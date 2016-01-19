@@ -1,14 +1,17 @@
 #!/bin/sh
 rm -r -f ../c-xref
+
+cd src 
+make
+cd ..
+
 mkdir ../c-xref
 cp -r doc/jexercise ../c-xref/jexercise
 cp -r doc/cexercise ../c-xref/cexercise
 #create a text version of manual pages
 #man doc/c-xref.man | sed -f doc/man2ascii.sed > doc/c-xref.txt
 #man doc/c-xrefrc.man | sed -f doc/man2ascii.sed > doc/c-xrefrc.txt
-cd src 
-make
-cd ..
+
 cp src/c-xref ../c-xref/
 # the following is a special case for cygwin platform
 if test -f src/c-xref.exe
