@@ -1,0 +1,57 @@
+
+**********************************************************************
+*     Installing Xrefactory for Emacs-NT and XEmacs                  *
+**********************************************************************
+
+In following text XREFDIR denotes the directory where you have untared
+the  Xrefactory  distribution (it  is  not  an environment  variable).
+Similarly,   EMACS   denotes   your  Emacs   installation   directory.
+Substitute this  directory for XREFDIR  in the following text  and put
+lines:
+
+	(setq exec-path (cons "XREFDIR" exec-path))
+	(setq load-path (cons "XREFDIR/emacs" load-path))
+	(load "xrefactory")
+
+to your  (X)Emacs initialization  file (this may  be one  of ~\.emacs,
+C:\_emacs, C:\.emacs,  C:\~\.emacs or C:\.xemacs\init.el  depending on
+the version of (X)Emacs).
+
+
+It  is  done. It  is  highly recommended  that  you  work through  the
+tutorials    in   the    files    'XREFDIR/jexercise/Index.java'   and
+'XREFDIR/cexercise/index.c'.    To  start   the  tutorial   just  open
+mentioned files and follow the instructions written there.
+
+Xrefactory uses  F3-F8 functional hot-keys.  It  is highly recommended
+that you keep this binding during the tutorials and initial evaluation
+of Xrefactory.  Later, you can redefine key bindings either by editing
+xrefactory.el file or by adding the line:
+
+    (defvar xref-key-binding 'none)
+
+to your  .emacs file  BEFORE loading of  "xrefactory" file.  This line
+prevents Xrefactory  from binding its  functions to hot  keys allowing
+you to define your own keys.
+
+
+**********************************************************************
+*                 Installing Xrefactory for jEdit                    *
+**********************************************************************
+
+In  following  text  JEDIT  denotes  either  your  jEdit  installation
+directory (usually  'C:\Program Files\jEdit'), or  your personal jEdit
+configuration  directory (usually  'C:\.jedit'), and  XREF  stands for
+your Xrefactory installation directory.
+
+1.) Copy XREF\jedit\Xrefactory.jar file into JEDIT\jars directory.
+
+2.) Create directory JEDIT\jars\Xrefactory
+
+3.) Copy XREF\xref file into JEDIT\jars\Xrefactory directory.
+
+It  is done.  It  is hightly  recommended to  pass our  exercise files
+starting  in 'XREF\jexercise\Index.java'  and 'XREF\cexercise\index.c'
+files.   To  pass  exercises  just  open mentioned  files  and  follow
+instructions written there.
+

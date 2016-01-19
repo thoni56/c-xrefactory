@@ -1,0 +1,55 @@
+#!/bin/sh
+rm -r -f ../c-xref
+mkdir ../c-xref
+cp -r doc/jexercise ../c-xref/jexercise
+cp -r doc/cexercise ../c-xref/cexercise
+#create a text version of manual pages
+#man doc/c-xref.man | sed -f doc/man2ascii.sed > doc/c-xref.txt
+#man doc/c-xrefrc.man | sed -f doc/man2ascii.sed > doc/c-xrefrc.txt
+cd src 
+make
+cd ..
+cp src/c-xref ../c-xref/
+# the following is a special case for cygwin platform
+if test -f src/c-xref.exe
+then
+  cp src/c-xref.exe ../c-xref/
+fi
+#create README files
+cat doc/INSTALL doc/readme doc/readme2 > ../c-xref/README
+cp doc/INSTALL ../c-xref/INSTALL
+cp doc/c-xrefsetup ../c-xref/
+cp doc/c-xrefinstall ../c-xref/
+cp doc/c-xref.man ../c-xref/
+#cp doc/c-xref.txt ../c-xref/
+cp doc/c-xrefrc.man ../c-xref/
+#cp doc/c-xrefrc.txt ../c-xref/
+cd env
+for d in *
+do
+	if test ${d} != "CVS" -a ${d} != "kawa" 
+	then
+		mkdir ../../c-xref/${d}
+		for f in `cat ${d}/Files`
+		do 
+			cp ${d}/${f} ../../c-xref/${d}/
+		done
+	fi
+done
+cd ..
+cp GPL.txt ../c-xref/GPL.txt
+cp doc/LICENSE ../c-xref/LICENSE
+cd ../c-xref
+ln -s emacs xemacs
+chmod -R a+r ../c-xref
+
+
+
+
+
+
+
+
+
+
+

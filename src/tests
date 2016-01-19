@@ -1,0 +1,9 @@
+xref -refactory -rfct-add-param -olcxparnum=1 "-rfct-param1=int i;" -rfct-param2=0 -p ~/tmp/jexercise -olcursor=816 ~/tmp/jexercise/com/xrefactory/refactorings/MoveMethod.java
+
+xref -refactory -rfct-del-param -olcxparnum=1 -p ~/tmp/jexercise -olcursor=816 ~/tmp/jexercise/com/xrefactory/refactorings/MoveMethod.java
+
+xref -refactory -rfct-move-param -olcxparnum=1 -olcxparnum2=2 -p ~/tmp/jexercise -olcursor=816 ~/tmp/jexercise/com/xrefactory/refactorings/MoveMethod.java
+
+xref -refactory -rfct-rename -renameto=tototo -p ~/tmp/jexercise -olcursor=816 ~/tmp/jexercise/com/xrefactory/refactorings/MoveMethod.java
+
+

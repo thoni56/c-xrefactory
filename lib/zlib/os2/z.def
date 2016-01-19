@@ -1,0 +1,51 @@
+;
+; Slightly modified version of ../nt/zlib.dnt :-)
+;
+
+LIBRARY		Z
+DESCRIPTION	"Zlib compression library for OS/2"
+CODE		PRELOAD MOVEABLE DISCARDABLE
+DATA		PRELOAD MOVEABLE MULTIPLE
+
+EXPORTS
+    _adler32
+    _compress
+    _crc32
+    _deflate
+    _deflateCopy
+    _deflateEnd
+    _deflateInit2_
+    _deflateInit_
+    _deflateParams
+    _deflateReset
+    _deflateSetDictionary
+    _gzclose
+    _gzdopen
+    _gzerror
+    _gzflush
+    _gzopen
+    _gzread
+    _gzwrite
+    _inflate
+    _inflateEnd
+    _inflateInit2_
+    _inflateInit_
+    _inflateReset
+    _inflateSetDictionary
+    _inflateSync
+    _uncompress
+    _zlibVersion
+    _gzprintf
+    _gzputc
+    _gzgetc
+    _gzseek
+    _gzrewind
+    _gztell
+    _gzeof
+    _gzsetparams
+    _zError
+    _inflateSyncPoint
+    _get_crc_table
+    _compress2
+    _gzputs
+    _gzgets

@@ -1,0 +1,22 @@
+Hello,
+
+You have asked for the PACKAGE package via e-mail. Please
+find it enclosed in this message. In order to install Xref,
+save this message into a file (say PACKAGE.uu) in preference
+in your home directory and then unpack it by typing:
+
+        uudecode PACKAGE.uu
+        gunzip PACKAGE.tar.gz
+        tar xf PACKAGE.tar
+        cd PACKDIR
+        sh setup
+
+Please do not hesitate to report any problems.
+
+Enjoy,
+
+    Marian.
+
+
+
+

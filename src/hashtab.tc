@@ -1,0 +1,143 @@
+/* .c template for hashed table*/
+/* requires macros:
+	HASH_TAB_TYPE
+	HASH_ELEM_TYPE
+	HASH_FUN_PREFIX
+	HASH_FUN(elem)
+	HASH_ELEM_EQUAL(e1,e2)
+*/
+/* form of include:
+
+#define HASH_TAB_TYPE struct
+#define HASH_ELEM_TYPE
+#define HASH_FUN_PREFIX
+#define HASH_FUN(elem) 
+#define HASH_ELEM_EQUAL(e1,e2)
+
+#include "hashTab.tc"
+
+#undef HASH_TAB_TYPE
+#undef HASH_ELEM_TYPE
+#undef HASH_FUN_PREFIX
+#undef HASH_FUN
+#undef HASH_ELEM_EQUAL
+*/
+
+#define GLUE1(a,b) a ## b
+#define GLUE2(a,b) GLUE1(a,b)
+
+#define HASH_SHIFT 211
+
+/* len inicializuje*/
+
+void GLUE2(HASH_FUN_PREFIX,NAInit)(HASH_TAB_TYPE *t, int size) {
+	int i;
+	t->numberOfElements = 0;
+	t->size = size;
+	memset(t->tab, 0, sizeof(HASH_ELEM_TYPE*)*t->size);
+//	for (i=0; i<t->size; i++) t->tab[i] = NULL;
+}
+
+/* alokuje a inicializuje*/
+
+void GLUE2(HASH_FUN_PREFIX,Init)(HASH_TAB_TYPE *t, int size) {
+	int i;
+	XX_ALLOCC(t->tab, size, HASH_ELEM_TYPE *);
+	GLUE2(HASH_FUN_PREFIX,NAInit)(t, size);
+}
+
+int GLUE2(HASH_FUN_PREFIX,IsMember)(
+					HASH_TAB_TYPE *t, 
+					HASH_ELEM_TYPE *elem,
+					int *position
+			) {
+	unsigned posid;
+	posid = HASH_FUN(elem);
+	posid = posid % t->size;
+	assert(t->tab!=NULL);
+	while (t->tab[posid] != NULL) {
+		if (HASH_ELEM_EQUAL(t->tab[posid], elem)) {
+			*position = posid;
+			return(1);
+		}
+		posid=(posid+HASH_SHIFT) % t->size;
+	}
+	*position = posid;
+	return(0);
+}
+
+void GLUE2(HASH_FUN_PREFIX,Set) (
+					HASH_TAB_TYPE *t, 
+					HASH_ELEM_TYPE *elem,
+					int position
+				) {
+    if (t->tab[position]==NULL) {
+		t->numberOfElements ++;
+	    if ((t->numberOfElements * 9) / 8 >= t->size) {
+    	  fatalError(ERR_ST, "[hashAdd] file table overflowed", XREF_EXIT_ERR);
+	    }
+	}
+    t->tab[position] = elem;
+/*&fprintf(dumpOut,"adding %s\n",elem->name);fflush(dumpOut);&*/
+}
+
+void GLUE2(HASH_FUN_PREFIX,Add) (
+					HASH_TAB_TYPE *t, 
+					HASH_ELEM_TYPE *elem,
+					int *position
+				) {
+  if (! GLUE2(HASH_FUN_PREFIX,IsMember)(t,elem,position)) {
+	GLUE2(HASH_FUN_PREFIX,Set) (t,elem,*position);
+  }
+}
+
+void GLUE2(HASH_FUN_PREFIX,Free)(HASH_TAB_TYPE *t) {
+	XX_FREE(t->tab);
+}
+
+void GLUE2(HASH_FUN_PREFIX,Map)(
+					HASH_TAB_TYPE *t, 
+					void (*fun)(HASH_ELEM_TYPE *)
+				) {
+	int i;
+	for(i=0; i<t->size; i++) {
+		if (t->tab[i]!=NULL) (*fun)(t->tab[i]);
+	}
+}
+
+void GLUE2(HASH_FUN_PREFIX,Map2)(
+					HASH_TAB_TYPE *t, 
+					void (*fun)(HASH_ELEM_TYPE *, void *),
+					void *a
+				) {
+	int i;
+	for(i=0; i<t->size; i++) {
+		if (t->tab[i]!=NULL) (*fun)(t->tab[i], a);
+	}
+}
+
+void GLUE2(HASH_FUN_PREFIX,Map4)(
+					HASH_TAB_TYPE *t, 
+					void (*fun)(int, void *, void *),
+					void *a,
+					void *b
+				) {
+	int i;
+	for(i=0; i<t->size; i++) {
+		if (t->tab[i]!=NULL) (*fun)(i, a, b);
+	}
+}
+
+void GLUE2(HASH_FUN_PREFIX,Map3)(
+					HASH_TAB_TYPE *t, 
+					void (*fun)(HASH_ELEM_TYPE *, int)
+				) {
+	int i;
+	for(i=0; i<t->size; i++) {
+		if (t->tab[i]!=NULL) (*fun)(t->tab[i], i);
+	}
+}
+
+
+#undef GLUE1
+#undef GLUE2

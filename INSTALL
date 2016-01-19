@@ -1,0 +1,80 @@
+
+This is README file for portable source distribution of Xrefactory. 
+
+**********************************************************************
+*    Auto Create Xrefactory Distribution                             *
+**********************************************************************
+
+1.) In order to create the distribution, goto the directory containing
+this file and type:
+
+        sh ./CreateXrefDistribution
+
+(or simply make). If everything is  going all right, you will find the
+'c-xref' directory along  the original 'c-xrefactory' directory.  This
+directory contains a working  distribution containing all files needed
+to  install and  run  Xrefactory.  Go  there  and follow  instructions
+written there in the README or INSTALL file.
+
+
+**********************************************************************
+*      Manual Create Xrefactory Distribution                         *
+**********************************************************************
+
+In following text, let XREFDIR be the directory containing this file.
+
+1.)   First compile  xref  sources.  They  are  stored in  XREFDIR/src
+directory.  If you  have 'make' or 'gmake' installed  on your computer
+then invoke it in the 'src' directory. This will produce an executable
+task (named xref or xref.exe, ...). You can check it from command line
+by invoking it with -about option:
+
+    xref -about
+
+Now you need to install Xrefactory under your environment:
+
+2.)   Emacs/XEmacs installation: Copy  files XREFDIR/env/emacs/xref.el
+and XREFDIR/env/emacs/xrefactory.el to directory containing your Emacs
+lisp code. Then add line:
+
+	(load "xrefactory")
+
+to  your ~/.emacs file.  Finally, appropriate  your PATH  variable (or
+equivalent  on  your  system),  so  that command  'xref'  invokes  the
+executable xref compiled in step 1.
+
+3.)   jEdit installation:  Copy  file XREFDIR/env/jedit/Xrefactory.jar
+into  your  jEdit  plugins  directory (usualy  ~/.jedit/jars  or  jars
+subdirectory  of  jEdit  installation  directory). Then  create  empty
+directory 'Xrefactory' in your jedit plugins directory (the same where
+you have copied Xrefactory.jar) and copy there 'XREFDIR/src/xref' task
+created in step 1.
+
+
+
+**********************************************************************
+*      Developing Xrefactory                                         *
+**********************************************************************
+
+
+1.) If you  actively develop xref and modify sources,  you will need a
+working copy of  xref task in xref.bs file  (because xref is partially
+bootstrapped).  So  before doing your first  source file modification,
+do the following!
+
+  make
+  make bs
+
+then, you  can modify source files  and rebuild simply by make. 
+
+2.) You will need to build Berkeley yacc, which is stored in byacc-1.9
+directory.
+
+3.) You will also need to  update file dependeces from time to time by
+the command:
+
+  make dependencies
+
+4.) To compile xref with debugging options use:
+
+  make -f Makefile.development

@@ -1,0 +1,26 @@
+
+Simple build:
+^^^^^^^^^^^^^
+
+  make dependencies
+  make
+
+
+
+Development:
+^^^^^^^^^^^^
+
+First, you will need to build Berkeley yacc, which is stored in
+byacc-1.9 directory. Second,  you will need a copy of a working
+copy of xref task in xref.bs file (because xref is partially 
+bootstrapped). Todo this, you can call:
+
+  make bs
+
+then, you can modify source files and rebuild. To compile xref
+with debugging options use:
+
+  make -f Makefile.development
+
+
+

@@ -1,0 +1,62 @@
+**********************************************************************
+*                   installing emacs support manually                *
+**********************************************************************
+
+1.)  This section  applies only  if  you haven't  run the  'c-xrefsetup'
+script making those initializations automatically.
+
+2.) In order to make c-xref work under Emacs/XEmacs editors, you have to
+set  the  'load-path' variable  in  your  Emacs/XEmacs  editor, so  it
+includes the directory containing this  README file.  Then you have to
+add the command '(load "c-xrefactory.el")' into your '~/.emacs' file.
+
+
+**********************************************************************
+*                      editing standard key layout                   *
+**********************************************************************
+
+1.) If  you don't like the  standard c-xref key binding,  you can edit
+the file  'c-xrefactory.el' to select  more appropriate one.   You can
+also switch between global and (C and Java) mode local key bindings by
+setting  the  "c-xref-key-binding"  variable  to  either  "'local"  or
+"'global". If  you wish to  completely redefine all key  bindings, put
+there the value "'none".  In order  to detect emacs key names, you can
+use  the "Ctrl-h l"  emacs function  showing names  of last  100 typed
+keys.
+
+2.)  You can edit the 'c-xrefactory.el' file also to appropriate other
+customizable  parameters,  like  seting  on/off  syntax  highlighting,
+default project name, etc.
+
+3.) If you are using C-Xrefactory installed into system directories of
+your  computer, before  customizing  you should  first  copy the  file
+'c-xrefactory.el'     from     its     standard     place     (usually
+'usr/lib/emacs/site-lisp/c-xrefactory.el')  into  your  directory  and
+edit it here.  Then  you should correct the '(load "c-xrefactory.el")'
+command in your '~/.emacs' file putting there the path to your copy of
+the 'c-xrefactory.el' file.
+
+
+**********************************************************************
+*                 standard c-xref key-binding for emacs              *
+**********************************************************************
+
+All C-Xref's macros under (X)Emacs  can be invoked also by selecting the
+appropriate line  from the 'C-Xref' menu  of the menu  bar. Standard key
+binding is:
+
+
+F8      - Completion of identifiers. Info on symbols.
+F7      - Delete proposition window (if any) created by F8.
+F6      - look for cross-references of the selected identifier, 
+          push those referencies onto stack,
+          go to the definition of the selected identifier (i.e 
+          definition of funcion, variable, type name, macro or struct record).
+F5      - pop last cross-references pushed by F6, 
+          go to the position from where those references were pushed.
+F4      - go to the next reference of the top symbol pushed by F6.
+F3      - go to the previous reference of the top symbol pushed by F6.
+
+
+
+

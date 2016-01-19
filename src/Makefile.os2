@@ -1,0 +1,63 @@
+PROG=xref
+ROOTDIR=..
+
+#########################################################################
+CC= gcc
+COMCFLAGS= -Zomf -O -I$(INCLUDE) -I$(INCLUDE2) $(ZLIB_OPT)
+CFLAGS= $(COMCFLAGS) $(RELEASECFLAGS) 
+LDFLAGS= -Zomf -s -static -Zstack 0x2000 -Zlinker /PM:VIO $(RELEASELDFLAGS) $(SPECIALLDFLAGS)
+CPP_ONLY_FLAG= -E $(COMCFLAGS)
+MAKEDEPFLAGS= -E -MM $(COMCFLAGS)
+#########################################################################
+
+OBJS=cgram.o main.o globals.o misc.o semact.o commons.o generate.o \
+	 enumTxt.o complet.o cxref.o cxfile.o lex.o yylex.o cexp.o options.o \
+	 caching.o javagram.o jsemact.o cfread.o cct.o init.o \
+     editor.o refactory.o \
+	 yaccgram.o html.o extract.o classh.o jslsemact.o $(ZLIB_LIB)
+
+#	 cccgram.o ccclex.o cccsemact.o javaslgram.o 
+
+# put following into comments if you wish to build without zlib library, 
+# i.e. without possibility to read compressed .jar files
+ZLIB_OPT=-DUSE_LIBZ
+ZLIB_LIB=$(ZLIB_PATH)/$(ZLIB)
+ZLIB_PATH=$(ROOTDIR)/tsk/any/zlib
+ZLIB=z.lib
+
+#
+SRC=$(ROOTDIR)/src
+INCLUDE=$(ROOTDIR)/src
+INCLUDE2=$(ZLIB_PATH)
+
+#########################################################################
+all: $(PROG)
+
+$(ZLIB_PATH)/$(ZLIB):
+	cd $(ZLIB_PATH); \
+	cp os2/Makefile.os2 .; \
+	make -f Makefile.os2 $(ZLIB)
+
+$(PROG): $(OBJS)
+	$(CC) $(LDFLAGS) -o $(PROG) $(OBJS)
+	echo -e "\n\t\t\t\tnormal end of make\n"
+
+#########################################################################
+
+clean:;	-cd $(ZLIB_PATH); make -f Makefile.os2 clean
+		rm -f *.o *.exe $(ZLIB_LIB) $(ZLIB_PATH)/Makefile.os2
+rm:;	rm -f $(OBJS) $(PROG) locScan.l \
+		gram.y *.err y.output refs *.o gram.c cexp.c gram.h
+dep:;	$(CC) *.c $(MAKEDEPFLAGS) > MMdepend
+		mv MMdepend $(ROOTDIR)/mks/
+inst:	$(PROG)
+		cp $(BIN)/$(PROG) $(BIN)/$(PROG).old			; true
+		cp $(PROG) $(BIN)/$(PROG)
+ln:;	ln -f -s $(SRC)/*.c .
+lib:;	cp -r $(ROOTDIR)/lib/*lib .
+xrefmsg: qnxmsg.c
+		$(CC) $(COMCFLAGS) -o xrefmsg qnxmsg.c
+xrefspeller: xrefspeller.c commons.c
+		$(CC) $(COMCFLAGS) -o xrefspeller xrefspeller.c commons.c
+
+#########################################################################

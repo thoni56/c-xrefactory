@@ -1,0 +1,63 @@
+/* ********************************************************************** */
+/* .h template for hashed table*/
+
+#define GLUE1(a,b) a ## b
+#define GLUE2(a,b) GLUE1(a,b)
+
+
+HASH_TAB_TYPE {
+	int size;
+	int numberOfElements;
+	HASH_ELEM_TYPE **tab;				/* *tab[size];*/
+};
+
+
+extern void GLUE2(HASH_FUN_PREFIX, Init) C_ARG((		/* Init */
+					HASH_TAB_TYPE *tab, 
+					int velkost
+				));
+extern void GLUE2(HASH_FUN_PREFIX,NAInit) C_ARG((		/* not alloc init */
+					HASH_TAB_TYPE *t,
+					int velkost
+				));
+extern int  GLUE2(HASH_FUN_PREFIX, IsMember)  C_ARG((	/* IsMember */
+					HASH_TAB_TYPE *tab, 
+					HASH_ELEM_TYPE *elem,
+					int *position
+				));
+void GLUE2(HASH_FUN_PREFIX,Set)  C_ARG((			/* add elem at position */
+					HASH_TAB_TYPE *t, 
+					HASH_ELEM_TYPE *elem,
+					int position
+				));
+extern void GLUE2(HASH_FUN_PREFIX, Add)  C_ARG((	/* Add, returns position */
+					HASH_TAB_TYPE *tab, 
+					HASH_ELEM_TYPE *elem,
+					int *position
+				));
+extern void GLUE2(HASH_FUN_PREFIX, Free)  C_ARG((HASH_TAB_TYPE *tab));
+extern void GLUE2(HASH_FUN_PREFIX, Map) C_ARG((
+					HASH_TAB_TYPE *tab, 
+					void (*fun)(HASH_ELEM_TYPE *)
+				));
+extern void GLUE2(HASH_FUN_PREFIX, Map2) C_ARG((
+					HASH_TAB_TYPE *tab, 
+					void (*fun)(HASH_ELEM_TYPE *, void *),
+					void *
+				));
+extern void GLUE2(HASH_FUN_PREFIX, Map4) C_ARG((
+					HASH_TAB_TYPE *tab, 
+					void (*fun)(int, void *, void *),
+					void *, void *
+				));
+extern void GLUE2(HASH_FUN_PREFIX, Map3) C_ARG((
+					HASH_TAB_TYPE *tab, 
+					void (*fun)(HASH_ELEM_TYPE *, int)
+				));
+
+#undef GLUE1
+#undef GLUE2
+
+
+
+

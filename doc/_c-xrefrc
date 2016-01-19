@@ -1,0 +1,181 @@
+// 
+// This is Xrefactory configuration file. It contains options 
+needed to process sources of user's projects. The file contains
+an example project configuration, but it needs to be adjusted. 
+
+// For more detailed information about the format of this '_xrefrc' 
+// file, please read the 'xrefrcman.txt' file included in our 
+// distribution. For more informations about available options read
+// the 'xrefman.txt' file.
+
+
+
+
+// ---------------------------------------------------------------
+// the following is typical section if Xref is invoked from Emacs.
+// ---------------------------------------------------------------
+
+// In order to handle multiple user's projects the _xrefrc file is
+// divided into sections.  Each section starts by the name of the section
+// enclosed into [] brackets. By convention (and for possible automatic
+// project detection) the project name is the name of principal directory
+// containing your sources.
+
+[c:\myproject\src]    // a section marker
+
+// NOTE: Use the full path including drive letter if you wish to use
+// automatic section selection.
+
+// Following specifies source files of the project. Those files are
+// processed when invoking xref with the '-create' or '-p' options 
+// or when invoked by the 'Create the TAG file' menu item of Emacs.
+// You may insert several directory as well as single file names.
+
+-r c:\myproject\src
+
+// The following option specifies where the file containing cross
+// references is placed. Please use an absolute path here.
+
+-refs \Xrefs
+
+// The following option specifies the number of files into which the cross 
+// references are splitted.
+// You should specify the 'refnum' proportionally to the size
+// of your project, the recommended number is the number of lines of your 
+// sources divided by 3 000. This number specifies also the number of
+// cross-reference HTML files.
+
+-refnum=50
+
+
+// -----------------------------------------------------------------
+//                        Java specific options
+//
+// The following option specifies where to search Java classes.
+// This option overrides the %CLASSPATH% environment value.
+// If your %CLASSPATH% variable is not set, uncomment and adjust this!
+
+// -classpath c:\myjava
+
+// If you browse a standard JDK symbol, you may wish to see
+// its javadoc documentation. In order to allow this adjust
+// following two options. However, you will also need to have an Internet
+// browser installed as well as working 'browse-url' package in 
+// your (X)Emacs.
+
+-htmljavadocpath=http://java.sun.com/j2se/1.3/docs/api
+-htmljavadocavailable=java.applet:java.awt:java.beans:java.io:java.lang:java.math:java.net:java.rmi:java.security:java.sql:java.text:java.util:javax.accessibility:javax.swing:org.omg.CORBA:org.omg.CosNaming
+
+
+
+// -----------------------------------------------------------------
+//                        C specific options
+//
+// Following options specify default macros for source pre-processing
+// Please adjust this if using Xrefactory for C language.
+
+-DDEBUG             // command line macro definition
+-DMY_VERSION=2.7    // macro with body
+
+// Following options specify where to search include files.
+// Please adjust this!
+
+-I ..\h
+-I ..\include
+-I ..\..\h
+-I ..\..\include
+-I ..\..\..\h
+-I ..\..\..\include
+-I "\Program Files\DevStudio\VC\include"
+
+// Following option causes that editing macros do not update references 
+// from include files while answering a request. It is strongly recommended
+// to use this option when working on a large project or on a project
+// loading large include files (for example MSVC include file).
+
+-noincluderefresh
+
+// -----------------------------------------------------------------
+// ----- following options control the form of generated HTML ------
+
+// The following option specifies the directory where the html files 
+// created from your sources will be placed. Please use an absolute 
+// path here.
+
+-htmlroot=\HTML
+
+// The following option sets the tabulator value for HTML output.
+
+-htmltab=8
+
+// The following options control generating of cross referencing files
+// when creating HTML form of sources. Options
+// '-htmlgxlist' and '-htmllxlist' specifies respectively whether to 
+// generate those lists for global and local symbols. 
+
+-htmlgxlist
+// -htmllxlist
+
+
+// -------------------------------------------------------------------
+// Now follows a typical section description if Xref is used from Kawa
+// -------------------------------------------------------------------
+
+// Usually you do not need any specific options for Kawa projects.
+// This file is of any usage only if you need some particular
+// treatment of your project.
+
+// In order to handle multiple user's projects the _xrefrc file is
+// divided into sections.  Each section starts by the name of the section
+// enclosed into [] brackets. The name should be the same as this
+// in Kawa.
+
+[mytestproject]          // project name as it is named in Kawa
+
+// Usually you do not need to specify the cross reference file name,
+// and CLASSPATH, as they are taken from Kawa.
+
+// The following option specifies the number of files into which the cross 
+// references are splitted.
+// You should specify the 'refnum' proportionally to the size
+// of your project, the recommended number is the number of lines of your 
+// sources divided by 3 000. This number specifies also the number of
+// cross-reference HTML files.
+
+-refnum=20
+
+// ----- following options control the form of generated HTML ------
+// ------------ (if you wish to generate HTML forms) ---------------
+
+// The following option specifies the directory where the html files 
+// created from your sources will be placed. Please use an absolute 
+// path here.
+
+-htmlroot=\HTML
+
+// The following option sets the tabulator value for HTML output.
+
+-htmltab=2
+
+// The following options control generating of cross referencing files
+// when creating HTML form of sources. Options
+// '-htmlgxlist' and '-htmllxlist' specifies respectively whether to 
+// generate those lists for global and local symbols. The option
+// '-htmlrichlist' specifies whether those lists contain also one
+// corresponding line of source code, or not. If you have a fast
+// machine and a lot of space on disk, uncomment them all.
+
+-htmlgxlist
+// -htmllxlist
+// -htmlrichlist
+
+
+
+
+
+
+
+
+
+
+

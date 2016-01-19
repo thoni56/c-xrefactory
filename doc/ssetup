@@ -1,0 +1,56 @@
+#! /bin/sh
+echo
+echo "------       Xref installation into system directories    ------ "
+echo
+PPWD=`pwd`
+PATH=${PATH}:${PPWD}
+export PATH
+#if test `id -u` != 0
+#then
+#	echo "This installation can be run only by the super-user."
+#	echo "If you are not 'root', you should install Xref into your"
+#    echo "personal directories by running the 'setup' script."
+#	echo
+#	exit
+#fi
+cp -v xref /usr/bin/
+cd emacs
+sh init
+if test -d /usr/lib/emacs/site-lisp
+then
+	cp -v xref.el /usr/lib/xemacs/site-lisp/xref.el
+	cp -v sxrefactory.el /usr/lib/xemacs/site-lisp/xrefactory.el
+fi
+if test -d /usr/lib/xemacs/site-lisp
+then
+	cp -v xref.el /usr/lib/xemacs/site-lisp/xref.el
+	cp -v sxrefactory.el /usr/lib/xemacs/site-lisp/xrefactory.el
+fi
+cd ..
+cd vedit3
+sh init
+if test -d /usr/lib/vedit3
+then
+	mkdir /usr/lib/vedit3/xref
+	cp  -v .sveditrc /usr/lib/vedit3/xref/.veditrc
+	cp  -v .svedit.key /usr/lib/vedit3/xref/.xrefvdt.key
+	cp  -v .svedit.cfg /usr/lib/vedit3/xref/.xrefvdt.cfg
+	cp -v xref*.vdm /usr/lib/vedit3/xref/
+fi
+cd ..
+echo "Installation into your system directories is over."
+echo "Press <Return> to continue."
+read xxx
+echo
+echo "In order to use Xref under Emacs/Xemacs editors, users should insert"
+echo "the line:"
+echo "  (load \"xrefactory.el\")"
+echo "into their '~/.emacs' file."
+echo "If the \"/usr/lib/{x}emacs/site-lisp/\" directory is not in your"
+echo "emacs 'load-path' variable, then they should insert before this line "
+echo "the following text:"
+echo "  (setq load-path (append load-path '(\"/usr/lib/emacs/site-lisp\")))"
+echo
+echo "In order to use Xref under the Vedit3 editor, users should copy"
+echo "the 'vedit3/.veditrc' file into their home directory."
+echo

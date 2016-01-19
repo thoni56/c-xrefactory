@@ -1,0 +1,3 @@
+find . -name "*.c" -print > /tmp/xreffiles
+xref `cat /tmp/xreffiles`
+rm -f /tmp/xreffiles

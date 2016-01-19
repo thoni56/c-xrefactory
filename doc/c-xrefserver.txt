@@ -1,0 +1,87 @@
+**********************************************************************
+*           Xref task used as server for editiong commands           *
+**********************************************************************
+
+**********************************************************************
+*                          Introduction                              *
+**********************************************************************
+
+When xref is invoked with option "-task_regime_server", it acts like a
+server  reading  input  options  from  standard  input  and  producing
+answers on the standard output. 
+
+Because on majority of OS,  pipes are slower than temporary files, two
+pipes (standard input and output)  are used only for small quantity of
+datas and their main purpose is synchronisation of editing environment
+and xref task.
+
+The  xref  task expects  a  suite of  input  options  finished by  the
+"end-of-options" string. Options are basically those which can be used
+on  command line  (with exception  of  -I and  -D options).   Moreover
+numerous special options not documented in the xref manual page can be
+used. One  of options should specify  the output file  for the answer.
+In such  case the xref  task computes the  answer, stores it  into the
+output file  and then  it writes the  "<sync>" string on  its standard
+output.
+
+NOTE:
+
+If you wish  to examine the exact communication  between xref task and
+Emacs editor, you can edit the xref.el file and change the line:
+
+(defvar xref-debug-mode nil)
+
+to:
+
+(defvar xref-debug-mode t)
+
+This  will cause that  Emacs will  display all  informations exchanged
+with xref task.
+
+
+
+EXAMPLE:        ******************************************************
+
+The simplest example of xref  comunication protocol is invocation of a
+completion  function.   Let's  consider   that  we  have  a  file  t.c
+containing the following text:
+
+----------------------------------------------------------------------
+struct toto {int x,y;} t;
+
+main() {
+  t.
+  ;
+  ma
+}
+----------------------------------------------------------------------
+
+following suite  of commands will call  xref server task,  ask for all
+completions after "t." string at line  4 (offset 40), then it will ask
+for completion on line 5 (offset 49).
+
+vittek:~/tmp>~/xref/xref -task_regime_server -xrefactory-II
+-olcxcomplet
+-olcursor=40
+/home/vittek/tmp/t.c
+end-of-options
+
+<no-project-found len=20>/home/vittek/tmp/t.c</no-project-found>
+<all-completions nofocus=0 len=19>x  :int x
+y  :int y</all-completions>
+<sync>
+
+
+-olcxcomplet
+-olcursor=49
+/home/vittek/tmp/t.c
+end-of-options
+
+<no-project-found len=20>/home/vittek/tmp/t.c</no-project-found>
+<goto>
+<position-lc line=6 col=2 len=20>/home/vittek/tmp/t.c</position-lc>
+</goto>
+<single-completion len=4>main</single-completion>
+<sync>
+
+

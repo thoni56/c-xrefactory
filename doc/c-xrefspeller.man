@@ -1,0 +1,21 @@
+.\" Copyright (c) 1997-2000 Marian Vittek, Bratislava.
+.TH XREFSPELLER 1 \" -*- nroff -*-
+.SH NAME
+xrefspeller \- A user interface for xref.
+.SH SYNOPSIS
+.hy 0
+.na
+.TP
+.B xrefspeller
+.SH DESCRIPTION
+Xrefspeller is an interactive setup utility
+for the xref cross-referencing tool. It is obsolete now as
+all the job can be done directly from (X)Emacs editor now.
+.SH AUTHOR
+Marian Vittek, Bratislava 1997-2000.
+.SH "MORE INFO"
+.RB http://www.xref-tech.com
+.SH "SEE ALSO"
+.RB xref(1),
+.RB xrefrc(5)
+

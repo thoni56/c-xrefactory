@@ -1,0 +1,125 @@
+#
+# This makefile is included by Makefile and Makefile.platform makefiles.
+# Do not use it directly
+#
+
+OBJS=cgram.o main.o globals.o misc.o semact.o commons.o generate.o \
+	 enumTxt.o complet.o cxref.o cxfile.o lex.o yylex.o cexp.o options.o \
+	 caching.o javagram.o jsemact.o cfread.o cct.o init.o \
+     editor.o refactory.o \
+	 yaccgram.o html.o extract.o classh.o jslsemact.o \
+     $(ZLIB_LIB)
+
+# put following into comments if you wish to build without zlib library, 
+# i.e. without possibility to read compressed .jar files
+ZLIB_OPT=-DUSE_LIBZ
+ZLIB_LIB=$(ROOTDIR)/lib/zlib/libz.a
+
+
+#
+SRC=$(ROOTDIR)/src
+INCLUDES=-I$(ROOTDIR)/src -I$(ROOTDIR)/lib/zlib -I.
+
+#########################################################################
+
+all: $(ROOTDIR)/lib/zlib/libz.a c-xref
+
+..always..:;
+
+#supposing to not modify zlib
+$(ROOTDIR)/lib/zlib/libz.a: ..always..
+	make -C $(ROOTDIR)/lib/zlib libz.a
+
+cgram.c: cgram.y
+	$(ROOTDIR)/../byacc-1.9/yacc -v -d cgram.y
+	mv y.output cy.output
+	mv y.tab.c cgram.c
+	mv y.tab.h gram.h
+
+javagram.c: javagram.y cgram.c
+	$(ROOTDIR)/../byacc-1.9/yacc -v -d javagram.y
+	mv y.output jy.output
+	mv y.tab.c javagram.c
+	mv y.tab.h javagram.h
+	diff javagram.h gram.h
+
+javaslgram.c: javaslgram.y cgram.c
+	$(ROOTDIR)/../byacc-1.9/yacc -v -d javaslgram.y
+	mv y.tab.c javaslgram.c
+	mv y.tab.h javaslgram.h
+	diff javaslgram.h gram.h
+
+cccgram.c: cccgram.y cgram.c
+	$(ROOTDIR)/../byacc-1.9/yacc -v -d cccgram.y
+	mv y.tab.c cccgram.c
+	mv y.tab.h cccgram.h
+	diff cccgram.h gram.h
+
+yaccgram.c: yaccgram.y cgram.c
+	$(ROOTDIR)/../byacc-1.9/yacc -v -d yaccgram.y
+	mv y.tab.c yaccgram.c
+	mv y.tab.h yaccgram.h
+	diff yaccgram.h gram.h
+
+gram.h:	cgram.c
+
+cexp.c: cexp.y
+	$(ROOTDIR)/../byacc-1.9/yacc -v cexp.y
+	mv y.tab.c cexp.c
+
+strFill.h: proto.h strTdef.h
+	c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
+		-str_fill -header \
+		> tmpStrFill.h
+	mv -f tmpStrFill.h strFill.h
+
+strTdef.h: proto.h
+	echo > strTdef.h
+	c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
+		-typedefs -enum_name -header \
+		> tmpStrTdef.h
+	mv -f tmpStrTdef.h strTdef.h
+	c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
+		-typedefs -enum_name -header \
+		> tmpStrTdef.h
+	mv -f tmpStrTdef.h strTdef.h
+
+enumTxt.c: proto.h strFill.h strTdef.h ../doc/_c-xrefrc
+	echo "#include \"stdinc.h\"" > enumTxt.c
+	echo "#include \"proto.h\"  /*SBD*/" >> enumTxt.c
+	c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
+		-enum_name -body >> enumTxt.c
+
+#########################################################################
+
+c-xref: $(OBJS) 
+	$(CC) $(LDFLAGS) -o c-xref $(OBJS)
+	echo -e "\n\t\t\t\tnormal end of make\n"
+
+#########################################################################
+
+clean:;	
+	make -C $(ROOTDIR)/lib/zlib clean
+	rm -f $(OBJS) c-xref
+
+#########################################################################
+
+dependencies:;	
+	$(CC) -E -MM $(COMCFLAGS) *.c > Makefile.dependencies
+
+#########################################################################
+#      make a copy of working c-xref executable for bootstrap           #
+
+bs:;	
+	cp c-xref c-xref.bs
+
+#########################################################################
+
+
+
+
+
+
+
+
+

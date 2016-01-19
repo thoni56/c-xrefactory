@@ -1,0 +1,2 @@
+#!/bin/sh
+find . \( -name "*.c" -o -name "*.java" \) -exec emacs -batch -l ~/.emacs {} -f untabify-buffer \;

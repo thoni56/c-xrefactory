@@ -1,0 +1,61 @@
+**********************************************************************
+**********************************************************************
+
+IMPORTANT NOTICE: C-xrefactory is the new name for Xrefactory versions
+1.*. Renaming of Xrefactory to C-xrefactory allows coexistance of both
+softwares  under different  license  conditions.  If  anywhere in  the
+documentation, you see a (forgotten) reference to xref, or xrefactory,
+it probably refers to c-xref and c-xrefactory.
+
+**********************************************************************
+**********************************************************************
+
+
+**********************************************************************
+*              Automatic installation under Unix                     *
+**********************************************************************
+
+In order to install C-Xrefactory on your machine just type:
+
+    sh ./c-xrefsetup
+
+This script will guide you  through the installation of C-Xrefactory and
+will introduce its main functions.
+
+If  you  like C-Xrefactory  and  you  are  super-user, you  can  install
+C-Xrefactory  into  system  directories  by running  'sh  ./c-xrefinstall'
+script.  This  will make  C-Xrefactory available for  all users  on this
+machine.   However,  this  script  does  not  guide  you  through  the
+C-Xrefactory features.
+
+**********************************************************************
+*         Manual installation for Emacs/XEmacs under Unix            *
+**********************************************************************
+
+In following text C-XREFDIR denotes the directory where you have untared
+the  C-Xrefactory  distribution (it  is  not  an environment  variable).
+Substitute this  directory for C-XREFDIR  in the following text  and put
+lines:
+
+	(setq exec-path (cons "C-XREFDIR" exec-path))
+	(setq load-path (cons "C-XREFDIR/emacs" load-path))
+	(load "c-xrefactory")
+
+  to your ~/.emacs file.
+
+It  is  done. It  is  highly recommended  that  you  work through  the
+tutorials  starting by  'C-XREFDIR/cexercise/index.c'.   To start  the
+tutorial just open the file and follow the instructions written there.
+
+C-Xrefactory uses  F3-F8 functional hot-keys.  It  is highly recommended
+that you keep this binding during the tutorials and initial evaluation
+of C-Xrefactory.  Later, you can redefine key bindings either by editing
+c-xrefactory.el file or by adding the line:
+
+    (defvar c-xref-key-binding 'none)
+
+to your  .emacs file  BEFORE loading of  "c-xrefactory" file.  This line
+prevents C-Xrefactory  from binding its  functions to hot  keys allowing
+you to define your own keys.
+
+

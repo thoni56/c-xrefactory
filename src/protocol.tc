@@ -1,0 +1,153 @@
+PROTOCOL_ITEM(String, C_XREF_VERSION_NUMBER, 			"1.6.11")
+PROTOCOL_ITEM(String, C_XREF_FILE_VERSION_NUMBER, 		"1.6.0")
+
+COMMENT("All the following stuff shall be renamed to C_XREF_PPC_...")
+COMMENT("to avoid conflicts with Xrefactory 2.*.*")
+
+PROTOCOL_ITEM(String, PPC_NO_TAG, 						"-- no tag --")
+
+PROTOCOL_ITEM(String, PPC_VERSION_MISMATCH, 			"version-mismatch")
+
+PROTOCOL_ITEM(String, PPC_MULTIPLE_COMPLETIONS , 		"completions")
+PROTOCOL_ITEM(String, PPC_FULL_MULTIPLE_COMPLETIONS , 	"full-completions")
+PROTOCOL_ITEM(String, PPC_ALL_COMPLETIONS , 			"all-completions")
+PROTOCOL_ITEM(String, PPC_MULTIPLE_COMPLETION_LINE , 	"cl")
+PROTOCOL_ITEM(String, PPC_SINGLE_COMPLETION , 			"single-completion")
+PROTOCOL_ITEM(String, PPC_FQT_COMPLETION , 				"fqt-completion")
+PROTOCOL_ITEM(String, PPC_SYMBOL_LIST, 					"symbol-list")
+
+PROTOCOL_ITEM(String, PPC_CALL_MACRO, 					"macro")
+PROTOCOL_ITEM(String, PPC_REFACTORING_PRECHECK, 		"precheck")
+
+PROTOCOL_ITEM(String, PPC_REFACTORING_REPLACEMENT, 		"replacement")
+PROTOCOL_ITEM(String, PPC_REFACTORING_CUT_BLOCK, 		"cut-block")
+PROTOCOL_ITEM(String, PPC_REFACTORING_COPY_BLOCK, 		"copy-block")
+PROTOCOL_ITEM(String, PPC_REFACTORING_PASTE_BLOCK, 		"past-block")
+
+
+
+
+PROTOCOL_ITEM(String, PPC_ASK_CONFIRMATION, 			"ask-confirmation")
+PROTOCOL_ITEM(String, PPC_ADD_TO_IMPORTS_DIALOG, 		"add-to-imports-dialog")
+PROTOCOL_ITEM(String, PPC_EXTRACTION_DIALOG, 			"extraction-dialog")
+PROTOCOL_ITEM(String, PPC_DISPLAY_CLASS_TREE, 			"display-class-tree")
+
+PROTOCOL_ITEM(String, PPC_DISPLAY_RESOLUTION, 			"display-resolution")
+PROTOCOL_ITEM(String, PPC_DISPLAY_OR_UPDATE_BROWSER, 	"display-or-update-browser")
+PROTOCOL_ITEM(String, PPC_SYMBOL_RESOLUTION, 			"resolution")
+PROTOCOL_ITEM(String, PPC_SYMBOL, 						"symbol")
+PROTOCOL_ITEM(String, PPC_VIRTUAL_SYMBOL, 				"virtual-symbol")
+PROTOCOL_ITEM(String, PPC_CLASS, 						"class")
+
+PROTOCOL_ITEM(String, PPC_REFERENCE_LIST, 				"reference-list")
+PROTOCOL_ITEM(String, PPC_SRC_LINE, 					"src-line")
+PROTOCOL_ITEM(String, PPC_UPDATE_CURRENT_REFERENCE, 	"update-current-refn")
+
+PROTOCOL_ITEM(String, PPC_NO_PROJECT, 					"no-project-found")
+PROTOCOL_ITEM(String, PPC_NO_SYMBOL, 					"no-symbol-found")
+PROTOCOL_ITEM(String, PPC_SET_INFO, 					"set-info")
+PROTOCOL_ITEM(String, PPC_WARNING , 					"warning")
+PROTOCOL_ITEM(String, PPC_BOTTOM_WARNING , 				"bottom-warning")
+PROTOCOL_ITEM(String, PPC_ERROR , 						"error")
+PROTOCOL_ITEM(String, PPC_LICENSE_ERROR , 				"license-error")
+PROTOCOL_ITEM(String, PPC_FATAL_ERROR , 				"fatalError")
+PROTOCOL_ITEM(String, PPC_INFORMATION , 				"information")
+PROTOCOL_ITEM(String, PPC_BOTTOM_INFORMATION , 			"bottom-information")
+PROTOCOL_ITEM(String, PPC_DEBUG_INFORMATION , 			"debug-information")
+
+PROTOCOL_ITEM(String, PPC_GOTO, 						"goto")
+PROTOCOL_ITEM(String, PPC_BROWSE_URL, 					"browse-url")
+PROTOCOL_ITEM(String, PPC_FILE_SAVE_AS, 				"file-save-as")
+PROTOCOL_ITEM(String, PPC_MOVE_FILE_AS, 				"file-move-as")
+PROTOCOL_ITEM(String, PPC_KILL_BUFFER_REMOVE_FILE, 		"kill-buffer-remove-file")
+PROTOCOL_ITEM(String, PPC_MOVE_DIRECTORY, 				"move-directory")
+PROTOCOL_ITEM(String, PPC_INDENT, 						"indent-block")
+
+PROTOCOL_ITEM(String, PPC_IGNORE, 						"ignore")
+PROTOCOL_ITEM(String, PPC_PROGRESS, 					"progress")
+
+PROTOCOL_ITEM(String, PPC_UPDATE_REPORT, 				"update-report")
+
+PROTOCOL_ITEM(String, PPC_AVAILABLE_REFACTORINGS, 		"available-refactorings")
+
+PROTOCOL_ITEM(String, PPC_SYNCHRO_RECORD , 				"sync")
+
+
+
+PROTOCOL_ITEM(String, PPC_LC_POSITION, 					"position-lc")
+PROTOCOL_ITEM(String, PPC_OFFSET_POSITION, 				"position-off")
+PROTOCOL_ITEM(String, PPC_STRING_VALUE, 				"str")
+PROTOCOL_ITEM(String, PPC_INT_VALUE, 					"int")
+
+
+
+PROTOCOL_ITEM(String, PPCA_LEN, 				"len")
+PROTOCOL_ITEM(String, PPCA_LINE, 				"line")
+PROTOCOL_ITEM(String, PPCA_COL, 				"col")
+PROTOCOL_ITEM(String, PPCA_OFFSET, 				"off")
+PROTOCOL_ITEM(String, PPCA_VALUE, 				"val")
+PROTOCOL_ITEM(String, PPCA_LEVEL, 				"lev")
+PROTOCOL_ITEM(String, PPCA_VCLASS, 				"vcl")
+PROTOCOL_ITEM(String, PPCA_SELECTED, 			"selected")
+PROTOCOL_ITEM(String, PPCA_BASE, 				"base")
+PROTOCOL_ITEM(String, PPCA_DEF_REFN, 			"drefn")
+PROTOCOL_ITEM(String, PPCA_REFN, 				"refn")
+PROTOCOL_ITEM(String, PPCA_TYPE, 				"type")
+PROTOCOL_ITEM(String, PPCA_MTYPE, 				"mtype")
+PROTOCOL_ITEM(String, PPCA_CONTINUE, 			"continue")
+PROTOCOL_ITEM(String, PPCA_INTERFACE, 			"interface")
+PROTOCOL_ITEM(String, PPCA_INDENT, 				"indent")
+PROTOCOL_ITEM(String, PPCA_TREE_DEPS, 			"deps")
+PROTOCOL_ITEM(String, PPCA_TREE_UP, 			"up")
+PROTOCOL_ITEM(String, PPCA_DEFINITION, 			"definition")
+PROTOCOL_ITEM(String, PPCA_SYMBOL, 				"symbol")
+PROTOCOL_ITEM(String, PPCA_BEEP, 				"beep")
+PROTOCOL_ITEM(String, PPCA_NUMBER, 				"number")
+PROTOCOL_ITEM(String, PPCA_NO_FOCUS, 			"nofocus")
+
+
+PROTOCOL_ITEM(int, PPCV_BROWSER_TYPE_INFO, 		0)
+PROTOCOL_ITEM(int, PPCV_BROWSER_TYPE_WARNING, 	1)
+
+
+PROTOCOL_ITEM(int, PPC_AVR_NO_REFACTORING,  				 00)
+PROTOCOL_ITEM(int, PPC_AVR_RENAME_SYMBOL,  					 10)
+PROTOCOL_ITEM(int, PPC_AVR_RENAME_CLASS,  					 20)
+PROTOCOL_ITEM(int, PPC_AVR_RENAME_PACKAGE,  				 30)
+PROTOCOL_ITEM(int, PPC_AVR_ADD_PARAMETER,  					 40)
+PROTOCOL_ITEM(int, PPC_AVR_DEL_PARAMETER,  					 50)
+PROTOCOL_ITEM(int, PPC_AVR_MOVE_PARAMETER,  				 60)
+PROTOCOL_ITEM(int, PPC_AVR_MOVE_STATIC_FIELD,  				 70)
+PROTOCOL_ITEM(int, PPC_AVR_MOVE_STATIC_METHOD, 				 80)
+PROTOCOL_ITEM(int, PPC_AVR_MOVE_FIELD, 						 90)
+PROTOCOL_ITEM(int, PPC_AVR_TURN_DYNAMIC_METHOD_TO_STATIC, 	100)
+PROTOCOL_ITEM(int, PPC_AVR_TURN_STATIC_METHOD_TO_DYNAMIC, 	110)
+PROTOCOL_ITEM(int, PPC_AVR_PULL_UP_FIELD, 					120)
+PROTOCOL_ITEM(int, PPC_AVR_PULL_UP_METHOD, 					130)
+PROTOCOL_ITEM(int, PPC_AVR_PUSH_DOWN_FIELD, 				140)
+PROTOCOL_ITEM(int, PPC_AVR_PUSH_DOWN_METHOD, 				150)
+PROTOCOL_ITEM(int, PPC_AVR_MOVE_CLASS, 						160)
+PROTOCOL_ITEM(int, PPC_AVR_MOVE_CLASS_TO_NEW_FILE,			170)
+PROTOCOL_ITEM(int, PPC_AVR_MOVE_ALL_CLASSES_TO_NEW_FILE,	180)
+PROTOCOL_ITEM(int, PPC_AVR_ENCAPSULATE_FIELD, 				190)
+PROTOCOL_ITEM(int, PPC_AVR_SELF_ENCAPSULATE_FIELD, 			200)
+PROTOCOL_ITEM(int, PPC_AVR_ADD_TO_IMPORT, 					210)
+PROTOCOL_ITEM(int, PPC_AVR_EXTRACT_METHOD,  				220)
+PROTOCOL_ITEM(int, PPC_AVR_EXTRACT_FUNCTION,  				230)
+PROTOCOL_ITEM(int, PPC_AVR_EXTRACT_MACRO,  					240)
+PROTOCOL_ITEM(int, PPC_AVR_REDUCE_NAMES, 					250)
+PROTOCOL_ITEM(int, PPC_AVR_EXPAND_NAMES, 					260)
+PROTOCOL_ITEM(int, PPC_AVR_ADD_ALL_POSSIBLE_IMPORTS, 		270)
+PROTOCOL_ITEM(int, PPC_AVR_SET_MOVE_TARGET, 				280)
+PROTOCOL_ITEM(int, PPC_AVR_UNDO, 							290)
+PROTOCOL_ITEM(int, PPC_MAX_AVAILABLE_REFACTORINGS, 			300)
+
+
+
+
+COMMENT("following items are gong to be deleted, since 1.6.0")
+
+PROTOCOL_ITEM(String, PPC_SET_PROJECT, 					"set-project")
+
+COMMENT("Thre HAS to be an end of line at the end of the file")
+

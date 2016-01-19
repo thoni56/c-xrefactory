@@ -1,0 +1,181 @@
+<HTML>
+<HEAD>
+  <TITLE>Xrefactory for jEdit</TITLE>
+</HEAD>
+<BODY topmargin="0" leftmargin="0" bgcolor="#FFFFFF">
+
+<h1>Xref task used as server for editing commands</h1>
+
+<h3>Introduction</h3>
+
+
+When xref is invoked with option "-task_regime_server", it acts like a
+server  reading  input  options  from  standard  input  and  producing
+answers on the standard output. 
+
+<p>
+Because on majority of OS,  pipes are slower than temporary files, two
+pipes (standard input and output)  are used only for small quantity of
+datas and their main purpose is synchronisation of editing environment
+and xref task.
+
+<p>
+The  xref  task expects  a  suite of  input  options  finished by  the
+"end-of-options" string. Options are basically those which can be used
+on  command line  (with exception  of  -I and  -D options).   Moreover
+numerous special options not documented in the xref manual page can be
+used. One  of options should specify  the output file  for the answer.
+In such  case the xref  task computes the  answer, stores it  into the
+output file  and then  it writes the  "<sync>" string on  its standard
+output.
+
+<p>
+NOTE:
+
+If you wish  to examine the exact communication  between xref task and
+Emacs editor, you can edit the xref.el file and change the line:
+
+<pre>
+
+(defvar xref-debug-mode nil)
+</pre>
+to:
+<pre>
+(defvar xref-debug-mode t)
+
+</pre>
+
+This  will cause that  Emacs will  display all  informations exchanged
+with xref task.
+
+
+
+<h3>EXAMPLE</h3>
+
+The simplest example of xref  comunication protocol is invocation of a
+completion  function.   Let's  consider   that  we  have  a  file  /tmp/xrefactory.tmp
+containing the following text:
+
+<pre>
+----------------------------------------------------------------------
+struct toto {int x,y;} t;
+
+main() {
+  t.
+  ;
+  ma
+}
+----------------------------------------------------------------------
+</pre>
+
+following suite  of commands will call  xref server task,  ask for all
+completions after "t." string at line  4 (offset 40), then it will ask
+for completion on line 6 (offset 49). In the following, text written 
+by hand is displayed in bold, answers from computer are in plain text.
+
+<pre>
+
+
+vittek:~/tmp/test><b>xref -task_regime_server -xrefactory-II
+-olcxcomplet
+-olcursor=40
+/tmp/xrefactory.tmp
+end-of-options
+
+</b>
+&lt;all-completions nofocus=0 len=19>x  :int x
+y  :int y&lt;/all-completions>
+&lt;sync>
+
+<b>-olcxcomplet
+-olcursor=49
+/tmp/xrefactory.tmp
+end-of-options
+
+</b>
+&lt;goto>
+&lt;position-lc line=6 col=2 len=25>/tmp/xrefactory.tmp&lt;/position-lc>
+&lt;/goto>
+&lt;single-completion len=4>main&lt;/single-completion>
+&lt;sync>
+
+
+</pre>
+
+The first answer means that the list:
+<pre>
+x  :int x
+y  :int y
+</pre>
+of possible completions should be displayed. The second answer is asking for moving to 
+the line 6 and column 2 of the file <i>/tmp/xrefactory.tmp</i> and inserting
+there the string <i>main</i>, which is the only completion.
+
+<h5>Using output file</h5>
+
+
+Following example demonstrates usage of a temporary file to get the output from xref task.
+In this case the answer is not
+produced on the standard output, but into a file. Only the <i>&lt;sync></i> record is
+passed via standard output.
+
+<pre>
+
+
+vittek:~/tmp/test><b>xref -task_regime_server -xrefactory-II
+-olcxcomplet
+-olcursor=49
+-o /tmp/xrefactory.out
+/tmp/xrefactory.tmp
+end-of-options
+
+</b>
+&lt;sync>
+
+vittek:~/tmp/test><b>cat /tmp/xrefactory.out</b>
+&lt;goto>
+ &lt;position-lc line=6 col=2 len=25>/tmp/xrefactory.tmp&lt;/position-lc>
+&lt;/goto>
+&lt;single-completion len=4>main&lt;/single-completion>
+vittek:~/tmp/test>
+
+</pre>
+
+
+<h5>Using temporary input file</h5>
+
+Usualy when completion is invoked from an editor, the currently edited file
+is not saved. The completion is not expected to save it neither. However in order
+to pass it to the <i>xref</i> task, the file has to be stored somewhere
+in the file system. Xrefactory offers special mecanism for this situation. It allows
+to specify that a temporary file is storing the current version of a source file.
+For example:
+
+<pre>
+
+
+vittek:~/tmp/test><b>xref -task_regime_server -xrefactory-II
+-olcxcomplet
+-olcursor=49
+-preload /home/vittek/tmp/test/toto.c /tmp/xrefactory.tmp
+-o /tmp/xrefactory.out
+/home/vittek/tmp/test/toto.c
+end-of-options
+</b>
+
+&lt;sync>
+
+vittek:~/tmp/test><b>cat /tmp/xrefactory.out</b>
+&lt;goto>
+ &lt;position-lc line=6 col=2 len=25>/home/vittek/tmp/test/toto.c&lt;/position-lc>
+&lt;/goto>
+&lt;single-completion len=4>main&lt;/single-completion>
+
+
+</pre>
+
+
+<br><br><br><br><br><br>
+
+</BODY>
+</HTML>

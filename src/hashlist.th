@@ -1,0 +1,117 @@
+/* *********************************************************************** */
+/* .h template for hashed table */
+
+/* treba definovat makra:
+	HASH_TAB_TYPE			meno typu hashovanej tabulky, musi byt struktura
+	HASH_ELEM_TYPE			meno typu poloziek tabulky
+	HASH_FUN_PREFIX				prefix, ktory sa prida pred mena fcii
+*/
+
+
+#define GLUE1(a,b) a ## b
+#define GLUE2(a,b) GLUE1(a,b)
+
+
+HASH_TAB_TYPE {
+	int size;
+	HASH_ELEM_TYPE **tab;				/* *tab[size];*/
+};
+
+
+extern void GLUE2(HASH_FUN_PREFIX, Init)  C_ARG((		/* Init */
+					HASH_TAB_TYPE *tab, 
+					int velkost
+				));
+extern void GLUE2(HASH_FUN_PREFIX,NAInit) C_ARG((		/* not alloc init */
+					HASH_TAB_TYPE *t,
+					int velkost
+				)); 
+extern int  GLUE2(HASH_FUN_PREFIX, IsMember)  C_ARG((	/* IsMember */
+					HASH_TAB_TYPE *tab, 
+					HASH_ELEM_TYPE *elem,
+					int *position,
+					HASH_ELEM_TYPE **origin
+				));
+int GLUE2(HASH_FUN_PREFIX,MembEqual) C_ARG((
+					HASH_ELEM_TYPE *e1,
+					HASH_ELEM_TYPE *e2
+			));
+int GLUE2(HASH_FUN_PREFIX,NextMember) C_ARG((
+					HASH_ELEM_TYPE *elem,
+					HASH_ELEM_TYPE **original
+			));
+void GLUE2(HASH_FUN_PREFIX,Set)  C_ARG((		/* prepend elem at position */
+					HASH_TAB_TYPE *t, 
+					HASH_ELEM_TYPE *elem,
+					int position
+				));
+void GLUE2(HASH_FUN_PREFIX,SetLast)  C_ARG((	/* append elem at position */
+					HASH_TAB_TYPE *t, 
+					HASH_ELEM_TYPE *elem,
+					int position
+				));
+extern void GLUE2(HASH_FUN_PREFIX, Add)  C_ARG((	/* Add, returns position */
+					HASH_TAB_TYPE *tab, 
+					HASH_ELEM_TYPE *elem,
+					int *position
+				));
+int GLUE2(HASH_FUN_PREFIX,Delete) C_ARG((	/* Delete first of elem from tab */
+					HASH_TAB_TYPE *t, 
+					HASH_ELEM_TYPE *elem
+			));
+/* Delete first of elem from tab, check exact equality of pointers */
+int GLUE2(HASH_FUN_PREFIX,DeleteExact) C_ARG((	
+					HASH_TAB_TYPE *t, 
+					HASH_ELEM_TYPE *elem
+			));
+int GLUE2(HASH_FUN_PREFIX,DeleteLast) C_ARG((/* Delete last of elem from tab */
+					HASH_TAB_TYPE *t, 
+					HASH_ELEM_TYPE *elem
+			));
+extern void GLUE2(HASH_FUN_PREFIX, Free) C_ARG((HASH_TAB_TYPE *tab));
+extern void GLUE2(HASH_FUN_PREFIX, Map) C_ARG((
+					HASH_TAB_TYPE *tab, 
+					void (*fun)(HASH_ELEM_TYPE *)
+				));
+extern void GLUE2(HASH_FUN_PREFIX, Map2) C_ARG((
+					HASH_TAB_TYPE *tab, 
+					void (*fun)(HASH_ELEM_TYPE *, void *),
+					void *
+				));
+extern void GLUE2(HASH_FUN_PREFIX, Map3) C_ARG((
+					HASH_TAB_TYPE *tab, 
+					void (*fun)(int)
+				));
+extern void GLUE2(HASH_FUN_PREFIX, Map31) C_ARG((
+					HASH_TAB_TYPE *tab, 
+					void (*fun)(int, void *, void *),
+					void *arg1, void *arg2
+				));
+extern void GLUE2(HASH_FUN_PREFIX, Map32) C_ARG((
+					HASH_TAB_TYPE *tab, 
+					void (*fun)(int, void *, void *, void *),
+					void *arg1, void *arg2, void *arg3
+				));
+extern void GLUE2(HASH_FUN_PREFIX, Map4) C_ARG((
+					HASH_TAB_TYPE *tab, 
+					void (*fun)(HASH_ELEM_TYPE *, int),
+					int
+				));
+extern void GLUE2(HASH_FUN_PREFIX, Map5) C_ARG((
+					HASH_TAB_TYPE *tab, 
+					void (*fun)(HASH_ELEM_TYPE *, void *),
+					void *arg
+				));
+void GLUE2(HASH_FUN_PREFIX,Statistics) C_ARG((
+					HASH_TAB_TYPE *t, 
+					int *usedIndexes,
+					int *elements,
+					int *maxdeep
+				));
+
+#undef GLUE1
+#undef GLUE2
+
+
+
+

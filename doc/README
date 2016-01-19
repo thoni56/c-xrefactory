@@ -1,0 +1,21 @@
+
+    This directory contains Xrefactory distribution files.
+
+Please, choose the most appropriate platform. If none (or you have some 
+troubles) select the 'xref-any.tar.gz' file for the newest source based
+portable version.
+
+After having download the selected file, you should decompress it by 
+the "gunzip xref-xxx.tar.gz" command and then de-tar it by the 
+"tar xfv xref-xxx.tar" command. To finish the installation type:
+
+	sh ./xrefsetup
+
+in the created directory.
+
+Enjoy!
+
+Marian.
+
+
+

@@ -1,0 +1,8 @@
+
+#define COMMENT(xx)
+#define PROTOCOL_ITEM(type, name, val) (defvar name val)
+
+#include "../../src/protocol.tc"
+
+#undef PROTOCOL_ITEM
+#undef COMMENT

@@ -1,0 +1,28 @@
+XREFSPELLER(1)                                     XREFSPELLER(1)
+
+
+
+NAME
+       xrefspeller - A user interface for xref.
+
+SYNOPSIS
+       xrefspeller
+
+DESCRIPTION
+       Xrefspeller is an interactive setup utility for the xref
+       cross-referencing tool. It is obsolete now as all the job
+       can be done directly from (X)Emacs editor now.
+
+AUTHOR
+       Marian Vittek, Bratislava 1997-2000.
+
+MORE INFO
+       http://www.xref-tech.com
+
+SEE ALSO
+       xref(1), xrefrc(5)
+
+
+
+
+                                                   XREFSPELLER(1)
