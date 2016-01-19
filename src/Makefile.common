@@ -30,36 +30,40 @@ all: $(ROOTDIR)/lib/zlib/libz.a c-xref
 $(ROOTDIR)/lib/zlib/libz.a: ..always..
 	make -C $(ROOTDIR)/lib/zlib libz.a
 
-cgram.c: cgram.y
-	$(ROOTDIR)/../byacc-1.9/yacc -v -d cgram.y
-	mv y.output cy.output
-	mv y.tab.c cgram.c
-	mv y.tab.h gram.h
+# Unless we need to modify the grammar, which incidentally includes
+# both java and c++, we can use the already included .c-files instead
+# of generating from yacc
 
-javagram.c: javagram.y cgram.c
-	$(ROOTDIR)/../byacc-1.9/yacc -v -d javagram.y
-	mv y.output jy.output
-	mv y.tab.c javagram.c
-	mv y.tab.h javagram.h
-	diff javagram.h gram.h
+# cgram.c: cgram.y
+# 	$(ROOTDIR)/../byacc-1.9/yacc -v -d cgram.y
+# 	mv y.output cy.output
+# 	mv y.tab.c cgram.c
+# 	mv y.tab.h gram.h
 
-javaslgram.c: javaslgram.y cgram.c
-	$(ROOTDIR)/../byacc-1.9/yacc -v -d javaslgram.y
-	mv y.tab.c javaslgram.c
-	mv y.tab.h javaslgram.h
-	diff javaslgram.h gram.h
+# javagram.c: javagram.y cgram.c
+# 	$(ROOTDIR)/../byacc-1.9/yacc -v -d javagram.y
+# 	mv y.output jy.output
+# 	mv y.tab.c javagram.c
+# 	mv y.tab.h javagram.h
+# 	diff javagram.h gram.h
 
-cccgram.c: cccgram.y cgram.c
-	$(ROOTDIR)/../byacc-1.9/yacc -v -d cccgram.y
-	mv y.tab.c cccgram.c
-	mv y.tab.h cccgram.h
-	diff cccgram.h gram.h
+# javaslgram.c: javaslgram.y cgram.c
+# 	$(ROOTDIR)/../byacc-1.9/yacc -v -d javaslgram.y
+# 	mv y.tab.c javaslgram.c
+# 	mv y.tab.h javaslgram.h
+# 	diff javaslgram.h gram.h
 
-yaccgram.c: yaccgram.y cgram.c
-	$(ROOTDIR)/../byacc-1.9/yacc -v -d yaccgram.y
-	mv y.tab.c yaccgram.c
-	mv y.tab.h yaccgram.h
-	diff yaccgram.h gram.h
+# cccgram.c: cccgram.y cgram.c
+# 	$(ROOTDIR)/../byacc-1.9/yacc -v -d cccgram.y
+# 	mv y.tab.c cccgram.c
+# 	mv y.tab.h cccgram.h
+# 	diff cccgram.h gram.h
+
+# yaccgram.c: yaccgram.y cgram.c
+# 	$(ROOTDIR)/../byacc-1.9/yacc -v -d yaccgram.y
+# 	mv y.tab.c yaccgram.c
+# 	mv y.tab.h yaccgram.h
+# 	diff yaccgram.h gram.h
 
 gram.h:	cgram.c
 
