@@ -2,15 +2,13 @@
 
 Once apon a time there was [http://www.xref.sk](http://www.xref.sk), a site promoting possibly the worlds first refactoring browser to cross the ["Refactoring's Rubicon"](http://martinfowler.com/articles/refactoringRubicon.html).
 
-At that time it had a free Java and C version, and a paid C++ version.
-
-Development seems to have been headed by a [Marián Vittek](http://dai.fmph.uniba.sk/w/Marian_Vittek/en).
+At that time it had a free Java and C version, and a paid C++ version. Development seems to have been headed by a [Marián Vittek](http://dai.fmph.uniba.sk/w/Marian_Vittek/en).
 
 Marián have been hard to track down and [http://www.xref.sk](http://www.xref.sk) seems to be going up and (mostly) down and there has been no support for many years.
 
-Marián made a C-version available under GPL 2009 on [SourceForge](http://sourceforge.net/projects/c-xref/) which is limited to C and Emacs.
+Marián made a C-version available under GPL already 2009 on [SourceForge](http://sourceforge.net/projects/c-xref/) which is limited to C and Emacs.
 
 As I'm almost dependent on this and refactoring tools for C is sadly lacking, I decided to pick this up and work a bit on it, maybe even make it a [bit more visible](http://sourceforge.net/projects/c-xref/), by moving it to GitHub. 
 
-If someone has contact with Marián, please inform him and ask him to contact me. Perhaps we still can create something great from this together with others who might be interested.
+If someone has contact with Marián, please inform him and ask him to contact me. Perhaps we can create something great from this together with others who might be interested.
 
