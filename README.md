@@ -1,4 +1,4 @@
-# C-xrefactory - A refactoring tool for C and Emacs
+# C-xrefactory - A refactoring tool for C/Java and Emacs
 
 Once apon a time there was [http://www.xref.sk](http://www.xref.sk), a
 site promoting possibly the worlds first refactoring browser to cross
@@ -20,11 +20,11 @@ limited to C and Emacs.
 As I'm almost dependent on this and refactoring tools for C is sadly
 lacking, I decided to pick this up and work a bit on it, maybe even
 make it a [bit more visible](http://sourceforge.net/projects/c-xref/),
-by moving it to GitHub. Although C-xref seems to be a crippled,
-quickly, thrown together, version of the full C/Java browser, I've
-started from that. No-one would be more happy than me if the original C
-and Java version, or better still, the C++ version, where added here
-or made publicly available somewhere.
+by moving it to GitHub. Although C-xref pretends to be only for C, it
+is all but identical to the full C/Java browser.
+
+No-one would be more happy than me if the C++ version where also put
+in the public domain.
 
 If someone has contact with Marián, please inform him and ask him to
 contact me. Perhaps we can create something great from this together
