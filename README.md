@@ -14,8 +14,8 @@ Marián have been hard to track down and
 (mostly) down and there has been no support for many years.
 
 Marián made a C-version, c-xref, available under GPL already 2009 on
-[SourceForge](http://sourceforge.net/projects/c-xref/) which is
-limited to C and Emacs.
+[SourceForge](http://sourceforge.net/projects/c-xref/) which seems to
+be intended to be limited to C and Emacs. Actually it's not, Java is still 
 
 As I'm almost dependent on this and refactoring tools for C is sadly
 lacking, I decided to pick this up and work a bit on it, maybe even

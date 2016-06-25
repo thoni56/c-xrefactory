@@ -4733,11 +4733,11 @@ the part of .c-xrefrc file describing this project will be deleted.
 
 
 (defun c-xref-append-new-project-section (pname planguage pcomments 
-											  pfiles mclass classpath 
-											  sourcepath 
-											  javadocpath classdir
-											  apfiles javahome ifiles
-											  rest refs htmlopt exactp)
+						pfiles mclass classpath 
+						sourcepath 
+						javadocpath classdir
+						apfiles javahome ifiles
+						rest refs htmlopt exactp)
   (let ((comment) (dlen) (cldopt) (tdq))
 	(setq comment (or (equal pcomments "y") (equal pcomments "Y")))
 	(goto-char (point-max))
@@ -5145,7 +5145,7 @@ belonging to this project.
 			(setq sourcepath "${cp}")
 			)
 		  (setq ljd (read-from-minibuffer 
-					  "Have you a local copy of JavaDoc documentation on your computer [yn]? " "y"))
+					  "Do you have a local copy of JavaDoc documentation on your computer [yn]? " "y"))
 		  (if (or (equal ljd "n") (equal ljd "N"))
 			  (setq javadocpath nil)
 			(setq javadocpath (c-xref-read-jpath-from-minibuffer "Enter javadocpath: " (concat javahome (c-xref-backslashify-name "docs/api"))))
