@@ -30,3 +30,5 @@ If someone has contact with Marián, please inform him and ask him to
 contact me. Perhaps we can create something great from this together
 with others who might be interested.
 
+NOTE: It seems that [http://www.xrefactory.com/](http://www.xrefactory.com/)
+is a better and more stable URL to the original Xrefactory.
