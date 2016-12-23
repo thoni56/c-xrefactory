@@ -1,9 +1,12 @@
 #ifndef _MEMMAC__H
 #define _MEMMAC__H
 
+#include <stdint.h>
+
+
 /* ******************** a simple memory handler ************************ */
 
-#define ALLIGNEMENT_OFF(xxx,allign) (allign-1-((((unsigned)(xxx))-1) & (allign-1)))
+#define ALLIGNEMENT_OFF(xxx,allign) (allign-1-((((uintptr_t)(xxx))-1) & (allign-1)))
 #define ALLIGNEMENT(xxx,allign) (((char*)(xxx))+ALLIGNEMENT_OFF(xxx,allign))
 
 

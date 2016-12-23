@@ -23,14 +23,14 @@ void ppcIndentOffset() {
 }
 
 void ppcGenPosition(S_position *p) {
-	char *fn;
+  char *fn;
 	assert(p!=NULL);
 	fn = s_fileTab.tab[p->file]->name;
 	ppcIndentOffset();
-	fprintf(ccOut, "<%s %s=%d %s=%d %s=%d>%s</%s>\n", 
+	fprintf(ccOut, "<%s %s=%d %s=%d %s=%ld>%s</%s>\n", 
 			PPC_LC_POSITION, 
 			PPCA_LINE, p->line, PPCA_COL, p->coll, 
-			PPCA_LEN, strlen(fn), fn, 
+		PPCA_LEN, (unsigned long)strlen(fn), fn, 
 			PPC_LC_POSITION);
 	//&ppcGenRecord(PPC_FILE, s_fileTab.tab[p->file]->name,"\n");
 	//&ppcGenNumericRecord(PPC_LINE, p->line,"","");
@@ -51,10 +51,10 @@ void ppcGenGotoMarkerRecord(S_editorMarker *pos) {
 
 void ppcGenOffsetPosition(char *fn, int offset) {
 	ppcIndentOffset();
-	fprintf(ccOut, "<%s %s=%d %s=%d>%s</%s>\n", 
+	fprintf(ccOut, "<%s %s=%d %s=%ld>%s</%s>\n", 
 			PPC_OFFSET_POSITION, 
 			PPCA_OFFSET, offset, 
-			PPCA_LEN, strlen(fn), fn, 
+		PPCA_LEN, (unsigned long)strlen(fn), fn, 
 			PPC_OFFSET_POSITION);
 	//&ppcGenRecord(PPC_FILE, m->buffer->name,"\n");
 	//&ppcGenNumericRecord(PPC_OFFSET, m->offset,"","");
@@ -116,17 +116,17 @@ void ppcGenAllCompletionsRecordBegin(int nofocus, int len) {
 
 void ppcGenRecordWithNumeric(char *kind, char *attr, int val, char *message,char *suff) {
 	ppcIndentOffset();
-	fprintf(ccOut, "<%s %s=%d %s=%d>%s</%s>%s", kind, 
-			attr, val, PPCA_LEN, strlen(message),
+	fprintf(ccOut, "<%s %s=%d %s=%ld>%s</%s>%s", kind, 
+			attr, val, PPCA_LEN, (unsigned long)strlen(message),
 			message, kind, suff);
 }
 
 void ppcGenTwoNumericsAndrecord(char *kind, char *attr1, int val1, char *attr2, int val2, char *message,char *suff) {
 	ppcIndentOffset();
-	fprintf(ccOut, "<%s %s=%d %s=%d %s=%d>%s</%s>%s", kind, 
+	fprintf(ccOut, "<%s %s=%d %s=%d %s=%ld>%s</%s>%s", kind, 
 			attr1, val1, 
 			attr2, val2, 
-			PPCA_LEN, strlen(message),
+			PPCA_LEN, (unsigned long)strlen(message),
 			message, kind, suff);
 }
 
@@ -137,7 +137,7 @@ void ppcGenNumericRecord(char *kind, int val,char *message,char *suff) {
 
 void ppcGenRecord(char *kind, char *message, char *suffix) {
 	ppcIndentOffset();
-	fprintf(ccOut, "<%s %s=%d>%s</%s>%s", kind, PPCA_LEN, strlen(message), message, 
+	fprintf(ccOut, "<%s %s=%ld>%s</%s>%s", kind, PPCA_LEN, (unsigned long)strlen(message), message, 
 			kind, suffix);
 }
 
@@ -150,8 +150,8 @@ void ppcGenTmpBuff() {
 
 void ppcGenDisplaySelectionRecord(char *message, int messageType, int continuation) {
 	ppcIndentOffset();
-	fprintf(ccOut, "<%s %s=%d %s=%d %s=%d>%s</%s>\n", PPC_DISPLAY_RESOLUTION, 
-			PPCA_LEN, strlen(message), 
+	fprintf(ccOut, "<%s %s=%ld %s=%d %s=%d>%s</%s>\n", PPC_DISPLAY_RESOLUTION, 
+			PPCA_LEN, (unsigned long)strlen(message), 
 			PPCA_MTYPE, messageType,
 			PPCA_CONTINUE, (continuation==CONTINUATION_ENABLED) ? 1 : 0,
 			message, PPC_DISPLAY_RESOLUTION);
