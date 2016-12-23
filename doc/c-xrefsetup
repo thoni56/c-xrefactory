@@ -181,6 +181,29 @@ then
 				EMACSRC=.xemacs/init.el
 			fi
 		fi
+	elif test ${XREF_EDITOR} = "emacs"
+	then
+	    echo "is emacs"
+		if test -f ~/.emacs.d/init.el
+		then
+		    echo ".emacs.d/init.el exists"
+			if test -f ~/.emacs
+			then
+				echo "-----------------------------------------------------------------"
+				echo "Your home directory contains both .emacs and .emacs/init.el"
+				echo "files. Please enter the one which is active with your current"
+				echo "Emacs installation."
+				echo "-----------------------------------------------------------------"
+				read EMACSRC
+				while test ! -f ~/${EMACSRC}
+				do
+					echo "The file ~/${EMACSRC} does not exist, please correct the name:"
+					read EMACSRC
+				done
+			else
+				EMACSRC=.emacs.d/init.el
+			fi
+		fi
 	fi
 	echo
 	echo "In order to load C-Xrefactory into your ${XREF_EDITOR} environment"
