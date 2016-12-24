@@ -83,7 +83,7 @@ char *placeIdent() {
 			assert(strlen(fn) < MAX_FILE_NAME_SIZE);
 			sprintf(mm, "%s:%d", simpleFileName(fn),cFile.lineNumber);
 			assert(strlen(mm) < MAX_HTML_REF_LEN);
-			sprintf(tt,"<A HREF=\"file://%s#%d\" %s=%d>%s</A>", fn, cFile.lineNumber, PPCA_LEN, strlen(mm), mm);
+			sprintf(tt, "<A HREF=\"file://%s#%d\" %s=%ld>%s</A>", fn, cFile.lineNumber, PPCA_LEN, (unsigned long)strlen(mm), mm);
 		} else {
 			sprintf(tt,"%s:%d ",simpleFileName(getRealFileNameStatic(cFile.fileName)),cFile.lineNumber); 
 		}

@@ -6,4 +6,4 @@ install:;
 
 clean:;
 	make -C src clean
-	make -C byacc-1.9 clean
+	#make -C byacc-1.9 clean
