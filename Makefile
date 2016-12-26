@@ -1,3 +1,7 @@
+ifndef VERBOSE
+MAKEFLAGS+=--no-print-directory
+endif
+
 all:;
 	sh CreateXrefDistribution
 
