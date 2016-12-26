@@ -19,7 +19,7 @@ then
   cp src/c-xref.exe ../c-xref/
 fi
 #create README files
-cat doc/INSTALL doc/readme doc/readme2 > ../c-xref/README
+cat doc/INSTALL doc/README doc/readme2 > ../c-xref/README
 cp doc/INSTALL ../c-xref/INSTALL
 cp doc/c-xrefsetup ../c-xref/
 cp doc/c-xrefinstall ../c-xref/
