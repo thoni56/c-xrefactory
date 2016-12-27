@@ -3189,9 +3189,9 @@ void mainCallXref(int argc, char **argv) {
     static int      fc,pfc;
     static int      inputIn;
     static int      firstPassing,mess,atLeastOneProcessed;
-    S_fileItem      *ffc, *pffc;
-    int             messagePrinted = 0;
-    int             numberOfInputs, inputCounter, pinputCounter;
+    static S_fileItem      *ffc, *pffc;
+    static int             messagePrinted = 0;
+    static int             numberOfInputs, inputCounter, pinputCounter;
 
     /* some compilers have problems with restoring regs after longjmp */
     dummy(&cxFreeBase0, &cxFreeBase, &ffc, &pffc, &inputIn, &firstPassing);
