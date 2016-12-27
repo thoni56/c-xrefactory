@@ -4,10 +4,9 @@
 
 all:
 	@if [ ! -d ffmpeg ] ; then \
-		echo "ffmpeg test case not activated, run 'make init'" ; \
-		echo "Once activated you can deactivate by 'make clean'" ; \
+		echo "Tests in \"ffmpeg\": not activated, run 'make init', 'make clean' to deactivate" ; \
 	else \
-		printf "Tests for \"ffmpeg\": " ; \
+		printf "Tests in \"ffmpeg\": " ; \
 		./c-xref -create -xrefrc c-xrefrc -p ffmpeg -user 1 -xrefactory-II -crlfconversion -crconversion -encoding=default -exactpositionresolve -o ffmpeg.log > /dev/null ; \
 		grep Generating ffmpeg.log > /dev/null ; \
 		if [ $$? -ne 0 ] ; then \

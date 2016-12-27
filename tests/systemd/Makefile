@@ -4,10 +4,9 @@
 
 all:
 	@if [ ! -d systemd ] ; then \
-		echo "systemd test case not activated, run 'make init'" ; \
-		echo "Once activated you can deactivate by 'make clean'" ; \
+		echo "Tests in \"systemd\": not activated, run 'make init', 'make clean' to deactivate" ; \
 	else \
-		printf "Tests for \"systemd\": " ; \
+		printf "Tests in \"systemd\": " ; \
 		./c-xref -create -xrefrc c-xrefrc -p systemd -user 1 -xrefactory-II -crlfconversion -crconversion -encoding=default -exactpositionresolve -o systemd.log > /dev/null ; \
 		grep Generating systemd.log > /dev/null ; \
 		if [ $$? -ne 0 ] ; then \
