@@ -6,7 +6,7 @@ all:;
 	sh CreateXrefDistribution
 
 test: all
-	cd tests; make
+	make -C tests
 
 install:;
 	sh c-xref/c-xrefsetup
