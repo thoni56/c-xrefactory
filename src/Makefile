@@ -7,7 +7,7 @@ EDGCFLAGS= -O
 LDFLAGS=
 BIN=$(HOME)/bin
 LEX=flex
-YACC=$(ROOTDIR)/../byacc-1.9/yacc
+YACC=byacc #$(ROOTDIR)/../byacc-1.9/yacc
 RANLIB=echo
 ROOTDIR=..
 #########################################################################
