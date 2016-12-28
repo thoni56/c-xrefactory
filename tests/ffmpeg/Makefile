@@ -1,19 +1,25 @@
 # Makefile for ffmpeg example/acceptance test for c-xrefactory
-# there should be a c-xref in this directory, either an exe or
-# a link to one, presumably the development version
+# If the ffmpeg repo is not cloned here the test are inactive
+# and will not run. To activate use 'make init' which clones the repo
+# and generates the c-xrefrc from a template. The tests will then
+# run with 'make'. They can be deactivated again by 'make clean'.
 
 all:
 	@if [ ! -d ffmpeg ] ; then \
 		echo "Tests in \"ffmpeg\": not activated, run 'make init', 'make clean' to deactivate" ; \
 	else \
 		printf "Tests in \"ffmpeg\": " ; \
-		./c-xref -create -xrefrc c-xrefrc -p ffmpeg -user 1 -xrefactory-II -crlfconversion -crconversion -encoding=default -exactpositionresolve -o ffmpeg.log > /dev/null ; \
-		grep Generating ffmpeg.log > /dev/null ; \
-		if [ $$? -ne 0 ] ; then \
-			echo "Failed" ; \
+		../run-c-xref -p ffmpeg -o ffmpeg.log ; \
+		if ! grep Generating ffmpeg.log > /dev/null ; then \
+			echo "Failed (ffmpeg.log)" ; \
 			exit 1 ; \
 		else \
-			echo "Ok" ; \
+			if grep -i "<error " out > /dev/null ; then \
+				echo "Failed (out)" ; \
+				exit 1 ; \
+			else \
+				echo "Ok" ; \
+			fi ; \
 		fi ; \
 	fi
 

@@ -1,19 +1,26 @@
 # Makefile for systemd example/acceptance test for c-xrefactory
-# there should be a c-xref in this directory, either an exe or
-# a link to one, presumably the development version
+# If the systemd repo is not cloned here the test are inactive
+# and will not run. To activate use 'make init' which clones the repo
+# and generates the c-xrefrc from a template. The tests will then
+# run with 'make'. They can be deactivated again by 'make clean'.
 
 all:
 	@if [ ! -d systemd ] ; then \
 		echo "Tests in \"systemd\": not activated, run 'make init', 'make clean' to deactivate" ; \
 	else \
+		rm -f out systemd.log ; \
 		printf "Tests in \"systemd\": " ; \
-		./c-xref -create -xrefrc c-xrefrc -p systemd -user 1 -xrefactory-II -crlfconversion -crconversion -encoding=default -exactpositionresolve -o systemd.log > /dev/null ; \
-		grep Generating systemd.log > /dev/null ; \
-		if [ $$? -ne 0 ] ; then \
-			echo "Failed" ; \
+		../run-c-xref -p systemd -o systemd.log ; \
+		if ! grep Generating systemd.log > /dev/null ; then \
+			echo "Failed (systemd.log)" ; \
 			exit 1 ; \
 		else \
-			echo "Ok" ; \
+			if grep -i "<error " out > /dev/null ; then \
+				echo "Failed (out)" ; \
+				exit 1 ; \
+			else \
+				echo "Ok" ; \
+			fi ; \
 		fi ; \
 	fi
 
