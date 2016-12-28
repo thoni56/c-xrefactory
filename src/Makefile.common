@@ -33,25 +33,31 @@ $(ROOTDIR)/lib/zlib/libz.a: ..always..
 # Unless we need to modify the grammar, which incidentally includes
 # both java and c++, we can use the already included .c-files instead
 # of generating from yacc
+#
+# AND I have yet to find the sources for a byacc that actually
+# generates sources that work. AFAICS the sources here requires an
+# 'int lastyystate;' declaration in the generated sources. And it
+# seems that all byacc's that I find do their state accounting
+# differently, so I'm wondering which byacc to use.
 
-cgram.c: cgram.y
-	$(YACC) -v -d cgram.y
-	mv y.output cy.output
-	mv y.tab.c cgram.c
-	mv y.tab.h gram.h
+# cgram.c: cgram.y
+# 	$(YACC) -v -d cgram.y
+# 	mv y.output cy.output
+# 	mv y.tab.c cgram.c
+# 	mv y.tab.h gram.h
 
-javagram.c: javagram.y cgram.c
-	$(YACC) -v -d javagram.y
-	mv y.output jy.output
-	mv y.tab.c javagram.c
-	mv y.tab.h javagram.h
-	diff javagram.h gram.h
+# javagram.c: javagram.y cgram.c
+# 	$(YACC) -v -d javagram.y
+# 	mv y.output jy.output
+# 	mv y.tab.c javagram.c
+# 	mv y.tab.h javagram.h
+# 	diff javagram.h gram.h
 
-yaccgram.c: yaccgram.y cgram.c
-	$(YACC) -v -d yaccgram.y
-	mv y.tab.c yaccgram.c
-	mv y.tab.h yaccgram.h
-	diff yaccgram.h gram.h
+# yaccgram.c: yaccgram.y cgram.c
+# 	$(YACC) -v -d yaccgram.y
+# 	mv y.tab.c yaccgram.c
+# 	mv y.tab.h yaccgram.h
+# 	diff yaccgram.h gram.h
 
 # Don't know what javasl is, no support anyway
 # javaslgram.c: javaslgram.y cgram.c
