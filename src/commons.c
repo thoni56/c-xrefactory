@@ -147,8 +147,12 @@ char *crTmpFileName_st() {
         strcpy(ttt, normalizeFileName(ttt, s_cwd));
     }
 #else                   /*SBD*/
-    tmp = tmpnam(NULL);
-    strcpy(ttt,tmp);
+    if (getenv("TMPDIR") == NULL)
+        strcpy(ttt, "/tmp/c-xref-temp-XXXXXX");
+    else
+        sprintf(ttt, "%s/c-xref-temp-XXXXXX", getenv("TMPDIR"));
+    if (mktemp(ttt) == NULL)
+        strcpy(ttt, "/tmp/c-xref-temp");
 #endif                  /*SBD*/
     //&fprintf(dumpOut,"temp file: %s\n", ttt);
     if (ttt == NULL) fatalError(ERR_ST, "can't create temporary file", XREF_EXIT_ERR);
