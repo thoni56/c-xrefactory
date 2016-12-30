@@ -1,17 +1,17 @@
 /*
 
-                 Welcome in Xrefactory exercise project!
+                 Welcome to the C-xrefactory exercise project!
 
   1.)  The basic hot-keys you need to know are: F6 which brings you to
   the definition of a symbol, and F5 which brings you back.
 
-  2.)  With  this knowledges you  can browse demonstration  files. Put
-  cursor on a function name, say  'completions', and press F6 to go to
+  2.)  With this knowledges you can browse demonstration files. Put
+  cursor on a function name, say 'completions', and press F6 to go to
   completion's examples.
 
-  At the  first invocation Xrefactory will  ask you for  creation of a
-  new  project.   You  should   answer  'yes'  (create  new  project).
-  Xrefactory will then pose you few  questions, if you do not know the
+  At the first invocation Xrefactory will ask you for creation of a
+  new project.  You should answer 'yes' (create new project).
+  C-xrefactory will then pose you few questions, if you do not know the
   answer, press <return> to select default value.
 
 */
