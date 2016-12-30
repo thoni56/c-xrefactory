@@ -31,6 +31,7 @@ void browsing() {
     il-> i = 0;
 
     // list all usages of this 'i' by pressing C-F6 (control F6);
+    // Note: not all environments support inputting "control F6"
     i = 0;
     /*
       'F3' and 'F4' inspect previous-next reference.
