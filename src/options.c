@@ -20,7 +20,7 @@ static char s_javaClassPathStatic[MAX_OPTION_LEN];
 
 
 static char *s_standardCOptions[] = {
-    "standardCOptions"
+    "standardCOptions",
     "-set", "nl", "\n",
     "-set", "dq", "\"",
     "-set", "pc", "%",

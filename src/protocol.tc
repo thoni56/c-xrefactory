@@ -145,9 +145,9 @@ PROTOCOL_ITEM(int, PPC_MAX_AVAILABLE_REFACTORINGS, 			300)
 
 
 
-COMMENT("following items are gong to be deleted, since 1.6.0")
+COMMENT("The following items are going to be deleted, since 1.6.0")
 
 PROTOCOL_ITEM(String, PPC_SET_PROJECT, 					"set-project")
 
-COMMENT("Thre HAS to be an end of line at the end of the file")
+COMMENT("There HAS to be an end of line at the end of the file")
 
