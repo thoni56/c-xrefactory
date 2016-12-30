@@ -1,0 +1,5 @@
+PACKAGE: byacc
+VERSION: 1.9
+PACKAGE_REVISION: 2
+MAINTAINER: Peter Tobias <tobias@server.et-inf.fho-emden.de>
+DESCRIPTION: The Berkeley LALR parser generator

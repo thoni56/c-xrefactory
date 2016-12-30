@@ -1,0 +1,8 @@
+Last update: 08/10/94
+
+The following things have been changed for the Debian distribution:
+
+- changed the makefile (CFLAGS)
+
+
+Peter Tobias <tobias@server.et-inf.fho-emden.de>

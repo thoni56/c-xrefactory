@@ -1,0 +1,17 @@
+*** main.c.orig	Mon Jul  5 18:47:51 1993
+--- main.c	Mon Jul  5 19:18:46 1993
+***************
+*** 72,76 ****
+  
+  
+! onintr()
+  {
+      done(1);
+--- 72,78 ----
+  
+  
+! void
+! onintr(signo)
+!     int signo;
+  {
+      done(1);

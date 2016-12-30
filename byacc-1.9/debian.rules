@@ -1,0 +1,49 @@
+#!/usr/bin/make -f
+
+.PHONY: build
+
+PKG = byacc-1.9
+
+P_REV := $(shell grep "PACKAGE_REVISION:" debian.control | cut -d' ' -f 2)
+
+
+build:
+	make "CFLAGS=-O2 -DNDEBUG" LDFLAGS=-s
+
+install: build
+	install -o root -g root -m 0755 yacc /usr/bin/byacc
+	install -o root -g root -m 0644 yacc.1 /usr/man/man1/byacc.1
+
+clean:
+	make clean
+	rm -f debian-tmp
+
+binary: build
+	install -o root -g root -m 0755 -d debian-tmp
+	install -o root -g root -m 0755 -d debian-tmp/DEBIAN
+	install -o root -g root -m 0755 -d debian-tmp/usr/bin
+	install -o root -g root -m 0755 -d debian-tmp/usr/man/man1
+	install -o root -g root -m 0755 -d debian-tmp/usr/doc/copyright
+	install -o root -g root -m 0755 yacc debian-tmp/usr/bin/byacc
+	install -o root -g root -m 0644 yacc.1 debian-tmp/usr/man/man1/byacc.1
+	install -o root -g root -m 0644 COPYRIGHT debian-tmp/usr/doc/copyright/byacc
+	install -o root -g root -m 0644 debian.control debian-tmp/DEBIAN/control
+	dpkg --build debian-tmp
+	mv debian-tmp.deb ../${PKG}-${P_REV}.deb
+
+source:
+# Makes a source package.
+	chmod +x debian.rules
+	(cd .. && tar cvf ${PKG}-${P_REV}.tar ${PKG} && \
+	 gzip -9v ${PKG}-${P_REV}.tar) || exit 1
+
+diff:
+# Makes a diff package.
+	(cd .. && diff -c -P -r ${PKG}.orig ${PKG} \
+	 > ${PKG}-${P_REV}.debian.diff; [ $$? = 1 ] && \
+	 gzip -9v ${PKG}-${P_REV}.debian.diff) || \
+	 exit 1
+
+dist: source diff binary
+# Make source, diff and binary packages
+

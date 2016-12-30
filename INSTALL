@@ -64,21 +64,16 @@ then, you  can modify source files  and rebuild simply by make.
 2.) You will need to build Berkeley yacc, which is stored in byacc-1.9
 directory.
 
-NOTE: At this point it is not known which of all byacc versions
-actually work. The version that works should have "int lastyystate;"
-in the generated y.tab.c.
+NOTE: The parser in byacc-1.9 is fetched from
+ftp://ftp.cs.berkeley.edu/pub/4bsd/byacc.1.9.tar.Z (linked to from
+e.g. http://invisible-island.net/byacc/byacc.html under "Related
+links"), but with a few patches (restored from the byacc from the
+official xrefactory.com sources):
 
-Here are some versions that do *not* work:
+ - support for RECURSIVE (needed by the java parser)
+ - 'lastyystate' used in the semantic rules (purpose unknown at this point)
 
-- ftp://invisible-island.net/byacc/byacc.tar.gz
-  Linked to by http://invisible-island.net/byacc/byacc.html ("The source")
-
-- ftp://ftp.cs.berkeley.edu/pub/4bsd/byacc.1.9.tar.Z
-  Linked to from e.g. http://invisible-island.net/byacc/byacc.html
-  under "Related links"
-
-- http://www.ibiblio.org/pub/Linux/devel/compiler-tools/yacc-1.9.1.tar.Z
-  Linked to by http://linux.freesoftware0.com/download/byacc-191-414e61e0.html
+Patches are in byacc.1.9.patch.txt.
 
 
 3.) You will also need to update file dependeces from time to time by

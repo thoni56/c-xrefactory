@@ -40,11 +40,11 @@ $(ROOTDIR)/lib/zlib/libz.a: ..always..
 # seems that all byacc's that I find do their state accounting
 # differently, so I'm wondering which byacc to use.
 
-# cgram.c: cgram.y
-# 	$(YACC) -v -d cgram.y
-# 	mv y.output cy.output
-# 	mv y.tab.c cgram.c
-# 	mv y.tab.h gram.h
+cgram.c: cgram.y
+	$(YACC) -v -d cgram.y
+	mv y.output cy.output
+	mv y.tab.c cgram.c
+	mv y.tab.h gram.h
 
 # javagram.c: javagram.y cgram.c
 # 	$(YACC) -v -d javagram.y
