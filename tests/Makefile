@@ -5,7 +5,8 @@ endif
 
 
 all:
-	@cd pragma_once; make
-	@cd html; make
-	@cd ffmpeg; make
-	@cd systemd; make
+	@make -C pragma_once
+	@make -C html
+	@make -C ffmpeg
+	@make -C systemd
+	@make -C default_include_path
