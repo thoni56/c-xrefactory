@@ -470,9 +470,7 @@ void setLocalVariableLinkName(struct symbol *p) {
         sprintf(ttt+tti+len,"%c%x-%x-%x-%x", LINK_NAME_CUT_SYMBOL,
                 p->pos.file,p->pos.line,p->pos.coll, s_count.localVar++);
     } else {
-        if (        p->b.storage==StorageExtern
-                    ||  p->b.storage==StorageTypedef
-                    ||  p->b.storage==StorageConstant ) {
+        if (p->b.storage==StorageExtern && ! s_opt.exactPositionResolve) {
             sprintf(ttt,"%s", p->name);
         } else {
             // it is now better to have name allways accessible
@@ -520,9 +518,17 @@ static void setStaticFunctionLinkName( S_symbol *p, int usage ) {
     //& }
 }
 
+#define MEM_FROM_PREVIOUS_BLOCK(ppp) (                                          \
+                                      s_topBlock->previousTopBlock != NULL &&   \
+                                      ((char*)ppp) > memory &&					\
+                                      ((char*)ppp) < memory+s_topBlock->previousTopBlock->firstFreeIndex \
+                                      )
+
 S_symbol *addNewSymbolDef(S_symbol *p, unsigned theDefaultStorage, S_symTab *tab,
                           int usage) {
     S_typeModifiers *tt;
+    S_symbol *pp;
+    int ii;
     if (p == &s_errorSymbol || p->b.symType==TypeError) return(p);
     if (p->b.symType == TypeError) return(p);
     assert(p && p->b.symType == TypeDefault && p->u.type);
@@ -539,17 +545,32 @@ S_symbol *addNewSymbolDef(S_symbol *p, unsigned theDefaultStorage, S_symTab *tab
         p->u.type = tt;
         tt->typedefin = p;
     }
-    // special care is given to linkNames for local variable
-    if (! WORK_NEST_LEVEL0()) {
+    if (! WORK_NEST_LEVEL0() && LANGUAGE(LAN_C)
+        || ! WORK_NEST_LEVEL1() && LANGUAGE(LAN_YACC)) {
         // local scope symbol
-        setLocalVariableLinkName(p);
+        if (! symTabIsMember(s_symTab,p,&ii,&pp)
+            || MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage)) {
+            pp = p;
+            setLocalVariableLinkName(pp);
+            addSymbol(pp, tab);
+        }
     } else if (p->b.symType==TypeDefault && p->b.storage==StorageStatic) {
-        setStaticFunctionLinkName(p, usage);
+        if (! symTabIsMember(s_symTab,p,&ii,&pp)) {
+            pp = p;
+            setStaticFunctionLinkName(pp, usage);
+            addSymbol(pp, tab);
+        }
+    } else {
+        if (! symTabIsMember(s_symTab,p,&ii,&pp)) {
+            pp = p;
+            if (s_opt.exactPositionResolve) {
+                setGlobalFileDepNames(pp->name, pp, MEM_XX);
+            }
+            addSymbol(pp, tab);
+        }
     }
-    //& if (IS_DEFINITION_OR_DECL_USAGE(usage)) addSymbol(p, tab); // maybe this is better
-    addSymbol(p, tab);
-    addCxReference(p, &p->pos, usage,s_noneFileIndex, s_noneFileIndex);
-    return(p);
+    addCxReference(pp, &p->pos, usage,s_noneFileIndex, s_noneFileIndex);
+    return(pp);
 }
 
 /* this function is dead man, nowhere used */
@@ -849,7 +870,8 @@ S_typeModifiers *simpleStrUnionSpecifier(   S_idIdent *typeName,
     FILL_symbolBits(&p.b,0,0, 0,0,0, type, StorageNone,0);
     FILL_symbol(&p, id->name, id->name, id->p,p.b,s,NULL, NULL);
     p.u.s = NULL;
-    if (! symTabIsMember(s_symTab,&p,&ii,&pp)){
+    if (! symTabIsMember(s_symTab,&p,&ii,&pp)
+        || MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage)) {
         //{static int c=0;fprintf(dumpOut,"str#%d\n",c++);}
         XX_ALLOC(pp, S_symbol);
         *pp = p;
@@ -886,7 +908,7 @@ void setGlobalFileDepNames(char *iname, S_symbol *pp, int memory) {
                 fname, pp->pos.line, pp->pos.coll,
                 LINK_NAME_CUT_SYMBOL);
     } else if (iname[0]==0) {
-        // anonymous structure/union ...
+        // anonymous enum/structure/union ...
         filen = pp->pos.file;
         pp->name=iname; pp->linkName=iname;
         order = 0;
@@ -999,9 +1021,11 @@ S_typeModifiers *simpleEnumSpecifier(S_idIdent *id, int usage) {
     FILL_symbolBits(&p.b,0,0, 0,0,0, TypeEnum, StorageNone,0);
     FILL_symbol(&p, id->name, id->name, id->p,p.b,enums,NULL, NULL);
     p.u.enums = NULL;
-    if (! symTabIsMember(s_symTab,&p,&ii,&pp)) {
+    if (! symTabIsMember(s_symTab,&p,&ii,&pp)
+        || MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage)) {
         pp = StackMemAlloc(S_symbol);
         *pp = p;
+        setGlobalFileDepNames(id->name, pp, MEM_XX);
         addSymbol(pp, s_symTab);
     }
     addCxReference(pp, &id->p, usage,s_noneFileIndex, s_noneFileIndex);
@@ -1013,6 +1037,7 @@ S_typeModifiers *crNewAnnonymeEnum(S_symbolList *enums) {
     pp = StackMemAlloc(S_symbol);
     FILL_symbolBits(&pp->b,0,0, 0,0,0, TypeEnum, StorageNone,0);
     FILL_symbol(pp, "", "", s_noPos,pp->b,enums,enums, NULL);
+    setGlobalFileDepNames("", pp, MEM_XX);
     pp->u.enums = enums;
     return(crSimpleEnumType(pp,TypeEnum));
 }
