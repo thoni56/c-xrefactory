@@ -4,9 +4,16 @@ MAKEFLAGS+=--no-print-directory
 endif
 
 
-all:
+all: quick slow
+
+quick:
+	@Echo "Quick tests..."
 	@make -C pragma_once
 	@make -C html
+	@make -C standard_includes
+
+slow:
+	@echo "Slow tests..."
 	@make -C ffmpeg
 	@make -C systemd
-	@make -C default_include_path
+
