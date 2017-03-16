@@ -3,6 +3,10 @@ ifndef VERBOSE
 MAKEFLAGS+=--no-print-directory
 endif
 
+void:
+	@echo "'make quick' for only fast tests"
+	@echo "'make slow' for only slow tests"
+	@echo "'make all' for both fast and slow tests"
 
 all: quick slow
 

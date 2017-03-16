@@ -1,3 +1,2 @@
-[standard_includes]
+[basic_html_generation]
     PWD
-    
