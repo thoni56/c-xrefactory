@@ -2041,6 +2041,7 @@ static void mainParseInputFile() {
 #   endif
 #   ifdef YACC_ALLOWED
     else if (s_language == LAN_YACC) {
+        printf("Parsing YACC-file\n");
         uniyylval = & yaccyylval;
         yaccyyparse();
     }

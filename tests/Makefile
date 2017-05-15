@@ -13,6 +13,7 @@ all: quick slow
 quick:
 	@Echo "Quick tests..."
 	@make -C pragma_once
+	@make -C process_yacc
 	@make -C basic_html_generation
 	@make -C standard_includes
 
