@@ -18,7 +18,7 @@ all: $(test_case)
 $(test_case):
 	@rm -f $@.log Xrefs
 	@printf "Tests in \"$@\": "
-	@bison file.y
+	@../../byacc-1.9/yacc file.y
 	@../../src/c-xref *.[cy] -o $@.log
 	@grep '	5/func	' Xrefs | grep '1541f9l17cr' > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
