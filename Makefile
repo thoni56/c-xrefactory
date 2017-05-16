@@ -2,15 +2,15 @@ ifndef VERBOSE
 MAKEFLAGS+=--no-print-directory
 endif
 
-all:;
+all:
 	sh CreateXrefDistribution
 
 test: all
 	make -C tests
 
-install:;
+install:
 	sh c-xref/c-xrefsetup
 
-clean:;
+clean:
 	make -C src clean
 	make -C byacc-1.9 clean

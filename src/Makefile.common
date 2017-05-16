@@ -80,13 +80,14 @@ cexp.c: cexp.y
 	$(YACC) -v cexp.y
 	mv y.tab.c cexp.c
 
-strFill.h: proto.h strTdef.h
+bootstrap:
+#strFill.h: proto.h strTdef.h
 	c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
 		-str_fill -header \
 		> tmpStrFill.h
 	mv -f tmpStrFill.h strFill.h
-
-strTdef.h: proto.h
+    
+#strTdef.h: proto.h
 	echo > strTdef.h
 	c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
 		-typedefs -enum_name -header \
@@ -96,8 +97,8 @@ strTdef.h: proto.h
 		-typedefs -enum_name -header \
 		> tmpStrTdef.h
 	mv -f tmpStrTdef.h strTdef.h
-
-enumTxt.c: proto.h strFill.h strTdef.h ../doc/_c-xrefrc
+    
+#enumTxt.c: proto.h strFill.h strTdef.h ../doc/_c-xrefrc
 	echo "#include \"stdinc.h\"" > enumTxt.c
 	echo "#include \"proto.h\"  /*SBD*/" >> enumTxt.c
 	c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
