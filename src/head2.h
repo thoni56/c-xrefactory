@@ -1,7 +1,7 @@
-/* *************************************************************** */
-/* ********  Constants usefull for source - distribution  ******** */
-/*        You are free to appropriate this file to your needs      */
-/* *************************************************************** */
+/* ************************************************************** */
+/* ********  Constants useful for source - distribution  ******** */
+/*        You are free to adapt this file to your needs           */
+/* ************************************************************** */
 
 #if defined(__WIN32) && (! defined(__WIN32__))
 #define __WIN32__ 1
@@ -21,11 +21,11 @@
 #define SIZE_TMP_MEM		       5000	/* temporary strings, not error messages */
 
 #define SIZE_ppMemory 	  	      20000	/* macro args name in define */
-#define SIZE_mbMemory 		     500000	/* pending macro expansions */
+#define SIZE_mbMemory 		    2000000	/* pending macro expansions */
 #define SIZE_opiMemory		     150000	/* memory used to store options strings */
 #define SIZE_workMemory        10000000	/* parsing stack memory */
-#define SIZE_tmpWorkMemory       200000	/* additional tmp parsing stack memory */
-#define SIZE_ftMemory 		    4000000	/* memory for file (and class) table */
+#define SIZE_tmpWorkMemory       400000	/* additional tmp parsing stack memory */
+#define SIZE_ftMemory 		    8000000	/* memory for file (and class) table */
 
 #define SIZE_ppmMemory	       15000000	/* macro definitions or java class files */
 #ifdef SMALL_OLCX_MEMORY
@@ -34,9 +34,9 @@
 #define SIZE_olcxMemory        15000000	/* memory for browsing symbol stack */
 #endif
 #ifdef LINEAR_ADD_REFERENCE
-#define CX_MEMORY_CHUNK_SIZE   10000000	
+#define CX_MEMORY_CHUNK_SIZE   10000000
 #else
-#define CX_MEMORY_CHUNK_SIZE	2000000	
+#define CX_MEMORY_CHUNK_SIZE	2000000
 #endif
                                         /* memory for cross references, can be
                                           increased also by -mf command line
@@ -48,7 +48,7 @@
 
 /* ************************** symbol table sizes ************************ */
 
-#define MAX_FILES			   50000	/* file and class table size, if you 
+#define MAX_FILES			   50000	/* file and class table size, if you
 										   change this, RECREATE Tag file */
 #define MAX_JAVA_ZIP_ARCHIVES	 200	/* max .jar archives in CLASSPATH */
 
@@ -56,7 +56,7 @@
 
 #define FQT_CLASS_TAB_SIZE 	   10000	/* just hash list table size */
 #define MAX_SYMBOLS 			5000	/* just hash list table size */
-#define MAX_JSL_SYMBOLS			5000	/* just hash list table size 
+#define MAX_JSL_SYMBOLS			5000	/* just hash list table size
 										   size of types for java simple load
 										 */
 #define MAX_CL_SYMBOLS 			 50		/* hash list table size for class locals */
@@ -96,7 +96,7 @@
 /* if there is too much on-line references, they are not ordered
    alphabetically according file name. It takes too much time.
 */
-#define MAX_OL_REFERENCES_TO_SORT	500	
+#define MAX_OL_REFERENCES_TO_SORT	500
 
 #define MAX_SET_GET_OPTIONS 		50
 
@@ -167,7 +167,7 @@
 
 /* just constants to be checked, that are data type limits              */
 /* do not modify those constants, rather compile sources with XREF_HUGE */
-#ifdef XREF_HUGE	
+#ifdef XREF_HUGE
 /* references are stored in 'int' */
 #define MAX_REFERENCABLE_LINE 		2147483647
 #define MAX_REFERENCABLE_COLUMN 	2147483647
@@ -213,6 +213,3 @@
 #define PRF_REF_PREFIX 	"/X"			/*SBD*/
 
 #endif									/*SBD*/
-
-
-
