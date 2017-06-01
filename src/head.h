@@ -52,7 +52,7 @@
 
 
 #define InternalCheck(expr) {\
-	if (!(expr)) internalCheckFail(#expr, __FILE__, __LINE__);\
+    if (!(expr)) internalCheckFail(#expr, __FILE__, __LINE__);\
 }
 
 #undef assert
@@ -92,15 +92,15 @@
 
 /* *********************************************************************** */
 
-#define XREF_EXIT_BASE 			64	// base for exit status
-#define XREF_EXIT_ERR 			65
-#define XREF_EXIT_NO_PROJECT 	66
+#define XREF_EXIT_BASE          64	// base for exit status
+#define XREF_EXIT_ERR           65
+#define XREF_EXIT_NO_PROJECT    66
 #define XREF_EXIT_LICENSE		67
 
 /* *********************************************************************** */
 
 #define ANY_FILE (-1)		// must be different from any file number
-#define ANY_CPP_PASS (-1) 	// must be different from any cpp pass number
+#define ANY_CPP_PASS (-1)   // must be different from any cpp pass number
 
 /* *********************************************************************** */
 
@@ -110,19 +110,19 @@
 
 // special link names starts by one space character
 // special local link names starts by two spaces
-#define LINK_NAME_CLASS_TREE_ITEM 				" [classTree]"
-#define LINK_NAME_IMPORTED_QUALIFIED_ITEM 		" redundant long names of the project"
-#define LINK_NAME_IMPORT_STATEMENT		 		"  import statement"
-#define LINK_NAME_UNIMPORTED_QUALIFIED_ITEM 	"  unimported type"
-#define LINK_NAME_MAYBE_THIS_ITEM 				"  method's \"maybe this\" dependencies"
-#define LINK_NAME_SUPER_METHOD_ITEM 			"  \"super\" dot method references"
-#define LINK_NAME_NOT_FQT_ITEM 					"  not fully qualified names"
-#define LINK_NAME_FUNCTION_SEPARATOR 			"  fun separator"
-#define LINK_NAME_SAFETY_CHECK_MISSED   		"  Conflicting References"
-#define LINK_NAME_SAFETY_CHECK_LOST   			"  References lost by refactoring"
-#define LINK_NAME_SAFETY_CHECK_FOUND   			"  Unexpected new references"
-#define LINK_NAME_INDUCED_ERROR         		"  References Misinterpreted due to previous Errors"
-#define LINK_NAME_MOVE_CLASS_MISSED     		"  Symbols Inaccessible After Class Moving"
+#define LINK_NAME_CLASS_TREE_ITEM               " [classTree]"
+#define LINK_NAME_IMPORTED_QUALIFIED_ITEM       " redundant long names of the project"
+#define LINK_NAME_IMPORT_STATEMENT              "  import statement"
+#define LINK_NAME_UNIMPORTED_QUALIFIED_ITEM     "  unimported type"
+#define LINK_NAME_MAYBE_THIS_ITEM               "  method's \"maybe this\" dependencies"
+#define LINK_NAME_SUPER_METHOD_ITEM             "  \"super\" dot method references"
+#define LINK_NAME_NOT_FQT_ITEM                  "  not fully qualified names"
+#define LINK_NAME_FUNCTION_SEPARATOR            "  fun separator"
+#define LINK_NAME_SAFETY_CHECK_MISSED           "  Conflicting References"
+#define LINK_NAME_SAFETY_CHECK_LOST             "  References lost by refactoring"
+#define LINK_NAME_SAFETY_CHECK_FOUND            "  Unexpected new references"
+#define LINK_NAME_INDUCED_ERROR                 "  References Misinterpreted due to previous Errors"
+#define LINK_NAME_MOVE_CLASS_MISSED             "  Symbols Inaccessible After Class Moving"
 
 #define LINK_NAME_CUT_SYMBOL '!'
 #define LINK_NAME_COLLATE_SYMBOL '#'
@@ -136,13 +136,13 @@
 #define LANGUAGE(lan) ((s_language & (lan)) != 0)
 #define ABS(xxx) ((xxx>0)?(xxx):(-(xxx)))
 #define CX_REGIME() (s_opt.taskRegime!=RegimeGenerate)
-#define WORK_NEST_LEVEL0() 	(s_topBlock->previousTopBlock == NULL)
+#define WORK_NEST_LEVEL0()  (s_topBlock->previousTopBlock == NULL)
 #define CLASS_NAME_FROM_NUM(cnum) (s_fileTab.tab[cnum]->name+1)
 
 /* *************************************************************** */
 
-#define MAX_CHARS 127	/* maximal value storable in char encoded types 	*/
-						/* just for strings encoding fun-profiles for link  */
+#define MAX_CHARS 127	/* maximal value storable in char encoded types     */
+                        /* just for strings encoding fun-profiles for link  */
 
 // !!!!!!! do not move the following into head2.h header, must be here
 // because if not, YACC will put there defaults !!!!!!
@@ -150,14 +150,14 @@
 
 /* **************  edit communication constants  ***************** */
 
-#define CC_COMPLETION 	'c'
-#define CC_CXREF 		'x'
-#define CC_EOF 			'\n'
+#define CC_COMPLETION   'c'
+#define CC_CXREF        'x'
+#define CC_EOF          '\n'
 
 /* ***************** OLCX COMMUNICATION CHARS ******************** */
 
-#define COLCX_GOTO_REFERENCE 		"#"
-#define COLCX_GOTO_REFERENCE_LIST 	"@"
+#define COLCX_GOTO_REFERENCE        "#"
+#define COLCX_GOTO_REFERENCE_LIST   "@"
 #define COLCX_LIST					";"
 
 /* ************ char to separate archive from file name ********** */
@@ -176,13 +176,13 @@
 
 /* ********************************************************************** */
 
-#define CCT_TREE_INDEX		 4	/* number of subtrees on each cct node    */
+#define CCT_TREE_INDEX       4	/* number of subtrees on each cct node    */
 
 #define TYPE_STR_RESERVE   100  /* reserve when sprinting type name */
                                 /* is it still actual ????????????? */
 #define NEST_VIRT_COMPL_OFFSET 1000
 
-#define MAXIMAL_INT 			((int) (((unsigned) -2)>>1))
+#define MAXIMAL_INT             ((int) (((unsigned) -2)>>1))
 
 #define MAX_AVAILABLE_REFACTORINGS 500
 #define OLCX_CHECK_ARRAY_SIZE 1000000
@@ -190,45 +190,45 @@
 /* ********************************************************************** */
 
 /* stack memory synchronized with program block structure */
-#define XX_ALLOC(p,t) 			{p = (t*) stackMemoryAlloc(sizeof(t)); }
-#define XX_ALLOCC(p,n,t) 		{p = (t*) stackMemoryAlloc((n)*sizeof(t)); }
-#define XX_FREE(p) 				{ }
+#define XX_ALLOC(p,t)           {p = (t*) stackMemoryAlloc(sizeof(t)); }
+#define XX_ALLOCC(p,n,t)        {p = (t*) stackMemoryAlloc((n)*sizeof(t)); }
+#define XX_FREE(p)              { }
 
 /* pre-processor macro definitions allocations */
-#define PP_ALLOC(p,t) 			{SM_ALLOC(ppmMemory,p,t);}
-#define PP_ALLOCC(p,n,t) 		{SM_ALLOCC(ppmMemory,p,n,t);}
+#define PP_ALLOC(p,t)           {SM_ALLOC(ppmMemory,p,t);}
+#define PP_ALLOCC(p,n,t)        {SM_ALLOCC(ppmMemory,p,n,t);}
 #define PP_REALLOCC(p,n,t,on)	{SM_REALLOCC(ppmMemory,p,n,t,on);}
-#define PP_FREE_UNTIL(p) 		{SM_FREE_UNTIL(ppmMemory,p);}
-#define PP_FREE(p) 				{ }
+#define PP_FREE_UNTIL(p)        {SM_FREE_UNTIL(ppmMemory,p);}
+#define PP_FREE(p)              { }
 
 /* java class-file read allocations ( same memory as cpp !!!!!!!! ) */
-#define CF_ALLOC(p,t) 			{SM_ALLOC(ppmMemory,p,t);}
-#define CF_ALLOCC(p,n,t) 		{SM_ALLOCC(ppmMemory,p,n,t);}
+#define CF_ALLOC(p,t)           {SM_ALLOC(ppmMemory,p,t);}
+#define CF_ALLOCC(p,n,t)        {SM_ALLOCC(ppmMemory,p,n,t);}
 #define CF_REALLOCC(p,n,t,on)	{SM_REALLOCC(ppmMemory,p,n,t,on);}
-#define CF_FREE_UNTIL(p) 		{SM_FREE_UNTIL(ppmMemory,p);}
-#define CF_FREE(p) 				{ }
+#define CF_FREE_UNTIL(p)        {SM_FREE_UNTIL(ppmMemory,p);}
+#define CF_FREE(p)              { }
 
 /* cross - references global symbols allocations */
-#define CX_ALLOC(p,t) 			{DM_ALLOC(cxMemory,p,t);}
-#define CX_ALLOCC(p,n,t) 		{DM_ALLOCC(cxMemory,p,n,t);}
-#define CX_FREE_UNTIL(p) 		{DM_FREE_UNTIL(cxMemory,p);}
+#define CX_ALLOC(p,t)           {DM_ALLOC(cxMemory,p,t);}
+#define CX_ALLOCC(p,n,t)        {DM_ALLOCC(cxMemory,p,n,t);}
+#define CX_FREE_UNTIL(p)        {DM_FREE_UNTIL(cxMemory,p);}
 
 /* file table allocations */
-#define FT_ALLOC(p,t) 			{SM_ALLOC(ftMemory,p,t);}
-#define FT_ALLOCC(p,n,t) 		{SM_ALLOCC(ftMemory,p,n,t);}
-#define FT_FREE_UNTIL(p) 		{SM_FREE_UNTIL(ftMemory,p);}
+#define FT_ALLOC(p,t)           {SM_ALLOC(ftMemory,p,t);}
+#define FT_ALLOCC(p,n,t)        {SM_ALLOCC(ftMemory,p,n,t);}
+#define FT_FREE_UNTIL(p)        {SM_FREE_UNTIL(ftMemory,p);}
 
 /* options allocations */
-#define OPT_ALLOC(p,t) 			{DM_ALLOC(((S_memory*)&s_opt.pendingMemory),p,t);}
-#define OPT_ALLOCC(p,n,t) 		{DM_ALLOCC(((S_memory*)&s_opt.pendingMemory),p,n,t);}
+#define OPT_ALLOC(p,t)          {DM_ALLOC(((S_memory*)&s_opt.pendingMemory),p,t);}
+#define OPT_ALLOCC(p,n,t)       {DM_ALLOCC(((S_memory*)&s_opt.pendingMemory),p,n,t);}
 
 /* on-line dialogs allocation */
 #define OLCX_ALLOCC(p,n,t) {\
-	RLM_SOFT_ALLOCC(olcxMemory, p, n, t);\
-	while (p==NULL) {\
-		freeOldestOlcx();\
-		RLM_SOFT_ALLOCC(olcxMemory, p, n, t);\
-	}\
+    RLM_SOFT_ALLOCC(olcxMemory, p, n, t);\
+    while (p==NULL) {\
+        freeOldestOlcx();\
+        RLM_SOFT_ALLOCC(olcxMemory, p, n, t);\
+    }\
 }
 #define OLCX_ALLOC(p,t) OLCX_ALLOCC(p,1,t)
 #define OLCX_FREE(p,size) RLM_FREE(olcxMemory, p, size)
@@ -236,46 +236,46 @@
 /* editor allocations, for now, store it in olcxmemory */
 #define ED_ALLOCC(p,n,t) OLCX_ALLOCC(p,n,t)
 #define ED_ALLOC(p,t) ED_ALLOCC(p,1,t)
-#define ED_FREE(p,size) OLCX_FREE(p,size) 
+#define ED_FREE(p,size) OLCX_FREE(p,size)
 
 /* *********************************************************************** */
 
 #ifdef DEBUG
 #define DPRINTF(Format) {\
-	if (s_opt.debug) {fprintf(dumpOut,Format);fflush(dumpOut);}\
+    if (s_opt.debug) {fprintf(dumpOut,Format);fflush(dumpOut);}\
 }
 #define DPRINTF1(Format) {\
-	if (s_opt.debug) {fprintf(dumpOut,Format);fflush(dumpOut);}\
+    if (s_opt.debug) {fprintf(dumpOut,Format);fflush(dumpOut);}\
 }
 #define DPRINTF2(Format,Arg1) {\
-	if (s_opt.debug) {fprintf(dumpOut,Format,Arg1);fflush(dumpOut);}\
+    if (s_opt.debug) {fprintf(dumpOut,Format,Arg1);fflush(dumpOut);}\
 }
 #define DPRINTF3(Format,Arg1,Arg2) {\
-	if (s_opt.debug) {fprintf(dumpOut,Format,Arg1,Arg2);fflush(dumpOut);}\
+    if (s_opt.debug) {fprintf(dumpOut,Format,Arg1,Arg2);fflush(dumpOut);}\
 }
 #define DPRINTF4(Format,Arg1,Arg2,Arg3) {\
-	if (s_opt.debug) {\
-		fprintf(dumpOut,Format,Arg1,Arg2,Arg3);\
-		fflush(dumpOut);\
-	}\
+    if (s_opt.debug) {\
+        fprintf(dumpOut,Format,Arg1,Arg2,Arg3);\
+        fflush(dumpOut);\
+    }\
 }
 #define DPRINTF5(Format,Arg1,Arg2,Arg3,Arg4) {\
-	if (s_opt.debug) {\
-		fprintf(dumpOut,Format,Arg1,Arg2,Arg3,Arg4);\
-		fflush(dumpOut);\
-	}\
+    if (s_opt.debug) {\
+        fprintf(dumpOut,Format,Arg1,Arg2,Arg3,Arg4);\
+        fflush(dumpOut);\
+    }\
 }
 #define DPRINTF6(Format,Arg1,Arg2,Arg3,Arg4,Arg5) {\
-	if (s_opt.debug) {\
-		fprintf(dumpOut,Format,Arg1,Arg2,Arg3,Arg4,Arg5);\
-		fflush(dumpOut);\
-	}\
+    if (s_opt.debug) {\
+        fprintf(dumpOut,Format,Arg1,Arg2,Arg3,Arg4,Arg5);\
+        fflush(dumpOut);\
+    }\
 }
 #define DPRINTF7(Format,Arg1,Arg2,Arg3,Arg4,Arg5,Arg6) {\
-	if (s_opt.debug) {\
-		fprintf(dumpOut,Format,Arg1,Arg2,Arg3,Arg4,Arg5,Arg6);\
-		fflush(dumpOut);\
-	}\
+    if (s_opt.debug) {\
+        fprintf(dumpOut,Format,Arg1,Arg2,Arg3,Arg4,Arg5,Arg6);\
+        fflush(dumpOut);\
+    }\
 }
 #else
 #define DPRINTF(Format) {}
@@ -299,7 +299,7 @@
 /* ********************************************************************** */
 /*            common integer return values for cplex funs                 */
 
-#define RETURN_OK 			0
+#define RETURN_OK           0
 #define RETURN_NOT_FOUND	1
 #define RETURN_ERROR		2
 
@@ -341,7 +341,7 @@
 #define LICENSE_CHECK() {}
 #define LICENSE_CHECK2() {}
 
-#else												// SOURCE_RELEASE 
+#else												// SOURCE_RELEASE
 
 #define BIN_LICENSE_CHECK(lc) {lc=0;}
 #define FILL_EXP_COMMAND() {}
@@ -362,92 +362,92 @@
 /* *********************************************************************** */
 
 #define GenInternalLabelReference(count,usage) {\
-	if (s_opt.cxrefs == OLO_EXTRACT) genInternalLabelReference(count, usage);\
+    if (s_opt.cxrefs == OLO_EXTRACT) genInternalLabelReference(count, usage);\
 }
 
 #define AddContinueBreakLabelSymbol(count, name, res) {\
-	if (s_opt.cxrefs == OLO_EXTRACT) res = addContinueBreakLabelSymbol(count, name);\
+    if (s_opt.cxrefs == OLO_EXTRACT) res = addContinueBreakLabelSymbol(count, name);\
 }
 
 #define DeleteContinueBreakLabelSymbol(name) {\
-	if (s_opt.cxrefs == OLO_EXTRACT) deleteContinueBreakLabelSymbol(name);\
+    if (s_opt.cxrefs == OLO_EXTRACT) deleteContinueBreakLabelSymbol(name);\
 }
 
 #define GenContBreakReference(name) {\
-	if (s_opt.cxrefs == OLO_EXTRACT) genContinueBreakReference(name);\
+    if (s_opt.cxrefs == OLO_EXTRACT) genContinueBreakReference(name);\
 }
 
 #define GenSwitchCaseFork(lastFlag) {\
-	if (s_opt.cxrefs == OLO_EXTRACT) genSwitchCaseFork(lastFlag);\
+    if (s_opt.cxrefs == OLO_EXTRACT) genSwitchCaseFork(lastFlag);\
 }
 
 #define ExtrDeleteContBreakSym(sym) {\
-	if (s_opt.cxrefs == OLO_EXTRACT) deleteSymDef(sym);\
+    if (s_opt.cxrefs == OLO_EXTRACT) deleteSymDef(sym);\
 }
 
 
 #define EXTRACT_COUNTER_SEMACT(rescount) {\
-		rescount = s_count.localSym;\
-		s_count.localSym++;\
+        rescount = s_count.localSym;\
+        s_count.localSym++;\
 }
 
 #define EXTRACT_LABEL_SEMACT(rescount) {\
-		rescount = s_count.localSym;\
-		GenInternalLabelReference(s_count.localSym, UsageDefined);\
-		s_count.localSym++;\
+        rescount = s_count.localSym;\
+        GenInternalLabelReference(s_count.localSym, UsageDefined);\
+        s_count.localSym++;\
 }
 
 #define EXTRACT_GOTO_SEMACT(rescount) {\
-		rescount = s_count.localSym;\
-		GenInternalLabelReference(s_count.localSym, UsageUsed);\
-		s_count.localSym++;\
+        rescount = s_count.localSym;\
+        GenInternalLabelReference(s_count.localSym, UsageUsed);\
+        s_count.localSym++;\
 }
 
 #define EXTRACT_FORK_SEMACT(rescount) {\
-		rescount = s_count.localSym;\
-		GenInternalLabelReference(s_count.localSym, UsageFork);\
-		s_count.localSym++;\
+        rescount = s_count.localSym;\
+        GenInternalLabelReference(s_count.localSym, UsageFork);\
+        s_count.localSym++;\
 }
 
 #define RESET_REFERENCE_USAGE(rrr,uuu) {\
-	if (rrr!=NULL && rrr->usg.base > uuu) {\
-		rrr->usg.base = uuu;\
-	}\
+    if (rrr!=NULL && rrr->usg.base > uuu) {\
+        rrr->usg.base = uuu;\
+    }\
 }
 
 #define POSITION_NEQ(p1,p2) (\
-	((p1).file != (p2).file) || \
-	((p1).line != (p2).line) || \
-	((p1).coll != (p2).coll) \
+    ((p1).file != (p2).file) || \
+    ((p1).line != (p2).line) || \
+    ((p1).coll != (p2).coll) \
 )
 
 #define POSITION_EQ(p1,p2) (! POSITION_NEQ(p1,p2))
 
 #define POSITION_LESS(p1,p2) (\
-	 ((p1).file < (p2).file) ||\
-	 ((p1).file==(p2).file && (p1).line < (p2).line)  || \
-	 ((p1).file==(p2).file && (p1).line==(p2).line && (p1).coll < (p2).coll) \
+     ((p1).file < (p2).file) ||\
+     ((p1).file==(p2).file && (p1).line < (p2).line)  || \
+     ((p1).file==(p2).file && (p1).line==(p2).line && (p1).coll < (p2).coll) \
 )
 #define POSITION_LESS_EQ(p1,p2) (\
-	 ((p1).file < (p2).file) ||\
-	 ((p1).file==(p2).file && (p1).line < (p2).line)  || \
-	 ((p1).file==(p2).file && (p1).line==(p2).line && (p1).coll <= (p2).coll) \
+     ((p1).file < (p2).file) ||\
+     ((p1).file==(p2).file && (p1).line < (p2).line)  || \
+     ((p1).file==(p2).file && (p1).line==(p2).line && (p1).coll <= (p2).coll) \
 )
 #define POSITION_IS_BETWEEN_IN_THE_SAME_FILE(p1,p,p2) (\
-	(p1).file == (p).file\
-	&& (p).file == (p2).file\
-	&& POSITION_LESS_EQ(p1,p)\
-	&& POSITION_LESS_EQ(p,p2)\
+    (p1).file == (p).file\
+    && (p).file == (p2).file\
+    && POSITION_LESS_EQ(p1,p)\
+    && POSITION_LESS_EQ(p,p2)\
 )
 
 #define MARKER_EQ(mm1, mm2) (mm1->buffer==mm2->buffer && mm1->offset==mm2->offset)
 
 #define REF_ELEM_EQUAL(e1,e2) (\
-	e1->b.symType==e2->b.symType && \
-	e1->b.storage==e2->b.storage && \
-	e1->b.category==e2->b.category && \
-	e1->vApplClass==e2->vApplClass && \
-	strcmp(e1->name,e2->name)==0\
+    e1->b.symType==e2->b.symType && \
+    e1->b.storage==e2->b.storage && \
+    e1->b.category==e2->b.category && \
+    e1->vApplClass==e2->vApplClass && \
+    strcmp(e1->name,e2->name)==0\
 )
 
 #define IS_DEFINITION_USAGE(usage) (\
@@ -463,13 +463,13 @@
 #define OL_VIEWABLE_REFS(rrr) ((rrr)->usg.base < UsageMaxOLUsages)
 
 #define SET_IDENTIFIER_YYLVAL(name, symb, pos) {\
-	uniyylval->bbidIdent.d = &s_yyIdentBuf[s_yyIdentBufi];\
-	s_yyIdentBufi ++; s_yyIdentBufi %= (YYBUFFERED_ID_INDEX);\
-	FILL_idIdent(uniyylval->bbidIdent.d, name, symb, pos);\
-	yytext = name;\
-	uniyylval->bbidIdent.b = pos;\
-	uniyylval->bbidIdent.e = pos;\
-	uniyylval->bbidIdent.e.coll += strlen(yytext);\
+    uniyylval->bbidIdent.d = &s_yyIdentBuf[s_yyIdentBufi];\
+    s_yyIdentBufi ++; s_yyIdentBufi %= (YYBUFFERED_ID_INDEX);\
+    FILL_idIdent(uniyylval->bbidIdent.d, name, symb, pos);\
+    yytext = name;\
+    uniyylval->bbidIdent.b = pos;\
+    uniyylval->bbidIdent.e = pos;\
+    uniyylval->bbidIdent.e.coll += strlen(yytext);\
 }
 
 #define SHOW_COMPLETION_WINDOW(ccc) (\
@@ -477,94 +477,94 @@
 )
 
 #define IS_BEST_FIT_MATCH(ss) (\
-	(ss->ooBits&OOC_VIRTUAL_MASK)==OOC_VIRT_SAME_APPL_FUN_CLASS\
+    (ss->ooBits&OOC_VIRTUAL_MASK)==OOC_VIRT_SAME_APPL_FUN_CLASS\
 )
 
 #define AddSymbolNoTrail(pp,symtab) {\
-	int i;\
-	S_symbol *memb;\
-	symTabIsMember(symtab,pp,&i,&memb);\
-	if (	LANGUAGE(LAN_CCC) && pp->b.symType==TypeDefault \
-			&& pp->u.type->m == TypeFunction) { \
-		pp->u.type->u.f.thisFunList = &(symtab->tab[i]); \
-	} \
-	symTabSet(symtab,pp,i);\
+    int i;\
+    S_symbol *memb;\
+    symTabIsMember(symtab,pp,&i,&memb);\
+    if (	LANGUAGE(LAN_CCC) && pp->b.symType==TypeDefault \
+            && pp->u.type->m == TypeFunction) { \
+        pp->u.type->u.f.thisFunList = &(symtab->tab[i]); \
+    } \
+    symTabSet(symtab,pp,i);\
 }
 
 #define LINK_NAME_MAYBE_START(ccc) (\
-	ccc=='.' || ccc=='/' || ccc==LINK_NAME_CUT_SYMBOL \
-	|| ccc==LINK_NAME_COLLATE_SYMBOL \
-	|| ccc=='$'\
+    ccc=='.' || ccc=='/' || ccc==LINK_NAME_CUT_SYMBOL \
+    || ccc==LINK_NAME_COLLATE_SYMBOL \
+    || ccc=='$'\
 )
 
 #define GET_NUDE_NAME(name, start, len) {\
-	register int _c_;\
-	register char *_ss_;\
-	_ss_ = start = name; \
-	while ((_c_= *_ss_)) {\
-		if (_c_ == '(') break;\
-		if (LINK_NAME_MAYBE_START(_c_)) start = _ss_+1;\
-		_ss_++ ;\
-	}\
-	len = _ss_ - start;\
+    register int _c_;\
+    register char *_ss_;\
+    _ss_ = start = name; \
+    while ((_c_= *_ss_)) {\
+        if (_c_ == '(') break;\
+        if (LINK_NAME_MAYBE_START(_c_)) start = _ss_+1;\
+        _ss_++ ;\
+    }\
+    len = _ss_ - start;\
 }
 
 #define JAVA_STATICALLY_LINKED(storage, accessFlags) (\
-	(storage==StorageField\
-	|| ((storage==StorageMethod || storage==StorageConstructor)\
-		&& (accessFlags & ACC_STATIC)))\
+    (storage==StorageField\
+    || ((storage==StorageMethod || storage==StorageConstructor)\
+        && (accessFlags & ACC_STATIC)))\
 )
 
 #define JavaMapOnPaths(thePaths, COMMAND ) {\
-	char *currentPath, *jmop_pp, *jmop_ecp;\
-	int jmop_i, jmop_ind;\
-	/* following was static, but I need to call this recursively */\
-	char sourcepathes[MAX_SOURCE_PATH_SIZE];\
-	assert(thePaths!=NULL);\
-	jmop_pp = thePaths;\
-	strcpy(sourcepathes, jmop_pp);\
-	currentPath = sourcepathes;\
-	jmop_ecp = currentPath+strlen(currentPath);\
-	while (currentPath<jmop_ecp) {\
-		for(jmop_ind=0; \
-			currentPath[jmop_ind]!=0 && currentPath[jmop_ind]!=CLASS_PATH_SEPARATOR; \
-			jmop_ind++) ;\
-		currentPath[jmop_ind] = 0;\
-		jmop_i = jmop_ind;\
-		if (jmop_i>0 && currentPath[jmop_i-1]==SLASH) currentPath[--jmop_i] = 0;\
-		COMMAND;\
-		currentPath += jmop_ind;\
-		currentPath++;\
-	}\
+    char *currentPath, *jmop_pp, *jmop_ecp;\
+    int jmop_i, jmop_ind;\
+    /* following was static, but I need to call this recursively */\
+    char sourcepathes[MAX_SOURCE_PATH_SIZE];\
+    assert(thePaths!=NULL);\
+    jmop_pp = thePaths;\
+    strcpy(sourcepathes, jmop_pp);\
+    currentPath = sourcepathes;\
+    jmop_ecp = currentPath+strlen(currentPath);\
+    while (currentPath<jmop_ecp) {\
+        for(jmop_ind=0; \
+            currentPath[jmop_ind]!=0 && currentPath[jmop_ind]!=CLASS_PATH_SEPARATOR; \
+            jmop_ind++) ;\
+        currentPath[jmop_ind] = 0;\
+        jmop_i = jmop_ind;\
+        if (jmop_i>0 && currentPath[jmop_i-1]==SLASH) currentPath[--jmop_i] = 0;\
+        COMMAND;\
+        currentPath += jmop_ind;\
+        currentPath++;\
+    }\
 }
 
 #define SAFETY_CHECK2_GET_SYM_LISTS(refs,origrefs,newrefs,diffrefs,pbflag) {\
-	assert(s_olcxCurrentUser);\
+    assert(s_olcxCurrentUser);\
 /*&fprintf(ccOut,";safetyCheck2!!!\n");fflush(dumpOut);&*/\
-	refs = s_olcxCurrentUser->browserStack.top;\
-	if (refs==NULL || refs->previous==NULL || refs->previous->previous==NULL){\
-		error(ERR_INTERNAL, "something goes wrong at safety check");\
-		pbflag = 1;\
-	} else {\
-		newrefs = refs;\
-		diffrefs = refs->previous;\
-		origrefs = refs->previous->previous;\
-	}\
+    refs = s_olcxCurrentUser->browserStack.top;\
+    if (refs==NULL || refs->previous==NULL || refs->previous->previous==NULL){\
+        error(ERR_INTERNAL, "something goes wrong at safety check");\
+        pbflag = 1;\
+    } else {\
+        newrefs = refs;\
+        diffrefs = refs->previous;\
+        origrefs = refs->previous->previous;\
+    }\
 }
 
 #define MOVE_CLASS_MAP_FUN_RETURN_ON_UNINTERESTING_SYMBOLS(ri,dd) {\
-	if (! isPushAllMethodsValidRefItem(ri)) return;\
-	/* this is too strong, but check only fields and methods */\
-	if (ri->b.storage!=StorageField\
-		&& ri->b.storage!=StorageMethod\
-		&& ri->b.storage!=StorageConstructor) return;\
-	/* check that it has default accessibility*/\
-	if (ri->b.accessFlags & ACC_PUBLIC) return;\
-	if (ri->b.accessFlags & ACC_PROTECTED) return;\
-	if (! (ri->b.accessFlags & ACC_PRIVATE)) {\
-		/* default accessibility, check only if transpackage move*/\
-		if (! dd->transPackageMove) return;\
-	}\
+    if (! isPushAllMethodsValidRefItem(ri)) return;\
+    /* this is too strong, but check only fields and methods */\
+    if (ri->b.storage!=StorageField\
+        && ri->b.storage!=StorageMethod\
+        && ri->b.storage!=StorageConstructor) return;\
+    /* check that it has default accessibility*/\
+    if (ri->b.accessFlags & ACC_PUBLIC) return;\
+    if (ri->b.accessFlags & ACC_PROTECTED) return;\
+    if (! (ri->b.accessFlags & ACC_PRIVATE)) {\
+        /* default accessibility, check only if transpackage move*/\
+        if (! dd->transPackageMove) return;\
+    }\
 }
 
 #define IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, dd) ( \
@@ -580,8 +580,8 @@
 #define JAVA2HTML() (s_opt.java2html)
 
 #define SPRINT_FILE_TAB_CLASS_NAME(ftname, linkName) {\
-	sprintf(ftname, "%c%s.class", ZIP_SEPARATOR_CHAR, linkName);\
-	assert(strlen(ftname)+1 < MAX_FILE_NAME_SIZE);\
+    sprintf(ftname, "%c%s.class", ZIP_SEPARATOR_CHAR, linkName);\
+    assert(strlen(ftname)+1 < MAX_FILE_NAME_SIZE);\
 }
 
 /*#define LARGE_FILE_POSITION() XREF_HUGE */
@@ -607,15 +607,15 @@
 
 #if ZERO   // OLD_HASH
 #define SYM_TAB_HASH_FUN_INC(oldval, charcode) {\
-	oldval = oldval+oldval+charcode;\
+    oldval = oldval+oldval+charcode;\
 }
 #define SYM_TAB_HASH_FUN_FINAL(oldval) {}
 #else
 #define SYM_TAB_HASH_FUN_INC(oldval, charcode) {\
-	oldval+=charcode; oldval+=(oldval<<10); oldval^=(oldval>>6);\
+    oldval+=charcode; oldval+=(oldval<<10); oldval^=(oldval>>6);\
 }
 #define SYM_TAB_HASH_FUN_FINAL(oldval) {\
-	oldval+=(oldval<<3); oldval^=(oldval>>11); oldval+=(oldval<<15);\
+    oldval+=(oldval<<3); oldval^=(oldval>>11); oldval+=(oldval<<15);\
 }
 #endif
 
@@ -653,7 +653,7 @@
 #define ACC_DEFAULT				0x000
 #define ACC_ALL					0x800
 
-#define ACC_PPP_MODIFER_MASK 	0x007
+#define ACC_PPP_MODIFER_MASK    0x007
 
 /* *********************************************************************** */
 // this is maximal value of required access field in usg bits, it is index
@@ -671,11 +671,11 @@
 
 /* ********************** code inspection state bits ********************* */
 
-#define INSP_VISITED	 		1
-#define INSP_INSIDE_BLOCK	  	2
-#define INSP_OUTSIDE_BLOCK  	4
-#define INSP_INSIDE_REENTER  	8		/* value reenters the block 			*/
-#define INSP_INSIDE_PASSING  	16		/* a non-modified values pass via block */
+#define INSP_VISITED            1
+#define INSP_INSIDE_BLOCK       2
+#define INSP_OUTSIDE_BLOCK      4
+#define INSP_INSIDE_REENTER     8		/* value reenters the block             */
+#define INSP_INSIDE_PASSING     16		/* a non-modified values pass via block */
 
 /* *******************   Object-Oriented Resolutions   ******************* */
 
@@ -720,5 +720,3 @@
 /* *********************************************************************** */
 
 #endif	/* ifndef _HEAD__H*/
-
-
