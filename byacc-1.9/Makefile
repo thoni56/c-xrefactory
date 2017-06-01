@@ -1,18 +1,18 @@
-DEST	      = .
+DEST		  = .
 
-HDRS	      = defs.h
+HDRS		  = defs.h
 
-CFLAGS	      = -O -DNDEBUG
+CFLAGS		  = -O -DNDEBUG -std=c89
 
-LDFLAGS	      =
+LDFLAGS		  =
 
-LIBS	      =
+LIBS		  =
 
-LINKER	      = cc
+LINKER		  = cc
 
 MAKEFILE      = Makefile
 
-OBJS	      = closure.o \
+OBJS		  = closure.o \
 		error.o \
 		lalr.o \
 		lr0.o \
@@ -25,11 +25,11 @@ OBJS	      = closure.o \
 		verbose.o \
 		warshall.o
 
-PRINT	      = pr -f -l88
+PRINT		  = pr -f -l88
 
-PROGRAM	      = yacc
+PROGRAM		  = yacc
 
-SRCS	      = closure.c \
+SRCS		  = closure.c \
 		error.c \
 		lalr.c \
 		lr0.c \
@@ -45,7 +45,7 @@ SRCS	      = closure.c \
 all:		$(PROGRAM)
 
 $(PROGRAM):     $(OBJS) $(LIBS)
-		@echo -n "Loading $(PROGRAM) ... "
+		@/bin/echo -n "Loading $(PROGRAM) ... "
 		@$(LINKER) $(LDFLAGS) -o $(PROGRAM) $(OBJS) $(LIBS)
 		@echo "done"
 

@@ -59,9 +59,9 @@ char *header[] =
     "#define YYMAXDEPTH 500",
     "#endif",
     "#endif",
-	// [M.V.] 23.1.2001
-	"#ifndef RECURSIVE",
-	//
+    // [M.V.] 23.1.2001
+    "#ifndef RECURSIVE",
+    //
     "int yydebug;",
     "int yynerrs;",
     "int yyerrflag;",
@@ -73,11 +73,11 @@ char *header[] =
     "YYSTYPE yylval;",
     "short yyss[YYSTACKSIZE];",
     "YYSTYPE yyvs[YYSTACKSIZE];",
-	// [M.V.] 23.1.2001
-	"#else",
-	"#include \"recyacc.h\"",
-	"#endif",
-	//
+    // [M.V.] 23.1.2001
+    "#else",
+    "#include \"recyacc.h\"",
+    "#endif",
+    //
     "#define yystacksize YYSTACKSIZE",
     0
 };
@@ -89,7 +89,7 @@ char *body[] =
     "#define YYREJECT goto yyabort",
     "#define YYACCEPT goto yyaccept",
     "#define YYERROR goto yyerrlab",
-	"#define ERR_RECOVERY_ON 1",
+    "#define ERR_RECOVERY_ON 1",
     "int",
     "yyparse()",
     "{",
@@ -118,7 +118,7 @@ char *body[] =
     "    if ((yyn = yydefred[yystate])) goto yyreduce;",
     "    if (yychar < 0)",
     "    {",
-	"		 lastyystate = yystate;",
+    "        lastyystate = yystate;",
     "        if ((yychar = yylex()) < 0) yychar = 0;",
     "#if YYDEBUG",
     "        if (yydebug)",
@@ -253,7 +253,7 @@ char *trailer[] =
     "        *++yyvsp = yyval;",
     "        if (yychar < 0)",
     "        {",
-	"		 	lastyystate = yystate;",
+    "           lastyystate = yystate;",
     "            if ((yychar = yylex()) < 0) yychar = 0;",
     "#if YYDEBUG",
     "            if (yydebug)",
@@ -297,8 +297,7 @@ char *trailer[] =
 };
 
 
-write_section(section)
-char *section[];
+void write_section(char *section[])
 {
     register int c;
     register int i;
@@ -308,12 +307,12 @@ char *section[];
     f = code_file;
     for (i = 0; s = section[i]; ++i)
     {
-	++outline;
-	while (c = *s)
-	{
-	    putc(c, f);
-	    ++s;
-	}
-	putc('\n', f);
+    ++outline;
+    while (c = *s)
+    {
+        putc(c, f);
+        ++s;
+    }
+    putc('\n', f);
     }
 }
