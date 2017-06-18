@@ -4,11 +4,11 @@
 #
 
 OBJS=cgram.o main.o globals.o misc.o semact.o commons.o generate.o \
-	 enumTxt.o complet.o cxref.o cxfile.o lex.o yylex.o cexp.o options.o \
-	 caching.o javagram.o jsemact.o cfread.o cct.o init.o \
-	 editor.o refactory.o \
-	 yaccgram.o html.o extract.o classh.o jslsemact.o \
-	 $(ZLIB_LIB)
+     enumTxt.o complet.o cxref.o cxfile.o lex.o yylex.o cexp.o options.o \
+     caching.o javagram.o jsemact.o cfread.o cct.o init.o \
+     editor.o refactory.o \
+     yaccgram.o html.o extract.o classh.o jslsemact.o \
+     $(ZLIB_LIB)
 
 # put following into comments if you wish to build without zlib library,
 # i.e. without possibility to read compressed .jar files
@@ -28,7 +28,7 @@ all: $(ROOTDIR)/lib/zlib/libz.a c-xref
 
 #supposing to not modify zlib
 $(ROOTDIR)/lib/zlib/libz.a: ..always..
-	make -C $(ROOTDIR)/lib/zlib libz.a
+    make -C $(ROOTDIR)/lib/zlib libz.a
 
 # Unless we need to modify the grammar, which incidentally includes
 # both java and c++, we can use the already included .c-files instead
@@ -38,7 +38,7 @@ $(ROOTDIR)/lib/zlib/libz.a: ..always..
 # Disable standard yacc to C rule so that we can compile without YACC on user sites
 %.c : %.y
 
-#cgram.c: cgram.y
+# cgram.c: cgram.y
 #	$(YACC) -v -d cgram.y)
 #	mv y.output cy.output
 #	mv y.tab.c cgram.c
@@ -72,57 +72,57 @@ $(ROOTDIR)/lib/zlib/libz.a: ..always..
 #	mv y.tab.h cccgram.h
 #	diff cccgram.h gram.h
 
-gram.h:	cgram.c
+# cexp.c: cexp.y
+#	$(YACC) -v cexp.y
+#	mv y.tab.c cexp.c
 
-cexp.c: cexp.y
-	$(YACC) -v cexp.y
-	mv y.tab.c cexp.c
+gram.h:	cgram.c
 
 bootstrap:
 #strFill.h: proto.h strTdef.h
-	c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
-		-str_fill -header \
-		> tmpStrFill.h
-	mv -f tmpStrFill.h strFill.h
+    c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
+        -str_fill -header \
+        > tmpStrFill.h
+    mv -f tmpStrFill.h strFill.h
 
 #strTdef.h: proto.h
-	echo > strTdef.h
-	c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
-		-typedefs -enum_name -header \
-		> tmpStrTdef.h
-	mv -f tmpStrTdef.h strTdef.h
-	c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
-		-typedefs -enum_name -header \
-		> tmpStrTdef.h
-	mv -f tmpStrTdef.h strTdef.h
+    echo > strTdef.h
+    c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
+        -typedefs -enum_name -header \
+        > tmpStrTdef.h
+    mv -f tmpStrTdef.h strTdef.h
+    c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
+        -typedefs -enum_name -header \
+        > tmpStrTdef.h
+    mv -f tmpStrTdef.h strTdef.h
 
 #enumTxt.c: proto.h strFill.h strTdef.h ../doc/_c-xrefrc
-	echo "#include \"stdinc.h\"" > enumTxt.c
-	echo "#include \"proto.h\"  /*SBD*/" >> enumTxt.c
-	c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
-		-enum_name -body >> enumTxt.c
+    echo "#include \"stdinc.h\"" > enumTxt.c
+    echo "#include \"proto.h\"  /*SBD*/" >> enumTxt.c
+    c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
+        -enum_name -body >> enumTxt.c
 
 #########################################################################
 
 c-xref: $(OBJS)
-	$(CC) $(LDFLAGS) -o c-xref $(OBJS)
-	echo -e "\n\t\t\t\tnormal end of make\n"
+    $(CC) $(LDFLAGS) -o c-xref $(OBJS)
+    echo -e "\n\t\t\t\tnormal end of make\n"
 
 #########################################################################
 
 clean:;
-	make -C $(ROOTDIR)/lib/zlib clean
-	rm -f $(OBJS) c-xref
+    make -C $(ROOTDIR)/lib/zlib clean
+    rm -f $(OBJS) c-xref
 
 #########################################################################
 
 dependencies:;
-	$(CC) -E -MM $(COMCFLAGS) *.c > Makefile.dependencies
+    $(CC) -E -MM $(COMCFLAGS) *.c > Makefile.dependencies
 
 #########################################################################
 #      make a copy of working c-xref executable for bootstrap           #
 
 bs:;
-	cp c-xref c-xref.bs
+    cp c-xref c-xref.bs
 
 #########################################################################
