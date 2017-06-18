@@ -18,3 +18,6 @@ include Makefile.dependencies
 
 
 #########################################################################
+
+$(YACC):
+	cd $(ROOTDIR)/byacc-1.9; make
