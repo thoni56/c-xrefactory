@@ -1,5 +1,7 @@
 #include "defs.h"
 
+#include <string.h>
+
 static int nvectors;
 static int nentries;
 static short **froms;

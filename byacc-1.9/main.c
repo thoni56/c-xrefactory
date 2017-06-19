@@ -1,4 +1,5 @@
 #include <signal.h>
+
 #include "defs.h"
 
 char dflag;
