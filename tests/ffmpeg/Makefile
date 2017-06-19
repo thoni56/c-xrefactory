@@ -32,7 +32,7 @@ c-xref:
 	ln -s ../../src/c-xref
 
 c-xrefrc: c-xrefrc.tpl
-	sed -e "s+PWD+$$PWD+g" c-xrefrc.tpl > c-xrefrc
+	@sed -e "s+PWD+$CURDIR+g" c-xrefrc.tpl > c-xrefrc
 
 clean:
 	rm -rf CXrefs c-xref c-xrefrc ffmpeg ffmpeg.log

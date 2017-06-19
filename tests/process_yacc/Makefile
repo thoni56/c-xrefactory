@@ -18,11 +18,11 @@ $(test_case):
 	@rm -f $@.log C-Xrefs
 	@printf "Tests in \"$@\": "
 	@../../byacc-1.9/yacc file.y
-	@../../src/c-xref *.[cy] -xrefrc c-xrefrc -refs $(PWD)/C-Xrefs -o $@.log
-	@# Get the "symbol" for the yacc-file from the C-Xrefs
-	$(eval f:=$(shell grep process_yacc/file.y C-Xrefs | awk '{print $$1}'))
-	@# Use that to see that the symbol is at character 9117 in that file
-	@grep '	5/func	' C-Xrefs | grep '$f9l17cr' > /dev/null ; \
+	@../../src/c-xref *.[cy] -xrefrc c-xrefrc -refs $(CURDIR)/C-Xrefs -o $@.log
+	@# Get the "symbol" for the yacc-file from the C-Xrefs and use it
+	@# to find the reference to func from the .y file
+	@f=`grep process_yacc/file.y C-Xrefs | awk '{print $$1}'` ; \
+	grep '	5/func	' C-Xrefs | grep '$f9l17cr' > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
 		echo "Failed" ; \
 		exit 1 ; \

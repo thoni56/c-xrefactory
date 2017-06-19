@@ -16,4 +16,4 @@ basic_html_generation: c-xrefrc
 	fi
 
 c-xrefrc: c-xrefrc.tpl
-	@sed -e "s+PWD+$$PWD+g" c-xrefrc.tpl > c-xrefrc
+	@sed -e "s+PWD+$$CURDIR+g" c-xrefrc.tpl > c-xrefrc
