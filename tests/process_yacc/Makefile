@@ -13,18 +13,19 @@ all: $(test_case)
 # such a line also includes all references including file reference, line and char:
 # '1541f9l17cr' means file 1541, line 9, character 17
 #
-# This should be possible to decipher from the source, but where...
 
 $(test_case):
-	@rm -f $@.log Xrefs
+	@rm -f $@.log C-Xrefs
 	@printf "Tests in \"$@\": "
 	@../../byacc-1.9/yacc file.y
-	@../../src/c-xref *.[cy] -o $@.log
-	@grep '	5/func	' Xrefs | grep '1541f9l17cr' > /dev/null ; \
+	@../../src/c-xref *.[cy] -xrefrc c-xrefrc -refs $(PWD)/C-Xrefs -o $@.log
+	@# Get the "symbol" for the yacc-file from the C-Xrefs
+	$(eval f:=$(shell grep process_yacc/file.y C-Xrefs | awk '{print $$1}'))
+	@# Use that to see that the symbol is at character 9117 in that file
+	@grep '	5/func	' C-Xrefs | grep '$f9l17cr' > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
 		echo "Failed" ; \
 		exit 1 ; \
 	else \
 		echo "Ok" ; \
 	fi
-
