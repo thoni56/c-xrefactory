@@ -136,9 +136,10 @@ static void aboutMessage() {
 #endif
 #endif
 #endif
-    //& fprintf(stdout,"The newest version of this software can be\n");
-    //& fprintf(stdout,"purchased at the address 'http://www.xref-tech.com'.\n");
     sprintf(ttt+strlen(ttt),"(c) 1997-2004 by Xref-Tech, http://www.xref-tech.com\n");
+    sprintf(ttt+strlen(ttt),"Released into GPL 2009 by Marian Vittek (SourceForge)\n");
+    sprintf(ttt+strlen(ttt),"Work resurrected and continued by Thomas Nilefalk 2015\n");
+    sprintf(ttt+strlen(ttt),"(http://github.com/thoni56/c-xrefactory)\n");
     if (s_opt.exit) {
         sprintf(ttt+strlen(ttt),"Exiting!");
     }
@@ -222,9 +223,9 @@ void dirInputFile(MAP_FUN_PROFILE) {
             topCallFlag = 0;
             if (s_opt.recursivelyDirs) nrecurseFlag = &topCallFlag;
             else nrecurseFlag = NULL;
-            mapDirectoryFiles(fn, dirInputFile,DO_NOT_ALLOW_EDITOR_FILES, 
+            mapDirectoryFiles(fn, dirInputFile,DO_NOT_ALLOW_EDITOR_FILES,
                               fn, NULL, NULL, nrecurseFlag, &topCallFlag);
-            editorMapOnNonexistantFiles(fn, dirInputFile, DEEP_ANY, 
+            editorMapOnNonexistantFiles(fn, dirInputFile, DEEP_ANY,
                                         fn, NULL, NULL, nrecurseFlag, &topCallFlag);
         } else {
             // no error, let it be
@@ -232,9 +233,9 @@ void dirInputFile(MAP_FUN_PROFILE) {
             //& warning(ERR_ST,tmpBuff);
         }
     } else if (stt==0) {
-        // .class can be inside a jar archiv, but this makes problem on 
+        // .class can be inside a jar archiv, but this makes problem on
         // recursive read of a directory, it attempts to read .class
-        if (    topCallFlag==0 
+        if (    topCallFlag==0
                 &&  (! fileNameHasOneOfSuffixes(fname, s_opt.cFilesSuffixes))
                 &&  (! fileNameHasOneOfSuffixes(fname, s_opt.javaFilesSuffixes))
 #ifdef CCC_ALLOWED
@@ -259,11 +260,11 @@ void dirInputFile(MAP_FUN_PROFILE) {
         JavaMapOnPaths(wcPaths,{
                 dirInputFile(currentPath,"",NULL,NULL,recurseFlag,&topCallFlag);
             });
-#if ZERO 
+#if ZERO
 #ifdef __WIN32__                /*SBD*/
     } else if (strchr(fn,'*')!=NULL) {
         copyDir(ttt, fn, &ii);
-        mapPatternFiles(fn, dirInputFile, ttt, 
+        mapPatternFiles(fn, dirInputFile, ttt,
                         NULL, NULL, recurseFlag, &topCallFlag);
 #endif                          /*SBD*/
 #endif
@@ -297,7 +298,7 @@ void allocOptionSpace(void **optAddress, int size) {
     char **res;
     res = (char**)optAddress;
     OPT_ALLOCC((*res), size, char);
-    optionAddToAllocatedList(res);  
+    optionAddToAllocatedList(res);
 }
 
 void crOptionStr(char **optAddress, char *text) {
@@ -313,7 +314,7 @@ static void copyOptionShiftPointer(char **lld, S_options *dest, S_options *src) 
     localOffset = ((char*)lld) - ((char*)src);
     dlld = ((char**) (((char*)dest) + localOffset));
     // dlld is dest equivalent of *lld from src
-    //&fprintf(dumpOut,"shifting (%x->%x) [%x]==%x ([%x]==%x), offsets == %d, %d, size==%d\n", src, dest, lld, *lld, dlld, *dlld, offset, localOffset, sizeof(S_options)); 
+    //&fprintf(dumpOut,"shifting (%x->%x) [%x]==%x ([%x]==%x), offsets == %d, %d, size==%d\n", src, dest, lld, *lld, dlld, *dlld, offset, localOffset, sizeof(S_options));
     if (*dlld != *lld) {
         fprintf(dumpOut,"problem %s\n", *lld);
     }
@@ -369,7 +370,7 @@ int mainHandleSetOption( int argc, char **argv, int i ) {
 }
 
 static int mainHandleIncludeOption(int argc, char **argv, int i) {
-    int nargc,aaa; 
+    int nargc,aaa;
     char **nargv;
     NEXT_FILE_ARG();
     s_opt.stdopFlag = 1;
@@ -487,7 +488,7 @@ static int processCOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i],"-classpath")==0) {
         NEXT_FILE_ARG();
 #if ZERO
-        if (s_opt.classpath!=NULL && *s_opt.classpath!=0 
+        if (s_opt.classpath!=NULL && *s_opt.classpath!=0
             && strcmp(s_opt.classpath,argv[i])!=0) {
             if (s_opt.taskRegime != RegimeEditServer) {
                 warning(ERR_ST,"redefinition of classpath, new value ignored");
@@ -527,7 +528,7 @@ static int processDOption(int *ii, int argc, char **argv) {
         crOptionStr(&s_opt.htmlRoot, argv[i]);
     }
     // TODO, do this macro allocation differently!!!!!!!!!!!!!
-    // just store macros in options and later add them into pp_memory 
+    // just store macros in options and later add them into pp_memory
     else if (strncmp(argv[i],"-D",2)==0) addMacroDefinedByOption(argv[i]+2);
     else if (strcmp(argv[i],"-displaynestedwithouters")==0) {
         s_opt.nestedClassDisplaying = NO_OUTERS_CUT;
@@ -675,7 +676,7 @@ static int processHOption(int *ii, int argc, char **argv) {
     }
     else if (strncmp(argv[i],"-htmljavadocavailable=",22)==0) {
         crOptionStr(&s_opt.htmlJdkDocAvailable, argv[i]+22);
-    } 
+    }
     else if (strncmp(argv[i],"-htmljavadocpath=",17)==0)    {
         crOptionStr(&s_opt.htmlJdkDocUrl, argv[i]+17);
     }
@@ -746,13 +747,13 @@ static int processIOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i],"-I")==0) {
         /* include dir */
         i++;
-        if (i >= argc) { 
-            sprintf(tmpBuff,"directory name expected after -I\n"); 
+        if (i >= argc) {
+            sprintf(tmpBuff,"directory name expected after -I\n");
             error(ERR_ST,tmpBuff);
             usage(argv[0]);
         }
         mainAddStringListOption(&s_opt.includeDirs, argv[i]);
-    } 
+    }
     else if (strncmp(argv[i],"-I", 2)==0 && argv[i][2]!=0) {
         mainAddStringListOption(&s_opt.includeDirs, argv[i]+2);
     }
@@ -825,7 +826,7 @@ static int processLOption(int *ii, int argc, char **argv) {
     if (0) {}
     else if (strncmp(argv[i],"-last_message=",14)==0) {
         crOptionStr(&s_opt.last_message, argv[i]+14);
-    } 
+    }
     else return(0);
     *ii = i;
     return(1);
@@ -841,7 +842,7 @@ static int processMOption(int *ii, int argc, char **argv) {
             fatalError(ERR_ST, "memory factor out of range <1,255>", XREF_EXIT_ERR);
         }
         s_opt.cxMemoryFaktor = newmf;
-    }   
+    }
     else if (strncmp(argv[i],"-maxCompls=",11)==0 || strncmp(argv[i],"-maxcompls=",11)==0)  {
         sscanf(argv[i]+11, "%d", &s_opt.maxCompletions);
     }
@@ -870,7 +871,7 @@ static int processNOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i],"-no_str")==0)              s_opt.no_ref_records = 1;
     else if (strcmp(argv[i],"-no_local")==0)            s_opt.no_ref_locals = 1;
     else if (strcmp(argv[i],"-no_cfrefs")==0)           s_opt.allowClassFileRefs = 0;
-    else if (strcmp(argv[i],"-no_stdop")==0 
+    else if (strcmp(argv[i],"-no_stdop")==0
              || strcmp(argv[i],"-nostdop")==0)          s_opt.no_stdop = 1;
     else if (strcmp(argv[i],"-noautoupdatefromsrc")==0) s_opt.javaSlAllowed = 0;
     else if (strcmp(argv[i],"-noerrors")==0)            s_opt.noErrors=1;
@@ -976,13 +977,13 @@ static int processOOption(int *ii, int argc, char **argv) {
     else if (strncmp(argv[i],"-olcxwindelwin=",15)==0) {
         s_opt.olcxWinDelFromLine = s_opt.olcxWinDelToLine = 0;
         s_opt.olcxWinDelFromCol = s_opt.olcxWinDelToCol = 0;
-        sscanf(argv[i]+15,"%d:%dx%d:%d", 
+        sscanf(argv[i]+15,"%d:%dx%d:%d",
                &s_opt.olcxWinDelFromLine, &s_opt.olcxWinDelFromCol,
                &s_opt.olcxWinDelToLine, &s_opt.olcxWinDelToCol);
         //&fprintf(dumpOut,"; delete refs %d:%d-%d:%d\n", s_opt.olcxWinDelFromLine, s_opt.olcxWinDelFromCol, s_opt.olcxWinDelToLine, s_opt.olcxWinDelToCol);
     }
     else if (strncmp(argv[i],"-olcxsafetycheckmovedblock=",27)==0) {
-        sscanf(argv[i]+27, "%d:%d:%d", &s_opt.checkFirstMovedLine, 
+        sscanf(argv[i]+27, "%d:%d:%d", &s_opt.checkFirstMovedLine,
                &s_opt.checkLinesMoved, &s_opt.checkNewLineNumber);
         //&fprintf(dumpOut,"safety check block moved == %d:%d:%d\n", s_opt.checkFirstMovedLine,s_opt.checkLinesMoved, s_opt.checkNewLineNumber);
     }
@@ -1038,7 +1039,7 @@ static int processOOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i],"-olcxppprecheck")==0) s_opt.cxrefs = OLO_PP_PRE_CHECK;
     else if (strcmp(argv[i],"-olcxpushforlm")==0) {
         s_opt.cxrefs = OLO_PUSH_FOR_LOCALM;
-        s_opt.manualResolve = RESOLVE_DIALOG_NEVER;      
+        s_opt.manualResolve = RESOLVE_DIALOG_NEVER;
     }
     else if (strcmp(argv[i],"-olcxpushglobalunused")==0)    s_opt.cxrefs = OLO_GLOBAL_UNUSED;
     else if (strcmp(argv[i],"-olcxpushfileunused")==0)  s_opt.cxrefs = OLO_LOCAL_UNUSED;
@@ -1575,7 +1576,7 @@ static void mainScheduleInputFileOptionToFileTable(char *infile) {
 static void mainProcessInFileOption(char *infile) {
     int i;
     if (infile[0]=='`' && infile[strlen(infile)-1]=='`') {
-        int nargc,aaa; 
+        int nargc,aaa;
         char **nargv, *pp;
         char command[MAX_OPTION_LEN];
         s_opt.stdopFlag = 1;
@@ -1601,7 +1602,7 @@ void processOptions(int argc, char **argv, int infilesFlag) {
     int             i,ii,newRefNum,ln,topCallFlag,processed,tmp;
     void            *recursFlag;
     for (i=1; i<argc; i++) {
-        if (s_opt.taskRegime==RegimeEditServer && 
+        if (s_opt.taskRegime==RegimeEditServer &&
             strncmp(argv[i],"-last_message=",14)==0) {
             // because of emacs-debug
             DPRINTF1("option -lastmessage=...\n");
@@ -1675,9 +1676,9 @@ void processOptions(int argc, char **argv, int infilesFlag) {
             }
         }
         if (! processed) {
-            sprintf(tmpBuff,"unknown option %s, (try xref -help)\n",argv[i]); 
+            sprintf(tmpBuff,"unknown option %s, (try xref -help)\n",argv[i]);
             error(ERR_ST,tmpBuff);
-            if (    s_opt.taskRegime==RegimeXref 
+            if (    s_opt.taskRegime==RegimeXref
                     ||  s_opt.taskRegime==RegimeHtmlGenerate) {
                 emergencyExit(XREF_EXIT_ERR);
             }
@@ -1802,7 +1803,7 @@ void searchDefaultOptionsFile(char *file, char *ttt, char *sect) {
         if (findFlag) {
             DPRINTF3("options file '%s' section '%s'\n",ttt,sect);
         }
-        fclose(ff);     
+        fclose(ff);
     }
     if (findFlag) return;
     /* then look for source directory  'Xref.opt' */
@@ -1822,7 +1823,7 @@ void searchDefaultOptionsFile(char *file, char *ttt, char *sect) {
     }
     if (findFlag) {
         if (s_opt.taskRegime!=RegimeEditServer) {
-            sprintf(tmpBuff,"%s\n\t\t%s", 
+            sprintf(tmpBuff,"%s\n\t\t%s",
                     "using of 'Xref.opt' file is an obsolete way of passing",
 #ifdef __WIN32__    /*SBD*/
                     "options to xref task. Please, use '%HOME%\\_c-xrefrc' file"
@@ -1857,12 +1858,12 @@ void searchDefaultOptionsFile(char *file, char *ttt, char *sect) {
     return;
 }
 
-static void writeOptionsFileMessage( char *file, 
+static void writeOptionsFileMessage( char *file,
                                      char *outFName, char *outSect ) {
     if (s_opt.refactoringRegime==RegimeRefactory) return;
     if (outFName[0]==0) {
         if (s_opt.project!=NULL) {
-            sprintf(tmpBuff,"'%s' project options not found", 
+            sprintf(tmpBuff,"'%s' project options not found",
                     s_opt.project);
             if (s_opt.taskRegime == RegimeEditServer) {
                 error(ERR_ST, tmpBuff);
@@ -1967,7 +1968,7 @@ static int computeAndOpenInputFile() {
             ppcGenRecord(PPC_IGNORE,"LOADING BUFFERED FILE","");
             ppcGenRecord(PPC_IGNORE,s_input_file_name,"\n");
             inputBuff->a.text[inputBuff->a.bufferSize]=0;
-            ppcGenRecord(PPC_IGNORE,inputBuff->a.text,"\n");            
+            ppcGenRecord(PPC_IGNORE,inputBuff->a.text,"\n");
 #endif
         }
     }
@@ -2058,7 +2059,7 @@ static void mainParseInputFile() {
 
     /*//////////////////////// after parsing actions ////////////////////// */
 #if ZERO
-    if (s_opt.taskRegime==RegimeXref || s_opt.taskRegime==RegimeHtmlGenerate) { 
+    if (s_opt.taskRegime==RegimeXref || s_opt.taskRegime==RegimeHtmlGenerate) {
         int ui,el,mdp,i,cr,ri;
         S_symbol *pp;
         S_symbolRefItem *rfi;
@@ -2204,11 +2205,11 @@ static void getAndProcessGccOptions() {
 }
 
 void getAndProcessXrefrcOptions(char *dffname, char *dffsect,char *project) {
-    int dfargc; 
+    int dfargc;
     char **dfargv;
     if (*dffname != 0 && s_opt.stdopFlag==0 && s_opt.no_stdop==0) {
         readOptionFile(dffname,&dfargc,&dfargv,dffsect,project);
-        // warning, the following can overwrite variables like 
+        // warning, the following can overwrite variables like
         // 's_cxref_file_name' allocated in PPM_MEMORY, then when memory
         // is got back by caching, it may provoke a problem
         processOptions(dfargc, dfargv, INFILES_DISABLED); /* .c-xrefrc opts*/
@@ -2258,7 +2259,7 @@ static void writeProgressInformation(int progress) {
     ct = time(NULL);
     // write progress only if it seems to be longer than 3 sec
     if (dialogDisplayed
-        || (progress == 0 && ct-timeZero > 1) 
+        || (progress == 0 && ct-timeZero > 1)
         || (progress != 0 && ct-timeZero >= 1 && 100*((double)ct-timeZero)/progress > 3)
         ) {
         if (! dialogDisplayed) {
@@ -2284,9 +2285,9 @@ static void mainFileProcessingInitialisations(
                                               int *outInputIn,
                                               int *outLanguage
                                               ) {
-    int             stargc; 
+    int             stargc;
     char            **stargv;
-    int             dfargc; 
+    int             dfargc;
     char            **dfargv;
     char            dffname[MAX_FILE_NAME_SIZE];
     char            dffsect[MAX_FILE_NAME_SIZE];
@@ -2304,10 +2305,10 @@ static void mainFileProcessingInitialisations(
     else dffstat.st_mtime = oldStdopTime;               // !!! just for now
     //&fprintf(dumpOut,"checking oldcp==%s\n",oldOnLineClassPath);
     //&fprintf(dumpOut,"checking newcp==%s\n",s_opt.classpath);
-    if (    *firstPassing 
+    if (    *firstPassing
             || oldCppPass != s_currCppPass
-            || strcmp(oldStdopFile,dffname) 
-            || strcmp(oldStdopSection,dffsect) 
+            || strcmp(oldStdopFile,dffname)
+            || strcmp(oldStdopSection,dffsect)
             || oldStdopTime != dffstat.st_mtime
             || oldLanguage!= *outLanguage
             || strcmp(oldOnLineClassPath, s_opt.classpath)
@@ -2336,9 +2337,9 @@ static void mainFileProcessingInitialisations(
            must be set after .c-xrefrc file, but s_cachedOptions can't contain
            piped options, !!! berk.
         */
-        { 
+        {
             copyOptions(&s_tmpOptions, &s_opt);
-            processOptions(nargc, nargv, INFILES_DISABLED); 
+            processOptions(nargc, nargv, INFILES_DISABLED);
             // get options file once more time, because of -license ???
             // if takes into account the -p option from piped options
             // but copy new project name into old to avoid warning message
@@ -2360,7 +2361,7 @@ static void mainFileProcessingInitialisations(
             goto fini;
         }
         copyOptions(&s_cachedOptions, &s_opt);  // before getJavaClassPath, it modifies ???
-        processOptions(nargc, nargv, INFILES_DISABLED); 
+        processOptions(nargc, nargv, INFILES_DISABLED);
         getJavaClassAndSourcePath();
         *outInputIn = computeAndOpenInputFile();
         strcpy(oldStdopFile,dffname);
@@ -2379,7 +2380,7 @@ static void mainFileProcessingInitialisations(
     } else {
         copyOptions(&s_opt, &s_cachedOptions);
         processOptions(nargc, nargv, INFILES_DISABLED); /* no include or define options */
-        /*& // if someone understand why this is here, I will uncomment it 
+        /*& // if someone understand why this is here, I will uncomment it
           searchDefaultOptionsFile(s_input_file_name, dffname, dffsect);
           &*/
         *outInputIn = computeAndOpenInputFile();
@@ -2388,7 +2389,7 @@ static void mainFileProcessingInitialisations(
     mainSetLanguage(fileName,  outLanguage);
     s_input_file_number = cFile.lb.cb.fileNumber;
     assert(s_opt.taskRegime);
-    if (    (s_opt.taskRegime==RegimeXref 
+    if (    (s_opt.taskRegime==RegimeXref
              || s_opt.taskRegime==RegimeHtmlGenerate)
             && (! s_javaPreScanOnly)) {
         if (s_opt.xref2) {
@@ -2439,7 +2440,7 @@ static void createXrefrcDefaultLicense() {
             ed += 15;
             lic = stringNumStr(rr, ed, em, ey, own);
             fprintf(ff, "\n\n// license string:\n");
-            fprintf(ff, "-license=%d/%d/%d/%d:%s:%s\n\n", 
+            fprintf(ff, "-license=%d/%d/%d/%d:%s:%s\n\n",
                     em,ed,ey,rr,own,lic);
 #endif
 #endif
@@ -2477,7 +2478,7 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
     mm = cxMemoryOverflowHandler(1);
     assert(mm);
     // initoptions
-    FILL_memory(((S_memory*)&s_initOpt.pendingMemory), 
+    FILL_memory(((S_memory*)&s_initOpt.pendingMemory),
                 optionsOverflowHandler, 0, SIZE_opiMemory, 0);
 
     // just for very beginning
@@ -2593,7 +2594,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     }
     // must be after processing command line options
     createXrefrcDefaultLicense();
-    initCaching(); 
+    initCaching();
     // enclosed in cache point, because of persistent #define in XrefEdit
     argcount = 0;
     s_input_file_name = cmdlnInputFile = getCommandLineFile(&argcount);
@@ -2629,8 +2630,8 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         if (inmode==INFILES_ENABLED && s_opt.update && !s_opt.create) {
             //&fprintf(dumpOut,"PREREADING !!!!!!!!!!!!!!!!\n");
             // this makes a problem: I need to preread cxref file before
-            // reading input files in order to preserve hash numbers, but 
-            // I need to read options first in order to have the name 
+            // reading input files in order to preserve hash numbers, but
+            // I need to read options first in order to have the name
             // of cxref file.
             // I need to read fstab also to remove removed files on update
             processOptions(dfargc, dfargv, INFILES_DISABLED);
@@ -2695,16 +2696,16 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, int mess) {
             if (s_fileTab.tab[i]->b.cxLoading) {
                 s_fileTab.tab[i]->b.cxLoading = 0;
                 s_fileTab.tab[i]->b.cxSaved = 1;
-                if (s_fileTab.tab[i]->b.commandLineEntered 
+                if (s_fileTab.tab[i]->b.commandLineEntered
                     || !s_opt.multiHeadRefsCare) savingFlag = 1;
-                // before, but do not work as scheduledToProcess is auto-cleared 
-                //&             if (s_fileTab.tab[i]->b.scheduledToProcess 
+                // before, but do not work as scheduledToProcess is auto-cleared
+                //&             if (s_fileTab.tab[i]->b.scheduledToProcess
                 //&                 || !s_opt.multiHeadRefsCare) savingFlag = 1;
                 //&fprintf(dumpOut," -># '%s'\n",s_fileTab.tab[i]->name);fflush(dumpOut);
             }
         }
     }
-    if (savingFlag==0 && mess!=MESS_FILE_ABORT) { 
+    if (savingFlag==0 && mess!=MESS_FILE_ABORT) {
         /* references overflowed, but no whole file readed */
         fatalError(ERR_NO_MEMORY,"cxMemory", XREF_EXIT_ERR);
     }
@@ -2748,7 +2749,7 @@ static void makeIncludeClosureOfFilesToUpdate() {
         fileAddedFlag = 0;
         for(i=0; i<s_fileTab.size; i++) {
             fi = s_fileTab.tab[i];
-            if (fi!=NULL && fi->b.scheduledToUpdate 
+            if (fi!=NULL && fi->b.scheduledToUpdate
                 && !fi->b.fullUpdateIncludesProcessed) {
                 fi->b.fullUpdateIncludesProcessed = 1;
                 isJavaFileFlag = fileNameHasOneOfSuffixes(fi->name, s_opt.javaFilesSuffixes);
@@ -2927,11 +2928,11 @@ static int mainSymbolCanBeIdentifiedByPosition(int fnum) {
     int     line,col;
     char dffname[MAX_FILE_NAME_SIZE];
     char dffsect[MAX_FILE_NAME_SIZE];
-    // there is a serious problem with options memory for options got from 
+    // there is a serious problem with options memory for options got from
     // the .c-xrefrc file. so for the moment this will not work.
     // which problem ??????
     // seems that those options are somewhere in ppmMemory overwritten?
-    //&return(0); 
+    //&return(0);
     if (!creatingOlcxRefs()) return(0);
     if (s_opt.browsedSymName == NULL) return(0);
     //&fprintf(dumpOut,"looking for sym %s on %s\n",s_opt.browsedSymName,s_opt.olcxlccursor);
@@ -2959,7 +2960,7 @@ static int mainSymbolCanBeIdentifiedByPosition(int fnum) {
     //&fprintf(dumpOut,"checking that %d, != NULL\n", s_olcxCurrentUser->browserStack.top->hkSelectedSym);
     if (s_olcxCurrentUser->browserStack.top->hkSelectedSym==NULL) return(0);
     // here I should set caching to 1 and recover the cachePoint ???
-    // yes, because last file references are still stored, even if I 
+    // yes, because last file references are still stored, even if I
     // update the cxref file, so do it only if switching file?
     // but how to ensure that next pass will start parsing?
     // By recovering of point 0 handled as such a special case.
@@ -2968,8 +2969,8 @@ static int mainSymbolCanBeIdentifiedByPosition(int fnum) {
     return(1);
 }
 
-static void mainEditSrvFileSingleCppPass( int argc, char **argv, 
-                                          int nargc, char **nargv, 
+static void mainEditSrvFileSingleCppPass( int argc, char **argv,
+                                          int nargc, char **nargv,
                                           int *firstPassing
                                           ) {
     int inputIn;
@@ -3009,9 +3010,9 @@ static void mainEditSrvFileSingleCppPass( int argc, char **argv,
 }
 
 
-static void mainEditServerProcessFile( int argc, char **argv, 
-                                       int nargc, char **nargv, 
-                                       int *firstPassing 
+static void mainEditServerProcessFile( int argc, char **argv,
+                                       int nargc, char **nargv,
+                                       int *firstPassing
                                        ) {
     FILE                        *inputIn;
     int                         ol2procfile;
@@ -3075,7 +3076,7 @@ char * presetEditServerFileDependingStatics() {
 
 int creatingOlcxRefs() {
     return (
-            s_opt.cxrefs==OLO_PUSH 
+            s_opt.cxrefs==OLO_PUSH
             ||  s_opt.cxrefs==OLO_PUSH_ONLY
             ||  s_opt.cxrefs==OLO_PUSH_AND_CALL_MACRO
             ||  s_opt.cxrefs==OLO_GOTO_PARAM_NAME
@@ -3110,9 +3111,9 @@ int creatingOlcxRefs() {
 
 int needToProcessInputFile() {
     return(
-           s_opt.cxrefs==OLO_COMPLETION 
+           s_opt.cxrefs==OLO_COMPLETION
            || s_opt.cxrefs==OLO_SEARCH
-           || s_opt.cxrefs==OLO_EXTRACT 
+           || s_opt.cxrefs==OLO_EXTRACT
            || s_opt.cxrefs==OLO_TAG_SEARCH
            || s_opt.cxrefs==OLO_SET_MOVE_TARGET
            || s_opt.cxrefs==OLO_SET_MOVE_CLASS_TARGET
@@ -3138,7 +3139,7 @@ int needToLoadOptions() {
 /* *************************************************************** */
 /*                          Xref regime                            */
 /* *************************************************************** */
-static int dummy(   char **cxFreeBase0, char **cxFreeBase, 
+static int dummy(   char **cxFreeBase0, char **cxFreeBase,
                     S_fileItem **ffc, S_fileItem **pffc,
                     int *inputIn,   int *firstPassing) {
     return(0);
@@ -3151,8 +3152,8 @@ static void mainXrefProcessInputFile( int argc, char **argv, int *_inputIn, int 
     s_maximalCppPass = 1;
     for(s_currCppPass=1; s_currCppPass<=s_maximalCppPass; s_currCppPass++) {
         if (! firstPassing) copyOptions(&s_opt, &s_cachedOptions);
-        mainFileProcessingInitialisations(&firstPassing, 
-                                          argc, argv, 0, NULL, &inputIn, 
+        mainFileProcessingInitialisations(&firstPassing,
+                                          argc, argv, 0, NULL, &inputIn,
                                           &s_language);
         s_olOriginalFileNumber = s_input_file_number;
         s_olOriginalComFileNumber = s_olOriginalFileNumber;
@@ -3187,7 +3188,7 @@ static void mainXrefProcessInputFile( int argc, char **argv, int *_inputIn, int 
     *_atLeastOneProcessed = atLeastOneProcessed;
 }
 
-static void mainXrefOneWholeFileProcessing(int argc, char **argv, 
+static void mainXrefOneWholeFileProcessing(int argc, char **argv,
                                            S_fileItem *ff,
                                            int *firstPassing, int *atLeastOneProcessed) {
     int         inputIn;
@@ -3198,9 +3199,9 @@ static void mainXrefOneWholeFileProcessing(int argc, char **argv,
     if (s_opt.update == UP_FULL_UPDATE || s_opt.create) {
         ff->lastFullUpdateMtime = ff->lastModif;
     }
-    mainXrefProcessInputFile(argc, argv, &inputIn, 
+    mainXrefProcessInputFile(argc, argv, &inputIn,
                              firstPassing, atLeastOneProcessed);
-    // now free the buffer because it tooks too much memory, 
+    // now free the buffer because it tooks too much memory,
     // but I can not free it when refactoring, nor when preloaded,
     // so be very carefull about this!!!
     if (s_ropt.refactoringRegime!=RegimeRefactory) {
@@ -3216,7 +3217,7 @@ static void printPrescanningMessage() {
     } else {
         fprintf(dumpOut, "Prescanning classes, please wait.\n");
         fflush(dumpOut);
-    }           
+    }
 }
 
 static int inputFileItemLess(S_fileItem *f1, S_fileItem *f2) {
@@ -3296,7 +3297,7 @@ void mainCallXref(int argc, char **argv) {
                     mainXrefOneWholeFileProcessing(argc, argv, pffc, &firstPassing, &atLeastOneProcessed);
                 }
                 if (s_opt.xref2) writeRelativeProgress(10*pinputCounter/numberOfInputs);
-                pinputCounter++;        
+                pinputCounter++;
             }
 #endif
             s_javaPreScanOnly = 0;
@@ -3317,7 +3318,7 @@ void mainCallXref(int argc, char **argv) {
     if (atLeastOneProcessed) {
         if (s_opt.taskRegime==RegimeHtmlGenerate) {
             // following is for case if an internalCheckFail, will rejump here
-            atLeastOneProcessed = 0; 
+            atLeastOneProcessed = 0;
             generateHtml();
             if (s_opt.noCxFile) CX_ALLOCC(cxFreeBase0,0,char);
             htmlGenGlobalReferenceLists(cxFreeBase0);
@@ -3384,8 +3385,8 @@ void mainCallEditServerInit(int nargc, char **nargv) {
     FILL_completions(&s_completions, 0, s_noPos, 0, 0, 0, 0, 0, 0);
 }
 
-void mainCallEditServer(int argc, char **argv, 
-                        int nargc, char **nargv, 
+void mainCallEditServer(int argc, char **argv,
+                        int nargc, char **nargv,
                         int *firstPassing
                         ) {
     int inputIn;
@@ -3440,7 +3441,7 @@ static void mainEditServer(int argc, char **argv) {
         if (s_opt.cxrefs == OLO_ABOUT) {
             aboutMessage();
         } else {
-            LICENSE_CHECK(); 
+            LICENSE_CHECK();
             mainAnswerEditAction();
         }
         //& s_opt.outputFileName = NULL;  // why this was here ???
@@ -3449,7 +3450,7 @@ static void mainEditServer(int argc, char **argv) {
         mainCloseOutputFile();
         if (s_opt.cxrefs == OLO_EXTRACT) s_cache.cpi = 2; // !!!! no cache
         if (s_opt.last_message != NULL) {
-            fprintf(ccOut,"%s",s_opt.last_message); 
+            fprintf(ccOut,"%s",s_opt.last_message);
             fflush(ccOut);
         }
         if (s_opt.xref2) ppcGenSynchroRecord();

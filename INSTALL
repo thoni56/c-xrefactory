@@ -10,12 +10,18 @@ this file and type:
 
         sh ./CreateXrefDistribution
 
-(or simply make). If everything is going all right, you will find the
+If everything is going all right, you will find the
 'c-xref' directory along the original 'c-xrefactory' directory.  This
 directory contains a working distribution containing all files needed
 to install and run Xrefactory.  Go there and follow instructions
 written there in the README or INSTALL file.
 
+2.) If you just want a c-xrefactory installation for yourself you can
+use the el-get (see https://github.com/dimitri/el-get) recipe provided
+in 'c-xrefactory.rcp'. Copy it to your <emacsdir>/el-get-user-recipes
+directory and say "M-x el-get-install" "c-xrefactory".
+
+3.) To just compile do "make" which will produce a new 'c-xref' program
 
 
 **********************************************************************
@@ -38,7 +44,7 @@ Now you need to install Xrefactory under your environment:
 and XREFDIR/env/emacs/c-xrefactory.el to directory containing your
 Emacs lisp code. Then add line:
 
-	(load "c-xrefactory")
+    (load "c-xrefactory")
 
 to your ~/.emacs file.  Finally, modify your PATH variable (or
 equivalent on your system), so that command 'c-xref' invokes the
@@ -59,7 +65,7 @@ do the following!
   make
   make bs
 
-then, you  can modify source files  and rebuild simply by make. 
+then, you can modify source files and rebuild simply by make.
 
 2.) You will need to build Berkeley yacc, which is stored in byacc-1.9
 directory.
@@ -75,6 +81,8 @@ official xrefactory.com sources):
 
 Patches are in byacc.1.9.patch.txt.
 
+Since that source is old it has been updated to modern C and the
+source is included in the repo so there should be nothing to do.
 
 3.) You will also need to update file dependeces from time to time by
 the command:

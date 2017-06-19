@@ -3,6 +3,9 @@ MAKEFLAGS+=--no-print-directory
 endif
 
 all:
+	make -C src
+
+distribution:
 	sh CreateXrefDistribution
 
 test: all
