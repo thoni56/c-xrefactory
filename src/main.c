@@ -2221,23 +2221,6 @@ static void checkExactPositionUpdate(int message) {
     }
 }
 
-#if ZERO
-// this will not work, before options are not reloaded when only
-// file changes, but no project
-static void setPredefinedFileEnvVariables(char *fileName) {
-    char *fvv;
-    fvv = getRealFileNameStatic(fileName);
-    strcpy(s_file, fvv);
-    InternalCheck(strlen(s_file) < MAX_FILE_NAME_SIZE-1);
-    xrefSetenv("__FILE", s_file);
-    strcpy(s_path, directoryName_st(fvv));
-    xrefSetenv("__PATH", s_path);
-    xrefSetenv("__FNAME", simpleFileName(s_file));
-    strcpy(s_name, simpleFileNameWithoutSuffix_st(fvv));
-    xrefSetenv("__NAME", s_name);
-}
-#endif
-
 static void writeProgressInformation(int progress) {
     static int      lastprogress;
     static time_t   timeZero;
@@ -2345,7 +2328,6 @@ static void mainFileProcessingInitialisations(
             //&     s_tmpOptions.setGetEnv = s_opt.setGetEnv; // hack, take new env. vals
             copyOptions(&s_opt, &s_tmpOptions);
         }
-        //& setPredefinedFileEnvVariables(fileName);
         reInitCwd(dffname, dffsect);
         tmpIncludeDirs = s_opt.includeDirs;
         s_opt.includeDirs = NULL;

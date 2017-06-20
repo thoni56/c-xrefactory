@@ -1,17 +1,13 @@
-/*
-  $Revision: 1.21 $
-  $Date: 2002/08/27 23:08:25 $
-*/
-
 #include "stdinc.h"
 #include "head.h"
-#include "proto.h"      /*SBD*/
+#include "proto.h"
+#include "globals.h"
 
 #include "unigram.h"
 #include "protocol.h"
-//
 
-#define FULL_COMPLETION_INTEND_CHARS    2
+
+#define FULL_COMPLETION_INDENT_CHARS    2
 
 static void formatFullCompletions(char *tt, int indent, int inipos) {
     int     pos;
@@ -29,7 +25,7 @@ static void formatFullCompletions(char *tt, int indent, int inipos) {
     }
  formatFullCompletionsEnd:
     return;
-    //&sprintf(tmpBuff,"result '\%s'",tt);ppcGenTmpBuff();  
+    //&sprintf(tmpBuff,"result '\%s'",tt);ppcGenTmpBuff();
 }
 
 void formatOutputLine(char *tt, int startingColumn) {
@@ -96,7 +92,7 @@ static char *getCompletionClassFieldString( S_cline *cl) {
     // statics, get class from link name
     //&     cname = javaGetNudePreTypeName_st(cl->t->linkName,CUT_OUTERS);
     //&             sprintf(tmpBuff,"%s", cname);
-    //&} else 
+    //&} else
     if (cl->vFunClass!=NULL) {
         cname = javaGetShortClassName(cl->vFunClass->linkName);
     } else {
@@ -127,19 +123,19 @@ static void sprintFullCompletionInfo(S_completions* c, int ii, int indent) {
         ttlen--;
         tt[ttlen]=0;
     }
-    sprintf(ppc, "%-*s:", indent+FULL_COMPLETION_INTEND_CHARS, tt);
+    sprintf(ppc, "%-*s:", indent+FULL_COMPLETION_INDENT_CHARS, tt);
     cindent = strlen(ppc);
     ppc += strlen(ppc);
     vFunCl = s_noneFileIndex;
-    size = COMPLETION_STRING_SIZE; 
+    size = COMPLETION_STRING_SIZE;
     ll = 0;
     if (c->a[ii].symType==TypeDefault) {
         assert(c->a[ii].t && c->a[ii].t->u.type);
         if (LANGUAGE(LAN_JAVA)) {
             cname = getCompletionClassFieldString(&c->a[ii]);
             if (c->a[ii].virtLevel>NEST_VIRT_COMPL_OFFSET) {
-                sprintf(tmpBuff,"(%d.%d)%s: ", 
-                        c->a[ii].virtLevel/NEST_VIRT_COMPL_OFFSET, 
+                sprintf(tmpBuff,"(%d.%d)%s: ",
+                        c->a[ii].virtLevel/NEST_VIRT_COMPL_OFFSET,
                         c->a[ii].virtLevel%NEST_VIRT_COMPL_OFFSET,
                         cname);
             } else if (c->a[ii].virtLevel>0) {
@@ -172,8 +168,8 @@ static void sprintFullCompletionInfo(S_completions* c, int ii, int indent) {
             }
         }
         typeSPrint(tt+ll, &size, c->a[ii].t->u.type, pname,' ', 0, tdexpFlag,SHORT_NAME, NULL);
-        if (LANGUAGE(LAN_JAVA) 
-            && (c->a[ii].t->b.storage == StorageMethod 
+        if (LANGUAGE(LAN_JAVA)
+            && (c->a[ii].t->b.storage == StorageMethod
                 || c->a[ii].t->b.storage == StorageConstructor)) {
             throwsSprintf(tt+ll+size, COMPLETION_STRING_SIZE-ll-size, c->a[ii].t->u.type->u.m.exceptions);
         }
@@ -182,7 +178,7 @@ static void sprintFullCompletionInfo(S_completions* c, int ii, int indent) {
                       c->a[ii].margn, c->a[ii].margs, NULL);
     } else if (LANGUAGE(LAN_JAVA) && c->a[ii].symType==TypeStruct ) {
         if (c->a[ii].t!=NULL) {
-            ll += printJavaModifiers(tt+ll, &size, c->a[ii].t->b.accessFlags);          
+            ll += printJavaModifiers(tt+ll, &size, c->a[ii].t->b.accessFlags);
             if (c->a[ii].t->b.accessFlags & ACC_INTERFACE) {
                 sprintf(tt+ll,"interface ");
             } else {
@@ -205,12 +201,12 @@ static void sprintFullCompletionInfo(S_completions* c, int ii, int indent) {
         assert(c->a[ii].symType>=0 && c->a[ii].symType<MAX_TYPE);
         sprintf(tt,"%s", typesName[c->a[ii].symType]);
     }
-    formatFullCompletions(tt, indent+FULL_COMPLETION_INTEND_CHARS+2, cindent);
+    formatFullCompletions(tt, indent+FULL_COMPLETION_INDENT_CHARS+2, cindent);
     for(i=0; tt[i]; i++) {
         sprintf(ppc,"%c",tt[i]);
         ppc += strlen(ppc);
         if (tt[i] == '\n') {
-            sprintf(ppc,"%-*s ",indent+FULL_COMPLETION_INTEND_CHARS, " ");
+            sprintf(ppc,"%-*s ",indent+FULL_COMPLETION_INDENT_CHARS, " ");
             ppc += strlen(ppc);
         }
     }
@@ -220,7 +216,7 @@ static void sprintFullJeditCompletionInfo(S_completions* c, int ii, int *nindent
     int size,ll,i,tdexpFlag,cindent;
     char *pname,*cname;
     static char vlevelBuff[TMP_STRING_SIZE];
-    size = COMPLETION_STRING_SIZE; 
+    size = COMPLETION_STRING_SIZE;
     ll = 0;
     sprintf(vlevelBuff," ");
     if (vclass != NULL) *vclass = vlevelBuff;
@@ -229,8 +225,8 @@ static void sprintFullJeditCompletionInfo(S_completions* c, int ii, int *nindent
         if (LANGUAGE(LAN_JAVA)) {
             cname = getCompletionClassFieldString(&c->a[ii]);
             if (c->a[ii].virtLevel>NEST_VIRT_COMPL_OFFSET) {
-                sprintf(vlevelBuff,"  : (%d.%d) %s ", 
-                        c->a[ii].virtLevel/NEST_VIRT_COMPL_OFFSET, 
+                sprintf(vlevelBuff,"  : (%d.%d) %s ",
+                        c->a[ii].virtLevel/NEST_VIRT_COMPL_OFFSET,
                         c->a[ii].virtLevel%NEST_VIRT_COMPL_OFFSET,
                         cname);
             } else if (c->a[ii].virtLevel>0) {
@@ -250,8 +246,8 @@ static void sprintFullJeditCompletionInfo(S_completions* c, int ii, int *nindent
         }
         typeSPrint(ppcTmpBuff+ll, &size, c->a[ii].t->u.type, pname,' ', 0, tdexpFlag,SHORT_NAME, nindent);
         *nindent += ll;
-        if (LANGUAGE(LAN_JAVA) 
-            && (c->a[ii].t->b.storage == StorageMethod 
+        if (LANGUAGE(LAN_JAVA)
+            && (c->a[ii].t->b.storage == StorageMethod
                 || c->a[ii].t->b.storage == StorageConstructor)) {
             throwsSprintf(ppcTmpBuff+ll+size, COMPLETION_STRING_SIZE-ll-size, c->a[ii].t->u.type->u.m.exceptions);
         }
@@ -260,7 +256,7 @@ static void sprintFullJeditCompletionInfo(S_completions* c, int ii, int *nindent
                       c->a[ii].margn, c->a[ii].margs, nindent);
     } else if (LANGUAGE(LAN_JAVA) && c->a[ii].symType==TypeStruct ) {
         if (c->a[ii].t!=NULL) {
-            ll += printJavaModifiers(ppcTmpBuff+ll, &size, c->a[ii].t->b.accessFlags);          
+            ll += printJavaModifiers(ppcTmpBuff+ll, &size, c->a[ii].t->b.accessFlags);
             if (c->a[ii].t->b.accessFlags & ACC_INTERFACE) {
                 sprintf(ppcTmpBuff+ll,"interface ");
             } else {
@@ -354,7 +350,7 @@ void printCompletionsBeginning(S_olCompletion *olc, int noFocus) {
     LIST_LEN(max, S_olCompletion, olc);
     if (s_opt.xref2) {
         if (s_opt.editor == ED_JEDIT && ! s_opt.jeditOldCompletions) {
-            ppcGenTwoNumericAndRecordBegin(PPC_FULL_MULTIPLE_COMPLETIONS, 
+            ppcGenTwoNumericAndRecordBegin(PPC_FULL_MULTIPLE_COMPLETIONS,
                                            PPCA_NUMBER, max,
                                            PPCA_NO_FOCUS, noFocus);
         } else {
@@ -492,7 +488,7 @@ void printCompletions(S_completions* c) {
     fflush(ccOut);
     return;
  finiWithoutMenu:
-    s_olcxCurrentUser->completionsStack.top = s_olcxCurrentUser->completionsStack.top->previous;            
+    s_olcxCurrentUser->completionsStack.top = s_olcxCurrentUser->completionsStack.top->previous;
     fflush(ccOut);
 }
 
@@ -605,9 +601,9 @@ static int completionOrderCmp(S_cline *c1, S_cline *c2) {
     }
 }
 
-static int realyInsert( S_cline *a, 
-                        int *aip, 
-                        char *s, 
+static int reallyInsert( S_cline *a,
+                        int *aip,
+                        char *s,
                         S_cline *t,
                         int orderFlag
                         ) {
@@ -634,7 +630,7 @@ static int realyInsert( S_cline *a,
     } else {
         // linear search
         for(l=0; l<ai; l++) {
-            if (isTheSameSymbol(t, &a[l])) return(0); 
+            if (isTheSameSymbol(t, &a[l])) return(0);
         }
     }
     if (orderFlag) {
@@ -683,7 +679,7 @@ int stringContainsCaseInsensitive(char *s1, char *s2) {
     return(0);
 }
 
-static void completionInsertName(char *name, S_cline *compLine, int orderFlag, 
+static void completionInsertName(char *name, S_cline *compLine, int orderFlag,
                                  S_completions *ci) {
     int len,l;
     //&compLine->s  = name;
@@ -695,12 +691,12 @@ static void completionInsertName(char *name, S_cline *compLine, int orderFlag,
         ci->a[ci->ai].s = name/*+len*/;
         ci->ai++;
         ci->maxLen = strlen(name/*+len*/);
-        ci->fullMatchFlag = ((len==ci->maxLen) 
+        ci->fullMatchFlag = ((len==ci->maxLen)
                              || (len==ci->maxLen-1 && name[len]=='(')
                              || (len==ci->maxLen-2 && name[len]=='('));
     } else {
         /*      InternalCheck(ci->ai < MAX_COMPLETIONS-1);*/
-        if (realyInsert(ci->a, &ci->ai, name/*+len*/, compLine, orderFlag)) {
+        if (reallyInsert(ci->a, &ci->ai, name/*+len*/, compLine, orderFlag)) {
             ci->fullMatchFlag = 0;
             l = strlen(name/*+len*/);
             if (l > ci->maxLen) ci->maxLen = l;
@@ -709,7 +705,7 @@ static void completionInsertName(char *name, S_cline *compLine, int orderFlag,
     }
 }
 
-void completeName(char *name, S_cline *compLine, int orderFlag, 
+void completeName(char *name, S_cline *compLine, int orderFlag,
                   S_completions *ci) {
     int len,l;
     if (name == NULL) return;
@@ -717,7 +713,7 @@ void completeName(char *name, S_cline *compLine, int orderFlag,
     completionInsertName(name, compLine, orderFlag, ci);
 }
 
-void searchName(char *name, S_cline *compLine, int orderFlag, 
+void searchName(char *name, S_cline *compLine, int orderFlag,
                 S_completions *ci) {
     int len,l;
     if (name == NULL) return;
@@ -742,7 +738,7 @@ void searchName(char *name, S_cline *compLine, int orderFlag,
         ci->maxLen = strlen(name);
     } else {
         /*      InternalCheck(ci->ai < MAX_COMPLETIONS-1);*/
-        if (realyInsert(ci->a, &ci->ai, name, compLine, 1)) {
+        if (reallyInsert(ci->a, &ci->ai, name, compLine, 1)) {
             ci->fullMatchFlag = 0;
             l = strlen(name);
             if (l > ci->maxLen) ci->maxLen = l;
@@ -950,7 +946,7 @@ static void completeRecordsNames(
             vlevel = rfs.sti + vlevelOffset;
             if (completionType == TypeInheritedFullMethod) {
                 // TODO customizable completion level
-                if (vlevel > 1 
+                if (vlevel > 1
                     && vlevel <= s_opt.completionOverloadWizardDeep+1
                     &&  (r->b.accessFlags & ACC_PRIVATE)==0
                     &&  (r->b.accessFlags & ACC_STATIC)==0) {
@@ -984,13 +980,13 @@ void completeRecNames(S_completions *c) {
     if (str->m == TypeStruct || str->m == TypeUnion) {
         s = str->u.t;
         assert(s);
-        completeRecordsNames(c, s, ACC_DEFAULT,CLASS_TO_ANY, 
+        completeRecordsNames(c, s, ACC_DEFAULT,CLASS_TO_ANY,
                              StorageDefault,TypeDefault,0);
     }
     s_structRecordCompletionType = &s_errorModifier;
 }
 
-static void completeFromSymTab( S_completions*c, 
+static void completeFromSymTab( S_completions*c,
                                 unsigned storage
                                 ){
     S_completionSymFunInfo  ii;
@@ -1109,7 +1105,7 @@ static char *spComplFindNextRecord(S_exprTokenType *tok) {
         assert(r);
         cname = r->name;
         CONST_CONSTRUCT_NAME(StorageDefault,r->b.storage,cname);
-        if (    cname!=NULL && 
+        if (    cname!=NULL &&
                 javaLinkable(ACC_ALL,r->b.accessFlags)) {
             assert(rfs.currClass && rfs.currClass->u.s);
             assert(r->b.symType == TypeDefault);
@@ -1174,7 +1170,7 @@ void completeForSpecial2(S_completions* c) {
 
 void completeUpFunProfile(S_completions* c) {
     S_symbol *dd;
-    if (s_upLevelFunctionCompletionType!=NULL 
+    if (s_upLevelFunctionCompletionType!=NULL
         && c->idToProcess[0] == 0
         && c->ai==0
         ) {
@@ -1219,9 +1215,9 @@ static void completeJavaConstructors(S_symbol *s, void *c) {
 }
 
 static void javaPackageNameCompletion(
-                                      char            *fname, 
-                                      char            *path, 
-                                      char            *pack, 
+                                      char            *fname,
+                                      char            *path,
+                                      char            *pack,
                                       S_completions   *c,
                                       void            *idp,
                                       int             *pstorage
@@ -1244,9 +1240,9 @@ static void javaPackageNameCompletion(
 }
 
 static void javaTypeNameCompletion(
-                                   char            *fname, 
-                                   char            *path, 
-                                   char            *pack, 
+                                   char            *fname,
+                                   char            *path,
+                                   char            *pack,
                                    S_completions   *c,
                                    void            *idp,
                                    int             *pstorage
@@ -1305,8 +1301,8 @@ static void javaCompleteNestedClasses(  S_completions *c,
     S_symbol        *str;
     str = cclas;
     // TODO count inheritance and virtual levels (at least for nested classes)
-    for(str=cclas; 
-        str!=NULL && str->u.s->super!=NULL; 
+    for(str=cclas;
+        str!=NULL && str->u.s->super!=NULL;
         str=str->u.s->super->d) {
         assert(str && str->u.s);
         for(i=0; i<str->u.s->nnested; i++) {
@@ -1367,7 +1363,7 @@ static void javaCompleteComposedName(
     /* complete packages and classes from file system */
     if (nameType==TypePackage){
         javaCreateComposedName(NULL,s_javaStat->lastParsedName,'/',NULL,packName,MAX_FILE_NAME_SIZE);
-        javaMapDirectoryFiles1(packName, javaTypeNameCompletion, 
+        javaMapDirectoryFiles1(packName, javaTypeNameCompletion,
                                c,s_javaStat->lastParsedName, &storage);
     }
     /* complete inner classes */
@@ -1400,7 +1396,7 @@ void javaHintCompleteMethodParameters(S_completions *c) {
     accCheck = getAccCheckOption();
     // partiall actual parameters
 
-    *actArg = 0; actArgi = 0; 
+    *actArg = 0; actArgi = 0;
     for(aaa=s_cp.erfsForParamsComplet->params; aaa!=NULL; aaa=aaa->next) {
         actArgi += javaTypeToString(aaa->d,actArg+actArgi,MAX_PROFILE_SIZE-actArgi);
     }
@@ -1415,7 +1411,7 @@ void javaHintCompleteMethodParameters(S_completions *c) {
             FILL_cline(&compLine, r->name, r, TypeDefault,
                        vlevel,0,NULL,vFunCl);
             processName(r->name, &compLine, 0, (void*) c);
-        }       
+        }
         rr = findStrRecordSym(rfs, mname, &r, CLASS_TO_METHOD, accCheck, visibCheck);
     } while (rr == RETURN_OK);
     if (c->ai != 0) {
@@ -1578,7 +1574,7 @@ static void comleteRecursivelyFqtNamesFromDirectory(MAP_FUN_PROFILE) {
     sprintf(fn,"%s%c%s",dir,SLASH,fname);
     stt = statb(fn, &st);
     if (stt==0  && (st.st_mode & S_IFMT)==S_IFDIR) {
-        mapDirectoryFiles(fn, comleteRecursivelyFqtNamesFromDirectory, DO_NOT_ALLOW_EDITOR_FILES, 
+        mapDirectoryFiles(fn, comleteRecursivelyFqtNamesFromDirectory, DO_NOT_ALLOW_EDITOR_FILES,
                           fn, path, NULL, a4, NULL);
     } else if (stt==0) {
         // O.K. cut the path
@@ -1600,7 +1596,7 @@ static void javaFqtCompletions(S_completions *c, int completionType) {
     if (s_opt.fqtNameToCompletions == 0) return;
     // fqt from .jars
     for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && s_zipArchivTab[i].fn[0]!=0; i++) {
-        fsRecMapOnFiles(s_zipArchivTab[i].dir, s_zipArchivTab[i].fn, 
+        fsRecMapOnFiles(s_zipArchivTab[i].dir, s_zipArchivTab[i].fn,
                         "", completeFqtClassFileFromZipArchiv, &cfmi);
     }
     if (s_opt.fqtNameToCompletions <= 1) return;
@@ -1618,7 +1614,7 @@ static void javaFqtCompletions(S_completions *c, int completionType) {
     // fqt from sourcepath
     JavaMapOnPaths(s_javaSourcePaths, {
             mapDirectoryFiles(currentPath, comleteRecursivelyFqtNamesFromDirectory,DO_NOT_ALLOW_EDITOR_FILES,
-                              currentPath,currentPath,NULL,&cfmi,NULL);     
+                              currentPath,currentPath,NULL,&cfmi,NULL);
         });
 }
 
@@ -1770,7 +1766,7 @@ void javaCompleteStrRecordQualifiedSuper(S_completions*c) {
     S_reference         *rr, *lastUselessRef;
     int                 ttype;
     lastUselessRef = NULL;
-    ttype = javaClassifyAmbiguousName(s_javaStat->lastParsedName, NULL,&str,&expr,&rr, 
+    ttype = javaClassifyAmbiguousName(s_javaStat->lastParsedName, NULL,&str,&expr,&rr,
                                       &lastUselessRef, USELESS_FQT_REFS_ALLOWED,CLASS_TO_TYPE,UsageUsed);
     if (ttype != TypeStruct) return;
     javaLoadClassSymbolsFromFile(str);
@@ -1785,7 +1781,7 @@ void javaCompleteUpMethodSingleName(S_completions*c) {
     if (s_javaStat!=NULL) {
         completeRecordsNames(c, s_javaStat->thisClass, ACC_ALL,CLASS_TO_ANY,
                              StorageDefault,TypeDefault,0);
-    }   
+    }
 }
 
 void javaCompleteFullInheritedMethodHeader(S_completions*c) {
@@ -1831,4 +1827,3 @@ void completeYaccLexem(S_completions*c) {
     FILL_completionSymInfo(&ii, c, TypeYaccSymbol);
     refTabMap2(&s_cxrefTab, completeFromXrefFun, (void*) &ii);
 }
-

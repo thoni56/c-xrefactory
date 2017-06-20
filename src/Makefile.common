@@ -4,7 +4,7 @@
 #
 
 OBJS=cgram.o main.o globals.o misc.o semact.o commons.o generate.o \
-	 enumTxt.o complet.o cxref.o cxfile.o lex.o yylex.o cexp.o options.o \
+	 enumTxt.o complete.o cxref.o cxfile.o lex.o yylex.o cexp.o options.o \
 	 caching.o javagram.o jsemact.o cfread.o cct.o init.o \
 	 editor.o refactory.o \
 	 yaccgram.o html.o extract.o classh.o jslsemact.o \
@@ -64,20 +64,6 @@ ifeq ($(YACCING),yes)
 	mv y.tab.h yaccgram.h
 	diff yaccgram.h cgram.h
 endif
-
-# Don't know what javasl is, no support anyway
-# javaslgram.c: javaslgram.y cgram.c
-#	$(YACC) -v -d javaslgram.y
-#	mv y.tab.c javaslgram.c
-#	mv y.tab.h javaslgram.h
-#	diff javaslgram.h cgram.h
-
-# No support for C++
-# cccgram.c: cccgram.y cgram.c
-#	$(YACC) -v -d cccgram.y
-#	mv y.tab.c cccgram.c
-#	mv y.tab.h cccgram.h
-#	diff cccgram.h cgram.h
 
 cexp.c: cexp.y
 ifeq ($(YACCING),yes)

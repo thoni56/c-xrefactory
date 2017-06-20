@@ -1,17 +1,12 @@
-/*
-  $Revision: 1.9 $
-  $Date: 2002/09/09 19:38:35 $
-*/
-
 #include "stdinc.h"
 #include "head.h"
-#include "proto.h"      /*SBD*/
+#include "proto.h"
 #include "unigram.h"
 
 S_jslStat *s_jsl;
 
 
-static void jslFillTypeSymbolItem( S_symbol *sd, S_jslSymbolList *ss , 
+static void jslFillTypeSymbolItem( S_symbol *sd, S_jslSymbolList *ss ,
                                    char *name) {
     FILL_symbolBits(&sd->b,0,0, 0,0, 0, TypeStruct, StorageNone,0);
     FILL_symbol(sd,name,name,s_noPos,sd->b,type,NULL,NULL);
@@ -81,7 +76,7 @@ void jslRemoveNestedClass(void  *ddv) {
     assert(check);
 }
 
-S_symbol *jslTypeSymbolDefinition(char *ttt2, S_idIdentList *packid, 
+S_symbol *jslTypeSymbolDefinition(char *ttt2, S_idIdentList *packid,
                                   int add, int order, int isSingleImportedFlag) {
     char                fqtName[MAX_FILE_NAME_SIZE];
     S_idIdentList       dd2;
@@ -222,7 +217,7 @@ S_symbol *jslPrependDirectEnclosingInstanceArgument(S_symbol *args) {
     return(args);
 }
 
-S_symbol *jslMethodHeader(unsigned modif, S_symbol *type, 
+S_symbol *jslMethodHeader(unsigned modif, S_symbol *type,
                           S_symbol *decl, int storage, S_symbolList *throws) {
     int newFun,vClass;
     completeDeclarator(type,decl);
@@ -240,7 +235,7 @@ S_symbol *jslMethodHeader(unsigned modif, S_symbol *type,
         addMethodCxReferences(modif, decl, s_jsl->classStat->thisClass);
     }
     if (newFun) {
-        DPRINTF5("[jsl] adding method %s==%s to %s (at %lx)\n", decl->name, 
+        DPRINTF5("[jsl] adding method %s==%s to %s (at %lx)\n", decl->name,
                  decl->linkName, s_jsl->classStat->thisClass->linkName, (unsigned long)decl);
         LIST_APPEND(S_symbol, s_jsl->classStat->thisClass->u.s->records, decl);
     }
@@ -284,7 +279,7 @@ void jslAddAllPackageClassesFromFileTab(S_idIdentList *packid) {
     pnlen = strlen(fqtName);
     for(i=0; i<s_fileTab.size; i++) {
         ff = s_fileTab.tab[i];
-        if (ff!=NULL 
+        if (ff!=NULL
             && ff->name[0]==ZIP_SEPARATOR_CHAR
             && strncmp(ff->name+1, fqtName, pnlen)==0
             && (packid==NULL || ff->name[pnlen+1] == '/')) {
@@ -331,7 +326,7 @@ void jslAddSuperClassOrInterfaceByName(S_symbol *memb,char *super){
     jslAddSuperClassOrInterface( memb, supp);
 }
 
-static void jslAddNestedClass(S_symbol *inner, S_symbol *outer, int memb, 
+static void jslAddNestedClass(S_symbol *inner, S_symbol *outer, int memb,
                               int accessFlags) {
     int i,n;
     assert(outer && outer->b.symType==TypeStruct && outer->u.s);
@@ -441,7 +436,7 @@ void jslAddNestedClassesToJslTypeTab( S_symbol *str, int order) {
         //&fprintf(dumpOut,"checking %s %s %d %d\n", ss->nest[i].cl->name, ss->nest[i].cl->linkName,ss->nest[i].membFlag, jslRecordAccessible(str, ss->nest[i].cl, ss->nest[i].accFlags));
         if (ss->nest[i].membFlag && jslRecordAccessible(str, ss->nest[i].cl, ss->nest[i].accFlags)) {
             FILL_idIdent(&ocid, str->linkName, NULL, s_noPos);
-            FILL_idIdentList(&oclassid, ocid, str->linkName, 
+            FILL_idIdentList(&oclassid, ocid, str->linkName,
                              TypeStruct, NULL);
             //&fprintf(dumpOut,"adding %s %s\n", ss->nest[i].cl->name, ss->nest[i].cl->linkName);
             jslTypeSymbolDefinition(ss->nest[i].cl->name, &oclassid,
@@ -460,7 +455,7 @@ void jslAddSuperNestedClassesToJslTypeTab( S_symbol *cc) {
 }
 
 
-void jslNewClassDefinitionBegin(S_idIdent *name, 
+void jslNewClassDefinitionBegin(S_idIdent *name,
                                 int accFlags,
                                 S_symbol *anonInterf,
                                 int position
@@ -487,14 +482,14 @@ void jslNewClassDefinitionBegin(S_idIdent *name,
             s_jsl->classStat->functionInnerCounter++;
             sprintf(tttn, "%d", s_jsl->classStat->functionInnerCounter);
             sprintf(ttt, "%s", inname->name);
-            FILLF_idIdentList(&mntmp, tttn, NULL, 
-                              s_noPos.file, s_noPos.line, s_noPos.coll, 
-                              tttn, 
+            FILLF_idIdentList(&mntmp, tttn, NULL,
+                              s_noPos.file, s_noPos.line, s_noPos.coll,
+                              tttn,
                               TypeStruct, s_jsl->classStat->className);
             // this is a very special reason why to do TYPE_ADD_YES here,
             // because method nested class will not be added as class nested
             // at the end of this function
-            cc = jslTypeSymbolDefinition(ttt, &mntmp, 
+            cc = jslTypeSymbolDefinition(ttt, &mntmp,
                                          TYPE_ADD_YES, ORDER_PREPEND, 0);
         } else {
             /* anonymous class implementing an interface */
@@ -573,7 +568,7 @@ void jslNewClassDefinitionBegin(S_idIdent *name,
                       cc->name,TypeStruct,
                       s_jsl->classStat->className);
     XX_ALLOC(nss, S_jslClassStat);
-    FILL_jslClassStat(nss, ill, cc, s_jsl->classStat->thisPackage, 
+    FILL_jslClassStat(nss, ill, cc, s_jsl->classStat->thisPackage,
                       0, 0, s_jsl->classStat);
     s_jsl->classStat = nss;
     javaCreateClassFileItem(cc);
@@ -623,11 +618,6 @@ void jslNewAnonClassDefinitionBegin(S_idIdent *interfName) {
     FILL_idIdentList(&ll, *interfName, interfName->name, TypeDefault, NULL);
     jslClassifyAmbiguousTypeName(&ll, &str);
     interf = jslTypeNameDefinition(&ll);
-    jslNewClassDefinitionBegin(&s_javaAnonymousClassName, ACC_DEFAULT, 
+    jslNewClassDefinitionBegin(&s_javaAnonymousClassName, ACC_DEFAULT,
                                interf, CPOS_ST);
 }
-
-
-
-
-

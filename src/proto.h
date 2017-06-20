@@ -1,5 +1,5 @@
-#ifndef _PROTO__H
-#define _PROTO__H
+#ifndef PROTO_H
+#define PROTO_H
 
 #include "stdinc.h"
 #include "strTdef.h"
@@ -3031,11 +3031,6 @@ extern int olcxMemoryi;
 #else
 extern int olcxMemoryAllocatedBytes;
 #endif
-extern char s_base[MAX_FILE_NAME_SIZE];
-extern char s_file[MAX_FILE_NAME_SIZE];
-extern char s_path[MAX_FILE_NAME_SIZE];
-extern char s_name[MAX_FILE_NAME_SIZE];
-extern char ppcTmpBuff[MAX_PPC_RECORD_SIZE];
 
 
 extern jmp_buf cxmemOverflow;
