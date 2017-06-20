@@ -267,16 +267,6 @@
 	(XXX)->isFromCxfile = _ARG_PROJECT_8_10 ARGS;\
 	(XXX)->sourceFile = _ARG_PROJECT_9_10 ARGS;\
 }
-#define FILL___jmp_buf_tag(XXX,FARG0,FARG1) {\
-	(XXX)->__mask_was_saved = FARG0;\
-	(XXX)->__saved_mask = FARG1;\
-}
-#define FILLF___jmp_buf_tag(XXX,FARG0) {\
-	(XXX)->__mask_was_saved = FARG0;\
-}
-#define _FILLF___jmp_buf_tag(XXX,ARGS) {\
-	(XXX)->__mask_was_saved = _ARG_PROJECT_0_1 ARGS;\
-}
 #define FILL_timeval(XXX,FARG0,FARG1) {\
 	(XXX)->tv_sec = FARG0;\
 	(XXX)->tv_usec = FARG1;\
@@ -289,11 +279,29 @@
 	(XXX)->tv_sec = _ARG_PROJECT_0_2 ARGS;\
 	(XXX)->tv_usec = _ARG_PROJECT_1_2 ARGS;\
 }
-#define FILL__IO_jump_t(XXX) {\
+#define FILL__glue(XXX,FARG0,FARG1,FARG2) {\
+	(XXX)->_next = FARG0;\
+	(XXX)->_niobs = FARG1;\
+	(XXX)->_iobs = FARG2;\
 }
-#define FILLF__IO_jump_t(XXX) {\
+#define FILLF__glue(XXX,FARG0,FARG1,FARG2) {\
+	(XXX)->_next = FARG0;\
+	(XXX)->_niobs = FARG1;\
+	(XXX)->_iobs = FARG2;\
 }
-#define _FILLF__IO_jump_t(XXX,ARGS) {\
+#define _FILLF__glue(XXX,ARGS) {\
+	(XXX)->_next = _ARG_PROJECT_0_3 ARGS;\
+	(XXX)->_niobs = _ARG_PROJECT_1_3 ARGS;\
+	(XXX)->_iobs = _ARG_PROJECT_2_3 ARGS;\
+}
+#define FILL__rand48(XXX,FARG0) {\
+	(XXX)->_add = FARG0;\
+}
+#define FILLF__rand48(XXX,FARG0) {\
+	(XXX)->_add = FARG0;\
+}
+#define _FILLF__rand48(XXX,ARGS) {\
+	(XXX)->_add = _ARG_PROJECT_0_1 ARGS;\
 }
 #define FILL_editorUndo(XXX,FARG0,FARG1,FARG2,FARG3,FARG4) {\
 	(XXX)->buffer = FARG0;\
@@ -528,12 +536,6 @@
 	(XXX)->membFlag = _ARG_PROJECT_1_3 ARGS;\
 	(XXX)->accFlags = _ARG_PROJECT_2_3 ARGS;\
 }
-#define FILL___dirstream(XXX) {\
-}
-#define FILLF___dirstream(XXX) {\
-}
-#define _FILLF___dirstream(XXX,ARGS) {\
-}
 #define FILL_tpCheckMoveClassData(XXX,FARG0,FARG1,FARG2,FARG3,FARG4) {\
 	(XXX)->mm = FARG0;\
 	(XXX)->spack = FARG1;\
@@ -689,24 +691,6 @@
 	(XXX)->u = _ARG_PROJECT_0_2 ARGS;\
 	(XXX)->p = _ARG_PROJECT_1_2 ARGS;\
 }
-#define FILL_sigevent(XXX) {\
-}
-#define FILLF_sigevent(XXX) {\
-}
-#define _FILLF_sigevent(XXX,ARGS) {\
-}
-#define FILL___gconv_info(XXX,FARG0,FARG1) {\
-	(XXX)->__nsteps = FARG0;\
-	(XXX)->__steps = FARG1;\
-}
-#define FILLF___gconv_info(XXX,FARG0,FARG1) {\
-	(XXX)->__nsteps = FARG0;\
-	(XXX)->__steps = FARG1;\
-}
-#define _FILLF___gconv_info(XXX,ARGS) {\
-	(XXX)->__nsteps = _ARG_PROJECT_0_2 ARGS;\
-	(XXX)->__steps = _ARG_PROJECT_1_2 ARGS;\
-}
 #define FILL_macroArgTabElem(XXX,FARG0,FARG1,FARG2) {\
 	(XXX)->name = FARG0;\
 	(XXX)->linkName = FARG1;\
@@ -809,6 +793,82 @@
 	(XXX)->node = _ARG_PROJECT_0_2 ARGS;\
 	(XXX)->sub = _ARG_PROJECT_1_2 ARGS;\
 }
+#define FILL__reent(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12,FARG13,FARG14,FARG15,FARG16,FARG17,FARG18,FARG19,FARG20) {\
+	(XXX)->_errno = FARG0;\
+	(XXX)->_stdin = FARG1;\
+	(XXX)->_stdout = FARG2;\
+	(XXX)->_stderr = FARG3;\
+	(XXX)->_inc = FARG4;\
+	(XXX)->_unspecified_locale_info = FARG5;\
+	(XXX)->_locale = FARG6;\
+	(XXX)->__sdidinit = FARG7;\
+	(XXX)->__cleanup = FARG8;\
+	(XXX)->_result = FARG9;\
+	(XXX)->_result_k = FARG10;\
+	(XXX)->_p5s = FARG11;\
+	(XXX)->_freelist = FARG12;\
+	(XXX)->_cvtlen = FARG13;\
+	(XXX)->_cvtbuf = FARG14;\
+	(XXX)->_new.FARG15 = FARG16;\
+	(XXX)->_atexit = FARG17;\
+	(XXX)->_atexit0 = FARG18;\
+	(XXX)->_sig_func = FARG19;\
+	(XXX)->__sglue = FARG20;\
+}
+#define FILLF__reent(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12,FARG13,FARG14,FARG15,FARG16,FARG17,FARG18,FARG19,FARG20,FARG21,FARG22,FARG23,FARG24,FARG25) {\
+	(XXX)->_errno = FARG0;\
+	(XXX)->_stdin = FARG1;\
+	(XXX)->_stdout = FARG2;\
+	(XXX)->_stderr = FARG3;\
+	(XXX)->_inc = FARG4;\
+	(XXX)->_unspecified_locale_info = FARG5;\
+	(XXX)->_locale = FARG6;\
+	(XXX)->__sdidinit = FARG7;\
+	(XXX)->__cleanup = FARG8;\
+	(XXX)->_result = FARG9;\
+	(XXX)->_result_k = FARG10;\
+	(XXX)->_p5s = FARG11;\
+	(XXX)->_freelist = FARG12;\
+	(XXX)->_cvtlen = FARG13;\
+	(XXX)->_cvtbuf = FARG14;\
+	_FILLUREC__##FARG15((&(XXX)->_new), FARG16);\
+	(XXX)->_atexit = FARG17;\
+	(XXX)->_atexit0._next = FARG18;\
+	(XXX)->_atexit0._ind = FARG19;\
+	(XXX)->_atexit0._on_exit_args._fntypes = FARG20;\
+	(XXX)->_atexit0._on_exit_args._is_cxa = FARG21;\
+	(XXX)->_sig_func = FARG22;\
+	(XXX)->__sglue._next = FARG23;\
+	(XXX)->__sglue._niobs = FARG24;\
+	(XXX)->__sglue._iobs = FARG25;\
+}
+#define _FILLF__reent(XXX,ARGS) {\
+	(XXX)->_errno = _ARG_PROJECT_0_26 ARGS;\
+	(XXX)->_stdin = _ARG_PROJECT_1_26 ARGS;\
+	(XXX)->_stdout = _ARG_PROJECT_2_26 ARGS;\
+	(XXX)->_stderr = _ARG_PROJECT_3_26 ARGS;\
+	(XXX)->_inc = _ARG_PROJECT_4_26 ARGS;\
+	(XXX)->_unspecified_locale_info = _ARG_PROJECT_5_26 ARGS;\
+	(XXX)->_locale = _ARG_PROJECT_6_26 ARGS;\
+	(XXX)->__sdidinit = _ARG_PROJECT_7_26 ARGS;\
+	(XXX)->__cleanup = _ARG_PROJECT_8_26 ARGS;\
+	(XXX)->_result = _ARG_PROJECT_9_26 ARGS;\
+	(XXX)->_result_k = _ARG_PROJECT_10_26 ARGS;\
+	(XXX)->_p5s = _ARG_PROJECT_11_26 ARGS;\
+	(XXX)->_freelist = _ARG_PROJECT_12_26 ARGS;\
+	(XXX)->_cvtlen = _ARG_PROJECT_13_26 ARGS;\
+	(XXX)->_cvtbuf = _ARG_PROJECT_14_26 ARGS;\
+	_FILLUREC__##_ARG_PROJECT_15_26 ARGS((&(XXX)->_new), _ARG_PROJECT_16_26 ARGS);\
+	(XXX)->_atexit = _ARG_PROJECT_17_26 ARGS;\
+	(XXX)->_atexit0._next = _ARG_PROJECT_18_26 ARGS;\
+	(XXX)->_atexit0._ind = _ARG_PROJECT_19_26 ARGS;\
+	(XXX)->_atexit0._on_exit_args._fntypes = _ARG_PROJECT_20_26 ARGS;\
+	(XXX)->_atexit0._on_exit_args._is_cxa = _ARG_PROJECT_21_26 ARGS;\
+	(XXX)->_sig_func = _ARG_PROJECT_22_26 ARGS;\
+	(XXX)->__sglue._next = _ARG_PROJECT_23_26 ARGS;\
+	(XXX)->__sglue._niobs = _ARG_PROJECT_24_26 ARGS;\
+	(XXX)->__sglue._iobs = _ARG_PROJECT_25_26 ARGS;\
+}
 #define FILL_editorRegionList(XXX,FARG0,FARG1) {\
 	(XXX)->r = FARG0;\
 	(XXX)->next = FARG1;\
@@ -835,38 +895,38 @@
 	(XXX)->s = _ARG_PROJECT_0_2 ARGS;\
 	(XXX)->p = _ARG_PROJECT_1_2 ARGS;\
 }
-#define FILL___pthread_attr_s(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8) {\
-	(XXX)->__detachstate = FARG0;\
-	(XXX)->__schedpolicy = FARG1;\
-	(XXX)->__schedparam = FARG2;\
-	(XXX)->__inheritsched = FARG3;\
-	(XXX)->__scope = FARG4;\
-	(XXX)->__guardsize = FARG5;\
-	(XXX)->__stackaddr_set = FARG6;\
-	(XXX)->__stackaddr = FARG7;\
-	(XXX)->__stacksize = FARG8;\
+#define FILL___tm(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8) {\
+	(XXX)->__tm_sec = FARG0;\
+	(XXX)->__tm_min = FARG1;\
+	(XXX)->__tm_hour = FARG2;\
+	(XXX)->__tm_mday = FARG3;\
+	(XXX)->__tm_mon = FARG4;\
+	(XXX)->__tm_year = FARG5;\
+	(XXX)->__tm_wday = FARG6;\
+	(XXX)->__tm_yday = FARG7;\
+	(XXX)->__tm_isdst = FARG8;\
 }
-#define FILLF___pthread_attr_s(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8) {\
-	(XXX)->__detachstate = FARG0;\
-	(XXX)->__schedpolicy = FARG1;\
-	(XXX)->__schedparam.__sched_priority = FARG2;\
-	(XXX)->__inheritsched = FARG3;\
-	(XXX)->__scope = FARG4;\
-	(XXX)->__guardsize = FARG5;\
-	(XXX)->__stackaddr_set = FARG6;\
-	(XXX)->__stackaddr = FARG7;\
-	(XXX)->__stacksize = FARG8;\
+#define FILLF___tm(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8) {\
+	(XXX)->__tm_sec = FARG0;\
+	(XXX)->__tm_min = FARG1;\
+	(XXX)->__tm_hour = FARG2;\
+	(XXX)->__tm_mday = FARG3;\
+	(XXX)->__tm_mon = FARG4;\
+	(XXX)->__tm_year = FARG5;\
+	(XXX)->__tm_wday = FARG6;\
+	(XXX)->__tm_yday = FARG7;\
+	(XXX)->__tm_isdst = FARG8;\
 }
-#define _FILLF___pthread_attr_s(XXX,ARGS) {\
-	(XXX)->__detachstate = _ARG_PROJECT_0_9 ARGS;\
-	(XXX)->__schedpolicy = _ARG_PROJECT_1_9 ARGS;\
-	(XXX)->__schedparam.__sched_priority = _ARG_PROJECT_2_9 ARGS;\
-	(XXX)->__inheritsched = _ARG_PROJECT_3_9 ARGS;\
-	(XXX)->__scope = _ARG_PROJECT_4_9 ARGS;\
-	(XXX)->__guardsize = _ARG_PROJECT_5_9 ARGS;\
-	(XXX)->__stackaddr_set = _ARG_PROJECT_6_9 ARGS;\
-	(XXX)->__stackaddr = _ARG_PROJECT_7_9 ARGS;\
-	(XXX)->__stacksize = _ARG_PROJECT_8_9 ARGS;\
+#define _FILLF___tm(XXX,ARGS) {\
+	(XXX)->__tm_sec = _ARG_PROJECT_0_9 ARGS;\
+	(XXX)->__tm_min = _ARG_PROJECT_1_9 ARGS;\
+	(XXX)->__tm_hour = _ARG_PROJECT_2_9 ARGS;\
+	(XXX)->__tm_mday = _ARG_PROJECT_3_9 ARGS;\
+	(XXX)->__tm_mon = _ARG_PROJECT_4_9 ARGS;\
+	(XXX)->__tm_year = _ARG_PROJECT_5_9 ARGS;\
+	(XXX)->__tm_wday = _ARG_PROJECT_6_9 ARGS;\
+	(XXX)->__tm_yday = _ARG_PROJECT_7_9 ARGS;\
+	(XXX)->__tm_isdst = _ARG_PROJECT_8_9 ARGS;\
 }
 #define FILL_lexInput(XXX,FARG0,FARG1,FARG2,FARG3,FARG4) {\
 	(XXX)->cc = FARG0;\
@@ -889,46 +949,11 @@
 	(XXX)->macname = _ARG_PROJECT_3_5 ARGS;\
 	(XXX)->margExpFlag = _ARG_PROJECT_4_5 ARGS;\
 }
-#define FILL___gconv_step_data(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7) {\
-	(XXX)->__outbuf = FARG0;\
-	(XXX)->__outbufend = FARG1;\
-	(XXX)->__flags = FARG2;\
-	(XXX)->__invocation_counter = FARG3;\
-	(XXX)->__internal_use = FARG4;\
-	(XXX)->__statep = FARG5;\
-	(XXX)->__state = FARG6;\
-	(XXX)->__trans = FARG7;\
+#define FILL_internal_state(XXX) {\
 }
-#define FILLF___gconv_step_data(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9) {\
-	(XXX)->__outbuf = FARG0;\
-	(XXX)->__outbufend = FARG1;\
-	(XXX)->__flags = FARG2;\
-	(XXX)->__invocation_counter = FARG3;\
-	(XXX)->__internal_use = FARG4;\
-	(XXX)->__statep = FARG5;\
-	(XXX)->__state.__count = FARG6;\
-	_FILLUREC__##FARG7((&(XXX)->__state.__value), FARG8);\
-	(XXX)->__trans = FARG9;\
-}
-#define _FILLF___gconv_step_data(XXX,ARGS) {\
-	(XXX)->__outbuf = _ARG_PROJECT_0_10 ARGS;\
-	(XXX)->__outbufend = _ARG_PROJECT_1_10 ARGS;\
-	(XXX)->__flags = _ARG_PROJECT_2_10 ARGS;\
-	(XXX)->__invocation_counter = _ARG_PROJECT_3_10 ARGS;\
-	(XXX)->__internal_use = _ARG_PROJECT_4_10 ARGS;\
-	(XXX)->__statep = _ARG_PROJECT_5_10 ARGS;\
-	(XXX)->__state.__count = _ARG_PROJECT_6_10 ARGS;\
-	_FILLUREC__##_ARG_PROJECT_7_10 ARGS((&(XXX)->__state.__value), _ARG_PROJECT_8_10 ARGS);\
-	(XXX)->__trans = _ARG_PROJECT_9_10 ARGS;\
-}
-#define FILL_internal_state(XXX,FARG0) {\
-	(XXX)->dummy = FARG0;\
-}
-#define FILLF_internal_state(XXX,FARG0) {\
-	(XXX)->dummy = FARG0;\
+#define FILLF_internal_state(XXX) {\
 }
 #define _FILLF_internal_state(XXX,ARGS) {\
-	(XXX)->dummy = _ARG_PROJECT_0_1 ARGS;\
 }
 #define FILL_referencesChangeData(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5) {\
 	(XXX)->linkName = FARG0;\
@@ -953,12 +978,6 @@
 	(XXX)->category = _ARG_PROJECT_3_6 ARGS;\
 	(XXX)->cxMemBegin = _ARG_PROJECT_4_6 ARGS;\
 	(XXX)->cxMemEnd = _ARG_PROJECT_5_6 ARGS;\
-}
-#define FILL__pthread_descr_struct(XXX) {\
-}
-#define FILLF__pthread_descr_struct(XXX) {\
-}
-#define _FILLF__pthread_descr_struct(XXX,ARGS) {\
 }
 #define FILL_htmlRefList(XXX,FARG0,FARG1,FARG2,FARG3) {\
 	(XXX)->s = FARG0;\
@@ -1020,33 +1039,6 @@
 	_FILLUREC_defUnion_##_ARG_PROJECT_13_16 ARGS((&(XXX)->u), _ARG_PROJECT_14_16 ARGS);\
 	(XXX)->next = _ARG_PROJECT_15_16 ARGS;\
 }
-#define FILL_random_data(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6) {\
-	(XXX)->fptr = FARG0;\
-	(XXX)->rptr = FARG1;\
-	(XXX)->state = FARG2;\
-	(XXX)->rand_type = FARG3;\
-	(XXX)->rand_deg = FARG4;\
-	(XXX)->rand_sep = FARG5;\
-	(XXX)->end_ptr = FARG6;\
-}
-#define FILLF_random_data(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6) {\
-	(XXX)->fptr = FARG0;\
-	(XXX)->rptr = FARG1;\
-	(XXX)->state = FARG2;\
-	(XXX)->rand_type = FARG3;\
-	(XXX)->rand_deg = FARG4;\
-	(XXX)->rand_sep = FARG5;\
-	(XXX)->end_ptr = FARG6;\
-}
-#define _FILLF_random_data(XXX,ARGS) {\
-	(XXX)->fptr = _ARG_PROJECT_0_7 ARGS;\
-	(XXX)->rptr = _ARG_PROJECT_1_7 ARGS;\
-	(XXX)->state = _ARG_PROJECT_2_7 ARGS;\
-	(XXX)->rand_type = _ARG_PROJECT_3_7 ARGS;\
-	(XXX)->rand_deg = _ARG_PROJECT_4_7 ARGS;\
-	(XXX)->rand_sep = _ARG_PROJECT_5_7 ARGS;\
-	(XXX)->end_ptr = _ARG_PROJECT_6_7 ARGS;\
-}
 #define FILL_usageBits(XXX,FARG0,FARG1,FARG2) {\
 	(XXX)->base = FARG0;\
 	(XXX)->requiredAccess = FARG1;\
@@ -1102,6 +1094,15 @@
 	(XXX)->d.u = _ARG_PROJECT_6_8 ARGS;\
 	(XXX)->d.p = _ARG_PROJECT_7_8 ARGS;\
 }
+#define FILL___pthread_spinlock_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
+}
+#define FILLF___pthread_spinlock_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
+}
+#define _FILLF___pthread_spinlock_t(XXX,ARGS) {\
+	(XXX)->__dummy = _ARG_PROJECT_0_1 ARGS;\
+}
 #define FILL_bb_int(XXX,FARG0,FARG1,FARG2) {\
 	(XXX)->b = FARG0;\
 	(XXX)->e = FARG1;\
@@ -1149,6 +1150,15 @@
 	(XXX)->res = _ARG_PROJECT_0_2 ARGS;\
 	(XXX)->completionType = _ARG_PROJECT_1_2 ARGS;\
 }
+#define FILL___pthread_mutex_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
+}
+#define FILLF___pthread_mutex_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
+}
+#define _FILLF___pthread_mutex_t(XXX,ARGS) {\
+	(XXX)->__dummy = _ARG_PROJECT_0_1 ARGS;\
+}
 #define FILL_completionSymFunInfo(XXX,FARG0,FARG1) {\
 	(XXX)->res = FARG0;\
 	(XXX)->storage = FARG1;\
@@ -1188,15 +1198,6 @@
 	(XXX)->args = _ARG_PROJECT_0_2 ARGS;\
 	(XXX)->thisFunList = _ARG_PROJECT_1_2 ARGS;\
 }
-#define FILL___sched_param(XXX,FARG0) {\
-	(XXX)->__sched_priority = FARG0;\
-}
-#define FILLF___sched_param(XXX,FARG0) {\
-	(XXX)->__sched_priority = FARG0;\
-}
-#define _FILLF___sched_param(XXX,ARGS) {\
-	(XXX)->__sched_priority = _ARG_PROJECT_0_1 ARGS;\
-}
 #define FILL_stringAddrList(XXX,FARG0,FARG1) {\
 	(XXX)->d = FARG0;\
 	(XXX)->next = FARG1;\
@@ -1208,6 +1209,12 @@
 #define _FILLF_stringAddrList(XXX,ARGS) {\
 	(XXX)->d = _ARG_PROJECT_0_2 ARGS;\
 	(XXX)->next = _ARG_PROJECT_1_2 ARGS;\
+}
+#define FILL__types_fd_set(XXX) {\
+}
+#define FILLF__types_fd_set(XXX) {\
+}
+#define _FILLF__types_fd_set(XXX,ARGS) {\
 }
 #define FILL_editorMarkerList(XXX,FARG0,FARG1,FARG2) {\
 	(XXX)->d = FARG0;\
@@ -1351,6 +1358,18 @@
 	(XXX)->memb = _ARG_PROJECT_6_8 ARGS;\
 	(XXX)->params = _ARG_PROJECT_7_8 ARGS;\
 }
+#define FILL___sbuf(XXX,FARG0,FARG1) {\
+	(XXX)->_base = FARG0;\
+	(XXX)->_size = FARG1;\
+}
+#define FILLF___sbuf(XXX,FARG0,FARG1) {\
+	(XXX)->_base = FARG0;\
+	(XXX)->_size = FARG1;\
+}
+#define _FILLF___sbuf(XXX,ARGS) {\
+	(XXX)->_base = _ARG_PROJECT_0_2 ARGS;\
+	(XXX)->_size = _ARG_PROJECT_1_2 ARGS;\
+}
 #define FILL_olCompletion(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9) {\
 	(XXX)->name = FARG0;\
 	(XXX)->fullName = FARG1;\
@@ -1493,84 +1512,6 @@
 	(XXX)->allocatedIndex = _ARG_PROJECT_4_6 ARGS;\
 	(XXX)->allocatedSize = _ARG_PROJECT_5_6 ARGS;\
 }
-#define FILL__IO_FILE(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12,FARG13,FARG14,FARG15,FARG16,FARG17,FARG18,FARG19,FARG20,FARG21,FARG22,FARG23) {\
-	(XXX)->_flags = FARG0;\
-	(XXX)->_IO_read_ptr = FARG1;\
-	(XXX)->_IO_read_end = FARG2;\
-	(XXX)->_IO_read_base = FARG3;\
-	(XXX)->_IO_write_base = FARG4;\
-	(XXX)->_IO_write_ptr = FARG5;\
-	(XXX)->_IO_write_end = FARG6;\
-	(XXX)->_IO_buf_base = FARG7;\
-	(XXX)->_IO_buf_end = FARG8;\
-	(XXX)->_IO_save_base = FARG9;\
-	(XXX)->_IO_backup_base = FARG10;\
-	(XXX)->_IO_save_end = FARG11;\
-	(XXX)->_markers = FARG12;\
-	(XXX)->_chain = FARG13;\
-	(XXX)->_fileno = FARG14;\
-	(XXX)->_flags2 = FARG15;\
-	(XXX)->_old_offset = FARG16;\
-	(XXX)->_cur_column = FARG17;\
-	(XXX)->_vtable_offset = FARG18;\
-	(XXX)->_lock = FARG19;\
-	(XXX)->_offset = FARG20;\
-	(XXX)->__pad1 = FARG21;\
-	(XXX)->__pad2 = FARG22;\
-	(XXX)->_mode = FARG23;\
-}
-#define FILLF__IO_FILE(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12,FARG13,FARG14,FARG15,FARG16,FARG17,FARG18,FARG19,FARG20,FARG21,FARG22,FARG23) {\
-	(XXX)->_flags = FARG0;\
-	(XXX)->_IO_read_ptr = FARG1;\
-	(XXX)->_IO_read_end = FARG2;\
-	(XXX)->_IO_read_base = FARG3;\
-	(XXX)->_IO_write_base = FARG4;\
-	(XXX)->_IO_write_ptr = FARG5;\
-	(XXX)->_IO_write_end = FARG6;\
-	(XXX)->_IO_buf_base = FARG7;\
-	(XXX)->_IO_buf_end = FARG8;\
-	(XXX)->_IO_save_base = FARG9;\
-	(XXX)->_IO_backup_base = FARG10;\
-	(XXX)->_IO_save_end = FARG11;\
-	(XXX)->_markers = FARG12;\
-	(XXX)->_chain = FARG13;\
-	(XXX)->_fileno = FARG14;\
-	(XXX)->_flags2 = FARG15;\
-	(XXX)->_old_offset = FARG16;\
-	(XXX)->_cur_column = FARG17;\
-	(XXX)->_vtable_offset = FARG18;\
-	(XXX)->_lock = FARG19;\
-	(XXX)->_offset = FARG20;\
-	(XXX)->__pad1 = FARG21;\
-	(XXX)->__pad2 = FARG22;\
-	(XXX)->_mode = FARG23;\
-}
-#define _FILLF__IO_FILE(XXX,ARGS) {\
-	(XXX)->_flags = _ARG_PROJECT_0_24 ARGS;\
-	(XXX)->_IO_read_ptr = _ARG_PROJECT_1_24 ARGS;\
-	(XXX)->_IO_read_end = _ARG_PROJECT_2_24 ARGS;\
-	(XXX)->_IO_read_base = _ARG_PROJECT_3_24 ARGS;\
-	(XXX)->_IO_write_base = _ARG_PROJECT_4_24 ARGS;\
-	(XXX)->_IO_write_ptr = _ARG_PROJECT_5_24 ARGS;\
-	(XXX)->_IO_write_end = _ARG_PROJECT_6_24 ARGS;\
-	(XXX)->_IO_buf_base = _ARG_PROJECT_7_24 ARGS;\
-	(XXX)->_IO_buf_end = _ARG_PROJECT_8_24 ARGS;\
-	(XXX)->_IO_save_base = _ARG_PROJECT_9_24 ARGS;\
-	(XXX)->_IO_backup_base = _ARG_PROJECT_10_24 ARGS;\
-	(XXX)->_IO_save_end = _ARG_PROJECT_11_24 ARGS;\
-	(XXX)->_markers = _ARG_PROJECT_12_24 ARGS;\
-	(XXX)->_chain = _ARG_PROJECT_13_24 ARGS;\
-	(XXX)->_fileno = _ARG_PROJECT_14_24 ARGS;\
-	(XXX)->_flags2 = _ARG_PROJECT_15_24 ARGS;\
-	(XXX)->_old_offset = _ARG_PROJECT_16_24 ARGS;\
-	(XXX)->_cur_column = _ARG_PROJECT_17_24 ARGS;\
-	(XXX)->_vtable_offset = _ARG_PROJECT_18_24 ARGS;\
-	(XXX)->_lock = _ARG_PROJECT_19_24 ARGS;\
-	(XXX)->_offset = _ARG_PROJECT_20_24 ARGS;\
-	(XXX)->__pad1 = _ARG_PROJECT_21_24 ARGS;\
-	(XXX)->__pad2 = _ARG_PROJECT_22_24 ARGS;\
-	(XXX)->_mode = _ARG_PROJECT_23_24 ARGS;\
-}
 #define FILL_topBlock(XXX,FARG0,FARG1,FARG2,FARG3) {\
 	(XXX)->firstFreeIndex = FARG0;\
 	(XXX)->tmpMemoryBasei = FARG1;\
@@ -1588,6 +1529,12 @@
 	(XXX)->tmpMemoryBasei = _ARG_PROJECT_1_4 ARGS;\
 	(XXX)->trail = _ARG_PROJECT_2_4 ARGS;\
 	(XXX)->previousTopBlock = _ARG_PROJECT_3_4 ARGS;\
+}
+#define FILL___locale_t(XXX) {\
+}
+#define FILLF___locale_t(XXX) {\
+}
+#define _FILLF___locale_t(XXX,ARGS) {\
 }
 #define FILL_timespec(XXX,FARG0,FARG1) {\
 	(XXX)->tv_sec = FARG0;\
@@ -1616,6 +1563,27 @@
 	(XXX)->localVar = _ARG_PROJECT_1_3 ARGS;\
 	(XXX)->anonymousClassCounter = _ARG_PROJECT_2_3 ARGS;\
 }
+#define FILL_flock(XXX,FARG0,FARG1,FARG2,FARG3,FARG4) {\
+	(XXX)->l_type = FARG0;\
+	(XXX)->l_whence = FARG1;\
+	(XXX)->l_start = FARG2;\
+	(XXX)->l_len = FARG3;\
+	(XXX)->l_pid = FARG4;\
+}
+#define FILLF_flock(XXX,FARG0,FARG1,FARG2,FARG3,FARG4) {\
+	(XXX)->l_type = FARG0;\
+	(XXX)->l_whence = FARG1;\
+	(XXX)->l_start = FARG2;\
+	(XXX)->l_len = FARG3;\
+	(XXX)->l_pid = FARG4;\
+}
+#define _FILLF_flock(XXX,ARGS) {\
+	(XXX)->l_type = _ARG_PROJECT_0_5 ARGS;\
+	(XXX)->l_whence = _ARG_PROJECT_1_5 ARGS;\
+	(XXX)->l_start = _ARG_PROJECT_2_5 ARGS;\
+	(XXX)->l_len = _ARG_PROJECT_3_5 ARGS;\
+	(XXX)->l_pid = _ARG_PROJECT_4_5 ARGS;\
+}
 #define FILL_symTab(XXX,FARG0,FARG1) {\
 	(XXX)->size = FARG0;\
 	(XXX)->tab = FARG1;\
@@ -1628,26 +1596,32 @@
 	(XXX)->size = _ARG_PROJECT_0_2 ARGS;\
 	(XXX)->tab = _ARG_PROJECT_1_2 ARGS;\
 }
-#define FILL___gconv_trans_data(XXX,FARG0,FARG1,FARG2,FARG3,FARG4) {\
-	(XXX)->__trans_fct = FARG0;\
-	(XXX)->__trans_context_fct = FARG1;\
-	(XXX)->__trans_end_fct = FARG2;\
-	(XXX)->__data = FARG3;\
-	(XXX)->__next = FARG4;\
+#define FILL___tzrule_struct(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6) {\
+	(XXX)->ch = FARG0;\
+	(XXX)->m = FARG1;\
+	(XXX)->n = FARG2;\
+	(XXX)->d = FARG3;\
+	(XXX)->s = FARG4;\
+	(XXX)->change = FARG5;\
+	(XXX)->offset = FARG6;\
 }
-#define FILLF___gconv_trans_data(XXX,FARG0,FARG1,FARG2,FARG3,FARG4) {\
-	(XXX)->__trans_fct = FARG0;\
-	(XXX)->__trans_context_fct = FARG1;\
-	(XXX)->__trans_end_fct = FARG2;\
-	(XXX)->__data = FARG3;\
-	(XXX)->__next = FARG4;\
+#define FILLF___tzrule_struct(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6) {\
+	(XXX)->ch = FARG0;\
+	(XXX)->m = FARG1;\
+	(XXX)->n = FARG2;\
+	(XXX)->d = FARG3;\
+	(XXX)->s = FARG4;\
+	(XXX)->change = FARG5;\
+	(XXX)->offset = FARG6;\
 }
-#define _FILLF___gconv_trans_data(XXX,ARGS) {\
-	(XXX)->__trans_fct = _ARG_PROJECT_0_5 ARGS;\
-	(XXX)->__trans_context_fct = _ARG_PROJECT_1_5 ARGS;\
-	(XXX)->__trans_end_fct = _ARG_PROJECT_2_5 ARGS;\
-	(XXX)->__data = _ARG_PROJECT_3_5 ARGS;\
-	(XXX)->__next = _ARG_PROJECT_4_5 ARGS;\
+#define _FILLF___tzrule_struct(XXX,ARGS) {\
+	(XXX)->ch = _ARG_PROJECT_0_7 ARGS;\
+	(XXX)->m = _ARG_PROJECT_1_7 ARGS;\
+	(XXX)->n = _ARG_PROJECT_2_7 ARGS;\
+	(XXX)->d = _ARG_PROJECT_3_7 ARGS;\
+	(XXX)->s = _ARG_PROJECT_4_7 ARGS;\
+	(XXX)->change = _ARG_PROJECT_5_7 ARGS;\
+	(XXX)->offset = _ARG_PROJECT_6_7 ARGS;\
 }
 #define FILL_bb_unsigned(XXX,FARG0,FARG1,FARG2) {\
 	(XXX)->b = FARG0;\
@@ -1671,6 +1645,15 @@
 	(XXX)->e.line = _ARG_PROJECT_4_7 ARGS;\
 	(XXX)->e.coll = _ARG_PROJECT_5_7 ARGS;\
 	(XXX)->d = _ARG_PROJECT_6_7 ARGS;\
+}
+#define FILL___pthread_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
+}
+#define FILLF___pthread_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
+}
+#define _FILLF___pthread_t(XXX,ARGS) {\
+	(XXX)->__dummy = _ARG_PROJECT_0_1 ARGS;\
 }
 #define FILL_disabledList(XXX,FARG0,FARG1,FARG2) {\
 	(XXX)->file = FARG0;\
@@ -2213,6 +2196,24 @@
 	(XXX)->category = _ARG_PROJECT_4_6 ARGS;\
 	(XXX)->htmlWasLn = _ARG_PROJECT_5_6 ARGS;\
 }
+#define FILL___pthread_condattr_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
+}
+#define FILLF___pthread_condattr_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
+}
+#define _FILLF___pthread_condattr_t(XXX,ARGS) {\
+	(XXX)->__dummy = _ARG_PROJECT_0_1 ARGS;\
+}
+#define FILL___pthread_rwlock_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
+}
+#define FILLF___pthread_rwlock_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
+}
+#define _FILLF___pthread_rwlock_t(XXX,ARGS) {\
+	(XXX)->__dummy = _ARG_PROJECT_0_1 ARGS;\
+}
 #define FILL_typeModifiersListPositionLstPair(XXX,FARG0,FARG1) {\
 	(XXX)->t = FARG0;\
 	(XXX)->p = FARG1;\
@@ -2231,20 +2232,118 @@
 }
 #define _FILLF_yyGlobalState(XXX,ARGS) {\
 }
-#define FILL__IO_marker(XXX,FARG0,FARG1,FARG2) {\
-	(XXX)->_next = FARG0;\
-	(XXX)->_sbuf = FARG1;\
-	(XXX)->_pos = FARG2;\
+#define FILL___sFILE(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12,FARG13,FARG14,FARG15,FARG16,FARG17,FARG18,FARG19,FARG20,FARG21) {\
+	(XXX)->_p = FARG0;\
+	(XXX)->_r = FARG1;\
+	(XXX)->_w = FARG2;\
+	(XXX)->_flags = FARG3;\
+	(XXX)->_file = FARG4;\
+	(XXX)->_bf = FARG5;\
+	(XXX)->_lbfsize = FARG6;\
+	(XXX)->_cookie = FARG7;\
+	(XXX)->_read = FARG8;\
+	(XXX)->_write = FARG9;\
+	(XXX)->_seek = FARG10;\
+	(XXX)->_close = FARG11;\
+	(XXX)->_ub = FARG12;\
+	(XXX)->_up = FARG13;\
+	(XXX)->_ur = FARG14;\
+	(XXX)->_lb = FARG15;\
+	(XXX)->_blksize = FARG16;\
+	(XXX)->_offset = FARG17;\
+	(XXX)->_data = FARG18;\
+	(XXX)->_lock = FARG19;\
+	(XXX)->_mbstate = FARG20;\
+	(XXX)->_flags2 = FARG21;\
 }
-#define FILLF__IO_marker(XXX,FARG0,FARG1,FARG2) {\
-	(XXX)->_next = FARG0;\
-	(XXX)->_sbuf = FARG1;\
-	(XXX)->_pos = FARG2;\
+#define FILLF___sFILE(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12,FARG13,FARG14,FARG15,FARG16,FARG17,FARG18,FARG19,FARG20,FARG21,FARG22,FARG23,FARG24,FARG25,FARG26) {\
+	(XXX)->_p = FARG0;\
+	(XXX)->_r = FARG1;\
+	(XXX)->_w = FARG2;\
+	(XXX)->_flags = FARG3;\
+	(XXX)->_file = FARG4;\
+	(XXX)->_bf._base = FARG5;\
+	(XXX)->_bf._size = FARG6;\
+	(XXX)->_lbfsize = FARG7;\
+	(XXX)->_cookie = FARG8;\
+	(XXX)->_read = FARG9;\
+	(XXX)->_write = FARG10;\
+	(XXX)->_seek = FARG11;\
+	(XXX)->_close = FARG12;\
+	(XXX)->_ub._base = FARG13;\
+	(XXX)->_ub._size = FARG14;\
+	(XXX)->_up = FARG15;\
+	(XXX)->_ur = FARG16;\
+	(XXX)->_lb._base = FARG17;\
+	(XXX)->_lb._size = FARG18;\
+	(XXX)->_blksize = FARG19;\
+	(XXX)->_offset = FARG20;\
+	(XXX)->_data = FARG21;\
+	(XXX)->_lock = FARG22;\
+	(XXX)->_mbstate.__count = FARG23;\
+	_FILLUREC__##FARG24((&(XXX)->_mbstate.__value), FARG25);\
+	(XXX)->_flags2 = FARG26;\
 }
-#define _FILLF__IO_marker(XXX,ARGS) {\
-	(XXX)->_next = _ARG_PROJECT_0_3 ARGS;\
-	(XXX)->_sbuf = _ARG_PROJECT_1_3 ARGS;\
-	(XXX)->_pos = _ARG_PROJECT_2_3 ARGS;\
+#define _FILLF___sFILE(XXX,ARGS) {\
+	(XXX)->_p = _ARG_PROJECT_0_27 ARGS;\
+	(XXX)->_r = _ARG_PROJECT_1_27 ARGS;\
+	(XXX)->_w = _ARG_PROJECT_2_27 ARGS;\
+	(XXX)->_flags = _ARG_PROJECT_3_27 ARGS;\
+	(XXX)->_file = _ARG_PROJECT_4_27 ARGS;\
+	(XXX)->_bf._base = _ARG_PROJECT_5_27 ARGS;\
+	(XXX)->_bf._size = _ARG_PROJECT_6_27 ARGS;\
+	(XXX)->_lbfsize = _ARG_PROJECT_7_27 ARGS;\
+	(XXX)->_cookie = _ARG_PROJECT_8_27 ARGS;\
+	(XXX)->_read = _ARG_PROJECT_9_27 ARGS;\
+	(XXX)->_write = _ARG_PROJECT_10_27 ARGS;\
+	(XXX)->_seek = _ARG_PROJECT_11_27 ARGS;\
+	(XXX)->_close = _ARG_PROJECT_12_27 ARGS;\
+	(XXX)->_ub._base = _ARG_PROJECT_13_27 ARGS;\
+	(XXX)->_ub._size = _ARG_PROJECT_14_27 ARGS;\
+	(XXX)->_up = _ARG_PROJECT_15_27 ARGS;\
+	(XXX)->_ur = _ARG_PROJECT_16_27 ARGS;\
+	(XXX)->_lb._base = _ARG_PROJECT_17_27 ARGS;\
+	(XXX)->_lb._size = _ARG_PROJECT_18_27 ARGS;\
+	(XXX)->_blksize = _ARG_PROJECT_19_27 ARGS;\
+	(XXX)->_offset = _ARG_PROJECT_20_27 ARGS;\
+	(XXX)->_data = _ARG_PROJECT_21_27 ARGS;\
+	(XXX)->_lock = _ARG_PROJECT_22_27 ARGS;\
+	(XXX)->_mbstate.__count = _ARG_PROJECT_23_27 ARGS;\
+	_FILLUREC__##_ARG_PROJECT_24_27 ARGS((&(XXX)->_mbstate.__value), _ARG_PROJECT_25_27 ARGS);\
+	(XXX)->_flags2 = _ARG_PROJECT_26_27 ARGS;\
+}
+#define FILL___DIR(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8) {\
+	(XXX)->__d_cookie = FARG0;\
+	(XXX)->__d_dirent = FARG1;\
+	(XXX)->__d_dirname = FARG2;\
+	(XXX)->__d_position = FARG3;\
+	(XXX)->__d_fd = FARG4;\
+	(XXX)->__d_internal = FARG5;\
+	(XXX)->__handle = FARG6;\
+	(XXX)->__fh = FARG7;\
+	(XXX)->__flags = FARG8;\
+}
+#define FILLF___DIR(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8) {\
+	(XXX)->__d_cookie = FARG0;\
+	(XXX)->__d_dirent = FARG1;\
+	(XXX)->__d_dirname = FARG2;\
+	(XXX)->__d_position = FARG3;\
+	(XXX)->__d_fd = FARG4;\
+	(XXX)->__d_internal = FARG5;\
+	(XXX)->__handle = FARG6;\
+	(XXX)->__fh = FARG7;\
+	(XXX)->__flags = FARG8;\
+}
+#define _FILLF___DIR(XXX,ARGS) {\
+	(XXX)->__d_cookie = _ARG_PROJECT_0_9 ARGS;\
+	(XXX)->__d_dirent = _ARG_PROJECT_1_9 ARGS;\
+	(XXX)->__d_dirname = _ARG_PROJECT_2_9 ARGS;\
+	(XXX)->__d_position = _ARG_PROJECT_3_9 ARGS;\
+	(XXX)->__d_fd = _ARG_PROJECT_4_9 ARGS;\
+	(XXX)->__d_internal = _ARG_PROJECT_5_9 ARGS;\
+	(XXX)->__handle = _ARG_PROJECT_6_9 ARGS;\
+	(XXX)->__fh = _ARG_PROJECT_7_9 ARGS;\
+	(XXX)->__flags = _ARG_PROJECT_8_9 ARGS;\
 }
 #define FILL_fileItem(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9) {\
 	(XXX)->name = FARG0;\
@@ -2299,6 +2398,21 @@
 	(XXX)->infs = _ARG_PROJECT_16_19 ARGS;\
 	(XXX)->directEnclosingInstance = _ARG_PROJECT_17_19 ARGS;\
 	(XXX)->next = _ARG_PROJECT_18_19 ARGS;\
+}
+#define FILL_gzFile_s(XXX,FARG0,FARG1,FARG2) {\
+	(XXX)->have = FARG0;\
+	(XXX)->next = FARG1;\
+	(XXX)->pos = FARG2;\
+}
+#define FILLF_gzFile_s(XXX,FARG0,FARG1,FARG2) {\
+	(XXX)->have = FARG0;\
+	(XXX)->next = FARG1;\
+	(XXX)->pos = FARG2;\
+}
+#define _FILLF_gzFile_s(XXX,ARGS) {\
+	(XXX)->have = _ARG_PROJECT_0_3 ARGS;\
+	(XXX)->next = _ARG_PROJECT_1_3 ARGS;\
+	(XXX)->pos = _ARG_PROJECT_2_3 ARGS;\
 }
 #define FILL_mallinfo(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9) {\
 	(XXX)->arena = FARG0;\
@@ -2384,75 +2498,67 @@
 	(XXX)->a = FARG5;\
 	(XXX)->b = FARG6;\
 }
-#define FILLF_editorBuffer(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12,FARG13,FARG14,FARG15,FARG16,FARG17,FARG18,FARG19,FARG20,FARG21,FARG22,FARG23,FARG24,FARG25,FARG26,FARG27,FARG28,FARG29,FARG30,FARG31,FARG32) {\
+#define FILLF_editorBuffer(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12,FARG13,FARG14,FARG15,FARG16,FARG17,FARG18,FARG19,FARG20,FARG21,FARG22,FARG23,FARG24,FARG25,FARG26,FARG27,FARG28) {\
 	(XXX)->name = FARG0;\
 	(XXX)->ftnum = FARG1;\
 	(XXX)->fileName = FARG2;\
 	(XXX)->stat.st_dev = FARG3;\
-	(XXX)->stat.__pad1 = FARG4;\
-	(XXX)->stat.st_ino = FARG5;\
-	(XXX)->stat.st_mode = FARG6;\
-	(XXX)->stat.st_nlink = FARG7;\
-	(XXX)->stat.st_uid = FARG8;\
-	(XXX)->stat.st_gid = FARG9;\
-	(XXX)->stat.st_rdev = FARG10;\
-	(XXX)->stat.__pad2 = FARG11;\
-	(XXX)->stat.st_size = FARG12;\
-	(XXX)->stat.st_blksize = FARG13;\
-	(XXX)->stat.st_blocks = FARG14;\
-	(XXX)->stat.st_atim.tv_sec = FARG15;\
-	(XXX)->stat.st_atim.tv_nsec = FARG16;\
-	(XXX)->stat.st_mtim.tv_sec = FARG17;\
-	(XXX)->stat.st_mtim.tv_nsec = FARG18;\
-	(XXX)->stat.st_ctim.tv_sec = FARG19;\
-	(XXX)->stat.st_ctim.tv_nsec = FARG20;\
-	(XXX)->stat.__unused4 = FARG21;\
-	(XXX)->stat.__unused5 = FARG22;\
-	(XXX)->markers = FARG23;\
-	(XXX)->a.bufferSize = FARG24;\
-	(XXX)->a.text = FARG25;\
-	(XXX)->a.allocatedFreePrefixSize = FARG26;\
-	(XXX)->a.allocatedBlock = FARG27;\
-	(XXX)->a.allocatedIndex = FARG28;\
-	(XXX)->a.allocatedSize = FARG29;\
-	(XXX)->b.textLoaded = FARG30;\
-	(XXX)->b.modified = FARG31;\
-	(XXX)->b.modifiedSinceLastQuasySave = FARG32;\
+	(XXX)->stat.__ERROR__ = FARG4;\
+	(XXX)->stat.st_mode = FARG5;\
+	(XXX)->stat.st_nlink = FARG6;\
+	(XXX)->stat.st_uid = FARG7;\
+	(XXX)->stat.st_gid = FARG8;\
+	(XXX)->stat.st_rdev = FARG9;\
+	(XXX)->stat.st_size = FARG10;\
+	(XXX)->stat.st_atime = FARG11;\
+	(XXX)->stat.st_spare1 = FARG12;\
+	(XXX)->stat.st_mtime = FARG13;\
+	(XXX)->stat.st_spare2 = FARG14;\
+	(XXX)->stat.st_ctime = FARG15;\
+	(XXX)->stat.st_spare3 = FARG16;\
+	(XXX)->stat.st_blksize = FARG17;\
+	(XXX)->stat.__ERROR__ = FARG18;\
+	(XXX)->markers = FARG19;\
+	(XXX)->a.bufferSize = FARG20;\
+	(XXX)->a.text = FARG21;\
+	(XXX)->a.allocatedFreePrefixSize = FARG22;\
+	(XXX)->a.allocatedBlock = FARG23;\
+	(XXX)->a.allocatedIndex = FARG24;\
+	(XXX)->a.allocatedSize = FARG25;\
+	(XXX)->b.textLoaded = FARG26;\
+	(XXX)->b.modified = FARG27;\
+	(XXX)->b.modifiedSinceLastQuasySave = FARG28;\
 }
 #define _FILLF_editorBuffer(XXX,ARGS) {\
-	(XXX)->name = _ARG_PROJECT_0_33 ARGS;\
-	(XXX)->ftnum = _ARG_PROJECT_1_33 ARGS;\
-	(XXX)->fileName = _ARG_PROJECT_2_33 ARGS;\
-	(XXX)->stat.st_dev = _ARG_PROJECT_3_33 ARGS;\
-	(XXX)->stat.__pad1 = _ARG_PROJECT_4_33 ARGS;\
-	(XXX)->stat.st_ino = _ARG_PROJECT_5_33 ARGS;\
-	(XXX)->stat.st_mode = _ARG_PROJECT_6_33 ARGS;\
-	(XXX)->stat.st_nlink = _ARG_PROJECT_7_33 ARGS;\
-	(XXX)->stat.st_uid = _ARG_PROJECT_8_33 ARGS;\
-	(XXX)->stat.st_gid = _ARG_PROJECT_9_33 ARGS;\
-	(XXX)->stat.st_rdev = _ARG_PROJECT_10_33 ARGS;\
-	(XXX)->stat.__pad2 = _ARG_PROJECT_11_33 ARGS;\
-	(XXX)->stat.st_size = _ARG_PROJECT_12_33 ARGS;\
-	(XXX)->stat.st_blksize = _ARG_PROJECT_13_33 ARGS;\
-	(XXX)->stat.st_blocks = _ARG_PROJECT_14_33 ARGS;\
-	(XXX)->stat.st_atim.tv_sec = _ARG_PROJECT_15_33 ARGS;\
-	(XXX)->stat.st_atim.tv_nsec = _ARG_PROJECT_16_33 ARGS;\
-	(XXX)->stat.st_mtim.tv_sec = _ARG_PROJECT_17_33 ARGS;\
-	(XXX)->stat.st_mtim.tv_nsec = _ARG_PROJECT_18_33 ARGS;\
-	(XXX)->stat.st_ctim.tv_sec = _ARG_PROJECT_19_33 ARGS;\
-	(XXX)->stat.st_ctim.tv_nsec = _ARG_PROJECT_20_33 ARGS;\
-	(XXX)->stat.__unused4 = _ARG_PROJECT_21_33 ARGS;\
-	(XXX)->stat.__unused5 = _ARG_PROJECT_22_33 ARGS;\
-	(XXX)->markers = _ARG_PROJECT_23_33 ARGS;\
-	(XXX)->a.bufferSize = _ARG_PROJECT_24_33 ARGS;\
-	(XXX)->a.text = _ARG_PROJECT_25_33 ARGS;\
-	(XXX)->a.allocatedFreePrefixSize = _ARG_PROJECT_26_33 ARGS;\
-	(XXX)->a.allocatedBlock = _ARG_PROJECT_27_33 ARGS;\
-	(XXX)->a.allocatedIndex = _ARG_PROJECT_28_33 ARGS;\
-	(XXX)->a.allocatedSize = _ARG_PROJECT_29_33 ARGS;\
-	(XXX)->b.textLoaded = _ARG_PROJECT_30_33 ARGS;\
-	(XXX)->b.modified = _ARG_PROJECT_31_33 ARGS;\
-	(XXX)->b.modifiedSinceLastQuasySave = _ARG_PROJECT_32_33 ARGS;\
+	(XXX)->name = _ARG_PROJECT_0_29 ARGS;\
+	(XXX)->ftnum = _ARG_PROJECT_1_29 ARGS;\
+	(XXX)->fileName = _ARG_PROJECT_2_29 ARGS;\
+	(XXX)->stat.st_dev = _ARG_PROJECT_3_29 ARGS;\
+	(XXX)->stat.__ERROR__ = _ARG_PROJECT_4_29 ARGS;\
+	(XXX)->stat.st_mode = _ARG_PROJECT_5_29 ARGS;\
+	(XXX)->stat.st_nlink = _ARG_PROJECT_6_29 ARGS;\
+	(XXX)->stat.st_uid = _ARG_PROJECT_7_29 ARGS;\
+	(XXX)->stat.st_gid = _ARG_PROJECT_8_29 ARGS;\
+	(XXX)->stat.st_rdev = _ARG_PROJECT_9_29 ARGS;\
+	(XXX)->stat.st_size = _ARG_PROJECT_10_29 ARGS;\
+	(XXX)->stat.st_atime = _ARG_PROJECT_11_29 ARGS;\
+	(XXX)->stat.st_spare1 = _ARG_PROJECT_12_29 ARGS;\
+	(XXX)->stat.st_mtime = _ARG_PROJECT_13_29 ARGS;\
+	(XXX)->stat.st_spare2 = _ARG_PROJECT_14_29 ARGS;\
+	(XXX)->stat.st_ctime = _ARG_PROJECT_15_29 ARGS;\
+	(XXX)->stat.st_spare3 = _ARG_PROJECT_16_29 ARGS;\
+	(XXX)->stat.st_blksize = _ARG_PROJECT_17_29 ARGS;\
+	(XXX)->stat.__ERROR__ = _ARG_PROJECT_18_29 ARGS;\
+	(XXX)->markers = _ARG_PROJECT_19_29 ARGS;\
+	(XXX)->a.bufferSize = _ARG_PROJECT_20_29 ARGS;\
+	(XXX)->a.text = _ARG_PROJECT_21_29 ARGS;\
+	(XXX)->a.allocatedFreePrefixSize = _ARG_PROJECT_22_29 ARGS;\
+	(XXX)->a.allocatedBlock = _ARG_PROJECT_23_29 ARGS;\
+	(XXX)->a.allocatedIndex = _ARG_PROJECT_24_29 ARGS;\
+	(XXX)->a.allocatedSize = _ARG_PROJECT_25_29 ARGS;\
+	(XXX)->b.textLoaded = _ARG_PROJECT_26_29 ARGS;\
+	(XXX)->b.modified = _ARG_PROJECT_27_29 ARGS;\
+	(XXX)->b.modifiedSinceLastQuasySave = _ARG_PROJECT_28_29 ARGS;\
 }
 #define FILL_editorBufferList(XXX,FARG0,FARG1) {\
 	(XXX)->f = FARG0;\
@@ -2493,6 +2599,51 @@
 	(XXX)->pos.line = _ARG_PROJECT_1_4 ARGS;\
 	(XXX)->pos.coll = _ARG_PROJECT_2_4 ARGS;\
 	(XXX)->next = _ARG_PROJECT_3_4 ARGS;\
+}
+#define FILL_gz_header_s(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12) {\
+	(XXX)->text = FARG0;\
+	(XXX)->time = FARG1;\
+	(XXX)->xflags = FARG2;\
+	(XXX)->os = FARG3;\
+	(XXX)->extra = FARG4;\
+	(XXX)->extra_len = FARG5;\
+	(XXX)->extra_max = FARG6;\
+	(XXX)->name = FARG7;\
+	(XXX)->name_max = FARG8;\
+	(XXX)->comment = FARG9;\
+	(XXX)->comm_max = FARG10;\
+	(XXX)->hcrc = FARG11;\
+	(XXX)->done = FARG12;\
+}
+#define FILLF_gz_header_s(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12) {\
+	(XXX)->text = FARG0;\
+	(XXX)->time = FARG1;\
+	(XXX)->xflags = FARG2;\
+	(XXX)->os = FARG3;\
+	(XXX)->extra = FARG4;\
+	(XXX)->extra_len = FARG5;\
+	(XXX)->extra_max = FARG6;\
+	(XXX)->name = FARG7;\
+	(XXX)->name_max = FARG8;\
+	(XXX)->comment = FARG9;\
+	(XXX)->comm_max = FARG10;\
+	(XXX)->hcrc = FARG11;\
+	(XXX)->done = FARG12;\
+}
+#define _FILLF_gz_header_s(XXX,ARGS) {\
+	(XXX)->text = _ARG_PROJECT_0_13 ARGS;\
+	(XXX)->time = _ARG_PROJECT_1_13 ARGS;\
+	(XXX)->xflags = _ARG_PROJECT_2_13 ARGS;\
+	(XXX)->os = _ARG_PROJECT_3_13 ARGS;\
+	(XXX)->extra = _ARG_PROJECT_4_13 ARGS;\
+	(XXX)->extra_len = _ARG_PROJECT_5_13 ARGS;\
+	(XXX)->extra_max = _ARG_PROJECT_6_13 ARGS;\
+	(XXX)->name = _ARG_PROJECT_7_13 ARGS;\
+	(XXX)->name_max = _ARG_PROJECT_8_13 ARGS;\
+	(XXX)->comment = _ARG_PROJECT_9_13 ARGS;\
+	(XXX)->comm_max = _ARG_PROJECT_10_13 ARGS;\
+	(XXX)->hcrc = _ARG_PROJECT_11_13 ARGS;\
+	(XXX)->done = _ARG_PROJECT_12_13 ARGS;\
 }
 #define FILL_bb_symbolList(XXX,FARG0,FARG1,FARG2) {\
 	(XXX)->b = FARG0;\
@@ -2540,21 +2691,6 @@
 	(XXX)->recsClassCounter = _ARG_PROJECT_3_6 ARGS;\
 	(XXX)->sti = _ARG_PROJECT_4_6 ARGS;\
 	(XXX)->aui = _ARG_PROJECT_5_6 ARGS;\
-}
-#define FILL_drand48_data(XXX,FARG0,FARG1,FARG2) {\
-	(XXX)->__c = FARG0;\
-	(XXX)->__init = FARG1;\
-	(XXX)->__a = FARG2;\
-}
-#define FILLF_drand48_data(XXX,FARG0,FARG1,FARG2) {\
-	(XXX)->__c = FARG0;\
-	(XXX)->__init = FARG1;\
-	(XXX)->__a = FARG2;\
-}
-#define _FILLF_drand48_data(XXX,ARGS) {\
-	(XXX)->__c = _ARG_PROJECT_0_3 ARGS;\
-	(XXX)->__init = _ARG_PROJECT_1_3 ARGS;\
-	(XXX)->__a = _ARG_PROJECT_2_3 ARGS;\
 }
 #define FILL_olSymbolsMenu(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12) {\
 	(XXX)->s = FARG0;\
@@ -2626,6 +2762,27 @@
 	(XXX)->outOnLine = _ARG_PROJECT_23_26 ARGS;\
 	(XXX)->markers = _ARG_PROJECT_24_26 ARGS;\
 	(XXX)->next = _ARG_PROJECT_25_26 ARGS;\
+}
+#define FILL__on_exit_args(XXX,FARG0,FARG1) {\
+	(XXX)->_fntypes = FARG0;\
+	(XXX)->_is_cxa = FARG1;\
+}
+#define FILLF__on_exit_args(XXX,FARG0,FARG1) {\
+	(XXX)->_fntypes = FARG0;\
+	(XXX)->_is_cxa = FARG1;\
+}
+#define _FILLF__on_exit_args(XXX,ARGS) {\
+	(XXX)->_fntypes = _ARG_PROJECT_0_2 ARGS;\
+	(XXX)->_is_cxa = _ARG_PROJECT_1_2 ARGS;\
+}
+#define FILL___pthread_mutexattr_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
+}
+#define FILLF___pthread_mutexattr_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
+}
+#define _FILLF___pthread_mutexattr_t(XXX,ARGS) {\
+	(XXX)->__dummy = _ARG_PROJECT_0_1 ARGS;\
 }
 #define FILL_freeTrail(XXX,FARG0,FARG1,FARG2) {\
 	(XXX)->action = FARG0;\
@@ -2953,7 +3110,7 @@
 	(XXX)->d = _ARG_PROJECT_0_2 ARGS;\
 	(XXX)->next = _ARG_PROJECT_1_2 ARGS;\
 }
-#define FILL_tm(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10) {\
+#define FILL_tm(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8) {\
 	(XXX)->tm_sec = FARG0;\
 	(XXX)->tm_min = FARG1;\
 	(XXX)->tm_hour = FARG2;\
@@ -2963,10 +3120,8 @@
 	(XXX)->tm_wday = FARG6;\
 	(XXX)->tm_yday = FARG7;\
 	(XXX)->tm_isdst = FARG8;\
-	(XXX)->tm_gmtoff = FARG9;\
-	(XXX)->tm_zone = FARG10;\
 }
-#define FILLF_tm(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10) {\
+#define FILLF_tm(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8) {\
 	(XXX)->tm_sec = FARG0;\
 	(XXX)->tm_min = FARG1;\
 	(XXX)->tm_hour = FARG2;\
@@ -2976,84 +3131,88 @@
 	(XXX)->tm_wday = FARG6;\
 	(XXX)->tm_yday = FARG7;\
 	(XXX)->tm_isdst = FARG8;\
-	(XXX)->tm_gmtoff = FARG9;\
-	(XXX)->tm_zone = FARG10;\
 }
 #define _FILLF_tm(XXX,ARGS) {\
-	(XXX)->tm_sec = _ARG_PROJECT_0_11 ARGS;\
-	(XXX)->tm_min = _ARG_PROJECT_1_11 ARGS;\
-	(XXX)->tm_hour = _ARG_PROJECT_2_11 ARGS;\
-	(XXX)->tm_mday = _ARG_PROJECT_3_11 ARGS;\
-	(XXX)->tm_mon = _ARG_PROJECT_4_11 ARGS;\
-	(XXX)->tm_year = _ARG_PROJECT_5_11 ARGS;\
-	(XXX)->tm_wday = _ARG_PROJECT_6_11 ARGS;\
-	(XXX)->tm_yday = _ARG_PROJECT_7_11 ARGS;\
-	(XXX)->tm_isdst = _ARG_PROJECT_8_11 ARGS;\
-	(XXX)->tm_gmtoff = _ARG_PROJECT_9_11 ARGS;\
-	(XXX)->tm_zone = _ARG_PROJECT_10_11 ARGS;\
+	(XXX)->tm_sec = _ARG_PROJECT_0_9 ARGS;\
+	(XXX)->tm_min = _ARG_PROJECT_1_9 ARGS;\
+	(XXX)->tm_hour = _ARG_PROJECT_2_9 ARGS;\
+	(XXX)->tm_mday = _ARG_PROJECT_3_9 ARGS;\
+	(XXX)->tm_mon = _ARG_PROJECT_4_9 ARGS;\
+	(XXX)->tm_year = _ARG_PROJECT_5_9 ARGS;\
+	(XXX)->tm_wday = _ARG_PROJECT_6_9 ARGS;\
+	(XXX)->tm_yday = _ARG_PROJECT_7_9 ARGS;\
+	(XXX)->tm_isdst = _ARG_PROJECT_8_9 ARGS;\
 }
-#define FILL_stat(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12,FARG13,FARG14,FARG15,FARG16) {\
+#define FILL_stat(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12,FARG13,FARG14,FARG15) {\
 	(XXX)->st_dev = FARG0;\
-	(XXX)->__pad1 = FARG1;\
-	(XXX)->st_ino = FARG2;\
-	(XXX)->st_mode = FARG3;\
-	(XXX)->st_nlink = FARG4;\
-	(XXX)->st_uid = FARG5;\
-	(XXX)->st_gid = FARG6;\
-	(XXX)->st_rdev = FARG7;\
-	(XXX)->__pad2 = FARG8;\
-	(XXX)->st_size = FARG9;\
-	(XXX)->st_blksize = FARG10;\
-	(XXX)->st_blocks = FARG11;\
-	(XXX)->st_atim = FARG12;\
-	(XXX)->st_mtim = FARG13;\
-	(XXX)->st_ctim = FARG14;\
-	(XXX)->__unused4 = FARG15;\
-	(XXX)->__unused5 = FARG16;\
+	(XXX)->__ERROR__ = FARG1;\
+	(XXX)->st_mode = FARG2;\
+	(XXX)->st_nlink = FARG3;\
+	(XXX)->st_uid = FARG4;\
+	(XXX)->st_gid = FARG5;\
+	(XXX)->st_rdev = FARG6;\
+	(XXX)->st_size = FARG7;\
+	(XXX)->st_atime = FARG8;\
+	(XXX)->st_spare1 = FARG9;\
+	(XXX)->st_mtime = FARG10;\
+	(XXX)->st_spare2 = FARG11;\
+	(XXX)->st_ctime = FARG12;\
+	(XXX)->st_spare3 = FARG13;\
+	(XXX)->st_blksize = FARG14;\
+	(XXX)->__ERROR__ = FARG15;\
 }
-#define FILLF_stat(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12,FARG13,FARG14,FARG15,FARG16,FARG17,FARG18,FARG19) {\
+#define FILLF_stat(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12,FARG13,FARG14,FARG15) {\
 	(XXX)->st_dev = FARG0;\
-	(XXX)->__pad1 = FARG1;\
-	(XXX)->st_ino = FARG2;\
-	(XXX)->st_mode = FARG3;\
-	(XXX)->st_nlink = FARG4;\
-	(XXX)->st_uid = FARG5;\
-	(XXX)->st_gid = FARG6;\
-	(XXX)->st_rdev = FARG7;\
-	(XXX)->__pad2 = FARG8;\
-	(XXX)->st_size = FARG9;\
-	(XXX)->st_blksize = FARG10;\
-	(XXX)->st_blocks = FARG11;\
-	(XXX)->st_atim.tv_sec = FARG12;\
-	(XXX)->st_atim.tv_nsec = FARG13;\
-	(XXX)->st_mtim.tv_sec = FARG14;\
-	(XXX)->st_mtim.tv_nsec = FARG15;\
-	(XXX)->st_ctim.tv_sec = FARG16;\
-	(XXX)->st_ctim.tv_nsec = FARG17;\
-	(XXX)->__unused4 = FARG18;\
-	(XXX)->__unused5 = FARG19;\
+	(XXX)->__ERROR__ = FARG1;\
+	(XXX)->st_mode = FARG2;\
+	(XXX)->st_nlink = FARG3;\
+	(XXX)->st_uid = FARG4;\
+	(XXX)->st_gid = FARG5;\
+	(XXX)->st_rdev = FARG6;\
+	(XXX)->st_size = FARG7;\
+	(XXX)->st_atime = FARG8;\
+	(XXX)->st_spare1 = FARG9;\
+	(XXX)->st_mtime = FARG10;\
+	(XXX)->st_spare2 = FARG11;\
+	(XXX)->st_ctime = FARG12;\
+	(XXX)->st_spare3 = FARG13;\
+	(XXX)->st_blksize = FARG14;\
+	(XXX)->__ERROR__ = FARG15;\
 }
 #define _FILLF_stat(XXX,ARGS) {\
-	(XXX)->st_dev = _ARG_PROJECT_0_20 ARGS;\
-	(XXX)->__pad1 = _ARG_PROJECT_1_20 ARGS;\
-	(XXX)->st_ino = _ARG_PROJECT_2_20 ARGS;\
-	(XXX)->st_mode = _ARG_PROJECT_3_20 ARGS;\
-	(XXX)->st_nlink = _ARG_PROJECT_4_20 ARGS;\
-	(XXX)->st_uid = _ARG_PROJECT_5_20 ARGS;\
-	(XXX)->st_gid = _ARG_PROJECT_6_20 ARGS;\
-	(XXX)->st_rdev = _ARG_PROJECT_7_20 ARGS;\
-	(XXX)->__pad2 = _ARG_PROJECT_8_20 ARGS;\
-	(XXX)->st_size = _ARG_PROJECT_9_20 ARGS;\
-	(XXX)->st_blksize = _ARG_PROJECT_10_20 ARGS;\
-	(XXX)->st_blocks = _ARG_PROJECT_11_20 ARGS;\
-	(XXX)->st_atim.tv_sec = _ARG_PROJECT_12_20 ARGS;\
-	(XXX)->st_atim.tv_nsec = _ARG_PROJECT_13_20 ARGS;\
-	(XXX)->st_mtim.tv_sec = _ARG_PROJECT_14_20 ARGS;\
-	(XXX)->st_mtim.tv_nsec = _ARG_PROJECT_15_20 ARGS;\
-	(XXX)->st_ctim.tv_sec = _ARG_PROJECT_16_20 ARGS;\
-	(XXX)->st_ctim.tv_nsec = _ARG_PROJECT_17_20 ARGS;\
-	(XXX)->__unused4 = _ARG_PROJECT_18_20 ARGS;\
-	(XXX)->__unused5 = _ARG_PROJECT_19_20 ARGS;\
+	(XXX)->st_dev = _ARG_PROJECT_0_16 ARGS;\
+	(XXX)->__ERROR__ = _ARG_PROJECT_1_16 ARGS;\
+	(XXX)->st_mode = _ARG_PROJECT_2_16 ARGS;\
+	(XXX)->st_nlink = _ARG_PROJECT_3_16 ARGS;\
+	(XXX)->st_uid = _ARG_PROJECT_4_16 ARGS;\
+	(XXX)->st_gid = _ARG_PROJECT_5_16 ARGS;\
+	(XXX)->st_rdev = _ARG_PROJECT_6_16 ARGS;\
+	(XXX)->st_size = _ARG_PROJECT_7_16 ARGS;\
+	(XXX)->st_atime = _ARG_PROJECT_8_16 ARGS;\
+	(XXX)->st_spare1 = _ARG_PROJECT_9_16 ARGS;\
+	(XXX)->st_mtime = _ARG_PROJECT_10_16 ARGS;\
+	(XXX)->st_spare2 = _ARG_PROJECT_11_16 ARGS;\
+	(XXX)->st_ctime = _ARG_PROJECT_12_16 ARGS;\
+	(XXX)->st_spare3 = _ARG_PROJECT_13_16 ARGS;\
+	(XXX)->st_blksize = _ARG_PROJECT_14_16 ARGS;\
+	(XXX)->__ERROR__ = _ARG_PROJECT_15_16 ARGS;\
+}
+#define FILL__atexit(XXX,FARG0,FARG1,FARG2) {\
+	(XXX)->_next = FARG0;\
+	(XXX)->_ind = FARG1;\
+	(XXX)->_on_exit_args = FARG2;\
+}
+#define FILLF__atexit(XXX,FARG0,FARG1,FARG2,FARG3) {\
+	(XXX)->_next = FARG0;\
+	(XXX)->_ind = FARG1;\
+	(XXX)->_on_exit_args._fntypes = FARG2;\
+	(XXX)->_on_exit_args._is_cxa = FARG3;\
+}
+#define _FILLF__atexit(XXX,ARGS) {\
+	(XXX)->_next = _ARG_PROJECT_0_4 ARGS;\
+	(XXX)->_ind = _ARG_PROJECT_1_4 ARGS;\
+	(XXX)->_on_exit_args._fntypes = _ARG_PROJECT_2_4 ARGS;\
+	(XXX)->_on_exit_args._is_cxa = _ARG_PROJECT_3_4 ARGS;\
 }
 #define FILL_editorRegion(XXX,FARG0,FARG1) {\
 	(XXX)->b = FARG0;\
@@ -3205,69 +3364,70 @@
 	(XXX)->st = FARG0;\
 	(XXX)->dir = FARG1;\
 }
-#define FILLF_zipFileTabItem(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12,FARG13,FARG14,FARG15,FARG16,FARG17,FARG18,FARG19,FARG20) {\
+#define FILLF_zipFileTabItem(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12,FARG13,FARG14,FARG15,FARG16) {\
 	(XXX)->st.st_dev = FARG0;\
-	(XXX)->st.__pad1 = FARG1;\
-	(XXX)->st.st_ino = FARG2;\
-	(XXX)->st.st_mode = FARG3;\
-	(XXX)->st.st_nlink = FARG4;\
-	(XXX)->st.st_uid = FARG5;\
-	(XXX)->st.st_gid = FARG6;\
-	(XXX)->st.st_rdev = FARG7;\
-	(XXX)->st.__pad2 = FARG8;\
-	(XXX)->st.st_size = FARG9;\
-	(XXX)->st.st_blksize = FARG10;\
-	(XXX)->st.st_blocks = FARG11;\
-	(XXX)->st.st_atim.tv_sec = FARG12;\
-	(XXX)->st.st_atim.tv_nsec = FARG13;\
-	(XXX)->st.st_mtim.tv_sec = FARG14;\
-	(XXX)->st.st_mtim.tv_nsec = FARG15;\
-	(XXX)->st.st_ctim.tv_sec = FARG16;\
-	(XXX)->st.st_ctim.tv_nsec = FARG17;\
-	(XXX)->st.__unused4 = FARG18;\
-	(XXX)->st.__unused5 = FARG19;\
-	(XXX)->dir = FARG20;\
+	(XXX)->st.__ERROR__ = FARG1;\
+	(XXX)->st.st_mode = FARG2;\
+	(XXX)->st.st_nlink = FARG3;\
+	(XXX)->st.st_uid = FARG4;\
+	(XXX)->st.st_gid = FARG5;\
+	(XXX)->st.st_rdev = FARG6;\
+	(XXX)->st.st_size = FARG7;\
+	(XXX)->st.st_atime = FARG8;\
+	(XXX)->st.st_spare1 = FARG9;\
+	(XXX)->st.st_mtime = FARG10;\
+	(XXX)->st.st_spare2 = FARG11;\
+	(XXX)->st.st_ctime = FARG12;\
+	(XXX)->st.st_spare3 = FARG13;\
+	(XXX)->st.st_blksize = FARG14;\
+	(XXX)->st.__ERROR__ = FARG15;\
+	(XXX)->dir = FARG16;\
 }
 #define _FILLF_zipFileTabItem(XXX,ARGS) {\
-	(XXX)->st.st_dev = _ARG_PROJECT_0_21 ARGS;\
-	(XXX)->st.__pad1 = _ARG_PROJECT_1_21 ARGS;\
-	(XXX)->st.st_ino = _ARG_PROJECT_2_21 ARGS;\
-	(XXX)->st.st_mode = _ARG_PROJECT_3_21 ARGS;\
-	(XXX)->st.st_nlink = _ARG_PROJECT_4_21 ARGS;\
-	(XXX)->st.st_uid = _ARG_PROJECT_5_21 ARGS;\
-	(XXX)->st.st_gid = _ARG_PROJECT_6_21 ARGS;\
-	(XXX)->st.st_rdev = _ARG_PROJECT_7_21 ARGS;\
-	(XXX)->st.__pad2 = _ARG_PROJECT_8_21 ARGS;\
-	(XXX)->st.st_size = _ARG_PROJECT_9_21 ARGS;\
-	(XXX)->st.st_blksize = _ARG_PROJECT_10_21 ARGS;\
-	(XXX)->st.st_blocks = _ARG_PROJECT_11_21 ARGS;\
-	(XXX)->st.st_atim.tv_sec = _ARG_PROJECT_12_21 ARGS;\
-	(XXX)->st.st_atim.tv_nsec = _ARG_PROJECT_13_21 ARGS;\
-	(XXX)->st.st_mtim.tv_sec = _ARG_PROJECT_14_21 ARGS;\
-	(XXX)->st.st_mtim.tv_nsec = _ARG_PROJECT_15_21 ARGS;\
-	(XXX)->st.st_ctim.tv_sec = _ARG_PROJECT_16_21 ARGS;\
-	(XXX)->st.st_ctim.tv_nsec = _ARG_PROJECT_17_21 ARGS;\
-	(XXX)->st.__unused4 = _ARG_PROJECT_18_21 ARGS;\
-	(XXX)->st.__unused5 = _ARG_PROJECT_19_21 ARGS;\
-	(XXX)->dir = _ARG_PROJECT_20_21 ARGS;\
+	(XXX)->st.st_dev = _ARG_PROJECT_0_17 ARGS;\
+	(XXX)->st.__ERROR__ = _ARG_PROJECT_1_17 ARGS;\
+	(XXX)->st.st_mode = _ARG_PROJECT_2_17 ARGS;\
+	(XXX)->st.st_nlink = _ARG_PROJECT_3_17 ARGS;\
+	(XXX)->st.st_uid = _ARG_PROJECT_4_17 ARGS;\
+	(XXX)->st.st_gid = _ARG_PROJECT_5_17 ARGS;\
+	(XXX)->st.st_rdev = _ARG_PROJECT_6_17 ARGS;\
+	(XXX)->st.st_size = _ARG_PROJECT_7_17 ARGS;\
+	(XXX)->st.st_atime = _ARG_PROJECT_8_17 ARGS;\
+	(XXX)->st.st_spare1 = _ARG_PROJECT_9_17 ARGS;\
+	(XXX)->st.st_mtime = _ARG_PROJECT_10_17 ARGS;\
+	(XXX)->st.st_spare2 = _ARG_PROJECT_11_17 ARGS;\
+	(XXX)->st.st_ctime = _ARG_PROJECT_12_17 ARGS;\
+	(XXX)->st.st_spare3 = _ARG_PROJECT_13_17 ARGS;\
+	(XXX)->st.st_blksize = _ARG_PROJECT_14_17 ARGS;\
+	(XXX)->st.__ERROR__ = _ARG_PROJECT_15_17 ARGS;\
+	(XXX)->dir = _ARG_PROJECT_16_17 ARGS;\
 }
 #define FILL_dirent(XXX,FARG0,FARG1,FARG2,FARG3) {\
-	(XXX)->d_ino = FARG0;\
-	(XXX)->d_off = FARG1;\
-	(XXX)->d_reclen = FARG2;\
-	(XXX)->d_type = FARG3;\
+	(XXX)->__d_version = FARG0;\
+	(XXX)->__ERROR__ = FARG1;\
+	(XXX)->d_type = FARG2;\
+	(XXX)->__d_internal1 = FARG3;\
 }
 #define FILLF_dirent(XXX,FARG0,FARG1,FARG2,FARG3) {\
-	(XXX)->d_ino = FARG0;\
-	(XXX)->d_off = FARG1;\
-	(XXX)->d_reclen = FARG2;\
-	(XXX)->d_type = FARG3;\
+	(XXX)->__d_version = FARG0;\
+	(XXX)->__ERROR__ = FARG1;\
+	(XXX)->d_type = FARG2;\
+	(XXX)->__d_internal1 = FARG3;\
 }
 #define _FILLF_dirent(XXX,ARGS) {\
-	(XXX)->d_ino = _ARG_PROJECT_0_4 ARGS;\
-	(XXX)->d_off = _ARG_PROJECT_1_4 ARGS;\
-	(XXX)->d_reclen = _ARG_PROJECT_2_4 ARGS;\
-	(XXX)->d_type = _ARG_PROJECT_3_4 ARGS;\
+	(XXX)->__d_version = _ARG_PROJECT_0_4 ARGS;\
+	(XXX)->__ERROR__ = _ARG_PROJECT_1_4 ARGS;\
+	(XXX)->d_type = _ARG_PROJECT_2_4 ARGS;\
+	(XXX)->__d_internal1 = _ARG_PROJECT_3_4 ARGS;\
+}
+#define FILL___pthread_key_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
+}
+#define FILLF___pthread_key_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
+}
+#define _FILLF___pthread_key_t(XXX,ARGS) {\
+	(XXX)->__dummy = _ARG_PROJECT_0_1 ARGS;\
 }
 #define FILL_cxScanFileFunctionLink(XXX,FARG0,FARG1,FARG2) {\
 	(XXX)->recordCode = FARG0;\
@@ -3349,6 +3509,15 @@
 	(XXX)->foundRefNotToTestedClass = _ARG_PROJECT_7_9 ARGS;\
 	(XXX)->foundOuterScopeRef = _ARG_PROJECT_8_9 ARGS;\
 }
+#define FILL___pthread_barrier_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
+}
+#define FILLF___pthread_barrier_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
+}
+#define _FILLF___pthread_barrier_t(XXX,ARGS) {\
+	(XXX)->__dummy = _ARG_PROJECT_0_1 ARGS;\
+}
 #define FILL_symbolList(XXX,FARG0,FARG1) {\
 	(XXX)->d = FARG0;\
 	(XXX)->next = FARG1;\
@@ -3392,6 +3561,27 @@
 	(XXX)->e.line = _ARG_PROJECT_4_7 ARGS;\
 	(XXX)->e.coll = _ARG_PROJECT_5_7 ARGS;\
 	(XXX)->d = _ARG_PROJECT_6_7 ARGS;\
+}
+#define FILL__Bigint(XXX,FARG0,FARG1,FARG2,FARG3,FARG4) {\
+	(XXX)->_next = FARG0;\
+	(XXX)->_k = FARG1;\
+	(XXX)->_maxwds = FARG2;\
+	(XXX)->_sign = FARG3;\
+	(XXX)->_wds = FARG4;\
+}
+#define FILLF__Bigint(XXX,FARG0,FARG1,FARG2,FARG3,FARG4) {\
+	(XXX)->_next = FARG0;\
+	(XXX)->_k = FARG1;\
+	(XXX)->_maxwds = FARG2;\
+	(XXX)->_sign = FARG3;\
+	(XXX)->_wds = FARG4;\
+}
+#define _FILLF__Bigint(XXX,ARGS) {\
+	(XXX)->_next = _ARG_PROJECT_0_5 ARGS;\
+	(XXX)->_k = _ARG_PROJECT_1_5 ARGS;\
+	(XXX)->_maxwds = _ARG_PROJECT_2_5 ARGS;\
+	(XXX)->_sign = _ARG_PROJECT_3_5 ARGS;\
+	(XXX)->_wds = _ARG_PROJECT_4_5 ARGS;\
 }
 #define FILL_typeModifiersList(XXX,FARG0,FARG1) {\
 	(XXX)->d = FARG0;\
@@ -3476,6 +3666,15 @@
 	(XXX)->r = _ARG_PROJECT_1_3 ARGS;\
 	(XXX)->pp = _ARG_PROJECT_2_3 ARGS;\
 }
+#define FILL___pthread_rwlockattr_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
+}
+#define FILLF___pthread_rwlockattr_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
+}
+#define _FILLF___pthread_rwlockattr_t(XXX,ARGS) {\
+	(XXX)->__dummy = _ARG_PROJECT_0_1 ARGS;\
+}
 #define FILL_classTreeData(XXX,FARG0,FARG1) {\
 	(XXX)->baseClassIndex = FARG0;\
 	(XXX)->tree = FARG1;\
@@ -3492,51 +3691,43 @@
 	(XXX)->validFlag = FARG0;\
 	(XXX)->stat = FARG1;\
 }
-#define FILLF_fileStat(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12,FARG13,FARG14,FARG15,FARG16,FARG17,FARG18,FARG19,FARG20) {\
+#define FILLF_fileStat(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12,FARG13,FARG14,FARG15,FARG16) {\
 	(XXX)->validFlag = FARG0;\
 	(XXX)->stat.st_dev = FARG1;\
-	(XXX)->stat.__pad1 = FARG2;\
-	(XXX)->stat.st_ino = FARG3;\
-	(XXX)->stat.st_mode = FARG4;\
-	(XXX)->stat.st_nlink = FARG5;\
-	(XXX)->stat.st_uid = FARG6;\
-	(XXX)->stat.st_gid = FARG7;\
-	(XXX)->stat.st_rdev = FARG8;\
-	(XXX)->stat.__pad2 = FARG9;\
-	(XXX)->stat.st_size = FARG10;\
-	(XXX)->stat.st_blksize = FARG11;\
-	(XXX)->stat.st_blocks = FARG12;\
-	(XXX)->stat.st_atim.tv_sec = FARG13;\
-	(XXX)->stat.st_atim.tv_nsec = FARG14;\
-	(XXX)->stat.st_mtim.tv_sec = FARG15;\
-	(XXX)->stat.st_mtim.tv_nsec = FARG16;\
-	(XXX)->stat.st_ctim.tv_sec = FARG17;\
-	(XXX)->stat.st_ctim.tv_nsec = FARG18;\
-	(XXX)->stat.__unused4 = FARG19;\
-	(XXX)->stat.__unused5 = FARG20;\
+	(XXX)->stat.__ERROR__ = FARG2;\
+	(XXX)->stat.st_mode = FARG3;\
+	(XXX)->stat.st_nlink = FARG4;\
+	(XXX)->stat.st_uid = FARG5;\
+	(XXX)->stat.st_gid = FARG6;\
+	(XXX)->stat.st_rdev = FARG7;\
+	(XXX)->stat.st_size = FARG8;\
+	(XXX)->stat.st_atime = FARG9;\
+	(XXX)->stat.st_spare1 = FARG10;\
+	(XXX)->stat.st_mtime = FARG11;\
+	(XXX)->stat.st_spare2 = FARG12;\
+	(XXX)->stat.st_ctime = FARG13;\
+	(XXX)->stat.st_spare3 = FARG14;\
+	(XXX)->stat.st_blksize = FARG15;\
+	(XXX)->stat.__ERROR__ = FARG16;\
 }
 #define _FILLF_fileStat(XXX,ARGS) {\
-	(XXX)->validFlag = _ARG_PROJECT_0_21 ARGS;\
-	(XXX)->stat.st_dev = _ARG_PROJECT_1_21 ARGS;\
-	(XXX)->stat.__pad1 = _ARG_PROJECT_2_21 ARGS;\
-	(XXX)->stat.st_ino = _ARG_PROJECT_3_21 ARGS;\
-	(XXX)->stat.st_mode = _ARG_PROJECT_4_21 ARGS;\
-	(XXX)->stat.st_nlink = _ARG_PROJECT_5_21 ARGS;\
-	(XXX)->stat.st_uid = _ARG_PROJECT_6_21 ARGS;\
-	(XXX)->stat.st_gid = _ARG_PROJECT_7_21 ARGS;\
-	(XXX)->stat.st_rdev = _ARG_PROJECT_8_21 ARGS;\
-	(XXX)->stat.__pad2 = _ARG_PROJECT_9_21 ARGS;\
-	(XXX)->stat.st_size = _ARG_PROJECT_10_21 ARGS;\
-	(XXX)->stat.st_blksize = _ARG_PROJECT_11_21 ARGS;\
-	(XXX)->stat.st_blocks = _ARG_PROJECT_12_21 ARGS;\
-	(XXX)->stat.st_atim.tv_sec = _ARG_PROJECT_13_21 ARGS;\
-	(XXX)->stat.st_atim.tv_nsec = _ARG_PROJECT_14_21 ARGS;\
-	(XXX)->stat.st_mtim.tv_sec = _ARG_PROJECT_15_21 ARGS;\
-	(XXX)->stat.st_mtim.tv_nsec = _ARG_PROJECT_16_21 ARGS;\
-	(XXX)->stat.st_ctim.tv_sec = _ARG_PROJECT_17_21 ARGS;\
-	(XXX)->stat.st_ctim.tv_nsec = _ARG_PROJECT_18_21 ARGS;\
-	(XXX)->stat.__unused4 = _ARG_PROJECT_19_21 ARGS;\
-	(XXX)->stat.__unused5 = _ARG_PROJECT_20_21 ARGS;\
+	(XXX)->validFlag = _ARG_PROJECT_0_17 ARGS;\
+	(XXX)->stat.st_dev = _ARG_PROJECT_1_17 ARGS;\
+	(XXX)->stat.__ERROR__ = _ARG_PROJECT_2_17 ARGS;\
+	(XXX)->stat.st_mode = _ARG_PROJECT_3_17 ARGS;\
+	(XXX)->stat.st_nlink = _ARG_PROJECT_4_17 ARGS;\
+	(XXX)->stat.st_uid = _ARG_PROJECT_5_17 ARGS;\
+	(XXX)->stat.st_gid = _ARG_PROJECT_6_17 ARGS;\
+	(XXX)->stat.st_rdev = _ARG_PROJECT_7_17 ARGS;\
+	(XXX)->stat.st_size = _ARG_PROJECT_8_17 ARGS;\
+	(XXX)->stat.st_atime = _ARG_PROJECT_9_17 ARGS;\
+	(XXX)->stat.st_spare1 = _ARG_PROJECT_10_17 ARGS;\
+	(XXX)->stat.st_mtime = _ARG_PROJECT_11_17 ARGS;\
+	(XXX)->stat.st_spare2 = _ARG_PROJECT_12_17 ARGS;\
+	(XXX)->stat.st_ctime = _ARG_PROJECT_13_17 ARGS;\
+	(XXX)->stat.st_spare3 = _ARG_PROJECT_14_17 ARGS;\
+	(XXX)->stat.st_blksize = _ARG_PROJECT_15_17 ARGS;\
+	(XXX)->stat.__ERROR__ = _ARG_PROJECT_16_17 ARGS;\
 }
 #define FILL_caching(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6) {\
 	(XXX)->activeCache = FARG0;\
@@ -3665,6 +3856,15 @@
 	(XXX)->d.r = _ARG_PROJECT_7_9 ARGS;\
 	(XXX)->d.pp = _ARG_PROJECT_8_9 ARGS;\
 }
+#define FILL___pthread_attr_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
+}
+#define FILLF___pthread_attr_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
+}
+#define _FILLF___pthread_attr_t(XXX,ARGS) {\
+	(XXX)->__dummy = _ARG_PROJECT_0_1 ARGS;\
+}
 #define FILL_userOlcx(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5) {\
 	(XXX)->name = FARG0;\
 	(XXX)->browserStack = FARG1;\
@@ -3696,12 +3896,6 @@
 	(XXX)->ct.baseClassIndex = _ARG_PROJECT_7_10 ARGS;\
 	(XXX)->ct.tree = _ARG_PROJECT_8_10 ARGS;\
 	(XXX)->next = _ARG_PROJECT_9_10 ARGS;\
-}
-#define FILL___gconv_loaded_object(XXX) {\
-}
-#define FILLF___gconv_loaded_object(XXX) {\
-}
-#define _FILLF___gconv_loaded_object(XXX,ARGS) {\
 }
 #define FILL_bb_symbolPositionPair(XXX,FARG0,FARG1,FARG2) {\
 	(XXX)->b = FARG0;\
@@ -3750,6 +3944,18 @@
 	(XXX)->e.line = _ARG_PROJECT_4_7 ARGS;\
 	(XXX)->e.coll = _ARG_PROJECT_5_7 ARGS;\
 	(XXX)->d = _ARG_PROJECT_6_7 ARGS;\
+}
+#define FILL___tzinfo_struct(XXX,FARG0,FARG1) {\
+	(XXX)->__tznorth = FARG0;\
+	(XXX)->__tzyear = FARG1;\
+}
+#define FILLF___tzinfo_struct(XXX,FARG0,FARG1) {\
+	(XXX)->__tznorth = FARG0;\
+	(XXX)->__tzyear = FARG1;\
+}
+#define _FILLF___tzinfo_struct(XXX,ARGS) {\
+	(XXX)->__tznorth = _ARG_PROJECT_0_2 ARGS;\
+	(XXX)->__tzyear = _ARG_PROJECT_1_2 ARGS;\
 }
 #define FILL_options(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12,FARG13,FARG14,FARG15,FARG16,FARG17,FARG18,FARG19,FARG20,FARG21,FARG22,FARG23,FARG24,FARG25,FARG26,FARG27,FARG28,FARG29,FARG30,FARG31,FARG32,FARG33,FARG34,FARG35,FARG36,FARG37,FARG38,FARG39,FARG40,FARG41,FARG42,FARG43,FARG44,FARG45,FARG46,FARG47,FARG48,FARG49,FARG50,FARG51,FARG52,FARG53,FARG54,FARG55,FARG56,FARG57,FARG58,FARG59,FARG60,FARG61,FARG62,FARG63,FARG64,FARG65,FARG66,FARG67,FARG68,FARG69,FARG70,FARG71,FARG72,FARG73,FARG74,FARG75,FARG76,FARG77,FARG78,FARG79,FARG80,FARG81,FARG82,FARG83,FARG84,FARG85,FARG86,FARG87,FARG88,FARG89,FARG90,FARG91,FARG92,FARG93,FARG94,FARG95,FARG96,FARG97,FARG98,FARG99,FARG100,FARG101,FARG102,FARG103,FARG104,FARG105,FARG106,FARG107,FARG108,FARG109,FARG110,FARG111,FARG112,FARG113,FARG114,FARG115,FARG116,FARG117,FARG118,FARG119,FARG120,FARG121,FARG122,FARG123,FARG124,FARG125,FARG126,FARG127,FARG128,FARG129,FARG130,FARG131,FARG132,FARG133,FARG134,FARG135,FARG136,FARG137,FARG138,FARG139,FARG140,FARG141,FARG142,FARG143,FARG144,FARG145,FARG146,FARG147,FARG148,FARG149) {\
 	(XXX)->fileEncoding = FARG0;\
@@ -4213,18 +4419,6 @@
 	(XXX)->pendingMemory.size = _ARG_PROJECT_151_153 ARGS;\
 	(XXX)->pendingMemory.b = _ARG_PROJECT_152_153 ARGS;\
 }
-#define FILL__pthread_fastlock(XXX,FARG0,FARG1) {\
-	(XXX)->__status = FARG0;\
-	(XXX)->__spinlock = FARG1;\
-}
-#define FILLF__pthread_fastlock(XXX,FARG0,FARG1) {\
-	(XXX)->__status = FARG0;\
-	(XXX)->__spinlock = FARG1;\
-}
-#define _FILLF__pthread_fastlock(XXX,ARGS) {\
-	(XXX)->__status = _ARG_PROJECT_0_2 ARGS;\
-	(XXX)->__spinlock = _ARG_PROJECT_1_2 ARGS;\
-}
 #define FILL_bb_idIdentList(XXX,FARG0,FARG1,FARG2) {\
 	(XXX)->b = FARG0;\
 	(XXX)->e = FARG1;\
@@ -4254,56 +4448,14 @@
 #define _FILLUREC_defUnion_mbody(XX,ARG) XX->mbody = ARG;
 #define _FILLUREC_defUnion_labn(XX,ARG) XX->labn = ARG;
 #define _FILLUREC_defUnion_keyWordVal(XX,ARG) XX->keyWordVal = ARG;
-#define FILL___gconv_step(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12,FARG13,FARG14) {\
-	(XXX)->__shlib_handle = FARG0;\
-	(XXX)->__modname = FARG1;\
-	(XXX)->__counter = FARG2;\
-	(XXX)->__from_name = FARG3;\
-	(XXX)->__to_name = FARG4;\
-	(XXX)->__fct = FARG5;\
-	(XXX)->__btowc_fct = FARG6;\
-	(XXX)->__init_fct = FARG7;\
-	(XXX)->__end_fct = FARG8;\
-	(XXX)->__min_needed_from = FARG9;\
-	(XXX)->__max_needed_from = FARG10;\
-	(XXX)->__min_needed_to = FARG11;\
-	(XXX)->__max_needed_to = FARG12;\
-	(XXX)->__stateful = FARG13;\
-	(XXX)->__data = FARG14;\
+#define FILL___pthread_cond_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
 }
-#define FILLF___gconv_step(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12,FARG13,FARG14) {\
-	(XXX)->__shlib_handle = FARG0;\
-	(XXX)->__modname = FARG1;\
-	(XXX)->__counter = FARG2;\
-	(XXX)->__from_name = FARG3;\
-	(XXX)->__to_name = FARG4;\
-	(XXX)->__fct = FARG5;\
-	(XXX)->__btowc_fct = FARG6;\
-	(XXX)->__init_fct = FARG7;\
-	(XXX)->__end_fct = FARG8;\
-	(XXX)->__min_needed_from = FARG9;\
-	(XXX)->__max_needed_from = FARG10;\
-	(XXX)->__min_needed_to = FARG11;\
-	(XXX)->__max_needed_to = FARG12;\
-	(XXX)->__stateful = FARG13;\
-	(XXX)->__data = FARG14;\
+#define FILLF___pthread_cond_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
 }
-#define _FILLF___gconv_step(XXX,ARGS) {\
-	(XXX)->__shlib_handle = _ARG_PROJECT_0_15 ARGS;\
-	(XXX)->__modname = _ARG_PROJECT_1_15 ARGS;\
-	(XXX)->__counter = _ARG_PROJECT_2_15 ARGS;\
-	(XXX)->__from_name = _ARG_PROJECT_3_15 ARGS;\
-	(XXX)->__to_name = _ARG_PROJECT_4_15 ARGS;\
-	(XXX)->__fct = _ARG_PROJECT_5_15 ARGS;\
-	(XXX)->__btowc_fct = _ARG_PROJECT_6_15 ARGS;\
-	(XXX)->__init_fct = _ARG_PROJECT_7_15 ARGS;\
-	(XXX)->__end_fct = _ARG_PROJECT_8_15 ARGS;\
-	(XXX)->__min_needed_from = _ARG_PROJECT_9_15 ARGS;\
-	(XXX)->__max_needed_from = _ARG_PROJECT_10_15 ARGS;\
-	(XXX)->__min_needed_to = _ARG_PROJECT_11_15 ARGS;\
-	(XXX)->__max_needed_to = _ARG_PROJECT_12_15 ARGS;\
-	(XXX)->__stateful = _ARG_PROJECT_13_15 ARGS;\
-	(XXX)->__data = _ARG_PROJECT_14_15 ARGS;\
+#define _FILLF___pthread_cond_t(XXX,ARGS) {\
+	(XXX)->__dummy = _ARG_PROJECT_0_1 ARGS;\
 }
 #define FILL_bb_intPair(XXX,FARG0,FARG1,FARG2) {\
 	(XXX)->b = FARG0;\
@@ -4451,6 +4603,15 @@
 	(XXX)->e.coll = _ARG_PROJECT_5_7 ARGS;\
 	(XXX)->d = _ARG_PROJECT_6_7 ARGS;\
 }
+#define FILL___pthread_barrierattr_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
+}
+#define FILLF___pthread_barrierattr_t(XXX,FARG0) {\
+	(XXX)->__dummy = FARG0;\
+}
+#define _FILLF___pthread_barrierattr_t(XXX,ARGS) {\
+	(XXX)->__dummy = _ARG_PROJECT_0_1 ARGS;\
+}
 #define FILL_programGraphNode(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6) {\
 	(XXX)->ref = FARG0;\
 	(XXX)->symRef = FARG1;\
@@ -4556,10 +4717,4 @@
 	(XXX)->savedYYstate = _ARG_PROJECT_7_10 ARGS;\
 	(XXX)->yyStateSize = _ARG_PROJECT_8_10 ARGS;\
 	(XXX)->next = _ARG_PROJECT_9_10 ARGS;\
-}
-#define FILL__IO_FILE_plus(XXX) {\
-}
-#define FILLF__IO_FILE_plus(XXX) {\
-}
-#define _FILLF__IO_FILE_plus(XXX,ARGS) {\
 }
