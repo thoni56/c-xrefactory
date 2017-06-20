@@ -1394,6 +1394,9 @@ label:
     |	CASE constant_expr ':' {
             GenSwitchCaseFork(0);
     }
+    |	CASE constant_expr ELIPSIS constant_expr ':' {
+            GenSwitchCaseFork(0);
+    }
     |	DEFAULT ':' {
             GenSwitchCaseFork(0);
     }

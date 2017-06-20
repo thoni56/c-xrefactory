@@ -1475,6 +1475,7 @@ statement
 labeled_statement
     : label_def_name ':' statement
     | CASE constant_expr ':' statement
+    | CASE constant_expr ELIPSIS constant_expr ':' statement
     | DEFAULT ':' statement
     ;
 
