@@ -19,7 +19,7 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #include "cgram.h"				/* tokens from grammars */
 #undef  YYSTYPE
 
-/* redefine object which can clash with gram.h */
+/* redefine object which can clash with cgram.h */
 
 #define yylval cexpyylval
 

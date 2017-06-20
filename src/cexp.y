@@ -9,7 +9,7 @@
 #include "cgram.h"				/* tokens from grammars */
 #undef  YYSTYPE
 
-/* redefine object which can clash with gram.h */
+/* redefine object which can clash with cgram.h */
 
 #define yylval cexpyylval
 
