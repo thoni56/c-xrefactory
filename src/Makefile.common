@@ -33,30 +33,37 @@ $(ROOTDIR)/lib/zlib/libz.a: ..always..
 # Unless we need to modify the grammar, which incidentally includes
 # both java and c++, we can use the already included .c-files instead
 # of generating from yacc
-#
 
-# Disable standard yacc to C rule so that we can compile without YACC on user sites
+# So we disable standard yacc to C rule so that we can compile without
+# YACC which should happen on user sites. To run yacc on .y-files use
+# 'make yacc' as defined in Makefile
 %.c : %.y
 
-# cgram.c: cgram.y
-#	$(YACC) -v -d cgram.y)
-#	mv y.output cy.output
-#	mv y.tab.c cgram.c
-#	mv y.tab.h gram.h
+cgram.c: cgram.y
+ifeq ($(YACCING),yes)
+	$(YACC) -v -d cgram.y
+	mv y.output cy.output
+	mv y.tab.c cgram.c
+	mv y.tab.h gram.h
+endif
 
 
-# javagram.c: javagram.y cgram.c
-#	$(YACC) -v -d javagram.y
-#	mv y.output jy.output
-#	mv y.tab.c javagram.c
-#	mv y.tab.h javagram.h
-#	diff javagram.h gram.h
+javagram.c: javagram.y cgram.c
+ifeq ($(YACCING),yes)
+	$(YACC) -v -d javagram.y
+	mv y.output jy.output
+	mv y.tab.c javagram.c
+	mv y.tab.h javagram.h
+	diff javagram.h gram.h
+endif
 
-# yaccgram.c: yaccgram.y cgram.c
-#	$(YACC) -v -d yaccgram.y
-#	mv y.tab.c yaccgram.c
-#	mv y.tab.h yaccgram.h
-#	diff yaccgram.h gram.h
+yaccgram.c: yaccgram.y cgram.c
+ifeq ($(YACCING),yes)
+	$(YACC) -v -d yaccgram.y
+	mv y.tab.c yaccgram.c
+	mv y.tab.h yaccgram.h
+	diff yaccgram.h gram.h
+endif
 
 # Don't know what javasl is, no support anyway
 # javaslgram.c: javaslgram.y cgram.c
@@ -72,9 +79,11 @@ $(ROOTDIR)/lib/zlib/libz.a: ..always..
 #	mv y.tab.h cccgram.h
 #	diff cccgram.h gram.h
 
-# cexp.c: cexp.y
-#	$(YACC) -v cexp.y
-#	mv y.tab.c cexp.c
+cexp.c: cexp.y
+ifeq ($(YACCING),yes)
+	$(YACC) -v cexp.y
+	mv y.tab.c cexp.c
+endif
 
 gram.h:	cgram.c
 
@@ -106,7 +115,6 @@ bootstrap:
 
 c-xref: $(OBJS)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS)
-	echo -e "\n\t\t\t\tnormal end of make\n"
 
 #########################################################################
 
