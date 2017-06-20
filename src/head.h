@@ -1,11 +1,13 @@
 #ifndef _HEAD__H
 #define _HEAD__H
 
+#include "constants.h"
+
 #include "strFill.h"
 
 #include "listmacr.h"
 #include "memmac.h"
-#include "head2.h"		/*SBD*/
+
 
 /* ************************** VERSION NUMBER ********************* */
 

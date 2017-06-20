@@ -1,14 +1,10 @@
-/*
-  $Revision: 1.18 $
-  $Date: 2002/09/08 21:28:57 $
-*/
-
 #include "stdinc.h"
 #include "head.h"
 #include "proto.h"      /*SBD*/
+#include "globals.h"
 
 #include "protocol.h"
-//
+
 
 FILE *dumpOut=NULL, *errOut=NULL;
 char tmpBuff[TMP_BUFF_SIZE];
@@ -80,11 +76,11 @@ char *normalizeFileName(char *name, char *relativeto) {
 #if defined (__WIN32__) || defined (__OS2__)    /*SBD*/
     } else if (name[0]=='\\' || name[0]=='/') {
         res[0] = relativeto[0]; res[1] = ':';
-        l1 = 1; 
+        l1 = 1;
     } else if (name[0]!=0 && name[1]==':') {
         res[0] = tolower(name[0]);      // normalize drive name
         res[1] = ':';
-        l1 = 1; 
+        l1 = 1;
         s1 = 2;
 #else           /*SBD*/
     } else if (name[0] == SLASH) {
@@ -241,7 +237,7 @@ static void errorMessage(char *out, int errCode, char *mess) {
         sprintf(out,"a problem while reading config record %s\n",mess);
         out += strlen(out);
         break;
-    default:  
+    default:
         sprintf(out,"%s\n",mess);
         out += strlen(out);
         break;
@@ -326,7 +322,7 @@ void internalCheckFail(char *expr, char *file, int line) {
 #   ifdef CORE_DUMP
     emergencyExit(XREF_EXIT_ERR);
 #   endif
-    if (s_opt.taskRegime == RegimeEditServer 
+    if (s_opt.taskRegime == RegimeEditServer
         || s_opt.refactoringRegime == RegimeRefactory
         || s_fileAbortionEnabled == 0
         ) {
@@ -335,9 +331,5 @@ void internalCheckFail(char *expr, char *file, int line) {
     fprintf(errOut, "\t file aborted!\n"); fflush(errOut);
     // longjump is causing problems with refactory, the longjmp
     // is missplaced
-    longjmp(cxmemOverflow,MESS_FILE_ABORT); 
+    longjmp(cxmemOverflow,MESS_FILE_ABORT);
 }
-
-
-
-

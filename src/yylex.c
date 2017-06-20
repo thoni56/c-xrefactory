@@ -1,15 +1,12 @@
-/*
-    $Revision: 1.25 $
-    $Date: 2002/08/24 21:50:56 $
-*/
-
 #include "stdinc.h"
 #include "head.h"
 #include "proto.h"      /*SBD*/
+#include "globals.h"
+
 #include "unigram.h"
 #include "memmac.h"
 #include "protocol.h"
-//
+
 /* !!!!!!!!!!!!!!!!!!! to caching !!!!!!!!!!!!!!! */
 
 #define HASH_TAB_TYPE struct maTab

@@ -4,8 +4,8 @@
 #include "stdinc.h"
 #include "strTdef.h"
 #include "head.h"
-#include "zlib.h" 		/*SBD*/
-#include "lexmac.h" 	/*SBD*/
+#include "zlib.h"       /*SBD*/
+#include "lexmac.h"     /*SBD*/
 
 /* ******************************  TYPEDEFS  ***************************** */
 
@@ -14,216 +14,216 @@ typedef unsigned char uchar;
 /* *********************************************************************** */
 
 enum miscellaneous {						/* misc. constants */
-	DEFAULT_VALUE,
-	TYPE_ADD_YES,
-	TYPE_ADD_NO,
-	ADD_YES,
-	ADD_NO,
-	CLASS_TO_TYPE,
-	CLASS_TO_EXPR,
-	CLASS_TO_METHOD,
-	CLASS_TO_ANY,
-	ACC_CHECK_YES,
-	ACC_CHECK_NO,
-	VISIB_CHECK_YES,
-	VISIB_CHECK_NO,
-	CUT_OVERRIDEN_YES,
-	CUT_OVERRIDEN_NO,
-	CX_FILE_ITEM_GEN,
-	NO_CX_FILE_ITEM_GEN,
-	CX_GENERATE_OUTPUT,
-	CX_JUST_READ,
-	CX_HTML_FIRST_PASS,
-	CX_HTML_SECOND_PASS,
-	CX_MENU_CREATION,
-	CX_BY_PASS,
-	HTML_GEN,
-	HTML_NO_GEN,
-	MEM_ALLOC_ON_SM,
-	MEM_ALLOC_ON_PP,
-	MEM_NO_ALLOC,
-	MESS_REFERENCE_OVERFLOW,
-	MESS_FILE_ABORT,
-	MESS_NONE,
-	INFILES_ENABLED,
-	INFILES_DISABLED,
-	BEFORE_BLOCK,
-	INSIDE_BLOCK,
-	AFTER_BLOCK,
-	EXTRACT_LOCAL_VAR,
-	EXTRACT_VALUE_ARGUMENT,
-	EXTRACT_LOCAL_OUT_ARGUMENT,
-	EXTRACT_OUT_ARGUMENT,
-	EXTRACT_IN_OUT_ARGUMENT,
-	EXTRACT_ADDRESS_ARGUMENT,
-	EXTRACT_RESULT_VALUE,
-	EXTRACT_IN_RESULT_VALUE,
-	EXTRACT_LOCAL_RESULT_VALUE,
-	EXTRACT_NONE,
-	EXTRACT_ERROR,
-	INVOCATION_XREF,
-	INVOCATION_SETUP,
-	INVOCATION_SPELLER,
-	SETUP_EDITOR_EMACS,
-	SETUP_EDITOR_XEMACS,
-	SETUP_EDITOR_VEDIT3,
-	SETUP_SHELL_SH,
-	SETUP_SHELL_CSH,
-	SETUP_SHELL_BASH,
-	SETUP_SHELL_UNKNOWN,
-	LOADING_SYMBOL,
-	SEARCH_SYMBOL,
-	FF_SCHEDULED_TO_PROCESS,
-	FF_COMMAND_LINE_ENTERED,
-	OL_LOOKING_2_PASS_MACRO_USAGE,
-	SHORT_NAME,
-	LONG_NAME,
-	GEN_HTML,
-	GEN_JAVA_DOC,
-	ONLINE_ONLY,
-	ALL_REFS,
-	COUNT_ONLY,
-	CUT_OUTERS,
-	NO_OUTERS_CUT,
-	VIRT_ITEM,
-	SINGLE_VIRT_ITEM,
-	FIRST_PASS,
-	SECOND_PASS,
-	DO_NOT_CHECK_IF_SELECTED,
-	PUSH_AFTER_MENU,
-	CHECK_NULL,
-	RESULT_IS_CLASS_FILE,
-	RESULT_IS_JAVA_FILE,
-	RESULT_NO_FILE_FOUND,
-	TRAILED_YES,
-	TRAILED_NO,
-	CPOS_FUNCTION_INNER,
-	CPOS_ST,
-	DIRECT_ONLY,
-	SUPERCLASS_NESTED_TOO,
-	DIFF_MISSING_REF,
-	DIFF_UNEXPECTED_REF,
-	CONSTRUCTOR_INVOCATION,
-	REGULAR_METHOD,
-	SUPER_METHOD_INVOCATION,
-	RESOLVE_DIALOG_ALLWAYS,
-	RESOLVE_DIALOG_NEVER,
-	GLOBAL_ENV_ONLY,
-	NO_ERROR_MESSAGE,
-	ADD_CX_REFS,
-	NO_CX_REFS,
-	ORDER_PREPEND,
-	ORDER_APPEND,
-	MEMBER_CLASS,
-	MEMBER_TYPE,
-	GEN_VIRTUALS,
-	GEN_NON_VIRTUALS,
-	REQ_FIELD,
-	REQ_METHOD,
-	REQ_STATIC,
-	REQ_NONSTATIC,
-	REQ_SUPERCLASS,
-	REQ_SUBCLASS,
-	REQ_CLASS,
-	REQ_PACKAGE,
-	INSPECT_DEF,
-	INSPECT_CLASS,
-	DOTIFY_NAME,
-	KEEP_SLASHES,
-	LOAD_SUPER,
-	DO_NOT_LOAD_SUPER,
-	INPUT_DIRECT,
-	INPUT_VIA_UNZIP,
-	INPUT_VIA_EDITOR,
-	FQT_COMPLETE_ALSO_ON_PACKAGE,
-	ADD_MAYBE_THIS_REFERENCE,
-	TSS_FULL_SEARCH,
-	TSS_SEARCH_DEFS_ONLY,
-	TSS_FULL_SEARCH_SHORT,
-	TSS_SEARCH_DEFS_ONLY_SHORT,
-	GEN_FULL_OUTPUT,
-	GEN_PRECHECKS,
-	GEN_NO_OUTPUT,
-	CHECK_FOR_ADD_PARAM,
-	CHECK_FOR_DEL_PARAM,
-	GET_PRIMARY_START,
-	GET_STATIC_PREFIX_START,
-	APPLY_CHECKS,
-	NO_CHECKS,
-	CONTINUATION_ENABLED,
-	CONTINUATION_DISABLED,
-	NO_OVERWRITE_CHECK,
-	CHECK_OVERWRITE,
-	ALLOW_EDITOR_FILES,
-	DO_NOT_ALLOW_EDITOR_FILES,
-	DEEP_ONE,
-	DEEP_ANY,
-	DEAD_CODE_DETECTION,
-	INTERACTIVE_YES,
-	INTERACTIVE_NO,
-	MARKER_IS_IN_CODE,
-	MARKER_IS_IN_SLASH_COMMENT,
-	MARKER_IS_IN_STAR_COMMENT,
-	PROFILE_NOT_APPLICABLE,
-	PROFILE_APPLICABLE,
-	PROFILE_PARTIALLY_APPLICABLE,
-	USELESS_FQT_REFS_ALLOWED,
-	USELESS_FQT_REFS_DISALLOWED,
-	PULLING_UP,
-	PUSHING_DOWN,
+    DEFAULT_VALUE,
+    TYPE_ADD_YES,
+    TYPE_ADD_NO,
+    ADD_YES,
+    ADD_NO,
+    CLASS_TO_TYPE,
+    CLASS_TO_EXPR,
+    CLASS_TO_METHOD,
+    CLASS_TO_ANY,
+    ACC_CHECK_YES,
+    ACC_CHECK_NO,
+    VISIB_CHECK_YES,
+    VISIB_CHECK_NO,
+    CUT_OVERRIDEN_YES,
+    CUT_OVERRIDEN_NO,
+    CX_FILE_ITEM_GEN,
+    NO_CX_FILE_ITEM_GEN,
+    CX_GENERATE_OUTPUT,
+    CX_JUST_READ,
+    CX_HTML_FIRST_PASS,
+    CX_HTML_SECOND_PASS,
+    CX_MENU_CREATION,
+    CX_BY_PASS,
+    HTML_GEN,
+    HTML_NO_GEN,
+    MEM_ALLOC_ON_SM,
+    MEM_ALLOC_ON_PP,
+    MEM_NO_ALLOC,
+    MESS_REFERENCE_OVERFLOW,
+    MESS_FILE_ABORT,
+    MESS_NONE,
+    INFILES_ENABLED,
+    INFILES_DISABLED,
+    BEFORE_BLOCK,
+    INSIDE_BLOCK,
+    AFTER_BLOCK,
+    EXTRACT_LOCAL_VAR,
+    EXTRACT_VALUE_ARGUMENT,
+    EXTRACT_LOCAL_OUT_ARGUMENT,
+    EXTRACT_OUT_ARGUMENT,
+    EXTRACT_IN_OUT_ARGUMENT,
+    EXTRACT_ADDRESS_ARGUMENT,
+    EXTRACT_RESULT_VALUE,
+    EXTRACT_IN_RESULT_VALUE,
+    EXTRACT_LOCAL_RESULT_VALUE,
+    EXTRACT_NONE,
+    EXTRACT_ERROR,
+    INVOCATION_XREF,
+    INVOCATION_SETUP,
+    INVOCATION_SPELLER,
+    SETUP_EDITOR_EMACS,
+    SETUP_EDITOR_XEMACS,
+    SETUP_EDITOR_VEDIT3,
+    SETUP_SHELL_SH,
+    SETUP_SHELL_CSH,
+    SETUP_SHELL_BASH,
+    SETUP_SHELL_UNKNOWN,
+    LOADING_SYMBOL,
+    SEARCH_SYMBOL,
+    FF_SCHEDULED_TO_PROCESS,
+    FF_COMMAND_LINE_ENTERED,
+    OL_LOOKING_2_PASS_MACRO_USAGE,
+    SHORT_NAME,
+    LONG_NAME,
+    GEN_HTML,
+    GEN_JAVA_DOC,
+    ONLINE_ONLY,
+    ALL_REFS,
+    COUNT_ONLY,
+    CUT_OUTERS,
+    NO_OUTERS_CUT,
+    VIRT_ITEM,
+    SINGLE_VIRT_ITEM,
+    FIRST_PASS,
+    SECOND_PASS,
+    DO_NOT_CHECK_IF_SELECTED,
+    PUSH_AFTER_MENU,
+    CHECK_NULL,
+    RESULT_IS_CLASS_FILE,
+    RESULT_IS_JAVA_FILE,
+    RESULT_NO_FILE_FOUND,
+    TRAILED_YES,
+    TRAILED_NO,
+    CPOS_FUNCTION_INNER,
+    CPOS_ST,
+    DIRECT_ONLY,
+    SUPERCLASS_NESTED_TOO,
+    DIFF_MISSING_REF,
+    DIFF_UNEXPECTED_REF,
+    CONSTRUCTOR_INVOCATION,
+    REGULAR_METHOD,
+    SUPER_METHOD_INVOCATION,
+    RESOLVE_DIALOG_ALLWAYS,
+    RESOLVE_DIALOG_NEVER,
+    GLOBAL_ENV_ONLY,
+    NO_ERROR_MESSAGE,
+    ADD_CX_REFS,
+    NO_CX_REFS,
+    ORDER_PREPEND,
+    ORDER_APPEND,
+    MEMBER_CLASS,
+    MEMBER_TYPE,
+    GEN_VIRTUALS,
+    GEN_NON_VIRTUALS,
+    REQ_FIELD,
+    REQ_METHOD,
+    REQ_STATIC,
+    REQ_NONSTATIC,
+    REQ_SUPERCLASS,
+    REQ_SUBCLASS,
+    REQ_CLASS,
+    REQ_PACKAGE,
+    INSPECT_DEF,
+    INSPECT_CLASS,
+    DOTIFY_NAME,
+    KEEP_SLASHES,
+    LOAD_SUPER,
+    DO_NOT_LOAD_SUPER,
+    INPUT_DIRECT,
+    INPUT_VIA_UNZIP,
+    INPUT_VIA_EDITOR,
+    FQT_COMPLETE_ALSO_ON_PACKAGE,
+    ADD_MAYBE_THIS_REFERENCE,
+    TSS_FULL_SEARCH,
+    TSS_SEARCH_DEFS_ONLY,
+    TSS_FULL_SEARCH_SHORT,
+    TSS_SEARCH_DEFS_ONLY_SHORT,
+    GEN_FULL_OUTPUT,
+    GEN_PRECHECKS,
+    GEN_NO_OUTPUT,
+    CHECK_FOR_ADD_PARAM,
+    CHECK_FOR_DEL_PARAM,
+    GET_PRIMARY_START,
+    GET_STATIC_PREFIX_START,
+    APPLY_CHECKS,
+    NO_CHECKS,
+    CONTINUATION_ENABLED,
+    CONTINUATION_DISABLED,
+    NO_OVERWRITE_CHECK,
+    CHECK_OVERWRITE,
+    ALLOW_EDITOR_FILES,
+    DO_NOT_ALLOW_EDITOR_FILES,
+    DEEP_ONE,
+    DEEP_ANY,
+    DEAD_CODE_DETECTION,
+    INTERACTIVE_YES,
+    INTERACTIVE_NO,
+    MARKER_IS_IN_CODE,
+    MARKER_IS_IN_SLASH_COMMENT,
+    MARKER_IS_IN_STAR_COMMENT,
+    PROFILE_NOT_APPLICABLE,
+    PROFILE_APPLICABLE,
+    PROFILE_PARTIALLY_APPLICABLE,
+    USELESS_FQT_REFS_ALLOWED,
+    USELESS_FQT_REFS_DISALLOWED,
+    PULLING_UP,
+    PUSHING_DOWN,
 };
 
 /* *******************      encodings      *************** */
 
 enum fileEncodings {
-	MULE_DEFAULT,				// in fact utf-8 or utf-16
-	MULE_EUROPEAN,				// byte per char
-	MULE_EUC,					// euc
-	MULE_SJIS,					// Shift-JIS
-	MULE_UTF,					// utf-8 or utf-16
-	MULE_UTF_8,					// utf-8
-	MULE_UTF_16,				// utf-16
-	MULE_UTF_16LE,				// utf-16 low endian
-	MULE_UTF_16BE,				// utf-16 big endian
+    MULE_DEFAULT,				// in fact utf-8 or utf-16
+    MULE_EUROPEAN,				// byte per char
+    MULE_EUC,					// euc
+    MULE_SJIS,					// Shift-JIS
+    MULE_UTF,					// utf-8 or utf-16
+    MULE_UTF_8,					// utf-8
+    MULE_UTF_16,				// utf-16
+    MULE_UTF_16LE,				// utf-16 low endian
+    MULE_UTF_16BE,				// utf-16 big endian
 };
 
 /* *******************      comment moving levels for refactoring      *************** */
 
 enum commentMovings {
-	CM_NO_COMMENT,
-	CM_SINGLE_SLASHED,
-	CM_SINGLE_STARED,
-	CM_SINGLE_SLASHED_AND_STARED,
-	CM_ALL_SLASHED,
-	CM_ALL_STARED,
-	CM_ALL_SLASHED_AND_STARED,
+    CM_NO_COMMENT,
+    CM_SINGLE_SLASHED,
+    CM_SINGLE_STARED,
+    CM_SINGLE_SLASHED_AND_STARED,
+    CM_ALL_SLASHED,
+    CM_ALL_STARED,
+    CM_ALL_SLASHED_AND_STARED,
 };
 
 /* *******************      generating imports defaults      *************** */
 
 // do to touch this! order is used, with arithmetics!
 enum addImportsDefault {
-	NID_IMPORT_ON_DEMAND,
-	NID_SINGLE_TYPE_IMPORT,
-	NID_KEPP_FQT_NAME,
+    NID_IMPORT_ON_DEMAND,
+    NID_SINGLE_TYPE_IMPORT,
+    NID_KEPP_FQT_NAME,
 };
 
 /* *******************      parsing deep      *************** */
 
 enum {
-	PD_ZERO,
-	PD_SHALLOW,
-	PD_DEEP,
-	PD_DEEPEST,
+    PD_ZERO,
+    PD_SHALLOW,
+    PD_DEEP,
+    PD_DEEPEST,
 };
 
 /* *******************      refactoring continuations      *************** */
 
 enum {
-	RC_ZERO,				// do not continue, keep interactive
-	RC_CONTINUE,			// continue, no special info
-	RC_IMPORT_SINGLE_TYPE,
-	RC_IMPORT_ON_DEMAND,
+    RC_ZERO,				// do not continue, keep interactive
+    RC_CONTINUE,			// continue, no special info
+    RC_IMPORT_SINGLE_TYPE,
+    RC_IMPORT_ON_DEMAND,
 };
 
 /* *******************      error messages type      *************** */
@@ -243,167 +243,167 @@ enum {
 /* ************ working regime in which the task is invoked ******** */
 
 enum taskRegimes {
-	RegimeUndefined,
-	RegimeXref,			/* cross referencer called by user from command line */
-	RegimeEditServer,	/* editor server, called by on-line editing action */
-	RegimeGenerate,		/* generate str-fill macros, ... */
-	RegimeHtmlGenerate,	/* generate html form of input files, ... */
-	RegimeRefactory,	/* generate html form of input files, ... */
+    RegimeUndefined,
+    RegimeXref,			/* cross referencer called by user from command line */
+    RegimeEditServer,	/* editor server, called by on-line editing action */
+    RegimeGenerate,		/* generate str-fill macros, ... */
+    RegimeHtmlGenerate,	/* generate html form of input files, ... */
+    RegimeRefactory,	/* generate html form of input files, ... */
 };
 
 /* ************** on-line (browsing) commands for xrefsrv ********** */
 
 enum olcxOptions {
-	OLO_COMPLETION,		/* must be zero */
-	OLO_SEARCH,
-	OLO_TAG_SEARCH,
-	OLO_RENAME,			/* same as push, just another ordering */
-	OLO_ENCAPSULATE,	/* same as rename, remove private references */
-	OLO_ARG_MANIP,			/* as rename, constructors resolved as functions */
-	OLO_VIRTUAL2STATIC_PUSH, /* same as rename, another message on virtuals */
-	OLO_GET_AVAILABLE_REFACTORINGS,
-	OLO_PUSH,
-	OLO_PUSH_NAME,
-	OLO_PUSH_SPECIAL_NAME,		/* also reparsing current file */
-	OLO_POP,
-	OLO_POP_ONLY,
-	OLO_PLUS,
-	OLO_MINUS,
-	OLO_GOTO_CURRENT,
-	OLO_GET_CURRENT_REFNUM,
-	OLO_GOTO_PARAM_NAME,
-	OLO_GLOBAL_UNUSED,
-	OLO_LOCAL_UNUSED,
-	OLO_LIST,
-	OLO_LIST_TOP,
-	OLO_PUSH_ONLY,
-	OLO_PUSH_AND_CALL_MACRO,
-	OLO_PUSH_ALL_IN_METHOD,
-	OLO_PUSH_FOR_LOCALM,
-	OLO_GOTO,
-	OLO_CGOTO,			/* goto completion item definition */
-	OLO_TAGGOTO,		/* goto tag search result */
-	OLO_TAGSELECT,		/* select tag search result */
-	OLO_CBROWSE,		/* browse javadoc of completion item */
-	OLO_REF_FILTER_SET,
-	OLO_REF_FILTER_PLUS,
-	OLO_REF_FILTER_MINUS,
-	OLO_CSELECT,		/* select completion */
-	OLO_COMPLETION_BACK,
-	OLO_COMPLETION_FORWARD,
-	OLO_EXTRACT,		/* extract block into separate function */
-	OLO_CT_INSPECT_DEF,		/* inspect definition from class tree */
-	OLO_MENU_INSPECT_DEF,	/* inspect definition from symbol menu */
-	OLO_MENU_INSPECT_CLASS,	/* inspect class from symbol menu */
-	OLO_MENU_SELECT,		/* select the line from symbol menu */
-	OLO_MENU_SELECT_ONLY,	/* select only the line from symbol menu */
-	OLO_MENU_SELECT_ALL,	/* select all from symbol menu */
-	OLO_MENU_SELECT_NONE,	/* select none from symbol menu */
-	OLO_MENU_FILTER_SET,	/* more strong filtering */
-	OLO_MENU_FILTER_PLUS,	/* more strong filtering */
-	OLO_MENU_FILTER_MINUS,	/* smaller filtering */
-	OLO_MENU_GO,		/* push references from selected menu items */
-	OLO_CHECK_VERSION,	/* check version correspondance */
-	OLO_RESET_REF_SUFFIX,	/* set n-th argument after argument insert */
-	OLO_TRIVIAL_PRECHECK,	/* trivial pre-refactoring checks */
-	OLO_MM_PRE_CHECK,		/* move method pre check */
-	OLO_PP_PRE_CHECK,		/* push-down/pull-up method pre check */
-	OLO_SAFETY_CHECK_INIT,
-	OLO_SAFETY_CHECK1,
-	OLO_SAFETY_CHECK2,
-	OLO_INTERSECTION,	/* just provide intersection of top references */
-	OLO_REMOVE_WIN,		/* just remove window of top references */
-	OLO_GOTO_DEF,		/* goto definition reference */
-	OLO_GOTO_CALLER,	/* goto caller reference */
-	OLO_SHOW_TOP,		/* show top symbol */
-	OLO_SHOW_TOP_APPL_CLASS,		/* show current reference appl class */
-	OLO_SHOW_TOP_TYPE,		/* show current symbol type */
-	OLO_SHOW_CLASS_TREE,		/* show current class tree */
-	OLO_TOP_SYMBOL_RES,	/* show top symbols resolution */
-	OLO_ACTIVE_PROJECT,		/* show active project name */
-	OLO_JAVA_HOME,		/* show inferred jdkclasspath */
-	OLO_REPUSH,			/* re-push pop-ed top */
-	OLO_CLASS_TREE,     /* display class tree */
-	OLO_USELESS_LONG_NAME,   /* display useless long class names */
-	OLO_USELESS_LONG_NAME_IN_CLASS,   /* display useless long class names */
-	OLO_MAYBE_THIS,   /* display 'this' class dependencies */
-	OLO_NOT_FQT_REFS,   /* display not fully qualified names in method */
-	OLO_NOT_FQT_REFS_IN_CLASS,   /* display not fully qualified names of class */
-	OLO_GET_ENV_VALUE,	/* get a value set by -set */
-	OLO_SET_MOVE_TARGET,	/* set target place for moving action */
-	OLO_SET_MOVE_CLASS_TARGET,	/* set target place for xref2 move class */
-	OLO_SET_MOVE_METHOD_TARGET,	/* set target place for xref2 move method */
-	OLO_GET_CURRENT_CLASS,
-	OLO_GET_CURRENT_SUPER_CLASS,
-	OLO_GET_METHOD_COORD,	/* get method beginning and end lines */
-	OLO_GET_CLASS_COORD,	/* get class beginning and end lines */
-	OLO_GET_SYMBOL_TYPE,	/* get type of a symbol */
-	OLO_TAG_SEARCH_FORWARD,
-	OLO_TAG_SEARCH_BACK,
-	OLO_PUSH_ENCAPSULATE_SAFETY_CHECK,
-	OLO_ENCAPSULATE_SAFETY_CHECK,
-	OLO_SYNTAX_PASS_ONLY,	 /* should replace OLO_GET_PRIMARY_START && OLO_GET_PARAM_COORDINATES */
-	OLO_GET_PRIMARY_START,	 /* get start position of primary expression */
-	OLO_GET_PARAM_COORDINATES,
-	OLO_ABOUT,
+    OLO_COMPLETION,		/* must be zero */
+    OLO_SEARCH,
+    OLO_TAG_SEARCH,
+    OLO_RENAME,			/* same as push, just another ordering */
+    OLO_ENCAPSULATE,	/* same as rename, remove private references */
+    OLO_ARG_MANIP,			/* as rename, constructors resolved as functions */
+    OLO_VIRTUAL2STATIC_PUSH, /* same as rename, another message on virtuals */
+    OLO_GET_AVAILABLE_REFACTORINGS,
+    OLO_PUSH,
+    OLO_PUSH_NAME,
+    OLO_PUSH_SPECIAL_NAME,		/* also reparsing current file */
+    OLO_POP,
+    OLO_POP_ONLY,
+    OLO_PLUS,
+    OLO_MINUS,
+    OLO_GOTO_CURRENT,
+    OLO_GET_CURRENT_REFNUM,
+    OLO_GOTO_PARAM_NAME,
+    OLO_GLOBAL_UNUSED,
+    OLO_LOCAL_UNUSED,
+    OLO_LIST,
+    OLO_LIST_TOP,
+    OLO_PUSH_ONLY,
+    OLO_PUSH_AND_CALL_MACRO,
+    OLO_PUSH_ALL_IN_METHOD,
+    OLO_PUSH_FOR_LOCALM,
+    OLO_GOTO,
+    OLO_CGOTO,			/* goto completion item definition */
+    OLO_TAGGOTO,		/* goto tag search result */
+    OLO_TAGSELECT,		/* select tag search result */
+    OLO_CBROWSE,		/* browse javadoc of completion item */
+    OLO_REF_FILTER_SET,
+    OLO_REF_FILTER_PLUS,
+    OLO_REF_FILTER_MINUS,
+    OLO_CSELECT,		/* select completion */
+    OLO_COMPLETION_BACK,
+    OLO_COMPLETION_FORWARD,
+    OLO_EXTRACT,		/* extract block into separate function */
+    OLO_CT_INSPECT_DEF,		/* inspect definition from class tree */
+    OLO_MENU_INSPECT_DEF,	/* inspect definition from symbol menu */
+    OLO_MENU_INSPECT_CLASS,	/* inspect class from symbol menu */
+    OLO_MENU_SELECT,		/* select the line from symbol menu */
+    OLO_MENU_SELECT_ONLY,	/* select only the line from symbol menu */
+    OLO_MENU_SELECT_ALL,	/* select all from symbol menu */
+    OLO_MENU_SELECT_NONE,	/* select none from symbol menu */
+    OLO_MENU_FILTER_SET,	/* more strong filtering */
+    OLO_MENU_FILTER_PLUS,	/* more strong filtering */
+    OLO_MENU_FILTER_MINUS,	/* smaller filtering */
+    OLO_MENU_GO,		/* push references from selected menu items */
+    OLO_CHECK_VERSION,	/* check version correspondance */
+    OLO_RESET_REF_SUFFIX,	/* set n-th argument after argument insert */
+    OLO_TRIVIAL_PRECHECK,	/* trivial pre-refactoring checks */
+    OLO_MM_PRE_CHECK,		/* move method pre check */
+    OLO_PP_PRE_CHECK,		/* push-down/pull-up method pre check */
+    OLO_SAFETY_CHECK_INIT,
+    OLO_SAFETY_CHECK1,
+    OLO_SAFETY_CHECK2,
+    OLO_INTERSECTION,	/* just provide intersection of top references */
+    OLO_REMOVE_WIN,		/* just remove window of top references */
+    OLO_GOTO_DEF,		/* goto definition reference */
+    OLO_GOTO_CALLER,	/* goto caller reference */
+    OLO_SHOW_TOP,		/* show top symbol */
+    OLO_SHOW_TOP_APPL_CLASS,		/* show current reference appl class */
+    OLO_SHOW_TOP_TYPE,		/* show current symbol type */
+    OLO_SHOW_CLASS_TREE,		/* show current class tree */
+    OLO_TOP_SYMBOL_RES,	/* show top symbols resolution */
+    OLO_ACTIVE_PROJECT,		/* show active project name */
+    OLO_JAVA_HOME,		/* show inferred jdkclasspath */
+    OLO_REPUSH,			/* re-push pop-ed top */
+    OLO_CLASS_TREE,     /* display class tree */
+    OLO_USELESS_LONG_NAME,   /* display useless long class names */
+    OLO_USELESS_LONG_NAME_IN_CLASS,   /* display useless long class names */
+    OLO_MAYBE_THIS,   /* display 'this' class dependencies */
+    OLO_NOT_FQT_REFS,   /* display not fully qualified names in method */
+    OLO_NOT_FQT_REFS_IN_CLASS,   /* display not fully qualified names of class */
+    OLO_GET_ENV_VALUE,	/* get a value set by -set */
+    OLO_SET_MOVE_TARGET,	/* set target place for moving action */
+    OLO_SET_MOVE_CLASS_TARGET,	/* set target place for xref2 move class */
+    OLO_SET_MOVE_METHOD_TARGET,	/* set target place for xref2 move method */
+    OLO_GET_CURRENT_CLASS,
+    OLO_GET_CURRENT_SUPER_CLASS,
+    OLO_GET_METHOD_COORD,	/* get method beginning and end lines */
+    OLO_GET_CLASS_COORD,	/* get class beginning and end lines */
+    OLO_GET_SYMBOL_TYPE,	/* get type of a symbol */
+    OLO_TAG_SEARCH_FORWARD,
+    OLO_TAG_SEARCH_BACK,
+    OLO_PUSH_ENCAPSULATE_SAFETY_CHECK,
+    OLO_ENCAPSULATE_SAFETY_CHECK,
+    OLO_SYNTAX_PASS_ONLY,    /* should replace OLO_GET_PRIMARY_START && OLO_GET_PARAM_COORDINATES */
+    OLO_GET_PRIMARY_START,   /* get start position of primary expression */
+    OLO_GET_PARAM_COORDINATES,
+    OLO_ABOUT,
 };
 
 /* ************************** refactorings **************************** */
 
 enum editorUndoOperations {
-	UNDO_REPLACE_STRING,
-	UNDO_RENAME_BUFFER,
-	UNDO_MOVE_BLOCK,
+    UNDO_REPLACE_STRING,
+    UNDO_RENAME_BUFFER,
+    UNDO_MOVE_BLOCK,
 };
 
 enum trivialPreChecks {
-	TPC_NONE,
-	TPC_MOVE_FIELD,
-	TPC_RENAME_PACKAGE,
-	TPC_RENAME_CLASS,
-	TPC_MOVE_CLASS,
-	TPC_MOVE_STATIC_FIELD,
-	TPC_MOVE_STATIC_METHOD,
-	TPC_TURN_DYN_METHOD_TO_STATIC,
-	TPC_TURN_STATIC_METHOD_TO_DYN,
-	TPC_PULL_UP_METHOD,
-	TPC_PUSH_DOWN_METHOD,
-	TPC_PUSH_DOWN_METHOD_POST_CHECK,
-	TPC_PULL_UP_FIELD,
-	TPC_PUSH_DOWN_FIELD,
-	TPC_GET_LAST_IMPORT_LINE, // not really a check
+    TPC_NONE,
+    TPC_MOVE_FIELD,
+    TPC_RENAME_PACKAGE,
+    TPC_RENAME_CLASS,
+    TPC_MOVE_CLASS,
+    TPC_MOVE_STATIC_FIELD,
+    TPC_MOVE_STATIC_METHOD,
+    TPC_TURN_DYN_METHOD_TO_STATIC,
+    TPC_TURN_STATIC_METHOD_TO_DYN,
+    TPC_PULL_UP_METHOD,
+    TPC_PUSH_DOWN_METHOD,
+    TPC_PUSH_DOWN_METHOD_POST_CHECK,
+    TPC_PULL_UP_FIELD,
+    TPC_PUSH_DOWN_FIELD,
+    TPC_GET_LAST_IMPORT_LINE, // not really a check
 };
 
 enum extractModes {
-	EXTR_FUNCTION,
-	EXTR_FUNCTION_ADDRESS_ARGS,
-	EXTR_MACRO,
+    EXTR_FUNCTION,
+    EXTR_FUNCTION_ADDRESS_ARGS,
+    EXTR_MACRO,
 };
 
 enum editors {
-	ED_NONE,
-	ED_EMACS,
-	ED_JEDIT,
+    ED_NONE,
+    ED_EMACS,
+    ED_JEDIT,
 };
 
 enum memories {
-	MEM_CF,
-	MEM_XX,
-	MEM_PP,
+    MEM_CF,
+    MEM_XX,
+    MEM_PP,
 };
 
 enum refCategories {
-	CatGlobal,
-	CatLocal,
-	MAX_CATEGORIES	
+    CatGlobal,
+    CatLocal,
+    MAX_CATEGORIES
 };
 
 enum refScopes {
-	ScopeDefault,
-	ScopeGlobal,
-	ScopeFile,
-	ScopeAuto,
-	MAX_SCOPES	
+    ScopeDefault,
+    ScopeGlobal,
+    ScopeFile,
+    ScopeAuto,
+    MAX_SCOPES
 };
 
 // !!!!!!!!!!!!! All this stuff is to be removed, new way of defining usages
@@ -411,259 +411,259 @@ enum refScopes {
 
 enum usages {
 // filter3  == all filters
-	ureserve0,
-	UsageOLBestFitDefined,
-	UsageJavaNativeDeclared,
-	ureserve1,
-	UsageDefined,
-	ureserve2,
-	UsageDeclared,
-	ureserve3,
+    ureserve0,
+    UsageOLBestFitDefined,
+    UsageJavaNativeDeclared,
+    ureserve1,
+    UsageDefined,
+    ureserve2,
+    UsageDeclared,
+    ureserve3,
 // filter2
-	UsageLvalUsed,	// == USAGE_EXTEND_USAGE
-	UsageLastUselessInClassOrMethod,	// last useless part of useless FQT name in 
+    UsageLvalUsed,	// == USAGE_EXTEND_USAGE
+    UsageLastUselessInClassOrMethod,	// last useless part of useless FQT name in
                                 // current method (only in regime server)
-	ureserve4,
+    ureserve4,
 // filter1
-	UsageAddrUsed,	// == USAGE_TOP_LEVEL_USED
-	ureserve5,
-	UsageConstructorUsed,			// can be put anywhere before 'Used'
-	ureserve6,
-	UsageMaybeThisInClassOrMethod,			// reference inside current method
-	UsageMaybeQualifThisInClassOrMethod,   // where 'this' may be inserted
-	UsageNotFQTypeInClassOrMethod,
-	UsageNotFQFieldInClassOrMethod,
-	UsageNonExpandableNotFQTNameInClassOrMethod,
-	UsageLastUseless,		// last part of useless FQT name
-	ureserve7,
+    UsageAddrUsed,	// == USAGE_TOP_LEVEL_USED
+    ureserve5,
+    UsageConstructorUsed,			// can be put anywhere before 'Used'
+    ureserve6,
+    UsageMaybeThisInClassOrMethod,			// reference inside current method
+    UsageMaybeQualifThisInClassOrMethod,   // where 'this' may be inserted
+    UsageNotFQTypeInClassOrMethod,
+    UsageNotFQFieldInClassOrMethod,
+    UsageNonExpandableNotFQTNameInClassOrMethod,
+    UsageLastUseless,		// last part of useless FQT name
+    ureserve7,
 //filter0
-	UsageUsed,
-	UsageUndefinedMacro,
-	UsageMethodInvokedViaSuper, // a method invoked by super.method(...)
-	UsageConstructorDefinition,	// Usage for Java type name, when used in constructor def.
-	ureserve8,
-	UsageOtherUseless,	// a useless part of useless FQT name (not last)
-	UsageThisUsage,		// 'this' reference
-	ureserve9,
-	UsageFork,			/* only in program graph for branching on label */
-	ureserve10,
-	ureserve11,
+    UsageUsed,
+    UsageUndefinedMacro,
+    UsageMethodInvokedViaSuper, // a method invoked by super.method(...)
+    UsageConstructorDefinition,	// Usage for Java type name, when used in constructor def.
+    ureserve8,
+    UsageOtherUseless,	// a useless part of useless FQT name (not last)
+    UsageThisUsage,		// 'this' reference
+    ureserve9,
+    UsageFork,			/* only in program graph for branching on label */
+    ureserve10,
+    ureserve11,
 //INVISIBLE USAGES
-	UsageMaxOLUsages,
+    UsageMaxOLUsages,
 
-	UsageNone,			/* also forgotten rval usage of lval usage ex. l=3; 
-						   also new Nested() resolved to error because of 
-						        enclosing instance
-						 */
-	UsageMacroBaseFileUsage, /* reference to input file expanding the macro */
-	UsageClassFileDefinition, /* reference got from class file (not shown in searches)*/
-	UsageJavaDoc,            /* reference to place javadoc link */
-	UsageJavaDocFullEntry,   /* reference to placce full javadoc comment */
-	UsageClassTreeDefinition, /* reference for class tree symbol */
-	UsageMaybeThis,				/* reference where 'this' maybe inserted */
-	UsageMaybeQualifiedThis,	/* reference where qualified 'this' may be inserted */
-	UsageThrown,				/* extract method exception information */
-	UsageCatched,				/* extract method exception information */
-	UsageTryCatchBegin,
-	UsageTryCatchEnd,
-	UsageSuperMethod,
-	UsageNotFQType,
-	UsageNotFQField,
-	UsageNonExpandableNotFQTName,
-	MAX_USAGES,
-	USAGE_ANY,
-	USAGE_FILTER,
+    UsageNone,			/* also forgotten rval usage of lval usage ex. l=3;
+                           also new Nested() resolved to error because of
+                                enclosing instance
+                         */
+    UsageMacroBaseFileUsage, /* reference to input file expanding the macro */
+    UsageClassFileDefinition, /* reference got from class file (not shown in searches)*/
+    UsageJavaDoc,            /* reference to place javadoc link */
+    UsageJavaDocFullEntry,   /* reference to placce full javadoc comment */
+    UsageClassTreeDefinition, /* reference for class tree symbol */
+    UsageMaybeThis,				/* reference where 'this' maybe inserted */
+    UsageMaybeQualifiedThis,	/* reference where qualified 'this' may be inserted */
+    UsageThrown,				/* extract method exception information */
+    UsageCatched,				/* extract method exception information */
+    UsageTryCatchBegin,
+    UsageTryCatchEnd,
+    UsageSuperMethod,
+    UsageNotFQType,
+    UsageNotFQField,
+    UsageNonExpandableNotFQTName,
+    MAX_USAGES,
+    USAGE_ANY,
+    USAGE_FILTER,
 };
 
 enum menuFilterLevels {
-	FilterAllOfSameName,
-	FilterSameProfile,
-	FilterSameProfileRelatedClass,
+    FilterAllOfSameName,
+    FilterSameProfile,
+    FilterSameProfileRelatedClass,
 //&	FilterVirtualAdequate,
 //&	FilterVirtualSameAppl,
-	MAX_MENU_FILTER_LEVEL,
+    MAX_MENU_FILTER_LEVEL,
 };
 
 enum refsFilterLevels {
-	RFilterAll,
-	RFilterAddrVal,			// also toplevel usage
-	RFilterLVal,			// also extend usage
-	RFilterDefinitions,
-	MAX_REF_LIST_FILTER_LEVEL,
+    RFilterAll,
+    RFilterAddrVal,			// also toplevel usage
+    RFilterLVal,			// also extend usage
+    RFilterDefinitions,
+    MAX_REF_LIST_FILTER_LEVEL,
 };
 
 enum storages {
-	// standard C storages
-	StorageError,
-	StorageAuto,
-	StorageGlobal,			/* not used anymore, backward compatibility */
-	StorageDefault,
-	StorageExtern,
-	StorageConstant,		/* enumerator definition */
-	StorageStatic,
-	StorageTypedef,
-	StorageMutable,
-	StorageRegister,
-	// some "artificial" Java storages
-	StorageConstructor,		/* storage for class constructors */
-	StorageField,			/* storage for class fields */
-	StorageMethod,			/* storage for class methods */
-	//
-	StorageNone,
-	MAX_STORAGE,
-	/* If this becomes greater than 32 increase STORAGES_LN !!!!!!!! */
+    // standard C storages
+    StorageError,
+    StorageAuto,
+    StorageGlobal,			/* not used anymore, backward compatibility */
+    StorageDefault,
+    StorageExtern,
+    StorageConstant,		/* enumerator definition */
+    StorageStatic,
+    StorageTypedef,
+    StorageMutable,
+    StorageRegister,
+    // some "artificial" Java storages
+    StorageConstructor,		/* storage for class constructors */
+    StorageField,			/* storage for class fields */
+    StorageMethod,			/* storage for class methods */
+    //
+    StorageNone,
+    MAX_STORAGE,
+    /* If this becomes greater than 32 increase STORAGES_LN !!!!!!!! */
 };
 
 enum types {
-	TypeDefault,
-	TypeChar ,
-	TypeUnsignedChar ,
-	TypeSignedChar ,
-	TypeInt ,
-	TypeUnsignedInt ,
-	TypeSignedInt ,
-	TypeShortInt ,
-	TypeShortUnsignedInt ,
-	TypeShortSignedInt ,
-	TypeLongInt ,
-	TypeLongUnsignedInt ,
-	TypeLongSignedInt ,
-	TypeFloat ,
-	TypeDouble ,
-	TypeStruct,
-	TypeUnion,
-	TypeEnum ,
-	TypeVoid ,
-	TypePointer,
-	TypeArray,
-	TypeFunction,
-	TypeAnonymeField,
-	TypeError,
-	MODIFIERS_START,
-	TmodLong,
-	TmodShort,
-	TmodSigned,
-	TmodUnsigned,
-	TmodShortSigned,
-	TmodShortUnsigned,
-	TmodLongSigned,
-	TmodLongUnsigned,
-	TypeReserve1,
-	TypeReserve2,
-	TypeReserve3,
-	TypeReserve4,
-	MODIFIERS_END,
-	TypeElipsis,
-	JAVA_TYPES,
-	TypeByte,
-	TypeShort,
-	TypeLong,
-	TypeBoolean,
-	TypeNull,
-	TypeOverloadedFunction,
-	TypeReserve7,
-	TypeReserve8,
-	TypeReserve9,
-	TypeReserve10,
-	TypeReserve11,
-	CCC_TYPES,
-	TypeWchar_t,
-	MAX_CTYPE,
-	TypeCppInclude,		/* dummy, the Cpp #include reference */
-	TypeMacro,			/* dummy, a macro in the symbol table */
-	TypeCppIfElse,		/* dummy, the Cpp #if #else #fi references */
-	TypeCppCollate,		/* dummy, the Cpp ## joined string reference */
-	TypePackage,		/* dummy, a package in java */
-	TypeYaccSymbol,		/* dummy, for yacc grammar references */
-	MAX_HTML_LIST_TYPE, /* only types until this will be listed in html lists*/
-	TypeLabel,			/* dummy, a label in the symbol table*/
-	TypeKeyword,		/* dummy, a keyword in the symbol table, + html ref. */
-	TypeToken,			/* dummy, a token for completions */
-	TypeUndefMacro,		/* dummy, an undefined macro in the symbol table */
-	TypeMacroArg,		/* dummy, a macro argument */
-	TypeDefinedOp,		/* dummy, the 'defined' keyword in #if directives */
-	TypeCppAny,			/* dummy, a Cpp reference (html only) */
-	TypeBlockMarker,	/* dummy, block markers for extract */
-	TypeTryCatchMarker,	/* dummy, block markers for extract */
-	TypeComment,		/* dummy, a commentary reference (html only) */
-	TypeExpression,		/* dummy, an ambig. name evaluated to expression in java */
-	TypePackedType,		/* dummy, typemodif, when type is in linkname */
-	TypeFunSep,			/* dummy, function separator for HTML */
-	TypeSpecialComplet,	/* dummy special completion string (for(;xx!=NULL ..)*/
-	TypeNonImportedClass,/* dummy for completion*/
-	TypeInducedError,         /* dummy in general*/
-	TypeInheritedFullMethod,   /* dummy for completion, complete whole definition */
-	TypeSpecialConstructorCompletion, /*dummy completion of constructor 'super'*/
-	TypeUnknown,   /* dummy for completion */
-	MAX_TYPE,
-	/* if this becomes greater than 256, increase SYMTYPES_LN !!!!!!!!!!!!! */
+    TypeDefault,
+    TypeChar ,
+    TypeUnsignedChar ,
+    TypeSignedChar ,
+    TypeInt ,
+    TypeUnsignedInt ,
+    TypeSignedInt ,
+    TypeShortInt ,
+    TypeShortUnsignedInt ,
+    TypeShortSignedInt ,
+    TypeLongInt ,
+    TypeLongUnsignedInt ,
+    TypeLongSignedInt ,
+    TypeFloat ,
+    TypeDouble ,
+    TypeStruct,
+    TypeUnion,
+    TypeEnum ,
+    TypeVoid ,
+    TypePointer,
+    TypeArray,
+    TypeFunction,
+    TypeAnonymeField,
+    TypeError,
+    MODIFIERS_START,
+    TmodLong,
+    TmodShort,
+    TmodSigned,
+    TmodUnsigned,
+    TmodShortSigned,
+    TmodShortUnsigned,
+    TmodLongSigned,
+    TmodLongUnsigned,
+    TypeReserve1,
+    TypeReserve2,
+    TypeReserve3,
+    TypeReserve4,
+    MODIFIERS_END,
+    TypeElipsis,
+    JAVA_TYPES,
+    TypeByte,
+    TypeShort,
+    TypeLong,
+    TypeBoolean,
+    TypeNull,
+    TypeOverloadedFunction,
+    TypeReserve7,
+    TypeReserve8,
+    TypeReserve9,
+    TypeReserve10,
+    TypeReserve11,
+    CCC_TYPES,
+    TypeWchar_t,
+    MAX_CTYPE,
+    TypeCppInclude,		/* dummy, the Cpp #include reference */
+    TypeMacro,			/* dummy, a macro in the symbol table */
+    TypeCppIfElse,		/* dummy, the Cpp #if #else #fi references */
+    TypeCppCollate,		/* dummy, the Cpp ## joined string reference */
+    TypePackage,		/* dummy, a package in java */
+    TypeYaccSymbol,		/* dummy, for yacc grammar references */
+    MAX_HTML_LIST_TYPE, /* only types until this will be listed in html lists*/
+    TypeLabel,			/* dummy, a label in the symbol table*/
+    TypeKeyword,		/* dummy, a keyword in the symbol table, + html ref. */
+    TypeToken,			/* dummy, a token for completions */
+    TypeUndefMacro,		/* dummy, an undefined macro in the symbol table */
+    TypeMacroArg,		/* dummy, a macro argument */
+    TypeDefinedOp,		/* dummy, the 'defined' keyword in #if directives */
+    TypeCppAny,			/* dummy, a Cpp reference (html only) */
+    TypeBlockMarker,	/* dummy, block markers for extract */
+    TypeTryCatchMarker,	/* dummy, block markers for extract */
+    TypeComment,		/* dummy, a commentary reference (html only) */
+    TypeExpression,		/* dummy, an ambig. name evaluated to expression in java */
+    TypePackedType,		/* dummy, typemodif, when type is in linkname */
+    TypeFunSep,			/* dummy, function separator for HTML */
+    TypeSpecialComplet,	/* dummy special completion string (for(;xx!=NULL ..)*/
+    TypeNonImportedClass,/* dummy for completion*/
+    TypeInducedError,         /* dummy in general*/
+    TypeInheritedFullMethod,   /* dummy for completion, complete whole definition */
+    TypeSpecialConstructorCompletion, /*dummy completion of constructor 'super'*/
+    TypeUnknown,   /* dummy for completion */
+    MAX_TYPE,
+    /* if this becomes greater than 256, increase SYMTYPES_LN !!!!!!!!!!!!! */
 };
 
 
 enum javaPCTIndex {		/* java Primitive Conversion Table Indexes */
-	PCTIndexError=0,
-	PCTIndexByte,
-	PCTIndexShort,
-	PCTIndexChar,
-	PCTIndexInt,
-	PCTIndexLong,
-	PCTIndexFloat,
-	PCTIndexDouble,
-	MAX_PCTIndex
+    PCTIndexError=0,
+    PCTIndexByte,
+    PCTIndexShort,
+    PCTIndexChar,
+    PCTIndexInt,
+    PCTIndexLong,
+    PCTIndexFloat,
+    PCTIndexDouble,
+    MAX_PCTIndex
 };
 
 enum copyFlag {		/* flag for genFillStructBody function*/
-	FillGenerate,
-	InternalFillGenerate,
-	CopyGenerate,
+    FillGenerate,
+    InternalFillGenerate,
+    CopyGenerate,
 };
 
 enum sFunResult {
-	RESULT_OK,
-	RESULT_ERR
+    RESULT_OK,
+    RESULT_ERR
 };
 
 enum inputType {
-	II_NORMAL,
-	II_MACRO,
-	II_MACRO_ARG,
-	II_CACHE,
+    II_NORMAL,
+    II_MACRO,
+    II_MACRO_ARG,
+    II_CACHE,
 };
 
 enum updateModifiers {
-	UP_NO_UPDATE = 0,			// must be zero !
-	UP_FAST_UPDATE,
-	UP_FULL_UPDATE,
+    UP_NO_UPDATE = 0,			// must be zero !
+    UP_FAST_UPDATE,
+    UP_FULL_UPDATE,
 };
 
 enum syntaxPassParsedImportantPosition {
-	SPP_LAST_TOP_LEVEL_CLASS_POSITION,
-	SPP_ASSIGNMENT_OPERATOR_POSITION,
-	SPP_ASSIGNMENT_END_POSITION,
-	SPP_CLASS_DECLARATION_BEGIN_POSITION,
-	SPP_CLASS_DECLARATION_END_POSITION,
-	SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION,
-	SPP_CLASS_DECLARATION_TYPE_END_POSITION,
-	SPP_METHOD_DECLARATION_BEGIN_POSITION,
-	SPP_METHOD_DECLARATION_END_POSITION,
-	SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION,
-	SPP_METHOD_DECLARATION_TYPE_END_POSITION,
-	SPP_FIELD_DECLARATION_BEGIN_POSITION,
-	SPP_FIELD_DECLARATION_END_POSITION,
-	SPP_FIELD_DECLARATION_TYPE_BEGIN_POSITION,
-	SPP_FIELD_DECLARATION_TYPE_END_POSITION,
-	SPP_CAST_LPAR_POSITION,
-	SPP_CAST_RPAR_POSITION,
-	SPP_CAST_TYPE_BEGIN_POSITION,
-	SPP_CAST_TYPE_END_POSITION,
-	SPP_CAST_EXPRESSION_BEGIN_POSITION,
-	SPP_CAST_EXPRESSION_END_POSITION,
-	SPP_PARENTHESED_EXPRESSION_LPAR_POSITION,
-	SPP_PARENTHESED_EXPRESSION_RPAR_POSITION,
-	SPP_PARENTHESED_EXPRESSION_BEGIN_POSITION,
-	SPP_PARENTHESED_EXPRESSION_END_POSITION,
+    SPP_LAST_TOP_LEVEL_CLASS_POSITION,
+    SPP_ASSIGNMENT_OPERATOR_POSITION,
+    SPP_ASSIGNMENT_END_POSITION,
+    SPP_CLASS_DECLARATION_BEGIN_POSITION,
+    SPP_CLASS_DECLARATION_END_POSITION,
+    SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION,
+    SPP_CLASS_DECLARATION_TYPE_END_POSITION,
+    SPP_METHOD_DECLARATION_BEGIN_POSITION,
+    SPP_METHOD_DECLARATION_END_POSITION,
+    SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION,
+    SPP_METHOD_DECLARATION_TYPE_END_POSITION,
+    SPP_FIELD_DECLARATION_BEGIN_POSITION,
+    SPP_FIELD_DECLARATION_END_POSITION,
+    SPP_FIELD_DECLARATION_TYPE_BEGIN_POSITION,
+    SPP_FIELD_DECLARATION_TYPE_END_POSITION,
+    SPP_CAST_LPAR_POSITION,
+    SPP_CAST_RPAR_POSITION,
+    SPP_CAST_TYPE_BEGIN_POSITION,
+    SPP_CAST_TYPE_END_POSITION,
+    SPP_CAST_EXPRESSION_BEGIN_POSITION,
+    SPP_CAST_EXPRESSION_END_POSITION,
+    SPP_PARENTHESED_EXPRESSION_LPAR_POSITION,
+    SPP_PARENTHESED_EXPRESSION_RPAR_POSITION,
+    SPP_PARENTHESED_EXPRESSION_BEGIN_POSITION,
+    SPP_PARENTHESED_EXPRESSION_END_POSITION,
 
-	SPP_MAX,
+    SPP_MAX,
 };
 
 /* ******************************************************************** */
@@ -671,113 +671,113 @@ enum syntaxPassParsedImportantPosition {
 /* ******************************************************************** */
 
 struct fileStat {
-	char			validFlag;
-	struct stat		stat;
+    char			validFlag;
+    struct stat		stat;
 };
 
 /* class cast tree */
 struct cctNode {
-	S_symbol	*node;
-	S_cctNode	*sub;       /* sub[CCT_TREE_INDEX]; */
+    S_symbol	*node;
+    S_cctNode	*sub;       /* sub[CCT_TREE_INDEX]; */
 };
 
 struct position {
-	int			file;
-	int 		line;
-	int			coll;
+    int			file;
+    int         line;
+    int			coll;
 };
 
 struct positionLst {
-	S_position		p;
-	S_positionLst 	*next;
+    S_position		p;
+    S_positionLst   *next;
 };
 
 /* return value for IDENTIFIER token from yylex */
 
 struct idIdent {
-	char 		*name;
-	S_symbol	*sd;		/* if yet in symbol table */
-	S_position	p;			/* position */
+    char        *name;
+    S_symbol	*sd;		/* if yet in symbol table */
+    S_position	p;			/* position */
 };
 
 struct freeTrail {
-	void			(*action)C_ARG((void*));
-	void 			*p;
-	S_freeTrail		*next;
+    void			(*action)C_ARG((void*));
+    void            *p;
+    S_freeTrail		*next;
 };
 
 struct topBlock {
-/*	char 			*stackMemoryBase;*/
-	int 			firstFreeIndex;
-	int				tmpMemoryBasei;
-	S_freeTrail		*trail;
-	S_topBlock 		*previousTopBlock;
+/*	char            *stackMemoryBase;*/
+    int             firstFreeIndex;
+    int				tmpMemoryBasei;
+    S_freeTrail		*trail;
+    S_topBlock      *previousTopBlock;
 };
 
 struct typeModifiers {
-	short 					m;
-	union typeModifUnion {
-		struct funTypeModif {		/* LAN_C/CPP Function */
-			S_symbol		*args;
-			S_symbol		**thisFunList;	/* only for LAN_CPP overloaded */
-		} f;
+    short                   m;
+    union typeModifUnion {
+        struct funTypeModif {		/* LAN_C/CPP Function */
+            S_symbol		*args;
+            S_symbol		**thisFunList;	/* only for LAN_CPP overloaded */
+        } f;
         //S_symbol			*args;		/* LAN_C Function */
-		struct methodTypeModif {		/* LAN_JAVA Function/Method */
-			char			*sig;
-			S_symbolList	*exceptions;
-		} m;
-		//char				*sig;		/* LAN_JAVA Function */
-		S_symbol			*t;			/* Struct/Union/Enum */
-	} u;
-	S_symbol				*typedefin;	/* the typedef symbol (if any) */
-	S_typeModifiers 		*next;
+        struct methodTypeModif {		/* LAN_JAVA Function/Method */
+            char			*sig;
+            S_symbolList	*exceptions;
+        } m;
+        //char				*sig;		/* LAN_JAVA Function */
+        S_symbol			*t;			/* Struct/Union/Enum */
+    } u;
+    S_symbol				*typedefin;	/* the typedef symbol (if any) */
+    S_typeModifiers         *next;
 };
 
 struct typeModifiersList {
-	S_typeModifiers		*d;
-	S_typeModifiersList	*next;
+    S_typeModifiers		*d;
+    S_typeModifiersList	*next;
 };
 
 struct recFindStr {
-	S_symbol			*baseClass;	/* class, application on which is looked*/
-	S_symbol			*currClass;	/* current class, NULL for loc vars. */
-	S_symbol 			*nextRecord;
-	unsigned			recsClassCounter;
-	int					sti;
-	S_symbolList		*st[MAX_INHERITANCE_DEEP];	/* super classes stack */
-	int					aui;
-	S_symbol			*au[MAX_ANONYMOUS_FIELDS];	/* anonymous unions */
+    S_symbol			*baseClass;	/* class, application on which is looked*/
+    S_symbol			*currClass;	/* current class, NULL for loc vars. */
+    S_symbol            *nextRecord;
+    unsigned			recsClassCounter;
+    int					sti;
+    S_symbolList		*st[MAX_INHERITANCE_DEEP];	/* super classes stack */
+    int					aui;
+    S_symbol			*au[MAX_ANONYMOUS_FIELDS];	/* anonymous unions */
 };
 
 struct extRecFindStr {
-	S_recFindStr			s;
-	S_symbol				*memb;
-	S_typeModifiersList		*params;
+    S_recFindStr			s;
+    S_symbol				*memb;
+    S_typeModifiersList		*params;
 };
 
 struct nestedSpec {
-	S_symbol		*cl;
-	char			membFlag;		/* flag whether it is nested in class */
-	short unsigned 	accFlags;
+    S_symbol		*cl;
+    char			membFlag;		/* flag whether it is nested in class */
+    short unsigned  accFlags;
 };
 
 struct symStructSpecific {
-	S_symbolList	*super;			/* list of super classes & interfaces */
-	S_symbol		*records;		/* str. records, should be a table of 	*/
-	S_cctNode		casts;			/* possible casts 						*/
-	short int		nnested;		/* # of java nested classes 	*/
-	S_nestedSpec	*nest;			/* array of nested classes		*/
-	S_typeModifiers	stype;			/* this structure type */
-	S_typeModifiers	sptrtype;		/* this structure pointer type */
-	char	 		currPackage;	/* am I in the currently processed package?, to be removed */
-	char			existsDEIarg;   /* class direct enclosing instance exists?, to be removed */
-	int				classFile;		/* in java, my class file index 
-									   == -1 for none, TODO to change 
-									   it to s_noneFileIndex !!!
-									*/
-	unsigned		recSearchCounter; /* tmp counter when looking for a record
-										it flags searched classes
-									 */
+    S_symbolList	*super;			/* list of super classes & interfaces */
+    S_symbol		*records;		/* str. records, should be a table of   */
+    S_cctNode		casts;			/* possible casts                       */
+    short int		nnested;		/* # of java nested classes     */
+    S_nestedSpec	*nest;			/* array of nested classes		*/
+    S_typeModifiers	stype;			/* this structure type */
+    S_typeModifiers	sptrtype;		/* this structure pointer type */
+    char            currPackage;	/* am I in the currently processed package?, to be removed */
+    char			existsDEIarg;   /* class direct enclosing instance exists?, to be removed */
+    int				classFile;		/* in java, my class file index
+                                       == -1 for none, TODO to change
+                                       it to s_noneFileIndex !!!
+                                    */
+    unsigned		recSearchCounter; /* tmp counter when looking for a record
+                                        it flags searched classes
+                                     */
 };
 
 
@@ -785,44 +785,44 @@ struct symStructSpecific {
 /*              symbol definition item in symbol table                */
 
 struct symbol {
-	char					*name;
-	char					*linkName;		/* fully qualified name for cx */
-	S_position				pos;			/* definition position for most syms;
-											   import position for imported classes!
-											 */
-	struct symbolBits {
-		unsigned			record			: 1;  /* whether struct record */
-		unsigned			isSingleImported: 1;  /* whether not imported by * import */
-		unsigned			accessFlags		: 12; /* java access bits */
-		unsigned			javaSourceLoaded: 1;  /* is jsl source file loaded ? */
-		unsigned			javaFileLoaded	: 1;  /* is class file loaded ? */
+    char					*name;
+    char					*linkName;		/* fully qualified name for cx */
+    S_position				pos;			/* definition position for most syms;
+                                               import position for imported classes!
+                                             */
+    struct symbolBits {
+        unsigned			record			: 1;  /* whether struct record */
+        unsigned			isSingleImported: 1;  /* whether not imported by * import */
+        unsigned			accessFlags		: 12; /* java access bits */
+        unsigned			javaSourceLoaded: 1;  /* is jsl source file loaded ? */
+        unsigned			javaFileLoaded	: 1;  /* is class file loaded ? */
 
-		unsigned			symType			: SYMTYPES_LN;
-		/* can be Default/Struct/Union/Enum/Label/Keyword/Macro/Package */
-		unsigned			storage			: STORAGES_LN;
-		unsigned			npointers		: 4; /*tmp. stored #of dcl. ptrs*/
-	} b;
-	union defUnion {
-		S_typeModifiers		*type;		/* if symType == TypeDefault */
-		S_symStructSpecific	*s;			/* if symType == Struct/Union */
-		S_symbolList		*enums;		/* if symType == Enum */
-		S_macroBody			*mbody; 	/* if symType == Macro ! can be NULL!*/
-		int					labn;		/* break/continue label index */
-		int					keyWordVal; /* if symType == Keyword*/
-	} u;
-	S_symbol 				*next;	/* next table item with the same hash */
+        unsigned			symType			: SYMTYPES_LN;
+        /* can be Default/Struct/Union/Enum/Label/Keyword/Macro/Package */
+        unsigned			storage			: STORAGES_LN;
+        unsigned			npointers		: 4; /*tmp. stored #of dcl. ptrs*/
+    } b;
+    union defUnion {
+        S_typeModifiers		*type;		/* if symType == TypeDefault */
+        S_symStructSpecific	*s;			/* if symType == Struct/Union */
+        S_symbolList		*enums;		/* if symType == Enum */
+        S_macroBody			*mbody;     /* if symType == Macro ! can be NULL!*/
+        int					labn;		/* break/continue label index */
+        int					keyWordVal; /* if symType == Keyword*/
+    } u;
+    S_symbol                *next;	/* next table item with the same hash */
 };
 
 struct symbolList {
-	S_symbol 		*d;
-	S_symbolList	*next;
+    S_symbol        *d;
+    S_symbolList	*next;
 };
 
 struct jslSymbolList {
-	S_symbol 		*d;
-	S_position		pos;
-	int 			isSingleImportedFlag;
-	S_jslSymbolList	*next;
+    S_symbol        *d;
+    S_position		pos;
+    int             isSingleImportedFlag;
+    S_jslSymbolList	*next;
 };
 
 
@@ -830,683 +830,683 @@ struct jslSymbolList {
 /*          symbol definition item in cross-reference table           */
 
 struct usageBits {
-	unsigned base:8;								// 0 - 128, it should not grow anymore
-	unsigned requiredAccess:MAX_REQUIRED_ACCESS_LN;	// required accessibility of the reference
-	// local properties (not saved in tag files)
-	unsigned dummy:1;								// unused for the moment
+    unsigned base:8;								// 0 - 128, it should not grow anymore
+    unsigned requiredAccess:MAX_REQUIRED_ACCESS_LN;	// required accessibility of the reference
+    // local properties (not saved in tag files)
+    unsigned dummy:1;								// unused for the moment
 };
 
 // !!! if you add a pointer to this structure, then update olcxCopyRefList
 struct reference {
-	S_usageBits				usg;
-	S_position				p;
-	S_reference 			*next;
+    S_usageBits				usg;
+    S_position				p;
+    S_reference             *next;
 };
 
 // !!! if you add a pointer to this structure, then update olcxCopyRefItem!
 struct symbolRefItem {
-	char						*name;
-	unsigned					fileHash;
-	int							vApplClass;	/* appl class for java virtuals */
-	int							vFunClass;	/* fun class for java virtuals */
-	struct symbolRefItemBits {
-		unsigned				symType		: SYMTYPES_LN;
-		unsigned				storage		: STORAGES_LN;
-		unsigned				scope		: SCOPES_LN;
-		unsigned				accessFlags	: 12; /* java access bits */
-		unsigned				category	: 2;  /* local/global */
-		unsigned				htmlWasLn	: 1;  /* html ln generated */
-	} b;
-	S_reference					*refs;
-	S_symbolRefItem 			*next;
+    char						*name;
+    unsigned					fileHash;
+    int							vApplClass;	/* appl class for java virtuals */
+    int							vFunClass;	/* fun class for java virtuals */
+    struct symbolRefItemBits {
+        unsigned				symType		: SYMTYPES_LN;
+        unsigned				storage		: STORAGES_LN;
+        unsigned				scope		: SCOPES_LN;
+        unsigned				accessFlags	: 12; /* java access bits */
+        unsigned				category	: 2;  /* local/global */
+        unsigned				htmlWasLn	: 1;  /* html ln generated */
+    } b;
+    S_reference					*refs;
+    S_symbolRefItem             *next;
 };
 
 struct symbolRefItemList {
-	S_symbolRefItem			*d;
-	S_symbolRefItemList		*next;
+    S_symbolRefItem			*d;
+    S_symbolRefItemList		*next;
 };
 
 /* ************* class hierarchy  cross referencing ************** */
 
 struct chReference {
-	int		ofile;		/* file of origin */
-	int 	clas;		/* index of super-class */
-	S_chReference	*next;
+    int		ofile;		/* file of origin */
+    int     clas;		/* index of super-class */
+    S_chReference	*next;
 };
 
 
 /* **************** processing cxref file ************************* */
 
 struct cxScanFileFunctionLink {
-	int		recordCode;
-	void 	(*handleFun)C_ARG((int size,int ri,char**ccc,char**ffin,S_charBuf*bbb, int additionalArg));
-	int		additionalArg;
+    int		recordCode;
+    void    (*handleFun)C_ARG((int size,int ri,char**ccc,char**ffin,S_charBuf*bbb, int additionalArg));
+    int		additionalArg;
 };
 
 /* ***************** on - line cross referencing ***************** */
 
 struct olCompletion {
-	char				*name;
-	char				*fullName;
-	char				*vclass;
-	short int			jindent;
-	short int			lineCount;
-	char				cat;			/* CatGlobal/CatLocal */
-	char				csymType;		/* symtype of completion */
-	S_reference			ref;
-	S_symbolRefItem		sym;
-	S_olCompletion		*next;
+    char				*name;
+    char				*fullName;
+    char				*vclass;
+    short int			jindent;
+    short int			lineCount;
+    char				cat;			/* CatGlobal/CatLocal */
+    char				csymType;		/* symtype of completion */
+    S_reference			ref;
+    S_symbolRefItem		sym;
+    S_olCompletion		*next;
 };
 
 struct olSymbolFoundInformation {
-	S_symbolRefItem *symrefs;		/* this is valid */
-	S_symbolRefItem *symRefsInfo;	/* additional for error message */
-	S_reference *currentRef;
+    S_symbolRefItem *symrefs;		/* this is valid */
+    S_symbolRefItem *symRefsInfo;	/* additional for error message */
+    S_reference *currentRef;
 };
 
 // !!! if you add a pointer to this structure, then update olcxCopyMenuSym!!
 struct olSymbolsMenu {
-	S_symbolRefItem 	s;
-	char				selected;
-	char				visible;
-	unsigned			ooBits;
-	char				olUsage;	/* usage of symbol under cursor */
-	short int			vlevel;		/* virt. level of applClass <-> olsymbol*/
-	short int			refn;
-	short int			defRefn;
-	char				defUsage;   /* usage of definition reference */
-	S_position 			defpos;
-	int 				outOnLine;
-	S_editorMarkerList	*markers;	/* for refactory only */
-	S_olSymbolsMenu		*next;
+    S_symbolRefItem     s;
+    char				selected;
+    char				visible;
+    unsigned			ooBits;
+    char				olUsage;	/* usage of symbol under cursor */
+    short int			vlevel;		/* virt. level of applClass <-> olsymbol*/
+    short int			refn;
+    short int			defRefn;
+    char				defUsage;   /* usage of definition reference */
+    S_position          defpos;
+    int                 outOnLine;
+    S_editorMarkerList	*markers;	/* for refactory only */
+    S_olSymbolsMenu		*next;
 };
 
 // if you add something to this structure, update olcxMoveTopFromAnotherUser()
 // !!!!!
 struct olcxReferences {
-	S_reference 		*r;			/* list of references */
-	S_reference         *act;		/* actual reference */
-	char				command;	/* OLO_PUSH/OLO_LIST/OLO_COMPLETION */
-	char				language;	/* C/JAVA/YACC */
-	time_t				atime;		/* last acces time */
-	// refsuffix is useless now, should be removed !!!! 
-	char				refsuffix[MAX_OLCX_SUFF_SIZE];
-	S_position			cpos;		/* caller position */
-	S_olCompletion		*cpls;		/* completions list for OLO_COMPLETION */
+    S_reference         *r;			/* list of references */
+    S_reference         *act;		/* actual reference */
+    char				command;	/* OLO_PUSH/OLO_LIST/OLO_COMPLETION */
+    char				language;	/* C/JAVA/YACC */
+    time_t				atime;		/* last acces time */
+    // refsuffix is useless now, should be removed !!!!
+    char				refsuffix[MAX_OLCX_SUFF_SIZE];
+    S_position			cpos;		/* caller position */
+    S_olCompletion		*cpls;		/* completions list for OLO_COMPLETION */
     // following two lists should be probably split into hashed tables of lists
     // because of bad performances for class tree and global unused symbols
-	S_olSymbolsMenu		*hkSelectedSym; /* resolved symbols under the cursor */
-	S_olSymbolsMenu		*menuSym;		/* hkSelectedSyms plus same name */
-	int					menuFilterLevel;
-	int					refsFilterLevel;
-	S_olcxReferences	*previous;
+    S_olSymbolsMenu		*hkSelectedSym; /* resolved symbols under the cursor */
+    S_olSymbolsMenu		*menuSym;		/* hkSelectedSyms plus same name */
+    int					menuFilterLevel;
+    int					refsFilterLevel;
+    S_olcxReferences	*previous;
 };
 
 // this is useless, (refsuffix is not used), but I keep it for
 // some time for case if something more is needed in class tree
 struct classTreeData {
-	char				refsuffix[MAX_OLCX_SUFF_SIZE];
-	int					baseClassIndex;
-	S_olSymbolsMenu		*tree;
+    char				refsuffix[MAX_OLCX_SUFF_SIZE];
+    int					baseClassIndex;
+    S_olSymbolsMenu		*tree;
 };
 
 struct olcxReferencesStack {
-	S_olcxReferences	*top;
-	S_olcxReferences	*root;
+    S_olcxReferences	*top;
+    S_olcxReferences	*root;
 };
 
 struct userOlcx {
-	char 					*name;
-	S_olcxReferencesStack	browserStack;
-	S_olcxReferencesStack	completionsStack;
-	S_olcxReferencesStack	retrieverStack;
-	S_classTreeData			ct;
-	S_userOlcx				*next;
+    char                    *name;
+    S_olcxReferencesStack	browserStack;
+    S_olcxReferencesStack	completionsStack;
+    S_olcxReferencesStack	retrieverStack;
+    S_classTreeData			ct;
+    S_userOlcx				*next;
 };
 
 /* ************************************************************* */
 /* **********************  file tab Item *********************** */
 
 struct fileItem {	/* to be renamed to constant pool item */
-	char 				*name;
-	time_t				lastModif;
-	time_t				lastInspect;
-	time_t				lastUpdateMtime;
-	time_t				lastFullUpdateMtime;
-	struct fileItemBits {
-		unsigned		cxLoading: 1;
-		unsigned		cxLoaded : 1;
-		unsigned		cxSaved	 : 1;
-		unsigned		commandLineEntered : 1;
-		unsigned		scheduledToProcess : 1;
-		unsigned		scheduledToUpdate : 1;
-		unsigned		fullUpdateIncludesProcessed : 1;
-		unsigned		isInterface : 1;        // class/interface for .class
-		unsigned		isFromCxfile : 1;       // is this file indexed in XFiles
-		//unsigned		classIsRelatedTo : 20;// tmp var for isRelated function
-		unsigned		sourceFile : 20;// file containing the class definition
-	} b;
-	S_chReference		*sups;			/* super-classes references */
-	S_chReference		*infs;			/* sub-classes references   */
-	int					directEnclosingInstance;  /* for Java Only  */
-	S_fileItem			*next;
+    char                *name;
+    time_t				lastModif;
+    time_t				lastInspect;
+    time_t				lastUpdateMtime;
+    time_t				lastFullUpdateMtime;
+    struct fileItemBits {
+        unsigned		cxLoading: 1;
+        unsigned		cxLoaded : 1;
+        unsigned		cxSaved  : 1;
+        unsigned		commandLineEntered : 1;
+        unsigned		scheduledToProcess : 1;
+        unsigned		scheduledToUpdate : 1;
+        unsigned		fullUpdateIncludesProcessed : 1;
+        unsigned		isInterface : 1;        // class/interface for .class
+        unsigned		isFromCxfile : 1;       // is this file indexed in XFiles
+        //unsigned		classIsRelatedTo : 20;// tmp var for isRelated function
+        unsigned		sourceFile : 20;// file containing the class definition
+    } b;
+    S_chReference		*sups;			/* super-classes references */
+    S_chReference		*infs;			/* sub-classes references   */
+    int					directEnclosingInstance;  /* for Java Only  */
+    S_fileItem			*next;
 };
 
 struct fileItemList {
-	S_fileItem		*d;
-	S_fileItemList	*next;
+    S_fileItem		*d;
+    S_fileItemList	*next;
 };
 
 /* ***************** COMPLETION STRUCTURES ********************** */
 
 
 struct cline {					/* should be a little bit union-ified */
-	char 			*s;
-	S_symbol 		*t;
-	short int		symType;
-	short int		virtLevel;
+    char            *s;
+    S_symbol        *t;
+    short int		symType;
+    short int		virtLevel;
 //	unsigned		virtClassOrder;		TODO !!!!
-	short int		margn;
-	char			**margs;
-	S_symbol		*vFunClass;
+    short int		margn;
+    char			**margs;
+    S_symbol		*vFunClass;
 };
 
 struct completions {
-	char 		idToProcess[MAX_FUN_NAME_SIZE];
-	int			idToProcessLen;
-	S_position	idToProcessPos;
-	int 		fullMatchFlag;
-	int 		isCompleteFlag;
-	int 		noFocusOnCompletions;
-	int 		abortFurtherCompletions;
-	char 		comPrefix[TMP_STRING_SIZE];
-	int			maxLen;
-	S_cline 	a[MAX_COMPLETIONS];
-	int 		ai;
+    char        idToProcess[MAX_FUN_NAME_SIZE];
+    int			idToProcessLen;
+    S_position	idToProcessPos;
+    int         fullMatchFlag;
+    int         isCompleteFlag;
+    int         noFocusOnCompletions;
+    int         abortFurtherCompletions;
+    char        comPrefix[TMP_STRING_SIZE];
+    int			maxLen;
+    S_cline     a[MAX_COMPLETIONS];
+    int         ai;
 };
 
 struct completionFunTab {
-	int token;
-	void (*fun)C_ARG((S_completions*));
+    int token;
+    void (*fun)C_ARG((S_completions*));
 };
 
 struct completionSymFunInfo {
-	S_completions 		*res;
-	unsigned			storage;
+    S_completions       *res;
+    unsigned			storage;
 };
 
 struct completionSymInfo {
-	S_completions 		*res;
-	unsigned			symType;
+    S_completions       *res;
+    unsigned			symType;
 };
 
 struct completionFqtMapInfo {
-	S_completions 		*res;
-	int					completionType;
+    S_completions       *res;
+    int					completionType;
 };
 
 /* ************************** INIT STRUCTURES ********************* */
 
 struct tokenNameIni {
-	char 		*name;
-	int 		token;
-	unsigned 	languages;
+    char        *name;
+    int         token;
+    unsigned    languages;
 };
 
 struct typeCharCodeIni {
-	int 		symType;
-	char		code;
+    int         symType;
+    char		code;
 };
 
 struct javaTypePCTIConvertIni {
-	int		symType;
-	int		PCTIndex;
+    int		symType;
+    int		PCTIndex;
 };
 
 struct typeModificationsInit {
-	int	type;
-	int	modShort;
-	int	modLong;
-	int	modSigned;
-	int	modUnsigned;
+    int	type;
+    int	modShort;
+    int	modLong;
+    int	modSigned;
+    int	modUnsigned;
 };
 
 struct intStringTab {
-	int 	i;
-	char 	*s;
+    int     i;
+    char    *s;
 };
 
 struct currentlyParsedCl {		// class local, nested for classes
-	S_symbol			*function;
-	S_extRecFindStr		*erfsForParamsComplet;			// curently parsed method for param completion 
-	unsigned	funBegPosition;
-	int 		cxMemiAtFunBegin;
-	int			cxMemiAtFunEnd;
-	int 		cxMemiAtClassBegin;
-	int			cxMemiAtClassEnd;
-	int			thisMethodMemoriesStored;
-	int			thisClassMemoriesStored;
-	int			parserPassedMarker;
+    S_symbol			*function;
+    S_extRecFindStr		*erfsForParamsComplet;			// curently parsed method for param completion
+    unsigned	funBegPosition;
+    int         cxMemiAtFunBegin;
+    int			cxMemiAtFunEnd;
+    int         cxMemiAtClassBegin;
+    int			cxMemiAtClassEnd;
+    int			thisMethodMemoriesStored;
+    int			thisClassMemoriesStored;
+    int			parserPassedMarker;
 };
 
 struct currentlyParsedStatics {
-	int 			extractProcessedFlag;
-	int 			cxMemiAtBlockBegin;
-	int 			cxMemiAtBlockEnd;
-	S_topBlock 		*workMemiAtBlockBegin;
-	S_topBlock 		*workMemiAtBlockEnd;
-	int				marker1Flag;
-	int				marker2Flag;
-	char			setTargetAnswerClass[TMP_STRING_SIZE];	// useless for xref2
-	int				moveTargetApproved;
-	char			currentPackageAnswer[TMP_STRING_SIZE];
-	char			currentClassAnswer[TMP_STRING_SIZE];
-	char			currentSuperClassAnswer[TMP_STRING_SIZE];
-	int				methodCoordEndLine;        // to be removed
-	int				cxMemiAtMethodBeginning;
-	int				cxMemiAtMethodEnd;
-	int				classCoordEndLine;
-	int				cxMemiAtClassBeginning;
-	int				cxMemiAtClassEnd;
-	int				lastImportLine;
-	S_symbol		*lastDeclaratorType;
-	S_symbol		*lastAssignementStruct;
+    int             extractProcessedFlag;
+    int             cxMemiAtBlockBegin;
+    int             cxMemiAtBlockEnd;
+    S_topBlock      *workMemiAtBlockBegin;
+    S_topBlock      *workMemiAtBlockEnd;
+    int				marker1Flag;
+    int				marker2Flag;
+    char			setTargetAnswerClass[TMP_STRING_SIZE];	// useless for xref2
+    int				moveTargetApproved;
+    char			currentPackageAnswer[TMP_STRING_SIZE];
+    char			currentClassAnswer[TMP_STRING_SIZE];
+    char			currentSuperClassAnswer[TMP_STRING_SIZE];
+    int				methodCoordEndLine;        // to be removed
+    int				cxMemiAtMethodBeginning;
+    int				cxMemiAtMethodEnd;
+    int				classCoordEndLine;
+    int				cxMemiAtClassBeginning;
+    int				cxMemiAtClassEnd;
+    int				lastImportLine;
+    S_symbol		*lastDeclaratorType;
+    S_symbol		*lastAssignementStruct;
 };
 
 /* ************************** JAVAS *********************************** */
 
 struct javaStat {
-	S_idIdentList		*className;			/* this class name */
-	S_typeModifiers		*thisType;			/* this class type */
-	S_symbol			*thisClass;			/* this class definition */
-	int					currentNestIndex;	/* currently parsed nested class */
-	char				*currentPackage;    /* current package */
-	char				*unNamedPackageDir;	/* directory for unnamed package */
-	char				*namedPackageDir;	/* inferred source-path for named package */
-	S_symTab			*locals;			/* args and local variables */
-	S_idIdentList 		*lastParsedName;
-	unsigned			cpMethodMods;		/* currently parsed method modifs */
-	S_currentlyParsedCl	cp;					/* some parsing positions */
-	int					classFileInd;		/* this file class index */
-	S_javaStat			*next;				/* outer class */
+    S_idIdentList		*className;			/* this class name */
+    S_typeModifiers		*thisType;			/* this class type */
+    S_symbol			*thisClass;			/* this class definition */
+    int					currentNestIndex;	/* currently parsed nested class */
+    char				*currentPackage;    /* current package */
+    char				*unNamedPackageDir;	/* directory for unnamed package */
+    char				*namedPackageDir;	/* inferred source-path for named package */
+    S_symTab			*locals;			/* args and local variables */
+    S_idIdentList       *lastParsedName;
+    unsigned			cpMethodMods;		/* currently parsed method modifs */
+    S_currentlyParsedCl	cp;					/* some parsing positions */
+    int					classFileInd;		/* this file class index */
+    S_javaStat			*next;				/* outer class */
 };
 
 /* java composed names */
 
 struct idIdentList {
-	S_idIdent 		idi;
-	char			*fname;			/* fqt name for java */
-	uchar			nameType;		/* type of name segment for java */
-	S_idIdentList	*next;
+    S_idIdent       idi;
+    char			*fname;			/* fqt name for java */
+    uchar			nameType;		/* type of name segment for java */
+    S_idIdentList	*next;
 };
 
 struct zipArchiveDir {
-	union {
-		S_zipArchiveDir	*sub;
-		unsigned		offset;
-	} u;
-	S_zipArchiveDir		*next;
-	char 				name[1];			/* array of char */
+    union {
+        S_zipArchiveDir	*sub;
+        unsigned		offset;
+    } u;
+    S_zipArchiveDir		*next;
+    char                name[1];			/* array of char */
 };
 
 struct zipFileTabItem {
-	char 			fn[MAX_FILE_NAME_SIZE];	/* stored with ';' at the end */
-	struct stat		st;						/* status of the archiv file */
-	S_zipArchiveDir	*dir;
+    char            fn[MAX_FILE_NAME_SIZE];	/* stored with ';' at the end */
+    struct stat		st;						/* status of the archiv file */
+    S_zipArchiveDir	*dir;
 };
 
 /* ***************** unique counters  *********************** */
 
 struct counters {
-	int localSym;
-	int localVar;
-	int anonymousClassCounter;
+    int localSym;
+    int localVar;
+    int anonymousClassCounter;
 };
 
 /* **************************** CACHING ****************************** */
 
 struct cachePoint {
-	S_topBlock				*topBlock;
-	S_topBlock 				starTopBlock;
-	int 					ppmMemoryi;
-	int 					cxMemoryi;
-	int 					mbMemoryi;
-	char					*lbcc;		/* caching lbcc */
-	short int				ibi;		/* caching ibi */
-	short int 				lineNumber;
-	short int 				ifDeep;
-	S_cppIfStack            *ifstack;
-	S_javaStat				*javaCached;
-	S_counters				counts;
+    S_topBlock				*topBlock;
+    S_topBlock              starTopBlock;
+    int                     ppmMemoryi;
+    int                     cxMemoryi;
+    int                     mbMemoryi;
+    char					*lbcc;		/* caching lbcc */
+    short int				ibi;		/* caching ibi */
+    short int               lineNumber;
+    short int               ifDeep;
+    S_cppIfStack            *ifstack;
+    S_javaStat				*javaCached;
+    S_counters				counts;
 };
 
 struct caching {
-	char			activeCache;		/* whether putting input to cache */
-	int				cpi;
-	S_cachePoint	cp[MAX_CACHE_POINTS];
-	int				ibi;
-	int				ib[INCLUDE_CACHE_SIZE];	/* included files numbers */
-	char			*lbcc;					/* first free of lb */
-	char			lb[LEX_BUF_CACHE_SIZE];	/* lexems buffer */
-	char			*lexcc;					/* first not yeat cached lexem */
-	char			*cc;					/* cc when input from cache */
-	char			*cfin;					/* end of cc, when input ... */
+    char			activeCache;		/* whether putting input to cache */
+    int				cpi;
+    S_cachePoint	cp[MAX_CACHE_POINTS];
+    int				ibi;
+    int				ib[INCLUDE_CACHE_SIZE];	/* included files numbers */
+    char			*lbcc;					/* first free of lb */
+    char			lb[LEX_BUF_CACHE_SIZE];	/* lexems buffer */
+    char			*lexcc;					/* first not yeat cached lexem */
+    char			*cc;					/* cc when input from cache */
+    char			*cfin;					/* end of cc, when input ... */
 };
 
 /* ************************ PRE-PROCESSOR **************************** */
 
 struct stringList {
-	char *d;
-	struct stringList *next;
+    char *d;
+    struct stringList *next;
 };
 
 struct stringAddrList {
-	char **d;
-	struct stringAddrList *next;
+    char **d;
+    struct stringAddrList *next;
 };
 
 struct macroArgTabElem {
-	char *name;
-	char *linkName;
-	int order;
+    char *name;
+    char *linkName;
+    int order;
 };
 
 struct macroBody {
-	short int argn;
-	int size;
-	char *name;			/* the name of the macro */
-	char **args;		/* names of arguments */
-	char *body;
+    short int argn;
+    int size;
+    char *name;			/* the name of the macro */
+    char **args;		/* names of arguments */
+    char *body;
 };
 
 struct charBuf {
-	char 		*cc;				/* first unread */
-	char 		*fin;				/* first free (invalid)  */
-	char 		a[CHAR_BUFF_SIZE];
-	FILE 		*ff;
-	unsigned	filePos;			/* how many chars was readed from file */
-	int			fileNumber;
-	int 		lineNum;
-	char 		*lineBegin;
-	short int 	collumnOffset;		/* collumn == cc-lineBegin + collumnOffset */
-	char		isAtEOF;
-	char		inputMethod;		/* unzipp/direct */
-	char 		z[CHAR_BUFF_SIZE];  /* zip input buffer */
-	z_stream	zipStream;
+    char        *cc;				/* first unread */
+    char        *fin;				/* first free (invalid)  */
+    char        a[CHAR_BUFF_SIZE];
+    FILE        *ff;
+    unsigned	filePos;			/* how many chars was readed from file */
+    int			fileNumber;
+    int         lineNum;
+    char        *lineBegin;
+    short int   collumnOffset;		/* collumn == cc-lineBegin + collumnOffset */
+    char		isAtEOF;
+    char		inputMethod;		/* unzipp/direct */
+    char        z[CHAR_BUFF_SIZE];  /* zip input buffer */
+    z_stream	zipStream;
 };
 
 struct lexBuf {
-	char 		*cc;				/* first unread */
-	char 		*fin;				/* first free (invalid)  */
-	char 		a[LEX_BUFF_SIZE];
+    char        *cc;				/* first unread */
+    char        *fin;				/* first free (invalid)  */
+    char        a[LEX_BUFF_SIZE];
 #if 1
-	S_position 	pRing[LEX_POSITIONS_RING_SIZE];		// file/line/coll position
-	unsigned 	fpRing[LEX_POSITIONS_RING_SIZE];	// file offset position
-	int 		posi;				/* pRing[posi%LEX_POSITIONS_RING_SIZE] */
+    S_position  pRing[LEX_POSITIONS_RING_SIZE];		// file/line/coll position
+    unsigned    fpRing[LEX_POSITIONS_RING_SIZE];	// file offset position
+    int         posi;				/* pRing[posi%LEX_POSITIONS_RING_SIZE] */
 #endif
-	S_charBuf 	cb;
+    S_charBuf   cb;
 };
 
 struct cppIfStack {
-	S_position pos;
-	S_cppIfStack  *next;
+    S_position pos;
+    S_cppIfStack  *next;
 };
 
 struct fileDesc {
-	char 			*fileName ;
-	int 			lineNumber ;
-	int				ifDeep;						/* deep of #ifs (C only)*/
-	S_cppIfStack 	*ifstack;					/* #if stack (C only) */
-	struct lexBuf 	lb;
+    char            *fileName ;
+    int             lineNumber ;
+    int				ifDeep;						/* deep of #ifs (C only)*/
+    S_cppIfStack    *ifstack;					/* #if stack (C only) */
+    struct lexBuf   lb;
 };
 
 struct lexInput {
-	char 			*cc;                /* pointer to current lexem */
-	char 			*fin;               /* end of buffer */
-	char 			*a;					/* beginning of buffer */
-	char 			*macname;			/* possible makro name */
-	char			margExpFlag;		/* input Flag */
+    char            *cc;                /* pointer to current lexem */
+    char            *fin;               /* end of buffer */
+    char            *a;					/* beginning of buffer */
+    char            *macname;			/* possible makro name */
+    char			margExpFlag;		/* input Flag */
 };
 
 /* ********************* MEMORIES *************************** */
 
 struct memory {
-	int		(*overflowHandler)(int n);
-	int 	i;
-	int		size;
-	double	b;		//  double in order to get it properly alligned
+    int		(*overflowHandler)(int n);
+    int     i;
+    int		size;
+    double	b;		//  double in order to get it properly alligned
 };
 
 /* ************************ HTML **************************** */
 
 struct intlist {
-	int 		i;
-	S_intlist 	*next;
+    int         i;
+    S_intlist   *next;
 };
 
 struct disabledList {
-	int 			file;
-	int 			clas;
-	S_disabledList 	*next;
+    int             file;
+    int             clas;
+    S_disabledList  *next;
 };
 
 struct htmlData {
-	S_position 			*cp;
-	S_reference 		*np;
-	S_symbolRefItem 	*nri;
+    S_position          *cp;
+    S_reference         *np;
+    S_symbolRefItem     *nri;
 };
 
 struct htmlRefList {
-	S_symbolRefItem	*s;
-	S_reference		*r;
-	S_symbolRefItem	*slist;		/* the hash list containing s, for virtuals */
-	S_htmlRefList	*next;
+    S_symbolRefItem	*s;
+    S_reference		*r;
+    S_symbolRefItem	*slist;		/* the hash list containing s, for virtuals */
+    S_htmlRefList	*next;
 };
 
 struct htmlLocalListms {	// local xlist map structure
-	FILE 	*ff;
-	int  	fnum;
-	char	*fname;
+    FILE    *ff;
+    int     fnum;
+    char	*fname;
 };
 
 /* *********************************************************** */
 
 struct programGraphNode {
-	S_reference 			*ref;		/* original reference of node */
-	S_symbolRefItem 		*symRef;
-	S_programGraphNode		*jump;
-	char					posBits;		/* INSIDE/OUSIDE block */
-	char					stateBits;		/* visited + where setted */
-	char					classifBits;	/* resulting classification */
-	S_programGraphNode		*next;
+    S_reference             *ref;		/* original reference of node */
+    S_symbolRefItem         *symRef;
+    S_programGraphNode		*jump;
+    char					posBits;		/* INSIDE/OUSIDE block */
+    char					stateBits;		/* visited + where setted */
+    char					classifBits;	/* resulting classification */
+    S_programGraphNode		*next;
 };
 
 struct exprTokenType {
-	S_typeModifiers *t;
-	S_reference 	*r;
-	S_position 		*pp;
+    S_typeModifiers *t;
+    S_reference     *r;
+    S_position      *pp;
 };
 
 struct nestedConstrTokenType {
-	S_typeModifiers *t;
-	S_idIdentList	*nid;
-	S_position 		*pp;
+    S_typeModifiers *t;
+    S_idIdentList	*nid;
+    S_position      *pp;
 };
 
 struct unsPositionPair {
-	unsigned 	u;
-	S_position	*p;
+    unsigned    u;
+    S_position	*p;
 };
 
 struct symbolPositionPair {
-	S_symbol	*s;
-	S_position	*p;
+    S_symbol	*s;
+    S_position	*p;
 };
 
 struct symbolPositionLstPair {
-	S_symbol		*s;
-	S_positionLst	*p;
+    S_symbol		*s;
+    S_positionLst	*p;
 };
 
 struct intPair {
-	int i1;
-	int i2;
+    int i1;
+    int i2;
 };
 
 struct typeModifiersListPositionLstPair {
-	S_typeModifiersList		*t;
-	S_positionLst			*p;
+    S_typeModifiersList		*t;
+    S_positionLst			*p;
 };
 
 struct whileExtractData {
-	int i1;
-	int i2;
-	S_symbol *i3;
-	S_symbol *i4;
+    int i1;
+    int i2;
+    S_symbol *i3;
+    S_symbol *i4;
 };
 
 struct referencesChangeData {
-	char		*linkName;
-	int			fnum;
-	S_symbol	*cclass;
-	int			category;
-	int			cxMemBegin;
-	int			cxMemEnd;
+    char		*linkName;
+    int			fnum;
+    S_symbol	*cclass;
+    int			category;
+    int			cxMemBegin;
+    int			cxMemEnd;
 };
 
 struct pushAllInBetweenData {
-	int			minMemi;
-	int			maxMemi;
+    int			minMemi;
+    int			maxMemi;
 };
 
 struct tpCheckSpecialReferencesData {
-	S_pushAllInBetweenData 	mm;
-	char					*symbolToTest;
-	int						classToTest;
-	S_symbolRefItem			*foundSpecialRefItem;
-	S_reference				*foundSpecialR;
-	S_symbolRefItem 		*foundRefToTestedClass;
-	S_symbolRefItem 		*foundRefNotToTestedClass;
-	S_reference 			*foundOuterScopeRef;
+    S_pushAllInBetweenData  mm;
+    char					*symbolToTest;
+    int						classToTest;
+    S_symbolRefItem			*foundSpecialRefItem;
+    S_reference				*foundSpecialR;
+    S_symbolRefItem         *foundRefToTestedClass;
+    S_symbolRefItem         *foundRefNotToTestedClass;
+    S_reference             *foundOuterScopeRef;
 };
 
 struct tpCheckMoveClassData {
-	S_pushAllInBetweenData 	mm;
-	char					*spack;
-	char					*tpack;
-	int						transPackageMove;
-	char					*sclass;
+    S_pushAllInBetweenData  mm;
+    char					*spack;
+    char					*tpack;
+    int						transPackageMove;
+    char					*sclass;
 };
 
 /* ***************** Java simple load file ********************** */
 
 
 struct jslClassStat {
-	S_idIdentList	*className;
-	S_symbol		*thisClass;
-	char			*thisPackage;
-	int				annonInnerCounter;	/* counter for anonym inner classes*/
-	int				functionInnerCounter; /* counter for function inner class*/
-	S_jslClassStat	*next;
+    S_idIdentList	*className;
+    S_symbol		*thisClass;
+    char			*thisPackage;
+    int				annonInnerCounter;	/* counter for anonym inner classes*/
+    int				functionInnerCounter; /* counter for function inner class*/
+    S_jslClassStat	*next;
 };
 
 struct jslStat {
-	int 					pass;
-	int 					sourceFileNumber;
-	int						language;
-	S_jslTypeTab 			*typeTab;
-	S_jslClassStat 			*classStat;
-	S_symbolList 			*waitList;
-	void/*YYSTYPE*/			*savedyylval;
-	struct yyGlobalState 	*savedYYstate;
-	int						yyStateSize;
-	S_idIdent				yyIdentBuf[YYBUFFERED_ID_INDEX]; // pending idents
-	S_jslStat				*next;
+    int                     pass;
+    int                     sourceFileNumber;
+    int						language;
+    S_jslTypeTab            *typeTab;
+    S_jslClassStat          *classStat;
+    S_symbolList            *waitList;
+    void/*YYSTYPE*/			*savedyylval;
+    struct yyGlobalState    *savedYYstate;
+    int						yyStateSize;
+    S_idIdent				yyIdentBuf[YYBUFFERED_ID_INDEX]; // pending idents
+    S_jslStat				*next;
 };
 
 /* ***************** editor structures ********************** */
 
 struct editorBuffer {
-	char 			*name;
-	int				ftnum;
-	char			*fileName;
-	struct stat		stat;
-	S_editorMarker	*markers;
-	struct editorBufferAllocationData {
-		int 	bufferSize;
-		char	*text;
-		int		allocatedFreePrefixSize;
-		char	*allocatedBlock;
-		int		allocatedIndex;
-		int		allocatedSize;
-	} a;
-	struct editorBufferBits {
-		unsigned		textLoaded:1;
-		unsigned		modified:1;
-		unsigned		modifiedSinceLastQuasySave:1;
-	} b;
+    char            *name;
+    int				ftnum;
+    char			*fileName;
+    struct stat		stat;
+    S_editorMarker	*markers;
+    struct editorBufferAllocationData {
+        int     bufferSize;
+        char	*text;
+        int		allocatedFreePrefixSize;
+        char	*allocatedBlock;
+        int		allocatedIndex;
+        int		allocatedSize;
+    } a;
+    struct editorBufferBits {
+        unsigned		textLoaded:1;
+        unsigned		modified:1;
+        unsigned		modifiedSinceLastQuasySave:1;
+    } b;
 };
 
 struct editorBufferList {
-	S_editorBuffer 		*f;
-	S_editorBufferList	*next;
+    S_editorBuffer      *f;
+    S_editorBufferList	*next;
 };
 
 struct editorMemoryBlock {
-	struct editorMemoryBlock *next;
+    struct editorMemoryBlock *next;
 };
 
 struct editorMarker {
-	S_editorBuffer		*buffer;
-	unsigned 			offset;
-	struct editorMarker *previous;   	// previous marker in this buffer
-	struct editorMarker *next;   		// next marker in this buffer
+    S_editorBuffer		*buffer;
+    unsigned            offset;
+    struct editorMarker *previous;      // previous marker in this buffer
+    struct editorMarker *next;          // next marker in this buffer
 };
 
 struct editorMarkerList {
-	S_editorMarker		*d;
-	S_usageBits			usg;
-	S_editorMarkerList	*next;
+    S_editorMarker		*d;
+    S_usageBits			usg;
+    S_editorMarkerList	*next;
 };
 
 struct editorRegion {
-	S_editorMarker		*b;
-	S_editorMarker		*e;
+    S_editorMarker		*b;
+    S_editorMarker		*e;
 };
 
 struct editorRegionList {
-	S_editorRegion		r;
-	S_editorRegionList	*next;
+    S_editorRegion		r;
+    S_editorRegionList	*next;
 };
 
 struct editorUndo {
-	S_editorBuffer		*buffer;
-	int					operation;
-	union editorUndoUnion {
-		struct editorUndoStrReplace {
-			unsigned			offset;
-			unsigned 			size;
-			unsigned			strlen;
-			char				*str;
-		} replace;
-		struct editorUndoRenameBuff {
-			char				*name;
-		} rename;
-		struct editorUndoMoveBlock {
-			unsigned			offset;
-			unsigned			size;
-			S_editorBuffer		*dbuffer;
-			unsigned			doffset;
-		} moveBlock;
-	} u;
-	S_editorUndo		*next;
+    S_editorBuffer		*buffer;
+    int					operation;
+    union editorUndoUnion {
+        struct editorUndoStrReplace {
+            unsigned			offset;
+            unsigned            size;
+            unsigned			strlen;
+            char				*str;
+        } replace;
+        struct editorUndoRenameBuff {
+            char				*name;
+        } rename;
+        struct editorUndoMoveBlock {
+            unsigned			offset;
+            unsigned			size;
+            S_editorBuffer		*dbuffer;
+            unsigned			doffset;
+        } moveBlock;
+    } u;
+    S_editorUndo		*next;
 };
 
 /* *********************************************************** */
 
 struct availableRefactoring {
-	unsigned 	available;
-	char		*option;
+    unsigned    available;
+    char		*option;
 };
 
 /* **************     parse tree with positions    *********** */
@@ -1516,80 +1516,80 @@ struct availableRefactoring {
 // node and additional data 'd' for parsing.
 
 struct bb_int {
-	S_position 	b, e;
-	int		d;
+    S_position  b, e;
+    int		d;
 };
 struct bb_unsigned {
-	S_position 		b, e;
-	unsigned		d;
+    S_position      b, e;
+    unsigned		d;
 };
 struct bb_symbol {
-	S_position 		b, e;
-	S_symbol		*d;
+    S_position      b, e;
+    S_symbol		*d;
 };
 struct bb_symbolList {
-	S_position 			b, e;
-	S_symbolList		*d;
+    S_position          b, e;
+    S_symbolList		*d;
 };
 struct bb_typeModifiers {
-	S_position 			b, e;
-	S_typeModifiers		*d;
+    S_position          b, e;
+    S_typeModifiers		*d;
 };
 struct bb_typeModifiersList {
-	S_position 				b, e;
-	S_typeModifiersList		*d;
+    S_position              b, e;
+    S_typeModifiersList		*d;
 };
 struct bb_freeTrail {
-	S_position 		b, e;
-	S_freeTrail		*d;
+    S_position      b, e;
+    S_freeTrail		*d;
 };
 struct bb_idIdent {
-	S_position 		b, e;
-	S_idIdent		*d;
+    S_position      b, e;
+    S_idIdent		*d;
 };
 struct bb_idIdentList {
-	S_position 			b, e;
-	S_idIdentList		*d;
+    S_position          b, e;
+    S_idIdentList		*d;
 };
 struct bb_exprTokenType {
-	S_position 			b, e;
-	S_exprTokenType		d;
+    S_position          b, e;
+    S_exprTokenType		d;
 };
 struct bb_nestedConstrTokenType {
-	S_position 					b, e;
-	S_nestedConstrTokenType		d;
+    S_position                  b, e;
+    S_nestedConstrTokenType		d;
 };
 struct bb_intPair {
-	S_position 		b, e;
-	S_intPair		d;
+    S_position      b, e;
+    S_intPair		d;
 };
 struct bb_whileExtractData {
-	S_position 				b, e;
-	S_whileExtractData		*d;
+    S_position              b, e;
+    S_whileExtractData		*d;
 };
 struct bb_position {
-	S_position 		b, e;
-	S_position		d;
+    S_position      b, e;
+    S_position		d;
 };
 struct bb_unsPositionPair {
-	S_position 				b, e;
-	S_unsPositionPair		d;
+    S_position              b, e;
+    S_unsPositionPair		d;
 };
 struct bb_symbolPositionPair {
-	S_position 					b, e;
-	S_symbolPositionPair		d;
+    S_position                  b, e;
+    S_symbolPositionPair		d;
 };
 struct bb_symbolPositionLstPair {
-	S_position 					b, e;
-	S_symbolPositionLstPair		d;
+    S_position                  b, e;
+    S_symbolPositionLstPair		d;
 };
 struct bb_positionLst {
-	S_position 			b, e;
-	S_positionLst		*d;
+    S_position          b, e;
+    S_positionLst		*d;
 };
 struct bb_typeModifiersListPositionLstPair  {
-	S_position 									b, e;
-	S_typeModifiersListPositionLstPair			d;
+    S_position                                  b, e;
+    S_typeModifiersListPositionLstPair			d;
 };
 
 
@@ -1599,191 +1599,191 @@ struct bb_typeModifiersListPositionLstPair  {
 /* *********************************************************** */
 
 struct htmlCutPathesOpts {
-	int pathesNum;
-	char *path[MAX_HTML_CUT_PATHES];
-	int plen[MAX_HTML_CUT_PATHES];
+    int pathesNum;
+    char *path[MAX_HTML_CUT_PATHES];
+    int plen[MAX_HTML_CUT_PATHES];
 };
 
 struct setGetEnv {
-	int num;
-	char *name[MAX_SET_GET_OPTIONS];
-	char *value[MAX_SET_GET_OPTIONS];
+    int num;
+    char *name[MAX_SET_GET_OPTIONS];
+    char *value[MAX_SET_GET_OPTIONS];
 };
 
 // TODO all strings inside to static string array
 struct options {
-	int fileEncoding;
-	char completeParenthesis;
-	int defaultAddImportStrategy;
-	char referenceListWithoutSource;
-	char jeditOldCompletions;		// to be removed
-	int completionOverloadWizardDeep;
-	int exit;
-	int commentMovingLevel;
-	S_stringList *pruneNames;
-	S_stringList *inputFiles;
-	int continueRefactoring;
-	int completionCaseSensitive;
-	char *xrefrc;
-	int eolConversion;
-	char *checkVersion;
-	int nestedClassDisplaying;
-	char *pushName;
-	int parnum2;
-	char *refpar1;
-	char *refpar2;
-	int theRefactoring;
-	int briefoutput;
-	int cacheIncludes;
-	int stdopFlag;		// does this serve to anything ?
-	char *renameTo;
-	int refactoringRegime;
-	int xref2;
-	char *moveTargetFile;
-	char *cFilesSuffixes;
-	char *javaFilesSuffixes;
-	char *cppFilesSuffixes;
-	int fileNamesCaseSensitive;
-	char *htmlLineNumLabel;
-	int htmlCutSuffix;
-	int tagSearchSpecif;
-	char *javaVersion;
-	char *olcxWinDelFile;
-	int olcxWinDelFromLine;
-	int olcxWinDelFromCol;
-	int olcxWinDelToLine;
-	int olcxWinDelToCol;
-	char *moveFromUser;
-	int noErrors;
-	int fqtNameToCompletions;
-	char *moveTargetClass;
-	int trivialPreCheckCode;
-	int urlGenTemporaryFile;
-	int urlAutoRedirect;
-	int javaFilesOnly;
-	int exactPositionResolve;
-	char *outputFileName;
-	char *lineFileName;	
-	S_stringList *includeDirs;
-	char *cxrefFileName;
+    int fileEncoding;
+    char completeParenthesis;
+    int defaultAddImportStrategy;
+    char referenceListWithoutSource;
+    char jeditOldCompletions;		// to be removed
+    int completionOverloadWizardDeep;
+    int exit;
+    int commentMovingLevel;
+    S_stringList *pruneNames;
+    S_stringList *inputFiles;
+    int continueRefactoring;
+    int completionCaseSensitive;
+    char *xrefrc;
+    int eolConversion;
+    char *checkVersion;
+    int nestedClassDisplaying;
+    char *pushName;
+    int parnum2;
+    char *refpar1;
+    char *refpar2;
+    int theRefactoring;
+    int briefoutput;
+    int cacheIncludes;
+    int stdopFlag;		// does this serve to anything ?
+    char *renameTo;
+    int refactoringRegime;
+    int xref2;
+    char *moveTargetFile;
+    char *cFilesSuffixes;
+    char *javaFilesSuffixes;
+    char *cppFilesSuffixes;
+    int fileNamesCaseSensitive;
+    char *htmlLineNumLabel;
+    int htmlCutSuffix;
+    int tagSearchSpecif;
+    char *javaVersion;
+    char *olcxWinDelFile;
+    int olcxWinDelFromLine;
+    int olcxWinDelFromCol;
+    int olcxWinDelToLine;
+    int olcxWinDelToCol;
+    char *moveFromUser;
+    int noErrors;
+    int fqtNameToCompletions;
+    char *moveTargetClass;
+    int trivialPreCheckCode;
+    int urlGenTemporaryFile;
+    int urlAutoRedirect;
+    int javaFilesOnly;
+    int exactPositionResolve;
+    char *outputFileName;
+    char *lineFileName;
+    S_stringList *includeDirs;
+    char *cxrefFileName;
 
-	char *checkFileMovedFrom;
-	char *checkFileMovedTo;
-	int checkFirstMovedLine;
-	int checkLinesMoved;
-	int checkNewLineNumber;
+    char *checkFileMovedFrom;
+    char *checkFileMovedTo;
+    int checkFirstMovedLine;
+    int checkLinesMoved;
+    int checkNewLineNumber;
 
-	char *getValue;
-	int java2html;
-	int javaSlAllowed;
-	int xfileHashingMethod;
-	char *htmlLineNumColor;
-	int htmlCxLineLen;
-	char *htmlJdkDocAvailable;
-	int htmlGenJdkDocLinks;
-	char *htmlJdkDocUrl;
-	char *javaDocPath;
-	int allowPackagesOnCl;
-	char *sourcePath;
-	int htmlDirectX;
-	char *jdocTmpDir;
-	int noCxFile;
-	int javaDoc;
-	int noIncludeRefs;
-	int allowClassFileRefs;
-	int filterValue;
-	char *jdkClassPath;
-	int manualResolve;
-	char *browsedSymName;
-	int modifiedFlag;
-	int olcxMenuSelectLineNum;
-	int htmlNoUnderline;
-	char *htmlLinkColor;
-	char *htmlCutPath;
-	int htmlCutPathLen;
-	int ooChecksBits;
-	int htmlLineNums;
-	int htmlNoColors;
-	int cxMemoryFaktor;
-	int multiHeadRefsCare;
-	int strictAnsi;
-	char * project;
-	int updateOnlyModifiedFiles;
-	char *olcxlccursor;
-	char *htmlZipCommand;
-	char *olcxSearchString;
-	int olineLen;
-	char licenseString[TMP_STRING_SIZE];
-	char *htmlLinkSuffix;
-	char *olExtractAddrParPrefix;
-	int extractMode;
-	int htmlFunSeparate;
-	//& char *extractName;
-	int maxCompletions;
-	int editor;
-	int create;
-	char *olcxRefSuffix;
-	int recursivelyDirs;
-	char *classpath;
-	int tabulator;
-	char *htmlRoot;
-	int htmlRichLists;
-	int	htmlglobalx;
-	int	htmllocalx;
-	int cIsCplusplus;
-	int olCursorPos;
-	int olMarkPos;
-	int taskRegime;
-	char *user;
-	int debug;
-	int cpp_comment;
-	int c_struct_scope;
-	int cxrefs;
-	int olcxGotoVal;
-	char *originalDir;
+    char *getValue;
+    int java2html;
+    int javaSlAllowed;
+    int xfileHashingMethod;
+    char *htmlLineNumColor;
+    int htmlCxLineLen;
+    char *htmlJdkDocAvailable;
+    int htmlGenJdkDocLinks;
+    char *htmlJdkDocUrl;
+    char *javaDocPath;
+    int allowPackagesOnCl;
+    char *sourcePath;
+    int htmlDirectX;
+    char *jdocTmpDir;
+    int noCxFile;
+    int javaDoc;
+    int noIncludeRefs;
+    int allowClassFileRefs;
+    int filterValue;
+    char *jdkClassPath;
+    int manualResolve;
+    char *browsedSymName;
+    int modifiedFlag;
+    int olcxMenuSelectLineNum;
+    int htmlNoUnderline;
+    char *htmlLinkColor;
+    char *htmlCutPath;
+    int htmlCutPathLen;
+    int ooChecksBits;
+    int htmlLineNums;
+    int htmlNoColors;
+    int cxMemoryFaktor;
+    int multiHeadRefsCare;
+    int strictAnsi;
+    char * project;
+    int updateOnlyModifiedFiles;
+    char *olcxlccursor;
+    char *htmlZipCommand;
+    char *olcxSearchString;
+    int olineLen;
+    char licenseString[TMP_STRING_SIZE];
+    char *htmlLinkSuffix;
+    char *olExtractAddrParPrefix;
+    int extractMode;
+    int htmlFunSeparate;
+    //& char *extractName;
+    int maxCompletions;
+    int editor;
+    int create;
+    char *olcxRefSuffix;
+    int recursivelyDirs;
+    char *classpath;
+    int tabulator;
+    char *htmlRoot;
+    int htmlRichLists;
+    int	htmlglobalx;
+    int	htmllocalx;
+    int cIsCplusplus;
+    int olCursorPos;
+    int olMarkPos;
+    int taskRegime;
+    char *user;
+    int debug;
+    int cpp_comment;
+    int c_struct_scope;
+    int cxrefs;
+    int olcxGotoVal;
+    char *originalDir;
 
-	int no_ref_locals;
-	int no_ref_records;
-	int no_ref_enumerator;
-	int no_ref_typedef;
-	int no_ref_macro;
-	int no_stdop;
-	int qnxMessages;
+    int no_ref_locals;
+    int no_ref_records;
+    int no_ref_enumerator;
+    int no_ref_typedef;
+    int no_ref_macro;
+    int no_stdop;
+    int qnxMessages;
 
-	/* GENERATE options */
+    /* GENERATE options */
 
-	int typedefg;
-	int str_fill;
-	int enum_name;
-	int body;
-	int header;
-	int str_copy;
+    int typedefg;
+    int str_fill;
+    int enum_name;
+    int body;
+    int header;
+    int str_copy;
 
-	/* CXREF options  */
+    /* CXREF options  */
 
-	int err;
-	int long_cxref;
-	int brief;
-	int update;
-	int keep_old;
-	char *last_message;
-	int refnum;
+    int err;
+    int long_cxref;
+    int brief;
+    int update;
+    int keep_old;
+    char *last_message;
+    int refnum;
 
-	// all the rest initialized to zeros by default
-	S_setGetEnv setGetEnv;
-	S_htmlCutPathesOpts htmlCut;
+    // all the rest initialized to zeros by default
+    S_setGetEnv setGetEnv;
+    S_htmlCutPathesOpts htmlCut;
 
-	// memory for strings
-	S_stringAddrList	*allAllocatedStrings;
-	S_memory			pendingMemory;
-	char				pendingFreeSpace[SIZE_opiMemory];
+    // memory for strings
+    S_stringAddrList	*allAllocatedStrings;
+    S_memory			pendingMemory;
+    char				pendingFreeSpace[SIZE_opiMemory];
 };
 
 struct optionsList {
-	char 				*section;
-	S_stringList		*opts;
-	S_options			flgopts;
-	S_optionsList		*next;
+    char                *section;
+    S_stringList		*opts;
+    S_options			flgopts;
+    S_optionsList		*next;
 };
 
 /* ************************ HASH TABLES ****************************** */
@@ -1936,9 +1936,9 @@ void removeFromTrailUntil C_ARG((S_freeTrail *untilP));
 void symDump C_ARG((S_symbol *));
 void symbolRefItemDump C_ARG((S_symbolRefItem *ss));
 int javaTypeStringSPrint C_ARG((char *buff, char *str, int nameStyle, int *oNamePos));
-void typeSPrint C_ARG((char *buff,int *size,S_typeModifiers *t,char*name, 
-					   int dclSepChar, int maxDeep, int typedefexp, 
-					   int longOrShortName, int *oNamePos));
+void typeSPrint C_ARG((char *buff,int *size,S_typeModifiers *t,char*name,
+                       int dclSepChar, int maxDeep, int typedefexp,
+                       int longOrShortName, int *oNamePos));
 void throwsSprintf C_ARG((char *out, int outsize, S_symbolList *exceptions));
 void macDefSPrintf C_ARG((char *buff, int *size, char *name1, char *name2, int argn, char **args, int *oNamePos));
 char * string3ConcatInStackMem C_ARG((char *str1, char *str2, char *str3));
@@ -1967,38 +1967,38 @@ int substringIndex C_ARG((char *s, char *subs));
 int stringEndsBySuffix C_ARG((char *s, char *suffix));
 int fileNameHasOneOfSuffixes C_ARG((char *fname, char *suffs));
 int mapPatternFiles C_ARG((
-		char *pattern,
-		void (*fun) (MAP_FUN_PROFILE),
-		char *a1,
-		char *a2,
-		S_completions *a3,
-		void *a4,
-		int *a5
-	));
+        char *pattern,
+        void (*fun) (MAP_FUN_PROFILE),
+        char *a1,
+        char *a2,
+        S_completions *a3,
+        void *a4,
+        int *a5
+    ));
 int mapDirectoryFiles C_ARG((
-		char *dirname,
-		void (*fun) (MAP_FUN_PROFILE),
-		int allowEditorFilesFlag,
-		char *a1,
-		char *a2,
-		S_completions *a3,
-		void *a4,
-		int *a5
-	));
+        char *dirname,
+        void (*fun) (MAP_FUN_PROFILE),
+        int allowEditorFilesFlag,
+        char *a1,
+        char *a2,
+        S_completions *a3,
+        void *a4,
+        int *a5
+    ));
 void javaMapDirectoryFiles1 C_ARG((
-		char *packfile,
-		void (*fun)(MAP_FUN_PROFILE),
-		S_completions *a1,
-		void *a2,
-		int *a3
-	));
+        char *packfile,
+        void (*fun)(MAP_FUN_PROFILE),
+        S_completions *a1,
+        void *a2,
+        int *a3
+    ));
 void javaMapDirectoryFiles2 C_ARG((
-		S_idIdentList *packid,
-		void (*fun)(MAP_FUN_PROFILE),
-		S_completions *a1,
-		void *a2,
-		int *a3
-	));
+        S_idIdentList *packid,
+        void (*fun)(MAP_FUN_PROFILE),
+        S_completions *a1,
+        void *a2,
+        int *a3
+    ));
 char *lastOccurenceInString C_ARG((char *ss, int ch));
 char *lastOccurenceOfSlashOrAntiSlash C_ARG((char *ss));
 char * getFileSuffix C_ARG((char *fn));
@@ -2073,8 +2073,8 @@ void genProjections C_ARG((int n));
 int olcxReferenceInternalLessFunction C_ARG((S_reference *r1, S_reference *r2));
 int olSymbolRefItemLess C_ARG((S_symbolRefItem *s1, S_symbolRefItem *s2));
 int searchStringFitness C_ARG((char *cxtag, int slen));
-char *crTagSearchLineStatic C_ARG((char *name, S_position *p, 
-							int *len1, int *len2, int *len3));
+char *crTagSearchLineStatic C_ARG((char *name, S_position *p,
+                            int *len1, int *len2, int *len3));
 int symbolNameShouldBeHiddenFromReports C_ARG((char *name));
 void searchSymbolCheckReference C_ARG((S_symbolRefItem  *ss, S_reference *rr));
 void tagSearchCompactShortResults();
@@ -2087,19 +2087,19 @@ int itIsSameCxSymbolIncludingFunClass C_ARG((S_symbolRefItem *p1, S_symbolRefIte
 int itIsSameCxSymbolIncludingApplClass C_ARG((S_symbolRefItem *p1, S_symbolRefItem *p2));
 int olcxItIsSameCxSymbol C_ARG((S_symbolRefItem *p1, S_symbolRefItem *p2));
 void olcxRecomputeSelRefs C_ARG(( S_olcxReferences *refs ));
-void olProcessSelectedReferences C_ARG((S_olcxReferences  	*rstack, void (*referencesMapFun)(S_olcxReferences *rstack, S_olSymbolsMenu *ss)));
+void olProcessSelectedReferences C_ARG((S_olcxReferences    *rstack, void (*referencesMapFun)(S_olcxReferences *rstack, S_olSymbolsMenu *ss)));
 void olcxPopOnly C_ARG(());
 S_reference * olcxCopyRefList C_ARG((S_reference *ll));
 void olStackDeleteSymbol C_ARG(( S_olcxReferences *refs));
 int getFileNumberFromName C_ARG((char *name));
-int olcxVirtualyAdequate C_ARG((int usage, int vApplCl, int vFunCl, 
-						int olUsage, int olApplCl, int olFunCl));
-void generateOnlineCxref C_ARG((	S_position *p, 
-							char *commandString,
-							int usage,
-							char *suffix,
-							char *suffix2
-	));
+int olcxVirtualyAdequate C_ARG((int usage, int vApplCl, int vFunCl,
+                        int olUsage, int olApplCl, int olFunCl));
+void generateOnlineCxref C_ARG((	S_position *p,
+                            char *commandString,
+                            int usage,
+                            char *suffix,
+                            char *suffix2
+    ));
 S_reference *olcxAddReferenceNoUsageCheck C_ARG((S_reference **rlist, S_reference *ref, int bestMatchFlag));
 S_reference *olcxAddReference C_ARG((S_reference **rlist,S_reference *ref,int bestMatchFlag));
 int isRelatedClass C_ARG((int cl1, int cl2));
@@ -2127,33 +2127,33 @@ void scanCxFile C_ARG((S_cxScanFileFunctionLink *scanFuns));
 void olcxAddReferences C_ARG((S_reference *list, S_reference **dlist, int fnum, int bestMatchFlag));
 void olSetCallerPosition C_ARG((S_position *pos));
 S_olCompletion * olCompletionListPrepend C_ARG((char *name, char *fullText, char *vclass, int jindent, S_symbol *s, S_symbolRefItem *ri, S_reference *dfpos, int symType, int vFunClass, S_olcxReferences *stack));
-S_olSymbolsMenu *olCreateNewMenuItem C_ARG(( 
-		S_symbolRefItem *sym, int vApplClass, int vFunCl, S_position *defpos, int defusage,
-		int selected, int visible, 
-		unsigned ooBits, int olusage, int vlevel 
-	));
+S_olSymbolsMenu *olCreateNewMenuItem C_ARG((
+        S_symbolRefItem *sym, int vApplClass, int vFunCl, S_position *defpos, int defusage,
+        int selected, int visible,
+        unsigned ooBits, int olusage, int vlevel
+    ));
 S_olSymbolsMenu *olAddBrowsedSymbol C_ARG((
-	S_symbolRefItem *sym, S_olSymbolsMenu **list, 
-	int selected, int visible, unsigned ooBits,
-	int olusage, int vlevel, 
-	S_position *defpos, int defusage));
+    S_symbolRefItem *sym, S_olSymbolsMenu **list,
+    int selected, int visible, unsigned ooBits,
+    int olusage, int vlevel,
+    S_position *defpos, int defusage));
 void renameCollationSymbols C_ARG((S_olSymbolsMenu *sss));
 void olCompletionListReverse();
 S_reference **addToRefList C_ARG((	S_reference **list,
-							S_usageBits *pusage,				
-							S_position *pos,
-							int category
-						));
+                            S_usageBits *pusage,
+                            S_position *pos,
+                            int category
+                        ));
 int isInRefList C_ARG((S_reference *list,
-				S_usageBits *pusage,				
-				S_position *pos,
-				int category
-				));
+                S_usageBits *pusage,
+                S_position *pos,
+                int category
+                ));
 char *getXrefEnvironmentValue C_ARG(( char *name ));
 int byPassAcceptableSymbol C_ARG((S_symbolRefItem *p));
 int itIsSymbolToPushOlRefences C_ARG((S_symbolRefItem *p, S_olcxReferences *rstack, S_olSymbolsMenu **rss, int checkSelFlag));
-void olcxAddReferenceToOlSymbolsMenu C_ARG((S_olSymbolsMenu  *cms, S_reference *rr, 
-						  int bestFitTlag));
+void olcxAddReferenceToOlSymbolsMenu C_ARG((S_olSymbolsMenu  *cms, S_reference *rr,
+                          int bestFitTlag));
 void putOnLineLoadedReferences C_ARG((S_symbolRefItem *p));
 void genOnLineReferences C_ARG((	S_olcxReferences *rstack, S_olSymbolsMenu *cms));
 S_olSymbolsMenu *createSelectionMenu C_ARG((S_symbolRefItem *dd));
@@ -2179,8 +2179,8 @@ void olcxReferencesDiff C_ARG((S_reference **anr1, S_reference **aor2,S_referenc
 int olcxShowSelectionMenu C_ARG(());
 int getClassNumFromClassLinkName C_ARG((char *name, int defaultResult));
 void getLineColCursorPositionFromCommandLineOption C_ARG(( int *l, int *c ));
-void changeClassReferencesUsages C_ARG((char *linkName, int category, int fnum, 
-								 S_symbol *cclass));
+void changeClassReferencesUsages C_ARG((char *linkName, int category, int fnum,
+                                 S_symbol *cclass));
 int isStrictlyEnclosingClass C_ARG((int enclosedClass, int enclosingClass));
 void changeMethodReferencesUsages C_ARG((char *linkName, int category, int fnum, S_symbol *cclass));
 void olcxPushSpecialCheckMenuSym C_ARG((int command, char *symname));
@@ -2212,7 +2212,7 @@ S_olSymbolsMenu *olcxFreeSymbolMenuItem C_ARG((S_olSymbolsMenu *ll));
 void olcxFreeResolutionMenu C_ARG(( S_olSymbolsMenu *sym ));
 int refCharCode C_ARG((int usage));
 int scanReferenceFile C_ARG((	char *fname, char *fns1, char *fns2,
-						S_cxScanFileFunctionLink *scanFunTab));
+                        S_cxScanFileFunctionLink *scanFunTab));
 int smartReadFileTabFile();
 void readOneAppropReferenceFile C_ARG((char *symname, S_cxScanFileFunctionLink  *scanFunTab));
 void scanReferenceFiles C_ARG((char *fname, S_cxScanFileFunctionLink *scanFunTab));
@@ -2237,14 +2237,14 @@ void classHierarchyGenInit C_ARG(());
 void setTmpClassBackPointersToMenu C_ARG((S_olSymbolsMenu *menu));
 int chLineOrderLess C_ARG((S_olSymbolsMenu *r1, S_olSymbolsMenu *r2));
 void splitMenuPerSymbolsAndMap C_ARG((
-	S_olSymbolsMenu *rrr, 
-	void (*fun)(S_olSymbolsMenu *, void *, void *),
-	void *p1,
-	char *p2
-	));
+    S_olSymbolsMenu *rrr,
+    void (*fun)(S_olSymbolsMenu *, void *, void *),
+    void *p1,
+    char *p2
+    ));
 void htmlGenGlobRefLists C_ARG((S_olSymbolsMenu *rrr, FILE *ff, char *fn));
-void genClassHierarchies C_ARG(( FILE *ff, S_olSymbolsMenu *rrr, 
-										int virtFlag, int pass ));
+void genClassHierarchies C_ARG(( FILE *ff, S_olSymbolsMenu *rrr,
+                                        int virtFlag, int pass ));
 int classHierarchyClassNameLess C_ARG((int c1, int c2));
 int classHierarchySupClassNameLess C_ARG((S_chReference *c1, S_chReference *c2));
 
@@ -2263,16 +2263,16 @@ int javaRecordAccessible C_ARG((S_recFindStr *rfs, S_symbol *applcl, S_symbol *f
 int javaRecordVisibleAndAccessible C_ARG((S_recFindStr *rfs, S_symbol *applCl, S_symbol *funCl, S_symbol *r));
 int javaGetMinimalAccessibility C_ARG((S_recFindStr *rfs, S_symbol *r));
 int findStrRecordSym C_ARG((	S_recFindStr *ss,
-								char *recname,
-								S_symbol **res,
-								int javaClassif,
-								int accessCheck,
-								int visibilityCheck
-					));
+                                char *recname,
+                                S_symbol **res,
+                                int javaClassif,
+                                int accessCheck,
+                                int visibilityCheck
+                    ));
 S_symbol *addNewSymbolDef C_ARG((S_symbol *p, unsigned storage, S_symTab *tab, int usage));
 S_symbol *addNewCopyOfSymbolDef C_ARG((S_symbol *def, unsigned defaultStorage));
-S_symbol *addNewDeclaration C_ARG((S_symbol *btype, S_symbol *decl, 
-							unsigned storage, S_symTab *tab));
+S_symbol *addNewDeclaration C_ARG((S_symbol *btype, S_symbol *decl,
+                            unsigned storage, S_symTab *tab));
 int styyerror C_ARG((char *s));
 int styyErrorRecovery C_ARG(());
 void setToNull C_ARG((void *p));
@@ -2290,26 +2290,26 @@ S_typeModifiers *crSimpleTypeMofifier  C_ARG((unsigned t));
 S_symbolList *crDefinitionList C_ARG((S_symbol *d));
 S_symbol *crSimpleDefinition C_ARG((unsigned storage, unsigned t, S_idIdent *id));
 int findStrRecord C_ARG((	S_symbol		*s,
-					char 			*recname,	/* can be NULL */
-					S_symbol 		**res,
-					int 			javaClassif
-				));
-S_reference * findStrRecordFromSymbol C_ARG((	S_symbol *str, 
-												S_idIdent *record,
-												S_symbol **res,
-												int javaClassif,
-												S_idIdent *super
-						));
-S_reference * findStrRecordFromType C_ARG((	S_typeModifiers *str, 
-							S_idIdent *record,
-							S_symbol **res,
-							int javaClassif
-						));
+                    char            *recname,	/* can be NULL */
+                    S_symbol        **res,
+                    int             javaClassif
+                ));
+S_reference * findStrRecordFromSymbol C_ARG((	S_symbol *str,
+                                                S_idIdent *record,
+                                                S_symbol **res,
+                                                int javaClassif,
+                                                S_idIdent *super
+                        ));
+S_reference * findStrRecordFromType C_ARG((	S_typeModifiers *str,
+                            S_idIdent *record,
+                            S_symbol **res,
+                            int javaClassif
+                        ));
 int mergeArguments C_ARG((S_symbol *id, S_symbol *ty));
-S_typeModifiers *simpleStrUnionSpecifier C_ARG((	S_idIdent *typeName, 
-											S_idIdent *id, 
-											int usage
-										));
+S_typeModifiers *simpleStrUnionSpecifier C_ARG((	S_idIdent *typeName,
+                                            S_idIdent *id,
+                                            int usage
+                                        ));
 S_typeModifiers *crNewAnnonymeStrUnion C_ARG((S_idIdent *typeName));
 void specializeStrUnionDef C_ARG((S_symbol *sd, S_symbol *rec));
 S_typeModifiers *simpleEnumSpecifier C_ARG((S_idIdent *id, int usage));
@@ -2321,13 +2321,13 @@ void setParamPositionForParameter0 C_ARG((S_position *lpar));
 void setParamPositionForParameterBeyondRange C_ARG((S_position *rpar));
 S_symbol *crEmptyField C_ARG(());
 void handleDeclaratorParamPositions C_ARG((S_symbol *decl, S_position *lpar,
-									S_positionLst *commas, S_position *rpar,
-										   int hasParam));
+                                    S_positionLst *commas, S_position *rpar,
+                                           int hasParam));
 void handleInvocationParamPositions C_ARG((S_reference *ref, S_position *lpar,
-									S_positionLst *commas, S_position *rpar,
-									int hasParam));
+                                    S_positionLst *commas, S_position *rpar,
+                                    int hasParam));
 void javaHandleDeclaratorParamPositions C_ARG((S_position *sym, S_position *lpar,
-											   S_positionLst *commas, S_position *rpar));
+                                               S_positionLst *commas, S_position *rpar));
 void setLocalVariableLinkName C_ARG((struct symbol *p));
 void labelReference C_ARG((S_idIdent *id, int usage));
 
@@ -2341,33 +2341,33 @@ void javaCheckForStaticPrefixStart C_ARG((S_position *cpos, S_position *bpos));
 void javaCheckForStaticPrefixInNameList C_ARG((S_idIdentList *name, S_position *pp));
 S_position *javaGetNameStartingPosition C_ARG((S_idIdentList *name));
 char *javaCreateComposedName C_ARG((
-									char			*prefix,
-									S_idIdentList 	*className,
-									int 			classNameSeparator,
-									char 			*name,
-									char			*resBuff,
-									int				resBufSize
-								));
+                                    char			*prefix,
+                                    S_idIdentList   *className,
+                                    int             classNameSeparator,
+                                    char            *name,
+                                    char			*resBuff,
+                                    int				resBufSize
+                                ));
 int findTopLevelName C_ARG((
-								char	 			*name,
-								S_recFindStr    	*resRfs,
-								S_symbol			**resMemb,
-								int 				classif
-								));
+                                char                *name,
+                                S_recFindStr        *resRfs,
+                                S_symbol			**resMemb,
+                                int                 classif
+                                ));
 int javaClassifySingleAmbigNameToTypeOrPack C_ARG((S_idIdentList *name,
-												   S_symbol **str,
-												   int cxrefFlag
-												   ));
+                                                   S_symbol **str,
+                                                   int cxrefFlag
+                                                   ));
 void javaAddImportConstructionReference C_ARG((S_position *importPos, S_position *pos, int usage));
-int javaClassifyAmbiguousName C_ARG((		S_idIdentList *name, 
-									S_recFindStr *rfs,
-									S_symbol **str,
-									S_typeModifiers **expr,
-									S_reference **oref,
-									S_reference **rdtoref, int allowUselesFqtRefs,
-									int classif, 
-									int usage
-									));
+int javaClassifyAmbiguousName C_ARG((		S_idIdentList *name,
+                                    S_recFindStr *rfs,
+                                    S_symbol **str,
+                                    S_typeModifiers **expr,
+                                    S_reference **oref,
+                                    S_reference **rdtoref, int allowUselesFqtRefs,
+                                    int classif,
+                                    int usage
+                                    ));
 S_reference *javaClassifyToTypeOrPackageName C_ARG((S_idIdentList *tname, int usage, S_symbol **str, int allowUselesFqtRefs));
 S_reference *javaClassifyToTypeName C_ARG((S_idIdentList *tname, int usage, S_symbol **str, int allowUselesFqtRefs));
 S_symbol * javaQualifiedThis C_ARG((S_idIdentList *tname, S_idIdent *thisid));
@@ -2382,19 +2382,19 @@ S_symbol *javaAddType C_ARG((S_idIdentList *clas, int accessFlag, S_position *p)
 S_symbol *javaCreateNewMethod C_ARG((char *name, S_position *pos, int mem));
 int javaTypeToString C_ARG((S_typeModifiers *type, char *pp, int ppSize));
 int javaIsYetInTheClass C_ARG((	S_symbol	*clas,
-								char		*lname,
-								S_symbol	**eq
-								));
+                                char		*lname,
+                                S_symbol	**eq
+                                ));
 int javaSetFunctionLinkName C_ARG((S_symbol *clas, S_symbol *decl, int mem));
 S_symbol * javaGetFieldClass C_ARG((char *fieldLinkName, char **fieldAdr));
-void javaAddNestedClassesAsTypeDefs C_ARG((S_symbol *cc, 
-						S_idIdentList *oclassname, int accessFlags));
+void javaAddNestedClassesAsTypeDefs C_ARG((S_symbol *cc,
+                        S_idIdentList *oclassname, int accessFlags));
 int javaTypeFileExist C_ARG((S_idIdentList *name));
 S_symbol *javaTypeSymbolDefinition C_ARG((S_idIdentList *tname, int accessFlags,int addType));
 S_symbol *javaTypeSymbolUsage C_ARG((S_idIdentList *tname, int accessFlags));
 void javaReadSymbolFromSourceFileEnd C_ARG(());
-void javaReadSymbolFromSourceFileInit C_ARG(( int sourceFileNum, 
-									   S_jslTypeTab *typeTab ));
+void javaReadSymbolFromSourceFileInit C_ARG(( int sourceFileNum,
+                                       S_jslTypeTab *typeTab ));
 void javaReadSymbolsFromSourceFileNoFreeing C_ARG((char *fname, char *asfname));
 void javaReadSymbolsFromSourceFile C_ARG((char *fname));
 int javaLinkNameIsAnnonymousClass C_ARG((char *linkname));
@@ -2412,13 +2412,13 @@ void javaAddMethodParametersToSymTable C_ARG((S_symbol *method));
 void javaMethodBodyBeginning C_ARG((S_symbol *method));
 void javaMethodBodyEnding C_ARG((S_position *pos));
 void javaAddMapedTypeName C_ARG((
-							char *file,
-							char *path,
-							char *pack,
-							S_completions *c,
-							void *vdirid,
-							int  *storage
-						));
+                            char *file,
+                            char *path,
+                            char *pack,
+                            S_completions *c,
+                            void *vdirid,
+                            int  *storage
+                        ));
 S_symbol *javaFQTypeSymbolDefinition C_ARG((char *name, char *fqName));
 S_symbol *javaFQTypeSymbol C_ARG((char *name, char *fqName));
 S_typeModifiers *javaClassNameType C_ARG((S_idIdentList *typeName));
@@ -2427,21 +2427,21 @@ int javaIsInnerAndCanGetUnnamedEnclosingInstance C_ARG((S_symbol *name, S_symbol
 S_typeModifiers *javaNestedNewType C_ARG((S_symbol *expr, S_idIdent *thenew, S_idIdentList *idl));
 S_typeModifiers *javaArrayFieldAccess C_ARG((S_idIdent *id));
 S_typeModifiers *javaMethodInvocationN C_ARG((
-								S_idIdentList *name,
-								S_typeModifiersList *args
-								));
+                                S_idIdentList *name,
+                                S_typeModifiersList *args
+                                ));
 S_typeModifiers *javaMethodInvocationT C_ARG((	S_typeModifiers *tt,
-										S_idIdent *name,
-										S_typeModifiersList *args
-									));
+                                        S_idIdent *name,
+                                        S_typeModifiersList *args
+                                    ));
 S_typeModifiers *javaMethodInvocationS C_ARG((	S_idIdent *super,
-												S_idIdent *name,
-												S_typeModifiersList *args
-									));
+                                                S_idIdent *name,
+                                                S_typeModifiersList *args
+                                    ));
 S_typeModifiers *javaConstructorInvocation C_ARG((S_symbol *class,
-										   S_position *pos,
-										   S_typeModifiersList *args
-	));
+                                           S_position *pos,
+                                           S_typeModifiersList *args
+    ));
 S_extRecFindStr *javaCrErfsForMethodInvocationN C_ARG((S_idIdentList *name));
 S_extRecFindStr *javaCrErfsForMethodInvocationT C_ARG((S_typeModifiers *tt,S_idIdent *name));
 S_extRecFindStr *javaCrErfsForMethodInvocationS C_ARG((S_idIdent *super,S_idIdent *name));
@@ -2454,14 +2454,14 @@ S_symbol *javaCurrentSuperClass C_ARG(());
 S_typeModifiers *javaCheckNumeric C_ARG((S_typeModifiers *tt));
 S_typeModifiers *javaNumericPromotion C_ARG((S_typeModifiers *tt));
 S_typeModifiers *javaBinaryNumericPromotion C_ARG((	S_typeModifiers *t1,
-												S_typeModifiers *t2
-											));
+                                                S_typeModifiers *t2
+                                            ));
 S_typeModifiers *javaBitwiseLogicalPromotion C_ARG((	S_typeModifiers *t1,
-												S_typeModifiers *t2
-											));
+                                                S_typeModifiers *t2
+                                            ));
 S_typeModifiers *javaConditionalPromotion C_ARG((	S_typeModifiers *t1,
-											S_typeModifiers *t2
-										));
+                                            S_typeModifiers *t2
+                                        ));
 int javaIsStringType C_ARG((S_typeModifiers *tt));
 void javaTypeDump C_ARG((S_typeModifiers *tt));
 void javaAddJslReadedTopLevelClasses C_ARG((S_jslTypeTab  *typeTab));
@@ -2479,7 +2479,7 @@ void javaCheckIfPackageDirectoryIsInClassOrSourcePath C_ARG((char *dir));
 */
 
 S_typeModifiers *cccFunApplication C_ARG((S_typeModifiers *fun,
-								  S_typeModifiersList *args));
+                                  S_typeModifiersList *args));
 
 /* ***********************************************************************
 ** zip.c
@@ -2498,20 +2498,20 @@ void addSuperClassOrInterface C_ARG(( S_symbol *memb, S_symbol *supp, int origin
 int javaCreateClassFileItem C_ARG(( S_symbol *memb));
 void addSuperClassOrInterfaceByName C_ARG((S_symbol *memb, char *super, int origin, int loadSuper));
 void fsRecMapOnFiles C_ARG((S_zipArchiveDir *dir, char *zip, char *path, void (*fun)(char *zip, char *file, void *arg), void *arg));
-int fsIsMember C_ARG((S_zipArchiveDir **dir, char *fn, unsigned offset, 
-						int addFlag, S_zipArchiveDir **place));
+int fsIsMember C_ARG((S_zipArchiveDir **dir, char *fn, unsigned offset,
+                        int addFlag, S_zipArchiveDir **place));
 int zipIndexArchive C_ARG((char *name));
 int zipFindFile C_ARG((char *name, char **resName, S_zipFileTabItem *zipfile));
 void javaMapZipDirFile C_ARG((
-		S_zipFileTabItem *zipfile,
-		char *packfile,
-		S_completions *a1,
-		void *a2,
-		int *a3,
-		void (*fun)(MAP_FUN_PROFILE),
-		char *classPath,
-		char *dirname
-	));
+        S_zipFileTabItem *zipfile,
+        char *packfile,
+        S_completions *a1,
+        void *a2,
+        int *a3,
+        void (*fun)(MAP_FUN_PROFILE),
+        char *classPath,
+        char *dirname
+    ));
 void javaReadClassFile C_ARG((char *name, S_symbol *cdef, int loadSuper));
 
 /* ***********************************************************************
@@ -2623,8 +2623,8 @@ void getJavaClassAndSourcePath C_ARG(());
 int packageOnCommandLine C_ARG((char *fn));
 void getStandardOptions C_ARG((int *nargc, char ***nargv));
 char *expandSpecialFilePredefinedVariables_st C_ARG((char *tt));
-int readOptionFromFile C_ARG((FILE *ff, int *nargc, char ***nargv, 
-						int memFl, char *sectionFile, char *project, char *resSection));
+int readOptionFromFile C_ARG((FILE *ff, int *nargc, char ***nargv,
+                        int memFl, char *sectionFile, char *project, char *resSection));
 void readOptionFile C_ARG((char *name, int *nargc, char ***nargv,char *sectionFile, char *project));
 void readOptionPipe C_ARG((char *command, int *nargc, char ***nargv,char *sectionFile));
 void javaSetSourcePath C_ARG((int defaultCpAllowed));
@@ -2657,10 +2657,10 @@ int versionNumber C_ARG(());
 */
 
 void genClassHierarchyItemLinks C_ARG(( FILE *ff, S_olSymbolsMenu *itt,
-										int virtFlag));
+                                        int virtFlag));
 void htmlGenNonVirtualGlobSymList C_ARG(( FILE *ff, char *fn, S_symbolRefItem *p ));
-void htmlGenGlobRefsForVirtMethod C_ARG((FILE *ff, char *fn, 
-												 S_olSymbolsMenu *rrr));
+void htmlGenGlobRefsForVirtMethod C_ARG((FILE *ff, char *fn,
+                                                 S_olSymbolsMenu *rrr));
 int htmlRefItemsOrderLess C_ARG((S_olSymbolsMenu *ss1, S_olSymbolsMenu *ss2));
 int isThereSomethingPrintable C_ARG((S_olSymbolsMenu *itt));
 void htmlGenEmptyRefsFile();
@@ -2677,7 +2677,7 @@ void htmlPutChar C_ARG((FILE *ff, int c));
 void htmlPrint C_ARG((FILE *ff, char *ss));
 void htmlGenGlobalReferenceLists C_ARG((char *cxMemFreeBase));
 void htmlAddJavaDocReference C_ARG((S_symbol  *p, S_position  *pos,
-							 int  vFunClass, int  vApplClass));
+                             int  vFunClass, int  vApplClass));
 void generateHtml C_ARG(());
 int addHtmlCutPath C_ARG((char *ss ));
 void htmlGetDefinitionReferences();
@@ -2715,31 +2715,31 @@ S_typeModifiers *jslAppendComposedType C_ARG((S_typeModifiers **d, unsigned t) )
 S_symbol *jslPrependDirectEnclosingInstanceArgument C_ARG((S_symbol *args));
 S_symbol *jslMethodHeader C_ARG((unsigned modif, S_symbol *type, S_symbol *decl, int storage, S_symbolList *throws) );
 S_symbol *jslTypeNameDefinition C_ARG((S_idIdentList *tname) );
-S_symbol *jslTypeSymbolDefinition C_ARG((char *ttt2, S_idIdentList *packid, 
-								  int add, int order, int isSingleImportedFlag) );
+S_symbol *jslTypeSymbolDefinition C_ARG((char *ttt2, S_idIdentList *packid,
+                                  int add, int order, int isSingleImportedFlag) );
 int jslClassifyAmbiguousTypeName C_ARG((S_idIdentList *name, S_symbol **str) );
 void jslAddNestedClassesToJslTypeTab C_ARG(( S_symbol *cc, int order) );
 void jslAddSuperNestedClassesToJslTypeTab C_ARG(( S_symbol *cc) );
 
 void jslAddSuperClassOrInterfaceByName C_ARG((S_symbol *memb,char *super));
-void jslNewClassDefinitionBegin C_ARG((S_idIdent *name, 
-								int accessFlags,
-								S_symbol *anonInterf,
-								int position
-	) );
+void jslNewClassDefinitionBegin C_ARG((S_idIdent *name,
+                                int accessFlags,
+                                S_symbol *anonInterf,
+                                int position
+    ) );
 void jslAddDefaultConstructor C_ARG((S_symbol *cl));
 void jslNewClassDefinitionEnd C_ARG(() );
 void jslNewAnonClassDefinitionBegin C_ARG((S_idIdent *interfName) );
 
 void jslAddSuperClassOrInterface C_ARG((S_symbol *memb,S_symbol *supp));
 void jslAddMapedImportTypeName C_ARG((
-							char *file,
-							char *path,
-							char *pack,
-							S_completions *c,
-							void *vdirid,
-							int  *storage
-						) );
+                            char *file,
+                            char *path,
+                            char *pack,
+                            S_completions *c,
+                            void *vdirid,
+                            int  *storage
+                        ) );
 void jslAddAllPackageClassesFromFileTab C_ARG((S_idIdentList *pack));
 
 
@@ -2763,9 +2763,9 @@ void getAndProcessXrefrcOptions C_ARG((char *dffname, char *dffsect, char *proje
 char * getInputFile C_ARG((int *fArgCount));
 void getPipedOptions C_ARG((int *outNargc,char ***outNargv));
 void mainCallEditServerInit C_ARG((int nargc, char **nargv));
-void mainCallEditServer C_ARG((int argc, char **argv, 
-							   int nargc, char **nargv, 
-							   int *firstPassing
+void mainCallEditServer C_ARG((int argc, char **argv,
+                               int nargc, char **nargv,
+                               int *firstPassing
 ));
 void mainCallXref C_ARG((int argc, char **argv));
 void mainXref C_ARG((int argc, char **argv));
@@ -2817,19 +2817,19 @@ void editorRemoveBlanks C_ARG((S_editorMarker *mm, int direction, S_editorUndo *
 void editorDumpUndoList C_ARG((S_editorUndo *uu));
 void editorMoveMarkerToLineCol C_ARG((S_editorMarker *m, int line, int col));
 void editorMarkersDifferences C_ARG((
-	S_editorMarkerList **list1, S_editorMarkerList **list2,
-	S_editorMarkerList **diff1, S_editorMarkerList **diff2));
+    S_editorMarkerList **list1, S_editorMarkerList **list2,
+    S_editorMarkerList **diff1, S_editorMarkerList **diff2));
 void editorFreeMarker C_ARG((S_editorMarker *marker));
 void editorFreeMarkerListNotMarkers C_ARG((S_editorMarkerList *occs));
 void editorFreeMarkersAndRegionList C_ARG((S_editorRegionList *occs));
 void editorFreeRegionListNotMarkers C_ARG((S_editorRegionList *occs));
 void editorSortRegionsAndRemoveOverlaps C_ARG((S_editorRegionList **regions));
 void editorSplitMarkersWithRespectToRegions C_ARG((
-	S_editorMarkerList 	**inMarkers, 
-	S_editorRegionList 	**inRegions,
-	S_editorMarkerList 	**outInsiders, 
-	S_editorMarkerList 	**outOutsiders
-	));
+    S_editorMarkerList  **inMarkers,
+    S_editorRegionList  **inRegions,
+    S_editorMarkerList  **outInsiders,
+    S_editorMarkerList  **outOutsiders
+    ));
 void editorRestrictMarkersToRegions C_ARG((S_editorMarkerList **mm, S_editorRegionList **regions));
 S_editorMarker *editorCrMarkerForBufferBegin C_ARG((S_editorBuffer *buffer));
 S_editorMarker *editorCrMarkerForBufferEnd C_ARG((S_editorBuffer *buffer));
@@ -2837,15 +2837,15 @@ S_editorRegionList *editorWholeBufferRegion C_ARG((S_editorBuffer *buffer));
 void editorScheduleModifiedBuffersToUpdate C_ARG(());
 void editorFreeMarkersAndMarkerList C_ARG((S_editorMarkerList *occs));
 int editorMapOnNonexistantFiles C_ARG((
-		char *dirname,
-		void (*fun)(MAP_FUN_PROFILE),
-		int deep,
-		char *a1,
-		char *a2,
-		S_completions *a3,
-		void *a4,
-		int *a5
-	));
+        char *dirname,
+        void (*fun)(MAP_FUN_PROFILE),
+        int deep,
+        char *a1,
+        char *a2,
+        S_completions *a3,
+        void *a4,
+        int *a5
+    ));
 void editorCloseBufferIfClosable C_ARG((char *name));
 void editorCloseAllBuffersIfClosable C_ARG(());
 void editorCloseAllBuffers C_ARG(());
@@ -3031,7 +3031,6 @@ extern int olcxMemoryi;
 #else
 extern int olcxMemoryAllocatedBytes;
 #endif
-extern char s_cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
 extern char s_base[MAX_FILE_NAME_SIZE];
 extern char s_file[MAX_FILE_NAME_SIZE];
 extern char s_path[MAX_FILE_NAME_SIZE];

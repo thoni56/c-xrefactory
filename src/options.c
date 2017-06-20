@@ -1,13 +1,10 @@
-/*
-  $Revision: 1.18 $
-  $Date: 2002/09/07 17:21:50 $
-*/
-
 #include "stdinc.h"
 #include "head.h"
 #include "proto.h"      /*SBD*/
+#include "globals.h"
+
 #include "protocol.h"
-//
+
 /* memory where on-line given options are stored */
 #define SIZE_optMemory SIZE_opiMemory
 static char optMemory[SIZE_optMemory];
@@ -60,7 +57,7 @@ static char *s_standardCOptions[] = {
     "-D__GNUC_MINOR__=7",
     "-D__ELF__=1",
     "-D__attribute__(xxx) ",
-    "-D__alignof__(xxx) 8", 
+    "-D__alignof__(xxx) 8",
     "-D__typeof__(xxx) int",
     "-D__gnuc_va_list void",
     "-I", "/usr/lib/g++-include/",
@@ -99,7 +96,7 @@ static char *s_standardCccOptions[] = {
     "-D__GNUC_MINOR__=7",
     "-D__ELF__=1",
     "-D__attribute__(xxx) ",
-    "-D__alignof__(xxx) 8", 
+    "-D__alignof__(xxx) 8",
     /*  "-D__typeof__(xxx) ", */
     "-D__asm__(xxx) {}",
     "-I", "/usr/lib/g++-include/",
@@ -225,7 +222,7 @@ static void expandEnvironmentVariables(char *tt, int ttsize, int *len,
     char vname[MAX_OPTION_LEN];
     char *vval;
     int i, d, j, starti, termc, expanded, vlen, tilda;
-    i = d = 0; 
+    i = d = 0;
     //&fprintf(dumpOut, "expanding option '%s'\n", tt);
     while(tt[i] && i<ttsize-2) {
         starti = -1;
@@ -289,7 +286,7 @@ static int getOptionFromFile(FILE *ff, char *tt, int ttsize, int *outI) {
             // when someone finished its section name by \ antislash
             while (c!=EOF /*& && c!='\n' &*/ && (c!='\"' /*|| lc=='\\'*/ )) {
                 // if (c=='\"' && lc=='\\') i--;
-                if (i < ttsize-1)   tt[i++]=c; 
+                if (i < ttsize-1)   tt[i++]=c;
                 lc=c; c=getc(ff);
             }
             if (c!='\"' && s_opt.taskRegime!=RegimeEditServer) {
@@ -300,7 +297,7 @@ static int getOptionFromFile(FILE *ff, char *tt, int ttsize, int *outI) {
             lc=c; c=getc(ff);
             while (c!=EOF && c!='\n' && (c!='`' /*|| lc=='\\'*/ )) {
                 // if (c=='`' && lc=='\\') i--;
-                if (i < ttsize-1)   tt[i++]=c; 
+                if (i < ttsize-1)   tt[i++]=c;
                 lc=c; c=getc(ff);
             }
             if (i < ttsize-1)   tt[i++]=c;
@@ -318,7 +315,7 @@ static int getOptionFromFile(FILE *ff, char *tt, int ttsize, int *outI) {
         } else {
             while (c!=EOF && c>' ') {
                 if (c=='\"') quotamess = 1;
-                if (i < ttsize-1)   tt[i++]=c; 
+                if (i < ttsize-1)   tt[i++]=c;
                 c=getc(ff);
             }
         }
@@ -332,7 +329,7 @@ static int getOptionFromFile(FILE *ff, char *tt, int ttsize, int *outI) {
             }
         }
         /* because QNX pathes can start by // */
-        if (i>=2  && tt[0]=='/' && tt[1]=='/') { 
+        if (i>=2  && tt[0]=='/' && tt[1]=='/') {
             while (c!=EOF && c!='\n') c=getc(ff);
             comment = 1;
         }
@@ -356,13 +353,13 @@ static void processSingleSectionMarker(char *tt,char *section,
 #if defined (__WIN32__) || defined (__OS2__)    /*SBD*/
     casesensitivity = 0;
 #endif                                          /*SBD*/
-    if (pathncmp(tt, section, sl, casesensitivity)==0 
+    if (pathncmp(tt, section, sl, casesensitivity)==0
         && (section[sl]=='/' || section[sl]=='\\' || section[sl]==0)) {
         if (sl > strlen(resSection)) {
             strcpy(resSection,tt);
             InternalCheck(strlen(resSection)+1 < MAX_FILE_NAME_SIZE);
         }
-        *writeFlag = 1; 
+        *writeFlag = 1;
     } else {
         *writeFlag = 0;
     }
@@ -448,7 +445,7 @@ static void processSectionMarker(char *ttt,int i,char *project,char *section,
 
 #define ACTIVE_OPTION() (isActiveSect && isActivePass)
 
-int readOptionFromFile(FILE *ff, int *nargc, char ***nargv, int memFl, 
+int readOptionFromFile(FILE *ff, int *nargc, char ***nargv, int memFl,
                        char *sectionFile,char *project, char *resSection) {
     char tt[MAX_OPTION_LEN];
     int len,argc,i,c,isActiveSect,isActivePass,res,sl,passn=0;
@@ -477,8 +474,8 @@ int readOptionFromFile(FILE *ff, int *nargc, char ***nargv, int memFl,
             strcpy(s_opt.licenseString, tt+9);
             //&         strcpy(s_initOpt.licenseString, tt+9);  // why not ?
             s_expTime = 0;          // reinitialize it to be reloaded
-        } else if (strcmp(tt,"-set")==0 && ACTIVE_OPTION() 
-                   && memFl!=MEM_NO_ALLOC) {    
+        } else if (strcmp(tt,"-set")==0 && ACTIVE_OPTION()
+                   && memFl!=MEM_NO_ALLOC) {
             // pre-evaluation of -set
             res = 1;
             ADD_OPTION_TO_ARGS(memFl,tt,len,argv,argc);
@@ -615,7 +612,7 @@ int packageOnCommandLine(char *fn) {
     }
     *dd = 0;
     InternalCheck(strlen(ppp)<MAX_FILE_NAME_SIZE-1);
-    cp = s_javaSourcePaths; 
+    cp = s_javaSourcePaths;
     while (cp!=NULL && *cp!=0) {
         for(ind=0; cp[ind]!=0 && cp[ind]!=CLASS_PATH_SEPARATOR; ind++) {
             ttt[ind]=cp[ind];
@@ -822,9 +819,9 @@ void getJavaClassAndSourcePath() {
             processClassPathString( jdkcp);
         }
 
-        if (LANGUAGE(LAN_JAVA) 
+        if (LANGUAGE(LAN_JAVA)
             && s_opt.taskRegime != RegimeEditServer
-            && s_opt.taskRegime != RegimeGenerate 
+            && s_opt.taskRegime != RegimeGenerate
             ) {
             static int messageFlag=0;
             if (messageFlag==0 && ! s_opt.briefoutput) {

@@ -1,3 +1,6 @@
+#ifndef HEAD2_H
+#define HEAD2_H
+
 /* ************************************************************** */
 /* ********  Constants useful for source - distribution  ******** */
 /*        You are free to adapt this file to your needs           */
@@ -213,3 +216,5 @@
 #define PRF_REF_PREFIX  "/X"			/*SBD*/
 
 #endif									/*SBD*/
+
+#endif

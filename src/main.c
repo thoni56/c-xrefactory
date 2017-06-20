@@ -1,6 +1,7 @@
 #include "stdinc.h"
 #include "head.h"
 #include "proto.h"      /*SBD*/
+#include "globals.h"
 #include "unigram.h"
 #include "recyacc.h"
 
@@ -3280,7 +3281,6 @@ void mainCallXref(int argc, char **argv) {
                 else if (ffc!=NULL) ffc=ffc->next;
             }
         } else {
-#if 1 //defined(VERSION_BETA3)
             s_javaPreScanOnly = 1;
             for(; pffc!=NULL; pffc=pffc->next) {
                 if (! messagePrinted) {
@@ -3294,7 +3294,6 @@ void mainCallXref(int argc, char **argv) {
                 if (s_opt.xref2) writeRelativeProgress(10*pinputCounter/numberOfInputs);
                 pinputCounter++;
             }
-#endif
             s_javaPreScanOnly = 0;
             s_fileAbortionEnabled = 1;
             for(; ffc!=NULL; ffc=ffc->next) {
@@ -3344,7 +3343,6 @@ void mainCallXref(int argc, char **argv) {
     }
 }
 
-//#define HTML_INTERACT 1
 
 void mainXref(int argc, char **argv) {
     int lc;

@@ -1,7 +1,4 @@
-/*
-  $Revision: 1.41 $
-  $Date: 2002/09/05 19:25:37 $
-*/
+#include "globals.h"
 
 #include "stdinc.h"
 #include "head.h"
@@ -776,7 +773,7 @@ S_intStringTab s_extractStoragesNamesInitTab[] = {
 };
 
 S_intStringTab s_typesNamesInitTab[] = {
-    {TypeDefault ,          "Default"}, 
+    {TypeDefault ,          "Default"},
     {TypeChar ,             "char"},
     {TypeUnsignedChar ,     "unsigned char"},
     {TypeSignedChar ,       "signed char"},
@@ -877,5 +874,3 @@ int s_preCrTypesIniTab[] = {
     TypeWchar_t,
     -1,
 };
-
-

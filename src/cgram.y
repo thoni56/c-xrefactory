@@ -33,7 +33,7 @@
 
 #include "stdinc.h"
 #include "head.h"
-#include "proto.h"      /*SBD*/
+#include "proto.h"
 
 
 #define YYDEBUG 0
