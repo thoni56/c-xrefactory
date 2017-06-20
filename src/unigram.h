@@ -1,7 +1,7 @@
 #ifndef _UNIGRAM__H
 #define _UNIGRAM__H
 
-#ifdef __WIN32__		/*SBD*/
+#ifdef __WIN32__
 
 #ifdef CONST
 #undef CONST
@@ -19,9 +19,9 @@
 #undef DELETE
 #endif
 
-#endif					/*SBD*/
+#endif
 
-#include "gram.h"
+#include "cgram.h"
 
 extern YYSTYPE cyylval;
 extern YYSTYPE javayylval;

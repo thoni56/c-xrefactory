@@ -16,7 +16,7 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #include "proto.h"      /*SBD*/
 
 #define YYSTYPE MAINYYSTYPE
-#include "gram.h"				/* tokens from grammars */
+#include "cgram.h"				/* tokens from grammars */
 #undef  YYSTYPE
 
 /* redefine object which can clash with gram.h */
@@ -342,29 +342,28 @@ YYSTYPE yyvs[YYSTACKSIZE];
 
 
 int cexpTranslateToken(int tok, int val) {
-	if (tok == '\n') return(0);
-	if (tok < 256) return(tok);
-	switch (tok) {
-	case CONSTANT: case LONG_CONSTANT:
-		yylval = val; 
+    if (tok == '\n') return(0);
+    if (tok < 256) return(tok);
+    switch (tok) {
+    case CONSTANT: case LONG_CONSTANT:
+        yylval = val;
 /*fprintf(dumpOut,"reading constant %d\n",val);*/
-		return(number);
-	case EQ_OP: 	return(EQ);
-	case NE_OP: 	return(NE);
-	case LE_OP: 	return(LE);
-	case GE_OP: 	return(GE);
-	case LEFT_OP: 	return(LS);
-	case RIGHT_OP: 	return(RS);
-	case AND_OP: 	return(ANDAND);
-	case OR_OP: 	return(OROR);
-	}
+        return(number);
+    case EQ_OP:     return(EQ);
+    case NE_OP:     return(NE);
+    case LE_OP:     return(LE);
+    case GE_OP:     return(GE);
+    case LEFT_OP:   return(LS);
+    case RIGHT_OP:  return(RS);
+    case AND_OP:    return(ANDAND);
+    case OR_OP:     return(OROR);
+    }
 /*	warning(ERR_ST,"unrecognized token in constant expression"); */
-	yylval = 0;
-	return(number);
-	return(UNKNOWN);
+    yylval = 0;
+    return(number);
+    return(UNKNOWN);
 }
-
-#line 368 "y.tab.c"
+#line 367 "y.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -522,16 +521,16 @@ break;
 case 4:
 #line 72 "cexp.y"
 {
-		if (yyvsp[0] == 0) yyval = yyvsp[-2];
-		else yyval = yyvsp[-2] / yyvsp[0];
-	}
+        if (yyvsp[0] == 0) yyval = yyvsp[-2];
+        else yyval = yyvsp[-2] / yyvsp[0];
+    }
 break;
 case 5:
 #line 76 "cexp.y"
 {
-		if (yyvsp[0] == 0) yyval = yyvsp[-2];
-		else yyval = yyvsp[-2] % yyvsp[0];
-	}
+        if (yyvsp[0] == 0) yyval = yyvsp[-2];
+        else yyval = yyvsp[-2] % yyvsp[0];
+    }
 break;
 case 6:
 #line 80 "cexp.y"
@@ -621,7 +620,7 @@ case 27:
 #line 105 "cexp.y"
 {yyval= yyvsp[0];}
 break;
-#line 625 "y.tab.c"
+#line 624 "y.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

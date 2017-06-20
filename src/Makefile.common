@@ -44,7 +44,7 @@ ifeq ($(YACCING),yes)
 	$(YACC) -v -d cgram.y
 	mv y.output cy.output
 	mv y.tab.c cgram.c
-	mv y.tab.h gram.h
+	mv y.tab.h cgram.h
 endif
 
 
@@ -54,7 +54,7 @@ ifeq ($(YACCING),yes)
 	mv y.output jy.output
 	mv y.tab.c javagram.c
 	mv y.tab.h javagram.h
-	diff javagram.h gram.h
+	diff javagram.h cgram.h
 endif
 
 yaccgram.c: yaccgram.y cgram.c
@@ -62,7 +62,7 @@ ifeq ($(YACCING),yes)
 	$(YACC) -v -d yaccgram.y
 	mv y.tab.c yaccgram.c
 	mv y.tab.h yaccgram.h
-	diff yaccgram.h gram.h
+	diff yaccgram.h cgram.h
 endif
 
 # Don't know what javasl is, no support anyway
@@ -70,14 +70,14 @@ endif
 #	$(YACC) -v -d javaslgram.y
 #	mv y.tab.c javaslgram.c
 #	mv y.tab.h javaslgram.h
-#	diff javaslgram.h gram.h
+#	diff javaslgram.h cgram.h
 
 # No support for C++
 # cccgram.c: cccgram.y cgram.c
 #	$(YACC) -v -d cccgram.y
 #	mv y.tab.c cccgram.c
 #	mv y.tab.h cccgram.h
-#	diff cccgram.h gram.h
+#	diff cccgram.h cgram.h
 
 cexp.c: cexp.y
 ifeq ($(YACCING),yes)
@@ -85,7 +85,7 @@ ifeq ($(YACCING),yes)
 	mv y.tab.c cexp.c
 endif
 
-gram.h:	cgram.c
+cgram.h: cgram.c
 
 bootstrap:
 #strFill.h: proto.h strTdef.h
