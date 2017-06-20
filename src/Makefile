@@ -18,6 +18,11 @@ include Makefile.dependencies
 
 
 #########################################################################
+#
+# Trigger running YACC on possibly updated grammar files
+
+yacc: $(YACC)
+	$(MAKE) YACCING=yes
 
 $(YACC):
-	cd $(ROOTDIR)/byacc-1.9; make
+	$(MAKE) -C $(ROOTDIR)/byacc-1.9
