@@ -1582,11 +1582,15 @@ _bef_:			{
 /* ****************** following is some gcc asm support ************ */
 /* it is not exactly as in gcc, but I hope it is suf. general */
 
+gcc_asm_symbolic_name_opt:
+	|	'[' IDENTIFIER ']'
+	;
+
 gcc_asm_item_opt:
-    |	IDENTIFIER
-    |	string_literales
-    |	IDENTIFIER '(' expr ')'
-    |	string_literales '(' expr ')'
+    |	gcc_asm_symbolic_name_opt IDENTIFIER
+    |	gcc_asm_symbolic_name_opt IDENTIFIER '(' expr ')'
+    |	gcc_asm_symbolic_name_opt string_literales
+    |	gcc_asm_symbolic_name_opt string_literales '(' expr ')'
     ;
 
 gcc_asm_item_list:
