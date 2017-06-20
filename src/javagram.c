@@ -40,9 +40,9 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 
 #include "stdinc.h"
 #include "head.h"
-#include "proto.h"      /*SBD*/
+#include "proto.h"
 #include "protocol.h"
-/* */
+
 
 #define YYDEBUG 0
 #define yyerror styyerror
@@ -164,7 +164,7 @@ typedef union {
     S_bb_typeModifiersListPositionLstPair   bbtypeModifiersListPositionLstPair;
     S_bb_nestedConstrTokenType              bbnestedConstrTokenType;
 } YYSTYPE;
-#line 168 "y.tab.c"
+#line 168 "javagram.c"
 #define TYPE_NAME 257
 #define CLASS_NAME 258
 #define TEMPLATE_NAME 259
@@ -2599,7 +2599,7 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
     }
     LICENSE_CHECK();
 }
-#line 2603 "y.tab.c"
+#line 2603 "javagram.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -7141,7 +7141,7 @@ case 484:
             }
         }
 break;
-#line 7145 "y.tab.c"
+#line 7145 "javagram.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

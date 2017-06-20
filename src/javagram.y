@@ -33,9 +33,9 @@
 
 #include "stdinc.h"
 #include "head.h"
-#include "proto.h"      /*SBD*/
+#include "proto.h"
 #include "protocol.h"
-/* */
+
 
 #define YYDEBUG 0
 #define yyerror styyerror

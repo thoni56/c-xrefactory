@@ -43,7 +43,7 @@ cgram.c: cgram.y
 ifeq ($(YACCING),yes)
 	$(YACC) -v -d cgram.y
 	mv y.output cy.output
-	mv y.tab.c cgram.c
+	sed 's/y.tab.c/cgram.c/g' y.tab.c > cgram.c
 	mv y.tab.h cgram.h
 endif
 
@@ -52,7 +52,7 @@ javagram.c: javagram.y cgram.c
 ifeq ($(YACCING),yes)
 	$(YACC) -v -d javagram.y
 	mv y.output jy.output
-	mv y.tab.c javagram.c
+	sed 's/y.tab.c/javagram.c/g' y.tab.c > javagram.c
 	mv y.tab.h javagram.h
 	diff javagram.h cgram.h
 endif
@@ -60,7 +60,7 @@ endif
 yaccgram.c: yaccgram.y cgram.c
 ifeq ($(YACCING),yes)
 	$(YACC) -v -d yaccgram.y
-	mv y.tab.c yaccgram.c
+	sed 's/y.tab.c/yaccgram.c/g' y.tab.c > yaccgram.c
 	mv y.tab.h yaccgram.h
 	diff yaccgram.h cgram.h
 endif

@@ -128,7 +128,7 @@ typedef union {
     S_bb_typeModifiersListPositionLstPair   bbtypeModifiersListPositionLstPair;
     S_bb_nestedConstrTokenType              bbnestedConstrTokenType;
 } YYSTYPE;
-#line 132 "y.tab.c"
+#line 132 "yaccgram.c"
 #define TYPE_NAME 257
 #define CLASS_NAME 258
 #define TEMPLATE_NAME 259
@@ -2460,7 +2460,7 @@ void makeYaccCompletions(char *s, int len, S_position *pos) {
 
     LICENSE_CHECK();
 }
-#line 2464 "y.tab.c"
+#line 2464 "yaccgram.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -4179,7 +4179,7 @@ case 481:
 #line 1686 "yaccgram.y"
 { stackMemoryBlockFree(); }
 break;
-#line 4183 "y.tab.c"
+#line 4183 "yaccgram.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

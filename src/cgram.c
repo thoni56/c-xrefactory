@@ -112,7 +112,7 @@ typedef union {
     S_bb_typeModifiersListPositionLstPair   bbtypeModifiersListPositionLstPair;
     S_bb_nestedConstrTokenType              bbnestedConstrTokenType;
 } YYSTYPE;
-#line 116 "y.tab.c"
+#line 116 "cgram.c"
 #define TYPE_NAME 257
 #define CLASS_NAME 258
 #define TEMPLATE_NAME 259
@@ -1997,7 +1997,7 @@ void makeCCompletions(char *s, int len, S_position *pos) {
 
     LICENSE_CHECK();
 }
-#line 2001 "y.tab.c"
+#line 2001 "cgram.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -3914,7 +3914,7 @@ case 341:
 #line 1757 "cgram.y"
 { stackMemoryBlockFree(); }
 break;
-#line 3918 "y.tab.c"
+#line 3918 "cgram.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

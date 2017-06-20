@@ -1,17 +1,18 @@
-#ifndef _RECYACC__H
+#ifndef RECYACC_H
+#define RECYACC_H
 
 struct yyGlobalState {
-	int gyydebug;
-	int gyynerrs;
-	int gyyerrflag;
-	int gyychar;
-	int lastgyystate;
-	short *gyyssp;
-	YYSTYPE *gyyvsp;
-	YYSTYPE gyyval;
-	YYSTYPE gyylval;
-	short gyyss[YYSTACKSIZE];
-	YYSTYPE gyyvs[YYSTACKSIZE];
+    int gyydebug;
+    int gyynerrs;
+    int gyyerrflag;
+    int gyychar;
+    int lastgyystate;
+    short *gyyssp;
+    YYSTYPE *gyyvsp;
+    YYSTYPE gyyval;
+    YYSTYPE gyylval;
+    short gyyss[YYSTACKSIZE];
+    YYSTYPE gyyvs[YYSTACKSIZE];
 };
 
 extern struct yyGlobalState *s_yygstate;
