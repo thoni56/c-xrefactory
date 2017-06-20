@@ -1,8 +1,3 @@
-/*
-  $Revision: 1.101 $
-  $Date: 2002/09/07 17:21:50 $
-*/
-
 #include "stdinc.h"
 #include "head.h"
 #include "proto.h"      /*SBD*/
@@ -10,7 +5,7 @@
 #include "recyacc.h"
 
 #include "protocol.h"
-//
+
 #define NON_FILE_NAME "___None___"
 
 static char olExtractAddrParPrefixStatChar[TMP_STRING_SIZE];
