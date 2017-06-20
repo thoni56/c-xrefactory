@@ -118,7 +118,7 @@ static void addYaccSymbolReference C_ARG((S_idIdent *name, int usage));
 
 /* c-special */
 %token TYPEDEF EXTERN AUTO REGISTER SIGNED UNSIGNED STRUCT UNION ENUM
-%token SIZEOF
+%token SIZEOF RESTRICT _ATOMIC _BOOL _THREADLOCAL _NORETURN
 /* hmm */
 %token ANONYME_MOD
 
@@ -918,6 +918,9 @@ declaration_specifiers0
         $$.d = $1.d;
         $$.d->b.storage = $2.d;
     }
+	| declaration_specifiers0 function_specifier			{
+		$$.d = $1.d;
+	}
     | COMPL_TYPE_NAME                                       {
         assert(0);
     }
@@ -946,6 +949,12 @@ declaration_modality_specifiers
     | declaration_modality_specifiers type_modality_specifier       {
         declTypeSpecifier1($1.d, $2.d);
     }
+	| function_specifier									{
+		$$.d = typeSpecifier1(TypeDefault);
+	}
+	| declaration_modality_specifiers function_specifier			{
+		$$.d = $1.d;
+	}
     ;
 
 init_declarator
@@ -954,19 +963,19 @@ init_declarator
     ;
 
 storage_class_specifier
-    : TYPEDEF   { $$.d = StorageTypedef; }
-    | EXTERN    { $$.d = StorageExtern; }
-    | STATIC    { $$.d = StorageStatic; }
-    | AUTO      { $$.d = StorageAuto; }
-    | REGISTER  { $$.d = StorageAuto; }
-/*
-    | INLINE    { $$.d = StorageStatic; }
-*/
+	: TYPEDEF		{ $$.d = StorageTypedef; }
+	| EXTERN		{ $$.d = StorageExtern; }
+	| STATIC		{ $$.d = StorageStatic; }
+	| _THREADLOCAL	{ $$.d = StorageThreadLocal; }
+	| AUTO			{ $$.d = StorageAuto; }
+	| REGISTER		{ $$.d = StorageAuto; }
     ;
 
 type_modality_specifier
     : CONST         { $$.d = TypeDefault; }
+	| RESTRICT		{ $$.d = TypeDefault; }
     | VOLATILE      { $$.d = TypeDefault; }
+	| _ATOMIC		{ $$.d = TypeDefault; }
     | ANONYME_MOD   { $$.d = TypeDefault; }
     ;
 
@@ -980,12 +989,18 @@ type_specifier1
     | FLOAT     { $$.d = TypeFloat; }
     | DOUBLE    { $$.d = TypeDouble; }
     | VOID      { $$.d = TypeVoid; }
+	| _BOOL		{ $$.d = TypeBoolean; }
     ;
 
 type_specifier2
     : struct_or_union_specifier     /* { $$.d = $1.d; } */
     | enum_specifier                /* { $$.d = $1.d; } */
     ;
+
+function_specifier
+	: INLINE
+	| _NORETURN
+	;
 
 struct_or_union_specifier
     : struct_or_union struct_identifier                             {

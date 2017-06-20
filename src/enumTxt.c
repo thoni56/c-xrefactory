@@ -263,6 +263,7 @@ char * storagesName[] = {
 	"StorageExtern",
 	"StorageConstant",
 	"StorageStatic",
+	"StorageThreadLocal",
 	"StorageTypedef",
 	"StorageMutable",
 	"StorageRegister",

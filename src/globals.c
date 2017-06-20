@@ -522,10 +522,11 @@ S_typeModificationsInit s_typeModificationsInit[] = {
 };
 
 S_tokenNameIni s_tokenNameIniTab[] = {
-    {"asm",         ASM_KEYWORD     ,LAN_CCC},
+    {"asm",         ASM_KEYWORD     ,LAN_C | LAN_YACC | LAN_CCC},
     {"auto",        AUTO            ,LAN_C | LAN_YACC | LAN_CCC},
     {"enum",        ENUM            ,LAN_C | LAN_YACC | LAN_CCC},
     {"extern",      EXTERN          ,LAN_C | LAN_YACC | LAN_CCC},
+    {"inline",      INLINE          ,LAN_C | LAN_YACC | LAN_CCC},
     {"register",    REGISTER        ,LAN_C | LAN_YACC | LAN_CCC},
     {"signed",      SIGNED          ,LAN_C | LAN_YACC | LAN_CCC},
     {"sizeof",      SIZEOF          ,LAN_C | LAN_YACC | LAN_CCC},
@@ -573,7 +574,6 @@ S_tokenNameIni s_tokenNameIniTab[] = {
     {"dynamic_cast",        DYNAMIC_CAST    ,LAN_CCC},
     {"explicit",            EXPLICIT        ,LAN_CCC},
     {"friend",              FRIEND          ,LAN_CCC},
-    {"inline",              INLINE          ,LAN_CCC},
     {"mutable",             MUTABLE         ,LAN_CCC},
     {"namespace",           NAMESPACE       ,LAN_CCC},
     {"operator",            OPERATOR        ,LAN_CCC},
@@ -608,6 +608,12 @@ S_tokenNameIni s_tokenNameIniTab[] = {
     {"void",        VOID            ,LAN_C | LAN_YACC | LAN_CCC | LAN_JAVA},
     {"volatile",    VOLATILE        ,LAN_C | LAN_YACC | LAN_CCC | LAN_JAVA},
     {"while",       WHILE           ,LAN_C | LAN_YACC | LAN_CCC | LAN_JAVA},
+
+    {"restrict",        RESTRICT        ,LAN_C},
+    {"_Atomic",         _ATOMIC         ,LAN_C},
+    {"_Bool",           _BOOL           ,LAN_C},
+    {"_Noreturn",       _NORETURN       ,LAN_C},
+    {"_Thread_local",   _THREADLOCAL    ,LAN_C},
 
     /*
       {"token",       TOKEN           ,LAN_YACC},
@@ -701,12 +707,10 @@ S_tokenNameIni s_tokenNameIniTab2[] = {
     {"__const__",       CONST           ,LAN_C | LAN_YACC | LAN_CCC},
     {"__signed",        SIGNED          ,LAN_C | LAN_YACC | LAN_CCC},
     {"__signed__",      SIGNED          ,LAN_C | LAN_YACC | LAN_CCC},
-    //& {"inline",          ANONYME_MOD     ,LAN_C | LAN_YACC },
     {"__inline",        ANONYME_MOD     ,LAN_C | LAN_YACC | LAN_CCC},
     {"__inline__",      ANONYME_MOD     ,LAN_C | LAN_YACC | LAN_CCC},
     {"__volatile",      VOLATILE        ,LAN_C | LAN_YACC | LAN_CCC},
     {"__volatile__",    VOLATILE        ,LAN_C | LAN_YACC | LAN_CCC},
-    //& {"asm",             ASM_KEYWORD     ,LAN_C },
     {"__asm",           ASM_KEYWORD     ,LAN_C | LAN_CCC},
     {"__asm__",         ASM_KEYWORD     ,LAN_C | LAN_CCC},
     {"__label__",       LABEL           ,LAN_C | LAN_CCC},

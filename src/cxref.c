@@ -296,6 +296,7 @@ static void getSymbolCxrefCategories(
                 ||  p->b.storage==StorageMethod
                 ||  p->b.storage==StorageConstructor
                 ||  p->b.storage==StorageStatic
+				||  p->b.storage==StorageThreadLocal
                 ) {
             if (p->linkName[0]==' ' && p->linkName[1]==' ') {
                 // a special symbol local linkname

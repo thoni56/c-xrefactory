@@ -501,6 +501,7 @@ enum storages {
     StorageExtern,
     StorageConstant,		/* enumerator definition */
     StorageStatic,
+    StorageThreadLocal,
     StorageTypedef,
     StorageMutable,
     StorageRegister,
