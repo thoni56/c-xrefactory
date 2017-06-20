@@ -2166,7 +2166,7 @@ static void getAndProcessGccOptions() {
     char *ttt, *lang;
     FILE *ff;
     struct stat stt;
-    if (LANGUAGE(LAN_C)) {
+    if (LANGUAGE(LAN_C) || LANGUAGE(LAN_YACC)) {
       lang = "c";
     }
     else if (LANGUAGE(LAN_CCC)) {
