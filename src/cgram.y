@@ -214,46 +214,46 @@
 /* *************************************************************** */
 
 %union {
-    int									integer;
-    unsigned							unsign;
-    S_symbol							*symbol;
-    S_symbolList						*symbolList;
-    S_typeModifiers						*typeModif;
-    S_typeModifiersList					*typeModifList;
-    S_freeTrail                         *trail;
-    S_idIdent							*idIdent;
-    S_idIdentList						*idlist;
-    S_exprTokenType						exprType;
-    S_intPair							intpair;
-    S_whileExtractData					*whiledata;
-    S_position							position;
-    S_unsPositionPair					unsPositionPair;
-    S_symbolPositionPair				symbolPositionPair;
-    S_symbolPositionLstPair				symbolPositionLstPair;
-    S_positionLst						*positionLst;
-    S_typeModifiersListPositionLstPair  typeModifiersListPositionLstPair;
+    int                                     integer;
+    unsigned                                unsign;
+    S_symbol                                *symbol;
+    S_symbolList                            *symbolList;
+    S_typeModifiers                         *typeModif;
+    S_typeModifiersList                     *typeModifList;
+    S_freeTrail                             *trail;
+    S_idIdent                               *idIdent;
+    S_idIdentList                           *idlist;
+    S_exprTokenType                         exprType;
+    S_intPair                               intpair;
+    S_whileExtractData                      *whiledata;
+    S_position                              position;
+    S_unsPositionPair                       unsPositionPair;
+    S_symbolPositionPair                    symbolPositionPair;
+    S_symbolPositionLstPair                 symbolPositionLstPair;
+    S_positionLst                           *positionLst;
+    S_typeModifiersListPositionLstPair      typeModifiersListPositionLstPair;
 
-    S_extRecFindStr							*erfs;
+    S_extRecFindStr                         *erfs;
 
-    S_bb_int								bbinteger;
-    S_bb_unsigned							bbunsign;
-    S_bb_symbol								bbsymbol;
-    S_bb_symbolList							bbsymbolList;
-    S_bb_typeModifiers						bbtypeModif;
-    S_bb_typeModifiersList					bbtypeModifList;
+    S_bb_int                                bbinteger;
+    S_bb_unsigned                           bbunsign;
+    S_bb_symbol                             bbsymbol;
+    S_bb_symbolList                         bbsymbolList;
+    S_bb_typeModifiers                      bbtypeModif;
+    S_bb_typeModifiersList                  bbtypeModifList;
     S_bb_freeTrail                          bbtrail;
-    S_bb_idIdent							bbidIdent;
-    S_bb_idIdentList						bbidlist;
-    S_bb_exprTokenType						bbexprType;
-    S_bb_intPair							bbintpair;
-    S_bb_whileExtractData					bbwhiledata;
-    S_bb_position							bbposition;
-    S_bb_unsPositionPair					bbunsPositionPair;
-    S_bb_symbolPositionPair					bbsymbolPositionPair;
-    S_bb_symbolPositionLstPair				bbsymbolPositionLstPair;
-    S_bb_positionLst						bbpositionLst;
+    S_bb_idIdent                            bbidIdent;
+    S_bb_idIdentList                        bbidlist;
+    S_bb_exprTokenType                      bbexprType;
+    S_bb_intPair                            bbintpair;
+    S_bb_whileExtractData                   bbwhiledata;
+    S_bb_position                           bbposition;
+    S_bb_unsPositionPair                    bbunsPositionPair;
+    S_bb_symbolPositionPair                 bbsymbolPositionPair;
+    S_bb_symbolPositionLstPair              bbsymbolPositionLstPair;
+    S_bb_positionLst                        bbpositionLst;
     S_bb_typeModifiersListPositionLstPair   bbtypeModifiersListPositionLstPair;
-    S_bb_nestedConstrTokenType				bbnestedConstrTokenType;
+    S_bb_nestedConstrTokenType              bbnestedConstrTokenType;
 }
 
 

@@ -194,24 +194,24 @@
 #define CHAR_LITERAL 450
 #define LAST_TOKEN 451
 typedef union {
-    int                                 integer;
-    unsigned                            unsign;
-    S_symbol                            *symbol;
-    S_symbolList                        *symbolList;
-    S_typeModifiers                     *typeModif;
-    S_typeModifiersList                 *typeModifList;
-    S_freeTrail                         *trail;
-    S_idIdent                           *idIdent;
-    S_idIdentList                       *idlist;
-    S_exprTokenType                     exprType;
-    S_intPair                           intpair;
-    S_whileExtractData                  *whiledata;
-    S_position                          position;
-    S_unsPositionPair                   unsPositionPair;
-    S_symbolPositionPair                symbolPositionPair;
-    S_symbolPositionLstPair             symbolPositionLstPair;
-    S_positionLst                       *positionLst;
-    S_typeModifiersListPositionLstPair  typeModifiersListPositionLstPair;
+    int                                     integer;
+    unsigned                                unsign;
+    S_symbol                                *symbol;
+    S_symbolList                            *symbolList;
+    S_typeModifiers                         *typeModif;
+    S_typeModifiersList                     *typeModifList;
+    S_freeTrail                             *trail;
+    S_idIdent                               *idIdent;
+    S_idIdentList                           *idlist;
+    S_exprTokenType                         exprType;
+    S_intPair                               intpair;
+    S_whileExtractData                      *whiledata;
+    S_position                              position;
+    S_unsPositionPair                       unsPositionPair;
+    S_symbolPositionPair                    symbolPositionPair;
+    S_symbolPositionLstPair                 symbolPositionLstPair;
+    S_positionLst                           *positionLst;
+    S_typeModifiersListPositionLstPair      typeModifiersListPositionLstPair;
 
     S_extRecFindStr                         *erfs;
 
