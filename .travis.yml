@@ -3,4 +3,4 @@ sudo: false
 dist: trusty
 script:
     - make
-    - cd test; make quick
+    - cd tests; make all

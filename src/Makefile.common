@@ -74,13 +74,13 @@ endif
 cgram.h: cgram.c
 
 bootstrap:
-strFill.h: proto.h strTdef.h c-xref.bs
+#strFill.h: proto.h strTdef.h c-xref.bs
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
 		-str_fill -header \
 		> tmpStrFill.h
 	mv -f tmpStrFill.h strFill.h
 
-strTdef.h: proto.h c-xref.bs
+#strTdef.h: proto.h c-xref.bs
 	echo > strTdef.h
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
 		-typedefs -enum_name -header \
@@ -91,13 +91,13 @@ strTdef.h: proto.h c-xref.bs
 		> tmpStrTdef.h
 	mv -f tmpStrTdef.h strTdef.h
 
-enumTxt.c: proto.h strFill.h strTdef.h ../doc/_c-xrefrc c-xref.bs
+#enumTxt.c: proto.h strFill.h strTdef.h ../doc/_c-xrefrc c-xref.bs
 	echo "#include \"stdinc.h\"" > enumTxt.c
 	echo "#include \"proto.h\"  /*SBD*/" >> enumTxt.c
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
 		-enum_name -body >> enumTxt.c
 
-c-xref.bs:
+#c-xref.bs:
 	@echo "You need to bootstrap by copying a working c-xref to"
 	@echo "c-xref.bs by doing:"
 	@echo "  make bs"
