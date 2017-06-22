@@ -2,6 +2,8 @@
 
 test_case = $(notdir $(shell pwd))
 
+YACC = ../../byacc-1.9/yacc
+
 all: $(test_case)
 
 # Note to self:
@@ -14,10 +16,10 @@ all: $(test_case)
 # '1541f9l17cr' means file 1541, line 9, character 17
 #
 
-$(test_case):
+$(test_case): $(YACC)
 	@rm -f $@.log C-Xrefs
 	@printf "Tests in \"$@\": "
-	@../../byacc-1.9/yacc file.y
+	@$(YACC) file.y
 	@../../src/c-xref *.[cy] -xrefrc c-xrefrc -refs $(CURDIR)/C-Xrefs -o $@.log
 	@# Get the "symbol" for the yacc-file from the C-Xrefs and use it
 	@# to find the reference to func from the .y file
@@ -29,3 +31,6 @@ $(test_case):
 	else \
 		echo "Ok" ; \
 	fi
+
+$(YACC):
+	make -C ../../byacc-1.9/
