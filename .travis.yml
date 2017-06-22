@@ -4,3 +4,9 @@ dist: trusty
 script:
     - make
     - cd tests; make all
+after_success:
+  - git config --global user.email "builds@travis-ci.com"
+  - git config --global user.name "Travis CI"
+  - export GIT_TAG=stable
+  - git tag $GIT_TAG -a -m "Generated tag from TravisCI build $TRAVIS_BUILD_NUMBER"
+  - git push origin $GIT_TAG
