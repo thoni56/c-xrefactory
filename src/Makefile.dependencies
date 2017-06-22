@@ -83,9 +83,6 @@ refactory.o: refactory.c stdinc.h head.h constants.h strFill.h listmacr.h \
 semact.o: semact.c stdinc.h head.h constants.h strFill.h listmacr.h \
  memmac.h proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
  lexmac.h hashlist.th hashtab.th unigram.h cgram.h
-y.tab.o: y.tab.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
- lexmac.h hashlist.th hashtab.th protocol.h protocol.tc recyacc.h
 yaccgram.o: yaccgram.c stdinc.h head.h constants.h strFill.h listmacr.h \
  memmac.h proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
  lexmac.h hashlist.th hashtab.th
