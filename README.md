@@ -1,5 +1,18 @@
 # C-xrefactory - A refactoring tool for C/Java and Emacs
 
+## TL;DR
+
+`c-xrefactory` is a free emacs refactoring tool and code browser for
+C (and Java).
+
+Easiest way to install is using
+
+    M-x el-get-install<ENTER>c-xrefactory<ENTER>
+
+Place cursor on an identifier and `go to definition`, `rename`, mark
+some code and `extract function` and so on. Your C programming and code
+will never be the same.
+
 ## The Story
 
 Once apon a time there was [http://www.xref.sk](http://www.xref.sk), a
