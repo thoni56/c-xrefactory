@@ -286,7 +286,8 @@
 #define DPRINTF3(Format,Arg1,Arg2) {}
 #define DPRINTF4(Format,Arg1,Arg2,Arg3) {}
 #define DPRINTF5(Format,Arg1,Arg2,Arg3,Arg4) {}
-#define DPRINTF6(Format,Arg1,Arg2,Arg3,Arg4,Arg5,Arg6) {}
+#define DPRINTF6(Format,Arg1,Arg2,Arg3,Arg4,Arg5) {}
+#define DPRINTF7(Format,Arg1,Arg2,Arg3,Arg4,Arg5,Arg6) {}
 #endif
 
 /* ********************************************************************** */
