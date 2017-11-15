@@ -382,6 +382,13 @@ char * typesName[] = {
 	"MAX_TYPE"
 };
 
+char * __codecvt_resultName[] = {
+	"__codecvt_ok",
+	"__codecvt_partial",
+	"__codecvt_error",
+	"__codecvt_noconv"
+};
+
 char * refsFilterLevelsName[] = {
 	"RFilterAll",
 	"RFilterAddrVal",
