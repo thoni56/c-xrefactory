@@ -1,0 +1,45 @@
+#
+# This makefile is included by Makefile.common to build a bootstrap
+# version of c-xref (c-xref.bs) which do not require regenerating the
+# strXXX.h files
+
+# Once that is done we can build a correct c-xref that knows about the actual
+# header files on this system. ...I think... thoni56
+#
+# Do not use this Makefile directly
+#
+
+OBJS=cgram.o main.o globals.o misc.o semact.o commons.o generate.o \
+	 enumTxt.o complete.o cxref.o cxfile.o lex.o yylex.o cexp.o options.o \
+	 caching.o javagram.o jsemact.o cfread.o cct.o init.o \
+	 editor.o refactory.o \
+	 yaccgram.o html.o extract.o classh.o jslsemact.o \
+	 $(ZLIB_LIB)
+
+# put following into comments if you wish to build without zlib library,
+# i.e. without possibility to read compressed .jar files
+ZLIB_OPT=-DUSE_LIBZ
+ZLIB_LIB=$(ROOTDIR)/lib/zlib/libz.a
+
+#
+SRC=$(ROOTDIR)/src
+INCLUDES=-I$(ROOTDIR)/src -I$(ROOTDIR)/lib/zlib -I.
+
+#########################################################################
+
+all: $(ROOTDIR)/lib/zlib/libz.a c-xref.bs
+
+..always..:;
+
+#########################################################################
+%.c : %.y
+
+c-xref.bs: $(OBJS)
+	$(CC) $(LDFLAGS) -o c-xref.bs $(OBJS)
+
+#########################################################################
+
+dependencies:;
+	$(CC) -E -MM $(COMCFLAGS) *.c > Makefile.dependencies
+
+#########################################################################
