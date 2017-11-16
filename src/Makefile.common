@@ -100,7 +100,7 @@ enumTxt.c: proto.h strFill.h strTdef.h ../doc/_c-xrefrc c-xref.bs
 		-enum_name -body >> enumTxt.c
 
 c-xref.bs:
-	make ROOTDIR=$(ROOTDIR) -f Makefile.bs
+	make ROOTDIR=$(ROOTDIR) CFLAGS="$(CFLAGS)" -f Makefile.bs
 	#echo "You need to bootstrap by copying a working c-xref to"
 	#echo "c-xref.bs by doing:"
 	#echo "  make bs"
