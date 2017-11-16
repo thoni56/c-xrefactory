@@ -1,8 +1,3 @@
-/*
-  $Revision: 1.12 $
-  $Date: 2002/08/03 21:43:56 $
-*/
-
 #include "stdinc.h"
 #include "head.h"
 #include "proto.h"      /*SBD*/
@@ -57,7 +52,7 @@ int classHierarchyClassNameLess(int c1, int c2) {
 }
 
 int classHierarchySupClassNameLess(S_chReference *c1, S_chReference *c2) {
-    return(classHierarchyClassNameLess(c1->clas, c2->clas)); 
+    return(classHierarchyClassNameLess(c1->clas, c2->clas));
 }
 
 static int markTransitiveRelevantSubsRec(int cind, int pass) {
@@ -105,7 +100,7 @@ void setTmpClassBackPointersToMenu(S_olSymbolsMenu *menu) {
     }
 }
 
-static void genClassHierarchyVerticalBars( FILE *ff, S_intlist *nextbars, 
+static void genClassHierarchyVerticalBars( FILE *ff, S_intlist *nextbars,
                                            int secondpass) {
     S_intlist *nn;
     if (s_opt.xref2 && s_opt.taskRegime!=RegimeHtmlGenerate) {
@@ -148,9 +143,9 @@ static void htmlCHEmptyIndent( FILE *ff ) {
 }
 
 
-static void htmlPrintClassHierarchyLine( FILE *ff, int fInd, 
-                                         S_intlist *nextbars, 
-                                         int virtFlag, 
+static void htmlPrintClassHierarchyLine( FILE *ff, int fInd,
+                                         S_intlist *nextbars,
+                                         int virtFlag,
                                          S_olSymbolsMenu *itt ) {
     char *cname, *pref1, *pref2, *suf1, *suf2;
     S_fileItem *fi;
@@ -166,7 +161,7 @@ static void htmlPrintClassHierarchyLine( FILE *ff, int fInd,
     pref1 = pref2 = suf1 = suf2 = "";
     if (fi->b.isInterface) {
         pref2 = "<em>"; suf2 = "</em>";
-    }           
+    }
     if (itt!=NULL && THEBIT(tmpChProcessed,fInd)==0) {
         assert(itt);
         genClassHierarchyItemLinks( ff, itt, virtFlag);
@@ -191,7 +186,7 @@ static void htmlPrintClassHierarchyLine( FILE *ff, int fInd,
     fprintf(ff,"\n");
 }
 
-static void olcxPrintMenuItemPrefix(FILE *ff, S_olSymbolsMenu *itt, 
+static void olcxPrintMenuItemPrefix(FILE *ff, S_olSymbolsMenu *itt,
                                     int selectable) {
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     if (s_opt.cxrefs==OLO_CLASS_TREE || s_opt.cxrefs==OLO_SHOW_CLASS_TREE) {
@@ -206,8 +201,8 @@ static void olcxPrintMenuItemPrefix(FILE *ff, S_olSymbolsMenu *itt,
         if (s_opt.xref2) fprintf(ff, " %s=0", PPCA_SELECTED);
         else fprintf(ff,"  ");
     }
-    if (itt!=NULL 
-        && itt->vlevel==1 
+    if (itt!=NULL
+        && itt->vlevel==1
         && ooBitsGreaterOrEqual(itt->ooBits, OOC_PROFILE_APPLICABLE)) {
         if (s_opt.xref2) fprintf(ff, " %s=1", PPCA_BASE);
         else fprintf(ff,">>");
@@ -215,7 +210,7 @@ static void olcxPrintMenuItemPrefix(FILE *ff, S_olSymbolsMenu *itt,
         if (s_opt.xref2) fprintf(ff, " %s=0", PPCA_BASE);
         else fprintf(ff,"  ");
     }
-    if (! s_opt.xref2) fprintf(ff," "); 
+    if (! s_opt.xref2) fprintf(ff," ");
     if (s_opt.cxrefs==OLO_CLASS_TREE || s_opt.cxrefs==OLO_SHOW_CLASS_TREE) {
         ; //fprintf(ff, "");
     } else if (itt==NULL || (itt->defRefn==0 && itt->refn==0) || !selectable) {
@@ -260,9 +255,9 @@ static void olcxMenuGenNonVirtualGlobSymList( FILE *ff, S_olSymbolsMenu *ss) {
     }
 }
 
-static void olcxMenuPrintClassHierarchyLine( FILE *ff, int fInd, 
-                                             S_intlist *nextbars, 
-                                             int virtFlag, 
+static void olcxMenuPrintClassHierarchyLine( FILE *ff, int fInd,
+                                             S_intlist *nextbars,
+                                             int virtFlag,
                                              S_olSymbolsMenu *itt ) {
     char        *cname;
     S_fileItem  *fi;
@@ -278,7 +273,7 @@ static void olcxMenuPrintClassHierarchyLine( FILE *ff, int fInd,
     if (s_opt.xref2) {
         LIST_LEN(indent, S_intlist, nextbars);
         fprintf(ff, " %s=%d", PPCA_INDENT, indent);
-    } 
+    }
     genClassHierarchyVerticalBars( ff, nextbars, 1);
     fi = s_fileTab.tab[fInd];
     if (itt!=NULL) {
@@ -293,7 +288,7 @@ static void olcxMenuPrintClassHierarchyLine( FILE *ff, int fInd,
         if (s_opt.xref2) fprintf(ff, " %s=1", PPCA_INTERFACE);
         else fprintf(ff,"~");
     }
-    cname = javaGetNudePreTypeName_st(getRealFileNameStatic(fi->name), 
+    cname = javaGetNudePreTypeName_st(getRealFileNameStatic(fi->name),
                                       s_opt.nestedClassDisplaying);
     if (s_opt.xref2) {
         if (THEBIT(tmpChProcessed,fInd)) fprintf(ff," %s=1", PPCA_TREE_UP);
@@ -307,9 +302,9 @@ static void olcxMenuPrintClassHierarchyLine( FILE *ff, int fInd,
 }
 
 
-static void descendTheClassHierarchy(   FILE *ff, 
+static void descendTheClassHierarchy(   FILE *ff,
                                         int vApplCl, int oldvFunCl,
-                                        S_olSymbolsMenu *rrr, 
+                                        S_olSymbolsMenu *rrr,
                                         int level,
                                         S_intlist *nextbars,
                                         int virtFlag,
@@ -331,7 +326,7 @@ static void descendTheClassHierarchy(   FILE *ff,
         assert(rrr);
         vFunCl = oldvFunCl;
         // O.K. create new item, so that browse class action will work
-        itt = olCreateNewMenuItem(&rrr->s, vApplCl, vFunCl, &s_noPos, UsageNone, 
+        itt = olCreateNewMenuItem(&rrr->s, vApplCl, vFunCl, &s_noPos, UsageNone,
                                   0, 1, 0, UsageNone, 0);
         // insert it into the list, no matter where?
         itt->next = rrr->next;
@@ -359,7 +354,7 @@ static void descendTheClassHierarchy(   FILE *ff,
     // subclasses will not be sorted !
     // also subclasses for on-line resolution would not be sorted!
     LIST_MERGE_SORT(S_chReference, fi->infs, classHierarchySupClassNameLess);
-    s=fi->infs; 
+    s=fi->infs;
     while (s!=NULL) {
         assert(s_fileTab.tab[s->clas]);
         snext = s->next;
@@ -367,7 +362,7 @@ static void descendTheClassHierarchy(   FILE *ff,
             snext = snext->next;
         }
         FILL_intlist(&snextbar, (snext!=NULL), nextbars)
-            descendTheClassHierarchy(ff, s->clas, vFunCl, rrr, level+1, 
+            descendTheClassHierarchy(ff, s->clas, vFunCl, rrr, level+1,
                                      &snextbar, virtFlag, pass);
         s = snext;
     }
@@ -397,7 +392,7 @@ static int genThisClassHierarchy(int vApplCl, int oldvFunCl,
     return(1);
 }
 
-void genClassHierarchies( FILE *ff, S_olSymbolsMenu *rrr, 
+void genClassHierarchies( FILE *ff, S_olSymbolsMenu *rrr,
                           int virtFlag, int pass ) {
     S_olSymbolsMenu *ss;
     int i,rr;
@@ -432,7 +427,7 @@ static int isInterface(int fnum) {
     return(fi->b.isInterface);
 }
 
-static int htmlRefItemsClassNameLess(S_olSymbolsMenu *ss1, 
+static int htmlRefItemsClassNameLess(S_olSymbolsMenu *ss1,
                                      S_olSymbolsMenu *ss2) {
     return(classHierarchyClassNameLess(ss1->s.vApplClass,ss2->s.vApplClass));
 }
@@ -474,13 +469,13 @@ static void htmlMarkVisibleAllClassesHavingDefinition( S_olSymbolsMenu *rrr ) {
 }
 
 static int isVirtualMenuItem(S_symbolRefItem *p) {
-    return (p->b.storage == StorageField 
+    return (p->b.storage == StorageField
             || p->b.storage == StorageMethod
             || p->b.storage == StorageConstructor);
 }
 
-static void genVirtualsGlobRefLists(    S_olSymbolsMenu *rrr, 
-                                        FILE *ff, 
+static void genVirtualsGlobRefLists(    S_olSymbolsMenu *rrr,
+                                        FILE *ff,
                                         char *fn
                                         ) {
     S_olSymbolsMenu     *rr,*ss;
@@ -505,8 +500,8 @@ static void genVirtualsGlobRefLists(    S_olSymbolsMenu *rrr,
     }
 }
 
-static void genNonVirtualsGlobRefLists( S_olSymbolsMenu *rrr, 
-                                        FILE *ff, 
+static void genNonVirtualsGlobRefLists( S_olSymbolsMenu *rrr,
+                                        FILE *ff,
                                         char *fn
                                         ) {
     S_olSymbolsMenu     *rr,*ss;
@@ -534,15 +529,15 @@ static void genNonVirtualsGlobRefLists( S_olSymbolsMenu *rrr,
 }
 
 #if ZERO
-void splitMenuPerSymbolsAndMap(S_olSymbolsMenu *rrr, 
+void splitMenuPerSymbolsAndMap(S_olSymbolsMenu *rrr,
                                void (*fun)(S_olSymbolsMenu *, void *, void *),
                                void *p1,
                                char *p2
-                               ) { 
+                               ) {
     S_olSymbolsMenu *rr, *ss, *nextl;
     rr = rrr;
     while (rr!=NULL) {
-        for(ss= rr; 
+        for(ss= rr;
             ss!=NULL&&ss->next!=NULL && itIsSameCxSymbol(&ss->next->s,&rr->s);
             ss = ss->next
             ) ;
@@ -555,11 +550,11 @@ void splitMenuPerSymbolsAndMap(S_olSymbolsMenu *rrr,
     }
 }
 #else
-void splitMenuPerSymbolsAndMap(S_olSymbolsMenu *rrr, 
+void splitMenuPerSymbolsAndMap(S_olSymbolsMenu *rrr,
                                void (*fun)(S_olSymbolsMenu *, void *, void *),
                                void *p1,
                                char *p2
-                               ) { 
+                               ) {
     S_olSymbolsMenu *rr, *mp, **ss, *cc, *all;
     S_symbolRefItem *cs;
     all = NULL;
@@ -584,7 +579,7 @@ void splitMenuPerSymbolsAndMap(S_olSymbolsMenu *rrr,
         LIST_APPEND(S_olSymbolsMenu, mp, all);
         all = mp;
     }
-    // now find the original head and make it head, 
+    // now find the original head and make it head,
     // berk, TODO do this by passing pointer to pointer to rrr
     // as parameter
     if (all!=rrr) {
@@ -612,5 +607,3 @@ void htmlGenGlobRefLists(S_olSymbolsMenu *rrr, FILE *ff, char *fn) {
                               rrr, (void (*)(S_olSymbolsMenu *, void *, void *))genVirtualsGlobRefLists, ff, fn
                               );
 }
-
-

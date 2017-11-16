@@ -1,15 +1,10 @@
-/*
-  $Revision: 1.1.1.1 $
-  $Date: 2002/02/13 21:20:27 $
-*/
-
 #include "stdinc.h"
 #include "head.h"
 #include "proto.h"      /*SBD*/
 
 /* ******************** Class Cast Tree ************************ */
 /* Data structure storing for each class all classes it can be */
-/* casted to */ 
+/* casted to */
 
 /*
   #define CCT_TREE_HASH(xx,deepFactor) (\
@@ -19,7 +14,7 @@
 
 #define CCT_TREE_HASH(xx,deepFactor) (                                  \
                                       (((long unsigned)xx) >> 4) / (deepFactor) % CCT_TREE_INDEX \
-                                      )
+                                                                        )
 
 
 void cctAddSimpleValue(S_cctNode *cc, S_symbol *x, int deepFactor) {
