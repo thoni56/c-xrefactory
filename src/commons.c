@@ -128,32 +128,33 @@ char *normalizeFileName(char *name, char *relativeto) {
 }
 
 
-char *crTmpFileName_st() {
-    static char ttt[MAX_FILE_NAME_SIZE];
-    char *tmp;
-    static int count =0;
+char *create_temporary_filename() {
+    static char temporary_name[MAX_FILE_NAME_SIZE];
+    char *temp_dir;
+    static int count = 0;
 #if defined (__WIN32__) || defined (__OS2__)    /*SBD*/
     // under Windows tmpnam returns file names in \ root.
-    tmp = getenv("TEMP");
-    if (tmp==NULL) {
-        tmp = tmpnam(NULL);
-        strcpy(ttt,tmp);
+    temp_dir = getenv("TEMP");
+    if (temp_dir == NULL) {
+        temp_dir = tmpnam(NULL);
+        strcpy(temporary_name, temp_dir);
     } else {
-        sprintf(ttt,"%s\\xrefu%d.tmp", tmp, count++);
-        strcpy(ttt, normalizeFileName(ttt, s_cwd));
+        sprintf(temporary_name,"%s\\xrefu%d.tmp", temp_dir, count++);
+        strcpy(temporary_name, normalizeFileName(temporary_name, s_cwd));
     }
 #else                   /*SBD*/
     if (getenv("TMPDIR") == NULL)
-        strcpy(ttt, "/tmp/c-xref-temp-XXXXXX");
+        strcpy(temporary_name, "/tmp/c-xref-temp-XXXXXX");
     else
-        sprintf(ttt, "%s/c-xref-temp-XXXXXX", getenv("TMPDIR"));
-    if (mktemp(ttt) == NULL)
-        strcpy(ttt, "/tmp/c-xref-temp");
+        sprintf(temporary_name, "%s/c-xref-temp-XXXXXX", getenv("TMPDIR"));
+    if (mktemp(temporary_name) == NULL)
+        strcpy(temporary_name, "/tmp/c-xref-temp");
 #endif                  /*SBD*/
-    //&fprintf(dumpOut,"temp file: %s\n", ttt);
-    if (ttt == NULL) fatalError(ERR_ST, "can't create temporary file", XREF_EXIT_ERR);
-    InternalCheck(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
-    return(ttt);
+    //&fprintf(dumpOut,"temp file: %s\n", temporary_name);
+    if (temporary_name == NULL)
+        fatalError(ERR_ST, "can't create temporary file name", XREF_EXIT_ERR);
+    InternalCheck(strlen(temporary_name) < MAX_FILE_NAME_SIZE-1);
+    return temporary_name;
 }
 
 void copyFile(char *src, char *dest) {

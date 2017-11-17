@@ -1957,7 +1957,7 @@ void expandWildCharactersInOnePathRec C_ARG((char *fn, char **outpaths, int *fre
 void expandWildCharactersInOnePath C_ARG((char *fn, char *outpaths, int olen));
 void expandWildCharactersInPaths C_ARG((char *paths, char *outpaths, int freeolen));
 char * getRealFileNameStatic C_ARG((char *fn));
-char *crTmpFileName_st();
+char *create_temporary_filename();
 void copyFile C_ARG((char *src, char *dest));
 void createDir C_ARG((char *dirname));
 void removeFile C_ARG((char *dirname));

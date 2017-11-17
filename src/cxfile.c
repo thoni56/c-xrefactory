@@ -17,7 +17,7 @@
 #define CXFI_FILE_INDEX     'f'
 #define CXFI_SOURCE_INDEX   'o'     /* source index for java classes */
 #define CXFI_SYM_INDEX      's'
-#define CXFI_USAGE          'u'                         
+#define CXFI_USAGE          'u'
 #define CXFI_LINE_INDEX     'l'
 #define CXFI_COLL_INDEX     'c'
 #define CXFI_REFERENCE      'r'     /* using 'fsulc' */
@@ -87,7 +87,7 @@ struct lastCxFileInfos {
     int                 symbolToCheckedForDeadness;
     char                deadSymbolIsDefined;
 
-    // following item can be used only via symbolTab, 
+    // following item can be used only via symbolTab,
     // it is just to smplifie memoru handling !!!!!!!!!!!!!!!!
     S_symbolRefItem     _symbolTab[MAX_CX_SYMBOL_TAB];
     char                _symbolTabNames[MAX_CX_SYMBOL_TAB][MAX_CX_SYMBOL_SIZE];
@@ -114,7 +114,7 @@ int cxFileHashNumber(char *sym) {
     if (s_opt.refnum <= 1) return(0);
     if (s_opt.xfileHashingMethod == XFILE_HASH_DEFAULT) {
         res = 0;
-        ss = sym; 
+        ss = sym;
         while ((c = *ss)) {
             if (c == '(') break;
             SYM_TAB_HASH_FUN_INC(res, c);
@@ -212,7 +212,7 @@ int searchStringFitness(char *cxtag, int len) {
         if (val > max) max = val;               \
     }
 
-char *crTagSearchLineStatic(char *name, S_position *p, 
+char *crTagSearchLineStatic(char *name, S_position *p,
                             int *len1, int *len2, int *len3) {
     static char res[COMPLETION_STRING_SIZE];
     char type[TMP_STRING_SIZE];
@@ -267,7 +267,7 @@ int symbolNameShouldBeHiddenFromReports(char *name) {
     // class$ fields
     if (strncmp(name, "class$", 6)==0) return(1);
 
-    // filter anonymous classes 
+    // filter anonymous classes
     //&if (s_opt.tagSearchSpecif==TSS_FULL_SEARCH || s_opt.tagSearchSpecif==TSS_SEARCH_DEFS_ONLY_SHORT) {
     // anonymous classes
     if (isdigit(name[0])) return(1);
@@ -537,20 +537,20 @@ FILL_symbolRefItemBits(&s_outLastInfos._symbolTab[symIndex].b,
                        d->b.symType, d->b.storage,
                        d->b.scope,d->b.accessFlags, d->b.category,0);
  FILL_symbolRefItem(&s_outLastInfos._symbolTab[symIndex],
-                    s_outLastInfos._symbolTabNames[symIndex], 
+                    s_outLastInfos._symbolTabNames[symIndex],
                     d->fileHash, // useless put 0
                     d->vApplClass, d->vFunClass,
                     s_outLastInfos._symbolTab[symIndex].b,NULL,NULL);
  s_outLastInfos.symbolTab[symIndex] = &s_outLastInfos._symbolTab[symIndex];
  s_outLastInfos.symbolIsWritten[symIndex] = 0;
  if ( d->b.category == CatLocal) return;
- if ( d->refs == NULL && ! forceGen) return; 
+ if ( d->refs == NULL && ! forceGen) return;
  for(rr = d->refs; rr!=NULL; rr=rr->next) {
      //&fprintf(ccOut,"checking ref %d --< %s:%d\n", s_fileTab.tab[rr->p.file]->b.cxLoading, s_fileTab.tab[rr->p.file]->name, rr->p.line);
      if (s_opt.update==UP_NO_UPDATE || s_fileTab.tab[rr->p.file]->b.cxLoading) {
          /* ?? s_opt.update==UP_NO_UPDATE, why it is there */
          genCxReference(rr, symIndex);
-     }   
+     }
  }
  //&fflush(cxOut);
 }
@@ -603,7 +603,7 @@ static void genCxFileHead() {
     genStringRecord(CXFI_SINGLE_RECORDS, sr, "");
     GenCompactRecord(CXFI_REFNUM, s_opt.refnum, " ");
     GenCompactRecord(CXFI_CHECK_NUMBER, COMPOSE_CXFI_CHECK_NUM(
-                                                               MAX_FILES, 
+                                                               MAX_FILES,
                                                                s_opt.xfileHashingMethod,
                                                                s_opt.exactPositionResolve
                                                                ), " ");
@@ -613,7 +613,7 @@ static void openInOutReferenceFiles(int updateFlag, char *fname) {
     char *ttt;
     tmpFileName[0] = 0;
     if (updateFlag) {
-        ttt = crTmpFileName_st();
+        ttt = create_temporary_filename();
         assert(strlen(ttt)+1 < MAX_FILE_NAME_SIZE);
         strcpy(tmpFileName, ttt);
         copyFile(fname, tmpFileName);
@@ -652,8 +652,8 @@ static void createDirIfNotExists(char *dirname) {
 
 /* fnamesuff contains '/' at the beginning */
 
-static void genPartialFileTabRefFile(   int updateFlag, 
-                                        char *dirname, 
+static void genPartialFileTabRefFile(   int updateFlag,
+                                        char *dirname,
                                         char *fnamesuff,
                                         void mapfun(S_fileItem *, int),
                                         void mapfun2(S_fileItem *, int)
@@ -666,13 +666,13 @@ static void genPartialFileTabRefFile(   int updateFlag,
     idTabMap3(&s_fileTab, mapfun);
     if (mapfun2!=NULL) idTabMap3(&s_fileTab, mapfun2);
     scanCxFile(s_cxFullScanFunTab);
-    referenceFileEnd(updateFlag, fn);       
+    referenceFileEnd(updateFlag, fn);
 }
 
 #if ZERO
 static void genPartialRefItem(S_symbolRefItem *dd, int fileOrder) {
     if (dd->b.category == CatLocal) return;
-    if (dd->refs == NULL) return; 
+    if (dd->refs == NULL) return;
     //& assert(cxFileHashNumber(dd->name) == dd->fileHash);
     if (dd->fileHash == fileOrder) genRefItem0(dd,0);
 #if ZERO // original
@@ -923,8 +923,8 @@ static void cxrfFileName(       int size,
     len = i;
     InternalCheck(len+1 < MAX_FILE_NAME_SIZE);
     InternalCheck(ii>=0 && ii<MAX_FILES);
-    FILLF_fileItem(&tffi, id, 0, 0,0, 0, 
-                   0,0,0,commandLineFlag,0,0,0,0,0,s_noneFileIndex, 
+    FILLF_fileItem(&tffi, id, 0, 0,0, 0,
+                   0,0,0,commandLineFlag,0,0,0,0,0,s_noneFileIndex,
                    NULL,NULL,s_noneFileIndex,NULL);
     if (! idTabIsMember(&s_fileTab,&tffi,&dii)) {
         addFileTabItem(id, &dii);
@@ -982,7 +982,7 @@ static void cxrfSourceIndex(    int size,
     if (s_fileTab.tab[file]->b.sourceFile == s_noneFileIndex
         || s_fileTab.tab[file]->b.sourceFile == -1) {
         //&fprintf(dumpOut,"setting %d source to %d\n", file, sfile);fflush(dumpOut);
-        //&fprintf(dumpOut,"setting %s source to %s\n", s_fileTab.tab[file]->name, s_fileTab.tab[sfile]->name);fflush(dumpOut); 
+        //&fprintf(dumpOut,"setting %s source to %s\n", s_fileTab.tab[file]->name, s_fileTab.tab[sfile]->name);fflush(dumpOut);
         // first check that it is not set directly from source
         if (! s_fileTab.tab[file]->b.cxLoading) {
             s_fileTab.tab[file]->b.sourceFile = sfile;
@@ -1231,7 +1231,7 @@ static void cxrfReferenceForFullUpdateSchedule(     int size,
     getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
     //&fprintf(dumpOut,"%d %d->%d %d  ", usage,file,s_decodeFilesNum[file],line);fflush(dumpOut);
     FILL_position(&pos,file,line,coll);
-    if (s_inLastInfos.onLineReferencedSym == 
+    if (s_inLastInfos.onLineReferencedSym ==
         s_inLastInfos.counter[CXFI_SYM_INDEX]) {
         addToRefList(&s_inLastInfos.symbolTab[sym]->refs,
                      &usageBits,&pos,CatGlobal);
@@ -1299,7 +1299,7 @@ static void cxrfReference(      int size,
             if (OL_VIEWABLE_REFS(&rr)) {
                 // restrict reported symbols to those defined in project
                 // input file
-                if (IS_DEFINITION_USAGE(rr.usg.base) 
+                if (IS_DEFINITION_USAGE(rr.usg.base)
                     && s_fileTab.tab[rr.p.file]->b.commandLineEntered
                     ) {
                     s_inLastInfos.deadSymbolIsDefined = 1;
@@ -1308,14 +1308,14 @@ static void cxrfReference(      int size,
                 }
             }
         } else if (additionalArg == OL_LOOKING_2_PASS_MACRO_USAGE) {
-            if (    s_inLastInfos.onLineReferencedSym == 
+            if (    s_inLastInfos.onLineReferencedSym ==
                     s_inLastInfos.counter[CXFI_SYM_INDEX]
                     &&  rr.usg.base == UsageMacroBaseFileUsage) {
                 s_olMacro2PassFile = rr.p.file;
             }
         } else {
             if (s_opt.cxrefs == OLO_TAG_SEARCH) {
-                if (rr.usg.base==UsageDefined 
+                if (rr.usg.base==UsageDefined
                     || ((s_opt.tagSearchSpecif==TSS_FULL_SEARCH
                          || s_opt.tagSearchSpecif==TSS_FULL_SEARCH_SHORT)
                         &&  (rr.usg.base==UsageDeclared
@@ -1323,20 +1323,20 @@ static void cxrfReference(      int size,
                     searchSymbolCheckReference(s_inLastInfos.symbolTab[sym],&rr);
                 }
             } else if (s_opt.cxrefs == OLO_SAFETY_CHECK1) {
-                if (    s_inLastInfos.onLineReferencedSym != 
+                if (    s_inLastInfos.onLineReferencedSym !=
                         s_inLastInfos.counter[CXFI_SYM_INDEX]) {
                     olcxCheck1CxFileReference(s_inLastInfos.symbolTab[sym],
-                                              &rr); 
+                                              &rr);
                 }
             } else {
-                if (    s_inLastInfos.onLineReferencedSym == 
+                if (    s_inLastInfos.onLineReferencedSym ==
                         s_inLastInfos.counter[CXFI_SYM_INDEX]) {
                     if (additionalArg == CX_MENU_CREATION) {
                         assert(s_inLastInfos.onLineRefMenuItem);
-                        if (s_opt.keep_old 
+                        if (s_opt.keep_old
                             || file!=s_olOriginalFileNumber
                             || s_fileTab.tab[file]->b.commandLineEntered==0
-                            || s_opt.cxrefs==OLO_GOTO 
+                            || s_opt.cxrefs==OLO_GOTO
                             || s_opt.cxrefs==OLO_CGOTO
                             || s_opt.cxrefs==OLO_PUSH_NAME
                             || s_opt.cxrefs==OLO_PUSH_SPECIAL_NAME
@@ -1346,15 +1346,15 @@ static void cxrfReference(      int size,
                         }
                     } else if (additionalArg == CX_BY_PASS) {
                         if (POSITION_EQ(s_olcxByPassPos,rr.p)) {
-                            // got the bypass reference 
+                            // got the bypass reference
                             //&fprintf(dumpOut,":adding bypass selected symbol %s\n", s_inLastInfos.symbolTab[sym]->name);
                             olAddBrowsedSymbol(s_inLastInfos.symbolTab[sym],
                                                &s_olcxCurrentUser->browserStack.top->hkSelectedSym,
                                                1, 1, 0, usage,0,&s_noPos, UsageNone);
                         }
-                    } else if (1 
-                               /*& 
-                                 s_opt.keep_old 
+                    } else if (1
+                               /*&
+                                 s_opt.keep_old
                                  || file!=s_olOriginalFileNumber
                                  || s_fileTab.tab[file]->b.commandLineEntered==0
                                  || s_opt.cxrefs==OLO_GOTO || s_opt.cxrefs==OLO_CGOTO
@@ -1471,7 +1471,7 @@ void scanCxFile(S_cxScanFileFunctionLink *scanFuns) {
         }
         GetChar(ch,cc,cfin,&cxfBuf);
     }
-    if (s_opt.taskRegime==RegimeEditServer 
+    if (s_opt.taskRegime==RegimeEditServer
         && (s_opt.cxrefs==OLO_LOCAL_UNUSED
             || s_opt.cxrefs==OLO_GLOBAL_UNUSED)) {
         // check if last symbol was dead
@@ -1545,7 +1545,7 @@ int smartReadFileTabFile() {
                 readedFileModTime = st.st_mtime;
                 readedFileSize = st.st_size;
                 strcpy(readedFileFile, tt);
-            } 
+            }
         } else {
             //&fprintf(dumpOut,":saving the (re)reading of file tab\n");
         }
@@ -1709,6 +1709,3 @@ S_cxScanFileFunctionLink s_cxDeadCodeDetectionScanFunTab[]={
     {CXFI_REFERENCE,cxrfReference, DEAD_CODE_DETECTION},
     {-1,NULL, 0},
 };
-
-
-

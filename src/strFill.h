@@ -528,12 +528,6 @@
 	(XXX)->membFlag = _ARG_PROJECT_1_3 ARGS;\
 	(XXX)->accFlags = _ARG_PROJECT_2_3 ARGS;\
 }
-#define FILL___dirstream(XXX) {\
-}
-#define FILLF___dirstream(XXX) {\
-}
-#define _FILLF___dirstream(XXX,ARGS) {\
-}
 #define FILL_tpCheckMoveClassData(XXX,FARG0,FARG1,FARG2,FARG3,FARG4) {\
 	(XXX)->mm = FARG0;\
 	(XXX)->spack = FARG1;\
@@ -2205,21 +2199,6 @@
 	(XXX)->directEnclosingInstance = _ARG_PROJECT_17_19 ARGS;\
 	(XXX)->next = _ARG_PROJECT_18_19 ARGS;\
 }
-#define FILL_gzFile_s(XXX,FARG0,FARG1,FARG2) {\
-	(XXX)->have = FARG0;\
-	(XXX)->next = FARG1;\
-	(XXX)->pos = FARG2;\
-}
-#define FILLF_gzFile_s(XXX,FARG0,FARG1,FARG2) {\
-	(XXX)->have = FARG0;\
-	(XXX)->next = FARG1;\
-	(XXX)->pos = FARG2;\
-}
-#define _FILLF_gzFile_s(XXX,ARGS) {\
-	(XXX)->have = _ARG_PROJECT_0_3 ARGS;\
-	(XXX)->next = _ARG_PROJECT_1_3 ARGS;\
-	(XXX)->pos = _ARG_PROJECT_2_3 ARGS;\
-}
 #define FILL_mallinfo(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9) {\
 	(XXX)->arena = FARG0;\
 	(XXX)->ordblks = FARG1;\
@@ -2413,51 +2392,6 @@
 	(XXX)->pos.line = _ARG_PROJECT_1_4 ARGS;\
 	(XXX)->pos.coll = _ARG_PROJECT_2_4 ARGS;\
 	(XXX)->next = _ARG_PROJECT_3_4 ARGS;\
-}
-#define FILL_gz_header_s(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12) {\
-	(XXX)->text = FARG0;\
-	(XXX)->time = FARG1;\
-	(XXX)->xflags = FARG2;\
-	(XXX)->os = FARG3;\
-	(XXX)->extra = FARG4;\
-	(XXX)->extra_len = FARG5;\
-	(XXX)->extra_max = FARG6;\
-	(XXX)->name = FARG7;\
-	(XXX)->name_max = FARG8;\
-	(XXX)->comment = FARG9;\
-	(XXX)->comm_max = FARG10;\
-	(XXX)->hcrc = FARG11;\
-	(XXX)->done = FARG12;\
-}
-#define FILLF_gz_header_s(XXX,FARG0,FARG1,FARG2,FARG3,FARG4,FARG5,FARG6,FARG7,FARG8,FARG9,FARG10,FARG11,FARG12) {\
-	(XXX)->text = FARG0;\
-	(XXX)->time = FARG1;\
-	(XXX)->xflags = FARG2;\
-	(XXX)->os = FARG3;\
-	(XXX)->extra = FARG4;\
-	(XXX)->extra_len = FARG5;\
-	(XXX)->extra_max = FARG6;\
-	(XXX)->name = FARG7;\
-	(XXX)->name_max = FARG8;\
-	(XXX)->comment = FARG9;\
-	(XXX)->comm_max = FARG10;\
-	(XXX)->hcrc = FARG11;\
-	(XXX)->done = FARG12;\
-}
-#define _FILLF_gz_header_s(XXX,ARGS) {\
-	(XXX)->text = _ARG_PROJECT_0_13 ARGS;\
-	(XXX)->time = _ARG_PROJECT_1_13 ARGS;\
-	(XXX)->xflags = _ARG_PROJECT_2_13 ARGS;\
-	(XXX)->os = _ARG_PROJECT_3_13 ARGS;\
-	(XXX)->extra = _ARG_PROJECT_4_13 ARGS;\
-	(XXX)->extra_len = _ARG_PROJECT_5_13 ARGS;\
-	(XXX)->extra_max = _ARG_PROJECT_6_13 ARGS;\
-	(XXX)->name = _ARG_PROJECT_7_13 ARGS;\
-	(XXX)->name_max = _ARG_PROJECT_8_13 ARGS;\
-	(XXX)->comment = _ARG_PROJECT_9_13 ARGS;\
-	(XXX)->comm_max = _ARG_PROJECT_10_13 ARGS;\
-	(XXX)->hcrc = _ARG_PROJECT_11_13 ARGS;\
-	(XXX)->done = _ARG_PROJECT_12_13 ARGS;\
 }
 #define FILL_bb_symbolList(XXX,FARG0,FARG1,FARG2) {\
 	(XXX)->b = FARG0;\
@@ -3236,24 +3170,6 @@
 	(XXX)->st.__glibc_reserved4 = _ARG_PROJECT_18_21 ARGS;\
 	(XXX)->st.__glibc_reserved5 = _ARG_PROJECT_19_21 ARGS;\
 	(XXX)->dir = _ARG_PROJECT_20_21 ARGS;\
-}
-#define FILL_dirent(XXX,FARG0,FARG1,FARG2,FARG3) {\
-	(XXX)->d_ino = FARG0;\
-	(XXX)->d_off = FARG1;\
-	(XXX)->d_reclen = FARG2;\
-	(XXX)->d_type = FARG3;\
-}
-#define FILLF_dirent(XXX,FARG0,FARG1,FARG2,FARG3) {\
-	(XXX)->d_ino = FARG0;\
-	(XXX)->d_off = FARG1;\
-	(XXX)->d_reclen = FARG2;\
-	(XXX)->d_type = FARG3;\
-}
-#define _FILLF_dirent(XXX,ARGS) {\
-	(XXX)->d_ino = _ARG_PROJECT_0_4 ARGS;\
-	(XXX)->d_off = _ARG_PROJECT_1_4 ARGS;\
-	(XXX)->d_reclen = _ARG_PROJECT_2_4 ARGS;\
-	(XXX)->d_type = _ARG_PROJECT_3_4 ARGS;\
 }
 #define FILL_cxScanFileFunctionLink(XXX,FARG0,FARG1,FARG2) {\
 	(XXX)->recordCode = FARG0;\
