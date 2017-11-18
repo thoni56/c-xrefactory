@@ -1824,11 +1824,7 @@ void searchDefaultOptionsFile(char *file, char *ttt, char *sect) {
 #ifdef __WIN32__    /*SBD*/
                     "options to xref task. Please, use '%HOME%\\_c-xrefrc' file"
 #else               /*SBD*/
-#ifdef __OS2__      /*SBD*/
-                    "options to xref task. Please, use '%HOME%\\.c-xrefrc' file"
-#else               /*SBD*/
                     "options to xref task. Please, use '~/.c-xrefrc' file"
-#endif              /*SBD*/
 #endif              /*SBD*/
                     );
             error(ERR_ST, tmpBuff);
@@ -1951,7 +1947,7 @@ static int computeAndOpenInputFile() {
         //& inputBuff = editorGetOpenedAndLoadedBuffer(s_input_file_name);
         inputBuff = editorFindFile(s_input_file_name);
         if (inputBuff == NULL) {
-#if defined (__WIN32__) || defined (__OS2__)    /*SBD*/
+#if defined (__WIN32__)    /*SBD*/
             inputIn = fopen(s_input_file_name,"rb");
 #else                   /*SBD*/
             inputIn = fopen(s_input_file_name,"r");
@@ -2802,7 +2798,7 @@ void mainOpenOutputFile(char *ofile) {
     mainCloseOutputFile();
     if (ofile!=NULL) {
         //&fprintf(dumpOut,"OPENING OUTPUT FILE %s\n", s_opt.outputFileName);
-#if defined (__WIN32__) || defined (__OS2__)    /*SBD*/
+#if defined (__WIN32__)    /*SBD*/
         // open it as binary file, so that record lengths will be correct
         ccOut = fopen(ofile,"wb");
 #else                   /*SBD*/

@@ -471,7 +471,7 @@ int zipIndexArchive(char *name) {
             }
             return(-1);
         }
-#if defined (__WIN32__) || defined (__OS2__)                /*SBD*/
+#if defined (__WIN32__)                                     /*SBD*/
         ff = fopen(name,"rb");
 #else                                                       /*SBD*/
         ff = fopen(name,"r");

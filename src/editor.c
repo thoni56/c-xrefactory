@@ -460,7 +460,7 @@ static void editorLoadFileIntoBufferText(S_editorBuffer *buff, struct stat *st) 
     fname = buff->fileName;
     space = buff->a.text;
     size = buff->a.bufferSize;
-#if defined (__WIN32__) || defined (__OS2__)        /*SBD*/
+#if defined (__WIN32__)                             /*SBD*/
     ff = fopen(fname, "r");         // was rb, but did not work
 #else                                               /*SBD*/
     ff = fopen(fname, "r");

@@ -25,14 +25,10 @@ void initCwd() {
             strcpy(s_cwd, rr);
         }
     }
-#if defined (__WIN32__) || defined (__OS2__)    /*SBD*/
+#if defined (__WIN32__)                         /*SBD*/
     if (strlen(s_cwd)<=2 || s_cwd[1]!=':') {
         // starting by drive specification
-#if defined (__OS2__)                           /*SBD*/
-        sprintf(nid,"%c:",_getdrive());
-#else                                           /*SBD*/
         sprintf(nid,"%c:",tolower('c'));
-#endif                                          /*SBD*/
         if (strlen(nid)+strlen(s_cwd) < MAX_FILE_NAME_SIZE-1) {
             strcpy(nid+strlen(nid),s_cwd);
             strcpy(s_cwd,nid);
@@ -50,7 +46,7 @@ void reInitCwd(char *dffname, char *dffsect) {
         copyDir(s_cwd, dffname, &ii);
     }
     if (dffsect[0]!=0
-#if defined (__WIN32__) || defined (__OS2__)    /*SBD*/
+#if defined (__WIN32__)    /*SBD*/
         && dffsect[1]==':' && dffsect[2]==SLASH
 #else                   /*SBD*/
         && dffsect[0]==SLASH
@@ -73,7 +69,7 @@ char *normalizeFileName(char *name, char *relativeto) {
         // special case a class name
         l1 = -1;
         inzip = 1;
-#if defined (__WIN32__) || defined (__OS2__)    /*SBD*/
+#if defined (__WIN32__)    /*SBD*/
     } else if (name[0]=='\\' || name[0]=='/') {
         res[0] = relativeto[0]; res[1] = ':';
         l1 = 1;
@@ -132,7 +128,7 @@ char *create_temporary_filename() {
     static char temporary_name[MAX_FILE_NAME_SIZE];
     char *temp_dir;
     static int count = 0;
-#if defined (__WIN32__) || defined (__OS2__)    /*SBD*/
+#if defined (__WIN32__)    /*SBD*/
     // under Windows tmpnam returns file names in \ root.
     temp_dir = getenv("TEMP");
     if (temp_dir == NULL) {

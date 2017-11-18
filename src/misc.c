@@ -13,7 +13,7 @@
 static int s_ppcIndentOffset = 0;
 
 void ppcGenSynchroRecord() {
-    fprintf(stdout, "<%s>\n", PPC_SYNCHRO_RECORD); 
+    fprintf(stdout, "<%s>\n", PPC_SYNCHRO_RECORD);
     fflush(stdout);
 }
 
@@ -27,10 +27,10 @@ void ppcGenPosition(S_position *p) {
     assert(p!=NULL);
     fn = s_fileTab.tab[p->file]->name;
     ppcIndentOffset();
-    fprintf(ccOut, "<%s %s=%d %s=%d %s=%ld>%s</%s>\n", 
-            PPC_LC_POSITION, 
-            PPCA_LINE, p->line, PPCA_COL, p->coll, 
-            PPCA_LEN, (unsigned long)strlen(fn), fn, 
+    fprintf(ccOut, "<%s %s=%d %s=%d %s=%ld>%s</%s>\n",
+            PPC_LC_POSITION,
+            PPCA_LINE, p->line, PPCA_COL, p->coll,
+            PPCA_LEN, (unsigned long)strlen(fn), fn,
             PPC_LC_POSITION);
     //&ppcGenRecord(PPC_FILE, s_fileTab.tab[p->file]->name,"\n");
     //&ppcGenNumericRecord(PPC_LINE, p->line,"","");
@@ -51,10 +51,10 @@ void ppcGenGotoMarkerRecord(S_editorMarker *pos) {
 
 void ppcGenOffsetPosition(char *fn, int offset) {
     ppcIndentOffset();
-    fprintf(ccOut, "<%s %s=%d %s=%ld>%s</%s>\n", 
-            PPC_OFFSET_POSITION, 
-            PPCA_OFFSET, offset, 
-            PPCA_LEN, (unsigned long)strlen(fn), fn, 
+    fprintf(ccOut, "<%s %s=%d %s=%ld>%s</%s>\n",
+            PPC_OFFSET_POSITION,
+            PPCA_OFFSET, offset,
+            PPCA_LEN, (unsigned long)strlen(fn), fn,
             PPC_OFFSET_POSITION);
     //&ppcGenRecord(PPC_FILE, m->buffer->name,"\n");
     //&ppcGenNumericRecord(PPC_OFFSET, m->offset,"","");
@@ -116,16 +116,16 @@ void ppcGenAllCompletionsRecordBegin(int nofocus, int len) {
 
 void ppcGenRecordWithNumeric(char *kind, char *attr, int val, char *message,char *suff) {
     ppcIndentOffset();
-    fprintf(ccOut, "<%s %s=%d %s=%ld>%s</%s>%s", kind, 
+    fprintf(ccOut, "<%s %s=%d %s=%ld>%s</%s>%s", kind,
             attr, val, PPCA_LEN, (unsigned long)strlen(message),
             message, kind, suff);
 }
 
 void ppcGenTwoNumericsAndrecord(char *kind, char *attr1, int val1, char *attr2, int val2, char *message,char *suff) {
     ppcIndentOffset();
-    fprintf(ccOut, "<%s %s=%d %s=%d %s=%ld>%s</%s>%s", kind, 
-            attr1, val1, 
-            attr2, val2, 
+    fprintf(ccOut, "<%s %s=%d %s=%d %s=%ld>%s</%s>%s", kind,
+            attr1, val1,
+            attr2, val2,
             PPCA_LEN, (unsigned long)strlen(message),
             message, kind, suff);
 }
@@ -137,7 +137,7 @@ void ppcGenNumericRecord(char *kind, int val,char *message,char *suff) {
 
 void ppcGenRecord(char *kind, char *message, char *suffix) {
     ppcIndentOffset();
-    fprintf(ccOut, "<%s %s=%ld>%s</%s>%s", kind, PPCA_LEN, (unsigned long)strlen(message), message, 
+    fprintf(ccOut, "<%s %s=%ld>%s</%s>%s", kind, PPCA_LEN, (unsigned long)strlen(message), message,
             kind, suffix);
 }
 
@@ -150,8 +150,8 @@ void ppcGenTmpBuff() {
 
 void ppcGenDisplaySelectionRecord(char *message, int messageType, int continuation) {
     ppcIndentOffset();
-    fprintf(ccOut, "<%s %s=%ld %s=%d %s=%d>%s</%s>\n", PPC_DISPLAY_RESOLUTION, 
-            PPCA_LEN, (unsigned long)strlen(message), 
+    fprintf(ccOut, "<%s %s=%ld %s=%d %s=%d>%s</%s>\n", PPC_DISPLAY_RESOLUTION,
+            PPCA_LEN, (unsigned long)strlen(message),
             PPCA_MTYPE, messageType,
             PPCA_CONTINUE, (continuation==CONTINUATION_ENABLED) ? 1 : 0,
             message, PPC_DISPLAY_RESOLUTION);
@@ -269,7 +269,7 @@ unsigned fileTabHashFun(char *ss) {
     hdd = hdd % MAX_FILES;
     hd = hd % TOP_DIR_HASH_SHIFT;
     h0 = h % FILE_HASH_SHIFT;
-    
+
     h = h0;
     h = (hd / FILE_HASH_SHIFT) * FILE_HASH_SHIFT + h;
     h = (hdd / TOP_DIR_HASH_SHIFT) * TOP_DIR_HASH_SHIFT + h;
@@ -360,7 +360,7 @@ static int jslHashEqual(S_symbolList *e1, S_symbolList *e2) {
 #define HASH_FUN_PREFIX refTab
 // following can't depend on vApplClass, because of finding def in html.c
 #define HASH_FUN(elemp) (hashFun(elemp->name) + (unsigned)elemp->vFunClass)
-#define HASH_ELEM_EQUAL(e1,e2) REF_ELEM_EQUAL(e1,e2) 
+#define HASH_ELEM_EQUAL(e1,e2) REF_ELEM_EQUAL(e1,e2)
 
 #include "hashlist.tc"
 
@@ -411,7 +411,7 @@ void *stackMemoryRealloc(void *p, int n, int oldn) {
     assert(((char *)p) - memory + oldn == s_topBlock->firstFreeIndex);
     if (s_topBlock->firstFreeIndex + n - oldn >= SIZE_workMemory) {
         fatalError(ERR_ST,"i+size > SIZE_workMemory,\n\tworking memory overflowed,\n\tread TROUBLES section of README file\n", XREF_EXIT_ERR);
-        assert(0);      
+        assert(0);
     }
     s_topBlock->firstFreeIndex += n - oldn;
     return(p);
@@ -431,7 +431,7 @@ void stackMemoryPop(void *p, int size) {
         fprintf(stderr,"i-size < 0\n"); assert(0);
     }
     memcpy(p, & memory[i-size], size);
-    s_topBlock->firstFreeIndex = i-size;    
+    s_topBlock->firstFreeIndex = i-size;
 }
 
 int *stackMemoryPushInt(int x) {
@@ -465,7 +465,7 @@ void stackMemoryBlockFree() {
     assert(tmpWorkMemoryi >= s_topBlock->tmpMemoryBasei);
     tmpWorkMemoryi = s_topBlock->tmpMemoryBasei;
     memi = s_topBlock->firstFreeIndex;
-    * s_topBlock =  * s_topBlock->previousTopBlock; 
+    * s_topBlock =  * s_topBlock->previousTopBlock;
     /*  FILL_topBlock(s_topBlock,s_topBlock->firstFreeIndex,NULL,NULL); */
     // burk, following disables any memory freeing for Java
     //  if (LANGUAGE(LAN_JAVA)) s_topBlock->firstFreeIndex = memi;
@@ -496,7 +496,7 @@ static void trailDump() {
 void addToTrail (void (*a)(void*), void *p) {
     S_freeTrail *t;
     /* no trail at level 0 in C*/
-    if (WORK_NEST_LEVEL0() && (LANGUAGE(LAN_C)||LANGUAGE(LAN_YACC))) return; 
+    if (WORK_NEST_LEVEL0() && (LANGUAGE(LAN_C)||LANGUAGE(LAN_YACC))) return;
     t = StackMemAlloc(S_freeTrail);
     t->action = a;
     t->p = (void **) p;
@@ -535,7 +535,7 @@ void typeDump(S_typeModifiers *t) {
 
 void symbolRefItemDump(S_symbolRefItem *ss) {
     fprintf(dumpOut,"%s\t%s %s %d %d %d %d %d\n",
-            ss->name, 
+            ss->name,
             s_fileTab.tab[ss->vApplClass]->name,
             s_fileTab.tab[ss->vFunClass]->name,
             ss->b.symType, ss->b.storage, ss->b.scope,
@@ -578,7 +578,7 @@ int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos) {
     }
 
 
-void typeSPrint(char *buff, int *size, S_typeModifiers *t, 
+void typeSPrint(char *buff, int *size, S_typeModifiers *t,
                 char *name, int dclSepChar, int maxDeep, int typedefexp,
                 int longOrShortName, int *oNamePos) {
     unsigned u;
@@ -604,7 +604,7 @@ void typeSPrint(char *buff, int *size, S_typeModifiers *t,
         if (t==NULL) goto typebreak;
         CHECK_TYPEDEF(t,type,typedefexpFlag,typebreak);
         switch (t->m) {
-        case TypeArray: 
+        case TypeArray:
             if (par) {pref[--i]='('; post[j++]=')'; }
             if (LANGUAGE(LAN_JAVA)) {
                 pref[--i]=' '; pref[--i]=']'; pref[--i]='[';
@@ -634,7 +634,7 @@ void typeSPrint(char *buff, int *size, S_typeModifiers *t,
                         sprintf(post+j,"%s",ttm);
                         j += strlen(post+j);
                     }
-                    if (dd->next!=NULL && j<COMPLETION_STRING_SIZE) 
+                    if (dd->next!=NULL && j<COMPLETION_STRING_SIZE)
                         sprintf(post+j,", ");
                     j += strlen(post+j);
                 }
@@ -681,7 +681,7 @@ void typeSPrint(char *buff, int *size, S_typeModifiers *t,
             }
             break;
         case TypeEnum:
-            if (t->u.t->name==NULL) sprintf(type,"enum "); 
+            if (t->u.t->name==NULL) sprintf(type,"enum ");
             else sprintf(type,"enum %s",t->u.t->linkName);
             r = strlen(type);
             /*
@@ -696,7 +696,7 @@ void typeSPrint(char *buff, int *size, S_typeModifiers *t,
               }
               r += SLEN(sprintf(type+r,"}"));
             */
-            break;                      
+            break;
         default:
             assert(t->m >= 0 && t->m < MAX_TYPE);
             InternalCheck(strlen(typesName[t->m]) < COMPLETION_STRING_SIZE);
@@ -708,7 +708,7 @@ void typeSPrint(char *buff, int *size, S_typeModifiers *t,
     }
  typebreak:
     post[j]=0;
-    realsize = strlen(type) + strlen(pref+i) + 
+    realsize = strlen(type) + strlen(pref+i) +
         strlen(name) + strlen(post) +2;
     if (realsize < *size) {
         if (dclSepChar==' ') {
@@ -719,7 +719,7 @@ void typeSPrint(char *buff, int *size, S_typeModifiers *t,
         *size = strlen(buff);
         if (oNamePos!=NULL) *oNamePos = *size;
 #if ZERO
-        // I think that following was interesting only for 
+        // I think that following was interesting only for
         // old coding of static fields/method.
         if (LANGUAGE(LAN_JAVA)) {
             int ttt;
@@ -764,7 +764,7 @@ void throwsSprintf(char *out, int outsize, S_symbolList *exceptions) {
     }
 }
 
-void macDefSPrintf(char *tt, int *size, char *name1, char *name2, 
+void macDefSPrintf(char *tt, int *size, char *name1, char *name2,
                    int argn, char **args, int *oNamePos) {
     int ii,ll,i,brief=0;
     ii = 0;
@@ -852,12 +852,12 @@ char *javaCutSourcePathFromFileName(char *fname) {
             }
         });
     // cut auto-detected source-path
-    if (s_javaStat!=NULL && s_javaStat->namedPackageDir != NULL) { 
+    if (s_javaStat!=NULL && s_javaStat->namedPackageDir != NULL) {
         len = strlen(s_javaStat->namedPackageDir);
         if (fnnCmp(s_javaStat->namedPackageDir, fname, len) == 0) {
             res = fname+len;
             goto fini;
-        }       
+        }
     }
  fini:
     if (*res=='/' || *res=='\\') res++;
@@ -967,7 +967,7 @@ void javaSignatureSPrint(char *buff, int *size, char *sig, int classstyle) {
         if (j+TYPE_STR_RESERVE > *size) goto fini;
     switchLabel:
         switch (*ssig) {
-        case '[': 
+        case '[':
             sprintf(post+posti,"[]");
             posti += strlen(post+posti);
             for(ssig++; *ssig && isdigit(*ssig); ssig++) ;
@@ -1016,7 +1016,7 @@ void linkNamePrettyPrint(char *ff, char *javaLinkName, int maxlen,
     else tt ++;
     for(; *tt && *tt!='('; tt++) {
         if (*tt == '/' || *tt=='\\' || *tt=='$') *ff++ = '.';
-        else *ff++ = *tt; 
+        else *ff++ = *tt;
         maxlen--;
         if (maxlen <=0) goto fini;
     }
@@ -1165,11 +1165,11 @@ int pathncmp(char *ss1, char *ss2, int n, int caseSensitive) {
     register int i;
     int         res;
     res = 0;
-#if (!defined (__WIN32__)) && (! defined (__OS2__))       /*SBD*/
+#if (!defined (__WIN32__))       /*SBD*/
     if (caseSensitive) return(strncmp(ss1,ss2,n));
 #endif                  /*SBD*/
     if (n<=0) return(0);
-#if defined (__WIN32__) || defined (__OS2__)              /*SBD*/
+#if defined (__WIN32__)              /*SBD*/
     // there is also problem of drive name on windows
     if (ss1[0]!=0 && tolower(ss1[0])==tolower(ss2[0]) && ss1[1]==':' && ss2[1]==':') {
         ss1+=2;
@@ -1179,7 +1179,7 @@ int pathncmp(char *ss1, char *ss2, int n, int caseSensitive) {
 #endif                  /*SBD*/
     if (n<=0) return(0);
     for(s1=ss1,s2=ss2,i=1; *s1 && *s2 && i<n; s1++,s2++,i++) {
-#if defined (__WIN32__) || defined (__OS2__)            /*SBD*/
+#if defined (__WIN32__)            /*SBD*/
         if (    (*s1 == '/' || *s1 == '\\')
                 &&  (*s2 == '/' || *s2 == '\\')) continue;
 #endif                  /*SBD*/
@@ -1189,11 +1189,11 @@ int pathncmp(char *ss1, char *ss2, int n, int caseSensitive) {
             if (tolower(*s1) != tolower(*s2)) break;
         }
     }
-#if defined (__WIN32__) || defined (__OS2__)            /*SBD*/
+#if defined (__WIN32__)            /*SBD*/
     if (    (*s1 == '/' || *s1 == '\\')
             &&  (*s2 == '/' || *s2 == '\\')) {
         res = 0;
-    } else 
+    } else
 #endif                  /*SBD*/
         if (caseSensitive) {
             res = *s1 - *s2;
@@ -1210,7 +1210,7 @@ int fnnCmp(char *ss1, char *ss2, int n) {
 int fnCmp(char *ss1, char *ss2) {
     register char *s1,*s2;
     int n;
-#if (!defined (__WIN32__)) && (! defined (__OS2__))         /*SBD*/
+#if (!defined (__WIN32__))         /*SBD*/
     if (s_opt.fileNamesCaseSensitive) return(strcmp(ss1,ss2));
 #endif                  /*SBD*/
     n = strlen(ss1);
@@ -1289,7 +1289,7 @@ int shellMatch(char *string, int stringLen, char *pattern, int caseSensitive) {
     states = shellMatchNewState(0, NULL);
     while (si<slen) {
         if (states == NULL) goto fini;
-        p= &states; 
+        p= &states;
         while(*p!=NULL) {
             pi = (*p)->i;
             //&fprintf(dumpOut,"checking char %d(%c) and state %d(%c)\n", si, string[si], pi, pattern[pi]);
@@ -1322,7 +1322,7 @@ int shellMatch(char *string, int stringLen, char *pattern, int caseSensitive) {
  fini:
     res = 0;
     for(f=states; f!=NULL; f=f->next) {
-        if (f->i == plen || (f->i < plen 
+        if (f->i == plen || (f->i < plen
                              && strncmp(pattern+f->i,"**************",plen-f->i)==0)
             ) {
             res = 1;
@@ -1386,7 +1386,7 @@ void expandWildCharactersInOnePathRec(char *fn, char **outpaths, int *freeolen) 
                 for(i=di; i>=ldi; i--) ttt[i+1] = ttt[i];
                 ttt[ldi]=0;
                 //&fprintf(dumpOut,"mapdirectoryfiles(%s, %s, %s)\n", ttt, ttt+ldi+1, fn+si);fflush(dumpOut);
-                mapDirectoryFiles(ttt, expandWildCharsMapFun, 0, ttt, ttt+ldi+1, 
+                mapDirectoryFiles(ttt, expandWildCharsMapFun, 0, ttt, ttt+ldi+1,
                                   (S_completions*)(fn+si), outpaths, freeolen);
             } else {
                 ttt[di] = fn[si];
@@ -1403,7 +1403,7 @@ void expandWildCharactersInOnePathRec(char *fn, char **outpaths, int *freeolen) 
         *(*outpaths) = 0;
         *freeolen -= 1;
         if (*freeolen <= 0) {
-            sprintf(tmpBuff, "expanded option %s overflows over MAX_OPTION_LEN", 
+            sprintf(tmpBuff, "expanded option %s overflows over MAX_OPTION_LEN",
                     *outpaths-(MAX_OPTION_LEN-*freeolen));
             fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
         }
@@ -1465,48 +1465,21 @@ char * getRealFileNameStatic(char *fn) {
     strcpy(ttt+di, fn+si);
     return(ttt);
 #else                       /*SBD*/
-#if defined (__OS2__)       /*SBD*/
-    FILEFINDBUF3 fdata = {0};
-    HDIR han = HDIR_CREATE;
-    ULONG nEntries = 1;
-    int si,di,bdi;
-    for(si=0,di=0; fn[si]&&fn[si]!=SLASH; si++,di++) ttt[di]=fn[si];
-    if (fn[si]) ttt[di++]=fn[si++];
-    while (fn[si] && fn[si]!=';') {
-        bdi = di;
-        while (fn[si] && fn[si]!=SLASH && fn[si]!=';') {
-            ttt[di] = fn[si];
-            si++; di++;
-        }
-        ttt[di] = 0;
-        if (DosFindFirst (ttt, &han, FILE_NORMAL | FILE_DIRECTORY, &fdata, sizeof (FILEFINDBUF3), &nEntries, FIL_STANDARD)) goto bbreak;
-        strcpy(ttt+bdi, fdata.achName);
-        di = bdi + strlen(ttt+bdi);
-        DosFindClose(han);
-        InternalCheck(di < MAX_FILE_NAME_SIZE-1);
-        ttt[di] = fn[si];
-        if (fn[si]) { di++; si++; }
-    }
- bbreak:
-    strcpy(ttt+di, fn+si);
-    return(ttt);
-#else                   /*SBD*/
     InternalCheck(strlen(fn) < MAX_FILE_NAME_SIZE-1);
     strcpy(ttt,fn);
     return(fn);
-#endif                  /*SBD*/
 #endif                  /*SBD*/
 }
 
 /* ***************************************************************** */
 
-#if defined (__WIN32__) || defined (__OS2__)            /*SBD*/
+#if defined (__WIN32__)            /*SBD*/
 
-int mapPatternFiles( 
+int mapPatternFiles(
                     char *pattern ,
                     void (*fun)(MAP_FUN_PROFILE),
-                    char *a1, char *a2, 
-                    S_completions *a3, 
+                    char *a1, char *a2,
+                    S_completions *a3,
                     void *a4, int *a5) {
 #if defined (__WIN32__)         /*SBD*/
     WIN32_FIND_DATA     fdata;
@@ -1571,30 +1544,19 @@ int mapDirectoryFiles(
     sprintf(d,"%c*",SLASH);
     res = mapPatternFiles( ttt, fun, a1, a2, a3, a4, a5);
 #else                       /*SBD*/
-#ifdef __OS2__              /*SBD*/
-    char *s,*d;
-    char ttt[MAX_FILE_NAME_SIZE];
-    for (s=dirname,d=ttt; *s; s++,d++) {
-        if (*s=='/') *d=SLASH;
-        else *d = *s;
-    }
-    InternalCheck(d-ttt < MAX_FILE_NAME_SIZE-3);
-    sprintf(d,"%c*",SLASH);
-    res = mapPatternFiles( ttt, fun, a1, a2, a3, a4, a5);
-#else                       /*SBD*/
     struct stat     stt;
     DIR             *fd;
     struct dirent   *dirbuf;
 
-    if (    statb(dirname,&stt) == 0 
+    if (    statb(dirname,&stt) == 0
             && (stt.st_mode & S_IFMT) == S_IFDIR
             && (fd = opendir(dirname)) != NULL) {
         while ((dirbuf=readdir(fd)) != NULL) {
-            if (    
+            if (
 #ifndef __QNX__             /*SBD*/
                 dirbuf->d_ino != 0 &&
 #endif                      /*SBD*/
-                strcmp(dirbuf->d_name, ".") != 0 
+                strcmp(dirbuf->d_name, ".") != 0
                 && strcmp(dirbuf->d_name, "..") != 0) {
                 /*fprintf(dumpOut,"mapping file %s\n",dirbuf->d_name);fflush(dumpOut);*/
                 (*fun)(dirbuf->d_name, a1, a2, a3, a4, a5);
@@ -1604,10 +1566,9 @@ int mapDirectoryFiles(
         closedir(fd);
     }
 #endif                      /*SBD*/
-#endif                      /*SBD*/
     // as special case, during refactorings you have to examine
     // also files stored in renamed buffers
-    if (s_ropt.refactoringRegime == RegimeRefactory 
+    if (s_ropt.refactoringRegime == RegimeRefactory
         && allowEditorFilesFlag==ALLOW_EDITOR_FILES) {
         res |= editorMapOnNonexistantFiles(dirname, fun, DEEP_ONE, a1, a2, a3, a4, a5);
     }
@@ -1621,7 +1582,7 @@ static char *concatFNameInTmpMemory( char *dirname , char *packfile) {
     if (*packfile) {
         *tt = SLASH;
         strcpy(tt+1,packfile);
-#if defined (__WIN32__) || defined (__OS2__)        /*SBD*/
+#if defined (__WIN32__)        /*SBD*/
         for(s=tt+1; *s; s++) if (*s=='/') *s=SLASH;
 #endif                                              /*SBD*/
     }
@@ -1639,7 +1600,7 @@ static int pathsStringContainsPath(char *paths, char *path) {
     return(0);
 }
 
-static int classPathContainsPath(char *path) {  
+static int classPathContainsPath(char *path) {
     S_stringList    *cp;
     for (cp=s_javaClassPaths; cp!=NULL; cp=cp->next) {
         //&fprintf(dumpOut,"[cp]checking %s<->%s\n", cp->d, path);
@@ -1762,7 +1723,7 @@ void javaMapDirectoryFiles1(
         if (s_fileTab.tab[i]!=NULL) {
             ttt = s_fileTab.tab[i]->name;
             if (*ttt==ZIP_SEPARATOR_CHAR && fileIsFromDirectory(ttt+1, packfile)) {
-                // HACK!!! Here I am using that class items looks like file name 
+                // HACK!!! Here I am using that class items looks like file name
                 // i.e. they have .class suffix
                 filename = lastOccurenceInString(ttt+1, SLASH);
                 if (filename==NULL) filename = ttt+1;
@@ -1862,7 +1823,7 @@ void jarFileParse() {
     // following make create a loop, but it is very unprobable
     s_fileTab.tab[ii]->b.cxLoading = 1;
     if (archi>=0 && archi<MAX_JAVA_ZIP_ARCHIVES) {
-        fsRecMapOnFiles(s_zipArchivTab[archi].dir, s_zipArchivTab[archi].fn, 
+        fsRecMapOnFiles(s_zipArchivTab[archi].dir, s_zipArchivTab[archi].fn,
                         "", scanClassFile, NULL);
     }
     s_fileTab.tab[ii]->b.cxLoaded = 1;
@@ -1871,7 +1832,7 @@ void jarFileParse() {
 void scanJarFilesForTagSearch() {
     int i;
     for (i=0; i<MAX_JAVA_ZIP_ARCHIVES; i++) {
-        fsRecMapOnFiles(s_zipArchivTab[i].dir, s_zipArchivTab[i].fn, 
+        fsRecMapOnFiles(s_zipArchivTab[i].dir, s_zipArchivTab[i].fn,
                         "", scanClassFile, NULL);
     }
 }
@@ -1929,4 +1890,3 @@ int cxMemoryOverflowHandler(int n) {
 #   endif
     return(cxMemory!=NULL);
 }
-

@@ -30,7 +30,7 @@ static char *s_standardCOptions[] = {
     "-D__ptr_t=void*",
     "-D__wchar_t=int",
 
-#if defined (__WIN32__) || defined (__OS2__)            /*SBD*/
+#if defined (__WIN32__)            /*SBD*/
     "-D_based(xxx)=",
     "-D__based(xxx)=",
     "-D__declspec(xxx)=",
@@ -297,7 +297,7 @@ static void expandEnvironmentVariables(char *tt, int ttsize, int *len,
         expanded = 0;
         termc = 0;
         tilda = 0;
-#if (!defined (__WIN32__)) && (!defined (__OS2__))          /*SBD*/
+#if (!defined (__WIN32__))          /*SBD*/
         if (i==0 && tt[i]=='~' && tt[i+1]=='/') {starti = i; termc='~'; tilda=1;}
 #endif                                                      /*SBD*/
         if (tt[i]=='$' && tt[i+1]=='{') {starti = i+2; termc='}';}
@@ -314,7 +314,7 @@ static void expandEnvironmentVariables(char *tt, int ttsize, int *len,
                     vval = getXrefEnvironmentValue(vname);
                 }
                 if (vval==NULL) vval = getenv(vname);
-#if (!defined (__WIN32__)) && (!defined (__OS2__))          /*SBD*/
+#if (!defined (__WIN32__))          /*SBD*/
                 if (tilda) vval = getenv("HOME");
 #endif                                                      /*SBD*/
                 if (vval != NULL) {
@@ -418,7 +418,7 @@ static void processSingleSectionMarker(char *tt,char *section,
                                        int *writeFlag, char *resSection) {
     int sl,casesensitivity=1;
     sl = strlen(tt);
-#if defined (__WIN32__) || defined (__OS2__)    /*SBD*/
+#if defined (__WIN32__)    /*SBD*/
     casesensitivity = 0;
 #endif                                          /*SBD*/
     if (pathncmp(tt, section, sl, casesensitivity)==0
@@ -724,7 +724,7 @@ static char * canItBeJavaBinPath(char *ttt) {
     int             stt, len;
     np = normalizeFileName(ttt, s_cwd);
     len = strlen(np);
-#if defined (__WIN32__) || defined (__OS2__)            /*SBD*/
+#if defined (__WIN32__)            /*SBD*/
     sprintf(res,"%s%cjava.exe", np, SLASH);
 #else                                                   /*SBD*/
     sprintf(res,"%s%cjava", np, SLASH);

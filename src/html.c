@@ -28,18 +28,18 @@ static char s_htmlEmptyRefs[MAX_FILE_NAME_SIZE];
 static S_olSymbolsMenu *s_htmlCurrentCxlist;
 static char *s_cxGlobalReferencesBase;
 
-#if defined(__WIN32__) || defined (__OS2__)     /*SBD*/
+#if defined(__WIN32__)                          /*SBD*/
 char *htmlNormalizedPath(char *p) {
     if (p[0]!=0 && p[1]==':') return(p+2);
     return(p);
 }
-#else                           /*SBD*/
+#else                                           /*SBD*/
 char *htmlNormalizedPath(char *p) {
     return(p);
 }
-#endif                          /*SBD*/
+#endif                                          /*SBD*/
 
-#if defined(__WIN32__) || defined (__OS2__)     /*SBD*/
+#if defined(__WIN32__)                          /*SBD*/
 int isAbsolutePath(char *p) {
     if (p[0]!=0 && p[1]==':' && p[2]==SLASH) return(1);
     if (p[0]==SLASH) return(1);

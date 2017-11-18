@@ -215,26 +215,7 @@ int specialFileNameCasesCheck(char *fname) {
 //fprintf(ccOut,"res %s\n",ttt);
     return(dif==0);
 #else					/*SBD*/
-#ifdef __OS2__			/*SBD*/
-    FILEFINDBUF3 fdata = {0};
-    HDIR han = HDIR_CREATE;
-    ULONG nEntries = 1;
-    int dif;
-    char *ss;
-    S_editorBuffer *buff;
-    buff = editorGetOpenedBuffer(fname);
-    if (buff != NULL) return(1);
-    ss = lastOccurenceInString(fname, '/');
-    if (ss==NULL) ss = lastOccurenceInString(fname, '\\');
-    if (ss==NULL) return(1);
-    if (DosFindFirst (fname, &han, FILE_NORMAL | FILE_DIRECTORY, &fdata, sizeof (FILEFINDBUF3), &nEntries, FIL_STANDARD)) return (1);
-    dif = strcmp(ss+1, fdata.achName);
-    DosFindClose(han);
-    return(dif==0);
-#else					/*SBD*/
-
     return(1);
-#endif					/*SBD*/
 #endif					/*SBD*/
 }
 

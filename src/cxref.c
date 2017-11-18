@@ -296,7 +296,7 @@ static void getSymbolCxrefCategories(
                 ||  p->b.storage==StorageMethod
                 ||  p->b.storage==StorageConstructor
                 ||  p->b.storage==StorageStatic
-				||  p->b.storage==StorageThreadLocal
+                ||  p->b.storage==StorageThreadLocal
                 ) {
             if (p->linkName[0]==' ' && p->linkName[1]==' ') {
                 // a special symbol local linkname
@@ -1524,7 +1524,7 @@ char *getLocalJavaDocFile_st(char *fileUrl) {
 
 static void unBackslashifyUrl(char *url) {
     char *ss;
-#if defined (__WIN32__) || defined (__OS2__)        /*SBD*/
+#if defined (__WIN32__)                             /*SBD*/
     for(ss=url; *ss; ss++) {
         if (*ss=='\\') *ss='/';
     }
