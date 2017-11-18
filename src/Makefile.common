@@ -6,30 +6,14 @@
 # c-xref. If they need to be re-generated and c-xref.bs does not exist then
 # c-xref.bs is built from existing sources using Makefile.bs.
 
-OBJS=cgram.o main.o globals.o misc.o semact.o commons.o generate.o \
-	 enumTxt.o complete.o cxref.o cxfile.o lex.o yylex.o cexp.o options.o \
-	 caching.o javagram.o jsemact.o cfread.o cct.o init.o \
-	 editor.o refactory.o \
-	 yaccgram.o html.o extract.o classh.o jslsemact.o \
-	 $(ZLIB_LIB)
-
-# put following into comments if you wish to build without zlib library,
-# i.e. without possibility to read compressed .jar files
-ZLIB_OPT=-DUSE_LIBZ
-ZLIB_LIB=$(ROOTDIR)/lib/zlib/libz.a
-
-
-#
-SRC=$(ROOTDIR)/src
-INCLUDES=-I$(ROOTDIR)/src -I$(ROOTDIR)/lib/zlib -I.
+include Makefile.objs
 
 #########################################################################
 
-all: $(ROOTDIR)/lib/zlib/libz.a c-xref
+all: $(ZLIB) c-xref
 
 ..always..:;
 
-#supposing to not modify zlib
 $(ROOTDIR)/lib/zlib/libz.a: ..always..
 	make -C $(ROOTDIR)/lib/zlib libz.a
 
@@ -101,16 +85,16 @@ enumTxt.c: proto.h strFill.h strTdef.h ../doc/_c-xrefrc c-xref.bs
 
 c-xref.bs:
 	make ROOTDIR=$(ROOTDIR) CFLAGS="$(CFLAGS)" -f Makefile.bs
-	#echo "You need to bootstrap by copying a working c-xref to"
-	#echo "c-xref.bs by doing:"
-	#echo "  make bs"
-	#echo "Worst case you need to back to a version that you can build"
-	#echo "and do it after that. Then apply changes and re-make."
+	@echo "You need to bootstrap by copying a working c-xref to"
+	@echo "c-xref.bs by doing:"
+	@echo "  make bs"
+	@echo "Worst case you need to back to a version that you can build"
+	@echo "and do it after that. Then apply changes and re-make."
 
 #########################################################################
 
 c-xref: $(OBJS)
-	$(CC) $(LDFLAGS) -o c-xref $(OBJS)
+	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
 
 #########################################################################
 

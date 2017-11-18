@@ -7,9 +7,12 @@ EDGCFLAGS= -O
 LDFLAGS=
 BIN=$(HOME)/bin
 LEX=flex
+
+# We need our own patched yacc
 YACC=$(ROOTDIR)/byacc-1.9/yacc
-RANLIB=echo
+
 ROOTDIR=..
+
 #########################################################################
 
 
