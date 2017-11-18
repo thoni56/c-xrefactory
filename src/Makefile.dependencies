@@ -1,92 +1,77 @@
 caching.o: caching.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
- lexmac.h hashlist.th hashtab.th protocol.h protocol.tc
+ memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th protocol.h \
+ protocol.tc
 cct.o: cct.c stdinc.h head.h constants.h strFill.h listmacr.h memmac.h \
- proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h lexmac.h \
- hashlist.th hashtab.th
+ proto.h strTdef.h lexmac.h hashlist.th hashtab.th
 cexp.o: cexp.c stdinc.h head.h constants.h strFill.h listmacr.h memmac.h \
- proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h lexmac.h \
- hashlist.th hashtab.th cgram.h
+ proto.h strTdef.h lexmac.h hashlist.th hashtab.th cgram.h
 cfread.o: cfread.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
- lexmac.h hashlist.th hashtab.th
+ memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th
 cgram.o: cgram.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
- lexmac.h hashlist.th hashtab.th
+ memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th
 classh.o: classh.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
- lexmac.h hashlist.th hashtab.th bitmaps.h protocol.h protocol.tc
+ memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th bitmaps.h \
+ protocol.h protocol.tc
 commons.o: commons.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
- lexmac.h hashlist.th hashtab.th globals.h protocol.h protocol.tc
+ memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th globals.h \
+ protocol.h protocol.tc
 complete.o: complete.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
- lexmac.h hashlist.th hashtab.th globals.h unigram.h cgram.h protocol.h \
- protocol.tc
+ memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th globals.h \
+ unigram.h cgram.h protocol.h protocol.tc
 cxfile.o: cxfile.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
- lexmac.h hashlist.th hashtab.th protocol.h protocol.tc
-cxref.o: cxref.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
- lexmac.h hashlist.th hashtab.th globals.h protocol.h protocol.tc \
- hashlist.tc
-editor.o: editor.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
- lexmac.h hashlist.th hashtab.th globals.h protocol.h protocol.tc \
- hashlist.tc
-enumTxt.o: enumTxt.c stdinc.h proto.h strTdef.h head.h constants.h \
- strFill.h listmacr.h memmac.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
- lexmac.h hashlist.th hashtab.th
-extract.o: extract.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
- lexmac.h hashlist.th hashtab.th unigram.h cgram.h protocol.h protocol.tc
-generate.o: generate.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
- lexmac.h hashlist.th hashtab.th
-globals.o: globals.c globals.h constants.h stdinc.h head.h strFill.h \
- listmacr.h memmac.h proto.h strTdef.h ../lib/zlib/zlib.h \
- ../lib/zlib/zconf.h lexmac.h hashlist.th hashtab.th unigram.h cgram.h \
- protocol.h protocol.tc
-html.o: html.c stdinc.h head.h constants.h strFill.h listmacr.h memmac.h \
- proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h lexmac.h \
- hashlist.th hashtab.th globals.h protocol.h protocol.tc
-init.o: init.c stdinc.h head.h constants.h strFill.h listmacr.h memmac.h \
- proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h lexmac.h \
- hashlist.th hashtab.th unigram.h cgram.h protocol.h protocol.tc
-javagram.o: javagram.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
- lexmac.h hashlist.th hashtab.th protocol.h protocol.tc recyacc.h
-jsemact.o: jsemact.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
- lexmac.h hashlist.th hashtab.th globals.h unigram.h cgram.h recyacc.h \
- protocol.h protocol.tc
-jslsemact.o: jslsemact.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
- lexmac.h hashlist.th hashtab.th unigram.h cgram.h
-lex.o: lex.c stdinc.h head.h constants.h strFill.h listmacr.h memmac.h \
- proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h lexmac.h \
- hashlist.th hashtab.th unigram.h cgram.h protocol.h protocol.tc
-main.o: main.c stdinc.h head.h constants.h strFill.h listmacr.h memmac.h \
- proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h lexmac.h \
- hashlist.th hashtab.th globals.h unigram.h cgram.h recyacc.h protocol.h \
+ memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th protocol.h \
  protocol.tc
+cxref.o: cxref.c stdinc.h head.h constants.h strFill.h listmacr.h \
+ memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th globals.h \
+ protocol.h protocol.tc hashlist.tc
+editor.o: editor.c stdinc.h head.h constants.h strFill.h listmacr.h \
+ memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th globals.h \
+ protocol.h protocol.tc hashlist.tc
+enumTxt.o: enumTxt.c stdinc.h proto.h strTdef.h head.h constants.h \
+ strFill.h listmacr.h memmac.h lexmac.h hashlist.th hashtab.th
+extract.o: extract.c stdinc.h head.h constants.h strFill.h listmacr.h \
+ memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th unigram.h \
+ cgram.h protocol.h protocol.tc
+generate.o: generate.c stdinc.h head.h constants.h strFill.h listmacr.h \
+ memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th
+globals.o: globals.c globals.h constants.h stdinc.h head.h strFill.h \
+ listmacr.h memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th \
+ unigram.h cgram.h protocol.h protocol.tc
+html.o: html.c stdinc.h head.h constants.h strFill.h listmacr.h memmac.h \
+ proto.h strTdef.h lexmac.h hashlist.th hashtab.th globals.h protocol.h \
+ protocol.tc
+init.o: init.c stdinc.h head.h constants.h strFill.h listmacr.h memmac.h \
+ proto.h strTdef.h lexmac.h hashlist.th hashtab.th unigram.h cgram.h \
+ protocol.h protocol.tc
+javagram.o: javagram.c stdinc.h head.h constants.h strFill.h listmacr.h \
+ memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th protocol.h \
+ protocol.tc recyacc.h
+jsemact.o: jsemact.c stdinc.h head.h constants.h strFill.h listmacr.h \
+ memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th globals.h \
+ unigram.h cgram.h recyacc.h protocol.h protocol.tc
+jslsemact.o: jslsemact.c stdinc.h head.h constants.h strFill.h listmacr.h \
+ memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th unigram.h \
+ cgram.h
+lex.o: lex.c stdinc.h head.h constants.h strFill.h listmacr.h memmac.h \
+ proto.h strTdef.h lexmac.h hashlist.th hashtab.th unigram.h cgram.h \
+ protocol.h protocol.tc
+main.o: main.c stdinc.h head.h constants.h strFill.h listmacr.h memmac.h \
+ proto.h strTdef.h lexmac.h hashlist.th hashtab.th globals.h unigram.h \
+ cgram.h recyacc.h protocol.h protocol.tc
 misc.o: misc.c stdinc.h head.h constants.h strFill.h listmacr.h memmac.h \
- proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h lexmac.h \
- hashlist.th hashtab.th bitmaps.h protocol.h protocol.tc hashlist.tc \
- hashtab.tc
+ proto.h strTdef.h lexmac.h hashlist.th hashtab.th bitmaps.h protocol.h \
+ protocol.tc hashlist.tc hashtab.tc
 options.o: options.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
- lexmac.h hashlist.th hashtab.th globals.h protocol.h protocol.tc
+ memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th globals.h \
+ protocol.h protocol.tc
 refactory.o: refactory.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
- lexmac.h hashlist.th hashtab.th globals.h protocol.h protocol.tc
+ memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th globals.h \
+ protocol.h protocol.tc
 semact.o: semact.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
- lexmac.h hashlist.th hashtab.th unigram.h cgram.h
+ memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th unigram.h \
+ cgram.h
 yaccgram.o: yaccgram.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
- lexmac.h hashlist.th hashtab.th
+ memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th
 yylex.o: yylex.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h proto.h strTdef.h ../lib/zlib/zlib.h ../lib/zlib/zconf.h \
- lexmac.h hashlist.th hashtab.th globals.h unigram.h cgram.h protocol.h \
- protocol.tc hashtab.tc
+ memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th globals.h \
+ unigram.h cgram.h protocol.h protocol.tc hashtab.tc
