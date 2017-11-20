@@ -125,7 +125,7 @@ char *normalizeFileName(char *name, char *relativeto) {
 
 
 char *create_temporary_filename() {
-    static char temporary_name[MAX_FILE_NAME_SIZE];
+    static char temporary_name[MAX_FILE_NAME_SIZE] = "";
     char *temp_dir;
     static int count = 0;
 #if defined (__WIN32__)    /*SBD*/
@@ -147,7 +147,7 @@ char *create_temporary_filename() {
         strcpy(temporary_name, "/tmp/c-xref-temp");
 #endif                  /*SBD*/
     //&fprintf(dumpOut,"temp file: %s\n", temporary_name);
-    if (temporary_name == NULL)
+    if (strlen(temporary_name))
         fatalError(ERR_ST, "can't create temporary file name", XREF_EXIT_ERR);
     InternalCheck(strlen(temporary_name) < MAX_FILE_NAME_SIZE-1);
     return temporary_name;
