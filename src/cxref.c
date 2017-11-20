@@ -2433,7 +2433,8 @@ void olStackDeleteSymbol( S_olcxReferences *refs) {
     for(    rr= &s_olcxCurrentUser->browserStack.root;
             *rr!=NULL&&*rr!=refs;
             rr= &(*rr)->previous
-            ) ;
+            )
+        ;
     assert(*rr != NULL);
     deleteOlcxRefs(rr, &s_olcxCurrentUser->browserStack);
 }
