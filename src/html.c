@@ -217,7 +217,8 @@ static void htmlGenHead(int fn) {
     for(i=0; fname[i]; i++) if (fname[i]==SLASH) sn++;
     ss0 = fname;
     while (sn > 0) {
-        for(ss=ss0; *ss && *ss!=SLASH; ss++) ;
+        for(ss=ss0; *ss && *ss!=SLASH; ss++)
+            ;
         assert(*ss);
         ch = *ss; *ss = 0;
         if (cutFlag && ss0<cutfn) {

@@ -147,7 +147,7 @@ char *create_temporary_filename() {
         strcpy(temporary_name, "/tmp/c-xref-temp");
 #endif                  /*SBD*/
     //&fprintf(dumpOut,"temp file: %s\n", temporary_name);
-    if (strlen(temporary_name))
+    if (strlen(temporary_name) == 0)
         fatalError(ERR_ST, "can't create temporary file name", XREF_EXIT_ERR);
     InternalCheck(strlen(temporary_name) < MAX_FILE_NAME_SIZE-1);
     return temporary_name;

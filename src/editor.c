@@ -240,7 +240,7 @@ static void editorApplyUtf16Conversion(S_editorBuffer *buff) {
 static int editorBufferStartsWithUtf16Bom(S_editorBuffer *buff) {
     register unsigned char      *s;
     register unsigned           cb;
-    s = buff->a.text;
+    s = (unsigned char *)buff->a.text;
     if (buff->a.bufferSize >= 2) {
         cb = (*s << 8) + *(s+1);
         if (cb == 0xfeff || cb == 0xfffe) return(1);

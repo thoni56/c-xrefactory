@@ -40,13 +40,13 @@ void zlibFree(voidpf opaque, voidpf address) {
 
 static int charBuffReadFromUnzipFilter(struct charBuf  *bb, char *outBuffer, int max_size) {
     int n, fn, res, iii;
-    bb->zipStream.next_out = outBuffer;
+    bb->zipStream.next_out = (unsigned char *)outBuffer;
     bb->zipStream.avail_out = max_size;
 #if defined(USE_LIBZ)       /*SBD*/
     do {
         if (bb->zipStream.avail_in == 0) {
             fn = charBuffReadFromFile(bb, bb->z, CHAR_BUFF_SIZE);
-            bb->zipStream.next_in = bb->z;
+            bb->zipStream.next_in = (unsigned char *)bb->z;
             bb->zipStream.avail_in = fn;
         }
         //&fprintf(stderr,"sending to inflate :");
@@ -62,7 +62,7 @@ static int charBuffReadFromUnzipFilter(struct charBuf  *bb, char *outBuffer, int
         } else {
             sprintf(tmpBuff, "something is going wrong while reading zipped .jar archiv, res == %d", res);
             error(ERR_ST, tmpBuff);
-            bb->zipStream.next_out = outBuffer;
+            bb->zipStream.next_out = (unsigned char *)outBuffer;
         }
     } while (((char*)bb->zipStream.next_out)==outBuffer && res==Z_OK);
 #endif                      /*SBD*/
@@ -131,7 +131,7 @@ int skipNCharsInCharBuf(struct charBuf *bb, unsigned count) {
     if (cc+count < fin) {
         bb->cc = cc+count;
         return(1);
-    } 
+    }
     if (bb->inputMethod == INPUT_VIA_UNZIP) {
         // TODO FINISH THIS
         count -= fin-cc;
@@ -222,7 +222,7 @@ void gotOnLineCxRefs( S_position *ps ) {
                                                }
 
 #define PassComment(ch,oldCh,ccc,cfin,cb,dd,cline,clb,clo) {            \
-                                                            /*  ******* a /* comment ******* */ \
+                                                            /*  ******* a block comment ******* */ \
                                                             line = cline; \
                                                             GetChar(ch,ccc,cfin,cb,clb,clo); \
                                                             if (ch=='\n') {cline ++; clb = ccc; clo = 0;} \
@@ -467,15 +467,15 @@ int getLexBuf(struct lexBuf *lb) {
         register long unsigned val=0;
         lexStartFilePos = ABS_FILE_POS(cb,cfin,ccc);
         if (ch=='0') {
-            GetChar(ch,ccc,cfin,cb,clb,clo);        
-            if (ch=='x' || ch=='X') {    
+            GetChar(ch,ccc,cfin,cb,clb,clo);
+            if (ch=='x' || ch=='X') {
                 /* hexa */
-                GetChar(ch,ccc,cfin,cb,clb,clo);                
+                GetChar(ch,ccc,cfin,cb,clb,clo);
                 while (isdigit(ch)||(ch>='a'&&ch<='f')||(ch>='A'&&ch<='F')) {
                     if (ch>='a') val = val*16+ch-'a'+10;
                     else if (ch>='A') val = val*16+ch-'A'+10;
                     else val = val*16+ch-'0';
-                    GetChar(ch,ccc,cfin,cb,clb,clo);                
+                    GetChar(ch,ccc,cfin,cb,clb,clo);
                 }
             } else {
                 /* octal */
@@ -525,13 +525,13 @@ int getLexBuf(struct lexBuf *lb) {
                 }
                 PutLexToken('.',dd);
                 PutLexPosition(cfile, cline, lexStartCol, dd);
-                goto nextLexem;             
+                goto nextLexem;
             } else if (ch=='*' && LANGUAGE(LAN_CCC)) {
                 GetChar(ch,ccc,cfin,cb,clb,clo);
                 PutLexToken(POINTM_OP,dd);
                 PutLexPosition(cfile, cline, lexStartCol, dd);
                 goto nextLexem;
-            } else if (isdigit(ch)) {   
+            } else if (isdigit(ch)) {
                 /* floating point constant */
                 UngetChar(ch,ccc,cfin,cb);
                 ch = '.';
@@ -544,16 +544,16 @@ int getLexBuf(struct lexBuf *lb) {
                 PutLexToken('.',dd);
                 PutLexPosition(cfile, cline, lexStartCol, dd);
                 goto nextLexem;
-            }           
+            }
 
         case '-':
             GetChar(ch,ccc,cfin,cb,clb,clo);
             if (ch=='=') {
-                PutLexToken(SUB_ASSIGN,dd); PutLexPosition(cfile, cline, lexStartCol, dd); GetChar(ch,ccc,cfin,cb,clb,clo); 
+                PutLexToken(SUB_ASSIGN,dd); PutLexPosition(cfile, cline, lexStartCol, dd); GetChar(ch,ccc,cfin,cb,clb,clo);
                 goto nextLexem;
             } else if (ch=='-') {PutLexToken(DEC_OP,dd); PutLexPosition(cfile, cline, lexStartCol, dd);GetChar(ch,ccc,cfin,cb,clb,clo); goto nextLexem;}
             else if (ch=='>' && LANGUAGE(LAN_C|LAN_YACC|LAN_CCC)) {
-                GetChar(ch,ccc,cfin,cb,clb,clo); 
+                GetChar(ch,ccc,cfin,cb,clb,clo);
                 if (ch=='*' && LANGUAGE(LAN_CCC)) {PutLexToken(PTRM_OP,dd); PutLexPosition(cfile, cline, lexStartCol, dd);GetChar(ch,ccc,cfin,cb,clb,clo); goto nextLexem;}
                 else {PutLexToken(PTR_OP,dd); PutLexPosition(cfile, cline, lexStartCol, dd);goto nextLexem;}
             } else {PutLexToken('-',dd); PutLexPosition(cfile, cline, lexStartCol, dd);goto nextLexem;}
@@ -564,7 +564,7 @@ int getLexBuf(struct lexBuf *lb) {
             else if (ch == '+') { PutLexToken(INC_OP,dd); PutLexPosition(cfile, cline, lexStartCol, dd);GetChar(ch,ccc,cfin,cb,clb,clo); goto nextLexem; }
             else {PutLexToken('+',dd); PutLexPosition(cfile, cline, lexStartCol, dd);goto nextLexem;}
 
-        case '>': 
+        case '>':
             GetChar(ch,ccc,cfin,cb,clb,clo);
             if (ch == '>') {
                 GetChar(ch,ccc,cfin,cb,clb,clo);
@@ -660,13 +660,13 @@ int getLexBuf(struct lexBuf *lb) {
                 PutLexInt(chval,dd);
                 PutLexPosition(cfile, cline, lexStartCol, dd);
                 PutLexInt(ABS_FILE_POS(cb,cfin,ccc)-lexStartFilePos, dd);
-                GetChar(ch,ccc,cfin,cb,clb,clo); 
+                GetChar(ch,ccc,cfin,cb,clb,clo);
             }
             goto nextLexem;
 
         case '\"':
             line = cline; size = 0;
-            PutLexToken(STRING_LITERAL,dd); 
+            PutLexToken(STRING_LITERAL,dd);
             do {
                 GetChar(ch,ccc,cfin,cb,clb,clo);                size ++;
                 if (ch!='\"' && size<MAX_LEXEM_SIZE-10) PutLexChar(ch,dd);
@@ -737,24 +737,24 @@ int getLexBuf(struct lexBuf *lb) {
                 PutLexLine(cline-line,dd);
                 goto nextLexem;
             } else {
-                PutLexToken('/',dd); 
+                PutLexToken('/',dd);
                 PutLexPosition(cfile, cline, lexStartCol, dd);
                 goto nextLexem;
             }
 
-        case '\\': 
+        case '\\':
             GetChar(ch,ccc,cfin,cb,clb,clo);
             if (ch == '\n') {
                 cline ++; clb = ccc;  clo = 0;
                 PutLexLine(1, dd);
                 GetChar(ch,ccc,cfin,cb,clb,clo);
             } else {
-                PutLexToken('\\',dd); 
+                PutLexToken('\\',dd);
                 PutLexPosition(cfile, cline, lexStartCol, dd);
             }
             goto nextLexem;
 
-        case '\n': 
+        case '\n':
             column = COLUMN_POS(ccc,clb,clo);
             if (column >= MAX_REFERENCABLE_COLUMN) {
                 fatalError(ERR_ST, "position over MAX_REFERENCABLE_COLUMN, read TROUBLES in README file", XREF_EXIT_ERR);
@@ -794,7 +794,7 @@ int getLexBuf(struct lexBuf *lb) {
             }
             goto nextLexem;
 
-        case '#': 
+        case '#':
             GetChar(ch,ccc,cfin,cb,clb,clo);
             if (ch == '#') {
                 GetChar(ch,ccc,cfin,cb,clb,clo);
@@ -816,7 +816,7 @@ int getLexBuf(struct lexBuf *lb) {
 #endif
         default:
             if (ch >= 32) {         /* small chars ignored */
-                PutLexToken(ch,dd); 
+                PutLexToken(ch,dd);
                 PutLexPosition(cfile, cline, lexStartCol, dd);
             }
             GetChar(ch,ccc,cfin,cb,clb,clo);
@@ -832,8 +832,8 @@ int getLexBuf(struct lexBuf *lb) {
         ps = & lb->pRing[pi];
         currentLexemPosition = lb->fpRing[pi];
         if (    cfile == s_olOriginalFileNumber
-                && cfile != s_noneFileIndex 
-                && cfile != -1 
+                && cfile != s_noneFileIndex
+                && cfile != -1
                 && s_jsl==NULL
                 ) {
             if (s_opt.cxrefs == OLO_EXTRACT && lb->posi>=2) {
@@ -885,7 +885,7 @@ int getLexBuf(struct lexBuf *lb) {
                     PutLexPosition(ps->file,ps->line,ps->coll,dd);
                     s_cps.marker2Flag=1;
                 }
-            } else if (     s_opt.cxrefs == OLO_COMPLETION 
+            } else if (     s_opt.cxrefs == OLO_COMPLETION
                             ||  s_opt.cxrefs == OLO_SEARCH) {
                 DeleteBlank(ch,ccc,cfin,cb,clb,clo);
                 apos = ABS_FILE_POS(cb, cfin, ccc);
@@ -914,7 +914,7 @@ int getLexBuf(struct lexBuf *lb) {
                         } else {
                             // completion after an identifier
                             PUT_EMPTY_COMPLETION_ID(ccc,dd,cline,clo,clb,
-                                                    cfile, 
+                                                    cfile,
                                                     apos-s_opt.olCursorPos);
                         }
                     } else if ((lastlex == LINE_TOK || lastlex == STRING_LITERAL)
@@ -963,4 +963,3 @@ int getLexBuf(struct lexBuf *lb) {
     if (lb->fin == lb->a) return(0);
     return(1);
 }
-
