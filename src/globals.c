@@ -326,7 +326,7 @@ S_options s_initOpt = {
     RegimeUndefined,    // refactoringRegime
     0,                  // xrefactory-II
     NULL,               // moveTargetFile
-#if defined (__WIN32__) || defined (__OS2__)            /*SBD*/
+#if defined (__WIN32__)                                 /*SBD*/
     "c;C",              // cFilesSuffixes
     "java;JAV",         // javaFilesSuffixes
     "C;cpp;CC;cc",      // c++FilesSuffixes

@@ -57,7 +57,7 @@ union constantPoolUnion {
         GetChar(val, ccc, ffin, bbb);           \
         GetChar(chh, ccc, ffin, bbb);           \
         val = val*256+chh;                      \
-        }
+    }
 
 #define GetU4(val, ccc, ffin, bbb) {            \
         register int chh;                       \
@@ -68,7 +68,7 @@ union constantPoolUnion {
         val = val*256+chh;                      \
         GetChar(chh, ccc, ffin, bbb);           \
         val = val*256+chh;                      \
-        }
+    }
 
 #define GetZU2(val, ccc, ffin, bbb) {           \
         register unsigned chh;                  \
@@ -184,7 +184,7 @@ static int zipReadLocalFileHeader(char **accc, char **affin, S_charBuf *iBuf,
         switchToZippedCharBuff(iBuf);
         ccc = iBuf->cc;
         ffin = iBuf->fin;
-    } 
+    }
 #endif                      /*SBD*/
     else {
         res = 0;
@@ -244,118 +244,118 @@ static int zipReadLocalFileHeader(char **accc, char **affin, S_charBuf *iBuf,
     }
 
 
-static int zipFindFileInCd(char **accc, char **affin, S_charBuf *iBuf, 
-                               char *fname, unsigned *foffset
-                               ) {
-char fn[MAX_FILE_NAME_SIZE];
-int headSig,madeByVersion,extractVersion,bitFlags,compressionMethod;
-int lastModTime,lastModDate,fnameLen,extraLen,fcommentLen,diskNumber;
-int i,internFileAttribs;
-unsigned externFileAttribs,localHeaderOffset;
-unsigned crc32,compressedSize,unCompressedSize;
+static int zipFindFileInCd(char **accc, char **affin, S_charBuf *iBuf,
+                           char *fname, unsigned *foffset
+                           ) {
+    char fn[MAX_FILE_NAME_SIZE];
+    int headSig,madeByVersion,extractVersion,bitFlags,compressionMethod;
+    int lastModTime,lastModDate,fnameLen,extraLen,fcommentLen,diskNumber;
+    int i,internFileAttribs;
+    unsigned externFileAttribs,localHeaderOffset;
+    unsigned crc32,compressedSize,unCompressedSize;
 
-char *ccc, *ffin;
-unsigned fsize, lastSig;
-int res = 0;
-unsigned offset;
-ccc = *accc; ffin = *affin;
-for(;;) {
-ReadZipCDRecord(ccc,ffin,iBuf);
-if (strcmp(fn,fname)==0) {
-// file found
-*foffset = localHeaderOffset;
-res = 1;
-goto fin;
-}
-} endcd:
-assert(headSig == 0x06054b50 || headSig == 0x02014b50);
-goto fin;
-endOfFile:
-error(ERR_ST,"unexpected end of file");
-fin:
-*accc = ccc; *affin = ffin; 
-return(res);
+    char *ccc, *ffin;
+    unsigned fsize, lastSig;
+    int res = 0;
+    unsigned offset;
+    ccc = *accc; ffin = *affin;
+    for(;;) {
+        ReadZipCDRecord(ccc,ffin,iBuf);
+        if (strcmp(fn,fname)==0) {
+            // file found
+            *foffset = localHeaderOffset;
+            res = 1;
+            goto fin;
+        }
+    } endcd:
+    assert(headSig == 0x06054b50 || headSig == 0x02014b50);
+    goto fin;
+ endOfFile:
+    error(ERR_ST,"unexpected end of file");
+ fin:
+    *accc = ccc; *affin = ffin;
+    return(res);
 }
 
 static S_charBuf s_zipTmpBuff;
 
-int fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset, 
-                   int addFlag, S_zipArchiveDir **place) {
-S_zipArchiveDir     *aa, **aaa, *p;
-int                 itemlen, res;
-char                *ss;
-if (dir == NULL) return(0);
-*place = *dir;
-res = 1;
-if (fn[0] == 0) {
-error(ERR_INTERNAL,"looking for empty file name in 'fsdir'");
-return(0);
-}
-if (fn[0]=='/' && fn[1]==0) {
-error(ERR_INTERNAL,"looking for root in 'fsdir'");
-return(0);  /* should not arrive */
-}
-lastrecLabel:
-ss = strchr(fn,'/');
-if (ss == NULL) {
-itemlen = strlen(fn);
-if (itemlen == 0) return(res);  /* directory */
-} else {
-itemlen = (ss-fn) + 1;
-}
-for(aaa=dir, aa= *aaa; aa!=NULL; aaa= &(aa->next), aa = *aaa) {
-/*&fprintf(dumpOut,"comparing %s <-> %s of len %d\n", fn, aa->name, itemlen);fflush(dumpOut);&*/
-if (strncmp(fn,aa->name,itemlen)==0 && aa->name[itemlen]==0) break;
-}
-assert(itemlen > 0);
-if (aa==NULL) {
-res = 0;
-if (addFlag == ADD_YES) {
-XX_ALLOCC(ss, sizeof(S_zipArchiveDir)+itemlen+1, char);
-p = (S_zipArchiveDir*)ss;
-FILL_zipArchiveDir(p,sub,NULL,NULL);
-strncpy(p->name, fn, itemlen);
-p->name[itemlen]=0;
-/*&fprintf(dumpOut,"adding new item\n", p->name);fflush(dumpOut);&*/
-if (fn[itemlen-1] == '/') {         /* directory */
-p->u.sub = NULL;
-} else {
-p->u.offset = offset;
-}
-*aaa = aa = p;
-} else {
-return(0);
-}
-}
-*place = aa;
-if (fn[itemlen-1] == '/') {
-dir = &(aa->u.sub);
-fn = fn+itemlen;
-goto lastrecLabel;
-} else {
-return(res);                    /* yet in the table */
-}
+int fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset,
+               int addFlag, S_zipArchiveDir **place) {
+    S_zipArchiveDir     *aa, **aaa, *p;
+    int                 itemlen, res;
+    char                *ss;
+    if (dir == NULL) return(0);
+    *place = *dir;
+    res = 1;
+    if (fn[0] == 0) {
+        error(ERR_INTERNAL,"looking for empty file name in 'fsdir'");
+        return(0);
+    }
+    if (fn[0]=='/' && fn[1]==0) {
+        error(ERR_INTERNAL,"looking for root in 'fsdir'");
+        return(0);  /* should not arrive */
+    }
+ lastrecLabel:
+    ss = strchr(fn,'/');
+    if (ss == NULL) {
+        itemlen = strlen(fn);
+        if (itemlen == 0) return(res);  /* directory */
+    } else {
+        itemlen = (ss-fn) + 1;
+    }
+    for(aaa=dir, aa= *aaa; aa!=NULL; aaa= &(aa->next), aa = *aaa) {
+        /*&fprintf(dumpOut,"comparing %s <-> %s of len %d\n", fn, aa->name, itemlen);fflush(dumpOut);&*/
+        if (strncmp(fn,aa->name,itemlen)==0 && aa->name[itemlen]==0) break;
+    }
+    assert(itemlen > 0);
+    if (aa==NULL) {
+        res = 0;
+        if (addFlag == ADD_YES) {
+            XX_ALLOCC(ss, sizeof(S_zipArchiveDir)+itemlen+1, char);
+            p = (S_zipArchiveDir*)ss;
+            FILL_zipArchiveDir(p,sub,NULL,NULL);
+            strncpy(p->name, fn, itemlen);
+            p->name[itemlen]=0;
+            /*&fprintf(dumpOut,"adding new item\n", p->name);fflush(dumpOut);&*/
+            if (fn[itemlen-1] == '/') {         /* directory */
+                p->u.sub = NULL;
+            } else {
+                p->u.offset = offset;
+            }
+            *aaa = aa = p;
+        } else {
+            return(0);
+        }
+    }
+    *place = aa;
+    if (fn[itemlen-1] == '/') {
+        dir = &(aa->u.sub);
+        fn = fn+itemlen;
+        goto lastrecLabel;
+    } else {
+        return(res);                    /* yet in the table */
+    }
 }
 
 void fsRecMapOnFiles(S_zipArchiveDir *dir, char *zip, char *path, void (*fun)(char *zip, char *file, void *arg), void *arg) {
-S_zipArchiveDir     *aa;
-char                *fn;
-char                npath[MAX_FILE_NAME_SIZE];
-int                 len;
-if (dir == NULL) return;
-for(aa=dir; aa!=NULL; aa=aa->next) {
-fn = aa->name;
-len = strlen(fn);
-sprintf(npath, "%s%s", path, fn);
-if (len==0 || fn[len-1]=='/') {
-fsRecMapOnFiles(aa->u.sub, zip, npath, fun, arg);
-} else {
-    (*fun)(zip, npath, arg);
- }
- }
+    S_zipArchiveDir     *aa;
+    char                *fn;
+    char                npath[MAX_FILE_NAME_SIZE];
+    int                 len;
+    if (dir == NULL) return;
+    for(aa=dir; aa!=NULL; aa=aa->next) {
+        fn = aa->name;
+        len = strlen(fn);
+        sprintf(npath, "%s%s", path, fn);
+        if (len==0 || fn[len-1]=='/') {
+            fsRecMapOnFiles(aa->u.sub, zip, npath, fun, arg);
+        } else {
+            (*fun)(zip, npath, arg);
+        }
+    }
 }
 
-static int findEndOfCentralDirectory(char **accc, char **affin, 
+static int findEndOfCentralDirectory(char **accc, char **affin,
                                      S_charBuf *iBuf, int fsize) {
     int offset,res;
     char *ccc, *ffin;
@@ -377,7 +377,7 @@ static int findEndOfCentralDirectory(char **accc, char **affin,
         goto fini;
     }
  fini:
-    *accc = ccc; *affin = ffin; 
+    *accc = ccc; *affin = ffin;
     return(res);
 }
 
@@ -416,7 +416,7 @@ static void zipArchiveScan(char **accc, char **affin, S_charBuf *iBuf,
  endOfFile:
     error(ERR_ST,"unexpected end of file");
  fini:
-    *accc = ccc; *affin = ffin; 
+    *accc = ccc; *affin = ffin;
 }
 
 #if 0
@@ -433,13 +433,13 @@ static void zipArchiveCdOffset(char **accc, char **affin, S_charBuf *iBuf,
     ccc = *accc; ffin = *affin;
     for(;;) {
         GetCurrentFileOffset(ccc,ffin,iBuf, (*offset));
-        zipReadLocalFileHeader(&ccc, &ffin, iBuf, fn, &fsize, &lastSig, 
+        zipReadLocalFileHeader(&ccc, &ffin, iBuf, fn, &fsize, &lastSig,
                                archivename);
         if (lastSig != 0x04034b50) break;
         //&fprintf(dumpOut,"skipping %d\n",compressedSize);fflush(dumpOut);
         SkipNChars(fsize,ccc,ffin,iBuf);
     }
-    *accc = ccc; *affin = ffin; 
+    *accc = ccc; *affin = ffin;
 }
 #endif
 
@@ -450,17 +450,17 @@ int zipIndexArchive(char *name) {
     struct stat fst;
     bbb = &s_zipTmpBuff;
     namelen = strlen(name);
-    for(archi=0; 
-        archi<MAX_JAVA_ZIP_ARCHIVES && s_zipArchivTab[archi].fn[0]!=0; 
+    for(archi=0;
+        archi<MAX_JAVA_ZIP_ARCHIVES && s_zipArchivTab[archi].fn[0]!=0;
         archi++) {
         if (strncmp(s_zipArchivTab[archi].fn,name,namelen)==0
             && s_zipArchivTab[archi].fn[namelen]==ZIP_SEPARATOR_CHAR) {
             goto forend;
         }
-    } 
+    }
  forend:;
     if (archi<MAX_JAVA_ZIP_ARCHIVES && s_zipArchivTab[archi].fn[0] == 0) {
-        // new file into the table 
+        // new file into the table
         DPRINTF2("adding %s into index \n",name);
         if (stat(name ,&fst)!=0) {
             assert(s_opt.taskRegime);
@@ -471,7 +471,7 @@ int zipIndexArchive(char *name) {
             }
             return(-1);
         }
-#if defined (__WIN32__) || defined (__OS2__)                /*SBD*/
+#if defined (__WIN32__)                                     /*SBD*/
         ff = fopen(name,"rb");
 #else                                                       /*SBD*/
         ff = fopen(name,"r");
@@ -522,13 +522,13 @@ static int zipSeekToFile(char **accc, char **affin, S_charBuf *iBuf,
     }
     if (fsIsMember(&s_zipArchivTab[i].dir,sep+1,0,ADD_NO,&place)==0) goto fini;
     SeekToPosition(ccc,ffin,iBuf,place->u.offset);
-    if (zipReadLocalFileHeader(&ccc, &ffin, iBuf, fn, &fsize, 
+    if (zipReadLocalFileHeader(&ccc, &ffin, iBuf, fn, &fsize,
                                &lastSig, s_zipArchivTab[i].fn, place->u.offset) == 0) goto fini;
     assert(lastSig == 0x04034b50);
     assert(strcmp(fn,sep+1)==0);
     res = 1;
  fini:
-    *accc = ccc; *affin = ffin; 
+    *accc = ccc; *affin = ffin;
     return(res);
 }
 
@@ -698,9 +698,9 @@ char * cfSkipFirstArgumentInSigString(char *sig) {
     ssig ++;
     assert(*ssig);
     switch (*ssig) {
-    case ')': 
+    case ')':
         break;
-    case '[': 
+    case '[':
         for(ssig++; *ssig && isdigit(*ssig); ssig++) ;
         break;
     case 'L':
@@ -738,19 +738,19 @@ S_typeModifiers * cfUnPackResultType(char *sig, char **restype) {
         *ares = tt;
         ares = &(tt->next);
         switch (*ssig) {
-        case ')': 
+        case ')':
             FILLF_typeModifiers(tt, TypeFunction,f,( NULL,NULL) ,NULL, NULL);
             assert(*sig == '(');
             tt->u.m.sig = NULL; /* must be set later !!!!!!!!!! */
             break;
-        case '[': 
+        case '[':
             FILLF_typeModifiers(tt, TypeArray,f,( NULL,NULL) ,NULL, NULL);
             for(ssig++; *ssig && isdigit(*ssig); ssig++) ;
             ssig --;
             break;
         case 'L':
             FILLF_typeModifiers(tt, TypeStruct,t, NULL,NULL, NULL);
-            fqname = ++ssig; 
+            fqname = ++ssig;
             ccname = fqname;
             for(; *ssig && *ssig!=';'; ssig++) {
                 if (*ssig == '/' || *ssig == '$') ccname = ssig+1;
@@ -773,7 +773,7 @@ S_typeModifiers * cfUnPackResultType(char *sig, char **restype) {
                 // TODO rather call 'javaFQTypeSymbolDefinitionCreate' !!!!
                 CF_ALLOCC(nnn, nmlen+1, char);
                 strcpy(nnn,fqname);
-                CF_ALLOC(pdd, S_symbol);            
+                CF_ALLOC(pdd, S_symbol);
                 FILL_symbolBits(&pdd->b,0,0,0,0,0,TypeStruct,StorageNone,0);
                 FILL_symbol(pdd,nnn+ccnameOffset,nnn,s_noPos,pdd->b,s,NULL,NULL);
                 CF_ALLOC(pdd->u.s, S_symStructSpecific);
@@ -870,9 +870,9 @@ static void cfAddRecordToClass( char *name,
     }
 }
 
-static void cfReadFieldInfos(   char **accc, 
-                                char **affin, 
-                                S_charBuf *iBuf, 
+static void cfReadFieldInfos(   char **accc,
+                                char **affin,
+                                S_charBuf *iBuf,
                                 S_symbol *memb,
                                 union constantPoolUnion *cp
                                 ) {
@@ -909,9 +909,9 @@ static char *simpleClassNameFromFQTName(char *fqtName) {
     return(res);
 }
 
-static void cfReadMethodInfos(  char **accc, 
-                                char **affin, 
-                                S_charBuf *iBuf, 
+static void cfReadMethodInfos(  char **accc,
+                                char **affin,
+                                S_charBuf *iBuf,
                                 S_symbol *memb,
                                 union constantPoolUnion *cp
                                 ) {
@@ -951,7 +951,7 @@ static void cfReadMethodInfos(  char **accc,
             name = memb->name;
 #if ZERO
             sprintf(ttt,"%s%c%s",memb->linkName,LINK_NAME_CUT_SYMBOL,memb->name);
-            
+
             CF_ALLOCC(name, strlen(ttt)+1, char);
             strcpy(name, ttt);
 #endif
@@ -1114,7 +1114,7 @@ void javaReadClassFile(char *name, S_symbol *memb, int loadSuper) {
     memb->b.javaFileLoaded = 1;
     /*&
       fprintf(dumpOut,": ppmmem == %d/%d\n",ppmMemoryi,SIZE_ppmMemory);
-      fprintf(dumpOut,":reading file %s arg class == %s == %s\n", 
+      fprintf(dumpOut,":reading file %s arg class == %s == %s\n",
       name, memb->name, memb->linkName); fflush(dumpOut);
       &*/
     zipsep = strchr(name, ZIP_SEPARATOR_CHAR);
@@ -1131,7 +1131,7 @@ void javaReadClassFile(char *name, S_symbol *memb, int loadSuper) {
     s_fileTab.tab[fileInd]->b.cxLoading = 1;
 
     FILL_position(&pos, fileInd,1,0);
-    addCxReference(memb, &pos, UsageClassFileDefinition, 
+    addCxReference(memb, &pos, UsageClassFileDefinition,
                    s_noneFileIndex, s_noneFileIndex);
     addCfClassTreeHierarchyRef(fileInd, UsageClassFileDefinition);
     //&fprintf(dumpOut,"ftitem==%s\n", s_fileTab.tab[fileInd]->name);
@@ -1172,7 +1172,7 @@ void javaReadClassFile(char *name, S_symbol *memb, int loadSuper) {
         super = constantPool[constantPool[superClass].clas.nameIndex].asciz;
         addSuperClassOrInterfaceByName(memb, super, memb->u.s->classFile,
                                        loadSuper);
-    }   
+    }
 
     GetU2(inum, ccc, ffin, &cFile.lb.cb);
     /* implemented interfaces */
@@ -1233,7 +1233,7 @@ void javaReadClassFile(char *name, S_symbol *memb, int loadSuper) {
                 GetU2(modifs, ccc, ffin, &cFile.lb.cb);
                 //& inners->b.accessFlags |= modifs;
                 //&fprintf(dumpOut,"modif? %x\n",modifs);fflush(dumpOut);
- 
+
                 FILL_nestedSpec(& memb->u.s->nest[rinners], inners, membFlag, modifs);
                 assert(inners && inners->b.symType==TypeStruct && inners->u.s);
                 cn = inners->u.s->classFile;
@@ -1277,7 +1277,3 @@ void javaReadClassFile(char *name, S_symbol *memb, int loadSuper) {
     //&{fprintf(dumpOut,": closing file %s\n",name);fflush(dumpOut);fprintf(dumpOut,": ppmmem == %d/%d\n",ppmMemoryi,SIZE_ppmMemory);fflush(dumpOut);}
     popInclude();
 }
-
-
-
-

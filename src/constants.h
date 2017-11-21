@@ -188,22 +188,16 @@
 #define FILE_BEGIN_DOT '_'
 /*typedef int pid_t;*/
 #else
-#ifdef __OS2__
-#define SLASH '\\'
-#define CLASS_PATH_SEPARATOR ';'
-#define FILE_BEGIN_DOT '.'
-#else
 #define SLASH '/'
 #define CLASS_PATH_SEPARATOR ':'
 #define FILE_BEGIN_DOT '.'
-#endif
 #endif
 
 
 /* ***************************  cxref files  ********************* */
 
 
-#if defined(__WIN32__) || defined (__OS2__)		/*SBD*/
+#if defined(__WIN32__)                  /*SBD*/
 
 #define PRF_FILES       "\\XFiles"		/*SBD*/
 #define PRF_CLASS       "\\XClasses"	/*SBD*/

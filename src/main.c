@@ -1824,11 +1824,7 @@ void searchDefaultOptionsFile(char *file, char *ttt, char *sect) {
 #ifdef __WIN32__    /*SBD*/
                     "options to xref task. Please, use '%HOME%\\_c-xrefrc' file"
 #else               /*SBD*/
-#ifdef __OS2__      /*SBD*/
-                    "options to xref task. Please, use '%HOME%\\.c-xrefrc' file"
-#else               /*SBD*/
                     "options to xref task. Please, use '~/.c-xrefrc' file"
-#endif              /*SBD*/
 #endif              /*SBD*/
                     );
             error(ERR_ST, tmpBuff);
@@ -1951,7 +1947,7 @@ static int computeAndOpenInputFile() {
         //& inputBuff = editorGetOpenedAndLoadedBuffer(s_input_file_name);
         inputBuff = editorFindFile(s_input_file_name);
         if (inputBuff == NULL) {
-#if defined (__WIN32__) || defined (__OS2__)    /*SBD*/
+#if defined (__WIN32__)    /*SBD*/
             inputIn = fopen(s_input_file_name,"rb");
 #else                   /*SBD*/
             inputIn = fopen(s_input_file_name,"r");
@@ -2161,10 +2157,10 @@ static int getLineFromFile(FILE *ff, char *tt, int ttsize, int *outI) {
 }
 
 static void getAndProcessGccOptions() {
-    char tt[MAX_OPTION_LEN];
+    char line[MAX_OPTION_LEN];
     int len,c,isActiveSect;
-    char *ttt, *lang;
-    FILE *ff;
+    char *tempfile_name, *lang;
+    FILE *tempfile;
     struct stat stt;
     if (LANGUAGE(LAN_C) || LANGUAGE(LAN_YACC)) {
       lang = "c";
@@ -2176,28 +2172,28 @@ static void getAndProcessGccOptions() {
       return;
     }
     isActiveSect = 0;
-    ttt = crTmpFileName_st();
-    assert(strlen(ttt)+1 < MAX_FILE_NAME_SIZE);
-    sprintf(tmpBuff, "LANG=C cpp -v -x %s -o /dev/null /dev/null >%s 2>&1", lang, ttt);
-    system(tmpBuff);
-    ff = fopen(ttt,"r");
-    if (ff==NULL) return;
-    while (getLineFromFile(ff,tt,MAX_OPTION_LEN,&len) != EOF) {
-        if (strncmp(tt,"#include <...> search starts here:",34)==0) {
+    tempfile_name = create_temporary_filename();
+    assert(strlen(tempfile_name)+1 < MAX_FILE_NAME_SIZE);
+    sprintf(tmpBuff, "LANG=C cpp -v -x %s -o /dev/null /dev/null >%s 2>&1", lang, tempfile_name);
+    int result = system(tmpBuff);
+    tempfile = fopen(tempfile_name,"r");
+    if (tempfile==NULL) return;
+    while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF) {
+        if (strncmp(line,"#include <...> search starts here:",34)==0) {
             isActiveSect = 1;
         }
-        else if (strncmp(tt,"End of search list.",19)==0) {
+        else if (strncmp(line,"End of search list.",19)==0) {
             isActiveSect = 0;
             break;
         }
         else if (    isActiveSect
-                     && statb(tt,&stt) == 0
+                     && statb(line,&stt) == 0
                      && (stt.st_mode & S_IFMT) == S_IFDIR) {
-            mainAddStringListOption(&s_opt.includeDirs, tt);
+            mainAddStringListOption(&s_opt.includeDirs, line);
         }
     }
-    fclose(ff);
-    removeFile(ttt);
+    fclose(tempfile);
+    removeFile(tempfile_name);
 }
 
 void getAndProcessXrefrcOptions(char *dffname, char *dffsect,char *project) {
@@ -2802,7 +2798,7 @@ void mainOpenOutputFile(char *ofile) {
     mainCloseOutputFile();
     if (ofile!=NULL) {
         //&fprintf(dumpOut,"OPENING OUTPUT FILE %s\n", s_opt.outputFileName);
-#if defined (__WIN32__) || defined (__OS2__)    /*SBD*/
+#if defined (__WIN32__)    /*SBD*/
         // open it as binary file, so that record lengths will be correct
         ccOut = fopen(ofile,"wb");
 #else                   /*SBD*/

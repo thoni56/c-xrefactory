@@ -42,7 +42,7 @@ void genInternalLabelReference(int counter, int usage) {
     S_idIdent ll;
     LOCAL_LABEL_NAME(ttt,counter);
     FILLF_idIdent(&ll, ttt, NULL, cFile.lb.cb.fileNumber, 0,0);
-    if (usage != UsageDefined) ll.p.line++; 
+    if (usage != UsageDefined) ll.p.line++;
     // line == 0 or 1 , (hack to get definition first)
     labelReference(&ll, usage);
 }
@@ -327,7 +327,7 @@ static int extIsJumpInOutBlock(S_programGraphNode *program) {
                                 ppp->ref->usg.base==UsageDefined        \
                                 &&  ppp->symRef->b.symType==TypeDefault \
                                 &&  ppp->symRef->b.scope==ScopeAuto     \
-                                ) 
+                                )
 #endif
 
 static void extClassifyLocalVariables(S_programGraphNode *program) {
@@ -376,128 +376,128 @@ static void extClassifyLocalVariables(S_programGraphNode *program) {
     }
 
 static void extReClassifyIOVars(S_programGraphNode *program) {
-S_programGraphNode  *p,*op;
-int                 uniqueOutFlag;
+    S_programGraphNode  *p,*op;
+    int uniqueOutFlag;
 
-op = NULL; uniqueOutFlag = 1;
-for(p=program; p!=NULL; p=p->next) {
-if (s_opt.extractMode == EXTR_FUNCTION_ADDRESS_ARGS) {
-if (        p->classifBits == EXTRACT_OUT_ARGUMENT
+    op = NULL; uniqueOutFlag = 1;
+    for(p=program; p!=NULL; p=p->next) {
+        if (s_opt.extractMode == EXTR_FUNCTION_ADDRESS_ARGS) {
+            if (p->classifBits == EXTRACT_OUT_ARGUMENT
                 ||  p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
                 ||  p->classifBits == EXTRACT_IN_OUT_ARGUMENT
                 ) {
-p->classifBits = EXTRACT_ADDRESS_ARGUMENT;
-}
-} else if (s_opt.extractMode == EXTR_FUNCTION) {
-if (p->classifBits == EXTRACT_OUT_ARGUMENT
-        || p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
-        ) {
-if (op == NULL) op = p;
- else uniqueOutFlag = 0;
-// re-classify to in_out
-}
-}
-}
+                p->classifBits = EXTRACT_ADDRESS_ARGUMENT;
+            }
+        } else if (s_opt.extractMode == EXTR_FUNCTION) {
+            if (p->classifBits == EXTRACT_OUT_ARGUMENT
+                || p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
+                ) {
+                if (op == NULL) op = p;
+                else uniqueOutFlag = 0;
+                // re-classify to in_out
+            }
+        }
+    }
 
-if (op!=NULL && uniqueOutFlag) {
-if (op->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT) {
-op->classifBits = EXTRACT_LOCAL_RESULT_VALUE;
-} else {
-op->classifBits = EXTRACT_RESULT_VALUE;
-}
-return;
-}
+    if (op!=NULL && uniqueOutFlag) {
+        if (op->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT) {
+            op->classifBits = EXTRACT_LOCAL_RESULT_VALUE;
+        } else {
+            op->classifBits = EXTRACT_RESULT_VALUE;
+        }
+        return;
+    }
 
-op = NULL; uniqueOutFlag = 1;
-for(p=program; p!=NULL; p=p->next) {
-if (s_opt.extractMode == EXTR_FUNCTION) {
-if (p->classifBits == EXTRACT_IN_OUT_ARGUMENT) {
-if (op == NULL) op = p;
- else uniqueOutFlag = 0;
-// re-classify to in_out
-}
-}
-}
+    op = NULL; uniqueOutFlag = 1;
+    for(p=program; p!=NULL; p=p->next) {
+        if (s_opt.extractMode == EXTR_FUNCTION) {
+            if (p->classifBits == EXTRACT_IN_OUT_ARGUMENT) {
+                if (op == NULL) op = p;
+                else uniqueOutFlag = 0;
+                // re-classify to in_out
+            }
+        }
+    }
 
-if (op!=NULL && uniqueOutFlag) {
-op->classifBits = EXTRACT_IN_RESULT_VALUE;
-return;
-}
+    if (op!=NULL && uniqueOutFlag) {
+        op->classifBits = EXTRACT_IN_RESULT_VALUE;
+        return;
+    }
 
 }
 
 /* ************************** macro ******************************* */
 
 static void extGenNewMacroCall(S_programGraphNode *program) {
-char                dcla[TMP_STRING_SIZE];
-char                decl[TMP_STRING_SIZE];
-char                name[TMP_STRING_SIZE];
-S_programGraphNode  *p;
-char                *declAddr;
-int                 i, fFlag=1;
+    char                dcla[TMP_STRING_SIZE];
+    char                decl[TMP_STRING_SIZE];
+    char                name[TMP_STRING_SIZE];
+    S_programGraphNode  *p;
+    char                *declAddr;
+    int                 i, fFlag=1;
 
-rb[0]=0;
+    rb[0]=0;
 
-sprintf(rb+strlen(rb),"\t%s",s_extractionName);
+    sprintf(rb+strlen(rb),"\t%s",s_extractionName);
 
-for(p=program; p!=NULL; p=p->next) {
-if (    p->classifBits == EXTRACT_VALUE_ARGUMENT
-            ||  p->classifBits == EXTRACT_IN_OUT_ARGUMENT
-            ||  p->classifBits == EXTRACT_ADDRESS_ARGUMENT
-            ||  p->classifBits == EXTRACT_OUT_ARGUMENT
-            ||  p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
-            ||  p->classifBits == EXTRACT_RESULT_VALUE
-            ||  p->classifBits == EXTRACT_IN_RESULT_VALUE
-            ||  p->classifBits == EXTRACT_LOCAL_VAR) {
-GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
-sprintf(rb+strlen(rb), "%s%s", fFlag?"(":", " , name);
-fFlag = 0;
-}
-}
-sprintf(rb+strlen(rb), "%s);\n", fFlag?"(":"");
+    for(p=program; p!=NULL; p=p->next) {
+        if (    p->classifBits == EXTRACT_VALUE_ARGUMENT
+                ||  p->classifBits == EXTRACT_IN_OUT_ARGUMENT
+                ||  p->classifBits == EXTRACT_ADDRESS_ARGUMENT
+                ||  p->classifBits == EXTRACT_OUT_ARGUMENT
+                ||  p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
+                ||  p->classifBits == EXTRACT_RESULT_VALUE
+                ||  p->classifBits == EXTRACT_IN_RESULT_VALUE
+                ||  p->classifBits == EXTRACT_LOCAL_VAR) {
+            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
+            sprintf(rb+strlen(rb), "%s%s", fFlag?"(":", " , name);
+            fFlag = 0;
+        }
+    }
+    sprintf(rb+strlen(rb), "%s);\n", fFlag?"(":"");
 
-InternalCheck(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
-if (s_opt.xref2) {
-ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
-} else {
-fprintf(ccOut, "%s", rb);
-}
+    InternalCheck(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
+    if (s_opt.xref2) {
+        ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
+    } else {
+        fprintf(ccOut, "%s", rb);
+    }
 }
 
 static void extGenNewMacroHead(S_programGraphNode *program) {
-char                nhead[MAX_EXTRACT_FUN_HEAD_SIZE];
-int                 nhi;
-char                dcla[TMP_STRING_SIZE];
-char                decl[MAX_EXTRACT_FUN_HEAD_SIZE];
-char                name[MAX_EXTRACT_FUN_HEAD_SIZE];
- S_programGraphNode  *p,*op;
- char                *declAddr;
- int                 i, uniqueOutFlag, fFlag=1;
+    char                nhead[MAX_EXTRACT_FUN_HEAD_SIZE];
+    int                 nhi;
+    char                dcla[TMP_STRING_SIZE];
+    char                decl[MAX_EXTRACT_FUN_HEAD_SIZE];
+    char                name[MAX_EXTRACT_FUN_HEAD_SIZE];
+    S_programGraphNode  *p,*op;
+    char                *declAddr;
+    int                 i, uniqueOutFlag, fFlag=1;
 
- rb[0]=0;
+    rb[0]=0;
 
- sprintf(rb+strlen(rb),"#define %s",s_extractionName);
- for(p=program; p!=NULL; p=p->next) {
-     if (    p->classifBits == EXTRACT_VALUE_ARGUMENT
-             ||  p->classifBits == EXTRACT_IN_OUT_ARGUMENT
-             ||  p->classifBits == EXTRACT_OUT_ARGUMENT
-             ||  p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
-             ||  p->classifBits == EXTRACT_ADDRESS_ARGUMENT
-             ||  p->classifBits == EXTRACT_RESULT_VALUE
-             ||  p->classifBits == EXTRACT_IN_RESULT_VALUE
-             ||  p->classifBits == EXTRACT_LOCAL_VAR) {
-         GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
-         sprintf(rb+strlen(rb), "%s%s", fFlag?"(":"," , name);
-         fFlag = 0;
-     }
- }
- sprintf(rb+strlen(rb), "%s) {\\\n", fFlag?"(":"");
- InternalCheck(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
- if (s_opt.xref2) {
-     ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
- } else {
-     fprintf(ccOut, "%s", rb);
- }
+    sprintf(rb+strlen(rb),"#define %s",s_extractionName);
+    for(p=program; p!=NULL; p=p->next) {
+        if (    p->classifBits == EXTRACT_VALUE_ARGUMENT
+                ||  p->classifBits == EXTRACT_IN_OUT_ARGUMENT
+                ||  p->classifBits == EXTRACT_OUT_ARGUMENT
+                ||  p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
+                ||  p->classifBits == EXTRACT_ADDRESS_ARGUMENT
+                ||  p->classifBits == EXTRACT_RESULT_VALUE
+                ||  p->classifBits == EXTRACT_IN_RESULT_VALUE
+                ||  p->classifBits == EXTRACT_LOCAL_VAR) {
+            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
+            sprintf(rb+strlen(rb), "%s%s", fFlag?"(":"," , name);
+            fFlag = 0;
+        }
+    }
+    sprintf(rb+strlen(rb), "%s) {\\\n", fFlag?"(":"");
+    InternalCheck(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
+    if (s_opt.xref2) {
+        ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
+    } else {
+        fprintf(ccOut, "%s", rb);
+    }
 }
 
 static void extGenNewMacroTail(S_programGraphNode *program) {
@@ -577,9 +577,9 @@ static void extGenNewFunCall(S_programGraphNode *program) {
 
 static void removeSymbolFromSymRefList(S_symbolRefItemList **ll, S_symbolRefItem *s) {
     S_symbolRefItemList **r;
-    r=ll; 
+    r=ll;
     while (*r!=NULL) {
-        if (isSmallerOrEqClass(getClassNumFromClassLinkName((*r)->d->name, s_noneFileIndex), 
+        if (isSmallerOrEqClass(getClassNumFromClassLinkName((*r)->d->name, s_noneFileIndex),
                                getClassNumFromClassLinkName(s->name, s_noneFileIndex))) {
             *r = (*r)->next;
         } else {
@@ -590,9 +590,9 @@ static void removeSymbolFromSymRefList(S_symbolRefItemList **ll, S_symbolRefItem
 
 static void addSymbolToSymRefList(S_symbolRefItemList **ll, S_symbolRefItem *s) {
     S_symbolRefItemList *r, *rr;
-    r = *ll; 
+    r = *ll;
     while (r!=NULL) {
-        if (isSmallerOrEqClass(getClassNumFromClassLinkName(s->name, s_noneFileIndex), 
+        if (isSmallerOrEqClass(getClassNumFromClassLinkName(s->name, s_noneFileIndex),
                                getClassNumFromClassLinkName(r->d->name, s_noneFileIndex))) {
             return;
         }

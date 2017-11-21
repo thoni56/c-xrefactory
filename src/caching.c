@@ -1,13 +1,8 @@
-/*
-  $Revision: 1.5 $
-  $Date: 2002/09/14 17:27:02 $
-*/
-
 #include "stdinc.h"
 #include "head.h"
 #include "proto.h"      /*SBD*/
 #include "protocol.h"
-//
+
 
 int testFileModifTime(int ii) {
     struct stat fst;
@@ -50,7 +45,7 @@ static void deleteReferencesOutOfMemory(S_reference **rr) {
 
 static void cxrefTabDeleteOutOfMemory(int i) {
     S_symbolRefItem **pp;
-    pp = &s_cxrefTab.tab[i]; 
+    pp = &s_cxrefTab.tab[i];
     while (*pp!=NULL) {
         if (DM_FREED_POINTER(cxMemory,*pp)) {
             /* out of memory, delete it */
@@ -97,27 +92,27 @@ static void fileTabDeleteOutOfMemory(S_fileItem *p, int i) {
 #define MEM_FREED_POINTER(ppp) (                                        \
                                 ((char*)ppp) >= memory+s_topBlock->firstFreeIndex && \
                                 ((char*)ppp) < memory+SIZE_workMemory   \
-                                )
+                                                                        )
 
 static void structCachingFree(S_symbol *pp) {
     S_symbolList **tp;
     assert(pp->u.s);
-    if (MEM_FREED_POINTER(pp->u.s->records) || 
+    if (MEM_FREED_POINTER(pp->u.s->records) ||
         SM_FREED_POINTER(ppmMemory,pp->u.s->records)) {
         pp->u.s->records = NULL;
     }
-    if (MEM_FREED_POINTER(pp->u.s->casts.node) || 
+    if (MEM_FREED_POINTER(pp->u.s->casts.node) ||
         SM_FREED_POINTER(ppmMemory,pp->u.s->casts.node)) {
         pp->u.s->casts.node = NULL;
     }
-    if (MEM_FREED_POINTER(pp->u.s->casts.sub) || 
+    if (MEM_FREED_POINTER(pp->u.s->casts.sub) ||
         SM_FREED_POINTER(ppmMemory,pp->u.s->casts.sub)) {
         pp->u.s->casts.sub = NULL;
     }
 
     tp = &pp->u.s->super;
     while (*tp!=NULL) {
-        if (MEM_FREED_POINTER(*tp) || 
+        if (MEM_FREED_POINTER(*tp) ||
             SM_FREED_POINTER(ppmMemory,*tp)) {
             *tp = (*tp)->next;
             goto contlabel;
@@ -163,7 +158,7 @@ static void symTabDeleteOutOfMemory(int i) {
             break;
         }
         pp= &(*pp)->next;
-    }   
+    }
 }
 
 static void javaFqtTabDeleteOutOfMemory(int i) {
@@ -179,7 +174,7 @@ static void javaFqtTabDeleteOutOfMemory(int i) {
             structCachingFree((*pp)->d);
         }
         pp= &(*pp)->next;
-    }   
+    }
 }
 
 static void trailDeleteOutOfMemory() {
@@ -196,9 +191,9 @@ static void includeListDeleteOutOfMemory() {
     while (*pp!=NULL) {
         if (SM_FREED_POINTER(ppmMemory,*pp)) {
             *pp = (*pp)->next;  continue;
-        } 
+        }
         pp= &(*pp)->next;
-    }   
+    }
 }
 
 static int cachedIncludedFilePass(int cpi) {
@@ -229,15 +224,15 @@ void recoverCxMemory(char *cxMemFreeBase) {
                                           && LANGUAGE(LAN_JAVA)         \
                                           && (s_opt.taskRegime == RegimeXref || s_opt.taskRegime == RegimeHtmlGenerate) \
                                           && ppmMemoryi < (SIZE_ppmMemory/3)*2 \
-                                          )
+                                                                        )
 
 
-void recoverCachePointZero() {
-    //&if (CACHING_CLASSES) {
-    ppmMemoryi = s_cache.cp[0].ppmMemoryi;
-    //&}
-    recoverCachePoint(0,s_cache.cp[0].lbcc,0);
-}
+    void recoverCachePointZero() {
+        //&if (CACHING_CLASSES) {
+        ppmMemoryi = s_cache.cp[0].ppmMemoryi;
+        //&}
+        recoverCachePoint(0,s_cache.cp[0].lbcc,0);
+    }
 
 void recoverMemoriesAfterOverflow(char *cxMemFreeBase) {
     recoverCxMemory(cxMemFreeBase);
@@ -281,13 +276,13 @@ void recoverCachePoint(int i, char *readedUntil, int activeCaching) {
     cFile.ifDeep = cp->ifDeep;
     cFile.ifstack = cp->ifstack;
     FILL_lexInput(&cInput, cp->lbcc, readedUntil, s_cache.lb, NULL, II_CACHE);
-    FILL_caching(&s_cache, 
+    FILL_caching(&s_cache,
                  activeCaching,
-                 i+1, 
+                 i+1,
                  cp->ibi,
                  cp->lbcc,
-                 cInput.cc, 
-                 cInput.cc, 
+                 cInput.cc,
+                 cInput.cc,
                  cInput.fin
                  );
     /*fprintf(dumpOut,"recovering 3\n"); fflush(dumpOut);*/
@@ -338,7 +333,7 @@ void cacheInput() {
     }
     /* if from cache, don't copy on the same place */
     if (cInput.margExpFlag != II_CACHE) memcpy(s_cache.lbcc, s_cache.lexcc, size);
-    s_cache.lbcc += size;   
+    s_cache.lbcc += size;
     s_cache.lexcc = cInput.cc;
 }
 
@@ -370,13 +365,10 @@ void poseCachePoint(int inputCaching) {
     DPRINTF2("posing cache point %d \n",s_cache.cpi);
     //&fprintf(dumpOut,"posing cache point %d\n",s_cache.cpi);
     FILL_cachePoint(pp, s_topBlock, *s_topBlock,
-                    ppmMemoryi, cxMemory->i, mbMemoryi, 
-                    s_cache.lbcc, s_cache.ibi, 
+                    ppmMemoryi, cxMemory->i, mbMemoryi,
+                    s_cache.lbcc, s_cache.ibi,
                     cFile.lineNumber, cFile.ifDeep, cFile.ifstack,
                     s_javaStat, s_count
                     );
     s_cache.cpi ++;
 }
-
-
-

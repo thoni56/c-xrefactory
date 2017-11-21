@@ -1,0 +1,28 @@
+#
+# This makefile is included by Makefile.common to build a bootstrap
+# version of c-xref (c-xref.bs) which do not require regenerating the
+# strXXX.h et al. files
+
+# Once that is done we can build a correct c-xref that knows about the actual
+# header files on this system. ...I think... /thoni56
+#
+# Do not use this Makefile directly
+#
+
+include Makefile.objs
+
+#########################################################################
+
+all: $(ZLIB) c-xref.bs
+
+..always..:;
+
+$(ROOTDIR)/lib/zlib/libz.a: ..always..
+	make -C $(ROOTDIR)/lib/zlib libz.a
+
+#########################################################################
+%.c : %.y
+
+c-xref.bs: $(OBJS)
+	$(CC) $(LDFLAGS) -o c-xref.bs $(OBJS) $(LIBS)
+	@echo "*************** c-xref.bs ***************"

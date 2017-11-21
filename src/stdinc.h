@@ -9,12 +9,8 @@
 #include <windows.h>	/*SBD*/
 #include <direct.h>		/*SBD*/
 #else					/*SBD*/
-#ifdef __OS2__			/*SBD*/
-#include <os2.h>		/*SBD*/
-#else					/*SBD*/
 #include <unistd.h>		/*SBD*/
 #include <dirent.h>		/*SBD*/
-#endif					/*SBD*/
 #endif					/*SBD*/
 
 
@@ -40,5 +36,3 @@
 
 
 #endif      /*SBD*/
-
-
