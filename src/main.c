@@ -109,40 +109,19 @@ static void usage(char *s) {
 }
 
 static void aboutMessage() {
-    time_t tt;
-    int j;
-    char ttt[REFACTORING_TMP_STRING_SIZE];
-    sprintf(ttt,"This is C-xrefactory version %s (%s).\n", C_XREF_VERSION_NUMBER, __DATE__);
-#if ZERO  // since 1.6.8 it is free
-#if defined(TIME_LIMITED) && ! defined(BIN_RELEASE)
-    tt = EXPIRATION;
-    sprintf(ttt+strlen(ttt),"Time limit: %s",ctime(&tt));
-#else
-#if defined(BIN_RELEASE)
-    setExpirationFromLicenseString();
-    if (s_expTime!=((time_t)-1)) {
-        sprintf(ttt+strlen(ttt),"Licensed until %s",ctime(&s_expTime));
-    }
-#else
-    /*&
-      for(j=0; s_licensement[j]; j++) tmpBuff[j]=s_licensement[j]^7;
-      tmpBuff[j]=0;
-      fprintf(stdout,"%s\n",tmpBuff);
-      &*/
-#endif
-#endif
-#endif
-    sprintf(ttt+strlen(ttt),"(c) 1997-2004 by Xref-Tech, http://www.xref-tech.com\n");
-    sprintf(ttt+strlen(ttt),"Released into GPL 2009 by Marian Vittek (SourceForge)\n");
-    sprintf(ttt+strlen(ttt),"Work resurrected and continued by Thomas Nilefalk 2015\n");
-    sprintf(ttt+strlen(ttt),"(http://github.com/thoni56/c-xrefactory)\n");
+    char output[REFACTORING_TMP_STRING_SIZE];
+    sprintf(output,"This is C-xrefactory version %s (%s).\n", C_XREF_VERSION_NUMBER, __DATE__);
+    sprintf(output+strlen(output),"(c) 1997-2004 by Xref-Tech, http://www.xref-tech.com\n");
+    sprintf(output+strlen(output),"Released into GPL 2009 by Marian Vittek (SourceForge)\n");
+    sprintf(output+strlen(output),"Work resurrected and continued by Thomas Nilefalk 2015\n");
+    sprintf(output+strlen(output),"(http://github.com/thoni56/c-xrefactory)\n");
     if (s_opt.exit) {
-        sprintf(ttt+strlen(ttt),"Exiting!");
+        sprintf(output+strlen(output),"Exiting!");
     }
     if (s_opt.xref2) {
-        ppcGenRecord(PPC_INFORMATION, ttt, "\n");
+        ppcGenRecord(PPC_INFORMATION, output, "\n");
     } else {
-        fprintf(stdout, "%s", ttt);
+        fprintf(stdout, "%s", output);
     }
     if (s_opt.exit) exit(XREF_EXIT_BASE);
 }
@@ -1424,7 +1403,8 @@ static int processSOption(int *ii, int argc, char **argv) {
 static int processTOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strcmp(argv[i],"-typedefs")==0)    s_opt.typedefg = 1;
+    else if (strcmp(argv[i],"-typedefs")==0)
+        s_opt.typedefg = 1;
     else if (strcmp(argv[i],"-task_regime_server")==0) {
         s_opt.taskRegime = RegimeEditServer;
     }
