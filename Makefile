@@ -9,7 +9,7 @@ distribution:
 	sh CreateXrefDistribution
 
 test: all
-	make -C tests
+	make -C tests all
 
 install:
 	sh c-xref/c-xrefsetup
