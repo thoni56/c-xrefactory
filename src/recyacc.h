@@ -18,6 +18,18 @@ struct yyGlobalState {
 extern struct yyGlobalState *s_yygstate;
 extern struct yyGlobalState *s_initYygstate;
 
+#undef yylval
+#undef yydebug
+#undef yynerrs
+#undef yyerrflag
+#undef yychar
+#undef lastyystate
+#undef yyssp
+#undef yyval
+#undef yyss
+#undef yyvs
+#undef yyvsp
+
 #define yylval (s_yygstate->gyylval)
 #define yydebug (s_yygstate->gyydebug)
 #define yynerrs (s_yygstate->gyynerrs)

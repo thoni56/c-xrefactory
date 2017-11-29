@@ -2826,130 +2826,130 @@ case 106:
 break;
 case 107:
 #line 741 "cgram.y"
-{ 
-		assert(yyvsp[0].bbidIdent.d);
-		assert(yyvsp[0].bbidIdent.d->sd);
-		yyval.bbsymbol.d = typeSpecifier2(yyvsp[0].bbidIdent.d->sd->u.type);
-	}
+{
+        assert(yyvsp[0].bbidIdent.d);
+        assert(yyvsp[0].bbidIdent.d->sd);
+        yyval.bbsymbol.d = typeSpecifier2(yyvsp[0].bbidIdent.d->sd->u.type);
+    }
 break;
 case 108:
 #line 746 "cgram.y"
 {
-		yyval.bbsymbol.d  = typeSpecifier1(yyvsp[0].bbunsign.d);
-	}
+        yyval.bbsymbol.d  = typeSpecifier1(yyvsp[0].bbunsign.d);
+    }
 break;
 case 109:
 #line 749 "cgram.y"
 {
-		yyval.bbsymbol.d  = typeSpecifier2(yyvsp[0].bbtypeModif.d);
-	}
+        yyval.bbsymbol.d  = typeSpecifier2(yyvsp[0].bbtypeModif.d);
+    }
 break;
 case 110:
 #line 752 "cgram.y"
-{ 
-		assert(yyvsp[0].bbidIdent.d);
-		assert(yyvsp[0].bbidIdent.d->sd);
-		yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
-		declTypeSpecifier2(yyvsp[-1].bbsymbol.d,yyvsp[0].bbidIdent.d->sd->u.type);
-	}
+{
+        assert(yyvsp[0].bbidIdent.d);
+        assert(yyvsp[0].bbidIdent.d->sd);
+        yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
+        declTypeSpecifier2(yyvsp[-1].bbsymbol.d,yyvsp[0].bbidIdent.d->sd->u.type);
+    }
 break;
 case 111:
 #line 758 "cgram.y"
 {
-		yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
-		declTypeSpecifier1(yyvsp[-1].bbsymbol.d,yyvsp[0].bbunsign.d);
-	}
+        yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
+        declTypeSpecifier1(yyvsp[-1].bbsymbol.d,yyvsp[0].bbunsign.d);
+    }
 break;
 case 112:
 #line 762 "cgram.y"
 {
-		yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
-		declTypeSpecifier2(yyvsp[-1].bbsymbol.d,yyvsp[0].bbtypeModif.d);
-	}
+        yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
+        declTypeSpecifier2(yyvsp[-1].bbsymbol.d,yyvsp[0].bbtypeModif.d);
+    }
 break;
 case 113:
 #line 766 "cgram.y"
 {
-		yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
-		declTypeSpecifier1(yyvsp[-1].bbsymbol.d,yyvsp[0].bbunsign.d);
-	}
+        yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
+        declTypeSpecifier1(yyvsp[-1].bbsymbol.d,yyvsp[0].bbunsign.d);
+    }
 break;
 case 114:
 #line 770 "cgram.y"
 {
-		yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
-		declTypeSpecifier1(yyvsp[-1].bbsymbol.d,yyvsp[0].bbunsign.d);
-	}
+        yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
+        declTypeSpecifier1(yyvsp[-1].bbsymbol.d,yyvsp[0].bbunsign.d);
+    }
 break;
 case 115:
 #line 774 "cgram.y"
 {
-		yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
-		declTypeSpecifier2(yyvsp[-1].bbsymbol.d,yyvsp[0].bbtypeModif.d);
-	}
+        yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
+        declTypeSpecifier2(yyvsp[-1].bbsymbol.d,yyvsp[0].bbtypeModif.d);
+    }
 break;
 case 116:
 #line 778 "cgram.y"
 {
-		yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
-		yyval.bbsymbol.d->b.storage = yyvsp[0].bbunsign.d; 
-	}
+        yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
+        yyval.bbsymbol.d->b.storage = yyvsp[0].bbunsign.d;
+    }
 break;
 case 117:
 #line 782 "cgram.y"
 {
-		yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
-	}
+        yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
+    }
 break;
 case 118:
 #line 785 "cgram.y"
-{ 
-		assert(0);
-	}
+{
+        assert(0);
+    }
 break;
 case 119:
 #line 788 "cgram.y"
-{ 
-		assert(0); /* token never used */ 
-	}
+{
+        assert(0); /* token never used */
+    }
 break;
 case 120:
 #line 794 "cgram.y"
 {
-		yyval.bbsymbol.d  = typeSpecifier1(TypeDefault);
-		yyval.bbsymbol.d->b.storage = yyvsp[0].bbunsign.d; 
-	}
+        yyval.bbsymbol.d  = typeSpecifier1(TypeDefault);
+        yyval.bbsymbol.d->b.storage = yyvsp[0].bbunsign.d;
+    }
 break;
 case 121:
 #line 798 "cgram.y"
 {
-		yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
-		yyval.bbsymbol.d->b.storage = yyvsp[0].bbunsign.d; 
-	}
+        yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
+        yyval.bbsymbol.d->b.storage = yyvsp[0].bbunsign.d;
+    }
 break;
 case 122:
 #line 802 "cgram.y"
 {
-		yyval.bbsymbol.d  = typeSpecifier1(yyvsp[0].bbunsign.d);
-	}
+        yyval.bbsymbol.d  = typeSpecifier1(yyvsp[0].bbunsign.d);
+    }
 break;
 case 123:
 #line 805 "cgram.y"
 {
-		declTypeSpecifier1(yyvsp[-1].bbsymbol.d, yyvsp[0].bbunsign.d);
-	}
+        declTypeSpecifier1(yyvsp[-1].bbsymbol.d, yyvsp[0].bbunsign.d);
+    }
 break;
 case 124:
 #line 808 "cgram.y"
 {
-		yyval.bbsymbol.d = typeSpecifier1(TypeDefault);
-	}
+        yyval.bbsymbol.d = typeSpecifier1(TypeDefault);
+    }
 break;
 case 125:
 #line 811 "cgram.y"
 {
-		yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
-	}
+        yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
+    }
 break;
 case 131:
 #line 858 "cgram.y"
