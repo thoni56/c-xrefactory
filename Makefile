@@ -11,6 +11,9 @@ distribution:
 test: all
 	make -C tests all
 
+quick: all
+	make -C tests quick
+
 install:
 	sh c-xref/c-xrefsetup
 
