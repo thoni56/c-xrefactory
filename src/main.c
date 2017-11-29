@@ -235,14 +235,6 @@ void dirInputFile(MAP_FUN_PROFILE) {
         JavaMapOnPaths(wcPaths,{
                 dirInputFile(currentPath,"",NULL,NULL,recurseFlag,&topCallFlag);
             });
-#if ZERO
-#ifdef __WIN32__                /*SBD*/
-    } else if (strchr(fn,'*')!=NULL) {
-        copyDir(ttt, fn, &ii);
-        mapPatternFiles(fn, dirInputFile, ttt,
-                        NULL, NULL, recurseFlag, &topCallFlag);
-#endif                          /*SBD*/
-#endif
     } else if (topCallFlag
                && ((!s_opt.allowPackagesOnCl)
                    || packageOnCommandLine(fname)==0)) {
