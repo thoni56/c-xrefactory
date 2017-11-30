@@ -108,3 +108,10 @@ dependencies:;
 	$(CC) -E -MM $(COMCFLAGS) *.c > Makefile.dependencies
 
 #########################################################################
+
+reset:
+	make clean
+	-rm c-xref.bs
+	cp enumTxt.ok enumTxt.h
+	cp strFill.ok strFill.h
+	cp strTdef.ok strTdef.h
