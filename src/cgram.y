@@ -1,9 +1,11 @@
 /*
-%expect
+  %expect 7
+  %expect-rr 34
 
-../../../byacc-1.9/yacc: 7 shift/reduce conflicts, 28 reduce/reduce conflicts.
+  ../byacc-1.9/yacc: 7 shift/reduce conflicts, 34 reduce/reduce conflicts.
 
 */
+
 %{
 
 #define yylval cyylval
@@ -738,80 +740,80 @@ user_defined_type
     ;
 
 declaration_specifiers0
-	: user_defined_type										{ 
-		assert($1.d);
-		assert($1.d->sd);
-		$$.d = typeSpecifier2($1.d->sd->u.type);
-	}
-	| type_specifier1										{
-		$$.d  = typeSpecifier1($1.d);
-	}
-	| type_specifier2										{
-		$$.d  = typeSpecifier2($1.d);
-	}
-	| declaration_modality_specifiers  user_defined_type	{ 
-		assert($2.d);
-		assert($2.d->sd);
-		$$.d = $1.d;
-		declTypeSpecifier2($1.d,$2.d->sd->u.type);
-	}
-	| declaration_modality_specifiers type_specifier1		{
-		$$.d = $1.d;
-		declTypeSpecifier1($1.d,$2.d);
-	}
-	| declaration_modality_specifiers type_specifier2		{
-		$$.d = $1.d;
-		declTypeSpecifier2($1.d,$2.d);
-	}
-	| declaration_specifiers0 type_modality_specifier		{
-		$$.d = $1.d;
-		declTypeSpecifier1($1.d,$2.d);
-	}
-	| declaration_specifiers0 type_specifier1				{
-		$$.d = $1.d;
-		declTypeSpecifier1($1.d,$2.d);
-	}
-	| declaration_specifiers0 type_specifier2				{
-		$$.d = $1.d;
-		declTypeSpecifier2($1.d,$2.d);
-	}
-	| declaration_specifiers0 storage_class_specifier		{
-		$$.d = $1.d;
-		$$.d->b.storage = $2.d; 
-	}
-	| declaration_specifiers0 function_specifier			{
-		$$.d = $1.d;
-	}
-	| COMPL_TYPE_NAME										{ 
-		assert(0);
-	}
-	| declaration_modality_specifiers COMPL_TYPE_NAME		{ 
-		assert(0); /* token never used */ 
-	}
-	;
+    : user_defined_type										{
+        assert($1.d);
+        assert($1.d->sd);
+        $$.d = typeSpecifier2($1.d->sd->u.type);
+    }
+    | type_specifier1										{
+        $$.d  = typeSpecifier1($1.d);
+    }
+    | type_specifier2										{
+        $$.d  = typeSpecifier2($1.d);
+    }
+    | declaration_modality_specifiers  user_defined_type	{
+        assert($2.d);
+        assert($2.d->sd);
+        $$.d = $1.d;
+        declTypeSpecifier2($1.d,$2.d->sd->u.type);
+    }
+    | declaration_modality_specifiers type_specifier1		{
+        $$.d = $1.d;
+        declTypeSpecifier1($1.d,$2.d);
+    }
+    | declaration_modality_specifiers type_specifier2		{
+        $$.d = $1.d;
+        declTypeSpecifier2($1.d,$2.d);
+    }
+    | declaration_specifiers0 type_modality_specifier		{
+        $$.d = $1.d;
+        declTypeSpecifier1($1.d,$2.d);
+    }
+    | declaration_specifiers0 type_specifier1				{
+        $$.d = $1.d;
+        declTypeSpecifier1($1.d,$2.d);
+    }
+    | declaration_specifiers0 type_specifier2				{
+        $$.d = $1.d;
+        declTypeSpecifier2($1.d,$2.d);
+    }
+    | declaration_specifiers0 storage_class_specifier		{
+        $$.d = $1.d;
+        $$.d->b.storage = $2.d;
+    }
+    | declaration_specifiers0 function_specifier			{
+        $$.d = $1.d;
+    }
+    | COMPL_TYPE_NAME										{
+        assert(0);
+    }
+    | declaration_modality_specifiers COMPL_TYPE_NAME		{
+        assert(0); /* token never used */
+    }
+    ;
 
 declaration_modality_specifiers
-	: storage_class_specifier								{
-		$$.d  = typeSpecifier1(TypeDefault);
-		$$.d->b.storage = $1.d; 
-	}
-	| declaration_modality_specifiers storage_class_specifier 		{
-		$$.d = $1.d;
-		$$.d->b.storage = $2.d; 
-	}
-	| type_modality_specifier								{
-		$$.d  = typeSpecifier1($1.d);
-	}
-	| declaration_modality_specifiers type_modality_specifier		{
-		declTypeSpecifier1($1.d, $2.d);
-	}
-	| function_specifier									{
-		$$.d = typeSpecifier1(TypeDefault);
-	}
-	| declaration_modality_specifiers function_specifier			{
-		$$.d = $1.d;
-	}
-	;
+    : storage_class_specifier								{
+        $$.d  = typeSpecifier1(TypeDefault);
+        $$.d->b.storage = $1.d;
+    }
+    | declaration_modality_specifiers storage_class_specifier       {
+        $$.d = $1.d;
+        $$.d->b.storage = $2.d;
+    }
+    | type_modality_specifier								{
+        $$.d  = typeSpecifier1($1.d);
+    }
+    | declaration_modality_specifiers type_modality_specifier		{
+        declTypeSpecifier1($1.d, $2.d);
+    }
+    | function_specifier									{
+        $$.d = typeSpecifier1(TypeDefault);
+    }
+    | declaration_modality_specifiers function_specifier			{
+        $$.d = $1.d;
+    }
+    ;
 
 /*& // an experiment
 declaration_specifier0:
@@ -855,38 +857,38 @@ init_declarator
 */
 
 storage_class_specifier
-	: TYPEDEF		{ $$.d = StorageTypedef; }
-	| EXTERN		{ $$.d = StorageExtern; }
-	| STATIC		{ $$.d = StorageStatic; }
-	| _THREADLOCAL	{ $$.d = StorageThreadLocal; }
-	| AUTO			{ $$.d = StorageAuto; }
-	| REGISTER		{ $$.d = StorageAuto; }
-	;
+    : TYPEDEF		{ $$.d = StorageTypedef; }
+    | EXTERN		{ $$.d = StorageExtern; }
+    | STATIC		{ $$.d = StorageStatic; }
+    | _THREADLOCAL	{ $$.d = StorageThreadLocal; }
+    | AUTO			{ $$.d = StorageAuto; }
+    | REGISTER		{ $$.d = StorageAuto; }
+    ;
 
 type_modality_specifier
-	: CONST			{ $$.d = TypeDefault; }
-	| RESTRICT		{ $$.d = TypeDefault; }
-	| VOLATILE		{ $$.d = TypeDefault; }
-	| _ATOMIC		{ $$.d = TypeDefault; }
-	| ANONYME_MOD	{ $$.d = TypeDefault; }
-	;
+    : CONST			{ $$.d = TypeDefault; }
+    | RESTRICT		{ $$.d = TypeDefault; }
+    | VOLATILE		{ $$.d = TypeDefault; }
+    | _ATOMIC		{ $$.d = TypeDefault; }
+    | ANONYME_MOD	{ $$.d = TypeDefault; }
+    ;
 
 type_modality_specifier_opt:
     | type_modality_specifier
     ;
 
 type_specifier1
-	: CHAR		{ $$.d = TypeChar; }
-	| SHORT		{ $$.d = TmodShort; }
-	| INT		{ $$.d = TypeInt; }
-	| LONG		{ $$.d = TmodLong; }
-	| SIGNED	{ $$.d = TmodSigned; }
-	| UNSIGNED	{ $$.d = TmodUnsigned; }
-	| FLOAT		{ $$.d = TypeFloat; }
-	| DOUBLE	{ $$.d = TypeDouble; }
-	| VOID		{ $$.d = TypeVoid; }
-	| _BOOL		{ $$.d = TypeBoolean; }
-	;
+    : CHAR		{ $$.d = TypeChar; }
+    | SHORT		{ $$.d = TmodShort; }
+    | INT		{ $$.d = TypeInt; }
+    | LONG		{ $$.d = TmodLong; }
+    | SIGNED	{ $$.d = TmodSigned; }
+    | UNSIGNED	{ $$.d = TmodUnsigned; }
+    | FLOAT		{ $$.d = TypeFloat; }
+    | DOUBLE	{ $$.d = TypeDouble; }
+    | VOID		{ $$.d = TypeVoid; }
+    | _BOOL		{ $$.d = TypeBoolean; }
+    ;
 
 type_specifier2
     : struct_or_union_specifier		/* { $$.d = $1.d; } */
@@ -894,9 +896,9 @@ type_specifier2
     ;
 
 function_specifier
-	: INLINE
-	| _NORETURN
-	;
+    : INLINE
+    | _NORETURN
+    ;
 
 struct_or_union_specifier
     : struct_or_union struct_identifier								{
@@ -1598,8 +1600,8 @@ _bef_:			{
 /* it is not exactly as in gcc, but I hope it is suf. general */
 
 gcc_asm_symbolic_name_opt:
-	|	'[' IDENTIFIER ']'
-	;
+    |	'[' IDENTIFIER ']'
+    ;
 
 gcc_asm_item_opt:
     |	gcc_asm_symbolic_name_opt IDENTIFIER
@@ -1675,7 +1677,6 @@ external_definition
     } compound_statement {
         stackMemoryBlockFree();
         s_cp.function = NULL;
-        LICENSE_CHECK();
         if (s_opt.taskRegime == RegimeHtmlGenerate) {
             htmlAddFunctionSeparatorReference();
         }
@@ -1809,7 +1810,6 @@ void makeCCompletions(char *s, int len, S_position *pos) {
     int tok, yyn, i;
     S_cline compLine;
 /*fprintf(stderr,"completing \"%s\"\n",s);*/
-    LICENSE_CHECK();
     strncpy(s_completions.idToProcess, s, MAX_FUN_NAME_SIZE);
     s_completions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
     FILL_completions(&s_completions, len, *pos, 0, 0, 0, 0, 0, 0);
@@ -1855,6 +1855,4 @@ void makeCCompletions(char *s, int len, S_position *pos) {
                 }
         }
     }
-
-    LICENSE_CHECK();
 }

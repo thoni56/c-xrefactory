@@ -315,7 +315,6 @@ void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) {
             cacheInput();\
             s_cache.lexcc = cFile.lb.cc;\
             SetCInputConsistency();\
-            LICENSE_CHECK2();\
         }\
         lastlexadd = cInput.cc;\
     }\

@@ -332,33 +332,6 @@
   msek = (mtt)->tm_sec;\
 }
 
-/* ********************      PROTECTION    ************************** */
-
-#define EXP_COM_SIZE 32
-
-#ifdef BIN_RELEASE									// BIN_RELEASE
-
-#define FILL_EXP_COMMAND() {}
-#define SET_EXPIRATION() {}
-#define BIN_LICENSE_CHECK(lc) {lc=0;}
-#define LICENSE_CHECK() {}
-#define LICENSE_CHECK2() {}
-
-#else												// SOURCE_RELEASE
-
-#define BIN_LICENSE_CHECK(lc) {lc=0;}
-#define FILL_EXP_COMMAND() {}
-
-#ifdef TIME_LIMITED				// SOURCE RELEASE && TIME_LIMITED
-#define SET_EXPIRATION() {}
-#define LICENSE_CHECK() {}
-#define LICENSE_CHECK2() {}
-#else							// SOURCE RELEASE && TIME_UNLIMITED
-#define SET_EXPIRATION() {}
-#define LICENSE_CHECK() {}
-#define LICENSE_CHECK2() {}
-#endif
-#endif
 
 #define DEFINITION_NOT_FOUND_MESSAGE "Definition not found"
 

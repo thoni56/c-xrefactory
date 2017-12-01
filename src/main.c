@@ -2377,19 +2377,6 @@ static void createXrefrcDefaultLicense() {
             sprintf(tmpBuff, "home directory %s does not exists", fn);
             fatalError(ERR_ST,tmpBuff, XREF_EXIT_ERR);
         } else {
-#if ZERO
-#ifdef BIN_RELEASE
-            tt = time(NULL);
-            tmm = localtime(&tt);
-            UNFILL_TM(tmm,ed,em,ey,eh,emi,es);
-            own = "evaluation"; rr = 1;
-            ed += 15;
-            lic = stringNumStr(rr, ed, em, ey, own);
-            fprintf(ff, "\n\n// license string:\n");
-            fprintf(ff, "-license=%d/%d/%d/%d:%s:%s\n\n",
-                    em,ed,ey,rr,own,lic);
-#endif
-#endif
             fclose(ff);
         }
     }
@@ -2436,9 +2423,8 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
     memset(&s_count, 0, sizeof(S_counters));
     s_opt.includeDirs = NULL;
     SM_INIT(ftMemory);
-    FT_ALLOCC(s_fileTab.tab, MAX_FILES, struct fileItem *);\
-    FILL_EXP_COMMAND();\
-    fileTabInit();\
+    FT_ALLOCC(s_fileTab.tab, MAX_FILES, struct fileItem *);
+    fileTabInit();
     FILL_position(&s_noPos, s_noneFileIndex, 0, 0);
     FILL_usageBits(&s_noUsage, UsageNone, 0, 0);
     FILL_reference(&s_noRef, s_noUsage, s_noPos, NULL);
@@ -2484,9 +2470,9 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     // the following causes long jump, berk.
     CX_ALLOCC(sss, CX_MEMORY_CHUNK_SIZE, char);
     CX_FREE_UNTIL(sss);
-    CX_ALLOCC(s_cxrefTab.tab,MAX_CXREF_SYMBOLS, struct symbolRefItem *);\
-    refTabNAInit( &s_cxrefTab,MAX_CXREF_SYMBOLS);\
-    if (firstmemory==0) {firstmemory=1;SET_EXPIRATION();}\
+    CX_ALLOCC(s_cxrefTab.tab,MAX_CXREF_SYMBOLS, struct symbolRefItem *);
+    refTabNAInit( &s_cxrefTab,MAX_CXREF_SYMBOLS);
+    if (firstmemory==0) {firstmemory=1;}
     SM_INIT(ppmMemory);
     ppMemInit();
     stackMemoryInit();
@@ -3103,7 +3089,6 @@ static void mainXrefProcessInputFile( int argc, char **argv, int *_inputIn, int 
                                           &s_language);
         s_olOriginalFileNumber = s_input_file_number;
         s_olOriginalComFileNumber = s_olOriginalFileNumber;
-        LICENSE_CHECK();
         if (inputIn) {
             recoverFromCache();
             s_cache.activeCache = 0;    /* no caching in cxref */
@@ -3384,7 +3369,6 @@ static void mainEditServer(int argc, char **argv) {
         if (s_opt.cxrefs == OLO_ABOUT) {
             aboutMessage();
         } else {
-            LICENSE_CHECK();
             mainAnswerEditAction();
         }
         //& s_opt.outputFileName = NULL;  // why this was here ???
@@ -3418,7 +3402,6 @@ static void mainGenerate(int argc, char **argv) {
                                       &inputIn, &s_language);
     s_olOriginalFileNumber = s_input_file_number;
     s_olOriginalComFileNumber = s_olOriginalFileNumber;
-    LICENSE_CHECK();
     if (inputIn) {
         recoverFromCache();
         mainParseInputFile();

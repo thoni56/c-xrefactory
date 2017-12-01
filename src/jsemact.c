@@ -1879,7 +1879,6 @@ void javaMethodBodyBeginning(S_symbol *method) {
 
 // this should be merged with _bef_ token!
 void javaMethodBodyEnding(S_position *endpos) {
-    LICENSE_CHECK();
     if (s_opt.taskRegime == RegimeHtmlGenerate) {
         htmlAddFunctionSeparatorReference();
     } else if (s_opt.taskRegime == RegimeEditServer) {

@@ -918,9 +918,9 @@ declaration_specifiers0
         $$.d = $1.d;
         $$.d->b.storage = $2.d;
     }
-	| declaration_specifiers0 function_specifier			{
-		$$.d = $1.d;
-	}
+    | declaration_specifiers0 function_specifier			{
+        $$.d = $1.d;
+    }
     | COMPL_TYPE_NAME                                       {
         assert(0);
     }
@@ -949,12 +949,12 @@ declaration_modality_specifiers
     | declaration_modality_specifiers type_modality_specifier       {
         declTypeSpecifier1($1.d, $2.d);
     }
-	| function_specifier									{
-		$$.d = typeSpecifier1(TypeDefault);
-	}
-	| declaration_modality_specifiers function_specifier			{
-		$$.d = $1.d;
-	}
+    | function_specifier									{
+        $$.d = typeSpecifier1(TypeDefault);
+    }
+    | declaration_modality_specifiers function_specifier			{
+        $$.d = $1.d;
+    }
     ;
 
 init_declarator
@@ -963,19 +963,19 @@ init_declarator
     ;
 
 storage_class_specifier
-	: TYPEDEF		{ $$.d = StorageTypedef; }
-	| EXTERN		{ $$.d = StorageExtern; }
-	| STATIC		{ $$.d = StorageStatic; }
-	| _THREADLOCAL	{ $$.d = StorageThreadLocal; }
-	| AUTO			{ $$.d = StorageAuto; }
-	| REGISTER		{ $$.d = StorageAuto; }
+    : TYPEDEF		{ $$.d = StorageTypedef; }
+    | EXTERN		{ $$.d = StorageExtern; }
+    | STATIC		{ $$.d = StorageStatic; }
+    | _THREADLOCAL	{ $$.d = StorageThreadLocal; }
+    | AUTO			{ $$.d = StorageAuto; }
+    | REGISTER		{ $$.d = StorageAuto; }
     ;
 
 type_modality_specifier
     : CONST         { $$.d = TypeDefault; }
-	| RESTRICT		{ $$.d = TypeDefault; }
+    | RESTRICT		{ $$.d = TypeDefault; }
     | VOLATILE      { $$.d = TypeDefault; }
-	| _ATOMIC		{ $$.d = TypeDefault; }
+    | _ATOMIC		{ $$.d = TypeDefault; }
     | ANONYME_MOD   { $$.d = TypeDefault; }
     ;
 
@@ -989,7 +989,7 @@ type_specifier1
     | FLOAT     { $$.d = TypeFloat; }
     | DOUBLE    { $$.d = TypeDouble; }
     | VOID      { $$.d = TypeVoid; }
-	| _BOOL		{ $$.d = TypeBoolean; }
+    | _BOOL		{ $$.d = TypeBoolean; }
     ;
 
 type_specifier2
@@ -998,9 +998,9 @@ type_specifier2
     ;
 
 function_specifier
-	: INLINE
-	| _NORETURN
-	;
+    : INLINE
+    | _NORETURN
+    ;
 
 struct_or_union_specifier
     : struct_or_union struct_identifier                             {
@@ -1610,7 +1610,6 @@ external_definition
     } compound_statement {
         stackMemoryBlockFree();
         s_cp.function = NULL;
-        LICENSE_CHECK();
     }
     | Sv_tmp EXTERN STRING_LITERAL  external_definition {
         tmpWorkMemoryi = $1.d;
@@ -1767,7 +1766,6 @@ void makeYaccCompletions(char *s, int len, S_position *pos) {
     int tok, yyn, i;
     S_cline compLine;
 /*fprintf(stderr,"completing \"%s\"\n",s);*/
-    LICENSE_CHECK();
     strncpy(s_completions.idToProcess, s, MAX_FUN_NAME_SIZE);
     s_completions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
     FILL_completions(&s_completions, len, *pos, 0, 0, 0, 0, 0, 0);
@@ -1798,6 +1796,4 @@ void makeYaccCompletions(char *s, int len, S_position *pos) {
                 }
         }
     }
-
-    LICENSE_CHECK();
 }

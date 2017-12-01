@@ -2602,7 +2602,6 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
     int tok, yyn, i;
     S_cline compLine;
 /*fprintf(dumpOut,": completing \"%s\" in state %d\n",s,lastyystate);*/
-    LICENSE_CHECK();
     strncpy(s_completions.idToProcess, s, MAX_FUN_NAME_SIZE);
     s_completions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
     FILL_completions(&s_completions, len, *pos, 0, 0, 0, 0, 0, 0);
@@ -2664,9 +2663,8 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
                 if (s_completions.abortFurtherCompletions) return;
         }
     }
-    LICENSE_CHECK();
 }
-#line 2670 "javagram.c"
+#line 2668 "javagram.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -7208,7 +7206,7 @@ case 484:
             }
         }
 break;
-#line 7212 "javagram.c"
+#line 7210 "javagram.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

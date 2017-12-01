@@ -138,23 +138,6 @@ static void htmlGenLogo() {
         fprintf(ccOut," version %s ",C_XREF_VERSION_NUMBER);
     }
     fprintf(ccOut," on %s\n", ctime(&s_fileProcessStartTime));
-#if ZERO
-#if defined(BIN_RELEASE)
-    if (! JAVA2HTML()) {
-        setExpirationFromLicenseString();
-        if (s_expTime!=((time_t)-1)) {
-            fprintf(ccOut,"<br>Trial version.");
-            //&         fprintf(ccOut,"<br>Trial version licensed until %s",ctime(&s_expTime));
-        }
-    }
-#elif defined(TIME_LIMITED)
-    {
-        time_t t = EXPIRATION;
-        fprintf(ccOut,"<br>Trial version.");
-        //&     fprintf(ccOut,"<br>Trial version licensed until %s", ctime(&t));
-    }
-#endif
-#endif
     fprintf(ccOut,"</center></font><p>\n");
 }
 

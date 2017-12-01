@@ -195,7 +195,6 @@ void gotOnLineCxRefs( S_position *ps ) {
             bbb->cc = ccc;                              \
             clo = ccc-clb;                              \
             if (bbb->isAtEOF || getCharBuf(bbb) == 0) { \
-                LICENSE_CHECK();                        \
                 cch = -1;                               \
                 bbb->isAtEOF = 1;                       \
             } else {                                    \
@@ -291,7 +290,6 @@ void gotOnLineCxRefs( S_position *ps ) {
         if (ch == '@' && *(dd-1)=='C') {                                \
             int i,len;                                                  \
             len = strlen(s_editCommunicationString);                    \
-            FILL_EXP_COMMAND();                                         \
             for (i=2;i<len;i++) {                                       \
                 GetChar(ch,ccc,cfin,cb, clb, clo);                      \
                 if (ch != s_editCommunicationString[i]) break;          \
