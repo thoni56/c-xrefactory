@@ -40,7 +40,7 @@ static char *s_standardCOptions[] = {
 #else                                                   /*SBD*/
     "-I", "/usr/include/",
 #endif                                                  /*SBD*/
-#ifdef __mygnulinux__   /*SBD*/
+#ifdef GNULINUXDEFS   /*SBD*/
     "-Dlinux=1",
     "-D__linux=1",
     "-D__linux__=1",
@@ -119,7 +119,7 @@ static char *s_standardCccOptions[] = {
     "-D__STDC__=1",
     "-I", "/usr/include/",
 
-#ifdef __mygnulinux__   /*SBD*/
+#ifdef GNULINUXDEFS   /*SBD*/
     "-Dlinux=1",
     "-D__linux=1",
     "-D__linux__=1",

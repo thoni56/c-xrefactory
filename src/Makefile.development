@@ -1,12 +1,12 @@
 #########################################################################
 CC= gcc
 COMCFLAGS= $(INCLUDES) -DDEBUG -DCORE_DUMP \
-                -DSMALL_OLCX_MEMORY $(ZLIB_OPT) \
-                -DBIN_RELEASE -DPRESERVE_C_ARGS -D__mygnulinux__
+				-DSMALL_OLCX_MEMORY $(ZLIB_OPT) \
+				-DBIN_RELEASE -DPRESERVE_C_ARGS -DGNULINUXDEFS
 CFLAGS= -c -O $(COMCFLAGS) \
-                -Waggregate-return -Wpointer-arith \
-                -Wimplicit -Wreturn-type -Wuninitialized \
-                -Wparentheses
+				-Waggregate-return -Wpointer-arith \
+				-Wimplicit -Wreturn-type -Wuninitialized \
+				-Wparentheses
 #               -Wall
 EDGCFLAGS= -O
 LDFLAGS= -O
