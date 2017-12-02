@@ -105,8 +105,6 @@ char ppmMemory[SIZE_ppmMemory];
 char mbMemory[SIZE_mbMemory];
 char ftMemory[SIZE_ftMemory];
 int ftMemoryi = 0;
-int next;
-char nextus[EXP_COM_SIZE];
 char tmpWorkMemory[SIZE_tmpWorkMemory];
 int tmpWorkMemoryi = 0;
 

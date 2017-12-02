@@ -2975,8 +2975,6 @@ extern S_tokenNameIni s_tokenNameIniTab[];
 extern S_tokenNameIni s_tokenNameIniTab2[];
 extern S_tokenNameIni s_tokenNameIniTab3[];
 extern int s_preCrTypesIniTab[];
-extern int next;
-extern char nextus[EXP_COM_SIZE];
 extern S_typeModifiers * s_preCrTypesTab[MAX_TYPE];
 extern S_typeModifiers * s_preCrPtr1TypesTab[MAX_TYPE];
 extern S_typeModifiers * s_preCrPtr2TypesTab[MAX_TYPE];
