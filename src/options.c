@@ -502,14 +502,14 @@ static void processSectionMarker(char *ttt,int i,char *project,char *section,
 
 
 #define OPTION_SPACE_ALLOCC(memFl,cc,num,type) {                        \
-                                                if (memFl==MEM_ALLOC_ON_SM) { \
-                                                                             SM_ALLOCC(optMemory,cc,num,type); \
-                                                                             } else if (memFl==MEM_ALLOC_ON_PP) { \
-                                                                                                                 PP_ALLOCC(cc,num,type); \
-                                                                                                                 } else { \
-                                                                                                                         assert(0); \
-                                                                                                                         } \
-                                                }
+        if (memFl==MEM_ALLOC_ON_SM) {                                   \
+            SM_ALLOCC(optMemory,cc,num,type);                           \
+        } else if (memFl==MEM_ALLOC_ON_PP) {                            \
+            PP_ALLOCC(cc,num,type);                                     \
+        } else {                                                        \
+            assert(0);                                                  \
+        }                                                               \
+    }
 
 #define ACTIVE_OPTION() (isActiveSect && isActivePass)
 

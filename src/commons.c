@@ -127,9 +127,9 @@ char *normalizeFileName(char *name, char *relativeto) {
 char *create_temporary_filename() {
     static char temporary_name[MAX_FILE_NAME_SIZE] = "";
     char *temp_dir;
-    static int count = 0;
 #if defined (__WIN32__)    /*SBD*/
     // under Windows tmpnam returns file names in \ root.
+    static int count = 0;
     temp_dir = getenv("TEMP");
     if (temp_dir == NULL) {
         temp_dir = tmpnam(NULL);

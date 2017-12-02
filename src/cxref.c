@@ -11,11 +11,11 @@
 #if 0    // this would not work because lvalue usage is overwritten over usage
 #define SORTED_LIST_NEQ(tmp,key) (                                      \
                                   POSITION_NEQ((tmp)->p, (key).p) || (tmp)->usage!=(key).usage \
-                                  )
+                                                                        )
 #else
-#define SORTED_LIST_NEQ(tmp,key) (                                  \
-                                  POSITION_NEQ((tmp)->p, (key).p)   \
-                                  )
+#define SORTED_LIST_NEQ(tmp,key) (                                      \
+                                  POSITION_NEQ((tmp)->p, (key).p)       \
+                                                                    )
 #endif
 
 #define POSITION_MINUS(res,p1,p2) {                                     \
@@ -96,7 +96,7 @@ S_olSymbolsMenu *olCreateNewMenuItem(
                                      S_symbolRefItem *sym, int vApplClass, int vFunCl, S_position *defpos, int defusage,
                                      int selected, int visible,
                                      unsigned ooBits, int olusage, int vlevel
-                                      ) {
+                                     ) {
     S_olSymbolsMenu *rr;
     int nlen;
     char *nn;
@@ -283,7 +283,7 @@ static void getSymbolCxrefCategories(
                                      int *p_category,
                                      int *p_scope,
                                      int *p_storage
-                                      ) {
+                                     ) {
     int category, scope, storage;
     category = CatLocal; scope = ScopeAuto; storage=StorageAuto;
     /* default */
@@ -1027,136 +1027,136 @@ static void deleteOlcxRefs(S_olcxReferences **rrefs, S_olcxReferencesStack *stac
 
 // TODO!!! should free completions in priority!
 void freeOldestOlcx() {
-int                     i;
-S_userOlcx              *user;
-S_olcxReferences        **refs,**oldest;
-time_t                  oldestt;
-S_olcxReferencesStack   *oldestStack;
-oldestt = s_fileProcessStartTime; oldest=NULL; oldestStack=NULL;
-if (s_ropt.refactoringRegime != RegimeRefactory) {
-for(i=0; i<OLCX_TAB_SIZE; i++) {
-user = s_olcxTab.tab[i];
-if (user!=NULL) {
-CHECK_AND_SET_OLDEST(&user->browserStack);
-CHECK_AND_SET_OLDEST(&user->completionsStack);
-CHECK_AND_SET_OLDEST(&user->retrieverStack);
-}
-}
-}
-if (oldestt == s_fileProcessStartTime || oldest == NULL) {
-fatalError(ERR_ST, "olcxMemory memory overflow, please try again.", XREF_EXIT_ERR);
-} else {
-assert(oldest!=NULL && oldestStack!=NULL);
-deleteOlcxRefs(oldest, oldestStack);
-}
+    int                     i;
+    S_userOlcx              *user;
+    S_olcxReferences        **refs,**oldest;
+    time_t                  oldestt;
+    S_olcxReferencesStack   *oldestStack;
+    oldestt = s_fileProcessStartTime; oldest=NULL; oldestStack=NULL;
+    if (s_ropt.refactoringRegime != RegimeRefactory) {
+        for(i=0; i<OLCX_TAB_SIZE; i++) {
+            user = s_olcxTab.tab[i];
+            if (user!=NULL) {
+                CHECK_AND_SET_OLDEST(&user->browserStack);
+                CHECK_AND_SET_OLDEST(&user->completionsStack);
+                CHECK_AND_SET_OLDEST(&user->retrieverStack);
+            }
+        }
+    }
+    if (oldestt == s_fileProcessStartTime || oldest == NULL) {
+        fatalError(ERR_ST, "olcxMemory memory overflow, please try again.", XREF_EXIT_ERR);
+    } else {
+        assert(oldest!=NULL && oldestStack!=NULL);
+        deleteOlcxRefs(oldest, oldestStack);
+    }
 }
 
 int olcxFreeOldCompletionItems(S_olcxReferencesStack *stack) {
-S_olcxReferences **ss;
-int i;
-ss = &stack->top;
-if (*ss == NULL) return(0);
-for(i=1; i<MAX_COMPLETIONS_HISTORY_DEEP; i++) {
-ss = &(*ss)->previous;
-if (*ss == NULL) return(0);
-}
-deleteOlcxRefs(ss, stack);
-return(1);
+    S_olcxReferences **ss;
+    int i;
+    ss = &stack->top;
+    if (*ss == NULL) return(0);
+    for(i=1; i<MAX_COMPLETIONS_HISTORY_DEEP; i++) {
+        ss = &(*ss)->previous;
+        if (*ss == NULL) return(0);
+    }
+    deleteOlcxRefs(ss, stack);
+    return(1);
 }
 
 void olcxInit() {
-int i;
-void * uu[OLCX_USER_RESERVE];
-RLM_INIT(olcxMemory);
-RLM_SOFT_ALLOCC(olcxMemory, s_olcxTab.tab, OLCX_TAB_SIZE, S_userOlcx *);
-//CHECK_FREE(s_olcxTab.tab);        // do not report non-freeing of olcxtable
-olcxTabNAInit(&s_olcxTab, OLCX_TAB_SIZE);
-/* reserve place for some users */
-for(i=0; i<OLCX_USER_RESERVE; i++) OLCX_ALLOC(uu[i], S_userOlcx);
-for(i=0; i<OLCX_USER_RESERVE; i++) RLM_FREE(olcxMemory, uu[i], sizeof(S_userOlcx));
+    int i;
+    void * uu[OLCX_USER_RESERVE];
+    RLM_INIT(olcxMemory);
+    RLM_SOFT_ALLOCC(olcxMemory, s_olcxTab.tab, OLCX_TAB_SIZE, S_userOlcx *);
+    //CHECK_FREE(s_olcxTab.tab);        // do not report non-freeing of olcxtable
+    olcxTabNAInit(&s_olcxTab, OLCX_TAB_SIZE);
+    /* reserve place for some users */
+    for(i=0; i<OLCX_USER_RESERVE; i++) OLCX_ALLOC(uu[i], S_userOlcx);
+    for(i=0; i<OLCX_USER_RESERVE; i++) RLM_FREE(olcxMemory, uu[i], sizeof(S_userOlcx));
 }
 
 S_userOlcx *olcxSetCurrentUser(char *user) {
-S_userOlcx  dd,*memb;
-int         ii,sz;
-char        *nn;
-FILLF_userOlcx(&dd, user, NULL, NULL,NULL,NULL,NULL,NULL,s_noneFileIndex, NULL, NULL);
-if (! olcxTabIsMember(&s_olcxTab, &dd, &ii, &memb)) {
-// I have changed it to FT, so it never invokes freeing of OLCX
-FT_ALLOC(memb, S_userOlcx);
-sz = strlen(user)+1;
-                 if (sz < sizeof(void*)) sz = sizeof(void*);
-FT_ALLOCC(nn, sz, char); // why this is in ftMem ?, some pb with free
-strcpy(nn, user);
-FILLF_userOlcx(memb, nn, NULL, NULL, NULL, NULL,  NULL, NULL, s_noneFileIndex, NULL, NULL);
-olcxTabAdd(&s_olcxTab, memb, &ii);
-}
-s_olcxCurrentUser = memb;
-return(memb);
+    S_userOlcx  dd,*memb;
+    int         ii,sz;
+    char        *nn;
+    FILLF_userOlcx(&dd, user, NULL, NULL,NULL,NULL,NULL,NULL,s_noneFileIndex, NULL, NULL);
+    if (! olcxTabIsMember(&s_olcxTab, &dd, &ii, &memb)) {
+        // I have changed it to FT, so it never invokes freeing of OLCX
+        FT_ALLOC(memb, S_userOlcx);
+        sz = strlen(user)+1;
+        if (sz < sizeof(void*)) sz = sizeof(void*);
+        FT_ALLOCC(nn, sz, char); // why this is in ftMem ?, some pb with free
+        strcpy(nn, user);
+        FILLF_userOlcx(memb, nn, NULL, NULL, NULL, NULL,  NULL, NULL, s_noneFileIndex, NULL, NULL);
+        olcxTabAdd(&s_olcxTab, memb, &ii);
+    }
+    s_olcxCurrentUser = memb;
+    return(memb);
 }
 
 static void setRefSuffix(S_olcxReferences *refs) {
-strncpy(refs->refsuffix, s_opt.olcxRefSuffix, MAX_OLCX_SUFF_SIZE-1);
-refs->refsuffix[MAX_OLCX_SUFF_SIZE-1]=0;
-refs->act = refs->r;
+    strncpy(refs->refsuffix, s_opt.olcxRefSuffix, MAX_OLCX_SUFF_SIZE-1);
+    refs->refsuffix[MAX_OLCX_SUFF_SIZE-1]=0;
+    refs->act = refs->r;
 }
 
 static void olcxFreePopedStackItems(S_olcxReferencesStack *stack) {
-assert(stack);
-// delete all after top
-while (stack->root != stack->top) {
-//&fprintf(dumpOut,":freeing %s\n", stack->root->hkSelectedSym->s.name);
-deleteOlcxRefs(&stack->root, stack);
-}
+    assert(stack);
+    // delete all after top
+    while (stack->root != stack->top) {
+        //&fprintf(dumpOut,":freeing %s\n", stack->root->hkSelectedSym->s.name);
+        deleteOlcxRefs(&stack->root, stack);
+    }
 }
 
 void olcxPushEmptyStackItem(S_olcxReferencesStack *stack) {
-S_olcxReferences *res, *rr;
-olcxFreePopedStackItems(stack);
-OLCX_ALLOC(res, S_olcxReferences);  /* first alloc, to avoid surprise */
-FILL_olcxReferences(res, NULL, NULL, s_opt.cxrefs, s_language,
+    S_olcxReferences *res, *rr;
+    olcxFreePopedStackItems(stack);
+    OLCX_ALLOC(res, S_olcxReferences);  /* first alloc, to avoid surprise */
+    FILL_olcxReferences(res, NULL, NULL, s_opt.cxrefs, s_language,
                         s_fileProcessStartTime, s_noPos, NULL, NULL, NULL,
                         DEFAULT_MENU_FILTER_LEVEL, DEFAULT_REFS_FILTER_LEVEL,
                         stack->top);
-setRefSuffix(res);
-stack->top = stack->root = res;
+    setRefSuffix(res);
+    stack->top = stack->root = res;
 }
 
 static int olcxVirtualyUsageAdequate(int vApplCl, int vFunCl,
-                                         int olUsage, int olApplCl, int olFunCl) {
-int res;
-res = 0;
-//&fprintf(dumpOut,"\n:checking %s\n%s\n%s\n<->\n%s\n%s\n",usagesName[olUsage],s_fileTab.tab[olFunCl]->name,s_fileTab.tab[olApplCl]->name,s_fileTab.tab[vFunCl]->name,s_fileTab.tab[vApplCl]->name); fflush(dumpOut);
-if (IS_DEFINITION_OR_DECL_USAGE(olUsage)) {
-if (vFunCl == olFunCl) res = 1;
-if (isSmallerOrEqClass(olFunCl, vApplCl)) res = 1;
-} else {
-//&     if (vApplCl==vFunCl) { // only classes with definitions are considered
-if (vApplCl == olFunCl) res = 1;
-//&         if (vFunCl == olFunCl) res = 1;
-if (isSmallerOrEqClass(vApplCl, olApplCl)) res = 1;
-//&     }
-}
-//&fprintf(dumpOut,"result is %d\n",res);fflush(dumpOut);
-return(res);
+                                     int olUsage, int olApplCl, int olFunCl) {
+    int res;
+    res = 0;
+    //&fprintf(dumpOut,"\n:checking %s\n%s\n%s\n<->\n%s\n%s\n",usagesName[olUsage],s_fileTab.tab[olFunCl]->name,s_fileTab.tab[olApplCl]->name,s_fileTab.tab[vFunCl]->name,s_fileTab.tab[vApplCl]->name); fflush(dumpOut);
+    if (IS_DEFINITION_OR_DECL_USAGE(olUsage)) {
+        if (vFunCl == olFunCl) res = 1;
+        if (isSmallerOrEqClass(olFunCl, vApplCl)) res = 1;
+    } else {
+        //&     if (vApplCl==vFunCl) { // only classes with definitions are considered
+        if (vApplCl == olFunCl) res = 1;
+        //&         if (vFunCl == olFunCl) res = 1;
+        if (isSmallerOrEqClass(vApplCl, olApplCl)) res = 1;
+        //&     }
+    }
+    //&fprintf(dumpOut,"result is %d\n",res);fflush(dumpOut);
+    return(res);
 }
 
 S_reference *olcxAddReferenceNoUsageCheck(S_reference **rlist, S_reference *ref, int bestMatchFlag) {
-S_reference **place, *rr;
-rr = NULL;
-SORTED_LIST_PLACE2(place,S_reference, *ref, rlist);
-if (*place==NULL || SORTED_LIST_NEQ(*place,*ref)) {
-    OLCX_ALLOC(rr, S_reference);
-    *rr = *ref;
-    if (LANGUAGE(LAN_JAVA)) {
-        if (ref->usg.base==UsageDefined &&  bestMatchFlag) {
-            rr->usg.base = UsageOLBestFitDefined;
+    S_reference **place, *rr;
+    rr = NULL;
+    SORTED_LIST_PLACE2(place,S_reference, *ref, rlist);
+    if (*place==NULL || SORTED_LIST_NEQ(*place,*ref)) {
+        OLCX_ALLOC(rr, S_reference);
+        *rr = *ref;
+        if (LANGUAGE(LAN_JAVA)) {
+            if (ref->usg.base==UsageDefined &&  bestMatchFlag) {
+                rr->usg.base = UsageOLBestFitDefined;
+            }
         }
+        LIST_CONS(rr,(*place));
+        //&fprintf(dumpOut,"olcx adding %s %s:%d:%d\n",usagesName[ref->usg.base], s_fileTab.tab[ref->p.file]->name,ref->p.line,ref->p.coll); fflush(dumpOut);
     }
-    LIST_CONS(rr,(*place));
-    //&fprintf(dumpOut,"olcx adding %s %s:%d:%d\n",usagesName[ref->usg.base], s_fileTab.tab[ref->p.file]->name,ref->p.line,ref->p.coll); fflush(dumpOut);
- }
- return(rr);
+    return(rr);
 }
 
 
@@ -1260,7 +1260,7 @@ void generateOnlineCxref(   S_position *p,
                                       || comm==OLO_CGOTO                \
                                       /*&|| comm==OLO_TAG_SEARCH &*/    \
                                       )                                 \
-                                     )
+                                                                        )
 
 #define OLCX_MOVE_INIT(olcxuser,refs,checkFlag) {                       \
         assert(olcxuser);                                               \
@@ -1286,111 +1286,111 @@ void generateOnlineCxref(   S_position *p,
     }
 
 static void olcxRenameInit() {
-S_olcxReferences *refs;
-S_reference *rr,*rrd;
-OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
-//  setRefSuffix(refs);
-refs->act = refs->r;
-generateOnlineCxref(&refs->act->p, COLCX_GOTO_REFERENCE,
+    S_olcxReferences *refs;
+    S_reference *rr,*rrd;
+    OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
+    //  setRefSuffix(refs);
+    refs->act = refs->r;
+    generateOnlineCxref(&refs->act->p, COLCX_GOTO_REFERENCE,
                         refs->act->usg.base, refs->refsuffix, "");
 }
 
 
 int olcxListLessFunction(S_reference *r1, S_reference *r2) {
-int fc;
-char *s1,*s2;
-s1 = simpleFileName(s_fileTab.tab[r1->p.file]->name);
-s2 = simpleFileName(s_fileTab.tab[r2->p.file]->name);
-fc=strcmp(s1, s2);
-if (fc<0) return(1);
-if (fc>0) return(0);
-if (r1->p.file < r2->p.file) return(1);
-if (r1->p.file > r2->p.file) return(0);
-if (r1->p.line < r2->p.line) return(1);
-if (r1->p.line > r2->p.line) return(0);
-if (r1->p.coll < r2->p.coll) return(1);
-if (r1->p.coll > r2->p.coll) return(0);
-return(0);
+    int fc;
+    char *s1,*s2;
+    s1 = simpleFileName(s_fileTab.tab[r1->p.file]->name);
+    s2 = simpleFileName(s_fileTab.tab[r2->p.file]->name);
+    fc=strcmp(s1, s2);
+    if (fc<0) return(1);
+    if (fc>0) return(0);
+    if (r1->p.file < r2->p.file) return(1);
+    if (r1->p.file > r2->p.file) return(0);
+    if (r1->p.line < r2->p.line) return(1);
+    if (r1->p.line > r2->p.line) return(0);
+    if (r1->p.coll < r2->p.coll) return(1);
+    if (r1->p.coll > r2->p.coll) return(0);
+    return(0);
 }
 
 #define UsageImportantInOrder(r1,r2) (                                  \
                                       r1->usg.base==UsageDefined || r1->usg.base==UsageDeclared \
-                                          || r1->usg.base==UsageOLBestFitDefined \
-                                          || r2->usg.base==UsageDefined || r2->usg.base==UsageDeclared \
-                                          || r2->usg.base==UsageOLBestFitDefined \
-                                          )
+                                      || r1->usg.base==UsageOLBestFitDefined \
+                                      || r2->usg.base==UsageDefined || r2->usg.base==UsageDeclared \
+                                      || r2->usg.base==UsageOLBestFitDefined \
+                                                                        )
 
-int olcxPushLessFunction(S_reference *r1, S_reference *r2) {
-int fc;
-char *s1,*s2;
-if (UsageImportantInOrder(r1,r2)) {
-// in definition, declaration usage is important
-if (r1->usg.base < r2->usg.base) return(1);
-if (r1->usg.base > r2->usg.base) return(0);
-}
-return(olcxListLessFunction(r1, r2));
-}
+    int olcxPushLessFunction(S_reference *r1, S_reference *r2) {
+        int fc;
+        char *s1,*s2;
+        if (UsageImportantInOrder(r1,r2)) {
+            // in definition, declaration usage is important
+            if (r1->usg.base < r2->usg.base) return(1);
+            if (r1->usg.base > r2->usg.base) return(0);
+        }
+        return(olcxListLessFunction(r1, r2));
+    }
 
 
 #if ZERO
 static int olcxFastPushLessFunction(S_reference *r1, S_reference *r2) {
-char *s1,*s2;
-if (UsageImportantInOrder(r1,r2)) {
-// in definition, declaration usage is important
-if (r1->usg.base < r2->usg.base) return(1);
-if (r1->usg.base > r2->usg.base) return(0);
-}
-if (r1->p.file < r2->p.file) return(1);
-if (r1->p.file > r2->p.file) return(0);
-if (r1->p.line < r2->p.line) return(1);
-if (r1->p.line > r2->p.line) return(0);
-if (r1->p.coll < r2->p.coll) return(1);
-if (r1->p.coll > r2->p.coll) return(0);
-return(0);
+    char *s1,*s2;
+    if (UsageImportantInOrder(r1,r2)) {
+        // in definition, declaration usage is important
+        if (r1->usg.base < r2->usg.base) return(1);
+        if (r1->usg.base > r2->usg.base) return(0);
+    }
+    if (r1->p.file < r2->p.file) return(1);
+    if (r1->p.file > r2->p.file) return(0);
+    if (r1->p.line < r2->p.line) return(1);
+    if (r1->p.line > r2->p.line) return(0);
+    if (r1->p.coll < r2->p.coll) return(1);
+    if (r1->p.coll > r2->p.coll) return(0);
+    return(0);
 }
 #endif
 
 static void olcxNaturalReorder(S_olcxReferences *refs) {
-LIST_MERGE_SORT(S_reference, refs->r, olcxPushLessFunction);
+    LIST_MERGE_SORT(S_reference, refs->r, olcxPushLessFunction);
 }
 
 static void olcxGenNoReferenceSignal() {
-if (s_opt.xref2) {
-ppcGenRecord(PPC_BOTTOM_INFORMATION, "No reference", "\n");
-} else {
-fprintf(ccOut, "_");
-}
+    if (s_opt.xref2) {
+        ppcGenRecord(PPC_BOTTOM_INFORMATION, "No reference", "\n");
+    } else {
+        fprintf(ccOut, "_");
+    }
 }
 
 static void olcxOrderRefsAndGotoFirst() {
-S_olcxReferences *refs;
-OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
-//& setRefSuffix(refs);
-LIST_MERGE_SORT(S_reference, refs->r, olcxListLessFunction);
-refs->act = refs->r;
-if (refs->r != NULL) {
-generateOnlineCxref(&refs->act->p, COLCX_GOTO_REFERENCE,
-                        refs->act->usg.base, refs->refsuffix, "");
-} else {
-olcxGenNoReferenceSignal();
-}
+    S_olcxReferences *refs;
+    OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
+    //& setRefSuffix(refs);
+    LIST_MERGE_SORT(S_reference, refs->r, olcxListLessFunction);
+    refs->act = refs->r;
+    if (refs->r != NULL) {
+        generateOnlineCxref(&refs->act->p, COLCX_GOTO_REFERENCE,
+                            refs->act->usg.base, refs->refsuffix, "");
+    } else {
+        olcxGenNoReferenceSignal();
+    }
 }
 
 // references has to be ordered according internal file numbers order !!!!
 static int olcxSetCurrentRefsOnCaller( S_olcxReferences *refs ) {
-S_reference *rr;
-for(rr=refs->r; rr!=NULL; rr=rr->next){
-    //&fprintf(dumpOut,"checking %d %d %d to %d %d %d\n",rr->p.file, rr->p.line,rr->p.coll, refs->cpos.file,  refs->cpos.line,  refs->cpos.coll);
-    if (! POSITION_LESS(rr->p, refs->cpos)) break;
- }
-// it should never be NULL, but one never knows
- if (rr == NULL) {
-     refs->act = refs->r;
-     return(0);
- } else {
-     refs->act = rr;
-     return(1);
- }
+    S_reference *rr;
+    for(rr=refs->r; rr!=NULL; rr=rr->next){
+        //&fprintf(dumpOut,"checking %d %d %d to %d %d %d\n",rr->p.file, rr->p.line,rr->p.coll, refs->cpos.file,  refs->cpos.line,  refs->cpos.coll);
+        if (! POSITION_LESS(rr->p, refs->cpos)) break;
+    }
+    // it should never be NULL, but one never knows
+    if (rr == NULL) {
+        refs->act = refs->r;
+        return(0);
+    } else {
+        refs->act = rr;
+        return(1);
+    }
 }
 
 char *getJavaDocUrl_st(S_symbolRefItem *rr) {
@@ -1667,134 +1667,134 @@ static void skipNLines(FILE **cofile, int n) {
         /*fprintf(dumpOut,"getting char *%x < %x == '0x%x'\n",ccc,ffin,cch);fflush(dumpOut);*/ \
     }
 
-#define GetFileChar(ch,cp,bbb) {                                        \
-                                if (ch=='\n') {(cp)->line++; (cp)->coll=0;} \
-                                else (cp)->coll++;                      \
-                                GetBufChar(ch, bbb);                    \
-                                }
+#define GetFileChar(ch,cp,bbb) {                    \
+        if (ch=='\n') {(cp)->line++; (cp)->coll=0;} \
+        else (cp)->coll++;                          \
+        GetBufChar(ch, bbb);                        \
+    }
 
 int refCharCode(int usage) {
-switch (usage) {
- case UsageOLBestFitDefined: return('!');
- case UsageDefined:  return('*');
- case UsageDeclared: return('+');
- case UsageLvalUsed: return(',');
- case UsageAddrUsed: return('.');
-/* some specials for refactorings now */
- case UsageNotFQFieldInClassOrMethod:    return('.');
-// Usage Constructor definition is for move class to not expand
-// and move constructor definition references
- case UsageConstructorDefinition:        return('-');
- default:            return(' ');
-}
-assert(0);
+    switch (usage) {
+    case UsageOLBestFitDefined: return('!');
+    case UsageDefined:  return('*');
+    case UsageDeclared: return('+');
+    case UsageLvalUsed: return(',');
+    case UsageAddrUsed: return('.');
+        /* some specials for refactorings now */
+    case UsageNotFQFieldInClassOrMethod:    return('.');
+        // Usage Constructor definition is for move class to not expand
+        // and move constructor definition references
+    case UsageConstructorDefinition:        return('-');
+    default:            return(' ');
+    }
+    assert(0);
 }
 
 static char s_crefListLine[MAX_REF_LIST_LINE_LEN+5];
 static int s_crefListLinei = 0;
 
 static void passSourcePutChar(int c, FILE *ff) {
-if (s_opt.xref2) {
-if (s_crefListLinei < MAX_REF_LIST_LINE_LEN) {
-s_crefListLine[s_crefListLinei++] = c;
-s_crefListLine[s_crefListLinei] = 0;
-} else {
-strcpy(s_crefListLine + s_crefListLinei, "...");
-}
-} else {
-if (s_opt.taskRegime == RegimeHtmlGenerate) htmlPutChar(ff,c);
- else fputc(c,ff);
-}
+    if (s_opt.xref2) {
+        if (s_crefListLinei < MAX_REF_LIST_LINE_LEN) {
+            s_crefListLine[s_crefListLinei++] = c;
+            s_crefListLine[s_crefListLinei] = 0;
+        } else {
+            strcpy(s_crefListLine + s_crefListLinei, "...");
+        }
+    } else {
+        if (s_opt.taskRegime == RegimeHtmlGenerate) htmlPutChar(ff,c);
+        else fputc(c,ff);
+    }
 }
 
 static void printKawaRefRecord(FILE *off, int type, char *rec) {
-int len;
-len = strlen(rec);
-fprintf(off, " %d%c%s", len, type, rec);
+    int len;
+    len = strlen(rec);
+    fprintf(off, " %d%c%s", len, type, rec);
 }
 
 #define LISTABLE_USAGE(rr, usages, usageFilter) (                       \
                                                  usages==USAGE_ANY || usages==rr->usg.base \
-                                                     || (usages==USAGE_FILTER && rr->usg.base<usageFilter) \
-                                                     )
+                                                 || (usages==USAGE_FILTER && rr->usg.base<usageFilter) \
+                                                                        )
 
 static void linePosProcess( FILE *off,
-                                char *ofname,
-                                int usages,
-                                int usageFilter, // only if usages==USAGE_FILTER
-                                char *fname,
-                                S_reference **rrr,
-                                S_position *callerp,
-                                S_position *cp,
-                                int *cch,
-                                S_charBuf *cxfBuf
-                                ) {
-int             ch, pendingRefFlag, line, linerefn;
-S_reference     *rr,*r;
-char            *fn;
-rr = *rrr;
-ch = *cch;
-fn = simpleFileName(getRealFileNameStatic(fname));
-//& fn = getRealFileNameStatic(fname);
-r = NULL; pendingRefFlag = 0;
-line = 0; linerefn = 0;
-s_crefListLinei = 0;
-s_crefListLine[s_crefListLinei] = 0;
-do {
-if (LISTABLE_USAGE(rr, usages, usageFilter)) {
-if (r==NULL || r->usg.base > rr->usg.base)  r = rr;
-if (s_opt.taskRegime!=RegimeHtmlGenerate) {
-if (pendingRefFlag) {
-if (! s_opt.xref2) fprintf(off,"\n");
-}
-if (s_opt.xref2) {
-if (! pendingRefFlag) {
-sprintf(s_crefListLine+s_crefListLinei, "%s:%d:", fn, rr->p.line);
-s_crefListLinei += strlen(s_crefListLine+s_crefListLinei);
-}
-} else {
-if (POSITION_NEQ(*callerp, rr->p)) fprintf(off, " ");
- else fprintf(off, ">");
-fprintf(off,"%c%s:%d:",refCharCode(rr->usg.base),fn,
-            rr->p.line);
-}
-line = rr->p.line;
-linerefn ++;
-pendingRefFlag = 1;
-}
-}
-rr=rr->next;
-} while (rr!=NULL && ((rr->p.file == cp->file && rr->p.line == cp->line)
-|| (rr->usg.base>UsageMaxOLUsages)));
-if (r!=NULL) {
-if (! cxfBuf->isAtEOF) {
-while (ch!='\n' && (! cxfBuf->isAtEOF)) {
-passSourcePutChar(ch,off);
-GetFileChar(ch, cp, cxfBuf);
-}
-}
-if (! s_opt.xref2) passSourcePutChar('\n',off);
-}
-if (s_opt.xref2 && s_crefListLinei!=0) {
-ppcIndentOffset();
-fprintf(off, "<%s %s=%d %s=%ld>%s</%s>\n",
-            PPC_SRC_LINE, PPCA_REFN, linerefn,
-            PPCA_LEN, (unsigned long)strlen(s_crefListLine),
-            s_crefListLine, PPC_SRC_LINE);
-}
-*rrr = rr;
-*cch = ch;
+                            char *ofname,
+                            int usages,
+                            int usageFilter, // only if usages==USAGE_FILTER
+                            char *fname,
+                            S_reference **rrr,
+                            S_position *callerp,
+                            S_position *cp,
+                            int *cch,
+                            S_charBuf *cxfBuf
+                            ) {
+    int             ch, pendingRefFlag, line, linerefn;
+    S_reference     *rr,*r;
+    char            *fn;
+    rr = *rrr;
+    ch = *cch;
+    fn = simpleFileName(getRealFileNameStatic(fname));
+    //& fn = getRealFileNameStatic(fname);
+    r = NULL; pendingRefFlag = 0;
+    line = 0; linerefn = 0;
+    s_crefListLinei = 0;
+    s_crefListLine[s_crefListLinei] = 0;
+    do {
+        if (LISTABLE_USAGE(rr, usages, usageFilter)) {
+            if (r==NULL || r->usg.base > rr->usg.base)  r = rr;
+            if (s_opt.taskRegime!=RegimeHtmlGenerate) {
+                if (pendingRefFlag) {
+                    if (! s_opt.xref2) fprintf(off,"\n");
+                }
+                if (s_opt.xref2) {
+                    if (! pendingRefFlag) {
+                        sprintf(s_crefListLine+s_crefListLinei, "%s:%d:", fn, rr->p.line);
+                        s_crefListLinei += strlen(s_crefListLine+s_crefListLinei);
+                    }
+                } else {
+                    if (POSITION_NEQ(*callerp, rr->p)) fprintf(off, " ");
+                    else fprintf(off, ">");
+                    fprintf(off,"%c%s:%d:",refCharCode(rr->usg.base),fn,
+                            rr->p.line);
+                }
+                line = rr->p.line;
+                linerefn ++;
+                pendingRefFlag = 1;
+            }
+        }
+        rr=rr->next;
+    } while (rr!=NULL && ((rr->p.file == cp->file && rr->p.line == cp->line)
+                          || (rr->usg.base>UsageMaxOLUsages)));
+    if (r!=NULL) {
+        if (! cxfBuf->isAtEOF) {
+            while (ch!='\n' && (! cxfBuf->isAtEOF)) {
+                passSourcePutChar(ch,off);
+                GetFileChar(ch, cp, cxfBuf);
+            }
+        }
+        if (! s_opt.xref2) passSourcePutChar('\n',off);
+    }
+    if (s_opt.xref2 && s_crefListLinei!=0) {
+        ppcIndentOffset();
+        fprintf(off, "<%s %s=%d %s=%ld>%s</%s>\n",
+                PPC_SRC_LINE, PPCA_REFN, linerefn,
+                PPCA_LEN, (unsigned long)strlen(s_crefListLine),
+                s_crefListLine, PPC_SRC_LINE);
+    }
+    *rrr = rr;
+    *cch = ch;
 }
 
 static S_reference *passNonPrintableRefsForFile(S_reference *r,
-                                                    int fnum,
-                                                    int usages, int usageFilter
-                                                    ) {
-S_reference *rr;
- for(rr=r; rr!=NULL && rr->p.file == fnum; rr=rr->next) {
-     if (LISTABLE_USAGE(rr, usages, usageFilter)) return(rr);
- }
- return(rr);
+                                                int fnum,
+                                                int usages, int usageFilter
+                                                ) {
+    S_reference *rr;
+    for(rr=r; rr!=NULL && rr->p.file == fnum; rr=rr->next) {
+        if (LISTABLE_USAGE(rr, usages, usageFilter)) return(rr);
+    }
+    return(rr);
 }
 
 static void passRefsThroughSourceFile(S_reference **rrr, S_position *callerp,
@@ -2800,7 +2800,7 @@ static void handleConstructorSpecialsInSelectingSymbolInMenu(
                                         || command == OLO_SAFETY_CHECK1 \
                                         || command == OLO_SAFETY_CHECK2 \
                                         || s_opt.manualResolve == RESOLVE_DIALOG_NEVER \
-                                        )
+                                                                        )
 
 void dummyloop1(){}
 void dummyloop2(){}
