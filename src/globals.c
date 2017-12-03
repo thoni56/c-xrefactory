@@ -403,7 +403,6 @@ S_options s_initOpt = {
     NULL,
     "",
     79,
-    BIN_REL_LICENSE_STRING,
     "",
     "*_",
     EXTR_FUNCTION,

@@ -61,7 +61,6 @@ static void usage(char *s) {
     fprintf(stdout,"\t-javasuffixes=<paths>     - list of Java files suffixes separated by : (or ;)\n");
     fprintf(stdout,"\t-stdop <file>             - read options from <file>\n");
     fprintf(stdout,"\t-no_cpp_comment           - C++ like comments // not admitted\n");
-    fprintf(stdout,"\t-license=<string>         - license string\n");
 #if 0
     fprintf(stdout,"\t-olinelen=<n>             - length of lines for on-line output\n");
     fprintf(stdout,"\t-oocheckbits=<n>          - object-oriented resolution for completions\n");
@@ -2368,8 +2367,6 @@ static void createXrefrcDefaultLicense() {
     time_t          tt;
     struct tm       *tmm;
     char            *lic,*own,*ss;
-    // if this is registered binary distribution, return
-    //& if (s_initOpt.licenseString[0] == '0') return;
     getXrefrcFileName(fn);
     if (stat(fn, &st)!=0) {
         // does not exists

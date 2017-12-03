@@ -19,39 +19,8 @@
 #define JAVA_VERSION_1_4 "1.4"
 #define JAVA_VERSION_AUTO "auto"
 
-/* **************************** EXPIRATIONS ********************** */
-
-#define EXPIRATION0 0
-
-#define BIN_REL_LICENSE_STRING "1/1/2000/1365:x:dadde11113b13b11"
-
-// any-for-02-2004.tar.gz  i.e. until Thu Apr  1 00:00:00 2004
-//#define EXPIRATION 1080770400
-// any-for-03-2004.tar.gz  i.e. until Sat May  1 00:00:00 2004
-//#define EXPIRATION 1083362400
-// any-for-04-2004.tar.gz  i.e. until Tue Jun  1 00:00:00 2004
-//#define EXPIRATION 1086040800
-// any-for-05-2004.tar.gz  i.e. until Thu Jul  1 00:00:00 2004
-//#define EXPIRATION 1088632800
-// any-for-06-2004.tar.gz  i.e. until Sun Aug  1 00:00:00 2004
-//#define EXPIRATION 1091311200
-// any-for-07-2004.tar.gz  i.e. until Wed Sep  1 00:00:00 2004
-#define EXPIRATION 1093989600
-// any-for-08-2004.tar.gz  i.e. until Fri Oct  1 00:00:00 2004
-//#define EXPIRATION 1096581600
-// any-for-09-2004.tar.gz  i.e. until Mon Nov  1 00:00:00 2004
-//#define EXPIRATION 1099263600
-// any-for-10-2004.tar.gz  i.e. until Wed Dec  1 00:00:00 2004
-//#define EXPIRATION 1101855600
-// any-for-11-2004.tar.gz  i.e. until Sat Jan  1 00:00:00 2005
-//#define EXPIRATION 1104534000
-// any-for-12-2004.tar.gz  i.e. until Tue Feb  1 00:00:00 2005
-//#define EXPIRATION 1107212400
-// any-for-01-2005.tar.gz  i.e. until Tue Mar  1 00:00:00 2005
-//#define EXPIRATION 1109631600
 
 /* ******************** assertion checks ****************** */
-
 
 #define InternalCheck(expr) {\
     if (!(expr)) internalCheckFail(#expr, __FILE__, __LINE__);\

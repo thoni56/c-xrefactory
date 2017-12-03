@@ -537,11 +537,6 @@ int readOptionFromFile(FILE *ff, int *nargc, char ***nargv, int memFl,
                 isActivePass = 0;
             }
             if (passn > s_maximalCppPass) s_maximalCppPass = passn;
-        } else if (strncmp(tt,"-license=",9)==0) {
-            // special care is given to the -license option
-            strcpy(s_opt.licenseString, tt+9);
-            //&         strcpy(s_initOpt.licenseString, tt+9);  // why not ?
-            s_expTime = 0;          // reinitialize it to be reloaded
         } else if (strcmp(tt,"-set")==0 && ACTIVE_OPTION()
                    && memFl!=MEM_NO_ALLOC) {
             // pre-evaluation of -set

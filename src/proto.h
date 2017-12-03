@@ -1714,7 +1714,6 @@ struct options {
     char *htmlZipCommand;
     char *olcxSearchString;
     int olineLen;
-    char licenseString[TMP_STRING_SIZE];
     char *htmlLinkSuffix;
     char *olExtractAddrParPrefix;
     int extractMode;
