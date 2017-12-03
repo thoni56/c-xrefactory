@@ -24,3 +24,28 @@ Currently that causes some [warning]:s when _c-xref.bs_ generates new
 _strTdef.h_ and _strFill.h_.
 
 ## Design ##
+
+### Editor-Server
+
+The c-xrefactory application is divided into the server, _c-xref_ and
+the editor part, currently only emacs:en are supported so that's
+implemented in the env/emacs-packages.
+
+Communication between them is performed using text through standard
+input/output to/from _c-xref_. The protocol is defined in
+src/protocol.tc and must match env/emacs/c-xrefprotocol.el.
+
+NOTE: I have not found something that enforces this protocol-match such as
+generating one from the other.
+
+### Bootstrapping
+
+It seems like _c-xref_ needs to be bootstrapped by reading in a lot of
+predefined header files to get system definitions. This is done using
+options like `-task_regime_generate' which prints a lot of data
+structures on the standard output which is then fed into _strFill.h_,
+_strTdef.h_ and _enumTxt.h_ by the Makefile.
+
+NOTE: Why this is necessary, I don't know. It might be an
+optimization. In any case it creates an extra complexity building and
+maintaining and to the structure of _c-xref_.

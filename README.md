@@ -15,9 +15,9 @@ will never be the same.
 
 ## Help!
 
-This code is pre-historic. It was born in a world of
-copy-paste-hack-and-debug, there are no unit tests, or any tests at all
-for that matter.
+This code is pre-historic legacy. It seems to have been born in a
+world of copy-paste-hack-and-debug, there are no unit tests, or any
+tests at all for that matter.
 
 I'm on a long-time quest to resurrect this code to understandable,
 maintainable and developable standard. This is hard, difficult and
@@ -25,7 +25,8 @@ time consuming, as it is almost impossible to understand what anything
 does. At this point I've added a couple of smoke/functional tests,
 that at least should crash if something basic becomes broken.
 
-If you think you can help, I'll be happy to take it.
+If you think you can help, I'll be happy to take it, even if it is
+only adding one line of understanding in _src/NOTES.md_...
 
 
 ## The Story
