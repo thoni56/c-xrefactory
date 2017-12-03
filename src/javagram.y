@@ -56,7 +56,6 @@
 #define JslImportOnDemandDeclaration(iname) {\
     S_symbol *sym;\
     int st;\
-    char *origname;\
     st = jslClassifyAmbiguousTypeName(iname, &sym);\
     if (st == TypeStruct) {\
         javaLoadClassSymbolsFromFile(sym);\
@@ -1063,7 +1062,6 @@ TypeImportOnDemandDeclaration:
                 if (! SyntaxPassOnly()) {
                     S_symbol	*str;
                     S_typeModifiers		*expr;
-                    S_idIdentList		*ii;
                     S_reference			*rr, *lastUselessRef;
                     int					st;
                     st = javaClassifyAmbiguousName($2.d, NULL,&str,&expr,&rr,
@@ -1500,7 +1498,7 @@ FieldDeclaration:
         Modifiers_opt AssignementType VariableDeclarators ';'		{
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_symbol *s,*p,*pp,*memb,*clas;
+                    S_symbol *p,*pp,*memb,*clas;
                     int vClass;
                     S_recFindStr    rfs;
                     s_cps.lastAssignementStruct = NULL;
@@ -1551,7 +1549,6 @@ FieldDeclaration:
                 S_symbol *p;
                 S_symbol *pp;
                 S_symbol *clas;
-                S_recFindStr    rfs;
                 int		vClass;
                 clas = s_jsl->classStat->thisClass;
                 assert(clas != NULL);
@@ -1597,7 +1594,6 @@ VariableDeclarators:
     |	VariableDeclarators ',' VariableDeclarator		{
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_symbol *p;
                     assert($1.d && $3.d);
                     if ($3.d->b.storage == StorageError) {
                         $$.d = $1.d;
@@ -1611,7 +1607,6 @@ VariableDeclarators:
                 }
             }
             InSecondJslPass({
-                S_symbol *p;
                 assert($1.d && $3.d);
                 if ($3.d->b.storage == StorageError) {
                     $$.d = $1.d;
@@ -1942,14 +1937,14 @@ ConstructorDeclaration:
             {
                 if (RegularPass()) {
                     if (! SyntaxPassOnly()) {
-                        S_symbol *p,*pa, *pp, *mh, *args;
+                        S_symbol *mh, *args;
                         int i;
                         args = $2.d;
-/*&
-  if (! ($1.d & ACC_STATIC)) {
-  args = javaPrependDirectEnclosingInstanceArgument($2.d);
-  }
-  &*/
+                        /*&
+                          if (! ($1.d & ACC_STATIC)) {
+                              args = javaPrependDirectEnclosingInstanceArgument($2.d);
+                          }
+                          &*/
                         mh=javaMethodHeader($1.d, &s_errorSymbol, args, StorageConstructor);
                         // TODO! Merge this with 'javaMethodBodyBeginning'!
                         assert(mh->u.type && mh->u.type->m == TypeFunction);

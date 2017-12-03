@@ -168,14 +168,13 @@ static void scheduleCommandLineEnteredFileToProcess(char *fn) {
 }
 
 void dirInputFile(MAP_FUN_PROFILE) {
-    char            *dir,*fname,*fin,*suff, *wcp;
+    char            *dir,*fname, *suff;
     void            *recurseFlag;
     void            *nrecurseFlag;
     struct stat     st;
     char            fn[MAX_FILE_NAME_SIZE];
-    char            ttt[MAX_FILE_NAME_SIZE];
     char            wcPaths[MAX_OPTION_LEN];
-    int             ii,len,topCallFlag,stt, wclen;
+    int             topCallFlag, stt;
     dir = a1; fname = file; recurseFlag = a4; topCallFlag = *a5;
     if (topCallFlag == 0) {
         if (strcmp(fname,".")==0) return;
@@ -275,7 +274,7 @@ void crOptionStr(char **optAddress, char *text) {
 }
 
 static void copyOptionShiftPointer(char **lld, S_options *dest, S_options *src) {
-    char    *str, **dlld;
+    char    **dlld;
     int     offset, localOffset;
     offset = ((char*)dest) - ((char*)src);
     localOffset = ((char*)lld) - ((char*)src);
@@ -324,9 +323,8 @@ void xrefSetenv(char *name, char *val) {
 
 
 int mainHandleSetOption( int argc, char **argv, int i ) {
-    S_setGetEnv *sge;
     char *name, *val;
-    int j,n;
+
     NEXT_ARG();
     name = argv[i];
     assert(name);
@@ -337,7 +335,7 @@ int mainHandleSetOption( int argc, char **argv, int i ) {
 }
 
 static int mainHandleIncludeOption(int argc, char **argv, int i) {
-    int nargc,aaa;
+    int nargc;
     char **nargv;
     NEXT_FILE_ARG();
     s_opt.stdopFlag = 1;
@@ -508,7 +506,7 @@ static int processDOption(int *ii, int argc, char **argv) {
 static int processEOption(int *ii, int argc, char **argv) {
     int i = * ii;
     char ttt[TMP_STRING_SIZE];
-    int alen;
+
     if (0) {}
     else if (strcmp(argv[i],"-errors")==0)      s_opt.err = 1;
     else if (strcmp(argv[i],"-exit")==0)        s_opt.exit = 1;
@@ -701,7 +699,7 @@ static int processHOption(int *ii, int argc, char **argv) {
 }
 
 static void mainAddStringListOption(S_stringList **optlist, char *argvi) {
-    S_stringList **ll, *list;
+    S_stringList **ll;
     for(ll=optlist; *ll!=NULL; ll= &(*ll)->next) ;
     allocOptionSpace((void**)ll, sizeof(S_stringList));
     crOptionStr(&(*ll)->d, argvi);
@@ -1164,7 +1162,7 @@ static int processPOption(int *ii, int argc, char **argv) {
         crOptionStr(&s_opt.project, argv[i]);
     }
     else if (strcmp(argv[i],"-preload")==0) {
-        char *buff, *file, *fromFile;
+        char *file, *fromFile;
         NEXT_FILE_ARG();
         file = argv[i];
         strcpy(ttt, normalizeFileName(file, s_cwd));
@@ -1544,7 +1542,7 @@ static void mainScheduleInputFileOptionToFileTable(char *infile) {
 static void mainProcessInFileOption(char *infile) {
     int i;
     if (infile[0]=='`' && infile[strlen(infile)-1]=='`') {
-        int nargc,aaa;
+        int nargc;
         char **nargv, *pp;
         char command[MAX_OPTION_LEN];
         s_opt.stdopFlag = 1;
@@ -1564,11 +1562,8 @@ static void mainProcessInFileOption(char *infile) {
 }
 
 void processOptions(int argc, char **argv, int infilesFlag) {
-    S_stringList    *ll;
-    S_fileItem      *fi,ffi;
-    char            *fin,*ftin;
-    int             i,ii,newRefNum,ln,topCallFlag,processed,tmp;
-    void            *recursFlag;
+    int             i, processed;
+
     for (i=1; i<argc; i++) {
         if (s_opt.taskRegime==RegimeEditServer &&
             strncmp(argv[i],"-last_message=",14)==0) {
@@ -1665,7 +1660,6 @@ void mainScheduleInputFilesFromOptionsToFileTable() {
 
 
 static char * getInputFileFromFtab(int *fArgCount, int flag) {
-    char        *res;
     int         i;
     S_fileItem  *fi;
     for(i= *fArgCount; i<s_fileTab.size; i++) {
@@ -1689,7 +1683,6 @@ static char * getCommandLineFile(int *fArgCount) {
 }
 
 static void mainGenerateReferenceFile() {
-    char *inputRefFile;
     static int updateFlag = 0;
     if (s_opt.cxrefFileName == NULL) return;
     if (updateFlag == 0 && s_opt.update == 0) {
@@ -1707,7 +1700,7 @@ static void schedulingUpdateToProcess(S_fileItem *p) {
 }
 
 static void schedulingToUpdate(S_fileItem *p, void *rs) {
-    struct stat fstat,hstat,*refStat;
+    struct stat fstat,hstat, *refStat;
     char        sss[MAX_FILE_NAME_SIZE];
     refStat = (struct stat *) rs;
     if (p == s_fileTab.tab[s_noneFileIndex]) return;
@@ -1757,9 +1750,8 @@ void searchDefaultOptionsFile(char *file, char *ttt, char *sect) {
     struct stat fst;
     int fnum, ii, findFlag=0;
     FILE *ff=NULL;
-    FILE *ffn;
-    int nargc,aaa,hlen;
-    char **nargv,*hh;
+    int nargc;
+    char **nargv;
     ttt[0] = 0; sect[0]=0;
     if (file == NULL) return;
     if (s_opt.stdopFlag || s_opt.no_stdop) return;
@@ -1981,7 +1973,7 @@ static void initializationsPerInvocation() {
 static void fileTabInit() {
     int len;
     char *ff;
-    struct fileItem ffi,*ffii;
+    struct fileItem *ffii;
     idTabNAInit( &s_fileTab,MAX_FILES);
     len = strlen(NON_FILE_NAME);
     FT_ALLOCC(ff, len+1, char);
@@ -2130,7 +2122,7 @@ static int getLineFromFile(FILE *ff, char *tt, int ttsize, int *outI) {
 
 static void getAndProcessGccOptions() {
     char line[MAX_OPTION_LEN];
-    int len,c,isActiveSect;
+    int len, isActiveSect;
     char *tempfile_name, *lang;
     FILE *tempfile;
     struct stat stt;
@@ -2234,14 +2226,10 @@ static void mainFileProcessingInitialisations(
                                               ) {
     int             stargc;
     char            **stargv;
-    int             dfargc;
-    char            **dfargv;
     char            dffname[MAX_FILE_NAME_SIZE];
     char            dffsect[MAX_FILE_NAME_SIZE];
-    char            *ss, *fvv;
     struct stat     dffstat;
     char            *fileName;
-    int             lc;
     S_stringList    *tmpIncludeDirs;
 
     fileName = s_input_file_name;
@@ -2363,10 +2351,7 @@ static void createXrefrcDefaultLicense() {
     char            fn[MAX_FILE_NAME_SIZE];
     struct stat     st;
     FILE            *ff;
-    int             rand,rr,ed,em,ey,eh,emi,es,i;
-    time_t          tt;
-    struct tm       *tmm;
-    char            *lic,*own,*ss;
+
     getXrefrcFileName(fn);
     if (stat(fn, &st)!=0) {
         // does not exists
@@ -2447,17 +2432,14 @@ static void mainReinitFileTabEntry(S_fileItem *ft, int i) {
 
 void mainTaskEntryInitialisations(int argc, char **argv) {
     char        tt[MAX_FILE_NAME_SIZE];
-    char        ttt[MAX_FILE_NAME_SIZE];
     char        dffname[MAX_FILE_NAME_SIZE];
     char        dffsect[MAX_FILE_NAME_SIZE];
-    char        relcwd[MAX_FILE_NAME_SIZE];
     char        *ss;
     int         dfargc;
     char        **dfargv;
     int         argcount;
     char        *sss,*cmdlnInputFile;
-    int         inmode,ii,topCallFlag, noerropt;
-    void        *recursFlag;
+    int         inmode, noerropt;
     static int  firstmemory=0;
 
     s_fileAbortionEnabled = 0;
@@ -2669,7 +2651,7 @@ static void makeIncludeClosureOfFilesToUpdate() {
     char                *cxFreeBase;
     int                 i,ii,fileAddedFlag, isJavaFileFlag;
     S_fileItem          *fi,*includer;
-    S_symbolRefItem     sri,ddd,*memb;
+    S_symbolRefItem     ddd,*memb;
     S_reference         *rr;
     CX_ALLOCC(cxFreeBase,0,char);
     readOneAppropReferenceFile(LINK_NAME_INCLUDE_REFS,
@@ -2773,8 +2755,7 @@ void mainOpenOutputFile(char *ofile) {
 }
 
 static int scheduleFileUsingTheMacro() {
-    int                 rr,ii;
-    S_symbolRefItem     ddd,*memb;
+    S_symbolRefItem     ddd;
     S_olSymbolsMenu     mm, *oldMenu;
     S_olcxReferences    *tmpc;
     assert(s_olstringInMbody);
@@ -2857,8 +2838,7 @@ static void mainPushThisFileIncludeReferences(int fnum) {
 
 static int mainSymbolCanBeIdentifiedByPosition(int fnum) {
     int     line,col;
-    char dffname[MAX_FILE_NAME_SIZE];
-    char dffsect[MAX_FILE_NAME_SIZE];
+
     // there is a serious problem with options memory for options got from
     // the .c-xrefrc file. so for the moment this will not work.
     // which problem ??????
@@ -2905,7 +2885,8 @@ static void mainEditSrvFileSingleCppPass( int argc, char **argv,
                                           int *firstPassing
                                           ) {
     int inputIn;
-    int ol2procfile,line,col;
+    int ol2procfile;
+
     inputIn = 0;
     s_olStringSecondProcessing = 0;
     mainFileProcessingInitialisations(firstPassing, argc, argv,
@@ -2945,8 +2926,6 @@ static void mainEditServerProcessFile( int argc, char **argv,
                                        int nargc, char **nargv,
                                        int *firstPassing
                                        ) {
-    FILE                        *inputIn;
-    int                         ol2procfile;
     assert(s_fileTab.tab[s_olOriginalComFileNumber]->b.scheduledToProcess);
     s_maximalCppPass = 1;
     s_currCppPass = 1;
@@ -2955,7 +2934,7 @@ static void mainEditServerProcessFile( int argc, char **argv,
         assert(s_input_file_name!=NULL);
         mainEditSrvFileSingleCppPass( argc, argv, nargc, nargv, firstPassing);
         if (s_opt.cxrefs==OLO_EXTRACT
-            || (s_olstringServed && ! creatingOlcxRefs())) goto fileParsed;
+            || (s_olstringServed && ! creatingOlcxRefs())) goto fileParsed; /* TODO: break? */
         if (LANGUAGE(LAN_JAVA)) goto fileParsed;
     }
  fileParsed:
@@ -3183,8 +3162,7 @@ static S_fileItem *mainCreateListOfInputFiles() {
 
 void mainCallXref(int argc, char **argv) {
     static char     *cxFreeBase0, *cxFreeBase;
-    static char     *fn;
-    static int      fc,pfc;
+    static int      fc;
     static int      inputIn;
     static int      firstPassing,mess,atLeastOneProcessed;
     static S_fileItem      *ffc, *pffc;
@@ -3201,7 +3179,7 @@ void mainCallXref(int argc, char **argv) {
     CX_ALLOCC(cxFreeBase,0,char);
     s_cxResizingBlocked = 1;
     if (s_opt.update) scheduleModifiedFilesToUpdate();
-    pfc = fc = 0; atLeastOneProcessed = 0;
+    fc = 0; atLeastOneProcessed = 0;
     ffc = pffc = mainCreateListOfInputFiles();
     inputCounter = pinputCounter = 0;
     LIST_LEN(numberOfInputs, S_fileItem, ffc);
@@ -3279,8 +3257,6 @@ void mainCallXref(int argc, char **argv) {
 
 
 void mainXref(int argc, char **argv) {
-    int lc;
-
     mainOpenOutputFile(s_opt.outputFileName);
     editorLoadAllOpenedBufferFiles();
 
@@ -3316,7 +3292,6 @@ void mainCallEditServer(int argc, char **argv,
                         int nargc, char **nargv,
                         int *firstPassing
                         ) {
-    int inputIn;
     editorLoadAllOpenedBufferFiles();
     olcxSetCurrentUser(s_opt.user);
     if (creatingOlcxRefs()) olcxPushEmptyStackItem(&s_olcxCurrentUser->browserStack);
@@ -3345,9 +3320,8 @@ void mainCallEditServer(int argc, char **argv,
 
 static void mainEditServer(int argc, char **argv) {
     int     nargc;  char **nargv;
-    FILE    *inputIn;
-    int     firstPassing, fArgCount;
-    pid_t   qnxClientPid;
+    int     firstPassing;
+
     s_cxResizingBlocked = 1;
     firstPassing = 1;
     copyOptions(&s_cachedOptions, &s_opt);

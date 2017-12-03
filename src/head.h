@@ -306,6 +306,7 @@
 
 /* *********************************************************************** */
 
+/* TODO: push the conditions into the functions for these macros */
 #define GenInternalLabelReference(count,usage) {\
     if (s_opt.cxrefs == OLO_EXTRACT) genInternalLabelReference(count, usage);\
 }

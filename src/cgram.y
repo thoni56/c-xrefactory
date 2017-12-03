@@ -410,7 +410,6 @@ postfix_expr
         assert($$.d.t);
     }
     | postfix_expr {SetStrCompl2($1.d.t);} PTR_OP str_rec_identifier	{
-        S_typeModifiers *p;
         S_symbol *rec=NULL;
         $$.d.r = NULL;
         if ($1.d.t->m==TypePointer || $1.d.t->m==TypeArray) {
@@ -1654,7 +1653,7 @@ external_definition
         tmpWorkMemoryi = $1.d;
     }
     | Sv_tmp function_definition_head {
-        S_symbol *p,*pa,*pp;
+        S_symbol *p;
         int i;
         assert($2.d);
         // I think that due to the following line sometimes
