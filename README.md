@@ -13,6 +13,21 @@ Place cursor on an identifier and `go to definition`, `rename`, mark
 some code and `extract function` and so on. Your C programming and code
 will never be the same.
 
+## Help!
+
+This code is pre-historic. It was born in a world of
+copy-paste-hack-and-debug, there are no unit tests, or any tests at all
+for that matter.
+
+I'm on a long-time quest to resurrect this code to understandable,
+maintainable and developable standard. This is hard, difficult and
+time consuming, as it is almost impossible to understand what anything
+does. At this point I've added a couple of smoke/functional tests,
+that at least should crash if something basic becomes broken.
+
+If you think you can help, I'll be happy to take it.
+
+
 ## The Story
 
 Once apon a time there was [http://www.xref.sk](http://www.xref.sk), a
