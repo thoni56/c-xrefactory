@@ -42,7 +42,7 @@ void setToNull(void *p) {
 
 void deleteSymDef(void *p) {
     S_symbol        *pp;
-    S_javaStat      *scp;
+
     pp = (S_symbol *) p;
     DPRINTF3("deleting %s %s\n", pp->name, pp->linkName);
     if (symTabDelete(s_javaStat->locals,pp)) return;
@@ -105,13 +105,10 @@ S_recFindStr * iniFind(S_symbol *s, S_recFindStr *rfs) {
 #if ZERO //DEBUG_ACCESS
 #define DAP(xxx) xxx
 #else
-#define DAP(xxx) 
+#define DAP(xxx)
 #endif
 
 int javaOuterClassAccessible(S_symbol *cl) {
-    S_javaStat          *cs, *lcs;
-    S_symStructSpecific *nest;
-    int                 i,in,len;
     DAP(fprintf(dumpOut,"testing class accessibility of %s\n",cl->linkName);fflush(dumpOut);)
         if (cl->b.accessFlags & ACC_PUBLIC) {
             DAP(fprintf(dumpOut,"ret 1 access public\n"); fflush(dumpOut);)
@@ -168,8 +165,7 @@ static int accessibleByDefaultAccessibility(S_recFindStr *rfs, S_symbol *funcl) 
 // when modifying this, you will need to change it there too
 int javaRecordAccessible(S_recFindStr *rfs, S_symbol *appcl, S_symbol *funcl, S_symbol *rec, unsigned recAccessFlags) {
     S_javaStat          *cs, *lcs;
-    S_symStructSpecific *nest;
-    int                 i,in,len;
+    int                 len;
     if (funcl == NULL) return(1);  /* argument or local variable */
     DAP(fprintf(dumpOut,"testing accessibility %s . %s of x%x\n",funcl->linkName,rec->linkName, recAccessFlags);fflush(dumpOut);)
         //&if ((s_opt.ooChecksBits & OOC_ACCESS_CHECK) == 0) {
@@ -372,15 +368,15 @@ int findStrRecord(  S_symbol        *s,
 
 /* and push reference */
 // this should be split into two copies, different for C and Java.
-S_reference *findStrRecordFromSymbol( S_symbol *sym, 
-                                      S_idIdent *record, 
-                                      S_symbol **res, 
+S_reference *findStrRecordFromSymbol( S_symbol *sym,
+                                      S_idIdent *record,
+                                      S_symbol **res,
                                       int javaClassif,
                                       S_idIdent *super /* covering special case when invoked
                                                           as SUPER.sym, berk */
                                       ) {
     S_recFindStr    rfs;
-    S_reference     rf, *ref;
+    S_reference     *ref;
     S_usageBits     ub;
     int rr, minacc;
     ref = NULL;
@@ -389,7 +385,7 @@ S_reference *findStrRecordFromSymbol( S_symbol *sym,
     rr = findStrRecordSym(iniFind(sym,&rfs),record->name,res,
                           javaClassif, ACC_CHECK_NO, VISIB_CHECK_NO);
     if (rr == RESULT_OK && rfs.currClass!=NULL &&
-        ((*res)->b.storage==StorageField 
+        ((*res)->b.storage==StorageField
          || (*res)->b.storage==StorageMethod
          || (*res)->b.storage==StorageConstructor)){
         assert(rfs.currClass->u.s && rfs.baseClass && rfs.baseClass->u.s);
@@ -418,7 +414,6 @@ S_reference * findStrRecordFromType(    S_typeModifiers *str,
                                         int javaClassif
                                         ) {
     S_reference *ref;
-    int rr;
     assert(str);
     ref = NULL;
     if (str->m != TypeStruct && str->m != TypeUnion) {
@@ -460,11 +455,11 @@ void setLocalVariableLinkName(struct symbol *p) {
     int len,tti;
     if (s_opt.cxrefs == OLO_EXTRACT) {
         // extract variable, I must pass all needed informations in linkname
-        sprintf(nnn,"%c%s%c",   LINK_NAME_CUT_SYMBOL, p->name, 
+        sprintf(nnn,"%c%s%c",   LINK_NAME_CUT_SYMBOL, p->name,
                 LINK_NAME_CUT_SYMBOL);
         ttt[0] = LINK_NAME_EXTRACT_DEFAULT_FLAG;
         // why it commented out ?
-        //& if ((!LANGUAGE(LAN_JAVA)) 
+        //& if ((!LANGUAGE(LAN_JAVA))
         //&     && (p->u.type->m == TypeUnion || p->u.type->m == TypeStruct)) {
         //&     ttt[0] = LINK_NAME_EXTRACT_STR_UNION_TYPE_FLAG;
         //& }
@@ -475,7 +470,7 @@ void setLocalVariableLinkName(struct symbol *p) {
         sprintf(ttt+tti+len,"%c%x-%x-%x-%x", LINK_NAME_CUT_SYMBOL,
                 p->pos.file,p->pos.line,p->pos.coll, s_count.localVar++);
     } else {
-        if (        p->b.storage==StorageExtern 
+        if (        p->b.storage==StorageExtern
                     ||  p->b.storage==StorageTypedef
                     ||  p->b.storage==StorageConstant ) {
             sprintf(ttt,"%s", p->name);
@@ -500,9 +495,9 @@ void setLocalVariableLinkName(struct symbol *p) {
 
 static void setStaticFunctionLinkName( S_symbol *p, int usage ) {
     char        ttt[TMP_STRING_SIZE];
-    int         len,ii;
+    int         len;
     char        *ss,*basefname;
-    S_symbol    *memb;
+
     //& if (! symTabIsMember(s_symTab, p, &ii, &memb)) {
     // follwing unifies static symbols taken from the same header files.
     // Static symbols can be used only after being defined, so it is sufficient
@@ -544,7 +539,7 @@ S_symbol *addNewSymbolDef(S_symbol *p, unsigned theDefaultStorage, S_symTab *tab
         p->u.type = tt;
         tt->typedefin = p;
     }
-    // special care is given to linkNames for local variable 
+    // special care is given to linkNames for local variable
     if (! WORK_NEST_LEVEL0()) {
         // local scope symbol
         setLocalVariableLinkName(p);
@@ -568,7 +563,7 @@ S_symbol *addNewCopyOfSymbolDef(S_symbol *def, unsigned storage) {
 
 S_symbol *addNewDeclaration(
                             S_symbol *btype,
-                            S_symbol *decl, 
+                            S_symbol *decl,
                             unsigned storage,
                             S_symTab *tab
                             ) {
@@ -608,11 +603,11 @@ void addFunctionParameterToSymTable(S_symbol *function, S_symbol *p, int i, S_sy
             addNewSymbolDef(pa, StorageAuto, tab, UsageDefined);
         }
         if (s_opt.cxrefs == OLO_EXTRACT) {
-            addCxReference(pa, &pa->pos, UsageLvalUsed, 
+            addCxReference(pa, &pa->pos, UsageLvalUsed,
                            s_noneFileIndex, s_noneFileIndex);
         }
     }
-    if (s_opt.cxrefs == OLO_GOTO_PARAM_NAME 
+    if (s_opt.cxrefs == OLO_GOTO_PARAM_NAME
         && i == s_opt.olcxGotoVal
         && POSITION_EQ(function->pos, s_cxRefPos)) {
         s_paramPosition = p->pos;
@@ -672,7 +667,7 @@ static S_typeModifiers *mergeBaseType(S_typeModifiers *t1,S_typeModifiers *t2){
         r = typeUnsignedChange[b];
         r = typeLongChange[r];
         break;
-    default: assert(0);
+    default: assert(0); r=0;
     }
     return(crSimpleTypeMofifier(r));
 }
@@ -710,19 +705,16 @@ S_symbol *typeSpecifier1(unsigned t) {
 }
 
 void declTypeSpecifier1(S_symbol *d, unsigned t) {
-    S_symbol    *r;
     assert(d && d->u.type);
     d->u.type = mergeBaseModTypes(d->u.type,crSimpleTypeMofifier(t));
 }
 
 void declTypeSpecifier2(S_symbol *d, S_typeModifiers *t) {
-    unsigned b,rb;
     assert(d && d->u.type);
     d->u.type = mergeBaseModTypes(d->u.type, t);
 }
 
 void declTypeSpecifier21(S_typeModifiers *t, S_symbol *d) {
-    unsigned        b;
     assert(d && d->u.type);
     d->u.type = mergeBaseModTypes(t, d->u.type);
 }
@@ -840,15 +832,15 @@ static S_typeModifiers *crSimpleEnumType(S_symbol *edef, int type) {
     return(res);
 }
 
-S_typeModifiers *simpleStrUnionSpecifier(   S_idIdent *typeName, 
-                                            S_idIdent *id, 
+S_typeModifiers *simpleStrUnionSpecifier(   S_idIdent *typeName,
+                                            S_idIdent *id,
                                             int usage
                                             ) {
     S_symbol p,*pp;
     int ii,type;
     /*fprintf(dumpOut, "new str %s\n",id->name); fflush(dumpOut);*/
     assert(typeName && typeName->sd && typeName->sd->b.symType == TypeKeyword);
-    assert(     typeName->sd->u.keyWordVal == STRUCT 
+    assert(     typeName->sd->u.keyWordVal == STRUCT
                 ||  typeName->sd->u.keyWordVal == CLASS
                 ||  typeName->sd->u.keyWordVal == UNION
                 );
@@ -889,9 +881,9 @@ void setGlobalFileDepNames(char *iname, S_symbol *pp, int memory) {
     assert(pp);
     if (s_opt.exactPositionResolve) {
         fname = simpleFileName(s_fileTab.tab[pp->pos.file]->name);
-        sprintf(tmp, "%x-%s-%x-%x%c", 
+        sprintf(tmp, "%x-%s-%x-%x%c",
                 hashFun(s_fileTab.tab[pp->pos.file]->name),
-                fname, pp->pos.line, pp->pos.coll, 
+                fname, pp->pos.line, pp->pos.coll,
                 LINK_NAME_CUT_SYMBOL);
     } else if (iname[0]==0) {
         // anonymous structure/union ...
@@ -954,13 +946,12 @@ void setGlobalFileDepNames(char *iname, S_symbol *pp, int memory) {
 
 S_typeModifiers *crNewAnnonymeStrUnion(S_idIdent *typeName) {
     S_symbol *pp;
-    int type,ti,line,coll,nlen,nnlen;
-    char *name,*fname,*fsname;
-    char  ttt[TMP_STRING_SIZE];
+    int type;
+
     assert(typeName);
     assert(typeName->sd);
     assert(typeName->sd->b.symType == TypeKeyword);
-    assert(     typeName->sd->u.keyWordVal == STRUCT 
+    assert(     typeName->sd->u.keyWordVal == STRUCT
                 ||  typeName->sd->u.keyWordVal == CLASS
                 ||  typeName->sd->u.keyWordVal == UNION
                 );
@@ -971,16 +962,6 @@ S_typeModifiers *crNewAnnonymeStrUnion(S_idIdent *typeName) {
     FILL_symbolBits(&pp->b,0,0, 0,0,0, type, StorageNone,0);
     FILL_symbol(pp, "", NULL, typeName->p,pp->b,type,NULL, NULL);
     setGlobalFileDepNames("", pp, MEM_XX);
-#if ZERO
-    if (s_opt.exactPositionResolve) {
-        sprintf(ttt, "%s-%x%c", 
-                simpleFileName(s_fileTab.tab[typeName->p.file]->name),
-                typeName->p.line,
-                LINK_NAME_CUT_SYMBOL);
-        XX_ALLOCC(pp->linkName, strlen(ttt)+1, char);
-        strcpy(pp->linkName, ttt);
-    }
-#endif
     XX_ALLOC(pp->u.s, S_symStructSpecific);
     FILLF_symStructSpecific(pp->u.s, NULL,
                             NULL, NULL, NULL, 0, NULL,
@@ -1003,7 +984,7 @@ void specializeStrUnionDef(S_symbol *sd, S_symbol *rec) {
         if (dd->name!=NULL) {
             dd->linkName = string3ConcatInStackMem(sd->linkName,".",dd->name);
             dd->b.record = 1;
-            if (    LANGUAGE(LAN_CCC) && dd->b.symType==TypeDefault 
+            if (    LANGUAGE(LAN_CCC) && dd->b.symType==TypeDefault
                     &&  dd->u.type->m==TypeFunction) {
                 dd->u.type->u.f.thisFunList = &sd->u.s->records;
             }
@@ -1058,7 +1039,7 @@ void setParamPositionForParameterBeyondRange(S_position *rpar) {
     s_paramEndPosition = *rpar;
 }
 
-static void handleParameterPositions(S_position *lpar, S_positionLst *commas, 
+static void handleParameterPositions(S_position *lpar, S_positionLst *commas,
                                      S_position *rpar, int hasParam) {
     int i, argn;
     S_position *p1, *p2;
@@ -1134,4 +1115,3 @@ void javaHandleDeclaratorParamPositions(S_position *sym, S_position *lpar,
         handleParameterPositions(lpar, commas->next, rpar, 1);
     }
 }
-

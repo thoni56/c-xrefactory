@@ -10,14 +10,12 @@
 
 #define NON_FILE_NAME "___None___"
 
-static char olExtractAddrParPrefixStatChar[TMP_STRING_SIZE];
 static char oldStdopFile[MAX_FILE_NAME_SIZE];
 static char oldStdopSection[MAX_FILE_NAME_SIZE];
 static char oldOnLineClassPath[MAX_OPTION_LEN];
 static time_t oldStdopTime;
 static int oldLanguage;
 static int oldCppPass;
-static char qnxMsgBuff[QNX_MSG_BUF_SIZE];
 static S_options s_tmpOptions;
 
 static void usage(char *s) {
@@ -2534,12 +2532,12 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
             inmode = INFILES_DISABLED;
         }
         // disable error reporting on xref task on this pre-reading of .c-xrefrc
+        noerropt = s_opt.noErrors;
         if (s_opt.taskRegime==RegimeEditServer) {
-            noerropt = s_opt.noErrors;
             s_opt.noErrors = 1;
         }
         // there is a problem with INFILES_ENABLED (update for safetycheck),
-        // I should first load cxref file, in order to protect file numbers.
+        // It should first load cxref file, in order to protect file numbers.
         if (inmode==INFILES_ENABLED && s_opt.update && !s_opt.create) {
             //&fprintf(dumpOut,"PREREADING !!!!!!!!!!!!!!!!\n");
             // this makes a problem: I need to preread cxref file before
@@ -2552,9 +2550,11 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         }
         processOptions(dfargc, dfargv, inmode);
         // recover value of errors messages
-        if (s_opt.taskRegime==RegimeEditServer) s_opt.noErrors = noerropt;
+        if (s_opt.taskRegime==RegimeEditServer)
+            s_opt.noErrors = noerropt;
         checkExactPositionUpdate(0);
-        if (inmode == INFILES_ENABLED) mainScheduleInputFilesFromOptionsToFileTable();
+        if (inmode == INFILES_ENABLED)
+            mainScheduleInputFilesFromOptionsToFileTable();
     }
     recoverCachePointZero();
 

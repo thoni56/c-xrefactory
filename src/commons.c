@@ -11,7 +11,7 @@ char tmpBuff[TMP_BUFF_SIZE];
 
 void initCwd() {
     char *rr;
-    char nid[MAX_FILE_NAME_SIZE];
+
     rr = getcwd(s_cwd, MAX_FILE_NAME_SIZE);
     if (rr==NULL) {
         // try also with getenv, on some linuxes the statically linked
@@ -126,8 +126,9 @@ char *normalizeFileName(char *name, char *relativeto) {
 
 char *create_temporary_filename() {
     static char temporary_name[MAX_FILE_NAME_SIZE] = "";
-    char *temp_dir;
 #if defined (__WIN32__)    /*SBD*/
+    char *temp_dir;
+
     // under Windows tmpnam returns file names in \ root.
     static int count = 0;
     temp_dir = getenv("TEMP");

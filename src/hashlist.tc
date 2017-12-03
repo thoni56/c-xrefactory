@@ -28,51 +28,49 @@
 
 
 void GLUE2(HASH_FUN_PREFIX,NAInit)(HASH_TAB_TYPE *t, int size) {
-    register int i;
     t->size = size;
     memset(t->tab, 0, sizeof(HASH_ELEM_TYPE *)*t->size);
 }
 
 
 void GLUE2(HASH_FUN_PREFIX,Init)(HASH_TAB_TYPE *t, int size) {
-    register int i;
     XX_ALLOCC(t->tab, size, HASH_ELEM_TYPE *);
     GLUE2(HASH_FUN_PREFIX,NAInit)(t, size);
 }
 
 
 int GLUE2(HASH_FUN_PREFIX,IsMember)(
-                    HASH_TAB_TYPE *t,
-                    HASH_ELEM_TYPE *elem,
-                    int *position,
-                    HASH_ELEM_TYPE **original
-            ) {
+                                    HASH_TAB_TYPE *t,
+                                    HASH_ELEM_TYPE *elem,
+                                    int *position,
+                                    HASH_ELEM_TYPE **original
+                                    ) {
     unsigned posid;
     HASH_ELEM_TYPE *pp;
     posid = HASH_FUN(elem);
     posid = posid % t->size;
     *position = posid;
     assert(t->tab!=NULL);
-/*fprintf(dumpOut,"new comp %d: ",posid);fflush(dumpOut);*/
+    /*fprintf(dumpOut,"new comp %d: ",posid);fflush(dumpOut);*/
     for (pp=t->tab[posid]; pp!=NULL; pp=pp->next) {
-/*fprintf(dumpOut," %d ",pp);fflush(dumpOut);*/
-/*fprintf(dumpOut,"%s to %s\n",elem->name, pp->name);fflush(dumpOut);*/
+        /*fprintf(dumpOut," %d ",pp);fflush(dumpOut);*/
+        /*fprintf(dumpOut,"%s to %s\n",elem->name, pp->name);fflush(dumpOut);*/
         if (HASH_ELEM_EQUAL(pp, elem)) {
             *original = pp;
-/*fprintf(dumpOut,"found\n");fflush(dumpOut);*/
+            /*fprintf(dumpOut,"found\n");fflush(dumpOut);*/
             return(1);
         }
     }
     *original = NULL;
-/*fprintf(dumpOut,"not found\n");fflush(dumpOut);*/
+    /*fprintf(dumpOut,"not found\n");fflush(dumpOut);*/
     return(0);
 }
 
 
 int GLUE2(HASH_FUN_PREFIX,NextMember)(
-                    HASH_ELEM_TYPE *elem,
-                    HASH_ELEM_TYPE **original
-            ) {
+                                      HASH_ELEM_TYPE *elem,
+                                      HASH_ELEM_TYPE **original
+                                      ) {
     HASH_ELEM_TYPE *pp;
     assert(*original);
     for (pp= (*original)->next; pp!=NULL; pp=pp->next) {
@@ -87,18 +85,18 @@ int GLUE2(HASH_FUN_PREFIX,NextMember)(
 
 
 int GLUE2(HASH_FUN_PREFIX,MembEqual)(
-                    HASH_ELEM_TYPE *e1,
-                    HASH_ELEM_TYPE *e2
-            ) {
+                                     HASH_ELEM_TYPE *e1,
+                                     HASH_ELEM_TYPE *e2
+                                     ) {
     assert(e1 && e2);
     return(HASH_ELEM_EQUAL(e1, e2));
 }
 
 
 int GLUE2(HASH_FUN_PREFIX,Delete)(
-                    HASH_TAB_TYPE *t,
-                    HASH_ELEM_TYPE *elem
-            ) {
+                                  HASH_TAB_TYPE *t,
+                                  HASH_ELEM_TYPE *elem
+                                  ) {
     unsigned posid;
     HASH_ELEM_TYPE **pp;
     posid = HASH_FUN(elem);
