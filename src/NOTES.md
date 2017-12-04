@@ -35,8 +35,13 @@ Communication between them is performed using text through standard
 input/output to/from _c-xref_. The protocol is defined in
 src/protocol.tc and must match env/emacs/c-xrefprotocol.el.
 
-NOTE: I have not found something that enforces this protocol-match such as
-generating one from the other.
+NOTE: I find it strange that the macros for C define static variables for
+these PROTOCOL_ITEMs in every C unit that includes _protocol.h_.
+
+NOTE: There is a similar structure with _c-xrefprotocol.elt_ which
+includes _protocol.tc_ to wrap the PROTOCOL_ITEMs into
+`defvar`s. Although, at this point, I don't understand exactly where
+that expansion is done for Emacs-lisp.
 
 ### Bootstrapping
 
