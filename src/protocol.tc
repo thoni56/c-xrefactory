@@ -22,7 +22,7 @@ PROTOCOL_ITEM(String, PPC_REFACTORING_PRECHECK,         "precheck")
 PROTOCOL_ITEM(String, PPC_REFACTORING_REPLACEMENT,      "replacement")
 PROTOCOL_ITEM(String, PPC_REFACTORING_CUT_BLOCK,        "cut-block")
 PROTOCOL_ITEM(String, PPC_REFACTORING_COPY_BLOCK,       "copy-block")
-PROTOCOL_ITEM(String, PPC_REFACTORING_PASTE_BLOCK,      "past-block")
+PROTOCOL_ITEM(String, PPC_REFACTORING_PASTE_BLOCK,      "paste-block")
 
 
 

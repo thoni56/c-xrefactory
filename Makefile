@@ -4,6 +4,7 @@ endif
 
 all:
 	make -C src
+	make -C env/emacs
 
 distribution:
 	sh CreateXrefDistribution

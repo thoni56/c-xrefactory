@@ -1,5 +1,11 @@
-(defvar XREF_VERSION_NUMBER "1.6.11")
-(defvar XREF_FILE_VERSION_NUMBER "1.6.0")
+
+
+
+(defvar C_XREF_VERSION_NUMBER "1.6.12")
+(defvar C_XREF_FILE_VERSION_NUMBER "1.6.0")
+
+
+
 
 (defvar PPC_NO_TAG "-- no tag --")
 
@@ -19,7 +25,7 @@
 (defvar PPC_REFACTORING_REPLACEMENT "replacement")
 (defvar PPC_REFACTORING_CUT_BLOCK "cut-block")
 (defvar PPC_REFACTORING_COPY_BLOCK "copy-block")
-(defvar PPC_REFACTORING_PASTE_BLOCK "past-block")
+(defvar PPC_REFACTORING_PASTE_BLOCK "paste-block")
 
 
 
