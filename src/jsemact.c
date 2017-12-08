@@ -6,7 +6,6 @@
 #include "unigram.h"
 #include "recyacc.h"
 #include "protocol.h"
-//
 #define IsJavaReferenceType(m) (m==TypeStruct || m==TypeArray)
 
 static int javaNotFqtUsageCorrection(S_symbol *sym, int usage);
@@ -23,7 +22,7 @@ char *javaCreateComposedName(
                                     int				resBuffSize
                                 ) {
     int len,ll,sss,totallen;
-    char *ln,*lastName;
+    char *ln;
     char separator;
     S_idIdentList *ii;
     if (name == NULL) name = "";
@@ -224,7 +223,7 @@ int javaTypeFileExist(S_idIdentList *name) {
     char            *fname;
     struct stat		stt;
     S_stringList	*cp;
-    int				i,ii,nameType;
+    int				i,ii;
     S_idIdentList	tname;
     S_fileItem		dd;
     S_zipArchiveDir	*place;
@@ -277,7 +276,6 @@ int javaTypeFileExist(S_idIdentList *name) {
 }
 
 int javaFindClassFile(char *name, char **resName, struct stat *stt) {
-    char            fname[MAX_FILE_NAME_SIZE];
     S_stringList	*cp;
     int				i,res;
 //&fprintf(dumpOut,"searching for classfile of %s\n",name);fflush(dumpOut);
@@ -301,9 +299,8 @@ int javaFindClassFile(char *name, char **resName, struct stat *stt) {
 }
 
 int javaFindSourceFile(char *name, char **resName, struct stat *stt) {
-    char            fname[MAX_FILE_NAME_SIZE];
     S_stringList	*cp;
-    int				i,res;
+
     if (s_javaStat->unNamedPackageDir != NULL) {		/* unnamed package */
 /*fprintf(dumpOut,"searching for %s %s\n",s_javaStat->thisFileDir,name);fflush(dumpOut);*/
         if (javaFindFile0( s_javaStat->unNamedPackageDir,"/",name, ".java",
@@ -512,7 +509,7 @@ S_symbol * javaGetFieldClass(char *fieldLinkName, char **fieldAdr) {
     char sbuf[MAX_FILE_NAME_SIZE];
     char fqbuf[MAX_FILE_NAME_SIZE];
     char *p,*lp,*lpp;
-    S_symbol        pp,*memb;
+    S_symbol        *memb;
     int fqlen,slen;
     lp = fieldLinkName;
     lpp = NULL;
@@ -537,7 +534,6 @@ S_symbol * javaGetFieldClass(char *fieldLinkName, char **fieldAdr) {
 static S_symbol *javaAddTypeToSymbolTable(S_symbol *memb, int accessFlags, S_position *importPos, int isSingleImported) {
     S_symbol *nmemb;
     S_symbol *memb2;
-    int ii;
 
 #if 0
 
@@ -589,10 +585,8 @@ static S_symbol *javaAddTypeToSymbolTable(S_symbol *memb, int accessFlags, S_pos
 S_symbol *javaTypeSymbolDefinition(S_idIdentList *tname,
                                    int accessFlags,
                                    int addTyp){
-    S_symbol                pp,*memb,*memb2,*nmemb;
-    int                     ii;
+    S_symbol                pp,*memb;
     char                    fqtName[MAX_FILE_NAME_SIZE];
-    S_javaStat				*ttt;
 
     assert(tname);
     assert(tname->nameType == TypeStruct);
@@ -608,10 +602,9 @@ S_symbol *javaTypeSymbolDefinition(S_idIdentList *tname,
 
 S_symbol *javaTypeSymbolUsage(S_idIdentList *tname,
                                    int accessFlags){
-    S_symbol                pp,*memb,*memb2,*nmemb;
+    S_symbol                pp,*memb;
     int                     ii;
     char                    fqtName[MAX_FILE_NAME_SIZE];
-    S_javaStat				*ttt;
 
     assert(tname);
     assert(tname->nameType == TypeStruct);
@@ -646,8 +639,8 @@ S_symbol *javaTypeNameDefinition(S_idIdentList *tname) {
 
 static void javaJslLoadSuperClasses(S_symbol *cc, int currentParsedFile) {
     S_symbolList *ss;
-    int classfilenum, sourcefilenum;
     static int nestCounter = 0;
+
     nestCounter ++;
     if (nestCounter > MAX_CLASSES) {
         fatalError(ERR_INTERNAL, "unexpected cycle in class hierarchy", XREF_EXIT_ERR);
@@ -704,9 +697,8 @@ void javaReadSymbolFromSourceFileEnd() {
 void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
     FILE                    *ff;
     S_editorBuffer			*bb;
-    char					*cname;
     S_symbolList            *ll;
-    int						cfilenum, loadingbit;
+    int						cfilenum;
     static int              nestDeep = 0;
     nestDeep ++;
 
@@ -762,7 +754,7 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
 void javaReadSymbolsFromSourceFile(char *fname) {
     S_jslTypeTab    *typeTab;
     int				ii;
-    int				savedJslSourceFn, memBalance;
+    int				memBalance;
     addFileTabItem(fname, &ii);
     memBalance = s_topBlock->firstFreeIndex;
     stackMemoryBlockStart();
@@ -804,7 +796,7 @@ static void javaHackCopySourceLoadedCopyPars(S_symbol *memb) {
 void javaLoadClassSymbolsFromFile(S_symbol *memb) {
     char *sname, *cname;
     S_symbol *cl;
-    int ii, ffound, cfi, cInd;
+    int ffound, cfi, cInd;
     if (memb == NULL) return;
 //&fprintf(dumpOut,"!requesting class (%d)%s\n", memb, memb->linkName);
     sname = cname = "";
@@ -865,7 +857,7 @@ static int findTopLevelNameInternal(
                                 ) {
     int				ii,res;
     S_symbol        sd;
-    S_javaStat		*cscope, *scopeToSearch;
+    S_javaStat		*cscope;
     assert((!LANGUAGE(LAN_JAVA)) ||
         (classif==CLASS_TO_EXPR || classif==CLASS_TO_METHOD));
     assert(accCheck==ACC_CHECK_YES || accCheck==ACC_CHECK_NO);
@@ -1151,8 +1143,8 @@ static int javaClassifySingleAmbigName( S_idIdentList *name,
                                         int cxrefFlag
     ) {
     int             res, nfqtusage, minacc;
-    S_position		ipos;
     S_recFindStr *nullRfs = NULL;
+
     if (classif==CLASS_TO_EXPR || classif==CLASS_TO_METHOD) {
         /* argument, local variable or class record */
         if (findTopLevelName(name->idi.name,rfs,str,classif)==RETURN_OK) {
@@ -1205,7 +1197,7 @@ static int javaNotFqtUsageCorrection(S_symbol *sym, int usage) {
     S_symbol        *str;
     S_typeModifiers *expr;
     S_reference     *loref;
-    S_idIdentList   sname, *nn;
+    S_idIdentList   sname;
     char            *pp, packname[TMP_STRING_SIZE];
 
     if (s_opt.taskRegime == RegimeHtmlGenerate) return(usage);
@@ -1245,7 +1237,7 @@ static void javaCheckForUselessFqt(S_idIdentList *name, int classif, S_symbol *r
     S_symbol        *str;
     S_typeModifiers *expr;
     S_reference     *loref;
-    S_idIdentList   sname, *nn;
+    S_idIdentList   sname;
 
     uselessFqt = 0;
 
@@ -1296,7 +1288,7 @@ static S_reference *javaCheckForUselessTypeName(S_idIdentList   *name,
     S_symbol        *str;
     S_typeModifiers *expr;
     S_reference     *loref;
-    S_idIdentList   sname, *nn;
+    S_idIdentList   sname;
     S_reference     *res;
 
     res = NULL;
@@ -1367,9 +1359,8 @@ int javaClassifyAmbiguousName(
         int allowUselesFqtRefs,
         int classif,
         int usage) {
-    S_symbol    *memb, *innm, sd;
-    int			ii,pres,rf,classif2,rr;
-    int			uusage,res, minacc;
+    int			pres,rf,classif2,rr;
+    int			uusage, minacc;
     S_symbol    *pstr;
     S_recFindStr localRfs;
     S_typeModifiers     *pexpr;
@@ -1504,7 +1495,6 @@ S_typeModifiers *javaClassifyToExpressionName(S_idIdentList *name,
 // returns last useless reference (if any)
 S_reference *javaClassifyToTypeOrPackageName(S_idIdentList *tname, int usage, S_symbol **str, int allowUselesFqtRefs) {
     S_typeModifiers		*expr;
-    S_idIdentList		*ii;
     S_reference			*rr, *lastUselessRef;
     lastUselessRef = NULL;
     javaClassifyAmbiguousName(tname, NULL, str, &expr, &rr, &lastUselessRef, allowUselesFqtRefs,
@@ -1514,7 +1504,7 @@ S_reference *javaClassifyToTypeOrPackageName(S_idIdentList *tname, int usage, S_
 
 S_reference *javaClassifyToTypeName(S_idIdentList *tname, int usage, S_symbol **str, int allowUselesFqtRefs) {
     S_reference *res;
-    S_symbol    *ss;
+
     res = javaClassifyToTypeOrPackageName(tname, usage, str, allowUselesFqtRefs);
     if (tname->nameType != TypeStruct) {
         // there is probably a problem with class or source path
@@ -1530,7 +1520,6 @@ S_reference *javaClassifyToTypeName(S_idIdentList *tname, int usage, S_symbol **
 S_symbol * javaQualifiedThis(S_idIdentList *tname, S_idIdent *thisid) {
     S_symbol			*str;
     S_typeModifiers		*expr;
-    S_idIdentList		*ii;
     S_reference			*rr, *lastUselessRef;
     int					ttype;
     lastUselessRef = NULL;
@@ -1652,7 +1641,7 @@ int javaExistEquallyProfiledFun(	S_symbol	*clas,
 #endif
 
 int javaIsYetInTheClass(S_symbol *clas, char *lname, S_symbol **eq) {
-    S_symbol        *memb,*r;
+    S_symbol        *r;
     assert(clas && clas->u.s);
     for (r=clas->u.s->records; r!=NULL; r=r->next) {
     //&fprintf(dumpOut, "[javaIsYetInTheClass] checking %s <-> %s\n",r->linkName, lname);fflush(dumpOut);
@@ -1667,7 +1656,7 @@ int javaIsYetInTheClass(S_symbol *clas, char *lname, S_symbol **eq) {
 
 
 static int javaNumberOfNativeMethodsWithThisName(S_symbol *clas, char *name) {
-    S_symbol        *memb,*r;
+    S_symbol        *r;
     int				res;
     res = 0;
     assert(clas && clas->b.symType==TypeStruct && clas->u.s);
@@ -1682,10 +1671,9 @@ static int javaNumberOfNativeMethodsWithThisName(S_symbol *clas, char *name) {
 
 int javaSetFunctionLinkName(S_symbol *clas, S_symbol *decl,int mem) {
     static char pp[MAX_PROFILE_SIZE];
-    char *ln, *classn;
+    char *ln;
     int ppi,profilei, res;
     S_symbol *args;
-    S_typeModifiers *tt;
     S_symbol *memb;
     res = 0;
     if (decl == &s_errorSymbol || decl->b.symType==TypeError) return(res);
@@ -1728,7 +1716,7 @@ int javaSetFunctionLinkName(S_symbol *clas, S_symbol *decl,int mem) {
 static void addNativeMethodCxReference(S_symbol *decl, S_symbol *clas) {
     char nlname[MAX_CX_SYMBOL_SIZE];
     char *s, *d;
-    int baselen;
+
     sprintf(nlname, "Java_");
     s = clas->linkName;
     d = nlname + strlen(nlname);
@@ -1858,7 +1846,7 @@ S_symbol *javaMethodHeader(unsigned modif, S_symbol *type,
 }
 
 void javaAddMethodParametersToSymTable(S_symbol *method) {
-    S_symbol *p, *pp, *pa;
+    S_symbol *p;
     int i;
     for(p=method->u.type->u.f.args,i=1; p!=NULL; p=p->next,i++) {
         addFunctionParameterToSymTable(method, p, i, s_javaStat->locals);
@@ -1866,8 +1854,6 @@ void javaAddMethodParametersToSymTable(S_symbol *method) {
 }
 
 void javaMethodBodyBeginning(S_symbol *method) {
-    S_symbol *p,*pp;
-    int i;
     assert(method->u.type && method->u.type->m == TypeFunction);
     s_cp.function = method;
     GenInternalLabelReference(-1, UsageDefined);
@@ -1898,11 +1884,10 @@ void javaAddMapedTypeName(
                             void *vdirid,
                             int  *storage
                         ) {
-    char				*p,*suff;
-    char                ttt1[MAX_FILE_NAME_SIZE];
+    char				*p;
     char                ttt2[MAX_FILE_NAME_SIZE];
     int					len2;
-    S_idIdentList       dd1,dd2,*packid;
+    S_idIdentList       dd2,*packid;
     S_symbol			*memb;
     /*&fprintf(dumpOut,":import type %s %s %s\n", file, path, pack);&*/
     packid = (S_idIdentList *) vdirid;
@@ -2149,8 +2134,7 @@ S_symbol *javaGetSuperClass(S_symbol *cc) {
 S_symbol *javaCurrentSuperClass() {
     S_typeModifiers     *tt;
     S_symbol			*cc;
-    S_symbolList		*sups;
-    int					nsup;
+
     assert(s_javaStat);
     tt = s_javaStat->thisType;
     assert(tt->m == TypeStruct);
@@ -2171,12 +2155,11 @@ static S_typeModifiers *javaMethodInvocation(
     S_symbol            * appl[MAX_APPL_OVERLOAD_FUNS];
     int                 funCl[MAX_APPL_OVERLOAD_FUNS];
     unsigned			minacc[MAX_APPL_OVERLOAD_FUNS];
-    S_symbol            dd;
     S_symbolList		*ee;
     S_typeModifiersList *aaa;
     S_usageBits			ub;
     int					smallesti, baseCl, vApplCl, vFunCl, usedusage;
-    int					i,appli,actArgi,rr, cxflag;
+    int					i,appli,actArgi,rr;
 
     assert(rfs->baseClass);  // method must be inside a class
     assert(rfs->baseClass->b.symType == TypeStruct);
@@ -2265,7 +2248,7 @@ static S_typeModifiers *javaMethodInvocation(
 
 S_extRecFindStr *javaCrErfsForMethodInvocationN(S_idIdentList *name) {
     S_extRecFindStr		*erfs;
-    S_typeModifiers		*expr,*res;
+    S_typeModifiers		*expr;
     S_reference			*rr;
     int					nt;
     XX_ALLOC(erfs, S_extRecFindStr);
@@ -2294,7 +2277,6 @@ S_extRecFindStr *javaCrErfsForMethodInvocationT(S_typeModifiers *tt,
                                                 S_idIdent *name
     ) {
     S_extRecFindStr		*erfs;
-    S_typeModifiers		*res;
     int					rr;
 /*fprintf(dumpOut,"invocation of %s\n",name->name); fflush(dumpOut);*/
     if (tt->m == TypeArray) tt = &s_javaArrayObjectSymbol.u.s->stype;
@@ -2329,9 +2311,8 @@ S_typeModifiers *javaMethodInvocationT(	S_typeModifiers *tt,
 S_extRecFindStr *javaCrErfsForMethodInvocationS(S_idIdent *super,
                                                            S_idIdent *name
     ) {
-    S_symbol            *memb,*ss;
+    S_symbol            *ss;
     S_extRecFindStr		*erfs;
-    S_typeModifiers		*expr,*res;
     int					rr;
     ss = javaCurrentSuperClass();
     if (ss == &s_errorSymbol || ss->b.symType==TypeError) return(NULL);
@@ -2366,9 +2347,7 @@ S_typeModifiers *javaMethodInvocationS(S_idIdent *super,
 S_extRecFindStr *javaCrErfsForConstructorInvocation(S_symbol *clas,
                                                     S_position *pos
     ) {
-    S_symbol            *memb;
     S_extRecFindStr		*erfs;
-    S_typeModifiers		*expr,*res;
     int					rr;
     if (clas == &s_errorSymbol || clas->b.symType==TypeError) return(NULL);
     assert(clas && clas->b.symType == TypeStruct);
@@ -2561,7 +2540,7 @@ void javaAddJslReadedTopLevelClasses(S_jslTypeTab  *jslTypeTab) {
 void javaAddNestedClassToSymbolTab( S_symbol *str ) {
     S_symStructSpecific     *ss;
     int                     i;
-    S_symbol                *nss;
+
     assert(str && str->b.symType==TypeStruct);
     ss = str->u.s;
     assert(ss);
@@ -2595,14 +2574,13 @@ struct freeTrail * newClassDefinitionBegin(	S_idIdent *name,
                                             S_symbol *anonInterf) {
     S_idIdentList   *p;
     S_symbol        *dd,*ddd;
-    S_typeModifiers *tt;
     S_freeTrail     *res;
     S_javaStat      *oldStat;
-    int             i,nnest,noff,classf,innerNamesCorrect;
+    int             nnest,noff,classf;
     S_nestedSpec	*nst,*nn;
     S_symTab		*locals;
     S_idIdent		idi;
-    S_symStructSpecific *ss;
+
     assert(s_javaStat);
     oldStat = s_javaStat;
     XX_ALLOC(s_javaStat, S_javaStat);

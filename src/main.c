@@ -3384,25 +3384,11 @@ static void mainGenerate(int argc, char **argv) {
     symTabMap(s_symTab, generate);
 }
 
-static int log_file_no;
-static void setup_logging(void) {
-    char template[] = "/tmp/c-xref-tmp-XXXXXX";
-
-    /* Initial attempt to use log.c instead of dumpOut et. al */
-    if ((log_file_no = mkstemp(template)) != -1)
-        log_set_fp(fdopen(log_file_no, "w"));
-
-    log_set_quiet(1);
-    log_trace("%s", "PROCESS START!!!!!!!!!!!!!!!!!!!!!!!!!!!");
-}
-
 /* *********************************************************************** */
 /* **************************       MAIN      **************************** */
 /* *********************************************************************** */
 
 int main(int argc, char **argv) {
-    setup_logging();
-
     setjmp(s_memoryResize);
     if (s_cxResizingBlocked) {
         fatalError(ERR_ST,"cx_memory resizing required, see the TROUBLES section of README file", XREF_EXIT_ERR);
@@ -3417,6 +3403,5 @@ int main(int argc, char **argv) {
     if (s_opt.taskRegime == RegimeEditServer) mainEditServer(argc, argv);
     if (s_opt.taskRegime == RegimeGenerate) mainGenerate(argc, argv);
 
-    close(log_file_no);
     return(0);
 }

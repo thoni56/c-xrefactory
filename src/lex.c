@@ -39,7 +39,7 @@ void zlibFree(voidpf opaque, voidpf address) {
 }
 
 static int charBuffReadFromUnzipFilter(struct charBuf  *bb, char *outBuffer, int max_size) {
-    int n, fn, res, iii;
+    int n, fn, res;
     bb->zipStream.next_out = (unsigned char *)outBuffer;
     bb->zipStream.avail_out = max_size;
 #if defined(USE_LIBZ)       /*SBD*/
@@ -74,7 +74,7 @@ int getCharBuf(struct charBuf *bb) {
     char *dd;
     char *cc;
     char *fin;
-    int n,c;
+    int n;
     int max_size;
     fin = bb->fin;
     cc = bb->cc;
@@ -95,8 +95,7 @@ void switchToZippedCharBuff(struct charBuf *bb) {
     char *dd;
     char *cc;
     char *fin;
-    int n,c;
-    int max_size;
+
     getCharBuf(bb);     // just for now
 #if defined(USE_LIBZ)       /*SBD*/
     fin = bb->fin;
@@ -124,7 +123,7 @@ int skipNCharsInCharBuf(struct charBuf *bb, unsigned count) {
     char *dd;
     char *cc;
     char *fin;
-    int n,c;
+    int n;
     int max_size;
     fin = bb->fin;
     cc = bb->cc;
@@ -433,8 +432,8 @@ int getLexBuf(struct lexBuf *lb) {
     int cline,clo; /* current line, current line offset (for collumn)*/
     char *clb;          /* current line begin */
     char oldCh;
-    int line,size,cfile,lexStartCol, lexStartFilePos, column, lexemlen;
-    S_position lexPos;
+    int line,size,cfile,lexStartCol, lexStartFilePos, column;
+
     /* first test whether the input is cached */
     if (s_cache.activeCache && inStacki==0 && macStacki==0) {
         cacheInput();
@@ -823,9 +822,9 @@ int getLexBuf(struct lexBuf *lb) {
     assert(0);
  nextLexem:
     if (s_opt.taskRegime == RegimeEditServer) {
-        int pi,lpi,len,lastlex,parChar,apos,idcoll;
+        int pi,len,lastlex,parChar,apos;
         S_position *ps;
-        int pos0,pos1,currentLexemPosition;
+        int pos1,currentLexemPosition;
         pi = (lb->posi-1) % LEX_POSITIONS_RING_SIZE;
         ps = & lb->pRing[pi];
         currentLexemPosition = lb->fpRing[pi];
