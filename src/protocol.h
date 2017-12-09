@@ -3,7 +3,11 @@
 
 #define String char *
 #define COMMENT(xx)
-#define PROTOCOL_ITEM(type, name, val) static type name = val;
+#ifdef PROTOCOL_C
+#define PROTOCOL_ITEM(type, name, val) type name = val;
+#else
+#define PROTOCOL_ITEM(type, name, val) extern type name;
+#endif
 
 #include "protocol.tc"
 
