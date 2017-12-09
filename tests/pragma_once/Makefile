@@ -11,7 +11,10 @@ pragma_once:
 	if [ $$? -ne 0 ] ; then \
 		echo "Failed" ; \
 		exit 1 ; \
-	else \
-		echo "Ok" ; \
 	fi
-
+	@if ! cmp $@.log $@.log.expected ; then \
+		echo "Failed comparing log" ; \
+		exit 1 ; \
+	fi
+	@echo "Ok"
+	@exit 0
