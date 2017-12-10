@@ -101,11 +101,10 @@ static void genFillItem(char *pref, int action,
 }
 
 
-static int genFillStructBody(S_symbol *defin, int i, int argn, int fullFlag, 
+static int genFillStructBody(S_symbol *defin, int i, int argn, int fullFlag,
                              char *pref, int action) {
     S_symbol *rec;
     S_symbol *p;
-    S_typeModifiers *tt;
     char prefix[TMP_STRING_SIZE];
     char rname[TMP_STRING_SIZE];
     int l1,l2;
@@ -118,7 +117,7 @@ static int genFillStructBody(S_symbol *defin, int i, int argn, int fullFlag,
     }
     for(p=rec; p!=NULL; p=p->next) {
         if (subToFill(p, fullFlag)) {
-            if (    (p->u.type->m == TypeStruct && fullFlag) 
+            if (    (p->u.type->m == TypeStruct && fullFlag)
                     || p->u.type->m == TypeUnion) {
                 l1 = strlen(pref);
                 l2 = strlen(p->name);
@@ -128,7 +127,7 @@ static int genFillStructBody(S_symbol *defin, int i, int argn, int fullFlag,
                 prefix[l1+l2] = 0;
                 if (p->u.type->m == TypeUnion) {
                     if (fullFlag) {
-                        strcpy(rname,getFillArgumentName(i,argn,action)); 
+                        strcpy(rname,getFillArgumentName(i,argn,action));
                         i++;
                         fprintf(cxOut,
                                 "\t_FILLUREC_%s_##%s((&(XXX)->%s), %s);\\\n",
@@ -138,7 +137,7 @@ static int genFillStructBody(S_symbol *defin, int i, int argn, int fullFlag,
                     } else {
                         prefix[l1+l2] = '.';
                         prefix[l1+l2+1] = 0;
-                        strcpy(rname,getFillArgumentName(i,argn,action)); 
+                        strcpy(rname,getFillArgumentName(i,argn,action));
                         i++;
                         genFillItem( prefix, action, rname, i, argn);
                         i++;
@@ -204,7 +203,6 @@ static void genStructFill(S_symbol *s) {
 
 static void genUnionRecords(S_symbol *s) {
     char *name;
-    int argn;
     S_symbol *rec,*p;
     assert(s);
     name = s->name;
@@ -240,7 +238,7 @@ static void genStructCopy(S_symbol *s) {
         fprintf(cxOut,
                 "extern struct %s*\ncopy_%s(struct %s *, void *(*alloc)(int));\n",
                 name,name,name);
-    } 
+    }
     if (s_opt.body) {
         fprintf(cxOut,
                 "struct %s *\ncopy_%s(struct %s *s, void *(*alloc)(int n))",
@@ -322,5 +320,3 @@ void generate(S_symbol *s) {
         if (s_opt.enum_name) genEnumText(s);
     }
 }
-
-

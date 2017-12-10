@@ -282,17 +282,16 @@ void GLUE2(HASH_FUN_PREFIX,Statistics)(
                     int *elements,
                     int *maxdeep
                 ) {
-    int i,ui,el,dp,mdp,mdpi;
+    int i,ui,el,dp,mdp;
     HASH_ELEM_TYPE *pp;
     ui= el = dp = mdp = 0;
-    mdpi = -1;
     for(i=0; i<t->size; i++) {
         if (t->tab[i]!=NULL) ui ++;
         dp = el;
         for(pp=t->tab[i]; pp!=NULL; pp=pp->next) {
             el++;
         }
-        if (mdp < el-dp) {mdp = el-dp; mdpi = i;}
+        if (mdp < el-dp) {mdp = el-dp;}
     }
     *usedIndexes = ui;
     *elements = el;

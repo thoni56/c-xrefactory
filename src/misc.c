@@ -181,7 +181,7 @@ void ppcGenPreCheckRecord(S_editorMarker *pos, int oldLen) {
 }
 
 void ppcGenReferencePreCheckRecord(S_reference *r, char *text) {
-    int     i,len;
+    int     len;
     len = strlen(text);
     ppcGenGotoPositionRecord(&r->p);
     ppcIndentOffset();
@@ -546,7 +546,7 @@ void symbolRefItemDump(S_symbolRefItem *ss) {
 
 
 int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos) {
-    int i, bj;
+    int i;
     char *pp;
     i = 0;
     if (oNamePos!=NULL) *oNamePos = i;
@@ -581,13 +581,11 @@ int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos) {
 void typeSPrint(char *buff, int *size, S_typeModifiers *t,
                 char *name, int dclSepChar, int maxDeep, int typedefexp,
                 int longOrShortName, int *oNamePos) {
-    unsigned u;
     S_symbol *dd;   S_symbol *ddd;
     char pref[COMPLETION_STRING_SIZE];
     char post[COMPLETION_STRING_SIZE];
     char type[COMPLETION_STRING_SIZE];
-    char tmp[COMPLETION_STRING_SIZE];
-    char *ttm, *pp;
+    char *ttm;
     int i,j,par,realsize,r,rr,jj,minInfi,typedefexpFlag;
     typedefexpFlag = typedefexp;
     type[0] = 0;
@@ -802,7 +800,7 @@ void macDefSPrintf(char *tt, int *size, char *name1, char *name2,
 
 char * string3ConcatInStackMem(char *str1, char *str2, char *str3) {
     int l1,l2,l3;
-    char *p,*s;
+    char *s;
     l1 = strlen(str1);
     l2 = strlen(str2);
     l3 = strlen(str3);
@@ -838,7 +836,6 @@ char *javaCutClassPathFromFileName(char *fname) {
 }
 
 char *javaCutSourcePathFromFileName(char *fname) {
-    S_stringList    *cp;
     int             len;
     char            *res,*ss;
     res = fname;
@@ -865,15 +862,14 @@ char *javaCutSourcePathFromFileName(char *fname) {
 }
 
 void javaDotifyFileName(char *ss) {
-    char *s, *o, *lp;
-    lp = NULL;
+    char *s;
     for (s=ss; *s; s++) {
         if (*s == '/' || *s == '\\') *s = '.';
     }
 }
 
 void javaDotifyClassName(char *ss) {
-    char *s, *o;
+    char *s;
     for (s=ss; *s; s++) {
         if (*s == '/' || *s == '\\' || *s=='$') *s = '.';
     }
@@ -897,9 +893,6 @@ static void getClassFqtNameFromFileNum(int fnum, char *ttt) {
 
 // file num is not neccessary a class item !
 void javaGetClassNameFromFileNum(int nn, char *tmpOut, int dotify) {
-    char                *ss,*s,*o,*lp;
-    S_stringList        *cp;
-    int                 len;
     getClassFqtNameFromFileNum(nn, tmpOut);
     if (dotify==DOTIFY_NAME) javaDotifyFileName(tmpOut);
 }
@@ -1208,7 +1201,6 @@ int fnnCmp(char *ss1, char *ss2, int n) {
 }
 
 int fnCmp(char *ss1, char *ss2) {
-    register char *s1,*s2;
     int n;
 #if (!defined (__WIN32__))         /*SBD*/
     if (s_opt.fileNamesCaseSensitive) return(strcmp(ss1,ss2));
@@ -1369,7 +1361,7 @@ static void expandWildCharsMapFun(MAP_FUN_PROFILE) {
 // Dont use this function!!!! what you need is: expandWildCharactersInOnePath
 void expandWildCharactersInOnePathRec(char *fn, char **outpaths, int *freeolen) {
     char                ttt[MAX_FILE_NAME_SIZE];
-    int                 i, si,di,bdi, ldi, len;
+    int                 i, si,di, ldi, len;
     struct stat         st;
 
     //&fprintf(dumpOut,"expandwc(%s)\n", fn);fflush(dumpOut);
@@ -1576,7 +1568,7 @@ int mapDirectoryFiles(
 }
 
 static char *concatFNameInTmpMemory( char *dirname , char *packfile) {
-    register char *s, *tt, *fname;
+    register char *tt, *fname;
     fname = tmpMemory;
     tt = strmcpy(fname, dirname);
     if (*packfile) {
@@ -1665,7 +1657,7 @@ int substringIndex(char *s, char *subs) {
 }
 
 void javaGetPackageNameFromSourceFileName(char *src, char *opack) {
-    char *sss, *ss, *dd;
+    char *sss, *dd;
     sss = javaCutSourcePathFromFileName(src);
     strcpy(opack, sss);
     InternalCheck(strlen(opack)+1 < MAX_FILE_NAME_SIZE);
@@ -1701,9 +1693,7 @@ void javaMapDirectoryFiles1(
                             int *a3
                             ){
     S_stringList    *cp;
-    struct stat     stt;
-    struct dirent   *dirbuf;
-    char            *tt,*fname,*ttt, *filename;
+    char            *fname;
     int             i;
     // avoiding recursivity?
     //&static bitArray fileMapped[BIT_ARR_DIM(MAX_FILES)];
@@ -1784,7 +1774,6 @@ static void scanClassFile(char *zip, char *file, void *arg) {
     char        ttt[MAX_FILE_NAME_SIZE];
     char        *tt, *suff;
     S_symbol    *memb;
-    S_position  pos;
     int         cpi, fileInd;
     //&fprintf(dumpOut,"scanning %s ; %s\n", zip, file);
     suff = getFileSuffix(file);
@@ -1864,7 +1853,7 @@ int optionsOverflowHandler(int n) {
 }
 
 int cxMemoryOverflowHandler(int n) {
-    int delta,ofaktor,faktor,oldsize, newsize;
+    int ofaktor,faktor,oldsize, newsize;
     S_memory *oldcxMemory;
     DPRINTF("Reallocating cxMemory.\n");
     if (cxMemory!=NULL) {

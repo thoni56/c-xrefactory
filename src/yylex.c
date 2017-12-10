@@ -129,9 +129,8 @@ int addFileTabItem(char *name, int *fileNumber) {
 }
 
 void getOrCreateFileInfo(char *ss, int *fileNumber, char **fileName) {
-    int ii,len,newFileFlag,cxloading;
-    char *ff;
-    struct fileItem *ffii;
+    int ii, newFileFlag,cxloading;
+
     if (ss==NULL) {
         *fileNumber = ii = s_noneFileIndex;
         *fileName = s_fileTab.tab[ii]->name;
@@ -332,8 +331,8 @@ void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) {
 /* ***************************************************************** */
 
 static void testCxrefCompletionId(int *llex, char *idd, S_position *pos) {
-    int line,val,len,lex,res=0;
-    unsigned h;
+    int lex;
+
     lex = *llex;
     assert(s_opt.taskRegime);
     if (s_opt.taskRegime == RegimeEditServer) {
@@ -368,10 +367,9 @@ static void testCxrefCompletionId(int *llex, char *idd, S_position *pos) {
 /* ********************************** #LINE *********************** */
 
 static  void processLine() {
-    char ss[TMP_STRING_SIZE];
-    int i,lex,l,h,v=0,len;
+    int lex,l,h,v=0,len;
     S_position pos;
-    char ch,*cc;
+
     GetLex(lex);
     PassLex(cInput.cc,lex,l,v,h,pos, len,1);
     if (lex != CONSTANT) return;
@@ -423,13 +421,10 @@ void addThisFileDefineIncludeReference(int filenum) {
 }
 
 void addIncludeReference(int filenum, S_position *pos) {
-    S_position      dpos;
     S_symbol        ss;
 //&fprintf(dumpOut,"adding reference on file %d==%s\n",filenum, s_fileTab.tab[filenum]->name);
     fillIncludeSymbolItem( &ss, filenum, pos);
     addCxReference(&ss, pos, UsageUsed, filenum, filenum);
-//&	FILL_position(&dpos, filenum, 1, 0);
-//&	addCxReference(&ss, &dpos, UsageDefined, filenum, filenum);
 }
 
 static void addIncludeReferences(int filenum, S_position *pos) {
@@ -477,7 +472,7 @@ static FILE *openInclude(char pchar, char *name, char **fileName) {
     char            nn[MAX_FILE_NAME_SIZE];
     char            rdir[MAX_FILE_NAME_SIZE];
     char            *nnn;
-    int             nnlen,dlen,fdlen,nmlen,len,ii;
+    int             nnlen,dlen,fdlen,nmlen;
     er = NULL; r = NULL;
     nmlen = strlen(name);
     copyDir(rdir, cFile.fileName, &fdlen);
@@ -537,8 +532,6 @@ static void processInclude2(S_position *ipos, char pchar, char *iname) {
 
 
 static void processInclude(S_position *ipos) {
-    FILE *nyyin;
-    char *fname;
     char *ccc, *cc2;
     int lex,l,h,v,len;
     S_position pos;
@@ -645,14 +638,14 @@ static void handleMacroUsageParameterPositions(int argi, S_position *macpos,
 }
 
 static void processDefine(int argFlag) {
-    int i,lex,l,h,v;
+    int lex,l,h,v;
     int bodyReadingFlag = 0;
-    int j,sizei,ii,msize,argi,ellipsis,len;
+    int sizei,ii,msize,argi,ellipsis,len;
     S_symbol *pp;
     S_macroArgTabElem *maca,mmaca;
     S_macroBody *macbody;
     S_position pos, macpos, ppb1, ppb2, *parpos1, *parpos2, *tmppp;
-    char ch,*cc,*mname,*aname,*mbody,*mLinkName,*mm,*fromcc,*tocc,*ddd;
+    char *cc,*mname,*aname,*mbody,*mm,*ddd;
     char **argNames, *argLinkName;
 
     sizei= -1;
@@ -800,13 +793,11 @@ errorlab:
 /* ************************** -D option ************************** */
 
 void addMacroDefinedByOption(char *opt) {
-    char *name,*cc,*body,*nopt;
-    S_symbol *pp;
-    S_macroBody *macbody;
-    int size,args;
+    char *cc,*nopt;
+    int args;
     PP_ALLOCC(nopt,strlen(opt)+3,char);
     strcpy(nopt,opt);
-    name = cc = nopt;
+    cc = nopt;
     while (isalpha(*cc) || isdigit(*cc) || *cc == '_') cc++;
     args = 0;
     if (*cc == '=') {
@@ -891,7 +882,6 @@ static void genCppIfElseReference(int level, S_position *pos, int usage) {
 static int cppDeleteUntilEndElse(int untilEnd) {
     int lex,l,h,v,len;
     int deep;
-    int el;
     S_position pos;
     deep = 1;
     while (deep > 0) {
@@ -941,10 +931,9 @@ static void execCppIf(int deleteSource) {
 
 static void processIfdef(int isIfdef) {
     int lex,l,h,v;
-    int i,ii,mm,len;
-    char nn[MACRO_NAME_SIZE];
+    int ii,mm,len;
     S_symbol pp,*memb;
-    char ch,*cc,nnn;
+    char *cc;
     S_position pos;
     int deleteSrc;
     GetLex(lex);
@@ -1089,7 +1078,7 @@ static int processCppConstruct(int lex) {
     int l,v,len;
     unsigned h;
     S_position pos;
-    char *fname,*mname;
+
     PassLex(cInput.cc,lex,l,v,h,pos, len,1);
 /*	if (s_opt.debug) fprintf(dumpOut,"%s ",s_tokenName[lex]); */
     switch (lex) {
@@ -1221,10 +1210,9 @@ static int macroCallExpansion( char *cc2, int lex, S_position *pos ) {
 
 
 static void expandMacroArgument(S_lexInput *argb) {
-    S_lexInput expArg;
     S_symbol sd,*memb;
     char *buf,*cc,*cc2,*bcc, *tbcc;
-    int nn,ii,lex,line,val,bsize,nnr,failedMacroExpansion,len;
+    int nn,ii,lex,line,val,bsize,failedMacroExpansion,len;
     S_position pos;
     unsigned hash;
     PrependMacInput(*argb);
@@ -1287,8 +1275,8 @@ static void cxAddCollateReference( char *sym, char *cs, S_position *pos ) {
 
 static void collate(char **albcc, char **abcc, char *buf, int *absize,
                     char **ancc, S_lexInput *actArgs) {
-    char *lbcc,*bcc,*cc,*ccfin,*cc0,*ncc,*cc1,*occ;
-    int line, val, lex, nlex, len1, bsize, nlt,len;
+    char *lbcc,*bcc,*cc,*ccfin,*cc0,*ncc,*occ;
+    int line, val, lex, nlex, len1, bsize, len;
     S_position pos,respos;
     unsigned hash;
     ncc = *ancc;
@@ -1414,11 +1402,10 @@ static void crMacroBody(S_lexInput *macBody,
                         int actArgn
                         ) {
     char *cc,*cc0,*cfin,*bcc,*lbcc;
-    char *cc2,*c2fin;
-    int i,lex,line,val,len,rsize,bsize,lexlen;
+    int i,lex,line,val,len,bsize,lexlen;
     S_position pos, hpos;
     unsigned hash;
-    char *buf,*buf2,*res;
+    char *buf,*buf2;
 
     val=0; //compiler
     /* first make ## collations */
@@ -1517,10 +1504,10 @@ static void getActMacroArgument(char *cc,
                                 int actArgi
                                 ) {
     char *buf,*bcc;
-    int i,line,val,len, poffset;
-    S_position pos, *tmppp;
+    int line,val,len, poffset;
+    S_position pos;
     unsigned h;
-    int bufsize,actsize,lex,deep;
+    int bufsize,lex,deep;
     lex = *llex;
     bufsize = MACRO_ARG_UNIT_SIZE;
     deep = 0;
@@ -1566,7 +1553,7 @@ endOfMacArg:;
 static struct lexInput *getActualMacroArguments(S_macroBody *mb, S_position *mpos,
                                                 S_position *lparpos) {
     char *cc;
-    int i,lex,line,val,len;
+    int lex,line,val,len;
     S_position pos, ppb1, ppb2, *parpos1, *parpos2;
     unsigned h;
     int actArgi = 0;
@@ -1638,11 +1625,11 @@ static void addMacroBaseUsageRef( S_symbol *mdef) {
 
 
 static int macroCallExpand(S_symbol *mdef, S_position *mpos) {
-    int i,lex,line,val,len;
+    int lex,line,val,len;
     char *cc2,*freeBase;
     S_position pos, lparpos;
     unsigned h;
-    struct lexInput *actArgs,macInput,*father,macBody;
+    struct lexInput *actArgs,macBody;
     S_macroBody *mb;
     cc2 = cInput.cc;
     mb = mdef->u.mbody;
@@ -1721,7 +1708,7 @@ int lexBufDump(struct lexBuf *lb) {
 /*                   caching of input                             */
 /* ************************************************************** */
 int cachedInputPass(int cpoint, char **cfrom) {
-    int lex,line,i,val,res,len;				// ??redeclaration of len ??
+    int lex,line,val,res,len;				// ??redeclaration of len ??
     S_position pos;
     unsigned h,lsize,compsize;
     char *cc,*cto,*ccc;
@@ -1780,7 +1767,6 @@ static char constant[50];
 }
 
 static int processCIdent(unsigned hashval, char *id, S_position *idposa) {
-    int lex,line,i,val,len;
     S_symbol *sd,*memb;
     memb = NULL;
 /*fprintf(dumpOut,"looking for %s in %d\n",id,s_symTab);*/
@@ -1809,7 +1795,6 @@ static int processCIdent(unsigned hashval, char *id, S_position *idposa) {
 
 
 static int processJavaIdent(unsigned hashval, char *id, S_position *idposa) {
-    int lex,line,i,val,len;
     S_symbol *sd,*memb;
     memb = NULL;
 /*fprintf(dumpOut,"looking for %s in %d\n",id,s_symTab);*/
@@ -1831,7 +1816,6 @@ static int processJavaIdent(unsigned hashval, char *id, S_position *idposa) {
 
 
 static int processCccIdent(unsigned hashval, char *id, S_position *idposa) {
-    int lex,line,i,val,len;
     S_symbol *sd,*memb;
     memb = NULL;
 /*fprintf(dumpOut,"looking for %s in %d\n",id,s_symTab);*/
@@ -1928,7 +1912,7 @@ static void actionOnBlockMarker() {
 }
 
 int yylex() {
-    int         lex,line,i,val,len;
+    int         lex,line,val,len;
     S_position  pos,idpos;
     char		*cc;
     unsigned h;
@@ -1960,7 +1944,7 @@ int yylex() {
         register char *id;
         register unsigned h;
         int ii;
-        S_symbol *sd,dd,*memb;
+        S_symbol dd,*memb;
         h = 0;//compiler
         id = yytext = cInput.cc;
         PassLex(cInput.cc,lex,line,val,h,idpos, len,macStacki == 0);
