@@ -12,9 +12,5 @@ pragma_once:
 		echo "Failed" ; \
 		exit 1 ; \
 	fi
-	@if ! cmp $@.log $@.log.expected ; then \
-		echo "Failed comparing log" ; \
-		exit 1 ; \
-	fi
 	@echo "Ok"
 	@exit 0
