@@ -2,7 +2,7 @@
   %expect 7
   %expect-rr 34
 
-  ../byacc-1.9/yacc: 7 shift/reduce conflicts, 34 reduce/reduce conflicts.
+../../../byacc-1.9/yacc: 7 shift/reduce conflicts, 28 reduce/reduce conflicts.
 
 */
 
@@ -701,6 +701,13 @@ declaration
     : Sv_tmp declaration_specifiers ';'		{ tmpWorkMemoryi = $1.d; }
     | Sv_tmp init_declarations ';'			{ tmpWorkMemoryi = $1.d; }
     | error
+        {
+#ifdef DEBUGPARSING
+            char buffer[100];
+            sprintf(buffer, "error parsing declaration, near '%s'\n", yytext);
+            yyerror(buffer);
+#endif
+        }
     ;
 
 init_declarations
@@ -715,6 +722,11 @@ init_declarations
     | error												{
         /* $$.d = &s_errorSymbol; */
         $$.d = typeSpecifier2(&s_errorModifier);
+#ifdef DEBUGPARSING
+        char buffer[100];
+        sprintf(buffer, "error parsing init_declarations, near '%s'\n", yytext);
+        yyerror(buffer);
+#endif
     }
     ;
 
@@ -963,6 +975,11 @@ struct_declaration
         /* $$.d = &s_errorSymbol; */
         XX_ALLOC($$.d, S_symbol);
         *$$.d = s_errorSymbol;
+#ifdef DEBUGPARSING
+        char buffer[100];
+        sprintf(buffer, "DEBUG: error parsing struct_declaration near '%s'\n", yytext);
+        yyerror(buffer);
+#endif
     }
     ;
 
@@ -1047,6 +1064,11 @@ enumerator
         /* $$.d = &s_errorSymbol; */
         XX_ALLOC($$.d, S_symbol);
         *$$.d = s_errorSymbol;
+#ifdef DEBUGPARSING
+        char buffer[100];
+        sprintf(buffer, "DEBUG: error parsing enumerator near '%s'\n", yytext);
+        yyerror(buffer);
+#endif
     }
     | COMPL_OTHER_NAME		{ assert(0); /* token never used */ }
     ;
@@ -1289,6 +1311,11 @@ parameter_declaration
         */
         XX_ALLOC($$.d, S_symbol);
         *$$.d = s_errorSymbol;
+#ifdef DEBUGPARSING
+        char buffer[100];
+        sprintf(buffer, "DEBUG: error parsing parameter_declaration near '%s'\n", yytext);
+        yyerror(buffer);
+#endif
     }
     ;
 
@@ -1367,6 +1394,13 @@ initializer
     | '{' initializer_list '}'
     | '{' initializer_list ',' '}'
     | error
+    {
+#ifdef DEBUGPARSING
+        char buffer[100];
+        sprintf(buffer, "error parsing initializer, near '%s'\n", yytext);
+        yyerror(buffer);
+#endif
+    }
     ;
 
 initializer_list
