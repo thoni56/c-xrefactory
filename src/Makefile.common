@@ -82,8 +82,8 @@ c-xref.bs:
 # which are dependent on compiler builtins or standard headers for
 # the current environment (not actually dependent on c-xref.bs)
 
-compiler_definitions.h: c-xref.bs
-	echo | gcc -dM -E - > compiler_definitions.h
+compiler_defines.h: c-xref.bs
+	echo | gcc -dM -E - > compiler_defines.h
 
 strFill.h: proto.h strTdef.h c-xref.bs
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION proto.h \
