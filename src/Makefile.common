@@ -89,6 +89,7 @@ strFill.h: proto.h strTdef.h c-xref.bs
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION proto.h \
 		-str_fill -header -no_stdop \
 		> tmpStrFill.h
+	if [ -e strFill.h ]; then mv -f strFill.h strFill.backup ; fi
 	mv -f tmpStrFill.h strFill.h
 
 strTdef.h: proto.h c-xref.bs
@@ -96,13 +97,16 @@ strTdef.h: proto.h c-xref.bs
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION proto.h \
 		-typedefs -enum_name -header -no_stdop \
 		> tmpStrTdef.h
+	if [ -e strTdef.h ]; then mv -f strTdef.h strTdef.backup ; fi
 	mv -f tmpStrTdef.h strTdef.h
 
 enumTxt.h: proto.h strFill.h strTdef.h ../doc/_c-xrefrc c-xref.bs
-	echo "#include \"stdinc.h\"" > enumTxt.h
-	echo "#include \"proto.h\"  /*SBD*/" >> enumTxt.h
+	echo "#include \"stdinc.h\"" > tmpenumTxt.h
+	echo "#include \"proto.h\"  /*SBD*/" >> tmpenumTxt.h
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION proto.h \
-		-enum_name -body -no_stdop >> enumTxt.h
+		-enum_name -body -no_stdop >> tmpenumTxt.h
+	if [ -e enumTxt.h ]; then mv -f enumTxt.h enumTxt.backup ; fi
+	mv -f tmpenumTxt.h enumTxt.h
 
 c-xref: $(OBJS)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
