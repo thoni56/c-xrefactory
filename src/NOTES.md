@@ -45,12 +45,30 @@ that expansion is done for Emacs-lisp.
 
 ### Bootstrapping
 
-It seems like _c-xref_ needs to be bootstrapped by reading in a lot of
-predefined header files to get system definitions. This is done using
-options like `-task_regime_generate' which prints a lot of data
-structures on the standard output which is then fed into _strFill.h_,
-_strTdef.h_ and _enumTxt.h_ by the Makefile.
+_c-xref_ needs to be bootstrapped by reading in a lot of predefined
+header files to get system definitions. This is done using options
+like `-task_regime_generate' which prints a lot of data structures on
+the standard output which is then fed into _strFill.h_, _strTdef.h_
+and _enumTxt.h_ by the Makefile.
 
-NOTE: Why this is necessary, I don't know. It might be an
+NOTE: Why this is necessary, I don't exactly know. It might be an
 optimization. In any case it creates an extra complexity building and
 maintaining and to the structure of _c-xref_.
+
+#### typedefs
+
+In _options.h_ there are a number of definitions which somehow are
+send to the compiler/preprocessor or used so that standard settings
+are the same as if a program will be compiled using the standard
+compiler on the platform. At this point I don't know how this is done,
+maybe just entered as symbols in one of the many symboltables?
+
+Typical examples include "__linux" but also on some platforms things
+like "fpos_t=long".
+
+#### Include paths
+
+Also in _options.h_ some standard-like include paths are added, but
+there is a better attempt in _getAndProcessGccOptions()_ which uses
+the compiler/preprocessor itself to figure out those paths. This is
+much better and should really be the only way, I think.

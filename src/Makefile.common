@@ -69,15 +69,31 @@ endif
 
 cgram.h: cgram.c
 
+#########################################################################
+# Bootstrap a c-xref.bs using globally working sources
+#
+c-xref.bs:
+	@echo "BOOTSTRAPPING..."
+	make ROOTDIR=$(ROOTDIR) CFLAGS="$(CFLAGS) -DBOOTSTRAP" -f Makefile.bs
+
+
+#########################################################################
+# Once we have bootstrapped a c-xref.bs it can generate definitions
+# which are dependent on compiler builtins or standard headers for
+# the current environment (not actually dependent on c-xref.bs)
+
+compiler_definitions.h: c-xref.bs
+	echo | gcc -dM -E - > compiler_definitions.h
+
 strFill.h: proto.h strTdef.h c-xref.bs
-	./c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
+	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION proto.h \
 		-str_fill -header -no_stdop \
 		> tmpStrFill.h
 	mv -f tmpStrFill.h strFill.h
 
 strTdef.h: proto.h c-xref.bs
 	echo > strTdef.h
-	./c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
+	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION proto.h \
 		-typedefs -enum_name -header -no_stdop \
 		> tmpStrTdef.h
 	mv -f tmpStrTdef.h strTdef.h
@@ -85,14 +101,8 @@ strTdef.h: proto.h c-xref.bs
 enumTxt.h: proto.h strFill.h strTdef.h ../doc/_c-xrefrc c-xref.bs
 	echo "#include \"stdinc.h\"" > enumTxt.h
 	echo "#include \"proto.h\"  /*SBD*/" >> enumTxt.h
-	./c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
+	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION proto.h \
 		-enum_name -body -no_stdop >> enumTxt.h
-
-c-xref.bs:
-	@echo "BOOTSTRAPPING..."
-	make ROOTDIR=$(ROOTDIR) CFLAGS="$(CFLAGS) -DBOOTSTRAP" -f Makefile.bs
-
-#########################################################################
 
 c-xref: $(OBJS)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)

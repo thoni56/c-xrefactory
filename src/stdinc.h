@@ -1,6 +1,14 @@
 #ifndef STDINC__H      /*SBD*/
 #define STDINC__H      /*SBD*/
 
+/* If we are not bootstrapping, then the compiler built-in definitions
+   should be generated and included in the generation, but not during compile
+   since the whole point is that the compiler already automatically adds them.
+ */
+#ifdef GENERATION
+#include "compiler_definitions.h"
+#endif
+
 #if defined(__WIN32) && (! defined(__WIN32__))		/*SBD*/
 #define __WIN32__ 1									/*SBD*/
 #endif												/*SBD*/
