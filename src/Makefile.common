@@ -117,6 +117,9 @@ clean:;
 	make -C $(ROOTDIR)/lib/zlib clean
 	rm -f $(OBJS) c-xref
 
+cleaner: clean
+	rm strFill.h strTdef.h enumTxt.h c-xref.bs
+
 #########################################################################
 
 dependencies:;
@@ -124,9 +127,7 @@ dependencies:;
 
 #########################################################################
 
-reset:
-	make clean
-	-rm c-xref.bs
-	cp enumTxt.ok enumTxt.c
-	cp strFill.ok strFill.h
-	cp strTdef.ok strTdef.h
+compare:
+	-diff strFill.h strFill.backup
+	-diff strTdef.h strTdef.backup
+	-diff enumTxt.h enumTxt.backup
