@@ -1,5 +1,5 @@
-#ifndef HEAD2_H
-#define HEAD2_H
+#ifndef CONSTANTS_H
+#define CONSTANTS_H
 
 /* ************************************************************** */
 /* ********  Constants useful for source - distribution  ******** */
