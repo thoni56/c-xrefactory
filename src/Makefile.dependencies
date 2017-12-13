@@ -55,21 +55,25 @@ jslsemact.o: jslsemact.c stdinc.h head.h constants.h strFill.h listmacr.h \
 lex.o: lex.c stdinc.h head.h constants.h strFill.h listmacr.h memmac.h \
  proto.h strTdef.h lexmac.h hashlist.th hashtab.th unigram.h cgram.h \
  protocol.h protocol.tc
+log.o: log.c log.h
 main.o: main.c stdinc.h head.h constants.h strFill.h listmacr.h memmac.h \
  proto.h strTdef.h lexmac.h hashlist.th hashtab.th globals.h unigram.h \
- cgram.h recyacc.h protocol.h protocol.tc
+ cgram.h recyacc.h log.h protocol.h protocol.tc
 misc.o: misc.c stdinc.h head.h constants.h strFill.h listmacr.h memmac.h \
  proto.h strTdef.h lexmac.h hashlist.th hashtab.th bitmaps.h protocol.h \
  protocol.tc hashlist.tc hashtab.tc
 options.o: options.c stdinc.h head.h constants.h strFill.h listmacr.h \
  memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th globals.h \
  protocol.h protocol.tc
+protocol.o: protocol.c protocol.h protocol.tc
 refactory.o: refactory.c stdinc.h head.h constants.h strFill.h listmacr.h \
  memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th globals.h \
  protocol.h protocol.tc
 semact.o: semact.c stdinc.h head.h constants.h strFill.h listmacr.h \
  memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th unigram.h \
  cgram.h
+y.tab.o: y.tab.c stdinc.h head.h constants.h strFill.h listmacr.h \
+ memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th
 yaccgram.o: yaccgram.c stdinc.h head.h constants.h strFill.h listmacr.h \
  memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th
 yylex.o: yylex.c stdinc.h head.h constants.h strFill.h listmacr.h \
