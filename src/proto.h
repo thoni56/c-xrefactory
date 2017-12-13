@@ -708,7 +708,7 @@ struct idIdent {
 };
 
 struct freeTrail {
-    void			(*action)C_ARG((void*));
+    void			(*action)(void*);
     void            *p;
     S_freeTrail		*next;
 };
@@ -886,7 +886,7 @@ struct chReference {
 
 struct cxScanFileFunctionLink {
     int		recordCode;
-    void    (*handleFun)C_ARG((int size,int ri,char**ccc,char**ffin,S_charBuf*bbb, int additionalArg));
+    void    (*handleFun)(int size,int ri,char**ccc,char**ffin,S_charBuf*bbb, int additionalArg);
     int		additionalArg;
 };
 
@@ -1034,7 +1034,7 @@ struct completions {
 
 struct completionFunTab {
     int token;
-    void (*fun)C_ARG((S_completions*));
+    void (*fun)(S_completions*);
 };
 
 struct completionSymFunInfo {
@@ -1863,116 +1863,116 @@ struct optionsList {
 ** commons.c
 */
 
-void emergencyExit C_ARG((int exitStatus));
-extern void warning C_ARG((int kod, char *sprava));
-extern void error C_ARG((int kod, char *sprava));
-extern void fatalError C_ARG((int kod, char *sprava, int exitCode));
-extern void internalCheckFail C_ARG((char *expr, char *file, int line));
+void emergencyExit(int exitStatus);
+extern void warning(int kod, char *sprava);
+extern void error(int kod, char *sprava);
+extern void fatalError(int kod, char *sprava, int exitCode);
+extern void internalCheckFail(char *expr, char *file, int line);
 
 /* ***********************************************************************
 ** cct.c
 */
-void cctAddSimpleValue C_ARG((S_cctNode *cc, S_symbol *x, int deepFactor));
-int cctIsMember C_ARG((S_cctNode *cc, S_symbol *x, int deepFactor));
-void cctAddCctTree C_ARG((S_cctNode *cc, S_cctNode *x, int deepFactor));
-void cctDump C_ARG((S_cctNode *cc, int deep));
-void cctTest C_ARG(());
+void cctAddSimpleValue(S_cctNode *cc, S_symbol *x, int deepFactor);
+int cctIsMember(S_cctNode *cc, S_symbol *x, int deepFactor);
+void cctAddCctTree(S_cctNode *cc, S_cctNode *x, int deepFactor);
+void cctDump(S_cctNode *cc, int deep);
+void cctTest();
 
 
 /* ***********************************************************************
 ** misc.c
 */
 
-void ppcGenSynchroRecord C_ARG(());
-void ppcIndentOffset C_ARG(());
-void ppcGenGotoOffsetPosition C_ARG((char *fname, int offset));
-void ppcGenRecordBegin C_ARG((char *kind));
-void ppcGenRecordWithAttributeBegin C_ARG((char *kind, char *attr, char *val));
-void ppcGenRecordWithNumAttributeBegin C_ARG((char *kind, char *attr, int val));
-void ppcGenRecordEnd C_ARG((char *kind));
-void ppcGenNumericRecordBegin C_ARG((char *kind, int val));
-void ppcGenTwoNumericAndRecordBegin C_ARG((char *kind, char *attr1, int val1, char *attr2, int val2));
-void ppcGenWithNumericAndRecordBegin C_ARG((char *kind, int val, char *attr, char *attrVal));
-void ppcGenAllCompletionsRecordBegin C_ARG((int nofocus, int len));
-void ppcGenTwoNumericsAndrecord C_ARG((char *kind, char *attr1, int val1, char *attr2, int val2, char *message,char *suff));
-void ppcGenRecordWithNumeric C_ARG((char *kind, char *attr, int val, char *message,char *suff));
-void ppcGenNumericRecord C_ARG((char *kind, int val, char *message, char *suff));
-void ppcGenRecord C_ARG((char *kind, char *message, char *suffix));
-void ppcGenTmpBuff C_ARG(());
-void ppcGenDisplaySelectionRecord C_ARG((char *message, int messageType, int continuation));
-void ppcGenGotoMarkerRecord C_ARG((S_editorMarker *pos));
-void ppcGenPosition C_ARG((S_position *p));
-void ppcGenDefinitionNotFoundWarning C_ARG(());
-void ppcGenDefinitionNotFoundWarningAtBottom C_ARG(());
-void ppcGenReplaceRecord C_ARG((char *file, int offset, char *oldName, int oldNameLen, char *newName));
-void ppcGenPreCheckRecord C_ARG((S_editorMarker *pos, int oldLen));
-void ppcGenReferencePreCheckRecord C_ARG((S_reference *r, char *text));
-void ppcGenGotoPositionRecord C_ARG((S_position *p));
-void ppcGenOffsetPosition C_ARG((char *fn, int offset));
-void ppcGenMarker C_ARG((S_editorMarker *m));
-char * stringNumStr C_ARG(( int rr, int ed, int em, int ey, char *own ));
-void jarFileParse C_ARG(());
-void scanJarFilesForTagSearch C_ARG(());
-void classFileParse C_ARG(());
-void fillTrivialSpecialRefItem C_ARG(( S_symbolRefItem *ddd , char *name));
-void setExpirationFromLicenseString C_ARG(());
-int optionsOverflowHandler C_ARG((int n));
-int cxMemoryOverflowHandler C_ARG((int n));
+void ppcGenSynchroRecord();
+void ppcIndentOffset();
+void ppcGenGotoOffsetPosition(char *fname, int offset);
+void ppcGenRecordBegin(char *kind);
+void ppcGenRecordWithAttributeBegin(char *kind, char *attr, char *val);
+void ppcGenRecordWithNumAttributeBegin(char *kind, char *attr, int val);
+void ppcGenRecordEnd(char *kind);
+void ppcGenNumericRecordBegin(char *kind, int val);
+void ppcGenTwoNumericAndRecordBegin(char *kind, char *attr1, int val1, char *attr2, int val2);
+void ppcGenWithNumericAndRecordBegin(char *kind, int val, char *attr, char *attrVal);
+void ppcGenAllCompletionsRecordBegin(int nofocus, int len);
+void ppcGenTwoNumericsAndrecord(char *kind, char *attr1, int val1, char *attr2, int val2, char *message,char *suff);
+void ppcGenRecordWithNumeric(char *kind, char *attr, int val, char *message,char *suff);
+void ppcGenNumericRecord(char *kind, int val, char *message, char *suff);
+void ppcGenRecord(char *kind, char *message, char *suffix);
+void ppcGenTmpBuff();
+void ppcGenDisplaySelectionRecord(char *message, int messageType, int continuation);
+void ppcGenGotoMarkerRecord(S_editorMarker *pos);
+void ppcGenPosition(S_position *p);
+void ppcGenDefinitionNotFoundWarning();
+void ppcGenDefinitionNotFoundWarningAtBottom();
+void ppcGenReplaceRecord(char *file, int offset, char *oldName, int oldNameLen, char *newName);
+void ppcGenPreCheckRecord(S_editorMarker *pos, int oldLen);
+void ppcGenReferencePreCheckRecord(S_reference *r, char *text);
+void ppcGenGotoPositionRecord(S_position *p);
+void ppcGenOffsetPosition(char *fn, int offset);
+void ppcGenMarker(S_editorMarker *m);
+char * stringNumStr( int rr, int ed, int em, int ey, char *own );
+void jarFileParse();
+void scanJarFilesForTagSearch();
+void classFileParse();
+void fillTrivialSpecialRefItem( S_symbolRefItem *ddd , char *name);
+void setExpirationFromLicenseString();
+int optionsOverflowHandler(int n);
+int cxMemoryOverflowHandler(int n);
 
-void noSuchRecordError C_ARG((char *rec));
-void methodAppliedOnNonClass C_ARG((char *rec));
-void methodNameNotRecognized C_ARG((char *rec));
-void dumpOptions C_ARG((int nargc, char **nargv));
-void stackMemoryInit C_ARG(());
-void *stackMemoryAlloc C_ARG((int size));
-void *stackMemoryPush C_ARG((void *p, int size));
-int  *stackMemoryPushInt C_ARG((int x));
-char *stackMemoryPushString C_ARG((char *s));
-void stackMemoryPop C_ARG((void *, int size));
-void stackMemoryBlockStart C_ARG(());
-void stackMemoryBlockFree C_ARG(());
-void stackMemoryStartErrZone C_ARG(());
-void stackMemoryStopErrZone C_ARG(());
-void stackMemoryErrorInZone C_ARG(());
-void stackMemoryDump C_ARG(());
+void noSuchRecordError(char *rec);
+void methodAppliedOnNonClass(char *rec);
+void methodNameNotRecognized(char *rec);
+void dumpOptions(int nargc, char **nargv);
+void stackMemoryInit();
+void *stackMemoryAlloc(int size);
+void *stackMemoryPush(void *p, int size);
+int  *stackMemoryPushInt(int x);
+char *stackMemoryPushString(char *s);
+void stackMemoryPop(void *, int size);
+void stackMemoryBlockStart();
+void stackMemoryBlockFree();
+void stackMemoryStartErrZone();
+void stackMemoryStopErrZone();
+void stackMemoryErrorInZone();
+void stackMemoryDump();
 
-void addToTrail  C_ARG((void (*action)(void*),  void *p));
-void removeFromTrailUntil C_ARG((S_freeTrail *untilP));
+void addToTrail (void (*action)(void*),  void *p);
+void removeFromTrailUntil(S_freeTrail *untilP);
 
-void symDump C_ARG((S_symbol *));
-void symbolRefItemDump C_ARG((S_symbolRefItem *ss));
-int javaTypeStringSPrint C_ARG((char *buff, char *str, int nameStyle, int *oNamePos));
-void typeSPrint C_ARG((char *buff,int *size,S_typeModifiers *t,char*name,
+void symDump(S_symbol *);
+void symbolRefItemDump(S_symbolRefItem *ss);
+int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos);
+void typeSPrint(char *buff,int *size,S_typeModifiers *t,char*name,
                        int dclSepChar, int maxDeep, int typedefexp,
-                       int longOrShortName, int *oNamePos));
-void throwsSprintf C_ARG((char *out, int outsize, S_symbolList *exceptions));
-void macDefSPrintf C_ARG((char *buff, int *size, char *name1, char *name2, int argn, char **args, int *oNamePos));
-char * string3ConcatInStackMem C_ARG((char *str1, char *str2, char *str3));
+                       int longOrShortName, int *oNamePos);
+void throwsSprintf(char *out, int outsize, S_symbolList *exceptions);
+void macDefSPrintf(char *buff, int *size, char *name1, char *name2, int argn, char **args, int *oNamePos);
+char * string3ConcatInStackMem(char *str1, char *str2, char *str3);
 
-unsigned hashFun C_ARG((char *s));
-void javaSignatureSPrint C_ARG((char *buff, int *size, char *sig, int classstyle));
-void fPutDecimal C_ARG((FILE *f, int n));
-char *strmcpy C_ARG((char *dest, char *src));
-char *simpleFileName C_ARG((char *fullFileName));
-char *directoryName_st C_ARG((char *fullFileName));
-char *simpleFileNameWithoutSuffix_st C_ARG((char *fullFileName));
-int containsWildCharacter C_ARG((char *ss));
-int shellMatch C_ARG((char *string, int stringLen, char *pattern, int caseSensitive));
-void expandWildCharactersInOnePathRec C_ARG((char *fn, char **outpaths, int *freeolen));
-void expandWildCharactersInOnePath C_ARG((char *fn, char *outpaths, int olen));
-void expandWildCharactersInPaths C_ARG((char *paths, char *outpaths, int freeolen));
-char * getRealFileNameStatic C_ARG((char *fn));
+unsigned hashFun(char *s);
+void javaSignatureSPrint(char *buff, int *size, char *sig, int classstyle);
+void fPutDecimal(FILE *f, int n);
+char *strmcpy(char *dest, char *src);
+char *simpleFileName(char *fullFileName);
+char *directoryName_st(char *fullFileName);
+char *simpleFileNameWithoutSuffix_st(char *fullFileName);
+int containsWildCharacter(char *ss);
+int shellMatch(char *string, int stringLen, char *pattern, int caseSensitive);
+void expandWildCharactersInOnePathRec(char *fn, char **outpaths, int *freeolen);
+void expandWildCharactersInOnePath(char *fn, char *outpaths, int olen);
+void expandWildCharactersInPaths(char *paths, char *outpaths, int freeolen);
+char * getRealFileNameStatic(char *fn);
 char *create_temporary_filename();
-void copyFile C_ARG((char *src, char *dest));
-void createDir C_ARG((char *dirname));
-void removeFile C_ARG((char *dirname));
-int substringIndexWithLimit C_ARG((char *s, int limit, char *subs));
-int stringContainsSubstring C_ARG((char *s, char *subs));
-void javaGetPackageNameFromSourceFileName C_ARG((char *src, char *opack));
-int substringIndex C_ARG((char *s, char *subs));
-int stringEndsBySuffix C_ARG((char *s, char *suffix));
-int fileNameHasOneOfSuffixes C_ARG((char *fname, char *suffs));
-int mapPatternFiles C_ARG((
+void copyFile(char *src, char *dest);
+void createDir(char *dirname);
+void removeFile(char *dirname);
+int substringIndexWithLimit(char *s, int limit, char *subs);
+int stringContainsSubstring(char *s, char *subs);
+void javaGetPackageNameFromSourceFileName(char *src, char *opack);
+int substringIndex(char *s, char *subs);
+int stringEndsBySuffix(char *s, char *suffix);
+int fileNameHasOneOfSuffixes(char *fname, char *suffs);
+int mapPatternFiles(
         char *pattern,
         void (*fun) (MAP_FUN_PROFILE),
         char *a1,
@@ -1980,8 +1980,8 @@ int mapPatternFiles C_ARG((
         S_completions *a3,
         void *a4,
         int *a5
-    ));
-int mapDirectoryFiles C_ARG((
+    );
+int mapDirectoryFiles(
         char *dirname,
         void (*fun) (MAP_FUN_PROFILE),
         int allowEditorFilesFlag,
@@ -1990,238 +1990,238 @@ int mapDirectoryFiles C_ARG((
         S_completions *a3,
         void *a4,
         int *a5
-    ));
-void javaMapDirectoryFiles1 C_ARG((
+    );
+void javaMapDirectoryFiles1(
         char *packfile,
         void (*fun)(MAP_FUN_PROFILE),
         S_completions *a1,
         void *a2,
         int *a3
-    ));
-void javaMapDirectoryFiles2 C_ARG((
+    );
+void javaMapDirectoryFiles2(
         S_idIdentList *packid,
         void (*fun)(MAP_FUN_PROFILE),
         S_completions *a1,
         void *a2,
         int *a3
-    ));
-char *lastOccurenceInString C_ARG((char *ss, int ch));
-char *lastOccurenceOfSlashOrAntiSlash C_ARG((char *ss));
-char * getFileSuffix C_ARG((char *fn));
-char *javaCutClassPathFromFileName C_ARG((char *fname));
-char *javaCutSourcePathFromFileName C_ARG((char *fname));
-int pathncmp C_ARG((char *ss1, char *ss2, int n, int caseSensitive));
-int fnCmp C_ARG((char *ss1, char *ss2));
-int fnnCmp C_ARG((char *ss1, char *ss2, int n));
+    );
+char *lastOccurenceInString(char *ss, int ch);
+char *lastOccurenceOfSlashOrAntiSlash(char *ss);
+char * getFileSuffix(char *fn);
+char *javaCutClassPathFromFileName(char *fname);
+char *javaCutSourcePathFromFileName(char *fname);
+int pathncmp(char *ss1, char *ss2, int n, int caseSensitive);
+int fnCmp(char *ss1, char *ss2);
+int fnnCmp(char *ss1, char *ss2, int n);
 
 /* ***********************************************************************
 ** completion.c
 */
-void processName C_ARG((char *name, S_cline *t, int orderFlag, void *c));
-void completeForSpecial1 C_ARG((S_completions*));
-void completeForSpecial2 C_ARG((S_completions*));
-void completeUpFunProfile C_ARG((S_completions* c));
-void completeTypes C_ARG((S_completions*));
-void completeStructs C_ARG((S_completions*));
-void completeRecNames C_ARG((S_completions*));
-void completeEnums C_ARG((S_completions*));
-void completeLabels C_ARG((S_completions*));
-void completeMacros C_ARG((S_completions*c));
-void completeOthers C_ARG((S_completions*));
-void javaCompleteTypeSingleName C_ARG((S_completions*));
-void javaHintImportFqt C_ARG((S_completions*c));
-void javaHintVariableName C_ARG((S_completions*c));
-void javaHintCompleteNonImportedTypes C_ARG((S_completions*c));
-void javaHintCompleteMethodParameters C_ARG((S_completions *c));
-void javaCompleteTypeCompName C_ARG((S_completions*));
-void javaCompleteThisPackageName C_ARG((S_completions*c));
-void javaCompletePackageSingleName C_ARG((S_completions*));
-void javaCompleteExprSingleName C_ARG((S_completions*));
-void javaCompleteUpMethodSingleName C_ARG((S_completions*));
-void javaCompleteFullInheritedMethodHeader C_ARG((S_completions*c));
-void javaCompletePackageCompName C_ARG((S_completions*));
-void javaCompleteExprCompName C_ARG((S_completions*));
-void javaCompleteMethodCompName C_ARG((S_completions*));
-void javaCompleteHintForConstructSingleName C_ARG((S_completions *c));
-void javaCompleteConstructSingleName C_ARG((S_completions*c));
-void javaCompleteConstructCompName C_ARG((S_completions*c));
-void javaCompleteConstructNestNameName C_ARG((S_completions*c));
-void javaCompleteConstructNestPrimName C_ARG((S_completions*c));
-void javaCompleteStrRecordPrimary C_ARG((S_completions*c));
-void javaCompleteStrRecordSuper C_ARG((S_completions*c));
-void javaCompleteStrRecordQualifiedSuper C_ARG((S_completions*c));
-void javaCompleteClassDefinitionNameSpecial C_ARG((S_completions*c));
-void javaCompleteClassDefinitionName C_ARG((S_completions*c));
-void javaCompleteThisConstructor C_ARG((S_completions*c));
-void javaCompleteSuperConstructor C_ARG((S_completions*c));
-void javaCompleteSuperNestedConstructor C_ARG((S_completions*c));
-void completeYaccLexem C_ARG((S_completions*c));
-char *javaGetShortClassName C_ARG(( char *inn));
-char *javaGetShortClassNameFromFileNum_st C_ARG((int fnum));
-char *javaGetNudePreTypeName_st C_ARG(( char *inn, int cutMode));
+void processName(char *name, S_cline *t, int orderFlag, void *c);
+void completeForSpecial1(S_completions*);
+void completeForSpecial2(S_completions*);
+void completeUpFunProfile(S_completions* c);
+void completeTypes(S_completions*);
+void completeStructs(S_completions*);
+void completeRecNames(S_completions*);
+void completeEnums(S_completions*);
+void completeLabels(S_completions*);
+void completeMacros(S_completions*c);
+void completeOthers(S_completions*);
+void javaCompleteTypeSingleName(S_completions*);
+void javaHintImportFqt(S_completions*c);
+void javaHintVariableName(S_completions*c);
+void javaHintCompleteNonImportedTypes(S_completions*c);
+void javaHintCompleteMethodParameters(S_completions *c);
+void javaCompleteTypeCompName(S_completions*);
+void javaCompleteThisPackageName(S_completions*c);
+void javaCompletePackageSingleName(S_completions*);
+void javaCompleteExprSingleName(S_completions*);
+void javaCompleteUpMethodSingleName(S_completions*);
+void javaCompleteFullInheritedMethodHeader(S_completions*c);
+void javaCompletePackageCompName(S_completions*);
+void javaCompleteExprCompName(S_completions*);
+void javaCompleteMethodCompName(S_completions*);
+void javaCompleteHintForConstructSingleName(S_completions *c);
+void javaCompleteConstructSingleName(S_completions*c);
+void javaCompleteConstructCompName(S_completions*c);
+void javaCompleteConstructNestNameName(S_completions*c);
+void javaCompleteConstructNestPrimName(S_completions*c);
+void javaCompleteStrRecordPrimary(S_completions*c);
+void javaCompleteStrRecordSuper(S_completions*c);
+void javaCompleteStrRecordQualifiedSuper(S_completions*c);
+void javaCompleteClassDefinitionNameSpecial(S_completions*c);
+void javaCompleteClassDefinitionName(S_completions*c);
+void javaCompleteThisConstructor(S_completions*c);
+void javaCompleteSuperConstructor(S_completions*c);
+void javaCompleteSuperNestedConstructor(S_completions*c);
+void completeYaccLexem(S_completions*c);
+char *javaGetShortClassName( char *inn);
+char *javaGetShortClassNameFromFileNum_st(int fnum);
+char *javaGetNudePreTypeName_st( char *inn, int cutMode);
 
-void olCompletionListInit C_ARG((S_position *originalPos));
-void formatOutputLine C_ARG((char *tt, int startingColumn));
-void printCompletionsList C_ARG((int noFocus));
-void printCompletions C_ARG((S_completions*c));
+void olCompletionListInit(S_position *originalPos);
+void formatOutputLine(char *tt, int startingColumn);
+void printCompletionsList(int noFocus);
+void printCompletions(S_completions*c);
 
 /* ***********************************************************************
 ** generate.c
 */
 
-void generate C_ARG((S_symbol *s));
-void genProjections C_ARG((int n));
+void generate(S_symbol *s);
+void genProjections(int n);
 
 /* ***********************************************************************
 ** cxref.c, cxfile.c
 */
 
-int olcxReferenceInternalLessFunction C_ARG((S_reference *r1, S_reference *r2));
-int olSymbolRefItemLess C_ARG((S_symbolRefItem *s1, S_symbolRefItem *s2));
-int searchStringFitness C_ARG((char *cxtag, int slen));
-char *crTagSearchLineStatic C_ARG((char *name, S_position *p,
-                            int *len1, int *len2, int *len3));
-int symbolNameShouldBeHiddenFromReports C_ARG((char *name));
-void searchSymbolCheckReference C_ARG((S_symbolRefItem  *ss, S_reference *rr));
+int olcxReferenceInternalLessFunction(S_reference *r1, S_reference *r2);
+int olSymbolRefItemLess(S_symbolRefItem *s1, S_symbolRefItem *s2);
+int searchStringFitness(char *cxtag, int slen);
+char *crTagSearchLineStatic(char *name, S_position *p,
+                            int *len1, int *len2, int *len3);
+int symbolNameShouldBeHiddenFromReports(char *name);
+void searchSymbolCheckReference(S_symbolRefItem  *ss, S_reference *rr);
 void tagSearchCompactShortResults();
 void printTagSearchResults();
 int creatingOlcxRefs();
-int olcxTopSymbolExists C_ARG(());
-S_olSymbolsMenu *olCreateSpecialMenuItem C_ARG((char *fieldName, int cfi,int storage));
-int itIsSameCxSymbol C_ARG((S_symbolRefItem *p1, S_symbolRefItem *p2));
-int itIsSameCxSymbolIncludingFunClass C_ARG((S_symbolRefItem *p1, S_symbolRefItem *p2));
-int itIsSameCxSymbolIncludingApplClass C_ARG((S_symbolRefItem *p1, S_symbolRefItem *p2));
-int olcxItIsSameCxSymbol C_ARG((S_symbolRefItem *p1, S_symbolRefItem *p2));
-void olcxRecomputeSelRefs C_ARG(( S_olcxReferences *refs ));
-void olProcessSelectedReferences C_ARG((S_olcxReferences    *rstack, void (*referencesMapFun)(S_olcxReferences *rstack, S_olSymbolsMenu *ss)));
-void olcxPopOnly C_ARG(());
-S_reference * olcxCopyRefList C_ARG((S_reference *ll));
-void olStackDeleteSymbol C_ARG(( S_olcxReferences *refs));
-int getFileNumberFromName C_ARG((char *name));
-int olcxVirtualyAdequate C_ARG((int usage, int vApplCl, int vFunCl,
-                        int olUsage, int olApplCl, int olFunCl));
-void generateOnlineCxref C_ARG((	S_position *p,
+int olcxTopSymbolExists();
+S_olSymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi,int storage);
+int itIsSameCxSymbol(S_symbolRefItem *p1, S_symbolRefItem *p2);
+int itIsSameCxSymbolIncludingFunClass(S_symbolRefItem *p1, S_symbolRefItem *p2);
+int itIsSameCxSymbolIncludingApplClass(S_symbolRefItem *p1, S_symbolRefItem *p2);
+int olcxItIsSameCxSymbol(S_symbolRefItem *p1, S_symbolRefItem *p2);
+void olcxRecomputeSelRefs( S_olcxReferences *refs );
+void olProcessSelectedReferences(S_olcxReferences    *rstack, void (*referencesMapFun)(S_olcxReferences *rstack, S_olSymbolsMenu *ss));
+void olcxPopOnly();
+S_reference * olcxCopyRefList(S_reference *ll);
+void olStackDeleteSymbol( S_olcxReferences *refs);
+int getFileNumberFromName(char *name);
+int olcxVirtualyAdequate(int usage, int vApplCl, int vFunCl,
+                        int olUsage, int olApplCl, int olFunCl);
+void generateOnlineCxref(	S_position *p,
                             char *commandString,
                             int usage,
                             char *suffix,
                             char *suffix2
-    ));
-S_reference *olcxAddReferenceNoUsageCheck C_ARG((S_reference **rlist, S_reference *ref, int bestMatchFlag));
-S_reference *olcxAddReference C_ARG((S_reference **rlist,S_reference *ref,int bestMatchFlag));
-int isRelatedClass C_ARG((int cl1, int cl2));
-void olcxFreeReferences C_ARG((S_reference *r));
-int isSmallerOrEqClass C_ARG((int inf, int sup));
-int olcxPushLessFunction C_ARG((S_reference *r1, S_reference *r2));
-int olcxListLessFunction C_ARG((S_reference *r1, S_reference *r2));
-char *getJavaDocUrl_st C_ARG((S_symbolRefItem *rr));
-char *getLocalJavaDocFile_st C_ARG((char *fileUrl));
-char *getFullUrlOfJavaDoc_st C_ARG((char *fileUrl));
-int htmlJdkDocAvailableForUrl C_ARG((char *ss));
-void setIntToZero C_ARG((void *p));
-S_reference *duplicateReference C_ARG((S_reference *r));
-S_reference * addCxReferenceNew C_ARG((S_symbol *p, S_position *pos, S_usageBits *ub, int vFunCl, int vApplCl));
-S_reference * addCxReference C_ARG((S_symbol *p, S_position *pos, int usage, int vFunClass,int vApplClass));
-S_reference *addSpecialFieldReference C_ARG((char *name, int storage, int fnum, S_position *p, int usage));
-void addClassTreeHierarchyReference C_ARG((int fnum, S_position *p, int usage));
-void addCfClassTreeHierarchyRef C_ARG((int fnum, int usage));
-void addTrivialCxReference  C_ARG((char *name, int symType, int storage, S_position *pos, int usage));
-int cxFileHashNumber C_ARG((char *sym));
-void genReferenceFile C_ARG((int updateFlag, char *fname));
-void addSubClassItemToFileTab C_ARG(( int sup, int inf, int origin));
-void addSubClassesItemsToFileTab C_ARG((S_symbol *ss, int origin));
-void scanCxFile C_ARG((S_cxScanFileFunctionLink *scanFuns));
-void olcxAddReferences C_ARG((S_reference *list, S_reference **dlist, int fnum, int bestMatchFlag));
-void olSetCallerPosition C_ARG((S_position *pos));
-S_olCompletion * olCompletionListPrepend C_ARG((char *name, char *fullText, char *vclass, int jindent, S_symbol *s, S_symbolRefItem *ri, S_reference *dfpos, int symType, int vFunClass, S_olcxReferences *stack));
-S_olSymbolsMenu *olCreateNewMenuItem C_ARG((
+    );
+S_reference *olcxAddReferenceNoUsageCheck(S_reference **rlist, S_reference *ref, int bestMatchFlag);
+S_reference *olcxAddReference(S_reference **rlist,S_reference *ref,int bestMatchFlag);
+int isRelatedClass(int cl1, int cl2);
+void olcxFreeReferences(S_reference *r);
+int isSmallerOrEqClass(int inf, int sup);
+int olcxPushLessFunction(S_reference *r1, S_reference *r2);
+int olcxListLessFunction(S_reference *r1, S_reference *r2);
+char *getJavaDocUrl_st(S_symbolRefItem *rr);
+char *getLocalJavaDocFile_st(char *fileUrl);
+char *getFullUrlOfJavaDoc_st(char *fileUrl);
+int htmlJdkDocAvailableForUrl(char *ss);
+void setIntToZero(void *p);
+S_reference *duplicateReference(S_reference *r);
+S_reference * addCxReferenceNew(S_symbol *p, S_position *pos, S_usageBits *ub, int vFunCl, int vApplCl);
+S_reference * addCxReference(S_symbol *p, S_position *pos, int usage, int vFunClass,int vApplClass);
+S_reference *addSpecialFieldReference(char *name, int storage, int fnum, S_position *p, int usage);
+void addClassTreeHierarchyReference(int fnum, S_position *p, int usage);
+void addCfClassTreeHierarchyRef(int fnum, int usage);
+void addTrivialCxReference (char *name, int symType, int storage, S_position *pos, int usage);
+int cxFileHashNumber(char *sym);
+void genReferenceFile(int updateFlag, char *fname);
+void addSubClassItemToFileTab( int sup, int inf, int origin);
+void addSubClassesItemsToFileTab(S_symbol *ss, int origin);
+void scanCxFile(S_cxScanFileFunctionLink *scanFuns);
+void olcxAddReferences(S_reference *list, S_reference **dlist, int fnum, int bestMatchFlag);
+void olSetCallerPosition(S_position *pos);
+S_olCompletion * olCompletionListPrepend(char *name, char *fullText, char *vclass, int jindent, S_symbol *s, S_symbolRefItem *ri, S_reference *dfpos, int symType, int vFunClass, S_olcxReferences *stack);
+S_olSymbolsMenu *olCreateNewMenuItem(
         S_symbolRefItem *sym, int vApplClass, int vFunCl, S_position *defpos, int defusage,
         int selected, int visible,
         unsigned ooBits, int olusage, int vlevel
-    ));
-S_olSymbolsMenu *olAddBrowsedSymbol C_ARG((
+    );
+S_olSymbolsMenu *olAddBrowsedSymbol(
     S_symbolRefItem *sym, S_olSymbolsMenu **list,
     int selected, int visible, unsigned ooBits,
     int olusage, int vlevel,
-    S_position *defpos, int defusage));
-void renameCollationSymbols C_ARG((S_olSymbolsMenu *sss));
+    S_position *defpos, int defusage);
+void renameCollationSymbols(S_olSymbolsMenu *sss);
 void olCompletionListReverse();
-S_reference **addToRefList C_ARG((	S_reference **list,
+S_reference **addToRefList(	S_reference **list,
                             S_usageBits *pusage,
                             S_position *pos,
                             int category
-                        ));
-int isInRefList C_ARG((S_reference *list,
+                        );
+int isInRefList(S_reference *list,
                 S_usageBits *pusage,
                 S_position *pos,
                 int category
-                ));
-char *getXrefEnvironmentValue C_ARG(( char *name ));
-int byPassAcceptableSymbol C_ARG((S_symbolRefItem *p));
-int itIsSymbolToPushOlRefences C_ARG((S_symbolRefItem *p, S_olcxReferences *rstack, S_olSymbolsMenu **rss, int checkSelFlag));
-void olcxAddReferenceToOlSymbolsMenu C_ARG((S_olSymbolsMenu  *cms, S_reference *rr,
-                          int bestFitTlag));
-void putOnLineLoadedReferences C_ARG((S_symbolRefItem *p));
-void genOnLineReferences C_ARG((	S_olcxReferences *rstack, S_olSymbolsMenu *cms));
-S_olSymbolsMenu *createSelectionMenu C_ARG((S_symbolRefItem *dd));
-void mapCreateSelectionMenu C_ARG((S_symbolRefItem *dd));
-int olcxFreeOldCompletionItems C_ARG((S_olcxReferencesStack *stack));
-void olcxInit C_ARG(());
-S_userOlcx *olcxSetCurrentUser C_ARG((char *user));
-void linkNamePrettyPrint C_ARG((char *ff, char *javaLinkName, int maxlen,int argsStyle ));
-char *simpleFileNameFromFileNum C_ARG((int fnum));
-char *getShortClassNameFromClassNum_st C_ARG((int fnum));
-S_reference * getDefinitionRef C_ARG((S_reference *rr));
-void printSymbolLinkNameString C_ARG(( FILE *ff, char *linkName));
-int safetyCheck2ShouldWarn C_ARG(());
-void olCreateSelectionMenu C_ARG((int command));
-void printClassFqtNameFromClassNum C_ARG((FILE *ff, int fnum));
-void sprintfSymbolLinkName C_ARG((char *ttt, S_olSymbolsMenu *ss));
-void printSymbolLinkName C_ARG(( FILE *ff, S_olSymbolsMenu *ss));
-void olcxPushEmptyStackItem C_ARG((S_olcxReferencesStack *stack));
-void olcxPrintSelectionMenu C_ARG((S_olSymbolsMenu *));
-int ooBitsGreaterOrEqual C_ARG((unsigned oo1, unsigned oo2));
-void olcxPrintClassTree C_ARG((S_olSymbolsMenu *sss));
-void olcxReferencesDiff C_ARG((S_reference **anr1, S_reference **aor2,S_reference **diff));
-int olcxShowSelectionMenu C_ARG(());
-int getClassNumFromClassLinkName C_ARG((char *name, int defaultResult));
-void getLineColCursorPositionFromCommandLineOption C_ARG(( int *l, int *c ));
-void changeClassReferencesUsages C_ARG((char *linkName, int category, int fnum,
-                                 S_symbol *cclass));
-int isStrictlyEnclosingClass C_ARG((int enclosedClass, int enclosingClass));
-void changeMethodReferencesUsages C_ARG((char *linkName, int category, int fnum, S_symbol *cclass));
-void olcxPushSpecialCheckMenuSym C_ARG((int command, char *symname));
-int refOccursInRefs C_ARG((S_reference *r, S_reference *list));
-void olcxCheck1CxFileReference C_ARG((S_symbolRefItem *ss, S_reference *r));
-void olcxPushSpecial C_ARG((char *fieldName, int command));
-int isPushAllMethodsValidRefItem C_ARG((S_symbolRefItem *ri));
-int symbolsCorrespondWrtMoving C_ARG((S_olSymbolsMenu *osym,S_olSymbolsMenu *nsym,int command));
-void olcxPrintPushingAction C_ARG((int opt, int afterMenu));
-void olPushAllReferencesInBetween C_ARG((int minMemi, int maxMemi));
-int tpCheckSourceIsNotInnerClass C_ARG(());
-void tpCheckFillMoveClassData C_ARG((S_tpCheckMoveClassData *dd, char *spack, char *tpack));
-int tpCheckMoveClassAccessibilities C_ARG(());
-int tpCheckSuperMethodReferencesForDynToSt C_ARG(());
-int tpCheckOuterScopeUsagesForDynToSt C_ARG(());
-int tpCheckMethodReferencesWithApplOnSuperClassForPullUp C_ARG(());
-int tpCheckSuperMethodReferencesForPullUp C_ARG(());
-int tpCheckSuperMethodReferencesAfterPushDown C_ARG(());
-int tpCheckTargetToBeDirectSubOrSupClass C_ARG((int flag, char *subOrSuper));
-int tpPullUpFieldLastPreconditions C_ARG(());
-int tpPushDownFieldLastPreconditions C_ARG(());
-S_symbol *getMoveTargetClass C_ARG(());
-int javaGetSuperClassNumFromClassNum C_ARG((int cn));
-int javaIsSuperClass C_ARG((int superclas, int clas));
-void pushLocalUnusedSymbolsAction C_ARG(());
-void mainAnswerEditAction C_ARG(());
+                );
+char *getXrefEnvironmentValue( char *name );
+int byPassAcceptableSymbol(S_symbolRefItem *p);
+int itIsSymbolToPushOlRefences(S_symbolRefItem *p, S_olcxReferences *rstack, S_olSymbolsMenu **rss, int checkSelFlag);
+void olcxAddReferenceToOlSymbolsMenu(S_olSymbolsMenu  *cms, S_reference *rr,
+                          int bestFitTlag);
+void putOnLineLoadedReferences(S_symbolRefItem *p);
+void genOnLineReferences(	S_olcxReferences *rstack, S_olSymbolsMenu *cms);
+S_olSymbolsMenu *createSelectionMenu(S_symbolRefItem *dd);
+void mapCreateSelectionMenu(S_symbolRefItem *dd);
+int olcxFreeOldCompletionItems(S_olcxReferencesStack *stack);
+void olcxInit();
+S_userOlcx *olcxSetCurrentUser(char *user);
+void linkNamePrettyPrint(char *ff, char *javaLinkName, int maxlen,int argsStyle );
+char *simpleFileNameFromFileNum(int fnum);
+char *getShortClassNameFromClassNum_st(int fnum);
+S_reference * getDefinitionRef(S_reference *rr);
+void printSymbolLinkNameString( FILE *ff, char *linkName);
+int safetyCheck2ShouldWarn();
+void olCreateSelectionMenu(int command);
+void printClassFqtNameFromClassNum(FILE *ff, int fnum);
+void sprintfSymbolLinkName(char *ttt, S_olSymbolsMenu *ss);
+void printSymbolLinkName( FILE *ff, S_olSymbolsMenu *ss);
+void olcxPushEmptyStackItem(S_olcxReferencesStack *stack);
+void olcxPrintSelectionMenu(S_olSymbolsMenu *);
+int ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2);
+void olcxPrintClassTree(S_olSymbolsMenu *sss);
+void olcxReferencesDiff(S_reference **anr1, S_reference **aor2,S_reference **diff);
+int olcxShowSelectionMenu();
+int getClassNumFromClassLinkName(char *name, int defaultResult);
+void getLineColCursorPositionFromCommandLineOption( int *l, int *c );
+void changeClassReferencesUsages(char *linkName, int category, int fnum,
+                                 S_symbol *cclass);
+int isStrictlyEnclosingClass(int enclosedClass, int enclosingClass);
+void changeMethodReferencesUsages(char *linkName, int category, int fnum, S_symbol *cclass);
+void olcxPushSpecialCheckMenuSym(int command, char *symname);
+int refOccursInRefs(S_reference *r, S_reference *list);
+void olcxCheck1CxFileReference(S_symbolRefItem *ss, S_reference *r);
+void olcxPushSpecial(char *fieldName, int command);
+int isPushAllMethodsValidRefItem(S_symbolRefItem *ri);
+int symbolsCorrespondWrtMoving(S_olSymbolsMenu *osym,S_olSymbolsMenu *nsym,int command);
+void olcxPrintPushingAction(int opt, int afterMenu);
+void olPushAllReferencesInBetween(int minMemi, int maxMemi);
+int tpCheckSourceIsNotInnerClass();
+void tpCheckFillMoveClassData(S_tpCheckMoveClassData *dd, char *spack, char *tpack);
+int tpCheckMoveClassAccessibilities();
+int tpCheckSuperMethodReferencesForDynToSt();
+int tpCheckOuterScopeUsagesForDynToSt();
+int tpCheckMethodReferencesWithApplOnSuperClassForPullUp();
+int tpCheckSuperMethodReferencesForPullUp();
+int tpCheckSuperMethodReferencesAfterPushDown();
+int tpCheckTargetToBeDirectSubOrSupClass(int flag, char *subOrSuper);
+int tpPullUpFieldLastPreconditions();
+int tpPushDownFieldLastPreconditions();
+S_symbol *getMoveTargetClass();
+int javaGetSuperClassNumFromClassNum(int cn);
+int javaIsSuperClass(int superclas, int clas);
+void pushLocalUnusedSymbolsAction();
+void mainAnswerEditAction();
 void freeOldestOlcx();
-S_olSymbolsMenu *olcxFreeSymbolMenuItem C_ARG((S_olSymbolsMenu *ll));
-void olcxFreeResolutionMenu C_ARG(( S_olSymbolsMenu *sym ));
-int refCharCode C_ARG((int usage));
-int scanReferenceFile C_ARG((	char *fname, char *fns1, char *fns2,
-                        S_cxScanFileFunctionLink *scanFunTab));
+S_olSymbolsMenu *olcxFreeSymbolMenuItem(S_olSymbolsMenu *ll);
+void olcxFreeResolutionMenu( S_olSymbolsMenu *sym );
+int refCharCode(int usage);
+int scanReferenceFile(	char *fname, char *fns1, char *fns2,
+                        S_cxScanFileFunctionLink *scanFunTab);
 int smartReadFileTabFile();
-void readOneAppropReferenceFile C_ARG((char *symname, S_cxScanFileFunctionLink  *scanFunTab));
-void scanReferenceFiles C_ARG((char *fname, S_cxScanFileFunctionLink *scanFunTab));
+void readOneAppropReferenceFile(char *symname, S_cxScanFileFunctionLink  *scanFunTab);
+void scanReferenceFiles(char *fname, S_cxScanFileFunctionLink *scanFunTab);
 
 extern S_cxScanFileFunctionLink s_cxScanFileTab[];
 extern S_cxScanFileFunctionLink s_cxFullScanFunTab[];
@@ -2239,133 +2239,133 @@ extern S_cxScanFileFunctionLink s_cxDeadCodeDetectionScanFunTab[];
 ** classh.c
 */
 
-void classHierarchyGenInit C_ARG(());
-void setTmpClassBackPointersToMenu C_ARG((S_olSymbolsMenu *menu));
-int chLineOrderLess C_ARG((S_olSymbolsMenu *r1, S_olSymbolsMenu *r2));
-void splitMenuPerSymbolsAndMap C_ARG((
+void classHierarchyGenInit();
+void setTmpClassBackPointersToMenu(S_olSymbolsMenu *menu);
+int chLineOrderLess(S_olSymbolsMenu *r1, S_olSymbolsMenu *r2);
+void splitMenuPerSymbolsAndMap(
     S_olSymbolsMenu *rrr,
     void (*fun)(S_olSymbolsMenu *, void *, void *),
     void *p1,
     char *p2
-    ));
-void htmlGenGlobRefLists C_ARG((S_olSymbolsMenu *rrr, FILE *ff, char *fn));
-void genClassHierarchies C_ARG(( FILE *ff, S_olSymbolsMenu *rrr,
-                                        int virtFlag, int pass ));
-int classHierarchyClassNameLess C_ARG((int c1, int c2));
-int classHierarchySupClassNameLess C_ARG((S_chReference *c1, S_chReference *c2));
+    );
+void htmlGenGlobRefLists(S_olSymbolsMenu *rrr, FILE *ff, char *fn);
+void genClassHierarchies( FILE *ff, S_olSymbolsMenu *rrr,
+                                        int virtFlag, int pass );
+int classHierarchyClassNameLess(int c1, int c2);
+int classHierarchySupClassNameLess(S_chReference *c1, S_chReference *c2);
 
 /* ***********************************************************************
 ** semact.c
 */
 
-void unpackPointers C_ARG((S_symbol *pp));
-int displayingErrorMessages C_ARG(());
-void deleteSymDef C_ARG((void *p));
-void addSymbol C_ARG((S_symbol *pp, S_symTab *tab));
-void recFindPush C_ARG((S_symbol *sym, S_recFindStr *rfs));
-S_recFindStr * iniFind C_ARG((S_symbol *s, S_recFindStr *rfs));
-int javaOuterClassAccessible C_ARG((S_symbol *cl));
-int javaRecordAccessible C_ARG((S_recFindStr *rfs, S_symbol *applcl, S_symbol *funcl, S_symbol *rec, unsigned recAccessFlags));
-int javaRecordVisibleAndAccessible C_ARG((S_recFindStr *rfs, S_symbol *applCl, S_symbol *funCl, S_symbol *r));
-int javaGetMinimalAccessibility C_ARG((S_recFindStr *rfs, S_symbol *r));
-int findStrRecordSym C_ARG((	S_recFindStr *ss,
+void unpackPointers(S_symbol *pp);
+int displayingErrorMessages();
+void deleteSymDef(void *p);
+void addSymbol(S_symbol *pp, S_symTab *tab);
+void recFindPush(S_symbol *sym, S_recFindStr *rfs);
+S_recFindStr * iniFind(S_symbol *s, S_recFindStr *rfs);
+int javaOuterClassAccessible(S_symbol *cl);
+int javaRecordAccessible(S_recFindStr *rfs, S_symbol *applcl, S_symbol *funcl, S_symbol *rec, unsigned recAccessFlags);
+int javaRecordVisibleAndAccessible(S_recFindStr *rfs, S_symbol *applCl, S_symbol *funCl, S_symbol *r);
+int javaGetMinimalAccessibility(S_recFindStr *rfs, S_symbol *r);
+int findStrRecordSym(	S_recFindStr *ss,
                                 char *recname,
                                 S_symbol **res,
                                 int javaClassif,
                                 int accessCheck,
                                 int visibilityCheck
-                    ));
-S_symbol *addNewSymbolDef C_ARG((S_symbol *p, unsigned storage, S_symTab *tab, int usage));
-S_symbol *addNewCopyOfSymbolDef C_ARG((S_symbol *def, unsigned defaultStorage));
-S_symbol *addNewDeclaration C_ARG((S_symbol *btype, S_symbol *decl,
-                            unsigned storage, S_symTab *tab));
-int styyerror C_ARG((char *s));
-int styyErrorRecovery C_ARG(());
-void setToNull C_ARG((void *p));
-void allocNewCurrentDefinition C_ARG(());
-S_symbol *typeSpecifier1 C_ARG((unsigned t));
-void declTypeSpecifier1 C_ARG((S_symbol *d, unsigned t));
-S_symbol *typeSpecifier2 C_ARG((S_typeModifiers *t));
-void declTypeSpecifier2 C_ARG((S_symbol *d, S_typeModifiers *t));
-void declTypeSpecifier21 C_ARG((S_typeModifiers *t, S_symbol *d));
-S_typeModifiers *appendComposedType C_ARG((S_typeModifiers **d, unsigned t));
-S_typeModifiers *prependComposedType C_ARG((S_typeModifiers *d, unsigned t));
-void completeDeclarator C_ARG((S_symbol *t, S_symbol *d));
-void addFunctionParameterToSymTable C_ARG((S_symbol *function, S_symbol *p, int i, S_symTab *tab));
-S_typeModifiers *crSimpleTypeMofifier  C_ARG((unsigned t));
-S_symbolList *crDefinitionList C_ARG((S_symbol *d));
-S_symbol *crSimpleDefinition C_ARG((unsigned storage, unsigned t, S_idIdent *id));
-int findStrRecord C_ARG((	S_symbol		*s,
+                    );
+S_symbol *addNewSymbolDef(S_symbol *p, unsigned storage, S_symTab *tab, int usage);
+S_symbol *addNewCopyOfSymbolDef(S_symbol *def, unsigned defaultStorage);
+S_symbol *addNewDeclaration(S_symbol *btype, S_symbol *decl,
+                            unsigned storage, S_symTab *tab);
+int styyerror(char *s);
+int styyErrorRecovery();
+void setToNull(void *p);
+void allocNewCurrentDefinition();
+S_symbol *typeSpecifier1(unsigned t);
+void declTypeSpecifier1(S_symbol *d, unsigned t);
+S_symbol *typeSpecifier2(S_typeModifiers *t);
+void declTypeSpecifier2(S_symbol *d, S_typeModifiers *t);
+void declTypeSpecifier21(S_typeModifiers *t, S_symbol *d);
+S_typeModifiers *appendComposedType(S_typeModifiers **d, unsigned t);
+S_typeModifiers *prependComposedType(S_typeModifiers *d, unsigned t);
+void completeDeclarator(S_symbol *t, S_symbol *d);
+void addFunctionParameterToSymTable(S_symbol *function, S_symbol *p, int i, S_symTab *tab);
+S_typeModifiers *crSimpleTypeMofifier (unsigned t);
+S_symbolList *crDefinitionList(S_symbol *d);
+S_symbol *crSimpleDefinition(unsigned storage, unsigned t, S_idIdent *id);
+int findStrRecord(	S_symbol		*s,
                     char            *recname,	/* can be NULL */
                     S_symbol        **res,
                     int             javaClassif
-                ));
-S_reference * findStrRecordFromSymbol C_ARG((	S_symbol *str,
+                );
+S_reference * findStrRecordFromSymbol(	S_symbol *str,
                                                 S_idIdent *record,
                                                 S_symbol **res,
                                                 int javaClassif,
                                                 S_idIdent *super
-                        ));
-S_reference * findStrRecordFromType C_ARG((	S_typeModifiers *str,
+                        );
+S_reference * findStrRecordFromType(	S_typeModifiers *str,
                             S_idIdent *record,
                             S_symbol **res,
                             int javaClassif
-                        ));
-int mergeArguments C_ARG((S_symbol *id, S_symbol *ty));
-S_typeModifiers *simpleStrUnionSpecifier C_ARG((	S_idIdent *typeName,
+                        );
+int mergeArguments(S_symbol *id, S_symbol *ty);
+S_typeModifiers *simpleStrUnionSpecifier(	S_idIdent *typeName,
                                             S_idIdent *id,
                                             int usage
-                                        ));
-S_typeModifiers *crNewAnnonymeStrUnion C_ARG((S_idIdent *typeName));
-void specializeStrUnionDef C_ARG((S_symbol *sd, S_symbol *rec));
-S_typeModifiers *simpleEnumSpecifier C_ARG((S_idIdent *id, int usage));
-void setGlobalFileDepNames C_ARG((char *iname, S_symbol *pp, int memory));
-S_typeModifiers *crNewAnnonymeEnum C_ARG((S_symbolList *enums));
-void appendPositionToList C_ARG((S_positionLst **list, S_position *pos));
-void setParamPositionForFunctionWithoutParams C_ARG((S_position *lpar));
-void setParamPositionForParameter0 C_ARG((S_position *lpar));
-void setParamPositionForParameterBeyondRange C_ARG((S_position *rpar));
-S_symbol *crEmptyField C_ARG(());
-void handleDeclaratorParamPositions C_ARG((S_symbol *decl, S_position *lpar,
+                                        );
+S_typeModifiers *crNewAnnonymeStrUnion(S_idIdent *typeName);
+void specializeStrUnionDef(S_symbol *sd, S_symbol *rec);
+S_typeModifiers *simpleEnumSpecifier(S_idIdent *id, int usage);
+void setGlobalFileDepNames(char *iname, S_symbol *pp, int memory);
+S_typeModifiers *crNewAnnonymeEnum(S_symbolList *enums);
+void appendPositionToList(S_positionLst **list, S_position *pos);
+void setParamPositionForFunctionWithoutParams(S_position *lpar);
+void setParamPositionForParameter0(S_position *lpar);
+void setParamPositionForParameterBeyondRange(S_position *rpar);
+S_symbol *crEmptyField();
+void handleDeclaratorParamPositions(S_symbol *decl, S_position *lpar,
                                     S_positionLst *commas, S_position *rpar,
-                                           int hasParam));
-void handleInvocationParamPositions C_ARG((S_reference *ref, S_position *lpar,
+                                           int hasParam);
+void handleInvocationParamPositions(S_reference *ref, S_position *lpar,
                                     S_positionLst *commas, S_position *rpar,
-                                    int hasParam));
-void javaHandleDeclaratorParamPositions C_ARG((S_position *sym, S_position *lpar,
-                                               S_positionLst *commas, S_position *rpar));
-void setLocalVariableLinkName C_ARG((struct symbol *p));
-void labelReference C_ARG((S_idIdent *id, int usage));
+                                    int hasParam);
+void javaHandleDeclaratorParamPositions(S_position *sym, S_position *lpar,
+                                               S_positionLst *commas, S_position *rpar);
+void setLocalVariableLinkName(struct symbol *p);
+void labelReference(S_idIdent *id, int usage);
 
 /* ***********************************************************************
 ** jsemact.c
 */
 
-void javaCheckForPrimaryStart C_ARG((S_position *cpos, S_position *pp));
-void javaCheckForPrimaryStartInNameList C_ARG((S_idIdentList *name, S_position *pp));
-void javaCheckForStaticPrefixStart C_ARG((S_position *cpos, S_position *bpos));
-void javaCheckForStaticPrefixInNameList C_ARG((S_idIdentList *name, S_position *pp));
-S_position *javaGetNameStartingPosition C_ARG((S_idIdentList *name));
-char *javaCreateComposedName C_ARG((
+void javaCheckForPrimaryStart(S_position *cpos, S_position *pp);
+void javaCheckForPrimaryStartInNameList(S_idIdentList *name, S_position *pp);
+void javaCheckForStaticPrefixStart(S_position *cpos, S_position *bpos);
+void javaCheckForStaticPrefixInNameList(S_idIdentList *name, S_position *pp);
+S_position *javaGetNameStartingPosition(S_idIdentList *name);
+char *javaCreateComposedName(
                                     char			*prefix,
                                     S_idIdentList   *className,
                                     int             classNameSeparator,
                                     char            *name,
                                     char			*resBuff,
                                     int				resBufSize
-                                ));
-int findTopLevelName C_ARG((
+                                );
+int findTopLevelName(
                                 char                *name,
                                 S_recFindStr        *resRfs,
                                 S_symbol			**resMemb,
                                 int                 classif
-                                ));
-int javaClassifySingleAmbigNameToTypeOrPack C_ARG((S_idIdentList *name,
+                                );
+int javaClassifySingleAmbigNameToTypeOrPack(S_idIdentList *name,
                                                    S_symbol **str,
                                                    int cxrefFlag
-                                                   ));
-void javaAddImportConstructionReference C_ARG((S_position *importPos, S_position *pos, int usage));
-int javaClassifyAmbiguousName C_ARG((		S_idIdentList *name,
+                                                   );
+void javaAddImportConstructionReference(S_position *importPos, S_position *pos, int usage);
+int javaClassifyAmbiguousName(		S_idIdentList *name,
                                     S_recFindStr *rfs,
                                     S_symbol **str,
                                     S_typeModifiers **expr,
@@ -2373,119 +2373,119 @@ int javaClassifyAmbiguousName C_ARG((		S_idIdentList *name,
                                     S_reference **rdtoref, int allowUselesFqtRefs,
                                     int classif,
                                     int usage
-                                    ));
-S_reference *javaClassifyToTypeOrPackageName C_ARG((S_idIdentList *tname, int usage, S_symbol **str, int allowUselesFqtRefs));
-S_reference *javaClassifyToTypeName C_ARG((S_idIdentList *tname, int usage, S_symbol **str, int allowUselesFqtRefs));
-S_symbol * javaQualifiedThis C_ARG((S_idIdentList *tname, S_idIdent *thisid));
-void javaClassifyToPackageName C_ARG(( S_idIdentList *id ));
-void javaClassifyToPackageNameAndAddRefs C_ARG((S_idIdentList *id, int usage));
-char *javaImportSymbolName_st C_ARG((int file, int line, int coll));
-S_typeModifiers *javaClassifyToExpressionName C_ARG((S_idIdentList *name,S_reference **oref));
-S_symbol *javaTypeNameDefinition C_ARG((S_idIdentList *tname));
-void javaSetFieldLinkName C_ARG((S_symbol *d));
-void javaAddPackageDefinition C_ARG((S_idIdentList *id));
-S_symbol *javaAddType C_ARG((S_idIdentList *clas, int accessFlag, S_position *p));
-S_symbol *javaCreateNewMethod C_ARG((char *name, S_position *pos, int mem));
-int javaTypeToString C_ARG((S_typeModifiers *type, char *pp, int ppSize));
-int javaIsYetInTheClass C_ARG((	S_symbol	*clas,
+                                    );
+S_reference *javaClassifyToTypeOrPackageName(S_idIdentList *tname, int usage, S_symbol **str, int allowUselesFqtRefs);
+S_reference *javaClassifyToTypeName(S_idIdentList *tname, int usage, S_symbol **str, int allowUselesFqtRefs);
+S_symbol * javaQualifiedThis(S_idIdentList *tname, S_idIdent *thisid);
+void javaClassifyToPackageName( S_idIdentList *id );
+void javaClassifyToPackageNameAndAddRefs(S_idIdentList *id, int usage);
+char *javaImportSymbolName_st(int file, int line, int coll);
+S_typeModifiers *javaClassifyToExpressionName(S_idIdentList *name,S_reference **oref);
+S_symbol *javaTypeNameDefinition(S_idIdentList *tname);
+void javaSetFieldLinkName(S_symbol *d);
+void javaAddPackageDefinition(S_idIdentList *id);
+S_symbol *javaAddType(S_idIdentList *clas, int accessFlag, S_position *p);
+S_symbol *javaCreateNewMethod(char *name, S_position *pos, int mem);
+int javaTypeToString(S_typeModifiers *type, char *pp, int ppSize);
+int javaIsYetInTheClass(	S_symbol	*clas,
                                 char		*lname,
                                 S_symbol	**eq
-                                ));
-int javaSetFunctionLinkName C_ARG((S_symbol *clas, S_symbol *decl, int mem));
-S_symbol * javaGetFieldClass C_ARG((char *fieldLinkName, char **fieldAdr));
-void javaAddNestedClassesAsTypeDefs C_ARG((S_symbol *cc,
-                        S_idIdentList *oclassname, int accessFlags));
-int javaTypeFileExist C_ARG((S_idIdentList *name));
-S_symbol *javaTypeSymbolDefinition C_ARG((S_idIdentList *tname, int accessFlags,int addType));
-S_symbol *javaTypeSymbolUsage C_ARG((S_idIdentList *tname, int accessFlags));
-void javaReadSymbolFromSourceFileEnd C_ARG(());
-void javaReadSymbolFromSourceFileInit C_ARG(( int sourceFileNum,
-                                       S_jslTypeTab *typeTab ));
-void javaReadSymbolsFromSourceFileNoFreeing C_ARG((char *fname, char *asfname));
-void javaReadSymbolsFromSourceFile C_ARG((char *fname));
-int javaLinkNameIsAnnonymousClass C_ARG((char *linkname));
-int javaLinkNameIsANestedClass C_ARG((char *cname));
-int isANestedClass C_ARG((S_symbol *ss));
-void addSuperMethodCxReferences C_ARG((int classIndex, S_position *pos));
-S_reference * addUselessFQTReference C_ARG((int classIndex, S_position *pos));
-S_reference *addUnimportedTypeLongReference C_ARG((int classIndex, S_position *pos));
-void addThisCxReferences C_ARG((int classIndex, S_position *pos));
-void javaLoadClassSymbolsFromFile C_ARG((S_symbol *memb));
-S_symbol *javaPrependDirectEnclosingInstanceArgument C_ARG((S_symbol *args));
-void addMethodCxReferences C_ARG((unsigned modif, S_symbol *method, S_symbol *clas));
-S_symbol *javaMethodHeader C_ARG((unsigned modif, S_symbol *type, S_symbol *decl, int storage));
-void javaAddMethodParametersToSymTable C_ARG((S_symbol *method));
-void javaMethodBodyBeginning C_ARG((S_symbol *method));
-void javaMethodBodyEnding C_ARG((S_position *pos));
-void javaAddMapedTypeName C_ARG((
+                                );
+int javaSetFunctionLinkName(S_symbol *clas, S_symbol *decl, int mem);
+S_symbol * javaGetFieldClass(char *fieldLinkName, char **fieldAdr);
+void javaAddNestedClassesAsTypeDefs(S_symbol *cc,
+                        S_idIdentList *oclassname, int accessFlags);
+int javaTypeFileExist(S_idIdentList *name);
+S_symbol *javaTypeSymbolDefinition(S_idIdentList *tname, int accessFlags,int addType);
+S_symbol *javaTypeSymbolUsage(S_idIdentList *tname, int accessFlags);
+void javaReadSymbolFromSourceFileEnd();
+void javaReadSymbolFromSourceFileInit( int sourceFileNum,
+                                       S_jslTypeTab *typeTab );
+void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname);
+void javaReadSymbolsFromSourceFile(char *fname);
+int javaLinkNameIsAnnonymousClass(char *linkname);
+int javaLinkNameIsANestedClass(char *cname);
+int isANestedClass(S_symbol *ss);
+void addSuperMethodCxReferences(int classIndex, S_position *pos);
+S_reference * addUselessFQTReference(int classIndex, S_position *pos);
+S_reference *addUnimportedTypeLongReference(int classIndex, S_position *pos);
+void addThisCxReferences(int classIndex, S_position *pos);
+void javaLoadClassSymbolsFromFile(S_symbol *memb);
+S_symbol *javaPrependDirectEnclosingInstanceArgument(S_symbol *args);
+void addMethodCxReferences(unsigned modif, S_symbol *method, S_symbol *clas);
+S_symbol *javaMethodHeader(unsigned modif, S_symbol *type, S_symbol *decl, int storage);
+void javaAddMethodParametersToSymTable(S_symbol *method);
+void javaMethodBodyBeginning(S_symbol *method);
+void javaMethodBodyEnding(S_position *pos);
+void javaAddMapedTypeName(
                             char *file,
                             char *path,
                             char *pack,
                             S_completions *c,
                             void *vdirid,
                             int  *storage
-                        ));
-S_symbol *javaFQTypeSymbolDefinition C_ARG((char *name, char *fqName));
-S_symbol *javaFQTypeSymbol C_ARG((char *name, char *fqName));
-S_typeModifiers *javaClassNameType C_ARG((S_idIdentList *typeName));
-S_typeModifiers *javaNewAfterName C_ARG((S_idIdentList *name, S_idIdent *id, S_idIdentList *idl));
-int javaIsInnerAndCanGetUnnamedEnclosingInstance C_ARG((S_symbol *name, S_symbol **outEi));
-S_typeModifiers *javaNestedNewType C_ARG((S_symbol *expr, S_idIdent *thenew, S_idIdentList *idl));
-S_typeModifiers *javaArrayFieldAccess C_ARG((S_idIdent *id));
-S_typeModifiers *javaMethodInvocationN C_ARG((
+                        );
+S_symbol *javaFQTypeSymbolDefinition(char *name, char *fqName);
+S_symbol *javaFQTypeSymbol(char *name, char *fqName);
+S_typeModifiers *javaClassNameType(S_idIdentList *typeName);
+S_typeModifiers *javaNewAfterName(S_idIdentList *name, S_idIdent *id, S_idIdentList *idl);
+int javaIsInnerAndCanGetUnnamedEnclosingInstance(S_symbol *name, S_symbol **outEi);
+S_typeModifiers *javaNestedNewType(S_symbol *expr, S_idIdent *thenew, S_idIdentList *idl);
+S_typeModifiers *javaArrayFieldAccess(S_idIdent *id);
+S_typeModifiers *javaMethodInvocationN(
                                 S_idIdentList *name,
                                 S_typeModifiersList *args
-                                ));
-S_typeModifiers *javaMethodInvocationT C_ARG((	S_typeModifiers *tt,
+                                );
+S_typeModifiers *javaMethodInvocationT(	S_typeModifiers *tt,
                                         S_idIdent *name,
                                         S_typeModifiersList *args
-                                    ));
-S_typeModifiers *javaMethodInvocationS C_ARG((	S_idIdent *super,
+                                    );
+S_typeModifiers *javaMethodInvocationS(	S_idIdent *super,
                                                 S_idIdent *name,
                                                 S_typeModifiersList *args
-                                    ));
-S_typeModifiers *javaConstructorInvocation C_ARG((S_symbol *class,
+                                    );
+S_typeModifiers *javaConstructorInvocation(S_symbol *class,
                                            S_position *pos,
                                            S_typeModifiersList *args
-    ));
-S_extRecFindStr *javaCrErfsForMethodInvocationN C_ARG((S_idIdentList *name));
-S_extRecFindStr *javaCrErfsForMethodInvocationT C_ARG((S_typeModifiers *tt,S_idIdent *name));
-S_extRecFindStr *javaCrErfsForMethodInvocationS C_ARG((S_idIdent *super,S_idIdent *name));
-S_extRecFindStr *javaCrErfsForConstructorInvocation C_ARG((S_symbol *clas, S_position *pos));
-int javaClassIsInCurrentPackage C_ARG((S_symbol *cl));
-int javaFqtNamesAreFromTheSamePackage C_ARG((char *classFqName, char *fqname2));
-int javaMethodApplicability C_ARG((S_symbol *memb, char *actArgs));
-S_symbol *javaGetSuperClass C_ARG((S_symbol *cc));
-S_symbol *javaCurrentSuperClass C_ARG(());
-S_typeModifiers *javaCheckNumeric C_ARG((S_typeModifiers *tt));
-S_typeModifiers *javaNumericPromotion C_ARG((S_typeModifiers *tt));
-S_typeModifiers *javaBinaryNumericPromotion C_ARG((	S_typeModifiers *t1,
+    );
+S_extRecFindStr *javaCrErfsForMethodInvocationN(S_idIdentList *name);
+S_extRecFindStr *javaCrErfsForMethodInvocationT(S_typeModifiers *tt,S_idIdent *name);
+S_extRecFindStr *javaCrErfsForMethodInvocationS(S_idIdent *super,S_idIdent *name);
+S_extRecFindStr *javaCrErfsForConstructorInvocation(S_symbol *clas, S_position *pos);
+int javaClassIsInCurrentPackage(S_symbol *cl);
+int javaFqtNamesAreFromTheSamePackage(char *classFqName, char *fqname2);
+int javaMethodApplicability(S_symbol *memb, char *actArgs);
+S_symbol *javaGetSuperClass(S_symbol *cc);
+S_symbol *javaCurrentSuperClass();
+S_typeModifiers *javaCheckNumeric(S_typeModifiers *tt);
+S_typeModifiers *javaNumericPromotion(S_typeModifiers *tt);
+S_typeModifiers *javaBinaryNumericPromotion(	S_typeModifiers *t1,
                                                 S_typeModifiers *t2
-                                            ));
-S_typeModifiers *javaBitwiseLogicalPromotion C_ARG((	S_typeModifiers *t1,
+                                            );
+S_typeModifiers *javaBitwiseLogicalPromotion(	S_typeModifiers *t1,
                                                 S_typeModifiers *t2
-                                            ));
-S_typeModifiers *javaConditionalPromotion C_ARG((	S_typeModifiers *t1,
+                                            );
+S_typeModifiers *javaConditionalPromotion(	S_typeModifiers *t1,
                                             S_typeModifiers *t2
-                                        ));
-int javaIsStringType C_ARG((S_typeModifiers *tt));
-void javaTypeDump C_ARG((S_typeModifiers *tt));
-void javaAddJslReadedTopLevelClasses C_ARG((S_jslTypeTab  *typeTab));
-struct freeTrail * newAnonClassDefinitionBegin C_ARG((S_idIdent *interfName));
-void javaAddSuperNestedClassToSymbolTab C_ARG(( S_symbol *cc));
-struct freeTrail * newClassDefinitionBegin C_ARG((S_idIdent *name, int accessFlags, S_symbol *anonInterf));
-void newClassDefinitionEnd C_ARG((S_freeTrail *trail));
-void javaInitArrayObject C_ARG(());
-void javaParsedSuperClass C_ARG((S_symbol *s));
-void javaSetClassSourceInformation C_ARG((char *package, S_idIdent *cl));
-void javaCheckIfPackageDirectoryIsInClassOrSourcePath C_ARG((char *dir));
+                                        );
+int javaIsStringType(S_typeModifiers *tt);
+void javaTypeDump(S_typeModifiers *tt);
+void javaAddJslReadedTopLevelClasses(S_jslTypeTab  *typeTab);
+struct freeTrail * newAnonClassDefinitionBegin(S_idIdent *interfName);
+void javaAddSuperNestedClassToSymbolTab( S_symbol *cc);
+struct freeTrail * newClassDefinitionBegin(S_idIdent *name, int accessFlags, S_symbol *anonInterf);
+void newClassDefinitionEnd(S_freeTrail *trail);
+void javaInitArrayObject();
+void javaParsedSuperClass(S_symbol *s);
+void javaSetClassSourceInformation(char *package, S_idIdent *cl);
+void javaCheckIfPackageDirectoryIsInClassOrSourcePath(char *dir);
 
 /* ***********************************************************************
 ** cccsemact.c
 */
 
-S_typeModifiers *cccFunApplication C_ARG((S_typeModifiers *fun,
-                                  S_typeModifiersList *args));
+S_typeModifiers *cccFunApplication(S_typeModifiers *fun,
+                                  S_typeModifiersList *args);
 
 /* ***********************************************************************
 ** zip.c
@@ -2498,17 +2498,17 @@ S_typeModifiers *cccFunApplication C_ARG((S_typeModifiers *fun,
 ** cfread.c
 */
 
-void javaHumanizeLinkName C_ARG(( char *inn, char *outn, int size));
-S_symbol *cfAddCastsToModule C_ARG((S_symbol *memb, S_symbol *sup));
-void addSuperClassOrInterface C_ARG(( S_symbol *memb, S_symbol *supp, int origin ));
-int javaCreateClassFileItem C_ARG(( S_symbol *memb));
-void addSuperClassOrInterfaceByName C_ARG((S_symbol *memb, char *super, int origin, int loadSuper));
-void fsRecMapOnFiles C_ARG((S_zipArchiveDir *dir, char *zip, char *path, void (*fun)(char *zip, char *file, void *arg), void *arg));
-int fsIsMember C_ARG((S_zipArchiveDir **dir, char *fn, unsigned offset,
-                        int addFlag, S_zipArchiveDir **place));
-int zipIndexArchive C_ARG((char *name));
-int zipFindFile C_ARG((char *name, char **resName, S_zipFileTabItem *zipfile));
-void javaMapZipDirFile C_ARG((
+void javaHumanizeLinkName( char *inn, char *outn, int size);
+S_symbol *cfAddCastsToModule(S_symbol *memb, S_symbol *sup);
+void addSuperClassOrInterface( S_symbol *memb, S_symbol *supp, int origin );
+int javaCreateClassFileItem( S_symbol *memb);
+void addSuperClassOrInterfaceByName(S_symbol *memb, char *super, int origin, int loadSuper);
+void fsRecMapOnFiles(S_zipArchiveDir *dir, char *zip, char *path, void (*fun)(char *zip, char *file, void *arg), void *arg);
+int fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset,
+                        int addFlag, S_zipArchiveDir **place);
+int zipIndexArchive(char *name);
+int zipFindFile(char *name, char **resName, S_zipFileTabItem *zipfile);
+void javaMapZipDirFile(
         S_zipFileTabItem *zipfile,
         char *packfile,
         S_completions *a1,
@@ -2517,74 +2517,74 @@ void javaMapZipDirFile C_ARG((
         void (*fun)(MAP_FUN_PROFILE),
         char *classPath,
         char *dirname
-    ));
-void javaReadClassFile C_ARG((char *name, S_symbol *cdef, int loadSuper));
+    );
+void javaReadClassFile(char *name, S_symbol *cdef, int loadSuper);
 
 /* ***********************************************************************
 ** cgram.y
 */
-int cyyparse C_ARG(());
-void makeCCompletions C_ARG((char *s, int len, S_position *pos));
+int cyyparse();
+void makeCCompletions(char *s, int len, S_position *pos);
 
 /* ***********************************************************************
 ** javaslgram.y
 */
-int javaslyyparse C_ARG(());
+int javaslyyparse();
 
 /* ***********************************************************************
 ** javagram.y
 */
-int javayyparse C_ARG(());
-void makeJavaCompletions C_ARG((char *s, int len, S_position *pos));
+int javayyparse();
+void makeJavaCompletions(char *s, int len, S_position *pos);
 
 /* ***********************************************************************
 ** cppgram.y
 */
-int cccyyparse C_ARG(());
-void makeCccCompletions C_ARG((char *s, int len, S_position *pos));
+int cccyyparse();
+void makeCccCompletions(char *s, int len, S_position *pos);
 
 /* ***********************************************************************
 ** yaccgram.y
 */
-int yaccyyparse C_ARG(());
-void makeYaccCompletions C_ARG((char *s, int len, S_position *pos));
+int yaccyyparse();
+void makeYaccCompletions(char *s, int len, S_position *pos);
 
 /* ***********************************************************************
 ** cexp.y
 */
 
-int cexpyyparse C_ARG(());
+int cexpyyparse();
 
 /* ***********************************************************************
 ** lex.c
 */
-void charBuffClose C_ARG((struct charBuf *bb));
-int getCharBuf C_ARG((struct charBuf *bb));
-void switchToZippedCharBuff C_ARG((struct charBuf *bb));
-int skipNCharsInCharBuf C_ARG((struct charBuf *bb, unsigned count));
-int getLexBuf C_ARG((struct lexBuf *lb));
-void gotOnLineCxRefs C_ARG(( S_position *ps ));
+void charBuffClose(struct charBuf *bb);
+int getCharBuf(struct charBuf *bb);
+void switchToZippedCharBuff(struct charBuf *bb);
+int skipNCharsInCharBuf(struct charBuf *bb, unsigned count);
+int getLexBuf(struct lexBuf *lb);
+void gotOnLineCxRefs( S_position *ps );
 
 /* ***********************************************************************
 ** yylex.c
 */
-void ppMemInit C_ARG(());
-void initAllInputs C_ARG(());
-void initInput C_ARG((FILE *ff, S_editorBuffer *buffer, char *prepend, char *name));
-void addIncludeReference C_ARG((int filenum, S_position *pos));
-void addThisFileDefineIncludeReference C_ARG((int filenum));
-void pushNewInclude C_ARG((FILE *f, S_editorBuffer *buff, char *name, char *prepend));
-void popInclude C_ARG(());
-void copyDir C_ARG((char *dest, char *s, int *i));
-char *normalizeFileName C_ARG((char *name, char *relativeto));
-int addFileTabItem C_ARG((char *name, int *fileNumber));
-void getOrCreateFileInfo C_ARG((char *ss, int *fileNumber, char **fileName));
-void setOpenFileInfo C_ARG((char *ss));
-void addMacroDefinedByOption C_ARG((char *opt));
-char *placeIdent C_ARG(());
-int yylex C_ARG(());
-int cachedInputPass C_ARG((int cpoint, char **cfromto));
-int cexpyylex C_ARG(());
+void ppMemInit();
+void initAllInputs();
+void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name);
+void addIncludeReference(int filenum, S_position *pos);
+void addThisFileDefineIncludeReference(int filenum);
+void pushNewInclude(FILE *f, S_editorBuffer *buff, char *name, char *prepend);
+void popInclude();
+void copyDir(char *dest, char *s, int *i);
+char *normalizeFileName(char *name, char *relativeto);
+int addFileTabItem(char *name, int *fileNumber);
+void getOrCreateFileInfo(char *ss, int *fileNumber, char **fileName);
+void setOpenFileInfo(char *ss);
+void addMacroDefinedByOption(char *opt);
+char *placeIdent();
+int yylex();
+int cachedInputPass(int cpoint, char **cfromto);
+int cexpyylex();
 
 extern char *yytext;
 
@@ -2592,29 +2592,29 @@ extern char *yytext;
 ** cexp.c
 */
 
-void cccLexBackTrack C_ARG((int lbi));
-int cccylex C_ARG(());
-int cccGetLexPosition C_ARG(());
+void cccLexBackTrack(int lbi);
+int cccylex();
+int cccGetLexPosition();
 extern int s_cccYylexBufi;
 
 /* ***********************************************************************
 ** cexp.c
 */
-int cexpTranslateToken C_ARG((int tok, int val));
+int cexpTranslateToken(int tok, int val);
 
 /* ***********************************************************************
 ** caching.c
 */
-int testFileModifTime C_ARG((int ii));
-void initCaching C_ARG(());
-void recoverCachePoint C_ARG((int i, char *readedUntil, int activeCaching));
-void recoverFromCache C_ARG(());
-void cacheInput C_ARG(());
-void cacheInclude C_ARG((int fileNum));
-void poseCachePoint C_ARG((int inputCacheFlag));
-void recoverCxMemory C_ARG((char *cxMemFreeBase));
-void recoverCachePointZero C_ARG(());
-void recoverMemoriesAfterOverflow C_ARG((char *cxMemFreeBase));
+int testFileModifTime(int ii);
+void initCaching();
+void recoverCachePoint(int i, char *readedUntil, int activeCaching);
+void recoverFromCache();
+void cacheInput();
+void cacheInclude(int fileNum);
+void poseCachePoint(int inputCacheFlag);
+void recoverCxMemory(char *cxMemFreeBase);
+void recoverCachePointZero();
+void recoverMemoriesAfterOverflow(char *cxMemFreeBase);
 
 /* ***********************************************************************
 ** options.c
@@ -2625,29 +2625,29 @@ void optionsVisualEdit();
 int processInteractiveFlagOption(char **argv, int i);
 char *getJavaHome();
 char *getJdkClassPathFastly();
-void getJavaClassAndSourcePath C_ARG(());
-int packageOnCommandLine C_ARG((char *fn));
-void getStandardOptions C_ARG((int *nargc, char ***nargv));
-char *expandSpecialFilePredefinedVariables_st C_ARG((char *tt));
-int readOptionFromFile C_ARG((FILE *ff, int *nargc, char ***nargv,
-                        int memFl, char *sectionFile, char *project, char *resSection));
-void readOptionFile C_ARG((char *name, int *nargc, char ***nargv,char *sectionFile, char *project));
-void readOptionPipe C_ARG((char *command, int *nargc, char ***nargv,char *sectionFile));
-void javaSetSourcePath C_ARG((int defaultCpAllowed));
-void getOptionsFromMessage C_ARG((char *qnxMsgBuff, int *nargc, char ***nargv));
-int changeRefNumOption C_ARG((int newRefNum));
+void getJavaClassAndSourcePath();
+int packageOnCommandLine(char *fn);
+void getStandardOptions(int *nargc, char ***nargv);
+char *expandSpecialFilePredefinedVariables_st(char *tt);
+int readOptionFromFile(FILE *ff, int *nargc, char ***nargv,
+                        int memFl, char *sectionFile, char *project, char *resSection);
+void readOptionFile(char *name, int *nargc, char ***nargv,char *sectionFile, char *project);
+void readOptionPipe(char *command, int *nargc, char ***nargv,char *sectionFile);
+void javaSetSourcePath(int defaultCpAllowed);
+void getOptionsFromMessage(char *qnxMsgBuff, int *nargc, char ***nargv);
+int changeRefNumOption(int newRefNum);
 
 /* ***********************************************************************
 ** init.c
 */
 
-void initCwd C_ARG(());
-void reInitCwd C_ARG((char *dffname, char *dffsect));
-void initTokenNameTab C_ARG(());
-void initJavaTypePCTIConvertIniTab C_ARG(());
-void initTypeCharCodeTab C_ARG(());
-void initArchaicTypes C_ARG(());
-void initPreCreatedTypes C_ARG(());
+void initCwd();
+void reInitCwd(char *dffname, char *dffsect);
+void initTokenNameTab();
+void initJavaTypePCTIConvertIniTab();
+void initTypeCharCodeTab();
+void initArchaicTypes();
+void initPreCreatedTypes();
 void initTypeModifiersTabs();
 void initExtractStoragesNameTab();
 void initTypesNamesTab();
