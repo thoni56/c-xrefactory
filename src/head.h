@@ -266,15 +266,6 @@
 #endif
 
 /* ********************************************************************** */
-/*                      common macros for C arguments                     */
-
-#if defined(PRESERVE_C_ARGS) || defined(__cplusplus)
-#define C_ARG(xxx) xxx
-#else
-#define C_ARG(xxx) ()
-#endif
-
-/* ********************************************************************** */
 /*            common integer return values for cplex funs                 */
 
 #define RETURN_OK           0

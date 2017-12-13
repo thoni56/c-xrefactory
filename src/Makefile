@@ -1,7 +1,7 @@
 #########################################################################
 CC= gcc
 COMCFLAGS= $(INCLUDES) -DDEBUG $(ZLIB_OPT) \
-			-DPRESERVE_C_ARGS -DGNULINUXDEFS -DYACC_ALLOWED
+			-DGNULINUXDEFS -DYACC_ALLOWED
 CFLAGS=-c -g -Og $(COMCFLAGS)
 EDGCFLAGS= -O
 LDFLAGS=

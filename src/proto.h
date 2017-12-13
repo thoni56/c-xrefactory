@@ -2656,36 +2656,36 @@ void initTypesNamesTab();
 ** version.c
 */
 
-int versionNumber C_ARG(());
+int versionNumber();
 
 /* ***********************************************************************
 ** html.c
 */
 
-void genClassHierarchyItemLinks C_ARG(( FILE *ff, S_olSymbolsMenu *itt,
-                                        int virtFlag));
-void htmlGenNonVirtualGlobSymList C_ARG(( FILE *ff, char *fn, S_symbolRefItem *p ));
-void htmlGenGlobRefsForVirtMethod C_ARG((FILE *ff, char *fn,
-                                                 S_olSymbolsMenu *rrr));
-int htmlRefItemsOrderLess C_ARG((S_olSymbolsMenu *ss1, S_olSymbolsMenu *ss2));
-int isThereSomethingPrintable C_ARG((S_olSymbolsMenu *itt));
+void genClassHierarchyItemLinks(FILE *ff, S_olSymbolsMenu *itt,
+                                        int virtFlag);
+void htmlGenNonVirtualGlobSymList(FILE *ff, char *fn, S_symbolRefItem *p );
+void htmlGenGlobRefsForVirtMethod(FILE *ff, char *fn,
+                                                 S_olSymbolsMenu *rrr);
+int htmlRefItemsOrderLess(S_olSymbolsMenu *ss1, S_olSymbolsMenu *ss2);
+int isThereSomethingPrintable(S_olSymbolsMenu *itt);
 void htmlGenEmptyRefsFile();
-void javaGetClassNameFromFileNum C_ARG((int nn, char *tmpOut, int dotify));
-void javaSlashifyDotName C_ARG((char *ss));
-void javaDotifyClassName C_ARG((char *ss));
-void javaDotifyFileName C_ARG(( char *ss));
-int isAbsolutePath C_ARG((char *p));
-char *htmlNormalizedPath C_ARG((char *p));
-char *htmlGetLinkFileNameStatic C_ARG((char *link, char *file));
-void recursivelyCreateFileDirIfNotExists C_ARG((char *fpath));
-void concatPathes C_ARG((char *res, int rsize, char *p1, char *p2, char *p3));
-void htmlPutChar C_ARG((FILE *ff, int c));
-void htmlPrint C_ARG((FILE *ff, char *ss));
-void htmlGenGlobalReferenceLists C_ARG((char *cxMemFreeBase));
-void htmlAddJavaDocReference C_ARG((S_symbol  *p, S_position  *pos,
-                             int  vFunClass, int  vApplClass));
-void generateHtml C_ARG(());
-int addHtmlCutPath C_ARG((char *ss ));
+void javaGetClassNameFromFileNum(int nn, char *tmpOut, int dotify);
+void javaSlashifyDotName(char *ss);
+void javaDotifyClassName(char *ss);
+void javaDotifyFileName( char *ss);
+int isAbsolutePath(char *p);
+char *htmlNormalizedPath(char *p);
+char *htmlGetLinkFileNameStatic(char *link, char *file);
+void recursivelyCreateFileDirIfNotExists(char *fpath);
+void concatPathes(char *res, int rsize, char *p1, char *p2, char *p3);
+void htmlPutChar(FILE *ff, int c);
+void htmlPrint(FILE *ff, char *ss);
+void htmlGenGlobalReferenceLists(char *cxMemFreeBase);
+void htmlAddJavaDocReference(S_symbol  *p, S_position  *pos,
+                             int  vFunClass, int  vApplClass);
+void generateHtml();
+int addHtmlCutPath(char *ss );
 void htmlGetDefinitionReferences();
 void htmlAddFunctionSeparatorReference();
 
@@ -2696,11 +2696,11 @@ void htmlAddFunctionSeparatorReference();
 
 void actionsBeforeAfterExternalDefinition();
 void extractActionOnBlockMarker();
-void genInternalLabelReference C_ARG((int counter, int usage));
-S_symbol * addContinueBreakLabelSymbol C_ARG((int labn, char *name));
-void deleteContinueBreakLabelSymbol C_ARG((char *name));
-void genContinueBreakReference C_ARG((char *name));
-void genSwitchCaseFork C_ARG((int lastFlag));
+void genInternalLabelReference(int counter, int usage);
+S_symbol * addContinueBreakLabelSymbol(int labn, char *name);
+void deleteContinueBreakLabelSymbol(char *name);
+void genContinueBreakReference(char *name);
+void genSwitchCaseFork(int lastFlag);
 
 /* ***********************************************************************
 ** emacsex.c
@@ -2712,41 +2712,41 @@ void genSafetyCheckFailAction();
 ** jslsemact.c
 */
 
-S_symbol *jslTypeSpecifier1 C_ARG((unsigned t) );
-S_symbol *jslTypeSpecifier2 C_ARG((S_typeModifiers *t) );
+S_symbol *jslTypeSpecifier1(unsigned t);
+S_symbol *jslTypeSpecifier2(S_typeModifiers *t);
 
-void jslCompleteDeclarator C_ARG((S_symbol *t, S_symbol *d) );
-S_typeModifiers *jslPrependComposedType C_ARG((S_typeModifiers *d, unsigned t) );
-S_typeModifiers *jslAppendComposedType C_ARG((S_typeModifiers **d, unsigned t) );
-S_symbol *jslPrependDirectEnclosingInstanceArgument C_ARG((S_symbol *args));
-S_symbol *jslMethodHeader C_ARG((unsigned modif, S_symbol *type, S_symbol *decl, int storage, S_symbolList *throws) );
-S_symbol *jslTypeNameDefinition C_ARG((S_idIdentList *tname) );
-S_symbol *jslTypeSymbolDefinition C_ARG((char *ttt2, S_idIdentList *packid,
-                                  int add, int order, int isSingleImportedFlag) );
-int jslClassifyAmbiguousTypeName C_ARG((S_idIdentList *name, S_symbol **str) );
-void jslAddNestedClassesToJslTypeTab C_ARG(( S_symbol *cc, int order) );
-void jslAddSuperNestedClassesToJslTypeTab C_ARG(( S_symbol *cc) );
+void jslCompleteDeclarator(S_symbol *t, S_symbol *d);
+S_typeModifiers *jslPrependComposedType(S_typeModifiers *d, unsigned t);
+S_typeModifiers *jslAppendComposedType(S_typeModifiers **d, unsigned t);
+S_symbol *jslPrependDirectEnclosingInstanceArgument(S_symbol *args);
+S_symbol *jslMethodHeader(unsigned modif, S_symbol *type, S_symbol *decl, int storage, S_symbolList *throws);
+S_symbol *jslTypeNameDefinition(S_idIdentList *tname);
+S_symbol *jslTypeSymbolDefinition(char *ttt2, S_idIdentList *packid,
+                                  int add, int order, int isSingleImportedFlag);
+int jslClassifyAmbiguousTypeName(S_idIdentList *name, S_symbol **str);
+void jslAddNestedClassesToJslTypeTab( S_symbol *cc, int order);
+void jslAddSuperNestedClassesToJslTypeTab( S_symbol *cc);
 
-void jslAddSuperClassOrInterfaceByName C_ARG((S_symbol *memb,char *super));
-void jslNewClassDefinitionBegin C_ARG((S_idIdent *name,
+void jslAddSuperClassOrInterfaceByName(S_symbol *memb,char *super);
+void jslNewClassDefinitionBegin(S_idIdent *name,
                                 int accessFlags,
                                 S_symbol *anonInterf,
                                 int position
-    ) );
-void jslAddDefaultConstructor C_ARG((S_symbol *cl));
-void jslNewClassDefinitionEnd C_ARG(() );
-void jslNewAnonClassDefinitionBegin C_ARG((S_idIdent *interfName) );
+    );
+void jslAddDefaultConstructor(S_symbol *cl);
+void jslNewClassDefinitionEnd();
+void jslNewAnonClassDefinitionBegin(S_idIdent *interfName);
 
-void jslAddSuperClassOrInterface C_ARG((S_symbol *memb,S_symbol *supp));
-void jslAddMapedImportTypeName C_ARG((
+void jslAddSuperClassOrInterface(S_symbol *memb,S_symbol *supp);
+void jslAddMapedImportTypeName(
                             char *file,
                             char *path,
                             char *pack,
                             S_completions *c,
                             void *vdirid,
                             int  *storage
-                        ) );
-void jslAddAllPackageClassesFromFileTab C_ARG((S_idIdentList *pack));
+                        );
+void jslAddAllPackageClassesFromFileTab(S_idIdentList *pack);
 
 
 extern S_jslStat *s_jsl;
@@ -2755,94 +2755,94 @@ extern S_jslStat *s_jsl;
 ** main.c
 */
 
-void dirInputFile C_ARG((MAP_FUN_PROFILE));
-void crOptionStr C_ARG((char **dest, char *text));
-void xrefSetenv C_ARG((char *name, char *val));
-int mainHandleSetOption C_ARG(( int argc, char **argv, int i ));
-void copyOptions C_ARG((S_options *dest, S_options *src));
+void dirInputFile(MAP_FUN_PROFILE);
+void crOptionStr(char **dest, char *text);
+void xrefSetenv(char *name, char *val);
+int mainHandleSetOption(int argc, char **argv, int i );
+void copyOptions(S_options *dest, S_options *src);
 void resetPendingSymbolMenuData();
-char *presetEditServerFileDependingStatics C_ARG(());
-void searchDefaultOptionsFile C_ARG((char *file, char *ttt, char *sect));
-void processOptions C_ARG((int argc, char **argv, int infilesFlag));
-void mainSetLanguage C_ARG((char *inFileName, int *outLanguage));
-void getAndProcessXrefrcOptions C_ARG((char *dffname, char *dffsect, char *project));
-char * getInputFile C_ARG((int *fArgCount));
-void getPipedOptions C_ARG((int *outNargc,char ***outNargv));
-void mainCallEditServerInit C_ARG((int nargc, char **nargv));
-void mainCallEditServer C_ARG((int argc, char **argv,
+char *presetEditServerFileDependingStatics();
+void searchDefaultOptionsFile(char *file, char *ttt, char *sect);
+void processOptions(int argc, char **argv, int infilesFlag);
+void mainSetLanguage(char *inFileName, int *outLanguage);
+void getAndProcessXrefrcOptions(char *dffname, char *dffsect, char *project);
+char * getInputFile(int *fArgCount);
+void getPipedOptions(int *outNargc,char ***outNargv);
+void mainCallEditServerInit(int nargc, char **nargv);
+void mainCallEditServer(int argc, char **argv,
                                int nargc, char **nargv,
                                int *firstPassing
-));
-void mainCallXref C_ARG((int argc, char **argv));
-void mainXref C_ARG((int argc, char **argv));
-void writeRelativeProgress C_ARG((int progress));
-void mainTaskEntryInitialisations C_ARG((int argc, char **argv));
-void mainOpenOutputFile C_ARG((char *ofile));
-void mainCloseOutputFile C_ARG(());
+);
+void mainCallXref(int argc, char **argv);
+void mainXref(int argc, char **argv);
+void writeRelativeProgress(int progress);
+void mainTaskEntryInitialisations(int argc, char **argv);
+void mainOpenOutputFile(char *ofile);
+void mainCloseOutputFile();
 
 
 /* ***********************************************************************
 ** editor.c
 */
 
-void editorInit C_ARG(());
-int statb C_ARG((char *path, struct stat  *statbuf));
-int editorMarkerLess C_ARG((S_editorMarker *m1, S_editorMarker *m2));
-int editorMarkerLessOrEq C_ARG((S_editorMarker *m1, S_editorMarker *m2));
-int editorMarkerGreater C_ARG((S_editorMarker *m1, S_editorMarker *m2));
-int editorMarkerGreaterOrEq C_ARG((S_editorMarker *m1, S_editorMarker *m2));
-int editorMarkerListLess C_ARG((S_editorMarkerList *l1, S_editorMarkerList *l2));
-int editorRegionListLess C_ARG((S_editorRegionList *l1, S_editorRegionList *l2));
-S_editorBuffer *editorOpenBufferNoFileLoad C_ARG((char *name, char *fileName));
-S_editorBuffer *editorGetOpenedBuffer C_ARG((char *name));
-S_editorBuffer *editorGetOpenedAndLoadedBuffer C_ARG((char *name));
-S_editorBuffer *editorFindFile C_ARG((char *name));
-S_editorBuffer *editorFindFileCreate C_ARG((char *name));
-S_editorMarker *editorCrNewMarkerForPosition C_ARG((S_position *pos));
-S_editorMarkerList *editorReferencesToMarkers C_ARG((S_reference *refs, int (*filter)(S_reference *, void *), void *filterParam));
-S_reference *editorMarkersToReferences C_ARG((S_editorMarkerList **mms));
-void editorRenameBuffer C_ARG((S_editorBuffer *buff, char *newName, S_editorUndo **undo));
-void editorReplaceString C_ARG((S_editorBuffer *buff, int position, int delsize, char *str, int strlength, S_editorUndo **undo));
-void editorMoveBlock C_ARG((S_editorMarker *dest, S_editorMarker *src, int size, S_editorUndo **undo));
-void editorDumpBuffer C_ARG((S_editorBuffer *buff));
-void editorDumpBuffers C_ARG(());
-void editorDumpMarker C_ARG((S_editorMarker *mm));
-void editorDumpMarkerList C_ARG((S_editorMarkerList *mml));
-void editorDumpRegionList C_ARG((S_editorRegionList *mml));
-void editorQuasySaveModifiedBuffers C_ARG(());
-void editorLoadAllOpenedBufferFiles C_ARG(());
-S_editorMarker *editorCrNewMarker C_ARG((S_editorBuffer *buff, int offset));
-S_editorMarker *editorDuplicateMarker C_ARG((S_editorMarker *mm));
-int editorCountLinesBetweenMarkers C_ARG((S_editorMarker *m1, S_editorMarker *m2));
-int editorRunWithMarkerUntil C_ARG((S_editorMarker *m, int (*until)(int), int step));
-int editorMoveMarkerToNewline C_ARG((S_editorMarker *m, int direction));
-int editorMoveMarkerToNonBlank C_ARG((S_editorMarker *m, int direction));
-int editorMoveMarkerBeyondIdentifier C_ARG((S_editorMarker *m, int direction));
-int editorMoveMarkerToNonBlankOrNewline C_ARG((S_editorMarker *m, int direction));
-void editorRemoveBlanks C_ARG((S_editorMarker *mm, int direction, S_editorUndo **undo));
-void editorDumpUndoList C_ARG((S_editorUndo *uu));
-void editorMoveMarkerToLineCol C_ARG((S_editorMarker *m, int line, int col));
-void editorMarkersDifferences C_ARG((
+void editorInit();
+int statb(char *path, struct stat  *statbuf);
+int editorMarkerLess(S_editorMarker *m1, S_editorMarker *m2);
+int editorMarkerLessOrEq(S_editorMarker *m1, S_editorMarker *m2);
+int editorMarkerGreater(S_editorMarker *m1, S_editorMarker *m2);
+int editorMarkerGreaterOrEq(S_editorMarker *m1, S_editorMarker *m2);
+int editorMarkerListLess(S_editorMarkerList *l1, S_editorMarkerList *l2);
+int editorRegionListLess(S_editorRegionList *l1, S_editorRegionList *l2);
+S_editorBuffer *editorOpenBufferNoFileLoad(char *name, char *fileName);
+S_editorBuffer *editorGetOpenedBuffer(char *name);
+S_editorBuffer *editorGetOpenedAndLoadedBuffer(char *name);
+S_editorBuffer *editorFindFile(char *name);
+S_editorBuffer *editorFindFileCreate(char *name);
+S_editorMarker *editorCrNewMarkerForPosition(S_position *pos);
+S_editorMarkerList *editorReferencesToMarkers(S_reference *refs, int (*filter)(S_reference *, void *), void *filterParam);
+S_reference *editorMarkersToReferences(S_editorMarkerList **mms);
+void editorRenameBuffer(S_editorBuffer *buff, char *newName, S_editorUndo **undo);
+void editorReplaceString(S_editorBuffer *buff, int position, int delsize, char *str, int strlength, S_editorUndo **undo);
+void editorMoveBlock(S_editorMarker *dest, S_editorMarker *src, int size, S_editorUndo **undo);
+void editorDumpBuffer(S_editorBuffer *buff);
+void editorDumpBuffers();
+void editorDumpMarker(S_editorMarker *mm);
+void editorDumpMarkerList(S_editorMarkerList *mml);
+void editorDumpRegionList(S_editorRegionList *mml);
+void editorQuasySaveModifiedBuffers();
+void editorLoadAllOpenedBufferFiles();
+S_editorMarker *editorCrNewMarker(S_editorBuffer *buff, int offset);
+S_editorMarker *editorDuplicateMarker(S_editorMarker *mm);
+int editorCountLinesBetweenMarkers(S_editorMarker *m1, S_editorMarker *m2);
+int editorRunWithMarkerUntil(S_editorMarker *m, int (*until)(int), int step);
+int editorMoveMarkerToNewline(S_editorMarker *m, int direction);
+int editorMoveMarkerToNonBlank(S_editorMarker *m, int direction);
+int editorMoveMarkerBeyondIdentifier(S_editorMarker *m, int direction);
+int editorMoveMarkerToNonBlankOrNewline(S_editorMarker *m, int direction);
+void editorRemoveBlanks(S_editorMarker *mm, int direction, S_editorUndo **undo);
+void editorDumpUndoList(S_editorUndo *uu);
+void editorMoveMarkerToLineCol(S_editorMarker *m, int line, int col);
+void editorMarkersDifferences(
     S_editorMarkerList **list1, S_editorMarkerList **list2,
-    S_editorMarkerList **diff1, S_editorMarkerList **diff2));
-void editorFreeMarker C_ARG((S_editorMarker *marker));
-void editorFreeMarkerListNotMarkers C_ARG((S_editorMarkerList *occs));
-void editorFreeMarkersAndRegionList C_ARG((S_editorRegionList *occs));
-void editorFreeRegionListNotMarkers C_ARG((S_editorRegionList *occs));
-void editorSortRegionsAndRemoveOverlaps C_ARG((S_editorRegionList **regions));
-void editorSplitMarkersWithRespectToRegions C_ARG((
+    S_editorMarkerList **diff1, S_editorMarkerList **diff2);
+void editorFreeMarker(S_editorMarker *marker);
+void editorFreeMarkerListNotMarkers(S_editorMarkerList *occs);
+void editorFreeMarkersAndRegionList(S_editorRegionList *occs);
+void editorFreeRegionListNotMarkers(S_editorRegionList *occs);
+void editorSortRegionsAndRemoveOverlaps(S_editorRegionList **regions);
+void editorSplitMarkersWithRespectToRegions(
     S_editorMarkerList  **inMarkers,
     S_editorRegionList  **inRegions,
     S_editorMarkerList  **outInsiders,
     S_editorMarkerList  **outOutsiders
-    ));
-void editorRestrictMarkersToRegions C_ARG((S_editorMarkerList **mm, S_editorRegionList **regions));
-S_editorMarker *editorCrMarkerForBufferBegin C_ARG((S_editorBuffer *buffer));
-S_editorMarker *editorCrMarkerForBufferEnd C_ARG((S_editorBuffer *buffer));
-S_editorRegionList *editorWholeBufferRegion C_ARG((S_editorBuffer *buffer));
-void editorScheduleModifiedBuffersToUpdate C_ARG(());
-void editorFreeMarkersAndMarkerList C_ARG((S_editorMarkerList *occs));
-int editorMapOnNonexistantFiles C_ARG((
+    );
+void editorRestrictMarkersToRegions(S_editorMarkerList **mm, S_editorRegionList **regions);
+S_editorMarker *editorCrMarkerForBufferBegin(S_editorBuffer *buffer);
+S_editorMarker *editorCrMarkerForBufferEnd(S_editorBuffer *buffer);
+S_editorRegionList *editorWholeBufferRegion(S_editorBuffer *buffer);
+void editorScheduleModifiedBuffersToUpdate();
+void editorFreeMarkersAndMarkerList(S_editorMarkerList *occs);
+int editorMapOnNonexistantFiles(
         char *dirname,
         void (*fun)(MAP_FUN_PROFILE),
         int deep,
@@ -2851,22 +2851,22 @@ int editorMapOnNonexistantFiles C_ARG((
         S_completions *a3,
         void *a4,
         int *a5
-    ));
-void editorCloseBufferIfClosable C_ARG((char *name));
-void editorCloseAllBuffersIfClosable C_ARG(());
-void editorCloseAllBuffers C_ARG(());
-void editorTest C_ARG(());
+    );
+void editorCloseBufferIfClosable(char *name);
+void editorCloseAllBuffersIfClosable();
+void editorCloseAllBuffers();
+void editorTest();
 
 
 /* ***********************************************************************
 ** refactory.c
 */
 
-void refactoryAskForReallyContinueConfirmation C_ARG(());
-void refactoryDisplayResolutionDialog C_ARG((char *message,int messageType, int continuation));
-void editorApplyUndos C_ARG((S_editorUndo *undos, S_editorUndo *until, S_editorUndo **undoundo, int gen));
-void editorUndoUntil C_ARG((S_editorUndo *until, S_editorUndo **undoUndo));
-void mainRefactory C_ARG((int argc, char **argv));
+void refactoryAskForReallyContinueConfirmation();
+void refactoryDisplayResolutionDialog(char *message,int messageType, int continuation);
+void editorApplyUndos(S_editorUndo *undos, S_editorUndo *until, S_editorUndo **undoundo, int gen);
+void editorUndoUntil(S_editorUndo *until, S_editorUndo **undoUndo);
+void mainRefactory(int argc, char **argv);
 
 /* ***********************************************************************
 ** globals.c

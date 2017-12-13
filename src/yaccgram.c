@@ -82,8 +82,8 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 static S_symbol *l_yaccUnion = NULL;
 static S_symbol *l_currentType = NULL;
 
-static void addRuleLocalVariable C_ARG((S_idIdent *name, int order));
-static void addYaccSymbolReference C_ARG((S_idIdent *name, int usage));
+static void addRuleLocalVariable(S_idIdent *name, int order);
+static void addYaccSymbolReference(S_idIdent *name, int usage);
 
 #line 223 "yaccgram.y"
 typedef union {

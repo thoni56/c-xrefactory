@@ -47,8 +47,8 @@ int s_yyPositionBufi = 0;
 
 #define IS_IDENTIFIER_LEXEM(lex) (lex==IDENTIFIER || lex==IDENT_NO_CPP_EXPAND  || lex==IDENT_TO_COMPLETE)
 
-static void prependMacroArgument C_ARG((S_lexInput *argb));
-static int macroCallExpand C_ARG((S_symbol *mdef, S_position *mpos));
+static void prependMacroArgument(S_lexInput *argb);
+static int macroCallExpand(S_symbol *mdef, S_position *mpos);
 
 /* ************************************************************ */
 
