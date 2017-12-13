@@ -2136,7 +2136,7 @@ static void getAndProcessGccOptions() {
     isActiveSect = 0;
     tempfile_name = create_temporary_filename();
     assert(strlen(tempfile_name)+1 < MAX_FILE_NAME_SIZE);
-    sprintf(tmpBuff, "LANG=C cpp -v -x %s -o /dev/null /dev/null >%s 2>&1", lang, tempfile_name);
+    sprintf(tmpBuff, "LANG=C gcc -v -x %s -o /dev/null /dev/null >%s 2>&1", lang, tempfile_name);
     int result = system(tmpBuff);
     tempfile = fopen(tempfile_name,"r");
     if (tempfile==NULL) return;
