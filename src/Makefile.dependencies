@@ -27,8 +27,9 @@ cxref.o: cxref.c stdinc.h head.h constants.h strFill.h listmacr.h \
 editor.o: editor.c stdinc.h head.h constants.h strFill.h listmacr.h \
  memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th globals.h \
  protocol.h protocol.tc hashlist.tc
-enumTxt.o: enumTxt.c stdinc.h proto.h strTdef.h head.h constants.h \
- strFill.h listmacr.h memmac.h lexmac.h hashlist.th hashtab.th
+enumTxt.o: enumTxt.c enumTxt.h stdinc.h proto.h strTdef.h head.h \
+ constants.h strFill.h listmacr.h memmac.h lexmac.h hashlist.th \
+ hashtab.th
 extract.o: extract.c stdinc.h head.h constants.h strFill.h listmacr.h \
  memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th unigram.h \
  cgram.h protocol.h protocol.tc

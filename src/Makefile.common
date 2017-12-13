@@ -82,11 +82,11 @@ strTdef.h: proto.h c-xref.bs
 		> tmpStrTdef.h
 	mv -f tmpStrTdef.h strTdef.h
 
-enumTxt.c: proto.h strFill.h strTdef.h ../doc/_c-xrefrc c-xref.bs
-	echo "#include \"stdinc.h\"" > enumTxt.c
-	echo "#include \"proto.h\"  /*SBD*/" >> enumTxt.c
+enumTxt.h: proto.h strFill.h strTdef.h ../doc/_c-xrefrc c-xref.bs
+	echo "#include \"stdinc.h\"" > enumTxt.h
+	echo "#include \"proto.h\"  /*SBD*/" >> enumTxt.h
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
-		-enum_name -body -no_stdop >> enumTxt.c
+		-enum_name -body -no_stdop >> enumTxt.h
 
 c-xref.bs:
 	@echo "BOOTSTRAPPING..."
