@@ -2,7 +2,13 @@
 #define PROTO_H
 
 #include "stdinc.h"
+
+#ifdef BOOTSTRAP
+#include "strTdef.bs"
+#else
 #include "strTdef.h"
+#endif
+
 #include "head.h"
 #include "zlib.h"       /*SBD*/
 #include "lexmac.h"     /*SBD*/

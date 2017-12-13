@@ -3,3 +3,5 @@ c-xref.exe
 *.output
 y.tab.c
 c-xref.bs
+strFill.h
+strTdef.h

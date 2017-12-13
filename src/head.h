@@ -3,7 +3,11 @@
 
 #include "constants.h"
 
+#ifdef BOOTSTRAP
+#include "strFill.bs"
+#else
 #include "strFill.h"
+#endif
 
 #include "listmacr.h"
 #include "memmac.h"
