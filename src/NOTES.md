@@ -72,3 +72,12 @@ Also in _options.h_ some standard-like include paths are added, but
 there is a better attempt in _getAndProcessGccOptions()_ which uses
 the compiler/preprocessor itself to figure out those paths. This is
 much better and should really be the only way, I think.
+
+## Include files
+
+Seems this code is using very old C style with a separate proto.h
+where all prototypes for all externally visible functions are placed.
+
+This file also is used in the "generation" step, which I can't
+understand right now. Does the "generation" step create internal data
+for c-xref source code!?!??!
