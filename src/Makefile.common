@@ -62,18 +62,14 @@ cgram.h: cgram.c
 
 strFill.h: proto.h strTdef.h c-xref.bs
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
-		-str_fill -header \
+		-str_fill -header -refs .c-xrefs \
 		> tmpStrFill.h
 	mv -f tmpStrFill.h strFill.h
 
 strTdef.h: proto.h c-xref.bs
 	echo > strTdef.h
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
-		-typedefs -enum_name -header \
-		> tmpStrTdef.h
-	mv -f tmpStrTdef.h strTdef.h
-	./c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
-		-typedefs -enum_name -header \
+		-typedefs -enum_name -header -refs .c-xrefs \
 		> tmpStrTdef.h
 	mv -f tmpStrTdef.h strTdef.h
 
@@ -81,7 +77,7 @@ enumTxt.c: proto.h strFill.h strTdef.h ../doc/_c-xrefrc c-xref.bs
 	echo "#include \"stdinc.h\"" > enumTxt.c
 	echo "#include \"proto.h\"  /*SBD*/" >> enumTxt.c
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) proto.h \
-		-enum_name -body >> enumTxt.c
+		-enum_name -body -refs .c-xrefs >> enumTxt.c
 
 c-xref.bs:
 	make ROOTDIR=$(ROOTDIR) CFLAGS="$(CFLAGS)" -f Makefile.bs
@@ -112,6 +108,6 @@ dependencies:;
 reset:
 	make clean
 	-rm c-xref.bs
-	cp enumTxt.ok enumTxt.h
+	cp enumTxt.ok enumTxt.c
 	cp strFill.ok strFill.h
 	cp strTdef.ok strTdef.h
