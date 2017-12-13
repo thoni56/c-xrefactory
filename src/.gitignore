@@ -7,3 +7,4 @@ strFill.h
 strTdef.h
 enumTxt.h
 compiler_defines.h
+*.backup
