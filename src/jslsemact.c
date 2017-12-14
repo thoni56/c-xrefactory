@@ -86,7 +86,7 @@ S_symbol *jslTypeSymbolDefinition(char *ttt2, S_idIdentList *packid,
     S_position          *importPos;
 
     jslFillTypeSymbolItem( &sd, &ss, ttt2);
-    FILLF_idIdentList(&dd2, ttt2,NULL,-1,0,0, ttt2,TypeStruct,packid);
+    FILLF_idIdentList(&dd2, ttt2,NULL,-1,0,0,NULL, ttt2,TypeStruct,packid);
     javaCreateComposedName(NULL,&dd2,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
     smemb = javaFQTypeSymbolDefinition(ttt2, fqtName);
     //&fprintf(ccOut, "[jsl] jslTypeSymbolDefinition %s, %s, %s, %s\n", ttt2, fqtName, smemb->name, smemb->linkName);
@@ -125,7 +125,7 @@ S_symbol *jslTypeSymbolUsage(char *ttt2, S_idIdentList *packid) {
         smemb = memb->d;
         return(smemb);
     }
-    FILLF_idIdentList(&dd2, ttt2,NULL,-1,0,0, ttt2,TypeStruct,packid);
+    FILLF_idIdentList(&dd2, ttt2,NULL,-1,0,0,NULL, ttt2,TypeStruct,packid);
     javaCreateComposedName(NULL,&dd2,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
     smemb = javaFQTypeSymbolDefinition(ttt2, fqtName);
     return(smemb);
@@ -435,7 +435,7 @@ void jslAddNestedClassesToJslTypeTab( S_symbol *str, int order) {
     for(i=0; i<ss->nnested; i++) {
         //&fprintf(dumpOut,"checking %s %s %d %d\n", ss->nest[i].cl->name, ss->nest[i].cl->linkName,ss->nest[i].membFlag, jslRecordAccessible(str, ss->nest[i].cl, ss->nest[i].accFlags));
         if (ss->nest[i].membFlag && jslRecordAccessible(str, ss->nest[i].cl, ss->nest[i].accFlags)) {
-            FILL_idIdent(&ocid, str->linkName, NULL, s_noPos);
+            FILL_idIdent(&ocid, str->linkName, NULL, s_noPos, NULL);
             FILL_idIdentList(&oclassid, ocid, str->linkName,
                              TypeStruct, NULL);
             //&fprintf(dumpOut,"adding %s %s\n", ss->nest[i].cl->name, ss->nest[i].cl->linkName);
@@ -483,7 +483,7 @@ void jslNewClassDefinitionBegin(S_idIdent *name,
             sprintf(tttn, "%d", s_jsl->classStat->functionInnerCounter);
             sprintf(ttt, "%s", inname->name);
             FILLF_idIdentList(&mntmp, tttn, NULL,
-                              s_noPos.file, s_noPos.line, s_noPos.coll,
+                              s_noPos.file, s_noPos.line, s_noPos.coll, NULL,
                               tttn,
                               TypeStruct, s_jsl->classStat->className);
             // this is a very special reason why to do TYPE_ADD_YES here,
@@ -564,7 +564,7 @@ void jslNewClassDefinitionBegin(S_idIdent *name,
     stackMemoryBlockStart();
     XX_ALLOC(ill, S_idIdentList);
     FILLF_idIdentList(ill, cc->name, inname->sd,
-                      inname->p.file, inname->p.line, inname->p.coll,
+                      inname->p.file, inname->p.line, inname->p.coll, NULL,
                       cc->name,TypeStruct,
                       s_jsl->classStat->className);
     XX_ALLOC(nss, S_jslClassStat);

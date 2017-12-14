@@ -262,6 +262,8 @@
 %type <bbidIdent> IDENTIFIER identifier struct_identifier enum_identifier
 %type <bbidIdent> str_rec_identifier STRUCT UNION struct_or_union
 %type <bbidIdent> user_defined_type TYPE_NAME
+%type <bbidIdent> designator, designator_list
+%type <bbidlist> designation_opt, initializer, initializer_list, eq_initializer_opt
 %type <bbinteger> assignment_operator
 %type <bbinteger> pointer CONSTANT _ncounter_ _nlabel_ _ngoto_ _nfork_
 %type <bbunsign> storage_class_specifier type_specifier1
@@ -711,14 +713,14 @@ declaration
     ;
 
 init_declarations
-    : declaration_specifiers init_declarator			{
+    : declaration_specifiers init_declarator eq_initializer_opt	{
         $$.d = $1.d;
-        addNewDeclaration($1.d, $2.d, StorageAuto,s_symTab);
-    } eq_initializer_opt
-    | init_declarations ',' init_declarator             {
+        addNewDeclaration($1.d, $2.d, $3.d, StorageAuto, s_symTab);
+    }
+    | init_declarations ',' init_declarator eq_initializer_opt	{
         $$.d = $1.d;
-        addNewDeclaration($1.d, $3.d, StorageAuto,s_symTab);
-    } eq_initializer_opt
+        addNewDeclaration($1.d, $3.d, $4.d, StorageAuto, s_symTab);
+    }
     | error												{
         /* $$.d = &s_errorSymbol; */
         $$.d = typeSpecifier2(&s_errorModifier);
@@ -853,8 +855,12 @@ asm_opt:
     |	ASM_KEYWORD '(' string_literales ')'
     ;
 
-eq_initializer_opt:
-    | '=' initializer
+eq_initializer_opt:		{
+        $$.d = NULL;
+    }
+    | '=' initializer	{
+        $$.d = $2.d;
+    }
     ;
 
 init_declarator
@@ -1389,12 +1395,18 @@ abstract_declarator2
     ;
 
 initializer
-    : assignment_expr
+    : assignment_expr		{
+        $$.d = NULL;
+    }
       /* it is enclosed because on linux kernel it overflows memory */
-    | '{' initializer_list '}'
-    | '{' initializer_list ',' '}'
-    | error
-    {
+    | '{' initializer_list '}'	{
+        $$.d = $2.d;
+    }
+    | '{' initializer_list ',' '}'	{
+        $$.d = $2.d;
+    }
+    | error				{
+        $$.d = NULL;
 #ifdef DEBUGPARSING
         char buffer[100];
         sprintf(buffer, "error parsing initializer, near '%s'\n", yytext);
@@ -1404,11 +1416,42 @@ initializer
     ;
 
 initializer_list
-    : Sv_tmp Start_block initializer Stop_block	{
+    : Sv_tmp designation_opt Start_block initializer Stop_block	{
+        $$.d = $2.d;
         tmpWorkMemoryi = $1.d;
     }
-    | initializer_list ',' Sv_tmp Start_block initializer Stop_block	{
+    | initializer_list ',' Sv_tmp designation_opt Start_block initializer Stop_block	{
+        LIST_APPEND(S_idIdentList, $1.d, $4.d);
         tmpWorkMemoryi = $3.d;
+    }
+    ;
+
+designation_opt:				{
+        $$.d = NULL;
+    }
+    | designator_list '='		{
+        $$.d = StackMemAlloc(S_idIdentList);
+        FILL_idIdentList($$.d, *$1.d, $1.d->name, TypeDefault, NULL);
+    }
+    ;
+
+designator_list
+    : designator					{
+        $$.d = $1.d;
+    }
+    | designator_list designator	{
+        LIST_APPEND(S_idIdent, $1.d, $2.d);
+    }
+    ;
+
+designator
+    : '[' constant_expr ']'		{
+        $$.d = StackMemAlloc(S_idIdent);
+        FILL_idIdent($$.d, "", NULL, s_noPos, NULL);
+    }
+    | '.' str_rec_identifier	{
+        $$.d = StackMemAlloc(S_idIdent);
+        *($$.d) = *($2.d);
     }
     ;
 
@@ -1737,17 +1780,17 @@ external_definition
 top_init_declarations
     : declaration_specifiers init_declarator eq_initializer_opt			{
         $$.d = $1.d;
-        addNewDeclaration($1.d, $2.d, StorageExtern,s_symTab);
+        addNewDeclaration($1.d, $2.d, $3.d, StorageExtern,s_symTab);
     }
-    | init_declarator eq_initializer_opt									{
+    | init_declarator eq_initializer_opt						{
         $$.d = & s_defaultIntDefinition;
-        addNewDeclaration($$.d, $1.d, StorageExtern,s_symTab);
+        addNewDeclaration($$.d, $1.d, $2.d, StorageExtern,s_symTab);
     }
     | top_init_declarations ',' init_declarator eq_initializer_opt			{
         $$.d = $1.d;
-        addNewDeclaration($1.d, $3.d, StorageExtern,s_symTab);
+        addNewDeclaration($1.d, $3.d, $4.d, StorageExtern,s_symTab);
     }
-    | error												{
+    | error										{
         /* $$.d = &s_errorSymbol; */
         $$.d = typeSpecifier2(&s_errorModifier);
     }

@@ -705,6 +705,7 @@ struct idIdent {
     char        *name;
     S_symbol	*sd;		/* if yet in symbol table */
     S_position	p;			/* position */
+    S_idIdent   *next;
 };
 
 struct freeTrail {
@@ -2277,7 +2278,7 @@ int findStrRecordSym(	S_recFindStr *ss,
                     );
 S_symbol *addNewSymbolDef(S_symbol *p, unsigned storage, S_symTab *tab, int usage);
 S_symbol *addNewCopyOfSymbolDef(S_symbol *def, unsigned defaultStorage);
-S_symbol *addNewDeclaration(S_symbol *btype, S_symbol *decl,
+S_symbol *addNewDeclaration(S_symbol *btype, S_symbol *decl, S_idIdentList *idl,
                             unsigned storage, S_symTab *tab);
 int styyerror(char *s);
 int styyErrorRecovery();

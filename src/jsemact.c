@@ -160,7 +160,7 @@ void javaAddNestedClassesAsTypeDefs(S_symbol *cc, S_idIdentList *oclassname,
             nn = ss->nest[i].cl;
             assert(nn);
 //& XX_ALLOC(ll, S_idIdentList);
-            FILL_idIdent(&ll.idi, nn->name, cc, s_noPos);
+            FILL_idIdent(&ll.idi, nn->name, cc, s_noPos,NULL);
             FILL_idIdentList(&ll, ll.idi, nn->name,TypeStruct,oclassname);
             javaTypeSymbolDefinition(&ll, accessFlags, TYPE_ADD_YES);
         }
@@ -1210,7 +1210,7 @@ static int javaNotFqtUsageCorrection(S_symbol *sym, int usage) {
     packname[pplen] = 0;
 
     FILLF_idIdentList(&sname, packname, NULL,
-                      s_noPos.file, s_noPos.line, s_noPos.coll,
+                      s_noPos.file, s_noPos.line, s_noPos.coll,NULL,
                       packname, TypeExpression, NULL)
     rr = javaClassifySingleAmbigName(&sname,&localRfs,&str,&expr,&loref,
                                       CLASS_TO_EXPR, UsageNone, NO_CX_REFS);
@@ -1898,7 +1898,7 @@ void javaAddMapedTypeName(
     strncpy(ttt2, file, len2);
     InternalCheck(len2+1 < MAX_FILE_NAME_SIZE);
     ttt2[len2] = 0;
-    FILLF_idIdentList(&dd2, ttt2,NULL,-1,0,0, ttt2,TypeStruct,packid);
+    FILLF_idIdentList(&dd2, ttt2,NULL,-1,0,0,NULL, ttt2,TypeStruct,packid);
     memb = javaTypeSymbolDefinition(&dd2,ACC_DEFAULT, TYPE_ADD_YES);
     DPRINTF3(":import type %s == %s\n", memb->name, memb->linkName);
 }
@@ -1926,7 +1926,7 @@ S_typeModifiers *javaNestedNewType(S_symbol *sym, S_idIdent *thenew,
         id = &idl->idi;
         assert(sym && sym->linkName);
         id2 = sym->linkName;
-        FILLF_idIdentList(&d2, id2, sym, -1,0,0, id2, TypeStruct, NULL);
+        FILLF_idIdentList(&d2, id2, sym, -1,0,0,NULL, id2, TypeStruct, NULL);
         FILL_idIdentList(&d1, *id, id->name, TypeStruct, &d2);
         javaClassifyNameToNestedType(&d1, sym, UsageUsed, &str, &rr);
         res = javaClassNameType(&d1);
@@ -2371,7 +2371,7 @@ S_typeModifiers *javaConstructorInvocation(S_symbol *clas,
     erfs = javaCrErfsForConstructorInvocation(clas, pos);
     if (erfs == NULL) return(&s_errorModifier);
     if (erfs->s.baseClass != erfs->s.currClass) return(&s_errorModifier);
-    FILL_idIdent(&name, clas->name, NULL, *pos);
+    FILL_idIdent(&name, clas->name, NULL, *pos, NULL);
     res = javaMethodInvocation(&erfs->s, erfs->memb, &name, args,CONSTRUCTOR_INVOCATION,&s_noPos);
     return(res);
 }
@@ -2607,7 +2607,7 @@ struct freeTrail * newClassDefinitionBegin(	S_idIdent *name,
 //&		innerNamesCorrect = (strcmp(nn->cl->name, name->name)==0);
 //&		assert(innerNamesCorrect);
         dd = nn->cl;
-        FILL_idIdent(&idi,dd->linkName, NULL, name->p);
+        FILL_idIdent(&idi,dd->linkName, NULL, name->p, NULL);
         XX_ALLOC(p, S_idIdentList);
         FILL_idIdentList(p, idi, dd->linkName, TypeStruct, NULL);
         ddd = javaAddType(p, accessFlags, & name->p);

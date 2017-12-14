@@ -2525,7 +2525,7 @@ static void addRuleLocalVariable(S_idIdent *name, int order) {
             FILL_symbolBits(&ss->b,0,0,0,0,0,TypeDefault,StorageAuto,0);
             FILL_symbol(ss,nn,nn,name->p,ss->b,type,NULL,NULL);
             ss->pos.coll ++ ; // to avoid ambiguity of NonTerminal <-> $$.d
-            addNewDeclaration(p, ss, StorageAuto, s_symTab);
+            addNewDeclaration(p, ss, NULL, StorageAuto, s_symTab);
         }
     }
 }
@@ -2781,7 +2781,7 @@ case 15:
             ss->u.type = NULL;
             addYaccSymbolReference(yyvsp[0].bbidIdent.d,UsageDeclared);
             if (l_currentType!=NULL) {
-                addNewDeclaration(l_currentType, ss, StorageAuto,s_symTab);
+                addNewDeclaration(l_currentType, ss, NULL, StorageAuto,s_symTab);
             }
         }
 break;
@@ -3284,14 +3284,14 @@ case 282:
 #line 845 "yaccgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
-        addNewDeclaration(yyvsp[-1].bbsymbol.d, yyvsp[0].bbsymbol.d, StorageAuto,s_symTab);
+        addNewDeclaration(yyvsp[-1].bbsymbol.d, yyvsp[0].bbsymbol.d, NULL, StorageAuto,s_symTab);
     }
 break;
 case 283:
 #line 849 "yaccgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
-        addNewDeclaration(yyvsp[-2].bbsymbol.d, yyvsp[0].bbsymbol.d, StorageAuto,s_symTab);
+        addNewDeclaration(yyvsp[-2].bbsymbol.d, yyvsp[0].bbsymbol.d, NULL, StorageAuto,s_symTab);
     }
 break;
 case 284:
@@ -4232,21 +4232,21 @@ case 477:
 #line 1625 "yaccgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
-        addNewDeclaration(yyvsp[-1].bbsymbol.d, yyvsp[0].bbsymbol.d, StorageExtern,s_symTab);
+        addNewDeclaration(yyvsp[-1].bbsymbol.d, yyvsp[0].bbsymbol.d, NULL, StorageExtern,s_symTab);
     }
 break;
 case 478:
 #line 1629 "yaccgram.y"
 {
         yyval.bbsymbol.d = & s_defaultIntDefinition;
-        addNewDeclaration(yyval.bbsymbol.d, yyvsp[0].bbsymbol.d, StorageExtern,s_symTab);
+        addNewDeclaration(yyval.bbsymbol.d, yyvsp[0].bbsymbol.d, NULL, StorageExtern,s_symTab);
     }
 break;
 case 479:
 #line 1633 "yaccgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
-        addNewDeclaration(yyvsp[-2].bbsymbol.d, yyvsp[0].bbsymbol.d, StorageExtern,s_symTab);
+        addNewDeclaration(yyvsp[-2].bbsymbol.d, yyvsp[0].bbsymbol.d, NULL, StorageExtern,s_symTab);
     }
 break;
 case 480:

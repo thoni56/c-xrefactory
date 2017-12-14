@@ -41,7 +41,7 @@ void genInternalLabelReference(int counter, int usage) {
     char ttt[TMP_STRING_SIZE];
     S_idIdent ll;
     LOCAL_LABEL_NAME(ttt,counter);
-    FILLF_idIdent(&ll, ttt, NULL, cFile.lb.cb.fileNumber, 0,0);
+    FILLF_idIdent(&ll, ttt, NULL, cFile.lb.cb.fileNumber, 0,0,NULL);
     if (usage != UsageDefined) ll.p.line++;
     // line == 0 or 1 , (hack to get definition first)
     labelReference(&ll, usage);

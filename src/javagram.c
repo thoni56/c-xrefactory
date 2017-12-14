@@ -4979,7 +4979,7 @@ case 234:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    addNewDeclaration(yyvsp[-1].bbsymbol.d,yyvsp[0].bbsymbol.d,StorageAuto,s_javaStat->locals);
+                    addNewDeclaration(yyvsp[-1].bbsymbol.d,yyvsp[0].bbsymbol.d,NULL,StorageAuto,s_javaStat->locals);
                     yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
                 } else {
                     PropagateBorns(yyval.bbsymbol, yyvsp[-1].bbsymbol, yyvsp[0].bbsymbol);
@@ -4992,7 +4992,7 @@ case 235:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    addNewDeclaration(yyvsp[-1].bbsymbol.d,yyvsp[0].bbsymbol.d,StorageAuto,s_javaStat->locals);
+                    addNewDeclaration(yyvsp[-1].bbsymbol.d,yyvsp[0].bbsymbol.d,NULL,StorageAuto,s_javaStat->locals);
                     yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
                 } else {
                     PropagateBorns(yyval.bbsymbol, yyvsp[-2].bbposition, yyvsp[0].bbsymbol);
@@ -5006,7 +5006,7 @@ case 236:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (yyvsp[-2].bbsymbol.d->b.symType != TypeError) {
-                        addNewDeclaration(yyvsp[-2].bbsymbol.d,yyvsp[0].bbsymbol.d,StorageAuto,s_javaStat->locals);
+                        addNewDeclaration(yyvsp[-2].bbsymbol.d,yyvsp[0].bbsymbol.d,NULL,StorageAuto,s_javaStat->locals);
                     }
                     yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
                 } else {

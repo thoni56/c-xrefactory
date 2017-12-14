@@ -364,7 +364,7 @@ symbol_to_type_seq:
             ss->u.type = NULL;
             addYaccSymbolReference($2.d,UsageDeclared);
             if (l_currentType!=NULL) {
-                addNewDeclaration(l_currentType, ss, StorageAuto,s_symTab);
+                addNewDeclaration(l_currentType, ss, NULL, StorageAuto,s_symTab);
             }
         }
     ;
@@ -844,11 +844,11 @@ declaration
 init_declarations
     : declaration_specifiers init_declarator            {
         $$.d = $1.d;
-        addNewDeclaration($1.d, $2.d, StorageAuto,s_symTab);
+        addNewDeclaration($1.d, $2.d, NULL, StorageAuto,s_symTab);
     }
     | init_declarations ',' init_declarator             {
         $$.d = $1.d;
-        addNewDeclaration($1.d, $3.d, StorageAuto,s_symTab);
+        addNewDeclaration($1.d, $3.d, NULL, StorageAuto,s_symTab);
     }
     | error                                             {
         /*$$.d = &s_errorSymbol;*/
@@ -1624,15 +1624,15 @@ external_definition
 top_init_declarations
     : declaration_specifiers init_declarator            {
         $$.d = $1.d;
-        addNewDeclaration($1.d, $2.d, StorageExtern,s_symTab);
+        addNewDeclaration($1.d, $2.d, NULL, StorageExtern,s_symTab);
     }
     | init_declarator                                   {
         $$.d = & s_defaultIntDefinition;
-        addNewDeclaration($$.d, $1.d, StorageExtern,s_symTab);
+        addNewDeclaration($$.d, $1.d, NULL, StorageExtern,s_symTab);
     }
     | top_init_declarations ',' init_declarator         {
         $$.d = $1.d;
-        addNewDeclaration($1.d, $3.d, StorageExtern,s_symTab);
+        addNewDeclaration($1.d, $3.d, NULL, StorageExtern,s_symTab);
     }
     | error                                             {
         /*$$.d = &s_errorSymbol;*/
@@ -1745,7 +1745,7 @@ static void addRuleLocalVariable(S_idIdent *name, int order) {
             FILL_symbolBits(&ss->b,0,0,0,0,0,TypeDefault,StorageAuto,0);
             FILL_symbol(ss,nn,nn,name->p,ss->b,type,NULL,NULL);
             ss->pos.coll ++ ; // to avoid ambiguity of NonTerminal <-> $$.d
-            addNewDeclaration(p, ss, StorageAuto, s_symTab);
+            addNewDeclaration(p, ss, NULL, StorageAuto, s_symTab);
         }
     }
 }
