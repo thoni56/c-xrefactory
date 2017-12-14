@@ -16,9 +16,9 @@ quick:
 	@make -C process_yacc
 	@make -C basic_html_generation
 	@make -C standard_includes
+	@make -C init_parsing
 
 slow:
 	@echo "Slow tests..."
 	@make -C ffmpeg
 	@make -C systemd
-
