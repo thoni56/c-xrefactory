@@ -81,3 +81,21 @@ where all prototypes for all externally visible functions are placed.
 This file also is used in the "generation" step, which I can't
 understand right now. Does the "generation" step create internal data
 for c-xref source code!?!??!
+
+## C-Xrefs file
+
+This file (or files) contains compact, but textual representations of
+the cross-reference information. Format is somewhat complex, but here
+are somethings that I think I have found out:
+
+- the encoding has one character markers which are listed at the top
+  of cxfile.c
+- the coding seems to often start with a number and then a character,
+  such as '4l' means line 4
+- references seems to be optimized to not repeat information if it
+  would be a repetition, such as '15l3cr7cr' means that there are two
+  references on line 15, one in column 3 the other in column 7
+- so there is a notion of "current" for all values which need not be
+  repeated
+- e.g. references all use 'fsulc' fields, i.e. file, symbol index,
+  line and column, but do not repeat 'f' as long as it is the same
