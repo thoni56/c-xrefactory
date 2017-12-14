@@ -2327,7 +2327,7 @@ static void mainFileProcessingInitialisations(
         if (s_opt.xref2) {
             ppcGenRecord(PPC_INFORMATION, getRealFileNameStatic(s_input_file_name), "\n");
         } else {
-            fprintf(dumpOut,"'%s'\n", getRealFileNameStatic(s_input_file_name));
+            fprintf(dumpOut,"Processing'%s'\n", getRealFileNameStatic(s_input_file_name));
         }
         fflush(dumpOut);
     }
@@ -3062,6 +3062,7 @@ static void mainXrefProcessInputFile( int argc, char **argv, int *_inputIn, int 
     s_maximalCppPass = 1;
     for(s_currCppPass=1; s_currCppPass<=s_maximalCppPass; s_currCppPass++) {
         if (! firstPassing) copyOptions(&s_opt, &s_cachedOptions);
+        log_info("Preprocessing pass #%d", s_currCppPass);
         mainFileProcessingInitialisations(&firstPassing,
                                           argc, argv, 0, NULL, &inputIn,
                                           &s_language);
@@ -3384,11 +3385,18 @@ static void mainGenerate(int argc, char **argv) {
     symTabMap(s_symTab, generate);
 }
 
+
+static void setupLogging(void) {
+    log_set_quiet(1);
+}
+
+
 /* *********************************************************************** */
 /* **************************       MAIN      **************************** */
 /* *********************************************************************** */
 
 int main(int argc, char **argv) {
+    setupLogging();
     setjmp(s_memoryResize);
     if (s_cxResizingBlocked) {
         fatalError(ERR_ST,"cx_memory resizing required, see the TROUBLES section of README file", XREF_EXIT_ERR);
