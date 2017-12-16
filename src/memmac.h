@@ -6,8 +6,8 @@
 
 /* ******************** a simple memory handler ************************ */
 
-#define ALLIGNEMENT_OFF(xxx,allign) (allign-1-((((uintptr_t)(xxx))-1) & (allign-1)))
-#define ALLIGNEMENT(xxx,allign) (((char*)(xxx))+ALLIGNEMENT_OFF(xxx,allign))
+#define ALIGNMENT_OFF(xxx,allign) (allign-1-((((uintptr_t)(xxx))-1) & (allign-1)))
+#define ALIGNMENT(xxx,allign) (((char*)(xxx))+ALIGNMENT_OFF(xxx,allign))
 
 
 /* ********************************************************************* */
@@ -21,7 +21,7 @@
 #define SM_ALLOCC(mem,p,n,t) {\
     assert( (n) >= 0);\
     /* memset(mem+mem##i,0,(n)*sizeof(t)); */\
-    mem##i = ((char*)ALLIGNEMENT(mem+mem##i,STANDARD_ALLIGNEMENT)) - mem;\
+    mem##i = ((char*)ALIGNMENT(mem+mem##i,STANDARD_ALIGNMENT)) - mem;\
     if (mem##i+(n)*sizeof(t) >= SIZE_##mem) {\
         fatalError(ERR_NO_MEMORY,#mem, XREF_EXIT_ERR);\
     }\
@@ -54,7 +54,7 @@
 #define DM_INIT(mem) {mem->i = 0;}
 #define DM_ALLOCC(mem,p,n,t) {\
     assert( (n) >= 0);\
-    mem->i = ((char*)ALLIGNEMENT(((char*)&mem->b)+mem->i,STANDARD_ALLIGNEMENT)) - ((char*)&mem->b);\
+    mem->i = ((char*)ALIGNMENT(((char*)&mem->b)+mem->i,STANDARD_ALIGNMENT)) - ((char*)&mem->b);\
     if (mem->i+(n)*sizeof(t) >= mem->size) {\
         if (mem->overflowHandler(n)) longjmp(s_memoryResize,1); \
         else fatalError(ERR_NO_MEMORY,#mem, XREF_EXIT_ERR);\

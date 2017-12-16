@@ -10,11 +10,11 @@
 #define __WIN32__ 1
 #endif
 
-/*	STANDARD_ALLIGNEMENT must be larger than void* !!!!!!!!!! */
+/*	STANDARD_ALIGNMENT must be larger than void* !!!!!!!!!! */
 #ifdef __i386__
 #define STANDARD_ALLIGNEMENT sizeof(void*)
 #else
-#define STANDARD_ALLIGNEMENT sizeof(long int)
+#define STANDARD_ALIGNMENT sizeof(long int)
 #endif
 
 /* #define XREF_HUGE 1 */

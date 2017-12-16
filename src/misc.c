@@ -391,7 +391,7 @@ void stackMemoryInit() {
 void *stackMemoryAlloc(int size) {
     register int i;
     i = s_topBlock->firstFreeIndex;
-    i = ((char *)ALLIGNEMENT(memory+i,STANDARD_ALLIGNEMENT))-memory;
+    i = ((char *)ALIGNMENT(memory+i,STANDARD_ALIGNMENT))-memory;
     if (i+size < SIZE_workMemory) {
         s_topBlock->firstFreeIndex = i+size;
         return( & memory[i] );
