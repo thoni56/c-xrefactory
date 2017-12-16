@@ -1,15 +1,18 @@
 /* *********************************************************************** */
 /* .h template for hashed table */
 
-/* treba definovat makra:
-    HASH_TAB_TYPE			meno typu hashovanej tabulky, musi byt struktura
-    HASH_ELEM_TYPE			meno typu poloziek tabulky
-    HASH_FUN_PREFIX				prefix, ktory sa prida pred mena fcii
+/* This requires the definition of these variables prior to inclusion
+    HASH_TAB_TYPE			type of the hash-table, must be a struct
+    HASH_FUN_PREFIX			prefix that will be added to the beginning of the functions
+    HASH_ELEM_TYPE			type of the elements in the hashtable
+
+    TODO: merge HASH_TAB_TYPE and HASH_FUN_PREFIX so we only need one and require
+    HASH_TAB_TYPE to be "struct HASH_FUN_PREFIX'.
 */
 
 
 #define GLUE1(a,b) a ## b
-#define GLUE2(a,b) GLUE1(a,b)
+#define CONCAT(a,b) GLUE1(a,b)
 
 
 HASH_TAB_TYPE {
@@ -18,91 +21,91 @@ HASH_TAB_TYPE {
 };
 
 
-extern void GLUE2(HASH_FUN_PREFIX, Init) (		/* Init */
+extern void CONCAT(HASH_FUN_PREFIX, Init) (		/* Init */
                     HASH_TAB_TYPE *tab,
                     int velkost
                 );
-extern void GLUE2(HASH_FUN_PREFIX,NAInit)(		/* not alloc init */
+extern void CONCAT(HASH_FUN_PREFIX, NAInit)(		/* not alloc init */
                     HASH_TAB_TYPE *t,
                     int velkost
                 );
-extern int  GLUE2(HASH_FUN_PREFIX, IsMember) (	/* IsMember */
+extern int  CONCAT(HASH_FUN_PREFIX, IsMember) (	/* IsMember */
                     HASH_TAB_TYPE *tab,
                     HASH_ELEM_TYPE *elem,
                     int *position,
                     HASH_ELEM_TYPE **origin
                 );
-int GLUE2(HASH_FUN_PREFIX,MembEqual)(
+extern int CONCAT(HASH_FUN_PREFIX, MembEqual)(
                     HASH_ELEM_TYPE *e1,
                     HASH_ELEM_TYPE *e2
             );
-int GLUE2(HASH_FUN_PREFIX,NextMember)(
+extern int CONCAT(HASH_FUN_PREFIX, NextMember)(
                     HASH_ELEM_TYPE *elem,
                     HASH_ELEM_TYPE **original
             );
-void GLUE2(HASH_FUN_PREFIX,Set) (		/* prepend elem at position */
+extern void CONCAT(HASH_FUN_PREFIX, Set) (		/* prepend elem at position */
                     HASH_TAB_TYPE *t,
                     HASH_ELEM_TYPE *elem,
                     int position
                 );
-void GLUE2(HASH_FUN_PREFIX,SetLast) (	/* append elem at position */
+extern void CONCAT(HASH_FUN_PREFIX, SetLast) (	/* append elem at position */
                     HASH_TAB_TYPE *t,
                     HASH_ELEM_TYPE *elem,
                     int position
                 );
-extern void GLUE2(HASH_FUN_PREFIX, Add) (	/* Add, returns position */
+extern void CONCAT(HASH_FUN_PREFIX, Add) (	/* Add, returns position */
                     HASH_TAB_TYPE *tab,
                     HASH_ELEM_TYPE *elem,
                     int *position
                 );
-int GLUE2(HASH_FUN_PREFIX,Delete)(	/* Delete first of elem from tab */
+extern int CONCAT(HASH_FUN_PREFIX, Delete)(	/* Delete first of elem from tab */
                     HASH_TAB_TYPE *t,
                     HASH_ELEM_TYPE *elem
             );
 /* Delete first of elem from tab, check exact equality of pointers */
-int GLUE2(HASH_FUN_PREFIX,DeleteExact)(
+extern int CONCAT(HASH_FUN_PREFIX, DeleteExact)(
                     HASH_TAB_TYPE *t,
                     HASH_ELEM_TYPE *elem
             );
-int GLUE2(HASH_FUN_PREFIX,DeleteLast)(/* Delete last of elem from tab */
+extern int CONCAT(HASH_FUN_PREFIX, DeleteLast)(/* Delete last of elem from tab */
                     HASH_TAB_TYPE *t,
                     HASH_ELEM_TYPE *elem
             );
-extern void GLUE2(HASH_FUN_PREFIX, Free)(HASH_TAB_TYPE *tab);
-extern void GLUE2(HASH_FUN_PREFIX, Map)(
+extern void CONCAT(HASH_FUN_PREFIX, Free)(HASH_TAB_TYPE *tab);
+extern void CONCAT(HASH_FUN_PREFIX, Map)(
                     HASH_TAB_TYPE *tab,
                     void (*fun)(HASH_ELEM_TYPE *)
                 );
-extern void GLUE2(HASH_FUN_PREFIX, Map2)(
+extern void CONCAT(HASH_FUN_PREFIX, Map2)(
                     HASH_TAB_TYPE *tab,
                     void (*fun)(HASH_ELEM_TYPE *, void *),
                     void *
                 );
-extern void GLUE2(HASH_FUN_PREFIX, Map3)(
+extern void CONCAT(HASH_FUN_PREFIX, Map3)(
                     HASH_TAB_TYPE *tab,
                     void (*fun)(int)
                 );
-extern void GLUE2(HASH_FUN_PREFIX, Map31)(
+extern void CONCAT(HASH_FUN_PREFIX, Map31)(
                     HASH_TAB_TYPE *tab,
                     void (*fun)(int, void *, void *),
                     void *arg1, void *arg2
                 );
-extern void GLUE2(HASH_FUN_PREFIX, Map32)(
+extern void CONCAT(HASH_FUN_PREFIX, Map32)(
                     HASH_TAB_TYPE *tab,
                     void (*fun)(int, void *, void *, void *),
                     void *arg1, void *arg2, void *arg3
                 );
-extern void GLUE2(HASH_FUN_PREFIX, Map4)(
+extern void CONCAT(HASH_FUN_PREFIX, Map4)(
                     HASH_TAB_TYPE *tab,
                     void (*fun)(HASH_ELEM_TYPE *, int),
                     int
                 );
-extern void GLUE2(HASH_FUN_PREFIX, Map5)(
+extern void CONCAT(HASH_FUN_PREFIX, Map5)(
                     HASH_TAB_TYPE *tab,
                     void (*fun)(HASH_ELEM_TYPE *, void *),
                     void *arg
                 );
-void GLUE2(HASH_FUN_PREFIX,Statistics)(
+extern void CONCAT(HASH_FUN_PREFIX, Statistics)(
                     HASH_TAB_TYPE *t,
                     int *usedIndexes,
                     int *elements,
@@ -110,4 +113,8 @@ void GLUE2(HASH_FUN_PREFIX,Statistics)(
                 );
 
 #undef GLUE1
-#undef GLUE2
+#undef CONCAT
+
+/* Local Variables: */
+/* mode: c */
+/* End: */

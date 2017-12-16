@@ -24,26 +24,26 @@
 */
 
 #define GLUE1(a,b) a ## b
-#define GLUE2(a,b) GLUE1(a,b)
+#define CONCAT(a,b) GLUE1(a,b)
 
 #define HASH_SHIFT 211
 
-/* len inicializuje*/
+/* Initialize only, no allocation */
 
-void GLUE2(HASH_FUN_PREFIX,NAInit)(HASH_TAB_TYPE *t, int size) {
+void CONCAT(HASH_FUN_PREFIX,NAInit)(HASH_TAB_TYPE *t, int size) {
     t->numberOfElements = 0;
     t->size = size;
     memset(t->tab, 0, sizeof(HASH_ELEM_TYPE*)*t->size);
 }
 
-/* alokuje a inicializuje*/
+/* Allocate and initialize */
 
-void GLUE2(HASH_FUN_PREFIX,Init)(HASH_TAB_TYPE *t, int size) {
+void CONCAT(HASH_FUN_PREFIX,Init)(HASH_TAB_TYPE *t, int size) {
     XX_ALLOCC(t->tab, size, HASH_ELEM_TYPE *);
-    GLUE2(HASH_FUN_PREFIX,NAInit)(t, size);
+    CONCAT(HASH_FUN_PREFIX,NAInit)(t, size);
 }
 
-int GLUE2(HASH_FUN_PREFIX,IsMember)(
+int CONCAT(HASH_FUN_PREFIX,IsMember)(
                                     HASH_TAB_TYPE *t,
                                     HASH_ELEM_TYPE *elem,
                                     int *position
@@ -63,7 +63,7 @@ int GLUE2(HASH_FUN_PREFIX,IsMember)(
     return(0);
 }
 
-void GLUE2(HASH_FUN_PREFIX,Set) (
+void CONCAT(HASH_FUN_PREFIX,Set) (
                                  HASH_TAB_TYPE *t,
                                  HASH_ELEM_TYPE *elem,
                                  int position
@@ -78,21 +78,21 @@ void GLUE2(HASH_FUN_PREFIX,Set) (
     /*&fprintf(dumpOut,"adding %s\n",elem->name);fflush(dumpOut);&*/
 }
 
-void GLUE2(HASH_FUN_PREFIX,Add) (
+void CONCAT(HASH_FUN_PREFIX,Add) (
                                  HASH_TAB_TYPE *t,
                                  HASH_ELEM_TYPE *elem,
                                  int *position
                                  ) {
-    if (! GLUE2(HASH_FUN_PREFIX,IsMember)(t,elem,position)) {
-        GLUE2(HASH_FUN_PREFIX,Set) (t,elem,*position);
+    if (! CONCAT(HASH_FUN_PREFIX,IsMember)(t,elem,position)) {
+        CONCAT(HASH_FUN_PREFIX,Set) (t,elem,*position);
     }
 }
 
-void GLUE2(HASH_FUN_PREFIX,Free)(HASH_TAB_TYPE *t) {
+void CONCAT(HASH_FUN_PREFIX,Free)(HASH_TAB_TYPE *t) {
     XX_FREE(t->tab);
 }
 
-void GLUE2(HASH_FUN_PREFIX,Map)(
+void CONCAT(HASH_FUN_PREFIX,Map)(
                                 HASH_TAB_TYPE *t,
                                 void (*fun)(HASH_ELEM_TYPE *)
                                 ) {
@@ -102,7 +102,7 @@ void GLUE2(HASH_FUN_PREFIX,Map)(
     }
 }
 
-void GLUE2(HASH_FUN_PREFIX,Map2)(
+void CONCAT(HASH_FUN_PREFIX,Map2)(
                                  HASH_TAB_TYPE *t,
                                  void (*fun)(HASH_ELEM_TYPE *, void *),
                                  void *a
@@ -113,7 +113,7 @@ void GLUE2(HASH_FUN_PREFIX,Map2)(
     }
 }
 
-void GLUE2(HASH_FUN_PREFIX,Map4)(
+void CONCAT(HASH_FUN_PREFIX,Map4)(
                                  HASH_TAB_TYPE *t,
                                  void (*fun)(int, void *, void *),
                                  void *a,
@@ -125,7 +125,7 @@ void GLUE2(HASH_FUN_PREFIX,Map4)(
     }
 }
 
-void GLUE2(HASH_FUN_PREFIX,Map3)(
+void CONCAT(HASH_FUN_PREFIX,Map3)(
                                  HASH_TAB_TYPE *t,
                                  void (*fun)(HASH_ELEM_TYPE *, int)
                                  ) {
@@ -137,4 +137,8 @@ void GLUE2(HASH_FUN_PREFIX,Map3)(
 
 
 #undef GLUE1
-#undef GLUE2
+#undef CONCAT
+
+/* Local variables: */
+/* Mode: c          */
+/* End:             */

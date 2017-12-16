@@ -2,7 +2,7 @@
 /* .h template for hashed table*/
 
 #define GLUE1(a,b) a ## b
-#define GLUE2(a,b) GLUE1(a,b)
+#define CONCAT(a,b) GLUE1(a,b)
 
 
 HASH_TAB_TYPE {
@@ -12,48 +12,52 @@ HASH_TAB_TYPE {
 };
 
 
-extern void GLUE2(HASH_FUN_PREFIX, Init)(		/* Init */
+extern void CONCAT(HASH_FUN_PREFIX, Init)(		/* Init */
                     HASH_TAB_TYPE *tab,
                     int velkost
                 );
-extern void GLUE2(HASH_FUN_PREFIX,NAInit)(		/* not alloc init */
+extern void CONCAT(HASH_FUN_PREFIX,NAInit)(		/* not alloc init */
                     HASH_TAB_TYPE *t,
                     int velkost
                 );
-extern int  GLUE2(HASH_FUN_PREFIX, IsMember) (	/* IsMember */
+extern int  CONCAT(HASH_FUN_PREFIX, IsMember) (	/* IsMember */
                     HASH_TAB_TYPE *tab,
                     HASH_ELEM_TYPE *elem,
                     int *position
                 );
-void GLUE2(HASH_FUN_PREFIX,Set) (			/* add elem at position */
+void CONCAT(HASH_FUN_PREFIX,Set) (			/* add elem at position */
                     HASH_TAB_TYPE *t,
                     HASH_ELEM_TYPE *elem,
                     int position
                 );
-extern void GLUE2(HASH_FUN_PREFIX, Add) (	/* Add, returns position */
+extern void CONCAT(HASH_FUN_PREFIX, Add) (	/* Add, returns position */
                     HASH_TAB_TYPE *tab,
                     HASH_ELEM_TYPE *elem,
                     int *position
                 );
-extern void GLUE2(HASH_FUN_PREFIX, Free) (HASH_TAB_TYPE *tab);
-extern void GLUE2(HASH_FUN_PREFIX, Map)(
+extern void CONCAT(HASH_FUN_PREFIX, Free) (HASH_TAB_TYPE *tab);
+extern void CONCAT(HASH_FUN_PREFIX, Map)(
                     HASH_TAB_TYPE *tab,
                     void (*fun)(HASH_ELEM_TYPE *)
                 );
-extern void GLUE2(HASH_FUN_PREFIX, Map2)(
+extern void CONCAT(HASH_FUN_PREFIX, Map2)(
                     HASH_TAB_TYPE *tab,
                     void (*fun)(HASH_ELEM_TYPE *, void *),
                     void *
                 );
-extern void GLUE2(HASH_FUN_PREFIX, Map4)(
+extern void CONCAT(HASH_FUN_PREFIX, Map4)(
                     HASH_TAB_TYPE *tab,
                     void (*fun)(int, void *, void *),
                     void *, void *
                 );
-extern void GLUE2(HASH_FUN_PREFIX, Map3)(
+extern void CONCAT(HASH_FUN_PREFIX, Map3)(
                     HASH_TAB_TYPE *tab,
                     void (*fun)(HASH_ELEM_TYPE *, int)
                 );
 
 #undef GLUE1
-#undef GLUE2
+#undef CONCAT
+
+/* Local variables: */
+/* Mode: c          */
+/* End:             */
