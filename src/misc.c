@@ -1,8 +1,3 @@
-/*
-  $Revision: 1.51 $
-  $Date: 2002/09/08 21:28:57 $
-*/
-
 #include "stdinc.h"
 #include "head.h"
 #include "proto.h"      /*SBD*/

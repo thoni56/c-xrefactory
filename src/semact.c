@@ -1,8 +1,3 @@
-/*
-  $Revision: 1.13 $
-  $Date: 2002/09/03 19:40:20 $
-*/
-
 #include "stdinc.h"
 #include "head.h"
 #include "proto.h"      /*SBD*/
@@ -595,9 +590,9 @@ void addInitializerRefs(
         tt = decl->u.type;
         for (id = &ll->idi; id!=NULL; id=id->next) {
             if (tt->m == TypeArray) {
-			    tt = tt->next;
-			    continue;
-			}
+                tt = tt->next;
+                continue;
+            }
             if (tt->m != TypeStruct && tt->m != TypeUnion) return;
             ref = findStrRecordFromType(tt, id, &rec, CLASS_TO_ANY);
             if (NULL == ref) return;

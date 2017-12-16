@@ -1,8 +1,3 @@
-/*
-  $Revision: 1.4 $
-  $Date: 2002/07/31 17:19:58 $
-*/
-
 #include "stdinc.h"
 #include "head.h"
 #include "proto.h"      /*SBD*/
@@ -32,7 +27,7 @@ static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {
     }
 }
 
-static char *autoDetectJavaVersion() {  
+static char *autoDetectJavaVersion() {
     int i;
     char *res;
     // O.K. pass jars and look for rt.jar
@@ -60,8 +55,8 @@ void initTokenNameTab() {
     }
     jv = s_opt.javaVersion;
     if (strcmp(jv, JAVA_VERSION_AUTO)==0) jv = autoDetectJavaVersion();
-    if (s_opt.taskRegime!=RegimeEditServer 
-        && s_opt.taskRegime!=RegimeGenerate 
+    if (s_opt.taskRegime!=RegimeEditServer
+        && s_opt.taskRegime!=RegimeGenerate
         && messageWritten==0) {
         if (s_opt.xref2) {
             sprintf(tmpBuff,"java version == %s", jv);
@@ -158,7 +153,7 @@ void initArchaicTypes() {
     FILL_symbol(&s_defaultIntDefinition,NULL,NULL,s_noPos,
                 s_defaultIntDefinition.b,type,&s_defaultIntModifier,NULL);
     s_defaultIntDefinition.u.type = &s_defaultIntModifier;
-    FILLF_typeModifiers(&s_defaultPackedTypeModifier,TypePackedType,f,( 
+    FILLF_typeModifiers(&s_defaultPackedTypeModifier,TypePackedType,f,(
                                                                        NULL,NULL) ,NULL,NULL);
     FILLF_typeModifiers(&s_defaultVoidModifier,TypeVoid,f,( NULL,NULL) ,NULL,NULL);
     FILL_symbolBits(&s_defaultVoidDefinition.b,0,0,0,0,0,TypeDefault,StorageDefault,0);
@@ -197,5 +192,3 @@ void initPreCreatedTypes() {
         s_preCrPtr2TypesTab[t] = tt;
     }
 }
-
-
