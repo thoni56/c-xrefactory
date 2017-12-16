@@ -183,16 +183,12 @@ void setIntToZero(void *p) {
     *pp = 0;
 }
 
-#ifdef LINEAR_ADD_REFERENCE
 
-this will not work, DO NOT compie this version with this macro setting
-
-#else
-    S_reference **addToRefList( S_reference **list,
-                                S_usageBits *pusage,
-                                S_position *pos,
-                                int category
-                                ) {
+S_reference **addToRefList( S_reference **list,
+                            S_usageBits *pusage,
+                            S_position *pos,
+                            int category
+                            ) {
     S_reference *rr, **place;
     S_reference ppp;
     FILL_reference(&ppp, *pusage, *pos, NULL);
@@ -208,7 +204,7 @@ this will not work, DO NOT compie this version with this macro setting
     }
     return(place);
 }
-#endif
+
 
 int isInRefList(S_reference *list,
                 S_usageBits *pusage,

@@ -1471,9 +1471,6 @@ void scanCxFile(S_cxScanFileFunctionLink *scanFuns) {
         // check if last symbol was dead
         cxfileCheckLastSymbolDeadness();
     }
-#ifdef LINEAR_ADD_REFERENCE
-    purgeCxReferenceTable();
-#endif
     /*fprintf(dumpOut,"ref. file scanned\n"); fflush(dumpOut);*/
 }
 

@@ -2007,9 +2007,6 @@ static void mainParseInputFile() {
     }
     s_cache.activeCache = 0;
     cFile.fileName = NULL;
-#ifdef LINEAR_ADD_REFERENCE
-    purgeCxReferenceTable();
-#endif
 
     /*//////////////////////// after parsing actions ////////////////////// */
 #if ZERO

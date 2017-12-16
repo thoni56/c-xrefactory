@@ -36,11 +36,8 @@
 #else
 #define SIZE_olcxMemory        50000000	/* memory for browsing symbol stack */
 #endif
-#ifdef LINEAR_ADD_REFERENCE
-#define CX_MEMORY_CHUNK_SIZE   10000000
-#else
 #define CX_MEMORY_CHUNK_SIZE	2000000
-#endif
+
                                         /* memory for cross references, can be
                                           increased also by -mf command line
                                           option.
