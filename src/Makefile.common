@@ -11,9 +11,6 @@
 # strFill.bs, strTdef.bs and enumTxt.bs should be used when
 # bootstraping, so those files should be usable on all platforms.
 #
-# N.B. this is a work in progress, strFill and strTdef are included so
-# they are #ifdef'ed for BOOTSTRAP or not, but enumTxt.c/.bs are not
-# yet solved.
 
 include Makefile.objs
 

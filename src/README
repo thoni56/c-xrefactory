@@ -1,4 +1,3 @@
-
 Simple build:
 ^^^^^^^^^^^^^
 
@@ -6,21 +5,24 @@ Simple build:
   make
 
 
-
 Development:
 ^^^^^^^^^^^^
 
-First, you will need to build Berkeley yacc, which is stored in
-byacc-1.9 directory. Second,  you will need a copy of a working
-copy of xref task in xref.bs file (because xref is partially 
-bootstrapped). Todo this, you can call:
+First, you will need to build a special patched version of Berkeley
+yacc, which is stored in byacc-1.9 directory.
 
-  make bs
+c-xref is partially bootstrapped (read more about this in NOTES.md) so
+the build will be in two steps (performed automatically):
 
-then, you can modify source files and rebuild. To compile xref
-with debugging options use:
+  - build a c-xref.bs from pre-generated sources if required
+  - generate new versions of strFill.h, strTdef.h and enumTxt.h with that
+  - build actual c-xref
 
-  make -f Makefile.development
+NOTE: since we want to distribute c-xref in source form, you should
+always check that bootstrapping works. (Making incompatible changes to
+some structures will break this for example.) Do this with
 
+     make cleaner; make
 
-
+It should put your directory in a very clean state so that c-xref has
+to be bootstrapped.
