@@ -115,10 +115,10 @@ c-xref: $(OBJS)
 
 clean:;
 	make -C $(ROOTDIR)/lib/zlib clean
-	rm -f $(OBJS) c-xref
+	-rm -f $(OBJS) c-xref
 
 cleaner: clean
-	rm strFill.h strTdef.h enumTxt.h c-xref.bs
+	-rm strFill.h strTdef.h enumTxt.h c-xref.bs
 
 #########################################################################
 
