@@ -3178,7 +3178,7 @@ break;
 case 177:
 #line 1029 "cgram.y"
 {
-        yyval.bbtypeModif.d = crNewAnnonymeEnum(yyvsp[-1].bbsymbolList.d);
+        yyval.bbtypeModif.d = createNewAnonymousEnum(yyvsp[-1].bbsymbolList.d);
     }
 break;
 case 178:

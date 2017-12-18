@@ -2314,7 +2314,7 @@ S_typeModifiers *crNewAnnonymeStrUnion(S_idIdent *typeName);
 void specializeStrUnionDef(S_symbol *sd, S_symbol *rec);
 S_typeModifiers *simpleEnumSpecifier(S_idIdent *id, int usage);
 void setGlobalFileDepNames(char *iname, S_symbol *pp, int memory);
-S_typeModifiers *crNewAnnonymeEnum(S_symbolList *enums);
+S_typeModifiers *createNewAnonymousEnum(S_symbolList *enums);
 void appendPositionToList(S_positionLst **list, S_position *pos);
 void setParamPositionForFunctionWithoutParams(S_position *lpar);
 void setParamPositionForParameter0(S_position *lpar);

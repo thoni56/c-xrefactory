@@ -1054,7 +1054,7 @@ S_typeModifiers *simpleEnumSpecifier(S_idIdent *id, int usage) {
     return(crSimpleEnumType(pp,TypeEnum));
 }
 
-S_typeModifiers *crNewAnnonymeEnum(S_symbolList *enums) {
+S_typeModifiers *createNewAnonymousEnum(S_symbolList *enums) {
     S_symbol *pp;
     pp = StackMemAlloc(S_symbol);
     FILL_symbolBits(&pp->b,0,0, 0,0,0, TypeEnum, StorageNone,0);

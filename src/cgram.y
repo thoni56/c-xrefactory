@@ -1027,7 +1027,7 @@ enum_specifier
         }
     }
     | ENUM '{' enumerator_list_comma '}'						{
-        $$.d = crNewAnnonymeEnum($3.d);
+        $$.d = createNewAnonymousEnum($3.d);
     }
     ;
 
