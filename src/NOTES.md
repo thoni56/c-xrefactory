@@ -155,31 +155,42 @@ Here are some of the conventions in naming that are being used:
 _proto.h_ is a file which declares enums and structures that are read
 as part of the bootstrap process. Here be dragons (magic...).
 
-### strTdef.h
+I *think* that for each struct defined in _proto.h_ there will be a
+set of macros generated that can act as "functions" to fill a
+structure as a one-liner.
 
-What I have figured out so far is that in _proto.h_ simple struct
-declarations are performed. These are then read into the generator
-part and then are printed as typedefs. So a structure like
+E.g given a structure like
 
-    struct myStruct { int a; };
+    struct myStruct { int a; struct anotherStruct b; }
 
-will be read and result in a typedef-declaration (in _strTdef.h_) that
-looks like:
+There will be a typedef generated (in _strTdef.h_):
 
     typedef struct myStruct S_myStruct;
 
-This typedef can then be used instead of the more "cumbersome" `struct
-myStruct`.
+And there will be two "filler"-function macros defined (in
+_strFill.h_):
 
-However, many of these typedefs are actually only used in one module
-and should really be local to that module. Furthermore, I can see no
-reason why
+    #define FILL_myStruct(XXX, ARG0, ARG1) { .... }
 
-    typedef struct myStruct { int a; } S_myStruct;
+and
 
-should work equally well. (And I even venture to call that
+    #define FILLF_myStruct(XXX, ARG0, ARG1, ARG2, ARG3, ...) { .... }
 
-    typedef struct myStruct { int a; } MyStruct;
+The first simply allows you to initialize a structure pointed to by
+the `XXX` argument using the `ARG0` etc. to fill out consecutive
+fields.
 
-So, I'll try to move such local typedefs from _proto.h_ to where they
-belong, one by one...
+The second is a "serialized" version where you can fill *every* field
+in the complete structure. So the number of arguments will depend on
+the total number of fields in all the substructures.
+
+This makes it easy to add a new structure or to add fields to an already
+existing one without having to manually update the "Create"-function
+for tha structure.
+
+However, the usage of the _FILL_ functions is less that crystal clear...
+
+I also think that you could actually merge the struct definition with
+the typedef so that _strTdef.h_ would not be needed. But maybe this
+design is because _c_xref_ can only do its generation magic for
+struct's, not typedef's, but who knows.
