@@ -45,26 +45,49 @@ that expansion is done for Emacs-lisp.
 
 ### Bootstrapping
 
-_c-xref_ needs to be bootstrapped by reading in a lot of predefined
-header files to get system definitions. This is done using options
-like `-task_regime_generate' which prints a lot of data structures on
-the standard output which is then fed into _strFill.h_, _strTdef.h_
-and _enumTxt.h_ by the Makefile.
+#### Reasons
+
+_c-xref_ uses a load of structures, and lists of them, that need to be
+created and initialized in a lot of places (such as the parsers). To
+make this somewhat manageable, _c-xref_ itself parses the strucures
+and generates macros to fill them.
+
+_c-xref_ is also bootstrapped into reading in a lot of predefined
+header files to get system definitions as "preloaded
+definitions".
 
 NOTE: Why this is necessary, I don't exactly know. It might be an
 optimization. In any case it creates an extra complexity building and
 maintaining and to the structure of _c-xref_.
 
-#### typedefs
+#### Mechanism
+
+The bootstrapping uses _c-xref_'s own capability to parse C-code and
+parse those structures and spit out filling macros, and some other
+stuff.
+
+This is done using options like `-task_regime_generate'
+which prints a lot of data structures on the standard output which is
+then fed into _strFill.h_, _strTdef.h_ and _enumTxt.h_ by the
+Makefile.
+
+#### Compiler defines
 
 In _options.h_ there are a number of definitions which somehow are
-send to the compiler/preprocessor or used so that standard settings
+sent to the compiler/preprocessor or used so that standard settings
 are the same as if a program will be compiled using the standard
-compiler on the platform. At this point I don't know how this is done,
+compiler on the platform. At this point I don't know exactly how this
+conversion from C declarations to compile time definitions is done,
 maybe just entered as symbols in one of the many symboltables?
 
 Typical examples include "__linux" but also on some platforms things
 like "fpos_t=long".
+
+I've implemented a mechanism that uses "gcc -E -mD" to print out and
+catch all compiler defines in `compiler_defines.h`. This was necessary
+because of such definitions on Darwin which where not in the
+"pre-programmed" ones. And this is more general and should possibly
+completely replace the "programmed" ones in `options.c`?
 
 #### Include paths
 
@@ -80,7 +103,8 @@ where all prototypes for all externally visible functions are placed.
 
 This file also is used in the "generation" step, which I can't
 understand right now. Does the "generation" step create internal data
-for c-xref source code!?!??!
+for c-xref source code!?!??! I think this is because of the
+bootstrapping of fill macros etc.
 
 ## C-Xrefs file
 

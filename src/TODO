@@ -1,0 +1,30 @@
+There are a *lot* of things to do to make c-xref into modern C.
+
+* Memory allocation is home grown, probably out of necessity. Refactor
+  to a state where it can be replaced by the memory allocation of
+  current run-times. I can't see that even 32-bit memory restrictions
+  (2 GB) should be a problem.
+
+* Naming. Generally it is heavy on short, write-only naming, we should
+  move towards full names as much as possible.
+
+* Macros. There are many things that need the magic of macros, but we
+  should watch out for "macro for optimisation" and remove that.
+
+* Header files. There are a number of sections in the proto.h that
+  indicates which file/module it declares an externa interface for. We
+  should move that to a <module>.h file instead. Just watchout for
+  datatypes that need to be in proto.h because of the strFill et. al
+  generation.
+
+* Modules. Some things might really belong in separat modules, at
+  first glance at least, the hash tables and lists are such
+  candidates. If we do that it would be much easier to mock and unit
+  test other modules.
+
+* Unit tests. There are none. Period. We need to get some working as
+  quickly as possible. Meanwhile there are some functional level tests
+  in ../tests, but as all integrating tests with I/O they are quite
+  slow. (Aand some only work on huge data, because that was the test
+  case given for some issues, and I really want to have a test case
+  for each issue before fixing it, if possible.)

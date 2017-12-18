@@ -890,11 +890,11 @@ void getJavaClassAndSourcePath() {
         expandWildCharactersInPaths(cp, s_javaClassPathStatic, MAX_OPTION_LEN);
         cp = s_javaClassPathStatic;
 
-        crOptionStr(&s_opt.classpath, cp);  //??? why is this, only optimisation of getenv?
+        createOptionString(&s_opt.classpath, cp);  //??? why is this, only optimisation of getenv?
         processClassPathString(cp);
         jdkcp = getJdkClassPathFastly();
         if (jdkcp != NULL && *jdkcp!=0) {
-            crOptionStr(&s_opt.jdkClassPath, jdkcp);  //only optimisation of getenv?
+            createOptionString(&s_opt.jdkClassPath, jdkcp);  //only optimisation of getenv?
             processClassPathString( jdkcp);
         }
 
@@ -957,16 +957,4 @@ void getXrefrcFileName(char *ttt) {
         sprintf(ttt, "%s%c%cc-xrefrc", hh, SLASH, FILE_BEGIN_DOT);
     }
     InternalCheck(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
-}
-
-
-void optionsVisualEdit() {
-#if ZERO
-    char            rcfilename[MAX_FILE_NAME_SIZE];
-    S_optionsList   *opts,*pp;
-    S_stringList    *ss;
-    getXrefrcFileName(rcfilename);
-    opts = readXrefrcFile(rcfilename);
-    writeXrefrcFile(dumpOut, opts);
-#endif
 }

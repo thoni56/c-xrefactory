@@ -1786,13 +1786,6 @@ struct options {
     char				pendingFreeSpace[SIZE_opiMemory];
 };
 
-struct optionsList {
-    char                *section;
-    S_stringList		*opts;
-    S_options			flgopts;
-    S_optionsList		*next;
-};
-
 /* ************************ HASH TABLES ****************************** */
 
 #define HASH_TAB_TYPE struct symTab
@@ -2321,7 +2314,7 @@ S_typeModifiers *crNewAnnonymeStrUnion(S_idIdent *typeName);
 void specializeStrUnionDef(S_symbol *sd, S_symbol *rec);
 S_typeModifiers *simpleEnumSpecifier(S_idIdent *id, int usage);
 void setGlobalFileDepNames(char *iname, S_symbol *pp, int memory);
-S_typeModifiers *crNewAnnonymeEnum(S_symbolList *enums);
+S_typeModifiers *createNewAnonymousEnum(S_symbolList *enums);
 void appendPositionToList(S_positionLst **list, S_position *pos);
 void setParamPositionForFunctionWithoutParams(S_position *lpar);
 void setParamPositionForParameter0(S_position *lpar);
@@ -2622,7 +2615,6 @@ void recoverMemoriesAfterOverflow(char *cxMemFreeBase);
 */
 void addSourcePathesCut();
 void getXrefrcFileName( char *ttt );
-void optionsVisualEdit();
 int processInteractiveFlagOption(char **argv, int i);
 char *getJavaHome();
 char *getJdkClassPathFastly();
@@ -2757,7 +2749,7 @@ extern S_jslStat *s_jsl;
 */
 
 void dirInputFile(MAP_FUN_PROFILE);
-void crOptionStr(char **dest, char *text);
+void createOptionString(char **dest, char *text);
 void xrefSetenv(char *name, char *val);
 int mainHandleSetOption(int argc, char **argv, int i );
 void copyOptions(S_options *dest, S_options *src);

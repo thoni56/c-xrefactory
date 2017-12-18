@@ -3650,7 +3650,7 @@ break;
 case 353:
 #line 1104 "yaccgram.y"
 {
-        yyval.bbtypeModif.d = crNewAnnonymeEnum(yyvsp[-1].bbsymbolList.d);
+        yyval.bbtypeModif.d = createNewAnonymousEnum(yyvsp[-1].bbsymbolList.d);
     }
 break;
 case 354:
