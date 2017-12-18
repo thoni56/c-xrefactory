@@ -890,11 +890,11 @@ void getJavaClassAndSourcePath() {
         expandWildCharactersInPaths(cp, s_javaClassPathStatic, MAX_OPTION_LEN);
         cp = s_javaClassPathStatic;
 
-        crOptionStr(&s_opt.classpath, cp);  //??? why is this, only optimisation of getenv?
+        createOptionString(&s_opt.classpath, cp);  //??? why is this, only optimisation of getenv?
         processClassPathString(cp);
         jdkcp = getJdkClassPathFastly();
         if (jdkcp != NULL && *jdkcp!=0) {
-            crOptionStr(&s_opt.jdkClassPath, jdkcp);  //only optimisation of getenv?
+            createOptionString(&s_opt.jdkClassPath, jdkcp);  //only optimisation of getenv?
             processClassPathString( jdkcp);
         }
 

@@ -2749,7 +2749,7 @@ extern S_jslStat *s_jsl;
 */
 
 void dirInputFile(MAP_FUN_PROFILE);
-void crOptionStr(char **dest, char *text);
+void createOptionString(char **dest, char *text);
 void xrefSetenv(char *name, char *val);
 int mainHandleSetOption(int argc, char **argv, int i );
 void copyOptions(S_options *dest, S_options *src);
