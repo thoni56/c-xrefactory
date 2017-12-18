@@ -1786,14 +1786,6 @@ struct options {
     char				pendingFreeSpace[SIZE_opiMemory];
 };
 
-/*struct optionsList {
-    char                *section;
-    S_stringList		*opts;
-    S_options			flgopts;
-    S_optionsList		*next;
-};
-*/
-
 /* ************************ HASH TABLES ****************************** */
 
 #define HASH_TAB_TYPE struct symTab
