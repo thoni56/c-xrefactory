@@ -2443,20 +2443,6 @@ void javaSetClassSourceInformation(char *package, S_idIdent *cl);
 void javaCheckIfPackageDirectoryIsInClassOrSourcePath(char *dir);
 
 /* ***********************************************************************
-** cccsemact.c
-*/
-
-S_typeModifiers *cccFunApplication(S_typeModifiers *fun,
-                                  S_typeModifiersList *args);
-
-/* ***********************************************************************
-** zip.c
-*/
-
-//& extern voidpf zlibAlloc OF((voidpf opaque, uInt items, uInt size));
-//& extern void   zlibFree  OF((voidpf opaque, voidpf address));
-
-/* ***********************************************************************
 ** cfread.c
 */
 
@@ -2481,12 +2467,6 @@ void javaMapZipDirFile(
         char *dirname
     );
 void javaReadClassFile(char *name, S_symbol *cdef, int loadSuper);
-
-/* ***********************************************************************
-** cgram.y
-*/
-int cyyparse();
-void makeCCompletions(char *s, int len, S_position *pos);
 
 /* ***********************************************************************
 ** javaslgram.y

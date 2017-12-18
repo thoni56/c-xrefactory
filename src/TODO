@@ -1,5 +1,15 @@
 There are a *lot* of things to do to make c-xref into modern C.
 
+* Although generation of typedef's etc. in strTdef et al might be
+  questioned we need to handle that for now, but at least let's add
+  #ifndef guards so that any file that requires a typedef can include
+  them without need to consider ordering of the include files.
+
+* enumTxt.c is a generated set of strings for the enum values in
+  proto.h, but the extern declarations of them are in strTdef.h. A
+  cleaner way would be to generate them into enumTxt.h (or a better
+  name, such as 'generated_enum_strings.h').
+
 * Memory allocation is home grown, probably out of necessity. Refactor
   to a state where it can be replaced by the memory allocation of
   current run-times. I can't see that even 32-bit memory restrictions

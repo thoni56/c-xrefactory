@@ -4,6 +4,7 @@
 #include "proto.h"      /*SBD*/
 #include "globals.h"
 #include "generate.h"
+#include "cgram.x"
 #include "unigram.h"
 #include "recyacc.h"
 #include "log.h"

@@ -4,6 +4,7 @@
 #include "proto.h"      /*SBD*/
 #include "globals.h"
 
+#include "cgram.x"
 #include "unigram.h"
 #include "memmac.h"
 #include "protocol.h"
