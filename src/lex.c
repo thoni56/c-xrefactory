@@ -97,8 +97,8 @@ void switchToZippedCharBuff(struct charBuf *bb) {
     cc = bb->cc;
     for(dd=bb->z; cc<fin; cc++,dd++) *dd = *cc;
     FILL_z_stream_s(&bb->zipStream,
-                    bb->z, dd-bb->z, 0,
-                    bb->a, CHAR_BUFF_SIZE, 0,
+                    (Bytef*)bb->z, dd-bb->z, 0,
+                    (Bytef*)bb->a, CHAR_BUFF_SIZE, 0,
                     NULL, NULL,
                     zlibAlloc, zlibFree,
                     NULL, 0, 0, 0
