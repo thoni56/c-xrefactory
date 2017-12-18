@@ -1786,12 +1786,13 @@ struct options {
     char				pendingFreeSpace[SIZE_opiMemory];
 };
 
-struct optionsList {
+/*struct optionsList {
     char                *section;
     S_stringList		*opts;
     S_options			flgopts;
     S_optionsList		*next;
 };
+*/
 
 /* ************************ HASH TABLES ****************************** */
 
@@ -2622,7 +2623,6 @@ void recoverMemoriesAfterOverflow(char *cxMemFreeBase);
 */
 void addSourcePathesCut();
 void getXrefrcFileName( char *ttt );
-void optionsVisualEdit();
 int processInteractiveFlagOption(char **argv, int i);
 char *getJavaHome();
 char *getJdkClassPathFastly();

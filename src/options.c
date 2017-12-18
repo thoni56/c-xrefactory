@@ -958,15 +958,3 @@ void getXrefrcFileName(char *ttt) {
     }
     InternalCheck(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
 }
-
-
-void optionsVisualEdit() {
-#if ZERO
-    char            rcfilename[MAX_FILE_NAME_SIZE];
-    S_optionsList   *opts,*pp;
-    S_stringList    *ss;
-    getXrefrcFileName(rcfilename);
-    opts = readXrefrcFile(rcfilename);
-    writeXrefrcFile(dumpOut, opts);
-#endif
-}
