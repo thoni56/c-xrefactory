@@ -36,7 +36,7 @@
 #include "stdinc.h"
 #include "head.h"
 #include "proto.h"
-
+#include "commons.h"
 
 #define YYDEBUG 0
 #define yyerror styyerror

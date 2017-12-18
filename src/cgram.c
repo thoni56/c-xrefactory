@@ -38,7 +38,7 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #include "stdinc.h"
 #include "head.h"
 #include "proto.h"
-
+#include "commons.h"
 
 #define YYDEBUG 0
 #define yyerror styyerror

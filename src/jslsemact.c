@@ -1,5 +1,6 @@
 #include "stdinc.h"
 #include "head.h"
+#include "commons.h"
 #include "proto.h"
 #include "unigram.h"
 #include "cct.h"

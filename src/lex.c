@@ -1,9 +1,10 @@
 #include "stdinc.h"
 #include "head.h"
+#include "commons.h"
 #include "proto.h"      /*SBD*/
 #include "unigram.h"
 #include "protocol.h"
-//
+
 
 /* ***************************************************************** */
 /*                        Character reading                          */

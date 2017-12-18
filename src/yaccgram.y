@@ -27,6 +27,7 @@
 
 #include "stdinc.h"
 #include "head.h"
+#include "commons.h"
 #include "proto.h"      /*SBD*/
 
 #define YYDEBUG 0

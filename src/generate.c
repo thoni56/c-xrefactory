@@ -1,5 +1,6 @@
 #include "stdinc.h"
 #include "head.h"
+#include "commons.h"
 #include "proto.h"      /*SBD*/
 
 static int subToFill(S_symbol *p, int fullFlag) {
