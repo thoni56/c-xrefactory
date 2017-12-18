@@ -152,7 +152,6 @@ extern char * sFunResultName[];
 typedef struct classTreeData S_classTreeData;
 extern char * menuFilterLevelsName[];
 extern char * miscellaneousName[];
-typedef struct fileStat S_fileStat;
 typedef struct caching S_caching;
 typedef struct fileDesc S_fileDesc;
 typedef struct bb_exprTokenType S_bb_exprTokenType;

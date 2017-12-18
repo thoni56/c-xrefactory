@@ -14,7 +14,7 @@
    #define HASH_FUN(elem)
    #define HASH_ELEM_EQUAL(e1,e2)
 
-   #include "hashTab.tc"
+   #include "hashtab.tc"
 
    #undef HASH_TAB_TYPE
    #undef HASH_ELEM_TYPE

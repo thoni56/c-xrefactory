@@ -38,10 +38,18 @@ src/protocol.tc and must match env/emacs/c-xrefprotocol.el.
 NOTE: I find it strange that the macros for C define static variables for
 these PROTOCOL_ITEMs in every C unit that includes _protocol.h_.
 
+NOTE: that there has been an improvement here since we now only
+generate a .c-file for the option data which is access through the
+.h-definitions as per normal, modern, C-style.
+
 NOTE: There is a similar structure with _c-xrefprotocol.elt_ which
 includes _protocol.tc_ to wrap the PROTOCOL_ITEMs into
 `defvar`s. Although, at this point, I don't understand exactly where
 that expansion is done for Emacs-lisp.
+
+NOTE: there is now some Makefile trickery that ensures that these two
+are in sync.
+
 
 ### Bootstrapping
 
@@ -123,3 +131,55 @@ are somethings that I think I have found out:
   repeated
 - e.g. references all use 'fsulc' fields, i.e. file, symbol index,
   line and column, but do not repeat 'f' as long as it is the same
+
+
+## Naming conventions
+
+_C-xref_ started probably as a cross-referencer for the languages
+supported (C, Java, C++), orginally had the name "xref" which became
+"xrefactory" when refactoring support was added. And when Mariàn
+released a "C only" version in 2009 some of all "xref" references was
+changed to "c-xref". So, as most software, there is a history and a
+naming legacy to remember.
+
+Here are some of the conventions in naming that are being used:
+
+  *olcx* \
+  "On-line CX" (Cross-reference)
+
+  *OLO* \
+  "On-line option" - some kind of options for the server
+
+## proto.h
+
+_proto.h_ is a file which declares enums and structures that are read
+as part of the bootstrap process. Here be dragons (magic...).
+
+### strTdef.h
+
+What I have figured out so far is that in _proto.h_ simple struct
+declarations are performed. These are then read into the generator
+part and then are printed as typedefs. So a structure like
+
+    struct myStruct { int a; };
+
+will be read and result in a typedef-declaration (in _strTdef.h_) that
+looks like:
+
+    typedef struct myStruct S_myStruct;
+
+This typedef can then be used instead of the more "cumbersome" `struct
+myStruct`.
+
+However, many of these typedefs are actually only used in one module
+and should really be local to that module. Furthermore, I can see no
+reason why
+
+    typedef struct myStruct { int a; } S_myStruct;
+
+should work equally well. (And I even venture to call that
+
+    typedef struct myStruct { int a; } MyStruct;
+
+So, I'll try to move such local typedefs from _proto.h_ to where they
+belong, one by one...

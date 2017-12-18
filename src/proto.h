@@ -677,11 +677,6 @@ enum syntaxPassParsedImportantPosition {
 /*                               STRUCTURES                             */
 /* ******************************************************************** */
 
-struct fileStat {
-    char			validFlag;
-    struct stat		stat;
-};
-
 /* class cast tree */
 struct cctNode {
     S_symbol	*node;
