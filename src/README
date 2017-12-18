@@ -26,3 +26,10 @@ some structures will break this for example.) Do this with
 
 It should put your directory in a very clean state so that c-xref has
 to be bootstrapped.
+
+If you change any grammar files or anything they might depend on you
+can run regenerate the parsers (c, java, yacc, cexp) with
+
+   make yacc
+
+which will also generate new parsers.

@@ -3,6 +3,7 @@
 #include "commons.h"
 #include "proto.h"      /*SBD*/
 #include "globals.h"
+#include "generate.h"
 #include "unigram.h"
 #include "recyacc.h"
 #include "log.h"

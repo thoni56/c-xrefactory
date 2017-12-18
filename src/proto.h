@@ -2035,13 +2035,6 @@ void printCompletionsList(int noFocus);
 void printCompletions(S_completions*c);
 
 /* ***********************************************************************
-** generate.c
-*/
-
-void generate(S_symbol *s);
-void genProjections(int n);
-
-/* ***********************************************************************
 ** cxref.c, cxfile.c
 */
 
