@@ -87,7 +87,7 @@ typedef union {
     S_unsPositionPair                       unsPositionPair;
     S_symbolPositionPair                    symbolPositionPair;
     S_symbolPositionLstPair                 symbolPositionLstPair;
-    S_positionLst                           *positionLst;
+    S_positionList                           *positionLst;
     S_typeModifiersListPositionLstPair      typeModifiersListPositionLstPair;
 
     S_extRecFindStr                         *erfs;
@@ -2438,8 +2438,8 @@ break;
 case 26:
 #line 442 "cgram.y"
 {
-            XX_ALLOC(yyval.bbpositionLst.d, S_positionLst);
-            FILL_positionLst(yyval.bbpositionLst.d, s_noPos, yyvsp[0].bbpositionLst.d);
+            XX_ALLOC(yyval.bbpositionLst.d, S_positionList);
+            FILL_positionList(yyval.bbpositionLst.d, s_noPos, yyvsp[0].bbpositionLst.d);
         }
 break;
 case 27:

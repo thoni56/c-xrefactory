@@ -689,9 +689,9 @@ struct position {
     int			coll;
 };
 
-struct positionLst {
+struct positionList {
     S_position		p;
-    S_positionLst   *next;
+    S_positionList   *next;
 };
 
 /* return value for IDENTIFIER token from yylex */
@@ -1348,7 +1348,7 @@ struct symbolPositionPair {
 
 struct symbolPositionLstPair {
     S_symbol		*s;
-    S_positionLst	*p;
+    S_positionList	*p;
 };
 
 struct intPair {
@@ -1358,7 +1358,7 @@ struct intPair {
 
 struct typeModifiersListPositionLstPair {
     S_typeModifiersList		*t;
-    S_positionLst			*p;
+    S_positionList			*p;
 };
 
 struct whileExtractData {
@@ -1588,7 +1588,7 @@ struct bb_symbolPositionLstPair {
 };
 struct bb_positionLst {
     S_position          b, e;
-    S_positionLst		*d;
+    S_positionList		*d;
 };
 struct bb_typeModifiersListPositionLstPair  {
     S_position                                  b, e;
@@ -2310,19 +2310,19 @@ void specializeStrUnionDef(S_symbol *sd, S_symbol *rec);
 S_typeModifiers *simpleEnumSpecifier(S_idIdent *id, int usage);
 void setGlobalFileDepNames(char *iname, S_symbol *pp, int memory);
 S_typeModifiers *createNewAnonymousEnum(S_symbolList *enums);
-void appendPositionToList(S_positionLst **list, S_position *pos);
+void appendPositionToList(S_positionList **list, S_position *pos);
 void setParamPositionForFunctionWithoutParams(S_position *lpar);
 void setParamPositionForParameter0(S_position *lpar);
 void setParamPositionForParameterBeyondRange(S_position *rpar);
 S_symbol *crEmptyField();
 void handleDeclaratorParamPositions(S_symbol *decl, S_position *lpar,
-                                    S_positionLst *commas, S_position *rpar,
+                                    S_positionList *commas, S_position *rpar,
                                            int hasParam);
 void handleInvocationParamPositions(S_reference *ref, S_position *lpar,
-                                    S_positionLst *commas, S_position *rpar,
+                                    S_positionList *commas, S_position *rpar,
                                     int hasParam);
 void javaHandleDeclaratorParamPositions(S_position *sym, S_position *lpar,
-                                               S_positionLst *commas, S_position *rpar);
+                                               S_positionList *commas, S_position *rpar);
 void setLocalVariableLinkName(struct symbol *p);
 void labelReference(S_idIdent *id, int usage);
 

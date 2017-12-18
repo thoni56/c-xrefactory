@@ -2033,17 +2033,17 @@
     (XXX)->e.coll = _ARG_PROJECT_5_7 ARGS;\
     (XXX)->d = _ARG_PROJECT_6_7 ARGS;\
 }
-#define FILL_positionLst(XXX,FARG0,FARG1) {\
+#define FILL_positionList(XXX,FARG0,FARG1) {\
     (XXX)->p = FARG0;\
     (XXX)->next = FARG1;\
 }
-#define FILLF_positionLst(XXX,FARG0,FARG1,FARG2,FARG3) {\
+#define FILLF_positionList(XXX,FARG0,FARG1,FARG2,FARG3) {\
     (XXX)->p.file = FARG0;\
     (XXX)->p.line = FARG1;\
     (XXX)->p.coll = FARG2;\
     (XXX)->next = FARG3;\
 }
-#define _FILLF_positionLst(XXX,ARGS) {\
+#define _FILLF_positionList(XXX,ARGS) {\
     (XXX)->p.file = _ARG_PROJECT_0_4 ARGS;\
     (XXX)->p.line = _ARG_PROJECT_1_4 ARGS;\
     (XXX)->p.coll = _ARG_PROJECT_2_4 ARGS;\

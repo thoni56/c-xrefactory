@@ -232,7 +232,7 @@
     S_unsPositionPair                       unsPositionPair;
     S_symbolPositionPair                    symbolPositionPair;
     S_symbolPositionLstPair                 symbolPositionLstPair;
-    S_positionLst                           *positionLst;
+    S_positionList                           *positionLst;
     S_typeModifiersListPositionLstPair      typeModifiersListPositionLstPair;
 
     S_extRecFindStr                         *erfs;
@@ -440,8 +440,8 @@ argument_expr_list_opt:				{
             $$.d = NULL;
         }
     |	argument_expr_list			{
-            XX_ALLOC($$.d, S_positionLst);
-            FILL_positionLst($$.d, s_noPos, $1.d);
+            XX_ALLOC($$.d, S_positionList);
+            FILL_positionList($$.d, s_noPos, $1.d);
         }
     ;
 

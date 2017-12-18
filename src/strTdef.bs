@@ -97,7 +97,7 @@ typedef struct fileItem S_fileItem;
 extern char * storagesName[];
 typedef struct mallinfo S_mallinfo;
 typedef struct bb_idIdent S_bb_idIdent;
-typedef struct positionLst S_positionLst;
+typedef struct positionList S_positionList;
 typedef struct editorBuffer S_editorBuffer;
 typedef struct editorBufferList S_editorBufferList;
 typedef struct availableRefactoring S_availableRefactoring;

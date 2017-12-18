@@ -237,7 +237,7 @@ static void addYaccSymbolReference(S_idIdent *name, int usage);
     S_unsPositionPair                       unsPositionPair;
     S_symbolPositionPair                    symbolPositionPair;
     S_symbolPositionLstPair                 symbolPositionLstPair;
-    S_positionLst                           *positionLst;
+    S_positionList                           *positionLst;
     S_typeModifiersListPositionLstPair      typeModifiersListPositionLstPair;
 
     S_extRecFindStr                         *erfs;
