@@ -540,11 +540,11 @@ S_symbol *addNewSymbolDef(S_symbol *p, unsigned theDefaultStorage, S_symTab *tab
         p->u.type = tt;
         tt->typedefin = p;
     }
-    if (! WORK_NEST_LEVEL0() && LANGUAGE(LAN_C)
-        || ! WORK_NEST_LEVEL1() && LANGUAGE(LAN_YACC)) {
+    if ((! WORK_NEST_LEVEL0() && LANGUAGE(LAN_C))
+        || (! WORK_NEST_LEVEL1() && LANGUAGE(LAN_YACC))) {
         // local scope symbol
         if (! symTabIsMember(s_symTab,p,&ii,&pp)
-            || MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage)) {
+            || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
             pp = p;
             setLocalVariableLinkName(pp);
             addSymbol(pp, tab);
@@ -893,7 +893,7 @@ S_typeModifiers *simpleStrUnionSpecifier(   S_idIdent *typeName,
     FILL_symbol(&p, id->name, id->name, id->p,p.b,s,NULL, NULL);
     p.u.s = NULL;
     if (! symTabIsMember(s_symTab,&p,&ii,&pp)
-        || MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage)) {
+        || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
         //{static int c=0;fprintf(dumpOut,"str#%d\n",c++);}
         XX_ALLOC(pp, S_symbol);
         *pp = p;
@@ -1044,7 +1044,7 @@ S_typeModifiers *simpleEnumSpecifier(S_idIdent *id, int usage) {
     FILL_symbol(&p, id->name, id->name, id->p,p.b,enums,NULL, NULL);
     p.u.enums = NULL;
     if (! symTabIsMember(s_symTab,&p,&ii,&pp)
-        || MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage)) {
+        || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
         pp = StackMemAlloc(S_symbol);
         *pp = p;
         setGlobalFileDepNames(id->name, pp, MEM_XX);
