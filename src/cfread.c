@@ -1,6 +1,7 @@
 #include "stdinc.h"
 #include "head.h"
 #include "proto.h"      /*SBD*/
+#include "cct.h"
 
 /* *********************** read JAVA class file ************************* */
 

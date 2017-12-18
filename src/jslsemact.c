@@ -2,6 +2,7 @@
 #include "head.h"
 #include "proto.h"
 #include "unigram.h"
+#include "cct.h"
 
 S_jslStat *s_jsl;
 

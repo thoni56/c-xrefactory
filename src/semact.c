@@ -2,6 +2,7 @@
 #include "head.h"
 #include "proto.h"      /*SBD*/
 #include "unigram.h"
+#include "cct.h"
 
 int displayingErrorMessages() {
     // no error messages for file preloaded for symbols

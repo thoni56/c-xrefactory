@@ -2,10 +2,11 @@
 #include "head.h"
 #include "proto.h"      /*SBD*/
 #include "globals.h"
-
+#include "cct.h"
 #include "unigram.h"
 #include "recyacc.h"
 #include "protocol.h"
+
 #define IsJavaReferenceType(m) (m==TypeStruct || m==TypeArray)
 
 static int javaNotFqtUsageCorrection(S_symbol *sym, int usage);

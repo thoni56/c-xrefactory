@@ -678,10 +678,10 @@ enum syntaxPassParsedImportantPosition {
 /* ******************************************************************** */
 
 /* class cast tree */
-struct cctNode {
+typedef struct cctNode {
     S_symbol	*node;
     S_cctNode	*sub;       /* sub[CCT_TREE_INDEX]; */
-};
+} CctNode;
 
 struct position {
     int			file;
@@ -691,7 +691,7 @@ struct position {
 
 struct positionList {
     S_position		p;
-    S_positionList   *next;
+    S_positionList  *next;
 };
 
 /* return value for IDENTIFIER token from yylex */
@@ -1857,16 +1857,6 @@ extern void warning(int kod, char *sprava);
 extern void error(int kod, char *sprava);
 extern void fatalError(int kod, char *sprava, int exitCode);
 extern void internalCheckFail(char *expr, char *file, int line);
-
-/* ***********************************************************************
-** cct.c
-*/
-void cctAddSimpleValue(S_cctNode *cc, S_symbol *x, int deepFactor);
-int cctIsMember(S_cctNode *cc, S_symbol *x, int deepFactor);
-void cctAddCctTree(S_cctNode *cc, S_cctNode *x, int deepFactor);
-void cctDump(S_cctNode *cc, int deep);
-void cctTest();
-
 
 /* ***********************************************************************
 ** misc.c

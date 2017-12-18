@@ -2,6 +2,9 @@
 #include "head.h"
 #include "proto.h"      /*SBD*/
 
+#include "cct.h"
+
+
 /* ******************** Class Cast Tree ************************ */
 /* Data structure storing for each class all classes it can be */
 /* casted to */
