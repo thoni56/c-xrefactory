@@ -2565,18 +2565,6 @@ void htmlAddFunctionSeparatorReference();
 
 
 /* ***********************************************************************
-** extract.c
-*/
-
-void actionsBeforeAfterExternalDefinition();
-void extractActionOnBlockMarker();
-void genInternalLabelReference(int counter, int usage);
-S_symbol * addContinueBreakLabelSymbol(int labn, char *name);
-void deleteContinueBreakLabelSymbol(char *name);
-void genContinueBreakReference(char *name);
-void genSwitchCaseFork(int lastFlag);
-
-/* ***********************************************************************
 ** emacsex.c
 */
 

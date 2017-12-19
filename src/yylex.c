@@ -5,6 +5,7 @@
 #include "lex.h"
 #include "globals.h"
 #include "caching.h"
+#include "extract.h"
 
 #include "cgram.x"
 #include "cexp.x"

@@ -304,25 +304,6 @@
 /* *********************************************************************** */
 
 /* TODO: push the conditions into the functions for these macros */
-#define GenInternalLabelReference(count,usage) {\
-    if (s_opt.cxrefs == OLO_EXTRACT) genInternalLabelReference(count, usage);\
-}
-
-#define AddContinueBreakLabelSymbol(count, name, res) {\
-    if (s_opt.cxrefs == OLO_EXTRACT) res = addContinueBreakLabelSymbol(count, name);\
-}
-
-#define DeleteContinueBreakLabelSymbol(name) {\
-    if (s_opt.cxrefs == OLO_EXTRACT) deleteContinueBreakLabelSymbol(name);\
-}
-
-#define GenContBreakReference(name) {\
-    if (s_opt.cxrefs == OLO_EXTRACT) genContinueBreakReference(name);\
-}
-
-#define GenSwitchCaseFork(lastFlag) {\
-    if (s_opt.cxrefs == OLO_EXTRACT) genSwitchCaseFork(lastFlag);\
-}
 
 #define ExtrDeleteContBreakSym(sym) {\
     if (s_opt.cxrefs == OLO_EXTRACT) deleteSymDef(sym);\
@@ -406,13 +387,13 @@
 #define OL_VIEWABLE_REFS(rrr) ((rrr)->usg.base < UsageMaxOLUsages)
 
 #define SET_IDENTIFIER_YYLVAL(name, symb, pos) {\
-	uniyylval->bbidIdent.d = &s_yyIdentBuf[s_yyIdentBufi];\
-	s_yyIdentBufi ++; s_yyIdentBufi %= (YYBUFFERED_ID_INDEX);\
-	FILL_idIdent(uniyylval->bbidIdent.d, name, symb, pos, NULL);\
-	yytext = name;\
-	uniyylval->bbidIdent.b = pos;\
-	uniyylval->bbidIdent.e = pos;\
-	uniyylval->bbidIdent.e.coll += strlen(yytext);\
+    uniyylval->bbidIdent.d = &s_yyIdentBuf[s_yyIdentBufi];\
+    s_yyIdentBufi ++; s_yyIdentBufi %= (YYBUFFERED_ID_INDEX);\
+    FILL_idIdent(uniyylval->bbidIdent.d, name, symb, pos, NULL);\
+    yytext = name;\
+    uniyylval->bbidIdent.b = pos;\
+    uniyylval->bbidIdent.e = pos;\
+    uniyylval->bbidIdent.e.coll += strlen(yytext);\
 }
 
 #define SHOW_COMPLETION_WINDOW(ccc) (\

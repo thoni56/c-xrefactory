@@ -1,10 +1,9 @@
-#include "stdinc.h"
-#include "head.h"
+#include "extract.h"
+
 #include "commons.h"
-#include "proto.h"      /*SBD*/
 #include "unigram.h"
 #include "protocol.h"
-//
+
 
 #define EXTRACT_GEN_BUFFER_SIZE 500000
 

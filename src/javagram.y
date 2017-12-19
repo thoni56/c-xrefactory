@@ -36,6 +36,7 @@
 #include "commons.h"
 #include "proto.h"
 #include "protocol.h"
+#include "extract.h"
 
 #include "javagram.x"
 

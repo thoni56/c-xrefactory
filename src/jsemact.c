@@ -4,6 +4,7 @@
 #include "proto.h"      /*SBD*/
 #include "globals.h"
 #include "cct.h"
+#include "extract.h"
 #include "javagram.x"
 #include "unigram.h"
 #include "recyacc.h"

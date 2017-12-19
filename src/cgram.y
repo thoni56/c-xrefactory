@@ -38,6 +38,8 @@
 #include "commons.h"
 #include "caching.h"
 
+#include "extract.h"
+
 #define YYDEBUG 0
 #define yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
