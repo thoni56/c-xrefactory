@@ -2469,24 +2469,6 @@ void javaMapZipDirFile(
 void javaReadClassFile(char *name, S_symbol *cdef, int loadSuper);
 
 /* ***********************************************************************
-** javagram.y
-*/
-int javayyparse();
-void makeJavaCompletions(char *s, int len, S_position *pos);
-
-/* ***********************************************************************
-** cppgram.y
-*/
-int cccyyparse();
-void makeCccCompletions(char *s, int len, S_position *pos);
-
-/* ***********************************************************************
-** yaccgram.y
-*/
-int yaccyyparse();
-void makeYaccCompletions(char *s, int len, S_position *pos);
-
-/* ***********************************************************************
 ** cexp.y
 */
 
