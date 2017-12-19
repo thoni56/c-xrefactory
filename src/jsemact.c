@@ -722,7 +722,6 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
     pushNewInclude(ff, bb, asfname, "\n");
     cfilenum = cFile.lb.cb.fileNumber;
     s_jsl->pass = 1;
-    //&javaslyyparse();
     javayyparse();
     popInclude();      // this will close the file
     DPRINTF3("\n[jsl] CLOSE file %s level %d\n", fname, nestDeep);
@@ -741,7 +740,6 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
     pushNewInclude(ff, bb, asfname, "\n");
     cfilenum = cFile.lb.cb.fileNumber;
     s_jsl->pass = 2;
-    //&javaslyyparse();
     javayyparse();
     popInclude();      // this will close the file
 //&fprintf(dumpOut,"\n[jsl] CLOSE file %s level %d\n", fname, nestDeep);

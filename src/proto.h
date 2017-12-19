@@ -2469,11 +2469,6 @@ void javaMapZipDirFile(
 void javaReadClassFile(char *name, S_symbol *cdef, int loadSuper);
 
 /* ***********************************************************************
-** javaslgram.y
-*/
-int javaslyyparse();
-
-/* ***********************************************************************
 ** javagram.y
 */
 int javayyparse();
