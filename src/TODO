@@ -1,19 +1,23 @@
 There are a *lot* of things to do to make c-xref into modern C.
 
+* Ensure only externally used functions are visible in the modules
+  header file. And that only those are "non-static" in the C file.
+
 * Although generation of typedef's etc. in strTdef et al might be
   questioned we need to handle that for now, but at least let's add
   #ifndef guards so that any file that requires a typedef can include
-  them without need to consider ordering of the include files.
+  them without need to consider the order of the included
+  files. (Until we get into a dependency loop...)
 
 * enumTxt.c is a generated set of strings for the enum values in
-  proto.h, but the extern declarations of them are in strTdef.h. A
-  cleaner way would be to generate them into enumTxt.h (or a better
-  name, such as 'generated_enum_strings.h').
+  proto.h, but the extern declarations of them are in strTdef.g. A
+  cleaner way would be to generate them into an "enumTxt.h" (or a
+  better name, such as 'generated_enum_strings.h').
 
 * Memory allocation is home grown, probably out of necessity. Refactor
-  to a state where it can be replaced by the memory allocation of
-  current run-times. I can't see that even 32-bit memory restrictions
-  (2 GB) should be a problem.
+  to a state where it can be replaced (at least as an experiment) by
+  the memory allocation of current run-times. I can't see that even
+  32-bit memory restrictions (2 GB) should be a problem.
 
 * Naming. Generally it is heavy on short, write-only naming, we should
   move towards full names as much as possible.
@@ -35,6 +39,6 @@ There are a *lot* of things to do to make c-xref into modern C.
 * Unit tests. There are none. Period. We need to get some working as
   quickly as possible. Meanwhile there are some functional level tests
   in ../tests, but as all integrating tests with I/O they are quite
-  slow. (Aand some only work on huge data, because that was the test
+  slow. (And some only work on huge data, because that was the test
   case given for some issues, and I really want to have a test case
   for each issue before fixing it, if possible.)

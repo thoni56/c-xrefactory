@@ -6,7 +6,7 @@
 #ifdef BOOTSTRAP
 #include "strFill.bs"
 #else
-#include "strFill.h"
+#include "strFill.g"
 #endif
 
 #include "listmacr.h"

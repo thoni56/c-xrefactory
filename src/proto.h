@@ -6,7 +6,7 @@
 #ifdef BOOTSTRAP
 #include "strTdef.bs"
 #else
-#include "strTdef.h"
+#include "strTdef.g"
 #endif
 
 #include "head.h"

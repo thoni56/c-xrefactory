@@ -6,7 +6,7 @@
 # c-xref. If they need to be re-generated and c-xref.bs does not exist then
 # c-xref.bs is built from existing sources using Makefile.bs.
 #
-# In particular strFill.h, strTdef.h and enumTxt.c are generated to catch
+# In particular strFill.g, strTdef.g and enumTxt.c are generated to catch
 # what's relevant for this machine. Bootstrap versions of them,
 # strFill.bs, strTdef.bs and enumTxt.bs should be used when
 # bootstraping, so those files should be usable on all platforms.
@@ -78,32 +78,34 @@ c-xref.bs:
 # Once we have bootstrapped a c-xref.bs it can generate definitions
 # which are dependent on compiler builtins or standard headers for
 # the current environment (not actually dependent on c-xref.bs)
+#
+# .g = generated
 
-compiler_defines.h: c-xref.bs
-	echo | gcc -dM -E - > compiler_defines.h
+compiler_defines.g: c-xref.bs
+	echo | gcc -dM -E - > compiler_defines.g
 
-strFill.h: proto.h strTdef.h c-xref.bs
+strFill.g: proto.h strTdef.g compiler_defines.g c-xref.bs
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION proto.h \
 		-str_fill -header -no_stdop \
 		> tmpStrFill.h
-	if [ -e strFill.h ]; then mv -f strFill.h strFill.backup ; fi
-	mv -f tmpStrFill.h strFill.h
+	if [ -e strFill.g ]; then mv -f strFill.g strFill.backup ; fi
+	mv -f tmpStrFill.h strFill.g
 
-strTdef.h: proto.h c-xref.bs
-	echo > strTdef.h
+strTdef.g: proto.h compiler_defines.g c-xref.bs
+	echo > strTdef.g
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION proto.h \
 		-typedefs -enum_name -header -no_stdop \
 		> tmpStrTdef.h
-	if [ -e strTdef.h ]; then mv -f strTdef.h strTdef.backup ; fi
-	mv -f tmpStrTdef.h strTdef.h
+	if [ -e strTdef.g ]; then mv -f strTdef.g strTdef.backup ; fi
+	mv -f tmpStrTdef.h strTdef.g
 
-enumTxt.h: proto.h strFill.h strTdef.h ../doc/_c-xrefrc c-xref.bs
-	echo "#include \"stdinc.h\"" > tmpenumTxt.h
-	echo "#include \"proto.h\"  /*SBD*/" >> tmpenumTxt.h
+enumTxt.g: proto.h strFill.g strTdef.g compiler_defines.g ../doc/_c-xrefrc c-xref.bs
+	echo "#include \"stdinc.h\"" > tmpenumTxt.g
+	echo "#include \"proto.h\"  /*SBD*/" >> tmpenumTxt.g
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION proto.h \
-		-enum_name -body -no_stdop >> tmpenumTxt.h
-	if [ -e enumTxt.h ]; then mv -f enumTxt.h enumTxt.backup ; fi
-	mv -f tmpenumTxt.h enumTxt.h
+		-enum_name -body -no_stdop >> tmpenumTxt.g
+	if [ -e enumTxt.g ]; then mv -f enumTxt.g enumTxt.backup ; fi
+	mv -f tmpenumTxt.g enumTxt.g
 
 c-xref: $(OBJS)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
@@ -115,7 +117,7 @@ clean:;
 	-rm -f $(OBJS) c-xref
 
 cleaner: clean
-	-rm strFill.h strTdef.h enumTxt.h c-xref.bs
+	-rm compiler_defines.g strFill.g strTdef.g enumTxt.g c-xref.bs
 
 #########################################################################
 
@@ -125,6 +127,6 @@ dependencies:;
 #########################################################################
 
 compare:
-	-diff strFill.h strFill.backup
-	-diff strTdef.h strTdef.backup
+	-diff strFill.g strFill.backup
+	-diff strTdef.g strTdef.backup
 	-diff enumTxt.h enumTxt.backup

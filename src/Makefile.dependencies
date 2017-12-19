@@ -1,90 +1,90 @@
-caching.o: caching.c caching.h stdinc.h head.h constants.h strFill.h \
- listmacr.h memmac.h commons.h proto.h strTdef.h lexmac.h hashlist.th \
- hashtab.th protocol.h protocol.tc
-cct.o: cct.c cct.h proto.h stdinc.h strTdef.h head.h constants.h \
- strFill.h listmacr.h memmac.h lexmac.h hashlist.th hashtab.th commons.h
-cexp.o: cexp.c stdinc.h head.h constants.h strFill.h listmacr.h memmac.h \
- proto.h strTdef.h lexmac.h hashlist.th hashtab.th cgram.h cexp.x
-cfread.o: cfread.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h commons.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th \
- lex.h cct.h
-cgram.o: cgram.c cgram.x proto.h stdinc.h strTdef.h head.h constants.h \
- strFill.h listmacr.h memmac.h lexmac.h hashlist.th hashtab.th commons.h \
- caching.h extract.h
-classh.o: classh.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h commons.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th \
+caching.o: caching.c caching.h stdinc.h head.h constants.h strFill.g \
+ listmacr.h memmac.h commons.h proto.h strTdef.g lexmac.h hashlist.th \
+ hashtab.th protocol.h protocol.tc yylex.h
+cct.o: cct.c cct.h proto.h stdinc.h strTdef.g head.h constants.h \
+ strFill.g listmacr.h memmac.h lexmac.h hashlist.th hashtab.th commons.h
+cexp.o: cexp.c cexp.x stdinc.h head.h constants.h strFill.g listmacr.h \
+ memmac.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th yylex.h \
+ cgram.h
+cfread.o: cfread.c stdinc.h head.h constants.h strFill.g listmacr.h \
+ memmac.h commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th \
+ lex.h yylex.h cct.h
+cgram.o: cgram.c cgram.x proto.h stdinc.h strTdef.g head.h constants.h \
+ strFill.g listmacr.h memmac.h lexmac.h hashlist.th hashtab.th yylex.h \
+ commons.h caching.h extract.h
+classh.o: classh.c classh.h proto.h stdinc.h strTdef.g head.h constants.h \
+ strFill.g listmacr.h memmac.h lexmac.h hashlist.th hashtab.th commons.h \
  bitmaps.h protocol.h protocol.tc
-commons.o: commons.c commons.h stdinc.h head.h constants.h strFill.h \
- listmacr.h memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th \
- globals.h protocol.h protocol.tc
-complete.o: complete.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h commons.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th \
+commons.o: commons.c commons.h stdinc.h head.h constants.h strFill.g \
+ listmacr.h memmac.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th \
+ globals.h yylex.h protocol.h protocol.tc
+complete.o: complete.c stdinc.h head.h constants.h strFill.g listmacr.h \
+ memmac.h commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th \
  globals.h unigram.h cgram.h protocol.h protocol.tc
-cxfile.o: cxfile.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h commons.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th \
- lex.h protocol.h protocol.tc
-cxref.o: cxref.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h commons.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th \
- lex.h globals.h caching.h protocol.h protocol.tc hashlist.tc
-editor.o: editor.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h commons.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th \
- globals.h protocol.h protocol.tc hashlist.tc
-enumTxt.o: enumTxt.c enumTxt.h stdinc.h proto.h strTdef.h head.h \
- constants.h strFill.h listmacr.h memmac.h lexmac.h hashlist.th \
- hashtab.th
-extract.o: extract.c extract.h proto.h stdinc.h strTdef.h head.h \
- constants.h strFill.h listmacr.h memmac.h lexmac.h hashlist.th \
+cxfile.o: cxfile.c stdinc.h head.h constants.h strFill.g listmacr.h \
+ memmac.h commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th \
+ lex.h yylex.h protocol.h protocol.tc
+cxref.o: cxref.c stdinc.h head.h constants.h strFill.g listmacr.h \
+ memmac.h commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th \
+ lex.h yylex.h classh.h globals.h caching.h protocol.h protocol.tc \
+ hashlist.tc
+editor.o: editor.c stdinc.h head.h constants.h strFill.g listmacr.h \
+ memmac.h commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th \
+ globals.h yylex.h protocol.h protocol.tc hashlist.tc
+enumTxt.o: enumTxt.c enumTxt.g
+extract.o: extract.c extract.h proto.h stdinc.h strTdef.g head.h \
+ constants.h strFill.g listmacr.h memmac.h lexmac.h hashlist.th \
  hashtab.th commons.h unigram.h cgram.h protocol.h protocol.tc
-generate.o: generate.c generate.h proto.h stdinc.h strTdef.h head.h \
- constants.h strFill.h listmacr.h memmac.h lexmac.h hashlist.th \
+generate.o: generate.c generate.h proto.h stdinc.h strTdef.g head.h \
+ constants.h strFill.g listmacr.h memmac.h lexmac.h hashlist.th \
  hashtab.th commons.h
-globals.o: globals.c globals.h constants.h stdinc.h head.h strFill.h \
- listmacr.h memmac.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th \
+globals.o: globals.c globals.h constants.h stdinc.h head.h strFill.g \
+ listmacr.h memmac.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th \
  unigram.h cgram.h protocol.h protocol.tc
-html.o: html.c stdinc.h head.h constants.h strFill.h listmacr.h memmac.h \
- commons.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th globals.h \
- caching.h protocol.h protocol.tc
-init.o: init.c stdinc.h head.h constants.h strFill.h listmacr.h memmac.h \
- commons.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th unigram.h \
+html.o: html.c stdinc.h head.h constants.h strFill.g listmacr.h memmac.h \
+ commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th classh.h \
+ globals.h caching.h protocol.h protocol.tc yylex.h
+init.o: init.c stdinc.h head.h constants.h strFill.g listmacr.h memmac.h \
+ commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th unigram.h \
  cgram.h protocol.h protocol.tc
-javagram.o: javagram.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h commons.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th \
- protocol.h protocol.tc extract.h javagram.x recyacc.h
-jsemact.o: jsemact.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h commons.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th \
- globals.h cct.h extract.h javagram.x unigram.h cgram.h recyacc.h \
+javagram.o: javagram.c javagram.x proto.h stdinc.h strTdef.g head.h \
+ constants.h strFill.g listmacr.h memmac.h lexmac.h hashlist.th \
+ hashtab.th yylex.h commons.h protocol.h protocol.tc extract.h recyacc.h
+jsemact.o: jsemact.c stdinc.h head.h constants.h strFill.g listmacr.h \
+ memmac.h commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th \
+ globals.h cct.h extract.h yylex.h javagram.x unigram.h cgram.h recyacc.h \
  protocol.h protocol.tc
-jslsemact.o: jslsemact.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h commons.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th \
+jslsemact.o: jslsemact.c stdinc.h head.h constants.h strFill.g listmacr.h \
+ memmac.h commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th \
  unigram.h cgram.h cct.h
-lex.o: lex.c lex.h proto.h stdinc.h strTdef.h head.h constants.h \
- strFill.h listmacr.h memmac.h lexmac.h hashlist.th hashtab.th commons.h \
+lex.o: lex.c lex.h proto.h stdinc.h strTdef.g head.h constants.h \
+ strFill.g listmacr.h memmac.h lexmac.h hashlist.th hashtab.th commons.h \
  unigram.h cgram.h caching.h protocol.h protocol.tc
 log.o: log.c log.h
-main.o: main.c stdinc.h head.h constants.h strFill.h listmacr.h memmac.h \
- commons.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th globals.h \
- generate.h cgram.x yaccgram.x javagram.x unigram.h cgram.h caching.h \
- recyacc.h lex.h log.h protocol.h protocol.tc
-misc.o: misc.c stdinc.h head.h constants.h strFill.h listmacr.h memmac.h \
- commons.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th bitmaps.h \
- caching.h protocol.h protocol.tc hashlist.tc hashtab.tc
-options.o: options.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h commons.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th \
- globals.h protocol.h protocol.tc
+main.o: main.c stdinc.h head.h constants.h strFill.g listmacr.h memmac.h \
+ commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th globals.h \
+ generate.h refactory.h cgram.x yaccgram.x javagram.x unigram.h cgram.h \
+ caching.h recyacc.h yylex.h lex.h log.h protocol.h protocol.tc
+misc.o: misc.c stdinc.h head.h constants.h strFill.g listmacr.h memmac.h \
+ commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th bitmaps.h \
+ caching.h protocol.h protocol.tc yylex.h hashlist.tc hashtab.tc
+options.o: options.c stdinc.h head.h constants.h strFill.g listmacr.h \
+ memmac.h commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th \
+ globals.h yylex.h protocol.h protocol.tc
 protocol.o: protocol.c protocol.h protocol.tc
-refactory.o: refactory.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h commons.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th \
- globals.h protocol.h protocol.tc
-semact.o: semact.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h commons.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th \
- unigram.h cgram.h cct.h
-y.tab.o: y.tab.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h commons.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th \
- protocol.h protocol.tc extract.h javagram.x recyacc.h
-yaccgram.o: yaccgram.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h commons.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th \
- caching.h
-yylex.o: yylex.c stdinc.h head.h constants.h strFill.h listmacr.h \
- memmac.h commons.h proto.h strTdef.h lexmac.h hashlist.th hashtab.th \
+refactory.o: refactory.c refactory.h proto.h stdinc.h strTdef.g head.h \
+ constants.h strFill.g listmacr.h memmac.h lexmac.h hashlist.th \
+ hashtab.th commons.h globals.h yylex.h protocol.h protocol.tc
+semact.o: semact.c stdinc.h head.h constants.h strFill.g listmacr.h \
+ memmac.h commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th \
+ unigram.h cgram.h cct.h yylex.h
+y.tab.o: y.tab.c stdinc.h head.h constants.h strFill.g listmacr.h \
+ memmac.h commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th \
+ caching.h yylex.h
+yaccgram.o: yaccgram.c stdinc.h head.h constants.h strFill.g listmacr.h \
+ memmac.h commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th \
+ caching.h yylex.h
+yylex.o: yylex.c yylex.h proto.h stdinc.h strTdef.g head.h constants.h \
+ strFill.g listmacr.h memmac.h lexmac.h hashlist.th hashtab.th commons.h \
  lex.h globals.h caching.h extract.h cgram.x cexp.x yaccgram.x javagram.x \
  unigram.h cgram.h protocol.h protocol.tc hashtab.tc

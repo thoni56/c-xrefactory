@@ -21,7 +21,7 @@ the repository and then use that to re-generate the definitions and
 rebuild a proper _c-xref_.
 
 Currently that causes some [warning]:s when _c-xref.bs_ generates new
-_strTdef.h_ and _strFill.h_.
+_strTdef.g_ and _strFill.g_.
 
 ## Design ##
 
@@ -76,7 +76,7 @@ stuff.
 
 This is done using options like `-task_regime_generate'
 which prints a lot of data structures on the standard output which is
-then fed into _strFill.h_, _strTdef.h_ and _enumTxt.h_ by the
+then fed into _strFill.g_, _strTdef.g_ and _enumTxt.g_ by the
 Makefile.
 
 #### Compiler defines
@@ -163,12 +163,12 @@ E.g given a structure like
 
     struct myStruct { int a; struct anotherStruct b; }
 
-There will be a typedef generated (in _strTdef.h_):
+There will be a typedef generated (in _strTdef.g_):
 
     typedef struct myStruct S_myStruct;
 
 And there will be two "filler"-function macros defined (in
-_strFill.h_):
+_strFill.g_):
 
     #define FILL_myStruct(XXX, ARG0, ARG1) { .... }
 
