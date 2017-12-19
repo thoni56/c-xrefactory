@@ -37,6 +37,7 @@
 #include "proto.h"
 #include "protocol.h"
 
+#include "javagram.x"
 
 #define YYDEBUG 0
 #define yyerror styyerror

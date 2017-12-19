@@ -38,6 +38,8 @@
 #include "proto.h"
 #include "commons.h"
 
+#include "cgram.x"
+
 #define YYDEBUG 0
 #define yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery

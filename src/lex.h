@@ -1,6 +1,8 @@
 #ifndef LEX_H
 #define LEX_H
 
+#include "proto.h"
+
 extern void charBuffClose(struct charBuf *bb);
 extern int getCharBuf(struct charBuf *bb);
 extern void switchToZippedCharBuff(struct charBuf *bb);

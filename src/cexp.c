@@ -19,6 +19,8 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #include "cgram.h"				/* tokens from grammars */
 #undef  YYSTYPE
 
+#include "cexp.x"
+
 /* redefine object which can clash with cgram.h */
 
 #define yylval cexpyylval
@@ -51,7 +53,7 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #define yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
-#line 55 "y.tab.c"
+#line 57 "y.tab.c"
 #define number 257
 #define DEFINED 258
 #define EQ 259
@@ -338,7 +340,7 @@ YYSTYPE yyvs[YYSTACKSIZE];
 #include "recyacc.h"
 #endif
 #define yystacksize YYSTACKSIZE
-#line 108 "cexp.y"
+#line 110 "cexp.y"
 
 
 int cexpTranslateToken(int tok, int val) {
@@ -363,7 +365,7 @@ int cexpTranslateToken(int tok, int val) {
     return(number);
     return(UNKNOWN);
 }
-#line 367 "y.tab.c"
+#line 369 "y.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -507,120 +509,120 @@ yyreduce:
     switch (yyn)
     {
 case 1:
-#line 67 "cexp.y"
+#line 69 "cexp.y"
 { return(yyvsp[0]); }
 break;
 case 2:
-#line 68 "cexp.y"
+#line 70 "cexp.y"
 { return(0); }
 break;
 case 3:
-#line 71 "cexp.y"
+#line 73 "cexp.y"
 {yyval = yyvsp[-2] * yyvsp[0];}
 break;
 case 4:
-#line 72 "cexp.y"
+#line 74 "cexp.y"
 {
         if (yyvsp[0] == 0) yyval = yyvsp[-2];
         else yyval = yyvsp[-2] / yyvsp[0];
     }
 break;
 case 5:
-#line 76 "cexp.y"
+#line 78 "cexp.y"
 {
         if (yyvsp[0] == 0) yyval = yyvsp[-2];
         else yyval = yyvsp[-2] % yyvsp[0];
     }
 break;
 case 6:
-#line 80 "cexp.y"
+#line 82 "cexp.y"
 {yyval = yyvsp[-2] + yyvsp[0];}
 break;
 case 7:
-#line 81 "cexp.y"
+#line 83 "cexp.y"
 {yyval = yyvsp[-2] - yyvsp[0];}
 break;
 case 8:
-#line 82 "cexp.y"
+#line 84 "cexp.y"
 {yyval = yyvsp[-2] << yyvsp[0];}
 break;
 case 9:
-#line 83 "cexp.y"
+#line 85 "cexp.y"
 {yyval = yyvsp[-2] >> yyvsp[0];}
 break;
 case 10:
-#line 84 "cexp.y"
+#line 86 "cexp.y"
 {yyval = yyvsp[-2] < yyvsp[0];}
 break;
 case 11:
-#line 85 "cexp.y"
+#line 87 "cexp.y"
 {yyval = yyvsp[-2] > yyvsp[0];}
 break;
 case 12:
-#line 86 "cexp.y"
+#line 88 "cexp.y"
 {yyval = yyvsp[-2] <= yyvsp[0];}
 break;
 case 13:
-#line 87 "cexp.y"
+#line 89 "cexp.y"
 {yyval = yyvsp[-2] >= yyvsp[0];}
 break;
 case 14:
-#line 88 "cexp.y"
+#line 90 "cexp.y"
 {yyval = yyvsp[-2] == yyvsp[0];}
 break;
 case 15:
-#line 89 "cexp.y"
+#line 91 "cexp.y"
 {yyval = yyvsp[-2] != yyvsp[0];}
 break;
 case 16:
-#line 90 "cexp.y"
+#line 92 "cexp.y"
 {yyval = yyvsp[-2] & yyvsp[0];}
 break;
 case 17:
-#line 91 "cexp.y"
+#line 93 "cexp.y"
 {yyval = yyvsp[-2] ^ yyvsp[0];}
 break;
 case 18:
-#line 92 "cexp.y"
+#line 94 "cexp.y"
 {yyval = yyvsp[-2] | yyvsp[0];}
 break;
 case 19:
-#line 93 "cexp.y"
+#line 95 "cexp.y"
 {yyval = yyvsp[-2] && yyvsp[0];}
 break;
 case 20:
-#line 94 "cexp.y"
+#line 96 "cexp.y"
 {yyval = yyvsp[-2] || yyvsp[0];}
 break;
 case 21:
-#line 95 "cexp.y"
+#line 97 "cexp.y"
 {yyval = yyvsp[-4] ? yyvsp[-2] : yyvsp[0];}
 break;
 case 22:
-#line 96 "cexp.y"
+#line 98 "cexp.y"
 {yyval = yyvsp[0];}
 break;
 case 23:
-#line 97 "cexp.y"
+#line 99 "cexp.y"
 {yyval = -yyvsp[0];}
 break;
 case 24:
-#line 98 "cexp.y"
+#line 100 "cexp.y"
 {yyval = !yyvsp[0];}
 break;
 case 25:
-#line 99 "cexp.y"
+#line 101 "cexp.y"
 {yyval = ~yyvsp[0];}
 break;
 case 26:
-#line 100 "cexp.y"
+#line 102 "cexp.y"
 {yyval = yyvsp[-1];}
 break;
 case 27:
-#line 105 "cexp.y"
+#line 107 "cexp.y"
 {yyval= yyvsp[0];}
 break;
-#line 624 "y.tab.c"
+#line 626 "y.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

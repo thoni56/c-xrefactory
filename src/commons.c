@@ -1,6 +1,7 @@
+#include "commons.h"
+
 #include "stdinc.h"
 #include "head.h"
-#include "commons.h"
 #include "proto.h"      /*SBD*/
 #include "globals.h"
 

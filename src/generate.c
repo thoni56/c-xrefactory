@@ -1,7 +1,7 @@
-#include "stdinc.h"
-#include "head.h"
+#include "generate.h"
+
 #include "commons.h"
-#include "proto.h"      /*SBD*/
+
 
 static int subToFill(S_symbol *p, int fullFlag) {
     if (p->b.storage == StorageError) return(0);
