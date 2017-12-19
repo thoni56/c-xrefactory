@@ -5,7 +5,10 @@
 #include "globals.h"
 
 #include "cgram.x"
+#include "cexp.x"
+#include "yaccgram.x"
 #include "javagram.x"
+
 #include "unigram.h"
 #include "memmac.h"
 #include "protocol.h"

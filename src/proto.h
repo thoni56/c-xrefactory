@@ -2469,12 +2469,6 @@ void javaMapZipDirFile(
 void javaReadClassFile(char *name, S_symbol *cdef, int loadSuper);
 
 /* ***********************************************************************
-** cexp.y
-*/
-
-int cexpyyparse();
-
-/* ***********************************************************************
 ** lex.c
 */
 void charBuffClose(struct charBuf *bb);
