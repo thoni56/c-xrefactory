@@ -4,10 +4,13 @@
 #include "proto.h"      /*SBD*/
 #include "globals.h"
 #include "generate.h"
+
 #include "cgram.x"
 #include "yaccgram.x"
 #include "javagram.x"
 #include "unigram.h"
+
+#include "caching.h"
 #include "recyacc.h"
 #include "lex.h"
 #include "log.h"

@@ -33,12 +33,10 @@
 #define yygindex cyygindex
 #define yyvsp cyyvsp
 
-#include "stdinc.h"
-#include "head.h"
-#include "proto.h"
-#include "commons.h"
-
 #include "cgram.x"
+
+#include "commons.h"
+#include "caching.h"
 
 #define YYDEBUG 0
 #define yyerror styyerror

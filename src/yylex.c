@@ -4,6 +4,7 @@
 #include "proto.h"      /*SBD*/
 #include "lex.h"
 #include "globals.h"
+#include "caching.h"
 
 #include "cgram.x"
 #include "cexp.x"

@@ -3,9 +3,9 @@
 #include "commons.h"
 #include "proto.h"      /*SBD*/
 #include "bitmaps.h"
-
+#include "caching.h"
 #include "protocol.h"
-//
+
 static int s_ppcIndentOffset = 0;
 
 void ppcGenSynchroRecord() {

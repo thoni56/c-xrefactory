@@ -2492,34 +2492,6 @@ int cexpyylex();
 extern char *yytext;
 
 /* ***********************************************************************
-** cexp.c
-*/
-
-void cccLexBackTrack(int lbi);
-int cccylex();
-int cccGetLexPosition();
-extern int s_cccYylexBufi;
-
-/* ***********************************************************************
-** cexp.c
-*/
-int cexpTranslateToken(int tok, int val);
-
-/* ***********************************************************************
-** caching.c
-*/
-int testFileModifTime(int ii);
-void initCaching();
-void recoverCachePoint(int i, char *readedUntil, int activeCaching);
-void recoverFromCache();
-void cacheInput();
-void cacheInclude(int fileNum);
-void poseCachePoint(int inputCacheFlag);
-void recoverCxMemory(char *cxMemFreeBase);
-void recoverCachePointZero();
-void recoverMemoriesAfterOverflow(char *cxMemFreeBase);
-
-/* ***********************************************************************
 ** options.c
 */
 void addSourcePathesCut();

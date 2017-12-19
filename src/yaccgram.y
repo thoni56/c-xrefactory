@@ -29,6 +29,7 @@
 #include "head.h"
 #include "commons.h"
 #include "proto.h"      /*SBD*/
+#include "caching.h"
 
 #define YYDEBUG 0
 #define yyerror styyerror

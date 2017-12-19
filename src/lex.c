@@ -5,6 +5,7 @@
 #include "commons.h"
 #include "proto.h"      /*SBD*/
 #include "unigram.h"
+#include "caching.h"
 #include "protocol.h"
 
 
