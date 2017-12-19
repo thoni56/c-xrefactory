@@ -2523,12 +2523,6 @@ void htmlAddFunctionSeparatorReference();
 
 
 /* ***********************************************************************
-** emacsex.c
-*/
-
-void genSafetyCheckFailAction();
-
-/* ***********************************************************************
 ** jslsemact.c
 */
 
