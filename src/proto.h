@@ -2198,25 +2198,6 @@ extern S_cxScanFileFunctionLink s_cxSymbolSearchScanFunTab[];
 extern S_cxScanFileFunctionLink s_cxDeadCodeDetectionScanFunTab[];
 
 /* ***********************************************************************
-** classh.c
-*/
-
-void classHierarchyGenInit();
-void setTmpClassBackPointersToMenu(S_olSymbolsMenu *menu);
-int chLineOrderLess(S_olSymbolsMenu *r1, S_olSymbolsMenu *r2);
-void splitMenuPerSymbolsAndMap(
-    S_olSymbolsMenu *rrr,
-    void (*fun)(S_olSymbolsMenu *, void *, void *),
-    void *p1,
-    char *p2
-    );
-void htmlGenGlobRefLists(S_olSymbolsMenu *rrr, FILE *ff, char *fn);
-void genClassHierarchies( FILE *ff, S_olSymbolsMenu *rrr,
-                                        int virtFlag, int pass );
-int classHierarchyClassNameLess(int c1, int c2);
-int classHierarchySupClassNameLess(S_chReference *c1, S_chReference *c2);
-
-/* ***********************************************************************
 ** semact.c
 */
 
