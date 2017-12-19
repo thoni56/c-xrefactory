@@ -2673,16 +2673,6 @@ void editorTest();
 
 
 /* ***********************************************************************
-** refactory.c
-*/
-
-void refactoryAskForReallyContinueConfirmation();
-void refactoryDisplayResolutionDialog(char *message,int messageType, int continuation);
-void editorApplyUndos(S_editorUndo *undos, S_editorUndo *until, S_editorUndo **undoundo, int gen);
-void editorUndoUntil(S_editorUndo *until, S_editorUndo **undoUndo);
-void mainRefactory(int argc, char **argv);
-
-/* ***********************************************************************
 ** globals.c
 */
 
