@@ -6,6 +6,7 @@
 #include "globals.h"
 #include "caching.h"
 #include "protocol.h"
+#include "yylex.h"
 
 
 #define HTML_EMPTY_REF_FILE "/XrefEmptyRefs.html"

@@ -3,6 +3,7 @@
 #include "commons.h"
 #include "proto.h"      /*SBD*/
 #include "lex.h"
+#include "yylex.h"
 #include "classh.h"
 #include "globals.h"
 #include "caching.h"

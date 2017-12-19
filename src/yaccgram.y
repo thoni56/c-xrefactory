@@ -30,6 +30,7 @@
 #include "commons.h"
 #include "proto.h"      /*SBD*/
 #include "caching.h"
+#include "yylex.h"
 
 #define YYDEBUG 0
 #define yyerror styyerror

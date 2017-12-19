@@ -5,6 +5,8 @@
 #include "bitmaps.h"
 #include "caching.h"
 #include "protocol.h"
+#include "yylex.h"
+
 
 static int s_ppcIndentOffset = 0;
 

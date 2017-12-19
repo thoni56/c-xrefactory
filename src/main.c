@@ -12,6 +12,7 @@
 
 #include "caching.h"
 #include "recyacc.h"
+#include "yylex.h"
 #include "lex.h"
 #include "log.h"
 

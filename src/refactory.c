@@ -3,6 +3,7 @@
 #include "commons.h"
 #include "proto.h"      /*SBD*/
 #include "globals.h"
+#include "yylex.h"
 
 #include "protocol.h"
 

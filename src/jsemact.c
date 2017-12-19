@@ -5,9 +5,13 @@
 #include "globals.h"
 #include "cct.h"
 #include "extract.h"
+#include "yylex.h"
+
 #include "javagram.x"
+
 #include "unigram.h"
 #include "recyacc.h"
+
 #include "protocol.h"
 
 #define IsJavaReferenceType(m) (m==TypeStruct || m==TypeArray)

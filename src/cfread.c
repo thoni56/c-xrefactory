@@ -3,9 +3,11 @@
 #include "commons.h"
 #include "proto.h"      /*SBD*/
 #include "lex.h"
+#include "yylex.h"
 #include "cct.h"
 
-/* *********************** read JAVA class file ************************* */
+
+/* *********************** Read JAVA class file ************************* */
 
 struct javaCpClassInfo {
     short unsigned  nameIndex;

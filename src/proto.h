@@ -2450,29 +2450,6 @@ void javaMapZipDirFile(
 void javaReadClassFile(char *name, S_symbol *cdef, int loadSuper);
 
 /* ***********************************************************************
-** yylex.c
-*/
-void ppMemInit();
-void initAllInputs();
-void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name);
-void addIncludeReference(int filenum, S_position *pos);
-void addThisFileDefineIncludeReference(int filenum);
-void pushNewInclude(FILE *f, S_editorBuffer *buff, char *name, char *prepend);
-void popInclude();
-void copyDir(char *dest, char *s, int *i);
-char *normalizeFileName(char *name, char *relativeto);
-int addFileTabItem(char *name, int *fileNumber);
-void getOrCreateFileInfo(char *ss, int *fileNumber, char **fileName);
-void setOpenFileInfo(char *ss);
-void addMacroDefinedByOption(char *opt);
-char *placeIdent();
-int yylex();
-int cachedInputPass(int cpoint, char **cfromto);
-int cexpyylex();
-
-extern char *yytext;
-
-/* ***********************************************************************
 ** options.c
 */
 void addSourcePathesCut();

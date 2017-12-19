@@ -1,15 +1,16 @@
 %{
 
 
+#include "cexp.x"
+
 #include "stdinc.h"
 #include "head.h"
 #include "proto.h"      /*SBD*/
+#include "yylex.h"
 
 #define YYSTYPE MAINYYSTYPE
 #include "cgram.h"				/* tokens from grammars */
 #undef  YYSTYPE
-
-#include "cexp.x"
 
 /* redefine object which can clash with cgram.h */
 

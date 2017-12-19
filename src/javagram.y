@@ -31,6 +31,9 @@
 #define yyvsp javayyvsp
 
 
+#include "javagram.x"
+
+#include "yylex.h"
 #include "stdinc.h"
 #include "head.h"
 #include "commons.h"
@@ -38,7 +41,6 @@
 #include "protocol.h"
 #include "extract.h"
 
-#include "javagram.x"
 
 #define YYDEBUG 0
 #define yyerror styyerror
