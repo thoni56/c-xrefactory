@@ -2469,16 +2469,6 @@ void javaMapZipDirFile(
 void javaReadClassFile(char *name, S_symbol *cdef, int loadSuper);
 
 /* ***********************************************************************
-** lex.c
-*/
-void charBuffClose(struct charBuf *bb);
-int getCharBuf(struct charBuf *bb);
-void switchToZippedCharBuff(struct charBuf *bb);
-int skipNCharsInCharBuf(struct charBuf *bb, unsigned count);
-int getLexBuf(struct lexBuf *lb);
-void gotOnLineCxRefs( S_position *ps );
-
-/* ***********************************************************************
 ** yylex.c
 */
 void ppMemInit();

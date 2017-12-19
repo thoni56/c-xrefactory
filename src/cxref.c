@@ -2,10 +2,11 @@
 #include "head.h"
 #include "commons.h"
 #include "proto.h"      /*SBD*/
+#include "lex.h"
 #include "globals.h"
 
 #include "protocol.h"
-//
+
 
 #define SORTED_LIST_LESS(tmp,key) (POSITION_LESS((tmp)->p, (key).p))
 

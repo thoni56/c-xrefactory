@@ -2,6 +2,7 @@
 #include "head.h"
 #include "commons.h"
 #include "proto.h"      /*SBD*/
+#include "lex.h"
 #include "protocol.h"
 
 

@@ -9,6 +9,7 @@
 #include "javagram.x"
 #include "unigram.h"
 #include "recyacc.h"
+#include "lex.h"
 #include "log.h"
 
 #include "protocol.h"
