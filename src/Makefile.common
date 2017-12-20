@@ -99,9 +99,9 @@ strTdef.g: proto.h compiler_defines.g c-xref.bs
 	if [ -e strTdef.g ]; then mv -f strTdef.g strTdef.backup ; fi
 	mv -f tmpStrTdef.h strTdef.g
 
-enumTxt.g: proto.h strFill.g strTdef.g compiler_defines.g ../doc/_c-xrefrc c-xref.bs
+enumTxt.g: proto.h compiler_defines.g ../doc/_c-xrefrc c-xref.bs
 	echo "#include \"stdinc.h\"" > tmpenumTxt.g
-	echo "#include \"proto.h\"  /*SBD*/" >> tmpenumTxt.g
+	echo "#include \"proto.h\"" >> tmpenumTxt.g
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION proto.h \
 		-enum_name -body -no_stdop >> tmpenumTxt.g
 	if [ -e enumTxt.g ]; then mv -f enumTxt.g enumTxt.backup ; fi

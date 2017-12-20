@@ -31,7 +31,9 @@ cxref.o: cxref.c stdinc.h head.h constants.h strFill.g listmacr.h \
 editor.o: editor.c stdinc.h head.h constants.h strFill.g listmacr.h \
  memmac.h commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th \
  globals.h yylex.h protocol.h protocol.tc hashlist.tc
-enumTxt.o: enumTxt.c enumTxt.g
+enumTxt.o: enumTxt.c enumTxt.g stdinc.h proto.h strTdef.g head.h \
+ constants.h strFill.g listmacr.h memmac.h lexmac.h hashlist.th \
+ hashtab.th
 extract.o: extract.c extract.h proto.h stdinc.h strTdef.g head.h \
  constants.h strFill.g listmacr.h memmac.h lexmac.h hashlist.th \
  hashtab.th commons.h unigram.h cgram.h protocol.h protocol.tc
@@ -65,9 +67,10 @@ main.o: main.c stdinc.h head.h constants.h strFill.g listmacr.h memmac.h \
  commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th globals.h \
  generate.h refactory.h cgram.x yaccgram.x javagram.x unigram.h cgram.h \
  caching.h recyacc.h yylex.h lex.h log.h protocol.h protocol.tc
-misc.o: misc.c stdinc.h head.h constants.h strFill.g listmacr.h memmac.h \
- commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th bitmaps.h \
- caching.h protocol.h protocol.tc yylex.h hashlist.tc hashtab.tc
+misc.o: misc.c misc.h proto.h stdinc.h strTdef.g head.h constants.h \
+ strFill.g listmacr.h memmac.h lexmac.h hashlist.th hashtab.th commons.h \
+ bitmaps.h caching.h protocol.h protocol.tc yylex.h hashlist.tc \
+ hashtab.tc
 options.o: options.c stdinc.h head.h constants.h strFill.g listmacr.h \
  memmac.h commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th \
  globals.h yylex.h protocol.h protocol.tc

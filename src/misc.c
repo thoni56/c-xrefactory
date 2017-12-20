@@ -1,7 +1,8 @@
+#include "misc.h"
+
 #include "stdinc.h"
 #include "head.h"
 #include "commons.h"
-#include "proto.h"      /*SBD*/
 #include "bitmaps.h"
 #include "caching.h"
 #include "protocol.h"
