@@ -1,7 +1,20 @@
 There are a *lot* of things to do to make c-xref into modern C.
 
+Concrete things in progress:
+
+* Move all function prototypes from proto.h to <module>.h
+
+Concrete things todo:
+
 * Ensure only externally used functions are visible in the modules
   header file. And that only those are "non-static" in the C file.
+
+* Ensure each header file is not dependent on the fact that some other
+  header file is included before it. (Could this be done by taking
+  each header file and try to compile it in isolation? It should
+  include whatever other things it needs...)
+
+* Refactor out the hashtables and lists to separate modules.
 
 * Although generation of typedef's etc. in strTdef et al might be
   questioned we need to handle that for now, but at least let's add
@@ -19,6 +32,8 @@ There are a *lot* of things to do to make c-xref into modern C.
   the memory allocation of current run-times. I can't see that even
   32-bit memory restrictions (2 GB) should be a problem.
 
+General improvements:
+
 * Naming. Generally it is heavy on short, write-only naming, we should
   move towards full names as much as possible.
 
@@ -31,7 +46,7 @@ There are a *lot* of things to do to make c-xref into modern C.
   datatypes that need to be in proto.h because of the strFill et. al
   generation.
 
-* Modules. Some things might really belong in separat modules, at
+* Modules. Some things might really belong in separate modules, at
   first glance at least, the hash tables and lists are such
   candidates. If we do that it would be much easier to mock and unit
   test other modules.
