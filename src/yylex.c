@@ -8,6 +8,7 @@
 #include "globals.h"
 #include "caching.h"
 #include "extract.h"
+#include "misc.h"
 
 #include "cgram.x"
 #include "cexp.x"

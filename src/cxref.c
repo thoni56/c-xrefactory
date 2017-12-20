@@ -7,6 +7,8 @@
 #include "classh.h"
 #include "globals.h"
 #include "caching.h"
+#include "misc.h"
+#include "complete.h"
 #include "protocol.h"
 
 
@@ -2533,7 +2535,8 @@ static void olcxMenuToggleSelect() {
         } else {
             linkNamePrettyPrint(ln,ss->s.name,MAX_HTML_REF_LEN,SHORT_NAME);
             cname = javaGetNudePreTypeName_st(getRealFileNameStatic(
-                                                                    s_fileTab.tab[ss->s.vApplClass]->name), s_opt.nestedClassDisplaying);
+                                                                    s_fileTab.tab[ss->s.vApplClass]->name),
+                                              s_opt.nestedClassDisplaying);
             sprintf(tmpBuff, "%s %s refs of \"%s\"",
                     (ss->selected?"inserting":"removing"), cname, ln);
             fprintf(ccOut,"*%s", tmpBuff);

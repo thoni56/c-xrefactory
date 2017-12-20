@@ -3,6 +3,7 @@
 #include "commons.h"
 #include "proto.h"      /*SBD*/
 #include "unigram.h"
+#include "misc.h"
 #include "cct.h"
 #include "yylex.h"
 

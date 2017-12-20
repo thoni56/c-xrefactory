@@ -1,3 +1,11 @@
+/*
+
+  External declarations from cgram-"module".
+
+  Cannot be named 'cgram.h' since yacc creates cgram.[ch] when generating
+
+*/
+
 #ifndef CGRAM_X
 #define CGRAM_X
 

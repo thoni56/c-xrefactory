@@ -4,7 +4,8 @@
 #include "proto.h"      /*SBD*/
 #include "unigram.h"
 #include "protocol.h"
-//
+#include "misc.h"
+
 
 static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {
     char *nn;

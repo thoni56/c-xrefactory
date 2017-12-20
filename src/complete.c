@@ -1,9 +1,8 @@
-#include "stdinc.h"
-#include "head.h"
-#include "commons.h"
-#include "proto.h"
-#include "globals.h"
+#include "complete.h"
 
+#include "commons.h"
+#include "globals.h"
+#include "misc.h"
 #include "unigram.h"
 #include "protocol.h"
 

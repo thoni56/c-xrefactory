@@ -5,6 +5,8 @@
 #include "globals.h"
 #include "generate.h"
 #include "refactory.h"
+#include "misc.h"
+#include "complete.h"
 
 #include "cgram.x"
 #include "yaccgram.x"

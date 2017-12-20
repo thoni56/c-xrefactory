@@ -5,6 +5,7 @@
 #include "lex.h"
 #include "yylex.h"
 #include "cct.h"
+#include "misc.h"
 
 
 /* *********************** Read JAVA class file ************************* */

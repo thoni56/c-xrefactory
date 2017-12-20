@@ -2,6 +2,8 @@
 
 #include "stdinc.h"
 #include "head.h"
+#include "misc.h"
+#include "complete.h"
 #include "commons.h"
 #include "proto.h"      /*SBD*/
 #include "globals.h"

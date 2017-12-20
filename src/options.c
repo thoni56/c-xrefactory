@@ -4,6 +4,7 @@
 #include "proto.h"      /*SBD*/
 #include "globals.h"
 #include "yylex.h"
+#include "misc.h"
 
 #include "protocol.h"
 

@@ -25,10 +25,14 @@
 #define yygindex yaccyygindex
 #define yyvsp yaccyyvsp
 
+#include "yaccgram.x"
+
+#include "misc.h"
 #include "stdinc.h"
 #include "head.h"
 #include "commons.h"
-#include "proto.h"      /*SBD*/
+#include "complete.h"
+#include "proto.h"
 #include "caching.h"
 #include "yylex.h"
 

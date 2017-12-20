@@ -522,11 +522,6 @@
 #define CHAR_ON_MARKER(marker) (*MARKER_TO_POINTER(marker))
 #define CHAR_AFTER_MARKER(marker) (*POINTER_AFTER_MARKER(marker))
 
-/* *********************************************************************** */
-
-#define StackMemPush(x,t) ((t*) stackMemoryPush(x,sizeof(t)))
-#define StackMemAlloc(t) ((t*) stackMemoryAlloc(sizeof(t)))
-
 /* ******************* symbol table hash function unit ****************** */
 
 #if ZERO   // OLD_HASH

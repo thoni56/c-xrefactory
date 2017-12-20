@@ -35,10 +35,11 @@
 
 #include "cgram.x"
 
+#include "misc.h"
 #include "yylex.h"
 #include "commons.h"
 #include "caching.h"
-
+#include "complete.h"
 #include "extract.h"
 
 #define YYDEBUG 0

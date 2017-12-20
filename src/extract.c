@@ -1,5 +1,6 @@
 #include "extract.h"
 
+#include "misc.h"
 #include "commons.h"
 #include "unigram.h"
 #include "protocol.h"
