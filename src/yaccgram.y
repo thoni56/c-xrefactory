@@ -35,6 +35,7 @@
 #include "proto.h"
 #include "caching.h"
 #include "yylex.h"
+#include "semact.h"
 
 #define YYDEBUG 0
 #define yyerror styyerror

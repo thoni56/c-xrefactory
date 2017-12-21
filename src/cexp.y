@@ -5,8 +5,9 @@
 
 #include "stdinc.h"
 #include "head.h"
-#include "proto.h"      /*SBD*/
+#include "proto.h"
 #include "yylex.h"
+#include "semact.h"
 
 #define YYSTYPE MAINYYSTYPE
 #include "cgram.h"				/* tokens from grammars */

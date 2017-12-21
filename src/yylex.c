@@ -9,6 +9,7 @@
 #include "caching.h"
 #include "extract.h"
 #include "misc.h"
+#include "semact.h"
 
 #include "cgram.x"
 #include "cexp.x"

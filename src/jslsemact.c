@@ -5,6 +5,7 @@
 #include "proto.h"
 #include "unigram.h"
 #include "cct.h"
+#include "semact.h"
 
 S_jslStat *s_jsl;
 

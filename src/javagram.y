@@ -42,6 +42,7 @@
 #include "proto.h"
 #include "protocol.h"
 #include "extract.h"
+#include "semact.h"
 
 
 #define YYDEBUG 0

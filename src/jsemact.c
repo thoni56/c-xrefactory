@@ -7,6 +7,7 @@
 #include "misc.h"
 #include "extract.h"
 #include "yylex.h"
+#include "semact.h"
 
 #include "javagram.x"
 

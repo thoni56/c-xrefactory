@@ -6,6 +6,13 @@ Concrete things in progress:
 
 Concrete things todo:
 
+* Make yacc parsing allowed the default. Change Makefile.common so
+  that YACCALLOWED is reversed, i.e. if you *don't* want yacc parsing
+  in the build c-xref set EXCLUDE_YACC_PARSING (or something similar)
+
+* Make Makefile.common look for our patched yacc and if it's not
+  available ignore yacc-rules otherwise always run yacc.
+
 * Ensure only externally used functions are visible in the modules
   header file. And that only those are "non-static" in the C file.
 
@@ -57,3 +64,5 @@ General improvements:
   slow. (And some only work on huge data, because that was the test
   case given for some issues, and I really want to have a test case
   for each issue before fixing it, if possible.)
+
+Done:

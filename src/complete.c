@@ -5,6 +5,7 @@
 #include "misc.h"
 #include "unigram.h"
 #include "protocol.h"
+#include "semact.h"
 
 
 #define FULL_COMPLETION_INDENT_CHARS    2

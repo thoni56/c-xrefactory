@@ -1,7 +1,7 @@
+#include "semact.h"
+
 #include "stdinc.h"
-#include "head.h"
 #include "commons.h"
-#include "proto.h"      /*SBD*/
 #include "unigram.h"
 #include "misc.h"
 #include "cct.h"

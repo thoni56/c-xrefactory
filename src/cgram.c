@@ -43,6 +43,7 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #include "caching.h"
 #include "complete.h"
 #include "extract.h"
+#include "semact.h"
 
 #define YYDEBUG 0
 #define yyerror styyerror
@@ -73,7 +74,7 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 
 #define AddComposedType(ddd, ttt) appendComposedType(&ddd->u.type, ttt)
 
-#line 222 "cgram.y"
+#line 223 "cgram.y"
 typedef union {
     int                                     integer;
     unsigned                                unsign;
@@ -116,7 +117,7 @@ typedef union {
     S_bb_typeModifiersListPositionLstPair   bbtypeModifiersListPositionLstPair;
     S_bb_nestedConstrTokenType              bbnestedConstrTokenType;
 } YYSTYPE;
-#line 120 "cgram.c"
+#line 121 "cgram.c"
 #define TYPE_NAME 257
 #define CLASS_NAME 258
 #define TEMPLATE_NAME 259
@@ -2050,7 +2051,7 @@ YYSTYPE yyvs[YYSTACKSIZE];
 #include "recyacc.h"
 #endif
 #define yystacksize YYSTACKSIZE
-#line 1869 "cgram.y"
+#line 1870 "cgram.y"
 
 
 static S_completionFunTab spCompletionsTab[]  = {
@@ -2121,7 +2122,7 @@ void makeCCompletions(char *s, int len, S_position *pos) {
         }
     }
 }
-#line 2125 "cgram.c"
+#line 2126 "cgram.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -2265,7 +2266,7 @@ yyreduce:
     switch (yyn)
     {
 case 1:
-#line 308 "cgram.y"
+#line 309 "cgram.y"
 {
         S_symbol *p;
         S_symbol *dd;
@@ -2303,27 +2304,27 @@ case 1:
     }
 break;
 case 2:
-#line 343 "cgram.y"
-{ CrTypeModifier(yyval.bbexprType.d.t, TypeInt); yyval.bbexprType.d.r = NULL;}
-break;
-case 3:
 #line 344 "cgram.y"
 { CrTypeModifier(yyval.bbexprType.d.t, TypeInt); yyval.bbexprType.d.r = NULL;}
 break;
-case 4:
+case 3:
 #line 345 "cgram.y"
+{ CrTypeModifier(yyval.bbexprType.d.t, TypeInt); yyval.bbexprType.d.r = NULL;}
+break;
+case 4:
+#line 346 "cgram.y"
 { CrTypeModifier(yyval.bbexprType.d.t, TypeLong); yyval.bbexprType.d.r = NULL;}
 break;
 case 5:
-#line 346 "cgram.y"
+#line 347 "cgram.y"
 { CrTypeModifier(yyval.bbexprType.d.t, TypeFloat); yyval.bbexprType.d.r = NULL;}
 break;
 case 6:
-#line 347 "cgram.y"
+#line 348 "cgram.y"
 { CrTypeModifier(yyval.bbexprType.d.t, TypeDouble); yyval.bbexprType.d.r = NULL;}
 break;
 case 7:
-#line 348 "cgram.y"
+#line 349 "cgram.y"
 {
         S_typeModifiers *p;
         CrTypeModifier(p, TypeChar);
@@ -2333,24 +2334,24 @@ case 7:
     }
 break;
 case 8:
-#line 355 "cgram.y"
+#line 356 "cgram.y"
 {
         yyval.bbexprType.d = yyvsp[-1].bbexprType.d;
     }
 break;
 case 9:
-#line 358 "cgram.y"
+#line 359 "cgram.y"
 {       /* GNU's shit */
         yyval.bbexprType.d.t = &s_errorModifier;
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 10:
-#line 362 "cgram.y"
+#line 363 "cgram.y"
 { assert(0); /* token never used */ }
 break;
 case 14:
-#line 372 "cgram.y"
+#line 373 "cgram.y"
 {
         if (yyvsp[-3].bbexprType.d.t->m==TypePointer || yyvsp[-3].bbexprType.d.t->m==TypeArray) yyval.bbexprType.d.t=yyvsp[-3].bbexprType.d.t->next;
         else if (yyvsp[-1].bbexprType.d.t->m==TypePointer || yyvsp[-1].bbexprType.d.t->m==TypeArray) yyval.bbexprType.d.t=yyvsp[-1].bbexprType.d.t->next;
@@ -2360,14 +2361,14 @@ case 14:
     }
 break;
 case 15:
-#line 392 "cgram.y"
+#line 393 "cgram.y"
 {
                 yyval.typeModif = s_upLevelFunctionCompletionType;
                 s_upLevelFunctionCompletionType = yyvsp[0].bbexprType.d.t;
             }
 break;
 case 16:
-#line 396 "cgram.y"
+#line 397 "cgram.y"
 {
         s_upLevelFunctionCompletionType = yyvsp[-3].typeModif;
         if (yyvsp[-4].bbexprType.d.t->m==TypeFunction) {
@@ -2385,11 +2386,11 @@ case 16:
     }
 break;
 case 17:
-#line 411 "cgram.y"
+#line 412 "cgram.y"
 {SetStrCompl1(yyvsp[0].bbexprType.d.t);}
 break;
 case 18:
-#line 411 "cgram.y"
+#line 412 "cgram.y"
 {
         S_symbol *rec=NULL;
         yyval.bbexprType.d.r = findStrRecordFromType(yyvsp[-3].bbexprType.d.t, yyvsp[0].bbidIdent.d, &rec, CLASS_TO_ANY);
@@ -2399,11 +2400,11 @@ case 18:
     }
 break;
 case 19:
-#line 418 "cgram.y"
+#line 419 "cgram.y"
 {SetStrCompl2(yyvsp[0].bbexprType.d.t);}
 break;
 case 20:
-#line 418 "cgram.y"
+#line 419 "cgram.y"
 {
         S_symbol *rec=NULL;
         yyval.bbexprType.d.r = NULL;
@@ -2416,77 +2417,77 @@ case 20:
     }
 break;
 case 21:
-#line 428 "cgram.y"
+#line 429 "cgram.y"
 {
         yyval.bbexprType.d.t = yyvsp[-1].bbexprType.d.t;
         RESET_REFERENCE_USAGE(yyvsp[-1].bbexprType.d.r, UsageAddrUsed);
     }
 break;
 case 22:
-#line 432 "cgram.y"
+#line 433 "cgram.y"
 {
         yyval.bbexprType.d.t = yyvsp[-1].bbexprType.d.t;
         RESET_REFERENCE_USAGE(yyvsp[-1].bbexprType.d.r, UsageAddrUsed);
     }
 break;
 case 24:
-#line 440 "cgram.y"
+#line 441 "cgram.y"
 { assert(0); /* token never used */ }
 break;
 case 25:
-#line 443 "cgram.y"
+#line 444 "cgram.y"
 {
             yyval.bbpositionLst.d = NULL;
         }
 break;
 case 26:
-#line 446 "cgram.y"
+#line 447 "cgram.y"
 {
             XX_ALLOC(yyval.bbpositionLst.d, S_positionList);
             FILL_positionList(yyval.bbpositionLst.d, s_noPos, yyvsp[0].bbpositionLst.d);
         }
 break;
 case 27:
-#line 453 "cgram.y"
+#line 454 "cgram.y"
 {
         yyval.bbpositionLst.d = NULL;
     }
 break;
 case 28:
-#line 456 "cgram.y"
+#line 457 "cgram.y"
 {
         yyval.bbpositionLst.d = yyvsp[-2].bbpositionLst.d;
         appendPositionToList(&yyval.bbpositionLst.d, &yyvsp[-1].bbposition.d);
     }
 break;
 case 29:
-#line 460 "cgram.y"
-{/* never used */}
-break;
-case 30:
 #line 461 "cgram.y"
 {/* never used */}
 break;
+case 30:
+#line 462 "cgram.y"
+{/* never used */}
+break;
 case 32:
-#line 466 "cgram.y"
+#line 467 "cgram.y"
 {
         yyval.bbexprType.d.t = yyvsp[0].bbexprType.d.t;
         RESET_REFERENCE_USAGE(yyvsp[0].bbexprType.d.r, UsageAddrUsed);
     }
 break;
 case 33:
-#line 470 "cgram.y"
+#line 471 "cgram.y"
 {
         yyval.bbexprType.d.t = yyvsp[0].bbexprType.d.t;
         RESET_REFERENCE_USAGE(yyvsp[0].bbexprType.d.r, UsageAddrUsed);
     }
 break;
 case 34:
-#line 474 "cgram.y"
+#line 475 "cgram.y"
 { yyval.bbexprType.d.t = yyvsp[0].bbexprType.d.t; yyval.bbexprType.d.r = NULL;}
 break;
 case 35:
-#line 475 "cgram.y"
+#line 476 "cgram.y"
 {
         yyval.bbexprType.d.t = StackMemAlloc(S_typeModifiers);
         FILLF_typeModifiers(yyval.bbexprType.d.t, TypePointer,f,( NULL,NULL) ,NULL,yyvsp[0].bbexprType.d.t);
@@ -2495,7 +2496,7 @@ case 35:
     }
 break;
 case 36:
-#line 481 "cgram.y"
+#line 482 "cgram.y"
 {
         if (yyvsp[0].bbexprType.d.t->m==TypePointer || yyvsp[0].bbexprType.d.t->m==TypeArray) yyval.bbexprType.d.t=yyvsp[0].bbexprType.d.t->next;
         else yyval.bbexprType.d.t = &s_errorModifier;
@@ -2504,69 +2505,69 @@ case 36:
     }
 break;
 case 37:
-#line 487 "cgram.y"
+#line 488 "cgram.y"
 {
         CrTypeModifier(yyval.bbexprType.d.t, TypeInt);
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 38:
-#line 491 "cgram.y"
+#line 492 "cgram.y"
 {
         CrTypeModifier(yyval.bbexprType.d.t, TypeInt);
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 39:
-#line 496 "cgram.y"
+#line 497 "cgram.y"
 {
         labelReference(yyvsp[0].bbidIdent.d, UsageLvalUsed);
     }
 break;
 case 45:
-#line 510 "cgram.y"
+#line 511 "cgram.y"
 {
         yyval.bbexprType.d.t = yyvsp[-2].bbtypeModif.d;
         yyval.bbexprType.d.r = yyvsp[0].bbexprType.d.r;
     }
 break;
 case 46:
-#line 514 "cgram.y"
+#line 515 "cgram.y"
 { /* GNU-extension*/
         yyval.bbexprType.d.t = yyvsp[-4].bbtypeModif.d;
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 47:
-#line 518 "cgram.y"
+#line 519 "cgram.y"
 { /* GNU-extension*/
         yyval.bbexprType.d.t = yyvsp[-5].bbtypeModif.d;
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 49:
-#line 526 "cgram.y"
+#line 527 "cgram.y"
 {
         yyval.bbexprType.d.t = &s_defaultIntModifier;
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 50:
-#line 530 "cgram.y"
+#line 531 "cgram.y"
 {
         yyval.bbexprType.d.t = &s_defaultIntModifier;
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 51:
-#line 534 "cgram.y"
+#line 535 "cgram.y"
 {
         yyval.bbexprType.d.t = &s_defaultIntModifier;
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 53:
-#line 542 "cgram.y"
+#line 543 "cgram.y"
 {
         if (yyvsp[0].bbexprType.d.t->m==TypePointer || yyvsp[0].bbexprType.d.t->m==TypeArray) yyval.bbexprType.d.t = yyvsp[0].bbexprType.d.t;
         else yyval.bbexprType.d.t = yyvsp[-2].bbexprType.d.t;
@@ -2574,7 +2575,7 @@ case 53:
     }
 break;
 case 54:
-#line 547 "cgram.y"
+#line 548 "cgram.y"
 {
         if (yyvsp[0].bbexprType.d.t->m==TypePointer || yyvsp[0].bbexprType.d.t->m==TypeArray) yyval.bbexprType.d.t = yyvsp[0].bbexprType.d.t;
         else yyval.bbexprType.d.t = yyvsp[-2].bbexprType.d.t;
@@ -2582,112 +2583,112 @@ case 54:
     }
 break;
 case 56:
-#line 556 "cgram.y"
+#line 557 "cgram.y"
 {
         yyval.bbexprType.d.t = &s_defaultIntModifier;
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 57:
-#line 560 "cgram.y"
+#line 561 "cgram.y"
 {
         yyval.bbexprType.d.t = &s_defaultIntModifier;
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 59:
-#line 568 "cgram.y"
+#line 569 "cgram.y"
 {
         yyval.bbexprType.d.t = &s_defaultIntModifier;
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 60:
-#line 572 "cgram.y"
+#line 573 "cgram.y"
 {
         yyval.bbexprType.d.t = &s_defaultIntModifier;
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 61:
-#line 576 "cgram.y"
+#line 577 "cgram.y"
 {
         yyval.bbexprType.d.t = &s_defaultIntModifier;
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 62:
-#line 580 "cgram.y"
+#line 581 "cgram.y"
 {
         yyval.bbexprType.d.t = &s_defaultIntModifier;
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 64:
-#line 588 "cgram.y"
+#line 589 "cgram.y"
 {
         yyval.bbexprType.d.t = &s_defaultIntModifier;
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 65:
-#line 592 "cgram.y"
+#line 593 "cgram.y"
 {
         yyval.bbexprType.d.t = &s_defaultIntModifier;
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 67:
-#line 600 "cgram.y"
+#line 601 "cgram.y"
 {
         yyval.bbexprType.d.t = &s_defaultIntModifier;
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 69:
-#line 608 "cgram.y"
+#line 609 "cgram.y"
 {
         yyval.bbexprType.d.t = &s_defaultIntModifier;
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 71:
-#line 616 "cgram.y"
+#line 617 "cgram.y"
 {
         yyval.bbexprType.d.t = &s_defaultIntModifier;
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 73:
-#line 624 "cgram.y"
+#line 625 "cgram.y"
 {
         yyval.bbexprType.d.t = &s_defaultIntModifier;
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 75:
-#line 632 "cgram.y"
+#line 633 "cgram.y"
 {
         yyval.bbexprType.d.t = &s_defaultIntModifier;
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 77:
-#line 640 "cgram.y"
+#line 641 "cgram.y"
 {
         yyval.bbexprType.d.t = yyvsp[-2].bbexprType.d.t;
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 78:
-#line 645 "cgram.y"
+#line 646 "cgram.y"
 {
         yyval.bbexprType.d.t = yyvsp[0].bbexprType.d.t;
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 80:
-#line 653 "cgram.y"
+#line 654 "cgram.y"
 {
         if (yyvsp[-2].bbexprType.d.r != NULL && s_opt.cxrefs == OLO_EXTRACT) {
             S_reference *rr;
@@ -2709,72 +2710,72 @@ case 80:
     }
 break;
 case 81:
-#line 675 "cgram.y"
+#line 676 "cgram.y"
 {yyval.bbinteger.d = '=';}
 break;
 case 82:
-#line 676 "cgram.y"
+#line 677 "cgram.y"
 {yyval.bbinteger.d = MUL_ASSIGN;}
 break;
 case 83:
-#line 677 "cgram.y"
+#line 678 "cgram.y"
 {yyval.bbinteger.d = DIV_ASSIGN;}
 break;
 case 84:
-#line 678 "cgram.y"
+#line 679 "cgram.y"
 {yyval.bbinteger.d = MOD_ASSIGN;}
 break;
 case 85:
-#line 679 "cgram.y"
+#line 680 "cgram.y"
 {yyval.bbinteger.d = ADD_ASSIGN;}
 break;
 case 86:
-#line 680 "cgram.y"
+#line 681 "cgram.y"
 {yyval.bbinteger.d = SUB_ASSIGN;}
 break;
 case 87:
-#line 681 "cgram.y"
+#line 682 "cgram.y"
 {yyval.bbinteger.d = LEFT_ASSIGN;}
 break;
 case 88:
-#line 682 "cgram.y"
+#line 683 "cgram.y"
 {yyval.bbinteger.d = RIGHT_ASSIGN;}
 break;
 case 89:
-#line 683 "cgram.y"
+#line 684 "cgram.y"
 {yyval.bbinteger.d = AND_ASSIGN;}
 break;
 case 90:
-#line 684 "cgram.y"
+#line 685 "cgram.y"
 {yyval.bbinteger.d = XOR_ASSIGN;}
 break;
 case 91:
-#line 685 "cgram.y"
+#line 686 "cgram.y"
 {yyval.bbinteger.d = OR_ASSIGN;}
 break;
 case 93:
-#line 690 "cgram.y"
+#line 691 "cgram.y"
 {
         yyval.bbexprType.d.t = yyvsp[0].bbexprType.d.t;
         yyval.bbexprType.d.r = NULL;
     }
 break;
 case 95:
-#line 701 "cgram.y"
+#line 702 "cgram.y"
 {
         yyval.bbunsign.d = tmpWorkMemoryi;
     }
 break;
 case 96:
-#line 707 "cgram.y"
-{ tmpWorkMemoryi = yyvsp[-2].bbunsign.d; }
-break;
-case 97:
 #line 708 "cgram.y"
 { tmpWorkMemoryi = yyvsp[-2].bbunsign.d; }
 break;
+case 97:
+#line 709 "cgram.y"
+{ tmpWorkMemoryi = yyvsp[-2].bbunsign.d; }
+break;
 case 98:
-#line 710 "cgram.y"
+#line 711 "cgram.y"
 {
 #ifdef DEBUGPARSING
             char buffer[100];
@@ -2784,21 +2785,21 @@ case 98:
         }
 break;
 case 99:
-#line 720 "cgram.y"
+#line 721 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
         addNewDeclaration(yyvsp[-2].bbsymbol.d, yyvsp[-1].bbsymbol.d, yyvsp[0].bbidlist.d, StorageAuto, s_symTab);
     }
 break;
 case 100:
-#line 724 "cgram.y"
+#line 725 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-3].bbsymbol.d;
         addNewDeclaration(yyvsp[-3].bbsymbol.d, yyvsp[-1].bbsymbol.d, yyvsp[0].bbidlist.d, StorageAuto, s_symTab);
     }
 break;
 case 101:
-#line 728 "cgram.y"
+#line 729 "cgram.y"
 {
         /* $$.d = &s_errorSymbol; */
         yyval.bbsymbol.d = typeSpecifier2(&s_errorModifier);
@@ -2810,7 +2811,7 @@ case 101:
     }
 break;
 case 104:
-#line 745 "cgram.y"
+#line 746 "cgram.y"
 {
         int usage;
         yyval.bbidIdent.d = yyvsp[0].bbidIdent.d;
@@ -2825,7 +2826,7 @@ case 104:
     }
 break;
 case 105:
-#line 760 "cgram.y"
+#line 761 "cgram.y"
 {
         assert(yyvsp[0].bbidIdent.d);
         assert(yyvsp[0].bbidIdent.d->sd);
@@ -2833,19 +2834,19 @@ case 105:
     }
 break;
 case 106:
-#line 765 "cgram.y"
+#line 766 "cgram.y"
 {
         yyval.bbsymbol.d  = typeSpecifier1(yyvsp[0].bbunsign.d);
     }
 break;
 case 107:
-#line 768 "cgram.y"
+#line 769 "cgram.y"
 {
         yyval.bbsymbol.d  = typeSpecifier2(yyvsp[0].bbtypeModif.d);
     }
 break;
 case 108:
-#line 771 "cgram.y"
+#line 772 "cgram.y"
 {
         assert(yyvsp[0].bbidIdent.d);
         assert(yyvsp[0].bbidIdent.d->sd);
@@ -2854,201 +2855,201 @@ case 108:
     }
 break;
 case 109:
-#line 777 "cgram.y"
+#line 778 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
         declTypeSpecifier1(yyvsp[-1].bbsymbol.d,yyvsp[0].bbunsign.d);
     }
 break;
 case 110:
-#line 781 "cgram.y"
+#line 782 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
         declTypeSpecifier2(yyvsp[-1].bbsymbol.d,yyvsp[0].bbtypeModif.d);
     }
 break;
 case 111:
-#line 785 "cgram.y"
+#line 786 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
         declTypeSpecifier1(yyvsp[-1].bbsymbol.d,yyvsp[0].bbunsign.d);
     }
 break;
 case 112:
-#line 789 "cgram.y"
+#line 790 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
         declTypeSpecifier1(yyvsp[-1].bbsymbol.d,yyvsp[0].bbunsign.d);
     }
 break;
 case 113:
-#line 793 "cgram.y"
+#line 794 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
         declTypeSpecifier2(yyvsp[-1].bbsymbol.d,yyvsp[0].bbtypeModif.d);
     }
 break;
 case 114:
-#line 797 "cgram.y"
+#line 798 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
         yyval.bbsymbol.d->b.storage = yyvsp[0].bbunsign.d;
     }
 break;
 case 115:
-#line 801 "cgram.y"
+#line 802 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
     }
 break;
 case 116:
-#line 804 "cgram.y"
+#line 805 "cgram.y"
 {
         assert(0);
     }
 break;
 case 117:
-#line 807 "cgram.y"
+#line 808 "cgram.y"
 {
         assert(0); /* token never used */
     }
 break;
 case 118:
-#line 813 "cgram.y"
+#line 814 "cgram.y"
 {
         yyval.bbsymbol.d  = typeSpecifier1(TypeDefault);
         yyval.bbsymbol.d->b.storage = yyvsp[0].bbunsign.d;
     }
 break;
 case 119:
-#line 817 "cgram.y"
+#line 818 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
         yyval.bbsymbol.d->b.storage = yyvsp[0].bbunsign.d;
     }
 break;
 case 120:
-#line 821 "cgram.y"
+#line 822 "cgram.y"
 {
         yyval.bbsymbol.d  = typeSpecifier1(yyvsp[0].bbunsign.d);
     }
 break;
 case 121:
-#line 824 "cgram.y"
+#line 825 "cgram.y"
 {
         declTypeSpecifier1(yyvsp[-1].bbsymbol.d, yyvsp[0].bbunsign.d);
     }
 break;
 case 122:
-#line 827 "cgram.y"
+#line 828 "cgram.y"
 {
         yyval.bbsymbol.d = typeSpecifier1(TypeDefault);
     }
 break;
 case 123:
-#line 830 "cgram.y"
+#line 831 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
     }
 break;
 case 126:
-#line 862 "cgram.y"
+#line 863 "cgram.y"
 {
         yyval.bbidlist.d = NULL;
     }
 break;
 case 127:
-#line 865 "cgram.y"
+#line 866 "cgram.y"
 {
         yyval.bbidlist.d = yyvsp[0].bbidlist.d;
     }
 break;
 case 129:
-#line 881 "cgram.y"
+#line 882 "cgram.y"
 { yyval.bbunsign.d = StorageTypedef; }
 break;
 case 130:
-#line 882 "cgram.y"
+#line 883 "cgram.y"
 { yyval.bbunsign.d = StorageExtern; }
 break;
 case 131:
-#line 883 "cgram.y"
+#line 884 "cgram.y"
 { yyval.bbunsign.d = StorageStatic; }
 break;
 case 132:
-#line 884 "cgram.y"
+#line 885 "cgram.y"
 { yyval.bbunsign.d = StorageThreadLocal; }
 break;
 case 133:
-#line 885 "cgram.y"
-{ yyval.bbunsign.d = StorageAuto; }
-break;
-case 134:
 #line 886 "cgram.y"
 { yyval.bbunsign.d = StorageAuto; }
 break;
-case 135:
-#line 890 "cgram.y"
-{ yyval.bbunsign.d = TypeDefault; }
+case 134:
+#line 887 "cgram.y"
+{ yyval.bbunsign.d = StorageAuto; }
 break;
-case 136:
+case 135:
 #line 891 "cgram.y"
 { yyval.bbunsign.d = TypeDefault; }
 break;
-case 137:
+case 136:
 #line 892 "cgram.y"
 { yyval.bbunsign.d = TypeDefault; }
 break;
-case 138:
+case 137:
 #line 893 "cgram.y"
 { yyval.bbunsign.d = TypeDefault; }
 break;
-case 139:
+case 138:
 #line 894 "cgram.y"
 { yyval.bbunsign.d = TypeDefault; }
 break;
+case 139:
+#line 895 "cgram.y"
+{ yyval.bbunsign.d = TypeDefault; }
+break;
 case 142:
-#line 902 "cgram.y"
+#line 903 "cgram.y"
 { yyval.bbunsign.d = TypeChar; }
 break;
 case 143:
-#line 903 "cgram.y"
+#line 904 "cgram.y"
 { yyval.bbunsign.d = TmodShort; }
 break;
 case 144:
-#line 904 "cgram.y"
+#line 905 "cgram.y"
 { yyval.bbunsign.d = TypeInt; }
 break;
 case 145:
-#line 905 "cgram.y"
+#line 906 "cgram.y"
 { yyval.bbunsign.d = TmodLong; }
 break;
 case 146:
-#line 906 "cgram.y"
+#line 907 "cgram.y"
 { yyval.bbunsign.d = TmodSigned; }
 break;
 case 147:
-#line 907 "cgram.y"
+#line 908 "cgram.y"
 { yyval.bbunsign.d = TmodUnsigned; }
 break;
 case 148:
-#line 908 "cgram.y"
+#line 909 "cgram.y"
 { yyval.bbunsign.d = TypeFloat; }
 break;
 case 149:
-#line 909 "cgram.y"
+#line 910 "cgram.y"
 { yyval.bbunsign.d = TypeDouble; }
 break;
 case 150:
-#line 910 "cgram.y"
+#line 911 "cgram.y"
 { yyval.bbunsign.d = TypeVoid; }
 break;
 case 151:
-#line 911 "cgram.y"
+#line 912 "cgram.y"
 { yyval.bbunsign.d = TypeBoolean; }
 break;
 case 156:
-#line 925 "cgram.y"
+#line 926 "cgram.y"
 {
         int usage;
         if (WORK_NEST_LEVEL0()) usage = USAGE_TOP_LEVEL_USED;
@@ -3057,7 +3058,7 @@ case 156:
     }
 break;
 case 157:
-#line 931 "cgram.y"
+#line 932 "cgram.y"
 {
         assert(yyvsp[-3].bbtypeModif.d && yyvsp[-3].bbtypeModif.d->u.t);
         yyval.bbtypeModif.d = yyvsp[-3].bbtypeModif.d;
@@ -3065,37 +3066,37 @@ case 157:
     }
 break;
 case 158:
-#line 936 "cgram.y"
+#line 937 "cgram.y"
 {
         yyval.bbtypeModif.d = yyvsp[-2].bbtypeModif.d;
     }
 break;
 case 159:
-#line 942 "cgram.y"
+#line 943 "cgram.y"
 {
         yyval.bbtypeModif.d = simpleStrUnionSpecifier(yyvsp[-1].bbidIdent.d, yyvsp[0].bbidIdent.d, UsageDefined);
     }
 break;
 case 160:
-#line 945 "cgram.y"
+#line 946 "cgram.y"
 {
         yyval.bbtypeModif.d = crNewAnnonymeStrUnion(yyvsp[0].bbidIdent.d);
     }
 break;
 case 162:
-#line 952 "cgram.y"
+#line 953 "cgram.y"
 { assert(0); /* token never used */ }
 break;
 case 163:
-#line 956 "cgram.y"
-{ yyval.bbidIdent.d = yyvsp[0].bbidIdent.d; }
-break;
-case 164:
 #line 957 "cgram.y"
 { yyval.bbidIdent.d = yyvsp[0].bbidIdent.d; }
 break;
+case 164:
+#line 958 "cgram.y"
+{ yyval.bbidIdent.d = yyvsp[0].bbidIdent.d; }
+break;
 case 166:
-#line 962 "cgram.y"
+#line 963 "cgram.y"
 {
         if (yyvsp[-1].bbsymbol.d == &s_errorSymbol || yyvsp[-1].bbsymbol.d->b.symType==TypeError) {
             yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
@@ -3108,7 +3109,7 @@ case 166:
     }
 break;
 case 167:
-#line 975 "cgram.y"
+#line 976 "cgram.y"
 {
         S_symbol *p;
         assert(yyvsp[-2].bbsymbol.d && yyvsp[-1].bbsymbol.d);
@@ -3120,7 +3121,7 @@ case 167:
     }
 break;
 case 168:
-#line 984 "cgram.y"
+#line 985 "cgram.y"
 {
         /* $$.d = &s_errorSymbol; */
         XX_ALLOC(yyval.bbsymbol.d, S_symbol);
@@ -3133,14 +3134,14 @@ case 168:
     }
 break;
 case 169:
-#line 997 "cgram.y"
+#line 998 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
         assert(yyval.bbsymbol.d->next == NULL);
     }
 break;
 case 170:
-#line 1001 "cgram.y"
+#line 1002 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
         assert(yyvsp[0].bbsymbol.d->next == NULL);
@@ -3148,19 +3149,19 @@ case 170:
     }
 break;
 case 171:
-#line 1008 "cgram.y"
+#line 1009 "cgram.y"
 { /* gcc extension allow empty field */
         yyval.bbsymbol.d = crEmptyField();
     }
 break;
 case 172:
-#line 1011 "cgram.y"
+#line 1012 "cgram.y"
 {
         yyval.bbsymbol.d = crEmptyField();
     }
 break;
 case 175:
-#line 1019 "cgram.y"
+#line 1020 "cgram.y"
 {
         int usage;
         if (WORK_NEST_LEVEL0()) usage = USAGE_TOP_LEVEL_USED;
@@ -3169,7 +3170,7 @@ case 175:
     }
 break;
 case 176:
-#line 1025 "cgram.y"
+#line 1026 "cgram.y"
 {
         assert(yyvsp[-3].bbtypeModif.d && yyvsp[-3].bbtypeModif.d->m == TypeEnum && yyvsp[-3].bbtypeModif.d->u.t);
         yyval.bbtypeModif.d = yyvsp[-3].bbtypeModif.d;
@@ -3180,50 +3181,50 @@ case 176:
     }
 break;
 case 177:
-#line 1033 "cgram.y"
+#line 1034 "cgram.y"
 {
         yyval.bbtypeModif.d = createNewAnonymousEnum(yyvsp[-1].bbsymbolList.d);
     }
 break;
 case 178:
-#line 1039 "cgram.y"
+#line 1040 "cgram.y"
 {
         yyval.bbtypeModif.d = simpleEnumSpecifier(yyvsp[0].bbidIdent.d, UsageDefined);
     }
 break;
 case 180:
-#line 1046 "cgram.y"
+#line 1047 "cgram.y"
 { assert(0); /* token never used */ }
 break;
 case 183:
-#line 1055 "cgram.y"
+#line 1056 "cgram.y"
 {
         yyval.bbsymbolList.d = crDefinitionList(yyvsp[0].bbsymbol.d);
     }
 break;
 case 184:
-#line 1058 "cgram.y"
+#line 1059 "cgram.y"
 {
         yyval.bbsymbolList.d = yyvsp[-2].bbsymbolList.d;
         LIST_APPEND(S_symbolList, yyval.bbsymbolList.d, crDefinitionList(yyvsp[0].bbsymbol.d));
     }
 break;
 case 185:
-#line 1065 "cgram.y"
+#line 1066 "cgram.y"
 {
         yyval.bbsymbol.d = crSimpleDefinition(StorageConstant,TypeInt,yyvsp[0].bbidIdent.d);
         addNewSymbolDef(yyval.bbsymbol.d,StorageConstant, s_symTab, UsageDefined);
     }
 break;
 case 186:
-#line 1069 "cgram.y"
+#line 1070 "cgram.y"
 {
         yyval.bbsymbol.d = crSimpleDefinition(StorageConstant,TypeInt,yyvsp[-2].bbidIdent.d);
         addNewSymbolDef(yyval.bbsymbol.d,StorageConstant, s_symTab, UsageDefined);
     }
 break;
 case 187:
-#line 1073 "cgram.y"
+#line 1074 "cgram.y"
 {
         /* $$.d = &s_errorSymbol; */
         XX_ALLOC(yyval.bbsymbol.d, S_symbol);
@@ -3236,11 +3237,11 @@ case 187:
     }
 break;
 case 188:
-#line 1083 "cgram.y"
+#line 1084 "cgram.y"
 { assert(0); /* token never used */ }
 break;
 case 190:
-#line 1088 "cgram.y"
+#line 1089 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
         assert(yyval.bbsymbol.d->b.npointers == 0);
@@ -3248,7 +3249,7 @@ case 190:
     }
 break;
 case 191:
-#line 1096 "cgram.y"
+#line 1097 "cgram.y"
 {
         yyval.bbsymbol.d = StackMemAlloc(S_symbol);
         FILL_symbolBits(&yyval.bbsymbol.d->b,0,0,0,0,0,TypeDefault,StorageDefault,0);
@@ -3257,14 +3258,14 @@ case 191:
     }
 break;
 case 192:
-#line 1102 "cgram.y"
+#line 1103 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
         unpackPointers(yyval.bbsymbol.d);
     }
 break;
 case 193:
-#line 1106 "cgram.y"
+#line 1107 "cgram.y"
 {
         assert(yyvsp[-2].bbsymbol.d);
         yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
@@ -3272,7 +3273,7 @@ case 193:
     }
 break;
 case 194:
-#line 1111 "cgram.y"
+#line 1112 "cgram.y"
 {
         assert(yyvsp[-3].bbsymbol.d);
         yyval.bbsymbol.d = yyvsp[-3].bbsymbol.d;
@@ -3280,7 +3281,7 @@ case 194:
     }
 break;
 case 195:
-#line 1116 "cgram.y"
+#line 1117 "cgram.y"
 {
         S_typeModifiers *p;
         assert(yyvsp[-2].bbsymbol.d);
@@ -3291,7 +3292,7 @@ case 195:
     }
 break;
 case 196:
-#line 1124 "cgram.y"
+#line 1125 "cgram.y"
 {
         S_typeModifiers *p;
         assert(yyvsp[-3].bbsymbol.d);
@@ -3302,7 +3303,7 @@ case 196:
     }
 break;
 case 197:
-#line 1132 "cgram.y"
+#line 1133 "cgram.y"
 {
         S_typeModifiers *p;
         assert(yyvsp[-3].bbsymbol.d);
@@ -3313,47 +3314,47 @@ case 197:
     }
 break;
 case 198:
-#line 1140 "cgram.y"
+#line 1141 "cgram.y"
 { assert(0); /* token never used */ }
 break;
 case 199:
-#line 1144 "cgram.y"
+#line 1145 "cgram.y"
 {
         yyval.bbinteger.d = 1;
     }
 break;
 case 200:
-#line 1147 "cgram.y"
+#line 1148 "cgram.y"
 {
         yyval.bbinteger.d = 1;
     }
 break;
 case 201:
-#line 1150 "cgram.y"
+#line 1151 "cgram.y"
 {
         yyval.bbinteger.d = yyvsp[0].bbinteger.d+1;
     }
 break;
 case 202:
-#line 1153 "cgram.y"
+#line 1154 "cgram.y"
 {
         yyval.bbinteger.d = yyvsp[0].bbinteger.d+1;
     }
 break;
 case 203:
-#line 1159 "cgram.y"
+#line 1160 "cgram.y"
 {
         yyval.bbsymbol.d  = typeSpecifier1(yyvsp[0].bbunsign.d);
     }
 break;
 case 204:
-#line 1162 "cgram.y"
+#line 1163 "cgram.y"
 {
         declTypeSpecifier1(yyvsp[-1].bbsymbol.d, yyvsp[0].bbunsign.d);
     }
 break;
 case 207:
-#line 1190 "cgram.y"
+#line 1191 "cgram.y"
 {
         assert(yyvsp[0].bbidIdent.d);
         assert(yyvsp[0].bbidIdent.d->sd);
@@ -3362,19 +3363,19 @@ case 207:
     }
 break;
 case 208:
-#line 1196 "cgram.y"
+#line 1197 "cgram.y"
 {
         yyval.bbsymbol.d  = typeSpecifier1(yyvsp[0].bbunsign.d);
     }
 break;
 case 209:
-#line 1199 "cgram.y"
+#line 1200 "cgram.y"
 {
         yyval.bbsymbol.d  = typeSpecifier2(yyvsp[0].bbtypeModif.d);
     }
 break;
 case 210:
-#line 1202 "cgram.y"
+#line 1203 "cgram.y"
 {
         assert(yyvsp[0].bbidIdent.d);
         assert(yyvsp[0].bbidIdent.d->sd);
@@ -3384,54 +3385,54 @@ case 210:
     }
 break;
 case 211:
-#line 1209 "cgram.y"
+#line 1210 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
         declTypeSpecifier1(yyvsp[-1].bbsymbol.d,yyvsp[0].bbunsign.d);
     }
 break;
 case 212:
-#line 1213 "cgram.y"
+#line 1214 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
         declTypeSpecifier2(yyvsp[-1].bbsymbol.d,yyvsp[0].bbtypeModif.d);
     }
 break;
 case 213:
-#line 1217 "cgram.y"
+#line 1218 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
         declTypeSpecifier1(yyvsp[-1].bbsymbol.d,yyvsp[0].bbunsign.d);
     }
 break;
 case 214:
-#line 1221 "cgram.y"
+#line 1222 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
         declTypeSpecifier1(yyvsp[-1].bbsymbol.d,yyvsp[0].bbunsign.d);
     }
 break;
 case 215:
-#line 1225 "cgram.y"
+#line 1226 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
         declTypeSpecifier2(yyvsp[-1].bbsymbol.d,yyvsp[0].bbtypeModif.d);
     }
 break;
 case 216:
-#line 1229 "cgram.y"
+#line 1230 "cgram.y"
 {
         assert(0);
     }
 break;
 case 217:
-#line 1232 "cgram.y"
+#line 1233 "cgram.y"
 {
         assert(0); /* token never used */
     }
 break;
 case 219:
-#line 1239 "cgram.y"
+#line 1240 "cgram.y"
 {
         S_symbol *p;
         S_position pp;
@@ -3445,7 +3446,7 @@ case 219:
     }
 break;
 case 220:
-#line 1253 "cgram.y"
+#line 1254 "cgram.y"
 {
         S_symbol *p;
         p = StackMemAlloc(S_symbol);
@@ -3457,7 +3458,7 @@ case 220:
     }
 break;
 case 221:
-#line 1262 "cgram.y"
+#line 1263 "cgram.y"
 {
         S_symbol        *p;
         p = StackMemAlloc(S_symbol);
@@ -3470,11 +3471,11 @@ case 221:
     }
 break;
 case 222:
-#line 1272 "cgram.y"
+#line 1273 "cgram.y"
 { assert(0); /* token never used */ }
 break;
 case 224:
-#line 1277 "cgram.y"
+#line 1278 "cgram.y"
 {
         S_symbol        *p;
         S_position      pp;
@@ -3488,14 +3489,14 @@ case 224:
     }
 break;
 case 225:
-#line 1291 "cgram.y"
+#line 1292 "cgram.y"
 {
         yyval.bbsymbolPositionLstPair.d.s = yyvsp[0].bbsymbol.d;
         yyval.bbsymbolPositionLstPair.d.p = NULL;
     }
 break;
 case 226:
-#line 1295 "cgram.y"
+#line 1296 "cgram.y"
 {
         yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
         LIST_APPEND(S_symbol, yyvsp[-2].bbsymbolPositionLstPair.d.s, yyvsp[0].bbsymbol.d);
@@ -3503,14 +3504,14 @@ case 226:
     }
 break;
 case 227:
-#line 1304 "cgram.y"
+#line 1305 "cgram.y"
 {
         completeDeclarator(yyvsp[-1].bbsymbol.d, yyvsp[0].bbsymbol.d);
         yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
     }
 break;
 case 228:
-#line 1308 "cgram.y"
+#line 1309 "cgram.y"
 {
         yyval.bbsymbol.d = StackMemAlloc(S_symbol);
         FILL_symbolBits(&yyval.bbsymbol.d->b,0,0,0,0,0,TypeDefault, StorageDefault,0);
@@ -3519,7 +3520,7 @@ case 228:
     }
 break;
 case 229:
-#line 1314 "cgram.y"
+#line 1315 "cgram.y"
 {
         /*
             this was commented out, because of excess of tmpWorkMemory
@@ -3538,20 +3539,20 @@ case 229:
     }
 break;
 case 230:
-#line 1333 "cgram.y"
+#line 1334 "cgram.y"
 {
         yyval.bbtypeModif.d = yyvsp[0].bbsymbol.d->u.type;
     }
 break;
 case 231:
-#line 1336 "cgram.y"
+#line 1337 "cgram.y"
 {
         yyval.bbtypeModif.d = yyvsp[0].bbtypeModif.d;
         LIST_APPEND(S_typeModifiers, yyval.bbtypeModif.d, yyvsp[-1].bbsymbol.d->u.type);
     }
 break;
 case 232:
-#line 1343 "cgram.y"
+#line 1344 "cgram.y"
 {
         int i;
         CrTypeModifier(yyval.bbtypeModif.d,TypePointer);
@@ -3559,13 +3560,13 @@ case 232:
     }
 break;
 case 233:
-#line 1348 "cgram.y"
+#line 1349 "cgram.y"
 {
         yyval.bbtypeModif.d = yyvsp[0].bbtypeModif.d;
     }
 break;
 case 234:
-#line 1351 "cgram.y"
+#line 1352 "cgram.y"
 {
         int i;
         yyval.bbtypeModif.d = yyvsp[0].bbtypeModif.d;
@@ -3573,53 +3574,53 @@ case 234:
     }
 break;
 case 235:
-#line 1359 "cgram.y"
+#line 1360 "cgram.y"
 {
         yyval.bbtypeModif.d = yyvsp[-1].bbtypeModif.d;
     }
 break;
 case 236:
-#line 1362 "cgram.y"
+#line 1363 "cgram.y"
 {
         CrTypeModifier(yyval.bbtypeModif.d,TypeArray);
     }
 break;
 case 237:
-#line 1365 "cgram.y"
+#line 1366 "cgram.y"
 {
         CrTypeModifier(yyval.bbtypeModif.d,TypeArray);
     }
 break;
 case 238:
-#line 1368 "cgram.y"
+#line 1369 "cgram.y"
 {
         yyval.bbtypeModif.d = yyvsp[-2].bbtypeModif.d;
         appendComposedType(&(yyval.bbtypeModif.d), TypeArray);
     }
 break;
 case 239:
-#line 1372 "cgram.y"
+#line 1373 "cgram.y"
 {
         yyval.bbtypeModif.d = yyvsp[-3].bbtypeModif.d;
         appendComposedType(&(yyval.bbtypeModif.d), TypeArray);
     }
 break;
 case 240:
-#line 1376 "cgram.y"
+#line 1377 "cgram.y"
 {
         CrTypeModifier(yyval.bbtypeModif.d,TypeFunction);
         FILL_funTypeModif(&yyval.bbtypeModif.d->u.f , NULL, NULL);
     }
 break;
 case 241:
-#line 1380 "cgram.y"
+#line 1381 "cgram.y"
 {
         CrTypeModifier(yyval.bbtypeModif.d,TypeFunction);
         FILL_funTypeModif(&yyval.bbtypeModif.d->u.f , yyvsp[-1].bbsymbolPositionLstPair.d.s, NULL);
     }
 break;
 case 242:
-#line 1384 "cgram.y"
+#line 1385 "cgram.y"
 {
         S_typeModifiers *p;
         yyval.bbtypeModif.d = yyvsp[-2].bbtypeModif.d;
@@ -3628,7 +3629,7 @@ case 242:
     }
 break;
 case 243:
-#line 1390 "cgram.y"
+#line 1391 "cgram.y"
 {
         S_typeModifiers *p;
         yyval.bbtypeModif.d = yyvsp[-3].bbtypeModif.d;
@@ -3640,25 +3641,25 @@ case 243:
     }
 break;
 case 244:
-#line 1402 "cgram.y"
+#line 1403 "cgram.y"
 {
         yyval.bbidlist.d = NULL;
     }
 break;
 case 245:
-#line 1406 "cgram.y"
+#line 1407 "cgram.y"
 {
         yyval.bbidlist.d = yyvsp[-1].bbidlist.d;
     }
 break;
 case 246:
-#line 1409 "cgram.y"
+#line 1410 "cgram.y"
 {
         yyval.bbidlist.d = yyvsp[-2].bbidlist.d;
     }
 break;
 case 247:
-#line 1412 "cgram.y"
+#line 1413 "cgram.y"
 {
         yyval.bbidlist.d = NULL;
 #ifdef DEBUGPARSING
@@ -3669,213 +3670,213 @@ case 247:
     }
 break;
 case 248:
-#line 1423 "cgram.y"
+#line 1424 "cgram.y"
 {
         yyval.bbidlist.d = yyvsp[-3].bbidlist.d;
         tmpWorkMemoryi = yyvsp[-4].bbunsign.d;
     }
 break;
 case 249:
-#line 1427 "cgram.y"
+#line 1428 "cgram.y"
 {
         LIST_APPEND(S_idIdentList, yyvsp[-6].bbidlist.d, yyvsp[-3].bbidlist.d);
         tmpWorkMemoryi = yyvsp[-4].bbunsign.d;
     }
 break;
 case 250:
-#line 1433 "cgram.y"
+#line 1434 "cgram.y"
 {
         yyval.bbidlist.d = NULL;
     }
 break;
 case 251:
-#line 1436 "cgram.y"
+#line 1437 "cgram.y"
 {
         yyval.bbidlist.d = StackMemAlloc(S_idIdentList);
         FILL_idIdentList(yyval.bbidlist.d, *yyvsp[-1].bbidIdent.d, yyvsp[-1].bbidIdent.d->name, TypeDefault, NULL);
     }
 break;
 case 252:
-#line 1443 "cgram.y"
+#line 1444 "cgram.y"
 {
         yyval.bbidIdent.d = yyvsp[0].bbidIdent.d;
     }
 break;
 case 253:
-#line 1446 "cgram.y"
+#line 1447 "cgram.y"
 {
         LIST_APPEND(S_idIdent, yyvsp[-1].bbidIdent.d, yyvsp[0].bbidIdent.d);
     }
 break;
 case 254:
-#line 1452 "cgram.y"
+#line 1453 "cgram.y"
 {
         yyval.bbidIdent.d = StackMemAlloc(S_idIdent);
         FILL_idIdent(yyval.bbidIdent.d, "", NULL, s_noPos, NULL);
     }
 break;
 case 255:
-#line 1456 "cgram.y"
+#line 1457 "cgram.y"
 {
         yyval.bbidIdent.d = StackMemAlloc(S_idIdent);
         *(yyval.bbidIdent.d) = *(yyvsp[0].bbidIdent.d);
     }
 break;
 case 256:
-#line 1463 "cgram.y"
+#line 1464 "cgram.y"
 {
         tmpWorkMemoryi = yyvsp[-1].bbunsign.d;
     }
 break;
 case 257:
-#line 1466 "cgram.y"
+#line 1467 "cgram.y"
 {
         tmpWorkMemoryi = yyvsp[-1].bbunsign.d;
     }
 break;
 case 258:
-#line 1469 "cgram.y"
+#line 1470 "cgram.y"
 {
         tmpWorkMemoryi = yyvsp[-1].bbunsign.d;
     }
 break;
 case 259:
-#line 1472 "cgram.y"
+#line 1473 "cgram.y"
 {
         tmpWorkMemoryi = yyvsp[-1].bbunsign.d;
     }
 break;
 case 260:
-#line 1475 "cgram.y"
+#line 1476 "cgram.y"
 {
         tmpWorkMemoryi = yyvsp[-1].bbunsign.d;
     }
 break;
 case 261:
-#line 1478 "cgram.y"
+#line 1479 "cgram.y"
 {
         tmpWorkMemoryi = yyvsp[-1].bbunsign.d;
     }
 break;
 case 262:
-#line 1481 "cgram.y"
+#line 1482 "cgram.y"
 {
         tmpWorkMemoryi = yyvsp[-1].bbunsign.d;
     }
 break;
 case 263:
-#line 1484 "cgram.y"
+#line 1485 "cgram.y"
 {
         tmpWorkMemoryi = yyvsp[-1].bbunsign.d;
     }
 break;
 case 265:
-#line 1491 "cgram.y"
+#line 1492 "cgram.y"
 {
             GenSwitchCaseFork(0);
     }
 break;
 case 266:
-#line 1494 "cgram.y"
+#line 1495 "cgram.y"
 {
             GenSwitchCaseFork(0);
     }
 break;
 case 267:
-#line 1497 "cgram.y"
+#line 1498 "cgram.y"
 {
             GenSwitchCaseFork(0);
     }
 break;
 case 269:
-#line 1507 "cgram.y"
+#line 1508 "cgram.y"
 {
         labelReference(yyvsp[0].bbidIdent.d,UsageDefined);
     }
 break;
 case 270:
-#line 1510 "cgram.y"
+#line 1511 "cgram.y"
 { assert(0); /* token never used */ }
 break;
 case 271:
-#line 1514 "cgram.y"
+#line 1515 "cgram.y"
 {
         labelReference(yyvsp[0].bbidIdent.d,UsageUsed);
     }
 break;
 case 272:
-#line 1517 "cgram.y"
+#line 1518 "cgram.y"
 { assert(0); /* token never used */ }
 break;
 case 277:
-#line 1534 "cgram.y"
+#line 1535 "cgram.y"
 {
         labelReference(yyvsp[0].bbidIdent.d,UsageDeclared);
     }
 break;
 case 278:
-#line 1537 "cgram.y"
+#line 1538 "cgram.y"
 {
         labelReference(yyvsp[0].bbidIdent.d,UsageDeclared);
     }
 break;
 case 283:
-#line 1562 "cgram.y"
+#line 1563 "cgram.y"
 { yyval.bbexprType.d.t = NULL; yyval.bbexprType.d.r = NULL; }
 break;
 case 284:
-#line 1563 "cgram.y"
+#line 1564 "cgram.y"
 { yyval.bbexprType.d = yyvsp[0].bbexprType.d; }
 break;
 case 286:
-#line 1571 "cgram.y"
+#line 1572 "cgram.y"
 {EXTRACT_COUNTER_SEMACT(yyval.bbinteger.d);}
 break;
 case 287:
-#line 1574 "cgram.y"
+#line 1575 "cgram.y"
 {EXTRACT_LABEL_SEMACT(yyval.bbinteger.d);}
 break;
 case 288:
-#line 1577 "cgram.y"
+#line 1578 "cgram.y"
 {EXTRACT_GOTO_SEMACT(yyval.bbinteger.d);}
 break;
 case 289:
-#line 1580 "cgram.y"
+#line 1581 "cgram.y"
 {EXTRACT_FORK_SEMACT(yyval.bbinteger.d);}
 break;
 case 290:
-#line 1584 "cgram.y"
+#line 1585 "cgram.y"
 {
         GenInternalLabelReference(yyvsp[-1].bbinteger.d, UsageDefined);
     }
 break;
 case 291:
-#line 1587 "cgram.y"
+#line 1588 "cgram.y"
 {
         GenInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
     }
 break;
 case 292:
-#line 1589 "cgram.y"
+#line 1590 "cgram.y"
 {
         GenInternalLabelReference(yyvsp[-2].bbinteger.d, UsageDefined);
     }
 break;
 case 293:
-#line 1592 "cgram.y"
+#line 1593 "cgram.y"
 {/*6*/
         AddContinueBreakLabelSymbol(1000*yyvsp[0].bbinteger.d, SWITCH_LABEL_NAME, yyval.symbol);
     }
 break;
 case 294:
-#line 1594 "cgram.y"
+#line 1595 "cgram.y"
 {/*7*/
         AddContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME, yyval.symbol);
         GenInternalLabelReference(yyvsp[-1].bbinteger.d, UsageFork);
     }
 break;
 case 295:
-#line 1597 "cgram.y"
+#line 1598 "cgram.y"
 {
         GenSwitchCaseFork(1);
         ExtrDeleteContBreakSym(yyvsp[-1].symbol);
@@ -3884,23 +3885,23 @@ case 295:
     }
 break;
 case 296:
-#line 1606 "cgram.y"
+#line 1607 "cgram.y"
 {s_forCompletionType=yyvsp[0].bbexprType.d;}
 break;
 case 297:
-#line 1611 "cgram.y"
+#line 1612 "cgram.y"
 {/*7*/
         AddContinueBreakLabelSymbol(yyvsp[-4].bbinteger.d, CONTINUE_LABEL_NAME, yyval.symbol);
     }
 break;
 case 298:
-#line 1613 "cgram.y"
+#line 1614 "cgram.y"
 {/*8*/
         AddContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME, yyval.symbol);
     }
 break;
 case 299:
-#line 1615 "cgram.y"
+#line 1616 "cgram.y"
 {
         ExtrDeleteContBreakSym(yyvsp[-1].symbol);
         ExtrDeleteContBreakSym(yyvsp[-2].symbol);
@@ -3909,19 +3910,19 @@ case 299:
     }
 break;
 case 300:
-#line 1622 "cgram.y"
+#line 1623 "cgram.y"
 { /*5*/
         AddContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, CONTINUE_LABEL_NAME, yyval.symbol);
     }
 break;
 case 301:
-#line 1624 "cgram.y"
+#line 1625 "cgram.y"
 {/*6*/
         AddContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME, yyval.symbol);
     }
 break;
 case 302:
-#line 1626 "cgram.y"
+#line 1627 "cgram.y"
 {
         ExtrDeleteContBreakSym(yyvsp[-2].symbol);
         ExtrDeleteContBreakSym(yyvsp[-3].symbol);
@@ -3929,14 +3930,14 @@ case 302:
     }
 break;
 case 303:
-#line 1630 "cgram.y"
+#line 1631 "cgram.y"
 {
         GenInternalLabelReference(yyvsp[-11].bbinteger.d, UsageFork);
         GenInternalLabelReference(yyvsp[-9].bbinteger.d, UsageDefined);
     }
 break;
 case 304:
-#line 1638 "cgram.y"
+#line 1639 "cgram.y"
 {
         /*13*/
         GenInternalLabelReference(yyvsp[-7].bbinteger.d, UsageUsed);
@@ -3945,13 +3946,13 @@ case 304:
         }
 break;
 case 305:
-#line 1644 "cgram.y"
+#line 1645 "cgram.y"
 {/*14*/
         AddContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME, yyval.symbol);
         }
 break;
 case 306:
-#line 1648 "cgram.y"
+#line 1649 "cgram.y"
 {
         ExtrDeleteContBreakSym(yyvsp[-1].symbol);
         ExtrDeleteContBreakSym(yyvsp[-2].symbol);
@@ -3960,37 +3961,37 @@ case 306:
         }
 break;
 case 310:
-#line 1660 "cgram.y"
+#line 1661 "cgram.y"
 {
         GenContBreakReference(CONTINUE_LABEL_NAME);
     }
 break;
 case 311:
-#line 1663 "cgram.y"
+#line 1664 "cgram.y"
 {
         GenContBreakReference(BREAK_LABEL_NAME);
     }
 break;
 case 312:
-#line 1666 "cgram.y"
+#line 1667 "cgram.y"
 {
         GenInternalLabelReference(-1, UsageUsed);
     }
 break;
 case 313:
-#line 1669 "cgram.y"
+#line 1670 "cgram.y"
 {
         GenInternalLabelReference(-1, UsageUsed);
     }
 break;
 case 314:
-#line 1674 "cgram.y"
+#line 1675 "cgram.y"
 {
         actionsBeforeAfterExternalDefinition();
     }
 break;
 case 330:
-#line 1716 "cgram.y"
+#line 1717 "cgram.y"
 {
         if (inStacki == 0) {
             poseCachePoint(1);
@@ -3998,7 +3999,7 @@ case 330:
     }
 break;
 case 331:
-#line 1721 "cgram.y"
+#line 1722 "cgram.y"
 {
         if (inStacki == 0) {
             poseCachePoint(1);
@@ -4006,19 +4007,19 @@ case 331:
     }
 break;
 case 333:
-#line 1730 "cgram.y"
+#line 1731 "cgram.y"
 {
         tmpWorkMemoryi = yyvsp[-2].bbunsign.d;
     }
 break;
 case 334:
-#line 1733 "cgram.y"
+#line 1734 "cgram.y"
 {
         tmpWorkMemoryi = yyvsp[-2].bbunsign.d;
     }
 break;
 case 335:
-#line 1736 "cgram.y"
+#line 1737 "cgram.y"
 {
         S_symbol *p;
         int i;
@@ -4043,7 +4044,7 @@ case 335:
     }
 break;
 case 336:
-#line 1757 "cgram.y"
+#line 1758 "cgram.y"
 {
         stackMemoryBlockFree();
         s_cp.function = NULL;
@@ -4053,71 +4054,71 @@ case 336:
     }
 break;
 case 337:
-#line 1764 "cgram.y"
+#line 1765 "cgram.y"
 {
         tmpWorkMemoryi = yyvsp[-3].bbunsign.d;
     }
 break;
 case 338:
-#line 1767 "cgram.y"
+#line 1768 "cgram.y"
 {
         tmpWorkMemoryi = yyvsp[-5].bbunsign.d;
     }
 break;
 case 339:
-#line 1770 "cgram.y"
+#line 1771 "cgram.y"
 {
         tmpWorkMemoryi = yyvsp[-5].bbunsign.d;
     }
 break;
 case 340:
-#line 1773 "cgram.y"
+#line 1774 "cgram.y"
 {
         tmpWorkMemoryi = yyvsp[-2].bbunsign.d;
     }
 break;
 case 341:
-#line 1776 "cgram.y"
+#line 1777 "cgram.y"
 {
         tmpWorkMemoryi = yyvsp[-1].bbunsign.d;
     }
 break;
 case 342:
-#line 1779 "cgram.y"
+#line 1780 "cgram.y"
 {  /* empty external definition */
         tmpWorkMemoryi = yyvsp[-1].bbunsign.d;
     }
 break;
 case 343:
-#line 1785 "cgram.y"
+#line 1786 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
         addNewDeclaration(yyvsp[-2].bbsymbol.d, yyvsp[-1].bbsymbol.d, yyvsp[0].bbidlist.d, StorageExtern,s_symTab);
     }
 break;
 case 344:
-#line 1789 "cgram.y"
+#line 1790 "cgram.y"
 {
         yyval.bbsymbol.d = & s_defaultIntDefinition;
         addNewDeclaration(yyval.bbsymbol.d, yyvsp[-1].bbsymbol.d, yyvsp[0].bbidlist.d, StorageExtern,s_symTab);
     }
 break;
 case 345:
-#line 1793 "cgram.y"
+#line 1794 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-3].bbsymbol.d;
         addNewDeclaration(yyvsp[-3].bbsymbol.d, yyvsp[-1].bbsymbol.d, yyvsp[0].bbidlist.d, StorageExtern,s_symTab);
     }
 break;
 case 346:
-#line 1797 "cgram.y"
+#line 1798 "cgram.y"
 {
         /* $$.d = &s_errorSymbol; */
         yyval.bbsymbol.d = typeSpecifier2(&s_errorModifier);
     }
 break;
 case 348:
-#line 1805 "cgram.y"
+#line 1806 "cgram.y"
 {
         int r;
         assert(yyvsp[-1].bbsymbol.d->u.type && yyvsp[-1].bbsymbol.d->u.type->m == TypeFunction);
@@ -4127,13 +4128,13 @@ case 348:
     }
 break;
 case 349:
-#line 1815 "cgram.y"
+#line 1816 "cgram.y"
 {
         yyval.bbsymbol.d = NULL;
     }
 break;
 case 350:
-#line 1818 "cgram.y"
+#line 1819 "cgram.y"
 {
         S_symbol *p;
         assert(yyvsp[-2].bbsymbol.d && yyvsp[-1].bbsymbol.d);
@@ -4144,26 +4145,26 @@ case 350:
     }
 break;
 case 351:
-#line 1829 "cgram.y"
+#line 1830 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
     }
 break;
 case 352:
-#line 1832 "cgram.y"
+#line 1833 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-3].bbsymbol.d;
         LIST_APPEND(S_symbol, yyval.bbsymbol.d, yyvsp[-1].bbsymbol.d);
     }
 break;
 case 353:
-#line 1836 "cgram.y"
+#line 1837 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
     }
 break;
 case 354:
-#line 1842 "cgram.y"
+#line 1843 "cgram.y"
 {
         completeDeclarator(&s_defaultIntDefinition, yyvsp[0].bbsymbol.d);
         assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->u.type);
@@ -4172,7 +4173,7 @@ case 354:
     }
 break;
 case 355:
-#line 1848 "cgram.y"
+#line 1849 "cgram.y"
 {
         completeDeclarator(yyvsp[-1].bbsymbol.d, yyvsp[0].bbsymbol.d);
         assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->u.type);
@@ -4181,14 +4182,14 @@ case 355:
     }
 break;
 case 356:
-#line 1857 "cgram.y"
+#line 1858 "cgram.y"
 { stackMemoryBlockStart(); }
 break;
 case 357:
-#line 1860 "cgram.y"
+#line 1861 "cgram.y"
 { stackMemoryBlockFree(); }
 break;
-#line 4192 "cgram.c"
+#line 4193 "cgram.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

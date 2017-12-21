@@ -41,6 +41,7 @@
 #include "caching.h"
 #include "complete.h"
 #include "extract.h"
+#include "semact.h"
 
 #define YYDEBUG 0
 #define yyerror styyerror
