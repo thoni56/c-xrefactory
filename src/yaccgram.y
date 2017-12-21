@@ -36,6 +36,7 @@
 #include "caching.h"
 #include "yylex.h"
 #include "semact.h"
+#include "cxref.h"
 
 #define YYDEBUG 0
 #define yyerror styyerror

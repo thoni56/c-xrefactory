@@ -1,7 +1,6 @@
-#include "stdinc.h"
-#include "head.h"
+#include "cxref.h"
+
 #include "commons.h"
-#include "proto.h"      /*SBD*/
 #include "lex.h"
 #include "yylex.h"
 #include "classh.h"
@@ -10,19 +9,15 @@
 #include "misc.h"
 #include "complete.h"
 #include "protocol.h"
+#include "cxfile.h"
+#include "refactory.h"
 
 
 #define SORTED_LIST_LESS(tmp,key) (POSITION_LESS((tmp)->p, (key).p))
 
-#if 0    // this would not work because lvalue usage is overwritten over usage
-#define SORTED_LIST_NEQ(tmp,key) (                                      \
-                                  POSITION_NEQ((tmp)->p, (key).p) || (tmp)->usage!=(key).usage \
-                                  )
-#else
 #define SORTED_LIST_NEQ(tmp,key) (                                  \
                                   POSITION_NEQ((tmp)->p, (key).p)   \
                                   )
-#endif
 
 #define POSITION_MINUS(res,p1,p2) {                                     \
         FILL_position(&(res), (p1).file-(p2).file, (p1).line-(p2).line, (p1).coll-(p2).coll); \

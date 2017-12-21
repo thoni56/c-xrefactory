@@ -6,6 +6,8 @@
 #include "unigram.h"
 #include "protocol.h"
 #include "semact.h"
+#include "cxref.h"
+#include "cxfile.h"
 
 
 #define FULL_COMPLETION_INDENT_CHARS    2

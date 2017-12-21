@@ -1,3 +1,5 @@
+#include "cxfile.h"
+
 #include "stdinc.h"
 #include "head.h"
 #include "commons.h"
@@ -5,6 +7,7 @@
 #include "lex.h"
 #include "misc.h"
 #include "yylex.h"
+#include "cxref.h"
 #include "protocol.h"
 
 
@@ -101,7 +104,6 @@ static S_charBuf cxfBuf;
 static unsigned s_decodeFilesNum[MAX_FILES];
 
 static char tmpFileName[MAX_FILE_NAME_SIZE];
-
 
 
 /* *********************** INPUT/OUTPUT ************************** */
@@ -1578,7 +1580,6 @@ void readOneAppropReferenceFile(char *symbolName,
         if (tmp == 0) return;
     }
 }
-
 
 /* ************************************************************ */
 

@@ -8,6 +8,8 @@
 #include "proto.h"      /*SBD*/
 #include "globals.h"
 #include "yylex.h"
+#include "cxref.h"
+#include "cxfile.h"
 
 #include "protocol.h"
 

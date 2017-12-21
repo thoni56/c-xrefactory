@@ -8,6 +8,8 @@
 #include "caching.h"
 #include "protocol.h"
 #include "yylex.h"
+#include "cxref.h"
+#include "cxfile.h"
 
 
 #define HTML_EMPTY_REF_FILE "/XrefEmptyRefs.html"

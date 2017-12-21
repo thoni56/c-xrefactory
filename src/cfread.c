@@ -6,7 +6,8 @@
 #include "yylex.h"
 #include "cct.h"
 #include "misc.h"
-
+#include "cxref.h"
+#include "cxfile.h"
 
 /* *********************** Read JAVA class file ************************* */
 

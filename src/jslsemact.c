@@ -6,6 +6,7 @@
 #include "unigram.h"
 #include "cct.h"
 #include "semact.h"
+#include "cxref.h"
 
 S_jslStat *s_jsl;
 

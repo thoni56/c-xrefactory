@@ -7,6 +7,7 @@
 #include "unigram.h"
 #include "caching.h"
 #include "protocol.h"
+#include "cxref.h"
 
 
 /* ***************************************************************** */

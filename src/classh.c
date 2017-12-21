@@ -6,6 +6,7 @@
 #include "commons.h"
 #include "proto.h"      /*SBD*/
 #include "bitmaps.h"
+#include "cxref.h"
 
 #include "protocol.h"
 

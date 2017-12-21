@@ -5,6 +5,7 @@
 #include "globals.h"
 #include "yylex.h"
 #include "misc.h"
+#include "cxref.h"
 
 #include "protocol.h"
 

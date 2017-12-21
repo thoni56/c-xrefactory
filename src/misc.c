@@ -7,6 +7,8 @@
 #include "caching.h"
 #include "protocol.h"
 #include "yylex.h"
+#include "cxfile.h"
+#include "cxref.h"
 
 
 static int s_ppcIndentOffset = 0;

@@ -8,6 +8,7 @@
 #include "extract.h"
 #include "yylex.h"
 #include "semact.h"
+#include "cxref.h"
 
 #include "javagram.x"
 

@@ -5,6 +5,7 @@
 #include "unigram.h"
 #include "protocol.h"
 #include "semact.h"
+#include "cxref.h"
 
 
 #define EXTRACT_GEN_BUFFER_SIZE 500000

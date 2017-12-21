@@ -33,6 +33,7 @@
 
 #include "javagram.x"
 
+#include "cxref.h"
 #include "yylex.h"
 #include "stdinc.h"
 #include "head.h"

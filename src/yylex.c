@@ -10,6 +10,8 @@
 #include "extract.h"
 #include "misc.h"
 #include "semact.h"
+#include "cxref.h"
+#include "cxfile.h"
 
 #include "cgram.x"
 #include "cexp.x"

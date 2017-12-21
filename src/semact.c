@@ -6,6 +6,7 @@
 #include "misc.h"
 #include "cct.h"
 #include "yylex.h"
+#include "cxref.h"
 
 
 int displayingErrorMessages() {

@@ -13,6 +13,8 @@
 #include "javagram.x"
 #include "unigram.h"
 
+#include "cxref.h"
+#include "cxfile.h"
 #include "caching.h"
 #include "recyacc.h"
 #include "yylex.h"
