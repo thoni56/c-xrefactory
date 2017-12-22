@@ -1,5 +1,5 @@
-#include "stdinc.h"
-#include "head.h"
+#include "cfread.h"
+
 #include "commons.h"
 #include "proto.h"      /*SBD*/
 #include "lex.h"
@@ -8,6 +8,8 @@
 #include "misc.h"
 #include "cxref.h"
 #include "cxfile.h"
+#include "jsemact.h"
+
 
 /* *********************** Read JAVA class file ************************* */
 

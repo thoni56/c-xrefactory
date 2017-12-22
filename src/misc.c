@@ -1,7 +1,6 @@
 #include "misc.h"
 
-#include "stdinc.h"
-#include "head.h"
+#include "jsemact.h"
 #include "commons.h"
 #include "bitmaps.h"
 #include "caching.h"

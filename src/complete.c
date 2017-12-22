@@ -7,6 +7,7 @@
 #include "unigram.h"
 #include "protocol.h"
 #include "semact.h"
+#include "jsemact.h"
 #include "cxref.h"
 #include "cxfile.h"
 #include "cfread.h"

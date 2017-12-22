@@ -8,6 +8,7 @@
 #include "semact.h"
 #include "cxref.h"
 #include "cfread.h"
+#include "jsemact.h"
 
 
 S_jslStat *s_jsl;

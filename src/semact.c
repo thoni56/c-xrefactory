@@ -1,12 +1,12 @@
 #include "semact.h"
 
-#include "stdinc.h"
 #include "commons.h"
 #include "unigram.h"
 #include "misc.h"
 #include "cct.h"
 #include "yylex.h"
 #include "cxref.h"
+#include "jsemact.h"
 
 
 int displayingErrorMessages() {

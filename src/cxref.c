@@ -13,6 +13,7 @@
 #include "cxfile.h"
 #include "refactory.h"
 #include "options.h"
+#include "jsemact.h"
 
 
 #define SORTED_LIST_LESS(tmp,key) (POSITION_LESS((tmp)->p, (key).p))

@@ -1,7 +1,6 @@
-#include "stdinc.h"
-#include "head.h"
+#include "jsemact.h"
+
 #include "commons.h"
-#include "proto.h"      /*SBD*/
 #include "globals.h"
 #include "cct.h"
 #include "misc.h"

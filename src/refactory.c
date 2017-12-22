@@ -8,6 +8,7 @@
 #include "yylex.h"
 #include "cxref.h"
 #include "cxfile.h"
+#include "jsemact.h"
 
 #include "protocol.h"
 
