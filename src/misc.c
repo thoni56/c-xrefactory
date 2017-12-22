@@ -9,6 +9,7 @@
 #include "yylex.h"
 #include "cxfile.h"
 #include "cxref.h"
+#include "cfread.h"
 
 
 static int s_ppcIndentOffset = 0;

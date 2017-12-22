@@ -21,7 +21,7 @@ commons.o: commons.c commons.h stdinc.h head.h constants.h strFill.g \
 complete.o: complete.c complete.h proto.h stdinc.h strTdef.g head.h \
  constants.h strFill.g listmacr.h memmac.h lexmac.h hashlist.th \
  hashtab.th commons.h globals.h misc.h html.h unigram.h cgram.h \
- protocol.h protocol.tc semact.h cxref.h cxfile.h
+ protocol.h protocol.tc semact.h cxref.h cxfile.h cfread.h
 cxfile.o: cxfile.c cxfile.h proto.h stdinc.h strTdef.g head.h constants.h \
  strFill.g listmacr.h memmac.h lexmac.h hashlist.th hashtab.th commons.h \
  lex.h misc.h yylex.h cxref.h html.h protocol.h protocol.tc
@@ -58,11 +58,11 @@ javagram.o: javagram.c javagram.x proto.h stdinc.h strTdef.g head.h \
  protocol.tc extract.h semact.h recyacc.h
 jsemact.o: jsemact.c stdinc.h head.h constants.h strFill.g listmacr.h \
  memmac.h commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th \
- globals.h cct.h misc.h extract.h yylex.h semact.h cxref.h html.h \
- javagram.x unigram.h cgram.h recyacc.h protocol.h protocol.tc
+ globals.h cct.h misc.h extract.h yylex.h semact.h cxref.h cfread.h \
+ html.h javagram.x unigram.h cgram.h recyacc.h protocol.h protocol.tc
 jslsemact.o: jslsemact.c stdinc.h head.h constants.h strFill.g listmacr.h \
  memmac.h misc.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th \
- commons.h unigram.h cgram.h cct.h semact.h cxref.h
+ commons.h unigram.h cgram.h cct.h semact.h cxref.h cfread.h
 lex.o: lex.c lex.h proto.h stdinc.h strTdef.g head.h constants.h \
  strFill.g listmacr.h memmac.h lexmac.h hashlist.th hashtab.th commons.h \
  unigram.h cgram.h caching.h protocol.h protocol.tc cxref.h
@@ -75,7 +75,7 @@ main.o: main.c stdinc.h head.h constants.h strFill.g listmacr.h memmac.h \
 misc.o: misc.c misc.h proto.h stdinc.h strTdef.g head.h constants.h \
  strFill.g listmacr.h memmac.h lexmac.h hashlist.th hashtab.th commons.h \
  bitmaps.h caching.h protocol.h protocol.tc yylex.h cxfile.h cxref.h \
- hashlist.tc hashtab.tc
+ cfread.h hashlist.tc hashtab.tc
 options.o: options.c stdinc.h head.h constants.h strFill.g listmacr.h \
  memmac.h commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th \
  globals.h yylex.h misc.h cxref.h html.h protocol.h protocol.tc
@@ -87,10 +87,9 @@ refactory.o: refactory.c refactory.h proto.h stdinc.h strTdef.g head.h \
 semact.o: semact.c semact.h proto.h stdinc.h strTdef.g head.h constants.h \
  strFill.g listmacr.h memmac.h lexmac.h hashlist.th hashtab.th commons.h \
  unigram.h cgram.h misc.h cct.h yylex.h cxref.h
-y.tab.o: y.tab.c javagram.x proto.h stdinc.h strTdef.g head.h constants.h \
- strFill.g listmacr.h memmac.h lexmac.h hashlist.th hashtab.th cxref.h \
- yylex.h misc.h commons.h html.h complete.h protocol.h protocol.tc \
- extract.h semact.h recyacc.h
+y.tab.o: y.tab.c yaccgram.x proto.h stdinc.h strTdef.g head.h constants.h \
+ strFill.g listmacr.h memmac.h lexmac.h hashlist.th hashtab.th misc.h \
+ commons.h complete.h caching.h yylex.h semact.h cxref.h
 yaccgram.o: yaccgram.c yaccgram.x proto.h stdinc.h strTdef.g head.h \
  constants.h strFill.g listmacr.h memmac.h lexmac.h hashlist.th \
  hashtab.th misc.h commons.h complete.h caching.h yylex.h semact.h \

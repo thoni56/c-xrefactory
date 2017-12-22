@@ -9,6 +9,7 @@
 #include "yylex.h"
 #include "semact.h"
 #include "cxref.h"
+#include "cfread.h"
 #include "html.h"
 
 #include "javagram.x"

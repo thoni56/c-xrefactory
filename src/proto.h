@@ -1993,32 +1993,6 @@ void javaSetClassSourceInformation(char *package, S_idIdent *cl);
 void javaCheckIfPackageDirectoryIsInClassOrSourcePath(char *dir);
 
 /* ***********************************************************************
-** cfread.c
-*/
-
-void javaHumanizeLinkName( char *inn, char *outn, int size);
-S_symbol *cfAddCastsToModule(S_symbol *memb, S_symbol *sup);
-void addSuperClassOrInterface( S_symbol *memb, S_symbol *supp, int origin );
-int javaCreateClassFileItem( S_symbol *memb);
-void addSuperClassOrInterfaceByName(S_symbol *memb, char *super, int origin, int loadSuper);
-void fsRecMapOnFiles(S_zipArchiveDir *dir, char *zip, char *path, void (*fun)(char *zip, char *file, void *arg), void *arg);
-int fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset,
-                        int addFlag, S_zipArchiveDir **place);
-int zipIndexArchive(char *name);
-int zipFindFile(char *name, char **resName, S_zipFileTabItem *zipfile);
-void javaMapZipDirFile(
-        S_zipFileTabItem *zipfile,
-        char *packfile,
-        S_completions *a1,
-        void *a2,
-        int *a3,
-        void (*fun)(MAP_FUN_PROFILE),
-        char *classPath,
-        char *dirname
-    );
-void javaReadClassFile(char *name, S_symbol *cdef, int loadSuper);
-
-/* ***********************************************************************
 ** options.c
 */
 void addSourcePathesCut();

@@ -9,6 +9,7 @@
 #include "semact.h"
 #include "cxref.h"
 #include "cxfile.h"
+#include "cfread.h"
 
 
 #define FULL_COMPLETION_INDENT_CHARS    2

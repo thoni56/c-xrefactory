@@ -7,8 +7,10 @@
 #include "misc.h"
 #include "cxref.h"
 #include "html.h"
+#include "cfread.h"
 
 #include "protocol.h"
+
 
 /* memory where on-line given options are stored */
 #define SIZE_optMemory SIZE_opiMemory
