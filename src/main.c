@@ -8,6 +8,7 @@
 #include "misc.h"
 #include "complete.h"
 #include "html.h"
+#include "options.h"
 
 #include "cgram.x"
 #include "yaccgram.x"

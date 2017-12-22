@@ -1993,26 +1993,6 @@ void javaSetClassSourceInformation(char *package, S_idIdent *cl);
 void javaCheckIfPackageDirectoryIsInClassOrSourcePath(char *dir);
 
 /* ***********************************************************************
-** options.c
-*/
-void addSourcePathesCut();
-void getXrefrcFileName( char *ttt );
-int processInteractiveFlagOption(char **argv, int i);
-char *getJavaHome();
-char *getJdkClassPathFastly();
-void getJavaClassAndSourcePath();
-int packageOnCommandLine(char *fn);
-void getStandardOptions(int *nargc, char ***nargv);
-char *expandSpecialFilePredefinedVariables_st(char *tt);
-int readOptionFromFile(FILE *ff, int *nargc, char ***nargv,
-                        int memFl, char *sectionFile, char *project, char *resSection);
-void readOptionFile(char *name, int *nargc, char ***nargv,char *sectionFile, char *project);
-void readOptionPipe(char *command, int *nargc, char ***nargv,char *sectionFile);
-void javaSetSourcePath(int defaultCpAllowed);
-void getOptionsFromMessage(char *qnxMsgBuff, int *nargc, char ***nargv);
-int changeRefNumOption(int newRefNum);
-
-/* ***********************************************************************
 ** init.c
 */
 

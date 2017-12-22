@@ -12,6 +12,7 @@
 #include "protocol.h"
 #include "cxfile.h"
 #include "refactory.h"
+#include "options.h"
 
 
 #define SORTED_LIST_LESS(tmp,key) (POSITION_LESS((tmp)->p, (key).p))

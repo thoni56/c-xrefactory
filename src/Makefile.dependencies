@@ -24,11 +24,11 @@ complete.o: complete.c complete.h proto.h stdinc.h strTdef.g head.h \
  protocol.h protocol.tc semact.h cxref.h cxfile.h cfread.h
 cxfile.o: cxfile.c cxfile.h proto.h stdinc.h strTdef.g head.h constants.h \
  strFill.g listmacr.h memmac.h lexmac.h hashlist.th hashtab.th commons.h \
- lex.h misc.h yylex.h cxref.h html.h protocol.h protocol.tc
+ lex.h misc.h yylex.h cxref.h html.h protocol.h protocol.tc options.h
 cxref.o: cxref.c cxref.h proto.h stdinc.h strTdef.g head.h constants.h \
  strFill.g listmacr.h memmac.h lexmac.h hashlist.th hashtab.th commons.h \
  lex.h yylex.h classh.h globals.h caching.h html.h misc.h complete.h \
- protocol.h protocol.tc cxfile.h refactory.h hashlist.tc
+ protocol.h protocol.tc cxfile.h refactory.h options.h hashlist.tc
 editor.o: editor.c stdinc.h head.h constants.h strFill.g listmacr.h \
  memmac.h commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th \
  globals.h yylex.h misc.h cxref.h protocol.h protocol.tc hashlist.tc
@@ -69,16 +69,16 @@ lex.o: lex.c lex.h proto.h stdinc.h strTdef.g head.h constants.h \
 log.o: log.c log.h
 main.o: main.c stdinc.h head.h constants.h strFill.g listmacr.h memmac.h \
  commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th globals.h \
- generate.h refactory.h misc.h complete.h html.h cgram.x yaccgram.x \
- javagram.x unigram.h cgram.h cxref.h cxfile.h caching.h recyacc.h \
- yylex.h lex.h log.h protocol.h protocol.tc
+ generate.h refactory.h misc.h complete.h html.h options.h cgram.x \
+ yaccgram.x javagram.x unigram.h cgram.h cxref.h cxfile.h caching.h \
+ recyacc.h yylex.h lex.h log.h protocol.h protocol.tc
 misc.o: misc.c misc.h proto.h stdinc.h strTdef.g head.h constants.h \
  strFill.g listmacr.h memmac.h lexmac.h hashlist.th hashtab.th commons.h \
  bitmaps.h caching.h protocol.h protocol.tc yylex.h cxfile.h cxref.h \
  cfread.h hashlist.tc hashtab.tc
 options.o: options.c stdinc.h head.h constants.h strFill.g listmacr.h \
  memmac.h commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th \
- globals.h yylex.h misc.h cxref.h html.h protocol.h protocol.tc
+ globals.h yylex.h misc.h cxref.h html.h cfread.h protocol.h protocol.tc
 protocol.o: protocol.c protocol.h protocol.tc
 refactory.o: refactory.c refactory.h proto.h stdinc.h strTdef.g head.h \
  constants.h strFill.g listmacr.h memmac.h lexmac.h hashlist.th \

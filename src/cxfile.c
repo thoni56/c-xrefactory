@@ -10,6 +10,7 @@
 #include "cxref.h"
 #include "html.h"
 #include "protocol.h"
+#include "options.h"
 
 
 
