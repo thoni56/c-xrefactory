@@ -49,9 +49,9 @@ html.o: html.c html.h proto.h stdinc.h strTdef.g head.h constants.h \
  strFill.g listmacr.h memmac.h lexmac.h hashlist.th hashtab.th commons.h \
  classh.h misc.h globals.h caching.h protocol.h protocol.tc yylex.h \
  cxref.h cxfile.h
-init.o: init.c stdinc.h head.h constants.h strFill.g listmacr.h memmac.h \
- commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th unigram.h \
- cgram.h protocol.h protocol.tc misc.h
+init.o: init.c init.h stdinc.h head.h constants.h strFill.g listmacr.h \
+ memmac.h commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th \
+ unigram.h cgram.h protocol.h protocol.tc misc.h
 javagram.o: javagram.c javagram.x proto.h stdinc.h strTdef.g head.h \
  constants.h strFill.g listmacr.h memmac.h lexmac.h hashlist.th \
  hashtab.th cxref.h yylex.h misc.h commons.h html.h complete.h protocol.h \
@@ -69,7 +69,7 @@ lex.o: lex.c lex.h proto.h stdinc.h strTdef.g head.h constants.h \
 log.o: log.c log.h
 main.o: main.c stdinc.h head.h constants.h strFill.g listmacr.h memmac.h \
  commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th globals.h \
- generate.h refactory.h misc.h complete.h html.h options.h cgram.x \
+ generate.h refactory.h misc.h complete.h html.h options.h init.h cgram.x \
  yaccgram.x javagram.x unigram.h cgram.h cxref.h cxfile.h caching.h \
  recyacc.h yylex.h lex.h log.h protocol.h protocol.tc
 misc.o: misc.c misc.h proto.h stdinc.h strTdef.g head.h constants.h \

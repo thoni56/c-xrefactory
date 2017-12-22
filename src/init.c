@@ -1,3 +1,5 @@
+#include "init.h"
+
 #include "stdinc.h"
 #include "head.h"
 #include "commons.h"

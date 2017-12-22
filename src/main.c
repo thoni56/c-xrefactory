@@ -9,6 +9,7 @@
 #include "complete.h"
 #include "html.h"
 #include "options.h"
+#include "init.h"
 
 #include "cgram.x"
 #include "yaccgram.x"

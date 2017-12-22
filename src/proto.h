@@ -1993,21 +1993,6 @@ void javaSetClassSourceInformation(char *package, S_idIdent *cl);
 void javaCheckIfPackageDirectoryIsInClassOrSourcePath(char *dir);
 
 /* ***********************************************************************
-** init.c
-*/
-
-void initCwd();
-void reInitCwd(char *dffname, char *dffsect);
-void initTokenNameTab();
-void initJavaTypePCTIConvertIniTab();
-void initTypeCharCodeTab();
-void initArchaicTypes();
-void initPreCreatedTypes();
-void initTypeModifiersTabs();
-void initExtractStoragesNameTab();
-void initTypesNamesTab();
-
-/* ***********************************************************************
 ** jslsemact.c
 */
 
