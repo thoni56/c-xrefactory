@@ -6,6 +6,7 @@
 #include "yylex.h"
 #include "misc.h"
 #include "cxref.h"
+#include "html.h"
 
 #include "protocol.h"
 

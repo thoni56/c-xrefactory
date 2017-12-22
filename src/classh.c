@@ -1,10 +1,8 @@
 #include "classh.h"
 
-#include "stdinc.h"
-#include "head.h"
 #include "misc.h"
 #include "commons.h"
-#include "proto.h"      /*SBD*/
+#include "html.h"
 #include "bitmaps.h"
 #include "cxref.h"
 

@@ -7,6 +7,7 @@
 #include "refactory.h"
 #include "misc.h"
 #include "complete.h"
+#include "html.h"
 
 #include "cgram.x"
 #include "yaccgram.x"

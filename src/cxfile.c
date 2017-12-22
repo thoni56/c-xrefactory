@@ -8,6 +8,7 @@
 #include "misc.h"
 #include "yylex.h"
 #include "cxref.h"
+#include "html.h"
 #include "protocol.h"
 
 

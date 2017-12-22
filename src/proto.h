@@ -2054,38 +2054,6 @@ void initExtractStoragesNameTab();
 void initTypesNamesTab();
 
 /* ***********************************************************************
-** html.c
-*/
-
-void genClassHierarchyItemLinks(FILE *ff, S_olSymbolsMenu *itt,
-                                        int virtFlag);
-void htmlGenNonVirtualGlobSymList(FILE *ff, char *fn, S_symbolRefItem *p );
-void htmlGenGlobRefsForVirtMethod(FILE *ff, char *fn,
-                                                 S_olSymbolsMenu *rrr);
-int htmlRefItemsOrderLess(S_olSymbolsMenu *ss1, S_olSymbolsMenu *ss2);
-int isThereSomethingPrintable(S_olSymbolsMenu *itt);
-void htmlGenEmptyRefsFile();
-void javaGetClassNameFromFileNum(int nn, char *tmpOut, int dotify);
-void javaSlashifyDotName(char *ss);
-void javaDotifyClassName(char *ss);
-void javaDotifyFileName( char *ss);
-int isAbsolutePath(char *p);
-char *htmlNormalizedPath(char *p);
-char *htmlGetLinkFileNameStatic(char *link, char *file);
-void recursivelyCreateFileDirIfNotExists(char *fpath);
-void concatPathes(char *res, int rsize, char *p1, char *p2, char *p3);
-void htmlPutChar(FILE *ff, int c);
-void htmlPrint(FILE *ff, char *ss);
-void htmlGenGlobalReferenceLists(char *cxMemFreeBase);
-void htmlAddJavaDocReference(S_symbol  *p, S_position  *pos,
-                             int  vFunClass, int  vApplClass);
-void generateHtml();
-int addHtmlCutPath(char *ss );
-void htmlGetDefinitionReferences();
-void htmlAddFunctionSeparatorReference();
-
-
-/* ***********************************************************************
 ** jslsemact.c
 */
 

@@ -3,6 +3,7 @@
 #include "commons.h"
 #include "globals.h"
 #include "misc.h"
+#include "html.h"
 #include "unigram.h"
 #include "protocol.h"
 #include "semact.h"

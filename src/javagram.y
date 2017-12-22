@@ -39,6 +39,7 @@
 #include "head.h"
 #include "misc.h"
 #include "commons.h"
+#include "html.h"
 #include "complete.h"
 #include "proto.h"
 #include "protocol.h"

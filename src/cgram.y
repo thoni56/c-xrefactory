@@ -36,6 +36,7 @@
 #include "cgram.x"
 
 #include "misc.h"
+#include "html.h"
 #include "yylex.h"
 #include "commons.h"
 #include "caching.h"

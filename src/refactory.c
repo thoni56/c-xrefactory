@@ -1,11 +1,9 @@
 #include "refactory.h"
 
-#include "stdinc.h"
-#include "head.h"
+#include "html.h"
 #include "misc.h"
 #include "complete.h"
 #include "commons.h"
-#include "proto.h"      /*SBD*/
 #include "globals.h"
 #include "yylex.h"
 #include "cxref.h"

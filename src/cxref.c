@@ -6,6 +6,7 @@
 #include "classh.h"
 #include "globals.h"
 #include "caching.h"
+#include "html.h"
 #include "misc.h"
 #include "complete.h"
 #include "protocol.h"
