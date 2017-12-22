@@ -3,7 +3,6 @@ CC= gcc
 COMCFLAGS= $(INCLUDES) -DDEBUG $(ZLIB_OPT) \
 			-DPRESERVE_C_ARGS -DGNULINUXDEFS
 CFLAGS= -c -O $(COMCFLAGS) -Wno-long-double
-EDGCFLAGS= -O -Wno-long-double
 LDFLAGS=
 BIN=$(HOME)/bin
 LEX=flex

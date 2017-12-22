@@ -8,7 +8,6 @@ CFLAGS= -c -O $(COMCFLAGS) \
 				-Wimplicit -Wreturn-type -Wuninitialized \
 				-Wparentheses
 #               -Wall
-EDGCFLAGS= -O
 LDFLAGS= -O
 #LDFLAGS= -g -Xlinker -Map -Xlinker map.txt
 BIN=$(HOME)/bin
