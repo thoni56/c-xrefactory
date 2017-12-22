@@ -357,11 +357,9 @@ static void testCxrefCompletionId(int *llex, char *idd, S_position *pos) {
             if (s_language == LAN_JAVA) {
                 makeJavaCompletions(idd, strlen(idd), pos);
             }
-#			ifdef YACC_ALLOWED
             else if (s_language == LAN_YACC) {
                 makeYaccCompletions(idd, strlen(idd), pos);
             }
-#			endif
 #			ifdef CCC_ALLOWED
             else if (s_language == LAN_CCC) {
                 makeCccCompletions(idd, strlen(idd), pos);

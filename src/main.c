@@ -228,9 +228,7 @@ void dirInputFile(MAP_FUN_PROFILE) {
 #ifdef CCC_ALLOWED
                 &&  (! fileNameHasOneOfSuffixes(fname, s_opt.cppFilesSuffixes))
 #endif
-#ifdef YACC_ALLOWED
                 &&  fnCmp(suff,".y")!=0
-#endif
                 ) {
             return;
         }
@@ -2009,13 +2007,11 @@ static void mainParseInputFile() {
         cccyyparse();
     }
 #   endif
-#   ifdef YACC_ALLOWED
     else if (s_language == LAN_YACC) {
         //printf("Parsing YACC-file\n");
         uniyylval = & yaccyylval;
         yaccyyparse();
     }
-#   endif
     else {
         uniyylval = & cyylval;
         cyyparse();
@@ -2092,11 +2088,9 @@ void mainSetLanguage(char *inFileName, int *outLanguage) {
             *outLanguage = LAN_JAR;
         } else if (fnCmp(suff,".class")==0) {
             *outLanguage = LAN_CLASS;
-#   ifdef YACC_ALLOWED
         } else if (fnCmp(suff,".y")==0) {
             *outLanguage = LAN_YACC;
             typesName[TypeStruct] = "struct";
-#   endif
 #   ifdef CCC_ALLOWED
         } else if (fileNameHasOneOfSuffixes(inFileName, s_opt.cppFilesSuffixes)) {
             *outLanguage = LAN_CCC;
