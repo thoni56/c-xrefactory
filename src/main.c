@@ -11,6 +11,7 @@
 #include "options.h"
 #include "init.h"
 #include "jslsemact.h"
+#include "editor.h"
 
 #include "cgram.x"
 #include "yaccgram.x"

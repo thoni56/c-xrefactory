@@ -9,6 +9,7 @@
 #include "cxref.h"
 #include "cxfile.h"
 #include "jsemact.h"
+#include "editor.h"
 
 #include "protocol.h"
 

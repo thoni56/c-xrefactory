@@ -11,6 +11,7 @@
 #include "cxref.h"
 #include "cxfile.h"
 #include "cfread.h"
+#include "editor.h"
 
 
 #define FULL_COMPLETION_INDENT_CHARS    2

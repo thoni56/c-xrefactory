@@ -8,6 +8,7 @@
 #include "cxref.h"
 #include "html.h"
 #include "cfread.h"
+#include "editor.h"
 
 #include "protocol.h"
 

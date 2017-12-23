@@ -6,6 +6,7 @@
 #include "proto.h"      /*SBD*/
 #include "protocol.h"
 #include "yylex.h"
+#include "editor.h"
 
 
 int testFileModifTime(int ii) {

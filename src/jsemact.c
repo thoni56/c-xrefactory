@@ -11,6 +11,7 @@
 #include "cfread.h"
 #include "html.h"
 #include "jslsemact.h"
+#include "editor.h"
 
 #include "javagram.x"
 

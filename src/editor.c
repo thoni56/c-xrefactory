@@ -1,7 +1,6 @@
-#include "stdinc.h"
-#include "head.h"
+#include "editor.h"
+
 #include "commons.h"
-#include "proto.h"      /*SBD*/
 #include "globals.h"
 #include "yylex.h"
 #include "misc.h"

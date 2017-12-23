@@ -11,6 +11,7 @@
 #include "html.h"
 #include "protocol.h"
 #include "options.h"
+#include "editor.h"
 
 
 

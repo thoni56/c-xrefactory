@@ -9,6 +9,7 @@
 #include "cxfile.h"
 #include "cxref.h"
 #include "cfread.h"
+#include "editor.h"
 
 
 static int s_ppcIndentOffset = 0;

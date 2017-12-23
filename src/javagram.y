@@ -35,6 +35,7 @@
 
 #include "jslsemact.h"
 #include "jsemact.h"
+#include "editor.h"
 #include "cxref.h"
 #include "yylex.h"
 #include "stdinc.h"
