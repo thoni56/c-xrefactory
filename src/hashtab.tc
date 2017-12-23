@@ -23,8 +23,8 @@
    #undef HASH_ELEM_EQUAL
 */
 
-#define GLUE1(a,b) a ## b
-#define CONCAT(a,b) GLUE1(a,b)
+#define GLUE(a,b) a ## b
+#define CONCAT(a,b) GLUE(a,b)
 
 #define HASH_SHIFT 211
 
@@ -136,7 +136,7 @@ void CONCAT(HASH_FUN_PREFIX,Map3)(
 }
 
 
-#undef GLUE1
+#undef GLUE
 #undef CONCAT
 
 /* Local variables: */

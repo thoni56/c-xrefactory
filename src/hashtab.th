@@ -1,8 +1,8 @@
 /* ********************************************************************** */
 /* .h template for hashed table*/
 
-#define GLUE1(a,b) a ## b
-#define CONCAT(a,b) GLUE1(a,b)
+#define GLUE(a,b) a ## b
+#define CONCAT(a,b) GLUE(a,b)
 
 
 HASH_TAB_TYPE {
@@ -55,7 +55,7 @@ extern void CONCAT(HASH_FUN_PREFIX, Map3)(
                     void (*fun)(HASH_ELEM_TYPE *, int)
                 );
 
-#undef GLUE1
+#undef GLUE
 #undef CONCAT
 
 /* Local variables: */

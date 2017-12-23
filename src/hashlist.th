@@ -11,8 +11,8 @@
 */
 
 
-#define GLUE1(a,b) a ## b
-#define CONCAT(a,b) GLUE1(a,b)
+#define GLUE(a,b) a ## b
+#define CONCAT(a,b) GLUE(a,b)
 
 
 HASH_TAB_TYPE {
@@ -112,7 +112,7 @@ extern void CONCAT(HASH_FUN_PREFIX, Statistics)(
                     int *maxdeep
                 );
 
-#undef GLUE1
+#undef GLUE
 #undef CONCAT
 
 /* Local Variables: */
