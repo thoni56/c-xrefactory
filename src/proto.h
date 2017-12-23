@@ -1,6 +1,17 @@
 #ifndef PROTO_H
 #define PROTO_H
 
+/*
+
+  Structures herein will be subject to the filler, structure typedef
+  and enum strings generation done in the Makefile.common.
+
+  In the beginning of c-xrefs modern life this was a huge pile of
+  anything, I'm trying to clean this up so that only things that
+  actually require the generation are in here.
+
+ */
+
 #include "stdinc.h"
 
 #ifdef BOOTSTRAP
@@ -12,6 +23,7 @@
 #include "head.h"
 #include "zlib.h"       /*SBD*/
 #include "lexmac.h"     /*SBD*/
+
 
 /* ******************************  TYPEDEFS  ***************************** */
 
@@ -1783,65 +1795,11 @@ struct options {
 
 /* ************************ HASH TABLES ****************************** */
 
-#define HASH_TAB_TYPE struct symTab
-#define HASH_ELEM_TYPE S_symbol
-#define HASH_FUN_PREFIX symTab
-
-#include "hashlist.th"
-
-#undef HASH_TAB_TYPE
-#undef HASH_ELEM_TYPE
-#undef HASH_FUN_PREFIX
-
-#define HASH_TAB_TYPE struct javaFqtTab
-#define HASH_ELEM_TYPE S_symbolList
-#define HASH_FUN_PREFIX javaFqtTab
-
-#include "hashlist.th"
-
-#undef HASH_TAB_TYPE
-#undef HASH_ELEM_TYPE
-#undef HASH_FUN_PREFIX
-
-#define HASH_TAB_TYPE struct jslTypeTab
-#define HASH_ELEM_TYPE S_jslSymbolList
-#define HASH_FUN_PREFIX jslTypeTab
-
-#include "hashlist.th"
-
-#undef HASH_TAB_TYPE
-#undef HASH_ELEM_TYPE
-#undef HASH_FUN_PREFIX
-
-#define HASH_TAB_TYPE struct refTab
-#define HASH_ELEM_TYPE S_symbolRefItem
-#define HASH_FUN_PREFIX refTab
-
-#include "hashlist.th"
-
-#undef HASH_TAB_TYPE
-#undef HASH_ELEM_TYPE
-#undef HASH_FUN_PREFIX
-
-#define HASH_TAB_TYPE struct idTab
-#define HASH_ELEM_TYPE S_fileItem
-#define HASH_FUN_PREFIX idTab
-
-#include "hashtab.th"
-
-#undef HASH_TAB_TYPE
-#undef HASH_ELEM_TYPE
-#undef HASH_FUN_PREFIX
-
-
-#define HASH_TAB_TYPE struct editorBufferTab
-#define HASH_ELEM_TYPE S_editorBufferList
-#define HASH_FUN_PREFIX editorBufferTab
-
-#include "hashlist.th"
-
-#undef HASH_TAB_TYPE
-#undef HASH_ELEM_TYPE
-#undef HASH_FUN_PREFIX
+#include "symtab.h"
+#include "javafqttab.h"
+#include "jsltypetab.h"
+#include "reftab.h"
+#include "idtab.h"
+#include "editorbuffertab.h"
 
 #endif	/* ifndef _PROTO__H*/

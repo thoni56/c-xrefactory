@@ -3,9 +3,6 @@
 
 #include "cexp.x"
 
-#include "stdinc.h"
-#include "head.h"
-#include "proto.h"
 #include "yylex.h"
 #include "semact.h"
 
