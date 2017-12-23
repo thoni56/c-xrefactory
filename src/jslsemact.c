@@ -1,8 +1,7 @@
-#include "stdinc.h"
-#include "head.h"
+#include "jslsemact.h"
+
 #include "misc.h"
 #include "commons.h"
-#include "proto.h"
 #include "unigram.h"
 #include "cct.h"
 #include "semact.h"

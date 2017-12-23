@@ -7,6 +7,7 @@
 #include "yylex.h"
 #include "cxref.h"
 #include "jsemact.h"
+#include "jslsemact.h"
 
 
 int displayingErrorMessages() {

@@ -33,6 +33,7 @@
 
 #include "javagram.x"
 
+#include "jslsemact.h"
 #include "jsemact.h"
 #include "cxref.h"
 #include "yylex.h"

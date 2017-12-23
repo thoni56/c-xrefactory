@@ -10,6 +10,7 @@
 #include "html.h"
 #include "options.h"
 #include "init.h"
+#include "jslsemact.h"
 
 #include "cgram.x"
 #include "yaccgram.x"

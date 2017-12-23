@@ -1,9 +1,6 @@
 #include "yylex.h"
 
-#include "stdinc.h"
-#include "head.h"
 #include "commons.h"
-#include "proto.h"      /*SBD*/
 #include "lex.h"
 #include "globals.h"
 #include "caching.h"
@@ -12,6 +9,7 @@
 #include "semact.h"
 #include "cxref.h"
 #include "cxfile.h"
+#include "jslsemact.h"
 
 #include "cgram.x"
 #include "cexp.x"

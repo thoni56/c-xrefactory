@@ -55,25 +55,26 @@ init.o: init.c init.h stdinc.h head.h constants.h strFill.g listmacr.h \
  unigram.h cgram.h protocol.h protocol.tc misc.h
 javagram.o: javagram.c javagram.x proto.h stdinc.h strTdef.g head.h \
  constants.h strFill.g listmacr.h memmac.h lexmac.h hashlist.th \
- hashtab.th jsemact.h cxref.h yylex.h misc.h commons.h html.h complete.h \
- protocol.h protocol.tc extract.h semact.h recyacc.h
+ hashtab.th jslsemact.h jsemact.h cxref.h yylex.h misc.h commons.h html.h \
+ complete.h protocol.h protocol.tc extract.h semact.h recyacc.h
 jsemact.o: jsemact.c jsemact.h proto.h stdinc.h strTdef.g head.h \
  constants.h strFill.g listmacr.h memmac.h lexmac.h hashlist.th \
  hashtab.th commons.h globals.h cct.h misc.h extract.h yylex.h semact.h \
- cxref.h cfread.h html.h javagram.x unigram.h cgram.h recyacc.h \
- protocol.h protocol.tc
-jslsemact.o: jslsemact.c stdinc.h head.h constants.h strFill.g listmacr.h \
- memmac.h misc.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th \
- commons.h unigram.h cgram.h cct.h semact.h cxref.h cfread.h jsemact.h
+ cxref.h cfread.h html.h jslsemact.h javagram.x unigram.h cgram.h \
+ recyacc.h protocol.h protocol.tc
+jslsemact.o: jslsemact.c jslsemact.h proto.h stdinc.h strTdef.g head.h \
+ constants.h strFill.g listmacr.h memmac.h lexmac.h hashlist.th \
+ hashtab.th misc.h commons.h unigram.h cgram.h cct.h semact.h cxref.h \
+ cfread.h jsemact.h
 lex.o: lex.c lex.h proto.h stdinc.h strTdef.g head.h constants.h \
  strFill.g listmacr.h memmac.h lexmac.h hashlist.th hashtab.th commons.h \
- unigram.h cgram.h caching.h protocol.h protocol.tc cxref.h
+ unigram.h cgram.h caching.h protocol.h protocol.tc cxref.h jslsemact.h
 log.o: log.c log.h
 main.o: main.c stdinc.h head.h constants.h strFill.g listmacr.h memmac.h \
  commons.h proto.h strTdef.g lexmac.h hashlist.th hashtab.th globals.h \
- generate.h refactory.h misc.h complete.h html.h options.h init.h cgram.x \
- yaccgram.x javagram.x unigram.h cgram.h cxref.h cxfile.h caching.h \
- recyacc.h yylex.h lex.h log.h protocol.h protocol.tc
+ generate.h refactory.h misc.h complete.h html.h options.h init.h \
+ jslsemact.h cgram.x yaccgram.x javagram.x unigram.h cgram.h cxref.h \
+ cxfile.h caching.h recyacc.h yylex.h lex.h log.h protocol.h protocol.tc
 misc.o: misc.c misc.h proto.h stdinc.h strTdef.g head.h constants.h \
  strFill.g listmacr.h memmac.h lexmac.h hashlist.th hashtab.th jsemact.h \
  commons.h bitmaps.h caching.h protocol.h protocol.tc yylex.h cxfile.h \
@@ -88,11 +89,11 @@ refactory.o: refactory.c refactory.h proto.h stdinc.h strTdef.g head.h \
  cxfile.h jsemact.h protocol.h protocol.tc
 semact.o: semact.c semact.h proto.h stdinc.h strTdef.g head.h constants.h \
  strFill.g listmacr.h memmac.h lexmac.h hashlist.th hashtab.th commons.h \
- unigram.h cgram.h misc.h cct.h yylex.h cxref.h jsemact.h
+ unigram.h cgram.h misc.h cct.h yylex.h cxref.h jsemact.h jslsemact.h
 y.tab.o: y.tab.c javagram.x proto.h stdinc.h strTdef.g head.h constants.h \
- strFill.g listmacr.h memmac.h lexmac.h hashlist.th hashtab.th jsemact.h \
- cxref.h yylex.h misc.h commons.h html.h complete.h protocol.h \
- protocol.tc extract.h semact.h recyacc.h
+ strFill.g listmacr.h memmac.h lexmac.h hashlist.th hashtab.th \
+ jslsemact.h jsemact.h cxref.h yylex.h misc.h commons.h html.h complete.h \
+ protocol.h protocol.tc extract.h semact.h recyacc.h
 yaccgram.o: yaccgram.c yaccgram.x proto.h stdinc.h strTdef.g head.h \
  constants.h strFill.g listmacr.h memmac.h lexmac.h hashlist.th \
  hashtab.th misc.h commons.h complete.h caching.h yylex.h semact.h \
@@ -100,5 +101,5 @@ yaccgram.o: yaccgram.c yaccgram.x proto.h stdinc.h strTdef.g head.h \
 yylex.o: yylex.c yylex.h proto.h stdinc.h strTdef.g head.h constants.h \
  strFill.g listmacr.h memmac.h lexmac.h hashlist.th hashtab.th commons.h \
  lex.h globals.h caching.h extract.h misc.h semact.h cxref.h cxfile.h \
- cgram.x cexp.x yaccgram.x javagram.x unigram.h cgram.h protocol.h \
- protocol.tc hashtab.tc
+ jslsemact.h cgram.x cexp.x yaccgram.x javagram.x unigram.h cgram.h \
+ protocol.h protocol.tc hashtab.tc

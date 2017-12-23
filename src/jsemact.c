@@ -10,6 +10,7 @@
 #include "cxref.h"
 #include "cfread.h"
 #include "html.h"
+#include "jslsemact.h"
 
 #include "javagram.x"
 

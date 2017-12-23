@@ -8,6 +8,7 @@
 #include "caching.h"
 #include "protocol.h"
 #include "cxref.h"
+#include "jslsemact.h"
 
 
 /* ***************************************************************** */

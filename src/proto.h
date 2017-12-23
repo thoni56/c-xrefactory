@@ -1850,49 +1850,6 @@ struct options {
 
 
 /* ***********************************************************************
-** jslsemact.c
-*/
-
-S_symbol *jslTypeSpecifier1(unsigned t);
-S_symbol *jslTypeSpecifier2(S_typeModifiers *t);
-
-void jslCompleteDeclarator(S_symbol *t, S_symbol *d);
-S_typeModifiers *jslPrependComposedType(S_typeModifiers *d, unsigned t);
-S_typeModifiers *jslAppendComposedType(S_typeModifiers **d, unsigned t);
-S_symbol *jslPrependDirectEnclosingInstanceArgument(S_symbol *args);
-S_symbol *jslMethodHeader(unsigned modif, S_symbol *type, S_symbol *decl, int storage, S_symbolList *throws);
-S_symbol *jslTypeNameDefinition(S_idIdentList *tname);
-S_symbol *jslTypeSymbolDefinition(char *ttt2, S_idIdentList *packid,
-                                  int add, int order, int isSingleImportedFlag);
-int jslClassifyAmbiguousTypeName(S_idIdentList *name, S_symbol **str);
-void jslAddNestedClassesToJslTypeTab( S_symbol *cc, int order);
-void jslAddSuperNestedClassesToJslTypeTab( S_symbol *cc);
-
-void jslAddSuperClassOrInterfaceByName(S_symbol *memb,char *super);
-void jslNewClassDefinitionBegin(S_idIdent *name,
-                                int accessFlags,
-                                S_symbol *anonInterf,
-                                int position
-    );
-void jslAddDefaultConstructor(S_symbol *cl);
-void jslNewClassDefinitionEnd();
-void jslNewAnonClassDefinitionBegin(S_idIdent *interfName);
-
-void jslAddSuperClassOrInterface(S_symbol *memb,S_symbol *supp);
-void jslAddMapedImportTypeName(
-                            char *file,
-                            char *path,
-                            char *pack,
-                            S_completions *c,
-                            void *vdirid,
-                            int  *storage
-                        );
-void jslAddAllPackageClassesFromFileTab(S_idIdentList *pack);
-
-
-extern S_jslStat *s_jsl;
-
-/* ***********************************************************************
 ** main.c
 */
 
