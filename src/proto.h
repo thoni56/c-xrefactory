@@ -1844,40 +1844,4 @@ struct options {
 #undef HASH_ELEM_TYPE
 #undef HASH_FUN_PREFIX
 
-/* ********************************************************************* */
-/*                            EXTERN DEFINITIONS                         */
-/* ********************************************************************* */
-
-
-/* ***********************************************************************
-** main.c
-*/
-
-int creatingOlcxRefs();
-void dirInputFile(MAP_FUN_PROFILE);
-void createOptionString(char **dest, char *text);
-void xrefSetenv(char *name, char *val);
-int mainHandleSetOption(int argc, char **argv, int i );
-void copyOptions(S_options *dest, S_options *src);
-void resetPendingSymbolMenuData();
-char *presetEditServerFileDependingStatics();
-void searchDefaultOptionsFile(char *file, char *ttt, char *sect);
-void processOptions(int argc, char **argv, int infilesFlag);
-void mainSetLanguage(char *inFileName, int *outLanguage);
-void getAndProcessXrefrcOptions(char *dffname, char *dffsect, char *project);
-char * getInputFile(int *fArgCount);
-void getPipedOptions(int *outNargc,char ***outNargv);
-void mainCallEditServerInit(int nargc, char **nargv);
-void mainCallEditServer(int argc, char **argv,
-                               int nargc, char **nargv,
-                               int *firstPassing
-);
-void mainCallXref(int argc, char **argv);
-void mainXref(int argc, char **argv);
-void writeRelativeProgress(int progress);
-void mainTaskEntryInitialisations(int argc, char **argv);
-void mainOpenOutputFile(char *ofile);
-void mainCloseOutputFile();
-
-
 #endif	/* ifndef _PROTO__H*/

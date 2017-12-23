@@ -7,6 +7,7 @@
 #include "protocol.h"
 #include "cxref.h"
 #include "jslsemact.h"
+#include "main.h"
 
 
 /* ***************************************************************** */

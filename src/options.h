@@ -1,6 +1,8 @@
 #ifndef OPTIONS_H
 #define OPTIONS_H
 
+#include "stdinc.h"
+
 extern void addSourcePathesCut();
 extern void getXrefrcFileName( char *ttt );
 extern int processInteractiveFlagOption(char **argv, int i);

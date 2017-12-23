@@ -1,7 +1,6 @@
-#include "stdinc.h"
-#include "head.h"
+#include "main.h"
+
 #include "commons.h"
-#include "proto.h"      /*SBD*/
 #include "globals.h"
 #include "generate.h"
 #include "refactory.h"

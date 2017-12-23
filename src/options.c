@@ -1,7 +1,6 @@
-#include "stdinc.h"
-#include "head.h"
+#include "options.h"
+
 #include "commons.h"
-#include "proto.h"      /*SBD*/
 #include "globals.h"
 #include "yylex.h"
 #include "misc.h"
@@ -9,6 +8,7 @@
 #include "html.h"
 #include "cfread.h"
 #include "editor.h"
+#include "main.h"
 
 #include "protocol.h"
 

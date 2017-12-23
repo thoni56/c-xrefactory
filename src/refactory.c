@@ -1,5 +1,6 @@
 #include "refactory.h"
 
+#include "main.h"
 #include "html.h"
 #include "misc.h"
 #include "complete.h"

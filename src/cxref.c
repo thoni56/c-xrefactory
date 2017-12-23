@@ -15,6 +15,8 @@
 #include "options.h"
 #include "jsemact.h"
 #include "editor.h"
+#include "main.h"
+
 
 
 #define SORTED_LIST_LESS(tmp,key) (POSITION_LESS((tmp)->p, (key).p))
