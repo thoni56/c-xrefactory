@@ -1,6 +1,7 @@
 #include "generate.h"
 
 #include "commons.h"
+#include "globals.h"
 
 
 static int subToFill(S_symbol *p, int fullFlag) {

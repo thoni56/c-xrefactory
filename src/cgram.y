@@ -35,6 +35,7 @@
 
 #include "cgram.x"
 
+#include "globals.h"
 #include "misc.h"
 #include "html.h"
 #include "yylex.h"

@@ -1,12 +1,11 @@
 #include "caching.h"
 
-#include "stdinc.h"
-#include "head.h"
 #include "commons.h"
-#include "proto.h"      /*SBD*/
+#include "globals.h"
 #include "protocol.h"
 #include "yylex.h"
 #include "editor.h"
+
 
 
 int testFileModifTime(int ii) {

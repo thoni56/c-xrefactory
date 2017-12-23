@@ -1,7 +1,7 @@
 #include "cfread.h"
 
 #include "commons.h"
-#include "proto.h"      /*SBD*/
+#include "globals.h"
 #include "lex.h"
 #include "yylex.h"
 #include "cct.h"

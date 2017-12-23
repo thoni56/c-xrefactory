@@ -27,12 +27,10 @@
 
 #include "yaccgram.x"
 
+#include "globals.h"
 #include "misc.h"
-#include "stdinc.h"
-#include "head.h"
 #include "commons.h"
 #include "complete.h"
-#include "proto.h"
 #include "caching.h"
 #include "yylex.h"
 #include "semact.h"

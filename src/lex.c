@@ -1,9 +1,7 @@
 #include "lex.h"
 
-#include "stdinc.h"
-#include "head.h"
+#include "globals.h"
 #include "commons.h"
-#include "proto.h"      /*SBD*/
 #include "unigram.h"
 #include "caching.h"
 #include "protocol.h"

@@ -1,9 +1,7 @@
 #include "init.h"
 
-#include "stdinc.h"
-#include "head.h"
 #include "commons.h"
-#include "proto.h"      /*SBD*/
+#include "globals.h"
 #include "unigram.h"
 #include "protocol.h"
 #include "misc.h"

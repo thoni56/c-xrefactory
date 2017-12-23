@@ -1,6 +1,7 @@
 #include "cct.h"
 
 #include "commons.h"
+#include "globals.h"
 
 
 /* ******************** Class Cast Tree ************************ */

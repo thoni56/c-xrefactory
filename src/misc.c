@@ -1,5 +1,6 @@
 #include "misc.h"
 
+#include "globals.h"
 #include "jsemact.h"
 #include "commons.h"
 #include "bitmaps.h"

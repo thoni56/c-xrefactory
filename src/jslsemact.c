@@ -2,6 +2,7 @@
 
 #include "misc.h"
 #include "commons.h"
+#include "globals.h"
 #include "unigram.h"
 #include "cct.h"
 #include "semact.h"

@@ -33,6 +33,7 @@
 
 #include "javagram.x"
 
+#include "globals.h"
 #include "jslsemact.h"
 #include "jsemact.h"
 #include "editor.h"
