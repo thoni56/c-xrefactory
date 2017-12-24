@@ -11,6 +11,7 @@
 #include "cxref.h"
 #include "cfread.h"
 #include "editor.h"
+#include "enumTxt.h"
 
 
 static int s_ppcIndentOffset = 0;

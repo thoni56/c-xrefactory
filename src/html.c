@@ -1,9 +1,6 @@
 #include "html.h"
 
-#include "stdinc.h"
-#include "head.h"
 #include "commons.h"
-#include "proto.h"      /*SBD*/
 #include "classh.h"
 #include "misc.h"
 #include "globals.h"
@@ -12,6 +9,7 @@
 #include "yylex.h"
 #include "cxref.h"
 #include "cxfile.h"
+#include "enumTxt.h"
 
 
 #define HTML_EMPTY_REF_FILE "/XrefEmptyRefs.html"

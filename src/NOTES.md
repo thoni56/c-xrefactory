@@ -74,9 +74,9 @@ The bootstrapping uses _c-xref_'s own capability to parse C-code and
 parse those structures and spit out filling macros, and some other
 stuff.
 
-This is done using options like `-task_regime_generate'
-which prints a lot of data structures on the standard output which is
-then fed into _strFill.g_, _strTdef.g_ and _enumTxt.g_ by the
+This is done using options like `-task_regime_generate' which prints a
+lot of data structures on the standard output which is then fed into
+generate versions of _strFill_, _strTdef_ and _enumTxt_ by the
 Makefile.
 
 #### Compiler defines
@@ -155,20 +155,20 @@ Here are some of the conventions in naming that are being used:
 _proto.h_ is a file which declares enums and structures that are read
 as part of the bootstrap process. Here be dragons (magic...).
 
-I *think* that for each struct defined in _proto.h_ there will be a
-set of macros generated that can act as "functions" to fill a
+It seems like for each struct defined by reading _proto.h_ there will
+be a set of macros generated that can act as "functions" to fill a
 structure as a one-liner.
 
 E.g given a structure like
 
     struct myStruct { int a; struct anotherStruct b; }
 
-There will be a typedef generated (in _strTdef.g_):
+There will be a typedef generated (in _strTdef_):
 
     typedef struct myStruct S_myStruct;
 
 And there will be two "filler"-function macros defined (in
-_strFill.g_):
+_strFill_):
 
     #define FILL_myStruct(XXX, ARG0, ARG1) { .... }
 
@@ -193,4 +193,4 @@ However, the usage of the _FILL_ functions is less that crystal clear...
 I also think that you could actually merge the struct definition with
 the typedef so that _strTdef.h_ would not be needed. But maybe this
 design is because _c_xref_ can only do its generation magic for
-struct's, not typedef's, but who knows.
+struct's, not typedef's, but who knows...

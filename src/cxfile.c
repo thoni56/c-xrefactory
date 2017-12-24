@@ -10,6 +10,7 @@
 #include "protocol.h"
 #include "options.h"
 #include "editor.h"
+#include "enumTxt.h"
 
 
 

@@ -6,6 +6,7 @@
 #include "html.h"
 #include "bitmaps.h"
 #include "cxref.h"
+#include "enumTxt.h"
 
 #include "protocol.h"
 

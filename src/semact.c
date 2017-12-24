@@ -9,6 +9,7 @@
 #include "cxref.h"
 #include "jsemact.h"
 #include "jslsemact.h"
+#include "enumTxt.h"
 
 
 int displayingErrorMessages() {

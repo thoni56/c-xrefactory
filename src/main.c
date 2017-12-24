@@ -11,6 +11,7 @@
 #include "init.h"
 #include "jslsemact.h"
 #include "editor.h"
+#include "enumTxt.h"
 
 #include "cgram.x"
 #include "yaccgram.x"

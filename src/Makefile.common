@@ -84,28 +84,34 @@ c-xref.bs:
 compiler_defines.g: c-xref.bs
 	echo | gcc -dM -E - > compiler_defines.g
 
-strFill.g: proto.h strTdef.g compiler_defines.g c-xref.bs
+strFill.g.h: proto.h strTdef.g.h compiler_defines.g c-xref.bs
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION proto.h \
 		-str_fill -header -no_stdop \
-		> tmpStrFill.h
-	if [ -e strFill.g ]; then mv -f strFill.g strFill.backup ; fi
-	mv -f tmpStrFill.h strFill.g
+		> tmpStrFill.g.h
+	if [ -e strFill.g.h ]; then mv -f strFill.g.h strFill.h.backup ; fi
+	mv -f tmpStrFill.g.h strFill.g.h
 
-strTdef.g: proto.h compiler_defines.g c-xref.bs
-	echo > strTdef.g
+strTdef.g.h: proto.h compiler_defines.g c-xref.bs
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION proto.h \
-		-typedefs -enum_name -header -no_stdop \
-		> tmpStrTdef.h
-	if [ -e strTdef.g ]; then mv -f strTdef.g strTdef.backup ; fi
-	mv -f tmpStrTdef.h strTdef.g
+		-typedefs -header -no_stdop \
+		> tmpStrTdef.g.h
+	if [ -e strTdef.g.h ]; then mv -f strTdef.g.h strTdef.h.backup ; fi
+	mv -f tmpStrTdef.g.h strTdef.g.h
 
-enumTxt.g: proto.h compiler_defines.g ../doc/_c-xrefrc c-xref.bs
-	echo "#include \"stdinc.h\"" > tmpenumTxt.g
-	echo "#include \"proto.h\"" >> tmpenumTxt.g
+enumTxt.g.h: proto.h compiler_defines.g c-xref.bs
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION proto.h \
-		-enum_name -body -no_stdop >> tmpenumTxt.g
-	if [ -e enumTxt.g ]; then mv -f enumTxt.g enumTxt.backup ; fi
-	mv -f tmpenumTxt.g enumTxt.g
+		-enum_name -header -no_stdop \
+		> tmpenumTxt.g.h
+	if [ -e enumTxt.g.h ]; then mv -f enumTxt.g.h enumTxt.h.backup ; fi
+	mv -f tmpenumTxt.g.h enumTxt.g.h
+
+enumTxt.g.c: proto.h compiler_defines.g ../doc/_c-xrefrc c-xref.bs
+	echo "#include \"stdinc.h\"" > tmpenumTxt.g.c
+	echo "#include \"proto.h\"" >> tmpenumTxt.g.c
+	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION proto.h \
+		-enum_name -body -no_stdop >> tmpenumTxt.g.c
+	if [ -e enumTxt.g.c ]; then mv -f enumTxt.g.c enumTxt.c.backup ; fi
+	mv -f tmpenumTxt.g.c enumTxt.g.c
 
 c-xref: $(OBJS)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
@@ -117,7 +123,7 @@ clean:;
 	-rm -f $(OBJS) c-xref
 
 cleaner: clean
-	-rm compiler_defines.g strFill.g strTdef.g enumTxt.g c-xref.bs
+	-rm compiler_defines.g strFill.g.h strTdef.g.h enumTxt.g.[ch] c-xref.bs
 
 #########################################################################
 
@@ -127,6 +133,7 @@ dependencies:;
 #########################################################################
 
 compare:
-	-diff strFill.g strFill.backup
-	-diff strTdef.g strTdef.backup
-	-diff enumTxt.h enumTxt.backup
+	-diff strFill.g.h strFill.h.backup
+	-diff strTdef.g.h strTdef.h.backup
+	-diff enumTxt.g.h enumTxt.h.backup
+	-diff enumTxt.g.c enumTxt.c.backup

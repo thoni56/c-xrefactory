@@ -16,6 +16,7 @@
 #include "jsemact.h"
 #include "editor.h"
 #include "main.h"
+#include "enumTxt.h"
 
 
 

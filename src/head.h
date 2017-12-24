@@ -3,11 +3,7 @@
 
 #include "constants.h"
 
-#ifdef BOOTSTRAP
-#include "strFill.bs"
-#else
-#include "strFill.g"
-#endif
+#include "strFill.h"
 
 #include "listmacr.h"
 #include "memmac.h"
@@ -121,7 +117,7 @@
 #define MAX_CHARS 127	/* maximal value storable in char encoded types     */
                         /* just for strings encoding fun-profiles for link  */
 
-// !!!!!!! do not move the following into head2.h header, must be here
+// !!!!!!! do not move the following into constants.h header, must be here
 // because if not, YACC will put there defaults !!!!!!
 #define YYSTACKSIZE 5000
 

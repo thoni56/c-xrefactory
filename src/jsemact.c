@@ -12,6 +12,7 @@
 #include "html.h"
 #include "jslsemact.h"
 #include "editor.h"
+#include "enumTxt.h"
 
 #include "javagram.x"
 

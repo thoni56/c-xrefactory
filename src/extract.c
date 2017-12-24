@@ -7,6 +7,7 @@
 #include "protocol.h"
 #include "semact.h"
 #include "cxref.h"
+#include "enumTxt.h"
 
 
 #define EXTRACT_GEN_BUFFER_SIZE 500000

@@ -3,8 +3,9 @@ c-xref.exe
 *.output
 y.tab.c
 c-xref.bs
-strFill.g
-strTdef.g
-enumTxt.g
+strTdef.g.h
+strFill.g.h
+enumTxt.g.h
+enumTxt.g.c
 compiler_defines.g
 *.backup

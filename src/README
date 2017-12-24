@@ -15,12 +15,12 @@ c-xref is partially bootstrapped (read more about this in NOTES.md) so
 the build will be in two steps (performed automatically):
 
   - build a c-xref.bs from pre-generated sources if required
-  - generate new versions of strFill.g, strTdef.g and enumTxt.g with that
+  - generate new versions of strFill, strTdef and enumTxt using that
   - build actual c-xref
 
 NOTE: since we want to distribute c-xref in source form, you should
 always check that bootstrapping works. (Making incompatible changes to
-some structures will break this for example.) Do this with
+some structures will break this for example.) Check this with
 
      make cleaner; make
 

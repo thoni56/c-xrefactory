@@ -5,6 +5,7 @@
 #include "unigram.h"
 #include "protocol.h"
 #include "misc.h"
+#include "enumTxt.h"
 
 
 static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {

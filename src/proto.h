@@ -14,15 +14,11 @@
 
 #include "stdinc.h"
 
-#ifdef BOOTSTRAP
-#include "strTdef.bs"
-#else
-#include "strTdef.g"
-#endif
+#include "strTdef.h"
 
 #include "head.h"
-#include "zlib.h"       /*SBD*/
-#include "lexmac.h"     /*SBD*/
+#include "zlib.h"
+#include "lexmac.h"
 
 
 /* ******************************  TYPEDEFS  ***************************** */
