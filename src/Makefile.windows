@@ -5,7 +5,6 @@ COMCFLAGS= $(INCLUDES) -DDEBUG $(ZLIB_OPT) \
 CFLAGS= -c -O $(COMCFLAGS)
 LDFLAGS= -static
 CPP_ONLY_FLAG= -E $(COMCFLAGS)
-BIN=$(HOME)/bin
 LEX=flex
 YACC=$(ROOTDIR)/../byacc-1.9/yacc
 RANLIB=echo

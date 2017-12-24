@@ -10,7 +10,6 @@ CFLAGS= -c -O $(COMCFLAGS) \
 #               -Wall
 LDFLAGS= -O
 #LDFLAGS= -g -Xlinker -Map -Xlinker map.txt
-BIN=$(HOME)/bin
 LEX=flex
 YACC=$(ROOTDIR)/../byacc-1.9/yacc
 RANLIB=echo
