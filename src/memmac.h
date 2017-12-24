@@ -6,8 +6,8 @@
 
 /* ******************** a simple memory handler ************************ */
 
-#define ALIGNMENT_OFF(xxx,allign) (allign-1-((((uintptr_t)(xxx))-1) & (allign-1)))
-#define ALIGNMENT(xxx,allign) (((char*)(xxx))+ALIGNMENT_OFF(xxx,allign))
+#define ALIGNMENT_OFF(xxx,align) (align-1-((((uintptr_t)(xxx))-1) & (align-1)))
+#define ALIGNMENT(xxx,align) (((char*)(xxx))+ALIGNMENT_OFF(xxx,align))
 
 
 /* ********************************************************************* */
