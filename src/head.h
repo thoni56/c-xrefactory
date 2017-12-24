@@ -166,11 +166,6 @@
 
 /* ********************************************************************** */
 
-/* stack memory synchronized with program block structure */
-#define XX_ALLOC(p,t)           {p = (t*) stackMemoryAlloc(sizeof(t)); }
-#define XX_ALLOCC(p,n,t)        {p = (t*) stackMemoryAlloc((n)*sizeof(t)); }
-#define XX_FREE(p)              { }
-
 /* pre-processor macro definitions allocations */
 #define PP_ALLOC(p,t)           {SM_ALLOC(ppmMemory,p,t);}
 #define PP_ALLOCC(p,n,t)        {SM_ALLOCC(ppmMemory,p,n,t);}
