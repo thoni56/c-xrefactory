@@ -1,5 +1,11 @@
 #include "misc.h"
 
+#ifdef __WIN32__
+#include <direct.h>
+#else
+#include <dirent.h>
+#endif
+
 #include "globals.h"
 #include "jsemact.h"
 #include "commons.h"
