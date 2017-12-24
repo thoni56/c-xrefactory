@@ -29,6 +29,10 @@ Concrete things todo:
   them without need to consider the order of the included
   files. (Until we get into a dependency loop...)
 
+* Ensure all ANSI-C, C99 and C11 keywords (and macros for them?) are
+  recognized (list e.g. at
+  http://www.c-programming-simple-steps.com/c-keywords.html)
+
 * enumTxt.c is a generated set of strings for the enum values in
   proto.h, but the extern declarations of them are in strTdef.g. A
   cleaner way would be to generate them into an "enumTxt.h" (or a
