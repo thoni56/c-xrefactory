@@ -2,16 +2,10 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 Concrete things in progress:
 
-* Move all function prototypes from proto.h to <module>.h
+* Refactor out the hashtables and lists to separate modules.
+
 
 Concrete things todo:
-
-* Make yacc parsing allowed the default. Change Makefile.common so
-  that YACCALLOWED is reversed, i.e. if you *don't* want yacc parsing
-  in the build c-xref set EXCLUDE_YACC_PARSING (or something similar)
-
-* Make Makefile.common look for our patched yacc and if it's not
-  available ignore yacc-rules otherwise always run yacc.
 
 * Ensure only externally used functions are visible in the modules
   header file. And that only those are "non-static" in the C file.
@@ -20,8 +14,6 @@ Concrete things todo:
   header file is included before it. (Could this be done by taking
   each header file and try to compile it in isolation? It should
   include whatever other things it needs...)
-
-* Refactor out the hashtables and lists to separate modules.
 
 * Although generation of typedef's etc. in strTdef et al might be
   questioned we need to handle that for now, but at least let's add
@@ -32,11 +24,6 @@ Concrete things todo:
 * Ensure all ANSI-C, C99 and C11 keywords (and macros for them?) are
   recognized (list e.g. at
   http://www.c-programming-simple-steps.com/c-keywords.html)
-
-* enumTxt.c is a generated set of strings for the enum values in
-  proto.h, but the extern declarations of them are in strTdef.g. A
-  cleaner way would be to generate them into an "enumTxt.h" (or a
-  better name, such as 'generated_enum_strings.h').
 
 * Memory allocation is home grown, probably out of necessity. Refactor
   to a state where it can be replaced (at least as an experiment) by
@@ -70,3 +57,28 @@ General improvements:
   for each issue before fixing it, if possible.)
 
 Done:
+
+* Make yacc parsing allowed the default. Change Makefile.common so
+  that YACCALLOWED is reversed, i.e. if you *don't* want yacc parsing
+  in the build c-xref set EXCLUDE_YACC_PARSING (or something similar)
+  ACTUALLY: removed conditionals around that code, and kept the CCC
+  conditionals.
+
+* Make Makefile.common look for our patched yacc and if it's not
+  available ignore yacc-rules otherwise always run yacc.
+
+* Changed naming strategy for the bootstrap and generated
+  files. "*.bs.h" is now a bootstrap file, while *.g.h" is the local
+  generated one using the boostrap version of c-xref. Also a single
+  header file for each of the generated files is now taking care of
+  the BOOTSTRAPPING ifdef and include the correct bootstrap or
+  generated file.
+
+* enumTxt.c is a generated set of strings for the enum values in
+  proto.h, but the extern declarations of them are in strTdef.g. A
+  cleaner way would be to generate them into an "enumTxt.h" (or a
+  better name, such as 'generated_enum_strings.h').
+  ACTUALLY: split generation of enumTxt header to its own header file
+  with the naming strategy as for the others.
+
+* Move all function prototypes from proto.h to <module>.h
