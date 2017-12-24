@@ -1,5 +1,10 @@
-/* ********************************************************************** */
-/* .h template for hashed table*/
+/* **********************************************************************
+   .h template for hashed table
+
+   Can be included many times because its a template generator, not an
+   interface.
+
+*/
 
 #define GLUE(a,b) a ## b
 #define CONCAT(a,b) GLUE(a,b)

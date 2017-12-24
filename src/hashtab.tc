@@ -1,20 +1,27 @@
-/* .c template for hashed table*/
-/* requires macros:
+/*
+   .c template for hashed table
+
+   Should be included only in a .c file
+
+   Requires the following macros to be set:
    HASH_TAB_TYPE
    HASH_ELEM_TYPE
    HASH_FUN_PREFIX
    HASH_FUN(elem)
    HASH_ELEM_EQUAL(e1,e2)
-*/
-/* form of include:
 
-   #define HASH_TAB_TYPE struct
-   #define HASH_ELEM_TYPE
-   #define HASH_FUN_PREFIX
-   #define HASH_FUN(elem)
-   #define HASH_ELEM_EQUAL(e1,e2)
+   E.g.
+
+   #define HASH_TAB_TYPE struct X
+   #define HASH_ELEM_TYPE T
+   #define HASH_FUN_PREFIX X
+   #define HASH_FUN(elem) hash(elem)
+   #define HASH_ELEM_EQUAL(e1,e2) eq(e1,e2)
 
    #include "hashtab.tc"
+
+   If included in a C-file which will generate many hashtabs you also
+   need to:
 
    #undef HASH_TAB_TYPE
    #undef HASH_ELEM_TYPE
@@ -22,6 +29,8 @@
    #undef HASH_FUN
    #undef HASH_ELEM_EQUAL
 */
+
+#include <string.h>             /* For memset() */
 
 #define GLUE(a,b) a ## b
 #define CONCAT(a,b) GLUE(a,b)
