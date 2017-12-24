@@ -1,7 +1,9 @@
 #ifndef YYLEX_H
 #define YYLEX_H
 
-#include "proto.h"
+#include <stdio.h>
+
+#include "strTdef.h"
 
 extern char *yytext;
 

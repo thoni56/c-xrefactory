@@ -1,6 +1,8 @@
 #ifndef REFTAB_H
 #define REFTAB_H
 
+#include "strTdef.h"
+
 #define HASH_TAB_TYPE struct refTab
 #define HASH_ELEM_TYPE S_symbolRefItem
 #define HASH_FUN_PREFIX refTab
