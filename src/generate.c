@@ -118,7 +118,7 @@ static int genFillStructBody(S_symbol *defin, int i, int argn, int fullFlag,
                     || p->u.type->m == TypeUnion) {
                 l1 = strlen(pref);
                 l2 = strlen(p->name);
-                InternalCheck(l1+l2+6 < TMP_STRING_SIZE);
+                assert(l1+l2+6 < TMP_STRING_SIZE);
                 strcpy(prefix,pref);
                 strcpy(prefix+l1, p->name);
                 prefix[l1+l2] = 0;

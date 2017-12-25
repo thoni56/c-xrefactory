@@ -1743,7 +1743,7 @@ static void schedulingToUpdate(S_fileItem *p, void *rs) {
     } else if (s_opt.taskRegime == RegimeHtmlGenerate) {
         concatPathes(sss,MAX_FILE_NAME_SIZE,s_opt.htmlRoot,p->name,".html");
         strcat(sss, s_opt.htmlLinkSuffix);
-        InternalCheck(strlen(sss) < MAX_FILE_NAME_SIZE-2);
+        assert(strlen(sss) < MAX_FILE_NAME_SIZE-2);
         if (statb(sss, &hstat) || fstat.st_mtime >= hstat.st_mtime) {
             p->b.scheduledToUpdate = 1;
         }
@@ -1787,7 +1787,7 @@ void searchDefaultOptionsFile(char *file, char *ttt, char *sect) {
     for(; findFlag==0; ) {
         copyDir(ttt,ttt,&ii);
         if (ii == 0) break;
-        InternalCheck(ii+15<MAX_FILE_NAME_SIZE);
+        assert(ii+15<MAX_FILE_NAME_SIZE);
         sprintf(ttt+ii,"Xref.opt");
         /*fprintf(dumpOut,"try to open %s\n",ttt);*/
         if (stat(ttt,&fst)==0 && (fst.st_mode & S_IFMT) != S_IFDIR) {
@@ -1962,11 +1962,11 @@ static void initDefaultCxrefFileName(char *inputfile) {
     int         ii;
     static char dcx[MAX_FILE_NAME_SIZE];
     copyDir(dcx, normalizeFileName(inputfile, s_cwd), &ii);
-    InternalCheck(ii < MAX_FILE_NAME_SIZE);
+    assert(ii < MAX_FILE_NAME_SIZE);
     strcpy(&dcx[ii], DEFAULT_CXREF_FILE);
-    InternalCheck(strlen(dcx) < MAX_FILE_NAME_SIZE);
+    assert(strlen(dcx) < MAX_FILE_NAME_SIZE);
     strcpy(dcx, getRealFileNameStatic(normalizeFileName(dcx, s_cwd)));
-    InternalCheck(strlen(dcx) < MAX_FILE_NAME_SIZE);
+    assert(strlen(dcx) < MAX_FILE_NAME_SIZE);
     s_opt.cxrefFileName = dcx;
 }
 
@@ -2265,7 +2265,7 @@ static void mainFileProcessingInitialisations(
             recoverCachePointZero();
         }
         strcpy(oldOnLineClassPath, s_opt.classpath);
-        InternalCheck(strlen(oldOnLineClassPath)<MAX_OPTION_LEN-1);
+        assert(strlen(oldOnLineClassPath)<MAX_OPTION_LEN-1);
         s_opt.stdopFlag = 0;
         initPreCreatedTypes();
         initCwd();
@@ -2710,7 +2710,7 @@ static void scheduleModifiedFilesToUpdate() {
     } else {
         fnamesuff = PRF_FILES;
         sprintf(ttt,"%s%s", s_opt.cxrefFileName, fnamesuff);
-        InternalCheck(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
+        assert(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
         filestab = ttt;
     }
     if (statb(filestab, &refStat)) refStat.st_mtime = 0;

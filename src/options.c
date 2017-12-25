@@ -254,7 +254,7 @@ char *expandSpecialFilePredefinedVariables_st(char *tt) {
     char            superclass[MAX_FILE_NAME_SIZE];
     fvv = getRealFileNameStatic(s_input_file_name);
     strcpy(file, fvv);
-    InternalCheck(strlen(file) < MAX_FILE_NAME_SIZE-1);
+    assert(strlen(file) < MAX_FILE_NAME_SIZE-1);
     strcpy(path, directoryName_st(file));
     strcpy(name, simpleFileNameWithoutSuffix_st(file));
     suffix = lastOccurenceInString(file, '.');
@@ -302,7 +302,7 @@ char *expandSpecialFilePredefinedVariables_st(char *tt) {
         } else {
             res[j++] = tt[i++];
         }
-        InternalCheck(j<MAX_OPTION_LEN);
+        assert(j<MAX_OPTION_LEN);
     }
     res[j]=0;
     return(res);
@@ -353,7 +353,7 @@ static void expandEnvironmentVariables(char *tt, int ttsize, int *len,
         if (expanded==0) {
             ttt[d++] = tt[i++];
         }
-        InternalCheck(d<MAX_OPTION_LEN-2);
+        assert(d<MAX_OPTION_LEN-2);
     }
     ttt[d] = 0;
     *len = d;
@@ -449,7 +449,7 @@ static void processSingleSectionMarker(char *tt,char *section,
         && (section[sl]=='/' || section[sl]=='\\' || section[sl]==0)) {
         if (sl > strlen(resSection)) {
             strcpy(resSection,tt);
-            InternalCheck(strlen(resSection)+1 < MAX_FILE_NAME_SIZE);
+            assert(strlen(resSection)+1 < MAX_FILE_NAME_SIZE);
         }
         *writeFlag = 1;
     } else {
@@ -473,7 +473,7 @@ static void processSectionMarker(char *ttt,int i,char *project,char *section,
             if (project!=NULL) {
                 if (strcmp(currentPath, project)==0) {
                     strcpy(resSection,currentPath);
-                    InternalCheck(strlen(resSection)+1 < MAX_FILE_NAME_SIZE);
+                    assert(strlen(resSection)+1 < MAX_FILE_NAME_SIZE);
                     *writeFlag = 1;
                     goto fini;
                 } else {
@@ -489,7 +489,7 @@ static void processSectionMarker(char *ttt,int i,char *project,char *section,
     if (project!=NULL) {
         if (strcmp(tt, project)==0) {
             strcpy(resSection,tt);
-            InternalCheck(strlen(resSection)+1 < MAX_FILE_NAME_SIZE);
+            assert(strlen(resSection)+1 < MAX_FILE_NAME_SIZE);
             *writeFlag = 1;
         } else {
             *writeFlag = 0;
@@ -502,7 +502,7 @@ static void processSectionMarker(char *ttt,int i,char *project,char *section,
     if (*writeFlag) {
         // TODO!!! YOU NEED TO ALLOCATE SPACE FOR THIS!!!
         strcpy(s_base, resSection);
-        InternalCheck(strlen(resSection) < MAX_FILE_NAME_SIZE-1);
+        assert(strlen(resSection) < MAX_FILE_NAME_SIZE-1);
         xrefSetenv("__BASE", s_base);
         strcpy(resSection, firstPath);
         // completely wrong, what about file names from command line ?
@@ -698,7 +698,7 @@ int packageOnCommandLine(char *fn) {
         else *dd = *ss;
     }
     *dd = 0;
-    InternalCheck(strlen(ppp)<MAX_FILE_NAME_SIZE-1);
+    assert(strlen(ppp)<MAX_FILE_NAME_SIZE-1);
     cp = s_javaSourcePaths;
     while (cp!=NULL && *cp!=0) {
         for(ind=0; cp[ind]!=0 && cp[ind]!=CLASS_PATH_SEPARATOR; ind++) {
@@ -710,7 +710,7 @@ int packageOnCommandLine(char *fn) {
             ttt[i++] = SLASH;
         }
         strcpy(ttt+i, ppp);
-        InternalCheck(strlen(ttt)<MAX_FILE_NAME_SIZE-1);
+        assert(strlen(ttt)<MAX_FILE_NAME_SIZE-1);
         //&fprintf(dumpOut,"checking '%s'\n", ttt);
         stt = statb(ttt, &st);
         if (stt==0  && (st.st_mode & S_IFMT)==S_IFDIR) {
@@ -964,5 +964,5 @@ void getXrefrcFileName(char *ttt) {
     } else {
         sprintf(ttt, "%s%c%cc-xrefrc", hh, SLASH, FILE_BEGIN_DOT);
     }
-    InternalCheck(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
+    assert(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
 }

@@ -608,7 +608,7 @@ void typeSPrint(char *buff, int *size, S_typeModifiers *t,
             CHECK_TYPEDEF(t,type,typedefexpFlag,typebreak);
             pref[--i]='*'; par=1;
         }
-        InternalCheck(i>2);
+        assert(i>2);
         if (t==NULL) goto typebreak;
         CHECK_TYPEDEF(t,type,typedefexpFlag,typebreak);
         switch (t->m) {
@@ -707,12 +707,12 @@ void typeSPrint(char *buff, int *size, S_typeModifiers *t,
             break;
         default:
             assert(t->m >= 0 && t->m < MAX_TYPE);
-            InternalCheck(strlen(typesName[t->m]) < COMPLETION_STRING_SIZE);
+            assert(strlen(typesName[t->m]) < COMPLETION_STRING_SIZE);
             strcpy(type, typesName[t->m]);
             r = strlen(type);
             break;
         }
-        InternalCheck(i>2 && j<COMPLETION_STRING_SIZE-3);
+        assert(i>2 && j<COMPLETION_STRING_SIZE-3);
     }
  typebreak:
     post[j]=0;
@@ -781,7 +781,7 @@ void macDefSPrintf(char *tt, int *size, char *name1, char *name2,
     if (oNamePos!=NULL) *oNamePos = ll;
     sprintf(tt+ll,"%s%s",name1,name2);
     ii = strlen(tt);
-    InternalCheck(ii< *size);
+    assert(ii< *size);
     if (argn != -1) {
         sprintf(tt+ii,"(");
         ii += strlen(tt+ii);
@@ -966,7 +966,7 @@ void javaSignatureSPrint(char *buff, int *size, char *sig, int classstyle) {
     assert(*sig == '(');
     ssig = sig; posti=0; post[0]=0;
     for(ssig++; *ssig && *ssig!=')'; ssig++) {
-        InternalCheck(j+1 < *size);
+        assert(j+1 < *size);
         if (j+TYPE_STR_RESERVE > *size) goto fini;
     switchLabel:
         switch (*ssig) {
@@ -998,7 +998,7 @@ void javaSignatureSPrint(char *buff, int *size, char *sig, int classstyle) {
         }
     }
  fini:
-    InternalCheck(j+1 < *size);
+    assert(j+1 < *size);
     if (j+TYPE_STR_RESERVE > *size) {
         j = *size - TYPE_STR_RESERVE - 3;
         sprintf(buff+j, "...");
@@ -1158,7 +1158,7 @@ char *directoryName_st(char *fullFileName) {
     static char res[MAX_FILE_NAME_SIZE];
     int ii;
     copyDir(res, fullFileName, &ii);
-    InternalCheck(ii < MAX_FILE_NAME_SIZE-1);
+    assert(ii < MAX_FILE_NAME_SIZE-1);
     if (ii>2 && res[ii-1]==SLASH) res[ii-1] = 0;
     return(res);
 }
@@ -1458,7 +1458,7 @@ char * getRealFileNameStatic(char *fn) {
         strcpy(ttt+bdi, fdata.cFileName);
         di = bdi + strlen(ttt+bdi);
         FindClose(han);
-        InternalCheck(di < MAX_FILE_NAME_SIZE-1);
+        assert(di < MAX_FILE_NAME_SIZE-1);
         ttt[di] = fn[si];
         //fprintf(ccOut,"res %s\n",ttt);
         if (fn[si]) { di++; si++; }
@@ -1467,7 +1467,7 @@ char * getRealFileNameStatic(char *fn) {
     strcpy(ttt+di, fn+si);
     return(ttt);
 #else                       /*SBD*/
-    InternalCheck(strlen(fn) < MAX_FILE_NAME_SIZE-1);
+    assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
     strcpy(ttt,fn);
     return(fn);
 #endif                  /*SBD*/
@@ -1542,7 +1542,7 @@ int mapDirectoryFiles(
         if (*s=='/') *d=SLASH;
         else *d = *s;
     }
-    InternalCheck(d-ttt < MAX_FILE_NAME_SIZE-3);
+    assert(d-ttt < MAX_FILE_NAME_SIZE-3);
     sprintf(d,"%c*",SLASH);
     res = mapPatternFiles( ttt, fun, a1, a2, a3, a4, a5);
 #else                       /*SBD*/
@@ -1670,7 +1670,7 @@ void javaGetPackageNameFromSourceFileName(char *src, char *opack) {
     char *sss, *dd;
     sss = javaCutSourcePathFromFileName(src);
     strcpy(opack, sss);
-    InternalCheck(strlen(opack)+1 < MAX_FILE_NAME_SIZE);
+    assert(strlen(opack)+1 < MAX_FILE_NAME_SIZE);
     dd = lastOccurenceInString(opack, '.');
     if (dd!=NULL) *dd=0;
     javaDotifyFileName(opack);
@@ -1798,7 +1798,7 @@ static void scanClassFile(char *zip, char *file, void *arg) {
         if (! s_fileTab.tab[fileInd]->b.cxSaved) {
             // read only if not saved (and returned through overflow)
             sprintf(ttt, "%s%s", zip, file);
-            InternalCheck(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
+            assert(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
             // recover memories, only cxrefs are interesting
             assert(memb->u.s);
             //&fprintf(dumpOut,"adding %s %s\n", memb->name, s_fileTab.tab[fileInd]->name);
@@ -1839,7 +1839,7 @@ void scanJarFilesForTagSearch() {
 void classFileParse() {
     char    ttt[MAX_FILE_NAME_SIZE];
     char    *t,*tt;
-    InternalCheck(strlen(s_input_file_name) < MAX_FILE_NAME_SIZE-1);
+    assert(strlen(s_input_file_name) < MAX_FILE_NAME_SIZE-1);
     strcpy(ttt, s_input_file_name);
     tt = strchr(ttt, ';');
     if (tt==NULL) {

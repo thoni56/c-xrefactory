@@ -191,6 +191,27 @@ for tha structure.
 However, the usage of the _FILL_ functions is less that crystal clear...
 
 I also think that you could actually merge the struct definition with
-the typedef so that _strTdef.h_ would not be needed. But maybe this
-design is because _c_xref_ can only do its generation magic for
-struct's, not typedef's, but who knows...
+the typedef so that _strTdef.h_ would not be needed. But it seems that
+this design is because the structures in _proto.h_ are not a directed
+graph, so loops makes that impossible. Instead the typedefs are
+included before the structs:
+
+    #include "strTdef.h"
+
+    struct someNode {
+        S_someOtherNode *this;
+        ...
+
+    struct someOtherNode {
+        S_someNode *that;
+        ...
+
+But this is ideomatically solved using the structs themselves:
+
+    struct someNode {
+        struct someOtherNode *this;
+        ...
+
+    struct someOtherNode {
+        struct someNode *that;
+        ...

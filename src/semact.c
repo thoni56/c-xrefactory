@@ -91,7 +91,7 @@ void recFindPush(S_symbol *str, S_recFindStr *rfs) {
     rfs->currClass = str;
     //& if (ss->super != NULL) { // this optimization makes completion info wrong
     rfs->st[rfs->sti] = ss->super;
-    InternalCheck(rfs->sti < MAX_INHERITANCE_DEEP);
+    assert(rfs->sti < MAX_INHERITANCE_DEEP);
     rfs->sti ++;
     //& }
 }
@@ -513,7 +513,7 @@ static void setStaticFunctionLinkName( S_symbol *p, int usage ) {
     }
     sprintf(ttt,"%s!%s", simpleFileName(basefname), p->name);
     len = strlen(ttt);
-    InternalCheck(len < TMP_STRING_SIZE-2);
+    assert(len < TMP_STRING_SIZE-2);
     XX_ALLOCC(ss, len+1, char);
     strcpy(ss, ttt);
     p->linkName = ss;
@@ -959,7 +959,7 @@ void setGlobalFileDepNames(char *iname, S_symbol *pp, int memory) {
     }
     len = strlen(tmp);
     len2 = len + strlen(iname);
-    InternalCheck(len < MACRO_NAME_SIZE-2);
+    assert(len < MACRO_NAME_SIZE-2);
     if (memory == MEM_XX) {
         XX_ALLOCC(mname, len2+1, char);
     } else {
@@ -984,7 +984,7 @@ void setGlobalFileDepNames(char *iname, S_symbol *pp, int memory) {
 
     len = strlen(tmp);
     len2 = len + strlen(iname);
-    InternalCheck(len < MACRO_NAME_SIZE-2);
+    assert(len < MACRO_NAME_SIZE-2);
     if (memory == MEM_XX) {
         XX_ALLOCC(mname, len2+1, char);
     } else {

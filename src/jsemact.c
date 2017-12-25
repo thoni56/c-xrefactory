@@ -59,7 +59,7 @@ char *javaCreateComposedName(
     if (resBuff == NULL) {
         XX_ALLOCC(ln, len+1, char);
     } else {
-        InternalCheck(len < resBuffSize);
+        assert(len < resBuffSize);
         ln = resBuff;
     }
     ll = strlen(name);
@@ -193,7 +193,7 @@ static int javaFindFile0( char *classPath,char *slash,char *name,
     ss = strmcpy(ss,slash);
     ss = strmcpy(ss,name);
     ss = strmcpy(ss, suffix);
-    InternalCheck(ss-fname+1 < MAX_FILE_NAME_SIZE);
+    assert(ss-fname+1 < MAX_FILE_NAME_SIZE);
     ffn = normalizeFileName(fname,s_cwd);
 //&	fprintf(dumpOut, "looking for file %s\n", ffn);
     if (statb(ffn,stt) == 0) {
@@ -1218,7 +1218,7 @@ static int javaNotFqtUsageCorrection(S_symbol *sym, int usage) {
     pp = strchr(sym->linkName, '/');
     if (pp==NULL) pp = sym->linkName;
     pplen = pp - sym->linkName;
-    InternalCheck(pplen < TMP_STRING_SIZE-1);
+    assert(pplen < TMP_STRING_SIZE-1);
     strncpy(packname, sym->linkName, pplen);
     packname[pplen] = 0;
 
@@ -1620,7 +1620,7 @@ int javaTypeToString(S_typeModifiers *type, char *pp, int ppSize) {
             assert(s_javaBaseTypeCharCodes[tt->m]!=0);
             pp[ppi++] = s_javaBaseTypeCharCodes[tt->m];
         }
-        InternalCheck(ppi < ppSize);
+        assert(ppi < ppSize);
     }
     pp[ppi]=0;
     return(ppi);
@@ -1708,7 +1708,7 @@ int javaSetFunctionLinkName(S_symbol *clas, S_symbol *decl,int mem) {
     }
     sprintf(pp+ppi,")");
     ppi += strlen(pp+ppi);
-    InternalCheck(ppi<MAX_PROFILE_SIZE);
+    assert(ppi<MAX_PROFILE_SIZE);
 //	if (javaExistEquallyProfiledFun(clas, decl->name, pp+profilei, &memb)) {
     if (javaIsYetInTheClass(clas, pp, &memb)) {
         decl->linkName = memb->linkName;
@@ -1756,7 +1756,7 @@ static void addNativeMethodCxReference(S_symbol *decl, S_symbol *clas) {
         else *d = *s;
     }
     *d = 0;
-    InternalCheck(d-nlname < MAX_CX_SYMBOL_SIZE-1);
+    assert(d-nlname < MAX_CX_SYMBOL_SIZE-1);
     addTrivialCxReference(nlname, TypeDefault,StorageExtern, &decl->pos,
                           UsageJavaNativeDeclared);
 }
@@ -1909,7 +1909,7 @@ void javaAddMapedTypeName(
     if (strcmp(p,".class")!=0 && strcmp(p,".java")!=0) return;
     len2 = p - file;
     strncpy(ttt2, file, len2);
-    InternalCheck(len2+1 < MAX_FILE_NAME_SIZE);
+    assert(len2+1 < MAX_FILE_NAME_SIZE);
     ttt2[len2] = 0;
     FILLF_idIdentList(&dd2, ttt2,NULL,-1,0,0,NULL, ttt2,TypeStruct,packid);
     memb = javaTypeSymbolDefinition(&dd2,ACC_DEFAULT, TYPE_ADD_YES);

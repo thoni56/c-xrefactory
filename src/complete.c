@@ -65,30 +65,30 @@ static int printJavaModifiers(char *buf, int *size, unsigned acc) {
     if (1 || (s_opt.ooChecksBits & OOC_ACCESS_CHECK)==0) {
         if (acc & ACC_PUBLIC) {
             sprintf(buf+i,"public "); i+=strlen(buf+i);
-            InternalCheck(i< *size);
+            assert(i< *size);
         }
         if (acc & ACC_PRIVATE) {
             sprintf(buf+i,"private "); i+=strlen(buf+i);
-            InternalCheck(i< *size);
+            assert(i< *size);
         }
         if (acc & ACC_PROTECTED) {
             sprintf(buf+i,"protected "); i+=strlen(buf+i);
-            InternalCheck(i< *size);
+            assert(i< *size);
         }
 #if ZERO
         if (acc & ACC_NATIVE) {
             sprintf(buf+i,"native "); i+=strlen(buf+i);
-            InternalCheck(i< *size);
+            assert(i< *size);
         }
 #endif
     }
     if (acc & ACC_STATIC) {
         sprintf(buf+i,"static "); i+=strlen(buf+i);
-        InternalCheck(i< *size);
+        assert(i< *size);
     }
     if (acc & ACC_FINAL) {
         sprintf(buf+i,"final "); i+=strlen(buf+i);
-        InternalCheck(i< *size);
+        assert(i< *size);
     }
     *size -= i;
     return(i);
@@ -701,7 +701,7 @@ static void completionInsertName(char *name, S_cline *compLine, int orderFlag,
                              || (len==ci->maxLen-1 && name[len]=='(')
                              || (len==ci->maxLen-2 && name[len]=='('));
     } else {
-        /*      InternalCheck(ci->ai < MAX_COMPLETIONS-1);*/
+        assert(ci->ai < MAX_COMPLETIONS-1);
         if (reallyInsert(ci->a, &ci->ai, name/*+len*/, compLine, orderFlag)) {
             ci->fullMatchFlag = 0;
             l = strlen(name/*+len*/);
@@ -742,7 +742,7 @@ void searchName(char *name, S_cline *compLine, int orderFlag,
         ci->ai++;
         ci->maxLen = strlen(name);
     } else {
-        /*      InternalCheck(ci->ai < MAX_COMPLETIONS-1);*/
+        assert(ci->ai < MAX_COMPLETIONS-1);
         if (reallyInsert(ci->a, &ci->ai, name, compLine, 1)) {
             ci->fullMatchFlag = 0;
             l = strlen(name);
@@ -1278,11 +1278,11 @@ static void javaTypeNameCompletion(
         else return;
         complType = TypeStruct;
         sprintf(cfname,"%s/%s", pack, fname);
-        InternalCheck(strlen(cfname)+1 < MAX_FILE_NAME_SIZE);
+        assert(strlen(cfname)+1 < MAX_FILE_NAME_SIZE);
         memb = javaGetFieldClass(cfname,NULL);
         if (storage == StorageConstructor) {
             sprintf(cfname,"%s/%s/%s", path, pack, fname);
-            InternalCheck(strlen(cfname)+1 < MAX_FILE_NAME_SIZE);
+            assert(strlen(cfname)+1 < MAX_FILE_NAME_SIZE);
             memb = javaGetFileNameClass(cfname);
             completeConstructorsFromFile(c, cfname);
         }
@@ -1502,7 +1502,7 @@ static void completeFqtFromFileName(char *file, void *cfmpi) {
     suff = getFileSuffix(file);
     if (fnCmp(suff, ".class")==0 || fnCmp(suff, ".java")==0) {
         sprintf(ttt, "%s", file);
-        InternalCheck(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
+        assert(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
         suff = lastOccurenceInString(ttt, '.');
         assert(suff);
         *suff = 0;

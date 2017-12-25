@@ -86,7 +86,7 @@ static void htmlCompressFile(char *fname) {
     strncpy(sss, s_opt.htmlZipCommand, len1);
     strcpy(sss+len1, fname);
     strcat(sss, s+1);
-    InternalCheck(strlen(sss) < MAX_HTML_REF_LEN-2);
+    assert(strlen(sss) < MAX_HTML_REF_LEN-2);
     int r = system(sss);
 }
 
@@ -106,13 +106,13 @@ char *htmlGetLinkFileNameStatic(char *link, char *file) {
     for(; *p1; p1++) {
         if (*p1 == SLASH) {
             sprintf(resp,"..%c",HTML_SLASH); resp+=3;
-            InternalCheck(resp-fn < MAX_FILE_NAME_SIZE-2);
+            assert(resp-fn < MAX_FILE_NAME_SIZE-2);
         }
     }
     strcpy(resp,ls2);
     ls = resp;
     while ((ls=strchr(ls+1, SLASH))!=NULL) *ls = HTML_SLASH;
-    InternalCheck(resp-fn < MAX_FILE_NAME_SIZE-2);
+    assert(resp-fn < MAX_FILE_NAME_SIZE-2);
     /*&fprintf(dumpOut,"result is '%s'\n",fn);fflush(dumpOut);&*/
     return(fn);
 }
@@ -160,7 +160,7 @@ static char *htmlAuxFileNameStatic(int fnum, char *subdir,
     n = fd - fn;
     strncpy(res, fn, n);
     sprintf(res+n,"%c%s%s%s%s",SLASH,subdir,fd,suff1,suff2);
-    InternalCheck(strlen(res)<MAX_FILE_NAME_SIZE-1);
+    assert(strlen(res)<MAX_FILE_NAME_SIZE-1);
     return(res);
 }
 
@@ -636,7 +636,7 @@ void concatPathes(char *res, int rsize, char *p1, char *p2, char *p3) {
     if (p3==NULL) p3="";
     sprintf(res,"%s%s%s",p1,htmlNormalizedPath(p2),htmlNormalizedPath(p3));
     // check there is space for some additional suffixes
-    InternalCheck(strlen(res)<rsize-1);
+    assert(strlen(res)<rsize-1);
 }
 
 static S_reference * htmlGetDefinitionRef(S_htmlRefList *rrr, int usage) {
@@ -708,7 +708,7 @@ static char *htmlStSymbolCode(S_symbolRefItem *r, int usage) {
             if (*sss=='/' || *sss=='\\') *sss = '.';
         }
     }
-    InternalCheck(strlen(ss) < MAX_CX_SYMBOL_SIZE-2);
+    assert(strlen(ss) < MAX_CX_SYMBOL_SIZE-2);
     return(ss);
 }
 
@@ -834,7 +834,7 @@ static void htmlGetStaticHREFItems(
             sprintf(prf,"<A>");
         }
     }
-    InternalCheck(strlen(prf)<MAX_HTML_REF_LEN-2);
+    assert(strlen(prf)<MAX_HTML_REF_LEN-2);
     if (cri->b.category == CatLocal) {
         htmlCrLocalRefsFileName(cp->file, cri, usage, tmp, tmp2);
     } else {
@@ -1321,7 +1321,7 @@ static void htmlScanCxFileAndGenRefLists(char *fn1, char *fn2,
     S_symbolRefItem     *rr;
     S_olSymbolsMenu     *ss;
     sprintf(fn, "%s%s", getRealFileNameStatic(normalizeFileName(fn1,s_cwd)), fn2);
-    InternalCheck(strlen(fn) < MAX_FILE_NAME_SIZE-1);
+    assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
     if (! s_opt.noCxFile) {
         fIn = fopen(fn, "r");
         if (fIn == NULL) {

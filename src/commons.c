@@ -23,7 +23,7 @@ void initCwd() {
             error(ERR_ST, "can't get current working directory");
             sprintf(s_cwd, ".");
         } else {
-            InternalCheck(strlen(rr) < MAX_FILE_NAME_SIZE);
+            assert(strlen(rr) < MAX_FILE_NAME_SIZE);
             strcpy(s_cwd, rr);
         }
     }
@@ -152,7 +152,7 @@ char *create_temporary_filename() {
     //&fprintf(dumpOut,"temp file: %s\n", temporary_name);
     if (strlen(temporary_name) == 0)
         fatalError(ERR_ST, "can't create temporary file name", XREF_EXIT_ERR);
-    InternalCheck(strlen(temporary_name) < MAX_FILE_NAME_SIZE-1);
+    assert(strlen(temporary_name) < MAX_FILE_NAME_SIZE-1);
     return temporary_name;
 }
 
@@ -242,7 +242,7 @@ static void errorMessage(char *out, int errCode, char *mess) {
         out += strlen(out);
         break;
     }
-    InternalCheck(strlen(ppcTmpBuff) < MAX_PPC_RECORD_SIZE-1);
+    assert(strlen(ppcTmpBuff) < MAX_PPC_RECORD_SIZE-1);
 }
 
 void warning(int errCode, char *mess) {

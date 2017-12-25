@@ -99,7 +99,7 @@ char *placeIdent() {
             sprintf(tt,"%s:%d ",simpleFileName(getRealFileNameStatic(cFile.fileName)),cFile.lineNumber);
         }
         s = strlen(tt);
-        InternalCheck(s<MAX_HTML_REF_LEN);
+        assert(s<MAX_HTML_REF_LEN);
         return(tt);
     }
     return("");
@@ -209,7 +209,7 @@ void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) {
     plen = strlen(prepend);
     if (buffer!=NULL) {
         // read buffer
-        InternalCheck(plen < buffer->a.allocatedFreePrefixSize);
+        assert(plen < buffer->a.allocatedFreePrefixSize);
         strncpy(buffer->a.text-plen, prepend, plen);
         bbase = buffer->a.text-plen;
         bsize = buffer->a.bufferSize+plen;
@@ -217,7 +217,7 @@ void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) {
         assert(bbase > buffer->a.allocatedBlock);
     } else {
         // read file
-        InternalCheck(plen < CHAR_BUFF_SIZE);
+        assert(plen < CHAR_BUFF_SIZE);
         strcpy(cFile.lb.cb.a,prepend);
         bbase = cFile.lb.cb.a;
         bsize = plen;
@@ -302,7 +302,7 @@ void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) {
 }
 
 #define PrependMacInput(macInput) {\
-    InternalCheck(macStacki < MACSTACK_SIZE-1);\
+    assert(macStacki < MACSTACK_SIZE-1);\
     macStack[macStacki++] = cInput;\
     cInput = macInput;\
     cInput.cc = cInput.a;\

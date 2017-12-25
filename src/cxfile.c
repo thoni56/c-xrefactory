@@ -663,7 +663,7 @@ static void genPartialFileTabRefFile(   int updateFlag,
                                         ) {
     char fn[MAX_FILE_NAME_SIZE];
     sprintf(fn, "%s%s", dirname, fnamesuff);
-    InternalCheck(strlen(fn) < MAX_FILE_NAME_SIZE-1);
+    assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
     openInOutReferenceFiles(updateFlag, fn);
     genCxFileHead();
     idTabMap3(&s_fileTab, mapfun);
@@ -733,7 +733,7 @@ void genReferenceFile(int updateFlag, char *fname) {
                                  genClassHierarchyItems, NULL);
         for (i=0; i<s_opt.refnum; i++) {
             sprintf(fn, "%s%s%04d", dirname, PRF_REF_PREFIX, i);
-            InternalCheck(strlen(fn) < MAX_FILE_NAME_SIZE-1);
+            assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
             openInOutReferenceFiles(updateFlag, fn);
             genCxFileHead();
             scanCxFile(s_cxFullScanFunTab);
@@ -924,8 +924,8 @@ static void cxrfFileName(       int size,
     }
     id[i] = 0;
     len = i;
-    InternalCheck(len+1 < MAX_FILE_NAME_SIZE);
-    InternalCheck(ii>=0 && ii<MAX_FILES);
+    assert(len+1 < MAX_FILE_NAME_SIZE);
+    assert(ii>=0 && ii<MAX_FILES);
     FILLF_fileItem(&tffi, id, 0, 0,0, 0,
                    0,0,0,commandLineFlag,0,0,0,0,0,s_noneFileIndex,
                    NULL,NULL,s_noneFileIndex,NULL);
@@ -1010,7 +1010,7 @@ static int scanSymNameString(int size,char **ccc,char **ffin,
     }
     id[i] = 0;
     len = i;
-    InternalCheck(len+1 < MAX_CX_SYMBOL_SIZE);
+    assert(len+1 < MAX_CX_SYMBOL_SIZE);
     *ccc = cc; *ffin = fin;
     return(len);
 }
@@ -1051,7 +1051,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(    int size,
     accessFlags = s_inLastInfos.counter[CXFI_ACCESS_BITS];
     storage = s_inLastInfos.counter[CXFI_STORAGE];
     si = s_inLastInfos.counter[CXFI_SYM_INDEX];
-    InternalCheck(si>=0 && si<MAX_CX_SYMBOL_TAB);
+    assert(si>=0 && si<MAX_CX_SYMBOL_TAB);
     id = s_inLastInfos._symbolTabNames[si];
     len = scanSymNameString( size, ccc, ffin, bbb, id);
     cc = *ccc; fin = *ffin;
@@ -1131,7 +1131,7 @@ static void cxrfSymbolName(     int size,
     accessFlags = s_inLastInfos.counter[CXFI_ACCESS_BITS];
     storage = s_inLastInfos.counter[CXFI_STORAGE];
     si = s_inLastInfos.counter[CXFI_SYM_INDEX];
-    InternalCheck(si>=0 && si<MAX_CX_SYMBOL_TAB);
+    assert(si>=0 && si<MAX_CX_SYMBOL_TAB);
     id = s_inLastInfos._symbolTabNames[si];
     len = scanSymNameString( size, ccc, ffin, bbb, id);
     cc = *ccc; fin = *ffin;
@@ -1281,7 +1281,7 @@ static void cxrfReference(      int size,
         FILL_position(&pos,file,line,coll);
         FILL_usageBits(&usageBits, usage, reqAcc, 0);
         FILL_reference(&rr, usageBits, pos, NULL);
-        InternalCheck(sym>=0 && sym<MAX_CX_SYMBOL_TAB);
+        assert(sym>=0 && sym<MAX_CX_SYMBOL_TAB);
         if (additionalArg==CX_HTML_SECOND_PASS) {
             if (rr.usg.base<UsageMaxOLUsages || rr.usg.base==UsageClassTreeDefinition) {
                 addToRefList(&s_inLastInfos.symbolTab[sym]->refs,
@@ -1490,7 +1490,7 @@ int scanReferenceFile(  char *fname, char *fns1, char *fns2,
                         ) {
     char fn[MAX_FILE_NAME_SIZE];
     sprintf(fn, "%s%s%s", fname, fns1, fns2);
-    InternalCheck(strlen(fn) < MAX_FILE_NAME_SIZE-1);
+    assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
     //&fprintf(dumpOut,":scanning file %s\n",fn);
     fIn = fopen(fn,"r");
     if (fIn==NULL) {
@@ -1576,7 +1576,7 @@ void readOneAppropReferenceFile(char *symbolName,
         i = cxFileHashNumber(symbolName);
         //&fprintf(dumpOut,"reading X%04d\n",i);fflush(dumpOut);
         sprintf(fns, "%04d", i);
-        InternalCheck(strlen(fns) < MAX_FILE_NAME_SIZE-1);
+        assert(strlen(fns) < MAX_FILE_NAME_SIZE-1);
         tmp = scanReferenceFile(s_opt.cxrefFileName,PRF_REF_PREFIX,fns,
                                 scanFunTab);
         if (tmp == 0) return;

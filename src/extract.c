@@ -34,7 +34,7 @@ static void dumpProgram(S_programGraphNode *program) {
 
 #define LOCAL_LABEL_NAME(ttt, counter) {                \
         sprintf(ttt,"%%L%d",counter);                   \
-        InternalCheck(strlen(ttt) < TMP_STRING_SIZE-1); \
+        assert(strlen(ttt) < TMP_STRING_SIZE-1); \
     }
 
 void genInternalLabelReference(int counter, int usage) {
@@ -456,7 +456,7 @@ static void extGenNewMacroCall(S_programGraphNode *program) {
     }
     sprintf(rb+strlen(rb), "%s);\n", fFlag?"(":"");
 
-    InternalCheck(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
+    assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (s_opt.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
@@ -492,7 +492,7 @@ static void extGenNewMacroHead(S_programGraphNode *program) {
         }
     }
     sprintf(rb+strlen(rb), "%s) {\\\n", fFlag?"(":"");
-    InternalCheck(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
+    assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (s_opt.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
@@ -505,7 +505,7 @@ static void extGenNewMacroTail(S_programGraphNode *program) {
 
     sprintf(rb+strlen(rb),"}\n\n");
 
-    InternalCheck(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
+    assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (s_opt.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
@@ -567,7 +567,7 @@ static void extGenNewFunCall(S_programGraphNode *program) {
         }
     }
     sprintf(rb+strlen(rb), "%s);\n", fFlag?"(":"");
-    InternalCheck(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
+    assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (s_opt.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
@@ -783,7 +783,7 @@ static void extGenNewFunHead(S_programGraphNode *program) {
         }
     }
     if (fFlag == 0) sprintf(rb+strlen(rb), ";\n");
-    InternalCheck(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
+    assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (s_opt.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
@@ -819,7 +819,7 @@ static void extGenNewFunTail(S_programGraphNode *program) {
         }
     }
     sprintf(rb+strlen(rb),"}\n\n");
-    InternalCheck(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
+    assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (s_opt.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
@@ -931,7 +931,7 @@ static void extJavaGenNewClassCall(S_programGraphNode *program) {
     sprintf(rb+strlen(rb), "\n");
     sprintf(rb+strlen(rb),"\t\t%s = null;\n", s_extractionName);
 
-    InternalCheck(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
+    assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (s_opt.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
@@ -1054,7 +1054,7 @@ static void extJavaGenNewClassHead(S_programGraphNode *program) {
         }
     }
     if (fFlag == 0) sprintf(rb+strlen(rb), ";\n");
-    InternalCheck(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
+    assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (s_opt.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
@@ -1097,7 +1097,7 @@ static void extJavaGenNewClassTail(S_programGraphNode *program) {
     }
     sprintf(rb+strlen(rb),"\t\t}\n\t}\n\n");
 
-    InternalCheck(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
+    assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (s_opt.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {

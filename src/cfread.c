@@ -547,7 +547,7 @@ int zipFindFile(char *name,
     bbb = &s_zipTmpBuff;
     strcpy(fname,name);
     strcat(fname,".class");
-    InternalCheck(strlen(fname)+1 < MAX_FILE_NAME_SIZE);
+    assert(strlen(fname)+1 < MAX_FILE_NAME_SIZE);
     /*&fprintf(dumpOut,"looking for file %s in %s\n",fname,zipfile->fn);fflush(dumpOut);&*/
     if (fsIsMember(&zipfile->dir,fname,0,ADD_NO,&place)==0) return(0);
     if (resName != NULL) {
@@ -688,7 +688,7 @@ void javaHumanizeLinkName( char *inn, char *outn, int size) {
         //&     if (LANGUAGE(LAN_JAVA)) {
         if (outn[i]=='/') outn[i]='.';
         //&     }
-        InternalCheck(i<size-1);
+        assert(i<size-1);
     }
     outn[i] = 0;
 }
@@ -1156,7 +1156,7 @@ void javaReadClassFile(char *name, S_symbol *memb, int loadSuper) {
         error(ERR_ST,tmpBuff);
         goto fini;
     }
-    InternalCheck(cval == 0xcafebabe);
+    assert(cval == 0xcafebabe);
     GetU4(cval, ccc, ffin, &cFile.lb.cb);
     /*&fprintf(dumpOut, "version is %d\n", cval);&*/
     constantPool = cfReadConstantPool(&ccc, &ffin, &cFile.lb.cb, &cpSize);

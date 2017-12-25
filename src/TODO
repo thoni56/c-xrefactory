@@ -4,8 +4,13 @@ Concrete things in progress:
 
 * Refactor out the hashtables and lists to separate modules.
 
-
 Concrete things todo:
+
+* Change structure declarations in proto.h into ideomatic struct
+  {struct} typedefs instead of using typenames generated into the
+  strTdef file. See NOTES.md. Few examples of strategy is implemented
+  with cctNode and position. Primary benefit is to be able to use
+  renaming on them...
 
 * Ensure only externally used functions are visible in the modules
   header file. And that only those are "non-static" in the C file.

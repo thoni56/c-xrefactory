@@ -687,20 +687,20 @@ enum syntaxPassParsedImportantPosition {
 
 /* class cast tree */
 typedef struct cctNode {
-    S_symbol	*node;
-    S_cctNode	*sub;       /* sub[CCT_TREE_INDEX]; */
-} CctNode;
+    struct symbol	*node;
+    struct cctNode	*sub;       /* sub[CCT_TREE_INDEX]; */
+} S_cctNode;
 
-struct position {
+typedef struct position {
     int			file;
     int         line;
     int			coll;
-};
+} S_position;
 
-struct positionList {
+typedef struct positionList {
     S_position		p;
     S_positionList  *next;
-};
+} S_positionList;
 
 /* return value for IDENTIFIER token from yylex */
 

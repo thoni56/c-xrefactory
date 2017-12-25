@@ -271,7 +271,7 @@ void jslAddMapedImportTypeName(
     if (strcmp(p,".class")!=0 && strcmp(p,".java")!=0) return;
     len2 = p - file;
     strncpy(ttt2, file, len2);
-    InternalCheck(len2+1 < MAX_FILE_NAME_SIZE);
+    assert(len2+1 < MAX_FILE_NAME_SIZE);
     ttt2[len2] = 0;
     jslTypeSymbolDefinition(ttt2, packid,TYPE_ADD_YES, ORDER_APPEND, 0);
 }

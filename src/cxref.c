@@ -531,7 +531,7 @@ static void setOlSymbolTypeForPrint(S_symbol *p) {
         typeSPrint(s_olSymbolType, &size, tt, "", ' ', 0, 1, LONG_NAME, NULL);
         if (tt->m == TypeStruct && tt->u.t!=NULL) {
             strcpy(s_olSymbolClassType, tt->u.t->linkName);
-            InternalCheck(strlen(s_olSymbolClassType)+1 < COMPLETION_STRING_SIZE);
+            assert(strlen(s_olSymbolClassType)+1 < COMPLETION_STRING_SIZE);
         }
         // remove pending spaces
         len = strlen(s_olSymbolType);
@@ -1427,7 +1427,7 @@ char *getJavaDocUrl_st(S_symbolRefItem *rr) {
     } else if (rr->b.symType == TypePackage) {
         sprintf(res,"%s/package-tree.html",rr->name);
     }
-    InternalCheck(strlen(res)<MAX_HTML_REF_LEN-1);
+    assert(strlen(res)<MAX_HTML_REF_LEN-1);
     return(res);
 }
 
@@ -1571,7 +1571,7 @@ static int olcxBrowseSymbolInJavaDoc( S_symbolRefItem *rr ) {
         rrr = olcxGenHtmlFileWithIndirectLink(tmpfname, getFullUrlOfJavaDoc_st(url));
         if (rrr) {
             sprintf(theUrl, "file:///%s", tmpfname);
-            InternalCheck(strlen(theUrl)<MAX_FILE_NAME_SIZE-1);
+            assert(strlen(theUrl)<MAX_FILE_NAME_SIZE-1);
             if (s_opt.xref2) {
                 ppcGenRecord(PPC_BROWSE_URL, theUrl, "\n");
             } else {
@@ -3020,7 +3020,7 @@ static S_olSymbolsMenu *olcxCopyMenuSym(S_olSymbolsMenu *mm) {
         a->s.refs = olcxCopyRefList(rr->s.refs);
         a->s.next = NULL;
 #ifdef CORE_DUMP
-        InternalCheck(rr->markers==NULL);
+        assert(rr->markers==NULL);
 #endif
         a->markers = NULL;     // do not copy markers
         *aa = a;

@@ -86,7 +86,7 @@ static void refactorySetNargv(char *nargv[MAX_NARGV_OPTIONS_NUM],
     i++;
     if (s_ropt.xrefrc!=NULL) {
         sprintf(optXrefrc, "-xrefrc=%s", s_ropt.xrefrc);
-        InternalCheck(strlen(optXrefrc)+1 < MAX_FILE_NAME_SIZE);
+        assert(strlen(optXrefrc)+1 < MAX_FILE_NAME_SIZE);
         nargv[i] = optXrefrc;
         i++;
     }
@@ -331,7 +331,7 @@ static char *refactoryGetIdentifierOnMarker_st(S_editorMarker *pos) {
     // now get it
     for(e=s; e<smax && (isalpha(*e) || isdigit(*e) || *e=='_' || *e=='$'); e++) ;
     reslen = e-s;
-    InternalCheck(reslen < TMP_STRING_SIZE-1);
+    assert(reslen < TMP_STRING_SIZE-1);
     strncpy(res, s, reslen);
     res[reslen] = 0;
     return(res);
@@ -640,7 +640,7 @@ static void refactoryRenameTo(S_editorMarker *pos, char *oldName, char *newName)
     int     nlen;
     nlen = strlen(oldName);
     actName = refactoryGetIdentifierOnMarker_st(pos);
-    InternalCheck(strcmp(actName, oldName)==0);
+    assert(strcmp(actName, oldName)==0);
     refactoryCheckedReplaceString(pos, nlen, oldName, newName);
 }
 
@@ -1162,7 +1162,7 @@ int tpCheckTargetToBeDirectSubOrSupClass(int flag, char *subOrSuper) {
         return(0);
     }
     readOneAppropReferenceFile(NULL, s_cxScanFunTabForClassHierarchy);
-    InternalCheck(target->u.s!=NULL&&target->u.s->classFile!=s_noneFileIndex);
+    assert(target->u.s!=NULL&&target->u.s->classFile!=s_noneFileIndex);
     if (flag == REQ_SUBCLASS) cl=s_fileTab.tab[ss->s.vApplClass]->infs;
     else cl=s_fileTab.tab[ss->s.vApplClass]->sups;
     for(; cl!=NULL; cl=cl->next) {
@@ -1196,7 +1196,7 @@ int tpPullUpFieldLastPreconditions() {
     assert(ss);
     target = getMoveTargetClass();
     assert(target!=NULL);
-    InternalCheck(target->u.s!=NULL&&target->u.s->classFile!=s_noneFileIndex);
+    assert(target->u.s!=NULL&&target->u.s->classFile!=s_noneFileIndex);
     for(mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
         if (itIsSameCxSymbol(&ss->s,&mm->s)
             && mm->s.vApplClass == target->u.s->classFile) goto cont2;
@@ -1236,7 +1236,7 @@ int tpPushDownFieldLastPreconditions() {
     thisclassi = ss->s.vApplClass;
     target = getMoveTargetClass();
     assert(target!=NULL);
-    InternalCheck(target->u.s!=NULL&&target->u.s->classFile!=s_noneFileIndex);
+    assert(target->u.s!=NULL&&target->u.s->classFile!=s_noneFileIndex);
     sourcesm = targetsm = NULL;
     for(mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
         if (itIsSameCxSymbol(&ss->s,&mm->s)) {
@@ -1581,7 +1581,7 @@ static void refactorySimpleRenaming(S_editorMarkerList *occs, S_editorMarker *po
                 if (ss==NULL) ss=nfile;
                 else ss++;
                 sprintf(ss, "%s.java", s_ropt.renameTo);
-                InternalCheck(strlen(nfile) < MAX_FILE_NAME_SIZE-1);
+                assert(strlen(nfile) < MAX_FILE_NAME_SIZE-1);
                 if (strcmp(nfile, point->buffer->name)!=0) {
                     // O.K. I should move file
                     refactoryCheckedRenameBuffer(point->buffer, nfile, &s_editorUndo);
@@ -1843,7 +1843,7 @@ static int refactoryGetParamNamePosition(S_editorMarker *pos, char *fname, int a
     int             res;
     actName = refactoryGetIdentifierOnMarker_st(pos);
     clearParamPositions();
-    InternalCheck(strcmp(actName, fname)==0);
+    assert(strcmp(actName, fname)==0);
     sprintf(pushOpt, "-olcxgotoparname%d", argn);
     refactoryEditServerParseBuffer( s_ropt.project, pos->buffer, pos,NULL, pushOpt,NULL);
     olcxPopOnly();
@@ -1984,7 +1984,7 @@ static int refactoryAddStringAsParameter(S_editorMarker *pos, S_editorMarker *en
     }
 
     sprintf(par, "%s%s%s", sep1, param, sep2);
-    InternalCheck(strlen(param) < REFACTORING_TMP_STRING_SIZE-1);
+    assert(strlen(param) < REFACTORING_TMP_STRING_SIZE-1);
 
     insertionOffset = mm->offset;
     refactoryReplaceString(mm, 0, par);
@@ -2222,7 +2222,7 @@ static int createMarkersForAllReferencesInRegions(
     int             res, n, nn;
     res = 0;
     for(mm=menu; mm!=NULL; mm=mm->next) {
-        InternalCheck(mm->markers==NULL);
+        assert(mm->markers==NULL);
         if (mm->selected && mm->visible) {
             //&LIST_LEN(nn, S_reference, mm->s.refs);sprintf(tmpBuff,"there are %d refs for %s", nn, s_fileTab.tab[mm->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
             mm->markers = editorReferencesToMarkers(mm->s.refs,filter0, NULL);
