@@ -90,7 +90,7 @@ static void htmlCompressFile(char *fname) {
     int r = system(sss);
 }
 
-char *htmlGetLinkFileNameStatic(char *link, char *file) {
+static char *htmlGetLinkFileNameStatic(char *link, char *file) {
     static char fn[MAX_FILE_NAME_SIZE];
     char *p1,*p2,*ls1,*ls2,*resp, *ls;
     /*&fprintf(dumpOut,"getting relative of '%s'  '%s'\n",link,file);fflush(dumpOut);&*/
@@ -449,7 +449,7 @@ static char * getDefaultCxFileStatic() {
                 PRF_REF_PREFIX, 0);
     }
     ss = cutHtmlPath(tt);
-    concatPathes(ttt,MAX_FILE_NAME_SIZE,
+    concatPaths(ttt,MAX_FILE_NAME_SIZE,
                  s_opt.htmlRoot,
                  cutHtmlPath(tt),
                  "");
@@ -467,7 +467,7 @@ static void htmlGenFrameFile(FILE *ff, int fnum, char *thisfn) {
             htmlGetLinkFileNameStatic(getDefaultCxFileStatic(),thisfn),
             s_opt.htmlLinkSuffix);
 
-    concatPathes(ffn,MAX_FILE_NAME_SIZE,
+    concatPaths(ffn,MAX_FILE_NAME_SIZE,
                  s_opt.htmlRoot,
                  cutHtmlPath(getRealFileNameStatic(s_fileTab.tab[fnum]->name)),
                  "");
@@ -567,7 +567,7 @@ void htmlPutChar(FILE *ff, int c) {
     }
 }
 
-void htmlPrint(FILE *ff, char *ss) {
+static void htmlPrint(FILE *ff, char *ss) {
     char *s;
     for(s=ss; *s; s++) htmlPutChar(ff,*s);
 }
@@ -629,7 +629,7 @@ void recursivelyCreateFileDirIfNotExists(char *fpath) {
 #endif
 }
 
-void concatPathes(char *res, int rsize, char *p1, char *p2, char *p3) {
+void concatPaths(char *res, int rsize, char *p1, char *p2, char *p3) {
     int i,j;
     if (p1==NULL) p1="";
     if (p2==NULL) p2="";
@@ -1087,7 +1087,7 @@ static void shiftToTheBeginningOfClassList(S_fileItem *fi,S_chReference **orr){
     if (rr==NULL) return;
 }
 
-int isThereSomethingPrintable(S_olSymbolsMenu *itt) {
+static int isThereSomethingPrintable(S_olSymbolsMenu *itt) {
     S_reference *r;
     for(r=itt->s.refs; r!=NULL; r=r->next) {
         if (r->usg.base<UsageMaxOLUsages) return(1);
@@ -1339,7 +1339,7 @@ static void htmlScanCxFileAndGenRefLists(char *fn1, char *fn2,
             fprintf(stdout,"X%04d ",fi);
             fflush(stdout);
         }
-        concatPathes(ln,MAX_FILE_NAME_SIZE, s_opt.htmlRoot, ffn,".html");
+        concatPaths(ln,MAX_FILE_NAME_SIZE, s_opt.htmlRoot, ffn,".html");
         recursivelyCreateFileDirIfNotExists(ln);
         ff = fopen(ln, "w");
         if (ff==NULL) error(ERR_CANT_OPEN, ln);
@@ -1610,7 +1610,7 @@ static void htmlGenerateFile(int fnum) {
     FILE                *ff;
     assert(s_fileTab.tab[fnum]);
     /*&fprintf(dumpOut,"opening %s\n",fn);&*/
-    concatPathes(ffn,MAX_FILE_NAME_SIZE,
+    concatPaths(ffn,MAX_FILE_NAME_SIZE,
                  s_opt.htmlRoot,
                  htmlAuxFileNameStatic(fnum,"XFRM","",".frm.html"),
                  NULL);
@@ -1624,7 +1624,7 @@ static void htmlGenerateFile(int fnum) {
             htmlCompressFile(ffn);
         }
     }
-    concatPathes(ffn,MAX_FILE_NAME_SIZE,
+    concatPaths(ffn,MAX_FILE_NAME_SIZE,
                  s_opt.htmlRoot,htmlCutLastSuffixStatic(cutHtmlPath(getRealFileNameStatic(s_fileTab.tab[fnum]->name))),".html");
     recursivelyCreateFileDirIfNotExists(ffn);
     ccOut = fopen(ffn,"w");
@@ -1642,7 +1642,7 @@ static void htmlGenerateFile(int fnum) {
         /* now create local reference lists */
         if (s_opt.htmllocalx) {
             strcpy(ffn,htmlAuxFileNameStatic(fnum,"XLL","",""));
-            concatPathes(ffn2,MAX_FILE_NAME_SIZE,s_opt.htmlRoot,ffn,".html");
+            concatPaths(ffn2,MAX_FILE_NAME_SIZE,s_opt.htmlRoot,ffn,".html");
             recursivelyCreateFileDirIfNotExists(ffn2);
             ff = fopen(ffn2,"w");
             if (ff==NULL) error(ERR_CANT_OPEN,ffn2);
@@ -1666,7 +1666,7 @@ static void htmlGenerateJavaDocFile(int fnum) {
     int                 stt;
     assert(s_fileTab.tab[fnum]);
     /*&fprintf(dumpOut,"opening %s\n",fn);&*/
-    concatPathes(ffn,MAX_FILE_NAME_SIZE,
+    concatPaths(ffn,MAX_FILE_NAME_SIZE,
                  s_opt.jdocTmpDir,
                  cutHtmlPath(getRealFileNameStatic(s_fileTab.tab[fnum]->name)),
                  ""); // maybe some suffix .doc ?
@@ -1720,7 +1720,7 @@ int isJavaClassFile(S_fileItem *ffi) {
     return(0);
 }
 
-void htmlGenEmptyRefsFile() {
+static void htmlGenEmptyRefsFile() {
     FILE        *ff;
     ff = fopen(s_htmlEmptyRefs,"w");
     if (ff!=NULL) {
@@ -1793,7 +1793,7 @@ void generateHtml() {
     if (s_opt.htmlRoot==NULL ||  s_opt.htmlRoot[0]==0) {
         fatalError(ERR_ST, "No HTML output directory specified, use -htmlroot=<dir>", XREF_EXIT_ERR);
     }
-    concatPathes(s_htmlEmptyRefs,MAX_FILE_NAME_SIZE,
+    concatPaths(s_htmlEmptyRefs,MAX_FILE_NAME_SIZE,
                  s_opt.htmlRoot,HTML_EMPTY_REF_FILE,"");
     for(i=0; i<MAX_FILES; i++) {
         fi = s_fileTab.tab[i];

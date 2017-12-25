@@ -1741,7 +1741,7 @@ static void schedulingToUpdate(S_fileItem *p, void *rs) {
             p->b.cxLoading = 1;     /* Hack, to remove references from file */
         }
     } else if (s_opt.taskRegime == RegimeHtmlGenerate) {
-        concatPathes(sss,MAX_FILE_NAME_SIZE,s_opt.htmlRoot,p->name,".html");
+        concatPaths(sss,MAX_FILE_NAME_SIZE,s_opt.htmlRoot,p->name,".html");
         strcat(sss, s_opt.htmlLinkSuffix);
         assert(strlen(sss) < MAX_FILE_NAME_SIZE-2);
         if (statb(sss, &hstat) || fstat.st_mtime >= hstat.st_mtime) {
