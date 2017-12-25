@@ -70,10 +70,10 @@ static int genFillStructArguments(  S_symbol *defin,
             if (p->u.type->m == TypeStruct  && fullFlag) {
                 i = genFillStructArguments(p->u.type->u.t,i,1);
             } else if (p->u.type->m == TypeUnion) {
-                fillGenArgHeadItem("FARG", &i);
-                fillGenArgHeadItem("FARG", &i);
+                fillGenArgHeadItem("ARG", &i);
+                fillGenArgHeadItem("ARG", &i);
             } else {
-                fillGenArgHeadItem("FARG", &i);
+                fillGenArgHeadItem("ARG", &i);
             }
         }
     }
@@ -86,7 +86,7 @@ static char *getFillArgumentName(int i, int argn, int action) {
     if (action == InternalFillGenerate) {
         sprintf(res,"_ARG_PROJECT_%d_%d ARGS", i, argn);
     } else {
-        sprintf(res,"FARG%d",i);
+        sprintf(res,"ARG%d",i);
     }
     return(res);
 }
