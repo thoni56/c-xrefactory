@@ -8,7 +8,6 @@ extern void recoverFromCache();
 extern void cacheInput();
 extern void cacheInclude(int fileNum);
 extern void poseCachePoint(int inputCacheFlag);
-extern void recoverCxMemory(char *cxMemFreeBase);
 extern void recoverCachePointZero();
 extern void recoverMemoriesAfterOverflow(char *cxMemFreeBase);
 

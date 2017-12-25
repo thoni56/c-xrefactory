@@ -97,7 +97,7 @@ void switchToZippedCharBuff(struct charBuf *bb) {
     char *fin;
 
     getCharBuf(bb);     // just for now
-#if defined(USE_LIBZ)       /*SBD*/
+#if defined(USE_LIBZ)
     fin = bb->fin;
     cc = bb->cc;
     for(dd=bb->z; cc<fin; cc++,dd++) *dd = *cc;
@@ -116,7 +116,7 @@ void switchToZippedCharBuff(struct charBuf *bb) {
         fprintf(stderr,"initialization: %s\n", bb->zipStream.msg);
         exit(1);
     }
-#endif                      /*SBD*/
+#endif
 }
 
 int skipNCharsInCharBuf(struct charBuf *bb, unsigned count) {

@@ -437,7 +437,7 @@ static int htmlRefItemsClassNameLess(S_olSymbolsMenu *ss1,
     return(classHierarchyClassNameLess(ss1->s.vApplClass,ss2->s.vApplClass));
 }
 
-int chLineOrderLess(S_olSymbolsMenu *r1, S_olSymbolsMenu *r2) {
+static int chLineOrderLess(S_olSymbolsMenu *r1, S_olSymbolsMenu *r2) {
     return(r1->outOnLine < r2->outOnLine);
 }
 

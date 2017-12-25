@@ -51,10 +51,10 @@ void genInternalLabelReference(int counter, int usage) {
 }
 
 
-S_symbol * addContinueBreakLabelSymbol(int labn, char *name) {
+S_symbol *addContinueBreakLabelSymbol(int labn, char *name) {
     S_symbol *s;
 
-    if (s_opt.cxrefs != OLO_EXTRACT) return;
+    if (s_opt.cxrefs != OLO_EXTRACT) return NULL;
 
     XX_ALLOC(s, S_symbol);
     FILL_symbolBits(&s->b,0,0,0,0,0,TypeLabel,StorageAuto,0);

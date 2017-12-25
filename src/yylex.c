@@ -142,7 +142,7 @@ int addFileTabItem(char *name, int *fileNumber) {
     return(1);
 }
 
-void getOrCreateFileInfo(char *ss, int *fileNumber, char **fileName) {
+static void getOrCreateFileInfo(char *ss, int *fileNumber, char **fileName) {
     int ii, newFileFlag,cxloading;
 
     if (ss==NULL) {
@@ -184,7 +184,7 @@ void getOrCreateFileInfo(char *ss, int *fileNumber, char **fileName) {
 }
 
 /* this function is redundant, remove it in future */
-void setOpenFileInfo(char *ss) {
+static void setOpenFileInfo(char *ss) {
     int ii;
     char *ff;
     getOrCreateFileInfo(ss, &ii, &ff);
@@ -236,12 +236,12 @@ void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) {
                    NULL, NULL,
                    NULL, NULL,		// zlibAlloc, zlibFree,
                    NULL, 0, 0, 0
-        );
+                   );
     setOpenFileInfo(name);
     SetCInputConsistency();
     s_ifEvaluation = 0;				/* ??? */
 
-/*	while (yylex());	exit(0); */
+    /*	while (yylex());	exit(0); */
 
 }
 
@@ -251,93 +251,93 @@ void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) {
 
 /* maybe too time-consuming, when lex is known */
 /* should be broken into parts */
-#define PassLex(Input,lex,lineval,val,hash,pos, length,linecount) {\
-    if (lex > MULTI_TOKENS_START) {\
-        if (IS_IDENTIFIER_LEXEM(lex)){\
-            register char *tmpcc,tmpch;\
-            hash = 0;\
-            for(tmpcc=Input,tmpch= *tmpcc; tmpch; tmpch = *++tmpcc) {\
-                SYM_TAB_HASH_FUN_INC(hash, tmpch);\
-            }\
-            SYM_TAB_HASH_FUN_FINAL(hash);\
-            tmpcc ++;\
-            GetLexPosition((pos),tmpcc);\
-            Input = tmpcc;\
-        } else if (lex == STRING_LITERAL) {\
-            register char *tmpcc,tmpch;\
-            for(tmpcc=Input,tmpch= *tmpcc; tmpch; tmpch = *++tmpcc);\
-            tmpcc ++;\
-            GetLexPosition((pos),tmpcc);\
-            Input = tmpcc;\
-        } else if (lex == LINE_TOK) {\
-            GetLexToken(lineval,Input);\
-            if (linecount) {\
-                if(s_opt.debug) dpnewline(lineval);\
-                cFile.lineNumber += lineval; \
-            }\
-        } else if (lex == CONSTANT || lex == LONG_CONSTANT) {\
-            GetLexInt(val,Input);\
-            GetLexPosition((pos),Input);\
-            GetLexInt(length,Input);\
-        } else if (lex == DOUBLE_CONSTANT || lex == FLOAT_CONSTANT) {\
-            GetLexPosition((pos),Input);\
-            GetLexInt(length,Input);\
-        } else if (lex == CPP_MAC_ARG) {\
-            GetLexInt(val,Input);\
-            GetLexPosition((pos),Input);\
-        } else if (lex == CHAR_LITERAL) {\
-            GetLexInt(val,Input);\
-            GetLexPosition((pos),Input);\
-            GetLexInt(length,Input);\
-        }\
-    } else if (lex>CPP_TOKENS_START && lex<CPP_TOKENS_END) {\
-        GetLexPosition((pos),Input);\
-    } else if (lex == '\n' && (linecount)) {\
-        GetLexPosition((pos),Input);\
-        if (s_opt.debug) dpnewline(1);\
-        cFile.lineNumber ++; \
-    } else {\
-        GetLexPosition((pos),Input);\
-    } \
-}
+#define PassLex(Input,lex,lineval,val,hash,pos, length,linecount) {     \
+        if (lex > MULTI_TOKENS_START) {                                 \
+            if (IS_IDENTIFIER_LEXEM(lex)){                              \
+                register char *tmpcc,tmpch;                             \
+                hash = 0;                                               \
+                for(tmpcc=Input,tmpch= *tmpcc; tmpch; tmpch = *++tmpcc) { \
+                    SYM_TAB_HASH_FUN_INC(hash, tmpch);                  \
+                }                                                       \
+                SYM_TAB_HASH_FUN_FINAL(hash);                           \
+                tmpcc ++;                                               \
+                GetLexPosition((pos),tmpcc);                            \
+                Input = tmpcc;                                          \
+            } else if (lex == STRING_LITERAL) {                         \
+                register char *tmpcc,tmpch;                             \
+                for(tmpcc=Input,tmpch= *tmpcc; tmpch; tmpch = *++tmpcc); \
+                tmpcc ++;                                               \
+                GetLexPosition((pos),tmpcc);                            \
+                Input = tmpcc;                                          \
+            } else if (lex == LINE_TOK) {                               \
+                GetLexToken(lineval,Input);                             \
+                if (linecount) {                                        \
+                    if(s_opt.debug) dpnewline(lineval);                 \
+                    cFile.lineNumber += lineval;                        \
+                }                                                       \
+            } else if (lex == CONSTANT || lex == LONG_CONSTANT) {       \
+                GetLexInt(val,Input);                                   \
+                GetLexPosition((pos),Input);                            \
+                GetLexInt(length,Input);                                \
+            } else if (lex == DOUBLE_CONSTANT || lex == FLOAT_CONSTANT) { \
+                GetLexPosition((pos),Input);                            \
+                GetLexInt(length,Input);                                \
+            } else if (lex == CPP_MAC_ARG) {                            \
+                GetLexInt(val,Input);                                   \
+                GetLexPosition((pos),Input);                            \
+            } else if (lex == CHAR_LITERAL) {                           \
+                GetLexInt(val,Input);                                   \
+                GetLexPosition((pos),Input);                            \
+                GetLexInt(length,Input);                                \
+            }                                                           \
+        } else if (lex>CPP_TOKENS_START && lex<CPP_TOKENS_END) {        \
+            GetLexPosition((pos),Input);                                \
+        } else if (lex == '\n' && (linecount)) {                        \
+            GetLexPosition((pos),Input);                                \
+            if (s_opt.debug) dpnewline(1);                              \
+            cFile.lineNumber ++;                                        \
+        } else {                                                        \
+            GetLexPosition((pos),Input);                                \
+        }                                                               \
+    }
 
-#define PrependMacInput(macInput) {\
-    assert(macStacki < MACSTACK_SIZE-1);\
-    macStack[macStacki++] = cInput;\
-    cInput = macInput;\
-    cInput.cc = cInput.a;\
-    cInput.margExpFlag = II_MACRO;\
-}
+#define PrependMacInput(macInput) {             \
+        assert(macStacki < MACSTACK_SIZE-1);    \
+        macStack[macStacki++] = cInput;         \
+        cInput = macInput;                      \
+        cInput.cc = cInput.a;                   \
+        cInput.margExpFlag = II_MACRO;          \
+    }
 
-#define GetLexA(lex,lastlexadd) {\
-    while (cInput.cc >= cInput.fin) {\
-        char margFlag;\
-        margFlag = cInput.margExpFlag;\
-        if (macStacki > 0) {\
-            if (margFlag == II_MACRO_ARG) goto endOfMacArg;\
-            MB_FREE_UNTIL(cInput.a);\
-            cInput = macStack[--macStacki];\
-        } else if (margFlag == II_NORMAL) {\
-            SetCFileConsistency();\
-            getLexBuf(&cFile.lb);\
-            if (cFile.lb.cc >= cFile.lb.fin) goto endOfFile;\
-            SetCInputConsistency();\
-        } else {\
-/*			s_cache.recoveringFromCache = 0;*/\
-            s_cache.cc = s_cache.cfin = NULL;\
-            cacheInput();\
-            s_cache.lexcc = cFile.lb.cc;\
-            SetCInputConsistency();\
-        }\
-        lastlexadd = cInput.cc;\
-    }\
-    lastlexadd = cInput.cc;\
-    GetLexToken(lex,cInput.cc);\
-}
+#define GetLexA(lex,lastlexadd) {                                   \
+        while (cInput.cc >= cInput.fin) {                           \
+            char margFlag;                                          \
+            margFlag = cInput.margExpFlag;                          \
+            if (macStacki > 0) {                                    \
+                if (margFlag == II_MACRO_ARG) goto endOfMacArg;     \
+                MB_FREE_UNTIL(cInput.a);                            \
+                cInput = macStack[--macStacki];                     \
+            } else if (margFlag == II_NORMAL) {                     \
+                SetCFileConsistency();                              \
+                getLexBuf(&cFile.lb);                               \
+                if (cFile.lb.cc >= cFile.lb.fin) goto endOfFile;    \
+                SetCInputConsistency();                             \
+            } else {                                                \
+                /*			s_cache.recoveringFromCache = 0;*/      \
+                s_cache.cc = s_cache.cfin = NULL;                   \
+                cacheInput();                                       \
+                s_cache.lexcc = cFile.lb.cc;                        \
+                SetCInputConsistency();                             \
+            }                                                       \
+            lastlexadd = cInput.cc;                                 \
+        }                                                           \
+        lastlexadd = cInput.cc;                                     \
+        GetLexToken(lex,cInput.cc);                                 \
+    }
 
-#define GetLex(lex) {\
-    char *lastlexcc; GetLexA(lex,lastlexcc);\
-}
+#define GetLex(lex) {                               \
+        char *lastlexcc; GetLexA(lex,lastlexcc);    \
+    }
 
 
 /* ***************************************************************** */

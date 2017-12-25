@@ -5,7 +5,6 @@
 
 extern void classHierarchyGenInit();
 extern void setTmpClassBackPointersToMenu(S_olSymbolsMenu *menu);
-extern int chLineOrderLess(S_olSymbolsMenu *r1, S_olSymbolsMenu *r2);
 extern void splitMenuPerSymbolsAndMap(
                                       S_olSymbolsMenu *rrr,
                                       void (*fun)(S_olSymbolsMenu *, void *, void *),

@@ -215,7 +215,7 @@ static int cachedIncludedFilePass(int cpi) {
     return(1);
 }
 
-void recoverCxMemory(char *cxMemFreeBase) {
+static void recoverCxMemory(char *cxMemFreeBase) {
     CX_FREE_UNTIL(cxMemFreeBase);
     idTabMap3(&s_fileTab, fileTabDeleteOutOfMemory);
     refTabMap3(&s_cxrefTab, cxrefTabDeleteOutOfMemory);
@@ -231,12 +231,12 @@ void recoverCxMemory(char *cxMemFreeBase) {
                                                                         )
 
 
-    void recoverCachePointZero() {
-        //&if (CACHING_CLASSES) {
-        ppmMemoryi = s_cache.cp[0].ppmMemoryi;
-        //&}
-        recoverCachePoint(0,s_cache.cp[0].lbcc,0);
-    }
+void recoverCachePointZero() {
+    //&if (CACHING_CLASSES) {
+    ppmMemoryi = s_cache.cp[0].ppmMemoryi;
+    //&}
+    recoverCachePoint(0,s_cache.cp[0].lbcc,0);
+}
 
 void recoverMemoriesAfterOverflow(char *cxMemFreeBase) {
     recoverCxMemory(cxMemFreeBase);
