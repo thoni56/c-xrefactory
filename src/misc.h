@@ -38,12 +38,10 @@ extern void ppcGenReferencePreCheckRecord(S_reference *r, char *text);
 extern void ppcGenGotoPositionRecord(S_position *p);
 extern void ppcGenOffsetPosition(char *fn, int offset);
 extern void ppcGenMarker(S_editorMarker *m);
-extern char * stringNumStr( int rr, int ed, int em, int ey, char *own );
 extern void jarFileParse();
 extern void scanJarFilesForTagSearch();
 extern void classFileParse();
 extern void fillTrivialSpecialRefItem( S_symbolRefItem *ddd , char *name);
-extern void setExpirationFromLicenseString();
 extern int optionsOverflowHandler(int n);
 extern int cxMemoryOverflowHandler(int n);
 
@@ -59,9 +57,6 @@ extern char *stackMemoryPushString(char *s);
 extern void stackMemoryPop(void *, int size);
 extern void stackMemoryBlockStart();
 extern void stackMemoryBlockFree();
-extern void stackMemoryStartErrZone();
-extern void stackMemoryStopErrZone();
-extern void stackMemoryErrorInZone();
 extern void stackMemoryDump();
 
 extern void addToTrail (void (*action)(void*),  void *p);
@@ -90,9 +85,6 @@ extern void expandWildCharactersInOnePathRec(char *fn, char **outpaths, int *fre
 extern void expandWildCharactersInOnePath(char *fn, char *outpaths, int olen);
 extern void expandWildCharactersInPaths(char *paths, char *outpaths, int freeolen);
 extern char * getRealFileNameStatic(char *fn);
-extern void copyFile(char *src, char *dest);
-extern void createDir(char *dirname);
-extern void removeFile(char *dirname);
 extern int substringIndexWithLimit(char *s, int limit, char *subs);
 extern int stringContainsSubstring(char *s, char *subs);
 extern void javaGetPackageNameFromSourceFileName(char *src, char *opack);
@@ -136,7 +128,7 @@ extern void javaMapDirectoryFiles2(
     );
 extern char *lastOccurenceInString(char *ss, int ch);
 extern char *lastOccurenceOfSlashOrAntiSlash(char *ss);
-extern char * getFileSuffix(char *fn);
+extern char *getFileSuffix(char *fn);
 extern char *javaCutClassPathFromFileName(char *fname);
 extern char *javaCutSourcePathFromFileName(char *fname);
 extern int pathncmp(char *ss1, char *ss2, int n, int caseSensitive);

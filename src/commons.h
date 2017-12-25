@@ -6,5 +6,10 @@ extern void warning(int kod, char *sprava);
 extern void error(int kod, char *sprava);
 extern void fatalError(int kod, char *sprava, int exitCode);
 extern void internalCheckFail(char *expr, char *file, int line);
+extern char *create_temporary_filename();
+extern void copyFile(char *src, char *dest);
+extern void createDir(char *dirname);
+extern void removeFile(char *dirname);
+
 
 #endif
