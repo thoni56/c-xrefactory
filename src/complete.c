@@ -1559,7 +1559,7 @@ static void completeFqtClassFileFromFileTab(S_fileItem *fi, void *cfmpi) {
     }
 }
 
-static void comleteRecursivelyFqtNamesFromDirectory(MAP_FUN_PROFILE) {
+static void completeRecursivelyFqtNamesFromDirectory(MAP_FUN_PROFILE) {
     char            *fname, *dir, *path;
     char            fn[MAX_FILE_NAME_SIZE];
     struct stat     st;
@@ -1574,7 +1574,7 @@ static void comleteRecursivelyFqtNamesFromDirectory(MAP_FUN_PROFILE) {
     sprintf(fn,"%s%c%s",dir,SLASH,fname);
     stt = statb(fn, &st);
     if (stt==0  && (st.st_mode & S_IFMT)==S_IFDIR) {
-        mapDirectoryFiles(fn, comleteRecursivelyFqtNamesFromDirectory, DO_NOT_ALLOW_EDITOR_FILES,
+        mapDirectoryFiles(fn, completeRecursivelyFqtNamesFromDirectory, DO_NOT_ALLOW_EDITOR_FILES,
                           fn, path, NULL, a4, NULL);
     } else if (stt==0) {
         // O.K. cut the path
@@ -1607,13 +1607,13 @@ static void javaFqtCompletions(S_completions *c, int completionType) {
     if (s_opt.fqtNameToCompletions <= 2) return;
     // fqt from classpath
     for(pp=s_javaClassPaths; pp!=NULL; pp=pp->next) {
-        mapDirectoryFiles(pp->d, comleteRecursivelyFqtNamesFromDirectory,DO_NOT_ALLOW_EDITOR_FILES,
+        mapDirectoryFiles(pp->d, completeRecursivelyFqtNamesFromDirectory,DO_NOT_ALLOW_EDITOR_FILES,
                           pp->d,pp->d,NULL,&cfmi,NULL);
     }
     if (s_opt.fqtNameToCompletions <= 3) return;
     // fqt from sourcepath
     JavaMapOnPaths(s_javaSourcePaths, {
-            mapDirectoryFiles(currentPath, comleteRecursivelyFqtNamesFromDirectory,DO_NOT_ALLOW_EDITOR_FILES,
+            mapDirectoryFiles(currentPath, completeRecursivelyFqtNamesFromDirectory,DO_NOT_ALLOW_EDITOR_FILES,
                               currentPath,currentPath,NULL,&cfmi,NULL);
         });
 }

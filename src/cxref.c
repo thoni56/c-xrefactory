@@ -4823,7 +4823,7 @@ void mainAnswerEditAction() {
         assert(s_olcxCurrentUser);
         olcxPushEmptyStackItem(&s_olcxCurrentUser->retrieverStack);
         s_olcxCurrentUser->retrieverStack.top->cpos = opos;
-        if (containsWildCharacter(s_opt.olcxSearchString)) {
+        if (containsWildcard(s_opt.olcxSearchString)) {
             s_wildCharSearch = 1;
         } else {
             s_wildCharSearch = 0;

@@ -1336,7 +1336,7 @@ int shellMatch(char *string, int stringLen, char *pattern, int caseSensitive) {
     return(res);
 }
 
-int containsWildCharacter(char *ss) {
+int containsWildcard(char *ss) {
     register int c;
     for(; *ss; ss++) {
         c = *ss;
@@ -1346,7 +1346,7 @@ int containsWildCharacter(char *ss) {
 }
 
 
-static void expandWildCharsMapFun(MAP_FUN_PROFILE) {
+static void expandWildcardsMapFun(MAP_FUN_PROFILE) {
     char            ttt[MAX_FILE_NAME_SIZE];
     char            *dir1, *pattern, *dir2, **outpath;
     int             *freeolen;
@@ -1375,7 +1375,7 @@ void expandWildCharactersInOnePathRec(char *fn, char **outpaths, int *freeolen) 
     struct stat         st;
 
     //&fprintf(dumpOut,"expandwc(%s)\n", fn);fflush(dumpOut);
-    if (containsWildCharacter(fn)) {
+    if (containsWildcard(fn)) {
         si = 0; di = 0;
         while (fn[si]) {
             ldi = di;
@@ -1384,11 +1384,11 @@ void expandWildCharactersInOnePathRec(char *fn, char **outpaths, int *freeolen) 
                 si++; di++;
             }
             ttt[di] = 0;
-            if (containsWildCharacter(ttt+ldi)) {
+            if (containsWildcard(ttt+ldi)) {
                 for(i=di; i>=ldi; i--) ttt[i+1] = ttt[i];
                 ttt[ldi]=0;
                 //&fprintf(dumpOut,"mapdirectoryfiles(%s, %s, %s)\n", ttt, ttt+ldi+1, fn+si);fflush(dumpOut);
-                mapDirectoryFiles(ttt, expandWildCharsMapFun, 0, ttt, ttt+ldi+1,
+                mapDirectoryFiles(ttt, expandWildcardsMapFun, 0, ttt, ttt+ldi+1,
                                   (S_completions*)(fn+si), outpaths, freeolen);
             } else {
                 ttt[di] = fn[si];

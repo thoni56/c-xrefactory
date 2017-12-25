@@ -79,7 +79,7 @@ extern char *strmcpy(char *dest, char *src);
 extern char *simpleFileName(char *fullFileName);
 extern char *directoryName_st(char *fullFileName);
 extern char *simpleFileNameWithoutSuffix_st(char *fullFileName);
-extern int containsWildCharacter(char *ss);
+extern int containsWildcard(char *ss);
 extern int shellMatch(char *string, int stringLen, char *pattern, int caseSensitive);
 extern void expandWildCharactersInOnePathRec(char *fn, char **outpaths, int *freeolen);
 extern void expandWildCharactersInOnePath(char *fn, char *outpaths, int olen);

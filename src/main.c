@@ -244,7 +244,7 @@ void dirInputFile(MAP_FUN_PROFILE) {
             return;
         }
         scheduleCommandLineEnteredFileToProcess(fn);
-    } else if (containsWildCharacter(fn)) {
+    } else if (containsWildcard(fn)) {
         expandWildCharactersInOnePath(fn, wcPaths, MAX_OPTION_LEN);
         //&fprintf(dumpOut, "wild char path %s expanded to %s\n", fn, wcPaths);
         JavaMapOnPaths(wcPaths,{
@@ -2169,7 +2169,7 @@ static void getAndProcessGccOptions() {
     removeFile(tempfile_name);
 }
 
-void getAndProcessXrefrcOptions(char *dffname, char *dffsect,char *project) {
+static void getAndProcessXrefrcOptions(char *dffname, char *dffsect,char *project) {
     int dfargc;
     char **dfargv;
     if (*dffname != 0 && s_opt.stdopFlag==0 && s_opt.no_stdop==0) {
@@ -2723,7 +2723,7 @@ static void scheduleModifiedFilesToUpdate() {
 }
 
 
-void resetPendingSymbolMenuData() {
+static void resetPendingSymbolMenuData(void) {
     S_olcxReferences *rstack;
     olcxSetCurrentUser(s_opt.user);
     rstack = s_olcxCurrentUser->browserStack.top;
@@ -2961,7 +2961,7 @@ static void initAvailableRefactorings() {
 }
 
 
-char * presetEditServerFileDependingStatics() {
+static char *presetEditServerFileDependingStatics(void) {
     int     i, fArgCount;
     char    *fileName;
     s_fileProcessStartTime = time(NULL);
@@ -3268,7 +3268,7 @@ void mainCallXref(int argc, char **argv) {
 }
 
 
-void mainXref(int argc, char **argv) {
+static void mainXref(int argc, char **argv) {
     mainOpenOutputFile(s_opt.outputFileName);
     editorLoadAllOpenedBufferFiles();
 
