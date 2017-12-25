@@ -73,6 +73,5 @@ extern int editorMapOnNonexistantFiles(
 extern void editorCloseBufferIfClosable(char *name);
 extern void editorCloseAllBuffersIfClosable();
 extern void editorCloseAllBuffers();
-extern void editorTest();
 
 #endif

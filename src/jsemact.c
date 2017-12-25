@@ -1869,7 +1869,7 @@ void javaAddMethodParametersToSymTable(S_symbol *method) {
 void javaMethodBodyBeginning(S_symbol *method) {
     assert(method->u.type && method->u.type->m == TypeFunction);
     s_cp.function = method;
-    GenInternalLabelReference(-1, UsageDefined);
+    genInternalLabelReference(-1, UsageDefined);
     s_count.localVar = 0;
     javaAddMethodParametersToSymTable(method);
     method->u.type->u.m.sig = strchr(method->linkName, '(');

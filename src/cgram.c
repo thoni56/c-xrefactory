@@ -3776,19 +3776,19 @@ break;
 case 265:
 #line 1495 "cgram.y"
 {
-            GenSwitchCaseFork(0);
+            genSwitchCaseFork(0);
     }
 break;
 case 266:
 #line 1498 "cgram.y"
 {
-            GenSwitchCaseFork(0);
+            genSwitchCaseFork(0);
     }
 break;
 case 267:
 #line 1501 "cgram.y"
 {
-            GenSwitchCaseFork(0);
+            genSwitchCaseFork(0);
     }
 break;
 case 269:
@@ -3850,41 +3850,41 @@ break;
 case 290:
 #line 1588 "cgram.y"
 {
-        GenInternalLabelReference(yyvsp[-1].bbinteger.d, UsageDefined);
+        genInternalLabelReference(yyvsp[-1].bbinteger.d, UsageDefined);
     }
 break;
 case 291:
 #line 1591 "cgram.y"
 {
-        GenInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
+        genInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
     }
 break;
 case 292:
 #line 1593 "cgram.y"
 {
-        GenInternalLabelReference(yyvsp[-2].bbinteger.d, UsageDefined);
+        genInternalLabelReference(yyvsp[-2].bbinteger.d, UsageDefined);
     }
 break;
 case 293:
 #line 1596 "cgram.y"
 {/*6*/
-        AddContinueBreakLabelSymbol(1000*yyvsp[0].bbinteger.d, SWITCH_LABEL_NAME, yyval.symbol);
+        yyval.symbol = addContinueBreakLabelSymbol(1000*yyvsp[0].bbinteger.d, SWITCH_LABEL_NAME);
     }
 break;
 case 294:
 #line 1598 "cgram.y"
 {/*7*/
-        AddContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME, yyval.symbol);
-        GenInternalLabelReference(yyvsp[-1].bbinteger.d, UsageFork);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME);
+        genInternalLabelReference(yyvsp[-1].bbinteger.d, UsageFork);
     }
 break;
 case 295:
 #line 1601 "cgram.y"
 {
-        GenSwitchCaseFork(1);
+        genSwitchCaseFork(1);
         ExtrDeleteContBreakSym(yyvsp[-1].symbol);
         ExtrDeleteContBreakSym(yyvsp[-2].symbol);
-        GenInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
+        genInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
     }
 break;
 case 296:
@@ -3894,13 +3894,13 @@ break;
 case 297:
 #line 1615 "cgram.y"
 {/*7*/
-        AddContinueBreakLabelSymbol(yyvsp[-4].bbinteger.d, CONTINUE_LABEL_NAME, yyval.symbol);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-4].bbinteger.d, CONTINUE_LABEL_NAME);
     }
 break;
 case 298:
 #line 1617 "cgram.y"
 {/*8*/
-        AddContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME, yyval.symbol);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME);
     }
 break;
 case 299:
@@ -3908,20 +3908,20 @@ case 299:
 {
         ExtrDeleteContBreakSym(yyvsp[-1].symbol);
         ExtrDeleteContBreakSym(yyvsp[-2].symbol);
-        GenInternalLabelReference(yyvsp[-7].bbinteger.d, UsageUsed);
-        GenInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
+        genInternalLabelReference(yyvsp[-7].bbinteger.d, UsageUsed);
+        genInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
     }
 break;
 case 300:
 #line 1626 "cgram.y"
 { /*5*/
-        AddContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, CONTINUE_LABEL_NAME, yyval.symbol);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, CONTINUE_LABEL_NAME);
     }
 break;
 case 301:
 #line 1628 "cgram.y"
 {/*6*/
-        AddContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME, yyval.symbol);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME);
     }
 break;
 case 302:
@@ -3929,29 +3929,29 @@ case 302:
 {
         ExtrDeleteContBreakSym(yyvsp[-2].symbol);
         ExtrDeleteContBreakSym(yyvsp[-3].symbol);
-        GenInternalLabelReference(yyvsp[-5].bbinteger.d, UsageDefined);
+        genInternalLabelReference(yyvsp[-5].bbinteger.d, UsageDefined);
     }
 break;
 case 303:
 #line 1634 "cgram.y"
 {
-        GenInternalLabelReference(yyvsp[-11].bbinteger.d, UsageFork);
-        GenInternalLabelReference(yyvsp[-9].bbinteger.d, UsageDefined);
+        genInternalLabelReference(yyvsp[-11].bbinteger.d, UsageFork);
+        genInternalLabelReference(yyvsp[-9].bbinteger.d, UsageDefined);
     }
 break;
 case 304:
 #line 1642 "cgram.y"
 {
         /*13*/
-        GenInternalLabelReference(yyvsp[-7].bbinteger.d, UsageUsed);
-        GenInternalLabelReference(yyvsp[-4].bbinteger.d, UsageDefined);
-        AddContinueBreakLabelSymbol(yyvsp[-3].bbinteger.d, CONTINUE_LABEL_NAME, yyval.symbol);
+        genInternalLabelReference(yyvsp[-7].bbinteger.d, UsageUsed);
+        genInternalLabelReference(yyvsp[-4].bbinteger.d, UsageDefined);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-3].bbinteger.d, CONTINUE_LABEL_NAME);
         }
 break;
 case 305:
 #line 1648 "cgram.y"
 {/*14*/
-        AddContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME, yyval.symbol);
+            yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME);
         }
 break;
 case 306:
@@ -3959,32 +3959,32 @@ case 306:
 {
         ExtrDeleteContBreakSym(yyvsp[-1].symbol);
         ExtrDeleteContBreakSym(yyvsp[-2].symbol);
-        GenInternalLabelReference(yyvsp[-6].bbinteger.d, UsageUsed);
-        GenInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
+        genInternalLabelReference(yyvsp[-6].bbinteger.d, UsageUsed);
+        genInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
         }
 break;
 case 310:
 #line 1664 "cgram.y"
 {
-        GenContBreakReference(CONTINUE_LABEL_NAME);
+        genContinueBreakReference(CONTINUE_LABEL_NAME);
     }
 break;
 case 311:
 #line 1667 "cgram.y"
 {
-        GenContBreakReference(BREAK_LABEL_NAME);
+        genContinueBreakReference(BREAK_LABEL_NAME);
     }
 break;
 case 312:
 #line 1670 "cgram.y"
 {
-        GenInternalLabelReference(-1, UsageUsed);
+        genInternalLabelReference(-1, UsageUsed);
     }
 break;
 case 313:
 #line 1673 "cgram.y"
 {
-        GenInternalLabelReference(-1, UsageUsed);
+        genInternalLabelReference(-1, UsageUsed);
     }
 break;
 case 314:
@@ -4038,7 +4038,7 @@ case 335:
         s_count.localVar = 0;
         assert(yyvsp[0].bbsymbol.d->u.type && yyvsp[0].bbsymbol.d->u.type->m == TypeFunction);
         s_cp.function = yyvsp[0].bbsymbol.d;
-        GenInternalLabelReference(-1, UsageDefined);
+        genInternalLabelReference(-1, UsageDefined);
         for(p=yyvsp[0].bbsymbol.d->u.type->u.f.args,i=1; p!=NULL; p=p->next,i++) {
             if (p->b.symType == TypeElipsis) continue;
             if (p->u.type == NULL) p->u.type = &s_defaultIntModifier;

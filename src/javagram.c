@@ -4532,7 +4532,7 @@ case 176:
                         stackMemoryBlockStart();  /* in order to remove arguments*/
                         s_cp.function = mh; /* added for set-target-position checks */
                         /* also needed for pushing label reference */
-                        GenInternalLabelReference(-1, UsageDefined);
+                        genInternalLabelReference(-1, UsageDefined);
                         s_count.localVar = 0;
                         assert(yyvsp[-1].bbsymbol.d && yyvsp[-1].bbsymbol.d->u.type);
                         javaAddMethodParametersToSymTable(yyvsp[-1].bbsymbol.d);
@@ -5144,7 +5144,7 @@ case 280:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    GenInternalLabelReference(yyvsp[-1].bbinteger.d, UsageDefined);
+                    genInternalLabelReference(yyvsp[-1].bbinteger.d, UsageDefined);
                 } else {
                     PropagateBorns(yyval.bbposition, yyvsp[-5].bbposition, yyvsp[0].bbposition);
                 }
@@ -5156,7 +5156,7 @@ case 281:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    GenInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
+                    genInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
                     yyval.bbinteger.d = yyvsp[0].bbinteger.d;
                 } else {
                     PropagateBorns(yyval.bbinteger, yyvsp[-7].bbposition, yyvsp[-1].bbposition);
@@ -5169,7 +5169,7 @@ case 282:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    GenInternalLabelReference(yyvsp[-1].bbinteger.d, UsageDefined);
+                    genInternalLabelReference(yyvsp[-1].bbinteger.d, UsageDefined);
                 } else {
                     PropagateBorns(yyval.bbposition, yyvsp[-1].bbinteger, yyvsp[0].bbposition);
                 }
@@ -5181,7 +5181,7 @@ case 283:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    GenInternalLabelReference(yyvsp[-1].bbinteger.d, UsageDefined);
+                    genInternalLabelReference(yyvsp[-1].bbinteger.d, UsageDefined);
                 } else {
                     PropagateBorns(yyval.bbposition, yyvsp[-1].bbinteger, yyvsp[0].bbposition);
                 }
@@ -5193,7 +5193,7 @@ case 284:
 {/*6*/
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    AddContinueBreakLabelSymbol(1000*yyvsp[0].bbinteger.d,SWITCH_LABEL_NAME,yyval.symbol);
+                    yyval.symbol = addContinueBreakLabelSymbol(1000*yyvsp[0].bbinteger.d,SWITCH_LABEL_NAME);
                 }
             }
         }
@@ -5203,8 +5203,8 @@ case 285:
 {/*7*/
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    AddContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME, yyval.symbol);
-                    GenInternalLabelReference(yyvsp[-1].bbinteger.d, UsageFork);
+                    yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME);
+                    genInternalLabelReference(yyvsp[-1].bbinteger.d, UsageFork);
                 }
             }
         }
@@ -5214,10 +5214,10 @@ case 286:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    GenSwitchCaseFork(1);
+                    genSwitchCaseFork(1);
                     ExtrDeleteContBreakSym(yyvsp[-1].symbol);
                     ExtrDeleteContBreakSym(yyvsp[-2].symbol);
-                    GenInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
+                    genInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
                 } else {
                     PropagateBorns(yyval.bbposition, yyvsp[-7].bbposition, yyvsp[0].bbposition);
                 }
@@ -5259,7 +5259,7 @@ case 293:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    GenSwitchCaseFork(0);
+                    genSwitchCaseFork(0);
                 }
             }
         }
@@ -5302,8 +5302,8 @@ case 300:
                     if (s_opt.cxrefs == OLO_EXTRACT) {
                         S_symbol *cl, *bl;
                         cl = bl = NULL;        /* just to avoid warning message*/
-                        AddContinueBreakLabelSymbol(yyvsp[-4].bbinteger.d, CONTINUE_LABEL_NAME, cl);
-                        AddContinueBreakLabelSymbol(yyvsp[0].bbinteger.d, BREAK_LABEL_NAME, bl);
+                        cl = addContinueBreakLabelSymbol(yyvsp[-4].bbinteger.d, CONTINUE_LABEL_NAME);
+                        bl = addContinueBreakLabelSymbol(yyvsp[0].bbinteger.d, BREAK_LABEL_NAME);
                         XX_ALLOC(yyval.bbwhiledata.d, S_whileExtractData);
                         FILL_whileExtractData(yyval.bbwhiledata.d, yyvsp[-4].bbinteger.d, yyvsp[0].bbinteger.d, cl, bl);
                     } else {
@@ -5323,8 +5323,8 @@ case 301:
                     if (yyvsp[-1].bbwhiledata.d != NULL) {
                         ExtrDeleteContBreakSym(yyvsp[-1].bbwhiledata.d->i4);
                         ExtrDeleteContBreakSym(yyvsp[-1].bbwhiledata.d->i3);
-                        GenInternalLabelReference(yyvsp[-1].bbwhiledata.d->i1, UsageUsed);
-                        GenInternalLabelReference(yyvsp[-1].bbwhiledata.d->i2, UsageDefined);
+                        genInternalLabelReference(yyvsp[-1].bbwhiledata.d->i1, UsageUsed);
+                        genInternalLabelReference(yyvsp[-1].bbwhiledata.d->i2, UsageDefined);
                     }
                 } else {
                     PropagateBorns(yyval.bbposition, yyvsp[-1].bbwhiledata, yyvsp[0].bbposition);
@@ -5340,8 +5340,8 @@ case 302:
                     if (yyvsp[-1].bbwhiledata.d != NULL) {
                         ExtrDeleteContBreakSym(yyvsp[-1].bbwhiledata.d->i4);
                         ExtrDeleteContBreakSym(yyvsp[-1].bbwhiledata.d->i3);
-                        GenInternalLabelReference(yyvsp[-1].bbwhiledata.d->i1, UsageUsed);
-                        GenInternalLabelReference(yyvsp[-1].bbwhiledata.d->i2, UsageDefined);
+                        genInternalLabelReference(yyvsp[-1].bbwhiledata.d->i1, UsageUsed);
+                        genInternalLabelReference(yyvsp[-1].bbwhiledata.d->i2, UsageDefined);
                     }
                 } else {
                     PropagateBorns(yyval.bbposition, yyvsp[-1].bbwhiledata, yyvsp[0].bbposition);
@@ -5354,7 +5354,7 @@ case 303:
 { /*5*/
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    AddContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, CONTINUE_LABEL_NAME, yyval.symbol);
+                    yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, CONTINUE_LABEL_NAME);
                 }
             }
         }
@@ -5364,7 +5364,7 @@ case 304:
 {/*6*/
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    AddContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME, yyval.symbol);
+                    yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME);
                 }
             }
         }
@@ -5376,7 +5376,7 @@ case 305:
                 if (! SyntaxPassOnly()) {
                     ExtrDeleteContBreakSym(yyvsp[-2].symbol);
                     ExtrDeleteContBreakSym(yyvsp[-3].symbol);
-                    GenInternalLabelReference(yyvsp[-5].bbinteger.d, UsageDefined);
+                    genInternalLabelReference(yyvsp[-5].bbinteger.d, UsageDefined);
                 }
             }
         }
@@ -5386,8 +5386,8 @@ case 306:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    GenInternalLabelReference(yyvsp[-11].bbinteger.d, UsageFork);
-                    GenInternalLabelReference(yyvsp[-9].bbinteger.d, UsageDefined);
+                    genInternalLabelReference(yyvsp[-11].bbinteger.d, UsageFork);
+                    genInternalLabelReference(yyvsp[-9].bbinteger.d, UsageDefined);
                 } else {
                     PropagateBorns(yyval.bbposition, yyvsp[-12].bbposition, yyvsp[0].bbposition);
                 }
@@ -5424,10 +5424,10 @@ case 310:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     S_symbol *ss;
-                    GenInternalLabelReference(yyvsp[-7].bbinteger.d, UsageUsed);
-                    GenInternalLabelReference(yyvsp[-4].bbinteger.d, UsageDefined);
-                    AddContinueBreakLabelSymbol(yyvsp[-3].bbinteger.d, CONTINUE_LABEL_NAME, ss);
-                    AddContinueBreakLabelSymbol(yyvsp[0].bbinteger.d, BREAK_LABEL_NAME, ss);
+                    genInternalLabelReference(yyvsp[-7].bbinteger.d, UsageUsed);
+                    genInternalLabelReference(yyvsp[-4].bbinteger.d, UsageDefined);
+                    ss = addContinueBreakLabelSymbol(yyvsp[-3].bbinteger.d, CONTINUE_LABEL_NAME);
+                    ss = addContinueBreakLabelSymbol(yyvsp[0].bbinteger.d, BREAK_LABEL_NAME);
                     yyval.bbintpair.d.i1 = yyvsp[-3].bbinteger.d;
                     yyval.bbintpair.d.i2 = yyvsp[0].bbinteger.d;
                 } else {
@@ -5441,10 +5441,10 @@ case 311:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    DeleteContinueBreakLabelSymbol(BREAK_LABEL_NAME);
-                    DeleteContinueBreakLabelSymbol(CONTINUE_LABEL_NAME);
-                    GenInternalLabelReference(yyvsp[-1].bbintpair.d.i1, UsageUsed);
-                    GenInternalLabelReference(yyvsp[-1].bbintpair.d.i2, UsageDefined);
+                    deleteContinueBreakLabelSymbol(BREAK_LABEL_NAME);
+                    deleteContinueBreakLabelSymbol(CONTINUE_LABEL_NAME);
+                    genInternalLabelReference(yyvsp[-1].bbintpair.d.i1, UsageUsed);
+                    genInternalLabelReference(yyvsp[-1].bbintpair.d.i2, UsageDefined);
                 } else {
                     PropagateBorns(yyval.bbposition, yyvsp[-1].bbintpair, yyvsp[0].bbposition);
                 }
@@ -5456,10 +5456,10 @@ case 312:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    DeleteContinueBreakLabelSymbol(BREAK_LABEL_NAME);
-                    DeleteContinueBreakLabelSymbol(CONTINUE_LABEL_NAME);
-                    GenInternalLabelReference(yyvsp[-1].bbintpair.d.i1, UsageUsed);
-                    GenInternalLabelReference(yyvsp[-1].bbintpair.d.i2, UsageDefined);
+                    deleteContinueBreakLabelSymbol(BREAK_LABEL_NAME);
+                    deleteContinueBreakLabelSymbol(CONTINUE_LABEL_NAME);
+                    genInternalLabelReference(yyvsp[-1].bbintpair.d.i1, UsageUsed);
+                    genInternalLabelReference(yyvsp[-1].bbintpair.d.i2, UsageDefined);
                 } else {
                     PropagateBorns(yyval.bbposition, yyvsp[-1].bbintpair, yyvsp[0].bbposition);
                 }
@@ -5567,7 +5567,7 @@ case 325:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    GenContBreakReference(BREAK_LABEL_NAME);
+                    genContinueBreakReference(BREAK_LABEL_NAME);
                 } else {
                     PropagateBorns(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
                 }
@@ -5585,7 +5585,7 @@ case 327:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    GenContBreakReference(CONTINUE_LABEL_NAME);
+                    genContinueBreakReference(CONTINUE_LABEL_NAME);
                 } else {
                     PropagateBorns(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
                 }
@@ -5597,7 +5597,7 @@ case 328:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    GenInternalLabelReference(-1, UsageUsed);
+                    genInternalLabelReference(-1, UsageUsed);
                 } else {
                     PropagateBorns(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
                 }
@@ -5609,7 +5609,7 @@ case 329:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    GenInternalLabelReference(-1, UsageUsed);
+                    genInternalLabelReference(-1, UsageUsed);
                 } else {
                     PropagateBorns(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
                 }
@@ -5656,7 +5656,7 @@ case 336:
 {
                 if (RegularPass()) {
                     if (! SyntaxPassOnly()) {
-                        GenInternalLabelReference(yyvsp[-2].bbinteger.d, UsageDefined);
+                        genInternalLabelReference(yyvsp[-2].bbinteger.d, UsageDefined);
                     }
                 }
             }
@@ -5699,7 +5699,7 @@ case 341:
 {
                 if (RegularPass()) {
                     if (! SyntaxPassOnly()) {
-                        GenInternalLabelReference(yyvsp[-4].bbinteger.d, UsageDefined);
+                        genInternalLabelReference(yyvsp[-4].bbinteger.d, UsageDefined);
                     } else {
                         PropagateBorns(yyval.bbposition, yyvsp[-8].bbidIdent, yyvsp[-1].bbposition);
                     }
@@ -5726,7 +5726,7 @@ case 343:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    GenInternalLabelReference(yyvsp[-1].bbinteger.d, UsageDefined);
+                    genInternalLabelReference(yyvsp[-1].bbinteger.d, UsageDefined);
                 } else {
                     PropagateBorns(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
                 }

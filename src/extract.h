@@ -3,25 +3,6 @@
 
 #include "proto.h"
 
-/* TODO: push the conditions into the functions for these macros */
-#define GenInternalLabelReference(count,usage) {\
-    if (s_opt.cxrefs == OLO_EXTRACT) genInternalLabelReference(count, usage);\
-}
-#define AddContinueBreakLabelSymbol(count, name, res) {\
-    if (s_opt.cxrefs == OLO_EXTRACT) res = addContinueBreakLabelSymbol(count, name);\
-}
-#define DeleteContinueBreakLabelSymbol(name) {\
-    if (s_opt.cxrefs == OLO_EXTRACT) deleteContinueBreakLabelSymbol(name);\
-}
-
-#define GenContBreakReference(name) {\
-    if (s_opt.cxrefs == OLO_EXTRACT) genContinueBreakReference(name);\
-}
-
-#define GenSwitchCaseFork(lastFlag) {\
-    if (s_opt.cxrefs == OLO_EXTRACT) genSwitchCaseFork(lastFlag);\
-}
-
 extern S_symbol * addContinueBreakLabelSymbol(int labn, char *name);
 extern void actionsBeforeAfterExternalDefinition();
 extern void extractActionOnBlockMarker();

@@ -4808,7 +4808,8 @@ void mainAnswerEditAction() {
             ppcGenRecord(PPC_VERSION_MISMATCH, C_XREF_VERSION_NUMBER, "\n");
         }
         break;
-    case OLO_COMPLETION: case OLO_SEARCH:
+    case OLO_COMPLETION:
+    case OLO_SEARCH:
         printCompletions(&s_completions);
         break;
     case OLO_EXTRACT:

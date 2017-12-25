@@ -40,6 +40,9 @@ static void dumpProgram(S_programGraphNode *program) {
 void genInternalLabelReference(int counter, int usage) {
     char ttt[TMP_STRING_SIZE];
     S_idIdent ll;
+
+    if (s_opt.cxrefs != OLO_EXTRACT) return;
+
     LOCAL_LABEL_NAME(ttt,counter);
     FILLF_idIdent(&ll, ttt, NULL, cFile.lb.cb.fileNumber, 0,0,NULL);
     if (usage != UsageDefined) ll.p.line++;
@@ -50,6 +53,9 @@ void genInternalLabelReference(int counter, int usage) {
 
 S_symbol * addContinueBreakLabelSymbol(int labn, char *name) {
     S_symbol *s;
+
+    if (s_opt.cxrefs != OLO_EXTRACT) return;
+
     XX_ALLOC(s, S_symbol);
     FILL_symbolBits(&s->b,0,0,0,0,0,TypeLabel,StorageAuto,0);
     FILL_symbol(s,name,name,s_noPos,s->b,labn,labn,NULL);
@@ -61,6 +67,9 @@ S_symbol * addContinueBreakLabelSymbol(int labn, char *name) {
 void deleteContinueBreakLabelSymbol(char *name) {
     S_symbol    ss,*memb;
     int         ii;
+
+    if (s_opt.cxrefs != OLO_EXTRACT) return;
+
     FILL_symbolBits(&ss.b, 0,0,0,0,0,TypeLabel,StorageAuto,0);
     FILL_symbol(&ss, name, name, s_noPos, ss.b,labn,0, NULL);
     if (symTabIsMember(s_symTab, &ss, &ii, &memb)) {
@@ -73,6 +82,9 @@ void deleteContinueBreakLabelSymbol(char *name) {
 void genContinueBreakReference(char *name) {
     S_symbol    ss,*memb;
     int         ii;
+
+    if (s_opt.cxrefs != OLO_EXTRACT) return;
+
     FILL_symbolBits(&ss.b, 0,0,0,0,0,TypeLabel,StorageAuto,0);
     FILL_symbol(&ss, name, name, s_noPos, ss.b,labn,0, NULL);
     if (symTabIsMember(s_symTab, &ss, &ii, &memb)) {
@@ -83,6 +95,9 @@ void genContinueBreakReference(char *name) {
 void genSwitchCaseFork(int lastFlag) {
     S_symbol    ss,*memb;
     int         ii;
+
+    if (s_opt.cxrefs != OLO_EXTRACT) return;
+
     FILL_symbolBits(&ss.b, 0,0,0,0,0,TypeLabel,StorageAuto,0);
     FILL_symbol(&ss, SWITCH_LABEL_NAME, SWITCH_LABEL_NAME, s_noPos, ss.b,labn,0,NULL);
     if (symTabIsMember(s_symTab, &ss, &ii, &memb)) {

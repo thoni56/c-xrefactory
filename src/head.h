@@ -308,19 +308,19 @@
 
 #define EXTRACT_LABEL_SEMACT(rescount) {\
         rescount = s_count.localSym;\
-        GenInternalLabelReference(s_count.localSym, UsageDefined);\
+        genInternalLabelReference(s_count.localSym, UsageDefined);\
         s_count.localSym++;\
 }
 
 #define EXTRACT_GOTO_SEMACT(rescount) {\
         rescount = s_count.localSym;\
-        GenInternalLabelReference(s_count.localSym, UsageUsed);\
+        genInternalLabelReference(s_count.localSym, UsageUsed);\
         s_count.localSym++;\
 }
 
 #define EXTRACT_FORK_SEMACT(rescount) {\
         rescount = s_count.localSym;\
-        GenInternalLabelReference(s_count.localSym, UsageFork);\
+        genInternalLabelReference(s_count.localSym, UsageFork);\
         s_count.localSym++;\
 }
 

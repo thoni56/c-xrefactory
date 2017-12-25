@@ -1540,7 +1540,3 @@ void editorCloseAllBuffers() {
         s_editorBufferTab.tab[i] = NULL;
     }
 }
-
-void editorTest() {
-    S_editorBuffer *buff;
-}

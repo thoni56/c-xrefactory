@@ -1493,13 +1493,13 @@ statement
 label:
         label_def_name ':'
     |	CASE constant_expr ':' {
-            GenSwitchCaseFork(0);
+            genSwitchCaseFork(0);
     }
     |	CASE constant_expr ELIPSIS constant_expr ':' {
-            GenSwitchCaseFork(0);
+            genSwitchCaseFork(0);
     }
     |	DEFAULT ':' {
-            GenSwitchCaseFork(0);
+            genSwitchCaseFork(0);
     }
     ;
 
@@ -1586,23 +1586,23 @@ _nfork_:	{EXTRACT_FORK_SEMACT($$.d);}
 
 selection_statement
     : IF '(' expr ')' _nfork_ statement						{
-        GenInternalLabelReference($5.d, UsageDefined);
+        genInternalLabelReference($5.d, UsageDefined);
     }
     | IF '(' expr ')' _nfork_ statement ELSE _ngoto_ {
-        GenInternalLabelReference($5.d, UsageDefined);
+        genInternalLabelReference($5.d, UsageDefined);
     }	statement								{
-        GenInternalLabelReference($8.d, UsageDefined);
+        genInternalLabelReference($8.d, UsageDefined);
     }
     | SWITCH '(' expr ')' /*5*/ _ncounter_  {/*6*/
-        AddContinueBreakLabelSymbol(1000*$5.d, SWITCH_LABEL_NAME, $<symbol>$);
+        $<symbol>$ = addContinueBreakLabelSymbol(1000*$5.d, SWITCH_LABEL_NAME);
     } {/*7*/
-        AddContinueBreakLabelSymbol($5.d, BREAK_LABEL_NAME, $<symbol>$);
-        GenInternalLabelReference($5.d, UsageFork);
+        $<symbol>$ = addContinueBreakLabelSymbol($5.d, BREAK_LABEL_NAME);
+        genInternalLabelReference($5.d, UsageFork);
     } statement					{
-        GenSwitchCaseFork(1);
+        genSwitchCaseFork(1);
         ExtrDeleteContBreakSym($<symbol>7);
         ExtrDeleteContBreakSym($<symbol>6);
-        GenInternalLabelReference($5.d, UsageDefined);
+        genInternalLabelReference($5.d, UsageDefined);
     }
     ;
 
@@ -1613,27 +1613,27 @@ for1maybe_expr:
 iteration_statement
     : WHILE _nlabel_ '(' expr ')' /*6*/ _nfork_
     {/*7*/
-        AddContinueBreakLabelSymbol($2.d, CONTINUE_LABEL_NAME, $<symbol>$);
+        $<symbol>$ = addContinueBreakLabelSymbol($2.d, CONTINUE_LABEL_NAME);
     } {/*8*/
-        AddContinueBreakLabelSymbol($6.d, BREAK_LABEL_NAME, $<symbol>$);
+        $<symbol>$ = addContinueBreakLabelSymbol($6.d, BREAK_LABEL_NAME);
     } statement					{
         ExtrDeleteContBreakSym($<symbol>8);
         ExtrDeleteContBreakSym($<symbol>7);
-        GenInternalLabelReference($2.d, UsageUsed);
-        GenInternalLabelReference($6.d, UsageDefined);
+        genInternalLabelReference($2.d, UsageUsed);
+        genInternalLabelReference($6.d, UsageDefined);
     }
 
     | DO _nlabel_ _ncounter_ _ncounter_ { /*5*/
-        AddContinueBreakLabelSymbol($3.d, CONTINUE_LABEL_NAME, $<symbol>$);
+        $<symbol>$ = addContinueBreakLabelSymbol($3.d, CONTINUE_LABEL_NAME);
     } {/*6*/
-        AddContinueBreakLabelSymbol($4.d, BREAK_LABEL_NAME, $<symbol>$);
+        $<symbol>$ = addContinueBreakLabelSymbol($4.d, BREAK_LABEL_NAME);
     } statement WHILE {
         ExtrDeleteContBreakSym($<symbol>6);
         ExtrDeleteContBreakSym($<symbol>5);
-        GenInternalLabelReference($3.d, UsageDefined);
+        genInternalLabelReference($3.d, UsageDefined);
     } '(' expr ')' ';'			{
-        GenInternalLabelReference($2.d, UsageFork);
-        GenInternalLabelReference($4.d, UsageDefined);
+        genInternalLabelReference($2.d, UsageFork);
+        genInternalLabelReference($4.d, UsageDefined);
     }
 
     | FOR '(' for1maybe_expr ';'
@@ -1641,19 +1641,19 @@ iteration_statement
             /*9*/ _nlabel_  maybe_expr ')' /*12*/ _nfork_
         {
         /*13*/
-        GenInternalLabelReference($5.d, UsageUsed);
-        GenInternalLabelReference($8.d, UsageDefined);
-        AddContinueBreakLabelSymbol($9.d, CONTINUE_LABEL_NAME, $<symbol>$);
+        genInternalLabelReference($5.d, UsageUsed);
+        genInternalLabelReference($8.d, UsageDefined);
+        $<symbol>$ = addContinueBreakLabelSymbol($9.d, CONTINUE_LABEL_NAME);
         }
         {/*14*/
-        AddContinueBreakLabelSymbol($12.d, BREAK_LABEL_NAME, $<symbol>$);
+            $<symbol>$ = addContinueBreakLabelSymbol($12.d, BREAK_LABEL_NAME);
         }
             statement
         {
         ExtrDeleteContBreakSym($<symbol>14);
         ExtrDeleteContBreakSym($<symbol>13);
-        GenInternalLabelReference($9.d, UsageUsed);
-        GenInternalLabelReference($12.d, UsageDefined);
+        genInternalLabelReference($9.d, UsageUsed);
+        genInternalLabelReference($12.d, UsageDefined);
         }
     | FOR '(' for1maybe_expr ';' COMPL_FOR_SPECIAL1
     | FOR '(' for1maybe_expr ';' _nlabel_  maybe_expr ';' COMPL_FOR_SPECIAL2
@@ -1662,16 +1662,16 @@ iteration_statement
 jump_statement
     : GOTO label_name ';'
     | CONTINUE ';'			{
-        GenContBreakReference(CONTINUE_LABEL_NAME);
+        genContinueBreakReference(CONTINUE_LABEL_NAME);
     }
     | BREAK ';'				{
-        GenContBreakReference(BREAK_LABEL_NAME);
+        genContinueBreakReference(BREAK_LABEL_NAME);
     }
     | RETURN ';'			{
-        GenInternalLabelReference(-1, UsageUsed);
+        genInternalLabelReference(-1, UsageUsed);
     }
     | RETURN expr ';'		{
-        GenInternalLabelReference(-1, UsageUsed);
+        genInternalLabelReference(-1, UsageUsed);
     }
     ;
 
@@ -1752,7 +1752,7 @@ external_definition
         s_count.localVar = 0;
         assert($2.d->u.type && $2.d->u.type->m == TypeFunction);
         s_cp.function = $2.d;
-        GenInternalLabelReference(-1, UsageDefined);
+        genInternalLabelReference(-1, UsageDefined);
         for(p=$2.d->u.type->u.f.args,i=1; p!=NULL; p=p->next,i++) {
             if (p->b.symType == TypeElipsis) continue;
             if (p->u.type == NULL) p->u.type = &s_defaultIntModifier;
