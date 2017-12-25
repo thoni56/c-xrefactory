@@ -90,7 +90,6 @@ extern void expandWildCharactersInOnePathRec(char *fn, char **outpaths, int *fre
 extern void expandWildCharactersInOnePath(char *fn, char *outpaths, int olen);
 extern void expandWildCharactersInPaths(char *paths, char *outpaths, int freeolen);
 extern char * getRealFileNameStatic(char *fn);
-extern char *create_temporary_filename();
 extern void copyFile(char *src, char *dest);
 extern void createDir(char *dirname);
 extern void removeFile(char *dirname);

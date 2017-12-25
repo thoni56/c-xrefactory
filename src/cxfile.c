@@ -612,21 +612,19 @@ static void genCxFileHead() {
                                                                ), " ");
 }
 
-static void openInOutReferenceFiles(int updateFlag, char *fname) {
-    char *ttt;
+static void openInOutReferenceFiles(int updateFlag, char *filename) {
     tmpFileName[0] = 0;
     if (updateFlag) {
-        ttt = create_temporary_filename();
-        assert(strlen(ttt)+1 < MAX_FILE_NAME_SIZE);
-        strcpy(tmpFileName, ttt);
-        copyFile(fname, tmpFileName);
+        char *tempname = create_temporary_filename();
+        strcpy(tmpFileName, tempname);
+        copyFile(filename, tmpFileName);
     }
-    assert(fname);
-    cxOut = fopen(fname,"w");
-    if (cxOut == NULL) fatalError(ERR_CANT_OPEN, fname, XREF_EXIT_ERR);
+    assert(filename);
+    cxOut = fopen(filename,"w");
+    if (cxOut == NULL) fatalError(ERR_CANT_OPEN, filename, XREF_EXIT_ERR);
     if (updateFlag) {
-        fIn = fopen(tmpFileName,"r");
-        if (fIn==NULL) warning(ERR_CANT_OPEN,tmpFileName);
+        fIn = fopen(tmpFileName, "r");
+        if (fIn==NULL) warning(ERR_CANT_OPEN, tmpFileName);
     } else {
         fIn = NULL;
     }
@@ -1485,9 +1483,9 @@ void scanCxFile(S_cxScanFileFunctionLink *scanFuns) {
 
 /* fnamesuff contains '/' at the beginning !!! */
 
-int scanReferenceFile(  char *fname, char *fns1, char *fns2,
-                        S_cxScanFileFunctionLink *scanFunTab
-                        ) {
+int scanReferenceFile(char *fname, char *fns1, char *fns2,
+                      S_cxScanFileFunctionLink *scanFunTab
+                      ) {
     char fn[MAX_FILE_NAME_SIZE];
     sprintf(fn, "%s%s%s", fname, fns1, fns2);
     assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);

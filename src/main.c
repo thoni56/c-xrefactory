@@ -2159,9 +2159,9 @@ static void getAndProcessGccOptions() {
             isActiveSect = 0;
             break;
         }
-        else if (    isActiveSect
-                     && statb(line,&stt) == 0
-                     && (stt.st_mode & S_IFMT) == S_IFDIR) {
+        else if (isActiveSect
+                 && statb(line,&stt) == 0
+                 && (stt.st_mode & S_IFMT) == S_IFDIR) {
             mainAddStringListOption(&s_opt.includeDirs, line);
         }
     }
