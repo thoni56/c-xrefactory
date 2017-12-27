@@ -597,7 +597,7 @@ static int htmlPositionLess(S_position *p1, S_position *p2) {
 void recursivelyCreateFileDirIfNotExists(char *fpath) {
     char    *p;
     int     ch,len,loopFlag;
-    S_stat  st;
+    struct stat  st;
 #if 1  // NEW VERSION
     len = strlen(fpath);
     loopFlag = 1;

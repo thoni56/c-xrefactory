@@ -10,11 +10,16 @@
   anything, I'm trying to clean this up so that only things that
   actually require the generation are in here.
 
+  - DONE: move prototypes to separate .h files
+  - DONE: introduce typedef's directly on the structs here
+  - DONE: change usage of typedef names inside structures to "struct ..." to
+    avoid depenency on other structures through typedefs names
+  - DONE: Remove the need for strTdef
+  - Rename this to something other than "proto.h"...
+
  */
 
 #include "stdinc.h"
-
-#include "strTdef.h"
 
 #include "head.h"
 #include "zlib.h"
@@ -469,11 +474,11 @@ enum usages {
                            also new Nested() resolved to error because of
                                 enclosing instance
                          */
-    UsageMacroBaseFileUsage, /* reference to input file expanding the macro */
-    UsageClassFileDefinition, /* reference got from class file (not shown in searches)*/
-    UsageJavaDoc,            /* reference to place javadoc link */
-    UsageJavaDocFullEntry,   /* reference to placce full javadoc comment */
-    UsageClassTreeDefinition, /* reference for class tree symbol */
+    UsageMacroBaseFileUsage,    /* reference to input file expanding the macro */
+    UsageClassFileDefinition,   /* reference got from class file (not shown in searches)*/
+    UsageJavaDoc,               /* reference to place javadoc link */
+    UsageJavaDocFullEntry,      /* reference to placce full javadoc comment */
+    UsageClassTreeDefinition,   /* reference for class tree symbol */
     UsageMaybeThis,				/* reference where 'this' maybe inserted */
     UsageMaybeQualifiedThis,	/* reference where qualified 'this' may be inserted */
     UsageThrown,				/* extract method exception information */
@@ -692,293 +697,289 @@ typedef struct cctNode {
 } S_cctNode;
 
 typedef struct position {
-    int			file;
-    int         line;
-    int			coll;
+    int file;
+    int line;
+    int coll;
 } S_position;
 
 typedef struct positionList {
-    S_position		p;
-    S_positionList  *next;
+    struct position     p;
+    struct positionList *next;
 } S_positionList;
 
 /* return value for IDENTIFIER token from yylex */
 
-struct idIdent {
-    char        *name;
-    S_symbol	*sd;		/* if yet in symbol table */
-    S_position	p;			/* position */
-    S_idIdent   *next;
-};
+typedef struct idIdent {
+    char			*name;
+    struct symbol	*sd;
+    struct position	p;
+    struct idIdent  *next;
+} S_idIdent;
 
-struct freeTrail {
-    void			(*action)(void*);
-    void            *p;
-    S_freeTrail		*next;
-};
+typedef struct freeTrail {
+    void             (*action)(void*);
+    void             *p;
+    struct freeTrail *next;
+} S_freeTrail;
 
-struct topBlock {
-/*	char            *stackMemoryBase;*/
-    int             firstFreeIndex;
-    int				tmpMemoryBasei;
-    S_freeTrail		*trail;
-    S_topBlock      *previousTopBlock;
-};
+typedef struct topBlock {
+    int              firstFreeIndex;
+    int              tmpMemoryBasei;
+    struct freeTrail *trail;
+    struct topBlock  *previousTopBlock;
+} S_topBlock;
 
-struct typeModifiers {
-    short                   m;
+typedef struct typeModifiers {
+    short                     m;
     union typeModifUnion {
-        struct funTypeModif {		/* LAN_C/CPP Function */
-            S_symbol		*args;
-            S_symbol		**thisFunList;	/* only for LAN_CPP overloaded */
+        struct funTypeModif {                /* LAN_C/CPP Function */
+            struct symbol     *args;
+            struct symbol     **thisFunList; /* only for LAN_CPP overloaded */
         } f;
-        //S_symbol			*args;		/* LAN_C Function */
-        struct methodTypeModif {		/* LAN_JAVA Function/Method */
-            char			*sig;
-            S_symbolList	*exceptions;
+        //struct symbol       *args;         /* LAN_C Function - why not used? */
+        struct methodTypeModif {             /* LAN_JAVA Function/Method */
+            char              *sig;
+            struct symbolList *exceptions;
         } m;
-        //char				*sig;		/* LAN_JAVA Function */
-        S_symbol			*t;			/* Struct/Union/Enum */
+        //char                *sig;          /* LAN_JAVA Function */
+        struct symbol         *t;            /* Struct/Union/Enum */
     } u;
-    S_symbol				*typedefin;	/* the typedef symbol (if any) */
-    S_typeModifiers         *next;
-};
+    struct symbol             *typedefin;  /* the typedef symbol (if any) */
+    struct typeModifiers      *next;
+} S_typeModifiers;
 
-struct typeModifiersList {
-    S_typeModifiers		*d;
-    S_typeModifiersList	*next;
-};
+typedef struct typeModifiersList {
+    struct typeModifiers		*d;
+    struct typeModifiersList	*next;
+} S_typeModifiersList;
 
-struct recFindStr {
-    S_symbol			*baseClass;	/* class, application on which is looked*/
-    S_symbol			*currClass;	/* current class, NULL for loc vars. */
-    S_symbol            *nextRecord;
-    unsigned			recsClassCounter;
-    int					sti;
-    S_symbolList		*st[MAX_INHERITANCE_DEEP];	/* super classes stack */
-    int					aui;
-    S_symbol			*au[MAX_ANONYMOUS_FIELDS];	/* anonymous unions */
-};
 
-struct extRecFindStr {
-    S_recFindStr			s;
-    S_symbol				*memb;
-    S_typeModifiersList		*params;
-};
+typedef struct recFindStr {
+    struct symbol			*baseClass;	/* class, application on which is looked*/
+    struct symbol			*currClass;	/* current class, NULL for loc vars. */
+    struct symbol           *nextRecord;
+    unsigned                recsClassCounter;
+    int                     sti;
+    struct symbolList		*st[MAX_INHERITANCE_DEEP];	/* super classes stack */
+    int                     aui;
+    struct symbol			*au[MAX_ANONYMOUS_FIELDS];	/* anonymous unions */
+} S_recFindStr;
 
-struct nestedSpec {
-    S_symbol		*cl;
+typedef struct extRecFindStr {
+    struct recFindStr			s;
+    struct symbol				*memb;
+    struct typeModifiersList	*params;
+} S_extRecFindStr;
+
+typedef struct nestedSpec {
+    struct symbol		*cl;
     char			membFlag;		/* flag whether it is nested in class */
     short unsigned  accFlags;
-};
+} S_nestedSpec;
 
-struct symStructSpecific {
-    S_symbolList	*super;			/* list of super classes & interfaces */
-    S_symbol		*records;		/* str. records, should be a table of   */
-    S_cctNode		casts;			/* possible casts                       */
-    short int		nnested;		/* # of java nested classes     */
-    S_nestedSpec	*nest;			/* array of nested classes		*/
-    S_typeModifiers	stype;			/* this structure type */
-    S_typeModifiers	sptrtype;		/* this structure pointer type */
-    char            currPackage;	/* am I in the currently processed package?, to be removed */
-    char			existsDEIarg;   /* class direct enclosing instance exists?, to be removed */
-    int				classFile;		/* in java, my class file index
-                                       == -1 for none, TODO to change
-                                       it to s_noneFileIndex !!!
-                                    */
-    unsigned		recSearchCounter; /* tmp counter when looking for a record
-                                        it flags searched classes
-                                     */
-};
+typedef struct symStructSpecific {
+    struct symbolList		*super;			/* list of super classes & interfaces */
+    struct symbol			*records;		/* str. records, should be a table of   */
+    struct cctNode			casts;			/* possible casts                       */
+    short int				nnested;		/* # of java nested classes     */
+    struct nestedSpec		*nest;			/* array of nested classes		*/
+    struct typeModifiers	stype;			/* this structure type */
+    struct typeModifiers	sptrtype;		/* this structure pointer type */
+    char                    currPackage;	/* am I in the currently processed package?, to be removed */
+    char					existsDEIarg;   /* class direct enclosing instance exists?, to be removed */
+    int						classFile;		/* in java, my class file index
+                                               == -1 for none, TODO to change
+                                               it to s_noneFileIndex !!!
+                                            */
+    unsigned				recSearchCounter; /* tmp counter when looking for a record
+                                                it flags searched classes
+                                             */
+} S_symStructSpecific;
 
 
 /* ****************************************************************** */
 /*              symbol definition item in symbol table                */
 
-struct symbol {
+typedef struct symbolBits {
+    unsigned			record			: 1;  /* whether struct record */
+    unsigned			isSingleImported: 1;  /* whether not imported by * import */
+    unsigned			accessFlags		: 12; /* java access bits */
+    unsigned			javaSourceLoaded: 1;  /* is jsl source file loaded ? */
+    unsigned			javaFileLoaded	: 1;  /* is class file loaded ? */
+
+    unsigned			symType			: SYMTYPES_LN;
+    /* can be Default/Struct/Union/Enum/Label/Keyword/Macro/Package */
+    unsigned			storage			: STORAGES_LN;
+    unsigned			npointers		: 4; /*tmp. stored #of dcl. ptrs*/
+} S_symbolBits;
+
+typedef struct symbol {
     char					*name;
     char					*linkName;		/* fully qualified name for cx */
-    S_position				pos;			/* definition position for most syms;
-                                               import position for imported classes!
-                                             */
-    struct symbolBits {
-        unsigned			record			: 1;  /* whether struct record */
-        unsigned			isSingleImported: 1;  /* whether not imported by * import */
-        unsigned			accessFlags		: 12; /* java access bits */
-        unsigned			javaSourceLoaded: 1;  /* is jsl source file loaded ? */
-        unsigned			javaFileLoaded	: 1;  /* is class file loaded ? */
-
-        unsigned			symType			: SYMTYPES_LN;
-        /* can be Default/Struct/Union/Enum/Label/Keyword/Macro/Package */
-        unsigned			storage			: STORAGES_LN;
-        unsigned			npointers		: 4; /*tmp. stored #of dcl. ptrs*/
-    } b;
+    struct position			pos;			/* definition position for most syms;
+                                              import position for imported classes!
+                                            */
+    struct symbolBits b;
     union defUnion {
-        S_typeModifiers		*type;		/* if symType == TypeDefault */
-        S_symStructSpecific	*s;			/* if symType == Struct/Union */
-        S_symbolList		*enums;		/* if symType == Enum */
-        S_macroBody			*mbody;     /* if symType == Macro ! can be NULL!*/
-        int					labn;		/* break/continue label index */
-        int					keyWordVal; /* if symType == Keyword*/
+        struct typeModifiers		*type;		/* if symType == TypeDefault */
+        struct symStructSpecific	*s;			/* if symType == Struct/Union */
+        struct symbolList			*enums;		/* if symType == Enum */
+        struct macroBody			*mbody;     /* if symType == Macro ! can be NULL!*/
+        int							labn;		/* break/continue label index */
+        int							keyWordVal; /* if symType == Keyword*/
     } u;
-    S_symbol                *next;	/* next table item with the same hash */
-};
+    struct symbol                   *next;	/* next table item with the same hash */
+} S_symbol;
 
-struct symbolList {
-    S_symbol        *d;
-    S_symbolList	*next;
-};
+typedef struct symbolList {
+    struct symbol        *d;
+    struct symbolList    *next;
+} S_symbolList;
 
-struct jslSymbolList {
-    S_symbol        *d;
-    S_position		pos;
-    int             isSingleImportedFlag;
-    S_jslSymbolList	*next;
-};
+typedef struct jslSymbolList {
+    struct symbol           *d;
+    struct position			pos;
+    int						isSingleImportedFlag;
+    struct jslSymbolList	*next;
+} S_jslSymbolList;
 
 
 /* ****************************************************************** */
 /*          symbol definition item in cross-reference table           */
 
-struct usageBits {
+typedef struct usageBits {
     unsigned base:8;								// 0 - 128, it should not grow anymore
     unsigned requiredAccess:MAX_REQUIRED_ACCESS_LN;	// required accessibility of the reference
     // local properties (not saved in tag files)
     unsigned dummy:1;								// unused for the moment
-};
+} S_usageBits;
 
 // !!! if you add a pointer to this structure, then update olcxCopyRefList
-struct reference {
-    S_usageBits				usg;
-    S_position				p;
-    S_reference             *next;
-};
+typedef struct reference {
+    struct usageBits			usg;
+    struct position				p;
+    struct reference            *next;
+} S_reference;
+
+typedef struct symbolRefItemBits {
+    unsigned				symType		: SYMTYPES_LN;
+    unsigned				storage		: STORAGES_LN;
+    unsigned				scope		: SCOPES_LN;
+    unsigned				accessFlags	: 12; /* java access bits */
+    unsigned				category	: 2;  /* local/global */
+    unsigned				htmlWasLn	: 1;  /* html ln generated */
+} S_symbolRefItemBits;
 
 // !!! if you add a pointer to this structure, then update olcxCopyRefItem!
-struct symbolRefItem {
+typedef struct symbolRefItem {
     char						*name;
     unsigned					fileHash;
     int							vApplClass;	/* appl class for java virtuals */
     int							vFunClass;	/* fun class for java virtuals */
-    struct symbolRefItemBits {
-        unsigned				symType		: SYMTYPES_LN;
-        unsigned				storage		: STORAGES_LN;
-        unsigned				scope		: SCOPES_LN;
-        unsigned				accessFlags	: 12; /* java access bits */
-        unsigned				category	: 2;  /* local/global */
-        unsigned				htmlWasLn	: 1;  /* html ln generated */
-    } b;
-    S_reference					*refs;
-    S_symbolRefItem             *next;
-};
+    struct symbolRefItemBits b;
+    struct reference			*refs;
+    struct symbolRefItem        *next;
+} S_symbolRefItem;
 
-struct symbolRefItemList {
-    S_symbolRefItem			*d;
-    S_symbolRefItemList		*next;
-};
+typedef struct symbolRefItemList {
+    struct symbolRefItem		*d;
+    struct symbolRefItemList	*next;
+} S_symbolRefItemList;
 
 /* ************* class hierarchy  cross referencing ************** */
 
-struct chReference {
-    int		ofile;		/* file of origin */
-    int     clas;		/* index of super-class */
-    S_chReference	*next;
-};
+typedef struct chReference {
+    int					ofile;		/* file of origin */
+    int                 clas;		/* index of super-class */
+    struct chReference	*next;
+} S_chReference;
 
-
-/* **************** processing cxref file ************************* */
-
-struct cxScanFileFunctionLink {
-    int		recordCode;
-    void    (*handleFun)(int size,int ri,char**ccc,char**ffin,S_charBuf*bbb, int additionalArg);
-    int		additionalArg;
-};
 
 /* ***************** on - line cross referencing ***************** */
 
-struct olCompletion {
-    char				*name;
-    char				*fullName;
-    char				*vclass;
-    short int			jindent;
-    short int			lineCount;
-    char				cat;			/* CatGlobal/CatLocal */
-    char				csymType;		/* symtype of completion */
-    S_reference			ref;
-    S_symbolRefItem		sym;
-    S_olCompletion		*next;
-};
+typedef struct olCompletion {
+    char					*name;
+    char					*fullName;
+    char					*vclass;
+    short int				jindent;
+    short int				lineCount;
+    char					cat;			/* CatGlobal/CatLocal */
+    char					csymType;		/* symtype of completion */
+    struct reference		ref;
+    struct symbolRefItem	sym;
+    struct olCompletion		*next;
+} S_olCompletion;
 
-struct olSymbolFoundInformation {
-    S_symbolRefItem *symrefs;		/* this is valid */
-    S_symbolRefItem *symRefsInfo;	/* additional for error message */
-    S_reference *currentRef;
-};
+typedef struct olSymbolFoundInformation {
+    struct symbolRefItem	*symrefs;		/* this is valid */
+    struct symbolRefItem	*symRefsInfo;	/* additional for error message */
+    struct reference		*currentRef;
+} S_olSymbolFoundInformation;
 
 // !!! if you add a pointer to this structure, then update olcxCopyMenuSym!!
-struct olSymbolsMenu {
-    S_symbolRefItem     s;
-    char				selected;
-    char				visible;
-    unsigned			ooBits;
-    char				olUsage;	/* usage of symbol under cursor */
-    short int			vlevel;		/* virt. level of applClass <-> olsymbol*/
-    short int			refn;
-    short int			defRefn;
-    char				defUsage;   /* usage of definition reference */
-    S_position          defpos;
-    int                 outOnLine;
-    S_editorMarkerList	*markers;	/* for refactory only */
-    S_olSymbolsMenu		*next;
-};
+typedef struct olSymbolsMenu {
+    struct symbolRefItem	s;
+    char					selected;
+    char					visible;
+    unsigned				ooBits;
+    char					olUsage;	/* usage of symbol under cursor */
+    short int				vlevel;		/* virt. level of applClass <-> olsymbol*/
+    short int				refn;
+    short int				defRefn;
+    char					defUsage;   /* usage of definition reference */
+    struct position         defpos;
+    int                     outOnLine;
+    struct editorMarkerList	*markers;	/* for refactory only */
+    struct olSymbolsMenu	*next;
+} S_olSymbolsMenu;
 
 // if you add something to this structure, update olcxMoveTopFromAnotherUser()
 // !!!!!
-struct olcxReferences {
-    S_reference         *r;			/* list of references */
-    S_reference         *act;		/* actual reference */
-    char				command;	/* OLO_PUSH/OLO_LIST/OLO_COMPLETION */
-    char				language;	/* C/JAVA/YACC */
-    time_t				atime;		/* last acces time */
+typedef struct olcxReferences {
+    struct reference        *r;			/* list of references */
+    struct reference        *act;		/* actual reference */
+    char					command;	/* OLO_PUSH/OLO_LIST/OLO_COMPLETION */
+    char					language;	/* C/JAVA/YACC */
+    time_t					atime;		/* last acces time */
     // refsuffix is useless now, should be removed !!!!
-    char				refsuffix[MAX_OLCX_SUFF_SIZE];
-    S_position			cpos;		/* caller position */
-    S_olCompletion		*cpls;		/* completions list for OLO_COMPLETION */
+    char					refsuffix[MAX_OLCX_SUFF_SIZE];
+    struct position			cpos;		/* caller position */
+    struct olCompletion		*cpls;		/* completions list for OLO_COMPLETION */
     // following two lists should be probably split into hashed tables of lists
     // because of bad performances for class tree and global unused symbols
-    S_olSymbolsMenu		*hkSelectedSym; /* resolved symbols under the cursor */
-    S_olSymbolsMenu		*menuSym;		/* hkSelectedSyms plus same name */
-    int					menuFilterLevel;
-    int					refsFilterLevel;
-    S_olcxReferences	*previous;
-};
+    struct olSymbolsMenu	*hkSelectedSym; /* resolved symbols under the cursor */
+    struct olSymbolsMenu	*menuSym;		/* hkSelectedSyms plus same name */
+    int						menuFilterLevel;
+    int						refsFilterLevel;
+    struct olcxReferences	*previous;
+} S_olcxReferences;
 
 // this is useless, (refsuffix is not used), but I keep it for
 // some time for case if something more is needed in class tree
-struct classTreeData {
-    char				refsuffix[MAX_OLCX_SUFF_SIZE];
-    int					baseClassIndex;
-    S_olSymbolsMenu		*tree;
-};
+typedef struct classTreeData {
+    char					refsuffix[MAX_OLCX_SUFF_SIZE];
+    int						baseClassIndex;
+    struct olSymbolsMenu	*tree;
+} S_classTreeData;
 
-struct olcxReferencesStack {
-    S_olcxReferences	*top;
-    S_olcxReferences	*root;
-};
+typedef struct olcxReferencesStack {
+    struct olcxReferences	*top;
+    struct olcxReferences	*root;
+} S_olcxReferencesStack;
 
-struct userOlcx {
-    char                    *name;
-    S_olcxReferencesStack	browserStack;
-    S_olcxReferencesStack	completionsStack;
-    S_olcxReferencesStack	retrieverStack;
-    S_classTreeData			ct;
-    S_userOlcx				*next;
-};
+typedef struct userOlcx {
+    char                        *name;
+    struct olcxReferencesStack	browserStack;
+    struct olcxReferencesStack	completionsStack;
+    struct olcxReferencesStack	retrieverStack;
+    struct classTreeData		ct;
+    struct userOlcx				*next;
+} S_userOlcx;
 
 /* ************************************************************* */
 /* **********************  file tab Item *********************** */
 
-struct fileItem {	/* to be renamed to constant pool item */
+typedef struct fileItem {	/* to be renamed to constant pool item */
     char                *name;
     time_t				lastModif;
     time_t				lastInspect;
@@ -997,115 +998,115 @@ struct fileItem {	/* to be renamed to constant pool item */
         //unsigned		classIsRelatedTo : 20;// tmp var for isRelated function
         unsigned		sourceFile : 20;// file containing the class definition
     } b;
-    S_chReference		*sups;			/* super-classes references */
-    S_chReference		*infs;			/* sub-classes references   */
+    struct chReference	*sups;			/* super-classes references */
+    struct chReference	*infs;			/* sub-classes references   */
     int					directEnclosingInstance;  /* for Java Only  */
-    S_fileItem			*next;
-};
+    struct fileItem		*next;
+} S_fileItem;
 
-struct fileItemList {
-    S_fileItem		*d;
-    S_fileItemList	*next;
-};
+typedef struct fileItemList {
+    struct fileItem		*d;
+    struct fileItemList	*next;
+} S_fileItemList;
 
 /* ***************** COMPLETION STRUCTURES ********************** */
 
 
-struct cline {					/* should be a little bit union-ified */
+typedef struct cline {					/* should be a little bit union-ified */
     char            *s;
-    S_symbol        *t;
+    struct symbol   *t;
     short int		symType;
     short int		virtLevel;
 //	unsigned		virtClassOrder;		TODO !!!!
     short int		margn;
     char			**margs;
-    S_symbol		*vFunClass;
-};
+    struct symbol	*vFunClass;
+} S_cline;
 
-struct completions {
-    char        idToProcess[MAX_FUN_NAME_SIZE];
-    int			idToProcessLen;
-    S_position	idToProcessPos;
-    int         fullMatchFlag;
-    int         isCompleteFlag;
-    int         noFocusOnCompletions;
-    int         abortFurtherCompletions;
-    char        comPrefix[TMP_STRING_SIZE];
-    int			maxLen;
-    S_cline     a[MAX_COMPLETIONS];
-    int         ai;
-};
+typedef struct completions {
+    char            idToProcess[MAX_FUN_NAME_SIZE];
+    int				idToProcessLen;
+    struct position	idToProcessPos;
+    int             fullMatchFlag;
+    int             isCompleteFlag;
+    int             noFocusOnCompletions;
+    int             abortFurtherCompletions;
+    char            comPrefix[TMP_STRING_SIZE];
+    int				maxLen;
+    struct cline    a[MAX_COMPLETIONS];
+    int             ai;
+} S_completions;
 
-struct completionFunTab {
+typedef struct completionFunTab {
     int token;
     void (*fun)(S_completions*);
-};
+} S_completionFunTab;
 
-struct completionSymFunInfo {
-    S_completions       *res;
+typedef struct completionSymFunInfo {
+    struct completions	*res;
     unsigned			storage;
-};
+} S_completionSymFunInfo;
 
-struct completionSymInfo {
-    S_completions       *res;
+typedef struct completionSymInfo {
+    struct completions	*res;
     unsigned			symType;
-};
+} S_completionSymInfo;
 
-struct completionFqtMapInfo {
-    S_completions       *res;
+typedef struct completionFqtMapInfo {
+    struct completions  *res;
     int					completionType;
-};
+} S_completionFqtMapInfo;
 
 /* ************************** INIT STRUCTURES ********************* */
 
-struct tokenNameIni {
+typedef struct tokenNameIni {
     char        *name;
     int         token;
     unsigned    languages;
-};
+} S_tokenNameIni;
 
-struct typeCharCodeIni {
+typedef struct typeCharCodeIni {
     int         symType;
     char		code;
-};
+} S_typeCharCodeIni;
 
-struct javaTypePCTIConvertIni {
+typedef struct javaTypePCTIConvertIni {
     int		symType;
     int		PCTIndex;
-};
+} S_javaTypePCTIConvertIni;
 
-struct typeModificationsInit {
+typedef struct typeModificationsInit {
     int	type;
     int	modShort;
     int	modLong;
     int	modSigned;
     int	modUnsigned;
-};
+} S_typeModificationsInit;
 
-struct intStringTab {
+typedef struct intStringTab {
     int     i;
     char    *s;
-};
+} S_intStringTab;
 
-struct currentlyParsedCl {		// class local, nested for classes
-    S_symbol			*function;
-    S_extRecFindStr		*erfsForParamsComplet;			// curently parsed method for param completion
-    unsigned	funBegPosition;
-    int         cxMemiAtFunBegin;
-    int			cxMemiAtFunEnd;
-    int         cxMemiAtClassBegin;
-    int			cxMemiAtClassEnd;
-    int			thisMethodMemoriesStored;
-    int			thisClassMemoriesStored;
-    int			parserPassedMarker;
-};
+typedef struct currentlyParsedCl {		// class local, nested for classes
+    struct symbol			*function;
+    struct extRecFindStr	*erfsForParamsComplet;			// curently parsed method for param completion
+    unsigned				funBegPosition;
+    int                     cxMemiAtFunBegin;
+    int						cxMemiAtFunEnd;
+    int                     cxMemiAtClassBegin;
+    int						cxMemiAtClassEnd;
+    int						thisMethodMemoriesStored;
+    int						thisClassMemoriesStored;
+    int						parserPassedMarker;
+} S_currentlyParsedCl;
 
-struct currentlyParsedStatics {
+typedef struct currentlyParsedStatics {
     int             extractProcessedFlag;
     int             cxMemiAtBlockBegin;
     int             cxMemiAtBlockEnd;
-    S_topBlock      *workMemiAtBlockBegin;
-    S_topBlock      *workMemiAtBlockEnd;
+    struct topBlock *workMemiAtBlockBegin;
+    struct topBlock *workMemiAtBlockEnd;
     int				marker1Flag;
     int				marker2Flag;
     char			setTargetAnswerClass[TMP_STRING_SIZE];	// useless for xref2
@@ -1120,65 +1121,65 @@ struct currentlyParsedStatics {
     int				cxMemiAtClassBeginning;
     int				cxMemiAtClassEnd;
     int				lastImportLine;
-    S_symbol		*lastDeclaratorType;
-    S_symbol		*lastAssignementStruct;
-};
+    struct symbol	*lastDeclaratorType;
+    struct symbol	*lastAssignementStruct;
+} S_currentlyParsedStatics;
 
 /* ************************** JAVAS *********************************** */
 
-struct javaStat {
-    S_idIdentList		*className;			/* this class name */
-    S_typeModifiers		*thisType;			/* this class type */
-    S_symbol			*thisClass;			/* this class definition */
-    int					currentNestIndex;	/* currently parsed nested class */
-    char				*currentPackage;    /* current package */
-    char				*unNamedPackageDir;	/* directory for unnamed package */
-    char				*namedPackageDir;	/* inferred source-path for named package */
-    S_symTab			*locals;			/* args and local variables */
-    S_idIdentList       *lastParsedName;
-    unsigned			cpMethodMods;		/* currently parsed method modifs */
-    S_currentlyParsedCl	cp;					/* some parsing positions */
-    int					classFileInd;		/* this file class index */
-    S_javaStat			*next;				/* outer class */
-};
+typedef struct javaStat {
+    struct idIdentList			*className;			/* this class name */
+    struct typeModifiers		*thisType;			/* this class type */
+    struct symbol				*thisClass;			/* this class definition */
+    int							currentNestIndex;	/* currently parsed nested class */
+    char						*currentPackage;    /* current package */
+    char						*unNamedPackageDir;	/* directory for unnamed package */
+    char						*namedPackageDir;	/* inferred source-path for named package */
+    struct symTab				*locals;			/* args and local variables */
+    struct idIdentList          *lastParsedName;
+    unsigned					cpMethodMods;		/* currently parsed method modifs */
+    struct currentlyParsedCl	cp;					/* some parsing positions */
+    int							classFileInd;		/* this file class index */
+    struct javaStat				*next;				/* outer class */
+} S_javaStat;
 
 /* java composed names */
 
-struct idIdentList {
-    S_idIdent       idi;
-    char			*fname;			/* fqt name for java */
-    uchar			nameType;		/* type of name segment for java */
-    S_idIdentList	*next;
-};
+typedef struct idIdentList {
+    struct idIdent      idi;
+    char				*fname;			/* fqt name for java */
+    uchar				nameType;		/* type of name segment for java */
+    struct idIdentList	*next;
+} S_idIdentList;
 
-struct zipArchiveDir {
+typedef struct zipArchiveDir {
     union {
-        S_zipArchiveDir	*sub;
-        unsigned		offset;
+        struct zipArchiveDir	*sub;
+        unsigned				offset;
     } u;
-    S_zipArchiveDir		*next;
+    struct zipArchiveDir		*next;
     char                name[1];			/* array of char */
-};
+} S_zipArchiveDir;
 
-struct zipFileTabItem {
-    char            fn[MAX_FILE_NAME_SIZE];	/* stored with ';' at the end */
-    struct stat		st;						/* status of the archiv file */
-    S_zipArchiveDir	*dir;
-};
+typedef struct zipFileTabItem {
+    char                    fn[MAX_FILE_NAME_SIZE];	/* stored with ';' at the end */
+    struct stat				st;						/* status of the archiv file */
+    struct zipArchiveDir	*dir;
+} S_zipFileTabItem;
 
 /* ***************** unique counters  *********************** */
 
-struct counters {
+typedef struct counters {
     int localSym;
     int localVar;
     int anonymousClassCounter;
-};
+} S_counters;
 
 /* **************************** CACHING ****************************** */
 
-struct cachePoint {
-    S_topBlock				*topBlock;
-    S_topBlock              starTopBlock;
+typedef struct cachePoint {
+    struct topBlock			*topBlock;
+    struct topBlock             starTopBlock;
     int                     ppmMemoryi;
     int                     cxMemoryi;
     int                     mbMemoryi;
@@ -1186,51 +1187,51 @@ struct cachePoint {
     short int				ibi;		/* caching ibi */
     short int               lineNumber;
     short int               ifDeep;
-    S_cppIfStack            *ifstack;
-    S_javaStat				*javaCached;
-    S_counters				counts;
-};
+    struct cppIfStack       *ifstack;
+    struct javaStat			*javaCached;
+    struct counters			counts;
+} S_cachePoint;
 
-struct caching {
-    char			activeCache;		/* whether putting input to cache */
-    int				cpi;
-    S_cachePoint	cp[MAX_CACHE_POINTS];
-    int				ibi;
-    int				ib[INCLUDE_CACHE_SIZE];	/* included files numbers */
-    char			*lbcc;					/* first free of lb */
-    char			lb[LEX_BUF_CACHE_SIZE];	/* lexems buffer */
-    char			*lexcc;					/* first not yeat cached lexem */
-    char			*cc;					/* cc when input from cache */
-    char			*cfin;					/* end of cc, when input ... */
-};
+typedef struct caching {
+    char				activeCache;		/* whether putting input to cache */
+    int					cpi;
+    struct cachePoint	cp[MAX_CACHE_POINTS];
+    int					ibi;
+    int					ib[INCLUDE_CACHE_SIZE];	/* included files numbers */
+    char				*lbcc;					/* first free of lb */
+    char				lb[LEX_BUF_CACHE_SIZE];	/* lexems buffer */
+    char				*lexcc;					/* first not yeat cached lexem */
+    char				*cc;					/* cc when input from cache */
+    char				*cfin;					/* end of cc, when input ... */
+} S_caching;
 
 /* ************************ PRE-PROCESSOR **************************** */
 
-struct stringList {
+typedef struct stringList {
     char *d;
     struct stringList *next;
-};
+} S_stringList;
 
-struct stringAddrList {
+typedef struct stringAddrList {
     char **d;
     struct stringAddrList *next;
-};
+} S_stringAddrList;
 
-struct macroArgTabElem {
+typedef struct macroArgTabElem {
     char *name;
     char *linkName;
     int order;
-};
+} S_macroArgTabElem;
 
-struct macroBody {
+typedef struct macroBody {
     short int argn;
     int size;
     char *name;			/* the name of the macro */
     char **args;		/* names of arguments */
     char *body;
-};
+} S_macroBody;
 
-struct charBuf {
+typedef struct charBuf {
     char        *cc;				/* first unread */
     char        *fin;				/* first free (invalid)  */
     char        a[CHAR_BUFF_SIZE];
@@ -1244,205 +1245,217 @@ struct charBuf {
     char		inputMethod;		/* unzipp/direct */
     char        z[CHAR_BUFF_SIZE];  /* zip input buffer */
     z_stream	zipStream;
-};
+} S_charBuf;
 
-struct lexBuf {
-    char        *cc;				/* first unread */
-    char        *fin;				/* first free (invalid)  */
-    char        a[LEX_BUFF_SIZE];
-#if 1
-    S_position  pRing[LEX_POSITIONS_RING_SIZE];		// file/line/coll position
-    unsigned    fpRing[LEX_POSITIONS_RING_SIZE];	// file offset position
-    int         posi;				/* pRing[posi%LEX_POSITIONS_RING_SIZE] */
-#endif
-    S_charBuf   cb;
-};
+typedef struct lexBuf {
+    char            *cc;				/* first unread */
+    char            *fin;				/* first free (invalid)  */
+    char            a[LEX_BUFF_SIZE];
+    struct position pRing[LEX_POSITIONS_RING_SIZE];		// file/line/coll position
+    unsigned        fpRing[LEX_POSITIONS_RING_SIZE];	// file offset position
+    int             posi;				/* pRing[posi%LEX_POSITIONS_RING_SIZE] */
+    struct charBuf  cb;
+} S_lexBuf;
 
-struct cppIfStack {
-    S_position pos;
-    S_cppIfStack  *next;
-};
+typedef struct cppIfStack {
+    struct position pos;
+    struct cppIfStack *next;
+} S_cppIfStack;
 
-struct fileDesc {
-    char            *fileName ;
-    int             lineNumber ;
-    int				ifDeep;						/* deep of #ifs (C only)*/
-    S_cppIfStack    *ifstack;					/* #if stack (C only) */
-    struct lexBuf   lb;
-};
+typedef struct fileDesc {
+    char                *fileName ;
+    int                 lineNumber ;
+    int					ifDeep;						/* deep of #ifs (C only)*/
+    struct cppIfStack   *ifstack;					/* #if stack (C only) */
+    struct lexBuf       lb;
+} S_fileDesc;
 
-struct lexInput {
-    char            *cc;                /* pointer to current lexem */
-    char            *fin;               /* end of buffer */
-    char            *a;					/* beginning of buffer */
-    char            *macname;			/* possible makro name */
-    char			margExpFlag;		/* input Flag */
-};
+typedef struct lexInput {
+    char *cc;               /* pointer to current lexem */
+    char *fin;              /* end of buffer */
+    char *a;				/* beginning of buffer */
+    char *macname;			/* possible makro name */
+    char margExpFlag;		/* input Flag */
+} S_lexInput;
+
+/* **************** processing cxref file ************************* */
+
+typedef struct cxScanFileFunctionLink {
+    int		recordCode;
+    void    (*handleFun)(int size,int ri,char**ccc,char**ffin,S_charBuf*bbb, int additionalArg);
+    int		additionalArg;
+} S_cxScanFileFunctionLink;
 
 /* ********************* MEMORIES *************************** */
 
-struct memory {
+typedef struct memory {
     int		(*overflowHandler)(int n);
     int     i;
     int		size;
-    double	b;		//  double in order to get it properly alligned
-};
+    double  b;		//  double in order to get it properly alligned
+} S_memory;
 
 /* ************************ HTML **************************** */
 
-struct intlist {
+typedef struct intlist {
     int         i;
-    S_intlist   *next;
-};
+    struct intlist   *next;
+} S_intlist;
 
-struct disabledList {
+typedef struct disabledList {
     int             file;
     int             clas;
-    S_disabledList  *next;
-};
+    struct disabledList  *next;
+} S_disabledList;
 
-struct htmlData {
-    S_position          *cp;
-    S_reference         *np;
-    S_symbolRefItem     *nri;
-};
+typedef struct htmlData {
+    struct position          *cp;
+    struct reference         *np;
+    struct symbolRefItem     *nri;
+} S_htmlData;
 
-struct htmlRefList {
-    S_symbolRefItem	*s;
-    S_reference		*r;
-    S_symbolRefItem	*slist;		/* the hash list containing s, for virtuals */
-    S_htmlRefList	*next;
-};
+typedef struct htmlRefList {
+    struct symbolRefItem	*s;
+    struct reference		*r;
+    struct symbolRefItem	*slist;		/* the hash list containing s, for virtuals */
+    struct htmlRefList		*next;
+} S_htmlRefList;
 
-struct htmlLocalListms {	// local xlist map structure
+typedef struct htmlLocalListms {	// local xlist map structure
     FILE    *ff;
     int     fnum;
     char	*fname;
-};
+} S_htmlLocalListms;
 
 /* *********************************************************** */
 
-struct programGraphNode {
-    S_reference             *ref;		/* original reference of node */
-    S_symbolRefItem         *symRef;
-    S_programGraphNode		*jump;
-    char					posBits;		/* INSIDE/OUSIDE block */
-    char					stateBits;		/* visited + where setted */
-    char					classifBits;	/* resulting classification */
-    S_programGraphNode		*next;
-};
+typedef struct programGraphNode {
+    struct reference            *ref;		/* original reference of node */
+    struct symbolRefItem        *symRef;
+    struct programGraphNode		*jump;
+    char						posBits;		/* INSIDE/OUSIDE block */
+    char						stateBits;		/* visited + where setted */
+    char						classifBits;	/* resulting classification */
+    struct programGraphNode		*next;
+} S_programGraphNode;
 
-struct exprTokenType {
-    S_typeModifiers *t;
-    S_reference     *r;
-    S_position      *pp;
-};
+typedef struct exprTokenType {
+    struct typeModifiers *t;
+    struct reference     *r;
+    struct position      *pp;
+} S_exprTokenType;
 
-struct nestedConstrTokenType {
-    S_typeModifiers *t;
-    S_idIdentList	*nid;
-    S_position      *pp;
-};
+typedef struct nestedConstrTokenType {
+    struct typeModifiers	*t;
+    struct idIdentList		*nid;
+    struct position			*pp;
+} S_nestedConstrTokenType;
 
-struct unsPositionPair {
-    unsigned    u;
-    S_position	*p;
-};
+typedef struct unsPositionPair {
+    unsigned		u;
+    struct position	*p;
+} S_unsPositionPair;
 
-struct symbolPositionPair {
-    S_symbol	*s;
-    S_position	*p;
-};
+typedef struct symbolPositionPair {
+    struct symbol	*s;
+    struct position	*p;
+} S_symbolPositionPair;
 
-struct symbolPositionLstPair {
-    S_symbol		*s;
-    S_positionList	*p;
-};
+typedef struct symbolPositionLstPair {
+    struct symbol		*s;
+    struct positionList	*p;
+} S_symbolPositionLstPair;
 
-struct intPair {
+typedef struct intPair {
     int i1;
     int i2;
-};
+} S_intPair;
 
-struct typeModifiersListPositionLstPair {
-    S_typeModifiersList		*t;
-    S_positionList			*p;
-};
+typedef struct typeModifiersListPositionLstPair {
+    struct typeModifiersList	*t;
+    struct positionList			*p;
+} S_typeModifiersListPositionLstPair;
 
-struct whileExtractData {
-    int i1;
-    int i2;
-    S_symbol *i3;
-    S_symbol *i4;
-};
+typedef struct whileExtractData {
+    int				i1;
+    int             i2;
+    struct symbol	*i3;
+    struct symbol	*i4;
+} S_whileExtractData;
 
-struct referencesChangeData {
-    char		*linkName;
-    int			fnum;
-    S_symbol	*cclass;
-    int			category;
-    int			cxMemBegin;
-    int			cxMemEnd;
-};
+typedef struct referencesChangeData {
+    char			*linkName;
+    int				fnum;
+    struct symbol	*cclass;
+    int				category;
+    int				cxMemBegin;
+    int				cxMemEnd;
+} S_referencesChangeData;
 
-struct pushAllInBetweenData {
+typedef struct pushAllInBetweenData {
     int			minMemi;
     int			maxMemi;
-};
+} S_pushAllInBetweenData;
 
-struct tpCheckSpecialReferencesData {
-    S_pushAllInBetweenData  mm;
-    char					*symbolToTest;
-    int						classToTest;
-    S_symbolRefItem			*foundSpecialRefItem;
-    S_reference				*foundSpecialR;
-    S_symbolRefItem         *foundRefToTestedClass;
-    S_symbolRefItem         *foundRefNotToTestedClass;
-    S_reference             *foundOuterScopeRef;
-};
+typedef struct tpCheckSpecialReferencesData {
+    struct pushAllInBetweenData	mm;
+    char						*symbolToTest;
+    int							classToTest;
+    struct symbolRefItem		*foundSpecialRefItem;
+    struct reference			*foundSpecialR;
+    struct symbolRefItem        *foundRefToTestedClass;
+    struct symbolRefItem        *foundRefNotToTestedClass;
+    struct reference            *foundOuterScopeRef;
+} S_tpCheckSpecialReferencesData;
 
-struct tpCheckMoveClassData {
-    S_pushAllInBetweenData  mm;
-    char					*spack;
-    char					*tpack;
-    int						transPackageMove;
-    char					*sclass;
-};
+typedef struct tpCheckMoveClassData {
+    struct pushAllInBetweenData  mm;
+    char		*spack;
+    char		*tpack;
+    int			transPackageMove;
+    char		*sclass;
+} S_tpCheckMoveClassData;
 
 /* ***************** Java simple load file ********************** */
 
 
-struct jslClassStat {
-    S_idIdentList	*className;
-    S_symbol		*thisClass;
-    char			*thisPackage;
-    int				annonInnerCounter;	/* counter for anonym inner classes*/
-    int				functionInnerCounter; /* counter for function inner class*/
-    S_jslClassStat	*next;
-};
+typedef struct jslClassStat {
+    struct idIdentList	*className;
+    struct symbol		*thisClass;
+    char				*thisPackage;
+    int					annonInnerCounter;	/* counter for anonym inner classes*/
+    int					functionInnerCounter; /* counter for function inner class*/
+    struct jslClassStat	*next;
+} S_jslClassStat;
 
-struct jslStat {
+typedef struct jslStat {
     int                     pass;
     int                     sourceFileNumber;
     int						language;
-    S_jslTypeTab            *typeTab;
-    S_jslClassStat          *classStat;
-    S_symbolList            *waitList;
+    struct jslTypeTab       *typeTab;
+    struct jslClassStat     *classStat;
+    struct symbolList       *waitList;
     void/*YYSTYPE*/			*savedyylval;
     struct yyGlobalState    *savedYYstate;
     int						yyStateSize;
-    S_idIdent				yyIdentBuf[YYBUFFERED_ID_INDEX]; // pending idents
-    S_jslStat				*next;
-};
+    struct idIdent			yyIdentBuf[YYBUFFERED_ID_INDEX]; // pending idents
+    struct jslStat			*next;
+} S_jslStat;
 
 /* ***************** editor structures ********************** */
 
-struct editorBuffer {
-    char            *name;
-    int				ftnum;
-    char			*fileName;
-    struct stat		stat;
-    S_editorMarker	*markers;
+typedef struct editorBufferBits {
+        unsigned		textLoaded:1;
+        unsigned		modified:1;
+        unsigned		modifiedSinceLastQuasySave:1;
+} S_editorBufferBits;
+
+typedef struct editorBuffer {
+    char                *name;
+    int					ftnum;
+    char				*fileName;
+    struct stat			stat;
+    struct editorMarker	*markers;
     struct editorBufferAllocationData {
         int     bufferSize;
         char	*text;
@@ -1451,47 +1464,43 @@ struct editorBuffer {
         int		allocatedIndex;
         int		allocatedSize;
     } a;
-    struct editorBufferBits {
-        unsigned		textLoaded:1;
-        unsigned		modified:1;
-        unsigned		modifiedSinceLastQuasySave:1;
-    } b;
-};
+    struct editorBufferBits b;
+} S_editorBuffer;
 
-struct editorBufferList {
-    S_editorBuffer      *f;
-    S_editorBufferList	*next;
-};
+typedef struct editorBufferList {
+    struct editorBuffer     *f;
+    struct editorBufferList	*next;
+} S_editorBufferList;
 
-struct editorMemoryBlock {
+typedef struct editorMemoryBlock {
     struct editorMemoryBlock *next;
-};
+} S_editorMemoryBlock;
 
-struct editorMarker {
-    S_editorBuffer		*buffer;
-    unsigned            offset;
-    struct editorMarker *previous;      // previous marker in this buffer
-    struct editorMarker *next;          // next marker in this buffer
-};
+typedef struct editorMarker {
+    struct editorBuffer		*buffer;
+    unsigned                offset;
+    struct editorMarker     *previous;      // previous marker in this buffer
+    struct editorMarker     *next;          // next marker in this buffer
+} S_editorMarker;
 
-struct editorMarkerList {
-    S_editorMarker		*d;
-    S_usageBits			usg;
-    S_editorMarkerList	*next;
-};
+typedef struct editorMarkerList {
+    struct editorMarker		*d;
+    struct usageBits		usg;
+    struct editorMarkerList	*next;
+} S_editorMarkerList;
 
-struct editorRegion {
-    S_editorMarker		*b;
-    S_editorMarker		*e;
-};
+typedef struct editorRegion {
+    struct editorMarker		*b;
+    struct editorMarker		*e;
+} S_editorRegion;
 
-struct editorRegionList {
-    S_editorRegion		r;
-    S_editorRegionList	*next;
-};
+typedef struct editorRegionList {
+    struct editorRegion		r;
+    struct editorRegionList	*next;
+} S_editorRegionList;
 
-struct editorUndo {
-    S_editorBuffer		*buffer;
+typedef struct editorUndo {
+    struct editorBuffer	*buffer;
     int					operation;
     union editorUndoUnion {
         struct editorUndoStrReplace {
@@ -1506,19 +1515,19 @@ struct editorUndo {
         struct editorUndoMoveBlock {
             unsigned			offset;
             unsigned			size;
-            S_editorBuffer		*dbuffer;
+            struct editorBuffer	*dbuffer;
             unsigned			doffset;
         } moveBlock;
     } u;
-    S_editorUndo		*next;
-};
+    struct editorUndo     *next;
+} S_editorUndo;
 
 /* *********************************************************** */
 
-struct availableRefactoring {
+typedef struct availableRefactoring {
     unsigned    available;
     char		*option;
-};
+} S_availableRefactoring;
 
 /* **************     parse tree with positions    *********** */
 
@@ -1526,82 +1535,82 @@ struct availableRefactoring {
 // containing 'b','e' records for begin and end position of parse tree
 // node and additional data 'd' for parsing.
 
-struct bb_int {
-    S_position  b, e;
+typedef struct bb_int {
+    struct position  b, e;
     int		d;
-};
-struct bb_unsigned {
-    S_position      b, e;
+} S_bb_int;
+typedef struct bb_unsigned {
+    struct position      b, e;
     unsigned		d;
-};
-struct bb_symbol {
-    S_position      b, e;
-    S_symbol		*d;
-};
-struct bb_symbolList {
-    S_position          b, e;
-    S_symbolList		*d;
-};
-struct bb_typeModifiers {
-    S_position          b, e;
-    S_typeModifiers		*d;
-};
-struct bb_typeModifiersList {
-    S_position              b, e;
-    S_typeModifiersList		*d;
-};
-struct bb_freeTrail {
-    S_position      b, e;
-    S_freeTrail		*d;
-};
-struct bb_idIdent {
-    S_position      b, e;
-    S_idIdent		*d;
-};
-struct bb_idIdentList {
-    S_position          b, e;
-    S_idIdentList		*d;
-};
-struct bb_exprTokenType {
-    S_position          b, e;
-    S_exprTokenType		d;
-};
-struct bb_nestedConstrTokenType {
-    S_position                  b, e;
-    S_nestedConstrTokenType		d;
-};
-struct bb_intPair {
-    S_position      b, e;
-    S_intPair		d;
-};
-struct bb_whileExtractData {
-    S_position              b, e;
-    S_whileExtractData		*d;
-};
-struct bb_position {
-    S_position      b, e;
-    S_position		d;
-};
-struct bb_unsPositionPair {
-    S_position              b, e;
-    S_unsPositionPair		d;
-};
-struct bb_symbolPositionPair {
-    S_position                  b, e;
-    S_symbolPositionPair		d;
-};
-struct bb_symbolPositionLstPair {
-    S_position                  b, e;
-    S_symbolPositionLstPair		d;
-};
-struct bb_positionLst {
-    S_position          b, e;
-    S_positionList		*d;
-};
-struct bb_typeModifiersListPositionLstPair  {
-    S_position                                  b, e;
-    S_typeModifiersListPositionLstPair			d;
-};
+} S_bb_unsigned;
+typedef struct bb_symbol {
+    struct position      b, e;
+    struct symbol		*d;
+} S_bb_symbol;
+typedef struct bb_symbolList {
+    struct position          b, e;
+    struct symbolList		*d;
+} S_bb_symbolList;
+typedef struct bb_typeModifiers {
+    struct position          b, e;
+    struct typeModifiers		*d;
+} S_bb_typeModifiers;
+typedef struct bb_typeModifiersList {
+    struct position              b, e;
+    struct typeModifiersList		*d;
+} S_bb_typeModifiersList;
+typedef struct bb_freeTrail {
+    struct position      b, e;
+    struct freeTrail		*d;
+} S_bb_freeTrail;
+typedef struct bb_idIdent {
+    struct position      b, e;
+    struct idIdent		*d;
+} S_bb_idIdent;
+typedef struct bb_idIdentList {
+    struct position          b, e;
+    struct idIdentList		*d;
+} S_bb_idIdentList;
+typedef struct bb_exprTokenType {
+    struct position          b, e;
+    struct exprTokenType		d;
+} S_bb_exprTokenType;
+typedef struct bb_nestedConstrTokenType {
+    struct position                  b, e;
+    struct nestedConstrTokenType		d;
+} S_bb_nestedConstrTokenType;
+typedef struct bb_intPair {
+    struct position      b, e;
+    struct intPair		d;
+} S_bb_intPair;
+typedef struct bb_whileExtractData {
+    struct position              b, e;
+    struct whileExtractData		*d;
+} S_bb_whileExtractData;
+typedef struct bb_position {
+    struct position      b, e;
+    struct position		d;
+} S_bb_position;
+typedef struct bb_unsPositionPair {
+    struct position              b, e;
+    struct unsPositionPair		d;
+} S_bb_unsPositionPair;
+typedef struct bb_symbolPositionPair {
+    struct position                  b, e;
+    struct symbolPositionPair		d;
+} S_bb_symbolPositionPair;
+typedef struct bb_symbolPositionLstPair {
+    struct position                  b, e;
+    struct symbolPositionLstPair		d;
+} S_bb_symbolPositionLstPair;
+typedef struct bb_positionLst {
+    struct position          b, e;
+    struct positionList		*d;
+} S_bb_positionLst;
+typedef struct bb_typeModifiersListPositionLstPair {
+    struct position                                  b, e;
+    struct typeModifiersListPositionLstPair			d;
+} S_bb_typeModifiersListPositionLstPair;
 
 
 
@@ -1609,20 +1618,20 @@ struct bb_typeModifiersListPositionLstPair  {
 /* *********************   options  ************************** */
 /* *********************************************************** */
 
-struct htmlCutPathesOpts {
+typedef struct htmlCutPathesOpts {
     int pathesNum;
     char *path[MAX_HTML_CUT_PATHES];
     int plen[MAX_HTML_CUT_PATHES];
-};
+} S_htmlCutPathesOpts;
 
-struct setGetEnv {
+typedef struct setGetEnv {
     int num;
     char *name[MAX_SET_GET_OPTIONS];
     char *value[MAX_SET_GET_OPTIONS];
-};
+} S_setGetEnv;
 
 // TODO all strings inside to static string array
-struct options {
+typedef struct options {
     int fileEncoding;
     char completeParenthesis;
     int defaultAddImportStrategy;
@@ -1631,8 +1640,8 @@ struct options {
     int completionOverloadWizardDeep;
     int exit;
     int commentMovingLevel;
-    S_stringList *pruneNames;
-    S_stringList *inputFiles;
+    struct stringList *pruneNames;
+    struct stringList *inputFiles;
     int continueRefactoring;
     int completionCaseSensitive;
     char *xrefrc;
@@ -1675,7 +1684,7 @@ struct options {
     int exactPositionResolve;
     char *outputFileName;
     char *lineFileName;
-    S_stringList *includeDirs;
+    struct stringList *includeDirs;
     char *cxrefFileName;
 
     char *checkFileMovedFrom;
@@ -1780,14 +1789,14 @@ struct options {
     int refnum;
 
     // all the rest initialized to zeros by default
-    S_setGetEnv setGetEnv;
-    S_htmlCutPathesOpts htmlCut;
+    struct setGetEnv setGetEnv;
+    struct htmlCutPathesOpts htmlCut;
 
     // memory for strings
-    S_stringAddrList	*allAllocatedStrings;
-    S_memory			pendingMemory;
-    char				pendingFreeSpace[SIZE_opiMemory];
-};
+    struct stringAddrList	*allAllocatedStrings;
+    struct memory			pendingMemory;
+    char					pendingFreeSpace[SIZE_opiMemory];
+} S_options;
 
 /* ************************ HASH TABLES ****************************** */
 

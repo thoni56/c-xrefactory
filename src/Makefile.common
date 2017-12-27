@@ -84,19 +84,12 @@ c-xref.bs:
 compiler_defines.g: c-xref.bs
 	echo | gcc -dM -E - > compiler_defines.g
 
-strFill.g.h: proto.h strTdef.g.h compiler_defines.g c-xref.bs
+strFill.g.h: proto.h compiler_defines.g c-xref.bs
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION proto.h \
 		-str_fill -header -no_stdop \
 		> tmpStrFill.g.h
 	if [ -e strFill.g.h ]; then mv -f strFill.g.h strFill.h.backup ; fi
 	mv -f tmpStrFill.g.h strFill.g.h
-
-strTdef.g.h: proto.h compiler_defines.g c-xref.bs
-	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION proto.h \
-		-typedefs -header -no_stdop \
-		> tmpStrTdef.g.h
-	if [ -e strTdef.g.h ]; then mv -f strTdef.g.h strTdef.h.backup ; fi
-	mv -f tmpStrTdef.g.h strTdef.g.h
 
 enumTxt.g.h: proto.h compiler_defines.g c-xref.bs
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION proto.h \
@@ -123,7 +116,7 @@ clean:;
 	-rm -f $(OBJS) c-xref
 
 cleaner: clean
-	-rm compiler_defines.g strFill.g.h strTdef.g.h enumTxt.g.[ch] c-xref.bs
+	-rm compiler_defines.g strFill.g.h enumTxt.g.[ch] c-xref.bs
 
 #########################################################################
 

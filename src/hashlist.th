@@ -15,10 +15,10 @@
 #define CONCAT(a,b) GLUE(a,b)
 
 
-HASH_TAB_TYPE {
+typedef HASH_TAB_TYPE {
     int size;
     HASH_ELEM_TYPE **tab;				/* *tab[size];*/
-};
+} CONCAT(S_, HASH_FUN_PREFIX);
 
 
 extern void CONCAT(HASH_FUN_PREFIX, Init) (		/* Init */

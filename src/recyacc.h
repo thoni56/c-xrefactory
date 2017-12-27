@@ -1,7 +1,7 @@
 #ifndef RECYACC_H
 #define RECYACC_H
 
-struct yyGlobalState {
+typedef struct yyGlobalState {
     int gyydebug;
     int gyynerrs;
     int gyyerrflag;
@@ -13,7 +13,7 @@ struct yyGlobalState {
     YYSTYPE gyylval;
     short gyyss[YYSTACKSIZE];
     YYSTYPE gyyvs[YYSTACKSIZE];
-};
+} S_yyGlobalState;
 
 extern struct yyGlobalState *s_yygstate;
 extern struct yyGlobalState *s_initYygstate;
