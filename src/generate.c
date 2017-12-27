@@ -46,15 +46,15 @@ static void genCopy(S_symbol *defin,
 }
 
 static void fillGenArgHeadItem(char *name, int  *i) {
-    fprintf(cxOut,",%s%d", name, *i);
+    fprintf(cxOut,", %s%d", name, *i);
     (*i)++;
 }
 
 
-static int genFillStructArguments(  S_symbol *defin,
-                                    int i,
-                                    int fullFlag
-                                    ) {
+static int genFillStructArguments(S_symbol *defin,
+                                  int i,
+                                  int fullFlag
+                                  ) {
     S_symbol *rec;
     S_symbol *p;
     static int deep=0;
@@ -91,9 +91,11 @@ static char *getFillArgumentName(int i, int argn, int action) {
     return(res);
 }
 
+#define FILL_ARGUMENT_NAME "STRUCTP"
+
 static void genFillItem(char *pref, int action,
                         char *name,    int  i, int argn) {
-    fprintf(cxOut,"\t(XXX)->%s%s = %s;\\\n",
+    fprintf(cxOut,"\t(%s)->%s%s = %s;\\\n", FILL_ARGUMENT_NAME,
             pref,name,getFillArgumentName(i,argn,action));
 }
 
@@ -127,8 +129,10 @@ static int genFillStructBody(S_symbol *defin, int i, int argn, int fullFlag,
                         strcpy(rname,getFillArgumentName(i,argn,action));
                         i++;
                         fprintf(cxOut,
-                                "\t_FILLUREC_%s_##%s((&(XXX)->%s), %s);\\\n",
-                                p->u.type->u.t->name,rname,prefix,
+                                "\t_FILLUREC_%s_##%s((&(%s)->%s), %s);\\\n",
+                                p->u.type->u.t->name,rname,
+                                FILL_ARGUMENT_NAME,
+                                prefix,
                                 getFillArgumentName(i,argn,action));
                         i++;
                     } else {
@@ -182,17 +186,17 @@ static void genStructFill(S_symbol *s) {
     assert(s->u.s);
     rec = s->u.s->records;
     assert(name);
-    fprintf(cxOut,"#define FILL_%s(XXX",name);
+    fprintf(cxOut,"#define FILL_%s(%s", name, FILL_ARGUMENT_NAME);
     argn = genFillStructArguments(s, 0, 0);
     fprintf(cxOut,") {\\\n");
     genFillStructBody(s, 0, argn, 0, "", FillGenerate);
     fprintf(cxOut,"}\n");
-    fprintf(cxOut,"#define FILLF_%s(XXX",name);
+    fprintf(cxOut,"#define FILLF_%s(%s", name, FILL_ARGUMENT_NAME);
     argn = genFillStructArguments(s, 0, 1);
     fprintf(cxOut,") {\\\n");
     genFillStructBody(s, 0, argn, 1, "", FillGenerate);
     fprintf(cxOut,"}\n");
-    fprintf(cxOut,"#define _FILLF_%s(XXX,ARGS) {\\\n",name);
+    fprintf(cxOut,"#define _FILLF_%s(%s, ARGS) {\\\n", name, FILL_ARGUMENT_NAME);
     genFillStructBody(s, 0, argn, 1, "", InternalFillGenerate);
     fprintf(cxOut,"}\n");
 }
