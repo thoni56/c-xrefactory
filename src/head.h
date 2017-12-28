@@ -20,15 +20,6 @@
 #define JAVA_VERSION_AUTO "auto"
 
 
-/* ******************** assertion checks ****************** */
-
-#define InternalCheck(expr) {\
-    if (!(expr)) internalCheckFail(#expr, __FILE__, __LINE__);\
-}
-
-#undef assert
-#define assert(expr) InternalCheck(expr)
-
 /* ******************** language identification ****************** */
 
 /* bitwise different */

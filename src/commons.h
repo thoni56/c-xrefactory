@@ -1,6 +1,13 @@
 #ifndef COMMONS_H
 #define COMMONS_H
 
+#define InternalCheck(expr) {\
+    if (!(expr)) internalCheckFail(#expr, __FILE__, __LINE__);\
+}
+
+#undef assert
+#define assert(expr) InternalCheck(expr)
+
 extern void emergencyExit(int exitStatus);
 extern void warning(int kod, char *sprava);
 extern void error(int kod, char *sprava);
