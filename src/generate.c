@@ -45,11 +45,20 @@ static void genCopy(S_symbol *defin,
     }
 }
 
-static void fillGenArgHeadItem(char *name, int  *i) {
-    fprintf(cxOut,", %s%d", name, *i);
-    (*i)++;
+static void fillGenArgHeadItem(char *name, int i) {
+    fprintf(cxOut,", %s%d", name, i);
 }
 
+
+static char *getFillArgumentName(int i, int argn, int action) {
+    static char res[TMP_STRING_SIZE];
+    if (action == InternalFillGenerate) {
+        sprintf(res,"_ARG_PROJECT_%d_%d ARGS", i, argn);
+    } else {
+        sprintf(res,"ARG%d",i);
+    }
+    return(res);
+}
 
 static int genFillStructArguments(S_symbol *defin,
                                   int i,
@@ -70,10 +79,10 @@ static int genFillStructArguments(S_symbol *defin,
             if (p->u.type->m == TypeStruct  && fullFlag) {
                 i = genFillStructArguments(p->u.type->u.t,i,1);
             } else if (p->u.type->m == TypeUnion) {
-                fillGenArgHeadItem("ARG", &i);
-                fillGenArgHeadItem("ARG", &i);
+                fillGenArgHeadItem("ARG", i++);
+                fillGenArgHeadItem("ARG", i++);
             } else {
-                fillGenArgHeadItem("ARG", &i);
+                fillGenArgHeadItem("ARG", i++);
             }
         }
     }
@@ -81,15 +90,6 @@ static int genFillStructArguments(S_symbol *defin,
     return(i);
 }
 
-static char *getFillArgumentName(int i, int argn, int action) {
-    static char res[TMP_STRING_SIZE];
-    if (action == InternalFillGenerate) {
-        sprintf(res,"_ARG_PROJECT_%d_%d ARGS", i, argn);
-    } else {
-        sprintf(res,"ARG%d",i);
-    }
-    return(res);
-}
 
 #define FILL_ARGUMENT_NAME "STRUCTP"
 
