@@ -17,6 +17,7 @@ quick:
 	@make -C basic_html_generation
 	@make -C standard_includes
 	@make -C init_parsing
+	@make -C generate_str_fill
 
 slow:
 	@echo "Slow tests..."
