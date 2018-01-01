@@ -1,0 +1,14 @@
+# Boiler plate Makefile for many c-xref tests
+#
+# - Names the test from directory name
+# - Generates a specific, simple, c-xrefrc from a template
+#
+# In the test Makefiles you just need to include this and define the
+# $(TEST) target where the execution of the test should go.
+
+TEST = $(notdir $(CURDIR))
+
+all: c-xrefrc $(TEST)
+
+c-xrefrc: ../c-xrefrc.tpl
+	@sed -e "s+PWD+$(CURDIR)+g" -e "s+PROJ+$(TEST)+g" ../c-xrefrc.tpl > c-xrefrc

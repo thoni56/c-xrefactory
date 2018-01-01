@@ -1,9 +1,9 @@
 # Automated tests for html generation
 # Initial version
 
-all: basic_html_generation
+include ../Makefile.boilerplate
 
-basic_html_generation: c-xrefrc
+$(TEST):
 	@rm -rf output $@.log
 	@printf "Tests in \"$@\": "
 	@../../src/c-xref -xrefrc c-xrefrc -p $@ -html -htmlroot=output -htmlcutcwd $@.[ch] -o $@.log
@@ -14,6 +14,3 @@ basic_html_generation: c-xrefrc
 	else \
 		echo "Ok" ; \
 	fi
-
-c-xrefrc: c-xrefrc.tpl
-	@sed -e "s+PWD+$(CURDIR)+g" c-xrefrc.tpl > c-xrefrc

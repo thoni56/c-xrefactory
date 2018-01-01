@@ -1,11 +1,4 @@
-#
-
-TEST = $(notdir $(CURDIR))
-
-all: c-xrefrc $(TEST)
-
-c-xrefrc: ../c-xrefrc.tpl
-	@sed -e "s+PWD+$(CURDIR)+g" -e "s+PROJ+$(TEST)+g" ../c-xrefrc.tpl > c-xrefrc
+include ../Makefile.boilerplate
 
 $(TEST):
 	@rm -rf output $@.log

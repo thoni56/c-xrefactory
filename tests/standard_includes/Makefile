@@ -1,9 +1,9 @@
 # Automated test for finding standard includes (uses stdbool.h)
 # Initial version
 
-all: standard_includes
+include ../Makefile.boilerplate
 
-standard_includes:
+$(TEST):
 	@rm -rf C-Xrefs $@.log
 	@printf "Tests in \"$@\": "
 	@../../src/c-xref -xrefrc c-xrefrc -refs $(CURDIR)/C-Xrefs $@.c -o $@.log

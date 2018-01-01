@@ -1,10 +1,8 @@
 # Automated tests for <test case>
 
-test_case = $(notdir $(shell pwd))
+include ../Makefile.boilerplate
 
 YACC = ../../byacc-1.9/yacc
-
-all: $(test_case)
 
 # Note to self:
 # The Xrefs file contains all references in a format that I have yet
@@ -16,7 +14,7 @@ all: $(test_case)
 # '1541f9l17cr' means file 1541, line 9, character 17
 #
 
-$(test_case): $(YACC)
+$(TEST): $(YACC)
 	@rm -f $@.log C-Xrefs
 	@printf "Tests in \"$@\": "
 	@$(YACC) file.y

@@ -16,7 +16,7 @@ quick:
 	@make -C process_yacc
 	@make -C basic_html_generation
 	@make -C standard_includes
-	@make -C init_parsing
+	@make -C initializer_parsing
 	@make -C generate_str_fill
 
 slow:

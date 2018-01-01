@@ -1,9 +1,6 @@
-# Automated tests for pragma once
+include ../Makefile.boilerplate
 
-all: init_parsing
-
-.PHONY: init_parsing
-init_parsing:
+$(TEST):
 	@rm -f $@.log Xrefs
 	@printf "Tests in \"$@\": "
 	@../../src/c-xref $@.c -xrefrc c-xrefrc -refs $(CURDIR)/C-Xrefs -o $@.log
