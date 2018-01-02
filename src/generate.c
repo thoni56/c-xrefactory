@@ -301,7 +301,7 @@ void generateProjectionMacros(int n) {
         for(j=0; j<i; j++) {
             fprintf(cxOut,"#define _ARG_%d_OF_%d",j,i);
             for (k=0;k<i;k++) fprintf(cxOut,"%sARG%d",(k?",":"("),k);
-            fprintf(cxOut,") A%d\n",j);
+            fprintf(cxOut,") ARG%d\n",j);
         }
     }
 }
