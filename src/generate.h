@@ -4,6 +4,6 @@
 #include "proto.h"
 
 extern void generate(S_symbol *s);
-extern void genProjections(int n);
+extern void generateProjectionMacros(int n);
 
 #endif

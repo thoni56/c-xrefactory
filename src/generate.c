@@ -50,12 +50,12 @@ static void fillGenArgHeadItem(char *name, int i) {
 }
 
 
-static char *getFillArgumentName(int i, int argn, int action) {
+static char *getFillArgumentName(int argument_number, int argument_count, int action) {
     static char res[TMP_STRING_SIZE];
     if (action == InternalFillGenerate) {
-        sprintf(res,"_ARG_PROJECT_%d_%d ARGS", i, argn);
+        sprintf(res,"_ARG_%d_OF_%d ARGS", argument_number, argument_count);
     } else {
-        sprintf(res,"ARG%d",i);
+        sprintf(res,"ARG%d",argument_number);
     }
     return(res);
 }
@@ -79,10 +79,10 @@ static int genFillStructArguments(S_symbol *defin,
             if (p->u.type->m == TypeStruct  && fullFlag) {
                 i = genFillStructArguments(p->u.type->u.t,i,1);
             } else if (p->u.type->m == TypeUnion) {
-                fillGenArgHeadItem("ARG", i++);
-                fillGenArgHeadItem("ARG", i++);
+                fprintf(cxOut, ", %s", getFillArgumentName(i++, 0, FillGenerate));
+                fprintf(cxOut, ", %s", getFillArgumentName(i++, 0, FillGenerate));
             } else {
-                fillGenArgHeadItem("ARG", i++);
+                fprintf(cxOut, ", %s", getFillArgumentName(i++, 0, FillGenerate));
             }
         }
     }
@@ -93,10 +93,10 @@ static int genFillStructArguments(S_symbol *defin,
 
 #define FILL_ARGUMENT_NAME "STRUCTP"
 
-static void genFillItem(char *pref, int action,
-                        char *name,    int  i, int argn) {
+static void genFillItem(char *prefix, int action,
+                        char *name, int argument_number, int argument_count) {
     fprintf(cxOut,"\t(%s)->%s%s = %s;\\\n", FILL_ARGUMENT_NAME,
-            pref,name,getFillArgumentName(i,argn,action));
+            prefix,name,getFillArgumentName(argument_number,argument_count,action));
 }
 
 
@@ -292,11 +292,11 @@ static void genEnumText(S_symbol *s) {
     }
 }
 
-void genProjections(int n) {
+void generateProjectionMacros(int n) {
     int i,j,k;
     for (i=1; i<=n; i++) {
         for(j=0; j<i; j++) {
-            fprintf(cxOut,"#define _ARG_PROJECT_%d_%d",j,i);
+            fprintf(cxOut,"#define _ARG_%d_OF_%d",j,i);
             for (k=0;k<i;k++) fprintf(cxOut,"%sA%d",(k?",":"("),k);
             fprintf(cxOut,") A%d\n",j);
         }
