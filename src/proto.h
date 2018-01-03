@@ -632,12 +632,6 @@ enum javaPCTIndex {		/* java Primitive Conversion Table Indexes */
     MAX_PCTIndex
 };
 
-enum copyFlag {		/* flag for genFillStructBody function*/
-    FillGenerate,
-    InternalFillGenerate,
-    CopyGenerate,
-};
-
 enum sFunResult {
     RESULT_OK,
     RESULT_ERR

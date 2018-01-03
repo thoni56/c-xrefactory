@@ -1,18 +1,25 @@
 #include "generate.h"
 
+#include <stdbool.h>
+
 #include "commons.h"
 #include "globals.h"
 
 
-static int subToFill(S_symbol *p, int fullFlag) {
-    if (p->b.storage == StorageError) return(0);
+typedef enum {
+    GenerateStructureFill,
+    GenerateInternalFill,
+    GenerateStructureCopy,
+} GenerateKind;
+
+
+static bool isSubstructureToFill(S_symbol *p) {
+    if (p->b.storage == StorageError) return false;
     assert(p->u.type);
-    if (p->u.type->m == TypeAnonymeField) return(0);
-    if (p->u.type->m == TypeFunction) return(0);
-    if (p->u.type->m == TypeArray) return(0);           /* just for now*/
-    //& if (p->u.type->m == TypeUnion && ! fullFlag) return(0);
-    //& if (p->u.type->m == TypeUnion) return(0);
-    return(1);
+    if (p->u.type->m == TypeAnonymeField) return false;
+    if (p->u.type->m == TypeFunction) return false;
+    if (p->u.type->m == TypeArray) return false;           /* just for now */
+    return true;
 }
 
 static void genCopy(S_symbol *defin,
@@ -26,7 +33,7 @@ static void genCopy(S_symbol *defin,
     for(i=0; i<pi; i++) stars[i]='*';
     stars[i]=0;
     if (tt->m == TypePointer && tt->next->m==TypeVoid) {
-        sprintf(tmpBuff,"a void * pointer in %s, wrong structre copy possible",
+        sprintf(tmpBuff,"a void * pointer in %s, wrong structure copy possible",
                 defin->name);
         warning(ERR_ST,tmpBuff);
     } else if (tt->m == TypePointer && tt->next->m!=TypeStruct) {
@@ -45,14 +52,10 @@ static void genCopy(S_symbol *defin,
     }
 }
 
-static void fillGenArgHeadItem(char *name, int i) {
-    fprintf(cxOut,", %s%d", name, i);
-}
-
-
-static char *getFillArgumentName(int argument_number, int argument_count, int action) {
+static char *getFillArgumentName(int argument_number, int argument_count,
+                                 GenerateKind action) {
     static char res[TMP_STRING_SIZE];
-    if (action == InternalFillGenerate) {
+    if (action == GenerateInternalFill) {
         sprintf(res,"_ARG_%d_OF_%d ARGS", argument_number, argument_count);
     } else {
         sprintf(res,"ARG%d",argument_number);
@@ -62,7 +65,7 @@ static char *getFillArgumentName(int argument_number, int argument_count, int ac
 
 static int genFillStructArguments(S_symbol *defin,
                                   int i,
-                                  int fullFlag
+                                  bool fullFlag
                                   ) {
     S_symbol *rec;
     S_symbol *p;
@@ -75,14 +78,14 @@ static int genFillStructArguments(S_symbol *defin,
         fatalError(ERR_ST,"too much nested structures, probably recursive", XREF_EXIT_ERR);
     }
     for(p=rec; p!=NULL; p=p->next) {
-        if (subToFill(p, fullFlag)) {
+        if (isSubstructureToFill(p)) {
             if (p->u.type->m == TypeStruct  && fullFlag) {
                 i = genFillStructArguments(p->u.type->u.t,i,1);
             } else if (p->u.type->m == TypeUnion) {
-                fprintf(cxOut, ", %s", getFillArgumentName(i++, 0, FillGenerate));
-                fprintf(cxOut, ", %s", getFillArgumentName(i++, 0, FillGenerate));
+                fprintf(cxOut, ", %s", getFillArgumentName(i++, 0, GenerateStructureFill));
+                fprintf(cxOut, ", %s", getFillArgumentName(i++, 0, GenerateStructureFill));
             } else {
-                fprintf(cxOut, ", %s", getFillArgumentName(i++, 0, FillGenerate));
+                fprintf(cxOut, ", %s", getFillArgumentName(i++, 0, GenerateStructureFill));
             }
         }
     }
@@ -93,15 +96,15 @@ static int genFillStructArguments(S_symbol *defin,
 
 #define FILL_ARGUMENT_NAME "STRUCTP"
 
-static void genFillItem(char *prefix, int action,
-                        char *name, int argument_number, int argument_count) {
+static void fillField(char *prefix, char *name, int argument_number,
+                      int argument_count, GenerateKind action) {
     fprintf(cxOut,"\t(%s)->%s%s = %s;\\\n", FILL_ARGUMENT_NAME,
             prefix,name,getFillArgumentName(argument_number,argument_count,action));
 }
 
 
-static int genFillStructBody(S_symbol *defin, int i, int argn, int fullFlag,
-                             char *pref, int action) {
+static int genFillStructBody(S_symbol *defin, int i, int argn, bool fullFlag,
+                             char *pref, GenerateKind action) {
     S_symbol *rec;
     S_symbol *p;
     char prefix[TMP_STRING_SIZE];
@@ -115,7 +118,7 @@ static int genFillStructBody(S_symbol *defin, int i, int argn, int fullFlag,
         fatalError(ERR_ST,"too much nested structures, probably recursive", XREF_EXIT_ERR);
     }
     for(p=rec; p!=NULL; p=p->next) {
-        if (subToFill(p, fullFlag)) {
+        if (isSubstructureToFill(p)) {
             if (    (p->u.type->m == TypeStruct && fullFlag)
                     || p->u.type->m == TypeUnion) {
                 l1 = strlen(pref);
@@ -140,7 +143,7 @@ static int genFillStructBody(S_symbol *defin, int i, int argn, int fullFlag,
                         prefix[l1+l2+1] = 0;
                         strcpy(rname,getFillArgumentName(i,argn,action));
                         i++;
-                        genFillItem( prefix, action, rname, i, argn);
+                        fillField( prefix, rname, i, argn, action);
                         i++;
                     }
                 } else {
@@ -149,7 +152,7 @@ static int genFillStructBody(S_symbol *defin, int i, int argn, int fullFlag,
                     i=genFillStructBody(p->u.type->u.t,i,argn,1,prefix,action);
                 }
             } else {
-                genFillItem( pref, action, p->name, i, argn);
+                fillField( pref, p->name, i, argn, action);
                 i++;
             }
         }
@@ -189,15 +192,15 @@ static void genStructFill(S_symbol *s) {
     fprintf(cxOut,"#define FILL_%s(%s", name, FILL_ARGUMENT_NAME);
     argn = genFillStructArguments(s, 0, 0);
     fprintf(cxOut,") {\\\n");
-    genFillStructBody(s, 0, argn, 0, "", FillGenerate);
+    genFillStructBody(s, 0, argn, 0, "", GenerateStructureFill);
     fprintf(cxOut,"}\n");
     fprintf(cxOut,"#define FILLF_%s(%s", name, FILL_ARGUMENT_NAME);
     argn = genFillStructArguments(s, 0, 1);
     fprintf(cxOut,") {\\\n");
-    genFillStructBody(s, 0, argn, 1, "", FillGenerate);
+    genFillStructBody(s, 0, argn, 1, "", GenerateStructureFill);
     fprintf(cxOut,"}\n");
     fprintf(cxOut,"#define _FILLF_%s(%s, ARGS) {\\\n", name, FILL_ARGUMENT_NAME);
-    genFillStructBody(s, 0, argn, 1, "", InternalFillGenerate);
+    genFillStructBody(s, 0, argn, 1, "", GenerateInternalFill);
     fprintf(cxOut,"}\n");
 }
 
@@ -249,7 +252,7 @@ static void genStructCopy(S_symbol *s) {
         fprintf(cxOut,"  d = (struct %s *) (*alloc)(sizeof(struct %s));\n",
                 name,name);
         fprintf(cxOut,"  memcpy(d,s,sizeof(struct %s));\n",name);
-        genFillStructBody(s, 0, 0/*????*/, 1, "", CopyGenerate);
+        genFillStructBody(s, 0, 0/*????*/, 1, "", GenerateStructureCopy);
         fprintf(cxOut,"  return(d);\n");
         fprintf(cxOut,"}\n\n");
     }
@@ -297,7 +300,7 @@ void generateProjectionMacros(int n) {
     for (i=1; i<=n; i++) {
         for(j=0; j<i; j++) {
             fprintf(cxOut,"#define _ARG_%d_OF_%d",j,i);
-            for (k=0;k<i;k++) fprintf(cxOut,"%sA%d",(k?",":"("),k);
+            for (k=0;k<i;k++) fprintf(cxOut,"%sARG%d",(k?",":"("),k);
             fprintf(cxOut,") A%d\n",j);
         }
     }
