@@ -2,7 +2,6 @@
 
 #include "commons.h"
 #include "globals.h"
-#include "yylex.h"
 #include "misc.h"
 #include "cxref.h"
 #include "html.h"
@@ -728,7 +727,7 @@ int packageOnCommandLine(char *fn) {
     return(res);
 }
 
-void addSourcePathesCut() {
+void addSourcePathesCut(void) {
     javaSetSourcePath(1);
     JavaMapOnPaths(s_javaSourcePaths,{
             addHtmlCutPath(currentPath);
@@ -765,7 +764,7 @@ static char * canItBeJavaBinPath(char *ttt) {
 }
 
 
-static char *getJdk12AutoClassPathFastly() {
+static char *getJdk12AutoClassPathFastly(void) {
     char            ttt[MAX_FILE_NAME_SIZE];
     char            *res;
     char            *cp;
@@ -789,7 +788,7 @@ static char *getJdk12AutoClassPathFastly() {
     return(NULL);
 }
 
-char *getJdkClassPathFastly() {
+char *getJdkClassPathFastly(void) {
     char *jdkcp;
     jdkcp = s_opt.jdkClassPath;
     if (jdkcp == NULL || *jdkcp==0) jdkcp = getenv("JDKCLASSPATH");
@@ -840,7 +839,7 @@ static char *s_defaultPossibleJavaBinPaths[] = {
     NULL
 };
 
-char *getJdkClassPath() {
+char *getJdkClassPath(void) {
     char            ttt[MAX_FILE_NAME_SIZE];
     char            *res, *cp;
     FILE            *ff;
@@ -855,7 +854,7 @@ char *getJdkClassPath() {
     return(NULL);
 }
 
-char *getJavaHome() {
+char *getJavaHome(void) {
     static char     res[MAX_FILE_NAME_SIZE];
     char            *tt;
     char            *cp;
@@ -873,7 +872,7 @@ char *getJavaHome() {
     return(NULL);
 }
 
-void getJavaClassAndSourcePath() {
+void getJavaClassAndSourcePath(void) {
     char            *cp,*jdkcp,*path;
     int             i;
     for(i=0; i<MAX_JAVA_ZIP_ARCHIVES; i++) {

@@ -3,12 +3,12 @@
 
 #include "stdinc.h"
 
-extern void addSourcePathesCut();
+extern void addSourcePathesCut(void);
 extern void getXrefrcFileName( char *ttt );
 extern int processInteractiveFlagOption(char **argv, int i);
-extern char *getJavaHome();
-extern char *getJdkClassPathFastly();
-extern void getJavaClassAndSourcePath();
+extern char *getJavaHome(void);
+extern char *getJdkClassPathFastly(void);
+extern void getJavaClassAndSourcePath(void);
 extern int packageOnCommandLine(char *fn);
 extern void getStandardOptions(int *nargc, char ***nargv);
 extern char *expandSpecialFilePredefinedVariables_st(char *tt);
