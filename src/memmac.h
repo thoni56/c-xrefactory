@@ -76,72 +76,6 @@
 
 /* ************* a suplementary level with free-lists ******************** */
 
-#define RLM_ALLIGNEMENT STANDARD_ALLIGNEMENT
-
-#ifdef OLD_RLM_MEMORY
-
-#define RLM_INIT(mem) {\
-    int i;\
-    SM_INIT(mem);\
-    for(i=0; i<MAX_BUFFERED_SIZE_##mem; i++) mem##FreeList[i] = NULL;\
-}
-#define RLM_SOFT_ALLOCC(mem,p,nn,t) {\
-    int n = (int) ALLIGNEMENT(((nn)*sizeof(t)),RLM_ALLIGNEMENT);\
-    char *rlmtmp;\
-    assert(n >= sizeof(void*));\
-    assert(n < MAX_BUFFERED_SIZE_##mem);\
-    if ((p = (t*) mem##FreeList[n]) == NULL) {\
-        p = NULL;\
-        if (SM_FREE_SPACE(mem, n)) {\
-            SM_ALLOCC(mem, rlmtmp, n, char);\
-            p = (t *) rlmtmp;\
-        }\
-    } else {\
-        mem##FreeList[n] = *((void **) p);\
-    }\
-}
-#define RLM_ALLOCC(mem,p,nn,t) {\
-    RLM_SOFT_ALLOCC(mem,p,nn,t);\
-    if (p==NULL) SM_ALLOCC(mem, p, nn, t);\
-}
-#define RLM_ALLOC(mem,p,t) {RLM_ALLOCC(mem,p,1,t);}
-#define RLM_SOFT_ALLOC(mem,p,t) {RLM_SOFT_ALLOCC(mem,p,1,t);}
-#define RLM_FREE(mem,p,nn) {\
-    int n = (int) ALLIGNEMENT((nn),RLM_ALLIGNEMENT);\
-    * (void **) p = mem##FreeList[n];\
-    mem##FreeList[n] = p;\
-}
-
-#define RLM_FREE_COUNT(mem) {\
-    int i,count;\
-    void *r;\
-    count = 0;\
-    for( i=0; i<MAX_BUFFERED_SIZE_##mem; i++ ) {\
-        r = mem##FreeList[i];\
-        while (r!=NULL) {\
-            count += i;\
-            r = *(void**)r;\
-        }\
-    }\
-    fprintf(stdout,"\ntotal free %d\n",count); fflush(stdout);\
-}
-
-#define RLM_DUMP(mem) {\
-    int i;\
-    void *r;\
-    for( i=0; i<MAX_BUFFERED_SIZE_##mem; i++ ) {\
-        fprintf(stdout,"%2d: ",i);\
-        r = mem##FreeList[i];\
-        while (r!=NULL) {\
-            fprintf(stdout,"%x ",r);\
-            r = *(void**)r;\
-        }\
-        fprintf(stdout,"\n",i);\
-    }\
-}
-
-#else
-
 #define RLM_INIT(mem) {mem##AllocatedBytes = 0; CHECK_INIT();}
 
 #define RLM_SOFT_ALLOCC(mem,p,nn,t) {\
@@ -160,7 +94,6 @@
     free(p);\
 }
 
-#endif
 
 
 /* ********************************************************************** */
