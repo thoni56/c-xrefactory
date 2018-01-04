@@ -381,22 +381,7 @@ static int jslHashEqual(S_symbolList *e1, S_symbolList *e2) {
 #undef HASH_ELEM_EQUAL
 
 
-#define HASH_TAB_TYPE struct idTab
-#define HASH_ELEM_TYPE S_fileItem
-#define HASH_FUN_PREFIX idTab
-#define HASH_FUN(elemp) fileTabHashFun(elemp->name)
-#define HASH_ELEM_EQUAL(e1,e2) (strcmp(e1->name,e2->name)==0)
-
-#include "hashtab.tc"
-
-#undef HASH_TAB_TYPE
-#undef HASH_ELEM_TYPE
-#undef HASH_FUN_PREFIX
-#undef HASH_FUN
-#undef HASH_ELEM_EQUAL
-
 /* ***************************************************************** */
-
 
 void stackMemoryInit() {
     s_topBlock = (S_topBlock *) memory;
