@@ -8,6 +8,8 @@
 #undef assert
 #define assert(expr) InternalCheck(expr)
 
+extern void initCwd(void);
+extern void reInitCwd(char *dffname, char *dffsect);
 extern void emergencyExit(int exitStatus);
 extern void warning(int kod, char *sprava);
 extern void error(int kod, char *sprava);

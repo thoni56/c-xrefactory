@@ -1,15 +1,13 @@
 #ifndef INIT_H
 #define INIT_H
 
-extern void initCwd();
-extern void reInitCwd(char *dffname, char *dffsect);
-extern void initTokenNameTab();
-extern void initJavaTypePCTIConvertIniTab();
-extern void initTypeCharCodeTab();
-extern void initArchaicTypes();
-extern void initPreCreatedTypes();
-extern void initTypeModifiersTabs();
-extern void initExtractStoragesNameTab();
-extern void initTypesNamesTab();
+extern void initTokenNameTab(void);
+extern void initJavaTypePCTIConvertIniTab(void);
+extern void initTypeCharCodeTab(void);
+extern void initArchaicTypes(void);
+extern void initPreCreatedTypes(void);
+extern void initTypeModifiersTabs(void);
+extern void initExtractStoragesNameTab(void);
+extern void initTypesNamesTab(void);
 
 #endif

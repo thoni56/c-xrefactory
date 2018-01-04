@@ -30,7 +30,7 @@ static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {
     }
 }
 
-static char *autoDetectJavaVersion() {
+static char *autoDetectJavaVersion(void) {
     int i;
     char *res;
     // O.K. pass jars and look for rt.jar
@@ -48,7 +48,7 @@ static char *autoDetectJavaVersion() {
     return(res);
 }
 
-void initTokenNameTab() {
+void initTokenNameTab(void) {
     char        *nn,*jv;
     int         tok,ii,i,tlan;
     S_symbol    *pp;
@@ -88,7 +88,7 @@ void initTokenNameTab() {
         if (tmp>=0) type##modifier##Change[t] = tmp;        \
     }
 
-void initTypeModifiersTabs() {
+void initTypeModifiersTabs(void) {
     int i,t;
     for(i=0; i<MAX_TYPE; i++) {
         typeShortChange[i] = i;
@@ -104,7 +104,7 @@ void initTypeModifiersTabs() {
     }
 }
 
-void initJavaTypePCTIConvertIniTab() {
+void initJavaTypePCTIConvertIniTab(void) {
     int                         i;
     S_javaTypePCTIConvertIni    *s;
     for (i=0; s_javaTypePCTIConvertIniTab[i].symType != -1; i++) {
@@ -114,7 +114,7 @@ void initJavaTypePCTIConvertIniTab() {
     }
 }
 
-void initTypeCharCodeTab() {
+void initTypeCharCodeTab(void) {
     int                 i;
     S_typeCharCodeIni   *s;
     for (i=0; s_baseTypeCharCodesIniTab[i].symType != -1; i++) {
@@ -126,7 +126,7 @@ void initTypeCharCodeTab() {
     }
 }
 
-void initTypesNamesTab() {
+void initTypesNamesTab(void) {
     int                 i;
     S_intStringTab      *s;
     for (i=0; s_typesNamesInitTab[i].i != -1; i++) {
@@ -136,7 +136,7 @@ void initTypesNamesTab() {
     }
 }
 
-void initExtractStoragesNameTab() {
+void initExtractStoragesNameTab(void) {
     int                 i;
     S_intStringTab      *s;
     for(i=0; i<MAX_STORAGE; i++) s_extractStorageName[i]="";
@@ -148,7 +148,7 @@ void initExtractStoragesNameTab() {
 }
 
 
-void initArchaicTypes() {
+void initArchaicTypes(void) {
     /* ******* some defaults and built-ins initialisationa ********* */
 
     FILLF_typeModifiers(&s_defaultIntModifier,TypeInt,f,( NULL,NULL) ,NULL,NULL);
@@ -170,7 +170,7 @@ void initArchaicTypes() {
     s_errorSymbol.u.type = &s_errorModifier;
 }
 
-void initPreCreatedTypes() {
+void initPreCreatedTypes(void) {
     int i,t;
     S_typeModifiers *tt;
     for(i=0; i<MAX_TYPE; i++) {
