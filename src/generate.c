@@ -164,15 +164,15 @@ static int genFillStructBody(S_symbol *defin, int i, int argn, bool fullFlag,
 /* ******************************************************************* */
 /* ******************************************************************* */
 
-static void genStructTypedef(S_symbol *s) {
+static void generateTypedefForStructOrUnion(S_symbol *symbol) {
     char *name;
     S_symbol *rec;
-    assert(s);
-    name = s->name;
-    assert(s->u.s);
-    rec = s->u.s->records;
+    assert(symbol);
+    name = symbol->name;
+    assert(symbol->u.s);
+    rec = symbol->u.s->records;
     assert(name);
-    if (s->b.symType == TypeStruct) {
+    if (symbol->b.symType == TypeStruct) {
         fprintf(cxOut,"typedef struct %s S_%s;\n",name,name);
     } else {
         fprintf(cxOut,"typedef union %s U_%s;\n",name,name);
@@ -180,38 +180,38 @@ static void genStructTypedef(S_symbol *s) {
 }
 
 
-static void genStructFill(S_symbol *s) {
+static void generateStructureFillMacros(S_symbol *symbol) {
     char *name;
     int argn;
     S_symbol *rec;
-    assert(s);
-    name = s->name;
-    assert(s->u.s);
-    rec = s->u.s->records;
+    assert(symbol);
+    name = symbol->name;
+    assert(symbol->u.s);
+    rec = symbol->u.s->records;
     assert(name);
     fprintf(cxOut,"#define FILL_%s(%s", name, FILL_ARGUMENT_NAME);
-    argn = genFillStructArguments(s, 0, 0);
+    argn = genFillStructArguments(symbol, 0, 0);
     fprintf(cxOut,") {\\\n");
-    genFillStructBody(s, 0, argn, 0, "", GenerateStructureFill);
+    genFillStructBody(symbol, 0, argn, 0, "", GenerateStructureFill);
     fprintf(cxOut,"}\n");
     fprintf(cxOut,"#define FILLF_%s(%s", name, FILL_ARGUMENT_NAME);
-    argn = genFillStructArguments(s, 0, 1);
+    argn = genFillStructArguments(symbol, 0, 1);
     fprintf(cxOut,") {\\\n");
-    genFillStructBody(s, 0, argn, 1, "", GenerateStructureFill);
+    genFillStructBody(symbol, 0, argn, 1, "", GenerateStructureFill);
     fprintf(cxOut,"}\n");
     fprintf(cxOut,"#define _FILLF_%s(%s, ARGS) {\\\n", name, FILL_ARGUMENT_NAME);
-    genFillStructBody(s, 0, argn, 1, "", GenerateInternalFill);
+    genFillStructBody(symbol, 0, argn, 1, "", GenerateInternalFill);
     fprintf(cxOut,"}\n");
 }
 
 
-static void genUnionRecords(S_symbol *s) {
+static void generateUnionFillMacros(S_symbol *symbol) {
     char *name;
     S_symbol *rec,*p;
-    assert(s);
-    name = s->name;
-    assert(s->u.s);
-    rec = s->u.s->records;
+    assert(symbol);
+    name = symbol->name;
+    assert(symbol->u.s);
+    rec = symbol->u.s->records;
     assert(name);
     for(p=rec; p!=NULL; p=p->next) {
         if (p->b.symType == TypeDefault) {
@@ -229,13 +229,13 @@ static void genUnionRecords(S_symbol *s) {
 }
 
 
-static void genStructCopy(S_symbol *s) {
+static void generateStructCopyFunction(S_symbol *symbol) {
     char *name;
     S_symbol *rec;
-    assert(s);
-    name = s->name;
-    assert(s->u.s);
-    rec = s->u.s->records;
+    assert(symbol);
+    name = symbol->name;
+    assert(symbol->u.s);
+    rec = symbol->u.s->records;
     assert(name);
     if (rec==NULL) return;
     if (s_opt.header) {
@@ -252,30 +252,30 @@ static void genStructCopy(S_symbol *s) {
         fprintf(cxOut,"  d = (struct %s *) (*alloc)(sizeof(struct %s));\n",
                 name,name);
         fprintf(cxOut,"  memcpy(d,s,sizeof(struct %s));\n",name);
-        genFillStructBody(s, 0, 0/*????*/, 1, "", GenerateStructureCopy);
+        genFillStructBody(symbol, 0, 0/*????*/, 1, "", GenerateStructureCopy);
         fprintf(cxOut,"  return(d);\n");
         fprintf(cxOut,"}\n\n");
     }
 }
 
-static void genEnumTypedef(S_symbol *s) {
+static void generateTypedefForEnum(S_symbol *symbol) {
     char *name;
     S_symbolList *e;
-    assert(s);
-    name = s->name;
-    e = s->u.enums;
+    assert(symbol);
+    name = symbol->name;
+    e = symbol->u.enums;
     assert(name);
     /*
       fprintf(fOut,"typedef enum %s E_%s;\n",name,name);
     */
 }
 
-static void genEnumText(S_symbol *s) {
+static void generateEnumString(S_symbol *symbol) {
     char *name;
     S_symbolList *e;
-    assert(s);
-    name = s->name;
-    e = s->u.enums;
+    assert(symbol);
+    name = symbol->name;
+    e = symbol->u.enums;
     assert(name);
     if (s_opt.header) {
         fprintf(cxOut,"extern char * %sName[];\n",name);
@@ -295,7 +295,7 @@ static void genEnumText(S_symbol *s) {
     }
 }
 
-void generateProjectionMacros(int n) {
+void generateArgumentSelectionMacros(int n) {
     int i,j,k;
     for (i=1; i<=n; i++) {
         for(j=0; j<i; j++) {
@@ -309,18 +309,18 @@ void generateProjectionMacros(int n) {
 /* ********************************************************************* */
 /* ********************************************************************* */
 
-void generate(S_symbol *s) {
-    assert(s);
-    if (s->name==NULL || s->name[0]==0) return;
-    if (s->b.symType==TypeStruct || s->b.symType==TypeUnion) {
-        if (s_opt.typedefg) genStructTypedef(s);
+void generate(S_symbol *symbol) {
+    assert(symbol);
+    if (symbol->name==NULL || symbol->name[0]==0) return;
+    if (symbol->b.symType==TypeStruct || symbol->b.symType==TypeUnion) {
+        if (s_opt.typedefg) generateTypedefForStructOrUnion(symbol);
         if (s_opt.str_fill) {
-            if (s->b.symType==TypeStruct) genStructFill(s);
-            if (s->b.symType==TypeUnion) genUnionRecords(s);
+            if (symbol->b.symType==TypeStruct) generateStructureFillMacros(symbol);
+            if (symbol->b.symType==TypeUnion) generateUnionFillMacros(symbol);
         }
-        if (s_opt.str_copy) genStructCopy(s);
-    } else if (s->b.symType == TypeEnum) {
-        if (s_opt.typedefg) genEnumTypedef(s);
-        if (s_opt.enum_name) genEnumText(s);
+        if (s_opt.str_copy) generateStructCopyFunction(symbol);
+    } else if (symbol->b.symType == TypeEnum) {
+        if (s_opt.typedefg) generateTypedefForEnum(symbol);
+        if (s_opt.enum_name) generateEnumString(symbol);
     }
 }

@@ -3,7 +3,7 @@
 
 #include "proto.h"
 
-extern void generate(S_symbol *s);
-extern void generateProjectionMacros(int n);
+extern void generate(S_symbol *symbol);
+extern void generateArgumentSelectionMacros(int max_arg);
 
 #endif

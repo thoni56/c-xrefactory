@@ -2706,19 +2706,19 @@ S_typeModifiers *javaArrayFieldAccess(S_idIdent *id) {
     return(rec->u.type);
 }
 
-void javaParsedSuperClass(S_symbol *s) {
+void javaParsedSuperClass(S_symbol *symbol) {
     S_symbolList *pp;
-    assert(s_javaStat->thisClass&&s_javaStat->thisClass->b.symType==TypeStruct);
+    assert(s_javaStat->thisClass && s_javaStat->thisClass->b.symType==TypeStruct);
     assert(s_javaStat->thisClass->u.s);
-    assert(s && s->b.symType==TypeStruct && s->u.s);
+    assert(symbol && symbol->b.symType==TypeStruct && symbol->u.s);
     for(pp=s_javaStat->thisClass->u.s->super; pp!=NULL; pp=pp->next) {
-        if (pp->d == s) break;
+        if (pp->d == symbol) break;
     }
     if (pp==NULL) {
-//&fprintf(dumpOut,"manual super class %s of %s == %s\n",s->linkName,s_javaStat->thisClass->linkName, s_fileTab.tab[s_javaStat->thisClass->u.s->classFile]->name);fflush(dumpOut);
+//&fprintf(dumpOut,"manual super class %s of %s == %s\n",symbol->linkName,s_javaStat->thisClass->linkName, s_fileTab.tab[s_javaStat->thisClass->u.s->classFile]->name);fflush(dumpOut);
         //&assert(0); // this should never comed now
-        javaLoadClassSymbolsFromFile(s);
-        addSuperClassOrInterface(s_javaStat->thisClass, s,
+        javaLoadClassSymbolsFromFile(symbol);
+        addSuperClassOrInterface(s_javaStat->thisClass, symbol,
                                  cFile.lb.cb.fileNumber);
     }
 }

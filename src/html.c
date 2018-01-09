@@ -567,9 +567,9 @@ void htmlPutChar(FILE *ff, int c) {
     }
 }
 
-static void htmlPrint(FILE *ff, char *ss) {
-    char *s;
-    for(s=ss; *s; s++) htmlPutChar(ff,*s);
+static void htmlPrint(FILE *file, char *string) {
+    char *c;
+    for(c=string; *c; c++) htmlPutChar(file, *c);
 }
 
 static void htmlPutCharLF(FILE *ff, int c, S_position *cp) {

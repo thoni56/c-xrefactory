@@ -3392,7 +3392,7 @@ static void mainGenerate(int argc, char **argv) {
         mainParseInputFile();
         cFile.lb.cb.isAtEOF = 0;
     }
-    if (s_opt.str_fill) generateProjectionMacros(20);
+    if (s_opt.str_fill) generateArgumentSelectionMacros(20);
     symTabMap(s_symTab, generate);
 }
 
