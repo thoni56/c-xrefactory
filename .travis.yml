@@ -1,6 +1,7 @@
 language: c
 sudo: false
 dist: trusty
+if: NOT tag = stable
 script:
     - make
     - cd tests; make all
