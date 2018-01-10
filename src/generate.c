@@ -22,36 +22,6 @@ static bool isSubstructureToFill(S_symbol *p) {
     return true;
 }
 
-static void genCopy(S_symbol *defin,
-                    S_symbol *p,
-                    S_typeModifiers *tt,
-                    char *pref,
-                    int pi
-                    ) {
-    char stars[200];
-    int i;
-    for(i=0; i<pi; i++) stars[i]='*';
-    stars[i]=0;
-    if (tt->m == TypePointer && tt->next->m==TypeVoid) {
-        sprintf(tmpBuff,"a void * pointer in %s, wrong structure copy possible",
-                defin->name);
-        warning(ERR_ST,tmpBuff);
-    } else if (tt->m == TypePointer && tt->next->m!=TypeStruct) {
-        /* TO DO BETTER !!! g++ makes an error when converting void* to void**/
-        fprintf(cxOut,"  (void*)%sd->%s%s=(*alloc)(sizeof(*%ss->%s%s));\n",
-                stars,pref,p->name,stars,pref,p->name);
-        if (tt->next->m==TypePointer) {
-            genCopy(defin,p,tt->next,pref,pi+1);
-        } else {
-            fprintf(cxOut,"  memcpy(%sd->%s%s,%ss->%s%s,sizeof(*%ss->%s%s));\n",
-                    stars,pref,p->name,stars,pref,p->name,stars,pref,p->name);
-        }
-    } else if (tt->m == TypePointer && tt->next->m==TypeStruct) {
-        fprintf(cxOut,"  %sd->%s%s = copy_%s(%ss->%s%s,alloc);\n",stars,
-                pref,p->name,tt->next->u.t->name,stars,pref,p->name);
-    }
-}
-
 static char *getFillArgumentName(int argument_number, int argument_count,
                                  GenerateKind action) {
     static char res[TMP_STRING_SIZE];
