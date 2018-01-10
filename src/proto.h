@@ -536,24 +536,24 @@ enum storages {
 
 enum types {
     TypeDefault,
-    TypeChar ,
-    TypeUnsignedChar ,
-    TypeSignedChar ,
-    TypeInt ,
-    TypeUnsignedInt ,
-    TypeSignedInt ,
-    TypeShortInt ,
-    TypeShortUnsignedInt ,
-    TypeShortSignedInt ,
-    TypeLongInt ,
-    TypeLongUnsignedInt ,
-    TypeLongSignedInt ,
-    TypeFloat ,
-    TypeDouble ,
+    TypeChar,
+    TypeUnsignedChar,
+    TypeSignedChar,
+    TypeInt,
+    TypeUnsignedInt,
+    TypeSignedInt,
+    TypeShortInt,
+    TypeShortUnsignedInt,
+    TypeShortSignedInt,
+    TypeLongInt,
+    TypeLongUnsignedInt,
+    TypeLongSignedInt,
+    TypeFloat,
+    TypeDouble,
     TypeStruct,
     TypeUnion,
-    TypeEnum ,
-    TypeVoid ,
+    TypeEnum,
+    TypeVoid,
     TypePointer,
     TypeArray,
     TypeFunction,
@@ -724,7 +724,7 @@ typedef struct topBlock {
 } S_topBlock;
 
 typedef struct typeModifiers {
-    short                     m;
+    enum types                m;
     union typeModifUnion {
         struct funTypeModif {                /* LAN_C/CPP Function */
             struct symbol     *args;
@@ -818,9 +818,9 @@ typedef struct symbol {
         struct typeModifiers		*type;		/* if symType == TypeDefault */
         struct symStructSpecific	*s;			/* if symType == Struct/Union */
         struct symbolList			*enums;		/* if symType == Enum */
-        struct macroBody			*mbody;     /* if symType == Macro ! can be NULL!*/
+        struct macroBody			*mbody;     /* if symType == Macro ! can be NULL! */
         int							labn;		/* break/continue label index */
-        int							keyWordVal; /* if symType == Keyword*/
+        int							keyWordVal; /* if symType == Keyword */
     } u;
     struct symbol                   *next;	/* next table item with the same hash */
 } S_symbol;

@@ -13,12 +13,12 @@ typedef enum {
 } GenerateKind;
 
 
-static bool isSubstructureToFill(S_symbol *p) {
-    if (p->b.storage == StorageError) return false;
-    assert(p->u.type);
-    if (p->u.type->m == TypeAnonymeField) return false;
-    if (p->u.type->m == TypeFunction) return false;
-    if (p->u.type->m == TypeArray) return false;           /* just for now */
+static bool isSubstructureToFill(S_symbol *symbol) {
+    if (symbol->b.storage == StorageError) return false;
+    assert(symbol->u.type);
+    if (symbol->u.type->m == TypeAnonymeField) return false;
+    if (symbol->u.type->m == TypeFunction) return false;
+    if (symbol->u.type->m == TypeArray) return false;
     return true;
 }
 
@@ -33,21 +33,21 @@ static char *getFillArgumentName(int argument_number, int argument_count,
     return(res);
 }
 
-static int genFillStructArguments(S_symbol *defin,
+static int genFillStructArguments(S_symbol *symbol,
                                   int i,
                                   bool fullFlag
                                   ) {
-    S_symbol *rec;
+    S_symbol *records;
     S_symbol *p;
     static int deep=0;
-    assert(defin->u.s);
-    rec = defin->u.s->records;
+    assert(symbol->u.s);
+    records = symbol->u.s->records;
     deep++;
 
     if (deep > MAX_NESTED_DEEP) {
         fatalError(ERR_ST,"too much nested structures, probably recursive", XREF_EXIT_ERR);
     }
-    for(p=rec; p!=NULL; p=p->next) {
+    for(p=records; p!=NULL; p=p->next) {
         if (isSubstructureToFill(p)) {
             if (p->u.type->m == TypeStruct  && fullFlag) {
                 i = genFillStructArguments(p->u.type->u.t,i,1);
