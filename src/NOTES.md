@@ -58,15 +58,15 @@ are in sync.
 _c-xref_ uses a load of structures, and lists of them, that need to be
 created and initialized in a lot of places (such as the parsers). To
 make this somewhat manageable, _c-xref_ itself parses the strucures
-and generates macros to fill them.
+and generates macros that can be used to fill them with one call.
 
 _c-xref_ is also bootstrapped into reading in a lot of predefined
 header files to get system definitions as "preloaded
 definitions".
 
-NOTE: Why this is necessary, I don't exactly know. It might be an
-optimization. In any case it creates an extra complexity building and
-maintaining and to the structure of _c-xref_.
+NOTE: Why this pre-loading is necessary, I don't exactly know. It
+might be an optimization. In any case it creates an extra complexity
+building and maintaining and to the structure of _c-xref_.
 
 #### Mechanism
 
@@ -76,8 +76,8 @@ stuff.
 
 This is done using options like `-task_regime_generate' which prints a
 lot of data structures on the standard output which is then fed into
-generate versions of _strFill_, _strTdef_ and _enumTxt_ by the
-Makefile.
+generated versions of _strFill_, _strTdef_(no longer) and _enumTxt_ by
+the Makefile.
 
 #### Compiler defines
 
@@ -132,6 +132,27 @@ are somethings that I think I have found out:
 - e.g. references all use 'fsulc' fields, i.e. file, symbol index,
   line and column, but do not repeat 'f' as long as it is the same
 
+## Parsers
+
+_C_xref_ uses a patched version of berkley yacc to generate
+parsers. There are a number of them, C, C expressions and Java. There
+are also traces of calls to the C++ parser that existed but was
+proprietary.
+
+The patch is mainly to the skeleton and seems to relate mostly to
+handling of errors and adding a recursive parsing feature that is
+required for Java.
+
+Some changes are also made to be ablo to accomodate multiple parsers
+in the same executable. The Makefile generates the parsers and renames
+them as appropriate.
+
+## Comment handling
+
+It seems like there are special provisions for handling comments that
+starts with "//&" because references to symbols within these comments
+are actually found and registered. They will be affected by renames
+and local motions.
 
 ## Naming conventions
 
@@ -189,6 +210,15 @@ existing one without having to manually update the "Create"-function
 for tha structure.
 
 However, the usage of the _FILL_ functions is less that crystal clear...
+
+## How things were
+
+Here are saved texts that described how things were before. They are
+no longer true, since that quirk, magic or bad coding is gone. But it
+is kept here as an archive for those wanting to to backtracking to
+original sources.
+
+### strTdef.h
 
 I also think that you could actually merge the struct definition with
 the typedef so that _strTdef.h_ would not be needed. But it seems that
