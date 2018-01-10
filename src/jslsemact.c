@@ -40,7 +40,7 @@ S_typeModifiers *jslCrSimpleTypeMofifier(unsigned t) {
         p = s_preCrTypesTab[t];
     }
     /*fprintf(dumpOut,"t,p->m == %d %d == %s %s\n",t,p->m,typesName[t],typesName[p->m]); fflush(dumpOut);*/
-    assert(p->m == t);
+    assert(p->kind == t);
     return(p);
 }
 

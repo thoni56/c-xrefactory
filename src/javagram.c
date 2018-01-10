@@ -3871,7 +3871,7 @@ case 121:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                    assert(yyvsp[0].bbsymbol.d->u.type->m == TypeStruct);
+                    assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass(yyvsp[0].bbsymbol.d->u.type->u.t);
                 } else {
                     PropagateBorns(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbsymbol);
@@ -3879,7 +3879,7 @@ case 121:
             }
             InSecondJslPass({
                 assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                assert(yyvsp[0].bbsymbol.d->u.type->m == TypeStruct);
+                assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             yyvsp[0].bbsymbol.d->u.type->u.t);
             });
@@ -3903,7 +3903,7 @@ case 124:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                    assert(yyvsp[0].bbsymbol.d->u.type->m == TypeStruct);
+                    assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass(yyvsp[0].bbsymbol.d->u.type->u.t);
                 } else {
                     PropagateBorns(yyval.bbposition, yyvsp[0].bbsymbol, yyvsp[0].bbsymbol);
@@ -3911,7 +3911,7 @@ case 124:
             }
             InSecondJslPass({
                 assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                assert(yyvsp[0].bbsymbol.d->u.type->m == TypeStruct);
+                assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             yyvsp[0].bbsymbol.d->u.type->u.t);
             });
@@ -3923,7 +3923,7 @@ case 125:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                    assert(yyvsp[0].bbsymbol.d->u.type->m == TypeStruct);
+                    assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass(yyvsp[0].bbsymbol.d->u.type->u.t);
                 } else {
                     PropagateBorns(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbsymbol);
@@ -3931,7 +3931,7 @@ case 125:
             }
             InSecondJslPass({
                 assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                assert(yyvsp[0].bbsymbol.d->u.type->m == TypeStruct);
+                assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             yyvsp[0].bbsymbol.d->u.type->u.t);
             });
@@ -4332,7 +4332,7 @@ case 158:
                 if (RegularPass()) {
                     if (! SyntaxPassOnly()) {
                         yyval.bbsymbol.d = yyvsp[-3].symbol;
-                        assert(yyval.bbsymbol.d && yyval.bbsymbol.d->u.type && yyval.bbsymbol.d->u.type->m == TypeFunction);
+                        assert(yyval.bbsymbol.d && yyval.bbsymbol.d->u.type && yyval.bbsymbol.d->u.type->kind == TypeFunction);
                         FILL_funTypeModif(&yyval.bbsymbol.d->u.type->u.f , yyvsp[-1].bbsymbolPositionLstPair.d.s, NULL);
                     } else {
                         javaHandleDeclaratorParamPositions(&yyvsp[-4].bbidIdent.d->p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbsymbolPositionLstPair.d.p, &yyvsp[0].bbposition.d);
@@ -4341,7 +4341,7 @@ case 158:
                 }
                 InSecondJslPass({
                     yyval.bbsymbol.d = yyvsp[-3].symbol;
-                    assert(yyval.bbsymbol.d && yyval.bbsymbol.d->u.type && yyval.bbsymbol.d->u.type->m == TypeFunction);
+                    assert(yyval.bbsymbol.d && yyval.bbsymbol.d->u.type && yyval.bbsymbol.d->u.type->kind == TypeFunction);
                     FILL_funTypeModif(&yyval.bbsymbol.d->u.type->u.f , yyvsp[-1].bbsymbolPositionLstPair.d.s, NULL);
                 });
             }
@@ -4476,7 +4476,7 @@ case 170:
             PropagateBornsIfRegularSyntaxPass(yyval.bbsymbolList, yyvsp[0].bbsymbol, yyvsp[0].bbsymbol);
             InSecondJslPass({
                 assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                assert(yyvsp[0].bbsymbol.d->u.type->m == TypeStruct);
+                assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                 CF_ALLOC(yyval.bbsymbolList.d, S_symbolList);
                 FILL_symbolList(yyval.bbsymbolList.d, yyvsp[0].bbsymbol.d->u.type->u.t, NULL);
             });
@@ -4488,7 +4488,7 @@ case 171:
             PropagateBornsIfRegularSyntaxPass(yyval.bbsymbolList, yyvsp[-2].bbsymbolList, yyvsp[0].bbsymbol);
             InSecondJslPass({
                 assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                assert(yyvsp[0].bbsymbol.d->u.type->m == TypeStruct);
+                assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                 CF_ALLOC(yyval.bbsymbolList.d, S_symbolList);
                 FILL_symbolList(yyval.bbsymbolList.d, yyvsp[0].bbsymbol.d->u.type->u.t, yyvsp[-2].bbsymbolList.d);
             });
@@ -4528,7 +4528,7 @@ case 176:
                           &*/
                         mh=javaMethodHeader(yyvsp[-2].bbunsign.d, &s_errorSymbol, args, StorageConstructor);
                         /* TODO! Merge this with 'javaMethodBodyBeginning'!*/
-                        assert(mh->u.type && mh->u.type->m == TypeFunction);
+                        assert(mh->u.type && mh->u.type->kind == TypeFunction);
                         stackMemoryBlockStart();  /* in order to remove arguments*/
                         s_cp.function = mh; /* added for set-target-position checks */
                         /* also needed for pushing label reference */
@@ -4605,7 +4605,7 @@ case 179:
                 if (RegularPass()) {
                     if (! SyntaxPassOnly()) {
                         yyval.bbsymbol.d = yyvsp[-3].symbol;
-                        assert(yyval.bbsymbol.d && yyval.bbsymbol.d->u.type && yyval.bbsymbol.d->u.type->m == TypeFunction);
+                        assert(yyval.bbsymbol.d && yyval.bbsymbol.d->u.type && yyval.bbsymbol.d->u.type->kind == TypeFunction);
                         FILL_funTypeModif(&yyval.bbsymbol.d->u.type->u.f , yyvsp[-1].bbsymbolPositionLstPair.d.s, NULL);
                     } else {
                         javaHandleDeclaratorParamPositions(&yyvsp[-4].bbidIdent.d->p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbsymbolPositionLstPair.d.p, &yyvsp[0].bbposition.d);
@@ -4614,7 +4614,7 @@ case 179:
                 }
                 InSecondJslPass({
                     yyval.bbsymbol.d = yyvsp[-3].symbol;
-                    assert(yyval.bbsymbol.d && yyval.bbsymbol.d->u.type && yyval.bbsymbol.d->u.type->m == TypeFunction);
+                    assert(yyval.bbsymbol.d && yyval.bbsymbol.d->u.type && yyval.bbsymbol.d->u.type->kind == TypeFunction);
                     FILL_funTypeModif(&yyval.bbsymbol.d->u.type->u.f , yyvsp[-1].bbsymbolPositionLstPair.d.s, NULL);
                 });
             }
@@ -4832,7 +4832,7 @@ case 204:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                    assert(yyvsp[0].bbsymbol.d->u.type->m == TypeStruct);
+                    assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass(yyvsp[0].bbsymbol.d->u.type->u.t);
                 } else {
                     PropagateBorns(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbsymbol);
@@ -4840,7 +4840,7 @@ case 204:
             }
             InSecondJslPass({
                 assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                assert(yyvsp[0].bbsymbol.d->u.type->m == TypeStruct);
+                assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             yyvsp[0].bbsymbol.d->u.type->u.t);
             })
@@ -4852,7 +4852,7 @@ case 205:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                    assert(yyvsp[0].bbsymbol.d->u.type->m == TypeStruct);
+                    assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass(yyvsp[0].bbsymbol.d->u.type->u.t);
                 } else {
                     PropagateBorns(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbsymbol);
@@ -4860,7 +4860,7 @@ case 205:
             }
             InSecondJslPass({
                 assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                assert(yyvsp[0].bbsymbol.d->u.type->m == TypeStruct);
+                assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             yyvsp[0].bbsymbol.d->u.type->u.t);
             })
@@ -5887,9 +5887,9 @@ case 360:
                 if (ComputingPossibleParameterCompletion()) {
                     S_typeModifiers *mm;
                     s_cp.erfsForParamsComplet = NULL;
-                    if (yyvsp[-4].bbexprType.d.t->m == TypeStruct) {
+                    if (yyvsp[-4].bbexprType.d.t->kind == TypeStruct) {
                         mm = javaNestedNewType(yyvsp[-4].bbexprType.d.t->u.t, yyvsp[-2].bbidIdent.d, yyvsp[-1].bbidlist.d);
-                        if (mm->m != TypeError) {
+                        if (mm->kind != TypeError) {
                             s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &(yyvsp[-1].bbidlist.d->idi.p));
                         }
                     }
@@ -5902,7 +5902,7 @@ case 361:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
-                    if (yyvsp[-8].bbexprType.d.t->m == TypeStruct) {
+                    if (yyvsp[-8].bbexprType.d.t->kind == TypeStruct) {
                         yyval.bbnestedConstrTokenType.d.t = javaNestedNewType(yyvsp[-8].bbexprType.d.t->u.t, yyvsp[-6].bbidIdent.d, yyvsp[-5].bbidlist.d);
                     } else {
                         yyval.bbnestedConstrTokenType.d.t = &s_errorModifier;
@@ -5910,7 +5910,7 @@ case 361:
                     javaHandleDeclaratorParamPositions(&yyvsp[-5].bbidlist.d->idi.p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbtypeModifiersListPositionLstPair.d.p, &yyvsp[0].bbposition.d);
                     assert(yyval.bbnestedConstrTokenType.d.t);
                     yyval.bbnestedConstrTokenType.d.nid = yyvsp[-5].bbidlist.d;
-                    if (yyval.bbnestedConstrTokenType.d.t->m != TypeError) {
+                    if (yyval.bbnestedConstrTokenType.d.t->kind != TypeError) {
                         javaConstructorInvocation(yyval.bbnestedConstrTokenType.d.t->u.t, &(yyvsp[-5].bbidlist.d->idi.p), yyvsp[-1].bbtypeModifiersListPositionLstPair.d.t);
                     }
                 } else {
@@ -5927,7 +5927,7 @@ case 362:
                     S_typeModifiers *mm;
                     s_cp.erfsForParamsComplet = NULL;
                     mm = javaNewAfterName(yyvsp[-4].bbidlist.d, yyvsp[-2].bbidIdent.d, yyvsp[-1].bbidlist.d);
-                    if (mm->m != TypeError) {
+                    if (mm->kind != TypeError) {
                         s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &(yyvsp[-1].bbidlist.d->idi.p));
                     }
                 }
@@ -5941,7 +5941,7 @@ case 363:
                     s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
                     yyval.bbnestedConstrTokenType.d.t = javaNewAfterName(yyvsp[-8].bbidlist.d, yyvsp[-6].bbidIdent.d, yyvsp[-5].bbidlist.d);
                     yyval.bbnestedConstrTokenType.d.nid = yyvsp[-5].bbidlist.d;
-                    if (yyval.bbnestedConstrTokenType.d.t->m != TypeError) {
+                    if (yyval.bbnestedConstrTokenType.d.t->kind != TypeError) {
                         javaConstructorInvocation(yyval.bbnestedConstrTokenType.d.t->u.t, &(yyvsp[-5].bbidlist.d->idi.p), yyvsp[-1].bbtypeModifiersListPositionLstPair.d.t);
                     }
                 } else {
@@ -6091,7 +6091,7 @@ case 370:
                         yyval.bbexprType.d.t = yyvsp[0].bbnestedConstrTokenType.d.t;
                         yyval.bbexprType.d.pp = yyvsp[0].bbnestedConstrTokenType.d.pp;
                         yyval.bbexprType.d.r = NULL;
-                        if (yyval.bbexprType.d.t->m != TypeError) {
+                        if (yyval.bbexprType.d.t->kind != TypeError) {
                             yyval.trail = newClassDefinitionBegin(&s_javaAnonymousClassName, ACC_DEFAULT, yyval.bbexprType.d.t->u.t);
                         } else {
                             yyval.trail = newAnonClassDefinitionBegin(& yyvsp[0].bbnestedConstrTokenType.d.nid->idi);
@@ -6306,7 +6306,7 @@ case 392:
                     assert(yyvsp[-2].bbexprType.d.t);
                     yyval.bbexprType.d.r = NULL;
                     yyval.bbexprType.d.pp = yyvsp[-2].bbexprType.d.pp;
-                    if (yyvsp[-2].bbexprType.d.t->m == TypeStruct) {
+                    if (yyvsp[-2].bbexprType.d.t->kind == TypeStruct) {
                         javaLoadClassSymbolsFromFile(yyvsp[-2].bbexprType.d.t->u.t);
                         yyval.bbexprType.d.r = findStrRecordFromType(yyvsp[-2].bbexprType.d.t, yyvsp[0].bbidIdent.d, &rec, CLASS_TO_EXPR);
                         assert(rec);
@@ -6479,7 +6479,7 @@ case 404:
                 if (! SyntaxPassOnly()) {
                     S_typeModifiers *tt;
                     tt = javaClassifyToExpressionName(yyvsp[-3].bbidlist.d, &(yyval.bbexprType.d.r));
-                    if (tt->m==TypeArray) yyval.bbexprType.d.t=tt->next;
+                    if (tt->kind==TypeArray) yyval.bbexprType.d.t=tt->next;
                     else yyval.bbexprType.d.t = &s_errorModifier;
                     assert(yyval.bbexprType.d.t);
                     yyval.bbexprType.d.r = NULL;
@@ -6495,7 +6495,7 @@ case 405:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if (yyvsp[-3].bbexprType.d.t->m==TypeArray) yyval.bbexprType.d.t=yyvsp[-3].bbexprType.d.t->next;
+                    if (yyvsp[-3].bbexprType.d.t->kind==TypeArray) yyval.bbexprType.d.t=yyvsp[-3].bbexprType.d.t->next;
                     else yyval.bbexprType.d.t = &s_errorModifier;
                     assert(yyval.bbexprType.d.t);
                     yyval.bbexprType.d.r = NULL;
@@ -6632,7 +6632,7 @@ case 423:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if (yyvsp[0].bbexprType.d.t->m == TypeBoolean) yyval.bbexprType.d.t = yyvsp[0].bbexprType.d.t;
+                    if (yyvsp[0].bbexprType.d.t->kind == TypeBoolean) yyval.bbexprType.d.t = yyvsp[0].bbexprType.d.t;
                     else yyval.bbexprType.d.t = &s_errorModifier;
                     yyval.bbexprType.d.r = NULL;
                 } else {
@@ -6650,7 +6650,7 @@ case 425:
                     assert(yyvsp[-2].bbsymbolPositionPair.d.s && yyvsp[-2].bbsymbolPositionPair.d.s->u.type);
                     yyval.bbexprType.d.t = yyvsp[-2].bbsymbolPositionPair.d.s->u.type;
                     yyval.bbexprType.d.r = NULL;
-                    assert(yyval.bbexprType.d.t->m == TypeArray);
+                    assert(yyval.bbexprType.d.t->kind == TypeArray);
                 } else {
                     yyval.bbexprType.d.pp = NULL_POS;
                     PropagateBorns(yyval.bbexprType, yyvsp[-3].bbposition, yyvsp[0].bbexprType);
@@ -7026,7 +7026,7 @@ case 462:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if (yyvsp[0].bbexprType.d.t!=NULL && yyvsp[0].bbexprType.d.t->m==TypeStruct) {
+                    if (yyvsp[0].bbexprType.d.t!=NULL && yyvsp[0].bbexprType.d.t->kind==TypeStruct) {
                         s_cps.lastAssignementStruct = yyvsp[0].bbexprType.d.t->u.t;
                     }
                 }

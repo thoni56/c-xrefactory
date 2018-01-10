@@ -823,7 +823,7 @@ static void cfAddRecordToClass( char *name,
     int rr,bc;
     S_position dpos;
     tt = cfUnPackResultType(sig, &restype);
-    if (tt->m==TypeFunction) {
+    if (tt->kind==TypeFunction) {
         // hack, this will temporary cut the result,
         // however if this is the shared string with name ....? B of B for ex.
         bc = *restype; *restype = 0;
@@ -855,7 +855,7 @@ static void cfAddRecordToClass( char *name,
         strcpy(ln, pp);
     }
     prof = strchr(ln,'(');
-    if (tt->m == TypeFunction) {
+    if (tt->kind == TypeFunction) {
         assert(*sig == '(');
         assert(*prof == '(');
         tt->u.m.sig = prof;

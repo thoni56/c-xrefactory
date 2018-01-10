@@ -391,7 +391,7 @@
     S_symbol *memb;\
     symTabIsMember(symtab,pp,&i,&memb);\
     if (	LANGUAGE(LAN_CCC) && pp->b.symType==TypeDefault \
-            && pp->u.type->m == TypeFunction) { \
+            && pp->u.type->kind == TypeFunction) { \
         pp->u.type->u.f.thisFunList = &(symtab->tab[i]); \
     } \
     symTabSet(symtab,pp,i);\

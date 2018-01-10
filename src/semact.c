@@ -291,9 +291,9 @@ int findStrRecordSym(   S_recFindStr    *ss,
         for(r=ss->nextRecord; r!=NULL; r=r->next) {
             // special gcc extension of anonymous struct record
             if (r->name!=NULL && *r->name==0 && r->b.symType==TypeDefault
-                && r->u.type->m==TypeAnonymeField
+                && r->u.type->kind==TypeAnonymeField
                 && r->u.type->next!=NULL
-                && (r->u.type->next->m==TypeUnion || r->u.type->next->m==TypeStruct)) {
+                && (r->u.type->next->kind==TypeUnion || r->u.type->next->kind==TypeStruct)) {
                 // put the anonymous union as 'super class'
                 if (ss->aui+1 < MAX_ANONYMOUS_FIELDS) {
                     ss->au[ss->aui++] = r->u.type->next->u.t;
@@ -308,7 +308,7 @@ int findStrRecordSym(   S_recFindStr    *ss,
                 if (javaClassif!=CLASS_TO_ANY) {
                     assert(r->b.symType == TypeDefault);
                     assert(r->u.type);
-                    m = r->u.type->m;
+                    m = r->u.type->kind;
                     if (m==TypeFunction && javaClassif!=CLASS_TO_METHOD) goto nextRecord;
                     if (m!=TypeFunction && javaClassif==CLASS_TO_METHOD) goto nextRecord;
                 }
@@ -420,7 +420,7 @@ S_reference * findStrRecordFromType(    S_typeModifiers *str,
     S_reference *ref;
     assert(str);
     ref = NULL;
-    if (str->m != TypeStruct && str->m != TypeUnion) {
+    if (str->kind != TypeStruct && str->kind != TypeUnion) {
         *res = &s_errorSymbol;
         goto fini;
     }
@@ -464,7 +464,7 @@ void setLocalVariableLinkName(struct symbol *p) {
         ttt[0] = LINK_NAME_EXTRACT_DEFAULT_FLAG;
         // why it commented out ?
         //& if ((!LANGUAGE(LAN_JAVA))
-        //&     && (p->u.type->m == TypeUnion || p->u.type->m == TypeStruct)) {
+        //&     && (p->u.type->kind == TypeUnion || p->u.type->kind == TypeStruct)) {
         //&     ttt[0] = LINK_NAME_EXTRACT_STR_UNION_TYPE_FLAG;
         //& }
         sprintf(ttt+1,"%s", s_extractStorageName[p->b.storage]);
@@ -536,7 +536,7 @@ S_symbol *addNewSymbolDef(S_symbol *p, unsigned theDefaultStorage, S_symTab *tab
     if (p == &s_errorSymbol || p->b.symType==TypeError) return(p);
     if (p->b.symType == TypeError) return(p);
     assert(p && p->b.symType == TypeDefault && p->u.type);
-    if (p->u.type->m == TypeFunction && p->b.storage == StorageDefault) {
+    if (p->u.type->kind == TypeFunction && p->b.storage == StorageDefault) {
         p->b.storage = StorageExtern;
     }
     if (p->b.storage == StorageDefault) {
@@ -598,11 +598,11 @@ void addInitializerRefs(
     for(ll=idl; ll!=NULL; ll=ll->next) {
         tt = decl->u.type;
         for (id = &ll->idi; id!=NULL; id=id->next) {
-            if (tt->m == TypeArray) {
+            if (tt->kind == TypeArray) {
                 tt = tt->next;
                 continue;
             }
-            if (tt->m != TypeStruct && tt->m != TypeUnion) return;
+            if (tt->kind != TypeStruct && tt->kind != TypeUnion) return;
             ref = findStrRecordFromType(tt, id, &rec, CLASS_TO_ANY);
             if (NULL == ref) return;
             assert(rec);
@@ -626,7 +626,7 @@ S_symbol *addNewDeclaration(
     assert(decl->b.symType == TypeDefault);
     completeDeclarator(btype, decl);
     usage = UsageDefined;
-    if (decl->u.type->m == TypeFunction) usage = UsageDeclared;
+    if (decl->u.type->kind == TypeFunction) usage = UsageDeclared;
     else if (decl->b.storage == StorageExtern) usage = UsageDeclared;
     addNewSymbolDef(decl, storage, tab, usage);
     addInitializerRefs(decl, idl);
@@ -676,20 +676,20 @@ S_typeModifiers *crSimpleTypeMofifier(unsigned t) {
         p = s_preCrTypesTab[t];
     }
     /*fprintf(dumpOut,"t,p->m == %d %d == %s %s\n",t,p->m,typesName[t],typesName[p->m]); fflush(dumpOut);*/
-    assert(p->m == t);
+    assert(p->kind == t);
     return(p);
 }
 
 static S_typeModifiers *mergeBaseType(S_typeModifiers *t1,S_typeModifiers *t2){
     unsigned b,r;
     unsigned modif;
-    assert(t1->m<MODIFIERS_END && t2->m<MODIFIERS_END);
-    b=t1->m; modif=t2->m;// just to confuse compiler warning
+    assert(t1->kind<MODIFIERS_END && t2->kind<MODIFIERS_END);
+    b=t1->kind; modif=t2->kind;// just to confuse compiler warning
     /* if both are types, error, return the new one only*/
-    if (t1->m <= MODIFIERS_START && t2->m <= MODIFIERS_START) return(t2);
+    if (t1->kind <= MODIFIERS_START && t2->kind <= MODIFIERS_START) return(t2);
     /* if not use tables*/
-    if (t1->m > MODIFIERS_START) {modif = t1->m; b = t2->m; }
-    if (t2->m > MODIFIERS_START) {modif = t2->m; b = t1->m; }
+    if (t1->kind > MODIFIERS_START) {modif = t1->kind; b = t2->kind; }
+    if (t2->kind > MODIFIERS_START) {modif = t2->kind; b = t1->kind; }
     switch (modif) {
     case TmodLong:
         r = typeLongChange[b];
@@ -726,12 +726,12 @@ static S_typeModifiers *mergeBaseType(S_typeModifiers *t1,S_typeModifiers *t2){
 
 static S_typeModifiers * mergeBaseModTypes(S_typeModifiers *t1, S_typeModifiers *t2) {
     assert(t1 && t2);
-    if (t1->m == TypeDefault) return(t2);
-    if (t2->m == TypeDefault) return(t1);
-    assert(t1->m >=0 && t1->m<MAX_TYPE);
-    assert(t2->m >=0 && t2->m<MAX_TYPE);
-    if (s_preCrTypesTab[t2->m] == NULL) return(t2);  /* not base type*/
-    if (s_preCrTypesTab[t1->m] == NULL) return(t1);  /* not base type*/
+    if (t1->kind == TypeDefault) return(t2);
+    if (t2->kind == TypeDefault) return(t1);
+    assert(t1->kind >=0 && t1->kind<MAX_TYPE);
+    assert(t2->kind >=0 && t2->kind<MAX_TYPE);
+    if (s_preCrTypesTab[t2->kind] == NULL) return(t2);  /* not base type*/
+    if (s_preCrTypesTab[t1->kind] == NULL) return(t1);  /* not base type*/
     return(mergeBaseType(t1, t2));
 }
 
@@ -806,25 +806,25 @@ void completeDeclarator(S_symbol *t, S_symbol *d) {
     assert(t->b.symType==TypeDefault);
     dt = &(d->u.type); tt = t->u.type;
     if (d->b.npointers) {
-        if (d->b.npointers>=1 && (tt->m==TypeStruct||tt->m==TypeUnion)
+        if (d->b.npointers>=1 && (tt->kind==TypeStruct||tt->kind==TypeUnion)
             && tt->typedefin==NULL) {
             //fprintf(dumpOut,"saving 1 str pointer:%d\n",counter++);fflush(dumpOut);
             d->b.npointers--;
             //if(d->b.npointers) {fprintf(dumpOut,"possible 2\n");fflush(dumpOut);}
-            assert(tt->u.t && tt->u.t->b.symType==tt->m && tt->u.t->u.s);
+            assert(tt->u.t && tt->u.t->b.symType==tt->kind && tt->u.t->u.s);
             tt = & tt->u.t->u.s->sptrtype;
-        } else if (d->b.npointers>=2 && s_preCrPtr2TypesTab[tt->m]!=NULL
+        } else if (d->b.npointers>=2 && s_preCrPtr2TypesTab[tt->kind]!=NULL
                    && tt->typedefin==NULL) {
             assert(tt->next==NULL); /* not a user defined type */
             //fprintf(dumpOut,"saving 2 pointer\n");fflush(dumpOut);
             d->b.npointers-=2;
-            tt = s_preCrPtr2TypesTab[tt->m];
-        } else if (d->b.npointers>=1 && s_preCrPtr1TypesTab[tt->m]!=NULL
+            tt = s_preCrPtr2TypesTab[tt->kind];
+        } else if (d->b.npointers>=1 && s_preCrPtr1TypesTab[tt->kind]!=NULL
                    && tt->typedefin==NULL) {
             assert(tt->next==NULL); /* not a user defined type */
             //fprintf(dumpOut,"saving 1 pointer\n");fflush(dumpOut);
             d->b.npointers--;
-            tt = s_preCrPtr1TypesTab[tt->m];
+            tt = s_preCrPtr1TypesTab[tt->kind];
         }
     }
     unpackPointers(d);
@@ -922,7 +922,7 @@ S_typeModifiers *simpleStrUnionSpecifier(   S_idIdent *typeName,
 
 static int isStaticFun(S_symbol *p) {
     return(p->b.symType==TypeDefault && p->b.storage==StorageStatic
-           && p->u.type->m == TypeFunction);
+           && p->u.type->kind == TypeFunction);
 }
 
 void setGlobalFileDepNames(char *iname, S_symbol *pp, int memory) {
@@ -1038,7 +1038,7 @@ void specializeStrUnionDef(S_symbol *sd, S_symbol *rec) {
             dd->linkName = string3ConcatInStackMem(sd->linkName,".",dd->name);
             dd->b.record = 1;
             if (    LANGUAGE(LAN_CCC) && dd->b.symType==TypeDefault
-                    &&  dd->u.type->m==TypeFunction) {
+                    &&  dd->u.type->kind==TypeFunction) {
                 dd->u.type->u.f.thisFunList = &sd->u.s->records;
             }
             addCxReference(dd,&dd->pos,UsageDefined,s_noneFileIndex, s_noneFileIndex);

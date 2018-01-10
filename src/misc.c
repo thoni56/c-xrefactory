@@ -523,7 +523,7 @@ void symDump(S_symbol *s) {
 void typeDump(S_typeModifiers *t) {
     fprintf(dumpOut,"dumpStart\n");
     for(; t!=NULL; t=t->next) {
-        fprintf(dumpOut," %x\n",t->m);
+        fprintf(dumpOut," %x\n",t->kind);
     }
     fprintf(dumpOut,"dumpStop\n");
 }
@@ -589,14 +589,14 @@ void typeSPrint(char *buff, int *size, S_typeModifiers *t,
     j=0;
     for(;t!=NULL;t=t->next) {
         par = 0;
-        for (;t!=NULL && t->m==TypePointer;t=t->next) {
+        for (;t!=NULL && t->kind==TypePointer;t=t->next) {
             CHECK_TYPEDEF(t,type,typedefexpFlag,typebreak);
             pref[--i]='*'; par=1;
         }
         assert(i>2);
         if (t==NULL) goto typebreak;
         CHECK_TYPEDEF(t,type,typedefexpFlag,typebreak);
-        switch (t->m) {
+        switch (t->kind) {
         case TypeArray:
             if (par) {pref[--i]='('; post[j++]=')'; }
             if (LANGUAGE(LAN_JAVA)) {
@@ -636,7 +636,7 @@ void typeSPrint(char *buff, int *size, S_typeModifiers *t,
             break;
         case TypeStruct: case TypeUnion:
             if (s_language != LAN_JAVA) {
-                if (t->m == TypeStruct) sprintf(type,"struct ");
+                if (t->kind == TypeStruct) sprintf(type,"struct ");
                 else sprintf(type,"union ");
                 r = strlen(type);
             } else r=0;
@@ -691,9 +691,9 @@ void typeSPrint(char *buff, int *size, S_typeModifiers *t,
             */
             break;
         default:
-            assert(t->m >= 0 && t->m < MAX_TYPE);
-            assert(strlen(typesName[t->m]) < COMPLETION_STRING_SIZE);
-            strcpy(type, typesName[t->m]);
+            assert(t->kind >= 0 && t->kind < MAX_TYPE);
+            assert(strlen(typesName[t->kind]) < COMPLETION_STRING_SIZE);
+            strcpy(type, typesName[t->kind]);
             r = strlen(type);
             break;
         }

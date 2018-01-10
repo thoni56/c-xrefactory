@@ -62,7 +62,7 @@
 #define SetStrCompl2(xxx) {\
     assert(s_opt.taskRegime);\
     if (s_opt.taskRegime == RegimeEditServer) {\
-        if (xxx->m==TypePointer || xxx->m==TypeArray) {\
+        if (xxx->kind==TypePointer || xxx->kind==TypeArray) {\
             s_structRecordCompletionType = xxx->next;\
         } else s_structRecordCompletionType = &s_errorModifier;\
     }\
@@ -566,14 +566,14 @@ primary_expr
 postfix_expr
     : primary_expr                              /* { $$.d = $1.d; } */
     | postfix_expr '[' expr ']'                 {
-        if ($1.d.t->m==TypePointer || $1.d.t->m==TypeArray) $$.d.t=$1.d.t->next;
-        else if ($3.d.t->m==TypePointer || $3.d.t->m==TypeArray) $$.d.t=$3.d.t->next;
+        if ($1.d.t->kind==TypePointer || $1.d.t->kind==TypeArray) $$.d.t=$1.d.t->next;
+        else if ($3.d.t->kind==TypePointer || $3.d.t->kind==TypeArray) $$.d.t=$3.d.t->next;
         else $$.d.t = &s_errorModifier;
         $$.d.r = NULL;
         assert($$.d.t);
     }
     | postfix_expr '(' ')'                      {
-        if ($1.d.t->m==TypeFunction) {
+        if ($1.d.t->kind==TypeFunction) {
             $$.d.t=$1.d.t->next;
             handleInvocationParamPositions($1.d.r, &$2.d, NULL, &$3.d, 0);
         } else {
@@ -583,7 +583,7 @@ postfix_expr
         assert($$.d.t);
     }
     | postfix_expr '(' argument_expr_list ')'   {
-        if ($1.d.t->m==TypeFunction) {
+        if ($1.d.t->kind==TypeFunction) {
             $$.d.t=$1.d.t->next;
             handleInvocationParamPositions($1.d.r, &$2.d, $3.d, &$4.d, 1);
         } else {
@@ -603,7 +603,7 @@ postfix_expr
         S_typeModifiers *p;
         S_symbol *rec=NULL;
         $$.d.r = NULL;
-        if ($1.d.t->m==TypePointer || $1.d.t->m==TypeArray) {
+        if ($1.d.t->kind==TypePointer || $1.d.t->kind==TypeArray) {
             $$.d.r = findStrRecordFromType($1.d.t->next, $4.d, &rec, CLASS_TO_ANY);
             assert(rec);
             $$.d.t = rec->u.type;
@@ -641,7 +641,7 @@ unary_expr
         $$.d.r = NULL;
     }
     | '*' cast_expr                 {
-        if ($2.d.t->m==TypePointer || $2.d.t->m==TypeArray) $$.d.t=$2.d.t->next;
+        if ($2.d.t->kind==TypePointer || $2.d.t->kind==TypeArray) $$.d.t=$2.d.t->next;
         else $$.d.t = &s_errorModifier;
         assert($$.d.t);
         $$.d.r = NULL;
@@ -698,12 +698,12 @@ multiplicative_expr
 additive_expr
     : multiplicative_expr                       /* { $$.d = $1.d; } */
     | additive_expr '+' multiplicative_expr     {
-        if ($3.d.t->m==TypePointer || $3.d.t->m==TypeArray) $$.d.t = $3.d.t;
+        if ($3.d.t->kind==TypePointer || $3.d.t->kind==TypeArray) $$.d.t = $3.d.t;
         else $$.d.t = $1.d.t;
         $$.d.r = NULL;
     }
     | additive_expr '-' multiplicative_expr     {
-        if ($3.d.t->m==TypePointer || $3.d.t->m==TypeArray) $$.d.t = $3.d.t;
+        if ($3.d.t->kind==TypePointer || $3.d.t->kind==TypeArray) $$.d.t = $3.d.t;
         else $$.d.t = $1.d.t;
         $$.d.r = NULL;
     }
@@ -1101,7 +1101,7 @@ enum_specifier
         $$.d = simpleEnumSpecifier($2.d, UsageUsed);
     }
     | enum_define_specifier '{' enumerator_list_comma '}'       {
-        assert($1.d && $1.d->m == TypeEnum && $1.d->u.t);
+        assert($1.d && $1.d->kind == TypeEnum && $1.d->u.t);
         $$.d = $1.d;
         if ($$.d->u.t->u.enums==NULL) {
             $$.d->u.t->u.enums = $3.d;
@@ -1597,7 +1597,7 @@ external_definition
         addNewSymbolDef($2.d, StorageExtern, s_symTab, UsageDefined);
         tmpWorkMemoryi = $1.d;
         stackMemoryBlockStart();
-        assert($2.d->u.type && $2.d->u.type->m == TypeFunction);
+        assert($2.d->u.type && $2.d->u.type->kind == TypeFunction);
         s_cp.function = $2.d;
         for(p=$2.d->u.type->u.f.args,i=1; p!=NULL; p=p->next,i++) {
             if (p->b.symType == TypeElipsis) continue;
@@ -1652,7 +1652,7 @@ function_definition_head
     : function_head_declaration                         /* { $$.d = $1.d; } */
     | function_definition_head fun_arg_declaration      {
         int r;
-        assert($1.d->u.type && $1.d->u.type->m == TypeFunction);
+        assert($1.d->u.type && $1.d->u.type->kind == TypeFunction);
         r = mergeArguments($1.d->u.type->u.f.args, $2.d);
         if (r == RESULT_ERR) YYERROR;
         $$.d = $1.d;
@@ -1690,13 +1690,13 @@ function_head_declaration
     : declarator                            {
         completeDeclarator(&s_defaultIntDefinition, $1.d);
         assert($1.d && $1.d->u.type);
-        if ($1.d->u.type->m != TypeFunction) YYERROR;
+        if ($1.d->u.type->kind != TypeFunction) YYERROR;
         $$.d = $1.d;
     }
     | declaration_specifiers declarator     {
         completeDeclarator($1.d, $2.d);
         assert($2.d && $2.d->u.type);
-        if ($2.d->u.type->m != TypeFunction) YYERROR;
+        if ($2.d->u.type->kind != TypeFunction) YYERROR;
         $$.d = $2.d;
     }
     ;

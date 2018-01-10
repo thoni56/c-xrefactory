@@ -1354,7 +1354,7 @@ Super_opt:											{
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert($2.d && $2.d->b.symType == TypeDefault && $2.d->u.type);
-                    assert($2.d->u.type->m == TypeStruct);
+                    assert($2.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass($2.d->u.type->u.t);
                 } else {
                     PropagateBorns($$, $1, $2);
@@ -1362,7 +1362,7 @@ Super_opt:											{
             }
             InSecondJslPass({
                 assert($2.d && $2.d->b.symType == TypeDefault && $2.d->u.type);
-                assert($2.d->u.type->m == TypeStruct);
+                assert($2.d->u.type->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             $2.d->u.type->u.t);
             });
@@ -1382,7 +1382,7 @@ InterfaceTypeList:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert($1.d && $1.d->b.symType == TypeDefault && $1.d->u.type);
-                    assert($1.d->u.type->m == TypeStruct);
+                    assert($1.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass($1.d->u.type->u.t);
                 } else {
                     PropagateBorns($$, $1, $1);
@@ -1390,7 +1390,7 @@ InterfaceTypeList:
             }
             InSecondJslPass({
                 assert($1.d && $1.d->b.symType == TypeDefault && $1.d->u.type);
-                assert($1.d->u.type->m == TypeStruct);
+                assert($1.d->u.type->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             $1.d->u.type->u.t);
             });
@@ -1399,7 +1399,7 @@ InterfaceTypeList:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert($3.d && $3.d->b.symType == TypeDefault && $3.d->u.type);
-                    assert($3.d->u.type->m == TypeStruct);
+                    assert($3.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass($3.d->u.type->u.t);
                 } else {
                     PropagateBorns($$, $1, $3);
@@ -1407,7 +1407,7 @@ InterfaceTypeList:
             }
             InSecondJslPass({
                 assert($3.d && $3.d->b.symType == TypeDefault && $3.d->u.type);
-                assert($3.d->u.type->m == TypeStruct);
+                assert($3.d->u.type->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             $3.d->u.type->u.t);
             });
@@ -1786,7 +1786,7 @@ MethodDeclarator:
                 if (RegularPass()) {
                     if (! SyntaxPassOnly()) {
                         $$.d = $<symbol>2;
-                        assert($$.d && $$.d->u.type && $$.d->u.type->m == TypeFunction);
+                        assert($$.d && $$.d->u.type && $$.d->u.type->kind == TypeFunction);
                         FILL_funTypeModif(&$$.d->u.type->u.f , $4.d.s, NULL);
                     } else {
                         javaHandleDeclaratorParamPositions(&$1.d->p, &$3.d, $4.d.p, &$5.d);
@@ -1795,7 +1795,7 @@ MethodDeclarator:
                 }
                 InSecondJslPass({
                     $$.d = $<symbol>2;
-                    assert($$.d && $$.d->u.type && $$.d->u.type->m == TypeFunction);
+                    assert($$.d && $$.d->u.type && $$.d->u.type->kind == TypeFunction);
                     FILL_funTypeModif(&$$.d->u.type->u.f , $4.d.s, NULL);
                 });
             }
@@ -1911,7 +1911,7 @@ ClassTypeList:
             PropagateBornsIfRegularSyntaxPass($$, $1, $1);
             InSecondJslPass({
                 assert($1.d && $1.d->b.symType == TypeDefault && $1.d->u.type);
-                assert($1.d->u.type->m == TypeStruct);
+                assert($1.d->u.type->kind == TypeStruct);
                 CF_ALLOC($$.d, S_symbolList);
                 FILL_symbolList($$.d, $1.d->u.type->u.t, NULL);
             });
@@ -1920,7 +1920,7 @@ ClassTypeList:
             PropagateBornsIfRegularSyntaxPass($$, $1, $3);
             InSecondJslPass({
                 assert($3.d && $3.d->b.symType == TypeDefault && $3.d->u.type);
-                assert($3.d->u.type->m == TypeStruct);
+                assert($3.d->u.type->kind == TypeStruct);
                 CF_ALLOC($$.d, S_symbolList);
                 FILL_symbolList($$.d, $3.d->u.type->u.t, $1.d);
             });
@@ -1961,7 +1961,7 @@ ConstructorDeclaration:
                           &*/
                         mh=javaMethodHeader($1.d, &s_errorSymbol, args, StorageConstructor);
                         // TODO! Merge this with 'javaMethodBodyBeginning'!
-                        assert(mh->u.type && mh->u.type->m == TypeFunction);
+                        assert(mh->u.type && mh->u.type->kind == TypeFunction);
                         stackMemoryBlockStart();  // in order to remove arguments
                         s_cp.function = mh; /* added for set-target-position checks */
                         /* also needed for pushing label reference */
@@ -2034,7 +2034,7 @@ ConstructorDeclarator:
                 if (RegularPass()) {
                     if (! SyntaxPassOnly()) {
                         $$.d = $<symbol>2;
-                        assert($$.d && $$.d->u.type && $$.d->u.type->m == TypeFunction);
+                        assert($$.d && $$.d->u.type && $$.d->u.type->kind == TypeFunction);
                         FILL_funTypeModif(&$$.d->u.type->u.f , $4.d.s, NULL);
                     } else {
                         javaHandleDeclaratorParamPositions(&$1.d->p, &$3.d, $4.d.p, &$5.d);
@@ -2043,7 +2043,7 @@ ConstructorDeclarator:
                 }
                 InSecondJslPass({
                     $$.d = $<symbol>2;
-                    assert($$.d && $$.d->u.type && $$.d->u.type->m == TypeFunction);
+                    assert($$.d && $$.d->u.type && $$.d->u.type->kind == TypeFunction);
                     FILL_funTypeModif(&$$.d->u.type->u.f , $4.d.s, NULL);
                 });
             }
@@ -2208,7 +2208,7 @@ ExtendsInterfaces:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert($2.d && $2.d->b.symType == TypeDefault && $2.d->u.type);
-                    assert($2.d->u.type->m == TypeStruct);
+                    assert($2.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass($2.d->u.type->u.t);
                 } else {
                     PropagateBorns($$, $1, $2);
@@ -2216,7 +2216,7 @@ ExtendsInterfaces:
             }
             InSecondJslPass({
                 assert($2.d && $2.d->b.symType == TypeDefault && $2.d->u.type);
-                assert($2.d->u.type->m == TypeStruct);
+                assert($2.d->u.type->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             $2.d->u.type->u.t);
             })
@@ -2225,7 +2225,7 @@ ExtendsInterfaces:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert($3.d && $3.d->b.symType == TypeDefault && $3.d->u.type);
-                    assert($3.d->u.type->m == TypeStruct);
+                    assert($3.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass($3.d->u.type->u.t);
                 } else {
                     PropagateBorns($$, $1, $3);
@@ -2233,7 +2233,7 @@ ExtendsInterfaces:
             }
             InSecondJslPass({
                 assert($3.d && $3.d->b.symType == TypeDefault && $3.d->u.type);
-                assert($3.d->u.type->m == TypeStruct);
+                assert($3.d->u.type->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             $3.d->u.type->u.t);
             })
@@ -3152,9 +3152,9 @@ NestedConstructorInvocation:
                 if (ComputingPossibleParameterCompletion()) {
                     S_typeModifiers *mm;
                     s_cp.erfsForParamsComplet = NULL;
-                    if ($1.d.t->m == TypeStruct) {
+                    if ($1.d.t->kind == TypeStruct) {
                         mm = javaNestedNewType($1.d.t->u.t, $3.d, $4.d);
-                        if (mm->m != TypeError) {
+                        if (mm->kind != TypeError) {
                             s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &($4.d->idi.p));
                         }
                     }
@@ -3164,7 +3164,7 @@ NestedConstructorInvocation:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     s_cp.erfsForParamsComplet = $5;
-                    if ($1.d.t->m == TypeStruct) {
+                    if ($1.d.t->kind == TypeStruct) {
                         $$.d.t = javaNestedNewType($1.d.t->u.t, $3.d, $4.d);
                     } else {
                         $$.d.t = &s_errorModifier;
@@ -3172,7 +3172,7 @@ NestedConstructorInvocation:
                     javaHandleDeclaratorParamPositions(&$4.d->idi.p, &$7.d, $8.d.p, &$9.d);
                     assert($$.d.t);
                     $$.d.nid = $4.d;
-                    if ($$.d.t->m != TypeError) {
+                    if ($$.d.t->kind != TypeError) {
                         javaConstructorInvocation($$.d.t->u.t, &($4.d->idi.p), $8.d.t);
                     }
                 } else {
@@ -3187,7 +3187,7 @@ NestedConstructorInvocation:
                     S_typeModifiers *mm;
                     s_cp.erfsForParamsComplet = NULL;
                     mm = javaNewAfterName($1.d, $3.d, $4.d);
-                    if (mm->m != TypeError) {
+                    if (mm->kind != TypeError) {
                         s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &($4.d->idi.p));
                     }
                 }
@@ -3198,7 +3198,7 @@ NestedConstructorInvocation:
                     s_cp.erfsForParamsComplet = $5;
                     $$.d.t = javaNewAfterName($1.d, $3.d, $4.d);
                     $$.d.nid = $4.d;
-                    if ($$.d.t->m != TypeError) {
+                    if ($$.d.t->kind != TypeError) {
                         javaConstructorInvocation($$.d.t->u.t, &($4.d->idi.p), $8.d.t);
                     }
                 } else {
@@ -3335,7 +3335,7 @@ ClassInstanceCreationExpression:
                         $$.d.t = $1.d.t;
                         $$.d.pp = $1.d.pp;
                         $$.d.r = NULL;
-                        if ($$.d.t->m != TypeError) {
+                        if ($$.d.t->kind != TypeError) {
                             $<trail>$ = newClassDefinitionBegin(&s_javaAnonymousClassName, ACC_DEFAULT, $$.d.t->u.t);
                         } else {
                             $<trail>$ = newAnonClassDefinitionBegin(& $1.d.nid->idi);
@@ -3524,7 +3524,7 @@ FieldAccess:
                     assert($1.d.t);
                     $$.d.r = NULL;
                     $$.d.pp = $1.d.pp;
-                    if ($1.d.t->m == TypeStruct) {
+                    if ($1.d.t->kind == TypeStruct) {
                         javaLoadClassSymbolsFromFile($1.d.t->u.t);
                         $$.d.r = findStrRecordFromType($1.d.t, $3.d, &rec, CLASS_TO_EXPR);
                         assert(rec);
@@ -3670,7 +3670,7 @@ ArrayAccess:
                 if (! SyntaxPassOnly()) {
                     S_typeModifiers *tt;
                     tt = javaClassifyToExpressionName($1.d, &($$.d.r));
-                    if (tt->m==TypeArray) $$.d.t=tt->next;
+                    if (tt->kind==TypeArray) $$.d.t=tt->next;
                     else $$.d.t = &s_errorModifier;
                     assert($$.d.t);
                     $$.d.r = NULL;
@@ -3683,7 +3683,7 @@ ArrayAccess:
     |	PrimaryNoNewArray '[' Expression ']'		{
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if ($1.d.t->m==TypeArray) $$.d.t=$1.d.t->next;
+                    if ($1.d.t->kind==TypeArray) $$.d.t=$1.d.t->next;
                     else $$.d.t = &s_errorModifier;
                     assert($$.d.t);
                     $$.d.r = NULL;
@@ -3815,7 +3815,7 @@ UnaryExpressionNotPlusMinus:
     |	'!' UnaryExpression		{
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if ($2.d.t->m == TypeBoolean) $$.d.t = $2.d.t;
+                    if ($2.d.t->kind == TypeBoolean) $$.d.t = $2.d.t;
                     else $$.d.t = &s_errorModifier;
                     $$.d.r = NULL;
                 } else {
@@ -3834,7 +3834,7 @@ CastExpression:
                     assert($2.d.s && $2.d.s->u.type);
                     $$.d.t = $2.d.s->u.type;
                     $$.d.r = NULL;
-                    assert($$.d.t->m == TypeArray);
+                    assert($$.d.t->kind == TypeArray);
                 } else {
                     $$.d.pp = NULL_POS;
                     PropagateBorns($$, $1, $4);
@@ -4201,7 +4201,7 @@ Assignment:
         LeftHandSide {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if ($1.d.t!=NULL && $1.d.t->m==TypeStruct) {
+                    if ($1.d.t!=NULL && $1.d.t->kind==TypeStruct) {
                         s_cps.lastAssignementStruct = $1.d.t->u.t;
                     }
                 }

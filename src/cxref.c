@@ -267,7 +267,7 @@ static int newRefTabItem(S_refTab *reftab,
     //& if (p->b.symType == TypeMacro) return(1);
     //& if (p->b.symType == TypeCppIfElse) return(1);
     //& if (p->b.symType == TypeDefault && p->b.storage == StorageStatic
-    //&     && p->u.type->m == TypeFunction) return(0);
+    //&     && p->u.type->kind == TypeFunction) return(0);
     //& if (category == CatLocal) return(1); // can I comment it ?
     return(0);
 }
@@ -376,9 +376,9 @@ static void setClassTreeBaseType(S_classTreeData *ct, S_symbol *p) {
     } else if (p->b.symType == TypeDefault && p->b.storage!=StorageConstructor) {
         tt = p->u.type;
         assert(tt);
-        if (tt->m == TypeFunction) tt = tt->next;
+        if (tt->kind == TypeFunction) tt = tt->next;
         assert(tt);
-        if (tt->m == TypeStruct) {
+        if (tt->kind == TypeStruct) {
             rtcls = tt->u.t;
             assert(rtcls!=NULL && rtcls->b.symType==TypeStruct
                    && rtcls->u.s!=NULL);
@@ -527,9 +527,9 @@ static void setOlSymbolTypeForPrint(S_symbol *p) {
     s_olSymbolClassType[0]=0;
     if (p->b.symType == TypeDefault) {
         tt = p->u.type;
-        if (tt!=NULL && tt->m==TypeFunction) tt = tt->next;
+        if (tt!=NULL && tt->kind==TypeFunction) tt = tt->next;
         typeSPrint(s_olSymbolType, &size, tt, "", ' ', 0, 1, LONG_NAME, NULL);
-        if (tt->m == TypeStruct && tt->u.t!=NULL) {
+        if (tt->kind == TypeStruct && tt->u.t!=NULL) {
             strcpy(s_olSymbolClassType, tt->u.t->linkName);
             assert(strlen(s_olSymbolClassType)+1 < COMPLETION_STRING_SIZE);
         }
@@ -587,7 +587,7 @@ static void setOlAvailableRefactorings(S_symbol *p, S_olSymbolsMenu *mmi, int us
         if (p->b.storage != StorageConstructor) {
             s_availableRefactorings[PPC_AVR_RENAME_SYMBOL].available = 1;
         }
-        if (p->u.type->m == TypeFunction || p->u.type->m == TypeMacro) {
+        if (p->u.type->kind == TypeFunction || p->u.type->kind == TypeMacro) {
             s_availableRefactorings[PPC_AVR_ADD_PARAMETER].available = 1;
             s_availableRefactorings[PPC_AVR_DEL_PARAMETER].available = 1;
             s_availableRefactorings[PPC_AVR_MOVE_PARAMETER].available = 1;

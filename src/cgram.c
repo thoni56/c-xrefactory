@@ -62,7 +62,7 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #define SetStrCompl2(xxx) {\
     assert(s_opt.taskRegime);\
     if (s_opt.taskRegime == RegimeEditServer) {\
-        if (xxx->m==TypePointer || xxx->m==TypeArray) {\
+        if (xxx->kind==TypePointer || xxx->kind==TypeArray) {\
             s_structRecordCompletionType = xxx->next;\
             assert(s_structRecordCompletionType);\
         } else s_structRecordCompletionType = &s_errorModifier;\
@@ -2356,8 +2356,8 @@ break;
 case 14:
 #line 376 "cgram.y"
 {
-        if (yyvsp[-3].bbexprType.d.t->m==TypePointer || yyvsp[-3].bbexprType.d.t->m==TypeArray) yyval.bbexprType.d.t=yyvsp[-3].bbexprType.d.t->next;
-        else if (yyvsp[-1].bbexprType.d.t->m==TypePointer || yyvsp[-1].bbexprType.d.t->m==TypeArray) yyval.bbexprType.d.t=yyvsp[-1].bbexprType.d.t->next;
+        if (yyvsp[-3].bbexprType.d.t->kind==TypePointer || yyvsp[-3].bbexprType.d.t->kind==TypeArray) yyval.bbexprType.d.t=yyvsp[-3].bbexprType.d.t->next;
+        else if (yyvsp[-1].bbexprType.d.t->kind==TypePointer || yyvsp[-1].bbexprType.d.t->kind==TypeArray) yyval.bbexprType.d.t=yyvsp[-1].bbexprType.d.t->next;
         else yyval.bbexprType.d.t = &s_errorModifier;
         yyval.bbexprType.d.r = NULL;
         assert(yyval.bbexprType.d.t);
@@ -2374,7 +2374,7 @@ case 16:
 #line 400 "cgram.y"
 {
         s_upLevelFunctionCompletionType = yyvsp[-3].typeModif;
-        if (yyvsp[-4].bbexprType.d.t->m==TypeFunction) {
+        if (yyvsp[-4].bbexprType.d.t->kind==TypeFunction) {
             yyval.bbexprType.d.t=yyvsp[-4].bbexprType.d.t->next;
             if (yyvsp[-1].bbpositionLst.d==NULL) {
                 handleInvocationParamPositions(yyvsp[-4].bbexprType.d.r, &yyvsp[-2].bbposition.d, NULL, &yyvsp[0].bbposition.d, 0);
@@ -2411,7 +2411,7 @@ case 20:
 {
         S_symbol *rec=NULL;
         yyval.bbexprType.d.r = NULL;
-        if (yyvsp[-3].bbexprType.d.t->m==TypePointer || yyvsp[-3].bbexprType.d.t->m==TypeArray) {
+        if (yyvsp[-3].bbexprType.d.t->kind==TypePointer || yyvsp[-3].bbexprType.d.t->kind==TypeArray) {
             yyval.bbexprType.d.r = findStrRecordFromType(yyvsp[-3].bbexprType.d.t->next, yyvsp[0].bbidIdent.d, &rec, CLASS_TO_ANY);
             assert(rec);
             yyval.bbexprType.d.t = rec->u.type;
@@ -2501,7 +2501,7 @@ break;
 case 36:
 #line 485 "cgram.y"
 {
-        if (yyvsp[0].bbexprType.d.t->m==TypePointer || yyvsp[0].bbexprType.d.t->m==TypeArray) yyval.bbexprType.d.t=yyvsp[0].bbexprType.d.t->next;
+        if (yyvsp[0].bbexprType.d.t->kind==TypePointer || yyvsp[0].bbexprType.d.t->kind==TypeArray) yyval.bbexprType.d.t=yyvsp[0].bbexprType.d.t->next;
         else yyval.bbexprType.d.t = &s_errorModifier;
         assert(yyval.bbexprType.d.t);
         yyval.bbexprType.d.r = NULL;
@@ -2572,7 +2572,7 @@ break;
 case 53:
 #line 546 "cgram.y"
 {
-        if (yyvsp[0].bbexprType.d.t->m==TypePointer || yyvsp[0].bbexprType.d.t->m==TypeArray) yyval.bbexprType.d.t = yyvsp[0].bbexprType.d.t;
+        if (yyvsp[0].bbexprType.d.t->kind==TypePointer || yyvsp[0].bbexprType.d.t->kind==TypeArray) yyval.bbexprType.d.t = yyvsp[0].bbexprType.d.t;
         else yyval.bbexprType.d.t = yyvsp[-2].bbexprType.d.t;
         yyval.bbexprType.d.r = NULL;
     }
@@ -2580,7 +2580,7 @@ break;
 case 54:
 #line 551 "cgram.y"
 {
-        if (yyvsp[0].bbexprType.d.t->m==TypePointer || yyvsp[0].bbexprType.d.t->m==TypeArray) yyval.bbexprType.d.t = yyvsp[0].bbexprType.d.t;
+        if (yyvsp[0].bbexprType.d.t->kind==TypePointer || yyvsp[0].bbexprType.d.t->kind==TypeArray) yyval.bbexprType.d.t = yyvsp[0].bbexprType.d.t;
         else yyval.bbexprType.d.t = yyvsp[-2].bbexprType.d.t;
         yyval.bbexprType.d.r = NULL;
     }
@@ -3175,7 +3175,7 @@ break;
 case 176:
 #line 1029 "cgram.y"
 {
-        assert(yyvsp[-3].bbtypeModif.d && yyvsp[-3].bbtypeModif.d->m == TypeEnum && yyvsp[-3].bbtypeModif.d->u.t);
+        assert(yyvsp[-3].bbtypeModif.d && yyvsp[-3].bbtypeModif.d->kind == TypeEnum && yyvsp[-3].bbtypeModif.d->u.t);
         yyval.bbtypeModif.d = yyvsp[-3].bbtypeModif.d;
         if (yyval.bbtypeModif.d->u.t->u.enums==NULL) {
             yyval.bbtypeModif.d->u.t->u.enums = yyvsp[-1].bbsymbolList.d;
@@ -4036,7 +4036,7 @@ case 335:
         tmpWorkMemoryi = yyvsp[-1].bbunsign.d;
         stackMemoryBlockStart();
         s_count.localVar = 0;
-        assert(yyvsp[0].bbsymbol.d->u.type && yyvsp[0].bbsymbol.d->u.type->m == TypeFunction);
+        assert(yyvsp[0].bbsymbol.d->u.type && yyvsp[0].bbsymbol.d->u.type->kind == TypeFunction);
         s_cp.function = yyvsp[0].bbsymbol.d;
         genInternalLabelReference(-1, UsageDefined);
         for(p=yyvsp[0].bbsymbol.d->u.type->u.f.args,i=1; p!=NULL; p=p->next,i++) {
@@ -4124,7 +4124,7 @@ case 348:
 #line 1809 "cgram.y"
 {
         int r;
-        assert(yyvsp[-1].bbsymbol.d->u.type && yyvsp[-1].bbsymbol.d->u.type->m == TypeFunction);
+        assert(yyvsp[-1].bbsymbol.d->u.type && yyvsp[-1].bbsymbol.d->u.type->kind == TypeFunction);
         r = mergeArguments(yyvsp[-1].bbsymbol.d->u.type->u.f.args, yyvsp[0].bbsymbol.d);
         if (r == RESULT_ERR) YYERROR;
         yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
@@ -4171,7 +4171,7 @@ case 354:
 {
         completeDeclarator(&s_defaultIntDefinition, yyvsp[0].bbsymbol.d);
         assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->u.type);
-        if (yyvsp[0].bbsymbol.d->u.type->m != TypeFunction) YYERROR;
+        if (yyvsp[0].bbsymbol.d->u.type->kind != TypeFunction) YYERROR;
         yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
     }
 break;
@@ -4180,7 +4180,7 @@ case 355:
 {
         completeDeclarator(yyvsp[-1].bbsymbol.d, yyvsp[0].bbsymbol.d);
         assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->u.type);
-        if (yyvsp[0].bbsymbol.d->u.type->m != TypeFunction) YYERROR;
+        if (yyvsp[0].bbsymbol.d->u.type->kind != TypeFunction) YYERROR;
         yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
     }
 break;

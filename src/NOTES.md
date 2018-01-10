@@ -79,6 +79,25 @@ lot of data structures on the standard output which is then fed into
 generated versions of _strFill_, _strTdef_(no longer) and _enumTxt_ by
 the Makefile.
 
+The process starts with building a _c-xref.bs_ executable from checked
+in sources. This complies uses a BOOTSTRAPPING define that causes some
+header files to include pre-generated versions of the generated files
+(currently _strFill.bs.h_ and _enumTxt.bs.h_) which should work in all
+environments.
+
+NOTE: if you change the name of a field in a structure that is subject
+to FILL-generation you will need to manually update the
+_strFill.bs.h_, but a "make cleaner all" will show you where does are.
+
+After the _c-xref.bs_ has been built, it is used to generate _strFill_
+and _enumTxt_ which might include specific structures for the current
+environment.
+
+HOWEVER: if FILL macros are used for structures which are different on
+some platforms, say a FILE structure, that FILL macro will have
+difference number of arguments, so I'm not sure how smart this "smart"
+generation technique actually is.
+
 #### Compiler defines
 
 In _options.h_ there are a number of definitions which somehow are

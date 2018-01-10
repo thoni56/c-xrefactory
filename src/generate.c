@@ -16,9 +16,9 @@ typedef enum {
 static bool isSubstructureToFill(S_symbol *symbol) {
     if (symbol->b.storage == StorageError) return false;
     assert(symbol->u.type);
-    if (symbol->u.type->m == TypeAnonymeField) return false;
-    if (symbol->u.type->m == TypeFunction) return false;
-    if (symbol->u.type->m == TypeArray) return false;
+    if (symbol->u.type->kind == TypeAnonymeField) return false;
+    if (symbol->u.type->kind == TypeFunction) return false;
+    if (symbol->u.type->kind == TypeArray) return false;
     return true;
 }
 
@@ -49,9 +49,9 @@ static int genFillStructArguments(S_symbol *symbol,
     }
     for(p=records; p!=NULL; p=p->next) {
         if (isSubstructureToFill(p)) {
-            if (p->u.type->m == TypeStruct  && fullFlag) {
+            if (p->u.type->kind == TypeStruct  && fullFlag) {
                 i = genFillStructArguments(p->u.type->u.t,i,1);
-            } else if (p->u.type->m == TypeUnion) {
+            } else if (p->u.type->kind == TypeUnion) {
                 fprintf(cxOut, ", %s", getFillArgumentName(i++, 0, GenerateStructureFill));
                 fprintf(cxOut, ", %s", getFillArgumentName(i++, 0, GenerateStructureFill));
             } else {
@@ -89,15 +89,15 @@ static int genFillStructBody(S_symbol *defin, int i, int argn, bool fullFlag,
     }
     for(p=rec; p!=NULL; p=p->next) {
         if (isSubstructureToFill(p)) {
-            if (    (p->u.type->m == TypeStruct && fullFlag)
-                    || p->u.type->m == TypeUnion) {
+            if (    (p->u.type->kind == TypeStruct && fullFlag)
+                    || p->u.type->kind == TypeUnion) {
                 l1 = strlen(pref);
                 l2 = strlen(p->name);
                 assert(l1+l2+6 < TMP_STRING_SIZE);
                 strcpy(prefix,pref);
                 strcpy(prefix+l1, p->name);
                 prefix[l1+l2] = 0;
-                if (p->u.type->m == TypeUnion) {
+                if (p->u.type->kind == TypeUnion) {
                     if (fullFlag) {
                         strcpy(rname,getFillArgumentName(i,argn,action));
                         i++;
@@ -185,7 +185,7 @@ static void generateUnionFillMacros(S_symbol *symbol) {
     assert(name);
     for(p=rec; p!=NULL; p=p->next) {
         if (p->b.symType == TypeDefault) {
-            if (p->u.type->m == TypeStruct) {
+            if (p->u.type->kind == TypeStruct) {
                 fprintf(cxOut,
                         "#define _FILLUREC_%s_%s(XX,ARGS) _FILLF_%s(&(XX->%s),ARGS)\n",
                         name, p->name, p->u.type->u.t->name, p->name);

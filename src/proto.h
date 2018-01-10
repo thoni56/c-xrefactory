@@ -724,7 +724,7 @@ typedef struct topBlock {
 } S_topBlock;
 
 typedef struct typeModifiers {
-    enum types                m;
+    enum types                kind;
     union typeModifUnion {
         struct funTypeModif {                /* LAN_C/CPP Function */
             struct symbol     *args;
