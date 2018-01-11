@@ -4,17 +4,15 @@
    Should be included only in a .c file
 
    Requires the following macros to be set:
-   HASH_TAB_TYPE
+   HASH_TAB_NAME
    HASH_ELEM_TYPE
-   HASH_FUN_PREFIX
    HASH_FUN(elem)
    HASH_ELEM_EQUAL(e1,e2)
 
    E.g.
 
-   #define HASH_TAB_TYPE struct X
+   #define HASH_TAB_NAME  X
    #define HASH_ELEM_TYPE T
-   #define HASH_FUN_PREFIX X
    #define HASH_FUN(elem) hash(elem)
    #define HASH_ELEM_EQUAL(e1,e2) eq(e1,e2)
 
@@ -23,9 +21,8 @@
    If included in a C-file which will generate many hashtabs you also
    need to:
 
-   #undef HASH_TAB_TYPE
+   #undef HASH_TAB_NAME
    #undef HASH_ELEM_TYPE
-   #undef HASH_FUN_PREFIX
    #undef HASH_FUN
    #undef HASH_ELEM_EQUAL
 */
@@ -34,6 +31,10 @@
 
 #define GLUE(a,b) a ## b
 #define CONCAT(a,b) GLUE(a,b)
+
+/* Here we create TAB_TYPE and FUN_PREFIX from TAB_NAME */
+#define HASH_TAB_TYPE struct HASH_TAB_NAME
+#define HASH_FUN_PREFIX HASH_TAB_NAME
 
 #define HASH_SHIFT 211
 

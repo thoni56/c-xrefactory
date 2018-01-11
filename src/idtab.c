@@ -7,8 +7,6 @@
 #define HASH_FUN(elemp) fileTabHashFun(elemp->name)
 #define HASH_ELEM_EQUAL(e1,e2) (strcmp(e1->name,e2->name)==0)
 
-HASH_TAB_TYPE s_fileTab;
-
 static unsigned fileTabHashFun(char *ss) {
     register unsigned h = 0;
     register char *s = ss;

@@ -1,31 +1,33 @@
 /* .c template for hashed table*/
+
 /* requires macros:
-    HASH_TAB_TYPE
-    HASH_ELEM_TYPE
-    HASH_FUN_PREFIX
-    HASH_FUN(elem)
-    HASH_ELEM_EQUAL(e1,e2)
+    HASH_TAB_NAME (both name for struct and prefix for functions)
+    HASH_ELEM_TYPE (type of elements)
+    HASH_FUN(elem) (function for hash)
+    HASH_ELEM_EQUAL(e1,e2) (expression or function for equality)
 */
+
 /* form of include:
 
-#define HASH_TAB_TYPE struct
-#define HASH_ELEM_TYPE
-#define HASH_FUN_PREFIX
-#define HASH_FUN(elem)
-#define HASH_ELEM_EQUAL(e1,e2)
+   #define HASH_TAB_NAME <name>
+   #define HASH_ELEM_TYPE <element>
+   #define HASH_FUN(elem) <hashfun>
+   #define HASH_ELEM_EQUAL(e1,e2) <eqexpr>
 
-#include "hashTab.tc"
+   #include "hashlist.tc"
 
-#undef HASH_TAB_TYPE
-#undef HASH_ELEM_TYPE
-#undef HASH_FUN_PREFIX
-#undef HASH_FUN
-#undef HASH_ELEM_EQUAL
+   #undef HASH_TAB_NAME
+   #undef HASH_ELEM_TYPE
+   #undef HASH_FUN
+   #undef HASH_ELEM_EQUAL
 */
 
 #define GLUE(a,b) a ## b
 #define CONCAT(a,b) GLUE(a,b)
 
+/* Here we create TAB_TYPE and FUN_PREFIX from TAB_NAME */
+#define HASH_TAB_TYPE struct HASH_TAB_NAME
+#define HASH_FUN_PREFIX HASH_TAB_NAME
 
 void CONCAT(HASH_FUN_PREFIX,NAInit)(HASH_TAB_TYPE *t, int size) {
     t->size = size;
@@ -301,6 +303,8 @@ void CONCAT(HASH_FUN_PREFIX,Statistics)(
 
 #undef GLUE
 #undef CONCAT
+#undef HASH_TAB_TYPE
+#undef HASH_FUN_PREFIX
 
 /* Local variables: */
 /* Mode: c          */

@@ -10,6 +10,9 @@
 #define GLUE(a,b) a ## b
 #define CONCAT(a,b) GLUE(a,b)
 
+/* Here we create TAB_TYPE and FUN_PREFIX from TAB_NAME */
+#define HASH_TAB_TYPE struct HASH_TAB_NAME
+#define HASH_FUN_PREFIX HASH_TAB_NAME
 
 typedef HASH_TAB_TYPE {
     int size;
@@ -63,6 +66,8 @@ extern void CONCAT(HASH_FUN_PREFIX, Map3)(
 
 #undef GLUE
 #undef CONCAT
+#undef HASH_TAB_TYPE
+#undef HASH_FUN_PREFIX
 
 /* Local variables: */
 /* Mode: c          */
