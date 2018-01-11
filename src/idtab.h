@@ -1,5 +1,5 @@
-#ifndef IDTAB_H
-#define IDTAB_H
+#ifndef _IDTAB_H_
+#define _IDTAB_H_
 
 #include "proto.h"
 
@@ -9,8 +9,10 @@
 
 #include "hashtab.th"
 
+#ifndef _IDTAB_
 #undef HASH_TAB_TYPE
 #undef HASH_ELEM_TYPE
 #undef HASH_FUN_PREFIX
+#endif
 
 #endif
