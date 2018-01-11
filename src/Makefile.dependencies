@@ -151,6 +151,10 @@ semact.o: semact.c semact.h proto.h stdinc.h head.h constants.h strFill.h \
  commons.h globals.h unigram.h cgram.h misc.h cct.h yylex.h cxref.h \
  jsemact.h jslsemact.h enumTxt.h enumTxt.g.h
 structs.o: structs.c
+symtab.o: symtab.c symtab.h proto.h stdinc.h head.h constants.h strFill.h \
+ strFill.g.h listmacr.h memmac.h lexmac.h javafqttab.h hashlist.th \
+ jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h misc.h \
+ hashlist.tc
 y.tab.o: y.tab.c yaccgram.x proto.h stdinc.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
  javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \

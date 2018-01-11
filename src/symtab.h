@@ -1,7 +1,9 @@
-#ifndef SYMTAB_H
-#define SYMTAB_H
+#ifndef _SYMTAB_H_
+#define _SYMTAB_H_
 
-typedef struct symTab S_symTab; /* TODO this should be done automatically by the .th ... */
+#include "proto.h"
+
+typedef struct symTab S_symTab;
 
 #define HASH_TAB_TYPE struct symTab
 #define HASH_ELEM_TYPE S_symbol
@@ -9,8 +11,10 @@ typedef struct symTab S_symTab; /* TODO this should be done automatically by the
 
 #include "hashlist.th"
 
+#ifndef _SYMTAB_
 #undef HASH_TAB_TYPE
 #undef HASH_ELEM_TYPE
 #undef HASH_FUN_PREFIX
+#endif
 
 #endif

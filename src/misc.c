@@ -305,20 +305,7 @@ unsigned fileTabHashFun(char *ss) {
 
 #endif
 
-#define HASH_TAB_TYPE struct symTab
-#define HASH_ELEM_TYPE S_symbol
-#define HASH_FUN_PREFIX symTab
-#define HASH_FUN(elemp) hashFun(elemp->name)
-#define HASH_ELEM_EQUAL(e1,e2) (e1->b.symType==e2->b.symType && strcmp(e1->name,e2->name)==0)
-
-#include "hashlist.tc"
-
-#undef HASH_TAB_TYPE
-#undef HASH_ELEM_TYPE
-#undef HASH_FUN_PREFIX
-#undef HASH_FUN
-#undef HASH_ELEM_EQUAL
-
+#include "symtab.h"
 
 #define HASH_TAB_TYPE struct javaFqtTab
 #define HASH_ELEM_TYPE S_symbolList
