@@ -9,33 +9,16 @@
 #include "protocol.h"
 
 
-#define EDITOR_BUFF_TAB_SIZE 100
-
 #define MIN_EDITOR_MEMORY_BLOCK 11
 #define MAX_EDITOR_MEMORY_BLOCK 32
 
-// this has to cover at least allignement allocations
+// this has to cover at least alignment allocations
 #define EDITOR_ALLOCATION_RESERVE 1024
 #define EDITOR_FREE_PREFIX_SIZE 16
 
 S_editorMemoryBlock *s_editorMemory[MAX_EDITOR_MEMORY_BLOCK];
 
-S_editorBufferList *s_staticEditorBufferTabTab[EDITOR_BUFF_TAB_SIZE];
-S_editorBufferTab s_editorBufferTab;
-
-#define HASH_TAB_TYPE struct editorBufferTab
-#define HASH_ELEM_TYPE S_editorBufferList
-#define HASH_FUN_PREFIX editorBufferTab
-#define HASH_FUN(elemp) hashFun(elemp->f->name)
-#define HASH_ELEM_EQUAL(e1,e2) (strcmp(e1->f->name,e2->f->name)==0)
-
-#include "hashlist.tc"
-
-#undef HASH_TAB_TYPE
-#undef HASH_ELEM_TYPE
-#undef HASH_FUN_PREFIX
-#undef HASH_FUN
-#undef HASH_ELEM_EQUAL
+#include "editorbuffertab.h"
 
 ////////////////////////////////////////////////////////////////////
 //                      encoding stuff
