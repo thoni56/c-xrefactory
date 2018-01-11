@@ -23,20 +23,7 @@
 
 /* !!!!!!!!!!!!!!!!!!! to caching !!!!!!!!!!!!!!! */
 
-#define HASH_TAB_TYPE struct maTab
-#define HASH_ELEM_TYPE S_macroArgTabElem
-#define HASH_FUN_PREFIX maTab
-#define HASH_FUN(elemp) hashFun(elemp->name)
-#define HASH_ELEM_EQUAL(e1,e2) (strcmp(e1->name,e2->name)==0)
-
-#include "hashtab.th"
-#include "hashtab.tc"
-
-#undef HASH_TAB_TYPE
-#undef HASH_ELEM_TYPE
-#undef HASH_FUN_PREFIX
-#undef HASH_FUN
-#undef HASH_ELEM_EQUAL
+#include "matab.h"
 
 #define MB_INIT()				{SM_INIT(mbMemory);}
 #define MB_ALLOC(p,t)           {SM_ALLOC(mbMemory,p,t);}
@@ -44,7 +31,6 @@
 #define MB_REALLOCC(p,n,t,on)	{SM_REALLOCC(mbMemory,p,n,t,on);}
 #define MB_FREE_UNTIL(p)        {SM_FREE_UNTIL(mbMemory,p);}
 
-static struct maTab s_maTab;
 static char ppMemory[SIZE_ppMemory];
 static int ppMemoryi=0;
 

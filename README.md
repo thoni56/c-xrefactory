@@ -5,7 +5,7 @@
 `c-xrefactory` is a free emacs refactoring tool and code browser for
 C (and Java).
 
-Easiest way to install is using
+Easiest way to install is using `el-get` (see note):
 
     M-x el-get-install<ENTER>c-xrefactory<ENTER>
 
@@ -71,3 +71,8 @@ in the public domain.
 If someone has contact with Marián, please inform him and ask him to
 contact me. Perhaps we can create something great from this together
 with others who might be interested.
+
+NOTE: You can easily install `el-get` in your running emacs using a
+snippet from [`el-get`s github
+repo](https://github.com/dimitri/el-get), but don't forget to add the
+`el-get` pieces in you emacs init.

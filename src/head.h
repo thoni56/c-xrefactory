@@ -506,19 +506,12 @@
 
 /* ******************* symbol table hash function unit ****************** */
 
-#if ZERO   // OLD_HASH
-#define SYM_TAB_HASH_FUN_INC(oldval, charcode) {\
-    oldval = oldval+oldval+charcode;\
-}
-#define SYM_TAB_HASH_FUN_FINAL(oldval) {}
-#else
 #define SYM_TAB_HASH_FUN_INC(oldval, charcode) {\
     oldval+=charcode; oldval+=(oldval<<10); oldval^=(oldval>>6);\
 }
 #define SYM_TAB_HASH_FUN_FINAL(oldval) {\
     oldval+=(oldval<<3); oldval^=(oldval>>11); oldval+=(oldval<<15);\
 }
-#endif
 
 /* *********************************************************************** */
 /*                    JAVA Constant Pool Item Tags                         */
