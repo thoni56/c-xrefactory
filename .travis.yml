@@ -2,13 +2,11 @@ language: c
 sudo: false
 dist: trusty
 script:
-    - # make
-    - # cd tests; make all
+    - make
+    - cd tests; make all
 branches:
     except:
         - stable
 after_success:
-    - #cd ..
-    - pwd
-    - ls
+    - cd ..
     - ./.travis.merge_to_stable_maybe.sh
