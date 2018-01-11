@@ -6,6 +6,12 @@ Concrete things in progress:
 
 Concrete things todo:
 
+* Build a protocol spy that can be put between the editor and the
+  server to inspect and learn about the communication. It should be
+  fairly easy, just start up like c-xref does, start the real c-xref
+  with the startup arguments. Shuffle all communication on to the
+  other while logging the messages to a file.
+
 * Ensure only externally used functions are visible in the modules
   header file. And that only those are "non-static" in the C file.
 
@@ -13,6 +19,12 @@ Concrete things todo:
   header file is included before it. (Could this be done by taking
   each header file and try to compile it in isolation? It should
   include whatever other things it needs...)
+
+* Start using log.c functions to log rather than "fprintf(dumpOut..."
+  and adjust options so that we can better control logging. A note to
+  self is that setting up the temporary files are kind of tricky,
+  partly because of the multi-pass character (that I don't really get
+  at this point)
 
 * Although generation of typedef's etc. in strTdef et al might be
   questioned we need to handle that for now, but at least let's add
