@@ -47,23 +47,7 @@
 
 /* ************************************************************** */
 
-typedef struct olcxTab S_olcxTab;
-#define HASH_TAB_TYPE struct olcxTab
-#define HASH_ELEM_TYPE S_userOlcx
-#define HASH_FUN_PREFIX olcxTab
-#define HASH_FUN(elemp) hashFun(elemp->name)
-#define HASH_ELEM_EQUAL(e1,e2) (strcmp(e1->name,e2->name)==0)
-
-#include "hashlist.th"
-#include "hashlist.tc"
-
-#undef HASH_TAB_TYPE
-#undef HASH_ELEM_TYPE
-#undef HASH_FUN_PREFIX
-#undef HASH_FUN
-#undef HASH_ELEM_EQUAL
-
-static S_olcxTab s_olcxTab;
+#include "olcxtab.h"
 
 static void oloPushByNameIfNothingPushed();
 
