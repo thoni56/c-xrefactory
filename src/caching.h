@@ -1,5 +1,5 @@
-#ifndef CACHING_H
-#define CACHING_H
+#ifndef _CACHING_H_
+#define _CACHING_H_
 
 extern int testFileModifTime(int ii);
 extern void initCaching();
