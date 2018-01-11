@@ -125,8 +125,5 @@ dependencies:;
 
 #########################################################################
 
-compare:
-	-diff strFill.g.h strFill.h.backup
-	-diff strTdef.g.h strTdef.h.backup
-	-diff enumTxt.g.h enumTxt.h.backup
-	-diff enumTxt.g.c enumTxt.c.backup
+test:
+	$(MAKE) -C .. test
