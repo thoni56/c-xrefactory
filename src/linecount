@@ -1,0 +1,1 @@
+cloc `ls *.[chy] ../env/emacs/*.el | grep -v gram.\[ch\] | grep -v cexp.\[ch\] | grep -v .g. | grep -v .bs.` | grep -v c-xrefprotocol.el
