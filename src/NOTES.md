@@ -1,5 +1,20 @@
 # NOTES about c-xref implementation, design etc. #
 
+## Versions ##
+
+The current sources are in 1.6.X range. This is the same as the orginal
+xrefactory and probably also the proprietary C++ supporting version.
+
+There is an option, "-xrefactory-II", that might indicate
+something going on. But currently the only difference seems to be if
+output is in the form of fprintf:s or using functions in the
+`ppc`-family (either calling `ppcGenRecord()` or `fprint`ing using
+some PPC-symbol). This, and hinted to in how the emacs-part starts
+the server and some initial server option variables in refactory.c,
+indicates that the communication from the editor and the refactory
+server is using this. It does *not* look like this is a forward to
+next generation attempt.
+
 ## Building ##
 
 One step in the build process is generating initialization information
