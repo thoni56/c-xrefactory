@@ -308,22 +308,7 @@ unsigned fileTabHashFun(char *ss) {
 #include "symtab.h"
 #include "javafqttab.h"
 #include "jsltypetab.h"
-
-#define HASH_TAB_TYPE struct refTab
-#define HASH_ELEM_TYPE S_symbolRefItem
-#define HASH_FUN_PREFIX refTab
-// following can't depend on vApplClass, because of finding def in html.c
-#define HASH_FUN(elemp) (hashFun(elemp->name) + (unsigned)elemp->vFunClass)
-#define HASH_ELEM_EQUAL(e1,e2) REF_ELEM_EQUAL(e1,e2)
-
-#include "hashlist.tc"
-
-#undef HASH_TAB_TYPE
-#undef HASH_ELEM_TYPE
-#undef HASH_FUN_PREFIX
-#undef HASH_FUN
-#undef HASH_ELEM_EQUAL
-
+#include "reftab.h"
 
 /* ***************************************************************** */
 

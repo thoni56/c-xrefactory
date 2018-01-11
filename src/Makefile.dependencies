@@ -90,6 +90,10 @@ init.o: init.c init.h commons.h globals.h constants.h proto.h stdinc.h \
  hashlist.th javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th \
  editorbuffertab.h unigram.h cgram.h protocol.h protocol.tc misc.h \
  enumTxt.h enumTxt.g.h
+javafqttab.o: javafqttab.c javafqttab.h proto.h stdinc.h head.h \
+ constants.h strFill.h strFill.g.h listmacr.h memmac.h lexmac.h symtab.h \
+ hashlist.th jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
+ misc.h hashlist.tc
 javagram.o: javagram.c javagram.x proto.h stdinc.h head.h constants.h \
  strFill.h strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
  javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
@@ -107,6 +111,10 @@ jslsemact.o: jslsemact.c jslsemact.h proto.h stdinc.h head.h constants.h \
  javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
  misc.h commons.h globals.h unigram.h cgram.h cct.h semact.h cxref.h \
  cfread.h jsemact.h
+jsltypetab.o: jsltypetab.c jsltypetab.h proto.h stdinc.h head.h \
+ constants.h strFill.h strFill.g.h listmacr.h memmac.h lexmac.h symtab.h \
+ hashlist.th javafqttab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
+ misc.h hashlist.tc
 lex.o: lex.c lex.h proto.h stdinc.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
  javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
@@ -128,8 +136,7 @@ misc.o: misc.c misc.h proto.h stdinc.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
  javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
  globals.h jsemact.h commons.h bitmaps.h caching.h protocol.h protocol.tc \
- yylex.h cxfile.h cxref.h cfread.h editor.h enumTxt.h enumTxt.g.h \
- hashlist.tc
+ yylex.h cxfile.h cxref.h cfread.h editor.h enumTxt.h enumTxt.g.h
 olcxtab.o: olcxtab.c olcxtab.h proto.h stdinc.h head.h constants.h \
  strFill.h strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
  javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
@@ -145,6 +152,10 @@ refactory.o: refactory.c refactory.h proto.h stdinc.h head.h constants.h \
  javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
  main.h html.h misc.h complete.h commons.h globals.h yylex.h cxref.h \
  cxfile.h jsemact.h editor.h protocol.h protocol.tc
+reftab.o: reftab.c reftab.h proto.h stdinc.h head.h constants.h strFill.h \
+ strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
+ javafqttab.h jsltypetab.h idtab.h hashtab.th editorbuffertab.h misc.h \
+ hashlist.tc
 semact.o: semact.c semact.h proto.h stdinc.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
  javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
