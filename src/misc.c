@@ -307,34 +307,7 @@ unsigned fileTabHashFun(char *ss) {
 
 #include "symtab.h"
 #include "javafqttab.h"
-
-#if ZERO
-#define HASH_ELEM_EQUAL(e1,e2) (jslHashEqual(e1,e2))
-static int jslHashEqual(S_symbolList *e1, S_symbolList *e2) {
-    int res;
-    res = HASH_ELEM_EQUAL(e1,e2);
-    //fprintf(dumpOut," checking %s <-> %s     ===>%d\n", e1->d->name, e2->d->name,res);
-    return(res);
-}
-#undef HASH_ELEM_EQUAL
-#endif
-
-#define HASH_TAB_TYPE struct jslTypeTab
-#define HASH_ELEM_TYPE S_jslSymbolList
-#define HASH_FUN_PREFIX jslTypeTab
-#define HASH_FUN(elemp) hashFun(elemp->d->name)
-#define HASH_ELEM_EQUAL(e1,e2) (                                        \
-                                e1->d->b.symType==e2->d->b.symType      \
-                                && strcmp(e1->d->name,e2->d->name)==0   \
-                                )
-
-#include "hashlist.tc"
-
-#undef HASH_TAB_TYPE
-#undef HASH_ELEM_TYPE
-#undef HASH_FUN_PREFIX
-#undef HASH_FUN
-#undef HASH_ELEM_EQUAL
+#include "jsltypetab.h"
 
 #define HASH_TAB_TYPE struct refTab
 #define HASH_ELEM_TYPE S_symbolRefItem
