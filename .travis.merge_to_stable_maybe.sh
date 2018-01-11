@@ -5,7 +5,7 @@ if [[ "$TRAVIS_BRANCH" != "master" || "$TRAVIS_PULL_REQUEST" != "false" ]]; then
   exit 0
 fi
 
-echo "Moving stable branch to current build..."
+echo "Moving stable branch to current master..."
 
 git config --global user.email "builds@travis-ci.com"
 git config --global user.name "Travis CI"
