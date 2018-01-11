@@ -20,6 +20,11 @@ Concrete things todo:
   each header file and try to compile it in isolation? It should
   include whatever other things it needs...)
 
+* Ensure every file only includes what it needs so that dependencies
+  are a small as possible. This is why IWYU exists!! It means "Include
+  What You Use" and is a Clang related project at
+  https://github.com/include-what-you-use/include-what-you-use)
+
 * Start using log.c functions to log rather than "fprintf(dumpOut..."
   and adjust options so that we can better control logging. A note to
   self is that setting up the temporary files are kind of tricky,
