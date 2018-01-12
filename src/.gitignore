@@ -1,5 +1,6 @@
 c-xref
 c-xref.exe
+.c-xrefrc
 *.output
 y.tab.c
 c-xref.bs

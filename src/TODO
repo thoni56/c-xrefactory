@@ -28,8 +28,8 @@ Concrete things todo:
 * Start using log.c functions to log rather than "fprintf(dumpOut..."
   and adjust options so that we can better control logging. A note to
   self is that setting up the temporary files are kind of tricky,
-  partly because of the multi-pass character (that I don't really get
-  at this point)
+  partly because of the multi-pass character of the c-xref (that I
+  don't really get at this point)
 
 * Although generation of typedef's etc. in strTdef et al might be
   questioned we need to handle that for now, but at least let's add

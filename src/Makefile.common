@@ -16,7 +16,7 @@ include Makefile.objs
 
 #########################################################################
 
-all: $(ZLIB) c-xref
+all: $(ZLIB) c-xref .c-xrefrc
 
 ..always..:;
 
@@ -127,3 +127,11 @@ dependencies:;
 
 test:
 	$(MAKE) -C .. test
+
+.c-xrefrc:
+	@echo "Generating local .c-xrefrc"
+	@echo "[$(CURDIR)]"  > .c-xrefrc
+	@echo "  $(CURDIR)" >> .c-xrefrc
+	@echo >> .c-xrefrc
+	@echo "[/tmp/jexercise]" >> .c-xrefrc
+	@echo "  /tmp/jexercise" >> .c-xrefrc
