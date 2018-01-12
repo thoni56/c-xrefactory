@@ -123,6 +123,16 @@ void CONCAT(HASH_FUN_PREFIX,Map2)(
     }
 }
 
+void CONCAT(HASH_FUN_PREFIX,Map3)(
+                                 HASH_TAB_TYPE *t,
+                                 void (*fun)(HASH_ELEM_TYPE *, int)
+                                 ) {
+    int i;
+    for(i=0; i<t->size; i++) {
+        if (t->tab[i]!=NULL) (*fun)(t->tab[i], i);
+    }
+}
+
 void CONCAT(HASH_FUN_PREFIX,Map4)(
                                  HASH_TAB_TYPE *t,
                                  void (*fun)(int, void *, void *),
@@ -135,19 +145,10 @@ void CONCAT(HASH_FUN_PREFIX,Map4)(
     }
 }
 
-void CONCAT(HASH_FUN_PREFIX,Map3)(
-                                 HASH_TAB_TYPE *t,
-                                 void (*fun)(HASH_ELEM_TYPE *, int)
-                                 ) {
-    int i;
-    for(i=0; i<t->size; i++) {
-        if (t->tab[i]!=NULL) (*fun)(t->tab[i], i);
-    }
-}
-
-
 #undef GLUE
 #undef CONCAT
+#undef HASH_TAB_TYPE
+#undef HASH_FUN_PREFIX
 
 /* Local variables: */
 /* Mode: c          */
