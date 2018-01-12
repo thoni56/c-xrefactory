@@ -8,6 +8,7 @@
 #include "semact.h"
 #include "cxref.h"
 #include "enumTxt.h"
+#include "reftab.h"
 
 
 #define EXTRACT_GEN_BUFFER_SIZE 500000

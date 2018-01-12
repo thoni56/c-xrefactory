@@ -10,6 +10,7 @@
 #include "cxref.h"
 #include "cxfile.h"
 #include "enumTxt.h"
+#include "reftab.h"
 
 
 #define HTML_EMPTY_REF_FILE "/XrefEmptyRefs.html"

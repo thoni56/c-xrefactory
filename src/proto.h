@@ -1797,7 +1797,6 @@ typedef struct options {
 #include "symtab.h"
 #include "javafqttab.h"
 #include "jsltypetab.h"
-#include "reftab.h"
 #include "idtab.h"
 #include "editorbuffertab.h"
 

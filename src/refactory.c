@@ -11,6 +11,7 @@
 #include "cxfile.h"
 #include "jsemact.h"
 #include "editor.h"
+#include "reftab.h"
 
 #include "protocol.h"
 

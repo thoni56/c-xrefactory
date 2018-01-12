@@ -8,3 +8,5 @@
 #include "misc.h"
 
 #include "hashlist.tc"
+
+S_refTab s_cxrefTab;

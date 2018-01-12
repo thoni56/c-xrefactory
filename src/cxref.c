@@ -17,7 +17,7 @@
 #include "editor.h"
 #include "main.h"
 #include "enumTxt.h"
-
+#include "reftab.h"
 
 
 #define SORTED_LIST_LESS(tmp,key) (POSITION_LESS((tmp)->p, (key).p))

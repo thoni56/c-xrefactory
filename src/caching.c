@@ -5,7 +5,7 @@
 #include "protocol.h"
 #include "yylex.h"
 #include "editor.h"
-
+#include "reftab.h"
 
 
 int testFileModifTime(int ii) {

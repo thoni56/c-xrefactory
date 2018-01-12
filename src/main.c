@@ -12,6 +12,7 @@
 #include "jslsemact.h"
 #include "editor.h"
 #include "enumTxt.h"
+#include "reftab.h"
 
 #include "cgram.x"
 #include "yaccgram.x"

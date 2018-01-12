@@ -133,8 +133,6 @@ extern S_position s_olcxByPassPos;
 extern S_position s_cxRefPos;
 extern int s_cxRefFlag;
 
-extern S_refTab s_cxrefTab;				/* symbols cross references */
-
 extern FILE *fIn;
 
 extern int s_input_file_number;
