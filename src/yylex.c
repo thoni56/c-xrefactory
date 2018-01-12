@@ -116,14 +116,14 @@ int addFileTabItem(char *name, int *fileNumber) {
     nn = normalizeFileName(name,s_cwd);
     FILLF_fileItem(&ffi,nn, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
                    NULL,NULL,s_noneFileIndex,NULL);
-    if (idTabIsMember(&s_fileTab, &ffi, fileNumber)) return(0);
+    if (fileTabIsMember(&s_fileTab, &ffi, fileNumber)) return(0);
     len = strlen(nn);
     FT_ALLOCC(fname, len+1, char);
     strcpy(fname, nn);
     FT_ALLOC(ffii, S_fileItem);
     FILLF_fileItem(ffii,fname, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
                    NULL,NULL,s_noneFileIndex,NULL);
-    idTabAdd(&s_fileTab, ffii, &ii);
+    fileTabAdd(&s_fileTab, ffii, &ii);
     testFileModifTime(ii); // it was too slow on load ?
     *fileNumber = ii;
     return(1);

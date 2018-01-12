@@ -256,7 +256,7 @@ int javaTypeFileExist(S_idIdentList *name) {
     fname[1] = ZIP_SEPARATOR_CHAR;
     FILLF_fileItem(&dd,fname+1, 0,0,0,0,0,0,0,0,0,0,0,0,0,s_noneFileIndex,
                    NULL,NULL,s_noneFileIndex,NULL);
-    if  (idTabIsMember(&s_fileTab, &dd, &ii) &&
+    if  (fileTabIsMember(&s_fileTab, &dd, &ii) &&
          s_fileTab.tab[ii]->b.sourceFile!=s_noneFileIndex) {
         return(1);
     }

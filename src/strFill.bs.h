@@ -464,17 +464,17 @@
     (STRUCTP)->size = _ARG_0_OF_2 ARGS;\
     (STRUCTP)->tab = _ARG_1_OF_2 ARGS;\
 }
-#define FILL_idTab(STRUCTP, ARG0, ARG1, ARG2) {\
+#define FILL_fileTab(STRUCTP, ARG0, ARG1, ARG2) {\
     (STRUCTP)->size = ARG0;\
     (STRUCTP)->numberOfElements = ARG1;\
     (STRUCTP)->tab = ARG2;\
 }
-#define FILLF_idTab(STRUCTP, ARG0, ARG1, ARG2) {\
+#define FILLF_fileTab(STRUCTP, ARG0, ARG1, ARG2) {\
     (STRUCTP)->size = ARG0;\
     (STRUCTP)->numberOfElements = ARG1;\
     (STRUCTP)->tab = ARG2;\
 }
-#define _FILLF_idTab(STRUCTP, ARGS) {\
+#define _FILLF_fileTab(STRUCTP, ARGS) {\
     (STRUCTP)->size = _ARG_0_OF_3 ARGS;\
     (STRUCTP)->numberOfElements = _ARG_1_OF_3 ARGS;\
     (STRUCTP)->tab = _ARG_2_OF_3 ARGS;\

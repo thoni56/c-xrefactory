@@ -1,182 +1,182 @@
 caching.o: caching.c caching.h commons.h globals.h constants.h proto.h \
  stdinc.h head.h strFill.h strFill.g.h listmacr.h memmac.h lexmac.h \
- symtab.h hashlist.th javafqttab.h jsltypetab.h reftab.h idtab.h \
- hashtab.th editorbuffertab.h protocol.h protocol.tc yylex.h editor.h
+ symtab.h hashlist.th javafqttab.h jsltypetab.h filetab.h hashtab.th \
+ editorbuffertab.h protocol.h protocol.tc yylex.h editor.h reftab.h
 cct.o: cct.c cct.h proto.h stdinc.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h \
  commons.h globals.h
 cexp.o: cexp.c cexp.x yylex.h proto.h stdinc.h head.h constants.h \
  strFill.h strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h \
  semact.h cgram.h
 cfread.o: cfread.c cfread.h proto.h stdinc.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h \
  commons.h globals.h lex.h yylex.h cct.h misc.h cxref.h cxfile.h \
  jsemact.h
 cgram.o: cgram.c cgram.x proto.h stdinc.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h \
  globals.h misc.h html.h yylex.h commons.h caching.h complete.h extract.h \
  semact.h cxref.h
 classh.o: classh.c classh.h proto.h stdinc.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
- misc.h commons.h globals.h html.h bitmaps.h cxref.h enumTxt.h \
- enumTxt.g.h protocol.h protocol.tc
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h misc.h \
+ commons.h globals.h html.h bitmaps.h cxref.h enumTxt.h enumTxt.g.h \
+ protocol.h protocol.tc
 commons.o: commons.c commons.h globals.h constants.h proto.h stdinc.h \
  head.h strFill.h strFill.g.h listmacr.h memmac.h lexmac.h symtab.h \
- hashlist.th javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th \
+ hashlist.th javafqttab.h jsltypetab.h filetab.h hashtab.th \
  editorbuffertab.h misc.h yylex.h main.h protocol.h protocol.tc
 complete.o: complete.c complete.h proto.h stdinc.h head.h constants.h \
  strFill.h strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h \
  commons.h globals.h misc.h html.h unigram.h cgram.h protocol.h \
  protocol.tc semact.h jsemact.h cxref.h cxfile.h cfread.h editor.h \
- enumTxt.h enumTxt.g.h
+ enumTxt.h enumTxt.g.h reftab.h
 cxfile.o: cxfile.c cxfile.h proto.h stdinc.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h \
  commons.h globals.h lex.h misc.h yylex.h cxref.h html.h protocol.h \
- protocol.tc options.h editor.h enumTxt.h enumTxt.g.h
+ protocol.tc options.h editor.h enumTxt.h enumTxt.g.h reftab.h
 cxref.o: cxref.c cxref.h proto.h stdinc.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h \
  commons.h lex.h yylex.h classh.h globals.h caching.h html.h misc.h \
  complete.h protocol.h protocol.tc cxfile.h refactory.h options.h \
- jsemact.h editor.h main.h enumTxt.h enumTxt.g.h olcxtab.h
+ jsemact.h editor.h main.h enumTxt.h enumTxt.g.h reftab.h olcxtab.h
 editor.o: editor.c editor.h proto.h stdinc.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h \
  commons.h globals.h yylex.h misc.h cxref.h protocol.h protocol.tc
 editorbuffertab.o: editorbuffertab.c editorbuffertab.h proto.h stdinc.h \
  head.h constants.h strFill.h strFill.g.h listmacr.h memmac.h lexmac.h \
- symtab.h hashlist.th javafqttab.h jsltypetab.h reftab.h idtab.h \
- hashtab.th misc.h hashlist.tc
+ symtab.h hashlist.th javafqttab.h jsltypetab.h filetab.h hashtab.th \
+ misc.h hashlist.tc
 enumTxt.bs.o: enumTxt.bs.c stdinc.h proto.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h
 enumTxt.o: enumTxt.c enumTxt.g.c stdinc.h proto.h head.h constants.h \
  strFill.h strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h
 enumTxt.g.o: enumTxt.g.c stdinc.h proto.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h
 extract.o: extract.c extract.h proto.h stdinc.h head.h constants.h \
  strFill.h strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
- misc.h commons.h globals.h unigram.h cgram.h protocol.h protocol.tc \
- semact.h cxref.h enumTxt.h enumTxt.g.h
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h misc.h \
+ commons.h globals.h unigram.h cgram.h protocol.h protocol.tc semact.h \
+ cxref.h enumTxt.h enumTxt.g.h reftab.h
+filetab.o: filetab.c filetab.h proto.h stdinc.h head.h constants.h \
+ strFill.h strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
+ javafqttab.h jsltypetab.h editorbuffertab.h hashtab.th commons.h misc.h \
+ hashtab.tc
 generate.o: generate.c generate.h proto.h stdinc.h head.h constants.h \
  strFill.h strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h \
  commons.h globals.h
 globals.o: globals.c globals.h constants.h proto.h stdinc.h head.h \
  strFill.h strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h \
  unigram.h cgram.h protocol.h protocol.tc
 html.o: html.c html.h proto.h stdinc.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h \
  commons.h classh.h misc.h globals.h caching.h protocol.h protocol.tc \
- yylex.h cxref.h cxfile.h enumTxt.h enumTxt.g.h
-idtab.o: idtab.c idtab.h proto.h stdinc.h head.h constants.h strFill.h \
- strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h editorbuffertab.h hashtab.th \
- commons.h misc.h hashtab.tc
+ yylex.h cxref.h cxfile.h enumTxt.h enumTxt.g.h reftab.h
 init.o: init.c init.h commons.h globals.h constants.h proto.h stdinc.h \
  head.h strFill.h strFill.g.h listmacr.h memmac.h lexmac.h symtab.h \
- hashlist.th javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th \
+ hashlist.th javafqttab.h jsltypetab.h filetab.h hashtab.th \
  editorbuffertab.h unigram.h cgram.h protocol.h protocol.tc misc.h \
  enumTxt.h enumTxt.g.h
 javafqttab.o: javafqttab.c javafqttab.h proto.h stdinc.h head.h \
  constants.h strFill.h strFill.g.h listmacr.h memmac.h lexmac.h symtab.h \
- hashlist.th jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
- misc.h hashlist.tc
+ hashlist.th jsltypetab.h filetab.h hashtab.th editorbuffertab.h misc.h \
+ hashlist.tc
 javagram.o: javagram.c javagram.x proto.h stdinc.h head.h constants.h \
  strFill.h strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h \
  globals.h jslsemact.h jsemact.h editor.h cxref.h yylex.h misc.h \
  commons.h html.h complete.h protocol.h protocol.tc extract.h semact.h \
  recyacc.h
 jsemact.o: jsemact.c jsemact.h proto.h stdinc.h head.h constants.h \
  strFill.h strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h \
  commons.h globals.h cct.h misc.h extract.h yylex.h semact.h cxref.h \
  cfread.h html.h jslsemact.h editor.h enumTxt.h enumTxt.g.h javagram.x \
  unigram.h cgram.h recyacc.h protocol.h protocol.tc
 jslsemact.o: jslsemact.c jslsemact.h proto.h stdinc.h head.h constants.h \
  strFill.h strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
- misc.h commons.h globals.h unigram.h cgram.h cct.h semact.h cxref.h \
- cfread.h jsemact.h
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h misc.h \
+ commons.h globals.h unigram.h cgram.h cct.h semact.h cxref.h cfread.h \
+ jsemact.h
 jsltypetab.o: jsltypetab.c jsltypetab.h proto.h stdinc.h head.h \
  constants.h strFill.h strFill.g.h listmacr.h memmac.h lexmac.h symtab.h \
- hashlist.th javafqttab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
- misc.h hashlist.tc
+ hashlist.th javafqttab.h filetab.h hashtab.th editorbuffertab.h misc.h \
+ hashlist.tc
 lex.o: lex.c lex.h proto.h stdinc.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h \
  globals.h commons.h unigram.h cgram.h caching.h protocol.h protocol.tc \
  cxref.h jslsemact.h main.h
 log.o: log.c log.h
 main.o: main.c main.h proto.h stdinc.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h \
  commons.h globals.h generate.h refactory.h misc.h complete.h html.h \
- options.h init.h jslsemact.h editor.h enumTxt.h enumTxt.g.h cgram.x \
- yaccgram.x javagram.x unigram.h cgram.h cxref.h cxfile.h caching.h \
- recyacc.h yylex.h lex.h log.h protocol.h protocol.tc
+ options.h init.h jslsemact.h editor.h enumTxt.h enumTxt.g.h reftab.h \
+ cgram.x yaccgram.x javagram.x unigram.h cgram.h cxref.h cxfile.h \
+ caching.h recyacc.h yylex.h lex.h log.h protocol.h protocol.tc
 matab.o: matab.c matab.h proto.h stdinc.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
- misc.h commons.h hashtab.tc
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h misc.h \
+ commons.h hashtab.tc
 misc.o: misc.c misc.h proto.h stdinc.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h \
  globals.h jsemact.h commons.h bitmaps.h caching.h protocol.h protocol.tc \
- yylex.h cxfile.h cxref.h cfread.h editor.h enumTxt.h enumTxt.g.h
+ yylex.h cxfile.h cxref.h cfread.h editor.h enumTxt.h enumTxt.g.h \
+ reftab.h
 olcxtab.o: olcxtab.c olcxtab.h proto.h stdinc.h head.h constants.h \
  strFill.h strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
- misc.h hashlist.tc
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h misc.h \
+ hashlist.tc
 options.o: options.c options.h stdinc.h commons.h globals.h constants.h \
  proto.h head.h strFill.h strFill.g.h listmacr.h memmac.h lexmac.h \
- symtab.h hashlist.th javafqttab.h jsltypetab.h reftab.h idtab.h \
- hashtab.th editorbuffertab.h misc.h cxref.h html.h cfread.h editor.h \
- main.h protocol.h protocol.tc
+ symtab.h hashlist.th javafqttab.h jsltypetab.h filetab.h hashtab.th \
+ editorbuffertab.h misc.h cxref.h html.h cfread.h editor.h main.h \
+ protocol.h protocol.tc
 protocol.o: protocol.c protocol.h protocol.tc
 refactory.o: refactory.c refactory.h proto.h stdinc.h head.h constants.h \
  strFill.h strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
- main.h html.h misc.h complete.h commons.h globals.h yylex.h cxref.h \
- cxfile.h jsemact.h editor.h protocol.h protocol.tc
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h main.h \
+ html.h misc.h complete.h commons.h globals.h yylex.h cxref.h cxfile.h \
+ jsemact.h editor.h reftab.h protocol.h protocol.tc
 reftab.o: reftab.c reftab.h proto.h stdinc.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h idtab.h hashtab.th editorbuffertab.h misc.h \
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h misc.h \
  hashlist.tc
 semact.o: semact.c semact.h proto.h stdinc.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h \
  commons.h globals.h unigram.h cgram.h misc.h cct.h yylex.h cxref.h \
  jsemact.h jslsemact.h enumTxt.h enumTxt.g.h
 structs.o: structs.c
 symtab.o: symtab.c symtab.h proto.h stdinc.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h javafqttab.h hashlist.th \
- jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h misc.h \
- hashlist.tc
+ jsltypetab.h filetab.h hashtab.th editorbuffertab.h misc.h hashlist.tc
 y.tab.o: y.tab.c yaccgram.x proto.h stdinc.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h \
  globals.h misc.h commons.h complete.h caching.h yylex.h semact.h cxref.h
 yaccgram.o: yaccgram.c yaccgram.x proto.h stdinc.h head.h constants.h \
  strFill.h strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h \
  globals.h misc.h commons.h complete.h caching.h yylex.h semact.h cxref.h
 yylex.o: yylex.c yylex.h proto.h stdinc.h head.h constants.h strFill.h \
  strFill.g.h listmacr.h memmac.h lexmac.h symtab.h hashlist.th \
- javafqttab.h jsltypetab.h reftab.h idtab.h hashtab.th editorbuffertab.h \
+ javafqttab.h jsltypetab.h filetab.h hashtab.th editorbuffertab.h \
  commons.h lex.h globals.h caching.h extract.h misc.h semact.h cxref.h \
- cxfile.h jslsemact.h editor.h cgram.x cexp.x yaccgram.x javagram.x \
- unigram.h cgram.h protocol.h protocol.tc matab.h
+ cxfile.h jslsemact.h editor.h reftab.h cgram.x cexp.x yaccgram.x \
+ javagram.x unigram.h cgram.h protocol.h protocol.tc matab.h

@@ -3121,7 +3121,7 @@ int getFileNumberFromName(char *name) {
     nn = normalizeFileName(name, s_cwd);
     FILLF_fileItem(&dd,nn, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
                    NULL,NULL,s_noneFileIndex,NULL);
-    if (idTabIsMember(&s_fileTab, &dd, &ii)) {
+    if (fileTabIsMember(&s_fileTab, &dd, &ii)) {
         return(ii);
     } else {
         return(s_noneFileIndex);
@@ -3525,7 +3525,7 @@ int getClassNumFromClassLinkName(char *name, int defaultResult) {
     //&fprintf(dumpOut,"looking for class %s\n",cfname);fflush(dumpOut);
     FILLF_fileItem(&ffi,cfname, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,
                    s_noneFileIndex,NULL,NULL,s_noneFileIndex,NULL);
-    if (idTabIsMember(&s_fileTab, &ffi, &ii)) clii = ii;
+    if (fileTabIsMember(&s_fileTab, &ffi, &ii)) clii = ii;
     return(clii);
 }
 

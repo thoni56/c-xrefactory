@@ -1773,7 +1773,7 @@ void htmlGenGlobalReferenceLists(char *cxMemFreeBase) {
         htmlScanCxFileAndGenRefLists(dirname,PRF_FILES,HTML_GXANY,HTML_NO_GEN);
         htmlScanCxFileAndGenRefLists(dirname,PRF_CLASS,
                                      HTML_GXANY, HTML_NO_GEN);
-        idTabMap(&s_fileTab, sortSubClassesList);
+        fileTabMap(&s_fileTab, sortSubClassesList);
         CX_ALLOCC(newFreeBase, 0, char);
         for (i=0; i<s_opt.refnum; i++) {
             recoverMemoriesAfterOverflow(newFreeBase);

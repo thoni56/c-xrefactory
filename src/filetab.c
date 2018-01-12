@@ -1,5 +1,5 @@
-#define _IDTAB_
-#include "idtab.h"
+#define _FILETAB_
+#include "filetab.h"
 
 #include "commons.h"
 #include "misc.h"

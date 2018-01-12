@@ -1987,18 +1987,18 @@ static void initializationsPerInvocation() {
     s_javaObjectSymbol = NULL;
 }
 
-static void fileTabInit() {
+static void initFileTab() {
     int len;
     char *ff;
     struct fileItem *ffii;
-    idTabNAInit( &s_fileTab,MAX_FILES);
+    fileTabNAInit( &s_fileTab,MAX_FILES);
     len = strlen(NON_FILE_NAME);
     FT_ALLOCC(ff, len+1, char);
     strcpy(ff, NON_FILE_NAME);
     FT_ALLOC(ffii, S_fileItem);
     FILLF_fileItem(ffii,ff, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
                    NULL,NULL,s_noneFileIndex, NULL);
-    idTabAdd(&s_fileTab, ffii, &s_noneFileIndex);
+    fileTabAdd(&s_fileTab, ffii, &s_noneFileIndex);
 }
 
 /*///////////////////////// parsing /////////////////////////////////// */
@@ -2418,7 +2418,7 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
     s_opt.includeDirs = NULL;
     SM_INIT(ftMemory);
     FT_ALLOCC(s_fileTab.tab, MAX_FILES, struct fileItem *);
-    fileTabInit();
+    initFileTab();
     FILL_position(&s_noPos, s_noneFileIndex, 0, 0);
     FILL_usageBits(&s_noUsage, UsageNone, 0, 0);
     FILL_reference(&s_noRef, s_noUsage, s_noPos, NULL);
@@ -2455,7 +2455,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     s_fileAbortionEnabled = 0;
 
     // supposing that file table is still here, but reinit it
-    idTabMap3(&s_fileTab, mainReinitFileTabEntry);
+    fileTabMap3(&s_fileTab, mainReinitFileTabEntry);
 
     DM_INIT(cxMemory);
     // the following causes long jump, berk.
@@ -2716,11 +2716,11 @@ static void scheduleModifiedFilesToUpdate() {
     }
     if (statb(filestab, &refStat)) refStat.st_mtime = 0;
     scanReferenceFile(s_opt.cxrefFileName, fnamesuff,"", s_cxScanFileTab);
-    idTabMap2(&s_fileTab, schedulingToUpdate, &refStat);
+    fileTabMap2(&s_fileTab, schedulingToUpdate, &refStat);
     if (s_opt.update==UP_FULL_UPDATE /*& && !LANGUAGE(LAN_JAVA) &*/) {
         makeIncludeClosureOfFilesToUpdate();
     }
-    idTabMap(&s_fileTab, schedulingUpdateToProcess);
+    fileTabMap(&s_fileTab, schedulingUpdateToProcess);
 }
 
 
@@ -3244,9 +3244,9 @@ void mainCallXref(int argc, char **argv) {
             //& if (s_opt.htmlglobalx || s_opt.htmllocalx) htmlGenEmptyRefsFile();
         }
         if (s_opt.taskRegime==RegimeXref) {
-            //&         idTabMap(&s_fileTab, setUpdateMtimesInFileTab);
+            //&         fileTabMap(&s_fileTab, setUpdateMtimesInFileTab);
             if (s_opt.update==0 || s_opt.update==UP_FULL_UPDATE) {
-                idTabMap(&s_fileTab, setFullUpdateMtimesInFileTab);
+                fileTabMap(&s_fileTab, setFullUpdateMtimesInFileTab);
             }
             if (s_opt.xref2) {
                 sprintf(tmpBuff, "Generating '%s'",s_opt.cxrefFileName);

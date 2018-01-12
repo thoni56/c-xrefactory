@@ -664,8 +664,8 @@ static void genPartialFileTabRefFile(   int updateFlag,
     assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
     openInOutReferenceFiles(updateFlag, fn);
     genCxFileHead();
-    idTabMap3(&s_fileTab, mapfun);
-    if (mapfun2!=NULL) idTabMap3(&s_fileTab, mapfun2);
+    fileTabMap3(&s_fileTab, mapfun);
+    if (mapfun2!=NULL) fileTabMap3(&s_fileTab, mapfun2);
     scanCxFile(s_cxFullScanFunTab);
     referenceFileEnd(updateFlag, fn);
 }
@@ -713,11 +713,11 @@ void genReferenceFile(int updateFlag, char *fname) {
     if (s_opt.refnum <= 1) {
         /* single reference file */
         openInOutReferenceFiles(updateFlag, fname);
-        /*&     idTabMap(&s_fileTab, javaInitSubClassInfo);&*/
+        /*&     fileTabMap(&s_fileTab, javaInitSubClassInfo);&*/
         genCxFileHead();
-        idTabMap3(&s_fileTab, genFileIndexItem);
-        idTabMap3(&s_fileTab, genFileSourceIndexItem);
-        idTabMap3(&s_fileTab, genClassHierarchyItems);
+        fileTabMap3(&s_fileTab, genFileIndexItem);
+        fileTabMap3(&s_fileTab, genFileSourceIndexItem);
+        fileTabMap3(&s_fileTab, genClassHierarchyItems);
         scanCxFile(s_cxFullScanFunTab);
         refTabMap(&s_cxrefTab, genRefItem);
         referenceFileEnd(updateFlag, fname);
@@ -927,7 +927,7 @@ static void cxrfFileName(       int size,
     FILLF_fileItem(&tffi, id, 0, 0,0, 0,
                    0,0,0,commandLineFlag,0,0,0,0,0,s_noneFileIndex,
                    NULL,NULL,s_noneFileIndex,NULL);
-    if (! idTabIsMember(&s_fileTab,&tffi,&dii)) {
+    if (! fileTabIsMember(&s_fileTab,&tffi,&dii)) {
         addFileTabItem(id, &dii);
         ffi = s_fileTab.tab[dii];
         ffi->b.commandLineEntered = commandLineFlag;

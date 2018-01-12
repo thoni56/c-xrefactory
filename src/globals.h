@@ -88,7 +88,7 @@ extern S_topBlock *s_topBlock;
 
 extern S_symTab *s_symTab;
 extern S_javaFqtTab s_javaFqtTab;
-extern S_idTab s_fileTab;
+extern S_fileTab s_fileTab;
 
 extern S_typeModifiers s_defaultIntModifier;
 extern S_symbol s_defaultIntDefinition;
