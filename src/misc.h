@@ -54,7 +54,7 @@ extern void *stackMemoryAlloc(int size);
 extern void *stackMemoryPush(void *p, int size);
 extern int  *stackMemoryPushInt(int x);
 extern char *stackMemoryPushString(char *s);
-extern void stackMemoryPop(void *, int size);
+extern void stackMemoryPop(void *p, int size);
 extern void stackMemoryBlockStart();
 extern void stackMemoryBlockFree();
 extern void stackMemoryDump();
@@ -62,7 +62,7 @@ extern void stackMemoryDump();
 extern void addToTrail (void (*action)(void*),  void *p);
 extern void removeFromTrailUntil(S_freeTrail *untilP);
 
-extern void symDump(S_symbol *);
+extern void symDump(S_symbol *symbol);
 extern void symbolRefItemDump(S_symbolRefItem *ss);
 extern int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos);
 extern void typeSPrint(char *buff,int *size,S_typeModifiers *t,char*name,
