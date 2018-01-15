@@ -2,7 +2,7 @@
 
 vpath %.c ..
 
-CFLAGS = -fPIC
+CFLAGS = -fPIC -g -MMD
 
 all: filetab.so
 	cgreen-runner $^
@@ -12,3 +12,5 @@ filetab.so: filetab_tests.o filetab.o misc_mock.o commons_mock.o
 
 clean:
 	rm *.o *.so
+
+-include *.d
