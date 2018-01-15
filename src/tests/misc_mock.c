@@ -155,7 +155,7 @@ void stackMemoryInit() {
 }
 
 void *stackMemoryAlloc(int size) {
-  return (void *) mock(size);
+  return (void *) malloc(size);
 }
 
 void *stackMemoryPush(void *p, int size) {
