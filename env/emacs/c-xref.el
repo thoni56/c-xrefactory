@@ -7683,59 +7683,88 @@ at the next invocation of any of its functions.
   "Show basic help informations for use of C-xrefactory."
   (interactive "")
   (let ((iw))
-	(setq iw (c-xref-display-and-set-new-dialog-window c-xref-info-buffer nil t))
-	(insert " C-xref Help.
+    (setq iw (c-xref-display-and-set-new-dialog-window c-xref-info-buffer nil t))
+    (insert " C-xref Help.
 
-C-xrefactory is  a refactoring development  environment for C  and Java.
-Its functions  can be  accessed via the  'c-xref' menu.   Optionally the
-most   frequently  used   functions  are   accessible   via  hot-keys.
-Documentation of a particular  function is available through the \"C-h
-k\" key combination (i.e.  the 'control' key together with 'h' key and
-then the  'k' key)  followed by mouse  selection of  the corresponding
-menu item.
+C-xrefactory is a refactoring development environment for C and
+Java.  Its functions can be accessed via the 'c-xref' menu.
+Optionally the most frequently used functions are accessible via
+hot-keys.  Documentation of a particular function is available
+through the \"C-h k\" key combination (i.e.  the 'control' key
+together with 'h' key and then the 'k' key) followed by mouse
+selection of the corresponding menu item.
 
 PROJECTS:
 
-C-xrefactory  is project based:  you will  need to  create or  select an
-'active project' before doing anything else. In particular, you should
-start your work with C-xrefactory  by invoking the 'Project -> New' menu
-item.
+C-xrefactory is project based: you will need to create or select
+an 'active project' before doing anything else. In particular,
+you should start your work with C-xrefactory by invoking the
+'Project -> New' menu item. C-xrefactory will also prompt for
+creating a project if you invoke a C-xrefactory function, such as
+'Push This Symbol and Goto Definition' in a file not belonging to
+a project.
 
-TAG FILE: 
+C-xrefactory will automatically try to identify which project you
+are working with from the location of the current source file.
 
-The main object you will then  work with is the 'tag file'.  This file
-stores all  the necessary information  about your project  sources, in
-particular informations  about all symbols,  their linking properties,
-definition place(s) and  all usages.  The maintenance of  the tag file
-is the responsibility of the user.  An out of date tag file will cause
-mistakes in  source browsing.   However, the code  Completion function
-and Extract  Region refactorings  are independent of  the tag  file as
-they  depend  only on  file-local  information.   Three functions  are
-available  for maintenance  of  tag files,  trading  off time  against
-accuracy.  The  'Full Update' function  should guarantee a  correct of
-tag file; however it is recomended to re-create the tag file from time
-to time in order to remove garbage.
+Projects may use #ifdef:s and to cover code inside all such
+conditional segments C-xrefactory might need to do multiple
+passes over the source with different preprocessor settings. You
+can define them during the creation of the project or modify them
+later. See CUSTOMIZATION below.
 
-BROWSING AND REFACTORINGS:  
+TAG FILE:
 
-In general you have to  position the point on the browsed (refactored)
-symbol before invoking any  reference pushing or refactoring function.
-For parameter manipulations you need to position the point on the name
-of the function/method, not  on the parameter itself.  Before invoking
-the extract region function you will need to select a region with your
-mouse or by specifying begin of the region by C-<space> and the end by
-the point.  C-xrefactory may open  some dialogs in a  horizontally split
-window; in  general in those screens  the middle mouse  button makes a
-choice, and the right button gives a menu of available actions.
+The tag file stores all the necessary information about your
+project sources, in particular informations about all symbols,
+their linking properties, definition place(s) and all usages.
+The maintenance of the tag file is the responsibility of the
+user.  An out of date tag file will cause mistakes in source
+browsing.  However, the 'Complete Identifier' function and the
+'Extract Function/Method/Macro' refactorings are independent of
+the tag file as they depend only on file-local information.
 
-XREF TASK:  
+Three functions are available for maintenance of tag files,
+trading off time against accuracy.  The 'Full Update' function
+should guarantee correct content of the tag file; it is
+recomended to re-create the tag file from time to time in order
+to remove garbage.
+
+BROWSING AND REFACTORINGS:
+
+With browsing we mean jumping between all usages of the same
+symbol. Note that with c-xref semantically different symbols are
+considered different. You can start such browsing either by placing
+the position on a symbol and activating the function
+c-xref-push-and-goto-definition, which is usually bound to function
+key F6, or from the menu 'Browsing with Symbol Stack'. Once you have
+pushed a symbol you can navigate through all detected occurences with
+F3 and F4. F5 will pop that symbol and move back to where the position
+was before the symbol push. This can be done recursively to any depth.
+
+To invoke a refactoring (bound to F11) you have to position the
+point on the browsed (refactored) symbol. For a rename you place the
+cursor on a symbol, press F11 and select 'Rename'.
+
+For parameter manipulations (adding or deleting a parameter) you
+need to position the point on the name of the function/method,
+not on the parameter itself.  Before invoking any of the 'Extract
+Method/Function/Macro' functions you need to select a
+region (with your mouse or by specifying begin of the region by
+C-<space> and the end by the point).
+
+C-xrefactory may open some dialogs in a horizontally split
+window; in general in those screens the middle mouse button makes
+a choice, and the right button gives a menu of available actions.
+
+C-XREF BACKGROUND TASK:
 
 Emacs C-xref  functions cooperate with  an external 'c-xref' task;  if you
 think that the task has entered  an inconsistent state, or if you wish
 to interrupt  creation or update of  the tag file, you  can invoke the
 'Kill c-xref task' function.
 
-CUSTOMIZATION: 
+CUSTOMIZATION:
 
 C-xrefactory can be  customized via the 'C-xref ->  Options' menu item and
 via  the  ~/.c-xrefrc  configuration  file.   The  'Options'  menu  item
