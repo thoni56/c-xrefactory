@@ -9,9 +9,13 @@ Easiest way to install is using `el-get` (see note):
 
     M-x el-get-install<ENTER>c-xrefactory<ENTER>
 
-Place cursor on an identifier and `go to definition`, `rename`, mark
-some code and `extract function` and so on. Your C programming and code
-will never be the same.
+Place cursor on an identifier and `go to definition` (F-6), navigate
+between occurrances (F-3, F-4), refactor (F-11) with `rename`, mark
+some code and `extract function` and so on. Your C programming and
+code will never be the same.
+
+When installed correctly there will be an Emacs menu called `C-xref`
+for easy access to most functions.
 
 ## Help!
 
