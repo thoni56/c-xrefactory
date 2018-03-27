@@ -4115,7 +4115,7 @@ case 141:
                         /* set interface default access flags*/
                         p->b.accessFlags |= (ACC_PUBLIC|ACC_STATIC|ACC_FINAL);
                     }
-                    log_debug("[jsl] adding field %s to %s\n",
+                    log_trace("[jsl] adding field %s to %s\n",
                               p->name,clas->linkName);
                     LIST_APPEND(S_symbol, clas->u.s->records, p);
                     assert(vClass!=s_noneFileIndex);

@@ -22,6 +22,9 @@
 #include "memmac.h"
 #include "protocol.h"
 
+#include "log.h"
+
+
 /* !!!!!!!!!!!!!!!!!!! to caching !!!!!!!!!!!!!!! */
 
 #include "matab.h"
@@ -576,13 +579,11 @@ static void addMacroToTabs(S_symbol *pp, char *name) {
     int ii,mm;
     S_symbol *memb;
     mm = symTabIsMember(s_symTab,pp,&ii,&memb);
-#ifdef DEBUG
     if (mm) {
-        log_debug(": masking macro %s",name);
+        log_trace(": masking macro %s",name);
     } else {
-        log_debug(": adding macro %s",name);
+        log_trace(": adding macro %s",name);
     }
-#endif
     symTabSet(s_symTab,pp,ii);
 }
 

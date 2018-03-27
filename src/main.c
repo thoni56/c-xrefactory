@@ -1585,9 +1585,9 @@ void processOptions(int argc, char **argv, int infilesFlag) {
         if (s_opt.taskRegime==RegimeEditServer &&
             strncmp(argv[i],"-last_message=",14)==0) {
             // because of emacs-debug
-            log_debug("option -lastmessage=...");
+            log_trace("option -lastmessage=...");
         } else {
-            log_debug("option %s", argv[i]);
+            log_trace("option %s", argv[i]);
         }
         processed = 0;
         if (argv[i][0] == '-') {
@@ -3400,8 +3400,8 @@ static void mainGenerate(int argc, char **argv) {
 }
 
 static void initLogging(void) {
-    log_set_quiet(1);
-    log_set_level(LOG_FATAL);
+    /* Always log errors and above to console */
+    log_set_console_level(LOG_ERROR);
 }
 
 static void setupLogging(void) {
@@ -3410,11 +3410,11 @@ static void setupLogging(void) {
        too */
     log_set_fp(dumpOut);
 
-    log_set_quiet(1);
+    /* TODO: Can't specify LOG_TRACE option yet */
     if (s_opt.debug)
-        log_set_level(LOG_DEBUG);
+        log_set_file_level(LOG_DEBUG);
     else
-        log_set_level(LOG_INFO);
+        log_set_file_level(LOG_INFO);
 }
 
 

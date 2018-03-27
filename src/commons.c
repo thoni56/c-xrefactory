@@ -7,6 +7,8 @@
 
 #include "protocol.h"
 
+#include "log.h"
+
 
 FILE *dumpOut=NULL, *errOut=NULL;
 char tmpBuff[TMP_BUFF_SIZE];
@@ -299,6 +301,7 @@ void fatalError(int errCode, char *mess, int exitStatus) {
     if (s_opt.xref2) {
         ppcGenRecord(PPC_FATAL_ERROR, ppcTmpBuff,"\n");
     } else {
+        log_error(ppcTmpBuff);
         fprintf(errOut, "%s", ppcTmpBuff);
         fprintf(errOut,"\t exiting\n");
         fflush(errOut);
