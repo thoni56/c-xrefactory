@@ -115,19 +115,19 @@ S_recFindStr * iniFind(S_symbol *s, S_recFindStr *rfs) {
 #endif
 
 int javaOuterClassAccessible(S_symbol *cl) {
-    DAP(fprintf(dumpOut,"testing class accessibility of %s\n",cl->linkName);fflush(dumpOut);)
-        if (cl->b.accessFlags & ACC_PUBLIC) {
-            DAP(fprintf(dumpOut,"ret 1 access public\n"); fflush(dumpOut);)
-                return(1);
-        }
+    log_trace("testing class accessibility of %s",cl->linkName);
+    if (cl->b.accessFlags & ACC_PUBLIC) {
+        log_trace("ret 1 access public");
+        return 1;
+    }
     /* default access, check whether it is in current package */
     assert(s_javaStat);
     if (javaClassIsInCurrentPackage(cl)) {
-        DAP(fprintf(dumpOut,"ret 1 default protection in current package\n"); fflush(dumpOut);)
-            return(1);
+        log_trace("ret 1 default protection in current package");
+        return 1;
     }
-    DAP(fprintf(dumpOut,"ret 0 on default\n"); fflush(dumpOut);)
-        return(0);
+    log_trace("ret 0 on default");
+    return 0;
 
 }
 
@@ -167,40 +167,38 @@ static int accessibleByDefaultAccessibility(S_recFindStr *rfs, S_symbol *funcl) 
     return(1);
 }
 
-// BERK, ther eis a copy of this function in jslsemact !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// BERK, there is a copy of this function in jslsemact.c (jslRecordAccessible)
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // when modifying this, you will need to change it there too
+// So, why don't we extract this common functionality?!?!?!?
 int javaRecordAccessible(S_recFindStr *rfs, S_symbol *appcl, S_symbol *funcl, S_symbol *rec, unsigned recAccessFlags) {
     S_javaStat          *cs, *lcs;
     int                 len;
     if (funcl == NULL) return(1);  /* argument or local variable */
-    DAP(fprintf(dumpOut,"testing accessibility %s . %s of x%x\n",funcl->linkName,rec->linkName, recAccessFlags);fflush(dumpOut);)
-        //&if ((s_opt.ooChecksBits & OOC_ACCESS_CHECK) == 0) {
-        //&DAP(fprintf(dumpOut,"ret 1, checking dissabled\n"); fflush(dumpOut);)
-        //& return(1);
-        //&}
-        assert(s_javaStat);
+    log_trace("testing accessibility %s . %s of x%x",funcl->linkName,rec->linkName, recAccessFlags);
+    assert(s_javaStat);
     if (recAccessFlags & ACC_PUBLIC) {
-        DAP(fprintf(dumpOut,"ret 1 access public\n"); fflush(dumpOut);)
-            return(1);
+        log_trace("ret 1 access public");
+        return 1;
     }
     if (recAccessFlags & ACC_PROTECTED) {
         // doesn't it refers to application class?
         if (accessibleByDefaultAccessibility(rfs, funcl)) {
-            DAP(fprintf(dumpOut,"ret 1 protected in current package\n"); fflush(dumpOut);)
-                return(1);
+            log_trace("ret 1 protected in current package");
+            return 1;
         }
         for (cs=s_javaStat; cs!=NULL && cs->thisClass!=NULL; cs=cs->next) {
             if (cs->thisClass == funcl) {
-                DAP(fprintf(dumpOut,"ret 1 as it is inside class\n"); fflush(dumpOut);)
-                    return(1);
+                log_trace("ret 1 as it is inside class");
+                return 1;
             }
             if (cctIsMember(&cs->thisClass->u.s->casts, funcl, 1)) {
-                DAP(fprintf(dumpOut,"ret 1 as it is inside subclass\n"); fflush(dumpOut);)
-                    return(1);
+                log_trace("ret 1 as it is inside subclass");
+                return 1;
             }
         }
-        DAP(fprintf(dumpOut,"ret 0 on protected\n"); fflush(dumpOut);)
-            return(0);
+        log_trace("ret 0 on protected");
+        return 0;
     }
     if (recAccessFlags & ACC_PRIVATE) {
         // finally it seems that following is wrong and that private field
@@ -219,21 +217,21 @@ int javaRecordAccessible(S_recFindStr *rfs, S_symbol *appcl, S_symbol *funcl, S_
             //&fprintf(dumpOut,"comparing %s and %s\n", lcs->thisClass->linkName, funcl->linkName);
             len = strlen(lcs->thisClass->linkName);
             if (strncmp(lcs->thisClass->linkName, funcl->linkName, len)==0) {
-                DAP(fprintf(dumpOut,"ret 1 private inside the class\n"); fflush(dumpOut);)
-                    return(1);
+                log_trace("ret 1 private inside the class");
+                return 1;
             }
         }
-        DAP(fprintf(dumpOut,"ret 0 on private\n"); fflush(dumpOut);)
-            return(0);
+        log_trace("ret 0 on private");
+        return 0;
     }
     /* default access */
     // it seems that here you should check rather if application class
     if (accessibleByDefaultAccessibility(rfs, funcl)) {
-        DAP(fprintf(dumpOut,"ret 1 default protection in current package\n"); fflush(dumpOut);)
-            return(1);
+        log_trace("ret 1 default protection in current package");
+        return 1;
     }
-    DAP(fprintf(dumpOut,"ret 0 on default\n"); fflush(dumpOut);)
-        return(0);
+    log_trace("ret 0 on default");
+    return 0;
 }
 
 int javaRecordVisibleAndAccessible(S_recFindStr *rfs, S_symbol *applCl, S_symbol *funCl, S_symbol *r) {

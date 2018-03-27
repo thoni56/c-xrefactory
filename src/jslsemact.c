@@ -352,46 +352,40 @@ static void jslAddNestedClass(S_symbol *inner, S_symbol *outer, int memb,
     }
 }
 
-#if 0 //ZERO //DEBUG_ACCESS
-#define DAP(xxx) xxx
-#else
-#define DAP(xxx)
-#endif
-
-// BERK, ther eis a copy of this function in jsemact !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+// BERK, there is a copy of this function in semact.c (javaRecordAccessible)
+// !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // when modifying this, you will need to change it there too
+// So, why don't we extract this common functionality?!?!?!?
 int jslRecordAccessible(S_symbol *cl, S_symbol *rec, unsigned recAccessFlags) {
     S_jslClassStat      *cs, *lcs;
     S_symStructSpecific *nest;
     int                 i,in,len;
-    if (cl == NULL) return(1);  /* argument or local variable */
-    DAP(fprintf(dumpOut,"testing accessibility %s . %s of 0%o\n",cl->linkName,rec->linkName, recAccessFlags);fflush(dumpOut);)
-        //&if ((s_opt.ooChecksBits & OOC_ACCESS_CHECK) == 0) {
-        //&DAP(fprintf(dumpOut,"ret 1, checking dissabled\n"); fflush(dumpOut);)
-        //& return(1);
-        //&}
-        assert(s_jsl && s_jsl->classStat);
+    if (cl == NULL)
+        return 1;  /* argument or local variable */
+
+    log_trace("testing accessibility %s . %s of 0%o",cl->linkName, rec->linkName, recAccessFlags);
+    assert(s_jsl && s_jsl->classStat);
     if (recAccessFlags & ACC_PUBLIC) {
-        DAP(fprintf(dumpOut,"ret 1 access public\n"); fflush(dumpOut);)
-            return(1);
+        log_trace("ret 1 access public");
+        return 1;
     }
     if (recAccessFlags & ACC_PROTECTED) {
         if (javaClassIsInCurrentPackage(cl)) {
-            DAP(fprintf(dumpOut,"ret 1 protected in current package\n"); fflush(dumpOut);)
-                return(1);
+            log_trace("ret 1 protected in current package");
+            return 1;
         }
         for (cs=s_jsl->classStat; cs!=NULL && cs->thisClass!=NULL; cs=cs->next) {
             if (cs->thisClass == cl) {
-                DAP(fprintf(dumpOut,"ret 1 as it is inside class\n"); fflush(dumpOut);)
-                    return(1);
+                log_trace("ret 1 as it is inside class");
+                return 1;
             }
             if (cctIsMember(&cs->thisClass->u.s->casts, cl, 1)) {
-                DAP(fprintf(dumpOut,"ret 1 as it is inside subclass\n"); fflush(dumpOut);)
-                    return(1);
+                log_trace("ret 1 as it is inside subclass");
+                return 1;
             }
         }
-        DAP(fprintf(dumpOut,"ret 0 on protected\n"); fflush(dumpOut);)
-            return(0);
+        log_trace("ret 0 on protected");
+        return 0;
     }
     if (recAccessFlags & ACC_PRIVATE) {
         // finally it seems that following is wrong and that private field
@@ -408,23 +402,23 @@ int jslRecordAccessible(S_symbol *cl, S_symbol *rec, unsigned recAccessFlags) {
             lcs = cs;
         }
         if (lcs!=NULL && lcs->thisClass!=NULL) {
-            //&fprintf(dumpOut,"comparing %s and %s\n", lcs->thisClass->linkName, cl->linkName);
+            log_trace("comparing %s and %s", lcs->thisClass->linkName, cl->linkName);
             len = strlen(lcs->thisClass->linkName);
             if (strncmp(lcs->thisClass->linkName, cl->linkName, len)==0) {
-                DAP(fprintf(dumpOut,"ret 1 private inside the class\n"); fflush(dumpOut);)
-                    return(1);
+                log_trace("ret 1 private inside the class");
+                return 1;
             }
         }
-        DAP(fprintf(dumpOut,"ret 0 on private\n"); fflush(dumpOut);)
-            return(0);
+        log_trace("ret 0 on private");
+        return 0;
     }
     /* default access */
     if (javaClassIsInCurrentPackage(cl)) {
-        DAP(fprintf(dumpOut,"ret 1 default protection in current package\n"); fflush(dumpOut);)
-            return(1);
+        log_trace("ret 1 default protection in current package");
+        return 1;
     }
-    DAP(fprintf(dumpOut,"ret 0 on default\n"); fflush(dumpOut);)
-        return(0);
+    log_trace("ret 0 on default");
+    return 0;
 }
 
 
@@ -438,12 +432,12 @@ void jslAddNestedClassesToJslTypeTab( S_symbol *str, int order) {
     assert(ss);
     log_debug("appending %d nested classes of %s", ss->nnested, str->linkName);
     for(i=0; i<ss->nnested; i++) {
-        //&fprintf(dumpOut,"checking %s %s %d %d\n", ss->nest[i].cl->name, ss->nest[i].cl->linkName,ss->nest[i].membFlag, jslRecordAccessible(str, ss->nest[i].cl, ss->nest[i].accFlags));
+        log_trace("checking %s %s %d %d", ss->nest[i].cl->name, ss->nest[i].cl->linkName,ss->nest[i].membFlag, jslRecordAccessible(str, ss->nest[i].cl, ss->nest[i].accFlags));
         if (ss->nest[i].membFlag && jslRecordAccessible(str, ss->nest[i].cl, ss->nest[i].accFlags)) {
             FILL_idIdent(&ocid, str->linkName, NULL, s_noPos, NULL);
             FILL_idIdentList(&oclassid, ocid, str->linkName,
                              TypeStruct, NULL);
-            //&fprintf(dumpOut,"adding %s %s\n", ss->nest[i].cl->name, ss->nest[i].cl->linkName);
+            log_trace("adding %s %s", ss->nest[i].cl->name, ss->nest[i].cl->linkName);
             jslTypeSymbolDefinition(ss->nest[i].cl->name, &oclassid,
                                     TYPE_ADD_YES, order, 0);
         }
