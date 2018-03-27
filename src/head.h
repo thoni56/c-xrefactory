@@ -8,7 +8,6 @@
 #include "listmacr.h"
 #include "memmac.h"
 
-
 /* ************************** VERSION NUMBER ********************* */
 
 // version numbers were moved to 'protocol.tc'
@@ -197,55 +196,6 @@
 #define ED_ALLOC(p,t) ED_ALLOCC(p,1,t)
 #define ED_FREE(p,size) OLCX_FREE(p,size)
 
-/* *********************************************************************** */
-
-#ifdef DEBUG
-#define DPRINTF(Format) {\
-    if (s_opt.debug) {fprintf(dumpOut,Format);fflush(dumpOut);}\
-}
-#define DPRINTF1(Format) {\
-    if (s_opt.debug) {fprintf(dumpOut,Format);fflush(dumpOut);}\
-}
-#define DPRINTF2(Format,Arg1) {\
-    if (s_opt.debug) {fprintf(dumpOut,Format,Arg1);fflush(dumpOut);}\
-}
-#define DPRINTF3(Format,Arg1,Arg2) {\
-    if (s_opt.debug) {fprintf(dumpOut,Format,Arg1,Arg2);fflush(dumpOut);}\
-}
-#define DPRINTF4(Format,Arg1,Arg2,Arg3) {\
-    if (s_opt.debug) {\
-        fprintf(dumpOut,Format,Arg1,Arg2,Arg3);\
-        fflush(dumpOut);\
-    }\
-}
-#define DPRINTF5(Format,Arg1,Arg2,Arg3,Arg4) {\
-    if (s_opt.debug) {\
-        fprintf(dumpOut,Format,Arg1,Arg2,Arg3,Arg4);\
-        fflush(dumpOut);\
-    }\
-}
-#define DPRINTF6(Format,Arg1,Arg2,Arg3,Arg4,Arg5) {\
-    if (s_opt.debug) {\
-        fprintf(dumpOut,Format,Arg1,Arg2,Arg3,Arg4,Arg5);\
-        fflush(dumpOut);\
-    }\
-}
-#define DPRINTF7(Format,Arg1,Arg2,Arg3,Arg4,Arg5,Arg6) {\
-    if (s_opt.debug) {\
-        fprintf(dumpOut,Format,Arg1,Arg2,Arg3,Arg4,Arg5,Arg6);\
-        fflush(dumpOut);\
-    }\
-}
-#else
-#define DPRINTF(Format) {}
-#define DPRINTF1(Format) {}
-#define DPRINTF2(Format,Arg1) {}
-#define DPRINTF3(Format,Arg1,Arg2) {}
-#define DPRINTF4(Format,Arg1,Arg2,Arg3) {}
-#define DPRINTF5(Format,Arg1,Arg2,Arg3,Arg4) {}
-#define DPRINTF6(Format,Arg1,Arg2,Arg3,Arg4,Arg5) {}
-#define DPRINTF7(Format,Arg1,Arg2,Arg3,Arg4,Arg5,Arg6) {}
-#endif
 
 /* ********************************************************************** */
 /*            common integer return values for cplex funs                 */

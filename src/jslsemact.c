@@ -10,12 +10,14 @@
 #include "cfread.h"
 #include "jsemact.h"
 
+#include "log.h"
+
 
 S_jslStat *s_jsl;
 
 
-static void jslFillTypeSymbolItem( S_symbol *sd, S_jslSymbolList *ss ,
-                                   char *name) {
+static void jslFillTypeSymbolItem(S_symbol *sd, S_jslSymbolList *ss ,
+                                  char *name) {
     FILL_symbolBits(&sd->b,0,0, 0,0, 0, TypeStruct, StorageNone,0);
     FILL_symbol(sd,name,name,s_noPos,sd->b,type,NULL,NULL);
     FILL_jslSymbolList(ss, sd, s_noPos, 0, NULL);
@@ -78,7 +80,7 @@ void jslRemoveNestedClass(void  *ddv) {
     int             check;
     dd = (S_jslSymbolList *) ddv;
     //&fprintf(dumpOut, "removing class %s from jsltab\n", dd->d->name);
-    DPRINTF2("removing class %s from jsltab\n", dd->d->name);
+    log_debug("removing class %s from jsltab", dd->d->name);
     assert(s_jsl!=NULL);
     check = jslTypeTabDeleteExact(s_jsl->typeTab, dd);
     assert(check);
@@ -105,17 +107,13 @@ S_symbol *jslTypeSymbolDefinition(char *ttt2, S_idIdentList *packid,
         FILL_jslSymbolList(xss, smemb, *importPos, isSingleImportedFlag, NULL);
         mm = jslTypeTabIsMember(s_jsl->typeTab, xss, &ii, &memb);
         if (order == ORDER_PREPEND) {
-            //&fprintf(ccOut,"[jsl] prepending class %s (%s) to jsltab\n", smemb->name, smemb->linkName);
-            DPRINTF2("[jsl] prepending class %s to jsltab\n", smemb->name);
+            log_debug("[jsl] prepending class %s to jsltab", smemb->name);
             jslTypeTabSet(s_jsl->typeTab, xss, ii);
             addToTrail(jslRemoveNestedClass, xss);
         } else {
-            //&fprintf(ccOut,"[jsl] appending class %s (%s) to jsltab\n", smemb->name, smemb->linkName);
-            //&         if (mm==0) {        // useless optimisation (makes probles moreover)
-            DPRINTF2("[jsl] appending class %s to jsltab\n", smemb->name);
+            log_debug("[jsl] appending class %s to jsltab", smemb->name);
             jslTypeTabSetLast(s_jsl->typeTab, xss, ii);
             addToTrail(jslRemoveNestedClass, xss);
-            //&         }
         }
     }
     return(smemb);
@@ -243,8 +241,8 @@ S_symbol *jslMethodHeader(unsigned modif, S_symbol *type,
         addMethodCxReferences(modif, decl, s_jsl->classStat->thisClass);
     }
     if (newFun) {
-        DPRINTF5("[jsl] adding method %s==%s to %s (at %lx)\n", decl->name,
-                 decl->linkName, s_jsl->classStat->thisClass->linkName, (unsigned long)decl);
+        log_debug("[jsl] adding method %s==%s to %s (at %lx)", decl->name,
+                  decl->linkName, s_jsl->classStat->thisClass->linkName, (unsigned long)decl);
         LIST_APPEND(S_symbol, s_jsl->classStat->thisClass->u.s->records, decl);
     }
     decl->u.type->u.m.sig = strchr(decl->linkName, '(');
@@ -321,7 +319,7 @@ void jslAddToLoadWaitList( S_symbol *clas ) {
 void jslAddSuperClassOrInterface(S_symbol *memb,S_symbol *supp){
     int origin;
     S_symbolList *ll;
-    DPRINTF3("loading super/interf %s of %s\n",supp->linkName,memb->linkName);
+    log_debug("loading super/interf %s of %s",supp->linkName,memb->linkName);
     javaLoadClassSymbolsFromFile(supp);
     origin = memb->u.s->classFile;
     addSuperClassOrInterface( memb, supp, origin);
@@ -340,7 +338,7 @@ static void jslAddNestedClass(S_symbol *inner, S_symbol *outer, int memb,
     assert(outer && outer->b.symType==TypeStruct && outer->u.s);
     n = outer->u.s->nnested;
     //&sprintf(tmpBuff,"adding nested %s of %s(at %d)[%d] --> %s to %s\n", inner->name, outer->name, outer, n, inner->linkName, outer->linkName);ppcGenTmpBuff();
-    DPRINTF7("adding nested %s of %s(at %lx)[%d] --> %s to %s\n", inner->name, outer->name, (unsigned long)outer, n, inner->linkName, outer->linkName);
+    log_debug("adding nested %s of %s(at %lx)[%d] --> %s to %s", inner->name, outer->name, (unsigned long)outer, n, inner->linkName, outer->linkName);
     if (n == 0) {
         CF_ALLOCC(outer->u.s->nest, MAX_INNERS_CLASSES, S_nestedSpec);
     }
@@ -438,8 +436,7 @@ void jslAddNestedClassesToJslTypeTab( S_symbol *str, int order) {
     assert(str && str->b.symType==TypeStruct);
     ss = str->u.s;
     assert(ss);
-    //&fprintf(dumpOut,"appending %d nested classes of %s to jsltab\n", ss->nnested, str->linkName);
-    DPRINTF3("appending %d nested classes of %s\n", ss->nnested, str->linkName);
+    log_debug("appending %d nested classes of %s", ss->nnested, str->linkName);
     for(i=0; i<ss->nnested; i++) {
         //&fprintf(dumpOut,"checking %s %s %d %d\n", ss->nest[i].cl->name, ss->nest[i].cl->linkName,ss->nest[i].membFlag, jslRecordAccessible(str, ss->nest[i].cl, ss->nest[i].accFlags));
         if (ss->nest[i].membFlag && jslRecordAccessible(str, ss->nest[i].cl, ss->nest[i].accFlags)) {

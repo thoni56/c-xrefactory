@@ -50,6 +50,7 @@
 #include "extract.h"
 #include "semact.h"
 
+#include "log.h"
 
 #define YYDEBUG 0
 #define yyerror styyerror
@@ -1580,8 +1581,8 @@ FieldDeclaration:
                         // set interface default access flags
                         p->b.accessFlags |= (ACC_PUBLIC|ACC_STATIC|ACC_FINAL);
                     }
-                    DPRINTF3("[jsl] adding field %s to %s\n",
-                            p->name,clas->linkName);
+                    log_debug("[jsl] adding field %s to %s\n",
+                              p->name,clas->linkName);
                     LIST_APPEND(S_symbol, clas->u.s->records, p);
                     assert(vClass!=s_noneFileIndex);
                     if (p->pos.file!=s_olOriginalFileNumber && s_opt.cxrefs==OLO_PUSH) {

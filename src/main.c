@@ -495,7 +495,7 @@ static int processDOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
 #   ifdef DEBUG
-    else if (strcmp(argv[i],"-debug")==0)       s_opt.debug = 1;
+    else if (strcmp(argv[i],"-debug")==0) s_opt.debug = 1;
 #   endif
     else if (strcmp(argv[i],"-d")==0)   {
         int ln;
@@ -1585,9 +1585,9 @@ void processOptions(int argc, char **argv, int infilesFlag) {
         if (s_opt.taskRegime==RegimeEditServer &&
             strncmp(argv[i],"-last_message=",14)==0) {
             // because of emacs-debug
-            DPRINTF1("option -lastmessage=...\n");
+            log_debug("option -lastmessage=...");
         } else {
-            DPRINTF2("option %s\n",argv[i]);
+            log_debug("option %s", argv[i]);
         }
         processed = 0;
         if (argv[i][0] == '-') {
@@ -1778,7 +1778,7 @@ void searchDefaultOptionsFile(char *file, char *ttt, char *sect) {
     if (ff!=NULL) {
         findFlag = readOptionFromFile(ff,&nargc,&nargv,MEM_NO_ALLOC,file,s_opt.project,sect);
         if (findFlag) {
-            DPRINTF3("options file '%s' section '%s'\n",ttt,sect);
+            log_debug("options file '%s' section '%s'", ttt, sect);
         }
         fclose(ff);
     }
@@ -1792,7 +1792,7 @@ void searchDefaultOptionsFile(char *file, char *ttt, char *sect) {
         sprintf(ttt+ii,"Xref.opt");
         /*fprintf(dumpOut,"try to open %s\n",ttt);*/
         if (stat(ttt,&fst)==0 && (fst.st_mode & S_IFMT) != S_IFDIR) {
-            DPRINTF2("options file '%s'\n",ttt);
+            log_debug("options file '%s'", ttt);
             findFlag = 1;
         } else {
             ttt[ii-1]=0;
@@ -2339,9 +2339,8 @@ static void mainFileProcessingInitialisations(
         if (s_opt.xref2) {
             ppcGenRecord(PPC_INFORMATION, getRealFileNameStatic(s_input_file_name), "\n");
         } else {
-            fprintf(dumpOut,"Processing'%s'\n", getRealFileNameStatic(s_input_file_name));
+            log_info("Processing '%s'", getRealFileNameStatic(s_input_file_name));
         }
-        fflush(dumpOut);
     }
  fini:
     initializationsPerInvocation();
@@ -2413,7 +2412,7 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
 
     // following will be displayed only at third pass or so, because
     // s_opt.debug is set only after passing through option processing
-    DPRINTF("Initialisations.\n");
+    log_debug("Initialisations.");
     memset(&s_count, 0, sizeof(S_counters));
     s_opt.includeDirs = NULL;
     SM_INIT(ftMemory);
@@ -2574,7 +2573,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     //& getJavaClassAndSourcePath();
     initCaching();
 
-    DPRINTF("Leaving all task initialisations.\n");
+    log_debug("Leaving all task initialisations.");
 }
 
 static void mainReferencesOverflowed(char *cxMemFreeBase, int mess) {
@@ -2764,6 +2763,11 @@ void mainOpenOutputFile(char *ofile) {
     }
     errOut = ccOut;
     dumpOut = ccOut;
+
+    /* This is called from various places multiple times, don't know
+       why yet, but we need to set log output here, since it's used as
+       output too */
+    log_set_fp(dumpOut);
 }
 
 static int scheduleFileUsingTheMacro() {
@@ -3074,7 +3078,6 @@ static void mainXrefProcessInputFile( int argc, char **argv, int *_inputIn, int 
     s_maximalCppPass = 1;
     for(s_currCppPass=1; s_currCppPass<=s_maximalCppPass; s_currCppPass++) {
         if (! firstPassing) copyOptions(&s_opt, &s_cachedOptions);
-        log_info("Preprocessing pass #%d", s_currCppPass);
         mainFileProcessingInitialisations(&firstPassing,
                                           argc, argv, 0, NULL, &inputIn,
                                           &s_language);
@@ -3252,8 +3255,7 @@ void mainCallXref(int argc, char **argv) {
                 sprintf(tmpBuff, "Generating '%s'",s_opt.cxrefFileName);
                 ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
             } else {
-                fprintf(dumpOut, "Generating '%s'\n",s_opt.cxrefFileName);
-                fflush(dumpOut);
+                log_info("Generating '%s'",s_opt.cxrefFileName);
             }
             mainGenerateReferenceFile();
         }
@@ -3397,9 +3399,22 @@ static void mainGenerate(int argc, char **argv) {
     symTabMap(s_symTab, generate);
 }
 
+static void initLogging(void) {
+    log_set_quiet(1);
+    log_set_level(LOG_FATAL);
+}
 
 static void setupLogging(void) {
+    /* Note that dumpOut may change since 'mainOpenOutputFile()' is
+       called from several places, so we'll do a 'log_set_fp()' there
+       too */
+    log_set_fp(dumpOut);
+
     log_set_quiet(1);
+    if (s_opt.debug)
+        log_set_level(LOG_DEBUG);
+    else
+        log_set_level(LOG_INFO);
 }
 
 
@@ -3408,14 +3423,22 @@ static void setupLogging(void) {
 /* *********************************************************************** */
 
 int main(int argc, char **argv) {
-    setupLogging();
+    /* Options are read very late down below, so we need some sensible defaults until then */
+    initLogging();
+
+    /* There is something interesting going on here, some mysterious
+       CX_ALLOCC always makes one longjmp back to here before we can
+       start processing for real ... */
     setjmp(s_memoryResize);
     if (s_cxResizingBlocked) {
         fatalError(ERR_ST,"cx_memory resizing required, see the TROUBLES section of README file", XREF_EXIT_ERR);
     }
+
     s_currCppPass = ANY_CPP_PASS;
     mainTotalTaskEntryInitialisations(argc, argv);
     mainTaskEntryInitialisations(argc, argv);
+
+    setupLogging();
     //&editorTest();
     if (s_opt.refactoringRegime == RegimeRefactory) mainRefactory(argc, argv);
     if (s_opt.taskRegime == RegimeXref) mainXref(argc, argv);

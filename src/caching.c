@@ -7,6 +7,8 @@
 #include "editor.h"
 #include "reftab.h"
 
+#include "log.h"
+
 
 int testFileModifTime(int ii) {
     struct stat fst;
@@ -302,7 +304,7 @@ void recoverFromCache() {
     assert(s_cache.cpi >= 1);
     s_cache.activeCache = 0;
     /*  s_cache.recoveringFromCache = 1;*/
-    DPRINTF1(": reading from cache\n");
+    log_debug(": reading from cache");
     readedUntil = s_cache.cp[0].lbcc;
     for(i=1; i<s_cache.cpi; i++) {
         /*fprintf(dumpOut,"try to recover cache point %d\n",i);fflush(dumpOut);*/
@@ -311,7 +313,7 @@ void recoverFromCache() {
     }
     assert(i > 1);
     /* now, recover state from the cache point 'i-1' */
-    DPRINTF2("recovering cache point %d\n",i-1);
+    log_debug("recovering cache point %d",i-1);
     recoverCachePoint(i-1, readedUntil, 1);
 }
 
@@ -366,7 +368,7 @@ void poseCachePoint(int inputCaching) {
     if (s_cache.activeCache == 0) return;
     if (tmpWorkMemoryi != 0) return; /* something in non cached tmp memory */
     pp = &s_cache.cp[s_cache.cpi];
-    DPRINTF2("posing cache point %d \n",s_cache.cpi);
+    log_debug("posing cache point %d ",s_cache.cpi);
     //&fprintf(dumpOut,"posing cache point %d\n",s_cache.cpi);
     FILL_cachePoint(pp, s_topBlock, *s_topBlock,
                     ppmMemoryi, cxMemory->i, mbMemoryi,

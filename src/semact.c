@@ -11,6 +11,8 @@
 #include "jslsemact.h"
 #include "enumTxt.h"
 
+#include "log.h"
+
 
 int displayingErrorMessages() {
     // no error messages for file preloaded for symbols
@@ -48,7 +50,7 @@ void deleteSymDef(void *p) {
     S_symbol        *pp;
 
     pp = (S_symbol *) p;
-    DPRINTF3("deleting %s %s\n", pp->name, pp->linkName);
+    log_debug("deleting %s %s", pp->name, pp->linkName);
     if (symTabDelete(s_javaStat->locals,pp)) return;
     if (symTabDelete(s_symTab,pp)==0) {
         assert(s_opt.taskRegime);
@@ -72,7 +74,7 @@ void addSymbol(S_symbol *pp, S_symTab *tab) {
         one. All this story is about storing information in trail. It should
         containt, both table and pointer !!!!
     */
-    DPRINTF4("adding symbol %s: %s %s\n",pp->name, typesName[pp->b.symType], storagesName[pp->b.storage]);
+    log_debug("adding symbol %s: %s %s",pp->name, typesName[pp->b.symType], storagesName[pp->b.storage]);
     assert(pp->b.npointers==0);
     AddSymbolNoTrail(pp,tab);
     addToTrail(deleteSymDef, pp  /* AND ALSO!!! , tab */ );

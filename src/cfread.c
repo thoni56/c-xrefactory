@@ -10,6 +10,8 @@
 #include "cxfile.h"
 #include "jsemact.h"
 
+#include "log.h"
+
 
 /* *********************** Read JAVA class file ************************* */
 
@@ -465,7 +467,7 @@ int zipIndexArchive(char *name) {
  forend:;
     if (archi<MAX_JAVA_ZIP_ARCHIVES && s_zipArchivTab[archi].fn[0] == 0) {
         // new file into the table
-        DPRINTF2("adding %s into index \n",name);
+        log_debug("adding %s into index ",name);
         if (stat(name ,&fst)!=0) {
             assert(s_opt.taskRegime);
             if (s_opt.taskRegime!=RegimeEditServer) {
@@ -1057,7 +1059,7 @@ void addSuperClassOrInterface( S_symbol *memb, S_symbol *supp, int origin ) {
     //
     for(ss=memb->u.s->super; ss!=NULL && ss->d!=supp; ss=ss->next) ;
     if (ss!=NULL && ss->d==supp) return; // avoid multiple occurences
-    DPRINTF3(" adding supperclass %s to %s\n", supp->linkName,memb->linkName);
+    log_debug(" adding supperclass %s to %s", supp->linkName,memb->linkName);
     if (cctIsMember(&supp->u.s->casts, memb, 1) || memb==supp) {
         sprintf(tmpBuff,"a cycle in super classes of %s detected",
                 memb->linkName);
@@ -1141,8 +1143,7 @@ void javaReadClassFile(char *name, S_symbol *memb, int loadSuper) {
     //&fprintf(dumpOut,"ftitem==%s\n", s_fileTab.tab[fileInd]->name);
     pushNewInclude( ff, NULL, s_fileTab.tab[fileInd]->name, "");
 
-    DPRINTF2("\nreading file %s\n",name); fflush(dumpOut);
-
+    log_debug("reading file %s",name);
 
     inBuf = &cFile.lb.cb;
     ccc = cFile.lb.cb.cc; ffin = cFile.lb.cb.fin;
@@ -1277,7 +1278,7 @@ void javaReadClassFile(char *name, S_symbol *memb, int loadSuper) {
  emergency:
     memb->u.s->nnested = 0;
  fini:
-    DPRINTF2("closing file %s\n",name);
+    log_debug("closing file %s", name);
     //&{fprintf(dumpOut,": closing file %s\n",name);fflush(dumpOut);fprintf(dumpOut,": ppmmem == %d/%d\n",ppmMemoryi,SIZE_ppmMemory);fflush(dumpOut);}
     popInclude();
 }

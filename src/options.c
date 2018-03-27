@@ -11,6 +11,8 @@
 
 #include "protocol.h"
 
+#include "log.h"
+
 
 /* memory where on-line given options are stored */
 #define SIZE_optMemory SIZE_opiMemory
@@ -668,9 +670,9 @@ static void processClassPathString( char *cp) {
         nlen = strlen(np); sfp = np+nlen-4;
         if (nlen>=4 && (strcmp(sfp,".zip")==0 || strcmp(sfp,".jar")==0)){
             // probably zip archiv
-            DPRINTF2("Indexing '%s'\n",np);
+            log_debug("Indexing '%s'",np);
             zipIndexArchive(np);
-            DPRINTF1("Done.\n");
+            log_debug("Done.");
         } else {
             // just path
             PP_ALLOCC(nn, strlen(np)+1, char);

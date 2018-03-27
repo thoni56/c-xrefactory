@@ -97,8 +97,7 @@ static void dpnewline(int n) {
     int i;
     if (s_opt.debug) {
         for(i=1; i<=n; i++) {
-            fprintf(dumpOut,"\n%s:%d ", cFile.fileName, cFile.lineNumber+i);
-            fflush(dumpOut);
+            log_trace("%s:%d", cFile.fileName, cFile.lineNumber+i);
         }
     }
 }
@@ -579,9 +578,9 @@ static void addMacroToTabs(S_symbol *pp, char *name) {
     mm = symTabIsMember(s_symTab,pp,&ii,&memb);
 #ifdef DEBUG
     if (mm) {
-        DPRINTF2(": masking macro %s\n",name);
+        log_debug(": masking macro %s",name);
     } else {
-        DPRINTF2(": adding macro %s\n",name);
+        log_debug(": adding macro %s",name);
     }
 #endif
     symTabSet(s_symTab,pp,ii);
@@ -825,7 +824,7 @@ static void processUnDefine() {
     PassLex(cInput.cc,lex,l,v,h,pos, len,1);
     testCxrefCompletionId(&lex,cc,&pos);
     if (IS_IDENTIFIER_LEXEM(lex)) {
-        DPRINTF2(": undef macro %s\n",cc);
+        log_debug(": undef macro %s",cc);
         FILL_symbolBits(&dd.b,0,0,0,0,0,TypeMacro,StorageNone,0);
         FILL_symbol(&dd,cc,cc,pos,dd.b,mbody,NULL,NULL);
         assert(s_opt.taskRegime);
@@ -895,18 +894,18 @@ static int cppDeleteUntilEndElse(int untilEnd) {
         } else if (lex == CPP_ELIF) {
             genCppIfElseReference(0, &pos, UsageUsed);
             if (deep == 1 && !untilEnd) {
-                DPRINTF1("#elif ");
+                log_debug("#elif ");
                 return(UNTIL_ELIF);
             }
         } else if (lex == CPP_ELSE) {
             genCppIfElseReference(0, &pos, UsageUsed);
             if (deep == 1 && !untilEnd) {
-                DPRINTF1("#else\n");
+                log_debug("#else");
                 return(UNTIL_ELSE);
             }
         }
     }
-    DPRINTF1("#endif\n");
+    log_debug("#endif");
     return(UNTIL_ENDIF);
 endOfMacArg:	assert(0);
 endOfFile:;
@@ -950,18 +949,18 @@ static void processIfdef(int isIfdef) {
             addCxReference(memb,&pos,UsageUsed,s_noneFileIndex,s_noneFileIndex);
         }
         if (isIfdef) {
-            DPRINTF1("#ifdef (true)\n");
+            log_debug("#ifdef (true)");
             deleteSrc = 0;
         } else {
-            DPRINTF1("#ifndef (false)\n");
+            log_debug("#ifndef (false)");
             deleteSrc = 1;
         }
     } else {
         if (isIfdef) {
-            DPRINTF1("#ifdef (false)\n");
+            log_debug("#ifdef (false)");
             deleteSrc = 1;
         } else {
-            DPRINTF1("#ifndef (true)\n");
+            log_debug("#ifndef (true)");
             deleteSrc = 0;
         }
     }
@@ -998,7 +997,7 @@ int cexpyylex() {
         if (! IS_IDENTIFIER_LEXEM(lex)) return(0);
         FILL_symbolBits(&dd.b,0,0,0,0,0,TypeMacro,StorageNone,0);
         FILL_symbol(&dd, cc,cc,s_noPos,dd.b,mbody,NULL,NULL);
-        DPRINTF2("(%s) ", dd.name);
+        log_debug("(%s)", dd.name);
         mm = symTabIsMember(s_symTab,&dd,&ii,&memb);
         if (mm && memb->u.mbody == NULL) mm = 0;   // undefined macro
         assert(s_opt.taskRegime);
@@ -1027,7 +1026,7 @@ endOfFile:;
 static void processIf() {
     int res=1,lex;
     s_ifEvaluation = 1;
-    DPRINTF1(": #if ");
+    log_debug(": #if");
     res = cexpyyparse();
     do lex = yylex(); while (lex != '\n');
     s_ifEvaluation = 0;
@@ -1109,7 +1108,7 @@ static int processCppConstruct(int lex) {
         processIf();
         break;
     case CPP_ELIF:
-        DPRINTF1("#elif ");
+        log_debug("#elif");
         if (cFile.ifDeep) {
             genCppIfElseReference(0, &pos, UsageUsed);
             cFile.ifDeep --;
@@ -1119,7 +1118,7 @@ static int processCppConstruct(int lex) {
         }
         break;
     case CPP_ELSE:
-        DPRINTF1("#else\n");
+        log_debug("#else");
         if (cFile.ifDeep) {
             genCppIfElseReference(0, &pos, UsageUsed);
             cFile.ifDeep --;
@@ -1129,7 +1128,7 @@ static int processCppConstruct(int lex) {
         }
         break;
     case CPP_ENDIF:
-        DPRINTF1("#endif\n");
+        log_debug("#endif");
         if (cFile.ifDeep) {
             cFile.ifDeep --;
             genCppIfElseReference(-1, &pos, UsageUsed);
@@ -1138,7 +1137,7 @@ static int processCppConstruct(int lex) {
         }
         break;
     case CPP_PRAGMA:
-        DPRINTF1("#pragma\n");
+        log_debug("#pragma");
         AddHtmlCppReference(pos);
         processPragma();
         break;
@@ -2029,10 +2028,7 @@ int yylex() {
     goto endOfFile;
 
  finish:
-//&	printf("!%s ", yytext); fflush(stdout);
-    DPRINTF2("%s ", yytext);
-//& fprintf(dumpOut, "!%s(%d)\n", yytext, s_cache.lbcc); fflush(stdout);
-//&	DPRINTF3("!%s(%d) ",yytext, cxMemory->i);
+    log_trace("!%s(%d) ",yytext, cxMemory->i);
     s_lastReturnedLexem = lex;
     return(lex);
 

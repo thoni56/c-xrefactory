@@ -19,6 +19,7 @@
 #include "editor.h"
 #include "enumTxt.h"
 
+#include "log.h"
 
 static int s_ppcIndentOffset = 0;
 
@@ -1779,7 +1780,7 @@ int optionsOverflowHandler(int n) {
 int cxMemoryOverflowHandler(int n) {
     int ofaktor,faktor,oldsize, newsize;
     S_memory *oldcxMemory;
-    DPRINTF("Reallocating cxMemory.\n");
+    log_debug("Reallocating cxMemory.");
     if (cxMemory!=NULL) {
         oldsize = cxMemory->size;
     } else {

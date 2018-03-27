@@ -21,6 +21,9 @@
 
 #include "protocol.h"
 
+#include "log.h"
+
+
 #define IsJavaReferenceType(m) (m==TypeStruct || m==TypeArray)
 
 static int javaNotFqtUsageCorrection(S_symbol *sym, int usage);
@@ -717,8 +720,7 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
     static int              nestDeep = 0;
     nestDeep ++;
 
-//&fprintf(dumpOut,"\n[jsl] FIRST PASS through %s level %d\n", fname, nestDeep);
-    DPRINTF3("\n[jsl] FIRST PASS through %s level %d\n", fname, nestDeep);
+    log_debug("[jsl] FIRST PASS through %s level %d", fname, nestDeep);
     ff = NULL;
     //&bb = editorGetOpenedAndLoadedBuffer(fname);
     bb = editorFindFile(fname);
@@ -737,9 +739,8 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
     s_jsl->pass = 1;
     javayyparse();
     popInclude();      // this will close the file
-    DPRINTF3("\n[jsl] CLOSE file %s level %d\n", fname, nestDeep);
-//&fprintf(dumpOut,"\n[jsl] SECOND PASS through %s level %d\n", fname, nestDeep);
-    DPRINTF3("\n[jsl] SECOND PASS through %s level %d\n", fname, nestDeep);
+    log_debug("[jsl] CLOSE file %s level %d", fname, nestDeep);
+    log_debug("[jsl] SECOND PASS through %s level %d", fname, nestDeep);
     ff = NULL;
     //&bb = editorGetOpenedAndLoadedBuffer(fname);
     bb = editorFindFile(fname);
@@ -755,8 +756,7 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
     s_jsl->pass = 2;
     javayyparse();
     popInclude();      // this will close the file
-//&fprintf(dumpOut,"\n[jsl] CLOSE file %s level %d\n", fname, nestDeep);
-    DPRINTF3("\n[jsl] CLOSE file %s level %d\n", fname, nestDeep);
+    log_debug("[jsl] CLOSE file %s level %d", fname, nestDeep);
     for(ll=s_jsl->waitList; ll!=NULL; ll=ll->next) {
         javaJslLoadSuperClasses(ll->d, cfilenum);
     }
@@ -1913,7 +1913,7 @@ void javaAddMapedTypeName(
     ttt2[len2] = 0;
     FILLF_idIdentList(&dd2, ttt2,NULL,-1,0,0,NULL, ttt2,TypeStruct,packid);
     memb = javaTypeSymbolDefinition(&dd2,ACC_DEFAULT, TYPE_ADD_YES);
-    DPRINTF3(":import type %s == %s\n", memb->name, memb->linkName);
+    log_debug(":import type %s == %s", memb->name, memb->linkName);
 }
 
 S_typeModifiers *javaClassNameType(S_idIdentList *typeName) {
