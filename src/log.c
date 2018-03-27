@@ -29,11 +29,11 @@
 #include "log.h"
 
 static struct {
-  void *udata;
-  log_LockFn lock;
-  FILE *fp;
-  int level;
-  int quiet;
+    void *udata;
+    log_LockFn lock;
+    FILE *fp;
+    int console_level;          /* Level to print to console/stderr */
+    int file_level;             /* Level to print to file */
 } L;
 
 
@@ -41,6 +41,7 @@ static const char *level_names[] = {
   "TRACE", "DEBUG", "INFO", "WARN", "ERROR", "FATAL"
 };
 
+#define LOG_USE_COLOR
 #ifdef LOG_USE_COLOR
 static const char *level_colors[] = {
   "\x1b[94m", "\x1b[36m", "\x1b[32m", "\x1b[33m", "\x1b[31m", "\x1b[35m"
@@ -77,18 +78,18 @@ void log_set_fp(FILE *fp) {
 }
 
 
-void log_set_level(int level) {
-  L.level = level;
+void log_set_file_level(int level) {
+  L.file_level = level;
 }
 
 
-void log_set_quiet(int enable) {
-  L.quiet = enable ? 1 : 0;
+void log_set_console_level(int level) {
+  L.console_level = level;
 }
 
 
 void log_log(int level, const char *file, int line, const char *fmt, ...) {
-  if (level < L.level) {
+  if (level < L.file_level && level < L.console_level) {
     return;
   }
 
@@ -100,15 +101,14 @@ void log_log(int level, const char *file, int line, const char *fmt, ...) {
   struct tm *lt = localtime(&t);
 
   /* Log to stderr */
-  if (!L.quiet) {
+  if (level >= L.console_level) {
     va_list args;
     char buf[16];
     buf[strftime(buf, sizeof(buf), "%H:%M:%S", lt)] = '\0';
 #ifdef LOG_USE_COLOR
     /* TODO: Only use colors if color capable */
-    fprintf(
-      stderr, "%s %s%-5s\x1b[0m \x1b[90m%s:%d:\x1b[0m ",
-      buf, level_colors[level], level_names[level], file, line);
+    fprintf(stderr, "%s %s%-5s\x1b[0m \x1b[90m%s:%d:\x1b[0m ",
+            buf, level_colors[level], level_names[level], file, line);
 #else
     fprintf(stderr, "%s %-5s %s:%d: ", buf, level_names[level], file, line);
 #endif
@@ -118,8 +118,8 @@ void log_log(int level, const char *file, int line, const char *fmt, ...) {
     fprintf(stderr, "\n");
   }
 
-  /* Log to file */
-  if (L.fp) {
+  /* Log to file, but avoid duplication if fp is stderr or stdout */
+  if (L.fp && L.fp != stderr && L.fp != stdout && level >= L.file_level) {
     va_list args;
     char buf[32];
     buf[strftime(buf, sizeof(buf), "%Y-%m-%d %H:%M:%S", lt)] = '\0';
