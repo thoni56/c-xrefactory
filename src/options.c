@@ -421,7 +421,7 @@ static int getOptionFromFile(FILE *ff, char *tt, int ttsize, int *outI) {
                 warning(ERR_ST, tmpBuff);
             }
         }
-        /* because QNX pathes can start by // */
+        /* because QNX paths can start with // */
         if (i>=2  && tt[0]=='/' && tt[1]=='/') {
             while (c!=EOF && c!='\n') c=getc(ff);
             comment = 1;
@@ -729,7 +729,7 @@ int packageOnCommandLine(char *fn) {
     return(res);
 }
 
-void addSourcePathesCut(void) {
+void addSourcePathsCut(void) {
     javaSetSourcePath(1);
     JavaMapOnPaths(s_javaSourcePaths,{
             addHtmlCutPath(currentPath);

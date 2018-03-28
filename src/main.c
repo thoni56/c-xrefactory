@@ -371,15 +371,15 @@ int addHtmlCutPath(char *ss ) {
         warning(ERR_ST,"slash at the end of -htmlcutpath path, ignoring it");
         return(res);
     }
-    for(i=0; i<s_opt.htmlCut.pathesNum; i++) {
-        // if yet in cutpathes, do nothing
+    for(i=0; i<s_opt.htmlCut.pathsNum; i++) {
+        // if yet in cutpaths, do nothing
         if (strcmp(s_opt.htmlCut.path[i], ss)==0) return(res);
     }
-    createOptionString(&(s_opt.htmlCut.path[s_opt.htmlCut.pathesNum]), ss);
-    ss = s_opt.htmlCut.path[s_opt.htmlCut.pathesNum];
-    s_opt.htmlCut.plen[s_opt.htmlCut.pathesNum] = ln;
-    //&fprintf(dumpOut,"adding cutpath %d %s\n",s_opt.htmlCut.pathesNum,ss);
-    for(i=0; i<s_opt.htmlCut.pathesNum; i++) {
+    createOptionString(&(s_opt.htmlCut.path[s_opt.htmlCut.pathsNum]), ss);
+    ss = s_opt.htmlCut.path[s_opt.htmlCut.pathsNum];
+    s_opt.htmlCut.plen[s_opt.htmlCut.pathsNum] = ln;
+    //&fprintf(dumpOut,"adding cutpath %d %s\n",s_opt.htmlCut.pathsNum,ss);
+    for(i=0; i<s_opt.htmlCut.pathsNum; i++) {
         // a more specialized path after a more general, exchange them
         len = s_opt.htmlCut.plen[i];
         if (fnnCmp(s_opt.htmlCut.path[i], ss, len)==0) {
@@ -388,16 +388,16 @@ int addHtmlCutPath(char *ss ) {
                     s_opt.htmlCut.path[i], ss);
             warning(ERR_ST, tmpBuff);
             res = 1;
-            s_opt.htmlCut.path[s_opt.htmlCut.pathesNum]=s_opt.htmlCut.path[i];
-            s_opt.htmlCut.plen[s_opt.htmlCut.pathesNum]=s_opt.htmlCut.plen[i];
+            s_opt.htmlCut.path[s_opt.htmlCut.pathsNum]=s_opt.htmlCut.path[i];
+            s_opt.htmlCut.plen[s_opt.htmlCut.pathsNum]=s_opt.htmlCut.plen[i];
             s_opt.htmlCut.path[i] = ss;
             s_opt.htmlCut.plen[i] = ln;
         }
     }
-    if (s_opt.htmlCut.pathesNum+2 >= MAX_HTML_CUT_PATHES) {
-        error(ERR_ST,"# of htmlcutpathes overflow over MAX_HTML_CUT_PATHES");
+    if (s_opt.htmlCut.pathsNum+2 >= MAX_HTML_CUT_PATHES) {
+        error(ERR_ST,"# of htmlcutpaths overflow over MAX_HTML_CUT_PATHES");
     } else {
-        s_opt.htmlCut.pathesNum++;
+        s_opt.htmlCut.pathsNum++;
     }
     return(res);
 }
@@ -673,10 +673,10 @@ static int processHOption(int *ii, int argc, char **argv) {
         }
     }
     else if (strcmp(argv[i],"-htmlcutsourcepaths")==0)  {
-        addSourcePathesCut();
+        addSourcePathsCut();
     }
-    else if (strcmp(argv[i],"-htmlcutsourcepathes")==0) {
-        addSourcePathesCut();
+    else if (strcmp(argv[i],"-htmlcutsourcepaths")==0) {
+        addSourcePathsCut();
     }
     else if (strcmp(argv[i],"-htmlcutsuffix")==0)   {
         s_opt.htmlCutSuffix = 1;

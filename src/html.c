@@ -62,7 +62,7 @@ static char *cutHtmlPath(char *path) {
     char *pp,*cutp;
     int i,m,cutpl;
     pp = htmlNormalizedPath(path);
-    m = s_opt.htmlCut.pathesNum;
+    m = s_opt.htmlCut.pathsNum;
     for(i=0; i<m; i++) {
         cutp = s_opt.htmlCut.path[i];
         cutpl = s_opt.htmlCut.plen[i];

@@ -2985,13 +2985,13 @@
     (STRUCTP)->next = _ARG_1_OF_2 ARGS;\
 }
 #define FILL_htmlCutPathesOpts(STRUCTP, ARG0) {\
-    (STRUCTP)->pathesNum = ARG0;\
+    (STRUCTP)->pathsNum = ARG0;\
 }
 #define FILLF_htmlCutPathesOpts(STRUCTP, ARG0) {\
-    (STRUCTP)->pathesNum = ARG0;\
+    (STRUCTP)->pathsNum = ARG0;\
 }
 #define _FILLF_htmlCutPathesOpts(STRUCTP, ARGS) {\
-    (STRUCTP)->pathesNum = _ARG_0_OF_1 ARGS;\
+    (STRUCTP)->pathsNum = _ARG_0_OF_1 ARGS;\
 }
 #define FILL_bb_freeTrail(STRUCTP, ARG0, ARG1, ARG2) {\
     (STRUCTP)->b = ARG0;\
@@ -3625,7 +3625,7 @@
     (STRUCTP)->last_message = ARG144;\
     (STRUCTP)->refnum = ARG145;\
     (STRUCTP)->setGetEnv.num = ARG146;\
-    (STRUCTP)->htmlCut.pathesNum = ARG147;\
+    (STRUCTP)->htmlCut.pathsNum = ARG147;\
     (STRUCTP)->allAllocatedStrings = ARG148;\
     (STRUCTP)->pendingMemory.overflowHandler = ARG149;\
     (STRUCTP)->pendingMemory.i = ARG150;\
@@ -3780,7 +3780,7 @@
     (STRUCTP)->last_message = _ARG_144_OF_153 ARGS;\
     (STRUCTP)->refnum = _ARG_145_OF_153 ARGS;\
     (STRUCTP)->setGetEnv.num = _ARG_146_OF_153 ARGS;\
-    (STRUCTP)->htmlCut.pathesNum = _ARG_147_OF_153 ARGS;\
+    (STRUCTP)->htmlCut.pathsNum = _ARG_147_OF_153 ARGS;\
     (STRUCTP)->allAllocatedStrings = _ARG_148_OF_153 ARGS;\
     (STRUCTP)->pendingMemory.overflowHandler = _ARG_149_OF_153 ARGS;\
     (STRUCTP)->pendingMemory.i = _ARG_150_OF_153 ARGS;\

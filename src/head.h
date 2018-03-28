@@ -375,11 +375,11 @@
     char *currentPath, *jmop_pp, *jmop_ecp;\
     int jmop_i, jmop_ind;\
     /* following was static, but I need to call this recursively */\
-    char sourcepathes[MAX_SOURCE_PATH_SIZE];\
+    char sourcepaths[MAX_SOURCE_PATH_SIZE];\
     assert(thePaths!=NULL);\
     jmop_pp = thePaths;\
-    strcpy(sourcepathes, jmop_pp);\
-    currentPath = sourcepathes;\
+    strcpy(sourcepaths, jmop_pp);\
+    currentPath = sourcepaths;\
     jmop_ecp = currentPath+strlen(currentPath);\
     while (currentPath<jmop_ecp) {\
         for(jmop_ind=0; \

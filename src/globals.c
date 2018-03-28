@@ -459,7 +459,7 @@ S_options s_initOpt = {
 
     // all the rest is initialized to zeros
     {0, },      // get/set end
-    {0, },      // -cutpathes
+    {0, },      // -cutpaths
 
     // penging memory for string values
     NULL,

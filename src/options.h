@@ -3,7 +3,7 @@
 
 #include "stdinc.h"
 
-extern void addSourcePathesCut(void);
+extern void addSourcePathsCut(void);
 extern void getXrefrcFileName( char *ttt );
 extern int processInteractiveFlagOption(char **argv, int i);
 extern char *getJavaHome(void);

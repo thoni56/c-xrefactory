@@ -301,7 +301,7 @@ int javaFindClassFile(char *name, char **resName, struct stat *stt) {
         if (javaFindFile0( s_javaStat->unNamedPackageDir,"/",name, ".class",
                           resName, stt)) return(1);
     }
-    // now other classpathes
+    // now other classpaths
     for (cp=s_javaClassPaths; cp!=NULL; cp=cp->next) {
         if (javaFindFile0( cp->d,"/",name, ".class", resName, stt)) return(1);
     }
@@ -324,11 +324,11 @@ int javaFindSourceFile(char *name, char **resName, struct stat *stt) {
         if (javaFindFile0( s_javaStat->unNamedPackageDir,"/",name, ".java",
                           resName, stt)) return(1);
     }
-    // sourcepathes
+    // sourcepaths
     JavaMapOnPaths(s_javaSourcePaths, {
         if (javaFindFile0(currentPath,"/",name,".java",resName,stt)) return(1);
     });
-    // now other classpathes
+    // now other classpaths
     for (cp=s_javaClassPaths; cp!=NULL; cp=cp->next) {
         if (javaFindFile0( cp->d,"/",name, ".java", resName, stt)) return(1);
     }

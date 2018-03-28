@@ -1605,11 +1605,11 @@ typedef struct bb_typeModifiersListPositionLstPair {
 /* *********************   options  ************************** */
 /* *********************************************************** */
 
-typedef struct htmlCutPathesOpts {
-    int pathesNum;
+typedef struct htmlCutPathsOpts {
+    int pathsNum;
     char *path[MAX_HTML_CUT_PATHES];
     int plen[MAX_HTML_CUT_PATHES];
-} S_htmlCutPathesOpts;
+} S_htmlCutPathsOpts;
 
 typedef struct setGetEnv {
     int num;
@@ -1777,7 +1777,7 @@ typedef struct options {
 
     // all the rest initialized to zeros by default
     struct setGetEnv setGetEnv;
-    struct htmlCutPathesOpts htmlCut;
+    struct htmlCutPathsOpts htmlCut;
 
     // memory for strings
     struct stringAddrList	*allAllocatedStrings;
