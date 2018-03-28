@@ -132,7 +132,7 @@ static void aboutMessage() {
     sprintf(output,"This is C-xrefactory version %s (%s).\n", C_XREF_VERSION_NUMBER, __DATE__);
     sprintf(output+strlen(output),"(c) 1997-2004 by Xref-Tech, http://www.xref-tech.com\n");
     sprintf(output+strlen(output),"Released into GPL 2009 by Marian Vittek (SourceForge)\n");
-    sprintf(output+strlen(output),"Work resurrected and continued by Thomas Nilefalk 2015\n");
+    sprintf(output+strlen(output),"Work resurrected and continued by Thomas Nilefalk 2015-\n");
     sprintf(output+strlen(output),"(http://github.com/thoni56/c-xrefactory)\n");
     if (s_opt.exit) {
         sprintf(output+strlen(output),"Exiting!");
