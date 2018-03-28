@@ -254,8 +254,7 @@ void warning(int errCode, char *mess) {
         if (s_opt.xref2) {
             ppcGenRecord(PPC_WARNING, ppcTmpBuff,"\n");
         } else {
-            fprintf(errOut, "%s", ppcTmpBuff);
-            fflush(errOut);
+            log_warning("%s", ppcTmpBuff);
         }
     }
 }

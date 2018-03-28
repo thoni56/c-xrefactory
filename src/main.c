@@ -3140,8 +3140,7 @@ static void printPrescanningMessage() {
         sprintf(tmpBuff, "Prescanning classes, please wait.");
         ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
     } else {
-        fprintf(dumpOut, "Prescanning classes, please wait.\n");
-        fflush(dumpOut);
+        log_info("Prescanning classes, please wait.");
     }
 }
 
