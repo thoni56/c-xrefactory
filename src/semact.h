@@ -37,7 +37,7 @@ extern S_typeModifiers *appendComposedType(S_typeModifiers **d, unsigned t);
 extern S_typeModifiers *prependComposedType(S_typeModifiers *d, unsigned t);
 extern void completeDeclarator(S_symbol *t, S_symbol *d);
 extern void addFunctionParameterToSymTable(S_symbol *function, S_symbol *p, int i, S_symTab *tab);
-extern S_typeModifiers *crSimpleTypeMofifier (unsigned t);
+extern S_typeModifiers *crSimpleTypeModifier (unsigned t);
 extern S_symbolList *crDefinitionList(S_symbol *d);
 extern S_symbol *crSimpleDefinition(unsigned storage, unsigned t, S_idIdent *id);
 extern int findStrRecord(S_symbol	*s,

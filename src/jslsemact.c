@@ -30,7 +30,7 @@ S_symbol *jslTypeSpecifier2(S_typeModifiers *t) {
     return(r);
 }
 
-S_typeModifiers *jslCrSimpleTypeMofifier(unsigned t) {
+S_typeModifiers *jslCrSimpleTypeModifier(unsigned t) {
     S_typeModifiers *p;
     assert(t>=0 && t<MAX_TYPE);
     if (s_preCrTypesTab[t] == NULL) {
@@ -46,7 +46,7 @@ S_typeModifiers *jslCrSimpleTypeMofifier(unsigned t) {
 
 S_symbol *jslTypeSpecifier1(unsigned t) {
     S_symbol        *r;
-    r = jslTypeSpecifier2(jslCrSimpleTypeMofifier(t));
+    r = jslTypeSpecifier2(jslCrSimpleTypeModifier(t));
     return(r);
 }
 

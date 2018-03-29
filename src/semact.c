@@ -666,7 +666,7 @@ void addFunctionParameterToSymTable(S_symbol *function, S_symbol *p, int i, S_sy
     }
 }
 
-S_typeModifiers *crSimpleTypeMofifier(unsigned t) {
+S_typeModifiers *crSimpleTypeModifier(unsigned t) {
     S_typeModifiers *p;
     assert(t>=0 && t<MAX_TYPE);
     if (s_preCrTypesTab[t] == NULL) {
@@ -721,7 +721,7 @@ static S_typeModifiers *mergeBaseType(S_typeModifiers *t1,S_typeModifiers *t2){
         break;
     default: assert(0); r=0;
     }
-    return(crSimpleTypeMofifier(r));
+    return(crSimpleTypeModifier(r));
 }
 
 static S_typeModifiers * mergeBaseModTypes(S_typeModifiers *t1, S_typeModifiers *t2) {
@@ -752,13 +752,13 @@ S_symbol *typeSpecifier2(S_typeModifiers *t) {
 
 S_symbol *typeSpecifier1(unsigned t) {
     S_symbol        *r;
-    r = typeSpecifier2(crSimpleTypeMofifier(t));
+    r = typeSpecifier2(crSimpleTypeModifier(t));
     return(r);
 }
 
 void declTypeSpecifier1(S_symbol *d, unsigned t) {
     assert(d && d->u.type);
-    d->u.type = mergeBaseModTypes(d->u.type,crSimpleTypeMofifier(t));
+    d->u.type = mergeBaseModTypes(d->u.type,crSimpleTypeModifier(t));
 }
 
 void declTypeSpecifier2(S_symbol *d, S_typeModifiers *t) {

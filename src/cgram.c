@@ -70,7 +70,7 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 }
 
 #define CrTypeModifier(xxx,ttt) {\
-        xxx = crSimpleTypeMofifier(ttt);\
+        xxx = crSimpleTypeModifier(ttt);\
         xxx = StackMemAlloc(S_typeModifiers);\
         FILLF_typeModifiers(xxx, ttt,f,( NULL,NULL) ,NULL,NULL);\
 }
