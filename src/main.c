@@ -1787,7 +1787,7 @@ void searchDefaultOptionsFile(char *file, char *ttt, char *sect) {
         if (ii == 0) break;
         assert(ii+15<MAX_FILE_NAME_SIZE);
         sprintf(ttt+ii,"Xref.opt");
-        /*fprintf(dumpOut,"try to open %s\n",ttt);*/
+        log_debug("trying to open %s",ttt);
         if (stat(ttt,&fst)==0 && (fst.st_mode & S_IFMT) != S_IFDIR) {
             log_debug("options file '%s'", ttt);
             findFlag = 1;
