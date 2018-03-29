@@ -2,16 +2,16 @@
 
 ;; Copyright (C) 1997-2004 Marian Vittek, Xref-Tech
 
-;; This  file  is  part  of  C-xrefactory  software;  it  implements  an
-;; interface  between  xref  task   and  (X)Emacs  editors.   You  can
-;; distribute it  under the  terms of the  GNU General  Public License
+;; This file is part of C-xrefactory software; it implements an
+;; interface between xref task and (X)Emacs editors.  You can
+;; distribute it under the terms of the GNU General Public License
 ;; version 2 as published by the Free Software Foundation.  You should
-;; have received a  copy of the GNU General  Public License along with
-;; this program; if not, write  to the Free Software Foundation, Inc.,
-;; 59  Temple Place  - Suite  330,  Boston, MA  02111-1307, USA.   The
-;; content of  this file is  copyrighted by Xref-Tech. This  file does
-;; not contain any code  written by independent developers.  Xref-Tech
-;; reserves  all rights  to make  any  future changes  in this  file's
+;; have received a copy of the GNU General Public License along with
+;; this program; if not, write to the Free Software Foundation, Inc.,
+;; 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  The
+;; content of this file is copyrighted by Xref-Tech. This file does
+;; not contain any code written by independent developers.  Xref-Tech
+;; reserves all rights to make any future changes in this file's
 ;; license conditions.
 
 (provide 'c-xref)
@@ -1148,12 +1148,12 @@ all modified files into the version control system.
         (require 'vc-hooks)
         (if (eq (vc-backend (buffer-file-name)) 'CVS)
             (if (not (c-xref-yes-or-no-window
-"[Warning]  Renaming of  classes  and packages  under  CVS requires  a
-successful  commit   after  the  renaming.   Otherwise,   it  will  be
-impossible  to undo  changes made  in  the file  system.  In  general,
-commits can cause troubles and it may be better to perform refactoring
-without  version  control (doing  CVS  operations  manually after  the
-renaming).
+"[Warning] Renaming of classes and packages under CVS requires a
+successful commit after the renaming.  Otherwise, it will be
+impossible to undo changes made in the file system.  In general,
+commits can cause troubles and it may be better to perform
+refactoring without version control (doing CVS operations
+manually after the renaming).
 
 Do you really wish to continue this refactoring under CVS ?"
                  t nil))
@@ -1171,9 +1171,10 @@ Do you really wish to continue this refactoring under CVS ?"
               (progn
                 (setq res t)
                 (if (not (c-xref-yes-or-no-window (format
-"[Warning] Undoing under RCS  will probably not work correctly because
-check-outs clear  undo informations.  You should use  RCS snapshots to
-memorize and undo changes with this version control system.
+"[Warning] Undoing under RCS will probably not work correctly
+because check-outs clear undo informations.  You should use RCS
+snapshots to memorize and undo changes with this version control
+system.
 
 Do you really wish to undo %s?" message)
                  t nil))
@@ -4583,10 +4584,10 @@ corresponding to this project name.
 (defun c-xref-project-set-active ()
 "Set  active  project.
 
-This function  is meningfull  only if your  '.c-xrefrc' file  contains a
-section defining options for your  project. After setting a project to
-be active  all C-xrefactory functions will proceed  according to options
-corresponding to this project name.
+This function is meningfull only if your '.c-xrefrc' file
+contains a section defining options for your project. After
+setting a project to be active all C-xrefactory functions will
+proceed according to options corresponding to this project name.
 "
   (interactive "")
   (c-xref-entry-point-make-initialisations-no-project-required)
@@ -4678,8 +4679,9 @@ corresponding to this project name.
 (defun c-xref-project-delete ()
 "Delete a project.
 
-This function asks you to select  the project you wish to delete. Then
-the part of .c-xrefrc file describing this project will be deleted.
+This function asks you to select the project you wish to
+delete. Then the part of .c-xrefrc file describing this project
+will be deleted.
 "
   (interactive "")
   (c-xref-entry-point-make-initialisations-no-project-required)
@@ -4996,17 +4998,18 @@ the part of .c-xrefrc file describing this project will be deleted.
 (defun c-xref-project-new ()
 "Create new project in  the .c-xrefrc C-xrefactory option file.
 
-This function  will ask  a few questions  about your project  and then
-create a  project description in  the .c-xrefrc configuration  file.  It
-adds  some common options  for further  manual editing.  This function
-creates  a simple  description which  can cover  most projects.  It is
-mostly useful for C-xrefactory  beginners.  Advanced users will probably
-prefer  to create  and edit  their  .c-xrefrc file  manually.  See  also
-'c-xrefrc' and  'c-xref' manual pages for  more info on the  format of the
-.c-xrefrc file and available options.
+This function will ask a few questions about your project and
+then create a project description in the .c-xrefrc configuration
+file.  It adds some common options for further manual editing.
+This function creates a simple description which can cover most
+projects.  It is mostly useful for C-xrefactory beginners.
+Advanced users will probably prefer to create and edit their
+.c-xrefrc file manually.  See also 'c-xrefrc' and 'c-xref' manual
+pages for more info on the format of the .c-xrefrc file and
+available options.
 
-To delete  a project, just edit  the .c-xrefrc file and  delete the part
-belonging to this project.
+To delete a project, just edit the .c-xrefrc file and delete the
+part belonging to this project.
 "
   (interactive "")
   (let ((pname) (checked) (tname) (breakcheck) (planguage) (pcomments)
@@ -5318,10 +5321,11 @@ section applies to the currently edited file.
 (defun c-xref-project-edit-options ()
 "Edit manually .c-xrefrc file.
 
-This  function just  loads the  .c-xrefrc file  and goes  to  the active
-project section.  You  need to edit this text  file manually. For more
-info about  the .c-xrefrc  file format, read  'c-xrefrc' manual  page. For
-more info about available options, read the 'c-xref' manual page.
+This function just loads the .c-xrefrc file and goes to the
+active project section.  You need to edit this text file
+manually. For more info about the .c-xrefrc file format, read
+'c-xrefrc' manual page. For more info about available options,
+read the 'c-xref' manual page.
 "
   (interactive "")
   (c-xref-entry-point-make-initialisations)
@@ -5430,13 +5434,13 @@ This  is  whichever  of  \"Compile file\",  \"Compile  Directory\"  or
 (defun c-xref-ide-compile-file ()
 "Compile file.
 
-The compile  command must  be specified in  your .c-xrefrc file  via the
-'-set compilefile <command>' option.  If the <command> string contains
-the %s  character sequence,  it will  be replaced by  the name  of the
-currently edited  file. Read the 'c-xref'  man page for  more info about
-the -set option.  This function  actually just calls the Emacs compile
-function with  the appropriate  command string. You  need to  have the
-'compile' package installed.
+The compile command must be specified in your .c-xrefrc file via
+the '-set compilefile <command>' option.  If the <command> string
+contains the %s character sequence, it will be replaced by the
+name of the currently edited file. Read the 'c-xref' man page for
+more info about the -set option.  This function actually just
+calls the Emacs compile function with the appropriate command
+string. You need to have the 'compile' package installed.
 "
   (interactive "")
   (c-xref-compile-function 'compilefile)
@@ -5445,13 +5449,13 @@ function with  the appropriate  command string. You  need to  have the
 (defun c-xref-ide-compile-dir ()
 "Compile  directory.
 
-The compile  command must  be specified in  your .c-xrefrc file  via the
-'-set compiledir  <command>' option. If the  <command> string contains
-the  %s  character  sequence,  it  will be  replaced  by  the  current
-directory name.  Read the 'c-xref' man page for more info about the -set
-option.  This function actually  just calls the Emacs compile function
-with the  appropriate command string.  You need to have  the 'compile'
-package installed.
+The compile command must be specified in your .c-xrefrc file via
+the '-set compiledir <command>' option. If the <command> string
+contains the %s character sequence, it will be replaced by the
+current directory name.  Read the 'c-xref' man page for more info
+about the -set option.  This function actually just calls the
+Emacs compile function with the appropriate command string.  You
+need to have the 'compile' package installed.
 "
   (interactive "")
   (c-xref-compile-function 'compiledir)
@@ -5460,8 +5464,8 @@ package installed.
 (defun c-xref-ide-compile-project ()
 "Compile  project.
 
-The compile  command must  be specified in  your .c-xrefrc file  via the
-'-set  compileproject  <command>'  option.    You  need  to  have  the
+The compile command must be specified in your .c-xrefrc file via
+the '-set compileproject <command>' option.  You need to have the
 'compile' package installed.
 "
   (interactive "")
@@ -5632,10 +5636,11 @@ string taken  from .c-xrefrc configuration  file.  You need to  have the
 (defun c-xref-ide-run-this ()
 "Run 'runthis' command.
 
-Run the command  specified by '-set runthis <command>'  option in your
-.c-xrefrc file.  If '%s' occurs in  <command> it will be replaced by the
-name of the  currently edited class.  It also sets  this command to be
-executed by the default run function 'c-xref-ide-run'.
+Run the command specified by '-set runthis <command>' option in
+your .c-xrefrc file.  If '%s' occurs in <command> it will be
+replaced by the name of the currently edited class.  It also sets
+this command to be executed by the default run function
+'c-xref-ide-run'.
 "
   (interactive "")
   (c-xref-entry-point-make-initialisations)
@@ -5645,9 +5650,9 @@ executed by the default run function 'c-xref-ide-run'.
 (defun c-xref-ide-run1 ()
 "Run 'run1' command.
 
-Run  the command  specified by  '-set run1  <command>' option  in your
-.c-xrefrc file.  It also sets this command to be executed by the default
-run function 'c-xref-ide-run'.
+Run the command specified by '-set run1 <command>' option in your
+.c-xrefrc file.  It also sets this command to be executed by the
+default run function 'c-xref-ide-run'.
 "
   (interactive "")
   (c-xref-entry-point-make-initialisations)
@@ -5658,9 +5663,9 @@ run function 'c-xref-ide-run'.
 (defun c-xref-ide-run2 ()
 "Run 'run2' command.
 
-Run  the command  specified by  '-set run2  <command>' option  in your
-.c-xrefrc file.  It also sets this command to be executed by the default
-run function 'c-xref-ide-run'.
+Run the command specified by '-set run2 <command>' option in your
+.c-xrefrc file.  It also sets this command to be executed by the
+default run function 'c-xref-ide-run'.
 "
   (interactive "")
   (c-xref-entry-point-make-initialisations)
@@ -5671,9 +5676,9 @@ run function 'c-xref-ide-run'.
 (defun c-xref-ide-run3 ()
 "Run 'run3' command.
 
-Run  the command  specified by  '-set run3  <command>' option  in your
-.c-xrefrc file.  It also sets this command to be executed by the default
-run function 'c-xref-ide-run'.
+Run the command specified by '-set run3 <command>' option in your
+.c-xrefrc file.  It also sets this command to be executed by the
+default run function 'c-xref-ide-run'.
 "
   (interactive "")
   (c-xref-entry-point-make-initialisations)
@@ -5684,9 +5689,9 @@ run function 'c-xref-ide-run'.
 (defun c-xref-ide-run4 ()
 "Run 'run4' command.
 
-Run  the command  specified by  '-set run4  <command>' option  in your
-.c-xrefrc file.  It also sets this command to be executed by the default
-run function 'c-xref-ide-run'.
+Run the command specified by '-set run4 <command>' option in your
+.c-xrefrc file.  It also sets this command to be executed by the
+default run function 'c-xref-ide-run'.
 "
   (interactive "")
   (c-xref-entry-point-make-initialisations)
@@ -5697,9 +5702,9 @@ run function 'c-xref-ide-run'.
 (defun c-xref-ide-run5 ()
 "Run 'run5' command.
 
-Run  the command  specified by  '-set run5  <command>' option  in your
-.c-xrefrc file.  It also sets this command to be executed by the default
-run function 'c-xref-ide-run'.
+Run the command specified by '-set run5 <command>' option in your
+.c-xrefrc file.  It also sets this command to be executed by the
+default run function 'c-xref-ide-run'.
 "
   (interactive "")
   (c-xref-entry-point-make-initialisations)
@@ -5709,8 +5714,9 @@ run function 'c-xref-ide-run'.
 (defun c-xref-ide-compile-run ()
 "Invoke (last)  compile command followed  by (last) run  command.
 
-The run command is invoked only if it is non-empty and the compilation
-is successful.  See also `c-xref-ide-compile' and `c-xref-ide-run'.
+The run command is invoked only if it is non-empty and the
+compilation is successful.  See also `c-xref-ide-compile' and
+`c-xref-ide-run'.
 "
   (interactive "")
   (let ((cproc) (owin) (cwin) (rc) (opc) (sdir) (dispatch-data))
@@ -5952,10 +5958,11 @@ is successful.  See also `c-xref-ide-compile' and `c-xref-ide-run'.
 (defun c-xref-create-refs ()
 "Create tags.
 
-This function  executes 'c-xref -create'.  The effect  of the invocation
-is  that the  C-xrefactory tag  files (used  by the  source  browser and
-refactorer)  are  created.  The  behavior  of  the  'c-xref' command  is
-controlled by options read from the '.c-xrefrc' file.
+This function executes 'c-xref -create'.  The effect of the
+invocation is that the C-xrefactory tag files (used by the source
+browser and refactorer) are created.  The behavior of the
+'c-xref' command is controlled by options read from the
+'.c-xrefrc' file.
 "
   (interactive "")
   (c-xref-entry-point-make-initialisations)
@@ -5966,10 +5973,11 @@ controlled by options read from the '.c-xrefrc' file.
 (defun c-xref-fast-update-refs ()
 "Fast update of tags.
 
-This  function  executes  'c-xref   -fastupdate'.   The  effect  of  the
-invocation is  that C-xrefactory tag  files (used by the  source browser
-and refactorer)  are updated.  The  behavior of the 'c-xref'  command is
-controlled by options read from the '.c-xrefrc' file.
+This function executes 'c-xref -fastupdate'.  The effect of the
+invocation is that C-xrefactory tag files (used by the source
+browser and refactorer) are updated.  The behavior of the
+'c-xref' command is controlled by options read from the
+'.c-xrefrc' file.
 "
   (interactive "")
   (c-xref-entry-point-make-initialisations)
@@ -5979,10 +5987,11 @@ controlled by options read from the '.c-xrefrc' file.
 (defun c-xref-update-refs (log)
 "Full update of tags.
 
-This function  executes 'c-xref -update'.  The effect  of the invocation
-is  that  C-xrefactory  tag  files  (used  by  the  source  browser  and
-refactorer)  are  updated.  The  behavior  of  the  'c-xref' command  is
-controlled by options read from the '.c-xrefrc' file.
+This function executes 'c-xref -update'.  The effect of the
+invocation is that C-xrefactory tag files (used by the source
+browser and refactorer) are updated.  The behavior of the
+'c-xref' command is controlled by options read from the
+'.c-xrefrc' file.
 "
   (interactive "P")
   (c-xref-entry-point-make-initialisations)
@@ -5993,12 +6002,12 @@ controlled by options read from the '.c-xrefrc' file.
 (defun c-xref-gen-html-documentation ()
 "Generate HTML documentation for active project.
 
-This  function  executes 'c-xref  -html'  command.   The  effect of  the
-invocation is that C-xrefactory  generates files containing html form of
-source files.  This function requires  that tag file is created and is
-up to date.  It also requires that options controlling HTML generation
-for  active project  are  configured in  the C-xrefactory  configuration
-file.
+This function executes 'c-xref -html' command.  The effect of the
+invocation is that C-xrefactory generates files containing html
+form of source files.  This function requires that tag file is
+created and is up to date.  It also requires that options
+controlling HTML generation for active project are configured in
+the C-xrefactory configuration file.
 "
   (interactive "")
   (c-xref-entry-point-make-initialisations)
@@ -6499,9 +6508,9 @@ separate window.
 (defun c-xref-push-references ()
 "Push references of a symbol on to the browser stack.
 
-This  function parses the  current buffer,  resolves the  symbol under
-point  and pushes  all its  references  (from active  project) on  the
-browser stack.
+This function parses the current buffer, resolves the symbol
+under point and pushes all its references (from active project)
+on the browser stack.
 "
   (interactive "")
   (let ((oldwins))
@@ -6515,9 +6524,10 @@ browser stack.
 (defun c-xref-push-and-goto-definition ()
 "Push references of a symbol on to the browser stack, goto definition.
 
-This  function parses the  current buffer,  resolves the  symbol under
-point and pushes  all its references (from the  active project) on the
-the browser stack, then goes to the symbol's definition.
+This function parses the current buffer, resolves the symbol
+under point and pushes all its references (from the active
+project) on the the browser stack, then goes to the symbol's
+definition.
 "
   (interactive "")
   (let ((oldwins))
@@ -6559,10 +6569,10 @@ browser stack, and launches the C-xrefactory interactive browser.
 (defun c-xref-push-global-unused-symbols ()
 "Push unused global symbols.
 
-This  function pushes  on to  the  reference stack  all references  to
-global symbols  defined in  the project but  not used. As  symbols are
-unused,  those  references  will  (usually) be  only  definitions  and
-declarations.
+This function pushes on to the reference stack all references to
+global symbols defined in the project but not used. As symbols
+are unused, those references will (usually) be only definitions
+and declarations.
 "
   (interactive "")
   (c-xref-entry-point-make-initialisations)
@@ -6573,10 +6583,10 @@ declarations.
 (defun c-xref-push-this-file-unused-symbols ()
 "Push unused symbols defined in this file.
 
-This function pushes on to  the reference stack all references to file
-local symbols defined in the current file and not used anywhere in the
-project.  As  symbols are unused,  those references will  (usually) be
-only definitions and declarations.
+This function pushes on to the reference stack all references to
+file local symbols defined in the current file and not used
+anywhere in the project.  As symbols are unused, those references
+will (usually) be only definitions and declarations.
 "
   (interactive "")
   (c-xref-entry-point-make-initialisations)
@@ -6586,13 +6596,14 @@ only definitions and declarations.
 (defun c-xref-push-name ()
 "Push references to a given symbol.
 
-This  function asks  for  a symbol  name,  then it  inspects the  tags
-looking for symbols  of that name.  For each such  symbol it loads all
-its references.
+This function asks for a symbol name, then it inspects the tags
+looking for symbols of that name.  For each such symbol it loads
+all its references.
 
-If there  are several symbols of the  same name the user  is asked for
-manual  selection.   The selection  menu  is  the  same as  for  other
-browsing functions, including class hierarchies for inherited symbols.
+If there are several symbols of the same name the user is asked
+for manual selection.  The selection menu is the same as for
+other browsing functions, including class hierarchies for
+inherited symbols.
 "
   (interactive "")
   (c-xref-entry-point-make-initialisations)
@@ -6612,20 +6623,22 @@ browsing functions, including class hierarchies for inherited symbols.
 (defun c-xref-push-and-apply-macro ()
 "Push references, traverse them and apply macro to each one.
 
-This  function parses the  current buffer,  resolves the  symbol under
-point and  pushes all its references  (from the active  project) on to
-the browser  stack. Then it  traverses all references starting  at the
-last, checks whether the reference is still pointing to the symbol and
-invokes a user defined macro on each reference.
+This function parses the current buffer, resolves the symbol
+under point and pushes all its references (from the active
+project) on to the browser stack. Then it traverses all
+references starting at the last, checks whether the reference is
+still pointing to the symbol and invokes a user defined macro on
+each reference.
 
-For example if you define an Emacs macro that deletes the old name and
-inserts  a  new  name,  then  this function  will  rename  all  symbol
-occurences. Unlike a renaming refactoring there are no safety checks.
+For example if you define an Emacs macro that deletes the old
+name and inserts a new name, then this function will rename all
+symbol occurences. Unlike a renaming refactoring there are no
+safety checks.
 
-NOTE: Be careful when using this  function. Be sure that your macro is
-not destructive.  Also,  even though it is not  a refactoring, changes
-made by this  function can be undone with  the 'undo last refactoring'
-function.
+NOTE: Be careful when using this function. Be sure that your
+macro is not destructive.  Also, even though it is not a
+refactoring, changes made by this function can be undone with the
+'undo last refactoring' function.
 "
   (interactive "")
   (let ((oldwins))
@@ -6681,11 +6694,11 @@ function.
 (defun c-xref-alternative-previous-reference ()
 "Move to the previous reference, error or refactoring error.
 
-Move  to  the previous  reference  of the  symbol  under  point. If  a
-compilation  buffer is  displayed in  some  window, then  move to  the
-previous error instead. If a  browser from an abandoned refactoring is
-displayed in some window, then  move to the previous reference in this
-browser instead.
+Move to the previous reference of the symbol under point. If a
+compilation buffer is displayed in some window, then move to the
+previous error instead. If a browser from an abandoned
+refactoring is displayed in some window, then move to the
+previous reference in this browser instead.
 "
   (interactive "")
   (let ((sw) (rw))
@@ -6708,10 +6721,11 @@ browser instead.
 (defun c-xref-alternative-next-reference ()
 "Move to the next reference, error or refactoring error.
 
-Move to the next reference of the symbol under point. If a compilation
-buffer  is displayed  in  some window,  then  move to  the next  error
-instead.  If a  browser from an abandoned refactoring  is displayed in
-some window, then move to the next reference in this browser instead.
+Move to the next reference of the symbol under point. If a
+compilation buffer is displayed in some window, then move to the
+next error instead.  If a browser from an abandoned refactoring
+is displayed in some window, then move to the next reference in
+this browser instead.
 "
   (interactive "")
   (let ((sw) (rw))
@@ -6734,8 +6748,8 @@ some window, then move to the next reference in this browser instead.
 (defun c-xref-pop-and-return ()
 "Pop references from the top of the browser stack.
 
-This function also  moves to the position from  where those references
-were pushed.
+This function also moves to the position from where those
+references were pushed.
 "
   (interactive "")
   (let ((oldwins))
@@ -6927,31 +6941,31 @@ This function also moves to the current reference.
         (c-xref-interactive-help  "
 
 
-C-xrefactory   search  expressions   are  similar   to   standard  shell
-expressions.  They are composed from a sequence of characters possibly
-containing  wild characters.  Following  wild cards  can be  used: '*'
-expands to  any (possibly  empty) string, '?'   expands to  any single
-character and '[...]'  expands  to one of enclosed characters.  Ranges
-of characters can be included between [ and ], so for example [a-zA-Z]
-matches   any  letter,   [0-9]  matches   any  digit,   as   in  shell
-expressions. If  the first character following  the [ is a  ^ then the
-sense  of expansion  is inverted,  for example  [^0-9] expands  to any
-non-digit character.  A symbol is reported only if its name completely
-matches  the searched string.   Java method  profile is  considered as
-part of the  name of the method, for  example, the expression *(*int*)
-will report  all methods  taking at least  one parameter of  type int.
-Letters are matched case  insensitively except when enclosed between [
-and ].
+C-xrefactory search expressions are similar to standard shell
+expressions.  They are composed from a sequence of characters
+possibly containing wild characters.  Following wild cards can be
+used: '*' expands to any (possibly empty) string, '?'  expands to
+any single character and '[...]'  expands to one of enclosed
+characters.  Ranges of characters can be included between [ and
+], so for example [a-zA-Z] matches any letter, [0-9] matches any
+digit, as in shell expressions. If the first character following
+the [ is a ^ then the sense of expansion is inverted, for example
+[^0-9] expands to any non-digit character.  A symbol is reported
+only if its name completely matches the searched string.  Java
+method profile is considered as part of the name of the method,
+for example, the expression *(*int*) will report all methods
+taking at least one parameter of type int.  Letters are matched
+case insensitively except when enclosed between [ and ].
 
-For example the expression  '*get*' will report all symbols containing
-the string 'get'.  Expression  'get*' will report all symbols starting
-with  the string  'get'.  Expression  [A-Z]* will  report  all symbols
-starting with an upper case letter.
+For example the expression '*get*' will report all symbols
+containing the string 'get'.  Expression 'get*' will report all
+symbols starting with the string 'get'.  Expression [A-Z]* will
+report all symbols starting with an upper case letter.
 
-If you enter an expression which does not contain any of the wild card
-characters *,  ? or [  then C-xrefactory reports all  symbols containing
-the entered  string. For  example, entering get  as the  expression is
-equivalent to entering *get*.
+If you enter an expression which does not contain any of the wild
+card characters *, ? or [ then C-xrefactory reports all symbols
+containing the entered string. For example, entering get as the
+expression is equivalent to entering *get*.
 
 " nil nil)
         (setq sstr (completing-read "Expression to search (-help for help): "
@@ -7053,8 +7067,9 @@ This function asks for strings to search, then it inspects the tags of
 active project looking for symbols containing the given string(s). For
 each  such  symbol it  displays  the  symbol  name together  with  its
 definition location.  Strings are matched against the full symbol name
-(including profile for Java methods).  For Java projects .jar archives
-mentioned in classpath are scanned and matching symbols are reported.
+(including profile for Java methods).  For Java projects .jar
+archives mentioned in classpath are scanned and matching symbols
+are reported.
 
 "
   (interactive "")
@@ -7074,11 +7089,12 @@ mentioned in classpath are scanned and matching symbols are reported.
 (defun c-xref-search-definition-in-tag-file ()
 "Search for a symbol defined in the project.
 
-This function asks for strings to search, then it inspects the tags of
-the  active   project  looking   for  symbols  containing   the  given
-string(s). For each  such symbol it displays the  symbol name together
-with  its definition  location.  When  looking for  a symbol  only the
-symbol name (the identifier) is checked against the given string(s).
+This function asks for strings to search, then it inspects the
+tags of the active project looking for symbols containing the
+given string(s). For each such symbol it displays the symbol name
+together with its definition location.  When looking for a symbol
+only the symbol name (the identifier) is checked against the
+given string(s).
 
 "
   (interactive "")
@@ -7623,11 +7639,12 @@ symbol name (the identifier) is checked against the given string(s).
 (defun c-xref-kill-xref-process (coredump)
 "Kill currently running  c-xref process.
 
-If  there  is an  c-xref  process creating/updating  a  tag  file it  is
-killed.  If there  is no  such process  this function  kills  the c-xref
-server process.  This function can be  used if the c-xref task enters an
-inconsistent state.  The c-xref  process is then restarted automatically
-at the next invocation of any of its functions.
+If there is an c-xref process creating/updating a tag file it is
+killed.  If there is no such process this function kills the
+c-xref server process.  This function can be used if the c-xref
+task enters an inconsistent state.  The c-xref process is then
+restarted automatically at the next invocation of any of its
+functions.
 "
   (interactive "P")
   (if (and (not (eq c-xref-tags-process nil))
@@ -7734,17 +7751,18 @@ BROWSING AND REFACTORINGS:
 
 With browsing we mean jumping between all usages of the same
 symbol. Note that with c-xref semantically different symbols are
-considered different. You can start such browsing either by placing
-the position on a symbol and activating the function
-c-xref-push-and-goto-definition, which is usually bound to function
-key F6, or from the menu 'Browsing with Symbol Stack'. Once you have
-pushed a symbol you can navigate through all detected occurences with
-F3 and F4. F5 will pop that symbol and move back to where the position
-was before the symbol push. This can be done recursively to any depth.
+considered different. You can start such browsing either by
+placing the position on a symbol and activating the function
+c-xref-push-and-goto-definition, which is usually bound to
+function key F6, or from the menu 'Browsing with Symbol
+Stack'. Once you have pushed a symbol you can navigate through
+all detected occurences with F3 and F4. F5 will pop that symbol
+and move back to where the position was before the symbol
+push. This can be done recursively to any depth.
 
 To invoke a refactoring (bound to F11) you have to position the
-point on the browsed (refactored) symbol. For a rename you place the
-cursor on a symbol, press F11 and select 'Rename'.
+point on the browsed (refactored) symbol. For a rename you place
+the cursor on a symbol, press F11 and select 'Rename'.
 
 For parameter manipulations (adding or deleting a parameter) you
 need to position the point on the name of the function/method,
@@ -7759,21 +7777,22 @@ a choice, and the right button gives a menu of available actions.
 
 C-XREF BACKGROUND TASK:
 
-Emacs C-xref  functions cooperate with  an external 'c-xref' task;  if you
-think that the task has entered  an inconsistent state, or if you wish
-to interrupt  creation or update of  the tag file, you  can invoke the
-'Kill c-xref task' function.
+Emacs C-xref functions cooperate with an external 'c-xref' task;
+if you think that the task has entered an inconsistent state, or
+if you wish to interrupt creation or update of the tag file, you
+can invoke the 'Kill c-xref task' function.
 
 CUSTOMIZATION:
 
-C-xrefactory can be  customized via the 'C-xref ->  Options' menu item and
-via  the  ~/.c-xrefrc  configuration  file.   The  'Options'  menu  item
-customizes  project independent  behaviour  which is  mainly the  user
-interface.   In the  '.c-xrefrc'  file you  can  specify your  projects'
-settings and  preferences.  There are  many options you  can customize
-via  .c-xrefrc;  for more  information  read  the  c-xref and  c-xrefrc  man
-pages. Before  using C-xrefactory you  should also read the  README file
-included in the distribution package.
+C-xrefactory can be customized via the 'C-xref -> Options' menu
+item and via the ~/.c-xrefrc configuration file.  The 'Options'
+menu item customizes project independent behaviour which is
+mainly the user interface.  In the '.c-xrefrc' file you can
+specify your projects' settings and preferences.  There are many
+options you can customize via .c-xrefrc; for more information
+read the c-xref and c-xrefrc man pages. Before using C-xrefactory
+you should also read the README file included in the distribution
+package.
 ")
   (goto-char (point-min))
   (c-xref-use-local-map c-xref-help-mode-map)
@@ -8003,19 +8022,20 @@ included in the distribution package.
 (defun c-xref-undo-last-refactoring (rd)
 "Undo a series of refactorings.
 
-This  function undos changes  made in  multiple buffers.   Buffers are
-switched at the  start of refactorings. The undo  itself is considered
-as a refactoring,  so further invocations can be  used to re-do undone
-changes.  It  uses the standard Emacs  undo mecanism which  may not be
-appropriate for  such a massive undo;  in case of  problems check your
-'undo-strong-limit' and 'undo-limit'  variable settings.  Undo can not
-be performed correctly if you have killed a modified buffer or saved a
-buffer with a different name.
+This function undos changes made in multiple buffers.  Buffers
+are switched at the start of refactorings. The undo itself is
+considered as a refactoring, so further invocations can be used
+to re-do undone changes.  It uses the standard Emacs undo
+mecanism which may not be appropriate for such a massive undo; in
+case of problems check your 'undo-strong-limit' and 'undo-limit'
+variable settings.  Undo can not be performed correctly if you
+have killed a modified buffer or saved a buffer with a different
+name.
 
-NOTE!   Do not  kill  any buffer  if  you are  using undo!  C-xrefactory
-memorizes the  state of  all opened buffers  at the beginning  of each
-refactoring. If any opened buffer  is killed in between, undo will not
-work correctly.
+NOTE!  Do not kill any buffer if you are using undo!
+C-xrefactory memorizes the state of all opened buffers at the
+beginning of each refactoring. If any opened buffer is killed in
+between, undo will not work correctly.
 "
   (interactive "i")
   (let ((undolist) (cloop) (cont-undo-state) (aa) (cbuff) (interact)
@@ -8188,22 +8208,24 @@ indicating before which action the state is memorized.
 (defun c-xref-refactor ()
 "Invoke refactorer.
 
-This function offers  a list of refactorings available  for the symbol
-under point  and for the region  between mark and point.  You can then
-select the refactoring to be performed.
+This function offers a list of refactorings available for the
+symbol under point and for the region between mark and point.
+You can then select the refactoring to be performed.
 
-C-xrefactory  performs refactorings  by precomputing  all changes  on an
-internal copy of source files  in the memory.  All checks are computed
-while working  with the model and  the refactoring is  applied on real
-sources only  if it  can be safely  performed. In consequence,  if the
-refactoring  fails  due to the  accessibility of symbols or  something
-similar, your source code should not be modified at all.
+C-xrefactory performs refactorings by precomputing all changes on
+an internal copy of source files in the memory.  All checks are
+computed while working with the model and the refactoring is
+applied on real sources only if it can be safely performed. In
+consequence, if the refactoring fails due to the accessibility of
+symbols or something similar, your source code should not be
+modified at all.
 
-Refactoring  does  not  affect  other  files than  source  code.   For
-example, if you  move a Java class from one  package into another then
-the old .class file will stay untouched and can cause problems for the
-compilation. Hence, it's a good idea to clean (and recreate) all class
-files after each important refactoring.
+Refactoring does not affect other files than source code.  For
+example, if you move a Java class from one package into another
+then the old .class file will stay untouched and can cause
+problems for the compilation. Hence, it's a good idea to
+clean (and recreate) all class files after each important
+refactoring.
 "
   (interactive "")
   (c-xref-entry-point-make-initialisations)
