@@ -1,24 +1,30 @@
 #!/bin/sh
 rm -r -f ../c-xref
 
-cd src 
+cd src
 make
 cd ..
 
+# Create package distribution directory
 mkdir ../c-xref
+
+# Copy exercise directories
 cp -r doc/jexercise ../c-xref/jexercise
 cp -r doc/cexercise ../c-xref/cexercise
+
 #create a text version of manual pages
 #man doc/c-xref.man | sed -f doc/man2ascii.sed > doc/c-xref.txt
 #man doc/c-xrefrc.man | sed -f doc/man2ascii.sed > doc/c-xrefrc.txt
 
-cp src/c-xref ../c-xref/
-# the following is a special case for cygwin platform
+# Copy executable
 if test -f src/c-xref.exe
 then
-  cp src/c-xref.exe ../c-xref/
+    cp src/c-xref.exe ../c-xref/
+else
+    cp src/c-xref ../c-xref/
 fi
-#create README files
+
+# Copy README files
 cat doc/INSTALL doc/README doc/readme2 > ../c-xref/README
 cp doc/INSTALL ../c-xref/INSTALL
 cp doc/c-xrefsetup ../c-xref/
@@ -27,32 +33,24 @@ cp doc/c-xref.man ../c-xref/
 #cp doc/c-xref.txt ../c-xref/
 cp doc/c-xrefrc.man ../c-xref/
 #cp doc/c-xrefrc.txt ../c-xref/
+
+# Copy relevant emacs files
 cd env
 for d in *
 do
-	if test ${d} != "CVS" -a ${d} != "kawa" 
-	then
-		mkdir ../../c-xref/${d}
-		for f in `cat ${d}/Files`
-		do 
-			cp ${d}/${f} ../../c-xref/${d}/
-		done
-	fi
+    mkdir ../../c-xref/${d}
+    for f in `cat ${d}/Files`
+    do
+        cp ${d}/${f} ../../c-xref/${d}/
+    done
 done
+
+# Copy license files
 cd ..
 cp GPL.txt ../c-xref/GPL.txt
 cp doc/LICENSE ../c-xref/LICENSE
+
+# Finish up
 cd ../c-xref
 ln -s emacs xemacs
 chmod -R a+r ../c-xref
-
-
-
-
-
-
-
-
-
-
-
