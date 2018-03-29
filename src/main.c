@@ -675,9 +675,6 @@ static int processHOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i],"-htmlcutsourcepaths")==0)  {
         addSourcePathsCut();
     }
-    else if (strcmp(argv[i],"-htmlcutsourcepaths")==0) {
-        addSourcePathsCut();
-    }
     else if (strcmp(argv[i],"-htmlcutsuffix")==0)   {
         s_opt.htmlCutSuffix = 1;
     }
