@@ -2113,12 +2113,12 @@ static int getLineFromFile(FILE *ff, char *tt, int ttsize, int *outI) {
     c = getc(ff);
     while ((c>=0 && c<=' ') || c=='\n' || c=='\t') c=getc(ff);
     if (c==EOF) {
-      res = EOF;
-      goto fini;
+        res = EOF;
+        goto fini;
     }
     while (c!=EOF && c!='\n') {
-      if (i < ttsize-1)   tt[i++]=c;
-      c=getc(ff);
+        if (i < ttsize-1)   tt[i++]=c;
+        c=getc(ff);
     }
     res = 'A';
  fini:
@@ -2134,13 +2134,13 @@ static void getAndProcessGccOptions() {
     FILE *tempfile;
     struct stat stt;
     if (LANGUAGE(LAN_C) || LANGUAGE(LAN_YACC)) {
-      lang = "c";
+        lang = "c";
     }
     else if (LANGUAGE(LAN_CCC)) {
-      lang = "c++";
+        lang = "c++";
     }
     else {
-      return;
+        return;
     }
     isActiveSect = 0;
     tempfile_name = create_temporary_filename();
@@ -3427,7 +3427,8 @@ int main(int argc, char **argv) {
        start processing for real ... */
     setjmp(s_memoryResize);
     if (s_cxResizingBlocked) {
-        fatalError(ERR_ST,"cx_memory resizing required, see the TROUBLES section of README file", XREF_EXIT_ERR);
+        fatalError(ERR_ST,"cx_memory resizing required, see the TROUBLES section of README file",
+                   XREF_EXIT_ERR);
     }
 
     s_currCppPass = ANY_CPP_PASS;
