@@ -1,0 +1,24 @@
+#!/bin/sh
+
+cd Xrefactory
+cp ../../../doc/xrefrc.txt doc
+cp ../../../doc/xref.txt doc
+ant clean
+ant
+cd ..
+mkdir tmp
+cd tmp
+cp -a ../Xrefactory .
+cd Xrefactory
+rm -r -f build CVS */CVS */*/CVS */*/*/CVS */*/*/*/CVS
+cd ..
+tar cfz ../Xrefactory.tgz Xrefactory
+zip -q -r -l ../Xrefactory.zip Xrefactory
+cd ..
+rm -r -f tmp
+rm -r -f Xrefactory/build
+
+
+
+
+

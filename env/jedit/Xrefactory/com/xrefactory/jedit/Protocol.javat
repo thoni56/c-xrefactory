@@ -1,0 +1,16 @@
+
+/* Xrefactory communication protocol constants          */
+/* Do not edit .java source file!! Those constants are 	*/
+/* primarily defined in protocol.c file.                */
+
+package com.xrefactory.jedit;
+
+public class Protocol {
+
+#define COMMENT(xx)
+#define PROTOCOL_ITEM(type, name, val) public static final type name = val;
+
+#include "../../../../../../src/protocol.tc"
+
+}
+
