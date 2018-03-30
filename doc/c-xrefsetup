@@ -277,6 +277,23 @@ do
             echo
             echo "Done."
             ;;
+        # #######################################################################
+        # #######################################################################
+        3)
+            xrefGetEditor
+            cd /tmp
+            rm -r -f /tmp/c-xrefjexercise
+            cp -r ${PPWD}/jexercise /tmp/c-xrefjexercise
+            if test X${XREF_EDITOR} = Xjedit
+            then
+                java -jar ${XREF_EDITORDIR}/jedit.jar /tmp/c-xrefjexercise/index.c
+            else
+                ${XREF_EDITOR} /tmp/c-xrefjexercise/Index.java
+            fi
+            rm -r -f /tmp/c-xrefjexercise
+            echo
+            echo "Done."
+            ;;
 
 
 
