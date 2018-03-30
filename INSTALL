@@ -5,21 +5,21 @@ C-xrefactory.
 *    Auto Create Xrefactory Distribution                             *
 **********************************************************************
 
-1.) In order to create the distribution, goto the directory containing
-this file and type:
+1.) If you just want a C-xrefactory installation for yourself and
+Emacs you can use el-get (see https://github.com/dimitri/el-get) and
+say "M-x el-get-install" "c-xrefactory".
+
+2.) In order to create a binary distribution, which you can use to
+install C-xrefactory for yourself, or distribute in your organization,
+goto the directory containing this file and type:
 
         sh ./CreateXrefDistribution
 
-If everything is going all right, you will find the
-'c-xref' directory along the original 'c-xrefactory' directory.  This
-directory contains a working distribution containing all files needed
-to install and run Xrefactory.  Go there and follow instructions
-written there in the README or INSTALL file.
-
-2.) If you just want a c-xrefactory installation for yourself you can
-use the el-get (see https://github.com/dimitri/el-get) recipe provided
-in 'c-xrefactory.rcp'. Copy it to your <emacsdir>/el-get-user-recipes
-directory and say "M-x el-get-install" "c-xrefactory".
+If everything is going all right, you will find the 'c-xref' directory
+along side the original 'c-xrefactory' directory.  This directory
+contains a working distribution containing all files needed to install
+and run C-xrefactory.  Go there and follow instructions in the README
+or INSTALL file.
 
 3.) To just compile do "make" which will produce a new 'c-xref' program
 
@@ -34,11 +34,11 @@ In following text, let XREFDIR be the directory containing this file.
 directory.  If you have 'make' or 'gmake' installed on your computer
 then invoke it in the 'src' directory. This will produce an executable
 task (named c-xref or c-xref.exe, ...). You can check it from command
-line by invoking it with -about option:
+the line by invoking it with -about option:
 
     c-xref -about
 
-Now you need to install Xrefactory under your environment:
+Now you need to install C-xrefactory under your environment:
 
 2.)  Emacs/XEmacs installation: Copy files XREFDIR/env/emacs/c-xref.el
 and XREFDIR/env/emacs/c-xrefactory.el to directory containing your
