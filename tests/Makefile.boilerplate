@@ -1,4 +1,4 @@
-# Boiler plate Makefile for many c-xref tests
+# Boilerplate Makefile for many c-xref tests
 #
 # - Names the test from directory name
 # - Generates a specific, simple, c-xrefrc from a template

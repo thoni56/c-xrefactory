@@ -17,8 +17,3 @@ zip -q -r -l ../Xrefactory.zip Xrefactory
 cd ..
 rm -r -f tmp
 rm -r -f Xrefactory/build
-
-
-
-
-
