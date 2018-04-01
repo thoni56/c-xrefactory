@@ -113,11 +113,11 @@ do
     echo "************************************************************************"
     echo "1.) Initialize C-Xrefactory."
     echo "2.) Check C-Xrefactory on small C exercise program."
-    #echo "3.) Check C-Xrefactory on small Java exercise program."
+    echo "3.) Check C-Xrefactory on small Java exercise program."
     #echo "4.) Enter license string (binary distributions only)."
     echo "************************************************************************"
     echo
-    echo -n "Choose action (0 to exit) [0-2]: "
+    echo -n "Choose action (0 to exit) [0-3]: "
     read aaa
     echo
     echo
