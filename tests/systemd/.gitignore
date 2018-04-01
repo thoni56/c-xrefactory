@@ -2,5 +2,5 @@ systemd
 systemd.log
 CXrefs
 c-xref
-c-xrefrc
+.c-xrefrc
 out

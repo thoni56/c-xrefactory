@@ -5,10 +5,19 @@
 #
 # In the test Makefiles you just need to include this and define the
 # $(TEST) target where the execution of the test should go.
+#
 
 TEST = $(notdir $(CURDIR))
 
-all: c-xrefrc $(TEST)
+all: .c-xrefrc $(TEST)
 
-c-xrefrc: ../c-xrefrc.tpl
-	@sed -e "s+PWD+$(CURDIR)+g" -e "s+PROJ+$(TEST)+g" ../c-xrefrc.tpl > c-xrefrc
+# If the test requires a .c-xrefrc for test directory you need to
+# generate one. The .c-xrefrc requires absolute paths, and to work in
+# any directory, a .c-xrefrc can be generated from a common
+# c-xrefrc.tpl by replacing some symbols as per rules below.
+#
+# We use the name '.c-xrefrc' so that a test can set HOME to CWD and
+# editors will automatically read the correct file as if it was in the
+# users HOME.
+.c-xrefrc: ../c-xrefrc.tpl
+	@sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" ../c-xrefrc.tpl > .c-xrefrc

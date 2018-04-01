@@ -1,7 +1,7 @@
 # Makefile for systemd example/acceptance test for c-xrefactory
 # If the systemd repo is not cloned here the test are inactive
 # and will not run. To activate use 'make init' which clones the repo
-# and generates the c-xrefrc from a template. The tests will then
+# and generates the .c-xrefrc from a template. The tests will then
 # run with 'make'. They can be deactivated again by 'make clean'.
 
 all:
@@ -24,7 +24,7 @@ all:
 		fi ; \
 	fi
 
-init: systemd c-xref c-xrefrc
+init: systemd c-xref .c-xrefrc
 
 systemd:
 	git clone git://anongit.freedesktop.org/systemd/systemd
@@ -32,8 +32,8 @@ systemd:
 c-xref:
 	ln -s ../../src/c-xref
 
-c-xrefrc: c-xrefrc.tpl
-	sed -e "s+PWD+$$PWD+g" c-xrefrc.tpl > c-xrefrc
+.c-xrefrc: c-xrefrc.tpl
+	sed -e "s+PWD+$$PWD+g" c-xrefrc.tpl > .c-xrefrc
 
 clean:
-	rm -rf CXrefs c-xref c-xrefrc systemd systemd.log
+	rm -rf CXrefs c-xref .c-xrefrc systemd systemd.log

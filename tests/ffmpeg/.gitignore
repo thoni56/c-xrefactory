@@ -2,5 +2,5 @@ ffmpeg
 ffmpeg.log
 CXrefs
 c-xref
-c-xrefrc
+.c-xrefrc
 out
