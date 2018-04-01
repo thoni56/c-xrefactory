@@ -1,9 +1,9 @@
 #include <stdio.h>
 
 /*
-  Select marked  region with  mouse and press  F11 or invoke  'Xref ->
+  Select marked  region with  mouse and press  F11 or invoke  'C-xref ->
   Refactor'.   In the  proposed menu  move to  the  'Extract Function'
-  refactoring and press <return>.  
+  refactoring and press <return>.
 */
 
 void extractFunction() {
@@ -28,4 +28,3 @@ int main() {
 /*
   F5 will bring you back to Index
 */
-

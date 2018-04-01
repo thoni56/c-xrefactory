@@ -1,7 +1,7 @@
 #include <stdio.h>
 
 /*
-  Follow  instructions  in  commentaries  to check  Xrefactory  source
+  Follow instructions in commentaries to check C-Xrefactory source
   browser.
 */
 
@@ -38,8 +38,8 @@ void browsing() {
       in created (right) window:
         'mouse-button12' goes to selected reference.
         'mouse-button3' pops up menu.
-      always:    
-        'F7' closes Xrefactory window.
+      always:
+        'F7' closes C-Xrefactory window.
     */
 
 
@@ -75,9 +75,6 @@ void browsing() {
 #include <stdlib.h>
 
 /*
-  Presentation of Xrefactory browser is over, F7 will close Xrefactory
-  window and (probably multiple) F5 will bring you back to index.  
+  Presentation of C-Xrefactory browser is over, F7 will close C-Xrefactory
+  window and (probably multiple) F5 will bring you back to index.
 */
-
-
-

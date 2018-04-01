@@ -2,7 +2,7 @@ package com.xrefactory.refactorings;
 
 /*
   Select marked  region with  mouse and extract  it into  method named
-  'fib' using 'Xref -> Refactor' and 'Extract Method'.
+  'fib' using 'C-xref -> Refactor' and 'Extract Method'.
 */
 
 class ExtractMethod {
@@ -25,4 +25,3 @@ class ExtractMethod {
 /*
   F5 will bring you back to Index
 */
-

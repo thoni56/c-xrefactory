@@ -2,10 +2,10 @@ package com.xrefactory.refactorings;
 
 /*
   Put cursor on  the METHOD NAME (not on the  parameter) and press F11
-  or  invoke  'Xref  ->  Refactor'.   Then  move  to  the  appropriate
+  or  invoke  'C-xref  ->  Refactor'.   Then  move  to  the  appropriate
   refactoring in the proposed menu and press <return>.
 
-  If  a  profile  collision  is  detected,  use  'Xref  ->  Undo  Last
+  If  a  profile  collision  is  detected,  use  'C-xref  ->  Undo  Last
   Refactoring' to undo wrong manipulation.
 
 */
@@ -27,7 +27,7 @@ class AddRemoveParameter {
         pp.printParameter("toto");
     }
 
-    // you can add/remove parameter on virtuals, 
+    // you can add/remove parameter on virtuals,
     // in preference do it for the whole hierarchy at once.
     // in proposed resolution screen press <return> to continue
     class Super {

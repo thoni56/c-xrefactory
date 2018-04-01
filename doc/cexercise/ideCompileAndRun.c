@@ -1,9 +1,9 @@
 #include <stdio.h>
 
 /*
-  1.) Select 'Xref -> Emacs IDE -> Compile File' to compile this file.
+  1.) Select 'C-xref -> Emacs IDE -> Compile File' to compile this file.
 
-  2.) Select 'Xref -> Emacs IDE -> Run1' to run this program.
+  2.) Select 'C-xref -> Emacs IDE -> Run1' to run this program.
 
   3.) From now, you can invoke compile-run macro by pressing C-F8.
 */

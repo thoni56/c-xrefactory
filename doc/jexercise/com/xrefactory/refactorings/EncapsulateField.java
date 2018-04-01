@@ -3,7 +3,7 @@ package com.xrefactory.refactorings;
 /*
   1.) Put cursor on definition of 'field'.
 
-  2.)  Invoke 'Xref  -> Refactor'  and select  'Encapsulate  Field' in
+  2.)  Invoke 'C-xref  -> Refactor'  and select  'Encapsulate  Field' in
   proposed menu.
 
   3.)  Undo last  refactoring and  proceed  one more  time with  'Self

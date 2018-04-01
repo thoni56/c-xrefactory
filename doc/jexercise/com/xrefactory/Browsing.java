@@ -4,7 +4,7 @@ import java.awt.*;
 import javax.swing.*;
 
 /*
-  Follow  instructions  in  commentaries  to check  Xrefactory  source
+  Follow  instructions  in  commentaries  to check  C-Xrefactory  source
   browser.
 */
 
@@ -24,13 +24,13 @@ class Browsing {
             int i = 2;
 
             // put cursor on following usages of variables i, j, k and
-            // check if Xrefactory resolves them correctly by pressing
+            // check if C-Xrefactory resolves them correctly by pressing
             // F6 followed by F5.
             System.out.println("i == " + i);              // i==2
             System.out.println("j == " + this.j);         // j==1
             System.out.println("k == " + k);              // k==0
 
-            // check Xrefactory's overloading resolution.
+            // check C-Xrefactory's overloading resolution.
             overloadedMethod(0);
             overloadedMethod("foo");
             overloadedMethod(this);
@@ -66,8 +66,8 @@ class Browsing {
           in created (right) window:
             'mouse-button12' goes to selected reference.
             'mouse-button3' pops up menu.
-          always:    
-            'F7' closes Xrefactory window.
+          always:
+            'F7' closes C-Xrefactory window.
         */
 
         // Now, put cursor on  'getComponentAt' and press C-F6 to list
@@ -101,15 +101,15 @@ class Browsing {
         jtree.getComponentAt(0,0);
 
         // you can see field/method applications w.r.t. to inheritance
-        // tree of  any browsed symbol by pushing  its references with 
+        // tree of  any browsed symbol by pushing  its references with
         // C-F6.
 
         (new Nested()).j = 0;
 
 
         /*
-          Presentation of  Xrefactory browser  is over, F7  will close
-          Xrefactory's windows  and (probably multiple)  F5 will bring
+          Presentation of  C-Xrefactory browser  is over, F7  will close
+          C-Xrefactory's windows  and (probably multiple)  F5 will bring
           you back to Index.
         */
     }
@@ -151,4 +151,3 @@ class Browsing {
     }
 
 }
-

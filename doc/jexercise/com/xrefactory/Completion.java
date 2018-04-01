@@ -19,7 +19,7 @@ class Completion extends JFrame {
         // local variable completion
         arg
         ;
-           
+
         // composed name completion
         java.ap
         ;
@@ -38,27 +38,27 @@ class Completion extends JFrame {
              mouse-button12      - select the completion.
              mouse-button3       - pop-up menu for this item.
            Everywhere:
-             F7                  - close Xrefactory's window
+             F7                  - close C-Xrefactory's window
         */
 
         // method completion displays profile
         System.out.pr
         ;
 
-        // completion of empty string at variable declaration place proposes 
+        // completion of empty string at variable declaration place proposes
         // the most often alternatives
-        Button 
+        Button
         ;
 
         // empty string after 'new' in an assignement is completed to class name
-        Button mybutton = new 
+        Button mybutton = new
         ;
 
         // completion on complete name displays its type
         arguments
         ;
 
-        // inherited symbols are displayed with level of inheritance 
+        // inherited symbols are displayed with level of inheritance
         // and origin class
         new JFrame().get
         ;
@@ -74,7 +74,7 @@ class Completion extends JFrame {
         class Nested extends JButton implements ActionListener {
             int app;
             void foo() {
-                
+
                 // no problem with nested classes
                 get
                 ;
@@ -85,12 +85,12 @@ class Completion extends JFrame {
                 super
                 ;
             }
-            
+
             // when completing empty string on method definition context
-            // inheritance wizard proposes inherited definitions 
-    
-            
-    
+            // inheritance wizard proposes inherited definitions
+
+
+
     }
 
 }

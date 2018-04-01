@@ -36,7 +36,7 @@ void completions() {
          mouse-button12      - select the completion.
          mouse-button3       - pop-up menu for this item.
        Everywhere:
-         F7                  - close Xrefactory's window
+         F7                  - close C-Xrefactory's window
     */
 
     // structure records completion
@@ -54,18 +54,18 @@ void completions() {
     // macro names completions
     ass
     ;
-    
+
 
     // works in definitions of used macros
 #define MACRO(xx) xx->
     MACRO(ptm)
     ;
-    
 
-    // also can shorten writing of list loops 
-    for(l=ll; 
+
+    // also can shorten writing of list loops
+    for(l=ll;
     // and
-    for(l=ll; l!=NULL; 
+    for(l=ll; l!=NULL;
 
 
 }

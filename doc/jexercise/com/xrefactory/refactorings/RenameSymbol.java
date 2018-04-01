@@ -1,7 +1,7 @@
 package com.xrefactory.refactorings;
 
 /*
-  Put cursor on the symbol to  rename and press F11 or invoke 'Xref ->
+  Put cursor on the symbol to  rename and press F11 or invoke 'C-xref ->
   Refactor'.  Then move to the appropriate refactoring in the proposed
   menu and press <return>.
 
@@ -39,4 +39,3 @@ class RenameSymbol {
 /*
   F5 will bring you back to Index
 */
-

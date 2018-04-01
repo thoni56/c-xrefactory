@@ -2,8 +2,8 @@
 
 /*
   Put cursor on the FUNCTION NAME (not on the parameter) and press F11
-  or  invoke  'Xref  ->  Refactor'.   Then  move  to  the  appropriate
-  refactoring in the proposed menu and press <return>.  
+  or  invoke  'C-xref  ->  Refactor'.   Then  move  to  the  appropriate
+  refactoring in the proposed menu and press <return>.
 */
 
 static int arg = 1;

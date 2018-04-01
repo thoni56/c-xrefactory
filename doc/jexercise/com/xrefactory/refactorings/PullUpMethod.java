@@ -1,12 +1,12 @@
 package com.xrefactory.refactorings;
 
 /*
-  1.)   Put  cursor inside  PullUpMethod  class  and  invoke 'Xref  ->
+  1.)   Put  cursor inside  PullUpMethod  class  and  invoke 'C-xref  ->
   Refactor'. Select 'Set Target  for Next Moving Refactoring' from the
   proposed menu.
 
   2.)  Move  cursor onto  the definition of  the method to  move (onto
-  'method' name), invoke 'Xref ->  Refactor' once more time and select
+  'method' name), invoke 'C-xref ->  Refactor' once more time and select
   'Pull Up Method'.
 */
 
@@ -36,4 +36,3 @@ class InferClass extends PullUpMethod {
 /*
   F5 will bring you back to Index
 */
-

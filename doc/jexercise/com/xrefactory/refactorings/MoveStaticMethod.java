@@ -1,13 +1,13 @@
 package com.xrefactory.refactorings;
 
 /*
-  1.)   Put  cursor   inside  TARGET   class  and   invoke   'Xref  ->
+  1.)   Put  cursor   inside  TARGET   class  and   invoke   'C-xref  ->
   Refactor'. Select 'Set Target  for Next Moving Refactoring' from the
   proposed menu.
 
 
   2.)  Move  cursor onto  the definition of  the method to  move (onto
-  'method' name), invoke 'Xref ->  Refactor' once more time and select
+  'method' name), invoke 'C-xref ->  Refactor' once more time and select
   'Move Static Method'.
 
 */
@@ -15,7 +15,7 @@ package com.xrefactory.refactorings;
 class Target {
     static int i=0;
     // move method here:
-    
+
 }
 
 class Source {
@@ -39,4 +39,3 @@ class MoveStaticMethod {
 /*
   (multiple) F5 will bring you back to Index
 */
-
