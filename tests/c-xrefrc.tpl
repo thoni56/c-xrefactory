@@ -1,8 +1,8 @@
-[TEST]
+[CURDIR]
   //  input files and directories (processed recursively)
   CURDIR
   //  directory where tag files are stored
-  -refs CURDIR
+  -refs CURDIR/CXrefs
   //  number of tag files
   -refnum=10
   //  setting for Emacs compile and run

@@ -1,5 +1,5 @@
 *.log
 file.tab.c
 y.tab.c
-C-Xrefs
+CXrefs
 .c-xrefrc

@@ -5,7 +5,7 @@ include ../Makefile.boilerplate
 YACC = ../../byacc-1.9/yacc
 
 # Note to self:
-# The Xrefs file contains all references in a format that I have yet
+# The CXrefs file contains all references in a format that I have yet
 # to completely decipher, but here are some details:
 #
 # A line for a file starts with an identification: '1541f'
@@ -18,11 +18,11 @@ $(TEST): $(YACC)
 	@rm -f $@.log C-Xrefs
 	@printf "Tests in \"$@\": "
 	@$(YACC) file.y
-	@../../src/c-xref *.[cy] -xrefrc .c-xrefrc -refs $(CURDIR)/C-Xrefs -o $@.log
-	@# Get the "symbol" for the yacc-file from the C-Xrefs and use it
+	@../../src/c-xref *.[cy] -xrefrc .c-xrefrc -refs $(CURDIR)/CXrefs -o $@.log
+	@# Get the "symbol" for the yacc-file from the CXrefs and use it
 	@# to find the reference to func from the .y file
-	@f=`grep process_yacc/file.y C-Xrefs | awk '{print $$1}'` ; \
-	grep '	5/func	' C-Xrefs | grep '$f9l17cr' > /dev/null ; \
+	@f=`grep process_yacc/file.y CXrefs | awk '{print $$1}'` ; \
+	grep '	5/func	' CXrefs | grep '$f9l17cr' > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
 		echo "Failed" ; \
 		exit 1 ; \
