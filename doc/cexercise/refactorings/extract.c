@@ -1,8 +1,8 @@
 #include <stdio.h>
 
 /*
-  Select marked  region with  mouse and press  F11 or invoke  'C-xref ->
-  Refactor'.   In the  proposed menu  move to  the  'Extract Function'
+  Select marked region with mouse and press F11 or invoke 'C-xref ->
+  Refactor'.  In the proposed menu move to the 'Extract Function'
   refactoring and press <return>.
 */
 

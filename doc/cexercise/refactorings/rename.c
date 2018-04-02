@@ -1,8 +1,9 @@
 /*
-  Put cursor  on a symbol you wish  to rename and press  F11 or invoke
-  'C-xref -> Refactor'. In the proposed menu move to the 'Rename Symbol'
-  refactoring and  press <return>.  If  a name collision  is detected,
-  use 'C-xref -> Undo Last Refactoring' to undo wrong renaming.
+  Put cursor on a symbol you wish to rename and press F11 or invoke
+  'C-xref -> Refactor'. In the proposed menu move to the 'Rename
+  Symbol' refactoring and press <return>.  If a name collision is
+  detected, use 'C-xref -> Undo Last Refactoring' to undo wrong
+  renaming.
 */
 
 static int j;
@@ -33,8 +34,8 @@ void renameSymbol() {
     }
 
 #define PRINTX() printf("x == %d\n", x);
-    // problem can  occur also if a symbol inside  a macro is refering
-    // to  various different variables.  Rename  for example following
+    // problem can occur also if a symbol inside a macro is refering
+    // to various different variables.  Rename for example following
     // 'x' variable
     {
         int x = 0;

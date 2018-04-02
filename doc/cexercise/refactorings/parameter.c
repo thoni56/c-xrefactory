@@ -2,7 +2,7 @@
 
 /*
   Put cursor on the FUNCTION NAME (not on the parameter) and press F11
-  or  invoke  'C-xref  ->  Refactor'.   Then  move  to  the  appropriate
+  or invoke 'C-xref -> Refactor'.  Then move to the appropriate
   refactoring in the proposed menu and press <return>.
 */
 

@@ -12,19 +12,19 @@ void browsing() {
 
     int i,j,k;
 
-    // put cursor  somewhere on 'i' variable and  press F6. Then using
-    // F3 and F4 inspect all its references.  Finaly pop references by
+    // put cursor somewhere on 'i' variable and press F6. Then using
+    // F3 and F4 inspect all its references.  Finally pop references by
     // pressing F5.
     for(i=0; i<10; i++) printf("i == %d\n", i );
 
-    // put cursor  on following usages of 'i' and  'j' and check scope
+    // put cursor on following usages of 'i' and 'j' and check scope
     // resolution by pressing F6 followed by F5.
     { int i;
       i = i + 1;
       j = j + 1;
     }
 
-    // structure records can be  browsed as well, browse 'next' or 'i'
+    // structure records can be browsed as well, browse 'next' or 'i'
     // records for example.
     il = il-> next ;
 
@@ -43,13 +43,13 @@ void browsing() {
     */
 
 
-    // browse  'next' symbol from  following line to  check resolution
+    // browse 'next' symbol from following line to check resolution
     // inside used macros
 #define LISTLEN(ll,res) {res=0; for(; ll!=NULL; ll=ll-> next ) res++;}
 
     LISTLEN(dl, k);
 
-    // ambiguity  handling: put cursor  on 'next' symbol and  list all
+    // ambiguity handling: put cursor on 'next' symbol and list all
     // its usages with C-F6
 #define LISTLOOP(ll,ii) for(ll=ii; ll!=NULL; ll=ll-> next )
     /*
@@ -60,7 +60,7 @@ void browsing() {
         'mouse-button12' select/unselect symbol.
         'mouse-button3' pops up menu.
 
-      As usualy 'F7' closes new windows.
+      As usually 'F7' closes new windows.
     */
 
     LISTLOOP(il, NULL) {}
@@ -75,6 +75,7 @@ void browsing() {
 #include <stdlib.h>
 
 /*
-  Presentation of C-Xrefactory browser is over, F7 will close C-Xrefactory
-  window and (probably multiple) F5 will bring you back to index.
+  Presentation of C-Xrefactory browser is over, F7 will close
+  C-Xrefactory window and (probably multiple) F5 will bring you back
+  to index.
 */
