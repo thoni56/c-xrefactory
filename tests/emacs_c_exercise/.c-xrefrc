@@ -1,0 +1,18 @@
+[/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise]
+  //  input files and directories (processed recursively)
+  /home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise
+  //  directory where tag files are stored
+  -refs /home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/CXrefs
+  //  number of tag files
+  -refnum=10
+  //  setting for Emacs compile and run
+  -set compilefile "cc %s"
+  -set compiledir "cc *.c"
+  -set compileproject "
+    cd /home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise
+    make
+    "
+  -set run1 "a.out"
+  -set run5 ""  // an empty run; C-F8 will only compile
+  //  set default to run1
+  -set run ${run1}

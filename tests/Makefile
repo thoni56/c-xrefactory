@@ -21,5 +21,6 @@ quick:
 
 slow:
 	@echo "Slow tests..."
+	@make -C emacs_c_exercise
 	@make -C ffmpeg
 	@make -C systemd

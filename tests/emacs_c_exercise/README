@@ -1,0 +1,8 @@
+In this directory we want to verify
+
+- c-xref server functionality
+- the C example that's included in distributions
+
+1. setup emacs with c-xrefactory using development version of c-xref (../../src/c-xref)
+2. run emacs and apply the refactorings in the example on the example code
+3. verify the refactored files
