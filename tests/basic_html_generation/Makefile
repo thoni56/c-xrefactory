@@ -6,7 +6,7 @@ include ../Makefile.boilerplate
 $(TEST):
 	@rm -rf output $@.log
 	@printf "Tests in \"$@\": "
-	@../../src/c-xref -xrefrc .c-xrefrc -p $@ -html -htmlroot=output -htmlcutcwd $@.[ch] -o $@.log
+	@../../src/c-xref -xrefrc .c-xrefrc -html -htmlroot=output -htmlcutcwd $@.[ch] -o $@.log
 	@grep '<A HREF="$@.h.html#:5">Options</A> options;' output/$@.c.html > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
 		echo "Failed" ; \
