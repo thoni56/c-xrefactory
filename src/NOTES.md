@@ -44,11 +44,12 @@ _strTdef.g_ and _strFill.g_.
 
 The c-xrefactory application is divided into the server, _c-xref_ and
 the editor part, currently only emacs:en are supported so that's
-implemented in the env/emacs-packages.
+implemented in the env/emacs-packages. (Though the jEdit source is now
+also resurrected, it is completely untested.)
 
-Communication between them is performed using text through standard
-input/output to/from _c-xref_. The protocol is defined in
-src/protocol.tc and must match env/emacs/c-xrefprotocol.el.
+Communication between the editor and the server is performed using
+text through standard input/output to/from _c-xref_. The protocol is
+defined in src/protocol.tc and must match env/emacs/c-xrefprotocol.el.
 
 NOTE: I find it strange that the macros for C define static variables for
 these PROTOCOL_ITEMs in every C unit that includes _protocol.h_.
@@ -95,14 +96,14 @@ generated versions of _strFill_, _strTdef_(no longer) and _enumTxt_ by
 the Makefile.
 
 The process starts with building a _c-xref.bs_ executable from checked
-in sources. This complies uses a BOOTSTRAPPING define that causes some
+in sources. This compile uses a BOOTSTRAPPING define that causes some
 header files to include pre-generated versions of the generated files
 (currently _strFill.bs.h_ and _enumTxt.bs.h_) which should work in all
 environments.
 
 NOTE: if you change the name of a field in a structure that is subject
 to FILL-generation you will need to manually update the
-_strFill.bs.h_, but a "make cleaner all" will show you where does are.
+_strFill.bs.h_, but a "make cleaner all" will show you where those are.
 
 After the _c-xref.bs_ has been built, it is used to generate _strFill_
 and _enumTxt_ which might include specific structures for the current
@@ -140,15 +141,18 @@ much better and should really be the only way, I think.
 
 ## Include files
 
-Seems this code is using very old C style with a separate proto.h
-where all prototypes for all externally visible functions are placed.
+This code is using very old C style with a separate proto.h where all
+prototypes for all externally visible functions are placed.
 
 This file also is used in the "generation" step, which I can't
 understand right now. Does the "generation" step create internal data
 for c-xref source code!?!??! I think this is because of the
 bootstrapping of fill macros etc.
 
-## C-Xrefs file
+Of course this will have to change into the modern x.h/x.c externally
+visible interface model.
+
+## CXrefs file
 
 This file (or files) contains compact, but textual representations of
 the cross-reference information. Format is somewhat complex, but here
@@ -177,7 +181,7 @@ The patch is mainly to the skeleton and seems to relate mostly to
 handling of errors and adding a recursive parsing feature that is
 required for Java.
 
-Some changes are also made to be ablo to accomodate multiple parsers
+Some changes are also made to be able to accomodate multiple parsers
 in the same executable. The Makefile generates the parsers and renames
 them as appropriate.
 
@@ -190,7 +194,7 @@ and local motions.
 
 ## Naming conventions
 
-_C-xref_ started probably as a cross-referencer for the languages
+_C-xref_ started (probably) as a cross-referencer for the languages
 supported (C, Java, C++), orginally had the name "xref" which became
 "xrefactory" when refactoring support was added. And when Mariàn
 released a "C only" version in 2009 some of all "xref" references was
@@ -241,7 +245,7 @@ the total number of fields in all the substructures.
 
 This makes it easy to add a new structure or to add fields to an already
 existing one without having to manually update the "Create"-function
-for tha structure.
+for that structure.
 
 However, the usage of the _FILL_ functions is less that crystal clear...
 
