@@ -6280,7 +6280,7 @@ the C-xrefactory configuration file.
   (interactive "")
   (let ((ns) (os) (nns))
     (setq os (car c-xref-completion-auto-search-list))
-    (setq ns (format "%s%c" os last-command-char))
+    (setq ns (format "%s%c" os last-command-event))
     (beginning-of-line)
     (c-xref-auto-search-search ns)
     (setq nns (car c-xref-completion-auto-search-list))
