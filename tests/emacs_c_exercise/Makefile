@@ -18,6 +18,8 @@ $(TEST):
 	@../../src/c-xref cexercise -xrefrc .c-xrefrc -refs $(CURDIR)/CXrefs -o $@.log
 	@# Run emacs with commands to execute the example sequence
 	@HOME=$(CURDIR) emacs --no-splash -batch -l .emacs.el -l emacs_c_exercise.el > /dev/null 2>&1
+	@# Remove tilde-files after editing
+	@find cexercise -name \*~ -exec rm {} \;
 	@# Compare output to expected resulting files
 	@diff -r cexercise expected > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
