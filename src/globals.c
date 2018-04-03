@@ -12,9 +12,9 @@ char *s_debugSurveyPointer;
 int s_fileAbortionEnabled;
 
 #ifdef OLCX_MEMORY_CHECK
-void *s_olcx_chech_array[OLCX_CHECK_ARRAY_SIZE];
-int s_olcx_chech_array_sizes[OLCX_CHECK_ARRAY_SIZE];
-int s_olcx_chech_arrayi = 0;
+void *s_olcx_check_array[OLCX_CHECK_ARRAY_SIZE];
+int s_olcx_check_array_sizes[OLCX_CHECK_ARRAY_SIZE];
+int s_olcx_check_arrayi = 0;
 #endif
 
 int s_wildCharSearch;

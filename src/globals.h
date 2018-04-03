@@ -12,9 +12,9 @@ extern char *s_debugSurveyPointer;
 extern int s_fileAbortionEnabled;
 
 #ifdef OLCX_MEMORY_CHECK
-extern void *s_olcx_chech_array[OLCX_CHECK_ARRAY_SIZE];
-extern int s_olcx_chech_array_sizes[OLCX_CHECK_ARRAY_SIZE];
-extern int s_olcx_chech_arrayi;
+extern void *s_olcx_check_array[OLCX_CHECK_ARRAY_SIZE];
+extern int s_olcx_check_array_sizes[OLCX_CHECK_ARRAY_SIZE];
+extern int s_olcx_check_arrayi;
 #endif
 extern int s_wildCharSearch;
 extern int s_lastReturnedLexem;

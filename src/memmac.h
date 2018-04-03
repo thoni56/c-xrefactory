@@ -99,34 +99,34 @@
 /* ********************************************************************** */
 
 #ifdef OLCX_MEMORY_CHECK
-#define CHECK_INIT() {s_olcx_chech_arrayi=0;}
+#define CHECK_INIT() {s_olcx_check_arrayi=0;}
 #define CHECK_ALLOC(p, n) {\
-    if (s_olcx_chech_arrayi == -1) assert(0);\
-    s_olcx_chech_array[s_olcx_chech_arrayi] = p;\
-    s_olcx_chech_array_sizes[s_olcx_chech_arrayi] = n;\
-    s_olcx_chech_arrayi ++;\
-    assert(s_olcx_chech_arrayi<OLCX_CHECK_ARRAY_SIZE-2);\
+    if (s_olcx_check_arrayi == -1) assert(0);\
+    s_olcx_check_array[s_olcx_check_arrayi] = p;\
+    s_olcx_check_array_sizes[s_olcx_check_arrayi] = n;\
+    s_olcx_check_arrayi ++;\
+    assert(s_olcx_check_arrayi<OLCX_CHECK_ARRAY_SIZE-2);\
 }
 #define CHECK_FREE(p, nn) {\
     int _itmpi, _nnlen;\
     _nnlen = nn;\
     if (nn == 0) error(ERR_INTERNAL, "Freeing chunk of size 0");\
-    for (_itmpi=0; _itmpi<s_olcx_chech_arrayi; _itmpi++) {\
-        if (s_olcx_chech_array[_itmpi] == p) {\
-            s_olcx_chech_array[_itmpi]=NULL;\
-            if (_nnlen != s_olcx_chech_array_sizes[_itmpi]) {\
-                sprintf(tmpBuff, "Cell %d allocated with size %d and freed with %d\n", _itmpi, s_olcx_chech_array_sizes[_itmpi], _nnlen);\
+    for (_itmpi=0; _itmpi<s_olcx_check_arrayi; _itmpi++) {\
+        if (s_olcx_check_array[_itmpi] == p) {\
+            s_olcx_check_array[_itmpi]=NULL;\
+            if (_nnlen != s_olcx_check_array_sizes[_itmpi]) {\
+                sprintf(tmpBuff, "Cell %d allocated with size %d and freed with %d\n", _itmpi, s_olcx_check_array_sizes[_itmpi], _nnlen);\
                 fatalError(ERR_INTERNAL, tmpBuff, XREF_EXIT_ERR);\
             }\
             break;\
         }\
     }\
-    if (_itmpi==s_olcx_chech_arrayi) fatalError(ERR_INTERNAL, "Freeing unalocated cell", XREF_EXIT_ERR);\
+    if (_itmpi==s_olcx_check_arrayi) fatalError(ERR_INTERNAL, "Freeing unalocated cell", XREF_EXIT_ERR);\
 }
 #define CHECK_FINAL() {\
     int _itmpi;\
-    for (_itmpi=0; _itmpi<s_olcx_chech_arrayi; _itmpi++) {\
-        if (s_olcx_chech_array[_itmpi]!=NULL) {\
+    for (_itmpi=0; _itmpi<s_olcx_check_arrayi; _itmpi++) {\
+        if (s_olcx_check_array[_itmpi]!=NULL) {\
             sprintf(tmpBuff, "unfreed cell #%d\n", _itmpi);\
             error(ERR_INTERNAL, tmpBuff;\
         }\
