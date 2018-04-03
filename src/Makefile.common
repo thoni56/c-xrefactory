@@ -117,7 +117,7 @@ c-xref: $(OBJS)
 
 clean:;
 	-make -C $(ROOTDIR)/lib/zlib clean
-	-rm -f $(OBJS) c-xref
+	-rm -f $(OBJS) c-xref .c-xrefrc
 
 cleaner: clean
 	-rm compiler_defines.g strFill.g.h enumTxt.g.[ch] c-xref.bs
@@ -131,11 +131,3 @@ dependencies:;
 
 test:
 	$(MAKE) -C .. test
-
-.c-xrefrc:
-	@echo "Generating local .c-xrefrc"
-	@echo "[$(CURDIR)]"  > .c-xrefrc
-	@echo "  $(CURDIR)" >> .c-xrefrc
-	@echo >> .c-xrefrc
-	@echo "[/tmp/jexercise]" >> .c-xrefrc
-	@echo "  /tmp/jexercise" >> .c-xrefrc
