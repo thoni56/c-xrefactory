@@ -1,0 +1,2 @@
+[CURDIR]
+    CURDIR
