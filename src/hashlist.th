@@ -23,11 +23,11 @@ typedef HASH_TAB_TYPE {
 
 extern void CONCAT(HASH_FUN_PREFIX, Init) (		/* Init */
                     HASH_TAB_TYPE *tab,
-                    int velkost
+                    int size
                 );
 extern void CONCAT(HASH_FUN_PREFIX, NAInit)(		/* not alloc init */
                     HASH_TAB_TYPE *t,
-                    int velkost
+                    int size
                 );
 extern int  CONCAT(HASH_FUN_PREFIX, IsMember) (	/* IsMember */
                     HASH_TAB_TYPE *tab,
