@@ -8,6 +8,13 @@
 
 #include "hashlist.th"
 
+/*
+  run the following command in shell to get the expanded declarations of hashlist
+
+  gcc -E symtab.h
+
+*/
+
 #ifndef _SYMTAB_
 #undef HASH_TAB_NAME
 #undef HASH_ELEM_TYPE
