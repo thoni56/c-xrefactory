@@ -8,5 +8,6 @@ strTdef.g.h
 strFill.g.h
 enumTxt.g.h
 enumTxt.g.c
+tmp-*.g.[hc]
 compiler_defines.g
 *.backup

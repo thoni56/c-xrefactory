@@ -116,7 +116,7 @@ enumTxt.g.h: proto.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
 enumTxt.g.c: proto.h compiler_defines.g .c-xrefrc c-xref.bs Makefile.common
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION \
 		-enum_name -body -xrefrc .c-xrefrc proto.h \
-		>> tmp-$@
+		> tmp-$@
 	if [ -e $@ ]; then \
 		if ! diff $@ tmp-$@ ; then \
 			mv -f $@ $@.backup ; \
