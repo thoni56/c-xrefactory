@@ -84,28 +84,47 @@ c-xref.bs:
 compiler_defines.g: c-xref.bs Makefile.common
 	echo | gcc -dM -E - > compiler_defines.g
 
+# Generate structure filler functions
 strFill.g.h: proto.h symtab.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION \
 		-str_fill -header -xrefrc .c-xrefrc proto.h \
-		> tmpStrFill.g.h
-	if [ -e strFill.g.h ]; then mv -f strFill.g.h strFill.h.backup ; fi
-	mv -f tmpStrFill.g.h strFill.g.h
+		> tmp-$@
+	if [ -e $@ ]; then \
+		if ! diff $@ tmp-$@ ; then \
+			mv -f $@ $@.backup ; \
+			mv -f tmp-$@ $@ ; \
+		fi \
+	else \
+			mv -f tmp-$@ $@ ; \
+	fi
 
+# Generate enum string representations header
 enumTxt.g.h: proto.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION \
 		-enum_name -header -xrefrc .c-xrefrc proto.h \
-		> tmpenumTxt.g.h
-	if [ -e enumTxt.g.h ]; then mv -f enumTxt.g.h enumTxt.h.backup ; fi
-	mv -f tmpenumTxt.g.h enumTxt.g.h
+		> tmp-$@
+	if [ -e $@ ]; then \
+		if ! diff $@ tmp-$@ ; then \
+			mv -f $@ $@.backup ; \
+			mv -f tmp-$@ $@ ; \
+		fi \
+	else \
+			mv -f tmp-$@ $@ ; \
+	fi
 
+# Generate enum string representations
 enumTxt.g.c: proto.h compiler_defines.g .c-xrefrc c-xref.bs Makefile.common
-	echo "#include \"stdinc.h\"" > tmpenumTxt.g.c
-	echo "#include \"proto.h\"" >> tmpenumTxt.g.c
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION \
 		-enum_name -body -xrefrc .c-xrefrc proto.h \
-		>> tmpenumTxt.g.c
-	if [ -e enumTxt.g.c ]; then mv -f enumTxt.g.c enumTxt.c.backup ; fi
-	mv -f tmpenumTxt.g.c enumTxt.g.c
+		>> tmp-$@
+	if [ -e $@ ]; then \
+		if ! diff $@ tmp-$@ ; then \
+			mv -f $@ $@.backup ; \
+			mv -f tmp-$@ $@ ; \
+		fi \
+	else \
+			mv -f tmp-$@ $@ ; \
+	fi
 
 c-xref: $(OBJS)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
