@@ -1,0 +1,10 @@
+#include <cgreen/mocks.h>
+
+unsigned hashFun(char *s) {
+    return mock(s);
+}
+
+/* No mock, just allocate memory as requested */
+void *stackMemoryAlloc(int size) {
+    return (void *)malloc(size);
+}

@@ -161,25 +161,37 @@ are somethings that I think I have found out:
 - the encoding has one character markers which are listed at the top
   of cxfile.c
 - the coding seems to often start with a number and then a character,
-  such as '4l' means line 4
+  such as '4l' (4 ell) means line 4, 23c mean column 23
 - references seems to be optimized to not repeat information if it
   would be a repetition, such as '15l3cr7cr' means that there are two
   references on line 15, one in column 3 the other in column 7
 - so there is a notion of "current" for all values which need not be
   repeated
 - e.g. references all use 'fsulc' fields, i.e. file, symbol index,
-  line and column, but do not repeat 'f' as long as it is the same
+  usage, line and column, but do not repeat a 'fsulc' as long as it is
+  the same
+
+So a line might say
+
+    12205f 1522108169p m1ia 84:/home/...
+
+The line identifies the file with id 12205. The file was last included
+in an update of refs at sometime which is identified by 1522108169
+(mtime), has not been part of a full update of xrefs, was mentioned on
+the command line. (I don't know what the 'a' means...) Finally, the
+file name itself is 84 characters long.
 
 ## Parsers
 
-_C_xref_ uses a patched version of berkley yacc to generate
-parsers. There are a number of them, C, C expressions and Java. There
-are also traces of calls to the C++ parser that existed but was
-proprietary.
+_C-xref_ uses a patched version of berkley yacc to generate
+parsers. There are a number of parsers, for C, C expressions and
+Java. There are also traces of calls to the C++ parser that existed
+but was proprietary.
 
-The patch is mainly to the skeleton and seems to relate mostly to
-handling of errors and adding a recursive parsing feature that is
-required for Java.
+The patch to byacc is mainly to the skeleton and seems to relate
+mostly to handling of errors and adding a recursive parsing feature
+that is required for Java. It is not impossible that the change can be
+adapted to other versions of yacc, but this has not be tried.
 
 Some changes are also made to be able to accomodate multiple parsers
 in the same executable. The Makefile generates the parsers and renames
