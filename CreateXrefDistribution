@@ -1,4 +1,6 @@
 #!/bin/sh
+OWD=$PWD
+
 rm -r -f ../c-xref
 
 cd src
@@ -56,3 +58,5 @@ cp doc/LICENSE ../c-xref/LICENSE
 cd ../c-xref
 ln -s emacs xemacs
 chmod -R a+r ../c-xref
+
+cd $OWD
