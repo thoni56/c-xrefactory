@@ -34,15 +34,17 @@ cp doc/c-xref.man ../c-xref/
 cp doc/c-xrefrc.man ../c-xref/
 #cp doc/c-xrefrc.txt ../c-xref/
 
-# Copy relevant emacs files
+# Copy relevant editor files
 cd env
 for d in *
 do
-    mkdir ../../c-xref/${d}
-    for f in `cat ${d}/Files`
-    do
-        cp ${d}/${f} ../../c-xref/${d}/
-    done
+    if [ "$d" != "jedit" ] ; then
+        mkdir ../../c-xref/${d}
+        for f in `cat ${d}/Files`
+        do
+            cp ${d}/${f} ../../c-xref/${d}/
+        done
+    fi
 done
 
 # Copy license files
