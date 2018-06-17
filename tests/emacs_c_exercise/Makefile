@@ -20,7 +20,7 @@ setup:
 		mv .c-xrefrc.new .c-xrefrc ; \
 	fi
 	@# Generate refs
-	@../../src/c-xref cexercise -xrefrc .c-xrefrc -refs $(CURDIR)/CXrefs -o $@.log
+	@../../src/c-xref cexercise -xrefrc .c-xrefrc -refs $(CURDIR)/CXrefs -o $(TEST).log
 
 execute:
 	@# Run emacs with commands to execute the example sequence
