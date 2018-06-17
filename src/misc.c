@@ -1732,7 +1732,7 @@ void jarFileParse() {
     archi = zipIndexArchive(s_input_file_name);
     rr = addFileTabItem(s_input_file_name, &ii);
     assert(rr==0); // filename has to be in the table
-    testFileModifTime(ii);
+    testFileModifiedTime(ii);
     // set loading to 1, no matter whether saved (by overflow) or not
     // following make create a loop, but it is very unprobable
     s_fileTab.tab[ii]->b.cxLoading = 1;

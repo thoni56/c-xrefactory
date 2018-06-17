@@ -10,30 +10,31 @@
 #include "log.h"
 
 
-int testFileModifTime(int ii) {
+int testFileModifiedTime(int fileIndex) {
     struct stat fst;
     int res;
     time_t t0;
-    assert(s_fileTab.tab[ii] != NULL);
+
+    assert(s_fileTab.tab[fileIndex] != NULL);
     t0 = time(NULL);
-    if (s_fileTab.tab[ii]->lastInspect >= s_fileProcessStartTime
-        && s_fileTab.tab[ii]->lastInspect <= t0) {
+    if (s_fileTab.tab[fileIndex]->lastInspect >= s_fileProcessStartTime
+        && s_fileTab.tab[fileIndex]->lastInspect <= t0) {
         /* not supposing files can change during one execution */
         res = 1;
-        goto fini;
+        goto end;
     }
-    if (statb(s_fileTab.tab[ii]->name, &fst)) {
+    if (statb(s_fileTab.tab[fileIndex]->name, &fst)) {
         res = 0;
-        goto fini;
+        goto end;
     }
-    s_fileTab.tab[ii]->lastInspect = t0;
-    if (fst.st_mtime == s_fileTab.tab[ii]->lastModif) {
+    s_fileTab.tab[fileIndex]->lastInspect = t0;
+    if (fst.st_mtime == s_fileTab.tab[fileIndex]->lastModif) {
         res = 1;
     } else {
-        s_fileTab.tab[ii]->lastModif = fst.st_mtime;
+        s_fileTab.tab[fileIndex]->lastModif = fst.st_mtime;
         res = 0;
     }
- fini:
+ end:
     return(res);
 }
 
@@ -207,7 +208,7 @@ static int cachedIncludedFilePass(int cpi) {
     assert (cpi > 0);
     mi = s_cache.cp[cpi].ibi;
     for(i=s_cache.cp[cpi-1].ibi; i<mi; i++) {
-        mt = testFileModifTime(s_cache.ib[i]);
+        mt = testFileModifiedTime(s_cache.ib[i]);
         /*&
           fprintf(dumpOut,"mtime of %s eval to %d\n",
           s_fileTab.tab[s_cache.ib[i]]->name,mt);
@@ -349,7 +350,7 @@ void cacheInclude(int fileNum) {
       fprintf(dumpOut,"caching include of file %d: %s\n",
       s_cache.ibi, s_fileTab.tab[fileNum]->name);
     */
-    testFileModifTime(fileNum);
+    testFileModifiedTime(fileNum);
     assert(s_cache.ibi < INCLUDE_CACHE_SIZE);
     s_cache.ib[s_cache.ibi] = fileNum;
     s_cache.ibi ++;
