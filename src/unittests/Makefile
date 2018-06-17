@@ -1,6 +1,6 @@
 CFLAGS = -g -MMD -MT .d -fPIC -I..
 
-all: symtab_tests.so
+unit all: symtab_tests.so
 	cgreen-runner $<
 
 symtab_tests.so: symtab_tests.o symtab.o
