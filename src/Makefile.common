@@ -79,20 +79,34 @@ c-xref.bs:
 # which are dependent on compiler builtins or standard headers for
 # the current environment (not actually dependent on c-xref.bs)
 #
-# .g = generated
+# .g = generated, .bs = bootstrap version
 
 compiler_defines.g: c-xref.bs Makefile.common
-	echo | gcc -dM -E - > compiler_defines.g
+	echo | gcc -dM -E - > tmp-$@
+	@if [ -e $@ ]; then \
+		if ! diff $@ tmp-$@ ; then \
+			mv -f $@ $@.backup ; \
+			mv -f tmp-$@ $@ ; \
+			echo "Different, saved to $@." ; \
+		else \
+			echo "No change." ; \
+		fi \
+	else \
+			mv -f tmp-$@ $@ ; \
+	fi
 
 # Generate structure filler functions
 strFill.g.h: proto.h symtab.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION \
 		-str_fill -header -xrefrc .c-xrefrc proto.h \
 		> tmp-$@
-	if [ -e $@ ]; then \
+	@if [ -e $@ ]; then \
 		if ! diff $@ tmp-$@ ; then \
 			mv -f $@ $@.backup ; \
 			mv -f tmp-$@ $@ ; \
+			echo "Different, saved to $@" ; \
+		else \
+			echo "No change." ; \
 		fi \
 	else \
 			mv -f tmp-$@ $@ ; \
@@ -103,10 +117,13 @@ enumTxt.g.h: proto.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION \
 		-enum_name -header -xrefrc .c-xrefrc proto.h \
 		> tmp-$@
-	if [ -e $@ ]; then \
+	@if [ -e $@ ]; then \
 		if ! diff $@ tmp-$@ ; then \
 			mv -f $@ $@.backup ; \
 			mv -f tmp-$@ $@ ; \
+			echo "Different, saved to $@." ; \
+		else \
+			echo "No change." ; \
 		fi \
 	else \
 			mv -f tmp-$@ $@ ; \
@@ -117,10 +134,13 @@ enumTxt.g.c: proto.h compiler_defines.g .c-xrefrc c-xref.bs Makefile.common
 	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION \
 		-enum_name -body -xrefrc .c-xrefrc proto.h \
 		> tmp-$@
-	if [ -e $@ ]; then \
+	@if [ -e $@ ]; then \
 		if ! diff $@ tmp-$@ ; then \
 			mv -f $@ $@.backup ; \
 			mv -f tmp-$@ $@ ; \
+			echo "Different, saved to $@." ; \
+		else \
+			echo "No change." ; \
 		fi \
 	else \
 			mv -f tmp-$@ $@ ; \
