@@ -4,6 +4,11 @@ include ../Makefile.boilerplate
 
 $(TEST):
 	@printf "Tests in \"$@\": "
+	@$(MAKE) --no-print-directory setup
+	@$(MAKE) --no-print-directory execute
+	@$(MAKE) --no-print-directory check
+
+setup:
 	@rm -rf $@.log CXrefs
 	@# Copy c-example files here...
 	@rm -rf cexercise
@@ -16,10 +21,14 @@ $(TEST):
 	fi
 	@# Generate refs
 	@../../src/c-xref cexercise -xrefrc .c-xrefrc -refs $(CURDIR)/CXrefs -o $@.log
+
+execute:
 	@# Run emacs with commands to execute the example sequence
 	@HOME=$(CURDIR) emacs --no-splash -batch -l .emacs.el -l emacs_c_exercise.el > /dev/null 2>&1
 	@# Remove tilde-files after editing
 	@find cexercise -name \*~ -exec rm {} \;
+
+check:
 	@# Compare output to expected resulting files
 	@diff -r cexercise expected > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
