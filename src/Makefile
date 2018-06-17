@@ -25,7 +25,7 @@ endif
 include Makefile.common
 include Makefile.dependencies
 
-unit: all
+unit:
 	make -C unittests
 
 #########################################################################
