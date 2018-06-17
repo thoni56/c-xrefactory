@@ -1,7 +1,7 @@
 cp -r ../doc/jexercise /tmp
 
 export SOURCEPATH=/tmp/jexercise
-export CXREFRC="-xrefrc $PWD/.c-xrefrc -p /tmp/jexercise"
+export CXREFRC="-xrefrc /tmp/jexercise/.c-xrefrc -p /tmp/jexercise"
 
 ./c-xref -refactory -rfct-add-param -olcxparnum=1 "-rfct-param1=int i;" -rfct-param2=0 $CXREFRC -olcursor=866 /tmp/jexercise/com/xrefactory/refactorings/MoveMethod.java
 
