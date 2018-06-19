@@ -669,7 +669,7 @@ static int olcxOnlyParseNoPushing(int opt) {
 S_reference * addCxReferenceNew(S_symbol *p, S_position *pos, S_usageBits *usageb,
                                 int vFunCl, int vApplCl) {
     int                 ii,mm,category,scope,storage,defusage;
-    char                *ss;
+    char                *linkName;
     S_reference         rr, **place;
     S_position          *defpos;
     S_symbolRefItem     *pp,*memb, ppp;
@@ -754,11 +754,11 @@ S_reference * addCxReferenceNew(S_symbol *p, S_position *pos, S_usageBits *usage
     if (mm==0) {
         //&fprintf(dumpOut,"allocating %s\n",p->linkName);fflush(dumpOut);
         CX_ALLOC(pp, S_symbolRefItem);
-        CX_ALLOCC(ss, strlen(p->linkName)+1, char);
-        strcpy(ss, p->linkName);
+        CX_ALLOCC(linkName, strlen(p->linkName)+1, char);
+        strcpy(linkName, p->linkName);
         FILL_symbolRefItemBits(&pp->b,p->b.symType,storage,scope,
                                p->b.accessFlags,category,0);
-        FILL_symbolRefItem(pp,ss,cxFileHashNumber(ss),
+        FILL_symbolRefItem(pp,linkName,cxFileHashNumber(linkName),
                            vApplCl,vFunCl,pp->b,NULL,NULL);
         refTabSet(reftab, pp, ii);
         memb = pp;
