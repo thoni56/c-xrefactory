@@ -1,6 +1,8 @@
 #ifndef _SYMTAB_H_
 #define _SYMTAB_H_
 
+/* symTab - an instance of haslist */
+
 #include "proto.h"
 
 #define HASH_TAB_NAME symTab
