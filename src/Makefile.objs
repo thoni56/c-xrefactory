@@ -7,7 +7,7 @@ OBJS=cgram.o main.o globals.o misc.o semact.o commons.o generate.o \
 	 editor.o refactory.o protocol.o log.o \
 	 yaccgram.o html.o extract.o classh.o jslsemact.o \
 	 filetab.o matab.o olcxtab.o editorbuffertab.o symtab.o javafqttab.o \
-	 jsltypetab.o reftab.o
+	 jsltypetab.o reftab.o memmac.o
 
 # Put the following into comments if you wish to build without zlib
 # library, i.e. without possibility to read compressed .jar files

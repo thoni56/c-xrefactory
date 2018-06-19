@@ -52,15 +52,15 @@
 #define DM_FREED_POINTER(mem,ppp) DM_IS_BETWEEN(mem,ppp,mem->i,mem->size)
 
 #define DM_INIT(mem) {mem->i = 0;}
-#define DM_ALLOCC(mem,p,n,t) {\
+#define DM_ALLOCC(mem,p,n,type) {\
     assert( (n) >= 0);\
     mem->i = ((char*)ALIGNMENT(((char*)&mem->b)+mem->i,STANDARD_ALIGNMENT)) - ((char*)&mem->b);\
-    if (mem->i+(n)*sizeof(t) >= mem->size) {\
-        if (mem->overflowHandler(n)) longjmp(s_memoryResize,1); \
+    if (mem->i+(n)*sizeof(type) >= mem->size) {\
+        if (mem->overflowHandler(n)) memoryResize();        \
         else fatalError(ERR_NO_MEMORY,#mem, XREF_EXIT_ERR);\
     }\
-    p = (t*) (((char*)&mem->b) + mem->i);\
-    mem->i += (n)*sizeof(t);\
+    p = (type*) (((char*)&mem->b) + mem->i);\
+    mem->i += (n)*sizeof(type);\
 }
 #define DM_ALLOC(mem,p,t) {DM_ALLOCC(mem,p,1,t);}
 #define DM_REALLOCC(mem,p,n,t,oldn) {\
@@ -76,6 +76,7 @@
 
 /* ************* a suplementary level with free-lists ******************** */
 
+/* This is only used for olcxMemory so "mem" is always olcxMemory... */
 #define RLM_INIT(mem) {mem##AllocatedBytes = 0; CHECK_INIT();}
 
 #define RLM_SOFT_ALLOCC(mem,p,nn,t) {\
@@ -97,6 +98,8 @@
 
 
 /* ********************************************************************** */
+
+/* Here are some macros that adds consistency checks to olcx-memory handling */
 
 #ifdef OLCX_MEMORY_CHECK
 #define CHECK_INIT() {s_olcx_check_arrayi=0;}
@@ -141,5 +144,7 @@
 
 
 /* ********************************************************************** */
+
+void memoryResize(void);
 
 #endif
