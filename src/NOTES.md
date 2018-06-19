@@ -33,10 +33,7 @@ source and should generate a version specific for the current system.
 The strategy selected, until some better idea comes along, is to try
 to build a _c-xref.bs_, if there isn't one already, from the sources in
 the repository and then use that to re-generate the definitions and
-rebuild a proper _c-xref_.
-
-Currently that causes some [warning]:s when _c-xref.bs_ generates new
-_strTdef.g_ and _strFill.g_.
+rebuild a proper _c-xref_. See Bootstrapping below.
 
 ## Design ##
 
@@ -46,6 +43,8 @@ The c-xrefactory application is divided into the server, _c-xref_ and
 the editor part, currently only emacs:en are supported so that's
 implemented in the env/emacs-packages. (Though the jEdit source is now
 also resurrected, it is completely untested.)
+
+#### Protocol
 
 Communication between the editor and the server is performed using
 text through standard input/output to/from _c-xref_. The protocol is
@@ -66,6 +65,30 @@ that expansion is done for Emacs-lisp.
 NOTE: there is now some Makefile trickery that ensures that these two
 are in sync.
 
+TODO: Create tests that exercise the protocol, both directions.
+
+#### Invocation of server
+
+It is at this point a bit unclear how the server calls actually
+work. It seems like the editor fires up a server and keeps talking
+over the established channel (elisp function
+'c-xref-start-server-process'). This puts extra demands on the memory
+management in the server, since it might need to handle multiple
+information sets and options (as read from a .cxrefrc-file) for
+multiple projects simultaneously over a longer period of
+time. (E.g. if the user enters the editor starting with one project
+and then continues to work on another then new project options need to
+be read, and new tag information be generated and read and cached.)
+
+TODO: Figure out and describe how this works by looking at the
+elisp-sources.
+
+FINDINGS:
+- c-xref-start-server-process in c-xref.el
+- c-xref-send-data-to-running-process in c-xref.el
+- c-xref-server-call-refactoring-task in c-xref.el
+
+TODO: create some examples and tests for this context.
 
 ### Bootstrapping
 
@@ -129,15 +152,54 @@ like "fpos_t=long".
 I've implemented a mechanism that uses "gcc -E -mD" to print out and
 catch all compiler defines in `compiler_defines.h`. This was necessary
 because of such definitions on Darwin which where not in the
-"pre-programmed" ones. And this is more general and should possibly
-completely replace the "programmed" ones in `options.c`?
+"pre-programmed" ones.
+
+TODO?: And this is more general and should possibly completely replace
+the "programmed" ones in `options.c`?
 
 #### Include paths
 
 Also in _options.h_ some standard-like include paths are added, but
 there is a better attempt in _getAndProcessGccOptions()_ which uses
-the compiler/preprocessor itself to figure out those paths. This is
-much better and should really be the only way, I think.
+the compiler/preprocessor itself to figure out those paths.
+
+TODO?: This is much better and should really be the only way, I think.
+
+### Regimes
+
+As the base for `c-xrefactory` is some kind of cross-referencing
+engine, there are traces of multiple responsibilities, all still
+functional. The command line options `-regime X`/`s_opt.taskRegime` as
+shown in the final lines in `main()`.
+
+They are intertwined, probably through re-use of already existing
+functionality when extending to a refactoring browser.
+
+TODO?: Strip away the various "regimes" into more separated concerns.
+
+### Passes
+
+There is a variable in `main()` called `firstPassing` which is set and passed
+down through `mainEditServer()` until it is reset in
+`mainFileProcessingInitialisations()` after `initCaching()`.
+
+This seems to be a very hacky way to only initialize caching
+once... Maybe I'm missing something...
+
+### Memory allocation
+
+There are multiple levels of memory management.
+
+- Why is this required (possibly because of the long running server
+model)?
+- Exactly how this memory is allocated?
+- Why handle this allocation in disparate spaces?
+- Why does not standard malloc()/free() suffice?
+
+### Caching
+
+There is obviously some caching going on. Don't know of what at this
+point. Tag data?
 
 ## Include files
 
@@ -181,6 +243,9 @@ in an update of refs at sometime which is identified by 1522108169
 the command line. (I don't know what the 'a' means...) Finally, the
 file name itself is 84 characters long.
 
+TODO: Build a tool to decipher this so that tests can query the
+generated data for expected data.
+
 ## Parsers
 
 _C-xref_ uses a patched version of berkley yacc to generate
@@ -196,6 +261,10 @@ adapted to other versions of yacc, but this has not be tried.
 Some changes are also made to be able to accomodate multiple parsers
 in the same executable. The Makefile generates the parsers and renames
 them as appropriate.
+
+TODO?: Should we just scrap the Java support and focus on C since a)
+the Java support is for Java 1.6 and b) there are more mature Java
+refactoring support available?
 
 ## Comment handling
 
