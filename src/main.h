@@ -3,7 +3,6 @@
 
 #include "proto.h"
 
-extern int creatingOlcxRefs();
 extern void dirInputFile(MAP_FUN_PROFILE);
 extern void xrefSetenv(char *name, char *val);
 

@@ -18,6 +18,7 @@
 #include "main.h"
 #include "enumTxt.h"
 #include "reftab.h"
+#include "utils.h"
 
 
 #define SORTED_LIST_LESS(tmp,key) (POSITION_LESS((tmp)->p, (key).p))
@@ -2175,7 +2176,7 @@ static void olcxSetActReferenceToFirstVisible(S_olcxReferences *refs, S_referenc
 static void olcxReferencePlus() {
     S_olcxReferences    *refs;
     S_reference         *r;
-    OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
+    OLCX_MOVE_INIT(s_olcxCurrentUser, refs, CHECK_NULL);
     if (refs->act == NULL) refs->act = refs->r;
     else {
         r = refs->act->next;

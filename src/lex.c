@@ -8,6 +8,7 @@
 #include "cxref.h"
 #include "jslsemact.h"
 #include "main.h"
+#include "utils.h"
 
 
 /* ***************************************************************** */

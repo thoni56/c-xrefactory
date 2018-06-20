@@ -26,6 +26,7 @@
 #include "yylex.h"
 #include "lex.h"
 #include "log.h"
+#include "utils.h"
 
 #include "protocol.h"
 
