@@ -1,6 +1,8 @@
 CFLAGS = -g -MMD -MT .d -fPIC -I..
 
-all: symtab_tests.so olcxtab_tests.so
+UNITTESTS = $(patsubst %.c,%.so,$(wildcard *_tests.c))
+
+all: $(UNITTESTS)
 	cgreen-runner --suite unittests $^
 
 symtab_tests.so: symtab_tests.o symtab.o
