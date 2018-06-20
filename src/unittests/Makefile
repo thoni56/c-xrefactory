@@ -1,7 +1,7 @@
 CFLAGS = -g -MMD -MT .d -fPIC -I..
 
 all: symtab_tests.so olcxtab_tests.so
-	cgreen-runner $^
+	cgreen-runner --suite unittests $^
 
 symtab_tests.so: symtab_tests.o symtab.o
 	gcc -shared -o $@ $^ -lcgreen
