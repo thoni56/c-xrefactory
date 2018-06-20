@@ -92,7 +92,7 @@ TODO: create some examples and tests for this context.
 
 ### Bootstrapping
 
-#### Reasons
+#### Rationale
 
 _c-xref_ uses a load of structures, and lists of them, that need to be
 created and initialized in a lot of places (such as the parsers). To
@@ -136,6 +136,8 @@ HOWEVER: if FILL macros are used for structures which are different on
 some platforms, say a FILE structure, that FILL macro will have
 difference number of arguments, so I'm not sure how smart this "smart"
 generation technique actually is.
+
+TODO: Investigate alternativ approaches to this generate "regime".
 
 #### Compiler defines
 
