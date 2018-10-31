@@ -1783,7 +1783,7 @@ tries to delete C-xrefactory windows first.
           (forward-char 1)
           (search-forward-regexp "[^0-9]" (point-max) 0)
           (setq ne (point))
-          (setq line (string-to-int (buffer-substring e (- ne 1))))
+          (setq line (string-to-number (buffer-substring e (- ne 1))))
           )
       )
     (goto-char p)
@@ -2411,7 +2411,7 @@ tries to delete C-xrefactory windows first.
                     )
           (setq i (+ i 1))
           )
-        (setq pn (string-to-int (substring ss j i)))
+        (setq pn (string-to-number (substring ss j i)))
         (message "progress %s%%" pn)
         (setq i (c-xref-server-dispatch-skip-blank ss i len))
         ))
@@ -2926,7 +2926,7 @@ on active project selection).
     (setq res 0)
     (setq as (assoc attr c-xref-server-ctag-attributes))
     (if as
-        (setq res (string-to-int (cdr as)))
+        (setq res (string-to-number (cdr as)))
       )
     res
 ))
@@ -3327,7 +3327,7 @@ No.
            "-olcxtrivialprecheck -getlastimportline"
            dispatch-data)
           (setq iline (cdr (assoc 'info dispatch-data)))
-          (setq iline-val (string-to-int iline))
+          (setq iline-val (string-to-number iline))
           (save-excursion
             (goto-line (+ iline-val 1))
             (beginning-of-line)
@@ -5192,7 +5192,7 @@ part belonging to this project.
                        "Do you compile sources several times with different macro settings [yn]? " "n"))
             (if (or (equal aaa "y") (equal aaa "Y"))
                 (progn
-                  (setq pasn (string-to-int
+                  (setq pasn (string-to-number
                               (read-from-minibuffer
                                "How many compilations with different initial macro settings: " "2")))
                   (setq aaa (read-from-minibuffer
@@ -5889,7 +5889,7 @@ compilation is successful.  See also `c-xref-ide-compile' and
             )
           (if (eq di 0) (setq di i))
           (setq file (substring line b di))
-          (setq ln (string-to-int (substring line (+ di 1) i)))
+          (setq ln (string-to-number (substring line (+ di 1) i)))
           (c-xref-show-file-line-in-caller-window file ln)
           )
       (c-xref-find-file-on-point)
@@ -7494,7 +7494,7 @@ given string(s).
 (defun c-xref-interactive-browser-dialog-set-filter (event)
   (interactive "i")
   (let ((level))
-    (setq level (string-to-int (char-to-string last-input-char)))
+    (setq level (string-to-number (char-to-string last-input-char)))
     (c-xref-browser-or-refs-set-filter level)
 ))
 
@@ -8331,7 +8331,7 @@ refactoring.
                   "Insert parameter at position [ 1 - arity('%s') ] : " name)
                  "1"
                  ))
-    (setq arg (string-to-int argns))
+    (setq arg (string-to-number argns))
     (if (and rd (equal (car (cdr rd)) "macro"))
         (setq default "ARG")
       (setq default "int arg")
@@ -8363,7 +8363,7 @@ refactoring.
                   "Delete parameter from position [ 1 - arity('%s') ] : " name)
                  "1"
                  ))
-    (setq arg (string-to-int argns))
+    (setq arg (string-to-number argns))
     (c-xref-non-interactive-del-parameter name arg)
 ))
 
@@ -8386,13 +8386,13 @@ refactoring.
                   "Position of parameter to move [ 1 - arity('%s') ] : " name)
                  "1"
                  ))
-    (setq arg1 (string-to-int argns))
+    (setq arg1 (string-to-number argns))
     (setq argns (read-from-minibuffer
                  (format
                   "Move to position [ 1 - arity('%s') ] : " name)
                  "2"
                  ))
-    (setq arg2 (string-to-int argns))
+    (setq arg2 (string-to-number argns))
     (c-xref-non-interactive-move-parameter name arg1 arg2)
 ))
 
@@ -8597,7 +8597,7 @@ refactoring.
                  ))
     (setq field (read-from-minibuffer
                  "Optionally the field getting method's object from the argument [\"\"] "))
-    (setq arg (string-to-int argns))
+    (setq arg (string-to-number argns))
     (c-xref-refactoring-init-actions (format "making %s virtual" name))
     (c-xref-server-call-refactoring-task
      (list
