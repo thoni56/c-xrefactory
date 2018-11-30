@@ -25,9 +25,6 @@ endif
 include Makefile.common
 include Makefile.dependencies
 
-unit:
-	make -C unittests
-
 #########################################################################
 #
 # Trigger building our patched yacc if it doesn't exist and run it on

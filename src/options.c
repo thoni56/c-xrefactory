@@ -39,6 +39,8 @@ static char s_javaClassPathStatic[MAX_OPTION_LEN];
 
       echo | gcc -E -dM - > compiler_definitions.h
 
+  NOTE4: note3 is implemented now, so do we need this now?
+
  */
 
 static char *s_standardCOptions[] = {

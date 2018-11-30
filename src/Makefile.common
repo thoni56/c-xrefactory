@@ -82,14 +82,12 @@ c-xref.bs:
 # .g = generated, .bs = bootstrap version
 
 compiler_defines.g: c-xref.bs Makefile.common
-	echo | gcc -dM -E - > tmp-$@
+	@echo | gcc -dM -E - > tmp-$@
 	@if [ -e $@ ]; then \
 		if ! diff $@ tmp-$@ ; then \
 			mv -f $@ $@.backup ; \
 			mv -f tmp-$@ $@ ; \
-			echo "Different, saved to $@." ; \
-		else \
-			echo "No change." ; \
+			echo "$@: regenerated." ; \
 		fi \
 	else \
 			mv -f tmp-$@ $@ ; \
@@ -97,16 +95,14 @@ compiler_defines.g: c-xref.bs Makefile.common
 
 # Generate structure filler functions
 strFill.g.h: proto.h symtab.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
-	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION \
+	@./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION \
 		-str_fill -header -xrefrc .c-xrefrc proto.h \
 		> tmp-$@
 	@if [ -e $@ ]; then \
 		if ! diff $@ tmp-$@ ; then \
 			mv -f $@ $@.backup ; \
 			mv -f tmp-$@ $@ ; \
-			echo "Different, saved to $@" ; \
-		else \
-			echo "No change." ; \
+			echo "$@: regenerated." ; \
 		fi \
 	else \
 			mv -f tmp-$@ $@ ; \
@@ -114,16 +110,14 @@ strFill.g.h: proto.h symtab.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.co
 
 # Generate enum string representations header
 enumTxt.g.h: proto.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
-	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION \
+	@./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION \
 		-enum_name -header -xrefrc .c-xrefrc proto.h \
 		> tmp-$@
 	@if [ -e $@ ]; then \
 		if ! diff $@ tmp-$@ ; then \
 			mv -f $@ $@.backup ; \
 			mv -f tmp-$@ $@ ; \
-			echo "Different, saved to $@." ; \
-		else \
-			echo "No change." ; \
+			echo "$@: regenerated." ; \
 		fi \
 	else \
 			mv -f tmp-$@ $@ ; \
@@ -131,16 +125,14 @@ enumTxt.g.h: proto.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
 
 # Generate enum string representations
 enumTxt.g.c: proto.h compiler_defines.g .c-xrefrc c-xref.bs Makefile.common
-	./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION \
+	@./c-xref.bs -task_regime_generate $(COMCFLAGS) -DGENERATION \
 		-enum_name -body -xrefrc .c-xrefrc proto.h \
 		> tmp-$@
 	@if [ -e $@ ]; then \
 		if ! diff $@ tmp-$@ ; then \
 			mv -f $@ $@.backup ; \
 			mv -f tmp-$@ $@ ; \
-			echo "Different, saved to $@." ; \
-		else \
-			echo "No change." ; \
+			echo "$@: regenerated." ; \
 		fi \
 	else \
 			mv -f tmp-$@ $@ ; \
@@ -170,3 +162,7 @@ dependencies:;
 
 test:
 	$(MAKE) -C .. test
+
+
+unit:
+	$(MAKE) -C unittests
