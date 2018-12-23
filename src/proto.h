@@ -257,11 +257,11 @@ enum {
 
 enum taskRegimes {
     RegimeUndefined,
-    RegimeXref, /* cross referencer called by user from command line */
-    RegimeEditServer, /* editor server, called by on-line editing action */
-    RegimeGenerate,		/* generate str-fill macros, ... */
-    RegimeHtmlGenerate,	/* generate html form of input files, ... */
-    RegimeRefactory,	/* refactoring server, called by on-line editing */
+    RegimeXref,           /* cross referencer called by user from command line */
+    RegimeHtmlGenerate,   /* generate html form of input files, ... */
+    RegimeEditServer,     /* editor server, called by on-line editing action */
+    RegimeRefactory,      /* refactoring server, called by on-line editing */
+    RegimeGenerate,       /* generate str-fill macros, ... */
 };
 
 /* ************** on-line (browsing) operations for c-xref server  ********** */
@@ -1436,7 +1436,7 @@ typedef struct jslStat {
 typedef struct editorBufferBits {
         unsigned		textLoaded:1;
         unsigned		modified:1;
-        unsigned		modifiedSinceLastQuasySave:1;
+        unsigned		modifiedSinceLastQuasiSave:1;
 } S_editorBufferBits;
 
 typedef struct editorBuffer {

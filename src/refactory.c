@@ -176,7 +176,7 @@ static void refactoryUpdateReferences(char *project) {
 
     ppcGenRecordBegin(PPC_UPDATE_REPORT);
 
-    editorQuasySaveModifiedBuffers();
+    editorQuasiSaveModifiedBuffers();
 
     copyOptions(&savedOptions, &s_opt);
     //copyOptions(&savedCachedOptions, &s_cachedOptions);
@@ -4512,7 +4512,7 @@ void mainRefactory(int argc, char **argv) {
     mainOpenOutputFile(s_ropt.outputFileName);
     editorLoadAllOpenedBufferFiles();
     // initialise lastQuasySaveTime
-    editorQuasySaveModifiedBuffers();
+    editorQuasiSaveModifiedBuffers();
 
     if (s_ropt.project==NULL) {
         fatalError(ERR_ST, "You have to specify active project with -p option",
@@ -4632,7 +4632,7 @@ void mainRefactory(int argc, char **argv) {
     }
 
     // synchronisation, wait so files can not be saved with the same time
-    editorQuasySaveModifiedBuffers();
+    editorQuasiSaveModifiedBuffers();
 
     mainCloseOutputFile();
     ppcGenSynchroRecord();

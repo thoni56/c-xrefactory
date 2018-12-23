@@ -27,7 +27,7 @@ extern void editorDumpBuffers();
 extern void editorDumpMarker(S_editorMarker *mm);
 extern void editorDumpMarkerList(S_editorMarkerList *mml);
 extern void editorDumpRegionList(S_editorRegionList *mml);
-extern void editorQuasySaveModifiedBuffers();
+extern void editorQuasiSaveModifiedBuffers();
 extern void editorLoadAllOpenedBufferFiles();
 extern S_editorMarker *editorCrNewMarker(S_editorBuffer *buff, int offset);
 extern S_editorMarker *editorDuplicateMarker(S_editorMarker *mm);

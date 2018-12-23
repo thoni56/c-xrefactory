@@ -509,7 +509,7 @@ static void fillEmptyEditorBuffer(S_editorBuffer *ff, char *aname, int ftnum,
     FILL_editorBuffer(ff, aname, ftnum, afname, s_noStat, NULL, ff->a, ff->b);
 }
 
-static S_editorBuffer *editorCrNewBuffer(char *name, char *fileName, struct stat *st) {
+static S_editorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct stat *st) {
     int                             minSize, allocIndex, allocSize, ii;
     char                            *space;
     char                            *aname, *nname, *afname, *nfileName;
@@ -542,7 +542,7 @@ static S_editorBuffer *editorCrNewBuffer(char *name, char *fileName, struct stat
 
 static void editorSetBufferModifiedFlag(S_editorBuffer *buff) {
     buff->b.modified = 1;
-    buff->b.modifiedSinceLastQuasySave = 1;
+    buff->b.modifiedSinceLastQuasiSave = 1;
 }
 
 S_editorBuffer *editorGetOpenedBuffer(char *name) {
@@ -616,7 +616,7 @@ void editorRenameBuffer(S_editorBuffer *buff, char *nName, S_editorUndo **undo) 
     // to keep information that the file is no longer existing
     // so old references will be removed on update (fixing problem of
     // of moving a package into an existing package).
-    removed = editorCrNewBuffer(oldName, oldName, &buff->stat);
+    removed = editorCreateNewBuffer(oldName, oldName, &buff->stat);
     allocNewEditorBufferTextSpace(removed, 0);
     removed->b.textLoaded = 1;
     editorSetBufferModifiedFlag(removed);
@@ -630,7 +630,7 @@ S_editorBuffer *editorOpenBufferNoFileLoad(char *name, char *fileName) {
         return(res);
     }
     stat(fileName, &st);
-    res = editorCrNewBuffer(name, fileName, &st);
+    res = editorCreateNewBuffer(name, fileName, &st);
     return(res);
 }
 
@@ -643,7 +643,7 @@ S_editorBuffer *editorFindFile(char *name) {
         res = editorGetOpenedBuffer(name);
         if (res == NULL) {
             if (stat(name, &st)==0 && (st.st_mode & S_IFMT)!=S_IFDIR) {
-                res = editorCrNewBuffer(name, name, &st);
+                res = editorCreateNewBuffer(name, name, &st);
             }
         }
         if (res != NULL && stat(res->fileName, &st)==0 && (st.st_mode & S_IFMT)!=S_IFDIR) {
@@ -667,7 +667,7 @@ S_editorBuffer *editorFindFileCreate(char *name) {
         st.st_size = 0;
         st.st_mtime = st.st_atime = st.st_ctime = time(NULL);
         st.st_mode = S_IFCHR;
-        res = editorCrNewBuffer(name, name, &st);
+        res = editorCreateNewBuffer(name, name, &st);
         assert(res!=NULL);
         allocNewEditorBufferTextSpace(res, 0);
         res->b.textLoaded = 1;
@@ -828,13 +828,13 @@ void editorDumpBuffers() {
 }
 
 static void editorQuasySaveBuffer(S_editorBuffer *buff) {
-    buff->b.modifiedSinceLastQuasySave = 0;
+    buff->b.modifiedSinceLastQuasiSave = 0;
     buff->stat.st_mtime = time(NULL);  //? why it does not work with 1;
     assert(s_fileTab.tab[buff->ftnum]);
     s_fileTab.tab[buff->ftnum]->lastModif = buff->stat.st_mtime;
 }
 
-void editorQuasySaveModifiedBuffers() {
+void editorQuasiSaveModifiedBuffers() {
     int                     i, saving;
     static time_t           lastQuazySaveTime = 0;
     time_t                  timeNull;
@@ -842,7 +842,7 @@ void editorQuasySaveModifiedBuffers() {
     saving = 0;
     for(i=0; i<s_editorBufferTab.size; i++) {
         for(ll=s_editorBufferTab.tab[i]; ll!=NULL; ll=ll->next) {
-            if (ll->f->b.modifiedSinceLastQuasySave) {
+            if (ll->f->b.modifiedSinceLastQuasiSave) {
                 saving = 1;
                 goto cont;
             }
@@ -862,7 +862,7 @@ void editorQuasySaveModifiedBuffers() {
     }
     for(i=0; i<s_editorBufferTab.size; i++) {
         for(ll=s_editorBufferTab.tab[i]; ll!=NULL; ll=ll->next) {
-            if (ll->f->b.modifiedSinceLastQuasySave) {
+            if (ll->f->b.modifiedSinceLastQuasiSave) {
                 editorQuasySaveBuffer(ll->f);
             }
         }

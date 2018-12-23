@@ -3404,6 +3404,8 @@ int main(int argc, char **argv) {
 
     setupLogging();
     //&editorTest();
+
+    // Ok, so there are these five main operating modes
     if (s_opt.refactoringRegime == RegimeRefactory) mainRefactory(argc, argv);
     if (s_opt.taskRegime == RegimeXref) mainXref(argc, argv);
     if (s_opt.taskRegime == RegimeHtmlGenerate) mainXref(argc, argv);
