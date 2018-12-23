@@ -1996,7 +1996,7 @@
     (STRUCTP)->a.allocatedSize = ARG26;\
     (STRUCTP)->b.textLoaded = ARG27;\
     (STRUCTP)->b.modified = ARG28;\
-    (STRUCTP)->b.modifiedSinceLastQuasySave = ARG29;\
+    (STRUCTP)->b.modifiedSinceLastQuasiSave = ARG29;\
 }
 #define _FILLF_editorBuffer(STRUCTP, ARGS) {\
     (STRUCTP)->name = _ARG_0_OF_30 ARGS;\
@@ -2028,7 +2028,7 @@
     (STRUCTP)->a.allocatedSize = _ARG_26_OF_30 ARGS;\
     (STRUCTP)->b.textLoaded = _ARG_27_OF_30 ARGS;\
     (STRUCTP)->b.modified = _ARG_28_OF_30 ARGS;\
-    (STRUCTP)->b.modifiedSinceLastQuasySave = _ARG_29_OF_30 ARGS;\
+    (STRUCTP)->b.modifiedSinceLastQuasiSave = _ARG_29_OF_30 ARGS;\
 }
 #define FILL_editorBufferList(STRUCTP, ARG0, ARG1) {\
     (STRUCTP)->f = ARG0;\
@@ -4029,17 +4029,17 @@
 #define FILL_editorBufferBits(STRUCTP, ARG0, ARG1, ARG2) {\
     (STRUCTP)->textLoaded = ARG0;\
     (STRUCTP)->modified = ARG1;\
-    (STRUCTP)->modifiedSinceLastQuasySave = ARG2;\
+    (STRUCTP)->modifiedSinceLastQuasiSave = ARG2;\
 }
 #define FILLF_editorBufferBits(STRUCTP, ARG0, ARG1, ARG2) {\
     (STRUCTP)->textLoaded = ARG0;\
     (STRUCTP)->modified = ARG1;\
-    (STRUCTP)->modifiedSinceLastQuasySave = ARG2;\
+    (STRUCTP)->modifiedSinceLastQuasiSave = ARG2;\
 }
 #define _FILLF_editorBufferBits(STRUCTP, ARGS) {\
     (STRUCTP)->textLoaded = _ARG_0_OF_3 ARGS;\
     (STRUCTP)->modified = _ARG_1_OF_3 ARGS;\
-    (STRUCTP)->modifiedSinceLastQuasySave = _ARG_2_OF_3 ARGS;\
+    (STRUCTP)->modifiedSinceLastQuasiSave = _ARG_2_OF_3 ARGS;\
 }
 #define FILL_itimerspec(STRUCTP, ARG0, ARG1) {\
     (STRUCTP)->it_interval = ARG0;\
