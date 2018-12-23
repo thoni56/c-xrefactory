@@ -6,10 +6,10 @@
 # c-xref. If they need to be re-generated and c-xref.bs does not exist then
 # c-xref.bs is built from existing sources using Makefile.bs.
 #
-# In particular strFill.g, strTdef.g and enumTxt.c are generated to catch
-# what's relevant for this machine. Bootstrap versions of them,
-# strFill.bs, strTdef.bs and enumTxt.bs should be used when
-# bootstraping, so those files should be usable on all platforms.
+# In particular strFill.g and enumTxt.c are generated to catch what's
+# relevant for this machine. Bootstrap versions of them, strFill.bs
+# and enumTxt.bs should be used when bootstraping, so those files
+# should be usable on all platforms.
 #
 
 include Makefile.objs
