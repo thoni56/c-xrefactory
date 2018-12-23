@@ -8,7 +8,7 @@
 
 When xref is invoked with option "-task_regime_server", it acts like a
 server  reading  input  options  from  standard  input  and  producing
-answers on the standard output. 
+answers on the standard output.
 
 Because on majority of OS,  pipes are slower than temporary files, two
 pipes (standard input and output)  are used only for small quantity of
@@ -42,8 +42,8 @@ with xref task.
 
 EXAMPLE:        ******************************************************
 
-The simplest example of xref  comunication protocol is invocation of a
-completion  function.   Let's  consider   that  we  have  a  file  t.c
+The simplest example of xref comunication protocol is an invocation of
+a completion function.  Let's consider that we have a file t.c
 containing the following text:
 
 ----------------------------------------------------------------------
@@ -56,11 +56,11 @@ main() {
 }
 ----------------------------------------------------------------------
 
-following suite  of commands will call  xref server task,  ask for all
-completions after "t." string at line  4 (offset 40), then it will ask
-for completion on line 5 (offset 49).
+The following sequence of commands will call xref server task, ask for
+all completions after "t." string at line 4 (offset 40), then it will
+ask for completion on line 5 (offset 49).
 
-vittek:~/tmp>~/xref/xref -task_regime_server -xrefactory-II
+vittek:~/tmp>~/c-xref/c-xref -task_regime_server -xrefactory-II
 -olcxcomplet
 -olcursor=40
 /home/vittek/tmp/t.c
@@ -83,5 +83,3 @@ end-of-options
 </goto>
 <single-completion len=4>main</single-completion>
 <sync>
-
-

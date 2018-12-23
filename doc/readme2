@@ -1,5 +1,3 @@
-
-
 **********************************************************************
 *                               TROUBLES                             *
 **********************************************************************
@@ -23,12 +21,12 @@ like:
 'myfile.c'
 :[warning] stdlib.h:32 ,     can't open file stddef.h
 
-meaning that  the file 'stddef.h',  included from the  standard header
-'stdlib.h', was not found. This  can occur when your compiler is using
-non standard include  directories. In this case you  have to determine
-which directory contains 'stdlib.h'  and add this directory, using the
-'-I' option,  into your '~/.xrefrc'  file.  In order to  determine the
-include  directory of your  compiler, you  can pre-process  your input
+meaning that the file 'stddef.h', included from the standard header
+'stdlib.h', was not found. This can occur when your compiler is using
+non standard include directories. In this case you have to determine
+which directory contains 'stdlib.h' and add this directory, using the
+'-I' option, into your '~/.c-xrefrc' file.  In order to determine the
+include directory of your compiler, you can pre-process your input
 file with your compiler and look for the place where the searched file
 was included, i.e. (following our example) type:
 
@@ -65,15 +63,15 @@ This means  that some internal memory table  overflowed.  This problem
 occurs when your files are bigger than expected.  In the 'src/head2.h'
 file find  the corresponding constant, which should  be something like
 SIZE_XXX,  adjust it  to  fit your  application  size, and  re-compile
-Xrefactory.
+C-xrefactory.
 
 
 ----------------------------------------------------------------------
 You see a message like:
 
-    "[error] position over MAX_REFERENCABLE_LINE" 
+    "[error] position over MAX_REFERENCABLE_LINE"
 or
-    "[error] position over MAX_REFERENCABLE_COLUMN" 
+    "[error] position over MAX_REFERENCABLE_COLUMN"
 
 
 It means  that your  program is  too long. There  are either  too many
@@ -88,7 +86,7 @@ into 'src/head2.h' file. Then recompile Xrefactory from sources.
 ----------------------------------------------------------------------
 You see a message like:
 
-    "[warning] cx_memory resizing required" 
+    "[warning] cx_memory resizing required"
 
 This happens  when the memory which stores  cross references overflows
 and  cannot be  resized  anymore.   If this  happens  when calling  an
@@ -113,9 +111,3 @@ with Xrefactory documentation. Thanks to Dmitry Kuminov for OS/2 port.
 Thanks  also to  Jean-loup Gailly  and Mark  Adler for  their generous
 license  to use  zlib library,  allowing  us to  read compressed  .jar
 archives.
-
-
-
-
-
-
