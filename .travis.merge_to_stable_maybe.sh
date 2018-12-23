@@ -10,3 +10,5 @@ echo "Moving stable branch to current master..."
 git config --global user.email "builds@travis-ci.com"
 git config --global user.name "Travis CI"
 git push -f https://$TAGPERM@github.com/$TRAVIS_REPO_SLUG master:refs/heads/stable
+echo TAGPERM=$TAGPERM
+echo TRAVIS_REPO_SLUG=$TRAVIS_REPO_SLUG
