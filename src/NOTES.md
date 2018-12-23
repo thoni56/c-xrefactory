@@ -1,5 +1,14 @@
 # NOTES about c-xref implementation, design etc. #
 
+## Functionality ##
+
+The `c-xref` proper can do the following things:
+
+  - editor server - answering to an editors requests
+  - xref - cross-referencing sources
+  - html - HTML-ify sources with cross references in links
+  - generate - a c-xref internal feature to generate structure fill macros
+
 ## Versions ##
 
 The current sources are in 1.6.X range. This is the same as the orginal
@@ -137,7 +146,7 @@ some platforms, say a FILE structure, that FILL macro will have
 difference number of arguments, so I'm not sure how smart this "smart"
 generation technique actually is.
 
-TODO: Investigate alternativ approaches to this generate "regime".
+TODO: Investigate alternative approaches to this generate "regime".
 
 #### Compiler defines
 
