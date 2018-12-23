@@ -14,3 +14,6 @@ $(TEST):
 	else \
 		echo "Ok" ; \
 	fi
+
+gdb:
+	gdb --args ../../src/c-xref -xrefrc .c-xrefrc -html -htmlroot=output -htmlcutcwd $(TEST).[ch] -o $(TEST).log
