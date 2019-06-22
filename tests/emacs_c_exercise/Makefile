@@ -30,9 +30,10 @@ execute:
 
 check:
 	@# Compare output to expected resulting files
-	@diff -r cexercise expected > /dev/null ; \
+	@diff -n -r cexercise expected > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
 		echo "Failed" ; \
+		diff -r cexercise expected ; \
 		exit 1 ; \
 	fi
 	@echo "Ok"

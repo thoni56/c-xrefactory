@@ -11,9 +11,10 @@
 ;; Can't use anything but the first completion, because there seems to
 ;; be no way to move point to other line in completion buffer when in
 ;; batch mode. Here's somethings that don't seem to work:
-(next-line)
-(forward-line)
-(call-interactively 'forward-line)
+;(next-line)
+;(forward-line)
+;(call-interactively 'forward-line)
+;;
 (set-mark (point))
 (c-xref-interactive-completion-select)
 (search-forward "ptm->")

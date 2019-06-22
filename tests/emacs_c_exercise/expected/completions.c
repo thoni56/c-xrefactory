@@ -44,7 +44,7 @@ void completions() {
     ;
 
     // partial completion
-    tm_zone
+    fpurge
     ;
 
     // works inside complex expressions
