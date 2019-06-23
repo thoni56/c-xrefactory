@@ -22,9 +22,11 @@ setup:
 	@# Generate refs
 	@../../src/c-xref cexercise -xrefrc .c-xrefrc -refs $(CURDIR)/CXrefs -o $(TEST).log
 
-execute:
+
+execute: EMACS_STARTUP=-batch
+execute exec:
 	@# Run emacs with commands to execute the example sequence
-	@HOME=$(CURDIR) emacs --no-splash -batch -l .emacs.el -l emacs_c_exercise.el > /dev/null 2>&1
+	@HOME=$(CURDIR) emacs --no-splash $(EMACS_STARTUP) -l .emacs.el -l emacs_c_exercise2.el > /dev/null 2>&1
 	@# Remove tilde-files after editing
 	@find cexercise -name \*~ -exec rm {} \;
 
