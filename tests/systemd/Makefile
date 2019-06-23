@@ -24,16 +24,13 @@ all:
 		fi ; \
 	fi
 
-init: systemd c-xref .c-xrefrc
+init: systemd .c-xrefrc
 
 systemd:
 	git clone git://anongit.freedesktop.org/systemd/systemd
-
-c-xref:
-	ln -s ../../src/c-xref
 
 .c-xrefrc: c-xrefrc.tpl
 	sed -e "s+PWD+$$PWD+g" c-xrefrc.tpl > .c-xrefrc
 
 clean:
-	rm -rf CXrefs c-xref .c-xrefrc systemd systemd.log
+	rm -rf CXrefs .c-xrefrc systemd systemd.log
