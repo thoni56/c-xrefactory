@@ -23,7 +23,7 @@ void completions() {
     ;
 
     // completion list
-    fp
+    fpr
     ;
     /* In the proposed list:
          <return>            - select the completion.

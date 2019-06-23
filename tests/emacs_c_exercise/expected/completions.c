@@ -23,7 +23,7 @@ void completions() {
     ;
 
     // completion list
-    FILE
+    fprintf
     ;
     /* In the proposed list:
          <return>            - select the completion.
@@ -44,7 +44,7 @@ void completions() {
     ;
 
     // partial completion
-    fpurge
+    tm_zone
     ;
 
     // works inside complex expressions
