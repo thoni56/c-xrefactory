@@ -27,7 +27,7 @@ extern void CONCAT(HASH_FUN_PREFIX, Init)(		/* Init */
                     HASH_TAB_TYPE *table,
                     int size
                 );
-extern void CONCAT(HASH_FUN_PREFIX,NAInit)(		/* not alloc init */
+extern void CONCAT(HASH_FUN_PREFIX, NAInit)(	/* No Allocation Init */
                     HASH_TAB_TYPE *table,
                     int size
                 );
@@ -36,17 +36,17 @@ extern bool CONCAT(HASH_FUN_PREFIX, IsMember) (	/* IsMember */
                     HASH_ELEM_TYPE *element,
                     int *position
                 );
-extern void CONCAT(HASH_FUN_PREFIX,Set) (			/* add elem at position */
+extern void CONCAT(HASH_FUN_PREFIX,Set) (       /* Add element at position */
                     HASH_TAB_TYPE *table,
                     HASH_ELEM_TYPE *element,
                     int position
                 );
-extern void CONCAT(HASH_FUN_PREFIX, Add) (	/* Add, returns position */
+extern void CONCAT(HASH_FUN_PREFIX, Add) (		/* Add, returns position */
                     HASH_TAB_TYPE *table,
                     HASH_ELEM_TYPE *element,
                     int *position
                 );
-extern void CONCAT(HASH_FUN_PREFIX, Free) (HASH_TAB_TYPE *tab);
+extern void CONCAT(HASH_FUN_PREFIX, Free) (HASH_TAB_TYPE *table);
 extern void CONCAT(HASH_FUN_PREFIX, Map)(
                     HASH_TAB_TYPE *table,
                     void (*fun)(HASH_ELEM_TYPE *)
