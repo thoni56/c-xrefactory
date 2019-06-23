@@ -39,7 +39,6 @@
 #define HASH_SHIFT 211
 
 /* Initialize only, no allocation */
-
 void CONCAT(HASH_FUN_PREFIX,NAInit)(HASH_TAB_TYPE *t, int size) {
     t->numberOfElements = 0;
     t->size = size;
@@ -47,101 +46,101 @@ void CONCAT(HASH_FUN_PREFIX,NAInit)(HASH_TAB_TYPE *t, int size) {
 }
 
 /* Allocate and initialize */
-
-void CONCAT(HASH_FUN_PREFIX,Init)(HASH_TAB_TYPE *t, int size) {
-    XX_ALLOCC(t->tab, size, HASH_ELEM_TYPE *);
-    CONCAT(HASH_FUN_PREFIX,NAInit)(t, size);
+void CONCAT(HASH_FUN_PREFIX,Init)(HASH_TAB_TYPE *table, int size) {
+    XX_ALLOCC(table->tab, size, HASH_ELEM_TYPE *);
+    CONCAT(HASH_FUN_PREFIX,NAInit)(table, size);
 }
 
-int CONCAT(HASH_FUN_PREFIX,IsMember)(
-                                    HASH_TAB_TYPE *t,
-                                    HASH_ELEM_TYPE *elem,
-                                    int *position
+/* Check for membership, will return position if found */
+bool CONCAT(HASH_FUN_PREFIX,IsMember)(
+                                    HASH_TAB_TYPE *table,
+                                    HASH_ELEM_TYPE *element,
+                                    int *position /* OUT */
                                     ) {
     unsigned posid;
-    posid = HASH_FUN(elem);
-    posid = posid % t->size;
-    assert(t->tab!=NULL);
-    while (t->tab[posid] != NULL) {
-        if (HASH_ELEM_EQUAL(t->tab[posid], elem)) {
+    posid = HASH_FUN(element);
+    posid = posid % table->size;
+    assert(table->tab!=NULL);
+    while (table->tab[posid] != NULL) {
+        if (HASH_ELEM_EQUAL(table->tab[posid], element)) {
             *position = posid;
-            return(1);
+            return true;
         }
-        posid=(posid+HASH_SHIFT) % t->size;
+        posid=(posid+HASH_SHIFT) % table->size;
     }
     *position = posid;
-    return(0);
+    return false;
 }
 
 void CONCAT(HASH_FUN_PREFIX,Set) (
-                                 HASH_TAB_TYPE *t,
-                                 HASH_ELEM_TYPE *elem,
+                                 HASH_TAB_TYPE *table,
+                                 HASH_ELEM_TYPE *element,
                                  int position
                                  ) {
-    if (t->tab[position]==NULL) {
-        t->numberOfElements ++;
-        if ((t->numberOfElements * 9) / 8 >= t->size) {
+    if (table->tab[position]==NULL) {
+        table->numberOfElements ++;
+        if ((table->numberOfElements * 9) / 8 >= table->size) {
             fatalError(ERR_ST, "[hashAdd] file table overflowed", XREF_EXIT_ERR);
         }
     }
-    t->tab[position] = elem;
-    /*&fprintf(dumpOut,"adding %s\n",elem->name);fflush(dumpOut);&*/
+    table->tab[position] = element;
+    /*&fprintf(dumpOut,"adding %s\n",element->name);fflush(dumpOut);&*/
 }
 
 void CONCAT(HASH_FUN_PREFIX,Add) (
-                                 HASH_TAB_TYPE *t,
-                                 HASH_ELEM_TYPE *elem,
+                                 HASH_TAB_TYPE *table,
+                                 HASH_ELEM_TYPE *element,
                                  int *position
                                  ) {
-    if (! CONCAT(HASH_FUN_PREFIX,IsMember)(t,elem,position)) {
-        CONCAT(HASH_FUN_PREFIX,Set) (t,elem,*position);
+    if (! CONCAT(HASH_FUN_PREFIX,IsMember)(table,element,position)) {
+        CONCAT(HASH_FUN_PREFIX,Set) (table,element,*position);
     }
 }
 
-void CONCAT(HASH_FUN_PREFIX,Free)(HASH_TAB_TYPE *t) {
-    XX_FREE(t->tab);
+void CONCAT(HASH_FUN_PREFIX,Free)(HASH_TAB_TYPE *table) {
+    XX_FREE(table->tab);
 }
 
 void CONCAT(HASH_FUN_PREFIX,Map)(
-                                HASH_TAB_TYPE *t,
+                                HASH_TAB_TYPE *table,
                                 void (*fun)(HASH_ELEM_TYPE *)
                                 ) {
     int i;
-    for(i=0; i<t->size; i++) {
-        if (t->tab[i]!=NULL) (*fun)(t->tab[i]);
+    for(i=0; i<table->size; i++) {
+        if (table->tab[i]!=NULL) (*fun)(table->tab[i]);
     }
 }
 
 void CONCAT(HASH_FUN_PREFIX,Map2)(
-                                 HASH_TAB_TYPE *t,
+                                 HASH_TAB_TYPE *table,
                                  void (*fun)(HASH_ELEM_TYPE *, void *),
                                  void *a
                                  ) {
     int i;
-    for(i=0; i<t->size; i++) {
-        if (t->tab[i]!=NULL) (*fun)(t->tab[i], a);
+    for(i=0; i<table->size; i++) {
+        if (table->tab[i]!=NULL) (*fun)(table->tab[i], a);
     }
 }
 
 void CONCAT(HASH_FUN_PREFIX,Map3)(
-                                 HASH_TAB_TYPE *t,
+                                 HASH_TAB_TYPE *table,
                                  void (*fun)(HASH_ELEM_TYPE *, int)
                                  ) {
     int i;
-    for(i=0; i<t->size; i++) {
-        if (t->tab[i]!=NULL) (*fun)(t->tab[i], i);
+    for(i=0; i<table->size; i++) {
+        if (table->tab[i]!=NULL) (*fun)(table->tab[i], i);
     }
 }
 
 void CONCAT(HASH_FUN_PREFIX,Map4)(
-                                 HASH_TAB_TYPE *t,
+                                 HASH_TAB_TYPE *table,
                                  void (*fun)(int, void *, void *),
                                  void *a,
                                  void *b
                                  ) {
     int i;
-    for(i=0; i<t->size; i++) {
-        if (t->tab[i]!=NULL) (*fun)(i, a, b);
+    for(i=0; i<table->size; i++) {
+        if (table->tab[i]!=NULL) (*fun)(i, a, b);
     }
 }
 

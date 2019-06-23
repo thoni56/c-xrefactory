@@ -29,35 +29,35 @@
 #define HASH_TAB_TYPE struct HASH_TAB_NAME
 #define HASH_FUN_PREFIX HASH_TAB_NAME
 
-void CONCAT(HASH_FUN_PREFIX,NAInit)(HASH_TAB_TYPE *t, int size) {
-    t->size = size;
-    memset(t->tab, 0, sizeof(HASH_ELEM_TYPE *)*t->size);
+void CONCAT(HASH_FUN_PREFIX,NAInit)(HASH_TAB_TYPE *table, int size) {
+    table->size = size;
+    memset(table->tab, 0, sizeof(HASH_ELEM_TYPE *)*table->size);
 }
 
 
-void CONCAT(HASH_FUN_PREFIX,Init)(HASH_TAB_TYPE *t, int size) {
-    XX_ALLOCC(t->tab, size, HASH_ELEM_TYPE *);
-    CONCAT(HASH_FUN_PREFIX,NAInit)(t, size);
+void CONCAT(HASH_FUN_PREFIX,Init)(HASH_TAB_TYPE *table, int size) {
+    XX_ALLOCC(table->tab, size, HASH_ELEM_TYPE *);
+    CONCAT(HASH_FUN_PREFIX,NAInit)(table, size);
 }
 
 
 int CONCAT(HASH_FUN_PREFIX,IsMember)(
-                                    HASH_TAB_TYPE *t,
-                                    HASH_ELEM_TYPE *elem,
+                                    HASH_TAB_TYPE *table,
+                                    HASH_ELEM_TYPE *element,
                                     int *position,
                                     HASH_ELEM_TYPE **original
                                     ) {
     unsigned posid;
     HASH_ELEM_TYPE *pp;
-    posid = HASH_FUN(elem);
-    posid = posid % t->size;
+    posid = HASH_FUN(element);
+    posid = posid % table->size;
     *position = posid;
-    assert(t->tab!=NULL);
+    assert(table->tab!=NULL);
     /*fprintf(dumpOut,"new comp %d: ",posid);fflush(dumpOut);*/
-    for (pp=t->tab[posid]; pp!=NULL; pp=pp->next) {
+    for (pp=table->tab[posid]; pp!=NULL; pp=pp->next) {
         /*fprintf(dumpOut," %d ",pp);fflush(dumpOut);*/
-        /*fprintf(dumpOut,"%s to %s\n",elem->name, pp->name);fflush(dumpOut);*/
-        if (HASH_ELEM_EQUAL(pp, elem)) {
+        /*fprintf(dumpOut,"%s to %s\n",element->name, pp->name);fflush(dumpOut);*/
+        if (HASH_ELEM_EQUAL(pp, element)) {
             *original = pp;
             /*fprintf(dumpOut,"found\n");fflush(dumpOut);*/
             return(1);
@@ -70,13 +70,13 @@ int CONCAT(HASH_FUN_PREFIX,IsMember)(
 
 
 int CONCAT(HASH_FUN_PREFIX,NextMember)(
-                                      HASH_ELEM_TYPE *elem,
+                                      HASH_ELEM_TYPE *element,
                                       HASH_ELEM_TYPE **original
                                       ) {
     HASH_ELEM_TYPE *pp;
     assert(*original);
     for (pp= (*original)->next; pp!=NULL; pp=pp->next) {
-        if (HASH_ELEM_EQUAL(pp, elem)) {
+        if (HASH_ELEM_EQUAL(pp, element)) {
             *original = pp;
             return(1);
         }
@@ -97,15 +97,15 @@ int CONCAT(HASH_FUN_PREFIX,MembEqual)(
 
 int CONCAT(HASH_FUN_PREFIX,Delete)(
                                   HASH_TAB_TYPE *t,
-                                  HASH_ELEM_TYPE *elem
+                                  HASH_ELEM_TYPE *element
                                   ) {
     unsigned posid;
     HASH_ELEM_TYPE **pp;
-    posid = HASH_FUN(elem);
+    posid = HASH_FUN(element);
     posid = posid % t->size;
     assert(t->tab!=NULL);
     for (pp= &(t->tab[posid]); *pp!=NULL; pp= &((*pp)->next)) {
-        if (HASH_ELEM_EQUAL((*pp), elem)) {
+        if (HASH_ELEM_EQUAL((*pp), element)) {
             *pp = (*pp)->next;
             return(1);
         }
@@ -116,15 +116,15 @@ int CONCAT(HASH_FUN_PREFIX,Delete)(
 
 int CONCAT(HASH_FUN_PREFIX,DeleteExact)(
                     HASH_TAB_TYPE *t,
-                    HASH_ELEM_TYPE *elem
+                    HASH_ELEM_TYPE *element
             ) {
     unsigned posid;
     HASH_ELEM_TYPE **pp;
-    posid = HASH_FUN(elem);
+    posid = HASH_FUN(element);
     posid = posid % t->size;
     assert(t->tab!=NULL);
     for (pp= &(t->tab[posid]); *pp!=NULL; pp= &((*pp)->next)) {
-        if ((*pp) == elem) {
+        if ((*pp) == element) {
             *pp = (*pp)->next;
             return(1);
         }
@@ -135,16 +135,16 @@ int CONCAT(HASH_FUN_PREFIX,DeleteExact)(
 
 int CONCAT(HASH_FUN_PREFIX,DeleteLast)(
                     HASH_TAB_TYPE *t,
-                    HASH_ELEM_TYPE *elem
+                    HASH_ELEM_TYPE *element
             ) {
     unsigned posid;
     HASH_ELEM_TYPE **pp, **dd;
-    posid = HASH_FUN(elem);
+    posid = HASH_FUN(element);
     posid = posid % t->size;
     assert(t->tab!=NULL);
     dd = NULL;
     for (pp= &(t->tab[posid]); *pp!=NULL; pp= &((*pp)->next)) {
-        if (HASH_ELEM_EQUAL((*pp), elem)) {
+        if (HASH_ELEM_EQUAL((*pp), element)) {
             dd = pp;
         }
     }
@@ -157,33 +157,33 @@ int CONCAT(HASH_FUN_PREFIX,DeleteLast)(
 
 void CONCAT(HASH_FUN_PREFIX,Set) (
                     HASH_TAB_TYPE *t,
-                    HASH_ELEM_TYPE *elem,
+                    HASH_ELEM_TYPE *element,
                     int position
                 ) {
-    elem->next = t->tab[position];
-    t->tab[position] = elem;
+    element->next = t->tab[position];
+    t->tab[position] = element;
 }
 
 void CONCAT(HASH_FUN_PREFIX,SetLast) (
                     HASH_TAB_TYPE *t,
-                    HASH_ELEM_TYPE *elem,
+                    HASH_ELEM_TYPE *element,
                     int position
                 ) {
     HASH_ELEM_TYPE **pp;
     for (pp= &(t->tab[position]); *pp!=NULL; pp= &((*pp)->next))
         ;
-    *pp = elem;
-    elem->next = NULL;
+    *pp = element;
+    element->next = NULL;
 }
 
 void CONCAT(HASH_FUN_PREFIX,Add) (
                     HASH_TAB_TYPE *t,
-                    HASH_ELEM_TYPE *elem,
+                    HASH_ELEM_TYPE *element,
                     int *position
                 ) {
   HASH_ELEM_TYPE *origin;
-  if (! CONCAT(HASH_FUN_PREFIX,IsMember)(t,elem,position,&origin)) {
-    CONCAT(HASH_FUN_PREFIX,Set) (t,elem,*position);
+  if (! CONCAT(HASH_FUN_PREFIX,IsMember)(t,element,position,&origin)) {
+    CONCAT(HASH_FUN_PREFIX,Set) (t,element,*position);
   }
 }
 
@@ -282,7 +282,7 @@ void CONCAT(HASH_FUN_PREFIX,Statistics)(
                     HASH_TAB_TYPE *t,
                     int *usedIndexes,
                     int *elements,
-                    int *maxdeep
+                    int *maxdepth
                 ) {
     int i,ui,el,dp,mdp;
     HASH_ELEM_TYPE *pp;
@@ -297,7 +297,7 @@ void CONCAT(HASH_FUN_PREFIX,Statistics)(
     }
     *usedIndexes = ui;
     *elements = el;
-    *maxdeep = mdp;
+    *maxdepth = mdp;
 }
 
 
