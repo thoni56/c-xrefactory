@@ -1,7 +1,6 @@
 #########################################################################
 CC= gcc
-COMCFLAGS= $(INCLUDES) -DDEBUG $(ZLIB_OPT) -DGNULINUXDEFS
-CFLAGS=-c -g -Og $(COMCFLAGS)
+CFLAGS=-c -g -Og $(INCLUDES) -DDEBUG $(ZLIB_OPT) -DGNULINUXDEFS
 LDFLAGS=
 LEX=flex
 
