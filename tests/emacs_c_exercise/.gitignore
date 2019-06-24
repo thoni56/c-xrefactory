@@ -2,3 +2,4 @@
 CXrefs
 cexercise
 *.log
+.cache
