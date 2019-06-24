@@ -1,26 +1,26 @@
 CFLAGS = -g -MMD -MT .d -fPIC -I..
 
+OBJDIR=objs
+
 UNITTESTS = $(patsubst %.c,%.so,$(wildcard *_tests.c))
 
 all: $(UNITTESTS)
 	cgreen-runner --suite unittests $^
 
-symtab_tests.so: symtab_tests.o symtab.o
+
+symtab_tests.so: $(OBJDIR)/symtab_tests.o $(OBJDIR)/symtab.o
 	gcc -shared -o $@ $^ -lcgreen
 
-symtab.o: ../symtab.c
-
-olcxtab_tests.so: olcxtab_tests.o olcxtab.o
+olcxtab_tests.so: $(OBJDIR)/olcxtab_tests.o $(OBJDIR)/olcxtab.o
 	gcc -shared -o $@ $^ -lcgreen
 
-olcxtab.o: ../olcxtab.c
-
-%.o: %.c
+$(OBJDIR)/%_tests.o: %_tests.c | $(OBJDIR)/
 	gcc -o $@ $(CFLAGS) -c $<
 
-%.o: ../%.c
+$(OBJDIR)/%.o: ../%.c | $(OBJDIR)/
 	gcc -o $@ $(CFLAGS) -c $<
 
+$(OBJDIR)/:
+	-mkdir $@
 
-
--include .d/*
+-include $(OBJDIR)/*.d
