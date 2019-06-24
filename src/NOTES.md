@@ -124,8 +124,8 @@ stuff.
 
 This is done using options like `-task_regime_generate' which prints a
 lot of data structures on the standard output which is then fed into
-generated versions of _strFill_, _strTdef_(no longer) and _enumTxt_ by
-the Makefile.
+generated versions of _strFill_, _strTdef_(no longer exists) and
+_enumTxt_ by the Makefile.
 
 The process starts with building a _c-xref.bs_ executable from checked
 in sources. This compile uses a BOOTSTRAPPING define that causes some
@@ -146,7 +146,9 @@ some platforms, say a FILE structure, that FILL macro will have
 difference number of arguments, so I'm not sure how smart this "smart"
 generation technique actually is.
 
-TODO: Investigate alternative approaches to this generate "regime".
+TODO: Investigate alternative approaches to this generate "regime",
+perhaps move to a "class"-oriented structure with initialization
+functions for each "class" instead of macros.
 
 #### Compiler defines
 
@@ -165,8 +167,8 @@ catch all compiler defines in `compiler_defines.h`. This was necessary
 because of such definitions on Darwin which where not in the
 "pre-programmed" ones.
 
-TODO?: And this is more general and should possibly completely replace
-the "programmed" ones in `options.c`?
+TODO?: As this is a more general approach it should possibly
+completely replace the "programmed" ones in `options.c`?
 
 #### Include paths
 
