@@ -14,9 +14,9 @@ OBJS=cgram.o main.o globals.o misc.o semact.o commons.o generate.o \
 ZLIB_OPT=-DUSE_LIBZ
 ZLIB_LIB= -lz
 
-# If you are not using your systems zlib uncomment these
-# ZLIB_LIB=$(ROOTDIR)/lib/zlib/libz.a
-# ZLIB_INCLUDE=-I$(ROOTDIR)/lib/zlib
-
+# If you are using your systems zlib use these
 INCLUDES=$(ZLIB_INCLUDE)
 LIBS=$(ZLIB_LIB)
+# Else build the local, included, version and use these
+# ZLIB_LIB=$(ROOTDIR)/lib/zlib/libz.a
+# ZLIB_INCLUDE=-I$(ROOTDIR)/lib/zlib
