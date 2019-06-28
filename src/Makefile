@@ -22,7 +22,6 @@ endif
 # The heavy lifting is here
 
 include Makefile.common
-include Makefile.dependencies
 
 #########################################################################
 #

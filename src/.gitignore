@@ -11,3 +11,4 @@ enumTxt.g.c
 tmp-*.g.[hc]
 compiler_defines.g
 *.backup
+.objects

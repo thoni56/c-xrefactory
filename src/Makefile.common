@@ -12,13 +12,20 @@
 # should be usable on all platforms.
 #
 
-include Makefile.objs
+include sources.mk
+OBJS = $(addprefix $(OBJDIR)/,${SRCS:.c=.o})
 
 #########################################################################
 
 all: $(ZLIB) c-xref .c-xrefrc
 
 ..always..:;
+
+$(OBJDIR)/%.o: %.c | $(OBJDIR)
+	$(CC) $(OUTPUT_OPTION) -MMD -c $<
+
+$(OBJDIR):
+	@mkdir $(OBJDIR)
 
 $(ROOTDIR)/lib/zlib/libz.a: ..always..
 	make -C $(ROOTDIR)/lib/zlib libz.a
@@ -152,11 +159,6 @@ clean:;
 
 cleaner: clean
 	-rm compiler_defines.g strFill.g.h enumTxt.g.[ch] c-xref.bs
-
-#########################################################################
-
-dependencies:;
-	$(CC) -E -MM $(COMCFLAGS) *.c > Makefile.dependencies
 
 #########################################################################
 
