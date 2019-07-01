@@ -132,20 +132,18 @@ static int genFillStructBody(S_symbol *defin, int i, int argn, bool fullFlag,
 }
 
 /* ******************************************************************* */
-/* ******************************************************************* */
 
 static void generateTypedefForStructOrUnion(S_symbol *symbol) {
     char *name;
-    S_symbol *rec;
+
     assert(symbol);
     name = symbol->name;
     assert(symbol->u.s);
-    rec = symbol->u.s->records;
     assert(name);
     if (symbol->b.symType == TypeStruct) {
-        fprintf(cxOut,"typedef struct %s S_%s;\n",name,name);
+        fprintf(cxOut,"typedef struct %s S_%s;\n", name, name);
     } else {
-        fprintf(cxOut,"typedef union %s U_%s;\n",name,name);
+        fprintf(cxOut,"typedef union %s U_%s;\n", name, name);
     }
 }
 
@@ -153,11 +151,10 @@ static void generateTypedefForStructOrUnion(S_symbol *symbol) {
 static void generateStructureFillMacros(S_symbol *symbol) {
     char *name;
     int argn;
-    S_symbol *rec;
+
     assert(symbol);
     name = symbol->name;
     assert(symbol->u.s);
-    rec = symbol->u.s->records;
     assert(name);
     fprintf(cxOut,"#define FILL_%s(%s", name, FILL_ARGUMENT_NAME);
     argn = genFillStructArguments(symbol, 0, 0);
@@ -230,14 +227,10 @@ static void generateStructCopyFunction(S_symbol *symbol) {
 
 static void generateTypedefForEnum(S_symbol *symbol) {
     char *name;
-    S_symbolList *e;
+
     assert(symbol);
     name = symbol->name;
-    e = symbol->u.enums;
     assert(name);
-    /*
-      fprintf(fOut,"typedef enum %s E_%s;\n",name,name);
-    */
 }
 
 static void generateEnumString(S_symbol *symbol) {
