@@ -435,7 +435,6 @@ void printCompletionsList(int noFocus) {
 
 void printCompletions(S_completions* c) {
     int                 ii, indent, jindent, max, vFunCl;
-    S_olCompletion      *olc;
     char                *vclass;
 
     jindent = 0; vclass = NULL;
@@ -489,7 +488,7 @@ void printCompletions(S_completions* c) {
             vFunCl = c->a[ii].vFunClass->u.s->classFile;
             if (vFunCl == -1) vFunCl = s_noneFileIndex;
         }
-        olc = olCompletionListPrepend(c->a[ii].s, ppcTmpBuff, vclass, jindent, c->a[ii].t,NULL, &s_noRef, c->a[ii].symType, vFunCl, s_olcxCurrentUser->completionsStack.top);
+        olCompletionListPrepend(c->a[ii].s, ppcTmpBuff, vclass, jindent, c->a[ii].t,NULL, &s_noRef, c->a[ii].symType, vFunCl, s_olcxCurrentUser->completionsStack.top);
     }
     olCompletionListReverse();
     printCompletionsList(c->noFocusOnCompletions);
@@ -1228,13 +1227,13 @@ static void javaPackageNameCompletion(
                                       void            *idp,
                                       int             *pstorage
                                       ) {
-    S_cline         compLine;
-    char            *cname;
-    S_idIdentList   *id;
-    id = (S_idIdentList *) idp;
+    S_cline compLine;
+    char *cname;
+
     if (strchr(fname,'.')!=NULL) return;        /* not very proper */
     /*& // original; Why this is commented out?
-      FILLF_idIdentList(&ttl, fname, NULL, -1, 0, 0, fname, TypePackage, id);
+      FILLF_idIdentList(&ttl, fname, NULL, -1, 0, 0, fname, TypePackage,
+                        (S_idIdentList *) idp);
       cname=javaCreateComposedName(path,&ttl,SLASH,NULL,tmpMemory,SIZE_TMP_MEM);
       if (statb(cname,&stt)!=0 || (stt.st_mode & S_IFMT) != S_IFDIR) return;
       &*/
@@ -1252,21 +1251,20 @@ static void javaTypeNameCompletion(
                                    void            *idp,
                                    int             *pstorage
                                    ) {
-    char            cfname[MAX_FILE_NAME_SIZE];
-    S_cline         compLine;
-    char            *cname,*suff;
-    S_idIdentList   *id;
-    int             len,storage,complType;
-    S_symbol        *memb;
-    memb = NULL;
-    id = (S_idIdentList *) idp;
+    char cfname[MAX_FILE_NAME_SIZE];
+    S_cline compLine;
+    char *cname, *suff;
+    int len, storage, complType;
+    S_symbol *memb = NULL;
+
     if (pstorage == NULL) storage = StorageDefault;
     else storage = *pstorage;
     len = strlen(fname);
     complType = TypePackage;
     /*&fprintf(dumpOut,":mapping %s\n",fname);fflush(dumpOut);&*/
     /*& // orig
-      FILLF_idIdentList(&ttl, fname, NULL, -1, 0, 0, fname, TypePackage, id);
+      FILLF_idIdentList(&ttl, fname, NULL, -1, 0, 0, fname, TypePackage,
+                        (S_idIdentList *) idp);
       cname=javaCreateComposedName(path,&ttl,SLASH,NULL,tmpMemory,SIZE_TMP_MEM);
       if (statb(cname,&stt)!=0 || (stt.st_mode & S_IFMT) != S_IFDIR) { //& }
       &*/
