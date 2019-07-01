@@ -23,4 +23,5 @@ all: $(ZLIB) c-xref.bs
 
 c-xref.bs: $(OBJS)
 	$(CC) $(LDFLAGS) -o c-xref.bs $(OBJS) $(LIBS)
+	$(MAKE) clean
 	@echo "*************** c-xref.bs ***************"
