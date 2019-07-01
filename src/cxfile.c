@@ -173,8 +173,9 @@ static int searchSingleStringEqual(char *s, char *c) {
 }
 
 static int searchSingleStringFitness(char *cxtag, char *searchedStr, int len) {
-    char *cc,*s,*c,*tt;
-    int i,pilotc;
+    char *cc;
+    int i, pilotc;
+
     assert(searchedStr);
     pilotc = tolower(*searchedStr);
     if (pilotc == '^') {
@@ -186,7 +187,6 @@ static int searchSingleStringFitness(char *cxtag, char *searchedStr, int len) {
             if (searchSingleStringEqual(searchedStr, cc)) return(1);
         }
     }
- fini0:
     return(0);
 }
 
@@ -218,15 +218,16 @@ int searchStringFitness(char *cxtag, int len) {
 char *crTagSearchLineStatic(char *name, S_position *p,
                             int *len1, int *len2, int *len3) {
     static char res[COMPLETION_STRING_SIZE];
-    char type[TMP_STRING_SIZE];
     char file[TMP_STRING_SIZE];
     char dir[TMP_STRING_SIZE];
     char *ffname;
     int l1,l2,l3,fl, dl;
+
     l1 = l2 = l3 = 0;
     l1 = strlen(name);
 
     /*&
+      char type[TMP_STRING_SIZE];
       type[0]=0;
       if (symType != TypeDefault) {
       l2 = strmcpy(type,typesName[symType]+4) - type;
@@ -258,9 +259,8 @@ char *crTagSearchLineStatic(char *name, S_position *p,
 
 // filter out symbols which polluating search reports
 int symbolNameShouldBeHiddenFromReports(char *name) {
-    int         nlen;
     char        *s;
-    nlen = strlen(name);
+
     // commons symbols
     if (name[0] == ' ') return(1);  // internal xref symbol
 
@@ -288,7 +288,7 @@ int symbolNameShouldBeHiddenFromReports(char *name) {
 void searchSymbolCheckReference(S_symbolRefItem  *ss, S_reference *rr) {
     char ssname[MAX_CX_SYMBOL_SIZE];
     char *s, *sname;
-    int i, slen;
+    int slen;
 
     if (ss->b.symType == TypeCppInclude) return;   // no %%i symbols
     if (symbolNameShouldBeHiddenFromReports(ss->name)) return;
@@ -483,9 +483,9 @@ static void genClassHierarchyItems(struct fileItem *fi, int ii) {
 }
 
 static void crSubClassInfo(int sup, int inf, int origin, int genfl) {
-    S_fileItem      *ii,*jj;
-    S_chReference   *p,*pp;
-    int             mm;
+    S_fileItem      *ii, *jj;
+    S_chReference   *p, *pp;
+
     ii = s_fileTab.tab[inf];
     jj = s_fileTab.tab[sup];
     assert(ii && jj);
@@ -512,8 +512,9 @@ void addSubClassItemToFileTab( int sup, int inf, int origin) {
 
 
 void addSubClassesItemsToFileTab(S_symbol *ss, int origin) {
-    int i,cf1;
+    int cf1;
     S_symbolList *sups;
+
     if (ss->b.symType != TypeStruct) return;
     /*fprintf(dumpOut,"testing %s\n",ss->name);*/
     assert(ss->b.javaFileLoaded);
@@ -590,7 +591,7 @@ static void genRefItem(S_symbolRefItem *dd) {
 static void genCxFileHead() {
     char sr[MAX_CHARS];
     char ttt[TMP_STRING_SIZE];
-    int i, magicnum;
+    int i;
     memset(&s_outLastInfos, 0, sizeof(s_outLastInfos));
     for(i=0; i<MAX_CHARS; i++) {
         s_outLastInfos.counter[i] = -1;
@@ -642,8 +643,7 @@ static void referenceFileEnd(int updateFlag, char *fname) {
 
 static void createDirIfNotExists(char *dirname) {
     struct stat st;
-    int createFlag;
-    createFlag = 1;
+
     if (stat(dirname, &st)==0) {
         if ((st.st_mode & S_IFMT) == S_IFDIR) return;
         removeFile(dirname);
@@ -770,7 +770,7 @@ void genReferenceFile(int updateFlag, char *fname) {
                                            }
 
 #define SkipNChars(count, ccc, ffin, iBuf) {    \
-        register int ccount,i,ch;               \
+        register int ccount, ch;               \
         ccount = count;                         \
         while (ccc + ccount > ffin) {           \
             ccount -= ffin - ccc;               \
@@ -844,12 +844,15 @@ static void cxrfCheckNumber(    int size,
                                 S_charBuf *bbb,
                                 int additionalArg
                                 ) {
-    int i,cch;
     int magicn, filen, hashMethod, exactPositionLinkFlag;
     char *cc, *fin;
+
     cc = *ccc; fin = *ffin;
+
     assert(ri == CXFI_CHECK_NUMBER);
-    if (s_opt.create) return; // no check when creating new file
+    if (s_opt.create)
+        return; // no check when creating new file
+
     magicn = s_inLastInfos.counter[CXFI_CHECK_NUMBER];
     DECOMPOSE_CXFI_CHECK_NUM(magicn,filen,hashMethod,exactPositionLinkFlag);
     if (filen != MAX_FILES) {
@@ -904,11 +907,11 @@ static void cxrfFileName(       int size,
                                 int genFl
                                 ) {
     char id[MAX_FILE_NAME_SIZE];
-    char *fn;
     struct fileItem *ffi,tffi;
     int i,ii,dii,len,commandLineFlag,isInterface;
     time_t fumtime, umtime;
     char *cc, *fin, cch;
+
     assert(ri == CXFI_FILE_NAME);
     cc = *ccc; fin = *ffin;
     fumtime = (time_t) s_inLastInfos.counter[CXFI_FILE_FUMTIME];
@@ -970,7 +973,7 @@ static void cxrfSourceIndex(    int size,
                                 S_charBuf *bbb,
                                 int genFl
                                 ) {
-    char *cc, *fin, cch;
+    char *cc, *fin;
     int file, sfile;
     assert(ri == CXFI_SOURCE_INDEX);
     cc = *ccc; fin = *ffin;
@@ -1038,13 +1041,13 @@ static void cxrfSymbolNameForFullUpdateSchedule(    int size,
                                                     S_charBuf *bbb,
                                                     int additionalArg
                                                     ) {
-    S_symbol *d;
-    S_symbolRefItem *ddd,dd,*memb;
-    int i,ii,si,symType,len,rr,vApplClass,vFunClass,accessFlags;
+    S_symbolRefItem *ddd, *memb;
+    int ii, si, symType, len, rr, vApplClass, vFunClass, accessFlags;
     int storage;
     char *id;
-    char *fn,*ss;
-    char *cc, *fin, cch;
+    char *ss;
+    char *cc, *fin;
+
     assert(ri == CXFI_SYM_NAME);
     accessFlags = s_inLastInfos.counter[CXFI_ACCESS_BITS];
     storage = s_inLastInfos.counter[CXFI_STORAGE];
@@ -1114,13 +1117,13 @@ static void cxrfSymbolName(     int size,
                                 S_charBuf *bbb,
                                 int additionalArg
                                 ) {
-    S_symbol *d;
-    S_symbolRefItem *ddd,dd,*memb;
+    S_symbolRefItem *ddd, *memb;
     S_olSymbolsMenu *cms;
-    int i,ii,si,symType,len,rr,vApplClass,vFunClass,ols,accessFlags,storage;
+    int ii, si, symType, len, rr, vApplClass, vFunClass, ols, accessFlags, storage;
     char *id;
-    char *fn,*ss;
-    char *cc, *fin, cch;
+    char *ss;
+    char *cc, *fin;
+
     assert(ri == CXFI_SYM_NAME);
     if (s_opt.taskRegime==RegimeEditServer && additionalArg==DEAD_CODE_DETECTION) {
         // check if previous symbol was dead
@@ -1173,7 +1176,6 @@ static void cxrfSymbolName(     int size,
                 s_inLastInfos.symbolToCheckedForDeadness = -1;
             }
         } else if (s_opt.cxrefs!=OLO_TAG_SEARCH) {
-            S_olSymbolsMenu     *ss;
             cms = NULL; ols = 0;
             if (additionalArg == CX_MENU_CREATION) {
                 cms = createSelectionMenu(ddd);
@@ -1212,12 +1214,11 @@ static void cxrfReferenceForFullUpdateSchedule(     int size,
                                                     S_charBuf *bbb,
                                                     int additionalArg
                                                     ) {
-    S_position          pos;
-    S_reference         rr,rro;
-    S_usageBits         usageBits;
-    S_symbolRefItem     *memb;
-    int                 ii,file,line,coll,usage,sym,vApplClass,vFunClass,addfl,symType,reqAcc;
-    int                 copyrefFl;
+    S_position pos;
+    S_usageBits usageBits;
+    int file, line, coll, usage, sym, vApplClass, vFunClass;
+    int symType,reqAcc;
+
     assert(ri == CXFI_REFERENCE);
     usage = s_inLastInfos.counter[CXFI_USAGE];
     reqAcc = s_inLastInfos.counter[CXFI_REQ_ACCESS];
@@ -1245,12 +1246,12 @@ static void cxrfReference(      int size,
                                 S_charBuf *bbb,
                                 int additionalArg
                                 ) {
-    S_position          pos;
-    S_reference         rr,rro;
-    S_symbolRefItem     *memb;
-    S_usageBits         usageBits;
-    int                 ii,file,line,coll,usage,sym,addfl,reqAcc;
-    int                 copyrefFl;
+    S_position pos;
+    S_reference rr;
+    S_usageBits usageBits;
+    int file, line, coll, usage, sym, reqAcc;
+    int copyrefFl;
+
     assert(ri == CXFI_REFERENCE);
     usage = s_inLastInfos.counter[CXFI_USAGE];
     reqAcc = s_inLastInfos.counter[CXFI_REQ_ACCESS];
@@ -1381,6 +1382,7 @@ static void cxrfRefNum(     int fileRefNum,
                             int additionalArg
                             ) {
     int check;
+
     check = changeRefNumOption(fileRefNum);
     if (check == 0) {
         assert(s_opt.taskRegime);
@@ -1395,9 +1397,8 @@ static void cxrfSubClass(       int size,
                                 S_charBuf *bbb,
                                 int additionalArg
                                 ) {
-    S_position pos;
-    S_reference rr;
     int of, file, sup, inf;
+
     assert(ri == CXFI_CLASS_EXT);
     file = of = s_inLastInfos.counter[CXFI_FILE_INDEX];
     sup = s_inLastInfos.counter[CXFI_SUPER_CLASS];
@@ -1505,9 +1506,9 @@ int scanReferenceFile(char *fname, char *fns1, char *fns2,
 }
 
 void scanReferenceFiles(char *fname, S_cxScanFileFunctionLink *scanFunTab) {
-    char    nn[MAX_FILE_NAME_SIZE];
-    char    *dirname;
-    int     i;
+    char nn[MAX_FILE_NAME_SIZE];
+    int i;
+
     if (s_opt.refnum <= 1) {
         scanReferenceFile(fname,"","",scanFunTab);
     } else {
