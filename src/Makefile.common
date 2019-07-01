@@ -26,9 +26,6 @@ all: $(ZLIB) c-xref .c-xrefrc
 $(OBJDIR)/%.o: %.c | $(OBJDIR)
 	$(CC) $(CFLAGS) $(OUTPUT_OPTION) -MMD -c $<
 
-$(OBJDIR):
-	@mkdir $(OBJDIR)
-
 $(ROOTDIR)/lib/zlib/libz.a: ..always..
 	make -C $(ROOTDIR)/lib/zlib libz.a
 
