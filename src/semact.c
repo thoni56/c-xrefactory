@@ -920,11 +920,6 @@ S_typeModifiers *simpleStrUnionSpecifier(   S_idIdent *typeName,
     return(&pp->u.s->stype);
 }
 
-static int isStaticFun(S_symbol *p) {
-    return(p->b.symType==TypeDefault && p->b.storage==StorageStatic
-           && p->u.type->kind == TypeFunction);
-}
-
 void setGlobalFileDepNames(char *iname, S_symbol *pp, int memory) {
     char            *mname, *fname;
     char            tmp[MACRO_NAME_SIZE];

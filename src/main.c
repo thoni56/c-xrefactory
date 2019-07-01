@@ -2842,14 +2842,6 @@ static void mainEditSrvParseInputFile( int *firstPassing, int inputIn ) {
     }
 }
 
-static void mainPushThisFileIncludeReferences(int fnum) {
-    S_symbolRefItem sref;
-    fillIncludeRefItem(&sref,fnum);
-    assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
-    olAddBrowsedSymbol(&sref, &s_olcxCurrentUser->browserStack.top->hkSelectedSym,
-                       1, 1, 0, UsageDefined,0,&s_noPos, UsageNone);
-}
-
 static int mainSymbolCanBeIdentifiedByPosition(int fnum) {
     int     line,col;
 

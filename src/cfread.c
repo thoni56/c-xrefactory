@@ -250,39 +250,6 @@ static int zipReadLocalFileHeader(char **accc, char **affin, S_charBuf *iBuf,
     }
 
 
-static int zipFindFileInCd(char **accc, char **affin, S_charBuf *iBuf,
-                           char *fname, unsigned *foffset
-                           ) {
-    char fn[MAX_FILE_NAME_SIZE];
-    int headSig,madeByVersion,extractVersion,bitFlags,compressionMethod;
-    int lastModTime,lastModDate,fnameLen,extraLen,fcommentLen,diskNumber;
-    int i,internFileAttribs;
-    unsigned externFileAttribs,localHeaderOffset;
-    unsigned crc32,compressedSize,unCompressedSize;
-
-    char *ccc, *ffin;
-    unsigned fsize, lastSig;
-    int res = 0;
-    unsigned offset;
-    ccc = *accc; ffin = *affin;
-    for(;;) {
-        ReadZipCDRecord(ccc,ffin,iBuf);
-        if (strcmp(fn,fname)==0) {
-            // file found
-            *foffset = localHeaderOffset;
-            res = 1;
-            goto fin;
-        }
-    } endcd:
-    assert(headSig == 0x06054b50 || headSig == 0x02014b50);
-    goto fin;
- endOfFile:
-    error(ERR_ST,"unexpected end of file");
- fin:
-    *accc = ccc; *affin = ffin;
-    return(res);
-}
-
 static S_charBuf s_zipTmpBuff;
 
 int fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset,

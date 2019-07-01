@@ -50,8 +50,6 @@
 
 #include "olcxtab.h"
 
-static void oloPushByNameIfNothingPushed();
-
 /* *********************************************************************** */
 
 int olcxReferenceInternalLessFunction(S_reference *r1, S_reference *r2) {
@@ -1622,17 +1620,6 @@ static void olcxOrderRefsAndGotoDefinition(int afterMenuFlag) {
     orderRefsAndGotoDefinition(refs, afterMenuFlag);
 }
 
-static void skipNLines(FILE **cofile, int n) {
-    int c;
-    for(; n>0; n--) {
-        while ((c=fgetc(*cofile)) != '\n' && c!=EOF) ;
-        if (c==EOF) {
-            *cofile = NULL;
-            return;
-        }
-    }
-}
-
 #define GetBufChar(cch, bbb) {                                          \
         if ((bbb)->cc >= (bbb)->fin) {                                  \
             if ((bbb)->isAtEOF || getCharBuf(bbb) == 0) {               \
@@ -1685,12 +1672,6 @@ static void passSourcePutChar(int c, FILE *ff) {
         if (s_opt.taskRegime == RegimeHtmlGenerate) htmlPutChar(ff,c);
         else fputc(c,ff);
     }
-}
-
-static void printKawaRefRecord(FILE *off, int type, char *rec) {
-int len;
-len = strlen(rec);
-fprintf(off, " %d%c%s", len, type, rec);
 }
 
 #define LISTABLE_USAGE(rr, usages, usageFilter) (                       \
@@ -2583,15 +2564,6 @@ static void olcxMenuSelectOnly() {
 }
 
 
-static void unselectUsedSymbol(S_olSymbolsMenu *list, S_olSymbolsMenu *sym) {
-    S_olSymbolsMenu *s;
-    for(s=list; s!=NULL; s=s->next) {
-        if (s->s.vFunClass == sym->s.vFunClass) {
-            s->selected = 0;
-        }
-    }
-}
-
 static void selectUnusedSymbols(S_olSymbolsMenu *mm, void *vflp, void *p2) {
     S_olSymbolsMenu     *ss, *s;
     int                 used, atleastOneSelected, filter, *flp;
@@ -2986,28 +2958,6 @@ S_reference * olcxCopyRefList(S_reference *ll) {
         OLCX_ALLOC(a, S_reference);
         *a = *rr;
         a->next = NULL;
-        *aa = a;
-        aa = &(a->next);
-    }
-    return(res);
-}
-
-static S_olSymbolsMenu *olcxCopyMenuSym(S_olSymbolsMenu *mm) {
-    S_olSymbolsMenu *rr, *res, *a, **aa;
-    char *nn;
-    res = NULL; aa= &res;
-    for(rr=mm; rr!=NULL; rr=rr->next) {
-        OLCX_ALLOC(a, S_olSymbolsMenu);
-        *a = *rr;
-        a->next = NULL;
-        OLCX_ALLOCC(nn, strlen(rr->s.name)+1, char);
-        strcpy(a->s.name, rr->s.name);
-        a->s.refs = olcxCopyRefList(rr->s.refs);
-        a->s.next = NULL;
-#ifdef CORE_DUMP
-        assert(rr->markers==NULL);
-#endif
-        a->markers = NULL;     // do not copy markers
         *aa = a;
         aa = &(a->next);
     }
@@ -4711,18 +4661,6 @@ static void answerPushLocalUnusedSymbolsAction() {
     ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "", "\n");
 }
 
-static S_reference *getUsageRef(S_reference *rrr) {
-    S_reference *res, *rr;
-    res = NULL;
-    for(rr=rrr; rr!=NULL; rr=rr->next) {
-        if (OL_VIEWABLE_REFS(rr) && (! IS_DEFINITION_OR_DECL_USAGE(rr->usg.base))) {
-            res = rr;
-            break;
-        }
-    }
-    return(res);
-}
-
 static void answerPushGlobalUnusedSymbolsAction() {
     S_olcxReferences    *rstack;
     S_olSymbolsMenu     *ss;
@@ -5118,29 +5056,6 @@ int byPassAcceptableSymbol(S_symbolRefItem *p) {
     if (len != nlen) return(0);
     if (strncmp(nn, nnn, len)) return(0);
     return(1);
-}
-
-// DOES NOT WORK!!! because it is not loading references from current file
-// because cxfile does not know I am in s_opt.cxrefs==OLO_PUSH_NAME
-static void oloPushByNameIfNothingPushed() {
-    if (s_olcxCurrentUser!=NULL
-        && s_olcxCurrentUser->browserStack.top!=NULL
-        && s_olcxCurrentUser->browserStack.top->hkSelectedSym==NULL
-        && s_olstring[0]!=0) {
-        // O.K. here I am nothing found
-        pushSymbolByName(s_olstring);
-        // will result into recursive call, but do not worry, hkSelectedSym
-        // is not NULL here, so no loop can occur
-        mainAnswerReferencePushingAction(OLO_PUSH_NAME);
-    }
-    if (! olcxCheckSymbolExists()) {
-        olcxNoSymbolFoundErrorMessage();
-        olStackDeleteSymbol( s_olcxCurrentUser->browserStack.top);
-    }
-}
-
-static int itIsSymbolToPushOlRefencesLess(S_olSymbolsMenu *ss, S_symbolRefItem *p) {
-    return(olSymbolRefItemLess(&ss->s, p));
 }
 
 int itIsSymbolToPushOlRefences(S_symbolRefItem *p,

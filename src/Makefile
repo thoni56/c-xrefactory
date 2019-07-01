@@ -1,6 +1,6 @@
 #########################################################################
 CC= gcc
-CFLAGS = -g -Og $(INCLUDES) -DDEBUG $(ZLIB_OPT) -DGNULINUXDEFS -MMD
+CFLAGS = -g -Og $(INCLUDES) -DDEBUG $(ZLIB_OPT) -DGNULINUXDEFS -MMD -Wall -funsigned-char
 LDFLAGS =
 LEX = flex
 

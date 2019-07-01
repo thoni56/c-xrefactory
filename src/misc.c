@@ -1593,23 +1593,6 @@ void javaGetPackageNameFromSourceFileName(char *src, char *opack) {
     if (dd!=NULL) *dd=0;
 }
 
-static int fileIsFromDirectory(char *file, char *dir) {
-    int     fl, dl, cmp;
-    char    ttt[MAX_FILE_NAME_SIZE];
-    fl = strlen(file);
-    dl = strlen(dir);
-    if (dl>fl) return(0);
-    if (file[dl]!='/' && file[dl]!='\\') return(0);
-    strncpy(ttt, file, dl);
-    ttt[dl]=0;
-    cmp = fnCmp(ttt, dir);
-    if (cmp!=0) return(0);
-    // finally no recursive search
-    if (strchr(file+dl+1, '/')!=NULL) return(0);
-    if (strchr(file+dl+1, '\\')!=NULL) return(0);
-    return(1);
-}
-
 void javaMapDirectoryFiles1(
                             char *packfile,
                             void (*fun)(MAP_FUN_PROFILE),
@@ -1627,28 +1610,6 @@ void javaMapDirectoryFiles1(
     // makes things slow and memory consuming
     // TODO! optimize this
     if (packfile == NULL) packfile = "";
-
-#ifdef VERSION_BETA3
-    // classes contained in fileTab, because of nested classes which does not have
-    // .class file for the moment
-    // TODO! this makes that many-many files are loaded       !!!!!!!!!!!!!!!!!!!!
-    // twice, make something, so that those classes are not mapped twice !!!!!!!!!
-    //&memset(fileMapped, 0, sizeof(fileMapped));
-    for(i=0; i<s_fileTab.size; i++) {
-        if (s_fileTab.tab[i]!=NULL) {
-            ttt = s_fileTab.tab[i]->name;
-            if (*ttt==ZIP_SEPARATOR_CHAR && fileIsFromDirectory(ttt+1, packfile)) {
-                // HACK!!! Here I am using that class items looks like file name
-                // i.e. they have .class suffix
-                filename = lastOccurenceInString(ttt+1, SLASH);
-                if (filename==NULL) filename = ttt+1;
-                else filename ++;
-                (*fun)(filename,"",packfile,a1,a2,a3);
-                //& SETBIT(fileMapped, i);
-            }
-        }
-    }
-#endif
 
     // source paths
     JavaMapOnPaths(s_javaSourcePaths, {

@@ -905,7 +905,6 @@ typedef struct olSymbolFoundInformation {
     struct reference		*currentRef;
 } S_olSymbolFoundInformation;
 
-// !!! if you add a pointer to this structure, then update olcxCopyMenuSym!!
 typedef struct olSymbolsMenu {
     struct symbolRefItem	s;
     char					selected;

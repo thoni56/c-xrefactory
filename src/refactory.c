@@ -69,9 +69,6 @@ int filterBuffer(S_reference *rr, void *buffer) {
     return(0);
 }
 
-static void refactoringGenGUISynchronisation() {
-}
-
 static void refactorySetNargv(char *nargv[MAX_NARGV_OPTIONS_NUM],
                               S_editorBuffer *buf,
                               char *project,

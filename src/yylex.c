@@ -51,7 +51,6 @@ int s_yyPositionBufi = 0;
 
 #define IS_IDENTIFIER_LEXEM(lex) (lex==IDENTIFIER || lex==IDENT_NO_CPP_EXPAND  || lex==IDENT_TO_COMPLETE)
 
-static void prependMacroArgument(S_lexInput *argb);
 static int macroCallExpand(S_symbol *mdef, S_position *mpos);
 
 /* ************************************************************ */
@@ -1192,21 +1191,6 @@ static int cyclicCall(S_macroBody *mb) {
     }
     return(0);
 }
-
-static int macroCallExpansion( char *cc2, int lex, S_position *pos ) {
-    S_symbol sd, *memb;
-    int ii;
-    if (lex == IDENTIFIER) {
-        FILL_symbolBits(&sd.b,0,0,0,0,0,TypeMacro, StorageNone,0);
-        FILL_symbol(&sd,cc2,cc2,s_noPos,sd.b,mbody,NULL,NULL);
-        if (symTabIsMember(s_symTab,&sd,&ii,&memb)) {
-            /* it is a macro, provide macro expansion */
-            if (macroCallExpand(memb,pos)) return(1);
-        }
-    }
-    return(0);
-}
-
 
 static void expandMacroArgument(S_lexInput *argb) {
     S_symbol sd,*memb;
