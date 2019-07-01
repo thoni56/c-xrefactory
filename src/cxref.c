@@ -1690,15 +1690,16 @@ static void linePosProcess( FILE *off,
                             int *cch,
                             S_charBuf *cxfBuf
                             ) {
-    int             ch, pendingRefFlag, line, linerefn;
-    S_reference     *rr,*r;
+    int             ch, pendingRefFlag, linerefn;
+    S_reference     *rr, *r;
     char            *fn;
+
     rr = *rrr;
     ch = *cch;
     fn = simpleFileName(getRealFileNameStatic(fname));
     //& fn = getRealFileNameStatic(fname);
     r = NULL; pendingRefFlag = 0;
-    line = 0; linerefn = 0;
+    linerefn = 0;
     s_crefListLinei = 0;
     s_crefListLine[s_crefListLinei] = 0;
     do {
@@ -1719,8 +1720,7 @@ static void linePosProcess( FILE *off,
                     fprintf(off,"%c%s:%d:",refCharCode(rr->usg.base),fn,
                             rr->p.line);
                 }
-                line = rr->p.line;
-                linerefn ++;
+                linerefn++;
                 pendingRefFlag = 1;
             }
         }
@@ -2989,7 +2989,7 @@ void olcxReferencesDiff(    S_reference **anr1,
                             S_reference **diff
                             ) {
     S_reference *r, *nr1, *or2, **dd;
-    int mode;
+
     LIST_MERGE_SORT(S_reference, *anr1, olcxReferenceInternalLessFunction);
     LIST_MERGE_SORT(S_reference, *aor2, olcxReferenceInternalLessFunction);
     nr1 = *anr1; or2 = *aor2; dd = diff;
@@ -3012,10 +3012,10 @@ void olcxReferencesDiff(    S_reference **anr1,
     if (nr1!=NULL || or2!=NULL) {
         if (nr1!=NULL) {
             r = nr1;
-            mode = DIFF_UNEXPECTED_REF;
+            /* mode = DIFF_UNEXPECTED_REF; */
         } else {
             r = or2;
-            mode = DIFF_MISSING_REF;
+            /* mode = DIFF_MISSING_REF; */
         }
         for(; r!=NULL; r=r->next) {
             *dd = olcxCopyReference(r);
@@ -3367,6 +3367,7 @@ static int countSelectedItems(S_olSymbolsMenu *menu) {
 static int linkNamesHaveSameProfile(char *n1, char *n2) {
     char *p1, *p2;
     int diff;
+
     p1 = strchr(n1, '(');
     p2 = strchr(n2, '(');
     if (p1==NULL && p2==NULL) return(1);
@@ -4484,97 +4485,97 @@ static void olTrivialRefactoringPreCheck(int refcode) {
     tpchsymbol = s_olcxCurrentUser->browserStack.top;
     switch (refcode) {
     case TPC_MOVE_FIELD:
-        tpCheckUnicityOfSymbol("field") &&
-            tpCheckItIsAFieldOrMethod(REQ_FIELD, "field") &&
-            tpCheckThatCurrentReferenceIsDefinition("field") &&
-            fprintf(ccOut,"*** move_static_field trivial precheck passed.");
+        (void) (tpCheckUnicityOfSymbol("field") &&
+                tpCheckItIsAFieldOrMethod(REQ_FIELD, "field") &&
+                tpCheckThatCurrentReferenceIsDefinition("field") &&
+                fprintf(ccOut,"*** move_static_field trivial precheck passed."));
         break;
     case TPC_MOVE_STATIC_FIELD:
-        tpCheckUnicityOfSymbol("field") &&
-            tpCheckItIsAFieldOrMethod(REQ_FIELD, "field") &&
-            tpCheckThatCurrentReferenceIsDefinition("field") &&
-            tpCheckStaticity(REQ_STATIC,"field") &&
-            fprintf(ccOut,"*** move_static_field trivial precheck passed.");
+        (void) (tpCheckUnicityOfSymbol("field") &&
+                tpCheckItIsAFieldOrMethod(REQ_FIELD, "field") &&
+                tpCheckThatCurrentReferenceIsDefinition("field") &&
+                tpCheckStaticity(REQ_STATIC,"field") &&
+                fprintf(ccOut,"*** move_static_field trivial precheck passed."));
         break;
     case TPC_MOVE_STATIC_METHOD:
-        tpCheckUnicityOfSymbol("method") &&
-            tpCheckItIsAFieldOrMethod(REQ_METHOD, "method") &&
-            tpCheckThatCurrentReferenceIsDefinition("method") &&
-            tpCheckStaticity(REQ_STATIC,"method") &&
-            fprintf(ccOut,"*** move_static_method trivial precheck passed.");
+        (void) (tpCheckUnicityOfSymbol("method") &&
+                tpCheckItIsAFieldOrMethod(REQ_METHOD, "method") &&
+                tpCheckThatCurrentReferenceIsDefinition("method") &&
+                tpCheckStaticity(REQ_STATIC,"method") &&
+                fprintf(ccOut,"*** move_static_method trivial precheck passed."));
         break;
     case TPC_TURN_STATIC_METHOD_TO_DYN:
-        tpCheckUnicityOfSymbol("method") &&
-            tpCheckItIsAFieldOrMethod(REQ_METHOD, "method") &&
-            tpCheckThatCurrentReferenceIsDefinition("method") &&
-            tpCheckStaticity(REQ_STATIC,"method") &&
-            fprintf(ccOut,"*** turn_static_method_to_dyn trivial precheck passed.");
+        (void) (tpCheckUnicityOfSymbol("method") &&
+                tpCheckItIsAFieldOrMethod(REQ_METHOD, "method") &&
+                tpCheckThatCurrentReferenceIsDefinition("method") &&
+                tpCheckStaticity(REQ_STATIC,"method") &&
+                fprintf(ccOut,"*** turn_static_method_to_dyn trivial precheck passed."));
         break;
     case TPC_TURN_DYN_METHOD_TO_STATIC:
-        tpCheckUnicityOfSymbol("method") &&
-            tpCheckItIsAFieldOrMethod(REQ_METHOD, "method") &&
-            tpCheckThatCurrentReferenceIsDefinition("method") &&
-            tpCheckStaticity(REQ_NONSTATIC,"method") &&
-            tpCheckOuterScopeUsagesForDynToSt() &&
-            tpCheckSuperMethodReferencesForDynToSt() &&
-            fprintf(ccOut,"*** turn_static_method_to_dyn trivial precheck passed.");
+        (void) (tpCheckUnicityOfSymbol("method") &&
+                tpCheckItIsAFieldOrMethod(REQ_METHOD, "method") &&
+                tpCheckThatCurrentReferenceIsDefinition("method") &&
+                tpCheckStaticity(REQ_NONSTATIC,"method") &&
+                tpCheckOuterScopeUsagesForDynToSt() &&
+                tpCheckSuperMethodReferencesForDynToSt() &&
+                fprintf(ccOut,"*** turn_static_method_to_dyn trivial precheck passed."));
         break;
     case TPC_PULL_UP_METHOD:
-        tpCheckUnicityOfSymbol("method")
-            && tpCheckItIsAFieldOrMethod(REQ_METHOD, "method")
-            && tpCheckThatCurrentReferenceIsDefinition("method")
-            && tpCheckStaticity(REQ_NONSTATIC,"method")
-            && tpCheckTargetToBeDirectSubOrSupClass(REQ_SUPERCLASS,"superclass")
-            && tpCheckSuperMethodReferencesForPullUp()
-            && tpCheckMethodReferencesWithApplOnSuperClassForPullUp()
-            && fprintf(ccOut,"*** pull_up_method trivial precheck passed.");
+        (void) (tpCheckUnicityOfSymbol("method") &&
+                tpCheckItIsAFieldOrMethod(REQ_METHOD, "method") &&
+                tpCheckThatCurrentReferenceIsDefinition("method") &&
+                tpCheckStaticity(REQ_NONSTATIC,"method") &&
+                tpCheckTargetToBeDirectSubOrSupClass(REQ_SUPERCLASS,"superclass") &&
+                tpCheckSuperMethodReferencesForPullUp() &&
+                tpCheckMethodReferencesWithApplOnSuperClassForPullUp() &&
+                fprintf(ccOut,"*** pull_up_method trivial precheck passed."));
         break;
     case TPC_PUSH_DOWN_METHOD:
-        tpCheckUnicityOfSymbol("method") &&
-            tpCheckItIsAFieldOrMethod(REQ_METHOD, "method") &&
-            tpCheckThatCurrentReferenceIsDefinition("method") &&
-            tpCheckStaticity(REQ_NONSTATIC,"method") &&
-            tpCheckTargetToBeDirectSubOrSupClass(REQ_SUBCLASS, "subclass") &&
-            tpCheckPrintPushingDownMethodType();
-        break;
+        (void) (tpCheckUnicityOfSymbol("method") &&
+                tpCheckItIsAFieldOrMethod(REQ_METHOD, "method") &&
+                tpCheckThatCurrentReferenceIsDefinition("method") &&
+                tpCheckStaticity(REQ_NONSTATIC,"method") &&
+                tpCheckTargetToBeDirectSubOrSupClass(REQ_SUBCLASS, "subclass") &&
+                tpCheckPrintPushingDownMethodType());
+                break;
     case TPC_PUSH_DOWN_METHOD_POST_CHECK:
-        tpCheckSuperMethodReferencesAfterPushDown() &&
-            fprintf(ccOut,"*** push_down_method trivial postcheck passed.");
+        (void) (tpCheckSuperMethodReferencesAfterPushDown() &&
+                fprintf(ccOut,"*** push_down_method trivial postcheck passed."));
         break;
     case TPC_PULL_UP_FIELD:
-        tpCheckUnicityOfSymbol("field")
-            && tpCheckItIsAFieldOrMethod(REQ_FIELD, "field")
-            && tpCheckThatCurrentReferenceIsDefinition("field")
-            && tpCheckStaticity(REQ_NONSTATIC,"field")
-            && tpCheckTargetToBeDirectSubOrSupClass(REQ_SUPERCLASS,"superclass")
-            && tpPullUpFieldLastPreconditions()
-            && fprintf(ccOut,"*** pull_up_field trivial precheck passed.");
+        (void) (tpCheckUnicityOfSymbol("field") &&
+                tpCheckItIsAFieldOrMethod(REQ_FIELD, "field") &&
+                tpCheckThatCurrentReferenceIsDefinition("field") &&
+                tpCheckStaticity(REQ_NONSTATIC,"field") &&
+                tpCheckTargetToBeDirectSubOrSupClass(REQ_SUPERCLASS,"superclass") &&
+                tpPullUpFieldLastPreconditions() &&
+                fprintf(ccOut,"*** pull_up_field trivial precheck passed."));
         break;
     case TPC_PUSH_DOWN_FIELD:
-        tpCheckUnicityOfSymbol("field") &&
-            tpCheckItIsAFieldOrMethod(REQ_FIELD, "field") &&
-            tpCheckThatCurrentReferenceIsDefinition("field") &&
-            tpCheckStaticity(REQ_NONSTATIC,"field") &&
-            tpCheckTargetToBeDirectSubOrSupClass(REQ_SUBCLASS, "subclass") &&
-            tpPushDownFieldLastPreconditions() &&
-            fprintf(ccOut,"*** push_down_field trivial precheck passed.");
+        (void) (tpCheckUnicityOfSymbol("field") &&
+                tpCheckItIsAFieldOrMethod(REQ_FIELD, "field") &&
+                tpCheckThatCurrentReferenceIsDefinition("field") &&
+                tpCheckStaticity(REQ_NONSTATIC,"field") &&
+                tpCheckTargetToBeDirectSubOrSupClass(REQ_SUBCLASS, "subclass") &&
+                tpPushDownFieldLastPreconditions() &&
+                fprintf(ccOut,"*** push_down_field trivial precheck passed."));
         break;
     case TPC_RENAME_PACKAGE:
-        tpCheckUnicityOfSymbol("package") &&
-            tpCheckItIsAPackage(REQ_PACKAGE, "package") &&
-            tpCheckPrintSelectedSymbol();
+        (void) (tpCheckUnicityOfSymbol("package") &&
+                tpCheckItIsAPackage(REQ_PACKAGE, "package") &&
+                tpCheckPrintSelectedSymbol());
         break;
     case TPC_RENAME_CLASS:
-        tpCheckUnicityOfSymbol("class") &&
-            tpCheckItIsAPackage(REQ_CLASS, "class") &&
-            tpCheckPrintSelectedSymbol();
+        (void) (tpCheckUnicityOfSymbol("class") &&
+                tpCheckItIsAPackage(REQ_CLASS, "class") &&
+                tpCheckPrintSelectedSymbol());
         break;
     case TPC_MOVE_CLASS:
-        tpCheckUnicityOfSymbol("class") &&
-            tpCheckItIsAPackage(REQ_CLASS, "class") &&
-            tpCheckSourceIsNotInnerClass() &&
-            tpCheckMoveClassAccessibilities() &&
-            tpCheckPrintClassMovingType();
+        (void) (tpCheckUnicityOfSymbol("class") &&
+                tpCheckItIsAPackage(REQ_CLASS, "class") &&
+                tpCheckSourceIsNotInnerClass() &&
+                tpCheckMoveClassAccessibilities() &&
+                tpCheckPrintClassMovingType());
         break;
     case TPC_GET_LAST_IMPORT_LINE:
         if (s_opt.xref2) {
@@ -4592,7 +4593,6 @@ static void olTrivialRefactoringPreCheck(int refcode) {
 }
 
 static void mainAnswerReferencePushingAction(int command) {
-    S_olcxReferences *rstack;
     assert(creatingOlcxRefs());
     //&olcxPrintSelectionMenu(s_olcxCurrentUser->browserStack.top->hkSelectedSym);
     //&olcxPrintSelectionMenu(s_olcxCurrentUser->browserStack.top->hkSelectedSym);
@@ -4610,8 +4610,7 @@ static void mainAnswerReferencePushingAction(int command) {
         }
     } else {
         assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
-        rstack = s_olcxCurrentUser->browserStack.top;
-        //&olProcessSelectedReferences(rstack, genOnLineReferences);
+        //&olProcessSelectedReferences(s_olcxCurrentUser->browserStack.top, genOnLineReferences);
         olcxPrintPushingAction(s_opt.cxrefs, DEFAULT_VALUE);
     }
 }
