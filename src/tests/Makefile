@@ -5,7 +5,7 @@ vpath %.c ..
 CFLAGS = -fPIC -g -MMD
 
 all: filetab.so
-	cgreen-runner $^
+	cgreen-runner $(CGREEN_OUTPUT) $^
 
 filetab.so: filetab_tests.o filetab.o misc_mock.o commons_mock.o
 	gcc -shared -o $@ $^
