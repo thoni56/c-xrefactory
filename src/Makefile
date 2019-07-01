@@ -1,8 +1,8 @@
 #########################################################################
 CC= gcc
-CFLAGS=-c -g -Og $(INCLUDES) -DDEBUG $(ZLIB_OPT) -DGNULINUXDEFS
-LDFLAGS=
-LEX=flex
+CFLAGS = -g -Og $(INCLUDES) -DDEBUG $(ZLIB_OPT) -DGNULINUXDEFS -MMD
+LDFLAGS =
+LEX = flex
 
 ROOTDIR=..
 

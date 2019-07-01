@@ -21,6 +21,17 @@ $(OBJDIR)/%.o: %.c | $(OBJDIR)
 
 all: $(ZLIB) c-xref .c-xrefrc
 
+..always..:;
+
+$(OBJDIR)/%.o: %.c | $(OBJDIR)
+	$(CC) $(CFLAGS) $(OUTPUT_OPTION) -MMD -c $<
+
+$(OBJDIR):
+	@mkdir $(OBJDIR)
+
+$(ROOTDIR)/lib/zlib/libz.a: ..always..
+	make -C $(ROOTDIR)/lib/zlib libz.a
+
 # Unless we need to modify the grammar, which incidentally includes
 # both java and c++, we can use the already included .c-files instead
 # of generating from yacc
