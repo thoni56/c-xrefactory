@@ -1715,9 +1715,9 @@ static void schedulingUpdateToProcess(S_fileItem *p) {
 }
 
 static void schedulingToUpdate(S_fileItem *p, void *rs) {
-    struct stat fstat,hstat, *refStat;
-    char        sss[MAX_FILE_NAME_SIZE];
-    refStat = (struct stat *) rs;
+    struct stat fstat, hstat;
+    char sss[MAX_FILE_NAME_SIZE];
+
     if (p == s_fileTab.tab[s_noneFileIndex]) return;
     //& if (s_opt.update==UP_FAST_UPDATE && p->b.commandLineEntered == 0) return;
     //&fprintf(dumpOut,"checking %s for update\n",p->name); fflush(dumpOut);
@@ -2147,7 +2147,7 @@ static void getAndProcessGccOptions() {
     tempfile_name = create_temporary_filename();
     assert(strlen(tempfile_name)+1 < MAX_FILE_NAME_SIZE);
     sprintf(tmpBuff, "LANG=C gcc -v -x %s -o /dev/null /dev/null >%s 2>&1", lang, tempfile_name);
-    int result = system(tmpBuff);
+    int result __attribute__((unused)) = system(tmpBuff);
     tempfile = fopen(tempfile_name,"r");
     if (tempfile==NULL) return;
     while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF) {
@@ -3132,13 +3132,12 @@ static S_fileItem *mainCreateListOfInputFiles() {
 }
 
 void mainCallXref(int argc, char **argv) {
-    static char     *cxFreeBase0, *cxFreeBase;
-    static int      fc;
-    static int      inputIn;
-    static int      firstPassing,mess,atLeastOneProcessed;
-    static S_fileItem      *ffc, *pffc;
-    static int             messagePrinted = 0;
-    static int             numberOfInputs, inputCounter, pinputCounter;
+    static char *cxFreeBase0, *cxFreeBase;
+    static int inputIn;
+    static int firstPassing, mess, atLeastOneProcessed;
+    static S_fileItem *ffc, *pffc;
+    static int messagePrinted = 0;
+    static int numberOfInputs, inputCounter, pinputCounter;
 
     /* some compilers have problems with restoring regs after longjmp */
     dummy(&cxFreeBase0, &cxFreeBase, &ffc, &pffc, &inputIn, &firstPassing);
@@ -3150,7 +3149,7 @@ void mainCallXref(int argc, char **argv) {
     CX_ALLOCC(cxFreeBase,0,char);
     s_cxResizingBlocked = 1;
     if (s_opt.update) scheduleModifiedFilesToUpdate();
-    fc = 0; atLeastOneProcessed = 0;
+    atLeastOneProcessed = 0;
     ffc = pffc = mainCreateListOfInputFiles();
     inputCounter = pinputCounter = 0;
     LIST_LEN(numberOfInputs, S_fileItem, ffc);
