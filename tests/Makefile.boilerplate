@@ -7,7 +7,7 @@
 # $(TEST) target where the execution of the test should go.
 #
 
-TEST = $(notdir $(CURDIR))
+TEST = $(shell basename '$(CURDIR)')
 
 all: .c-xrefrc $(TEST)
 
