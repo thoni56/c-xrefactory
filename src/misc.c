@@ -381,7 +381,7 @@ void stackMemoryBlockStart() {
 }
 
 void stackMemoryBlockFree() {
-    int memi;
+
     /*fprintf(dumpOut,"finish block\n");*/
     //&removeFromTrailUntil(NULL);
     assert(s_topBlock && s_topBlock->previousTopBlock);
@@ -389,7 +389,6 @@ void stackMemoryBlockFree() {
     /*fprintf(dumpOut,"block free %d %d \n",tmpWorkMemoryi,s_topBlock->tmpMemoryBasei); fflush(dumpOut);*/
     assert(tmpWorkMemoryi >= s_topBlock->tmpMemoryBasei);
     tmpWorkMemoryi = s_topBlock->tmpMemoryBasei;
-    memi = s_topBlock->firstFreeIndex;
     * s_topBlock =  * s_topBlock->previousTopBlock;
     /*  FILL_topBlock(s_topBlock,s_topBlock->firstFreeIndex,NULL,NULL); */
     // burk, following disables any memory freeing for Java
