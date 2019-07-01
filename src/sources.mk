@@ -10,6 +10,16 @@ SRCS = cgram.c main.c globals.c misc.c semact.c commons.c generate.c \
 	   jsltypetab.c reftab.c memmac.c utils.c
 
 OBJDIR = .objects
+OBJS = $(addprefix $(OBJDIR)/,${SRCS:.c=.o})
+
+$(OBJDIR)/%.o: %.c | $(OBJDIR)
+	$(CC) $(OUTPUT_OPTION) -MMD -c $<
+
+$(OBJDIR):
+	@mkdir $(OBJDIR)
+
+$(ZLIB_LIB):
+	make -C $(ROOTDIR)/lib/zlib libz.a
 
 # Put the following into comments if you wish to build without zlib
 # library, i.e. without possibility to read compressed .jar files

@@ -9,20 +9,18 @@
 # Do not use this Makefile directly
 #
 
-include Makefile.objs
+include sources.mk
+
+$(OBJDIR)/%.o: %.c | $(OBJDIR)
+	$(CC) $(CFLAGS) $(OUTPUT_OPTION) -MMD -c $<
 
 #########################################################################
 
 all: $(ZLIB) c-xref.bs
 
-..always..:;
-
-$(ROOTDIR)/lib/zlib/libz.a: ..always..
-	make -C $(ROOTDIR)/lib/zlib libz.a
-
 #########################################################################
 %.c : %.y
 
 c-xref.bs: $(OBJS)
-	$(CC) -g $(LDFLAGS) -o c-xref.bs $(OBJS) $(LIBS)
+	$(CC) $(LDFLAGS) -o c-xref.bs $(OBJS) $(LIBS)
 	@echo "*************** c-xref.bs ***************"
