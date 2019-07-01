@@ -1,10 +1,228 @@
+#include "../misc.h"
+
 #include <cgreen/mocks.h>
 
-unsigned hashFun(char *s) {
-    return mock(s);
+void ppcGenSynchroRecord() {
+  mock();
+}
+
+void ppcIndentOffset() {
+  mock();
+}
+
+void ppcGenGotoOffsetPosition(char *fname, int offset) {
+  mock(fname, offset);
+}
+
+void ppcGenRecordBegin(char *kind) {
+  mock(kind);
+}
+
+void ppcGenRecordWithAttributeBegin(char *kind, char *attr, char *val) {
+  mock(kind, attr, val);
+}
+
+void ppcGenRecordWithNumAttributeBegin(char *kind, char *attr, int val) {
+  mock(kind, attr, val);
+}
+
+void ppcGenRecordEnd(char *kind) {
+  mock(kind);
+}
+
+void ppcGenNumericRecordBegin(char *kind, int val) {
+  mock(kind, val);
+}
+
+void ppcGenTwoNumericAndRecordBegin(char *kind, char *attr1, int val1, char *attr2, int val2) {
+  mock(kind, attr1, val1, attr2, val2);
+}
+
+void ppcGenWithNumericAndRecordBegin(char *kind, int val, char *attr, char *attrVal) {
+  mock(kind, val, attr, attrVal);
+}
+
+void ppcGenAllCompletionsRecordBegin(int nofocus, int len) {
+  mock(nofocus, len);
+}
+
+void ppcGenTwoNumericsAndrecord(char *kind, char *attr1, int val1, char *attr2, int val2, char *message, char *suff) {
+  mock(kind, attr1, val1, attr2, val2, message, suff);
+}
+
+void ppcGenRecordWithNumeric(char *kind, char *attr, int val, char *message, char *suff) {
+  mock(kind, attr, val, message, suff);
+}
+
+void ppcGenNumericRecord(char *kind, int val, char *message, char *suff) {
+  mock(kind, val, message, suff);
+}
+
+void ppcGenRecord(char *kind, char *message, char *suffix) {
+  mock(kind, message, suffix);
+}
+
+void ppcGenTmpBuff() {
+  mock();
+}
+
+void ppcGenDisplaySelectionRecord(char *message, int messageType, int continuation) {
+  mock(message, messageType, continuation);
+}
+
+void ppcGenGotoMarkerRecord(S_editorMarker *pos) {
+  mock(pos);
+}
+
+void ppcGenPosition(S_position *p) {
+  mock(p);
+}
+
+void ppcGenDefinitionNotFoundWarning() {
+  mock();
+}
+
+void ppcGenDefinitionNotFoundWarningAtBottom() {
+  mock();
+}
+
+void ppcGenReplaceRecord(char *file, int offset, char *oldName, int oldNameLen, char *newName) {
+  mock(file, offset, oldName, oldNameLen, newName);
+}
+
+void ppcGenPreCheckRecord(S_editorMarker *pos, int oldLen) {
+  mock(pos, oldLen);
+}
+
+void ppcGenReferencePreCheckRecord(S_reference *r, char *text) {
+  mock(r, text);
+}
+
+void ppcGenGotoPositionRecord(S_position *p) {
+  mock(p);
+}
+
+void ppcGenOffsetPosition(char *fn, int offset) {
+  mock(fn, offset);
+}
+
+void ppcGenMarker(S_editorMarker *m) {
+  mock(m);
+}
+
+void jarFileParse() {
+  mock();
+}
+
+void scanJarFilesForTagSearch() {
+  mock();
+}
+
+void classFileParse() {
+  mock();
+}
+
+void fillTrivialSpecialRefItem(S_symbolRefItem *ddd, char *name) {
+  mock(ddd, name);
+}
+
+int optionsOverflowHandler(int n) {
+  return (int) mock(n);
+}
+
+int cxMemoryOverflowHandler(int n) {
+  return (int) mock(n);
+}
+
+void noSuchRecordError(char *rec) {
+  mock(rec);
+}
+
+void methodAppliedOnNonClass(char *rec) {
+  mock(rec);
+}
+
+void methodNameNotRecognized(char *rec) {
+  mock(rec);
+}
+
+void dumpOptions(int nargc, char **nargv) {
+  mock(nargc, nargv);
+}
+
+void stackMemoryInit() {
+  mock();
 }
 
 /* No mock, just allocate memory as requested */
 void *stackMemoryAlloc(int size) {
     return (void *)malloc(size);
+}
+
+void *stackMemoryPush(void *p, int size) {
+  return (void *) mock(p, size);
+}
+
+int *stackMemoryPushInt(int x) {
+  return (int *) mock(x);
+}
+
+char *stackMemoryPushString(char *s) {
+  return (char *) mock(s);
+}
+
+void stackMemoryPop(void *p, int size) {
+    mock(p, size);
+}
+
+void stackMemoryBlockStart() {
+  mock();
+}
+
+void stackMemoryBlockFree() {
+  mock();
+}
+
+void stackMemoryDump() {
+  mock();
+}
+
+void addToTrail(void (*action)(void *), void *p) {
+  mock(action, p);
+}
+
+void removeFromTrailUntil(S_freeTrail *untilP) {
+  mock(untilP);
+}
+
+void symDump(S_symbol *s) {
+  mock(s);
+}
+
+void symbolRefItemDump(S_symbolRefItem *ss) {
+  mock(ss);
+}
+
+int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos) {
+  return (int) mock(buff, str, nameStyle, oNamePos);
+}
+
+void typeSPrint(char *buff, int *size, S_typeModifiers *t, char *name, int dclSepChar, int maxDeep, int typedefexp, int longOrShortName, int *oNamePos) {
+  mock(buff, size, t, name, dclSepChar, maxDeep, typedefexp, longOrShortName, oNamePos);
+}
+
+void throwsSprintf(char *out, int outsize, S_symbolList *exceptions) {
+  mock(out, outsize, exceptions);
+}
+
+void macDefSPrintf(char *buff, int *size, char *name1, char *name2, int argn, char **args, int *oNamePos) {
+  mock(buff, size, name1, name2, argn, args, oNamePos);
+}
+
+char *string3ConcatInStackMem(char *str1, char *str2, char *str3) {
+  return (char *) mock(str1, str2, str3);
+}
+
+unsigned hashFun(char *s) {
+    return mock(s);
 }
