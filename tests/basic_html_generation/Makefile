@@ -4,8 +4,8 @@
 include ../Makefile.boilerplate
 
 $(TEST):
+	@printf "Tests in '$@': "
 	@rm -rf output $@.log
-	@printf "Tests in \"$@\": "
 	@../../src/c-xref -xrefrc .c-xrefrc -html -htmlroot=output -htmlcutcwd $@.[ch] -o $@.log
 	@grep '<A HREF="$@.h.html#:5">Options</A> options;' output/$@.c.html > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
