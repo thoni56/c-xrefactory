@@ -160,4 +160,4 @@ test:
 unit:
 	$(MAKE) -C unittests
 
-$(SRCS) : strFill.g.h enumTxt.g.h
+$(SRCS) : strFill.g.h enumTxt.g.h enumTxt.g.c
