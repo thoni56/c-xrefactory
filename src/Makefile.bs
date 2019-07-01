@@ -1,8 +1,8 @@
 #
-# This makefile is included by Makefile.common to build a bootstrap
+# This makefile is executed from Makefile.common to build a bootstrap
 # version of c-xref (c-xref.bs) which do not require regenerating the
 # strXXX.h et al. files
-
+#
 # Once that is done we can build a correct c-xref that knows about the actual
 # header files on this system. ...I think... /thoni56
 #
@@ -12,7 +12,7 @@
 include sources.mk
 
 $(OBJDIR)/%.o: %.c | $(OBJDIR)
-	$(CC) $(CFLAGS) $(OUTPUT_OPTION) -MMD -c $<
+	$(CC) $(BS_CFLAGS) -DBOOTSTRAP $(OUTPUT_OPTION) -MMD -c $<
 
 #########################################################################
 
