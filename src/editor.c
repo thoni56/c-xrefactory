@@ -435,11 +435,11 @@ static void editorFreeBuffer(S_editorBufferList *ll) {
 }
 
 static void editorLoadFileIntoBufferText(S_editorBuffer *buff, struct stat *st) {
-    register char *s, *d, *maxs;
-    char    *space, *fname;
-    FILE    *ff;
-    char    *bb;
-    int     n, ss, size;
+    char *space, *fname;
+    FILE *ff;
+    char *bb;
+    int n, ss, size;
+
     fname = buff->fileName;
     space = buff->a.text;
     size = buff->a.bufferSize;
@@ -507,12 +507,12 @@ static void fillEmptyEditorBuffer(S_editorBuffer *ff, char *aname, int ftnum,
 }
 
 static S_editorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct stat *st) {
-    int                             minSize, allocIndex, allocSize, ii;
-    char                            *space;
-    char                            *aname, *nname, *afname, *nfileName;
-    S_editorBuffer                  *ff;
-    S_editorBufferList              *ffl;
-    int                             ftnum;
+    int ii;
+    char *aname, *nname, *afname, *nfileName;
+    S_editorBuffer *ff;
+    S_editorBufferList *ffl;
+    int ftnum;
+
     nname = normalizeFileName(name, s_cwd);
     ED_ALLOCC(aname, strlen(nname)+1, char);
     strcpy(aname, nname);
@@ -543,10 +543,10 @@ static void editorSetBufferModifiedFlag(S_editorBuffer *buff) {
 }
 
 S_editorBuffer *editorGetOpenedBuffer(char *name) {
-    S_editorBufferBits  ddb;
     S_editorBuffer      dd;
     S_editorBufferList  ddl, *memb;
     int                 ii;
+
     fillEmptyEditorBuffer(&dd, name, 0, name);
     FILL_editorBufferList(&ddl, &dd, NULL);
     if (editorBufferTabIsMember(&s_editorBufferTab, &ddl, &ii, &memb)) {
@@ -563,13 +563,12 @@ S_editorBuffer *editorGetOpenedAndLoadedBuffer(char *name) {
 }
 
 void editorRenameBuffer(S_editorBuffer *buff, char *nName, S_editorUndo **undo) {
-    char                newName[MAX_FILE_NAME_SIZE];
-    int                 fti, ii, mem, deleted;
-    S_editorBufferBits  ddb;
-    S_editorBuffer      dd, *removed;
-    S_editorBufferList  ddl, *memb, *memb2;
-    S_editorUndo        *uu;
-    char                *oldName;
+    char newName[MAX_FILE_NAME_SIZE];
+    int fti, ii, mem, deleted;
+    S_editorBuffer dd, *removed;
+    S_editorBufferList ddl, *memb, *memb2;
+    S_editorUndo *uu;
+    char *oldName;
 
     strcpy(newName, normalizeFileName(nName, s_cwd));
     //&sprintf(tmpBuff, "Renaming %s (at %d) to %s (at %d)", buff->name, buff->name, newName, newName);warning(ERR_INTERNAL, tmpBuff);
@@ -674,11 +673,11 @@ S_editorBuffer *editorFindFileCreate(char *name) {
 
 void editorReplaceString(S_editorBuffer *buff, int position, int delsize,
                          char *str, int strlength, S_editorUndo **undo) {
-    int             nsize, oldsize, index, undosize, pattractor;
-    char            *text, *space, *undotext;
-    S_editorBuffer  *nb;
-    S_editorMarker  *m;
-    S_editorUndo    *uu;
+    int nsize, oldsize, index, undosize, pattractor;
+    char *text, *space, *undotext;
+    S_editorMarker *m;
+    S_editorUndo *uu;
+
     assert(position >=0 && position <= buff->a.bufferSize);
     assert(delsize >= 0);
     assert(strlength >= 0);
@@ -748,11 +747,11 @@ void editorReplaceString(S_editorBuffer *buff, int position, int delsize,
 
 void editorMoveBlock(S_editorMarker *dest, S_editorMarker *src, int size,
                      S_editorUndo **undo) {
-    S_editorMarker  *mmoved, *tmp, **mmm, *mm;
-    S_editorBuffer  *sb, *db;
-    S_editorUndo    *uu;
-    int             off1, off2, offd, undodoffset;
-    mmoved = NULL;
+    S_editorMarker *tmp, *mm;
+    S_editorBuffer *sb, *db;
+    S_editorUndo *uu;
+    int off1, off2, offd, undodoffset;
+
     assert(size>=0);
     if (dest->buffer == src->buffer
         && dest->offset > src->offset
@@ -868,9 +867,10 @@ void editorQuasiSaveModifiedBuffers() {
 }
 
 void editorLoadAllOpenedBufferFiles() {
-    int                     i, size;
-    S_editorBufferList      *ll,*nn;
-    struct stat             st;
+    int i, size;
+    S_editorBufferList *ll;
+    struct stat st;
+
     for(i=0; i<s_editorBufferTab.size; i++) {
         for(ll=s_editorBufferTab.tab[i]; ll!=NULL; ll=ll->next) {
             if (!ll->f->b.textLoaded) {
@@ -942,7 +942,8 @@ int editorMoveMarkerBeyondIdentifier(S_editorMarker *m, int direction) {
 }
 
 void editorRemoveBlanks(S_editorMarker *mm, int direction, S_editorUndo **undo) {
-    int moffset, len;
+    int moffset;
+
     moffset = mm->offset;
     if (direction < 0) {
         mm->offset --;
@@ -1278,8 +1279,8 @@ void editorSplitMarkersWithRespectToRegions(
                                             S_editorMarkerList  **outInsiders,
                                             S_editorMarkerList  **outOutsiders
                                             ) {
-    S_editorMarkerList  *mm, *nn, *nextmm;
-    S_editorRegionList  *rr;
+    S_editorMarkerList *mm, *nn;
+    S_editorRegionList *rr;
 
     *outInsiders = NULL;
     *outOutsiders = NULL;
@@ -1398,11 +1399,12 @@ int editorMapOnNonexistantFiles(
                                 void *a4,
                                 int *a5
                                 ) {
-    int                     i, dlen, fnlen, res, lastMappedLen;
-    S_editorBufferList      *ll, *bl;
-    char                    *ss, *lastMapped;
-    char                    fname[MAX_FILE_NAME_SIZE];
-    struct stat             st;
+    int dlen, fnlen, res, lastMappedLen;
+    S_editorBufferList *ll, *bl;
+    char *ss, *lastMapped;
+    char fname[MAX_FILE_NAME_SIZE];
+    struct stat st;
+
     // In order to avoid mapping of the same directory several
     // times, first just create list of all files, sort it, and then
     // map them
@@ -1481,9 +1483,10 @@ static void editorCloseBuffer(S_editorBufferList *memb, int ii) {
 // be very carefull when using this function, because of interpretation
 // of 'Closable', this should be additional field: 'closable' or what
 void editorCloseBufferIfClosable(char *name) {
-    S_editorBuffer      dd;
-    S_editorBufferList  ddl, *memb, **ll;
-    int                 ii;
+    S_editorBuffer dd;
+    S_editorBufferList ddl, *memb;
+    int ii;
+
     fillEmptyEditorBuffer(&dd, name, 0, name);
     FILL_editorBufferList(&ddl, &dd, NULL);
     if (editorBufferTabIsMember(&s_editorBufferTab, &ddl, &ii, &memb)) {
@@ -1496,7 +1499,7 @@ void editorCloseBufferIfClosable(char *name) {
 void editorCloseAllBuffersIfClosable() {
     int                     i;
     S_editorBufferList      *ll,*nn;
-    S_editorMarker          *m, *mm;
+
     for(i=0; i<s_editorBufferTab.size; i++) {
         for(ll=s_editorBufferTab.tab[i]; ll!=NULL;) {
             nn = ll->next;
@@ -1508,9 +1511,9 @@ void editorCloseAllBuffersIfClosable() {
 }
 
 void editorCloseAllBuffers() {
-    int                     i;
-    S_editorBufferList      *ll,*nn;
-    S_editorMarker          *m, *mm;
+    int i;
+    S_editorBufferList *ll,*nn;
+
     for(i=0; i<s_editorBufferTab.size; i++) {
         for(ll=s_editorBufferTab.tab[i]; ll!=NULL;) {
             nn = ll->next;

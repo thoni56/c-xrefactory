@@ -29,20 +29,22 @@ static char *s_refactoryEditSrvInitOptions[] = {
     //& "-debug",
     "-task_regime_server",
     NULL,
-};
+}
 
 static char *s_refactoryXrefInitOptions[] = {
     "xref",
     "-xrefactory-II",
     "-briefoutput",
     NULL,
-};
+}
+
 static char *s_refactoryUpdateOption = "-fastupdate";
 
 static int argnum(char **margv) {
-    int     res;
-    char    **aa;
-    for(res=0, aa=margv; *margv!=NULL; res++,margv++) ;
+    int res;
+
+    for(res=0, *margv!=NULL; res++,margv++)
+        ;
     return(res);
 }
 
@@ -159,9 +161,8 @@ static void dumpNargv(int argc, char **argv) {
 // including options in s_opt, ...
 // call to this function MUST be followed by a pushing action, to refresh options
 static void refactoryUpdateReferences(char *project) {
-    int                 i, nargc, refactoryXrefInitOptionsNum;
-    S_editorBuffer      bb;
-    char                *nargv[MAX_NARGV_OPTIONS_NUM];
+    int i, nargc, refactoryXrefInitOptionsNum;
+    char *nargv[MAX_NARGV_OPTIONS_NUM];
     // following woud be too long to be allocated on stack
     //static S_options  savedCachedOptions;
     static S_options    savedOptions;
@@ -264,8 +265,6 @@ static void refactoryBeInteractive() {
 
 
 void refactoryDisplayResolutionDialog(char *message,int messageType,int continuation) {
-    int                 pargc;
-    char                **pargv;
     strcpy(tmpBuff, message);
     formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
     ppcGenDisplaySelectionRecord(tmpBuff, messageType, continuation);
@@ -336,8 +335,6 @@ static char *refactoryGetIdentifierOnMarker_st(S_editorMarker *pos) {
 }
 
 static void refactoryReplaceString(S_editorMarker *pos, int len, char *newVal) {
-    char            *bVal;
-    bVal = pos->buffer->a.text + pos->offset;
     editorReplaceString(pos->buffer, pos->offset, len,
                         newVal, strlen(newVal), &s_editorUndo);
 }
@@ -704,14 +701,10 @@ static S_olSymbolsMenu *javaGetRelevantHkSelectedItem(S_symbolRefItem *ri) {
 }
 
 static void tpCheckFutureAccOfLocalReferences(S_symbolRefItem *ri, void *ddd) {
-    S_reference             *rr;
-    S_olcxReferences        *rstack;
-    S_tpCheckMoveClassData  *dd;
-    char                    symclass[MAX_FILE_NAME_SIZE];
-    int                     sclen, symclen;
-    S_position              *defpos;
-    int                     defusage;
-    S_olSymbolsMenu         *ss;
+    S_reference *rr;
+    S_tpCheckMoveClassData *dd;
+    S_olSymbolsMenu *ss;
+
     dd = (S_tpCheckMoveClassData *) ddd;
     //&fprintf(ccOut,"!mapping %s\n", ri->name);
     MOVE_CLASS_MAP_FUN_RETURN_ON_UNINTERESTING_SYMBOLS(ri, dd);
@@ -734,13 +727,10 @@ static void tpCheckFutureAccOfLocalReferences(S_symbolRefItem *ri, void *ddd) {
 }
 
 static void tpCheckMoveClassPutClassDefaultSymbols(S_symbolRefItem *ri, void *ddd) {
-    S_reference             *rr;
-    S_olcxReferences        *rstack;
-    S_tpCheckMoveClassData  *dd;
-    char                    symclass[MAX_FILE_NAME_SIZE];
-    int                     sclen, symclen;
-    S_position              *defpos;
-    int                     defusage;
+    S_reference *rr;
+    S_olcxReferences *rstack;
+    S_tpCheckMoveClassData *dd;
+
     dd = (S_tpCheckMoveClassData *) ddd;
     //&fprintf(ccOut,"!mapping %s\n", ri->name);
     MOVE_CLASS_MAP_FUN_RETURN_ON_UNINTERESTING_SYMBOLS(ri, dd);
