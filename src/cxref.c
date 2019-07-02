@@ -2377,8 +2377,8 @@ int olcxItIsSameCxSymbol(S_symbolRefItem *p1, S_symbolRefItem *p2) {
     int n1len, n2len;
     char *n1start, *n2start;
     //& CHECK_ATTRIBUTES(p1,p2);  // to show panic macro and panic symbol and to make safetycheck working
-    GET_NUDE_NAME(p1->name, n1start, n1len);
-    GET_NUDE_NAME(p2->name, n2start, n2len);
+    GET_BARE_NAME(p1->name, n1start, n1len);
+    GET_BARE_NAME(p2->name, n2start, n2len);
     if (n1len != n2len) return(0);
     if (strncmp(n1start, n2start, n1len)) return(0);
     return(1);
@@ -5050,8 +5050,8 @@ void mainAnswerEditAction() {
 int byPassAcceptableSymbol(S_symbolRefItem *p) {
     int nlen,len;
     char *nn, *nnn;
-    GET_NUDE_NAME(p->name, nn, len);
-    GET_NUDE_NAME(s_opt.browsedSymName, nnn, nlen);
+    GET_BARE_NAME(p->name, nn, len);
+    GET_BARE_NAME(s_opt.browsedSymName, nnn, nlen);
     if (len != nlen) return(0);
     if (strncmp(nn, nnn, len)) return(0);
     return(1);

@@ -1077,8 +1077,8 @@ int htmlRefItemsOrderLess(S_olSymbolsMenu *ss1, S_olSymbolsMenu *ss2) {
     int len2 __attribute__((unused));
 
     s1 = &ss1->s; s2 = &ss2->s;
-    GET_NUDE_NAME(s1->name, n1, len1);
-    GET_NUDE_NAME(s2->name, n2, len2);
+    GET_BARE_NAME(s1->name, n1, len1);
+    GET_BARE_NAME(s2->name, n2, len2);
     r = strcmp(n1, n2);
     if (r!=0) return(r<0);
     r = strcmp(s1->name, s2->name);

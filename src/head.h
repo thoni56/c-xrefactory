@@ -353,7 +353,7 @@
     || ccc=='$'\
 )
 
-#define GET_NUDE_NAME(name, start, len) {\
+#define GET_BARE_NAME(name, start, len) {\
     register int _c_;\
     register char *_ss_;\
     _ss_ = start = name; \
