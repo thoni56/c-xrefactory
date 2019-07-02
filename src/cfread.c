@@ -95,7 +95,7 @@ union constantPoolUnion {
     }
 
 #define SkipNChars(count, ccc, ffin, bbb) {     \
-        register int ccount,i,ch;               \
+        register int ccount;                \
         ccount = (count);                       \
         if (ccc + ccount < ffin) ccc += ccount; \
         else {                                  \
