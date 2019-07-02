@@ -320,11 +320,11 @@ void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) {
             lastlexadd = cInput.cc;                                 \
         }                                                           \
         lastlexadd = cInput.cc;                                     \
-        GetLexToken(lex,cInput.cc);                                 \
+        GetLexToken(lex, cInput.cc);                                \
     }
 
 #define GetLex(lex) {                               \
-        char *lastlexcc; GetLexA(lex,lastlexcc);    \
+        char *lastlexcc; GetLexA(lex, lastlexcc);   \
     }
 
 

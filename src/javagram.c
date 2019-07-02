@@ -3525,10 +3525,10 @@ case 77:
             yyval.bbidlist.d = yyvsp[-3].bbidlist.d;
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_symbol	*str;
-                    S_typeModifiers		*expr;
-                    S_reference			*rr, *lastUselessRef;
-                    int					st;
+                    S_symbol *str;
+                    S_typeModifiers *expr;
+                    S_reference *rr, *lastUselessRef;
+                    int st __attribute__((unused));
                     st = javaClassifyAmbiguousName(yyvsp[-3].bbidlist.d, NULL,&str,&expr,&rr,
                                                    &lastUselessRef, USELESS_FQT_REFS_DISALLOWED,
                                                    CLASS_TO_TYPE,UsageUsed);
@@ -4520,7 +4520,7 @@ case 176:
                 if (RegularPass()) {
                     if (! SyntaxPassOnly()) {
                         S_symbol *mh, *args;
-                        int i;
+
                         args = yyvsp[-1].bbsymbol.d;
                         /*&
                           if (! ($1.d & ACC_STATIC)) {
@@ -5424,7 +5424,7 @@ case 310:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_symbol *ss;
+                    S_symbol *ss __attribute__((unused));
                     genInternalLabelReference(yyvsp[-7].bbinteger.d, UsageUsed);
                     genInternalLabelReference(yyvsp[-4].bbinteger.d, UsageDefined);
                     ss = addContinueBreakLabelSymbol(yyvsp[-3].bbinteger.d, CONTINUE_LABEL_NAME);
@@ -5976,10 +5976,10 @@ case 365:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     S_symbol *ss, *tt, *ei;
-                    S_symbol	*str;
-                    S_typeModifiers		*expr;
-                    S_idIdentList		*ii;
-                    S_reference			*rr, *lastUselessRef;
+                    S_symbol *str;
+                    S_typeModifiers *expr;
+                    S_reference *rr, *lastUselessRef;
+
                     s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
                     lastUselessRef = NULL;
                     javaClassifyAmbiguousName(yyvsp[-3].bbidlist.d, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
@@ -6332,7 +6332,7 @@ case 393:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     S_symbol *ss,*rec=NULL;
-                    S_recFindStr rfs;
+
                     yyval.bbexprType.d.r = NULL;
                     yyval.bbexprType.d.pp = &yyvsp[-2].bbidIdent.d->p;
                     ss = javaCurrentSuperClass();
@@ -6360,7 +6360,7 @@ case 394:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     S_symbol *ss,*rec=NULL;
-                    S_recFindStr rfs;
+
                     ss = javaQualifiedThis(yyvsp[-4].bbidlist.d, yyvsp[-2].bbidIdent.d);
                     if (ss != &s_errorSymbol && ss->b.symType!=TypeError) {
                         javaLoadClassSymbolsFromFile(ss);

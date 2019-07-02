@@ -1075,10 +1075,10 @@ TypeImportOnDemandDeclaration:
             $$.d = $2.d;
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_symbol	*str;
-                    S_typeModifiers		*expr;
-                    S_reference			*rr, *lastUselessRef;
-                    int					st;
+                    S_symbol *str;
+                    S_typeModifiers *expr;
+                    S_reference *rr, *lastUselessRef;
+                    int st __attribute__((unused));
                     st = javaClassifyAmbiguousName($2.d, NULL,&str,&expr,&rr,
                                                    &lastUselessRef, USELESS_FQT_REFS_DISALLOWED,
                                                    CLASS_TO_TYPE,UsageUsed);
@@ -1953,7 +1953,7 @@ ConstructorDeclaration:
                 if (RegularPass()) {
                     if (! SyntaxPassOnly()) {
                         S_symbol *mh, *args;
-                        int i;
+
                         args = $2.d;
                         /*&
                           if (! ($1.d & ACC_STATIC)) {
@@ -2738,7 +2738,7 @@ ForStatementPrefix:
         /*8*/ _nlabel_  ForUpdate_opt ')' /*11*/ _nfork_    {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_symbol *ss;
+                    S_symbol *ss __attribute__((unused));
                     genInternalLabelReference($4.d, UsageUsed);
                     genInternalLabelReference($7.d, UsageDefined);
                     ss = addContinueBreakLabelSymbol($8.d, CONTINUE_LABEL_NAME);
@@ -3233,10 +3233,10 @@ ClassInstanceCreationExpression:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     S_symbol *ss, *tt, *ei;
-                    S_symbol	*str;
-                    S_typeModifiers		*expr;
-                    S_idIdentList		*ii;
-                    S_reference			*rr, *lastUselessRef;
+                    S_symbol *str;
+                    S_typeModifiers *expr;
+                    S_reference *rr, *lastUselessRef;
+
                     s_cp.erfsForParamsComplet = $2;
                     lastUselessRef = NULL;
                     javaClassifyAmbiguousName($3.d, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
@@ -3547,7 +3547,7 @@ FieldAccess:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     S_symbol *ss,*rec=NULL;
-                    S_recFindStr rfs;
+
                     $$.d.r = NULL;
                     $$.d.pp = &$1.d->p;
                     ss = javaCurrentSuperClass();
@@ -3572,7 +3572,7 @@ FieldAccess:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     S_symbol *ss,*rec=NULL;
-                    S_recFindStr rfs;
+
                     ss = javaQualifiedThis($1.d, $3.d);
                     if (ss != &s_errorSymbol && ss->b.symType!=TypeError) {
                         javaLoadClassSymbolsFromFile(ss);
