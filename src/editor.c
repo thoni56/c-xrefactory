@@ -323,7 +323,6 @@ static void editorError(int errCode, char *message) {
 }
 
 int editorMarkerLess(S_editorMarker *m1, S_editorMarker *m2) {
-    int c;
     // m1->buffer->ftnum <> m2->buffer->ftnum;
     // following is tricky as it works also for renamed buffers
     if (m1->buffer < m2->buffer) return(1);
@@ -391,8 +390,6 @@ S_editorMarker *editorDuplicateMarker(S_editorMarker *mm) {
 }
 
 static void editorRemoveMarkerFromBufferNoFreeing(S_editorMarker *marker) {
-    S_editorMarker  **m, *next;
-    S_editorBuffer  *buff;
     if (marker == NULL) return;
     if (marker->next!=NULL) marker->next->previous = marker->previous;
     if (marker->previous==NULL) {

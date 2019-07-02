@@ -53,7 +53,8 @@ int cctIsMember(S_cctNode *cc, S_symbol *x, int deepFactor) {
 
 
 void cctAddCctTree(S_cctNode *cc, S_cctNode *x, int deepFactor) {
-    int i,h;
+    int i;
+
     //&fprintf(dumpOut,"adding %d tree to %d tree at deep == %d\n", x, cc, deepFactor);
     if (x->node == NULL) return;
     if (cc->node == NULL) {

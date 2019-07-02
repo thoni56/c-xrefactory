@@ -135,8 +135,8 @@ static int zipReadLocalFileHeader(char **accc, char **affin, S_charBuf *iBuf,
                                   char *fn, unsigned *fsize, unsigned *lastSig,
                                   char *archivename, unsigned fileOffset) {
     int res;
-    register char *ccc, *ffin;
-    register int i,offset;
+    char *ccc, *ffin;
+    int i;
     int headSig,extractVersion,bitFlags,compressionMethod;
     int lastModTime,lastModDate,fnameLen,extraLen;
     unsigned crc32,compressedSize,unCompressedSize;
@@ -364,7 +364,8 @@ static void zipArchiveScan(char **accc, char **affin, S_charBuf *iBuf,
     int i,internFileAttribs,tmp;
     unsigned externFileAttribs,localHeaderOffset, cdOffset;
     unsigned crc32,compressedSize,unCompressedSize;
-    unsigned foffset;
+    unsigned foffset __attribute__((unused));
+
     ccc = *accc; ffin = *affin;
     zip->dir = NULL;
     if (findEndOfCentralDirectory(&ccc, &ffin, iBuf, fsize)==0) goto fini;
@@ -417,10 +418,11 @@ static void zipArchiveCdOffset(char **accc, char **affin, S_charBuf *iBuf,
 #endif
 
 int zipIndexArchive(char *name) {
-    int         archi,namelen,fsize;
-    FILE        *ff;
-    S_charBuf   *bbb;
+    int archi, namelen;
+    FILE *ff;
+    S_charBuf *bbb;
     struct stat fst;
+
     bbb = &s_zipTmpBuff;
     namelen = strlen(name);
     for(archi=0;
@@ -474,9 +476,10 @@ static int zipSeekToFile(char **accc, char **affin, S_charBuf *iBuf,
     char *sep;
     char *ccc, *ffin;
     int i,namelen,res = 0;
-    unsigned lastSig,fsize,lhoffset;
+    unsigned lastSig, fsize;
     char fn[MAX_FILE_NAME_SIZE];
     S_zipArchiveDir *place;
+
     ccc = *accc; ffin = *affin;
     sep = strchr(name,ZIP_SEPARATOR_CHAR);
     if (sep == NULL) {return(0);}
@@ -509,11 +512,10 @@ int zipFindFile(char *name,
                 char **resName,             /* can be NULL !!! */
                 S_zipFileTabItem *zipfile
                 ) {
-    char            *pp,*ccc,*ffin;
-    char            fname[MAX_FILE_NAME_SIZE];
-    S_charBuf       *bbb;
+    char *pp;
+    char fname[MAX_FILE_NAME_SIZE];
     S_zipArchiveDir *place;
-    bbb = &s_zipTmpBuff;
+
     strcpy(fname,name);
     strcat(fname,".class");
     assert(strlen(fname)+1 < MAX_FILE_NAME_SIZE);
@@ -537,11 +539,11 @@ void javaMapZipDirFile(
                        char *classPath,
                        char *dirname
                        ) {
-    char            fn[MAX_FILE_NAME_SIZE];
-    char            dirn[MAX_FILE_NAME_SIZE];
-    S_zipArchiveDir *place,*aa;
-    char            *pp,*ccc,*ffin,*tmpp,*ss;
-    int             dirlen;
+    char fn[MAX_FILE_NAME_SIZE];
+    char dirn[MAX_FILE_NAME_SIZE];
+    S_zipArchiveDir *place, *aa;
+    char *ss;
+    int dirlen;
 
     dirlen = strlen(dirname);
     strcpy(dirn,dirname);
@@ -687,13 +689,11 @@ char * cfSkipFirstArgumentInSigString(char *sig) {
 }
 
 S_typeModifiers * cfUnPackResultType(char *sig, char **restype) {
-    S_typeModifiers *res,**ares,*tt;
-    S_symbol dd,*pdd;
-    S_symbolList ddl,*memb;
-    int typ,ii,nmlen;
-    char *fqname,*nnn;
-    char *ssig,*ccname;
-    int ccnameOffset;
+    S_typeModifiers *res, **ares, *tt;
+    int typ;
+    char *fqname;
+    char *ssig, *ccname;
+
     res = NULL;
     ares = &res;
     ssig = sig;
@@ -729,8 +729,6 @@ S_typeModifiers * cfUnPackResultType(char *sig, char **restype) {
                 if (*ssig == '/' || *ssig == '$') ccname = ssig+1;
             }
             assert(*ssig == ';');
-            nmlen = ssig-fqname;
-            ccnameOffset = ccname - fqname;
             *ssig = 0;
 
 #if ! ZERO  // [13.1.2003]
@@ -784,7 +782,6 @@ static void cfAddRecordToClass( char *name,
                                 ) {
     static char pp[MAX_PROFILE_SIZE];
     S_symbol *d,*memb;
-    S_symbolList *dl;
     char *ln,*prof;
     S_typeModifiers *tt;
     char *restype;
@@ -849,20 +846,20 @@ static void cfReadFieldInfos(   char **accc,
                                 S_symbol *memb,
                                 union constantPoolUnion *cp
                                 ) {
-    register char *ccc, *ffin;
-    register int cval,count,ind;
-    int size,i,accesFlags,nameind,sigind;
+    char *ccc, *ffin;
+    int count, ind;
+    int access_flags, nameind, sigind;
     ccc = *accc; ffin = *affin;
     GetU2(count, ccc, ffin, iBuf);
     for(ind=0; ind<count; ind++) {
-        GetU2(accesFlags, ccc, ffin, iBuf);
+        GetU2(access_flags, ccc, ffin, iBuf);
         GetU2(nameind, ccc, ffin, iBuf);
         GetU2(sigind, ccc, ffin, iBuf);
         /*
           fprintf(dumpOut, "field '%s' of type '%s'\n",
           cp[nameind].asciz,cp[sigind].asciz); fflush(dumpOut);
         */
-        cfAddRecordToClass(cp[nameind].asciz,cp[sigind].asciz,memb,accesFlags,
+        cfAddRecordToClass(cp[nameind].asciz,cp[sigind].asciz,memb,access_flags,
                            StorageField,NULL);
         SkipAttributes(ccc, ffin, iBuf);
     }
@@ -888,17 +885,17 @@ static void cfReadMethodInfos(  char **accc,
                                 S_symbol *memb,
                                 union constantPoolUnion *cp
                                 ) {
-    register char *ccc, *ffin, *name, *sign, *sign2;
-    register unsigned cval,count,ind;
-    register unsigned aind,acount,aname,alen,excount;
-    int size,i,accesFlags,nameind,sigind,storage,exclass;
+    char *ccc, *ffin, *name, *sign, *sign2;
+    unsigned count, ind;
+    unsigned aind, acount, aname, alen, excount;
+    int i, access_flags, nameind, sigind, storage, exclass;
     char *exname, *exsname;
     S_symbol *exc;
     S_symbolList *exclist, *ee;
     ccc = *accc; ffin = *affin;
     GetU2(count, ccc, ffin, iBuf);
     for(ind=0; ind<count; ind++) {
-        GetU2(accesFlags, ccc, ffin, iBuf);
+        GetU2(access_flags, ccc, ffin, iBuf);
         GetU2(nameind, ccc, ffin, iBuf);
         GetU2(sigind, ccc, ffin, iBuf);
         /*
@@ -912,22 +909,15 @@ static void cfReadMethodInfos(  char **accc,
         exclist = NULL;
         if (strcmp(name, JAVA_CONSTRUCTOR_NAME1)==0
             || strcmp(name, JAVA_CONSTRUCTOR_NAME2)==0) {
-            char ttt[TMP_STRING_SIZE];
             // isn't it yet done by javac?
             //&if (strcmp(name, JAVA_CONSTRUCTOR_NAME2)==0) {
-            //& accesFlags |= ACC_STATIC;
+            //& access_flags |= ACC_STATIC;
             //&}
             // if constructor, put there type name as constructor name
             // instead of <init>
             //&fprintf(dumpOut,"constructor %s of %s\n", name, memb->name);
             assert(memb && memb->b.symType==TypeStruct && memb->u.s);
             name = memb->name;
-#if ZERO
-            sprintf(ttt,"%s%c%s",memb->linkName,LINK_NAME_CUT_SYMBOL,memb->name);
-
-            CF_ALLOCC(name, strlen(ttt)+1, char);
-            strcpy(name, ttt);
-#endif
             storage = StorageConstructor;
             if (s_fileTab.tab[memb->u.s->classFile]->directEnclosingInstance != s_noneFileIndex) {
                 //& assert(memb->u.s->existsDEIarg);
@@ -1002,7 +992,7 @@ static void cfReadMethodInfos(  char **accc,
                 SkipNChars(alen, ccc, ffin, iBuf);
             }
         }
-        cfAddRecordToClass(name, sign, memb, accesFlags, storage, exclist);
+        cfAddRecordToClass(name, sign, memb, access_flags, storage, exclist);
     }
     goto fin;
  endOfFile:
@@ -1052,8 +1042,9 @@ void addSuperClassOrInterfaceByName(S_symbol *memb, char *super, int origin,
 
 int javaCreateClassFileItem( S_symbol *memb) {
     char ftname[MAX_FILE_NAME_SIZE];
-    char *rftname;
-    int ii, newItem;
+    int ii;
+    int newItem __attribute__((unused));
+
     SPRINT_FILE_TAB_CLASS_NAME(ftname, memb->linkName);
     newItem = addFileTabItem(ftname, &ii);
     memb->u.s->classFile = ii;
@@ -1069,19 +1060,16 @@ int javaCreateClassFileItem( S_symbol *memb) {
 /* ********************************************************************* */
 
 void javaReadClassFile(char *name, S_symbol *memb, int loadSuper) {
-    register int cval,tmp,i,inum,innval,rinners,snum,modifs;
+    int cval, i, inum, innval, rinners, modifs;
     FILE *ff;
-    int fnlen,upp,innNameInd,membFlag;
+    int upp, innNameInd, membFlag;
     char *ccc, *ffin;
-    char *super,*interf,*innerCName, *zipsep;
-    S_symbol *interfs, *inners, *supp;
-    S_symbolList *ssl;
+    char *super, *interf, *innerCName, *zipsep;
+    S_symbol *inners;
     int thisClass, superClass, accesFlags, cpSize;
-    int fileInd,mm,ind,count,aname,alen,cn;
-    char *inner,*upper,*thisClassName;
-    S_charBuf *inBuf;
+    int fileInd, ind, count, aname, alen, cn;
+    char *inner, *upper, *thisClassName;
     union constantPoolUnion *constantPool;
-    S_fileItem ffi;
     S_position pos;
 
     memb->b.javaFileLoaded = 1;
@@ -1112,7 +1100,6 @@ void javaReadClassFile(char *name, S_symbol *memb, int loadSuper) {
 
     log_debug("reading file %s",name);
 
-    inBuf = &cFile.lb.cb;
     ccc = cFile.lb.cb.cc; ffin = cFile.lb.cb.fin;
     if (zipsep != NULL) {
         if (zipSeekToFile(&ccc,&ffin,&cFile.lb.cb,name) == 0) goto fini;

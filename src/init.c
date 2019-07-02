@@ -49,10 +49,11 @@ static char *autoDetectJavaVersion(void) {
 }
 
 void initTokenNameTab(void) {
-    char        *nn,*jv;
-    int         tok,ii,i,tlan;
-    S_symbol    *pp;
-    static int  messageWritten=0;
+    char *jv;
+    int ii;
+    S_symbol *pp;
+    static int messageWritten=0;
+
     if (! s_opt.strictAnsi) {
         initTokensFromTab(s_tokenNameIniTab2);
     }
@@ -89,7 +90,8 @@ void initTokenNameTab(void) {
     }
 
 void initTypeModifiersTabs(void) {
-    int i,t;
+    int i;
+
     for(i=0; i<MAX_TYPE; i++) {
         typeShortChange[i] = i;
         typeLongChange[i] = i;
