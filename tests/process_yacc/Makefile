@@ -19,8 +19,6 @@ $(TEST): $(YACC)
 	@rm -rf $@.log CXrefs
 	@$(YACC) file.y
 	@../../src/c-xref *.[cy] -xrefrc .c-xrefrc -refs "$(CURDIR)/CXrefs" -o $@.log
-	ls
-	less .c-xrefrc
 	@# Get the "symbol" for the yacc-file from the CXrefs and use it
 	@# to find the reference to func from the .y file
 	@f=`grep process_yacc/file.y CXrefs/* | awk '{print $$1}'` ; \

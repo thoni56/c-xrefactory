@@ -9,7 +9,7 @@ UNITTESTS = $(patsubst %.c,%.so,$(wildcard *_tests.c))
 CGREEN = -L/usr/local/lib -lcgreen
 
 all: $(UNITTESTS)
-	cgreen-runner --suite unittests $^
+	cgreen-runner $(CGREEN_OUTPUT) --suite unittests $^
 
 
 symtab_tests.so: $(OBJDIR)/symtab_tests.o $(OBJDIR)/symtab.o
