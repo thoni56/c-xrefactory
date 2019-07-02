@@ -364,7 +364,8 @@ static void expandEnvironmentVariables(char *tt, int ttsize, int *len,
 }
 
 static int getOptionFromFile(FILE *ff, char *tt, int ttsize, int *outI) {
-    int i,c,lc,comment,res,verbat,quotamess;
+    int i, c, last_char;
+    int comment, res, quotamess;
     c = getc(ff);
     do {
         quotamess = 0;
@@ -375,24 +376,24 @@ static int getOptionFromFile(FILE *ff, char *tt, int ttsize, int *outI) {
             goto fini;
         }
         if (c=='\"') {
-            lc=c; c=getc(ff);
-            // the excaped " (\") are forbidden, it mades problems
-            // when someone finished its section name by \ antislash
+            last_char=c; c=getc(ff);
+            // the escaped " (\") are forbidden, it creates problems
+            // when someone finished a section name by \ reverse slash
             while (c!=EOF /*& && c!='\n' &*/ && (c!='\"' /*|| lc=='\\'*/ )) {
                 // if (c=='\"' && lc=='\\') i--;
                 if (i < ttsize-1)   tt[i++]=c;
-                lc=c; c=getc(ff);
+                last_char=c; c=getc(ff);
             }
             if (c!='\"' && s_opt.taskRegime!=RegimeEditServer) {
                 fatalError(ERR_ST, "option string through end of file", XREF_EXIT_ERR);
             }
         } else if (c=='`') {
             tt[i++]=c;
-            lc=c; c=getc(ff);
+            last_char=c; c=getc(ff);
             while (c!=EOF && c!='\n' && (c!='`' /*|| lc=='\\'*/ )) {
                 // if (c=='`' && lc=='\\') i--;
                 if (i < ttsize-1)   tt[i++]=c;
-                lc=c; c=getc(ff);
+                last_char=c; c=getc(ff);
             }
             if (i < ttsize-1)   tt[i++]=c;
             if (c!='`'  && s_opt.taskRegime!=RegimeEditServer) {
@@ -400,10 +401,10 @@ static int getOptionFromFile(FILE *ff, char *tt, int ttsize, int *outI) {
             }
         } else if (c=='[') {
             tt[i++] = c;
-            lc=c; c=getc(ff);
+            last_char=c; c=getc(ff);
             while (c!=EOF && c!='\n' && (c!=']' /*|| lc=='\\'*/ )) {
                 if (i < ttsize-1)       tt[i++]=c;
-                lc=c; c=getc(ff);
+                last_char=c; c=getc(ff);
             }
             if (c==']') tt[i++]=c;
         } else {
@@ -461,9 +462,9 @@ static void processSingleSectionMarker(char *tt,char *section,
 
 static void processSectionMarker(char *ttt,int i,char *project,char *section,
                                  int *writeFlag, char *resSection) {
-    int         sl;
     char        *tt;
     char        firstPath[MAX_FILE_NAME_SIZE];
+
     ttt[i-1]=0;
     tt = ttt+1;
     firstPath[0]=0;
@@ -542,8 +543,9 @@ static void processSectionMarker(char *ttt,int i,char *project,char *section,
 int readOptionFromFile(FILE *ff, int *nargc, char ***nargv, int memFl,
                        char *sectionFile,char *project, char *resSection) {
     char tt[MAX_OPTION_LEN];
-    int len,argc,i,c,isActiveSect,isActivePass,res,sl,passn=0;
+    int len, argc, i, c, isActiveSect, isActivePass, res, passn=0;
     char **aargv,*argv[MAX_STD_ARGS];
+
     argc = 1; res = 0; isActiveSect = isActivePass = 1; aargv=NULL;
     resSection[0]=0;
     if (memFl==MEM_ALLOC_ON_SM) SM_INIT(optMemory);
@@ -613,7 +615,7 @@ void readOptionPipe(char *comm, int *nargc, char ***nargv, char *sectionFile) {
 }
 
 void getOptionsFromMessage(char *qnxMsgBuff, int *nargc, char ***nargv) {
-    int i,b;
+    int i;
     int argc;
     char **aargv,*argv[MAX_STD_ARGS];
     i=0; argc = 1;
@@ -843,10 +845,9 @@ static char *s_defaultPossibleJavaBinPaths[] = {
 };
 
 char *getJdkClassPath(void) {
-    char            ttt[MAX_FILE_NAME_SIZE];
-    char            *res, *cp;
-    FILE            *ff;
-    int             i;
+    char *res;
+    int i;
+
     res = getJdkClassPathFastly();
     if (res!=NULL && *res!=0) return(res);
     // Can't determine it fastly, try other methods
@@ -860,8 +861,8 @@ char *getJdkClassPath(void) {
 char *getJavaHome(void) {
     static char     res[MAX_FILE_NAME_SIZE];
     char            *tt;
-    char            *cp;
     int             ii;
+
     tt = getJdkClassPath();
     if (tt!=NULL && *tt!=0) {
         copyDir(res, tt, &ii);
@@ -876,8 +877,9 @@ char *getJavaHome(void) {
 }
 
 void getJavaClassAndSourcePath(void) {
-    char            *cp,*jdkcp,*path;
-    int             i;
+    char *cp, *jdkcp;
+    int i;
+
     for(i=0; i<MAX_JAVA_ZIP_ARCHIVES; i++) {
         if (s_zipArchivTab[i].fn[0] == 0) break;
         s_zipArchivTab[i].fn[0]=0;
@@ -914,7 +916,6 @@ void getJavaClassAndSourcePath(void) {
             ) {
             static int messageFlag=0;
             if (messageFlag==0 && ! s_opt.briefoutput) {
-                FILE *ofile;
                 if (s_opt.xref2) {
                     if (jdkcp!=NULL && *jdkcp!=0) {
                         sprintf(tmpBuff,"java runtime == %s", jdkcp);

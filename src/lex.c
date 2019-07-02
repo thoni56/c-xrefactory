@@ -290,7 +290,7 @@ void gotOnLineCxRefs( S_position *ps ) {
             }                                                           \
             if (i>=len) {                                               \
                 /* it is the place marker */                            \
-                dd --; /* delete the C */                               \
+                dd--; /* delete the C */                                \
                 GetChar(ch,ccc,cfin,cb, clb, clo);                      \
                 if (ch == CC_COMPLETION) {                              \
                     PutLexToken(IDENT_TO_COMPLETE,ddd);                 \
