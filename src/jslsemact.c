@@ -88,12 +88,13 @@ void jslRemoveNestedClass(void  *ddv) {
 
 S_symbol *jslTypeSymbolDefinition(char *ttt2, S_idIdentList *packid,
                                   int add, int order, int isSingleImportedFlag) {
-    char                fqtName[MAX_FILE_NAME_SIZE];
-    S_idIdentList       dd2;
-    int                 ii, res, mm;
-    S_symbol            sd, *smemb;
-    S_jslSymbolList     ss, *xss, *memb;
-    S_position          *importPos;
+    char fqtName[MAX_FILE_NAME_SIZE];
+    S_idIdentList dd2;
+    int ii;
+    int mm __attribute__((unused));
+    S_symbol sd, *smemb;
+    S_jslSymbolList ss, *xss, *memb;
+    S_position *importPos;
 
     jslFillTypeSymbolItem( &sd, &ss, ttt2);
     FILLF_idIdentList(&dd2, ttt2,NULL,-1,0,0,NULL, ttt2,TypeStruct,packid);
@@ -120,11 +121,11 @@ S_symbol *jslTypeSymbolDefinition(char *ttt2, S_idIdentList *packid,
 }
 
 S_symbol *jslTypeSymbolUsage(char *ttt2, S_idIdentList *packid) {
-    char                fqtName[MAX_FILE_NAME_SIZE];
-    S_idIdentList       dd2;
-    int                 ii, res;
-    S_symbol            sd, *smemb;
-    S_jslSymbolList         ss, *xss, *memb;
+    char fqtName[MAX_FILE_NAME_SIZE];
+    S_idIdentList dd2;
+    int ii;
+    S_symbol sd, *smemb;
+    S_jslSymbolList ss, *memb;
 
     jslFillTypeSymbolItem( &sd, &ss, ttt2);
     if (packid==NULL && jslTypeTabIsMember(s_jsl->typeTab, &ss, &ii, &memb)) {
@@ -225,7 +226,8 @@ S_symbol *jslPrependDirectEnclosingInstanceArgument(S_symbol *args) {
 
 S_symbol *jslMethodHeader(unsigned modif, S_symbol *type,
                           S_symbol *decl, int storage, S_symbolList *throws) {
-    int newFun,vClass;
+    int newFun;
+
     completeDeclarator(type,decl);
     decl->b.accessFlags = modif;
     assert(s_jsl && s_jsl->classStat && s_jsl->classStat->thisClass);
@@ -258,10 +260,11 @@ void jslAddMapedImportTypeName(
                                void *vdirid,
                                int  *storage
                                ) {
-    char                *p,*suff;
-    char                ttt2[MAX_FILE_NAME_SIZE];
-    int                 ii, len2, res;
-    S_idIdentList       *packid;
+    char *p;
+    char ttt2[MAX_FILE_NAME_SIZE];
+    int len2;
+    S_idIdentList *packid;
+
     //&fprintf(ccOut,":jsl import type %s %s %s\n", file, path, pack);
     packid = (S_idIdentList *) vdirid;
     for(p=file; *p && *p!='.' && *p!='$'; p++) ;
@@ -318,8 +321,8 @@ void jslAddToLoadWaitList( S_symbol *clas ) {
 
 void jslAddSuperClassOrInterface(S_symbol *memb,S_symbol *supp){
     int origin;
-    S_symbolList *ll;
-    log_debug("loading super/interf %s of %s",supp->linkName,memb->linkName);
+
+    log_debug("loading super/interf %s of %s", supp->linkName, memb->linkName);
     javaLoadClassSymbolsFromFile(supp);
     origin = memb->u.s->classFile;
     addSuperClassOrInterface( memb, supp, origin);
@@ -334,7 +337,8 @@ void jslAddSuperClassOrInterfaceByName(S_symbol *memb,char *super){
 
 static void jslAddNestedClass(S_symbol *inner, S_symbol *outer, int memb,
                               int accessFlags) {
-    int i,n;
+    int n;
+
     assert(outer && outer->b.symType==TypeStruct && outer->u.s);
     n = outer->u.s->nnested;
     //&sprintf(tmpBuff,"adding nested %s of %s(at %d)[%d] --> %s to %s\n", inner->name, outer->name, outer, n, inner->linkName, outer->linkName);ppcGenTmpBuff();
@@ -357,9 +361,9 @@ static void jslAddNestedClass(S_symbol *inner, S_symbol *outer, int memb,
 // when modifying this, you will need to change it there too
 // So, why don't we extract this common functionality?!?!?!?
 int jslRecordAccessible(S_symbol *cl, S_symbol *rec, unsigned recAccessFlags) {
-    S_jslClassStat      *cs, *lcs;
-    S_symStructSpecific *nest;
-    int                 i,in,len;
+    S_jslClassStat *cs, *lcs;
+    int len;
+
     if (cl == NULL)
         return 1;  /* argument or local variable */
 
@@ -461,13 +465,12 @@ void jslNewClassDefinitionBegin(S_idIdent *name,
                                 ) {
     char                ttt[TMP_STRING_SIZE];
     char                tttn[TMP_STRING_SIZE];
-    char                *annord;
     S_jslClassStat      *nss;
-    S_idIdent           *inname, *ann;
-    S_idIdentList       *ill, *all, inn, mntmp;
+    S_idIdent           *inname;
+    S_idIdentList       *ill, mntmp;
     S_symbol            *cc;
-    S_symStructSpecific *ss;
-    int                 i,n, fileInd, membflag, cn;
+    int                 fileInd, membflag, cn;
+
     inname = name;
 #if ZERO
     XX_ALLOC(inname, S_idIdent);
