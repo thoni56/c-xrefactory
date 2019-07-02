@@ -364,7 +364,7 @@ static void extClassifyLocalVariables(S_programGraphNode *program) {
 */
 #define GetLocalVarStringFromLinkName(linkName,oDecla,oName,oDecl,declStar,cpName) { \
         register char *s,*d,*dn,*dd;                                    \
-        int nLen;                                                       \
+                                                                        \
         /*&fprintf(dumpOut, ":analyzing '%s'\n",linkName);fflush(dumpOut);&*/ \
         for(    s=linkName+1,d=oDecl,dd=oDecla;                         \
                 *s!=0 && *s!=LINK_NAME_CUT_SYMBOL;                      \
@@ -445,12 +445,11 @@ static void extReClassifyIOVars(S_programGraphNode *program) {
 /* ************************** macro ******************************* */
 
 static void extGenNewMacroCall(S_programGraphNode *program) {
-    char                dcla[TMP_STRING_SIZE];
-    char                decl[TMP_STRING_SIZE];
-    char                name[TMP_STRING_SIZE];
-    S_programGraphNode  *p;
-    char                *declAddr;
-    int                 i, fFlag=1;
+    char dcla[TMP_STRING_SIZE];
+    char decl[TMP_STRING_SIZE];
+    char name[TMP_STRING_SIZE];
+    S_programGraphNode *p;
+    int fFlag=1;
 
     rb[0]=0;
 
@@ -481,14 +480,11 @@ static void extGenNewMacroCall(S_programGraphNode *program) {
 }
 
 static void extGenNewMacroHead(S_programGraphNode *program) {
-    char                nhead[MAX_EXTRACT_FUN_HEAD_SIZE];
-    int                 nhi;
-    char                dcla[TMP_STRING_SIZE];
-    char                decl[MAX_EXTRACT_FUN_HEAD_SIZE];
-    char                name[MAX_EXTRACT_FUN_HEAD_SIZE];
-    S_programGraphNode  *p,*op;
-    char                *declAddr;
-    int                 i, uniqueOutFlag, fFlag=1;
+    char dcla[TMP_STRING_SIZE];
+    char decl[MAX_EXTRACT_FUN_HEAD_SIZE];
+    char name[MAX_EXTRACT_FUN_HEAD_SIZE];
+    S_programGraphNode *p;
+    int fFlag=1;
 
     rb[0]=0;
 
@@ -535,12 +531,11 @@ static void extGenNewMacroTail(S_programGraphNode *program) {
 
 
 static void extGenNewFunCall(S_programGraphNode *program) {
-    char                dcla[TMP_STRING_SIZE];
-    char                decl[TMP_STRING_SIZE];
-    char                name[TMP_STRING_SIZE];
-    S_programGraphNode  *p;
-    char                *declAddr;
-    int                 i, fFlag=1;
+    char dcla[TMP_STRING_SIZE];
+    char decl[TMP_STRING_SIZE];
+    char name[TMP_STRING_SIZE];
+    S_programGraphNode *p;
+    int fFlag=1;
 
     rb[0]=0;
 
@@ -625,8 +620,9 @@ static S_symbolRefItemList *computeExceptionsThrownBetween(S_programGraphNode *b
                                                            S_programGraphNode *ee
                                                            ) {
     S_symbolRefItemList *res, *excs, *catched, *noncatched, **cl;
-    S_programGraphNode  *p, *b, *e;
-    int                 deep;
+    S_programGraphNode *p, *e;
+    int deep;
+
     catched = NULL; noncatched = NULL; cl = &catched;
     for(p=bb; p!=NULL && p!=ee; p=p->next) {
         if (p->symRef->b.symType == TypeTryCatchMarker && p->ref->usg.base == UsageTryCatchBegin) {
@@ -693,17 +689,14 @@ static void extractSprintThrownExceptions(char *nhead, S_programGraphNode *progr
 }
 
 static void extGenNewFunHead(S_programGraphNode *program) {
-    char                nhead[MAX_EXTRACT_FUN_HEAD_SIZE];
-    int                 nhi,ldclaLen;
-    char                ldcla[TMP_STRING_SIZE];
-    char                dcla[TMP_STRING_SIZE];
-    char                decl[MAX_EXTRACT_FUN_HEAD_SIZE];
-    char                name[MAX_EXTRACT_FUN_HEAD_SIZE];
-    S_programGraphNode  *p,*op;
-    char                *declAddr;
-    int                 i, uniqueOutFlag, fFlag=1;
-    S_symbolRefItemList *exceptions, *ee;
-
+    char nhead[MAX_EXTRACT_FUN_HEAD_SIZE];
+    int nhi, ldclaLen;
+    char ldcla[TMP_STRING_SIZE];
+    char dcla[TMP_STRING_SIZE];
+    char decl[MAX_EXTRACT_FUN_HEAD_SIZE];
+    char name[MAX_EXTRACT_FUN_HEAD_SIZE];
+    S_programGraphNode  *p;
+    int fFlag=1;
 
     rb[0]=0;
 
@@ -860,12 +853,12 @@ static char * extJavaNewClassName() {
 
 
 static void extJavaGenNewClassCall(S_programGraphNode *program) {
-    char                dcla[TMP_STRING_SIZE];
-    char                decl[TMP_STRING_SIZE];
-    char                name[TMP_STRING_SIZE];
-    S_programGraphNode  *p;
-    char                *declAddr,*classname;
-    int                 i, fFlag=1;
+    char dcla[TMP_STRING_SIZE];
+    char decl[TMP_STRING_SIZE];
+    char name[TMP_STRING_SIZE];
+    S_programGraphNode *p;
+    char *classname;
+    int fFlag=1;
 
     rb[0]=0;
 
@@ -885,7 +878,7 @@ static void extJavaGenNewClassCall(S_programGraphNode *program) {
     sprintf(rb+strlen(rb), "\n");
 #endif
 
-    // contructor invocation
+    // constructor invocation
     sprintf(rb+strlen(rb),"\t\t%s %s = new %s",classname, s_extractionName,classname);
     fFlag = 1;
     for(p=program; p!=NULL; p=p->next) {
@@ -956,16 +949,15 @@ static void extJavaGenNewClassCall(S_programGraphNode *program) {
 }
 
 static void extJavaGenNewClassHead(S_programGraphNode *program) {
-    char                nhead[MAX_EXTRACT_FUN_HEAD_SIZE];
-    int                 nhi,ldclaLen;
-    char                ldcla[TMP_STRING_SIZE];
-    char                dcla[TMP_STRING_SIZE];
-    char                *classname;
-    char                decl[MAX_EXTRACT_FUN_HEAD_SIZE];
-    char                name[MAX_EXTRACT_FUN_HEAD_SIZE];
-    S_programGraphNode  *p,*op;
-    char                *declAddr, *mattrib;
-    int                 i, uniqueOutFlag, fFlag=1;
+    char nhead[MAX_EXTRACT_FUN_HEAD_SIZE];
+    int nhi, ldclaLen;
+    char ldcla[TMP_STRING_SIZE];
+    char dcla[TMP_STRING_SIZE];
+    char *classname;
+    char decl[MAX_EXTRACT_FUN_HEAD_SIZE];
+    char name[MAX_EXTRACT_FUN_HEAD_SIZE];
+    S_programGraphNode *p;
+    int fFlag=1;
 
     rb[0]=0;
 
@@ -1136,8 +1128,9 @@ static int extJavaIsNewClassNecesary(S_programGraphNode *program) {
 }
 
 static void extMakeExtraction() {
-    S_programGraphNode *program,*p;
-    int cat,newClassExt;
+    S_programGraphNode *program;
+    int newClassExt;
+
     if (s_cp.cxMemiAtFunBegin > s_cps.cxMemiAtBlockBegin
         || s_cps.cxMemiAtBlockBegin > s_cps.cxMemiAtBlockEnd
         || s_cps.cxMemiAtBlockEnd > s_cp.cxMemiAtFunEnd
@@ -1210,7 +1203,6 @@ static void extMakeExtraction() {
 
 
 void actionsBeforeAfterExternalDefinition() {
-    int pi;
     if (s_cps.cxMemiAtBlockEnd != 0
         // you have to check for matching class method
         // i.e. for case 'void mmm() { //blockbeg; ...; //blockend; class X { mmm(){}!!}; }'
