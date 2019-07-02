@@ -39,10 +39,11 @@ char *javaCreateComposedName(
                                     char			*resBuff,
                                     int				resBuffSize
                                 ) {
-    int len,ll,sss,totallen;
+    int len, ll, sss;
     char *ln;
     char separator;
     S_idIdentList *ii;
+
     if (name == NULL) name = "";
     if (prefix == NULL) prefix = "";
     sss = 0;
@@ -58,7 +59,6 @@ char *javaCreateComposedName(
     ll = strlen(name);
     if (sss && ll!=0) len++;
     len += ll;
-    totallen = len;
     if (resBuff == NULL) {
         XX_ALLOCC(ln, len+1, char);
     } else {
@@ -94,7 +94,6 @@ char *javaCreateComposedName(
     len -= ll;
     strncpy(ln+len, prefix, ll);
     assert(len == 0);
-//&assert(strlen(ln)==totallen);
     return(ln);
 }
 
@@ -294,9 +293,9 @@ int javaTypeFileExist(S_idIdentList *name) {
 }
 
 int javaFindClassFile(char *name, char **resName, struct stat *stt) {
-    S_stringList	*cp;
-    int				i,res;
-//&fprintf(dumpOut,"searching for classfile of %s\n",name);fflush(dumpOut);
+    S_stringList *cp;
+    int i;
+
     if (s_javaStat->unNamedPackageDir != NULL) {		/* unnamed package */
         if (javaFindFile0( s_javaStat->unNamedPackageDir,"/",name, ".class",
                           resName, stt)) return(1);
@@ -425,8 +424,6 @@ int javaFqtNamesAreFromTheSamePackage(char *nn1, char *nn2) {
 }
 
 int javaClassIsInCurrentPackage(S_symbol *cl) {
-    char *cclass;
-    cclass = NULL;
     if (s_jsl!=NULL) {
         if (s_jsl->classStat->thisClass == NULL) {
             // probably import class.*; (nested subclasses)
@@ -551,34 +548,7 @@ S_symbol * javaGetFieldClass(char *fieldLinkName, char **fieldAdr) {
 // I think that s_symTab should contain symbollist, not symbols!
 static S_symbol *javaAddTypeToSymbolTable(S_symbol *memb, int accessFlags, S_position *importPos, int isSingleImported) {
     S_symbol *nmemb;
-    S_symbol *memb2;
-
-#if 0
-
-    if (! symTabIsMember(s_symTab, memb, &ii, &memb2)) {
-        addSymbol(memb, s_symTab);
-    } else {
-        // truly speaking I do not know how do this this works
-        while (memb2!=NULL && strcmp(memb->linkName, memb2->linkName)!=0) {
-            symTabNextMember(memb, &memb2);
-        }
-        if (memb2!=NULL) {
-            /* it should be added, to overwrite this scope */
-            /* but allocate a new one, because of cycle in 'next' */
-            CF_ALLOC(nmemb, S_symbol);			//	XX_ALLOC will probably not work
-            *nmemb = *memb;
-            addSymbol(nmemb, s_symTab);
-            memb = memb2;
-            //memb = nmemb; // ??
-        } else {
-            addSymbol(memb, s_symTab);
-        }
-    }
-    // now set new informations
-    memb->b.accessFlags = accessFlags;
-    memb->b.isSingleImported = isSingleImported;
-
-#else
+    //&S_symbol *memb2;
 
     memb->b.accessFlags = accessFlags;
     memb->b.isSingleImported = isSingleImported;
@@ -593,8 +563,6 @@ static S_symbol *javaAddTypeToSymbolTable(S_symbol *memb, int accessFlags, S_pos
     nmemb->pos = *importPos;
     addSymbol(nmemb, s_symTab);
     //&memb = nmemb;
-
-#endif
 
     return(memb);
 }
@@ -1685,9 +1653,10 @@ static int javaNumberOfNativeMethodsWithThisName(S_symbol *clas, char *name) {
 int javaSetFunctionLinkName(S_symbol *clas, S_symbol *decl,int mem) {
     static char pp[MAX_PROFILE_SIZE];
     char *ln;
-    int ppi,profilei, res;
+    int ppi, res;
     S_symbol *args;
     S_symbol *memb;
+
     res = 0;
     if (decl == &s_errorSymbol || decl->b.symType==TypeError) return(res);
     assert(decl->b.symType == TypeDefault);
@@ -1700,7 +1669,6 @@ int javaSetFunctionLinkName(S_symbol *clas, S_symbol *decl,int mem) {
         sprintf(pp+ppi,"%s", decl->name);
 //&	}
     ppi += strlen(pp+ppi);
-    profilei = ppi;
     sprintf(pp+ppi,"(");
     ppi += strlen(pp+ppi);
     for(args=decl->u.type->u.f.args; args!=NULL; args=args->next) {
@@ -1962,12 +1930,11 @@ S_typeModifiers *javaNestedNewType(S_symbol *sym, S_idIdent *thenew,
 }
 
 S_typeModifiers *javaNewAfterName(S_idIdentList *name, S_idIdent *thenew, S_idIdentList *idl) {
-    S_symbol            *str;
-    S_typeModifiers		*expr,*res;
-    int                 atype;
-    S_reference         *rr;
-    S_idIdent           *id;
-    id = &idl->idi;
+    S_symbol *str;
+    S_typeModifiers *expr, *res;
+    int atype;
+    S_reference *rr;
+
     atype = javaClassifyAmbiguousName(name,NULL,&str,&expr,&rr,NULL, USELESS_FQT_REFS_ALLOWED,CLASS_TO_EXPR,UsageUsed);
     if (atype == TypeExpression) {
         if (expr->kind != TypeStruct) res = & s_errorModifier;
