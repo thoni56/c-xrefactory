@@ -156,11 +156,6 @@ int skipNCharsInCharBuf(struct charBuf *bb, unsigned count) {
     return(bb->cc != bb->fin);
 }
 
-static void dumpCharBuf(struct charBuf *bb) {
-    char *cc;
-    for (cc = bb->cc; cc<bb->fin; cc++) putchar(*cc);
-}
-
 void gotOnLineCxRefs( S_position *ps ) {
     if (creatingOlcxRefs()) {
         s_cache.activeCache = 0;

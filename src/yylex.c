@@ -110,10 +110,10 @@ static void dpnewline(int n) {
 /* *********************************************************** */
 
 int addFileTabItem(char *name, int *fileNumber) {
-    int					ii,len,res;
-    char				*fname,*nn;
-    struct fileItem     ffi, *ffii;
-    res = 0;
+    int ii, len;
+    char *fname, *nn;
+    struct fileItem ffi, *ffii;
+
     nn = normalizeFileName(name,s_cwd);
     FILLF_fileItem(&ffi,nn, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
                    NULL,NULL,s_noneFileIndex,NULL);
@@ -1031,9 +1031,6 @@ static void processIf() {
     do lex = yylex(); while (lex != '\n');
     s_ifEvaluation = 0;
     execCppIf(! res);
-    return;
-endOfMacArg:	assert(0);
-endOfFile:;
 }
 
 static void processPragma() {
@@ -1720,7 +1717,6 @@ int cachedInputPass(int cpoint, char **cfrom) {
         ccc += lsize;
     }
 endOfFile:
-cantCache:
     SetCFileConsistency();
     *cfrom = ccc;
     return(res);
