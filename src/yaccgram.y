@@ -335,7 +335,6 @@ before_rules_item:
 */
         any_token
     |   '%' UNION {
-            S_typeModifiers *aa;
             AddHtmlTrivialReference($2.d->p);
             $<typeModif>$ = crNewAnnonymeStrUnion($2.d);
         }
@@ -364,7 +363,8 @@ before_rules_item:
 
 symbol_to_type_seq:
     |   symbol_to_type_seq IDENTIFIER   {
-            S_symbol *ss,sss;
+            S_symbol *ss;
+
             ss = StackMemAlloc(S_symbol);
             FILL_symbolBits(&ss->b,0,0,0,0,0,TypeDefault,StorageAuto,0);
             FILL_symbol(ss,$2.d->name,$2.d->name,$2.d->p,ss->b,type,NULL,NULL);
@@ -529,7 +529,8 @@ primary_expr
             /* implicit function declaration */
             S_typeModifiers *p;
             S_symbol *d;
-            S_symbol *dd;
+            S_symbol *dd __attribute__((unused));
+
             CrTypeModifier(p, TypeInt);
             $$.d.t = StackMemAlloc(S_typeModifiers);
             FILLF_typeModifiers($$.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
@@ -600,8 +601,8 @@ postfix_expr
         assert($$.d.t);
     }
     | postfix_expr {SetStrCompl2($1.d.t);} PTR_OP str_rec_identifier    {
-        S_typeModifiers *p;
         S_symbol *rec=NULL;
+
         $$.d.r = NULL;
         if ($1.d.t->kind==TypePointer || $1.d.t->kind==TypeArray) {
             $$.d.r = findStrRecordFromType($1.d.t->next, $4.d, &rec, CLASS_TO_ANY);
@@ -1159,7 +1160,6 @@ enumerator
 declarator
     : declarator2                                       /* { $$.d = $1.d; } */
     | pointer declarator2                               {
-        S_typeModifiers *p;
         int i;
         $$.d = $2.d;
         for (i=0; i<$1.d; i++) AddComposedType($$.d,TypePointer);
@@ -1716,7 +1716,8 @@ identifier
 %%
 
 static void addYaccSymbolReference(S_idIdent *name, int usage) {
-    S_symbol *p,*ss,sss;
+    S_symbol sss;
+
     FILL_symbolBits(&sss.b,0,0,0,0,0,TypeYaccSymbol,StorageNone,0);
     FILL_symbol(&sss,name->name,name->name,name->p,sss.b,type,NULL,NULL);
     addCxReference(&sss, &name->p, usage,s_noneFileIndex, s_noneFileIndex);
@@ -1739,8 +1740,8 @@ static void addYaccSymbolReference(S_idIdent *name, int usage) {
 
 static void addRuleLocalVariable(S_idIdent *name, int order) {
     S_symbol *p,*ss;
-    int     rr;
     char	*nn;
+
     if (l_yaccUnion!=NULL) {
         p = name->sd;
         if (p != NULL && p->b.symType == TypeDefault) {
