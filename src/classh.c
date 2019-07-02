@@ -35,10 +35,11 @@ static void clearTmpClassBackPointersToMenu() {
 }
 
 int classHierarchyClassNameLess(int c1, int c2) {
-    char *n2, *nn;
+    char *nn;
     S_fileItem *fi1, *fi2;
     int ccc;
     char ttt[MAX_FILE_NAME_SIZE];
+
     fi1 = s_fileTab.tab[c1];
     fi2 = s_fileTab.tab[c2];
     assert(fi1 && fi2);
@@ -63,11 +64,10 @@ int classHierarchySupClassNameLess(S_chReference *c1, S_chReference *c2) {
 static int markTransitiveRelevantSubsRec(int cind, int pass) {
     S_fileItem      *fi, *tt;
     S_chReference   *s;
-    int             res;
+
     fi = s_fileTab.tab[cind];
     if (THEBIT(tmpChMarkProcessed,cind)) return(THEBIT(tmpChRelevant,cind));
     SETBIT(tmpChMarkProcessed, cind);
-    res = 0;
     for(s=fi->infs; s!=NULL; s=s->next) {
         tt = s_fileTab.tab[s->clas];
         assert(tt);
@@ -85,9 +85,7 @@ static int markTransitiveRelevantSubsRec(int cind, int pass) {
 }
 
 static void markTransitiveRelevantSubs(int cind, int pass) {
-    S_fileItem      *fi;
-    //&fprintf(dumpOut,"\n PRE checking %s relevant\n",fi->name);
-    fi = s_fileTab.tab[cind];
+    //&fprintf(dumpOut,"\n PRE checking %s relevant\n",s_fileTab.tab[cind]->name);
     if (THEBIT(tmpChRelevant,cind)==0) return;
     markTransitiveRelevantSubsRec(cind, pass);
 }
@@ -235,8 +233,8 @@ static void olcxPrintMenuItemPrefix(FILE *ff, S_olSymbolsMenu *itt,
 }
 
 static void olcxMenuGenNonVirtualGlobSymList( FILE *ff, S_olSymbolsMenu *ss) {
-    int ii;
     char ttt[MAX_CX_SYMBOL_SIZE];
+
     if (s_symbolListOutputCurrentLine == 1) s_symbolListOutputCurrentLine++; // first line irregularity
     ss->outOnLine = s_symbolListOutputCurrentLine;
     s_symbolListOutputCurrentLine ++ ;
@@ -315,13 +313,12 @@ static void descendTheClassHierarchy(   FILE *ff,
                                         int virtFlag,
                                         int pass
                                         ) {
-    S_intlist       snextbar,*nn;
-    S_fileItem      *tt, *fi;
-    S_chReference   *s,*ol,*snext;
-    S_olSymbolsMenu     *itt;
-    S_symbolRefItem     *ri;
-    char            *cname,*pref1,*pref2,*suf1,*suf2;
-    int             i, vFunCl;
+    S_intlist snextbar;
+    S_fileItem *fi;
+    S_chReference *s, *snext;
+    S_olSymbolsMenu *itt;
+    int vFunCl;
+
     fi = s_fileTab.tab[vApplCl];
     assert(fi!=NULL);
     if (THEBIT(tmpChRelevant,vApplCl)==0) return;
@@ -378,8 +375,9 @@ static int genThisClassHierarchy(int vApplCl, int oldvFunCl,
                                  S_olSymbolsMenu   *rrr,
                                  int virtFlag,
                                  int pass) {
-    S_fileItem      *top,*tt,*fi;
-    S_chReference   *s;
+    S_fileItem *tt,*fi;
+    S_chReference *s;
+
     fi = s_fileTab.tab[vApplCl];
     if (fi==NULL) return(0);
     if (THEBIT(tmpChProcessed,vApplCl)) return(0);
@@ -400,8 +398,6 @@ static int genThisClassHierarchy(int vApplCl, int oldvFunCl,
 void genClassHierarchies( FILE *ff, S_olSymbolsMenu *rrr,
                           int virtFlag, int pass ) {
     S_olSymbolsMenu *ss;
-    int i,rr;
-    S_fileItem *fi;
 
     // mark the classes where the method is defined and used
     clearTmpChRelevant();
@@ -442,8 +438,8 @@ static int chLineOrderLess(S_olSymbolsMenu *r1, S_olSymbolsMenu *r2) {
 }
 
 void olcxMenuGenGlobRefsForVirtMethod(FILE *ff, S_olSymbolsMenu *rrr) {
-    char            ln[MAX_HTML_REF_LEN];
-    int             virtFlag;
+    char ln[MAX_HTML_REF_LEN];
+
     linkNamePrettyPrint(ln,rrr->s.name,MAX_HTML_REF_LEN,SHORT_NAME);
     if (strcmp(rrr->s.name, LINK_NAME_CLASS_TREE_ITEM)==0) {
         /*&
@@ -483,12 +479,10 @@ static void genVirtualsGlobRefLists(    S_olSymbolsMenu *rrr,
                                         FILE *ff,
                                         char *fn
                                         ) {
-    S_olSymbolsMenu     *rr,*ss;
-    int             i,olen,nlen,count,virtFlag;
+    S_olSymbolsMenu *ss;
     S_symbolRefItem *p;
-    S_fileItem      *fi;
+
     // first count if there are some references at all
-    count = 0;
     for(ss=rrr; ss!=NULL && ss->visible==0; ss=ss->next) ;
     if (ss == NULL) return;
     assert(rrr!=NULL);
@@ -509,12 +503,10 @@ static void genNonVirtualsGlobRefLists( S_olSymbolsMenu *rrr,
                                         FILE *ff,
                                         char *fn
                                         ) {
-    S_olSymbolsMenu     *rr,*ss;
-    int             i,olen,nlen,count,virtFlag;
+    S_olSymbolsMenu *ss;
     S_symbolRefItem *p;
-    S_fileItem      *fi;
+
     // first count if there are some references at all
-    count = 0;
     for(ss=rrr; ss!=NULL && ss->visible==0; ss=ss->next) ;
     if (ss == NULL) return;
     assert(rrr!=NULL);
@@ -599,10 +591,8 @@ void splitMenuPerSymbolsAndMap(S_olSymbolsMenu *rrr,
 #endif
 
 void htmlGenGlobRefLists(S_olSymbolsMenu *rrr, FILE *ff, char *fn) {
-    S_olSymbolsMenu     *rr,*ss,*nextl;
-    int             i,n;
-    static int      counter;
-    S_symbolRefItem *p;
+    S_olSymbolsMenu *rr;
+
     for(rr=rrr; rr!=NULL; rr=rr->next) rr->outOnLine = 0;
     s_symbolListOutputCurrentLine = 1;
     splitMenuPerSymbolsAndMap(
