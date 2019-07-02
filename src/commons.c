@@ -128,7 +128,7 @@ char *normalizeFileName(char *name, char *relativeto) {
 }
 
 
-char *create_temporary_filename() {
+char *create_temporary_filename(void) {
     static char temporary_name[MAX_FILE_NAME_SIZE] = "";
 #if defined (__WIN32__)    /*SBD*/
     char *temp_dir;
