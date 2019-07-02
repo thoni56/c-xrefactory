@@ -77,7 +77,7 @@ cgram.h: cgram.c
 #
 c-xref.bs:
 	@echo "BOOTSTRAPPING..."
-	make ROOTDIR=$(ROOTDIR) CFLAGS="$(CFLAGS) -DBOOTSTRAP" -f Makefile.bs
+	make ROOTDIR=$(ROOTDIR) -f Makefile.bs
 
 
 #########################################################################
