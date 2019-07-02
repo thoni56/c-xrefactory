@@ -364,8 +364,10 @@ static void expandEnvironmentVariables(char *tt, int ttsize, int *len,
 }
 
 static int getOptionFromFile(FILE *ff, char *tt, int ttsize, int *outI) {
-    int i, c, last_char;
+    int i, c;
+    int last_char __attribute__((unused));
     int comment, res, quotamess;
+
     c = getc(ff);
     do {
         quotamess = 0;
