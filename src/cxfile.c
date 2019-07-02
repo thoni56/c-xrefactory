@@ -760,25 +760,25 @@ void genReferenceFile(int updateFlag, char *fname) {
         /*fprintf(dumpOut,"getting char *%x < %x == '0x%x'\n",ccc,ffin,cch);fflush(dumpOut);*/ \
     }
 
-#define ScanInt(cch, ccc, ffin, bbb, res) {                             \
-                                           while (cch==' ' || cch=='\n' || cch=='\t') GetChar(cch,ccc,ffin,bbb); \
-                                           res = 0;                     \
-                                           while (isdigit(cch)) {       \
-                                                                 res = res*10 + cch-'0'; \
-                                                                 GetChar(cch,ccc,ffin,bbb); \
-                                                                 }      \
-                                           }
+#define ScanInt(cch, ccc, ffin, bbb, res) {                                   \
+        while (cch==' ' || cch=='\n' || cch=='\t') GetChar(cch,ccc,ffin,bbb); \
+        res = 0;                                                              \
+        while (isdigit(cch)) {                                                \
+            res = res*10 + cch-'0';                                           \
+            GetChar(cch,ccc,ffin,bbb);                                        \
+        }                                                                     \
+    }
 
-#define SkipNChars(count, ccc, ffin, iBuf) {    \
-        register int ccount, ch;               \
-        ccount = count;                         \
-        while (ccc + ccount > ffin) {           \
-            ccount -= ffin - ccc;               \
-            ccc = ffin;                         \
-            GetChar(ch, ccc, ffin, iBuf);       \
-            ccount --;                          \
-        }                                       \
-        ccc += ccount;                          \
+#define SkipNChars(count, ccc, ffin, iBuf) {                \
+        register int ccount, ch __attribute__((unused));    \
+        ccount = count;                                     \
+        while (ccc + ccount > ffin) {                       \
+            ccount -= ffin - ccc;                           \
+            ccc = ffin;                                     \
+            GetChar(ch, ccc, ffin, iBuf);                   \
+            ccount --;                                      \
+        }                                                   \
+        ccc += ccount;                                      \
     }
 
 static void cxrfSetSingleRecords(int size,
