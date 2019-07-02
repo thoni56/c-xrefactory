@@ -1,6 +1,3 @@
-#ifndef lint
-static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
-#endif
 #define YYBYACC 1
 #define YYMAJOR 1
 #define YYMINOR 9
@@ -52,7 +49,7 @@ static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
 #define yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
-#line 56 "y.tab.c"
+#line 53 "y.tab.c"
 #define number 257
 #define DEFINED 258
 #define EQ 259
@@ -364,7 +361,7 @@ int cexpTranslateToken(int tok, int val) {
     return(number);
     return(UNKNOWN);
 }
-#line 368 "y.tab.c"
+#line 365 "y.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -621,7 +618,7 @@ case 27:
 #line 106 "cexp.y"
 {yyval= yyvsp[0];}
 break;
-#line 625 "y.tab.c"
+#line 622 "y.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

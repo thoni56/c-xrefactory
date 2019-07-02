@@ -1,6 +1,3 @@
-#ifndef lint
-static char yysccsid[] = "@(#)yaccpar	1.9 (Berkeley) 02/21/93";
-#endif
 #define YYBYACC 1
 #define YYMAJOR 1
 #define YYMINOR 9
@@ -135,7 +132,7 @@ typedef union {
     S_bb_typeModifiersListPositionLstPair   bbtypeModifiersListPositionLstPair;
     S_bb_nestedConstrTokenType              bbnestedConstrTokenType;
 } YYSTYPE;
-#line 139 "yaccgram.c"
+#line 136 "yaccgram.c"
 #define TYPE_NAME 257
 #define CLASS_NAME 258
 #define TEMPLATE_NAME 259
@@ -2584,7 +2581,7 @@ void makeYaccCompletions(char *s, int len, S_position *pos) {
         }
     }
 }
-#line 2588 "yaccgram.c"
+#line 2585 "yaccgram.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -4336,7 +4333,7 @@ case 491:
 #line 1708 "yaccgram.y"
 { stackMemoryBlockFree(); }
 break;
-#line 4340 "yaccgram.c"
+#line 4337 "yaccgram.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

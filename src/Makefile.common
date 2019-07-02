@@ -38,7 +38,7 @@ $(ROOTDIR)/lib/zlib/libz.a: ..always..
 # 'make yacc' as defined in Makefile
 %.c : %.y
 
-cgram.c: cgram.y
+cgram.c: cgram.y $(YACC)
 ifeq ($(YACCING),yes)
 	$(YACC) -v -d cgram.y
 	mv y.output cy.output
@@ -47,7 +47,7 @@ ifeq ($(YACCING),yes)
 endif
 
 
-javagram.c: javagram.y cgram.c
+javagram.c: javagram.y cgram.c $(YACC)
 ifeq ($(YACCING),yes)
 	$(YACC) -v -d javagram.y
 	mv y.output jy.output
@@ -56,7 +56,7 @@ ifeq ($(YACCING),yes)
 	diff javagram.h cgram.h
 endif
 
-yaccgram.c: yaccgram.y cgram.c
+yaccgram.c: yaccgram.y cgram.c $(YACC)
 ifeq ($(YACCING),yes)
 	$(YACC) -v -d yaccgram.y
 	sed 's/y.tab.c/yaccgram.c/g' y.tab.c > yaccgram.c
@@ -64,7 +64,7 @@ ifeq ($(YACCING),yes)
 	diff yaccgram.h cgram.h
 endif
 
-cexp.c: cexp.y
+cexp.c: cexp.y $(YACC)
 ifeq ($(YACCING),yes)
 	$(YACC) -v cexp.y
 	mv y.tab.c cexp.c
