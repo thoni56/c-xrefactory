@@ -14,7 +14,7 @@
 #include "log.h"
 
 
-int displayingErrorMessages() {
+int displayingErrorMessages(void) {
     // no error messages for file preloaded for symbols
     if (LANGUAGE(LAN_JAVA) && s_jsl!=NULL) return(0);
     if (s_opt.debug || s_opt.err) return(1);
@@ -33,7 +33,7 @@ int styyerror(char *s) {
     return(0);
 }
 
-int styyErrorRecovery() {
+int styyErrorRecovery(void) {
     if (s_opt.debug && displayingErrorMessages()) {
         error(ERR_ST, " recovery");
     }
@@ -1122,7 +1122,7 @@ static void handleParameterPositions(S_position *lpar, S_positionList *commas,
     }
 }
 
-S_symbol *crEmptyField() {
+S_symbol *crEmptyField(void) {
     S_symbol *res;
     S_typeModifiers *p;
     p = StackMemAlloc(S_typeModifiers);

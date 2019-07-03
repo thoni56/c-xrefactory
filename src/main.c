@@ -128,7 +128,7 @@ static void usage(char *s) {
     fprintf(stdout,"\t-version                  - give this release version number\n");
 }
 
-static void aboutMessage() {
+static void aboutMessage(void) {
     char output[REFACTORING_TMP_STRING_SIZE];
     sprintf(output,"This is C-xrefactory version %s (%s).\n", C_XREF_VERSION_NUMBER, __DATE__);
     sprintf(output+strlen(output),"(c) 1997-2004 by Xref-Tech, http://www.xref-tech.com\n");
@@ -1664,7 +1664,7 @@ void processOptions(int argc, char **argv, int infilesFlag) {
     }
 }
 
-void mainScheduleInputFilesFromOptionsToFileTable() {
+void mainScheduleInputFilesFromOptionsToFileTable(void) {
     S_stringList *ll;
     for(ll=s_opt.inputFiles; ll!=NULL; ll=ll->next) {
         mainProcessInFileOption(ll->d);
@@ -1697,7 +1697,7 @@ static char * getCommandLineFile(int *fArgCount) {
     return(getInputFileFromFtab(fArgCount,FF_COMMAND_LINE_ENTERED));
 }
 
-static void mainGenerateReferenceFile() {
+static void mainGenerateReferenceFile(void) {
     static int updateFlag = 0;
     if (s_opt.cxrefFileName == NULL) return;
     if (updateFlag == 0 && s_opt.update == 0) {
@@ -1905,7 +1905,7 @@ static void getOptionsFile(char *file, char *outFName, char *outSect,int errMess
     return;
 }
 
-static int computeAndOpenInputFile() {
+static int computeAndOpenInputFile(void) {
     FILE            *inputIn;
     S_editorBuffer  *inputBuff;
     assert(s_language);
@@ -1951,7 +1951,7 @@ static int computeAndOpenInputFile() {
     }
 }
 
-static void initOptions() {
+static void initOptions(void) {
     copyOptions(&s_opt, &s_initOpt);
     s_opt.stdopFlag = 0;
     s_input_file_number = s_noneFileIndex;
@@ -1969,7 +1969,7 @@ static void initDefaultCxrefFileName(char *inputfile) {
     s_opt.cxrefFileName = dcx;
 }
 
-static void initializationsPerInvocation() {
+static void initializationsPerInvocation(void) {
     int i;
     s_cp = s_cpInit;
     s_cps = s_cpsInit;
@@ -1985,7 +1985,7 @@ static void initializationsPerInvocation() {
     s_javaObjectSymbol = NULL;
 }
 
-static void initFileTab() {
+static void initFileTab(void) {
     int len;
     char *ff;
     struct fileItem *ffii;
@@ -2000,7 +2000,7 @@ static void initFileTab() {
 }
 
 /*///////////////////////// parsing /////////////////////////////////// */
-static void mainParseInputFile() {
+static void mainParseInputFile(void) {
     if (s_language == LAN_JAVA) {
         uniyylval = & s_yygstate->gyylval;
         javayyparse();
@@ -2128,7 +2128,7 @@ static int getLineFromFile(FILE *ff, char *tt, int ttsize, int *outI) {
     return(res);
 }
 
-static void getAndProcessGccOptions() {
+static void getAndProcessGccOptions(void) {
     char line[MAX_OPTION_LEN];
     int len, isActiveSect;
     char *tempfile_name, *lang;
@@ -2357,7 +2357,7 @@ static void mainFileProcessingInitialisations(
     // so s_input_file_number is not set if the file is not really opened!!!
 }
 
-static void createXrefrcDefaultLicense() {
+static void createXrefrcDefaultLicense(void) {
     char            fn[MAX_FILE_NAME_SIZE];
     struct stat     st;
     FILE            *ff;
@@ -2659,7 +2659,7 @@ static void fillIncludeRefItem( S_symbolRefItem *ddd , int fnum) {
                        fnum, fnum, ddd->b,NULL,NULL);
 }
 
-static void makeIncludeClosureOfFilesToUpdate() {
+static void makeIncludeClosureOfFilesToUpdate(void) {
     char                *cxFreeBase;
     int                 i,ii,fileAddedFlag, isJavaFileFlag;
     S_fileItem          *fi,*includer;
@@ -2699,7 +2699,7 @@ static void makeIncludeClosureOfFilesToUpdate() {
     recoverMemoriesAfterOverflow(cxFreeBase);
 }
 
-static void scheduleModifiedFilesToUpdate() {
+static void scheduleModifiedFilesToUpdate(void) {
     char        ttt[MAX_FILE_NAME_SIZE];
     char        *filestab;
     struct stat refStat;
@@ -2737,7 +2737,7 @@ static void resetPendingSymbolMenuData(void) {
 }
 #endif
 
-void mainCloseOutputFile() {
+void mainCloseOutputFile(void) {
     if (ccOut!=stdout) {
         //&fprintf(dumpOut,"CLOSING OUTPUT FILE\n");
         fclose(ccOut);
@@ -2773,7 +2773,7 @@ void mainOpenOutputFile(char *ofile) {
     log_set_fp(dumpOut);
 }
 
-static int scheduleFileUsingTheMacro() {
+static int scheduleFileUsingTheMacro(void) {
     S_symbolRefItem     ddd;
     S_olSymbolsMenu     mm, *oldMenu;
     S_olcxReferences    *tmpc;
@@ -2954,7 +2954,7 @@ static void mainEditServerProcessFile( int argc, char **argv,
     s_fileTab.tab[s_olOriginalComFileNumber]->b.scheduledToProcess = 0;
 }
 
-static void initAvailableRefactorings() {
+static void initAvailableRefactorings(void) {
     int i;
     for(i=0; i<MAX_AVAILABLE_REFACTORINGS; i++) {
         s_availableRefactorings[i].available=0;
@@ -2998,7 +2998,7 @@ static char *presetEditServerFileDependingStatics(void) {
 }
 
 
-int needToProcessInputFile() {
+int needToProcessInputFile(void) {
     return(
            s_opt.cxrefs==OLO_COMPLETION
            || s_opt.cxrefs==OLO_SEARCH
@@ -3016,7 +3016,7 @@ int needToProcessInputFile() {
            );
 }
 
-int needToLoadOptions() {
+int needToLoadOptions(void) {
     return(needToProcessInputFile()
            || s_opt.cxrefs==OLO_CT_INSPECT_DEF
            || s_opt.cxrefs==OLO_MENU_INSPECT_CLASS
@@ -3098,7 +3098,7 @@ static void mainXrefOneWholeFileProcessing(int argc, char **argv,
     }
 }
 
-static void printPrescanningMessage() {
+static void printPrescanningMessage(void) {
     if (s_opt.xref2) {
         sprintf(tmpBuff, "Prescanning classes, please wait.");
         ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
@@ -3124,7 +3124,7 @@ static int inputFileItemLess(S_fileItem *f1, S_fileItem *f2) {
     return(0);
 }
 
-static S_fileItem *mainCreateListOfInputFiles() {
+static S_fileItem *mainCreateListOfInputFiles(void) {
     S_fileItem *res;
     char *nn;
     int n;

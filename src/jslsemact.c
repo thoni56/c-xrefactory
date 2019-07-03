@@ -593,7 +593,7 @@ void jslNewClassDefinitionBegin(S_idIdent *name,
     }
 }
 
-void jslNewClassDefinitionEnd() {
+void jslNewClassDefinitionEnd(void) {
     S_symbol *cc;
     int fileInd;
     assert(s_jsl->classStat && s_jsl->classStat->next);

@@ -20,16 +20,16 @@ static S_olSymbolsMenu *tmpVApplClassBackPointersToMenu[MAX_FILES];
 static int s_symbolListOutputCurrentLine =0;
 
 
-static void clearTmpChRelevant() {
+static void clearTmpChRelevant(void) {
     memset(tmpChRelevant, 0, sizeof(tmpChRelevant));
 }
-static void clearTmpChProcessed() {
+static void clearTmpChProcessed(void) {
     memset(tmpChProcessed, 0, sizeof(tmpChProcessed));
 }
-static void clearTmpChMarkProcessed() {
+static void clearTmpChMarkProcessed(void) {
     memset(tmpChMarkProcessed, 0, sizeof(tmpChMarkProcessed));
 }
-static void clearTmpClassBackPointersToMenu() {
+static void clearTmpClassBackPointersToMenu(void) {
     // this should be rather cycle affecting NULLs
     memset(tmpVApplClassBackPointersToMenu, 0, sizeof(tmpVApplClassBackPointersToMenu));
 }
@@ -90,7 +90,7 @@ static void markTransitiveRelevantSubs(int cind, int pass) {
     markTransitiveRelevantSubsRec(cind, pass);
 }
 
-void classHierarchyGenInit() {
+void classHierarchyGenInit(void) {
     clearTmpChRelevant();
     clearTmpChProcessed();
 }

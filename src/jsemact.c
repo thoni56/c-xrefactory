@@ -671,7 +671,7 @@ void javaReadSymbolFromSourceFileInit( int sourceFileNum,
     s_language = LAN_JAVA;
 }
 
-void javaReadSymbolFromSourceFileEnd() {
+void javaReadSymbolFromSourceFileEnd(void) {
     s_language = s_jsl->language;
     uniyylval = s_jsl->savedyylval;
     memcpy(s_yygstate, s_jsl->savedYYstate, s_jsl->yyStateSize);
@@ -2113,7 +2113,7 @@ S_symbol *javaGetSuperClass(S_symbol *cc) {
     return(sups->d);
 }
 
-S_symbol *javaCurrentSuperClass() {
+S_symbol *javaCurrentSuperClass(void) {
     S_typeModifiers     *tt;
     S_symbol			*cc;
 
@@ -2639,7 +2639,7 @@ void newClassDefinitionEnd(S_freeTrail *trail) {
 //&fprintf(dumpOut,"recovering s_cp to %d\n", s_cp.cxMemiAtClassBegin);
 }
 
-void javaInitArrayObject() {
+void javaInitArrayObject(void) {
     static S_symbol             s_lengthSymbol;
     static S_symStructSpecific  s_arraySpec;
 

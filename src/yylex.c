@@ -56,7 +56,7 @@ static int macroCallExpand(S_symbol *mdef, S_position *mpos);
 
 /* ************************************************************ */
 
-void initAllInputs() {
+void initAllInputs(void) {
     mbMemoryi=0;
     inStacki=0;
     macStacki=0;
@@ -73,7 +73,7 @@ void initAllInputs() {
 }
 
 
-char *placeIdent() {
+char *placeIdent(void) {
     static char tt[MAX_HTML_REF_LEN];
     char fn[MAX_FILE_NAME_SIZE];
     char mm[MAX_HTML_REF_LEN];
@@ -185,7 +185,7 @@ static void setOpenFileInfo(char *ss) {
 /*                             Init Reading                          */
 /* ***************************************************************** */
 
-void ppMemInit() {
+void ppMemInit(void) {
     PP_ALLOCC(s_maTab.tab, MAX_MACRO_ARGS, struct macroArgTabElem *);
     maTabNAInit(&s_maTab, MAX_MACRO_ARGS);
     ppMemoryi = 0;
@@ -367,7 +367,7 @@ static void testCxrefCompletionId(int *llex, char *idd, S_position *pos) {
 
 /* ********************************** #LINE *********************** */
 
-static  void processLine() {
+static  void processLine(void) {
     int lex,l,h,v=0,len;
     S_position pos;
 
@@ -448,7 +448,7 @@ void pushNewInclude(FILE *f, S_editorBuffer *buffer, char *name, char *prepend) 
     cacheInclude(cFile.lb.cb.fileNumber);
 }
 
-void popInclude() {
+void popInclude(void) {
     assert(s_fileTab.tab[cFile.lb.cb.fileNumber]);
     if (s_fileTab.tab[cFile.lb.cb.fileNumber]->b.cxLoading) {
         s_fileTab.tab[cFile.lb.cb.fileNumber]->b.cxLoaded = 1;
@@ -815,7 +815,7 @@ void addMacroDefinedByOption(char *opt) {
 
 /* ****************************** #UNDEF ************************* */
 
-static void processUnDefine() {
+static void processUnDefine(void) {
     int lex,l,h,v,ii,len;
     char *cc;
     S_position pos;
@@ -973,7 +973,7 @@ endOfFile:;
 
 /* ********************************* #IF ************************** */
 
-int cexpyylex() {
+int cexpyylex(void) {
     int l,v,lex,par,ii,res,mm,len;
     char *cc;
     unsigned h;
@@ -1024,7 +1024,7 @@ endOfFile:;
     return(0);
 }
 
-static void processIf() {
+static void processIf(void) {
     int res=1,lex;
     s_ifEvaluation = 1;
     log_debug(": #if");
@@ -1034,7 +1034,7 @@ static void processIf() {
     execCppIf(! res);
 }
 
-static void processPragma() {
+static void processPragma(void) {
     int lex,l,v,len,ii;
     unsigned h;
     char *mname, *fname;
@@ -1815,7 +1815,7 @@ static int processCccIdent(unsigned hashval, char *id, S_position *idposa) {
     return(IDENTIFIER);
 }
 
-static void actionOnBlockMarker() {
+static void actionOnBlockMarker(void) {
     if (s_opt.cxrefs == OLO_SET_MOVE_TARGET) {
         s_cps.setTargetAnswerClass[0] = 0;
         if (LANGUAGE(LAN_JAVA)) {
@@ -1891,7 +1891,7 @@ static void actionOnBlockMarker() {
         uniyylval->bbinteger.e.coll += len;\
 }
 
-int yylex() {
+int yylex(void) {
     int         lex,line,val,len;
     S_position  pos,idpos;
     char		*cc;

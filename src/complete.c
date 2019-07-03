@@ -880,7 +880,7 @@ static void processSpecialInheritedFullCompletion( S_completions *c, int orderFl
                vlevel,0,NULL,vFunCl);
     processName(fcc, &compLine, orderFlag, (void*) c);
 }
-static int getAccCheckOption() {
+static int getAccCheckOption(void) {
     int accCheck;
     if (s_opt.ooChecksBits & OOC_ACCESS_CHECK) {
         accCheck = ACC_CHECK_YES;

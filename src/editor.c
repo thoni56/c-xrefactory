@@ -298,7 +298,7 @@ static void editorPerformEncodingAdjustemets(S_editorBuffer *buff) {
 
 //////////////////////////////////////////////////////////////////////////////
 
-void editorInit() {
+void editorInit(void) {
     s_editorBufferTab.tab = s_staticEditorBufferTabTab;
     editorBufferTabNAInit(&s_editorBufferTab, EDITOR_BUFF_TAB_SIZE);
 }
@@ -810,7 +810,7 @@ void editorDumpBuffer(S_editorBuffer *buff) {
     }
 }
 
-void editorDumpBuffers() {
+void editorDumpBuffers(void) {
     int                     i;
     S_editorBufferList      *ll;
     fprintf(dumpOut,"[editorDumpBuffers] start\n");
@@ -830,7 +830,7 @@ static void editorQuasySaveBuffer(S_editorBuffer *buff) {
     s_fileTab.tab[buff->ftnum]->lastModif = buff->stat.st_mtime;
 }
 
-void editorQuasiSaveModifiedBuffers() {
+void editorQuasiSaveModifiedBuffers(void) {
     int                     i, saving;
     static time_t           lastQuazySaveTime = 0;
     time_t                  timeNull;
@@ -866,7 +866,7 @@ void editorQuasiSaveModifiedBuffers() {
     lastQuazySaveTime = time(NULL);
 }
 
-void editorLoadAllOpenedBufferFiles() {
+void editorLoadAllOpenedBufferFiles(void) {
     int i, size;
     S_editorBufferList *ll;
     struct stat st;
@@ -1345,7 +1345,7 @@ S_editorRegionList *editorWholeBufferRegion(S_editorBuffer *buffer) {
     return(theBufferRegion);
 }
 
-void editorScheduleModifiedBuffersToUpdate() {
+void editorScheduleModifiedBuffersToUpdate(void) {
     int                     i;
     S_editorBufferList      *ll;
     for(i=0; i<s_editorBufferTab.size; i++) {
@@ -1358,7 +1358,7 @@ void editorScheduleModifiedBuffersToUpdate() {
     }
 }
 
-static S_editorBufferList *editorComputeAllBuffersList() {
+static S_editorBufferList *editorComputeAllBuffersList(void) {
     int                 i;
     S_editorBufferList  *ll, *rr, *res;
     res = NULL;
@@ -1496,7 +1496,7 @@ void editorCloseBufferIfClosable(char *name) {
     }
 }
 
-void editorCloseAllBuffersIfClosable() {
+void editorCloseAllBuffersIfClosable(void) {
     int                     i;
     S_editorBufferList      *ll,*nn;
 
@@ -1510,7 +1510,7 @@ void editorCloseAllBuffersIfClosable() {
     }
 }
 
-void editorCloseAllBuffers() {
+void editorCloseAllBuffers(void) {
     int i;
     S_editorBufferList *ll,*nn;
 

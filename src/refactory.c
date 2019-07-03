@@ -240,7 +240,7 @@ static void refactoryEditServerParseBuffer(char *project,
                        nargc, nargv, &s_refactoryXrefEditSrvSubTaskFirstPassing);
 }
 
-static void refactoryBeInteractive() {
+static void refactoryBeInteractive(void) {
     int                 pargc;
     char                **pargv;
     copyOptions(&s_cachedOptions, &s_opt);
@@ -446,7 +446,7 @@ void editorUndoUntil(S_editorUndo *until, S_editorUndo **undoundo) {
     s_editorUndo = until;
 }
 
-static void refactoryAplyWholeRefactoringFromUndo() {
+static void refactoryAplyWholeRefactoringFromUndo(void) {
     S_editorUndo        *redoTrack;
     redoTrack = NULL;
     editorUndoUntil(s_refactoringStartPoint, &redoTrack);
@@ -855,7 +855,7 @@ void tpCheckFillMoveClassData(S_tpCheckMoveClassData *dd,
 
 }
 
-int tpCheckMoveClassAccessibilities() {
+int tpCheckMoveClassAccessibilities(void) {
     S_olcxReferences *rstack;
     S_olSymbolsMenu *ss;
     S_tpCheckMoveClassData dd;
@@ -916,7 +916,7 @@ int tpCheckMoveClassAccessibilities() {
     return(1);
 }
 
-int tpCheckSourceIsNotInnerClass() {
+int tpCheckSourceIsNotInnerClass(void) {
     S_olcxReferences    *rstack;
     S_olSymbolsMenu     *ss;
     int                 thisclassi,deii;
@@ -994,7 +994,7 @@ static int tpCheckSuperMethodReferencesInit(S_tpCheckSpecialReferencesData *rr) 
     return(1);
 }
 
-int tpCheckSuperMethodReferencesForPullUp() {
+int tpCheckSuperMethodReferencesForPullUp(void) {
     S_tpCheckSpecialReferencesData      rr;
     S_olcxReferences                    *rstack;
     S_olSymbolsMenu                     *ss;
@@ -1019,7 +1019,7 @@ int tpCheckSuperMethodReferencesForPullUp() {
     return(1);
 }
 
-int tpCheckSuperMethodReferencesAfterPushDown() {
+int tpCheckSuperMethodReferencesAfterPushDown(void) {
     S_tpCheckSpecialReferencesData rr;
     S_olcxReferences *rstack;
     S_olSymbolsMenu *ss;
@@ -1044,7 +1044,7 @@ int tpCheckSuperMethodReferencesAfterPushDown() {
     return(1);
 }
 
-int tpCheckSuperMethodReferencesForDynToSt() {
+int tpCheckSuperMethodReferencesForDynToSt(void) {
     S_tpCheckSpecialReferencesData      rr;
     int                                 tmp;
     tmp = tpCheckSuperMethodReferencesInit(&rr);
@@ -1060,7 +1060,7 @@ int tpCheckSuperMethodReferencesForDynToSt() {
     return(1);
 }
 
-int tpCheckOuterScopeUsagesForDynToSt() {
+int tpCheckOuterScopeUsagesForDynToSt(void) {
     S_tpCheckSpecialReferencesData  rr;
     S_olSymbolsMenu                     *ss;
     S_olcxReferences                    *rstack;
@@ -1089,7 +1089,7 @@ int tpCheckOuterScopeUsagesForDynToSt() {
     return(1);
 }
 
-int tpCheckMethodReferencesWithApplOnSuperClassForPullUp() {
+int tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
     // is there an application to original class or some of super types?
     // you should not consider any call from within the method,
     // when the method is invoked as single name, am I right?
@@ -1172,7 +1172,7 @@ int tpCheckTargetToBeDirectSubOrSupClass(int flag, char *subOrSuper) {
     return(0);
 }
 
-int tpPullUpFieldLastPreconditions() {
+int tpPullUpFieldLastPreconditions(void) {
     S_olcxReferences *rstack;
     S_olSymbolsMenu *ss,*mm;
     char ttt[TMP_STRING_SIZE];
@@ -1210,7 +1210,7 @@ int tpPullUpFieldLastPreconditions() {
     return(0);
 }
 
-int tpPushDownFieldLastPreconditions() {
+int tpPushDownFieldLastPreconditions(void) {
     S_olcxReferences *rstack;
     S_olSymbolsMenu *ss,*mm, *sourcesm, *targetsm;
     char ttt[TMP_STRING_SIZE];
@@ -1344,7 +1344,7 @@ static int refactoryMakeSafetyCheckAndUndo(
     return(res);
 }
 
-void refactoryAskForReallyContinueConfirmation() {
+void refactoryAskForReallyContinueConfirmation(void) {
     ppcGenRecord(PPC_ASK_CONFIRMATION,"The refactoring may change program behaviour, really continue?", "\n");
 }
 
@@ -1756,7 +1756,7 @@ static void refactoryCheckForMultipleReferencesOnSinglePlace(S_olcxReferences *r
     }
 }
 
-static void refactoryMultipleOccurencesSafetyCheck() {
+static void refactoryMultipleOccurencesSafetyCheck(void) {
     S_olcxReferences    *rstack;
 
     assert( s_olcxCurrentUser!=NULL);
@@ -1822,7 +1822,7 @@ static void refactoryRename(S_editorBuffer *buf, S_editorMarker *point) {
     }
 }
 
-void clearParamPositions() {
+void clearParamPositions(void) {
     s_paramPosition = s_noPos;
     s_paramBeginPosition = s_noPos;
     s_paramEndPosition = s_noPos;
@@ -2826,7 +2826,7 @@ static void refactoryPerformMovingOfStaticObjectAndMakeItPublic(
 
 }
 
-static S_editorMarker *getTargetFromOptions() {
+static S_editorMarker *getTargetFromOptions(void) {
     S_editorMarker  *target;
     S_editorBuffer  *tb;
     int             tline;

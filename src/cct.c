@@ -85,7 +85,7 @@ void cctDump(S_cctNode *cc, int deep) {
 }
 
 #if 0
-void cctTest() {
+void cctTest(void) {
     S_cctNode nn,hh;
     FILL_cctNode(&nn, NULL, NULL);
     cctDump(&nn, 0);

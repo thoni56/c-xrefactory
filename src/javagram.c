@@ -2546,7 +2546,7 @@ YYSTYPE yyvs[YYSTACKSIZE];
 #define yystacksize YYSTACKSIZE
 #line 4368 "javagram.y"
 
-void javaParsingInitializations() {
+void javaParsingInitializations(void) {
             S_symbol *ss;
             //&javaMapDirectoryFiles2(s_javaLangName,
             //&			javaAddMapedTypeName, NULL, s_javaLangName, NULL);

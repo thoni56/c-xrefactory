@@ -13,7 +13,7 @@
 FILE *dumpOut=NULL, *errOut=NULL;
 char tmpBuff[TMP_BUFF_SIZE];
 
-void initCwd() {
+void initCwd(void) {
     char *rr;
 
     rr = getcwd(s_cwd, MAX_FILE_NAME_SIZE);

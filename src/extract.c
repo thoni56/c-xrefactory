@@ -161,7 +161,7 @@ static int linearOrder(S_programGraphNode *n1, S_programGraphNode *n2) {
     return(n1->ref < n2->ref);
 }
 
-static S_programGraphNode * extMakeProgramGraph() {
+static S_programGraphNode * extMakeProgramGraph(void) {
     S_programGraphNode *program,*p;
     program = NULL;
     refTabMap5(&s_cxrefTab, extractFunGraphRef, ((void *) &program));
@@ -842,7 +842,7 @@ static void extGenNewFunTail(S_programGraphNode *program) {
 /* ********************** java function **************************** */
 
 
-static char * extJavaNewClassName() {
+static char * extJavaNewClassName(void) {
     static char classname[TMP_STRING_SIZE];
     if (s_extractionName[0]==0) {
         sprintf(classname,"NewClass");
@@ -1129,7 +1129,7 @@ static int extJavaIsNewClassNecesary(S_programGraphNode *program) {
     return(1);
 }
 
-static void extMakeExtraction() {
+static void extMakeExtraction(void) {
     S_programGraphNode *program;
     int newClassExt;
 
@@ -1204,7 +1204,7 @@ static void extMakeExtraction() {
 }
 
 
-void actionsBeforeAfterExternalDefinition() {
+void actionsBeforeAfterExternalDefinition(void) {
     if (s_cps.cxMemiAtBlockEnd != 0
         // you have to check for matching class method
         // i.e. for case 'void mmm() { //blockbeg; ...; //blockend; class X { mmm(){}!!}; }'
@@ -1229,7 +1229,7 @@ void actionsBeforeAfterExternalDefinition() {
 }
 
 
-void extractActionOnBlockMarker() {
+void extractActionOnBlockMarker(void) {
     S_position pos;
     if (s_cps.cxMemiAtBlockBegin == 0) {
         s_cps.cxMemiAtBlockBegin = cxMemory->i;

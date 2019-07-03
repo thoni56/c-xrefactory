@@ -589,7 +589,7 @@ static void genRefItem(S_symbolRefItem *dd) {
         filen = tmp;                                                    \
     }
 
-static void genCxFileHead() {
+static void genCxFileHead(void) {
     char sr[MAX_CHARS];
     char ttt[TMP_STRING_SIZE];
     int i;
@@ -1086,7 +1086,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(    int size,
     *ccc = cc; *ffin = fin;
 }
 
-static void cxfileCheckLastSymbolDeadness() {
+static void cxfileCheckLastSymbolDeadness(void) {
     if (s_inLastInfos.symbolToCheckedForDeadness != -1
         && s_inLastInfos.deadSymbolIsDefined) {
         //&sprintf(tmpBuff,"adding %s storage==%s", s_inLastInfos.symbolTab[s_inLastInfos.symbolToCheckedForDeadness]->name, storagesName[s_inLastInfos.symbolTab[s_inLastInfos.symbolToCheckedForDeadness]->b.storage]);ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
@@ -1522,7 +1522,7 @@ void scanReferenceFiles(char *fname, S_cxScanFileFunctionLink *scanFunTab) {
     }
 }
 
-int smartReadFileTabFile() {
+int smartReadFileTabFile(void) {
     static time_t   readedFileModTime = 0;
     static off_t    readedFileSize = 0;
     static char     readedFileFile[MAX_FILE_NAME_SIZE] = {0};

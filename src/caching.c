@@ -184,7 +184,7 @@ static void javaFqtTabDeleteOutOfMemory(int i) {
     }
 }
 
-static void trailDeleteOutOfMemory() {
+static void trailDeleteOutOfMemory(void) {
     S_freeTrail **pp;
     pp = & s_topBlock->trail;
     while (MEM_FREED_POINTER(*pp)) {
@@ -192,7 +192,7 @@ static void trailDeleteOutOfMemory() {
     }
 }
 
-static void includeListDeleteOutOfMemory() {
+static void includeListDeleteOutOfMemory(void) {
     S_stringList **pp;
     pp = & s_opt.includeDirs;
     while (*pp!=NULL) {
@@ -234,7 +234,7 @@ static void recoverCxMemory(char *cxMemFreeBase) {
                                                                         )
 
 
-void recoverCachePointZero() {
+void recoverCachePointZero(void) {
     //&if (CACHING_CLASSES) {
     ppmMemoryi = s_cache.cp[0].ppmMemoryi;
     //&}
@@ -299,7 +299,7 @@ void recoverCachePoint(int i, char *readedUntil, int activeCaching) {
 /*                         recover from cache                          */
 /* ******************************************************************* */
 
-void recoverFromCache() {
+void recoverFromCache(void) {
     int i;
     char *readedUntil;
     assert(s_cache.cpi >= 1);
@@ -318,7 +318,7 @@ void recoverFromCache() {
     recoverCachePoint(i-1, readedUntil, 1);
 }
 
-void initCaching() {
+void initCaching(void) {
     FILL_caching(&s_cache, 1, 0, 0, s_cache.lb, cFile.lb.cc, NULL,NULL);
     poseCachePoint(0);
     s_cache.activeCache = 0;
@@ -328,7 +328,7 @@ void initCaching() {
 /*        caching of input from 's_cache.lexcc' to 'cInput.cc'       */
 /* ****************************************************************** */
 
-void cacheInput() {
+void cacheInput(void) {
     int size;
     /*fprintf(dumpOut,"enter cacheInput\n");*/
     if (s_cache.activeCache == 0) return;

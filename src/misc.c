@@ -23,12 +23,12 @@
 
 static int s_ppcIndentOffset = 0;
 
-void ppcGenSynchroRecord() {
+void ppcGenSynchroRecord(void) {
     fprintf(stdout, "<%s>\n", PPC_SYNCHRO_RECORD);
     fflush(stdout);
 }
 
-void ppcIndentOffset() {
+void ppcIndentOffset(void) {
     int i;
     for(i=0; i<s_ppcIndentOffset; i++) fputc(' ', ccOut);
 }
@@ -153,7 +153,7 @@ void ppcGenRecord(char *kind, char *message, char *suffix) {
 }
 
 // use this for debugging purposes only!!!
-void ppcGenTmpBuff() {
+void ppcGenTmpBuff(void) {
     ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
     //&ppcGenRecord(PPC_INFORMATION,tmpBuff,"\n");
     fflush(ccOut);
@@ -201,11 +201,11 @@ void ppcGenReferencePreCheckRecord(S_reference *r, char *text) {
     fprintf(ccOut, "</%s>\n", PPC_REFACTORING_PRECHECK);
 }
 
-void ppcGenDefinitionNotFoundWarning() {
+void ppcGenDefinitionNotFoundWarning(void) {
     ppcGenRecord(PPC_WARNING, DEFINITION_NOT_FOUND_MESSAGE, "\n");
 }
 
-void ppcGenDefinitionNotFoundWarningAtBottom() {
+void ppcGenDefinitionNotFoundWarningAtBottom(void) {
     ppcGenRecordWithNumeric(PPC_BOTTOM_WARNING, PPCA_BEEP, 1, DEFINITION_NOT_FOUND_MESSAGE, "\n");
 }
 
@@ -313,7 +313,7 @@ unsigned fileTabHashFun(char *ss) {
 
 /* ***************************************************************** */
 
-void stackMemoryInit() {
+void stackMemoryInit(void) {
     s_topBlock = (S_topBlock *) memory;
     FILL_topBlock(s_topBlock, sizeof(S_topBlock), 0, NULL, NULL);
 }
@@ -369,7 +369,7 @@ char *stackMemoryPushString(char *s) {
     return((char*)stackMemoryPush(s, strlen(s)+1));
 }
 
-void stackMemoryBlockStart() {
+void stackMemoryBlockStart(void) {
     S_topBlock *p,top;
     /*fprintf(dumpOut,"start new block\n");*/
     top = *s_topBlock;
@@ -380,7 +380,7 @@ void stackMemoryBlockStart() {
     FILL_topBlock(s_topBlock, s_topBlock->firstFreeIndex, tmpWorkMemoryi, s_topBlock->trail, p);
 }
 
-void stackMemoryBlockFree() {
+void stackMemoryBlockFree(void) {
 
     /*fprintf(dumpOut,"finish block\n");*/
     //&removeFromTrailUntil(NULL);
@@ -396,7 +396,7 @@ void stackMemoryBlockFree() {
     assert(s_topBlock != NULL);
 }
 
-void stackMemoryDump() {
+void stackMemoryDump(void) {
     int i;
     fprintf(dumpOut,"start stackMemoryDump\n");
     fprintf(dumpOut,"sorry, not yet implemented ");
@@ -411,7 +411,7 @@ void stackMemoryDump() {
  */
 
 #if ZERO
-static void trailDump() {
+static void trailDump(void) {
     S_freeTrail *t;
     fprintf(dumpOut,"\nstart trailDump\n");
     for(t=s_topBlock->trail; t!=NULL; t=t->next) fprintf(dumpOut,"%p ",t);
@@ -1689,7 +1689,7 @@ static void scanClassFile(char *zip, char *file, void *arg) {
     }
 }
 
-void jarFileParse() {
+void jarFileParse(void) {
     int     archi,ii,rr;
     archi = zipIndexArchive(s_input_file_name);
     rr = addFileTabItem(s_input_file_name, &ii);
@@ -1705,7 +1705,7 @@ void jarFileParse() {
     s_fileTab.tab[ii]->b.cxLoaded = 1;
 }
 
-void scanJarFilesForTagSearch() {
+void scanJarFilesForTagSearch(void) {
     int i;
     for (i=0; i<MAX_JAVA_ZIP_ARCHIVES; i++) {
         fsRecMapOnFiles(s_zipArchivTab[i].dir, s_zipArchivTab[i].fn,
@@ -1713,7 +1713,7 @@ void scanJarFilesForTagSearch() {
     }
 }
 
-void classFileParse() {
+void classFileParse(void) {
     char    ttt[MAX_FILE_NAME_SIZE];
     char    *t,*tt;
     assert(strlen(s_input_file_name) < MAX_FILE_NAME_SIZE-1);
