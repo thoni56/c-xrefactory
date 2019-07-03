@@ -4,7 +4,7 @@
 #include "proto.h"
 
 extern void unpackPointers(S_symbol *pp);
-extern int displayingErrorMessages();
+extern int displayingErrorMessages(void);
 extern void deleteSymDef(void *p);
 extern void addSymbol(S_symbol *pp, S_symTab *tab);
 extern void recFindPush(S_symbol *sym, S_recFindStr *rfs);
@@ -25,9 +25,9 @@ extern S_symbol *addNewCopyOfSymbolDef(S_symbol *def, unsigned defaultStorage);
 extern S_symbol *addNewDeclaration(S_symbol *btype, S_symbol *decl, S_idIdentList *idl,
                                    unsigned storage, S_symTab *tab);
 extern int styyerror(char *s);
-extern int styyErrorRecovery();
+extern int styyErrorRecovery(void);
 extern void setToNull(void *p);
-extern void allocNewCurrentDefinition();
+extern void allocNewCurrentDefinition(void);
 extern S_symbol *typeSpecifier1(unsigned t);
 extern void declTypeSpecifier1(S_symbol *d, unsigned t);
 extern S_symbol *typeSpecifier2(S_typeModifiers *t);
@@ -70,7 +70,7 @@ extern void appendPositionToList(S_positionList **list, S_position *pos);
 extern void setParamPositionForFunctionWithoutParams(S_position *lpar);
 extern void setParamPositionForParameter0(S_position *lpar);
 extern void setParamPositionForParameterBeyondRange(S_position *rpar);
-extern S_symbol *crEmptyField();
+extern S_symbol *crEmptyField(void);
 extern void handleDeclaratorParamPositions(S_symbol *decl, S_position *lpar,
                                            S_positionList *commas, S_position *rpar,
                                            int hasParam);

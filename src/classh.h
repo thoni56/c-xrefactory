@@ -3,7 +3,7 @@
 
 #include "proto.h"
 
-extern void classHierarchyGenInit();
+extern void classHierarchyGenInit(void);
 extern void setTmpClassBackPointersToMenu(S_olSymbolsMenu *menu);
 extern void splitMenuPerSymbolsAndMap(
                                       S_olSymbolsMenu *rrr,

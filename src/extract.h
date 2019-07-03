@@ -4,8 +4,8 @@
 #include "proto.h"
 
 extern S_symbol * addContinueBreakLabelSymbol(int labn, char *name);
-extern void actionsBeforeAfterExternalDefinition();
-extern void extractActionOnBlockMarker();
+extern void actionsBeforeAfterExternalDefinition(void);
+extern void extractActionOnBlockMarker(void);
 extern void genInternalLabelReference(int counter, int usage);
 extern S_symbol * addContinueBreakLabelSymbol(int labn, char *name);
 extern void deleteContinueBreakLabelSymbol(char *name);

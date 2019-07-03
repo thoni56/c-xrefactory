@@ -25,7 +25,7 @@ extern void jslNewClassDefinitionBegin(S_idIdent *name,
                                        int position
                                        );
 extern void jslAddDefaultConstructor(S_symbol *cl);
-extern void jslNewClassDefinitionEnd();
+extern void jslNewClassDefinitionEnd(void);
 extern void jslNewAnonClassDefinitionBegin(S_idIdent *interfName);
 
 extern void jslAddSuperClassOrInterface(S_symbol *memb,S_symbol *supp);

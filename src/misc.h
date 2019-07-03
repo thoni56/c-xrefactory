@@ -11,8 +11,8 @@
 #define StackMemPush(x,t) ((t*) stackMemoryPush(x,sizeof(t)))
 #define StackMemAlloc(t) ((t*) stackMemoryAlloc(sizeof(t)))
 
-extern void ppcGenSynchroRecord();
-extern void ppcIndentOffset();
+extern void ppcGenSynchroRecord(void);
+extern void ppcIndentOffset(void);
 extern void ppcGenGotoOffsetPosition(char *fname, int offset);
 extern void ppcGenRecordBegin(char *kind);
 extern void ppcGenRecordWithAttributeBegin(char *kind, char *attr, char *val);
@@ -26,21 +26,21 @@ extern void ppcGenTwoNumericsAndrecord(char *kind, char *attr1, int val1, char *
 extern void ppcGenRecordWithNumeric(char *kind, char *attr, int val, char *message,char *suff);
 extern void ppcGenNumericRecord(char *kind, int val, char *message, char *suff);
 extern void ppcGenRecord(char *kind, char *message, char *suffix);
-extern void ppcGenTmpBuff();
+extern void ppcGenTmpBuff(void);
 extern void ppcGenDisplaySelectionRecord(char *message, int messageType, int continuation);
 extern void ppcGenGotoMarkerRecord(S_editorMarker *pos);
 extern void ppcGenPosition(S_position *p);
-extern void ppcGenDefinitionNotFoundWarning();
-extern void ppcGenDefinitionNotFoundWarningAtBottom();
+extern void ppcGenDefinitionNotFoundWarning(void);
+extern void ppcGenDefinitionNotFoundWarningAtBottom(void);
 extern void ppcGenReplaceRecord(char *file, int offset, char *oldName, int oldNameLen, char *newName);
 extern void ppcGenPreCheckRecord(S_editorMarker *pos, int oldLen);
 extern void ppcGenReferencePreCheckRecord(S_reference *r, char *text);
 extern void ppcGenGotoPositionRecord(S_position *p);
 extern void ppcGenOffsetPosition(char *fn, int offset);
 extern void ppcGenMarker(S_editorMarker *m);
-extern void jarFileParse();
-extern void scanJarFilesForTagSearch();
-extern void classFileParse();
+extern void jarFileParse(void);
+extern void scanJarFilesForTagSearch(void);
+extern void classFileParse(void);
 extern void fillTrivialSpecialRefItem( S_symbolRefItem *ddd , char *name);
 extern int optionsOverflowHandler(int n);
 extern int cxMemoryOverflowHandler(int n);
@@ -49,15 +49,15 @@ extern void noSuchRecordError(char *rec);
 extern void methodAppliedOnNonClass(char *rec);
 extern void methodNameNotRecognized(char *rec);
 extern void dumpOptions(int nargc, char **nargv);
-extern void stackMemoryInit();
+extern void stackMemoryInit(void);
 extern void *stackMemoryAlloc(int size);
 extern void *stackMemoryPush(void *p, int size);
 extern int  *stackMemoryPushInt(int x);
 extern char *stackMemoryPushString(char *s);
 extern void stackMemoryPop(void *p, int size);
-extern void stackMemoryBlockStart();
-extern void stackMemoryBlockFree();
-extern void stackMemoryDump();
+extern void stackMemoryBlockStart(void);
+extern void stackMemoryBlockFree(void);
+extern void stackMemoryDump(void);
 
 extern void addToTrail (void (*action)(void*),  void *p);
 extern void removeFromTrailUntil(S_freeTrail *untilP);

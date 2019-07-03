@@ -62,7 +62,7 @@ extern void javaAddNestedClassesAsTypeDefs(S_symbol *cc,
 extern int javaTypeFileExist(S_idIdentList *name);
 extern S_symbol *javaTypeSymbolDefinition(S_idIdentList *tname, int accessFlags,int addType);
 extern S_symbol *javaTypeSymbolUsage(S_idIdentList *tname, int accessFlags);
-extern void javaReadSymbolFromSourceFileEnd();
+extern void javaReadSymbolFromSourceFileEnd(void);
 extern void javaReadSymbolFromSourceFileInit( int sourceFileNum,
                                               S_jslTypeTab *typeTab );
 extern void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname);
@@ -120,7 +120,7 @@ extern int javaClassIsInCurrentPackage(S_symbol *cl);
 extern int javaFqtNamesAreFromTheSamePackage(char *classFqName, char *fqname2);
 extern int javaMethodApplicability(S_symbol *memb, char *actArgs);
 extern S_symbol *javaGetSuperClass(S_symbol *cc);
-extern S_symbol *javaCurrentSuperClass();
+extern S_symbol *javaCurrentSuperClass(void);
 extern S_typeModifiers *javaCheckNumeric(S_typeModifiers *tt);
 extern S_typeModifiers *javaNumericPromotion(S_typeModifiers *tt);
 extern S_typeModifiers *javaBinaryNumericPromotion(S_typeModifiers *t1,
@@ -139,7 +139,7 @@ extern struct freeTrail * newAnonClassDefinitionBegin(S_idIdent *interfName);
 extern void javaAddSuperNestedClassToSymbolTab( S_symbol *cc);
 extern struct freeTrail * newClassDefinitionBegin(S_idIdent *name, int accessFlags, S_symbol *anonInterf);
 extern void newClassDefinitionEnd(S_freeTrail *trail);
-extern void javaInitArrayObject();
+extern void javaInitArrayObject(void);
 extern void javaParsedSuperClass(S_symbol *s);
 extern void javaSetClassSourceInformation(char *package, S_idIdent *cl);
 extern void javaCheckIfPackageDirectoryIsInClassOrSourcePath(char *dir);

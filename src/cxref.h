@@ -5,8 +5,8 @@
 
 extern int olcxReferenceInternalLessFunction(S_reference *r1, S_reference *r2);
 extern int olSymbolRefItemLess(S_symbolRefItem *s1, S_symbolRefItem *s2);
-extern void tagSearchCompactShortResults();
-extern void printTagSearchResults();
+extern void tagSearchCompactShortResults(void);
+extern void printTagSearchResults(void);
 extern S_olSymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi,int storage);
 extern int itIsSameCxSymbol(S_symbolRefItem *p1, S_symbolRefItem *p2);
 extern int itIsSameCxSymbolIncludingFunClass(S_symbolRefItem *p1, S_symbolRefItem *p2);
@@ -15,7 +15,7 @@ extern int olcxItIsSameCxSymbol(S_symbolRefItem *p1, S_symbolRefItem *p2);
 extern void olcxRecomputeSelRefs( S_olcxReferences *refs );
 extern void olProcessSelectedReferences(S_olcxReferences *rstack,
                                         void (*referencesMapFun)(S_olcxReferences *rstack, S_olSymbolsMenu *ss));
-extern void olcxPopOnly();
+extern void olcxPopOnly(void);
 extern S_reference * olcxCopyRefList(S_reference *ll);
 extern void olStackDeleteSymbol( S_olcxReferences *refs);
 extern int getFileNumberFromName(char *name);
@@ -69,7 +69,7 @@ extern S_olSymbolsMenu *olAddBrowsedSymbol(S_symbolRefItem *sym, S_olSymbolsMenu
                                            int olusage, int vlevel,
                                            S_position *defpos, int defusage);
 extern void renameCollationSymbols(S_olSymbolsMenu *sss);
-extern void olCompletionListReverse();
+extern void olCompletionListReverse(void);
 extern S_reference **addToRefList(S_reference **list,
                                   S_usageBits *pusage,
                                   S_position *pos,
@@ -102,7 +102,7 @@ extern int ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2);
 extern void olcxPrintClassTree(S_olSymbolsMenu *sss);
 extern void olcxReferencesDiff(S_reference **anr1, S_reference **aor2,
                                S_reference **diff);
-extern int olcxShowSelectionMenu();
+extern int olcxShowSelectionMenu(void);
 extern int getClassNumFromClassLinkName(char *name, int defaultResult);
 extern void getLineColCursorPositionFromCommandLineOption( int *l, int *c );
 extern void changeClassReferencesUsages(char *linkName, int category, int fnum,

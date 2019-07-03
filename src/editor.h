@@ -3,7 +3,7 @@
 
 #include "proto.h"
 
-extern void editorInit();
+extern void editorInit(void);
 extern int statb(char *path, struct stat  *statbuf);
 extern int editorMarkerLess(S_editorMarker *m1, S_editorMarker *m2);
 extern int editorMarkerLessOrEq(S_editorMarker *m1, S_editorMarker *m2);
@@ -23,12 +23,12 @@ extern void editorRenameBuffer(S_editorBuffer *buff, char *newName, S_editorUndo
 extern void editorReplaceString(S_editorBuffer *buff, int position, int delsize, char *str, int strlength, S_editorUndo **undo);
 extern void editorMoveBlock(S_editorMarker *dest, S_editorMarker *src, int size, S_editorUndo **undo);
 extern void editorDumpBuffer(S_editorBuffer *buff);
-extern void editorDumpBuffers();
+extern void editorDumpBuffers(void);
 extern void editorDumpMarker(S_editorMarker *mm);
 extern void editorDumpMarkerList(S_editorMarkerList *mml);
 extern void editorDumpRegionList(S_editorRegionList *mml);
-extern void editorQuasiSaveModifiedBuffers();
-extern void editorLoadAllOpenedBufferFiles();
+extern void editorQuasiSaveModifiedBuffers(void);
+extern void editorLoadAllOpenedBufferFiles(void);
 extern S_editorMarker *editorCrNewMarker(S_editorBuffer *buff, int offset);
 extern S_editorMarker *editorDuplicateMarker(S_editorMarker *mm);
 extern int editorCountLinesBetweenMarkers(S_editorMarker *m1, S_editorMarker *m2);
@@ -58,7 +58,7 @@ extern void editorRestrictMarkersToRegions(S_editorMarkerList **mm, S_editorRegi
 extern S_editorMarker *editorCrMarkerForBufferBegin(S_editorBuffer *buffer);
 extern S_editorMarker *editorCrMarkerForBufferEnd(S_editorBuffer *buffer);
 extern S_editorRegionList *editorWholeBufferRegion(S_editorBuffer *buffer);
-extern void editorScheduleModifiedBuffersToUpdate();
+extern void editorScheduleModifiedBuffersToUpdate(void);
 extern void editorFreeMarkersAndMarkerList(S_editorMarkerList *occs);
 extern int editorMapOnNonexistantFiles(
                                        char *dirname,
@@ -71,7 +71,7 @@ extern int editorMapOnNonexistantFiles(
                                        int *a5
                                        );
 extern void editorCloseBufferIfClosable(char *name);
-extern void editorCloseAllBuffersIfClosable();
-extern void editorCloseAllBuffers();
+extern void editorCloseAllBuffersIfClosable(void);
+extern void editorCloseAllBuffers(void);
 
 #endif

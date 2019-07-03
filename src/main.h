@@ -25,6 +25,6 @@ extern void mainCallEditServer(int argc, char **argv,
 extern void mainCallXref(int argc, char **argv);
 extern void mainTaskEntryInitialisations(int argc, char **argv);
 extern void mainOpenOutputFile(char *ofile);
-extern void mainCloseOutputFile();
+extern void mainCloseOutputFile(void);
 
 #endif
