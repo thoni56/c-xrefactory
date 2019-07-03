@@ -1,8 +1,16 @@
 #########################################################################
-CC= gcc
+CC = gcc
+
+WARNINGS = -Wall -Wno-char-subscripts
+
+# CFLAGS for bootstrap compilation
 BS_CFLAGS = -g -Og $(INCLUDES) -DDEBUG $(ZLIB_OPT) -DGNULINUXDEFS -MMD
-CFLAGS = $(BS_CFLAGS) -Wall -funsigned-char
+
+# Real CFLAGS
+CFLAGS = $(BS_CFLAGS) -funsigned-char $(WARNINGS)
+
 LDFLAGS =
+
 LEX = flex
 
 ROOTDIR=..
