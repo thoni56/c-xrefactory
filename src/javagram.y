@@ -4366,7 +4366,7 @@ Stop_block:		{
 /* ****************************************************************** */
 %%
 
-void javaParsingInitializations() {
+void javaParsingInitializations(void) {
             S_symbol *ss;
             //&javaMapDirectoryFiles2(s_javaLangName,
             //&			javaAddMapedTypeName, NULL, s_javaLangName, NULL);
