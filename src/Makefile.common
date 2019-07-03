@@ -12,14 +12,14 @@
 # should be usable on all platforms.
 #
 
+all: $(ZLIB) c-xref .c-xrefrc
+
 include sources.mk
 
 $(OBJDIR)/%.o: %.c | $(OBJDIR)
 	$(CC) $(CFLAGS) $(OUTPUT_OPTION) -MMD -c $<
 
 #########################################################################
-
-all: $(ZLIB) c-xref .c-xrefrc
 
 ..always..:;
 
@@ -154,7 +154,7 @@ c-xref: $(OBJS)
 
 clean:;
 	-make -C $(ROOTDIR)/lib/zlib clean
-	-rm -rf $(OBJDIR) c-xref .c-xrefrc
+	-rm -rf $(OBJDIR)/*.o c-xref .c-xrefrc
 
 cleaner: clean
 	-rm compiler_defines.g strFill.g.h enumTxt.g.[ch] c-xref.bs

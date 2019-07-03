@@ -12,6 +12,8 @@ SRCS = cgram.c main.c globals.c misc.c semact.c commons.c generate.c \
 OBJDIR = .objects
 OBJS = $(addprefix $(OBJDIR)/,${SRCS:.c=.o})
 
+-include $(OBJDIR)/*.d
+
 $(OBJDIR)/%.o: %.c | $(OBJDIR)
 	$(CC) $(OUTPUT_OPTION) -MMD -c $<
 
