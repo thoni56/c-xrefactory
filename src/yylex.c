@@ -23,6 +23,7 @@
 #include "protocol.h"
 
 #include "log.h"
+#include "utils.h"
 
 
 /* !!!!!!!!!!!!!!!!!!! to caching !!!!!!!!!!!!!!! */
@@ -323,8 +324,8 @@ void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) {
         GetLexToken(lex, cInput.cc);                                \
     }
 
-#define GetLex(lex) {                               \
-        char *lastlexcc; GetLexA(lex, lastlexcc);   \
+#define GetLex(lex) {                                                \
+        char *lastlexcc; UNUSED lastlexcc; GetLexA(lex, lastlexcc);  \
     }
 
 
