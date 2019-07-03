@@ -421,21 +421,27 @@ void genClassHierarchies( FILE *ff, S_olSymbolsMenu *rrr,
     }
 }
 
+#if ZERO
 static int isInterface(int fnum) {
     S_fileItem *fi;
     fi = s_fileTab.tab[fnum];
     assert(fi!=NULL);
     return(fi->b.isInterface);
 }
+#endif
 
+#if ZERO
 static int htmlRefItemsClassNameLess(S_olSymbolsMenu *ss1,
                                      S_olSymbolsMenu *ss2) {
     return(classHierarchyClassNameLess(ss1->s.vApplClass,ss2->s.vApplClass));
 }
+#endif
 
+#if ZERO
 static int chLineOrderLess(S_olSymbolsMenu *r1, S_olSymbolsMenu *r2) {
     return(r1->outOnLine < r2->outOnLine);
 }
+#endif
 
 void olcxMenuGenGlobRefsForVirtMethod(FILE *ff, S_olSymbolsMenu *rrr) {
     char ln[MAX_HTML_REF_LEN];

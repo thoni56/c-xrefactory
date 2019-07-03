@@ -17,6 +17,7 @@ static unsigned s_javaExtractFromFunctionMods=ACC_DEFAULT;
 static char *rb;
 static char *s_extractionName;
 
+#if ZERO
 static void dumpProgram(S_programGraphNode *program) {
     S_programGraphNode *p;
     fprintf(dumpOut,"[ProgramDump]\n");
@@ -32,6 +33,7 @@ static void dumpProgram(S_programGraphNode *program) {
     }
     fflush(dumpOut);
 }
+#endif
 
 #define LOCAL_LABEL_NAME(ttt, counter) {                \
         sprintf(ttt,"%%L%d",counter);                   \

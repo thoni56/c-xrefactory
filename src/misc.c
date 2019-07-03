@@ -410,12 +410,14 @@ void stackMemoryDump() {
 /* *************************************************************************
  */
 
+#if ZERO
 static void trailDump() {
     S_freeTrail *t;
     fprintf(dumpOut,"\nstart trailDump\n");
     for(t=s_topBlock->trail; t!=NULL; t=t->next) fprintf(dumpOut,"%p ",t);
     fprintf(dumpOut,"\nstop trailDump\n");
 }
+#endif
 
 void addToTrail (void (*a)(void*), void *p) {
     S_freeTrail *t;

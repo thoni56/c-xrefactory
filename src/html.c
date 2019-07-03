@@ -1065,9 +1065,11 @@ static void htmlGenGlobRefList(FILE *ff, char *fname,
 /* ******************************************************************** */
 
 
+#if ZERO
 static int chUpperAdequate(S_fileItem *s, S_fileItem *origin) {
     return(origin->b.isInterface == s->b.isInterface);
 }
+#endif
 
 int htmlRefItemsOrderLess(S_olSymbolsMenu *ss1, S_olSymbolsMenu *ss2) {
     S_symbolRefItem *s1, *s2;
@@ -1087,12 +1089,14 @@ int htmlRefItemsOrderLess(S_olSymbolsMenu *ss1, S_olSymbolsMenu *ss2) {
     return(r);
 }
 
+#if ZERO
 static void shiftToTheBeginningOfClassList(S_fileItem *fi,S_chReference **orr){
     S_chReference *rr;
     assert(orr!=NULL);
     for(rr= *orr; rr!=NULL && s_fileTab.tab[rr->clas]!=fi; rr=rr->next) ;
     if (rr==NULL) return;
 }
+#endif
 
 static int isThereSomethingPrintable(S_olSymbolsMenu *itt) {
     S_reference *r;
@@ -1721,6 +1725,7 @@ int isJavaClassFile(S_fileItem *ffi) {
     return(0);
 }
 
+#if ZERO
 static void htmlGenEmptyRefsFile(void) {
     FILE        *ff;
     ff = fopen(s_htmlEmptyRefs,"w");
@@ -1735,9 +1740,11 @@ static void htmlGenEmptyRefsFile(void) {
         htmlCompressFile(s_htmlEmptyRefs);
     }
 }
+#endif
 
 /* ******************************************************************** */
 
+#if ZERO
 static void dumpClList(S_chReference *ll) {
     for(; ll!=NULL; ll=ll->next) {
         fprintf(dumpOut,"  %s\n",
@@ -1745,6 +1752,7 @@ static void dumpClList(S_chReference *ll) {
                                                                 s_fileTab.tab[ll->clas]->name), s_opt.nestedClassDisplaying));
     }
 }
+#endif
 
 static void sortSubClassesList(S_fileItem *fi) {
     //&fprintf(dumpOut,"sorting\n"); dumpClList(fi->infs);

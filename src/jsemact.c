@@ -953,6 +953,7 @@ static int javaClassIsInnerNonStaticMemberClass(S_symbol *tclas, S_symbol *name)
     return(0);
 }
 
+#if ZERO
 static int javaSimpleNameIsInnerMemberClass(char *name, S_symbol **innmemb) {
     S_javaStat		*cscope;
 //&fprintf(dumpOut,"looking for inner class %s\n",name);
@@ -967,6 +968,7 @@ static int javaSimpleNameIsInnerMemberClass(char *name, S_symbol **innmemb) {
     }
     return(0);
 }
+#endif
 
 int javaIsInnerAndCanGetUnnamedEnclosingInstance(S_symbol *name, S_symbol **outEi) {
     S_javaStat		*cscope;

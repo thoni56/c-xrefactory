@@ -223,6 +223,7 @@ S_reference *duplicateReference(S_reference *r) {
     return(rr);
 }
 
+#if ZERO
 static int newRefTabItem(S_refTab *reftab,
                          S_symbolRefItem **memb,
                          int usage,
@@ -255,7 +256,9 @@ static int newRefTabItem(S_refTab *reftab,
     //& if (category == CatLocal) return(1); // can I comment it ?
     return(0);
 }
+#endif
 
+#if ZERO
 static int htmlReferencableSymbol(int scope, int category, S_symbol *p) {
     //& if (p->b.symType==TypeCppIfElse) return(0); /* takes too much memory */
     if (scope==ScopeFile) return(1);
@@ -263,6 +266,7 @@ static int htmlReferencableSymbol(int scope, int category, S_symbol *p) {
     if (p->b.symType==TypeDefault && p->b.storage==StorageStatic) return(1);
     return(0);
 }
+#endif
 
 static void getSymbolCxrefCategories(
                                      S_symbol *p,
@@ -3366,6 +3370,7 @@ static int countSelectedItems(S_olSymbolsMenu *menu) {
     return(res);
 }
 
+#if ZERO
 static int linkNamesHaveSameProfile(char *n1, char *n2) {
     char *p1, *p2;
     int diff;
@@ -3377,6 +3382,7 @@ static int linkNamesHaveSameProfile(char *n1, char *n2) {
     diff = strcmp(p1, p2);
     return(diff == 0);
 }
+#endif
 
 static int refactoringLinkNameCorrespondance(char *n1, char *n2, int command) {
     // this should say if there is refactoring link names correspondance

@@ -145,6 +145,7 @@ static void refactorySetNargv(char *nargv[MAX_NARGV_OPTIONS_NUM],
     assert(i < MAX_NARGV_OPTIONS_NUM);
 }
 
+#if ZERO
 static void dumpNargv(int argc, char **argv) {
     int i;
     tmpBuff[0]=0;
@@ -153,6 +154,7 @@ static void dumpNargv(int argc, char **argv) {
     }
     ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
 }
+#endif
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // ----------------------- interface to edit server sub-task --------------------------
@@ -376,6 +378,7 @@ static void editorFreeSingleUndo(S_editorUndo *uu) {
     ED_FREE(uu, sizeof(S_editorUndo));
 }
 
+#if ZERO
 static void editorFreeUndos(S_editorUndo *undos) {
     S_editorUndo *uu, *next;
     uu=undos;
@@ -385,6 +388,7 @@ static void editorFreeUndos(S_editorUndo *undos) {
         uu = next;
     }
 }
+#endif
 
 void editorApplyUndos(S_editorUndo *undos, S_editorUndo *until,
                       S_editorUndo **undoundo, int gen) {
@@ -1407,6 +1411,7 @@ static S_editorMarker *refactoryCrNewMarkerForExpressionBegin(S_editorMarker *d,
     }
 }
 
+#if ZERO
 static int refactoryShouldIMoveDirectoryNow(S_editorUndo *undoBase, char *dir) {
     S_editorUndo *uu;
     int dlen;
@@ -1423,6 +1428,7 @@ static int refactoryShouldIMoveDirectoryNow(S_editorUndo *undoBase, char *dir) {
     }
     return(1);
 }
+#endif
 
 static void refactoryCheckedRenameBuffer(
                                          S_editorBuffer *buff, char *newName, S_editorUndo **undo
@@ -1887,6 +1893,7 @@ static int refactoryGetParamPosition(S_editorMarker *pos, char *fname, int argn)
     return(res);
 }
 
+#if ZERO
 static void dumpContext(S_editorMarker *mm) {
     int i, j, m;
     char tt[REFACTORING_TMP_STRING_SIZE];
@@ -1910,6 +1917,7 @@ static void dumpContext(S_editorMarker *mm) {
     tt[j++]=0;
     ppcGenRecord(PPC_INFORMATION, tt, "\n");
 }
+#endif
 
 // !!!!!!!!! pos and endm can be the same marker !!!!!!
 static int refactoryAddStringAsParameter(S_editorMarker *pos, S_editorMarker *endm,
@@ -3400,6 +3408,7 @@ static void refactoryTurnDynamicToStatic(S_editorMarker *point) {
 
 static int noSpaceChar(int c) {return(! isspace(c));}
 
+#if ZERO
 static void dumpReferences(S_reference *rr) {
     S_reference *r;
     fprintf(dumpOut, "[dump]");
@@ -3408,6 +3417,7 @@ static void dumpReferences(S_reference *rr) {
     }
     fprintf(dumpOut, "\n\n");
 }
+#endif
 
 static void refactoryPushMethodSymbolsPlusThoseWithClearedRegion(
                                                                  S_editorMarker *m1, S_editorMarker *m2

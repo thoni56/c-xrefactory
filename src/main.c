@@ -2721,6 +2721,7 @@ static void scheduleModifiedFilesToUpdate() {
 }
 
 
+#if ZERO
 static void resetPendingSymbolMenuData(void) {
     S_olcxReferences *rstack;
     olcxSetCurrentUser(s_opt.user);
@@ -2731,6 +2732,7 @@ static void resetPendingSymbolMenuData(void) {
         rstack->menuSym = NULL;
     }
 }
+#endif
 
 void mainCloseOutputFile() {
     if (ccOut!=stdout) {
@@ -2813,11 +2815,13 @@ static void setFullUpdateMtimesInFileTab(S_fileItem *fi) {
     }
 }
 
+#if ZERO
 static void setUpdateMtimesInFileTab(S_fileItem *fi) {
     if (fi->b.scheduledToUpdate || s_opt.create) {
         fi->lastUpdateMtime = fi->lastModif;
     }
 }
+#endif
 
 static void mainCloseInputFile(int inputIn ) {
     if (inputIn) {
