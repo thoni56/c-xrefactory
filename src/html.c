@@ -1011,7 +1011,7 @@ static void htmlGetThisFileReferences(int fnum, S_htmlRefList **rrr, int kind){
 static int htmlGenGlobRefListBody(FILE *ff, S_symbolRefItem *pp,
                                   char *fname, int usage, int opt) {
 #if 1
-    int count;
+    int count = 0;
 
     count += genRefListFileBody(ff, fname, pp, USAGE_ANY, opt);
 #else
