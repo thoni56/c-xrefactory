@@ -13,9 +13,10 @@ extern void genReferenceFile(int updateFlag, char *fname);
 extern void addSubClassItemToFileTab( int sup, int inf, int origin);
 extern void addSubClassesItemsToFileTab(S_symbol *ss, int origin);
 extern void scanCxFile(S_cxScanFileFunctionLink *scanFuns);
-extern int scanReferenceFile(	char *fname, char *fns1, char *fns2,
-                        S_cxScanFileFunctionLink *scanFunTab);
-extern void readOneAppropReferenceFile(char *symname, S_cxScanFileFunctionLink  *scanFunTab);
+extern int scanReferenceFile(char *fname, char *fns1, char *fns2,
+                             S_cxScanFileFunctionLink *scanFunTab);
+extern void readOneAppropReferenceFile(char *symname,
+                                       S_cxScanFileFunctionLink *scanFunTab);
 extern void scanReferenceFiles(char *fname, S_cxScanFileFunctionLink *scanFunTab);
 
 extern S_cxScanFileFunctionLink s_cxScanFileTab[];
