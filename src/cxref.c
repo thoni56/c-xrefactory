@@ -18,6 +18,7 @@
 #include "main.h"
 #include "enumTxt.h"
 #include "reftab.h"
+#include "log.h"
 #include "utils.h"
 
 
@@ -707,7 +708,7 @@ S_reference * addCxReferenceNew(S_symbol *p, S_position *pos, S_usageBits *usage
     getSymbolCxrefCategories( p, &category, &scope, &storage);
     if (scope == ScopeAuto && s_opt.no_ref_locals) return(NULL);
 
-    //&fprintf(dumpOut,":adding reference on %s(%d,%d) at %d,%d,%d  (%s) (%s) (%s) \n",p->linkName,vFunCl,vApplCl, pos->file,pos->line,pos->coll,refCategoriesName[category],usagesName[usage],storagesName[p->b.storage]);
+    log_trace(":adding reference on %s(%d,%d) at %d,%d,%d  (%s) (%s) (%s) \n",p->linkName,vFunCl,vApplCl, pos->file,pos->line,pos->coll,refCategoriesName[category],usagesName[usage],storagesName[p->b.storage]);
     assert(s_opt.taskRegime);
     if (s_opt.taskRegime == RegimeEditServer) {
         if (s_opt.cxrefs == OLO_EXTRACT) {
