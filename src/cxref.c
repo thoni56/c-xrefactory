@@ -668,74 +668,75 @@ static int olcxOnlyParseNoPushing(int opt) {
 /*                                                                       */
 S_reference * addCxReferenceNew(S_symbol *p, S_position *pos, S_usageBits *usageb,
                                 int vFunCl, int vApplCl) {
-    int                 ii,mm,category,scope,storage,defusage;
-    char                *linkName;
-    S_reference         rr, **place;
-    S_position          *defpos;
-    S_symbolRefItem     *pp,*memb, ppp;
-    S_olSymbolsMenu     *mmi;
-    S_refTab            *reftab;
-    int                 usage;
+    int ii,mm,category,scope,storage,defusage;
+    char *linkName;
+    S_reference rr, **place;
+    S_position *defpos;
+    S_symbolRefItem *pp,*memb, ppp;
+    S_olSymbolsMenu *mmi;
+    S_refTab *reftab;
+    int usage;
+
     usage = usageb->base;
     // do not record references on prescanning
     // this is because of cxMem overflow during prescanning (for ex. with -html)
-    if (s_javaPreScanOnly) return(NULL);
-    if (p->linkName == NULL) return(NULL);
-    if (* p->linkName == 0) return(NULL);
-    if (p == &s_errorSymbol || p->b.symType==TypeError) return(NULL);
-    if (pos->file == s_noneFileIndex) return(NULL);
+    if (s_javaPreScanOnly) return NULL;
+    if (p->linkName == NULL) return NULL;
+    if (* p->linkName == 0) return NULL;
+    if (p == &s_errorSymbol || p->b.symType==TypeError) return NULL;
+    if (pos->file == s_noneFileIndex) return NULL;
     assert(pos->file<MAX_FILES);
     assert(s_fileTab.tab[pos->file]);
     if (p->b.symType==TypeDefault && p->b.storage==StorageConstant) {
-        if (s_opt.no_ref_enumerator) return(NULL);
+        if (s_opt.no_ref_enumerator) return NULL;
     }
     /* typedefs */
     if (p->b.symType==TypeDefault && p->b.storage==StorageTypedef) {
-        if (s_opt.no_ref_typedef) return(NULL);
+        if (s_opt.no_ref_typedef) return NULL;
     }
     /* struct, union, enum */
     if ((p->b.symType==TypeStruct||p->b.symType==TypeUnion||p->b.symType==TypeEnum)){
-        if (s_opt.no_ref_typedef) return(NULL);
+        if (s_opt.no_ref_typedef) return NULL;
     }
     /* macros */
     if (p->b.symType == TypeMacro) {
-        if (s_opt.no_ref_macro) return(NULL);
+        if (s_opt.no_ref_macro) return NULL;
     }
     if (p->b.symType==TypeDefault) {
-        if (p->b.record && s_opt.no_ref_records) return(NULL);
+        if (p->b.record && s_opt.no_ref_records) return NULL;
     }
 
     getSymbolCxrefCategories( p, &category, &scope, &storage);
-    if (scope == ScopeAuto && s_opt.no_ref_locals) return(NULL);
+    if (scope == ScopeAuto && s_opt.no_ref_locals) return NULL;
 
     log_trace(":adding reference on %s(%d,%d) at %d,%d,%d  (%s) (%s) (%s) \n",p->linkName,vFunCl,vApplCl, pos->file,pos->line,pos->coll,refCategoriesName[category],usagesName[usage],storagesName[p->b.storage]);
     assert(s_opt.taskRegime);
     if (s_opt.taskRegime == RegimeEditServer) {
         if (s_opt.cxrefs == OLO_EXTRACT) {
-            if (s_input_file_number != cFile.lb.cb.fileNumber) return(NULL);
+            if (s_input_file_number != cFile.lb.cb.fileNumber) return NULL;
         } else {
             if (category==CatGlobal && p->b.symType!=TypeCppInclude && s_opt.cxrefs!=OLO_TAG_SEARCH) {
                 // do not load references if not the currently edited file
                 if (s_olOriginalFileNumber!=pos->file
-                    && s_opt.noIncludeRefs) return(NULL);
+                    && s_opt.noIncludeRefs) return NULL;
                 // do not load references if current file is an
                 // included header, they will be reloaded from ref file
                 //&fprintf(dumpOut,"%s comm %d\n", s_fileTab.tab[pos->file]->name, s_fileTab.tab[pos->file]->b.commandLineEntered);
             }
         }
     }
-    if (s_opt.taskRegime == RegimeGenerate) return(NULL);
+    if (s_opt.taskRegime == RegimeGenerate) return NULL;
     if (s_opt.taskRegime == RegimeXref) {
-        if (category == CatLocal) return(NULL); /* dont cxref local symbols */
-        if (s_fileTab.tab[pos->file]->b.cxLoading==0) return(NULL);
+        if (category == CatLocal) return NULL; /* dont cxref local symbols */
+        if (s_fileTab.tab[pos->file]->b.cxLoading==0) return NULL;
     }
     if (s_opt.taskRegime == RegimeHtmlGenerate) {
         //&     scope = ScopeFile;  /* do not forget any reference */
-        //&     if (! htmlReferencableSymbol(scope, category, p)) return(NULL);
-        //&     if (s_fileTab.tab[pos->file]->b.cxLoading==0) return(NULL);
-        if (s_fileTab.tab[pos->file]->b.cxLoading==0&&category==CatGlobal) return(NULL);
+        //&     if (! htmlReferencableSymbol(scope, category, p)) return NULL;
+        //&     if (s_fileTab.tab[pos->file]->b.cxLoading==0) return NULL;
+        if (s_fileTab.tab[pos->file]->b.cxLoading==0&&category==CatGlobal) return NULL;
         if (s_fileTab.tab[pos->file]->b.cxLoaded
-            &&p->b.symType==TypeCppIfElse) return(NULL);
+            &&p->b.symType==TypeCppIfElse) return NULL;
     }
     reftab = &s_cxrefTab;
     FILL_symbolRefItemBits(&ppp.b,p->b.symType,storage,scope,
@@ -747,7 +748,7 @@ S_reference * addCxReferenceNew(S_symbol *p, S_position *pos, S_usageBits *usage
         FILL_usageBits(&rr.usg, usage, 0, 0);
         FILL_reference(&rr, rr.usg, *pos, NULL);
         searchSymbolCheckReference(&ppp, &rr);
-        return(NULL);
+        return NULL;
     }
     mm = refTabIsMember(reftab, &ppp, &ii, &memb);
     //& was if (newRefTabItem(reftab,&memb,usage,storage,scope,category,p,vApplCl,vFunCl,&ii));
@@ -1148,7 +1149,7 @@ S_reference *olcxAddReferenceNoUsageCheck(S_reference **rlist, S_reference *ref,
 S_reference *olcxAddReference(S_reference **rlist,S_reference *ref,int bestMatchFlag) {
     S_reference *rr;
     //&sprintf(tmpBuff,"checking ref %s %s:%d:%d at %d\n",usagesName[ref->usg.base], simpleFileName(s_fileTab.tab[ref->p.file]->name),ref->p.line,ref->p.coll, ref); ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
-    if (! OL_VIEWABLE_REFS(ref)) return(NULL); // no regular on-line refs
+    if (! OL_VIEWABLE_REFS(ref)) return NULL; // no regular on-line refs
     rr = olcxAddReferenceNoUsageCheck(rlist, ref, bestMatchFlag);
     return(rr);
 }
@@ -1485,14 +1486,14 @@ static char *getExpandedLocalJavaDocFile_st(char *expandedPath, char *prefix, ch
             if ((s=strchr(fullfname, '#'))!=NULL) *s = 0;
             if (stat(fullfname, &st)==0) return(fullurl);
         });
-    return(NULL);
+    return NULL;
 }
 
 char *getLocalJavaDocFile_st(char *fileUrl) {
     char tmpfname[MAX_FILE_NAME_SIZE];
     static char wcJavaDocPath[MAX_OPTION_LEN];
     char *ss, *res;
-    if (s_opt.javaDocPath==NULL) return(NULL);
+    if (s_opt.javaDocPath==NULL) return NULL;
     strcpy(tmpfname, fileUrl);
     for(ss=tmpfname; *ss; ss++) if (*ss == '/') *ss = SLASH;
     expandWildCharactersInPaths(s_opt.javaDocPath, wcJavaDocPath, MAX_OPTION_LEN);
@@ -2289,7 +2290,7 @@ static S_olSymbolsMenu *findSymbolCorrespondingToReference(
             return(ss);
         }
     }
-    return(NULL);
+    return NULL;
 }
 
 static void olcxShowTopApplClass() {
@@ -3084,14 +3085,14 @@ static S_reference *olcxCreateFileShiftedRefListForCheck(S_reference *rr) {
     S_reference *res, *r, *tt, **resa;
     int ofn, nfn, fmline, lmline;
     //&fprintf(dumpOut,"!shifting enter\n");
-    if (s_opt.checkFileMovedFrom==NULL) return(NULL);
-    if (s_opt.checkFileMovedTo==NULL) return(NULL);
+    if (s_opt.checkFileMovedFrom==NULL) return NULL;
+    if (s_opt.checkFileMovedTo==NULL) return NULL;
     //&fprintf(dumpOut,"!shifting %s --> %s\n", s_opt.checkFileMovedFrom, s_opt.checkFileMovedTo);
     ofn = getFileNumberFromName(s_opt.checkFileMovedFrom);
     nfn = getFileNumberFromName(s_opt.checkFileMovedTo);
     //&fprintf(dumpOut,"!shifting %d --> %d\n", ofn, nfn);
-    if (ofn==s_noneFileIndex) return(NULL);
-    if (nfn==s_noneFileIndex) return(NULL);
+    if (ofn==s_noneFileIndex) return NULL;
+    if (nfn==s_noneFileIndex) return NULL;
     fmline = s_opt.checkFirstMovedLine;
     lmline = s_opt.checkFirstMovedLine + s_opt.checkLinesMoved;
     res = NULL; resa = &res;
@@ -3405,7 +3406,7 @@ static S_olSymbolsMenu *safetyCheck2FindCorrMenuItem(S_olSymbolsMenu *item,
             return(ss);
         }
     }
-    return(NULL);
+    return NULL;
 }
 
 static int scCompareVirtualHierarchies(S_olSymbolsMenu *origm,
@@ -3707,7 +3708,7 @@ static S_olSymbolsMenu *mmFindSymWithCorrespondingRef(S_reference *ref,
             return(mm);
         }
     }
-    return(NULL);
+    return NULL;
 }
 
 int symbolsCorrespondWrtMoving(S_olSymbolsMenu *osym,
@@ -3841,7 +3842,7 @@ static S_olSymbolsMenu *mmPreCheckFindCorrespondingSym(
             return(ss);
         }
     }
-    return(NULL);
+    return NULL;
 }
 
 static int mmRefOccursInRefs(S_reference *r, S_reference *list,
@@ -4366,7 +4367,7 @@ static S_symbol *javaGetClassSymbolFromClassDotName(char *fqName) {
 S_symbol *getMoveTargetClass() {
     if (s_opt.moveTargetClass == NULL) {
         error(ERR_INTERNAL,"pull up/push down pre-check without setting target class");
-        return(NULL);
+        return NULL;
     }
     return(javaGetClassSymbolFromClassDotName(s_opt.moveTargetClass));
 }
