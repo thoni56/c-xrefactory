@@ -130,7 +130,7 @@ char *normalizeFileName(char *name, char *relativeto) {
 
 char *create_temporary_filename(void) {
     static char temporary_name[MAX_FILE_NAME_SIZE] = "";
-#if defined (__WIN32__)    /*SBD*/
+#ifdef __WIN32__
     char *temp_dir;
 
     // under Windows tmpnam returns file names in \ root.
@@ -143,18 +143,26 @@ char *create_temporary_filename(void) {
         sprintf(temporary_name,"%s\\xrefu%d.tmp", temp_dir, count++);
         strcpy(temporary_name, normalizeFileName(temporary_name, s_cwd));
     }
-#else                   /*SBD*/
+    assert(strlen(temporary_name)+1 < MAX_FILE_NAME_SIZE);
+#else
     if (getenv("TMPDIR") == NULL)
         strcpy(temporary_name, "/tmp/c-xref-temp-XXXXXX");
     else
         sprintf(temporary_name, "%s/c-xref-temp-XXXXXX", getenv("TMPDIR"));
-    if (mktemp(temporary_name) == NULL)
+
+    /* Create and open a temporary file with safe mkstemp(), then
+       close it in order to stay with the semantics of this
+       function */
+    int fd = mkstemp(temporary_name);
+    if (fd != -1)
         strcpy(temporary_name, "/tmp/c-xref-temp");
+    else
+        close(fd);
 #endif                  /*SBD*/
     //&fprintf(dumpOut,"temp file: %s\n", temporary_name);
     if (strlen(temporary_name) == 0)
-        fatalError(ERR_ST, "can't create temporary file name", XREF_EXIT_ERR);
-    assert(strlen(temporary_name) < MAX_FILE_NAME_SIZE-1);
+        fatalError(ERR_ST, "couldn't create temporary file name", XREF_EXIT_ERR);
+
     return temporary_name;
 }
 
