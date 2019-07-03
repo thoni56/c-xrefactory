@@ -161,7 +161,7 @@ cleaner: clean
 
 #########################################################################
 
-test: unit
+test: unit c-xref
 	$(MAKE) -C ../tests quick
 
 
