@@ -12,6 +12,8 @@
 #include "enumTxt.h"
 #include "reftab.h"
 
+#include "log.h"
+#include "utils.h"
 
 #define HTML_EMPTY_REF_FILE "/XrefEmptyRefs.html"
 
@@ -88,7 +90,8 @@ static void htmlCompressFile(char *fname) {
     strcpy(sss+len1, fname);
     strcat(sss, s+1);
     assert(strlen(sss) < MAX_HTML_REF_LEN-2);
-    int r __attribute__((unused)) = system(sss);
+    int r = system(sss);
+    UNUSED r;
 }
 
 static char *htmlGetLinkFileNameStatic(char *link, char *file) {
@@ -441,7 +444,8 @@ static void htmlGenRefListTail(FILE *ff) {
 static char * getDefaultCxFileStatic() {
     static char ttt[MAX_FILE_NAME_SIZE];
     char tt[MAX_FILE_NAME_SIZE];
-    char *ss __attribute__((unused));
+    char *ss;
+    UNUSED ss;
 
     if (s_opt.refnum <= 1) {
         sprintf(tt,"%s.html", s_opt.cxrefFileName);
@@ -484,7 +488,8 @@ static void htmlGenFrameFile(FILE *ff, int fnum, char *thisfn) {
 
 
 void htmlGetDefinitionReferences() {
-    char *tt __attribute__((unused));
+    char *tt;
+    UNUSED tt;
 
     //&fprintf(dumpOut,"start scanning ref files\n");fflush(dumpOut);
     scanReferenceFiles(s_opt.cxrefFileName,s_cxFullScanFunTab);
@@ -1075,8 +1080,10 @@ int htmlRefItemsOrderLess(S_olSymbolsMenu *ss1, S_olSymbolsMenu *ss2) {
     S_symbolRefItem *s1, *s2;
     int r;
     char *n1, *n2;
-    int len1 __attribute__((unused));
-    int len2 __attribute__((unused));
+    int len1;
+    int len2;
+    UNUSED len1;
+    UNUSED len2;
 
     s1 = &ss1->s; s2 = &ss2->s;
     GET_BARE_NAME(s1->name, n1, len1);

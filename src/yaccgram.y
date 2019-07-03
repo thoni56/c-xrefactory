@@ -36,6 +36,9 @@
 #include "semact.h"
 #include "cxref.h"
 
+#include "log.h"
+#include "utils.h"
+
 #define YYDEBUG 0
 #define yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery

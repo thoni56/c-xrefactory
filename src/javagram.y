@@ -51,6 +51,7 @@
 #include "semact.h"
 
 #include "log.h"
+#include "utils.h"
 
 #define YYDEBUG 0
 #define yyerror styyerror

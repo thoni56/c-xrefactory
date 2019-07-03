@@ -11,6 +11,7 @@
 #include "jsemact.h"
 
 #include "log.h"
+#include "utils.h"
 
 
 /* *********************** Read JAVA class file ************************* */
@@ -364,7 +365,8 @@ static void zipArchiveScan(char **accc, char **affin, S_charBuf *iBuf,
     int i,internFileAttribs,tmp;
     unsigned externFileAttribs,localHeaderOffset, cdOffset;
     unsigned crc32,compressedSize,unCompressedSize;
-    unsigned foffset __attribute__((unused));
+    unsigned foffset;
+    UNUSED foffset;
 
     ccc = *accc; ffin = *affin;
     zip->dir = NULL;
@@ -1043,7 +1045,8 @@ void addSuperClassOrInterfaceByName(S_symbol *memb, char *super, int origin,
 int javaCreateClassFileItem( S_symbol *memb) {
     char ftname[MAX_FILE_NAME_SIZE];
     int ii;
-    int newItem __attribute__((unused));
+    int newItem;
+    UNUSED newItem;
 
     SPRINT_FILE_TAB_CLASS_NAME(ftname, memb->linkName);
     newItem = addFileTabItem(ftname, &ii);

@@ -2147,7 +2147,10 @@ static void getAndProcessGccOptions() {
     tempfile_name = create_temporary_filename();
     assert(strlen(tempfile_name)+1 < MAX_FILE_NAME_SIZE);
     sprintf(tmpBuff, "LANG=C gcc -v -x %s -o /dev/null /dev/null >%s 2>&1", lang, tempfile_name);
-    int result __attribute__((unused)) = system(tmpBuff);
+
+    int result = system(tmpBuff);
+    UNUSED result;
+
     tempfile = fopen(tempfile_name,"r");
     if (tempfile==NULL) return;
     while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF) {

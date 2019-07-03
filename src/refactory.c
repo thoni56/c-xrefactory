@@ -15,6 +15,8 @@
 
 #include "protocol.h"
 
+#include "log.h"
+#include "utils.h"
 
 #define RRF_CHARS_TO_PRE_CHECK_AROUND       1
 #define MAX_NARGV_OPTIONS_NUM               50
@@ -1096,9 +1098,10 @@ int tpCheckMethodReferencesWithApplOnSuperClassForPullUp() {
     S_reference *rr;
     S_olSymbolsMenu *ss,*mm;
     S_symbol *target;
-    int targetcn __attribute__((unused));
     int srccn;
     char                ttt[MAX_CX_SYMBOL_SIZE];
+    int targetcn;
+    UNUSED targetcn;
 
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
@@ -1304,11 +1307,12 @@ static int refactoryMakeSafetyCheckAndUndo(
                                            S_editorUndo **redoTrack
                                            ) {
     int res;
-    int pbflag __attribute__((unused));
     S_editorMarkerList *chks;
     S_editorMarker *defin;
     S_editorMarkerList *diff1, *diff2;
     S_olcxReferences *refs, *origrefs, *newrefs, *diffrefs;
+    int pbflag;
+    UNUSED pbflag;
 
     // safety check
 
@@ -3771,10 +3775,11 @@ static void refactoryPerformEncapsulateField(S_editorMarker *point,
     S_reference *anotherGetter, *anotherSetter;
     unsigned accFlags;
     S_editorMarkerList  *ll, *occs, *insiders, *outsiders;
-    S_editorMarker *eqm, *ee, *db __attribute__((unused));
     S_editorMarker *dte, *dtb, *de;
     S_editorMarker *getterm, *setterm, *tbeg, *tend;
     S_editorUndo *beforeInsertionUndo;
+    S_editorMarker *eqm, *ee, *db;
+    UNUSED db;
 
     strcpy(nameOnPoint, refactoryGetIdentifierOnMarker_st(point));
     nameOnPointLen = strlen(nameOnPoint);
@@ -4267,7 +4272,8 @@ static void refactoryPushDownPullUp(S_editorMarker *point, int direction, int li
     S_olSymbolsMenu *mm1, *mm2;
     S_symbolRefItem *theMethod;
     int size;
-    int lines __attribute__((unused));
+    int lines;
+    UNUSED lines;
 
     target = getTargetFromOptions();
     if (! validTargetPlace(target, "-olcxmmtarget")) return;

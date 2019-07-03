@@ -13,6 +13,7 @@
 #include "enumTxt.h"
 #include "reftab.h"
 
+#include "utils.h"
 
 /* *********************** INPUT/OUTPUT ************************** */
 
@@ -770,16 +771,16 @@ void genReferenceFile(int updateFlag, char *fname) {
     }
 
 #define SkipNChars(count, ccc, ffin, iBuf) {                \
-        register int ccount, ch __attribute__((unused));    \
-        ccount = count;                                     \
-        while (ccc + ccount > ffin) {                       \
-            ccount -= ffin - ccc;                           \
-            ccc = ffin;                                     \
-            GetChar(ch, ccc, ffin, iBuf);                   \
-            ccount --;                                      \
-        }                                                   \
-        ccc += ccount;                                      \
-    }
+    register int ccount, ch; UNUSED ch;                     \
+    ccount = count;                                         \
+    while (ccc + ccount > ffin) {                           \
+        ccount -= ffin - ccc;                               \
+        ccc = ffin;                                         \
+        GetChar(ch, ccc, ffin, iBuf);                       \
+        ccount --;                                          \
+    }                                                       \
+    ccc += ccount;                                          \
+}
 
 static void cxrfSetSingleRecords(int size,
                                  int ri,

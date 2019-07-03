@@ -11,6 +11,7 @@
 #include "jsemact.h"
 
 #include "log.h"
+#include "utils.h"
 
 
 S_jslStat *s_jsl;
@@ -91,10 +92,11 @@ S_symbol *jslTypeSymbolDefinition(char *ttt2, S_idIdentList *packid,
     char fqtName[MAX_FILE_NAME_SIZE];
     S_idIdentList dd2;
     int ii;
-    int mm __attribute__((unused));
     S_symbol sd, *smemb;
     S_jslSymbolList ss, *xss, *memb;
     S_position *importPos;
+    int mm;
+    UNUSED mm;
 
     jslFillTypeSymbolItem( &sd, &ss, ttt2);
     FILLF_idIdentList(&dd2, ttt2,NULL,-1,0,0,NULL, ttt2,TypeStruct,packid);

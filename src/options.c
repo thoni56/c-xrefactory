@@ -12,6 +12,7 @@
 #include "protocol.h"
 
 #include "log.h"
+#include "utils.h"
 
 
 /* memory where on-line given options are stored */
@@ -365,8 +366,9 @@ static void expandEnvironmentVariables(char *tt, int ttsize, int *len,
 
 static int getOptionFromFile(FILE *ff, char *tt, int ttsize, int *outI) {
     int i, c;
-    int last_char __attribute__((unused));
     int comment, res, quotamess;
+    int last_char;
+    UNUSED last_char;
 
     c = getc(ff);
     do {
