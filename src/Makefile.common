@@ -157,7 +157,7 @@ clean:;
 	-rm -rf $(OBJDIR)/*.o c-xref .c-xrefrc
 
 cleaner: clean
-	-rm compiler_defines.g strFill.g.h enumTxt.g.[ch] c-xref.bs
+	-rm -rf $(OBJDIR) compiler_defines.g strFill.g.h enumTxt.g.[ch] c-xref.bs
 
 #########################################################################
 
