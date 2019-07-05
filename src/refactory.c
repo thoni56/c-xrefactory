@@ -307,7 +307,7 @@ static void refactorySafetyCheck(char *project, S_editorBuffer *buf, S_editorMar
     }
     olCreateSelectionMenu(s_olcxCurrentUser->browserStack.top->command);
     if (safetyCheck2ShouldWarn()) {
-        if (LANGUAGE(LAN_JAVA)) {
+        if (LANGUAGE(LANG_JAVA)) {
             sprintf(tmpBuff, "This is class hierarchy of given symbol as it will appear after the refactoring. It does not corresponf to the hierarchy before the refactoring. It is probable that the refactoring will not be behaviour preserving. If you are not sure about your action, you should abandon this refactoring!");
         } else {
             sprintf(tmpBuff, "Those symbols will be refererred at this place after the refactoring. It is probable that the refactoring will not be behaviour preserving. If you are not sure about your action, you should abandon this refactoring!");
@@ -1550,11 +1550,11 @@ static void refactorySimpleRenaming(S_editorMarkerList *occs, S_editorMarker *po
     char                nfile[MAX_FILE_NAME_SIZE];
     char                *ss;
     S_editorMarkerList  *ll;
-    if (symtype == TypeStruct && LANGUAGE(LAN_JAVA)
+    if (symtype == TypeStruct && LANGUAGE(LANG_JAVA)
         && s_ropt.theRefactoring != PPC_AVR_RENAME_CLASS) {
         error(ERR_INTERNAL, "Use Rename Class to rename classes");
     }
-    if (symtype == TypePackage && LANGUAGE(LAN_JAVA)
+    if (symtype == TypePackage && LANGUAGE(LANG_JAVA)
         && s_ropt.theRefactoring != PPC_AVR_RENAME_PACKAGE) {
         error(ERR_INTERNAL, "Use Rename Package to rename packages");
     }
@@ -1780,7 +1780,7 @@ static void refactoryRename(S_editorBuffer *buf, S_editorMarker *point) {
 
     refactoryUpdateReferences(s_ropt.project);
 
-    if (LANGUAGE(LAN_JAVA)) {
+    if (LANGUAGE(LANG_JAVA)) {
         message = STANDARD_SELECT_SYMBOLS_MESSAGE;
     } else {
         message = STANDARD_C_SELECT_SYMBOLS_MESSAGE;
@@ -1793,7 +1793,7 @@ static void refactoryRename(S_editorBuffer *buf, S_editorMarker *point) {
     symtype = csym->s.b.symType;
     symLinkName = csym->s.name;
     undoStartPoint = s_editorUndo;
-    if (!LANGUAGE(LAN_JAVA)) {
+    if (!LANGUAGE(LANG_JAVA)) {
         refactoryMultipleOccurencesSafetyCheck();
     }
     refactorySimpleRenaming( occs, point,nameOnPoint,symLinkName, symtype);
@@ -1886,7 +1886,7 @@ static int refactoryGetParamPosition(S_editorMarker *pos, char *fname, int argn)
         error(ERR_ST, tmpBuff);
         res = RETURN_ERROR;
     }
-    if (! LANGUAGE(LAN_JAVA)) {
+    if (! LANGUAGE(LANG_JAVA)) {
         // check preconditions to avoid cases like
         // #define PAR1 toto,
         // ... lot of text
@@ -2187,7 +2187,7 @@ static void refactoryApplyParameterManipulation(S_editorBuffer *buf, S_editorMar
     refactoryApplyParamManip(nameOnPoint, occs,
                              manip, argn1, argn2
                              );
-    if (LANGUAGE(LAN_JAVA)) {
+    if (LANGUAGE(LANG_JAVA)) {
         check = refactoryMakeSafetyCheckAndUndo(buf, point, &occs, startPoint, &redoTrack);
         if (! check) refactoryAskForReallyContinueConfirmation();
         editorApplyUndos(redoTrack, NULL, &s_editorUndo, GEN_NO_OUTPUT);
@@ -4429,7 +4429,7 @@ static char * refactoryComputeUpdateOptionForSymbol(S_editorMarker *point) {
         }
     }
 
-    if (LANGUAGE(LAN_JAVA)) {
+    if (LANGUAGE(LANG_JAVA)) {
         if (cat == CatLocal) {
             // useless to update when there is nothing about the symbol in Tags
             res = "";
@@ -4556,7 +4556,7 @@ void mainRefactory(int argc, char **argv) {
         s_progressFactor = 3;
         s_refactoryUpdateOption = refactoryComputeUpdateOptionForSymbol(point);
         mainSetLanguage(file, &s_language);
-        if (LANGUAGE(LAN_JAVA)) s_progressFactor ++;
+        if (LANGUAGE(LANG_JAVA)) s_progressFactor ++;
         refactoryParameterManipulation(buf, point, s_ropt.theRefactoring,
                                        s_ropt.olcxGotoVal, s_ropt.parnum2);
     } else if (s_ropt.theRefactoring==PPC_AVR_MOVE_FIELD) {

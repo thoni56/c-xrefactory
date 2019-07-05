@@ -139,7 +139,7 @@ static void sprintFullCompletionInfo(S_completions* c, int ii, int indent) {
     ll = 0;
     if (c->a[ii].symType==TypeDefault) {
         assert(c->a[ii].t && c->a[ii].t->u.type);
-        if (LANGUAGE(LAN_JAVA)) {
+        if (LANGUAGE(LANG_JAVA)) {
             cname = getCompletionClassFieldString(&c->a[ii]);
             if (c->a[ii].virtLevel>NEST_VIRT_COMPL_OFFSET) {
                 sprintf(tmpBuff,"(%d.%d)%s: ",
@@ -168,7 +168,7 @@ static void sprintFullCompletionInfo(S_completions* c, int ii, int indent) {
         //      } else {
         pname = c->a[ii].t->name;
         //      }
-        if (LANGUAGE(LAN_JAVA)) {
+        if (LANGUAGE(LANG_JAVA)) {
             ll += printJavaModifiers(tt+ll, &size, c->a[ii].t->b.accessFlags);
             if (c->a[ii].vFunClass!=NULL) {
                 vFunCl = c->a[ii].vFunClass->u.s->classFile;
@@ -176,7 +176,7 @@ static void sprintFullCompletionInfo(S_completions* c, int ii, int indent) {
             }
         }
         typeSPrint(tt+ll, &size, c->a[ii].t->u.type, pname,' ', 0, tdexpFlag,SHORT_NAME, NULL);
-        if (LANGUAGE(LAN_JAVA)
+        if (LANGUAGE(LANG_JAVA)
             && (c->a[ii].t->b.storage == StorageMethod
                 || c->a[ii].t->b.storage == StorageConstructor)) {
             throwsSprintf(tt+ll+size, COMPLETION_STRING_SIZE-ll-size, c->a[ii].t->u.type->u.m.exceptions);
@@ -184,7 +184,7 @@ static void sprintFullCompletionInfo(S_completions* c, int ii, int indent) {
     } else if (c->a[ii].symType==TypeMacro) {
         macDefSPrintf(tt, &size, "", c->a[ii].s,
                       c->a[ii].margn, c->a[ii].margs, NULL);
-    } else if (LANGUAGE(LAN_JAVA) && c->a[ii].symType==TypeStruct ) {
+    } else if (LANGUAGE(LANG_JAVA) && c->a[ii].symType==TypeStruct ) {
         if (c->a[ii].t!=NULL) {
             ll += printJavaModifiers(tt+ll, &size, c->a[ii].t->b.accessFlags);
             if (c->a[ii].t->b.accessFlags & ACC_INTERFACE) {
@@ -230,7 +230,7 @@ static void sprintFullJeditCompletionInfo(S_completions* c, int ii, int *nindent
     if (vclass != NULL) *vclass = vlevelBuff;
     if (c->a[ii].symType==TypeDefault) {
         assert(c->a[ii].t && c->a[ii].t->u.type);
-        if (LANGUAGE(LAN_JAVA)) {
+        if (LANGUAGE(LANG_JAVA)) {
             cname = getCompletionClassFieldString(&c->a[ii]);
             if (c->a[ii].virtLevel>NEST_VIRT_COMPL_OFFSET) {
                 sprintf(vlevelBuff,"  : (%d.%d) %s ",
@@ -249,12 +249,12 @@ static void sprintFullJeditCompletionInfo(S_completions* c, int ii, int *nindent
             tdexpFlag = 0;
         }
         pname = c->a[ii].t->name;
-        if (LANGUAGE(LAN_JAVA)) {
+        if (LANGUAGE(LANG_JAVA)) {
             ll += printJavaModifiers(ppcTmpBuff+ll, &size, c->a[ii].t->b.accessFlags);
         }
         typeSPrint(ppcTmpBuff+ll, &size, c->a[ii].t->u.type, pname,' ', 0, tdexpFlag,SHORT_NAME, nindent);
         *nindent += ll;
-        if (LANGUAGE(LAN_JAVA)
+        if (LANGUAGE(LANG_JAVA)
             && (c->a[ii].t->b.storage == StorageMethod
                 || c->a[ii].t->b.storage == StorageConstructor)) {
             throwsSprintf(ppcTmpBuff+ll+size, COMPLETION_STRING_SIZE-ll-size, c->a[ii].t->u.type->u.m.exceptions);
@@ -262,7 +262,7 @@ static void sprintFullJeditCompletionInfo(S_completions* c, int ii, int *nindent
     } else if (c->a[ii].symType==TypeMacro) {
         macDefSPrintf(ppcTmpBuff, &size, "", c->a[ii].s,
                       c->a[ii].margn, c->a[ii].margs, nindent);
-    } else if (LANGUAGE(LAN_JAVA) && c->a[ii].symType==TypeStruct ) {
+    } else if (LANGUAGE(LANG_JAVA) && c->a[ii].symType==TypeStruct ) {
         if (c->a[ii].t!=NULL) {
             ll += printJavaModifiers(ppcTmpBuff+ll, &size, c->a[ii].t->b.accessFlags);
             if (c->a[ii].t->b.accessFlags & ACC_INTERFACE) {
@@ -468,7 +468,7 @@ void printCompletions(S_completions* c) {
         goto finiWithoutMenu;
     }
     // this can't be ordered directly, because of overloading
-    //&     if (LANGUAGE(LAN_JAVA)) reorderCompletionArray(c);
+    //&     if (LANGUAGE(LANG_JAVA)) reorderCompletionArray(c);
     indent = c->maxLen;
     if (s_opt.olineLen - indent < MIN_COMPLETION_INDENT_REST) {
         indent = s_opt.olineLen - MIN_COMPLETION_INDENT_REST;
@@ -484,7 +484,7 @@ void printCompletions(S_completions* c) {
             sprintFullCompletionInfo(c, ii, indent);
         }
         vFunCl = s_noneFileIndex;
-        if (LANGUAGE(LAN_JAVA)  && c->a[ii].vFunClass!=NULL) {
+        if (LANGUAGE(LANG_JAVA)  && c->a[ii].vFunClass!=NULL) {
             vFunCl = c->a[ii].vFunClass->u.s->classFile;
             if (vFunCl == -1) vFunCl = s_noneFileIndex;
         }
@@ -505,7 +505,7 @@ static int isTheSameSymbol(S_cline *c1, S_cline *c2) {
     if (strcmp(c1->s, c2->s) != 0) return(0);
     /*fprintf(dumpOut,"st %d %d\n",c1->symType,c2->symType);*/
     if (c1->symType != c2->symType) return(0);
-    if (s_language != LAN_JAVA) return(1);
+    if (s_language != LANG_JAVA) return(1);
     if (c1->symType == TypeStruct) {
         if (c1->t!=NULL && c2->t!=NULL) {
             return(strcmp(c1->t->linkName, c2->t->linkName)==0);
@@ -548,7 +548,7 @@ static int compareCompletionClassName(S_cline *c1, S_cline *c2) {
 static int completionOrderCmp(S_cline *c1, S_cline *c2) {
     int     c, l1, l2;
     char    *s1, *s2;
-    if (! LANGUAGE(LAN_JAVA)) {
+    if (! LANGUAGE(LANG_JAVA)) {
         // exact matches goes first
         s1 = strchr(c1->s, '(');
         if (s1 == NULL) l1 = strlen(c1->s);
@@ -625,7 +625,7 @@ static int reallyInsert( S_cline *a,
             c = completionOrderCmp(t, &a[x]);
             //&     c = strcmp(s, a[x].s);
             if (c==0) { /* identifier yet in completions */
-                if (s_language != LAN_JAVA) return(0); /* no overloading, so ... */
+                if (s_language != LANG_JAVA) return(0); /* no overloading, so ... */
                 if (symbolIsInTab(a, ai, &x, s, t)) return(0);
                 r = x; l = x + 1;
                 break;
@@ -800,7 +800,7 @@ static void completeFunctionOrMethodName(S_completions *c, int orderFlag, int vl
         cn = cname;
     } else {
         assert(r->u.type!=NULL);
-        if (LANGUAGE(LAN_JAVA)) {
+        if (LANGUAGE(LANG_JAVA)) {
             msig = r->u.type->u.m.sig;
             assert(msig!=NULL);
             if (msig[0]=='(' && msig[1]==')') {
@@ -855,7 +855,7 @@ void completeStructs(S_completions*c) {
 
 static int javaLinkable(unsigned storage, unsigned accessFlags) {
     /*fprintf(dumpOut,"testing linkability %x %x\n",storage,accessFlags);fflush(dumpOut);*/
-    if (s_language != LAN_JAVA) return(1);
+    if (s_language != LANG_JAVA) return(1);
     if (storage == ACC_ALL) return(1);
     if ((s_opt.ooChecksBits & OOC_LINKAGE_CHECK) == 0) return(1);
     if (storage & ACC_STATIC) return((accessFlags & ACC_STATIC) != 0);
@@ -869,7 +869,7 @@ static void processSpecialInheritedFullCompletion( S_completions *c, int orderFl
     S_cline compLine;
 
     tt[0]=0; ll=0; size=MAX_CX_SYMBOL_SIZE;
-    if (LANGUAGE(LAN_JAVA)) {
+    if (LANGUAGE(LANG_JAVA)) {
         ll+=printJavaModifiers(tt+ll, &size, r->b.accessFlags);
     }
     typeSPrint(tt+ll, &size, r->u.type, cname, ' ', 0, 1,SHORT_NAME, NULL);
@@ -890,7 +890,7 @@ static int getAccCheckOption(void) {
     return(accCheck);
 }
 
-#define STR_REC_INFO(cc) (* cc->idToProcess == 0 && s_language!=LAN_JAVA)
+#define STR_REC_INFO(cc) (* cc->idToProcess == 0 && s_language!=LANG_JAVA)
 
 static void completeRecordsNames(
                                  S_completions *c,
@@ -998,7 +998,7 @@ static void completeFromSymTab( S_completions*c,
     S_javaStat              *cs;
     int                     vlevelOffset;
     FILL_completionSymFunInfo(&ii, c, storage);
-    if (s_language == LAN_JAVA) {
+    if (s_language == LANG_JAVA) {
         vlevelOffset = 0;
         for(cs=s_javaStat; cs!=NULL && cs->thisClass!=NULL ;cs=cs->next) {
             symTabMap2(cs->locals, completeSymFun, (void*) &ii);
@@ -1079,7 +1079,7 @@ static int isEqualType(S_typeModifiers *t1, S_typeModifiers *t2) {
     if (s1->kind==TypeStruct || s1->kind==TypeUnion || s1->kind==TypeEnum) {
         if (s1->u.t != s2->u.t) return(0);
     } else if (s1->kind==TypeFunction) {
-        if (LANGUAGE(LAN_JAVA)) {
+        if (LANGUAGE(LANG_JAVA)) {
             if (strcmp(s1->u.m.sig,s2->u.m.sig)!=0) return(0);
         } else {
             for(ss1=s1->u.f.args, ss2=s2->u.f.args;
@@ -1630,7 +1630,7 @@ void javaHintVariableName(S_completions*c) {
     char    ss[TMP_STRING_SIZE];
     char    *name, *affect1, *affect2;
 
-    if (! LANGUAGE(LAN_JAVA)) return;
+    if (! LANGUAGE(LANG_JAVA)) return;
     if (c->idToProcessLen != 0) return;
     if (s_lastReturnedLexem != IDENTIFIER) return;
 

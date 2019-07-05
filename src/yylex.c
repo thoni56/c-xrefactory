@@ -161,7 +161,7 @@ static void getOrCreateFileInfo(char *ss, int *fileNumber, char **fileName) {
             /* if multihead references care, load include refs each time */
             cxloading = 0;
         }
-        if (LANGUAGE(LAN_JAVA)) {
+        if (LANGUAGE(LANG_JAVA)) {
             if (s_jsl!=NULL || s_javaPreScanOnly) {
                 // do not load (and save) references from jsl loaded files
                 // nor during prescanning
@@ -342,7 +342,7 @@ static void testCxrefCompletionId(int *llex, char *idd, S_position *pos) {
         if (lex==IDENT_TO_COMPLETE) {
             s_cache.activeCache = 0;
             s_olstringServed = 1;
-            if (s_language == LAN_JAVA) {
+            if (s_language == LANG_JAVA) {
                 makeJavaCompletions(idd, strlen(idd), pos);
             }
             else if (s_language == LAN_YACC) {
@@ -1818,7 +1818,7 @@ static int processCccIdent(unsigned hashval, char *id, S_position *idposa) {
 static void actionOnBlockMarker(void) {
     if (s_opt.cxrefs == OLO_SET_MOVE_TARGET) {
         s_cps.setTargetAnswerClass[0] = 0;
-        if (LANGUAGE(LAN_JAVA)) {
+        if (LANGUAGE(LANG_JAVA)) {
             if (s_cp.function == NULL) {
                 if (s_javaStat!=NULL) {
                     if (s_javaStat->thisClass==NULL) {
@@ -1831,7 +1831,7 @@ static void actionOnBlockMarker(void) {
         }
     } else if (s_opt.cxrefs == OLO_SET_MOVE_CLASS_TARGET) {
         s_cps.moveTargetApproved = 0;
-        if (LANGUAGE(LAN_JAVA)) {
+        if (LANGUAGE(LANG_JAVA)) {
             if (s_cp.function == NULL) {
                 if (s_javaStat!=NULL) {
                     s_cps.moveTargetApproved = 1;
@@ -1840,7 +1840,7 @@ static void actionOnBlockMarker(void) {
         }
     } else if (s_opt.cxrefs == OLO_SET_MOVE_METHOD_TARGET) {
         s_cps.moveTargetApproved = 0;
-        if (LANGUAGE(LAN_JAVA)) {
+        if (LANGUAGE(LANG_JAVA)) {
             if (s_cp.function == NULL) {
                 if (s_javaStat!=NULL) {
                     if (s_javaStat->thisClass!=NULL) {
@@ -1860,7 +1860,7 @@ static void actionOnBlockMarker(void) {
         s_cps.currentPackageAnswer[0] = 0;
         s_cps.currentClassAnswer[0] = 0;
         s_cps.currentSuperClassAnswer[0] = 0;
-        if (LANGUAGE(LAN_JAVA)) {
+        if (LANGUAGE(LANG_JAVA)) {
             if (s_javaStat!=NULL) {
                 strcpy(s_cps.currentPackageAnswer, s_javaThisPackageName);
                 if (s_javaStat->thisClass!=NULL) {
@@ -1936,7 +1936,7 @@ int yylex(void) {
 /*&fprintf(dumpOut,"id %s position %d %d %d\n",yytext,idpos.file,idpos.line,idpos.coll);&*/
         FILL_symbolBits(&dd.b,0,0,0,0,0,TypeMacro,StorageNone,0);
         FILL_symbol(&dd,yytext,yytext,s_noPos,dd.b,mbody,NULL,NULL);
-        if ((!LANGUAGE(LAN_JAVA))
+        if ((!LANGUAGE(LANG_JAVA))
             && lex!=IDENT_NO_CPP_EXPAND
             && symTabIsMember(s_symTab,&dd,&ii,&memb)) {
             // following is because the macro check can read new lexBuf,
@@ -1946,9 +1946,9 @@ int yylex(void) {
             if (macroCallExpand(memb,&idpos)) goto nextYylex;
         }
         h = h % s_symTab->size;
-        if(LANGUAGE(LAN_C)||LANGUAGE(LAN_YACC)) lex=processCIdent(h,id,&idpos);
-        else if (LANGUAGE(LAN_JAVA)) lex = processJavaIdent(h, id, &idpos);
-        else if (LANGUAGE(LAN_CCC)) lex = processCccIdent(h, id, &idpos);
+        if(LANGUAGE(LANG_C)||LANGUAGE(LAN_YACC)) lex=processCIdent(h,id,&idpos);
+        else if (LANGUAGE(LANG_JAVA)) lex = processJavaIdent(h, id, &idpos);
+        else if (LANGUAGE(LANG_CCC)) lex = processCccIdent(h, id, &idpos);
         else assert(0);
         goto finish;
     }
@@ -2018,7 +2018,7 @@ int yylex(void) {
     assert(0);
 
  endOfFile:
-    if ((!LANGUAGE(LAN_JAVA)) && inStacki != 0) {
+    if ((!LANGUAGE(LANG_JAVA)) && inStacki != 0) {
         popInclude();
         poseCachePoint(1);
         goto nextYylex;

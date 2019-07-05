@@ -543,7 +543,7 @@ static void setOlAvailableRefactorings(S_symbol *p, S_olSymbolsMenu *mmi, int us
         s_availableRefactorings[PPC_AVR_RENAME_PACKAGE].option = opt;
         break;
     case TypeStruct:
-        if (LANGUAGE(LAN_JAVA)) {
+        if (LANGUAGE(LANG_JAVA)) {
             if (IS_DEFINITION_USAGE(usage)) {
                 s_availableRefactorings[PPC_AVR_RENAME_CLASS].available = 1;
                 s_availableRefactorings[PPC_AVR_MOVE_CLASS].available = 1;
@@ -635,12 +635,12 @@ static void olGetAvailableRefactorings(void) {
     }
     if (s_opt.olCursorPos != s_opt.olMarkPos) {
         // region selected, TODO!!! some more prechecks for extract method
-        if (LANGUAGE(LAN_JAVA)) {
+        if (LANGUAGE(LANG_JAVA)) {
             s_availableRefactorings[PPC_AVR_EXTRACT_METHOD].available = 1;
         } else {
             s_availableRefactorings[PPC_AVR_EXTRACT_FUNCTION].available = 1;
         }
-        if (! LANGUAGE(LAN_JAVA)) {
+        if (! LANGUAGE(LANG_JAVA)) {
             s_availableRefactorings[PPC_AVR_EXTRACT_MACRO].available = 1;
         }
     }
@@ -811,7 +811,7 @@ S_reference * addCxReferenceNew(S_symbol *p, S_position *pos, S_usageBits *usage
                     mmi->defUsage = usage;
                 }
                 if (s_opt.cxrefs == OLO_CLASS_TREE
-                    && (LANGUAGE(LAN_JAVA) || LANGUAGE(LAN_CCC))) {
+                    && (LANGUAGE(LANG_JAVA) || LANGUAGE(LANG_CCC))) {
                     setClassTreeBaseType(&s_olcxCurrentUser->ct, p);
                 }
                 if (s_opt.cxrefs == OLO_GET_SYMBOL_TYPE) {
@@ -1138,7 +1138,7 @@ S_reference *olcxAddReferenceNoUsageCheck(S_reference **rlist, S_reference *ref,
     if (*place==NULL || SORTED_LIST_NEQ(*place,*ref)) {
         OLCX_ALLOC(rr, S_reference);
         *rr = *ref;
-        if (LANGUAGE(LAN_JAVA)) {
+        if (LANGUAGE(LANG_JAVA)) {
             if (ref->usg.base==UsageDefined &&  bestMatchFlag) {
                 rr->usg.base = UsageOLBestFitDefined;
             }
@@ -1578,7 +1578,7 @@ static int checkTheJavaDocBrowsing( S_olcxReferences *refs ) {
     // this was in commentary, why?
     // [16/2/2003 putting it back, because it tries to browse something
     // when definition not found in C language
-    if (LANGUAGE(LAN_JAVA)) {
+    if (LANGUAGE(LANG_JAVA)) {
         for(mm=refs->menuSym; mm!=NULL; mm=mm->next) {
             if (mm->visible && mm->selected) {
                 res = olcxBrowseSymbolInJavaDoc(&mm->s);
@@ -1864,7 +1864,7 @@ void olcxPrintSelectionMenu(S_olSymbolsMenu *sss) {
         ppcGenRecordEnd(PPC_SYMBOL_RESOLUTION);
     } else {
         if (s_opt.cxrefs==OLO_RENAME || s_opt.cxrefs==OLO_ARG_MANIP || s_opt.cxrefs==OLO_ENCAPSULATE) {
-            if (LANGUAGE(LAN_JAVA)) {
+            if (LANGUAGE(LANG_JAVA)) {
                 fprintf(ccOut, "-![Warning] It is highly recommended to process the whole hierarchy of related classes at once. Unselection of any class of applications above (and its exclusion from refactoring process) may cause changes in your program behavior. Press <return> to continue.\n");
             } else {
                 fprintf(ccOut, "-![Warning] It is highly recommended to process all symbols at once. Unselection of any symbols and its exclusion from refactoring process may cause changes in your program behavior. Press <return> to continue.\n");
@@ -1874,7 +1874,7 @@ void olcxPrintSelectionMenu(S_olSymbolsMenu *sss) {
             fprintf(ccOut, "-![Warning] If you see this message it is highly probable that turning this virtual method into static will not be behaviour preserving! This refactoring is behaviour preserving only if the method does not use mechanism of virtual invocations. On this screen you should select the application classes which are refering to the method which will become static. If you can't unambiguously determine those references do not continue in this refactoring!\n");
         }
         if (s_opt.cxrefs==OLO_SAFETY_CHECK2) {
-            if (LANGUAGE(LAN_JAVA)) {
+            if (LANGUAGE(LANG_JAVA)) {
                 fprintf(ccOut, "-![Warning] There are differences between original class hierarchy and the new one, those name clashes may cause that the refactoring will not be behavior preserving!\n");
             } else {
                 fprintf(ccOut, "-![Error] There is differences between original and new symbols referenced at this position. The difference is due to name clashes and may cause changes in the behaviour of the program. Please, undo last refactoring!");
@@ -2703,7 +2703,7 @@ static void handleConstructorSpecialsInSelectingSymbolInMenu(
                                                              ) {
     S_olSymbolsMenu *s1, *s2, *ss;
     int ccc, sss, lll, vn;
-    if (! LANGUAGE(LAN_JAVA)) return;
+    if (! LANGUAGE(LANG_JAVA)) return;
     if (! isSpecialConstructorOnlySelectionCase(command)) return;
     s1 = NULL; s2 = NULL;
     vn = 0;
@@ -3443,7 +3443,7 @@ int safetyCheck2ShouldWarn(void) {
     S_olcxReferences *refs, *origrefs, *newrefs, *diffrefs;
     problem = 0;
     if (s_opt.cxrefs != OLO_SAFETY_CHECK2) return(0);
-    if (! LANGUAGE(LAN_JAVA)) return(0);
+    if (! LANGUAGE(LANG_JAVA)) return(0);
     // compare hierarchies and deselect diff
     origrefs = newrefs = diffrefs = NULL;
     SAFETY_CHECK2_GET_SYM_LISTS(refs,origrefs,newrefs,diffrefs, problem);
@@ -3495,7 +3495,7 @@ static int olSpecialFieldCreateSelection(char *fieldName, int storage) {
     int                 clii;
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
-    if (! LANGUAGE(LAN_JAVA)) {
+    if (! LANGUAGE(LANG_JAVA)) {
         rstack->hkSelectedSym = NULL;
         error(ERR_ST,"This function is available only in Java language");
         return(s_noneFileIndex);
@@ -5037,7 +5037,7 @@ void mainAnswerEditAction(void) {
         rstack = s_olcxCurrentUser->browserStack.top;
         assert(rstack!=NULL);
         if (rstack->hkSelectedSym == NULL ||
-            (LANGUAGE(LAN_JAVA) &&
+            (LANGUAGE(LANG_JAVA) &&
              rstack->hkSelectedSym->s.b.storage!=StorageMethod &&
              rstack->hkSelectedSym->s.b.storage!=StorageConstructor)) {
             sprintf(tmpBuff,"Cursor (point) has to be positioned on a method or contructor name before invocation of this refactoring, not on the parameter itself. Please move the cursor onto the method (contructor) name and reinvoke the refactoring.");
@@ -5142,7 +5142,7 @@ static unsigned olcxOoBits(S_olSymbolsMenu *ols, S_symbolRefItem *p) {
     if (strcmp(ols->s.name,p->name)==0) {
         ooBits |= OOC_PROFILE_EQUAL;
     }
-    if (LANGUAGE(LAN_C) || LANGUAGE(LAN_YACC)
+    if (LANGUAGE(LANG_C) || LANGUAGE(LAN_YACC)
         || JAVA_STATICALLY_LINKED(ols->s.b.storage, ols->s.b.accessFlags)) {
         if (vFunCl == olvFunCl) ooBits |= OOC_VIRT_SAME_APPL_FUN_CLASS;
     } else {
@@ -5205,7 +5205,7 @@ S_olSymbolsMenu *createSelectionMenu(S_symbolRefItem *p) {
                 defusage = ss->defUsage;
                 //&fprintf(dumpOut,": propagating defpos (line %d) to menusym\n", defpos->line);
             }
-            if (LANGUAGE(LAN_JAVA)) {
+            if (LANGUAGE(LANG_JAVA)) {
                 vlev = classCmp(ss->s.vApplClass, p->vApplClass);
             } else {
                 vlev = 0;

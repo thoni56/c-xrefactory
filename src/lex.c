@@ -233,7 +233,7 @@ void gotOnLineCxRefs( S_position *ps ) {
 
 #define conType(val, cch, ccc, ffin, bbb, clb, clo, lex) {      \
         lex = CONSTANT;                                         \
-        if (LANGUAGE(LAN_JAVA)) {                               \
+        if (LANGUAGE(LANG_JAVA)) {                               \
             if (cch=='l' || cch=='L') {                         \
                 lex = LONG_CONSTANT;                            \
                 GetChar(cch, ccc, ffin, bbb, clb, clo);         \
@@ -257,7 +257,7 @@ void gotOnLineCxRefs( S_position *ps ) {
                                                                                        if (cch == '+' || cch=='-') GetChar(cch, ccc, ffin, bbb, clb, clo); \
                                                                                        while (isdigit(cch)) GetChar(cch, ccc, ffin, bbb, clb, clo); \
                                                                                        } \
-                                                        if (LANGUAGE(LAN_JAVA)) { \
+                                                        if (LANGUAGE(LANG_JAVA)) { \
                                                                                  if (cch == 'f' || cch == 'F' || cch == 'd' || cch == 'D') { \
                                                                                                                                             if (cch == 'f' || cch == 'F') lex = FLOAT_CONSTANT; \
                                                                                                                                             GetChar(cch, ccc, ffin, bbb, clb, clo); \
@@ -280,7 +280,7 @@ void gotOnLineCxRefs( S_position *ps ) {
             PutLexChar(ch,dd);                                          \
         identCont##lab:                                                 \
             GetChar(ch,ccc,cfin,cb, clb, clo);                          \
-        } while (isalpha(ch) || isdigit(ch) || ch=='_' || (ch=='$' && (LANGUAGE(LAN_YACC)||LANGUAGE(LAN_JAVA)))); \
+        } while (isalpha(ch) || isdigit(ch) || ch=='_' || (ch=='$' && (LANGUAGE(LAN_YACC)||LANGUAGE(LANG_JAVA)))); \
         if (ch == '@' && *(dd-1)=='C') {                                \
             int i,len;                                                  \
             len = strlen(s_editCommunicationString);                    \
@@ -451,7 +451,7 @@ int getLexBuf(struct lexBuf *lb) {
     /*  yytext = ccc; */
     lexStartDd = dd;
     lexStartCol = COLUMN_POS(ccc,clb,clo);
-    if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LAN_YACC)||LANGUAGE(LAN_JAVA)))) {
+    if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LAN_YACC)||LANGUAGE(LANG_JAVA)))) {
         ProcessIdentifier(ch, ccc, cfin, cb, dd, cfile, cline, clb, clo, lab2);
         goto nextLexem;
     } else if (isdigit(ch)) {
@@ -484,7 +484,7 @@ int getLexBuf(struct lexBuf *lb) {
             }
         }
         if (ch == '.' || ch=='e' || ch=='E'
-            || ((ch=='d' || ch=='D'|| ch=='f' || ch=='F') && LANGUAGE(LAN_JAVA))) {
+            || ((ch=='d' || ch=='D'|| ch=='f' || ch=='F') && LANGUAGE(LANG_JAVA))) {
             /* floating point */
             fpConstFin(ch,ccc,cfin,cb,clb,clo,rlex);
             PutLexToken(rlex,dd);
@@ -504,7 +504,7 @@ int getLexBuf(struct lexBuf *lb) {
         case '.':
             lexStartFilePos = ABS_FILE_POS(cb,cfin,ccc);
             GetChar(ch,ccc,cfin,cb,clb,clo);
-            if (ch == '.' && LANGUAGE(LAN_C|LAN_YACC|LAN_CCC)) {
+            if (ch == '.' && LANGUAGE(LANG_C|LAN_YACC|LANG_CCC)) {
                 GetChar(ch,ccc,cfin,cb,clb,clo);
                 if (ch == '.') {
                     GetChar(ch,ccc,cfin,cb,clb,clo);
@@ -518,7 +518,7 @@ int getLexBuf(struct lexBuf *lb) {
                 PutLexToken('.',dd);
                 PutLexPosition(cfile, cline, lexStartCol, dd);
                 goto nextLexem;
-            } else if (ch=='*' && LANGUAGE(LAN_CCC)) {
+            } else if (ch=='*' && LANGUAGE(LANG_CCC)) {
                 GetChar(ch,ccc,cfin,cb,clb,clo);
                 PutLexToken(POINTM_OP,dd);
                 PutLexPosition(cfile, cline, lexStartCol, dd);
@@ -544,9 +544,9 @@ int getLexBuf(struct lexBuf *lb) {
                 PutLexToken(SUB_ASSIGN,dd); PutLexPosition(cfile, cline, lexStartCol, dd); GetChar(ch,ccc,cfin,cb,clb,clo);
                 goto nextLexem;
             } else if (ch=='-') {PutLexToken(DEC_OP,dd); PutLexPosition(cfile, cline, lexStartCol, dd);GetChar(ch,ccc,cfin,cb,clb,clo); goto nextLexem;}
-            else if (ch=='>' && LANGUAGE(LAN_C|LAN_YACC|LAN_CCC)) {
+            else if (ch=='>' && LANGUAGE(LANG_C|LAN_YACC|LANG_CCC)) {
                 GetChar(ch,ccc,cfin,cb,clb,clo);
-                if (ch=='*' && LANGUAGE(LAN_CCC)) {PutLexToken(PTRM_OP,dd); PutLexPosition(cfile, cline, lexStartCol, dd);GetChar(ch,ccc,cfin,cb,clb,clo); goto nextLexem;}
+                if (ch=='*' && LANGUAGE(LANG_CCC)) {PutLexToken(PTRM_OP,dd); PutLexPosition(cfile, cline, lexStartCol, dd);GetChar(ch,ccc,cfin,cb,clb,clo); goto nextLexem;}
                 else {PutLexToken(PTR_OP,dd); PutLexPosition(cfile, cline, lexStartCol, dd);goto nextLexem;}
             } else {PutLexToken('-',dd); PutLexPosition(cfile, cline, lexStartCol, dd);goto nextLexem;}
 
@@ -560,7 +560,7 @@ int getLexBuf(struct lexBuf *lb) {
             GetChar(ch,ccc,cfin,cb,clb,clo);
             if (ch == '>') {
                 GetChar(ch,ccc,cfin,cb,clb,clo);
-                if(ch=='>' && LANGUAGE(LAN_JAVA)){
+                if(ch=='>' && LANGUAGE(LANG_JAVA)){
                     GetChar(ch,ccc,cfin,cb,clb,clo);
                     if(ch=='='){PutLexToken(URIGHT_ASSIGN,dd); PutLexPosition(cfile, cline, lexStartCol, dd);GetChar(ch,ccc,cfin,cb,clb,clo); goto nextLexem;}
                     else {PutLexToken(URIGHT_OP,dd); PutLexPosition(cfile, cline, lexStartCol, dd);goto nextLexem;}
@@ -632,7 +632,7 @@ int getLexBuf(struct lexBuf *lb) {
 
         case ':':
             GetChar(ch,ccc,cfin,cb,clb,clo);
-            if (ch == ':' && LANGUAGE(LAN_CCC)){ PutLexToken(DPOINT,dd); PutLexPosition(cfile, cline, lexStartCol, dd);GetChar(ch,ccc,cfin,cb,clb,clo); goto nextLexem; }
+            if (ch == ':' && LANGUAGE(LANG_CCC)){ PutLexToken(DPOINT,dd); PutLexPosition(cfile, cline, lexStartCol, dd);GetChar(ch,ccc,cfin,cb,clb,clo); goto nextLexem; }
             else {PutLexToken(':',dd); PutLexPosition(cfile, cline, lexStartCol, dd);goto nextLexem;}
 
         case '\'':
@@ -700,7 +700,7 @@ int getLexBuf(struct lexBuf *lb) {
                     GetChar(ch,ccc,cfin,cb,clb,clo);
                     goto nextLexem;
                 } else {
-                    if (ch=='*' && LANGUAGE(LAN_JAVA)) javadoc = 1;
+                    if (ch=='*' && LANGUAGE(LANG_JAVA)) javadoc = 1;
                     UngetChar(ch,ccc,cfin,cb); ch = '*';
                 }   /* !!! COPY BLOCK TO '/n' */
                 PassComment(ch,oldCh,ccc,cfin,cb,dd,cline,clb,clo);
@@ -767,7 +767,7 @@ int getLexBuf(struct lexBuf *lb) {
                         GetChar(ch,ccc,cfin,cb,clb,clo);
                     } else {
                         int javadoc=0;
-                        if (ch == '*' && LANGUAGE(LAN_JAVA)) javadoc = 1;
+                        if (ch == '*' && LANGUAGE(LANG_JAVA)) javadoc = 1;
                         UngetChar(ch,ccc,cfin,cb); ch = '*';
                         PassComment(ch,oldCh,ccc,cfin,cb,dd,cline,clb,clo);
                         CommentaryEndRef(ch,ccc,cfin,cb,dd,cfile,cline,clb,clo,javadoc);
@@ -780,7 +780,7 @@ int getLexBuf(struct lexBuf *lb) {
             }
             PutLexToken('\n',dd);
             PutLexPosition(cfile, cline, lexStartCol, dd);
-            if (ch == '#' && LANGUAGE(LAN_C|LAN_CCC|LAN_YACC)) {
+            if (ch == '#' && LANGUAGE(LANG_C|LANG_CCC|LAN_YACC)) {
                 NOTE_NEW_LEXEM_POSITION(ch,ccc,cfin,cb,lb,dd,cfile,cline,clb,clo);
                 HandleCppToken(ch,ccc,cfin,cb,dd,cfile,cline,clb,clo);
             }
@@ -835,7 +835,7 @@ int getLexBuf(struct lexBuf *lb) {
                 //&fprintf(dumpOut,":pos1==%d, olCursorPos==%d, olMarkPos==%d\n",pos1,s_opt.olCursorPos,s_opt.olMarkPos);
                 // all this is very, very HACK!!!
                 if (pos1 >= s_opt.olCursorPos && ! s_cps.marker1Flag) {
-                    if (LANGUAGE(LAN_JAVA)) parChar = ';';
+                    if (LANGUAGE(LANG_JAVA)) parChar = ';';
                     else {
                         if (s_cps.marker2Flag) parChar='}';
                         else parChar = '{';
@@ -856,7 +856,7 @@ int getLexBuf(struct lexBuf *lb) {
                     PutLexPosition(ps->file,ps->line,ps->coll,dd);
                     s_cps.marker1Flag=1;
                 } else if (pos1 >= s_opt.olMarkPos && ! s_cps.marker2Flag){
-                    if (LANGUAGE(LAN_JAVA)) parChar = ';';
+                    if (LANGUAGE(LANG_JAVA)) parChar = ';';
                     else {
                         if (s_cps.marker1Flag) parChar='}';
                         else parChar = '{';
@@ -931,7 +931,7 @@ int getLexBuf(struct lexBuf *lb) {
                         strcpy(s_olstring, lexStartDd+TOKEN_SIZE);
                     }
                 }
-                if (LANGUAGE(LAN_JAVA)) {
+                if (LANGUAGE(LANG_JAVA)) {
                     // there is a problem with this, when browsing at CPP construction
                     // that is why I restrict it to Java language! It is usefull
                     // only for Java refactorings

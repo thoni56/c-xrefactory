@@ -341,14 +341,21 @@ This makes it easy to add a new structure or to add fields to an already
 existing one without having to manually update the "Create"-function
 for that structure.
 
-However, the usage of the _FILL_ functions is less that crystal clear...
+NB. If one structure is different on different platforms the
+FILLF-function will also be, so that creates possible compilation
+problems...
+
+So, the usage of the _FILL_ functions is less that crystal clear, and
+might be the target of some serious refactoring into real functions
+instead. That would show which structures, and fields, actually need
+"fill" functions.
 
 ## How things were
 
-Here are saved texts that described how things were before. They are
-no longer true, since that quirk, magic or bad coding is gone. But it
-is kept here as an archive for those wanting to to backtracking to
-original sources.
+In this section are descriptions and saved texts that described how
+things were before. They are no longer true, since that quirk, magic
+or bad coding is gone. But it is kept here as an archive for those
+wanting to do backtracking to original sources.
 
 ### strTdef.h
 

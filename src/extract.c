@@ -745,12 +745,12 @@ static void extGenNewFunHead(S_programGraphNode *program) {
     extractSprintThrownExceptions(nhead+nhi, program);
     nhi += strlen(nhead+nhi);
 
-    if (LANGUAGE(LAN_JAVA)) {
+    if (LANGUAGE(LANG_JAVA)) {
         // this makes renaming after extraction much faster
         sprintf(rb+strlen(rb), "private ");
     }
 
-    if (LANGUAGE(LAN_JAVA) && (s_javaExtractFromFunctionMods&ACC_STATIC)==0) {
+    if (LANGUAGE(LANG_JAVA) && (s_javaExtractFromFunctionMods&ACC_STATIC)==0) {
         ; // sprintf(rb+strlen(rb), "");
     } else {
         sprintf(rb+strlen(rb), "static ");
@@ -1158,9 +1158,9 @@ static void extMakeExtraction(void) {
     extReClassifyIOVars(program);
 
     newClassExt = 0;
-    if (LANGUAGE(LAN_JAVA)) newClassExt =  extJavaIsNewClassNecesary(program);
+    if (LANGUAGE(LANG_JAVA)) newClassExt =  extJavaIsNewClassNecesary(program);
 
-    if (LANGUAGE(LAN_JAVA)) {
+    if (LANGUAGE(LANG_JAVA)) {
         if (newClassExt) s_extractionName = "newClass_";
         else s_extractionName = "newMethod_";
     } else {
@@ -1234,7 +1234,7 @@ void extractActionOnBlockMarker(void) {
     if (s_cps.cxMemiAtBlockBegin == 0) {
         s_cps.cxMemiAtBlockBegin = cxMemory->i;
         s_cps.workMemiAtBlockBegin = s_topBlock->previousTopBlock;
-        if (LANGUAGE(LAN_JAVA)) {
+        if (LANGUAGE(LANG_JAVA)) {
             s_javaExtractFromFunctionMods = s_javaStat->cpMethodMods;
         }
     } else {

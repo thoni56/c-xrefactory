@@ -668,7 +668,7 @@ void javaReadSymbolFromSourceFileInit( int sourceFileNum,
     memcpy(njsl->yyIdentBuf, s_yyIdentBuf,
            sizeof(S_idIdent[YYBUFFERED_ID_INDEX]));
     s_jsl = njsl;
-    s_language = LAN_JAVA;
+    s_language = LANG_JAVA;
 }
 
 void javaReadSymbolFromSourceFileEnd(void) {
@@ -839,7 +839,7 @@ static int findTopLevelNameInternal(
     int				ii,res;
     S_symbol        sd;
     S_javaStat		*cscope;
-    assert((!LANGUAGE(LAN_JAVA)) ||
+    assert((!LANGUAGE(LANG_JAVA)) ||
         (classif==CLASS_TO_EXPR || classif==CLASS_TO_METHOD));
     assert(accCheck==ACC_CHECK_YES || accCheck==ACC_CHECK_NO);
     assert(visibCheck==VISIB_CHECK_YES || visibCheck==VISIB_CHECK_NO);

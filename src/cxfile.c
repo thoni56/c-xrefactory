@@ -31,8 +31,8 @@
 #define CXFI_REQ_ACCESS     'A'     /* java reference required accessibilite index */
 #define CXFI_STORAGE        'g'     /* storaGe field */
 
-#define CXFI_SUPER_CLASS    'h'                         /* hore = up in slovac */
-#define CXFI_INFER_CLASS    'd'                         /* dole = down in slovac */
+#define CXFI_SUPER_CLASS    'h'     /* hore = up in slovac */
+#define CXFI_INFER_CLASS    'd'     /* dole = down in slovac */
 #define CXFI_CLASS_EXT      'e'     /* using 'fhd' */
 
 #define CXFI_MACRO_BASE_FILE 'b'    /* ref to a file invoking macro */
@@ -266,7 +266,7 @@ int symbolNameShouldBeHiddenFromReports(char *name) {
     if (name[0] == ' ') return(1);  // internal xref symbol
 
     // only java specific pollution
-    if (! LANGUAGE(LAN_JAVA)) return(0);
+    if (! LANGUAGE(LANG_JAVA)) return(0);
 
     // class$ fields
     if (strncmp(name, "class$", 6)==0) return(1);

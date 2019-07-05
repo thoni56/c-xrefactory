@@ -422,7 +422,7 @@ static void trailDump(void) {
 void addToTrail (void (*a)(void*), void *p) {
     S_freeTrail *t;
     /* no trail at level 0 in C*/
-    if (WORK_NEST_LEVEL0() && (LANGUAGE(LAN_C)||LANGUAGE(LAN_YACC))) return;
+    if (WORK_NEST_LEVEL0() && (LANGUAGE(LANG_C)||LANGUAGE(LAN_YACC))) return;
     t = StackMemAlloc(S_freeTrail);
     t->action = a;
     t->p = (void **) p;
@@ -477,7 +477,7 @@ int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos) {
     i = 0;
     if (oNamePos!=NULL) *oNamePos = i;
     for(pp=str; *pp; pp++) {
-        if (    s_language == LAN_JAVA &&
+        if (    s_language == LANG_JAVA &&
                 *pp == '.' &&
                 *(pp+1) == '<') {
             /* java constructor */
@@ -530,7 +530,7 @@ void typeSPrint(char *buff, int *size, S_typeModifiers *t,
         switch (t->kind) {
         case TypeArray:
             if (par) {pref[--i]='('; post[j++]=')'; }
-            if (LANGUAGE(LAN_JAVA)) {
+            if (LANGUAGE(LANG_JAVA)) {
                 pref[--i]=' '; pref[--i]=']'; pref[--i]='[';
             } else {
                 post[j++]='['; post[j++]=']';
@@ -540,7 +540,7 @@ void typeSPrint(char *buff, int *size, S_typeModifiers *t,
             if (par) {pref[--i]='('; post[j++]=')'; }
             sprintf(post+j,"(");
             j += strlen(post+j);
-            if (s_language == LAN_JAVA) {
+            if (s_language == LANG_JAVA) {
                 jj = COMPLETION_STRING_SIZE - j - TYPE_STR_RESERVE;
                 javaSignatureSPrint(post+j, &jj, t->u.m.sig,longOrShortName);
                 j += jj;
@@ -566,13 +566,13 @@ void typeSPrint(char *buff, int *size, S_typeModifiers *t,
             post[j++]=')';
             break;
         case TypeStruct: case TypeUnion:
-            if (s_language != LAN_JAVA) {
+            if (s_language != LANG_JAVA) {
                 if (t->kind == TypeStruct) sprintf(type,"struct ");
                 else sprintf(type,"union ");
                 r = strlen(type);
             } else r=0;
             if (t->u.t->name!=NULL) {
-                if (s_language == LAN_JAVA) {
+                if (s_language == LANG_JAVA) {
                     r += javaTypeStringSPrint(type+r, t->u.t->linkName,longOrShortName, NULL);
                 } else {
                     sprintf(type+r,"%s ",t->u.t->name);

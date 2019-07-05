@@ -220,10 +220,10 @@ void getStandardOptions(int *nargc, char ***nargv) {
     char **aargv;
     int standardOptNum;
     char **standardOptions;
-    if (LANGUAGE(LAN_JAVA)) {
+    if (LANGUAGE(LANG_JAVA)) {
         standardOptNum = s_standardJavaOptNum;
         standardOptions = s_standardJavaOptions;
-    } else if (LANGUAGE(LAN_CCC)) {
+    } else if (LANGUAGE(LANG_CCC)) {
         standardOptNum = s_standardCccOptNum;
         standardOptions = s_standardCccOptions;
     } else {
@@ -892,11 +892,11 @@ void getJavaClassAndSourcePath(void) {
     // optimize wild char expand and getenv [5.2.2003]
     s_javaClassPaths = NULL;
 
-    if (LANGUAGE(LAN_JAVA)) {
+    if (LANGUAGE(LANG_JAVA)) {
         javaSetSourcePath(0);
 
         if (s_javaSourcePaths==NULL) {
-            if (LANGUAGE(LAN_JAVA)) {
+            if (LANGUAGE(LANG_JAVA)) {
                 error(ERR_ST,"no classpath or sourcepath specified");
             }
             s_javaSourcePaths = s_defaultClassPath;
@@ -914,7 +914,7 @@ void getJavaClassAndSourcePath(void) {
             processClassPathString( jdkcp);
         }
 
-        if (LANGUAGE(LAN_JAVA)
+        if (LANGUAGE(LANG_JAVA)
             && s_opt.taskRegime != RegimeEditServer
             && s_opt.taskRegime != RegimeGenerate
             ) {

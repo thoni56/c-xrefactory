@@ -228,7 +228,7 @@ static void recoverCxMemory(char *cxMemFreeBase) {
 #define CACHING_CLASSES 1
 #define CAN_CONTINUE_CACHING_CLASSES(cp) (                              \
                                           CACHING_CLASSES               \
-                                          && LANGUAGE(LAN_JAVA)         \
+                                          && LANGUAGE(LANG_JAVA)         \
                                           && (s_opt.taskRegime == RegimeXref || s_opt.taskRegime == RegimeHtmlGenerate) \
                                           && ppmMemoryi < (SIZE_ppmMemory/3)*2 \
                                                                         )

@@ -1911,7 +1911,7 @@ static int computeAndOpenInputFile(void) {
     assert(s_language);
     inputBuff = NULL;
     //!!!! hack for .jar files !!!
-    if (LANGUAGE(LAN_JAR) || LANGUAGE(LAN_CLASS)) return(0);
+    if (LANGUAGE(LANG_JAR) || LANGUAGE(LANG_CLASS)) return(0);
     if (s_input_file_name == NULL) {
         assert(0);
         inputIn = stdin;
@@ -2001,7 +2001,7 @@ static void initFileTab(void) {
 
 /*///////////////////////// parsing /////////////////////////////////// */
 static void mainParseInputFile(void) {
-    if (s_language == LAN_JAVA) {
+    if (s_language == LANG_JAVA) {
         uniyylval = & s_yygstate->gyylval;
         javayyparse();
     }
@@ -2084,14 +2084,14 @@ void mainSetLanguage(char *inFileName, int *outLanguage) {
         || fileNameHasOneOfSuffixes(inFileName, s_opt.javaFilesSuffixes)
         || (fnnCmp(simpleFileName(inFileName), "Untitled-", 9)==0)  // jEdit unnamed buffer
         ) {
-        *outLanguage = LAN_JAVA;
+        *outLanguage = LANG_JAVA;
         typesName[TypeStruct] = "class";
     } else {
         suff = getFileSuffix(inFileName);
         if (fnCmp(suff,".zip")==0 || fnCmp(suff,".jar")==0) {
-            *outLanguage = LAN_JAR;
+            *outLanguage = LANG_JAR;
         } else if (fnCmp(suff,".class")==0) {
-            *outLanguage = LAN_CLASS;
+            *outLanguage = LANG_CLASS;
         } else if (fnCmp(suff,".y")==0) {
             *outLanguage = LAN_YACC;
             typesName[TypeStruct] = "struct";
@@ -2101,7 +2101,7 @@ void mainSetLanguage(char *inFileName, int *outLanguage) {
             typesName[TypeStruct] = "class";
 #   endif
         } else {
-            *outLanguage = LAN_C;
+            *outLanguage = LANG_C;
             typesName[TypeStruct] = "struct";
         }
     }
@@ -2134,10 +2134,10 @@ static void getAndProcessGccOptions(void) {
     char *tempfile_name, *lang;
     FILE *tempfile;
     struct stat stt;
-    if (LANGUAGE(LAN_C) || LANGUAGE(LAN_YACC)) {
+    if (LANGUAGE(LANG_C) || LANGUAGE(LAN_YACC)) {
         lang = "c";
     }
-    else if (LANGUAGE(LAN_CCC)) {
+    else if (LANGUAGE(LANG_CCC)) {
         lang = "c++";
     }
     else {
@@ -2717,7 +2717,7 @@ static void scheduleModifiedFilesToUpdate(void) {
     if (statb(filestab, &refStat)) refStat.st_mtime = 0;
     scanReferenceFile(s_opt.cxrefFileName, fnamesuff,"", s_cxScanFileTab);
     fileTabMap2(&s_fileTab, schedulingToUpdate, &refStat);
-    if (s_opt.update==UP_FULL_UPDATE /*& && !LANGUAGE(LAN_JAVA) &*/) {
+    if (s_opt.update==UP_FULL_UPDATE /*& && !LANGUAGE(LANG_JAVA) &*/) {
         makeIncludeClosureOfFilesToUpdate();
     }
     fileTabMap(&s_fileTab, schedulingUpdateToProcess);
@@ -2911,7 +2911,7 @@ static void mainEditSrvFileSingleCppPass( int argc, char **argv,
         return;
     }
     mainEditSrvParseInputFile( firstPassing, inputIn);
-    if (s_opt.olCursorPos==0 && !LANGUAGE(LAN_JAVA)) {
+    if (s_opt.olCursorPos==0 && !LANGUAGE(LANG_JAVA)) {
         // special case, push the file as include reference
         if (creatingOlcxRefs()) {
             S_position dpos;
@@ -2948,7 +2948,7 @@ static void mainEditServerProcessFile( int argc, char **argv,
         mainEditSrvFileSingleCppPass( argc, argv, nargc, nargv, firstPassing);
         if (s_opt.cxrefs==OLO_EXTRACT
             || (s_olstringServed && ! creatingOlcxRefs())) goto fileParsed; /* TODO: break? */
-        if (LANGUAGE(LAN_JAVA)) goto fileParsed;
+        if (LANGUAGE(LANG_JAVA)) goto fileParsed;
     }
  fileParsed:
     s_fileTab.tab[s_olOriginalComFileNumber]->b.scheduledToProcess = 0;
@@ -3054,10 +3054,10 @@ static void mainXrefProcessInputFile( int argc, char **argv, int *_inputIn, int 
             inputIn = 0;
             cFile.lb.cb.ff = stdin;
             atLeastOneProcessed=1;
-        } else if (LANGUAGE(LAN_JAR)) {
+        } else if (LANGUAGE(LANG_JAR)) {
             jarFileParse();
             atLeastOneProcessed=1;
-        } else if (LANGUAGE(LAN_CLASS)) {
+        } else if (LANGUAGE(LANG_CLASS)) {
             classFileParse();
             atLeastOneProcessed=1;
         } else {
@@ -3067,7 +3067,7 @@ static void mainXrefProcessInputFile( int argc, char **argv, int *_inputIn, int 
         // no multiple passes for java programs
         firstPassing = 0;
         cFile.lb.cb.isAtEOF = 0;
-        if (LANGUAGE(LAN_JAVA)) goto fileParsed;
+        if (LANGUAGE(LANG_JAVA)) goto fileParsed;
     }
 
  fileParsed:
@@ -3177,7 +3177,7 @@ void mainCallXref(int argc, char **argv) {
                     messagePrinted = 1;
                 }
                 mainSetLanguage(pffc->name, &s_language);
-                if (LANGUAGE(LAN_JAVA)) {
+                if (LANGUAGE(LANG_JAVA)) {
                     mainXrefOneWholeFileProcessing(argc, argv, pffc, &firstPassing, &atLeastOneProcessed);
                 }
                 if (s_opt.xref2) writeRelativeProgress(10*pinputCounter/numberOfInputs);

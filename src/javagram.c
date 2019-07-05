@@ -6310,7 +6310,7 @@ case 392:
                         yyval.bbexprType.d.r = findStrRecordFromType(yyvsp[-2].bbexprType.d.t, yyvsp[0].bbidIdent.d, &rec, CLASS_TO_EXPR);
                         assert(rec);
                         yyval.bbexprType.d.t = rec->u.type;
-                    } else if (s_language == LAN_JAVA) {
+                    } else if (s_language == LANG_JAVA) {
                         yyval.bbexprType.d.t = javaArrayFieldAccess(yyvsp[0].bbidIdent.d);
                     } else {
                         yyval.bbexprType.d.t = &s_errorModifier;

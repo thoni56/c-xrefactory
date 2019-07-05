@@ -3531,7 +3531,7 @@ FieldAccess:
                         $$.d.r = findStrRecordFromType($1.d.t, $3.d, &rec, CLASS_TO_EXPR);
                         assert(rec);
                         $$.d.t = rec->u.type;
-                    } else if (s_language == LAN_JAVA) {
+                    } else if (s_language == LANG_JAVA) {
                         $$.d.t = javaArrayFieldAccess($3.d);
                     } else {
                         $$.d.t = &s_errorModifier;

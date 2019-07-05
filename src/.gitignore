@@ -12,3 +12,4 @@ tmp-*.g.[hc]
 compiler_defines.g
 *.backup
 .objects
+tmp-*.g

@@ -22,12 +22,12 @@
 /* ******************** language identification ****************** */
 
 /* bitwise different */
-#define LAN_C		2
-#define LAN_JAVA	4
+#define LANG_C		2
+#define LANG_JAVA	4
 #define LAN_YACC	8
-#define LAN_CCC		16	/* ccc - standing for C++ */
-#define LAN_JAR		32
-#define LAN_CLASS	64
+#define LANG_CCC	16	/* ccc - standing for C++ */
+#define LANG_JAR	32
+#define LANG_CLASS	64
 
 /* ****************** end of line conversions ***************************** */
 
@@ -340,7 +340,7 @@
     int i;\
     S_symbol *memb;\
     symTabIsMember(symtab,pp,&i,&memb);\
-    if (	LANGUAGE(LAN_CCC) && pp->b.symType==TypeDefault \
+    if (	LANGUAGE(LANG_CCC) && pp->b.symType==TypeDefault \
             && pp->u.type->kind == TypeFunction) { \
         pp->u.type->u.f.thisFunList = &(symtab->tab[i]); \
     } \

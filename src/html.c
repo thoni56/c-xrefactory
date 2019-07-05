@@ -18,7 +18,7 @@
 #define HTML_EMPTY_REF_FILE "/XrefEmptyRefs.html"
 
 #define EXTERN_JDOC_AVAILABLE(refItem) (                                \
-                                        LANGUAGE(LAN_JAVA)              \
+                                        LANGUAGE(LANG_JAVA)              \
                                         && s_opt.htmlGenJdkDocLinks     \
                                         && (s_opt.htmlJdkDocUrl!=NULL || s_opt.javaDocPath!=NULL) \
                                         && htmlJdkDocAvailable(refItem) \
@@ -400,7 +400,7 @@ static void htmlGenRefListItemHead(FILE *ff, char *ln, char *symName,
     } else if (p!=NULL) {
         htmlGenSmallTabHead( ff, HTML_COLOR_SMALL_TAB_HEAD, genFlag);
         fprintf(ff,"<A NAME=\"%s\"></A>",ln);
-        if (p->b.symType==TypeStruct && LANGUAGE(LAN_JAVA)) {
+        if (p->b.symType==TypeStruct && LANGUAGE(LANG_JAVA)) {
             if (p->b.accessFlags & ACC_INTERFACE) {
                 fprintf(ff,"interface&nbsp;");
             } else {
@@ -413,7 +413,7 @@ static void htmlGenRefListItemHead(FILE *ff, char *ln, char *symName,
         }
         ld = sn;
         while ((d=strchr(ld, '.'))!=NULL) ld = d+1;
-        if (LANGUAGE(LAN_JAVA)) {
+        if (LANGUAGE(LANG_JAVA)) {
             while ((d=strchr(ld, '$'))!=NULL) ld = d+1;
         }
         fprintf(ff,"<B>%s</B>",ld);
@@ -1116,7 +1116,7 @@ static int isThereSomethingPrintable(S_olSymbolsMenu *itt) {
 static int htmlIsThereSomethingPrintable(S_olSymbolsMenu *itt) {
     S_reference *r;
     //&fprintf(dumpOut,"looking for something printable in %s\n", itt->s.name);
-    if (LANGUAGE(LAN_JAVA) && itt->s.b.symType==TypeCppInclude) return(0);
+    if (LANGUAGE(LANG_JAVA) && itt->s.b.symType==TypeCppInclude) return(0);
     for(r=itt->s.refs; r!=NULL; r=r->next) {
         //&fprintf(dumpOut,"hecking ref %d,%d\n", r->p.line, r->p.coll);
         if (r->usg.base==UsageClassTreeDefinition) return(1);
@@ -1479,7 +1479,7 @@ static void htmlPosProcess( FILE **fff,
         }
         htmlGetStaticHREFItems(rr,cp, &prf1, &suf1, &prf, &suf);
         /*&
-          if (LANGUAGE(LAN_JAVA) && rr->s->vFunClass != s_noneFileIndex) {
+          if (LANGUAGE(LANG_JAVA) && rr->s->vFunClass != s_noneFileIndex) {
           // if virtual method, then point to cxrefs
           prf = prf1; suf=suf1;
           }

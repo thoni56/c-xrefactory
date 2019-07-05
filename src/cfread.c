@@ -658,7 +658,7 @@ void javaHumanizeLinkName( char *inn, char *outn, int size) {
     else cut ++;
     for(i=0; cut[i]; i++) {
         outn[i] = cut[i];
-        //&     if (LANGUAGE(LAN_JAVA)) {
+        //&     if (LANGUAGE(LANG_JAVA)) {
         if (outn[i]=='/') outn[i]='.';
         //&     }
         assert(i<size-1);

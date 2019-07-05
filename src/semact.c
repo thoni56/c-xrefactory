@@ -16,7 +16,7 @@
 
 int displayingErrorMessages(void) {
     // no error messages for file preloaded for symbols
-    if (LANGUAGE(LAN_JAVA) && s_jsl!=NULL) return(0);
+    if (LANGUAGE(LANG_JAVA) && s_jsl!=NULL) return(0);
     if (s_opt.debug || s_opt.err) return(1);
     return(0);
 }
@@ -301,7 +301,7 @@ int findStrRecordSym(   S_recFindStr    *ss,
             }
             //&fprintf(dumpOut,":checking %s\n",r->name); fflush(dumpOut);
             if (recname==NULL || strcmp(r->name,recname)==0) {
-                if (! LANGUAGE(LAN_JAVA)) {
+                if (! LANGUAGE(LANG_JAVA)) {
                     FSRS_RETURN_WITH_SUCCESS(ss, res, r);
                 }
                 //&fprintf(dumpOut,"acc O.K., checking classif %d\n",javaClassif);fflush(dumpOut);
@@ -433,7 +433,7 @@ void labelReference(S_idIdent *id, int usage) {
     char ttt[TMP_STRING_SIZE];
     char *tt;
     assert(id);
-    if (LANGUAGE(LAN_JAVA)) {
+    if (LANGUAGE(LANG_JAVA)) {
         assert(s_javaStat&&s_javaStat->thisClass&&s_javaStat->thisClass->u.s);
         if (s_cp.function!=NULL) {
             sprintf(ttt,"%x-%s.%s",s_javaStat->thisClass->u.s->classFile,
@@ -463,7 +463,7 @@ void setLocalVariableLinkName(struct symbol *p) {
                 LINK_NAME_CUT_SYMBOL);
         ttt[0] = LINK_NAME_EXTRACT_DEFAULT_FLAG;
         // why it commented out ?
-        //& if ((!LANGUAGE(LAN_JAVA))
+        //& if ((!LANGUAGE(LANG_JAVA))
         //&     && (p->u.type->kind == TypeUnion || p->u.type->kind == TypeStruct)) {
         //&     ttt[0] = LINK_NAME_EXTRACT_STR_UNION_TYPE_FLAG;
         //& }
@@ -549,7 +549,7 @@ S_symbol *addNewSymbolDef(S_symbol *p, unsigned theDefaultStorage, S_symTab *tab
         p->u.type = tt;
         tt->typedefin = p;
     }
-    if ((! WORK_NEST_LEVEL0() && LANGUAGE(LAN_C))
+    if ((! WORK_NEST_LEVEL0() && LANGUAGE(LANG_C))
         || (! WORK_NEST_LEVEL1() && LANGUAGE(LAN_YACC))) {
         // local scope symbol
         if (! symTabIsMember(s_symTab,p,&ii,&pp)
@@ -738,7 +738,7 @@ static S_typeModifiers * mergeBaseModTypes(S_typeModifiers *t1, S_typeModifiers 
 S_symbol *typeSpecifier2(S_typeModifiers *t) {
     S_symbol    *r;
     /* this is just temporary, when have not the tempmemory in java,c++ */
-    if (LANGUAGE(LAN_C)) {
+    if (LANGUAGE(LANG_C)) {
         SM_ALLOC(tmpWorkMemory, r, S_symbol);
     } else {
         XX_ALLOC(r, S_symbol);
@@ -1032,7 +1032,7 @@ void specializeStrUnionDef(S_symbol *sd, S_symbol *rec) {
         if (dd->name!=NULL) {
             dd->linkName = string3ConcatInStackMem(sd->linkName,".",dd->name);
             dd->b.record = 1;
-            if (    LANGUAGE(LAN_CCC) && dd->b.symType==TypeDefault
+            if (    LANGUAGE(LANG_CCC) && dd->b.symType==TypeDefault
                     &&  dd->u.type->kind==TypeFunction) {
                 dd->u.type->u.f.thisFunList = &sd->u.s->records;
             }
