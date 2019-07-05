@@ -30,20 +30,36 @@ for file in os.listdir("CXrefs"):
                     break
 print("References = %s" %(references))
 
-# TODO should search for the fileref somehow...
+# Search for the fileref
+pos = references.find('uA') # start of fileref
+pos = pos+len('uA')
 
-# Split references into separate substrings
-fileref = references[3:9]
-
-# TODO need to search for the 'l'
-lineref = references[9:11]
-
-# TODO need to search for the 'c'
-colref = references[11:13]
-
-reftype = references[13:14]
-
+# Split references into separate substrings: fileref
+length = references[pos:].find('f')
+fileref = references[pos:pos+length]
 print("fileref = %s" % fileref)
-print("lineref = %s" % lineref)
-print("colref = %s" % colref)
-print("reftype = %s" % reftype)
+
+pos = pos + len(fileref) + 1
+print("pos = %s" % pos);
+
+while pos < len(references):
+    # Search for the 'l'
+    length = references[pos:].find('l')
+    lineref = references[pos:pos+length]
+    print("lineref = %s" % lineref)
+
+    pos = pos + len(lineref) + 1
+
+    # Search for the 'c'
+    length = references[pos:].find('c')
+    colref = references[pos:pos+length]
+    print("colref = %s" % colref)
+
+    pos = pos + len(colref) + 1
+
+    # Search for reftype? Or what is it?
+    length = references[pos:].find('r')
+    reftype = references[pos:pos+length+1]
+    print("reftype? = %s" % reftype)
+
+    pos = pos + len(reftype)
