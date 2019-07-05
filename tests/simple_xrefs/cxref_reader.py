@@ -9,7 +9,7 @@ import re
 # Get the fileid for "single_int.c"
 with open("CXrefs/XFiles") as origin_file:
     for line in origin_file:
-        match = re.findall(r'.*single_int.c', line)
+        match = re.findall(r'.*single_int1.c', line)
         if match:
             fileid = line.split()[0]
             break
@@ -40,7 +40,6 @@ fileref = references[pos:pos+length]
 print("fileref = %s" % fileref)
 
 pos = pos + len(fileref) + 1
-print("pos = %s" % pos);
 
 while pos < len(references):
     # Search for the 'l'
@@ -63,3 +62,6 @@ while pos < len(references):
     print("reftype? = %s" % reftype)
 
     pos = pos + len(reftype)
+
+
+    "4uA 20900f 1l 4c r 4l c r 32710f 1l 4c r 4l c r 48151f 1l 4c r 4l c r"

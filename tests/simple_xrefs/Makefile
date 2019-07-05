@@ -10,9 +10,11 @@ $(TEST):
 	@rm -rf output $@.log CXrefs
 	@$(COMMAND)
 	file=`grep single_int1.c CXrefs/XFiles | awk -F' ' '{print $1}'` ; \
-	echo $$file
+	./cxref-reader.py > out
+	cmp out expected
 	if [ $$? -ne 0 ] ; then \
 		echo "Failed" ; \
+		diff expected out ; \
 		exit 1 ; \
 	else \
 		echo "Ok" ; \
