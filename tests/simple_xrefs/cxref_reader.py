@@ -4,64 +4,59 @@
 
 # For now only verify the data for c-xrefactory test case 'simple_xrefs'
 
-import re
-
-# Get the fileid for "single_int.c"
-with open("CXrefs/XFiles") as origin_file:
-    for line in origin_file:
-        match = re.findall(r'.*single_int1.c', line)
-        if match:
-            fileid = line.split()[0]
-            break
-print("Fileid = %s" %(fileid))
-
-# Read refs-line for id
-
-identifier = "single_int_on_line_1_col_4"
-
 import os
-for file in os.listdir("CXrefs"):
-    if file.startswith("X0"):
-        with open(os.path.join("CXrefs", file)) as origin_file:
-            for line in origin_file:
-                match = re.findall(r''+identifier, line)
-                if match:
-                    references = line.split()[-1]
-                    break
-print("References = %s" %(references))
+import re
+import sys
+from collections import namedtuple
 
-# Search for the fileref
-pos = references.find('uA') # start of fileref
-pos = pos+len('uA')
+# Create the reference structure
+Reference = namedtuple('Reference', ['file', 'line', 'column'])
 
-# Split references into separate substrings: fileref
-length = references[pos:].find('f')
-fileref = references[pos:pos+length]
-print("fileref = %s" % fileref)
+def unpack_refs(string, file=None, line=None, column=None):
+    if string == None or string == "":
+        return None
 
-pos = pos + len(fileref) + 1
+    f = re.match("(\d+)f", string)
+    if not f == None:
+        file = int(string[f.start():f.end()-1])
+        string = string[f.end():]
 
-while pos < len(references):
-    # Search for the 'l'
-    length = references[pos:].find('l')
-    lineref = references[pos:pos+length]
-    print("lineref = %s" % lineref)
+    f = re.match("(\d+)l", string)
+    if not f == None:
+        line = int(string[f.start():f.end()-1])
+        string = string[f.end():]
 
-    pos = pos + len(lineref) + 1
+    f = re.match("(\d+)c", string)
+    if not f == None:
+        column = int(string[f.start():f.end()-1])
 
-    # Search for the 'c'
-    length = references[pos:].find('c')
-    colref = references[pos:pos+length]
-    print("colref = %s" % colref)
+    return Reference(file, line, column)
 
-    pos = pos + len(colref) + 1
+if __name__ == "__main__":
 
-    # Search for reftype? Or what is it?
-    length = references[pos:].find('r')
-    reftype = references[pos:pos+length+1]
-    print("reftype? = %s" % reftype)
+    identifier = "/single_int_on_line_1_col_4"
+    references_string = None
 
-    pos = pos + len(reftype)
+    for file in os.listdir("CXrefs"):
+        if file.startswith("X0"):
+            with open(os.path.join("CXrefs", file)) as origin_file:
+                for line in origin_file:
+                    match = re.findall(r''+identifier, line)
+                    if match:
+                        references_string = line.split()[-1]
+                        break
+                else:
+                    continue
+    if not references_string:
+        print("Error: identifier '%s' not found" % identifier)
+        sys.exit(1)
+    print("references_string = %s" %(references_string))
 
+    # Search for the fileref
+    pos = references_string.find('uA') # start of fileref
+    pos = pos+len('uA')
+
+    references = unpack_refs(references_string[pos:])
+    print(references)
 
     "4uA 20900f 1l 4c r 4l c r 32710f 1l 4c r 4l c r 48151f 1l 4c r 4l c r"

@@ -9,9 +9,9 @@ $(TEST):
 	@printf "Tests in '$@': "
 	@rm -rf output $@.log CXrefs
 	@$(COMMAND)
-	file=`grep single_int1.c CXrefs/XFiles | awk -F' ' '{print $1}'` ; \
-	./cxref-reader.py > out
-	cmp out expected
+	@file=`grep single_int1.c CXrefs/XFiles | awk -F' ' '{print $1}'` ; \
+	./cxref_reader.py > out ; \
+	cmp out expected ; \
 	if [ $$? -ne 0 ] ; then \
 		echo "Failed" ; \
 		diff expected out ; \

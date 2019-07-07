@@ -1,3 +1,5 @@
 CXrefs
 out
 *.log
+.c-xrefrc
+__pycache__

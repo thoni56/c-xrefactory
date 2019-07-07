@@ -1,22 +1,33 @@
+#! /usr/bin/env python3
+
 import unittest
 
-import cxref_reader
+from cxref_reader import unpack_refs, Reference
 
 class TestReferenceUnpacker(unittest.TestCase):
 
-    def test_file_line_col(self):
-        self.assertEqual('foo'.upper(), 'FOO')
+    def test_empty_line_gives_empty_references(self):
+        self.assertEqual(unpack_refs(""), None)
 
-    def test_isupper(self):
-        self.assertTrue('FOO'.isupper())
-        self.assertFalse('Foo'.isupper())
+    def test_explicit_file_line_col_returns_them(self):
+        ref = unpack_refs("1f2l3cr")
+        self.assertEqual(Reference(1, 2, 3), ref)
 
-    def test_split(self):
-        s = 'hello world'
-        self.assertEqual(s.split(), ['hello', 'world'])
-        # check that s.split fails when the separator is not a string
-        with self.assertRaises(TypeError):
-            s.split(2)
+    def test_another_explicit_file_returns_reference(self):
+        ref = unpack_refs("2f3l4cr")
+        self.assertEqual(Reference(2, 3, 4), ref)
+
+    def test_no_file_uses_argument(self):
+        ref = unpack_refs("2l3cr", file=1)
+        self.assertEqual(Reference(1, 2, 3), ref)
+
+    def test_no_line_uses_argument(self):
+        ref = unpack_refs("1f3cr", line=2)
+        self.assertEqual(Reference(1, 2, 3), ref)
+
+    def test_no_column_uses_argument(self):
+        ref = unpack_refs("1f2lr", column=3)
+        self.assertEqual(Reference(1, 2, 3), ref)
 
 if __name__ == '__main__':
     unittest.main()
