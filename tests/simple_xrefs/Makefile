@@ -3,13 +3,12 @@
 
 include ../Makefile.boilerplate
 
-COMMAND = ../../src/c-xref -xrefrc .c-xrefrc single_int*.c -o $@.log
+COMMAND = ../../src/c-xref -xrefrc .c-xrefrc single_int*.c -o $(TEST).log
 
 $(TEST):
 	@printf "Tests in '$@': "
 	@rm -rf output $@.log CXrefs
 	@$(COMMAND)
-	@file=`grep single_int1.c CXrefs/XFiles | awk -F' ' '{print $1}'` ; \
 	./cxref_reader.py > out ; \
 	cmp out expected ; \
 	if [ $$? -ne 0 ] ; then \
