@@ -2,7 +2,8 @@
 
 import unittest
 
-from cxref_reader import unpack_refs, Reference
+from cxref_reader import unpack_refs, Reference, unpack_files
+
 
 class TestReferenceUnpacker(unittest.TestCase):
 
@@ -38,6 +39,13 @@ class TestReferenceUnpacker(unittest.TestCase):
         ref = unpack_refs("1f2l3cr5l6cr")
         self.assertEqual([Reference(1, 2, 3),
                           Reference(1, 5, 6)], ref)
+
+
+class TestFileReferenceUnpacker(unittest.TestCase):
+
+    def test_unpack_files_returns_empty_list_for_empty_string(self):
+        files = unpack_files("")
+
 
 if __name__ == '__main__':
     unittest.main()
