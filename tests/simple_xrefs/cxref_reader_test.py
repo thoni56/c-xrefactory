@@ -34,6 +34,10 @@ class TestReferenceUnpacker(unittest.TestCase):
         self.assertEqual([Reference(1, 2, 3),
                           Reference(4, 5, 6)], ref)
 
+    def test_two_references_are_unpacked_to_a_list_of_two_even_if_second_is_incomplete(self):
+        ref = unpack_refs("1f2l3cr5l6cr")
+        self.assertEqual([Reference(1, 2, 3),
+                          Reference(1, 5, 6)], ref)
 
 if __name__ == '__main__':
     unittest.main()
