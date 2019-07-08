@@ -10,27 +10,32 @@ import sys
 from collections import namedtuple
 
 # Create the reference structure
-Reference = namedtuple('Reference', ['file', 'line', 'column'])
+Reference = namedtuple('Reference', ['fileno', 'lineno', 'colno'])
 
-def unpack_refs(string, file=None, line=None, column=None):
-    if string == None or string == "":
-        return None
+# Unpack a reference string into a list of References(fileno, lineno, colno)
+def unpack_refs(string, fileno=None, lineno=None, colno=None):
+    refs = []
+    while string != "":
+        f = re.match("(\d+)f", string)
+        if not f == None:
+            fileno = int(string[f.start():f.end()-1])
+            string = string[f.end():]
 
-    f = re.match("(\d+)f", string)
-    if not f == None:
-        file = int(string[f.start():f.end()-1])
-        string = string[f.end():]
+        f = re.match("(\d+)l", string)
+        if not f == None:
+            lineno = int(string[f.start():f.end()-1])
+            string = string[f.end():]
 
-    f = re.match("(\d+)l", string)
-    if not f == None:
-        line = int(string[f.start():f.end()-1])
-        string = string[f.end():]
+        f = re.match("(\d+)c", string)
+        if not f == None:
+            colno = int(string[f.start():f.end()-1])
+            string = string[f.end():]
 
-    f = re.match("(\d+)c", string)
-    if not f == None:
-        column = int(string[f.start():f.end()-1])
+        string = string[1:] # For now, skip 'r' - reference?
+        refs.append(Reference(fileno, lineno, colno))
 
-    return Reference(file, line, column)
+    return refs
+
 
 if __name__ == "__main__":
 
@@ -53,7 +58,7 @@ if __name__ == "__main__":
     print("references_string = %s" %(references_string))
 
     # Search for the fileref
-    pos = references_string.find('uA') # start of fileref
+    pos = references_string.find('uA') # Don't know what this is yet...
     pos = pos+len('uA')
 
     references = unpack_refs(references_string[pos:])
