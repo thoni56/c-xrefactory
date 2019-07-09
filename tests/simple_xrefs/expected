@@ -1,2 +1,7 @@
-references_string = 4uA20900f1l4cr4lcr48151f1l4cr4lcr
-[Reference(fileno=20900, lineno=1, colno=4), Reference(fileno=20900, lineno=4, colno=4), Reference(fileno=20900, lineno=4, colno=4), Reference(fileno=48151, lineno=1, colno=4), Reference(fileno=48151, lineno=4, colno=4), Reference(fileno=48151, lineno=4, colno=4)]
+references_string = 4uA3191f1l4cr4lcr9708f1l4cr4lcr
+single_int2.c:1:4
+single_int2.c:4:4
+single_int2.c:4:4
+single_int1.c:1:4
+single_int1.c:4:4
+single_int1.c:4:4

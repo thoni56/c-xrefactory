@@ -1,5 +1,4 @@
-# Automated tests for html generation
-# Initial version
+# Automated tests for checking generated c-xreferences
 
 include ../Makefile.boilerplate
 
@@ -9,8 +8,8 @@ $(TEST):
 	@printf "Tests in '$@': "
 	@rm -rf output $@.log CXrefs
 	@$(COMMAND)
-	./cxref_reader.py > out ; \
-	cmp out expected ; \
+	@./cxref_reader.py > out
+	@cmp out expected ; \
 	if [ $$? -ne 0 ] ; then \
 		echo "Failed" ; \
 		diff expected out ; \

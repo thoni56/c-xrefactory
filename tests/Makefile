@@ -12,6 +12,7 @@ all: quick slow
 
 quick:
 	@echo "Quick tests..."
+	@make -C simple_xrefs
 	@make -C pragma_once
 	@make -C process_yacc
 	@make -C basic_html_generation

@@ -10,15 +10,15 @@ import sys
 from collections import namedtuple
 
 # Create the reference structure
-Reference = namedtuple('Reference', ['fileno', 'lineno', 'colno'])
+Reference = namedtuple('Reference', ['fileid', 'lineno', 'colno'])
 
-# Unpack a reference string into a list of References(fileno, lineno, colno)
-def unpack_refs(string, fileno=None, lineno=None, colno=None):
+# Unpack a reference string into a list of References(fileid, lineno, colno)
+def unpack_refs(string, fileid=None, lineno=None, colno=None):
     refs = []
     while string != "":
         f = re.match(r"(\d+)f", string)
         if not f == None:
-            fileno = int(string[f.start():f.end()-1])
+            fileid = int(string[f.start():f.end()-1])
             string = string[f.end():]
 
         f = re.match(r"(\d+)l", string)
@@ -32,7 +32,7 @@ def unpack_refs(string, fileno=None, lineno=None, colno=None):
             string = string[f.end():]
 
         string = string[1:] # For now, skip 'r' - reference?
-        refs.append(Reference(fileno, lineno, colno))
+        refs.append(Reference(fileid, lineno, colno))
 
     return refs
 
@@ -47,11 +47,17 @@ def unpack_files(lines):
     for line in lines:
         segments = line.split(' ')
         if len(segments) > 0 and segments[0] != '':
-            filerefs.append(FileReference(segments[0][:-1],  # Remove trailing 'f'
-                                          segments[1],
-                                          segments[2],
-                                          segments[3].split(':', 1)[-1]))
+            if segments[0][-1] == 'f':
+                filerefs.append(FileReference(int(segments[0][:-1]),  # Remove trailing 'f'
+                                              segments[1],
+                                              segments[2],
+                                              segments[3].split(':', 1)[-1]))
     return filerefs
+
+# Return FileReference or None if no or multiple matches
+def get_filename_from_id(fileid, file_references):
+    filerefs = [ fileref for fileref in file_references if fileref.fileid == fileid]
+    return filerefs[0].filename if len(filerefs) == 1 else None
 
 if __name__ == "__main__":
 
@@ -82,6 +88,8 @@ if __name__ == "__main__":
         lines = [line.rstrip('\n') for line in file]
     files = unpack_files(lines)
     for r in references:
-        print()
+        filename = get_filename_from_id(r.fileid, files)
+        filename = os.path.basename(filename)
+        print("%s:%d:%d" % (filename, r.lineno, r.colno))
 
     "4uA 20900f 1l 4c r 4l c r 32710f 1l 4c r 4l c r 48151f 1l 4c r 4l c r"
