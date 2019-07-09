@@ -16,17 +16,17 @@ Reference = namedtuple('Reference', ['fileno', 'lineno', 'colno'])
 def unpack_refs(string, fileno=None, lineno=None, colno=None):
     refs = []
     while string != "":
-        f = re.match("(\d+)f", string)
+        f = re.match(r"(\d+)f", string)
         if not f == None:
             fileno = int(string[f.start():f.end()-1])
             string = string[f.end():]
 
-        f = re.match("(\d+)l", string)
+        f = re.match(r"(\d+)l", string)
         if not f == None:
             lineno = int(string[f.start():f.end()-1])
             string = string[f.end():]
 
-        f = re.match("(\d+)c", string)
+        f = re.match(r"(\d+)c", string)
         if not f == None:
             colno = int(string[f.start():f.end()-1])
             string = string[f.end():]
@@ -36,6 +36,22 @@ def unpack_refs(string, fileno=None, lineno=None, colno=None):
 
     return refs
 
+# Create a File structure
+FileReference = namedtuple('FileReference', ['fileid', 'update', 'access', 'filename'])
+
+# Takes array of lines
+def unpack_files(lines):
+    if lines == None or len(lines) == 0:
+        return []
+    filerefs = []
+    for line in lines:
+        segments = line.split(' ')
+        if len(segments) > 0 and segments[0] != '':
+            filerefs.append(FileReference(segments[0][:-1],  # Remove trailing 'f'
+                                          segments[1],
+                                          segments[2],
+                                          segments[3].split(':', 1)[-1]))
+    return filerefs
 
 if __name__ == "__main__":
 
@@ -62,6 +78,10 @@ if __name__ == "__main__":
     pos = pos+len('uA')
 
     references = unpack_refs(references_string[pos:])
-    print(references)
+    with open("CXrefs/Xfiles") as file:
+        lines = [line.rstrip('\n') for line in file]
+    files = unpack_files(lines)
+    for r in references:
+        print()
 
     "4uA 20900f 1l 4c r 4l c r 32710f 1l 4c r 4l c r 48151f 1l 4c r 4l c r"
