@@ -13,6 +13,8 @@ from collections import namedtuple
 Reference = namedtuple('Reference', ['fileid', 'lineno', 'colno'])
 
 # Unpack a reference string into a list of References(fileid, lineno, colno)
+
+
 def unpack_refs(string, fileid=None, lineno=None, colno=None):
     refs = []
     while string != "":
@@ -31,15 +33,19 @@ def unpack_refs(string, fileid=None, lineno=None, colno=None):
             colno = int(string[f.start():f.end()-1])
             string = string[f.end():]
 
-        string = string[1:] # For now, skip 'r' - reference?
+        string = string[1:]  # For now, skip 'r' - reference?
         refs.append(Reference(fileid, lineno, colno))
 
     return refs
 
+
 # Create a File structure
-FileReference = namedtuple('FileReference', ['fileid', 'update', 'access', 'filename'])
+FileReference = namedtuple(
+    'FileReference', ['fileid', 'update', 'access', 'filename'])
 
 # Takes array of lines
+
+
 def unpack_files(lines):
     if lines == None or len(lines) == 0:
         return []
@@ -55,9 +61,13 @@ def unpack_files(lines):
     return filerefs
 
 # Return FileReference or None if no or multiple matches
+
+
 def get_filename_from_id(fileid, file_references):
-    filerefs = [ fileref for fileref in file_references if fileref.fileid == fileid]
+    filerefs = [
+        fileref for fileref in file_references if fileref.fileid == fileid]
     return filerefs[0].filename if len(filerefs) == 1 else None
+
 
 if __name__ == "__main__":
 
@@ -77,14 +87,13 @@ if __name__ == "__main__":
     if not references_string:
         print("Error: identifier '%s' not found" % identifier)
         sys.exit(1)
-    print("references_string = %s" %(references_string))
 
     # Search for the fileref
-    pos = references_string.find('uA') # Don't know what this is yet...
+    pos = references_string.find('uA')  # Don't know what this is yet...
     pos = pos+len('uA')
 
     references = unpack_refs(references_string[pos:])
-    with open("CXrefs/Xfiles") as file:
+    with open("CXrefs/XFiles") as file:
         lines = [line.rstrip('\n') for line in file]
     files = unpack_files(lines)
     for r in references:
