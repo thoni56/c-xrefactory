@@ -58,6 +58,16 @@ class TestPositionUnpacker(unittest.TestCase):
         self.assertEqual(ref[1].lineno, 5)
         self.assertEqual(ref[1].colno, 6)
 
+    def test_should_save_position_string(self):
+        ref = unpack_positions("4uA1f2l3cr5l6cr")
+        self.assertEqual(ref[0].position_string, "1f2l3cr")
+        self.assertEqual(ref[1].position_string, "5l6cr")
+
+    def test_should_save_complete_string(self):
+        ref = unpack_positions("4uA1f2l3cr5l6cr")
+        self.assertEqual(ref[0].complete_string, "4uA1f2l3cr5l6cr")
+        self.assertEqual(ref[1].complete_string, "4uA1f2l3cr5l6cr")
+
 
 class TestFileReferenceUnpacker(unittest.TestCase):
 

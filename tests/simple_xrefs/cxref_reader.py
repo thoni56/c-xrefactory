@@ -10,16 +10,19 @@ import sys
 from collections import namedtuple
 
 # Create the Position structure
-SymbolPosition = namedtuple('SymbolPosition', ['fileid', 'lineno', 'colno'])
+SymbolPosition = namedtuple(
+    'SymbolPosition', ['fileid', 'lineno', 'colno', 'position_string', 'complete_string'])
 
 
 def unpack_positions(string, fileid=None, lineno=None, colno=None):
     # Unpack a reference string into a list of SymbolPositions
     refs = []
     # What is "4uA" starting many position strings?
+    complete_string = string
     if string.startswith("4uA"):
         string = string[len("4uA"):]
     while string != "":
+        position_string = string
         f = re.match(r"(\d+)f", string)
         if not f == None:
             fileid = int(string[f.start():f.end()-1])
@@ -36,7 +39,10 @@ def unpack_positions(string, fileid=None, lineno=None, colno=None):
             string = string[f.end():]
 
         string = string[1:]  # For now, skip 'r' - reference?
-        refs.append(SymbolPosition(fileid, lineno, colno))
+        refs.append(SymbolPosition(fileid, lineno, colno,
+                                   position_string[:len(
+                                       position_string)-len(string)],
+                                   complete_string))
 
     return refs
 
