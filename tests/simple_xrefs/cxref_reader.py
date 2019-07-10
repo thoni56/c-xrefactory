@@ -82,15 +82,39 @@ def unpack_symbols(lines):
 
 if __name__ == "__main__":
 
+    if len(sys.argv) > 2:
+        print(
+            "ERROR: %s only takes 1 argument, the directory to scan, it defaults to 'CXrefs'" % sys.argv[0])
+        sys.exit()
+
+    if len(sys.argv) == 2:
+        directory_name = sys.argv[1]
+    else:
+        directory_name = "CXrefs"
+
+    if not os.path.exists(directory_name):
+        print("ERROR: directory '%s' does not exist, point to a c-xref index directory" %
+              directory_name)
+        sys.exit()
+
+    if not os.path.isdir(directory_name):
+        print("ERROR: '%s' is not a directory, should be a c-xref index directory" %
+              directory_name)
+        sys.exit()
+
+    if not os.path.exists(os.path.join(directory_name, "XFiles")):
+        print("ERROR: '%s' does not contain an 'XFiles' file" % directory_name)
+        sys.exit()
+
     # Get all file references
-    with open("CXrefs/XFiles") as filename:
+    with open(os.path.join(directory_name, "XFiles")) as filename:
         lines = [line.rstrip('\n') for line in filename]
     files = unpack_files(lines)
 
     # Read all CXref-files and list identifiers
-    for filename in os.listdir("CXrefs"):
+    for filename in os.listdir(directory_name):
         if filename != "XFiles":
-            with open(os.path.join("CXrefs", filename)) as origin_file:
+            with open(os.path.join(directory_name, filename)) as origin_file:
                 symbols = unpack_symbols(origin_file.readlines())
                 for symbol in symbols:
                     print(symbol.symbolname)
