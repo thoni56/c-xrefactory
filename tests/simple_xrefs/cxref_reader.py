@@ -9,14 +9,16 @@ import re
 import sys
 from collections import namedtuple
 
-# Create the reference structure
-Reference = namedtuple('Reference', ['fileid', 'lineno', 'colno'])
-
-# Unpack a reference string into a list of References(fileid, lineno, colno)
+# Create the Position structure
+SymbolPosition = namedtuple('SymbolPosition', ['fileid', 'lineno', 'colno'])
 
 
-def unpack_refs(string, fileid=None, lineno=None, colno=None):
+def unpack_positions(string, fileid=None, lineno=None, colno=None):
+    # Unpack a reference string into a list of SymbolPositions
     refs = []
+    # What is "4uA" starting many position strings?
+    if string.startswith("4uA"):
+        string = string[len("4uA"):]
     while string != "":
         f = re.match(r"(\d+)f", string)
         if not f == None:
@@ -34,7 +36,7 @@ def unpack_refs(string, fileid=None, lineno=None, colno=None):
             string = string[f.end():]
 
         string = string[1:]  # For now, skip 'r' - reference?
-        refs.append(Reference(fileid, lineno, colno))
+        refs.append(SymbolPosition(fileid, lineno, colno))
 
     return refs
 
@@ -43,12 +45,8 @@ def unpack_refs(string, fileid=None, lineno=None, colno=None):
 FileReference = namedtuple(
     'FileReference', ['fileid', 'update', 'access', 'filename'])
 
-# Takes array of lines
-
 
 def unpack_files(lines):
-    if lines == None or len(lines) == 0:
-        return []
     filerefs = []
     for line in lines:
         segments = line.split(' ')
@@ -60,45 +58,46 @@ def unpack_files(lines):
                                               segments[3].split(':', 1)[-1]))
     return filerefs
 
-# Return FileReference or None if no or multiple matches
-
 
 def get_filename_from_id(fileid, file_references):
+    # Return FileReference or None if no or multiple matches
     filerefs = [
         fileref for fileref in file_references if fileref.fileid == fileid]
     return filerefs[0].filename if len(filerefs) == 1 else None
 
 
+# Create Symbol structure
+Symbol = namedtuple('Symbol', ['symbolname', 'positions'])
+
+
+def unpack_symbols(lines):
+    symbols = []
+    for line in lines:
+        if line != "" and line[0] == 't':
+            segments = line.split('\t')
+            symbolname = segments[1].split('/', 1)[-1]
+            symbols.append(Symbol(symbolname, segments[2]))
+    return symbols
+
+
 if __name__ == "__main__":
 
-    identifier = "/single_int_on_line_1_col_4"
-    references_string = None
-
-    for file in os.listdir("CXrefs"):
-        if file.startswith("X0"):
-            with open(os.path.join("CXrefs", file)) as origin_file:
-                for line in origin_file:
-                    match = re.findall(r''+identifier, line)
-                    if match:
-                        references_string = line.split()[-1]
-                        break
-                else:
-                    continue
-    if not references_string:
-        print("Error: identifier '%s' not found" % identifier)
-        sys.exit(1)
-
-    # Search for the fileref
-    pos = references_string.find('uA')  # Don't know what this is yet...
-    pos = pos+len('uA')
-
-    references = unpack_refs(references_string[pos:])
-    with open("CXrefs/XFiles") as file:
-        lines = [line.rstrip('\n') for line in file]
+    # Get all file references
+    with open("CXrefs/XFiles") as filename:
+        lines = [line.rstrip('\n') for line in filename]
     files = unpack_files(lines)
-    for r in references:
-        filename = get_filename_from_id(r.fileid, files)
-        filename = os.path.basename(filename)
-        print("%s:%d:%d" % (filename, r.lineno, r.colno))
+
+    # Read all CXref-files and list identifiers
+    for filename in os.listdir("CXrefs"):
+        if filename != "XFiles":
+            with open(os.path.join("CXrefs", filename)) as origin_file:
+                symbols = unpack_symbols(origin_file.readlines())
+                for symbol in symbols:
+                    print(symbol.symbolname)
+                    positions = unpack_positions(symbol.positions)
+                    for p in positions:
+                        filename = get_filename_from_id(p.fileid, files)
+                        filename = os.path.basename(filename)
+                        print("    %s:%d:%d" % (filename, p.lineno, p.colno))
 
     "4uA 20900f 1l 4c r 4l c r 32710f 1l 4c r 4l c r 48151f 1l 4c r 4l c r"
