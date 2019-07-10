@@ -12,33 +12,51 @@ class TestPositionUnpacker(unittest.TestCase):
 
     def test_explicit_file_line_col_returns_them(self):
         ref = unpack_positions("4uA1f2l3cr")
-        self.assertEqual([SymbolPosition(1, 2, 3)], ref)
+        self.assertEqual(ref[0].fileid, 1)
+        self.assertEqual(ref[0].lineno, 2)
+        self.assertEqual(ref[0].colno, 3)
 
     def test_another_explicit_file_returns_position(self):
         ref = unpack_positions("4uA2f3l4cr")
-        self.assertEqual([SymbolPosition(2, 3, 4)], ref)
+        self.assertEqual(ref[0].fileid, 2)
+        self.assertEqual(ref[0].lineno, 3)
+        self.assertEqual(ref[0].colno, 4)
 
     def test_no_file_uses_argument(self):
         ref = unpack_positions("4uA2l3cr", fileid=1)
-        self.assertEqual([SymbolPosition(1, 2, 3)], ref)
+        self.assertEqual(ref[0].fileid, 1)
+        self.assertEqual(ref[0].lineno, 2)
+        self.assertEqual(ref[0].colno, 3)
 
     def test_no_line_uses_argument(self):
         ref = unpack_positions("4uA1f3cr", lineno=2)
-        self.assertEqual([SymbolPosition(1, 2, 3)], ref)
+        self.assertEqual(ref[0].fileid, 1)
+        self.assertEqual(ref[0].lineno, 2)
+        self.assertEqual(ref[0].colno, 3)
 
     def test_no_column_uses_argument(self):
         ref = unpack_positions("4uA1f2lr", colno=3)
-        self.assertEqual([SymbolPosition(1, 2, 3)], ref)
+        self.assertEqual(ref[0].fileid, 1)
+        self.assertEqual(ref[0].lineno, 2)
+        self.assertEqual(ref[0].colno, 3)
 
     def test_two_positions_are_unpacked_to_a_list_of_two(self):
         ref = unpack_positions("4uA1f2l3cr4f5l6cr")
-        self.assertEqual([SymbolPosition(1, 2, 3),
-                          SymbolPosition(4, 5, 6)], ref)
+        self.assertEqual(ref[0].fileid, 1)
+        self.assertEqual(ref[0].lineno, 2)
+        self.assertEqual(ref[0].colno, 3)
+        self.assertEqual(ref[1].fileid, 4)
+        self.assertEqual(ref[1].lineno, 5)
+        self.assertEqual(ref[1].colno, 6)
 
     def test_two_positions_are_unpacked_to_a_list_of_two_even_if_second_is_incomplete(self):
         ref = unpack_positions("4uA1f2l3cr5l6cr")
-        self.assertEqual([SymbolPosition(1, 2, 3),
-                          SymbolPosition(1, 5, 6)], ref)
+        self.assertEqual(ref[0].fileid, 1)
+        self.assertEqual(ref[0].lineno, 2)
+        self.assertEqual(ref[0].colno, 3)
+        self.assertEqual(ref[1].fileid, 1)
+        self.assertEqual(ref[1].lineno, 5)
+        self.assertEqual(ref[1].colno, 6)
 
 
 class TestFileReferenceUnpacker(unittest.TestCase):
