@@ -19,10 +19,10 @@ quick:
 	@make -C standard_includes
 	@make -C initializer_parsing
 	@make -C generate_str_fill
-	@make -C c-xref
 
 slow:
 	@echo "Slow tests..."
+	@make -C c-xref
 	@make -C emacs_c_exercise
 	@make -C ffmpeg
 	@make -C systemd
