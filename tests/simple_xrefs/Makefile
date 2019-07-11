@@ -8,11 +8,11 @@ $(TEST):
 	@printf "Tests in '$@': "
 	@rm -rf output $@.log CXrefs
 	@$(COMMAND)
-	@./cxref_reader.py > out
-	@cmp out expected ; \
+	@../../utils/cxref_reader.py > output
+	@cmp output expected ; \
 	if [ $$? -ne 0 ] ; then \
 		echo "Failed" ; \
-		diff expected out ; \
+		diff expected output ; \
 		exit 1 ; \
 	else \
 		echo "Ok" ; \
