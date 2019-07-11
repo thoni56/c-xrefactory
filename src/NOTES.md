@@ -46,6 +46,15 @@ rebuild a proper _c-xref_. See Bootstrapping below.
 
 ## Design ##
 
+The _c-xref_ program is actually a mish-mash of a multitude of features baked into one program. This is a major cause of the mess that it is source-wise.
+
+It is
+
+- an HTML cross-reference generator (probably the root of the project)
+- a generator for persistent cross-reference data
+- a reference server for editors, serving cross-reference, navigational and completion data for over a protocol
+- a refactoring server (the worlds first to cross the Refactoring Rubicon)
+
 ### Editor-Server
 
 The c-xrefactory application is divided into the server, _c-xref_ and
