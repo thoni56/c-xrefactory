@@ -266,7 +266,7 @@ file name itself is 84 characters long.
 
 TODO: Build a tool to decipher this so that tests can query the
 generated data for expected data. This is now partly ongoing in the
-'simple_xrefs' test directory.
+'utils' directory.
 
 ## Parsers
 
