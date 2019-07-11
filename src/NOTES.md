@@ -235,16 +235,24 @@ are somethings that I think I have found out:
 
 - the encoding has one character markers which are listed at the top
   of cxfile.c
+
 - the coding seems to often start with a number and then a character,
   such as '4l' (4 ell) means line 4, 23c mean column 23
+
 - references seems to be optimized to not repeat information if it
   would be a repetition, such as '15l3cr7cr' means that there are two
   references on line 15, one in column 3 the other in column 7
+
 - so there is a notion of "current" for all values which need not be
   repeated
+
 - e.g. references all use 'fsulc' fields, i.e. file, symbol index,
   usage, line and column, but do not repeat a 'fsulc' as long as it is
   the same
+
+- some "fields" have a length indicator before, such as filenames
+  ('6:/abc.c') indicated by ':' and version information ('34v file
+  format: C-xrefactory 1.6.0 ') indicated by 'v'.
 
 So a line might say
 
@@ -257,7 +265,8 @@ the command line. (I don't know what the 'a' means...) Finally, the
 file name itself is 84 characters long.
 
 TODO: Build a tool to decipher this so that tests can query the
-generated data for expected data.
+generated data for expected data. This is now partly ongoing in the
+'simple_xrefs' test directory.
 
 ## Parsers
 

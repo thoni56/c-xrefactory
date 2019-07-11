@@ -3389,7 +3389,7 @@ int main(int argc, char **argv) {
 
     /* There is something interesting going on here, some mysterious
        CX_ALLOCC always makes one longjmp back to here before we can
-       start processing for real ... */
+       start processing for real ... Allocating initial memory? */
     setjmp(s_memoryResize);
     if (s_cxResizingBlocked) {
         fatalError(ERR_ST,"cx_memory resizing required, see the TROUBLES section of README file",

@@ -1,0 +1,6 @@
+CXrefs
+out
+*.log
+.c-xrefrc
+__pycache__
+.vscode
