@@ -77,7 +77,7 @@ def unpack_files(lines):
                 elif segments[0][-1] == 'v':
                     # Version string
                     pass
-                elif segments[0][-1] == '@':
+                elif segments[0][0:3] == '21@':
                     # "Single Records" - whatever that is
                     pass
                 else:
@@ -93,20 +93,36 @@ def get_filename_from_id(fileid, file_references):
 
 
 # Create Symbol structure
-Symbol = namedtuple('Symbol', ['symbolname', 'positions'])
+Symbol = namedtuple('Symbol', ['symbolname', 'positions', 'kind'])
 
 
 def unpack_symbols(lines):
     symbols = []
+    marker = ""
     for line in lines:
-        if len(line) > 0:
-            if line != "":
-                if line[0] == 't':
-                    segments = line.split('\t')
-                    symbolname = segments[1].split('/', 1)[-1]
-                    symbols.append(Symbol(symbolname, segments[2]))
-                else:
-                    print("Unknown line in Xrefs file: '%s'" % line)
+        if line != "":
+            if line[0] != '\t':
+                # If there is a marker, dechiffer it, else use the previously found one
+                marker = re.match(r"(\d*)\D", line).group()
+            if marker[-1] == 'v':
+                # Version string
+                pass
+            elif marker[-1] == '@':
+                # "Single Records" - whatever that is
+                pass
+            elif marker[-1] == 't':
+                # Symbol type
+                segments = line.split('\t')
+                symbolname = segments[1].split('/', 1)[-1]
+                symbols.append(Symbol(symbolname, segments[2], marker))
+            elif marker[-1] == 'g':
+                # Storage
+                segments = line.split('\t')
+                symbolname = segments[1].split('/', 1)[-1]
+                symbols.append(Symbol(symbolname, segments[2], marker))
+            else:
+                print("Unknown marker '%s' in Xrefs file: '%s'" %
+                      (marker[-1], line))
     return symbols
 
 
@@ -156,11 +172,21 @@ if __name__ == "__main__":
             with open(os.path.join(directory_name, filename)) as origin_file:
                 lines = read_lines_from(
                     directory_name, filename)
+                # Somewhere to save previously found fileid, lineno and colno
+                fileid = None
+                lineno = None
+                colno = None
                 symbols = unpack_symbols(lines)
                 for symbol in symbols:
                     print(symbol.symbolname)
-                    positions = unpack_positions(symbol.positions)
+                    # Use previously found fileid, lineno and colno
+                    positions = unpack_positions(
+                        symbol.positions, fileid=fileid, lineno=lineno, colno=colno)
                     for p in positions:
+                        # Save fileid, lineno and colno in case any of them are skipped in next symbol in this file
+                        fileid = p.fileid
+                        lineno = p.lineno
+                        colno = p.colno
                         filename = get_filename_from_id(p.fileid, files)
                         filename = os.path.basename(filename)
                         print("    %s:%d:%d" % (filename, p.lineno, p.colno))
