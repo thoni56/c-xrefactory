@@ -118,18 +118,7 @@ def readlines_without_newlines_from(directory_name, file_name):
     return lines
 
 
-if __name__ == "__main__":
-
-    if len(sys.argv) > 2:
-        print(
-            "ERROR: %s only takes 1 argument, the directory to scan, it defaults to 'CXrefs'" % sys.argv[0])
-        sys.exit()
-
-    if len(sys.argv) == 2:
-        directory_name = sys.argv[1]
-    else:
-        directory_name = "CXrefs"
-
+def verify_directory(directory_name):
     if not os.path.exists(directory_name):
         print("ERROR: directory '%s' does not exist, point to a c-xref index directory" %
               directory_name)
@@ -143,6 +132,21 @@ if __name__ == "__main__":
     if not os.path.exists(os.path.join(directory_name, "XFiles")):
         print("ERROR: '%s' does not contain an 'XFiles' file" % directory_name)
         sys.exit()
+
+
+if __name__ == "__main__":
+
+    if len(sys.argv) > 2:
+        print(
+            "ERROR: %s only takes 1 argument, the directory to scan, it defaults to 'CXrefs'" % sys.argv[0])
+        sys.exit()
+
+    if len(sys.argv) == 2:
+        directory_name = sys.argv[1]
+    else:
+        directory_name = "CXrefs"
+
+    verify_directory(directory_name)
 
     # Get all file references
     lines = readlines_without_newlines_from(directory_name, "XFiles")
