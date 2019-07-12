@@ -2,8 +2,6 @@
 #
 # Read information from cxref-files
 
-# For now only verify the data for c-xrefactory test case 'simple_xrefs'
-
 import os
 import re
 import sys
@@ -112,7 +110,7 @@ def unpack_symbols(lines):
     return symbols
 
 
-def readlines_without_newlines_from(directory_name, file_name):
+def read_lines_from(directory_name, file_name):
     with open(os.path.join(directory_name, file_name)) as filename:
         lines = [line.rstrip('\n') for line in filename]
     return lines
@@ -149,14 +147,14 @@ if __name__ == "__main__":
     verify_directory(directory_name)
 
     # Get all file references
-    lines = readlines_without_newlines_from(directory_name, "XFiles")
+    lines = read_lines_from(directory_name, "XFiles")
     files = unpack_files(lines)
 
     # Read all CXref-files and list identifiers
     for filename in os.listdir(directory_name):
         if filename != "XFiles":
             with open(os.path.join(directory_name, filename)) as origin_file:
-                lines = readlines_without_newlines_from(
+                lines = read_lines_from(
                     directory_name, filename)
                 symbols = unpack_symbols(lines)
                 for symbol in symbols:
