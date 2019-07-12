@@ -17,12 +17,20 @@ SymbolPosition = namedtuple(
 def unpack_positions(string, fileid=None, lineno=None, colno=None):
     # Unpack a reference string into a list of SymbolPositions
     refs = []
-    # What is "4uA" starting many position strings?
     complete_string = string
-    if string.startswith("4uA"):
-        string = string[len("4uA"):]
+
     while string != "":
         position_string = string
+        f = re.match(r"(\d+)u", string)
+        if not f == None:
+            usage = int(string[f.start():f.end()-1])
+            string = string[f.end():]
+
+        if string[0] == 'A':
+            # Don't now what this is yet ("java reference required accessibilite index")
+            accessibility_index = True
+            string = string[1:]
+
         f = re.match(r"(\d+)f", string)
         if not f == None:
             fileid = int(string[f.start():f.end()-1])
@@ -39,6 +47,10 @@ def unpack_positions(string, fileid=None, lineno=None, colno=None):
             string = string[f.end():]
 
         string = string[1:]  # For now, skip 'r' - reference?
+
+        if not fileid or not lineno or not colno:
+            print("ERROR: incomplete position, string is: '%s'" %
+                  position_string)
         refs.append(SymbolPosition(fileid, lineno, colno,
                                    position_string[:len(
                                        position_string)-len(string)],
@@ -55,13 +67,23 @@ FileReference = namedtuple(
 def unpack_files(lines):
     filerefs = []
     for line in lines:
-        segments = line.split(' ')
-        if len(segments) > 0 and segments[0] != '':
-            if segments[0][-1] == 'f':
-                filerefs.append(FileReference(int(segments[0][:-1]),  # Remove trailing 'f'
-                                              segments[1],
-                                              segments[2],
-                                              segments[3].split(':', 1)[-1]))
+        if len(line) > 0:
+            segments = line.split(' ')
+            if len(segments) > 0 and segments[0] != '':
+                if segments[0][-1] == 'f':
+                    # Remove trailing 'f' and turn fileid into an int
+                    filerefs.append(FileReference(int(segments[0][:-1]),
+                                                  segments[1],
+                                                  segments[2],
+                                                  segments[3].split(':', 1)[-1]))
+                elif segments[0][-1] == 'v':
+                    # Version string
+                    pass
+                elif segments[0][-1] == '@':
+                    # "Single Records" - whatever that is
+                    pass
+                else:
+                    print("Unknown line in XFiles: '%s'" % line)
     return filerefs
 
 
@@ -79,11 +101,21 @@ Symbol = namedtuple('Symbol', ['symbolname', 'positions'])
 def unpack_symbols(lines):
     symbols = []
     for line in lines:
-        if line != "" and line[0] == 't':
-            segments = line.split('\t')
-            symbolname = segments[1].split('/', 1)[-1]
-            symbols.append(Symbol(symbolname, segments[2]))
+        if len(line) > 0:
+            if line != "":
+                if line[0] == 't':
+                    segments = line.split('\t')
+                    symbolname = segments[1].split('/', 1)[-1]
+                    symbols.append(Symbol(symbolname, segments[2]))
+                else:
+                    print("Unknown line in Xrefs file: '%s'" % line)
     return symbols
+
+
+def readlines_without_newlines_from(directory_name, file_name):
+    with open(os.path.join(directory_name, file_name)) as filename:
+        lines = [line.rstrip('\n') for line in filename]
+    return lines
 
 
 if __name__ == "__main__":
@@ -113,15 +145,16 @@ if __name__ == "__main__":
         sys.exit()
 
     # Get all file references
-    with open(os.path.join(directory_name, "XFiles")) as filename:
-        lines = [line.rstrip('\n') for line in filename]
+    lines = readlines_without_newlines_from(directory_name, "XFiles")
     files = unpack_files(lines)
 
     # Read all CXref-files and list identifiers
     for filename in os.listdir(directory_name):
         if filename != "XFiles":
             with open(os.path.join(directory_name, filename)) as origin_file:
-                symbols = unpack_symbols(origin_file.readlines())
+                lines = readlines_without_newlines_from(
+                    directory_name, filename)
+                symbols = unpack_symbols(lines)
                 for symbol in symbols:
                     print(symbol.symbolname)
                     positions = unpack_positions(symbol.positions)
