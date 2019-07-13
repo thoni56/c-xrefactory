@@ -16,7 +16,7 @@ $(TEST):
 		echo "Expected:" ; \
 		hexdump -C expected ; \
 		echo "But got:" ; \
-		hexdump -C out ; \
+		hexdump -C output ; \
 		exit 1 ; \
 	else \
 		echo "Ok" ; \
