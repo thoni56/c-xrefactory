@@ -13,6 +13,10 @@ $(TEST):
 	if [ $$? -ne 0 ] ; then \
 		echo "Failed" ; \
 		diff expected output ; \
+		echo "Expected:" ; \
+		hexdump -C expected ; \
+		echo "But got:" ; \
+		hexdump -C out ; \
 		exit 1 ; \
 	else \
 		echo "Ok" ; \
