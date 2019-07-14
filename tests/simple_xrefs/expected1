@@ -1,0 +1,7 @@
+single_int_on_line_1_col_4
+    single_int2.c:1:4
+    single_int2.c:4:4
+    single_int2.c:4:4
+    single_int1.c:1:4
+    single_int1.c:4:4
+    single_int1.c:4:4
