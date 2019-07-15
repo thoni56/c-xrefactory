@@ -1,4 +1,4 @@
 [ffmpeg]
     PWD/ffmpeg
-    -refs     PWD/CXrefs/ffmpeg
+    -refs     PWD/CXrefs
     -refnum=100
