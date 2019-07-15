@@ -4,7 +4,7 @@ PPWD=`pwd`
 #
 # This is a script that aims at running a virgin Emacs with minimal c-xrefactory setup
 # with the development versions of everything (which means that there should be a freshly
-# compiler src/c-xref available. This is to ensure no interference with your own setup.
+# compiled src/c-xref available. This is to ensure no interference with your own setup.
 
 PPWD=`pwd`
 
