@@ -89,7 +89,7 @@ struct lastCxFileInfos {
     int                 additional[MAX_CHARS];
 
     // dead code detection vars
-    int                 symbolToCheckedForDeadness;
+    int                 symbolToCheckForDeadness;
     char                deadSymbolIsDefined;
 
     // following item can be used only via symbolTab,
@@ -331,27 +331,7 @@ static void get_version_string(char *ttt) {                             \
 }
 
 
-/* Those two are macros for efficiency of small updates */
-
-#if ZERO
-#define GenDecimal(info) {                          \
-        static char _ttt_[TMP_STRING_SIZE]= {0,};   \
-        char *_d_;                                  \
-        int _n_;                                    \
-        _n_ = info;                                 \
-        assert(_n_>0);                              \
-        _d_ = _ttt_+TMP_STRING_SIZE-1;              \
-        while (_n_>=10) {                           \
-            *(--_d_) = _n_%10 + '0';                \
-            _n_ = _n_/10;                           \
-        }                                           \
-        *(--_d_) = _n_ + '0';                       \
-        assert(_d_>=_ttt_);                         \
-        fputs(_d_, cxOut);                          \
-    }
-#endif
-
-#define GenCompactRecord(recNum, info, blankPrefix) {                   \
+#define writeCompactRecord(recNum, info, blankPrefix) {                   \
         assert(recNum >= 0 && recNum < MAX_CHARS); \
         assert(info >= 0);                                              \
         if (*blankPrefix!=0) fputs(blankPrefix, cxOut);                 \
@@ -360,7 +340,7 @@ static void get_version_string(char *ttt) {                             \
         s_outLastInfos.counter[recNum] = info;                          \
     }
 
-#define GenOptCompactRecord(recNum, info, blankPrefix) {    \
+#define writeOptionalCompactRecord(recNum, info, blankPrefix) {    \
         assert(recNum >= 0 && recNum < MAX_CHARS);          \
         if (*blankPrefix!=0) fputs(blankPrefix, cxOut);     \
         if (s_outLastInfos.counter[recNum] != info) {       \
@@ -370,7 +350,7 @@ static void get_version_string(char *ttt) {                             \
         }                                                   \
     }
 
-static void genStringRecord(int recNum, char *s, char *blankPrefix) {
+static void writeStringRecord(int recNum, char *s, char *blankPrefix) {
     int rsize;
     rsize = strlen(s)+1;
     if (*blankPrefix!=0) fputs(blankPrefix, cxOut);
@@ -380,33 +360,33 @@ static void genStringRecord(int recNum, char *s, char *blankPrefix) {
 }
 
 
-static void genSymbolItem(int symIndex) {
+static void writeSymbolItem(int symIndex) {
     char ttt[TMP_STRING_SIZE];
     S_symbolRefItem *d;
-    GenOptCompactRecord(CXFI_SYM_INDEX, symIndex, "");
+    writeOptionalCompactRecord(CXFI_SYM_INDEX, symIndex, "");
     d = s_outLastInfos.symbolTab[symIndex];
-    GenOptCompactRecord(CXFI_SYM_TYPE, d->b.symType, "\n");
-    GenOptCompactRecord(CXFI_INFER_CLASS, d->vApplClass, "");
-    GenOptCompactRecord(CXFI_SUPER_CLASS, d->vFunClass, "");
-    GenOptCompactRecord(CXFI_ACCESS_BITS, d->b.accessFlags, "");
-    GenOptCompactRecord(CXFI_STORAGE, d->b.storage, "");
+    writeOptionalCompactRecord(CXFI_SYM_TYPE, d->b.symType, "\n");
+    writeOptionalCompactRecord(CXFI_INFER_CLASS, d->vApplClass, "");
+    writeOptionalCompactRecord(CXFI_SUPER_CLASS, d->vFunClass, "");
+    writeOptionalCompactRecord(CXFI_ACCESS_BITS, d->b.accessFlags, "");
+    writeOptionalCompactRecord(CXFI_STORAGE, d->b.storage, "");
     s_outLastInfos.macroBaseFileGeneratedForSym[symIndex] = 0;
     s_outLastInfos.symbolIsWritten[symIndex] = 1;
     if (s_opt.long_cxref) {
         sprintf(ttt,"\t%s",typesName[d->b.symType]);
-        genStringRecord(CXFI_REMARK,ttt,"");
+        writeStringRecord(CXFI_REMARK,ttt,"");
     }
-    genStringRecord(CXFI_SYM_NAME, d->name, "\t");
+    writeStringRecord(CXFI_SYM_NAME, d->name, "\t");
     if (s_opt.long_cxref) {
         if (d->vApplClass != s_noneFileIndex) {
             sprintf(ttt,"\ton %s",s_fileTab.tab[d->vApplClass]->name);
-            genStringRecord(CXFI_REMARK,ttt,"\n");
+            writeStringRecord(CXFI_REMARK,ttt,"\n");
         }
     }
     if (s_opt.long_cxref) {
         if (d->vApplClass != s_noneFileIndex) {
             sprintf(ttt,"\tfun %s",s_fileTab.tab[d->vFunClass]->name);
-            genStringRecord(CXFI_REMARK,ttt,"\n");
+            writeStringRecord(CXFI_REMARK,ttt,"\n");
         }
     }
     //& fprintf(cxOut,"\n\n");
@@ -414,77 +394,78 @@ static void genSymbolItem(int symIndex) {
     fputc('\t', cxOut);
 }
 
-#define GenOptSymbolItem(symIndex) {                        \
+#define writeOptionalSymbolItem(symIndex) {                        \
         if (! s_outLastInfos.symbolIsWritten[symIndex]) {   \
-            genSymbolItem(symIndex);                        \
+            writeSymbolItem(symIndex);                        \
         }                                                   \
     }
 
-#define GenCxReferenceBase(symbolNum, usage, requiredAccess, file, line, coll) { \
+#define writeCxReferenceBase(symbolNum, usage, requiredAccess, file, line, coll) { \
         char ttt[TMP_STRING_SIZE];                                      \
-        GenOptSymbolItem(symbolNum);                                    \
+        writeOptionalSymbolItem(symbolNum);                                    \
         if (usage == UsageMacroBaseFileUsage) {                         \
             /* optimize the number of those references to 1*/           \
             assert(symbolNum>=0 && symbolNum<MAX_CX_SYMBOL_TAB);        \
             if (s_outLastInfos.macroBaseFileGeneratedForSym[symbolNum]) return; \
             s_outLastInfos.macroBaseFileGeneratedForSym[symbolNum] = 1; \
         }                                                               \
-        GenOptCompactRecord(CXFI_USAGE, usage, "");                     \
-        GenOptCompactRecord(CXFI_REQ_ACCESS, requiredAccess, "");       \
-        GenOptCompactRecord(CXFI_SYM_INDEX, symbolNum, "");             \
-        GenOptCompactRecord(CXFI_FILE_INDEX, file, "");                 \
-        GenOptCompactRecord(CXFI_LINE_INDEX, line, "");                 \
-        GenOptCompactRecord(CXFI_COLL_INDEX, coll, "");                 \
-        GenCompactRecord(CXFI_REFERENCE, 0, "");                        \
+        writeOptionalCompactRecord(CXFI_USAGE, usage, "");                     \
+        writeOptionalCompactRecord(CXFI_REQ_ACCESS, requiredAccess, "");       \
+        writeOptionalCompactRecord(CXFI_SYM_INDEX, symbolNum, "");             \
+        writeOptionalCompactRecord(CXFI_FILE_INDEX, file, "");                 \
+        writeOptionalCompactRecord(CXFI_LINE_INDEX, line, "");                 \
+        writeOptionalCompactRecord(CXFI_COLL_INDEX, coll, "");                 \
+        writeCompactRecord(CXFI_REFERENCE, 0, "");                        \
         if (s_opt.long_cxref) {                                         \
             sprintf(ttt,"\t%-7s in %30s:%u:%d\n",usagesName[usage]+5,   \
                     s_fileTab.tab[file]->name,line,coll);               \
-            genStringRecord(CXFI_REMARK,ttt,"");                        \
+            writeStringRecord(CXFI_REMARK,ttt,"");                        \
         }                                                               \
     }
 
-static void genCxReference(S_reference *rr, int symbolNum) {
-    GenCxReferenceBase(symbolNum, rr->usg.base, rr->usg.requiredAccess, rr->p.file, rr->p.line, rr->p.coll);
+static void writeCxReference(S_reference *reference, int symbolNum) {
+    writeCxReferenceBase(symbolNum, reference->usg.base, reference->usg.requiredAccess,
+                         reference->p.file, reference->p.line, reference->p.coll);
 }
 
-static void genSubClassInfo(int sup, int inf, int origin) {
+static void writeSubClassInfo(int sup, int inf, int origin) {
     char ttt[TMP_STRING_SIZE];
-    GenOptCompactRecord(CXFI_FILE_INDEX, origin, "\n");
-    GenOptCompactRecord(CXFI_SUPER_CLASS, sup, "");
-    GenOptCompactRecord(CXFI_INFER_CLASS, inf, "");
-    GenCompactRecord(CXFI_CLASS_EXT, 0, "");
+    writeOptionalCompactRecord(CXFI_FILE_INDEX, origin, "\n");
+    writeOptionalCompactRecord(CXFI_SUPER_CLASS, sup, "");
+    writeOptionalCompactRecord(CXFI_INFER_CLASS, inf, "");
+    writeCompactRecord(CXFI_CLASS_EXT, 0, "");
     if (s_opt.long_cxref) {
         sprintf(ttt,"\t\t%s",s_fileTab.tab[inf]->name);
-        genStringRecord(CXFI_REMARK,ttt,"\n");
+        writeStringRecord(CXFI_REMARK,ttt,"\n");
         sprintf(ttt,"  extends\t%s",s_fileTab.tab[sup]->name);
-        genStringRecord(CXFI_REMARK,ttt,"\n");
+        writeStringRecord(CXFI_REMARK,ttt,"\n");
     }
 }
 
-static void genFileIndexItem(struct fileItem *fi, int ii) {
-    GenOptCompactRecord(CXFI_FILE_INDEX, ii, "\n");
-    GenOptCompactRecord(CXFI_FILE_UMTIME, fi->lastUpdateMtime, " ");
-    GenOptCompactRecord(CXFI_FILE_FUMTIME, fi->lastFullUpdateMtime, " ");
-    GenOptCompactRecord(CXFI_INPUT_FROM_CL, fi->b.commandLineEntered, "");
+static void writeFileIndexItem(struct fileItem *fi, int ii) {
+    writeOptionalCompactRecord(CXFI_FILE_INDEX, ii, "\n");
+    writeOptionalCompactRecord(CXFI_FILE_UMTIME, fi->lastUpdateMtime, " ");
+    writeOptionalCompactRecord(CXFI_FILE_FUMTIME, fi->lastFullUpdateMtime, " ");
+    writeOptionalCompactRecord(CXFI_INPUT_FROM_CL, fi->b.commandLineEntered, "");
     if (fi->b.isInterface) {
-        GenOptCompactRecord(CXFI_ACCESS_BITS, ACC_INTERFACE, "");
+        writeOptionalCompactRecord(CXFI_ACCESS_BITS, ACC_INTERFACE, "");
     } else {
-        GenOptCompactRecord(CXFI_ACCESS_BITS, ACC_DEFAULT, "");
+        writeOptionalCompactRecord(CXFI_ACCESS_BITS, ACC_DEFAULT, "");
     }
-    genStringRecord(CXFI_FILE_NAME, fi->name, " ");
+    writeStringRecord(CXFI_FILE_NAME, fi->name, " ");
 }
 
-static void genFileSourceIndexItem(struct fileItem *fi, int ii) {
-    if (fi->b.sourceFile != s_noneFileIndex) {
-        GenOptCompactRecord(CXFI_FILE_INDEX, ii, "\n");
-        GenCompactRecord(CXFI_SOURCE_INDEX, fi->b.sourceFile, " ");
+static void writeFileSourceIndexItem(struct fileItem *fileItem, int ii) {
+    if (fileItem->b.sourceFile != s_noneFileIndex) {
+        writeOptionalCompactRecord(CXFI_FILE_INDEX, ii, "\n");
+        writeCompactRecord(CXFI_SOURCE_INDEX, fileItem->b.sourceFile, " ");
     }
 }
 
 static void genClassHierarchyItems(struct fileItem *fi, int ii) {
     S_chReference *p;
     for(p=fi->sups; p!=NULL; p=p->next) {
-        genSubClassInfo(p->clas, ii, p->ofile);
+        writeSubClassInfo(p->clas, ii, p->ofile);
     }
 }
 
@@ -502,7 +483,7 @@ static void crSubClassInfo(int sup, int inf, int origin, int genfl) {
         ii->sups = p;
         assert(s_opt.taskRegime);
         if (s_opt.taskRegime == RegimeXref) {
-            if (genfl == CX_FILE_ITEM_GEN) genSubClassInfo(sup, inf, origin);
+            if (genfl == CX_FILE_ITEM_GEN) writeSubClassInfo(sup, inf, origin);
         }
         CX_ALLOC(pp, S_chReference);
         FILL_chReference(pp, origin, inf, jj->infs);
@@ -559,7 +540,7 @@ static void genRefItem0(S_symbolRefItem *d, int forceGen) {
         //&fprintf(ccOut,"checking ref %d --< %s:%d\n", s_fileTab.tab[rr->p.file]->b.cxLoading, s_fileTab.tab[rr->p.file]->name, rr->p.line);
         if (s_opt.update==UP_NO_UPDATE || s_fileTab.tab[rr->p.file]->b.cxLoading) {
             /* ?? s_opt.update==UP_NO_UPDATE, why it is there */
-            genCxReference(rr, symIndex);
+            writeCxReference(rr, symIndex);
         }
     }
     //&fflush(cxOut);
@@ -567,14 +548,6 @@ static void genRefItem0(S_symbolRefItem *d, int forceGen) {
 
 static void genRefItem(S_symbolRefItem *dd) {
     genRefItem0(dd,0);
-#if ZERO // original
-    S_symbolRefItem *d;
-    /* why this is made like this ???, meaning it recollects all */
-    /* from the list, however it makes complexity O(n^2)         */
-    for(d=dd; d!=NULL; d=d->next) {
-        if (REF_ELEM_EQUAL(d,dd)) genRefItem0(d,0);
-    }
-#endif
 }
 
 #define COMPOSE_CXFI_CHECK_NUM(filen,hashMethod,exactPositionLinkFlag) ( \
@@ -599,16 +572,16 @@ static void genCxFileHead(void) {
         s_outLastInfos.counter[i] = -1;
     }
     get_version_string(ttt);
-    genStringRecord(CXFI_VERSION, ttt, "\n\n");
+    writeStringRecord(CXFI_VERSION, ttt, "\n\n");
     fprintf(cxOut,"\n\n\n");
     for(i=0; i<MAX_CHARS && s_cxGeneratedSingleRecords[i] != -1; i++) {
         sr[i] = s_cxGeneratedSingleRecords[i];
     }
     assert(i < MAX_CHARS);
     sr[i]=0;
-    genStringRecord(CXFI_SINGLE_RECORDS, sr, "");
-    GenCompactRecord(CXFI_REFNUM, s_opt.refnum, " ");
-    GenCompactRecord(CXFI_CHECK_NUMBER, COMPOSE_CXFI_CHECK_NUM(
+    writeStringRecord(CXFI_SINGLE_RECORDS, sr, "");
+    writeCompactRecord(CXFI_REFNUM, s_opt.refnum, " ");
+    writeCompactRecord(CXFI_CHECK_NUMBER, COMPOSE_CXFI_CHECK_NUM(
                                                                MAX_FILES,
                                                                s_opt.xfileHashingMethod,
                                                                s_opt.exactPositionResolve
@@ -717,8 +690,8 @@ void genReferenceFile(int updateFlag, char *fname) {
         openInOutReferenceFiles(updateFlag, fname);
         /*&     fileTabMap(&s_fileTab, javaInitSubClassInfo);&*/
         genCxFileHead();
-        fileTabMap3(&s_fileTab, genFileIndexItem);
-        fileTabMap3(&s_fileTab, genFileSourceIndexItem);
+        fileTabMap3(&s_fileTab, writeFileIndexItem);
+        fileTabMap3(&s_fileTab, writeFileSourceIndexItem);
         fileTabMap3(&s_fileTab, genClassHierarchyItems);
         scanCxFile(s_cxFullScanFunTab);
         refTabMap(&s_cxrefTab, genRefItem);
@@ -728,7 +701,7 @@ void genReferenceFile(int updateFlag, char *fname) {
         dirname = fname;
         createDirIfNotExists(dirname);
         genPartialFileTabRefFile(updateFlag,dirname,PRF_FILES,
-                                 genFileIndexItem, genFileSourceIndexItem);
+                                 writeFileIndexItem, writeFileSourceIndexItem);
         genPartialFileTabRefFile(updateFlag,dirname,PRF_CLASS,
                                  genClassHierarchyItems, NULL);
         for (i=0; i<s_opt.refnum; i++) {
@@ -945,7 +918,7 @@ static void cxrfFileName(       int size,
         assert(s_opt.taskRegime);
         if (s_opt.taskRegime == RegimeXref) {
             if (genFl == CX_GENERATE_OUTPUT) {
-                genFileIndexItem(ffi, dii);
+                writeFileIndexItem(ffi, dii);
             }
         }
     } else {
@@ -1037,13 +1010,13 @@ static void getSymTypeAndClasses(int *_symType, int *_vApplClass,
 
 
 
-static void cxrfSymbolNameForFullUpdateSchedule(    int size,
-                                                    int ri,
-                                                    char **ccc,
-                                                    char **ffin,
-                                                    S_charBuf *bbb,
-                                                    int additionalArg
-                                                    ) {
+static void cxrfSymbolNameForFullUpdateSchedule(int size,
+                                                int ri,
+                                                char **ccc,
+                                                char **ffin,
+                                                S_charBuf *bbb,
+                                                int additionalArg
+                                                ) {
     S_symbolRefItem *ddd, *memb;
     int ii, si, symType, len, rr, vApplClass, vFunClass, accessFlags;
     int storage;
@@ -1089,10 +1062,10 @@ static void cxrfSymbolNameForFullUpdateSchedule(    int size,
 }
 
 static void cxfileCheckLastSymbolDeadness(void) {
-    if (s_inLastInfos.symbolToCheckedForDeadness != -1
+    if (s_inLastInfos.symbolToCheckForDeadness != -1
         && s_inLastInfos.deadSymbolIsDefined) {
-        //&sprintf(tmpBuff,"adding %s storage==%s", s_inLastInfos.symbolTab[s_inLastInfos.symbolToCheckedForDeadness]->name, storagesName[s_inLastInfos.symbolTab[s_inLastInfos.symbolToCheckedForDeadness]->b.storage]);ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
-        olAddBrowsedSymbol(s_inLastInfos.symbolTab[s_inLastInfos.symbolToCheckedForDeadness],
+        //&sprintf(tmpBuff,"adding %s storage==%s", s_inLastInfos.symbolTab[s_inLastInfos.symbolToCheckForDeadness]->name, storagesName[s_inLastInfos.symbolTab[s_inLastInfos.symbolToCheckForDeadness]->b.storage]);ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
+        olAddBrowsedSymbol(s_inLastInfos.symbolTab[s_inLastInfos.symbolToCheckForDeadness],
                            &s_olcxCurrentUser->browserStack.top->hkSelectedSym,
                            1,1,0,UsageDefined,0, &s_noPos, UsageDefined);
     }
@@ -1173,10 +1146,10 @@ static void cxrfSymbolName(     int size,
     if (s_opt.taskRegime == RegimeEditServer) {
         if (additionalArg == DEAD_CODE_DETECTION) {
             if (symbolIsReportableAsDead(s_inLastInfos.symbolTab[si])) {
-                s_inLastInfos.symbolToCheckedForDeadness = si;
+                s_inLastInfos.symbolToCheckForDeadness = si;
                 s_inLastInfos.deadSymbolIsDefined = 0;
             } else {
-                s_inLastInfos.symbolToCheckedForDeadness = -1;
+                s_inLastInfos.symbolToCheckForDeadness = -1;
             }
         } else if (s_opt.cxrefs!=OLO_TAG_SEARCH) {
             cms = NULL; ols = 0;
@@ -1210,13 +1183,13 @@ static void cxrfSymbolName(     int size,
     *ccc = cc; *ffin = fin;
 }
 
-static void cxrfReferenceForFullUpdateSchedule(     int size,
-                                                    int ri,
-                                                    char **ccc,
-                                                    char **ffin,
-                                                    S_charBuf *bbb,
-                                                    int additionalArg
-                                                    ) {
+static void cxrfReferenceForFullUpdateSchedule(int size,
+                                               int ri,
+                                               char **ccc,
+                                               char **ffin,
+                                               S_charBuf *bbb,
+                                               int additionalArg
+                                               ) {
     S_position pos;
     S_usageBits usageBits;
     int file, line, coll, usage, sym, vApplClass, vFunClass;
@@ -1242,13 +1215,13 @@ static void cxrfReferenceForFullUpdateSchedule(     int size,
     }
 }
 
-static void cxrfReference(      int size,
-                                int ri,
-                                char **ccc,
-                                char **ffin,
-                                S_charBuf *bbb,
-                                int additionalArg
-                                ) {
+static void cxrfReference(int size,
+                          int ri,
+                          char **ccc,
+                          char **ffin,
+                          S_charBuf *bbb,
+                          int additionalArg
+                          ) {
     S_position pos;
     S_reference rr;
     S_usageBits usageBits;
@@ -1278,7 +1251,7 @@ static void cxrfReference(      int size,
         } else {
             copyrefFl = ! s_fileTab.tab[file]->b.cxLoading;
         }
-        if (copyrefFl) GenCxReferenceBase(sym, usage, reqAcc, file, line, coll);
+        if (copyrefFl) writeCxReferenceBase(sym, usage, reqAcc, file, line, coll);
     } else  if (s_opt.taskRegime == RegimeHtmlGenerate) {
         FILL_position(&pos,file,line,coll);
         FILL_usageBits(&usageBits, usage, reqAcc, 0);
@@ -1308,7 +1281,7 @@ static void cxrfReference(      int size,
                     ) {
                     s_inLastInfos.deadSymbolIsDefined = 1;
                 } else if (! IS_DEFINITION_OR_DECL_USAGE(rr.usg.base)) {
-                    s_inLastInfos.symbolToCheckedForDeadness = -1;
+                    s_inLastInfos.symbolToCheckForDeadness = -1;
                 }
             }
         } else if (additionalArg == OL_LOOKING_2_PASS_MACRO_USAGE) {
@@ -1377,13 +1350,13 @@ static void cxrfReference(      int size,
 }
 
 
-static void cxrfRefNum(     int fileRefNum,
-                            int ri,
-                            char **ccc,
-                            char **ffin,
-                            S_charBuf *bbb,
-                            int additionalArg
-                            ) {
+static void cxrfRefNum(int fileRefNum,
+                       int ri,
+                       char **ccc,
+                       char **ffin,
+                       S_charBuf *bbb,
+                       int additionalArg
+                       ) {
     int check;
 
     check = changeRefNumOption(fileRefNum);
@@ -1393,13 +1366,13 @@ static void cxrfRefNum(     int fileRefNum,
     }
 }
 
-static void cxrfSubClass(       int size,
-                                int ri,
-                                char **ccc,
-                                char **ffin,
-                                S_charBuf *bbb,
-                                int additionalArg
-                                ) {
+static void cxrfSubClass(int size,
+                         int ri,
+                         char **ccc,
+                         char **ffin,
+                         S_charBuf *bbb,
+                         int additionalArg
+                         ) {
     int of, file, sup, inf;
 
     assert(ri == CXFI_CLASS_EXT);
@@ -1422,7 +1395,7 @@ static void cxrfSubClass(       int size,
     if (s_opt.taskRegime == RegimeXref) {
         if (s_fileTab.tab[file]->b.cxLoading==0 &&
             additionalArg==CX_GENERATE_OUTPUT) {
-            genSubClassInfo(sup, inf, file);  // updating refs
+            writeSubClassInfo(sup, inf, file);  // updating refs
             //&         crSubClassInfo(sup, inf, file, CX_FILE_ITEM_GEN);
         }
     }
@@ -1444,7 +1417,7 @@ void scanCxFile(S_cxScanFileFunctionLink *scanFuns) {
     /*fprintf(dumpOut,"scanning ref. file start 2\n"); fflush(dumpOut);*/
     memset(&s_inLastInfos, 0, sizeof(s_inLastInfos));
     s_inLastInfos.onLineReferencedSym = -1;
-    s_inLastInfos.symbolToCheckedForDeadness = -1;
+    s_inLastInfos.symbolToCheckForDeadness = -1;
     s_inLastInfos.onLineRefMenuItem = NULL;
     s_inLastInfos.singleRecord[CXFI_INFER_CLASS] = s_noneFileIndex;
     s_inLastInfos.singleRecord[CXFI_SUPER_CLASS] = s_noneFileIndex;
