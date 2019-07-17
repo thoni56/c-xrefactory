@@ -29,21 +29,35 @@ def unpack_positions(string, fileid=None, lineno=None, colno=None):
             accessibility_index = True
             string = string[1:]
 
+        # File marker
         f = re.match(r"(\d+)f", string)
         if not f == None:
             fileid = int(string[f.start():f.end()-1])
             string = string[f.end():]
 
+        # Line marker
         f = re.match(r"(\d+)l", string)
         if not f == None:
             lineno = int(string[f.start():f.end()-1])
             string = string[f.end():]
+        if string[0] == 'l':
+            # Line marker without lineno, use previous?
+            string = string[1:]
 
+        # Column marker
         f = re.match(r"(\d+)c", string)
         if not f == None:
             colno = int(string[f.start():f.end()-1])
             string = string[f.end():]
+        if string[0] == 'c':
+            # Column marker without colno, use previous?
+            string = string[1:]
 
+        if string[0] == 'r':
+            reference = True
+        else:
+            print("Unknown position type(?): '%s'" % string[0])
+            exit(1)
         string = string[1:]  # For now, skip 'r' - reference?
 
         if not fileid or not lineno or not colno:
