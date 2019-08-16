@@ -11,18 +11,14 @@ $(TEST):
 	@rm -rf output $@.log CXrefs
 	@$(COMMAND)
 	@../../utils/cxref_reader.py > output
-	@$(call CHECK_FOR_CONTENT,expected1) ; \
-	e=$$? ; \
-	if [ $$e -ne 0 ] ; then \
-		echo "Failed: output did not contain expected1" ; \
-		exit 1 ; \
-	fi
-	@$(call CHECK_FOR_CONTENT,expected2) ; \
-	e=$$? ; \
-	if [ $$e -ne 0 ] ; then \
-		echo "Failed: output did not contain expected2" ; \
-		exit 1 ; \
-	fi
+	@while read -r line ; do \
+		grep -q $$line output ; \
+		ecode=$$? ; \
+		if [ $$ecode -ne 0 ] ; then \
+			echo "Failed: output did not contain expected: '$$line'" ; \
+			exit 1 ; \
+		fi ; \
+	done < expected
 	@echo "Ok"
 	@exit 0
 
