@@ -67,7 +67,7 @@ endif
 cexp.c: cexp.y $(YACC)
 ifeq ($(YACCING),yes)
 	$(YACC) -v cexp.y
-	mv y.tab.c cexp.c
+	sed 's/y.tab.c/cexp.c/g' y.tab.c > cexp.c
 endif
 
 cgram.h: cgram.c
