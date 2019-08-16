@@ -49,7 +49,7 @@
 #define yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
-#line 53 "y.tab.c"
+#line 53 "cexp.c"
 #define number 257
 #define DEFINED 258
 #define EQ 259
@@ -361,7 +361,7 @@ int cexpTranslateToken(int tok, int val) {
     return(number);
     return(UNKNOWN);
 }
-#line 365 "y.tab.c"
+#line 365 "cexp.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -618,7 +618,7 @@ case 27:
 #line 106 "cexp.y"
 {yyval= yyvsp[0];}
 break;
-#line 622 "y.tab.c"
+#line 622 "cexp.c"
     }
     yyssp -= yym;
     yystate = *yyssp;
