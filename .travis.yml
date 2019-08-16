@@ -23,6 +23,6 @@ after_success:
     - pwd
     - cd ..
     - ./.travis.merge_to_stable_maybe.sh
-    - lcov -d compiler/.alan -d interpreter/.arun -c -o coverage.info
+    - lcov -d src -c -o coverage.info
     - lcov --remove coverage.info '/usr/*' -o coverage.info
     - coveralls-lcov coverage.info
