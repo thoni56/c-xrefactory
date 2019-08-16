@@ -7,9 +7,9 @@ WARNINGS = -Wall -Wno-char-subscripts
 BS_CFLAGS = -g -Og $(INCLUDES) -DDEBUG $(ZLIB_OPT) -DGNULINUXDEFS -MMD
 
 # Real CFLAGS
-CFLAGS = $(BS_CFLAGS) -funsigned-char $(WARNINGS)
+CFLAGS = $(BS_CFLAGS) -funsigned-char $(WARNINGS) $(COVERAGE)
 
-LDFLAGS =
+LDFLAGS = $(COVERAGE)
 
 LEX = flex
 

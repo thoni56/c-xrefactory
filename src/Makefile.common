@@ -162,11 +162,11 @@ cleaner: clean
 #########################################################################
 
 test: unit c-xref
-	$(MAKE) -C ../tests quick
+	$(MAKE) COVERAGE=$(COVERAGE) -C ../tests quick
 
 
 unit:
-	$(MAKE) -C unittests
+	$(MAKE) COVERAGE=$(COVERAGE) -C unittests
 
 # Special dependecies to force rebuild of c-xref.bs to generate needed files
 $(SRCS) : strFill.g.h enumTxt.g.h enumTxt.g.c

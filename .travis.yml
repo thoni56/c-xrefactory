@@ -2,15 +2,27 @@ language: c
 sudo: false
 dist: xenial
 if: NOT tag = stable
+
+before_install:
+    - gem install coveralls-lcov
+    - wget https://github.com/cgreen-devs/cgreen/releases/latest/download/cgreen_1.2.0_amd64.deb
+    - sudo apt-get install ./cgreen_1.2.0_amd64.deb
+
 script:
-    - make
+    - cd src ; make COVERAGE=--coverage ; make COVERAGE=--coverage unit ; cd ..
     - cd tests
     - cd ffmpeg ; make init ; cd ..
     - cd systemd ; make init ; cd ..
     - make all
+
 branches:
     except:
         - stable
+
 after_success:
+    - pwd
     - cd ..
     - ./.travis.merge_to_stable_maybe.sh
+    - lcov -d compiler/.alan -d interpreter/.arun -c -o coverage.info
+    - lcov --remove coverage.info '/usr/*' -o coverage.info
+    - coveralls-lcov coverage.info

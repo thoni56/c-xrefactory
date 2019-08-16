@@ -1,6 +1,6 @@
 vpath %.c ..
 
-CFLAGS = -g -MMD -MT .d -fPIC -I..
+CFLAGS = -g -MMD -MT .d -fPIC -I.. $(COVERAGE)
 
 OBJDIR=objs
 
@@ -13,13 +13,13 @@ all: $(UNITTESTS)
 
 
 symtab_tests.so: $(OBJDIR)/symtab_tests.o $(OBJDIR)/symtab.o
-	gcc -shared -o $@ $^ $(CGREEN)
+	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 olcxtab_tests.so: $(OBJDIR)/olcxtab_tests.o $(OBJDIR)/olcxtab.o
-	gcc -shared -o $@ $^ $(CGREEN)
+	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 filetab_tests.so: $(OBJDIR)/filetab_tests.o $(OBJDIR)/filetab.o
-	gcc -shared -o $@ $^ $(CGREEN)
+	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 $(OBJDIR)/%_tests.o: %_tests.c | $(OBJDIR)/
 	gcc -o $@ $(CFLAGS) -c $<
