@@ -4,9 +4,10 @@ dist: xenial
 if: NOT tag = stable
 script:
     - make
-    - cd tests/ffmpeg ; make init ; cd ..
-    - cd tests/systemd ; make init ; cd ..
-    - cd tests; make all
+    - cd tests
+    - cd ffmpeg ; make init ; cd ..
+    - cd systemd ; make init ; cd ..
+    - make all
 branches:
     except:
         - stable
