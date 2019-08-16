@@ -3,6 +3,11 @@ sudo: false
 dist: xenial
 if: NOT tag = stable
 
+addons:
+  apt:
+    packages:
+    - lcov
+
 before_install:
     - gem install coveralls-lcov
     - wget https://github.com/cgreen-devs/cgreen/releases/latest/download/cgreen_1.2.0_amd64.deb
