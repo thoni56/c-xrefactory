@@ -203,6 +203,6 @@ if __name__ == "__main__":
                         colno = p.colno
                         filename = get_filename_from_id(p.fileid, files)
                         filename = os.path.basename(filename)
-                        print("    %s:%d:%d" % (filename, p.lineno, p.colno))
+                        print("    %s@%s:%d:%d" % (symbol.symbolname, filename, p.lineno, p.colno))
 
     "4uA 20900f 1l 4c r 4l c r 32710f 1l 4c r 4l c r 48151f 1l 4c r 4l c r"
