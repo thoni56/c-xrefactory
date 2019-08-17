@@ -14,7 +14,7 @@ all: $(UNITTESTS)
 
 # A test lib for a module is built from its .o and the _test.o (and some extras)
 %_tests.so: %.o %_tests.o $(EXTRA_OBJS)
-	$(LINK) -shared -o $@ $(sort $(EXTRA_OBJS) $^) $(LDLIBS) -lcgreen
+	gcc -shared -o $@ $(sort $(EXTRA_OBJS) $^) $(LDLIBS) -lcgreen
 
 $(OBJDIR)/%_tests.o: %_tests.c | $(OBJDIR)/
 	gcc -o $@ $(CFLAGS) -c $<
