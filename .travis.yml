@@ -7,7 +7,7 @@ addons:
   apt:
     packages:
     - lcov
-    - emacs
+    - emacs-nox
 
 before_install:
     - gem install coveralls-lcov
