@@ -2,7 +2,7 @@ vpath %.c ..
 
 CFLAGS = -g -MMD -MT .d -fPIC -I.. $(COVERAGE)
 
-OBJDIR=.objs
+OBJDIR=objs
 
 # Find all *_tests.c automatically
 UNITTESTS = $(patsubst %.c,%.so,$(wildcard *_tests.c))
@@ -36,8 +36,8 @@ cxfile_tests.so:$(OBJDIR)/cxfile_tests.o $(patsubst %,$(OBJDIR)/%.o,$(CXFILE_DEP
 
 
 # A test lib for a module is built from its .o and the _test.o (and some extras)
-#%_tests.so: $(OBJDIR)/%.o $(OBJDIR)/%_tests.o $(EXTRA_OBJS)
-#	gcc -shared -o $@ $(sort $(EXTRA_OBJS) $^) $(LDLIBS) -lcgreen
+%_tests.so: %.o %_tests.o $(EXTRA_OBJS)
+	gcc -shared -o $@ $(sort $(EXTRA_OBJS) $^) $(LDLIBS) -lcgreen
 
 $(OBJDIR)/%_tests.o: %_tests.c | $(OBJDIR)/
 	gcc -o $@ $(CFLAGS) -c $<
