@@ -3,7 +3,7 @@
 #include "../filetab.h"
 
 #include "misc.mock"
-#include "common.mock"
+#include "commons.mock"
 
 Describe(FileTab);
 BeforeEach(FileTab) {}

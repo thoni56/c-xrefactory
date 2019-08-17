@@ -1,8 +1,8 @@
 #include <cgreen/cgreen.h>
 
-#include "cxfile.h"
+#include "cxfile.c"
 
-#include "misc.mock"
+S_memory *cxMemory=NULL;
 
 Describe(CxFile);
 BeforeEach(CxFile) {}
