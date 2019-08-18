@@ -1627,15 +1627,15 @@ static void olcxOrderRefsAndGotoDefinition(int afterMenuFlag) {
 }
 
 #define GetBufChar(cch, bbb) {                                          \
-        if ((bbb)->cc >= (bbb)->fin) {                                  \
+        if ((bbb)->next >= (bbb)->end) {                                  \
             if ((bbb)->isAtEOF || getCharBuf(bbb) == 0) {               \
                 cch = EOF;                                              \
                 (bbb)->isAtEOF = 1;                                     \
             } else {                                                    \
-                cch = * ((unsigned char*)(bbb)->cc); (bbb)->cc ++;      \
+                cch = * ((unsigned char*)(bbb)->next); (bbb)->next ++;      \
             }                                                           \
         } else {                                                        \
-            cch = * ((unsigned char*)(bbb)->cc); (bbb)->cc++;           \
+            cch = * ((unsigned char*)(bbb)->next); (bbb)->next++;           \
         }                                                               \
         /*fprintf(dumpOut,"getting char *%x < %x == '0x%x'\n",ccc,ffin,cch);fflush(dumpOut);*/ \
     }

@@ -2592,18 +2592,18 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, int mess) {
         fatalError(ERR_ST,"sorry no file for cxrefs, use -refs option", XREF_EXIT_ERR);
     }
     for(i=0; i<inStacki; i++) {
-        if (inStack[i].lb.cb.ff != stdin) {
+        if (inStack[i].lb.cb.file != stdin) {
             fi = inStack[i].lb.cb.fileNumber;
             assert(s_fileTab.tab[fi]);
             s_fileTab.tab[fi]->b.cxLoading = 0;
-            if (inStack[i].lb.cb.ff!=NULL) charBuffClose(&inStack[i].lb.cb);
+            if (inStack[i].lb.cb.file!=NULL) charBuffClose(&inStack[i].lb.cb);
         }
     }
-    if (cFile.lb.cb.ff != stdin) {
+    if (cFile.lb.cb.file != stdin) {
         fi = cFile.lb.cb.fileNumber;
         assert(s_fileTab.tab[fi]);
         s_fileTab.tab[fi]->b.cxLoading = 0;
-        if (cFile.lb.cb.ff!=NULL) charBuffClose(&cFile.lb.cb);
+        if (cFile.lb.cb.file!=NULL) charBuffClose(&cFile.lb.cb);
     }
     if (s_opt.taskRegime==RegimeHtmlGenerate) {
         if (s_opt.noCxFile) {
@@ -2828,7 +2828,7 @@ static void setUpdateMtimesInFileTab(S_fileItem *fi) {
 
 static void mainCloseInputFile(int inputIn ) {
     if (inputIn) {
-        if (cFile.lb.cb.ff!=stdin) {
+        if (cFile.lb.cb.file!=stdin) {
             charBuffClose(&cFile.lb.cb);
         }
     }
@@ -3052,7 +3052,7 @@ static void mainXrefProcessInputFile( int argc, char **argv, int *_inputIn, int 
             mainParseInputFile();
             charBuffClose(&cFile.lb.cb);
             inputIn = 0;
-            cFile.lb.cb.ff = stdin;
+            cFile.lb.cb.file = stdin;
             atLeastOneProcessed=1;
         } else if (LANGUAGE(LANG_JAR)) {
             jarFileParse();

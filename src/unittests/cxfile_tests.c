@@ -42,14 +42,15 @@ Describe(CxFile);
 BeforeEach(CxFile) {}
 AfterEach(CxFile) {}
 
-static CharacterBuffer cxfBuf;
+static CharacterBuffer characterBuffer;
 
 Ensure(CxFile, can_scan_int) {
-    char ch = ' ';
-    char *cc = cxfBuf.buffer;
-    char *cfin = cxfBuf.fin;
-    int recInfo;
+    char next = ' ';
+    char *characters = characterBuffer.buffer;
+    char *end = characterBuffer.end;
+    int result;
 
-    expect(getCharBuf);
-    ScanInt(ch, cc, cfin, &cxfBuf, recInfo);
+    expect(getCharBuf,
+           when(buffer, is_equal_to_hex(&characterBuffer)));
+    ScanInt(next, characters, end, &characterBuffer, result);
 }

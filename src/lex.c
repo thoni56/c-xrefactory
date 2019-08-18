@@ -15,18 +15,19 @@
 /* ***************************************************************** */
 
 
-static int charBuffReadFromFile(struct CharacterBuffer  *bb, char *outBuffer, int max_size) {
+static int charBuffReadFromFile(struct CharacterBuffer  *buffer, char *outBuffer, int max_size) {
     int n;
-    if (bb->ff == NULL) n = 0;
-    else n = fread(outBuffer, 1, max_size, bb->ff);
+
+    if (buffer->file == NULL) n = 0;
+    else n = fread(outBuffer, 1, max_size, buffer->file);
     return(n);
 }
 
-void charBuffClose(struct CharacterBuffer *bb) {
-    if (bb->ff!=NULL) fclose(bb->ff);
+void charBuffClose(struct CharacterBuffer *buffer) {
+    if (buffer->file!=NULL) fclose(buffer->file);
 #if defined(USE_LIBZ)       /*SBD*/
-    if (bb->inputMethod == INPUT_VIA_UNZIP) {
-        inflateEnd(&bb->zipStream);
+    if (buffer->inputMethod == INPUT_VIA_UNZIP) {
+        inflateEnd(&buffer->zipStream);
     }
 #endif                      /*SBD*/
 }
@@ -38,22 +39,22 @@ void zlibFree(voidpf opaque, voidpf address) {
     free(address);
 }
 
-static int charBuffReadFromUnzipFilter(struct CharacterBuffer  *bb, char *outBuffer, int max_size) {
+static int charBuffReadFromUnzipFilter(struct CharacterBuffer *buffer, char *outBuffer, int max_size) {
     int n, fn, res;
-    bb->zipStream.next_out = (unsigned char *)outBuffer;
-    bb->zipStream.avail_out = max_size;
+    buffer->zipStream.next_out = (unsigned char *)outBuffer;
+    buffer->zipStream.avail_out = max_size;
 #if defined(USE_LIBZ)       /*SBD*/
     do {
-        if (bb->zipStream.avail_in == 0) {
-            fn = charBuffReadFromFile(bb, bb->z, CHAR_BUFF_SIZE);
-            bb->zipStream.next_in = (unsigned char *)bb->z;
-            bb->zipStream.avail_in = fn;
+        if (buffer->zipStream.avail_in == 0) {
+            fn = charBuffReadFromFile(buffer, buffer->z, CHAR_BUFF_SIZE);
+            buffer->zipStream.next_in = (unsigned char *)buffer->z;
+            buffer->zipStream.avail_in = fn;
         }
         //&fprintf(stderr,"sending to inflate :");
-        //&for(iii=0;iii<100;iii++) fprintf(stderr, " %d", bb->zipStream.next_in[iii]);
+        //&for(iii=0;iii<100;iii++) fprintf(stderr, " %d", buffer->zipStream.next_in[iii]);
         //&fprintf(stderr,"\n\n");
         res = Z_DATA_ERROR;
-        res = inflate(&bb->zipStream, Z_SYNC_FLUSH);  // Z_NO_FLUSH
+        res = inflate(&buffer->zipStream, Z_SYNC_FLUSH);  // Z_NO_FLUSH
         //&fprintf(dumpOut,"res == %d\n", res);
         if (res==Z_OK) {
             //&fprintf(dumpOut,"successfull zip read\n");
@@ -62,11 +63,11 @@ static int charBuffReadFromUnzipFilter(struct CharacterBuffer  *bb, char *outBuf
         } else {
             sprintf(tmpBuff, "something is going wrong while reading zipped .jar archiv, res == %d", res);
             error(ERR_ST, tmpBuff);
-            bb->zipStream.next_out = (unsigned char *)outBuffer;
+            buffer->zipStream.next_out = (unsigned char *)outBuffer;
         }
-    } while (((char*)bb->zipStream.next_out)==outBuffer && res==Z_OK);
+    } while (((char*)buffer->zipStream.next_out)==outBuffer && res==Z_OK);
 #endif                      /*SBD*/
-    n = ((char*)bb->zipStream.next_out) - outBuffer;
+    n = ((char*)buffer->zipStream.next_out) - outBuffer;
     return(n);
 }
 
@@ -76,8 +77,8 @@ int getCharBuf(struct CharacterBuffer *buffer) {
     char *fin;
     int n;
     int max_size;
-    fin = buffer->fin;
-    cc = buffer->cc;
+    fin = buffer->end;
+    cc = buffer->next;
     for(dd=buffer->buffer+MAX_UNGET_CHARS; cc<fin; cc++,dd++) *dd = *cc;
     max_size = CHAR_BUFF_SIZE - (dd - buffer->buffer);
     if (buffer->inputMethod == INPUT_DIRECT) {
@@ -86,9 +87,9 @@ int getCharBuf(struct CharacterBuffer *buffer) {
         n = charBuffReadFromUnzipFilter(buffer, dd, max_size);
     }
     buffer->filePos += n;
-    buffer->fin = dd+n;
-    buffer->cc = buffer->buffer+MAX_UNGET_CHARS;
-    return(buffer->cc != buffer->fin);
+    buffer->end = dd+n;
+    buffer->next = buffer->buffer+MAX_UNGET_CHARS;
+    return(buffer->next != buffer->end);
 }
 
 void switchToZippedCharBuff(struct CharacterBuffer *buffer) {
@@ -98,8 +99,8 @@ void switchToZippedCharBuff(struct CharacterBuffer *buffer) {
 
     getCharBuf(buffer);     // just for now
 #if defined(USE_LIBZ)
-    fin = buffer->fin;
-    cc = buffer->cc;
+    fin = buffer->end;
+    cc = buffer->next;
     for(dd=buffer->z; cc<fin; cc++,dd++) *dd = *cc;
     FILL_z_stream_s(&buffer->zipStream,
                     (Bytef*)buffer->z, dd-buffer->z, 0,
@@ -108,7 +109,7 @@ void switchToZippedCharBuff(struct CharacterBuffer *buffer) {
                     zlibAlloc, zlibFree,
                     NULL, 0, 0, 0
                     );
-    buffer->cc = buffer->fin = buffer->buffer;
+    buffer->next = buffer->end = buffer->buffer;
     buffer->inputMethod = INPUT_VIA_UNZIP;
     inflateInit2(&(buffer->zipStream), -MAX_WBITS);
     if (buffer->zipStream.msg != NULL) {
@@ -118,41 +119,42 @@ void switchToZippedCharBuff(struct CharacterBuffer *buffer) {
 #endif
 }
 
-int skipNCharsInCharBuf(struct CharacterBuffer *bb, unsigned count) {
+int skipNCharsInCharBuf(struct CharacterBuffer *buffer, unsigned count) {
     char *dd;
     char *cc;
     char *fin;
     int n;
     int max_size;
-    fin = bb->fin;
-    cc = bb->cc;
+
+    fin = buffer->end;
+    cc = buffer->next;
     if (cc+count < fin) {
-        bb->cc = cc+count;
+        buffer->next = cc+count;
         return(1);
     }
-    if (bb->inputMethod == INPUT_VIA_UNZIP) {
+    if (buffer->inputMethod == INPUT_VIA_UNZIP) {
         // TODO FINISH THIS
         count -= fin-cc;
-        bb->cc = bb->fin;
-        getCharBuf(bb);
-        if (bb->fin != bb->cc) {
+        buffer->next = buffer->end;
+        getCharBuf(buffer);
+        if (buffer->end != buffer->next) {
             // TODO remove last recursion
-            skipNCharsInCharBuf(bb, count);
+            skipNCharsInCharBuf(buffer, count);
         }
     } else {
         count -= fin-cc;
         /*&fprintf(dumpOut,"seeking %d chars\n",count); fflush(dumpOut);&*/
-        fseek(bb->ff, count, SEEK_CUR);
-        bb->filePos += count;
-        dd=bb->buffer+MAX_UNGET_CHARS;
-        max_size = CHAR_BUFF_SIZE-(dd - bb->buffer);
-        if (bb->ff == NULL) n = 0;
-        else n = fread(dd, 1, max_size, bb->ff);
-        bb->filePos += n;
-        bb->fin = dd+n;
-        bb->cc = bb->buffer+MAX_UNGET_CHARS;
+        fseek(buffer->file, count, SEEK_CUR);
+        buffer->filePos += count;
+        dd=buffer->buffer+MAX_UNGET_CHARS;
+        max_size = CHAR_BUFF_SIZE-(dd - buffer->buffer);
+        if (buffer->file == NULL) n = 0;
+        else n = fread(dd, 1, max_size, buffer->file);
+        buffer->filePos += n;
+        buffer->end = dd+n;
+        buffer->next = buffer->buffer+MAX_UNGET_CHARS;
     }
-    return(bb->cc != bb->fin);
+    return(buffer->next != buffer->end);
 }
 
 void gotOnLineCxRefs( S_position *ps ) {
@@ -185,13 +187,13 @@ void gotOnLineCxRefs( S_position *ps ) {
 
 #define GetChar(cch, ccc, ffin, bbb, clb, clo) {        \
         if (ccc >= ffin) {                              \
-            bbb->cc = ccc;                              \
+            bbb->next = ccc;                              \
             clo = ccc-clb;                              \
             if (bbb->isAtEOF || getCharBuf(bbb) == 0) { \
                 cch = -1;                               \
                 bbb->isAtEOF = 1;                       \
             } else {                                    \
-                ccc = bbb->cc; ffin = bbb->fin;         \
+                ccc = bbb->next; ffin = bbb->end;         \
                 clb = ccc;                              \
                 cch = * ((unsigned char *)ccc);         \
                 ccc = ((char *)ccc) + 1;                \
@@ -438,7 +440,7 @@ int getLexBuf(struct lexBuf *lb) {
     lb->cc = lb->a;
     cb = &lb->cb;
     cline = cb->lineNum; clb = cb->lineBegin; clo = cb->columnOffset;
-    ccc = cb->cc; cfin = cb->fin; cfile = cb->fileNumber;
+    ccc = cb->next; cfin = cb->end; cfile = cb->fileNumber;
     GetChar(ch,ccc,cfin,cb,clb,clo);
  contin:
     DeleteBlank(ch,ccc,cfin,cb,clb,clo);
@@ -947,7 +949,7 @@ int getLexBuf(struct lexBuf *lb) {
     }
     if (ch != -1) goto contin;
  finish:
-    cb->cc = ccc; cb->fin = cfin;
+    cb->next = ccc; cb->end = cfin;
     cb->lineNum = cline; cb->lineBegin = clb; cb->columnOffset = clo;
     lb->fin = dd;
     //&lexBufDump(lb);

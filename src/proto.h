@@ -1220,10 +1220,10 @@ typedef struct macroBody {
 } S_macroBody;
 
 typedef struct CharacterBuffer {
-    char        *cc;				/* first unread */
-    char        *fin;				/* first free (invalid)  */
+    char        *next;				/* first unread */
+    char        *end;				/* pointing after valid characters */
     char        buffer[CHAR_BUFF_SIZE];
-    FILE        *ff;
+    FILE        *file;
     unsigned	filePos;			/* how many chars was readed from file */
     int			fileNumber;
     int         lineNum;

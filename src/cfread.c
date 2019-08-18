@@ -39,13 +39,13 @@ union constantPoolUnion {
 
 #define GetChar(cch, ccc, ffin, bbb) {                                  \
         if (ccc >= ffin) {                                              \
-            (bbb)->cc = ccc;                                            \
+            (bbb)->next = ccc;                                            \
             if ((bbb)->isAtEOF || getCharBuf(bbb) == 0) {               \
                 cch = -1;                                               \
                 (bbb)->isAtEOF = 1;                                     \
                 goto endOfFile;                                         \
             } else {                                                    \
-                ccc = (bbb)->cc; ffin = (bbb)->fin;                     \
+                ccc = (bbb)->next; ffin = (bbb)->end;                     \
                 cch = * ((unsigned char*)ccc); ccc ++;                  \
             }                                                           \
         } else {                                                        \
@@ -100,19 +100,19 @@ union constantPoolUnion {
         ccount = (count);                       \
         if (ccc + ccount < ffin) ccc += ccount; \
         else {                                  \
-            (bbb)->cc = ccc;                    \
+            (bbb)->next = ccc;                    \
             skipNCharsInCharBuf(bbb,(count));   \
-            ccc = (bbb)->cc; ffin = (bbb)->fin; \
+            ccc = (bbb)->next; ffin = (bbb)->end; \
         }                                       \
     }
 
 #define GetCurrentFileOffset(ccc,ffin,bbb,offset) { \
-        offset = ftell((bbb)->ff) - (ffin-ccc);     \
+        offset = ftell((bbb)->file) - (ffin-ccc);     \
     }
 
 #define SeekToPosition(ccc,ffin,bbb,offset) {                           \
-        fseek((bbb)->ff,offset,SEEK_SET);                               \
-        ccc = ffin = (bbb)->cc = (bbb)->fin = (bbb)->lineBegin = (bbb)->buffer; \
+        fseek((bbb)->file,offset,SEEK_SET);                               \
+        ccc = ffin = (bbb)->next = (bbb)->end = (bbb)->lineBegin = (bbb)->buffer; \
     }
 
 #define SkipAttributes(ccc, ffin, iBuf) {       \
@@ -186,11 +186,11 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iB
     }
 #if defined(USE_LIBZ)       /*SBD*/
     else if (compressionMethod == Z_DEFLATED) {
-        iBuf->cc = ccc;
-        iBuf->fin = ffin;
+        iBuf->next = ccc;
+        iBuf->end = ffin;
         switchToZippedCharBuff(iBuf);
-        ccc = iBuf->cc;
-        ffin = iBuf->fin;
+        ccc = iBuf->next;
+        ffin = iBuf->end;
     }
 #endif                      /*SBD*/
     else {
@@ -336,10 +336,10 @@ static int findEndOfCentralDirectory(char **accc, char **affin,
     res = 1;
     if (fsize < CHAR_BUFF_SIZE) offset = 0;
     else offset = fsize-(CHAR_BUFF_SIZE-MAX_UNGET_CHARS);
-    fseek(iBuf->ff, offset, SEEK_SET);
-    iBuf->cc = iBuf->fin;
+    fseek(iBuf->file, offset, SEEK_SET);
+    iBuf->next = iBuf->end;
     getCharBuf(iBuf);
-    ccc = ffin = iBuf->fin;
+    ccc = ffin = iBuf->end;
     for (ccc-=4; ccc>iBuf->buffer && strncmp(ccc,"\120\113\005\006",4)!=0; ccc--) {
     }
     if (ccc <= iBuf->buffer) {
@@ -466,7 +466,7 @@ int zipIndexArchive(char *name) {
         s_zipArchivTab[archi].fn[namelen] = ZIP_SEPARATOR_CHAR;
         s_zipArchivTab[archi].fn[namelen+1] = 0;
         FILL_zipFileTabItem(&s_zipArchivTab[archi], fst, NULL);
-        zipArchiveScan(&bbb->cc,&bbb->fin,bbb,&s_zipArchivTab[archi], fst.st_size);
+        zipArchiveScan(&bbb->next,&bbb->end,bbb,&s_zipArchivTab[archi], fst.st_size);
         fclose(ff);
     }
     return(archi);
@@ -1103,7 +1103,7 @@ void javaReadClassFile(char *name, S_symbol *memb, int loadSuper) {
 
     log_debug("reading file %s",name);
 
-    ccc = cFile.lb.cb.cc; ffin = cFile.lb.cb.fin;
+    ccc = cFile.lb.cb.next; ffin = cFile.lb.cb.end;
     if (zipsep != NULL) {
         if (zipSeekToFile(&ccc,&ffin,&cFile.lb.cb,name) == 0) goto fini;
     }

@@ -721,12 +721,12 @@ void genReferenceFile(int updateFlag, char *fname) {
 
 #define GetChar(cch, ccc, ffin, bbb) {                                  \
         if (ccc >= ffin) {                                              \
-            (bbb)->cc = ccc;                                            \
+            (bbb)->next = ccc;                                            \
             if ((bbb)->isAtEOF || getCharBuf(bbb) == 0) {               \
                 cch = -1;                                               \
                 (bbb)->isAtEOF = 1;                                     \
             } else {                                                    \
-                ccc = (bbb)->cc; ffin = (bbb)->fin;                     \
+                ccc = (bbb)->next; ffin = (bbb)->end;                     \
                 cch = * ((unsigned char*)ccc); ccc ++;                  \
             }                                                           \
         } else {                                                        \
@@ -1429,7 +1429,7 @@ void scanCxFile(S_cxScanFileFunctionLink *scanFuns) {
         s_inLastInfos.additional[ch] = scanFuns[i].additionalArg;
     }
     FILL_CharacterBuffer(&cxfBuf, cxfBuf.buffer, cxfBuf.buffer, fIn, 0, -1, 0, 0, 0, 0,INPUT_DIRECT,s_defaultZStream);
-    ch = ' '; cc = cxfBuf.buffer; cfin = cxfBuf.fin;
+    ch = ' '; cc = cxfBuf.buffer; cfin = cxfBuf.end;
     while(! cxfBuf.isAtEOF) {
         ScanInt(ch, cc, cfin, &cxfBuf, recInfo);
         /*fprintf(stdout,"number %d scaned\n",recInfo);*/
