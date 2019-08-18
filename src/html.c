@@ -600,6 +600,7 @@ static int htmlPositionLess(S_position *p1, S_position *p2) {
                 );
 }
 
+// TODO: move to commons.c or, better, filesystem.c
 void recursivelyCreateFileDirIfNotExists(char *fpath) {
     char    *p;
     int     ch,len,loopFlag;

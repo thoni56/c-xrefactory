@@ -81,7 +81,7 @@ extern void CONCAT(HASH_FUN_PREFIX, Map)(
 extern void CONCAT(HASH_FUN_PREFIX, Map2)(
                     HASH_TAB_TYPE *table,
                     void (*fun)(HASH_ELEM_TYPE *, void *),
-                    void *
+                    void *a
                 );
 extern void CONCAT(HASH_FUN_PREFIX, Map3)(
                     HASH_TAB_TYPE *table,
@@ -100,7 +100,7 @@ extern void CONCAT(HASH_FUN_PREFIX, Map32)(
 extern void CONCAT(HASH_FUN_PREFIX, Map4)(
                     HASH_TAB_TYPE *table,
                     void (*fun)(HASH_ELEM_TYPE *, int),
-                    int
+                    int a
                 );
 extern void CONCAT(HASH_FUN_PREFIX, Map5)(
                     HASH_TAB_TYPE *table,

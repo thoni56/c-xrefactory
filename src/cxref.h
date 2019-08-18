@@ -97,7 +97,7 @@ extern S_reference * getDefinitionRef(S_reference *rr);
 extern int safetyCheck2ShouldWarn(void);
 extern void olCreateSelectionMenu(int command);
 extern void olcxPushEmptyStackItem(S_olcxReferencesStack *stack);
-extern void olcxPrintSelectionMenu(S_olSymbolsMenu *);
+extern void olcxPrintSelectionMenu(S_olSymbolsMenu *sss);
 extern int ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2);
 extern void olcxPrintClassTree(S_olSymbolsMenu *sss);
 extern void olcxReferencesDiff(S_reference **anr1, S_reference **aor2,
@@ -130,6 +130,5 @@ extern void freeOldestOlcx(void);
 extern S_olSymbolsMenu *olcxFreeSymbolMenuItem(S_olSymbolsMenu *ll);
 extern void olcxFreeResolutionMenu( S_olSymbolsMenu *sym );
 extern int refCharCode(int usage);
-extern int smartReadFileTabFile(void);
 
 #endif
