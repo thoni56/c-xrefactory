@@ -70,25 +70,25 @@ static int charBuffReadFromUnzipFilter(struct charBuf  *bb, char *outBuffer, int
     return(n);
 }
 
-int getCharBuf(struct charBuf *bb) {
+int getCharBuf(struct charBuf *buffer) {
     char *dd;
     char *cc;
     char *fin;
     int n;
     int max_size;
-    fin = bb->fin;
-    cc = bb->cc;
-    for(dd=bb->a+MAX_UNGET_CHARS; cc<fin; cc++,dd++) *dd = *cc;
-    max_size = CHAR_BUFF_SIZE - (dd - bb->a);
-    if (bb->inputMethod == INPUT_DIRECT) {
-        n = charBuffReadFromFile(bb, dd, max_size);
+    fin = buffer->fin;
+    cc = buffer->cc;
+    for(dd=buffer->a+MAX_UNGET_CHARS; cc<fin; cc++,dd++) *dd = *cc;
+    max_size = CHAR_BUFF_SIZE - (dd - buffer->a);
+    if (buffer->inputMethod == INPUT_DIRECT) {
+        n = charBuffReadFromFile(buffer, dd, max_size);
     } else {
-        n = charBuffReadFromUnzipFilter(bb, dd, max_size);
+        n = charBuffReadFromUnzipFilter(buffer, dd, max_size);
     }
-    bb->filePos += n;
-    bb->fin = dd+n;
-    bb->cc = bb->a+MAX_UNGET_CHARS;
-    return(bb->cc != bb->fin);
+    buffer->filePos += n;
+    buffer->fin = dd+n;
+    buffer->cc = buffer->a+MAX_UNGET_CHARS;
+    return(buffer->cc != buffer->fin);
 }
 
 void switchToZippedCharBuff(struct charBuf *bb) {
