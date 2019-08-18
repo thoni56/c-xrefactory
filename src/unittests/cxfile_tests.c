@@ -50,5 +50,6 @@ Ensure(CxFile, can_scan_int) {
     char *cfin = cxfBuf.fin;
     int recInfo;
 
+    expect(getCharBuf, when(bb, is_equal_to_hex(&cxfBuf)));
     ScanInt(ch, cc, cfin, &cxfBuf, recInfo);
 }
