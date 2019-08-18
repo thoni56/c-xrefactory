@@ -2,7 +2,7 @@ vpath %.c ..
 
 CFLAGS = -g -MMD -MT .d -fPIC -I.. $(COVERAGE)
 
-OBJDIR=objs
+OBJDIR=.objs
 
 # Find all *_tests.c automatically
 UNITTESTS = $(patsubst %.c,%.so,$(wildcard *_tests.c))

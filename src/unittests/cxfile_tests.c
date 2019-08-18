@@ -9,11 +9,11 @@ Describe(CxFile);
 BeforeEach(CxFile) {}
 AfterEach(CxFile) {}
 
-static S_charBuf cxfBuf;
+static CharacterBuffer cxfBuf;
 
 Ensure(CxFile, can_scan_int) {
     char ch = ' ';
-    char *cc = cxfBuf.a;
+    char *cc = cxfBuf.buffer;
     char *cfin = cxfBuf.fin;
     int recInfo;
 
