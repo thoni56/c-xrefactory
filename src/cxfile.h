@@ -18,6 +18,7 @@ extern int scanReferenceFile(char *fname, char *fns1, char *fns2,
 extern void readOneAppropReferenceFile(char *symname,
                                        S_cxScanFileFunctionLink *scanFunTab);
 extern void scanReferenceFiles(char *fname, S_cxScanFileFunctionLink *scanFunTab);
+extern int smartReadFileTabFile(void);
 
 extern S_cxScanFileFunctionLink s_cxScanFileTab[];
 extern S_cxScanFileFunctionLink s_cxFullScanFunTab[];
