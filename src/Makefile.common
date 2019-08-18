@@ -162,6 +162,7 @@ cleaner: clean
 #########################################################################
 
 test: c-xref
+	@echo "Only running quick tests for now - 'cd ..; make test' to run all"
 	$(MAKE) COVERAGE=$(COVERAGE) -C ../tests quick
 
 
