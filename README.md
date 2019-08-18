@@ -1,4 +1,4 @@
-[![Coverage Status](https://coveralls.io/repos/github/thoni56/c-xrefactory/badge.svg?branch=master)](https://coveralls.io/github/thoni56/c-xrefactory?branch=master)
+[![Build Status](https://travis-ci.org/thoni56/c-xrefactory.svg?branch=master)](https://travis-ci.org/thoni56/c-xrefactory)[![Coverage Status](https://coveralls.io/repos/github/thoni56/c-xrefactory/badge.svg?branch=master)](https://coveralls.io/github/thoni56/c-xrefactory?branch=master)
 # C-xrefactory - A refactoring tool for C/Java and Emacs
 
 ## TL;DR
