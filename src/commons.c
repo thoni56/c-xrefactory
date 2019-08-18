@@ -1,17 +1,16 @@
+/* TODO: Make this independent on other modules */
+
 #include "commons.h"
 
 #include "globals.h"
-#include "misc.h"
-#include "yylex.h"
-#include "main.h"
+#include "misc.h"               /* ppcGenRecord() & ppcGenSynchroRecord() */
+#include "yylex.h"              /* placeIdent() */
+#include "main.h"               /* mainCloseOutputFile() */
 
 #include "protocol.h"
 
 #include "log.h"
 
-
-FILE *dumpOut=NULL, *errOut=NULL;
-char tmpBuff[TMP_BUFF_SIZE];
 
 void initCwd(void) {
     char *rr;
