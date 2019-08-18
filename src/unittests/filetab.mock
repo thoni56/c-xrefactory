@@ -1,20 +1,18 @@
-/*
-typedef struct fileTab {
-    int size;
-    int numberOfElements;
-    S_fileItem **tab;
-} S_fileTab;
-*/
+/* -*- c -*-*/
+#include "../filetab.h"
 
 void fileTabInit(
                  struct fileTab *table,
                  int size
-                 );
+                 ) {
+    mock(table, size);
+}
+
 void fileTabNAInit(
                    struct fileTab *table,
                    int size
                    ) {
-    mock();
+    mock(table, size);
 }
 
 
@@ -23,7 +21,7 @@ bool fileTabIsMember (
                       S_fileItem *element,
                       int *position
                       ) {
-    return (bool)mock();
+    return (bool)mock(table, element, position);
 }
 
 void fileTabSet (
@@ -31,7 +29,7 @@ void fileTabSet (
                  S_fileItem *element,
                  int position
                  ) {
-    mock();
+    mock(table, element, position);
 }
 
 void fileTabAdd (
@@ -39,18 +37,18 @@ void fileTabAdd (
                  S_fileItem *element,
                  int *position
                  ) {
-    mock();
+    mock(table, element, position);
 }
 
 void fileTabFree (struct fileTab *table) {
-    mock();
+    mock(table);
 }
 
 void fileTabMap(
                 struct fileTab *table,
                 void (*fun)(S_fileItem *)
                 ) {
-    mock();
+    mock(table, fun);
 }
 
 void fileTabMap2(
@@ -58,7 +56,7 @@ void fileTabMap2(
                  void (*fun)(S_fileItem *, void *),
                  void *a
                  ) {
-    mock();
+    mock(table, fun, a);
 }
 
 void fileTabMap4(
@@ -66,12 +64,12 @@ void fileTabMap4(
                  void (*fun)(int, void *, void *),
                  void *a, void *b
                  ) {
-    mock();
+    mock(table, fun, a, b);
 }
 
 void fileTabMap3(
                  struct fileTab *table,
                  void (*fun)(S_fileItem *, int)
                  ) {
-    mock();
+    mock(table, fun);
 }
