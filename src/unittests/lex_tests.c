@@ -1,6 +1,7 @@
 #include <cgreen/cgreen.h>
 
-#include "lex.h"
+/* Including the source since we are testing macros */
+#include "lex.c"
 
 Describe(Lex);
 BeforeEach(Lex) {}
@@ -27,5 +28,6 @@ S_jslStat *s_jsl;
 #include "cxref.mock"
 #include "utils.mock"
 
-Ensure(Lex, can_something) {
+Ensure(Lex, can_get_char) {
+    int cval;
 }
