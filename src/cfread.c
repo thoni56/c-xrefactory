@@ -112,7 +112,7 @@ union constantPoolUnion {
 
 #define SeekToPosition(ccc,ffin,bbb,offset) {                           \
         fseek((bbb)->ff,offset,SEEK_SET);                               \
-        ccc = ffin = (bbb)->cc = (bbb)->fin = (bbb)->lineBegin = (bbb)->a; \
+        ccc = ffin = (bbb)->cc = (bbb)->fin = (bbb)->lineBegin = (bbb)->buffer; \
     }
 
 #define SkipAttributes(ccc, ffin, iBuf) {       \
@@ -340,9 +340,9 @@ static int findEndOfCentralDirectory(char **accc, char **affin,
     iBuf->cc = iBuf->fin;
     getCharBuf(iBuf);
     ccc = ffin = iBuf->fin;
-    for (ccc-=4; ccc>iBuf->a && strncmp(ccc,"\120\113\005\006",4)!=0; ccc--) {
+    for (ccc-=4; ccc>iBuf->buffer && strncmp(ccc,"\120\113\005\006",4)!=0; ccc--) {
     }
-    if (ccc <= iBuf->a) {
+    if (ccc <= iBuf->buffer) {
         res = 0;
         assert(s_opt.taskRegime);
         if (s_opt.taskRegime!=RegimeEditServer) {
@@ -460,7 +460,7 @@ int zipIndexArchive(char *name) {
             }
             return(-1);
         }
-        FILL_CharacterBuffer(bbb, bbb->a, bbb->a, ff, 0, 0, 0, bbb->a, 0, 0,INPUT_DIRECT,s_defaultZStream);
+        FILL_CharacterBuffer(bbb, bbb->buffer, bbb->buffer, ff, 0, 0, 0, bbb->buffer, 0, 0,INPUT_DIRECT,s_defaultZStream);
         assert(namelen+2 < MAX_FILE_NAME_SIZE);
         strcpy(s_zipArchivTab[archi].fn, name);
         s_zipArchivTab[archi].fn[namelen] = ZIP_SEPARATOR_CHAR;

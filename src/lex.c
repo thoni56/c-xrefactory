@@ -78,8 +78,8 @@ int getCharBuf(struct CharacterBuffer *buffer) {
     int max_size;
     fin = buffer->fin;
     cc = buffer->cc;
-    for(dd=buffer->a+MAX_UNGET_CHARS; cc<fin; cc++,dd++) *dd = *cc;
-    max_size = CHAR_BUFF_SIZE - (dd - buffer->a);
+    for(dd=buffer->buffer+MAX_UNGET_CHARS; cc<fin; cc++,dd++) *dd = *cc;
+    max_size = CHAR_BUFF_SIZE - (dd - buffer->buffer);
     if (buffer->inputMethod == INPUT_DIRECT) {
         n = charBuffReadFromFile(buffer, dd, max_size);
     } else {
@@ -87,33 +87,32 @@ int getCharBuf(struct CharacterBuffer *buffer) {
     }
     buffer->filePos += n;
     buffer->fin = dd+n;
-    buffer->cc = buffer->a+MAX_UNGET_CHARS;
+    buffer->cc = buffer->buffer+MAX_UNGET_CHARS;
     return(buffer->cc != buffer->fin);
 }
 
-void switchToZippedCharBuff(struct CharacterBuffer *bb) {
+void switchToZippedCharBuff(struct CharacterBuffer *buffer) {
     char *dd;
     char *cc;
     char *fin;
 
-    getCharBuf(bb);     // just for now
+    getCharBuf(buffer);     // just for now
 #if defined(USE_LIBZ)
-    fin = bb->fin;
-    cc = bb->cc;
-    for(dd=bb->z; cc<fin; cc++,dd++) *dd = *cc;
-    FILL_z_stream_s(&bb->zipStream,
-                    (Bytef*)bb->z, dd-bb->z, 0,
-                    (Bytef*)bb->a, CHAR_BUFF_SIZE, 0,
+    fin = buffer->fin;
+    cc = buffer->cc;
+    for(dd=buffer->z; cc<fin; cc++,dd++) *dd = *cc;
+    FILL_z_stream_s(&buffer->zipStream,
+                    (Bytef*)buffer->z, dd-buffer->z, 0,
+                    (Bytef*)buffer->buffer, CHAR_BUFF_SIZE, 0,
                     NULL, NULL,
                     zlibAlloc, zlibFree,
                     NULL, 0, 0, 0
                     );
-    bb->cc = bb->fin = bb->a;
-    bb->inputMethod = INPUT_VIA_UNZIP;
-    //inflateInit(&(bb->zipStream));
-    inflateInit2(&(bb->zipStream), -MAX_WBITS);
-    if (bb->zipStream.msg!=NULL) {
-        fprintf(stderr,"initialization: %s\n", bb->zipStream.msg);
+    buffer->cc = buffer->fin = buffer->buffer;
+    buffer->inputMethod = INPUT_VIA_UNZIP;
+    inflateInit2(&(buffer->zipStream), -MAX_WBITS);
+    if (buffer->zipStream.msg != NULL) {
+        fprintf(stderr, "initialization: %s\n", buffer->zipStream.msg);
         exit(1);
     }
 #endif
@@ -145,13 +144,13 @@ int skipNCharsInCharBuf(struct CharacterBuffer *bb, unsigned count) {
         /*&fprintf(dumpOut,"seeking %d chars\n",count); fflush(dumpOut);&*/
         fseek(bb->ff, count, SEEK_CUR);
         bb->filePos += count;
-        dd=bb->a+MAX_UNGET_CHARS;
-        max_size = CHAR_BUFF_SIZE-(dd - bb->a);
+        dd=bb->buffer+MAX_UNGET_CHARS;
+        max_size = CHAR_BUFF_SIZE-(dd - bb->buffer);
         if (bb->ff == NULL) n = 0;
         else n = fread(dd, 1, max_size, bb->ff);
         bb->filePos += n;
         bb->fin = dd+n;
-        bb->cc = bb->a+MAX_UNGET_CHARS;
+        bb->cc = bb->buffer+MAX_UNGET_CHARS;
     }
     return(bb->cc != bb->fin);
 }
