@@ -678,6 +678,7 @@ static S_reference * htmlGetDefinitionRef(S_htmlRefList *rrr, int usage) {
                     }
                 }
             }
+            goto nextsym;       /* To avoid compiler warnings */
         nextsym:;
         }
     }
