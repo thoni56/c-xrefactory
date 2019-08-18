@@ -1657,14 +1657,14 @@
     (STRUCTP)->cc = ARG0;\
     (STRUCTP)->fin = ARG1;\
     (STRUCTP)->posi = ARG2;\
-    (STRUCTP)->cb.cc = ARG3;\
-    (STRUCTP)->cb.fin = ARG4;\
-    (STRUCTP)->cb.ff = ARG5;\
+    (STRUCTP)->cb.next = ARG3;\
+    (STRUCTP)->cb.end = ARG4;\
+    (STRUCTP)->cb.file = ARG5;\
     (STRUCTP)->cb.filePos = ARG6;\
     (STRUCTP)->cb.fileNumber = ARG7;\
     (STRUCTP)->cb.lineNum = ARG8;\
     (STRUCTP)->cb.lineBegin = ARG9;\
-    (STRUCTP)->cb.collumnOffset = ARG10;\
+    (STRUCTP)->cb.columnOffset = ARG10;\
     (STRUCTP)->cb.isAtEOF = ARG11;\
     (STRUCTP)->cb.inputMethod = ARG12;\
     (STRUCTP)->cb.zipStream.next_in = ARG13;\
@@ -1686,14 +1686,14 @@
     (STRUCTP)->cc = _ARG_0_OF_27 ARGS;\
     (STRUCTP)->fin = _ARG_1_OF_27 ARGS;\
     (STRUCTP)->posi = _ARG_2_OF_27 ARGS;\
-    (STRUCTP)->cb.cc = _ARG_3_OF_27 ARGS;\
-    (STRUCTP)->cb.fin = _ARG_4_OF_27 ARGS;\
-    (STRUCTP)->cb.ff = _ARG_5_OF_27 ARGS;\
+    (STRUCTP)->cb.next = _ARG_3_OF_27 ARGS;\
+    (STRUCTP)->cb.end = _ARG_4_OF_27 ARGS;\
+    (STRUCTP)->cb.file = _ARG_5_OF_27 ARGS;\
     (STRUCTP)->cb.filePos = _ARG_6_OF_27 ARGS;\
     (STRUCTP)->cb.fileNumber = _ARG_7_OF_27 ARGS;\
     (STRUCTP)->cb.lineNum = _ARG_8_OF_27 ARGS;\
     (STRUCTP)->cb.lineBegin = _ARG_9_OF_27 ARGS;\
-    (STRUCTP)->cb.collumnOffset = _ARG_10_OF_27 ARGS;\
+    (STRUCTP)->cb.columnOffset = _ARG_10_OF_27 ARGS;\
     (STRUCTP)->cb.isAtEOF = _ARG_11_OF_27 ARGS;\
     (STRUCTP)->cb.inputMethod = _ARG_12_OF_27 ARGS;\
     (STRUCTP)->cb.zipStream.next_in = _ARG_13_OF_27 ARGS;\
@@ -2284,28 +2284,28 @@
     (STRUCTP)->typedefin = _ARG_3_OF_5 ARGS;\
     (STRUCTP)->next = _ARG_4_OF_5 ARGS;\
 }
-#define FILL_charBuf(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10) {\
-    (STRUCTP)->cc = ARG0;\
-    (STRUCTP)->fin = ARG1;\
-    (STRUCTP)->ff = ARG2;\
+#define FILL_CharacterBuffer(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10) {\
+    (STRUCTP)->next = ARG0;\
+    (STRUCTP)->end = ARG1;\
+    (STRUCTP)->file = ARG2;\
     (STRUCTP)->filePos = ARG3;\
     (STRUCTP)->fileNumber = ARG4;\
     (STRUCTP)->lineNum = ARG5;\
     (STRUCTP)->lineBegin = ARG6;\
-    (STRUCTP)->collumnOffset = ARG7;\
+    (STRUCTP)->columnOffset = ARG7;\
     (STRUCTP)->isAtEOF = ARG8;\
     (STRUCTP)->inputMethod = ARG9;\
     (STRUCTP)->zipStream = ARG10;\
 }
-#define FILLF_charBuf(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13, ARG14, ARG15, ARG16, ARG17, ARG18, ARG19, ARG20, ARG21, ARG22, ARG23) {\
-    (STRUCTP)->cc = ARG0;\
-    (STRUCTP)->fin = ARG1;\
-    (STRUCTP)->ff = ARG2;\
+#define FILLF_CharacterBuffer(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13, ARG14, ARG15, ARG16, ARG17, ARG18, ARG19, ARG20, ARG21, ARG22, ARG23) {\
+    (STRUCTP)->next = ARG0;\
+    (STRUCTP)->end = ARG1;\
+    (STRUCTP)->file = ARG2;\
     (STRUCTP)->filePos = ARG3;\
     (STRUCTP)->fileNumber = ARG4;\
     (STRUCTP)->lineNum = ARG5;\
     (STRUCTP)->lineBegin = ARG6;\
-    (STRUCTP)->collumnOffset = ARG7;\
+    (STRUCTP)->columnOffset = ARG7;\
     (STRUCTP)->isAtEOF = ARG8;\
     (STRUCTP)->inputMethod = ARG9;\
     (STRUCTP)->zipStream.next_in = ARG10;\
@@ -2323,15 +2323,15 @@
     (STRUCTP)->zipStream.adler = ARG22;\
     (STRUCTP)->zipStream.reserved = ARG23;\
 }
-#define _FILLF_charBuf(STRUCTP, ARGS) {\
-    (STRUCTP)->cc = _ARG_0_OF_24 ARGS;\
-    (STRUCTP)->fin = _ARG_1_OF_24 ARGS;\
-    (STRUCTP)->ff = _ARG_2_OF_24 ARGS;\
+#define _FILLF_CharacterBuffer(STRUCTP, ARGS) {\
+    (STRUCTP)->next = _ARG_0_OF_24 ARGS;\
+    (STRUCTP)->end = _ARG_1_OF_24 ARGS;\
+    (STRUCTP)->file = _ARG_2_OF_24 ARGS;\
     (STRUCTP)->filePos = _ARG_3_OF_24 ARGS;\
     (STRUCTP)->fileNumber = _ARG_4_OF_24 ARGS;\
     (STRUCTP)->lineNum = _ARG_5_OF_24 ARGS;\
     (STRUCTP)->lineBegin = _ARG_6_OF_24 ARGS;\
-    (STRUCTP)->collumnOffset = _ARG_7_OF_24 ARGS;\
+    (STRUCTP)->columnOffset = _ARG_7_OF_24 ARGS;\
     (STRUCTP)->isAtEOF = _ARG_8_OF_24 ARGS;\
     (STRUCTP)->inputMethod = _ARG_9_OF_24 ARGS;\
     (STRUCTP)->zipStream.next_in = _ARG_10_OF_24 ARGS;\
@@ -3160,14 +3160,14 @@
     (STRUCTP)->lb.cc = ARG4;\
     (STRUCTP)->lb.fin = ARG5;\
     (STRUCTP)->lb.posi = ARG6;\
-    (STRUCTP)->lb.cb.cc = ARG7;\
-    (STRUCTP)->lb.cb.fin = ARG8;\
-    (STRUCTP)->lb.cb.ff = ARG9;\
+    (STRUCTP)->lb.cb.next = ARG7;\
+    (STRUCTP)->lb.cb.end = ARG8;\
+    (STRUCTP)->lb.cb.file = ARG9;\
     (STRUCTP)->lb.cb.filePos = ARG10;\
     (STRUCTP)->lb.cb.fileNumber = ARG11;\
     (STRUCTP)->lb.cb.lineNum = ARG12;\
     (STRUCTP)->lb.cb.lineBegin = ARG13;\
-    (STRUCTP)->lb.cb.collumnOffset = ARG14;\
+    (STRUCTP)->lb.cb.columnOffset = ARG14;\
     (STRUCTP)->lb.cb.isAtEOF = ARG15;\
     (STRUCTP)->lb.cb.inputMethod = ARG16;\
     (STRUCTP)->lb.cb.zipStream.next_in = ARG17;\
@@ -3200,7 +3200,7 @@
     (STRUCTP)->lb.cb.fileNumber = _ARG_11_OF_31 ARGS;\
     (STRUCTP)->lb.cb.lineNum = _ARG_12_OF_31 ARGS;\
     (STRUCTP)->lb.cb.lineBegin = _ARG_13_OF_31 ARGS;\
-    (STRUCTP)->lb.cb.collumnOffset = _ARG_14_OF_31 ARGS;\
+    (STRUCTP)->lb.cb.columnOffset = _ARG_14_OF_31 ARGS;\
     (STRUCTP)->lb.cb.isAtEOF = _ARG_15_OF_31 ARGS;\
     (STRUCTP)->lb.cb.inputMethod = _ARG_16_OF_31 ARGS;\
     (STRUCTP)->lb.cb.zipStream.next_in = _ARG_17_OF_31 ARGS;\
