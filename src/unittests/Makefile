@@ -18,6 +18,9 @@ clean:
 cleaner: clean
 	-rm -rf $(OBJDIR)
 
+lex_tests.so: $(OBJDIR)/lex_tests.o $(OBJDIR)/lex.o
+	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
+
 symtab_tests.so: $(OBJDIR)/symtab_tests.o $(OBJDIR)/symtab.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 

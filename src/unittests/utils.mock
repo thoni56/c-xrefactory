@@ -1,0 +1,8 @@
+/* -*- c -*-*/
+#include "../utils.h"
+#include <cgreen/mocks.h>
+
+int creatingOlcxRefs(void) { 
+  return (int) mock();
+}
+
