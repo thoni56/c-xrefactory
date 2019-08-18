@@ -1772,7 +1772,8 @@ static void passRefsThroughSourceFile(S_reference **rrr, S_position *callerp,
     S_editorBuffer      *ebuf;
     char                *cofileName;
     S_position          cp;
-    CharacterBuffer           cxfBuf;
+    CharacterBuffer     cxfBuf;
+
     rr = *rrr;
     if (rr==NULL) goto fin;
     fnum = rr->p.file;

@@ -1228,7 +1228,7 @@ typedef struct CharacterBuffer {
     int			fileNumber;
     int         lineNum;
     char        *lineBegin;
-    short int   collumnOffset;		/* collumn == cc-lineBegin + collumnOffset */
+    int         columnOffset;		/* column == cc-lineBegin + columnOffset */
     char		isAtEOF;
     char		inputMethod;		/* unzipp/direct */
     char        z[CHAR_BUFF_SIZE];  /* zip input buffer */

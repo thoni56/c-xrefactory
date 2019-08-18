@@ -438,7 +438,7 @@ int getLexBuf(struct lexBuf *lb) {
     for(dd=lb->a,cc=lb->cc; cc<lb->fin; cc++,dd++) *dd = *cc;
     lb->cc = lb->a;
     cb = &lb->cb;
-    cline = cb->lineNum; clb = cb->lineBegin; clo = cb->collumnOffset;
+    cline = cb->lineNum; clb = cb->lineBegin; clo = cb->columnOffset;
     ccc = cb->cc; cfin = cb->fin; cfile = cb->fileNumber;
     GetChar(ch,ccc,cfin,cb,clb,clo);
  contin:
@@ -949,7 +949,7 @@ int getLexBuf(struct lexBuf *lb) {
     if (ch != -1) goto contin;
  finish:
     cb->cc = ccc; cb->fin = cfin;
-    cb->lineNum = cline; cb->lineBegin = clb; cb->collumnOffset = clo;
+    cb->lineNum = cline; cb->lineBegin = clb; cb->columnOffset = clo;
     lb->fin = dd;
     //&lexBufDump(lb);
     if (lb->fin == lb->a) return(0);
