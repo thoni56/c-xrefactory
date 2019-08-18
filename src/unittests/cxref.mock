@@ -1,0 +1,347 @@
+/* -*- c -*-*/
+#include "../cxref.h"
+#include <cgreen/mocks.h>
+
+int olcxReferenceInternalLessFunction(S_reference *r1, S_reference *r2) {
+    return (int) mock(r1, r2);
+}
+
+int olSymbolRefItemLess(S_symbolRefItem *s1, S_symbolRefItem *s2) {
+    return (int) mock(s1, s2);
+}
+
+void tagSearchCompactShortResults(void) {
+    mock();
+}
+
+void printTagSearchResults(void) {
+    mock();
+}
+
+S_olSymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, int storage) {
+    return (S_olSymbolsMenu *) mock(fieldName, cfi, storage);
+}
+
+int itIsSameCxSymbol(S_symbolRefItem *p1, S_symbolRefItem *p2) {
+    return (int) mock(p1, p2);
+}
+
+int itIsSameCxSymbolIncludingFunClass(S_symbolRefItem *p1, S_symbolRefItem *p2) {
+    return (int) mock(p1, p2);
+}
+
+int itIsSameCxSymbolIncludingApplClass(S_symbolRefItem *p1, S_symbolRefItem *p2) {
+    return (int) mock(p1, p2);
+}
+
+int olcxItIsSameCxSymbol(S_symbolRefItem *p1, S_symbolRefItem *p2) {
+    return (int) mock(p1, p2);
+}
+
+void olcxRecomputeSelRefs(S_olcxReferences *refs) {
+    mock(refs);
+}
+
+void olProcessSelectedReferences(S_olcxReferences *rstack, void (*referencesMapFun)(S_olcxReferences *rstack, S_olSymbolsMenu *ss)) {
+    mock(rstack, referencesMapFun);
+}
+
+void olcxPopOnly(void) {
+    mock();
+}
+
+S_reference *olcxCopyRefList(S_reference *ll) {
+    return (S_reference *) mock(ll);
+}
+
+void olStackDeleteSymbol(S_olcxReferences *refs) {
+    mock(refs);
+}
+
+int getFileNumberFromName(char *name) {
+    return (int) mock(name);
+}
+
+void generateOnlineCxref(S_position *p, char *commandString, int usage, char *suffix, char *suffix2) {
+    mock(p, commandString, usage, suffix, suffix2);
+}
+
+S_reference *olcxAddReferenceNoUsageCheck(S_reference **rlist, S_reference *ref, int bestMatchFlag) {
+    return (S_reference *) mock(rlist, ref, bestMatchFlag);
+}
+
+S_reference *olcxAddReference(S_reference **rlist, S_reference *ref, int bestMatchFlag) {
+    return (S_reference *) mock(rlist, ref, bestMatchFlag);
+}
+
+void olcxFreeReferences(S_reference *r) {
+    mock(r);
+}
+
+int isSmallerOrEqClass(int inf, int sup) {
+    return (int) mock(inf, sup);
+}
+
+int olcxPushLessFunction(S_reference *r1, S_reference *r2) {
+    return (int) mock(r1, r2);
+}
+
+int olcxListLessFunction(S_reference *r1, S_reference *r2) {
+    return (int) mock(r1, r2);
+}
+
+char *getJavaDocUrl_st(S_symbolRefItem *rr) {
+    return (char *) mock(rr);
+}
+
+char *getLocalJavaDocFile_st(char *fileUrl) {
+    return (char *) mock(fileUrl);
+}
+
+char *getFullUrlOfJavaDoc_st(char *fileUrl) {
+    return (char *) mock(fileUrl);
+}
+
+int htmlJdkDocAvailableForUrl(char *ss) {
+    return (int) mock(ss);
+}
+
+void setIntToZero(void *p) {
+    mock(p);
+}
+
+S_reference *duplicateReference(S_reference *r) {
+    return (S_reference *) mock(r);
+}
+
+S_reference *addCxReferenceNew(S_symbol *p, S_position *pos, S_usageBits *ub, int vFunCl, int vApplCl) {
+    return (S_reference *) mock(p, pos, ub, vFunCl, vApplCl);
+}
+
+S_reference *addCxReference(S_symbol *p, S_position *pos, int usage, int vFunClass, int vApplClass) {
+    return (S_reference *) mock(p, pos, usage, vFunClass, vApplClass);
+}
+
+S_reference *addSpecialFieldReference(char *name, int storage, int fnum, S_position *p, int usage) {
+    return (S_reference *) mock(name, storage, fnum, p, usage);
+}
+
+void addClassTreeHierarchyReference(int fnum, S_position *p, int usage) {
+    mock(fnum, p, usage);
+}
+
+void addCfClassTreeHierarchyRef(int fnum, int usage) {
+    mock(fnum, usage);
+}
+
+void addTrivialCxReference(char *name, int symType, int storage, S_position *pos, int usage) {
+    mock(name, symType, storage, pos, usage);
+}
+
+void olcxAddReferences(S_reference *list, S_reference **dlist, int fnum, int bestMatchFlag) {
+    mock(list, dlist, fnum, bestMatchFlag);
+}
+
+void olSetCallerPosition(S_position *pos) {
+    mock(pos);
+}
+
+S_olCompletion *olCompletionListPrepend(char *name, char *fullText, char *vclass, int jindent, S_symbol *s, S_symbolRefItem *ri, S_reference *dfpos, int symType, int vFunClass, S_olcxReferences *stack) {
+    return (S_olCompletion *) mock(name, fullText, vclass, jindent, s, ri, dfpos, symType, vFunClass, stack);
+}
+
+S_olSymbolsMenu *olCreateNewMenuItem(S_symbolRefItem *sym, int vApplClass, int vFunCl, S_position *defpos, int defusage, int selected, int visible, unsigned ooBits, int olusage, int vlevel) {
+    return (S_olSymbolsMenu *) mock(sym, vApplClass, vFunCl, defpos, defusage, selected, visible, ooBits, olusage, vlevel);
+}
+
+S_olSymbolsMenu *olAddBrowsedSymbol(S_symbolRefItem *sym, S_olSymbolsMenu **list, int selected, int visible, unsigned ooBits, int olusage, int vlevel, S_position *defpos, int defusage) {
+    return (S_olSymbolsMenu *) mock(sym, list, selected, visible, ooBits, olusage, vlevel, defpos, defusage);
+}
+
+void renameCollationSymbols(S_olSymbolsMenu *sss) {
+    mock(sss);
+}
+
+void olCompletionListReverse(void) {
+    mock();
+}
+
+S_reference **addToRefList(S_reference **list, S_usageBits *pusage, S_position *pos, int category) {
+    return (S_reference **) mock(list, pusage, pos, category);
+}
+
+int isInRefList(S_reference *list, S_usageBits *pusage, S_position *pos, int category) {
+    return (int) mock(list, pusage, pos, category);
+}
+
+char *getXrefEnvironmentValue(char *name) {
+    return (char *) mock(name);
+}
+
+int byPassAcceptableSymbol(S_symbolRefItem *p) {
+    return (int) mock(p);
+}
+
+int itIsSymbolToPushOlRefences(S_symbolRefItem *p, S_olcxReferences *rstack, S_olSymbolsMenu **rss, int checkSelFlag) {
+    return (int) mock(p, rstack, rss, checkSelFlag);
+}
+
+void olcxAddReferenceToOlSymbolsMenu(S_olSymbolsMenu *cms, S_reference *rr, int bestFitTlag) {
+    mock(cms, rr, bestFitTlag);
+}
+
+void putOnLineLoadedReferences(S_symbolRefItem *p) {
+    mock(p);
+}
+
+void genOnLineReferences(S_olcxReferences *rstack, S_olSymbolsMenu *cms) {
+    mock(rstack, cms);
+}
+
+S_olSymbolsMenu *createSelectionMenu(S_symbolRefItem *dd) {
+    return (S_olSymbolsMenu *) mock(dd);
+}
+
+void mapCreateSelectionMenu(S_symbolRefItem *dd) {
+    mock(dd);
+}
+
+int olcxFreeOldCompletionItems(S_olcxReferencesStack *stack) {
+    return (int) mock(stack);
+}
+
+void olcxInit(void) {
+    mock();
+}
+
+S_userOlcx *olcxSetCurrentUser(char *user) {
+    return (S_userOlcx *) mock(user);
+}
+
+S_reference *getDefinitionRef(S_reference *rr) {
+    return (S_reference *) mock(rr);
+}
+
+int safetyCheck2ShouldWarn(void) {
+    return (int) mock();
+}
+
+void olCreateSelectionMenu(int command) {
+    mock(command);
+}
+
+void olcxPushEmptyStackItem(S_olcxReferencesStack *stack) {
+    mock(stack);
+}
+
+void olcxPrintSelectionMenu(S_olSymbolsMenu *sss) {
+    mock(sss);
+}
+
+int ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2) {
+    return (int) mock(oo1, oo2);
+}
+
+void olcxPrintClassTree(S_olSymbolsMenu *sss) {
+    mock(sss);
+}
+
+void olcxReferencesDiff(S_reference **anr1, S_reference **aor2, S_reference **diff) {
+    mock(anr1, aor2, diff);
+}
+
+int olcxShowSelectionMenu(void) {
+    return (int) mock();
+}
+
+int getClassNumFromClassLinkName(char *name, int defaultResult) {
+    return (int) mock(name, defaultResult);
+}
+
+void getLineColCursorPositionFromCommandLineOption(int *l, int *c) {
+    mock(l, c);
+}
+
+void changeClassReferencesUsages(char *linkName, int category, int fnum, S_symbol *cclass) {
+    mock(linkName, category, fnum, cclass);
+}
+
+int isStrictlyEnclosingClass(int enclosedClass, int enclosingClass) {
+    return (int) mock(enclosedClass, enclosingClass);
+}
+
+void changeMethodReferencesUsages(char *linkName, int category, int fnum, S_symbol *cclass) {
+    mock(linkName, category, fnum, cclass);
+}
+
+void olcxPushSpecialCheckMenuSym(int command, char *symname) {
+    mock(command, symname);
+}
+
+int refOccursInRefs(S_reference *r, S_reference *list) {
+    return (int) mock(r, list);
+}
+
+void olcxCheck1CxFileReference(S_symbolRefItem *ss, S_reference *r) {
+    mock(ss, r);
+}
+
+void olcxPushSpecial(char *fieldName, int command) {
+    mock(fieldName, command);
+}
+
+int isPushAllMethodsValidRefItem(S_symbolRefItem *ri) {
+    return (int) mock(ri);
+}
+
+int symbolsCorrespondWrtMoving(S_olSymbolsMenu *osym, S_olSymbolsMenu *nsym, int command) {
+    return (int) mock(osym, nsym, command);
+}
+
+void olcxPrintPushingAction(int opt, int afterMenu) {
+    mock(opt, afterMenu);
+}
+
+void olPushAllReferencesInBetween(int minMemi, int maxMemi) {
+    mock(minMemi, maxMemi);
+}
+
+void tpCheckFillMoveClassData(S_tpCheckMoveClassData *dd, char *spack, char *tpack) {
+    mock(dd, spack, tpack);
+}
+
+S_symbol *getMoveTargetClass(void) {
+    return (S_symbol *) mock();
+}
+
+int javaGetSuperClassNumFromClassNum(int cn) {
+    return (int) mock(cn);
+}
+
+int javaIsSuperClass(int superclas, int clas) {
+    return (int) mock(superclas, clas);
+}
+
+void pushLocalUnusedSymbolsAction(void) {
+    mock();
+}
+
+void mainAnswerEditAction(void) {
+    mock();
+}
+
+void freeOldestOlcx(void) {
+    mock();
+}
+
+S_olSymbolsMenu *olcxFreeSymbolMenuItem(S_olSymbolsMenu *ll) {
+    return (S_olSymbolsMenu *) mock(ll);
+}
+
+void olcxFreeResolutionMenu(S_olSymbolsMenu *sym) {
+    mock(sym);
+}
+
+int refCharCode(int usage) {
+    return (int) mock(usage);
+}

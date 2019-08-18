@@ -1,0 +1,77 @@
+/*
+typedef struct fileTab {
+    int size;
+    int numberOfElements;
+    S_fileItem **tab;
+} S_fileTab;
+*/
+
+void fileTabInit(
+                 struct fileTab *table,
+                 int size
+                 );
+void fileTabNAInit(
+                   struct fileTab *table,
+                   int size
+                   ) {
+    mock();
+}
+
+
+bool fileTabIsMember (
+                      struct fileTab *table,
+                      S_fileItem *element,
+                      int *position
+                      ) {
+    return (bool)mock();
+}
+
+void fileTabSet (
+                 struct fileTab *table,
+                 S_fileItem *element,
+                 int position
+                 ) {
+    mock();
+}
+
+void fileTabAdd (
+                 struct fileTab *table,
+                 S_fileItem *element,
+                 int *position
+                 ) {
+    mock();
+}
+
+void fileTabFree (struct fileTab *table) {
+    mock();
+}
+
+void fileTabMap(
+                struct fileTab *table,
+                void (*fun)(S_fileItem *)
+                ) {
+    mock();
+}
+
+void fileTabMap2(
+                 struct fileTab *table,
+                 void (*fun)(S_fileItem *, void *),
+                 void *a
+                 ) {
+    mock();
+}
+
+void fileTabMap4(
+                 struct fileTab *table,
+                 void (*fun)(int, void *, void *),
+                 void *a, void *b
+                 ) {
+    mock();
+}
+
+void fileTabMap3(
+                 struct fileTab *table,
+                 void (*fun)(S_fileItem *, int)
+                 ) {
+    mock();
+}

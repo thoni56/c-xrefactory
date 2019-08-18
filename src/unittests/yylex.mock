@@ -1,0 +1,55 @@
+#include "../yylex.h"
+#include <cgreen/mocks.h>
+
+void ppMemInit(void) { 
+  mock();
+}
+
+void initAllInputs(void) { 
+  mock();
+}
+
+void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) { 
+  mock(ff, buffer, prepend, name);
+}
+
+void addIncludeReference(int filenum, S_position *pos) { 
+  mock(filenum, pos);
+}
+
+void addThisFileDefineIncludeReference(int filenum) { 
+  mock(filenum);
+}
+
+void pushNewInclude(FILE *f, S_editorBuffer *buff, char *name, char *prepend) { 
+  mock(f, buff, name, prepend);
+}
+
+void popInclude(void) { 
+  mock();
+}
+
+int addFileTabItem(char *name, int *fileNumber) { 
+  return (int) mock(name, fileNumber);
+}
+
+void addMacroDefinedByOption(char *opt) { 
+  mock(opt);
+}
+
+char *placeIdent(void) { 
+  return (char *) mock();
+}
+
+int cachedInputPass(int cpoint, char **cfromto) { 
+  return (int) mock(cpoint, cfromto);
+}
+
+int cexpyylex(void) { 
+  return (int) mock();
+}
+
+int yylex(void) { 
+  return (int) mock();
+}
+
