@@ -433,14 +433,10 @@ yyloop:
         goto yyreduce;
     }
     if (yyerrflag) goto yyinrecovery;
-#ifdef lint
     goto yynewerror;
-#endif
 yynewerror:
     yyerror("syntax error");
-#ifdef lint
     goto yyerrlab;
-#endif
 yyerrlab:
     ++yynerrs;
 yyinrecovery:
@@ -618,7 +614,7 @@ case 27:
 #line 106 "cexp.y"
 {yyval= yyvsp[0];}
 break;
-#line 622 "cexp.c"
+#line 618 "cexp.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

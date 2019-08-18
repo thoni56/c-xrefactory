@@ -2657,14 +2657,10 @@ yyloop:
         goto yyreduce;
     }
     if (yyerrflag) goto yyinrecovery;
-#ifdef lint
     goto yynewerror;
-#endif
 yynewerror:
     yyerror("syntax error");
-#ifdef lint
     goto yyerrlab;
-#endif
 yyerrlab:
     ++yynerrs;
 yyinrecovery:
@@ -4337,7 +4333,7 @@ case 491:
 #line 1711 "yaccgram.y"
 { stackMemoryBlockFree(); }
 break;
-#line 4341 "yaccgram.c"
+#line 4337 "yaccgram.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

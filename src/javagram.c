@@ -2748,14 +2748,10 @@ yyloop:
         goto yyreduce;
     }
     if (yyerrflag) goto yyinrecovery;
-#ifdef lint
     goto yynewerror;
-#endif
 yynewerror:
     yyerror("syntax error");
-#ifdef lint
     goto yyerrlab;
-#endif
 yyerrlab:
     ++yynerrs;
 yyinrecovery:
@@ -7214,7 +7210,7 @@ case 484:
             }
         }
 break;
-#line 7218 "javagram.c"
+#line 7214 "javagram.c"
     }
     yyssp -= yym;
     yystate = *yyssp;
