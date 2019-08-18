@@ -161,7 +161,7 @@ cleaner: clean
 
 #########################################################################
 
-test: unit c-xref
+test: c-xref
 	$(MAKE) COVERAGE=$(COVERAGE) -C ../tests quick
 
 
