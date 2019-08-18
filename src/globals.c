@@ -6,7 +6,7 @@
 #include "unigram.h"
 
 #include "protocol.h"
-//
+
 
 char *s_debugSurveyPointer;
 int s_fileAbortionEnabled;
@@ -106,6 +106,8 @@ char ftMemory[SIZE_ftMemory];
 int ftMemoryi = 0;
 char tmpWorkMemory[SIZE_tmpWorkMemory];
 int tmpWorkMemoryi = 0;
+char tmpBuff[TMP_BUFF_SIZE];
+
 
 #ifdef OLD_RLM_MEMORY
 void *olcxMemoryFreeList[MAX_BUFFERED_SIZE_olcxMemory] = {NULL};
@@ -242,6 +244,8 @@ char *s_javaThisPackageName = "";
 FILE *cxOut;
 FILE *fIn;
 FILE *ccOut=NULL;
+FILE *dumpOut=NULL;
+FILE *errOut=NULL;
 
 int s_cxResizingBlocked = 0;
 

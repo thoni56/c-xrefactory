@@ -1219,21 +1219,21 @@ typedef struct macroBody {
     char *body;
 } S_macroBody;
 
-typedef struct charBuf {
+typedef struct CharacterBuffer {
     char        *cc;				/* first unread */
     char        *fin;				/* first free (invalid)  */
-    char        a[CHAR_BUFF_SIZE];
+    char        buffer[CHAR_BUFF_SIZE];
     FILE        *ff;
     unsigned	filePos;			/* how many chars was readed from file */
     int			fileNumber;
     int         lineNum;
     char        *lineBegin;
-    short int   collumnOffset;		/* collumn == cc-lineBegin + collumnOffset */
+    int         columnOffset;		/* column == cc-lineBegin + columnOffset */
     char		isAtEOF;
     char		inputMethod;		/* unzipp/direct */
     char        z[CHAR_BUFF_SIZE];  /* zip input buffer */
     z_stream	zipStream;
-} S_charBuf;
+} CharacterBuffer;
 
 typedef struct lexBuf {
     char            *cc;				/* first unread */
@@ -1242,7 +1242,7 @@ typedef struct lexBuf {
     struct position pRing[LEX_POSITIONS_RING_SIZE];		// file/line/coll position
     unsigned        fpRing[LEX_POSITIONS_RING_SIZE];	// file offset position
     int             posi;				/* pRing[posi%LEX_POSITIONS_RING_SIZE] */
-    struct charBuf  cb;
+    struct CharacterBuffer  cb;
 } S_lexBuf;
 
 typedef struct cppIfStack {
@@ -1270,7 +1270,7 @@ typedef struct lexInput {
 
 typedef struct cxScanFileFunctionLink {
     int		recordCode;
-    void    (*handleFun)(int size,int ri,char**ccc,char**ffin,S_charBuf*bbb, int additionalArg);
+    void    (*handleFun)(int size,int ri,char**ccc,char**ffin,CharacterBuffer*bbb, int additionalArg);
     int		additionalArg;
 } S_cxScanFileFunctionLink;
 

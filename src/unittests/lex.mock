@@ -1,0 +1,27 @@
+/* -*- c -*-*/
+#include "../lex.h"
+#include <cgreen/mocks.h>
+
+void charBuffClose(struct CharacterBuffer *bb) {
+  mock(bb);
+}
+
+int getCharBuf(struct CharacterBuffer *bb) {
+  return (int) mock(bb);
+}
+
+void switchToZippedCharBuff(struct CharacterBuffer *bb) {
+  mock(bb);
+}
+
+int skipNCharsInCharBuf(struct CharacterBuffer *bb, unsigned count) {
+  return (int) mock(bb, count);
+}
+
+int getLexBuf(struct lexBuf *lb) {
+  return (int) mock(lb);
+}
+
+void gotOnLineCxRefs(S_position *ps) {
+  mock(ps);
+}

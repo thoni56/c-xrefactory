@@ -1,12 +1,12 @@
+/* -*- c -*-*/
 #include "../misc.h"
-
 #include <cgreen/mocks.h>
 
-void ppcGenSynchroRecord() {
+void ppcGenSynchroRecord(void) {
   mock();
 }
 
-void ppcIndentOffset() {
+void ppcIndentOffset(void) {
   mock();
 }
 
@@ -62,7 +62,7 @@ void ppcGenRecord(char *kind, char *message, char *suffix) {
   mock(kind, message, suffix);
 }
 
-void ppcGenTmpBuff() {
+void ppcGenTmpBuff(void) {
   mock();
 }
 
@@ -78,11 +78,11 @@ void ppcGenPosition(S_position *p) {
   mock(p);
 }
 
-void ppcGenDefinitionNotFoundWarning() {
+void ppcGenDefinitionNotFoundWarning(void) {
   mock();
 }
 
-void ppcGenDefinitionNotFoundWarningAtBottom() {
+void ppcGenDefinitionNotFoundWarningAtBottom(void) {
   mock();
 }
 
@@ -110,15 +110,15 @@ void ppcGenMarker(S_editorMarker *m) {
   mock(m);
 }
 
-void jarFileParse() {
+void jarFileParse(void) {
   mock();
 }
 
-void scanJarFilesForTagSearch() {
+void scanJarFilesForTagSearch(void) {
   mock();
 }
 
-void classFileParse() {
+void classFileParse(void) {
   mock();
 }
 
@@ -150,13 +150,13 @@ void dumpOptions(int nargc, char **nargv) {
   mock(nargc, nargv);
 }
 
-void stackMemoryInit() {
+void stackMemoryInit(void) {
   mock();
 }
 
 /* No mock, just allocate memory as requested */
 void *stackMemoryAlloc(int size) {
-    return (void *)malloc(size);
+  return (void *)malloc(size);
 }
 
 void *stackMemoryPush(void *p, int size) {
@@ -172,18 +172,18 @@ char *stackMemoryPushString(char *s) {
 }
 
 void stackMemoryPop(void *p, int size) {
-    mock(p, size);
+  mock(p, size);
 }
 
-void stackMemoryBlockStart() {
+void stackMemoryBlockStart(void) {
   mock();
 }
 
-void stackMemoryBlockFree() {
+void stackMemoryBlockFree(void) {
   mock();
 }
 
-void stackMemoryDump() {
+void stackMemoryDump(void) {
   mock();
 }
 
@@ -195,8 +195,8 @@ void removeFromTrailUntil(S_freeTrail *untilP) {
   mock(untilP);
 }
 
-void symDump(S_symbol *s) {
-  mock(s);
+void symDump(S_symbol *symbol) {
+  mock(symbol);
 }
 
 void symbolRefItemDump(S_symbolRefItem *ss) {
@@ -224,5 +224,177 @@ char *string3ConcatInStackMem(char *str1, char *str2, char *str3) {
 }
 
 unsigned hashFun(char *s) {
-    return mock(s);
+  return (unsigned) mock(s);
+}
+
+void javaSignatureSPrint(char *buff, int *size, char *sig, int classstyle) {
+  mock(buff, size, sig, classstyle);
+}
+
+void fPutDecimal(FILE *f, int n) {
+  mock(f, n);
+}
+
+char *strmcpy(char *dest, char *src) {
+  return (char *) mock(dest, src);
+}
+
+char *simpleFileName(char *fullFileName) {
+  return (char *) mock(fullFileName);
+}
+
+char *directoryName_st(char *fullFileName) {
+  return (char *) mock(fullFileName);
+}
+
+char *simpleFileNameWithoutSuffix_st(char *fullFileName) {
+  return (char *) mock(fullFileName);
+}
+
+int containsWildcard(char *ss) {
+  return (int) mock(ss);
+}
+
+int shellMatch(char *string, int stringLen, char *pattern, int caseSensitive) {
+  return (int) mock(string, stringLen, pattern, caseSensitive);
+}
+
+void expandWildCharactersInOnePathRec(char *fn, char **outpaths, int *freeolen) {
+  mock(fn, outpaths, freeolen);
+}
+
+void expandWildCharactersInOnePath(char *fn, char *outpaths, int olen) {
+  mock(fn, outpaths, olen);
+}
+
+void expandWildCharactersInPaths(char *paths, char *outpaths, int freeolen) {
+  mock(paths, outpaths, freeolen);
+}
+
+char *getRealFileNameStatic(char *fn) {
+  return (char *) mock(fn);
+}
+
+int substringIndexWithLimit(char *s, int limit, char *subs) {
+  return (int) mock(s, limit, subs);
+}
+
+int stringContainsSubstring(char *s, char *subs) {
+  return (int) mock(s, subs);
+}
+
+void javaGetPackageNameFromSourceFileName(char *src, char *opack) {
+  mock(src, opack);
+}
+
+void javaGetClassNameFromFileNum(int nn, char *tmpOut, int dotify) {
+  mock(nn, tmpOut, dotify);
+}
+
+void javaSlashifyDotName(char *ss) {
+  mock(ss);
+}
+
+void javaDotifyClassName(char *ss) {
+  mock(ss);
+}
+
+void javaDotifyFileName(char *ss) {
+  mock(ss);
+}
+
+char *javaGetNudePreTypeName_st(char *inn, int cutMode) {
+  return (char *) mock(inn, cutMode);
+}
+
+char *javaGetShortClassNameFromFileNum_st(int fnum) {
+  return (char *) mock(fnum);
+}
+
+int substringIndex(char *s, char *subs) {
+  return (int) mock(s, subs);
+}
+
+int stringEndsBySuffix(char *s, char *suffix) {
+  return (int) mock(s, suffix);
+}
+
+int fileNameHasOneOfSuffixes(char *fname, char *suffs) {
+  return (int) mock(fname, suffs);
+}
+
+int mapPatternFiles(char *pattern, void (*fun)(char *file, char *a1, char *a2, S_completions *a3, void *a4, int *a5), char *a1, char *a2, S_completions *a3, void *a4, int *a5) {
+  return (int) mock(pattern, fun, a1, a2, a3, a4, a5);
+}
+
+int mapDirectoryFiles(char *dirname, void (*fun)(char *file, char *a1, char *a2, S_completions *a3, void *a4, int *a5), int allowEditorFilesFlag, char *a1, char *a2, S_completions *a3, void *a4, int *a5) {
+  return (int) mock(dirname, fun, allowEditorFilesFlag, a1, a2, a3, a4, a5);
+}
+
+void javaMapDirectoryFiles1(char *packfile, void (*fun)(char *file, char *a1, char *a2, S_completions *a3, void *a4, int *a5), S_completions *a1, void *a2, int *a3) {
+  mock(packfile, fun, a1, a2, a3);
+}
+
+void javaMapDirectoryFiles2(S_idIdentList *packid, void (*fun)(char *file, char *a1, char *a2, S_completions *a3, void *a4, int *a5), S_completions *a1, void *a2, int *a3) {
+  mock(packid, fun, a1, a2, a3);
+}
+
+char *lastOccurenceInString(char *ss, int ch) {
+  return (char *) mock(ss, ch);
+}
+
+char *lastOccurenceOfSlashOrAntiSlash(char *ss) {
+  return (char *) mock(ss);
+}
+
+char *getFileSuffix(char *fn) {
+  return (char *) mock(fn);
+}
+
+char *javaCutClassPathFromFileName(char *fname) {
+  return (char *) mock(fname);
+}
+
+char *javaCutSourcePathFromFileName(char *fname) {
+  return (char *) mock(fname);
+}
+
+int pathncmp(char *ss1, char *ss2, int n, int caseSensitive) {
+  return (int) mock(ss1, ss2, n, caseSensitive);
+}
+
+int fnCmp(char *ss1, char *ss2) {
+  return (int) mock(ss1, ss2);
+}
+
+int fnnCmp(char *ss1, char *ss2, int n) {
+  return (int) mock(ss1, ss2, n);
+}
+
+void linkNamePrettyPrint(char *ff, char *javaLinkName, int maxlen, int argsStyle) {
+  mock(ff, javaLinkName, maxlen, argsStyle);
+}
+
+char *simpleFileNameFromFileNum(int fnum) {
+  return (char *) mock(fnum);
+}
+
+char *getShortClassNameFromClassNum_st(int fnum) {
+  return (char *) mock(fnum);
+}
+
+void printSymbolLinkNameString(FILE *ff, char *linkName) {
+  mock(ff, linkName);
+}
+
+void printClassFqtNameFromClassNum(FILE *ff, int fnum) {
+  mock(ff, fnum);
+}
+
+void sprintfSymbolLinkName(char *ttt, S_olSymbolsMenu *ss) {
+  mock(ttt, ss);
+}
+
+void printSymbolLinkName(FILE *ff, S_olSymbolsMenu *ss) {
+  mock(ff, ss);
 }

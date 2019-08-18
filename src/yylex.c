@@ -207,8 +207,8 @@ void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) {
     } else {
         // read file
         assert(plen < CHAR_BUFF_SIZE);
-        strcpy(cFile.lb.cb.a,prepend);
-        bbase = cFile.lb.cb.a;
+        strcpy(cFile.lb.cb.buffer,prepend);
+        bbase = cFile.lb.cb.buffer;
         bsize = plen;
         filepos = 0;
     }

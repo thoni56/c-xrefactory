@@ -1694,7 +1694,7 @@ static void linePosProcess( FILE *off,
                             S_position *callerp,
                             S_position *cp,
                             int *cch,
-                            S_charBuf *cxfBuf
+                            CharacterBuffer *cxfBuf
                             ) {
     int             ch, pendingRefFlag, linerefn;
     S_reference     *rr, *r;
@@ -1772,7 +1772,8 @@ static void passRefsThroughSourceFile(S_reference **rrr, S_position *callerp,
     S_editorBuffer      *ebuf;
     char                *cofileName;
     S_position          cp;
-    S_charBuf           cxfBuf;
+    CharacterBuffer     cxfBuf;
+
     rr = *rrr;
     if (rr==NULL) goto fin;
     fnum = rr->p.file;
@@ -1785,7 +1786,7 @@ static void passRefsThroughSourceFile(S_reference **rrr, S_position *callerp,
     } else {
         ebuf = editorFindFile(cofileName);
         //&cofile = fopen(cofileName, "r");
-        //&FILL_charBuf(&cxfBuf, cxfBuf.a, cxfBuf.a, cofile, 0, -1, 0, 0, 0, 0,INPUT_DIRECT,s_defaultZStream);
+        //&FILL_CharacterBuffer(&cxfBuf, cxfBuf.buffer, cxfBuf.buffer, cofile, 0, -1, 0, 0, 0, 0,INPUT_DIRECT,s_defaultZStream);
         if (ebuf==NULL) {
             if (s_opt.xref2) {
                 sprintf(tmpBuff, "file %s not accessible", cofileName);
@@ -1800,7 +1801,7 @@ static void passRefsThroughSourceFile(S_reference **rrr, S_position *callerp,
     if (ebuf==NULL) {
         cxfBuf.isAtEOF = 1;
     } else {
-        FILL_charBuf(&cxfBuf, ebuf->a.text, ebuf->a.text+ebuf->a.bufferSize, NULL, ebuf->a.bufferSize, s_noneFileIndex, 0, ebuf->a.text, 0, 0,INPUT_DIRECT, s_defaultZStream);
+        FILL_CharacterBuffer(&cxfBuf, ebuf->a.text, ebuf->a.text+ebuf->a.bufferSize, NULL, ebuf->a.bufferSize, s_noneFileIndex, 0, ebuf->a.text, 0, 0,INPUT_DIRECT, s_defaultZStream);
         GetFileChar(ch, &cp, &cxfBuf);
     }
     FILL_position(&cp, rr->p.file, 1, 0);

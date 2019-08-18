@@ -1,0 +1,40 @@
+/* -*- c -*-*/
+#include "../caching.h"
+#include <cgreen/mocks.h>
+
+int testFileModifiedTime(int ii) { 
+  return (int) mock(ii);
+}
+
+void initCaching(void) { 
+  mock();
+}
+
+void recoverCachePoint(int i, char *readedUntil, int activeCaching) { 
+  mock(i, readedUntil, activeCaching);
+}
+
+void recoverFromCache(void) { 
+  mock();
+}
+
+void cacheInput(void) { 
+  mock();
+}
+
+void cacheInclude(int fileNum) { 
+  mock(fileNum);
+}
+
+void poseCachePoint(int inputCacheFlag) { 
+  mock(inputCacheFlag);
+}
+
+void recoverCachePointZero(void) { 
+  mock();
+}
+
+void recoverMemoriesAfterOverflow(char *cxMemFreeBase) { 
+  mock(cxMemFreeBase);
+}
+

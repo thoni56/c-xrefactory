@@ -1,0 +1,75 @@
+/* -*- c -*-*/
+#include "../filetab.h"
+
+void fileTabInit(
+                 struct fileTab *table,
+                 int size
+                 ) {
+    mock(table, size);
+}
+
+void fileTabNAInit(
+                   struct fileTab *table,
+                   int size
+                   ) {
+    mock(table, size);
+}
+
+
+bool fileTabIsMember (
+                      struct fileTab *table,
+                      S_fileItem *element,
+                      int *position
+                      ) {
+    return (bool)mock(table, element, position);
+}
+
+void fileTabSet (
+                 struct fileTab *table,
+                 S_fileItem *element,
+                 int position
+                 ) {
+    mock(table, element, position);
+}
+
+void fileTabAdd (
+                 struct fileTab *table,
+                 S_fileItem *element,
+                 int *position
+                 ) {
+    mock(table, element, position);
+}
+
+void fileTabFree (struct fileTab *table) {
+    mock(table);
+}
+
+void fileTabMap(
+                struct fileTab *table,
+                void (*fun)(S_fileItem *)
+                ) {
+    mock(table, fun);
+}
+
+void fileTabMap2(
+                 struct fileTab *table,
+                 void (*fun)(S_fileItem *, void *),
+                 void *a
+                 ) {
+    mock(table, fun, a);
+}
+
+void fileTabMap4(
+                 struct fileTab *table,
+                 void (*fun)(int, void *, void *),
+                 void *a, void *b
+                 ) {
+    mock(table, fun, a, b);
+}
+
+void fileTabMap3(
+                 struct fileTab *table,
+                 void (*fun)(S_fileItem *, int)
+                 ) {
+    mock(table, fun);
+}

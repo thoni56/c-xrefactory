@@ -1,0 +1,8 @@
+/* -*- c -*-*/
+#include "../memmac.h"
+#include <cgreen/mocks.h>
+
+void memoryResize(void) { 
+  mock();
+}
+

@@ -1,3 +1,4 @@
+[![Coverage Status](https://coveralls.io/repos/github/thoni56/c-xrefactory/badge.svg?branch=master)](https://coveralls.io/github/thoni56/c-xrefactory?branch=master)
 # C-xrefactory - A refactoring tool for C/Java and Emacs
 
 ## TL;DR
@@ -20,7 +21,7 @@ for easy access to most functions.
 ## Help!
 
 This code is pre-historic legacy. It seems to have been born in a
-world of copy-paste-hack-and-debug, there are no unit tests, or any
+world of copy-paste-hack-and-debug, there were no unit tests, or any
 tests at all for that matter.
 
 I'm on a long-time quest to resurrect this code to understandable,

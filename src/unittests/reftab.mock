@@ -1,0 +1,155 @@
+/*
+typedef struct refTab {
+    int size;
+    S_symbolRefItem **tab;
+} S_refTab;
+*/
+
+void refTabInit (
+                    struct refTab *table,
+                    int size
+                );
+void refTabNAInit(
+                    struct refTab *table,
+                    int size
+                ) {
+    mock();
+}
+
+int refTabIsMember (
+                    struct refTab *table,
+                    S_symbolRefItem *element,
+                    int *position,
+                    S_symbolRefItem **origin
+                ) {
+    mock();
+}
+
+int refTabMembEqual(
+                    S_symbolRefItem *e1,
+                    S_symbolRefItem *e2
+            ) {
+    mock();
+}
+
+int refTabNextMember(
+                    S_symbolRefItem *element,
+                    S_symbolRefItem **original
+            ) {
+    mock();
+}
+
+void refTabSet (
+                    struct refTab *table,
+                    S_symbolRefItem *element,
+                    int position
+                ) {
+    mock();
+}
+
+void refTabSetLast (
+                    struct refTab *table,
+                    S_symbolRefItem *element,
+                    int position
+                ) {
+    mock();
+}
+
+void refTabAdd (
+                    struct refTab *table,
+                    S_symbolRefItem *element,
+                    int *position
+                ) {
+    mock();
+}
+
+int refTabDelete(
+                    struct refTab *table,
+                    S_symbolRefItem *element
+            ) {
+    mock();
+}
+
+
+int refTabDeleteExact(
+                    struct refTab *table,
+                    S_symbolRefItem *element
+            ) {
+    return (int)mock();
+}
+
+int refTabDeleteLast(
+                    struct refTab *table,
+                    S_symbolRefItem *element
+            ) {
+    mock();
+}
+
+void refTabFree(
+                    struct refTab *tab
+                ) {
+    mock();
+}
+
+void refTabMap(
+                    struct refTab *table,
+                    void (*fun)(S_symbolRefItem *)
+                ) {
+    mock();
+}
+
+void refTabMap2(
+                    struct refTab *table,
+                    void (*fun)(S_symbolRefItem *, void *),
+                    void *a
+                ) {
+    mock();
+}
+
+void refTabMap3(
+                    struct refTab *table,
+                    void (*fun)(int)
+                ) {
+    mock();
+}
+
+void refTabMap31(
+                    struct refTab *table,
+                    void (*fun)(int, void *, void *),
+                    void *arg1, void *arg2
+                ) {
+    mock();
+}
+
+void refTabMap32(
+                    struct refTab *table,
+                    void (*fun)(int, void *, void *, void *),
+                    void *arg1, void *arg2, void *arg3
+                ) {
+    mock();
+}
+
+void refTabMap4(
+                    struct refTab *table,
+                    void (*fun)(S_symbolRefItem *, int),
+                    int a
+                ) {
+    mock();
+}
+
+void refTabMap5(
+                    struct refTab *table,
+                    void (*fun)(S_symbolRefItem *, void *),
+                    void *arg
+                ) {
+    mock();
+}
+
+void refTabStatistics(
+                    struct refTab *table,
+                    int *usedIndexes,
+                    int *elements,
+                    int *maxdepth
+                ) {
+    mock();
+}
