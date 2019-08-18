@@ -3,10 +3,10 @@
 
 #include "proto.h"
 
-extern void charBuffClose(struct charBuf *bb);
-extern int getCharBuf(struct charBuf *bb);
-extern void switchToZippedCharBuff(struct charBuf *bb);
-extern int skipNCharsInCharBuf(struct charBuf *bb, unsigned count);
+extern void charBuffClose(struct CharacterBuffer *bb);
+extern int getCharBuf(struct CharacterBuffer *bb);
+extern void switchToZippedCharBuff(struct CharacterBuffer *bb);
+extern int skipNCharsInCharBuf(struct CharacterBuffer *bb, unsigned count);
 extern int getLexBuf(struct lexBuf *lb);
 extern void gotOnLineCxRefs( S_position *ps );
 

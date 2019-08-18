@@ -132,7 +132,7 @@ struct zipIndexItem {
     char name;              /* array of char    */
 };
 
-static int zipReadLocalFileHeader(char **accc, char **affin, S_charBuf *iBuf,
+static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iBuf,
                                   char *fn, unsigned *fsize, unsigned *lastSig,
                                   char *archivename, unsigned fileOffset) {
     int res;
@@ -251,7 +251,7 @@ static int zipReadLocalFileHeader(char **accc, char **affin, S_charBuf *iBuf,
     }
 
 
-static S_charBuf s_zipTmpBuff;
+static CharacterBuffer s_zipTmpBuff;
 
 int fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset,
                int addFlag, S_zipArchiveDir **place) {
@@ -330,7 +330,7 @@ void fsRecMapOnFiles(S_zipArchiveDir *dir, char *zip, char *path, void (*fun)(ch
 }
 
 static int findEndOfCentralDirectory(char **accc, char **affin,
-                                     S_charBuf *iBuf, int fsize) {
+                                     CharacterBuffer *iBuf, int fsize) {
     int offset,res;
     char *ccc, *ffin;
     res = 1;
@@ -355,7 +355,7 @@ static int findEndOfCentralDirectory(char **accc, char **affin,
     return(res);
 }
 
-static void zipArchiveScan(char **accc, char **affin, S_charBuf *iBuf,
+static void zipArchiveScan(char **accc, char **affin, CharacterBuffer *iBuf,
                            S_zipFileTabItem *zip, int fsize) {
     char fn[MAX_FILE_NAME_SIZE];
     char *ccc, *ffin;
@@ -422,7 +422,7 @@ static void zipArchiveCdOffset(char **accc, char **affin, S_charBuf *iBuf,
 int zipIndexArchive(char *name) {
     int archi, namelen;
     FILE *ff;
-    S_charBuf *bbb;
+    CharacterBuffer *bbb;
     struct stat fst;
 
     bbb = &s_zipTmpBuff;
@@ -460,7 +460,7 @@ int zipIndexArchive(char *name) {
             }
             return(-1);
         }
-        FILL_charBuf(bbb, bbb->a, bbb->a, ff, 0, 0, 0, bbb->a, 0, 0,INPUT_DIRECT,s_defaultZStream);
+        FILL_CharacterBuffer(bbb, bbb->a, bbb->a, ff, 0, 0, 0, bbb->a, 0, 0,INPUT_DIRECT,s_defaultZStream);
         assert(namelen+2 < MAX_FILE_NAME_SIZE);
         strcpy(s_zipArchivTab[archi].fn, name);
         s_zipArchivTab[archi].fn[namelen] = ZIP_SEPARATOR_CHAR;
@@ -472,7 +472,7 @@ int zipIndexArchive(char *name) {
     return(archi);
 }
 
-static int zipSeekToFile(char **accc, char **affin, S_charBuf *iBuf,
+static int zipSeekToFile(char **accc, char **affin, CharacterBuffer *iBuf,
                          char *name
                          ) {
     char *sep;
@@ -574,7 +574,7 @@ void javaMapZipDirFile(
 /* **************************************************************** */
 
 static union constantPoolUnion * cfReadConstantPool(
-                                                    char **accc, char **affin, S_charBuf *iBuf,
+                                                    char **accc, char **affin, CharacterBuffer *iBuf,
                                                     int *cpSize
                                                     ) {
     register char *ccc, *ffin;
@@ -844,7 +844,7 @@ static void cfAddRecordToClass( char *name,
 
 static void cfReadFieldInfos(   char **accc,
                                 char **affin,
-                                S_charBuf *iBuf,
+                                CharacterBuffer *iBuf,
                                 S_symbol *memb,
                                 union constantPoolUnion *cp
                                 ) {
@@ -883,7 +883,7 @@ static char *simpleClassNameFromFQTName(char *fqtName) {
 
 static void cfReadMethodInfos(  char **accc,
                                 char **affin,
-                                S_charBuf *iBuf,
+                                CharacterBuffer *iBuf,
                                 S_symbol *memb,
                                 union constantPoolUnion *cp
                                 ) {

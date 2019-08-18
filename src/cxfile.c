@@ -85,7 +85,7 @@ struct lastCxFileInfos {
     int                 macroBaseFileGeneratedForSym[MAX_CX_SYMBOL_TAB];
     char                singleRecord[MAX_CHARS];
     int                 counter[MAX_CHARS];
-    void                (*fun[MAX_CHARS])(int size,int ri,char **ccc,char **ffin,S_charBuf *bbb, int additional);
+    void                (*fun[MAX_CHARS])(int size,int ri,char **ccc,char **ffin,CharacterBuffer *bbb, int additional);
     int                 additional[MAX_CHARS];
 
     // dead code detection vars
@@ -102,7 +102,7 @@ static struct lastCxFileInfos s_inLastInfos;
 static struct lastCxFileInfos s_outLastInfos;
 
 
-static S_charBuf cxfBuf;
+static CharacterBuffer cxfBuf;
 
 static unsigned s_decodeFilesNum[MAX_FILES];
 
@@ -735,12 +735,12 @@ void genReferenceFile(int updateFlag, char *fname) {
         /*fprintf(dumpOut,"getting char *%x < %x == '0x%x'\n",ccc,ffin,cch);fflush(dumpOut);*/ \
     }
 
-#define ScanInt(cch, ccc, ffin, bbb, res) {                                   \
-        while (cch==' ' || cch=='\n' || cch=='\t') GetChar(cch,ccc,ffin,bbb); \
-        res = 0;                                                              \
+#define ScanInt(cch, ccc, ffin, buffer, result) {                                   \
+        while (cch==' ' || cch=='\n' || cch=='\t') GetChar(cch,ccc,ffin,buffer); \
+        result = 0;                                                              \
         while (isdigit(cch)) {                                                \
-            res = res*10 + cch-'0';                                           \
-            GetChar(cch,ccc,ffin,bbb);                                        \
+            result = result*10 + cch-'0';                                           \
+            GetChar(cch,ccc,ffin,buffer);                                        \
         }                                                                     \
     }
 
@@ -760,7 +760,7 @@ static void cxrfSetSingleRecords(int size,
                                  int ri,
                                  char **ccc,
                                  char **ffin,
-                                 S_charBuf *bbb,
+                                 CharacterBuffer *bbb,
                                  int additionalArg
                                  ) {
     int i,cch;
@@ -791,7 +791,7 @@ static void cxrfVersionCheck(int size,
                              int ri,
                              char **ccc,
                              char **ffin,
-                             S_charBuf *bbb,
+                             CharacterBuffer *bbb,
                              int additionalArg
                              ) {
     char versionString[TMP_STRING_SIZE];
@@ -817,7 +817,7 @@ static void cxrfCheckNumber(    int size,
                                 int ri,
                                 char **ccc,
                                 char **ffin,
-                                S_charBuf *bbb,
+                                CharacterBuffer *bbb,
                                 int additionalArg
                                 ) {
     int magicn, filen, hashMethod, exactPositionLinkFlag;
@@ -879,7 +879,7 @@ static void cxrfFileName(       int size,
                                 int ri,
                                 char **ccc,
                                 char **ffin,
-                                S_charBuf *bbb,
+                                CharacterBuffer *bbb,
                                 int genFl
                                 ) {
     char id[MAX_FILE_NAME_SIZE];
@@ -946,7 +946,7 @@ static void cxrfSourceIndex(    int size,
                                 int ri,
                                 char **ccc,
                                 char **ffin,
-                                S_charBuf *bbb,
+                                CharacterBuffer *bbb,
                                 int genFl
                                 ) {
     char *cc, *fin;
@@ -977,7 +977,7 @@ static void cxrfSourceIndex(    int size,
 }
 
 static int scanSymNameString(int size,char **ccc,char **ffin,
-                             S_charBuf *bbb,char *id) {
+                             CharacterBuffer *bbb,char *id) {
     int i, len;
     char *cc, *fin, cch;
     cc = *ccc; fin = *ffin;
@@ -1014,7 +1014,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
                                                 int ri,
                                                 char **ccc,
                                                 char **ffin,
-                                                S_charBuf *bbb,
+                                                CharacterBuffer *bbb,
                                                 int additionalArg
                                                 ) {
     S_symbolRefItem *ddd, *memb;
@@ -1090,7 +1090,7 @@ static void cxrfSymbolName(     int size,
                                 int ri,
                                 char **ccc,
                                 char **ffin,
-                                S_charBuf *bbb,
+                                CharacterBuffer *bbb,
                                 int additionalArg
                                 ) {
     S_symbolRefItem *ddd, *memb;
@@ -1187,7 +1187,7 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
                                                int ri,
                                                char **ccc,
                                                char **ffin,
-                                               S_charBuf *bbb,
+                                               CharacterBuffer *bbb,
                                                int additionalArg
                                                ) {
     S_position pos;
@@ -1219,7 +1219,7 @@ static void cxrfReference(int size,
                           int ri,
                           char **ccc,
                           char **ffin,
-                          S_charBuf *bbb,
+                          CharacterBuffer *bbb,
                           int additionalArg
                           ) {
     S_position pos;
@@ -1354,7 +1354,7 @@ static void cxrfRefNum(int fileRefNum,
                        int ri,
                        char **ccc,
                        char **ffin,
-                       S_charBuf *bbb,
+                       CharacterBuffer *bbb,
                        int additionalArg
                        ) {
     int check;
@@ -1370,7 +1370,7 @@ static void cxrfSubClass(int size,
                          int ri,
                          char **ccc,
                          char **ffin,
-                         S_charBuf *bbb,
+                         CharacterBuffer *bbb,
                          int additionalArg
                          ) {
     int of, file, sup, inf;
@@ -1428,7 +1428,7 @@ void scanCxFile(S_cxScanFileFunctionLink *scanFuns) {
         s_inLastInfos.fun[ch] = scanFuns[i].handleFun;
         s_inLastInfos.additional[ch] = scanFuns[i].additionalArg;
     }
-    FILL_charBuf(&cxfBuf, cxfBuf.a, cxfBuf.a, fIn, 0, -1, 0, 0, 0, 0,INPUT_DIRECT,s_defaultZStream);
+    FILL_CharacterBuffer(&cxfBuf, cxfBuf.a, cxfBuf.a, fIn, 0, -1, 0, 0, 0, 0,INPUT_DIRECT,s_defaultZStream);
     ch = ' '; cc = cxfBuf.a; cfin = cxfBuf.fin;
     while(! cxfBuf.isAtEOF) {
         ScanInt(ch, cc, cfin, &cxfBuf, recInfo);

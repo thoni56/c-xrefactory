@@ -15,14 +15,14 @@
 /* ***************************************************************** */
 
 
-static int charBuffReadFromFile(struct charBuf  *bb, char *outBuffer, int max_size) {
+static int charBuffReadFromFile(struct CharacterBuffer  *bb, char *outBuffer, int max_size) {
     int n;
     if (bb->ff == NULL) n = 0;
     else n = fread(outBuffer, 1, max_size, bb->ff);
     return(n);
 }
 
-void charBuffClose(struct charBuf *bb) {
+void charBuffClose(struct CharacterBuffer *bb) {
     if (bb->ff!=NULL) fclose(bb->ff);
 #if defined(USE_LIBZ)       /*SBD*/
     if (bb->inputMethod == INPUT_VIA_UNZIP) {
@@ -38,7 +38,7 @@ void zlibFree(voidpf opaque, voidpf address) {
     free(address);
 }
 
-static int charBuffReadFromUnzipFilter(struct charBuf  *bb, char *outBuffer, int max_size) {
+static int charBuffReadFromUnzipFilter(struct CharacterBuffer  *bb, char *outBuffer, int max_size) {
     int n, fn, res;
     bb->zipStream.next_out = (unsigned char *)outBuffer;
     bb->zipStream.avail_out = max_size;
@@ -70,7 +70,7 @@ static int charBuffReadFromUnzipFilter(struct charBuf  *bb, char *outBuffer, int
     return(n);
 }
 
-int getCharBuf(struct charBuf *buffer) {
+int getCharBuf(struct CharacterBuffer *buffer) {
     char *dd;
     char *cc;
     char *fin;
@@ -91,7 +91,7 @@ int getCharBuf(struct charBuf *buffer) {
     return(buffer->cc != buffer->fin);
 }
 
-void switchToZippedCharBuff(struct charBuf *bb) {
+void switchToZippedCharBuff(struct CharacterBuffer *bb) {
     char *dd;
     char *cc;
     char *fin;
@@ -119,7 +119,7 @@ void switchToZippedCharBuff(struct charBuf *bb) {
 #endif
 }
 
-int skipNCharsInCharBuf(struct charBuf *bb, unsigned count) {
+int skipNCharsInCharBuf(struct CharacterBuffer *bb, unsigned count) {
     char *dd;
     char *cc;
     char *fin;
@@ -419,7 +419,7 @@ void gotOnLineCxRefs( S_position *ps ) {
 
 int getLexBuf(struct lexBuf *lb) {
     register int ch;
-    struct charBuf *cb;
+    struct CharacterBuffer *cb;
     register char *ccc, *cfin;
     register char *cc, *dd, *lmax, *lexStartDd;
     unsigned chval=0;
