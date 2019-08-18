@@ -44,7 +44,7 @@ BeforeEach(CxFile) {}
 AfterEach(CxFile) {}
 
 
-Ensure(CxFile, can_scan_int) {
+xEnsure(CxFile, can_scan_int) {
     char ch = ' ';
     char *cc = cxfBuf.a;
     char *cfin = cxfBuf.fin;
