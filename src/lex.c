@@ -3,18 +3,15 @@
 #include "globals.h"
 #include "commons.h"
 #include "unigram.h"
-#include "caching.h"
-#include "protocol.h"
 #include "cxref.h"
-#include "jslsemact.h"
-#include "utils.h"
+
+#include "caching.h"            /* cacheInput() */
+#include "jslsemact.h"          /* s_jsl */
 
 
 /* ***************************************************************** */
 /*                         Lexical Analysis                          */
 /* ***************************************************************** */
-
-/*& static int brack_deep = 0; &*/
 
 #define PutLexLine(line,dd) {                               \
         if (line!=0) {                                      \
@@ -46,12 +43,9 @@
             cch = * ((unsigned char *)ccc);             \
             ccc = ((char *)ccc) + 1;                    \
         }                                               \
-        /*&if (brack_deep==0) putchar(cch);&*/          \
-        /*fprintf(dumpOut,"getting char %c\n",cch);*/   \
     }
 
 #define UngetChar(cch, ccc, ffin, bbb) {*--ccc = cch;                   \
-                                        /*&if (brack_deep==0) printf("--unget--");&*/ \
                                         }
 #define DeleteBlank(cch,ccc,ffin,bbb,clb,clo) {                         \
                                                while (cch==' '|| cch=='\t' || cch=='\004') { \
@@ -645,11 +639,6 @@ int getLexBuf(struct lexBuf *lb) {
         case -1:
             /* ** probably end of file ** */
             goto nextLexem;
-#if ZERO
-        case '{': if (brack_deep==0) printf("/**/}");
-            brack_deep+=2;
-        case '}': brack_deep--;
-#endif
         default:
             if (ch >= 32) {         /* small chars ignored */
                 PutLexToken(ch,dd);
