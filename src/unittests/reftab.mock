@@ -1,3 +1,4 @@
+/* -*- c -*-*/
 /*
 typedef struct refTab {
     int size;
@@ -22,21 +23,21 @@ int refTabIsMember (
                     int *position,
                     S_symbolRefItem **origin
                 ) {
-    mock();
+    return (int)mock();
 }
 
 int refTabMembEqual(
                     S_symbolRefItem *e1,
                     S_symbolRefItem *e2
             ) {
-    mock();
+    return (int)mock();
 }
 
 int refTabNextMember(
                     S_symbolRefItem *element,
                     S_symbolRefItem **original
             ) {
-    mock();
+    return (int)mock();
 }
 
 void refTabSet (
@@ -67,7 +68,7 @@ int refTabDelete(
                     struct refTab *table,
                     S_symbolRefItem *element
             ) {
-    mock();
+    return (int)mock();
 }
 
 
@@ -82,7 +83,7 @@ int refTabDeleteLast(
                     struct refTab *table,
                     S_symbolRefItem *element
             ) {
-    mock();
+    return (int)mock();
 }
 
 void refTabFree(
