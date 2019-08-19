@@ -1,0 +1,31 @@
+/* -*- c -*-*/
+#include "../charbuf.h"
+#include <cgreen/mocks.h>
+
+void charBuffClose(struct CharacterBuffer *buffer) {
+  mock(buffer);
+}
+
+voidpf zlibAlloc(voidpf opaque, uInt items, uInt size) {
+  mock(opaque, items, size);
+}
+
+void zlibFree(voidpf opaque, voidpf address) {
+  mock(opaque, address);
+}
+
+int getCharBuf(struct CharacterBuffer *buffer) {
+  return (int) mock(buffer);
+}
+
+void switchToZippedCharBuff(struct CharacterBuffer *buffer) {
+  mock(buffer);
+}
+
+int skipNCharsInCharBuf(struct CharacterBuffer *buffer, unsigned count) {
+  return (int) mock(buffer, count);
+}
+
+void gotOnLineCxRefs(S_position *ps) {
+  mock(ps);
+}
