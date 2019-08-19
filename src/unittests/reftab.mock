@@ -9,12 +9,16 @@ typedef struct refTab {
 void refTabInit (
                     struct refTab *table,
                     int size
-                );
+                )
+{
+    mock(table, size);
+}
+
 void refTabNAInit(
                     struct refTab *table,
                     int size
                 ) {
-    mock();
+    mock(table, size);
 }
 
 int refTabIsMember (
@@ -23,21 +27,21 @@ int refTabIsMember (
                     int *position,
                     S_symbolRefItem **origin
                 ) {
-    return (int)mock();
+    return (int)mock(table, element, position, origin);
 }
 
 int refTabMembEqual(
                     S_symbolRefItem *e1,
                     S_symbolRefItem *e2
             ) {
-    return (int)mock();
+    return (int)mock(e1, e2);
 }
 
 int refTabNextMember(
                     S_symbolRefItem *element,
                     S_symbolRefItem **original
             ) {
-    return (int)mock();
+    return (int)mock(element, original);
 }
 
 void refTabSet (
@@ -45,7 +49,7 @@ void refTabSet (
                     S_symbolRefItem *element,
                     int position
                 ) {
-    mock();
+    mock(table, element, position);
 }
 
 void refTabSetLast (
@@ -53,7 +57,7 @@ void refTabSetLast (
                     S_symbolRefItem *element,
                     int position
                 ) {
-    mock();
+    mock(table, element, position);
 }
 
 void refTabAdd (
@@ -61,14 +65,14 @@ void refTabAdd (
                     S_symbolRefItem *element,
                     int *position
                 ) {
-    mock();
+    mock(table, element, position);
 }
 
 int refTabDelete(
                     struct refTab *table,
                     S_symbolRefItem *element
             ) {
-    return (int)mock();
+    return (int)mock(table, element);
 }
 
 
@@ -76,27 +80,27 @@ int refTabDeleteExact(
                     struct refTab *table,
                     S_symbolRefItem *element
             ) {
-    return (int)mock();
+    return (int)mock(table, element);
 }
 
 int refTabDeleteLast(
                     struct refTab *table,
                     S_symbolRefItem *element
             ) {
-    return (int)mock();
+    return (int)mock(table, element);
 }
 
 void refTabFree(
-                    struct refTab *tab
+                    struct refTab *table
                 ) {
-    mock();
+    mock(table);
 }
 
 void refTabMap(
                     struct refTab *table,
                     void (*fun)(S_symbolRefItem *)
                 ) {
-    mock();
+    mock(table, fun);
 }
 
 void refTabMap2(
@@ -104,14 +108,14 @@ void refTabMap2(
                     void (*fun)(S_symbolRefItem *, void *),
                     void *a
                 ) {
-    mock();
+    mock(table, fun);
 }
 
 void refTabMap3(
                     struct refTab *table,
                     void (*fun)(int)
                 ) {
-    mock();
+    mock(table, fun);
 }
 
 void refTabMap31(
@@ -119,7 +123,7 @@ void refTabMap31(
                     void (*fun)(int, void *, void *),
                     void *arg1, void *arg2
                 ) {
-    mock();
+    mock(table, fun, arg1, arg2);
 }
 
 void refTabMap32(
@@ -127,15 +131,15 @@ void refTabMap32(
                     void (*fun)(int, void *, void *, void *),
                     void *arg1, void *arg2, void *arg3
                 ) {
-    mock();
+    mock(table, fun, arg1, arg2, arg3);
 }
 
 void refTabMap4(
                     struct refTab *table,
                     void (*fun)(S_symbolRefItem *, int),
-                    int a
+                    int i
                 ) {
-    mock();
+    mock(table, fun, i);
 }
 
 void refTabMap5(
@@ -143,7 +147,7 @@ void refTabMap5(
                     void (*fun)(S_symbolRefItem *, void *),
                     void *arg
                 ) {
-    mock();
+    mock(table, fun, arg);
 }
 
 void refTabStatistics(
@@ -152,5 +156,5 @@ void refTabStatistics(
                     int *elements,
                     int *maxdepth
                 ) {
-    mock();
+    mock(table, usedIndexes, elements, maxdepth);
 }

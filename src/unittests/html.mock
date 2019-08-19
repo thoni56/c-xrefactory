@@ -1,63 +1,63 @@
+/* -*- c -*-*/
 #include "../html.h"
 #include <cgreen/mocks.h>
 
-void genClassHierarchyItemLinks(FILE *ff, S_olSymbolsMenu *itt, int virtFlag) { 
-  mock(ff, itt, virtFlag);
+void genClassHierarchyItemLinks(FILE *ff, S_olSymbolsMenu *itt, int virtFlag) {
+    mock(ff, itt, virtFlag);
 }
 
-void htmlGenNonVirtualGlobSymList(FILE *ff, char *fn, S_symbolRefItem *p) { 
-  mock(ff, fn, p);
+void htmlGenNonVirtualGlobSymList(FILE *ff, char *fn, S_symbolRefItem *p) {
+    mock(ff, fn, p);
 }
 
-void htmlGenGlobRefsForVirtMethod(FILE *ff, char *fn, S_olSymbolsMenu *rrr) { 
-  mock(ff, fn, rrr);
+void htmlGenGlobRefsForVirtMethod(FILE *ff, char *fn, S_olSymbolsMenu *rrr) {
+    mock(ff, fn, rrr);
 }
 
-int htmlRefItemsOrderLess(S_olSymbolsMenu *ss1, S_olSymbolsMenu *ss2) { 
-  return (int) mock(ss1, ss2);
+int htmlRefItemsOrderLess(S_olSymbolsMenu *ss1, S_olSymbolsMenu *ss2) {
+    return (int) mock(ss1, ss2);
 }
 
-int isAbsolutePath(char *p) { 
-  return (int) mock(p);
+int isAbsolutePath(char *p) {
+    return (int) mock(p);
 }
 
-char *htmlNormalizedPath(char *p) { 
-  return (char *) mock(p);
+char *htmlNormalizedPath(char *p) {
+    return (char *) mock(p);
 }
 
-void recursivelyCreateFileDirIfNotExists(char *fpath) { 
-  mock(fpath);
+void recursivelyCreateFileDirIfNotExists(char *fpath) {
+    mock(fpath);
 }
 
-void concatPaths(char *res, int rsize, char *p1, char *p2, char *p3) { 
-  mock(res, rsize, p1, p2, p3);
+void concatPaths(char *res, int rsize, char *p1, char *p2, char *p3) {
+    mock(res, rsize, p1, p2, p3);
 }
 
-void htmlPutChar(FILE *ff, int c) { 
-  mock(ff, c);
+void htmlPutChar(FILE *ff, int c) {
+    mock(ff, c);
 }
 
-void htmlGenGlobalReferenceLists(char *cxMemFreeBase) { 
-  mock(cxMemFreeBase);
+void htmlGenGlobalReferenceLists(char *cxMemFreeBase) {
+    mock(cxMemFreeBase);
 }
 
-void htmlAddJavaDocReference(S_symbol *p, S_position *pos, int vFunClass, int vApplClass) { 
-  mock(p, pos, vFunClass, vApplClass);
+void htmlAddJavaDocReference(S_symbol *p, S_position *pos, int vFunClass, int vApplClass) {
+    mock(p, pos, vFunClass, vApplClass);
 }
 
-int addHtmlCutPath(char *ss) { 
-  return (int) mock(ss);
+int addHtmlCutPath(char *ss) {
+    return (int) mock(ss);
 }
 
-void htmlGetDefinitionReferences(void) { 
-  mock();
+void htmlGetDefinitionReferences(void) {
+    mock();
 }
 
-void htmlAddFunctionSeparatorReference(void) { 
-  mock();
+void htmlAddFunctionSeparatorReference(void) {
+    mock();
 }
 
-void generateHtml(void) { 
-  mock();
+void generateHtml(void) {
+    mock();
 }
-
