@@ -1,13 +1,9 @@
 #include "charbuf.h"
 
 #include "globals.h"
-#include "commons.h"
-#include "unigram.h"
-#include "caching.h"
-#include "protocol.h"
-#include "cxref.h"
-#include "jslsemact.h"
-#include "utils.h"
+
+#include "commons.h"            /* error() */
+#include "utils.h"              /* creatingOlcxRefs() */
 
 
 
