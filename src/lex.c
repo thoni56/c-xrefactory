@@ -155,7 +155,6 @@
         }                                                               \
         PutLexChar(0,dd);                                               \
         PutLexPosition(cfile,cline,idcoll,dd);                          \
-    identEnd##lab:;                                                     \
     }
 
 #define HandleCppToken(ch,ccc,cfin,cb,dd, cfile, cline, clb, clo) {     \
