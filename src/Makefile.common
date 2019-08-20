@@ -167,7 +167,7 @@ test: c-xref
 
 
 unit:
-	$(MAKE) COVERAGE=$(COVERAGE) -C unittests
+	$(MAKE) COVERAGE="$(COVERAGE)" -C unittests
 
 # Special dependecies to force rebuild of c-xref.bs to generate needed files
 $(SRCS) : strFill.g.h enumTxt.g.h enumTxt.g.c
