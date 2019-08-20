@@ -29,10 +29,9 @@ branches:
 after_success:
     # Move "stable" tag if on master
     - ./.travis.merge_to_stable_maybe.sh
-    # Coverage for application to Coveralls
+    # Coverage to Coveralls
     - lcov -d src -c -o coverage.info
     - lcov --remove coverage.info '/usr/*' -o coverage.info
     - coveralls-lcov coverage.info
-    # Coverage for (only) unittests to Codecov
-    - rm -rf src/.objects
+    # Coverage to Codecov
     - bash <(curl -s https://codecov.io/bash)
