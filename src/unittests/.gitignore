@@ -2,3 +2,5 @@
 *.so
 pycparser
 .objs
+coverage.info
+coverage

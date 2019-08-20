@@ -18,6 +18,11 @@ clean:
 cleaner: clean
 	-rm -rf $(OBJDIR)
 
+coverage: COVERAGE=--coverage
+coverage: clean all
+	lcov -d . -c -o coverage.info
+	genhtml -o coverage coverage.info
+
 lex_tests.so: $(OBJDIR)/lex_tests.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
