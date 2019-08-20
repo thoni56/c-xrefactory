@@ -15,7 +15,7 @@ before_install:
     - sudo apt-get install ./cgreen_1.2.0_amd64.deb
 
 script:
-    - cd src ; make COVERAGE=--coverage ; make COVERAGE=--coverage unit ; cd ..
+    - cd src ; make COVERAGE="--coverage -O0" ; make COVERAGE="--coverage -O0" unit ; cd ..
     - cd tests
     - cd ffmpeg ; make init ; cd ..
     - cd systemd ; make init ; cd ..
@@ -28,7 +28,12 @@ branches:
 after_success:
     - pwd
     - cd ..
+    # Move "stable" tag if on master
     - ./.travis.merge_to_stable_maybe.sh
+    # Coverage for application to Coveralls
     - lcov -d src -c -o coverage.info
     - lcov --remove coverage.info '/usr/*' -o coverage.info
     - coveralls-lcov coverage.info
+    # Coverage for unittests to Codecov
+    - cd src/unittests
+    - bash <(curl -s https://codecov.io/bash)
