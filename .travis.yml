@@ -20,20 +20,19 @@ script:
     - cd ffmpeg ; make init ; cd ..
     - cd systemd ; make init ; cd ..
     - make all
+    - cd ..
 
 branches:
     except:
         - stable
 
 after_success:
-    - pwd
-    - cd ..
     # Move "stable" tag if on master
     - ./.travis.merge_to_stable_maybe.sh
     # Coverage for application to Coveralls
     - lcov -d src -c -o coverage.info
     - lcov --remove coverage.info '/usr/*' -o coverage.info
     - coveralls-lcov coverage.info
-    # Coverage for unittests to Codecov
-    - cd src/unittests
+    # Coverage for (only) unittests to Codecov
+    - rm -rf src/.objects
     - bash <(curl -s https://codecov.io/bash)
