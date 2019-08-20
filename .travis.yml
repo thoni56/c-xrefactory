@@ -31,7 +31,7 @@ after_success:
     - ./.travis.merge_to_stable_maybe.sh
     # Unittest coverage to Coveralls
     - cd src/unittests
-    - lcov -d . -c -o coverage.info
+    - lcov -d .objs -c -o coverage.info
     - lcov --remove coverage.info '/usr/*' -o coverage.info
     - coveralls-lcov coverage.info
     - rm -rf .objs
