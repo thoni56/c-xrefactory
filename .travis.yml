@@ -30,7 +30,7 @@ after_success:
     # Move "stable" tag if on master
     - ./.travis.merge_to_stable_maybe.sh
     # Coverage to Coveralls
-    - lcov -d src -c -o coverage.info
+    - lcov -d src/unittests -c -o coverage.info
     - lcov --remove coverage.info '/usr/*' -o coverage.info
     - coveralls-lcov coverage.info
     # Coverage to Codecov
