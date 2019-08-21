@@ -14,4 +14,4 @@ flags:
       - src
   unittests:
     paths:
-      - src/unittests/
+      - src

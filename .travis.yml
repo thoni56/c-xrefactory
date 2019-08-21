@@ -17,8 +17,7 @@ before_install:
 script:
     - cd src
     - make COVERAGE="--coverage -O0"
-    - cd ..
-    - cd src/unittests
+    - cd unittests
     - make COVERAGE="--coverage -O0"
     - bash <(curl -s https://codecov.io/bash) -c -F unittests
     - cd ../..
@@ -27,6 +26,7 @@ script:
     - cd systemd ; make init ; cd ..
     - make all
     - cd ..
+    - find . -name *.gc?? -exec rm {} \;
     - bash <(curl -s https://codecov.io/bash) -c -F integration
 
 branches:
