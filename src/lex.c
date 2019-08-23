@@ -28,13 +28,13 @@
 
 #define GetChar(cch, ccc, ffin, bbb, clb, clo) {        \
         if (ccc >= ffin) {                              \
-            bbb->next = ccc;                              \
+            bbb->next = ccc;                            \
             clo = ccc-clb;                              \
             if (bbb->isAtEOF || getCharBuf(bbb) == 0) { \
                 cch = -1;                               \
                 bbb->isAtEOF = 1;                       \
             } else {                                    \
-                ccc = bbb->next; ffin = bbb->end;         \
+                ccc = bbb->next; ffin = bbb->end;       \
                 clb = ccc;                              \
                 cch = * ((unsigned char *)ccc);         \
                 ccc = ((char *)ccc) + 1;                \
@@ -45,8 +45,8 @@
         }                                               \
     }
 
-#define UngetChar(cch, ccc, ffin, bbb) {*--ccc = cch;                   \
-                                        }
+#define UngetChar(cch, ccc, ffin, bbb) { *--ccc = cch; }
+
 #define DeleteBlank(cch,ccc,ffin,bbb,clb,clo) {                         \
                                                while (cch==' '|| cch=='\t' || cch=='\004') { \
                                                                                             GetChar(cch,ccc,ffin,bbb,clb,clo); \

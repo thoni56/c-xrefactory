@@ -721,12 +721,12 @@ void genReferenceFile(int updateFlag, char *fname) {
 
 #define GetChar(cch, ccc, ffin, bbb) {                                  \
         if (ccc >= ffin) {                                              \
-            (bbb)->next = ccc;                                            \
+            (bbb)->next = ccc;                                          \
             if ((bbb)->isAtEOF || getCharBuf(bbb) == 0) {               \
                 cch = -1;                                               \
                 (bbb)->isAtEOF = 1;                                     \
             } else {                                                    \
-                ccc = (bbb)->next; ffin = (bbb)->end;                     \
+                ccc = (bbb)->next; ffin = (bbb)->end;                   \
                 cch = * ((unsigned char*)ccc); ccc ++;                  \
             }                                                           \
         } else {                                                        \
@@ -736,12 +736,12 @@ void genReferenceFile(int updateFlag, char *fname) {
     }
 
 #define ScanInt(cch, ccc, ffin, buffer, result) {                                   \
-        while (cch==' ' || cch=='\n' || cch=='\t') GetChar(cch,ccc,ffin,buffer); \
-        result = 0;                                                              \
-        while (isdigit(cch)) {                                                \
+        while (cch==' ' || cch=='\n' || cch=='\t') GetChar(cch,ccc,ffin,buffer);    \
+        result = 0;                                                                 \
+        while (isdigit(cch)) {                                                      \
             result = result*10 + cch-'0';                                           \
-            GetChar(cch,ccc,ffin,buffer);                                        \
-        }                                                                     \
+            GetChar(cch,ccc,ffin,buffer);                                           \
+        }                                                                           \
     }
 
 #define SkipNChars(count, ccc, ffin, iBuf) {                \

@@ -577,12 +577,13 @@ static union constantPoolUnion * cfReadConstantPool(
                                                     char **accc, char **affin, CharacterBuffer *iBuf,
                                                     int *cpSize
                                                     ) {
-    register char *ccc, *ffin;
-    register int cval;
+    char *ccc, *ffin;
+    int cval;
     int count,tag,ind,classind,nameind,typeind,strind;
     int size,i;
     union constantPoolUnion *cp=NULL;
     char *str;
+
     ccc = *accc; ffin = *affin;
     GetU2(count, ccc, ffin, iBuf);
     CF_ALLOCC(cp, count, union constantPoolUnion);

@@ -50,7 +50,11 @@ Ensure(CxFile, can_scan_int) {
     char *end = characterBuffer.end;
     int result;
 
+    strcpy(characterBuffer.buffer, "123");
     expect(getCharBuf,
            when(buffer, is_equal_to_hex(&characterBuffer)));
+
     ScanInt(next, characters, end, &characterBuffer, result);
+
+    assert_that(result, is_equal_to(123));
 }

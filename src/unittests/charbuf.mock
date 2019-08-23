@@ -3,29 +3,29 @@
 #include <cgreen/mocks.h>
 
 void charBuffClose(struct CharacterBuffer *buffer) {
-  mock(buffer);
+    mock(buffer);
 }
 
 voidpf zlibAlloc(voidpf opaque, uInt items, uInt size) {
-  mock(opaque, items, size);
+    return (voidpf)mock(opaque, items, size);
 }
 
 void zlibFree(voidpf opaque, voidpf address) {
-  mock(opaque, address);
+    mock(opaque, address);
 }
 
 int getCharBuf(struct CharacterBuffer *buffer) {
-  return (int) mock(buffer);
+    return (int) mock(buffer);
 }
 
 void switchToZippedCharBuff(struct CharacterBuffer *buffer) {
-  mock(buffer);
+    mock(buffer);
 }
 
 int skipNCharsInCharBuf(struct CharacterBuffer *buffer, unsigned count) {
-  return (int) mock(buffer, count);
+    return (int) mock(buffer, count);
 }
 
 void gotOnLineCxRefs(S_position *ps) {
-  mock(ps);
+    mock(ps);
 }
