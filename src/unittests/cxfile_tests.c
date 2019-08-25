@@ -45,12 +45,17 @@ AfterEach(CxFile) {}
 static CharacterBuffer characterBuffer;
 
 Ensure(CxFile, can_scan_int) {
+    CharacterBuffer *cb = &characterBuffer;
     char next = ' ';
-    char *characters = characterBuffer.buffer;
-    char *end = characterBuffer.end;
+    char *characters;
+    char *end;
     int result;
 
-    strcpy(characterBuffer.buffer, "123");
+    characters = cb->buffer;
+    strcpy(cb->buffer, "123");
+    cb->end = &cb->buffer[strlen("123")];
+    end = cb->end;
+
     expect(getCharBuf,
            when(buffer, is_equal_to_hex(&characterBuffer)));
 
