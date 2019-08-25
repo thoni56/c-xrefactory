@@ -760,7 +760,7 @@ static void cxrfSetSingleRecords(int size,
                                  int ri,
                                  char **ccc,
                                  char **ffin,
-                                 CharacterBuffer *bbb,
+                                 CharacterBuffer *cb,
                                  int additionalArg
                                  ) {
     int i,cch;
@@ -768,7 +768,7 @@ static void cxrfSetSingleRecords(int size,
     cc = *ccc; fin = *ffin;
     assert(ri == CXFI_SINGLE_RECORDS);
     for(i=0; i<size-1; i++) {
-        GetChar(cch, cc, fin, bbb);
+        GetChar(cch, cc, fin, cb);
         s_inLastInfos.singleRecord[cch] = 1;
     }
     *ccc = cc; *ffin = fin;
@@ -791,7 +791,7 @@ static void cxrfVersionCheck(int size,
                              int ri,
                              char **ccc,
                              char **ffin,
-                             CharacterBuffer *bbb,
+                             CharacterBuffer *cb,
                              int additionalArg
                              ) {
     char versionString[TMP_STRING_SIZE];
@@ -802,7 +802,7 @@ static void cxrfVersionCheck(int size,
     cc = *ccc; fin = *ffin;
     assert(ri == CXFI_VERSION);
     for(i=0; i<size-1; i++) {
-        GetChar(cch, cc, fin, bbb);
+        GetChar(cch, cc, fin, cb);
         versionString[i]=cch;
     }
     versionString[i]=0;
@@ -813,13 +813,13 @@ static void cxrfVersionCheck(int size,
     *ccc = cc; *ffin = fin;
 }
 
-static void cxrfCheckNumber(    int size,
-                                int ri,
-                                char **ccc,
-                                char **ffin,
-                                CharacterBuffer *bbb,
-                                int additionalArg
-                                ) {
+static void cxrfCheckNumber(int size,
+                            int ri,
+                            char **ccc,
+                            char **ffin,
+                            CharacterBuffer *cb,
+                            int additionalArg
+                            ) {
     int magicn, filen, hashMethod, exactPositionLinkFlag;
     char *cc, *fin;
 
@@ -875,13 +875,13 @@ static int cxrfFileItemShouldBeUpdatedFromCxFile(S_fileItem *ffi) {
     return(updateFromCxFile);
 }
 
-static void cxrfFileName(       int size,
-                                int ri,
-                                char **ccc,
-                                char **ffin,
-                                CharacterBuffer *bbb,
-                                int genFl
-                                ) {
+static void cxrfFileName(int size,
+                         int ri,
+                         char **ccc,
+                         char **ffin,
+                         CharacterBuffer *cb,
+                         int genFl
+                         ) {
     char id[MAX_FILE_NAME_SIZE];
     struct fileItem *ffi,tffi;
     int i,ii,dii,len,commandLineFlag,isInterface;
@@ -896,7 +896,7 @@ static void cxrfFileName(       int size,
     isInterface=((s_inLastInfos.counter[CXFI_ACCESS_BITS] & ACC_INTERFACE)!=0);
     ii = s_inLastInfos.counter[CXFI_FILE_INDEX];
     for (i=0; i<size-1; i++) {
-        GetChar(cch, cc, fin, bbb);
+        GetChar(cch, cc, fin, cb);
         id[i] = cch;
     }
     id[i] = 0;
@@ -942,13 +942,13 @@ static void cxrfFileName(       int size,
     *ccc = cc; *ffin = fin;
 }
 
-static void cxrfSourceIndex(    int size,
-                                int ri,
-                                char **ccc,
-                                char **ffin,
-                                CharacterBuffer *bbb,
-                                int genFl
-                                ) {
+static void cxrfSourceIndex(int size,
+                            int ri,
+                            char **ccc,
+                            char **ffin,
+                            CharacterBuffer *cb,
+                            int genFl
+                            ) {
     char *cc, *fin;
     int file, sfile;
     assert(ri == CXFI_SOURCE_INDEX);
@@ -1014,7 +1014,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
                                                 int ri,
                                                 char **ccc,
                                                 char **ffin,
-                                                CharacterBuffer *bbb,
+                                                CharacterBuffer *cb,
                                                 int additionalArg
                                                 ) {
     S_symbolRefItem *ddd, *memb;
@@ -1030,7 +1030,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
     si = s_inLastInfos.counter[CXFI_SYM_INDEX];
     assert(si>=0 && si<MAX_CX_SYMBOL_TAB);
     id = s_inLastInfos._symbolTabNames[si];
-    len = scanSymNameString( size, ccc, ffin, bbb, id);
+    len = scanSymNameString( size, ccc, ffin, cb, id);
     cc = *ccc; fin = *ffin;
     getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
     //&fprintf(dumpOut,":scanning ref of %s %d %d: \n",id,symType,vFunClass);fflush(dumpOut);
@@ -1086,13 +1086,13 @@ static int symbolIsReportableAsDead(S_symbolRefItem *ss) {
     return(1);
 }
 
-static void cxrfSymbolName(     int size,
-                                int ri,
-                                char **ccc,
-                                char **ffin,
-                                CharacterBuffer *bbb,
-                                int additionalArg
-                                ) {
+static void cxrfSymbolName(int size,
+                           int ri,
+                           char **ccc,
+                           char **ffin,
+                           CharacterBuffer *cb,
+                           int additionalArg
+                           ) {
     S_symbolRefItem *ddd, *memb;
     S_olSymbolsMenu *cms;
     int ii, si, symType, len, rr, vApplClass, vFunClass, ols, accessFlags, storage;
@@ -1110,7 +1110,7 @@ static void cxrfSymbolName(     int size,
     si = s_inLastInfos.counter[CXFI_SYM_INDEX];
     assert(si>=0 && si<MAX_CX_SYMBOL_TAB);
     id = s_inLastInfos._symbolTabNames[si];
-    len = scanSymNameString( size, ccc, ffin, bbb, id);
+    len = scanSymNameString( size, ccc, ffin, cb, id);
     cc = *ccc; fin = *ffin;
     getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
     /*fprintf(dumpOut,":scanning ref of %s %d %d: \n",id,symType,virtClass);fflush(dumpOut);*/
@@ -1187,7 +1187,7 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
                                                int ri,
                                                char **ccc,
                                                char **ffin,
-                                               CharacterBuffer *bbb,
+                                               CharacterBuffer *cb,
                                                int additionalArg
                                                ) {
     S_position pos;
@@ -1219,7 +1219,7 @@ static void cxrfReference(int size,
                           int ri,
                           char **ccc,
                           char **ffin,
-                          CharacterBuffer *bbb,
+                          CharacterBuffer *cb,
                           int additionalArg
                           ) {
     S_position pos;
@@ -1354,7 +1354,7 @@ static void cxrfRefNum(int fileRefNum,
                        int ri,
                        char **ccc,
                        char **ffin,
-                       CharacterBuffer *bbb,
+                       CharacterBuffer *cb,
                        int additionalArg
                        ) {
     int check;
@@ -1370,7 +1370,7 @@ static void cxrfSubClass(int size,
                          int ri,
                          char **ccc,
                          char **ffin,
-                         CharacterBuffer *bbb,
+                         CharacterBuffer *cb,
                          int additionalArg
                          ) {
     int of, file, sup, inf;
