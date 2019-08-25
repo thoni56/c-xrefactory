@@ -1408,7 +1408,7 @@ static void cxrfSubClass(int size,
 }
 
 void scanCxFile(S_cxScanFileFunctionLink *scanFuns) {
-    int recInfo;
+    int scannedInt;
     int ch,i;
     char *cc, *cfin;
 
@@ -1431,21 +1431,21 @@ void scanCxFile(S_cxScanFileFunctionLink *scanFuns) {
     FILL_CharacterBuffer(&cxfBuf, cxfBuf.buffer, cxfBuf.buffer, fIn, 0, -1, 0, 0, 0, 0,INPUT_DIRECT,s_defaultZStream);
     ch = ' '; cc = cxfBuf.buffer; cfin = cxfBuf.end;
     while(! cxfBuf.isAtEOF) {
-        ScanInt(ch, cc, cfin, &cxfBuf, recInfo);
-        /*fprintf(stdout,"number %d scaned\n",recInfo);*/
-        /*fprintf(stdout,"record %d == %c scaned\n",ch,ch);*/
+        ScanInt(ch, cc, cfin, &cxfBuf, scannedInt);
+        /*fprintf(stdout,"number %d scanned\n",recInfo);*/
+        /*fprintf(stdout,"record %d == %c scanned\n",ch,ch);*/
         /*fflush(stdout);*/
         if (cxfBuf.isAtEOF) break;
         assert(ch >= 0 && ch<MAX_CHARS);
         if (s_inLastInfos.singleRecord[ch]) {
-            s_inLastInfos.counter[ch] = recInfo;
+            s_inLastInfos.counter[ch] = scannedInt;
         }
         if (s_inLastInfos.fun[ch] != NULL) {
-            (*s_inLastInfos.fun[ch])(recInfo, ch, &cc, &cfin, &cxfBuf,
+            (*s_inLastInfos.fun[ch])(scannedInt, ch, &cc, &cfin, &cxfBuf,
                                      s_inLastInfos.additional[ch]);
         } else if (! s_inLastInfos.singleRecord[ch]) {
-            assert(recInfo>0);
-            SkipNChars(recInfo-1, cc, cfin, &cxfBuf);
+            assert(scannedInt>0);
+            SkipNChars(scannedInt-1, cc, cfin, &cxfBuf);
         }
         GetChar(ch,cc,cfin,&cxfBuf);
     }
