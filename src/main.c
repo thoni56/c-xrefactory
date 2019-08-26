@@ -496,7 +496,8 @@ static int processDOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
 #   ifdef DEBUG
-    else if (strcmp(argv[i],"-debug")==0) s_opt.debug = 1;
+    else if (strcmp(argv[i],"-debug")==0)
+        s_opt.debug = 1;
 #   endif
     else if (strcmp(argv[i],"-d")==0)   {
         int ln;
@@ -887,11 +888,6 @@ static int processOOption(int *ii, int argc, char **argv) {
     else if (strncmp(argv[i],"-olcxresetrefsuffix=",20)==0)     {
         s_opt.cxrefs = OLO_RESET_REF_SUFFIX;
         createOptionString(&s_opt.olcxRefSuffix, argv[i]+20);
-    }
-    else if (strncmp(argv[i],"-olcxextract=",13)==0) {
-        // don't use this, obsolete
-        s_opt.cxrefs = OLO_EXTRACT;
-        //& createOptionString(&s_opt.extractName, argv[i]+13);
     }
     else if (strcmp(argv[i],"-olcxextract")==0) {
         s_opt.cxrefs = OLO_EXTRACT;
@@ -1408,7 +1404,9 @@ static int processSOption(int *ii, int argc, char **argv) {
 static int processTOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strcmp(argv[i],"-typedefs")==0)
+    else if (strcmp(argv[i],"-trace")==0) {
+        s_opt.trace = 1;
+    } else if (strcmp(argv[i],"-typedefs")==0)
         s_opt.typedefg = 1;
     else if (strcmp(argv[i],"-task_regime_server")==0) {
         s_opt.taskRegime = RegimeEditServer;
@@ -3372,7 +3370,9 @@ static void setupLogging(void) {
     log_set_fp(dumpOut);
 
     /* TODO: Can't specify LOG_TRACE option yet */
-    if (s_opt.debug)
+    if (s_opt.trace)
+        log_set_file_level(LOG_TRACE);
+    else if (s_opt.debug)
         log_set_file_level(LOG_DEBUG);
     else
         log_set_file_level(LOG_INFO);

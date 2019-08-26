@@ -1725,7 +1725,6 @@ typedef struct options {
     char *olExtractAddrParPrefix;
     int extractMode;
     int htmlFunSeparate;
-    //& char *extractName;
     int maxCompletions;
     int editor;
     int create;
@@ -1743,6 +1742,7 @@ typedef struct options {
     int taskRegime;
     char *user;
     int debug;
+    int trace;
     int cpp_comment;
     int c_struct_scope;
     int cxrefs;

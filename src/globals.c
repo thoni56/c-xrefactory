@@ -428,6 +428,7 @@ S_options s_initOpt = {
     RegimeXref,
     "nouser",           // -user
     0,
+    0,
     1,
     0,
     0,
