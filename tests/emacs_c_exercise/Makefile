@@ -3,7 +3,7 @@
 include ../Makefile.boilerplate
 
 $(TEST):
-	@printf "Tests in \"$@\": "
+	@printf "Tests in '$@': "
 	@$(MAKE) --no-print-directory setup
 	@$(MAKE) --no-print-directory execute
 	@$(MAKE) --no-print-directory check

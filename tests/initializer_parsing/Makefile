@@ -1,7 +1,7 @@
 include ../Makefile.boilerplate
 
 $(TEST):
-	@printf "Tests in \"$@\": "
+	@printf "Tests in '$@': "
 	@rm -rf $@.log CXrefs
 	@../../src/c-xref $@.c -xrefrc .c-xrefrc -refs $(CURDIR)/CXrefs -o $@.log
 # Check for the xrefs for 'E0'
