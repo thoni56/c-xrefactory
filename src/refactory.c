@@ -1152,7 +1152,7 @@ int tpCheckTargetToBeDirectSubOrSupClass(int flag, char *subOrSuper) {
         error(ERR_ST, "moving to NULL target class?");
         return(0);
     }
-    readOneAppropReferenceFile(NULL, s_cxScanFunTabForClassHierarchy);
+    readOneAppropReferenceFile(NULL, classHierarchyFunctionSequence);
     assert(target->u.s!=NULL&&target->u.s->classFile!=s_noneFileIndex);
     if (flag == REQ_SUBCLASS) cl=s_fileTab.tab[ss->s.vApplClass]->infs;
     else cl=s_fileTab.tab[ss->s.vApplClass]->sups;

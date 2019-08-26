@@ -1846,7 +1846,7 @@ void olcxPrintClassTree(S_olSymbolsMenu *sss) {
     } else {
         fprintf(ccOut, "<");
     }
-    readOneAppropReferenceFile(NULL, s_cxScanFunTabForClassHierarchy);
+    readOneAppropReferenceFile(NULL, classHierarchyFunctionSequence);
     htmlGenGlobRefLists(sss, ccOut, "__NO_HTML_FILE_NAME!__");
     if (s_opt.xref2) ppcGenRecordEnd(PPC_DISPLAY_CLASS_TREE);
 }
@@ -1858,7 +1858,7 @@ void olcxPrintSelectionMenu(S_olSymbolsMenu *sss) {
         fprintf(ccOut, ">");
     }
     if (sss!=NULL) {
-        readOneAppropReferenceFile(NULL, s_cxScanFunTabForClassHierarchy);
+        readOneAppropReferenceFile(NULL, classHierarchyFunctionSequence);
         htmlGenGlobRefLists(sss, ccOut, "__NO_HTML_FILE_NAME!__");
     }
     if (s_opt.xref2) {
@@ -2063,7 +2063,7 @@ static void olcxFindDefinitionAndGenGoto(S_symbolRefItem *sym) {
     FILL_olSymbolsMenu(&mmm, *sym, 1,1,0,UsageUsed,0,0,0,UsageNone,s_noPos,0, NULL, NULL);
     //&oldrefs = *refs;
     refs->menuSym = &mmm;
-    readOneAppropReferenceFile(sym->name, s_cxFullScanFunTab);
+    readOneAppropReferenceFile(sym->name, fullScanFunctionSequence);
     orderRefsAndGotoDefinition(refs, DEFAULT_VALUE);
     //&olcxFreeReferences(refs->r);
     //&*refs = oldrefs;
@@ -3547,7 +3547,7 @@ void olCreateSelectionMenu(int command) {
     LIST_SORT(S_olSymbolsMenu, rstack->hkSelectedSym, olMenuHashFileNumLess);
     ss = rstack->hkSelectedSym;
     while (ss!=NULL) {
-        readOneAppropReferenceFile(ss->s.name, s_cxSymbolMenuCreationTab);
+        readOneAppropReferenceFile(ss->s.name, symbolMenuCreationFunctionSequence);
         fnum = cxFileHashNumber(ss->s.name);
         //&fprintf(dumpOut,"file %d readed\n", fnum);
         while (ss!=NULL && fnum==cxFileHashNumber(ss->s.name)) ss = ss->next;
@@ -4677,7 +4677,7 @@ static void answerPushGlobalUnusedSymbolsAction(void) {
     rstack = s_olcxCurrentUser->browserStack.top;
     ss = rstack->hkSelectedSym;
     assert(ss == NULL);
-    scanReferenceFiles(s_opt.cxrefFileName, s_cxDeadCodeDetectionScanFunTab);
+    scanReferenceFiles(s_opt.cxrefFileName, deadCodeDetectionFunctionSequence);
     olCreateSelectionMenu(s_opt.cxrefs);
     assert(s_opt.xref2);
     ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "", "\n");
@@ -4761,7 +4761,7 @@ void mainAnswerEditAction(void) {
             s_wildCharSearch = 0;
         }
         if (s_opt.tagSearchSpecif==TSS_FULL_SEARCH) scanJarFilesForTagSearch();
-        scanReferenceFiles(s_opt.cxrefFileName, s_cxSymbolSearchScanFunTab);
+        scanReferenceFiles(s_opt.cxrefFileName, symbolSearchFunctionSequence);
         printTagSearchResults();
         break;
     case OLO_TAG_SEARCH_BACK:

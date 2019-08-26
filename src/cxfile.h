@@ -12,24 +12,24 @@ extern int cxFileHashNumber(char *sym);
 extern void genReferenceFile(int updateFlag, char *fname);
 extern void addSubClassItemToFileTab( int sup, int inf, int origin);
 extern void addSubClassesItemsToFileTab(S_symbol *ss, int origin);
-extern void scanCxFile(S_cxScanFileFunctionLink *scanFuns);
+extern void scanCxFile(ScanFileFunctionStep *scanFuns);
 extern int scanReferenceFile(char *fname, char *fns1, char *fns2,
-                             S_cxScanFileFunctionLink *scanFunTab);
+                             ScanFileFunctionStep *scanFunTab);
 extern void readOneAppropReferenceFile(char *symname,
-                                       S_cxScanFileFunctionLink *scanFunTab);
-extern void scanReferenceFiles(char *fname, S_cxScanFileFunctionLink *scanFunTab);
+                                       ScanFileFunctionStep *scanFunTab);
+extern void scanReferenceFiles(char *fname, ScanFileFunctionStep *scanFunTab);
 extern int smartReadFileTabFile(void);
 
-extern S_cxScanFileFunctionLink s_cxScanFileTab[];
-extern S_cxScanFileFunctionLink s_cxFullScanFunTab[];
-extern S_cxScanFileFunctionLink s_cxByPassFunTab[];
-extern S_cxScanFileFunctionLink s_cxSymbolMenuCreationTab[];
-extern S_cxScanFileFunctionLink s_cxSymbolLoadMenuRefs[];
-extern S_cxScanFileFunctionLink s_cxScanFunTabFor2PassMacroUsage[];
-extern S_cxScanFileFunctionLink s_cxScanFunTabForClassHierarchy[];
-extern S_cxScanFileFunctionLink s_cxFullUpdateScanFunTab[];
-extern S_cxScanFileFunctionLink s_cxHtmlGlobRefListScanFunTab[];
-extern S_cxScanFileFunctionLink s_cxSymbolSearchScanFunTab[];
-extern S_cxScanFileFunctionLink s_cxDeadCodeDetectionScanFunTab[];
+extern ScanFileFunctionStep normalScanFunctionSequence[];
+extern ScanFileFunctionStep fullScanFunctionSequence[];
+extern ScanFileFunctionStep byPassFunctionSequence[];
+extern ScanFileFunctionStep symbolMenuCreationFunctionSequence[];
+extern ScanFileFunctionStep symbolLoadMenuRefsFunctionSequence[];
+extern ScanFileFunctionStep secondPassMacroUsageFunctionSequence[];
+extern ScanFileFunctionStep classHierarchyFunctionSequence[];
+extern ScanFileFunctionStep fullUpdateFunctionSequence[];
+extern ScanFileFunctionStep htmlGlobalReferencesFunctionSequence[];
+extern ScanFileFunctionStep symbolSearchFunctionSequence[];
+extern ScanFileFunctionStep deadCodeDetectionFunctionSequence[];
 
 #endif

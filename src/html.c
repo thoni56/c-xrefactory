@@ -492,7 +492,7 @@ void htmlGetDefinitionReferences(void) {
     UNUSED tt;
 
     //&fprintf(dumpOut,"start scanning ref files\n");fflush(dumpOut);
-    scanReferenceFiles(s_opt.cxrefFileName,s_cxFullScanFunTab);
+    scanReferenceFiles(s_opt.cxrefFileName,fullScanFunctionSequence);
     /* following lines, just ensures, there will be enough space for refs */
     CX_ALLOCC(s_cxGlobalReferencesBase, CX_MEMORY_CHUNK_SIZE, char);
     CX_ALLOCC(tt, CX_MEMORY_CHUNK_SIZE, char);
@@ -1340,7 +1340,7 @@ static void htmlScanCxFileAndGenRefLists(char *fn1, char *fn2,
         if (fIn == NULL) {
             error(ERR_CANT_OPEN, fn);
         } else {
-            scanCxFile(s_cxHtmlGlobRefListScanFunTab);
+            scanCxFile(htmlGlobalReferencesFunctionSequence);
             fclose(fIn);
         }
     }

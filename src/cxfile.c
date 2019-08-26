@@ -13,6 +13,7 @@
 #include "enumTxt.h"
 #include "reftab.h"
 
+#include "log.h"
 #include "utils.h"
 
 /* *********************** INPUT/OUTPUT ************************** */
@@ -641,7 +642,7 @@ static void genPartialFileTabRefFile(   int updateFlag,
     genCxFileHead();
     fileTabMap3(&s_fileTab, mapfun);
     if (mapfun2!=NULL) fileTabMap3(&s_fileTab, mapfun2);
-    scanCxFile(s_cxFullScanFunTab);
+    scanCxFile(fullScanFunctionSequence);
     referenceFileEnd(updateFlag, fn);
 }
 
@@ -693,7 +694,7 @@ void genReferenceFile(int updateFlag, char *fname) {
         fileTabMap3(&s_fileTab, writeFileIndexItem);
         fileTabMap3(&s_fileTab, writeFileSourceIndexItem);
         fileTabMap3(&s_fileTab, genClassHierarchyItems);
-        scanCxFile(s_cxFullScanFunTab);
+        scanCxFile(fullScanFunctionSequence);
         refTabMap(&s_cxrefTab, genRefItem);
         referenceFileEnd(updateFlag, fname);
     } else {
@@ -709,7 +710,7 @@ void genReferenceFile(int updateFlag, char *fname) {
             assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
             openInOutReferenceFiles(updateFlag, fn);
             genCxFileHead();
-            scanCxFile(s_cxFullScanFunTab);
+            scanCxFile(fullScanFunctionSequence);
             //&refTabMap4(&s_cxrefTab, genPartialRefItem, i);
             generateRefsFromMemory(i);
             referenceFileEnd(updateFlag, fn);
@@ -1407,7 +1408,7 @@ static void cxrfSubClass(int size,
     }
 }
 
-void scanCxFile(S_cxScanFileFunctionLink *scanFuns) {
+void scanCxFile(ScanFileFunctionStep *scanFuns) {
     int scannedInt;
     int ch,i;
     char *cc, *cfin;
@@ -1462,7 +1463,7 @@ void scanCxFile(S_cxScanFileFunctionLink *scanFuns) {
 /* fnamesuff contains '/' at the beginning !!! */
 
 int scanReferenceFile(char *fname, char *fns1, char *fns2,
-                      S_cxScanFileFunctionLink *scanFunTab
+                      ScanFileFunctionStep *scanFunTab
                       ) {
     char fn[MAX_FILE_NAME_SIZE];
     sprintf(fn, "%s%s%s", fname, fns1, fns2);
@@ -1482,7 +1483,7 @@ int scanReferenceFile(char *fname, char *fns1, char *fns2,
     }
 }
 
-void scanReferenceFiles(char *fname, S_cxScanFileFunctionLink *scanFunTab) {
+void scanReferenceFiles(char *fname, ScanFileFunctionStep *scanFunTab) {
     char nn[MAX_FILE_NAME_SIZE];
     int i;
 
@@ -1515,7 +1516,7 @@ int smartReadFileTabFile(void) {
                 ||  readedFileSize != st.st_size
                 ||  strcmp(readedFileFile, tt) != 0) {
             //&fprintf(dumpOut,":(re)reading file tab\n");
-            tmp = scanReferenceFile(tt,"","",s_cxScanFileTab);
+            tmp = scanReferenceFile(tt,"","",normalScanFunctionSequence);
             if (tmp != 0) {
                 readedFileModTime = st.st_mtime;
                 readedFileSize = st.st_size;
@@ -1531,7 +1532,7 @@ int smartReadFileTabFile(void) {
 
 // symbolName can be NULL !!!!!!
 void readOneAppropReferenceFile(char *symbolName,
-                                S_cxScanFileFunctionLink  *scanFunTab
+                                ScanFileFunctionStep  *scanFunTab
                                 ) {
     static char fns[MAX_FILE_NAME_SIZE];
     int i,tmp;
@@ -1562,7 +1563,7 @@ void readOneAppropReferenceFile(char *symbolName,
 /* ************************************************************ */
 
 
-S_cxScanFileFunctionLink s_cxScanFileTab[]={
+ScanFileFunctionStep normalScanFunctionSequence[]={
     {CXFI_SINGLE_RECORDS,cxrfSetSingleRecords, 0},
     {CXFI_FILE_NAME,cxrfFileName, CX_JUST_READ},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
@@ -1571,7 +1572,7 @@ S_cxScanFileFunctionLink s_cxScanFileTab[]={
     {-1,NULL, 0},
 };
 
-S_cxScanFileFunctionLink s_cxFullScanFunTab[]={
+ScanFileFunctionStep fullScanFunctionSequence[]={
     {CXFI_SINGLE_RECORDS,cxrfSetSingleRecords, 0},
     {CXFI_VERSION, cxrfVersionCheck, 0},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
@@ -1584,7 +1585,7 @@ S_cxScanFileFunctionLink s_cxFullScanFunTab[]={
     {-1,NULL, 0},
 };
 
-S_cxScanFileFunctionLink s_cxByPassFunTab[]={
+ScanFileFunctionStep byPassFunctionSequence[]={
     {CXFI_SINGLE_RECORDS,cxrfSetSingleRecords, 0},
     {CXFI_VERSION, cxrfVersionCheck, 0},
     {CXFI_FILE_NAME,cxrfFileName, CX_JUST_READ},
@@ -1596,7 +1597,7 @@ S_cxScanFileFunctionLink s_cxByPassFunTab[]={
     {-1,NULL, 0},
 };
 
-S_cxScanFileFunctionLink s_cxSymbolLoadMenuRefs[]={
+ScanFileFunctionStep symbolLoadMenuRefsFunctionSequence[]={
     {CXFI_SINGLE_RECORDS,cxrfSetSingleRecords, 0},
     {CXFI_VERSION, cxrfVersionCheck, 0},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
@@ -1609,7 +1610,7 @@ S_cxScanFileFunctionLink s_cxSymbolLoadMenuRefs[]={
     {-1,NULL, 0},
 };
 
-S_cxScanFileFunctionLink s_cxSymbolMenuCreationTab[]={
+ScanFileFunctionStep symbolMenuCreationFunctionSequence[]={
     {CXFI_SINGLE_RECORDS,cxrfSetSingleRecords, 0},
     {CXFI_VERSION, cxrfVersionCheck, 0},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
@@ -1622,7 +1623,7 @@ S_cxScanFileFunctionLink s_cxSymbolMenuCreationTab[]={
     {-1,NULL, 0},
 };
 
-S_cxScanFileFunctionLink s_cxFullUpdateScanFunTab[]={
+ScanFileFunctionStep fullUpdateFunctionSequence[]={
     {CXFI_SINGLE_RECORDS,cxrfSetSingleRecords, 0},
     {CXFI_VERSION, cxrfVersionCheck, 0},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
@@ -1634,7 +1635,7 @@ S_cxScanFileFunctionLink s_cxFullUpdateScanFunTab[]={
     {-1,NULL, 0},
 };
 
-S_cxScanFileFunctionLink s_cxScanFunTabFor2PassMacroUsage[]={
+ScanFileFunctionStep secondPassMacroUsageFunctionSequence[]={
     {CXFI_SINGLE_RECORDS,cxrfSetSingleRecords, DEFAULT_VALUE},
     {CXFI_FILE_NAME,cxrfFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
@@ -1645,7 +1646,7 @@ S_cxScanFileFunctionLink s_cxScanFunTabFor2PassMacroUsage[]={
     {-1,NULL, 0},
 };
 
-S_cxScanFileFunctionLink s_cxScanFunTabForClassHierarchy[]={
+ScanFileFunctionStep classHierarchyFunctionSequence[]={
     {CXFI_SINGLE_RECORDS,cxrfSetSingleRecords, DEFAULT_VALUE},
     {CXFI_FILE_NAME,cxrfFileName, CX_JUST_READ},
     {CXFI_CLASS_EXT,cxrfSubClass, CX_JUST_READ},
@@ -1653,7 +1654,7 @@ S_cxScanFileFunctionLink s_cxScanFunTabForClassHierarchy[]={
     {-1,NULL, 0},
 };
 
-S_cxScanFileFunctionLink s_cxHtmlGlobRefListScanFunTab[]={
+ScanFileFunctionStep htmlGlobalReferencesFunctionSequence[]={
     {CXFI_SINGLE_RECORDS,cxrfSetSingleRecords, 0},
     {CXFI_FILE_NAME,cxrfFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
@@ -1664,7 +1665,7 @@ S_cxScanFileFunctionLink s_cxHtmlGlobRefListScanFunTab[]={
     {-1,NULL, 0},
 };
 
-S_cxScanFileFunctionLink s_cxSymbolSearchScanFunTab[]={
+ScanFileFunctionStep symbolSearchFunctionSequence[]={
     {CXFI_SINGLE_RECORDS,cxrfSetSingleRecords, 0},
     {CXFI_REFNUM,cxrfRefNum, 0},
     {CXFI_FILE_NAME,cxrfFileName, CX_JUST_READ},
@@ -1674,7 +1675,7 @@ S_cxScanFileFunctionLink s_cxSymbolSearchScanFunTab[]={
     {-1,NULL, 0},
 };
 
-S_cxScanFileFunctionLink s_cxDeadCodeDetectionScanFunTab[]={
+ScanFileFunctionStep deadCodeDetectionFunctionSequence[]={
     {CXFI_SINGLE_RECORDS,cxrfSetSingleRecords, 0},
     {CXFI_REFNUM,cxrfRefNum, 0},
     {CXFI_FILE_NAME,cxrfFileName, CX_JUST_READ},

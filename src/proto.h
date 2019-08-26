@@ -1272,7 +1272,7 @@ typedef struct cxScanFileFunctionLink {
     int		recordCode;
     void    (*handleFun)(int size,int ri,char**ccc,char**ffin,CharacterBuffer*bbb, int additionalArg);
     int		additionalArg;
-} S_cxScanFileFunctionLink;
+} ScanFileFunctionStep;
 
 /* ********************* MEMORIES *************************** */
 

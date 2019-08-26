@@ -2667,7 +2667,7 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
     S_reference         *rr;
     CX_ALLOCC(cxFreeBase,0,char);
     readOneAppropReferenceFile(LINK_NAME_INCLUDE_REFS,
-                               s_cxFullUpdateScanFunTab); // get include refs
+                               fullUpdateFunctionSequence); // get include refs
     // iterate over scheduled files
     fileAddedFlag = 1;
     while (fileAddedFlag) {
@@ -2715,7 +2715,7 @@ static void scheduleModifiedFilesToUpdate(void) {
         filestab = ttt;
     }
     if (statb(filestab, &refStat)) refStat.st_mtime = 0;
-    scanReferenceFile(s_opt.cxrefFileName, fnamesuff,"", s_cxScanFileTab);
+    scanReferenceFile(s_opt.cxrefFileName, fnamesuff,"", normalScanFunctionSequence);
     fileTabMap2(&s_fileTab, schedulingToUpdate, &refStat);
     if (s_opt.update==UP_FULL_UPDATE /*& && !LANGUAGE(LANG_JAVA) &*/) {
         makeIncludeClosureOfFilesToUpdate();
@@ -2801,7 +2801,7 @@ static int scheduleFileUsingTheMacro(void) {
     s_olcxCurrentUser->browserStack.top->menuSym = &mm;
     s_olMacro2PassFile = s_noneFileIndex;
     //&fprintf(dumpOut,":here I am, looking for usage of %s\n",memb->name);
-    readOneAppropReferenceFile(s_olstringInMbody,s_cxScanFunTabFor2PassMacroUsage);
+    readOneAppropReferenceFile(s_olstringInMbody,secondPassMacroUsageFunctionSequence);
     s_olcxCurrentUser->browserStack.top->menuSym = oldMenu;
     if (tmpc!=NULL) {
         olStackDeleteSymbol(tmpc);
@@ -2879,7 +2879,7 @@ static int mainSymbolCanBeIdentifiedByPosition(int fnum) {
     getLineColCursorPositionFromCommandLineOption( &line, &col);
     FILL_position(&s_olcxByPassPos, fnum, line, col);
     olSetCallerPosition(&s_olcxByPassPos);
-    readOneAppropReferenceFile(s_opt.browsedSymName, s_cxByPassFunTab);
+    readOneAppropReferenceFile(s_opt.browsedSymName, byPassFunctionSequence);
     // if no symbol found, it may be a local symbol, try by parsing
     //&fprintf(dumpOut,"checking that %d, != NULL\n", s_olcxCurrentUser->browserStack.top->hkSelectedSym);
     if (s_olcxCurrentUser->browserStack.top->hkSelectedSym==NULL) return(0);
