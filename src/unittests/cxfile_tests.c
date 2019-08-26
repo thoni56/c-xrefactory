@@ -1,6 +1,6 @@
 #include <cgreen/cgreen.h>
 
-/* Must #include it since we are (for now) unittesting an internal macro (GetInt) */
+/* Must #include it since we are (for now) unittesting an internal macro (ScanInt) */
 #include "cxfile.c"
 
 /* From globals.c */
