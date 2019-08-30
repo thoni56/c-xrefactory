@@ -51,6 +51,7 @@ Ensure(CxFile, can_scan_int) {
     char *end;
     int result;
 
+    log_set_console_level(LOG_DEBUG);
     characters = cb->buffer;
     strcpy(cb->buffer, "123");
     cb->end = &cb->buffer[strlen("123")];
