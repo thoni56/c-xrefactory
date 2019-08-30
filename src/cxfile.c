@@ -736,14 +736,31 @@ void genReferenceFile(int updateFlag, char *fname) {
         /*fprintf(dumpOut,"getting char *%x < %x == '0x%x'\n",ccc,ffin,cch);fflush(dumpOut);*/ \
     }
 
+static void trace_buffer(CharacterBuffer *buffer) {
+    log_trace("buffer=0x%x", buffer);
+    log_trace("buffer.buffer=0x%x", &buffer->buffer);
+    log_trace("buffer.next=0x%x", buffer->next);
+    log_trace("buffer.end=0x%x", buffer->end);
+}
+
 #define ScanInt(cch, ccc, ffin, buffer, result) {                                   \
-        while (cch==' ' || cch=='\n' || cch=='\t') GetChar(cch,ccc,ffin,buffer);    \
-        result = 0;                                                                 \
-        while (isdigit(cch)) {                                                      \
-            result = result*10 + cch-'0';                                           \
-            GetChar(cch,ccc,ffin,buffer);                                           \
-        }                                                                           \
-    }
+    log_trace("+++ScanInt");                                        \
+    log_trace("cch='%c' (0x%x) @ 0x%x", cch, cch, &cch);                \
+    log_trace("ffin='%x' @ 0x%x", ffin, &ffin);                         \
+    trace_buffer(buffer);                                               \
+    log_trace("result='%d'", result);                                   \
+    while (cch==' ' || cch=='\n' || cch=='\t') GetChar(cch,ccc,ffin,buffer); \
+    result = 0;                                                         \
+    while (isdigit(cch)) {                                              \
+        result = result*10 + cch-'0';                                   \
+        GetChar(cch,ccc,ffin,buffer);                                   \
+    }                                                                   \
+    log_trace("cch='%c' (0x%x) @ 0x%x", cch, cch, &cch);                \
+    log_trace("ffin='%x' @ 0x%x", ffin, &ffin);                         \
+    trace_buffer(buffer);                                               \
+    log_trace("result='%d'", result);                                   \
+    log_trace("---ScanInt");                                            \
+}
 
 #define SkipNChars(count, ccc, ffin, iBuf) {                \
     register int ccount, ch; UNUSED ch;                     \
