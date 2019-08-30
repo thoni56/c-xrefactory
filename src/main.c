@@ -3305,7 +3305,7 @@ static void mainEditServer(int argc, char **argv) {
         // message
         mainOpenOutputFile(s_opt.outputFileName);
         //&dumpOptions(nargc, nargv);
-        /*fprintf(dumpOut,"getting request\n");fflush(dumpOut);*/
+        log_trace("getting request");
         mainCallEditServerInit(nargc, nargv);
         if (ccOut==stdout && s_opt.outputFileName!=NULL) {
             mainOpenOutputFile(s_opt.outputFileName);

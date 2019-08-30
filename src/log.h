@@ -15,7 +15,7 @@
 
 typedef void (*log_LockFn)(void *udata, int lock);
 
-enum { LOG_TRACE, LOG_DEBUG, LOG_INFO, LOG_WARN, LOG_ERROR, LOG_FATAL };
+typedef enum { LOG_TRACE, LOG_DEBUG, LOG_INFO, LOG_WARN, LOG_ERROR, LOG_FATAL } LogLevel;
 
 /* TODO: should set up for conditionally making some macros NoOPs using #ifdef's */
 #define log_trace(...) log_log(LOG_TRACE, __FILE__, __LINE__, __VA_ARGS__)
@@ -31,6 +31,6 @@ extern void log_set_fp(FILE *fp);
 extern void log_set_console_level(int level);
 extern void log_set_file_level(int level);
 
-extern void log_log(int level, const char *file, int line, const char *fmt, ...);
+extern void log_log(LogLevel level, const char *file, int line, const char *fmt, ...);
 
 #endif

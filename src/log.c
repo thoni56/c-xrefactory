@@ -90,7 +90,7 @@ void log_set_console_level(int level) {
 #define RESET_COLOR "\x1b[0m "
 
 
-void log_log(int level, const char *file, int line, const char *fmt, ...) {
+void log_log(LogLevel level, const char *file, int line, const char *fmt, ...) {
   if (level < L.file_level && level < L.console_level) {
     return;
   }
