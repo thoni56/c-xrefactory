@@ -87,6 +87,8 @@ void log_set_console_level(int level) {
   L.console_level = level;
 }
 
+#define RESET_COLOR "\x1b[0m "
+
 
 void log_log(int level, const char *file, int line, const char *fmt, ...) {
   if (level < L.file_level && level < L.console_level) {
@@ -107,11 +109,13 @@ void log_log(int level, const char *file, int line, const char *fmt, ...) {
     buf[strftime(buf, sizeof(buf), "%H:%M:%S", lt)] = '\0';
 #ifdef LOG_USE_COLOR
     /* TODO: Only use colors if color capable */
-    fprintf(stderr, "%s %s%-5s\x1b[0m \x1b[90m%s:%d:\x1b[0m ",
-            buf, level_colors[level], level_names[level], file, line);
+    fprintf(stderr, "%s %s%-5s %s%15s:%-5d: ",
+            buf, level_colors[level], level_names[level], RESET_COLOR,
 #else
-    fprintf(stderr, "%s %-5s %s:%d: ", buf, level_names[level], file, line);
+    fprintf(stderr, "%s %-5s %s:%d: ", buf, level_names[level],
 #endif
+            /* format, after possibly truncating, file name to standard field of 15 */
+            strlen(file)>15?file+strlen(file)-15:file, line);
     va_start(args, fmt);
     vfprintf(stderr, fmt, args);
     va_end(args);
