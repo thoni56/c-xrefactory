@@ -3264,6 +3264,7 @@ void mainCallEditServer(int argc, char **argv,
                         int nargc, char **nargv,
                         int *firstPassing
                         ) {
+    log_trace("+++%s", __func__);
     editorLoadAllOpenedBufferFiles();
     olcxSetCurrentUser(s_opt.user);
     if (creatingOlcxRefs()) olcxPushEmptyStackItem(&s_olcxCurrentUser->browserStack);
@@ -3288,6 +3289,7 @@ void mainCallEditServer(int argc, char **argv,
         }
 #endif
     }
+    log_trace("---%s", __func__);
 }
 
 static void mainEditServer(int argc, char **argv) {
