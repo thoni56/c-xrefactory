@@ -733,7 +733,7 @@ void genReferenceFile(int updateFlag, char *fname) {
         } else {                                                        \
             cch = * ((unsigned char*)ccc); ccc++;                       \
         }                                                               \
-        /*fprintf(dumpOut,"getting char *%x < %x == '0x%x'\n",ccc,ffin,cch);fflush(dumpOut);*/ \
+        log_trace("getting char *%x < %x == '0x%x'",ccc,ffin,cch);    \
     }
 
 static void trace_buffer(CharacterBuffer *buffer) {
