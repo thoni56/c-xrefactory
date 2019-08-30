@@ -2383,9 +2383,7 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
     int mm;
 
     errOut = stderr;
-    dumpOut = stdout; /*fopen("/dev/tty6","w");*/
-
-    /*  dumpOut = errOut = stderr; */
+    dumpOut = stdout;
 
     s_fileAbortionEnabled = 0;
     cxOut = stdout;
@@ -3369,7 +3367,6 @@ static void setupLogging(void) {
        too */
     log_set_fp(dumpOut);
 
-    /* TODO: Can't specify LOG_TRACE option yet */
     if (s_opt.trace)
         log_set_file_level(LOG_TRACE);
     else if (s_opt.debug)
