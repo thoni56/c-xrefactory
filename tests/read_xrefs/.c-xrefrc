@@ -1,0 +1,18 @@
+[/Users/thomas/Utveckling/c-xrefactory/tests/simple_xrefs]
+  //  input files and directories (processed recursively)
+  /Users/thomas/Utveckling/c-xrefactory/tests/simple_xrefs
+  //  directory where tag files are stored
+  -refs /Users/thomas/Utveckling/c-xrefactory/tests/simple_xrefs/CXrefs
+  //  number of tag files
+  -refnum=10
+  //  setting for Emacs compile and run
+  -set compilefile "cc %s"
+  -set compiledir "cc *.c"
+  -set compileproject "
+    cd /Users/thomas/Utveckling/c-xrefactory/tests/simple_xrefs
+    make
+    "
+  -set run1 "a.out"
+  -set run5 ""  // an empty run; C-F8 will only compile
+  //  set default to run1
+  -set run ${run1}

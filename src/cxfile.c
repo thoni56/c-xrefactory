@@ -893,13 +893,13 @@ static int cxrfFileItemShouldBeUpdatedFromCxFile(S_fileItem *ffi) {
     return(updateFromCxFile);
 }
 
-static void cxrfFileName(int size,
-                         int ri,
-                         char **ccc,
-                         char **ffin,
-                         CharacterBuffer *cb,
-                         int genFl
-                         ) {
+static void cxReadFileName(int size,
+                           int ri,
+                           char **ccc,
+                           char **ffin,
+                           CharacterBuffer *cb,
+                           int genFl
+                           ) {
     char id[MAX_FILE_NAME_SIZE];
     struct fileItem *ffi,tffi;
     int i,ii,dii,len,commandLineFlag,isInterface;
@@ -1581,123 +1581,123 @@ void readOneAppropReferenceFile(char *symbolName,
 
 
 ScanFileFunctionStep normalScanFunctionSequence[]={
-    {CXFI_SINGLE_RECORDS,cxrfSetSingleRecords, 0},
-    {CXFI_FILE_NAME,cxrfFileName, CX_JUST_READ},
+    {CXFI_SINGLE_RECORDS, cxrfSetSingleRecords, 0},
+    {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
-    {CXFI_REFNUM,cxrfRefNum, 0},
+    {CXFI_REFNUM, cxrfRefNum, 0},
     {-1,NULL, 0},
 };
 
 ScanFileFunctionStep fullScanFunctionSequence[]={
-    {CXFI_SINGLE_RECORDS,cxrfSetSingleRecords, 0},
+    {CXFI_SINGLE_RECORDS, cxrfSetSingleRecords, 0},
     {CXFI_VERSION, cxrfVersionCheck, 0},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
-    {CXFI_FILE_NAME,cxrfFileName, CX_GENERATE_OUTPUT},
+    {CXFI_FILE_NAME, cxReadFileName, CX_GENERATE_OUTPUT},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_GENERATE_OUTPUT},
-    {CXFI_SYM_NAME,cxrfSymbolName, DEFAULT_VALUE},
-    {CXFI_REFERENCE,cxrfReference, CX_HTML_FIRST_PASS},
-    {CXFI_CLASS_EXT,cxrfSubClass, CX_GENERATE_OUTPUT},
-    {CXFI_REFNUM,cxrfRefNum, 0},
+    {CXFI_SYM_NAME, cxrfSymbolName, DEFAULT_VALUE},
+    {CXFI_REFERENCE, cxrfReference, CX_HTML_FIRST_PASS},
+    {CXFI_CLASS_EXT, cxrfSubClass, CX_GENERATE_OUTPUT},
+    {CXFI_REFNUM, cxrfRefNum, 0},
     {-1,NULL, 0},
 };
 
 ScanFileFunctionStep byPassFunctionSequence[]={
-    {CXFI_SINGLE_RECORDS,cxrfSetSingleRecords, 0},
+    {CXFI_SINGLE_RECORDS, cxrfSetSingleRecords, 0},
     {CXFI_VERSION, cxrfVersionCheck, 0},
-    {CXFI_FILE_NAME,cxrfFileName, CX_JUST_READ},
+    {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
-    {CXFI_SYM_NAME,cxrfSymbolName, CX_BY_PASS},
-    {CXFI_REFERENCE,cxrfReference, CX_BY_PASS},
-    {CXFI_CLASS_EXT,cxrfSubClass, CX_JUST_READ},
-    {CXFI_REFNUM,cxrfRefNum, 0},
+    {CXFI_SYM_NAME, cxrfSymbolName, CX_BY_PASS},
+    {CXFI_REFERENCE, cxrfReference, CX_BY_PASS},
+    {CXFI_CLASS_EXT, cxrfSubClass, CX_JUST_READ},
+    {CXFI_REFNUM, cxrfRefNum, 0},
     {-1,NULL, 0},
 };
 
 ScanFileFunctionStep symbolLoadMenuRefsFunctionSequence[]={
-    {CXFI_SINGLE_RECORDS,cxrfSetSingleRecords, 0},
+    {CXFI_SINGLE_RECORDS, cxrfSetSingleRecords, 0},
     {CXFI_VERSION, cxrfVersionCheck, 0},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
-    {CXFI_FILE_NAME,cxrfFileName, CX_JUST_READ},
+    {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
-    {CXFI_SYM_NAME,cxrfSymbolName, DEFAULT_VALUE},
-    {CXFI_REFERENCE,cxrfReference, CX_MENU_CREATION},
-    {CXFI_CLASS_EXT,cxrfSubClass, CX_JUST_READ},
-    {CXFI_REFNUM,cxrfRefNum, 0},
+    {CXFI_SYM_NAME, cxrfSymbolName, DEFAULT_VALUE},
+    {CXFI_REFERENCE, cxrfReference, CX_MENU_CREATION},
+    {CXFI_CLASS_EXT, cxrfSubClass, CX_JUST_READ},
+    {CXFI_REFNUM, cxrfRefNum, 0},
     {-1,NULL, 0},
 };
 
 ScanFileFunctionStep symbolMenuCreationFunctionSequence[]={
-    {CXFI_SINGLE_RECORDS,cxrfSetSingleRecords, 0},
+    {CXFI_SINGLE_RECORDS, cxrfSetSingleRecords, 0},
     {CXFI_VERSION, cxrfVersionCheck, 0},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
-    {CXFI_FILE_NAME,cxrfFileName, CX_JUST_READ},
+    {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
-    {CXFI_SYM_NAME,cxrfSymbolName, CX_MENU_CREATION},
-    {CXFI_REFERENCE,cxrfReference, CX_MENU_CREATION},
-    {CXFI_CLASS_EXT,cxrfSubClass, CX_JUST_READ},
-    {CXFI_REFNUM,cxrfRefNum, 0},
+    {CXFI_SYM_NAME, cxrfSymbolName, CX_MENU_CREATION},
+    {CXFI_REFERENCE, cxrfReference, CX_MENU_CREATION},
+    {CXFI_CLASS_EXT, cxrfSubClass, CX_JUST_READ},
+    {CXFI_REFNUM, cxrfRefNum, 0},
     {-1,NULL, 0},
 };
 
 ScanFileFunctionStep fullUpdateFunctionSequence[]={
-    {CXFI_SINGLE_RECORDS,cxrfSetSingleRecords, 0},
+    {CXFI_SINGLE_RECORDS, cxrfSetSingleRecords, 0},
     {CXFI_VERSION, cxrfVersionCheck, 0},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
-    {CXFI_FILE_NAME,cxrfFileName, CX_JUST_READ},
+    {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
-    {CXFI_SYM_NAME,cxrfSymbolNameForFullUpdateSchedule, DEFAULT_VALUE},
-    {CXFI_REFERENCE,cxrfReferenceForFullUpdateSchedule, DEFAULT_VALUE},
-    {CXFI_REFNUM,cxrfRefNum, 0},
+    {CXFI_SYM_NAME, cxrfSymbolNameForFullUpdateSchedule, DEFAULT_VALUE},
+    {CXFI_REFERENCE, cxrfReferenceForFullUpdateSchedule, DEFAULT_VALUE},
+    {CXFI_REFNUM, cxrfRefNum, 0},
     {-1,NULL, 0},
 };
 
 ScanFileFunctionStep secondPassMacroUsageFunctionSequence[]={
-    {CXFI_SINGLE_RECORDS,cxrfSetSingleRecords, DEFAULT_VALUE},
-    {CXFI_FILE_NAME,cxrfFileName, CX_JUST_READ},
+    {CXFI_SINGLE_RECORDS, cxrfSetSingleRecords, DEFAULT_VALUE},
+    {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
-    {CXFI_SYM_NAME,cxrfSymbolName, OL_LOOKING_2_PASS_MACRO_USAGE},
-    {CXFI_REFERENCE,cxrfReference, OL_LOOKING_2_PASS_MACRO_USAGE},
-    {CXFI_CLASS_EXT,cxrfSubClass, CX_JUST_READ},
-    {CXFI_REFNUM,cxrfRefNum, DEFAULT_VALUE},
+    {CXFI_SYM_NAME, cxrfSymbolName, OL_LOOKING_2_PASS_MACRO_USAGE},
+    {CXFI_REFERENCE, cxrfReference, OL_LOOKING_2_PASS_MACRO_USAGE},
+    {CXFI_CLASS_EXT, cxrfSubClass, CX_JUST_READ},
+    {CXFI_REFNUM, cxrfRefNum, DEFAULT_VALUE},
     {-1,NULL, 0},
 };
 
 ScanFileFunctionStep classHierarchyFunctionSequence[]={
-    {CXFI_SINGLE_RECORDS,cxrfSetSingleRecords, DEFAULT_VALUE},
-    {CXFI_FILE_NAME,cxrfFileName, CX_JUST_READ},
-    {CXFI_CLASS_EXT,cxrfSubClass, CX_JUST_READ},
-    {CXFI_REFNUM,cxrfRefNum, DEFAULT_VALUE},
+    {CXFI_SINGLE_RECORDS, cxrfSetSingleRecords, DEFAULT_VALUE},
+    {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
+    {CXFI_CLASS_EXT, cxrfSubClass, CX_JUST_READ},
+    {CXFI_REFNUM, cxrfRefNum, DEFAULT_VALUE},
     {-1,NULL, 0},
 };
 
 ScanFileFunctionStep htmlGlobalReferencesFunctionSequence[]={
-    {CXFI_SINGLE_RECORDS,cxrfSetSingleRecords, 0},
-    {CXFI_FILE_NAME,cxrfFileName, CX_JUST_READ},
+    {CXFI_SINGLE_RECORDS, cxrfSetSingleRecords, 0},
+    {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
-    {CXFI_CLASS_EXT,cxrfSubClass, CX_JUST_READ},
-    {CXFI_SYM_NAME,cxrfSymbolName, CX_HTML_SECOND_PASS},
-    {CXFI_REFERENCE,cxrfReference, CX_HTML_SECOND_PASS},
-    {CXFI_REFNUM,cxrfRefNum, 0},
+    {CXFI_CLASS_EXT, cxrfSubClass, CX_JUST_READ},
+    {CXFI_SYM_NAME, cxrfSymbolName, CX_HTML_SECOND_PASS},
+    {CXFI_REFERENCE, cxrfReference, CX_HTML_SECOND_PASS},
+    {CXFI_REFNUM, cxrfRefNum, 0},
     {-1,NULL, 0},
 };
 
 ScanFileFunctionStep symbolSearchFunctionSequence[]={
-    {CXFI_SINGLE_RECORDS,cxrfSetSingleRecords, 0},
-    {CXFI_REFNUM,cxrfRefNum, 0},
-    {CXFI_FILE_NAME,cxrfFileName, CX_JUST_READ},
+    {CXFI_SINGLE_RECORDS, cxrfSetSingleRecords, 0},
+    {CXFI_REFNUM, cxrfRefNum, 0},
+    {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
-    {CXFI_SYM_NAME,cxrfSymbolName, SEARCH_SYMBOL},
-    {CXFI_REFERENCE,cxrfReference, CX_HTML_FIRST_PASS},
+    {CXFI_SYM_NAME, cxrfSymbolName, SEARCH_SYMBOL},
+    {CXFI_REFERENCE, cxrfReference, CX_HTML_FIRST_PASS},
     {-1,NULL, 0},
 };
 
 ScanFileFunctionStep deadCodeDetectionFunctionSequence[]={
-    {CXFI_SINGLE_RECORDS,cxrfSetSingleRecords, 0},
-    {CXFI_REFNUM,cxrfRefNum, 0},
-    {CXFI_FILE_NAME,cxrfFileName, CX_JUST_READ},
+    {CXFI_SINGLE_RECORDS, cxrfSetSingleRecords, 0},
+    {CXFI_REFNUM, cxrfRefNum, 0},
+    {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
-    {CXFI_SYM_NAME,cxrfSymbolName, DEAD_CODE_DETECTION},
-    {CXFI_REFERENCE,cxrfReference, DEAD_CODE_DETECTION},
+    {CXFI_SYM_NAME, cxrfSymbolName, DEAD_CODE_DETECTION},
+    {CXFI_REFERENCE, cxrfReference, DEAD_CODE_DETECTION},
     {-1,NULL, 0},
 };

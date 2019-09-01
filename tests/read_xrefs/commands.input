@@ -1,0 +1,8 @@
+-olcxgetprojectname -xrefrc "/Users/thomas/.c-xrefrc" "/Users/thomas/Utveckling/c-xrefactory/src/cxfile.c"
+end-of-options
+
+<set-info len=41>/Users/thomas/Utveckling/c-xrefactory/src</set-info>
+-encoding=european -olcxpush -urldirect  "-preload" "/Users/thomas/Utveckling/c-xrefactory/src/cxfile.c" "/tmp/c-xrefxthomas1123.tmp" "-olmark=0" "-olcursor=23600" "/Users/thomas/Utveckling/c-xrefactory/src/cxfile.c" -xrefrc "/Users/thomas/.c-xrefrc" -p "/Users/thomas/Utveckling/c-xrefactory/src" -user 1
+end-of-options
+
+.
