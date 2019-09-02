@@ -364,85 +364,98 @@ static void expandEnvironmentVariables(char *tt, int ttsize, int *len,
     //&fprintf(dumpOut, "result '%s'\n", tt);
 }
 
-static int getOptionFromFile(FILE *ff, char *tt, int ttsize, int *outI) {
+static int getOptionFromFile(FILE *file, char *text, int text_size, int *chars_read) {
     int i, c;
     int comment, res, quotamess;
-    int last_char;
-    UNUSED last_char;
+    int previous_char;
+    UNUSED previous_char;
 
-    c = getc(ff);
+    c = getc(file);
     do {
         quotamess = 0;
-        *outI = i = comment = 0;
-        while ((c>=0 && c<=' ') || c=='\n' || c=='\t') c=getc(ff);
+        *chars_read = i = comment = 0;
+
+        /* Skip all white space? */
+        while ((c>=0 && c<=' ') || c=='\n' || c=='\t')
+            c=getc(file);
+
         if (c==EOF) {
             res = EOF;
             goto fini;
         }
+
         if (c=='\"') {
-            last_char=c; c=getc(ff);
-            // the escaped " (\") are forbidden, it creates problems
+            /* Read a double quoted string */
+            previous_char=c; c=getc(file);
+            // Escaping the double quote (\") is not allowed, it creates problems
             // when someone finished a section name by \ reverse slash
-            while (c!=EOF /*& && c!='\n' &*/ && (c!='\"' /*|| lc=='\\'*/ )) {
-                // if (c=='\"' && lc=='\\') i--;
-                if (i < ttsize-1)   tt[i++]=c;
-                last_char=c; c=getc(ff);
+            while (c!=EOF && c!='\"') {
+                if (i < text_size-1)
+                    text[i++]=c;
+                previous_char=c; c=getc(file);
             }
             if (c!='\"' && s_opt.taskRegime!=RegimeEditServer) {
                 fatalError(ERR_ST, "option string through end of file", XREF_EXIT_ERR);
             }
         } else if (c=='`') {
-            tt[i++]=c;
-            last_char=c; c=getc(ff);
-            while (c!=EOF && c!='\n' && (c!='`' /*|| lc=='\\'*/ )) {
-                // if (c=='`' && lc=='\\') i--;
-                if (i < ttsize-1)   tt[i++]=c;
-                last_char=c; c=getc(ff);
+            text[i++]=c;
+            previous_char=c; c=getc(file);
+            while (c!=EOF && c!='\n' && c!='`') {
+                if (i < text_size-1)
+                    text[i++]=c;
+                previous_char=c; c=getc(file);
             }
-            if (i < ttsize-1)   tt[i++]=c;
+            if (i < text_size-1)
+                text[i++]=c;
             if (c!='`'  && s_opt.taskRegime!=RegimeEditServer) {
                 error(ERR_ST, "option string through end of line");
             }
         } else if (c=='[') {
-            tt[i++] = c;
-            last_char=c; c=getc(ff);
+            text[i++] = c;
+            previous_char=c; c=getc(file);
             while (c!=EOF && c!='\n' && (c!=']' /*|| lc=='\\'*/ )) {
-                if (i < ttsize-1)       tt[i++]=c;
-                last_char=c; c=getc(ff);
+                if (i < text_size-1)
+                    text[i++]=c;
+                previous_char=c; c=getc(file);
             }
-            if (c==']') tt[i++]=c;
+            if (c==']')
+                text[i++]=c;
         } else {
             while (c!=EOF && c>' ') {
-                if (c=='\"') quotamess = 1;
-                if (i < ttsize-1)   tt[i++]=c;
-                c=getc(ff);
+                if (c=='\"')
+                    quotamess = 1;
+                if (i < text_size-1)
+                    text[i++]=c;
+                c=getc(file);
             }
         }
-        tt[i]=0;
+        text[i]=0;
         if (quotamess && s_opt.taskRegime!=RegimeEditServer) {
             static int messageWritten=0;
             if (! messageWritten) {
                 messageWritten = 1;
-                sprintf(tmpBuff,"option '%s' contains quotas.",tt);
+                sprintf(tmpBuff,"option '%s' contains quotas.", text);
                 warning(ERR_ST, tmpBuff);
             }
         }
         /* because QNX paths can start with // */
-        if (i>=2  && tt[0]=='/' && tt[1]=='/') {
-            while (c!=EOF && c!='\n') c=getc(ff);
+        if (i>=2 && text[0]=='/' && text[1]=='/') {
+            while (c!=EOF && c!='\n')
+                c=getc(file);
             comment = 1;
         }
     } while (comment);
-    if (strcmp(tt,END_OF_OPTIONS_STRING)==0) {
-        i = 0;  res = EOF;
+    if (strcmp(text, END_OF_OPTIONS_STRING)==0) {
+        i = 0; res = EOF;
     } else {
         res = 'A';
     }
+
  fini:
-    tt[i] = 0;
-    *outI = i;
-    // if (i>0) assert(tt[i-1]!='\n'); // no longer true
-    return(res);
+    text[i] = 0;
+    *chars_read = i;
+
+    return res;
 }
 
 static void processSingleSectionMarker(char *tt,char *section,
@@ -544,9 +557,9 @@ static void processSectionMarker(char *ttt,int i,char *project,char *section,
 
 #define ACTIVE_OPTION() (isActiveSect && isActivePass)
 
-int readOptionFromFile(FILE *ff, int *nargc, char ***nargv, int memFl,
+int readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
                        char *sectionFile,char *project, char *resSection) {
-    char tt[MAX_OPTION_LEN];
+    char text[MAX_OPTION_LEN];
     int len, argc, i, c, isActiveSect, isActivePass, res, passn=0;
     char **aargv,*argv[MAX_STD_ARGS];
 
@@ -555,42 +568,42 @@ int readOptionFromFile(FILE *ff, int *nargc, char ***nargv, int memFl,
     if (memFl==MEM_ALLOC_ON_SM) SM_INIT(optMemory);
     c = 'a';
     while (c!=EOF) {
-        c = getOptionFromFile(ff,tt,MAX_OPTION_LEN,&len);
-        if (len>=2 && tt[0]=='[' && tt[len-1]==']') {
-            //&fprintf(dumpOut,"!checking '%s'\n", tt);
-            expandEnvironmentVariables(tt+1,MAX_OPTION_LEN,&len,GLOBAL_ENV_ONLY);
-            //&fprintf(dumpOut,"expanded '%s'\n", tt);
-            processSectionMarker(tt,len+1,project,sectionFile,&isActiveSect,resSection);
-        } else if (isActiveSect && strncmp(tt,"-pass",5)==0) {
-            sscanf(tt+5, "%d", &passn);
+        c = getOptionFromFile(file,text,MAX_OPTION_LEN,&len);
+        if (len>=2 && text[0]=='[' && text[len-1]==']') {
+            log_trace("!checking '%s'", text);
+            expandEnvironmentVariables(text+1, MAX_OPTION_LEN, &len, GLOBAL_ENV_ONLY);
+            log_trace("expanded '%s'", text);
+            processSectionMarker(text,len+1,project,sectionFile,&isActiveSect,resSection);
+        } else if (isActiveSect && strncmp(text,"-pass",5)==0) {
+            sscanf(text+5, "%d", &passn);
             if (passn==s_currCppPass || s_currCppPass==ANY_CPP_PASS) {
                 isActivePass = 1;
             } else {
                 isActivePass = 0;
             }
             if (passn > s_maximalCppPass) s_maximalCppPass = passn;
-        } else if (strcmp(tt,"-set")==0 && ACTIVE_OPTION()
+        } else if (strcmp(text,"-set")==0 && ACTIVE_OPTION()
                    && memFl!=MEM_NO_ALLOC) {
             // pre-evaluation of -set
             res = 1;
-            ADD_OPTION_TO_ARGS(memFl,tt,len,argv,argc);
-            c = getOptionFromFile(ff,tt,MAX_OPTION_LEN,&len);
-            expandEnvironmentVariables(tt,MAX_OPTION_LEN,&len,DEFAULT_VALUE);
-            ADD_OPTION_TO_ARGS(memFl,tt,len,argv,argc);
-            c = getOptionFromFile(ff,tt,MAX_OPTION_LEN,&len);
-            expandEnvironmentVariables(tt,MAX_OPTION_LEN,&len,DEFAULT_VALUE);
-            ADD_OPTION_TO_ARGS(memFl,tt,len,argv,argc);
+            ADD_OPTION_TO_ARGS(memFl,text,len,argv,argc);
+            c = getOptionFromFile(file,text,MAX_OPTION_LEN,&len);
+            expandEnvironmentVariables(text,MAX_OPTION_LEN,&len,DEFAULT_VALUE);
+            ADD_OPTION_TO_ARGS(memFl,text,len,argv,argc);
+            c = getOptionFromFile(file,text,MAX_OPTION_LEN,&len);
+            expandEnvironmentVariables(text,MAX_OPTION_LEN,&len,DEFAULT_VALUE);
+            ADD_OPTION_TO_ARGS(memFl,text,len,argv,argc);
             if (argc < MAX_STD_ARGS) {
                 assert(argc>=3);
                 mainHandleSetOption(argc, argv, argc-3);
             }
         } else if (c!=EOF && ACTIVE_OPTION()) {
             res = 1;
-            expandEnvironmentVariables(tt,MAX_OPTION_LEN,&len,DEFAULT_VALUE);
-            ADD_OPTION_TO_ARGS(memFl,tt,len,argv,argc);
+            expandEnvironmentVariables(text,MAX_OPTION_LEN,&len,DEFAULT_VALUE);
+            ADD_OPTION_TO_ARGS(memFl,text,len,argv,argc);
         }
     }
-    if (argc >= MAX_STD_ARGS-1) error(ERR_ST,"too much options");
+    if (argc >= MAX_STD_ARGS-1) error(ERR_ST,"too many options");
     if (res && memFl!=MEM_NO_ALLOC) {
         OPTION_SPACE_ALLOCC(memFl, aargv, argc, char*);
         for(i=1; i<argc; i++) aargv[i] = argv[i];
