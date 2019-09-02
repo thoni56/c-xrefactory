@@ -22,6 +22,8 @@ script:
     # Use Codecov for unittest coverage
     - bash <(curl -s https://codecov.io/bash) -c
     - cd ../..
+    - lcov --zerocounters
+    # Now reset coverage and run integration tests
     - cd tests
     - cd ffmpeg ; make init ; cd ..
     - cd systemd ; make init ; cd ..
