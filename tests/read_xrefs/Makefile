@@ -6,10 +6,11 @@ COMMAND = ../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-
 
 $(TEST): commands.input CXrefs/XFiles
 	@printf "Tests in '$@': "
-	-@$(COMMAND) < commands.input > commands.output
+	@$(COMMAND) < commands.input > commands.output || true
 	@sed -e "s+`expr length $$PWD/single_int1.c`>$$PWD/single_int1.c+66>CURDIR/single_int1.c+g" output.log > output.tmp
-	@diff output.tmp output.expected
+	@cmp output.tmp output.expected
 	@if [ $$? -ne 0 ] ; then \
+		diff output.tmp output.expected ; \
 		echo "Failed" ; \
 		exit 1 ; \
 	else \
