@@ -3,7 +3,6 @@
 #include "globals.h"
 
 #include "commons.h"            /* error() */
-#include "utils.h"              /* creatingOlcxRefs() */
 
 
 
@@ -69,7 +68,7 @@ static int charBuffReadFromUnzipFilter(struct CharacterBuffer *buffer, char *out
     return(n);
 }
 
-int getCharBuf(struct CharacterBuffer *buffer) {
+bool getCharBuf(struct CharacterBuffer *buffer) {
     char *dd;
     char *cc;
     char *fin;
@@ -153,11 +152,4 @@ int skipNCharsInCharBuf(struct CharacterBuffer *buffer, unsigned count) {
         buffer->next = buffer->buffer+MAX_UNGET_CHARS;
     }
     return(buffer->next != buffer->end);
-}
-
-void gotOnLineCxRefs( S_position *ps ) {
-    if (creatingOlcxRefs()) {
-        s_cache.activeCache = 0;
-        s_cxRefPos = *ps;
-    }
 }

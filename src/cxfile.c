@@ -12,6 +12,7 @@
 #include "editor.h"
 #include "enumTxt.h"
 #include "reftab.h"
+#include "charbuf.h"
 
 #include "log.h"
 #include "utils.h"

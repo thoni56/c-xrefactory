@@ -9,6 +9,7 @@
 #include "cxref.h"
 #include "cxfile.h"
 #include "jsemact.h"
+#include "charbuf.h"
 
 #include "log.h"
 #include "utils.h"

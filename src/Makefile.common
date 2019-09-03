@@ -154,6 +154,7 @@ c-xref: $(OBJS)
 
 clean:;
 	-make -C $(ROOTDIR)/lib/zlib clean
+	-make -C unittests clean
 	-rm -rf $(OBJDIR)/*.o c-xref .c-xrefrc
 
 cleaner: clean

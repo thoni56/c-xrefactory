@@ -12,6 +12,7 @@
 #include "jslsemact.h"
 #include "editor.h"
 #include "reftab.h"
+#include "charbuf.h"
 
 #include "cgram.x"
 #include "cexp.x"

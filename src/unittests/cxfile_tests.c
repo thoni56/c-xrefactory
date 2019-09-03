@@ -36,10 +36,14 @@ S_refTab s_cxrefTab;
 #include "lex.mock"
 #include "editor.mock"
 #include "memmac.mock"
+#include "charbuf.mock"
+
 #include "enumTxt.c"
 
 Describe(CxFile);
-BeforeEach(CxFile) {}
+BeforeEach(CxFile) {
+    log_set_console_level(LOG_DEBUG); /* Set to LOG_TRACE if needed */
+}
 AfterEach(CxFile) {}
 
 static CharacterBuffer characterBuffer;
@@ -51,7 +55,6 @@ Ensure(CxFile, can_scan_int) {
     char *end;
     int result;
 
-    log_set_console_level(LOG_DEBUG);
     characters = cb->buffer;
     strcpy(cb->buffer, "123");
     cb->end = &cb->buffer[strlen("123")];
@@ -63,4 +66,27 @@ Ensure(CxFile, can_scan_int) {
     ScanInt(next, characters, end, &characterBuffer, result);
 
     assert_that(result, is_equal_to(123));
+}
+
+
+Ensure(CxFile, can_get_char) {
+    CharacterBuffer *cb = &characterBuffer;
+    char next = ' ';
+    char *characters;
+    char *end;
+    int result;
+
+    characters = cb->buffer;
+    strcpy(cb->buffer, "123");
+    cb->end = &cb->buffer[strlen("123")];
+    end = cb->end;
+
+    GetChar(next, characters, end, &characterBuffer);
+    assert_that(next, is_equal_to('1'));
+
+    GetChar(next, characters, end, &characterBuffer);
+    assert_that(next, is_equal_to('2'));
+
+    GetChar(next, characters, end, &characterBuffer);
+    assert_that(next, is_equal_to('3'));
 }

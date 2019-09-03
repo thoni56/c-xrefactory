@@ -14,7 +14,7 @@ void zlibFree(voidpf opaque, voidpf address) {
     mock(opaque, address);
 }
 
-int getCharBuf(struct CharacterBuffer *buffer) {
+bool getCharBuf(struct CharacterBuffer *buffer) {
     return (int) mock(buffer);
 }
 
@@ -24,8 +24,4 @@ void switchToZippedCharBuff(struct CharacterBuffer *buffer) {
 
 int skipNCharsInCharBuf(struct CharacterBuffer *buffer, unsigned count) {
     return (int) mock(buffer, count);
-}
-
-void gotOnLineCxRefs(S_position *ps) {
-    mock(ps);
 }

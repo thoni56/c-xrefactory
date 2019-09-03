@@ -19,6 +19,7 @@
 #include "javagram.x"
 #include "unigram.h"
 
+#include "charbuf.h"
 #include "cxref.h"
 #include "cxfile.h"
 #include "caching.h"

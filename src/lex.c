@@ -4,10 +4,20 @@
 #include "commons.h"
 #include "unigram.h"
 #include "cxref.h"
+#include "charbuf.h"
 
 #include "caching.h"            /* cacheInput() */
 #include "jslsemact.h"          /* s_jsl */
 
+#include "utils.h"              /* creatingOlcxRefs() */
+
+
+void gotOnLineCxRefs( S_position *ps ) {
+    if (creatingOlcxRefs()) {
+        s_cache.activeCache = 0;
+        s_cxRefPos = *ps;
+    }
+}
 
 /* ***************************************************************** */
 /*                         Lexical Analysis                          */
