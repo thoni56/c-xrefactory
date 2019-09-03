@@ -7,7 +7,7 @@ COMMAND = ../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-
 $(TEST): commands.input CXrefs/XFiles
 	@printf "Tests in '$@': "
 	@$(COMMAND) < commands.input > commands.output || true
-	@sed -e "s+`expr length $$PWD/single_int1.c`>$$PWD/single_int1.c+66>CURDIR/single_int1.c+g" output.log > output.tmp
+	@sed -e "s+`echo $$PWD/single_int1.c| awk '{ print length }'`>$$PWD/single_int1.c+66>CURDIR/single_int1.c+g" output.log > output.tmp
 	@cmp output.tmp output.expected
 	@if [ $$? -ne 0 ] ; then \
 		diff output.tmp output.expected ; \
@@ -25,4 +25,7 @@ commands.input: commands.tpl
 	@sed -e "s+CURDIR+$(CURDIR)+g" $< > $@
 
 CXrefs/XFiles: CXrefs/XFiles.tpl
-	@sed -e "s+71:CURDIR+`expr length $$PWD/single_int1.c`:$(CURDIR)+g" $< > $@
+	@sed -e "s+71:CURDIR+`echo $$PWD/single_int1.c| awk '{ print length }'`:$(CURDIR)+g" $< > $@
+
+clean:
+	rm commands.input CXrefs/XFiles
