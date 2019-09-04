@@ -55,7 +55,7 @@ union constantPoolUnion {
         /*fprintf(dumpOut,"getting char *%x < %x == '0x%x'\n",ccc,ffin,cch);fflush(dumpOut);*/ \
     }
 
-#define UngetChar(cch, ccc, ffin, bbb) {*--ccc = cch;}
+#define UngetChar(cch, ccc, bbb) {*--ccc = cch;}
 
 
 #define GetU1(val, ccc, ffin, bbb) GetChar(val, ccc, ffin, bbb)
