@@ -207,7 +207,7 @@ void gotOnLineCxRefs( S_position *ps ) {
                                                                                                                                                                                                                                                                                                                   PutLexToken(CPP_DEFINE0,dd); \
                                                                                                                                                                                                                                                                                                                   PutLexPosition(cfile,cline,lcoll,dd); \
                                                                                                                                                                                                                                                                                                                   DeleteBlank(ch,ccc,cfin,cb, clb, clo); \
-                                                                                                                                                                                                                                                                                                                  NOTE_NEW_LEXEM_POSITION(ch,ccc,cfin,cb,lb,dd,cfile,cline,clb,clo); \
+                                                                                                                                                                                                                                                                                                                  NOTE_NEW_LEXEM_POSITION(ccc,cfin,cb,lb,dd,cfile,cline,clb,clo); \
                                                                                                                                                                                                                                                                                                                   ProcessIdentifier(ch, ccc, cfin, cb, dd, cfile, cline, clb, clo,lab1); \
                                                                                                                                                                                                                                                                                                                   if (ch == '(') { \
                                                                                                                                                                                                                                                                                                                                   PutLexToken(CPP_DEFINE,ddd); \
@@ -249,7 +249,7 @@ void gotOnLineCxRefs( S_position *ps ) {
                                                    }                    \
         }
 
-#define NOTE_NEW_LEXEM_POSITION(ch,ccc,cfin,cb,lb,dd, cfile, cline, clb, clo){ \
+#define NOTE_NEW_LEXEM_POSITION(ccc,cfin,cb,lb,dd, cfile, cline, clb, clo){ \
         int pi = lb->posi % LEX_POSITIONS_RING_SIZE;                    \
         lb->fpRing[pi] = ABS_FILE_POS(cb,cfin,ccc);                     \
         lb->pRing[pi].file = cfile;                                     \
@@ -295,7 +295,7 @@ int getLexBuf(struct lexBuf *lb) {
         UngetChar(ch,ccc,cfin,cb);
         goto finish;
     }
-    NOTE_NEW_LEXEM_POSITION(ch,ccc,cfin,cb,lb,dd,cfile,cline,clb,clo);
+    NOTE_NEW_LEXEM_POSITION(ccc,cfin,cb,lb,dd,cfile,cline,clb,clo);
     /*  yytext = ccc; */
     lexStartDd = dd;
     lexStartCol = COLUMN_POS(ccc,clb,clo);
@@ -629,7 +629,7 @@ int getLexBuf(struct lexBuf *lb) {
             PutLexToken('\n',dd);
             PutLexPosition(cfile, cline, lexStartCol, dd);
             if (ch == '#' && LANGUAGE(LANG_C|LANG_CCC|LAN_YACC)) {
-                NOTE_NEW_LEXEM_POSITION(ch,ccc,cfin,cb,lb,dd,cfile,cline,clb,clo);
+                NOTE_NEW_LEXEM_POSITION(ccc,cfin,cb,lb,dd,cfile,cline,clb,clo);
                 HandleCppToken(ch,ccc,cfin,cb,dd,cfile,cline,clb,clo);
             }
             goto nextLexem;
