@@ -1,7 +1,7 @@
--olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/single_int1.c"
+-olcxgetprojectname -xrefrc ".c-xrefrc" "single_int1.c"
 end-of-options
 
--encoding=european -olcxpush -urldirect  "-preload" "CURDIR/cxfile.c" "-olmark=0" "-olcursor=6" "CURDIR/single_int1.c" -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-encoding=european -olcxpush -urldirect  "-preload" "single_int1.c" "-olmark=0" "-olcursor=6" "single_int1.c" -xrefrc ".c-xrefrc" -p "CURDIR"
 end-of-options
 
 .
