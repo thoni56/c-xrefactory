@@ -9,6 +9,7 @@
 #include "caching.h"            /* cacheInput() */
 #include "jslsemact.h"          /* s_jsl */
 
+#include "log.h"
 #include "utils.h"              /* creatingOlcxRefs() */
 
 
@@ -55,7 +56,10 @@ void gotOnLineCxRefs( S_position *ps ) {
         }                                               \
     }
 
-#define UngetChar(cch, ccc) { *--ccc = cch; }
+#define UngetChar(cch, ccc) {                        \
+    log_trace("Ungetting %s(%c) at %s", #cch, cch, #ccc); \
+    *--ccc = cch;                                         \
+}
 
 #define DeleteBlank(cch,ccc,ffin,bbb,clb,clo) {                         \
                                                while (cch==' '|| cch=='\t' || cch=='\004') { \
@@ -292,7 +296,7 @@ int getLexBuf(struct lexBuf *lb) {
  contin:
     DeleteBlank(ch,ccc,cfin,cb,clb,clo);
     if (dd >= lmax) {
-        UngetChar(ch, ccc);
+        UngetChar(ch,ccc,cfin,cb);
         goto finish;
     }
     NOTE_NEW_LEXEM_POSITION(ccc,cfin,cb,lb,dd,cfile,cline,clb,clo);
@@ -360,7 +364,7 @@ int getLexBuf(struct lexBuf *lb) {
                     PutLexPosition(cfile, cline, lexStartCol, dd);
                     goto nextLexem;
                 } else {
-                    UngetChar(ch, ccc);
+                    UngetChar(ch,ccc,cfin,cb);
                     ch = '.';
                 }
                 PutLexToken('.',dd);
@@ -373,7 +377,7 @@ int getLexBuf(struct lexBuf *lb) {
                 goto nextLexem;
             } else if (isdigit(ch)) {
                 /* floating point constant */
-                UngetChar(ch, ccc);
+                UngetChar(ch,ccc,cfin,cb);
                 ch = '.';
                 fpConstFin(ch,ccc,cfin,cb,clb,clo,rlex);
                 PutLexToken(rlex,dd);
@@ -452,7 +456,7 @@ int getLexBuf(struct lexBuf *lb) {
                     CommentaryEndRef(ch,ccc,cfin,cb,dd,cfile,cline,clb,clo,0);
                     goto nextLexem;
                 } else {
-                    UngetChar(ch, ccc); ch = '*';
+                    UngetChar(ch,ccc,cfin,cb); ch = '*';
                     PutLexToken('&',dd); PutLexPosition(cfile, cline, lexStartCol, dd);goto nextLexem;
                 }}
             else {PutLexToken('&',dd); PutLexPosition(cfile, cline, lexStartCol, dd);goto nextLexem;}
@@ -549,7 +553,7 @@ int getLexBuf(struct lexBuf *lb) {
                     goto nextLexem;
                 } else {
                     if (ch=='*' && LANGUAGE(LANG_JAVA)) javadoc = 1;
-                    UngetChar(ch, ccc); ch = '*';
+                    UngetChar(ch,ccc,cfin,cb); ch = '*';
                 }   /* !!! COPY BLOCK TO '/n' */
                 PassComment(ch,oldCh,ccc,cfin,cb,dd,cline,clb,clo);
                 CommentaryEndRef(ch,ccc,cfin,cb,dd,cfile,cline,clb,clo,javadoc);
@@ -616,13 +620,13 @@ int getLexBuf(struct lexBuf *lb) {
                     } else {
                         int javadoc=0;
                         if (ch == '*' && LANGUAGE(LANG_JAVA)) javadoc = 1;
-                        UngetChar(ch, ccc); ch = '*';
+                        UngetChar(ch,ccc,cfin,cb); ch = '*';
                         PassComment(ch,oldCh,ccc,cfin,cb,dd,cline,clb,clo);
                         CommentaryEndRef(ch,ccc,cfin,cb,dd,cfile,cline,clb,clo,javadoc);
                         DeleteBlank(ch,ccc,cfin,cb,clb,clo);
                     }
                 } else {
-                    UngetChar(ch, ccc);
+                    UngetChar(ch,ccc,cfin,cb);
                     ch = '/';
                 }
             }

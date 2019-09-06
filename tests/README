@@ -1,0 +1,16 @@
+These subdirectories contains integration tests for c-xrefactory.
+
+You can "make all", "make quick" or "make slow".
+
+To make a test in a subdirectory to be executed you have to explicitly
+include it in the Makefile in the directory. This is so that you
+can add partial, or in progress, tests, without the whole test suite
+failing.
+
+The Makefiles in the subdirectories usually does some magic with
+paths.  c-xref expects full paths, at least in the CX-files and writes
+full paths in the output. (We should try to referencing files in the
+commands without paths, since they would be in CWD.)
+
+In that magic CURDIR is exchanged with the full path of the current
+directory.
