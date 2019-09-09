@@ -23,7 +23,8 @@ coverage: clean all
 	lcov -d . -c -o coverage.info
 	genhtml -o coverage coverage.info
 
-lex_tests.so: $(OBJDIR)/lex_tests.o
+LEX_DEPENDENCIES = log
+lex_tests.so: $(OBJDIR)/lex_tests.o $(patsubst %,$(OBJDIR)/%.o,$(LEX_DEPENDENCIES))
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 symtab_tests.so: $(OBJDIR)/symtab_tests.o $(OBJDIR)/symtab.o
