@@ -2,11 +2,12 @@
 
 include ../Makefile.boilerplate
 
-COMMAND = ../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-o" "output.log" "-task_regime_server"
+COMMAND = ../../src/c-xref
+OPTIONS = "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-o" "output.log" "-task_regime_server"
 
 $(TEST): commands.input CXrefs/XFiles
 	@printf "Tests in '$@': "
-	@$(COMMAND) < commands.input > commands.output || true
+	@$(COMMAND) $(OPTIONS) < commands.input > commands.output || true
 	@sed -e "s+`echo $$PWD/single_int1.c| awk '{ print length }'`>$$PWD/single_int1.c+66>CURDIR/single_int1.c+g" output.log > output.tmp
 	@cmp output.tmp output.expected
 	@if [ $$? -ne 0 ] ; then \
@@ -18,8 +19,11 @@ $(TEST): commands.input CXrefs/XFiles
 	fi
 	@exit 0
 
+trace: COMMAND+=-trace
+trace: $(TEST)
+
 gdb:
-	gdb --args $(COMMAND)
+	gdb --args $(COMMAND) $(OPTIONS)
 
 commands.input: commands.tpl
 	@sed -e "s+CURDIR+$(CURDIR)+g" $< > $@

@@ -319,7 +319,7 @@ void recoverFromCache(void) {
 }
 
 void initCaching(void) {
-    FILL_caching(&s_cache, 1, 0, 0, s_cache.lb, cFile.lb.cc, NULL,NULL);
+    FILL_caching(&s_cache, 1, 0, 0, s_cache.lb, cFile.lb.next, NULL,NULL);
     poseCachePoint(0);
     s_cache.activeCache = 0;
 }

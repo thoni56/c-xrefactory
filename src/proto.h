@@ -1236,7 +1236,7 @@ typedef struct CharacterBuffer {
 } CharacterBuffer;
 
 typedef struct lexBuf {
-    char            *cc;				/* first unread */
+    char            *next;				/* next to read */
     char            *fin;				/* first free (invalid)  */
     char            a[LEX_BUFF_SIZE];
     struct position pRing[LEX_POSITIONS_RING_SIZE];		// file/line/coll position

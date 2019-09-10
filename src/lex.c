@@ -36,7 +36,6 @@ void gotOnLineCxRefs( S_position *ps ) {
         PutLexPosition(cfile,cline,ccol,dd);                \
     }                                                       \
 
-
 #define GetChar(cch, ccc, ffin, bbb, clb, clo) {        \
         if (ccc >= ffin) {                              \
             bbb->next = ccc;                            \
@@ -54,7 +53,7 @@ void gotOnLineCxRefs( S_position *ps ) {
             cch = * ((unsigned char *)ccc);             \
             ccc = ((char *)ccc) + 1;                    \
         }                                               \
-    }
+   }
 
 #define UngetChar(cch, ccc) {                        \
     log_trace("Ungetting %s(%c) at %s", #cch, cch, #ccc); \
@@ -62,27 +61,27 @@ void gotOnLineCxRefs( S_position *ps ) {
 }
 
 #define DeleteBlank(cch,ccc,ffin,bbb,clb,clo) {                         \
-                                               while (cch==' '|| cch=='\t' || cch=='\004') { \
-                                                                                            GetChar(cch,ccc,ffin,bbb,clb,clo); \
-                                                                                            } \
-                                               }
+        while (cch==' '|| cch=='\t' || cch=='\004') {                   \
+            GetChar(cch,ccc,ffin,bbb,clb,clo);                          \
+        }                                                               \
+    }
 
 #define PassComment(ch,oldCh,ccc,cfin,cb,dd,cline,clb,clo) {            \
-                                                            /*  ******* a block comment ******* */ \
-                                                            line = cline; \
-                                                            GetChar(ch,ccc,cfin,cb,clb,clo); \
-                                                            if (ch=='\n') {cline ++; clb = ccc; clo = 0;} \
-                                                            /* TODO test on cpp directive */ \
-                                                            do {        \
-                                                                oldCh = ch; \
-                                                                GetChar(ch,ccc,cfin,cb,clb,clo); \
-                                                                if (ch=='\n') {cline ++; clb = ccc; clo = 0;} \
-                                                                /* TODO test on cpp directive */ \
-                                                                } while ((oldCh != '*' || ch != '/') && ch != -1); \
-                                                            if (ch == -1) warning(ERR_ST,"comment through eof"); \
-                                                            PutLexLine(cline-line,dd); \
-                                                            GetChar(ch,ccc,cfin,cb,clb,clo); \
-                                                            }
+        /*  ******* a block comment ******* */                          \
+        line = cline;                                                   \
+        GetChar(ch,ccc,cfin,cb,clb,clo);                                \
+        if (ch=='\n') {cline ++; clb = ccc; clo = 0;}                   \
+        /* TODO test on cpp directive */                                \
+        do {                                                            \
+            oldCh = ch;                                                 \
+            GetChar(ch,ccc,cfin,cb,clb,clo);                            \
+            if (ch=='\n') {cline ++; clb = ccc; clo = 0;}               \
+            /* TODO test on cpp directive */                            \
+        } while ((oldCh != '*' || ch != '/') && ch != -1);              \
+        if (ch == -1) warning(ERR_ST,"comment through eof");            \
+        PutLexLine(cline-line,dd);                                      \
+        GetChar(ch,ccc,cfin,cb,clb,clo);                                \
+    }
 
 #define conType(val, cch, ccc, ffin, bbb, clb, clo, lex) {      \
         lex = CONSTANT;                                         \
@@ -100,27 +99,27 @@ void gotOnLineCxRefs( S_position *ps ) {
     }
 
 #define fpConstFin(cch, ccc, ffin, bbb, clb, clo, lex) {                \
-                                                        lex = DOUBLE_CONSTANT; \
-                                                        if (cch == '.') { \
-                                                                         do { GetChar(cch, ccc, ffin, bbb, clb, clo); \
-                                                                              } while (isdigit(cch)); \
-                                                                         } \
-                                                        if (cch == 'e' || cch == 'E') { \
-                                                                                       GetChar(cch, ccc, ffin, bbb, clb, clo); \
-                                                                                       if (cch == '+' || cch=='-') GetChar(cch, ccc, ffin, bbb, clb, clo); \
-                                                                                       while (isdigit(cch)) GetChar(cch, ccc, ffin, bbb, clb, clo); \
-                                                                                       } \
-                                                        if (LANGUAGE(LANG_JAVA)) { \
-                                                                                 if (cch == 'f' || cch == 'F' || cch == 'd' || cch == 'D') { \
-                                                                                                                                            if (cch == 'f' || cch == 'F') lex = FLOAT_CONSTANT; \
-                                                                                                                                            GetChar(cch, ccc, ffin, bbb, clb, clo); \
-                                                                                                                                            } \
-                                                                                 } else { \
-                                                                                         if (cch == 'f' || cch == 'F' || cch == 'l' || cch == 'L') { \
-                                                                                                                                                    GetChar(cch, ccc, ffin, bbb, clb, clo); \
-                                                                                                                                                    } \
-                                                                                         } \
-                                                        }
+        lex = DOUBLE_CONSTANT;                                          \
+        if (cch == '.') {                                               \
+            do { GetChar(cch, ccc, ffin, bbb, clb, clo);                \
+            } while (isdigit(cch));                                     \
+        }                                                               \
+        if (cch == 'e' || cch == 'E') {                                 \
+            GetChar(cch, ccc, ffin, bbb, clb, clo);                     \
+            if (cch == '+' || cch=='-') GetChar(cch, ccc, ffin, bbb, clb, clo); \
+            while (isdigit(cch)) GetChar(cch, ccc, ffin, bbb, clb, clo); \
+        }                                                               \
+        if (LANGUAGE(LANG_JAVA)) {                                      \
+            if (cch == 'f' || cch == 'F' || cch == 'd' || cch == 'D') { \
+                if (cch == 'f' || cch == 'F') lex = FLOAT_CONSTANT;     \
+                GetChar(cch, ccc, ffin, bbb, clb, clo);                 \
+            }                                                           \
+        } else {                                                        \
+            if (cch == 'f' || cch == 'F' || cch == 'l' || cch == 'L') { \
+                GetChar(cch, ccc, ffin, bbb, clb, clo);                 \
+            }                                                           \
+        }                                                               \
+   }
 
 #define ProcessIdentifier(ch, ccc, cfin, cb, dd, cfile, cline, clb, clo, lab){ \
         int idcoll;                                                     \
@@ -172,58 +171,58 @@ void gotOnLineCxRefs( S_position *ps ) {
         GetChar(ch,ccc,cfin,cb, clb, clo);                              \
         DeleteBlank(ch,ccc,cfin,cb, clb, clo);                          \
         for(i=0; i<9 && (isalpha(ch) || isdigit(ch) || ch=='_') ; i++) { \
-                                                                        tt[i] = ch; \
-                                                                        GetChar(ch,ccc,cfin,cb, clb, clo); \
-                                                                        } \
+            tt[i] = ch;                                                 \
+            GetChar(ch,ccc,cfin,cb, clb, clo);                          \
+        }                                                               \
         tt[i]=0;                                                        \
         if (! strcmp(tt,"ifdef")) {                                     \
-                                   PutLexToken(CPP_IFDEF,dd); PutLexPosition(cfile,cline,lcoll,dd); \
-                                   } else if (! strcmp(tt,"ifndef")) {  \
-                                                                      PutLexToken(CPP_IFNDEF,dd); PutLexPosition(cfile,cline,lcoll,dd); \
-                                                                      } else if (! strcmp(tt,"if")) { \
-                                                                                                     PutLexToken(CPP_IF,dd); PutLexPosition(cfile,cline,lcoll,dd); \
-                                                                                                     } else if (! strcmp(tt,"elif")) { \
-                                                                                                                                      PutLexToken(CPP_ELIF,dd); PutLexPosition(cfile,cline,lcoll,dd); \
-                                                                                                                                      } else if (! strcmp(tt,"undef")) { \
-                                                                                                                                                                        PutLexToken(CPP_UNDEF,dd); PutLexPosition(cfile,cline,lcoll,dd); \
-                                                                                                                                                                        } else if (! strcmp(tt,"else")) { \
-                                                                                                                                                                                                         PutLexToken(CPP_ELSE,dd); PutLexPosition(cfile,cline,lcoll,dd); \
-                                                                                                                                                                                                         } else if (! strcmp(tt,"endif")) { \
-                                                                                                                                                                                                                                           PutLexToken(CPP_ENDIF,dd); PutLexPosition(cfile,cline,lcoll,dd); \
-                                                                                                                                                                                                                                           } else if (! strcmp(tt,"include")) { \
-                                                                                                                                                                                                                                                                               char endCh; \
-                                                                                                                                                                                                                                                                               PutLexToken(CPP_INCLUDE,dd); \
-                                                                                                                                                                                                                                                                               PutLexPosition(cfile,cline,lcoll,dd); \
-                                                                                                                                                                                                                                                                               DeleteBlank(ch,ccc,cfin,cb, clb, clo); \
-                                                                                                                                                                                                                                                                               if (ch == '\"' || ch == '<') { \
-                                                                                                                                                                                                                                                                                                             if (ch == '\"') endCh = '\"'; \
-                                                                                                                                                                                                                                                                                                             else endCh = '>'; \
-                                                                                                                                                                                                                                                                                                             scol = COLUMN_POS(ccc,clb,clo); \
-                                                                                                                                                                                                                                                                                                             PutLexToken(STRING_LITERAL,dd); \
-                                                                                                                                                                                                                                                                                                             do { PutLexChar(ch,dd); GetChar(ch,ccc,cfin,cb, clb, clo); \
-                                                                                                                                                                                                                                                                                                                  } while (ch!=endCh && ch!='\n'); \
-                                                                                                                                                                                                                                                                                                             PutLexChar(0,dd); \
-                                                                                                                                                                                                                                                                                                             PutLexPosition(cfile,cline,scol,dd); \
-                                                                                                                                                                                                                                                                                                             if (ch == endCh) GetChar(ch,ccc,cfin,cb, clb, clo); \
-                                                                                                                                                                                                                                                                                                             } \
-                                                                                                                                                                                                                                                                               } else if (! strcmp(tt,"define")) { \
-                                                                                                                                                                                                                                                                                                                  ddd = dd; \
-                                                                                                                                                                                                                                                                                                                  PutLexToken(CPP_DEFINE0,dd); \
-                                                                                                                                                                                                                                                                                                                  PutLexPosition(cfile,cline,lcoll,dd); \
-                                                                                                                                                                                                                                                                                                                  DeleteBlank(ch,ccc,cfin,cb, clb, clo); \
-                                                                                                                                                                                                                                                                                                                  NOTE_NEW_LEXEM_POSITION(ccc,cfin,cb,lb,dd,cfile,cline,clb,clo); \
-                                                                                                                                                                                                                                                                                                                  ProcessIdentifier(ch, ccc, cfin, cb, dd, cfile, cline, clb, clo,lab1); \
-                                                                                                                                                                                                                                                                                                                  if (ch == '(') { \
-                                                                                                                                                                                                                                                                                                                                  PutLexToken(CPP_DEFINE,ddd); \
-                                                                                                                                                                                                                                                                                                                                  } \
-                                                                                                                                                                                                                                                                                                                  } else if (! strcmp(tt,"pragma")) { \
-                                                                                                                                                                                                                                                                                                                                                     PutLexToken(CPP_PRAGMA,dd); PutLexPosition(cfile,cline,lcoll,dd); \
-                                                                                                                                                                                                                                                                                                                                                     } else { \
-                                                                                                                                                                                                                                                                                                                                                             PutLexToken(CPP_LINE,dd); PutLexPosition(cfile,cline,lcoll,dd); \
-                                                                                                                                                                                                                                                                                                                                                             } \
-        }
+            PutLexToken(CPP_IFDEF,dd); PutLexPosition(cfile,cline,lcoll,dd); \
+        } else if (! strcmp(tt,"ifndef")) {                             \
+            PutLexToken(CPP_IFNDEF,dd); PutLexPosition(cfile,cline,lcoll,dd); \
+        } else if (! strcmp(tt,"if")) {                                 \
+            PutLexToken(CPP_IF,dd); PutLexPosition(cfile,cline,lcoll,dd); \
+        } else if (! strcmp(tt,"elif")) {                               \
+            PutLexToken(CPP_ELIF,dd); PutLexPosition(cfile,cline,lcoll,dd); \
+        } else if (! strcmp(tt,"undef")) {                              \
+            PutLexToken(CPP_UNDEF,dd); PutLexPosition(cfile,cline,lcoll,dd); \
+        } else if (! strcmp(tt,"else")) {                               \
+            PutLexToken(CPP_ELSE,dd); PutLexPosition(cfile,cline,lcoll,dd); \
+        } else if (! strcmp(tt,"endif")) {                              \
+            PutLexToken(CPP_ENDIF,dd); PutLexPosition(cfile,cline,lcoll,dd); \
+        } else if (! strcmp(tt,"include")) {                            \
+            char endCh;                                                 \
+            PutLexToken(CPP_INCLUDE,dd);                                \
+            PutLexPosition(cfile,cline,lcoll,dd);                       \
+            DeleteBlank(ch,ccc,cfin,cb, clb, clo);                      \
+            if (ch == '\"' || ch == '<') {                              \
+                if (ch == '\"') endCh = '\"';                           \
+                else endCh = '>';                                       \
+                scol = COLUMN_POS(ccc,clb,clo);                         \
+                PutLexToken(STRING_LITERAL,dd);                         \
+                do { PutLexChar(ch,dd); GetChar(ch,ccc,cfin,cb, clb, clo); \
+                } while (ch!=endCh && ch!='\n');                        \
+                PutLexChar(0,dd);                                       \
+                PutLexPosition(cfile,cline,scol,dd);                    \
+                if (ch == endCh) GetChar(ch,ccc,cfin,cb, clb, clo);     \
+            }                                                           \
+        } else if (! strcmp(tt,"define")) {                             \
+            ddd = dd;                                                   \
+            PutLexToken(CPP_DEFINE0,dd);                                \
+            PutLexPosition(cfile,cline,lcoll,dd);                       \
+            DeleteBlank(ch,ccc,cfin,cb, clb, clo);                      \
+            NOTE_NEW_LEXEM_POSITION(ccc,cfin,cb,lb,cfile,cline,clb,clo); \
+            ProcessIdentifier(ch, ccc, cfin, cb, dd, cfile, cline, clb, clo,lab1); \
+            if (ch == '(') {                                            \
+                PutLexToken(CPP_DEFINE,ddd);                            \
+            }                                                           \
+        } else if (! strcmp(tt,"pragma")) {                             \
+            PutLexToken(CPP_PRAGMA,dd); PutLexPosition(cfile,cline,lcoll,dd); \
+        } else {                                                        \
+            PutLexToken(CPP_LINE,dd); PutLexPosition(cfile,cline,lcoll,dd); \
+        }                                                               \
+   }
 
-#define CommentaryBegRef(ch,ccc,cfin,cb,dd, cfile, cline, clb, clo) {   \
+#define CommentaryBegRef(ccc, cfile, cline, clb, clo) {   \
         if (s_opt.taskRegime==RegimeHtmlGenerate && s_opt.htmlNoColors==0) { \
             int         lcoll;                                          \
             S_position  pos;                                            \
@@ -235,25 +234,25 @@ void gotOnLineCxRefs( S_position *ps ) {
         }                                                               \
     }
 
-#define CommentaryEndRef(ch,ccc,cfin,cb,dd, cfile, cline, clb, clo,jdoc) { \
+#define CommentaryEndRef(ccc, cfile, cline, clb, clo, jdoc) { \
         if (s_opt.taskRegime==RegimeHtmlGenerate) {                     \
-                                                   int         lcoll;   \
-                                                   S_position  pos;     \
-                                                   char        ttt[TMP_STRING_SIZE]; \
-                                                   lcoll = COLUMN_POS(ccc,clb,clo); \
-                                                   FILL_position(&pos, cfile, cline, lcoll); \
-                                                   sprintf(ttt,"%x/*",cfile); \
-                                                   if (s_opt.htmlNoColors==0) { \
-                                                                               addTrivialCxReference(ttt,TypeComment,StorageDefault, &pos, UsageUsed); \
-                                                                               } \
-                                                   if (jdoc) {          \
-                                                              pos.coll -= 2; \
-                                                              addTrivialCxReference(ttt,TypeComment,StorageDefault, &pos, UsageJavaDoc); \
-                                                              }         \
-                                                   }                    \
-        }
+            int         lcoll;                                          \
+            S_position  pos;                                            \
+            char        ttt[TMP_STRING_SIZE];                           \
+            lcoll = COLUMN_POS(ccc,clb,clo);                            \
+            FILL_position(&pos, cfile, cline, lcoll);                   \
+            sprintf(ttt,"%x/*",cfile);                                  \
+            if (s_opt.htmlNoColors==0) {                                \
+                addTrivialCxReference(ttt,TypeComment,StorageDefault, &pos, UsageUsed); \
+            }                                                           \
+            if (jdoc) {                                                 \
+                pos.coll -= 2;                                          \
+                addTrivialCxReference(ttt,TypeComment,StorageDefault, &pos, UsageJavaDoc); \
+            }                                                           \
+        }                                                               \
+    }
 
-#define NOTE_NEW_LEXEM_POSITION(ccc,cfin,cb,lb,dd, cfile, cline, clb, clo){ \
+#define NOTE_NEW_LEXEM_POSITION(ccc, cfin, cb, lb, cfile, cline, clb, clo){ \
         int pi = lb->posi % LEX_POSITIONS_RING_SIZE;                    \
         lb->fpRing[pi] = ABS_FILE_POS(cb,cfin,ccc);                     \
         lb->pRing[pi].file = cfile;                                     \
@@ -262,7 +261,7 @@ void gotOnLineCxRefs( S_position *ps ) {
         lb->posi ++;                                                    \
     }
 
-#define PUT_EMPTY_COMPLETION_ID(ccc,dd,cline,clo,clb,cfile,llen) {  \
+#define PUT_EMPTY_COMPLETION_ID(ccc, dd, cline, clo, clb, cfile, llen) {  \
         PutLexToken(IDENT_TO_COMPLETE,dd);                          \
         PutLexChar(0,dd);                                           \
         PutLexPosition(cfile,cline,                                 \
@@ -270,14 +269,14 @@ void gotOnLineCxRefs( S_position *ps ) {
     }
 
 int getLexBuf(struct lexBuf *lb) {
-    register int ch;
+    int ch;
     struct CharacterBuffer *cb;
-    register char *ccc, *cfin;
-    register char *cc, *dd, *lmax, *lexStartDd;
+    char *ccc, *cfin;
+    char *cc, *dd, *lmax, *lexStartDd;
     unsigned chval=0;
     int rlex;
-    int cline,clo; /* current line, current line offset (for collumn)*/
-    char *clb;          /* current line begin */
+    int cline, clo; /* current line, current line offset (for column)*/
+    char *clb;      /* current line begin */
     char oldCh;
     int line,size,cfile,lexStartCol, lexStartFilePos, column;
 
@@ -287,8 +286,8 @@ int getLexBuf(struct lexBuf *lb) {
         s_cache.lexcc = lb->a;
     }
     lmax = lb->a + LEX_BUFF_SIZE - MAX_LEXEM_SIZE;
-    for(dd=lb->a,cc=lb->cc; cc<lb->fin; cc++,dd++) *dd = *cc;
-    lb->cc = lb->a;
+    for(dd=lb->a,cc=lb->next; cc<lb->fin; cc++,dd++) *dd = *cc;
+    lb->next = lb->a;
     cb = &lb->cb;
     cline = cb->lineNum; clb = cb->lineBegin; clo = cb->columnOffset;
     ccc = cb->next; cfin = cb->end; cfile = cb->fileNumber;
@@ -299,7 +298,7 @@ int getLexBuf(struct lexBuf *lb) {
         UngetChar(ch,ccc);
         goto finish;
     }
-    NOTE_NEW_LEXEM_POSITION(ccc,cfin,cb,lb,dd,cfile,cline,clb,clo);
+    NOTE_NEW_LEXEM_POSITION(ccc,cfin,cb,lb,cfile,cline,clb,clo);
     /*  yytext = ccc; */
     lexStartDd = dd;
     lexStartCol = COLUMN_POS(ccc,clb,clo);
@@ -453,7 +452,7 @@ int getLexBuf(struct lexBuf *lb) {
                 if (ch == '/') {
                     /* a program commentary, ignore */
                     GetChar(ch,ccc,cfin,cb,clb,clo);
-                    CommentaryEndRef(ch,ccc,cfin,cb,dd,cfile,cline,clb,clo,0);
+                    CommentaryEndRef(ccc,cfile,cline,clb,clo,0);
                     goto nextLexem;
                 } else {
                     UngetChar(ch,ccc); ch = '*';
@@ -545,7 +544,7 @@ int getLexBuf(struct lexBuf *lb) {
             if (ch == '='){ PutLexToken(DIV_ASSIGN,dd); PutLexPosition(cfile, cline, lexStartCol, dd);GetChar(ch,ccc,cfin,cb,clb,clo); goto nextLexem; }
             else if (ch=='*') {
                 int javadoc=0;
-                CommentaryBegRef(ch,ccc,cfin,cb,dd,cfile,cline,clb,clo);
+                CommentaryBegRef(ccc,cfile,cline,clb,clo);
                 GetChar(ch,ccc,cfin,cb,clb,clo);
                 if (ch == '&') {
                     /* ****** a program comment, ignore */
@@ -556,16 +555,16 @@ int getLexBuf(struct lexBuf *lb) {
                     UngetChar(ch,ccc); ch = '*';
                 }   /* !!! COPY BLOCK TO '/n' */
                 PassComment(ch,oldCh,ccc,cfin,cb,dd,cline,clb,clo);
-                CommentaryEndRef(ch,ccc,cfin,cb,dd,cfile,cline,clb,clo,javadoc);
+                CommentaryEndRef(ccc,cfile,cline,clb,clo,javadoc);
                 goto nextLexem;
             } else if (ch=='/' && s_opt.cpp_comment) {
                 /*  ******* a // comment ******* */
-                CommentaryBegRef(ch,ccc,cfin,cb,dd,cfile,cline,clb,clo);
+                CommentaryBegRef(ccc,cfile,cline,clb,clo);
                 GetChar(ch,ccc,cfin,cb,clb,clo);
                 if (ch == '&') {
                     /* ****** a program comment, ignore */
                     GetChar(ch,ccc,cfin,cb,clb,clo);
-                    CommentaryEndRef(ch,ccc,cfin,cb,dd,cfile,cline,clb,clo,0);
+                    CommentaryEndRef(ccc,cfile,cline,clb,clo,0);
                     goto nextLexem;
                 }
                 line = cline;
@@ -577,7 +576,7 @@ int getLexBuf(struct lexBuf *lb) {
                         GetChar(ch,ccc,cfin,cb,clb,clo);
                     }
                 }
-                CommentaryEndRef(ch,ccc,cfin,cb,dd,cfile,cline,clb,clo,0);
+                CommentaryEndRef(ccc,cfile,cline,clb,clo,0);
                 PutLexLine(cline-line,dd);
                 goto nextLexem;
             } else {
@@ -612,7 +611,7 @@ int getLexBuf(struct lexBuf *lb) {
             if (ch == '/') {
                 GetChar(ch,ccc,cfin,cb,clb,clo);
                 if (ch == '*') {
-                    CommentaryBegRef(ch,ccc,cfin,cb,dd,cfile,cline,clb,clo);
+                    CommentaryBegRef(ccc,cfile,cline,clb,clo);
                     GetChar(ch,ccc,cfin,cb,clb,clo);
                     if (ch == '&') {
                         /* ****** a program comment, ignore */
@@ -622,7 +621,7 @@ int getLexBuf(struct lexBuf *lb) {
                         if (ch == '*' && LANGUAGE(LANG_JAVA)) javadoc = 1;
                         UngetChar(ch,ccc); ch = '*';
                         PassComment(ch,oldCh,ccc,cfin,cb,dd,cline,clb,clo);
-                        CommentaryEndRef(ch,ccc,cfin,cb,dd,cfile,cline,clb,clo,javadoc);
+                        CommentaryEndRef(ccc,cfile,cline,clb,clo,javadoc);
                         DeleteBlank(ch,ccc,cfin,cb,clb,clo);
                     }
                 } else {
@@ -633,7 +632,7 @@ int getLexBuf(struct lexBuf *lb) {
             PutLexToken('\n',dd);
             PutLexPosition(cfile, cline, lexStartCol, dd);
             if (ch == '#' && LANGUAGE(LANG_C|LANG_CCC|LAN_YACC)) {
-                NOTE_NEW_LEXEM_POSITION(ccc,cfin,cb,lb,dd,cfile,cline,clb,clo);
+                NOTE_NEW_LEXEM_POSITION(ccc,cfin,cb,lb,cfile,cline,clb,clo);
                 HandleCppToken(ch,ccc,cfin,cb,dd,cfile,cline,clb,clo);
             }
             goto nextLexem;

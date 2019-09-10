@@ -45,10 +45,10 @@ int s_yyPositionBufi = 0;
 
 #define SetCacheConsistency() {s_cache.cc = cInput.cc;}
 #define SetCFileConsistency() {\
-    cFile.lb.cc = cInput.cc;\
+    cFile.lb.next = cInput.cc;\
 }
 #define SetCInputConsistency() {\
-    FILL_lexInput(&cInput,cFile.lb.cc,cFile.lb.fin,cFile.lb.a,NULL,II_NORMAL);\
+    FILL_lexInput(&cInput,cFile.lb.next,cFile.lb.fin,cFile.lb.a,NULL,II_NORMAL);\
 }
 
 #define IS_IDENTIFIER_LEXEM(lex) (lex==IDENTIFIER || lex==IDENT_NO_CPP_EXPAND  || lex==IDENT_TO_COMPLETE)
@@ -310,13 +310,13 @@ void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) {
             } else if (margFlag == II_NORMAL) {                     \
                 SetCFileConsistency();                              \
                 getLexBuf(&cFile.lb);                               \
-                if (cFile.lb.cc >= cFile.lb.fin) goto endOfFile;    \
+                if (cFile.lb.next >= cFile.lb.fin) goto endOfFile;    \
                 SetCInputConsistency();                             \
             } else {                                                \
                 /*			s_cache.recoveringFromCache = 0;*/      \
                 s_cache.cc = s_cache.cfin = NULL;                   \
                 cacheInput();                                       \
-                s_cache.lexcc = cFile.lb.cc;                        \
+                s_cache.lexcc = cFile.lb.next;                        \
                 SetCInputConsistency();                             \
             }                                                       \
             lastlexadd = cInput.cc;                                 \
@@ -1666,7 +1666,7 @@ int lexBufDump(struct lexBuf *lb) {
     S_position pos;
     c=0;
     fprintf(dumpOut,"\nlexbufdump [start] \n"); fflush(dumpOut);
-    cc = lb->cc;
+    cc = lb->next;
     while (cc < lb->fin) {
         GetLexToken(lex,cc);
         if (lex==IDENTIFIER || lex==IDENT_NO_CPP_EXPAND) {
