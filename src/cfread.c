@@ -833,8 +833,8 @@ static void cfAddRecordToClass( char *name,
     }
     /*fprintf(dumpOut,"add definition of %s == %s\n",name, ln);fflush(dumpOut);*/
     CF_ALLOC(d, S_symbol);
-    FILL_symbolBits(&d->b,0,0,accessFlags,0, 0,TypeDefault, storage, 0);
-    FILL_symbol(d, name, ln, s_noPos,d->b,type,tt,NULL);
+    FILL_symbolBits(&d->bits,0,0,accessFlags,0, 0,TypeDefault, storage, 0);
+    FILL_symbol(d, name, ln, s_noPos,d->bits,type,tt,NULL);
     d->u.type = tt;
     assert(clas->u.s);
     LIST_APPEND(S_symbol, clas->u.s->records, d);
@@ -920,7 +920,7 @@ static void cfReadMethodInfos(  char **accc,
             // if constructor, put there type name as constructor name
             // instead of <init>
             //&fprintf(dumpOut,"constructor %s of %s\n", name, memb->name);
-            assert(memb && memb->b.symType==TypeStruct && memb->u.s);
+            assert(memb && memb->bits.symType==TypeStruct && memb->u.s);
             name = memb->name;
             storage = StorageConstructor;
             if (s_fileTab.tab[memb->u.s->classFile]->directEnclosingInstance != s_noneFileIndex) {
@@ -1077,7 +1077,7 @@ void javaReadClassFile(char *name, S_symbol *memb, int loadSuper) {
     union constantPoolUnion *constantPool;
     S_position pos;
 
-    memb->b.javaFileLoaded = 1;
+    memb->bits.javaFileLoaded = 1;
     /*&
       fprintf(dumpOut,": ppmmem == %d/%d\n",ppmMemoryi,SIZE_ppmMemory);
       fprintf(dumpOut,":reading file %s arg class == %s == %s\n",
@@ -1121,7 +1121,7 @@ void javaReadClassFile(char *name, S_symbol *memb, int loadSuper) {
     /*&fprintf(dumpOut, "version is %d\n", cval);&*/
     constantPool = cfReadConstantPool(&ccc, &ffin, &cFile.lb.cb, &cpSize);
     GetU2(accesFlags, ccc, ffin, &cFile.lb.cb);
-    memb->b.accessFlags = accesFlags;
+    memb->bits.accessFlags = accesFlags;
     //&fprintf(dumpOut,"reading accessFlags %s == %x\n", name, accesFlags);
     if (accesFlags & ACC_INTERFACE) s_fileTab.tab[fileInd]->b.isInterface=1;
     GetU2(thisClass, ccc, ffin, &cFile.lb.cb);
@@ -1195,11 +1195,11 @@ void javaReadClassFile(char *name, S_symbol *memb, int loadSuper) {
                     }
                 }
                 GetU2(modifs, ccc, ffin, &cFile.lb.cb);
-                //& inners->b.accessFlags |= modifs;
+                //& inners->bits.accessFlags |= modifs;
                 //&fprintf(dumpOut,"modif? %x\n",modifs);fflush(dumpOut);
 
                 FILL_nestedSpec(& memb->u.s->nest[rinners], inners, membFlag, modifs);
-                assert(inners && inners->b.symType==TypeStruct && inners->u.s);
+                assert(inners && inners->bits.symType==TypeStruct && inners->u.s);
                 cn = inners->u.s->classFile;
                 if (membFlag && ! (modifs & ACC_STATIC)) {
                     // note that non-static direct enclosing class exists

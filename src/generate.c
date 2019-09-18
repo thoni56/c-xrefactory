@@ -14,7 +14,7 @@ typedef enum {
 
 
 static bool isSubstructureToFill(S_symbol *symbol) {
-    if (symbol->b.storage == StorageError) return false;
+    if (symbol->bits.storage == StorageError) return false;
     assert(symbol->u.type);
     if (symbol->u.type->kind == TypeAnonymeField) return false;
     if (symbol->u.type->kind == TypeFunction) return false;
@@ -140,7 +140,7 @@ static void generateTypedefForStructOrUnion(S_symbol *symbol) {
     name = symbol->name;
     assert(symbol->u.s);
     assert(name);
-    if (symbol->b.symType == TypeStruct) {
+    if (symbol->bits.symType == TypeStruct) {
         fprintf(cxOut,"typedef struct %s S_%s;\n", name, name);
     } else {
         fprintf(cxOut,"typedef union %s U_%s;\n", name, name);
@@ -181,7 +181,7 @@ static void generateUnionFillMacros(S_symbol *symbol) {
     rec = symbol->u.s->records;
     assert(name);
     for(p=rec; p!=NULL; p=p->next) {
-        if (p->b.symType == TypeDefault) {
+        if (p->bits.symType == TypeDefault) {
             if (p->u.type->kind == TypeStruct) {
                 fprintf(cxOut,
                         "#define _FILLUREC_%s_%s(XX,ARGS) _FILLF_%s(&(XX->%s),ARGS)\n",
@@ -275,14 +275,14 @@ void generateArgumentSelectionMacros(int n) {
 void generate(S_symbol *symbol) {
     assert(symbol);
     if (symbol->name==NULL || symbol->name[0]==0) return;
-    if (symbol->b.symType==TypeStruct || symbol->b.symType==TypeUnion) {
+    if (symbol->bits.symType==TypeStruct || symbol->bits.symType==TypeUnion) {
         if (s_opt.typedefg) generateTypedefForStructOrUnion(symbol);
         if (s_opt.str_fill) {
-            if (symbol->b.symType==TypeStruct) generateStructureFillMacros(symbol);
-            if (symbol->b.symType==TypeUnion) generateUnionFillMacros(symbol);
+            if (symbol->bits.symType==TypeStruct) generateStructureFillMacros(symbol);
+            if (symbol->bits.symType==TypeUnion) generateUnionFillMacros(symbol);
         }
         if (s_opt.str_copy) generateStructCopyFunction(symbol);
-    } else if (symbol->b.symType == TypeEnum) {
+    } else if (symbol->bits.symType == TypeEnum) {
         if (s_opt.typedefg) generateTypedefForEnum(symbol);
         if (s_opt.enum_name) generateEnumString(symbol);
     }

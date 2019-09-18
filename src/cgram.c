@@ -2267,10 +2267,10 @@ case 1:
         S_symbol *p;
         S_symbol *dd;
         p = yyvsp[0].bbidIdent.d->sd;
-        if (p != NULL && p->b.symType == TypeDefault) {
+        if (p != NULL && p->bits.symType == TypeDefault) {
             assert(p && p);
             dd = p;
-            assert(dd->b.storage != StorageTypedef);
+            assert(dd->bits.storage != StorageTypedef);
             yyval.bbexprType.d.t = dd->u.type;
             assert(s_opt.taskRegime);
             if (CX_REGIME()) {
@@ -2287,8 +2287,8 @@ case 1:
             yyval.bbexprType.d.t = StackMemAlloc(S_typeModifiers);
             FILLF_typeModifiers(yyval.bbexprType.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
             d = StackMemAlloc(S_symbol);
-            FILL_symbolBits(&d->b,0,0,0,0,0,TypeDefault, StorageExtern, 0);
-            FILL_symbol(d,yyvsp[0].bbidIdent.d->name,yyvsp[0].bbidIdent.d->name,yyvsp[0].bbidIdent.d->p,d->b,type,yyval.bbexprType.d.t,NULL);
+            FILL_symbolBits(&d->bits,0,0,0,0,0,TypeDefault, StorageExtern, 0);
+            FILL_symbol(d,yyvsp[0].bbidIdent.d->name,yyvsp[0].bbidIdent.d->name,yyvsp[0].bbidIdent.d->p,d->bits,type,yyval.bbexprType.d.t,NULL);
             d->u.type = yyval.bbexprType.d.t;
             dd = addNewSymbolDef(d, StorageExtern, s_symTab, UsageUsed);
             if (CX_REGIME()) {
@@ -2889,7 +2889,7 @@ case 114:
 #line 801 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
-        yyval.bbsymbol.d->b.storage = yyvsp[0].bbunsign.d;
+        yyval.bbsymbol.d->bits.storage = yyvsp[0].bbunsign.d;
     }
 break;
 case 115:
@@ -2914,14 +2914,14 @@ case 118:
 #line 817 "cgram.y"
 {
         yyval.bbsymbol.d  = typeSpecifier1(TypeDefault);
-        yyval.bbsymbol.d->b.storage = yyvsp[0].bbunsign.d;
+        yyval.bbsymbol.d->bits.storage = yyvsp[0].bbunsign.d;
     }
 break;
 case 119:
 #line 821 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
-        yyval.bbsymbol.d->b.storage = yyvsp[0].bbunsign.d;
+        yyval.bbsymbol.d->bits.storage = yyvsp[0].bbunsign.d;
     }
 break;
 case 120:
@@ -3094,9 +3094,9 @@ break;
 case 166:
 #line 966 "cgram.y"
 {
-        if (yyvsp[-1].bbsymbol.d == &s_errorSymbol || yyvsp[-1].bbsymbol.d->b.symType==TypeError) {
+        if (yyvsp[-1].bbsymbol.d == &s_errorSymbol || yyvsp[-1].bbsymbol.d->bits.symType==TypeError) {
             yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
-        } else if (yyvsp[0].bbsymbol.d == &s_errorSymbol || yyvsp[-1].bbsymbol.d->b.symType==TypeError)  {
+        } else if (yyvsp[0].bbsymbol.d == &s_errorSymbol || yyvsp[-1].bbsymbol.d->bits.symType==TypeError)  {
             yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
         } else {
             yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
@@ -3240,16 +3240,16 @@ case 190:
 #line 1092 "cgram.y"
 {
         yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
-        assert(yyval.bbsymbol.d->b.npointers == 0);
-        yyval.bbsymbol.d->b.npointers = yyvsp[-1].bbinteger.d;
+        assert(yyval.bbsymbol.d->bits.npointers == 0);
+        yyval.bbsymbol.d->bits.npointers = yyvsp[-1].bbinteger.d;
     }
 break;
 case 191:
 #line 1100 "cgram.y"
 {
         yyval.bbsymbol.d = StackMemAlloc(S_symbol);
-        FILL_symbolBits(&yyval.bbsymbol.d->b,0,0,0,0,0,TypeDefault,StorageDefault,0);
-        FILL_symbol(yyval.bbsymbol.d,yyvsp[0].bbidIdent.d->name,yyvsp[0].bbidIdent.d->name,yyvsp[0].bbidIdent.d->p,yyval.bbsymbol.d->b,type,NULL,NULL);
+        FILL_symbolBits(&yyval.bbsymbol.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
+        FILL_symbol(yyval.bbsymbol.d,yyvsp[0].bbidIdent.d->name,yyvsp[0].bbidIdent.d->name,yyvsp[0].bbidIdent.d->p,yyval.bbsymbol.d->bits,type,NULL,NULL);
         yyval.bbsymbol.d->u.type = NULL;
     }
 break;
@@ -3434,8 +3434,8 @@ case 219:
         S_position pp;
         p = StackMemAlloc(S_symbol);
         FILL_position(&pp, -1, 0, 0);
-        FILL_symbolBits(&p->b,0,0,0,0,0,TypeElipsis,StorageDefault,0);
-        FILL_symbol(p,"","",pp,p->b,type,NULL,NULL);
+        FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0);
+        FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL);
         yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
         LIST_APPEND(S_symbol, yyval.bbsymbolPositionLstPair.d.s, p);
         appendPositionToList(&yyval.bbsymbolPositionLstPair.d.p, &yyvsp[-1].bbposition.d);
@@ -3446,8 +3446,8 @@ case 220:
 {
         S_symbol *p;
         p = StackMemAlloc(S_symbol);
-        FILL_symbolBits(&p->b,0,0,0,0,0,TypeDefault,StorageDefault,0);
-        FILL_symbol(p,yyvsp[0].bbidIdent.d->name,yyvsp[0].bbidIdent.d->name,yyvsp[0].bbidIdent.d->p,p->b,type,NULL,NULL);
+        FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
+        FILL_symbol(p,yyvsp[0].bbidIdent.d->name,yyvsp[0].bbidIdent.d->name,yyvsp[0].bbidIdent.d->p,p->bits,type,NULL,NULL);
         p->u.type = NULL;
         yyval.bbsymbolPositionLstPair.d.s = p;
         yyval.bbsymbolPositionLstPair.d.p = NULL;
@@ -3458,8 +3458,8 @@ case 221:
 {
         S_symbol        *p;
         p = StackMemAlloc(S_symbol);
-        FILL_symbolBits(&p->b,0,0,0,0,0,TypeDefault,StorageDefault,0);
-        FILL_symbol(p,yyvsp[0].bbidIdent.d->name,yyvsp[0].bbidIdent.d->name,yyvsp[0].bbidIdent.d->p,p->b,type,NULL,NULL);
+        FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
+        FILL_symbol(p,yyvsp[0].bbidIdent.d->name,yyvsp[0].bbidIdent.d->name,yyvsp[0].bbidIdent.d->p,p->bits,type,NULL,NULL);
         p->u.type = NULL;
         yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
         LIST_APPEND(S_symbol, yyval.bbsymbolPositionLstPair.d.s, p);
@@ -3477,8 +3477,8 @@ case 224:
         S_position      pp;
         p = StackMemAlloc(S_symbol);
         FILL_position(&pp, -1, 0, 0);
-        FILL_symbolBits(&p->b,0,0,0,0,0,TypeElipsis,StorageDefault,0);
-        FILL_symbol(p,"","",pp,p->b,type,NULL,NULL);
+        FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0);
+        FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL);
         yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
         LIST_APPEND(S_symbol, yyval.bbsymbolPositionLstPair.d.s, p);
         appendPositionToList(&yyval.bbsymbolPositionLstPair.d.p, &yyvsp[-1].bbposition.d);
@@ -3510,8 +3510,8 @@ case 228:
 #line 1312 "cgram.y"
 {
         yyval.bbsymbol.d = StackMemAlloc(S_symbol);
-        FILL_symbolBits(&yyval.bbsymbol.d->b,0,0,0,0,0,TypeDefault, StorageDefault,0);
-        FILL_symbol(yyval.bbsymbol.d, NULL, NULL, s_noPos,yyval.bbsymbol.d->b,type,yyvsp[0].bbtypeModif.d,NULL);
+        FILL_symbolBits(&yyval.bbsymbol.d->bits,0,0,0,0,0,TypeDefault, StorageDefault,0);
+        FILL_symbol(yyval.bbsymbol.d, NULL, NULL, s_noPos,yyval.bbsymbol.d->bits,type,yyvsp[0].bbtypeModif.d,NULL);
         yyval.bbsymbol.d->u.type = yyvsp[0].bbtypeModif.d;
     }
 break;
@@ -4022,7 +4022,7 @@ case 335:
         assert(yyvsp[0].bbsymbol.d);
         /* I think that due to the following line sometimes*/
         /* storage was not extern, see 'addNewSymbolDef'*/
-        /*& if ($2.d->b.storage == StorageDefault) $2.d->b.storage = StorageExtern;*/
+        /*& if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern;*/
         /* TODO!!!, here you should check if there is previous declaration of*/
         /* the function, if yes and is declared static, make it static!*/
         addNewSymbolDef(yyvsp[0].bbsymbol.d, StorageExtern, s_symTab, UsageDefined);
@@ -4033,7 +4033,7 @@ case 335:
         s_cp.function = yyvsp[0].bbsymbol.d;
         genInternalLabelReference(-1, UsageDefined);
         for(p=yyvsp[0].bbsymbol.d->u.type->u.f.args,i=1; p!=NULL; p=p->next,i++) {
-            if (p->b.symType == TypeElipsis) continue;
+            if (p->bits.symType == TypeElipsis) continue;
             if (p->u.type == NULL) p->u.type = &s_defaultIntModifier;
             addFunctionParameterToSymTable(yyvsp[0].bbsymbol.d, p, i, s_symTab);
         }

@@ -16,7 +16,7 @@ S_position s_cxRefPos;
 S_options s_opt;        // current options
 char *s_editCommunicationString = "C@$./@mVeDitznAC";
 int s_olOriginalFileNumber = -1;
-int macStacki=0;
+int macroStackIndex=0;
 int s_noneFileIndex = -1;
 int inStacki=0;
 

@@ -340,7 +340,7 @@
     int i;\
     S_symbol *memb;\
     symTabIsMember(symtab,pp,&i,&memb);\
-    if (	LANGUAGE(LANG_CCC) && pp->b.symType==TypeDefault \
+    if (	LANGUAGE(LANG_CCC) && pp->bits.symType==TypeDefault \
             && pp->u.type->kind == TypeFunction) { \
         pp->u.type->u.f.thisFunList = &(symtab->tab[i]); \
     } \

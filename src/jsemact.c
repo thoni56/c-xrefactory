@@ -148,8 +148,8 @@ static void javaAddNameCxReference(S_idIdentList *id, unsigned usage) {
     S_symbol    dd;
     assert(id != NULL);
     cname = javaCreateComposedName(NULL,id,'/',NULL,tmpMemory,SIZE_TMP_MEM);
-    FILL_symbolBits(&dd.b,0,0,0,0,0,id->nameType,StorageNone,0);
-    FILL_symbol(&dd,id->idi.name,cname,id->idi.p,dd.b,type,NULL,NULL);
+    FILL_symbolBits(&dd.bits,0,0,0,0,0,id->nameType,StorageNone,0);
+    FILL_symbol(&dd,id->idi.name,cname,id->idi.p,dd.bits,type,NULL,NULL);
     /* if you do something else do attention on the union initialisation */
     addCxReference(&dd, &id->idi.p, usage,s_noneFileIndex, s_noneFileIndex);
 }
@@ -157,7 +157,7 @@ static void javaAddNameCxReference(S_idIdentList *id, unsigned usage) {
 S_symbol *javaAddType(S_idIdentList *clas, int accessFlags, S_position *p) {
     S_symbol *dd;
     dd = javaTypeSymbolDefinition(clas, accessFlags, TYPE_ADD_YES);
-    dd->b.accessFlags = accessFlags;
+    dd->bits.accessFlags = accessFlags;
     addCxReference(dd, p, UsageDefined,s_noneFileIndex, s_noneFileIndex);
     htmlAddJavaDocReference(dd, p, s_noneFileIndex, s_noneFileIndex);
     return(dd);
@@ -169,7 +169,7 @@ void javaAddNestedClassesAsTypeDefs(S_symbol *cc, S_idIdentList *oclassname,
     S_idIdentList		ll;
     S_symbol            *nn;
     int i;
-    assert(cc && cc->b.symType==TypeStruct);
+    assert(cc && cc->bits.symType==TypeStruct);
     ss = cc->u.s;
     assert(ss);
     for(i=0; i<ss->nnested; i++) {
@@ -459,8 +459,8 @@ static S_symbol *javaFQTypeSymbolDefinitionCreate(char *name,
     CF_ALLOCC(lname1, strlen(fqName)+1, char);
     strcpy(lname1, fqName);
     CF_ALLOC(memb, S_symbol);
-    FILL_symbolBits(&memb->b,0,0, 0,0, 0,	TypeStruct, StorageNone,0);
-    FILL_symbol(memb, sname, lname1, s_noPos,memb->b,s,NULL,NULL);
+    FILL_symbolBits(&memb->bits,0,0, 0,0, 0,	TypeStruct, StorageNone,0);
+    FILL_symbol(memb, sname, lname1, s_noPos,memb->bits,s,NULL,NULL);
     CF_ALLOC(memb->u.s, S_symStructSpecific);
     FILLF_symStructSpecific(memb->u.s,NULL,
                         NULL,NULL,NULL,0,NULL,
@@ -484,8 +484,8 @@ static S_symbol *javaFQTypeSymbolDefinitionCreate(char *name,
 }
 
 #define FILL_JAVA_TYPE_DUMMY_SYM(name,fqName,pp,ppl) {\
-    FILL_symbolBits(&pp.b,0,0, 0,0, 0, TypeStruct, StorageNone,0);\
-    FILL_symbol(&pp, name, fqName, s_noPos,pp.b,s,NULL,NULL);\
+    FILL_symbolBits(&pp.bits,0,0, 0,0, 0, TypeStruct, StorageNone,0);\
+    FILL_symbol(&pp, name, fqName, s_noPos,pp.bits,s,NULL,NULL);\
     FILL_symbolList(&ppl, &pp, NULL);\
 }
 
@@ -550,13 +550,13 @@ static S_symbol *javaAddTypeToSymbolTable(S_symbol *memb, int accessFlags, S_pos
     S_symbol *nmemb;
     //&S_symbol *memb2;
 
-    memb->b.accessFlags = accessFlags;
-    memb->b.isSingleImported = isSingleImported;
+    memb->bits.accessFlags = accessFlags;
+    memb->bits.isSingleImported = isSingleImported;
     //&if (symTabIsMember(s_symTab, memb, &ii, &memb2)) {
     //&	while (memb2!=NULL && strcmp(memb->linkName, memb2->linkName)!=0) {
     //&		symTabNextMember(memb, &memb2);
     //&	}
-    //&	if (memb2!=NULL) memb2->b.accessFlags = accessFlags;
+    //&	if (memb2!=NULL) memb2->bits.accessFlags = accessFlags;
     //&}
     XX_ALLOC(nmemb, S_symbol);
     *nmemb = *memb;
@@ -576,8 +576,8 @@ S_symbol *javaTypeSymbolDefinition(S_idIdentList *tname,
 
     assert(tname);
     assert(tname->nameType == TypeStruct);
-    FILL_symbolBits(&pp.b,0,0, accessFlags,0, 0, TypeStruct, StorageNone,0);
-    FILL_symbol(&pp,tname->idi.name,tname->idi.name,s_noPos,pp.b,s,NULL,NULL);
+    FILL_symbolBits(&pp.bits,0,0, accessFlags,0, 0, TypeStruct, StorageNone,0);
+    FILL_symbol(&pp,tname->idi.name,tname->idi.name,s_noPos,pp.bits,s,NULL,NULL);
     javaCreateComposedName(NULL,tname,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
     memb = javaFQTypeSymbolDefinition(tname->idi.name, fqtName);
     if (addTyp == TYPE_ADD_YES) {
@@ -594,8 +594,8 @@ S_symbol *javaTypeSymbolUsage(S_idIdentList *tname,
 
     assert(tname);
     assert(tname->nameType == TypeStruct);
-    FILL_symbolBits(&pp.b,0,0, accessFlags,0, 0, TypeStruct, StorageNone,0);
-    FILL_symbol(&pp,tname->idi.name,tname->idi.name,s_noPos,pp.b,s,NULL,NULL);
+    FILL_symbolBits(&pp.bits,0,0, accessFlags,0, 0, TypeStruct, StorageNone,0);
+    FILL_symbol(&pp,tname->idi.name,tname->idi.name,s_noPos,pp.bits,s,NULL,NULL);
     if (tname->next==NULL && symTabIsMember(s_symTab, &pp, &ii, &memb)) {
         // get canonical copy
         memb = javaFQTypeSymbolDefinition(memb->name, memb->linkName);
@@ -617,8 +617,8 @@ S_symbol *javaTypeNameDefinition(S_idIdentList *tname) {
     FILLF_typeModifiers(td, TypeStruct,t,memb,NULL, NULL);
     td->u.t = memb;
     XX_ALLOC(dd, S_symbol);
-    FILL_symbolBits(&dd->b,0,0,0,0,0,	TypeDefault, StorageDefault,0);
-    FILL_symbol(dd,memb->name,memb->linkName,tname->idi.p,dd->b,type,td,NULL);
+    FILL_symbolBits(&dd->bits,0,0,0,0,0,	TypeDefault, StorageDefault,0);
+    FILL_symbol(dd,memb->name,memb->linkName,tname->idi.p,dd->bits,type,td,NULL);
     dd->u.type = td;
     return(dd);
 }
@@ -766,11 +766,11 @@ static void addJavaFileDependency(int file, char *onfile) {
 static void javaHackCopySourceLoadedCopyPars(S_symbol *memb) {
     S_symbol *cl;
     cl = javaFQTypeSymbolDefinition(memb->name, memb->linkName);
-    if (cl->b.javaSourceLoaded) {
-        memb->b.accessFlags = cl->b.accessFlags;
-        memb->b.storage = cl->b.storage;
-        memb->b.symType = cl->b.symType;
-        memb->b.javaSourceLoaded = cl->b.javaSourceLoaded;
+    if (cl->bits.javaSourceLoaded) {
+        memb->bits.accessFlags = cl->bits.accessFlags;
+        memb->bits.storage = cl->bits.storage;
+        memb->bits.symType = cl->bits.symType;
+        memb->bits.javaSourceLoaded = cl->bits.javaSourceLoaded;
     }
 }
 
@@ -781,11 +781,11 @@ void javaLoadClassSymbolsFromFile(S_symbol *memb) {
     if (memb == NULL) return;
 //&fprintf(dumpOut,"!requesting class (%d)%s\n", memb, memb->linkName);
     sname = cname = "";
-    if (memb->b.javaFileLoaded == 0) {
-        memb->b.javaFileLoaded = 1;
+    if (memb->bits.javaFileLoaded == 0) {
+        memb->bits.javaFileLoaded = 1;
         // following is a hack due to multiple items in symbol tab !!!
         cl = javaFQTypeSymbolDefinition(memb->name, memb->linkName);
-        if (cl!=NULL && cl!=memb) cl->b.javaFileLoaded = 1;
+        if (cl!=NULL && cl!=memb) cl->bits.javaFileLoaded = 1;
         cInd = javaCreateClassFileItem(memb);
         addCfClassTreeHierarchyRef(cInd, UsageClassFileDefinition);
         ffound = javaFindFile(memb, &sname, &cname);
@@ -803,7 +803,7 @@ void javaLoadClassSymbolsFromFile(S_symbol *memb) {
                 // (moved inner class) retry searching for class file
                 ffound = javaFindFile(memb, &sname, &cname);
             }
-            if (memb->b.javaSourceLoaded == 0){
+            if (memb->bits.javaSourceLoaded == 0){
                 // HACK, probably loaded into another possition of symboltab, make copy
                 javaHackCopySourceLoadedCopyPars(memb);
             }
@@ -817,7 +817,7 @@ void javaLoadClassSymbolsFromFile(S_symbol *memb) {
             }
         }
         // I need to get also accessflags for example
-        if (cl!=NULL && cl!=memb) cl->b = memb->b;
+        if (cl!=NULL && cl!=memb) cl->bits = memb->bits;
         if (sname != NULL) {
             addJavaFileDependency(s_olOriginalFileNumber, sname);
         }
@@ -844,8 +844,8 @@ static int findTopLevelNameInternal(
     assert(accCheck==ACC_CHECK_YES || accCheck==ACC_CHECK_NO);
     assert(visibCheck==VISIB_CHECK_YES || visibCheck==VISIB_CHECK_NO);
 //&fprintf(dumpOut,"checking %s\n",name);
-    FILL_symbolBits(&sd.b,0,0, 0,0,0,	TypeDefault, StorageNone,0);
-    FILL_symbol(&sd, name, name, s_noPos,sd.b,type,NULL,NULL);
+    FILL_symbolBits(&sd.bits,0,0, 0,0,0,	TypeDefault, StorageNone,0);
+    FILL_symbol(&sd, name, name, s_noPos,sd.bits,type,NULL,NULL);
     res = RETURN_NOT_FOUND;
     for(	cscope=startingScope;
             cscope!=NULL && cscope->thisClass!=NULL && res!=RETURN_OK;
@@ -912,7 +912,7 @@ static int javaIsNestedClass(S_symbol *tclas, char *name, S_symbol **innmemb) {
     for(clas=tclas;
         clas!=NULL && clas->u.s->super!=NULL;
         clas=clas->u.s->super->d) {
-        assert(clas->b.symType == TypeStruct && clas->u.s);
+        assert(clas->bits.symType == TypeStruct && clas->u.s);
         n = clas->u.s->nnested;
         inners = clas->u.s->nest;
         for(i=0; i<n; i++) {
@@ -921,7 +921,7 @@ static int javaIsNestedClass(S_symbol *tclas, char *name, S_symbol **innmemb) {
                 // the following if makes problem, because when resolving
                 // a name Outer.Inner I do not care whether it is static
                 // or not. Why I have put this there????
-//&				if ((inners[i].cl->b.accessFlags&ACC_STATIC)==0) {
+//&				if ((inners[i].cl->bits.accessFlags&ACC_STATIC)==0) {
                     *innmemb = inners[i].cl;
                     return(1);
 //&				}
@@ -939,13 +939,13 @@ static int javaClassIsInnerNonStaticMemberClass(S_symbol *tclas, S_symbol *name)
     for(clas=tclas;
         clas!=NULL && clas->u.s->super!=NULL;
         clas=clas->u.s->super->d) {
-        assert(clas->b.symType == TypeStruct && clas->u.s);
+        assert(clas->bits.symType == TypeStruct && clas->u.s);
         n = clas->u.s->nnested;
         inners = clas->u.s->nest;
         for(i=0; i<n; i++) {
 //&fprintf(dumpOut,"checking %s<->%s\n",inners[i].cl->name, name);fflush(dumpOut);
             if (inners[i].membFlag && strcmp(inners[i].cl->linkName, name->linkName)==0
-                && (inners[i].cl->b.accessFlags & ACC_STATIC) == 0) {
+                && (inners[i].cl->bits.accessFlags & ACC_STATIC) == 0) {
                 return(1);
             }
         }
@@ -1006,8 +1006,8 @@ int javaClassifySingleAmbigNameToTypeOrPack(S_idIdentList *name,
     S_symbol    sd, *mm, *memb, *nextmemb;
     int         ii, haveit, accessible;
     S_position  *ipos;
-    FILL_symbolBits(&sd.b,0,0, 0,0, 0, TypeStruct, StorageNone,0);
-    FILL_symbol(&sd,name->idi.name,name->idi.name,s_noPos,sd.b,type,NULL,NULL);
+    FILL_symbolBits(&sd.bits,0,0, 0,0, 0, TypeStruct, StorageNone,0);
+    FILL_symbol(&sd,name->idi.name,name->idi.name,s_noPos,sd.bits,type,NULL,NULL);
     haveit = 0;
     if (symTabIsMember(s_symTab, &sd, &ii, &memb)) {
         /* a type */
@@ -1033,7 +1033,7 @@ int javaClassifySingleAmbigNameToTypeOrPack(S_idIdentList *name,
                         accessible = javaOuterClassAccessible(mm);
                         if (accessible == 1) {
                             // multiple imports
-                            if ((*str)->b.isSingleImported == mm->b.isSingleImported) {
+                            if ((*str)->bits.isSingleImported == mm->bits.isSingleImported) {
                                 assert(strcmp((*str)->linkName, mm->linkName)!=0);
                                 haveit = 0;
                                 // this is tricky, mark the import as used
@@ -1084,9 +1084,9 @@ int javaClassifySingleAmbigNameToTypeOrPack(S_idIdentList *name,
     if (classif!=CLASS_TO_METHOD) {\
         if (rfs != NULL && rfs->currClass!=NULL) {\
             assert(rfs && rfs->currClass && \
-                rfs->currClass->b.symType==TypeStruct && rfs->currClass->u.s);\
+                rfs->currClass->bits.symType==TypeStruct && rfs->currClass->u.s);\
             assert(rfs && rfs->baseClass && \
-                rfs->baseClass->b.symType==TypeStruct && rfs->baseClass->u.s);\
+                rfs->baseClass->bits.symType==TypeStruct && rfs->baseClass->u.s);\
             if (s_opt.cxrefs!=OLO_ENCAPSULATE \
                 || ! javaRecordAccessible(rfs, rfs->baseClass, rfs->currClass, sym, ACC_PRIVATE)) {\
                 FILL_usageBits(&ub, usage, minacc, 0);\
@@ -1140,7 +1140,7 @@ static int javaClassifySingleAmbigName( S_idIdentList *name,
                     // the question is: is a reference to static field
                     // also reference to 'this'? If yes, it will
                     // prevent many methods from beeing turned static.
-                    if ((*str)->b.accessFlags & ACC_STATIC) {
+                    if ((*str)->bits.accessFlags & ACC_STATIC) {
                         nfqtusage = javaNotFqtUsageCorrection(rfs->currClass,UsageNotFQField);
                         addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM,StorageField,
                                 rfs->currClass->u.s->classFile,
@@ -1313,7 +1313,7 @@ static void javaClassifyNameToNestedType(S_idIdentList *name, S_symbol *outerc, 
     // you have to search the class, it may come from superclass
 
     if ((s_opt.ooChecksBits & OOC_ALL_CHECKS)==0
-        || javaRecordAccessible(NULL,outerc, outerc, *str, (*str)->b.accessFlags)) {
+        || javaRecordAccessible(NULL,outerc, outerc, *str, (*str)->bits.accessFlags)) {
         *oref = javaAddClassCxReference(*str, &name->idi.p, uusage);
     }
 }
@@ -1323,7 +1323,7 @@ static void classifiedToNestedClass(S_idIdentList *name, S_symbol **str, S_refer
     //&*str=javaTypeSymbolUsage(name,ACC_DEFAULT);
     javaLoadClassSymbolsFromFile(*str);
     if ((s_opt.ooChecksBits & OOC_ALL_CHECKS)==0
-        || javaRecordAccessible(NULL,pstr, pstr, *str, (*str)->b.accessFlags)) {
+        || javaRecordAccessible(NULL,pstr, pstr, *str, (*str)->bits.accessFlags)) {
         *oref = javaAddClassCxReference(*str, &name->idi.p, uusage);
         if (allowUselesFqtRefs == USELESS_FQT_REFS_ALLOWED) {
             javaCheckForUselessFqt(name, classif, *str, rdtoref, prdtoref);
@@ -1566,8 +1566,8 @@ S_symbol *javaCreateNewMethod(char *nn, S_position *p, int mem) {
         res = StackMemAlloc(S_symbol);
     }
     FILLF_typeModifiers(m, TypeFunction,f,( NULL,NULL) ,NULL, NULL);
-    FILL_symbolBits(&res->b,0,0,0,0,0,TypeDefault,StorageDefault,0);
-    FILL_symbol(res,name,name,*p,res->b,type,m,NULL);
+    FILL_symbolBits(&res->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
+    FILL_symbol(res,name,name,*p,res->bits,type,m,NULL);
     res->u.type = m;
 //&fprintf(dumpOut,"creating method %s at %x %x\n",nn, res, m);
     return(res);
@@ -1642,9 +1642,9 @@ static int javaNumberOfNativeMethodsWithThisName(S_symbol *clas, char *name) {
     S_symbol        *r;
     int				res;
     res = 0;
-    assert(clas && clas->b.symType==TypeStruct && clas->u.s);
+    assert(clas && clas->bits.symType==TypeStruct && clas->u.s);
     for (r=clas->u.s->records; r!=NULL; r=r->next) {
-        if (strcmp(r->name, name)==0 && (r->b.accessFlags&ACC_NATIVE)) {
+        if (strcmp(r->name, name)==0 && (r->bits.accessFlags&ACC_NATIVE)) {
             res++;
         }
     }
@@ -1660,12 +1660,12 @@ int javaSetFunctionLinkName(S_symbol *clas, S_symbol *decl,int mem) {
     S_symbol *memb;
 
     res = 0;
-    if (decl == &s_errorSymbol || decl->b.symType==TypeError) return(res);
-    assert(decl->b.symType == TypeDefault);
+    if (decl == &s_errorSymbol || decl->bits.symType==TypeError) return(res);
+    assert(decl->bits.symType == TypeDefault);
     assert(decl->u.type);
     if (decl->u.type->kind != TypeFunction) return(res);
     ppi=0;
-//&	if (decl->b.accessFlags & ACC_STATIC) {
+//&	if (decl->bits.accessFlags & ACC_STATIC) {
 //&		sprintf(pp+ppi,"%s.%s",clas->linkName, decl->name);
 //&	} else {
         sprintf(pp+ppi,"%s", decl->name);
@@ -1805,11 +1805,11 @@ S_symbol *javaMethodHeader(unsigned modif, S_symbol *type,
                            S_symbol *decl, int storage) {
     int newFun,vClass;
     completeDeclarator(type, decl);
-    decl->b.accessFlags = modif;
-    decl->b.storage = storage;
-    if (s_javaStat->thisClass->b.accessFlags & ACC_INTERFACE) {
+    decl->bits.accessFlags = modif;
+    decl->bits.storage = storage;
+    if (s_javaStat->thisClass->bits.accessFlags & ACC_INTERFACE) {
         // set interface default access flags
-        decl->b.accessFlags |= (ACC_PUBLIC | ACC_ABSTRACT);
+        decl->bits.accessFlags |= (ACC_PUBLIC | ACC_ABSTRACT);
     }
     newFun = javaSetFunctionLinkName(s_javaStat->thisClass, decl,MEM_XX);
     //&assert(newFun==0); // This should be allways zero now with jsl.
@@ -1843,7 +1843,7 @@ void javaMethodBodyBeginning(S_symbol *method) {
     s_count.localVar = 0;
     javaAddMethodParametersToSymTable(method);
     method->u.type->u.m.sig = strchr(method->linkName, '(');
-    s_javaStat->cpMethodMods = method->b.accessFlags;
+    s_javaStat->cpMethodMods = method->bits.accessFlags;
 }
 
 // this should be merged with _bef_ token!
@@ -1920,7 +1920,7 @@ S_typeModifiers *javaNestedNewType(S_symbol *sym, S_idIdent *thenew,
         // you may also check that idl->next == sym
         if (res && res->kind == TypeStruct) {
             assert(res->u.t && res->u.t->u.s);
-            if (res->u.t->b.accessFlags & ACC_STATIC) {
+            if (res->u.t->bits.accessFlags & ACC_STATIC) {
                 // add the prefix of new as redundant long name
                 addUselessFQTReference(res->u.t->u.s->classFile, &thenew->p);
             }
@@ -1943,7 +1943,7 @@ S_typeModifiers *javaNewAfterName(S_idIdentList *name, S_idIdent *thenew, S_idId
         else res = javaNestedNewType(expr->u.t, thenew, idl);
     } else if (atype == TypeStruct) {
         assert(str);
-        assert(str->b.symType == TypeStruct);
+        assert(str->bits.symType == TypeStruct);
         res = javaNestedNewType(str, thenew, idl);
     } else res = & s_errorModifier;
     return(res);
@@ -2068,9 +2068,9 @@ finish:
 static int javaSmallerProfile(S_symbol *s1, S_symbol *s2) {
     int r;
     char *p1,*p2;
-    assert(s1 && s1->b.symType==TypeDefault && s1->u.type);
+    assert(s1 && s1->bits.symType==TypeDefault && s1->u.type);
     assert(s1->u.type->kind == TypeFunction && s1->u.type->u.m.sig);
-    assert(s2 && s2->b.symType==TypeDefault && s2->u.type);
+    assert(s2 && s2->bits.symType==TypeDefault && s2->u.type);
     assert(s2->u.type->kind == TypeFunction && s2->u.type->u.m.sig);
     p1 = s1->u.type->u.m.sig;
     p2 = s2->u.type->u.m.sig;
@@ -2090,7 +2090,7 @@ static int javaSmallerProfile(S_symbol *s1, S_symbol *s2) {
 int javaMethodApplicability(S_symbol *memb, char *actArgs) {
     int r;
     char *fargs;
-    assert(memb && memb->b.symType==TypeDefault && memb->u.type);
+    assert(memb && memb->bits.symType==TypeDefault && memb->u.type);
     assert(memb->u.type->kind == TypeFunction && memb->u.type->u.m.sig);
     fargs = memb->u.type->u.m.sig;
 //&sprintf(tmpBuff,"testing applicability of %s to %s\n",fargs,actArgs);ppcGenTmpBuff();
@@ -2107,7 +2107,7 @@ int javaMethodApplicability(S_symbol *memb, char *actArgs) {
 
 S_symbol *javaGetSuperClass(S_symbol *cc) {
     S_symbolList		*sups;
-    assert(cc->b.symType == TypeStruct && cc->u.s);
+    assert(cc->bits.symType == TypeStruct && cc->u.s);
     sups = cc->u.s->super;
     if (sups == NULL) return(&s_errorSymbol);	/* class Object only */
     return(sups->d);
@@ -2144,13 +2144,13 @@ static S_typeModifiers *javaMethodInvocation(
     int					i,appli,actArgi,rr;
 
     assert(rfs->baseClass);  // method must be inside a class
-    assert(rfs->baseClass->b.symType == TypeStruct);
+    assert(rfs->baseClass->bits.symType == TypeStruct);
     baseCl = rfs->baseClass->u.s->classFile;
     assert(baseCl != -1);
 
 //&sprintf(tmpBuff,"java method invocation\n"); ppcGenTmpBuff();
 //&sprintf(tmpBuff,"the method is %s == '%s'\n",memb->name,memb->linkName);ppcGenTmpBuff();
-    assert(memb && memb->b.symType==TypeDefault && memb->u.type->kind == TypeFunction);
+    assert(memb && memb->bits.symType==TypeDefault && memb->u.type->kind == TypeFunction);
     for(aaa=args; aaa!=NULL; aaa=aaa->next) {
         if (aaa->d->kind == TypeError) {
 //&fprintf(dumpOut,"induced missinterpred at %d\n", name->p.line);
@@ -2172,7 +2172,7 @@ static S_typeModifiers *javaMethodInvocation(
             && javaMethodApplicability(memb,actArg) == PROFILE_APPLICABLE) {
             appl[appli] = memb;
             minacc[appli] = javaGetMinimalAccessibility(rfs, memb);
-            assert(rfs && rfs->currClass && rfs->currClass->b.symType==TypeStruct);
+            assert(rfs && rfs->currClass && rfs->currClass->bits.symType==TypeStruct);
             funCl[appli] = rfs->currClass->u.s->classFile;
             assert(funCl[appli] != -1);
             appli++;
@@ -2199,12 +2199,12 @@ static S_typeModifiers *javaMethodInvocation(
         if (! javaSmallerProfile(appl[smallesti], appl[i])) return(&s_errorModifier);
     }
 //&sprintf(tmpBuff,"the invoked method is %s of %s\n\n",appl[smallesti]->linkName,s_fileTab.tab[funCl[smallesti]]->name);ppcGenTmpBuff();
-    assert(appl[smallesti]->b.symType == TypeDefault);
+    assert(appl[smallesti]->bits.symType == TypeDefault);
     assert(appl[smallesti]->u.type->kind == TypeFunction);
     assert(funCl[smallesti] != -1);
     vFunCl = funCl[smallesti];
     vApplCl = baseCl;
-//&	if (appl[smallesti]->b.accessFlags & ACC_STATIC) {
+//&	if (appl[smallesti]->bits.accessFlags & ACC_STATIC) {
 //&		vFunCl = vApplCl = s_noneFileIndex;
 //&	}
     usedusage = UsageUsed;
@@ -2297,9 +2297,9 @@ S_extRecFindStr *javaCrErfsForMethodInvocationS(S_idIdent *super,
     S_extRecFindStr		*erfs;
     int					rr;
     ss = javaCurrentSuperClass();
-    if (ss == &s_errorSymbol || ss->b.symType==TypeError) return(NULL);
-    assert(ss && ss->b.symType == TypeStruct);
-    assert(ss->b.javaFileLoaded);
+    if (ss == &s_errorSymbol || ss->bits.symType==TypeError) return(NULL);
+    assert(ss && ss->bits.symType == TypeStruct);
+    assert(ss->bits.javaFileLoaded);
     XX_ALLOC(erfs, S_extRecFindStr);
     erfs->params = NULL;
 /*	I do not know, once will come the day I will know
@@ -2331,12 +2331,12 @@ S_extRecFindStr *javaCrErfsForConstructorInvocation(S_symbol *clas,
     ) {
     S_extRecFindStr		*erfs;
     int					rr;
-    if (clas == &s_errorSymbol || clas->b.symType==TypeError) return(NULL);
-    assert(clas && clas->b.symType == TypeStruct);
+    if (clas == &s_errorSymbol || clas->bits.symType==TypeError) return(NULL);
+    assert(clas && clas->bits.symType == TypeStruct);
     javaLoadClassSymbolsFromFile(clas);
     XX_ALLOC(erfs, S_extRecFindStr);
     erfs->params = NULL;
-    assert(clas->b.javaFileLoaded);
+    assert(clas->bits.javaFileLoaded);
     rr = findStrRecordSym(iniFind(clas, &erfs->s), clas->name, &erfs->memb,
                         CLASS_TO_METHOD,ACC_CHECK_NO,VISIB_CHECK_NO);
     if (rr != RETURN_OK) return(NULL);
@@ -2456,7 +2456,7 @@ lastRecLabel:
     if (t1->kind == TypeStruct) {
         s1 = t1->u.t; s2 = t2->u.t;
         assert(s1 && s2);
-        assert(s1->b.symType == TypeStruct && s1->u.s);
+        assert(s1->bits.symType == TypeStruct && s1->u.s);
         javaLoadClassSymbolsFromFile(s1);
         res = cctIsMember(&s1->u.s->casts, s2, 1);
 //&fprintf(dumpOut,"!checking convertibility %s->%s, res==%d\n",s1->linkName, s2->linkName, res);fflush(dumpOut);
@@ -2512,7 +2512,7 @@ void javaAddJslReadedTopLevelClasses(S_jslTypeTab  *jslTypeTab) {
         if (jslTypeTab->tab[i]!=NULL) {
             LIST_REVERSE(S_jslSymbolList, jslTypeTab->tab[i]);
             for(ss=jslTypeTab->tab[i]; ss!=NULL; ss=ss->next) {
-                javaAddTypeToSymbolTable(ss->d, ss->d->b.accessFlags, &ss->pos, ss->isSingleImportedFlag);
+                javaAddTypeToSymbolTable(ss->d, ss->d->bits.accessFlags, &ss->pos, ss->isSingleImportedFlag);
             }
             LIST_REVERSE(S_jslSymbolList, jslTypeTab->tab[i]);
         }
@@ -2523,7 +2523,7 @@ void javaAddNestedClassToSymbolTab( S_symbol *str ) {
     S_symStructSpecific     *ss;
     int                     i;
 
-    assert(str && str->b.symType==TypeStruct);
+    assert(str && str->bits.symType==TypeStruct);
     ss = str->u.s;
     assert(ss);
     for(i=0; i<ss->nnested; i++) {
@@ -2536,7 +2536,7 @@ void javaAddNestedClassToSymbolTab( S_symbol *str ) {
 //&fprintf(dumpOut,"adding nested class %s\n", nss->name);
             addSymbol(nss, s_symTab);
 #else
-            javaAddTypeToSymbolTable(ss->nest[i].cl, ss->nest[i].cl->b.accessFlags, &s_noPos, 0);
+            javaAddTypeToSymbolTable(ss->nest[i].cl, ss->nest[i].cl->bits.accessFlags, &s_noPos, 0);
 #endif
         }
     }
@@ -2573,7 +2573,7 @@ struct freeTrail * newClassDefinitionBegin(	S_idIdent *name,
 /*&fprintf(dumpOut,"adding new class %s\n",name->name);fflush(dumpOut);&*/
     if (oldStat->next!=NULL) {
         /* ** nested class ** */
-        if (oldStat->thisClass->b.accessFlags & ACC_INTERFACE) {
+        if (oldStat->thisClass->bits.accessFlags & ACC_INTERFACE) {
             accessFlags |= (ACC_PUBLIC | ACC_STATIC);
         }
         nnest = oldStat->thisClass->u.s->nnested;
@@ -2602,7 +2602,7 @@ struct freeTrail * newClassDefinitionBegin(	S_idIdent *name,
         FILL_idIdentList(p,*name,name->name,TypeStruct,s_javaStat->className);
         dd = javaAddType(p, accessFlags, & name->p);
         res = s_topBlock->trail;
-        assert(dd->b.symType == TypeStruct);
+        assert(dd->bits.symType == TypeStruct);
         s_spp[SPP_LAST_TOP_LEVEL_CLASS_POSITION] = name->p;
     }
     classf = dd->u.s->classFile;
@@ -2645,10 +2645,10 @@ void javaInitArrayObject(void) {
 
     assert(s_javaObjectSymbol != NULL);
     javaLoadClassSymbolsFromFile(s_javaObjectSymbol);
-    FILL_symbolBits(&s_lengthSymbol.b,0,0, ACC_PUBLIC,0, 0,
+    FILL_symbolBits(&s_lengthSymbol.bits,0,0, ACC_PUBLIC,0, 0,
                         TypeDefault, StorageDefault,0);
     FILL_symbol(&s_lengthSymbol, "length", "java/lang/array.length",
-                s_noPos,s_lengthSymbol.b,type,&s_defaultIntModifier, NULL);
+                s_noPos,s_lengthSymbol.bits,type,&s_defaultIntModifier, NULL);
     s_lengthSymbol.u.type = & s_defaultIntModifier;
     FILLF_symStructSpecific(&s_arraySpec, NULL,
                 &s_lengthSymbol, NULL,NULL,
@@ -2658,11 +2658,11 @@ void javaInitArrayObject(void) {
                 1,0, -1,0);
     s_arraySpec.stype.u.t = &s_javaArrayObjectSymbol;
     // orig. javaFileLoaded==1, I changed, because of methodInvoc. reference
-    FILL_symbolBits(&s_javaArrayObjectSymbol.b,0,0,ACC_PUBLIC,0, 1,
+    FILL_symbolBits(&s_javaArrayObjectSymbol.bits,0,0,ACC_PUBLIC,0, 1,
                     TypeStruct, StorageDefault,0);
     FILL_symbol(&s_javaArrayObjectSymbol, "__arrayObject__",
                 "__arrayObject__", s_noPos,
-                s_javaArrayObjectSymbol.b,s,&s_arraySpec, NULL);
+                s_javaArrayObjectSymbol.bits,s,&s_arraySpec, NULL);
     s_javaArrayObjectSymbol.u.s = &s_arraySpec;
     javaCreateClassFileItem(&s_javaArrayObjectSymbol);
     addSuperClassOrInterfaceByName(&s_javaArrayObjectSymbol,s_javaLangObjectLinkName, s_noneFileIndex, LOAD_SUPER);
@@ -2677,9 +2677,9 @@ S_typeModifiers *javaArrayFieldAccess(S_idIdent *id) {
 
 void javaParsedSuperClass(S_symbol *symbol) {
     S_symbolList *pp;
-    assert(s_javaStat->thisClass && s_javaStat->thisClass->b.symType==TypeStruct);
+    assert(s_javaStat->thisClass && s_javaStat->thisClass->bits.symType==TypeStruct);
     assert(s_javaStat->thisClass->u.s);
-    assert(symbol && symbol->b.symType==TypeStruct && symbol->u.s);
+    assert(symbol && symbol->bits.symType==TypeStruct && symbol->u.s);
     for(pp=s_javaStat->thisClass->u.s->super; pp!=NULL; pp=pp->next) {
         if (pp->d == symbol) break;
     }

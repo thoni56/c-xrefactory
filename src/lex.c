@@ -281,13 +281,13 @@ int getLexBuf(struct lexBuf *lb) {
     int line,size,cfile,lexStartCol, lexStartFilePos, column;
 
     /* first test whether the input is cached */
-    if (s_cache.activeCache && inStacki==0 && macStacki==0) {
+    if (s_cache.activeCache && inStacki==0 && macroStackIndex==0) {
         cacheInput();
-        s_cache.lexcc = lb->a;
+        s_cache.lexcc = lb->chars;
     }
-    lmax = lb->a + LEX_BUFF_SIZE - MAX_LEXEM_SIZE;
-    for(dd=lb->a,cc=lb->next; cc<lb->fin; cc++,dd++) *dd = *cc;
-    lb->next = lb->a;
+    lmax = lb->chars + LEX_BUFF_SIZE - MAX_LEXEM_SIZE;
+    for(dd=lb->chars,cc=lb->next; cc<lb->fin; cc++,dd++) *dd = *cc;
+    lb->next = lb->chars;
     cb = &lb->cb;
     cline = cb->lineNum; clb = cb->lineBegin; clo = cb->columnOffset;
     ccc = cb->next; cfin = cb->end; cfile = cb->fileNumber;
@@ -799,7 +799,7 @@ int getLexBuf(struct lexBuf *lb) {
     cb->lineNum = cline; cb->lineBegin = clb; cb->columnOffset = clo;
     lb->fin = dd;
 
-    if (lb->fin == lb->a)
+    if (lb->fin == lb->chars)
         return 0;
     else
         return 1;

@@ -808,7 +808,7 @@ typedef struct symbol {
     struct position			pos;			/* definition position for most syms;
                                               import position for imported classes!
                                             */
-    struct symbolBits b;
+    struct symbolBits bits;
     union defUnion {
         struct typeModifiers		*type;		/* if symType == TypeDefault */
         struct symStructSpecific	*s;			/* if symType == Struct/Union */
@@ -1238,7 +1238,7 @@ typedef struct CharacterBuffer {
 typedef struct lexBuf {
     char            *next;				/* next to read */
     char            *fin;				/* first free (invalid)  */
-    char            a[LEX_BUFF_SIZE];
+    char            chars[LEX_BUFF_SIZE];
     struct position pRing[LEX_POSITIONS_RING_SIZE];		// file/line/coll position
     unsigned        fpRing[LEX_POSITIONS_RING_SIZE];	// file offset position
     int             posi;				/* pRing[posi%LEX_POSITIONS_RING_SIZE] */

@@ -313,10 +313,10 @@ primary_expr
         S_symbol *p;
         S_symbol *dd;
         p = $1.d->sd;
-        if (p != NULL && p->b.symType == TypeDefault) {
+        if (p != NULL && p->bits.symType == TypeDefault) {
             assert(p && p);
             dd = p;
-            assert(dd->b.storage != StorageTypedef);
+            assert(dd->bits.storage != StorageTypedef);
             $$.d.t = dd->u.type;
             assert(s_opt.taskRegime);
             if (CX_REGIME()) {
@@ -333,8 +333,8 @@ primary_expr
             $$.d.t = StackMemAlloc(S_typeModifiers);
             FILLF_typeModifiers($$.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
             d = StackMemAlloc(S_symbol);
-            FILL_symbolBits(&d->b,0,0,0,0,0,TypeDefault, StorageExtern, 0);
-            FILL_symbol(d,$1.d->name,$1.d->name,$1.d->p,d->b,type,$$.d.t,NULL);
+            FILL_symbolBits(&d->bits,0,0,0,0,0,TypeDefault, StorageExtern, 0);
+            FILL_symbol(d,$1.d->name,$1.d->name,$1.d->p,d->bits,type,$$.d.t,NULL);
             d->u.type = $$.d.t;
             dd = addNewSymbolDef(d, StorageExtern, s_symTab, UsageUsed);
             if (CX_REGIME()) {
@@ -800,7 +800,7 @@ declaration_specifiers0
     }
     | declaration_specifiers0 storage_class_specifier		{
         $$.d = $1.d;
-        $$.d->b.storage = $2.d;
+        $$.d->bits.storage = $2.d;
     }
     | declaration_specifiers0 function_specifier			{
         $$.d = $1.d;
@@ -816,11 +816,11 @@ declaration_specifiers0
 declaration_modality_specifiers
     : storage_class_specifier								{
         $$.d  = typeSpecifier1(TypeDefault);
-        $$.d->b.storage = $1.d;
+        $$.d->bits.storage = $1.d;
     }
     | declaration_modality_specifiers storage_class_specifier       {
         $$.d = $1.d;
-        $$.d->b.storage = $2.d;
+        $$.d->bits.storage = $2.d;
     }
     | type_modality_specifier								{
         $$.d  = typeSpecifier1($1.d);
@@ -964,9 +964,9 @@ struct_or_union
 struct_declaration_list
     : struct_declaration								/* { $$.d = $1.d; } */
     | struct_declaration_list struct_declaration		{
-        if ($1.d == &s_errorSymbol || $1.d->b.symType==TypeError) {
+        if ($1.d == &s_errorSymbol || $1.d->bits.symType==TypeError) {
             $$.d = $2.d;
-        } else if ($2.d == &s_errorSymbol || $1.d->b.symType==TypeError)  {
+        } else if ($2.d == &s_errorSymbol || $1.d->bits.symType==TypeError)  {
             $$.d = $1.d;
         } else {
             $$.d = $1.d;
@@ -1091,16 +1091,16 @@ declarator
     : declarator2										/* { $$.d = $1.d; } */
     | pointer declarator2								{
         $$.d = $2.d;
-        assert($$.d->b.npointers == 0);
-        $$.d->b.npointers = $1.d;
+        assert($$.d->bits.npointers == 0);
+        $$.d->bits.npointers = $1.d;
     }
     ;
 
 declarator2
     : identifier										{
         $$.d = StackMemAlloc(S_symbol);
-        FILL_symbolBits(&$$.d->b,0,0,0,0,0,TypeDefault,StorageDefault,0);
-        FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->b,type,NULL,NULL);
+        FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
+        FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->bits,type,NULL,NULL);
         $$.d->u.type = NULL;
     }
     | '(' declarator ')'								{
@@ -1245,8 +1245,8 @@ parameter_identifier_list
         S_position pp;
         p = StackMemAlloc(S_symbol);
         FILL_position(&pp, -1, 0, 0);
-        FILL_symbolBits(&p->b,0,0,0,0,0,TypeElipsis,StorageDefault,0);
-        FILL_symbol(p,"","",pp,p->b,type,NULL,NULL);
+        FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0);
+        FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL);
         $$.d = $1.d;
         LIST_APPEND(S_symbol, $$.d.s, p);
         appendPositionToList(&$$.d.p, &$2.d);
@@ -1257,8 +1257,8 @@ identifier_list
     : IDENTIFIER								{
         S_symbol *p;
         p = StackMemAlloc(S_symbol);
-        FILL_symbolBits(&p->b,0,0,0,0,0,TypeDefault,StorageDefault,0);
-        FILL_symbol(p,$1.d->name,$1.d->name,$1.d->p,p->b,type,NULL,NULL);
+        FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
+        FILL_symbol(p,$1.d->name,$1.d->name,$1.d->p,p->bits,type,NULL,NULL);
         p->u.type = NULL;
         $$.d.s = p;
         $$.d.p = NULL;
@@ -1266,8 +1266,8 @@ identifier_list
     | identifier_list ',' identifier			{
         S_symbol        *p;
         p = StackMemAlloc(S_symbol);
-        FILL_symbolBits(&p->b,0,0,0,0,0,TypeDefault,StorageDefault,0);
-        FILL_symbol(p,$3.d->name,$3.d->name,$3.d->p,p->b,type,NULL,NULL);
+        FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
+        FILL_symbol(p,$3.d->name,$3.d->name,$3.d->p,p->bits,type,NULL,NULL);
         p->u.type = NULL;
         $$.d = $1.d;
         LIST_APPEND(S_symbol, $$.d.s, p);
@@ -1283,8 +1283,8 @@ parameter_type_list
         S_position      pp;
         p = StackMemAlloc(S_symbol);
         FILL_position(&pp, -1, 0, 0);
-        FILL_symbolBits(&p->b,0,0,0,0,0,TypeElipsis,StorageDefault,0);
-        FILL_symbol(p,"","",pp,p->b,type,NULL,NULL);
+        FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0);
+        FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL);
         $$.d = $1.d;
         LIST_APPEND(S_symbol, $$.d.s, p);
         appendPositionToList(&$$.d.p, &$2.d);
@@ -1311,8 +1311,8 @@ parameter_declaration
     }
     | type_name									{
         $$.d = StackMemAlloc(S_symbol);
-        FILL_symbolBits(&$$.d->b,0,0,0,0,0,TypeDefault, StorageDefault,0);
-        FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->b,type,$1.d,NULL);
+        FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault, StorageDefault,0);
+        FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,$1.d,NULL);
         $$.d->u.type = $1.d;
     }
     | error										{
@@ -1743,7 +1743,7 @@ external_definition
         assert($2.d);
         // I think that due to the following line sometimes
         // storage was not extern, see 'addNewSymbolDef'
-        //& if ($2.d->b.storage == StorageDefault) $2.d->b.storage = StorageExtern;
+        //& if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern;
         // TODO!!!, here you should check if there is previous declaration of
         // the function, if yes and is declared static, make it static!
         addNewSymbolDef($2.d, StorageExtern, s_symTab, UsageDefined);
@@ -1754,7 +1754,7 @@ external_definition
         s_cp.function = $2.d;
         genInternalLabelReference(-1, UsageDefined);
         for(p=$2.d->u.type->u.f.args,i=1; p!=NULL; p=p->next,i++) {
-            if (p->b.symType == TypeElipsis) continue;
+            if (p->bits.symType == TypeElipsis) continue;
             if (p->u.type == NULL) p->u.type = &s_defaultIntModifier;
             addFunctionParameterToSymTable($2.d, p, i, s_symTab);
         }

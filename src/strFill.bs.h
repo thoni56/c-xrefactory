@@ -896,7 +896,7 @@
     (STRUCTP)->name = ARG0;\
     (STRUCTP)->linkName = ARG1;\
     (STRUCTP)->pos = ARG2;\
-    (STRUCTP)->b = ARG3;\
+    (STRUCTP)->bits = ARG3;\
     (STRUCTP)->u.ARG4 = ARG5;\
     (STRUCTP)->next = ARG6;\
 }

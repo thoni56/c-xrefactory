@@ -21,8 +21,8 @@ static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {
         if ((isalpha(*nn) || *nn=='_') && (tlan & s_language)) {
             /* looks like a key word */
             XX_ALLOC(pp, S_symbol);
-            FILL_symbolBits(&pp->b,0,0, 0,0,0,TypeKeyword,StorageNone,0);
-            FILL_symbol(pp,nn,nn,s_noPos,pp->b,keyWordVal,tok,NULL);
+            FILL_symbolBits(&pp->bits,0,0, 0,0,0,TypeKeyword,StorageNone,0);
+            FILL_symbol(pp,nn,nn,s_noPos,pp->bits,keyWordVal,tok,NULL);
             pp->u.keyWordVal = tok;
             /*fprintf(dumpOut,"adding keyword %s to tab %d\n",nn,s_symTab);*/
             symTabAdd(s_symTab,pp,&ii);
@@ -77,8 +77,8 @@ void initTokenNameTab(void) {
     initTokensFromTab(s_tokenNameIniTab);
     /* and add the 'defined' keyword for #if */
     XX_ALLOC(pp, S_symbol);
-    FILL_symbolBits(&pp->b,0,0,0,0,0,TypeDefinedOp,StorageNone,0);
-    FILL_symbol(pp,"defined","defined",s_noPos,pp->b,type,NULL,NULL);
+    FILL_symbolBits(&pp->bits,0,0,0,0,0,TypeDefinedOp,StorageNone,0);
+    FILL_symbol(pp,"defined","defined",s_noPos,pp->bits,type,NULL,NULL);
     symTabAdd(s_symTab,pp,&ii);
 }
 
@@ -154,21 +154,21 @@ void initArchaicTypes(void) {
     /* ******* some defaults and built-ins initialisationa ********* */
 
     FILLF_typeModifiers(&s_defaultIntModifier,TypeInt,f,( NULL,NULL) ,NULL,NULL);
-    FILL_symbolBits(&s_defaultIntDefinition.b,0,0,0,0,0,TypeDefault,StorageDefault,0);
+    FILL_symbolBits(&s_defaultIntDefinition.bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
     FILL_symbol(&s_defaultIntDefinition,NULL,NULL,s_noPos,
-                s_defaultIntDefinition.b,type,&s_defaultIntModifier,NULL);
+                s_defaultIntDefinition.bits,type,&s_defaultIntModifier,NULL);
     s_defaultIntDefinition.u.type = &s_defaultIntModifier;
     FILLF_typeModifiers(&s_defaultPackedTypeModifier,TypePackedType,f,(
                                                                        NULL,NULL) ,NULL,NULL);
     FILLF_typeModifiers(&s_defaultVoidModifier,TypeVoid,f,( NULL,NULL) ,NULL,NULL);
-    FILL_symbolBits(&s_defaultVoidDefinition.b,0,0,0,0,0,TypeDefault,StorageDefault,0);
+    FILL_symbolBits(&s_defaultVoidDefinition.bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
     FILL_symbol(&s_defaultVoidDefinition,NULL,NULL,s_noPos,
-                s_defaultVoidDefinition.b,type,&s_defaultVoidModifier,NULL);
+                s_defaultVoidDefinition.bits,type,&s_defaultVoidModifier,NULL);
     s_defaultVoidDefinition.u.type = &s_defaultVoidModifier;
     FILLF_typeModifiers(&s_errorModifier, TypeError,f,( NULL,NULL) ,NULL,NULL);
-    FILL_symbolBits(&s_errorSymbol.b,0,0, 0,0,0,TypeError, StorageNone,0);
+    FILL_symbolBits(&s_errorSymbol.bits,0,0, 0,0,0,TypeError, StorageNone,0);
     FILL_symbol(&s_errorSymbol,"__ERROR__",
-                "__ERROR__",s_noPos,s_errorSymbol.b,type,&s_errorModifier,NULL);
+                "__ERROR__",s_noPos,s_errorSymbol.bits,type,&s_errorModifier,NULL);
     s_errorSymbol.u.type = &s_errorModifier;
 }
 

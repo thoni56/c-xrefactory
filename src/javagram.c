@@ -3865,7 +3865,7 @@ case 121:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
+                    assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
                     assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass(yyvsp[0].bbsymbol.d->u.type->u.t);
                 } else {
@@ -3873,7 +3873,7 @@ case 121:
                 }
             }
             InSecondJslPass({
-                assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
+                assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
                 assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             yyvsp[0].bbsymbol.d->u.type->u.t);
@@ -3897,7 +3897,7 @@ case 124:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
+                    assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
                     assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass(yyvsp[0].bbsymbol.d->u.type->u.t);
                 } else {
@@ -3905,7 +3905,7 @@ case 124:
                 }
             }
             InSecondJslPass({
-                assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
+                assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
                 assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             yyvsp[0].bbsymbol.d->u.type->u.t);
@@ -3917,7 +3917,7 @@ case 125:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
+                    assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
                     assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass(yyvsp[0].bbsymbol.d->u.type->u.t);
                 } else {
@@ -3925,7 +3925,7 @@ case 125:
                 }
             }
             InSecondJslPass({
-                assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
+                assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
                 assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             yyvsp[0].bbsymbol.d->u.type->u.t);
@@ -4050,15 +4050,15 @@ case 141:
                     for(p=yyvsp[-1].bbsymbol.d; p!=NULL; p=pp) {
                         pp = p->next;
                         p->next = NULL;
-                        if (p->b.symType == TypeError) continue;
-                        assert(p->b.symType == TypeDefault);
+                        if (p->bits.symType == TypeError) continue;
+                        assert(p->bits.symType == TypeDefault);
                         completeDeclarator(yyvsp[-2].bbsymbol.d, p);
                         vClass = s_javaStat->classFileInd;
-                        p->b.accessFlags = yyvsp[-3].bbunsign.d;
-                        p->b.storage = StorageField;
-                        if (clas->b.accessFlags&ACC_INTERFACE) {
+                        p->bits.accessFlags = yyvsp[-3].bbunsign.d;
+                        p->bits.storage = StorageField;
+                        if (clas->bits.accessFlags&ACC_INTERFACE) {
                             /* set interface default access flags*/
-                            p->b.accessFlags |= (ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
+                            p->bits.accessFlags |= (ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
                         }
                         /*&javaSetFieldLinkName(p);*/
                         iniFind(clas, &rfs);
@@ -4098,16 +4098,16 @@ case 141:
                 for(p=yyvsp[-1].bbsymbol.d; p!=NULL; p=pp) {
                     pp = p->next;
                     p->next = NULL;
-                    if (p->b.symType == TypeError) continue;
-                    assert(p->b.symType == TypeDefault);
+                    if (p->bits.symType == TypeError) continue;
+                    assert(p->bits.symType == TypeDefault);
                     assert(clas->u.s);
                     vClass = clas->u.s->classFile;
                     jslCompleteDeclarator(yyvsp[-2].bbsymbol.d, p);
-                    p->b.accessFlags = yyvsp[-3].bbunsign.d;
-                    p->b.storage = StorageField;
-                    if (clas->b.accessFlags&ACC_INTERFACE) {
+                    p->bits.accessFlags = yyvsp[-3].bbunsign.d;
+                    p->bits.storage = StorageField;
+                    if (clas->bits.accessFlags&ACC_INTERFACE) {
                         /* set interface default access flags*/
-                        p->b.accessFlags |= (ACC_PUBLIC|ACC_STATIC|ACC_FINAL);
+                        p->bits.accessFlags |= (ACC_PUBLIC|ACC_STATIC|ACC_FINAL);
                     }
                     log_debug("[jsl] adding field %s to %s\n",
                               p->name,clas->linkName);
@@ -4128,7 +4128,7 @@ case 142:
             yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(yyval.bbsymbol.d->b.symType == TypeDefault || yyval.bbsymbol.d->b.symType == TypeError);
+                    assert(yyval.bbsymbol.d->bits.symType == TypeDefault || yyval.bbsymbol.d->bits.symType == TypeError);
                 } else {
                     PropagateBorns(yyval.bbsymbol, yyvsp[0].bbsymbol, yyvsp[0].bbsymbol);
                 }
@@ -4141,26 +4141,26 @@ case 143:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert(yyvsp[-2].bbsymbol.d && yyvsp[0].bbsymbol.d);
-                    if (yyvsp[0].bbsymbol.d->b.storage == StorageError) {
+                    if (yyvsp[0].bbsymbol.d->bits.storage == StorageError) {
                         yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
                     } else {
                         yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
                         yyval.bbsymbol.d->next = yyvsp[-2].bbsymbol.d;
                     }
-                    assert(yyval.bbsymbol.d->b.symType == TypeDefault || yyval.bbsymbol.d->b.symType == TypeError);
+                    assert(yyval.bbsymbol.d->bits.symType == TypeDefault || yyval.bbsymbol.d->bits.symType == TypeError);
                 } else {
                     PropagateBorns(yyval.bbsymbol, yyvsp[-2].bbsymbol, yyvsp[0].bbsymbol);
                 }
             }
             InSecondJslPass({
                 assert(yyvsp[-2].bbsymbol.d && yyvsp[0].bbsymbol.d);
-                if (yyvsp[0].bbsymbol.d->b.storage == StorageError) {
+                if (yyvsp[0].bbsymbol.d->bits.storage == StorageError) {
                     yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
                 } else {
                     yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
                     yyval.bbsymbol.d->next = yyvsp[-2].bbsymbol.d;
                 }
-                assert(yyval.bbsymbol.d->b.symType==TypeDefault || yyval.bbsymbol.d->b.symType==TypeError);
+                assert(yyval.bbsymbol.d->bits.symType==TypeDefault || yyval.bbsymbol.d->bits.symType==TypeError);
             });
         }
 break;
@@ -4194,8 +4194,8 @@ case 147:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.bbsymbol.d = StackMemAlloc(S_symbol);
-                    FILL_symbolBits(&yyval.bbsymbol.d->b,0,0,0,0,0,TypeDefault,StorageDefault,0);
-                    FILL_symbol(yyval.bbsymbol.d,yyvsp[0].bbidIdent.d->name,yyvsp[0].bbidIdent.d->name,yyvsp[0].bbidIdent.d->p,yyval.bbsymbol.d->b,type,NULL,NULL);
+                    FILL_symbolBits(&yyval.bbsymbol.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
+                    FILL_symbol(yyval.bbsymbol.d,yyvsp[0].bbidIdent.d->name,yyvsp[0].bbidIdent.d->name,yyvsp[0].bbidIdent.d->p,yyval.bbsymbol.d->bits,type,NULL,NULL);
                     yyval.bbsymbol.d->u.type = NULL;
                 } else {
                     PropagateBorns(yyval.bbsymbol, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
@@ -4206,8 +4206,8 @@ case 147:
                 CF_ALLOCC(name, strlen(yyvsp[0].bbidIdent.d->name)+1, char);
                 strcpy(name, yyvsp[0].bbidIdent.d->name);
                 CF_ALLOC(yyval.bbsymbol.d, S_symbol);
-                FILL_symbolBits(&yyval.bbsymbol.d->b,0,0,0,0,0,TypeDefault,StorageDefault,0);
-                FILL_symbol(yyval.bbsymbol.d,name,name,yyvsp[0].bbidIdent.d->p,yyval.bbsymbol.d->b,type,NULL,NULL);
+                FILL_symbolBits(&yyval.bbsymbol.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
+                FILL_symbol(yyval.bbsymbol.d,name,name,yyvsp[0].bbidIdent.d->p,yyval.bbsymbol.d->bits,type,NULL,NULL);
                 yyval.bbsymbol.d->u.type = NULL;
             });
         }
@@ -4470,7 +4470,7 @@ case 170:
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbsymbolList, yyvsp[0].bbsymbol, yyvsp[0].bbsymbol);
             InSecondJslPass({
-                assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
+                assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
                 assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                 CF_ALLOC(yyval.bbsymbolList.d, S_symbolList);
                 FILL_symbolList(yyval.bbsymbolList.d, yyvsp[0].bbsymbol.d->u.type->u.t, NULL);
@@ -4482,7 +4482,7 @@ case 171:
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbsymbolList, yyvsp[-2].bbsymbolList, yyvsp[0].bbsymbol);
             InSecondJslPass({
-                assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
+                assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
                 assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                 CF_ALLOC(yyval.bbsymbolList.d, S_symbolList);
                 FILL_symbolList(yyval.bbsymbolList.d, yyvsp[0].bbsymbol.d->u.type->u.t, yyvsp[-2].bbsymbolList.d);
@@ -4826,7 +4826,7 @@ case 204:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
+                    assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
                     assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass(yyvsp[0].bbsymbol.d->u.type->u.t);
                 } else {
@@ -4834,7 +4834,7 @@ case 204:
                 }
             }
             InSecondJslPass({
-                assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
+                assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
                 assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             yyvsp[0].bbsymbol.d->u.type->u.t);
@@ -4846,7 +4846,7 @@ case 205:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
+                    assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
                     assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass(yyvsp[0].bbsymbol.d->u.type->u.t);
                 } else {
@@ -4854,7 +4854,7 @@ case 205:
                 }
             }
             InSecondJslPass({
-                assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->b.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
+                assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
                 assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
                                             yyvsp[0].bbsymbol.d->u.type->u.t);
@@ -5014,7 +5014,7 @@ case 236:
 {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if (yyvsp[-2].bbsymbol.d->b.symType != TypeError) {
+                    if (yyvsp[-2].bbsymbol.d->bits.symType != TypeError) {
                         addNewDeclaration(yyvsp[-2].bbsymbol.d,yyvsp[0].bbsymbol.d,NULL,StorageAuto,s_javaStat->locals);
                     }
                     yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
@@ -5677,11 +5677,11 @@ case 340:
 {
                 if (RegularPass()) {
                     if (! SyntaxPassOnly()) {
-                        if (yyvsp[-3].bbsymbol.d->b.symType != TypeError) {
+                        if (yyvsp[-3].bbsymbol.d->bits.symType != TypeError) {
                             addNewSymbolDef(yyvsp[-3].bbsymbol.d, StorageAuto, s_javaStat->locals,
                                             UsageDefined);
                             if (s_opt.cxrefs == OLO_EXTRACT) {
-                                assert(yyvsp[-3].bbsymbol.d->b.symType==TypeDefault);
+                                assert(yyvsp[-3].bbsymbol.d->bits.symType==TypeDefault);
                                 addCxReference(yyvsp[-3].bbsymbol.d->u.type->u.t, &yyvsp[-5].bbidIdent.d->p, UsageCatched, s_noneFileIndex, s_noneFileIndex);
                             }
                         }
@@ -5707,7 +5707,7 @@ case 342:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (s_opt.cxrefs == OLO_EXTRACT) {
-                        assert(yyvsp[-2].bbsymbol.d->b.symType==TypeDefault);
+                        assert(yyvsp[-2].bbsymbol.d->bits.symType==TypeDefault);
                         addCxReference(yyvsp[-2].bbsymbol.d->u.type->u.t, &yyvsp[-4].bbidIdent.d->p, UsageCatched, s_noneFileIndex, s_noneFileIndex);
                     }
                 } else {
@@ -5999,7 +5999,7 @@ case 365:
                             /* and annulating of reference makes class renaming wrong!*/
                             /* Well, it is legal only for static nested classes.*/
                             /* But for security reasons, I will keep it in comment,*/
-                            /*&if (! (ss->b.accessFlags&ACC_STATIC)) {*/
+                            /*&if (! (ss->bits.accessFlags&ACC_STATIC)) {*/
                             /*&	if (rr!=NULL) rr->usg.base = s_noUsage;*/
                             /*&}*/
                         }
@@ -6330,7 +6330,7 @@ case 393:
                     yyval.bbexprType.d.r = NULL;
                     yyval.bbexprType.d.pp = &yyvsp[-2].bbidIdent.d->p;
                     ss = javaCurrentSuperClass();
-                    if (ss != &s_errorSymbol && ss->b.symType!=TypeError) {
+                    if (ss != &s_errorSymbol && ss->bits.symType!=TypeError) {
                         javaLoadClassSymbolsFromFile(ss);
                         yyval.bbexprType.d.r = findStrRecordFromSymbol(ss, yyvsp[0].bbidIdent.d, &rec, CLASS_TO_EXPR, yyvsp[-2].bbidIdent.d);
                         assert(rec);
@@ -6356,7 +6356,7 @@ case 394:
                     S_symbol *ss,*rec=NULL;
 
                     ss = javaQualifiedThis(yyvsp[-4].bbidlist.d, yyvsp[-2].bbidIdent.d);
-                    if (ss != &s_errorSymbol && ss->b.symType!=TypeError) {
+                    if (ss != &s_errorSymbol && ss->bits.symType!=TypeError) {
                         javaLoadClassSymbolsFromFile(ss);
                         ss = javaGetSuperClass(ss);
                         yyval.bbexprType.d.r = findStrRecordFromSymbol(ss, yyvsp[0].bbidIdent.d, &rec, CLASS_TO_EXPR, NULL);

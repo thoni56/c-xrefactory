@@ -97,7 +97,7 @@ static int printJavaModifiers(char *buf, int *size, unsigned acc) {
 
 static char *getCompletionClassFieldString( S_cline *cl) {
     char *cname;
-    //& if (cl->t->b.accessFlags & ACC_STATIC) {
+    //& if (cl->t->bits.accessFlags & ACC_STATIC) {
     // statics, get class from link name
     //&     cname = javaGetNudePreTypeName_st(cl->t->linkName,CUT_OUTERS);
     //&             sprintf(tmpBuff,"%s", cname);
@@ -156,7 +156,7 @@ static void sprintFullCompletionInfo(S_completions* c, int ii, int indent) {
             ppc += strlen(ppc);
         }
         tdexpFlag = 1;
-        if (c->a[ii].t->b.storage == StorageTypedef) {
+        if (c->a[ii].t->bits.storage == StorageTypedef) {
             sprintf(tt,"typedef ");
             ll = strlen(tt);
             size -= ll;
@@ -169,7 +169,7 @@ static void sprintFullCompletionInfo(S_completions* c, int ii, int indent) {
         pname = c->a[ii].t->name;
         //      }
         if (LANGUAGE(LANG_JAVA)) {
-            ll += printJavaModifiers(tt+ll, &size, c->a[ii].t->b.accessFlags);
+            ll += printJavaModifiers(tt+ll, &size, c->a[ii].t->bits.accessFlags);
             if (c->a[ii].vFunClass!=NULL) {
                 vFunCl = c->a[ii].vFunClass->u.s->classFile;
                 if (vFunCl == -1) vFunCl = s_noneFileIndex;
@@ -177,8 +177,8 @@ static void sprintFullCompletionInfo(S_completions* c, int ii, int indent) {
         }
         typeSPrint(tt+ll, &size, c->a[ii].t->u.type, pname,' ', 0, tdexpFlag,SHORT_NAME, NULL);
         if (LANGUAGE(LANG_JAVA)
-            && (c->a[ii].t->b.storage == StorageMethod
-                || c->a[ii].t->b.storage == StorageConstructor)) {
+            && (c->a[ii].t->bits.storage == StorageMethod
+                || c->a[ii].t->bits.storage == StorageConstructor)) {
             throwsSprintf(tt+ll+size, COMPLETION_STRING_SIZE-ll-size, c->a[ii].t->u.type->u.m.exceptions);
         }
     } else if (c->a[ii].symType==TypeMacro) {
@@ -186,8 +186,8 @@ static void sprintFullCompletionInfo(S_completions* c, int ii, int indent) {
                       c->a[ii].margn, c->a[ii].margs, NULL);
     } else if (LANGUAGE(LANG_JAVA) && c->a[ii].symType==TypeStruct ) {
         if (c->a[ii].t!=NULL) {
-            ll += printJavaModifiers(tt+ll, &size, c->a[ii].t->b.accessFlags);
-            if (c->a[ii].t->b.accessFlags & ACC_INTERFACE) {
+            ll += printJavaModifiers(tt+ll, &size, c->a[ii].t->bits.accessFlags);
+            if (c->a[ii].t->bits.accessFlags & ACC_INTERFACE) {
                 sprintf(tt+ll,"interface ");
             } else {
                 sprintf(tt+ll,"class ");
@@ -242,7 +242,7 @@ static void sprintFullJeditCompletionInfo(S_completions* c, int ii, int *nindent
             }
         }
         tdexpFlag = 1;
-        if (c->a[ii].t->b.storage == StorageTypedef) {
+        if (c->a[ii].t->bits.storage == StorageTypedef) {
             sprintf(ppcTmpBuff,"typedef ");
             ll = strlen(ppcTmpBuff);
             size -= ll;
@@ -250,13 +250,13 @@ static void sprintFullJeditCompletionInfo(S_completions* c, int ii, int *nindent
         }
         pname = c->a[ii].t->name;
         if (LANGUAGE(LANG_JAVA)) {
-            ll += printJavaModifiers(ppcTmpBuff+ll, &size, c->a[ii].t->b.accessFlags);
+            ll += printJavaModifiers(ppcTmpBuff+ll, &size, c->a[ii].t->bits.accessFlags);
         }
         typeSPrint(ppcTmpBuff+ll, &size, c->a[ii].t->u.type, pname,' ', 0, tdexpFlag,SHORT_NAME, nindent);
         *nindent += ll;
         if (LANGUAGE(LANG_JAVA)
-            && (c->a[ii].t->b.storage == StorageMethod
-                || c->a[ii].t->b.storage == StorageConstructor)) {
+            && (c->a[ii].t->bits.storage == StorageMethod
+                || c->a[ii].t->bits.storage == StorageConstructor)) {
             throwsSprintf(ppcTmpBuff+ll+size, COMPLETION_STRING_SIZE-ll-size, c->a[ii].t->u.type->u.m.exceptions);
         }
     } else if (c->a[ii].symType==TypeMacro) {
@@ -264,8 +264,8 @@ static void sprintFullJeditCompletionInfo(S_completions* c, int ii, int *nindent
                       c->a[ii].margn, c->a[ii].margs, nindent);
     } else if (LANGUAGE(LANG_JAVA) && c->a[ii].symType==TypeStruct ) {
         if (c->a[ii].t!=NULL) {
-            ll += printJavaModifiers(ppcTmpBuff+ll, &size, c->a[ii].t->b.accessFlags);
-            if (c->a[ii].t->b.accessFlags & ACC_INTERFACE) {
+            ll += printJavaModifiers(ppcTmpBuff+ll, &size, c->a[ii].t->bits.accessFlags);
+            if (c->a[ii].t->bits.accessFlags & ACC_INTERFACE) {
                 sprintf(ppcTmpBuff+ll,"interface ");
             } else {
                 sprintf(ppcTmpBuff+ll,"class ");
@@ -591,8 +591,8 @@ static int completionOrderCmp(S_cline *c1, S_cline *c2) {
             if (c!=0) return(c);
             // compare storages, fields goes first, then methods
             if (c1->t!=NULL && c2->t!=NULL) {
-                if (c1->t->b.storage==StorageField && c2->t->b.storage==StorageMethod) return(-1);
-                if (c1->t->b.storage==StorageMethod && c2->t->b.storage==StorageField) return(1);
+                if (c1->t->bits.storage==StorageField && c2->t->bits.storage==StorageMethod) return(-1);
+                if (c1->t->bits.storage==StorageMethod && c2->t->bits.storage==StorageField) return(1);
             }
         }
         if (c1->symType==TypeNonImportedClass && c2->symType==TypeNonImportedClass) {
@@ -766,15 +766,15 @@ static void completeFun(S_symbol *s, void *c) {
     S_cline compLine;
     cc = (S_completionSymInfo *) c;
     assert(s && cc);
-    if (s->b.symType != cc->symType) return;
+    if (s->bits.symType != cc->symType) return;
     /*&fprintf(dumpOut,"testing %s\n",s->linkName);fflush(dumpOut);&*/
-    if (s->b.symType != TypeMacro) {
-        FILL_cline(&compLine, s->name, s, s->b.symType,0, 0, NULL,NULL);
+    if (s->bits.symType != TypeMacro) {
+        FILL_cline(&compLine, s->name, s, s->bits.symType,0, 0, NULL,NULL);
     } else {
         if (s->u.mbody==NULL) {
             FILL_cline(&compLine, s->name, s, TypeUndefMacro,0, 0, NULL,NULL);
         } else {
-            FILL_cline(&compLine, s->name, s, s->b.symType,0,
+            FILL_cline(&compLine, s->name, s, s->bits.symType,0,
                        s->u.mbody->argn, s->u.mbody->args,NULL);
         }
     }
@@ -830,16 +830,16 @@ static void completeSymFun(S_symbol *s, void *c) {
     char    *completionName;
     cc = (S_completionSymFunInfo *) c;
     assert(s);
-    if (s->b.symType != TypeDefault) return;
+    if (s->bits.symType != TypeDefault) return;
     assert(s);
-    if (cc->storage==StorageTypedef && s->b.storage!=StorageTypedef) return;
+    if (cc->storage==StorageTypedef && s->bits.storage!=StorageTypedef) return;
     completionName = s->name;
-    CONST_CONSTRUCT_NAME(cc->storage,s->b.storage,completionName);
+    CONST_CONSTRUCT_NAME(cc->storage,s->bits.storage,completionName);
     if (completionName!=NULL) {
-        if (s->b.symType == TypeDefault && s->u.type!=NULL && s->u.type->kind == TypeFunction) {
+        if (s->bits.symType == TypeDefault && s->u.type!=NULL && s->u.type->kind == TypeFunction) {
             completeFunctionOrMethodName(cc->res, 1, 0, s, NULL);
         } else {
-            FILL_cline(&compLine, completionName, s, s->b.symType,0, 0, NULL,NULL);
+            FILL_cline(&compLine, completionName, s, s->bits.symType,0, 0, NULL,NULL);
             processName(completionName, &compLine, 1, cc->res);
         }
     }
@@ -870,7 +870,7 @@ static void processSpecialInheritedFullCompletion( S_completions *c, int orderFl
 
     tt[0]=0; ll=0; size=MAX_CX_SYMBOL_SIZE;
     if (LANGUAGE(LANG_JAVA)) {
-        ll+=printJavaModifiers(tt+ll, &size, r->b.accessFlags);
+        ll+=printJavaModifiers(tt+ll, &size, r->bits.accessFlags);
     }
     typeSPrint(tt+ll, &size, r->u.type, cname, ' ', 0, 1,SHORT_NAME, NULL);
     XX_ALLOCC(fcc, strlen(tt)+1, char);
@@ -931,19 +931,19 @@ static void completeRecordsNames(
         /* because constructors are not inherited */
         assert(r);
         cname = r->name;
-        CONST_CONSTRUCT_NAME(constructorOpt,r->b.storage,cname);
+        CONST_CONSTRUCT_NAME(constructorOpt,r->bits.storage,cname);
         //&fprintf(dumpOut,"record %s\n", cname);
         if (    cname!=NULL
                 && *cname != 0
-                && r->b.symType != TypeError
+                && r->bits.symType != TypeError
                 // Hmm. I hope it will not filter out something important
                 && (! symbolNameShouldBeHiddenFromReports(r->linkName))
                 //  I do not know whether to check linkability or not
                 //  What is more natural ???
-                && javaLinkable(accessMod,r->b.accessFlags)) {
+                && javaLinkable(accessMod,r->bits.accessFlags)) {
             //&fprintf(dumpOut,"passed\n", cname);
             assert(rfs.currClass && rfs.currClass->u.s);
-            assert(r->b.symType == TypeDefault);
+            assert(r->bits.symType == TypeDefault);
             vFunCl = rfs.currClass;
             if (vFunCl->u.s->classFile == -1) {
                 vFunCl = NULL;
@@ -953,8 +953,8 @@ static void completeRecordsNames(
                 // TODO customizable completion level
                 if (vlevel > 1
                     && vlevel <= s_opt.completionOverloadWizardDeep+1
-                    &&  (r->b.accessFlags & ACC_PRIVATE)==0
-                    &&  (r->b.accessFlags & ACC_STATIC)==0) {
+                    &&  (r->bits.accessFlags & ACC_PRIVATE)==0
+                    &&  (r->bits.accessFlags & ACC_STATIC)==0) {
                     processSpecialInheritedFullCompletion(c,orderFlag,vlevel,
                                                           r, vFunCl, cname);
                 }
@@ -964,7 +964,7 @@ static void completeRecordsNames(
                            vlevel,0,NULL,vFunCl);
                 completionInsertName(c->idToProcess, &compLine, orderFlag, (void*) c);
             } else if (s_opt.completeParenthesis
-                       && (r->b.storage==StorageMethod || r->b.storage==StorageConstructor)) {
+                       && (r->bits.storage==StorageMethod || r->bits.storage==StorageConstructor)) {
                 completeFunctionOrMethodName(c, orderFlag, vlevel, r, vFunCl);
             } else {
                 FILL_cline(&compLine, cname, r, TypeDefault,
@@ -1109,11 +1109,11 @@ static char *spComplFindNextRecord(S_exprTokenType *tok) {
         if (rr != RETURN_OK) break;
         assert(r);
         cname = r->name;
-        CONST_CONSTRUCT_NAME(StorageDefault,r->b.storage,cname);
+        CONST_CONSTRUCT_NAME(StorageDefault,r->bits.storage,cname);
         if (    cname!=NULL &&
-                javaLinkable(ACC_ALL,r->b.accessFlags)) {
+                javaLinkable(ACC_ALL,r->bits.accessFlags)) {
             assert(rfs.currClass && rfs.currClass->u.s);
-            assert(r->b.symType == TypeDefault);
+            assert(r->bits.symType == TypeDefault);
             if (isEqualType(r->u.type, tok->t)) {
                 // there is a record of the same type
                 if (res == NULL) res = cname;
@@ -1180,8 +1180,8 @@ void completeUpFunProfile(S_completions* c) {
         && c->ai==0
         ) {
         XX_ALLOC(dd, S_symbol);
-        FILL_symbolBits(&dd->b,0,0, 0,0, 0, TypeDefault, StorageDefault,0);
-        FILL_symbol(dd, "    ", "    ",s_noPos, dd->b, type ,
+        FILL_symbolBits(&dd->bits,0,0, 0,0, 0, TypeDefault, StorageDefault,0);
+        FILL_symbol(dd, "    ", "    ",s_noPos, dd->bits, type ,
                     s_upLevelFunctionCompletionType,NULL);
         FILL_cline(&c->a[0], "    ", dd, TypeDefault,0, 0, NULL, NULL);
         c->fullMatchFlag = 1;
@@ -1215,7 +1215,7 @@ static void completeConstructorsFromFile(S_completions *c, char *fname) {
 }
 
 static void completeJavaConstructors(S_symbol *s, void *c) {
-    if (s->b.symType != TypeStruct) return;
+    if (s->bits.symType != TypeStruct) return;
     completeConstructorsFromFile((S_completions *)c, s->linkName);
 }
 
@@ -1311,7 +1311,7 @@ static void javaCompleteNestedClasses(  S_completions *c,
             if (str->u.s->nest[i].membFlag) {
                 memb = str->u.s->nest[i].cl;
                 assert(memb);
-                memb->b.accessFlags |= str->u.s->nest[i].accFlags;  // hack!!!
+                memb->bits.accessFlags |= str->u.s->nest[i].accFlags;  // hack!!!
                 FILL_cline(&compLine, memb->name, memb, TypeStruct,0, 0 , NULL,NULL);
                 processName(memb->name, &compLine, 1, (void*) c);
                 if (storage == StorageConstructor) {
@@ -1748,7 +1748,7 @@ void javaCompleteStrRecordPrimary(S_completions*c) {
 void javaCompleteStrRecordSuper(S_completions*c) {
     S_symbol *memb;
     memb = javaCurrentSuperClass();
-    if (memb == &s_errorSymbol || memb->b.symType==TypeError) return;
+    if (memb == &s_errorSymbol || memb->bits.symType==TypeError) return;
     assert(memb);
     javaLoadClassSymbolsFromFile(memb);
     completeRecordsNames(c, memb, s_javaStat->cpMethodMods,CLASS_TO_ANY, StorageDefault,TypeDefault,0);
@@ -1765,7 +1765,7 @@ void javaCompleteStrRecordQualifiedSuper(S_completions*c) {
     if (ttype != TypeStruct) return;
     javaLoadClassSymbolsFromFile(str);
     str = javaGetSuperClass(str);
-    if (str == &s_errorSymbol || str->b.symType==TypeError) return;
+    if (str == &s_errorSymbol || str->bits.symType==TypeError) return;
     assert(str);
     completeRecordsNames(c, str, s_javaStat->cpMethodMods,CLASS_TO_ANY, StorageDefault,TypeDefault,0);
 }

@@ -48,7 +48,7 @@ int s_yyPositionBufi = 0;
     cFile.lb.next = cInput.cc;\
 }
 #define SetCInputConsistency() {\
-    FILL_lexInput(&cInput,cFile.lb.next,cFile.lb.fin,cFile.lb.a,NULL,II_NORMAL);\
+    FILL_lexInput(&cInput,cFile.lb.next,cFile.lb.fin,cFile.lb.chars,NULL,II_NORMAL);\
 }
 
 #define IS_IDENTIFIER_LEXEM(lex) (lex==IDENTIFIER || lex==IDENT_NO_CPP_EXPAND  || lex==IDENT_TO_COMPLETE)
@@ -60,7 +60,7 @@ static int macroCallExpand(S_symbol *mdef, S_position *mpos);
 void initAllInputs(void) {
     mbMemoryi=0;
     inStacki=0;
-    macStacki=0;
+    macroStackIndex=0;
     s_ifEvaluation = 0;
     s_cxRefFlag = 0;
     maTabNAInit(&s_maTab, MAX_MACRO_ARGS);
@@ -292,8 +292,8 @@ void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) {
     }
 
 #define PrependMacInput(macInput) {             \
-        assert(macStacki < MACSTACK_SIZE-1);    \
-        macStack[macStacki++] = cInput;         \
+        assert(macroStackIndex < MACSTACK_SIZE-1);    \
+        macStack[macroStackIndex++] = cInput;         \
         cInput = macInput;                      \
         cInput.cc = cInput.a;                   \
         cInput.margExpFlag = II_MACRO;          \
@@ -303,10 +303,10 @@ void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) {
         while (cInput.cc >= cInput.fin) {                           \
             char margFlag;                                          \
             margFlag = cInput.margExpFlag;                          \
-            if (macStacki > 0) {                                    \
+            if (macroStackIndex > 0) {                                    \
                 if (margFlag == II_MACRO_ARG) goto endOfMacArg;     \
                 MB_FREE_UNTIL(cInput.a);                            \
-                cInput = macStack[--macStacki];                     \
+                cInput = macStack[--macroStackIndex];                     \
             } else if (margFlag == II_NORMAL) {                     \
                 SetCFileConsistency();                              \
                 getLexBuf(&cFile.lb);                               \
@@ -407,8 +407,8 @@ static void fillIncludeSymbolItem( S_symbol *ss,
     // all includes needs to be in the same cxfile, beacause of
     // -update. On the other side in HTML I wish then to splitted
     // by first letter of file name.
-    FILL_symbolBits(&ss->b,0,0,0,0,0,TypeCppInclude,StorageDefault,0);
-    FILL_symbol(ss, LINK_NAME_INCLUDE_REFS, LINK_NAME_INCLUDE_REFS, *pos,ss->b,
+    FILL_symbolBits(&ss->bits,0,0,0,0,0,TypeCppInclude,StorageDefault,0);
+    FILL_symbol(ss, LINK_NAME_INCLUDE_REFS, LINK_NAME_INCLUDE_REFS, *pos,ss->bits,
                 type,NULL, NULL);
 }
 
@@ -520,8 +520,8 @@ static void processInclude2(S_position *ipos, char pchar, char *iname) {
     S_symbol ss,*memb;
     int ii;
     sprintf(tmpBuff, "PragmaOnce-%s", iname);
-    FILL_symbolBits(&ss.b,0,0,0,0,0,TypeMacro,StorageNone,0);
-    FILL_symbol(&ss,tmpBuff,tmpBuff,s_noPos,ss.b,mbody,NULL,NULL);
+    FILL_symbolBits(&ss.bits,0,0,0,0,0,TypeMacro,StorageNone,0);
+    FILL_symbol(&ss,tmpBuff,tmpBuff,s_noPos,ss.bits,mbody,NULL,NULL);
     if (symTabIsMember(s_symTab, &ss, &ii, &memb)) return;
     nyyin = openInclude(pchar, iname, &fname);
     if (nyyin == NULL) {
@@ -541,11 +541,11 @@ static void processInclude(S_position *ipos) {
     ccc = cInput.cc;
     if (lex == STRING_LITERAL) {
         PassLex(cInput.cc,lex,l,v,h,pos, len,1);
-        if (macStacki != 0) {
+        if (macroStackIndex != 0) {
             error(ERR_INTERNAL,"include directive in macro body?");
 assert(0);
             cInput = macStack[0];
-            macStacki = 0;
+            macroStackIndex = 0;
         }
         processInclude2(ipos, *ccc, ccc+1);
     } else {
@@ -553,7 +553,7 @@ assert(0);
         lex = yylex();
         if (lex == STRING_LITERAL) {
             cInput = macStack[0];		// hack, cut everything pending
-            macStacki = 0;
+            macroStackIndex = 0;
             processInclude2(ipos, '\"', yytext);
         } else if (lex == '<') {
             // TODO!!!!
@@ -588,7 +588,7 @@ static void addMacroToTabs(S_symbol *pp, char *name) {
     symTabSet(s_symTab,pp,ii);
 }
 
-static void setMacArgName(S_macroArgTabElem *arg, void *at) {
+static void setMacroArgumentName(S_macroArgTabElem *arg, void *at) {
     char ** argTab;
     argTab = (char**)at;
     assert(arg->order>=0);
@@ -661,8 +661,8 @@ static void processDefine(int argFlag) {
     testCxrefCompletionId(&lex,cc,&macpos);    /* for cross-referencing */
     if (lex != IDENTIFIER) return;
     PP_ALLOC(pp, S_symbol);
-    FILL_symbolBits(&pp->b,0,0,0,0,0,TypeMacro,StorageNone,0);
-    FILL_symbol(pp,NULL,NULL,macpos,pp->b,mbody,NULL,NULL);
+    FILL_symbolBits(&pp->bits,0,0,0,0,0,TypeMacro,StorageNone,0);
+    FILL_symbol(pp,NULL,NULL,macpos,pp->bits,mbody,NULL,NULL);
     setGlobalFileDepNames(cc, pp, MEM_PP);
     mname = pp->name;
     /* process arguments */
@@ -771,7 +771,7 @@ endOfBody:
 //{static int c=0;fprintf(dumpOut,"margs0#%d\n",c+=argi);}
         PP_ALLOCC(argNames, argi, char*);
         memset(argNames,0,argi*sizeof(char*));
-        maTabMap2(&s_maTab, setMacArgName, argNames);
+        maTabMap2(&s_maTab, setMacroArgumentName, argNames);
     } else argNames = NULL;
     FILL_macroBody(macbody,argi,msize,mname,argNames,mbody);
     pp->u.mbody = macbody;
@@ -827,8 +827,8 @@ static void processUnDefine(void) {
     testCxrefCompletionId(&lex,cc,&pos);
     if (IS_IDENTIFIER_LEXEM(lex)) {
         log_debug(": undef macro %s",cc);
-        FILL_symbolBits(&dd.b,0,0,0,0,0,TypeMacro,StorageNone,0);
-        FILL_symbol(&dd,cc,cc,pos,dd.b,mbody,NULL,NULL);
+        FILL_symbolBits(&dd.bits,0,0,0,0,0,TypeMacro,StorageNone,0);
+        FILL_symbol(&dd,cc,cc,pos,dd.bits,mbody,NULL,NULL);
         assert(s_opt.taskRegime);
         /* !!!!!!!!!!!!!! tricky, add macro with mbody == NULL !!!!!!!!!! */
         /* this is because of monotonicity for caching, just adding symbol */
@@ -837,8 +837,8 @@ static void processUnDefine(void) {
                 addCxReference(memb, &pos, UsageUndefinedMacro,s_noneFileIndex, s_noneFileIndex);
             }
             PP_ALLOC(pp, S_symbol);
-            FILL_symbolBits(&pp->b,0,0, 0,0, 0, TypeMacro, StorageNone,0);
-            FILL_symbol(pp, memb->name, memb->linkName, pos, pp->b,mbody,NULL, NULL);
+            FILL_symbolBits(&pp->bits,0,0, 0,0, 0, TypeMacro, StorageNone,0);
+            FILL_symbol(pp, memb->name, memb->linkName, pos, pp->bits,mbody,NULL, NULL);
             pp->u.mbody = NULL;
 //{static int c=0;fprintf(dumpOut,"#undef#%d\n",c++);}
             addMacroToTabs(pp,memb->name);
@@ -941,8 +941,8 @@ static void processIfdef(int isIfdef) {
     PassLex(cInput.cc,lex,l,v,h,pos, len,1);
     testCxrefCompletionId(&lex,cc,&pos);
     if (! IS_IDENTIFIER_LEXEM(lex)) return;
-    FILL_symbolBits(&pp.b,0,0,0,0,0,TypeMacro,StorageNone,0);
-    FILL_symbol(&pp,cc,cc,s_noPos,pp.b,mbody,NULL,NULL);
+    FILL_symbolBits(&pp.bits,0,0,0,0,0,TypeMacro,StorageNone,0);
+    FILL_symbol(&pp,cc,cc,s_noPos,pp.bits,mbody,NULL,NULL);
     assert(s_opt.taskRegime);
     mm = symTabIsMember(s_symTab,&pp,&ii,&memb);
     if (mm && memb->u.mbody==NULL) mm = 0;	// undefined macro
@@ -997,8 +997,8 @@ int cexpyylex(void) {
             par = 0;
         }
         if (! IS_IDENTIFIER_LEXEM(lex)) return(0);
-        FILL_symbolBits(&dd.b,0,0,0,0,0,TypeMacro,StorageNone,0);
-        FILL_symbol(&dd, cc,cc,s_noPos,dd.b,mbody,NULL,NULL);
+        FILL_symbolBits(&dd.bits,0,0,0,0,0,TypeMacro,StorageNone,0);
+        FILL_symbol(&dd, cc,cc,s_noPos,dd.bits,mbody,NULL,NULL);
         log_debug("(%s)", dd.name);
         mm = symTabIsMember(s_symTab,&dd,&ii,&memb);
         if (mm && memb->u.mbody == NULL) mm = 0;   // undefined macro
@@ -1050,8 +1050,8 @@ static void processPragma(void) {
         PP_ALLOCC(mname, strlen(tmpBuff)+1, char);
         strcpy(mname, tmpBuff);
         PP_ALLOC(pp, S_symbol);
-        FILL_symbolBits(&pp->b,0,0,0,0,0,TypeMacro,StorageNone,0);
-        FILL_symbol(pp,mname,mname,pos,pp->b,mbody,NULL,NULL);
+        FILL_symbolBits(&pp->bits,0,0,0,0,0,TypeMacro,StorageNone,0);
+        FILL_symbol(pp,mname,mname,pos,pp->bits,mbody,NULL,NULL);
         symTabAdd(s_symTab,pp,&ii);
     }
     while (lex != '\n') {PassLex(cInput.cc,lex,l,v,h,pos, len,1); GetLex(lex);}
@@ -1183,7 +1183,7 @@ static int cyclicCall(S_macroBody *mb) {
     name = mb->name;
 /*fprintf(dumpOut,"testing '%s' against curr '%s'\n",name,cInput.macname);*/
     if (cInput.macname != NULL && !strcmp(name,cInput.macname)) return(1);
-    for(i=0; i<macStacki; i++) {
+    for(i=0; i<macroStackIndex; i++) {
         ll = &macStack[i];
 /*fprintf(dumpOut,"testing '%s' against '%s'\n",name,ll->macname);*/
         if (ll->macname != NULL && !strcmp(name,ll->macname)) return(1);
@@ -1206,7 +1206,7 @@ static void expandMacroArgument(S_lexInput *argb) {
     nextLexem:
         GetLexA(lex,cc);
         cc2 = cInput.cc;
-        PassLex(cInput.cc,lex, line, val, hash, pos, len, macStacki == 0);
+        PassLex(cInput.cc,lex, line, val, hash, pos, len, macroStackIndex == 0);
         nn = ((char*)cInput.cc) - cc;
         assert(nn >= 0);
         memcpy(bcc, cc, nn);
@@ -1215,8 +1215,8 @@ static void expandMacroArgument(S_lexInput *argb) {
         // read new lexbuffer and destroy cInput, so copy it now.
         failedMacroExpansion = 0;
         if (lex == IDENTIFIER) {
-            FILL_symbolBits(&sd.b,0,0,0,0,0,TypeMacro, StorageNone,0);
-            FILL_symbol(&sd,cc2,cc2,s_noPos,sd.b,mbody,NULL,NULL);
+            FILL_symbolBits(&sd.bits,0,0,0,0,0,TypeMacro, StorageNone,0);
+            FILL_symbol(&sd,cc2,cc2,s_noPos,sd.bits,mbody,NULL,NULL);
             if (symTabIsMember(s_symTab,&sd,&ii,&memb)) {
                 /* it is a macro, provide macro expansion */
                 if (macroCallExpand(memb,&pos)) goto nextLexem;
@@ -1233,7 +1233,7 @@ static void expandMacroArgument(S_lexInput *argb) {
         TestPPBufOverflow(bcc,buf,bsize);
     }
 endOfMacArg:
-    cInput = macStack[--macStacki];
+    cInput = macStack[--macroStackIndex];
     PP_REALLOCC(buf,bcc-buf,char,bsize+MAX_LEXEM_SIZE);
     FILL_lexInput(argb,buf,bcc,buf,NULL,II_NORMAL);
     return;
@@ -1468,7 +1468,7 @@ static void crMacroBody(S_lexInput *macBody,
 #define GetNotLineLexA(lex,lastlexaddr) {\
     GetLexA(lex,lastlexaddr);\
     while (lex == LINE_TOK || lex == '\n') {\
-        PassLex(cInput.cc,lex,line,val,h,pos, len, macStacki == 0);\
+        PassLex(cInput.cc,lex,line,val,h,pos, len, macroStackIndex == 0);\
         GetLexA(lex,lastlexaddr);\
     }\
 }
@@ -1511,7 +1511,7 @@ static void getActMacroArgument(char *cc,
                     bufsize+MAX_LEXEM_SIZE-MACRO_ARG_UNIT_SIZE);
         }
         GetNotLineLexA(lex,cc);
-        PassLex(cInput.cc,lex,line,val,h, (**parpos2), len, macStacki == 0);
+        PassLex(cInput.cc,lex,line,val,h, (**parpos2), len, macroStackIndex == 0);
         if ((lex == ',' || lex == ')') && deep == 0) {
             poffset ++;
             handleMacroUsageParameterPositions(actArgi+poffset, mpos, *parpos1, *parpos2, 0);
@@ -1546,7 +1546,7 @@ static struct lexInput *getActualMacroArguments(S_macroBody *mb, S_position *mpo
     parpos2 = &ppb2;
     PP_ALLOCC(actArgs,mb->argn,struct lexInput);
     GetNotLineLexA(lex,cc);
-    PassLex(cInput.cc,lex,line,val,h, pos, len, macStacki == 0);
+    PassLex(cInput.cc,lex,line,val,h, pos, len, macroStackIndex == 0);
     if (lex == ')') {
         *parpos2 = pos;
         handleMacroUsageParameterPositions(0, mpos, parpos1, parpos2, 1);
@@ -1557,7 +1557,7 @@ static struct lexInput *getActualMacroArguments(S_macroBody *mb, S_position *mpo
             actArgi ++ ;
             if (lex != ',' || actArgi >= mb->argn) break;
             GetNotLineLexA(lex,cc);
-            PassLex(cInput.cc,lex,line,val,h, pos, len, macStacki == 0);
+            PassLex(cInput.cc,lex,line,val,h, pos, len, macroStackIndex == 0);
         }
     }
     if (actArgi!=0) {
@@ -1586,7 +1586,7 @@ static void addMacroBaseUsageRef( S_symbol *mdef) {
     S_position          basePos;
     FILL_position(&basePos, s_input_file_number, 0, 0);
     FILL_symbolRefItemBits(&ppp.b,TypeMacro,StorageDefault,ScopeGlobal,
-                           mdef->b.accessFlags, CatGlobal,0);
+                           mdef->bits.accessFlags, CatGlobal,0);
     FILL_symbolRefItem(&ppp,mdef->linkName,
                        cxFileHashNumber(mdef->linkName), // useless, put 0
                        s_noneFileIndex,s_noneFileIndex,
@@ -1616,7 +1616,7 @@ static int macroCallExpand(S_symbol *mdef, S_position *mpos) {
     cc2 = cInput.cc;
     mb = mdef->u.mbody;
     if (mb == NULL) return(0);	/* !!!!!         tricky,  undefined macro */
-    if (macStacki == 0) { /* call from source, init mem */
+    if (macroStackIndex == 0) { /* call from source, init mem */
         MB_INIT();
     }
 //&fprintf(dumpOut,"try to expand macro '%s'\n", mb->name);fflush(dumpOut);
@@ -1628,7 +1628,7 @@ static int macroCallExpand(S_symbol *mdef, S_position *mpos) {
             cInput.cc = cc2;		/* unget lexem */
             return(0);
         }
-        PassLex(cInput.cc,lex,line,val,h, lparpos, len, macStacki == 0);
+        PassLex(cInput.cc,lex,line,val,h, lparpos, len, macroStackIndex == 0);
         actArgs = getActualMacroArguments(mb, mpos, &lparpos);
     } else {
         actArgs = NULL;
@@ -1735,7 +1735,7 @@ static char charText[2]={0,0};
 static char constant[50];
 
 #define CHECK_ID_FOR_KEYWORD(sd,idposa) {\
-    if (sd->b.symType == TypeKeyword) {\
+    if (sd->bits.symType == TypeKeyword) {\
         SET_IDENTIFIER_YYLVAL(sd->name, sd, *idposa);\
         if (s_opt.taskRegime==RegimeHtmlGenerate && s_opt.htmlNoColors==0) {\
             char ttt[TMP_STRING_SIZE];\
@@ -1755,12 +1755,12 @@ static int processCIdent(unsigned hashval, char *id, S_position *idposa) {
         if (strcmp(sd->name, id) == 0) {
             if (memb == NULL) memb = sd;
             CHECK_ID_FOR_KEYWORD(sd, idposa);
-            if (sd->b.symType == TypeDefinedOp && s_ifEvaluation) {
+            if (sd->bits.symType == TypeDefinedOp && s_ifEvaluation) {
                 return(CPP_DEFINED_OP);
             }
-            if (sd->b.symType == TypeDefault) {
+            if (sd->bits.symType == TypeDefault) {
                 SET_IDENTIFIER_YYLVAL(sd->name, sd, *idposa);
-                if (sd->b.storage == StorageTypedef) {
+                if (sd->bits.storage == StorageTypedef) {
                     return(TYPE_NAME);
                 } else {
                     return(IDENTIFIER);
@@ -1783,7 +1783,7 @@ static int processJavaIdent(unsigned hashval, char *id, S_position *idposa) {
         if (strcmp(sd->name, id) == 0) {
             if (memb == NULL) memb = sd;
             CHECK_ID_FOR_KEYWORD(sd, idposa);
-            if (sd->b.symType == TypeDefault) {
+            if (sd->bits.symType == TypeDefault) {
                 SET_IDENTIFIER_YYLVAL(sd->name, sd, *idposa);
                 return(IDENTIFIER);
             }
@@ -1804,7 +1804,7 @@ static int processCccIdent(unsigned hashval, char *id, S_position *idposa) {
         if (strcmp(sd->name, id) == 0) {
             if (memb == NULL) memb = sd;
             CHECK_ID_FOR_KEYWORD(sd, idposa);
-            if (sd->b.symType == TypeDefinedOp && s_ifEvaluation) {
+            if (sd->bits.symType == TypeDefinedOp && s_ifEvaluation) {
                 return(CPP_DEFINED_OP);
             }
             break;	// I hope it will work.
@@ -1893,104 +1893,106 @@ static void actionOnBlockMarker(void) {
 }
 
 int yylex(void) {
-    int         lex,line,val,len;
-    S_position  pos,idpos;
-    char		*cc;
+    int         lexem, line, val, len;
+    S_position  pos, idpos;
+    char		*ch;
     unsigned h;
+
     len = 0;
  nextYylex:
-    GetLexA(lex, cc);
+    GetLexA(lexem, ch);
  contYylex:
-    if (lex < 256) {
-        if (lex == '\n') {
+    if (lexem < 256) {
+        if (lexem == '\n') {
             if (s_ifEvaluation) {
-                cInput.cc = cc;
+                cInput.cc = ch;
             } else {
-                PassLex(cInput.cc,lex,line,val,h,pos, len,macStacki == 0);
+                PassLex(cInput.cc,lexem,line,val,h,pos, len,macroStackIndex == 0);
                 for(;;) {
-                    GetLex(lex);
-                    if (lex<=CPP_TOKENS_START || lex>=CPP_TOKENS_END) goto contYylex;
-                    if (processCppConstruct(lex) == 0) goto endOfFile;
+                    GetLex(lexem);
+                    if (lexem<=CPP_TOKENS_START || lexem>=CPP_TOKENS_END) goto contYylex;
+                    if (processCppConstruct(lexem) == 0) goto endOfFile;
                 }
             }
         } else {
-            PassLex(cInput.cc,lex,line,val,h,pos, len,macStacki == 0);
-            SET_POSITION_YYLVAL(pos, s_tokenLength[lex]);
+            PassLex(cInput.cc, lexem, line, val, h, pos, len, macroStackIndex == 0);
+            SET_POSITION_YYLVAL(pos, s_tokenLength[lexem]);
         }
         yytext = charText;
-        charText[0] = lex;
+        charText[0] = lexem;
         goto finish;
     }
-    if (lex==IDENTIFIER || lex==IDENT_NO_CPP_EXPAND) {
+    if (lexem==IDENTIFIER || lexem==IDENT_NO_CPP_EXPAND) {
         register char *id;
         register unsigned h;
         int ii;
-        S_symbol dd,*memb;
+        S_symbol symbol, *memberP;
+
         h = 0;//compiler
         id = yytext = cInput.cc;
-        PassLex(cInput.cc,lex,line,val,h,idpos, len,macStacki == 0);
+        PassLex(cInput.cc,lexem,line,val,h,idpos, len,macroStackIndex == 0);
         assert(s_opt.taskRegime);
         if (s_opt.taskRegime == RegimeEditServer) {
 //			???????????? isn't this useless
-            testCxrefCompletionId(&lex,yytext,&idpos);
+            testCxrefCompletionId(&lexem,yytext,&idpos);
         }
-/*&fprintf(dumpOut,"id %s position %d %d %d\n",yytext,idpos.file,idpos.line,idpos.coll);&*/
-        FILL_symbolBits(&dd.b,0,0,0,0,0,TypeMacro,StorageNone,0);
-        FILL_symbol(&dd,yytext,yytext,s_noPos,dd.b,mbody,NULL,NULL);
+        log_trace("id %s position %d %d %d",yytext,idpos.file,idpos.line,idpos.coll);
+        FILL_symbolBits(&symbol.bits,0,0,0,0,0,TypeMacro,StorageNone,0);
+        FILL_symbol(&symbol,yytext,yytext,s_noPos,symbol.bits,mbody,NULL,NULL);
         if ((!LANGUAGE(LANG_JAVA))
-            && lex!=IDENT_NO_CPP_EXPAND
-            && symTabIsMember(s_symTab,&dd,&ii,&memb)) {
+            && lexem!=IDENT_NO_CPP_EXPAND
+            && symTabIsMember(s_symTab,&symbol,&ii,&memberP)) {
             // following is because the macro check can read new lexBuf,
             // so id would be destroyed
-            //&assert(strcmp(id,memb->name)==0);
-            id = memb->name;
-            if (macroCallExpand(memb,&idpos)) goto nextYylex;
+            //&assert(strcmp(id,memberP->name)==0);
+            id = memberP->name;
+            if (macroCallExpand(memberP,&idpos)) goto nextYylex;
         }
         h = h % s_symTab->size;
-        if(LANGUAGE(LANG_C)||LANGUAGE(LAN_YACC)) lex=processCIdent(h,id,&idpos);
-        else if (LANGUAGE(LANG_JAVA)) lex = processJavaIdent(h, id, &idpos);
-        else if (LANGUAGE(LANG_CCC)) lex = processCccIdent(h, id, &idpos);
+        if(LANGUAGE(LANG_C)||LANGUAGE(LAN_YACC)) lexem=processCIdent(h,id,&idpos);
+        else if (LANGUAGE(LANG_JAVA)) lexem = processJavaIdent(h, id, &idpos);
+        else if (LANGUAGE(LANG_CCC)) lexem = processCccIdent(h, id, &idpos);
         else assert(0);
         goto finish;
     }
-    if (lex == OL_MARKER_TOKEN) {
-        PassLex(cInput.cc,lex,line,val,h,pos, len,macStacki == 0);
+    if (lexem == OL_MARKER_TOKEN) {
+        PassLex(cInput.cc,lexem,line,val,h,pos, len,macroStackIndex == 0);
         actionOnBlockMarker();
         goto nextYylex;
     }
-    if (lex < MULTI_TOKENS_START) {
-        yytext = s_tokenName[lex];
-        PassLex(cInput.cc,lex,line,val,h,pos, len,macStacki == 0);
-        SET_POSITION_YYLVAL(pos, s_tokenLength[lex]);
+    if (lexem < MULTI_TOKENS_START) {
+        yytext = s_tokenName[lexem];
+        PassLex(cInput.cc,lexem,line,val,h,pos, len,macroStackIndex == 0);
+        SET_POSITION_YYLVAL(pos, s_tokenLength[lexem]);
         goto finish;
     }
-    if (lex == LINE_TOK) {
-        PassLex(cInput.cc,lex,line,val,h,pos, len,macStacki == 0);
+    if (lexem == LINE_TOK) {
+        PassLex(cInput.cc,lexem,line,val,h,pos, len,macroStackIndex == 0);
         goto nextYylex;
     }
-    if (lex == CONSTANT || lex == LONG_CONSTANT) {
+    if (lexem == CONSTANT || lexem == LONG_CONSTANT) {
         val=0;//compiler
-        PassLex(cInput.cc,lex,line,val,h,pos, len,macStacki == 0);
+        PassLex(cInput.cc,lexem,line,val,h,pos, len,macroStackIndex == 0);
         sprintf(constant,"%d",val);
         SET_INTEGER_YYLVAL(val, pos, len);
         yytext = constant;
         goto finish;
     }
-    if (lex == FLOAT_CONSTANT || lex == DOUBLE_CONSTANT) {
+    if (lexem == FLOAT_CONSTANT || lexem == DOUBLE_CONSTANT) {
         yytext = "'fltp constant'";
-        PassLex(cInput.cc,lex,line,val,h,pos, len,macStacki == 0);
+        PassLex(cInput.cc,lexem,line,val,h,pos, len,macroStackIndex == 0);
         SET_POSITION_YYLVAL(pos, len);
         goto finish;
     }
-    if (lex == STRING_LITERAL) {
+    if (lexem == STRING_LITERAL) {
         yytext = cInput.cc;
-        PassLex(cInput.cc,lex,line,val,h,pos, len,macStacki == 0);
+        PassLex(cInput.cc,lexem,line,val,h,pos, len,macroStackIndex == 0);
         SET_POSITION_YYLVAL(pos, strlen(yytext));
         goto finish;
     }
-    if (lex == CHAR_LITERAL) {
+    if (lexem == CHAR_LITERAL) {
         val=0;//compiler
-        PassLex(cInput.cc,lex,line,val,h,pos, len,macStacki == 0);
+        PassLex(cInput.cc,lexem,line,val,h,pos, len,macroStackIndex == 0);
         sprintf(constant,"'%c'",val);
         SET_INTEGER_YYLVAL(val, pos, len);
         yytext = constant;
@@ -1999,9 +2001,9 @@ int yylex(void) {
     assert(s_opt.taskRegime);
     if (s_opt.taskRegime == RegimeEditServer) {
         yytext = cInput.cc;
-        PassLex(cInput.cc,lex,line,val,h,pos, len,macStacki == 0);
-        if (lex == IDENT_TO_COMPLETE) {
-            testCxrefCompletionId(&lex,yytext,&pos);
+        PassLex(cInput.cc,lexem,line,val,h,pos, len,macroStackIndex == 0);
+        if (lexem == IDENT_TO_COMPLETE) {
+            testCxrefCompletionId(&lexem,yytext,&pos);
             while (inStacki != 0) popInclude();
             /* while (getLexBuf(&cFile.lb)) cFile.lb.cc = cFile.lb.fin;*/
             goto endOfFile;
@@ -2012,8 +2014,8 @@ int yylex(void) {
 
  finish:
     log_trace("!%s(%d) ",yytext, cxMemory->i);
-    s_lastReturnedLexem = lex;
-    return(lex);
+    s_lastReturnedLexem = lexem;
+    return(lexem);
 
  endOfMacArg:
     assert(0);

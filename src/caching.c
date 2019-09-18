@@ -138,7 +138,7 @@ static void symTabDeleteOutOfMemory(int i) {
           (*pp)->linkName,(*pp)->next);
           fflush(dumpOut);
         */
-        switch ((*pp)->b.symType) {
+        switch ((*pp)->bits.symType) {
         case TypeMacro:
             if (SM_FREED_POINTER(ppmMemory,*pp)) {
                 *pp = (*pp)->next;  continue;
@@ -332,7 +332,7 @@ void cacheInput(void) {
     int size;
     /*fprintf(dumpOut,"enter cacheInput\n");*/
     if (s_cache.activeCache == 0) return;
-    if (inStacki != 0 || macStacki != 0) return;
+    if (inStacki != 0 || macroStackIndex != 0) return;
     size = cInput.cc - s_cache.lexcc;
     if ( s_cache.lbcc - s_cache.lb + size >= LEX_BUF_CACHE_SIZE) {
         s_cache.activeCache = 0;
@@ -360,7 +360,7 @@ void cacheInclude(int fileNum) {
 void poseCachePoint(int inputCaching) {
     struct cachePoint *pp;
     if (s_cache.activeCache == 0) return;
-    if (inStacki != 0 || macStacki != 0) return;
+    if (inStacki != 0 || macroStackIndex != 0) return;
     if (s_cache.cpi >= MAX_CACHE_POINTS) {
         s_cache.activeCache = 0;
         return;

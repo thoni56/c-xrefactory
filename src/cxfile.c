@@ -504,15 +504,15 @@ void addSubClassesItemsToFileTab(S_symbol *ss, int origin) {
     int cf1;
     S_symbolList *sups;
 
-    if (ss->b.symType != TypeStruct) return;
+    if (ss->bits.symType != TypeStruct) return;
     /*fprintf(dumpOut,"testing %s\n",ss->name);*/
-    assert(ss->b.javaFileLoaded);
-    if (ss->b.javaFileLoaded == 0) return;
+    assert(ss->bits.javaFileLoaded);
+    if (ss->bits.javaFileLoaded == 0) return;
     cf1 = ss->u.s->classFile;
     assert(cf1 >= 0 &&  cf1 < MAX_FILES);
     /*fprintf(dumpOut,"loaded: #sups == %d\n",ns);*/
     for(sups=ss->u.s->super; sups!=NULL; sups=sups->next) {
-        assert(sups->d && sups->d->b.symType == TypeStruct);
+        assert(sups->d && sups->d->bits.symType == TypeStruct);
         addSubClassItemToFileTab( sups->d->u.s->classFile, cf1, origin);
     }
 }
