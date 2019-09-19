@@ -726,7 +726,7 @@ void genReferenceFile(int updateFlag, char *fname) {
             (bbb)->next = ccc;                                          \
             if ((bbb)->isAtEOF || getCharBuf(bbb) == 0) {               \
                 cch = -1;                                               \
-                (bbb)->isAtEOF = 1;                                     \
+                (bbb)->isAtEOF = true;                                  \
             } else {                                                    \
                 ccc = (bbb)->next; ffin = (bbb)->end;                   \
                 cch = * ((unsigned char*)ccc); ccc ++;                  \
@@ -734,7 +734,7 @@ void genReferenceFile(int updateFlag, char *fname) {
         } else {                                                        \
             cch = * ((unsigned char*)ccc); ccc++;                       \
         }                                                               \
-        log_trace("getting char *%x < %x == '0x%x'",ccc,ffin,cch);    \
+        log_trace("getting char *%x < %x == '0x%x'",ccc,ffin,cch);      \
     }
 
 static void trace_buffer(CharacterBuffer *buffer) {

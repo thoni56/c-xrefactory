@@ -42,7 +42,7 @@ void gotOnLineCxRefs( S_position *ps ) {
             clo = ccc-clb;                              \
             if (bbb->isAtEOF || getCharBuf(bbb) == 0) { \
                 cch = -1;                               \
-                bbb->isAtEOF = 1;                       \
+                bbb->isAtEOF = true;                    \
             } else {                                    \
                 ccc = bbb->next; ffin = bbb->end;       \
                 clb = ccc;                              \

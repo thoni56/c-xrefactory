@@ -40,13 +40,13 @@ union constantPoolUnion {
 
 #define GetChar(cch, ccc, ffin, bbb) {                                  \
         if (ccc >= ffin) {                                              \
-            (bbb)->next = ccc;                                            \
+            (bbb)->next = ccc;                                          \
             if ((bbb)->isAtEOF || getCharBuf(bbb) == 0) {               \
                 cch = -1;                                               \
-                (bbb)->isAtEOF = 1;                                     \
+                (bbb)->isAtEOF = true;                                  \
                 goto endOfFile;                                         \
             } else {                                                    \
-                ccc = (bbb)->next; ffin = (bbb)->end;                     \
+                ccc = (bbb)->next; ffin = (bbb)->end;                   \
                 cch = * ((unsigned char*)ccc); ccc ++;                  \
             }                                                           \
         } else {                                                        \

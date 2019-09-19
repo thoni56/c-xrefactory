@@ -1629,15 +1629,15 @@ static void olcxOrderRefsAndGotoDefinition(int afterMenuFlag) {
 }
 
 #define GetBufChar(cch, bbb) {                                          \
-        if ((bbb)->next >= (bbb)->end) {                                  \
+        if ((bbb)->next >= (bbb)->end) {                                \
             if ((bbb)->isAtEOF || getCharBuf(bbb) == 0) {               \
                 cch = EOF;                                              \
-                (bbb)->isAtEOF = 1;                                     \
+                (bbb)->isAtEOF = true;                                  \
             } else {                                                    \
-                cch = * ((unsigned char*)(bbb)->next); (bbb)->next ++;      \
+                cch = * ((unsigned char*)(bbb)->next); (bbb)->next ++;  \
             }                                                           \
         } else {                                                        \
-            cch = * ((unsigned char*)(bbb)->next); (bbb)->next++;           \
+            cch = * ((unsigned char*)(bbb)->next); (bbb)->next++;       \
         }                                                               \
         /*fprintf(dumpOut,"getting char *%x < %x == '0x%x'\n",ccc,ffin,cch);fflush(dumpOut);*/ \
     }
@@ -1801,7 +1801,7 @@ static void passRefsThroughSourceFile(S_reference **rrr, S_position *callerp,
     }
     ch = ' ';
     if (ebuf==NULL) {
-        cxfBuf.isAtEOF = 1;
+        cxfBuf.isAtEOF = true;
     } else {
         FILL_CharacterBuffer(&cxfBuf, ebuf->a.text, ebuf->a.text+ebuf->a.bufferSize, NULL, ebuf->a.bufferSize, s_noneFileIndex, 0, ebuf->a.text, 0, 0,INPUT_DIRECT, s_defaultZStream);
         GetFileChar(ch, &cp, &cxfBuf);
