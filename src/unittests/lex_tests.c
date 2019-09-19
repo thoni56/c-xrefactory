@@ -30,5 +30,8 @@ S_jslStat *s_jsl;
 #include "charbuf.mock"
 
 Ensure(Lex, can_get_char) {
-    int cval;
+    struct lexBuf lexBuf;
+    cgreen_mocks_are(learning_mocks);
+
+    //getLexBuf(&lexBuf);
 }
