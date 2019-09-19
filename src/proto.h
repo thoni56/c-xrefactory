@@ -1246,7 +1246,7 @@ typedef struct lexBuf {
     struct position pRing[LEX_POSITIONS_RING_SIZE];		// file/line/coll position
     unsigned        fpRing[LEX_POSITIONS_RING_SIZE];	// file offset position
     int             posi;				/* pRing[posi%LEX_POSITIONS_RING_SIZE] */
-    struct CharacterBuffer cb;
+    struct CharacterBuffer buffer;
 } S_lexBuf;
 
 typedef struct cppIfStack {

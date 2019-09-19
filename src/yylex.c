@@ -178,7 +178,7 @@ static void setOpenFileInfo(char *ss) {
     int ii;
     char *ff;
     getOrCreateFileInfo(ss, &ii, &ff);
-    cFile.lb.cb.fileNumber = ii;
+    cFile.lb.buffer.fileNumber = ii;
     cFile.fileName = ff;
 }
 
@@ -208,8 +208,8 @@ void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) {
     } else {
         // read file
         assert(plen < CHAR_BUFF_SIZE);
-        strcpy(cFile.lb.cb.chars,prepend);
-        bbase = cFile.lb.cb.chars;
+        strcpy(cFile.lb.buffer.chars,prepend);
+        bbase = cFile.lb.buffer.chars;
         bsize = plen;
         filepos = 0;
     }
@@ -446,15 +446,15 @@ void pushNewInclude(FILE *f, S_editorBuffer *buffer, char *name, char *prepend) 
     }
     inStacki ++;
     initInput(f, buffer, prepend, name);
-    cacheInclude(cFile.lb.cb.fileNumber);
+    cacheInclude(cFile.lb.buffer.fileNumber);
 }
 
 void popInclude(void) {
-    assert(s_fileTab.tab[cFile.lb.cb.fileNumber]);
-    if (s_fileTab.tab[cFile.lb.cb.fileNumber]->b.cxLoading) {
-        s_fileTab.tab[cFile.lb.cb.fileNumber]->b.cxLoaded = 1;
+    assert(s_fileTab.tab[cFile.lb.buffer.fileNumber]);
+    if (s_fileTab.tab[cFile.lb.buffer.fileNumber]->b.cxLoading) {
+        s_fileTab.tab[cFile.lb.buffer.fileNumber]->b.cxLoaded = 1;
     }
-    charBuffClose(&cFile.lb.cb);
+    charBuffClose(&cFile.lb.buffer);
     if (inStacki != 0) {
         cFile = inStack[--inStacki];	/* buffers are copied !!!!!!, burk */
         if (inStacki == 0 && s_cache.cc!=NULL) {
@@ -528,7 +528,7 @@ static void processInclude2(S_position *ipos, char pchar, char *iname) {
         assert(s_opt.taskRegime);
         if (s_opt.taskRegime!=RegimeEditServer) warning(ERR_CANT_OPEN, iname);
     } else if (CX_REGIME()) {
-        addIncludeReferences(cFile.lb.cb.fileNumber, ipos);
+        addIncludeReferences(cFile.lb.buffer.fileNumber, ipos);
     }
 }
 

@@ -288,7 +288,7 @@ int getLexBuf(struct lexBuf *lb) {
     lmax = lb->chars + LEX_BUFF_SIZE - MAX_LEXEM_SIZE;
     for(dd=lb->chars,cc=lb->next; cc<lb->end; cc++,dd++) *dd = *cc;
     lb->next = lb->chars;
-    cb = &lb->cb;
+    cb = &lb->buffer;
     cline = cb->lineNum; clb = cb->lineBegin; clo = cb->columnOffset;
     ccc = cb->next; cfin = cb->end; cfile = cb->fileNumber;
     GetChar(ch,ccc,cfin,cb,clb,clo);
