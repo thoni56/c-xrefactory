@@ -146,9 +146,6 @@ enum miscellaneous {						/* misc. constants */
     KEEP_SLASHES,
     LOAD_SUPER,
     DO_NOT_LOAD_SUPER,
-    INPUT_DIRECT,
-    INPUT_VIA_UNZIP,
-    INPUT_VIA_EDITOR,
     FQT_COMPLETE_ALSO_ON_PACKAGE,
     ADD_MAYBE_THIS_REFERENCE,
     TSS_FULL_SEARCH,
@@ -1220,6 +1217,12 @@ typedef struct macroBody {
     char *body;
 } S_macroBody;
 
+typedef enum {
+    INPUT_DIRECT,
+    INPUT_VIA_UNZIP,
+    INPUT_VIA_EDITOR
+} InputMethod;
+
 typedef struct CharacterBuffer {
     char        *next;				/* first unread */
     char        *end;				/* pointing after valid characters */
@@ -1230,8 +1233,8 @@ typedef struct CharacterBuffer {
     int         lineNum;
     char        *lineBegin;
     int         columnOffset;		/* column == cc-lineBegin + columnOffset */
-    char		isAtEOF;
-    char		inputMethod;		/* unzip/direct */
+    bool		isAtEOF;
+    InputMethod	inputMethod;		/* unzip/direct */
     char        z[CHAR_BUFF_SIZE];  /* zip input buffer */
     z_stream	zipStream;
 } CharacterBuffer;
