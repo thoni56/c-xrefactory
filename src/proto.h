@@ -1230,7 +1230,7 @@ typedef struct CharacterBuffer {
     char        *lineBegin;
     int         columnOffset;		/* column == cc-lineBegin + columnOffset */
     char		isAtEOF;
-    char		inputMethod;		/* unzipp/direct */
+    char		inputMethod;		/* unzip/direct */
     char        z[CHAR_BUFF_SIZE];  /* zip input buffer */
     z_stream	zipStream;
 } CharacterBuffer;
@@ -1242,7 +1242,7 @@ typedef struct lexBuf {
     struct position pRing[LEX_POSITIONS_RING_SIZE];		// file/line/coll position
     unsigned        fpRing[LEX_POSITIONS_RING_SIZE];	// file offset position
     int             posi;				/* pRing[posi%LEX_POSITIONS_RING_SIZE] */
-    struct CharacterBuffer  cb;
+    struct CharacterBuffer cb;
 } S_lexBuf;
 
 typedef struct cppIfStack {
