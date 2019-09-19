@@ -1222,9 +1222,9 @@ typedef struct macroBody {
 typedef struct CharacterBuffer {
     char        *next;				/* first unread */
     char        *end;				/* pointing after valid characters */
-    char        buffer[CHAR_BUFF_SIZE];
+    char        chars[CHAR_BUFF_SIZE];
     FILE        *file;
-    unsigned	filePos;			/* how many chars was readed from file */
+    unsigned	filePos;			/* how many chars was read from file */
     int			fileNumber;
     int         lineNum;
     char        *lineBegin;
@@ -1237,7 +1237,7 @@ typedef struct CharacterBuffer {
 
 typedef struct lexBuf {
     char            *next;				/* next to read */
-    char            *fin;				/* first free (invalid)  */
+    char            *end;				/* pointing *after* last valid char */
     char            chars[LEX_BUFF_SIZE];
     struct position pRing[LEX_POSITIONS_RING_SIZE];		// file/line/coll position
     unsigned        fpRing[LEX_POSITIONS_RING_SIZE];	// file offset position

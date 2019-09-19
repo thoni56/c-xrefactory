@@ -1788,7 +1788,7 @@ static void passRefsThroughSourceFile(S_reference **rrr, S_position *callerp,
     } else {
         ebuf = editorFindFile(cofileName);
         //&cofile = fopen(cofileName, "r");
-        //&FILL_CharacterBuffer(&cxfBuf, cxfBuf.buffer, cxfBuf.buffer, cofile, 0, -1, 0, 0, 0, 0,INPUT_DIRECT,s_defaultZStream);
+        //&FILL_CharacterBuffer(&cxfBuf, cxfBuf.chars, cxfBuf.chars, cofile, 0, -1, 0, 0, 0, 0,INPUT_DIRECT,s_defaultZStream);
         if (ebuf==NULL) {
             if (s_opt.xref2) {
                 sprintf(tmpBuff, "file %s not accessible", cofileName);

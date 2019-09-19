@@ -48,7 +48,7 @@ int s_yyPositionBufi = 0;
     cFile.lb.next = cInput.cc;\
 }
 #define SetCInputConsistency() {\
-    FILL_lexInput(&cInput,cFile.lb.next,cFile.lb.fin,cFile.lb.chars,NULL,II_NORMAL);\
+    FILL_lexInput(&cInput,cFile.lb.next,cFile.lb.end,cFile.lb.chars,NULL,II_NORMAL);\
 }
 
 #define IS_IDENTIFIER_LEXEM(lex) (lex==IDENTIFIER || lex==IDENT_NO_CPP_EXPAND  || lex==IDENT_TO_COMPLETE)
@@ -208,8 +208,8 @@ void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) {
     } else {
         // read file
         assert(plen < CHAR_BUFF_SIZE);
-        strcpy(cFile.lb.cb.buffer,prepend);
-        bbase = cFile.lb.cb.buffer;
+        strcpy(cFile.lb.cb.chars,prepend);
+        bbase = cFile.lb.cb.chars;
         bsize = plen;
         filepos = 0;
     }
@@ -310,7 +310,7 @@ void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) {
             } else if (margFlag == II_NORMAL) {                     \
                 SetCFileConsistency();                              \
                 getLexBuf(&cFile.lb);                               \
-                if (cFile.lb.next >= cFile.lb.fin) goto endOfFile;    \
+                if (cFile.lb.next >= cFile.lb.end) goto endOfFile;    \
                 SetCInputConsistency();                             \
             } else {                                                \
                 /*			s_cache.recoveringFromCache = 0;*/      \
@@ -568,7 +568,7 @@ assert(0);
 
 /* ********************************* #DEFINE ********************** */
 
-#define GetNBLex(lex) {\
+#define GetNonBlankMaybeLexem(lex) {\
     GetLex(lex);\
     while (lex == LINE_TOK) {\
         PassLex(cInput.cc,lex,l,v,h,pos, len,1);\
@@ -669,12 +669,12 @@ static void processDefine(int argFlag) {
     maTabNAInit(&s_maTab,s_maTab.size);
     argi = -1;
     if (argFlag) {
-        GetNBLex(lex);
+        GetNonBlankMaybeLexem(lex);
         PassLex(cInput.cc,lex,l,v,h,*parpos2, len,1);
         *parpos1 = *parpos2;
         if (lex != '(') goto errorlab;
         argi ++;
-        GetNBLex(lex);
+        GetNonBlankMaybeLexem(lex);
         if (lex != ')') {
             for(;;) {
                 cc = aname = cInput.cc;
@@ -697,7 +697,7 @@ static void processDefine(int argFlag) {
                 FILL_macroArgTabElem(maca, mm, argLinkName, argi);
                 maTabAdd(&s_maTab, maca, &ii);
                 argi ++;
-                GetNBLex(lex);
+                GetNonBlankMaybeLexem(lex);
                 tmppp=parpos1; parpos1=parpos2; parpos2=tmppp;
                 PassLex(cInput.cc,lex,l,v,h,*parpos2, len,1);
                 if (! ellipsis) {
@@ -707,12 +707,12 @@ static void processDefine(int argFlag) {
                 }
                 if (lex == ELIPSIS) {
                     // GNU ELLIPSIS ?????
-                    GetNBLex(lex);
+                    GetNonBlankMaybeLexem(lex);
                     PassLex(cInput.cc,lex,l,v,h,*parpos2, len,1);
                 }
                 if (lex == ')') break;
                 if (lex != ',') break;
-                GetNBLex(lex);
+                GetNonBlankMaybeLexem(lex);
             }
             handleMacroDefinitionParameterPositions(argi, &macpos, parpos1, &s_noPos, parpos2, 1);
         } else {
@@ -726,7 +726,7 @@ static void processDefine(int argFlag) {
     PP_ALLOC(macbody, S_macroBody);
     PP_ALLOCC(mbody,msize+MAX_LEXEM_SIZE,char);
     bodyReadingFlag = 1;
-    GetNBLex(lex);
+    GetNonBlankMaybeLexem(lex);
     cc = cInput.cc;
     PassLex(cInput.cc,lex,l,v,h,pos, len,1);
     while (lex != '\n') {
@@ -753,7 +753,7 @@ static void processDefine(int argFlag) {
                 for(; cc<cInput.cc; ddd++,cc++)*ddd= *cc;
                 sizei = ddd - mbody;
             }
-            GetNBLex(lex);
+            GetNonBlankMaybeLexem(lex);
             cc = cInput.cc;
             PassLex(cInput.cc,lex,l,v,h,pos, len,1);
         }
@@ -985,12 +985,12 @@ int cexpyylex(void) {
         // this is useless, as it would be set to 0 anyway
         lex = cexpTranslateToken(CONSTANT, 0);
     } else if (lex == CPP_DEFINED_OP) {
-        GetNBLex(lex);
+        GetNonBlankMaybeLexem(lex);
         cc = cInput.cc;
         PassLex(cInput.cc,lex,l,v,h,pos, len,1);
         if (lex == '(') {
             par = 1;
-            GetNBLex(lex);
+            GetNonBlankMaybeLexem(lex);
             cc = cInput.cc;
             PassLex(cInput.cc,lex,l,v,h,pos, len,1);
         } else {
@@ -1009,7 +1009,7 @@ int cexpyylex(void) {
         /* following call sets uniyylval */
         res = cexpTranslateToken(CONSTANT, mm);
         if (par) {
-            GetNBLex(lex);
+            GetNonBlankMaybeLexem(lex);
             PassLex(cInput.cc,lex,l,v,h,pos, len,1);
             if (lex != ')' && s_opt.taskRegime!=RegimeEditServer) {
                 warning(ERR_ST,"missing ')' after defined( ");
@@ -1667,7 +1667,7 @@ int lexBufDump(struct lexBuf *lb) {
     c=0;
     fprintf(dumpOut,"\nlexbufdump [start] \n"); fflush(dumpOut);
     cc = lb->next;
-    while (cc < lb->fin) {
+    while (cc < lb->end) {
         GetLexToken(lex,cc);
         if (lex==IDENTIFIER || lex==IDENT_NO_CPP_EXPAND) {
             fprintf(dumpOut,"%s ",cc);

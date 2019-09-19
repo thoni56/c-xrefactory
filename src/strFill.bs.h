@@ -3158,7 +3158,7 @@
     (STRUCTP)->ifDeep = ARG2;\
     (STRUCTP)->ifstack = ARG3;\
     (STRUCTP)->lb.next = ARG4;\
-    (STRUCTP)->lb.fin = ARG5;\
+    (STRUCTP)->lb.end = ARG5;\
     (STRUCTP)->lb.posi = ARG6;\
     (STRUCTP)->lb.cb.next = ARG7;\
     (STRUCTP)->lb.cb.end = ARG8;\

@@ -286,7 +286,7 @@ int getLexBuf(struct lexBuf *lb) {
         s_cache.lexcc = lb->chars;
     }
     lmax = lb->chars + LEX_BUFF_SIZE - MAX_LEXEM_SIZE;
-    for(dd=lb->chars,cc=lb->next; cc<lb->fin; cc++,dd++) *dd = *cc;
+    for(dd=lb->chars,cc=lb->next; cc<lb->end; cc++,dd++) *dd = *cc;
     lb->next = lb->chars;
     cb = &lb->cb;
     cline = cb->lineNum; clb = cb->lineBegin; clo = cb->columnOffset;
@@ -797,9 +797,9 @@ int getLexBuf(struct lexBuf *lb) {
 
     cb->next = ccc; cb->end = cfin;
     cb->lineNum = cline; cb->lineBegin = clb; cb->columnOffset = clo;
-    lb->fin = dd;
+    lb->end = dd;
 
-    if (lb->fin == lb->chars)
+    if (lb->end == lb->chars)
         return 0;
     else
         return 1;

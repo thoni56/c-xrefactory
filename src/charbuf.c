@@ -76,8 +76,8 @@ bool getCharBuf(struct CharacterBuffer *buffer) {
     int max_size;
     fin = buffer->end;
     cc = buffer->next;
-    for(dd=buffer->buffer+MAX_UNGET_CHARS; cc<fin; cc++,dd++) *dd = *cc;
-    max_size = CHAR_BUFF_SIZE - (dd - buffer->buffer);
+    for(dd=buffer->chars+MAX_UNGET_CHARS; cc<fin; cc++,dd++) *dd = *cc;
+    max_size = CHAR_BUFF_SIZE - (dd - buffer->chars);
     if (buffer->inputMethod == INPUT_DIRECT) {
         n = charBuffReadFromFile(buffer, dd, max_size);
     } else {
@@ -85,7 +85,7 @@ bool getCharBuf(struct CharacterBuffer *buffer) {
     }
     buffer->filePos += n;
     buffer->end = dd+n;
-    buffer->next = buffer->buffer+MAX_UNGET_CHARS;
+    buffer->next = buffer->chars+MAX_UNGET_CHARS;
     return(buffer->next != buffer->end);
 }
 
@@ -101,12 +101,12 @@ void switchToZippedCharBuff(struct CharacterBuffer *buffer) {
     for(dd=buffer->z; cc<fin; cc++,dd++) *dd = *cc;
     FILL_z_stream_s(&buffer->zipStream,
                     (Bytef*)buffer->z, dd-buffer->z, 0,
-                    (Bytef*)buffer->buffer, CHAR_BUFF_SIZE, 0,
+                    (Bytef*)buffer->chars, CHAR_BUFF_SIZE, 0,
                     NULL, NULL,
                     zlibAlloc, zlibFree,
                     NULL, 0, 0, 0
                     );
-    buffer->next = buffer->end = buffer->buffer;
+    buffer->next = buffer->end = buffer->chars;
     buffer->inputMethod = INPUT_VIA_UNZIP;
     inflateInit2(&(buffer->zipStream), -MAX_WBITS);
     if (buffer->zipStream.msg != NULL) {
@@ -143,13 +143,13 @@ int skipNCharsInCharBuf(struct CharacterBuffer *buffer, unsigned count) {
         /*&fprintf(dumpOut,"seeking %d chars\n",count); fflush(dumpOut);&*/
         fseek(buffer->file, count, SEEK_CUR);
         buffer->filePos += count;
-        dd=buffer->buffer+MAX_UNGET_CHARS;
-        max_size = CHAR_BUFF_SIZE-(dd - buffer->buffer);
+        dd=buffer->chars+MAX_UNGET_CHARS;
+        max_size = CHAR_BUFF_SIZE-(dd - buffer->chars);
         if (buffer->file == NULL) n = 0;
         else n = fread(dd, 1, max_size, buffer->file);
         buffer->filePos += n;
         buffer->end = dd+n;
-        buffer->next = buffer->buffer+MAX_UNGET_CHARS;
+        buffer->next = buffer->chars+MAX_UNGET_CHARS;
     }
     return(buffer->next != buffer->end);
 }

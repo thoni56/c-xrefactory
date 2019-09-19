@@ -55,9 +55,9 @@ Ensure(CxFile, can_scan_int) {
     char *end;
     int result;
 
-    characters = cb->buffer;
-    strcpy(cb->buffer, "123");
-    cb->end = &cb->buffer[strlen("123")];
+    characters = cb->chars;
+    strcpy(cb->chars, "123");
+    cb->end = &cb->chars[strlen("123")];
     end = cb->end;
 
     expect(getCharBuf,
@@ -76,9 +76,9 @@ Ensure(CxFile, can_get_char) {
     char *end;
     int result;
 
-    characters = cb->buffer;
-    strcpy(cb->buffer, "123");
-    cb->end = &cb->buffer[strlen("123")];
+    characters = cb->chars;
+    strcpy(cb->chars, "123");
+    cb->end = &cb->chars[strlen("123")];
     end = cb->end;
 
     GetChar(next, characters, end, &characterBuffer);

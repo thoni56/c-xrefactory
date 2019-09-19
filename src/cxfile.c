@@ -739,7 +739,7 @@ void genReferenceFile(int updateFlag, char *fname) {
 
 static void trace_buffer(CharacterBuffer *buffer) {
     log_trace("buffer=0x%x", buffer);
-    log_trace("buffer.buffer=0x%x", &buffer->buffer);
+    log_trace("buffer.buffer=0x%x", &buffer->chars);
     log_trace("buffer.next=0x%x", buffer->next);
     log_trace("buffer.end=0x%x", buffer->end);
 }
@@ -1447,8 +1447,8 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
         s_inLastInfos.fun[ch] = scanFuns[i].handleFun;
         s_inLastInfos.additional[ch] = scanFuns[i].additionalArg;
     }
-    FILL_CharacterBuffer(&cxfBuf, cxfBuf.buffer, cxfBuf.buffer, fIn, 0, -1, 0, 0, 0, 0,INPUT_DIRECT,s_defaultZStream);
-    ch = ' '; cc = cxfBuf.buffer; cfin = cxfBuf.end;
+    FILL_CharacterBuffer(&cxfBuf, cxfBuf.chars, cxfBuf.chars, fIn, 0, -1, 0, 0, 0, 0,INPUT_DIRECT,s_defaultZStream);
+    ch = ' '; cc = cxfBuf.chars; cfin = cxfBuf.end;
     while(! cxfBuf.isAtEOF) {
         ScanInt(ch, cc, cfin, &cxfBuf, scannedInt);
         /*fprintf(stdout,"number %d scanned\n",recInfo);*/
