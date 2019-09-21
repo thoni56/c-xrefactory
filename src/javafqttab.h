@@ -4,7 +4,7 @@
 #include "proto.h"
 
 #define HASH_TAB_NAME javaFqtTab
-#define HASH_ELEM_TYPE S_symbolList
+#define HASH_ELEM_TYPE SymbolList
 
 #include "hashlist.th"
 

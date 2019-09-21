@@ -502,7 +502,7 @@ void addSubClassItemToFileTab( int sup, int inf, int origin) {
 
 void addSubClassesItemsToFileTab(S_symbol *ss, int origin) {
     int cf1;
-    S_symbolList *sups;
+    SymbolList *sups;
 
     if (ss->bits.symType != TypeStruct) return;
     /*fprintf(dumpOut,"testing %s\n",ss->name);*/

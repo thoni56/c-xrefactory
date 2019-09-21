@@ -278,7 +278,7 @@
     int                                     integer;
     unsigned                                unsign;
     S_symbol                                *symbol;
-    S_symbolList                            *symbolList;
+    SymbolList                            *symbolList;
     S_typeModifiers                         *typeModif;
     S_typeModifiersList                     *typeModifList;
     S_freeTrail                             *trail;
@@ -1914,7 +1914,7 @@ ClassTypeList:
             InSecondJslPass({
                 assert($1.d && $1.d->bits.symType == TypeDefault && $1.d->u.type);
                 assert($1.d->u.type->kind == TypeStruct);
-                CF_ALLOC($$.d, S_symbolList);
+                CF_ALLOC($$.d, SymbolList);
                 FILL_symbolList($$.d, $1.d->u.type->u.t, NULL);
             });
         }
@@ -1923,7 +1923,7 @@ ClassTypeList:
             InSecondJslPass({
                 assert($3.d && $3.d->bits.symType == TypeDefault && $3.d->u.type);
                 assert($3.d->u.type->kind == TypeStruct);
-                CF_ALLOC($$.d, S_symbolList);
+                CF_ALLOC($$.d, SymbolList);
                 FILL_symbolList($$.d, $3.d->u.type->u.t, $1.d);
             });
         }

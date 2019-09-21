@@ -138,7 +138,7 @@ typedef union {
     int                                     integer;
     unsigned                                unsign;
     S_symbol                                *symbol;
-    S_symbolList                            *symbolList;
+    SymbolList                            *symbolList;
     S_typeModifiers                         *typeModif;
     S_typeModifiersList                     *typeModifList;
     S_freeTrail                             *trail;
@@ -4472,7 +4472,7 @@ case 170:
             InSecondJslPass({
                 assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
                 assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
-                CF_ALLOC(yyval.bbsymbolList.d, S_symbolList);
+                CF_ALLOC(yyval.bbsymbolList.d, SymbolList);
                 FILL_symbolList(yyval.bbsymbolList.d, yyvsp[0].bbsymbol.d->u.type->u.t, NULL);
             });
         }
@@ -4484,7 +4484,7 @@ case 171:
             InSecondJslPass({
                 assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
                 assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
-                CF_ALLOC(yyval.bbsymbolList.d, S_symbolList);
+                CF_ALLOC(yyval.bbsymbolList.d, SymbolList);
                 FILL_symbolList(yyval.bbsymbolList.d, yyvsp[0].bbsymbol.d->u.type->u.t, yyvsp[-2].bbsymbolList.d);
             });
         }

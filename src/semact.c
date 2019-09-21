@@ -143,7 +143,7 @@ static int javaRecordVisible(S_symbol *appcl, S_symbol *funcl, unsigned accessFl
 static int accessibleByDefaultAccessibility(S_recFindStr *rfs, S_symbol *funcl) {
     int             i;
     S_symbol        *cc;
-    S_symbolList    *sups;
+    SymbolList    *sups;
     if (rfs==NULL) {
         // nested class checking, just check without inheritance checking
         return(javaClassIsInCurrentPackage(funcl));
@@ -275,7 +275,7 @@ int findStrRecordSym(   S_recFindStr    *ss,
                         int             visibilityCheck /* redundant, always equal to accCheck? */
                         ) {
     S_symbol            *s,*r,*cclass;
-    S_symbolList        *sss;
+    SymbolList        *sss;
     int                 m;
 
     //&fprintf(dumpOut,":\nNEW SEARCH\n"); fflush(dumpOut);

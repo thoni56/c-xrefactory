@@ -10,7 +10,7 @@ extern void jslCompleteDeclarator(S_symbol *t, S_symbol *d);
 extern S_typeModifiers *jslPrependComposedType(S_typeModifiers *d, unsigned t);
 extern S_typeModifiers *jslAppendComposedType(S_typeModifiers **d, unsigned t);
 extern S_symbol *jslPrependDirectEnclosingInstanceArgument(S_symbol *args);
-extern S_symbol *jslMethodHeader(unsigned modif, S_symbol *type, S_symbol *decl, int storage, S_symbolList *throws);
+extern S_symbol *jslMethodHeader(unsigned modif, S_symbol *type, S_symbol *decl, int storage, SymbolList *throws);
 extern S_symbol *jslTypeNameDefinition(S_idIdentList *tname);
 extern S_symbol *jslTypeSymbolDefinition(char *ttt2, S_idIdentList *packid,
                                          int add, int order, int isSingleImportedFlag);

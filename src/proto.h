@@ -821,7 +821,7 @@ typedef struct symbol {
 typedef struct symbolList {
     struct symbol        *d;
     struct symbolList    *next;
-} S_symbolList;
+} SymbolList;
 
 typedef struct jslSymbolList {
     struct symbol           *d;

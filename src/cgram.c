@@ -79,7 +79,7 @@ typedef union {
     int                                     integer;
     unsigned                                unsign;
     S_symbol                                *symbol;
-    S_symbolList                            *symbolList;
+    SymbolList                            *symbolList;
     S_typeModifiers                         *typeModif;
     S_typeModifiersList                     *typeModifList;
     S_freeTrail                             *trail;

@@ -227,7 +227,7 @@ S_symbol *jslPrependDirectEnclosingInstanceArgument(S_symbol *args) {
 }
 
 S_symbol *jslMethodHeader(unsigned modif, S_symbol *type,
-                          S_symbol *decl, int storage, S_symbolList *throws) {
+                          S_symbol *decl, int storage, SymbolList *throws) {
     int newFun;
 
     completeDeclarator(type,decl);
@@ -314,8 +314,8 @@ void jslAddAllPackageClassesFromFileTab(S_idIdentList *packid) {
 }
 
 void jslAddToLoadWaitList( S_symbol *clas ) {
-    S_symbolList *ll;
-    CF_ALLOC(ll, S_symbolList);
+    SymbolList *ll;
+    CF_ALLOC(ll, SymbolList);
     FILL_symbolList(ll, clas, s_jsl->waitList);
     s_jsl->waitList = ll;
 }
@@ -452,7 +452,7 @@ void jslAddNestedClassesToJslTypeTab( S_symbol *str, int order) {
 
 
 void jslAddSuperNestedClassesToJslTypeTab( S_symbol *cc) {
-    S_symbolList *ss;
+    SymbolList *ss;
     for(ss=cc->u.s->super; ss!=NULL; ss=ss->next) {
         jslAddSuperNestedClassesToJslTypeTab(ss->d);
     }

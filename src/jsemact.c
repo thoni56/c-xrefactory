@@ -452,7 +452,7 @@ int javaClassIsInCurrentPackage(S_symbol *cl) {
 static S_symbol *javaFQTypeSymbolDefinitionCreate(char *name,
                                             char *fqName, int ii) {
     S_symbol        *memb;
-    S_symbolList    *pppl;
+    SymbolList    *pppl;
     char			*lname1,*sname;
     CF_ALLOCC(sname, strlen(name)+1, char);
     strcpy(sname, name);
@@ -468,7 +468,7 @@ static S_symbol *javaFQTypeSymbolDefinitionCreate(char *name,
                         TypePointer,f,(NULL,NULL),NULL,&memb->u.s->stype,
                         javaFqtNamesAreFromTheSamePackage(lname1, s_javaThisPackageName),0, -1,0);
     memb->u.s->stype.u.t = memb;
-    CF_ALLOC(pppl, S_symbolList);
+    CF_ALLOC(pppl, SymbolList);
     FILL_symbolList(pppl, memb, NULL);
     if (ii < 0) {
         javaFqtTabAdd(&s_javaFqtTab,pppl,&ii);
@@ -491,7 +491,7 @@ static S_symbol *javaFQTypeSymbolDefinitionCreate(char *name,
 
 S_symbol *javaFQTypeSymbol(char *name, char *fqName) {
     S_symbol        pp,*memb;
-    S_symbolList    ppl, *pppl;
+    SymbolList    ppl, *pppl;
     int             ii;
     FILL_JAVA_TYPE_DUMMY_SYM(name,fqName,pp,ppl);
     if (javaFqtTabIsMember(&s_javaFqtTab, &ppl, &ii, &pppl)) {
@@ -504,7 +504,7 @@ S_symbol *javaFQTypeSymbol(char *name, char *fqName) {
 
 S_symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {
     S_symbol        pp,*memb;
-    S_symbolList    ppl, *pppl;
+    SymbolList    ppl, *pppl;
     int             ii;
     FILL_JAVA_TYPE_DUMMY_SYM(name,fqName,pp,ppl);
     if (javaFqtTabIsMember(&s_javaFqtTab, &ppl, &ii, &pppl)) {
@@ -624,7 +624,7 @@ S_symbol *javaTypeNameDefinition(S_idIdentList *tname) {
 }
 
 static void javaJslLoadSuperClasses(S_symbol *cc, int currentParsedFile) {
-    S_symbolList *ss;
+    SymbolList *ss;
     static int nestCounter = 0;
 
     nestCounter ++;
@@ -683,7 +683,7 @@ void javaReadSymbolFromSourceFileEnd(void) {
 void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
     FILE                    *ff;
     S_editorBuffer			*bb;
-    S_symbolList            *ll;
+    SymbolList            *ll;
     int						cfilenum;
     static int              nestDeep = 0;
     nestDeep ++;
@@ -2106,7 +2106,7 @@ int javaMethodApplicability(S_symbol *memb, char *actArgs) {
 }
 
 S_symbol *javaGetSuperClass(S_symbol *cc) {
-    S_symbolList		*sups;
+    SymbolList		*sups;
     assert(cc->bits.symType == TypeStruct && cc->u.s);
     sups = cc->u.s->super;
     if (sups == NULL) return(&s_errorSymbol);	/* class Object only */
@@ -2137,7 +2137,7 @@ static S_typeModifiers *javaMethodInvocation(
     S_symbol            * appl[MAX_APPL_OVERLOAD_FUNS];
     int                 funCl[MAX_APPL_OVERLOAD_FUNS];
     unsigned			minacc[MAX_APPL_OVERLOAD_FUNS];
-    S_symbolList		*ee;
+    SymbolList		*ee;
     S_typeModifiersList *aaa;
     S_usageBits			ub;
     int					smallesti, baseCl, vApplCl, vFunCl, usedusage;
@@ -2499,7 +2499,7 @@ void javaTypeDump(S_typeModifiers *tt) {
 
 void removeFunNestedClass(void  *ddv) {
     S_symbol        *dd;
-    S_symbolList	ss;
+    SymbolList	ss;
     dd = (S_symbol *) ddv;
     FILL_symbolList(&ss, dd, NULL);
     javaFqtTabDelete(&s_javaFqtTab, &ss);
@@ -2543,7 +2543,7 @@ void javaAddNestedClassToSymbolTab( S_symbol *str ) {
 }
 
 void javaAddSuperNestedClassToSymbolTab( S_symbol *cc ) {
-    S_symbolList *ss;
+    SymbolList *ss;
     for(ss=cc->u.s->super; ss != NULL; ss=ss->next) {
         javaAddSuperNestedClassToSymbolTab(ss->d);
     }
@@ -2676,7 +2676,7 @@ S_typeModifiers *javaArrayFieldAccess(S_idIdent *id) {
 }
 
 void javaParsedSuperClass(S_symbol *symbol) {
-    S_symbolList *pp;
+    SymbolList *pp;
     assert(s_javaStat->thisClass && s_javaStat->thisClass->bits.symType==TypeStruct);
     assert(s_javaStat->thisClass->u.s);
     assert(symbol && symbol->bits.symType==TypeStruct && symbol->u.s);

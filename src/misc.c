@@ -257,44 +257,6 @@ unsigned hashFun(char *ss) {
 }
 
 
-#if 0
-
-#define FILE_HASH_SHIFT 64
-#define DIR_HASH_SHIFT 32
-#define TOP_DIR_HASH_SHIFT (FILE_HASH_SHIFT*DIR_HASH_SHIFT)
-
-unsigned fileTabHashFun(char *ss) {
-    register unsigned h = 0, hd = 0, hdd = 0, h0;
-    register char *s = ss;
-    register char c;
-    for(c= *s; c ; c= *++s) {
-        if (c=='/' || c=='\\') {
-            hdd = hd;
-            hd = h;
-        }
-        SYM_TAB_HASH_FUN_INC(h, c);
-    }
-    SYM_TAB_HASH_FUN_FINAL(h);
-    SYM_TAB_HASH_FUN_FINAL(hd);
-    SYM_TAB_HASH_FUN_FINAL(hdd);
-    hdd = hdd % MAX_FILES;
-    hd = hd % TOP_DIR_HASH_SHIFT;
-    h0 = h % FILE_HASH_SHIFT;
-
-    h = h0;
-    h = (hd / FILE_HASH_SHIFT) * FILE_HASH_SHIFT + h;
-    h = (hdd / TOP_DIR_HASH_SHIFT) * TOP_DIR_HASH_SHIFT + h;
-#if 0
-    if (h>=MAX_FILES) {
-        sprintf(tmpBuff, "filetabHash(%s) == %d <-- %d,%d,%d", ss, h, hdd, hd, h0);
-        warning(ERR_ST, tmpBuff);
-    }
-#endif
-    return(h);
-}
-
-#else
-
 unsigned fileTabHashFun(char *ss) {
     register unsigned h = 0;
     register char *s = ss;
@@ -303,8 +265,6 @@ unsigned fileTabHashFun(char *ss) {
     SYM_TAB_HASH_FUN_FINAL(h);
     return(h);
 }
-
-#endif
 
 #include "symtab.h"
 #include "javafqttab.h"
@@ -669,9 +629,9 @@ void typeSPrint(char *buff, int *size, S_typeModifiers *t,
     }
 }
 
-void throwsSprintf(char *out, int outsize, S_symbolList *exceptions) {
+void throwsSprintf(char *out, int outsize, SymbolList *exceptions) {
     int outi,firstflag;
-    S_symbolList *ee;
+    SymbolList *ee;
     outi = 0;
     //& sprintf(out+outi, " !!! ");
     //& outi += strlen(out+outi);

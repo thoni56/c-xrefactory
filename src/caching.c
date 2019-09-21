@@ -102,7 +102,7 @@ static void fileTabDeleteOutOfMemory(S_fileItem *p, int i) {
                                                                         )
 
 static void structCachingFree(S_symbol *pp) {
-    S_symbolList **tp;
+    SymbolList **tp;
     assert(pp->u.s);
     if (MEM_FREED_POINTER(pp->u.s->records) ||
         SM_FREED_POINTER(ppmMemory,pp->u.s->records)) {
@@ -169,7 +169,7 @@ static void symTabDeleteOutOfMemory(int i) {
 }
 
 static void javaFqtTabDeleteOutOfMemory(int i) {
-    S_symbolList **pp;
+    SymbolList **pp;
     pp = &s_javaFqtTab.tab[i];
     while (*pp!=NULL) {
         if (SM_FREED_POINTER(ppmMemory,*pp)) {

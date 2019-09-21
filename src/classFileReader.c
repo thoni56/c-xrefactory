@@ -782,7 +782,7 @@ static void cfAddRecordToClass( char *name,
                                 S_symbol *clas,
                                 int accessFlags,
                                 int storage,
-                                S_symbolList *exceptions
+                                SymbolList *exceptions
                                 ) {
     static char pp[MAX_PROFILE_SIZE];
     S_symbol *d,*memb;
@@ -895,7 +895,7 @@ static void cfReadMethodInfos(  char **accc,
     int i, access_flags, nameind, sigind, storage, exclass;
     char *exname, *exsname;
     S_symbol *exc;
-    S_symbolList *exclist, *ee;
+    SymbolList *exclist, *ee;
     ccc = *accc; ffin = *affin;
     GetU2(count, ccc, ffin, iBuf);
     for(ind=0; ind<count; ind++) {
@@ -951,9 +951,9 @@ static void cfReadMethodInfos(  char **accc,
                     //&fprintf(dumpOut,"throws %s\n", exname);fflush(dumpOut);
                     exsname = simpleClassNameFromFQTName(exname);
                     exc = javaFQTypeSymbolDefinition(exsname, exname);
-                    CF_ALLOC(ee, S_symbolList);
+                    CF_ALLOC(ee, SymbolList);
                     FILL_symbolList(ee, exc, exclist);
-                    *ee = (S_symbolList){.d = exc, .next = exclist};
+                    *ee = (SymbolList){.d = exc, .next = exclist};
                     exclist = ee;
                 }
             } else if (1 && strcmp(cp[aname].asciz, "Code")==0) {
@@ -1015,7 +1015,7 @@ S_symbol *cfAddCastsToModule(S_symbol *memb, S_symbol *sup) {
 }
 
 void addSuperClassOrInterface( S_symbol *memb, S_symbol *supp, int origin ) {
-    S_symbolList *ssl, *ss;
+    SymbolList *ssl, *ss;
     // [14.9]
     supp = javaFQTypeSymbolDefinition(supp->name, supp->linkName);
     //
@@ -1029,9 +1029,9 @@ void addSuperClassOrInterface( S_symbol *memb, S_symbol *supp, int origin ) {
         return;
     }
     cfAddCastsToModule(memb, supp);
-    CF_ALLOC(ssl, S_symbolList);
+    CF_ALLOC(ssl, SymbolList);
     FILL_symbolList(ssl, supp, NULL);
-    LIST_APPEND(S_symbolList, memb->u.s->super, ssl);
+    LIST_APPEND(SymbolList, memb->u.s->super, ssl);
     addSubClassItemToFileTab(supp->u.s->classFile,
                              memb->u.s->classFile,
                              origin);

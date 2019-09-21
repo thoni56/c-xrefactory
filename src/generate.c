@@ -235,7 +235,7 @@ static void generateTypedefForEnum(S_symbol *symbol) {
 
 static void generateEnumString(S_symbol *symbol) {
     char *name;
-    S_symbolList *e;
+    SymbolList *e;
     assert(symbol);
     name = symbol->name;
     e = symbol->u.enums;

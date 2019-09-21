@@ -68,7 +68,7 @@ extern int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oName
 extern void typeSPrint(char *buff,int *size,S_typeModifiers *t,char*name,
                        int dclSepChar, int maxDeep, int typedefexp,
                        int longOrShortName, int *oNamePos);
-extern void throwsSprintf(char *out, int outsize, S_symbolList *exceptions);
+extern void throwsSprintf(char *out, int outsize, SymbolList *exceptions);
 extern void macDefSPrintf(char *buff, int *size, char *name1, char *name2, int argn, char **args, int *oNamePos);
 extern char * string3ConcatInStackMem(char *str1, char *str2, char *str3);
 
