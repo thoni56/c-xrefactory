@@ -831,7 +831,7 @@ void completeDeclarator(S_symbol *t, S_symbol *d) {
     LIST_APPEND(S_typeModifiers, *dt, tt);
 }
 
-S_symbol *crSimpleDefinition(unsigned storage, unsigned t, S_idIdent *id) {
+S_symbol *createSimpleDefinition(unsigned storage, unsigned t, S_idIdent *id) {
     S_typeModifiers *p;
     S_symbol    *r;
     p = StackMemAlloc(S_typeModifiers);

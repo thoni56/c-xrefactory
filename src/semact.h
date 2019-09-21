@@ -39,7 +39,7 @@ extern void completeDeclarator(S_symbol *t, S_symbol *d);
 extern void addFunctionParameterToSymTable(S_symbol *function, S_symbol *p, int i, S_symTab *tab);
 extern S_typeModifiers *crSimpleTypeModifier (unsigned t);
 extern SymbolList *createDefinitionList(S_symbol *symbol);
-extern S_symbol *crSimpleDefinition(unsigned storage, unsigned t, S_idIdent *id);
+extern S_symbol *createSimpleDefinition(unsigned storage, unsigned t, S_idIdent *id);
 extern int findStrRecord(S_symbol	*s,
                          char		*recname,	/* can be NULL */
                          S_symbol	**res,

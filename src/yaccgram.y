@@ -1145,11 +1145,11 @@ enumerator_list
 
 enumerator
     : identifier                            {
-        $$.d = crSimpleDefinition(StorageConstant,TypeInt,$1.d);
+        $$.d = createSimpleDefinition(StorageConstant,TypeInt,$1.d);
         addNewSymbolDef($$.d,StorageConstant, s_symTab, UsageDefined);
     }
     | identifier '=' constant_expr          {
-        $$.d = crSimpleDefinition(StorageConstant,TypeInt,$1.d);
+        $$.d = createSimpleDefinition(StorageConstant,TypeInt,$1.d);
         addNewSymbolDef($$.d,StorageConstant, s_symTab, UsageDefined);
     }
     | error                                 {
