@@ -1,4 +1,4 @@
-#include "cfread.h"
+#include "classFileReader.h"
 
 #include "commons.h"
 #include "globals.h"
@@ -953,6 +953,7 @@ static void cfReadMethodInfos(  char **accc,
                     exc = javaFQTypeSymbolDefinition(exsname, exname);
                     CF_ALLOC(ee, S_symbolList);
                     FILL_symbolList(ee, exc, exclist);
+                    *ee = (S_symbolList){.d = exc, .next = exclist};
                     exclist = ee;
                 }
             } else if (1 && strcmp(cp[aname].asciz, "Code")==0) {

@@ -7,7 +7,7 @@
 #include "cct.h"
 #include "semact.h"
 #include "cxref.h"
-#include "cfread.h"
+#include "classFileReader.h"
 #include "jsemact.h"
 
 #include "log.h"
