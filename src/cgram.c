@@ -3195,14 +3195,14 @@ break;
 case 183:
 #line 1059 "cgram.y"
 {
-        yyval.bbsymbolList.d = crDefinitionList(yyvsp[0].bbsymbol.d);
+        yyval.bbsymbolList.d = createDefinitionList(yyvsp[0].bbsymbol.d);
     }
 break;
 case 184:
 #line 1062 "cgram.y"
 {
         yyval.bbsymbolList.d = yyvsp[-2].bbsymbolList.d;
-        LIST_APPEND(S_symbolList, yyval.bbsymbolList.d, crDefinitionList(yyvsp[0].bbsymbol.d));
+        LIST_APPEND(SymbolList, yyval.bbsymbolList.d, createDefinitionList(yyvsp[0].bbsymbol.d));
     }
 break;
 case 185:

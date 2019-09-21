@@ -848,12 +848,14 @@ S_symbol *crSimpleDefinition(unsigned storage, unsigned t, S_idIdent *id) {
     return(r);
 }
 
-S_symbolList *crDefinitionList(S_symbol *d) {
-    S_symbolList *p;
-    assert(d);
-    p = StackMemAlloc(S_symbolList);
-    FILL_symbolList(p, d, NULL);
-    return(p);
+SymbolList *createDefinitionList(S_symbol *symbol) {
+    SymbolList *p;
+
+    assert(symbol);
+    p = StackMemAlloc(SymbolList);
+    FILL_symbolList(p, symbol, NULL);
+
+    return p;
 }
 
 int mergeArguments(S_symbol *id, S_symbol *ty) {
@@ -1058,7 +1060,7 @@ S_typeModifiers *simpleEnumSpecifier(S_idIdent *id, int usage) {
     return(crSimpleEnumType(pp,TypeEnum));
 }
 
-S_typeModifiers *createNewAnonymousEnum(S_symbolList *enums) {
+S_typeModifiers *createNewAnonymousEnum(SymbolList *enums) {
     S_symbol *pp;
     pp = StackMemAlloc(S_symbol);
     FILL_symbolBits(&pp->bits,0,0, 0,0,0, TypeEnum, StorageNone,0);

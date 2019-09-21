@@ -3671,14 +3671,14 @@ break;
 case 359:
 #line 1137 "yaccgram.y"
 {
-        yyval.bbsymbolList.d = crDefinitionList(yyvsp[0].bbsymbol.d);
+        yyval.bbsymbolList.d = createDefinitionList(yyvsp[0].bbsymbol.d);
     }
 break;
 case 360:
 #line 1140 "yaccgram.y"
 {
         yyval.bbsymbolList.d = yyvsp[-2].bbsymbolList.d;
-        LIST_APPEND(S_symbolList, yyval.bbsymbolList.d, crDefinitionList(yyvsp[0].bbsymbol.d));
+        LIST_APPEND(SymbolList, yyval.bbsymbolList.d, createDefinitionList(yyvsp[0].bbsymbol.d));
     }
 break;
 case 361:

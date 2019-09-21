@@ -1135,11 +1135,11 @@ enumerator_list_comma
 
 enumerator_list
     : enumerator                            {
-        $$.d = crDefinitionList($1.d);
+        $$.d = createDefinitionList($1.d);
     }
     | enumerator_list ',' enumerator        {
         $$.d = $1.d;
-        LIST_APPEND(S_symbolList, $$.d, crDefinitionList($3.d));
+        LIST_APPEND(SymbolList, $$.d, createDefinitionList($3.d));
     }
     ;
 
