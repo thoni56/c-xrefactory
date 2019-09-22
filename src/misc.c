@@ -40,12 +40,12 @@ void ppcGenPosition(S_position *p) {
     ppcIndentOffset();
     fprintf(ccOut, "<%s %s=%d %s=%d %s=%ld>%s</%s>\n",
             PPC_LC_POSITION,
-            PPCA_LINE, p->line, PPCA_COL, p->coll,
+            PPCA_LINE, p->line, PPCA_COL, p->col,
             PPCA_LEN, (unsigned long)strlen(fn), fn,
             PPC_LC_POSITION);
     //&ppcGenRecord(PPC_FILE, s_fileTab.tab[p->file]->name,"\n");
     //&ppcGenNumericRecord(PPC_LINE, p->line,"","");
-    //&ppcGenNumericRecord(PPC_COL, p->coll,"","");
+    //&ppcGenNumericRecord(PPC_COL, p->col,"","");
 }
 
 void ppcGenGotoPositionRecord(S_position *p) {

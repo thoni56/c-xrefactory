@@ -1112,8 +1112,8 @@ char *javaImportSymbolName_st(int file, int line, int coll) {
 
 void javaAddImportConstructionReference(S_position *importPos, S_position *pos, int usage) {
     char *isymName;
-    isymName = javaImportSymbolName_st(importPos->file, importPos->line, importPos->coll);
-//&fprintf(dumpOut,"using import on %s:%d (%d)  at %s:%d\n", simpleFileName(s_fileTab.tab[importPos->file]->name), importPos->line, importPos->coll, simpleFileName(s_fileTab.tab[pos->file]->name), pos->line);
+    isymName = javaImportSymbolName_st(importPos->file, importPos->line, importPos->col);
+//&fprintf(dumpOut,"using import on %s:%d (%d)  at %s:%d\n", simpleFileName(s_fileTab.tab[importPos->file]->name), importPos->line, importPos->col, simpleFileName(s_fileTab.tab[pos->file]->name), pos->line);
     addSpecialFieldReference(isymName, StorageDefault, s_noneFileIndex, pos, usage);
 }
 
@@ -1193,7 +1193,7 @@ static int javaNotFqtUsageCorrection(S_symbol *sym, int usage) {
     packname[pplen] = 0;
 
     FILLF_idIdentList(&sname, packname, NULL,
-                      s_noPos.file, s_noPos.line, s_noPos.coll,NULL,
+                      s_noPos.file, s_noPos.line, s_noPos.col,NULL,
                       packname, TypeExpression, NULL)
     rr = javaClassifySingleAmbigName(&sname,&localRfs,&str,&expr,&loref,
                                       CLASS_TO_EXPR, UsageNone, NO_CX_REFS);
@@ -1248,7 +1248,7 @@ static void javaCheckForUselessFqt(S_idIdentList *name, int classif, S_symbol *r
         if (str->u.s->classFile == rstr->u.s->classFile) {
             assert(name && rstr->u.s);
             *oref = addUselessFQTReference(rstr->u.s->classFile,&name->idi.p);
-//&fprintf(dumpOut,"!adding TYPE useless reference on %d,%d\n", name->idi.p.line, name->idi.p.coll);
+//&fprintf(dumpOut,"!adding TYPE useless reference on %d,%d\n", name->idi.p.line, name->idi.p.col);
             javaResetUselessReference(lref);
             uselessFqt = 1;
         }
@@ -1299,7 +1299,7 @@ static S_reference *javaCheckForUselessTypeName(S_idIdentList   *name,
         // equality of pointers may be too strong ???
         if(rfs->currClass->u.s->classFile==localRfs.currClass->u.s->classFile){
             *oref = addUselessFQTReference(rfs->currClass->u.s->classFile, &name->idi.p);
-//&fprintf(dumpOut,"!adding useless reference on %d,%d\n", name->idi.p.line, name->idi.p.coll);
+//&fprintf(dumpOut,"!adding useless reference on %d,%d\n", name->idi.p.line, name->idi.p.col);
             javaResetUselessReference(lref);
         }
     }

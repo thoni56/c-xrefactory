@@ -274,7 +274,7 @@
 #define POSITION_NEQ(p1,p2) (\
     ((p1).file != (p2).file) || \
     ((p1).line != (p2).line) || \
-    ((p1).coll != (p2).coll) \
+    ((p1).col != (p2).col) \
 )
 
 #define POSITION_EQ(p1,p2) (! POSITION_NEQ(p1,p2))
@@ -282,12 +282,12 @@
 #define POSITION_LESS(p1,p2) (\
      ((p1).file < (p2).file) ||\
      ((p1).file==(p2).file && (p1).line < (p2).line)  || \
-     ((p1).file==(p2).file && (p1).line==(p2).line && (p1).coll < (p2).coll) \
+     ((p1).file==(p2).file && (p1).line==(p2).line && (p1).col < (p2).col) \
 )
 #define POSITION_LESS_EQ(p1,p2) (\
      ((p1).file < (p2).file) ||\
      ((p1).file==(p2).file && (p1).line < (p2).line)  || \
-     ((p1).file==(p2).file && (p1).line==(p2).line && (p1).coll <= (p2).coll) \
+     ((p1).file==(p2).file && (p1).line==(p2).line && (p1).col <= (p2).col) \
 )
 #define POSITION_IS_BETWEEN_IN_THE_SAME_FILE(p1,p,p2) (\
     (p1).file == (p).file\
@@ -325,7 +325,7 @@
     yytext = name;\
     uniyylval->bbidIdent.b = pos;\
     uniyylval->bbidIdent.e = pos;\
-    uniyylval->bbidIdent.e.coll += strlen(yytext);\
+    uniyylval->bbidIdent.e.col += strlen(yytext);\
 }
 
 #define SHOW_COMPLETION_WINDOW(ccc) (\

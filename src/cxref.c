@@ -31,11 +31,11 @@
                                   )
 
 #define POSITION_MINUS(res,p1,p2) {                                     \
-        FILL_position(&(res), (p1).file-(p2).file, (p1).line-(p2).line, (p1).coll-(p2).coll); \
+        FILL_position(&(res), (p1).file-(p2).file, (p1).line-(p2).line, (p1).col-(p2).col); \
     }
 
 #define POSITION_PLUS(res,p1,p2) {                                      \
-        FILL_position(&(res), (p1).file+(p2).file, (p1).line+(p2).line, (p1).coll+(p2).coll); \
+        FILL_position(&(res), (p1).file+(p2).file, (p1).line+(p2).line, (p1).col+(p2).col); \
     }
 
 #define CX_TEST_SPACE() {                                               \
@@ -107,7 +107,7 @@ S_olSymbolsMenu *olCreateNewMenuItem(
                         NULL, NULL,
                         // symbolMenu
                         selected, visible, ooBits, olusage, vlevel, 0,0,
-                        defusage, defpos->file, defpos->line, defpos->coll,
+                        defusage, defpos->file, defpos->line, defpos->col,
                         0, NULL,
                         NULL);
 
@@ -445,7 +445,7 @@ void changeFieldRefUsages(S_symbolRefItem  *ri, void  *rrcd) {
                     }
                     break;
                 case UsageNotFQType: rr->usg.base = UsageNotFQTypeInClassOrMethod;
-                    //&sprintf(tmpBuff, "reseting %d:%d:%d at %d", rr->p.file, rr->p.line, rr->p.coll, rr);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+                    //&sprintf(tmpBuff, "reseting %d:%d:%d at %d", rr->p.file, rr->p.line, rr->p.col, rr);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
                     break;
                 case UsageNotFQField: rr->usg.base = UsageNotFQFieldInClassOrMethod;
                     break;
@@ -715,7 +715,7 @@ S_reference * addCxReferenceNew(S_symbol *p, S_position *pos, S_usageBits *usage
     getSymbolCxrefCategories( p, &category, &scope, &storage);
     if (scope == ScopeAuto && s_opt.no_ref_locals) return NULL;
 
-    log_trace(":adding reference on %s(%d,%d) at %d,%d,%d  (%s) (%s) (%s) \n",p->linkName,vFunCl,vApplCl, pos->file,pos->line,pos->coll,refCategoriesName[category],usagesName[usage],storagesName[p->bits.storage]);
+    log_trace(":adding reference on %s(%d,%d) at %d,%d,%d  (%s) (%s) (%s) \n",p->linkName,vFunCl,vApplCl, pos->file,pos->line,pos->col,refCategoriesName[category],usagesName[usage],storagesName[p->bits.storage]);
     assert(s_opt.taskRegime);
     if (s_opt.taskRegime == RegimeEditServer) {
         if (s_opt.cxrefs == OLO_EXTRACT) {
@@ -777,7 +777,7 @@ S_reference * addCxReferenceNew(S_symbol *p, S_position *pos, S_usageBits *usage
     }
     /*  category = reftab->category; */
     place = addToRefList(&memb->refs,usageb,pos,category);
-    //&fprintf(dumpOut,"checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s\n", s_fileTab.tab[s_cxRefPos.file]->name, s_cxRefPos.file, s_cxRefPos.line, s_cxRefPos.coll, s_fileTab.tab[pos->file]->name, pos->file, pos->line, pos->coll, memcmp(&s_cxRefPos, pos, sizeof(S_position)), POSITION_EQ(s_cxRefPos, *pos), usage, p->linkName);
+    //&fprintf(dumpOut,"checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s\n", s_fileTab.tab[s_cxRefPos.file]->name, s_cxRefPos.file, s_cxRefPos.line, s_cxRefPos.col, s_fileTab.tab[pos->file]->name, pos->file, pos->line, pos->col, memcmp(&s_cxRefPos, pos, sizeof(S_position)), POSITION_EQ(s_cxRefPos, *pos), usage, p->linkName);
 
     if (s_opt.taskRegime == RegimeEditServer
         && POSITION_EQ(s_cxRefPos, *pos)
@@ -1146,7 +1146,7 @@ S_reference *olcxAddReferenceNoUsageCheck(S_reference **rlist, S_reference *ref,
             }
         }
         LIST_CONS(rr,(*place));
-        //&fprintf(dumpOut,"olcx adding %s %s:%d:%d\n",usagesName[ref->usg.base], s_fileTab.tab[ref->p.file]->name,ref->p.line,ref->p.coll); fflush(dumpOut);
+        //&fprintf(dumpOut,"olcx adding %s %s:%d:%d\n",usagesName[ref->usg.base], s_fileTab.tab[ref->p.file]->name,ref->p.line,ref->p.col); fflush(dumpOut);
     }
     return(rr);
 }
@@ -1154,7 +1154,7 @@ S_reference *olcxAddReferenceNoUsageCheck(S_reference **rlist, S_reference *ref,
 
 S_reference *olcxAddReference(S_reference **rlist,S_reference *ref,int bestMatchFlag) {
     S_reference *rr;
-    //&sprintf(tmpBuff,"checking ref %s %s:%d:%d at %d\n",usagesName[ref->usg.base], simpleFileName(s_fileTab.tab[ref->p.file]->name),ref->p.line,ref->p.coll, ref); ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+    //&sprintf(tmpBuff,"checking ref %s %s:%d:%d at %d\n",usagesName[ref->usg.base], simpleFileName(s_fileTab.tab[ref->p.file]->name),ref->p.line,ref->p.col, ref); ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
     if (! OL_VIEWABLE_REFS(ref)) return NULL; // no regular on-line refs
     rr = olcxAddReferenceNoUsageCheck(rlist, ref, bestMatchFlag);
     return(rr);
@@ -1172,7 +1172,7 @@ void olcxAppendReference(S_reference *ref, S_olcxReferences *refs) {
     S_reference *rr;
     rr = olcxCopyReference(ref);
     LIST_APPEND(S_reference, refs->r, rr);
-    //&fprintf(dumpOut,"olcx appending %s %s:%d:%d\n",usagesName[ref->usg.base], s_fileTab.tab[ref->p.file]->name,ref->p.line,ref->p.coll); fflush(dumpOut);
+    //&fprintf(dumpOut,"olcx appending %s %s:%d:%d\n",usagesName[ref->usg.base], s_fileTab.tab[ref->p.file]->name,ref->p.line,ref->p.col); fflush(dumpOut);
 }
 
 /* fnum is file number of which references are added, can be ANY_FILE
@@ -1240,7 +1240,7 @@ void generateOnlineCxref(   S_position *p,
     } else {
         fprintf(ccOut,"%s%s#*+*#%d %d :%c%s%s ;;\n", commandString,
                 getRealFileNameStatic(s_fileTab.tab[p->file]->name),
-                p->line, p->coll, refCharCode(usage),
+                p->line, p->col, refCharCode(usage),
                 suffix, suffix2);
     }
 }
@@ -1299,8 +1299,8 @@ int olcxListLessFunction(S_reference *r1, S_reference *r2) {
     if (r1->p.file > r2->p.file) return(0);
     if (r1->p.line < r2->p.line) return(1);
     if (r1->p.line > r2->p.line) return(0);
-    if (r1->p.coll < r2->p.coll) return(1);
-    if (r1->p.coll > r2->p.coll) return(0);
+    if (r1->p.col < r2->p.col) return(1);
+    if (r1->p.col > r2->p.col) return(0);
     return(0);
 }
 
@@ -1369,7 +1369,7 @@ static void olcxOrderRefsAndGotoFirst(void) {
 static int olcxSetCurrentRefsOnCaller( S_olcxReferences *refs ) {
     S_reference *rr;
     for(rr=refs->r; rr!=NULL; rr=rr->next){
-        //&fprintf(dumpOut,"checking %d %d %d to %d %d %d\n",rr->p.file, rr->p.line,rr->p.coll, refs->cpos.file,  refs->cpos.line,  refs->cpos.coll);
+        //&fprintf(dumpOut,"checking %d %d %d to %d %d %d\n",rr->p.file, rr->p.line,rr->p.col, refs->cpos.file,  refs->cpos.line,  refs->cpos.col);
         if (! POSITION_LESS(rr->p, refs->cpos)) break;
     }
     // it should never be NULL, but one never knows
@@ -1643,8 +1643,8 @@ static void olcxOrderRefsAndGotoDefinition(int afterMenuFlag) {
     }
 
 #define GetFileChar(ch,cp,bbb) {                    \
-        if (ch=='\n') {(cp)->line++; (cp)->coll=0;} \
-        else (cp)->coll++;                          \
+        if (ch=='\n') {(cp)->line++; (cp)->col=0;} \
+        else (cp)->col++;                          \
         GetBufChar(ch, bbb);                        \
     }
 
@@ -2209,7 +2209,7 @@ static void olcxReferenceGotoDef(void) {
     dr = getDefinitionRef(refs->r);
     if (dr != NULL) refs->act = dr;
     else refs->act = refs->r;
-    //&fprintf(dumpOut,"goto ref %d %d\n", refs->act->p.line, refs->act->p.coll);
+    //&fprintf(dumpOut,"goto ref %d %d\n", refs->act->p.line, refs->act->p.col);
     olcxGenGotoActReference(refs);
 }
 
@@ -3150,7 +3150,7 @@ static int olRemoveCallerReference(S_olcxReferences *refs) {
     S_reference *rr, **rrr;
     LIST_MERGE_SORT(S_reference, refs->r, olcxReferenceInternalLessFunction);
     for(rrr= &refs->r, rr=refs->r; rr!=NULL; rrr= &rr->next, rr=rr->next){
-        //&fprintf(dumpOut,"checking %d %d %d to %d %d %d\n",rr->p.file, rr->p.line,rr->p.coll, refs->cpos.file,  refs->cpos.line,  refs->cpos.coll);
+        //&fprintf(dumpOut,"checking %d %d %d to %d %d %d\n",rr->p.file, rr->p.line,rr->p.col, refs->cpos.file,  refs->cpos.line,  refs->cpos.col);
         if (! POSITION_LESS(rr->p, refs->cpos)) break;
     }
     if (rr == NULL) return(0);
@@ -3770,8 +3770,8 @@ static int mmPreCheckMakeDifference(S_olcxReferences *origrefs,
         // TODO! Check here rather symbol name, then just column offsets
         assert(ofirstsym->s.refs && nfirstsym->s.refs);
         POSITION_MINUS(moveOffset,nfirstsym->s.refs->p,ofirstsym->s.refs->p);
-        //&fprintf(dumpOut,"!ofirstsym, nfirstsym == %s %s at %d,%d %d,%d\n", ofirstsym->s.name, nfirstsym->s.name, ofirstsym->s.refs->p.line, ofirstsym->s.refs->p.coll, nfirstsym->s.refs->p.line, nfirstsym->s.refs->p.coll);
-        if (moveOffset.coll!=0) {
+        //&fprintf(dumpOut,"!ofirstsym, nfirstsym == %s %s at %d,%d %d,%d\n", ofirstsym->s.name, nfirstsym->s.name, ofirstsym->s.refs->p.line, ofirstsym->s.refs->p.col, nfirstsym->s.refs->p.line, nfirstsym->s.refs->p.col);
+        if (moveOffset.col!=0) {
             error(ERR_ST, "method has to be moved into an empty line");
             return(1);
         }
@@ -4000,7 +4000,7 @@ static void olcxRemoveRefWinFromRefList( S_reference **r1,
     while (*r1!=NULL) {
         r = r1; r1 = &(*r1)->next;
         cr = *r;
-        //&fprintf(dumpOut,"! checking %d:%d\n", cr->p.line, cr->p.coll);
+        //&fprintf(dumpOut,"! checking %d:%d\n", cr->p.line, cr->p.col);
         if (cr->p.file == wdfile
             && POSITION_LESS(*fp, cr->p) && POSITION_LESS(cr->p, *tp)) {
             // remove the reference
@@ -4008,7 +4008,7 @@ static void olcxRemoveRefWinFromRefList( S_reference **r1,
             OLCX_FREE_REFERENCE(*r);
             *r = nr;
             r1 = r;
-            //&fprintf(dumpOut,"! removing reference %d:%d\n", cr->p.line, cr->p.coll);
+            //&fprintf(dumpOut,"! removing reference %d:%d\n", cr->p.line, cr->p.col);
         }
     }
 }
@@ -4242,7 +4242,7 @@ static void olPushAllReferencesInBetweenMapFun(S_symbolRefItem *ri,
     rstack = s_olcxCurrentUser->browserStack.top;
     if (! isPushAllMethodsValidRefItem(ri)) return;
     for(rr=ri->refs; rr!=NULL; rr=rr->next) {
-        //&fprintf(dumpOut,"checking %d.%d ref of %s\n", rr->p.line,rr->p.coll,ri->name); fflush(dumpOut);
+        //&fprintf(dumpOut,"checking %d.%d ref of %s\n", rr->p.line,rr->p.col,ri->name); fflush(dumpOut);
         if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, dd)) {
             defRef = getDefinitionRef(ri->refs);
             if (defRef!=NULL && IS_DEFINITION_OR_DECL_USAGE(defRef->usg.base)) {

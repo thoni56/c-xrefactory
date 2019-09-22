@@ -381,7 +381,7 @@ S_editorMarker *editorCrNewMarkerForPosition(S_position *pos) {
     }
     buf = editorFindFile(s_fileTab.tab[pos->file]->name);
     mm = editorCrNewMarker(buf, 0);
-    editorMoveMarkerToLineCol(mm, pos->line, pos->coll);
+    editorMoveMarkerToLineCol(mm, pos->line, pos->col);
     return(mm);
 }
 
@@ -1008,7 +1008,7 @@ S_editorMarkerList *editorReferencesToMarkers(S_reference *refs,
         if (r != NULL) {
             file = r->p.file;
             line = r->p.line;
-            col = r->p.coll;
+            col = r->p.col;
             buff = editorFindFile(s_fileTab.tab[file]->name);
             if (buff==NULL) {
                 error(ERR_CANT_OPEN, s_fileTab.tab[file]->name);
@@ -1029,7 +1029,7 @@ S_editorMarkerList *editorReferencesToMarkers(S_reference *refs,
                         while (r!=NULL && ! filter(r,filterParam)) r = r->next;
                         if (r==NULL || file != r->p.file) break;
                         line = r->p.line;
-                        col = r->p.coll;
+                        col = r->p.col;
                     }
                     if (*s=='\n') {ln++; c = -1;}
                 }

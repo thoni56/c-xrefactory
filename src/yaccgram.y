@@ -1755,7 +1755,7 @@ static void addRuleLocalVariable(S_idIdent *name, int order) {
             ss = StackMemAlloc(S_symbol);
             FILL_symbolBits(&ss->bits,0,0,0,0,0,TypeDefault,StorageAuto,0);
             FILL_symbol(ss,nn,nn,name->p,ss->bits,type,NULL,NULL);
-            ss->pos.coll ++ ; // to avoid ambiguity of NonTerminal <-> $$.d
+            ss->pos.col ++ ; // to avoid ambiguity of NonTerminal <-> $$.d
             addNewDeclaration(p, ss, NULL, StorageAuto, s_symTab);
         }
     }

@@ -246,7 +246,7 @@ void gotOnLineCxRefs( S_position *ps ) {
                 addTrivialCxReference(ttt,TypeComment,StorageDefault, &pos, UsageUsed); \
             }                                                           \
             if (jdoc) {                                                 \
-                pos.coll -= 2;                                          \
+                pos.col -= 2;                                          \
                 addTrivialCxReference(ttt,TypeComment,StorageDefault, &pos, UsageJavaDoc); \
             }                                                           \
         }                                                               \
@@ -257,7 +257,7 @@ void gotOnLineCxRefs( S_position *ps ) {
         lb->fpRing[pi] = ABS_FILE_POS(cb,cfin,ccc);                     \
         lb->pRing[pi].file = cfile;                                     \
         lb->pRing[pi].line = cline;                                     \
-        lb->pRing[pi].coll = COLUMN_POS(ccc,clb,clo);                   \
+        lb->pRing[pi].col = COLUMN_POS(ccc,clb,clo);                   \
         lb->posi ++;                                                    \
     }
 
@@ -688,19 +688,19 @@ int getLexBuf(struct lexBuf *lb) {
                             else parChar = '{';
                         }
                         PutLexToken(parChar,dd);
-                        PutLexPosition(ps->file,ps->line,ps->coll,dd);
+                        PutLexPosition(ps->file,ps->line,ps->col,dd);
                         PutLexToken(parChar,dd);
-                        PutLexPosition(ps->file,ps->line,ps->coll,dd);
+                        PutLexPosition(ps->file,ps->line,ps->col,dd);
                         PutLexToken(';',dd);
-                        PutLexPosition(ps->file,ps->line,ps->coll,dd);
+                        PutLexPosition(ps->file,ps->line,ps->col,dd);
                         PutLexToken(';',dd);
-                        PutLexPosition(ps->file,ps->line,ps->coll,dd);
+                        PutLexPosition(ps->file,ps->line,ps->col,dd);
                         PutLexToken(OL_MARKER_TOKEN,dd);
-                        PutLexPosition(ps->file,ps->line,ps->coll,dd);
+                        PutLexPosition(ps->file,ps->line,ps->col,dd);
                         PutLexToken(parChar,dd);
-                        PutLexPosition(ps->file,ps->line,ps->coll,dd);
+                        PutLexPosition(ps->file,ps->line,ps->col,dd);
                         PutLexToken(parChar,dd);
-                        PutLexPosition(ps->file,ps->line,ps->coll,dd);
+                        PutLexPosition(ps->file,ps->line,ps->col,dd);
                         s_cps.marker1Flag=1;
                     } else if (pos1 >= s_opt.olMarkPos && ! s_cps.marker2Flag){
                         if (LANGUAGE(LANG_JAVA)) parChar = ';';
@@ -709,19 +709,19 @@ int getLexBuf(struct lexBuf *lb) {
                             else parChar = '{';
                         }
                         PutLexToken(parChar,dd);
-                        PutLexPosition(ps->file,ps->line,ps->coll,dd);
+                        PutLexPosition(ps->file,ps->line,ps->col,dd);
                         PutLexToken(parChar,dd);
-                        PutLexPosition(ps->file,ps->line,ps->coll,dd);
+                        PutLexPosition(ps->file,ps->line,ps->col,dd);
                         PutLexToken(';',dd);
-                        PutLexPosition(ps->file,ps->line,ps->coll,dd);
+                        PutLexPosition(ps->file,ps->line,ps->col,dd);
                         PutLexToken(';',dd);
-                        PutLexPosition(ps->file,ps->line,ps->coll,dd);
+                        PutLexPosition(ps->file,ps->line,ps->col,dd);
                         PutLexToken(OL_MARKER_TOKEN,dd);
-                        PutLexPosition(ps->file,ps->line,ps->coll,dd);
+                        PutLexPosition(ps->file,ps->line,ps->col,dd);
                         PutLexToken(parChar,dd);
-                        PutLexPosition(ps->file,ps->line,ps->coll,dd);
+                        PutLexPosition(ps->file,ps->line,ps->col,dd);
                         PutLexToken(parChar,dd);
-                        PutLexPosition(ps->file,ps->line,ps->coll,dd);
+                        PutLexPosition(ps->file,ps->line,ps->col,dd);
                         s_cps.marker2Flag=1;
                     }
                 } else if (     s_opt.cxrefs == OLO_COMPLETION
@@ -747,7 +747,7 @@ int getLexBuf(struct lexBuf *lb) {
                                     PutLexToken(IDENT_TO_COMPLETE, dd);
                                     dd += len;
                                     PutLexChar(0,dd);
-                                    PutLexPosition(ps->file,ps->line,ps->coll,dd);
+                                    PutLexPosition(ps->file,ps->line,ps->col,dd);
                                 }
                                 //&fprintf(dumpOut,":ress %s\n", lexStartDd+TOKEN_SIZE);fflush(dumpOut);
                             } else {
@@ -786,7 +786,7 @@ int getLexBuf(struct lexBuf *lb) {
                         apos = ABS_FILE_POS(cb, cfin, ccc);
                         if (apos >= s_opt.olCursorPos && ! s_cps.marker1Flag) {
                             PutLexToken(OL_MARKER_TOKEN,dd);
-                            PutLexPosition(ps->file,ps->line,ps->coll,dd);
+                            PutLexPosition(ps->file,ps->line,ps->col,dd);
                             s_cps.marker1Flag=1;
                         }
                     }

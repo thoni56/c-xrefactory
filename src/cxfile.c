@@ -427,7 +427,7 @@ static void writeSymbolItem(int symIndex) {
 
 static void writeCxReference(S_reference *reference, int symbolNum) {
     writeCxReferenceBase(symbolNum, reference->usg.base, reference->usg.requiredAccess,
-                         reference->p.file, reference->p.line, reference->p.coll);
+                         reference->p.file, reference->p.line, reference->p.col);
 }
 
 static void writeSubClassInfo(int sup, int inf, int origin) {

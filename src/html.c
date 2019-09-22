@@ -515,8 +515,8 @@ static int htmlRefListOrdering(S_reference *r1, S_reference *r2) {
     if (r1->p.file > r2->p.file) return(0);
     if (r1->p.line < r2->p.line) return(1);
     if (r1->p.line > r2->p.line) return(0);
-    if (r1->p.coll < r2->p.coll) return(1);
-    if (r1->p.coll > r2->p.coll) return(0);
+    if (r1->p.col < r2->p.col) return(1);
+    if (r1->p.col > r2->p.col) return(0);
     if (r1->usg.base < r2->usg.base) return(1);
     if (r1->usg.base > r2->usg.base) return(0);
     return(0);
@@ -528,7 +528,7 @@ static int htmlRefListOrdering(S_reference *r1, S_reference *r2) {
 #define SORTED_LIST_NEQ(tmp,key) (                                      \
                                   ((tmp)->r->p.file != (key).r->p.file) || \
                                   ((tmp)->r->p.line != (key).r->p.line) || \
-                                  ((tmp)->r->p.coll != (key).r->p.coll) \
+                                  ((tmp)->r->p.col != (key).r->p.col) \
                                   )
 
 void htmlPutChar(FILE *ff, int c) {
@@ -596,7 +596,7 @@ static void htmlPutCharLF(FILE *ff, int c, S_position *cp) {
 
 static int htmlPositionLess(S_position *p1, S_position *p2) {
     return(     p1->line < p2->line
-                ||  (p1->line == p2->line && p1->coll < p2->coll)
+                ||  (p1->line == p2->line && p1->col < p2->col)
                 );
 }
 
@@ -992,7 +992,7 @@ static void htmlGetThisFileReferences(int fnum, S_htmlRefList **rrr, int kind){
             for(rr=d->refs; rr!=NULL; rr=rr->next) {
                 if (rr->p.file == fnum &&
                     (kind==ALL_REFS || rr->usg.base<UsageMaxOLUsages)) {
-                    /*&fprintf(dumpOut,"checking ref [%s,%d,%d](%s) on %s:%x\n",s_fileTab.tab[rr->p.file]->name,rr->p.line,rr->p.coll,usagesName[rr->usg.base],d->name,d);fflush(dumpOut);&*/
+                    /*&fprintf(dumpOut,"checking ref [%s,%d,%d](%s) on %s:%x\n",s_fileTab.tab[rr->p.file]->name,rr->p.line,rr->p.col,usagesName[rr->usg.base],d->name,d);fflush(dumpOut);&*/
                     //&                 if ((char*)rr<s_cxGlobalReferencesBase) continue;//!!tricky
                     FILL_htmlRefList(&rref,d,rr,dd,NULL);
                     SORTED_LIST_PLACE2(place, S_htmlRefList, rref, rrr0);
@@ -1003,7 +1003,7 @@ static void htmlGetThisFileReferences(int fnum, S_htmlRefList **rrr, int kind){
                         // ?? why PP_ALLOC ? Because called
                         // once per file and it is cleared after.
                         *r = rref;
-                        /*&fprintf(dumpOut,"adding ref [%s,%d,%d](%s) on %s:%x\n",s_fileTab.tab[r->r->p.file]->name,r->r->p.line,r->r->p.coll,usagesName[r->r->usg.base],r->s->name,r->s);fflush(dumpOut);&*/
+                        /*&fprintf(dumpOut,"adding ref [%s,%d,%d](%s) on %s:%x\n",s_fileTab.tab[r->r->p.file]->name,r->r->p.line,r->r->p.col,usagesName[r->r->usg.base],r->s->name,r->s);fflush(dumpOut);&*/
                         LIST_CONS(r,(*place));
                     }
                     rrr0 = place;
@@ -1120,7 +1120,7 @@ static int htmlIsThereSomethingPrintable(S_olSymbolsMenu *itt) {
     //&fprintf(dumpOut,"looking for something printable in %s\n", itt->s.name);
     if (LANGUAGE(LANG_JAVA) && itt->s.b.symType==TypeCppInclude) return(0);
     for(r=itt->s.refs; r!=NULL; r=r->next) {
-        //&fprintf(dumpOut,"hecking ref %d,%d\n", r->p.line, r->p.coll);
+        //&fprintf(dumpOut,"hecking ref %d,%d\n", r->p.line, r->p.col);
         if (r->usg.base==UsageClassTreeDefinition) return(1);
         if (r->usg.base<UsageMaxOLUsages) return(1);
     }
@@ -1374,8 +1374,8 @@ static void htmlScanCxFileAndGenRefLists(char *fn1, char *fn2,
 /* ***************************************************************** */
 
 #define GetFileChar(ch,ff,cp) {                     \
-        if (ch=='\n') {(cp)->line++; (cp)->coll=0;} \
-        else (cp)->coll++;                          \
+        if (ch=='\n') {(cp)->line++; (cp)->col=0;} \
+        else (cp)->col++;                          \
         ch=fgetc(ff);                               \
         if (ch==EOF) {                              \
             fclose(ff);                             \
@@ -1447,7 +1447,7 @@ static void htmlPosProcess( FILE **fff,
     prf = suf = "";
     prf0 = suf0 = "";
     prf1 = suf1 = "";
-    /*&fprintf(dumpOut,"processing '%s' at %d,%d,%d\n",cri->name,rr->r->p.file,rr->r->p.line,rr->r->p.coll);fflush(dumpOut);&*/
+    /*&fprintf(dumpOut,"processing '%s' at %d,%d,%d\n",cri->name,rr->r->p.file,rr->r->p.line,rr->r->p.col);fflush(dumpOut);&*/
     if (cri->b.symType == TypeFunSep) {
         if (s_opt.htmlFunSeparate) {
             fprintf(ccOut, "</pre><font size= -1 color=\"red\"><hr><center>");
@@ -1498,7 +1498,7 @@ static void htmlPosProcess( FILE **fff,
                 ) {
 #ifdef DEBUG
             if (ch != '#') {
-                fprintf(dumpOut,"cpp ref on '%c' not at #: %s,%d,%d\n",ch,s_fileTab.tab[rr->r->p.file]->name,rr->r->p.line,rr->r->p.coll);fflush(dumpOut);
+                fprintf(dumpOut,"cpp ref on '%c' not at #: %s,%d,%d\n",ch,s_fileTab.tab[rr->r->p.file]->name,rr->r->p.line,rr->r->p.col);fflush(dumpOut);
             }
 #endif
             htmlPutCharLF(ccOut, ch, cp);

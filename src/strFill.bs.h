@@ -562,7 +562,7 @@
     (STRUCTP)->sd = ARG1;\
     (STRUCTP)->p.file = ARG2;\
     (STRUCTP)->p.line = ARG3;\
-    (STRUCTP)->p.coll = ARG4;\
+    (STRUCTP)->p.col = ARG4;\
     (STRUCTP)->next = ARG5;\
 }
 #define _FILLF_idIdent(STRUCTP, ARGS) {\
@@ -2218,7 +2218,7 @@
     (STRUCTP)->defUsage = ARG19;\
     (STRUCTP)->defpos.file = ARG20;\
     (STRUCTP)->defpos.line = ARG21;\
-    (STRUCTP)->defpos.coll = ARG22;\
+    (STRUCTP)->defpos.col = ARG22;\
     (STRUCTP)->outOnLine = ARG23;\
     (STRUCTP)->markers = ARG24;\
     (STRUCTP)->next = ARG25;\
@@ -3045,7 +3045,7 @@
 #define FILL_position(STRUCTP, ARG0, ARG1, ARG2) {\
     (STRUCTP)->file = ARG0;\
     (STRUCTP)->line = ARG1;\
-    (STRUCTP)->coll = ARG2;\
+    (STRUCTP)->col = ARG2;\
 }
 #define FILLF_position(STRUCTP, ARG0, ARG1, ARG2) {\
     (STRUCTP)->file = ARG0;\
@@ -3071,7 +3071,7 @@
     (STRUCTP)->idi.sd = ARG1;\
     (STRUCTP)->idi.p.file = ARG2;\
     (STRUCTP)->idi.p.line = ARG3;\
-    (STRUCTP)->idi.p.coll = ARG4;\
+    (STRUCTP)->idi.p.col = ARG4;\
     (STRUCTP)->idi.next = ARG5;\
     (STRUCTP)->fname = ARG6;\
     (STRUCTP)->nameType = ARG7;\

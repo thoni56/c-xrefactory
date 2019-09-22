@@ -622,7 +622,7 @@ static void handleMacroUsageParameterPositions(int argi, S_position *macpos,
     ) {
     if (s_opt.cxrefs == OLO_GET_PARAM_COORDINATES
         && POSITION_EQ(*macpos, s_cxRefPos)) {
-//&sprintf(tmpBuff,"checking param %d at %d,%d, final==%d", argi, parpos1->coll, parpos2->coll, final);ppcGenTmpBuff();
+//&sprintf(tmpBuff,"checking param %d at %d,%d, final==%d", argi, parpos1->col, parpos2->col, final);ppcGenTmpBuff();
         if (final) {
             if (argi==0) {
                 setParamPositionForFunctionWithoutParams(parpos1);
@@ -632,7 +632,7 @@ static void handleMacroUsageParameterPositions(int argi, S_position *macpos,
         } else if (argi == s_opt.olcxGotoVal) {
             s_paramBeginPosition = *parpos1;
             s_paramEndPosition = *parpos2;
-//&fprintf(dumpOut,"regular setting to %d - %d\n", parpos1->coll, parpos2->coll);
+//&fprintf(dumpOut,"regular setting to %d - %d\n", parpos1->col, parpos2->col);
         }
     }
 }
@@ -739,7 +739,7 @@ static void processDefine(int argFlag) {
                 ddd = mbody+sizei;
                 PutLexToken(CPP_MAC_ARG, ddd);
                 PutLexInt(s_maTab.tab[ii]->order, ddd);
-                PutLexPosition(pos.file, pos.line,pos.coll,ddd);
+                PutLexPosition(pos.file, pos.line,pos.col,ddd);
                 sizei = ddd - mbody;
             } else {
                 if (lex==IDENT_TO_COMPLETE
@@ -873,7 +873,7 @@ static void genCppIfElseReference(int level, S_position *pos, int usage) {
     }
     if (cFile.ifstack!=NULL) {
       dp = cFile.ifstack->pos;
-      sprintf(ttt,"CppIf%x-%x-%d", dp.file, dp.coll, dp.line);
+      sprintf(ttt,"CppIf%x-%x-%d", dp.file, dp.col, dp.line);
       addTrivialCxReference(ttt, TypeCppIfElse,StorageDefault, pos, usage);
       if (level < 0) cFile.ifstack = cFile.ifstack->next;
     }
@@ -1313,10 +1313,10 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
 /*				NextLexPosition(respos,bcc+1);	*/ /* new identifier position*/
                 strcpy(bcc,occ);
                 // the following is a hack as # is part of ## symbols
-                respos.coll --;
-                assert(respos.coll>=0);
+                respos.col --;
+                assert(respos.col>=0);
                 cxAddCollateReference( lbcc+IDENT_TOKEN_SIZE, bcc, &respos);
-                respos.coll ++;
+                respos.col ++;
             } else {
                 NextLexPosition(respos,bcc+1);	/* new identifier position*/
                 sprintf(bcc,"%d",val);
@@ -1325,7 +1325,7 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
             bcc += strlen(bcc);
             assert(*bcc==0);
             bcc++;
-            PutLexPosition(respos.file,respos.line,respos.coll,bcc);
+            PutLexPosition(respos.file,respos.line,respos.col,bcc);
         }
     }
     TestPPBufOverflow(bcc,buf,bsize);
@@ -1443,7 +1443,7 @@ static void crMacroBody(S_lexInput *macBody,
             macArgsToString(bcc, &actArgs[val]);
             len = strlen(bcc)+1;
             bcc += len;
-            PutLexPosition(hpos.file, hpos.line, hpos.coll, bcc);
+            PutLexPosition(hpos.file, hpos.line, hpos.col, bcc);
             if (len >= MACRO_UNIT_SIZE-15) {
                 error(ERR_INTERNAL,"size of #macro_argument exceeded MACRO_UNIT_SIZE");
             }
@@ -1882,14 +1882,14 @@ static void actionOnBlockMarker(void) {
     uniyylval->bbposition.d = pos;\
     uniyylval->bbposition.b = pos;\
     uniyylval->bbposition.e = pos;\
-    uniyylval->bbposition.e.coll += len;\
+    uniyylval->bbposition.e.col += len;\
 }
 
 #define SET_INTEGER_YYLVAL(val, pos, len) {\
         uniyylval->bbinteger.d = val;\
         uniyylval->bbinteger.b = pos;\
         uniyylval->bbinteger.e = pos;\
-        uniyylval->bbinteger.e.coll += len;\
+        uniyylval->bbinteger.e.col += len;\
 }
 
 int yylex(void) {
@@ -1936,7 +1936,7 @@ int yylex(void) {
 //			???????????? isn't this useless
             testCxrefCompletionId(&lexem,yytext,&idpos);
         }
-        log_trace("id %s position %d %d %d",yytext,idpos.file,idpos.line,idpos.coll);
+        log_trace("id %s position %d %d %d",yytext,idpos.file,idpos.line,idpos.col);
         FILL_symbolBits(&symbol.bits,0,0,0,0,0,TypeMacro,StorageNone,0);
         FILL_symbol(&symbol,yytext,yytext,s_noPos,symbol.bits,mbody,NULL,NULL);
         if ((!LANGUAGE(LANG_JAVA))

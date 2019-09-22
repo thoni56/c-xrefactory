@@ -686,7 +686,7 @@ typedef struct cctNode {
 typedef struct position {
     int file;
     int line;
-    int coll;
+    int col;
 } S_position;
 
 typedef struct positionList {

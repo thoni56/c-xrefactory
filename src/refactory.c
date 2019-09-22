@@ -670,7 +670,7 @@ static void refactoryPushMarkersAsReferences(S_editorMarkerList **markers,
     for(mm=refs->menuSym; mm!=NULL; mm=mm->next) {
         if (strcmp(mm->s.name, sym)==0) {
             for(r=rr; r!=NULL; r=r->next) {
-                //&sprintf(tmpBuff,"adding mis ref on %d:%d", r->p.line, r->p.coll);
+                //&sprintf(tmpBuff,"adding mis ref on %d:%d", r->p.line, r->p.col);
                 //&ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
                 olcxAddReference(&mm->s.refs, r, 0);
             }
@@ -742,7 +742,7 @@ static void tpCheckMoveClassPutClassDefaultSymbols(S_symbolRefItem *ri, void *dd
     MOVE_CLASS_MAP_FUN_RETURN_ON_UNINTERESTING_SYMBOLS(ri, dd);
     // fine, add it to Menu, so we will load its references
     for(rr=ri->refs; rr!=NULL; rr=rr->next) {
-        //&fprintf(dumpOut,"checking %d.%d ref of %s\n", rr->p.line,rr->p.coll,ri->name); fflush(dumpOut);
+        //&fprintf(dumpOut,"checking %d.%d ref of %s\n", rr->p.line,rr->p.col,ri->name); fflush(dumpOut);
         if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, (&dd->mm))) {
             if (IS_DEFINITION_OR_DECL_USAGE(rr->usg.base)) {
                 // definition inside class, default or private acces to be checked
@@ -1408,7 +1408,7 @@ static S_editorMarker *refactoryCrNewMarkerForExpressionBegin(S_editorMarker *d,
     } else {
         bb = editorGetOpenedAndLoadedBuffer(s_fileTab.tab[pos->file]->name);
         pp = editorCrNewMarker(bb, 0);
-        editorMoveMarkerToLineCol(pp, pos->line, pos->coll);
+        editorMoveMarkerToLineCol(pp, pos->line, pos->col);
         assert(pp->buffer == d->buffer);
         assert(pp->offset <= d->offset);
         return(pp);
@@ -1879,7 +1879,7 @@ static int refactoryGetParamPosition(S_editorMarker *pos, char *fname, int argn)
     if (s_paramBeginPosition.file != s_paramEndPosition.file
         || s_paramBeginPosition.line > s_paramEndPosition.line
         || (s_paramBeginPosition.line == s_paramEndPosition.line
-            && s_paramBeginPosition.coll > s_paramEndPosition.coll)) {
+            && s_paramBeginPosition.col > s_paramEndPosition.col)) {
         ppcGenGotoMarkerRecord(pos);
         sprintf(tmpBuff, "Something goes wrong at this occurence, can't get reasonable parameter limites");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
@@ -1945,7 +1945,7 @@ static int refactoryAddStringAsParameter(S_editorMarker *pos, S_editorMarker *en
     } else {
         mm = endm;
         assert(mm->buffer->ftnum == s_paramBeginPosition.file);
-        editorMoveMarkerToLineCol(mm, s_paramBeginPosition.line, s_paramBeginPosition.coll);
+        editorMoveMarkerToLineCol(mm, s_paramBeginPosition.line, s_paramBeginPosition.col);
     }
 
     sep1=""; sep2="";

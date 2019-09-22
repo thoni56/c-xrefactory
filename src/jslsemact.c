@@ -487,7 +487,7 @@ void jslNewClassDefinitionBegin(S_idIdent *name,
             sprintf(tttn, "%d", s_jsl->classStat->functionInnerCounter);
             sprintf(ttt, "%s", inname->name);
             FILLF_idIdentList(&mntmp, tttn, NULL,
-                              s_noPos.file, s_noPos.line, s_noPos.coll, NULL,
+                              s_noPos.file, s_noPos.line, s_noPos.col, NULL,
                               tttn,
                               TypeStruct, s_jsl->classStat->className);
             // this is a very special reason why to do TYPE_ADD_YES here,
@@ -568,7 +568,7 @@ void jslNewClassDefinitionBegin(S_idIdent *name,
     stackMemoryBlockStart();
     XX_ALLOC(ill, S_idIdentList);
     FILLF_idIdentList(ill, cc->name, inname->sd,
-                      inname->p.file, inname->p.line, inname->p.coll, NULL,
+                      inname->p.file, inname->p.line, inname->p.col, NULL,
                       cc->name,TypeStruct,
                       s_jsl->classStat->className);
     XX_ALLOC(nss, S_jslClassStat);

@@ -472,7 +472,7 @@ void setLocalVariableLinkName(struct symbol *p) {
         len = TMP_STRING_SIZE - tti;
         typeSPrint(ttt+tti, &len, p->u.type, nnn, LINK_NAME_CUT_SYMBOL, 0,1,SHORT_NAME, NULL);
         sprintf(ttt+tti+len,"%c%x-%x-%x-%x", LINK_NAME_CUT_SYMBOL,
-                p->pos.file,p->pos.line,p->pos.coll, s_count.localVar++);
+                p->pos.file,p->pos.line,p->pos.col, s_count.localVar++);
     } else {
         if (p->bits.storage==StorageExtern && ! s_opt.exactPositionResolve) {
             sprintf(ttt,"%s", p->name);
@@ -480,12 +480,12 @@ void setLocalVariableLinkName(struct symbol *p) {
             // it is now better to have name allways accessible
             //&         if (s_opt.taskRegime == RegimeHtmlGenerate) {
             // html symbol, must pass the name for cxreference list item
-            sprintf(ttt,"%x-%x-%x%c%s",p->pos.file,p->pos.line,p->pos.coll,
+            sprintf(ttt,"%x-%x-%x%c%s",p->pos.file,p->pos.line,p->pos.col,
                     LINK_NAME_CUT_SYMBOL, p->name);
             /*&
               } else {
               // no special information need to pass
-              sprintf(ttt,"%x-%x-%x", p->pos.file,p->pos.line,p->pos.coll);
+              sprintf(ttt,"%x-%x-%x", p->pos.file,p->pos.line,p->pos.col);
               }
               &*/
         }
@@ -933,7 +933,7 @@ void setGlobalFileDepNames(char *iname, S_symbol *pp, int memory) {
         fname = simpleFileName(s_fileTab.tab[pp->pos.file]->name);
         sprintf(tmp, "%x-%s-%x-%x%c",
                 hashFun(s_fileTab.tab[pp->pos.file]->name),
-                fname, pp->pos.line, pp->pos.coll,
+                fname, pp->pos.line, pp->pos.col,
                 LINK_NAME_CUT_SYMBOL);
     } else if (iname[0]==0) {
         // anonymous enum/structure/union ...
