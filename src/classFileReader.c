@@ -734,38 +734,7 @@ S_typeModifiers * cfUnPackResultType(char *sig, char **restype) {
             }
             assert(*ssig == ';');
             *ssig = 0;
-
-#if ! ZERO  // [13.1.2003]
-
             tt->u.t = javaFQTypeSymbolDefinition(ccname, fqname);
-
-#else
-
-            FILL_symbolBits(&dd.b,0,0, 0,0, 0, TypeStruct, StorageNone,0);
-            FILL_symbol(&dd, ccname, fqname,s_noPos,dd.b,s,NULL,NULL);
-            FILL_symbolList(&ddl, &dd, NULL);
-            if (! javaFqtTabIsMember(&s_javaFqtTab,&ddl,&ii,&memb)) {
-                // TODO rather call 'javaFQTypeSymbolDefinitionCreate' !!!!
-                CF_ALLOCC(nnn, nmlen+1, char);
-                strcpy(nnn,fqname);
-                CF_ALLOC(pdd, S_symbol);
-                FILL_symbolBits(&pdd->b,0,0,0,0,0,TypeStruct,StorageNone,0);
-                FILL_symbol(pdd,nnn+ccnameOffset,nnn,s_noPos,pdd->b,s,NULL,NULL);
-                CF_ALLOC(pdd->u.s, S_symStructSpecific);
-                FILLF_symStructSpecific(pdd->u.s, NULL,
-                                        NULL, NULL, NULL, 0, NULL,
-                                        TypeStruct,t,NULL,NULL,NULL,
-                                        TypePointer,f,(NULL,NULL),NULL,&pdd->u.s->stype,
-                                        javaFqtNamesAreFromTheSamePackage(nnn, s_javaThisPackageName),0, -1,0);
-                pdd->u.s->stype.u.t = pdd;
-                CF_ALLOC(memb, S_symbolList);
-                FILL_symbolList(memb, pdd, NULL);
-                javaFqtTabSet(&s_javaFqtTab,memb,ii);
-                // I think this can be there, as it is very used
-                javaCreateClassFileItem(memb->d);
-            }
-            tt->u.t = memb->d;
-#endif
             *ssig = ';';
             break;
         default:
@@ -953,6 +922,7 @@ static void cfReadMethodInfos(  char **accc,
                     exc = javaFQTypeSymbolDefinition(exsname, exname);
                     CF_ALLOC(ee, SymbolList);
                     FILL_symbolList(ee, exc, exclist);
+                    /* Replaced by: */
                     *ee = (SymbolList){.d = exc, .next = exclist};
                     exclist = ee;
                 }
