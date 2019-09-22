@@ -20,6 +20,7 @@ quick:
 	@make -C initializer_parsing
 	@make -C generate_str_fill
 	@make -C read_xrefs
+	@make -C java_example
 
 slow:
 	@echo "Slow tests..."
