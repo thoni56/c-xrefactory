@@ -10,7 +10,7 @@ import javax.swing.*;
 
 class Browsing {
 
-    void simplest() {
+    void simplest() throws Exception, Exception {
         int i;
 
         // put  cursor somewhere  on 'i' variable  and press  F6. Then
