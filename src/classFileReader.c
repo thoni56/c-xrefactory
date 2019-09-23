@@ -921,7 +921,7 @@ static void cfReadMethodInfos(  char **accc,
                     exsname = simpleClassNameFromFQTName(exname);
                     exc = javaFQTypeSymbolDefinition(exsname, exname);
                     CF_ALLOC(ee, SymbolList);
-                    /* Replaced FILL_symbolList(ee, exc, exclist); with: */
+                    /* REPLACED: FILL_symbolList(ee, exc, exclist); with: */
                     *ee = (SymbolList){.d = exc, .next = exclist};
                     exclist = ee;
                 }

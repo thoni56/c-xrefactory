@@ -1917,7 +1917,8 @@ ClassTypeList:
                 assert($1.d && $1.d->bits.symType == TypeDefault && $1.d->u.type);
                 assert($1.d->u.type->kind == TypeStruct);
                 CF_ALLOC($$.d, SymbolList);
-                FILL_symbolList($$.d, $1.d->u.type->u.t, NULL);
+                /* REPLACED: FILL_symbolList($$.d, $1.d->u.type->u.t, NULL); with: */
+                *$$.d = (SymbolList){.d = $1.d->u.type->u.t, .next = NULL};
             }
         }
     |	ClassTypeList ',' ClassType		{
@@ -1926,7 +1927,8 @@ ClassTypeList:
                 assert($3.d && $3.d->bits.symType == TypeDefault && $3.d->u.type);
                 assert($3.d->u.type->kind == TypeStruct);
                 CF_ALLOC($$.d, SymbolList);
-                FILL_symbolList($$.d, $3.d->u.type->u.t, $1.d);
+                /* REPLACED: FILL_symbolList($$.d, $3.d->u.type->u.t, $1.d); with: */
+                *$$.d = (SymbolList){.d = $3.d->u.type->u.t, .next = $1.d};
             }
         }
     ;

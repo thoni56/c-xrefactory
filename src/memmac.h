@@ -74,7 +74,7 @@
 }
 
 
-/* ************* a suplementary level with free-lists ******************** */
+/* ************* a supplementary level with free-lists ******************** */
 
 /* This is only used for olcxMemory so "mem" is always olcxMemory... */
 #define RLM_INIT(mem) {mem##AllocatedBytes = 0; CHECK_INIT();}
@@ -124,7 +124,7 @@
             break;\
         }\
     }\
-    if (_itmpi==s_olcx_check_arrayi) fatalError(ERR_INTERNAL, "Freeing unalocated cell", XREF_EXIT_ERR);\
+    if (_itmpi==s_olcx_check_arrayi) fatalError(ERR_INTERNAL, "Freeing unallocated cell", XREF_EXIT_ERR);\
 }
 #define CHECK_FINAL() {\
     int _itmpi;\

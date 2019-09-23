@@ -450,10 +450,11 @@ int javaClassIsInCurrentPackage(S_symbol *cl) {
 }
 
 static S_symbol *javaFQTypeSymbolDefinitionCreate(char *name,
-                                            char *fqName, int ii) {
+                                                  char *fqName, int ii) {
     S_symbol        *memb;
-    SymbolList    *pppl;
+    SymbolList      *pppl;
     char			*lname1,*sname;
+
     CF_ALLOCC(sname, strlen(name)+1, char);
     strcpy(sname, name);
     CF_ALLOCC(lname1, strlen(fqName)+1, char);
@@ -463,13 +464,16 @@ static S_symbol *javaFQTypeSymbolDefinitionCreate(char *name,
     FILL_symbol(memb, sname, lname1, s_noPos,memb->bits,s,NULL,NULL);
     CF_ALLOC(memb->u.s, S_symStructSpecific);
     FILLF_symStructSpecific(memb->u.s,NULL,
-                        NULL,NULL,NULL,0,NULL,
-                        TypeStruct,t,NULL,NULL,NULL,
-                        TypePointer,f,(NULL,NULL),NULL,&memb->u.s->stype,
-                        javaFqtNamesAreFromTheSamePackage(lname1, s_javaThisPackageName),0, -1,0);
+                            NULL,NULL,NULL,0,NULL,
+                            TypeStruct,t,NULL,NULL,NULL,
+                            TypePointer,f,(NULL,NULL),NULL,&memb->u.s->stype,
+                            javaFqtNamesAreFromTheSamePackage(lname1,
+                                                              s_javaThisPackageName),
+                            0, -1, 0);
     memb->u.s->stype.u.t = memb;
     CF_ALLOC(pppl, SymbolList);
-    FILL_symbolList(pppl, memb, NULL);
+    /* REPLACED: FILL_symbolList(pppl, memb, NULL); with: */
+    *pppl = (SymbolList){.d = memb, .next = NULL};
     if (ii < 0) {
         javaFqtTabAdd(&s_javaFqtTab,pppl,&ii);
     } else {
@@ -2495,14 +2499,6 @@ void javaTypeDump(S_typeModifiers *tt) {
     } else {
         fprintf(dumpOut,"%s",typesName[tt->kind]);
     }
-}
-
-void removeFunNestedClass(void  *ddv) {
-    S_symbol        *dd;
-    SymbolList	ss;
-    dd = (S_symbol *) ddv;
-    FILL_symbolList(&ss, dd, NULL);
-    javaFqtTabDelete(&s_javaFqtTab, &ss);
 }
 
 void javaAddJslReadedTopLevelClasses(S_jslTypeTab  *jslTypeTab) {

@@ -315,8 +315,10 @@ void jslAddAllPackageClassesFromFileTab(S_idIdentList *packid) {
 
 void jslAddToLoadWaitList( S_symbol *clas ) {
     SymbolList *ll;
+
     CF_ALLOC(ll, SymbolList);
-    FILL_symbolList(ll, clas, s_jsl->waitList);
+    /* REPLACED: FILL_symbolList(ll, clas, s_jsl->waitList); with: */
+    *ll = (SymbolList){.d = clas, .next = s_jsl->waitList};
     s_jsl->waitList = ll;
 }
 
