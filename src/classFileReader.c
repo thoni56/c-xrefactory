@@ -921,8 +921,7 @@ static void cfReadMethodInfos(  char **accc,
                     exsname = simpleClassNameFromFQTName(exname);
                     exc = javaFQTypeSymbolDefinition(exsname, exname);
                     CF_ALLOC(ee, SymbolList);
-                    FILL_symbolList(ee, exc, exclist);
-                    /* Replaced by: */
+                    /* Replaced FILL_symbolList(ee, exc, exclist); with: */
                     *ee = (SymbolList){.d = exc, .next = exclist};
                     exclist = ee;
                 }
@@ -986,21 +985,23 @@ S_symbol *cfAddCastsToModule(S_symbol *memb, S_symbol *sup) {
 
 void addSuperClassOrInterface( S_symbol *memb, S_symbol *supp, int origin ) {
     SymbolList *ssl, *ss;
-    // [14.9]
+
     supp = javaFQTypeSymbolDefinition(supp->name, supp->linkName);
-    //
-    for(ss=memb->u.s->super; ss!=NULL && ss->d!=supp; ss=ss->next) ;
-    if (ss!=NULL && ss->d==supp) return; // avoid multiple occurences
-    log_debug(" adding supperclass %s to %s", supp->linkName,memb->linkName);
+    for(ss=memb->u.s->super; ss!=NULL && ss->d!=supp; ss=ss->next)
+        ;
+    if (ss!=NULL && ss->d==supp)
+        return; // avoid multiple occurences
+    log_debug(" adding superclass %s to %s", supp->linkName,memb->linkName);
     if (cctIsMember(&supp->u.s->casts, memb, 1) || memb==supp) {
-        sprintf(tmpBuff,"a cycle in super classes of %s detected",
+        sprintf(tmpBuff,"detected cycle in super classes of %s",
                 memb->linkName);
         error(ERR_ST, tmpBuff);
         return;
     }
     cfAddCastsToModule(memb, supp);
     CF_ALLOC(ssl, SymbolList);
-    FILL_symbolList(ssl, supp, NULL);
+    /* REPLACED FILL_symbolList(ssl, supp, NULL); with: */
+    *ssl = (SymbolList){.d = supp, .next = NULL};
     LIST_APPEND(SymbolList, memb->u.s->super, ssl);
     addSubClassItemToFileTab(supp->u.s->classFile,
                              memb->u.s->classFile,
