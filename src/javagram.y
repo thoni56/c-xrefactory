@@ -2482,16 +2482,16 @@ StatementExpression:
     |	ClassInstanceCreationExpression	{PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
     ;
 
-_ncounter_:  {if (RegularPass()) EXTRACT_COUNTER_SEMACT($$.d);}
+_ncounter_:  {if (RegularPass()) EXTRACT_COUNTER_SEMACT($$.data);}
     ;
 
-_nlabel_:	{if (RegularPass()) EXTRACT_LABEL_SEMACT($$.d);}
+_nlabel_:	{if (RegularPass()) EXTRACT_LABEL_SEMACT($$.data);}
     ;
 
-_ngoto_:	{if (RegularPass()) EXTRACT_GOTO_SEMACT($$.d);}
+_ngoto_:	{if (RegularPass()) EXTRACT_GOTO_SEMACT($$.data);}
     ;
 
-_nfork_:	{if (RegularPass()) EXTRACT_FORK_SEMACT($$.d);}
+_nfork_:	{if (RegularPass()) EXTRACT_FORK_SEMACT($$.data);}
     ;
 
 
@@ -2499,7 +2499,7 @@ IfThenStatement:
         IF '(' Expression ')' _nfork_ Statement                     {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference($5.d, UsageDefined);
+                    genInternalLabelReference($5.data, UsageDefined);
                 } else {
                     PropagateBorns($$, $1, $6);
                 }
@@ -2511,8 +2511,8 @@ IfThenElseStatementPrefix:
         IF '(' Expression ')' _nfork_ StatementNoShortIf ELSE _ngoto_ {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference($5.d, UsageDefined);
-                    $$.d = $8.d;
+                    genInternalLabelReference($5.data, UsageDefined);
+                    $$.data = $8.data;
                 } else {
                     PropagateBorns($$, $1, $7);
                 }
@@ -2524,7 +2524,7 @@ IfThenElseStatement:
         IfThenElseStatementPrefix Statement {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference($1.d, UsageDefined);
+                    genInternalLabelReference($1.data, UsageDefined);
                 } else {
                     PropagateBorns($$, $1, $2);
                 }
@@ -2536,7 +2536,7 @@ IfThenElseStatementNoShortIf:
         IfThenElseStatementPrefix StatementNoShortIf {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference($1.d, UsageDefined);
+                    genInternalLabelReference($1.data, UsageDefined);
                 } else {
                     PropagateBorns($$, $1, $2);
                 }
@@ -2548,14 +2548,14 @@ SwitchStatement:
         SWITCH '(' Expression ')' /*5*/ _ncounter_  {/*6*/
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $<symbol>$ = addContinueBreakLabelSymbol(1000*$5.d,SWITCH_LABEL_NAME);
+                    $<symbol>$ = addContinueBreakLabelSymbol(1000*$5.data,SWITCH_LABEL_NAME);
                 }
             }
         } {/*7*/
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $<symbol>$ = addContinueBreakLabelSymbol($5.d, BREAK_LABEL_NAME);
-                    genInternalLabelReference($5.d, UsageFork);
+                    $<symbol>$ = addContinueBreakLabelSymbol($5.data, BREAK_LABEL_NAME);
+                    genInternalLabelReference($5.data, UsageFork);
                 }
             }
         }   SwitchBlock                     {
@@ -2564,7 +2564,7 @@ SwitchStatement:
                     genSwitchCaseFork(1);
                     ExtrDeleteContBreakSym($<symbol>7);
                     ExtrDeleteContBreakSym($<symbol>6);
-                    genInternalLabelReference($5.d, UsageDefined);
+                    genInternalLabelReference($5.data, UsageDefined);
                 } else {
                     PropagateBorns($$, $1, $8);
                 }
@@ -2632,10 +2632,10 @@ WhileStatementPrefix:
                     if (s_opt.cxrefs == OLO_EXTRACT) {
                         S_symbol *cl, *bl;
                         cl = bl = NULL;        // just to avoid warning message
-                        cl = addContinueBreakLabelSymbol($2.d, CONTINUE_LABEL_NAME);
-                        bl = addContinueBreakLabelSymbol($6.d, BREAK_LABEL_NAME);
+                        cl = addContinueBreakLabelSymbol($2.data, CONTINUE_LABEL_NAME);
+                        bl = addContinueBreakLabelSymbol($6.data, BREAK_LABEL_NAME);
                         XX_ALLOC($$.d, S_whileExtractData);
-                        FILL_whileExtractData($$.d, $2.d, $6.d, cl, bl);
+                        FILL_whileExtractData($$.d, $2.data, $6.data, cl, bl);
                     } else {
                         $$.d = NULL;
                     }
@@ -2684,13 +2684,13 @@ DoStatement:
         DO _nlabel_ _ncounter_ _ncounter_ { /*5*/
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $<symbol>$ = addContinueBreakLabelSymbol($3.d, CONTINUE_LABEL_NAME);
+                    $<symbol>$ = addContinueBreakLabelSymbol($3.data, CONTINUE_LABEL_NAME);
                 }
             }
         } {/*6*/
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $<symbol>$ = addContinueBreakLabelSymbol($4.d, BREAK_LABEL_NAME);
+                    $<symbol>$ = addContinueBreakLabelSymbol($4.data, BREAK_LABEL_NAME);
                 }
             }
         } Statement WHILE {
@@ -2698,14 +2698,14 @@ DoStatement:
                 if (! SyntaxPassOnly()) {
                     ExtrDeleteContBreakSym($<symbol>6);
                     ExtrDeleteContBreakSym($<symbol>5);
-                    genInternalLabelReference($3.d, UsageDefined);
+                    genInternalLabelReference($3.data, UsageDefined);
                 }
             }
         } '(' Expression ')' ';'			{
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference($2.d, UsageFork);
-                    genInternalLabelReference($4.d, UsageDefined);
+                    genInternalLabelReference($2.data, UsageFork);
+                    genInternalLabelReference($4.data, UsageDefined);
                 } else {
                     PropagateBorns($$, $1, $13);
                 }
@@ -2740,12 +2740,12 @@ ForStatementPrefix:
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
                     S_symbol *ss __attribute__((unused));
-                    genInternalLabelReference($4.d, UsageUsed);
-                    genInternalLabelReference($7.d, UsageDefined);
-                    ss = addContinueBreakLabelSymbol($8.d, CONTINUE_LABEL_NAME);
-                    ss = addContinueBreakLabelSymbol($11.d, BREAK_LABEL_NAME);
-                    $$.d.i1 = $8.d;
-                    $$.d.i2 = $11.d;
+                    genInternalLabelReference($4.data, UsageUsed);
+                    genInternalLabelReference($7.data, UsageDefined);
+                    ss = addContinueBreakLabelSymbol($8.data, CONTINUE_LABEL_NAME);
+                    ss = addContinueBreakLabelSymbol($11.data, BREAK_LABEL_NAME);
+                    $$.d.i1 = $8.data;
+                    $$.d.i2 = $11.data;
                 } else {
                     PropagateBorns($$, $1, $10);
                 }
@@ -2945,7 +2945,7 @@ TryStatement:
             {
                 if (RegularPass()) {
                     if (! SyntaxPassOnly()) {
-                        genInternalLabelReference($2.d, UsageDefined);
+                        genInternalLabelReference($2.data, UsageDefined);
                     }
                 }
             }
@@ -2986,7 +2986,7 @@ CatchClause:
             {
                 if (RegularPass()) {
                     if (! SyntaxPassOnly()) {
-                        genInternalLabelReference($5.d, UsageDefined);
+                        genInternalLabelReference($5.data, UsageDefined);
                     } else {
                         PropagateBorns($$, $1, $8);
                     }
@@ -3010,7 +3010,7 @@ Finally:
         FINALLY _nfork_ Block {
             if (RegularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference($2.d, UsageDefined);
+                    genInternalLabelReference($2.data, UsageDefined);
                 } else {
                     PropagateBorns($$, $1, $3);
                 }
@@ -3429,7 +3429,7 @@ ArrayCreationExpression:
                 if (! SyntaxPassOnly()) {
                     int i;
                     CrTypeModifier($$.d.t,$3.d.u);
-                    for(i=0; i<$4.d; i++) PrependModifier($$.d.t, TypeArray);
+                    for(i=0; i<$4.data; i++) PrependModifier($$.d.t, TypeArray);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &$1.d->p;
@@ -3443,7 +3443,7 @@ ArrayCreationExpression:
                 if (! SyntaxPassOnly()) {
                     int i;
                     CrTypeModifier($$.d.t,$3.d.u);
-                    for(i=0; i<$4.d; i++) PrependModifier($$.d.t, TypeArray);
+                    for(i=0; i<$4.data; i++) PrependModifier($$.d.t, TypeArray);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &$1.d->p;
@@ -3457,7 +3457,7 @@ ArrayCreationExpression:
                     int i;
                     assert($3.d && $3.d->u.type);
                     $$.d.t = $3.d->u.type;
-                    for(i=0; i<$4.d; i++) PrependModifier($$.d.t, TypeArray);
+                    for(i=0; i<$4.data; i++) PrependModifier($$.d.t, TypeArray);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &$1.d->p;
@@ -3472,7 +3472,7 @@ ArrayCreationExpression:
                     int i;
                     assert($3.d && $3.d->u.type);
                     $$.d.t = $3.d->u.type;
-                    for(i=0; i<$4.d; i++) PrependModifier($$.d.t, TypeArray);
+                    for(i=0; i<$4.data; i++) PrependModifier($$.d.t, TypeArray);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &$1.d->p;
@@ -3485,11 +3485,11 @@ ArrayCreationExpression:
 
 DimExprs:
         DimExpr						{
-            if (RegularPass()) $$.d = 1;
+            if (RegularPass()) $$.data = 1;
             PropagateBornsIfRegularSyntaxPass($$, $1, $1);
         }
     |	DimExprs DimExpr			{
-            if (RegularPass()) $$.d = $1.d+1;
+            if (RegularPass()) $$.data = $1.data+1;
             PropagateBornsIfRegularSyntaxPass($$, $1, $2);
         }
     ;
@@ -3501,7 +3501,7 @@ DimExpr:
     ;
 
 Dims_opt:							{
-            if (RegularPass()) $$.d = 0;
+            if (RegularPass()) $$.data = 0;
             SetNullBorns($$);
         }
     |	Dims						/* { $$ = $1; } */
@@ -3509,11 +3509,11 @@ Dims_opt:							{
 
 Dims:
         '[' ']'						{
-            if (RegularPass()) $$.d = 1;
+            if (RegularPass()) $$.data = 1;
             PropagateBornsIfRegularSyntaxPass($$, $1, $2);
         }
     |	Dims '[' ']'				{
-            if (RegularPass()) $$.d = $1.d+1;
+            if (RegularPass()) $$.data = $1.data+1;
             PropagateBornsIfRegularSyntaxPass($$, $1, $3);
         }
     ;

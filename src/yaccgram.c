@@ -2830,19 +2830,19 @@ case 31:
                 addYaccSymbolReference(yyvsp[0].bbidIdent.d, UsageUsed);
                 addRuleLocalVariable(yyvsp[0].bbidIdent.d, 1);
             }
-            yyval.bbinteger.d = 2;
+            yyval.bbinteger.data = 2;
         }
 break;
 case 32:
 #line 428 "yaccgram.y"
 {
-            yyval.bbinteger.d = 2;
+            yyval.bbinteger.data = 2;
         }
 break;
 case 33:
 #line 431 "yaccgram.y"
 {
-            yyval.bbinteger.d = 1;
+            yyval.bbinteger.data = 1;
         }
 break;
 case 34:
@@ -2850,21 +2850,21 @@ case 34:
 {
             if (yyvsp[0].bbidIdent.d != NULL) {
                 addYaccSymbolReference(yyvsp[0].bbidIdent.d, UsageUsed);
-                addRuleLocalVariable(yyvsp[0].bbidIdent.d, yyvsp[-1].bbinteger.d);
+                addRuleLocalVariable(yyvsp[0].bbidIdent.d, yyvsp[-1].bbinteger.data);
             }
-            yyval.bbinteger.d = yyvsp[-1].bbinteger.d + 1;
+            yyval.bbinteger.data = yyvsp[-1].bbinteger.data + 1;
         }
 break;
 case 35:
 #line 441 "yaccgram.y"
 {
-            yyval.bbinteger.d = yyvsp[-1].bbinteger.d + 1;
+            yyval.bbinteger.data = yyvsp[-1].bbinteger.data + 1;
         }
 break;
 case 36:
 #line 444 "yaccgram.y"
 {
-            yyval.bbinteger.d = yyvsp[-1].bbinteger.d;
+            yyval.bbinteger.data = yyvsp[-1].bbinteger.data;
         }
 break;
 case 38:
@@ -3712,7 +3712,7 @@ case 366:
 {
         int i;
         yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
-        for (i=0; i<yyvsp[-1].bbinteger.d; i++) AddComposedType(yyval.bbsymbol.d,TypePointer);
+        for (i=0; i<yyvsp[-1].bbinteger.data; i++) AddComposedType(yyval.bbsymbol.d,TypePointer);
     }
 break;
 case 367:
@@ -3785,25 +3785,25 @@ break;
 case 375:
 #line 1219 "yaccgram.y"
 {
-        yyval.bbinteger.d = 1;
+        yyval.bbinteger.data = 1;
     }
 break;
 case 376:
 #line 1222 "yaccgram.y"
 {
-        yyval.bbinteger.d = 1;
+        yyval.bbinteger.data = 1;
     }
 break;
 case 377:
 #line 1225 "yaccgram.y"
 {
-        yyval.bbinteger.d = yyvsp[0].bbinteger.d+1;
+        yyval.bbinteger.data = yyvsp[0].bbinteger.data+1;
     }
 break;
 case 378:
 #line 1228 "yaccgram.y"
 {
-        yyval.bbinteger.d = yyvsp[0].bbinteger.d+1;
+        yyval.bbinteger.data = yyvsp[0].bbinteger.data+1;
     }
 break;
 case 379:
@@ -4009,7 +4009,7 @@ case 408:
 {
         int i;
         CrTypeModifier(yyval.bbtypeModif.d,TypePointer);
-        for(i=1; i<yyvsp[0].bbinteger.d; i++) appendComposedType(&(yyval.bbtypeModif.d), TypePointer);
+        for(i=1; i<yyvsp[0].bbinteger.data; i++) appendComposedType(&(yyval.bbtypeModif.d), TypePointer);
     }
 break;
 case 409:
@@ -4023,7 +4023,7 @@ case 410:
 {
         int i;
         yyval.bbtypeModif.d = yyvsp[0].bbtypeModif.d;
-        for(i=0; i<yyvsp[-1].bbinteger.d; i++) appendComposedType(&(yyval.bbtypeModif.d), TypePointer);
+        for(i=0; i<yyvsp[-1].bbinteger.data; i++) appendComposedType(&(yyval.bbtypeModif.d), TypePointer);
     }
 break;
 case 411:

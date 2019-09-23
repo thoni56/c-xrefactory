@@ -423,26 +423,26 @@ rule_body:
                 addYaccSymbolReference($1.d, UsageUsed);
                 addRuleLocalVariable($1.d, 1);
             }
-            $$.d = 2;
+            $$.data = 2;
         }
     |   compound_statement      {
-            $$.d = 2;
+            $$.data = 2;
         }
     |   precedence              {
-            $$.d = 1;
+            $$.data = 1;
         }
     |   rule_body lexem         {
             if ($2.d != NULL) {
                 addYaccSymbolReference($2.d, UsageUsed);
-                addRuleLocalVariable($2.d, $1.d);
+                addRuleLocalVariable($2.d, $1.data);
             }
-            $$.d = $1.d + 1;
+            $$.data = $1.data + 1;
         }
     |   rule_body compound_statement        {
-            $$.d = $1.d + 1;
+            $$.data = $1.data + 1;
         }
     |   rule_body precedence        {
-            $$.d = $1.d;
+            $$.data = $1.data;
         }
     ;
 
@@ -1165,7 +1165,7 @@ declarator
     | pointer declarator2                               {
         int i;
         $$.d = $2.d;
-        for (i=0; i<$1.d; i++) AddComposedType($$.d,TypePointer);
+        for (i=0; i<$1.data; i++) AddComposedType($$.d,TypePointer);
     }
     ;
 
@@ -1217,16 +1217,16 @@ declarator2
 
 pointer
     : '*'                                   {
-        $$.d = 1;
+        $$.data = 1;
     }
     | '*' type_mod_specifier_list               {
-        $$.d = 1;
+        $$.data = 1;
     }
     | '*' pointer                           {
-        $$.d = $2.d+1;
+        $$.data = $2.data+1;
     }
     | '*' type_mod_specifier_list pointer       {
-        $$.d = $3.d+1;
+        $$.data = $3.data+1;
     }
     ;
 
@@ -1405,7 +1405,7 @@ abstract_declarator
     : pointer                               {
         int i;
         CrTypeModifier($$.d,TypePointer);
-        for(i=1; i<$1.d; i++) appendComposedType(&($$.d), TypePointer);
+        for(i=1; i<$1.data; i++) appendComposedType(&($$.d), TypePointer);
     }
     | abstract_declarator2                  {
         $$.d = $1.d;
@@ -1413,7 +1413,7 @@ abstract_declarator
     | pointer abstract_declarator2          {
         int i;
         $$.d = $2.d;
-        for(i=0; i<$1.d; i++) appendComposedType(&($$.d), TypePointer);
+        for(i=0; i<$1.data; i++) appendComposedType(&($$.d), TypePointer);
     }
     ;
 

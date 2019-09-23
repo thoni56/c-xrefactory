@@ -1529,7 +1529,7 @@ typedef struct availableRefactoring {
 
 typedef struct bb_int {
     struct position  b, e;
-    int		d;
+    int		data;
 } S_bb_int;
 typedef struct bb_unsigned {
     struct position      b, e;

@@ -2690,13 +2690,13 @@ case 80:
             S_reference *rr;
             rr = duplicateReference(yyvsp[-2].bbexprType.d.r);
             yyvsp[-2].bbexprType.d.r->usg = s_noUsage;
-            if (yyvsp[-1].bbinteger.d == '=') {
+            if (yyvsp[-1].bbinteger.data == '=') {
                 RESET_REFERENCE_USAGE(rr, UsageLvalUsed);
             } else {
                 RESET_REFERENCE_USAGE(rr, UsageAddrUsed);
             }
         } else {
-            if (yyvsp[-1].bbinteger.d == '=') {
+            if (yyvsp[-1].bbinteger.data == '=') {
                 RESET_REFERENCE_USAGE(yyvsp[-2].bbexprType.d.r, UsageLvalUsed);
             } else {
                 RESET_REFERENCE_USAGE(yyvsp[-2].bbexprType.d.r, UsageAddrUsed);
@@ -2707,47 +2707,47 @@ case 80:
 break;
 case 81:
 #line 679 "cgram.y"
-{yyval.bbinteger.d = '=';}
+{yyval.bbinteger.data = '=';}
 break;
 case 82:
 #line 680 "cgram.y"
-{yyval.bbinteger.d = MUL_ASSIGN;}
+{yyval.bbinteger.data = MUL_ASSIGN;}
 break;
 case 83:
 #line 681 "cgram.y"
-{yyval.bbinteger.d = DIV_ASSIGN;}
+{yyval.bbinteger.data = DIV_ASSIGN;}
 break;
 case 84:
 #line 682 "cgram.y"
-{yyval.bbinteger.d = MOD_ASSIGN;}
+{yyval.bbinteger.data = MOD_ASSIGN;}
 break;
 case 85:
 #line 683 "cgram.y"
-{yyval.bbinteger.d = ADD_ASSIGN;}
+{yyval.bbinteger.data = ADD_ASSIGN;}
 break;
 case 86:
 #line 684 "cgram.y"
-{yyval.bbinteger.d = SUB_ASSIGN;}
+{yyval.bbinteger.data = SUB_ASSIGN;}
 break;
 case 87:
 #line 685 "cgram.y"
-{yyval.bbinteger.d = LEFT_ASSIGN;}
+{yyval.bbinteger.data = LEFT_ASSIGN;}
 break;
 case 88:
 #line 686 "cgram.y"
-{yyval.bbinteger.d = RIGHT_ASSIGN;}
+{yyval.bbinteger.data = RIGHT_ASSIGN;}
 break;
 case 89:
 #line 687 "cgram.y"
-{yyval.bbinteger.d = AND_ASSIGN;}
+{yyval.bbinteger.data = AND_ASSIGN;}
 break;
 case 90:
 #line 688 "cgram.y"
-{yyval.bbinteger.d = XOR_ASSIGN;}
+{yyval.bbinteger.data = XOR_ASSIGN;}
 break;
 case 91:
 #line 689 "cgram.y"
-{yyval.bbinteger.d = OR_ASSIGN;}
+{yyval.bbinteger.data = OR_ASSIGN;}
 break;
 case 93:
 #line 694 "cgram.y"
@@ -3241,7 +3241,7 @@ case 190:
 {
         yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
         assert(yyval.bbsymbol.d->bits.npointers == 0);
-        yyval.bbsymbol.d->bits.npointers = yyvsp[-1].bbinteger.d;
+        yyval.bbsymbol.d->bits.npointers = yyvsp[-1].bbinteger.data;
     }
 break;
 case 191:
@@ -3316,25 +3316,25 @@ break;
 case 199:
 #line 1148 "cgram.y"
 {
-        yyval.bbinteger.d = 1;
+        yyval.bbinteger.data = 1;
     }
 break;
 case 200:
 #line 1151 "cgram.y"
 {
-        yyval.bbinteger.d = 1;
+        yyval.bbinteger.data = 1;
     }
 break;
 case 201:
 #line 1154 "cgram.y"
 {
-        yyval.bbinteger.d = yyvsp[0].bbinteger.d+1;
+        yyval.bbinteger.data = yyvsp[0].bbinteger.data+1;
     }
 break;
 case 202:
 #line 1157 "cgram.y"
 {
-        yyval.bbinteger.d = yyvsp[0].bbinteger.d+1;
+        yyval.bbinteger.data = yyvsp[0].bbinteger.data+1;
     }
 break;
 case 203:
@@ -3552,7 +3552,7 @@ case 232:
 {
         int i;
         CrTypeModifier(yyval.bbtypeModif.d,TypePointer);
-        for(i=1; i<yyvsp[0].bbinteger.d; i++) appendComposedType(&(yyval.bbtypeModif.d), TypePointer);
+        for(i=1; i<yyvsp[0].bbinteger.data; i++) appendComposedType(&(yyval.bbtypeModif.d), TypePointer);
     }
 break;
 case 233:
@@ -3566,7 +3566,7 @@ case 234:
 {
         int i;
         yyval.bbtypeModif.d = yyvsp[0].bbtypeModif.d;
-        for(i=0; i<yyvsp[-1].bbinteger.d; i++) appendComposedType(&(yyval.bbtypeModif.d), TypePointer);
+        for(i=0; i<yyvsp[-1].bbinteger.data; i++) appendComposedType(&(yyval.bbtypeModif.d), TypePointer);
     }
 break;
 case 235:
@@ -3826,49 +3826,49 @@ case 284:
 break;
 case 286:
 #line 1575 "cgram.y"
-{EXTRACT_COUNTER_SEMACT(yyval.bbinteger.d);}
+{EXTRACT_COUNTER_SEMACT(yyval.bbinteger.data);}
 break;
 case 287:
 #line 1578 "cgram.y"
-{EXTRACT_LABEL_SEMACT(yyval.bbinteger.d);}
+{EXTRACT_LABEL_SEMACT(yyval.bbinteger.data);}
 break;
 case 288:
 #line 1581 "cgram.y"
-{EXTRACT_GOTO_SEMACT(yyval.bbinteger.d);}
+{EXTRACT_GOTO_SEMACT(yyval.bbinteger.data);}
 break;
 case 289:
 #line 1584 "cgram.y"
-{EXTRACT_FORK_SEMACT(yyval.bbinteger.d);}
+{EXTRACT_FORK_SEMACT(yyval.bbinteger.data);}
 break;
 case 290:
 #line 1588 "cgram.y"
 {
-        genInternalLabelReference(yyvsp[-1].bbinteger.d, UsageDefined);
+        genInternalLabelReference(yyvsp[-1].bbinteger.data, UsageDefined);
     }
 break;
 case 291:
 #line 1591 "cgram.y"
 {
-        genInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
+        genInternalLabelReference(yyvsp[-3].bbinteger.data, UsageDefined);
     }
 break;
 case 292:
 #line 1593 "cgram.y"
 {
-        genInternalLabelReference(yyvsp[-2].bbinteger.d, UsageDefined);
+        genInternalLabelReference(yyvsp[-2].bbinteger.data, UsageDefined);
     }
 break;
 case 293:
 #line 1596 "cgram.y"
 {/*6*/
-        yyval.symbol = addContinueBreakLabelSymbol(1000*yyvsp[0].bbinteger.d, SWITCH_LABEL_NAME);
+        yyval.symbol = addContinueBreakLabelSymbol(1000*yyvsp[0].bbinteger.data, SWITCH_LABEL_NAME);
     }
 break;
 case 294:
 #line 1598 "cgram.y"
 {/*7*/
-        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME);
-        genInternalLabelReference(yyvsp[-1].bbinteger.d, UsageFork);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.data, BREAK_LABEL_NAME);
+        genInternalLabelReference(yyvsp[-1].bbinteger.data, UsageFork);
     }
 break;
 case 295:
@@ -3877,7 +3877,7 @@ case 295:
         genSwitchCaseFork(1);
         ExtrDeleteContBreakSym(yyvsp[-1].symbol);
         ExtrDeleteContBreakSym(yyvsp[-2].symbol);
-        genInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
+        genInternalLabelReference(yyvsp[-3].bbinteger.data, UsageDefined);
     }
 break;
 case 296:
@@ -3887,13 +3887,13 @@ break;
 case 297:
 #line 1615 "cgram.y"
 {/*7*/
-        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-4].bbinteger.d, CONTINUE_LABEL_NAME);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-4].bbinteger.data, CONTINUE_LABEL_NAME);
     }
 break;
 case 298:
 #line 1617 "cgram.y"
 {/*8*/
-        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.data, BREAK_LABEL_NAME);
     }
 break;
 case 299:
@@ -3901,20 +3901,20 @@ case 299:
 {
         ExtrDeleteContBreakSym(yyvsp[-1].symbol);
         ExtrDeleteContBreakSym(yyvsp[-2].symbol);
-        genInternalLabelReference(yyvsp[-7].bbinteger.d, UsageUsed);
-        genInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
+        genInternalLabelReference(yyvsp[-7].bbinteger.data, UsageUsed);
+        genInternalLabelReference(yyvsp[-3].bbinteger.data, UsageDefined);
     }
 break;
 case 300:
 #line 1626 "cgram.y"
 { /*5*/
-        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, CONTINUE_LABEL_NAME);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.data, CONTINUE_LABEL_NAME);
     }
 break;
 case 301:
 #line 1628 "cgram.y"
 {/*6*/
-        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.data, BREAK_LABEL_NAME);
     }
 break;
 case 302:
@@ -3922,29 +3922,29 @@ case 302:
 {
         ExtrDeleteContBreakSym(yyvsp[-2].symbol);
         ExtrDeleteContBreakSym(yyvsp[-3].symbol);
-        genInternalLabelReference(yyvsp[-5].bbinteger.d, UsageDefined);
+        genInternalLabelReference(yyvsp[-5].bbinteger.data, UsageDefined);
     }
 break;
 case 303:
 #line 1634 "cgram.y"
 {
-        genInternalLabelReference(yyvsp[-11].bbinteger.d, UsageFork);
-        genInternalLabelReference(yyvsp[-9].bbinteger.d, UsageDefined);
+        genInternalLabelReference(yyvsp[-11].bbinteger.data, UsageFork);
+        genInternalLabelReference(yyvsp[-9].bbinteger.data, UsageDefined);
     }
 break;
 case 304:
 #line 1642 "cgram.y"
 {
         /*13*/
-        genInternalLabelReference(yyvsp[-7].bbinteger.d, UsageUsed);
-        genInternalLabelReference(yyvsp[-4].bbinteger.d, UsageDefined);
-        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-3].bbinteger.d, CONTINUE_LABEL_NAME);
+        genInternalLabelReference(yyvsp[-7].bbinteger.data, UsageUsed);
+        genInternalLabelReference(yyvsp[-4].bbinteger.data, UsageDefined);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-3].bbinteger.data, CONTINUE_LABEL_NAME);
         }
 break;
 case 305:
 #line 1648 "cgram.y"
 {/*14*/
-            yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME);
+            yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.data, BREAK_LABEL_NAME);
         }
 break;
 case 306:
@@ -3952,8 +3952,8 @@ case 306:
 {
         ExtrDeleteContBreakSym(yyvsp[-1].symbol);
         ExtrDeleteContBreakSym(yyvsp[-2].symbol);
-        genInternalLabelReference(yyvsp[-6].bbinteger.d, UsageUsed);
-        genInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
+        genInternalLabelReference(yyvsp[-6].bbinteger.data, UsageUsed);
+        genInternalLabelReference(yyvsp[-3].bbinteger.data, UsageDefined);
         }
 break;
 case 310:

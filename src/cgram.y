@@ -659,13 +659,13 @@ assignment_expr
             S_reference *rr;
             rr = duplicateReference($1.d.r);
             $1.d.r->usg = s_noUsage;
-            if ($2.d == '=') {
+            if ($2.data == '=') {
                 RESET_REFERENCE_USAGE(rr, UsageLvalUsed);
             } else {
                 RESET_REFERENCE_USAGE(rr, UsageAddrUsed);
             }
         } else {
-            if ($2.d == '=') {
+            if ($2.data == '=') {
                 RESET_REFERENCE_USAGE($1.d.r, UsageLvalUsed);
             } else {
                 RESET_REFERENCE_USAGE($1.d.r, UsageAddrUsed);
@@ -676,17 +676,17 @@ assignment_expr
     ;
 
 assignment_operator
-    : '='					{$$.d = '=';}
-    | MUL_ASSIGN			{$$.d = MUL_ASSIGN;}
-    | DIV_ASSIGN			{$$.d = DIV_ASSIGN;}
-    | MOD_ASSIGN			{$$.d = MOD_ASSIGN;}
-    | ADD_ASSIGN			{$$.d = ADD_ASSIGN;}
-    | SUB_ASSIGN			{$$.d = SUB_ASSIGN;}
-    | LEFT_ASSIGN			{$$.d = LEFT_ASSIGN;}
-    | RIGHT_ASSIGN			{$$.d = RIGHT_ASSIGN;}
-    | AND_ASSIGN			{$$.d = AND_ASSIGN;}
-    | XOR_ASSIGN			{$$.d = XOR_ASSIGN;}
-    | OR_ASSIGN				{$$.d = OR_ASSIGN;}
+    : '='					{$$.data = '=';}
+    | MUL_ASSIGN			{$$.data = MUL_ASSIGN;}
+    | DIV_ASSIGN			{$$.data = DIV_ASSIGN;}
+    | MOD_ASSIGN			{$$.data = MOD_ASSIGN;}
+    | ADD_ASSIGN			{$$.data = ADD_ASSIGN;}
+    | SUB_ASSIGN			{$$.data = SUB_ASSIGN;}
+    | LEFT_ASSIGN			{$$.data = LEFT_ASSIGN;}
+    | RIGHT_ASSIGN			{$$.data = RIGHT_ASSIGN;}
+    | AND_ASSIGN			{$$.data = AND_ASSIGN;}
+    | XOR_ASSIGN			{$$.data = XOR_ASSIGN;}
+    | OR_ASSIGN				{$$.data = OR_ASSIGN;}
     ;
 
 expr
@@ -1092,7 +1092,7 @@ declarator
     | pointer declarator2								{
         $$.d = $2.d;
         assert($$.d->bits.npointers == 0);
-        $$.d->bits.npointers = $1.d;
+        $$.d->bits.npointers = $1.data;
     }
     ;
 
@@ -1146,16 +1146,16 @@ declarator2
 
 pointer
     : '*'									{
-        $$.d = 1;
+        $$.data = 1;
     }
     | '*' type_mod_specifier_list				{
-        $$.d = 1;
+        $$.data = 1;
     }
     | '*' pointer							{
-        $$.d = $2.d+1;
+        $$.data = $2.data+1;
     }
     | '*' type_mod_specifier_list pointer		{
-        $$.d = $3.d+1;
+        $$.data = $3.data+1;
     }
     ;
 
@@ -1347,7 +1347,7 @@ abstract_declarator
     : pointer								{
         int i;
         CrTypeModifier($$.d,TypePointer);
-        for(i=1; i<$1.d; i++) appendComposedType(&($$.d), TypePointer);
+        for(i=1; i<$1.data; i++) appendComposedType(&($$.d), TypePointer);
     }
     | abstract_declarator2					{
         $$.d = $1.d;
@@ -1355,7 +1355,7 @@ abstract_declarator
     | pointer abstract_declarator2			{
         int i;
         $$.d = $2.d;
-        for(i=0; i<$1.d; i++) appendComposedType(&($$.d), TypePointer);
+        for(i=0; i<$1.data; i++) appendComposedType(&($$.d), TypePointer);
     }
     ;
 
@@ -1572,37 +1572,37 @@ expression_statement
     ;
 
 
-_ncounter_:  {EXTRACT_COUNTER_SEMACT($$.d);}
+_ncounter_:  {EXTRACT_COUNTER_SEMACT($$.data);}
     ;
 
-_nlabel_:	{EXTRACT_LABEL_SEMACT($$.d);}
+_nlabel_:	{EXTRACT_LABEL_SEMACT($$.data);}
     ;
 
-_ngoto_:	{EXTRACT_GOTO_SEMACT($$.d);}
+_ngoto_:	{EXTRACT_GOTO_SEMACT($$.data);}
     ;
 
-_nfork_:	{EXTRACT_FORK_SEMACT($$.d);}
+_nfork_:	{EXTRACT_FORK_SEMACT($$.data);}
     ;
 
 selection_statement
     : IF '(' expr ')' _nfork_ statement						{
-        genInternalLabelReference($5.d, UsageDefined);
+        genInternalLabelReference($5.data, UsageDefined);
     }
     | IF '(' expr ')' _nfork_ statement ELSE _ngoto_ {
-        genInternalLabelReference($5.d, UsageDefined);
+        genInternalLabelReference($5.data, UsageDefined);
     }	statement								{
-        genInternalLabelReference($8.d, UsageDefined);
+        genInternalLabelReference($8.data, UsageDefined);
     }
     | SWITCH '(' expr ')' /*5*/ _ncounter_  {/*6*/
-        $<symbol>$ = addContinueBreakLabelSymbol(1000*$5.d, SWITCH_LABEL_NAME);
+        $<symbol>$ = addContinueBreakLabelSymbol(1000*$5.data, SWITCH_LABEL_NAME);
     } {/*7*/
-        $<symbol>$ = addContinueBreakLabelSymbol($5.d, BREAK_LABEL_NAME);
-        genInternalLabelReference($5.d, UsageFork);
+        $<symbol>$ = addContinueBreakLabelSymbol($5.data, BREAK_LABEL_NAME);
+        genInternalLabelReference($5.data, UsageFork);
     } statement					{
         genSwitchCaseFork(1);
         ExtrDeleteContBreakSym($<symbol>7);
         ExtrDeleteContBreakSym($<symbol>6);
-        genInternalLabelReference($5.d, UsageDefined);
+        genInternalLabelReference($5.data, UsageDefined);
     }
     ;
 
@@ -1613,27 +1613,27 @@ for1maybe_expr:
 iteration_statement
     : WHILE _nlabel_ '(' expr ')' /*6*/ _nfork_
     {/*7*/
-        $<symbol>$ = addContinueBreakLabelSymbol($2.d, CONTINUE_LABEL_NAME);
+        $<symbol>$ = addContinueBreakLabelSymbol($2.data, CONTINUE_LABEL_NAME);
     } {/*8*/
-        $<symbol>$ = addContinueBreakLabelSymbol($6.d, BREAK_LABEL_NAME);
+        $<symbol>$ = addContinueBreakLabelSymbol($6.data, BREAK_LABEL_NAME);
     } statement					{
         ExtrDeleteContBreakSym($<symbol>8);
         ExtrDeleteContBreakSym($<symbol>7);
-        genInternalLabelReference($2.d, UsageUsed);
-        genInternalLabelReference($6.d, UsageDefined);
+        genInternalLabelReference($2.data, UsageUsed);
+        genInternalLabelReference($6.data, UsageDefined);
     }
 
     | DO _nlabel_ _ncounter_ _ncounter_ { /*5*/
-        $<symbol>$ = addContinueBreakLabelSymbol($3.d, CONTINUE_LABEL_NAME);
+        $<symbol>$ = addContinueBreakLabelSymbol($3.data, CONTINUE_LABEL_NAME);
     } {/*6*/
-        $<symbol>$ = addContinueBreakLabelSymbol($4.d, BREAK_LABEL_NAME);
+        $<symbol>$ = addContinueBreakLabelSymbol($4.data, BREAK_LABEL_NAME);
     } statement WHILE {
         ExtrDeleteContBreakSym($<symbol>6);
         ExtrDeleteContBreakSym($<symbol>5);
-        genInternalLabelReference($3.d, UsageDefined);
+        genInternalLabelReference($3.data, UsageDefined);
     } '(' expr ')' ';'			{
-        genInternalLabelReference($2.d, UsageFork);
-        genInternalLabelReference($4.d, UsageDefined);
+        genInternalLabelReference($2.data, UsageFork);
+        genInternalLabelReference($4.data, UsageDefined);
     }
 
     | FOR '(' for1maybe_expr ';'
@@ -1641,19 +1641,19 @@ iteration_statement
             /*9*/ _nlabel_  maybe_expr ')' /*12*/ _nfork_
         {
         /*13*/
-        genInternalLabelReference($5.d, UsageUsed);
-        genInternalLabelReference($8.d, UsageDefined);
-        $<symbol>$ = addContinueBreakLabelSymbol($9.d, CONTINUE_LABEL_NAME);
+        genInternalLabelReference($5.data, UsageUsed);
+        genInternalLabelReference($8.data, UsageDefined);
+        $<symbol>$ = addContinueBreakLabelSymbol($9.data, CONTINUE_LABEL_NAME);
         }
         {/*14*/
-            $<symbol>$ = addContinueBreakLabelSymbol($12.d, BREAK_LABEL_NAME);
+            $<symbol>$ = addContinueBreakLabelSymbol($12.data, BREAK_LABEL_NAME);
         }
             statement
         {
         ExtrDeleteContBreakSym($<symbol>14);
         ExtrDeleteContBreakSym($<symbol>13);
-        genInternalLabelReference($9.d, UsageUsed);
-        genInternalLabelReference($12.d, UsageDefined);
+        genInternalLabelReference($9.data, UsageUsed);
+        genInternalLabelReference($12.data, UsageDefined);
         }
     | FOR '(' for1maybe_expr ';' COMPL_FOR_SPECIAL1
     | FOR '(' for1maybe_expr ';' _nlabel_  maybe_expr ';' COMPL_FOR_SPECIAL2
