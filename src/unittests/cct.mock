@@ -1,0 +1,24 @@
+/* -*- c -*-*/
+#include "../cct.h"
+#include <cgreen/mocks.h>
+
+void cctAddSimpleValue(S_cctNode *cc, S_symbol *x, int deepFactor) { 
+  mock(cc, x, deepFactor);
+}
+
+int cctIsMember(S_cctNode *cc, S_symbol *x, int deepFactor) { 
+  return (int) mock(cc, x, deepFactor);
+}
+
+void cctAddCctTree(S_cctNode *cc, S_cctNode *x, int deepFactor) { 
+  mock(cc, x, deepFactor);
+}
+
+void cctDump(S_cctNode *cc, int deep) { 
+  mock(cc, deep);
+}
+
+void cctTest(void) { 
+  mock();
+}
+
