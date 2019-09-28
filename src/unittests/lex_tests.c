@@ -31,7 +31,7 @@ S_jslStat *s_jsl;
 
 Ensure(Lex, can_get_char) {
     struct lexBuf lexBuf;
-    cgreen_mocks_are(learning_mocks);
+    //cgreen_mocks_are(learning_mocks);
 
     //getLexBuf(&lexBuf);
 }

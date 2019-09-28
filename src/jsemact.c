@@ -487,30 +487,14 @@ static S_symbol *javaFQTypeSymbolDefinitionCreate(char *name,
     return(memb);
 }
 
-#define FILL_JAVA_TYPE_DUMMY_SYM(name,fqName,pp,ppl) {\
-    FILL_symbolBits(&pp.bits,0,0, 0,0, 0, TypeStruct, StorageNone,0);\
-    FILL_symbol(&pp, name, fqName, s_noPos,pp.bits,s,NULL,NULL);\
-    FILL_symbolList(&ppl, &pp, NULL);\
-}
-
-S_symbol *javaFQTypeSymbol(char *name, char *fqName) {
-    S_symbol        pp,*memb;
-    SymbolList    ppl, *pppl;
-    int             ii;
-    FILL_JAVA_TYPE_DUMMY_SYM(name,fqName,pp,ppl);
-    if (javaFqtTabIsMember(&s_javaFqtTab, &ppl, &ii, &pppl)) {
-        memb = pppl->d;
-    } else {
-        memb = NULL;
-    }
-    return(memb);
-}
-
 S_symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {
     S_symbol        pp,*memb;
     SymbolList    ppl, *pppl;
     int             ii;
-    FILL_JAVA_TYPE_DUMMY_SYM(name,fqName,pp,ppl);
+
+    FILL_symbolBits(&pp.bits,0,0, 0,0, 0, TypeStruct, StorageNone,0);\
+    FILL_symbol(&pp, name, fqName, s_noPos,pp.bits,s,NULL,NULL);\
+    FILL_symbolList(&ppl, &pp, NULL);\
     if (javaFqtTabIsMember(&s_javaFqtTab, &ppl, &ii, &pppl)) {
         memb = pppl->d;
     } else {

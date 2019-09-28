@@ -90,7 +90,6 @@ extern void javaAddMapedTypeName(
                                  int  *storage
                                  );
 extern S_symbol *javaFQTypeSymbolDefinition(char *name, char *fqName);
-extern S_symbol *javaFQTypeSymbol(char *name, char *fqName);
 extern S_typeModifiers *javaClassNameType(S_idIdentList *typeName);
 extern S_typeModifiers *javaNewAfterName(S_idIdentList *name, S_idIdent *id, S_idIdentList *idl);
 extern int javaIsInnerAndCanGetUnnamedEnclosingInstance(S_symbol *name, S_symbol **outEi);

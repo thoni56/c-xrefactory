@@ -2,343 +2,338 @@
 #include "../jsemact.h"
 #include <cgreen/mocks.h>
 
-void javaCheckForPrimaryStart(S_position *cpos, S_position *pp) { 
+void javaCheckForPrimaryStart(S_position *cpos, S_position *pp) {
   mock(cpos, pp);
 }
 
-void javaCheckForPrimaryStartInNameList(S_idIdentList *name, S_position *pp) { 
+void javaCheckForPrimaryStartInNameList(S_idIdentList *name, S_position *pp) {
   mock(name, pp);
 }
 
-void javaCheckForStaticPrefixStart(S_position *cpos, S_position *bpos) { 
+void javaCheckForStaticPrefixStart(S_position *cpos, S_position *bpos) {
   mock(cpos, bpos);
 }
 
-void javaCheckForStaticPrefixInNameList(S_idIdentList *name, S_position *pp) { 
+void javaCheckForStaticPrefixInNameList(S_idIdentList *name, S_position *pp) {
   mock(name, pp);
 }
 
-S_position *javaGetNameStartingPosition(S_idIdentList *name) { 
+S_position *javaGetNameStartingPosition(S_idIdentList *name) {
   return (S_position *) mock(name);
 }
 
-char *javaCreateComposedName(char *prefix, S_idIdentList *className, int classNameSeparator, char *name, char *resBuff, int resBufSize) { 
+char *javaCreateComposedName(char *prefix, S_idIdentList *className, int classNameSeparator, char *name, char *resBuff, int resBufSize) {
   return (char *) mock(prefix, className, classNameSeparator, name, resBuff, resBufSize);
 }
 
-int findTopLevelName(char *name, S_recFindStr *resRfs, S_symbol **resMemb, int classif) { 
+int findTopLevelName(char *name, S_recFindStr *resRfs, S_symbol **resMemb, int classif) {
   return (int) mock(name, resRfs, resMemb, classif);
 }
 
-int javaClassifySingleAmbigNameToTypeOrPack(S_idIdentList *name, S_symbol **str, int cxrefFlag) { 
+int javaClassifySingleAmbigNameToTypeOrPack(S_idIdentList *name, S_symbol **str, int cxrefFlag) {
   return (int) mock(name, str, cxrefFlag);
 }
 
-void javaAddImportConstructionReference(S_position *importPos, S_position *pos, int usage) { 
+void javaAddImportConstructionReference(S_position *importPos, S_position *pos, int usage) {
   mock(importPos, pos, usage);
 }
 
-int javaClassifyAmbiguousName(S_idIdentList *name, S_recFindStr *rfs, S_symbol **str, S_typeModifiers **expr, S_reference **oref, S_reference **rdtoref, int allowUselesFqtRefs, int classif, int usage) { 
+int javaClassifyAmbiguousName(S_idIdentList *name, S_recFindStr *rfs, S_symbol **str, S_typeModifiers **expr, S_reference **oref, S_reference **rdtoref, int allowUselesFqtRefs, int classif, int usage) {
   return (int) mock(name, rfs, str, expr, oref, rdtoref, allowUselesFqtRefs, classif, usage);
 }
 
-S_reference *javaClassifyToTypeOrPackageName(S_idIdentList *tname, int usage, S_symbol **str, int allowUselesFqtRefs) { 
+S_reference *javaClassifyToTypeOrPackageName(S_idIdentList *tname, int usage, S_symbol **str, int allowUselesFqtRefs) {
   return (S_reference *) mock(tname, usage, str, allowUselesFqtRefs);
 }
 
-S_reference *javaClassifyToTypeName(S_idIdentList *tname, int usage, S_symbol **str, int allowUselesFqtRefs) { 
+S_reference *javaClassifyToTypeName(S_idIdentList *tname, int usage, S_symbol **str, int allowUselesFqtRefs) {
   return (S_reference *) mock(tname, usage, str, allowUselesFqtRefs);
 }
 
-S_symbol *javaQualifiedThis(S_idIdentList *tname, S_idIdent *thisid) { 
+S_symbol *javaQualifiedThis(S_idIdentList *tname, S_idIdent *thisid) {
   return (S_symbol *) mock(tname, thisid);
 }
 
-void javaClassifyToPackageName(S_idIdentList *id) { 
+void javaClassifyToPackageName(S_idIdentList *id) {
   mock(id);
 }
 
-void javaClassifyToPackageNameAndAddRefs(S_idIdentList *id, int usage) { 
+void javaClassifyToPackageNameAndAddRefs(S_idIdentList *id, int usage) {
   mock(id, usage);
 }
 
-char *javaImportSymbolName_st(int file, int line, int coll) { 
+char *javaImportSymbolName_st(int file, int line, int coll) {
   return (char *) mock(file, line, coll);
 }
 
-S_typeModifiers *javaClassifyToExpressionName(S_idIdentList *name, S_reference **oref) { 
+S_typeModifiers *javaClassifyToExpressionName(S_idIdentList *name, S_reference **oref) {
   return (S_typeModifiers *) mock(name, oref);
 }
 
-S_symbol *javaTypeNameDefinition(S_idIdentList *tname) { 
+S_symbol *javaTypeNameDefinition(S_idIdentList *tname) {
   return (S_symbol *) mock(tname);
 }
 
-void javaSetFieldLinkName(S_symbol *d) { 
+void javaSetFieldLinkName(S_symbol *d) {
   mock(d);
 }
 
-void javaAddPackageDefinition(S_idIdentList *id) { 
+void javaAddPackageDefinition(S_idIdentList *id) {
   mock(id);
 }
 
-S_symbol *javaAddType(S_idIdentList *clas, int accessFlag, S_position *p) { 
+S_symbol *javaAddType(S_idIdentList *clas, int accessFlag, S_position *p) {
   return (S_symbol *) mock(clas, accessFlag, p);
 }
 
-S_symbol *javaCreateNewMethod(char *name, S_position *pos, int mem) { 
+S_symbol *javaCreateNewMethod(char *name, S_position *pos, int mem) {
   return (S_symbol *) mock(name, pos, mem);
 }
 
-int javaTypeToString(S_typeModifiers *type, char *pp, int ppSize) { 
+int javaTypeToString(S_typeModifiers *type, char *pp, int ppSize) {
   return (int) mock(type, pp, ppSize);
 }
 
-int javaIsYetInTheClass(S_symbol *clas, char *lname, S_symbol **eq) { 
+int javaIsYetInTheClass(S_symbol *clas, char *lname, S_symbol **eq) {
   return (int) mock(clas, lname, eq);
 }
 
-int javaSetFunctionLinkName(S_symbol *clas, S_symbol *decl, int mem) { 
+int javaSetFunctionLinkName(S_symbol *clas, S_symbol *decl, int mem) {
   return (int) mock(clas, decl, mem);
 }
 
-S_symbol *javaGetFieldClass(char *fieldLinkName, char **fieldAdr) { 
+S_symbol *javaGetFieldClass(char *fieldLinkName, char **fieldAdr) {
   return (S_symbol *) mock(fieldLinkName, fieldAdr);
 }
 
-void javaAddNestedClassesAsTypeDefs(S_symbol *cc, S_idIdentList *oclassname, int accessFlags) { 
+void javaAddNestedClassesAsTypeDefs(S_symbol *cc, S_idIdentList *oclassname, int accessFlags) {
   mock(cc, oclassname, accessFlags);
 }
 
-int javaTypeFileExist(S_idIdentList *name) { 
+int javaTypeFileExist(S_idIdentList *name) {
   return (int) mock(name);
 }
 
-S_symbol *javaTypeSymbolDefinition(S_idIdentList *tname, int accessFlags, int addType) { 
+S_symbol *javaTypeSymbolDefinition(S_idIdentList *tname, int accessFlags, int addType) {
   return (S_symbol *) mock(tname, accessFlags, addType);
 }
 
-S_symbol *javaTypeSymbolUsage(S_idIdentList *tname, int accessFlags) { 
+S_symbol *javaTypeSymbolUsage(S_idIdentList *tname, int accessFlags) {
   return (S_symbol *) mock(tname, accessFlags);
 }
 
-void javaReadSymbolFromSourceFileEnd(void) { 
+void javaReadSymbolFromSourceFileEnd(void) {
   mock();
 }
 
-void javaReadSymbolFromSourceFileInit(int sourceFileNum, S_jslTypeTab *typeTab) { 
+void javaReadSymbolFromSourceFileInit(int sourceFileNum, S_jslTypeTab *typeTab) {
   mock(sourceFileNum, typeTab);
 }
 
-void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) { 
+void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
   mock(fname, asfname);
 }
 
-void javaReadSymbolsFromSourceFile(char *fname) { 
+void javaReadSymbolsFromSourceFile(char *fname) {
   mock(fname);
 }
 
-int javaLinkNameIsAnnonymousClass(char *linkname) { 
+int javaLinkNameIsAnnonymousClass(char *linkname) {
   return (int) mock(linkname);
 }
 
-int javaLinkNameIsANestedClass(char *cname) { 
+int javaLinkNameIsANestedClass(char *cname) {
   return (int) mock(cname);
 }
 
-int isANestedClass(S_symbol *ss) { 
+int isANestedClass(S_symbol *ss) {
   return (int) mock(ss);
 }
 
-void addSuperMethodCxReferences(int classIndex, S_position *pos) { 
+void addSuperMethodCxReferences(int classIndex, S_position *pos) {
   mock(classIndex, pos);
 }
 
-S_reference *addUselessFQTReference(int classIndex, S_position *pos) { 
+S_reference *addUselessFQTReference(int classIndex, S_position *pos) {
   return (S_reference *) mock(classIndex, pos);
 }
 
-S_reference *addUnimportedTypeLongReference(int classIndex, S_position *pos) { 
+S_reference *addUnimportedTypeLongReference(int classIndex, S_position *pos) {
   return (S_reference *) mock(classIndex, pos);
 }
 
-void addThisCxReferences(int classIndex, S_position *pos) { 
+void addThisCxReferences(int classIndex, S_position *pos) {
   mock(classIndex, pos);
 }
 
-void javaLoadClassSymbolsFromFile(S_symbol *memb) { 
+void javaLoadClassSymbolsFromFile(S_symbol *memb) {
   mock(memb);
 }
 
-S_symbol *javaPrependDirectEnclosingInstanceArgument(S_symbol *args) { 
+S_symbol *javaPrependDirectEnclosingInstanceArgument(S_symbol *args) {
   return (S_symbol *) mock(args);
 }
 
-void addMethodCxReferences(unsigned modif, S_symbol *method, S_symbol *clas) { 
+void addMethodCxReferences(unsigned modif, S_symbol *method, S_symbol *clas) {
   mock(modif, method, clas);
 }
 
-S_symbol *javaMethodHeader(unsigned modif, S_symbol *type, S_symbol *decl, int storage) { 
+S_symbol *javaMethodHeader(unsigned modif, S_symbol *type, S_symbol *decl, int storage) {
   return (S_symbol *) mock(modif, type, decl, storage);
 }
 
-void javaAddMethodParametersToSymTable(S_symbol *method) { 
+void javaAddMethodParametersToSymTable(S_symbol *method) {
   mock(method);
 }
 
-void javaMethodBodyBeginning(S_symbol *method) { 
+void javaMethodBodyBeginning(S_symbol *method) {
   mock(method);
 }
 
-void javaMethodBodyEnding(S_position *pos) { 
+void javaMethodBodyEnding(S_position *pos) {
   mock(pos);
 }
 
-void javaAddMapedTypeName(char *file, char *path, char *pack, S_completions *c, void *vdirid, int *storage) { 
+void javaAddMapedTypeName(char *file, char *path, char *pack, S_completions *c, void *vdirid, int *storage) {
   mock(file, path, pack, c, vdirid, storage);
 }
 
-S_symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) { 
+S_symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {
   return (S_symbol *) mock(name, fqName);
 }
 
-S_symbol *javaFQTypeSymbol(char *name, char *fqName) { 
-  return (S_symbol *) mock(name, fqName);
-}
-
-S_typeModifiers *javaClassNameType(S_idIdentList *typeName) { 
+S_typeModifiers *javaClassNameType(S_idIdentList *typeName) {
   return (S_typeModifiers *) mock(typeName);
 }
 
-S_typeModifiers *javaNewAfterName(S_idIdentList *name, S_idIdent *id, S_idIdentList *idl) { 
+S_typeModifiers *javaNewAfterName(S_idIdentList *name, S_idIdent *id, S_idIdentList *idl) {
   return (S_typeModifiers *) mock(name, id, idl);
 }
 
-int javaIsInnerAndCanGetUnnamedEnclosingInstance(S_symbol *name, S_symbol **outEi) { 
+int javaIsInnerAndCanGetUnnamedEnclosingInstance(S_symbol *name, S_symbol **outEi) {
   return (int) mock(name, outEi);
 }
 
-S_typeModifiers *javaNestedNewType(S_symbol *expr, S_idIdent *thenew, S_idIdentList *idl) { 
+S_typeModifiers *javaNestedNewType(S_symbol *expr, S_idIdent *thenew, S_idIdentList *idl) {
   return (S_typeModifiers *) mock(expr, thenew, idl);
 }
 
-S_typeModifiers *javaArrayFieldAccess(S_idIdent *id) { 
+S_typeModifiers *javaArrayFieldAccess(S_idIdent *id) {
   return (S_typeModifiers *) mock(id);
 }
 
-S_typeModifiers *javaMethodInvocationN(S_idIdentList *name, S_typeModifiersList *args) { 
+S_typeModifiers *javaMethodInvocationN(S_idIdentList *name, S_typeModifiersList *args) {
   return (S_typeModifiers *) mock(name, args);
 }
 
-S_typeModifiers *javaMethodInvocationT(S_typeModifiers *tt, S_idIdent *name, S_typeModifiersList *args) { 
+S_typeModifiers *javaMethodInvocationT(S_typeModifiers *tt, S_idIdent *name, S_typeModifiersList *args) {
   return (S_typeModifiers *) mock(tt, name, args);
 }
 
-S_typeModifiers *javaMethodInvocationS(S_idIdent *super, S_idIdent *name, S_typeModifiersList *args) { 
+S_typeModifiers *javaMethodInvocationS(S_idIdent *super, S_idIdent *name, S_typeModifiersList *args) {
   return (S_typeModifiers *) mock(super, name, args);
 }
 
-S_typeModifiers *javaConstructorInvocation(S_symbol *class, S_position *pos, S_typeModifiersList *args) { 
+S_typeModifiers *javaConstructorInvocation(S_symbol *class, S_position *pos, S_typeModifiersList *args) {
   return (S_typeModifiers *) mock(class, pos, args);
 }
 
-S_extRecFindStr *javaCrErfsForMethodInvocationN(S_idIdentList *name) { 
+S_extRecFindStr *javaCrErfsForMethodInvocationN(S_idIdentList *name) {
   return (S_extRecFindStr *) mock(name);
 }
 
-S_extRecFindStr *javaCrErfsForMethodInvocationT(S_typeModifiers *tt, S_idIdent *name) { 
+S_extRecFindStr *javaCrErfsForMethodInvocationT(S_typeModifiers *tt, S_idIdent *name) {
   return (S_extRecFindStr *) mock(tt, name);
 }
 
-S_extRecFindStr *javaCrErfsForMethodInvocationS(S_idIdent *super, S_idIdent *name) { 
+S_extRecFindStr *javaCrErfsForMethodInvocationS(S_idIdent *super, S_idIdent *name) {
   return (S_extRecFindStr *) mock(super, name);
 }
 
-S_extRecFindStr *javaCrErfsForConstructorInvocation(S_symbol *clas, S_position *pos) { 
+S_extRecFindStr *javaCrErfsForConstructorInvocation(S_symbol *clas, S_position *pos) {
   return (S_extRecFindStr *) mock(clas, pos);
 }
 
-int javaClassIsInCurrentPackage(S_symbol *cl) { 
+int javaClassIsInCurrentPackage(S_symbol *cl) {
   return (int) mock(cl);
 }
 
-int javaFqtNamesAreFromTheSamePackage(char *classFqName, char *fqname2) { 
+int javaFqtNamesAreFromTheSamePackage(char *classFqName, char *fqname2) {
   return (int) mock(classFqName, fqname2);
 }
 
-int javaMethodApplicability(S_symbol *memb, char *actArgs) { 
+int javaMethodApplicability(S_symbol *memb, char *actArgs) {
   return (int) mock(memb, actArgs);
 }
 
-S_symbol *javaGetSuperClass(S_symbol *cc) { 
+S_symbol *javaGetSuperClass(S_symbol *cc) {
   return (S_symbol *) mock(cc);
 }
 
-S_symbol *javaCurrentSuperClass(void) { 
+S_symbol *javaCurrentSuperClass(void) {
   return (S_symbol *) mock();
 }
 
-S_typeModifiers *javaCheckNumeric(S_typeModifiers *tt) { 
+S_typeModifiers *javaCheckNumeric(S_typeModifiers *tt) {
   return (S_typeModifiers *) mock(tt);
 }
 
-S_typeModifiers *javaNumericPromotion(S_typeModifiers *tt) { 
+S_typeModifiers *javaNumericPromotion(S_typeModifiers *tt) {
   return (S_typeModifiers *) mock(tt);
 }
 
-S_typeModifiers *javaBinaryNumericPromotion(S_typeModifiers *t1, S_typeModifiers *t2) { 
+S_typeModifiers *javaBinaryNumericPromotion(S_typeModifiers *t1, S_typeModifiers *t2) {
   return (S_typeModifiers *) mock(t1, t2);
 }
 
-S_typeModifiers *javaBitwiseLogicalPromotion(S_typeModifiers *t1, S_typeModifiers *t2) { 
+S_typeModifiers *javaBitwiseLogicalPromotion(S_typeModifiers *t1, S_typeModifiers *t2) {
   return (S_typeModifiers *) mock(t1, t2);
 }
 
-S_typeModifiers *javaConditionalPromotion(S_typeModifiers *t1, S_typeModifiers *t2) { 
+S_typeModifiers *javaConditionalPromotion(S_typeModifiers *t1, S_typeModifiers *t2) {
   return (S_typeModifiers *) mock(t1, t2);
 }
 
-int javaIsStringType(S_typeModifiers *tt) { 
+int javaIsStringType(S_typeModifiers *tt) {
   return (int) mock(tt);
 }
 
-void javaTypeDump(S_typeModifiers *tt) { 
+void javaTypeDump(S_typeModifiers *tt) {
   mock(tt);
 }
 
-void javaAddJslReadedTopLevelClasses(S_jslTypeTab *typeTab) { 
+void javaAddJslReadedTopLevelClasses(S_jslTypeTab *typeTab) {
   mock(typeTab);
 }
 
-struct freeTrail *newAnonClassDefinitionBegin(S_idIdent *interfName) { 
+struct freeTrail *newAnonClassDefinitionBegin(S_idIdent *interfName) {
   return (struct freeTrail *) mock(interfName);
 }
 
-void javaAddSuperNestedClassToSymbolTab(S_symbol *cc) { 
+void javaAddSuperNestedClassToSymbolTab(S_symbol *cc) {
   mock(cc);
 }
 
-struct freeTrail *newClassDefinitionBegin(S_idIdent *name, int accessFlags, S_symbol *anonInterf) { 
+struct freeTrail *newClassDefinitionBegin(S_idIdent *name, int accessFlags, S_symbol *anonInterf) {
   return (struct freeTrail *) mock(name, accessFlags, anonInterf);
 }
 
-void newClassDefinitionEnd(S_freeTrail *trail) { 
+void newClassDefinitionEnd(S_freeTrail *trail) {
   mock(trail);
 }
 
-void javaInitArrayObject(void) { 
+void javaInitArrayObject(void) {
   mock();
 }
 
-void javaParsedSuperClass(S_symbol *s) { 
+void javaParsedSuperClass(S_symbol *s) {
   mock(s);
 }
 
-void javaSetClassSourceInformation(char *package, S_idIdent *cl) { 
+void javaSetClassSourceInformation(char *package, S_idIdent *cl) {
   mock(package, cl);
 }
 
-void javaCheckIfPackageDirectoryIsInClassOrSourcePath(char *dir) { 
+void javaCheckIfPackageDirectoryIsInClassOrSourcePath(char *dir) {
   mock(dir);
 }
-
