@@ -164,11 +164,16 @@ cleaner: clean
 
 test: c-xref
 	@echo "Only running quick tests for now - 'cd ..; make test' to run all"
-	$(MAKE) COVERAGE=$(COVERAGE) -C ../tests quick
+	$(MAKE) -C ../tests quick
 
 
 unit:
 	$(MAKE) COVERAGE="$(COVERAGE)" -C unittests
+
+coverage: COVERAGE=--coverage
+coverage: clean all test
+	lcov -d . -c -o coverage.info
+	genhtml -o coverage coverage.info
 
 # Special dependecies to force rebuild of c-xref.bs to generate needed files
 $(SRCS) : strFill.g.h enumTxt.g.h enumTxt.g.c
