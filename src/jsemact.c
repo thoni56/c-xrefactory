@@ -488,19 +488,19 @@ static S_symbol *javaFQTypeSymbolDefinitionCreate(char *name,
 }
 
 S_symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {
-    S_symbol        pp,*memb;
-    SymbolList    ppl, *pppl;
-    int             ii;
+    S_symbol symbol, *member;
+    SymbolList ppl, *pppl;
+    int position;
 
-    FILL_symbolBits(&pp.bits,0,0, 0,0, 0, TypeStruct, StorageNone,0);\
-    FILL_symbol(&pp, name, fqName, s_noPos,pp.bits,s,NULL,NULL);\
-    FILL_symbolList(&ppl, &pp, NULL);\
-    if (javaFqtTabIsMember(&s_javaFqtTab, &ppl, &ii, &pppl)) {
-        memb = pppl->d;
+    FILL_symbolBits(&symbol.bits, 0, 0, 0, 0, 0, TypeStruct, StorageNone, 0);
+    FILL_symbol(&symbol, name, fqName, s_noPos,symbol.bits, s, NULL, NULL);
+    FILL_symbolList(&ppl, &symbol, NULL);
+    if (javaFqtTabIsMember(&s_javaFqtTab, &ppl, &position, &pppl)) {
+        member = pppl->d;
     } else {
-        memb = javaFQTypeSymbolDefinitionCreate(name, fqName, ii);
+        member = javaFQTypeSymbolDefinitionCreate(name, fqName, position);
     }
-    return(memb);
+    return member;
 }
 
 S_symbol * javaGetFieldClass(char *fieldLinkName, char **fieldAdr) {
@@ -815,18 +815,19 @@ void javaLoadClassSymbolsFromFile(S_symbol *memb) {
 
 
 static int findTopLevelNameInternal(
-                                char                *name,
-                                S_recFindStr        *resRfs,
-                                S_symbol			**resMemb,
-                                int                 classif,
-                                S_javaStat			*startingScope,
-                                int					accCheck,
-                                int					visibCheck,
-                                S_javaStat			**rscope
+                                char *name,
+                                S_recFindStr *resRfs,
+                                S_symbol **resMemb,
+                                int classif,
+                                S_javaStat *startingScope,
+                                int accCheck,
+                                int visibCheck,
+                                S_javaStat **rscope
                                 ) {
     int				ii,res;
     S_symbol        sd;
     S_javaStat		*cscope;
+
     assert((!LANGUAGE(LANG_JAVA)) ||
         (classif==CLASS_TO_EXPR || classif==CLASS_TO_METHOD));
     assert(accCheck==ACC_CHECK_YES || accCheck==ACC_CHECK_NO);
