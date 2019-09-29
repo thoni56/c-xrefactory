@@ -3373,20 +3373,6 @@ static int countSelectedItems(S_olSymbolsMenu *menu) {
     return(res);
 }
 
-#if ZERO
-static int linkNamesHaveSameProfile(char *n1, char *n2) {
-    char *p1, *p2;
-    int diff;
-
-    p1 = strchr(n1, '(');
-    p2 = strchr(n2, '(');
-    if (p1==NULL && p2==NULL) return(1);
-    if (p1==NULL || p2==NULL) return(0);
-    diff = strcmp(p1, p2);
-    return(diff == 0);
-}
-#endif
-
 static int refactoringLinkNameCorrespondance(char *n1, char *n2, int command) {
     // this should say if there is refactoring link names correspondance
     // between n1 and n2
