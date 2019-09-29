@@ -247,8 +247,6 @@ enum {
   ERR_INTERNAL,
   ERR_INTERNAL_CHECK,
   ERR_CFG,
-  ERR_LICENSE,
-  ERR_BIN_LICENSE,
 };
 
 /* ************ working regime in which the task is invoked ******** */
@@ -1801,4 +1799,4 @@ typedef struct options {
 #include "filetab.h"
 #include "editorbuffertab.h"
 
-#endif	/* ifndef _PROTO__H*/
+#endif	/* ifndef _PROTO__H */
