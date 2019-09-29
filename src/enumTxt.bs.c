@@ -1,5 +1,5 @@
 #include "stdinc.h"
-#include "proto.h"  /*SBD*/
+#include "proto.h"
 char * taskRegimesName[] = {
     "RegimeUndefined",
     "RegimeXref",
