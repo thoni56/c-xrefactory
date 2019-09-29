@@ -19,6 +19,8 @@ script:
     - make COVERAGE="--coverage -O0"
     - cd unittests
     - make COVERAGE="--coverage -O0"
+    # We don't want mocks to dillute actual unittest coverage
+    - lcov --remove coverage.info 'src/unittests/*.mock' -o coverage.info
     # Use Codecov for unittest coverage
     - bash <(curl -s https://codecov.io/bash) -c
     - cd ../..
