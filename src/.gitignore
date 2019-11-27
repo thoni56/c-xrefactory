@@ -13,3 +13,5 @@ compiler_defines.g
 *.backup
 .objects
 tmp-*.g
+coverage.info
+coverage
