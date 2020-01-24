@@ -8,7 +8,8 @@ OPTIONS = "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default"
 $(TEST): commands.input CXrefs/XFiles
 	@printf "Tests in '$@': "
 	@$(COMMAND) $(OPTIONS) < commands.input > commands.output || true
-	@sed -e "s+`echo $$PWD/single_int1.c| awk '{ print length }'`>$$PWD/single_int1.c+66>CURDIR/single_int1.c+g" output.log > output.tmp
+	@sed -e "s/len=[0-9]*/len=<n>/g" -e "s#$(CURDIR)#CURDIR#g" output.log > output.tmp
+	#@sed -e "s+`echo $$PWD/single_int1.c| awk '{ print length }'`>$$PWD/single_int1.c+66>CURDIR/single_int1.c+g" output.log > output.tmp
 	@cmp output.tmp output.expected
 	@if [ $$? -ne 0 ] ; then \
 		diff output.tmp output.expected ; \
