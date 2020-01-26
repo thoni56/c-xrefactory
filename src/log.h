@@ -15,7 +15,7 @@
 
 typedef void (*log_LockFn)(void *udata, int lock);
 
-typedef enum { LOG_TRACE, LOG_DEBUG, LOG_INFO, LOG_WARN, LOG_ERROR, LOG_FATAL } LogLevel;
+typedef enum { LOG_TRACE, LOG_DEBUG, LOG_INFO, LOG_WARN, LOG_ERROR, LOG_FATAL, LOG_NONE } LogLevel;
 
 /* TODO: should set up for conditionally making some macros NoOPs using #ifdef's */
 #define log_trace(...) log_log(LOG_TRACE, __FILE__, __LINE__, __VA_ARGS__)
