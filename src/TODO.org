@@ -1,0 +1,110 @@
+There are a *lot* of things to do to make c-xref into modern C.
+
+(This file is structured for Emacs org-mode...)
+
+* DOING Refactor out the hashtables and lists to separate modules.
+* DOING Start using log.c functions to log to a separate log file
+* DOING Build a protocol spy that can be put between the editor and the
+server to inspect and learn about the communication. It should be
+fairly easy, just start up like c-xref does, start the real c-xref
+with the startup arguments. Shuffle all communication on to the other
+while logging the messages to a file.
+
+* TODO Ensure only externally used functions are visible in the modules
+header file. And that only those are "non-static" in the C file.
+
+* TODO Extract PPC-functions from misc.c
+* TODO Ensure each header file is not dependent on the fact that some other
+header file is included before it. (Could this be done by taking each
+header file and try to compile it in isolation? It should include
+whatever other things it needs...)
+
+* TODO Ensure every file only includes what it needs so that dependencies
+are a small as possible. This is why IWYU exists!! It means "Include
+What You Use" and is a Clang related project at
+https://github.com/include-what-you-use/include-what-you-use)
+
+* TODO Rather than "fprintf(dumpOut...". Adjust options so that we can better
+control logging. A note to self is that setting up the temporary files
+are kind of tricky, partly because  of the multi-pass character of the
+c-xref (that I don't really get at this point).
+
+Initial work done in that we are calling log() but we need to move the
+output from dumpOut to some logFile.
+
+* TODO Ensure all ANSI-C, C99 and C11 keywords (and macros for them?) are
+  recognized (list e.g. at
+  http://www.c-programming-simple-steps.com/c-keywords.html)
+
+* TODO Memory allocation is home grown, probably out of necessity. Refactor
+  to a state where it can be replaced (at least as an experiment) by
+  the memory allocation of current run-times. I can't see that even
+  32-bit memory restrictions (2 GB) should be a problem. The caching
+  might be tied into this, though.
+
+General improvements:
+
+* TODO Naming. Generally it is heavy on short, write-only naming, we should
+  move towards full names as much as possible.
+
+* TODO Macros. There are many things that might need the magic of macros, but we
+should watch out for "macro for optimisation" and remove that.
+
+* TODO Header files. There are a number of sections in the proto.h that
+  indicates which file/module it declares an externa interface for. We
+  should move that to a <module>.h file instead. Just watchout for
+  datatypes that need to be in proto.h because of the strFill et. al
+  generation. Not all does, though...
+
+* TODO Modules. Some things might really belong in separate modules, at
+  first glance at least, the hash tables and lists are such
+  candidates. If we do that it would be much easier to mock and unit
+  test other modules.
+
+* TODO Unit tests. There are now some simple ones. We need to get some working as
+  quickly as possible. Meanwhile there are some functional level tests
+  in ../tests, but as all integrating tests with I/O they are quite
+  slow. (And some only work on huge data, because that was the test
+  case given for some issues, and I really want to have a test case
+  for each issue before fixing it, if possible.)
+
+Done:
+
+* TODO Change structure declarations in proto.h into ideomatic struct
+  {struct} typedefs instead of using typenames generated into the
+  strTdef file. See NOTES.md. Few examples of strategy is implemented
+  with cctNode and position. Primary benefit is to be able to use
+  renaming on them...
+
+* TODO Make yacc parsing allowed the default. Change Makefile.common so
+  that YACCALLOWED is reversed, i.e. if you *don't* want yacc parsing
+  in the build c-xref set EXCLUDE_YACC_PARSING (or something similar)
+  ACTUALLY: removed conditionals around that code, and kept the CCC
+  conditionals.
+
+* TODO Make Makefile.common look for our patched yacc and if it's not
+  available ignore yacc-rules otherwise always run yacc.
+
+* TODO enumTxt.c is a generated set of strings for the enum values in
+  proto.h, but the extern declarations of them are in strTdef.g. A
+  cleaner way would be to generate them into an "enumTxt.h" (or a
+  better name, such as 'generated_enum_strings.h').
+  ACTUALLY: split generation of enumTxt header to its own header file
+  with the naming strategy as for the others.
+
+* TODO Move all function prototypes from proto.h to <module>.h
+
+#+TODO: TODO(t) DOING(i) | DONE(d)
+
+* DONE Although generation of typedef's etc. in strTdef et al might be
+  questioned we need to handle that for now, but at least let's add
+  #ifndef guards so that any file that requires a typedef can include
+  them without need to consider the order of the included
+  files. (Until we get into a dependency loop...)
+
+* DONE Change naming strategy for the bootstrap and generated
+  files. "*.bs.h" is now a bootstrap file, while *.g.h" is the local
+  generated one using the boostrap version of c-xref. Also a single
+  header file for each of the generated files is now taking care of
+  the BOOTSTRAPPING ifdef and include the correct bootstrap or
+  generated file.
