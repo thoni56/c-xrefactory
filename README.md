@@ -60,8 +60,8 @@ seems to have been to allow parallell installations of free and
 non-free versions. `c-xref` seems to be intended to be limited to C
 and Emacs. Actually it's not. It is all but identical to the original
 full/free C/Java refactoring browser from
-[http://www.xref.sk](http://www.xref.sk). So Java is also fully (?)
-supported.
+[http://www.xref.sk](http://www.xref.sk). So Java is also supported,
+at least Java 1.3(?).
 
 ## About This Clone
 
