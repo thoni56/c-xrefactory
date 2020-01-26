@@ -1,34 +1,38 @@
-This directory is aimed at starting c-xref & emacs in a sandboxed
-session so that it can be monitored, logged and explored.
+In this directory you can start c-xref & emacs in a sandboxed
+session so that it can be monitored, logged and explored. Sandboxed
+means that the c-xref will guaranteed to be the one in ../../src and
+the emacs started will use the c-xref[actory].el in
+../../env/emacs. Also the home directory will be set to this directory
+so that all c-xref projects and data will be isolated and not interfer
+with your private ones.
 
-The goal is to be able to do
+You can do
 
     make
     make emacs
 
-or
+to start a sandboxed Emacs in the terminal or
 
     make gui
 
-and get a sandboxed emacs in terminal och gui-mode.
+to start one in gui-mode. (Currently only supports Emacs for MacOS).
 
-1. Create an emacs session with a local complete environment. Since we
+Details
+
+Create an emacs session with a local complete environment. Since we
 use el-get we can just replace the el-get git clone with a link to the
 complete c-xrefactory tree (which of course is another git clone of
 the repo but one that we do our development in, rather than the
-deployed one, which comes with el-get).
+deployed one, which comes with a real el-get installation. Note that
+el-get-update* is disabled to not screw this up.
 
-DONE.
-
-2. Inject a spy or logger between emacs and an actual c-xref
+Inject a spy or logger between emacs and an actual c-xref
 executable. For the sandboxed Emacs (run using the Makefile) the lisp
 variable `c-xref-home-directory` is set to point to the local `bin`
-directory. Any `c-xref` here will therefore be used as the one the
+sub-directory. Any `c-xref` here will therefore be used as the one the
 c-xrefactory elisp will call. And there is one now that logs the
 arguments.
 
-DONE.
-
-3. Log the inter-process communication between the started c-xref
+TODO Log the inter-process communication between the started c-xref
 server and Emacs so that we can get closer to the actual goal, namely
 to understand and refactor the c-xref protocol.
