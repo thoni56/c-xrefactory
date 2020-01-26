@@ -114,8 +114,8 @@ void log_log(LogLevel level, const char *file, int line, const char *fmt, ...) {
 #else
     fprintf(stderr, "%s %-5s %s:%d: ", buf, level_names[level],
 #endif
-            /* format, after possibly truncating, file name to standard field of 15 */
-            strlen(file)>15?file+strlen(file)-15:file, line);
+    /* format, after possibly truncating, file name to standard field of 15 */
+    strlen(file)>15?file+strlen(file)-15:file, line);
     va_start(args, fmt);
     vfprintf(stderr, fmt, args);
     va_end(args);
