@@ -11,7 +11,7 @@
 
 When xref is invoked with option "-task_regime_server", it acts like a
 server  reading  input  options  from  standard  input  and  producing
-answers on the standard output. 
+answers on the standard output.
 
 <p>
 Because on majority of OS,  pipes are slower than temporary files, two
@@ -70,13 +70,13 @@ main() {
 
 following suite  of commands will call  xref server task,  ask for all
 completions after "t." string at line  4 (offset 40), then it will ask
-for completion on line 6 (offset 49). In the following, text written 
+for completion on line 6 (offset 49). In the following, text written
 by hand is displayed in bold, answers from computer are in plain text.
 
 <pre>
 
 
-vittek:~/tmp/test><b>xref -task_regime_server -xrefactory-II
+vittek:~/tmp/test><b>xref -task_regime_server -server
 -olcxcomplet
 -olcursor=40
 /tmp/xrefactory.tmp
@@ -107,7 +107,7 @@ The first answer means that the list:
 x  :int x
 y  :int y
 </pre>
-of possible completions should be displayed. The second answer is asking for moving to 
+of possible completions should be displayed. The second answer is asking for moving to
 the line 6 and column 2 of the file <i>/tmp/xrefactory.tmp</i> and inserting
 there the string <i>main</i>, which is the only completion.
 
@@ -122,7 +122,7 @@ passed via standard output.
 <pre>
 
 
-vittek:~/tmp/test><b>xref -task_regime_server -xrefactory-II
+vittek:~/tmp/test><b>xref -task_regime_server -server
 -olcxcomplet
 -olcursor=49
 -o /tmp/xrefactory.out
@@ -154,7 +154,7 @@ For example:
 <pre>
 
 
-vittek:~/tmp/test><b>xref -task_regime_server -xrefactory-II
+vittek:~/tmp/test><b>xref -task_regime_server -server
 -olcxcomplet
 -olcursor=49
 -preload /home/vittek/tmp/test/toto.c /tmp/xrefactory.tmp

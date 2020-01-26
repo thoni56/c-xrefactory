@@ -139,7 +139,7 @@ static void aboutMessage(void) {
     if (s_opt.exit) {
         sprintf(output+strlen(output),"Exiting!");
     }
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         ppcGenRecord(PPC_INFORMATION, output, "\n");
     } else {
         fprintf(stdout, "%s", output);
@@ -1361,6 +1361,9 @@ static int processSOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i],"-str_fill")==0)    s_opt.str_fill = 1;
     else if (strcmp(argv[i],"-str_copy")==0)    s_opt.str_copy = 1;
     else if (strcmp(argv[i],"-stderr")==0)          errOut = stdout;
+    else if (strcmp(argv[i],"-server") == 0){
+        s_opt.server = 1;
+    }
     else if (strcmp(argv[i],"-source")==0)  {
         NEXT_ARG();
         if (strcmp(argv[i], JAVA_VERSION_1_3)!=0 && strcmp(argv[i], JAVA_VERSION_1_4)!=0) {
@@ -1511,9 +1514,6 @@ static int processWOption(int *ii, int argc, char **argv) {
 static int processXOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strcmp(argv[i],"-xrefactory-II") == 0){
-        s_opt.xref2 = 1;
-    }
     else if (strncmp(argv[i],"-xrefrc=",8) == 0) {
         createOptionString(&s_opt.xrefrc, argv[i]+8);
     }
@@ -1841,18 +1841,18 @@ static void writeOptionsFileMessage( char *file,
                 fatalError(ERR_ST, tmpBuff, XREF_EXIT_NO_PROJECT);
             }
         } else if (! JAVA2HTML()) {
-            if (s_opt.xref2) {
+            if (s_opt.server) {
                 ppcGenRecord(PPC_NO_PROJECT,file,"\n");
             } else {
                 sprintf(tmpBuff,"no project name covers '%s'",file);
                 warning(ERR_ST, tmpBuff);
             }
         }
-        //&} else if (s_opt.xref2) {
+        //&} else if (s_opt.server) {
         //& sprintf(tmpBuff,"C-xrefactory project: %s", outSect);
         //& ppcGenRecord(PPC_BOTTOM_INFORMATION, tmpBuff, "\n");
     } else if (s_opt.taskRegime==RegimeXref) {
-        if (s_opt.xref2) {
+        if (s_opt.server) {
             sprintf(tmpBuff,"C-xrefactory project: %s", outSect);
             ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
         } else {
@@ -1887,7 +1887,7 @@ static void handlePathologicProjectCases(char *file,char *outFName,char *outSect
                 strcpy(outFName, oldStdopFile);
             }
             if(strcmp(oldStdopFile,outFName)||strcmp(oldStdopSection,outSect)){
-                if (s_opt.xref2) {
+                if (s_opt.server) {
                     sprintf(tmpBuff, "[Xref] new project: '%s'", outSect);
                     ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
                 } else {
@@ -2336,7 +2336,7 @@ static void mainFileProcessingInitialisations(
     if (    (s_opt.taskRegime==RegimeXref
              || s_opt.taskRegime==RegimeHtmlGenerate)
             && (! s_javaPreScanOnly)) {
-        if (s_opt.xref2) {
+        if (s_opt.server) {
             ppcGenRecord(PPC_INFORMATION, getRealFileNameStatic(s_input_file_name), "\n");
         } else {
             log_info("Processing '%s'", getRealFileNameStatic(s_input_file_name));
@@ -2577,7 +2577,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 static void mainReferencesOverflowed(char *cxMemFreeBase, int mess) {
     int i,fi,savingFlag;
     if (mess!=MESS_NONE && s_opt.taskRegime!=RegimeHtmlGenerate) {
-        if (s_opt.xref2) {
+        if (s_opt.server) {
             ppcGenRecord(PPC_INFORMATION,"swapping references on disk", "\n");
             ppcGenRecord(PPC_INFORMATION,"", "\n");
         } else {
@@ -3096,7 +3096,7 @@ static void mainXrefOneWholeFileProcessing(int argc, char **argv,
 }
 
 static void printPrescanningMessage(void) {
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         sprintf(tmpBuff, "Prescanning classes, please wait.");
         ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
     } else {
@@ -3177,7 +3177,7 @@ void mainCallXref(int argc, char **argv) {
                 if (LANGUAGE(LANG_JAVA)) {
                     mainXrefOneWholeFileProcessing(argc, argv, pffc, &firstPassing, &atLeastOneProcessed);
                 }
-                if (s_opt.xref2) writeRelativeProgress(10*pinputCounter/numberOfInputs);
+                if (s_opt.server) writeRelativeProgress(10*pinputCounter/numberOfInputs);
                 pinputCounter++;
             }
             s_javaPreScanOnly = 0;
@@ -3186,7 +3186,7 @@ void mainCallXref(int argc, char **argv) {
                 mainXrefOneWholeFileProcessing(argc, argv, ffc, &firstPassing, &atLeastOneProcessed);
                 ffc->b.scheduledToProcess = 0;
                 ffc->b.scheduledToUpdate = 0;
-                if (s_opt.xref2) writeRelativeProgress(10+90*inputCounter/numberOfInputs);
+                if (s_opt.server) writeRelativeProgress(10+90*inputCounter/numberOfInputs);
                 inputCounter++;
                 CHECK_FINAL();
             }
@@ -3209,7 +3209,7 @@ void mainCallXref(int argc, char **argv) {
             if (s_opt.update==0 || s_opt.update==UP_FULL_UPDATE) {
                 fileTabMap(&s_fileTab, setFullUpdateMtimesInFileTab);
             }
-            if (s_opt.xref2) {
+            if (s_opt.server) {
                 sprintf(tmpBuff, "Generating '%s'",s_opt.cxrefFileName);
                 ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
             } else {
@@ -3223,7 +3223,7 @@ void mainCallXref(int argc, char **argv) {
         sprintf(tmpBuff,"no input file");
         error(ERR_ST, tmpBuff);
     }
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         writeRelativeProgress(100);
     }
 }
@@ -3235,7 +3235,7 @@ static void mainXref(int argc, char **argv) {
 
     mainCallXref(argc, argv);
     mainCloseOutputFile();
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         ppcGenSynchroRecord();
     }
     if (s_opt.last_message!=NULL) {
@@ -3328,7 +3328,7 @@ static void mainEditServer(int argc, char **argv) {
             fprintf(ccOut,"%s",s_opt.last_message);
             fflush(ccOut);
         }
-        if (s_opt.xref2) ppcGenSynchroRecord();
+        if (s_opt.server) ppcGenSynchroRecord();
         /*fprintf(dumpOut,"request answered\n\n");fflush(dumpOut);*/
     }
     assert(0);

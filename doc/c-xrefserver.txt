@@ -60,7 +60,7 @@ The following sequence of commands will call xref server task, ask for
 all completions after "t." string at line 4 (offset 40), then it will
 ask for completion on line 5 (offset 49).
 
-vittek:~/tmp>~/c-xref/c-xref -task_regime_server -xrefactory-II
+vittek:~/tmp>~/c-xref/c-xref -task_regime_server -server
 -olcxcomplet
 -olcursor=40
 /home/vittek/tmp/t.c

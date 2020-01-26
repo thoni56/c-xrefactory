@@ -256,9 +256,9 @@ static void errorMessage(char *out, int errCode, char *mess) {
 
 void warning(int errCode, char *mess) {
     if ((! s_opt.noErrors) && (! s_javaPreScanOnly)) {
-        if (! s_opt.xref2) fprintf(errOut,"![warning] ");
+        if (! s_opt.server) fprintf(errOut,"![warning] ");
         errorMessage(ppcTmpBuff,errCode, mess);
-        if (s_opt.xref2) {
+        if (s_opt.server) {
             ppcGenRecord(PPC_WARNING, ppcTmpBuff,"\n");
         } else {
             fprintf(errOut, "%s", ppcTmpBuff);
@@ -269,9 +269,9 @@ void warning(int errCode, char *mess) {
 }
 
 static void writeErrorMessage(int errCode, char *mess) {
-    if (! s_opt.xref2) fprintf(errOut,"![error] ");
+    if (! s_opt.server) fprintf(errOut,"![error] ");
     errorMessage(ppcTmpBuff,errCode, mess);
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         ppcGenRecord(PPC_ERROR, ppcTmpBuff,"\n");
     } else {
         fprintf(errOut, "%s", ppcTmpBuff);
@@ -293,7 +293,7 @@ void emergencyExit(int exitStatus) {
     fflush(stdout); fflush(stderr);
 #   endif
     mainCloseOutputFile();
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         ppcGenSynchroRecord();
     }
 #   ifdef CORE_DUMP
@@ -304,9 +304,9 @@ void emergencyExit(int exitStatus) {
 
 
 void fatalError(int errCode, char *mess, int exitStatus) {
-    if (! s_opt.xref2) fprintf(errOut,"![error] ");
+    if (! s_opt.server) fprintf(errOut,"![error] ");
     errorMessage(ppcTmpBuff, errCode, mess);
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         ppcGenRecord(PPC_FATAL_ERROR, ppcTmpBuff,"\n");
     } else {
         log_error(ppcTmpBuff);
@@ -322,7 +322,7 @@ void internalCheckFail(char *expr, char *file, int line) {
     sprintf(tmpBuff,"'%s' is not valid in '%s:%d'",expr,file,line);
     writeErrorMessage(ERR_INTERNAL_CHECK,tmpBuff);
     if (s_opt.taskRegime == RegimeEditServer || s_opt.refactoringRegime == RegimeRefactory) {
-        if (s_opt.xref2) {
+        if (s_opt.server) {
             ppcGenRecord(PPC_INFORMATION,"Exiting","\n");
             mainCloseOutputFile();
             ppcGenSynchroRecord();

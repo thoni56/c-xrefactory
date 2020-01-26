@@ -62,7 +62,7 @@ void initTokenNameTab(void) {
     if (s_opt.taskRegime!=RegimeEditServer
         && s_opt.taskRegime!=RegimeGenerate
         && messageWritten==0) {
-        if (s_opt.xref2) {
+        if (s_opt.server) {
             sprintf(tmpBuff,"java version == %s", jv);
             ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
         } else {

@@ -356,7 +356,7 @@ void printCompletionsBeginning(S_olCompletion *olc, int noFocus) {
     S_olCompletion      *cc;
     int                 tlen;
     LIST_LEN(max, S_olCompletion, olc);
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         if (s_opt.editor == ED_JEDIT && ! s_opt.jeditOldCompletions) {
             ppcGenTwoNumericAndRecordBegin(PPC_FULL_MULTIPLE_COMPLETIONS,
                                            PPCA_NUMBER, max,
@@ -409,7 +409,7 @@ void printCompletionsEnding(S_olCompletion *olc) {
 #           endif
         }
     }
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         if (s_opt.editor == ED_JEDIT && ! s_opt.jeditOldCompletions) {
             ppcGenRecordEnd(PPC_FULL_MULTIPLE_COMPLETIONS);
         } else {
@@ -441,7 +441,7 @@ void printCompletions(S_completions* c) {
     // O.K. there will be a menu diplayed, clear the old one
     olCompletionListInit(&c->idToProcessPos);
     if (c->ai == 0) {
-        if (s_opt.xref2) {
+        if (s_opt.server) {
             ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No completion possible **","\n");
         } else {
             fprintf(ccOut,"-");
@@ -449,7 +449,7 @@ void printCompletions(S_completions* c) {
         goto finiWithoutMenu;
     }
     if ((! c->fullMatchFlag) && c->ai==1) {
-        if (s_opt.xref2) {
+        if (s_opt.server) {
             ppcGenGotoPositionRecord(&s_olcxCurrentUser->completionsStack.top->cpos);
             ppcGenRecord(PPC_SINGLE_COMPLETION, c->a[0].s,"\n");
         } else {
@@ -458,7 +458,7 @@ void printCompletions(S_completions* c) {
         goto finiWithoutMenu;
     }
     if ((! c->fullMatchFlag) && strlen(c->comPrefix) > c->idToProcessLen) {
-        if (s_opt.xref2) {
+        if (s_opt.server) {
             ppcGenGotoPositionRecord(&s_olcxCurrentUser->completionsStack.top->cpos);
             ppcGenRecord(PPC_SINGLE_COMPLETION, c->comPrefix,"\n");
             ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 1, "Multiple completions","\n");

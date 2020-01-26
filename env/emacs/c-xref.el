@@ -2274,7 +2274,7 @@ tries to delete C-xrefactory windows first.
     (setq oldpct process-connection-type)
     (setq process-connection-type nil)
     (setq opts (append (list
-                         "-xrefactory-II"
+                         "-server"
                          ;;"-xrefrc" c-xref-options-file
                          ;;"-urldirect"
                          ;; do not comment following options without testing

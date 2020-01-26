@@ -80,7 +80,7 @@ char *placeIdent(void) {
     char mm[MAX_HTML_REF_LEN];
     int s;
     if (cFile.fileName!=NULL) {
-        if (s_opt.xref2 && s_opt.taskRegime!=RegimeEditServer) {
+        if (s_opt.server && s_opt.taskRegime!=RegimeEditServer) {
             strcpy(fn, getRealFileNameStatic(normalizeFileName(cFile.fileName, s_cwd)));
             assert(strlen(fn) < MAX_FILE_NAME_SIZE);
             sprintf(mm, "%s:%d", simpleFileName(fn),cFile.lineNumber);

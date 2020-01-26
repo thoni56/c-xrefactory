@@ -933,7 +933,7 @@ void getJavaClassAndSourcePath(void) {
             ) {
             static int messageFlag=0;
             if (messageFlag==0 && ! s_opt.briefoutput) {
-                if (s_opt.xref2) {
+                if (s_opt.server) {
                     if (jdkcp!=NULL && *jdkcp!=0) {
                         sprintf(tmpBuff,"java runtime == %s", jdkcp);
                         ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");

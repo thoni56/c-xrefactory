@@ -3,7 +3,7 @@
 include ../Makefile.boilerplate
 
 COMMAND = ../../src/c-xref
-OPTIONS = "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-o" "output.log" "-task_regime_server"
+OPTIONS = "-server" "-crlfconversion" "-crconversion" "-encoding=default" "-o" "output.log" "-task_regime_server"
 
 $(TEST): commands.input CXrefs/XFiles
 	@printf "Tests in '$@': "

@@ -474,7 +474,7 @@ static void extGenNewMacroCall(S_programGraphNode *program) {
     sprintf(rb+strlen(rb), "%s);\n", fFlag?"(":"");
 
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
         fprintf(ccOut, "%s", rb);
@@ -507,7 +507,7 @@ static void extGenNewMacroHead(S_programGraphNode *program) {
     }
     sprintf(rb+strlen(rb), "%s) {\\\n", fFlag?"(":"");
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
         fprintf(ccOut, "%s", rb);
@@ -520,7 +520,7 @@ static void extGenNewMacroTail(S_programGraphNode *program) {
     sprintf(rb+strlen(rb),"}\n\n");
 
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
         fprintf(ccOut, "%s", rb);
@@ -581,7 +581,7 @@ static void extGenNewFunCall(S_programGraphNode *program) {
     }
     sprintf(rb+strlen(rb), "%s);\n", fFlag?"(":"");
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
         fprintf(ccOut, "%s", rb);
@@ -795,7 +795,7 @@ static void extGenNewFunHead(S_programGraphNode *program) {
     }
     if (fFlag == 0) sprintf(rb+strlen(rb), ";\n");
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
         fprintf(ccOut, "%s", rb);
@@ -831,7 +831,7 @@ static void extGenNewFunTail(S_programGraphNode *program) {
     }
     sprintf(rb+strlen(rb),"}\n\n");
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
         fprintf(ccOut, "%s", rb);
@@ -943,7 +943,7 @@ static void extJavaGenNewClassCall(S_programGraphNode *program) {
     sprintf(rb+strlen(rb),"\t\t%s = null;\n", s_extractionName);
 
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
         fprintf(ccOut, "%s", rb);
@@ -1065,7 +1065,7 @@ static void extJavaGenNewClassHead(S_programGraphNode *program) {
     }
     if (fFlag == 0) sprintf(rb+strlen(rb), ";\n");
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
         fprintf(ccOut, "%s", rb);
@@ -1108,7 +1108,7 @@ static void extJavaGenNewClassTail(S_programGraphNode *program) {
     sprintf(rb+strlen(rb),"\t\t}\n\t}\n\n");
 
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
         fprintf(ccOut, "%s", rb);
@@ -1168,24 +1168,24 @@ static void extMakeExtraction(void) {
         else s_extractionName = "newFunction_";
     }
 
-    if (s_opt.xref2) ppcGenRecordWithAttributeBegin(PPC_EXTRACTION_DIALOG, PPCA_TYPE, s_extractionName);
+    if (s_opt.server) ppcGenRecordWithAttributeBegin(PPC_EXTRACTION_DIALOG, PPCA_TYPE, s_extractionName);
     CX_ALLOCC(rb, EXTRACT_GEN_BUFFER_SIZE, char);
 
-    if (! s_opt.xref2) {
+    if (! s_opt.server) {
         fprintf(ccOut,
                 "%%!\n------------------------ The Invocation ------------------------\n!\n");
     }
     if (s_opt.extractMode==EXTR_MACRO) extGenNewMacroCall(program);
     else if (newClassExt) extJavaGenNewClassCall(program);
     else extGenNewFunCall(program);
-    if (! s_opt.xref2) {
+    if (! s_opt.server) {
         fprintf(ccOut,
                 "!\n--------------------------- The Head ---------------------------\n!\n");
     }
     if (s_opt.extractMode==EXTR_MACRO) extGenNewMacroHead(program);
     else if (newClassExt) extJavaGenNewClassHead(program);
     else extGenNewFunHead(program);
-    if (! s_opt.xref2) {
+    if (! s_opt.server) {
         fprintf(ccOut,
                 "!\n--------------------------- The Tail ---------------------------\n!\n");
     }
@@ -1193,14 +1193,14 @@ static void extMakeExtraction(void) {
     else if (newClassExt) extJavaGenNewClassTail(program);
     else extGenNewFunTail(program);
 
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         ppcGenNumericRecord(PPC_INT_VALUE, s_cp.funBegPosition, "", "\n");
     } else {
         fprintf(ccOut,"!%d!\n", s_cp.funBegPosition);
         fflush(ccOut);
     }
 
-    if (s_opt.xref2) ppcGenRecordEnd(PPC_EXTRACTION_DIALOG);
+    if (s_opt.server) ppcGenRecordEnd(PPC_EXTRACTION_DIALOG);
 }
 
 

@@ -1347,7 +1347,7 @@ static void htmlScanCxFileAndGenRefLists(char *fn1, char *fn2,
     ffn = cutHtmlPath(fn);
     if (genFlag == HTML_GEN) {
         //& fprintf(stdout,"\n %s ",ffn);fflush(stdout);
-        if (!s_opt.xref2) {
+        if (!s_opt.server) {
             if (fi%10==0) fprintf(stdout,"\n");
             fprintf(stdout,"X%04d ",fi);
             fflush(stdout);
@@ -1646,7 +1646,7 @@ static void htmlGenerateFile(int fnum) {
         warning(ERR_CANT_OPEN,ffn);
         ccOut=stdout;
     } else {
-        if (!s_opt.xref2) {
+        if (!s_opt.server) {
             fprintf(dumpOut," -> '%s'\n", ffn); fflush(dumpOut);
         }
         htmlGenerateFileToCcOut(fnum);
@@ -1684,7 +1684,7 @@ static void htmlGenerateJavaDocFile(int fnum) {
                  s_opt.jdocTmpDir,
                  cutHtmlPath(getRealFileNameStatic(s_fileTab.tab[fnum]->name)),
                  ""); // maybe some suffix .doc ?
-    if (!s_opt.xref2) {
+    if (!s_opt.server) {
         fprintf(dumpOut," -> '%s'\n", ffn); fflush(dumpOut);
     }
     recursivelyCreateFileDirIfNotExists(ffn);
@@ -1774,7 +1774,7 @@ void htmlGenGlobalReferenceLists(char *cxMemFreeBase) {
     char    *dirname,*fname,*newFreeBase;
     int     i;
     if (s_opt.htmlglobalx == 0) return;
-    if (!s_opt.xref2) {
+    if (!s_opt.server) {
         fprintf(dumpOut,"\nGenerating global symbol reference lists");
         fflush(dumpOut);
     }
@@ -1798,7 +1798,7 @@ void htmlGenGlobalReferenceLists(char *cxMemFreeBase) {
             htmlScanCxFileAndGenRefLists(dirname,fn, i, HTML_GEN);
         }
     }
-    if (!s_opt.xref2) {
+    if (!s_opt.server) {
         fprintf(dumpOut,"\nDone.\n"); fflush(dumpOut);
     }
 }

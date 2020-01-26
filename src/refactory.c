@@ -27,7 +27,7 @@ static int s_refactoryXrefEditSrvSubTaskFirstPassing = 1;
 
 static char *s_refactoryEditSrvInitOptions[] = {
     "xref",
-    "-xrefactory-II",
+    "-server",
     //& "-debug",
     "-task_regime_server",
     NULL,
@@ -35,7 +35,7 @@ static char *s_refactoryEditSrvInitOptions[] = {
 
 static char *s_refactoryXrefInitOptions[] = {
     "xref",
-    "-xrefactory-II",
+    "-server",
     "-briefoutput",
     NULL,
 };
@@ -1051,7 +1051,7 @@ int tpCheckSuperMethodReferencesForDynToSt(void) {
     if (! tmp) return(0);
     // synthetize an answer
     if (rr.foundSpecialRefItem!=NULL) {
-        if (s_opt.xref2) ppcGenGotoPositionRecord(&rr.foundSpecialR->p);
+        if (s_opt.server) ppcGenGotoPositionRecord(&rr.foundSpecialR->p);
         sprintf(tmpBuff,"This method invokes another method using the keyword \"super\". Current version of C-xrefactory does not know how to make it static.");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         error(ERR_ST, tmpBuff);
@@ -1076,7 +1076,7 @@ int tpCheckOuterScopeUsagesForDynToSt(void) {
     if (rr.foundOuterScopeRef!=NULL) {
         sprintf(tmpBuff,"Inner class method is using symbols from outer scope. Current version of C-xrefactory does not know how to make it static.");
         // be soft, so that user can try it and see.
-        if (s_opt.xref2) {
+        if (s_opt.server) {
             ppcGenGotoPositionRecord(&rr.foundOuterScopeRef->p);
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
             ppcGenRecord(PPC_ERROR, tmpBuff, "\n");

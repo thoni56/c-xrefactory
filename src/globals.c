@@ -325,7 +325,7 @@ S_options s_initOpt = {
     0,                  // stdopFlag
     NULL,               // renameTo
     RegimeUndefined,    // refactoringRegime
-    0,                  // xrefactory-II
+    0,                  // server mode
     NULL,               // moveTargetFile
 #if defined (__WIN32__)                                 /*SBD*/
     "c;C",              // cFilesSuffixes

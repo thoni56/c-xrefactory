@@ -6,7 +6,7 @@
 
 include ../Makefile.boilerplate
 
-COMMAND = ../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-o" "output.log" "-task_regime_server"
+COMMAND = ../../src/c-xref "-server" "-crlfconversion" "-crconversion" "-encoding=default" "-o" "output.log" "-task_regime_server"
 
 $(TEST): commands.input CXrefs/XFiles
 	@printf "Tests in '$@': "

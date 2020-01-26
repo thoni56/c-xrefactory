@@ -106,7 +106,7 @@ void setTmpClassBackPointersToMenu(S_olSymbolsMenu *menu) {
 static void genClassHierarchyVerticalBars( FILE *ff, S_intlist *nextbars,
                                            int secondpass) {
     S_intlist *nn;
-    if (s_opt.xref2 && s_opt.taskRegime!=RegimeHtmlGenerate) {
+    if (s_opt.server && s_opt.taskRegime!=RegimeHtmlGenerate) {
         fprintf(ff," %s=\"", PPCA_TREE_DEPS);
     }
     if (nextbars!=NULL) {
@@ -121,7 +121,7 @@ static void genClassHierarchyVerticalBars( FILE *ff, S_intlist *nextbars,
         }
         LIST_REVERSE(S_intlist, nextbars);
     }
-    if (s_opt.xref2 && s_opt.taskRegime!=RegimeHtmlGenerate) {
+    if (s_opt.server && s_opt.taskRegime!=RegimeHtmlGenerate) {
         fprintf(ff,"\"");
     }
 }
@@ -195,41 +195,41 @@ static void olcxPrintMenuItemPrefix(FILE *ff, S_olSymbolsMenu *itt,
     if (s_opt.cxrefs==OLO_CLASS_TREE || s_opt.cxrefs==OLO_SHOW_CLASS_TREE) {
         ; //fprintf(ff,"");
     } else if (! selectable) {
-        if (s_opt.xref2) fprintf(ff, " %s=2", PPCA_SELECTED);
+        if (s_opt.server) fprintf(ff, " %s=2", PPCA_SELECTED);
         else fprintf(ff,"- ");
     } else if (itt!=NULL && itt->selected) {
-        if (s_opt.xref2) fprintf(ff, " %s=1", PPCA_SELECTED);
+        if (s_opt.server) fprintf(ff, " %s=1", PPCA_SELECTED);
         else fprintf(ff,"+ ");
     } else {
-        if (s_opt.xref2) fprintf(ff, " %s=0", PPCA_SELECTED);
+        if (s_opt.server) fprintf(ff, " %s=0", PPCA_SELECTED);
         else fprintf(ff,"  ");
     }
     if (itt!=NULL
         && itt->vlevel==1
         && ooBitsGreaterOrEqual(itt->ooBits, OOC_PROFILE_APPLICABLE)) {
-        if (s_opt.xref2) fprintf(ff, " %s=1", PPCA_BASE);
+        if (s_opt.server) fprintf(ff, " %s=1", PPCA_BASE);
         else fprintf(ff,">>");
     } else {
-        if (s_opt.xref2) fprintf(ff, " %s=0", PPCA_BASE);
+        if (s_opt.server) fprintf(ff, " %s=0", PPCA_BASE);
         else fprintf(ff,"  ");
     }
-    if (! s_opt.xref2) fprintf(ff," ");
+    if (! s_opt.server) fprintf(ff," ");
     if (s_opt.cxrefs==OLO_CLASS_TREE || s_opt.cxrefs==OLO_SHOW_CLASS_TREE) {
         ; //fprintf(ff, "");
     } else if (itt==NULL || (itt->defRefn==0 && itt->refn==0) || !selectable) {
-        if (s_opt.xref2) fprintf(ff, " %s=0 %s=0", PPCA_DEF_REFN, PPCA_REFN);
+        if (s_opt.server) fprintf(ff, " %s=0 %s=0", PPCA_DEF_REFN, PPCA_REFN);
         else fprintf(ff, "  -/-  ");
     } else if (itt->defRefn==0) {
-        if (s_opt.xref2) fprintf(ff, " %s=0 %s=%d", PPCA_DEF_REFN, PPCA_REFN, itt->refn);
+        if (s_opt.server) fprintf(ff, " %s=0 %s=%d", PPCA_DEF_REFN, PPCA_REFN, itt->refn);
         else fprintf(ff, "  -/%-3d", itt->refn);
     } else if (itt->refn==0) {
-        if (s_opt.xref2) fprintf(ff, " %s=%d %s=0", PPCA_DEF_REFN, itt->defRefn, PPCA_REFN);
+        if (s_opt.server) fprintf(ff, " %s=%d %s=0", PPCA_DEF_REFN, itt->defRefn, PPCA_REFN);
         else fprintf(ff, "%3d/-  ", itt->defRefn);
     } else {
-        if (s_opt.xref2) fprintf(ff, " %s=%d %s=%d", PPCA_DEF_REFN, itt->defRefn, PPCA_REFN, itt->refn);
+        if (s_opt.server) fprintf(ff, " %s=%d %s=%d", PPCA_DEF_REFN, itt->defRefn, PPCA_REFN, itt->refn);
         else fprintf(ff, "%3d/%-3d", itt->defRefn, itt->refn);
     }
-    if (! s_opt.xref2) fprintf(ff,"    ");
+    if (! s_opt.server) fprintf(ff,"    ");
 }
 
 static void olcxMenuGenNonVirtualGlobSymList( FILE *ff, S_olSymbolsMenu *ss) {
@@ -238,7 +238,7 @@ static void olcxMenuGenNonVirtualGlobSymList( FILE *ff, S_olSymbolsMenu *ss) {
     if (s_symbolListOutputCurrentLine == 1) s_symbolListOutputCurrentLine++; // first line irregularity
     ss->outOnLine = s_symbolListOutputCurrentLine;
     s_symbolListOutputCurrentLine ++ ;
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         ppcIndentOffset();
         fprintf(ff,"<%s %s=%d", PPC_SYMBOL, PPCA_LINE, ss->outOnLine+SYMBOL_MENU_FIRST_LINE);
         if (ss->s.b.symType!=TypeDefault) {
@@ -267,13 +267,13 @@ static void olcxMenuPrintClassHierarchyLine( FILE *ff, int fInd,
     int         yetProcesed, indent;
 
     yetProcesed = THEBIT(tmpChProcessed,fInd);
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         ppcIndentOffset();
         fprintf(ff, "<%s %s=%d", PPC_CLASS, PPCA_LINE,
                 itt->outOnLine+SYMBOL_MENU_FIRST_LINE);
     }
     olcxPrintMenuItemPrefix(ff, itt, ! yetProcesed);
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         LIST_LEN(indent, S_intlist, nextbars);
         fprintf(ff, " %s=%d", PPCA_INDENT, indent);
     }
@@ -282,18 +282,18 @@ static void olcxMenuPrintClassHierarchyLine( FILE *ff, int fInd,
     if (itt!=NULL) {
         assert(itt);
         if (itt->s.vApplClass == itt->s.vFunClass && s_opt.cxrefs!=OLO_CLASS_TREE) {
-            if (s_opt.xref2) fprintf(ff, " %s=1", PPCA_DEFINITION);
+            if (s_opt.server) fprintf(ff, " %s=1", PPCA_DEFINITION);
             else fprintf(ff,"*");
         }
         itt->visible = 1;
     }
     if (fi->b.isInterface) {
-        if (s_opt.xref2) fprintf(ff, " %s=1", PPCA_INTERFACE);
+        if (s_opt.server) fprintf(ff, " %s=1", PPCA_INTERFACE);
         else fprintf(ff,"~");
     }
     cname = javaGetNudePreTypeName_st(getRealFileNameStatic(fi->name),
                                       s_opt.nestedClassDisplaying);
-    if (s_opt.xref2) {
+    if (s_opt.server) {
         if (THEBIT(tmpChProcessed,fInd)) fprintf(ff," %s=1", PPCA_TREE_UP);
         fprintf(ff, " %s=%ld>%s</%s>\n", PPCA_LEN, (unsigned long)strlen(cname), cname, PPC_CLASS);
     } else {
@@ -453,7 +453,7 @@ void olcxMenuGenGlobRefsForVirtMethod(FILE *ff, S_olSymbolsMenu *rrr) {
           s_symbolListOutputCurrentLine += 1 ;
           &*/
     } else {
-        if (s_opt.xref2) ppcGenRecord(PPC_VIRTUAL_SYMBOL, ln, "\n");
+        if (s_opt.server) ppcGenRecord(PPC_VIRTUAL_SYMBOL, ln, "\n");
         else fprintf(ff, "\n== %s\n", ln);
         s_symbolListOutputCurrentLine += 2 ;
     }
@@ -463,7 +463,7 @@ void olcxMenuGenGlobRefsForVirtMethod(FILE *ff, S_olSymbolsMenu *rrr) {
     //&fprintf(ff,"interfaces:\n");
     setTmpClassBackPointersToMenu(rrr);
     genClassHierarchies( ff, rrr, SINGLE_VIRT_ITEM, SECOND_PASS);
-    //& if (! s_opt.xref2) fprintf(ff, "\n");
+    //& if (! s_opt.server) fprintf(ff, "\n");
     //& s_symbolListOutputCurrentLine ++ ;
 }
 

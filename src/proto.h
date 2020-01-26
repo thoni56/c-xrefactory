@@ -1648,7 +1648,7 @@ typedef struct options {
     int stdopFlag;		// does this serve to anything ?
     char *renameTo;
     int refactoringRegime;
-    int xref2;
+    int server;
     char *moveTargetFile;
     char *cFilesSuffixes;
     char *javaFilesSuffixes;
