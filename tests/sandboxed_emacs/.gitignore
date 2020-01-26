@@ -1,3 +1,5 @@
 .c-xrefrc
 CXrefs
 log
+log-command
+latest-invocation
