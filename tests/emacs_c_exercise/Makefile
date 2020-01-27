@@ -26,7 +26,7 @@ setup:
 execute: EMACS_STARTUP=-batch
 execute exec:
 	@# Run emacs with commands to execute the example sequence
-	@HOME=$(CURDIR) emacs --no-splash $(EMACS_STARTUP) -l .emacs.d/init.el -l .emacs.d/override-el-get-update.el -l emacs_c_exercise.el > /dev/null 2>&1
+	HOME=$(CURDIR) emacs --no-splash $(EMACS_STARTUP) -l .emacs.d/init.el -l .emacs.d/override-el-get-update.el -l emacs_c_exercise.el > /dev/null 2>&1
 	@# Remove tilde-files after editing
 	@find cexercise -name \*~ -exec rm {} \;
 
