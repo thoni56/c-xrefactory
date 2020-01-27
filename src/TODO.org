@@ -7,7 +7,7 @@ server to inspect and learn about the communication. It should be
 fairly easy, just start up like c-xref does, start the real c-xref
 with the startup arguments. Shuffle all communication on to the other
 while logging the messages to a file.
-* DOING Refactor out the hashtables and lists to separate modules.
+* DONE Refactor out the hashtables and lists to separate modules.
 * DOING Start using log.c functions to log to a separate log file
 * TODO Move XX_ALLOCC and friends to "memory" module
 * TODO Ensure only externally used functions are visible in the modules
