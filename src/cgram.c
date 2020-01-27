@@ -2194,10 +2194,14 @@ yyloop:
         goto yyreduce;
     }
     if (yyerrflag) goto yyinrecovery;
+#ifdef lint
     goto yynewerror;
+#endif
 yynewerror:
     yyerror("syntax error");
+#ifdef lint
     goto yyerrlab;
+#endif
 yyerrlab:
     ++yynerrs;
 yyinrecovery:
@@ -4185,7 +4189,7 @@ case 357:
 #line 1864 "cgram.y"
 { stackMemoryBlockFree(); }
 break;
-#line 4189 "cgram.c"
+#line 4193 "cgram.c"
     }
     yyssp -= yym;
     yystate = *yyssp;
