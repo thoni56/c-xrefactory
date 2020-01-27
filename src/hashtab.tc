@@ -29,6 +29,8 @@
 
 #include <string.h>             /* For memset() */
 
+#include "misc.h"               /* For XX_ALLOCC */
+
 #define GLUE(a,b) a ## b
 #define CONCAT(a,b) GLUE(a,b)
 

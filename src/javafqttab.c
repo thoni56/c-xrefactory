@@ -1,7 +1,9 @@
 #define _JAVAFQTTAB_
 #include "javafqttab.h"
 
-#include "misc.h"
+#include "hash.h"
+
+#include "misc.h"               /* For XX_ALLOCC */
 
 #define HASH_FUN(elemp) hashFun(elemp->d->linkName)
 #define HASH_ELEM_EQUAL(e1,e2) (                                        \

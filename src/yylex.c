@@ -23,6 +23,7 @@
 #include "memmac.h"
 #include "protocol.h"
 
+#include "hash.h"
 #include "log.h"
 #include "utils.h"
 
@@ -247,9 +248,9 @@ void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) {
                 register char *tmpcc,tmpch;                             \
                 hash = 0;                                               \
                 for(tmpcc=Input,tmpch= *tmpcc; tmpch; tmpch = *++tmpcc) { \
-                    SYM_TAB_HASH_FUN_INC(hash, tmpch);                  \
+                    SYMTAB_HASH_FUN_INC(hash, tmpch);                  \
                 }                                                       \
-                SYM_TAB_HASH_FUN_FINAL(hash);                           \
+                SYMTAB_HASH_FUN_FINAL(hash);                           \
                 tmpcc ++;                                               \
                 GetLexPosition((pos),tmpcc);                            \
                 Input = tmpcc;                                          \

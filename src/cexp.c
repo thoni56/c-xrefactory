@@ -433,14 +433,12 @@ yyloop:
         goto yyreduce;
     }
     if (yyerrflag) goto yyinrecovery;
-#ifdef lint
-    goto yynewerror;
-#endif
+
+    goto yynewerror;            /* Avoid unused label error */
 yynewerror:
     yyerror("syntax error");
-#ifdef lint
-    goto yyerrlab;
-#endif
+
+    goto yyerrlab;              /* Avoid unused label error */
 yyerrlab:
     ++yynerrs;
 yyinrecovery:

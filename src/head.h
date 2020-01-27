@@ -454,15 +454,6 @@
 #define CHAR_ON_MARKER(marker) (*MARKER_TO_POINTER(marker))
 #define CHAR_AFTER_MARKER(marker) (*POINTER_AFTER_MARKER(marker))
 
-/* ******************* symbol table hash function unit ****************** */
-
-#define SYM_TAB_HASH_FUN_INC(oldval, charcode) {\
-    oldval+=charcode; oldval+=(oldval<<10); oldval^=(oldval>>6);\
-}
-#define SYM_TAB_HASH_FUN_FINAL(oldval) {\
-    oldval+=(oldval<<3); oldval^=(oldval>>11); oldval+=(oldval<<15);\
-}
-
 /* *********************************************************************** */
 /*                    JAVA Constant Pool Item Tags                         */
 

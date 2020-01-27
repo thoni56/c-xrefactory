@@ -7,6 +7,8 @@
                                 && strcmp(e1->d->name,e2->d->name)==0   \
                                 )
 
-#include "misc.h"
+#include "hash.h"
+
+#include "misc.h"               /* For XX_ALLOCC */
 
 #include "hashlist.tc"

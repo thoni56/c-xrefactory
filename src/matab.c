@@ -1,7 +1,7 @@
 #define _MATAB_
 #include "matab.h"
 
-#include "misc.h"
+#include "hash.h"
 #include "commons.h"
 
 #define HASH_FUN(elemp) hashFun(elemp->name)

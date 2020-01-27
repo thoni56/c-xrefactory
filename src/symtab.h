@@ -1,12 +1,13 @@
 #ifndef _SYMTAB_H_
 #define _SYMTAB_H_
 
-/* symTab - an instance of haslist */
+/* symTab - an instance of hashlist */
 
 #include "proto.h"
 
 #define HASH_TAB_NAME symTab
 #define HASH_ELEM_TYPE S_symbol
+
 
 #include "hashlist.th"
 

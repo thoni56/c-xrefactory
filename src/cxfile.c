@@ -14,6 +14,7 @@
 #include "reftab.h"
 #include "charbuf.h"
 
+#include "hash.h"
 #include "log.h"
 #include "utils.h"
 
@@ -123,11 +124,11 @@ int cxFileHashNumber(char *sym) {
         ss = sym;
         while ((c = *ss)) {
             if (c == '(') break;
-            SYM_TAB_HASH_FUN_INC(res, c);
+            SYMTAB_HASH_FUN_INC(res, c);
             if (LINK_NAME_MAYBE_START(c)) res = 0;
             ss++;
         }
-        SYM_TAB_HASH_FUN_FINAL(res);
+        SYMTAB_HASH_FUN_FINAL(res);
         res %= s_opt.refnum;
         return(res);
     } else if (s_opt.xfileHashingMethod == XFILE_HASH_ALPHA1) {

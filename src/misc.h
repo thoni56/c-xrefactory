@@ -72,7 +72,6 @@ extern void throwsSprintf(char *out, int outsize, SymbolList *exceptions);
 extern void macDefSPrintf(char *buff, int *size, char *name1, char *name2, int argn, char **args, int *oNamePos);
 extern char * string3ConcatInStackMem(char *str1, char *str2, char *str3);
 
-extern unsigned hashFun(char *s);
 extern void javaSignatureSPrint(char *buff, int *size, char *sig, int classstyle);
 extern void fPutDecimal(FILE *f, int n);
 extern char *strmcpy(char *dest, char *src);

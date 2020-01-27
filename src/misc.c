@@ -244,27 +244,7 @@ void dumpOptions(int nargc, char **nargv) {
     ppcGenRecord(PPC_INFORMATION,tmpBuff,"\n");
 }
 
-/* ***********************************************************
- */
-
-unsigned hashFun(char *ss) {
-    register unsigned h = 0;
-    register char *s = ss;
-    register char c;
-    for(c= *s; c ; c= *++s) SYM_TAB_HASH_FUN_INC(h, c);
-    SYM_TAB_HASH_FUN_FINAL(h);
-    return(h);
-}
-
-
-unsigned fileTabHashFun(char *ss) {
-    register unsigned h = 0;
-    register char *s = ss;
-    register char c;
-    for(c= *s; c ; c= *++s) SYM_TAB_HASH_FUN_INC(h, c);
-    SYM_TAB_HASH_FUN_FINAL(h);
-    return(h);
-}
+/* *********************************************************** */
 
 #include "symtab.h"
 #include "javafqttab.h"

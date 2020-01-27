@@ -9,9 +9,10 @@ with the startup arguments. Shuffle all communication on to the other
 while logging the messages to a file.
 * DOING Refactor out the hashtables and lists to separate modules.
 * DOING Start using log.c functions to log to a separate log file
+* TODO Move XX_ALLOCC and friends to "memory" module
 * TODO Ensure only externally used functions are visible in the modules
 header file. And that only those are "non-static" in the C file.
-
+* TODO Fix byacc skeleton to "goto <non-used label" by remove ifdef around "lint"
 * TODO Remove bootstrap step (strfill and local definitions)
 ** TODO Remove all FILL_xxx macros by replacing actually used ones with compound initializers or functions:
 *** TODO Move all structs that are used for FILL_xxx to a separate file
