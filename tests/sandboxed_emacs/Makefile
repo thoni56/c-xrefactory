@@ -10,3 +10,8 @@ all emacs:
 
 gui: EMACS = /Applications/Emacs.app/Contents/MacOS/Emacs
 gui: emacs
+
+spy: c-xref-spy
+
+c-xref-spy: bin/c-xref
+	gcc -o bin/c-xref -g -Wall c-xref-spy.c
