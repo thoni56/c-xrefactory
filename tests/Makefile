@@ -12,19 +12,19 @@ all: quick slow
 
 quick:
 	@echo "Quick tests..."
-	@make -C simple_xrefs
-	@make -C pragma_once
-	@make -C process_yacc
-	@make -C basic_html_generation
-	@make -C standard_includes
-	@make -C initializer_parsing
-	@make -C generate_str_fill
-	@make -C java_example
-	#@make -C read_xrefs
+	@$(MAKE) -C simple_xrefs
+	@$(MAKE) -C pragma_once
+	@$(MAKE) -C process_yacc
+	@$(MAKE) -C basic_html_generation
+	@$(MAKE) -C standard_includes
+	@$(MAKE) -C initializer_parsing
+	@$(MAKE) -C generate_str_fill
+	@$(MAKE) -C java_example
+	#@$(MAKE) -C read_xrefs
 
 slow:
 	@echo "Slow tests..."
-	@make -C c-xref
-	@make -C emacs_c_exercise
-	@make -C ffmpeg
-	@make -C systemd
+	@$(MAKE) -C c-xref
+	@$(MAKE) -C emacs_c_exercise
+	@$(MAKE) -C ffmpeg
+	@$(MAKE) -C systemd
