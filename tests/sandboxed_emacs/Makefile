@@ -2,7 +2,7 @@
 # or run a hacked c-xref binary
 
 ACTUAL_HOME = $(HOME)
-TARGET=/Users/thomas/Utveckling/c-xrefactory/src/c-xref
+TARGET=`readlink -f ../../src/c-xref`
 
 # Run a sandboxed emacs
 EMACS = emacs
