@@ -3,8 +3,8 @@
 #include <unistd.h>
 #include <errno.h>
 
-#define PIPE_READ 0
-#define PIPE_WRITE 1
+#define READ_PIPE 0
+#define WRITE_PIPE 1
 
 FILE *logFile;
 
@@ -27,8 +27,8 @@ int main(int argc, char **argv) {
     }
 
     if (pipe(fromCxrefPipe) < 0) {
-        close(toCxrefPipe[PIPE_READ]);
-        close(toCxrefPipe[PIPE_WRITE]);
+        close(toCxrefPipe[READ_PIPE]);
+        close(toCxrefPipe[WRITE_PIPE]);
         perror("pipe(fromCxrefPipe)");
         _exit(-1);
     }
@@ -37,11 +37,11 @@ int main(int argc, char **argv) {
     if (pid == 0) {
         /* In the child, so... */
         /* ... connect the stdin... */
-        if (dup2(toCxrefPipe[PIPE_READ], STDIN_FILENO) == -1) exit(errno);
+        if (dup2(toCxrefPipe[READ_PIPE], STDIN_FILENO) == -1) exit(errno);
         /* ... and stdout... */
-        //if (dup2(fromCxrefPipe[PIPE_WRITE], STDOUT_FILENO) == -1) exit(errno);
-        //close(toCxrefPipe[PIPE_WRITE]);
-        //close(fromCxrefPipe[PIPE_WRITE]);
+        if (dup2(fromCxrefPipe[WRITE_PIPE], STDOUT_FILENO) == -1) exit(errno);
+        close(toCxrefPipe[WRITE_PIPE]);
+        close(fromCxrefPipe[WRITE_PIPE]);
         /* ... and exec ... */
         execv("../../src/c-xref", argv);
         /* ... if we get here execv failed... */
@@ -50,15 +50,15 @@ int main(int argc, char **argv) {
     }
 
     /* Parent... */
-    //close(toCxrefPipe[PIPE_READ]);
-    //close(fromCxrefPipe[PIPE_WRITE]);
+    close(toCxrefPipe[READ_PIPE]);
+    close(fromCxrefPipe[WRITE_PIPE]);
 
 
     /* Read and propagate input, read and propagate output */
     /* Assuming the communication is synchronous!!! */
     char buffer[10000];
-    FILE *toCxref = fdopen(toCxrefPipe[PIPE_WRITE], "w");
-    //FILE *fromCxref = fdopen(fromCxrefPipe[PIPE_READ], "r");
+    FILE *toCxref = fdopen(toCxrefPipe[WRITE_PIPE], "w");
+    FILE *fromCxref = fdopen(fromCxrefPipe[READ_PIPE], "r");
 
     while (fgets(buffer, 10000, stdin) != NULL) {
         fprintf(logFile, "<-:%s", buffer);
