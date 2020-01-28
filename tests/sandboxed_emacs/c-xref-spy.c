@@ -56,7 +56,7 @@ int main(int argc, char **argv) {
         if (trace) { fprintf(logFile, "** downstream child to fgets\n");  fflush(logFile); }
         while (fgets(buffer, 10000, stdin) != NULL) {
             if (trace) { fprintf(logFile, "** downstream child did fgets\n");  fflush(logFile); }
-            fprintf(logFile, "<-:%s", buffer); fflush(logFile);
+            fprintf(logFile, "->:%s", buffer); fflush(logFile);
             fputs(buffer, toTarget); fflush(toTarget);
         }
         fprintf(logFile, "** downstream child got NULL\n");
@@ -114,8 +114,8 @@ int main(int argc, char **argv) {
     /* Parent need to close all pipes... */
     close(downstream_pipe[READ_END]);
     close(downstream_pipe[WRITE_END]);
-    close(upstreamPipe[READ_END]);
-    close(upstreamPipe[WRITE_END]);
+    close(upstream_pipe[READ_END]);
+    close(upstream_pipe[WRITE_END]);
 
     int status;
     waitpid(downstream_pid, &status, 0);
