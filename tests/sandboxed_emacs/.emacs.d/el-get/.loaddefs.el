@@ -3,31 +3,8 @@
 ;;; Code:
 
 
-;;;### (autoloads nil "c-xrefactory/env/emacs/c-xref" "c-xrefactory/env/emacs/c-xref.el"
-;;;;;;  (0 0 0 0))
-;;; Generated autoloads from c-xrefactory/env/emacs/c-xref.el
-
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "c-xrefactory/env/emacs/c-xref" '("cut-long-refactoring-undo-list" "c-xref-" "undo-changes-until" "get-corresponding-undo")))
-
-;;;***
-
-;;;### (autoloads nil "c-xrefactory/env/emacs/c-xrefactory" "c-xrefactory/env/emacs/c-xrefactory.el"
-;;;;;;  (0 0 0 0))
-;;; Generated autoloads from c-xrefactory/env/emacs/c-xrefactory.el
-
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "c-xrefactory/env/emacs/c-xrefactory" '("c-xref-")))
-
-;;;***
-
-;;;### (autoloads nil "c-xrefactory/env/emacs/c-xrefdoc" "c-xrefactory/env/emacs/c-xrefdoc.el"
-;;;;;;  (0 0 0 0))
-;;; Generated autoloads from c-xrefactory/env/emacs/c-xrefdoc.el
-
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "c-xrefactory/env/emacs/c-xrefdoc" '("c-xref-refactoring-documentation")))
-
-;;;***
-
-;;;### (autoloads nil "el-get/el-get" "el-get/el-get.el" (0 0 0 0))
+;;;### (autoloads nil "el-get/el-get" "el-get/el-get.el" (24111 23251
+;;;;;;  697954 700000))
 ;;; Generated autoloads from el-get/el-get.el
 
 (autoload 'el-get-version "el-get/el-get" "\
@@ -124,28 +101,10 @@ already installed packages is considered.
 
 \(fn &optional SYNC &rest PACKAGES)" nil nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "el-get/el-get" '("el-get-")))
-
-;;;***
-
-;;;### (autoloads nil "el-get/el-get-autoloading" "el-get/el-get-autoloading.el"
-;;;;;;  (0 0 0 0))
-;;; Generated autoloads from el-get/el-get-autoloading.el
-
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "el-get/el-get-autoloading" '("el-get-")))
-
-;;;***
-
-;;;### (autoloads nil "el-get/el-get-build" "el-get/el-get-build.el"
-;;;;;;  (0 0 0 0))
-;;; Generated autoloads from el-get/el-get-build.el
-
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "el-get/el-get-build" '("el-get-")))
-
 ;;;***
 
 ;;;### (autoloads nil "el-get/el-get-bundle" "el-get/el-get-bundle.el"
-;;;;;;  (0 0 0 0))
+;;;;;;  (24111 23251 686965 800000))
 ;;; Generated autoloads from el-get/el-get-bundle.el
 
 (autoload 'el-get-bundle-el-get "el-get/el-get-bundle" "\
@@ -197,20 +156,10 @@ required.
 
 (function-put 'el-get-bundle! 'lisp-indent-function 'defun)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "el-get/el-get-bundle" '("el-get-bundle-")))
-
-;;;***
-
-;;;### (autoloads nil "el-get/el-get-byte-compile" "el-get/el-get-byte-compile.el"
-;;;;;;  (0 0 0 0))
-;;; Generated autoloads from el-get/el-get-byte-compile.el
-
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "el-get/el-get-byte-compile" '("el-get-")))
-
 ;;;***
 
 ;;;### (autoloads nil "el-get/el-get-check" "el-get/el-get-check.el"
-;;;;;;  (0 0 0 0))
+;;;;;;  (24111 23251 688963 800000))
 ;;; Generated autoloads from el-get/el-get-check.el
 
 (autoload 'el-get-check-recipe "el-get/el-get-check" "\
@@ -226,36 +175,10 @@ object or a file path.
 
 \(fn FILE-OR-BUFFER)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "el-get/el-get-check" '("el-get-check-")))
-
-;;;***
-
-;;;### (autoloads nil "el-get/el-get-core" "el-get/el-get-core.el"
-;;;;;;  (0 0 0 0))
-;;; Generated autoloads from el-get/el-get-core.el
-
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "el-get/el-get-core" '("el-get-")))
-
-;;;***
-
-;;;### (autoloads nil "el-get/el-get-custom" "el-get/el-get-custom.el"
-;;;;;;  (0 0 0 0))
-;;; Generated autoloads from el-get/el-get-custom.el
-
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "el-get/el-get-custom" '("el-get-")))
-
-;;;***
-
-;;;### (autoloads nil "el-get/el-get-dependencies" "el-get/el-get-dependencies.el"
-;;;;;;  (0 0 0 0))
-;;; Generated autoloads from el-get/el-get-dependencies.el
-
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "el-get/el-get-dependencies" '("el-get-" "topological-sort")))
-
 ;;;***
 
 ;;;### (autoloads nil "el-get/el-get-list-packages" "el-get/el-get-list-packages.el"
-;;;;;;  (0 0 0 0))
+;;;;;;  (24111 23251 692959 700000))
 ;;; Generated autoloads from el-get/el-get-list-packages.el
 
 (autoload 'el-get-list-packages "el-get/el-get-list-packages" "\
@@ -263,45 +186,15 @@ Display a list of packages.
 
 \(fn)" t nil)
 
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "el-get/el-get-list-packages" '("el-get-")))
-
 ;;;***
 
-;;;### (autoloads nil "el-get/el-get-methods" "el-get/el-get-methods.el"
-;;;;;;  (0 0 0 0))
-;;; Generated autoloads from el-get/el-get-methods.el
-
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "el-get/el-get-methods" '("el-get-insecure-check")))
-
-;;;***
-
-;;;### (autoloads nil "el-get/el-get-notify" "el-get/el-get-notify.el"
-;;;;;;  (0 0 0 0))
-;;; Generated autoloads from el-get/el-get-notify.el
-
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "el-get/el-get-notify" '("el-get-")))
-
-;;;***
-
-;;;### (autoloads nil "el-get/el-get-recipes" "el-get/el-get-recipes.el"
-;;;;;;  (0 0 0 0))
-;;; Generated autoloads from el-get/el-get-recipes.el
-
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "el-get/el-get-recipes" '("el-get-")))
-
-;;;***
-
-;;;### (autoloads nil "el-get/el-get-status" "el-get/el-get-status.el"
-;;;;;;  (0 0 0 0))
-;;; Generated autoloads from el-get/el-get-status.el
-
-(if (fboundp 'register-definition-prefixes) (register-definition-prefixes "el-get/el-get-status" '("el-get-")))
-
-;;;***
-
-;;;### (autoloads nil nil ("c-xrefactory/env/emacs/c-xrefprotocol.el"
-;;;;;;  "c-xrefactory/env/emacs/compileCxrefactory.el" "el-get/el-get-install.el")
-;;;;;;  (0 0 0 0))
+;;;### (autoloads nil nil ("c-xrefactory/env/emacs/c-xref.el" "c-xrefactory/env/emacs/c-xrefactory.el"
+;;;;;;  "c-xrefactory/env/emacs/c-xrefdoc.el" "el-get/el-get-autoloading.el"
+;;;;;;  "el-get/el-get-build.el" "el-get/el-get-byte-compile.el"
+;;;;;;  "el-get/el-get-core.el" "el-get/el-get-custom.el" "el-get/el-get-dependencies.el"
+;;;;;;  "el-get/el-get-install.el" "el-get/el-get-methods.el" "el-get/el-get-notify.el"
+;;;;;;  "el-get/el-get-recipes.el" "el-get/el-get-status.el") (24111
+;;;;;;  23251 691960 700000))
 
 ;;;***
 
