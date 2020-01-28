@@ -2,6 +2,7 @@
 # or run a hacked c-xref binary
 
 ACTUAL_HOME = $(HOME)
+TARGET=/Users/thomas/Utveckling/c-xrefactory/src/c-xref
 
 # Run a sandboxed emacs
 EMACS = emacs
@@ -14,4 +15,4 @@ gui: emacs
 spy: c-xref-spy
 
 c-xref-spy: bin/c-xref
-	gcc -o bin/c-xref -g -Wall c-xref-spy.c
+	$(CC) -o bin/c-xref -g -Wall -DTARGET=\"$(TARGET)\" c-xref-spy.c

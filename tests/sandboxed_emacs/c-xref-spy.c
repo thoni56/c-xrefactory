@@ -3,10 +3,14 @@
 #include <unistd.h>
 #include <errno.h>
 
-#define READ_PIPE 0
-#define WRITE_PIPE 1
+#define READ_END 0
+#define WRITE_END 1
 
 FILE *logFile;
+
+/* You need to define TARGET as a compile-time constant using -DTARGET=... */
+//#define TARGET "../../src/c-xref"
+
 
 int main(int argc, char **argv) {
     logFile = fopen("/tmp/c-xref-spy-input.log", "w");
@@ -15,62 +19,88 @@ int main(int argc, char **argv) {
     fprintf(logFile, "\n");
     fflush(logFile);
 
-    sleep(20);
+    /* Create the pipes for the sub-spies to the target */
+    int downstreamPipe[2];
+    int upstreamPipe[2];
 
-    /* Create the real c-xref process */
-    int toCxrefPipe[2];
-    int fromCxrefPipe[2];
-
-    if (pipe(toCxrefPipe) < 0) {
-        perror("pipe(toCxrefPipe)");
+    if (pipe(downstreamPipe) < 0) {
+        perror("pipe(downstreamPipe)");
         _exit(-1);
     }
 
-    if (pipe(fromCxrefPipe) < 0) {
-        close(toCxrefPipe[READ_PIPE]);
-        close(toCxrefPipe[WRITE_PIPE]);
-        perror("pipe(fromCxrefPipe)");
+    if (pipe(upstreamPipe) < 0) {
+        close(downstreamPipe[READ_END]);
+        close(downstreamPipe[WRITE_END]);
+        perror("pipe(upstreamPipe)");
         _exit(-1);
     }
 
-    pid_t pid = fork();
-    if (pid == 0) {
-        /* In the child, so... */
-        /* ... connect the stdin... */
-        if (dup2(toCxrefPipe[READ_PIPE], STDIN_FILENO) == -1) exit(errno);
-        /* ... and stdout... */
-        if (dup2(fromCxrefPipe[WRITE_PIPE], STDOUT_FILENO) == -1) exit(errno);
-        close(toCxrefPipe[WRITE_PIPE]);
-        close(fromCxrefPipe[WRITE_PIPE]);
-        /* ... and exec ... */
-        execv("../../src/c-xref", argv);
-        /* ... if we get here execv failed... */
-        perror("exec failed");
+    /* Fork a sub-spy to listen, log and propagate stdin */
+
+    pid_t downstream_pid = fork();
+    if (downstream_pid == 0) {
+        char buffer[10000];
+        FILE *toTarget = fdopen(downstreamPipe[WRITE_END], "w");
+
+        /* Close pipe ends we don't use */
+        close(downstreamPipe[READ_END]);
+        close(upstreamPipe[READ_END]);
+        close(upstreamPipe[WRITE_END]);
+
+        /* Read from stdin which is the same as the parent has */
+        while (fgets(buffer, 10000, stdin) != NULL) {
+            fprintf(logFile, "<-:%s", buffer);
+            fflush(logFile);
+            fputs(buffer, toTarget); fflush(toTarget);
+        }
+        fprintf(logFile, "Downstream got NULL\n");
         _exit(1);
     }
 
-    /* Parent... */
-    close(toCxrefPipe[READ_PIPE]);
-    close(fromCxrefPipe[WRITE_PIPE]);
+    /* Fork a sub-spy to listen, log and propagate stdout */
 
+    pid_t upstream_pid = fork();
+    if (upstream_pid == 0) {
+        char buffer[10000];
+        FILE *fromTarget = fdopen(upstreamPipe[READ_END], "r");
 
-    /* Read and propagate input, read and propagate output */
-    /* Assuming the communication is synchronous!!! */
-    char buffer[10000];
-    FILE *toCxref = fdopen(toCxrefPipe[WRITE_PIPE], "w");
-    FILE *fromCxref = fdopen(fromCxrefPipe[READ_PIPE], "r");
+        /* Close pipe ends we don't use */
+        close(downstreamPipe[READ_END]);
+        close(downstreamPipe[WRITE_END]);
+        close(upstreamPipe[WRITE_END]);
 
-    while (fgets(buffer, 10000, stdin) != NULL) {
-        fprintf(logFile, "<-:%s", buffer);
-        fflush(logFile);
-        fputs(buffer, toCxref); fflush(toCxref);
-        if (fgets(buffer, 10000, fromCxref) == NULL) {
-            fprintf(logFile, "Got NULL!\n"); fflush(logFile);
-            exit(1);
+        while (fgets(buffer, 10000, fromTarget) != NULL) {
+            fprintf(logFile, "<-:%s", buffer);
+            fflush(logFile);
+            /* Write to stdout which is the same as the parent has */
+            fputs(buffer, stdout); fflush(stdout);
         }
-        fprintf(logFile, "->:%s", buffer); fflush(logFile);
-        fprintf(stdout, "%s", buffer); fflush(stdout);
+        fprintf(logFile, "Upstream got NULL\n");
+        _exit(1);
     }
 
-    fclose(logFile);
+    /* Fork & exec the target with stdin & stdout pipes connected to the upstream and downstream pipes */
+    pid_t target_pid = fork();
+    if (target_pid == 0) {
+        /* In the target, so... */
+        /* ... connect the stdin to the downstream pipes read end... */
+        if (dup2(downstreamPipe[READ_END], STDIN_FILENO) == -1) exit(errno);
+        /* ... the stdout to the upstream pipes write end... */
+        if (dup2(upstreamPipe[READ_END], STDOUT_FILENO) == -1) exit(errno);
+        /* ... and exec ... */
+        execv(TARGET, argv);
+        /* ... if we get here execv failed... */
+        perror(TARGET);
+        _exit(1);
+    }
+
+    /* Parent need to close all pipes... */
+    close(downstreamPipe[READ_END]);
+    close(downstreamPipe[WRITE_END]);
+    close(upstreamPipe[READ_END]);
+    close(upstreamPipe[WRITE_END]);
+
+    int status;
+    waitpid(downstream_pid, &status, 0);
+    waitpid(upstream_pid, &status, 0);
 }
