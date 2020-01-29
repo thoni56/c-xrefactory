@@ -16,8 +16,10 @@ FILE *logFile;
 
 int main(int argc, char **argv) {
     bool trace = false;
+    char logFileName[100];
 
-    logFile = fopen("/tmp/pipespy.log", "w");
+    sprintf(logFileName, "/tmp/pipespy%d.log", getpid());
+    logFile = fopen(logFileName, "w");
     for (int a=0; a<argc; a++)
         fprintf(logFile, "%s ", argv[a]);
     fprintf(logFile, "\n");
