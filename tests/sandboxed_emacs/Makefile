@@ -1,8 +1,10 @@
 # Run an emacs in a sandboxed environment to e.g. inspect commuication
 # or run a hacked c-xref binary
 
-ACTUAL_HOME = $(HOME)
-TARGET=`readlink -f ../../src/c-xref`
+# This is the target to exec...
+TARGET=../../src/c-xref
+# ... with the full path...
+TARGET_PATH=`python -c "import os,sys; print(os.path.realpath(os.path.expanduser('$(TARGET)')))" "${1}"`
 
 # Run a sandboxed emacs
 EMACS = emacs
@@ -15,4 +17,4 @@ gui: emacs
 spy: c-xref-spy
 
 c-xref-spy: bin/c-xref
-	$(CC) -o bin/c-xref -g -Wall -DTARGET=\"$(TARGET)\" c-xref-spy.c
+	$(CC) -o bin/c-xref -g -Wall -DTARGET=\"$(TARGET_PATH)\" c-xref-spy.c
