@@ -956,7 +956,7 @@ typedef struct userOlcx {
     struct olcxReferencesStack	browserStack;
     struct olcxReferencesStack	completionsStack;
     struct olcxReferencesStack	retrieverStack;
-    struct classTreeData		ct;
+    struct classTreeData		classTree;
     struct userOlcx				*next;
 } S_userOlcx;
 

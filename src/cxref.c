@@ -814,7 +814,7 @@ S_reference * addCxReferenceNew(S_symbol *p, S_position *pos, S_usageBits *usage
                 }
                 if (s_opt.cxrefs == OLO_CLASS_TREE
                     && (LANGUAGE(LANG_JAVA) || LANGUAGE(LANG_CCC))) {
-                    setClassTreeBaseType(&s_olcxCurrentUser->ct, p);
+                    setClassTreeBaseType(&s_olcxCurrentUser->classTree, p);
                 }
                 if (s_opt.cxrefs == OLO_GET_SYMBOL_TYPE) {
                     setOlSymbolTypeForPrint(p);
@@ -2330,7 +2330,7 @@ static void olcxShowTopType(void) {
 }
 
 static void olcxShowClassTree(void) {
-    olcxPrintClassTree(s_olcxCurrentUser->ct.tree);
+    olcxPrintClassTree(s_olcxCurrentUser->classTree.tree);
 }
 
 S_olSymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi,int storage){
@@ -2458,7 +2458,7 @@ static void olcxSymbolMenuInspectDef(void) {
 
 static void olcxClassTreeInspectDef(void) {
     assert(s_olcxCurrentUser);
-    olcxMenuInspectDef(s_olcxCurrentUser->ct.tree, "0:#", INSPECT_CLASS);
+    olcxMenuInspectDef(s_olcxCurrentUser->classTree.tree, "0:#", INSPECT_CLASS);
 }
 
 void olProcessSelectedReferences(
@@ -3504,8 +3504,8 @@ static int olSpecialFieldCreateSelection(char *fieldName, int storage) {
             clii = getClassNumFromClassLinkName(ss->s.name, clii);
         } else {
             if (s_opt.cxrefs == OLO_CLASS_TREE) {
-                assert(s_olcxCurrentUser->ct.baseClassIndex!=s_noneFileIndex);
-                clii = s_olcxCurrentUser->ct.baseClassIndex;
+                assert(s_olcxCurrentUser->classTree.baseClassIndex!=s_noneFileIndex);
+                clii = s_olcxCurrentUser->classTree.baseClassIndex;
             } else {
                 if (ss->s.vApplClass!=s_noneFileIndex) clii = ss->s.vApplClass;
             }
@@ -4153,20 +4153,20 @@ void olcxPrintPushingAction(int opt, int afterMenu) {
 static void olcxCreateClassTree(void) {
     S_olcxReferences    *rstack;
     S_olSymbolsMenu     *ss;
-    olcxFreeResolutionMenu(s_olcxCurrentUser->ct.tree);
-    s_olcxCurrentUser->ct.tree = NULL;
+    olcxFreeResolutionMenu(s_olcxCurrentUser->classTree.tree);
+    s_olcxCurrentUser->classTree.tree = NULL;
     olSpecialFieldCreateSelection(LINK_NAME_CLASS_TREE_ITEM, StorageMethod);
     s_opt.ooChecksBits = (s_opt.ooChecksBits & ~OOC_VIRTUAL_MASK);
     s_opt.ooChecksBits |= OOC_VIRT_RELATED;
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
     olCreateSelectionMenu(rstack->command);
-    strcpy(s_olcxCurrentUser->ct.refsuffix, rstack->refsuffix);
-    s_olcxCurrentUser->ct.tree = rstack->menuSym;
+    strcpy(s_olcxCurrentUser->classTree.refsuffix, rstack->refsuffix);
+    s_olcxCurrentUser->classTree.tree = rstack->menuSym;
     rstack->menuSym = NULL;
-    olcxPrintClassTree(s_olcxCurrentUser->ct.tree);
+    olcxPrintClassTree(s_olcxCurrentUser->classTree.tree);
     // now free special references, which will never be used
-    for(ss=s_olcxCurrentUser->ct.tree; ss!=NULL; ss=ss->next) {
+    for(ss=s_olcxCurrentUser->classTree.tree; ss!=NULL; ss=ss->next) {
         olcxFreeReferences(ss->s.refs);
         ss->s.refs = NULL;
     }
