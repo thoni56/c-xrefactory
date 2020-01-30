@@ -14,7 +14,10 @@ all emacs:
 gui: EMACS = /Applications/Emacs.app/Contents/MacOS/Emacs
 gui: emacs
 
-spy: c-xref-spy
+spy: bin/c-xref
 
-c-xref-spy: bin/c-xref
-	$(CC) -o bin/c-xref -g -Wall -DTARGET=\"$(TARGET_PATH)\" c-xref-spy.c
+c-xref-spy: c-xref-spy.c Makefile
+	$(CC) -o c-xref-spy -g -Wall -DTARGET=\"$(TARGET_PATH)\" c-xref-spy.c
+
+bin/c-xref: c-xref-spy
+	cp c-xref-spy bin/c-xref
