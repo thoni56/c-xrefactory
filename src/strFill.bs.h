@@ -3250,7 +3250,7 @@
     (STRUCTP)->browserStack = ARG1;\
     (STRUCTP)->completionsStack = ARG2;\
     (STRUCTP)->retrieverStack = ARG3;\
-    (STRUCTP)->ct = ARG4;\
+    (STRUCTP)->classTree = ARG4;\
     (STRUCTP)->next = ARG5;\
 }
 #define FILLF_userOlcx(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9) {\
@@ -3261,8 +3261,8 @@
     (STRUCTP)->completionsStack.root = ARG4;\
     (STRUCTP)->retrieverStack.top = ARG5;\
     (STRUCTP)->retrieverStack.root = ARG6;\
-    (STRUCTP)->ct.baseClassIndex = ARG7;\
-    (STRUCTP)->ct.tree = ARG8;\
+    (STRUCTP)->classTree.baseClassIndex = ARG7;\
+    (STRUCTP)->classTree.tree = ARG8;\
     (STRUCTP)->next = ARG9;\
 }
 #define _FILLF_userOlcx(STRUCTP, ARGS) {\
@@ -3273,8 +3273,8 @@
     (STRUCTP)->completionsStack.root = _ARG_4_OF_10 ARGS;\
     (STRUCTP)->retrieverStack.top = _ARG_5_OF_10 ARGS;\
     (STRUCTP)->retrieverStack.root = _ARG_6_OF_10 ARGS;\
-    (STRUCTP)->ct.baseClassIndex = _ARG_7_OF_10 ARGS;\
-    (STRUCTP)->ct.tree = _ARG_8_OF_10 ARGS;\
+    (STRUCTP)->classTree.baseClassIndex = _ARG_7_OF_10 ARGS;\
+    (STRUCTP)->classTree.tree = _ARG_8_OF_10 ARGS;\
     (STRUCTP)->next = _ARG_9_OF_10 ARGS;\
 }
 #define FILL_bb_symbolPositionPair(STRUCTP, ARG0, ARG1, ARG2) {\
