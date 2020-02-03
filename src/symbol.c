@@ -17,3 +17,9 @@ S_symbol *newSymbolKeyword(char *name, char *linkName, struct position pos, int 
     s->u.keyWordVal = keyWordVal;
     return s;
 }
+
+extern S_symbol *newSymbolType(char *name, char *linkName, struct position pos, struct typeModifiers *type, S_symbol *next) {
+    S_symbol *s = newSymbol(name, linkName, pos, next);
+    s->u.type = type;
+    return s;
+}
