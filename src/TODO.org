@@ -2,7 +2,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
-* DOING Build a protocol spy that can be put between the editor and the
+* DONE Build a protocol spy that can be put between the editor and the
 server to inspect and learn about the communication. It should be
 fairly easy, just start up like c-xref does, start the real c-xref
 with the startup arguments. Shuffle all communication on to the other
@@ -12,7 +12,7 @@ while logging the messages to a file.
 * TODO Move XX_ALLOCC and friends to "memory" module
 * TODO Ensure only externally used functions are visible in the modules
 header file. And that only those are "non-static" in the C file.
-* TODO Fix byacc skeleton to "goto <non-used label" by remove ifdef around "lint"
+* DONE Fix byacc skeleton to "goto <non-used label" by remove ifdef around "lint"
 * TODO Remove bootstrap step (strfill and local definitions)
 ** TODO Remove all FILL_xxx macros by replacing actually used ones with compound initializers or functions:
 *** TODO Move all structs that are used for FILL_xxx to a separate file
@@ -20,7 +20,15 @@ In this way we can generate only those that are actually used and
 attack those one by one
 
 *** DONE Remove FILL_symbollist macro
-
+*** TODO Create a Symbol module with newSymbolxxx()
+The call pattern XX_ALLOC... FILL_symbolBits ... FILL_symbol is
+prominent. And if we remove all instances where a newSymbol() function
+returning a pointer would work that's a big step. Started on the
+"remove-fill-symbol" branch. There is still an issue in that the
+FILL_symbol macro takes one argument which is the name of the union
+field that the next argument should assign to (is this a general
+pattern for FILL-generation? Probably) Suggested solution is one
+newSymbol<field>() for each of the necessary fields that are actually used.
 * TODO Ensure each header file is not dependent on the fact that some other
 header file is included before it. (Could this be done by taking each
 header file and try to compile it in isolation? It should include
@@ -85,7 +93,7 @@ Done:
   with cctNode and position. Primary benefit is to be able to use
   renaming on them...
 
-* TODO Make yacc parsing allowed the default. Change Makefile.common so
+* DONE Make yacc parsing allowed the default. Change Makefile.common so
   that YACCALLOWED is reversed, i.e. if you *don't* want yacc parsing
   in the build c-xref set EXCLUDE_YACC_PARSING (or something similar)
   ACTUALLY: removed conditionals around that code, and kept the CCC
