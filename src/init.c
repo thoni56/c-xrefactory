@@ -6,6 +6,7 @@
 #include "protocol.h"
 #include "misc.h"
 #include "enumTxt.h"
+#include "symbol.h"
 
 
 static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {
@@ -20,10 +21,13 @@ static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {
         s_tokenLength[tok] = strlen(nn);
         if ((isalpha(*nn) || *nn=='_') && (tlan & s_language)) {
             /* looks like a key word */
-            XX_ALLOC(pp, S_symbol);
+            /* XX_ALLOC(pp, S_symbol); */
+            /* FILL_symbolBits(&pp->bits,0,0, 0,0,0,TypeKeyword,StorageNone,0); */
+            /* FILL_symbol(pp,nn,nn,s_noPos,pp->bits,keyWordVal,tok,NULL); */
+            /* REPLACED: XX_ALLOC & FILL_symbol() with */
+            pp = newSymbolKeyword(nn, nn, s_noPos, tok, NULL);
             FILL_symbolBits(&pp->bits,0,0, 0,0,0,TypeKeyword,StorageNone,0);
-            FILL_symbol(pp,nn,nn,s_noPos,pp->bits,keyWordVal,tok,NULL);
-            pp->u.keyWordVal = tok;
+
             /*fprintf(dumpOut,"adding keyword %s to tab %d\n",nn,s_symTab);*/
             symTabAdd(s_symTab,pp,&ii);
         }
