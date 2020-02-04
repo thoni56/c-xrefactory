@@ -1109,7 +1109,7 @@ declarator2
         /* FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->bits,type,NULL,NULL); */
         /* REPLACED: StackMemAlloc() and FILL_symbol() with: */
         $$.d = newSymbol($1.d->name, $1.d->name, $1.d->p, NULL);
-        $$.d->u.type = NULL;
+        $$.d->u.type = NULL;    /* TODO Unnecessary? */
         FILL_symbolBits(&$$.d->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
     }
     | '(' declarator ')'								{
@@ -1254,10 +1254,10 @@ parameter_identifier_list
         S_position pp;
         FILL_position(&pp, -1, 0, 0);
 
-        /* p = StackMemAlloc(S_symbol); */
-        /* FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0); */
-        /* FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL); */
-        /* REPLACED: StackMemAlloc() and FILL_symbol() with: */
+        /*& p = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0); */
+        /*& FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL); */
+        /*& REPLACED: StackMemAlloc() and FILL_symbol() with: */
         p = newSymbol("", "", pp, NULL);
         FILL_symbolBits(&p->bits, 0, 0, 0, 0, 0, TypeElipsis, StorageDefault, 0);
         $$.d = $1.d;
@@ -1297,10 +1297,10 @@ parameter_type_list
         S_position      pp;
         FILL_position(&pp, -1, 0, 0);
 
-        /* p = StackMemAlloc(S_symbol); */
-        /* FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0); */
-        /* FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL); */
-        /* REPLACED StackMemAlloc() + FILL_symbol() with: */
+        /*& p = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0); */
+        /*& FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL); */
+        /*& REPLACED StackMemAlloc() + FILL_symbol() with: */
         p = newSymbol("", "", pp, NULL);
         FILL_symbolBits(&p->bits, 0, 0, 0, 0, 0, TypeElipsis, StorageDefault, 0);
         $$.d = $1.d;
@@ -1329,9 +1329,12 @@ parameter_declaration
         $$.d = $2.d;
     }
     | type_name									{
-        $$.d = StackMemAlloc(S_symbol);
-        FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault, StorageDefault,0);
-        FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,$1.d,NULL);
+        /*& $$.d = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault, StorageDefault,0); */
+        /*& FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,$1.d,NULL); */
+        /*& REPLACED: StackMemAlloc()+FILL_symbol() with: */
+        $$.d = newSymbolType(NULL, NULL, s_noPos, $1.d, NULL);
+        FILL_symbolBits(&$$.d->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
         $$.d->u.type = $1.d;
     }
     | error										{
