@@ -4,6 +4,7 @@
 
 S_symbol *newSymbol(char *name, char *linkName, struct position pos, S_symbol *next) {
     S_symbol *s;
+
     XX_ALLOC(s, S_symbol);
     s->name = name;
     s->linkName = linkName;
