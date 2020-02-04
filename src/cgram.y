@@ -378,7 +378,7 @@ string_literales:
     ;
 
 postfix_expr
-    : primary_expr								/* { $$.d = $1.d; } */
+    : primary_expr								/*& { $$.d = $1.d; } */
     | postfix_expr '[' expr ']'					{
         if ($1.d.t->kind==TypePointer || $1.d.t->kind==TypeArray) $$.d.t=$1.d.t->next;
         else if ($3.d.t->kind==TypePointer || $3.d.t->kind==TypeArray) $$.d.t=$3.d.t->next;
@@ -446,7 +446,7 @@ postfix_expr
     ;
 
 str_rec_identifier
-    : identifier				/* { $$.d = $1.d; } */
+    : identifier				/*& { $$.d = $1.d; } */
     | COMPL_STRUCT_REC_NAME		{ assert(0); /* token never used */ }
     ;
 
@@ -472,7 +472,7 @@ argument_expr_list
     ;
 
 unary_expr
-    : postfix_expr					/* { $$.d = $1.d; } */
+    : postfix_expr					/*& { $$.d = $1.d; } */
     | INC_OP unary_expr				{
         $$.d.t = $2.d.t;
         RESET_REFERENCE_USAGE($2.d.r, UsageAddrUsed);
@@ -516,7 +516,7 @@ unary_operator
     ;
 
 cast_expr
-    : unary_expr						/* { $$.d = $1.d; } */
+    : unary_expr						/*& { $$.d = $1.d; } */
     | '(' type_name ')' cast_expr		{
         $$.d.t = $2.d;
         $$.d.r = $4.d.r;
@@ -532,7 +532,7 @@ cast_expr
     ;
 
 multiplicative_expr
-    : cast_expr							/* { $$.d = $1.d; } */
+    : cast_expr							/*& { $$.d = $1.d; } */
     | multiplicative_expr '*' cast_expr	{
         $$.d.t = &s_defaultIntModifier;
         $$.d.r = NULL;
@@ -548,7 +548,7 @@ multiplicative_expr
     ;
 
 additive_expr
-    : multiplicative_expr						/* { $$.d = $1.d; } */
+    : multiplicative_expr						/*& { $$.d = $1.d; } */
     | additive_expr '+' multiplicative_expr		{
         if ($3.d.t->kind==TypePointer || $3.d.t->kind==TypeArray) $$.d.t = $3.d.t;
         else $$.d.t = $1.d.t;
@@ -562,7 +562,7 @@ additive_expr
     ;
 
 shift_expr
-    : additive_expr								/* { $$.d = $1.d; } */
+    : additive_expr								/*& { $$.d = $1.d; } */
     | shift_expr LEFT_OP additive_expr			{
         $$.d.t = &s_defaultIntModifier;
         $$.d.r = NULL;
@@ -574,7 +574,7 @@ shift_expr
     ;
 
 relational_expr
-    : shift_expr								/* { $$.d = $1.d; } */
+    : shift_expr								/*& { $$.d = $1.d; } */
     | relational_expr '<' shift_expr			{
         $$.d.t = &s_defaultIntModifier;
         $$.d.r = NULL;
@@ -594,7 +594,7 @@ relational_expr
     ;
 
 equality_expr
-    : relational_expr							/* { $$.d = $1.d; } */
+    : relational_expr							/*& { $$.d = $1.d; } */
     | equality_expr EQ_OP relational_expr		{
         $$.d.t = &s_defaultIntModifier;
         $$.d.r = NULL;
@@ -606,7 +606,7 @@ equality_expr
     ;
 
 and_expr
-    : equality_expr								/* { $$.d = $1.d; } */
+    : equality_expr								/*& { $$.d = $1.d; } */
     | and_expr '&' equality_expr				{
         $$.d.t = &s_defaultIntModifier;
         $$.d.r = NULL;
@@ -614,7 +614,7 @@ and_expr
     ;
 
 exclusive_or_expr
-    : and_expr									/* { $$.d = $1.d; } */
+    : and_expr									/*& { $$.d = $1.d; } */
     | exclusive_or_expr '^' and_expr			{
         $$.d.t = &s_defaultIntModifier;
         $$.d.r = NULL;
@@ -622,7 +622,7 @@ exclusive_or_expr
     ;
 
 inclusive_or_expr
-    : exclusive_or_expr							/* { $$.d = $1.d; } */
+    : exclusive_or_expr							/*& { $$.d = $1.d; } */
     | inclusive_or_expr '|' exclusive_or_expr	{
         $$.d.t = &s_defaultIntModifier;
         $$.d.r = NULL;
@@ -630,7 +630,7 @@ inclusive_or_expr
     ;
 
 logical_and_expr
-    : inclusive_or_expr							/* { $$.d = $1.d; } */
+    : inclusive_or_expr							/*& { $$.d = $1.d; } */
     | logical_and_expr AND_OP inclusive_or_expr	{
         $$.d.t = &s_defaultIntModifier;
         $$.d.r = NULL;
@@ -638,7 +638,7 @@ logical_and_expr
     ;
 
 logical_or_expr
-    : logical_and_expr							/* { $$.d = $1.d; } */
+    : logical_and_expr							/*& { $$.d = $1.d; } */
     | logical_or_expr OR_OP logical_and_expr	{
         $$.d.t = &s_defaultIntModifier;
         $$.d.r = NULL;
@@ -646,7 +646,7 @@ logical_or_expr
     ;
 
 conditional_expr
-    : logical_or_expr											/* { $$.d = $1.d; } */
+    : logical_or_expr											/*& { $$.d = $1.d; } */
     | logical_or_expr '?' logical_or_expr ':' conditional_expr	{
         $$.d.t = $3.d.t;
         $$.d.r = NULL;
@@ -659,7 +659,7 @@ conditional_expr
     ;
 
 assignment_expr
-    : conditional_expr									/* { $$.d = $1.d; } */
+    : conditional_expr									/*& { $$.d = $1.d; } */
     | unary_expr assignment_operator assignment_expr	{
         if ($1.d.r != NULL && s_opt.cxrefs == OLO_EXTRACT) {
             S_reference *rr;
@@ -696,7 +696,7 @@ assignment_operator
     ;
 
 expr
-    : assignment_expr							/* { $$.d = $1.d; } */
+    : assignment_expr							/*& { $$.d = $1.d; } */
     | expr ',' assignment_expr					{
         $$.d.t = $3.d.t;
         $$.d.r = NULL;
@@ -922,8 +922,8 @@ type_specifier1
     ;
 
 type_specifier2
-    : struct_or_union_specifier		/* { $$.d = $1.d; } */
-    | enum_specifier				/* { $$.d = $1.d; } */
+    : struct_or_union_specifier		/*& { $$.d = $1.d; } */
+    | enum_specifier				/*& { $$.d = $1.d; } */
     ;
 
 function_specifier
@@ -958,7 +958,7 @@ struct_or_union_define_specifier
     ;
 
 struct_identifier
-    : identifier			/* { $$.d = $1.d; } */
+    : identifier			/*& { $$.d = $1.d; } */
     | COMPL_STRUCT_NAME		{ assert(0); /* token never used */ }
     ;
 
@@ -968,7 +968,7 @@ struct_or_union
     ;
 
 struct_declaration_list
-    : struct_declaration								/* { $$.d = $1.d; } */
+    : struct_declaration								/*& { $$.d = $1.d; } */
     | struct_declaration_list struct_declaration		{
         if ($1.d == &s_errorSymbol || $1.d->bits.symType==TypeError) {
             $$.d = $2.d;
@@ -1021,8 +1021,8 @@ struct_declarator:					{ /* gcc extension allow empty field */
     | ':' constant_expr				{
         $$.d = crEmptyField();
     }
-    | declarator					/* { $$.d = $1.d; } */
-    | declarator ':' constant_expr	/* { $$.d = $1.d; } */
+    | declarator					/*& { $$.d = $1.d; } */
+    | declarator ':' constant_expr	/*& { $$.d = $1.d; } */
     ;
 
 enum_specifier
@@ -1052,13 +1052,13 @@ enum_define_specifier
     ;
 
 enum_identifier
-    : identifier			/* { $$.d = $1.d; } */
+    : identifier			/*& { $$.d = $1.d; } */
     | COMPL_ENUM_NAME		{ assert(0); /* token never used */ }
     ;
 
 enumerator_list_comma
-    : enumerator_list               /* { $$.d = $1.d; } */
-    | enumerator_list ','           /* { $$.d = $1.d; } */
+    : enumerator_list               /*& { $$.d = $1.d; } */
+    | enumerator_list ','           /*& { $$.d = $1.d; } */
     ;
 
 enumerator_list
@@ -1094,7 +1094,7 @@ enumerator
     ;
 
 declarator
-    : declarator2										/* { $$.d = $1.d; } */
+    : declarator2										/*& { $$.d = $1.d; } */
     | pointer declarator2								{
         $$.d = $2.d;
         assert($$.d->bits.npointers == 0);
@@ -1194,8 +1194,8 @@ type_specifier_list
 */
 
 type_specifier_list
-    : type_mod_specifier_list						/* { $$.d = $1.d; } */
-    | type_specifier_list0							/* { $$.d = $1.d; } */
+    : type_mod_specifier_list						/*& { $$.d = $1.d; } */
+    | type_specifier_list0							/*& { $$.d = $1.d; } */
     ;
 
 type_specifier_list0
@@ -1247,7 +1247,7 @@ type_specifier_list0
     ;
 
 parameter_identifier_list
-    : identifier_list							/* { $$.d = $1.d; } */
+    : identifier_list							/*& { $$.d = $1.d; } */
     | identifier_list ',' ELIPSIS				{
         S_symbol *p;
         S_position pp;
@@ -1294,7 +1294,7 @@ identifier_list
     ;
 
 parameter_type_list
-    : parameter_list					/* { $$.d = $1.d; } */
+    : parameter_list					/*& { $$.d = $1.d; } */
     | parameter_list ',' ELIPSIS				{
         S_symbol        *p;
         S_position      pp;
@@ -1830,7 +1830,7 @@ top_init_declarations
     ;
 
 function_definition_head
-    : function_head_declaration							/* { $$.d = $1.d; } */
+    : function_head_declaration							/*& { $$.d = $1.d; } */
     | function_definition_head fun_arg_declaration		{
         int r;
         assert($1.d->u.type && $1.d->u.type->kind == TypeFunction);
@@ -1890,8 +1890,8 @@ Stop_block:		{ stackMemoryBlockFree(); }
     ;
 
 identifier
-    : IDENTIFIER    /* { $$.d = $1.d; } */
-    | TYPE_NAME		/* { $$.d = $1.d; } */
+    : IDENTIFIER    /*& { $$.d = $1.d; } */
+    | TYPE_NAME		/*& { $$.d = $1.d; } */
     ;
 
 %%
