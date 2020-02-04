@@ -1103,10 +1103,14 @@ struct_declarator
         S_typeModifiers *p;
         p = StackMemAlloc(S_typeModifiers);
         FILLF_typeModifiers(p,TypeAnonymeField,f,( NULL,NULL) ,NULL,NULL);
-        $$.d = StackMemAlloc(S_symbol);
+
+        /*& $$.d = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
+        /*& FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,p,NULL); */
+        /*& REPLACED StackMemAlloc()+FILL_symbol() with */
+        $$.d = newSymbolType(NULL, NULL, s_noPos, p, NULL);
         FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
-        FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,p,NULL);
-        $$.d->u.type = p;
+
     }
     | declarator ':' constant_expr  /* { $$.d = $1.d; } */
     ;
