@@ -1,0 +1,13 @@
+/* -*- c -*-*/
+#include "../symbol.h"
+#include <cgreen/mocks.h>
+
+S_symbol *newSymbol(char *name, char *linkName, struct position pos, S_symbol *next) {
+    return (S_symbol *)mock(name, linkName, pos, next);
+}
+S_symbol *newSymbolKeyword(char *name, char *linkName, struct position pos, int keyWordVal, S_symbol *next) {
+    return (S_symbol *)mock(name, linkName, pos, keyWordVal, next);
+}
+S_symbol *newSymbolType(char *name, char *linkName, struct position pos, struct typeModifiers *type, S_symbol *next) {
+    return (S_symbol *)mock(name, linkName, pos, type, next);
+}
