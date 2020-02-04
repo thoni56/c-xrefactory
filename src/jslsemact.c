@@ -9,6 +9,7 @@
 #include "cxref.h"
 #include "classFileReader.h"
 #include "jsemact.h"
+#include "symbol.h"
 
 #include "log.h"
 #include "utils.h"
@@ -19,8 +20,11 @@ S_jslStat *s_jsl;
 
 static void jslFillTypeSymbolItem(S_symbol *sd, S_jslSymbolList *ss ,
                                   char *name) {
-    FILL_symbolBits(&sd->bits,0,0, 0,0, 0, TypeStruct, StorageNone,0);
-    FILL_symbol(sd,name,name,s_noPos,sd->bits,type,NULL,NULL);
+    /*& FILL_symbolBits(&sd->bits,0,0, 0,0, 0, TypeStruct, StorageNone,0); */
+    /*& FILL_symbol(sd,name,name,s_noPos,sd->bits,type,NULL,NULL); */
+    /*& REPLACED: FILL_symbol() with */
+    sd = newSymbol(name, name, s_noPos, NULL);
+    FILL_symbolBits(&sd->bits, 0, 0, 0, 0, 0, TypeStruct, StorageNone, 0);
     FILL_jslSymbolList(ss, sd, s_noPos, 0, NULL);
 }
 

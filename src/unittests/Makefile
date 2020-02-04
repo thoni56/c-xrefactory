@@ -30,7 +30,7 @@ lex_tests.so: $(OBJDIR)/lex_tests.o $(patsubst %,$(OBJDIR)/%.o,$(LEX_DEPENDENCIE
 symtab_tests.so: $(OBJDIR)/symtab_tests.o $(OBJDIR)/symtab.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-jslsemact_tests.so: $(OBJDIR)/jslsemact_tests.o $(OBJDIR)/jslsemact.o $(OBJDIR)/log.o
+jslsemact_tests.so: $(OBJDIR)/jslsemact_tests.o $(OBJDIR)/jslsemact.o $(OBJDIR)/symbol.o $(OBJDIR)/log.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 olcxtab_tests.so: $(OBJDIR)/olcxtab_tests.o $(OBJDIR)/olcxtab.o
