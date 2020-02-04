@@ -834,23 +834,23 @@ void completeDeclarator(S_symbol *t, S_symbol *d) {
 }
 
 S_symbol *createSimpleDefinition(unsigned storage, unsigned t, S_idIdent *id) {
-    S_typeModifiers *p;
+    S_typeModifiers *typeModifiers;
     S_symbol    *r;
-    p = StackMemAlloc(S_typeModifiers);
-    FILLF_typeModifiers(p,t,f,( NULL,NULL) ,NULL,NULL);
+    typeModifiers = StackMemAlloc(S_typeModifiers);
+    FILLF_typeModifiers(typeModifiers,t,f,( NULL,NULL) ,NULL,NULL);
     if (id!=NULL) {
         /*& r = StackMemAlloc(S_symbol); */
         /*& FILL_symbolBits(&r->bits,0,0,0,0,0,TypeDefault,storage,0); */
-        /*& FILL_symbol(r,id->name,id->name,id->p,r->bits,type,p,NULL); */
+        /*& FILL_symbol(r,id->name,id->name,id->p,r->bits,type,typeModifiers,NULL); */
         /* REPLACED StackMemAlloc()+FILL_symbol() with */
-        r = newSymbolType(id->name, id->name, id->p, p, NULL);
+        r = newSymbolType(id->name, id->name, id->p, typeModifiers, NULL);
         FILL_symbolBits(&r->bits,0,0,0,0,0,TypeDefault,storage,0);
     } else {
         r = StackMemAlloc(S_symbol);
         FILL_symbolBits(&r->bits,0,0,0,0,0,TypeDefault,storage,0);
-        FILL_symbol(r,NULL, NULL, s_noPos,r->bits,type,p,NULL);
+        FILL_symbol(r,NULL, NULL, s_noPos,r->bits,type,typeModifiers,NULL);
     }
-    r->u.type = p;
+    r->u.type = typeModifiers;
     return(r);
 }
 
