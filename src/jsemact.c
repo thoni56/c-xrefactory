@@ -13,6 +13,7 @@
 #include "jslsemact.h"
 #include "editor.h"
 #include "enumTxt.h"
+#include "symbol.h"
 
 #include "javagram.x"
 
@@ -594,8 +595,6 @@ S_symbol *javaTypeSymbolUsage(S_idIdentList *tname,
     return(memb);
 }
 
-// seems that this function is completely wrong, because
-// of inherited nested classes, which should have
 S_symbol *javaTypeNameDefinition(S_idIdentList *tname) {
     S_symbol    *memb;
     S_symbol		*dd;
@@ -604,10 +603,11 @@ S_symbol *javaTypeNameDefinition(S_idIdentList *tname) {
     XX_ALLOC(td, S_typeModifiers);
     FILLF_typeModifiers(td, TypeStruct,t,memb,NULL, NULL);
     td->u.t = memb;
-    XX_ALLOC(dd, S_symbol);
-    FILL_symbolBits(&dd->bits,0,0,0,0,0,	TypeDefault, StorageDefault,0);
-    FILL_symbol(dd,memb->name,memb->linkName,tname->idi.p,dd->bits,type,td,NULL);
-    dd->u.type = td;
+    /* XX_ALLOC(dd, S_symbol); */
+    /* FILL_symbolBits(&dd->bits,0,0,0,0,0,	TypeDefault, StorageDefault,0); */
+    /* FILL_symbol(dd,memb->name,memb->linkName,tname->idi.p,dd->bits,type,td,NULL); */
+    dd = newSymbolType(memb->name, memb->linkName, tname->idi.p, td, NULL);
+    FILL_symbolBits(&dd->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
     return(dd);
 }
 
