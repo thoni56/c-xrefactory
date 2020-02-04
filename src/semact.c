@@ -10,6 +10,7 @@
 #include "jsemact.h"
 #include "jslsemact.h"
 #include "enumTxt.h"
+#include "symbol.h"
 
 #include "hash.h"
 #include "log.h"
@@ -837,11 +838,15 @@ S_symbol *createSimpleDefinition(unsigned storage, unsigned t, S_idIdent *id) {
     S_symbol    *r;
     p = StackMemAlloc(S_typeModifiers);
     FILLF_typeModifiers(p,t,f,( NULL,NULL) ,NULL,NULL);
-    r = StackMemAlloc(S_symbol);
     if (id!=NULL) {
+        /*& r = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&r->bits,0,0,0,0,0,TypeDefault,storage,0); */
+        /*& FILL_symbol(r,id->name,id->name,id->p,r->bits,type,p,NULL); */
+        /* REPLACED StackMemAlloc()+FILL_symbol() with */
+        r = newSymbolType(id->name, id->name, id->p, p, NULL);
         FILL_symbolBits(&r->bits,0,0,0,0,0,TypeDefault,storage,0);
-        FILL_symbol(r,id->name,id->name,id->p,r->bits,type,p,NULL);
     } else {
+        r = StackMemAlloc(S_symbol);
         FILL_symbolBits(&r->bits,0,0,0,0,0,TypeDefault,storage,0);
         FILL_symbol(r,NULL, NULL, s_noPos,r->bits,type,p,NULL);
     }
