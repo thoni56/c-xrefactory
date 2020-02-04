@@ -12,6 +12,7 @@ all: quick slow
 
 quick:
 	@echo "Quick tests..."
+	@$(MAKE) -C ellipsis
 	@$(MAKE) -C simple_xrefs
 	@$(MAKE) -C pragma_once
 	@$(MAKE) -C process_yacc

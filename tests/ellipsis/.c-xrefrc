@@ -1,0 +1,7 @@
+[/home/thoni/Utveckling/c-xrefactory/tests/ellipsis]
+  //  input files and directories (processed recursively)
+  /home/thoni/Utveckling/c-xrefactory/tests/ellipsis
+  //  directory where tag files are stored
+  -refs /home/thoni/Utveckling/c-xrefactory/tests/ellipsis/CXrefs
+  //  number of tag files
+  -refnum=10

@@ -1,0 +1,4 @@
+func1
+    func1@ellipsis.c:1:4
+func2
+    func2@ellipsis.c:2:4
