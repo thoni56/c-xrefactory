@@ -21,10 +21,10 @@ static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {
         s_tokenLength[tok] = strlen(nn);
         if ((isalpha(*nn) || *nn=='_') && (tlan & s_language)) {
             /* looks like a key word */
-            /* XX_ALLOC(pp, S_symbol); */
-            /* FILL_symbolBits(&pp->bits,0,0, 0,0,0,TypeKeyword,StorageNone,0); */
-            /* FILL_symbol(pp,nn,nn,s_noPos,pp->bits,keyWordVal,tok,NULL); */
-            /* REPLACED: XX_ALLOC & FILL_symbol() with */
+            /*& XX_ALLOC(pp, S_symbol); */
+            /*& FILL_symbolBits(&pp->bits,0,0, 0,0,0,TypeKeyword,StorageNone,0); */
+            /*& FILL_symbol(pp,nn,nn,s_noPos,pp->bits,keyWordVal,tok,NULL); */
+            /*& REPLACED: XX_ALLOC & FILL_symbol() with */
             pp = newSymbolKeyword(nn, nn, s_noPos, tok, NULL);
             FILL_symbolBits(&pp->bits,0,0, 0,0,0,TypeKeyword,StorageNone,0);
 
@@ -158,7 +158,10 @@ void initExtractStoragesNameTab(void) {
 
 
 void initArchaicTypes(void) {
-    /* ******* some defaults and built-ins initialisationa ********* */
+    /* ******* some defaults and built-ins initialisations ********* */
+
+    /* To REPLACE below FILL_Symbol() we need to change how the static
+       symbols are stored, pointers rather than structs */
 
     FILLF_typeModifiers(&s_defaultIntModifier,TypeInt,f,( NULL,NULL) ,NULL,NULL);
     FILL_symbolBits(&s_defaultIntDefinition.bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
