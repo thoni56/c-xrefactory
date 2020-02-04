@@ -3253,10 +3253,10 @@ break;
 case 191:
 #line 1106 "cgram.y"
 {
-        /* $$.d = StackMemAlloc(S_symbol); */
-        /* FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
-        /* FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->bits,type,NULL,NULL); */
-        /* REPLACED: StackMemAlloc() and FILL_symbol() with: */
+        /*& $$.d = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
+        /*& FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->bits,type,NULL,NULL); */
+        /*& REPLACED: StackMemAlloc() and FILL_symbol() with: */
         yyval.bbsymbol.d = newSymbol(yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->p, NULL);
         FILL_symbolBits(&yyval.bbsymbol.d->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
     }

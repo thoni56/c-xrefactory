@@ -1104,10 +1104,10 @@ declarator
 
 declarator2
     : identifier										{
-        /* $$.d = StackMemAlloc(S_symbol); */
-        /* FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
-        /* FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->bits,type,NULL,NULL); */
-        /* REPLACED: StackMemAlloc() and FILL_symbol() with: */
+        /*& $$.d = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
+        /*& FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->bits,type,NULL,NULL); */
+        /*& REPLACED: StackMemAlloc() and FILL_symbol() with: */
         $$.d = newSymbol($1.d->name, $1.d->name, $1.d->p, NULL);
         FILL_symbolBits(&$$.d->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
     }
