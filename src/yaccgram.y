@@ -35,6 +35,7 @@
 #include "yylex.h"
 #include "semact.h"
 #include "cxref.h"
+#include "symbol.h"
 
 #include "log.h"
 #include "utils.h"
@@ -368,10 +369,13 @@ symbol_to_type_seq:
     |   symbol_to_type_seq IDENTIFIER   {
             S_symbol *ss;
 
-            ss = StackMemAlloc(S_symbol);
+            /*& ss = StackMemAlloc(S_symbol); */
+            /*& FILL_symbolBits(&ss->bits,0,0,0,0,0,TypeDefault,StorageAuto,0); */
+            /*& FILL_symbol(ss,$2.d->name,$2.d->name,$2.d->p,ss->bits,type,NULL,NULL); */
+            /*& REPLACED StackMemAlloc()+FILL_symbol() with */
+            ss = newSymbol($2.d->name, $2.d->name, $2.d->p, NULL);
             FILL_symbolBits(&ss->bits,0,0,0,0,0,TypeDefault,StorageAuto,0);
-            FILL_symbol(ss,$2.d->name,$2.d->name,$2.d->p,ss->bits,type,NULL,NULL);
-            ss->u.type = NULL;
+
             addYaccSymbolReference($2.d,UsageDeclared);
             if (l_currentType!=NULL) {
                 addNewDeclaration(l_currentType, ss, NULL, StorageAuto,s_symTab);
