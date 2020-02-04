@@ -8,7 +8,8 @@ S_symbol *newSymbol(char *name, char *linkName, struct position pos, S_symbol *n
     s->name = name;
     s->linkName = linkName;
     s->pos = pos;
-    /* 'bits' and 'u' are not written */
+    /* s->bits is not assigned, all zeros? */
+    s->u.type = NULL;
     s->next = next;
     return s;
 }
