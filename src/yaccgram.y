@@ -1331,11 +1331,17 @@ parameter_identifier_list
     | identifier_list ',' ELIPSIS               {
         S_symbol *p;
         S_position pp;
-        p = StackMemAlloc(S_symbol);
         FILL_position(&pp, -1, 0, 0);
-        FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0);
-        FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL);
+
+        /*& p = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0); */
+        /*& FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL); */
+        /*& WITHOUT COVERAGE: REPLACED StackMemAlloc()+FILL_symbol() with */
+        p = newSymbol("", "", pp, NULL);
+        FILL_symbolBits(&p->bits, 0, 0, 0, 0, 0, TypeElipsis, StorageDefault, 0);
+
         $$.d = $1.d;
+
         LIST_APPEND(S_symbol, $$.d.s, p);
         appendPositionToList(&$$.d.p, &$2.d);
     }

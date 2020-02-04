@@ -2494,7 +2494,7 @@ YYSTYPE yyvs[YYSTACKSIZE];
 #include "recyacc.h"
 #endif
 #define yystacksize YYSTACKSIZE
-#line 1737 "yaccgram.y"
+#line 1743 "yaccgram.y"
 
 static void addYaccSymbolReference(S_idIdent *name, int usage) {
     S_symbol sss;
@@ -3918,17 +3918,23 @@ case 395:
 {
         S_symbol *p;
         S_position pp;
-        p = StackMemAlloc(S_symbol);
         FILL_position(&pp, -1, 0, 0);
-        FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0);
-        FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL);
+
+        /*& p = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0); */
+        /*& FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL); */
+        /*& WITHOUT COVERAGE: REPLACED StackMemAlloc()+FILL_symbol() with */
+        p = newSymbol("", "", pp, NULL);
+        FILL_symbolBits(&p->bits, 0, 0, 0, 0, 0, TypeElipsis, StorageDefault, 0);
+
         yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
+
         LIST_APPEND(S_symbol, yyval.bbsymbolPositionLstPair.d.s, p);
         appendPositionToList(&yyval.bbsymbolPositionLstPair.d.p, &yyvsp[-1].bbposition.d);
     }
 break;
 case 396:
-#line 1345 "yaccgram.y"
+#line 1351 "yaccgram.y"
 {
         S_symbol *p;
         p = StackMemAlloc(S_symbol);
@@ -3940,7 +3946,7 @@ case 396:
     }
 break;
 case 397:
-#line 1354 "yaccgram.y"
+#line 1360 "yaccgram.y"
 {
         S_symbol        *p;
         p = StackMemAlloc(S_symbol);
@@ -3953,11 +3959,11 @@ case 397:
     }
 break;
 case 398:
-#line 1364 "yaccgram.y"
+#line 1370 "yaccgram.y"
 { assert(0); /* token never used */ }
 break;
 case 400:
-#line 1369 "yaccgram.y"
+#line 1375 "yaccgram.y"
 {
         S_symbol        *p;
         S_position      pp;
@@ -3971,14 +3977,14 @@ case 400:
     }
 break;
 case 401:
-#line 1383 "yaccgram.y"
+#line 1389 "yaccgram.y"
 {
         yyval.bbsymbolPositionLstPair.d.s = yyvsp[0].bbsymbol.d;
         yyval.bbsymbolPositionLstPair.d.p = NULL;
     }
 break;
 case 402:
-#line 1387 "yaccgram.y"
+#line 1393 "yaccgram.y"
 {
         yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
         LIST_APPEND(S_symbol, yyvsp[-2].bbsymbolPositionLstPair.d.s, yyvsp[0].bbsymbol.d);
@@ -3986,14 +3992,14 @@ case 402:
     }
 break;
 case 403:
-#line 1395 "yaccgram.y"
+#line 1401 "yaccgram.y"
 {
         completeDeclarator(yyvsp[-1].bbsymbol.d, yyvsp[0].bbsymbol.d);
         yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
     }
 break;
 case 404:
-#line 1399 "yaccgram.y"
+#line 1405 "yaccgram.y"
 {
         yyval.bbsymbol.d = StackMemAlloc(S_symbol);
         FILL_symbolBits(&yyval.bbsymbol.d->bits,0,0,0,0,0,TypeDefault, StorageDefault,0);
@@ -4001,7 +4007,7 @@ case 404:
     }
 break;
 case 405:
-#line 1404 "yaccgram.y"
+#line 1410 "yaccgram.y"
 {
         /*$$.d = &s_errorSymbol;*/
         XX_ALLOC(yyval.bbsymbol.d, S_symbol);
@@ -4009,20 +4015,20 @@ case 405:
     }
 break;
 case 406:
-#line 1412 "yaccgram.y"
+#line 1418 "yaccgram.y"
 {
         yyval.bbtypeModif.d = yyvsp[0].bbsymbol.d->u.type;
     }
 break;
 case 407:
-#line 1415 "yaccgram.y"
+#line 1421 "yaccgram.y"
 {
         yyval.bbtypeModif.d = yyvsp[0].bbtypeModif.d;
         LIST_APPEND(S_typeModifiers, yyval.bbtypeModif.d, yyvsp[-1].bbsymbol.d->u.type);
     }
 break;
 case 408:
-#line 1422 "yaccgram.y"
+#line 1428 "yaccgram.y"
 {
         int i;
         CrTypeModifier(yyval.bbtypeModif.d,TypePointer);
@@ -4030,13 +4036,13 @@ case 408:
     }
 break;
 case 409:
-#line 1427 "yaccgram.y"
+#line 1433 "yaccgram.y"
 {
         yyval.bbtypeModif.d = yyvsp[0].bbtypeModif.d;
     }
 break;
 case 410:
-#line 1430 "yaccgram.y"
+#line 1436 "yaccgram.y"
 {
         int i;
         yyval.bbtypeModif.d = yyvsp[0].bbtypeModif.d;
@@ -4044,53 +4050,53 @@ case 410:
     }
 break;
 case 411:
-#line 1438 "yaccgram.y"
+#line 1444 "yaccgram.y"
 {
         yyval.bbtypeModif.d = yyvsp[-1].bbtypeModif.d;
     }
 break;
 case 412:
-#line 1441 "yaccgram.y"
+#line 1447 "yaccgram.y"
 {
         CrTypeModifier(yyval.bbtypeModif.d,TypeArray);
     }
 break;
 case 413:
-#line 1444 "yaccgram.y"
+#line 1450 "yaccgram.y"
 {
         CrTypeModifier(yyval.bbtypeModif.d,TypeArray);
     }
 break;
 case 414:
-#line 1447 "yaccgram.y"
+#line 1453 "yaccgram.y"
 {
         yyval.bbtypeModif.d = yyvsp[-2].bbtypeModif.d;
         appendComposedType(&(yyval.bbtypeModif.d), TypeArray);
     }
 break;
 case 415:
-#line 1451 "yaccgram.y"
+#line 1457 "yaccgram.y"
 {
         yyval.bbtypeModif.d = yyvsp[-3].bbtypeModif.d;
         appendComposedType(&(yyval.bbtypeModif.d), TypeArray);
     }
 break;
 case 416:
-#line 1455 "yaccgram.y"
+#line 1461 "yaccgram.y"
 {
         CrTypeModifier(yyval.bbtypeModif.d,TypeFunction);
         FILL_funTypeModif(&yyval.bbtypeModif.d->u.f , NULL, NULL);
     }
 break;
 case 417:
-#line 1459 "yaccgram.y"
+#line 1465 "yaccgram.y"
 {
         CrTypeModifier(yyval.bbtypeModif.d,TypeFunction);
         FILL_funTypeModif(&yyval.bbtypeModif.d->u.f , yyvsp[-1].bbsymbolPositionLstPair.d.s, NULL);
     }
 break;
 case 418:
-#line 1463 "yaccgram.y"
+#line 1469 "yaccgram.y"
 {
         S_typeModifiers *p;
         yyval.bbtypeModif.d = yyvsp[-2].bbtypeModif.d;
@@ -4099,7 +4105,7 @@ case 418:
     }
 break;
 case 419:
-#line 1469 "yaccgram.y"
+#line 1475 "yaccgram.y"
 {
         S_typeModifiers *p;
         yyval.bbtypeModif.d = yyvsp[-3].bbtypeModif.d;
@@ -4110,99 +4116,99 @@ case 419:
     }
 break;
 case 423:
-#line 1486 "yaccgram.y"
+#line 1492 "yaccgram.y"
 {
         tmpWorkMemoryi = yyvsp[-1].bbunsign.d;
     }
 break;
 case 424:
-#line 1489 "yaccgram.y"
+#line 1495 "yaccgram.y"
 {
         tmpWorkMemoryi = yyvsp[-1].bbunsign.d;
     }
 break;
 case 426:
-#line 1496 "yaccgram.y"
-{
-        tmpWorkMemoryi = yyvsp[-1].bbunsign.d;
-    }
-break;
-case 427:
-#line 1499 "yaccgram.y"
-{
-        tmpWorkMemoryi = yyvsp[-1].bbunsign.d;
-    }
-break;
-case 428:
 #line 1502 "yaccgram.y"
 {
         tmpWorkMemoryi = yyvsp[-1].bbunsign.d;
     }
 break;
-case 429:
+case 427:
 #line 1505 "yaccgram.y"
 {
         tmpWorkMemoryi = yyvsp[-1].bbunsign.d;
     }
 break;
-case 430:
+case 428:
 #line 1508 "yaccgram.y"
 {
         tmpWorkMemoryi = yyvsp[-1].bbunsign.d;
     }
 break;
-case 431:
+case 429:
 #line 1511 "yaccgram.y"
 {
         tmpWorkMemoryi = yyvsp[-1].bbunsign.d;
     }
 break;
+case 430:
+#line 1514 "yaccgram.y"
+{
+        tmpWorkMemoryi = yyvsp[-1].bbunsign.d;
+    }
+break;
+case 431:
+#line 1517 "yaccgram.y"
+{
+        tmpWorkMemoryi = yyvsp[-1].bbunsign.d;
+    }
+break;
 case 437:
-#line 1525 "yaccgram.y"
+#line 1531 "yaccgram.y"
 {
         labelReference(yyvsp[0].bbidIdent.d,UsageDefined);
     }
 break;
 case 438:
-#line 1528 "yaccgram.y"
+#line 1534 "yaccgram.y"
 { assert(0); /* token never used */ }
 break;
 case 439:
-#line 1532 "yaccgram.y"
+#line 1538 "yaccgram.y"
 {
         labelReference(yyvsp[0].bbidIdent.d,UsageUsed);
     }
 break;
 case 440:
-#line 1535 "yaccgram.y"
+#line 1541 "yaccgram.y"
 { assert(0); /* token never used */ }
 break;
 case 467:
-#line 1597 "yaccgram.y"
+#line 1603 "yaccgram.y"
 {
         /* poseCachePoint(1); no caching in yacc files */
     }
 break;
 case 468:
-#line 1600 "yaccgram.y"
+#line 1606 "yaccgram.y"
 {
         /* poseCachePoint(1); no caching in yacc files */
     }
 break;
 case 469:
-#line 1606 "yaccgram.y"
+#line 1612 "yaccgram.y"
 {
         tmpWorkMemoryi = yyvsp[-2].bbunsign.d;
     }
 break;
 case 470:
-#line 1609 "yaccgram.y"
+#line 1615 "yaccgram.y"
 {
         tmpWorkMemoryi = yyvsp[-2].bbunsign.d;
     }
 break;
 case 471:
-#line 1612 "yaccgram.y"
+#line 1618 "yaccgram.y"
 {
         S_symbol *p,*pa;
         int i;
@@ -4231,47 +4237,47 @@ case 471:
     }
 break;
 case 472:
-#line 1637 "yaccgram.y"
+#line 1643 "yaccgram.y"
 {
         stackMemoryBlockFree();
         s_cp.function = NULL;
     }
 break;
 case 473:
-#line 1641 "yaccgram.y"
+#line 1647 "yaccgram.y"
 {
         tmpWorkMemoryi = yyvsp[-3].bbunsign.d;
     }
 break;
 case 474:
-#line 1644 "yaccgram.y"
+#line 1650 "yaccgram.y"
 {
         tmpWorkMemoryi = yyvsp[-5].bbunsign.d;
     }
 break;
 case 477:
-#line 1652 "yaccgram.y"
+#line 1658 "yaccgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
         addNewDeclaration(yyvsp[-1].bbsymbol.d, yyvsp[0].bbsymbol.d, NULL, StorageExtern,s_symTab);
     }
 break;
 case 478:
-#line 1656 "yaccgram.y"
+#line 1662 "yaccgram.y"
 {
         yyval.bbsymbol.d = & s_defaultIntDefinition;
         addNewDeclaration(yyval.bbsymbol.d, yyvsp[0].bbsymbol.d, NULL, StorageExtern,s_symTab);
     }
 break;
 case 479:
-#line 1660 "yaccgram.y"
+#line 1666 "yaccgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
         addNewDeclaration(yyvsp[-2].bbsymbol.d, yyvsp[0].bbsymbol.d, NULL, StorageExtern,s_symTab);
     }
 break;
 case 480:
-#line 1664 "yaccgram.y"
+#line 1670 "yaccgram.y"
 {
         /*$$.d = &s_errorSymbol;*/
         XX_ALLOC(yyval.bbsymbol.d, S_symbol);
@@ -4279,7 +4285,7 @@ case 480:
     }
 break;
 case 482:
-#line 1673 "yaccgram.y"
+#line 1679 "yaccgram.y"
 {
         int r;
         assert(yyvsp[-1].bbsymbol.d->u.type && yyvsp[-1].bbsymbol.d->u.type->kind == TypeFunction);
@@ -4289,13 +4295,13 @@ case 482:
     }
 break;
 case 483:
-#line 1683 "yaccgram.y"
+#line 1689 "yaccgram.y"
 {
         yyval.bbsymbol.d = NULL;
     }
 break;
 case 484:
-#line 1686 "yaccgram.y"
+#line 1692 "yaccgram.y"
 {
         S_symbol *p;
         assert(yyvsp[-2].bbsymbol.d && yyvsp[-1].bbsymbol.d);
@@ -4306,26 +4312,26 @@ case 484:
     }
 break;
 case 485:
-#line 1697 "yaccgram.y"
+#line 1703 "yaccgram.y"
 {
         yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
     }
 break;
 case 486:
-#line 1700 "yaccgram.y"
+#line 1706 "yaccgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
         LIST_APPEND(S_symbol, yyval.bbsymbol.d, yyvsp[0].bbsymbol.d);
     }
 break;
 case 487:
-#line 1704 "yaccgram.y"
+#line 1710 "yaccgram.y"
 {
         yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
     }
 break;
 case 488:
-#line 1710 "yaccgram.y"
+#line 1716 "yaccgram.y"
 {
         completeDeclarator(&s_defaultIntDefinition, yyvsp[0].bbsymbol.d);
         assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->u.type);
@@ -4334,7 +4340,7 @@ case 488:
     }
 break;
 case 489:
-#line 1716 "yaccgram.y"
+#line 1722 "yaccgram.y"
 {
         completeDeclarator(yyvsp[-1].bbsymbol.d, yyvsp[0].bbsymbol.d);
         assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->u.type);
@@ -4343,14 +4349,14 @@ case 489:
     }
 break;
 case 490:
-#line 1725 "yaccgram.y"
+#line 1731 "yaccgram.y"
 { stackMemoryBlockStart(); }
 break;
 case 491:
-#line 1728 "yaccgram.y"
+#line 1734 "yaccgram.y"
 { stackMemoryBlockFree(); }
 break;
-#line 4354 "yaccgram.c"
+#line 4360 "yaccgram.c"
     }
     yyssp -= yym;
     yystate = *yyssp;
