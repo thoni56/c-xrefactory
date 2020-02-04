@@ -1143,12 +1143,17 @@ static void handleParameterPositions(S_position *lpar, S_positionList *commas,
 S_symbol *crEmptyField(void) {
     S_symbol *res;
     S_typeModifiers *p;
+
     p = StackMemAlloc(S_typeModifiers);
     FILLF_typeModifiers(p,TypeAnonymeField,f,( NULL,NULL) ,NULL,NULL);
-    res = StackMemAlloc(S_symbol);
-    FILL_symbolBits(&res->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
-    FILL_symbol(res, "", "", s_noPos,res->bits,type,p,NULL);
-    res->u.type = p;
+
+    /*& res = StackMemAlloc(S_symbol); */
+    /*& FILL_symbolBits(&res->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
+    /*& FILL_symbol(res, "", "", s_noPos,res->bits,type,p,NULL); */
+    /*& REPLACED StackMemAlloc()+FILL_symbol() with  */
+    res = newSymbolType("", "", s_noPos, p, NULL);
+    FILL_symbolBits(&res->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
+
     return(res);
 }
 
