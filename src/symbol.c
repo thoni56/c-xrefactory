@@ -26,3 +26,9 @@ extern S_symbol *newSymbolType(char *name, char *linkName, struct position pos, 
     s->u.type = type;
     return s;
 }
+
+extern S_symbol *newSymbolEnums(char *name, char *linkName, struct position pos, struct symbolList *enums, S_symbol *next) {
+    S_symbol *s = newSymbol(name, linkName, pos, next);
+    s->u.enums = enums;
+    return s;
+}
