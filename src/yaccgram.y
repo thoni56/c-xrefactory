@@ -541,10 +541,14 @@ primary_expr
             CrTypeModifier(p, TypeInt);
             $$.d.t = StackMemAlloc(S_typeModifiers);
             FILLF_typeModifiers($$.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
-            d = StackMemAlloc(S_symbol);
+
+            /*& d = StackMemAlloc(S_symbol); */
+            /*& FILL_symbolBits(&d->bits,0,0,0,0,0,TypeDefault, StorageExtern,0); */
+            /*& FILL_symbol(d,$1.d->name,$1.d->name,$1.d->p,d->bits,type,$$.d.t,NULL); */
+            /*& REPLACED StackMemAlloc()+FILL_symbol with */
+            d = newSymbolType($1.d->name, $1.d->name, $1.d->p,$$.d.t, NULL);
             FILL_symbolBits(&d->bits,0,0,0,0,0,TypeDefault, StorageExtern,0);
-            FILL_symbol(d,$1.d->name,$1.d->name,$1.d->p,d->bits,type,$$.d.t,NULL);
-            d->u.type = $$.d.t;
+
             dd = addNewSymbolDef(d, StorageExtern, s_symTab, UsageUsed);
             $$.d.r = NULL;
         }
