@@ -80,9 +80,12 @@ void initTokenNameTab(void) {
     /* regular tokentab at last, because we wish to have correct names */
     initTokensFromTab(s_tokenNameIniTab);
     /* and add the 'defined' keyword for #if */
-    XX_ALLOC(pp, S_symbol);
-    FILL_symbolBits(&pp->bits,0,0,0,0,0,TypeDefinedOp,StorageNone,0);
-    FILL_symbol(pp,"defined","defined",s_noPos,pp->bits,type,NULL,NULL);
+    /*& XX_ALLOC(pp, S_symbol); */
+    /*& FILL_symbolBits(&pp->bits,0,0,0,0,0,TypeDefinedOp,StorageNone,0); */
+    /*& FILL_symbol(pp,"defined","defined",s_noPos,pp->bits,type,NULL,NULL); */
+    /*& REPLACED: XX_ALLOC()+FILL_symbol() with: */
+    pp = newSymbol("defined", "defined", s_noPos, NULL);
+    FILL_symbolBits(&pp->bits, 0, 0, 0, 0, 0, TypeDefinedOp, StorageNone, 0);
     symTabAdd(s_symTab,pp,&ii);
 }
 
