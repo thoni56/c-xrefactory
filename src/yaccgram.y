@@ -950,15 +950,15 @@ declaration_specifiers0
 
 declaration_modality_specifiers
     : storage_class_specifier                               {
-        S_typeModifiers *p;
-        p = StackMemAlloc(S_typeModifiers);
-        FILLF_typeModifiers(p,TypeDefault,f,(NULL,NULL) ,NULL,NULL);
+        S_typeModifiers *typeModifiers;
+        typeModifiers = StackMemAlloc(S_typeModifiers);
+        FILLF_typeModifiers(typeModifiers,TypeDefault,f,(NULL,NULL) ,NULL,NULL);
 
         /*& $$.d = StackMemAlloc(S_symbol); */
         /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,$1.d,0); */
-        /*& FILL_symbol($$.d,NULL,NULL,s_noPos,$$.d->bits,type,p,NULL); */
+        /*& FILL_symbol($$.d,NULL,NULL,s_noPos,$$.d->bits,type,typeModifiers,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
-        $$.d = newSymbolType(NULL, NULL, s_noPos, p, NULL);
+        $$.d = newSymbolType(NULL, NULL, s_noPos, typeModifiers, NULL);
         FILL_symbolBits(&$$.d->bits, 0, 0, 0, 0, 0, TypeDefault, $1.d, 0);
     }
     | declaration_modality_specifiers storage_class_specifier       {

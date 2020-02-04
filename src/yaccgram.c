@@ -3421,15 +3421,15 @@ break;
 case 301:
 #line 952 "yaccgram.y"
 {
-        S_typeModifiers *p;
-        p = StackMemAlloc(S_typeModifiers);
-        FILLF_typeModifiers(p,TypeDefault,f,(NULL,NULL) ,NULL,NULL);
+        S_typeModifiers *typeModifiers;
+        typeModifiers = StackMemAlloc(S_typeModifiers);
+        FILLF_typeModifiers(typeModifiers,TypeDefault,f,(NULL,NULL) ,NULL,NULL);
 
         /*& $$.d = StackMemAlloc(S_symbol); */
         /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,$1.d,0); */
-        /*& FILL_symbol($$.d,NULL,NULL,s_noPos,$$.d->bits,type,p,NULL); */
+        /*& FILL_symbol($$.d,NULL,NULL,s_noPos,$$.d->bits,type,typeModifiers,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
-        yyval.bbsymbol.d = newSymbolType(NULL, NULL, s_noPos, p, NULL);
+        yyval.bbsymbol.d = newSymbolType(NULL, NULL, s_noPos, typeModifiers, NULL);
         FILL_symbolBits(&yyval.bbsymbol.d->bits, 0, 0, 0, 0, 0, TypeDefault, yyvsp[0].bbunsign.d, 0);
     }
 break;
