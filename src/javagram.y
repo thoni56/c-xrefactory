@@ -49,6 +49,7 @@
 #include "protocol.h"
 #include "extract.h"
 #include "semact.h"
+#include "symbol.h"
 
 #include "log.h"
 #include "utils.h"
@@ -1663,10 +1664,12 @@ VariableDeclaratorId:
         Identifier							{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d = StackMemAlloc(S_symbol);
-                    FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
-                    FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->bits,type,NULL,NULL);
-                    $$.d->u.type = NULL;
+                    /*& $$.d = StackMemAlloc(S_symbol); */
+                    /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
+                    /*& FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->bits,type,NULL,NULL); */
+                    /*& REPLACED StackMemAlloc()+FILL_symbol() with: */
+                    $$.d = newSymbol($1.d->name, $1.d->name, $1.d->p, NULL);
+                    FILL_symbolBits(&$$.d->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
                 } else {
                     PropagateBorns($$, $1, $1);
                 }

@@ -53,6 +53,7 @@
 #include "protocol.h"
 #include "extract.h"
 #include "semact.h"
+#include "symbol.h"
 
 #include "log.h"
 #include "utils.h"
@@ -134,7 +135,7 @@ static bool inSecondJslPass() {
 
 
 
-#line 278 "javagram.y"
+#line 279 "javagram.y"
 typedef union {
     int                                     integer;
     unsigned                                unsign;
@@ -177,7 +178,7 @@ typedef union {
     S_bb_typeModifiersListPositionLstPair   bbtypeModifiersListPositionLstPair;
     S_bb_nestedConstrTokenType              bbnestedConstrTokenType;
 } YYSTYPE;
-#line 181 "javagram.c"
+#line 182 "javagram.c"
 #define TYPE_NAME 257
 #define CLASS_NAME 258
 #define TEMPLATE_NAME 259
@@ -2545,7 +2546,7 @@ YYSTYPE yyvs[YYSTACKSIZE];
 #include "recyacc.h"
 #endif
 #define yystacksize YYSTACKSIZE
-#line 4367 "javagram.y"
+#line 4370 "javagram.y"
 
 void javaParsingInitializations(void) {
             S_symbol *ss;
@@ -2677,7 +2678,7 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
         }
     }
 }
-#line 2681 "javagram.c"
+#line 2682 "javagram.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -2817,7 +2818,7 @@ yyreduce:
     switch (yyn)
     {
 case 2:
-#line 421 "javagram.y"
+#line 422 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -2831,7 +2832,7 @@ case 2:
         }
 break;
 case 3:
-#line 432 "javagram.y"
+#line 433 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -2845,7 +2846,7 @@ case 3:
         }
 break;
 case 4:
-#line 443 "javagram.y"
+#line 444 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -2859,7 +2860,7 @@ case 4:
         }
 break;
 case 5:
-#line 454 "javagram.y"
+#line 455 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -2873,7 +2874,7 @@ case 5:
         }
 break;
 case 6:
-#line 465 "javagram.y"
+#line 466 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -2887,7 +2888,7 @@ case 6:
         }
 break;
 case 7:
-#line 476 "javagram.y"
+#line 477 "javagram.y"
 {
             if (regularPass()) {
                 CrTypeModifier(yyval.bbexprType.d.t,TypeDouble);
@@ -2898,7 +2899,7 @@ case 7:
         }
 break;
 case 8:
-#line 484 "javagram.y"
+#line 485 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -2912,7 +2913,7 @@ case 8:
         }
 break;
 case 9:
-#line 495 "javagram.y"
+#line 496 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -2927,7 +2928,7 @@ case 9:
         }
 break;
 case 10:
-#line 507 "javagram.y"
+#line 508 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -2942,7 +2943,7 @@ case 10:
         }
 break;
 case 11:
-#line 524 "javagram.y"
+#line 525 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -2958,14 +2959,14 @@ case 11:
         }
 break;
 case 12:
-#line 537 "javagram.y"
+#line 538 "javagram.y"
 {
             yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
             PropagateBornsIfRegularSyntaxPass(yyval.bbsymbol, yyvsp[0].bbsymbol, yyvsp[0].bbsymbol);
         }
 break;
 case 14:
-#line 545 "javagram.y"
+#line 546 "javagram.y"
 {
             yyval.bbunsPositionPair.d.u  = TypeBoolean;
             if (regularPass()) {
@@ -2975,7 +2976,7 @@ case 14:
         }
 break;
 case 17:
-#line 560 "javagram.y"
+#line 561 "javagram.y"
 {
             yyval.bbunsPositionPair.d.u  = TypeByte;
             if (regularPass()) SetPrimitiveTypePos(yyval.bbunsPositionPair.d.p, yyvsp[0].bbidIdent.d);
@@ -2983,7 +2984,7 @@ case 17:
         }
 break;
 case 18:
-#line 565 "javagram.y"
+#line 566 "javagram.y"
 {
             yyval.bbunsPositionPair.d.u  = TypeShort;
             if (regularPass()) SetPrimitiveTypePos(yyval.bbunsPositionPair.d.p, yyvsp[0].bbidIdent.d);
@@ -2991,7 +2992,7 @@ case 18:
         }
 break;
 case 19:
-#line 570 "javagram.y"
+#line 571 "javagram.y"
 {
             yyval.bbunsPositionPair.d.u  = TypeInt;
             if (regularPass()) SetPrimitiveTypePos(yyval.bbunsPositionPair.d.p, yyvsp[0].bbidIdent.d);
@@ -2999,7 +3000,7 @@ case 19:
         }
 break;
 case 20:
-#line 575 "javagram.y"
+#line 576 "javagram.y"
 {
             yyval.bbunsPositionPair.d.u  = TypeLong;
             if (regularPass()) SetPrimitiveTypePos(yyval.bbunsPositionPair.d.p, yyvsp[0].bbidIdent.d);
@@ -3007,7 +3008,7 @@ case 20:
         }
 break;
 case 21:
-#line 580 "javagram.y"
+#line 581 "javagram.y"
 {
             yyval.bbunsPositionPair.d.u  = TypeChar;
             if (regularPass()) SetPrimitiveTypePos(yyval.bbunsPositionPair.d.p, yyvsp[0].bbidIdent.d);
@@ -3015,7 +3016,7 @@ case 21:
         }
 break;
 case 22:
-#line 588 "javagram.y"
+#line 589 "javagram.y"
 {
             yyval.bbunsPositionPair.d.u  = TypeFloat;
             if (regularPass()) SetPrimitiveTypePos(yyval.bbunsPositionPair.d.p, yyvsp[0].bbidIdent.d);
@@ -3023,7 +3024,7 @@ case 22:
         }
 break;
 case 23:
-#line 593 "javagram.y"
+#line 594 "javagram.y"
 {
             yyval.bbunsPositionPair.d.u  = TypeDouble;
             if (regularPass()) SetPrimitiveTypePos(yyval.bbunsPositionPair.d.p, yyvsp[0].bbidIdent.d);
@@ -3031,14 +3032,14 @@ case 23:
         }
 break;
 case 25:
-#line 602 "javagram.y"
+#line 603 "javagram.y"
 {
             yyval.bbsymbol.d = yyvsp[0].bbsymbolPositionPair.d.s;
             PropagateBornsIfRegularSyntaxPass(yyval.bbsymbol, yyvsp[0].bbsymbolPositionPair, yyvsp[0].bbsymbolPositionPair);
         }
 break;
 case 26:
-#line 609 "javagram.y"
+#line 610 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -3058,11 +3059,11 @@ case 26:
         }
 break;
 case 27:
-#line 626 "javagram.y"
+#line 627 "javagram.y"
 { /* rule never reduced */ }
 break;
 case 28:
-#line 631 "javagram.y"
+#line 632 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -3080,11 +3081,11 @@ case 28:
         }
 break;
 case 29:
-#line 646 "javagram.y"
+#line 647 "javagram.y"
 { /* rule never reduced */ }
 break;
 case 32:
-#line 658 "javagram.y"
+#line 659 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -3103,7 +3104,7 @@ case 32:
         }
 break;
 case 33:
-#line 674 "javagram.y"
+#line 675 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -3126,7 +3127,7 @@ case 33:
         }
 break;
 case 34:
-#line 694 "javagram.y"
+#line 695 "javagram.y"
 {
             if (regularPass()) {
                 yyval.bbsymbolPositionPair.d = yyvsp[-2].bbsymbolPositionPair.d;
@@ -3143,74 +3144,74 @@ case 34:
         }
 break;
 case 35:
-#line 708 "javagram.y"
+#line 709 "javagram.y"
 { /* rule never used */ }
 break;
 case 36:
-#line 713 "javagram.y"
+#line 714 "javagram.y"
 {
                 if (regularPass()) AllocIdCopy(yyval.bbidIdent.d,yyvsp[0].bbidIdent.d);
                 PropagateBornsIfRegularSyntaxPass(yyval.bbidIdent, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
             }
 break;
 case 37:
-#line 717 "javagram.y"
+#line 718 "javagram.y"
 {
                 if (regularPass()) AllocIdCopy(yyval.bbidIdent.d,yyvsp[0].bbidIdent.d);
                 PropagateBornsIfRegularSyntaxPass(yyval.bbidIdent, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
             }
 break;
 case 38:
-#line 721 "javagram.y"
+#line 722 "javagram.y"
 {
                 if (regularPass()) AllocIdCopy(yyval.bbidIdent.d,yyvsp[0].bbidIdent.d);
                 PropagateBornsIfRegularSyntaxPass(yyval.bbidIdent, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
             }
 break;
 case 39:
-#line 725 "javagram.y"
+#line 726 "javagram.y"
 {
                 if (regularPass()) AllocIdCopy(yyval.bbidIdent.d,yyvsp[0].bbidIdent.d);
                 PropagateBornsIfRegularSyntaxPass(yyval.bbidIdent, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
             }
 break;
 case 40:
-#line 729 "javagram.y"
+#line 730 "javagram.y"
 {
                 if (regularPass()) AllocIdCopy(yyval.bbidIdent.d,yyvsp[0].bbidIdent.d);
                 PropagateBornsIfRegularSyntaxPass(yyval.bbidIdent, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
             }
 break;
 case 41:
-#line 733 "javagram.y"
+#line 734 "javagram.y"
 {
                 if (regularPass()) AllocIdCopy(yyval.bbidIdent.d,yyvsp[0].bbidIdent.d);
                 PropagateBornsIfRegularSyntaxPass(yyval.bbidIdent, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
             }
 break;
 case 42:
-#line 737 "javagram.y"
+#line 738 "javagram.y"
 {
                 if (regularPass()) AllocIdCopy(yyval.bbidIdent.d,yyvsp[0].bbidIdent.d);
                 PropagateBornsIfRegularSyntaxPass(yyval.bbidIdent, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
             }
 break;
 case 43:
-#line 741 "javagram.y"
+#line 742 "javagram.y"
 {
                 if (regularPass()) AllocIdCopy(yyval.bbidIdent.d,yyvsp[0].bbidIdent.d);
                 PropagateBornsIfRegularSyntaxPass(yyval.bbidIdent, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
             }
 break;
 case 44:
-#line 745 "javagram.y"
+#line 746 "javagram.y"
 {
                 if (regularPass()) AllocIdCopy(yyval.bbidIdent.d,yyvsp[0].bbidIdent.d);
                 PropagateBornsIfRegularSyntaxPass(yyval.bbidIdent, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
             }
 break;
 case 45:
-#line 752 "javagram.y"
+#line 753 "javagram.y"
 {
             yyval.bbidlist.d = yyvsp[0].bbidlist.d;
             if (regularPass()) {
@@ -3226,7 +3227,7 @@ case 45:
         }
 break;
 case 46:
-#line 765 "javagram.y"
+#line 766 "javagram.y"
 {
             yyval.bbidlist.d = yyvsp[0].bbidlist.d;
             if (regularPass()) {
@@ -3242,7 +3243,7 @@ case 46:
         }
 break;
 case 47:
-#line 781 "javagram.y"
+#line 782 "javagram.y"
 {
             yyval.bbidlist.d = StackMemAlloc(S_idIdentList);
             FILL_idIdentList(yyval.bbidlist.d, *yyvsp[0].bbidIdent.d, yyvsp[0].bbidIdent.d->name, TypeDefault, NULL);
@@ -3250,7 +3251,7 @@ case 47:
         }
 break;
 case 48:
-#line 789 "javagram.y"
+#line 790 "javagram.y"
 {
             yyval.bbidlist.d = StackMemAlloc(S_idIdentList);
             FILL_idIdentList(yyval.bbidlist.d, *yyvsp[0].bbidIdent.d, yyvsp[0].bbidIdent.d->name, TypeDefault, yyvsp[-2].bbidlist.d);
@@ -3258,7 +3259,7 @@ case 48:
         }
 break;
 case 59:
-#line 831 "javagram.y"
+#line 832 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -3270,11 +3271,11 @@ case 59:
         }
 break;
 case 60:
-#line 840 "javagram.y"
+#line 841 "javagram.y"
 { assert(0); /* token never used */ }
 break;
 case 61:
-#line 844 "javagram.y"
+#line 845 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -3286,11 +3287,11 @@ case 61:
         }
 break;
 case 62:
-#line 853 "javagram.y"
+#line 854 "javagram.y"
 { assert(0); /* token never used */ }
 break;
 case 63:
-#line 858 "javagram.y"
+#line 859 "javagram.y"
 {
             if (regularPass()) {
                 assert(s_javaStat);
@@ -3300,7 +3301,7 @@ case 63:
         }
 break;
 case 64:
-#line 864 "javagram.y"
+#line 865 "javagram.y"
 {
             if (regularPass()) {
                 if (yyvsp[0].bbidlist.d == NULL) {	/* anonymous package */
@@ -3431,7 +3432,7 @@ case 64:
         }
 break;
 case 65:
-#line 991 "javagram.y"
+#line 992 "javagram.y"
 {
             if (regularPass()) {
                 /* add this package types after imports! */
@@ -3443,13 +3444,13 @@ case 65:
         }
 break;
 case 68:
-#line 1004 "javagram.y"
+#line 1005 "javagram.y"
 {
             SetNullBorns(yyval.bbposition);
         }
 break;
 case 70:
-#line 1011 "javagram.y"
+#line 1012 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbidlist, yyvsp[0].bbidlist);
             if (inSecondJslPass()) {
@@ -3458,7 +3459,7 @@ case 70:
         }
 break;
 case 71:
-#line 1017 "javagram.y"
+#line 1018 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbidlist, yyvsp[0].bbidlist);
             if (inSecondJslPass()) {
@@ -3467,7 +3468,7 @@ case 71:
         }
 break;
 case 72:
-#line 1023 "javagram.y"
+#line 1024 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbidlist);
             if (inSecondJslPass()) {
@@ -3476,7 +3477,7 @@ case 72:
         }
 break;
 case 73:
-#line 1029 "javagram.y"
+#line 1030 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbidlist);
             if (inSecondJslPass()) {
@@ -3485,7 +3486,7 @@ case 73:
         }
 break;
 case 74:
-#line 1052 "javagram.y"
+#line 1053 "javagram.y"
 {
             yyval.bbidlist.d = yyvsp[-1].bbidlist.d;
             if (regularPass()) {
@@ -3507,15 +3508,15 @@ case 74:
         }
 break;
 case 75:
-#line 1071 "javagram.y"
-{ /* rule never used */ }
-break;
-case 76:
 #line 1072 "javagram.y"
 { /* rule never used */ }
 break;
+case 76:
+#line 1073 "javagram.y"
+{ /* rule never used */ }
+break;
 case 77:
-#line 1076 "javagram.y"
+#line 1077 "javagram.y"
 {
             yyval.bbidlist.d = yyvsp[-3].bbidlist.d;
             if (regularPass()) {
@@ -3537,35 +3538,35 @@ case 77:
         }
 break;
 case 78:
-#line 1095 "javagram.y"
+#line 1096 "javagram.y"
 { /* rule never used */ }
 break;
 case 79:
-#line 1098 "javagram.y"
+#line 1099 "javagram.y"
 {
             SetNullBorns(yyval.bbposition);
         }
 break;
 case 80:
-#line 1101 "javagram.y"
+#line 1102 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[-1].bbposition);
         }
 break;
 case 81:
-#line 1107 "javagram.y"
+#line 1108 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 82:
-#line 1110 "javagram.y"
+#line 1111 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 83:
-#line 1115 "javagram.y"
+#line 1116 "javagram.y"
 {
             yyval.bbidlist.d = NULL;
             if (regularPass()) {
@@ -3575,7 +3576,7 @@ case 83:
         }
 break;
 case 84:
-#line 1122 "javagram.y"
+#line 1123 "javagram.y"
 {
             yyval.bbidlist.d = yyvsp[-1].bbidlist.d;
             if (regularPass()) {
@@ -3585,7 +3586,7 @@ case 84:
         }
 break;
 case 85:
-#line 1129 "javagram.y"
+#line 1130 "javagram.y"
 {
             yyval.bbidlist.d = NULL;
             if (regularPass()) {
@@ -3595,15 +3596,15 @@ case 85:
         }
 break;
 case 86:
-#line 1136 "javagram.y"
-{ /* rule never used */ }
-break;
-case 87:
 #line 1137 "javagram.y"
 { /* rule never used */ }
 break;
+case 87:
+#line 1138 "javagram.y"
+{ /* rule never used */ }
+break;
 case 88:
-#line 1141 "javagram.y"
+#line 1142 "javagram.y"
 {
             if (regularPass()) {
                 javaSetClassSourceInformation(s_javaThisPackageName, yyvsp[0].bbidIdent.d);
@@ -3612,7 +3613,7 @@ case 88:
         }
 break;
 case 89:
-#line 1147 "javagram.y"
+#line 1148 "javagram.y"
 {
             if (regularPass()) {
                 javaSetClassSourceInformation(s_javaThisPackageName, yyvsp[0].bbidIdent.d);
@@ -3621,80 +3622,80 @@ case 89:
         }
 break;
 case 90:
-#line 1153 "javagram.y"
-{}
-break;
-case 91:
 #line 1154 "javagram.y"
 {}
 break;
+case 91:
+#line 1155 "javagram.y"
+{}
+break;
 case 92:
-#line 1159 "javagram.y"
+#line 1160 "javagram.y"
 {
             yyval.bbunsign.d = ACC_DEFAULT;
             SetNullBorns(yyval.bbunsign);
         }
 break;
 case 93:
-#line 1163 "javagram.y"
+#line 1164 "javagram.y"
 {
             yyval.bbunsign.d = yyvsp[0].bbunsign.d;
             PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbunsign, yyvsp[0].bbunsign);
         }
 break;
 case 95:
-#line 1171 "javagram.y"
+#line 1172 "javagram.y"
 {
             yyval.bbunsign.d = yyvsp[-1].bbunsign.d | yyvsp[0].bbunsign.d;
             PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[-1].bbunsign, yyvsp[0].bbunsign);
         }
 break;
 case 96:
-#line 1178 "javagram.y"
+#line 1179 "javagram.y"
 { yyval.bbunsign.d = ACC_PUBLIC; PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbposition, yyvsp[0].bbposition);}
 break;
 case 97:
-#line 1179 "javagram.y"
+#line 1180 "javagram.y"
 { yyval.bbunsign.d = ACC_PROTECTED; PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbposition, yyvsp[0].bbposition);}
 break;
 case 98:
-#line 1180 "javagram.y"
+#line 1181 "javagram.y"
 { yyval.bbunsign.d = ACC_PRIVATE; PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbposition, yyvsp[0].bbposition);}
 break;
 case 99:
-#line 1181 "javagram.y"
+#line 1182 "javagram.y"
 { yyval.bbunsign.d = ACC_STATIC; PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbposition, yyvsp[0].bbposition);}
 break;
 case 100:
-#line 1182 "javagram.y"
+#line 1183 "javagram.y"
 { yyval.bbunsign.d = ACC_ABSTRACT; PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbposition, yyvsp[0].bbposition);}
 break;
 case 101:
-#line 1183 "javagram.y"
+#line 1184 "javagram.y"
 { yyval.bbunsign.d = ACC_FINAL; PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbposition, yyvsp[0].bbposition);}
 break;
 case 102:
-#line 1184 "javagram.y"
+#line 1185 "javagram.y"
 { yyval.bbunsign.d = ACC_NATIVE; PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbposition, yyvsp[0].bbposition);}
 break;
 case 103:
-#line 1185 "javagram.y"
+#line 1186 "javagram.y"
 { yyval.bbunsign.d = ACC_SYNCHRONIZED; PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbposition, yyvsp[0].bbposition);}
 break;
 case 104:
-#line 1186 "javagram.y"
+#line 1187 "javagram.y"
 { yyval.bbunsign.d = 0; PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbposition, yyvsp[0].bbposition);}
 break;
 case 105:
-#line 1187 "javagram.y"
+#line 1188 "javagram.y"
 { yyval.bbunsign.d = ACC_TRANSIENT; PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbposition, yyvsp[0].bbposition);}
 break;
 case 106:
-#line 1188 "javagram.y"
+#line 1189 "javagram.y"
 { yyval.bbunsign.d = 0; PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbposition, yyvsp[0].bbposition);}
 break;
 case 108:
-#line 1219 "javagram.y"
+#line 1220 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -3707,7 +3708,7 @@ case 108:
             }
 break;
 case 109:
-#line 1228 "javagram.y"
+#line 1229 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -3719,7 +3720,7 @@ case 109:
             }
 break;
 case 110:
-#line 1236 "javagram.y"
+#line 1237 "javagram.y"
 {
                 if (regularPass()) {
                     yyval.bbidIdent.d = yyvsp[-5].bbidIdent.d;
@@ -3742,7 +3743,7 @@ case 110:
             }
 break;
 case 111:
-#line 1257 "javagram.y"
+#line 1258 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -3754,7 +3755,7 @@ case 111:
             }
 break;
 case 112:
-#line 1267 "javagram.y"
+#line 1268 "javagram.y"
 {
                 if (regularPass()) {
                     yyval.bbidIdent.d = yyvsp[-3].bbidIdent.d;
@@ -3770,11 +3771,11 @@ case 112:
             }
 break;
 case 113:
-#line 1280 "javagram.y"
+#line 1281 "javagram.y"
 { /* never used */ }
 break;
 case 114:
-#line 1285 "javagram.y"
+#line 1286 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -3786,7 +3787,7 @@ case 114:
             }
 break;
 case 115:
-#line 1293 "javagram.y"
+#line 1294 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -3798,7 +3799,7 @@ case 115:
             }
 break;
 case 116:
-#line 1301 "javagram.y"
+#line 1302 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -3817,7 +3818,7 @@ case 116:
             }
 break;
 case 117:
-#line 1318 "javagram.y"
+#line 1319 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -3829,7 +3830,7 @@ case 117:
             }
 break;
 case 118:
-#line 1328 "javagram.y"
+#line 1329 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -3844,11 +3845,11 @@ case 118:
             }
 break;
 case 119:
-#line 1340 "javagram.y"
+#line 1341 "javagram.y"
 { /* never used */ }
 break;
 case 120:
-#line 1346 "javagram.y"
+#line 1347 "javagram.y"
 {
             if (inSecondJslPass()) {
                 if (strcmp(s_jsl->classStat->thisClass->linkName,
@@ -3862,7 +3863,7 @@ case 120:
         }
 break;
 case 121:
-#line 1357 "javagram.y"
+#line 1358 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -3882,19 +3883,19 @@ case 121:
         }
 break;
 case 122:
-#line 1376 "javagram.y"
+#line 1377 "javagram.y"
 {
             SetNullBorns(yyval.bbposition);
         }
 break;
 case 123:
-#line 1379 "javagram.y"
+#line 1380 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 124:
-#line 1385 "javagram.y"
+#line 1386 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -3914,7 +3915,7 @@ case 124:
         }
 break;
 case 125:
-#line 1402 "javagram.y"
+#line 1403 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -3934,7 +3935,7 @@ case 125:
         }
 break;
 case 126:
-#line 1421 "javagram.y"
+#line 1422 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -3981,51 +3982,51 @@ case 126:
         }
 break;
 case 127:
-#line 1468 "javagram.y"
+#line 1469 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 128:
-#line 1471 "javagram.y"
+#line 1472 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-3].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 129:
-#line 1477 "javagram.y"
+#line 1478 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 130:
-#line 1480 "javagram.y"
+#line 1481 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 135:
-#line 1490 "javagram.y"
+#line 1491 "javagram.y"
 {SetNullBorns(yyval.bbposition);}
 break;
 case 136:
-#line 1494 "javagram.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);}
-break;
-case 137:
 #line 1495 "javagram.y"
 {PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);}
 break;
-case 138:
+case 137:
 #line 1496 "javagram.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);}
+break;
+case 138:
+#line 1497 "javagram.y"
 {PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbsymbol, yyvsp[0].bbsymbol);}
 break;
 case 139:
-#line 1497 "javagram.y"
+#line 1498 "javagram.y"
 {PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbposition, yyvsp[0].bbposition);}
 break;
 case 140:
-#line 1503 "javagram.y"
+#line 1504 "javagram.y"
 {
             yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
             if (regularPass()) {
@@ -4038,7 +4039,7 @@ case 140:
     }
 break;
 case 141:
-#line 1516 "javagram.y"
+#line 1517 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4124,7 +4125,7 @@ case 141:
         }
 break;
 case 142:
-#line 1602 "javagram.y"
+#line 1603 "javagram.y"
 {
             yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
             if (regularPass()) {
@@ -4137,7 +4138,7 @@ case 142:
         }
 break;
 case 143:
-#line 1612 "javagram.y"
+#line 1613 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4166,14 +4167,14 @@ case 143:
         }
 break;
 case 145:
-#line 1642 "javagram.y"
+#line 1643 "javagram.y"
 {
             yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
             PropagateBornsIfRegularSyntaxPass(yyval.bbsymbol, yyvsp[-2].bbsymbol, yyvsp[0].bbexprType);
         }
 break;
 case 146:
-#line 1646 "javagram.y"
+#line 1647 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4190,14 +4191,16 @@ case 146:
         }
 break;
 case 147:
-#line 1663 "javagram.y"
+#line 1664 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbsymbol.d = StackMemAlloc(S_symbol);
-                    FILL_symbolBits(&yyval.bbsymbol.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
-                    FILL_symbol(yyval.bbsymbol.d,yyvsp[0].bbidIdent.d->name,yyvsp[0].bbidIdent.d->name,yyvsp[0].bbidIdent.d->p,yyval.bbsymbol.d->bits,type,NULL,NULL);
-                    yyval.bbsymbol.d->u.type = NULL;
+                    /*& $$.d = StackMemAlloc(S_symbol); */
+                    /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
+                    /*& FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->bits,type,NULL,NULL); */
+                    /*& REPLACED StackMemAlloc()+FILL_symbol() with: */
+                    yyval.bbsymbol.d = newSymbol(yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->p, NULL);
+                    FILL_symbolBits(&yyval.bbsymbol.d->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
                 } else {
                     PropagateBorns(yyval.bbsymbol, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
                 }
@@ -4214,7 +4217,7 @@ case 147:
         }
 break;
 case 148:
-#line 1684 "javagram.y"
+#line 1687 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4233,11 +4236,11 @@ case 148:
         }
 break;
 case 149:
-#line 1700 "javagram.y"
+#line 1703 "javagram.y"
 {/* rule never used */}
 break;
 case 152:
-#line 1712 "javagram.y"
+#line 1715 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -4247,7 +4250,7 @@ case 152:
             }
 break;
 case 153:
-#line 1720 "javagram.y"
+#line 1723 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -4263,7 +4266,7 @@ case 153:
             }
 break;
 case 154:
-#line 1736 "javagram.y"
+#line 1739 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4285,7 +4288,7 @@ case 154:
         }
 break;
 case 155:
-#line 1755 "javagram.y"
+#line 1758 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4306,11 +4309,11 @@ case 155:
         }
 break;
 case 156:
-#line 1773 "javagram.y"
+#line 1776 "javagram.y"
 {assert(0);}
 break;
 case 157:
-#line 1778 "javagram.y"
+#line 1781 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -4323,7 +4326,7 @@ case 157:
             }
 break;
 case 158:
-#line 1789 "javagram.y"
+#line 1792 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -4343,7 +4346,7 @@ case 158:
             }
 break;
 case 159:
-#line 1806 "javagram.y"
+#line 1809 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4360,11 +4363,11 @@ case 159:
         }
 break;
 case 160:
-#line 1820 "javagram.y"
+#line 1823 "javagram.y"
 { assert(0);}
 break;
 case 161:
-#line 1823 "javagram.y"
+#line 1826 "javagram.y"
 {
             yyval.bbsymbolPositionLstPair.d.s = NULL;
             yyval.bbsymbolPositionLstPair.d.p = NULL;
@@ -4372,7 +4375,7 @@ case 161:
         }
 break;
 case 163:
-#line 1832 "javagram.y"
+#line 1835 "javagram.y"
 {
             if (! SyntaxPassOnly()) {
                 yyval.bbsymbolPositionLstPair.d.s = yyvsp[0].bbsymbol.d;
@@ -4384,7 +4387,7 @@ case 163:
         }
 break;
 case 164:
-#line 1841 "javagram.y"
+#line 1844 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4402,7 +4405,7 @@ case 164:
         }
 break;
 case 165:
-#line 1859 "javagram.y"
+#line 1862 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4419,7 +4422,7 @@ case 165:
         }
 break;
 case 166:
-#line 1873 "javagram.y"
+#line 1876 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4436,7 +4439,7 @@ case 166:
         }
 break;
 case 167:
-#line 1887 "javagram.y"
+#line 1890 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4453,21 +4456,21 @@ case 167:
         }
 break;
 case 168:
-#line 1903 "javagram.y"
+#line 1906 "javagram.y"
 {
             yyval.bbsymbolList.d = NULL;
             SetNullBorns(yyval.bbsymbolList);
         }
 break;
 case 169:
-#line 1907 "javagram.y"
+#line 1910 "javagram.y"
 {
             yyval.bbsymbolList.d = yyvsp[0].bbsymbolList.d;
             PropagateBornsIfRegularSyntaxPass(yyval.bbsymbolList, yyvsp[-1].bbposition, yyvsp[0].bbsymbolList);
         }
 break;
 case 170:
-#line 1914 "javagram.y"
+#line 1917 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbsymbolList, yyvsp[0].bbsymbol, yyvsp[0].bbsymbol);
             if (inSecondJslPass()) {
@@ -4480,7 +4483,7 @@ case 170:
         }
 break;
 case 171:
-#line 1924 "javagram.y"
+#line 1927 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbsymbolList, yyvsp[-2].bbsymbolList, yyvsp[0].bbsymbol);
             if (inSecondJslPass()) {
@@ -4493,26 +4496,26 @@ case 171:
         }
 break;
 case 173:
-#line 1938 "javagram.y"
+#line 1941 "javagram.y"
 {
             yyval.bbposition.d = yyvsp[0].bbposition.d;
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 174:
-#line 1947 "javagram.y"
+#line 1950 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 175:
-#line 1950 "javagram.y"
+#line 1953 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 176:
-#line 1957 "javagram.y"
+#line 1960 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -4547,7 +4550,7 @@ case 176:
             }
 break;
 case 177:
-#line 1989 "javagram.y"
+#line 1992 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4564,7 +4567,7 @@ case 177:
         }
 break;
 case 178:
-#line 2007 "javagram.y"
+#line 2010 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -4593,7 +4596,7 @@ case 178:
             }
 break;
 case 179:
-#line 2034 "javagram.y"
+#line 2037 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -4613,31 +4616,31 @@ case 179:
             }
 break;
 case 180:
-#line 2054 "javagram.y"
+#line 2057 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-5].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 181:
-#line 2057 "javagram.y"
-{
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-4].bbposition, yyvsp[0].bbposition);
-        }
-break;
-case 182:
 #line 2060 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-4].bbposition, yyvsp[0].bbposition);
         }
 break;
-case 183:
+case 182:
 #line 2063 "javagram.y"
+{
+            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-4].bbposition, yyvsp[0].bbposition);
+        }
+break;
+case 183:
+#line 2066 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 184:
-#line 2071 "javagram.y"
+#line 2074 "javagram.y"
 {
                 if (ComputingPossibleParameterCompletion()) {
                     s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(s_javaStat->thisClass, &yyvsp[-1].bbidIdent.d->p);
@@ -4645,7 +4648,7 @@ case 184:
             }
 break;
 case 185:
-#line 2075 "javagram.y"
+#line 2078 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -4659,7 +4662,7 @@ case 185:
             }
 break;
 case 186:
-#line 2087 "javagram.y"
+#line 2090 "javagram.y"
 {
                 if (ComputingPossibleParameterCompletion()) {
                     s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(javaCurrentSuperClass(), &yyvsp[-1].bbidIdent.d->p);
@@ -4667,7 +4670,7 @@ case 186:
             }
 break;
 case 187:
-#line 2091 "javagram.y"
+#line 2094 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -4683,7 +4686,7 @@ case 187:
             }
 break;
 case 188:
-#line 2105 "javagram.y"
+#line 2108 "javagram.y"
 {
                 if (ComputingPossibleParameterCompletion()) {
                     s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(javaCurrentSuperClass(), &(yyvsp[-1].bbidIdent.d->p));
@@ -4691,7 +4694,7 @@ case 188:
             }
 break;
 case 189:
-#line 2109 "javagram.y"
+#line 2112 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -4707,31 +4710,31 @@ case 189:
             }
 break;
 case 190:
-#line 2122 "javagram.y"
+#line 2125 "javagram.y"
 {SetNullBorns(yyval.bbposition);}
 break;
 case 191:
-#line 2123 "javagram.y"
+#line 2126 "javagram.y"
 {SetNullBorns(yyval.bbposition);}
 break;
 case 192:
-#line 2124 "javagram.y"
+#line 2127 "javagram.y"
 {SetNullBorns(yyval.bbposition);}
 break;
 case 193:
-#line 2125 "javagram.y"
+#line 2128 "javagram.y"
 {assert(0);}
 break;
 case 194:
-#line 2126 "javagram.y"
+#line 2129 "javagram.y"
 {assert(0);}
 break;
 case 195:
-#line 2127 "javagram.y"
+#line 2130 "javagram.y"
 {assert(0);}
 break;
 case 196:
-#line 2134 "javagram.y"
+#line 2137 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4743,7 +4746,7 @@ case 196:
         }
 break;
 case 197:
-#line 2142 "javagram.y"
+#line 2145 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4755,7 +4758,7 @@ case 197:
         }
 break;
 case 198:
-#line 2150 "javagram.y"
+#line 2153 "javagram.y"
 {
             if (regularPass()) {
                 yyval.bbidIdent.d = yyvsp[-4].bbidIdent.d;
@@ -4778,7 +4781,7 @@ case 198:
         }
 break;
 case 199:
-#line 2171 "javagram.y"
+#line 2174 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -4790,7 +4793,7 @@ case 199:
             }
 break;
 case 200:
-#line 2181 "javagram.y"
+#line 2184 "javagram.y"
 {
                 if (regularPass()) {
                     yyval.bbidIdent.d = yyvsp[-3].bbidIdent.d;
@@ -4806,11 +4809,11 @@ case 200:
             }
 break;
 case 201:
-#line 2194 "javagram.y"
+#line 2197 "javagram.y"
 { /* never used */ }
 break;
 case 202:
-#line 2197 "javagram.y"
+#line 2200 "javagram.y"
 {
             SetNullBorns(yyval.bbposition);
             if (inSecondJslPass()) {
@@ -4820,7 +4823,7 @@ case 202:
         }
 break;
 case 204:
-#line 2208 "javagram.y"
+#line 2211 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4840,7 +4843,7 @@ case 204:
         }
 break;
 case 205:
-#line 2225 "javagram.y"
+#line 2228 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4860,49 +4863,49 @@ case 205:
         }
 break;
 case 206:
-#line 2245 "javagram.y"
+#line 2248 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 207:
-#line 2248 "javagram.y"
+#line 2251 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-3].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 209:
-#line 2255 "javagram.y"
+#line 2258 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 210:
-#line 2261 "javagram.y"
+#line 2264 "javagram.y"
 {PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);}
 break;
 case 211:
-#line 2262 "javagram.y"
+#line 2265 "javagram.y"
 {PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);}
 break;
 case 212:
-#line 2263 "javagram.y"
+#line 2266 "javagram.y"
 {PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbsymbol, yyvsp[0].bbsymbol);}
 break;
 case 213:
-#line 2264 "javagram.y"
+#line 2267 "javagram.y"
 {PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbsymbol, yyvsp[0].bbsymbol);}
 break;
 case 214:
-#line 2265 "javagram.y"
+#line 2268 "javagram.y"
 {PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbposition, yyvsp[0].bbposition);}
 break;
 case 215:
-#line 2266 "javagram.y"
+#line 2269 "javagram.y"
 {SetNullBorns(yyval.bbposition);}
 break;
 case 217:
-#line 2275 "javagram.y"
+#line 2278 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -4912,7 +4915,7 @@ case 217:
             }
 break;
 case 218:
-#line 2283 "javagram.y"
+#line 2286 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -4924,65 +4927,65 @@ case 218:
             }
 break;
 case 219:
-#line 2297 "javagram.y"
+#line 2300 "javagram.y"
 {PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[-3].bbposition, yyvsp[0].bbposition);}
 break;
 case 220:
-#line 2298 "javagram.y"
+#line 2301 "javagram.y"
 {PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[-2].bbposition, yyvsp[0].bbposition);}
 break;
 case 221:
-#line 2299 "javagram.y"
+#line 2302 "javagram.y"
 {PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[-2].bbposition, yyvsp[0].bbposition);}
 break;
 case 222:
-#line 2300 "javagram.y"
+#line 2303 "javagram.y"
 {PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[-1].bbposition, yyvsp[0].bbposition);}
 break;
 case 223:
-#line 2304 "javagram.y"
+#line 2307 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbexprType, yyvsp[0].bbexprType);
         }
 break;
 case 224:
-#line 2307 "javagram.y"
+#line 2310 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbexprType);
         }
 break;
 case 225:
-#line 2315 "javagram.y"
+#line 2318 "javagram.y"
 {
             yyval.bbposition.d = yyvsp[0].bbposition.d;
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-4].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 226:
-#line 2319 "javagram.y"
+#line 2322 "javagram.y"
 {
             yyval.bbposition.d = yyvsp[0].bbposition.d;
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 228:
-#line 2327 "javagram.y"
+#line 2330 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 232:
-#line 2336 "javagram.y"
+#line 2339 "javagram.y"
 {SetNullBorns(yyval.bbposition);}
 break;
 case 233:
-#line 2340 "javagram.y"
+#line 2343 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbsymbol, yyvsp[0].bbposition);
         }
 break;
 case 234:
-#line 2346 "javagram.y"
+#line 2349 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4995,7 +4998,7 @@ case 234:
         }
 break;
 case 235:
-#line 2356 "javagram.y"
+#line 2359 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5008,7 +5011,7 @@ case 235:
         }
 break;
 case 236:
-#line 2366 "javagram.y"
+#line 2369 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5023,14 +5026,14 @@ case 236:
         }
 break;
 case 237:
-#line 2381 "javagram.y"
+#line 2384 "javagram.y"
 {
             if (regularPass()) yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
             PropagateBornsIfRegularSyntaxPass(yyval.bbsymbol, yyvsp[0].bbsymbol, yyvsp[0].bbsymbol);
         }
 break;
 case 238:
-#line 2385 "javagram.y"
+#line 2388 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5040,7 +5043,7 @@ case 238:
         }
 break;
 case 239:
-#line 2391 "javagram.y"
+#line 2394 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5053,87 +5056,87 @@ case 239:
         }
 break;
 case 263:
-#line 2442 "javagram.y"
+#line 2445 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 264:
-#line 2445 "javagram.y"
+#line 2448 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-4].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 265:
-#line 2451 "javagram.y"
+#line 2454 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 266:
-#line 2457 "javagram.y"
+#line 2460 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 267:
-#line 2463 "javagram.y"
+#line 2466 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 268:
-#line 2469 "javagram.y"
+#line 2472 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbexprType, yyvsp[0].bbposition);
         }
 break;
 case 269:
-#line 2475 "javagram.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[0].bbexprType, yyvsp[0].bbexprType);}
-break;
-case 270:
-#line 2476 "javagram.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[0].bbexprType, yyvsp[0].bbexprType);}
-break;
-case 271:
-#line 2477 "javagram.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[0].bbexprType, yyvsp[0].bbexprType);}
-break;
-case 272:
 #line 2478 "javagram.y"
 {PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[0].bbexprType, yyvsp[0].bbexprType);}
 break;
-case 273:
+case 270:
 #line 2479 "javagram.y"
 {PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[0].bbexprType, yyvsp[0].bbexprType);}
 break;
-case 274:
+case 271:
 #line 2480 "javagram.y"
 {PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[0].bbexprType, yyvsp[0].bbexprType);}
 break;
-case 275:
+case 272:
 #line 2481 "javagram.y"
 {PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[0].bbexprType, yyvsp[0].bbexprType);}
 break;
-case 276:
+case 273:
+#line 2482 "javagram.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[0].bbexprType, yyvsp[0].bbexprType);}
+break;
+case 274:
+#line 2483 "javagram.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[0].bbexprType, yyvsp[0].bbexprType);}
+break;
+case 275:
 #line 2484 "javagram.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[0].bbexprType, yyvsp[0].bbexprType);}
+break;
+case 276:
+#line 2487 "javagram.y"
 {if (regularPass()) EXTRACT_COUNTER_SEMACT(yyval.bbinteger.data);}
 break;
 case 277:
-#line 2487 "javagram.y"
+#line 2490 "javagram.y"
 {if (regularPass()) EXTRACT_LABEL_SEMACT(yyval.bbinteger.data);}
 break;
 case 278:
-#line 2490 "javagram.y"
+#line 2493 "javagram.y"
 {if (regularPass()) EXTRACT_GOTO_SEMACT(yyval.bbinteger.data);}
 break;
 case 279:
-#line 2493 "javagram.y"
+#line 2496 "javagram.y"
 {if (regularPass()) EXTRACT_FORK_SEMACT(yyval.bbinteger.data);}
 break;
 case 280:
-#line 2498 "javagram.y"
+#line 2501 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5145,7 +5148,7 @@ case 280:
         }
 break;
 case 281:
-#line 2510 "javagram.y"
+#line 2513 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5158,7 +5161,7 @@ case 281:
         }
 break;
 case 282:
-#line 2523 "javagram.y"
+#line 2526 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5170,7 +5173,7 @@ case 282:
         }
 break;
 case 283:
-#line 2535 "javagram.y"
+#line 2538 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5182,7 +5185,7 @@ case 283:
         }
 break;
 case 284:
-#line 2547 "javagram.y"
+#line 2550 "javagram.y"
 {/*6*/
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5192,7 +5195,7 @@ case 284:
         }
 break;
 case 285:
-#line 2553 "javagram.y"
+#line 2556 "javagram.y"
 {/*7*/
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5203,7 +5206,7 @@ case 285:
         }
 break;
 case 286:
-#line 2560 "javagram.y"
+#line 2563 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5218,37 +5221,37 @@ case 286:
         }
 break;
 case 287:
-#line 2575 "javagram.y"
+#line 2578 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-5].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 288:
-#line 2578 "javagram.y"
-{
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-4].bbposition, yyvsp[0].bbposition);
-        }
-break;
-case 289:
 #line 2581 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-4].bbposition, yyvsp[0].bbposition);
         }
 break;
-case 290:
+case 289:
 #line 2584 "javagram.y"
+{
+            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-4].bbposition, yyvsp[0].bbposition);
+        }
+break;
+case 290:
+#line 2587 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 292:
-#line 2591 "javagram.y"
+#line 2594 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 293:
-#line 2597 "javagram.y"
+#line 2600 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5258,37 +5261,37 @@ case 293:
         }
 break;
 case 294:
-#line 2603 "javagram.y"
+#line 2606 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 296:
-#line 2610 "javagram.y"
+#line 2613 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 297:
-#line 2613 "javagram.y"
+#line 2616 "javagram.y"
 {
             SetNullBorns(yyval.bbposition);
         }
 break;
 case 298:
-#line 2619 "javagram.y"
+#line 2622 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 299:
-#line 2622 "javagram.y"
+#line 2625 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 300:
-#line 2628 "javagram.y"
+#line 2631 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5309,7 +5312,7 @@ case 300:
         }
 break;
 case 301:
-#line 2649 "javagram.y"
+#line 2652 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5326,7 +5329,7 @@ case 301:
         }
 break;
 case 302:
-#line 2666 "javagram.y"
+#line 2669 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5343,7 +5346,7 @@ case 302:
         }
 break;
 case 303:
-#line 2683 "javagram.y"
+#line 2686 "javagram.y"
 { /*5*/
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5353,7 +5356,7 @@ case 303:
         }
 break;
 case 304:
-#line 2689 "javagram.y"
+#line 2692 "javagram.y"
 {/*6*/
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5363,7 +5366,7 @@ case 304:
         }
 break;
 case 305:
-#line 2695 "javagram.y"
+#line 2698 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5375,7 +5378,7 @@ case 305:
         }
 break;
 case 306:
-#line 2703 "javagram.y"
+#line 2706 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5388,19 +5391,19 @@ case 306:
         }
 break;
 case 307:
-#line 2715 "javagram.y"
+#line 2718 "javagram.y"
 {
             SetNullBorns(yyval.bbposition);
         }
 break;
 case 308:
-#line 2718 "javagram.y"
+#line 2721 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbexprType, yyvsp[0].bbexprType);
         }
 break;
 case 309:
-#line 2724 "javagram.y"
+#line 2727 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5412,7 +5415,7 @@ case 309:
         }
 break;
 case 310:
-#line 2738 "javagram.y"
+#line 2741 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5430,7 +5433,7 @@ case 310:
         }
 break;
 case 311:
-#line 2756 "javagram.y"
+#line 2759 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5445,7 +5448,7 @@ case 311:
         }
 break;
 case 312:
-#line 2771 "javagram.y"
+#line 2774 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5460,7 +5463,7 @@ case 312:
         }
 break;
 case 313:
-#line 2786 "javagram.y"
+#line 2789 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5472,7 +5475,7 @@ case 313:
         }
 break;
 case 314:
-#line 2795 "javagram.y"
+#line 2798 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5484,7 +5487,7 @@ case 314:
         }
 break;
 case 315:
-#line 2807 "javagram.y"
+#line 2810 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5496,7 +5499,7 @@ case 315:
         }
 break;
 case 316:
-#line 2816 "javagram.y"
+#line 2819 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5508,55 +5511,55 @@ case 316:
         }
 break;
 case 317:
-#line 2828 "javagram.y"
+#line 2831 "javagram.y"
 {
             SetNullBorns(yyval.bbposition);
         }
 break;
 case 318:
-#line 2831 "javagram.y"
+#line 2834 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 319:
-#line 2834 "javagram.y"
+#line 2837 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbsymbol, yyvsp[0].bbsymbol);
         }
 break;
 case 320:
-#line 2839 "javagram.y"
+#line 2842 "javagram.y"
 {
             SetNullBorns(yyval.bbposition);
         }
 break;
 case 321:
-#line 2842 "javagram.y"
+#line 2845 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 322:
-#line 2848 "javagram.y"
+#line 2851 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbexprType, yyvsp[0].bbexprType);
         }
 break;
 case 323:
-#line 2851 "javagram.y"
+#line 2854 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbexprType);
         }
 break;
 case 324:
-#line 2857 "javagram.y"
+#line 2860 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 325:
-#line 2860 "javagram.y"
+#line 2863 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5568,13 +5571,13 @@ case 325:
         }
 break;
 case 326:
-#line 2872 "javagram.y"
+#line 2875 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 327:
-#line 2875 "javagram.y"
+#line 2878 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5586,7 +5589,7 @@ case 327:
         }
 break;
 case 328:
-#line 2887 "javagram.y"
+#line 2890 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5598,7 +5601,7 @@ case 328:
         }
 break;
 case 329:
-#line 2896 "javagram.y"
+#line 2899 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5610,7 +5613,7 @@ case 329:
         }
 break;
 case 330:
-#line 2908 "javagram.y"
+#line 2911 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5624,19 +5627,19 @@ case 330:
         }
 break;
 case 331:
-#line 2922 "javagram.y"
+#line 2925 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-4].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 334:
-#line 2930 "javagram.y"
+#line 2933 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 335:
-#line 2937 "javagram.y"
+#line 2940 "javagram.y"
 {
                 if (s_opt.cxrefs == OLO_EXTRACT) {
                     addTrivialCxReference("TryCatch", TypeTryCatchMarker,StorageDefault,
@@ -5645,7 +5648,7 @@ case 335:
             }
 break;
 case 336:
-#line 2944 "javagram.y"
+#line 2947 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -5655,7 +5658,7 @@ case 336:
             }
 break;
 case 337:
-#line 2951 "javagram.y"
+#line 2954 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-5].bbidIdent, yyvsp[0].bbposition);
             if (s_opt.cxrefs == OLO_EXTRACT) {
@@ -5665,13 +5668,13 @@ case 337:
         }
 break;
 case 339:
-#line 2963 "javagram.y"
+#line 2966 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 340:
-#line 2970 "javagram.y"
+#line 2973 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -5688,7 +5691,7 @@ case 340:
             }
 break;
 case 341:
-#line 2985 "javagram.y"
+#line 2988 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -5700,7 +5703,7 @@ case 341:
             }
 break;
 case 342:
-#line 2994 "javagram.y"
+#line 2997 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5715,7 +5718,7 @@ case 342:
         }
 break;
 case 343:
-#line 3009 "javagram.y"
+#line 3012 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5727,7 +5730,7 @@ case 343:
         }
 break;
 case 344:
-#line 3023 "javagram.y"
+#line 3026 "javagram.y"
 {
             if (regularPass()) {
                 yyval.bbexprType.d = yyvsp[0].bbexprType.d;
@@ -5740,7 +5743,7 @@ case 344:
         }
 break;
 case 345:
-#line 3033 "javagram.y"
+#line 3036 "javagram.y"
 {
             if (regularPass()) {
                 yyval.bbexprType.d = yyvsp[0].bbexprType.d;
@@ -5753,7 +5756,7 @@ case 345:
         }
 break;
 case 347:
-#line 3047 "javagram.y"
+#line 3050 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5771,7 +5774,7 @@ case 347:
         }
 break;
 case 348:
-#line 3062 "javagram.y"
+#line 3065 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5787,7 +5790,7 @@ case 348:
         }
 break;
 case 349:
-#line 3075 "javagram.y"
+#line 3078 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5801,7 +5804,7 @@ case 349:
         }
 break;
 case 350:
-#line 3086 "javagram.y"
+#line 3089 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5817,7 +5820,7 @@ case 350:
         }
 break;
 case 351:
-#line 3099 "javagram.y"
+#line 3102 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5831,7 +5834,7 @@ case 351:
         }
 break;
 case 352:
-#line 3110 "javagram.y"
+#line 3113 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5845,7 +5848,7 @@ case 352:
         }
 break;
 case 353:
-#line 3121 "javagram.y"
+#line 3124 "javagram.y"
 {
             if (regularPass()) {
                 yyval.bbexprType.d = yyvsp[-1].bbexprType.d;
@@ -5865,17 +5868,17 @@ case 353:
         }
 break;
 case 358:
-#line 3142 "javagram.y"
+#line 3145 "javagram.y"
 { assert(0); /* rule never used */ }
 break;
 case 359:
-#line 3145 "javagram.y"
+#line 3148 "javagram.y"
 {
             yyval.erfs = s_cp.erfsForParamsComplet;
         }
 break;
 case 360:
-#line 3152 "javagram.y"
+#line 3155 "javagram.y"
 {
                 if (ComputingPossibleParameterCompletion()) {
                     S_typeModifiers *mm;
@@ -5890,7 +5893,7 @@ case 360:
             }
 break;
 case 361:
-#line 3164 "javagram.y"
+#line 3167 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5914,7 +5917,7 @@ case 361:
         }
 break;
 case 362:
-#line 3186 "javagram.y"
+#line 3189 "javagram.y"
 {
                 if (ComputingPossibleParameterCompletion()) {
                     S_typeModifiers *mm;
@@ -5927,7 +5930,7 @@ case 362:
             }
 break;
 case 363:
-#line 3196 "javagram.y"
+#line 3199 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5946,7 +5949,7 @@ case 363:
         }
 break;
 case 364:
-#line 3215 "javagram.y"
+#line 3218 "javagram.y"
 {
             if (ComputingPossibleParameterCompletion()) {
                 S_symbol            *ss;
@@ -5963,7 +5966,7 @@ case 364:
         }
 break;
 case 365:
-#line 3232 "javagram.y"
+#line 3235 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6015,7 +6018,7 @@ case 365:
         }
 break;
 case 366:
-#line 3282 "javagram.y"
+#line 3285 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -6040,7 +6043,7 @@ case 366:
             }
 break;
 case 367:
-#line 3304 "javagram.y"
+#line 3307 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -6050,7 +6053,7 @@ case 367:
             }
 break;
 case 368:
-#line 3311 "javagram.y"
+#line 3314 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6068,7 +6071,7 @@ case 368:
         }
 break;
 case 369:
-#line 3326 "javagram.y"
+#line 3329 "javagram.y"
 {
             yyval.bbexprType.d.t = yyvsp[0].bbnestedConstrTokenType.d.t;
             yyval.bbexprType.d.pp = yyvsp[0].bbnestedConstrTokenType.d.pp;
@@ -6077,7 +6080,7 @@ case 369:
         }
 break;
 case 370:
-#line 3333 "javagram.y"
+#line 3336 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -6098,7 +6101,7 @@ case 370:
             }
 break;
 case 371:
-#line 3352 "javagram.y"
+#line 3355 "javagram.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -6112,25 +6115,25 @@ case 371:
         }
 break;
 case 372:
-#line 3363 "javagram.y"
-{
-            assert(0); /* rule never used */
-        }
-break;
-case 373:
 #line 3366 "javagram.y"
 {
             assert(0); /* rule never used */
         }
 break;
-case 374:
+case 373:
 #line 3369 "javagram.y"
 {
             assert(0); /* rule never used */
         }
 break;
+case 374:
+#line 3372 "javagram.y"
+{
+            assert(0); /* rule never used */
+        }
+break;
 case 375:
-#line 3381 "javagram.y"
+#line 3384 "javagram.y"
 {
             yyval.bbtypeModifiersListPositionLstPair.d.t = NULL;
             yyval.bbtypeModifiersListPositionLstPair.d.p = NULL;
@@ -6138,7 +6141,7 @@ case 375:
         }
 break;
 case 377:
-#line 3390 "javagram.y"
+#line 3393 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6156,7 +6159,7 @@ case 377:
         }
 break;
 case 378:
-#line 3405 "javagram.y"
+#line 3408 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6174,15 +6177,15 @@ case 378:
         }
 break;
 case 379:
-#line 3420 "javagram.y"
+#line 3423 "javagram.y"
 {assert(0);}
 break;
 case 380:
-#line 3421 "javagram.y"
+#line 3424 "javagram.y"
 {assert(0);}
 break;
 case 381:
-#line 3426 "javagram.y"
+#line 3429 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6199,7 +6202,7 @@ case 381:
         }
 break;
 case 382:
-#line 3440 "javagram.y"
+#line 3443 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6215,7 +6218,7 @@ case 382:
         }
 break;
 case 383:
-#line 3453 "javagram.y"
+#line 3456 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6233,7 +6236,7 @@ case 383:
         }
 break;
 case 384:
-#line 3468 "javagram.y"
+#line 3471 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6250,48 +6253,48 @@ case 384:
         }
 break;
 case 385:
-#line 3486 "javagram.y"
+#line 3489 "javagram.y"
 {
             if (regularPass()) yyval.bbinteger.data = 1;
             PropagateBornsIfRegularSyntaxPass(yyval.bbinteger, yyvsp[0].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 386:
-#line 3490 "javagram.y"
+#line 3493 "javagram.y"
 {
             if (regularPass()) yyval.bbinteger.data = yyvsp[-1].bbinteger.data+1;
             PropagateBornsIfRegularSyntaxPass(yyval.bbinteger, yyvsp[-1].bbinteger, yyvsp[0].bbposition);
         }
 break;
 case 387:
-#line 3497 "javagram.y"
+#line 3500 "javagram.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 388:
-#line 3502 "javagram.y"
+#line 3505 "javagram.y"
 {
             if (regularPass()) yyval.bbinteger.data = 0;
             SetNullBorns(yyval.bbinteger);
         }
 break;
 case 390:
-#line 3510 "javagram.y"
+#line 3513 "javagram.y"
 {
             if (regularPass()) yyval.bbinteger.data = 1;
             PropagateBornsIfRegularSyntaxPass(yyval.bbinteger, yyvsp[-1].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 391:
-#line 3514 "javagram.y"
+#line 3517 "javagram.y"
 {
             if (regularPass()) yyval.bbinteger.data = yyvsp[-2].bbinteger.data+1;
             PropagateBornsIfRegularSyntaxPass(yyval.bbinteger, yyvsp[-2].bbinteger, yyvsp[0].bbposition);
         }
 break;
 case 392:
-#line 3521 "javagram.y"
+#line 3524 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6319,7 +6322,7 @@ case 392:
         }
 break;
 case 393:
-#line 3546 "javagram.y"
+#line 3549 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6347,7 +6350,7 @@ case 393:
         }
 break;
 case 394:
-#line 3571 "javagram.y"
+#line 3574 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6377,19 +6380,19 @@ case 394:
         }
 break;
 case 395:
-#line 3598 "javagram.y"
+#line 3601 "javagram.y"
 { assert(0); }
 break;
 case 396:
-#line 3599 "javagram.y"
+#line 3602 "javagram.y"
 { assert(0); }
 break;
 case 397:
-#line 3600 "javagram.y"
+#line 3603 "javagram.y"
 { assert(0); }
 break;
 case 398:
-#line 3604 "javagram.y"
+#line 3607 "javagram.y"
 {
             if (ComputingPossibleParameterCompletion()) {
                 s_cp.erfsForParamsComplet = javaCrErfsForMethodInvocationN(yyvsp[-1].bbidlist.d);
@@ -6397,7 +6400,7 @@ case 398:
         }
 break;
 case 399:
-#line 3608 "javagram.y"
+#line 3611 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6415,7 +6418,7 @@ case 399:
         }
 break;
 case 400:
-#line 3623 "javagram.y"
+#line 3626 "javagram.y"
 {
             if (ComputingPossibleParameterCompletion()) {
                 s_cp.erfsForParamsComplet = javaCrErfsForMethodInvocationT(yyvsp[-3].bbexprType.d.t, yyvsp[-1].bbidIdent.d);
@@ -6423,7 +6426,7 @@ case 400:
         }
 break;
 case 401:
-#line 3627 "javagram.y"
+#line 3630 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6440,7 +6443,7 @@ case 401:
         }
 break;
 case 402:
-#line 3641 "javagram.y"
+#line 3644 "javagram.y"
 {
             if (ComputingPossibleParameterCompletion()) {
                 s_cp.erfsForParamsComplet = javaCrErfsForMethodInvocationS(yyvsp[-3].bbidIdent.d, yyvsp[-1].bbidIdent.d);
@@ -6448,7 +6451,7 @@ case 402:
         }
 break;
 case 403:
-#line 3645 "javagram.y"
+#line 3648 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6466,7 +6469,7 @@ case 403:
         }
 break;
 case 404:
-#line 3669 "javagram.y"
+#line 3672 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6484,7 +6487,7 @@ case 404:
         }
 break;
 case 405:
-#line 3684 "javagram.y"
+#line 3687 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6500,11 +6503,11 @@ case 405:
         }
 break;
 case 406:
-#line 3697 "javagram.y"
+#line 3700 "javagram.y"
 { /* rule never used */ }
 break;
 case 408:
-#line 3702 "javagram.y"
+#line 3705 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6519,11 +6522,11 @@ case 408:
         }
 break;
 case 411:
-#line 3716 "javagram.y"
+#line 3719 "javagram.y"
 { /* rule never used */ }
 break;
 case 412:
-#line 3720 "javagram.y"
+#line 3723 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6537,7 +6540,7 @@ case 412:
         }
 break;
 case 413:
-#line 3734 "javagram.y"
+#line 3737 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6551,7 +6554,7 @@ case 413:
         }
 break;
 case 416:
-#line 3750 "javagram.y"
+#line 3753 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6565,7 +6568,7 @@ case 416:
         }
 break;
 case 417:
-#line 3761 "javagram.y"
+#line 3764 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6579,7 +6582,7 @@ case 417:
         }
 break;
 case 419:
-#line 3776 "javagram.y"
+#line 3779 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6593,7 +6596,7 @@ case 419:
         }
 break;
 case 420:
-#line 3790 "javagram.y"
+#line 3793 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6607,7 +6610,7 @@ case 420:
         }
 break;
 case 422:
-#line 3805 "javagram.y"
+#line 3808 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6621,7 +6624,7 @@ case 422:
         }
 break;
 case 423:
-#line 3816 "javagram.y"
+#line 3819 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6636,7 +6639,7 @@ case 423:
         }
 break;
 case 425:
-#line 3832 "javagram.y"
+#line 3835 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6661,7 +6664,7 @@ case 425:
         }
 break;
 case 426:
-#line 3854 "javagram.y"
+#line 3857 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6685,7 +6688,7 @@ case 426:
         }
 break;
 case 427:
-#line 3875 "javagram.y"
+#line 3878 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6708,7 +6711,7 @@ case 427:
         }
 break;
 case 429:
-#line 3910 "javagram.y"
+#line 3913 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6722,7 +6725,7 @@ case 429:
         }
 break;
 case 430:
-#line 3921 "javagram.y"
+#line 3924 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6736,7 +6739,7 @@ case 430:
         }
 break;
 case 431:
-#line 3932 "javagram.y"
+#line 3935 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6750,7 +6753,7 @@ case 431:
         }
 break;
 case 433:
-#line 3947 "javagram.y"
+#line 3950 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6777,7 +6780,7 @@ case 433:
         }
 break;
 case 434:
-#line 3971 "javagram.y"
+#line 3974 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6791,7 +6794,7 @@ case 434:
         }
 break;
 case 436:
-#line 3986 "javagram.y"
+#line 3989 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6805,7 +6808,7 @@ case 436:
         }
 break;
 case 437:
-#line 3997 "javagram.y"
+#line 4000 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6819,7 +6822,7 @@ case 437:
         }
 break;
 case 438:
-#line 4008 "javagram.y"
+#line 4011 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6833,7 +6836,7 @@ case 438:
         }
 break;
 case 440:
-#line 4023 "javagram.y"
+#line 4026 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6847,7 +6850,7 @@ case 440:
         }
 break;
 case 441:
-#line 4034 "javagram.y"
+#line 4037 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6861,7 +6864,7 @@ case 441:
         }
 break;
 case 442:
-#line 4045 "javagram.y"
+#line 4048 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6875,7 +6878,7 @@ case 442:
         }
 break;
 case 443:
-#line 4056 "javagram.y"
+#line 4059 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6889,7 +6892,7 @@ case 443:
         }
 break;
 case 444:
-#line 4067 "javagram.y"
+#line 4070 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6903,7 +6906,7 @@ case 444:
         }
 break;
 case 446:
-#line 4082 "javagram.y"
+#line 4085 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6917,7 +6920,7 @@ case 446:
         }
 break;
 case 447:
-#line 4093 "javagram.y"
+#line 4096 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6931,7 +6934,7 @@ case 447:
         }
 break;
 case 449:
-#line 4108 "javagram.y"
+#line 4111 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6945,7 +6948,7 @@ case 449:
         }
 break;
 case 451:
-#line 4123 "javagram.y"
+#line 4126 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6959,7 +6962,7 @@ case 451:
         }
 break;
 case 453:
-#line 4138 "javagram.y"
+#line 4141 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6973,7 +6976,7 @@ case 453:
         }
 break;
 case 455:
-#line 4153 "javagram.y"
+#line 4156 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6987,7 +6990,7 @@ case 455:
         }
 break;
 case 457:
-#line 4168 "javagram.y"
+#line 4171 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -7001,7 +7004,7 @@ case 457:
         }
 break;
 case 459:
-#line 4183 "javagram.y"
+#line 4186 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -7015,7 +7018,7 @@ case 459:
         }
 break;
 case 462:
-#line 4202 "javagram.y"
+#line 4205 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -7028,7 +7031,7 @@ case 462:
         }
 break;
 case 463:
-#line 4211 "javagram.y"
+#line 4214 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -7072,7 +7075,7 @@ case 463:
         }
 break;
 case 464:
-#line 4255 "javagram.y"
+#line 4258 "javagram.y"
 {
             if (regularPass()) {
                 yyval.bbexprType.d.pp = javaGetNameStartingPosition(yyvsp[0].bbidlist.d);
@@ -7087,95 +7090,95 @@ case 464:
         }
 break;
 case 467:
-#line 4269 "javagram.y"
+#line 4272 "javagram.y"
 { /* rule never used */ }
 break;
 case 468:
-#line 4273 "javagram.y"
+#line 4276 "javagram.y"
 {
             if (regularPass()) yyval.bbunsPositionPair.d.u = '=';
             PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 469:
-#line 4277 "javagram.y"
+#line 4280 "javagram.y"
 {
             if (regularPass()) yyval.bbunsPositionPair.d.u = MUL_ASSIGN;
             PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 470:
-#line 4281 "javagram.y"
+#line 4284 "javagram.y"
 {
             if (regularPass()) yyval.bbunsPositionPair.d.u = DIV_ASSIGN;
             PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 471:
-#line 4285 "javagram.y"
+#line 4288 "javagram.y"
 {
             if (regularPass()) yyval.bbunsPositionPair.d.u = MOD_ASSIGN;
             PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 472:
-#line 4289 "javagram.y"
+#line 4292 "javagram.y"
 {
             if (regularPass()) yyval.bbunsPositionPair.d.u = ADD_ASSIGN;
             PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 473:
-#line 4293 "javagram.y"
+#line 4296 "javagram.y"
 {
             if (regularPass()) yyval.bbunsPositionPair.d.u = SUB_ASSIGN;
             PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 474:
-#line 4297 "javagram.y"
+#line 4300 "javagram.y"
 {
             if (regularPass()) yyval.bbunsPositionPair.d.u = LEFT_ASSIGN;
             PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 475:
-#line 4301 "javagram.y"
+#line 4304 "javagram.y"
 {
             if (regularPass()) yyval.bbunsPositionPair.d.u = RIGHT_ASSIGN;
             PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 476:
-#line 4305 "javagram.y"
+#line 4308 "javagram.y"
 {
             if (regularPass()) yyval.bbunsPositionPair.d.u = URIGHT_ASSIGN;
             PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 477:
-#line 4309 "javagram.y"
+#line 4312 "javagram.y"
 {
             if (regularPass()) yyval.bbunsPositionPair.d.u = AND_ASSIGN;
             PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 478:
-#line 4313 "javagram.y"
+#line 4316 "javagram.y"
 {
             if (regularPass()) yyval.bbunsPositionPair.d.u = XOR_ASSIGN;
             PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 479:
-#line 4317 "javagram.y"
+#line 4320 "javagram.y"
 {
             if (regularPass()) yyval.bbunsPositionPair.d.u = OR_ASSIGN;
             PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
         }
 break;
 case 481:
-#line 4325 "javagram.y"
+#line 4328 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -7189,7 +7192,7 @@ case 481:
         }
 break;
 case 483:
-#line 4345 "javagram.y"
+#line 4348 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -7199,7 +7202,7 @@ case 483:
         }
 break;
 case 484:
-#line 4354 "javagram.y"
+#line 4357 "javagram.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -7208,7 +7211,7 @@ case 484:
             }
         }
 break;
-#line 7212 "javagram.c"
+#line 7215 "javagram.c"
     }
     yyssp -= yym;
     yystate = *yyssp;
