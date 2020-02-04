@@ -339,7 +339,7 @@ primary_expr
             /*& FILL_symbol(d,$1.d->name,$1.d->name,$1.d->p,d->bits,type,$$.d.t,NULL); */
             /*& REPLACED: StackMemAlloc() & FILL_symbol() with: */
             d = newSymbolType($1.d->name, $1.d->name, $1.d->p, $$.d.t, NULL);
-            FILL_symbolBits(&d->bits,0,0,0,0,0,TypeDefault, StorageExtern, 0);
+            FILL_symbolBits(&d->bits, 0, 0, 0, 0, 0, TypeDefault, StorageExtern, 0);
             d->u.type = $$.d.t; /* TODO Should not be needed... */
 
             dd = addNewSymbolDef(d, StorageExtern, s_symTab, UsageUsed);
@@ -1109,7 +1109,6 @@ declarator2
         /* FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->bits,type,NULL,NULL); */
         /* REPLACED: StackMemAlloc() and FILL_symbol() with: */
         $$.d = newSymbol($1.d->name, $1.d->name, $1.d->p, NULL);
-        $$.d->u.type = NULL;    /* TODO Unnecessary? */
         FILL_symbolBits(&$$.d->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
     }
     | '(' declarator ')'								{
@@ -1270,19 +1269,23 @@ parameter_identifier_list
 identifier_list
     : IDENTIFIER								{
         S_symbol *p;
-        p = StackMemAlloc(S_symbol);
-        FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
-        FILL_symbol(p,$1.d->name,$1.d->name,$1.d->p,p->bits,type,NULL,NULL);
-        p->u.type = NULL;
+        /*& p = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
+        /*& FILL_symbol(p,$1.d->name,$1.d->name,$1.d->p,p->bits,type,NULL,NULL); */
+        /*& REPLACED: StackMemAlloc()+FILL_symbol() with: */
+        p = newSymbol($1.d->name, $1.d->name, $1.d->p, NULL);
+        FILL_symbolBits(&p->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
         $$.d.s = p;
         $$.d.p = NULL;
     }
     | identifier_list ',' identifier			{
         S_symbol        *p;
-        p = StackMemAlloc(S_symbol);
-        FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
-        FILL_symbol(p,$3.d->name,$3.d->name,$3.d->p,p->bits,type,NULL,NULL);
-        p->u.type = NULL;
+        /*& p = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
+        /*& FILL_symbol(p,$3.d->name,$3.d->name,$3.d->p,p->bits,type,NULL,NULL); */
+        /*& REPLACED: StackMemAlloc()+FILL_symbol() with: */
+        p = newSymbol($3.d->name, $3.d->name, $3.d->p, NULL);
+        FILL_symbolBits(&p->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
         $$.d = $1.d;
         LIST_APPEND(S_symbol, $$.d.s, p);
         appendPositionToList(&$$.d.p, &$2.d);
@@ -1335,7 +1338,7 @@ parameter_declaration
         /*& REPLACED: StackMemAlloc()+FILL_symbol() with: */
         $$.d = newSymbolType(NULL, NULL, s_noPos, $1.d, NULL);
         FILL_symbolBits(&$$.d->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
-        $$.d->u.type = $1.d;
+        $$.d->u.type = $1.d;    /* TODO This should not be necessary */
     }
     | error										{
         /*
