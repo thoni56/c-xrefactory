@@ -68,7 +68,7 @@
 /* int func() to get parameter_identifier_list rule to trigger */
 
 start:	e						{ int func(p1, p2, p3); return($1); }
-    |	error					{ return(0); }
+    |	error					{ void func2(a, ...); return(0); }
     ;
 
 e:    e '*' e					{$$ = $1 * $3;}

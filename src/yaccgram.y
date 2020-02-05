@@ -1354,7 +1354,7 @@ identifier_list
         /*& p = StackMemAlloc(S_symbol); */
         /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
         /*& FILL_symbol(p,$1.d->name,$1.d->name,$1.d->p,p->bits,type,NULL,NULL); */
-        /*& WITHOUT COVERAGE REPLACED StackMemAlloc()+FILL_symbol() with */
+        /*& REPLACED StackMemAlloc()+FILL_symbol() with */
         p = newSymbol($1.d->name, $1.d->name, $1.d->p, NULL);
         FILL_symbolBits(&p->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
 
