@@ -1336,7 +1336,7 @@ parameter_identifier_list
         /*& p = StackMemAlloc(S_symbol); */
         /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0); */
         /*& FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL); */
-        /*& WITHOUT COVERAGE: REPLACED StackMemAlloc()+FILL_symbol() with */
+        /*& REPLACED StackMemAlloc()+FILL_symbol() with */
         p = newSymbol("", "", pp, NULL);
         FILL_symbolBits(&p->bits, 0, 0, 0, 0, 0, TypeElipsis, StorageDefault, 0);
 
@@ -1363,11 +1363,16 @@ identifier_list
     }
     | identifier_list ',' identifier            {
         S_symbol        *p;
-        p = StackMemAlloc(S_symbol);
+
+        /*& p = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
+        /*& FILL_symbol(p,$3.d->name,$3.d->name,$3.d->p,p->bits,type,NULL,NULL); */
+        /*& REPLACED StackMemAlloc()+FILL_symbol() with  */
+        p = newSymbol($3.d->name, $3.d->name, $3.d->p, NULL);
         FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
-        FILL_symbol(p,$3.d->name,$3.d->name,$3.d->p,p->bits,type,NULL,NULL);
-        p->u.type = NULL;
+
         $$.d = $1.d;
+
         LIST_APPEND(S_symbol, $$.d.s, p);
         appendPositionToList(&$$.d.p, &$2.d);
     }
