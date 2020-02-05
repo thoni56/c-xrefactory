@@ -16,6 +16,7 @@ quick:
 	@$(MAKE) -C simple_xrefs
 	@$(MAKE) -C pragma_once
 	@$(MAKE) -C process_yacc
+	@$(MAKE) -C yacc_coverage
 	@$(MAKE) -C basic_html_generation
 	@$(MAKE) -C standard_includes
 	@$(MAKE) -C initializer_parsing
