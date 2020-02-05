@@ -25,9 +25,10 @@ script:
     # Now reset coverage and run integration tests
     - find . -name *.gcda -exec rm {} \;
     - cd tests
+    - make quick
     - cd ffmpeg ; make init ; cd ..
     - cd systemd ; make init ; cd ..
-    - make all
+    - make slow
     - cd ..
     # Coverage to Coveralls
     - lcov -d src -c -o coverage.info
