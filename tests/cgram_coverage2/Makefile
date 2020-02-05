@@ -8,7 +8,6 @@ CHECK_FOR_CONTENT = python -c "content=open('$(1)').read(); target=open('output'
 
 $(TEST):
 	@printf "Tests in '$@': "
-	ls
 	@rm -rf output $@.log CXrefs
 	@$(COMMAND)
 	@../../utils/cxref_reader.py > output
