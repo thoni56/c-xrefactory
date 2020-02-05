@@ -8,9 +8,11 @@ CHECK_FOR_CONTENT = python -c "content=open('$(1)').read(); target=open('output'
 
 $(TEST):
 	@printf "Tests in '$@': "
-	@rm -rf output $@.log CXrefs
-	@$(COMMAND)
-	@../../utils/cxref_reader.py > output
+	ls
+	cat cgram_coverage.c
+	rm -rf output $@.log CXrefs
+	$(COMMAND)
+	../../utils/cxref_reader.py > output
 	@while read -r line ; do \
 		grep -q $$line output ; \
 		ecode=$$? ; \
