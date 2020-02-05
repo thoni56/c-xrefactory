@@ -16,7 +16,7 @@ quick:
 	@$(MAKE) -C pragma_once
 	@$(MAKE) -C process_yacc
 	@$(MAKE) -C yacc_coverage
-	@$(MAKE) -C cgram_coverage2
+	@$(MAKE) -C cgram_coverage
 	@$(MAKE) -C basic_html_generation
 	@$(MAKE) -C standard_includes
 	@$(MAKE) -C initializer_parsing
