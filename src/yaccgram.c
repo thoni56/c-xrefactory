@@ -4012,7 +4012,7 @@ case 404:
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
         yyval.bbsymbol.d = newSymbolIsType(NULL, NULL, s_noPos, yyvsp[0].bbtypeModif.d, NULL);
         FILL_symbolBits(&yyval.bbsymbol.d->bits,0,0,0,0,0,TypeDefault, StorageDefault,0);
-}
+    }
 break;
 case 405:
 #line 1427 "yaccgram.y"

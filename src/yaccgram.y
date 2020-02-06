@@ -1423,7 +1423,7 @@ parameter_declaration
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
         $$.d = newSymbolIsType(NULL, NULL, s_noPos, $1.d, NULL);
         FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault, StorageDefault,0);
-}
+    }
     | error                                     {
         /*$$.d = &s_errorSymbol;*/
         XX_ALLOC($$.d, S_symbol);
