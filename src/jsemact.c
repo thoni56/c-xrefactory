@@ -606,7 +606,7 @@ S_symbol *javaTypeNameDefinition(S_idIdentList *tname) {
     /* XX_ALLOC(dd, S_symbol); */
     /* FILL_symbolBits(&dd->bits,0,0,0,0,0,	TypeDefault, StorageDefault,0); */
     /* FILL_symbol(dd,memb->name,memb->linkName,tname->idi.p,dd->bits,type,td,NULL); */
-    dd = newSymbolType(memb->name, memb->linkName, tname->idi.p, td, NULL);
+    dd = newSymbolIsType(memb->name, memb->linkName, tname->idi.p, td, NULL);
     FILL_symbolBits(&dd->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
     return(dd);
 }

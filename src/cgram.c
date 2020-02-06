@@ -2292,7 +2292,7 @@ case 1:
             /*& FILL_symbolBits(&d->bits,0,0,0,0,0,TypeDefault, StorageExtern, 0); */
             /*& FILL_symbol(d,$1.d->name,$1.d->name,$1.d->p,d->bits,type,$$.d.t,NULL); */
             /*& REPLACED: StackMemAlloc() & FILL_symbol() with: */
-            d = newSymbolType(yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->p, yyval.bbexprType.d.t, NULL);
+            d = newSymbolIsType(yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->p, yyval.bbexprType.d.t, NULL);
             FILL_symbolBits(&d->bits, 0, 0, 0, 0, 0, TypeDefault, StorageExtern, 0);
             d->u.type = yyval.bbexprType.d.t; /* TODO Should not be needed... */
 
@@ -3535,7 +3535,7 @@ case 228:
         /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault, StorageDefault,0); */
         /*& FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,$1.d,NULL); */
         /*& REPLACED: StackMemAlloc()+FILL_symbol() with: */
-        yyval.bbsymbol.d = newSymbolType(NULL, NULL, s_noPos, yyvsp[0].bbtypeModif.d, NULL);
+        yyval.bbsymbol.d = newSymbolIsType(NULL, NULL, s_noPos, yyvsp[0].bbtypeModif.d, NULL);
         FILL_symbolBits(&yyval.bbsymbol.d->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
         yyval.bbsymbol.d->u.type = yyvsp[0].bbtypeModif.d;    /* TODO This should not be necessary */
     }

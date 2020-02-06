@@ -546,7 +546,7 @@ primary_expr
             /*& FILL_symbolBits(&d->bits,0,0,0,0,0,TypeDefault, StorageExtern,0); */
             /*& FILL_symbol(d,$1.d->name,$1.d->name,$1.d->p,d->bits,type,$$.d.t,NULL); */
             /*& REPLACED StackMemAlloc()+FILL_symbol with */
-            d = newSymbolType($1.d->name, $1.d->name, $1.d->p,$$.d.t, NULL);
+            d = newSymbolIsType($1.d->name, $1.d->name, $1.d->p,$$.d.t, NULL);
             FILL_symbolBits(&d->bits,0,0,0,0,0,TypeDefault, StorageExtern,0);
 
             dd = addNewSymbolDef(d, StorageExtern, s_symTab, UsageUsed);
@@ -958,7 +958,7 @@ declaration_modality_specifiers
         /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,$1.d,0); */
         /*& FILL_symbol($$.d,NULL,NULL,s_noPos,$$.d->bits,type,typeModifiers,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
-        $$.d = newSymbolType(NULL, NULL, s_noPos, typeModifiers, NULL);
+        $$.d = newSymbolIsType(NULL, NULL, s_noPos, typeModifiers, NULL);
         FILL_symbolBits(&$$.d->bits, 0, 0, 0, 0, 0, TypeDefault, $1.d, 0);
     }
     | declaration_modality_specifiers storage_class_specifier       {
@@ -1108,7 +1108,7 @@ struct_declarator
         /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
         /*& FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,p,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
-        $$.d = newSymbolType(NULL, NULL, s_noPos, p, NULL);
+        $$.d = newSymbolIsType(NULL, NULL, s_noPos, p, NULL);
         FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
 
     }
@@ -1391,7 +1391,7 @@ parameter_type_list
         /*& FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
         p = newSymbol("", "", pp, NULL);
-        FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0);
+        FILL_symbolBits(&p->bits, 0, 0, 0, 0, 0, TypeElipsis, StorageDefault, 0);
 
         $$.d = $1.d;
         LIST_APPEND(S_symbol, $$.d.s, p);
@@ -1421,7 +1421,7 @@ parameter_declaration
         /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault, StorageDefault,0); */
         /*& FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,$1.d,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
-        $$.d = newSymbolType(NULL, NULL, s_noPos, $1.d, NULL);
+        $$.d = newSymbolIsType(NULL, NULL, s_noPos, $1.d, NULL);
         FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault, StorageDefault,0);
 }
     | error                                     {

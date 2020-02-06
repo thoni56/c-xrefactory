@@ -25,7 +25,7 @@ static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {
             /*& FILL_symbolBits(&pp->bits,0,0, 0,0,0,TypeKeyword,StorageNone,0); */
             /*& FILL_symbol(pp,nn,nn,s_noPos,pp->bits,keyWordVal,tok,NULL); */
             /*& REPLACED: XX_ALLOC & FILL_symbol() with */
-            pp = newSymbolKeyword(nn, nn, s_noPos, tok, NULL);
+            pp = newSymbolIsKeyword(nn, nn, s_noPos, tok, NULL);
             FILL_symbolBits(&pp->bits,0,0, 0,0,0,TypeKeyword,StorageNone,0);
 
             /*fprintf(dumpOut,"adding keyword %s to tab %d\n",nn,s_symTab);*/

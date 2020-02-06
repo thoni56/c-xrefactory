@@ -338,7 +338,7 @@ primary_expr
             /*& FILL_symbolBits(&d->bits,0,0,0,0,0,TypeDefault, StorageExtern, 0); */
             /*& FILL_symbol(d,$1.d->name,$1.d->name,$1.d->p,d->bits,type,$$.d.t,NULL); */
             /*& REPLACED: StackMemAlloc() & FILL_symbol() with: */
-            d = newSymbolType($1.d->name, $1.d->name, $1.d->p, $$.d.t, NULL);
+            d = newSymbolIsType($1.d->name, $1.d->name, $1.d->p, $$.d.t, NULL);
             FILL_symbolBits(&d->bits, 0, 0, 0, 0, 0, TypeDefault, StorageExtern, 0);
             d->u.type = $$.d.t; /* TODO Should not be needed... */
 
@@ -1336,7 +1336,7 @@ parameter_declaration
         /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault, StorageDefault,0); */
         /*& FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,$1.d,NULL); */
         /*& REPLACED: StackMemAlloc()+FILL_symbol() with: */
-        $$.d = newSymbolType(NULL, NULL, s_noPos, $1.d, NULL);
+        $$.d = newSymbolIsType(NULL, NULL, s_noPos, $1.d, NULL);
         FILL_symbolBits(&$$.d->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
         $$.d->u.type = $1.d;    /* TODO This should not be necessary */
     }
