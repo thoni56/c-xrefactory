@@ -1417,10 +1417,13 @@ parameter_declaration
         $$.d = $2.d;
     }
     | type_name                                 {
-        $$.d = StackMemAlloc(S_symbol);
+        /*& $$.d = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault, StorageDefault,0); */
+        /*& FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,$1.d,NULL); */
+        /*& REPLACED StackMemAlloc()+FILL_symbol() with */
+        $$.d = newSymbolType(NULL, NULL, s_noPos, $1.d, NULL);
         FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault, StorageDefault,0);
-        FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,$1.d,NULL);
-    }
+}
     | error                                     {
         /*$$.d = &s_errorSymbol;*/
         XX_ALLOC($$.d, S_symbol);
@@ -1761,21 +1764,6 @@ static void addYaccSymbolReference(S_idIdent *name, int usage) {
     FILL_symbolBits(&sss.bits,0,0,0,0,0,TypeYaccSymbol,StorageNone,0);
     FILL_symbol(&sss,name->name,name->name,name->p,sss.bits,type,NULL,NULL);
     addCxReference(&sss, &name->p, usage,s_noneFileIndex, s_noneFileIndex);
-#if ZERO
-    p = name->sd;
-    if (p==NULL) {
-        S_symbol *ss;
-        ss = StackMemAlloc(S_symbol);
-        FILL_symbolBits(&ss->b,0,0,0,0,0,TypeYaccSymbol,StorageExtern,0);
-        FILL_symbol(ss,name->name,name->name,name->p,ss->b,type,NULL,NULL);
-        completeDeclarator(&s_defaultVoidDefinition, ss);
-        ss->b.storage = StorageExtern;
-        addSymbol(ss, s_symTab);
-        addCxReference(ss, &ss->pos, usage,s_noneFileIndex, s_noneFileIndex);
-    } else if (p->b.symType == TypeDefault) {
-        addCxReference(p, &name->p, usage,s_noneFileIndex, s_noneFileIndex);
-    }
-#endif
 }
 
 static void addRuleLocalVariable(S_idIdent *name, int order) {
@@ -1789,9 +1777,15 @@ static void addRuleLocalVariable(S_idIdent *name, int order) {
             assert(order>=0 && order < 10000);
             sprintf(nn,"$%d",order);
             if (order == 0) nn[1] = '$';
-            ss = StackMemAlloc(S_symbol);
+
+            /*& ss = StackMemAlloc(S_symbol); */
+            /*& FILL_symbolBits(&ss->bits,0,0,0,0,0,TypeDefault,StorageAuto,0); */
+            /*& FILL_symbol(ss,nn,nn,name->p,ss->bits,type,NULL,NULL); */
+            /*& REPLACED StackMemAlloc()+FILL_symbol() with */
+
+            ss = newSymbol(nn, nn, name->p, NULL);
             FILL_symbolBits(&ss->bits,0,0,0,0,0,TypeDefault,StorageAuto,0);
-            FILL_symbol(ss,nn,nn,name->p,ss->bits,type,NULL,NULL);
+
             ss->pos.col ++ ; // to avoid ambiguity of NonTerminal <-> $$.d
             addNewDeclaration(p, ss, NULL, StorageAuto, s_symTab);
         }
