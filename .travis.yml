@@ -15,6 +15,7 @@ before_install:
     - sudo apt-get install ./cgreen_1.2.0_amd64.deb
 
 script:
+    - ls tests/cgram_coverage
     - cd src
     - make COVERAGE="--coverage -O0"
     - cd unittests
@@ -24,6 +25,7 @@ script:
     - cd ../..
     # Now reset coverage and run integration tests
     - find . -name *.gcda -exec rm {} \;
+    - ls tests/cgram_coverage
     - cd tests
     - make quick
     - cd ffmpeg ; make init ; cd ..
