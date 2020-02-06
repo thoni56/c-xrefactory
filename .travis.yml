@@ -18,11 +18,14 @@ script:
     - ls tests/cgram_coverage
     - cd src
     - make COVERAGE="--coverage -O0"
+    - ls ../tests/cgram_coverage
     - cd unittests
     - make COVERAGE="--coverage -O0"
+    - ls ../../tests/cgram_coverage
     # Use Codecov for unittest coverage
     - bash <(curl -s https://codecov.io/bash) -c
     - cd ../..
+    - ls tests/cgram_coverage
     # Now reset coverage and run integration tests
     - find . -name *.gcda -exec rm {} \;
     - ls tests/cgram_coverage
