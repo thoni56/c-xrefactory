@@ -1390,7 +1390,7 @@ parameter_type_list
         /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0); */
         /*& FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
-        newSymbol("", "", pp, NULL);
+        p = newSymbol("", "", pp, NULL);
         FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0);
 
         $$.d = $1.d;

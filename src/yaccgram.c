@@ -3982,7 +3982,7 @@ case 400:
         /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0); */
         /*& FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
-        newSymbol("", "", pp, NULL);
+        p = newSymbol("", "", pp, NULL);
         FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0);
 
         yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
