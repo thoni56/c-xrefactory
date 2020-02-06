@@ -7,7 +7,6 @@ addons:
   apt:
     packages:
     - lcov
-    - emacs-nox
 
 before_install:
     - gem install coveralls-lcov
@@ -21,7 +20,7 @@ script:
     - make COVERAGE="--coverage -O0"
     - ls ../../tests/cgram_coverage
     # Use Codecov for unittest coverage
-    #- bash <(curl -s https://codecov.io/bash)
+    - bash <(curl -s https://codecov.io/bash)
     - cd ../..
     - ls tests/cgram_coverage
     # Now reset coverage and run integration tests
