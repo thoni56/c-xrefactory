@@ -22,7 +22,7 @@ quick:
 	@$(MAKE) -C initializer_parsing
 	@$(MAKE) -C generate_str_fill
 	@$(MAKE) -C java_example
-	#@$(MAKE) -C read_xrefs
+	@$(MAKE) -C read_xrefs
 
 slow:
 	@echo "Slow tests..."
