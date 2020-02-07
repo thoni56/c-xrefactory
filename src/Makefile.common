@@ -163,6 +163,7 @@ clean:;
 
 cleaner: clean
 	-rm -rf $(OBJDIR) compiler_defines.g strFill.g.h enumTxt.g.[ch] c-xref.bs
+	-make -C unittests cleaner
 
 #########################################################################
 
