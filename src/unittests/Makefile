@@ -39,6 +39,9 @@ olcxtab_tests.so: $(OBJDIR)/olcxtab_tests.o $(OBJDIR)/olcxtab.o
 filetab_tests.so: $(OBJDIR)/filetab_tests.o $(OBJDIR)/filetab.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
+symbol_tests.so: $(OBJDIR)/symbol_tests.o $(OBJDIR)/symbol.o
+	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
+
 CXFILE_DEPENDENCIES = protocol log #enumTxt globals commons enumTxt reftab cgram semact jslsemact complete cxref olcxtab cfread symtab editor editorbuffertab jsltypetab
 cxfile_tests.so:$(OBJDIR)/cxfile_tests.o $(patsubst %,$(OBJDIR)/%.o,$(CXFILE_DEPENDENCIES))
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
