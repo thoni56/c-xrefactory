@@ -23,7 +23,7 @@ static void jslFillTypeSymbolItem(S_symbol *sd, S_jslSymbolList *ss ,
     /*& FILL_symbolBits(&sd->bits,0,0, 0,0, 0, TypeStruct, StorageNone,0); */
     /*& FILL_symbol(sd,name,name,s_noPos,sd->bits,type,NULL,NULL); */
     /*& REPLACED: FILL_symbol() with */
-    sd = newSymbol(name, name, s_noPos, NULL);
+    sd = newSymbol(name, name, s_noPos);
     FILL_symbolBits(&sd->bits, 0, 0, 0, 0, 0, TypeStruct, StorageNone, 0);
     FILL_jslSymbolList(ss, sd, s_noPos, 0, NULL);
 }

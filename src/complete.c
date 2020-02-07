@@ -1184,7 +1184,7 @@ void completeUpFunProfile(S_completions* c) {
         FILL_symbol(dd, "    ", "    ",s_noPos, dd->bits, type ,
                     s_upLevelFunctionCompletionType,NULL);
         /*& ABOVE COULD BE REPLACED (when coverage) by XX_ALLOC()+FILL_Symbol() with */
-        /*& dd = newSymbolIsType("    ", "    ", s_noPos, dd->bits, type, s_upLevelFunctionCompletionType, NULL); */
+        /*& dd = newSymbolIsType("    ", "    ", s_noPos, dd->bits, s_upLevelFunctionCompletionType, NULL); */
         /*& FILL_symbolBits(&dd->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault,0); */
         FILL_cline(&c->a[0], "    ", dd, TypeDefault,0, 0, NULL, NULL);
         c->fullMatchFlag = 1;

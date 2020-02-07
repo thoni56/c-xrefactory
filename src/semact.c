@@ -843,12 +843,12 @@ S_symbol *createSimpleDefinition(unsigned storage, unsigned t, S_idIdent *id) {
         /*& FILL_symbolBits(&r->bits,0,0,0,0,0,TypeDefault,storage,0); */
         /*& FILL_symbol(r,id->name,id->name,id->p,r->bits,type,typeModifiers,NULL); */
         /* REPLACED StackMemAlloc()+FILL_symbol() with */
-        r = newSymbolIsType(id->name, id->name, id->p, typeModifiers, NULL);
+        r = newSymbolIsType(id->name, id->name, id->p, typeModifiers);
     } else {
         /*& r = StackMemAlloc(S_symbol); */
         /*& FILL_symbolBits(&r->bits,0,0,0,0,0,TypeDefault,storage,0); */
         /*& FILL_symbol(r,NULL, NULL, s_noPos,r->bits,type,typeModifiers,NULL); */
-        r = newSymbolIsType(NULL, NULL, s_noPos, typeModifiers, NULL);
+        r = newSymbolIsType(NULL, NULL, s_noPos, typeModifiers);
     }
     FILL_symbolBits(&r->bits, 0, 0, 0, 0, 0, TypeDefault, storage, 0);
     return(r);
@@ -1019,7 +1019,7 @@ S_typeModifiers *crNewAnnonymeStrUnion(S_idIdent *typeName) {
     /*& FILL_symbolBits(&pp->bits,0,0, 0,0,0, type, StorageNone,0); */
     /*& FILL_symbol(pp, "", NULL, typeName->p,pp->bits,type,NULL, NULL); */
     /*& REPLACED StackMemAlloc()+FILL_symbol() with: */
-    pp = newSymbol("", NULL, typeName->p, NULL);
+    pp = newSymbol("", NULL, typeName->p);
     FILL_symbolBits(&pp->bits, 0, 0, 0, 0, 0, type, StorageNone, 0);
 
     setGlobalFileDepNames("", pp, MEM_XX);
@@ -1078,7 +1078,7 @@ S_typeModifiers *createNewAnonymousEnum(SymbolList *enums) {
     /*& FILL_symbolBits(&pp->bits,0,0, 0,0,0, TypeEnum, StorageNone,0); */
     /*& FILL_symbol(pp, "", "", s_noPos,pp->bits,enums,enums, NULL); */
     /*& REPLACED StackMemAlloc()+FILL_symbol() with:  */
-    pp = newSymbolIsEnum("", "", s_noPos, enums, NULL);
+    pp = newSymbolIsEnum("", "", s_noPos, enums);
     FILL_symbolBits(&pp->bits, 0, 0, 0, 0, 0, TypeEnum, StorageNone, 0);
 
     setGlobalFileDepNames("", pp, MEM_XX);
@@ -1151,7 +1151,7 @@ S_symbol *crEmptyField(void) {
     /*& FILL_symbolBits(&res->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
     /*& FILL_symbol(res, "", "", s_noPos,res->bits,type,p,NULL); */
     /*& REPLACED StackMemAlloc()+FILL_symbol() with  */
-    res = newSymbolIsType("", "", s_noPos, p, NULL);
+    res = newSymbolIsType("", "", s_noPos, p);
     FILL_symbolBits(&res->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
 
     return(res);

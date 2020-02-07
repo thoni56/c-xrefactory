@@ -59,9 +59,13 @@ S_symbol *addContinueBreakLabelSymbol(int labn, char *name) {
 
     if (s_opt.cxrefs != OLO_EXTRACT) return NULL;
 
-    XX_ALLOC(s, S_symbol);
+    /*& XX_ALLOC(s, S_symbol); */
+    /*& FILL_symbolBits(&s->bits,0,0,0,0,0,TypeLabel,StorageAuto,0); */
+    /*& FILL_symbol(s,name,name,s_noPos,s->bits,labn,labn,NULL); */
+    /*& REPLACE XX_ALLOC()+FILL_symbol() with */
+    s = newSymbolIsLabel(name, name, s_noPos, s->bits, NULL);
     FILL_symbolBits(&s->bits,0,0,0,0,0,TypeLabel,StorageAuto,0);
-    FILL_symbol(s,name,name,s_noPos,s->bits,labn,labn,NULL);
+
     AddSymbolNoTrail(s, s_symTab);
     return(s);
 }
