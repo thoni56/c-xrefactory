@@ -3360,6 +3360,12 @@ static void mainGenerate(int argc, char **argv) {
 }
 
 static void initLogging(void) {
+    char fileName[100];
+
+    sprintf(fileName, "%s/c-xref%d.log", "/tmp", getpid());
+    FILE *tempFile = fopen(fileName, "w");
+    log_set_fp(tempFile);
+
     /* Always log errors and above to console */
     log_set_console_level(LOG_ERROR);
 }
@@ -3368,7 +3374,6 @@ static void setupLogging(void) {
     /* Note that dumpOut may change since 'mainOpenOutputFile()' is
        called from several places, so we'll do a 'log_set_fp()' there
        too */
-    log_set_fp(dumpOut);
 
     if (s_opt.trace)
         log_set_file_level(LOG_TRACE);
