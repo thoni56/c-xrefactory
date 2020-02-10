@@ -19,6 +19,7 @@
 #include "enumTxt.h"
 #include "reftab.h"
 #include "charbuf.h"
+#include "symbol.h"
 
 #include "log.h"
 #include "utils.h"
@@ -381,11 +382,15 @@ static void setClassTreeBaseType(S_classTreeData *ct, S_symbol *p) {
 S_reference *addSpecialFieldReference(char *name,int storage, int fnum,
                                       S_position *p, int usage){
     S_symbol        ss;
-    S_symbolBits    bb;
     S_reference     *res;
-    FILL_symbolBits(&bb,0,0, ACC_DEFAULT,0,0,TypeDefault, storage,0);
-    FILL_symbol(&ss, name, name, *p, bb,type,NULL, NULL);
+
+    /* FILL_symbolBits(&bb,0,0, ACC_DEFAULT,0,0,TypeDefault, storage,0); */
+    /* FILL_symbol(&ss, name, name, *p, bb,type,NULL, NULL); */
+    /* REPLACE FILL_symbol() on localvariable with */
+    fillSymbol(&ss, name, name, *p);
+    FILL_symbolBits(&ss.bits, 0, 0, ACC_DEFAULT, 0, 0, TypeDefault, storage, 0);
     res = addCxReference(&ss, p, usage, fnum, fnum);
+
     return(res);
 }
 
