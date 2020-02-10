@@ -2,16 +2,21 @@
 
 #include "misc.h"               /* For XX_ALLOC() */
 
-S_symbol *newSymbol(char *name, char *linkName, struct position pos) {
-    S_symbol *s;
-
-    XX_ALLOC(s, S_symbol);
+void fillSymbol(S_symbol *s, char *name, char *linkName, struct position  pos) {
     s->name = name;
     s->linkName = linkName;
     s->pos = pos;
     /* s->bits is not assigned, all zeros? */
     s->u.type = NULL;
     s->next = NULL;
+}
+
+
+S_symbol *newSymbol(char *name, char *linkName, struct position pos) {
+    S_symbol *s;
+
+    XX_ALLOC(s, S_symbol);
+    fillSymbol(s, name, linkName, pos);
 
     return s;
 }
