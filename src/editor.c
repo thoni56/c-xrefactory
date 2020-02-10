@@ -23,7 +23,7 @@ S_editorMemoryBlock *s_editorMemory[MAX_EDITOR_MEMORY_BLOCK];
 ////////////////////////////////////////////////////////////////////
 //                      encoding stuff
 
-#define EDITOR_ENCODING_WALK_THROW_BUFFER(buff, command) {  \
+#define EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, command) {  \
         register unsigned char *s, *d, *maxs;               \
         unsigned char *space;                               \
         space = (unsigned char *)buff->a.text;              \
@@ -82,100 +82,100 @@ S_editorMemoryBlock *s_editorMemory[MAX_EDITOR_MEMORY_BLOCK];
     }
 
 static void editorApplyCrLfCrConversion(S_editorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROW_BUFFER(buff, {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
             EDITOR_ENCODING_CR_LF_CR_CONVERSION(s,d)
             else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                      });
 }
 static void editorApplyCrLfConversion(S_editorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROW_BUFFER(buff, {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
             EDITOR_ENCODING_CR_LF_CONVERSION(s,d)
             else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                      });
 }
 static void editorApplyCrConversion(S_editorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROW_BUFFER(buff, {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
             EDITOR_ENCODING_CR_CONVERSION(s,d)
             else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                      });
 }
 static void editorApplyUtf8CrLfCrConversion(S_editorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROW_BUFFER(buff, {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
             EDITOR_ENCODING_UTF8_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_LF_CR_CONVERSION(s,d)
                 else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                          });
 }
 static void editorApplyUtf8CrLfConversion(S_editorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROW_BUFFER(buff, {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
             EDITOR_ENCODING_UTF8_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_LF_CONVERSION(s,d)
                 else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                          });
 }
 static void editorApplyUtf8CrConversion(S_editorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROW_BUFFER(buff, {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
             EDITOR_ENCODING_UTF8_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_CONVERSION(s,d)
                 else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                          });
 }
 static void editorApplyUtf8Conversion(S_editorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROW_BUFFER(buff, {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
             EDITOR_ENCODING_UTF8_CONVERSION(s,d)
             else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                      });
 }
 static void editorApplyEucCrLfCrConversion(S_editorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROW_BUFFER(buff, {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
             EDITOR_ENCODING_EUC_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_LF_CR_CONVERSION(s,d)
                 else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                          });
 }
 static void editorApplyEucCrLfConversion(S_editorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROW_BUFFER(buff, {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
             EDITOR_ENCODING_EUC_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_LF_CONVERSION(s,d)
                 else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                          });
 }
 static void editorApplyEucCrConversion(S_editorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROW_BUFFER(buff, {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
             EDITOR_ENCODING_EUC_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_CONVERSION(s,d)
                 else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                          });
 }
 static void editorApplyEucConversion(S_editorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROW_BUFFER(buff, {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
             EDITOR_ENCODING_EUC_CONVERSION(s,d)
             else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                      });
 }
 static void editorApplySjisCrLfCrConversion(S_editorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROW_BUFFER(buff, {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
             EDITOR_ENCODING_SJIS_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_LF_CR_CONVERSION(s,d)
                 else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                          });
 }
 static void editorApplySjisCrLfConversion(S_editorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROW_BUFFER(buff, {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
             EDITOR_ENCODING_SJIS_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_LF_CONVERSION(s,d)
                 else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                          });
 }
 static void editorApplySjisCrConversion(S_editorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROW_BUFFER(buff, {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
             EDITOR_ENCODING_SJIS_CONVERSION(s,d)
             else EDITOR_ENCODING_CR_CONVERSION(s,d)
                 else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                          });
 }
 static void editorApplySjisConversion(S_editorBuffer *buff) {
-    EDITOR_ENCODING_WALK_THROW_BUFFER(buff, {
+    EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, {
             EDITOR_ENCODING_SJIS_CONVERSION(s,d)
             else EDITOR_ENCODING_ELSE_BRANCH(s,d)
                      });
