@@ -845,13 +845,12 @@ S_reference * addCxReference(S_symbol *p, S_position *pos, int usage, int vFunCl
 
 void addTrivialCxReference(char *name,int symType,int storage,S_position *pos,int usage) {
     S_symbol        ss;
-    S_symbolBits    bb;
 
     /*& FILL_symbolBits(&bb,0,0, 0,0,0,symType,storage,0); */
     /*& FILL_symbol(&ss, name, name, *pos, bb,type,NULL, NULL); */
     /*& REPLACE FILL_symbol() with fillSymbol() */
     fillSymbol(&ss, name, name, *pos);
-    FILL_symbolBits(&bb,0,0, 0,0,0,symType,storage,0);
+    FILL_symbolBits(&ss.bits, 0, 0, 0, 0, 0, symType, storage, 0);
     addCxReference(&ss, pos, usage,s_noneFileIndex, s_noneFileIndex);
 }
 
