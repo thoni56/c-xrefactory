@@ -157,14 +157,14 @@
 #define PP_ALLOCC(p,n,t)        {SM_ALLOCC(ppmMemory,p,n,t);}
 #define PP_REALLOCC(p,n,t,on)	{SM_REALLOCC(ppmMemory,p,n,t,on);}
 #define PP_FREE_UNTIL(p)        {SM_FREE_UNTIL(ppmMemory,p);}
-#define PP_FREE(p)              { }
+/* #define PP_FREE(p)              { } */
 
 /* java class-file read allocations ( same memory as cpp !!!!!!!! ) */
 #define CF_ALLOC(p,t)           {SM_ALLOC(ppmMemory,p,t);}
 #define CF_ALLOCC(p,n,t)        {SM_ALLOCC(ppmMemory,p,n,t);}
-#define CF_REALLOCC(p,n,t,on)	{SM_REALLOCC(ppmMemory,p,n,t,on);}
-#define CF_FREE_UNTIL(p)        {SM_FREE_UNTIL(ppmMemory,p);}
-#define CF_FREE(p)              { }
+/* #define CF_REALLOCC(p,n,t,on)	{SM_REALLOCC(ppmMemory,p,n,t,on);} */
+/* #define CF_FREE_UNTIL(p)        {SM_FREE_UNTIL(ppmMemory,p);} */
+/* #define CF_FREE(p)              { } */
 
 /* cross - references global symbols allocations */
 #define CX_ALLOC(p,t)           {DM_ALLOC(cxMemory,p,t);}
@@ -174,7 +174,7 @@
 /* file table allocations */
 #define FT_ALLOC(p,t)           {SM_ALLOC(ftMemory,p,t);}
 #define FT_ALLOCC(p,n,t)        {SM_ALLOCC(ftMemory,p,n,t);}
-#define FT_FREE_UNTIL(p)        {SM_FREE_UNTIL(ftMemory,p);}
+/* #define FT_FREE_UNTIL(p)        {SM_FREE_UNTIL(ftMemory,p);} */
 
 /* options allocations */
 #define OPT_ALLOC(p,t)          {DM_ALLOC(((S_memory*)&s_opt.pendingMemory),p,t);}
