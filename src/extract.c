@@ -9,6 +9,7 @@
 #include "cxref.h"
 #include "enumTxt.h"
 #include "reftab.h"
+#include "symbol.h"
 
 
 #define EXTRACT_GEN_BUFFER_SIZE 500000
@@ -63,8 +64,8 @@ S_symbol *addContinueBreakLabelSymbol(int labn, char *name) {
     /*& FILL_symbolBits(&s->bits,0,0,0,0,0,TypeLabel,StorageAuto,0); */
     /*& FILL_symbol(s,name,name,s_noPos,s->bits,labn,labn,NULL); */
     /*& REPLACE XX_ALLOC()+FILL_symbol() with */
-    s = newSymbolIsLabel(name, name, s_noPos, s->bits, NULL);
-    FILL_symbolBits(&s->bits,0,0,0,0,0,TypeLabel,StorageAuto,0);
+    s = newSymbolIsLabel(name, name, s_noPos, labn);
+    FILL_symbolBits(&s->bits, 0, 0, 0, 0, 0, TypeLabel, StorageAuto, 0);
 
     AddSymbolNoTrail(s, s_symTab);
     return(s);
