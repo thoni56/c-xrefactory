@@ -384,9 +384,9 @@ S_reference *addSpecialFieldReference(char *name,int storage, int fnum,
     S_symbol        ss;
     S_reference     *res;
 
-    /* FILL_symbolBits(&bb,0,0, ACC_DEFAULT,0,0,TypeDefault, storage,0); */
-    /* FILL_symbol(&ss, name, name, *p, bb,type,NULL, NULL); */
-    /* REPLACE FILL_symbol() on localvariable with */
+    /*& FILL_symbolBits(&bb,0,0, ACC_DEFAULT,0,0,TypeDefault, storage,0); */
+    /*& FILL_symbol(&ss, name, name, *p, bb,type,NULL, NULL); */
+    /*& REPLACE FILL_symbol() on localvariable with */
     fillSymbol(&ss, name, name, *p);
     FILL_symbolBits(&ss.bits, 0, 0, ACC_DEFAULT, 0, 0, TypeDefault, storage, 0);
     res = addCxReference(&ss, p, usage, fnum, fnum);
@@ -846,8 +846,12 @@ S_reference * addCxReference(S_symbol *p, S_position *pos, int usage, int vFunCl
 void addTrivialCxReference(char *name,int symType,int storage,S_position *pos,int usage) {
     S_symbol        ss;
     S_symbolBits    bb;
+
+    /*& FILL_symbolBits(&bb,0,0, 0,0,0,symType,storage,0); */
+    /*& FILL_symbol(&ss, name, name, *pos, bb,type,NULL, NULL); */
+    /*& REPLACE FILL_symbol() with fillSymbol() */
+    fillSymbol(&ss, name, name, *pos);
     FILL_symbolBits(&bb,0,0, 0,0,0,symType,storage,0);
-    FILL_symbol(&ss, name, name, *pos, bb,type,NULL, NULL);
     addCxReference(&ss, pos, usage,s_noneFileIndex, s_noneFileIndex);
 }
 
