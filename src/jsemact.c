@@ -150,7 +150,7 @@ static void javaAddNameCxReference(S_idIdentList *id, unsigned usage) {
 
     assert(id != NULL);
     cname = javaCreateComposedName(NULL,id,'/',NULL,tmpMemory,SIZE_TMP_MEM);
-    fillSymbol(&dd,id->idi.name, cname, id->idi.p);
+    fillSymbol(&dd, id->idi.name, cname, id->idi.p);
     FILL_symbolBits(&dd.bits,0,0,0,0,0,id->nameType,StorageNone,0);
 
     /* if you do something else do attention on the union initialisation */
@@ -460,11 +460,14 @@ static S_symbol *javaFQTypeSymbolDefinitionCreate(char *name,
 
     CF_ALLOCC(sname, strlen(name)+1, char);
     strcpy(sname, name);
+
     CF_ALLOCC(lname1, strlen(fqName)+1, char);
     strcpy(lname1, fqName);
+
     CF_ALLOC(memb, S_symbol);
-    FILL_symbolBits(&memb->bits,0,0, 0,0, 0,	TypeStruct, StorageNone,0);
-    FILL_symbol(memb, sname, lname1, s_noPos,memb->bits,s,NULL,NULL);
+    fillSymbol(memb, sname, lname1, s_noPos);
+    FILL_symbolBits(&memb->bits, 0, 0, 0, 0, 0, TypeStruct, StorageNone, 0);
+
     CF_ALLOC(memb->u.s, S_symStructSpecific);
     FILLF_symStructSpecific(memb->u.s,NULL,
                             NULL,NULL,NULL,0,NULL,
@@ -474,14 +477,17 @@ static S_symbol *javaFQTypeSymbolDefinitionCreate(char *name,
                                                               s_javaThisPackageName),
                             0, -1, 0);
     memb->u.s->stype.u.t = memb;
+
     CF_ALLOC(pppl, SymbolList);
     /* REPLACED: FILL_symbolList(pppl, memb, NULL); with: */
     *pppl = (SymbolList){.d = memb, .next = NULL};
+
     if (ii < 0) {
         javaFqtTabAdd(&s_javaFqtTab,pppl,&ii);
     } else {
         javaFqtTabSet(&s_javaFqtTab,pppl,ii);
     }
+
     // I think this can be there, as it is very used
     javaCreateClassFileItem(memb);
     // this would be too strong, javaLoadClassSymbolsFromFile(memb);
@@ -495,9 +501,10 @@ S_symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {
     SymbolList ppl, *pppl;
     int position;
 
+    fillSymbol(&symbol, name, fqName, s_noPos);
     FILL_symbolBits(&symbol.bits, 0, 0, 0, 0, 0, TypeStruct, StorageNone, 0);
-    FILL_symbol(&symbol, name, fqName, s_noPos,symbol.bits, s, NULL, NULL);
     FILL_symbolList(&ppl, &symbol, NULL);
+
     if (javaFqtTabIsMember(&s_javaFqtTab, &ppl, &position, &pppl)) {
         member = pppl->d;
     } else {
