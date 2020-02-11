@@ -565,7 +565,6 @@ static S_symbol *javaAddTypeToSymbolTable(S_symbol *memb, int accessFlags, S_pos
     return(memb);
 }
 
-// TODO: split this function on two depending on addTyp parameter
 S_symbol *javaTypeSymbolDefinition(S_idIdentList *tname,
                                    int accessFlags,
                                    int addTyp){
@@ -574,8 +573,10 @@ S_symbol *javaTypeSymbolDefinition(S_idIdentList *tname,
 
     assert(tname);
     assert(tname->nameType == TypeStruct);
-    FILL_symbolBits(&pp.bits,0,0, accessFlags,0, 0, TypeStruct, StorageNone,0);
-    FILL_symbol(&pp,tname->idi.name,tname->idi.name,s_noPos,pp.bits,s,NULL,NULL);
+
+    fillSymbol(&pp, tname->idi.name, tname->idi.name, s_noPos);
+    FILL_symbolBits(&pp.bits, 0, 0, accessFlags, 0, 0, TypeStruct, StorageNone, 0);
+
     javaCreateComposedName(NULL,tname,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
     memb = javaFQTypeSymbolDefinition(tname->idi.name, fqtName);
     if (addTyp == TYPE_ADD_YES) {
