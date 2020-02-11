@@ -160,26 +160,21 @@ void initExtractStoragesNameTab(void) {
 void initArchaicTypes(void) {
     /* ******* some defaults and built-ins initialisations ********* */
 
-    /* To REPLACE below FILL_Symbol() we need to change how the static
-       symbols are stored, pointers rather than structs */
+    FILLF_typeModifiers(&s_defaultIntModifier, TypeInt, f, (NULL,NULL), NULL, NULL);
+    fillSymbolWithType(&s_defaultIntDefinition, NULL, NULL, s_noPos, &s_defaultIntModifier);
+    FILL_symbolBits(&s_defaultIntDefinition.bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
 
-    FILLF_typeModifiers(&s_defaultIntModifier,TypeInt,f,( NULL,NULL) ,NULL,NULL);
-    FILL_symbolBits(&s_defaultIntDefinition.bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
-    FILL_symbol(&s_defaultIntDefinition,NULL,NULL,s_noPos,
-                s_defaultIntDefinition.bits,type,&s_defaultIntModifier,NULL);
-    s_defaultIntDefinition.u.type = &s_defaultIntModifier;
-    FILLF_typeModifiers(&s_defaultPackedTypeModifier,TypePackedType,f,(
-                                                                       NULL,NULL) ,NULL,NULL);
+    FILLF_typeModifiers(&s_defaultPackedTypeModifier, TypePackedType, f,
+                        (NULL,NULL), NULL, NULL);
+
     FILLF_typeModifiers(&s_defaultVoidModifier,TypeVoid,f,( NULL,NULL) ,NULL,NULL);
-    FILL_symbolBits(&s_defaultVoidDefinition.bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
-    FILL_symbol(&s_defaultVoidDefinition,NULL,NULL,s_noPos,
-                s_defaultVoidDefinition.bits,type,&s_defaultVoidModifier,NULL);
-    s_defaultVoidDefinition.u.type = &s_defaultVoidModifier;
+    fillSymbolWithType(&s_defaultVoidDefinition, NULL, NULL, s_noPos,
+               &s_defaultVoidModifier);
+    FILL_symbolBits(&s_defaultVoidDefinition.bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
+
     FILLF_typeModifiers(&s_errorModifier, TypeError,f,( NULL,NULL) ,NULL,NULL);
-    FILL_symbolBits(&s_errorSymbol.bits,0,0, 0,0,0,TypeError, StorageNone,0);
-    FILL_symbol(&s_errorSymbol,"__ERROR__",
-                "__ERROR__",s_noPos,s_errorSymbol.bits,type,&s_errorModifier,NULL);
-    s_errorSymbol.u.type = &s_errorModifier;
+    fillSymbolWithType(&s_errorSymbol,"__ERROR__", "__ERROR__", s_noPos, &s_errorModifier);
+    FILL_symbolBits(&s_errorSymbol.bits, 0, 0, 0, 0, 0, TypeError, StorageNone, 0);
 }
 
 void initPreCreatedTypes(void) {

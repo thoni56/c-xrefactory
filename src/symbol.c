@@ -12,6 +12,11 @@ void fillSymbol(S_symbol *s, char *name, char *linkName, struct position  pos) {
 }
 
 
+void fillSymbolWithType(S_symbol *symbol, char *name, char *linkName, struct position pos, struct typeModifiers *type) {
+    fillSymbol(symbol, name, linkName, pos);
+    symbol->u.type = type;
+}
+
 S_symbol *newSymbol(char *name, char *linkName, struct position pos) {
     S_symbol *s;
 
