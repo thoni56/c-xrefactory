@@ -1679,9 +1679,8 @@ VariableDeclaratorId:
                 CF_ALLOCC(name, strlen($1.d->name)+1, char);
                 strcpy(name, $1.d->name);
                 CF_ALLOC($$.d, S_symbol);
-                FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
-                FILL_symbol($$.d,name,name,$1.d->p,$$.d->bits,type,NULL,NULL);
-                $$.d->u.type = NULL;
+                fillSymbol($$.d, name, name, $1.d->p);
+                FILL_symbolBits(&$$.d->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
             }
         }
     |	VariableDeclaratorId '[' ']'		{
