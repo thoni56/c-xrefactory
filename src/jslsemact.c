@@ -153,10 +153,11 @@ S_symbol *jslTypeNameDefinition(S_idIdentList *tname) {
     CF_ALLOC(td, S_typeModifiers); //XX_ALLOC?
     FILLF_typeModifiers(td, TypeStruct,t,memb,NULL, NULL);
     td->u.t = memb;
+
     CF_ALLOC(dd, S_symbol); //XX_ALLOC?
+    fillSymbolWithType(dd, memb->name, memb->linkName, tname->idi.p, td);
     FILL_symbolBits(&dd->bits,0,0,0,0,0,   TypeDefault, StorageDefault,0);
-    FILL_symbol(dd,memb->name,memb->linkName,tname->idi.p,dd->bits,type,td,NULL);
-    dd->u.type = td;
+
     return(dd);
 }
 

@@ -739,16 +739,15 @@ static S_typeModifiers * mergeBaseModTypes(S_typeModifiers *t1, S_typeModifiers 
 
 S_symbol *typeSpecifier2(S_typeModifiers *t) {
     S_symbol    *r;
-    /* this is just temporary, when have not the tempmemory in java,c++ */
+    /* this is temporary, as long as we do not have the tempmemory in java, c++ */
     if (LANGUAGE(LANG_C)) {
         SM_ALLOC(tmpWorkMemory, r, S_symbol);
     } else {
         XX_ALLOC(r, S_symbol);
     }
-    /*  XX_ALLOC(r, S_symbol);*/
+    fillSymbolWithType(r, NULL, NULL, s_noPos, t);
     FILL_symbolBits(&r->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
-    FILL_symbol(r,NULL,NULL,s_noPos,r->bits,type,t,NULL);
-    r->u.type = t;
+
     return(r);
 }
 
@@ -907,9 +906,10 @@ S_typeModifiers *simpleStrUnionSpecifier(   S_idIdent *typeName,
                 );
     if (typeName->sd->u.keyWordVal != UNION) type = TypeStruct;
     else type = TypeUnion;
-    FILL_symbolBits(&p.bits,0,0, 0,0,0, type, StorageNone,0);
-    FILL_symbol(&p, id->name, id->name, id->p,p.bits,s,NULL, NULL);
-    p.u.s = NULL;
+
+    fillSymbol(&p, id->name, id->name, id->p);
+    FILL_symbolBits(&p.bits, 0, 0, 0, 0, 0, type, StorageNone, 0);
+
     if (! symTabIsMember(s_symTab,&p,&ii,&pp)
         || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
         //{static int c=0;fprintf(dumpOut,"str#%d\n",c++);}
@@ -1057,9 +1057,10 @@ void specializeStrUnionDef(S_symbol *sd, S_symbol *rec) {
 S_typeModifiers *simpleEnumSpecifier(S_idIdent *id, int usage) {
     S_symbol p,*pp;
     int ii;
-    FILL_symbolBits(&p.bits,0,0, 0,0,0, TypeEnum, StorageNone,0);
-    FILL_symbol(&p, id->name, id->name, id->p,p.bits,enums,NULL, NULL);
-    p.u.enums = NULL;
+
+    fillSymbol(&p, id->name, id->name, id->p);
+    FILL_symbolBits(&p.bits, 0, 0, 0, 0, 0, TypeEnum, StorageNone, 0);
+
     if (! symTabIsMember(s_symTab,&p,&ii,&pp)
         || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
         pp = StackMemAlloc(S_symbol);

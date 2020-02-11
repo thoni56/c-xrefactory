@@ -1761,8 +1761,8 @@ identifier
 static void addYaccSymbolReference(S_idIdent *name, int usage) {
     S_symbol sss;
 
+    fillSymbol(&sss, name->name, name->name, name->p);
     FILL_symbolBits(&sss.bits,0,0,0,0,0,TypeYaccSymbol,StorageNone,0);
-    FILL_symbol(&sss,name->name,name->name,name->p,sss.bits,type,NULL,NULL);
     addCxReference(&sss, &name->p, usage,s_noneFileIndex, s_noneFileIndex);
 }
 
