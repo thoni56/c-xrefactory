@@ -9,7 +9,9 @@ TARGET_PATH=`python -c "import os,sys; print(os.path.realpath(os.path.expanduser
 # Run a sandboxed emacs
 EMACS = emacs
 all emacs:
-	@[ ! -f .emacs.d/el-get/c-xrefactory ] && ln -s $(CURDIR)/../../ .emacs.d/el-get/c-xrefactory
+	@if [ ! -e .emacs.d/el-get/c-xrefactory ] ; then \
+		ln -s $(CURDIR)/../../ .emacs.d/el-get/c-xrefactory ; \
+	fi
 	@HOME="$(PWD)" PATH="$(PWD)/bin":"$(PATH)" $(EMACS) -l $(PWD)/.emacs.d/init.el -l "$(PWD)"/.emacs.d/override-el-get-update.el --eval '(setq c-xref-home-directory "$(PWD)/bin/")' --eval '(setq c-xref-debug-mode t)' ../../src/cxref.c
 
 gui: EMACS = /Applications/Emacs.app/Contents/MacOS/Emacs
