@@ -13,6 +13,7 @@
 #include "editor.h"
 #include "reftab.h"
 #include "charbuf.h"
+#include "symbol.h"
 
 #include "cgram.x"
 #include "cexp.x"
@@ -408,9 +409,8 @@ static void fillIncludeSymbolItem( S_symbol *ss,
     // all includes needs to be in the same cxfile, beacause of
     // -update. On the other side in HTML I wish then to splitted
     // by first letter of file name.
+    fillSymbol(ss, LINK_NAME_INCLUDE_REFS, LINK_NAME_INCLUDE_REFS, *pos);
     FILL_symbolBits(&ss->bits,0,0,0,0,0,TypeCppInclude,StorageDefault,0);
-    FILL_symbol(ss, LINK_NAME_INCLUDE_REFS, LINK_NAME_INCLUDE_REFS, *pos,ss->bits,
-                type,NULL, NULL);
 }
 
 
@@ -521,8 +521,10 @@ static void processInclude2(S_position *ipos, char pchar, char *iname) {
     S_symbol ss,*memb;
     int ii;
     sprintf(tmpBuff, "PragmaOnce-%s", iname);
-    FILL_symbolBits(&ss.bits,0,0,0,0,0,TypeMacro,StorageNone,0);
-    FILL_symbol(&ss,tmpBuff,tmpBuff,s_noPos,ss.bits,mbody,NULL,NULL);
+
+    fillSymbol(&ss, tmpBuff, tmpBuff, s_noPos);
+    FILL_symbolBits(&ss.bits, 0, 0, 0, 0, 0, TypeMacro, StorageNone, 0);
+
     if (symTabIsMember(s_symTab, &ss, &ii, &memb)) return;
     nyyin = openInclude(pchar, iname, &fname);
     if (nyyin == NULL) {
@@ -661,9 +663,11 @@ static void processDefine(int argFlag) {
     PassLex(cInput.cc,lex,l,v,h,macpos, len,1);
     testCxrefCompletionId(&lex,cc,&macpos);    /* for cross-referencing */
     if (lex != IDENTIFIER) return;
+
     PP_ALLOC(pp, S_symbol);
-    FILL_symbolBits(&pp->bits,0,0,0,0,0,TypeMacro,StorageNone,0);
-    FILL_symbol(pp,NULL,NULL,macpos,pp->bits,mbody,NULL,NULL);
+    fillSymbol(pp, NULL, NULL, macpos);
+    FILL_symbolBits(&pp->bits, 0, 0, 0, 0, 0, TypeMacro, StorageNone, 0);
+
     setGlobalFileDepNames(cc, pp, MEM_PP);
     mname = pp->name;
     /* process arguments */
@@ -828,8 +832,10 @@ static void processUnDefine(void) {
     testCxrefCompletionId(&lex,cc,&pos);
     if (IS_IDENTIFIER_LEXEM(lex)) {
         log_debug(": undef macro %s",cc);
+
+        fillSymbol(&dd, cc, cc, pos);
         FILL_symbolBits(&dd.bits,0,0,0,0,0,TypeMacro,StorageNone,0);
-        FILL_symbol(&dd,cc,cc,pos,dd.bits,mbody,NULL,NULL);
+
         assert(s_opt.taskRegime);
         /* !!!!!!!!!!!!!! tricky, add macro with mbody == NULL !!!!!!!!!! */
         /* this is because of monotonicity for caching, just adding symbol */
@@ -837,11 +843,11 @@ static void processUnDefine(void) {
             if (CX_REGIME()) {
                 addCxReference(memb, &pos, UsageUndefinedMacro,s_noneFileIndex, s_noneFileIndex);
             }
+
             PP_ALLOC(pp, S_symbol);
+            fillSymbol(pp, memb->name, memb->linkName, pos);
             FILL_symbolBits(&pp->bits,0,0, 0,0, 0, TypeMacro, StorageNone,0);
-            FILL_symbol(pp, memb->name, memb->linkName, pos, pp->bits,mbody,NULL, NULL);
-            pp->u.mbody = NULL;
-//{static int c=0;fprintf(dumpOut,"#undef#%d\n",c++);}
+
             addMacroToTabs(pp,memb->name);
         }
     }
@@ -941,9 +947,12 @@ static void processIfdef(int isIfdef) {
     cc = cInput.cc;
     PassLex(cInput.cc,lex,l,v,h,pos, len,1);
     testCxrefCompletionId(&lex,cc,&pos);
+
     if (! IS_IDENTIFIER_LEXEM(lex)) return;
+
+    fillSymbol(&pp, cc, cc, s_noPos);
     FILL_symbolBits(&pp.bits,0,0,0,0,0,TypeMacro,StorageNone,0);
-    FILL_symbol(&pp,cc,cc,s_noPos,pp.bits,mbody,NULL,NULL);
+
     assert(s_opt.taskRegime);
     mm = symTabIsMember(s_symTab,&pp,&ii,&memb);
     if (mm && memb->u.mbody==NULL) mm = 0;	// undefined macro
@@ -997,10 +1006,14 @@ int cexpyylex(void) {
         } else {
             par = 0;
         }
+
         if (! IS_IDENTIFIER_LEXEM(lex)) return(0);
-        FILL_symbolBits(&dd.bits,0,0,0,0,0,TypeMacro,StorageNone,0);
-        FILL_symbol(&dd, cc,cc,s_noPos,dd.bits,mbody,NULL,NULL);
+
+        fillSymbol(&dd, cc, cc, s_noPos);
+        FILL_symbolBits(&dd.bits, 0, 0, 0, 0, 0, TypeMacro, StorageNone, 0);
+
         log_debug("(%s)", dd.name);
+
         mm = symTabIsMember(s_symTab,&dd,&ii,&memb);
         if (mm && memb->u.mbody == NULL) mm = 0;   // undefined macro
         assert(s_opt.taskRegime);
@@ -1050,9 +1063,11 @@ static void processPragma(void) {
         sprintf(tmpBuff, "PragmaOnce-%s", fname);
         PP_ALLOCC(mname, strlen(tmpBuff)+1, char);
         strcpy(mname, tmpBuff);
+
         PP_ALLOC(pp, S_symbol);
-        FILL_symbolBits(&pp->bits,0,0,0,0,0,TypeMacro,StorageNone,0);
-        FILL_symbol(pp,mname,mname,pos,pp->bits,mbody,NULL,NULL);
+        fillSymbol(pp, mname, mname, pos);
+        FILL_symbolBits(&pp->bits, 0, 0, 0, 0, 0, TypeMacro, StorageNone, 0);
+
         symTabAdd(s_symTab,pp,&ii);
     }
     while (lex != '\n') {PassLex(cInput.cc,lex,l,v,h,pos, len,1); GetLex(lex);}
@@ -1216,8 +1231,8 @@ static void expandMacroArgument(S_lexInput *argb) {
         // read new lexbuffer and destroy cInput, so copy it now.
         failedMacroExpansion = 0;
         if (lex == IDENTIFIER) {
+            fillSymbol(&sd, cc2, cc2, s_noPos);
             FILL_symbolBits(&sd.bits,0,0,0,0,0,TypeMacro, StorageNone,0);
-            FILL_symbol(&sd,cc2,cc2,s_noPos,sd.bits,mbody,NULL,NULL);
             if (symTabIsMember(s_symTab,&sd,&ii,&memb)) {
                 /* it is a macro, provide macro expansion */
                 if (macroCallExpand(memb,&pos)) goto nextLexem;
@@ -1938,8 +1953,10 @@ int yylex(void) {
             testCxrefCompletionId(&lexem,yytext,&idpos);
         }
         log_trace("id %s position %d %d %d",yytext,idpos.file,idpos.line,idpos.col);
+
+        fillSymbol(&symbol, yytext, yytext, s_noPos);
         FILL_symbolBits(&symbol.bits,0,0,0,0,0,TypeMacro,StorageNone,0);
-        FILL_symbol(&symbol,yytext,yytext,s_noPos,symbol.bits,mbody,NULL,NULL);
+
         if ((!LANGUAGE(LANG_JAVA))
             && lexem!=IDENT_NO_CPP_EXPAND
             && symTabIsMember(s_symTab,&symbol,&ii,&memberP)) {

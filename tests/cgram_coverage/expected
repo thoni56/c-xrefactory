@@ -1,0 +1,4 @@
+func1
+    func1@cgram_coverage.c:1:4
+func2
+    func2@cgram_coverage.c:2:4

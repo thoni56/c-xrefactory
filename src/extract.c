@@ -9,6 +9,7 @@
 #include "cxref.h"
 #include "enumTxt.h"
 #include "reftab.h"
+#include "symbol.h"
 
 
 #define EXTRACT_GEN_BUFFER_SIZE 500000
@@ -59,9 +60,13 @@ S_symbol *addContinueBreakLabelSymbol(int labn, char *name) {
 
     if (s_opt.cxrefs != OLO_EXTRACT) return NULL;
 
-    XX_ALLOC(s, S_symbol);
-    FILL_symbolBits(&s->bits,0,0,0,0,0,TypeLabel,StorageAuto,0);
-    FILL_symbol(s,name,name,s_noPos,s->bits,labn,labn,NULL);
+    /*& XX_ALLOC(s, S_symbol); */
+    /*& FILL_symbolBits(&s->bits,0,0,0,0,0,TypeLabel,StorageAuto,0); */
+    /*& FILL_symbol(s,name,name,s_noPos,s->bits,labn,labn,NULL); */
+    /*& REPLACE XX_ALLOC()+FILL_symbol() with */
+    s = newSymbolIsLabel(name, name, s_noPos, labn);
+    FILL_symbolBits(&s->bits, 0, 0, 0, 0, 0, TypeLabel, StorageAuto, 0);
+
     AddSymbolNoTrail(s, s_symTab);
     return(s);
 }
@@ -75,6 +80,9 @@ void deleteContinueBreakLabelSymbol(char *name) {
 
     FILL_symbolBits(&ss.bits, 0,0,0,0,0,TypeLabel,StorageAuto,0);
     FILL_symbol(&ss, name, name, s_noPos, ss.bits,labn,0, NULL);
+    /* Above could be REPLACE FILL_symbol() on local variable with fillSymbol() */
+    /* fillSymbolAsLabel(&ss, name, name, s_noPos, 0); */
+    /* FILL_symbolBits(&ss.bits, 0,0,0,0,0,TypeLabel,StorageAuto,0); */
     if (symTabIsMember(s_symTab, &ss, &ii, &memb)) {
         ExtrDeleteContBreakSym(memb);
     } else {

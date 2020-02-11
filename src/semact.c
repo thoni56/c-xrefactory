@@ -10,6 +10,7 @@
 #include "jsemact.h"
 #include "jslsemact.h"
 #include "enumTxt.h"
+#include "symbol.h"
 
 #include "hash.h"
 #include "log.h"
@@ -738,16 +739,15 @@ static S_typeModifiers * mergeBaseModTypes(S_typeModifiers *t1, S_typeModifiers 
 
 S_symbol *typeSpecifier2(S_typeModifiers *t) {
     S_symbol    *r;
-    /* this is just temporary, when have not the tempmemory in java,c++ */
+    /* this is temporary, as long as we do not have the tempmemory in java, c++ */
     if (LANGUAGE(LANG_C)) {
         SM_ALLOC(tmpWorkMemory, r, S_symbol);
     } else {
         XX_ALLOC(r, S_symbol);
     }
-    /*  XX_ALLOC(r, S_symbol);*/
+    fillSymbolWithType(r, NULL, NULL, s_noPos, t);
     FILL_symbolBits(&r->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
-    FILL_symbol(r,NULL,NULL,s_noPos,r->bits,type,t,NULL);
-    r->u.type = t;
+
     return(r);
 }
 
@@ -833,19 +833,23 @@ void completeDeclarator(S_symbol *t, S_symbol *d) {
 }
 
 S_symbol *createSimpleDefinition(unsigned storage, unsigned t, S_idIdent *id) {
-    S_typeModifiers *p;
-    S_symbol    *r;
-    p = StackMemAlloc(S_typeModifiers);
-    FILLF_typeModifiers(p,t,f,( NULL,NULL) ,NULL,NULL);
-    r = StackMemAlloc(S_symbol);
+    S_typeModifiers *typeModifiers;
+    S_symbol *r;
+    typeModifiers = StackMemAlloc(S_typeModifiers);
+    FILLF_typeModifiers(typeModifiers,t,f,( NULL,NULL) ,NULL,NULL);
     if (id!=NULL) {
-        FILL_symbolBits(&r->bits,0,0,0,0,0,TypeDefault,storage,0);
-        FILL_symbol(r,id->name,id->name,id->p,r->bits,type,p,NULL);
+        /*& r = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&r->bits,0,0,0,0,0,TypeDefault,storage,0); */
+        /*& FILL_symbol(r,id->name,id->name,id->p,r->bits,type,typeModifiers,NULL); */
+        /* REPLACED StackMemAlloc()+FILL_symbol() with */
+        r = newSymbolIsType(id->name, id->name, id->p, typeModifiers);
     } else {
-        FILL_symbolBits(&r->bits,0,0,0,0,0,TypeDefault,storage,0);
-        FILL_symbol(r,NULL, NULL, s_noPos,r->bits,type,p,NULL);
+        /*& r = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&r->bits,0,0,0,0,0,TypeDefault,storage,0); */
+        /*& FILL_symbol(r,NULL, NULL, s_noPos,r->bits,type,typeModifiers,NULL); */
+        r = newSymbolIsType(NULL, NULL, s_noPos, typeModifiers);
     }
-    r->u.type = p;
+    FILL_symbolBits(&r->bits, 0, 0, 0, 0, 0, TypeDefault, storage, 0);
     return(r);
 }
 
@@ -902,9 +906,10 @@ S_typeModifiers *simpleStrUnionSpecifier(   S_idIdent *typeName,
                 );
     if (typeName->sd->u.keyWordVal != UNION) type = TypeStruct;
     else type = TypeUnion;
-    FILL_symbolBits(&p.bits,0,0, 0,0,0, type, StorageNone,0);
-    FILL_symbol(&p, id->name, id->name, id->p,p.bits,s,NULL, NULL);
-    p.u.s = NULL;
+
+    fillSymbol(&p, id->name, id->name, id->p);
+    FILL_symbolBits(&p.bits, 0, 0, 0, 0, 0, type, StorageNone, 0);
+
     if (! symTabIsMember(s_symTab,&p,&ii,&pp)
         || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
         //{static int c=0;fprintf(dumpOut,"str#%d\n",c++);}
@@ -1010,9 +1015,13 @@ S_typeModifiers *crNewAnnonymeStrUnion(S_idIdent *typeName) {
     if (typeName->sd->u.keyWordVal == STRUCT) type = TypeStruct;
     else type = TypeUnion;
 
-    pp = StackMemAlloc(S_symbol);
-    FILL_symbolBits(&pp->bits,0,0, 0,0,0, type, StorageNone,0);
-    FILL_symbol(pp, "", NULL, typeName->p,pp->bits,type,NULL, NULL);
+    /*& pp = StackMemAlloc(S_symbol); */
+    /*& FILL_symbolBits(&pp->bits,0,0, 0,0,0, type, StorageNone,0); */
+    /*& FILL_symbol(pp, "", NULL, typeName->p,pp->bits,type,NULL, NULL); */
+    /*& REPLACED StackMemAlloc()+FILL_symbol() with: */
+    pp = newSymbol("", NULL, typeName->p);
+    FILL_symbolBits(&pp->bits, 0, 0, 0, 0, 0, type, StorageNone, 0);
+
     setGlobalFileDepNames("", pp, MEM_XX);
     XX_ALLOC(pp->u.s, S_symStructSpecific);
     FILLF_symStructSpecific(pp->u.s, NULL,
@@ -1048,9 +1057,10 @@ void specializeStrUnionDef(S_symbol *sd, S_symbol *rec) {
 S_typeModifiers *simpleEnumSpecifier(S_idIdent *id, int usage) {
     S_symbol p,*pp;
     int ii;
-    FILL_symbolBits(&p.bits,0,0, 0,0,0, TypeEnum, StorageNone,0);
-    FILL_symbol(&p, id->name, id->name, id->p,p.bits,enums,NULL, NULL);
-    p.u.enums = NULL;
+
+    fillSymbol(&p, id->name, id->name, id->p);
+    FILL_symbolBits(&p.bits, 0, 0, 0, 0, 0, TypeEnum, StorageNone, 0);
+
     if (! symTabIsMember(s_symTab,&p,&ii,&pp)
         || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
         pp = StackMemAlloc(S_symbol);
@@ -1064,9 +1074,14 @@ S_typeModifiers *simpleEnumSpecifier(S_idIdent *id, int usage) {
 
 S_typeModifiers *createNewAnonymousEnum(SymbolList *enums) {
     S_symbol *pp;
-    pp = StackMemAlloc(S_symbol);
-    FILL_symbolBits(&pp->bits,0,0, 0,0,0, TypeEnum, StorageNone,0);
-    FILL_symbol(pp, "", "", s_noPos,pp->bits,enums,enums, NULL);
+
+    /*& pp = StackMemAlloc(S_symbol); */
+    /*& FILL_symbolBits(&pp->bits,0,0, 0,0,0, TypeEnum, StorageNone,0); */
+    /*& FILL_symbol(pp, "", "", s_noPos,pp->bits,enums,enums, NULL); */
+    /*& REPLACED StackMemAlloc()+FILL_symbol() with:  */
+    pp = newSymbolIsEnum("", "", s_noPos, enums);
+    FILL_symbolBits(&pp->bits, 0, 0, 0, 0, 0, TypeEnum, StorageNone, 0);
+
     setGlobalFileDepNames("", pp, MEM_XX);
     pp->u.enums = enums;
     return(crSimpleEnumType(pp,TypeEnum));
@@ -1129,12 +1144,17 @@ static void handleParameterPositions(S_position *lpar, S_positionList *commas,
 S_symbol *crEmptyField(void) {
     S_symbol *res;
     S_typeModifiers *p;
+
     p = StackMemAlloc(S_typeModifiers);
     FILLF_typeModifiers(p,TypeAnonymeField,f,( NULL,NULL) ,NULL,NULL);
-    res = StackMemAlloc(S_symbol);
-    FILL_symbolBits(&res->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
-    FILL_symbol(res, "", "", s_noPos,res->bits,type,p,NULL);
-    res->u.type = p;
+
+    /*& res = StackMemAlloc(S_symbol); */
+    /*& FILL_symbolBits(&res->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
+    /*& FILL_symbol(res, "", "", s_noPos,res->bits,type,p,NULL); */
+    /*& REPLACED StackMemAlloc()+FILL_symbol() with  */
+    res = newSymbolIsType("", "", s_noPos, p);
+    FILL_symbolBits(&res->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
+
     return(res);
 }
 

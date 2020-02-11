@@ -35,6 +35,7 @@
 #include "yylex.h"
 #include "semact.h"
 #include "cxref.h"
+#include "symbol.h"
 
 #include "log.h"
 #include "utils.h"
@@ -368,10 +369,13 @@ symbol_to_type_seq:
     |   symbol_to_type_seq IDENTIFIER   {
             S_symbol *ss;
 
-            ss = StackMemAlloc(S_symbol);
+            /*& ss = StackMemAlloc(S_symbol); */
+            /*& FILL_symbolBits(&ss->bits,0,0,0,0,0,TypeDefault,StorageAuto,0); */
+            /*& FILL_symbol(ss,$2.d->name,$2.d->name,$2.d->p,ss->bits,type,NULL,NULL); */
+            /*& REPLACED StackMemAlloc()+FILL_symbol() with */
+            ss = newSymbol($2.d->name, $2.d->name, $2.d->p);
             FILL_symbolBits(&ss->bits,0,0,0,0,0,TypeDefault,StorageAuto,0);
-            FILL_symbol(ss,$2.d->name,$2.d->name,$2.d->p,ss->bits,type,NULL,NULL);
-            ss->u.type = NULL;
+
             addYaccSymbolReference($2.d,UsageDeclared);
             if (l_currentType!=NULL) {
                 addNewDeclaration(l_currentType, ss, NULL, StorageAuto,s_symTab);
@@ -537,10 +541,14 @@ primary_expr
             CrTypeModifier(p, TypeInt);
             $$.d.t = StackMemAlloc(S_typeModifiers);
             FILLF_typeModifiers($$.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
-            d = StackMemAlloc(S_symbol);
+
+            /*& d = StackMemAlloc(S_symbol); */
+            /*& FILL_symbolBits(&d->bits,0,0,0,0,0,TypeDefault, StorageExtern,0); */
+            /*& FILL_symbol(d,$1.d->name,$1.d->name,$1.d->p,d->bits,type,$$.d.t,NULL); */
+            /*& REPLACED StackMemAlloc()+FILL_symbol with */
+            d = newSymbolIsType($1.d->name, $1.d->name, $1.d->p,$$.d.t);
             FILL_symbolBits(&d->bits,0,0,0,0,0,TypeDefault, StorageExtern,0);
-            FILL_symbol(d,$1.d->name,$1.d->name,$1.d->p,d->bits,type,$$.d.t,NULL);
-            d->u.type = $$.d.t;
+
             dd = addNewSymbolDef(d, StorageExtern, s_symTab, UsageUsed);
             $$.d.r = NULL;
         }
@@ -568,7 +576,7 @@ primary_expr
     ;
 
 postfix_expr
-    : primary_expr                              /* { $$.d = $1.d; } */
+    : primary_expr                              /*& { $$.d = $1.d; } */
     | postfix_expr '[' expr ']'                 {
         if ($1.d.t->kind==TypePointer || $1.d.t->kind==TypeArray) $$.d.t=$1.d.t->next;
         else if ($3.d.t->kind==TypePointer || $3.d.t->kind==TypeArray) $$.d.t=$3.d.t->next;
@@ -619,7 +627,7 @@ postfix_expr
     ;
 
 str_rec_identifier
-    : identifier                /* { $$.d = $1.d; } */
+    : identifier                /*& { $$.d = $1.d; } */
     | COMPL_STRUCT_REC_NAME     { assert(0); /* token never used */ }
     ;
 
@@ -634,7 +642,7 @@ argument_expr_list
     ;
 
 unary_expr
-    : postfix_expr                  /* { $$.d = $1.d; } */
+    : postfix_expr                  /*& { $$.d = $1.d; } */
     | INC_OP unary_expr             { $$.d.t = $2.d.t; $$.d.r = NULL;}
     | DEC_OP unary_expr             { $$.d.t = $2.d.t; $$.d.r = NULL;}
     | unary_operator cast_expr      { $$.d.t = $2.d.t; $$.d.r = NULL;}
@@ -668,7 +676,7 @@ unary_operator
     ;
 
 cast_expr
-    : unary_expr                        /* { $$.d = $1.d; } */
+    : unary_expr                        /*& { $$.d = $1.d; } */
     | '(' type_name ')' cast_expr       {
         $$.d.t = $2.d;
         $$.d.r = $4.d.r;
@@ -684,7 +692,7 @@ cast_expr
     ;
 
 multiplicative_expr
-    : cast_expr                         /* { $$.d = $1.d; } */
+    : cast_expr                         /*& { $$.d = $1.d; } */
     | multiplicative_expr '*' cast_expr {
         $$.d.t = &s_defaultIntModifier;
         $$.d.r = NULL;
@@ -700,7 +708,7 @@ multiplicative_expr
     ;
 
 additive_expr
-    : multiplicative_expr                       /* { $$.d = $1.d; } */
+    : multiplicative_expr                       /*& { $$.d = $1.d; } */
     | additive_expr '+' multiplicative_expr     {
         if ($3.d.t->kind==TypePointer || $3.d.t->kind==TypeArray) $$.d.t = $3.d.t;
         else $$.d.t = $1.d.t;
@@ -714,7 +722,7 @@ additive_expr
     ;
 
 shift_expr
-    : additive_expr                             /* { $$.d = $1.d; } */
+    : additive_expr                             /*& { $$.d = $1.d; } */
     | shift_expr LEFT_OP additive_expr          {
         $$.d.t = &s_defaultIntModifier;
         $$.d.r = NULL;
@@ -726,7 +734,7 @@ shift_expr
     ;
 
 relational_expr
-    : shift_expr                                /* { $$.d = $1.d; } */
+    : shift_expr                                /*& { $$.d = $1.d; } */
     | relational_expr '<' shift_expr            {
         $$.d.t = &s_defaultIntModifier;
         $$.d.r = NULL;
@@ -746,7 +754,7 @@ relational_expr
     ;
 
 equality_expr
-    : relational_expr                           /* { $$.d = $1.d; } */
+    : relational_expr                           /*& { $$.d = $1.d; } */
     | equality_expr EQ_OP relational_expr       {
         $$.d.t = &s_defaultIntModifier;
         $$.d.r = NULL;
@@ -758,7 +766,7 @@ equality_expr
     ;
 
 and_expr
-    : equality_expr                             /* { $$.d = $1.d; } */
+    : equality_expr                             /*& { $$.d = $1.d; } */
     | and_expr '&' equality_expr                {
         $$.d.t = &s_defaultIntModifier;
         $$.d.r = NULL;
@@ -766,7 +774,7 @@ and_expr
     ;
 
 exclusive_or_expr
-    : and_expr                                  /* { $$.d = $1.d; } */
+    : and_expr                                  /*& { $$.d = $1.d; } */
     | exclusive_or_expr '^' and_expr            {
         $$.d.t = &s_defaultIntModifier;
         $$.d.r = NULL;
@@ -774,7 +782,7 @@ exclusive_or_expr
     ;
 
 inclusive_or_expr
-    : exclusive_or_expr                         /* { $$.d = $1.d; } */
+    : exclusive_or_expr                         /*& { $$.d = $1.d; } */
     | inclusive_or_expr '|' exclusive_or_expr   {
         $$.d.t = &s_defaultIntModifier;
         $$.d.r = NULL;
@@ -782,7 +790,7 @@ inclusive_or_expr
     ;
 
 logical_and_expr
-    : inclusive_or_expr                         /* { $$.d = $1.d; } */
+    : inclusive_or_expr                         /*& { $$.d = $1.d; } */
     | logical_and_expr AND_OP inclusive_or_expr {
         $$.d.t = &s_defaultIntModifier;
         $$.d.r = NULL;
@@ -790,7 +798,7 @@ logical_and_expr
     ;
 
 logical_or_expr
-    : logical_and_expr                          /* { $$.d = $1.d; } */
+    : logical_and_expr                          /*& { $$.d = $1.d; } */
     | logical_or_expr OR_OP logical_and_expr    {
         $$.d.t = &s_defaultIntModifier;
         $$.d.r = NULL;
@@ -798,7 +806,7 @@ logical_or_expr
     ;
 
 conditional_expr
-    : logical_or_expr                                           /* { $$.d = $1.d; } */
+    : logical_or_expr                                           /*& { $$.d = $1.d; } */
     | logical_or_expr '?' logical_or_expr ':' conditional_expr  {
         $$.d.t = $3.d.t;
         $$.d.r = NULL;
@@ -806,7 +814,7 @@ conditional_expr
     ;
 
 assignment_expr
-    : conditional_expr                                  /* { $$.d = $1.d; } */
+    : conditional_expr                                  /*& { $$.d = $1.d; } */
     | unary_expr assignment_operator assignment_expr    {
         RESET_REFERENCE_USAGE($1.d.r, UsageLvalUsed);
         $$.d.t = $1.d.t;
@@ -829,7 +837,7 @@ assignment_operator
     ;
 
 expr
-    : assignment_expr                           /* { $$.d = $1.d; } */
+    : assignment_expr                           /*& { $$.d = $1.d; } */
     | expr ',' assignment_expr                  {
         $$.d.t = $3.d.t;
         $$.d.r = NULL;
@@ -869,8 +877,8 @@ init_declarations
     ;
 
 declaration_specifiers
-    : declaration_modality_specifiers                       /* { $$.d = $1.d; } */
-    | declaration_specifiers0                               /* { $$.d = $1.d; } */
+    : declaration_modality_specifiers                       /*& { $$.d = $1.d; } */
+    | declaration_specifiers0                               /*& { $$.d = $1.d; } */
     ;
 
 user_defined_type
@@ -942,13 +950,16 @@ declaration_specifiers0
 
 declaration_modality_specifiers
     : storage_class_specifier                               {
-        S_typeModifiers *p;
-        p = StackMemAlloc(S_typeModifiers);
-        FILLF_typeModifiers(p,TypeDefault,f,(NULL,NULL) ,NULL,NULL);
-        $$.d = StackMemAlloc(S_symbol);
-        FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,$1.d,0);
-        FILL_symbol($$.d,NULL,NULL,s_noPos,$$.d->bits,type,p,NULL);
-        $$.d->u.type = p;
+        S_typeModifiers *typeModifiers;
+        typeModifiers = StackMemAlloc(S_typeModifiers);
+        FILLF_typeModifiers(typeModifiers,TypeDefault,f,(NULL,NULL) ,NULL,NULL);
+
+        /*& $$.d = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,$1.d,0); */
+        /*& FILL_symbol($$.d,NULL,NULL,s_noPos,$$.d->bits,type,typeModifiers,NULL); */
+        /*& REPLACED StackMemAlloc()+FILL_symbol() with */
+        $$.d = newSymbolIsType(NULL, NULL, s_noPos, typeModifiers);
+        FILL_symbolBits(&$$.d->bits, 0, 0, 0, 0, 0, TypeDefault, $1.d, 0);
     }
     | declaration_modality_specifiers storage_class_specifier       {
         $$.d = $1.d;
@@ -969,8 +980,8 @@ declaration_modality_specifiers
     ;
 
 init_declarator
-    : declarator                    /* { $$.d = $1.d; } */
-    | declarator '=' initializer    /* { $$.d = $1.d; } */
+    : declarator                    /*& { $$.d = $1.d; } */
+    | declarator '=' initializer    /*& { $$.d = $1.d; } */
     ;
 
 storage_class_specifier
@@ -1004,8 +1015,8 @@ type_specifier1
     ;
 
 type_specifier2
-    : struct_or_union_specifier     /* { $$.d = $1.d; } */
-    | enum_specifier                /* { $$.d = $1.d; } */
+    : struct_or_union_specifier     /*& { $$.d = $1.d; } */
+    | enum_specifier                /*& { $$.d = $1.d; } */
     ;
 
 function_specifier
@@ -1034,7 +1045,7 @@ struct_or_union_define_specifier
     ;
 
 struct_identifier
-    : identifier            /* { $$.d = $1.d; } */
+    : identifier            /*& { $$.d = $1.d; } */
     | COMPL_STRUCT_NAME     { assert(0); /* token never used */ }
     ;
 
@@ -1044,7 +1055,7 @@ struct_or_union
     ;
 
 struct_declaration_list
-    : struct_declaration                                /* { $$.d = $1.d; } */
+    : struct_declaration                                /*& { $$.d = $1.d; } */
     | struct_declaration_list struct_declaration        {
         if ($1.d == &s_errorSymbol || $1.d->bits.symType==TypeError) {
             $$.d = $2.d;
@@ -1087,17 +1098,21 @@ struct_declarator_list
     ;
 
 struct_declarator
-    : declarator                    /* { $$.d = $1.d; } */
+    : declarator                    /*& { $$.d = $1.d; } */
     | ':' constant_expr             {
         S_typeModifiers *p;
         p = StackMemAlloc(S_typeModifiers);
         FILLF_typeModifiers(p,TypeAnonymeField,f,( NULL,NULL) ,NULL,NULL);
-        $$.d = StackMemAlloc(S_symbol);
+
+        /*& $$.d = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
+        /*& FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,p,NULL); */
+        /*& REPLACED StackMemAlloc()+FILL_symbol() with */
+        $$.d = newSymbolIsType(NULL, NULL, s_noPos, p);
         FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
-        FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,p,NULL);
-        $$.d->u.type = p;
+
     }
-    | declarator ':' constant_expr  /* { $$.d = $1.d; } */
+    | declarator ':' constant_expr  /*& { $$.d = $1.d; } */
     ;
 
 enum_specifier
@@ -1124,13 +1139,13 @@ enum_define_specifier
     ;
 
 enum_identifier
-    : identifier            /* { $$.d = $1.d; } */
+    : identifier            /*& { $$.d = $1.d; } */
     | COMPL_ENUM_NAME       { assert(0); /* token never used */ }
     ;
 
 enumerator_list_comma
-    : enumerator_list               /* { $$.d = $1.d; } */
-    | enumerator_list ','           /* { $$.d = $1.d; } */
+    : enumerator_list               /*& { $$.d = $1.d; } */
+    | enumerator_list ','           /*& { $$.d = $1.d; } */
     ;
 
 enumerator_list
@@ -1161,7 +1176,7 @@ enumerator
     ;
 
 declarator
-    : declarator2                                       /* { $$.d = $1.d; } */
+    : declarator2                                       /*& { $$.d = $1.d; } */
     | pointer declarator2                               {
         int i;
         $$.d = $2.d;
@@ -1171,10 +1186,12 @@ declarator
 
 declarator2
     : IDENTIFIER                                        {
-        $$.d = StackMemAlloc(S_symbol);
-        FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
-        FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->bits,type,NULL,NULL);
-        $$.d->u.type = NULL;
+        /*& $$.d = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
+        /*& FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->bits,type,NULL,NULL); */
+        /*& REPLACED StackMemAlloc()+FILL_symbol() with */
+        $$.d = newSymbol($1.d->name, $1.d->name, $1.d->p);
+        FILL_symbolBits(&$$.d->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
     }
     | '(' declarator ')'                                {
         $$.d = $2.d;
@@ -1257,8 +1274,8 @@ type_specifier_list
 */
 
 type_specifier_list
-    : type_mod_specifier_list                       /* { $$.d = $1.d; } */
-    | type_specifier_list0                          /* { $$.d = $1.d; } */
+    : type_mod_specifier_list                       /*& { $$.d = $1.d; } */
+    | type_specifier_list0                          /*& { $$.d = $1.d; } */
     ;
 
 type_specifier_list0
@@ -1310,15 +1327,21 @@ type_specifier_list0
     ;
 
 parameter_identifier_list
-    : identifier_list                           /* { $$.d = $1.d; } */
+    : identifier_list                           /*& { $$.d = $1.d; } */
     | identifier_list ',' ELIPSIS               {
         S_symbol *p;
         S_position pp;
-        p = StackMemAlloc(S_symbol);
         FILL_position(&pp, -1, 0, 0);
-        FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0);
-        FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL);
+
+        /*& p = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0); */
+        /*& FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL); */
+        /*& REPLACED StackMemAlloc()+FILL_symbol() with */
+        p = newSymbol("", "", pp);
+        FILL_symbolBits(&p->bits, 0, 0, 0, 0, 0, TypeElipsis, StorageDefault, 0);
+
         $$.d = $1.d;
+
         LIST_APPEND(S_symbol, $$.d.s, p);
         appendPositionToList(&$$.d.p, &$2.d);
     }
@@ -1327,20 +1350,29 @@ parameter_identifier_list
 identifier_list
     : IDENTIFIER                                {
         S_symbol *p;
-        p = StackMemAlloc(S_symbol);
-        FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
-        FILL_symbol(p,$1.d->name,$1.d->name,$1.d->p,p->bits,type,NULL,NULL);
-        p->u.type = NULL;
+
+        /*& p = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
+        /*& FILL_symbol(p,$1.d->name,$1.d->name,$1.d->p,p->bits,type,NULL,NULL); */
+        /*& REPLACED StackMemAlloc()+FILL_symbol() with */
+        p = newSymbol($1.d->name, $1.d->name, $1.d->p);
+        FILL_symbolBits(&p->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
+
         $$.d.s = p;
         $$.d.p = NULL;
     }
     | identifier_list ',' identifier            {
         S_symbol        *p;
-        p = StackMemAlloc(S_symbol);
+
+        /*& p = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
+        /*& FILL_symbol(p,$3.d->name,$3.d->name,$3.d->p,p->bits,type,NULL,NULL); */
+        /*& REPLACED StackMemAlloc()+FILL_symbol() with:  */
+        p = newSymbol($3.d->name, $3.d->name, $3.d->p);
         FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
-        FILL_symbol(p,$3.d->name,$3.d->name,$3.d->p,p->bits,type,NULL,NULL);
-        p->u.type = NULL;
+
         $$.d = $1.d;
+
         LIST_APPEND(S_symbol, $$.d.s, p);
         appendPositionToList(&$$.d.p, &$2.d);
     }
@@ -1348,14 +1380,19 @@ identifier_list
     ;
 
 parameter_type_list
-    : parameter_list                    /* { $$.d = $1.d; } */
+    : parameter_list                    /*& { $$.d = $1.d; } */
     | parameter_list ',' ELIPSIS                {
         S_symbol        *p;
         S_position      pp;
-        p = StackMemAlloc(S_symbol);
         FILL_position(&pp, -1, 0, 0);
-        FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0);
-        FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL);
+
+        /*& p = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0); */
+        /*& FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL); */
+        /*& REPLACED StackMemAlloc()+FILL_symbol() with */
+        p = newSymbol("", "", pp);
+        FILL_symbolBits(&p->bits, 0, 0, 0, 0, 0, TypeElipsis, StorageDefault, 0);
+
         $$.d = $1.d;
         LIST_APPEND(S_symbol, $$.d.s, p);
         appendPositionToList(&$$.d.p, &$2.d);
@@ -1380,9 +1417,12 @@ parameter_declaration
         $$.d = $2.d;
     }
     | type_name                                 {
-        $$.d = StackMemAlloc(S_symbol);
+        /*& $$.d = StackMemAlloc(S_symbol); */
+        /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault, StorageDefault,0); */
+        /*& FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,$1.d,NULL); */
+        /*& REPLACED StackMemAlloc()+FILL_symbol() with */
+        $$.d = newSymbolIsType(NULL, NULL, s_noPos, $1.d);
         FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault, StorageDefault,0);
-        FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,$1.d,NULL);
     }
     | error                                     {
         /*$$.d = &s_errorSymbol;*/
@@ -1652,7 +1692,7 @@ top_init_declarations
     ;
 
 function_definition_head
-    : function_head_declaration                         /* { $$.d = $1.d; } */
+    : function_head_declaration                         /*& { $$.d = $1.d; } */
     | function_definition_head fun_arg_declaration      {
         int r;
         assert($1.d->u.type && $1.d->u.type->kind == TypeFunction);
@@ -1712,8 +1752,8 @@ Stop_block:     { stackMemoryBlockFree(); }
     ;
 
 identifier
-    : IDENTIFIER    /* { $$.d = $1.d; } */
-    | TYPE_NAME     /* { $$.d = $1.d; } */
+    : IDENTIFIER    /*& { $$.d = $1.d; } */
+    | TYPE_NAME     /*& { $$.d = $1.d; } */
     ;
 
 %%
@@ -1721,24 +1761,9 @@ identifier
 static void addYaccSymbolReference(S_idIdent *name, int usage) {
     S_symbol sss;
 
+    fillSymbol(&sss, name->name, name->name, name->p);
     FILL_symbolBits(&sss.bits,0,0,0,0,0,TypeYaccSymbol,StorageNone,0);
-    FILL_symbol(&sss,name->name,name->name,name->p,sss.bits,type,NULL,NULL);
     addCxReference(&sss, &name->p, usage,s_noneFileIndex, s_noneFileIndex);
-#if ZERO
-    p = name->sd;
-    if (p==NULL) {
-        S_symbol *ss;
-        ss = StackMemAlloc(S_symbol);
-        FILL_symbolBits(&ss->b,0,0,0,0,0,TypeYaccSymbol,StorageExtern,0);
-        FILL_symbol(ss,name->name,name->name,name->p,ss->b,type,NULL,NULL);
-        completeDeclarator(&s_defaultVoidDefinition, ss);
-        ss->b.storage = StorageExtern;
-        addSymbol(ss, s_symTab);
-        addCxReference(ss, &ss->pos, usage,s_noneFileIndex, s_noneFileIndex);
-    } else if (p->b.symType == TypeDefault) {
-        addCxReference(p, &name->p, usage,s_noneFileIndex, s_noneFileIndex);
-    }
-#endif
 }
 
 static void addRuleLocalVariable(S_idIdent *name, int order) {
@@ -1752,9 +1777,15 @@ static void addRuleLocalVariable(S_idIdent *name, int order) {
             assert(order>=0 && order < 10000);
             sprintf(nn,"$%d",order);
             if (order == 0) nn[1] = '$';
-            ss = StackMemAlloc(S_symbol);
+
+            /*& ss = StackMemAlloc(S_symbol); */
+            /*& FILL_symbolBits(&ss->bits,0,0,0,0,0,TypeDefault,StorageAuto,0); */
+            /*& FILL_symbol(ss,nn,nn,name->p,ss->bits,type,NULL,NULL); */
+            /*& REPLACED StackMemAlloc()+FILL_symbol() with */
+
+            ss = newSymbol(nn, nn, name->p);
             FILL_symbolBits(&ss->bits,0,0,0,0,0,TypeDefault,StorageAuto,0);
-            FILL_symbol(ss,nn,nn,name->p,ss->bits,type,NULL,NULL);
+
             ss->pos.col ++ ; // to avoid ambiguity of NonTerminal <-> $$.d
             addNewDeclaration(p, ss, NULL, StorageAuto, s_symTab);
         }

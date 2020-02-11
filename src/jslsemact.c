@@ -9,6 +9,7 @@
 #include "cxref.h"
 #include "classFileReader.h"
 #include "jsemact.h"
+#include "symbol.h"
 
 #include "log.h"
 #include "utils.h"
@@ -19,17 +20,21 @@ S_jslStat *s_jsl;
 
 static void jslFillTypeSymbolItem(S_symbol *sd, S_jslSymbolList *ss ,
                                   char *name) {
-    FILL_symbolBits(&sd->bits,0,0, 0,0, 0, TypeStruct, StorageNone,0);
-    FILL_symbol(sd,name,name,s_noPos,sd->bits,type,NULL,NULL);
+    /*& FILL_symbolBits(&sd->bits,0,0, 0,0, 0, TypeStruct, StorageNone,0); */
+    /*& FILL_symbol(sd,name,name,s_noPos,sd->bits,type,NULL,NULL); */
+    /*& REPLACED: FILL_symbol() with */
+    sd = newSymbol(name, name, s_noPos);
+    FILL_symbolBits(&sd->bits, 0, 0, 0, 0, 0, TypeStruct, StorageNone, 0);
     FILL_jslSymbolList(ss, sd, s_noPos, 0, NULL);
 }
 
 S_symbol *jslTypeSpecifier2(S_typeModifiers *t) {
     S_symbol    *r;
+
     CF_ALLOC(r, S_symbol);
-    FILL_symbolBits(&r->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
-    FILL_symbol(r,NULL,NULL,s_noPos,r->bits,type,t,NULL);
-    r->u.type = t;
+    fillSymbolWithType(r, NULL, NULL, s_noPos, t);
+    FILL_symbolBits(&r->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
+
     return(r);
 }
 
@@ -148,10 +153,11 @@ S_symbol *jslTypeNameDefinition(S_idIdentList *tname) {
     CF_ALLOC(td, S_typeModifiers); //XX_ALLOC?
     FILLF_typeModifiers(td, TypeStruct,t,memb,NULL, NULL);
     td->u.t = memb;
+
     CF_ALLOC(dd, S_symbol); //XX_ALLOC?
+    fillSymbolWithType(dd, memb->name, memb->linkName, tname->idi.p, td);
     FILL_symbolBits(&dd->bits,0,0,0,0,0,   TypeDefault, StorageDefault,0);
-    FILL_symbol(dd,memb->name,memb->linkName,tname->idi.p,dd->bits,type,td,NULL);
-    dd->u.type = td;
+
     return(dd);
 }
 

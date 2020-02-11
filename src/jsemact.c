@@ -13,6 +13,7 @@
 #include "jslsemact.h"
 #include "editor.h"
 #include "enumTxt.h"
+#include "symbol.h"
 
 #include "javagram.x"
 
@@ -144,12 +145,14 @@ static S_reference *javaAddClassCxReference(S_symbol *dd, S_position *pos, unsig
 }
 
 static void javaAddNameCxReference(S_idIdentList *id, unsigned usage) {
-    char                *cname;
-    S_symbol    dd;
+    char *cname;
+    S_symbol dd;
+
     assert(id != NULL);
     cname = javaCreateComposedName(NULL,id,'/',NULL,tmpMemory,SIZE_TMP_MEM);
+    fillSymbol(&dd, id->idi.name, cname, id->idi.p);
     FILL_symbolBits(&dd.bits,0,0,0,0,0,id->nameType,StorageNone,0);
-    FILL_symbol(&dd,id->idi.name,cname,id->idi.p,dd.bits,type,NULL,NULL);
+
     /* if you do something else do attention on the union initialisation */
     addCxReference(&dd, &id->idi.p, usage,s_noneFileIndex, s_noneFileIndex);
 }
@@ -457,11 +460,14 @@ static S_symbol *javaFQTypeSymbolDefinitionCreate(char *name,
 
     CF_ALLOCC(sname, strlen(name)+1, char);
     strcpy(sname, name);
+
     CF_ALLOCC(lname1, strlen(fqName)+1, char);
     strcpy(lname1, fqName);
+
     CF_ALLOC(memb, S_symbol);
-    FILL_symbolBits(&memb->bits,0,0, 0,0, 0,	TypeStruct, StorageNone,0);
-    FILL_symbol(memb, sname, lname1, s_noPos,memb->bits,s,NULL,NULL);
+    fillSymbol(memb, sname, lname1, s_noPos);
+    FILL_symbolBits(&memb->bits, 0, 0, 0, 0, 0, TypeStruct, StorageNone, 0);
+
     CF_ALLOC(memb->u.s, S_symStructSpecific);
     FILLF_symStructSpecific(memb->u.s,NULL,
                             NULL,NULL,NULL,0,NULL,
@@ -471,14 +477,17 @@ static S_symbol *javaFQTypeSymbolDefinitionCreate(char *name,
                                                               s_javaThisPackageName),
                             0, -1, 0);
     memb->u.s->stype.u.t = memb;
+
     CF_ALLOC(pppl, SymbolList);
     /* REPLACED: FILL_symbolList(pppl, memb, NULL); with: */
     *pppl = (SymbolList){.d = memb, .next = NULL};
+
     if (ii < 0) {
         javaFqtTabAdd(&s_javaFqtTab,pppl,&ii);
     } else {
         javaFqtTabSet(&s_javaFqtTab,pppl,ii);
     }
+
     // I think this can be there, as it is very used
     javaCreateClassFileItem(memb);
     // this would be too strong, javaLoadClassSymbolsFromFile(memb);
@@ -492,9 +501,10 @@ S_symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {
     SymbolList ppl, *pppl;
     int position;
 
+    fillSymbol(&symbol, name, fqName, s_noPos);
     FILL_symbolBits(&symbol.bits, 0, 0, 0, 0, 0, TypeStruct, StorageNone, 0);
-    FILL_symbol(&symbol, name, fqName, s_noPos,symbol.bits, s, NULL, NULL);
     FILL_symbolList(&ppl, &symbol, NULL);
+
     if (javaFqtTabIsMember(&s_javaFqtTab, &ppl, &position, &pppl)) {
         member = pppl->d;
     } else {
@@ -555,7 +565,6 @@ static S_symbol *javaAddTypeToSymbolTable(S_symbol *memb, int accessFlags, S_pos
     return(memb);
 }
 
-// TODO: split this function on two depending on addTyp parameter
 S_symbol *javaTypeSymbolDefinition(S_idIdentList *tname,
                                    int accessFlags,
                                    int addTyp){
@@ -564,8 +573,10 @@ S_symbol *javaTypeSymbolDefinition(S_idIdentList *tname,
 
     assert(tname);
     assert(tname->nameType == TypeStruct);
-    FILL_symbolBits(&pp.bits,0,0, accessFlags,0, 0, TypeStruct, StorageNone,0);
-    FILL_symbol(&pp,tname->idi.name,tname->idi.name,s_noPos,pp.bits,s,NULL,NULL);
+
+    fillSymbol(&pp, tname->idi.name, tname->idi.name, s_noPos);
+    FILL_symbolBits(&pp.bits, 0, 0, accessFlags, 0, 0, TypeStruct, StorageNone, 0);
+
     javaCreateComposedName(NULL,tname,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
     memb = javaFQTypeSymbolDefinition(tname->idi.name, fqtName);
     if (addTyp == TYPE_ADD_YES) {
@@ -582,8 +593,10 @@ S_symbol *javaTypeSymbolUsage(S_idIdentList *tname,
 
     assert(tname);
     assert(tname->nameType == TypeStruct);
+
+    fillSymbol(&pp, tname->idi.name, tname->idi.name, s_noPos);
     FILL_symbolBits(&pp.bits,0,0, accessFlags,0, 0, TypeStruct, StorageNone,0);
-    FILL_symbol(&pp,tname->idi.name,tname->idi.name,s_noPos,pp.bits,s,NULL,NULL);
+
     if (tname->next==NULL && symTabIsMember(s_symTab, &pp, &ii, &memb)) {
         // get canonical copy
         memb = javaFQTypeSymbolDefinition(memb->name, memb->linkName);
@@ -594,8 +607,6 @@ S_symbol *javaTypeSymbolUsage(S_idIdentList *tname,
     return(memb);
 }
 
-// seems that this function is completely wrong, because
-// of inherited nested classes, which should have
 S_symbol *javaTypeNameDefinition(S_idIdentList *tname) {
     S_symbol    *memb;
     S_symbol		*dd;
@@ -604,10 +615,11 @@ S_symbol *javaTypeNameDefinition(S_idIdentList *tname) {
     XX_ALLOC(td, S_typeModifiers);
     FILLF_typeModifiers(td, TypeStruct,t,memb,NULL, NULL);
     td->u.t = memb;
-    XX_ALLOC(dd, S_symbol);
-    FILL_symbolBits(&dd->bits,0,0,0,0,0,	TypeDefault, StorageDefault,0);
-    FILL_symbol(dd,memb->name,memb->linkName,tname->idi.p,dd->bits,type,td,NULL);
-    dd->u.type = td;
+    /* XX_ALLOC(dd, S_symbol); */
+    /* FILL_symbolBits(&dd->bits,0,0,0,0,0,	TypeDefault, StorageDefault,0); */
+    /* FILL_symbol(dd,memb->name,memb->linkName,tname->idi.p,dd->bits,type,td,NULL); */
+    dd = newSymbolIsType(memb->name, memb->linkName, tname->idi.p, td);
+    FILL_symbolBits(&dd->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
     return(dd);
 }
 
@@ -832,13 +844,14 @@ static int findTopLevelNameInternal(
         (classif==CLASS_TO_EXPR || classif==CLASS_TO_METHOD));
     assert(accCheck==ACC_CHECK_YES || accCheck==ACC_CHECK_NO);
     assert(visibCheck==VISIB_CHECK_YES || visibCheck==VISIB_CHECK_NO);
-//&fprintf(dumpOut,"checking %s\n",name);
-    FILL_symbolBits(&sd.bits,0,0, 0,0,0,	TypeDefault, StorageNone,0);
-    FILL_symbol(&sd, name, name, s_noPos,sd.bits,type,NULL,NULL);
+
+    fillSymbol(&sd, name, name, s_noPos);
+    FILL_symbolBits(&sd.bits, 0, 0, 0, 0, 0, TypeDefault, StorageNone, 0);
+
     res = RETURN_NOT_FOUND;
-    for(	cscope=startingScope;
-            cscope!=NULL && cscope->thisClass!=NULL && res!=RETURN_OK;
-            cscope=cscope->next
+    for(cscope=startingScope;
+        cscope!=NULL && cscope->thisClass!=NULL && res!=RETURN_OK;
+        cscope=cscope->next
         ) {
         assert(cscope->thisClass);
         if (classif!=CLASS_TO_METHOD && symTabIsMember(cscope->locals, &sd, &ii, resMemb)) {
@@ -995,8 +1008,10 @@ int javaClassifySingleAmbigNameToTypeOrPack(S_idIdentList *name,
     S_symbol    sd, *mm, *memb, *nextmemb;
     int         ii, haveit, accessible;
     S_position  *ipos;
+
+    fillSymbol(&sd, name->idi.name, name->idi.name, s_noPos);
     FILL_symbolBits(&sd.bits,0,0, 0,0, 0, TypeStruct, StorageNone,0);
-    FILL_symbol(&sd,name->idi.name,name->idi.name,s_noPos,sd.bits,type,NULL,NULL);
+
     haveit = 0;
     if (symTabIsMember(s_symTab, &sd, &ii, &memb)) {
         /* a type */
@@ -1554,11 +1569,11 @@ S_symbol *javaCreateNewMethod(char *nn, S_position *p, int mem) {
         m = StackMemAlloc(S_typeModifiers);
         res = StackMemAlloc(S_symbol);
     }
-    FILLF_typeModifiers(m, TypeFunction,f,( NULL,NULL) ,NULL, NULL);
-    FILL_symbolBits(&res->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
-    FILL_symbol(res,name,name,*p,res->bits,type,m,NULL);
-    res->u.type = m;
-//&fprintf(dumpOut,"creating method %s at %x %x\n",nn, res, m);
+
+    FILLF_typeModifiers(m, TypeFunction, f, (NULL, NULL), NULL, NULL);
+    fillSymbolWithType(res, name, name, *p, m);
+    FILL_symbolBits(&res->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
+
     return(res);
 }
 
@@ -2621,16 +2636,18 @@ void newClassDefinitionEnd(S_freeTrail *trail) {
 }
 
 void javaInitArrayObject(void) {
-    static S_symbol             s_lengthSymbol;
-    static S_symStructSpecific  s_arraySpec;
+    static S_symbol s_lengthSymbol;
+    static S_symStructSpecific s_arraySpec;
 
     assert(s_javaObjectSymbol != NULL);
     javaLoadClassSymbolsFromFile(s_javaObjectSymbol);
+
+    fillSymbolWithType(&s_lengthSymbol, "length", "java/lang/array.length",
+                       s_noPos, &s_defaultIntModifier);
     FILL_symbolBits(&s_lengthSymbol.bits,0,0, ACC_PUBLIC,0, 0,
                         TypeDefault, StorageDefault,0);
-    FILL_symbol(&s_lengthSymbol, "length", "java/lang/array.length",
-                s_noPos,s_lengthSymbol.bits,type,&s_defaultIntModifier, NULL);
     s_lengthSymbol.u.type = & s_defaultIntModifier;
+
     FILLF_symStructSpecific(&s_arraySpec, NULL,
                 &s_lengthSymbol, NULL,NULL,
                 0, NULL,
@@ -2638,15 +2655,18 @@ void javaInitArrayObject(void) {
                 TypePointer,f,(NULL,NULL),NULL,&s_arraySpec.stype,
                 1,0, -1,0);
     s_arraySpec.stype.u.t = &s_javaArrayObjectSymbol;
+
     // orig. javaFileLoaded==1, I changed, because of methodInvoc. reference
+
+    fillSymbolWithStruct(&s_javaArrayObjectSymbol, "__arrayObject__", "__arrayObject__",
+                         s_noPos, &s_arraySpec);
     FILL_symbolBits(&s_javaArrayObjectSymbol.bits,0,0,ACC_PUBLIC,0, 1,
                     TypeStruct, StorageDefault,0);
-    FILL_symbol(&s_javaArrayObjectSymbol, "__arrayObject__",
-                "__arrayObject__", s_noPos,
-                s_javaArrayObjectSymbol.bits,s,&s_arraySpec, NULL);
     s_javaArrayObjectSymbol.u.s = &s_arraySpec;
+
     javaCreateClassFileItem(&s_javaArrayObjectSymbol);
-    addSuperClassOrInterfaceByName(&s_javaArrayObjectSymbol,s_javaLangObjectLinkName, s_noneFileIndex, LOAD_SUPER);
+    addSuperClassOrInterfaceByName(&s_javaArrayObjectSymbol,s_javaLangObjectLinkName,
+                                   s_noneFileIndex, LOAD_SUPER);
 }
 
 S_typeModifiers *javaArrayFieldAccess(S_idIdent *id) {

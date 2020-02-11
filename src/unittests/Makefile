@@ -30,13 +30,16 @@ lex_tests.so: $(OBJDIR)/lex_tests.o $(patsubst %,$(OBJDIR)/%.o,$(LEX_DEPENDENCIE
 symtab_tests.so: $(OBJDIR)/symtab_tests.o $(OBJDIR)/symtab.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-jslsemact_tests.so: $(OBJDIR)/jslsemact_tests.o $(OBJDIR)/jslsemact.o $(OBJDIR)/log.o
+jslsemact_tests.so: $(OBJDIR)/jslsemact_tests.o $(OBJDIR)/jslsemact.o $(OBJDIR)/symbol.o $(OBJDIR)/log.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 olcxtab_tests.so: $(OBJDIR)/olcxtab_tests.o $(OBJDIR)/olcxtab.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 filetab_tests.so: $(OBJDIR)/filetab_tests.o $(OBJDIR)/filetab.o
+	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
+
+symbol_tests.so: $(OBJDIR)/symbol_tests.o $(OBJDIR)/symbol.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 CXFILE_DEPENDENCIES = protocol log #enumTxt globals commons enumTxt reftab cgram semact jslsemact complete cxref olcxtab cfread symtab editor editorbuffertab jsltypetab

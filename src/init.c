@@ -6,6 +6,7 @@
 #include "protocol.h"
 #include "misc.h"
 #include "enumTxt.h"
+#include "symbol.h"
 
 
 static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {
@@ -19,11 +20,14 @@ static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {
         s_tokenName[tok] = nn;
         s_tokenLength[tok] = strlen(nn);
         if ((isalpha(*nn) || *nn=='_') && (tlan & s_language)) {
-            /* looks like a key word */
-            XX_ALLOC(pp, S_symbol);
+            /* looks like a keyword */
+            /*& XX_ALLOC(pp, S_symbol); */
+            /*& FILL_symbolBits(&pp->bits,0,0, 0,0,0,TypeKeyword,StorageNone,0); */
+            /*& FILL_symbol(pp,nn,nn,s_noPos,pp->bits,keyWordVal,tok,NULL); */
+            /*& REPLACED: XX_ALLOC & FILL_symbol() with */
+            pp = newSymbolIsKeyword(nn, nn, s_noPos, tok);
             FILL_symbolBits(&pp->bits,0,0, 0,0,0,TypeKeyword,StorageNone,0);
-            FILL_symbol(pp,nn,nn,s_noPos,pp->bits,keyWordVal,tok,NULL);
-            pp->u.keyWordVal = tok;
+
             /*fprintf(dumpOut,"adding keyword %s to tab %d\n",nn,s_symTab);*/
             symTabAdd(s_symTab,pp,&ii);
         }
@@ -76,9 +80,12 @@ void initTokenNameTab(void) {
     /* regular tokentab at last, because we wish to have correct names */
     initTokensFromTab(s_tokenNameIniTab);
     /* and add the 'defined' keyword for #if */
-    XX_ALLOC(pp, S_symbol);
-    FILL_symbolBits(&pp->bits,0,0,0,0,0,TypeDefinedOp,StorageNone,0);
-    FILL_symbol(pp,"defined","defined",s_noPos,pp->bits,type,NULL,NULL);
+    /*& XX_ALLOC(pp, S_symbol); */
+    /*& FILL_symbolBits(&pp->bits,0,0,0,0,0,TypeDefinedOp,StorageNone,0); */
+    /*& FILL_symbol(pp,"defined","defined",s_noPos,pp->bits,type,NULL,NULL); */
+    /*& REPLACED: XX_ALLOC()+FILL_symbol() with: */
+    pp = newSymbol("defined", "defined", s_noPos);
+    FILL_symbolBits(&pp->bits, 0, 0, 0, 0, 0, TypeDefinedOp, StorageNone, 0);
     symTabAdd(s_symTab,pp,&ii);
 }
 
@@ -151,25 +158,23 @@ void initExtractStoragesNameTab(void) {
 
 
 void initArchaicTypes(void) {
-    /* ******* some defaults and built-ins initialisationa ********* */
+    /* ******* some defaults and built-ins initialisations ********* */
 
-    FILLF_typeModifiers(&s_defaultIntModifier,TypeInt,f,( NULL,NULL) ,NULL,NULL);
-    FILL_symbolBits(&s_defaultIntDefinition.bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
-    FILL_symbol(&s_defaultIntDefinition,NULL,NULL,s_noPos,
-                s_defaultIntDefinition.bits,type,&s_defaultIntModifier,NULL);
-    s_defaultIntDefinition.u.type = &s_defaultIntModifier;
-    FILLF_typeModifiers(&s_defaultPackedTypeModifier,TypePackedType,f,(
-                                                                       NULL,NULL) ,NULL,NULL);
+    FILLF_typeModifiers(&s_defaultIntModifier, TypeInt, f, (NULL,NULL), NULL, NULL);
+    fillSymbolWithType(&s_defaultIntDefinition, NULL, NULL, s_noPos, &s_defaultIntModifier);
+    FILL_symbolBits(&s_defaultIntDefinition.bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
+
+    FILLF_typeModifiers(&s_defaultPackedTypeModifier, TypePackedType, f,
+                        (NULL,NULL), NULL, NULL);
+
     FILLF_typeModifiers(&s_defaultVoidModifier,TypeVoid,f,( NULL,NULL) ,NULL,NULL);
-    FILL_symbolBits(&s_defaultVoidDefinition.bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
-    FILL_symbol(&s_defaultVoidDefinition,NULL,NULL,s_noPos,
-                s_defaultVoidDefinition.bits,type,&s_defaultVoidModifier,NULL);
-    s_defaultVoidDefinition.u.type = &s_defaultVoidModifier;
+    fillSymbolWithType(&s_defaultVoidDefinition, NULL, NULL, s_noPos,
+               &s_defaultVoidModifier);
+    FILL_symbolBits(&s_defaultVoidDefinition.bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
+
     FILLF_typeModifiers(&s_errorModifier, TypeError,f,( NULL,NULL) ,NULL,NULL);
-    FILL_symbolBits(&s_errorSymbol.bits,0,0, 0,0,0,TypeError, StorageNone,0);
-    FILL_symbol(&s_errorSymbol,"__ERROR__",
-                "__ERROR__",s_noPos,s_errorSymbol.bits,type,&s_errorModifier,NULL);
-    s_errorSymbol.u.type = &s_errorModifier;
+    fillSymbolWithType(&s_errorSymbol,"__ERROR__", "__ERROR__", s_noPos, &s_errorModifier);
+    FILL_symbolBits(&s_errorSymbol.bits, 0, 0, 0, 0, 0, TypeError, StorageNone, 0);
 }
 
 void initPreCreatedTypes(void) {

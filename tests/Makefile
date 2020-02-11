@@ -15,12 +15,14 @@ quick:
 	@$(MAKE) -C simple_xrefs
 	@$(MAKE) -C pragma_once
 	@$(MAKE) -C process_yacc
+	@$(MAKE) -C yacc_coverage
+	@$(MAKE) -C cgram_coverage
 	@$(MAKE) -C basic_html_generation
 	@$(MAKE) -C standard_includes
 	@$(MAKE) -C initializer_parsing
 	@$(MAKE) -C generate_str_fill
 	@$(MAKE) -C java_example
-	#@$(MAKE) -C read_xrefs
+	@$(MAKE) -C read_xrefs
 
 slow:
 	@echo "Slow tests..."
