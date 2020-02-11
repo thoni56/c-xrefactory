@@ -30,10 +30,11 @@ static void jslFillTypeSymbolItem(S_symbol *sd, S_jslSymbolList *ss ,
 
 S_symbol *jslTypeSpecifier2(S_typeModifiers *t) {
     S_symbol    *r;
+
     CF_ALLOC(r, S_symbol);
-    FILL_symbolBits(&r->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
-    FILL_symbol(r,NULL,NULL,s_noPos,r->bits,type,t,NULL);
-    r->u.type = t;
+    fillSymbolWithType(r, NULL, NULL, s_noPos, t);
+    FILL_symbolBits(&r->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
+
     return(r);
 }
 
