@@ -10,7 +10,9 @@ $(TEST):
 
 setup:
 	@rm -rf $@.log CXrefs
-	@[ ! -f .emacs.d/el-get/c-xrefactory ] && ln -s $(CURDIR)/../../ .emacs.d/el-get/c-xrefactory
+	@if [ ! -e .emacs.d/el-get/c-xrefactory ] ; then \
+		ln -s $(CURDIR)/../.. .emacs.d/el-get/c-xrefactory ; \
+	fi
 	@# Copy c-example files here...
 	@rm -rf cexercise
 	@cp -r ../../doc/cexercise .
@@ -43,7 +45,7 @@ check:
 	@exit 0
 
 clean:
-	@rm -rf $@.log CXrefs
+	@rm -rf $@.log CXrefs .emacs.d/el-get/c-xrefactory
 	@# Copy c-example files here...
 	@rm -rf cexercise
 	@cp -r ../../doc/cexercise .
