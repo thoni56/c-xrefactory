@@ -20,7 +20,7 @@ static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {
         s_tokenName[tok] = nn;
         s_tokenLength[tok] = strlen(nn);
         if ((isalpha(*nn) || *nn=='_') && (tlan & s_language)) {
-            /* looks like a key word */
+            /* looks like a keyword */
             /*& XX_ALLOC(pp, S_symbol); */
             /*& FILL_symbolBits(&pp->bits,0,0, 0,0,0,TypeKeyword,StorageNone,0); */
             /*& FILL_symbol(pp,nn,nn,s_noPos,pp->bits,keyWordVal,tok,NULL); */
