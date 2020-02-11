@@ -80,6 +80,9 @@ void deleteContinueBreakLabelSymbol(char *name) {
 
     FILL_symbolBits(&ss.bits, 0,0,0,0,0,TypeLabel,StorageAuto,0);
     FILL_symbol(&ss, name, name, s_noPos, ss.bits,labn,0, NULL);
+    /* Above could be REPLACE FILL_symbol() on local variable with fillSymbol() */
+    /* fillSymbolAsLabel(&ss, name, name, s_noPos, 0); */
+    /* FILL_symbolBits(&ss.bits, 0,0,0,0,0,TypeLabel,StorageAuto,0); */
     if (symTabIsMember(s_symTab, &ss, &ii, &memb)) {
         ExtrDeleteContBreakSym(memb);
     } else {
