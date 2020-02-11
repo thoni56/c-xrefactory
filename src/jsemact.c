@@ -145,12 +145,14 @@ static S_reference *javaAddClassCxReference(S_symbol *dd, S_position *pos, unsig
 }
 
 static void javaAddNameCxReference(S_idIdentList *id, unsigned usage) {
-    char                *cname;
-    S_symbol    dd;
+    char *cname;
+    S_symbol dd;
+
     assert(id != NULL);
     cname = javaCreateComposedName(NULL,id,'/',NULL,tmpMemory,SIZE_TMP_MEM);
+    fillSymbol(&dd,id->idi.name, cname, id->idi.p);
     FILL_symbolBits(&dd.bits,0,0,0,0,0,id->nameType,StorageNone,0);
-    FILL_symbol(&dd,id->idi.name,cname,id->idi.p,dd.bits,type,NULL,NULL);
+
     /* if you do something else do attention on the union initialisation */
     addCxReference(&dd, &id->idi.p, usage,s_noneFileIndex, s_noneFileIndex);
 }
