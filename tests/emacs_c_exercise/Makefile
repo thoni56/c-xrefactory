@@ -10,7 +10,9 @@ $(TEST):
 
 setup:
 	@rm -rf $@.log CXrefs
-	@[ ! -f .emacs.d/el-get/c-xrefactory ] && ln -s $(CURDIR)/../../ .emacs.d/el-get/c-xrefactory
+	@if [ ! -e .emacs.d/el-get/c-xrefactory ] ; then \
+		ln -s $(CURDIR)/../.. .emacs.d/el-get/c-xrefactory ; \
+	fi
 	@# Copy c-example files here...
 	@rm -rf cexercise
 	@cp -r ../../doc/cexercise .
@@ -27,7 +29,7 @@ setup:
 execute: EMACS_STARTUP=-batch
 execute exec:
 	@# Run emacs with commands to execute the example sequence
-	HOME=$(CURDIR) emacs --no-splash $(EMACS_STARTUP) -l .emacs.d/init.el -l .emacs.d/override-el-get-update.el -l emacs_c_exercise.el > /dev/null 2>&1
+	@HOME=$(CURDIR) emacs --no-splash $(EMACS_STARTUP) -l .emacs.d/init.el -l .emacs.d/override-el-get-update.el -l emacs_c_exercise.el > /dev/null 2>&1
 	@# Remove tilde-files after editing
 	@find cexercise -name \*~ -exec rm {} \;
 
@@ -43,7 +45,7 @@ check:
 	@exit 0
 
 clean:
-	@rm -rf $@.log CXrefs
+	@rm -rf $@.log CXrefs .emacs.d/el-get/c-xrefactory
 	@# Copy c-example files here...
 	@rm -rf cexercise
 	@cp -r ../../doc/cexercise .
