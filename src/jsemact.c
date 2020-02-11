@@ -2655,15 +2655,18 @@ void javaInitArrayObject(void) {
                 TypePointer,f,(NULL,NULL),NULL,&s_arraySpec.stype,
                 1,0, -1,0);
     s_arraySpec.stype.u.t = &s_javaArrayObjectSymbol;
+
     // orig. javaFileLoaded==1, I changed, because of methodInvoc. reference
+
+    fillSymbolWithStruct(&s_javaArrayObjectSymbol, "__arrayObject__", "__arrayObject__",
+                         s_noPos, &s_arraySpec);
     FILL_symbolBits(&s_javaArrayObjectSymbol.bits,0,0,ACC_PUBLIC,0, 1,
                     TypeStruct, StorageDefault,0);
-    FILL_symbol(&s_javaArrayObjectSymbol, "__arrayObject__",
-                "__arrayObject__", s_noPos,
-                s_javaArrayObjectSymbol.bits,s,&s_arraySpec, NULL);
     s_javaArrayObjectSymbol.u.s = &s_arraySpec;
+
     javaCreateClassFileItem(&s_javaArrayObjectSymbol);
-    addSuperClassOrInterfaceByName(&s_javaArrayObjectSymbol,s_javaLangObjectLinkName, s_noneFileIndex, LOAD_SUPER);
+    addSuperClassOrInterfaceByName(&s_javaArrayObjectSymbol,s_javaLangObjectLinkName,
+                                   s_noneFileIndex, LOAD_SUPER);
 }
 
 S_typeModifiers *javaArrayFieldAccess(S_idIdent *id) {

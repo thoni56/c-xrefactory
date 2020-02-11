@@ -22,5 +22,6 @@ extern void fillSymbolWithType(S_symbol *symbol, char *name, char *linkName, str
 extern S_symbol *newSymbolIsEnum(char *name, char *linkName, struct position pos, struct symbolList *enums);
 extern S_symbol *newSymbolIsLabel(char *name, char *linkName, struct position pos, int labelIndex);
 extern void fillSymbolWithLabel(S_symbol *symbol, char *name, char *linkName, struct position pos, int labelIndex);
+extern void fillSymbolWithStruct(S_symbol *symbol, char *name, char *linkName, struct position pos, struct symStructSpecific *structSpec);
 
 #endif
