@@ -1,0 +1,13 @@
+/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/bin/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -o /tmp/c-xrefxthoni392.tmp -task_regime_server 
+->:-olcxgetprojectname -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/src/cxref.c"
+->:end-of-options
+->:
+<-:<sync>
+->:-encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=107  "-preload" "/home/thoni/Utveckling/c-xrefactory/src/cxref.c" "/tmp/c-xrefxthoni398.tmp" "-olcursor=15" "/home/thoni/Utveckling/c-xrefactory/src/cxref.c" -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/src" -user 1
+->:end-of-options
+->:
+<-:<sync>
+->:-encoding=european -olcomplselect121 -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/src" -user 1
+->:end-of-options
+->:
+<-:<sync>
