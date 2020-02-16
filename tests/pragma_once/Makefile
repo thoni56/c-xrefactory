@@ -1,4 +1,5 @@
 # Automated tests for pragma once
+# Verification is just that it can parse "pragma once" and generate CXrefs
 
 include ../Makefile.boilerplate
 
