@@ -23,6 +23,7 @@ quick:
 	@$(MAKE) -C generate_str_fill
 	@$(MAKE) -C java_example
 	@$(MAKE) -C read_xrefs
+	@$(MAKE) -C complete_coverage
 
 slow:
 	@echo "Slow tests..."

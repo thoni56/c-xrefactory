@@ -4794,6 +4794,7 @@ void mainAnswerEditAction(void) {
                 }
             } else {
                 ifname = s_fileTab.tab[s_olOriginalComFileNumber]->name;
+                log_trace("ifname = %s", ifname);
                 searchDefaultOptionsFile(ifname, dffname, dffsect);
                 if (dffname[0]==0 || dffsect[0]==0) {
                     if (s_opt.noErrors) {
