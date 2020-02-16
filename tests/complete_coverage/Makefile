@@ -1,26 +1,27 @@
-# Automated tests for checking generated c-xreferences
+# Automated tests for exercising completion functionality
 
 include ../Makefile.boilerplate
 
-COMMAND = ../../src/c-xref -xrefrc .c-xrefrc single_int*.c -o $(TEST).log
+BASE_COMMAND = ../../src/c-xref -xrefrc $(CURDIR)/.c-xrefrc single_int*.c
 
-CHECK_FOR_CONTENT = python -c "content=open('$(1)').read(); target=open('output').read(); exit(0 if content in target else 1);"
-
-$(TEST):
+$(TEST): CXrefs
 	@printf "Tests in '$@': "
-	@rm -rf output $@.log CXrefs
-	@$(COMMAND)
-	@../../utils/cxref_reader.py > output
-	@while read -r line ; do \
-		grep -q $$line output ; \
-		ecode=$$? ; \
-		if [ $$ecode -ne 0 ] ; then \
-			echo "Failed: output did not contain expected: '$$line'" ; \
-			exit 1 ; \
-		fi ; \
-	done < expected
-	@echo "Ok"
+	@rm -rf output* $@.log /tmp/c-xref*.log
+	@python3 completion-sequence.py "$(CURDIR)" $(BASE_COMMAND) -xrefactory-II -o buffer -task_regime_server > output
+	@sed -e "s+$(CURDIR)+CURDIR+g" output > output.tmp
+	@cmp output.tmp expected
+	@if [ $$? -ne 0 ] ; then \
+		diff output.tmp expected ; \
+		echo "Failed" ; \
+		exit 1 ; \
+	else \
+		echo "Ok" ; \
+	fi
 	@exit 0
 
+CXrefs:
+init:
+	@$(BASE_COMMAND) -o $(TEST).log
+
 gdb:
-	gdb --args $(COMMAND)
+	gdb --args $(BASE_COMMAND)
