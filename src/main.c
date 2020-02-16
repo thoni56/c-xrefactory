@@ -2763,11 +2763,6 @@ void mainOpenOutputFile(char *ofile) {
     }
     errOut = ccOut;
     dumpOut = ccOut;
-
-    /* This is called from various places multiple times, don't know
-       why yet, but we need to set log output here, since it's used as
-       output too */
-    log_set_fp(dumpOut);
 }
 
 static int scheduleFileUsingTheMacro(void) {
@@ -3374,6 +3369,9 @@ static void setupLogging(void) {
     /* Note that dumpOut may change since 'mainOpenOutputFile()' is
        called from several places, so we'll do a 'log_set_fp()' there
        too */
+
+    /* Force tracing for now */
+    s_opt.trace = true;
 
     if (s_opt.trace)
         log_set_file_level(LOG_TRACE);
