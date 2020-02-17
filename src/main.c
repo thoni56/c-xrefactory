@@ -2644,7 +2644,13 @@ void getPipedOptions(int *outNargc,char ***outNargv){
         /* those options can't contain include or define options, */
         /* sections neither */
         c = getc(stdin);
-        if (c==EOF) fatalError(ERR_INTERNAL, "broken input pipe", XREF_EXIT_ERR);
+        if (c==EOF) {
+            /* Just log and exit since we don't know if there is someone there... */
+            /* We also want a clean exit() if we are going for coverage */
+            log_error("Broken pipe");
+            exit(-1);
+            fatalError(ERR_INTERNAL, "broken input pipe", XREF_EXIT_ERR);
+        }
     }
 }
 
