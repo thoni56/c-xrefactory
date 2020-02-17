@@ -1,6 +1,4 @@
 #!/bin/sh
-PPWD=`pwd`
-#!/bin/sh
 #
 # This is a script that aims at running a virgin Emacs with minimal c-xrefactory setup
 # with the development versions of everything (which means that there should be a freshly
