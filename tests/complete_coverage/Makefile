@@ -10,7 +10,7 @@ $(TEST): CXrefs
 	@python3 completion-sequence.py "$(CURDIR)" $(BASE_COMMAND) -xrefactory-II -o buffer -task_regime_server > output.tmp
 	@sed -e "s+$(CURDIR)+CURDIR+g" -e "s/len=[0-9]*/len=<n>/g" output.tmp > output
 	@cmp output expected ; \
-	@if [ $$? -ne 0 ] ; then \
+	if [ $$? -ne 0 ] ; then \
 		echo "Failed" ; \
 		diff output expected ; \
 		exit 1 ; \
