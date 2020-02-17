@@ -159,7 +159,7 @@ c-xref: $(OBJS)
 clean:;
 	-make -C $(ROOTDIR)/lib/zlib clean
 	-make -C unittests clean
-	-rm -rf $(OBJDIR)/*.o c-xref .c-xrefrc
+	-rm -rf $(OBJDIR)/*.o $(OBJDIR)/*.gc* c-xref .c-xrefrc
 
 cleaner: clean
 	-rm -rf $(OBJDIR) compiler_defines.g strFill.g.h enumTxt.g.[ch] c-xref.bs
