@@ -4,11 +4,12 @@
 #
 # Usage:
 #
-#     edit_server_driver.py <commandfile> <curdir> <bufferfile>
+#     edit_server_driver.py <commandfile> <curdir> <bufferfile> [ <seconds> ]
 #
 import sys
 import subprocess
 import io
+import time
 from shutil import copy
 
 
@@ -39,10 +40,19 @@ def read_output(filename):
 
 # First argument is the file with the commands
 command_file = sys.argv[1]
+
 # Second argument is the value of CURDIR
 CURDIR = sys.argv[2]
+
 # Third argument is name of the communication buffer file
 buffer = sys.argv[3]
+
+# If there is a fourth argument that is a sleep timer to
+# be able to attach a debugger
+if len(sys.argv) == 5:
+    sleep = int(sys.argv[4])
+else:
+    sleep = None
 
 with open(command_file, 'rb') as file:
     invocation = file.readline().decode().rstrip()
@@ -53,6 +63,9 @@ with open(command_file, 'rb') as file:
     p = subprocess.Popen(args.split(' '),
                          stdout=subprocess.PIPE,
                          stdin=subprocess.PIPE)
+
+    if sleep:
+        time.sleep(sleep)
 
     command = file.readline().decode()
     while command != '':
