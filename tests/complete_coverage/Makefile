@@ -2,17 +2,17 @@
 
 include ../Makefile.boilerplate
 
-BASE_COMMAND = ../../src/c-xref -xrefrc $(CURDIR)/.c-xrefrc single_int*.c
+BASE_COMMAND = ../../src/c-xref -xrefrc $(CURDIR)/.c-xrefrc single_int1.c
 
 $(TEST): CXrefs
 	@printf "Tests in '$@': "
 	@rm -rf output* $@.log /tmp/c-xref*.log
-	@python3 completion-sequence.py "$(CURDIR)" $(BASE_COMMAND) -xrefactory-II -o buffer -task_regime_server > output
-	@sed -e "s+$(CURDIR)+CURDIR+g" output > output.tmp
-	@cmp output.tmp expected
+	@python3 completion-sequence.py "$(CURDIR)" $(BASE_COMMAND) -xrefactory-II -o buffer -task_regime_server > output.tmp
+	@sed -e "s+$(CURDIR)+CURDIR+g" -e "s/len=[0-9]*/len=<n>/g" output.tmp > output
+	@cmp output expected ; \
 	@if [ $$? -ne 0 ] ; then \
-		diff output.tmp expected ; \
 		echo "Failed" ; \
+		diff output expected ; \
 		exit 1 ; \
 	else \
 		echo "Ok" ; \
@@ -25,3 +25,6 @@ init:
 
 gdb:
 	gdb --args $(BASE_COMMAND)
+
+clean:
+	rm -r CXrefs .c-xrefrc
