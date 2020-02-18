@@ -1682,12 +1682,13 @@ int optionsOverflowHandler(int n) {
 int cxMemoryOverflowHandler(int n) {
     int ofaktor,faktor,oldsize, newsize;
     S_memory *oldcxMemory;
-    log_debug("Reallocating cxMemory.");
+
     if (cxMemory!=NULL) {
         oldsize = cxMemory->size;
     } else {
         oldsize = 0;
     }
+
     ofaktor = oldsize / CX_MEMORY_CHUNK_SIZE;
     faktor = ((n>1)?(n-1):0)/CX_MEMORY_CHUNK_SIZE + 1; // 1 no patience to wait ;
     //& if (s_opt.cxMemoryFaktor>=1) faktor *= s_opt.cxMemoryFaktor;
@@ -1700,9 +1701,7 @@ int cxMemoryOverflowHandler(int n) {
     if (cxMemory!=NULL) {
         FILL_memory(cxMemory, cxMemoryOverflowHandler, 0, newsize, 0);
     }
-#   if ZERO //def DEBUG
-    fprintf(dumpOut,"\n[cxMemory] %d -> %d\n",oldsize,newsize);
-    fflush(dumpOut);
-#   endif
+    log_debug("Reallocating cxMemory: %d -> %d", oldsize, newsize);
+
     return(cxMemory!=NULL);
 }
