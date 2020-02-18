@@ -485,8 +485,8 @@ static void processSectionMarker(char *ttt,int i,char *project,char *section,
     ttt[i-1]=0;
     tt = ttt+1;
     firstPath[0]=0;
-    //&fprintf(errOut,"!processing %s for file %s project==%s\n", tt, section, project);
-#if 1 // ZERO
+    log_debug("processing %s for file %s project==%s", tt, section, project);
+#if 1
     *writeFlag = 0;
     JavaMapOnPaths(tt, {
             if (firstPath[0]==0) strcpy(firstPath, currentPath);
@@ -570,7 +570,7 @@ int readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
     while (c!=EOF) {
         c = getOptionFromFile(file,text,MAX_OPTION_LEN,&len);
         if (len>=2 && text[0]=='[' && text[len-1]==']') {
-            log_trace("!checking '%s'", text);
+            log_trace("checking '%s'", text);
             expandEnvironmentVariables(text+1, MAX_OPTION_LEN, &len, GLOBAL_ENV_ONLY);
             log_trace("expanded '%s'", text);
             processSectionMarker(text,len+1,project,sectionFile,&isActiveSect,resSection);
