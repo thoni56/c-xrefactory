@@ -357,7 +357,7 @@ primary_expr
     | LONG_CONSTANT			{ CrTypeModifier($$.d.t, TypeLong); $$.d.r = NULL;}
     | FLOAT_CONSTANT		{ CrTypeModifier($$.d.t, TypeFloat); $$.d.r = NULL;}
     | DOUBLE_CONSTANT		{ CrTypeModifier($$.d.t, TypeDouble); $$.d.r = NULL;}
-    | string_literales		{
+    | string_literals		{
         S_typeModifiers *p;
         CrTypeModifier(p, TypeChar);
         $$.d.t = StackMemAlloc(S_typeModifiers);
@@ -374,9 +374,9 @@ primary_expr
     | COMPL_OTHER_NAME		{ assert(0); /* token never used */ }
     ;
 
-string_literales:
+string_literals:
         STRING_LITERAL
-    |	STRING_LITERAL string_literales
+    |	STRING_LITERAL string_literals
     ;
 
 postfix_expr
@@ -868,7 +868,7 @@ declaration_specifiers:
 
 /* a gcc extensions ? */
 asm_opt:
-    |	ASM_KEYWORD '(' string_literales ')'
+    |	ASM_KEYWORD '(' string_literals ')'
     ;
 
 eq_initializer_opt:		{
@@ -1717,8 +1717,8 @@ gcc_asm_symbolic_name_opt:
 gcc_asm_item_opt:
     |	gcc_asm_symbolic_name_opt IDENTIFIER
     |	gcc_asm_symbolic_name_opt IDENTIFIER '(' expr ')'
-    |	gcc_asm_symbolic_name_opt string_literales
-    |	gcc_asm_symbolic_name_opt string_literales '(' expr ')'
+    |	gcc_asm_symbolic_name_opt string_literals
+    |	gcc_asm_symbolic_name_opt string_literals '(' expr ')'
     ;
 
 gcc_asm_item_list:
