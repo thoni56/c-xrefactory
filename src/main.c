@@ -182,7 +182,7 @@ static void scheduleCommandLineEnteredFileToProcess(char *fn) {
         // yes in edit server you processa also headers, etc.
         s_fileTab.tab[ii]->b.commandLineEntered = 1;
     }
-    log_trace("recursively process command line file %s\n", s_fileTab.tab[ii]->name);
+    log_trace("recursively process command line argument file '%s'", s_fileTab.tab[ii]->name);
     if (s_opt.updateOnlyModifiedFiles==0) {
         s_fileTab.tab[ii]->b.scheduledToProcess = 1;
     }
