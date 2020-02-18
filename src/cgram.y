@@ -1918,12 +1918,22 @@ static S_completionFunTab completionsTab[]  = {
 
 
 static bool wtf_some_check_against_yyn(int tok) {
-    int yyn;
+    int yyn1, yyn2;
+    bool result1 = (yyn1 = yysindex[lastyystate]) && (yyn1 += tok) >= 0 &&
+        yyn1 <= YYTABLESIZE && yycheck[yyn1] == tok;
+    bool result2 = (yyn2 = yyrindex[lastyystate]) && (yyn2 += tok) >= 0 &&
+        yyn2 <= YYTABLESIZE && yycheck[yyn2] == tok;
+    bool result = result1 || result2;
 
-    return ((yyn = yysindex[lastyystate]) && (yyn += tok) >= 0 &&
-     yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
-        ((yyn = yyrindex[lastyystate]) && (yyn += tok) >= 0 &&
-         yyn <= YYTABLESIZE && yycheck[yyn] == tok);
+    log_trace("wtf_some_check_against_yyn(%d) = %s;"
+              "yysindex[lastyystate] = yysindex[%d] = %d, yycheck[yyn] = %d"
+              "yyrindex[lastyystate] = yyrindex[%d] = %d, yycheck[yyn] = %d",
+              tok, result?"true":"false",
+              lastyystate, yysindex[lastyystate], yycheck[yyn1],
+              lastyystate, yyrindex[lastyystate], yycheck[yyn2]
+              );
+
+    return result;
 }
 
 void makeCCompletions(char *s, int len, S_position *pos) {
