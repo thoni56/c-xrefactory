@@ -47,6 +47,8 @@
 #include "cxref.h"
 #include "symbol.h"
 
+#include "log.h"
+
 #define YYDEBUG 0
 #define yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
@@ -1915,53 +1917,62 @@ static S_completionFunTab completionsTab[]  = {
 };
 
 
+static bool wtf_some_check_against_yyn(int tok) {
+    int yyn;
+
+    return ((yyn = yysindex[lastyystate]) && (yyn += tok) >= 0 &&
+     yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
+        ((yyn = yyrindex[lastyystate]) && (yyn += tok) >= 0 &&
+         yyn <= YYTABLESIZE && yycheck[yyn] == tok);
+}
+
 void makeCCompletions(char *s, int len, S_position *pos) {
     int tok, yyn, i;
     S_cline compLine;
-/*fprintf(stderr,"completing \"%s\"\n",s);*/
+
+    log_trace("completing \"%s\"",s);
     strncpy(s_completions.idToProcess, s, MAX_FUN_NAME_SIZE);
     s_completions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
     FILL_completions(&s_completions, len, *pos, 0, 0, 0, 0, 0, 0);
     /* special wizard completions */
     for (i=0;(tok=spCompletionsTab[i].token)!=0; i++) {
+        /* WTF does this check do? */
         if (((yyn = yysindex[lastyystate]) && (yyn += tok) >= 0 &&
-                yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
+             yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
             ((yyn = yyrindex[lastyystate]) && (yyn += tok) >= 0 &&
-                yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
-/*fprintf(stderr,"completing %d==%s v stave %d\n",i,yyname[tok],lastyystate);*/
-                (*spCompletionsTab[i].fun)(&s_completions);
-                if (s_completions.abortFurtherCompletions) return;
+             yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
+            log_trace("completing %d==%s v stave %d", i, s_tokenName[tok], lastyystate);
+            (*spCompletionsTab[i].fun)(&s_completions);
+            if (s_completions.abortFurtherCompletions) return;
         }
     }
     /* If there is a wizard completion, RETURN now */
     if (s_completions.ai != 0 && s_opt.cxrefs != OLO_SEARCH) return;
     /* basic language tokens */
     for (i=0;(tok=completionsTab[i].token)!=0; i++) {
+        /* WTF does this check do? */
         if (((yyn = yysindex[lastyystate]) && (yyn += tok) >= 0 &&
-                yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
+             yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
             ((yyn = yyrindex[lastyystate]) && (yyn += tok) >= 0 &&
-                yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
-/*&fprintf(stderr,"completing %d==%s v stave %d\n",i,yyname[tok],lastyystate);&*/
-                (*completionsTab[i].fun)(&s_completions);
-                if (s_completions.abortFurtherCompletions) return;
+             yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
+            log_trace("completing %d==%s v stave %d", i, s_tokenName[tok], lastyystate);
+            (*completionsTab[i].fun)(&s_completions);
+            if (s_completions.abortFurtherCompletions) return;
         }
     }
     /* basic language tokens */
     for (tok=0; tok<LAST_TOKEN; tok++) {
         if (tok==IDENTIFIER) continue;
-        if (((yyn = yysindex[lastyystate]) && (yyn += tok) >= 0 &&
-                yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
-            ((yyn = yyrindex[lastyystate]) && (yyn += tok) >= 0 &&
-                yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
-                if (s_tokenName[tok]!= NULL) {
-                    if (isalpha(*s_tokenName[tok]) || *s_tokenName[tok]=='_') {
-                        FILL_cline(&compLine, s_tokenName[tok], NULL, TypeKeyword,0, 0, NULL,NULL);
-                    } else {
-                        FILL_cline(&compLine, s_tokenName[tok], NULL, TypeToken,0, 0, NULL,NULL);
-                    }
-/*&fprintf(stderr,"completing %d==%s(%s) state %d\n",tok,yyname[tok],s_tokenName[tok],lastyystate);&*/
-                    processName(s_tokenName[tok], &compLine, 0, &s_completions);
+        if (wtf_some_check_against_yyn(tok)) {
+            if (s_tokenName[tok]!= NULL) {
+                if (isalpha(*s_tokenName[tok]) || *s_tokenName[tok]=='_') {
+                    FILL_cline(&compLine, s_tokenName[tok], NULL, TypeKeyword,0, 0, NULL,NULL);
+                } else {
+                    FILL_cline(&compLine, s_tokenName[tok], NULL, TypeToken,0, 0, NULL,NULL);
                 }
+                log_trace("completing %d==%s(%s) state %d", tok, s_tokenName[tok], s_tokenName[tok], lastyystate);
+                processName(s_tokenName[tok], &compLine, 0, &s_completions);
+            }
         }
     }
 }
