@@ -43,8 +43,6 @@ extern void javaCompleteSuperConstructor(S_completions *c);
 extern void javaCompleteSuperNestedConstructor(S_completions *c);
 extern void completeYaccLexem(S_completions *c);
 extern char *javaGetShortClassName(char *inn);
-extern char *javaGetShortClassNameFromFileNum_st(int fnum);
-extern char *javaGetNudePreTypeName_st(char *inn, int cutMode);
 
 extern void olCompletionListInit(S_position *originalPos);
 extern void formatOutputLine(char *tt, int startingColumn);
