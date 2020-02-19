@@ -2,187 +2,178 @@
 #include "../complete.h"
 #include <cgreen/mocks.h>
 
-void processName(char *name, S_cline *t, int orderFlag, void *c) { 
+void processName(char *name, S_cline *t, int orderFlag, void *c) {
   mock(name, t, orderFlag, c);
 }
 
-void completeForSpecial1(S_completions *c) { 
+void completeForSpecial1(S_completions *c) {
   mock(c);
 }
 
-void completeForSpecial2(S_completions *c) { 
+void completeForSpecial2(S_completions *c) {
   mock(c);
 }
 
-void completeUpFunProfile(S_completions *c) { 
+void completeUpFunProfile(S_completions *c) {
   mock(c);
 }
 
-void completeTypes(S_completions *c) { 
+void completeTypes(S_completions *c) {
   mock(c);
 }
 
-void completeStructs(S_completions *c) { 
+void completeStructs(S_completions *c) {
   mock(c);
 }
 
-void completeRecNames(S_completions *c) { 
+void completeRecNames(S_completions *c) {
   mock(c);
 }
 
-void completeEnums(S_completions *c) { 
+void completeEnums(S_completions *c) {
   mock(c);
 }
 
-void completeLabels(S_completions *c) { 
+void completeLabels(S_completions *c) {
   mock(c);
 }
 
-void completeMacros(S_completions *c) { 
+void completeMacros(S_completions *c) {
   mock(c);
 }
 
-void completeOthers(S_completions *c) { 
+void completeOthers(S_completions *c) {
   mock(c);
 }
 
-void javaCompleteTypeSingleName(S_completions *c) { 
+void javaCompleteTypeSingleName(S_completions *c) {
   mock(c);
 }
 
-void javaHintImportFqt(S_completions *c) { 
+void javaHintImportFqt(S_completions *c) {
   mock(c);
 }
 
-void javaHintVariableName(S_completions *c) { 
+void javaHintVariableName(S_completions *c) {
   mock(c);
 }
 
-void javaHintCompleteNonImportedTypes(S_completions *c) { 
+void javaHintCompleteNonImportedTypes(S_completions *c) {
   mock(c);
 }
 
-void javaHintCompleteMethodParameters(S_completions *c) { 
+void javaHintCompleteMethodParameters(S_completions *c) {
   mock(c);
 }
 
-void javaCompleteTypeCompName(S_completions *c) { 
+void javaCompleteTypeCompName(S_completions *c) {
   mock(c);
 }
 
-void javaCompleteThisPackageName(S_completions *c) { 
+void javaCompleteThisPackageName(S_completions *c) {
   mock(c);
 }
 
-void javaCompletePackageSingleName(S_completions *c) { 
+void javaCompletePackageSingleName(S_completions *c) {
   mock(c);
 }
 
-void javaCompleteExprSingleName(S_completions *c) { 
+void javaCompleteExprSingleName(S_completions *c) {
   mock(c);
 }
 
-void javaCompleteUpMethodSingleName(S_completions *c) { 
+void javaCompleteUpMethodSingleName(S_completions *c) {
   mock(c);
 }
 
-void javaCompleteFullInheritedMethodHeader(S_completions *c) { 
+void javaCompleteFullInheritedMethodHeader(S_completions *c) {
   mock(c);
 }
 
-void javaCompletePackageCompName(S_completions *c) { 
+void javaCompletePackageCompName(S_completions *c) {
   mock(c);
 }
 
-void javaCompleteExprCompName(S_completions *c) { 
+void javaCompleteExprCompName(S_completions *c) {
   mock(c);
 }
 
-void javaCompleteMethodCompName(S_completions *c) { 
+void javaCompleteMethodCompName(S_completions *c) {
   mock(c);
 }
 
-void javaCompleteHintForConstructSingleName(S_completions *c) { 
+void javaCompleteHintForConstructSingleName(S_completions *c) {
   mock(c);
 }
 
-void javaCompleteConstructSingleName(S_completions *c) { 
+void javaCompleteConstructSingleName(S_completions *c) {
   mock(c);
 }
 
-void javaCompleteConstructCompName(S_completions *c) { 
+void javaCompleteConstructCompName(S_completions *c) {
   mock(c);
 }
 
-void javaCompleteConstructNestNameName(S_completions *c) { 
+void javaCompleteConstructNestNameName(S_completions *c) {
   mock(c);
 }
 
-void javaCompleteConstructNestPrimName(S_completions *c) { 
+void javaCompleteConstructNestPrimName(S_completions *c) {
   mock(c);
 }
 
-void javaCompleteStrRecordPrimary(S_completions *c) { 
+void javaCompleteStrRecordPrimary(S_completions *c) {
   mock(c);
 }
 
-void javaCompleteStrRecordSuper(S_completions *c) { 
+void javaCompleteStrRecordSuper(S_completions *c) {
   mock(c);
 }
 
-void javaCompleteStrRecordQualifiedSuper(S_completions *c) { 
+void javaCompleteStrRecordQualifiedSuper(S_completions *c) {
   mock(c);
 }
 
-void javaCompleteClassDefinitionNameSpecial(S_completions *c) { 
+void javaCompleteClassDefinitionNameSpecial(S_completions *c) {
   mock(c);
 }
 
-void javaCompleteClassDefinitionName(S_completions *c) { 
+void javaCompleteClassDefinitionName(S_completions *c) {
   mock(c);
 }
 
-void javaCompleteThisConstructor(S_completions *c) { 
+void javaCompleteThisConstructor(S_completions *c) {
   mock(c);
 }
 
-void javaCompleteSuperConstructor(S_completions *c) { 
+void javaCompleteSuperConstructor(S_completions *c) {
   mock(c);
 }
 
-void javaCompleteSuperNestedConstructor(S_completions *c) { 
+void javaCompleteSuperNestedConstructor(S_completions *c) {
   mock(c);
 }
 
-void completeYaccLexem(S_completions *c) { 
+void completeYaccLexem(S_completions *c) {
   mock(c);
 }
 
-char *javaGetShortClassName(char *inn) { 
+char *javaGetShortClassName(char *inn) {
   return (char *) mock(inn);
 }
 
-char *javaGetShortClassNameFromFileNum_st(int fnum) { 
-  return (char *) mock(fnum);
-}
-
-char *javaGetNudePreTypeName_st(char *inn, int cutMode) { 
-  return (char *) mock(inn, cutMode);
-}
-
-void olCompletionListInit(S_position *originalPos) { 
+void olCompletionListInit(S_position *originalPos) {
   mock(originalPos);
 }
 
-void formatOutputLine(char *tt, int startingColumn) { 
+void formatOutputLine(char *tt, int startingColumn) {
   mock(tt, startingColumn);
 }
 
-void printCompletionsList(int noFocus) { 
+void printCompletionsList(int noFocus) {
   mock(noFocus);
 }
 
-void printCompletions(S_completions *c) { 
+void printCompletions(S_completions *c) {
   mock(c);
 }
-

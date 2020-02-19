@@ -2,12 +2,38 @@
 #include "../symbol.h"
 #include <cgreen/mocks.h>
 
-S_symbol *newSymbol(char *name, char *linkName, struct position pos, S_symbol *next) {
-    return (S_symbol *)mock(name, linkName, pos, next);
+S_symbol *newSymbol(char *name, char *linkName, struct position pos) {
+    return NULL; // (S_symbol *)mock(name, linkName, pos);
 }
-S_symbol *newSymbolKeyword(char *name, char *linkName, struct position pos, int keyWordVal, S_symbol *next) {
-    return (S_symbol *)mock(name, linkName, pos, keyWordVal, next);
+
+void fillSymbol(S_symbol *symbol, char *name, char *linkName, struct position pos) {
+    // mock(symbol, name, linkName, pos);
 }
-S_symbol *newSymbolType(char *name, char *linkName, struct position pos, struct typeModifiers *type, S_symbol *next) {
-    return (S_symbol *)mock(name, linkName, pos, type, next);
+
+S_symbol *newSymbolIsKeyword(char *name, char *linkName, struct position pos, int keyWordVal) {
+    return NULL; // (S_symbol *)mock(name, linkName, pos, keyWordVal);
+}
+
+S_symbol *newSymbolIsType(char *name, char *linkName, struct position pos, struct typeModifiers *type) {
+    return NULL; // (S_symbol *)mock(name, linkName, pos, type);
+}
+
+void fillSymbolWithType(S_symbol *symbol, char *name, char *linkName, struct position pos, struct typeModifiers *type) {
+    // mock(symbol, name, linkName, pos, type);
+}
+
+S_symbol *newSymbolIsEnum(char *name, char *linkName, struct position pos, struct symbolList *enums) {
+    return NULL; // (S_symbol *)mock(name, linkName, pos, enums);
+}
+
+S_symbol *newSymbolIsLabel(char *name, char *linkName, struct position pos, int labelIndex) {
+    return NULL; // (S_symbol *)mock(name, linkName, pos, labelIndex);
+}
+
+void fillSymbolWithLabel(S_symbol *symbol, char *name, char *linkName, struct position pos, int labelIndex) {
+    // mock(symbol, name, linkName, pos, labelIndex);
+}
+
+void fillSymbolWithStruct(S_symbol *symbol, char *name, char *linkName, struct position pos, struct symStructSpecific *structSpec) {
+    // mock(symbol, name, linkName, pos, structSpec);
 }
