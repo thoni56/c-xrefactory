@@ -2083,10 +2083,10 @@ static bool wtf_some_check_against_yyn(int tok) {
         yyn2 <= YYTABLESIZE && yycheck[yyn2] == tok;
     bool result = result1 || result2;
 
-    log_trace("wtf_some_check_against_yyn(%d) = %s;"
-              "yysindex[lastyystate] = yysindex[%d] = %d, yycheck[yyn] = %d"
+    log_trace("wtf_some_check_against_yyn(%03d) = %s, "
+              "yysindex[lastyystate] = yysindex[%d] = %d, yycheck[yyn] = %d, "
               "yyrindex[lastyystate] = yyrindex[%d] = %d, yycheck[yyn] = %d",
-              tok, result?"true":"false",
+              tok, result?"true ":"false",
               lastyystate, yysindex[lastyystate], yycheck[yyn1],
               lastyystate, yyrindex[lastyystate], yycheck[yyn2]
               );
