@@ -2075,18 +2075,18 @@ static S_completionFunTab completionsTab[]  = {
 };
 
 
-static bool wtf_some_check_against_yyn(int tok) {
+static bool valid_parser_action_on(int token) {
     int yyn1, yyn2;
-    bool result1 = (yyn1 = yysindex[lastyystate]) && (yyn1 += tok) >= 0 &&
-        yyn1 <= YYTABLESIZE && yycheck[yyn1] == tok;
-    bool result2 = (yyn2 = yyrindex[lastyystate]) && (yyn2 += tok) >= 0 &&
-        yyn2 <= YYTABLESIZE && yycheck[yyn2] == tok;
+    bool result1 = (yyn1 = yysindex[lastyystate]) && (yyn1 += token) >= 0 &&
+        yyn1 <= YYTABLESIZE && yycheck[yyn1] == token;
+    bool result2 = (yyn2 = yyrindex[lastyystate]) && (yyn2 += token) >= 0 &&
+        yyn2 <= YYTABLESIZE && yycheck[yyn2] == token;
     bool result = result1 || result2;
 
     log_trace("wtf_some_check_against_yyn(%03d) = %s, "
               "yysindex[lastyystate] = yysindex[%d] = %d, yycheck[yyn] = %d, "
               "yyrindex[lastyystate] = yyrindex[%d] = %d, yycheck[yyn] = %d",
-              tok, result?"true ":"false",
+              token, result?"true ":"false",
               lastyystate, yysindex[lastyystate], yycheck[yyn1],
               lastyystate, yyrindex[lastyystate], yycheck[yyn2]
               );
@@ -2095,19 +2095,19 @@ static bool wtf_some_check_against_yyn(int tok) {
 }
 
 void makeCCompletions(char *s, int len, S_position *pos) {
-    int token, yyn, i;
+    int token, i;
     S_cline compLine;
 
-    log_trace("completing \"%s\"",s);
+    log_trace("(C) completing \"%s\"",s);
     strncpy(s_completions.idToProcess, s, MAX_FUN_NAME_SIZE);
     s_completions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
     FILL_completions(&s_completions, len, *pos, 0, 0, 0, 0, 0, 0);
 
     /* special wizard completions */
     for (i=0; (token=spCompletionsTab[i].token) != 0; i++) {
-        log_trace("trying token %d", s_tokenName[token]);
-        if (wtf_some_check_against_yyn(token)) {
-            log_trace("completing %d==%s v state %d", i, s_tokenName[token], lastyystate);
+        log_trace("(C) trying token %d", s_tokenName[token]);
+        if (valid_parser_action_on(token)) {
+            log_trace("(C) completing %d==%s in state %d", i, s_tokenName[token], lastyystate);
             (*spCompletionsTab[i].fun)(&s_completions);
             if (s_completions.abortFurtherCompletions)
                 return;
@@ -2120,18 +2120,19 @@ void makeCCompletions(char *s, int len, S_position *pos) {
 
     /* basic language tokens */
     for (i=0; (token=completionsTab[i].token) != 0; i++) {
-        if (wtf_some_check_against_yyn(token)) {
-            log_trace("completing %d==%s v state %d", i, s_tokenName[token], lastyystate);
+        if (valid_parser_action_on(token)) {
+            log_trace("(C) completing %d==%s in state %d", i, s_tokenName[token], lastyystate);
             (*completionsTab[i].fun)(&s_completions);
             if (s_completions.abortFurtherCompletions)
                 return;
         }
     }
+
     /* basic language tokens */
     for (token=0; token<LAST_TOKEN; token++) {
         if (token == IDENTIFIER)
             continue;
-        if (wtf_some_check_against_yyn(token)) {
+        if (valid_parser_action_on(token)) {
             if (s_tokenName[token] != NULL) {
                 if (isalpha(*s_tokenName[token]) || *s_tokenName[token]=='_') {
                     FILL_cline(&compLine, s_tokenName[token], NULL, TypeKeyword, 0, 0, NULL, NULL);
@@ -2144,7 +2145,7 @@ void makeCCompletions(char *s, int len, S_position *pos) {
         }
     }
 }
-#line 2148 "cgram.c"
+#line 2149 "cgram.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -4231,7 +4232,7 @@ case 357:
 #line 1891 "cgram.y"
 { stackMemoryBlockFree(); }
 break;
-#line 4235 "cgram.c"
+#line 4236 "cgram.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

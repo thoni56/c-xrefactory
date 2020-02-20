@@ -1807,7 +1807,8 @@ static S_completionFunTab completionsTab[]  = {
 void makeYaccCompletions(char *s, int len, S_position *pos) {
     int tok, yyn, i;
     S_cline compLine;
-/*fprintf(stderr,"completing \"%s\"\n",s);*/
+
+    log_trace("(yacc) completing \"%s\"", s);
     strncpy(s_completions.idToProcess, s, MAX_FUN_NAME_SIZE);
     s_completions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
     FILL_completions(&s_completions, len, *pos, 0, 0, 0, 0, 0, 0);
@@ -1816,7 +1817,7 @@ void makeYaccCompletions(char *s, int len, S_position *pos) {
                 yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
             ((yyn = yyrindex[lastyystate]) && (yyn += tok) >= 0 &&
                 yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
-/*fprintf(stderr,"completing %d==%s v stave %d\n",i,yyname[tok],lastyystate);*/
+            /*fprintf(stderr,"completing %d==%s v stave %d\n",i,yyname[tok],lastyystate);*/
                 (*completionsTab[i].fun)(&s_completions);
                 if (s_completions.abortFurtherCompletions) return;
         }

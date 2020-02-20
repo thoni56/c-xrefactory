@@ -2615,19 +2615,22 @@ static S_completionFunTab hintCompletionsTab[]  = {
 void makeJavaCompletions(char *s, int len, S_position *pos) {
     int tok, yyn, i;
     S_cline compLine;
-/*fprintf(dumpOut,": completing \"%s\" in state %d\n",s,lastyystate);*/
+
+    log_trace("(java) completing \"%s\" in state %d", s, lastyystate);
     strncpy(s_completions.idToProcess, s, MAX_FUN_NAME_SIZE);
     s_completions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
     FILL_completions(&s_completions, len, *pos, 0, 0, 0, 0, 0, 0);
+
     /* special wizard completions */
     for (i=0;(tok=spCompletionsTab[i].token)!=0; i++) {
         if (((yyn = yysindex[lastyystate]) && (yyn += tok) >= 0 &&
-                yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
+             yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
             ((yyn = yyrindex[lastyystate]) && (yyn += tok) >= 0 &&
-                yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
-/*fprintf(stderr,"completing %d==%s v stave %d\n",i,yyname[tok],lastyystate);*/
-                (*spCompletionsTab[i].fun)(&s_completions);
-                if (s_completions.abortFurtherCompletions) return;
+             yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
+            log_trace("(java) completing %d==%s in state %d", i, s_tokenName[tok], lastyystate);
+            (*spCompletionsTab[i].fun)(&s_completions);
+            if (s_completions.abortFurtherCompletions)
+                return;
         }
     }
 
@@ -2635,13 +2638,13 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
     if (s_completions.ai != 0 && s_opt.cxrefs != OLO_SEARCH) return;
     for (i=0;(tok=completionsTab[i].token)!=0; i++) {
         if (((yyn = yysindex[lastyystate]) && (yyn += tok) >= 0 &&
-                yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
+             yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
             ((yyn = yyrindex[lastyystate]) && (yyn += tok) >= 0 &&
-                yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
-/*&fprintf(dumpOut,":completing %d==%s v stave %d\n",i,yyname[tok],lastyystate);fflush(dumpOut);&*/
-                (*completionsTab[i].fun)(&s_completions);
-/*fprintf(dumpOut,":completed\n");fflush(dumpOut);*/
-                if (s_completions.abortFurtherCompletions) return;
+             yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
+            log_trace("(java) completing %d==%s in state %d", i, s_tokenName[tok], lastyystate);
+            (*completionsTab[i].fun)(&s_completions);
+            if (s_completions.abortFurtherCompletions)
+                return;
         }
     }
 
@@ -2649,36 +2652,37 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
     for (tok=0; tok<LAST_TOKEN; tok++) {
         if (tok==IDENTIFIER) continue;
         if (((yyn = yysindex[lastyystate]) && (yyn += tok) >= 0 &&
-                yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
+             yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
             ((yyn = yyrindex[lastyystate]) && (yyn += tok) >= 0 &&
-                yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
-                if (s_tokenName[tok]!= NULL) {
-                    if (isalpha(*s_tokenName[tok]) || *s_tokenName[tok]=='_') {
-                        FILL_cline(&compLine, s_tokenName[tok], NULL, TypeKeyword,0, 0, NULL,NULL);
-                        processName(s_tokenName[tok], &compLine, 0, &s_completions);
-                    } else {
-                        //& FILL_cline(&compLine, s_tokenName[tok], NULL, TypeToken,0, 0, NULL,NULL);
-                    }
+             yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
+            if (s_tokenName[tok]!= NULL) {
+                if (isalpha(*s_tokenName[tok]) || *s_tokenName[tok]=='_') {
+                    FILL_cline(&compLine, s_tokenName[tok], NULL, TypeKeyword,0, 0, NULL,NULL);
+                    processName(s_tokenName[tok], &compLine, 0, &s_completions);
+                } else {
+                    //& FILL_cline(&compLine, s_tokenName[tok], NULL, TypeToken,0, 0, NULL,NULL);
                 }
+            }
         }
     }
 
-    /* If the completon window is shown, or there is no completion,
+    /* If the completion window is shown, or there is no completion,
        add also hints (should be optionally) */
     //&if (s_completions.comPrefix[0]!=0  && (s_completions.ai != 0)
     //&	&& s_opt.cxrefs != OLO_SEARCH) return;
 
     for (i=0;(tok=hintCompletionsTab[i].token)!=0; i++) {
         if (((yyn = yysindex[lastyystate]) && (yyn += tok) >= 0 &&
-                yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
+             yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
             ((yyn = yyrindex[lastyystate]) && (yyn += tok) >= 0 &&
-                yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
-                (*hintCompletionsTab[i].fun)(&s_completions);
-                if (s_completions.abortFurtherCompletions) return;
+             yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
+            (*hintCompletionsTab[i].fun)(&s_completions);
+            if (s_completions.abortFurtherCompletions)
+                return;
         }
     }
 }
-#line 2682 "javagram.c"
+#line 2686 "javagram.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -7210,7 +7214,7 @@ case 484:
             }
         }
 break;
-#line 7214 "javagram.c"
+#line 7218 "javagram.c"
     }
     yyssp -= yym;
     yystate = *yyssp;
