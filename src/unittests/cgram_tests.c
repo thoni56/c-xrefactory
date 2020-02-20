@@ -20,5 +20,5 @@ BeforeEach(Cgram){}
 AfterEach(Cgram){}
 
 Ensure(Cgram, wtf_expression_returns_expected_value) {
-    /* Probably can't find data that can be tested... */
+    /* Probably can't easily find data that can be tested... */
 }
