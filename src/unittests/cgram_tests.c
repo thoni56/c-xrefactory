@@ -19,6 +19,6 @@ Describe(Cgram);
 BeforeEach(Cgram){}
 AfterEach(Cgram){}
 
-Ensure(Cgram, wtf_expression_returns_expected_value) {
+Ensure(Cgram, exists_valid_parser_action_on_token_returns_expected_value) {
     /* Probably can't easily find data that can be tested... */
 }

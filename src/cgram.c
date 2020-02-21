@@ -2075,7 +2075,7 @@ static S_completionFunTab completionsTab[]  = {
 };
 
 
-static bool valid_parser_action_on(int token) {
+static bool exists_valid_parser_action_on(int token) {
     int yyn1, yyn2;
     bool result1 = (yyn1 = yysindex[lastyystate]) && (yyn1 += token) >= 0 &&
         yyn1 <= YYTABLESIZE && yycheck[yyn1] == token;
@@ -2106,7 +2106,7 @@ void makeCCompletions(char *s, int len, S_position *pos) {
     /* special wizard completions */
     for (i=0; (token=spCompletionsTab[i].token) != 0; i++) {
         log_trace("(C) trying token %d", s_tokenName[token]);
-        if (valid_parser_action_on(token)) {
+        if (exists_valid_parser_action_on(token)) {
             log_trace("(C) completing %d==%s in state %d", i, s_tokenName[token], lastyystate);
             (*spCompletionsTab[i].fun)(&s_completions);
             if (s_completions.abortFurtherCompletions)
@@ -2120,7 +2120,7 @@ void makeCCompletions(char *s, int len, S_position *pos) {
 
     /* basic language tokens */
     for (i=0; (token=completionsTab[i].token) != 0; i++) {
-        if (valid_parser_action_on(token)) {
+        if (exists_valid_parser_action_on(token)) {
             log_trace("(C) completing %d==%s in state %d", i, s_tokenName[token], lastyystate);
             (*completionsTab[i].fun)(&s_completions);
             if (s_completions.abortFurtherCompletions)
@@ -2132,7 +2132,7 @@ void makeCCompletions(char *s, int len, S_position *pos) {
     for (token=0; token<LAST_TOKEN; token++) {
         if (token == IDENTIFIER)
             continue;
-        if (valid_parser_action_on(token)) {
+        if (exists_valid_parser_action_on(token)) {
             if (s_tokenName[token] != NULL) {
                 if (isalpha(*s_tokenName[token]) || *s_tokenName[token]=='_') {
                     FILL_cline(&compLine, s_tokenName[token], NULL, TypeKeyword, 0, 0, NULL, NULL);
