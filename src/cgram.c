@@ -2139,7 +2139,7 @@ void makeCCompletions(char *s, int len, S_position *pos) {
                 } else {
                     FILL_cline(&compLine, s_tokenName[token], NULL, TypeToken, 0, 0, NULL, NULL);
                 }
-                log_trace("completing %d==%s(%s) state %d", token, s_tokenName[token], s_tokenName[token], lastyystate);
+                log_trace("(C) completing %d==%s(%s) state %d", token, s_tokenName[token], s_tokenName[token], lastyystate);
                 processName(s_tokenName[token], &compLine, 0, &s_completions);
             }
         }

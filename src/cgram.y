@@ -1917,7 +1917,7 @@ static S_completionFunTab completionsTab[]  = {
 };
 
 
-bool exits_valid_parser_action_on(int token) {
+bool exists_valid_parser_action_on(int token) {
     int yyn1, yyn2;
     bool result1 = (yyn1 = yysindex[lastyystate]) && (yyn1 += token) >= 0 &&
         yyn1 <= YYTABLESIZE && yycheck[yyn1] == token;
@@ -1981,7 +1981,7 @@ void makeCCompletions(char *s, int len, S_position *pos) {
                 } else {
                     FILL_cline(&compLine, s_tokenName[token], NULL, TypeToken, 0, 0, NULL, NULL);
                 }
-                log_trace("completing %d==%s(%s) state %d", token, s_tokenName[token], s_tokenName[token], lastyystate);
+                log_trace("(C) completing %d==%s(%s) state %d", token, s_tokenName[token], s_tokenName[token], lastyystate);
                 processName(s_tokenName[token], &compLine, 0, &s_completions);
             }
         }
