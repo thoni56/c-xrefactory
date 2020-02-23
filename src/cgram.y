@@ -1917,7 +1917,7 @@ static S_completionFunTab completionsTab[]  = {
 };
 
 
-bool exists_valid_parser_action_on(int token) {
+static bool exists_valid_parser_action_on(int token) {
     int yyn1, yyn2;
     bool result1 = (yyn1 = yysindex[lastyystate]) && (yyn1 += token) >= 0 &&
         yyn1 <= YYTABLESIZE && yycheck[yyn1] == token;
