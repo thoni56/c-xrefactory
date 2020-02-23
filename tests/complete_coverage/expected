@@ -21,7 +21,7 @@ end-of-options
 </goto>
 <single-completion len=<n>>single_int_on_line_1_col_4</single-completion>
 
--olcxcomplet CURDIR/single_int1.c -olcursor=168 -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxcomplet CURDIR/single_int1.c -olcursor=172 -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
