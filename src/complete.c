@@ -14,6 +14,7 @@
 #include "editor.h"
 #include "enumTxt.h"
 #include "reftab.h"
+#include "symbol.h"
 
 
 #define FULL_COMPLETION_INDENT_CHARS    2
@@ -1175,18 +1176,20 @@ void completeForSpecial2(S_completions* c) {
 
 void completeUpFunProfile(S_completions* c) {
     S_symbol *dd;
-    if (s_upLevelFunctionCompletionType!=NULL
+
+    if (s_upLevelFunctionCompletionType != NULL
         && c->idToProcess[0] == 0
-        && c->ai==0
+        && c->ai == 0
         ) {
-        XX_ALLOC(dd, S_symbol);
-        FILL_symbolBits(&dd->bits,0,0, 0,0, 0, TypeDefault, StorageDefault,0);
-        FILL_symbol(dd, "    ", "    ",s_noPos, dd->bits, type ,
-                    s_upLevelFunctionCompletionType,NULL);
-        /*& ABOVE COULD BE REPLACED (when coverage) by XX_ALLOC()+FILL_Symbol() with */
-        /*& dd = newSymbolIsType("    ", "    ", s_noPos, s_upLevelFunctionCompletionType); */
-        /*& FILL_symbolBits(&dd->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault,0); */
-        FILL_cline(&c->a[0], "    ", dd, TypeDefault,0, 0, NULL, NULL);
+        /*& XX_ALLOC(dd, S_symbol); */
+        /*& FILL_symbolBits(&dd->bits,0,0, 0,0, 0, TypeDefault, StorageDefault,0); */
+        /*& FILL_symbol(dd, "    ", "    ",s_noPos, dd->bits, type , */
+        /*&             s_upLevelFunctionCompletionType,NULL); */
+        /*& Above was replaced (without coverage) by with */
+        dd = newSymbolIsType("    ", "    ", s_noPos, s_upLevelFunctionCompletionType);
+        FILL_symbolBits(&dd->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
+        FILL_cline(&c->a[0], "    ", dd, TypeDefault, 0, 0, NULL, NULL);
+        assert(0 && "Comments indicate that COMPL_UP_FUN_PROFILE is not used but this indicates that it is!");
         c->fullMatchFlag = 1;
         c->comPrefix[0]=0;
         c->ai++;
