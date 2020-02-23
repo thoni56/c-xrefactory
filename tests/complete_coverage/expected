@@ -21,3 +21,43 @@ end-of-options
 </goto>
 <single-completion len=<n>>single_int_on_line_1_col_4</single-completion>
 
+-olcxcomplet CURDIR/single_int1.c -olcursor=168 -xrefrc CURDIR/.c-xrefrc -p CURDIR
+end-of-options
+
+<sync>
+<all-completions nofocus=0 len=<n>>               :token
+               :token
+,              :token
+:              :token
+;              :token
+=              :token
+[              :token
+{              :token
+static         :keyword
+char           :keyword
+const          :keyword
+double         :keyword
+float          :keyword
+int            :keyword
+long           :keyword
+short          :keyword
+void           :keyword
+volatile       :keyword
+typedef        :keyword
+extern         :keyword
+auto           :keyword
+register       :keyword
+signed         :keyword
+unsigned       :keyword
+struct         :keyword
+union          :keyword
+enum           :keyword
+restrict       :keyword
+_Atomic        :keyword
+_Bool          :keyword
+_Thread_local  :keyword
+_Noreturn      :keyword
+__stdcall      :keyword
+asm            :keyword
+inline         :keyword</all-completions>
+
