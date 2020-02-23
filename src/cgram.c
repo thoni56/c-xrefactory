@@ -2083,13 +2083,13 @@ static bool exists_valid_parser_action_on(int token) {
         yyn2 <= YYTABLESIZE && yycheck[yyn2] == token;
     bool result = result1 || result2;
 
-    log_trace("wtf_some_check_against_yyn(%03d) = %s, "
-              "yysindex[lastyystate] = yysindex[%d] = %d, yycheck[yyn] = %d, "
-              "yyrindex[lastyystate] = yyrindex[%d] = %d, yycheck[yyn] = %d",
-              token, result?"true ":"false",
-              lastyystate, yysindex[lastyystate], yycheck[yyn1],
-              lastyystate, yyrindex[lastyystate], yycheck[yyn2]
-              );
+    /* log_trace("wtf_some_check_against_yyn(%03d) = %s, " */
+    /*           "yysindex[lastyystate] = yysindex[%d] = %d, yycheck[yyn] = %d, " */
+    /*           "yyrindex[lastyystate] = yyrindex[%d] = %d, yycheck[yyn] = %d", */
+    /*           token, result?"true ":"false", */
+    /*           lastyystate, yysindex[lastyystate], yycheck[yyn1], */
+    /*           lastyystate, yyrindex[lastyystate], yycheck[yyn2] */
+    /*           ); */
 
     return result;
 }
