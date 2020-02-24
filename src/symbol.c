@@ -22,6 +22,11 @@ void fillSymbolWithStruct(S_symbol *symbol, char *name, char *linkName, struct p
     symbol->u.s = structSpec;
 }
 
+void fillSymbolWithLabel(S_symbol *symbol, char *name, char *linkName, struct position pos, int labelIndex) {
+    fillSymbol(symbol, name, linkName, pos);
+    symbol->u.labn = labelIndex;
+}
+
 S_symbol *newSymbol(char *name, char *linkName, struct position pos) {
     S_symbol *s;
 

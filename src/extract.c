@@ -78,11 +78,11 @@ void deleteContinueBreakLabelSymbol(char *name) {
 
     if (s_opt.cxrefs != OLO_EXTRACT) return;
 
-    FILL_symbolBits(&ss.bits, 0,0,0,0,0,TypeLabel,StorageAuto,0);
-    FILL_symbol(&ss, name, name, s_noPos, ss.bits,labn,0, NULL);
-    /* Above could be REPLACE FILL_symbol() on local variable with fillSymbol() */
-    /* fillSymbolAsLabel(&ss, name, name, s_noPos, 0); */
-    /* FILL_symbolBits(&ss.bits, 0,0,0,0,0,TypeLabel,StorageAuto,0); */
+    /*& FILL_symbolBits(&ss.bits, 0,0,0,0,0,TypeLabel,StorageAuto,0); */
+    /*& FILL_symbol(&ss, name, name, s_noPos, ss.bits,labn,0, NULL); */
+    /* Above FILL_symbol() on local variable is replaced with fillSymbol() */
+    fillSymbolWithLabel(&ss, name, name, s_noPos, 0);
+    FILL_symbolBits(&ss.bits, 0, 0, 0, 0, 0, TypeLabel, StorageAuto, 0);
     if (symTabIsMember(s_symTab, &ss, &ii, &memb)) {
         ExtrDeleteContBreakSym(memb);
     } else {
@@ -96,8 +96,12 @@ void genContinueBreakReference(char *name) {
 
     if (s_opt.cxrefs != OLO_EXTRACT) return;
 
+    /*& FILL_symbolBits(&ss.bits, 0,0,0,0,0,TypeLabel,StorageAuto,0); */
+    /*& FILL_symbol(&ss, name, name, s_noPos, ss.bits,labn,0, NULL); */
+    /* Above FILL_symbol() on local variable is replaced by fillSymbol() */
+    fillSymbolWithLabel(&ss, name, name, s_noPos, 0);
     FILL_symbolBits(&ss.bits, 0,0,0,0,0,TypeLabel,StorageAuto,0);
-    FILL_symbol(&ss, name, name, s_noPos, ss.bits,labn,0, NULL);
+
     if (symTabIsMember(s_symTab, &ss, &ii, &memb)) {
         genInternalLabelReference(memb->u.labn, UsageUsed);
     }
@@ -109,8 +113,11 @@ void genSwitchCaseFork(int lastFlag) {
 
     if (s_opt.cxrefs != OLO_EXTRACT) return;
 
-    FILL_symbolBits(&ss.bits, 0,0,0,0,0,TypeLabel,StorageAuto,0);
-    FILL_symbol(&ss, SWITCH_LABEL_NAME, SWITCH_LABEL_NAME, s_noPos, ss.bits,labn,0,NULL);
+    /*& FILL_symbolBits(&ss.bits, 0,0,0,0,0,TypeLabel,StorageAuto,0); */
+    /*& FILL_symbol(&ss,SWITCH_LABEL_NAME,SWITCH_LABEL_NAME,s_noPos,ss.bits,labn,0,NULL); */
+    /* Above FILL_symbol() on local variable is replaced by fillSymbol() */
+    fillSymbolWithLabel(&ss, SWITCH_LABEL_NAME, SWITCH_LABEL_NAME, s_noPos, 0);
+    FILL_symbolBits(&ss.bits, 0, 0, 0, 0, 0, TypeLabel, StorageAuto, 0);
     if (symTabIsMember(s_symTab, &ss, &ii, &memb)) {
         genInternalLabelReference(memb->u.labn, UsageDefined);
         if (! lastFlag) {
