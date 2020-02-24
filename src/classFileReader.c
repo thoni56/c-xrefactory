@@ -10,6 +10,7 @@
 #include "cxfile.h"
 #include "jsemact.h"
 #include "charbuf.h"
+#include "symbol.h"
 
 #include "log.h"
 #include "utils.h"
@@ -754,8 +755,8 @@ static void cfAddRecordToClass( char *name,
                                 SymbolList *exceptions
                                 ) {
     static char pp[MAX_PROFILE_SIZE];
-    S_symbol *d,*memb;
-    char *ln,*prof;
+    S_symbol *symbol, *memb;
+    char *linkName,*prof;
     S_typeModifiers *tt;
     char *restype;
     int len, vFunCl;
@@ -787,29 +788,31 @@ static void cfAddRecordToClass( char *name,
     rr = javaIsYetInTheClass(clas, pp, &memb);
     //& rr = 0;
     if (rr) {
-        ln = memb->linkName;
+        linkName = memb->linkName;
     } else {
         len = strlen(pp);
-        CF_ALLOCC(ln, len+1, char);
-        strcpy(ln, pp);
+        CF_ALLOCC(linkName, len+1, char);
+        strcpy(linkName, pp);
     }
-    prof = strchr(ln,'(');
+    prof = strchr(linkName,'(');
     if (tt->kind == TypeFunction) {
         assert(*sig == '(');
         assert(*prof == '(');
         tt->u.m.sig = prof;
         tt->u.m.exceptions = exceptions;
     }
-    /*fprintf(dumpOut,"add definition of %s == %s\n",name, ln);fflush(dumpOut);*/
-    CF_ALLOC(d, S_symbol);
-    FILL_symbolBits(&d->bits,0,0,accessFlags,0, 0,TypeDefault, storage, 0);
-    FILL_symbol(d, name, ln, s_noPos,d->bits,type,tt,NULL);
-    d->u.type = tt;
+
+    log_trace("adding definition of %s == %s\n", name, linkName);
+    /* TODO If this was allocated in "normal" memory we could use newSymbol() */
+    CF_ALLOC(symbol, S_symbol);
+    fillSymbolWithType(symbol, name, linkName, s_noPos, tt);
+    FILL_symbolBits(&symbol->bits,0,0,accessFlags,0, 0,TypeDefault, storage, 0);
+    symbol->u.type = tt;
     assert(clas->u.s);
-    LIST_APPEND(S_symbol, clas->u.s->records, d);
+    LIST_APPEND(S_symbol, clas->u.s->records, symbol);
     if (s_opt.allowClassFileRefs) {
         FILL_position(&dpos, clas->u.s->classFile, 1, 0);
-        addCxReference(d, &dpos, UsageClassFileDefinition, vFunCl, vFunCl);
+        addCxReference(symbol, &dpos, UsageClassFileDefinition, vFunCl, vFunCl);
     }
 }
 
