@@ -681,16 +681,7 @@ typedef struct cctNode {
     struct cctNode	*sub;       /* sub[CCT_TREE_INDEX]; */
 } S_cctNode;
 
-typedef struct position {
-    int file;
-    int line;
-    int col;
-} S_position;
-
-typedef struct positionList {
-    struct position     p;
-    struct positionList *next;
-} S_positionList;
+#include "position.h"
 
 /* return value for IDENTIFIER token from yylex */
 
@@ -782,39 +773,7 @@ typedef struct symStructSpecific {
 } S_symStructSpecific;
 
 
-/* ****************************************************************** */
-/*              symbol definition item in symbol table                */
-
-typedef struct symbolBits {
-    unsigned			record			: 1;  /* whether struct record */
-    unsigned			isSingleImported: 1;  /* whether not imported by * import */
-    unsigned			accessFlags		: 12; /* java access bits */
-    unsigned			javaSourceLoaded: 1;  /* is jsl source file loaded ? */
-    unsigned			javaFileLoaded	: 1;  /* is class file loaded ? */
-
-    unsigned			symType			: SYMTYPES_LN;
-    /* can be Default/Struct/Union/Enum/Label/Keyword/Macro/Package */
-    unsigned			storage			: STORAGES_LN;
-    unsigned			npointers		: 4; /*tmp. stored #of dcl. ptrs*/
-} S_symbolBits;
-
-typedef struct symbol {
-    char					*name;
-    char					*linkName;		/* fully qualified name for cx */
-    struct position			pos;			/* definition position for most syms;
-                                              import position for imported classes!
-                                            */
-    struct symbolBits bits;
-    union defUnion {
-        struct typeModifiers		*type;		/* if symType == TypeDefault */
-        struct symStructSpecific	*s;			/* if symType == Struct/Union */
-        struct symbolList			*enums;		/* if symType == Enum */
-        struct macroBody			*mbody;     /* if symType == Macro ! can be NULL! */
-        int							labn;		/* break/continue label index */
-        int							keyWordVal; /* if symType == Keyword */
-    } u;
-    struct symbol                   *next;	/* next table item with the same hash */
-} S_symbol;
+#include "symbol.h"
 
 typedef struct symbolList {
     struct symbol        *d;

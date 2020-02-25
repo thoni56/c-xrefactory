@@ -2,13 +2,44 @@
 #define _SYMBOL_H_
 
 /* Dependencies: */
-#include "proto.h"
+#include "head.h"
+#include "position.h"
 
 /* Types: */
 
-/* Should really have the symbol struct here also, but not until we
-   don't need the FILL_symbol() macro because as long as it needs to
-   be generated it has to live in proto.h */
+/* ****************************************************************** */
+/*              symbol definition item in symbol table                */
+
+typedef struct symbolBits {
+    unsigned			record			: 1;  /* whether struct record */
+    unsigned			isSingleImported: 1;  /* whether not imported by * import */
+    unsigned			accessFlags		: 12; /* java access bits */
+    unsigned			javaSourceLoaded: 1;  /* is jsl source file loaded ? */
+    unsigned			javaFileLoaded	: 1;  /* is class file loaded ? */
+
+    unsigned			symType			: SYMTYPES_LN;
+    /* can be Default/Struct/Union/Enum/Label/Keyword/Macro/Package */
+    unsigned			storage			: STORAGES_LN;
+    unsigned			npointers		: 4; /*tmp. stored #of dcl. ptrs*/
+} S_symbolBits;
+
+typedef struct symbol {
+    char					*name;
+    char					*linkName;		/* fully qualified name for cx */
+    struct position			pos;			/* definition position for most syms;
+                                              import position for imported classes!
+                                            */
+    struct symbolBits bits;
+    union defUnion {
+        struct typeModifiers		*type;		/* if symType == TypeDefault */
+        struct symStructSpecific	*s;			/* if symType == Struct/Union */
+        struct symbolList			*enums;		/* if symType == Enum */
+        struct macroBody			*mbody;     /* if symType == Macro ! can be NULL! */
+        int							labn;		/* break/continue label index */
+        int							keyWordVal; /* if symType == Keyword */
+    } u;
+    struct symbol                   *next;	/* next table item with the same hash */
+} S_symbol;
 
 
 /* Functions: */
