@@ -1,14 +1,18 @@
+# -*- org-todo-keyword-faces: (("DOING" . "orange")) -*-
+
 There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
-* DOING Start using log.c functions to log to a separate log file
+#+TODO: TODO(t) DOING(i) | DONE(d)
+
 * DOING Remove bootstrap step (strfill and local definitions)
 ** DOING Remove all FILL_xxx macros by using compound initializers or functions:
 *** DOING Remove FILL_symbol()
-***** DOING Replace all FILL_symbol() calls
-***** TODO Move Symbol struct to Symbol-module
-***** DONE Create a Symbol module with newSymbolxxx()
+***** DOING Remove #include "symbol" from proto.h
+***** DONE Replace all FILL_symbol() calls
+***** DONE Move Symbol struct to Symbol-module
+***** DONE Create a Symbol module with newSymbolxxx() & fillSymbolxxx()
 The call pattern XX_ALLOC... FILL_symbolBits ... FILL_symbol is
 prominent. And if we remove all instances where a newSymbol() function
 returning a pointer would work that's a big step. Started on the
@@ -23,6 +27,7 @@ attack those one by one, maybe?
 *** DONE Remove FILL_symbollist() macro
 ** TODO Remove generation of str_fill from build
 ** TODO Remove code for generation of str_fill
+* DOING Start using log.c functions to log to a separate log file
 * TODO Add an -exit option so that client can take down server cleanly
 * TODO Move XX_ALLOCC and friends to "memory" module
 * TODO Ensure only externally used functions are visible in the modules
@@ -91,6 +96,11 @@ easier to mock and unit test other modules.
   with the naming strategy as for the others.
 
 * TODO Move all function prototypes from proto.h to <module>.h
+* DONE Build a protocol spy that can be put between the editor and the
+server to inspect and learn about the communication. It should be
+fairly easy, just start up like c-xref does, start the real c-xref
+with the startup arguments. Shuffle all communication on to the other
+while logging the messages to a file.
 
 * DONE Although generation of typedef's etc. in strTdef et al might be
   questioned we need to handle that for now, but at least let's add
@@ -105,7 +115,6 @@ easier to mock and unit test other modules.
   the BOOTSTRAPPING ifdef and include the correct bootstrap or
   generated file.
 
-  #+TODO: TODO(t) DOING(i) | DONE(d)
 * DONE Unit tests. There are now some simple ones. We need to get some working as
   quickly as possible. Meanwhile there are some functional level tests
   in ../tests, but as all integrating tests with I/O they are quite
@@ -118,13 +127,6 @@ easier to mock and unit test other modules.
   in the build c-xref set EXCLUDE_YACC_PARSING (or something similar)
   ACTUALLY: removed conditionals around that code, and kept the CCC
   conditionals.
-
-
-* DONE Build a protocol spy that can be put between the editor and the
-server to inspect and learn about the communication. It should be
-fairly easy, just start up like c-xref does, start the real c-xref
-with the startup arguments. Shuffle all communication on to the other
-while logging the messages to a file.
 
 * DONE Refactor out the hashtables and lists to separate modules.
 * DONE Fix byacc skeleton to "goto <non-used label" by remove ifdef around "lint"
