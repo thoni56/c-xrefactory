@@ -12,7 +12,7 @@
 # should be usable on all platforms.
 #
 
-all: $(ZLIB) c-xref .c-xrefrc
+all: $(ZLIB) c-xref
 
 include sources.mk
 
@@ -38,7 +38,7 @@ $(ROOTDIR)/lib/zlib/libz.a: ..always..
 # 'make yacc' as defined in Makefile
 %.c : %.y
 
-cgram.c: cgram.y $(YACC)
+cgram.c cgram.h: cgram.y $(YACC)
 ifeq ($(YACCING),yes)
 	$(YACC) -v -d cgram.y
 	mv y.output cy.output
@@ -48,33 +48,31 @@ ifeq ($(YACCING),yes)
 endif
 
 
-javagram.c: javagram.y cgram.c $(YACC)
+javagram.c javagram.h: javagram.y $(YACC)
 ifeq ($(YACCING),yes)
 	$(YACC) -v -d javagram.y
 	mv y.output jy.output
 	sed 's/y.tab.c/javagram.c/g' y.tab.c > javagram.c
 	rm y.tab.c
 	mv y.tab.h javagram.h
-	diff javagram.h cgram.h
 endif
 
-yaccgram.c: yaccgram.y cgram.c $(YACC)
+yaccgram.c yaccgram.h: yaccgram.y $(YACC)
 ifeq ($(YACCING),yes)
 	$(YACC) -v -d yaccgram.y
 	sed 's/y.tab.c/yaccgram.c/g' y.tab.c > yaccgram.c
 	rm y.tab.c
 	mv y.tab.h yaccgram.h
-	diff yaccgram.h cgram.h
 endif
 
-cexp.c: cexp.y $(YACC)
+cexp.c cexp.h: cexp.y $(YACC)
 ifeq ($(YACCING),yes)
 	$(YACC) -v cexp.y
 	sed 's/y.tab.c/cexp.c/g' y.tab.c > cexp.c
 	rm y.tab.c
+	mv y.tab.h cexp.h
 endif
 
-cgram.h: cgram.c
 
 #########################################################################
 # Bootstrap a c-xref.bs using globally working sources
@@ -148,7 +146,7 @@ enumTxt.g.c: proto.h compiler_defines.g .c-xrefrc c-xref.bs Makefile.common
 			mv -f tmp-$@ $@ ; \
 	fi
 
-c-xref: $(OBJS)
+c-xref: .c-xrefrc $(OBJS)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
 
 .c-xrefrc: c-xrefrc.tpl
@@ -165,8 +163,7 @@ cleaner: clean
 	-rm -rf $(OBJDIR) compiler_defines.g strFill.g.h enumTxt.g.[ch] c-xref.bs
 	-make -C unittests cleaner
 
-#########################################################################
-
+########################################################################
 test: c-xref
 	@echo "Only running quick tests for now - 'cd ..; make test' to run all"
 	$(MAKE) -C ../tests quick
