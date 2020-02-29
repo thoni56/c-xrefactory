@@ -84,7 +84,8 @@ void addSymbol(S_symbol *pp, S_symTab *tab) {
 }
 
 void recFindPush(S_symbol *str, S_recFindStr *rfs) {
-    S_symStructSpecific     *ss;
+    S_symStructSpec *ss;
+
     assert(str && (str->bits.symType==TypeStruct || str->bits.symType==TypeUnion));
     if (rfs->recsClassCounter==0) {
         // this is hack to avoid problem when overloading to zero
@@ -915,12 +916,12 @@ S_typeModifiers *simpleStrUnionSpecifier(   S_idIdent *typeName,
         //{static int c=0;fprintf(dumpOut,"str#%d\n",c++);}
         XX_ALLOC(pp, S_symbol);
         *pp = p;
-        XX_ALLOC(pp->u.s, S_symStructSpecific);
-        FILLF_symStructSpecific(pp->u.s, NULL,
-                                NULL,NULL,NULL,0,NULL,
-                                type,f,(NULL,NULL),NULL,NULL,
-                                TypePointer,f,(NULL,NULL),NULL,&pp->u.s->stype,
-                                0,0, -1,0);
+        XX_ALLOC(pp->u.s, S_symStructSpec);
+        FILLF_symStructSpec(pp->u.s, NULL,
+                            NULL,NULL,NULL,0,NULL,
+                            type,f,(NULL,NULL),NULL,NULL,
+                            TypePointer,f,(NULL,NULL),NULL,&pp->u.s->stype,
+                            0,0, -1,0);
         pp->u.s->stype.u.t = pp;
         setGlobalFileDepNames(id->name, pp, MEM_XX);
         addSymbol(pp, s_symTab);
@@ -1023,12 +1024,12 @@ S_typeModifiers *crNewAnnonymeStrUnion(S_idIdent *typeName) {
     FILL_symbolBits(&pp->bits, 0, 0, 0, 0, 0, type, StorageNone, 0);
 
     setGlobalFileDepNames("", pp, MEM_XX);
-    XX_ALLOC(pp->u.s, S_symStructSpecific);
-    FILLF_symStructSpecific(pp->u.s, NULL,
-                            NULL, NULL, NULL, 0, NULL,
-                            type,f,(NULL,NULL),NULL,NULL,
-                            TypePointer,f,(NULL,NULL),NULL,&pp->u.s->stype,
-                            0,0, -1,0);
+    XX_ALLOC(pp->u.s, S_symStructSpec);
+    FILLF_symStructSpec(pp->u.s, NULL,
+                        NULL, NULL, NULL, 0, NULL,
+                        type,f,(NULL,NULL),NULL,NULL,
+                        TypePointer,f,(NULL,NULL),NULL,&pp->u.s->stype,
+                        0,0, -1,0);
     pp->u.s->stype.u.t = pp;
     addSymbol(pp, s_symTab);
     return(&pp->u.s->stype);

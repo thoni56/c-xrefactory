@@ -168,10 +168,11 @@ S_symbol *javaAddType(S_idIdentList *clas, int accessFlags, S_position *p) {
 
 void javaAddNestedClassesAsTypeDefs(S_symbol *cc, S_idIdentList *oclassname,
                                     int accessFlags) {
-    S_symStructSpecific *ss;
-    S_idIdentList		ll;
-    S_symbol            *nn;
+    S_symStructSpec *ss;
+    S_idIdentList	ll;
+    S_symbol        *nn;
     int i;
+
     assert(cc && cc->bits.symType==TypeStruct);
     ss = cc->u.s;
     assert(ss);
@@ -468,14 +469,14 @@ static S_symbol *javaFQTypeSymbolDefinitionCreate(char *name,
     fillSymbol(memb, sname, lname1, s_noPos);
     FILL_symbolBits(&memb->bits, 0, 0, 0, 0, 0, TypeStruct, StorageNone, 0);
 
-    CF_ALLOC(memb->u.s, S_symStructSpecific);
-    FILLF_symStructSpecific(memb->u.s,NULL,
-                            NULL,NULL,NULL,0,NULL,
-                            TypeStruct,t,NULL,NULL,NULL,
-                            TypePointer,f,(NULL,NULL),NULL,&memb->u.s->stype,
-                            javaFqtNamesAreFromTheSamePackage(lname1,
-                                                              s_javaThisPackageName),
-                            0, -1, 0);
+    CF_ALLOC(memb->u.s, S_symStructSpec);
+    FILLF_symStructSpec(memb->u.s,NULL,
+                        NULL,NULL,NULL,0,NULL,
+                        TypeStruct,t,NULL,NULL,NULL,
+                        TypePointer,f,(NULL,NULL),NULL,&memb->u.s->stype,
+                        javaFqtNamesAreFromTheSamePackage(lname1,
+                                                          s_javaThisPackageName),
+                        0, -1, 0);
     memb->u.s->stype.u.t = memb;
 
     CF_ALLOC(pppl, SymbolList);
@@ -2516,8 +2517,8 @@ void javaAddJslReadedTopLevelClasses(S_jslTypeTab  *jslTypeTab) {
 }
 
 void javaAddNestedClassToSymbolTab( S_symbol *str ) {
-    S_symStructSpecific     *ss;
-    int                     i;
+    S_symStructSpec *ss;
+    int i;
 
     assert(str && str->bits.symType==TypeStruct);
     ss = str->u.s;
@@ -2637,7 +2638,7 @@ void newClassDefinitionEnd(S_freeTrail *trail) {
 
 void javaInitArrayObject(void) {
     static S_symbol s_lengthSymbol;
-    static S_symStructSpecific s_arraySpec;
+    static S_symStructSpec s_arraySpec;
 
     assert(s_javaObjectSymbol != NULL);
     javaLoadClassSymbolsFromFile(s_javaObjectSymbol);
@@ -2648,12 +2649,12 @@ void javaInitArrayObject(void) {
                         TypeDefault, StorageDefault,0);
     s_lengthSymbol.u.type = & s_defaultIntModifier;
 
-    FILLF_symStructSpecific(&s_arraySpec, NULL,
-                &s_lengthSymbol, NULL,NULL,
-                0, NULL,
-                TypeStruct,t,NULL,NULL,NULL,
-                TypePointer,f,(NULL,NULL),NULL,&s_arraySpec.stype,
-                1,0, -1,0);
+    FILLF_symStructSpec(&s_arraySpec, NULL,
+                        &s_lengthSymbol, NULL,NULL,
+                        0, NULL,
+                        TypeStruct,t,NULL,NULL,NULL,
+                        TypePointer,f,(NULL,NULL),NULL,&s_arraySpec.stype,
+                        1,0, -1,0);
     s_arraySpec.stype.u.t = &s_javaArrayObjectSymbol;
 
     // orig. javaFileLoaded==1, I changed, because of methodInvoc. reference

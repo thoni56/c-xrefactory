@@ -753,7 +753,7 @@ typedef struct nestedSpec {
     short unsigned  accFlags;
 } S_nestedSpec;
 
-typedef struct symStructSpecific {
+typedef struct symStructSpec {
     struct symbolList		*super;			/* list of super classes & interfaces */
     struct symbol			*records;		/* str. records, should be a table of   */
     struct cctNode			casts;			/* possible casts                       */
@@ -770,7 +770,7 @@ typedef struct symStructSpecific {
     unsigned				recSearchCounter; /* tmp counter when looking for a record
                                                 it flags searched classes
                                              */
-} S_symStructSpecific;
+} S_symStructSpec;
 
 
 #include "symbol.h"

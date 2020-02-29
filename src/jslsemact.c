@@ -437,10 +437,11 @@ int jslRecordAccessible(S_symbol *cl, S_symbol *rec, unsigned recAccessFlags) {
 
 
 void jslAddNestedClassesToJslTypeTab( S_symbol *str, int order) {
-    S_symStructSpecific     *ss;
-    S_idIdent               ocid;
-    S_idIdentList           oclassid;
-    int                     i;
+    S_symStructSpec *ss;
+    S_idIdent ocid;
+    S_idIdentList oclassid;
+    int i;
+
     assert(str && str->bits.symType==TypeStruct);
     ss = str->u.s;
     assert(ss);

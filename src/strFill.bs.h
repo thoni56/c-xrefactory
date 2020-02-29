@@ -1151,7 +1151,7 @@
     (STRUCTP)->i3 = _ARG_2_OF_4 ARGS;\
     (STRUCTP)->i4 = _ARG_3_OF_4 ARGS;\
 }
-#define FILL_symStructSpecific(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10) {\
+#define FILL_symStructSpec(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10) {\
     (STRUCTP)->super = ARG0;\
     (STRUCTP)->records = ARG1;\
     (STRUCTP)->casts = ARG2;\
@@ -1164,7 +1164,7 @@
     (STRUCTP)->classFile = ARG9;\
     (STRUCTP)->recSearchCounter = ARG10;\
 }
-#define FILLF_symStructSpecific(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13, ARG14, ARG15, ARG16, ARG17, ARG18, ARG19) {\
+#define FILLF_symStructSpec(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13, ARG14, ARG15, ARG16, ARG17, ARG18, ARG19) {\
     (STRUCTP)->super = ARG0;\
     (STRUCTP)->records = ARG1;\
     (STRUCTP)->casts.node = ARG2;\
@@ -1184,7 +1184,7 @@
     (STRUCTP)->classFile = ARG18;\
     (STRUCTP)->recSearchCounter = ARG19;\
 }
-#define _FILLF_symStructSpecific(STRUCTP, ARGS) {\
+#define _FILLF_symStructSpec(STRUCTP, ARGS) {\
     (STRUCTP)->super = _ARG_0_OF_20 ARGS;\
     (STRUCTP)->records = _ARG_1_OF_20 ARGS;\
     (STRUCTP)->casts.node = _ARG_2_OF_20 ARGS;\

@@ -34,6 +34,6 @@ void fillSymbolWithLabel(S_symbol *symbol, char *name, char *linkName, struct po
     // mock(symbol, name, linkName, pos, labelIndex);
 }
 
-void fillSymbolWithStruct(S_symbol *symbol, char *name, char *linkName, struct position pos, struct symStructSpecific *structSpec) {
+void fillSymbolWithStruct(S_symbol *symbol, char *name, char *linkName, struct position pos, struct symStructSpec *structSpec) {
     // mock(symbol, name, linkName, pos, structSpec);
 }

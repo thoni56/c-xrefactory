@@ -32,7 +32,7 @@ typedef struct symbol {
     struct symbolBits bits;
     union defUnion {
         struct typeModifiers		*type;		/* if symType == TypeDefault */
-        struct symStructSpecific	*s;			/* if symType == Struct/Union */
+        struct symStructSpec	*s;			/* if symType == Struct/Union */
         struct symbolList			*enums;		/* if symType == Enum */
         struct macroBody			*mbody;     /* if symType == Macro ! can be NULL! */
         int							labn;		/* break/continue label index */
@@ -53,6 +53,6 @@ extern void fillSymbolWithType(S_symbol *symbol, char *name, char *linkName, str
 extern S_symbol *newSymbolIsEnum(char *name, char *linkName, struct position pos, struct symbolList *enums);
 extern S_symbol *newSymbolIsLabel(char *name, char *linkName, struct position pos, int labelIndex);
 extern void fillSymbolWithLabel(S_symbol *symbol, char *name, char *linkName, struct position pos, int labelIndex);
-extern void fillSymbolWithStruct(S_symbol *symbol, char *name, char *linkName, struct position pos, struct symStructSpecific *structSpec);
+extern void fillSymbolWithStruct(S_symbol *symbol, char *name, char *linkName, struct position pos, struct symStructSpec *structSpec);
 
 #endif
