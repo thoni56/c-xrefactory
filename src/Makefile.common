@@ -38,38 +38,18 @@ $(ROOTDIR)/lib/zlib/libz.a: ..always..
 # 'make yacc' as defined in Makefile
 #%.c : %.y
 
-cgram.c cgram.h: cgram.y $(YACC)
-ifeq ($(YACCING),yes)
+cgram.tab.c cgram.tab.h: cgram.y $(YACC)
 	$(YACC) -v -d -b cgram cgram.y
-	sed 's/cgram.tab.c/cgram.c/g' cgram.tab.c > cgram.c
-	rm cgram.tab.c
-	mv cgram.tab.h cgram.h
-endif
 
 
-javagram.c javagram.h: javagram.y $(YACC)
-ifeq ($(YACCING),yes)
+javagram.tab.c javagram.tab.h: javagram.y $(YACC)
 	$(YACC) -v -d -b javagram javagram.y
-	sed 's/javagram.tab.c/javagram.c/g' javagram.tab.c > javagram.c
-	rm javagram.tab.c
-	mv javagram.tab.h javagram.h
-endif
 
-yaccgram.c yaccgram.h: yaccgram.y $(YACC)
-ifeq ($(YACCING),yes)
+yaccgram.tab.c yaccgram.tab.h: yaccgram.y $(YACC)
 	$(YACC) -v -d -b yaccgram yaccgram.y
-	sed 's/yaccgram.tab.c/yaccgram.c/g' yaccgram.tab.c > yaccgram.c
-	rm yaccgram.tab.c
-	mv yaccgram.tab.h yaccgram.h
-endif
 
-cexp.c cexp.h: cexp.y $(YACC)
-ifeq ($(YACCING),yes)
+cexp.tab.c cexp.tab.h: cexp.y $(YACC)
 	$(YACC) -v -d -b cexp cexp.y
-	sed 's/cexp.tab.c/cexp.c/g' cexp.tab.c > cexp.c
-	rm cexp.tab.c
-	mv cexp.tab.h cexp.h
-endif
 
 
 #########################################################################

@@ -7,10 +7,10 @@
 #include "semact.h"
 
 #define YYSTYPE MAINYYSTYPE
-#include "cgram.h"				/* tokens from grammars */
+#include "cgram.tab.h"				/* tokens from grammars */
 #undef  YYSTYPE
 
-/* redefine object which can clash with cgram.h */
+/* Redefine names which can clash with C parser */
 
 #define yylval cexpyylval
 

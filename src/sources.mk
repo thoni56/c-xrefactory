@@ -1,13 +1,14 @@
 # Sources and link settings common to bootstrap (Makefile.bs) and the
 # real target build (Makefile.common)
 
-SRCS = cgram.c main.c globals.c misc.c semact.c commons.c generate.c \
-	   enumTxt.c complete.c cxref.c cxfile.c lex.c yylex.c cexp.c options.c \
-	   caching.c javagram.c jsemact.c classFileReader.c cct.c init.c \
+SRCS = main.c globals.c misc.c semact.c commons.c generate.c \
+	   enumTxt.c complete.c cxref.c cxfile.c lex.c yylex.c options.c \
+	   caching.c jsemact.c classFileReader.c cct.c init.c \
 	   editor.c refactory.c protocol.c log.c \
-	   yaccgram.c html.c extract.c classh.c jslsemact.c \
+	   html.c extract.c classh.c jslsemact.c \
 	   filetab.c matab.c olcxtab.c editorbuffertab.c symtab.c javafqttab.c \
-	   jsltypetab.c reftab.c memmac.c utils.c charbuf.c hash.c symbol.c
+	   jsltypetab.c reftab.c memmac.c utils.c charbuf.c hash.c symbol.c \
+	   cgram.tab.c javagram.tab.c cexp.tab.c yaccgram.tab.c
 
 OBJDIR = .objects
 OBJS = $(addprefix $(OBJDIR)/,${SRCS:.c=.o})

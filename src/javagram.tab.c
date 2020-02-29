@@ -178,7 +178,7 @@ typedef union {
     S_bb_typeModifiersListPositionLstPair   bbtypeModifiersListPositionLstPair;
     S_bb_nestedConstrTokenType              bbnestedConstrTokenType;
 } YYSTYPE;
-#line 182 "javagram.c"
+#line 182 "javagram.tab.c"
 #define TYPE_NAME 257
 #define CLASS_NAME 258
 #define TEMPLATE_NAME 259
@@ -2682,7 +2682,7 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
         }
     }
 }
-#line 2686 "javagram.c"
+#line 2686 "javagram.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -7214,7 +7214,7 @@ case 484:
             }
         }
 break;
-#line 7218 "javagram.c"
+#line 7218 "javagram.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;
