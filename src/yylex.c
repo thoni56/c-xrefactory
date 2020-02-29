@@ -18,7 +18,7 @@
 #include "c_parser.x"
 #include "cexp.x"
 #include "yaccgram.x"
-#include "javagram.x"
+#include "java_parser.x"
 
 #include "unigram.h"
 #include "memmac.h"

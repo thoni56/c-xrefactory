@@ -31,7 +31,7 @@
 #define yyvsp javayyvsp
 
 
-#include "javagram.x"
+#include "java_parser.x"
 
 #include "globals.h"
 #include "jslsemact.h"

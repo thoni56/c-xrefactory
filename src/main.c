@@ -16,7 +16,7 @@
 
 #include "c_parser.x"
 #include "yaccgram.x"
-#include "javagram.x"
+#include "java_parser.x"
 #include "unigram.h"
 
 #include "charbuf.h"

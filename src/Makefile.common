@@ -33,17 +33,12 @@ $(ROOTDIR)/lib/zlib/libz.a: ..always..
 # both java and c++, we can use the already included .c-files instead
 # of generating from yacc
 
-# So we disable standard yacc to C rule so that we can compile without
-# YACC which should happen on user sites. To run yacc on .y-files use
-# 'make yacc' as defined in Makefile
-#%.c : %.y
-
 c_parser.tab.c c_parser.tab.h: c_parser.y $(YACC)
 	$(YACC) -v -d -b c_parser c_parser.y
 
 
-javagram.tab.c javagram.tab.h: javagram.y $(YACC)
-	$(YACC) -v -d -b javagram javagram.y
+java_parser.tab.c java_parser.tab.h: java_parser.y $(YACC)
+	$(YACC) -v -d -b java_parser java_parser.y
 
 yaccgram.tab.c yaccgram.tab.h: yaccgram.y $(YACC)
 	$(YACC) -v -d -b yaccgram yaccgram.y

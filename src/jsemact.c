@@ -15,7 +15,7 @@
 #include "enumTxt.h"
 #include "symbol.h"
 
-#include "javagram.x"
+#include "java_parser.x"
 
 #include "unigram.h"
 #include "recyacc.h"
