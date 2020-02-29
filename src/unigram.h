@@ -22,7 +22,7 @@
 #endif
 
 /* Include one of the generated parser definitions for common token codes */
-#include "cgram.tab.h"
+#include "c_parser.tab.h"
 
 extern YYSTYPE cyylval;
 extern YYSTYPE javayylval;

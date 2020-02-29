@@ -14,7 +14,7 @@
 #include "semact.h"
 
 #define YYSTYPE MAINYYSTYPE
-#include "cgram.tab.h"				/* tokens from grammars */
+#include "c_parser.tab.h"				/* tokens from grammars */
 #undef  YYSTYPE
 
 /* Redefine names which can clash with C parser */

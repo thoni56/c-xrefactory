@@ -14,7 +14,7 @@
 #include "enumTxt.h"
 #include "reftab.h"
 
-#include "cgram.x"
+#include "c_parser.x"
 #include "yaccgram.x"
 #include "javagram.x"
 #include "unigram.h"

@@ -38,8 +38,8 @@ $(ROOTDIR)/lib/zlib/libz.a: ..always..
 # 'make yacc' as defined in Makefile
 #%.c : %.y
 
-cgram.tab.c cgram.tab.h: cgram.y $(YACC)
-	$(YACC) -v -d -b cgram cgram.y
+c_parser.tab.c c_parser.tab.h: c_parser.y $(YACC)
+	$(YACC) -v -d -b c_parser c_parser.y
 
 
 javagram.tab.c javagram.tab.h: javagram.y $(YACC)

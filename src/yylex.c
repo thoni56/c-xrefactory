@@ -15,7 +15,7 @@
 #include "charbuf.h"
 #include "symbol.h"
 
-#include "cgram.x"
+#include "c_parser.x"
 #include "cexp.x"
 #include "yaccgram.x"
 #include "javagram.x"

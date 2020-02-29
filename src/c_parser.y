@@ -33,7 +33,7 @@
 #define yygindex cyygindex
 #define yyvsp cyyvsp
 
-#include "cgram.x"
+#include "c_parser.x"
 
 #include "globals.h"
 #include "misc.h"
