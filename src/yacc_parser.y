@@ -25,7 +25,7 @@
 #define yygindex yaccyygindex
 #define yyvsp yaccyyvsp
 
-#include "yaccgram.x"
+#include "yacc_parser.x"
 
 #include "globals.h"
 #include "misc.h"

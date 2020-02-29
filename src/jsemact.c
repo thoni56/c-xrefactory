@@ -17,7 +17,7 @@
 
 #include "java_parser.x"
 
-#include "unigram.h"
+#include "parsers.h"
 #include "recyacc.h"
 
 #include "protocol.h"

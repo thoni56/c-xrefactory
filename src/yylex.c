@@ -17,10 +17,10 @@
 
 #include "c_parser.x"
 #include "cexp.x"
-#include "yaccgram.x"
+#include "yacc_parser.x"
 #include "java_parser.x"
 
-#include "unigram.h"
+#include "parsers.h"
 #include "memmac.h"
 #include "protocol.h"
 

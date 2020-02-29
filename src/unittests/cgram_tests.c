@@ -1,7 +1,7 @@
 #include <cgreen/cgreen.h>
 
 // Need to include since we are testing static functions
-#include "../cgram.tab.c"
+#include "../c_parser.tab.c"
 
 #include "semact.mock"
 #include "complete.mock"

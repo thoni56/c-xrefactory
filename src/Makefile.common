@@ -40,8 +40,8 @@ c_parser.tab.c c_parser.tab.h: c_parser.y $(YACC)
 java_parser.tab.c java_parser.tab.h: java_parser.y $(YACC)
 	$(YACC) -v -d -b java_parser java_parser.y
 
-yaccgram.tab.c yaccgram.tab.h: yaccgram.y $(YACC)
-	$(YACC) -v -d -b yaccgram yaccgram.y
+yacc_parser.tab.c yacc_parser.tab.h: yacc_parser.y $(YACC)
+	$(YACC) -v -d -b yacc_parser yacc_parser.y
 
 cexp.tab.c cexp.tab.h: cexp.y $(YACC)
 	$(YACC) -v -d -b cexp cexp.y

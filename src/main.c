@@ -15,9 +15,9 @@
 #include "reftab.h"
 
 #include "c_parser.x"
-#include "yaccgram.x"
+#include "yacc_parser.x"
 #include "java_parser.x"
-#include "unigram.h"
+#include "parsers.h"
 
 #include "charbuf.h"
 #include "cxref.h"
