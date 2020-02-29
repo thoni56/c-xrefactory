@@ -36,41 +36,39 @@ $(ROOTDIR)/lib/zlib/libz.a: ..always..
 # So we disable standard yacc to C rule so that we can compile without
 # YACC which should happen on user sites. To run yacc on .y-files use
 # 'make yacc' as defined in Makefile
-%.c : %.y
+#%.c : %.y
 
 cgram.c cgram.h: cgram.y $(YACC)
 ifeq ($(YACCING),yes)
-	$(YACC) -v -d cgram.y
-	mv y.output cy.output
-	sed 's/y.tab.c/cgram.c/g' y.tab.c > cgram.c
-	rm y.tab.c
-	mv y.tab.h cgram.h
+	$(YACC) -v -d -b cgram cgram.y
+	sed 's/cgram.tab.c/cgram.c/g' cgram.tab.c > cgram.c
+	rm cgram.tab.c
+	mv cgram.tab.h cgram.h
 endif
 
 
 javagram.c javagram.h: javagram.y $(YACC)
 ifeq ($(YACCING),yes)
-	$(YACC) -v -d javagram.y
-	mv y.output jy.output
-	sed 's/y.tab.c/javagram.c/g' y.tab.c > javagram.c
-	rm y.tab.c
-	mv y.tab.h javagram.h
+	$(YACC) -v -d -b javagram javagram.y
+	sed 's/javagram.tab.c/javagram.c/g' javagram.tab.c > javagram.c
+	rm javagram.tab.c
+	mv javagram.tab.h javagram.h
 endif
 
 yaccgram.c yaccgram.h: yaccgram.y $(YACC)
 ifeq ($(YACCING),yes)
-	$(YACC) -v -d yaccgram.y
-	sed 's/y.tab.c/yaccgram.c/g' y.tab.c > yaccgram.c
-	rm y.tab.c
-	mv y.tab.h yaccgram.h
+	$(YACC) -v -d -b yaccgram yaccgram.y
+	sed 's/yaccgram.tab.c/yaccgram.c/g' yaccgram.tab.c > yaccgram.c
+	rm yaccgram.tab.c
+	mv yaccgram.tab.h yaccgram.h
 endif
 
 cexp.c cexp.h: cexp.y $(YACC)
 ifeq ($(YACCING),yes)
-	$(YACC) -v cexp.y
-	sed 's/y.tab.c/cexp.c/g' y.tab.c > cexp.c
-	rm y.tab.c
-	mv y.tab.h cexp.h
+	$(YACC) -v -d -b cexp cexp.y
+	sed 's/cexp.tab.c/cexp.c/g' cexp.tab.c > cexp.c
+	rm cexp.tab.c
+	mv cexp.tab.h cexp.h
 endif
 
 
@@ -96,6 +94,8 @@ compiler_defines.g: c-xref.bs Makefile.common
 			mv -f $@ $@.backup ; \
 			mv -f tmp-$@ $@ ; \
 			echo "$@: regenerated." ; \
+		else \
+			rm tmp-$@ ; \
 		fi \
 	else \
 			mv -f tmp-$@ $@ ; \
@@ -111,12 +111,14 @@ strFill.g.h: proto.h symtab.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.co
 			mv -f $@ $@.backup ; \
 			mv -f tmp-$@ $@ ; \
 			echo "$@: regenerated." ; \
+		else \
+			rm tmp-$@ ; \
 		fi \
 	else \
 			mv -f tmp-$@ $@ ; \
 	fi
 
-# Generate enum string representations header
+# Generate enum string representations header file
 enumTxt.g.h: proto.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
 	@./c-xref.bs -task_regime_generate $(CXREF_CFLAGS) -DGENERATION \
 		-enum_name -header -xrefrc .c-xrefrc proto.h \
@@ -126,6 +128,8 @@ enumTxt.g.h: proto.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
 			mv -f $@ $@.backup ; \
 			mv -f tmp-$@ $@ ; \
 			echo "$@: regenerated." ; \
+		else \
+			rm tmp-$@ ; \
 		fi \
 	else \
 			mv -f tmp-$@ $@ ; \
@@ -141,6 +145,8 @@ enumTxt.g.c: proto.h compiler_defines.g .c-xrefrc c-xref.bs Makefile.common
 			mv -f $@ $@.backup ; \
 			mv -f tmp-$@ $@ ; \
 			echo "$@: regenerated." ; \
+		else \
+			rm tmp-$@ ; \
 		fi \
 	else \
 			mv -f tmp-$@ $@ ; \
