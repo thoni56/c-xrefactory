@@ -21,6 +21,7 @@
 
 #endif
 
+/* Include one of the generated parser definitions for common token codes */
 #include "cgram.h"
 
 extern YYSTYPE cyylval;
