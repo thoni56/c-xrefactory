@@ -25,3 +25,8 @@ init:
 
 clean:
 	rm -r CXrefs .c-xrefrc
+
+gdb:
+	@../../utils/edit_server_driver.py completion-sequence.txt "$(CURDIR)" buffer 15 > output.tmp &
+	sleep 1
+	sudo gdb -pid `pgrep c-xref | tail -1`
