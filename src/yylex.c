@@ -16,7 +16,7 @@
 #include "symbol.h"
 
 #include "c_parser.x"
-#include "cexp.x"
+#include "cexp_parser.x"
 #include "yacc_parser.x"
 #include "java_parser.x"
 
