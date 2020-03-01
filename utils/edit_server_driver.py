@@ -69,10 +69,11 @@ with open(command_file, 'rb') as file:
 
     command = file.readline().decode()
     while command != '':
-        while command.rstrip() != '<sync>':
+        while command.rstrip() != '<sync>' and command != '':
             send_command(p, command.replace("CURDIR", CURDIR))
             command = file.readline().decode()
-        end_of_options(p)
-        expect_sync(p)
-        read_output(buffer)
-        command = file.readline().decode()
+        if command != '':
+            end_of_options(p)
+            expect_sync(p)
+            read_output(buffer)
+            command = file.readline().decode()
