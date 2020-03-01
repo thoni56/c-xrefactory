@@ -43,8 +43,8 @@ java_parser.tab.c java_parser.tab.h: java_parser.y $(YACC)
 yacc_parser.tab.c yacc_parser.tab.h: yacc_parser.y $(YACC)
 	$(YACC) -v -d -b yacc_parser yacc_parser.y
 
-cexp.tab.c cexp.tab.h: cexp.y $(YACC)
-	$(YACC) -v -d -b cexp cexp.y
+cexp_parser.tab.c cexp_parser.tab.h: cexp_parser.y $(YACC)
+	$(YACC) -v -d -b cexp_parser cexp_parser.y
 
 
 #########################################################################
