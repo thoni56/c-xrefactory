@@ -3371,16 +3371,31 @@ static void mainGenerate(int argc, char **argv) {
 /* initLogging() is called as the first thing in main() so we look for log filename */
 static void initLogging(int argc, char *argv[]) {
     char fileName[MAX_FILE_NAME_SIZE+1] = "";
+    bool debug = false;
+    bool trace = false;
 
     for (int i=0; i<argc; i++) {
         if (strncmp(argv[i], "-log=", 5)==0)
             strcpy(fileName, &argv[i][5]);
+        if (strcmp(argv[i], "-debug") == 0)
+            debug = true;
+        if (strcmp(argv[i], "-trace") == 0)
+            trace = true;
     }
     if (fileName[0] != '\0') {
         FILE *tempFile = fopen(fileName, "w");
         if (tempFile != NULL)
             log_set_fp(tempFile);
     }
+
+#ifdef DEBUG
+    if (trace)
+        log_set_file_level(LOG_TRACE);
+    else if (debug)
+        log_set_file_level(LOG_DEBUG);
+    else
+#endif
+        log_set_file_level(LOG_INFO);
 
     /* Always log errors and above to console */
     log_set_console_level(LOG_ERROR);
