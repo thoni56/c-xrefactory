@@ -105,7 +105,8 @@ static void usage(char *s) {
     fprintf(stdout,"\t-exactpositionresolve     - resolve symbols by def. position\n");
     fprintf(stdout,"\t-mf<n>                    - factor increasing cxMemory\n");
 #   ifdef DEBUG
-    fprintf(stdout,"\t-debug                    - produce debug trace of the execution\n");
+    fprintf(stdout,"\t-debug                    - produce debug output of the execution\n");
+    fprintf(stdout,"\t-trace                    - produce trace output of the execution\n");
 #   endif
 #if 0
     fprintf(stdout,"\t-typedefs                 - generate structure/enums typedefs\n");
@@ -498,7 +499,7 @@ static int processDOption(int *ii, int argc, char **argv) {
     if (0) {}
 #   ifdef DEBUG
     else if (strcmp(argv[i],"-debug")==0)
-        s_opt.debug = 1;
+        s_opt.debug = true;
 #   endif
     else if (strcmp(argv[i],"-d")==0)   {
         int ln;
@@ -806,6 +807,9 @@ static int processKOption(int *ii, int argc, char **argv) {
 static int processLOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
+    else if (strncmp(argv[i], "-log=", 5)==0) {
+        ;                       /* Already handled in initLogging() */
+    }
     else if (strncmp(argv[i],"-last_message=",14)==0) {
         createOptionString(&s_opt.last_message, argv[i]+14);
     }
@@ -1405,10 +1409,14 @@ static int processSOption(int *ii, int argc, char **argv) {
 static int processTOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
+#ifdef DEBUG
     else if (strcmp(argv[i],"-trace")==0) {
-        s_opt.trace = 1;
-    } else if (strcmp(argv[i],"-typedefs")==0)
+        s_opt.trace = true;
+    }
+#endif
+    else if (strcmp(argv[i],"-typedefs")==0) {
         s_opt.typedefg = 1;
+    }
     else if (strcmp(argv[i],"-task_regime_server")==0) {
         s_opt.taskRegime = RegimeEditServer;
     }
@@ -3360,26 +3368,33 @@ static void mainGenerate(int argc, char **argv) {
     symTabMap(s_symTab, generate);
 }
 
-static void initLogging(void) {
-    char fileName[100];
+/* initLogging() is called as the first thing in main() so we look for log filename */
+static void initLogging(int argc, char *argv[]) {
+    char fileName[MAX_FILE_NAME_SIZE+1] = "";
 
-    sprintf(fileName, "%s/c-xref%d.log", "/tmp", getpid());
-    FILE *tempFile = fopen(fileName, "w");
-    log_set_fp(tempFile);
+    for (int i=0; i<argc; i++) {
+        if (strncmp(argv[i], "-log=", 5)==0)
+            strcpy(fileName, &argv[i][5]);
+    }
+    if (fileName[0] != '\0') {
+        FILE *tempFile = fopen(fileName, "w");
+        if (tempFile != NULL)
+            log_set_fp(tempFile);
+    }
 
     /* Always log errors and above to console */
     log_set_console_level(LOG_ERROR);
 }
 
+/* setupLogging() is called as part of the normal argument handling so can only change level */
 static void setupLogging(void) {
-    /* Force tracing for now */
-    // s_opt.trace = true;
-
+#ifdef DEBUG
     if (s_opt.trace)
         log_set_file_level(LOG_TRACE);
     else if (s_opt.debug)
         log_set_file_level(LOG_DEBUG);
     else
+#endif
         log_set_file_level(LOG_INFO);
 }
 
@@ -3390,7 +3405,7 @@ static void setupLogging(void) {
 
 int main(int argc, char **argv) {
     /* Options are read very late down below, so we need some sensible defaults until then */
-    initLogging();
+    initLogging(argc, argv);
 
     /* There is something interesting going on here, some mysterious
        CX_ALLOCC always makes one longjmp back to here before we can
