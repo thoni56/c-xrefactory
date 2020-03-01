@@ -27,7 +27,7 @@ trace: COMMAND+=-trace
 trace: $(TEST)
 
 gdb:
-	gdb --args $(COMMAND) $(OPTIONS)
+	gdb -ex 'set args $(COMMAND) $(OPTIONS) < commands.input' $(COMMAND)
 
 commands.input: commands.tpl
 	@sed -e "s+CURDIR+$(CURDIR)+g" $< > $@
