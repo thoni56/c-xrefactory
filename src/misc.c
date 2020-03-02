@@ -312,12 +312,12 @@ char *stackMemoryPushString(char *s) {
 
 void stackMemoryBlockStart(void) {
     S_topBlock *p,top;
-    /*fprintf(dumpOut,"start new block\n");*/
+    log_trace("start new block");
     top = *s_topBlock;
     p = StackMemPush(&top, S_topBlock);
     // trail can't be reset to NULL, because in case of syntax errors
     // this would avoid balancing of } at the end of class
-    //&FILL_topBlock(s_topBlock, s_topBlock->firstFreeIndex, tmpWorkMemoryi, NULL, p);
+    /*& FILL_topBlock(s_topBlock, s_topBlock->firstFreeIndex, tmpWorkMemoryi, NULL, p); */
     FILL_topBlock(s_topBlock, s_topBlock->firstFreeIndex, tmpWorkMemoryi, s_topBlock->trail, p);
 }
 

@@ -676,12 +676,14 @@ void javaSetSourcePath(int defaultCpAllowed) {
 }
 
 
-static void processClassPathString( char *cp) {
+static void processClassPathString(char *cp) {
     char            *nn, *np, *sfp;
     char            ttt[MAX_FILE_NAME_SIZE];
     S_stringList    **ll;
     int             ind, nlen;
-    for(ll= & s_javaClassPaths; *ll!=NULL; ll= &(*ll)->next) ;
+
+    for (ll = &s_javaClassPaths; *ll != NULL; ll = &(*ll)->next) ;
+
     while (*cp!=0) {
         for(ind=0; cp[ind]!=0 && cp[ind]!=CLASS_PATH_SEPARATOR; ind++) {
             ttt[ind]=cp[ind];

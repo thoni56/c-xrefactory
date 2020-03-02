@@ -865,11 +865,10 @@ static int findTopLevelNameInternal(
 //&fprintf(dumpOut,"%s is identified as local var or parameter\n", name);
             FILL_recFindStr(resRfs, NULL, NULL, *resMemb,s_recFindCl++, 0, 0);
 
-            /* before ?????????????
-            // FILL_recFindStr(resRfs, NULL, *resMemb, 0);
-            // resRfs->st[0].sup = &cscope->thisClass;
-            // resRfs->st[0].supern = 1;
-            */
+            /* before ????????????? */
+            /*& FILL_recFindStr(resRfs, NULL, *resMemb, 0); */
+            /*& resRfs->st[0].sup = &cscope->thisClass; */
+            /*& resRfs->st[0].supern = 1; */
             *rscope = NULL;
         } else {
             /* if present, then as a structure record */

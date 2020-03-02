@@ -1796,8 +1796,8 @@ static void passRefsThroughSourceFile(S_reference **rrr, S_position *callerp,
         ebuf = NULL;
     } else {
         ebuf = editorFindFile(cofileName);
-        //&cofile = fopen(cofileName, "r");
-        //&FILL_CharacterBuffer(&cxfBuf, cxfBuf.chars, cxfBuf.chars, cofile, 0, -1, 0, 0, 0, 0,INPUT_DIRECT,s_defaultZStream);
+        /*& cofile = fopen(cofileName, "r"); */
+        /*& FILL_CharacterBuffer(&cxfBuf, cxfBuf.chars, cxfBuf.chars, cofile, 0, -1, 0, 0, 0, 0,INPUT_DIRECT,s_defaultZStream); */
         if (ebuf==NULL) {
             if (s_opt.xref2) {
                 sprintf(tmpBuff, "file %s not accessible", cofileName);
@@ -1805,7 +1805,7 @@ static void passRefsThroughSourceFile(S_reference **rrr, S_position *callerp,
             } else {
                 fprintf(off,"  !!! file %s is not accessible: ", cofileName);
             }
-            //&error(ERR_CANT_OPEN, cofileName);
+            /*& error(ERR_CANT_OPEN, cofileName); */
         }
     }
     ch = ' ';

@@ -2078,13 +2078,13 @@ static S_completionFunTab completionsTab[]  = {
 
 static bool exists_valid_parser_action_on(int token) {
     int yyn1, yyn2;
-    bool result1 = (yyn1 = yysindex[lastyystate]) && (yyn1 += token) >= 0 &&
+    bool shift_action = (yyn1 = yysindex[lastyystate]) && (yyn1 += token) >= 0 &&
         yyn1 <= YYTABLESIZE && yycheck[yyn1] == token;
-    bool result2 = (yyn2 = yyrindex[lastyystate]) && (yyn2 += token) >= 0 &&
+    bool reduce_action = (yyn2 = yyrindex[lastyystate]) && (yyn2 += token) >= 0 &&
         yyn2 <= YYTABLESIZE && yycheck[yyn2] == token;
-    bool result = result1 || result2;
+    bool valid = shift_action || reduce_action;
 
-    return result;
+    return valid;
 }
 
 void makeCCompletions(char *s, int len, S_position *pos) {
