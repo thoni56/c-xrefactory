@@ -36,7 +36,6 @@ $(ROOTDIR)/lib/zlib/libz.a: ..always..
 c_parser.tab.c c_parser.tab.h: c_parser.y $(YACC)
 	$(YACC) -v -d -b c_parser c_parser.y
 
-
 java_parser.tab.c java_parser.tab.h: java_parser.y $(YACC)
 	$(YACC) -v -d -b java_parser java_parser.y
 
