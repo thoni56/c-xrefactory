@@ -10,6 +10,7 @@
 #include "enumTxt.h"
 #include "reftab.h"
 #include "symbol.h"
+#include "list.h"
 #include "strFill.h"
 
 

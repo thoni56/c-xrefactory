@@ -15,6 +15,7 @@
 #include "reftab.h"
 #include "strFill.h"
 #include "javafqttab.h"
+#include "list.h"
 
 #include "c_parser.x"
 #include "yacc_parser.x"

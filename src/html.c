@@ -11,6 +11,7 @@
 #include "cxfile.h"
 #include "enumTxt.h"
 #include "reftab.h"
+#include "list.h"
 #include "strFill.h"
 
 #include "log.h"

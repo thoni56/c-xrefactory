@@ -12,6 +12,7 @@
 #include "jsemact.h"
 #include "editor.h"
 #include "reftab.h"
+#include "list.h"
 #include "strFill.h"
 
 #include "protocol.h"

@@ -15,6 +15,7 @@
 #include "enumTxt.h"
 #include "symbol.h"
 #include "javafqttab.h"
+#include "list.h"
 #include "strFill.h"
 
 #include "java_parser.x"

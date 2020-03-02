@@ -10,6 +10,7 @@
 #include "classFileReader.h"
 #include "jsemact.h"
 #include "symbol.h"
+#include "list.h"
 #include "strFill.h"
 
 #include "log.h"
