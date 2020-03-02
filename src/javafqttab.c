@@ -11,4 +11,6 @@
                                 && strcmp(e1->d->linkName,e2->d->linkName)==0 \
                                 )
 
+S_javaFqtTab s_javaFqtTab;
+
 #include "hashlist.tc"

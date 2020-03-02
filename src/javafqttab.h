@@ -13,4 +13,6 @@
 #undef HASH_ELEM_TYPE
 #endif
 
+extern S_javaFqtTab s_javaFqtTab;
+
 #endif

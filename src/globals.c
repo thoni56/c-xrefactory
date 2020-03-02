@@ -88,7 +88,6 @@ S_completions s_completions;
 S_fileDesc cFile = {0};
 
 S_symTab *s_symTab;
-S_javaFqtTab s_javaFqtTab;
 S_fileTab s_fileTab;
 
 S_fileDesc inStack[INSTACK_SIZE];

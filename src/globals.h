@@ -5,6 +5,7 @@
 #include "proto.h"
 #include "symtab.h"
 
+
 extern char s_cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
 extern char s_base[MAX_FILE_NAME_SIZE];
 extern char ppcTmpBuff[MAX_PPC_RECORD_SIZE];
@@ -88,7 +89,6 @@ extern S_currentlyParsedStatics s_cpsInit;
 extern S_topBlock *s_topBlock;
 
 extern S_symTab *s_symTab;
-extern S_javaFqtTab s_javaFqtTab;
 extern S_fileTab s_fileTab;
 
 extern S_typeModifiers s_defaultIntModifier;
