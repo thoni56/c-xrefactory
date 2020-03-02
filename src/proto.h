@@ -1752,7 +1752,5 @@ typedef struct options {
 /* I think these are here to facilitate strFill generation. We could
    do that by including the .h files in the strFill generation
    command, maybe... */
-#include "filetab.h"
-#include "editorbuffertab.h"
 
 #endif	/* ifndef _PROTO__H */
