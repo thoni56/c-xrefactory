@@ -65,25 +65,23 @@ c-xref.bs:
 # we are planning on removing this at some point anyway.
 
 compiler_defines.g: c-xref.bs Makefile.common
-	@echo -n "Generating compiler defines: "
 	@echo | gcc -dM -E - > tmp-$@
 	@if [ -e $@ ]; then \
 		if ! diff $@ tmp-$@ ; then \
 			mv -f $@ $@.backup ; \
 			mv -f tmp-$@ $@ ; \
-			echo "regenerated." ; \
+			echo "$@: regenerated." ; \
 		else \
-			echo "no change." ; \
+			echo "$@: no change." ; \
 			rm tmp-$@ ; \
 		fi \
 	else \
-			echo "generated." ; \
+			echo "$@: generated." ; \
 			mv -f tmp-$@ $@ ; \
 	fi
 
 # Generate structure filler functions
 strFill.g: $(wildcard *.h) compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
-	@echo -n "Generating strFill header: "
 	@./c-xref.bs -task_regime_generate $(CXREF_CFLAGS) -DGENERATION \
 		-str_fill -header -xrefrc .c-xrefrc proto.h \
 		> tmp-$@
@@ -91,19 +89,18 @@ strFill.g: $(wildcard *.h) compiler_defines.g c-xref.bs .c-xrefrc Makefile.commo
 		if ! diff $@ tmp-$@ ; then \
 			mv -f $@ $@.backup ; \
 			mv -f tmp-$@ $@ ; \
-			echo "regenerated." ; \
+			echo "$@: generated." ; \
 		else \
-			echo "no change." ; \
+			echo "$@: no change." ; \
 			rm tmp-$@ ; \
 		fi \
 	else \
-			echo "generated." ; \
+			echo "$@: generated." ; \
 			mv -f tmp-$@ $@ ; \
 	fi
 
 # Generate enum string representations header file
 enumTxt.g: $(wildcard *.h) compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
-	@echo -n "Generating enumTxt header: "
 	@./c-xref.bs -task_regime_generate $(CXREF_CFLAGS) -DGENERATION \
 		-enum_name -header -xrefrc .c-xrefrc proto.h \
 		> tmp-$@
@@ -111,19 +108,18 @@ enumTxt.g: $(wildcard *.h) compiler_defines.g c-xref.bs .c-xrefrc Makefile.commo
 		if ! diff $@ tmp-$@ ; then \
 			mv -f $@ $@.backup ; \
 			mv -f tmp-$@ $@ ; \
-			echo "regenerated." ; \
+			echo "$@: regenerated." ; \
 		else \
-			echo "no change." ; \
+			echo "$@: no change." ; \
 			rm tmp-$@ ; \
 		fi \
 	else \
-			echo "generated." ; \
+			echo "$@: generated." ; \
 			mv -f tmp-$@ $@ ; \
 	fi
 
 # Generate enum string representations
 enumTxt.g.c: $(wildcard *.h) compiler_defines.g .c-xrefrc c-xref.bs Makefile.common
-	@echo -n "Generating enumTxt body: "
 	@./c-xref.bs -task_regime_generate $(CXREF_CFLAGS) -DGENERATION \
 		-enum_name -body -xrefrc .c-xrefrc proto.h \
 		> tmp-$@
@@ -131,13 +127,13 @@ enumTxt.g.c: $(wildcard *.h) compiler_defines.g .c-xrefrc c-xref.bs Makefile.com
 		if ! diff $@ tmp-$@ ; then \
 			mv -f $@ $@.backup ; \
 			mv -f tmp-$@ $@ ; \
-			echo "regenerated." ; \
+			echo "$@: regenerated." ; \
 		else \
-			echo "no change." ; \
+			echo "$@: no change." ; \
 			rm tmp-$@ ; \
 		fi \
 	else \
-			echo "generated." ; \
+			echo "$@: generated." ; \
 			mv -f tmp-$@ $@ ; \
 	fi
 
