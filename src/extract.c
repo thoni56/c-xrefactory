@@ -45,7 +45,7 @@ void genInternalLabelReference(int counter, int usage) {
     char ttt[TMP_STRING_SIZE];
     S_idIdent ll;
 
-    if (s_opt.cxrefs != OLO_EXTRACT) return;
+    if (s_opt.server_operation != OLO_EXTRACT) return;
 
     LOCAL_LABEL_NAME(ttt,counter);
     FILLF_idIdent(&ll, ttt, NULL, cFile.lb.buffer.fileNumber, 0,0,NULL);
@@ -58,7 +58,7 @@ void genInternalLabelReference(int counter, int usage) {
 S_symbol *addContinueBreakLabelSymbol(int labn, char *name) {
     S_symbol *s;
 
-    if (s_opt.cxrefs != OLO_EXTRACT) return NULL;
+    if (s_opt.server_operation != OLO_EXTRACT) return NULL;
 
     /*& XX_ALLOC(s, S_symbol); */
     /*& FILL_symbolBits(&s->bits,0,0,0,0,0,TypeLabel,StorageAuto,0); */
@@ -76,7 +76,7 @@ void deleteContinueBreakLabelSymbol(char *name) {
     S_symbol    ss,*memb;
     int         ii;
 
-    if (s_opt.cxrefs != OLO_EXTRACT) return;
+    if (s_opt.server_operation != OLO_EXTRACT) return;
 
     /*& FILL_symbolBits(&ss.bits, 0,0,0,0,0,TypeLabel,StorageAuto,0); */
     /*& FILL_symbol(&ss, name, name, s_noPos, ss.bits,labn,0, NULL); */
@@ -94,7 +94,7 @@ void genContinueBreakReference(char *name) {
     S_symbol    ss,*memb;
     int         ii;
 
-    if (s_opt.cxrefs != OLO_EXTRACT) return;
+    if (s_opt.server_operation != OLO_EXTRACT) return;
 
     /*& FILL_symbolBits(&ss.bits, 0,0,0,0,0,TypeLabel,StorageAuto,0); */
     /*& FILL_symbol(&ss, name, name, s_noPos, ss.bits,labn,0, NULL); */
@@ -111,7 +111,7 @@ void genSwitchCaseFork(int lastFlag) {
     S_symbol    ss,*memb;
     int         ii;
 
-    if (s_opt.cxrefs != OLO_EXTRACT) return;
+    if (s_opt.server_operation != OLO_EXTRACT) return;
 
     /*& FILL_symbolBits(&ss.bits, 0,0,0,0,0,TypeLabel,StorageAuto,0); */
     /*& FILL_symbol(&ss,SWITCH_LABEL_NAME,SWITCH_LABEL_NAME,s_noPos,ss.bits,labn,0,NULL); */
@@ -1226,7 +1226,7 @@ void actionsBeforeAfterExternalDefinition(void) {
         && s_cp.cxMemiAtFunBegin != 0
         && s_cp.cxMemiAtFunBegin <= s_cps.cxMemiAtBlockBegin
         // is it an extraction action ?
-        && s_opt.cxrefs == OLO_EXTRACT
+        && s_opt.server_operation == OLO_EXTRACT
         && (! s_cps.extractProcessedFlag)) {
         // O.K. make extraction
         s_cp.cxMemiAtFunEnd = cxMemory->i;

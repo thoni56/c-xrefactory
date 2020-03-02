@@ -1092,7 +1092,7 @@ int javaClassifySingleAmbigNameToTypeOrPack(S_idIdentList *name,
                 rfs->currClass->bits.symType==TypeStruct && rfs->currClass->u.s);\
             assert(rfs && rfs->baseClass && \
                 rfs->baseClass->bits.symType==TypeStruct && rfs->baseClass->u.s);\
-            if (s_opt.cxrefs!=OLO_ENCAPSULATE \
+            if (s_opt.server_operation!=OLO_ENCAPSULATE \
                 || ! javaRecordAccessible(rfs, rfs->baseClass, rfs->currClass, sym, ACC_PRIVATE)) {\
                 FILL_usageBits(&ub, usage, minacc, 0);\
                 oref=addCxReferenceNew(sym,pos, &ub,\
@@ -2224,7 +2224,7 @@ static S_typeModifiers *javaMethodInvocation(
     }
     FILL_usageBits(&ub, usedusage, minacc[smallesti], 0);
     addCxReferenceNew(appl[smallesti], &name->p, &ub, vFunCl, vApplCl);
-    if (s_opt.cxrefs == OLO_EXTRACT) {
+    if (s_opt.server_operation == OLO_EXTRACT) {
         for(ee=appl[smallesti]->u.type->u.m.exceptions; ee!=NULL; ee=ee->next) {
             addCxReference(ee->d, &name->p, UsageThrown, s_noneFileIndex, s_noneFileIndex);
         }

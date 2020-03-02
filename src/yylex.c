@@ -603,7 +603,7 @@ static void handleMacroDefinitionParameterPositions(int argi, S_position *macpos
                                                     S_position *pos, S_position *parpos2,
                                                     int final
     ) {
-    if ((s_opt.cxrefs == OLO_GOTO_PARAM_NAME || s_opt.cxrefs == OLO_GET_PARAM_COORDINATES)
+    if ((s_opt.server_operation == OLO_GOTO_PARAM_NAME || s_opt.server_operation == OLO_GET_PARAM_COORDINATES)
         && POSITION_EQ(*macpos, s_cxRefPos)) {
         if (final) {
             if (argi==0) {
@@ -623,7 +623,7 @@ static void handleMacroUsageParameterPositions(int argi, S_position *macpos,
                                                S_position *parpos1, S_position *parpos2,
                                                int final
     ) {
-    if (s_opt.cxrefs == OLO_GET_PARAM_COORDINATES
+    if (s_opt.server_operation == OLO_GET_PARAM_COORDINATES
         && POSITION_EQ(*macpos, s_cxRefPos)) {
 //&sprintf(tmpBuff,"checking param %d at %d,%d, final==%d", argi, parpos1->col, parpos2->col, final);ppcGenTmpBuff();
         if (final) {
@@ -1833,7 +1833,7 @@ static int processCccIdent(unsigned hashval, char *id, S_position *idposa) {
 }
 
 static void actionOnBlockMarker(void) {
-    if (s_opt.cxrefs == OLO_SET_MOVE_TARGET) {
+    if (s_opt.server_operation == OLO_SET_MOVE_TARGET) {
         s_cps.setTargetAnswerClass[0] = 0;
         if (LANGUAGE(LANG_JAVA)) {
             if (s_cp.function == NULL) {
@@ -1846,7 +1846,7 @@ static void actionOnBlockMarker(void) {
                 }
             }
         }
-    } else if (s_opt.cxrefs == OLO_SET_MOVE_CLASS_TARGET) {
+    } else if (s_opt.server_operation == OLO_SET_MOVE_CLASS_TARGET) {
         s_cps.moveTargetApproved = 0;
         if (LANGUAGE(LANG_JAVA)) {
             if (s_cp.function == NULL) {
@@ -1855,7 +1855,7 @@ static void actionOnBlockMarker(void) {
                 }
             }
         }
-    } else if (s_opt.cxrefs == OLO_SET_MOVE_METHOD_TARGET) {
+    } else if (s_opt.server_operation == OLO_SET_MOVE_METHOD_TARGET) {
         s_cps.moveTargetApproved = 0;
         if (LANGUAGE(LANG_JAVA)) {
             if (s_cp.function == NULL) {
@@ -1866,7 +1866,7 @@ static void actionOnBlockMarker(void) {
                 }
             }
         }
-    } else if (s_opt.cxrefs == OLO_EXTRACT) {
+    } else if (s_opt.server_operation == OLO_EXTRACT) {
         extractActionOnBlockMarker();
     } else {
 #if ZERO

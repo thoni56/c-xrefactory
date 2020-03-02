@@ -2115,7 +2115,7 @@ void makeCCompletions(char *s, int len, S_position *pos) {
     }
 
     /* If there is a wizard completion, RETURN now */
-    if (s_completions.ai != 0 && s_opt.cxrefs != OLO_SEARCH)
+    if (s_completions.ai != 0 && s_opt.server_operation != OLO_SEARCH)
         return;
 
     /* basic language tokens */
@@ -2714,7 +2714,7 @@ break;
 case 80:
 #line 665 "c_parser.y"
 {
-        if (yyvsp[-2].bbexprType.d.r != NULL && s_opt.cxrefs == OLO_EXTRACT) {
+        if (yyvsp[-2].bbexprType.d.r != NULL && s_opt.server_operation == OLO_EXTRACT) {
             S_reference *rr;
             rr = duplicateReference(yyvsp[-2].bbexprType.d.r);
             yyvsp[-2].bbexprType.d.r->usg = s_noUsage;

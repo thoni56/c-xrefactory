@@ -246,7 +246,7 @@ S_symbol *jslMethodHeader(unsigned modif, S_symbol *type,
     decl->bits.storage = storage;
     //& if (modif & ACC_STATIC) decl->bits.storage = StorageStaticMethod;
     newFun = javaSetFunctionLinkName(s_jsl->classStat->thisClass, decl, MEM_CF);
-    if (decl->pos.file != s_olOriginalFileNumber && s_opt.cxrefs == OLO_PUSH) {
+    if (decl->pos.file != s_olOriginalFileNumber && s_opt.server_operation == OLO_PUSH) {
         // pre load of saved file akes problem on move field/method, ...
         addMethodCxReferences(modif, decl, s_jsl->classStat->thisClass);
     }
@@ -561,7 +561,7 @@ void jslNewClassDefinitionBegin(S_idIdent *name,
     s_fileTab.tab[fileInd]->b.sourceFile = s_jsl->sourceFileNumber;
     if (accFlags & ACC_INTERFACE) s_fileTab.tab[fileInd]->b.isInterface=1;
     addClassTreeHierarchyReference(fileInd,&inname->p,UsageClassTreeDefinition);
-    if (inname->p.file != s_olOriginalFileNumber && s_opt.cxrefs == OLO_PUSH) {
+    if (inname->p.file != s_olOriginalFileNumber && s_opt.server_operation == OLO_PUSH) {
         // pre load of saved file akes problem on move field/method, ...
         addCxReference(cc, &inname->p, UsageDefined,s_noneFileIndex, s_noneFileIndex);
     }

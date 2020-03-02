@@ -426,7 +426,7 @@ static int processAOption(int *ii, int argc, char **argv) {
         sscanf(argv[i]+18, "%d", &s_opt.defaultAddImportStrategy);
     }
     else if (strcmp(argv[i],"-version")==0 || strcmp(argv[i],"-about")==0){
-        s_opt.cxrefs = OLO_ABOUT;
+        s_opt.server_operation = OLO_ABOUT;
     }
     else return(0);
     *ii = i;
@@ -623,7 +623,7 @@ static int processGOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i],"-get")==0) {
         NEXT_ARG();
         createOptionString(&s_opt.getValue, argv[i]);
-        s_opt.cxrefs = OLO_GET_ENV_VALUE;
+        s_opt.server_operation = OLO_GET_ENV_VALUE;
     }
     else return(0);
     *ii = i;
@@ -885,20 +885,20 @@ static int processOOption(int *ii, int argc, char **argv) {
     }
     else if (strncmp(argv[i],"-olcheckversion=",16)==0) {
         createOptionString(&s_opt.checkVersion, argv[i]+16);
-        s_opt.cxrefs = OLO_CHECK_VERSION;
+        s_opt.server_operation = OLO_CHECK_VERSION;
     }
     else if (strncmp(argv[i],"-olcxrefsuffix=",15)==0)  {
         createOptionString(&s_opt.olcxRefSuffix, argv[i]+15);
     }
     else if (strncmp(argv[i],"-olcxresetrefsuffix=",20)==0)     {
-        s_opt.cxrefs = OLO_RESET_REF_SUFFIX;
+        s_opt.server_operation = OLO_RESET_REF_SUFFIX;
         createOptionString(&s_opt.olcxRefSuffix, argv[i]+20);
     }
     else if (strcmp(argv[i],"-olcxextract")==0) {
-        s_opt.cxrefs = OLO_EXTRACT;
+        s_opt.server_operation = OLO_EXTRACT;
     }
     else if (strcmp(argv[i],"-olcxtrivialprecheck")==0) {
-        s_opt.cxrefs = OLO_TRIVIAL_PRECHECK;
+        s_opt.server_operation = OLO_TRIVIAL_PRECHECK;
     }
     else if (strcmp(argv[i],"-olmanualresolve")==0) {
         s_opt.manualResolve = RESOLVE_DIALOG_ALLWAYS;
@@ -932,14 +932,14 @@ static int processOOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i],"-olcxmodified")==0)    {
         s_opt.modifiedFlag = 1;
     }
-    else if (strcmp(argv[i],"-olcxrename")==0)  s_opt.cxrefs = OLO_RENAME;
-    else if (strcmp(argv[i],"-olcxencapsulate")==0) s_opt.cxrefs = OLO_ENCAPSULATE;
-    else if (strcmp(argv[i],"-olcxargmanip")==0)    s_opt.cxrefs = OLO_ARG_MANIP;
-    else if (strcmp(argv[i],"-olcxdynamictostatic1")==0)    s_opt.cxrefs = OLO_VIRTUAL2STATIC_PUSH;
-    else if (strcmp(argv[i],"-olcxsafetycheckinit")==0) s_opt.cxrefs = OLO_SAFETY_CHECK_INIT;
-    else if (strcmp(argv[i],"-olcxsafetycheck1")==0) s_opt.cxrefs = OLO_SAFETY_CHECK1;
-    else if (strcmp(argv[i],"-olcxsafetycheck2")==0) s_opt.cxrefs = OLO_SAFETY_CHECK2;
-    else if (strcmp(argv[i],"-olcxintersection")==0) s_opt.cxrefs = OLO_INTERSECTION;
+    else if (strcmp(argv[i],"-olcxrename")==0)  s_opt.server_operation = OLO_RENAME;
+    else if (strcmp(argv[i],"-olcxencapsulate")==0) s_opt.server_operation = OLO_ENCAPSULATE;
+    else if (strcmp(argv[i],"-olcxargmanip")==0)    s_opt.server_operation = OLO_ARG_MANIP;
+    else if (strcmp(argv[i],"-olcxdynamictostatic1")==0)    s_opt.server_operation = OLO_VIRTUAL2STATIC_PUSH;
+    else if (strcmp(argv[i],"-olcxsafetycheckinit")==0) s_opt.server_operation = OLO_SAFETY_CHECK_INIT;
+    else if (strcmp(argv[i],"-olcxsafetycheck1")==0) s_opt.server_operation = OLO_SAFETY_CHECK1;
+    else if (strcmp(argv[i],"-olcxsafetycheck2")==0) s_opt.server_operation = OLO_SAFETY_CHECK2;
+    else if (strcmp(argv[i],"-olcxintersection")==0) s_opt.server_operation = OLO_INTERSECTION;
     else if (strcmp(argv[i],"-olcxsafetycheckmovedfile")==0
              || strcmp(argv[i],"-olcxsafetycheckmoved")==0  /* backward compatibility */
              ) {
@@ -949,7 +949,7 @@ static int processOOption(int *ii, int argc, char **argv) {
         createOptionString(&s_opt.checkFileMovedTo, argv[i]);
     }
     else if (strcmp(argv[i],"-olcxwindel")==0) {
-        s_opt.cxrefs = OLO_REMOVE_WIN;
+        s_opt.server_operation = OLO_REMOVE_WIN;
     }
     else if (strcmp(argv[i],"-olcxwindelfile")==0) {
         NEXT_ARG();
@@ -968,17 +968,17 @@ static int processOOption(int *ii, int argc, char **argv) {
                &s_opt.checkLinesMoved, &s_opt.checkNewLineNumber);
         //&fprintf(dumpOut,"safety check block moved == %d:%d:%d\n", s_opt.checkFirstMovedLine,s_opt.checkLinesMoved, s_opt.checkNewLineNumber);
     }
-    else if (strcmp(argv[i],"-olcxgotodef")==0) s_opt.cxrefs = OLO_GOTO_DEF;
-    else if (strcmp(argv[i],"-olcxgotocaller")==0) s_opt.cxrefs = OLO_GOTO_CALLER;
-    else if (strcmp(argv[i],"-olcxgotocurrent")==0) s_opt.cxrefs = OLO_GOTO_CURRENT;
-    else if (strcmp(argv[i],"-olcxgetcurrentrefn")==0)s_opt.cxrefs=OLO_GET_CURRENT_REFNUM;
+    else if (strcmp(argv[i],"-olcxgotodef")==0) s_opt.server_operation = OLO_GOTO_DEF;
+    else if (strcmp(argv[i],"-olcxgotocaller")==0) s_opt.server_operation = OLO_GOTO_CALLER;
+    else if (strcmp(argv[i],"-olcxgotocurrent")==0) s_opt.server_operation = OLO_GOTO_CURRENT;
+    else if (strcmp(argv[i],"-olcxgetcurrentrefn")==0)s_opt.server_operation=OLO_GET_CURRENT_REFNUM;
     else if (strncmp(argv[i],"-olcxgotoparname",16)==0) {
-        s_opt.cxrefs = OLO_GOTO_PARAM_NAME;
+        s_opt.server_operation = OLO_GOTO_PARAM_NAME;
         s_opt.olcxGotoVal = 0;
         sscanf(argv[i]+16, "%d", &s_opt.olcxGotoVal);
     }
     else if (strncmp(argv[i],"-olcxgetparamcoord",18)==0) {
-        s_opt.cxrefs = OLO_GET_PARAM_COORDINATES;
+        s_opt.server_operation = OLO_GET_PARAM_COORDINATES;
         s_opt.olcxGotoVal = 0;
         sscanf(argv[i]+18, "%d", &s_opt.olcxGotoVal);
     }
@@ -990,164 +990,164 @@ static int processOOption(int *ii, int argc, char **argv) {
         s_opt.parnum2 = 0;
         sscanf(argv[i]+13, "%d", &s_opt.parnum2);
     }
-    else if (strcmp(argv[i],"-olcxtops")==0) s_opt.cxrefs = OLO_SHOW_TOP;
-    else if (strcmp(argv[i],"-olcxtoptype")==0) s_opt.cxrefs = OLO_SHOW_TOP_TYPE;
-    else if (strcmp(argv[i],"-olcxtopapplcl")==0) s_opt.cxrefs = OLO_SHOW_TOP_APPL_CLASS;
-    else if (strcmp(argv[i],"-olcxshowctree")==0) s_opt.cxrefs = OLO_SHOW_CLASS_TREE;
-    else if (strcmp(argv[i],"-olcxedittop")==0) s_opt.cxrefs = OLO_TOP_SYMBOL_RES;
-    else if (strcmp(argv[i],"-olcxclasstree")==0) s_opt.cxrefs = OLO_CLASS_TREE;
-    else if (strcmp(argv[i],"-olcxsyntaxpass")==0) s_opt.cxrefs = OLO_SYNTAX_PASS_ONLY;
+    else if (strcmp(argv[i],"-olcxtops")==0) s_opt.server_operation = OLO_SHOW_TOP;
+    else if (strcmp(argv[i],"-olcxtoptype")==0) s_opt.server_operation = OLO_SHOW_TOP_TYPE;
+    else if (strcmp(argv[i],"-olcxtopapplcl")==0) s_opt.server_operation = OLO_SHOW_TOP_APPL_CLASS;
+    else if (strcmp(argv[i],"-olcxshowctree")==0) s_opt.server_operation = OLO_SHOW_CLASS_TREE;
+    else if (strcmp(argv[i],"-olcxedittop")==0) s_opt.server_operation = OLO_TOP_SYMBOL_RES;
+    else if (strcmp(argv[i],"-olcxclasstree")==0) s_opt.server_operation = OLO_CLASS_TREE;
+    else if (strcmp(argv[i],"-olcxsyntaxpass")==0) s_opt.server_operation = OLO_SYNTAX_PASS_ONLY;
     else if (strcmp(argv[i],"-olcxprimarystart")==0) {
-        s_opt.cxrefs = OLO_GET_PRIMARY_START;
+        s_opt.server_operation = OLO_GET_PRIMARY_START;
         //&s_opt.parsingDeep = PD_ZERO;
     }
-    else if (strcmp(argv[i],"-olcxuselesslongnames")==0) s_opt.cxrefs = OLO_USELESS_LONG_NAME;
-    else if (strcmp(argv[i],"-olcxuselesslongnamesinclass")==0) s_opt.cxrefs = OLO_USELESS_LONG_NAME_IN_CLASS;
-    else if (strcmp(argv[i],"-olcxmaybethis")==0) s_opt.cxrefs = OLO_MAYBE_THIS;
-    else if (strcmp(argv[i],"-olcxnotfqt")==0) s_opt.cxrefs = OLO_NOT_FQT_REFS;
-    else if (strcmp(argv[i],"-olcxnotfqtinclass")==0) s_opt.cxrefs = OLO_NOT_FQT_REFS_IN_CLASS;
+    else if (strcmp(argv[i],"-olcxuselesslongnames")==0) s_opt.server_operation = OLO_USELESS_LONG_NAME;
+    else if (strcmp(argv[i],"-olcxuselesslongnamesinclass")==0) s_opt.server_operation = OLO_USELESS_LONG_NAME_IN_CLASS;
+    else if (strcmp(argv[i],"-olcxmaybethis")==0) s_opt.server_operation = OLO_MAYBE_THIS;
+    else if (strcmp(argv[i],"-olcxnotfqt")==0) s_opt.server_operation = OLO_NOT_FQT_REFS;
+    else if (strcmp(argv[i],"-olcxnotfqtinclass")==0) s_opt.server_operation = OLO_NOT_FQT_REFS_IN_CLASS;
     else if (strcmp(argv[i],"-olcxgetrefactorings")==0)     {
-        s_opt.cxrefs = OLO_GET_AVAILABLE_REFACTORINGS;
+        s_opt.server_operation = OLO_GET_AVAILABLE_REFACTORINGS;
     }
-    else if (strcmp(argv[i],"-olcxpush")==0)    s_opt.cxrefs = OLO_PUSH;
-    else if (strcmp(argv[i],"-olcxrepush")==0)  s_opt.cxrefs = OLO_REPUSH;
-    else if (strcmp(argv[i],"-olcxpushonly")==0) s_opt.cxrefs = OLO_PUSH_ONLY;
-    else if (strcmp(argv[i],"-olcxpushandcallmacro")==0) s_opt.cxrefs = OLO_PUSH_AND_CALL_MACRO;
-    else if (strcmp(argv[i],"-olcxencapsulatesc1")==0) s_opt.cxrefs = OLO_PUSH_ENCAPSULATE_SAFETY_CHECK;
-    else if (strcmp(argv[i],"-olcxencapsulatesc2")==0) s_opt.cxrefs = OLO_ENCAPSULATE_SAFETY_CHECK;
-    else if (strcmp(argv[i],"-olcxpushallinmethod")==0) s_opt.cxrefs = OLO_PUSH_ALL_IN_METHOD;
-    else if (strcmp(argv[i],"-olcxmmprecheck")==0) s_opt.cxrefs = OLO_MM_PRE_CHECK;
-    else if (strcmp(argv[i],"-olcxppprecheck")==0) s_opt.cxrefs = OLO_PP_PRE_CHECK;
+    else if (strcmp(argv[i],"-olcxpush")==0)    s_opt.server_operation = OLO_PUSH;
+    else if (strcmp(argv[i],"-olcxrepush")==0)  s_opt.server_operation = OLO_REPUSH;
+    else if (strcmp(argv[i],"-olcxpushonly")==0) s_opt.server_operation = OLO_PUSH_ONLY;
+    else if (strcmp(argv[i],"-olcxpushandcallmacro")==0) s_opt.server_operation = OLO_PUSH_AND_CALL_MACRO;
+    else if (strcmp(argv[i],"-olcxencapsulatesc1")==0) s_opt.server_operation = OLO_PUSH_ENCAPSULATE_SAFETY_CHECK;
+    else if (strcmp(argv[i],"-olcxencapsulatesc2")==0) s_opt.server_operation = OLO_ENCAPSULATE_SAFETY_CHECK;
+    else if (strcmp(argv[i],"-olcxpushallinmethod")==0) s_opt.server_operation = OLO_PUSH_ALL_IN_METHOD;
+    else if (strcmp(argv[i],"-olcxmmprecheck")==0) s_opt.server_operation = OLO_MM_PRE_CHECK;
+    else if (strcmp(argv[i],"-olcxppprecheck")==0) s_opt.server_operation = OLO_PP_PRE_CHECK;
     else if (strcmp(argv[i],"-olcxpushforlm")==0) {
-        s_opt.cxrefs = OLO_PUSH_FOR_LOCALM;
+        s_opt.server_operation = OLO_PUSH_FOR_LOCALM;
         s_opt.manualResolve = RESOLVE_DIALOG_NEVER;
     }
-    else if (strcmp(argv[i],"-olcxpushglobalunused")==0)    s_opt.cxrefs = OLO_GLOBAL_UNUSED;
-    else if (strcmp(argv[i],"-olcxpushfileunused")==0)  s_opt.cxrefs = OLO_LOCAL_UNUSED;
-    else if (strcmp(argv[i],"-olcxlist")==0)    s_opt.cxrefs = OLO_LIST;
-    else if (strcmp(argv[i],"-olcxlisttop")==0) s_opt.cxrefs=OLO_LIST_TOP;
-    else if (strcmp(argv[i],"-olcxpop")==0)     s_opt.cxrefs = OLO_POP;
-    else if (strcmp(argv[i],"-olcxpoponly")==0) s_opt.cxrefs =OLO_POP_ONLY;
-    else if (strcmp(argv[i],"-olcxplus")==0)    s_opt.cxrefs = OLO_PLUS;
-    else if (strcmp(argv[i],"-olcxminus")==0)   s_opt.cxrefs = OLO_MINUS;
-    else if (strcmp(argv[i],"-olcxsearch")==0)  s_opt.cxrefs = OLO_SEARCH;
-    else if (strcmp(argv[i],"-olcxcomplet")==0)s_opt.cxrefs=OLO_COMPLETION;
-    else if (strcmp(argv[i],"-olcxtarget")==0)  s_opt.cxrefs=OLO_SET_MOVE_TARGET;
-    else if (strcmp(argv[i],"-olcxmctarget")==0)    s_opt.cxrefs=OLO_SET_MOVE_CLASS_TARGET;
-    else if (strcmp(argv[i],"-olcxmmtarget")==0)    s_opt.cxrefs=OLO_SET_MOVE_METHOD_TARGET;
-    else if (strcmp(argv[i],"-olcxcurrentclass")==0)    s_opt.cxrefs=OLO_GET_CURRENT_CLASS;
-    else if (strcmp(argv[i],"-olcxcurrentsuperclass")==0)   s_opt.cxrefs=OLO_GET_CURRENT_SUPER_CLASS;
-    else if (strcmp(argv[i],"-olcxmethodlines")==0) s_opt.cxrefs=OLO_GET_METHOD_COORD;
-    else if (strcmp(argv[i],"-olcxclasslines")==0)  s_opt.cxrefs=OLO_GET_CLASS_COORD;
-    else if (strcmp(argv[i],"-olcxgetsymboltype")==0) s_opt.cxrefs=OLO_GET_SYMBOL_TYPE;
+    else if (strcmp(argv[i],"-olcxpushglobalunused")==0)    s_opt.server_operation = OLO_GLOBAL_UNUSED;
+    else if (strcmp(argv[i],"-olcxpushfileunused")==0)  s_opt.server_operation = OLO_LOCAL_UNUSED;
+    else if (strcmp(argv[i],"-olcxlist")==0)    s_opt.server_operation = OLO_LIST;
+    else if (strcmp(argv[i],"-olcxlisttop")==0) s_opt.server_operation=OLO_LIST_TOP;
+    else if (strcmp(argv[i],"-olcxpop")==0)     s_opt.server_operation = OLO_POP;
+    else if (strcmp(argv[i],"-olcxpoponly")==0) s_opt.server_operation =OLO_POP_ONLY;
+    else if (strcmp(argv[i],"-olcxplus")==0)    s_opt.server_operation = OLO_PLUS;
+    else if (strcmp(argv[i],"-olcxminus")==0)   s_opt.server_operation = OLO_MINUS;
+    else if (strcmp(argv[i],"-olcxsearch")==0)  s_opt.server_operation = OLO_SEARCH;
+    else if (strcmp(argv[i],"-olcxcomplet")==0)s_opt.server_operation=OLO_COMPLETION;
+    else if (strcmp(argv[i],"-olcxtarget")==0)  s_opt.server_operation=OLO_SET_MOVE_TARGET;
+    else if (strcmp(argv[i],"-olcxmctarget")==0)    s_opt.server_operation=OLO_SET_MOVE_CLASS_TARGET;
+    else if (strcmp(argv[i],"-olcxmmtarget")==0)    s_opt.server_operation=OLO_SET_MOVE_METHOD_TARGET;
+    else if (strcmp(argv[i],"-olcxcurrentclass")==0)    s_opt.server_operation=OLO_GET_CURRENT_CLASS;
+    else if (strcmp(argv[i],"-olcxcurrentsuperclass")==0)   s_opt.server_operation=OLO_GET_CURRENT_SUPER_CLASS;
+    else if (strcmp(argv[i],"-olcxmethodlines")==0) s_opt.server_operation=OLO_GET_METHOD_COORD;
+    else if (strcmp(argv[i],"-olcxclasslines")==0)  s_opt.server_operation=OLO_GET_CLASS_COORD;
+    else if (strcmp(argv[i],"-olcxgetsymboltype")==0) s_opt.server_operation=OLO_GET_SYMBOL_TYPE;
     else if (strcmp(argv[i],"-olcxgetprojectname")==0) {
-        s_opt.cxrefs=OLO_ACTIVE_PROJECT;
+        s_opt.server_operation=OLO_ACTIVE_PROJECT;
     }
     else if (strcmp(argv[i],"-olcxgetjavahome")==0) {
-        s_opt.cxrefs=OLO_JAVA_HOME;
+        s_opt.server_operation=OLO_JAVA_HOME;
     }
     else if (strncmp(argv[i],"-olcxlccursor=",14)==0) {
         // position of the cursor in line:column format
         createOptionString(&s_opt.olcxlccursor, argv[i]+14);
     }
     else if (strncmp(argv[i],"-olcxcplsearch=",15)==0) {
-        s_opt.cxrefs=OLO_SEARCH;
+        s_opt.server_operation=OLO_SEARCH;
         createOptionString(&s_opt.olcxSearchString, argv[i]+15);
     }
     else if (strncmp(argv[i],"-olcxtagsearch=",15)==0) {
-        s_opt.cxrefs=OLO_TAG_SEARCH;
+        s_opt.server_operation=OLO_TAG_SEARCH;
         createOptionString(&s_opt.olcxSearchString, argv[i]+15);
     }
     else if (strcmp(argv[i],"-olcxtagsearchforward")==0) {
-        s_opt.cxrefs=OLO_TAG_SEARCH_FORWARD;
+        s_opt.server_operation=OLO_TAG_SEARCH_FORWARD;
     }
     else if (strcmp(argv[i],"-olcxtagsearchback")==0) {
-        s_opt.cxrefs=OLO_TAG_SEARCH_BACK;
+        s_opt.server_operation=OLO_TAG_SEARCH_BACK;
     }
     else if (strncmp(argv[i],"-olcxpushname=",14)==0)   {
-        s_opt.cxrefs = OLO_PUSH_NAME;
+        s_opt.server_operation = OLO_PUSH_NAME;
         createOptionString(&s_opt.pushName, argv[i]+14);
     }
     else if (strncmp(argv[i],"-olcxpushspecialname=",21)==0)    {
-        s_opt.cxrefs = OLO_PUSH_SPECIAL_NAME;
+        s_opt.server_operation = OLO_PUSH_SPECIAL_NAME;
         createOptionString(&s_opt.pushName, argv[i]+21);
     }
     else if (strncmp(argv[i],"-olcomplselect",14)==0) {
-        s_opt.cxrefs=OLO_CSELECT;
+        s_opt.server_operation=OLO_CSELECT;
         s_opt.olcxGotoVal = 0;
         sscanf(argv[i]+14,"%d",&s_opt.olcxGotoVal);
     }
     else if (strcmp(argv[i],"-olcomplback")==0) {
-        s_opt.cxrefs=OLO_COMPLETION_BACK;
+        s_opt.server_operation=OLO_COMPLETION_BACK;
     }
     else if (strcmp(argv[i],"-olcomplforward")==0) {
-        s_opt.cxrefs=OLO_COMPLETION_FORWARD;
+        s_opt.server_operation=OLO_COMPLETION_FORWARD;
     }
     else if (strncmp(argv[i],"-olcxcgoto",10)==0) {
-        s_opt.cxrefs = OLO_CGOTO;
+        s_opt.server_operation = OLO_CGOTO;
         s_opt.olcxGotoVal = 0;
         sscanf(argv[i]+10,"%d",&s_opt.olcxGotoVal);
     }
     else if (strncmp(argv[i],"-olcxtaggoto",12)==0) {
-        s_opt.cxrefs = OLO_TAGGOTO;
+        s_opt.server_operation = OLO_TAGGOTO;
         s_opt.olcxGotoVal = 0;
         sscanf(argv[i]+12,"%d",&s_opt.olcxGotoVal);
     }
     else if (strncmp(argv[i],"-olcxtagselect",14)==0) {
-        s_opt.cxrefs = OLO_TAGSELECT;
+        s_opt.server_operation = OLO_TAGSELECT;
         s_opt.olcxGotoVal = 0;
         sscanf(argv[i]+14,"%d",&s_opt.olcxGotoVal);
     }
     else if (strncmp(argv[i],"-olcxcbrowse",12)==0) {
-        s_opt.cxrefs = OLO_CBROWSE;
+        s_opt.server_operation = OLO_CBROWSE;
         s_opt.olcxGotoVal = 0;
         sscanf(argv[i]+12,"%d",&s_opt.olcxGotoVal);
     }
     else if (strncmp(argv[i],"-olcxgoto",9)==0) {
-        s_opt.cxrefs = OLO_GOTO;
+        s_opt.server_operation = OLO_GOTO;
         s_opt.olcxGotoVal = 0;
         sscanf(argv[i]+9,"%d",&s_opt.olcxGotoVal);
     }
     else if (strncmp(argv[i],"-olcxfilter=",12)==0) {
-        s_opt.cxrefs = OLO_REF_FILTER_SET;
+        s_opt.server_operation = OLO_REF_FILTER_SET;
         sscanf(argv[i]+12,"%d",&s_opt.filterValue);
     }
     else if (strncmp(argv[i], "-olcxmenusingleselect",21)==0) {
-        s_opt.cxrefs = OLO_MENU_SELECT_ONLY;
+        s_opt.server_operation = OLO_MENU_SELECT_ONLY;
         s_opt.olcxMenuSelectLineNum = 0;
         sscanf(argv[i]+21,"%d",&s_opt.olcxMenuSelectLineNum);
     }
     else if (strncmp(argv[i],"-olcxmenuselect",15)==0) {
-        s_opt.cxrefs = OLO_MENU_SELECT;
+        s_opt.server_operation = OLO_MENU_SELECT;
         s_opt.olcxMenuSelectLineNum = 0;
         sscanf(argv[i]+15,"%d",&s_opt.olcxMenuSelectLineNum);
     }
     else if (strncmp(argv[i],"-olcxmenuinspectdef",19)==0) {
-        s_opt.cxrefs = OLO_MENU_INSPECT_DEF;
+        s_opt.server_operation = OLO_MENU_INSPECT_DEF;
         s_opt.olcxMenuSelectLineNum = 0;
         sscanf(argv[i]+19,"%d",&s_opt.olcxMenuSelectLineNum);
     }
     else if (strncmp(argv[i],"-olcxmenuinspectclass",21)==0) {
-        s_opt.cxrefs = OLO_MENU_INSPECT_CLASS;
+        s_opt.server_operation = OLO_MENU_INSPECT_CLASS;
         s_opt.olcxMenuSelectLineNum = 0;
         sscanf(argv[i]+21,"%d",&s_opt.olcxMenuSelectLineNum);
     }
     else if (strncmp(argv[i],"-olcxctinspectdef",17)==0) {
-        s_opt.cxrefs = OLO_CT_INSPECT_DEF;
+        s_opt.server_operation = OLO_CT_INSPECT_DEF;
         s_opt.olcxMenuSelectLineNum = 0;
         sscanf(argv[i]+17,"%d",&s_opt.olcxMenuSelectLineNum);
     }
     else if (strcmp(argv[i],"-olcxmenuall")==0) {
-        s_opt.cxrefs = OLO_MENU_SELECT_ALL;
+        s_opt.server_operation = OLO_MENU_SELECT_ALL;
     }
     else if (strcmp(argv[i],"-olcxmenunone")==0) {
-        s_opt.cxrefs = OLO_MENU_SELECT_NONE;
+        s_opt.server_operation = OLO_MENU_SELECT_NONE;
     }
     else if (strcmp(argv[i],"-olcxmenugo")==0) {
-        s_opt.cxrefs = OLO_MENU_GO;
+        s_opt.server_operation = OLO_MENU_GO;
     }
     else if (strncmp(argv[i],"-olcxmenufilter=",16)==0) {
-        s_opt.cxrefs = OLO_MENU_FILTER_SET;
+        s_opt.server_operation = OLO_MENU_FILTER_SET;
         sscanf(argv[i]+16,"%d",&s_opt.filterValue);
     }
     else if (strcmp(argv[i],"-optinclude")==0) {
@@ -1501,7 +1501,7 @@ static int processVOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
     else if (strcmp(argv[i],"-version")==0||strcmp(argv[i],"-about")==0){
-        s_opt.cxrefs = OLO_ABOUT;
+        s_opt.server_operation = OLO_ABOUT;
     }
     else return(0);
     *ii = i;
@@ -1923,7 +1923,7 @@ static int computeAndOpenInputFile(void) {
         assert(0);
         inputIn = stdin;
         s_input_file_name = "__none__";
-        //& } else if (s_opt.cxrefs == OLO_GET_ENV_VALUE) {
+        //& } else if (s_opt.server_operation == OLO_GET_ENV_VALUE) {
         // hack for getenv
         // not anymore, parse input for getenv ${__class}, ... settings
         // also if yes, then move this to 'mainEditSrvParseInputFile' !
@@ -2844,7 +2844,7 @@ static void mainEditSrvParseInputFile( int *firstPassing, int inputIn ) {
     //&fprintf(dumpOut,":here I am %s\n",s_fileTab.tab[s_input_file_number]->name);
     if (inputIn) {
         //&fprintf(dumpOut,"parse start\n");fflush(dumpOut);
-        if (s_opt.cxrefs!=OLO_TAG_SEARCH && s_opt.cxrefs!=OLO_PUSH_NAME) {
+        if (s_opt.server_operation!=OLO_TAG_SEARCH && s_opt.server_operation!=OLO_PUSH_NAME) {
             recoverFromCache();
             mainParseInputFile();
             //&fprintf(dumpOut,"parse stop\n");fflush(dumpOut);
@@ -2952,7 +2952,7 @@ static void mainEditServerProcessFile( int argc, char **argv,
         s_input_file_name = s_fileTab.tab[s_olOriginalComFileNumber]->name;
         assert(s_input_file_name!=NULL);
         mainEditSrvFileSingleCppPass( argc, argv, nargc, nargv, firstPassing);
-        if (s_opt.cxrefs==OLO_EXTRACT
+        if (s_opt.server_operation==OLO_EXTRACT
             || (s_olstringServed && ! creatingOlcxRefs())) goto fileParsed; /* TODO: break? */
         if (LANGUAGE(LANG_JAVA)) goto fileParsed;
     }
@@ -3006,28 +3006,28 @@ static char *presetEditServerFileDependingStatics(void) {
 
 int needToProcessInputFile(void) {
     return(
-           s_opt.cxrefs==OLO_COMPLETION
-           || s_opt.cxrefs==OLO_SEARCH
-           || s_opt.cxrefs==OLO_EXTRACT
-           || s_opt.cxrefs==OLO_TAG_SEARCH
-           || s_opt.cxrefs==OLO_SET_MOVE_TARGET
-           || s_opt.cxrefs==OLO_SET_MOVE_CLASS_TARGET
-           || s_opt.cxrefs==OLO_SET_MOVE_METHOD_TARGET
-           || s_opt.cxrefs==OLO_GET_CURRENT_CLASS
-           || s_opt.cxrefs==OLO_GET_CURRENT_SUPER_CLASS
-           || s_opt.cxrefs==OLO_GET_METHOD_COORD
-           || s_opt.cxrefs==OLO_GET_CLASS_COORD
-           || s_opt.cxrefs==OLO_GET_ENV_VALUE
+           s_opt.server_operation==OLO_COMPLETION
+           || s_opt.server_operation==OLO_SEARCH
+           || s_opt.server_operation==OLO_EXTRACT
+           || s_opt.server_operation==OLO_TAG_SEARCH
+           || s_opt.server_operation==OLO_SET_MOVE_TARGET
+           || s_opt.server_operation==OLO_SET_MOVE_CLASS_TARGET
+           || s_opt.server_operation==OLO_SET_MOVE_METHOD_TARGET
+           || s_opt.server_operation==OLO_GET_CURRENT_CLASS
+           || s_opt.server_operation==OLO_GET_CURRENT_SUPER_CLASS
+           || s_opt.server_operation==OLO_GET_METHOD_COORD
+           || s_opt.server_operation==OLO_GET_CLASS_COORD
+           || s_opt.server_operation==OLO_GET_ENV_VALUE
            || creatingOlcxRefs()
            );
 }
 
 int needToLoadOptions(void) {
     return(needToProcessInputFile()
-           || s_opt.cxrefs==OLO_CT_INSPECT_DEF
-           || s_opt.cxrefs==OLO_MENU_INSPECT_CLASS
-           || s_opt.cxrefs==OLO_MENU_INSPECT_DEF
-           || s_opt.cxrefs==OLO_CBROWSE
+           || s_opt.server_operation==OLO_CT_INSPECT_DEF
+           || s_opt.server_operation==OLO_MENU_INSPECT_CLASS
+           || s_opt.server_operation==OLO_MENU_INSPECT_DEF
+           || s_opt.server_operation==OLO_CBROWSE
            );
 }
 
@@ -3226,7 +3226,7 @@ void mainCallXref(int argc, char **argv) {
             }
             mainGenerateReferenceFile();
         }
-    } else if (s_opt.cxrefs == OLO_ABOUT) {
+    } else if (s_opt.server_operation == OLO_ABOUT) {
         aboutMessage();
     } else if (! s_opt.update)  {
         sprintf(tmpBuff,"no input file");
@@ -3265,7 +3265,7 @@ void mainCallEditServerInit(int nargc, char **nargv) {
     s_opt.classpath = "";
     processOptions(nargc, nargv, INFILES_ENABLED); /* no include or define options */
     mainScheduleInputFilesFromOptionsToFileTable();
-    if (s_opt.cxrefs == OLO_EXTRACT) s_cache.cpi = 2; // !!!! no cache
+    if (s_opt.server_operation == OLO_EXTRACT) s_cache.cpi = 2; // !!!! no cache
     olcxSetCurrentUser(s_opt.user);
     FILL_completions(&s_completions, 0, s_noPos, 0, 0, 0, 0, 0, 0);
 }
@@ -3323,7 +3323,7 @@ static void mainEditServer(int argc, char **argv) {
             mainOpenOutputFile(s_opt.outputFileName);
         }
         mainCallEditServer(argc, argv, nargc, nargv, &firstPassing);
-        if (s_opt.cxrefs == OLO_ABOUT) {
+        if (s_opt.server_operation == OLO_ABOUT) {
             aboutMessage();
         } else {
             mainAnswerEditAction();
@@ -3332,7 +3332,7 @@ static void mainEditServer(int argc, char **argv) {
         //editorCloseBufferIfNotUsedElsewhere(s_input_file_name);
         editorCloseAllBuffers();
         mainCloseOutputFile();
-        if (s_opt.cxrefs == OLO_EXTRACT) s_cache.cpi = 2; // !!!! no cache
+        if (s_opt.server_operation == OLO_EXTRACT) s_cache.cpi = 2; // !!!! no cache
         if (s_opt.last_message != NULL) {
             fprintf(ccOut,"%s",s_opt.last_message);
             fflush(ccOut);

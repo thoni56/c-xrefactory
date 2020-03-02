@@ -192,7 +192,7 @@ static void htmlPrintClassHierarchyLine( FILE *ff, int fInd,
 static void olcxPrintMenuItemPrefix(FILE *ff, S_olSymbolsMenu *itt,
                                     int selectable) {
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
-    if (s_opt.cxrefs==OLO_CLASS_TREE || s_opt.cxrefs==OLO_SHOW_CLASS_TREE) {
+    if (s_opt.server_operation==OLO_CLASS_TREE || s_opt.server_operation==OLO_SHOW_CLASS_TREE) {
         ; //fprintf(ff,"");
     } else if (! selectable) {
         if (s_opt.xref2) fprintf(ff, " %s=2", PPCA_SELECTED);
@@ -214,7 +214,7 @@ static void olcxPrintMenuItemPrefix(FILE *ff, S_olSymbolsMenu *itt,
         else fprintf(ff,"  ");
     }
     if (! s_opt.xref2) fprintf(ff," ");
-    if (s_opt.cxrefs==OLO_CLASS_TREE || s_opt.cxrefs==OLO_SHOW_CLASS_TREE) {
+    if (s_opt.server_operation==OLO_CLASS_TREE || s_opt.server_operation==OLO_SHOW_CLASS_TREE) {
         ; //fprintf(ff, "");
     } else if (itt==NULL || (itt->defRefn==0 && itt->refn==0) || !selectable) {
         if (s_opt.xref2) fprintf(ff, " %s=0 %s=0", PPCA_DEF_REFN, PPCA_REFN);
@@ -281,7 +281,7 @@ static void olcxMenuPrintClassHierarchyLine( FILE *ff, int fInd,
     fi = s_fileTab.tab[fInd];
     if (itt!=NULL) {
         assert(itt);
-        if (itt->s.vApplClass == itt->s.vFunClass && s_opt.cxrefs!=OLO_CLASS_TREE) {
+        if (itt->s.vApplClass == itt->s.vFunClass && s_opt.server_operation!=OLO_CLASS_TREE) {
             if (s_opt.xref2) fprintf(ff, " %s=1", PPCA_DEFINITION);
             else fprintf(ff,"*");
         }

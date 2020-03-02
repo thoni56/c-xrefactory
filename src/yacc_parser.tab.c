@@ -4236,7 +4236,7 @@ case 471:
                 *pa = *p;
                 addNewSymbolDef(pa, StorageAuto, s_symTab, UsageDefined);
             }
-            if (s_opt.cxrefs == OLO_GOTO_PARAM_NAME
+            if (s_opt.server_operation == OLO_GOTO_PARAM_NAME
                 && i == s_opt.olcxGotoVal
                 && POSITION_EQ(yyvsp[0].bbsymbol.d->pos, s_cxRefPos)) {
                 s_paramPosition = p->pos;

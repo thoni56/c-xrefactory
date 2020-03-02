@@ -663,7 +663,7 @@ conditional_expr
 assignment_expr
     : conditional_expr									/*& { $$.d = $1.d; } */
     | unary_expr assignment_operator assignment_expr	{
-        if ($1.d.r != NULL && s_opt.cxrefs == OLO_EXTRACT) {
+        if ($1.d.r != NULL && s_opt.server_operation == OLO_EXTRACT) {
             S_reference *rr;
             rr = duplicateReference($1.d.r);
             $1.d.r->usg = s_noUsage;
@@ -1957,7 +1957,7 @@ void makeCCompletions(char *s, int len, S_position *pos) {
     }
 
     /* If there is a wizard completion, RETURN now */
-    if (s_completions.ai != 0 && s_opt.cxrefs != OLO_SEARCH)
+    if (s_completions.ai != 0 && s_opt.server_operation != OLO_SEARCH)
         return;
 
     /* basic language tokens */

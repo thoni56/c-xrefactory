@@ -863,7 +863,7 @@ int tpCheckMoveClassAccessibilities(void) {
     char tpack[MAX_FILE_NAME_SIZE];
 
     tpCheckFillMoveClassData(&dd, spack, tpack);
-    olcxPushSpecialCheckMenuSym(s_opt.cxrefs,LINK_NAME_MOVE_CLASS_MISSED);
+    olcxPushSpecialCheckMenuSym(s_opt.server_operation,LINK_NAME_MOVE_CLASS_MISSED);
     refTabMap2(&s_cxrefTab, tpCheckDefaultAccessibilitiesMoveClass, &dd);
 
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
@@ -4496,7 +4496,7 @@ void mainRefactory(int argc, char **argv) {
     // this was commented out, but
     copyOptions(&s_cachedOptions, &s_opt);
     // MAGIC, fill something to restrict to browsing
-    s_ropt.cxrefs = OLO_LIST;
+    s_ropt.server_operation = OLO_LIST;
 
     mainOpenOutputFile(s_ropt.outputFileName);
     editorLoadAllOpenedBufferFiles();

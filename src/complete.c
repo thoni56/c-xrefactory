@@ -755,7 +755,7 @@ void searchName(char *name, S_cline *compLine, int orderFlag,
 void processName(char *name, S_cline *compLine, int orderFlag, void *c) {
     S_completions *ci;
     ci = (S_completions *) c;
-    if (s_opt.cxrefs == OLO_SEARCH) {
+    if (s_opt.server_operation == OLO_SEARCH) {
         searchName(name, compLine, orderFlag, ci);
     } else {
         completeName(name, compLine, orderFlag, ci);
@@ -1133,7 +1133,7 @@ static int isForCompletionSymbol(S_completions *c,
                                  ) {
     S_symbol    *sy;
 
-    if (s_opt.cxrefs != OLO_COMPLETION)  return(0);
+    if (s_opt.server_operation != OLO_COMPLETION)  return(0);
     if (tok->t==NULL) return(0);
     if (c->idToProcessLen != 0) return(0);
     if (tok->t->kind == TypePointer) {
@@ -1424,7 +1424,7 @@ void javaHintCompleteMethodParameters(S_completions *c) {
         c->fullMatchFlag = 1;
         c->noFocusOnCompletions = 1;
     }
-    if (s_opt.cxrefs != OLO_SEARCH) s_completions.abortFurtherCompletions = 1;
+    if (s_opt.server_operation != OLO_SEARCH) s_completions.abortFurtherCompletions = 1;
 }
 
 
@@ -1673,7 +1673,7 @@ void javaCompleteConstructSingleName(S_completions *c) {
 void javaCompleteHintForConstructSingleName(S_completions *c) {
     S_cline     compLine;
     char        *name;
-    if (c->idToProcessLen == 0 && s_opt.cxrefs == OLO_COMPLETION) {
+    if (c->idToProcessLen == 0 && s_opt.server_operation == OLO_COMPLETION) {
         // O.K. wizard completion
         if (s_cps.lastAssignementStruct!=NULL) {
             name = s_cps.lastAssignementStruct->name;
@@ -1711,7 +1711,7 @@ void javaCompleteExprSingleName(S_completions*c) {
 void javaCompleteThisConstructor (S_completions *c) {
     S_symbol *memb;
     if (strcmp(c->idToProcess,"this")!=0) return;
-    if (s_opt.cxrefs == OLO_SEARCH) return;
+    if (s_opt.server_operation == OLO_SEARCH) return;
     memb = s_javaStat->thisClass;
     javaLoadClassSymbolsFromFile(memb);
     completeRecordsNames(c, memb, ACC_ALL,CLASS_TO_ANY, StorageConstructor,
@@ -1721,7 +1721,7 @@ void javaCompleteThisConstructor (S_completions *c) {
 void javaCompleteSuperConstructor (S_completions *c) {
     S_symbol *memb;
     if (strcmp(c->idToProcess,"super")!=0) return;
-    if (s_opt.cxrefs == OLO_SEARCH) return;
+    if (s_opt.server_operation == OLO_SEARCH) return;
     memb = javaCurrentSuperClass();
     javaLoadClassSymbolsFromFile(memb);
     completeRecordsNames(c, memb, ACC_ALL,CLASS_TO_ANY, StorageConstructor,

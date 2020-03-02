@@ -1171,7 +1171,7 @@ static void cxrfSymbolName(int size,
             } else {
                 s_inLastInfos.symbolToCheckForDeadness = -1;
             }
-        } else if (s_opt.cxrefs!=OLO_TAG_SEARCH) {
+        } else if (s_opt.server_operation!=OLO_TAG_SEARCH) {
             cms = NULL; ols = 0;
             if (additionalArg == CX_MENU_CREATION) {
                 cms = createSelectionMenu(ddd);
@@ -1311,7 +1311,7 @@ static void cxrfReference(int size,
                 s_olMacro2PassFile = rr.p.file;
             }
         } else {
-            if (s_opt.cxrefs == OLO_TAG_SEARCH) {
+            if (s_opt.server_operation == OLO_TAG_SEARCH) {
                 if (rr.usg.base==UsageDefined
                     || ((s_opt.tagSearchSpecif==TSS_FULL_SEARCH
                          || s_opt.tagSearchSpecif==TSS_FULL_SEARCH_SHORT)
@@ -1319,7 +1319,7 @@ static void cxrfReference(int size,
                              || rr.usg.base==UsageClassFileDefinition))) {
                     searchSymbolCheckReference(s_inLastInfos.symbolTab[sym],&rr);
                 }
-            } else if (s_opt.cxrefs == OLO_SAFETY_CHECK1) {
+            } else if (s_opt.server_operation == OLO_SAFETY_CHECK1) {
                 if (    s_inLastInfos.onLineReferencedSym !=
                         s_inLastInfos.counter[CXFI_SYM_INDEX]) {
                     olcxCheck1CxFileReference(s_inLastInfos.symbolTab[sym],
@@ -1333,10 +1333,10 @@ static void cxrfReference(int size,
                         if (s_opt.keep_old
                             || file!=s_olOriginalFileNumber
                             || s_fileTab.tab[file]->b.commandLineEntered==0
-                            || s_opt.cxrefs==OLO_GOTO
-                            || s_opt.cxrefs==OLO_CGOTO
-                            || s_opt.cxrefs==OLO_PUSH_NAME
-                            || s_opt.cxrefs==OLO_PUSH_SPECIAL_NAME
+                            || s_opt.server_operation==OLO_GOTO
+                            || s_opt.server_operation==OLO_CGOTO
+                            || s_opt.server_operation==OLO_PUSH_NAME
+                            || s_opt.server_operation==OLO_PUSH_SPECIAL_NAME
                             ) {
                             //&fprintf(dumpOut,":adding reference %s:%d\n", s_fileTab.tab[rr.p.file]->name, rr.p.line);
                             olcxAddReferenceToOlSymbolsMenu(s_inLastInfos.onLineRefMenuItem, &rr, s_inLastInfos.onLineRefIsBestMatchFlag);
@@ -1354,7 +1354,7 @@ static void cxrfReference(int size,
                                  s_opt.keep_old
                                  || file!=s_olOriginalFileNumber
                                  || s_fileTab.tab[file]->b.commandLineEntered==0
-                                 || s_opt.cxrefs==OLO_GOTO || s_opt.cxrefs==OLO_CGOTO
+                                 || s_opt.server_operation==OLO_GOTO || s_opt.server_operation==OLO_CGOTO
                                  &*/
                                ) {
                         // this is only goto definition from completion menu?
@@ -1470,8 +1470,8 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
         GetChar(ch,cc,cfin,&cxfBuf);
     }
     if (s_opt.taskRegime==RegimeEditServer
-        && (s_opt.cxrefs==OLO_LOCAL_UNUSED
-            || s_opt.cxrefs==OLO_GLOBAL_UNUSED)) {
+        && (s_opt.server_operation==OLO_LOCAL_UNUSED
+            || s_opt.server_operation==OLO_GLOBAL_UNUSED)) {
         // check if last symbol was dead
         cxfileCheckLastSymbolDeadness();
     }
@@ -1555,7 +1555,7 @@ void readOneAppropReferenceFile(char *symbolName,
                                 ) {
     static char fns[MAX_FILE_NAME_SIZE];
     int i,tmp;
-    //& if (s_opt.cxrefs!=OLO_CGOTO && ! creatingOlcxRefs()) return;
+    //& if (s_opt.server_operation!=OLO_CGOTO && ! creatingOlcxRefs()) return;
     if (s_opt.cxrefFileName == NULL) return;
     cxOut = stdout;
     if (s_opt.refnum <= 1) {

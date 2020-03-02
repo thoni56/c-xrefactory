@@ -238,7 +238,7 @@
 /* TODO: push the conditions into the functions for these macros */
 
 #define ExtrDeleteContBreakSym(sym) {\
-    if (s_opt.cxrefs == OLO_EXTRACT) deleteSymDef(sym);\
+    if (s_opt.server_operation == OLO_EXTRACT) deleteSymDef(sym);\
 }
 
 

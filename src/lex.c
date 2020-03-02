@@ -675,7 +675,7 @@ int getLexBuf(struct lexBuf *lb) {
                     && cfile != -1
                     && s_jsl==NULL
                     ) {
-                if (s_opt.cxrefs == OLO_EXTRACT && lb->posi>=2) {
+                if (s_opt.server_operation == OLO_EXTRACT && lb->posi>=2) {
                     DeleteBlank(ch,ccc,cfin,cb,clb,clo);
                     pos1 = ABS_FILE_POS(cb, cfin, ccc);
                     //&idcoll = COLUMN_POS(ccc,clb,clo);
@@ -724,8 +724,8 @@ int getLexBuf(struct lexBuf *lb) {
                         PutLexPosition(ps->file,ps->line,ps->col,dd);
                         s_cps.marker2Flag=1;
                     }
-                } else if (     s_opt.cxrefs == OLO_COMPLETION
-                                ||  s_opt.cxrefs == OLO_SEARCH) {
+                } else if (     s_opt.server_operation == OLO_COMPLETION
+                                ||  s_opt.server_operation == OLO_SEARCH) {
                     DeleteBlank(ch,ccc,cfin,cb,clb,clo);
                     apos = ABS_FILE_POS(cb, cfin, ccc);
                     if (currentLexemPosition < s_opt.olCursorPos
@@ -738,7 +738,7 @@ int getLexBuf(struct lexBuf *lb) {
                             len = s_opt.olCursorPos-currentLexemPosition;
                             //&fprintf(dumpOut,":check %s[%d] <-> %d\n", lexStartDd+TOKEN_SIZE, len,strlen(lexStartDd+TOKEN_SIZE));fflush(dumpOut);
                             if (len <= strlen(lexStartDd+TOKEN_SIZE)) {
-                                if (s_opt.cxrefs == OLO_SEARCH) {
+                                if (s_opt.server_operation == OLO_SEARCH) {
                                     char *ddd;
                                     ddd = lexStartDd;
                                     PutLexToken(IDENT_TO_COMPLETE, ddd);

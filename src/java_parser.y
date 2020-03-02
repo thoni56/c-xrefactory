@@ -125,9 +125,9 @@ static bool inSecondJslPass() {
     return !regularPass() && s_jsl->pass==2;
 }
 
-#define SyntaxPassOnly() (s_opt.cxrefs==OLO_GET_PRIMARY_START || s_opt.cxrefs==OLO_GET_PARAM_COORDINATES || s_opt.cxrefs==OLO_SYNTAX_PASS_ONLY || s_javaPreScanOnly)
+#define SyntaxPassOnly() (s_opt.server_operation==OLO_GET_PRIMARY_START || s_opt.server_operation==OLO_GET_PARAM_COORDINATES || s_opt.server_operation==OLO_SYNTAX_PASS_ONLY || s_javaPreScanOnly)
 
-#define ComputingPossibleParameterCompletion() (regularPass() && (! SyntaxPassOnly()) && s_opt.taskRegime==RegimeEditServer && s_opt.cxrefs==OLO_COMPLETION)
+#define ComputingPossibleParameterCompletion() (regularPass() && (! SyntaxPassOnly()) && s_opt.taskRegime==RegimeEditServer && s_opt.server_operation==OLO_COMPLETION)
 
 
 
@@ -1427,17 +1427,17 @@ _bef_:	{
                         if (s_cp.parserPassedMarker && !s_cp.thisMethodMemoriesStored){
                             s_cps.cxMemiAtMethodBeginning = s_cp.cxMemiAtFunBegin;
                             s_cps.cxMemiAtMethodEnd = cxMemory->i;
-//&sprintf(tmpBuff,"setting %s, %d,%d   %d,%d", olcxOptionsName[s_opt.cxrefs], s_cp.parserPassedMarker, s_cp.thisMethodMemoriesStored, s_cps.cxMemiAtMethodBeginning,s_cps.cxMemiAtMethodEnd),ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+//&sprintf(tmpBuff,"setting %s, %d,%d   %d,%d", olcxOptionsName[s_opt.server_operation], s_cp.parserPassedMarker, s_cp.thisMethodMemoriesStored, s_cps.cxMemiAtMethodBeginning,s_cps.cxMemiAtMethodEnd),ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
                             s_cp.thisMethodMemoriesStored = 1;
-                            if (s_opt.cxrefs == OLO_MAYBE_THIS) {
+                            if (s_opt.server_operation == OLO_MAYBE_THIS) {
                                 changeMethodReferencesUsages(LINK_NAME_MAYBE_THIS_ITEM,
                                                              CatLocal, cFile.lb.buffer.fileNumber,
                                                              s_javaStat->thisClass);
-                            } else if (s_opt.cxrefs == OLO_NOT_FQT_REFS) {
+                            } else if (s_opt.server_operation == OLO_NOT_FQT_REFS) {
                                 changeMethodReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
                                                              CatLocal,cFile.lb.buffer.fileNumber,
                                                              s_javaStat->thisClass);
-                            } else if (s_opt.cxrefs == OLO_USELESS_LONG_NAME) {
+                            } else if (s_opt.server_operation == OLO_USELESS_LONG_NAME) {
                                 changeMethodReferencesUsages(LINK_NAME_IMPORTED_QUALIFIED_ITEM,
                                                              CatGlobal,cFile.lb.buffer.fileNumber,
                                                              s_javaStat->thisClass);
@@ -1446,11 +1446,11 @@ _bef_:	{
                             s_cps.cxMemiAtClassEnd = cxMemory->i;
                             s_cps.classCoordEndLine = cFile.lineNumber+1;
 //&fprintf(dumpOut,"!setting class end line to %d, cb==%d, ce==%d\n", s_cps.classCoordEndLine, s_cps.cxMemiAtClassBeginning, s_cps.cxMemiAtClassEnd);
-                            if (s_opt.cxrefs == OLO_NOT_FQT_REFS_IN_CLASS) {
+                            if (s_opt.server_operation == OLO_NOT_FQT_REFS_IN_CLASS) {
                                 changeClassReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
                                                             CatLocal,cFile.lb.buffer.fileNumber,
                                                             s_javaStat->thisClass);
-                            } else if (s_opt.cxrefs == OLO_USELESS_LONG_NAME_IN_CLASS) {
+                            } else if (s_opt.server_operation == OLO_USELESS_LONG_NAME_IN_CLASS) {
                                 changeClassReferencesUsages(LINK_NAME_IMPORTED_QUALIFIED_ITEM,
                                                             CatGlobal,cFile.lb.buffer.fileNumber,
                                                             s_javaStat->thisClass);
@@ -1589,7 +1589,7 @@ FieldDeclaration:
                               p->name,clas->linkName);
                     LIST_APPEND(S_symbol, clas->u.s->records, p);
                     assert(vClass!=s_noneFileIndex);
-                    if (p->pos.file!=s_olOriginalFileNumber && s_opt.cxrefs==OLO_PUSH) {
+                    if (p->pos.file!=s_olOriginalFileNumber && s_opt.server_operation==OLO_PUSH) {
                         // pre load of saved file akes problem on move field/method, ...
                         addCxReference(p, &p->pos, UsageDefined, vClass, vClass);
                     }
@@ -2630,7 +2630,7 @@ WhileStatementPrefix:
         WHILE _nlabel_ '(' Expression ')' /*6*/ _nfork_ {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if (s_opt.cxrefs == OLO_EXTRACT) {
+                    if (s_opt.server_operation == OLO_EXTRACT) {
                         S_symbol *cl, *bl;
                         cl = bl = NULL;        // just to avoid warning message
                         cl = addContinueBreakLabelSymbol($2.data, CONTINUE_LABEL_NAME);
@@ -2910,7 +2910,7 @@ ThrowStatement:
         Throw Expression ';'		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if (s_opt.cxrefs==OLO_EXTRACT) {
+                    if (s_opt.server_operation==OLO_EXTRACT) {
                         addCxReference($2.d.t->u.t, &$1.d->p, UsageThrown, s_noneFileIndex, s_noneFileIndex);
                     }
                 } else {
@@ -2937,7 +2937,7 @@ TryCatches:
 TryStatement:
         Try  _nfork_
             {
-                if (s_opt.cxrefs == OLO_EXTRACT) {
+                if (s_opt.server_operation == OLO_EXTRACT) {
                     addTrivialCxReference("TryCatch", TypeTryCatchMarker,StorageDefault,
                                             &$1.d->p, UsageTryCatchBegin);
                 }
@@ -2952,7 +2952,7 @@ TryStatement:
             }
         TryCatches		{
             PropagateBornsIfRegularSyntaxPass($$, $1, $6);
-            if (s_opt.cxrefs == OLO_EXTRACT) {
+            if (s_opt.server_operation == OLO_EXTRACT) {
                 addTrivialCxReference("TryCatch", TypeTryCatchMarker,StorageDefault,
                                         &$1.d->p, UsageTryCatchEnd);
             }
@@ -2975,7 +2975,7 @@ CatchClause:
                         if ($3.d->bits.symType != TypeError) {
                             addNewSymbolDef($3.d, StorageAuto, s_javaStat->locals,
                                             UsageDefined);
-                            if (s_opt.cxrefs == OLO_EXTRACT) {
+                            if (s_opt.server_operation == OLO_EXTRACT) {
                                 assert($3.d->bits.symType==TypeDefault);
                                 addCxReference($3.d->u.type->u.t, &$1.d->p, UsageCatched, s_noneFileIndex, s_noneFileIndex);
                             }
@@ -2996,7 +2996,7 @@ CatchClause:
     |	Catch '(' FormalParameter ')' ';'		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if (s_opt.cxrefs == OLO_EXTRACT) {
+                    if (s_opt.server_operation == OLO_EXTRACT) {
                         assert($3.d->bits.symType==TypeDefault);
                         addCxReference($3.d->u.type->u.t, &$1.d->p, UsageCatched, s_noneFileIndex, s_noneFileIndex);
                     }
@@ -4214,7 +4214,7 @@ Assignment:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     s_cps.lastAssignementStruct = NULL;
-                    if ($1.d.r != NULL && s_opt.cxrefs == OLO_EXTRACT) {
+                    if ($1.d.r != NULL && s_opt.server_operation == OLO_EXTRACT) {
                         S_reference *rr;
                         rr = duplicateReference($1.d.r);
                         $1.d.r->usg = s_noUsage;
@@ -4454,7 +4454,7 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
     }
 
     /* If there is a wizard completion, RETURN now */
-    if (s_completions.ai != 0 && s_opt.cxrefs != OLO_SEARCH) return;
+    if (s_completions.ai != 0 && s_opt.server_operation != OLO_SEARCH) return;
     for (i=0;(tok=completionsTab[i].token)!=0; i++) {
         if (((yyn = yysindex[lastyystate]) && (yyn += tok) >= 0 &&
              yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||

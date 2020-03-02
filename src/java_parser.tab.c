@@ -129,9 +129,9 @@ static bool inSecondJslPass() {
     return !regularPass() && s_jsl->pass==2;
 }
 
-#define SyntaxPassOnly() (s_opt.cxrefs==OLO_GET_PRIMARY_START || s_opt.cxrefs==OLO_GET_PARAM_COORDINATES || s_opt.cxrefs==OLO_SYNTAX_PASS_ONLY || s_javaPreScanOnly)
+#define SyntaxPassOnly() (s_opt.server_operation==OLO_GET_PRIMARY_START || s_opt.server_operation==OLO_GET_PARAM_COORDINATES || s_opt.server_operation==OLO_SYNTAX_PASS_ONLY || s_javaPreScanOnly)
 
-#define ComputingPossibleParameterCompletion() (regularPass() && (! SyntaxPassOnly()) && s_opt.taskRegime==RegimeEditServer && s_opt.cxrefs==OLO_COMPLETION)
+#define ComputingPossibleParameterCompletion() (regularPass() && (! SyntaxPassOnly()) && s_opt.taskRegime==RegimeEditServer && s_opt.server_operation==OLO_COMPLETION)
 
 
 
@@ -2635,7 +2635,7 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
     }
 
     /* If there is a wizard completion, RETURN now */
-    if (s_completions.ai != 0 && s_opt.cxrefs != OLO_SEARCH) return;
+    if (s_completions.ai != 0 && s_opt.server_operation != OLO_SEARCH) return;
     for (i=0;(tok=completionsTab[i].token)!=0; i++) {
         if (((yyn = yysindex[lastyystate]) && (yyn += tok) >= 0 &&
              yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
@@ -3948,17 +3948,17 @@ case 126:
                         if (s_cp.parserPassedMarker && !s_cp.thisMethodMemoriesStored){
                             s_cps.cxMemiAtMethodBeginning = s_cp.cxMemiAtFunBegin;
                             s_cps.cxMemiAtMethodEnd = cxMemory->i;
-/*&sprintf(tmpBuff,"setting %s, %d,%d   %d,%d", olcxOptionsName[s_opt.cxrefs], s_cp.parserPassedMarker, s_cp.thisMethodMemoriesStored, s_cps.cxMemiAtMethodBeginning,s_cps.cxMemiAtMethodEnd),ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");*/
+/*&sprintf(tmpBuff,"setting %s, %d,%d   %d,%d", olcxOptionsName[s_opt.server_operation], s_cp.parserPassedMarker, s_cp.thisMethodMemoriesStored, s_cps.cxMemiAtMethodBeginning,s_cps.cxMemiAtMethodEnd),ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");*/
                             s_cp.thisMethodMemoriesStored = 1;
-                            if (s_opt.cxrefs == OLO_MAYBE_THIS) {
+                            if (s_opt.server_operation == OLO_MAYBE_THIS) {
                                 changeMethodReferencesUsages(LINK_NAME_MAYBE_THIS_ITEM,
                                                              CatLocal, cFile.lb.buffer.fileNumber,
                                                              s_javaStat->thisClass);
-                            } else if (s_opt.cxrefs == OLO_NOT_FQT_REFS) {
+                            } else if (s_opt.server_operation == OLO_NOT_FQT_REFS) {
                                 changeMethodReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
                                                              CatLocal,cFile.lb.buffer.fileNumber,
                                                              s_javaStat->thisClass);
-                            } else if (s_opt.cxrefs == OLO_USELESS_LONG_NAME) {
+                            } else if (s_opt.server_operation == OLO_USELESS_LONG_NAME) {
                                 changeMethodReferencesUsages(LINK_NAME_IMPORTED_QUALIFIED_ITEM,
                                                              CatGlobal,cFile.lb.buffer.fileNumber,
                                                              s_javaStat->thisClass);
@@ -3967,11 +3967,11 @@ case 126:
                             s_cps.cxMemiAtClassEnd = cxMemory->i;
                             s_cps.classCoordEndLine = cFile.lineNumber+1;
 /*&fprintf(dumpOut,"!setting class end line to %d, cb==%d, ce==%d\n", s_cps.classCoordEndLine, s_cps.cxMemiAtClassBeginning, s_cps.cxMemiAtClassEnd);*/
-                            if (s_opt.cxrefs == OLO_NOT_FQT_REFS_IN_CLASS) {
+                            if (s_opt.server_operation == OLO_NOT_FQT_REFS_IN_CLASS) {
                                 changeClassReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
                                                             CatLocal,cFile.lb.buffer.fileNumber,
                                                             s_javaStat->thisClass);
-                            } else if (s_opt.cxrefs == OLO_USELESS_LONG_NAME_IN_CLASS) {
+                            } else if (s_opt.server_operation == OLO_USELESS_LONG_NAME_IN_CLASS) {
                                 changeClassReferencesUsages(LINK_NAME_IMPORTED_QUALIFIED_ITEM,
                                                             CatGlobal,cFile.lb.buffer.fileNumber,
                                                             s_javaStat->thisClass);
@@ -4119,7 +4119,7 @@ case 141:
                               p->name,clas->linkName);
                     LIST_APPEND(S_symbol, clas->u.s->records, p);
                     assert(vClass!=s_noneFileIndex);
-                    if (p->pos.file!=s_olOriginalFileNumber && s_opt.cxrefs==OLO_PUSH) {
+                    if (p->pos.file!=s_olOriginalFileNumber && s_opt.server_operation==OLO_PUSH) {
                         /* pre load of saved file akes problem on move field/method, ...*/
                         addCxReference(p, &p->pos, UsageDefined, vClass, vClass);
                     }
@@ -5298,7 +5298,7 @@ case 300:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if (s_opt.cxrefs == OLO_EXTRACT) {
+                    if (s_opt.server_operation == OLO_EXTRACT) {
                         S_symbol *cl, *bl;
                         cl = bl = NULL;        /* just to avoid warning message*/
                         cl = addContinueBreakLabelSymbol(yyvsp[-4].bbinteger.data, CONTINUE_LABEL_NAME);
@@ -5620,7 +5620,7 @@ case 330:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if (s_opt.cxrefs==OLO_EXTRACT) {
+                    if (s_opt.server_operation==OLO_EXTRACT) {
                         addCxReference(yyvsp[-1].bbexprType.d.t->u.t, &yyvsp[-2].bbidIdent.d->p, UsageThrown, s_noneFileIndex, s_noneFileIndex);
                     }
                 } else {
@@ -5644,7 +5644,7 @@ break;
 case 335:
 #line 2939 "java_parser.y"
 {
-                if (s_opt.cxrefs == OLO_EXTRACT) {
+                if (s_opt.server_operation == OLO_EXTRACT) {
                     addTrivialCxReference("TryCatch", TypeTryCatchMarker,StorageDefault,
                                             &yyvsp[-1].bbidIdent.d->p, UsageTryCatchBegin);
                 }
@@ -5664,7 +5664,7 @@ case 337:
 #line 2953 "java_parser.y"
 {
             PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-5].bbidIdent, yyvsp[0].bbposition);
-            if (s_opt.cxrefs == OLO_EXTRACT) {
+            if (s_opt.server_operation == OLO_EXTRACT) {
                 addTrivialCxReference("TryCatch", TypeTryCatchMarker,StorageDefault,
                                         &yyvsp[-5].bbidIdent.d->p, UsageTryCatchEnd);
             }
@@ -5684,7 +5684,7 @@ case 340:
                         if (yyvsp[-3].bbsymbol.d->bits.symType != TypeError) {
                             addNewSymbolDef(yyvsp[-3].bbsymbol.d, StorageAuto, s_javaStat->locals,
                                             UsageDefined);
-                            if (s_opt.cxrefs == OLO_EXTRACT) {
+                            if (s_opt.server_operation == OLO_EXTRACT) {
                                 assert(yyvsp[-3].bbsymbol.d->bits.symType==TypeDefault);
                                 addCxReference(yyvsp[-3].bbsymbol.d->u.type->u.t, &yyvsp[-5].bbidIdent.d->p, UsageCatched, s_noneFileIndex, s_noneFileIndex);
                             }
@@ -5710,7 +5710,7 @@ case 342:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if (s_opt.cxrefs == OLO_EXTRACT) {
+                    if (s_opt.server_operation == OLO_EXTRACT) {
                         assert(yyvsp[-2].bbsymbol.d->bits.symType==TypeDefault);
                         addCxReference(yyvsp[-2].bbsymbol.d->u.type->u.t, &yyvsp[-4].bbidIdent.d->p, UsageCatched, s_noneFileIndex, s_noneFileIndex);
                     }
@@ -7039,7 +7039,7 @@ case 463:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     s_cps.lastAssignementStruct = NULL;
-                    if (yyvsp[-3].bbexprType.d.r != NULL && s_opt.cxrefs == OLO_EXTRACT) {
+                    if (yyvsp[-3].bbexprType.d.r != NULL && s_opt.server_operation == OLO_EXTRACT) {
                         S_reference *rr;
                         rr = duplicateReference(yyvsp[-3].bbexprType.d.r);
                         yyvsp[-3].bbexprType.d.r->usg = s_noUsage;
