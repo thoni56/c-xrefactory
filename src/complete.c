@@ -1128,21 +1128,21 @@ static char *spComplFindNextRecord(S_exprTokenType *tok) {
 }
 
 static int isForCompletionSymbol(S_completions *c,
-                                 S_exprTokenType *tok,
+                                 S_exprTokenType *token,
                                  S_symbol **sym,
                                  char   **nextRecord
                                  ) {
     S_symbol    *sy;
 
     if (s_opt.server_operation != OLO_COMPLETION)  return(0);
-    if (tok->t==NULL) return(0);
+    if (token->t==NULL) return(0);
     if (c->idToProcessLen != 0) return(0);
-    if (tok->t->kind == TypePointer) {
-        assert(tok->t->next);
-        if (tok->t->next->kind == TypeStruct) {
-            *sym = sy = getSymFromRef(tok->r);
+    if (token->t->kind == TypePointer) {
+        assert(token->t->next);
+        if (token->t->next->kind == TypeStruct) {
+            *sym = sy = getSymFromRef(token->r);
             if (sy==NULL) return(0);
-            *nextRecord = spComplFindNextRecord(tok);
+            *nextRecord = spComplFindNextRecord(token);
             return(1);
         }
     }
