@@ -2662,7 +2662,7 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
                     FILL_cline(&compLine, s_tokenName[tok], NULL, TypeKeyword,0, 0, NULL,NULL);
                     processName(s_tokenName[tok], &compLine, 0, &s_completions);
                 } else {
-                    //& FILL_cline(&compLine, s_tokenName[tok], NULL, TypeToken,0, 0, NULL,NULL);
+                    /*& FILL_cline(&compLine, s_tokenName[tok], NULL, TypeToken,0, 0, NULL,NULL); */
                 }
             }
         }

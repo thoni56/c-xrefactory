@@ -3,7 +3,7 @@
 
 #include "constants.h"
 
-#include "memmac.h"
+#include "memory.h"
 
 /* ************************** VERSION NUMBER ********************* */
 

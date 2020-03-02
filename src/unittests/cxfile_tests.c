@@ -35,7 +35,7 @@ S_refTab s_cxrefTab;
 #include "yylex.mock"
 #include "lex.mock"
 #include "editor.mock"
-#include "memmac.mock"
+#include "memory.mock"
 #include "charbuf.mock"
 
 #include "enumTxt.c"

@@ -22,7 +22,7 @@
 #include "java_parser.x"
 
 #include "parsers.h"
-#include "memmac.h"
+#include "memory.h"
 #include "protocol.h"
 
 #include "hash.h"
