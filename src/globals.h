@@ -3,6 +3,7 @@
 
 #include "constants.h"
 #include "proto.h"
+#include "symtab.h"
 
 extern char s_cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
 extern char s_base[MAX_FILE_NAME_SIZE];

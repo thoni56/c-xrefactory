@@ -1,7 +1,8 @@
 #ifndef SEMACT_H
 #define SEMACT_H
 
-#include "proto.h"
+#include "symbol.h"
+#include "symtab.h"
 
 extern void unpackPointers(S_symbol *pp);
 extern int displayingErrorMessages(void);
