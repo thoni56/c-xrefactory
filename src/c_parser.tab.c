@@ -2084,14 +2084,6 @@ static bool exists_valid_parser_action_on(int token) {
         yyn2 <= YYTABLESIZE && yycheck[yyn2] == token;
     bool result = result1 || result2;
 
-    /* log_trace("wtf_some_check_against_yyn(%03d) = %s, " */
-    /*           "yysindex[lastyystate] = yysindex[%d] = %d, yycheck[yyn] = %d, " */
-    /*           "yyrindex[lastyystate] = yyrindex[%d] = %d, yycheck[yyn] = %d", */
-    /*           token, result?"true ":"false", */
-    /*           lastyystate, yysindex[lastyystate], yycheck[yyn1], */
-    /*           lastyystate, yyrindex[lastyystate], yycheck[yyn2] */
-    /*           ); */
-
     return result;
 }
 
@@ -2099,16 +2091,16 @@ void makeCCompletions(char *s, int len, S_position *pos) {
     int token, i;
     S_cline compLine;
 
-    log_trace("(C) completing \"%s\"",s);
+    log_trace("completing \"%s\"",s);
     strncpy(s_completions.idToProcess, s, MAX_FUN_NAME_SIZE);
     s_completions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
     FILL_completions(&s_completions, len, *pos, 0, 0, 0, 0, 0, 0);
 
     /* special wizard completions */
     for (i=0; (token=spCompletionsTab[i].token) != 0; i++) {
-        log_trace("(C) trying token %d", s_tokenName[token]);
+        log_trace("trying token %d", s_tokenName[token]);
         if (exists_valid_parser_action_on(token)) {
-            log_trace("(C) completing %d==%s in state %d", i, s_tokenName[token], lastyystate);
+            log_trace("completing %d==%s in state %d", i, s_tokenName[token], lastyystate);
             (*spCompletionsTab[i].fun)(&s_completions);
             if (s_completions.abortFurtherCompletions)
                 return;
@@ -2122,7 +2114,7 @@ void makeCCompletions(char *s, int len, S_position *pos) {
     /* basic language tokens */
     for (i=0; (token=completionsTab[i].token) != 0; i++) {
         if (exists_valid_parser_action_on(token)) {
-            log_trace("(C) completing %d==%s in state %d", i, s_tokenName[token], lastyystate);
+            log_trace("completing %d==%s in state %d", i, s_tokenName[token], lastyystate);
             (*completionsTab[i].fun)(&s_completions);
             if (s_completions.abortFurtherCompletions)
                 return;
@@ -2140,13 +2132,13 @@ void makeCCompletions(char *s, int len, S_position *pos) {
                 } else {
                     FILL_cline(&compLine, s_tokenName[token], NULL, TypeToken, 0, 0, NULL, NULL);
                 }
-                log_trace("(C) completing %d==%s(%s) state %d", token, s_tokenName[token], s_tokenName[token], lastyystate);
+                log_trace("completing %d==%s(%s) in state %d", token, s_tokenName[token], s_tokenName[token], lastyystate);
                 processName(s_tokenName[token], &compLine, 0, &s_completions);
             }
         }
     }
 }
-#line 2150 "c_parser.tab.c"
+#line 2142 "c_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -4233,7 +4225,7 @@ case 357:
 #line 1892 "c_parser.y"
 { stackMemoryBlockFree(); }
 break;
-#line 4237 "c_parser.tab.c"
+#line 4229 "c_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

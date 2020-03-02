@@ -2544,42 +2544,43 @@ static S_completionFunTab completionsTab[]  = {
 
 
 void makeYaccCompletions(char *s, int len, S_position *pos) {
-    int tok, yyn, i;
+    int token, yyn, i;
     S_cline compLine;
 
-    log_trace("(yacc) completing \"%s\"", s);
+    log_trace("completing \"%s\"", s);
     strncpy(s_completions.idToProcess, s, MAX_FUN_NAME_SIZE);
     s_completions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
     FILL_completions(&s_completions, len, *pos, 0, 0, 0, 0, 0, 0);
-    for (i=0;(tok=completionsTab[i].token)!=0; i++) {
-        if (((yyn = yysindex[lastyystate]) && (yyn += tok) >= 0 &&
-                yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
-            ((yyn = yyrindex[lastyystate]) && (yyn += tok) >= 0 &&
-                yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
-            /*fprintf(stderr,"completing %d==%s v stave %d\n",i,yyname[tok],lastyystate);*/
-                (*completionsTab[i].fun)(&s_completions);
-                if (s_completions.abortFurtherCompletions) return;
+    for (i=0;(token=completionsTab[i].token)!=0; i++) {
+        /* See c_parser.y for an explanation... */
+        if (((yyn = yysindex[lastyystate]) && (yyn += token) >= 0 &&
+             yyn <= YYTABLESIZE && yycheck[yyn] == token) ||
+            ((yyn = yyrindex[lastyystate]) && (yyn += token) >= 0 &&
+             yyn <= YYTABLESIZE && yycheck[yyn] == token)) {
+            log_trace("completing %d==%s in state %d", i, s_tokenName[token], lastyystate);
+            (*completionsTab[i].fun)(&s_completions);
+            if (s_completions.abortFurtherCompletions) return;
         }
     }
     /* basic language tokens */
-    for (tok=0; tok<LAST_TOKEN; tok++) {
-        if (tok==IDENTIFIER) continue;
-        if (((yyn = yysindex[lastyystate]) && (yyn += tok) >= 0 &&
-                yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
-            ((yyn = yyrindex[lastyystate]) && (yyn += tok) >= 0 &&
-                yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
-                if (s_tokenName[tok]!= NULL) {
-                    if (isalpha(*s_tokenName[tok]) || *s_tokenName[tok]=='_') {
-                        FILL_cline(&compLine, s_tokenName[tok], NULL, TypeKeyword,0, 0, NULL,NULL);
+    for (token=0; token<LAST_TOKEN; token++) {
+        if (token==IDENTIFIER) continue;
+        if (((yyn = yysindex[lastyystate]) && (yyn += token) >= 0 &&
+                yyn <= YYTABLESIZE && yycheck[yyn] == token) ||
+            ((yyn = yyrindex[lastyystate]) && (yyn += token) >= 0 &&
+                yyn <= YYTABLESIZE && yycheck[yyn] == token)) {
+                if (s_tokenName[token]!= NULL) {
+                    if (isalpha(*s_tokenName[token]) || *s_tokenName[token]=='_') {
+                        FILL_cline(&compLine, s_tokenName[token], NULL, TypeKeyword,0, 0, NULL,NULL);
                     } else {
-                        FILL_cline(&compLine, s_tokenName[tok], NULL, TypeToken,0, 0, NULL,NULL);
+                        FILL_cline(&compLine, s_tokenName[token], NULL, TypeToken,0, 0, NULL,NULL);
                     }
-                    processName(s_tokenName[tok], &compLine, 0, &s_completions);
+                    processName(s_tokenName[token], &compLine, 0, &s_completions);
                 }
         }
     }
 }
-#line 2583 "yacc_parser.tab.c"
+#line 2584 "yacc_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -4366,7 +4367,7 @@ case 491:
 #line 1752 "yacc_parser.y"
 { stackMemoryBlockFree(); }
 break;
-#line 4370 "yacc_parser.tab.c"
+#line 4371 "yacc_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;
