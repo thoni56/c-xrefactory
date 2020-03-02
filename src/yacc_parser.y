@@ -1809,18 +1809,18 @@ void makeYaccCompletions(char *s, int len, S_position *pos) {
     int tok, yyn, i;
     S_cline compLine;
 
-    log_trace("(yacc) completing \"%s\"", s);
+    log_trace("completing \"%s\"", s);
     strncpy(s_completions.idToProcess, s, MAX_FUN_NAME_SIZE);
     s_completions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
     FILL_completions(&s_completions, len, *pos, 0, 0, 0, 0, 0, 0);
     for (i=0;(tok=completionsTab[i].token)!=0; i++) {
         if (((yyn = yysindex[lastyystate]) && (yyn += tok) >= 0 &&
-                yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
+             yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
             ((yyn = yyrindex[lastyystate]) && (yyn += tok) >= 0 &&
-                yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
-            /*fprintf(stderr,"completing %d==%s v stave %d\n",i,yyname[tok],lastyystate);*/
-                (*completionsTab[i].fun)(&s_completions);
-                if (s_completions.abortFurtherCompletions) return;
+             yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
+            log_trace("completing %d==%s in state %d", i, yyname[tok], lastyystate);
+            (*completionsTab[i].fun)(&s_completions);
+            if (s_completions.abortFurtherCompletions) return;
         }
     }
     /* basic language tokens */

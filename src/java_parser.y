@@ -4436,7 +4436,7 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
     int tok, yyn, i;
     S_cline compLine;
 
-    log_trace("(java) completing \"%s\" in state %d", s, lastyystate);
+    log_trace("completing \"%s\" in state %d", s, lastyystate);
     strncpy(s_completions.idToProcess, s, MAX_FUN_NAME_SIZE);
     s_completions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
     FILL_completions(&s_completions, len, *pos, 0, 0, 0, 0, 0, 0);
@@ -4447,7 +4447,7 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
              yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
             ((yyn = yyrindex[lastyystate]) && (yyn += tok) >= 0 &&
              yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
-            log_trace("(java) completing %d==%s in state %d", i, s_tokenName[tok], lastyystate);
+            log_trace("completing %d==%s in state %d", i, s_tokenName[tok], lastyystate);
             (*spCompletionsTab[i].fun)(&s_completions);
             if (s_completions.abortFurtherCompletions)
                 return;
@@ -4461,7 +4461,7 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
              yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
             ((yyn = yyrindex[lastyystate]) && (yyn += tok) >= 0 &&
              yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
-            log_trace("(java) completing %d==%s in state %d", i, s_tokenName[tok], lastyystate);
+            log_trace("completing %d==%s in state %d", i, s_tokenName[tok], lastyystate);
             (*completionsTab[i].fun)(&s_completions);
             if (s_completions.abortFurtherCompletions)
                 return;
