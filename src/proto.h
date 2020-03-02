@@ -194,13 +194,13 @@ enum fileEncodings {
     MULE_UTF,					// utf-8 or utf-16
     MULE_UTF_8,					// utf-8
     MULE_UTF_16,				// utf-16
-    MULE_UTF_16LE,				// utf-16 low endian
+    MULE_UTF_16LE,				// utf-16 little endian
     MULE_UTF_16BE,				// utf-16 big endian
 };
 
 /* *******************      comment moving levels for refactoring      *************** */
 
-enum commentMovings {
+enum commentMovement {
     CM_NO_COMMENT,
     CM_SINGLE_SLASHED,
     CM_SINGLE_STARED,
@@ -1746,11 +1746,5 @@ typedef struct options {
     struct memory			pendingMemory;
     char					pendingFreeSpace[SIZE_opiMemory];
 } S_options;
-
-/* ************************ HASH TABLES ****************************** */
-
-/* I think these are here to facilitate strFill generation. We could
-   do that by including the .h files in the strFill generation
-   command, maybe... */
 
 #endif	/* ifndef _PROTO__H */
