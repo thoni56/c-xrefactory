@@ -11,6 +11,7 @@
 #include "jslsemact.h"
 #include "enumTxt.h"
 #include "symbol.h"
+#include "strFill.h"
 
 #include "hash.h"
 #include "log.h"

@@ -76,7 +76,7 @@ compiler_defines.g: c-xref.bs Makefile.common
 	fi
 
 # Generate structure filler functions
-strFill.g.h: proto.h symtab.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
+strFill.g.h: $(wildcard *.h) compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
 	@./c-xref.bs -task_regime_generate $(CXREF_CFLAGS) -DGENERATION \
 		-str_fill -header -xrefrc .c-xrefrc proto.h \
 		> tmp-$@
@@ -93,7 +93,7 @@ strFill.g.h: proto.h symtab.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.co
 	fi
 
 # Generate enum string representations header file
-enumTxt.g.h: proto.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
+enumTxt.g.h: $(wildcard *.h) proto.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
 	@./c-xref.bs -task_regime_generate $(CXREF_CFLAGS) -DGENERATION \
 		-enum_name -header -xrefrc .c-xrefrc proto.h \
 		> tmp-$@
@@ -110,7 +110,7 @@ enumTxt.g.h: proto.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
 	fi
 
 # Generate enum string representations
-enumTxt.g.c: proto.h compiler_defines.g .c-xrefrc c-xref.bs Makefile.common
+enumTxt.g.c: $(wildcard *.h) proto.h compiler_defines.g .c-xrefrc c-xref.bs Makefile.common
 	@./c-xref.bs -task_regime_generate $(CXREF_CFLAGS) -DGENERATION \
 		-enum_name -body -xrefrc .c-xrefrc proto.h \
 		> tmp-$@

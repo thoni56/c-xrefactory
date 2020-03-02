@@ -13,6 +13,7 @@
 #include "enumTxt.h"
 #include "reftab.h"
 #include "charbuf.h"
+#include "strFill.h"
 
 #include "hash.h"
 #include "log.h"

@@ -10,6 +10,7 @@
 #include "enumTxt.h"
 #include "reftab.h"
 #include "symbol.h"
+#include "strFill.h"
 
 
 #define EXTRACT_GEN_BUFFER_SIZE 500000

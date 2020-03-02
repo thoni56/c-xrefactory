@@ -5,6 +5,7 @@
 #include "parsers.h"
 #include "cxref.h"
 #include "charbuf.h"
+#include "strFill.h"
 
 #include "caching.h"            /* cacheInput() */
 #include "jslsemact.h"          /* s_jsl */

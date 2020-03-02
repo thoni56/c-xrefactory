@@ -1,6 +1,7 @@
 #include "charbuf.h"
 
 #include "globals.h"
+#include "strFill.h"
 
 #include "commons.h"            /* error() */
 

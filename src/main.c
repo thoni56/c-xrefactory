@@ -13,6 +13,7 @@
 #include "editor.h"
 #include "enumTxt.h"
 #include "reftab.h"
+#include "strFill.h"
 
 #include "c_parser.x"
 #include "yacc_parser.x"

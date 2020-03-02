@@ -3,8 +3,6 @@
 
 #include "constants.h"
 
-#include "strFill.h"
-
 #include "listmacr.h"
 #include "memmac.h"
 

@@ -36,6 +36,7 @@
 #include "semact.h"
 #include "cxref.h"
 #include "symbol.h"
+#include "strFill.h"
 
 #include "log.h"
 #include "utils.h"

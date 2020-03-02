@@ -18,6 +18,7 @@
 #include "classFileReader.h"
 #include "editor.h"
 #include "enumTxt.h"
+#include "strFill.h"
 
 #include "log.h"
 

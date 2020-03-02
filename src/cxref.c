@@ -20,6 +20,7 @@
 #include "reftab.h"
 #include "charbuf.h"
 #include "symbol.h"
+#include "strFill.h"
 
 #include "log.h"
 #include "utils.h"

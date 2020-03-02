@@ -7,6 +7,7 @@
 #include "bitmaps.h"
 #include "cxref.h"
 #include "enumTxt.h"
+#include "strFill.h"
 
 #include "protocol.h"
 

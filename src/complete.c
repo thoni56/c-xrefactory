@@ -15,6 +15,7 @@
 #include "enumTxt.h"
 #include "reftab.h"
 #include "symbol.h"
+#include "strFill.h"
 
 
 #define FULL_COMPLETION_INDENT_CHARS    2

@@ -2,6 +2,7 @@
 
 #include "commons.h"
 #include "globals.h"
+#include "strFill.h"
 
 
 /* ******************** Class Cast Tree ************************ */

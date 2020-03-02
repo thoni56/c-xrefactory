@@ -14,6 +14,7 @@
 #include "editor.h"
 #include "enumTxt.h"
 #include "symbol.h"
+#include "strFill.h"
 
 #include "java_parser.x"
 

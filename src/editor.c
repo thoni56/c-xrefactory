@@ -5,6 +5,7 @@
 #include "yylex.h"
 #include "misc.h"
 #include "cxref.h"
+#include "strFill.h"
 
 #include "protocol.h"
 

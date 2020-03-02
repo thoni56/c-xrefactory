@@ -6,6 +6,7 @@
 #include "yylex.h"
 #include "editor.h"
 #include "reftab.h"
+#include "strFill.h"
 
 #include "log.h"
 
