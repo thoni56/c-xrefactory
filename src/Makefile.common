@@ -73,7 +73,7 @@ compiler_defines.g: c-xref.bs Makefile.common
 			mv -f tmp-$@ $@ ; \
 			echo "regenerated." ; \
 		else \
-			echo "not necessary." ; \
+			echo "no change." ; \
 			rm tmp-$@ ; \
 		fi \
 	else \
@@ -93,7 +93,7 @@ strFill.g: $(wildcard *.h) compiler_defines.g c-xref.bs .c-xrefrc Makefile.commo
 			mv -f tmp-$@ $@ ; \
 			echo "regenerated." ; \
 		else \
-			echo "not necessary." ; \
+			echo "no change." ; \
 			rm tmp-$@ ; \
 		fi \
 	else \
@@ -113,7 +113,7 @@ enumTxt.g: $(wildcard *.h) compiler_defines.g c-xref.bs .c-xrefrc Makefile.commo
 			mv -f tmp-$@ $@ ; \
 			echo "regenerated." ; \
 		else \
-			echo "not necessary." ; \
+			echo "no change." ; \
 			rm tmp-$@ ; \
 		fi \
 	else \
@@ -133,7 +133,7 @@ enumTxt.g.c: $(wildcard *.h) compiler_defines.g .c-xrefrc c-xref.bs Makefile.com
 			mv -f tmp-$@ $@ ; \
 			echo "regenerated." ; \
 		else \
-			echo "not necessary." ; \
+			echo "no change." ; \
 			rm tmp-$@ ; \
 		fi \
 	else \
