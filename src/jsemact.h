@@ -1,7 +1,7 @@
 #ifndef JSEMACT_H
 #define JSEMACT_H
 
-#include "proto.h"
+#include "jsltypetab.h"
 
 extern void javaCheckForPrimaryStart(S_position *cpos, S_position *pp);
 extern void javaCheckForPrimaryStartInNameList(S_idIdentList *name, S_position *pp);
