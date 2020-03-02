@@ -2,9 +2,9 @@
 #define STRFILL_H
 
 #ifdef BOOTSTRAP
-#include "strFill.bs.h"
+#include "strFill.bs"
 #else
-#include "strFill.g.h"
+#include "strFill.g"
 #endif
 
 #endif

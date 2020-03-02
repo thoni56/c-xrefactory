@@ -6,10 +6,10 @@
 # c-xref. If they need to be re-generated and c-xref.bs does not exist then
 # c-xref.bs is built from existing sources using Makefile.bs.
 #
-# In particular strFill.g and enumTxt.c are generated to catch what's
-# relevant for this machine. Bootstrap versions of them, strFill.bs
-# and enumTxt.bs should be used when bootstraping, so those files
-# should be usable on all platforms.
+# In particular strFill.g and enumTxt.g/enumTxt.g.c are generated to
+# catch what's relevant for this machine. Bootstrap versions of them,
+# strFill.bs and enumTxt.bs/enumTxt.bs.c should be used when bootstraping, so those
+# files should be usable on all platforms.
 #
 
 all: $(ZLIB) c-xref
@@ -57,9 +57,12 @@ c-xref.bs:
 #########################################################################
 # Once we have bootstrapped a c-xref.bs it can generate definitions
 # which are dependent on compiler builtins or standard headers for
-# the current environment (not actually dependent on c-xref.bs)
+# the current environment.
 #
 # .g = generated, .bs = bootstrap version
+#
+# They might possibly be dependent on any header file so make that all,
+# we are planning on removing this at some point anyway.
 
 compiler_defines.g: c-xref.bs Makefile.common
 	@echo | gcc -dM -E - > tmp-$@
@@ -76,7 +79,7 @@ compiler_defines.g: c-xref.bs Makefile.common
 	fi
 
 # Generate structure filler functions
-strFill.g.h: $(wildcard *.h) compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
+strFill.g: $(wildcard *.h) compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
 	@./c-xref.bs -task_regime_generate $(CXREF_CFLAGS) -DGENERATION \
 		-str_fill -header -xrefrc .c-xrefrc proto.h \
 		> tmp-$@
@@ -93,7 +96,7 @@ strFill.g.h: $(wildcard *.h) compiler_defines.g c-xref.bs .c-xrefrc Makefile.com
 	fi
 
 # Generate enum string representations header file
-enumTxt.g.h: $(wildcard *.h) proto.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
+enumTxt.g: $(wildcard *.h) compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
 	@./c-xref.bs -task_regime_generate $(CXREF_CFLAGS) -DGENERATION \
 		-enum_name -header -xrefrc .c-xrefrc proto.h \
 		> tmp-$@
@@ -110,7 +113,7 @@ enumTxt.g.h: $(wildcard *.h) proto.h compiler_defines.g c-xref.bs .c-xrefrc Make
 	fi
 
 # Generate enum string representations
-enumTxt.g.c: $(wildcard *.h) proto.h compiler_defines.g .c-xrefrc c-xref.bs Makefile.common
+enumTxt.g.c: $(wildcard *.h) compiler_defines.g .c-xrefrc c-xref.bs Makefile.common
 	@./c-xref.bs -task_regime_generate $(CXREF_CFLAGS) -DGENERATION \
 		-enum_name -body -xrefrc .c-xrefrc proto.h \
 		> tmp-$@
@@ -158,4 +161,4 @@ coverage: clean all test
 	genhtml -o coverage coverage.info
 
 # Special dependecies to force rebuild of c-xref.bs to generate needed files
-$(SRCS) : strFill.g.h enumTxt.g.h enumTxt.g.c
+$(SRCS) : strFill.g enumTxt.g enumTxt.g.c
