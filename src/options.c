@@ -556,26 +556,27 @@ static void processSectionMarker(char *ttt,int i,char *project,char *section,
         }                                                               \
     }
 
-#define ACTIVE_OPTION() (isActiveSect && isActivePass)
+#define ACTIVE_OPTION() (isActiveSection && isActivePass)
 
 int readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
-                       char *sectionFile,char *project, char *resSection) {
+                       char *sectionFile, char *project, char *resSection) {
     char text[MAX_OPTION_LEN];
-    int len, argc, i, c, isActiveSect, isActivePass, res, passn=0;
+    int len, argc, i, c, isActiveSection, isActivePass, res, passn=0;
     char **aargv,*argv[MAX_STD_ARGS];
 
-    argc = 1; res = 0; isActiveSect = isActivePass = 1; aargv=NULL;
+    argc = 1; res = 0; isActiveSection = isActivePass = 1; aargv=NULL;
     resSection[0]=0;
     if (memFl==MEM_ALLOC_ON_SM) SM_INIT(optMemory);
     c = 'a';
     while (c!=EOF) {
-        c = getOptionFromFile(file,text,MAX_OPTION_LEN,&len);
+        c = getOptionFromFile(file, text, MAX_OPTION_LEN, &len);
+        log_trace("got option from file: '%s'", text);
         if (len>=2 && text[0]=='[' && text[len-1]==']') {
             log_trace("checking '%s'", text);
             expandEnvironmentVariables(text+1, MAX_OPTION_LEN, &len, GLOBAL_ENV_ONLY);
             log_trace("expanded '%s'", text);
-            processSectionMarker(text,len+1,project,sectionFile,&isActiveSect,resSection);
-        } else if (isActiveSect && strncmp(text,"-pass",5)==0) {
+            processSectionMarker(text,len+1,project,sectionFile,&isActiveSection,resSection);
+        } else if (isActiveSection && strncmp(text,"-pass", 5) == 0) {
             sscanf(text+5, "%d", &passn);
             if (passn==s_currCppPass || s_currCppPass==ANY_CPP_PASS) {
                 isActivePass = 1;
