@@ -1,63 +1,63 @@
+/* -*- c -*-*/
 #include "../options.h"
 #include <cgreen/mocks.h>
 
-void addSourcePathsCut(void) { 
+void addSourcePathsCut(void) {
   mock();
 }
 
-void getXrefrcFileName(char *ttt) { 
+void getXrefrcFileName(char *ttt) {
   mock(ttt);
 }
 
-int processInteractiveFlagOption(char **argv, int i) { 
+int processInteractiveFlagOption(char **argv, int i) {
   return (int) mock(argv, i);
 }
 
-char *getJavaHome(void) { 
+char *getJavaHome(void) {
   return (char *) mock();
 }
 
-char *getJdkClassPathFastly(void) { 
+char *getJdkClassPathFastly(void) {
   return (char *) mock();
 }
 
-void getJavaClassAndSourcePath(void) { 
+void getJavaClassAndSourcePath(void) {
   mock();
 }
 
-int packageOnCommandLine(char *fn) { 
+int packageOnCommandLine(char *fn) {
   return (int) mock(fn);
 }
 
-void getStandardOptions(int *nargc, char ***nargv) { 
+void getStandardOptions(int *nargc, char ***nargv) {
   mock(nargc, nargv);
 }
 
-char *expandSpecialFilePredefinedVariables_st(char *tt) { 
+char *expandSpecialFilePredefinedVariables_st(char *tt) {
   return (char *) mock(tt);
 }
 
-int readOptionFromFile(FILE *ff, int *nargc, char ***nargv, int memFl, char *sectionFile, char *project, char *resSection) { 
-  return (int) mock(ff, nargc, nargv, memFl, sectionFile, project, resSection);
+bool readOptionFromFile(FILE *ff, int *nargc, char ***nargv, int memFl, char *sectionFile, char *project, char *resSection) {
+  return (bool) mock(ff, nargc, nargv, memFl, sectionFile, project, resSection);
 }
 
-void readOptionFile(char *name, int *nargc, char ***nargv, char *sectionFile, char *project) { 
+void readOptionFile(char *name, int *nargc, char ***nargv, char *sectionFile, char *project) {
   mock(name, nargc, nargv, sectionFile, project);
 }
 
-void readOptionPipe(char *command, int *nargc, char ***nargv, char *sectionFile) { 
+void readOptionPipe(char *command, int *nargc, char ***nargv, char *sectionFile) {
   mock(command, nargc, nargv, sectionFile);
 }
 
-void javaSetSourcePath(int defaultCpAllowed) { 
+void javaSetSourcePath(int defaultCpAllowed) {
   mock(defaultCpAllowed);
 }
 
-void getOptionsFromMessage(char *qnxMsgBuff, int *nargc, char ***nargv) { 
+void getOptionsFromMessage(char *qnxMsgBuff, int *nargc, char ***nargv) {
   mock(qnxMsgBuff, nargc, nargv);
 }
 
-int changeRefNumOption(int newRefNum) { 
+int changeRefNumOption(int newRefNum) {
   return (int) mock(newRefNum);
 }
-

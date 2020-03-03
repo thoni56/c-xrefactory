@@ -1773,10 +1773,12 @@ static void schedulingToUpdate(S_fileItem *p, void *rs) {
 
 void searchDefaultOptionsFile(char *file, char *ttt, char *sect) {
     struct stat fst;
-    int fnum, ii, findFlag=0;
+    int fnum, ii;
+    bool found=false;
     FILE *ff=NULL;
     int nargc;
     char **nargv;
+
     ttt[0] = 0; sect[0]=0;
     if (file == NULL) return;
     if (s_opt.stdopFlag || s_opt.no_stdop) return;
@@ -1784,16 +1786,17 @@ void searchDefaultOptionsFile(char *file, char *ttt, char *sect) {
     getXrefrcFileName( ttt);
     ff = fopen(ttt,"r");
     if (ff!=NULL) {
-        findFlag = readOptionFromFile(ff,&nargc,&nargv,MEM_NO_ALLOC,file,s_opt.project,sect);
-        if (findFlag) {
+        found = readOptionFromFile(ff,&nargc,&nargv,MEM_NO_ALLOC,file,s_opt.project,sect);
+        if (found) {
             log_debug("options file '%s' section '%s'", ttt, sect);
         }
         fclose(ff);
     }
-    if (findFlag) return;
+    if (found) return;
+
     /* then look for source directory  'Xref.opt' */
     strcpy(ttt,normalizeFileName(file, s_cwd));
-    for(; findFlag==0; ) {
+    for(; found==0; ) {
         copyDir(ttt,ttt,&ii);
         if (ii == 0) break;
         assert(ii+15<MAX_FILE_NAME_SIZE);
@@ -1801,12 +1804,12 @@ void searchDefaultOptionsFile(char *file, char *ttt, char *sect) {
         log_debug("trying to open %s",ttt);
         if (stat(ttt,&fst)==0 && (fst.st_mode & S_IFMT) != S_IFDIR) {
             log_debug("options file '%s'", ttt);
-            findFlag = 1;
+            found = 1;
         } else {
             ttt[ii-1]=0;
         }
     }
-    if (findFlag) {
+    if (found) {
         if (s_opt.taskRegime!=RegimeEditServer) {
             sprintf(tmpBuff,"%s\n\t\t%s",
                     "using of 'Xref.opt' file is an obsolete way of passing",

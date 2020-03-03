@@ -558,13 +558,14 @@ static void processSectionMarker(char *ttt,int i,char *project,char *section,
 
 #define ACTIVE_OPTION() (isActiveSection && isActivePass)
 
-int readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
+bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
                        char *sectionFile, char *project, char *resSection) {
     char text[MAX_OPTION_LEN];
-    int len, argc, i, c, isActiveSection, isActivePass, res, passn=0;
+    int len, argc, i, c, isActiveSection, isActivePass, passn=0;
+    bool found = false;
     char **aargv,*argv[MAX_STD_ARGS];
 
-    argc = 1; res = 0; isActiveSection = isActivePass = 1; aargv=NULL;
+    argc = 1; isActiveSection = isActivePass = 1; aargv=NULL;
     resSection[0]=0;
     if (memFl==MEM_ALLOC_ON_SM) SM_INIT(optMemory);
     c = 'a';
@@ -587,7 +588,7 @@ int readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
         } else if (strcmp(text,"-set")==0 && ACTIVE_OPTION()
                    && memFl!=MEM_NO_ALLOC) {
             // pre-evaluation of -set
-            res = 1;
+            found = true;
             ADD_OPTION_TO_ARGS(memFl,text,len,argv,argc);
             c = getOptionFromFile(file,text,MAX_OPTION_LEN,&len);
             expandEnvironmentVariables(text,MAX_OPTION_LEN,&len,DEFAULT_VALUE);
@@ -600,19 +601,20 @@ int readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
                 mainHandleSetOption(argc, argv, argc-3);
             }
         } else if (c!=EOF && ACTIVE_OPTION()) {
-            res = 1;
+            found = true;
             expandEnvironmentVariables(text,MAX_OPTION_LEN,&len,DEFAULT_VALUE);
             ADD_OPTION_TO_ARGS(memFl,text,len,argv,argc);
         }
     }
     if (argc >= MAX_STD_ARGS-1) error(ERR_ST,"too many options");
-    if (res && memFl!=MEM_NO_ALLOC) {
+    if (found && memFl!=MEM_NO_ALLOC) {
         OPTION_SPACE_ALLOCC(memFl, aargv, argc, char*);
         for(i=1; i<argc; i++) aargv[i] = argv[i];
     }
     *nargc = argc;
     *nargv = aargv;
-    return(res);
+
+    return found;
 }
 
 void readOptionFile(char *name, int *nargc, char ***nargv, char *sectionFile, char *project) {
