@@ -971,24 +971,25 @@ int changeRefNumOption(int newRefNum) {
     return(check);
 }
 
-void getXrefrcFileName(char *ttt) {
+void getXrefrcFileName(char *filename) {
     int hlen;
     char *hh;
+
     if (s_opt.xrefrc!=NULL) {
-        sprintf(ttt, "%s", normalizeFileName(s_opt.xrefrc, s_cwd));
+        sprintf(filename, "%s", normalizeFileName(s_opt.xrefrc, s_cwd));
         return;
     }
     hh = getenv("HOME");
-#ifdef __WIN32__                    /*SBD*/
+#ifdef __WIN32__
     if (hh == NULL) hh = "c:\\";
-#else                               /*SBD*/
+#else
     if (hh == NULL) hh = "";
-#endif                              /*SBD*/
+#endif
     hlen = strlen(hh);
     if (hlen>0 && (hh[hlen-1]=='/' || hh[hlen-1]=='\\')) {
-        sprintf(ttt, "%s%cc-xrefrc", hh, FILE_BEGIN_DOT);
+        sprintf(filename, "%s%cc-xrefrc", hh, FILE_BEGIN_DOT);
     } else {
-        sprintf(ttt, "%s%c%cc-xrefrc", hh, SLASH, FILE_BEGIN_DOT);
+        sprintf(filename, "%s%c%cc-xrefrc", hh, SLASH, FILE_BEGIN_DOT);
     }
-    assert(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
+    assert(strlen(filename) < MAX_FILE_NAME_SIZE-1);
 }
