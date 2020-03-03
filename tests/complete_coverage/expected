@@ -1,4 +1,4 @@
-../../src/c-xref -xrefrc CURDIR/.c-xrefrc single_int1.c -xrefactory-II -o buffer -task_regime_server
+../../src/c-xref -xrefrc CURDIR/.c-xrefrc single_int1.c -xrefactory-II -o buffer -task_regime_server -log=log.log -trace
 -olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/single_int1.c
 end-of-options
 
