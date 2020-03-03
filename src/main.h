@@ -8,7 +8,7 @@ extern void xrefSetenv(char *name, char *val);
 
 extern void createOptionString(char **dest, char *text);
 extern void copyOptions(S_options *dest, S_options *src);
-extern void searchDefaultOptionsFile(char *file, char *ttt, char *sect);
+extern void searchDefaultOptionsFile(char *filename, char *options_filename, char *section);
 extern void processOptions(int argc, char **argv, int infilesFlag);
 extern void getPipedOptions(int *outNargc,char ***outNargv);
 

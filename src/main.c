@@ -1771,74 +1771,47 @@ static void schedulingToUpdate(S_fileItem *p, void *rs) {
     //&if (p->b.scheduledToUpdate) {fprintf(dumpOut,"scheduling %s to update\n", p->name); fflush(dumpOut);}
 }
 
-void searchDefaultOptionsFile(char *file, char *ttt, char *sect) {
-    struct stat fst;
-    int fnum, ii;
+void searchDefaultOptionsFile(char *filename, char *options_filename, char *section) {
+    int fileno;
     bool found=false;
-    FILE *ff=NULL;
+    FILE *options_file;
     int nargc;
     char **nargv;
 
-    ttt[0] = 0; sect[0]=0;
-    if (file == NULL) return;
+    options_filename[0] = 0; section[0]=0;
+    if (filename == NULL) return;
     if (s_opt.stdopFlag || s_opt.no_stdop) return;
-    /* first try to find section in HOME config. */
-    getXrefrcFileName( ttt);
-    ff = fopen(ttt,"r");
-    if (ff!=NULL) {
-        found = readOptionFromFile(ff,&nargc,&nargv,MEM_NO_ALLOC,file,s_opt.project,sect);
-        if (found) {
-            log_debug("options file '%s' section '%s'", ttt, sect);
-        }
-        fclose(ff);
-    }
-    if (found) return;
 
-    /* then look for source directory  'Xref.opt' */
-    strcpy(ttt,normalizeFileName(file, s_cwd));
-    for(; found==0; ) {
-        copyDir(ttt,ttt,&ii);
-        if (ii == 0) break;
-        assert(ii+15<MAX_FILE_NAME_SIZE);
-        sprintf(ttt+ii,"Xref.opt");
-        log_debug("trying to open %s",ttt);
-        if (stat(ttt,&fst)==0 && (fst.st_mode & S_IFMT) != S_IFDIR) {
-            log_debug("options file '%s'", ttt);
-            found = 1;
-        } else {
-            ttt[ii-1]=0;
+    /* Try to find section in HOME config. */
+    getXrefrcFileName(options_filename);
+    options_file = fopen(options_filename, "r");
+    if (options_file != NULL) {
+        found = readOptionFromFile(options_file,&nargc,&nargv,MEM_NO_ALLOC,filename,s_opt.project,section);
+        if (found) {
+            log_debug("options file '%s' section '%s'", options_filename, section);
         }
+        fclose(options_file);
     }
-    if (found) {
-        if (s_opt.taskRegime!=RegimeEditServer) {
-            sprintf(tmpBuff,"%s\n\t\t%s",
-                    "using of 'Xref.opt' file is an obsolete way of passing",
-#ifdef __WIN32__    /*SBD*/
-                    "options to xref task. Please, use '%HOME%\\_c-xrefrc' file"
-#else               /*SBD*/
-                    "options to xref task. Please, use '~/.c-xrefrc' file"
-#endif              /*SBD*/
-                    );
-            error(ERR_ST, tmpBuff);
-        }
+    if (found)
         return;
-    }
-    // finally if automatic selection did not find project, keep last one
+
+    // If automatic selection did not find project, keep previous one
     if (s_opt.project==NULL) {
         // but do this only if file is from cxfile, would be better to
         // check if it is from active project, but nothing is perfect
+        // TODO: Where else could it come from (Xref.opt is not used anymore)?
 
-        // I should check here whether the project still exists in the .c-xrefrc file
+        // TODO: check whether the project still exists in the .c-xrefrc file
         // it may happen that after deletion of the project, the request for active
-        // project will return non-existent project.
-        fnum = getFileNumberFromName(file);
-        if (fnum!=s_noneFileIndex && s_fileTab.tab[fnum]->b.isFromCxfile) {
-            strcpy(ttt, oldStdopFile);
-            strcpy(sect, oldStdopSection);
+        // project will return non-existent project. And then return "not found"?
+        fileno = getFileNumberFromName(filename);
+        if (fileno != s_noneFileIndex && s_fileTab.tab[fileno]->b.isFromCxfile) {
+            strcpy(options_filename, oldStdopFile);
+            strcpy(section, oldStdopSection);
             return;
         }
     }
-    ttt[0]=0;
+    options_filename[0]=0;
     return;
 }
 
