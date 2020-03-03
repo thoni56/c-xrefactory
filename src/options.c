@@ -816,7 +816,7 @@ static char *getJdk12AutoClassPathFastly(void) {
     return(NULL);
 }
 
-char *getJdkClassPathFastly(void) {
+static char *getJdkClassPathFastly(void) {
     char *jdkcp;
     jdkcp = s_opt.jdkClassPath;
     if (jdkcp == NULL || *jdkcp==0) jdkcp = getenv("JDKCLASSPATH");
@@ -867,7 +867,7 @@ static char *s_defaultPossibleJavaBinPaths[] = {
     NULL
 };
 
-char *getJdkClassPath(void) {
+static char *getJdkClassPath(void) {
     char *res;
     int i;
 

@@ -10,15 +10,7 @@ void getXrefrcFileName(char *ttt) {
   mock(ttt);
 }
 
-int processInteractiveFlagOption(char **argv, int i) {
-  return (int) mock(argv, i);
-}
-
 char *getJavaHome(void) {
-  return (char *) mock();
-}
-
-char *getJdkClassPathFastly(void) {
   return (char *) mock();
 }
 

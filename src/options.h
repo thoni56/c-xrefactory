@@ -6,9 +6,7 @@
 
 extern void addSourcePathsCut(void);
 extern void getXrefrcFileName( char *ttt );
-extern int processInteractiveFlagOption(char **argv, int i);
 extern char *getJavaHome(void);
-extern char *getJdkClassPathFastly(void);
 extern void getJavaClassAndSourcePath(void);
 extern int packageOnCommandLine(char *fn);
 extern void getStandardOptions(int *nargc, char ***nargv);
