@@ -28,10 +28,11 @@ attack those one by one, maybe?
 ** TODO Remove generation of str_fill from build
 ** TODO Remove code for generation of str_fill
 * DOING Start using log.c functions to log to a separate log file
-* TODO Add an -exit option so that client can take down server cleanly
-* TODO Move XX_ALLOCC and friends to "memory" module
-* TODO Ensure only externally used functions are visible in the modules
+* DOING Ensure only externally used functions are visible in the modules
 header file. And that only those are "non-static" in the C file.
+* TODO Add an -exit option so that client can take down server cleanly
+* TODO Document that the "distribution" method is unsupported
+* TODO Move XX_ALLOCC and friends to "memory" module
 * TODO Ensure each header file is not dependent on the fact that some other
 header file is included before it. (Could this be done by taking each
 header file and try to compile it in isolation? It should include
