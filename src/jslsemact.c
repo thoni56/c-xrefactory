@@ -40,7 +40,7 @@ S_symbol *jslTypeSpecifier2(S_typeModifiers *t) {
     return(r);
 }
 
-S_typeModifiers *jslCrSimpleTypeModifier(unsigned t) {
+static S_typeModifiers *jslCrSimpleTypeModifier(unsigned t) {
     S_typeModifiers *p;
     assert(t>=0 && t<MAX_TYPE);
     if (s_preCrTypesTab[t] == NULL) {
@@ -83,7 +83,7 @@ void jslCompleteDeclarator(S_symbol *t, S_symbol *d) {
     d->bits.storage = t->bits.storage;
 }
 
-void jslRemoveNestedClass(void  *ddv) {
+static void jslRemoveNestedClass(void  *ddv) {
     S_jslSymbolList *dd;
     int             check;
     dd = (S_jslSymbolList *) ddv;
@@ -129,7 +129,7 @@ S_symbol *jslTypeSymbolDefinition(char *ttt2, S_idIdentList *packid,
     return(smemb);
 }
 
-S_symbol *jslTypeSymbolUsage(char *ttt2, S_idIdentList *packid) {
+static S_symbol *jslTypeSymbolUsage(char *ttt2, S_idIdentList *packid) {
     char fqtName[MAX_FILE_NAME_SIZE];
     S_idIdentList dd2;
     int ii;
@@ -321,7 +321,7 @@ void jslAddAllPackageClassesFromFileTab(S_idIdentList *packid) {
     }
 }
 
-void jslAddToLoadWaitList( S_symbol *clas ) {
+static void jslAddToLoadWaitList( S_symbol *clas ) {
     SymbolList *ll;
 
     CF_ALLOC(ll, SymbolList);
@@ -371,8 +371,8 @@ static void jslAddNestedClass(S_symbol *inner, S_symbol *outer, int memb,
 // BERK, there is a copy of this function in semact.c (javaRecordAccessible)
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // when modifying this, you will need to change it there too
-// So, why don't we extract this common functionality?!?!?!?
-int jslRecordAccessible(S_symbol *cl, S_symbol *rec, unsigned recAccessFlags) {
+// TODO: So, why don't we extract this common functionality?!?!?!?
+static int jslRecordAccessible(S_symbol *cl, S_symbol *rec, unsigned recAccessFlags) {
     S_jslClassStat *cs, *lcs;
     int len;
 
