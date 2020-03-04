@@ -12,7 +12,8 @@
 # files should be usable on all platforms.
 #
 
-all: $(ZLIB) c-xref
+all: CFLAGS+=-DDEBUG
+all prod: $(ZLIB) c-xref
 
 include sources.mk
 
