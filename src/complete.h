@@ -42,7 +42,6 @@ extern void javaCompleteThisConstructor(S_completions *c);
 extern void javaCompleteSuperConstructor(S_completions *c);
 extern void javaCompleteSuperNestedConstructor(S_completions *c);
 extern void completeYaccLexem(S_completions *c);
-extern char *javaGetShortClassName(char *inn);
 
 extern void olCompletionListInit(S_position *originalPos);
 extern void formatOutputLine(char *tt, int startingColumn);

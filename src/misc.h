@@ -63,6 +63,7 @@ extern void addToTrail (void (*action)(void*),  void *p);
 extern void removeFromTrailUntil(S_freeTrail *untilP);
 
 extern void symDump(S_symbol *symbol);
+extern void typeDump(S_typeModifiers *typeModifiers);
 extern void symbolRefItemDump(S_symbolRefItem *ss);
 extern int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos);
 extern void typeSPrint(char *buff,int *size,S_typeModifiers *t,char*name,
@@ -92,19 +93,11 @@ extern void javaSlashifyDotName(char *ss);
 extern void javaDotifyClassName(char *ss);
 extern void javaDotifyFileName( char *ss);
 extern char *javaGetNudePreTypeName_st( char *inn, int cutMode);
+extern char *javaGetShortClassName(char *inn);
 extern char *javaGetShortClassNameFromFileNum_st(int fnum);
 extern int substringIndex(char *s, char *subs);
 extern int stringEndsBySuffix(char *s, char *suffix);
 extern int fileNameHasOneOfSuffixes(char *fname, char *suffs);
-extern int mapPatternFiles(
-        char *pattern,
-        void (*fun) (MAP_FUN_PROFILE),
-        char *a1,
-        char *a2,
-        S_completions *a3,
-        void *a4,
-        int *a5
-    );
 extern int mapDirectoryFiles(
         char *dirname,
         void (*fun) (MAP_FUN_PROFILE),

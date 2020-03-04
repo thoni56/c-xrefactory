@@ -273,16 +273,6 @@ void *stackMemoryAlloc(int size) {
     }
 }
 
-void *stackMemoryRealloc(void *p, int n, int oldn) {
-    assert(((char *)p) - memory + oldn == s_topBlock->firstFreeIndex);
-    if (s_topBlock->firstFreeIndex + n - oldn >= SIZE_workMemory) {
-        fatalError(ERR_ST,"i+size > SIZE_workMemory,\n\tworking memory overflowed,\n\tread TROUBLES section of README file\n", XREF_EXIT_ERR);
-        assert(0);
-    }
-    s_topBlock->firstFreeIndex += n - oldn;
-    return(p);
-}
-
 void *stackMemoryPush(void *p, int size) {
     void *m;
     m = stackMemoryAlloc(size);
@@ -1332,18 +1322,18 @@ char * getRealFileNameStatic(char *fn) {
 
 /* ***************************************************************** */
 
-#if defined (__WIN32__)            /*SBD*/
+#if defined (__WIN32__)
 
-int mapPatternFiles(
-                    char *pattern ,
-                    void (*fun)(MAP_FUN_PROFILE),
-                    char *a1, char *a2,
-                    S_completions *a3,
-                    void *a4, int *a5) {
-#if defined (__WIN32__)         /*SBD*/
+static int mapPatternFiles(char *pattern ,
+                           void (*fun)(MAP_FUN_PROFILE),
+                           char *a1, char *a2,
+                           S_completions *a3,
+                           void *a4, int *a5) {
+#if defined (__WIN32__)
     WIN32_FIND_DATA     fdata;
     HANDLE              han;
     int res;
+
     res = 0;
     han = FindFirstFile(pattern, &fdata);
     if (han != INVALID_HANDLE_VALUE) {
@@ -1357,12 +1347,12 @@ int mapPatternFiles(
         FindClose(han);
     }
     return(res);
-#else               /*SBD*/
+#else
     FILEFINDBUF3 fdata = {0};
     HDIR han = HDIR_CREATE;
     ULONG nEntries = 1;
-    int res;
-    res = 0;
+    int res = 0;
+
     if (!DosFindFirst (pattern, &han, FILE_NORMAL | FILE_DIRECTORY, &fdata, sizeof (FILEFINDBUF3), &nEntries, FIL_STANDARD)) {
         do {
             if ( strcmp(fdata.achName,".")!=0
@@ -1374,9 +1364,9 @@ int mapPatternFiles(
         DosFindClose(han);
     }
     return(res);
-#endif              /*SBD*/
+#endif
 }
-#endif              /*SBD*/
+#endif
 
 
 int mapDirectoryFiles(
