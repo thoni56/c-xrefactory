@@ -86,6 +86,7 @@ void cctDump(S_cctNode *cc, int deep) {
 }
 
 #if 0
+// TODO: make these into unit tests...
 void cctTest(void) {
     S_cctNode nn,hh;
     FILL_cctNode(&nn, NULL, NULL);
