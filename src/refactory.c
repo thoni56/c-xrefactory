@@ -44,7 +44,7 @@ static char *s_refactoryXrefInitOptions[] = {
 
 static char *s_refactoryUpdateOption = "-fastupdate";
 
-static int argnum(char **margv) {
+static int argument_count(char **margv) {
     int res;
 
     for(res=0; *margv!=NULL; res++,margv++)
@@ -188,8 +188,8 @@ static void refactoryUpdateReferences(char *project) {
     //copyOptions(&savedCachedOptions, &s_cachedOptions);
 
     refactorySetNargv(nargv, NULL, project, NULL, NULL);
-    nargc = argnum(nargv);
-    refactoryXrefInitOptionsNum = argnum(s_refactoryXrefInitOptions);
+    nargc = argument_count(nargv);
+    refactoryXrefInitOptionsNum = argument_count(s_refactoryXrefInitOptions);
     for(i=1; i<refactoryXrefInitOptionsNum; i++) {
         nargv[nargc++] = s_refactoryXrefInitOptions[i];
     }
@@ -209,7 +209,7 @@ static void refactoryUpdateReferences(char *project) {
     ppcGenRecordEnd(PPC_UPDATE_REPORT);
 
     // return into editSubTaskState
-    mainTaskEntryInitialisations(argnum(s_refactoryEditSrvInitOptions),
+    mainTaskEntryInitialisations(argument_count(s_refactoryEditSrvInitOptions),
                                  s_refactoryEditSrvInitOptions);
     s_refactoryXrefEditSrvSubTaskFirstPassing = 1;
     return;
@@ -230,7 +230,7 @@ static void refactoryEditServerParseBuffer(char *project,
     assert(s_opt.taskRegime == RegimeEditServer);
 
     refactorySetNargv(nargv, buf, project, point, mark);
-    nargc = argnum(nargv);
+    nargc = argument_count(nargv);
     if (pushOption!=NULL) {
         nargv[nargc++] = pushOption;
     }
@@ -239,7 +239,7 @@ static void refactoryEditServerParseBuffer(char *project,
     }
     //&dumpNargv(nargc, nargv);
     mainCallEditServerInit(nargc, nargv);
-    mainCallEditServer(argnum(s_refactoryEditSrvInitOptions),
+    mainCallEditServer(argument_count(s_refactoryEditSrvInitOptions),
                        s_refactoryEditSrvInitOptions,
                        nargc, nargv, &s_refactoryXrefEditSrvSubTaskFirstPassing);
 }
@@ -252,7 +252,7 @@ static void refactoryBeInteractive(void) {
         mainCloseOutputFile();
         ppcGenSynchroRecord();
         copyOptions(&s_opt, &s_cachedOptions);
-        processOptions(argnum(s_refactoryEditSrvInitOptions),
+        processOptions(argument_count(s_refactoryEditSrvInitOptions),
                        s_refactoryEditSrvInitOptions, INFILES_DISABLED);
         getPipedOptions(&pargc, &pargv);
         mainOpenOutputFile(s_ropt.outputFileName);
@@ -261,7 +261,7 @@ static void refactoryBeInteractive(void) {
         if (pargc <= 1) break;
         mainCallEditServerInit(pargc, pargv);
         if (s_opt.continueRefactoring) break;
-        mainCallEditServer(argnum(s_refactoryEditSrvInitOptions),
+        mainCallEditServer(argument_count(s_refactoryEditSrvInitOptions),
                            s_refactoryEditSrvInitOptions,
                            pargc, pargv, &s_refactoryXrefEditSrvSubTaskFirstPassing);
         mainAnswerEditAction();
@@ -4530,7 +4530,7 @@ void mainRefactory(int argc, char **argv) {
     s_refactoringStartPoint = s_editorUndo;
 
     // init subtask
-    mainTaskEntryInitialisations(argnum(s_refactoryEditSrvInitOptions),
+    mainTaskEntryInitialisations(argument_count(s_refactoryEditSrvInitOptions),
                                  s_refactoryEditSrvInitOptions);
     s_refactoryXrefEditSrvSubTaskFirstPassing = 1;
     // ------------
