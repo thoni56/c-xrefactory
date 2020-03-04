@@ -1677,6 +1677,7 @@ endOfFile:
     return(0);
 }
 
+#ifdef DEBUG
 int lexBufDump(struct lexBuf *lb) {
     char *cc;
     int v,h,c,lv,lex,len;
@@ -1702,6 +1703,7 @@ int lexBufDump(struct lexBuf *lb) {
     fprintf(dumpOut,"lexbufdump [stop]\n");fflush(dumpOut);
     return(0);
 }
+#endif
 
 /* ************************************************************** */
 /*                   caching of input                             */
