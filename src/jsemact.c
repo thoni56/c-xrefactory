@@ -216,8 +216,8 @@ static int javaFindFile0( char *classPath,char *slash,char *name,
     return(res);
 }
 
-int specialFileNameCasesCheck(char *fname) {
-#ifdef __WIN32__		/*SBD*/
+static int specialFileNameCasesCheck(char *fname) {
+#ifdef __WIN32__
     WIN32_FIND_DATA		fdata;
     HANDLE				han;
     int					dif;
@@ -230,19 +230,19 @@ int specialFileNameCasesCheck(char *fname) {
     ss = lastOccurenceInString(fname, '/');
     if (ss==NULL) ss = lastOccurenceInString(fname, '\\');
     if (ss==NULL) return(1);
-//fprintf(ccOut,"translating %s\n",ttt);
+    log_trace("translating %s",ttt);
     han = FindFirstFile(fname, &fdata);
     if (han == INVALID_HANDLE_VALUE) return(1);
     dif = strcmp(ss+1, fdata.cFileName);
     FindClose(han);
-//fprintf(ccOut,"res %s\n",ttt);
+    log_trace("result %s",ttt);
     return(dif==0);
-#else					/*SBD*/
+#else
     return(1);
-#endif					/*SBD*/
+#endif
 }
 
-/* !!!!!! this function strangely ressembles to javaFindFile, join them ????*/
+/* TODO this function strangely ressembles to javaFindFile, join them ????*/
 int javaTypeFileExist(S_idIdentList *name) {
     char            *fname;
     struct stat		stt;
@@ -299,7 +299,7 @@ int javaTypeFileExist(S_idIdentList *name) {
     return(0);
 }
 
-int javaFindClassFile(char *name, char **resName, struct stat *stt) {
+static int javaFindClassFile(char *name, char **resName, struct stat *stt) {
     S_stringList *cp;
     int i;
 
@@ -322,7 +322,7 @@ int javaFindClassFile(char *name, char **resName, struct stat *stt) {
     return(0);
 }
 
-int javaFindSourceFile(char *name, char **resName, struct stat *stt) {
+static int javaFindSourceFile(char *name, char **resName, struct stat *stt) {
     S_stringList	*cp;
 
     if (s_javaStat->unNamedPackageDir != NULL) {		/* unnamed package */
@@ -2518,7 +2518,7 @@ void javaAddJslReadedTopLevelClasses(S_jslTypeTab  *jslTypeTab) {
     }
 }
 
-void javaAddNestedClassToSymbolTab( S_symbol *str ) {
+static void javaAddNestedClassToSymbolTab( S_symbol *str ) {
     S_symStructSpec *ss;
     int i;
 
@@ -2527,16 +2527,7 @@ void javaAddNestedClassToSymbolTab( S_symbol *str ) {
     assert(ss);
     for(i=0; i<ss->nnested; i++) {
         if (ss->nest[i].membFlag && javaRecordAccessible(NULL,str, str, ss->nest[i].cl, ss->nest[i].accFlags)) {
-#if ZERO  // [13.1.2003]
-            // add only if not annonymous or function inner
-            //& [14.9] XX_ALLOC(nss, S_symbol);
-            CF_ALLOC(nss, S_symbol);
-            *nss = *ss->nest[i].cl;
-//&fprintf(dumpOut,"adding nested class %s\n", nss->name);
-            addSymbol(nss, s_symTab);
-#else
             javaAddTypeToSymbolTable(ss->nest[i].cl, ss->nest[i].cl->bits.accessFlags, &s_noPos, 0);
-#endif
         }
     }
 }
