@@ -591,10 +591,9 @@ S_symbol *addNewCopyOfSymbolDef(S_symbol *def, unsigned storage) {
     return(p);
 }
 
-void addInitializerRefs(
-                        S_symbol *decl,
-                        S_idIdentList *idl
-                        ) {
+static void addInitializerRefs(S_symbol *decl,
+                               S_idIdentList *idl
+                               ) {
     S_idIdentList *ll;
     S_idIdent* id;
     S_typeModifiers *tt;

@@ -28,7 +28,6 @@ extern S_symbol *addNewDeclaration(S_symbol *btype, S_symbol *decl, S_idIdentLis
 extern int styyerror(char *s);
 extern int styyErrorRecovery(void);
 extern void setToNull(void *p);
-extern void allocNewCurrentDefinition(void);
 extern S_symbol *typeSpecifier1(unsigned t);
 extern void declTypeSpecifier1(S_symbol *d, unsigned t);
 extern S_symbol *typeSpecifier2(S_typeModifiers *t);
