@@ -3,7 +3,7 @@ MAKEFLAGS+=--no-print-directory
 endif
 
 all:
-	make -C src
+	make -C src prod
 	make -C env/emacs
 
 distribution:
