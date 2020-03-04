@@ -283,7 +283,7 @@ static void optionAddToAllocatedList(char **dest) {
     }
 }
 
-void allocOptionSpace(void **optAddress, int size) {
+static void allocOptionSpace(void **optAddress, int size) {
     char **res;
     res = (char**)optAddress;
     OPT_ALLOCC((*res), size, char);
@@ -1674,7 +1674,7 @@ void processOptions(int argc, char **argv, int infilesFlag) {
     }
 }
 
-void mainScheduleInputFilesFromOptionsToFileTable(void) {
+static void mainScheduleInputFilesFromOptionsToFileTable(void) {
     S_stringList *ll;
     for(ll=s_opt.inputFiles; ll!=NULL; ll=ll->next) {
         mainProcessInFileOption(ll->d);
@@ -2983,7 +2983,7 @@ static char *presetEditServerFileDependingStatics(void) {
 }
 
 
-int needToProcessInputFile(void) {
+static int needToProcessInputFile(void) {
     return(
            s_opt.server_operation==OLO_COMPLETION
            || s_opt.server_operation==OLO_SEARCH
@@ -3001,7 +3001,7 @@ int needToProcessInputFile(void) {
            );
 }
 
-int needToLoadOptions(void) {
+static int needToLoadOptions(void) {
     return(needToProcessInputFile()
            || s_opt.server_operation==OLO_CT_INSPECT_DEF
            || s_opt.server_operation==OLO_MENU_INSPECT_CLASS
