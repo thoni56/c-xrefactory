@@ -342,8 +342,6 @@ static void reorderCompletionArray(S_completions* cc) {
 }
 #endif
 
-#define ALL_COMPLETIONS_IN_ONE 1
-
 static int completionsWillPrintEllipsis(S_olCompletion *olc) {
     int max, ellipsis;
     LIST_LEN(max, S_olCompletion, olc);
@@ -365,7 +363,6 @@ static void printCompletionsBeginning(S_olCompletion *olc, int noFocus) {
                                            PPCA_NUMBER, max,
                                            PPCA_NO_FOCUS, noFocus);
         } else {
-#           ifdef ALL_COMPLETIONS_IN_ONE
             tlen = 0;
             for(cc=olc; cc!=NULL; cc=cc->next) {
                 tlen += strlen(cc->fullName);
@@ -373,9 +370,6 @@ static void printCompletionsBeginning(S_olCompletion *olc, int noFocus) {
             }
             if (completionsWillPrintEllipsis(olc)) tlen += 4;
             ppcGenAllCompletionsRecordBegin(noFocus, tlen);
-#           else
-            ppcGenRecordWithNumAttributeBegin(PPC_MULTIPLE_COMPLETIONS, PPCA_NO_FOCUS, noFocus);
-#           endif
         }
     } else {
         fprintf(ccOut,";");
@@ -391,15 +385,7 @@ static void printOneCompletion(S_olCompletion *olc) {
         fprintf(ccOut, "%s", olc->fullName);
         fprintf(ccOut, "</%s>\n", PPC_MULTIPLE_COMPLETION_LINE);
     } else {
-#       ifdef ALL_COMPLETIONS_IN_ONE
         fprintf(ccOut, "%s", olc->fullName);
-#       else
-        if (s_opt.xref2) {
-            ppcGenRecord(PPC_MULTIPLE_COMPLETION_LINE, olc->fullName, "\n");
-        } else {
-            fprintf(ccOut, "%s", olc->fullName);
-        }
-#       endif
     }
 }
 
@@ -407,20 +393,14 @@ static void printCompletionsEnding(S_olCompletion *olc) {
     if (completionsWillPrintEllipsis(olc)) {
         if (s_opt.editor == ED_JEDIT && ! s_opt.jeditOldCompletions) {
         } else {
-#           ifdef ALL_COMPLETIONS_IN_ONE
             fprintf(ccOut,"\n...");
-#           endif
         }
     }
     if (s_opt.xref2) {
         if (s_opt.editor == ED_JEDIT && ! s_opt.jeditOldCompletions) {
             ppcGenRecordEnd(PPC_FULL_MULTIPLE_COMPLETIONS);
         } else {
-#           ifdef ALL_COMPLETIONS_IN_ONE
             ppcGenRecordEnd(PPC_ALL_COMPLETIONS);
-#           else
-            ppcGenRecordEnd(PPC_MULTIPLE_COMPLETIONS);
-#           endif
         }
     }
 }
