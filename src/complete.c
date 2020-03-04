@@ -354,7 +354,7 @@ static int completionsWillPrintEllipsis(S_olCompletion *olc) {
     return(ellipsis);
 }
 
-void printCompletionsBeginning(S_olCompletion *olc, int noFocus) {
+static void printCompletionsBeginning(S_olCompletion *olc, int noFocus) {
     int                 max;
     S_olCompletion      *cc;
     int                 tlen;
@@ -382,7 +382,7 @@ void printCompletionsBeginning(S_olCompletion *olc, int noFocus) {
     }
 }
 
-void printOneCompletion(S_olCompletion *olc) {
+static void printOneCompletion(S_olCompletion *olc) {
     if (s_opt.editor == ED_JEDIT && ! s_opt.jeditOldCompletions) {
         fprintf(ccOut,"<%s %s=\"%s\" %s=%d %s=%ld>", PPC_MULTIPLE_COMPLETION_LINE,
                 PPCA_VCLASS, olc->vclass,
@@ -403,7 +403,7 @@ void printOneCompletion(S_olCompletion *olc) {
     }
 }
 
-void printCompletionsEnding(S_olCompletion *olc) {
+static void printCompletionsEnding(S_olCompletion *olc) {
     if (completionsWillPrintEllipsis(olc)) {
         if (s_opt.editor == ED_JEDIT && ! s_opt.jeditOldCompletions) {
         } else {
@@ -679,7 +679,7 @@ static int completionTestPrefix(S_completions *ci, char *s) {
     return(1);
 }
 
-int stringContainsCaseInsensitive(char *s1, char *s2) {
+static int stringContainsCaseInsensitive(char *s1, char *s2) {
     register char *p,*a,*b;
     for (p=s1; *p; p++) {
         for(a=p,b=s2; tolower(*a)==tolower(*b); a++,b++) ;
@@ -714,14 +714,14 @@ static void completionInsertName(char *name, S_cline *compLine, int orderFlag,
     }
 }
 
-void completeName(char *name, S_cline *compLine, int orderFlag,
+static void completeName(char *name, S_cline *compLine, int orderFlag,
                   S_completions *ci) {
     if (name == NULL) return;
     if (completionTestPrefix(ci, name)) return;
     completionInsertName(name, compLine, orderFlag, ci);
 }
 
-void searchName(char *name, S_cline *compLine, int orderFlag,
+static void searchName(char *name, S_cline *compLine, int orderFlag,
                 S_completions *ci) {
     int l;
     if (name == NULL) return;
