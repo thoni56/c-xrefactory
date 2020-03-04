@@ -57,6 +57,7 @@ static int filter0(S_reference *rr, void *dummy) {
     return(0);
 }
 
+#ifdef FILTERS
 static int filter1(S_reference *rr, void *dummy) {
     if (rr->usg.base < s_refListFilters[1]) return(1);
     return(0);
@@ -74,6 +75,7 @@ static int filterBuffer(S_reference *rr, void *buffer) {
     if (rr->p.file == buff->ftnum) return(1);
     return(0);
 }
+#endif
 
 static void refactorySetNargv(char *nargv[MAX_NARGV_OPTIONS_NUM],
                               S_editorBuffer *buf,
