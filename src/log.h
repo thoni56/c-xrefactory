@@ -11,15 +11,19 @@
 #include <stdio.h>
 #include <stdarg.h>
 
-#define LOG_VERSION "0.1.0"
+#define LOG_VERSION "0.2.0"
 
 typedef void (*log_LockFn)(void *udata, int lock);
 
 typedef enum { LOG_TRACE, LOG_DEBUG, LOG_INFO, LOG_WARN, LOG_ERROR, LOG_FATAL, LOG_NONE } LogLevel;
 
-/* TODO: should set up for conditionally making some macros NoOPs using #ifdef's */
+#ifdef DEBUG
 #define log_trace(...) log_log(LOG_TRACE, __FILE__, __LINE__, __VA_ARGS__)
 #define log_debug(...) log_log(LOG_DEBUG, __FILE__, __LINE__, __VA_ARGS__)
+#else
+#define log_trace(...)
+#define log_debug(...)
+#endif
 #define log_info(...)  log_log(LOG_INFO,  __FILE__, __LINE__, __VA_ARGS__)
 #define log_warning(...)  log_log(LOG_WARN,  __FILE__, __LINE__, __VA_ARGS__)
 #define log_error(...) log_log(LOG_ERROR, __FILE__, __LINE__, __VA_ARGS__)
