@@ -52,22 +52,22 @@ static int argnum(char **margv) {
     return(res);
 }
 
-int filter0(S_reference *rr, void *dummy) {
+static int filter0(S_reference *rr, void *dummy) {
     if (rr->usg.base < UsageMaxOLUsages) return(1);
     return(0);
 }
 
-int filter1(S_reference *rr, void *dummy) {
+static int filter1(S_reference *rr, void *dummy) {
     if (rr->usg.base < s_refListFilters[1]) return(1);
     return(0);
 }
 
-int filter2(S_reference *rr, void *dummy) {
+static int filter2(S_reference *rr, void *dummy) {
     if (rr->usg.base < s_refListFilters[2]) return(1);
     return(0);
 }
 
-int filterBuffer(S_reference *rr, void *buffer) {
+static int filterBuffer(S_reference *rr, void *buffer) {
     S_editorBuffer *buff;
     buff = (S_editorBuffer *) buffer;
     if (rr->usg.base >= UsageMaxOLUsages) return(0);
@@ -830,8 +830,8 @@ static void tpCheckDefaultAccessibilitiesMoveClass(S_symbolRefItem *ri, void *dd
 }
 
 void tpCheckFillMoveClassData(S_tpCheckMoveClassData *dd,
-                              char *spack, char *tpack
-                              ) {
+                                     char *spack, char *tpack
+                                     ) {
     S_olcxReferences *rstack;
     S_olSymbolsMenu *sclass;
     char *targetfile, *srcfile;
@@ -1824,7 +1824,7 @@ static void refactoryRename(S_editorBuffer *buf, S_editorMarker *point) {
     }
 }
 
-void clearParamPositions(void) {
+static void clearParamPositions(void) {
     s_paramPosition = s_noPos;
     s_paramBeginPosition = s_noPos;
     s_paramEndPosition = s_noPos;

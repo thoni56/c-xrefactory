@@ -119,8 +119,6 @@ extern int symbolsCorrespondWrtMoving(S_olSymbolsMenu *osym, S_olSymbolsMenu *ns
                                       int command);
 extern void olcxPrintPushingAction(int opt, int afterMenu);
 extern void olPushAllReferencesInBetween(int minMemi, int maxMemi);
-extern void tpCheckFillMoveClassData(S_tpCheckMoveClassData *dd, char *spack,
-                                     char *tpack);
 extern S_symbol *getMoveTargetClass(void);
 extern int javaGetSuperClassNumFromClassNum(int cn);
 extern int javaIsSuperClass(int superclas, int clas);

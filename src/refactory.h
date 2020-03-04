@@ -15,6 +15,7 @@ extern int tpCheckOuterScopeUsagesForDynToSt(void);
 extern int tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void);
 extern int tpCheckSuperMethodReferencesForPullUp(void);
 extern int tpCheckSuperMethodReferencesAfterPushDown(void);
+extern void tpCheckFillMoveClassData(S_tpCheckMoveClassData *dd, char *spack, char *tpack);
 extern int tpCheckTargetToBeDirectSubOrSupClass(int flag, char *subOrSuper);
 extern int tpPullUpFieldLastPreconditions(void);
 extern int tpPushDownFieldLastPreconditions(void);
