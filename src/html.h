@@ -17,7 +17,6 @@ extern void htmlPutChar(FILE *ff, int c);
 extern void htmlGenGlobalReferenceLists(char *cxMemFreeBase);
 extern void htmlAddJavaDocReference(S_symbol  *p, S_position  *pos,
                                     int  vFunClass, int  vApplClass);
-extern int addHtmlCutPath(char *ss );
 extern void htmlGetDefinitionReferences(void);
 extern void htmlAddFunctionSeparatorReference(void);
 extern void generateHtml(void);

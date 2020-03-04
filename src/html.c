@@ -1729,46 +1729,17 @@ void htmlAddJavaDocReference(S_symbol  *p, S_position  *pos,
 
 /* ******************************************************************** */
 
-int isJavaClassFile(S_fileItem *ffi) {
+static int isJavaClassFile(S_fileItem *ffi) {
     char *ss;
     ss = getFileSuffix(ffi->name);
     if (strcmp(ss,".class")==0) return(1);
     return(0);
 }
 
-#if ZERO
-static void htmlGenEmptyRefsFile(void) {
-    FILE        *ff;
-    ff = fopen(s_htmlEmptyRefs,"w");
-    if (ff!=NULL) {
-        htmlGenRefListFileHead(ff, -1);
-        htmlGenRefListItemHead(ff, "",
-                               "Xrefs",
-                               NULL, USAGE_ANY, DEFAULT_VALUE
-                               );
-        htmlGenRefListTail(ff);
-        fclose(ff);
-        htmlCompressFile(s_htmlEmptyRefs);
-    }
-}
-#endif
-
 /* ******************************************************************** */
 
-#if ZERO
-static void dumpClList(S_chReference *ll) {
-    for(; ll!=NULL; ll=ll->next) {
-        fprintf(dumpOut,"  %s\n",
-                javaGetNudePreTypeName_st(getRealFileNameStatic(
-                                                                s_fileTab.tab[ll->clas]->name), s_opt.nestedClassDisplaying));
-    }
-}
-#endif
-
 static void sortSubClassesList(S_fileItem *fi) {
-    //&fprintf(dumpOut,"sorting\n"); dumpClList(fi->infs);
     LIST_MERGE_SORT(S_chReference, fi->infs, classHierarchySupClassNameLess);
-    //&fprintf(dumpOut,"result is\n"); dumpClList(fi->infs);
 }
 
 void htmlGenGlobalReferenceLists(char *cxMemFreeBase) {

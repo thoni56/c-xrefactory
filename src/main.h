@@ -6,6 +6,8 @@
 extern void dirInputFile(MAP_FUN_PROFILE);
 extern void xrefSetenv(char *name, char *val);
 
+extern int addHtmlCutPath(char *ss);
+
 extern void createOptionString(char **dest, char *text);
 extern void copyOptions(S_options *dest, S_options *src);
 extern void searchDefaultOptionsFile(char *filename, char *options_filename, char *section);

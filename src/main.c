@@ -368,7 +368,7 @@ static int mainHandleIncludeOption(int argc, char **argv, int i) {
     return(i);
 }
 
-int addHtmlCutPath(char *ss ) {
+int addHtmlCutPath(char *ss) {
     int i,ln,len, res;
     res = 0;
     ss = htmlNormalizedPath(ss);

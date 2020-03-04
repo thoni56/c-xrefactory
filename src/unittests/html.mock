@@ -46,10 +46,6 @@ void htmlAddJavaDocReference(S_symbol *p, S_position *pos, int vFunClass, int vA
     mock(p, pos, vFunClass, vApplClass);
 }
 
-int addHtmlCutPath(char *ss) {
-    return (int) mock(ss);
-}
-
 void htmlGetDefinitionReferences(void) {
     mock();
 }
