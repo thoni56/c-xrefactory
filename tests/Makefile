@@ -24,6 +24,7 @@ quick:
 	@$(MAKE) -C java_example
 	@$(MAKE) -C read_xrefs
 	@$(MAKE) -C complete_coverage
+	@$(MAKE) -C replay1
 
 slow:
 	@echo "Slow tests..."
