@@ -97,6 +97,9 @@ easier to mock and unit test other modules.
   with the naming strategy as for the others.
 
 * TODO Move all function prototypes from proto.h to <module>.h
+* DONE Make edit_server_driver read output from pipespy
+Idea is to be able to record interactions and then re-play them
+with the driver.
 * DONE Build a protocol spy that can be put between the editor and the
 server to inspect and learn about the communication. It should be
 fairly easy, just start up like c-xref does, start the real c-xref
