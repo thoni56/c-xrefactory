@@ -1,157 +1,577 @@
 ../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -task_regime_server -o buffer
--olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/index.c"
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/cexercise/index.c"
 end-of-options
 
 <sync>
-<no-project-found len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/index.c</no-project-found>
+<set-info len=<n>>CURDIR</set-info>
 
--encoding=european -olcxpush -urldirect  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/index.c" "/tmp/c-xrefxthoni731.tmp" "-olcursor=621" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/index.c" -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
-end-of-options
-
-<sync>
-<error len=<n>>'/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise' project options not found
-</error>
-<error len=<n>>'/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise' project options not found
-</error>
-<goto>
- <position-lc line=20 col=5 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/index.c</position-lc>
-</goto>
-
--olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
-end-of-options
-
-<sync>
-<no-project-found len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</no-project-found>
-
--encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=<n>  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni736.tmp" "-olmark=0" "-olcursor=430" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
-end-of-options
-
-<sync>
-<error len=<n>>'/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise' project options not found
-</error>
-<goto>
- <position-lc line=18 col=4 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</position-lc>
-</goto>
-<single-completion len=<n>>completions</single-completion>
-
--olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
-end-of-options
-
-<sync>
-<no-project-found len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</no-project-found>
-
--encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=<n>  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni741.tmp" "-olmark=430" "-olcursor=431" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
-end-of-options
-
-<sync>
-<error len=<n>>'/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise' project options not found
-</error>
-<all-completions nofocus=0 len=<n>>completions  :void completions()</all-completions>
-
--encoding=european -olcomplselect1 -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
+-encoding=european -olcxpush -urldirect  "-preload" "CURDIR/cexercise/index.c" "/tmp/c-xrefxthoni731.tmp" "-olcursor=621" "CURDIR/cexercise/index.c" -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
-<position-lc line=18 col=4 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</position-lc>
+ <position-lc line=20 col=5 len=<n>>CURDIR/cexercise/index.c</position-lc>
 </goto>
-<single-completion len=<n>>completions</single-completion>
 
--olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/cexercise/completions.c"
 end-of-options
 
 <sync>
-<no-project-found len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</no-project-found>
+<set-info len=<n>>CURDIR</set-info>
 
--encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=<n>  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni746.tmp" "-olmark=431" "-olcursor=431" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
+-encoding=european -olcomplselect1 -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
-<error len=<n>>'/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise' project options not found
-</error>
-<all-completions nofocus=0 len=<n>>completions  :void completions()</all-completions>
+<bottom-warning beep=1 len=<n>>Empty stack</bottom-warning>
 
--olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
+-encoding=european -olcomplback -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
-<no-project-found len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</no-project-found>
 
--encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=<n>  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni751.tmp" "-olmark=431" "-olcursor=431" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/cexercise/completions.c"
 end-of-options
 
 <sync>
-<error len=<n>>'/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise' project options not found
-</error>
-<all-completions nofocus=0 len=<n>>completions  :void completions()</all-completions>
+<set-info len=<n>>CURDIR</set-info>
 
--encoding=european -olcomplselect1 -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
+-encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=<n>  "-preload" "CURDIR/cexercise/completions.c" "/tmp/c-xrefxthoni756.tmp" "-olmark=431" "-olcursor=432" "CURDIR/cexercise/completions.c" -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
-<goto>
-<position-lc line=18 col=4 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</position-lc>
-</goto>
-<single-completion len=<n>>completions</single-completion>
-
--encoding=european -olcomplback -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
-end-of-options
-
-<sync>
-<goto>
-<position-lc line=18 col=4 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</position-lc>
-</goto>
-<all-completions nofocus=0 len=<n>>completions  :void completions()</all-completions>
-
--olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
-end-of-options
-
-<sync>
-<no-project-found len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</no-project-found>
-
--encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=<n>  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni756.tmp" "-olmark=431" "-olcursor=432" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
-end-of-options
-
-<sync>
-<error len=<n>>'/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise' project options not found
-</error>
-<all-completions nofocus=0 len=<n>>%    :token
-&    :token
-     :token
-*    :token
-+    :token
-,    :token
--    :token
-.    :token
-/    :token
-:    :token
-;    :token
-<    :token
-=    :token
->    :token
-?    :token
-[    :token
-^    :token
-|    :token
-++   :token
---   :token
-<<   :token
->>   :token
-<=   :token
->=   :token
-==   :token
-!=   :token
-&&   :token
-||   :token
-*=   :token
-/=   :token
-%=   :token
-+=   :token
--=   :token
-<<=  :token
->>=  :token
-&=   :token
-^=   :token
-|=   :token
-->   :token</all-completions>
+<all-completions nofocus=0 len=<n>>BUFSIZ                                           :#define BUFSIZ
+CLOCKS_PER_SEC                                   :#define CLOCKS_PER_SEC
+CLOCK_BOOTTIME                                   :#define CLOCK_BOOTTIME
+CLOCK_BOOTTIME_ALARM                             :#define CLOCK_BOOTTIME_ALARM
+CLOCK_MONOTONIC                                  :#define CLOCK_MONOTONIC
+CLOCK_MONOTONIC_COARSE                           :#define CLOCK_MONOTONIC_COARSE
+CLOCK_MONOTONIC_RAW                              :#define CLOCK_MONOTONIC_RAW
+CLOCK_PROCESS_CPUTIME_ID                         :#define CLOCK_PROCESS_CPUTIME_ID
+CLOCK_REALTIME                                   :#define CLOCK_REALTIME
+CLOCK_REALTIME_ALARM                             :#define CLOCK_REALTIME_ALARM
+CLOCK_REALTIME_COARSE                            :#define CLOCK_REALTIME_COARSE
+CLOCK_TAI                                        :#define CLOCK_TAI
+CLOCK_THREAD_CPUTIME_ID                          :#define CLOCK_THREAD_CPUTIME_ID
+EOF                                              :#define EOF
+FILE                                             :typedef struct _IO_FILE  FILE
+FILENAME_MAX                                     :#define FILENAME_MAX
+FOPEN_MAX                                        :#define FOPEN_MAX
+L_ctermid                                        :#define L_ctermid
+L_tmpnam                                         :#define L_tmpnam
+NULL                                             :#define NULL
+P_tmpdir                                         :#define P_tmpdir
+SEEK_CUR                                         :#define SEEK_CUR
+SEEK_END                                         :#define SEEK_END
+SEEK_SET                                         :#define SEEK_SET
+TIMER_ABSTIME                                    :#define TIMER_ABSTIME
+TMP_MAX                                          :#define TMP_MAX
+_ASSERT_H                                        :#define _ASSERT_H
+_ASSERT_H_DECLS                                  :#define _ASSERT_H_DECLS
+_ATFILE_SOURCE                                   :#define _ATFILE_SOURCE
+_BITS_G_CONFIG_H                                 :#define _BITS_G_CONFIG_H
+_BITS_LIBIO_H                                    :#define _BITS_LIBIO_H
+_BITS_STDIO_LIM_H                                :#define _BITS_STDIO_LIM_H
+_BITS_TIME_H                                     :#define _BITS_TIME_H
+_BITS_TYPESIZES_H                                :#define _BITS_TYPESIZES_H
+_BITS_TYPES_H                                    :#define _BITS_TYPES_H
+_BITS_TYPES_LOCALE_T_H                           :#define _BITS_TYPES_LOCALE_T_H
+_BITS_TYPES___LOCALE_T_H                         :#define _BITS_TYPES___LOCALE_T_H
+_BSD_SIZE_T_                                     :#define _BSD_SIZE_T_
+_BSD_SIZE_T_DEFINED_                             :#define _BSD_SIZE_T_DEFINED_
+_DEFAULT_SOURCE                                  :#define _DEFAULT_SOURCE
+_FEATURES_H                                      :#define _FEATURES_H
+_GCC_SIZE_T                                      :#define _GCC_SIZE_T
+_G_BUFSIZ                                        :#define _G_BUFSIZ
+_G_HAVE_MMAP                                     :#define _G_HAVE_MMAP
+_G_HAVE_MREMAP                                   :#define _G_HAVE_MREMAP
+_G_HAVE_ST_BLKSIZE                               :#define _G_HAVE_ST_BLKSIZE
+_G_IO_IO_FILE_VERSION                            :#define _G_IO_IO_FILE_VERSION
+_G_fpos64_t                                      :typedef struct   _G_fpos64_t
+_G_fpos_t                                        :typedef struct   _G_fpos_t
+_G_va_list                                       :#define _G_va_list
+_IOFBF                                           :#define _IOFBF
+_IOLBF                                           :#define _IOLBF
+_IONBF                                           :#define _IONBF
+_IOS_APPEND                                      :#define _IOS_APPEND
+_IOS_ATEND                                       :#define _IOS_ATEND
+_IOS_BIN                                         :#define _IOS_BIN
+_IOS_INPUT                                       :#define _IOS_INPUT
+_IOS_NOCREATE                                    :#define _IOS_NOCREATE
+_IOS_NOREPLACE                                   :#define _IOS_NOREPLACE
+_IOS_OUTPUT                                      :#define _IOS_OUTPUT
+_IOS_TRUNC                                       :#define _IOS_TRUNC
+_IO_2_1_stderr_                                  :struct _IO_FILE_plus  _IO_2_1_stderr_
+_IO_2_1_stdin_                                   :struct _IO_FILE_plus  _IO_2_1_stdin_
+_IO_2_1_stdout_                                  :struct _IO_FILE_plus  _IO_2_1_stdout_
+_IO_BAD_SEEN                                     :#define _IO_BAD_SEEN
+_IO_BE                                           :#define _IO_BE(expr, res)
+_IO_BOOLALPHA                                    :#define _IO_BOOLALPHA
+_IO_BUFSIZ                                       :#define _IO_BUFSIZ
+_IO_CURRENTLY_PUTTING                            :#define _IO_CURRENTLY_PUTTING
+_IO_DEC                                          :#define _IO_DEC
+_IO_DELETE_DONT_CLOSE                            :#define _IO_DELETE_DONT_CLOSE
+_IO_DONT_CLOSE                                   :#define _IO_DONT_CLOSE
+_IO_EOF_SEEN                                     :#define _IO_EOF_SEEN
+_IO_ERR_SEEN                                     :#define _IO_ERR_SEEN
+_IO_FILE                                         :typedef struct _IO_FILE  _IO_FILE
+_IO_FIXED                                        :#define _IO_FIXED
+_IO_FLAGS2_MMAP                                  :#define _IO_FLAGS2_MMAP
+_IO_FLAGS2_NOTCANCEL                             :#define _IO_FLAGS2_NOTCANCEL
+_IO_FLAGS2_USER_WBUF                             :#define _IO_FLAGS2_USER_WBUF
+_IO_HAVE_ST_BLKSIZE                              :#define _IO_HAVE_ST_BLKSIZE
+_IO_HEX                                          :#define _IO_HEX
+_IO_INTERNAL                                     :#define _IO_INTERNAL
+_IO_IN_BACKUP                                    :#define _IO_IN_BACKUP
+_IO_IS_APPENDING                                 :#define _IO_IS_APPENDING
+_IO_IS_FILEBUF                                   :#define _IO_IS_FILEBUF
+_IO_LEFT                                         :#define _IO_LEFT
+_IO_LINE_BUF                                     :#define _IO_LINE_BUF
+_IO_LINKED                                       :#define _IO_LINKED
+_IO_MAGIC                                        :#define _IO_MAGIC
+_IO_MAGIC_MASK                                   :#define _IO_MAGIC_MASK
+_IO_NO_READS                                     :#define _IO_NO_READS
+_IO_NO_WRITES                                    :#define _IO_NO_WRITES
+_IO_OCT                                          :#define _IO_OCT
+_IO_PENDING_OUTPUT_COUNT                         :#define _IO_PENDING_OUTPUT_COUNT(_fp)
+_IO_RIGHT                                        :#define _IO_RIGHT
+_IO_SCIENTIFIC                                   :#define _IO_SCIENTIFIC
+_IO_SHOWBASE                                     :#define _IO_SHOWBASE
+_IO_SHOWPOINT                                    :#define _IO_SHOWPOINT
+_IO_SHOWPOS                                      :#define _IO_SHOWPOS
+_IO_SKIPWS                                       :#define _IO_SKIPWS
+_IO_STDIO                                        :#define _IO_STDIO
+_IO_TIED_PUT_GET                                 :#define _IO_TIED_PUT_GET
+_IO_UNBUFFERED                                   :#define _IO_UNBUFFERED
+_IO_UNIFIED_JUMPTABLES                           :#define _IO_UNIFIED_JUMPTABLES
+_IO_UNITBUF                                      :#define _IO_UNITBUF
+_IO_UPPERCASE                                    :#define _IO_UPPERCASE
+_IO_USER_BUF                                     :#define _IO_USER_BUF
+_IO_USER_LOCK                                    :#define _IO_USER_LOCK
+_IO_cleanup_region_end                           :#define _IO_cleanup_region_end(_Doit)
+_IO_cleanup_region_start                         :#define _IO_cleanup_region_start(_fct,
+                                                  _fp)
+_IO_feof                                         :int _IO_feof(_IO_FILE *__fp)
+_IO_feof_unlocked                                :#define _IO_feof_unlocked(__fp)
+_IO_ferror                                       :int _IO_ferror(_IO_FILE *__fp)
+_IO_ferror_unlocked                              :#define _IO_ferror_unlocked(__fp)
+_IO_file_flags                                   :#define _IO_file_flags
+_IO_flockfile                                    :void _IO_flockfile(_IO_FILE *)
+_IO_fpos64_t                                     :#define _IO_fpos64_t
+_IO_fpos_t                                       :#define _IO_fpos_t
+_IO_free_backup_area                             :void _IO_free_backup_area(_IO_FILE *)
+_IO_ftrylockfile                                 :int _IO_ftrylockfile(_IO_FILE *)
+_IO_funlockfile                                  :void _IO_funlockfile(_IO_FILE *)
+_IO_getc                                         :int _IO_getc(_IO_FILE *__fp)
+_IO_getc_unlocked                                :#define _IO_getc_unlocked(_fp)
+_IO_iconv_t                                      :#define _IO_iconv_t
+_IO_lock_t                                       :typedef void _IO_lock_t
+_IO_need_lock                                    :#define _IO_need_lock(_fp)
+_IO_off64_t                                      :#define _IO_off64_t
+_IO_off_t                                        :#define _IO_off_t
+_IO_padn                                         :__ssize_t _IO_padn(_IO_FILE *, int ,
+                                                  __ssize_t )
+_IO_peekc                                        :#define _IO_peekc(_fp)
+_IO_peekc_locked                                 :int _IO_peekc_locked(_IO_FILE *__fp)
+_IO_peekc_unlocked                               :#define _IO_peekc_unlocked(_fp)
+_IO_pid_t                                        :#define _IO_pid_t
+_IO_putc                                         :int _IO_putc(int __c, _IO_FILE *__fp)
+_IO_putc_unlocked                                :#define _IO_putc_unlocked(_ch, _fp)
+_IO_seekoff                                      :__off64_t _IO_seekoff(_IO_FILE *,
+                                                  __off64_t , int , int )
+_IO_seekpos                                      :__off64_t _IO_seekpos(_IO_FILE *,
+                                                  __off64_t , int )
+_IO_sgetn                                        :size_t _IO_sgetn(_IO_FILE *, void *,
+                                                  size_t )
+_IO_size_t                                       :#define _IO_size_t
+_IO_ssize_t                                      :#define _IO_ssize_t
+_IO_stderr                                       :#define _IO_stderr
+_IO_stdin                                        :#define _IO_stdin
+_IO_stdout                                       :#define _IO_stdout
+_IO_uid_t                                        :#define _IO_uid_t
+_IO_va_list                                      :#define _IO_va_list
+_IO_vfprintf                                     :int _IO_vfprintf(_IO_FILE *, char *, void
+                                                  )
+_IO_vfscanf                                      :int _IO_vfscanf(_IO_FILE *, char *, void ,
+                                                  int *)
+_IO_wint_t                                       :#define _IO_wint_t
+_Noreturn                                        :#define _Noreturn
+_OLD_STDIO_MAGIC                                 :#define _OLD_STDIO_MAGIC
+_POSIX_C_SOURCE                                  :#define _POSIX_C_SOURCE
+_POSIX_SOURCE                                    :#define _POSIX_SOURCE
+_SIZET_                                          :#define _SIZET_
+_SIZE_T                                          :#define _SIZE_T
+_SIZE_T_                                         :#define _SIZE_T_
+_SIZE_T_DECLARED                                 :#define _SIZE_T_DECLARED
+_SIZE_T_DEFINED                                  :#define _SIZE_T_DEFINED
+_SIZE_T_DEFINED_                                 :#define _SIZE_T_DEFINED_
+_STDC_PREDEF_H                                   :#define _STDC_PREDEF_H
+_STDIO_H                                         :#define _STDIO_H
+_STDIO_USES_IOSTREAM                             :#define _STDIO_USES_IOSTREAM
+_SYS_CDEFS_H                                     :#define _SYS_CDEFS_H
+_SYS_SIZE_T_H                                    :#define _SYS_SIZE_T_H
+_Static_assert                                   :#define _Static_assert(expr, diagnostic)
+_TIME_H                                          :#define _TIME_H
+_T_SIZE                                          :#define _T_SIZE
+_T_SIZE_                                         :#define _T_SIZE_
+_VA_LIST_DEFINED                                 :#define _VA_LIST_DEFINED
+__ASMNAME                                        :#define __ASMNAME(cname)
+__ASMNAME2                                       :#define __ASMNAME2(prefix, cname)
+__ASSERT_FUNCTION                                :#define __ASSERT_FUNCTION
+__ASSERT_VOID_CAST                               :#define __ASSERT_VOID_CAST
+__BEGIN_DECLS                                    :#define __BEGIN_DECLS
+__BLKCNT64_T_TYPE                                :#define __BLKCNT64_T_TYPE
+__BLKCNT_T_TYPE                                  :#define __BLKCNT_T_TYPE
+__BLKSIZE_T_TYPE                                 :#define __BLKSIZE_T_TYPE
+__CLOCKID_T_TYPE                                 :#define __CLOCKID_T_TYPE
+__CLOCK_T_TYPE                                   :#define __CLOCK_T_TYPE
+__CONCAT                                         :#define __CONCAT(x, y)
+__CPU_MASK_TYPE                                  :#define __CPU_MASK_TYPE
+__DADDR_T_TYPE                                   :#define __DADDR_T_TYPE
+__DATE__                                         :#define __DATE__
+__DEV_T_TYPE                                     :#define __DEV_T_TYPE
+__ELF__                                          :#define __ELF__
+__END_DECLS                                      :#define __END_DECLS
+__FD_SETSIZE                                     :#define __FD_SETSIZE
+__FILE                                           :typedef struct _IO_FILE  __FILE
+__FILE__                                         :#define __FILE__
+__FILE_defined                                   :#define __FILE_defined
+__FSBLKCNT64_T_TYPE                              :#define __FSBLKCNT64_T_TYPE
+__FSBLKCNT_T_TYPE                                :#define __FSBLKCNT_T_TYPE
+__FSFILCNT64_T_TYPE                              :#define __FSFILCNT64_T_TYPE
+__FSFILCNT_T_TYPE                                :#define __FSFILCNT_T_TYPE
+__FSID_T_TYPE                                    :#define __FSID_T_TYPE
+__FSWORD_T_TYPE                                  :#define __FSWORD_T_TYPE
+__GID_T_TYPE                                     :#define __GID_T_TYPE
+__GID_T_TYPE                                     :#define __GID_T_TYPE
+__GLIBC_MINOR__                                  :#define __GLIBC_MINOR__
+__GLIBC_PREREQ                                   :#define __GLIBC_PREREQ(maj, min)
+__GLIBC_USE                                      :#define __GLIBC_USE(F)
+__GLIBC_USE_DEPRECATED_GETS                      :#define __GLIBC_USE_DEPRECATED_GETS
+__GLIBC_USE_IEC_60559_BFP_EXT                    :#define __GLIBC_USE_IEC_60559_BFP_EXT
+__GLIBC_USE_IEC_60559_FUNCS_EXT                  :#define __GLIBC_USE_IEC_60559_FUNCS_EXT
+__GLIBC_USE_IEC_60559_TYPES_EXT                  :#define __GLIBC_USE_IEC_60559_TYPES_EXT
+__GLIBC_USE_LIB_EXT2                             :#define __GLIBC_USE_LIB_EXT2
+__GLIBC__                                        :#define __GLIBC__
+__GNUC_MINOR__                                   :#define __GNUC_MINOR__
+__GNUC_PREREQ                                    :#define __GNUC_PREREQ(maj, min)
+__GNUC_VA_LIST                                   :#define __GNUC_VA_LIST
+__GNUC__                                         :#define __GNUC__
+__GNU_LIBRARY__                                  :#define __GNU_LIBRARY__
+__HAVE_COLUMN                                    :#define __HAVE_COLUMN
+__HAVE_GENERIC_SELECTION                         :#define __HAVE_GENERIC_SELECTION
+__ID_T_TYPE                                      :#define __ID_T_TYPE
+__INO64_T_TYPE                                   :#define __INO64_T_TYPE
+__INO_T_TYPE                                     :#define __INO_T_TYPE
+__INT16_TYPE__                                   :#define __INT16_TYPE__
+__INT32_TYPE__                                   :#define __INT32_TYPE__
+__INT64_TYPE__                                   :#define __INT64_TYPE__
+__INT8_TYPE__                                    :#define __INT8_TYPE__
+__INTMAX_TYPE__                                  :#define __INTMAX_TYPE__
+__INTPTR_TYPE__                                  :#define __INTPTR_TYPE__
+__INT_FAST16_TYPE__                              :#define __INT_FAST16_TYPE__
+__INT_FAST32_TYPE__                              :#define __INT_FAST32_TYPE__
+__INT_FAST64_TYPE__                              :#define __INT_FAST64_TYPE__
+__INT_FAST8_TYPE__                               :#define __INT_FAST8_TYPE__
+__INT_LEAST16_TYPE__                             :#define __INT_LEAST16_TYPE__
+__INT_LEAST32_TYPE__                             :#define __INT_LEAST32_TYPE__
+__INT_LEAST64_TYPE__                             :#define __INT_LEAST64_TYPE__
+__INT_LEAST8_TYPE__                              :#define __INT_LEAST8_TYPE__
+__KERNEL_STRICT_NAMES                            :#define __KERNEL_STRICT_NAMES
+__KEY_T_TYPE                                     :#define __KEY_T_TYPE
+__LDBL_REDIR                                     :#define __LDBL_REDIR(name, proto)
+__LDBL_REDIR1                                    :#define __LDBL_REDIR1(name, proto, alias)
+__LDBL_REDIR1_NTH                                :#define __LDBL_REDIR1_NTH(name, proto,
+                                                  alias)
+__LDBL_REDIR_DECL                                :#define __LDBL_REDIR_DECL(name)
+__LDBL_REDIR_NTH                                 :#define __LDBL_REDIR_NTH(name, proto)
+__LEAF                                           :#define __LEAF
+__LEAF_ATTR                                      :#define __LEAF_ATTR
+__LINE__                                         :#define __LINE__
+__MODE_T_TYPE                                    :#define __MODE_T_TYPE
+__NLINK_T_TYPE                                   :#define __NLINK_T_TYPE
+__NTH                                            :#define __NTH(fct)
+__NTHNL                                          :#define __NTHNL(fct)
+__OFF64_T_TYPE                                   :#define __OFF64_T_TYPE
+__OFF_T_TYPE                                     :#define __OFF_T_TYPE
+__P                                              :#define __P(args)
+__PID_T_TYPE                                     :#define __PID_T_TYPE
+__PMT                                            :#define __PMT(args)
+__PTRDIFF_TYPE__                                 :#define __PTRDIFF_TYPE__
+__REDIRECT                                       :#define __REDIRECT(name, proto, alias)
+__REDIRECT_LDBL                                  :#define __REDIRECT_LDBL(name, proto,
+                                                  alias)
+__REDIRECT_NTH                                   :#define __REDIRECT_NTH(name, proto, alias)
+__REDIRECT_NTHNL                                 :#define __REDIRECT_NTHNL(name, proto,
+                                                  alias)
+__REDIRECT_NTH_LDBL                              :#define __REDIRECT_NTH_LDBL(name, proto,
+                                                  alias)
+__RLIM64_T_TYPE                                  :#define __RLIM64_T_TYPE
+__RLIM_T_MATCHES_RLIM64_T                        :#define __RLIM_T_MATCHES_RLIM64_T
+__RLIM_T_TYPE                                    :#define __RLIM_T_TYPE
+__S16_TYPE                                       :#define __S16_TYPE
+__S32_TYPE                                       :#define __S32_TYPE
+__S64_TYPE                                       :#define __S64_TYPE
+__SIG_ATOMIC_TYPE__                              :#define __SIG_ATOMIC_TYPE__
+__SIZE_T                                         :#define __SIZE_T
+__SIZE_TYPE__                                    :#define __SIZE_TYPE__
+__SIZE_T__                                       :#define __SIZE_T__
+__SLONG32_TYPE                                   :#define __SLONG32_TYPE
+__SLONGWORD_TYPE                                 :#define __SLONGWORD_TYPE
+__SQUAD_TYPE                                     :#define __SQUAD_TYPE
+__SSIZE_T_TYPE                                   :#define __SSIZE_T_TYPE
+__STDC_IEC_559_COMPLEX__                         :#define __STDC_IEC_559_COMPLEX__
+__STDC_IEC_559__                                 :#define __STDC_IEC_559__
+__STDC_ISO_10646__                               :#define __STDC_ISO_10646__
+__STDC_NO_THREADS__                              :#define __STDC_NO_THREADS__
+__STDC__                                         :#define __STDC__
+__STDC__                                         :#define __STDC__
+__STRING                                         :#define __STRING(x)
+__SUSECONDS_T_TYPE                               :#define __SUSECONDS_T_TYPE
+__SWORD_TYPE                                     :#define __SWORD_TYPE
+__SYSCALL_SLONG_TYPE                             :#define __SYSCALL_SLONG_TYPE
+__SYSCALL_ULONG_TYPE                             :#define __SYSCALL_ULONG_TYPE
+__THROW                                          :#define __THROW
+__THROWNL                                        :#define __THROWNL
+__TIMER_T_TYPE                                   :#define __TIMER_T_TYPE
+__TIME_T_TYPE                                    :#define __TIME_T_TYPE
+__TIME__                                         :#define __TIME__
+__U16_TYPE                                       :#define __U16_TYPE
+__U32_TYPE                                       :#define __U32_TYPE
+__U64_TYPE                                       :#define __U64_TYPE
+__UID_T_TYPE                                     :#define __UID_T_TYPE
+__UINT16_TYPE__                                  :#define __UINT16_TYPE__
+__UINT32_TYPE__                                  :#define __UINT32_TYPE__
+__UINT64_TYPE__                                  :#define __UINT64_TYPE__
+__UINT8_TYPE__                                   :#define __UINT8_TYPE__
+__UINTMAX_TYPE__                                 :#define __UINTMAX_TYPE__
+__UINTPTR_TYPE__                                 :#define __UINTPTR_TYPE__
+__UINT_FAST16_TYPE__                             :#define __UINT_FAST16_TYPE__
+__UINT_FAST32_TYPE__                             :#define __UINT_FAST32_TYPE__
+__UINT_FAST64_TYPE__                             :#define __UINT_FAST64_TYPE__
+__UINT_FAST8_TYPE__                              :#define __UINT_FAST8_TYPE__
+__UINT_LEAST16_TYPE__                            :#define __UINT_LEAST16_TYPE__
+__UINT_LEAST32_TYPE__                            :#define __UINT_LEAST32_TYPE__
+__UINT_LEAST64_TYPE__                            :#define __UINT_LEAST64_TYPE__
+__UINT_LEAST8_TYPE__                             :#define __UINT_LEAST8_TYPE__
+__ULONG32_TYPE                                   :#define __ULONG32_TYPE
+__ULONGWORD_TYPE                                 :#define __ULONGWORD_TYPE
+__UQUAD_TYPE                                     :#define __UQUAD_TYPE
+__USECONDS_T_TYPE                                :#define __USECONDS_T_TYPE
+__USE_ATFILE                                     :#define __USE_ATFILE
+__USE_FORTIFY_LEVEL                              :#define __USE_FORTIFY_LEVEL
+__USE_ISOC95                                     :#define __USE_ISOC95
+__USE_ISOC99                                     :#define __USE_ISOC99
+__USE_MISC                                       :#define __USE_MISC
+__USE_POSIX                                      :#define __USE_POSIX
+__USE_POSIX199309                                :#define __USE_POSIX199309
+__USE_POSIX199506                                :#define __USE_POSIX199506
+__USE_POSIX2                                     :#define __USE_POSIX2
+__USE_POSIX_IMPLICITLY                           :#define __USE_POSIX_IMPLICITLY
+__USE_XOPEN2K                                    :#define __USE_XOPEN2K
+__USE_XOPEN2K8                                   :#define __USE_XOPEN2K8
+__UWORD_TYPE                                     :#define __UWORD_TYPE
+__WCHAR_TYPE__                                   :#define __WCHAR_TYPE__
+__WINT_TYPE__                                    :#define __WINT_TYPE__
+__WORDSIZE                                       :#define __WORDSIZE
+__WORDSIZE32_PTRDIFF_LONG                        :#define __WORDSIZE32_PTRDIFF_LONG
+__WORDSIZE32_SIZE_ULONG                          :#define __WORDSIZE32_SIZE_ULONG
+__WORDSIZE_TIME64_COMPAT32                       :#define __WORDSIZE_TIME64_COMPAT32
+____FILE_defined                                 :#define ____FILE_defined
+____mbstate_t_defined                            :#define ____mbstate_t_defined
+___int_size_t_h                                  :#define ___int_size_t_h
+__alignof__                                      :#define __alignof__(xxx)
+__always_inline                                  :#define __always_inline
+__assert                                         :void __assert(char *__assertion, char
+                                                  *__file, int __line)
+__assert_fail                                    :void __assert_fail(char *__assertion, char
+                                                  *__file, unsigned int __line, char
+                                                  *__function)
+__assert_perror_fail                             :void __assert_perror_fail(int __errnum,
+                                                  char *__file, unsigned int __line, char
+                                                  *__function)
+__attribute__                                    :#define __attribute__(xxx)
+__attribute_alloc_size__                         :#define __attribute_alloc_size__(params)
+__attribute_artificial__                         :#define __attribute_artificial__
+__attribute_const__                              :#define __attribute_const__
+__attribute_deprecated__                         :#define __attribute_deprecated__
+__attribute_deprecated_msg__                     :#define __attribute_deprecated_msg__(msg)
+__attribute_format_arg__                         :#define __attribute_format_arg__(x)
+__attribute_format_strfmon__                     :#define __attribute_format_strfmon__(a, b)
+__attribute_malloc__                             :#define __attribute_malloc__
+__attribute_noinline__                           :#define __attribute_noinline__
+__attribute_nonstring__                          :#define __attribute_nonstring__
+__attribute_pure__                               :#define __attribute_pure__
+__attribute_used__                               :#define __attribute_used__
+__attribute_warn_unused_result__                 :#define __attribute_warn_unused_result__
+__blkcnt64_t                                     :typedef long int __blkcnt64_t
+__blkcnt_t                                       :typedef long int __blkcnt_t
+__blksize_t                                      :typedef long int __blksize_t
+__bos                                            :#define __bos(ptr)
+__bos0                                           :#define __bos0(ptr)
+__caddr_t                                        :typedef char *__caddr_t
+__clock_t                                        :typedef long int __clock_t
+__clock_t_defined                                :#define __clock_t_defined
+__clockid_t                                      :typedef int __clockid_t
+__clockid_t_defined                              :#define __clockid_t_defined
+__codecvt_error                                  :int __codecvt_error
+__codecvt_noconv                                 :int __codecvt_noconv
+__codecvt_ok                                     :int __codecvt_ok
+__codecvt_partial                                :int __codecvt_partial
+__daddr_t                                        :typedef int __daddr_t
+__daylight                                       :int __daylight
+__dev_t                                          :typedef long unsigned int __dev_t
+__errordecl                                      :#define __errordecl(name, msg)
+__extension__                                    :#define __extension__
+__extern_always_inline                           :#define __extern_always_inline
+__extern_inline                                  :#define __extern_inline
+__flexarr                                        :#define __flexarr
+__fortify_function                               :#define __fortify_function
+__fsblkcnt64_t                                   :typedef long unsigned int __fsblkcnt64_t
+__fsblkcnt_t                                     :typedef long unsigned int __fsblkcnt_t
+__fsfilcnt64_t                                   :typedef long unsigned int __fsfilcnt64_t
+__fsfilcnt_t                                     :typedef long unsigned int __fsfilcnt_t
+__fsid_t                                         :typedef struct   __fsid_t
+__fsword_t                                       :typedef int __fsword_t
+__getdelim                                       :__ssize_t __getdelim(char **__lineptr,
+                                                  size_t *__n, int __delimiter, FILE
+                                                  *__stream)
+__gid_t                                          :typedef unsigned int __gid_t
+__glibc_c99_flexarr_available                    :#define __glibc_c99_flexarr_available
+__glibc_clang_has_extension                      :#define __glibc_clang_has_extension(ext)
+__glibc_clang_prereq                             :#define __glibc_clang_prereq(maj, min)
+__glibc_likely                                   :#define __glibc_likely(cond)
+__glibc_macro_warning                            :#define __glibc_macro_warning(msg)
+__glibc_unlikely                                 :#define __glibc_unlikely(cond)
+__gnuc_va_list                                   :#define __gnuc_va_list
+__id_t                                           :typedef unsigned int __id_t
+__ino64_t                                        :typedef long unsigned int __ino64_t
+__ino_t                                          :typedef long unsigned int __ino_t
+__int16_t                                        :typedef short signed int __int16_t
+__int32_t                                        :typedef signed int __int32_t
+__int64_t                                        :typedef long signed int __int64_t
+__int8_t                                         :typedef signed char __int8_t
+__intmax_t                                       :typedef long int __intmax_t
+__intptr_t                                       :typedef int __intptr_t
+__io_close_fn                                    :typedef int __io_close_fn(void *__cookie)
+__io_read_fn                                     :typedef __ssize_t __io_read_fn(void
+                                                  *__cookie, char *__buf, size_t __nbytes)
+__io_seek_fn                                     :typedef int __io_seek_fn(void *__cookie,
+                                                  __off64_t *__pos, int __w)
+__io_write_fn                                    :typedef __ssize_t __io_write_fn(void
+                                                  *__cookie, char *__buf, size_t __n)
+__isleap                                         :#define __isleap(year)
+__itimerspec_defined                             :#define __itimerspec_defined
+__key_t                                          :typedef int __key_t
+__linux                                          :#define __linux
+__linux__                                        :#define __linux__
+__locale_t                                       :typedef struct __locale_struct 
+                                                  *__locale_t
+__loff_t                                         :typedef long int __loff_t
+__mbstate_t                                      :typedef struct   __mbstate_t
+__mode_t                                         :typedef unsigned int __mode_t
+__mode_t                                         :typedef unsigned int __mode_t
+__mode_t                                         :typedef unsigned int __mode_t
+__mode_t                                         :typedef unsigned int __mode_t
+__nlink_t                                        :typedef unsigned int __nlink_t
+__nonnull                                        :#define __nonnull(params)
+__off64_t                                        :typedef long int __off64_t
+__off_t                                          :typedef long int __off_t
+__off_t_defined                                  :#define __off_t_defined
+__overflow                                       :int __overflow(_IO_FILE *, int )
+__pid_t                                          :typedef int __pid_t
+__pid_t_defined                                  :#define __pid_t_defined
+__ptr_t                                          :#define __ptr_t
+__quad_t                                         :typedef long int __quad_t
+__restrict                                       :#define __restrict
+__restrict_arr                                   :#define __restrict_arr
+__rlim64_t                                       :typedef long unsigned int __rlim64_t
+__rlim_t                                         :typedef long unsigned int __rlim_t
+__sig_atomic_t                                   :typedef int __sig_atomic_t
+__size_t                                         :#define __size_t
+__size_t__                                       :#define __size_t__
+__socklen_t                                      :typedef unsigned int __socklen_t
+__ssize_t                                        :typedef int __ssize_t
+__ssize_t_defined                                :#define __ssize_t_defined
+__struct_tm_defined                              :#define __struct_tm_defined
+__suseconds_t                                    :typedef long int __suseconds_t
+__syscall_slong_t                                :typedef long int __syscall_slong_t
+__syscall_ulong_t                                :typedef long unsigned int
+                                                  __syscall_ulong_t
+__time_t                                         :typedef long int __time_t
+__time_t_defined                                 :#define __time_t_defined
+__timer_t                                        :typedef void *__timer_t
+__timer_t_defined                                :#define __timer_t_defined
+__timespec_defined                               :#define __timespec_defined
+__timezone                                       :long int __timezone
+__typeof__                                       :#define __typeof__(xxx)
+__tzname                                         :char *__tzname[]
+__u_char                                         :typedef unsigned char __u_char
+__u_int                                          :typedef unsigned int __u_int
+__u_long                                         :typedef long unsigned int __u_long
+__u_quad_t                                       :typedef long unsigned int __u_quad_t
+__u_short                                        :typedef short unsigned int __u_short
+__uflow                                          :int __uflow(_IO_FILE *)
+__uid_t                                          :typedef unsigned int __uid_t
+__uint16_t                                       :typedef short unsigned int __uint16_t
+__uint32_t                                       :typedef unsigned int __uint32_t
+__uint64_t                                       :typedef long unsigned int __uint64_t
+__uint8_t                                        :typedef unsigned char __uint8_t
+__uintmax_t                                      :typedef long unsigned int __uintmax_t
+__underflow                                      :int __underflow(_IO_FILE *)
+__unix                                           :#define __unix
+__unix__                                         :#define __unix__
+__useconds_t                                     :typedef unsigned int __useconds_t
+__warnattr                                       :#define __warnattr(msg)
+__warndecl                                       :#define __warndecl(name, msg)
+__wchar_t                                        :#define __wchar_t
+__wur                                            :#define __wur
+asctime                                          :char *asctime(struct tm  *__tp)
+asctime_r                                        :char *asctime_r(struct tm  *__tp, char
+                                                  *__buf)
+assert                                           :#define assert(expr)
+clearerr                                         :void clearerr(FILE *__stream)
+clearerr_unlocked                                :void clearerr_unlocked(FILE *__stream)
+clock                                            :clock_t clock(void )
+clock_getcpuclockid                              :int clock_getcpuclockid(pid_t __pid,
+                                                  clockid_t *__clock_id)
+clock_getres                                     :int clock_getres(clockid_t __clock_id,
+                                                  struct timespec  *__res)
+clock_gettime                                    :int clock_gettime(clockid_t __clock_id,
+                                                  struct timespec  *__tp)
+clock_nanosleep                                  :int clock_nanosleep(clockid_t __clock_id,
+                                                  int __flags, struct timespec  *__req,
+                                                  struct timespec  *__rem)
+clock_settime                                    :int clock_settime(clockid_t __clock_id,
+                                                  struct timespec  *__tp)
+clock_t                                          :typedef long int clock_t
+clockid_t                                        :typedef int clockid_t
+com                                              :int com()
+completions                                      :void completions()
+ctermid                                          :char *ctermid(char *__s)
+ctime                                            :char *ctime(time_t *__timer)
+ctime_r                                          :char *ctime_r(time_t *__timer, char
+                                                  *__buf)
+daylight                                         :int daylight
+difftime                                         :double difftime(time_t __time1, time_t
+                                                  __time0)
+dprintf                                          :int dprintf(int __fd, char *__fmt, ...)
+dysize                                           :int dysize(int __year)
+fclose                                           :int fclose(FILE *__stream)
+fdopen                                           :FILE *fdopen(int __fd, char *__modes)
+feof                                             :int feof(FILE *__stream)
+feof_unlocked                                    :int feof_unlocked(FILE *__stream)
+ferror                                           :int ferror(FILE *__stream)
+ferror_unlocked                                  :int ferror_unlocked(FILE *__stream)
+fflush                                           :int fflush(FILE *__stream)
+fflush_unlocked                                  :int fflush_unlocked(FILE *__stream)
+fgetc                                            :int fgetc(FILE *__stream)
+fgetc_unlocked                                   :int fgetc_unlocked(FILE *__stream)
+fgetpos                                          :int fgetpos(FILE *__stream, fpos_t *__pos)
+fgets                                            :char *fgets(char *__s, int __n, FILE
+                                                  *__stream)
+fileno                                           :int fileno(FILE *__stream)
+fileno_unlocked                                  :int fileno_unlocked(FILE *__stream)
+flockfile                                        :void flockfile(FILE *__stream)
+...</all-completions>
 
