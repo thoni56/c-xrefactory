@@ -11,5 +11,5 @@
 <sync>
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/cexercise/completions.c"
 <sync>
--encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=93  "-preload" "CURDIR/cexercise/completions.c" "/tmp/c-xrefxthoni756.tmp" "-olmark=431" "-olcursor=432" "CURDIR/cexercise/completions.c" -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-encoding=european -olcxcomplet -maxcompls=100 -olfqtcompletionslevel=2 -olinelen=93  "-preload" "CURDIR/cexercise/completions.c" "/tmp/c-xrefxthoni756.tmp" "-olcursor=422" "CURDIR/cexercise/completions.c" -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 <sync>
