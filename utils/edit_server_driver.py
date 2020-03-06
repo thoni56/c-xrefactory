@@ -4,8 +4,26 @@
 #
 # Usage:
 #
-#     edit_server_driver.py <commandfile> <curdir> <bufferfile> [ <seconds> ]
+#     edit_server_driver.py <commandsfile> <curdir> <bufferfile> [ <seconds> ]
 #
+# Format of commandsfile is just a sequence of lines which are sent to
+# the edit server interspersed with <sync> which will cause the driver
+# to listen wait for syncronization from the server.
+#
+# The first line is always the invocation command.
+#
+# All commands will be printed on stdout. After a <sync> is recieved
+# the servers answer is in the specified output file. That answer will
+# be copied into the output so that the complete interaction can be
+# seen. Example input
+#
+#     ../../src/c-xref -xrefrc CURDIR/.c-xrefrc single_int1.c -xrefactory-II -o buffer -task_regime_server
+#     -olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/single_int1.c
+#     <sync>
+#     -olcxcomplet CURDIR/single_int1.c -olcursor=85 -xrefrc CURDIR/.c-xrefrc -p CURDIR
+#     <sync>
+#
+
 import sys
 import subprocess
 import io
