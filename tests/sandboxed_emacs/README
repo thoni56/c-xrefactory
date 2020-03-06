@@ -6,16 +6,26 @@ the emacs started will use the c-xref[actory].el in
 so that all c-xref projects and data will be isolated and not interfer
 with your private ones.
 
+The interaction will be saved by pipespy into a temporary file called
+/tmp/pipespyNNNN.log.
+
 You can do
 
     make
-    make emacs
 
-to start a sandboxed Emacs in the terminal or
+to start a sandboxed Emacs.
 
-    make gui
+One very handy use of this is that you can start an Emacs using this
+and then replay the interaction using the utility
+utils/edit_server_driver.
 
-to start one in gui-mode. (Currently only supports Emacs for MacOS).
+To do that save the /tmp/pipespy*.log file and use that as an input
+file for the driver. You just have to
+
+- remove the first three characters on the first line
+- remove all the lines with "end-of-options"
+- adjust the first line (which is the c-xref invocation command)
+
 
 Details
 
@@ -23,15 +33,14 @@ Create an emacs session with a local complete environment. Since we
 use el-get we can just replace the el-get git clone with a link to the
 complete c-xrefactory tree (which of course is another git clone of
 the repo but one that we do our development in, rather than the
-deployed one, which comes with a real el-get installation. Note that
-el-get-update* is disabled to not screw this up.
+deployed one, which comes with a real el-get installation. An attempt
+has been made to disable el-get-update* to not screw this up.
 
 Inject a spy or logger between emacs and an actual c-xref
 executable. For the sandboxed Emacs (run using the Makefile) the lisp
 variable `c-xref-home-directory` is set to point to the local `bin`
 sub-directory. Any `c-xref` here will therefore be used as the one the
-c-xrefactory elisp will call. And there is one now that logs the
-arguments.
+c-xrefactory elisp will call.
 
 TODO Log the inter-process communication between the started c-xref
 server and Emacs so that we can get closer to the actual goal, namely
