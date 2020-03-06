@@ -1,107 +1,121 @@
 ../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -task_regime_server -o buffer
--olcxgetprojectname -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/index.c"
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/index.c"
 end-of-options
 
 <sync>
-<set-info len=68>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise</set-info>
+<no-project-found len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/index.c</no-project-found>
 
--encoding=european -olcxpush -urldirect  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/index.c" "/tmp/c-xrefxthoni731.tmp" "-olcursor=621" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/index.c" -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
+-encoding=european -olcxpush -urldirect  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/index.c" "/tmp/c-xrefxthoni731.tmp" "-olcursor=621" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/index.c" -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
+end-of-options
+
+<sync>
+<error len=<n>>'/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise' project options not found
+</error>
+<error len=<n>>'/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise' project options not found
+</error>
+<goto>
+ <position-lc line=20 col=5 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/index.c</position-lc>
+</goto>
+
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
+end-of-options
+
+<sync>
+<no-project-found len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</no-project-found>
+
+-encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=<n>  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni736.tmp" "-olmark=0" "-olcursor=430" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
+end-of-options
+
+<sync>
+<error len=<n>>'/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise' project options not found
+</error>
+<goto>
+ <position-lc line=18 col=4 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</position-lc>
+</goto>
+<single-completion len=<n>>completions</single-completion>
+
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
+end-of-options
+
+<sync>
+<no-project-found len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</no-project-found>
+
+-encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=<n>  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni741.tmp" "-olmark=430" "-olcursor=431" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
+end-of-options
+
+<sync>
+<error len=<n>>'/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise' project options not found
+</error>
+<all-completions nofocus=0 len=<n>>completions  :void completions()</all-completions>
+
+-encoding=european -olcomplselect1 -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
 end-of-options
 
 <sync>
 <goto>
- <position-lc line=13 col=5 len=82>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</position-lc>
+<position-lc line=18 col=4 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</position-lc>
 </goto>
+<single-completion len=<n>>completions</single-completion>
 
--olcxgetprojectname -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
 end-of-options
 
 <sync>
-<set-info len=68>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise</set-info>
+<no-project-found len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</no-project-found>
 
--encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=93  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni736.tmp" "-olmark=0" "-olcursor=430" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
+-encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=<n>  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni746.tmp" "-olmark=431" "-olcursor=431" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
+end-of-options
+
+<sync>
+<error len=<n>>'/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise' project options not found
+</error>
+<all-completions nofocus=0 len=<n>>completions  :void completions()</all-completions>
+
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
+end-of-options
+
+<sync>
+<no-project-found len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</no-project-found>
+
+-encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=<n>  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni751.tmp" "-olmark=431" "-olcursor=431" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
+end-of-options
+
+<sync>
+<error len=<n>>'/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise' project options not found
+</error>
+<all-completions nofocus=0 len=<n>>completions  :void completions()</all-completions>
+
+-encoding=european -olcomplselect1 -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
 end-of-options
 
 <sync>
 <goto>
- <position-lc line=18 col=4 len=82>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</position-lc>
+<position-lc line=18 col=4 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</position-lc>
 </goto>
-<single-completion len=11>completions</single-completion>
+<single-completion len=<n>>completions</single-completion>
 
--olcxgetprojectname -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
-end-of-options
-
-<sync>
-<set-info len=68>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise</set-info>
-
--encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=93  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni741.tmp" "-olmark=430" "-olcursor=431" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
-end-of-options
-
-<sync>
-<all-completions nofocus=0 len=32>completions  :void completions()</all-completions>
-
--encoding=european -olcomplselect1 -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
+-encoding=european -olcomplback -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
 end-of-options
 
 <sync>
 <goto>
-<position-lc line=18 col=4 len=82>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</position-lc>
+<position-lc line=18 col=4 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</position-lc>
 </goto>
-<single-completion len=11>completions</single-completion>
+<all-completions nofocus=0 len=<n>>completions  :void completions()</all-completions>
 
--olcxgetprojectname -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
 end-of-options
 
 <sync>
-<set-info len=68>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise</set-info>
+<no-project-found len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</no-project-found>
 
--encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=93  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni746.tmp" "-olmark=431" "-olcursor=431" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
+-encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=<n>  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni756.tmp" "-olmark=431" "-olcursor=432" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
 end-of-options
 
 <sync>
-<all-completions nofocus=0 len=32>completions  :void completions()</all-completions>
-
--olcxgetprojectname -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
-end-of-options
-
-<sync>
-<set-info len=68>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise</set-info>
-
--encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=93  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni751.tmp" "-olmark=431" "-olcursor=431" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
-end-of-options
-
-<sync>
-<all-completions nofocus=0 len=32>completions  :void completions()</all-completions>
-
--encoding=european -olcomplselect1 -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
-end-of-options
-
-<sync>
-<goto>
-<position-lc line=18 col=4 len=82>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</position-lc>
-</goto>
-<single-completion len=11>completions</single-completion>
-
--encoding=european -olcomplback -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
-end-of-options
-
-<sync>
-<goto>
-<position-lc line=18 col=4 len=82>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c</position-lc>
-</goto>
-<all-completions nofocus=0 len=32>completions  :void completions()</all-completions>
-
--olcxgetprojectname -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
-end-of-options
-
-<sync>
-<set-info len=68>/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise</set-info>
-
--encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=93  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni756.tmp" "-olmark=431" "-olcursor=432" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
-end-of-options
-
-<sync>
-<all-completions nofocus=0 len=467>%    :token
+<error len=<n>>'/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise' project options not found
+</error>
+<all-completions nofocus=0 len=<n>>%    :token
 &    :token
      :token
 *    :token

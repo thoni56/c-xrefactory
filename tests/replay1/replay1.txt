@@ -1,31 +1,31 @@
 ../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -task_regime_server -o buffer
--olcxgetprojectname -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/index.c"
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/index.c"
 <sync>
--encoding=european -olcxpush -urldirect  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/index.c" "/tmp/c-xrefxthoni731.tmp" "-olcursor=621" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/index.c" -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
+-encoding=european -olcxpush -urldirect  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/index.c" "/tmp/c-xrefxthoni731.tmp" "-olcursor=621" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/index.c" -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
 <sync>
--olcxgetprojectname -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
 <sync>
--encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=93  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni736.tmp" "-olmark=0" "-olcursor=430" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
+-encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=93  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni736.tmp" "-olmark=0" "-olcursor=430" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
 <sync>
--olcxgetprojectname -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
 <sync>
--encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=93  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni741.tmp" "-olmark=430" "-olcursor=431" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
+-encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=93  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni741.tmp" "-olmark=430" "-olcursor=431" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
 <sync>
--encoding=european -olcomplselect1 -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
+-encoding=european -olcomplselect1 -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
 <sync>
--olcxgetprojectname -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
 <sync>
--encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=93  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni746.tmp" "-olmark=431" "-olcursor=431" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
+-encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=93  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni746.tmp" "-olmark=431" "-olcursor=431" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
 <sync>
--olcxgetprojectname -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
 <sync>
--encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=93  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni751.tmp" "-olmark=431" "-olcursor=431" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
+-encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=93  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni751.tmp" "-olmark=431" "-olcursor=431" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
 <sync>
--encoding=european -olcomplselect1 -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
+-encoding=european -olcomplselect1 -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
 <sync>
--encoding=european -olcomplback -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
+-encoding=european -olcomplback -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
 <sync>
--olcxgetprojectname -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c"
 <sync>
--encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=93  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni756.tmp" "-olmark=431" "-olcursor=432" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
+-encoding=european -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=93  "-preload" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" "/tmp/c-xrefxthoni756.tmp" "-olmark=431" "-olcursor=432" "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise/completions.c" -xrefrc "CURDIR/.c-xrefrc" -p "/home/thoni/Utveckling/c-xrefactory/tests/emacs_c_exercise/cexercise" -user 1
 <sync>
