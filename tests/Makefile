@@ -1,4 +1,7 @@
 # Run all tests
+#
+# NOTE: sandboxed_emacs is not a test...
+
 ifndef VERBOSE
 MAKEFLAGS+=--no-print-directory
 endif
@@ -22,7 +25,7 @@ quick:
 	@$(MAKE) -C initializer_parsing
 	@$(MAKE) -C generate_str_fill
 	@$(MAKE) -C java_example
-	@$(MAKE) -C edit_server_test/example
+	@$(MAKE) -C edit_server_test_example
 	@$(MAKE) -C olcx_push
 	@$(MAKE) -C olcx_complete
 

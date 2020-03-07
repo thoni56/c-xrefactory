@@ -1,5 +1,30 @@
+/***********************************************************************\
+
+    Program to spy on a stdin/stdout pipe communication between two
+    processes, the caller and the target.
+
+    thoni56/Thomas Nilefalk - January 2020
+
+    Make the caller exec this program instead of the real target and
+    ensure that the TARGET variable points to the target using a full
+    path.
+
+    Then, when called, this program, the parent, will set up three
+    child processes, one spy for each of the downstream and upstream
+    communication flows and a third which will exec the real target.
+    The downstream and upstream childs will hook in to the stdin and
+    stdout of the parent and thus read from the output pipe of the
+    caller and write to the input pipe it has set up.
+
+    The parent process will setup pipes so that the spy childs can
+    hook their pipes to the exec'ed target process.
+    While propagating the communication the children will also copy
+    that to a logfile.
+
+\**********************************************************************/
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <unistd.h>
 #include <errno.h>
 #include <sys/wait.h>
@@ -11,15 +36,37 @@
 FILE *logFile;
 
 /* You need to define TARGET as a compile-time constant using -DTARGET=... */
-//#define TARGET "../../src/c-xref"
+//#define TARGET "path/to/some/executable"
 
 
 int main(int argc, char **argv) {
-    bool trace = false;
+    bool trace = false;         /* To trace, you must change this using
+                                   the debugger. We can't add an
+                                   option for this since we don't
+                                   control argc/argv, the caller does.
+                                   And we don't want to have to change
+                                   it... */
     char logFileName[100];
+    char *fileName;
+#ifdef TARGET
+    char *target = TARGET;
+#else
+    char *target = getenv("TARGET");
+#endif
 
-    sprintf(logFileName, "/tmp/pipespy%d.log", getpid());
+    fileName = getenv("LOGFILE");
+    if (fileName != NULL)
+        strcpy(logFileName, fileName);
+    else
+        sprintf(logFileName, "/tmp/pipespy%d.log", getpid());
     logFile = fopen(logFileName, "w");
+
+    if (target == NULL) {
+        fprintf(logFile, "*** ERROR: NO pipe-spy TARGET DEFINED, neither compile-time or environment ***");
+        exit(-1);
+    }
+
+    /* Log arguments to the command on the first line in the log */
     for (int a=0; a<argc; a++)
         fprintf(logFile, "%s ", argv[a]);
     fprintf(logFile, "\n");
@@ -46,6 +93,7 @@ int main(int argc, char **argv) {
     pid_t downstream_pid = fork();
     if (downstream_pid == 0) {
         char buffer[10000];
+        if (trace) { fprintf(logFile, "** downstream child to fdopen\n"); fflush(logFile); }
         FILE *toTarget = fdopen(downstream_pipe[WRITE_END], "w");
         if (trace) { fprintf(logFile, "** downstream child did fdopen\n"); fflush(logFile); }
 
@@ -71,6 +119,7 @@ int main(int argc, char **argv) {
     pid_t upstream_pid = fork();
     if (upstream_pid == 0) {
         char buffer[10000];
+        if (trace) { fprintf(logFile, "** upstream child to fdopen\n");  fflush(logFile); }
         FILE *fromTarget = fdopen(upstream_pipe[READ_END], "r");
         if (trace) { fprintf(logFile, "** upstream child did fdopen\n");  fflush(logFile); }
 
@@ -97,18 +146,18 @@ int main(int argc, char **argv) {
     if (target_pid == 0) {
         /* In the target, so... */
         /* ... connect the stdin to the downstream pipes read end... */
-        if (trace) { fprintf(logFile, "** target child to dup2\n");  fflush(logFile); }
+        if (trace) { fprintf(logFile, "** target child to dup2 on read end\n");  fflush(logFile); }
         if (dup2(downstream_pipe[READ_END], STDIN_FILENO) == -1) exit(errno);
-        if (trace) { fprintf(logFile, "** target child did dup2\n");  fflush(logFile); }
+        if (trace) { fprintf(logFile, "** target child did dup2 on read end\n");  fflush(logFile); }
         /* ... the stdout to the upstream pipes write end... */
-        if (trace) { fprintf(logFile, "** target child to dup2\n");  fflush(logFile); }
+        if (trace) { fprintf(logFile, "** target child to dup2 in write end\n");  fflush(logFile); }
         if (dup2(upstream_pipe[WRITE_END], STDOUT_FILENO) == -1) exit(errno);
-        if (trace) { fprintf(logFile, "** target child did dup2\n");  fflush(logFile); }
+        if (trace) { fprintf(logFile, "** target child did dup2 in write end\n");  fflush(logFile); }
         /* ... and exec ... */
         if (trace) { fprintf(logFile, "** target child to execv\n");  fflush(logFile); }
-        execv(TARGET, argv);
+        execv(target, argv);
         /* ... if we get here execv failed... */
-        perror(TARGET);
+        perror(target);
         _exit(1);
     }
     if (trace) { fprintf(logFile, "** parent forked target to %d\n", target_pid);  fflush(logFile); }
