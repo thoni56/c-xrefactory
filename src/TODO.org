@@ -31,6 +31,7 @@ attack those one by one, maybe?
 * DOING Ensure only externally used functions are visible in the modules
 header file. And that only those are "non-static" in the C file.
 * TODO Add an -exit option so that client can take down server cleanly
+* TODO Clean up documentation, primarily remove 'create_distribution'
 * TODO Document that the "distribution" method is unsupported
 * TODO Move XX_ALLOCC and friends to "memory" module
 * TODO Ensure each header file is not dependent on the fact that some other
