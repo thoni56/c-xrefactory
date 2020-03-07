@@ -301,47 +301,6 @@ void olCompletionListInit(S_position *originalPos) {
     s_olcxCurrentUser->completionsStack.top->cpos = *originalPos;
 }
 
-#if ZERO
-// if it return 1 - so, the original order is prefered
-static int reorderCmpCompletions(S_cline *c1, S_cline *c2) {
-    int c;
-    char *n1,*n2;
-    if (c1->symType==TypeKeyword) return(1);
-    c = c1->virtLevel - c2->virtLevel;
-    if (c<0) return(-1);
-    if (c>0) return(1);
-    if (c1->symType!=c2->symType) return(1); // uncomparable types
-    if (c1->symType!=TypeDefault) return(1);
-    if (c2->vFunClass==NULL) return(1);
-    if (c1->vFunClass==NULL) return(-1);
-    n1 = javaGetShortClassName(c1->vFunClass->linkName);
-    n2 = javaGetShortClassName(c2->vFunClass->linkName);
-    c = strcmp(n1, n2);
-    if (c<0) return(-1);
-    if (c>0) return(1);
-    return(1);  // by default, keep original order
-}
-
-static void reorderCompletionArray(S_completions* cc) {
-    S_cline *a,tl;
-    int ai;
-    int l,r,x,c,i;
-    a = cc->a;
-    for (ai=0; ai<cc->ai; ai++) {
-        tl = a[ai];
-        l = 0; r = ai-1;
-        while (l<=r) {
-            x = (l+r)/2;
-            c = reorderCmpCompletions(&tl, &a[x]);
-            if (c<0) r=x-1; else l=x+1;
-        }
-        assert(l==r+1);
-        for(i=ai-1; i>=l; i--) a[i+1] = a[i];
-        a[l] = tl;
-    }
-}
-#endif
-
 static int completionsWillPrintEllipsis(S_olCompletion *olc) {
     int max, ellipsis;
     LIST_LEN(max, S_olCompletion, olc);
