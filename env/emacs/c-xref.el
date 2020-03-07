@@ -2614,12 +2614,12 @@ tries to delete C-xrefactory windows first.
     res
 ))
 
-(defun c-xref-send-data-to-process-and-dispatch (data dispatch-data tmp-files)
+(defun c-xref-send-data-to-process-and-dispatch (commands dispatch-data tmp-files)
   (let ((proc) (frame-id) (opts))
     (setq proc (cdr (assoc 'process dispatch-data)))
     (setq frame-id (cdr (assoc 'frame-id dispatch-data)))
     (setq opts (format "%s %s%s -xrefrc \"%s\" -p \"%s\" -user %d"
-                       data
+                       commands
                        (if c-xref-browser-lists-source-lines "" "-rlistwithoutsrc ")
                        (c-xref-encoding-option)
                        c-xref-options-file
