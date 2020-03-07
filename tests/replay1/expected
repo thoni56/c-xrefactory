@@ -5,7 +5,7 @@ end-of-options
 <sync>
 <set-info len=<n>>CURDIR</set-info>
 
--encoding=european -olcxpush -urldirect  "-preload" "CURDIR/cexercise/index.c" "/tmp/c-xrefxthoni731.tmp" "-olcursor=621" "CURDIR/cexercise/index.c" -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxpush -urldirect  "-preload" "CURDIR/cexercise/index.c" "/tmp/c-xrefxthoni731.tmp" "-olcursor=621" "CURDIR/cexercise/index.c" -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1 -encoding=european
 end-of-options
 
 <sync>
@@ -19,13 +19,13 @@ end-of-options
 <sync>
 <set-info len=<n>>CURDIR</set-info>
 
--encoding=european -olcomplselect1 -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcomplselect1 -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1 -encoding=european
 end-of-options
 
 <sync>
 <bottom-warning beep=1 len=<n>>Empty stack</bottom-warning>
 
--encoding=european -olcomplback -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcomplback -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1 -encoding=european
 end-of-options
 
 <sync>
@@ -36,7 +36,7 @@ end-of-options
 <sync>
 <set-info len=<n>>CURDIR</set-info>
 
--encoding=european -olcxcomplet -maxcompls=100 -olfqtcompletionslevel=2 -olinelen=<n>  "-preload" "CURDIR/cexercise/completions.c" "/tmp/c-xrefxthoni756.tmp" "-olcursor=422" "CURDIR/cexercise/completions.c" -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxcomplet -maxcompls=100 -olfqtcompletionslevel=2 -olinelen=<n>  "-preload" "CURDIR/cexercise/completions.c" "/tmp/c-xrefxthoni756.tmp" "-olcursor=422" "CURDIR/cexercise/completions.c" -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1 -encoding=european
 end-of-options
 
 <sync>
