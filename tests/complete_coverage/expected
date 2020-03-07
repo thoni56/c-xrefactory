@@ -1,27 +1,27 @@
-../../src/c-xref -xrefrc CURDIR/.c-xrefrc single_int1.c -xrefactory-II -o buffer -task_regime_server -log=log.log -trace
--olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/single_int1.c
+../../src/c-xref -xrefrc CURDIR/.c-xrefrc test_source/single_int1.c -xrefactory-II -o buffer -task_regime_server -log=log.log -trace
+-olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/test_source/single_int1.c
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
 
--olcxcomplet CURDIR/single_int1.c -olcursor=85 -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxcomplet CURDIR/test_source/single_int1.c -olcursor=85 -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
 <all-completions nofocus=0 len=<n>>single_int_on_line_1_col_4  :int single_int_on_line_1_col_4
 single_int_on_line_2_col_5  :int single_int_on_line_2_col_5</all-completions>
 
--olcxcomplet CURDIR/single_int1.c -olcursor=86 -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxcomplet CURDIR/test_source/single_int1.c -olcursor=86 -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>
 <goto>
-<position-lc line=4 col=0 len=<n>>CURDIR/single_int1.c</position-lc>
+<position-lc line=4 col=0 len=<n>>CURDIR/test_source/single_int1.c</position-lc>
 </goto>
 <single-completion len=<n>>single_int_on_line_1_col_4</single-completion>
 
--olcxcomplet CURDIR/single_int1.c -olcursor=172 -xrefrc CURDIR/.c-xrefrc -p CURDIR
+-olcxcomplet CURDIR/test_source/single_int1.c -olcursor=172 -xrefrc CURDIR/.c-xrefrc -p CURDIR
 end-of-options
 
 <sync>

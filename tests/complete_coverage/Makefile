@@ -2,31 +2,32 @@
 
 include ../Makefile.boilerplate
 
-COMMAND = ../../src/c-xref -xrefrc $(CURDIR)/.c-xrefrc single_int1.c
+CXREF = ../../src/c-xref -xrefrc $(CURDIR)/.c-xrefrc
+EDIT_SERVER_DRIVER = ../../utils/edit_server_driver.py
 
 $(TEST): CXrefs
-	@printf "Tests in '$@': "
-	@rm -rf output* $@.log /tmp/c-xref*.log
-	@../../utils/edit_server_driver.py completion-sequence.txt "$(CURDIR)" buffer > output.tmp
+	@$(EDIT_SERVER_DRIVER) commands.input "$(CURDIR)" buffer > output.tmp
 	@sed -e "s+$(CURDIR)+CURDIR+g" -e "s/len=[0-9]*/len=<n>/g" output.tmp > output
 	@cmp output expected ; \
 	if [ $$? -ne 0 ] ; then \
-		echo "Failed" ; \
+		echo "Tests in '$(TEST)': Failed" ; \
 		diff output expected ; \
 		exit 1 ; \
 	else \
-		echo "Ok" ; \
+		echo "Tests in '$(TEST)': Ok" ; \
 	fi
 	@exit 0
 
+trace: CXREF+=-trace
+trace: $(TEST)
+
 CXrefs:
-init:
-	@$(COMMAND) -o $(TEST).log
+	@$(CXREF) test_source -o $(TEST).log
 
 clean:
-	rm -r CXrefs .c-xrefrc
+	rm -rf CXrefs .c-xrefrc
 
 gdb:
-	@../../utils/edit_server_driver.py completion-sequence.txt "$(CURDIR)" buffer 15 > output.tmp &
+	@../../utils/edit_server_driver.py commands.input "$(CURDIR)" buffer 15 > output.tmp &
 	sleep 1
 	sudo gdb -pid `pgrep c-xref | tail -1`
