@@ -571,7 +571,11 @@ bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
     c = 'a';
     while (c!=EOF) {
         c = getOptionFromFile(file, text, MAX_OPTION_LEN, &len);
-        log_trace("got option from file: '%s'", text);
+        if (c==EOF) {
+            log_trace("got option from file (@EOF): '%s'", text);
+        } else {
+            log_trace("got option from file: '%s'", text);
+        }
         if (len>=2 && text[0]=='[' && text[len-1]==']') {
             log_trace("checking '%s'", text);
             expandEnvironmentVariables(text+1, MAX_OPTION_LEN, &len, GLOBAL_ENV_ONLY);
