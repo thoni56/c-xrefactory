@@ -1,3 +1,3 @@
 ../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -task_regime_server -o buffer
--olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/cexercise/index.c"
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/test_source/index.c"
 <sync>
