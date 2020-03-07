@@ -1,39 +1,34 @@
-# Automated tests for checking generated c-xreferences
+# Automated tests for olcx_push a.k.a goto-definition
 #
-# Verification: only that each line in output exists in expected
-# This is very crude
-
+# This should become the golden standard for creating an edit_server test:
+#
+# 1. generate CXrefs if they don't exist by running c-xref
+# 2. use ../../utils/edit_server_driver to feed the edit_server what's in commands.input
+# 3. normalize commands.output and compare
+#
 include ../Makefile.boilerplate
 
-COMMAND = ../../src/c-xref
-OPTIONS = "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-o" "output.log" "-task_regime_server"
+CXREF = ../../src/c-xref
 
-$(TEST): commands.input CXrefs/XFiles
+$(TEST): CXrefs
 	@printf "Tests in '$@': "
-	@$(COMMAND) $(OPTIONS) < commands.input > commands.output || true
-	@sed -e "s/len=[0-9]*/len=<n>/g" -e "s#$(CURDIR)#CURDIR#g" output.log > output
-	@while read -r line ; do \
-		grep -q "$$line" output ; \
-		ecode=$$? ; \
-		if [ $$ecode -ne 0 ] ; then \
-			echo "Failed: output did not contain expected: '$$line'" ; \
-			exit 1 ; \
-		fi ; \
-	done < expected
-	@echo "Ok"
+	@../../utils/edit_server_driver.py commands.input $(CURDIR) buffer > output.tmp
+	@sed -e "s/len=[0-9]*/len=<n>/g" -e "s#$(CURDIR)#CURDIR#g" output.tmp > output
+	@diff output expected > /dev/null ; \
+	if [ $$? -ne 0 ] ; then \
+		echo "Failed" ; \
+		diff output expected ; \
+		exit 1 ; \
+	else \
+		echo "Ok" ; \
+	fi
 	@exit 0
 
-trace: COMMAND+=-trace
+trace: CXREF+=-trace
 trace: $(TEST)
 
-gdb:
-	gdb -ex 'set args $(COMMAND) $(OPTIONS) < commands.input' $(COMMAND)
-
-commands.input: commands.tpl
-	@sed -e "s+CURDIR+$(CURDIR)+g" $< > $@
-
-CXrefs/XFiles: CXrefs/XFiles.tpl
-	@sed -e "s+<n>:CURDIR+`echo $$PWD/single_int1.c| awk '{ print length }'`:$(CURDIR)+g" $< > $@
+CXrefs:
+	$(CXREF) -xrefrc=.c-xrefrc single_int*.c -o output.log
 
 clean:
-	rm commands.input CXrefs/XFiles
+	rm -rf CXrefs

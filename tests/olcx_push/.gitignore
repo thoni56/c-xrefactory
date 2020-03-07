@@ -2,3 +2,5 @@
 commands.output
 output
 buffer
+output.tmp
+CXrefs
