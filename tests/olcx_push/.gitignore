@@ -1,5 +1,4 @@
 .c-xrefrc
-commands.input
 commands.output
 output
-output.log
+buffer
