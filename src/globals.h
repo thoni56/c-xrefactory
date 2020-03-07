@@ -164,13 +164,7 @@ extern int ppmMemoryi;
 extern char ftMemory[SIZE_ftMemory];
 extern int ftMemoryi;
 
-#ifdef OLD_RLM_MEMORY
-extern void *olcxMemoryFreeList[MAX_BUFFERED_SIZE_olcxMemory];
-extern char olcxMemory[SIZE_olcxMemory];
-extern int olcxMemoryi;
-#else
 extern int olcxMemoryAllocatedBytes;
-#endif
 
 
 extern jmp_buf cxmemOverflow;

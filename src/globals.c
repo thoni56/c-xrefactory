@@ -108,13 +108,7 @@ int tmpWorkMemoryi = 0;
 char tmpBuff[TMP_BUFF_SIZE];
 
 
-#ifdef OLD_RLM_MEMORY
-void *olcxMemoryFreeList[MAX_BUFFERED_SIZE_olcxMemory] = {NULL};
-char olcxMemory[SIZE_olcxMemory];
-int olcxMemoryi=0;
-#else
 int olcxMemoryAllocatedBytes;
-#endif
 
 S_memory *cxMemory=NULL;
 
