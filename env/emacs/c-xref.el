@@ -2618,10 +2618,10 @@ tries to delete C-xrefactory windows first.
   (let ((proc) (frame-id) (opts))
     (setq proc (cdr (assoc 'process dispatch-data)))
     (setq frame-id (cdr (assoc 'frame-id dispatch-data)))
-    (setq opts (format "%s%s %s -xrefrc \"%s\" -p \"%s\" -user %d"
+    (setq opts (format "%s %s%s -xrefrc \"%s\" -p \"%s\" -user %d"
+                       data
                        (if c-xref-browser-lists-source-lines "" "-rlistwithoutsrc ")
                        (c-xref-encoding-option)
-                       data
                        c-xref-options-file
                        c-xref-active-project
                        frame-id
