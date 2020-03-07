@@ -638,6 +638,7 @@ S_editorBuffer *editorFindFile(char *name) {
     int                 size;
     struct stat         st;
     S_editorBuffer      *res;
+
     res = editorGetOpenedAndLoadedBuffer(name);
     if (res==NULL) {
         res = editorGetOpenedBuffer(name);

@@ -1627,7 +1627,7 @@ typedef struct options {
     int fqtNameToCompletions;
     char *moveTargetClass;
     int trivialPreCheckCode;
-    int urlGenTemporaryFile;
+    bool urlGenTemporaryFile;
     int urlAutoRedirect;
     int javaFilesOnly;
     int exactPositionResolve;
