@@ -3001,14 +3001,6 @@ static int needToProcessInputFile(void) {
            );
 }
 
-static int needToLoadOptions(void) {
-    return(needToProcessInputFile()
-           || s_opt.server_operation==OLO_CT_INSPECT_DEF
-           || s_opt.server_operation==OLO_MENU_INSPECT_CLASS
-           || s_opt.server_operation==OLO_MENU_INSPECT_DEF
-           || s_opt.server_operation==OLO_CBROWSE
-           );
-}
 
 /* *************************************************************** */
 /*                          Xref regime                            */
