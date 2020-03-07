@@ -7,6 +7,7 @@
 #include "cxref.h"
 #include "list.h"
 #include "strFill.h"
+#include "log.h"
 
 #include "protocol.h"
 
@@ -530,7 +531,8 @@ static S_editorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct 
     ff->stat = *st;
     ED_ALLOC(ffl, S_editorBufferList);
     FILL_editorBufferList(ffl, ff, NULL);
-    //&sprintf(tmpBuff,"creating buffer %s %s\n", ff->name, ff->fileName);ppcGenRecord(PPC_IGNORE, tmpBuff, "\n");
+    log_trace("creating buffer %s %s", ff->name, ff->fileName);
+    //& ppcGenRecord(PPC_IGNORE, tmpBuff, "\n");
     editorBufferTabAdd(&s_editorBufferTab, ffl, &ii);
     // set ftnum at the end, because, addfiletabitem calls back the statb
     // from editor, so be tip-top at this moment!
