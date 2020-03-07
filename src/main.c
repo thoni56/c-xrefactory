@@ -157,6 +157,7 @@ static void aboutMessage(void) {
             sprintf(tmpBuff,"file name expected after %s\n",argv[i-1]); \
             error(ERR_ST,tmpBuff);                                      \
             usage(argv[0]);                                             \
+            exit(1);                                                    \
         }                                                               \
     }
 
@@ -166,6 +167,7 @@ static void aboutMessage(void) {
             sprintf(tmpBuff,"further argument(s) expected after %s\n",argv[i-1]); \
             error(ERR_ST,tmpBuff);                                      \
             usage(argv[0]);                                             \
+            exit(1);                                                    \
         }                                                               \
     }
 
@@ -1474,17 +1476,17 @@ static int processTOption(int *ii, int argc, char **argv) {
     return(1);
 }
 
-static int processUOption(int *ii, int argc, char **argv) {
-    int i = * ii;
+static bool processUOption(int *argIndexP, int argc, char **argv) {
+    int i = *argIndexP;
     if (0) {}
     else if (strcmp(argv[i],"-urlmanualredirect")==0)   {
         s_opt.urlAutoRedirect = 0;
     }
     else if (strcmp(argv[i],"-urldirect")==0)   {
-        s_opt.urlGenTemporaryFile = 0;
+        s_opt.urlGenTemporaryFile = false;
     }
     else if (strcmp(argv[i],"-user")==0) {
-        NEXT_FILE_ARG();
+        NEXT_ARG();
         createOptionString(&s_opt.user, argv[i]);
     }
     else if (strcmp(argv[i],"-update")==0)  {
@@ -1495,9 +1497,10 @@ static int processUOption(int *ii, int argc, char **argv) {
         s_opt.update = UP_FULL_UPDATE;
         s_opt.updateOnlyModifiedFiles = 1;
     }
-    else return(0);
-    *ii = i;
-    return(1);
+    else
+        return(false);
+    *argIndexP = i;
+    return true;
 }
 
 static int processVOption(int *ii, int argc, char **argv) {
