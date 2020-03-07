@@ -1,2 +1,5 @@
 output
 buffer
+output.tmp
+output.log
+.c-xrefrc

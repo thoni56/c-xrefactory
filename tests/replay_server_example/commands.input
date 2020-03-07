@@ -1,15 +1,3 @@
 ../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -task_regime_server -o buffer
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/cexercise/index.c"
 <sync>
--olcxpush -urldirect  "-preload" "CURDIR/cexercise/index.c" "/tmp/c-xrefxthoni731.tmp" "-olcursor=621" "CURDIR/cexercise/index.c" -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1 -encoding=european
-<sync>
--olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/cexercise/completions.c"
-<sync>
--olcomplselect1 -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1 -encoding=european
-<sync>
--olcomplback -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1 -encoding=european
-<sync>
--olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/cexercise/completions.c"
-<sync>
--olcxcomplet -maxcompls=100 -olfqtcompletionslevel=2 -olinelen=93  "-preload" "CURDIR/cexercise/completions.c" "/tmp/c-xrefxthoni756.tmp" "-olcursor=422" "CURDIR/cexercise/completions.c" -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1 -encoding=european
-<sync>
