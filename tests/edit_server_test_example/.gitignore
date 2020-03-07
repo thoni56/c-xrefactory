@@ -1,5 +1,6 @@
-output
 buffer
+output
 output.tmp
-output.log
+*.log
 .c-xrefrc
+CXrefs

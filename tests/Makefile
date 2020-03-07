@@ -22,9 +22,9 @@ quick:
 	@$(MAKE) -C initializer_parsing
 	@$(MAKE) -C generate_str_fill
 	@$(MAKE) -C java_example
-	@$(MAKE) -C replay_server_example
+	@$(MAKE) -C edit_server_test/example
 	@$(MAKE) -C olcx_push
-	@$(MAKE) -C complete_coverage
+	@$(MAKE) -C olcx_complete
 
 slow:
 	@echo "Slow tests..."

@@ -2,8 +2,10 @@
 #
 # 1. generate CXrefs if they don't exist by running c-xref
 # 2. use ../../utils/edit_server_driver to feed the edit_server what's in commands.input
-# 3. normalize commands.output and compare
+# 3. normalize the output and compare
 #
+# N.B. You can create a good starting point for your commands.input by running emacs
+# from ../sandboxed_emacs.
 
 include ../Makefile.boilerplate
 
@@ -26,7 +28,12 @@ trace: CXREF+=-trace
 trace: $(TEST)
 
 CXrefs:
-	@$(CXREF) -xrefrc=.c-xrefrc test_source -o output.log
+	@$(CXREF) -xrefrc=.c-xrefrc test_source -o $@.log
 
 clean:
 	rm -rf .c-xrefrc CXrefs output.log output.tmp
+
+gdb:
+	@$(EDIT_SERVER_DRIVER) commands.input "$(CURDIR)" buffer 15 > output.tmp &
+	sleep 1
+	sudo gdb -pid `pgrep c-xref | tail -1`
