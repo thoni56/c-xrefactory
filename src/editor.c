@@ -828,11 +828,11 @@ void editorDumpBuffers(void) {
     fprintf(dumpOut,"[editorDumpBuffers] end\n");
 }
 
-static void editorQuasiSaveBuffer(S_editorBuffer *buff) {
-    buff->b.modifiedSinceLastQuasiSave = false;
-    buff->stat.st_mtime = time(NULL);  //? why it does not work with 1;
-    assert(s_fileTab.tab[buff->ftnum]);
-    s_fileTab.tab[buff->ftnum]->lastModif = buff->stat.st_mtime;
+static void editorQuasiSaveBuffer(S_editorBuffer *buffer) {
+    buffer->b.modifiedSinceLastQuasiSave = false;
+    buffer->stat.st_mtime = time(NULL);  //? why it does not work with 1;
+    assert(s_fileTab.tab[buffer->ftnum]);
+    s_fileTab.tab[buffer->ftnum]->lastModified = buffer->stat.st_mtime;
 }
 
 void editorQuasiSaveModifiedBuffers(void) {

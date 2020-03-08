@@ -231,7 +231,7 @@ static void htmlGenHead(int fn) {
     fprintf(ccOut,"%s",ss0);
     fprintf(ccOut,"</B>");
     fprintf(ccOut," &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(%s) ",
-            ctime(&s_fileTab.tab[fn]->lastModif));
+            ctime(&s_fileTab.tab[fn]->lastModified));
     fprintf(ccOut,"</center>");
     fprintf(ccOut,"<hr>\n");
     fprintf(ccOut,"<pre>\n");

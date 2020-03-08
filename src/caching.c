@@ -30,10 +30,10 @@ int testFileModifiedTime(int fileIndex) {
         goto end;
     }
     s_fileTab.tab[fileIndex]->lastInspect = t0;
-    if (fst.st_mtime == s_fileTab.tab[fileIndex]->lastModif) {
+    if (fst.st_mtime == s_fileTab.tab[fileIndex]->lastModified) {
         res = 1;
     } else {
-        s_fileTab.tab[fileIndex]->lastModif = fst.st_mtime;
+        s_fileTab.tab[fileIndex]->lastModified = fst.st_mtime;
         res = 0;
     }
  end:

@@ -2802,7 +2802,7 @@ static int scheduleFileUsingTheMacro(void) {
 // this is necessary to put new mtimies for header files
 static void setFullUpdateMtimesInFileTab(S_fileItem *fi) {
     if (fi->b.scheduledToUpdate || s_opt.create) {
-        fi->lastFullUpdateMtime = fi->lastModif;
+        fi->lastFullUpdateMtime = fi->lastModified;
     }
 }
 
@@ -2864,8 +2864,8 @@ static bool mainSymbolCanBeIdentifiedByPosition(int fnum) {
 
     // if references are not updated do not search it here
     // there were fullUpdate time? why?
-    //&fprintf(dumpOut,"checking that lastmodif %d, == %d\n", s_fileTab.tab[fnum]->lastModif, s_fileTab.tab[fnum]->lastUpdateMtime);
-    if (s_fileTab.tab[fnum]->lastModif!=s_fileTab.tab[fnum]->lastUpdateMtime)
+    //&fprintf(dumpOut,"checking that lastmodif %d, == %d\n", s_fileTab.tab[fnum]->lastModified, s_fileTab.tab[fnum]->lastUpdateMtime);
+    if (s_fileTab.tab[fnum]->lastModified!=s_fileTab.tab[fnum]->lastUpdateMtime)
         return false;
 
     // here read one reference file looking for the refs
@@ -3072,9 +3072,9 @@ static void mainXrefOneWholeFileProcessing(int argc, char **argv,
     s_input_file_name = ff->name;
     s_fileProcessStartTime = time(NULL);
     // O.K. but this is missing all header files
-    ff->lastUpdateMtime = ff->lastModif;
+    ff->lastUpdateMtime = ff->lastModified;
     if (s_opt.update == UP_FULL_UPDATE || s_opt.create) {
-        ff->lastFullUpdateMtime = ff->lastModif;
+        ff->lastFullUpdateMtime = ff->lastModified;
     }
     mainXrefProcessInputFile(argc, argv, &inputIn,
                              firstPassing, atLeastOneProcessed);

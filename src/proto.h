@@ -924,7 +924,7 @@ typedef struct userOlcx {
 
 typedef struct fileItem {	/* to be renamed to constant pool item */
     char                *name;
-    time_t				lastModif;
+    time_t				lastModified;
     time_t				lastInspect;
     time_t				lastUpdateMtime;
     time_t				lastFullUpdateMtime;
