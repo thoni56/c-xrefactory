@@ -2837,8 +2837,8 @@ static void mainEditSrvParseInputFile( int *firstPassing, int inputIn ) {
     }
 }
 
-static int mainSymbolCanBeIdentifiedByPosition(int fnum) {
-    int     line,col;
+static bool mainSymbolCanBeIdentifiedByPosition(int fnum) {
+    int line,col;
 
     // there is a serious problem with options memory for options got from
     // the .c-xrefrc file. so for the moment this will not work.
@@ -2847,21 +2847,27 @@ static int mainSymbolCanBeIdentifiedByPosition(int fnum) {
     //&return(0);
     if (!creatingOlcxRefs()) return(0);
     if (s_opt.browsedSymName == NULL) return(0);
-    //&fprintf(dumpOut,"looking for sym %s on %s\n",s_opt.browsedSymName,s_opt.olcxlccursor);
+    log_trace("looking for sym %s on %s",s_opt.browsedSymName,s_opt.olcxlccursor);
     // modified file, can't identify the reference
-    //&fprintf(dumpOut,":modif flag == %d\n", s_opt.modifiedFlag);
-    if (s_opt.modifiedFlag == 1) return(0);
+    log_trace(":modif flag == %d", s_opt.modifiedFlag);
+    if (s_opt.modifiedFlag == 1)
+        return false;
+
     // here I will need also the symbol name
     // do not bypass commanline entered files, because of local symbols
     // and because references from currently processed file would
     // be not loaded from the TAG file (it expects they are loaded
     // by parsing).
-    //&fprintf(dumpOut,"checking if cmd %s, == %d\n", s_fileTab.tab[fnum]->name,s_fileTab.tab[fnum]->b.commandLineEntered);
-    if (s_fileTab.tab[fnum]->b.commandLineEntered) return(0);
+    log_trace("checking if cmd %s, == %d\n", s_fileTab.tab[fnum]->name,s_fileTab.tab[fnum]->b.commandLineEntered);
+    if (s_fileTab.tab[fnum]->b.commandLineEntered)
+        return false;
+
     // if references are not updated do not search it here
     // there were fullUpdate time? why?
     //&fprintf(dumpOut,"checking that lastmodif %d, == %d\n", s_fileTab.tab[fnum]->lastModif, s_fileTab.tab[fnum]->lastUpdateMtime);
-    if (s_fileTab.tab[fnum]->lastModif!=s_fileTab.tab[fnum]->lastUpdateMtime) return(0);
+    if (s_fileTab.tab[fnum]->lastModif!=s_fileTab.tab[fnum]->lastUpdateMtime)
+        return false;
+
     // here read one reference file looking for the refs
     // assume s_opt.olcxlccursor is correctly set;
     getLineColCursorPositionFromCommandLineOption( &line, &col);
@@ -2869,16 +2875,19 @@ static int mainSymbolCanBeIdentifiedByPosition(int fnum) {
     olSetCallerPosition(&s_olcxByPassPos);
     readOneAppropReferenceFile(s_opt.browsedSymName, byPassFunctionSequence);
     // if no symbol found, it may be a local symbol, try by parsing
-    //&fprintf(dumpOut,"checking that %d, != NULL\n", s_olcxCurrentUser->browserStack.top->hkSelectedSym);
-    if (s_olcxCurrentUser->browserStack.top->hkSelectedSym==NULL) return(0);
+    log_trace("checking that %d, != NULL", s_olcxCurrentUser->browserStack.top->hkSelectedSym);
+    if (s_olcxCurrentUser->browserStack.top->hkSelectedSym==NULL)
+        return false;
+
     // here I should set caching to 1 and recover the cachePoint ???
     // yes, because last file references are still stored, even if I
     // update the cxref file, so do it only if switching file?
     // but how to ensure that next pass will start parsing?
     // By recovering of point 0 handled as such a special case.
     recoverCachePointZero();
-    //&fprintf(dumpOut,"yes, it can be identified by position\n");
-    return(1);
+    log_trace("yes, it can be identified by position");
+
+    return true;
 }
 
 static void mainEditSrvFileSingleCppPass( int argc, char **argv,
