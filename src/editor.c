@@ -303,7 +303,7 @@ static void editorPerformEncodingAdjustemets(S_editorBuffer *buff) {
 
 void editorInit(void) {
     s_editorBufferTab.tab = s_staticEditorBufferTabTab;
-    editorBufferTabNAInit(&s_editorBufferTab, EDITOR_BUFF_TAB_SIZE);
+    editorBufferTabNoAllocInit(&s_editorBufferTab, EDITOR_BUFF_TAB_SIZE);
 }
 
 int statb(char *path, struct stat *statbuf) {

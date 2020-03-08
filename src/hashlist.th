@@ -25,7 +25,7 @@ extern void CONCAT(HASH_FUN_PREFIX, Init) (		/* Init */
                     HASH_TAB_TYPE *table,
                     int size
                 );
-extern void CONCAT(HASH_FUN_PREFIX, NAInit)(		/* not alloc init */
+extern void CONCAT(HASH_FUN_PREFIX, NoAllocInit)(		/* not alloc init */
                     HASH_TAB_TYPE *table,
                     int size
                 );

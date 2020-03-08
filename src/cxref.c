@@ -1072,7 +1072,7 @@ void olcxInit(void) {
     RLM_INIT(olcxMemory);
     RLM_SOFT_ALLOCC(olcxMemory, s_olcxTab.tab, OLCX_TAB_SIZE, S_userOlcx *);
     //CHECK_FREE(s_olcxTab.tab);        // do not report non-freeing of olcxtable
-    olcxTabNAInit(&s_olcxTab, OLCX_TAB_SIZE);
+    olcxTabNoAllocInit(&s_olcxTab, OLCX_TAB_SIZE);
     /* reserve place for some users */
     for(i=0; i<OLCX_USER_RESERVE; i++) OLCX_ALLOC(uu[i], S_userOlcx);
     for(i=0; i<OLCX_USER_RESERVE; i++) RLM_FREE(olcxMemory, uu[i], sizeof(S_userOlcx));

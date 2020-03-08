@@ -2449,7 +2449,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     CX_ALLOCC(sss, CX_MEMORY_CHUNK_SIZE, char);
     CX_FREE_UNTIL(sss);
     CX_ALLOCC(s_cxrefTab.tab,MAX_CXREF_SYMBOLS, struct symbolRefItem *);
-    refTabNAInit( &s_cxrefTab,MAX_CXREF_SYMBOLS);
+    refTabNoAllocInit( &s_cxrefTab,MAX_CXREF_SYMBOLS);
     if (firstmemory==0) {firstmemory=1;}
     SM_INIT(ppmMemory);
     ppMemInit();

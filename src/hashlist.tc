@@ -29,7 +29,7 @@
 #define HASH_TAB_TYPE struct HASH_TAB_NAME
 #define HASH_FUN_PREFIX HASH_TAB_NAME
 
-void CONCAT(HASH_FUN_PREFIX,NAInit)(HASH_TAB_TYPE *table, int size) {
+void CONCAT(HASH_FUN_PREFIX,NoAllocInit)(HASH_TAB_TYPE *table, int size) {
     table->size = size;
     memset(table->tab, 0, sizeof(HASH_ELEM_TYPE *)*table->size);
 }
@@ -37,7 +37,7 @@ void CONCAT(HASH_FUN_PREFIX,NAInit)(HASH_TAB_TYPE *table, int size) {
 
 void CONCAT(HASH_FUN_PREFIX,Init)(HASH_TAB_TYPE *table, int size) {
     XX_ALLOCC(table->tab, size, HASH_ELEM_TYPE *);
-    CONCAT(HASH_FUN_PREFIX,NAInit)(table, size);
+    CONCAT(HASH_FUN_PREFIX,NoAllocInit)(table, size);
 }
 
 
