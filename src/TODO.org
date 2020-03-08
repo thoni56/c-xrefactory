@@ -28,9 +28,6 @@ attack those one by one, maybe?
 ** TODO Remove generation of str_fill from build
 ** TODO Remove code for generation of str_fill
 * DOING Start using log.c functions to log to a separate log file
-* DOING Ensure only externally used functions are visible in the modules
-header file. And that only those are "non-static" in the C file.
-* TODO Add an -exit option so that client can take down server cleanly
 * TODO Clean up documentation, primarily remove 'create_distribution'
 * TODO Document that the "distribution" method is unsupported
 * TODO Move XX_ALLOCC and friends to "memory" module
@@ -50,7 +47,6 @@ control logging for various modules(?)
 ** DONE Include and start using log()
 
 ** TODO Move output from log() from dumpOut to some logFile
-
 * TODO Ensure all ANSI-C, C99 and C11 keywords (and macros for them?) are
   recognized (list e.g. at
   http://www.c-programming-simple-steps.com/c-keywords.html)
@@ -66,7 +62,6 @@ move towards full names as much as possible
 
 ** TODO Remove S_, s_ and other naming conventions
 ** TODO Use actual typedef names where ever possible
-
 * TODO Macros. There are many things that might need the magic of macros, but we
 should watch out for "macro for optimisation" and remove that.
 
@@ -98,6 +93,9 @@ easier to mock and unit test other modules.
   with the naming strategy as for the others.
 
 * TODO Move all function prototypes from proto.h to <module>.h
+* DONE Add an -exit option so that clients can take down server cleanly
+* DONE Ensure only externally used functions are visible in the modules
+header file. And that only those are "non-static" in the C file.
 * DONE Make edit_server_driver read output from pipespy
 Idea is to be able to record interactions and then re-play them
 with the driver.
@@ -134,4 +132,4 @@ while logging the messages to a file.
   conditionals.
 
 * DONE Refactor out the hashtables and lists to separate modules.
-* DONE Fix byacc skeleton to "goto <non-used label" by remove ifdef around "lint"
+* DONE Fix byacc skeleton to "goto <non-used label>" by remove ifdef around "lint"
