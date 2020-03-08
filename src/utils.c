@@ -4,6 +4,9 @@
 
 
 int creatingOlcxRefs(void) {
+    /* TODO: what does this actually test? that we need to create
+       refs?  And why does this not work when we introduce a OLO_NONE
+       before OLO_COMPLETE? */
     return (
             s_opt.server_operation==OLO_PUSH
             ||  s_opt.server_operation==OLO_PUSH_ONLY

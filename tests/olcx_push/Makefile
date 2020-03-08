@@ -22,7 +22,7 @@ trace: CXREF+=-trace
 trace: $(TEST)
 
 CXrefs:
-	@$(CXREF) -xrefrc=.c-xrefrc test_source -o output.log
+	@$(CXREF) -xrefrc=.c-xrefrc test_source -o cxrefs.log
 
 clean:
 	rm -rf CXrefs

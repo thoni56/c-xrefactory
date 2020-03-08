@@ -3,3 +3,4 @@
 <sync>
 -olcxpush -urldirect "-olmark=0" "-olcursor=6" "test_source/single_int1.c" -xrefrc ".c-xrefrc" -p "CURDIR" -encoding=european
 <sync>
+<exit>

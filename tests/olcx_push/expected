@@ -13,3 +13,6 @@ end-of-options
  <position-lc line=1 col=4 len=<n>>CURDIR/test_source/single_int1.c</position-lc>
 </goto>
 
+-exit
+end-of-options
+

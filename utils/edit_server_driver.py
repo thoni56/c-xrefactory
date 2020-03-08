@@ -23,6 +23,8 @@
 #     -olcxcomplet CURDIR/single_int1.c -olcursor=85 -xrefrc CURDIR/.c-xrefrc -p CURDIR
 #     <sync>
 #
+# If the line (probably the last) is '<exit>', the driver will send '-exit',
+# 'end-of-options' and exit. This allows the server to shut down nicely.
 
 import sys
 import subprocess
@@ -32,8 +34,8 @@ from shutil import copy
 
 
 def send_command(p, command):
-    print(command.rstrip())
-    p.stdin.write(command.encode())
+    print(command)
+    p.stdin.write((command+"\n").encode())
     p.stdin.flush()
 
 
@@ -50,6 +52,7 @@ def expect_sync(p):
     if line != '<sync>':
         print("ERROR: did not get expected <sync>")
         sys.exit(-1)
+
 
 def read_output(filename):
     with open(filename, 'rb') as file:
@@ -85,13 +88,19 @@ with open(command_file, 'rb') as file:
     if sleep:
         time.sleep(sleep)
 
-    command = file.readline().decode()
+    command = file.readline().decode().rstrip()
     while command != '':
-        while command.rstrip() != '<sync>' and command != '':
+        while command != '<sync>' and command != '<exit>' and command != '':
             send_command(p, command.replace("CURDIR", CURDIR))
-            command = file.readline().decode()
-        if command != '':
+            command = file.readline().decode().rstrip()
+
+        if command == '<exit>':
+            send_command(p, "-exit")
+            end_of_options(p)
+            sys.exit(0)
+
+        if command == '<sync>':
             end_of_options(p)
             expect_sync(p)
             read_output(buffer)
-            command = file.readline().decode()
+            command = file.readline().decode().rstrip()

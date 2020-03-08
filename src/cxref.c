@@ -4729,7 +4729,15 @@ void mainAnswerEditAction(void) {
     char                *ifname, *jdkcp;
     char                dffname[MAX_FILE_NAME_SIZE];
     char                dffsect[MAX_FILE_NAME_SIZE];
+
     assert(ccOut);
+
+    if (s_opt.exit) {
+        log_debug("Exiting");
+        exit(XREF_EXIT_BASE);
+    }
+
+
     switch (s_opt.server_operation) {
     case OLO_CHECK_VERSION:
         assert(s_opt.checkVersion!=NULL);
