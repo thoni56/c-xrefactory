@@ -1,6 +1,7 @@
 #ifndef _CHARBUF_H_
 #define _CHARBUF_H_
 
+#include <zlib.h>
 #include "proto.h"
 
 extern void charBuffClose(struct CharacterBuffer *buffer);
