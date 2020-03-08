@@ -1394,9 +1394,9 @@ typedef struct jslStat {
 /* ***************** editor structures ********************** */
 
 typedef struct editorBufferBits {
-        unsigned		textLoaded:1;
-        unsigned		modified:1;
-        unsigned		modifiedSinceLastQuasiSave:1;
+    bool textLoaded:1;
+    bool modified:1;
+    bool modifiedSinceLastQuasiSave:1;
 } S_editorBufferBits;
 
 typedef struct editorBuffer {

@@ -473,7 +473,7 @@ static void editorLoadFileIntoBufferText(S_editorBuffer *buff, struct stat *st) 
     }
     editorPerformEncodingAdjustemets(buff);
     buff->stat = *st;
-    buff->b.textLoaded = 1;
+    buff->b.textLoaded = true;
 }
 
 static void allocNewEditorBufferTextSpace(S_editorBuffer *ff, int size) {
@@ -542,8 +542,8 @@ static S_editorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct 
 }
 
 static void editorSetBufferModifiedFlag(S_editorBuffer *buff) {
-    buff->b.modified = 1;
-    buff->b.modifiedSinceLastQuasiSave = 1;
+    buff->b.modified = true;
+    buff->b.modifiedSinceLastQuasiSave = true;
 }
 
 S_editorBuffer *editorGetOpenedBuffer(char *name) {
@@ -618,7 +618,7 @@ void editorRenameBuffer(S_editorBuffer *buff, char *nName, S_editorUndo **undo) 
     // of moving a package into an existing package).
     removed = editorCreateNewBuffer(oldName, oldName, &buff->stat);
     allocNewEditorBufferTextSpace(removed, 0);
-    removed->b.textLoaded = 1;
+    removed->b.textLoaded = true;
     editorSetBufferModifiedFlag(removed);
 }
 
@@ -671,7 +671,7 @@ S_editorBuffer *editorFindFileCreate(char *name) {
         res = editorCreateNewBuffer(name, name, &st);
         assert(res!=NULL);
         allocNewEditorBufferTextSpace(res, 0);
-        res->b.textLoaded = 1;
+        res->b.textLoaded = true;
     }
     return(res);
 }
@@ -829,7 +829,7 @@ void editorDumpBuffers(void) {
 }
 
 static void editorQuasySaveBuffer(S_editorBuffer *buff) {
-    buff->b.modifiedSinceLastQuasiSave = 0;
+    buff->b.modifiedSinceLastQuasiSave = false;
     buff->stat.st_mtime = time(NULL);  //? why it does not work with 1;
     assert(s_fileTab.tab[buff->ftnum]);
     s_fileTab.tab[buff->ftnum]->lastModif = buff->stat.st_mtime;
