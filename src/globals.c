@@ -343,14 +343,14 @@ S_options s_initOpt = {
     0,          // noerrors
     0,          // fqtNameToCompletions
     NULL,       // moveTargetClass
-    TPC_NONE,   // trivial pre-check
-    1,      // urlGenTemporaryFile
-    1,      // urlautoredirect
-    0,      // javafilesonly
-    0,      // exact position
-    NULL,   // -o outputFileName
-    NULL,   // -line lineFileName
-    NULL,   // -I include dirs
+    0,          // TPC_NON, trivial pre-check
+    1,          // urlGenTemporaryFile
+    1,          // urlautoredirect
+    0,          // javafilesonly
+    0,          // exact position
+    NULL,       // -o outputFileName
+    NULL,       // -line lineFileName
+    NULL,       // -I include dirs
     DEFAULT_CXREF_FILE,     // -refs
 
     NULL,   // file move for safety check
@@ -401,7 +401,7 @@ S_options s_initOpt = {
     79,
     "",
     "*_",
-    EXTR_FUNCTION,
+    0,          // EXTR_FUNCTION, must be zero
     0,
     //& "__newFunction__",  // extractName
     MAX_COMPLETIONS,
