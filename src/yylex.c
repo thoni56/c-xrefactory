@@ -130,7 +130,7 @@ int addFileTabItem(char *name, int *fileNumber) {
     FILLF_fileItem(ffii,fname, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
                    NULL,NULL,s_noneFileIndex,NULL);
     fileTabAdd(&s_fileTab, ffii, &ii);
-    testFileModifiedTime(ii); // it was too slow on load ?
+    checkFileModifiedTime(ii); // it was too slow on load ?
     *fileNumber = ii;
     return(1);
 }
@@ -145,7 +145,7 @@ static void getOrCreateFileInfo(char *ss, int *fileNumber, char **fileName) {
         newFileFlag = addFileTabItem(ss, &ii);
         *fileNumber = ii;
         *fileName = s_fileTab.tab[ii]->name;
-        testFileModifiedTime(ii);
+        checkFileModifiedTime(ii);
         cxloading = s_fileTab.tab[ii]->b.cxLoading;
         if (newFileFlag) {
             cxloading = 1;

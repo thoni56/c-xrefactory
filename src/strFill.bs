@@ -1844,7 +1844,7 @@
 #define FILLF_fileItem(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13, ARG14, ARG15, ARG16, ARG17, ARG18) {\
     (STRUCTP)->name = ARG0;\
     (STRUCTP)->lastModified = ARG1;\
-    (STRUCTP)->lastInspect = ARG2;\
+    (STRUCTP)->lastInspected = ARG2;\
     (STRUCTP)->lastUpdateMtime = ARG3;\
     (STRUCTP)->lastFullUpdateMtime = ARG4;\
     (STRUCTP)->b.cxLoading = ARG5;\

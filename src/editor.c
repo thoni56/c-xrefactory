@@ -307,18 +307,20 @@ void editorInit(void) {
 }
 
 int statb(char *path, struct stat *statbuf) {
-    int                 res;
-    S_editorBuffer      *buff;
-    buff = editorGetOpenedBuffer(path);
-    if (buff!=NULL) {
-        if (statbuf!=NULL) {
-            *statbuf = buff->stat;
-            //&sprintf(tmpBuff,"returning stat of %s modified at %s", path, ctime(&buff->stat.st_mtime)); ppcGenRecord(PPC_IGNORE, tmpBuff, "\n");
+    int                 result;
+    S_editorBuffer      *buffer;
+
+    buffer = editorGetOpenedBuffer(path);
+    if (buffer != NULL) {
+        if (statbuf != NULL) {
+            *statbuf = buffer->stat;
+            log_trace("returning stat of %s modified at %s", path, ctime(&buffer->stat.st_mtime));
         }
         return(0);
     }
-    res = stat(path, statbuf);
-    return(res);
+    result = stat(path, statbuf);
+
+    return result;
 }
 
 static void editorError(int errCode, char *message) {

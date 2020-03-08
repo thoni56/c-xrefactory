@@ -883,10 +883,10 @@ static int cxrfFileItemShouldBeUpdatedFromCxFile(S_fileItem *ffi) {
         }
     }
     if (s_opt.taskRegime == RegimeEditServer) {
-        //&fprintf(dumpOut, "!lit st == %d %d\n", ffi->lastInspect, s_fileProcessStartTime);
+        //&fprintf(dumpOut, "!lit st == %d %d\n", ffi->lastInspected, s_fileProcessStartTime);
         // Hmm, should be there testing on both intervals
         // s_fileProcessStartTime < ffi->lastInspect < time(NULL) ????
-        if (ffi->lastInspect < s_fileProcessStartTime) {
+        if (ffi->lastInspected < s_fileProcessStartTime) {
             updateFromCxFile = 1;
         } else {
             updateFromCxFile = 0;

@@ -1,7 +1,7 @@
 #ifndef _CACHING_H_
 #define _CACHING_H_
 
-extern int testFileModifiedTime(int ii);
+extern int checkFileModifiedTime(int ii);
 extern void initCaching(void);
 extern void recoverCachePoint(int i, char *readedUntil, int activeCaching);
 extern void recoverFromCache(void);
