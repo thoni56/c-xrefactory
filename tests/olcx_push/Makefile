@@ -2,7 +2,7 @@
 #
 include ../Makefile.boilerplate
 
-CXREF = ../../src/c-xref
+CXREF = ../../src/c-xref -xrefrc $(CURDIR)/.c-xrefrc
 EDIT_SERVER_DRIVER = ../../utils/edit_server_driver.py
 
 $(TEST): CXrefs
@@ -26,3 +26,8 @@ CXrefs:
 
 clean:
 	rm -rf CXrefs
+
+gdb:
+	@$(EDIT_SERVER_DRIVER) commands.input "$(CURDIR)" buffer 15 > output.tmp &
+	sleep 1
+	sudo gdb -ex 'br mainAnswerEditAction' -pid `pgrep c-xref | tail -1`
