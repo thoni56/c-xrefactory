@@ -3,6 +3,7 @@
 #include "commons.h"
 #include "globals.h"
 #include "strFill.h"
+#include "log.h"
 
 
 /* ******************** Class Cast Tree ************************ */
@@ -56,7 +57,7 @@ int cctIsMember(S_cctNode *cc, S_symbol *x, int deepFactor) {
 void cctAddCctTree(S_cctNode *cc, S_cctNode *x, int deepFactor) {
     int i;
 
-    //&fprintf(dumpOut,"adding %d tree to %d tree at deep == %d\n", x, cc, deepFactor);
+    log_trace("adding %d tree to %d tree at deep == %d", x, cc, deepFactor);
     if (x->node == NULL) return;
     if (cc->node == NULL) {
         *cc = *x;           /* should be trailed ? */
@@ -77,10 +78,10 @@ void cctAddCctTree(S_cctNode *cc, S_cctNode *x, int deepFactor) {
 void cctDump(S_cctNode *cc, int deep) {
     int i;
     if (cc->node==NULL) {
-        fprintf(dumpOut,"%*sNULL\n",deep,""); fflush(dumpOut);
+        log_trace("%*sNULL",deep,"");
         return;
     }
-    fprintf(dumpOut,"%*s%lx\n",deep,"",(unsigned long)cc->node); fflush(dumpOut);
+    log_trace("%*s%lx",deep,"",(unsigned long)cc->node);
     if (cc->sub == NULL) return;
     for(i=0; i<CCT_TREE_INDEX; i++) cctDump(&cc->sub[i], deep+2);
 }
