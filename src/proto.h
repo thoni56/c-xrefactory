@@ -1706,7 +1706,7 @@ typedef struct options {
     int trace;
     int cpp_comment;
     int c_struct_scope;
-    int server_operation;
+    enum olcxOptions server_operation;
     int olcxGotoVal;
     char *originalDir;
 
