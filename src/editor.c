@@ -828,7 +828,7 @@ void editorDumpBuffers(void) {
     fprintf(dumpOut,"[editorDumpBuffers] end\n");
 }
 
-static void editorQuasySaveBuffer(S_editorBuffer *buff) {
+static void editorQuasiSaveBuffer(S_editorBuffer *buff) {
     buff->b.modifiedSinceLastQuasiSave = false;
     buff->stat.st_mtime = time(NULL);  //? why it does not work with 1;
     assert(s_fileTab.tab[buff->ftnum]);
@@ -864,7 +864,7 @@ void editorQuasiSaveModifiedBuffers(void) {
     for(i=0; i<s_editorBufferTab.size; i++) {
         for(ll=s_editorBufferTab.tab[i]; ll!=NULL; ll=ll->next) {
             if (ll->f->b.modifiedSinceLastQuasiSave) {
-                editorQuasySaveBuffer(ll->f);
+                editorQuasiSaveBuffer(ll->f);
             }
         }
     }
