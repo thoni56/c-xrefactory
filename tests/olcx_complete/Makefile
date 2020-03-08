@@ -28,6 +28,6 @@ clean:
 	rm -rf CXrefs .c-xrefrc
 
 gdb:
-	@../../utils/edit_server_driver.py commands.input "$(CURDIR)" buffer 15 > output.tmp &
+	@$(EDIT_SERVER_DRIVER) commands.input "$(CURDIR)" buffer 15 > output.tmp &
 	sleep 1
 	sudo gdb -pid `pgrep c-xref | tail -1`
