@@ -57,12 +57,12 @@ void genInternalLabelReference(int counter, int usage) {
 }
 
 
-S_symbol *addContinueBreakLabelSymbol(int labn, char *name) {
-    S_symbol *s;
+Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
+    Symbol *s;
 
     if (s_opt.server_operation != OLO_EXTRACT) return NULL;
 
-    /*& XX_ALLOC(s, S_symbol); */
+    /*& XX_ALLOC(s, Symbol); */
     /*& FILL_symbolBits(&s->bits,0,0,0,0,0,TypeLabel,StorageAuto,0); */
     /*& FILL_symbol(s,name,name,s_noPos,s->bits,labn,labn,NULL); */
     /*& REPLACE XX_ALLOC()+FILL_symbol() with */
@@ -75,7 +75,7 @@ S_symbol *addContinueBreakLabelSymbol(int labn, char *name) {
 
 
 void deleteContinueBreakLabelSymbol(char *name) {
-    S_symbol    ss,*memb;
+    Symbol    ss,*memb;
     int         ii;
 
     if (s_opt.server_operation != OLO_EXTRACT) return;
@@ -93,7 +93,7 @@ void deleteContinueBreakLabelSymbol(char *name) {
 }
 
 void genContinueBreakReference(char *name) {
-    S_symbol    ss,*memb;
+    Symbol    ss,*memb;
     int         ii;
 
     if (s_opt.server_operation != OLO_EXTRACT) return;
@@ -110,7 +110,7 @@ void genContinueBreakReference(char *name) {
 }
 
 void genSwitchCaseFork(int lastFlag) {
-    S_symbol    ss,*memb;
+    Symbol    ss,*memb;
     int         ii;
 
     if (s_opt.server_operation != OLO_EXTRACT) return;

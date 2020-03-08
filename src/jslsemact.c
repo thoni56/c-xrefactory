@@ -20,7 +20,7 @@
 S_jslStat *s_jsl;
 
 
-static void jslFillTypeSymbolItem(S_symbol *sd, S_jslSymbolList *ss ,
+static void jslFillTypeSymbolItem(Symbol *sd, JslSymbolList *ss ,
                                   char *name) {
     /*& FILL_symbolBits(&sd->bits,0,0, 0,0, 0, TypeStruct, StorageNone,0); */
     /*& FILL_symbol(sd,name,name,s_noPos,sd->bits,type,NULL,NULL); */
@@ -30,10 +30,10 @@ static void jslFillTypeSymbolItem(S_symbol *sd, S_jslSymbolList *ss ,
     FILL_jslSymbolList(ss, sd, s_noPos, 0, NULL);
 }
 
-S_symbol *jslTypeSpecifier2(S_typeModifiers *t) {
-    S_symbol    *r;
+Symbol *jslTypeSpecifier2(S_typeModifiers *t) {
+    Symbol    *r;
 
-    CF_ALLOC(r, S_symbol);
+    CF_ALLOC(r, Symbol);
     fillSymbolWithType(r, NULL, NULL, s_noPos, t);
     FILL_symbolBits(&r->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
 
@@ -54,8 +54,8 @@ static S_typeModifiers *jslCrSimpleTypeModifier(unsigned t) {
     return(p);
 }
 
-S_symbol *jslTypeSpecifier1(unsigned t) {
-    S_symbol        *r;
+Symbol *jslTypeSpecifier1(unsigned t) {
+    Symbol        *r;
     r = jslTypeSpecifier2(jslCrSimpleTypeModifier(t));
     return(r);
 }
@@ -75,7 +75,7 @@ S_typeModifiers *jslPrependComposedType(S_typeModifiers *d, unsigned t) {
     return(p);
 }
 
-void jslCompleteDeclarator(S_symbol *t, S_symbol *d) {
+void jslCompleteDeclarator(Symbol *t, Symbol *d) {
     assert(t && d);
     if (t == &s_errorSymbol || d == &s_errorSymbol
         || t->bits.symType==TypeError || d->bits.symType==TypeError) return;
@@ -84,9 +84,9 @@ void jslCompleteDeclarator(S_symbol *t, S_symbol *d) {
 }
 
 static void jslRemoveNestedClass(void  *ddv) {
-    S_jslSymbolList *dd;
+    JslSymbolList *dd;
     int             check;
-    dd = (S_jslSymbolList *) ddv;
+    dd = (JslSymbolList *) ddv;
     //&fprintf(dumpOut, "removing class %s from jsltab\n", dd->d->name);
     log_debug("removing class %s from jsltab", dd->d->name);
     assert(s_jsl!=NULL);
@@ -94,13 +94,13 @@ static void jslRemoveNestedClass(void  *ddv) {
     assert(check);
 }
 
-S_symbol *jslTypeSymbolDefinition(char *ttt2, S_idIdentList *packid,
+Symbol *jslTypeSymbolDefinition(char *ttt2, S_idIdentList *packid,
                                   int add, int order, int isSingleImportedFlag) {
     char fqtName[MAX_FILE_NAME_SIZE];
     S_idIdentList dd2;
     int ii;
-    S_symbol sd, *smemb;
-    S_jslSymbolList ss, *xss, *memb;
+    Symbol sd, *smemb;
+    JslSymbolList ss, *xss, *memb;
     S_position *importPos;
     int mm;
     UNUSED mm;
@@ -113,7 +113,7 @@ S_symbol *jslTypeSymbolDefinition(char *ttt2, S_idIdentList *packid,
     if (add==TYPE_ADD_YES) {
         if (packid!=NULL) importPos = &packid->idi.p;
         else importPos = &s_noPos;
-        XX_ALLOC(xss, S_jslSymbolList); // CF_ALLOC ???
+        XX_ALLOC(xss, JslSymbolList); // CF_ALLOC ???
         FILL_jslSymbolList(xss, smemb, *importPos, isSingleImportedFlag, NULL);
         mm = jslTypeTabIsMember(s_jsl->typeTab, xss, &ii, &memb);
         if (order == ORDER_PREPEND) {
@@ -129,12 +129,12 @@ S_symbol *jslTypeSymbolDefinition(char *ttt2, S_idIdentList *packid,
     return(smemb);
 }
 
-static S_symbol *jslTypeSymbolUsage(char *ttt2, S_idIdentList *packid) {
+static Symbol *jslTypeSymbolUsage(char *ttt2, S_idIdentList *packid) {
     char fqtName[MAX_FILE_NAME_SIZE];
     S_idIdentList dd2;
     int ii;
-    S_symbol sd, *smemb;
-    S_jslSymbolList ss, *memb;
+    Symbol sd, *smemb;
+    JslSymbolList ss, *memb;
 
     jslFillTypeSymbolItem( &sd, &ss, ttt2);
     if (packid==NULL && jslTypeTabIsMember(s_jsl->typeTab, &ss, &ii, &memb)) {
@@ -147,16 +147,16 @@ static S_symbol *jslTypeSymbolUsage(char *ttt2, S_idIdentList *packid) {
     return(smemb);
 }
 
-S_symbol *jslTypeNameDefinition(S_idIdentList *tname) {
-    S_symbol    *memb;
-    S_symbol        *dd;
+Symbol *jslTypeNameDefinition(S_idIdentList *tname) {
+    Symbol    *memb;
+    Symbol        *dd;
     S_typeModifiers     *td;
     memb = jslTypeSymbolUsage(tname->idi.name, tname->next);
     CF_ALLOC(td, S_typeModifiers); //XX_ALLOC?
     FILLF_typeModifiers(td, TypeStruct,t,memb,NULL, NULL);
     td->u.t = memb;
 
-    CF_ALLOC(dd, S_symbol); //XX_ALLOC?
+    CF_ALLOC(dd, Symbol); //XX_ALLOC?
     fillSymbolWithType(dd, memb->name, memb->linkName, tname->idi.p, td);
     FILL_symbolBits(&dd->bits,0,0,0,0,0,   TypeDefault, StorageDefault,0);
 
@@ -164,10 +164,10 @@ S_symbol *jslTypeNameDefinition(S_idIdentList *tname) {
 }
 
 static int jslClassifySingleAmbigNameToTypeOrPack(S_idIdentList *name,
-                                                  S_symbol **str
+                                                  Symbol **str
                                                   ){
-    S_symbol sd;
-    S_jslSymbolList ss, *memb, *nextmemb;
+    Symbol sd;
+    JslSymbolList ss, *memb, *nextmemb;
     int ii, haveit;
     jslFillTypeSymbolItem( &sd, &ss, name->idi.name);
     //&fprintf(dumpOut,":looking for %s\n", name->idi.name); fflush(dumpOut);
@@ -199,9 +199,9 @@ static int jslClassifySingleAmbigNameToTypeOrPack(S_idIdentList *name,
     return(TypePackage);
 }
 
-int jslClassifyAmbiguousTypeName(S_idIdentList *name, S_symbol **str) {
+int jslClassifyAmbiguousTypeName(S_idIdentList *name, Symbol **str) {
     int         pres;
-    S_symbol    *pstr;
+    Symbol    *pstr;
     assert(name);
     *str = &s_errorSymbol;
     if (name->next == NULL) {
@@ -229,13 +229,13 @@ int jslClassifyAmbiguousTypeName(S_idIdentList *name, S_symbol **str) {
     return(name->nameType);
 }
 
-S_symbol *jslPrependDirectEnclosingInstanceArgument(S_symbol *args) {
+Symbol *jslPrependDirectEnclosingInstanceArgument(Symbol *args) {
     warning(ERR_ST,"[jslPrependDirectEnclosingInstanceArgument] not yet implemented");
     return(args);
 }
 
-S_symbol *jslMethodHeader(unsigned modif, S_symbol *type,
-                          S_symbol *decl, int storage, SymbolList *throws) {
+Symbol *jslMethodHeader(unsigned modif, Symbol *type,
+                          Symbol *decl, int storage, SymbolList *throws) {
     int newFun;
 
     completeDeclarator(type,decl);
@@ -255,7 +255,7 @@ S_symbol *jslMethodHeader(unsigned modif, S_symbol *type,
     if (newFun) {
         log_debug("[jsl] adding method %s==%s to %s (at %lx)", decl->name,
                   decl->linkName, s_jsl->classStat->thisClass->linkName, (unsigned long)decl);
-        LIST_APPEND(S_symbol, s_jsl->classStat->thisClass->u.s->records, decl);
+        LIST_APPEND(Symbol, s_jsl->classStat->thisClass->u.s->records, decl);
     }
     decl->u.type->u.m.sig = strchr(decl->linkName, '(');
     decl->u.type->u.m.exceptions = throws;
@@ -321,7 +321,7 @@ void jslAddAllPackageClassesFromFileTab(S_idIdentList *packid) {
     }
 }
 
-static void jslAddToLoadWaitList( S_symbol *clas ) {
+static void jslAddToLoadWaitList( Symbol *clas ) {
     SymbolList *ll;
 
     CF_ALLOC(ll, SymbolList);
@@ -331,7 +331,7 @@ static void jslAddToLoadWaitList( S_symbol *clas ) {
 }
 
 
-void jslAddSuperClassOrInterface(S_symbol *memb,S_symbol *supp){
+void jslAddSuperClassOrInterface(Symbol *memb,Symbol *supp){
     int origin;
 
     log_debug("loading super/interf %s of %s", supp->linkName, memb->linkName);
@@ -341,13 +341,13 @@ void jslAddSuperClassOrInterface(S_symbol *memb,S_symbol *supp){
 }
 
 
-void jslAddSuperClassOrInterfaceByName(S_symbol *memb,char *super){
-    S_symbol        *supp;
+void jslAddSuperClassOrInterfaceByName(Symbol *memb,char *super){
+    Symbol        *supp;
     supp = javaGetFieldClass(super,NULL);
     jslAddSuperClassOrInterface( memb, supp);
 }
 
-static void jslAddNestedClass(S_symbol *inner, S_symbol *outer, int memb,
+static void jslAddNestedClass(Symbol *inner, Symbol *outer, int memb,
                               int accessFlags) {
     int n;
 
@@ -372,7 +372,7 @@ static void jslAddNestedClass(S_symbol *inner, S_symbol *outer, int memb,
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // when modifying this, you will need to change it there too
 // TODO: So, why don't we extract this common functionality?!?!?!?
-static int jslRecordAccessible(S_symbol *cl, S_symbol *rec, unsigned recAccessFlags) {
+static int jslRecordAccessible(Symbol *cl, Symbol *rec, unsigned recAccessFlags) {
     S_jslClassStat *cs, *lcs;
     int len;
 
@@ -438,7 +438,7 @@ static int jslRecordAccessible(S_symbol *cl, S_symbol *rec, unsigned recAccessFl
 }
 
 
-void jslAddNestedClassesToJslTypeTab( S_symbol *str, int order) {
+void jslAddNestedClassesToJslTypeTab( Symbol *str, int order) {
     S_symStructSpec *ss;
     S_idIdent ocid;
     S_idIdentList oclassid;
@@ -462,7 +462,7 @@ void jslAddNestedClassesToJslTypeTab( S_symbol *str, int order) {
 }
 
 
-void jslAddSuperNestedClassesToJslTypeTab( S_symbol *cc) {
+void jslAddSuperNestedClassesToJslTypeTab( Symbol *cc) {
     SymbolList *ss;
     for(ss=cc->u.s->super; ss!=NULL; ss=ss->next) {
         jslAddSuperNestedClassesToJslTypeTab(ss->d);
@@ -473,7 +473,7 @@ void jslAddSuperNestedClassesToJslTypeTab( S_symbol *cc) {
 
 void jslNewClassDefinitionBegin(S_idIdent *name,
                                 int accFlags,
-                                S_symbol *anonInterf,
+                                Symbol *anonInterf,
                                 int position
                                 ) {
     char                ttt[TMP_STRING_SIZE];
@@ -481,7 +481,7 @@ void jslNewClassDefinitionBegin(S_idIdent *name,
     S_jslClassStat      *nss;
     S_idIdent           *inname;
     S_idIdentList       *ill, mntmp;
-    S_symbol            *cc;
+    Symbol            *cc;
     int                 fileInd, membflag, cn;
 
     inname = name;
@@ -605,7 +605,7 @@ void jslNewClassDefinitionBegin(S_idIdent *name,
 }
 
 void jslNewClassDefinitionEnd(void) {
-    S_symbol *cc;
+    Symbol *cc;
     int fileInd;
     assert(s_jsl->classStat && s_jsl->classStat->next);
 
@@ -619,8 +619,8 @@ void jslNewClassDefinitionEnd(void) {
     stackMemoryBlockFree();
 }
 
-void jslAddDefaultConstructor(S_symbol *cl) {
-    S_symbol *cc;
+void jslAddDefaultConstructor(Symbol *cl) {
+    Symbol *cc;
     cc = javaCreateNewMethod(cl->name, &s_noPos,    MEM_CF);
     jslMethodHeader(cl->bits.accessFlags, &s_defaultVoidDefinition, cc,
                     StorageConstructor, NULL);
@@ -628,7 +628,7 @@ void jslAddDefaultConstructor(S_symbol *cl) {
 
 void jslNewAnonClassDefinitionBegin(S_idIdent *interfName) {
     S_idIdentList   ll;
-    S_symbol        *interf,*str;
+    Symbol        *interf,*str;
     //& XX_ALLOC(ll, S_idIdentList);
     FILL_idIdentList(&ll, *interfName, interfName->name, TypeDefault, NULL);
     jslClassifyAmbiguousTypeName(&ll, &str);

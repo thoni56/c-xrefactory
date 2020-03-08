@@ -83,7 +83,7 @@
 typedef union {
     int                                     integer;
     unsigned                                unsign;
-    S_symbol                                *symbol;
+    Symbol                                *symbol;
     SymbolList                            *symbolList;
     S_typeModifiers                         *typeModif;
     S_typeModifiersList                     *typeModifList;
@@ -2281,8 +2281,8 @@ yyreduce:
 case 1:
 #line 317 "c_parser.y"
 {
-        S_symbol *p;
-        S_symbol *dd;
+        Symbol *p;
+        Symbol *dd;
         p = yyvsp[0].bbidIdent.d->sd;
         if (p != NULL && p->bits.symType == TypeDefault) {
             assert(p && p);
@@ -2298,13 +2298,13 @@ case 1:
         } else {
             /* implicit function declaration */
             S_typeModifiers *p;
-            S_symbol *d;
-            S_symbol *dd;
+            Symbol *d;
+            Symbol *dd;
             CrTypeModifier(p, TypeInt);
             yyval.bbexprType.d.t = StackMemAlloc(S_typeModifiers);
             FILLF_typeModifiers(yyval.bbexprType.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
 
-            /*& d = StackMemAlloc(S_symbol); */
+            /*& d = StackMemAlloc(Symbol); */
             /*& FILL_symbolBits(&d->bits,0,0,0,0,0,TypeDefault, StorageExtern, 0); */
             /*& FILL_symbol(d,$1.d->name,$1.d->name,$1.d->p,d->bits,type,$$.d.t,NULL); */
             /*& REPLACED: StackMemAlloc() & FILL_symbol() with: */
@@ -2410,7 +2410,7 @@ break;
 case 18:
 #line 425 "c_parser.y"
 {
-        S_symbol *rec=NULL;
+        Symbol *rec=NULL;
         yyval.bbexprType.d.r = findStrRecordFromType(yyvsp[-3].bbexprType.d.t, yyvsp[0].bbidIdent.d, &rec, CLASS_TO_ANY);
         assert(rec);
         yyval.bbexprType.d.t = rec->u.type;
@@ -2424,7 +2424,7 @@ break;
 case 20:
 #line 432 "c_parser.y"
 {
-        S_symbol *rec=NULL;
+        Symbol *rec=NULL;
         yyval.bbexprType.d.r = NULL;
         if (yyvsp[-3].bbexprType.d.t->kind==TypePointer || yyvsp[-3].bbexprType.d.t->kind==TypeArray) {
             yyval.bbexprType.d.r = findStrRecordFromType(yyvsp[-3].bbexprType.d.t->next, yyvsp[0].bbidIdent.d, &rec, CLASS_TO_ANY);
@@ -3122,14 +3122,14 @@ case 166:
             yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
         } else {
             yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
-            LIST_APPEND(S_symbol, yyval.bbsymbol.d, yyvsp[0].bbsymbol.d);
+            LIST_APPEND(Symbol, yyval.bbsymbol.d, yyvsp[0].bbsymbol.d);
         }
     }
 break;
 case 167:
 #line 989 "c_parser.y"
 {
-        S_symbol *p;
+        Symbol *p;
         assert(yyvsp[-2].bbsymbol.d && yyvsp[-1].bbsymbol.d);
         for(p=yyvsp[-1].bbsymbol.d; p!=NULL; p=p->next) {
             completeDeclarator(yyvsp[-2].bbsymbol.d, p);
@@ -3142,7 +3142,7 @@ case 168:
 #line 998 "c_parser.y"
 {
         /* $$.d = &s_errorSymbol; */
-        XX_ALLOC(yyval.bbsymbol.d, S_symbol);
+        XX_ALLOC(yyval.bbsymbol.d, Symbol);
         *yyval.bbsymbol.d = s_errorSymbol;
 #ifdef DEBUGPARSING
         char buffer[100];
@@ -3163,7 +3163,7 @@ case 170:
 {
         yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
         assert(yyvsp[0].bbsymbol.d->next == NULL);
-        LIST_APPEND(S_symbol, yyval.bbsymbol.d, yyvsp[0].bbsymbol.d);
+        LIST_APPEND(Symbol, yyval.bbsymbol.d, yyvsp[0].bbsymbol.d);
     }
 break;
 case 171:
@@ -3245,7 +3245,7 @@ case 187:
 #line 1087 "c_parser.y"
 {
         /* $$.d = &s_errorSymbol; */
-        XX_ALLOC(yyval.bbsymbol.d, S_symbol);
+        XX_ALLOC(yyval.bbsymbol.d, Symbol);
         *yyval.bbsymbol.d = s_errorSymbol;
 #ifdef DEBUGPARSING
         char buffer[100];
@@ -3269,7 +3269,7 @@ break;
 case 191:
 #line 1110 "c_parser.y"
 {
-        /*& $$.d = StackMemAlloc(S_symbol); */
+        /*& $$.d = StackMemAlloc(Symbol); */
         /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
         /*& FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->bits,type,NULL,NULL); */
         /*& REPLACED: StackMemAlloc() and FILL_symbol() with: */
@@ -3454,11 +3454,11 @@ break;
 case 219:
 #line 1255 "c_parser.y"
 {
-        S_symbol *p;
+        Symbol *p;
         S_position pp;
         FILL_position(&pp, -1, 0, 0);
 
-        /*& p = StackMemAlloc(S_symbol); */
+        /*& p = StackMemAlloc(Symbol); */
         /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0); */
         /*& FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL); */
         /*& REPLACED: StackMemAlloc() and FILL_symbol() with: */
@@ -3466,15 +3466,15 @@ case 219:
         FILL_symbolBits(&p->bits, 0, 0, 0, 0, 0, TypeElipsis, StorageDefault, 0);
         yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
 
-        LIST_APPEND(S_symbol, yyval.bbsymbolPositionLstPair.d.s, p);
+        LIST_APPEND(Symbol, yyval.bbsymbolPositionLstPair.d.s, p);
         appendPositionToList(&yyval.bbsymbolPositionLstPair.d.p, &yyvsp[-1].bbposition.d);
     }
 break;
 case 220:
 #line 1274 "c_parser.y"
 {
-        S_symbol *p;
-        /*& p = StackMemAlloc(S_symbol); */
+        Symbol *p;
+        /*& p = StackMemAlloc(Symbol); */
         /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
         /*& FILL_symbol(p,$1.d->name,$1.d->name,$1.d->p,p->bits,type,NULL,NULL); */
         /*& REPLACED: StackMemAlloc()+FILL_symbol() with: */
@@ -3487,15 +3487,15 @@ break;
 case 221:
 #line 1285 "c_parser.y"
 {
-        S_symbol        *p;
-        /*& p = StackMemAlloc(S_symbol); */
+        Symbol        *p;
+        /*& p = StackMemAlloc(Symbol); */
         /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
         /*& FILL_symbol(p,$3.d->name,$3.d->name,$3.d->p,p->bits,type,NULL,NULL); */
         /*& REPLACED: StackMemAlloc()+FILL_symbol() with: */
         p = newSymbol(yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->p);
         FILL_symbolBits(&p->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
         yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
-        LIST_APPEND(S_symbol, yyval.bbsymbolPositionLstPair.d.s, p);
+        LIST_APPEND(Symbol, yyval.bbsymbolPositionLstPair.d.s, p);
         appendPositionToList(&yyval.bbsymbolPositionLstPair.d.p, &yyvsp[-1].bbposition.d);
     }
 break;
@@ -3506,11 +3506,11 @@ break;
 case 224:
 #line 1302 "c_parser.y"
 {
-        S_symbol        *p;
+        Symbol        *p;
         S_position      pp;
         FILL_position(&pp, -1, 0, 0);
 
-        /*& p = StackMemAlloc(S_symbol); */
+        /*& p = StackMemAlloc(Symbol); */
         /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0); */
         /*& FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL); */
         /*& REPLACED StackMemAlloc() + FILL_symbol() with: */
@@ -3518,7 +3518,7 @@ case 224:
         FILL_symbolBits(&p->bits, 0, 0, 0, 0, 0, TypeElipsis, StorageDefault, 0);
         yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
 
-        LIST_APPEND(S_symbol, yyval.bbsymbolPositionLstPair.d.s, p);
+        LIST_APPEND(Symbol, yyval.bbsymbolPositionLstPair.d.s, p);
         appendPositionToList(&yyval.bbsymbolPositionLstPair.d.p, &yyvsp[-1].bbposition.d);
     }
 break;
@@ -3533,7 +3533,7 @@ case 226:
 #line 1325 "c_parser.y"
 {
         yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
-        LIST_APPEND(S_symbol, yyvsp[-2].bbsymbolPositionLstPair.d.s, yyvsp[0].bbsymbol.d);
+        LIST_APPEND(Symbol, yyvsp[-2].bbsymbolPositionLstPair.d.s, yyvsp[0].bbsymbol.d);
         appendPositionToList(&yyval.bbsymbolPositionLstPair.d.p, &yyvsp[-1].bbposition.d);
     }
 break;
@@ -3547,7 +3547,7 @@ break;
 case 228:
 #line 1338 "c_parser.y"
 {
-        /*& $$.d = StackMemAlloc(S_symbol); */
+        /*& $$.d = StackMemAlloc(Symbol); */
         /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault, StorageDefault,0); */
         /*& FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,$1.d,NULL); */
         /*& REPLACED: StackMemAlloc()+FILL_symbol() with: */
@@ -3566,7 +3566,7 @@ case 229:
             void toto(Mistype arg) {}
             In case of problems rather increase the tmpWorkMemory !!!
         */
-        XX_ALLOC(yyval.bbsymbol.d, S_symbol);
+        XX_ALLOC(yyval.bbsymbol.d, Symbol);
         *yyval.bbsymbol.d = s_errorSymbol;
 #ifdef DEBUGPARSING
         char buffer[100];
@@ -4058,7 +4058,7 @@ break;
 case 335:
 #line 1769 "c_parser.y"
 {
-        S_symbol *p;
+        Symbol *p;
         int i;
         assert(yyvsp[0].bbsymbol.d);
         /* I think that due to the following line sometimes*/
@@ -4173,7 +4173,7 @@ break;
 case 350:
 #line 1851 "c_parser.y"
 {
-        S_symbol *p;
+        Symbol *p;
         assert(yyvsp[-2].bbsymbol.d && yyvsp[-1].bbsymbol.d);
         for(p=yyvsp[-1].bbsymbol.d; p!=NULL; p=p->next) {
             completeDeclarator(yyvsp[-2].bbsymbol.d, p);
@@ -4191,7 +4191,7 @@ case 352:
 #line 1865 "c_parser.y"
 {
         yyval.bbsymbol.d = yyvsp[-3].bbsymbol.d;
-        LIST_APPEND(S_symbol, yyval.bbsymbol.d, yyvsp[-1].bbsymbol.d);
+        LIST_APPEND(Symbol, yyval.bbsymbol.d, yyvsp[-1].bbsymbol.d);
     }
 break;
 case 353:

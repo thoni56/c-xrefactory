@@ -67,7 +67,7 @@
 #define JslAddComposedType(ddd, ttt) jslAppendComposedType(&ddd->u.type, ttt)
 
 #define JslImportSingleDeclaration(iname) {\
-    S_symbol *sym;\
+    Symbol *sym;\
     jslClassifyAmbiguousTypeName(iname, &sym);\
     jslTypeSymbolDefinition(iname->idi.name, iname->next, TYPE_ADD_YES,ORDER_PREPEND, 1);\
 }
@@ -77,7 +77,7 @@
 /* then even if classified to type it should be reclassified dep on the case */
 
 #define JslImportOnDemandDeclaration(iname) {\
-    S_symbol *sym;\
+    Symbol *sym;\
     int st;\
     st = jslClassifyAmbiguousTypeName(iname, &sym);\
     if (st == TypeStruct) {\
@@ -141,7 +141,7 @@ static bool inSecondJslPass() {
 typedef union {
     int                                     integer;
     unsigned                                unsign;
-    S_symbol                                *symbol;
+    Symbol                                *symbol;
     SymbolList                            *symbolList;
     S_typeModifiers                         *typeModif;
     S_typeModifiersList                     *typeModifList;
@@ -2551,7 +2551,7 @@ YYSTYPE yyvs[YYSTACKSIZE];
 #line 4371 "java_parser.y"
 
 void javaParsingInitializations(void) {
-            S_symbol *ss;
+            Symbol *ss;
             //&javaMapDirectoryFiles2(s_javaLangName,
             //&			javaAddMapedTypeName, NULL, s_javaLangName, NULL);
             ss = javaTypeSymbolDefinition(s_javaLangObjectName,ACC_DEFAULT, TYPE_ADD_NO);
@@ -3058,7 +3058,7 @@ case 26:
                 }
             };
             if (inSecondJslPass()) {
-                S_symbol *str;
+                Symbol *str;
                 jslClassifyAmbiguousTypeName(yyvsp[0].bbidlist.d, &str);
                 yyval.bbsymbol.d = jslTypeNameDefinition(yyvsp[0].bbidlist.d);
             }
@@ -3080,7 +3080,7 @@ case 28:
                 }
             };
             if (inSecondJslPass()) {
-                S_symbol *str;
+                Symbol *str;
                 jslClassifyAmbiguousTypeName(yyvsp[0].bbidlist.d, &str);
                 yyval.bbsymbol.d = jslTypeNameDefinition(yyvsp[0].bbidlist.d);
             }
@@ -3125,7 +3125,7 @@ case 33:
                 yyval.bbsymbolPositionPair.d.p = javaGetNameStartingPosition(yyvsp[-2].bbidlist.d);
             };
             if (inSecondJslPass()) {
-                S_symbol *ss;
+                Symbol *ss;
                 jslClassifyAmbiguousTypeName(yyvsp[-2].bbidlist.d, &ss);
                 yyval.bbsymbolPositionPair.d.s = jslTypeNameDefinition(yyvsp[-2].bbidlist.d);
                 yyval.bbsymbolPositionPair.d.s->u.type = jslPrependComposedType(yyval.bbsymbolPositionPair.d.s->u.type, TypeArray);
@@ -3498,7 +3498,7 @@ case 74:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     S_reference *lastUselessRef;
-                    S_symbol *str;
+                    Symbol *str;
                     /* it was type or packege, but I thing this would be better*/
                     lastUselessRef = javaClassifyToTypeName(yyvsp[-1].bbidlist.d, UsageUsed, &str, USELESS_FQT_REFS_DISALLOWED);
                     /* last useless reference is not useless here!*/
@@ -3527,7 +3527,7 @@ case 77:
             yyval.bbidlist.d = yyvsp[-3].bbidlist.d;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_symbol *str;
+                    Symbol *str;
                     S_typeModifiers *expr;
                     S_reference *rr, *lastUselessRef;
                     int st __attribute__((unused));
@@ -4049,7 +4049,7 @@ case 141:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_symbol *p,*pp,*memb,*clas;
+                    Symbol *p,*pp,*memb,*clas;
                     int vClass;
                     S_recFindStr    rfs;
                     s_cps.lastAssignementStruct = NULL;
@@ -4073,7 +4073,7 @@ case 141:
                         if (findStrRecordSym(&rfs, p->name, &memb, CLASS_TO_ANY,
                                              ACC_CHECK_NO,VISIB_CHECK_NO) == RETURN_NOT_FOUND) {
                             assert(clas->u.s);
-                            LIST_APPEND(S_symbol, clas->u.s->records, p);
+                            LIST_APPEND(Symbol, clas->u.s->records, p);
                         }
                         addCxReference(p, &p->pos, UsageDefined, vClass, vClass);
                         htmlAddJavaDocReference(p, &p->pos, vClass, vClass);
@@ -4097,9 +4097,9 @@ case 141:
                 }
             }
             if (inSecondJslPass()) {
-                S_symbol *p;
-                S_symbol *pp;
-                S_symbol *clas;
+                Symbol *p;
+                Symbol *pp;
+                Symbol *clas;
                 int		vClass;
                 clas = s_jsl->classStat->thisClass;
                 assert(clas != NULL);
@@ -4119,7 +4119,7 @@ case 141:
                     }
                     log_debug("[jsl] adding field %s to %s\n",
                               p->name,clas->linkName);
-                    LIST_APPEND(S_symbol, clas->u.s->records, p);
+                    LIST_APPEND(Symbol, clas->u.s->records, p);
                     assert(vClass!=s_noneFileIndex);
                     if (p->pos.file!=s_olOriginalFileNumber && s_opt.server_operation==OLO_PUSH) {
                         /* pre load of saved file akes problem on move field/method, ...*/
@@ -4184,14 +4184,14 @@ case 146:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    XX_ALLOC(yyval.bbsymbol.d, S_symbol);
+                    XX_ALLOC(yyval.bbsymbol.d, Symbol);
                     *yyval.bbsymbol.d = s_errorSymbol;
                 } else {
                     SetNullBorns(yyval.bbsymbol);
                 }
             }
             if (inSecondJslPass()) {
-                CF_ALLOC(yyval.bbsymbol.d, S_symbol);
+                CF_ALLOC(yyval.bbsymbol.d, Symbol);
                 *yyval.bbsymbol.d = s_errorSymbol;
             }
         }
@@ -4201,7 +4201,7 @@ case 147:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    /*& $$.d = StackMemAlloc(S_symbol); */
+                    /*& $$.d = StackMemAlloc(Symbol); */
                     /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
                     /*& FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->bits,type,NULL,NULL); */
                     /*& REPLACED StackMemAlloc()+FILL_symbol() with: */
@@ -4215,7 +4215,7 @@ case 147:
                 char *name;
                 CF_ALLOCC(name, strlen(yyvsp[0].bbidIdent.d->name)+1, char);
                 strcpy(name, yyvsp[0].bbidIdent.d->name);
-                CF_ALLOC(yyval.bbsymbol.d, S_symbol);
+                CF_ALLOC(yyval.bbsymbol.d, Symbol);
                 fillSymbol(yyval.bbsymbol.d, name, name, yyvsp[0].bbidIdent.d->p);
                 FILL_symbolBits(&yyval.bbsymbol.d->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
             }
@@ -4397,7 +4397,7 @@ case 164:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
-                    LIST_APPEND(S_symbol, yyval.bbsymbolPositionLstPair.d.s, yyvsp[0].bbsymbol.d);
+                    LIST_APPEND(Symbol, yyval.bbsymbolPositionLstPair.d.s, yyvsp[0].bbsymbol.d);
                 } else {
                     appendPositionToList(&yyval.bbsymbolPositionLstPair.d.p, &yyvsp[-1].bbposition.d);
                     PropagateBorns(yyval.bbsymbolPositionLstPair, yyvsp[-2].bbsymbolPositionLstPair, yyvsp[0].bbsymbol);
@@ -4405,7 +4405,7 @@ case 164:
             }
             if (inSecondJslPass()) {
                 yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
-                LIST_APPEND(S_symbol, yyval.bbsymbolPositionLstPair.d.s, yyvsp[0].bbsymbol.d);
+                LIST_APPEND(Symbol, yyval.bbsymbolPositionLstPair.d.s, yyvsp[0].bbsymbol.d);
             }
         }
 break;
@@ -4448,14 +4448,14 @@ case 167:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    XX_ALLOC(yyval.bbsymbol.d, S_symbol);
+                    XX_ALLOC(yyval.bbsymbol.d, Symbol);
                     *yyval.bbsymbol.d = s_errorSymbol;
                 } else {
                     SetNullBorns(yyval.bbsymbol);
                 }
             }
             if (inSecondJslPass()) {
-                CF_ALLOC(yyval.bbsymbol.d, S_symbol);
+                CF_ALLOC(yyval.bbsymbol.d, Symbol);
                 *yyval.bbsymbol.d = s_errorSymbol;
             }
         }
@@ -4524,7 +4524,7 @@ case 176:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        S_symbol *mh, *args;
+                        Symbol *mh, *args;
 
                         args = yyvsp[-1].bbsymbol.d;
                         /*&
@@ -4547,7 +4547,7 @@ case 176:
                     }
                 }
                 if (inSecondJslPass()) {
-                    S_symbol *args;
+                    Symbol *args;
                     args = yyvsp[-1].bbsymbol.d;
                     jslMethodHeader(yyvsp[-2].bbunsign.d,&s_defaultVoidDefinition,args,
                                     StorageConstructor, yyvsp[0].bbsymbolList.d);
@@ -4679,7 +4679,7 @@ case 187:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        S_symbol *ss;
+                        Symbol *ss;
                         ss = javaCurrentSuperClass();
                         javaConstructorInvocation(ss, &(yyvsp[-5].bbidIdent.d->p), yyvsp[-1].bbtypeModifiersListPositionLstPair.d.t);
                         s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
@@ -4703,7 +4703,7 @@ case 189:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        S_symbol *ss;
+                        Symbol *ss;
                         ss = javaCurrentSuperClass();
                         javaConstructorInvocation(ss, &(yyvsp[-5].bbidIdent.d->p), yyvsp[-1].bbtypeModifiersListPositionLstPair.d.t);
                         s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
@@ -5301,7 +5301,7 @@ case 300:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (s_opt.server_operation == OLO_EXTRACT) {
-                        S_symbol *cl, *bl;
+                        Symbol *cl, *bl;
                         cl = bl = NULL;        /* just to avoid warning message*/
                         cl = addContinueBreakLabelSymbol(yyvsp[-4].bbinteger.data, CONTINUE_LABEL_NAME);
                         bl = addContinueBreakLabelSymbol(yyvsp[0].bbinteger.data, BREAK_LABEL_NAME);
@@ -5424,7 +5424,7 @@ case 310:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_symbol *ss __attribute__((unused));
+                    Symbol *ss __attribute__((unused));
                     genInternalLabelReference(yyvsp[-7].bbinteger.data, UsageUsed);
                     genInternalLabelReference(yyvsp[-4].bbinteger.data, UsageDefined);
                     ss = addContinueBreakLabelSymbol(yyvsp[-3].bbinteger.data, CONTINUE_LABEL_NAME);
@@ -5813,7 +5813,7 @@ case 350:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_symbol *str;
+                    Symbol *str;
                     javaClassifyToTypeName(yyvsp[-2].bbidlist.d,UsageUsed, &str, USELESS_FQT_REFS_ALLOWED);
                     yyval.bbexprType.d.t = &s_javaClassModifier;
                     yyval.bbexprType.d.r = NULL;
@@ -5957,8 +5957,8 @@ case 364:
 #line 3219 "java_parser.y"
 {
             if (ComputingPossibleParameterCompletion()) {
-                S_symbol            *ss;
-                S_symbol			*str;
+                Symbol            *ss;
+                Symbol			*str;
                 S_typeModifiers		*expr;
                 S_reference			*rr, *lastUselessRef;
                 javaClassifyAmbiguousName(yyvsp[0].bbidlist.d, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
@@ -5975,8 +5975,8 @@ case 365:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_symbol *ss, *tt, *ei;
-                    S_symbol *str;
+                    Symbol *ss, *tt, *ei;
+                    Symbol *str;
                     S_typeModifiers *expr;
                     S_reference *rr, *lastUselessRef;
 
@@ -6027,7 +6027,7 @@ case 366:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        S_symbol *ss;
+                        Symbol *ss;
                         s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
                         javaClassifyToTypeName(yyvsp[-3].bbidlist.d,UsageUsed, &ss, USELESS_FQT_REFS_ALLOWED);
                         yyval.symbol = javaTypeNameDefinition(yyvsp[-3].bbidlist.d);
@@ -6039,7 +6039,7 @@ case 366:
                         /* interfaces are never inner.*/
                     }
                 } else {
-                    S_symbol *str, *cls;
+                    Symbol *str, *cls;
                     jslClassifyAmbiguousTypeName(yyvsp[-3].bbidlist.d, &str);
                     cls = jslTypeNameDefinition(yyvsp[-3].bbidlist.d);
                     jslNewClassDefinitionBegin(&s_javaAnonymousClassName,
@@ -6303,7 +6303,7 @@ case 392:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_symbol *rec=NULL;
+                    Symbol *rec=NULL;
                     assert(yyvsp[-2].bbexprType.d.t);
                     yyval.bbexprType.d.r = NULL;
                     yyval.bbexprType.d.pp = yyvsp[-2].bbexprType.d.pp;
@@ -6331,7 +6331,7 @@ case 393:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_symbol *ss,*rec=NULL;
+                    Symbol *ss,*rec=NULL;
 
                     yyval.bbexprType.d.r = NULL;
                     yyval.bbexprType.d.pp = &yyvsp[-2].bbidIdent.d->p;
@@ -6359,7 +6359,7 @@ case 394:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_symbol *ss,*rec=NULL;
+                    Symbol *ss,*rec=NULL;
 
                     ss = javaQualifiedThis(yyvsp[-4].bbidlist.d, yyvsp[-2].bbidIdent.d);
                     if (ss != &s_errorSymbol && ss->bits.symType!=TypeError) {

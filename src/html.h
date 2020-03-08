@@ -15,7 +15,7 @@ extern void recursivelyCreateFileDirIfNotExists(char *fpath);
 extern void concatPaths(char *res, int rsize, char *p1, char *p2, char *p3);
 extern void htmlPutChar(FILE *ff, int c);
 extern void htmlGenGlobalReferenceLists(char *cxMemFreeBase);
-extern void htmlAddJavaDocReference(S_symbol  *p, S_position  *pos,
+extern void htmlAddJavaDocReference(Symbol  *p, S_position  *pos,
                                     int  vFunClass, int  vApplClass);
 extern void htmlGetDefinitionReferences(void);
 extern void htmlAddFunctionSeparatorReference(void);

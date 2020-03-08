@@ -250,20 +250,20 @@ int s_noneFileIndex = -1;
 time_t s_expiration;
 
 S_typeModifiers s_defaultIntModifier;
-S_symbol s_defaultIntDefinition;
+Symbol s_defaultIntDefinition;
 S_typeModifiers s_defaultPackedTypeModifier;
 S_typeModifiers s_defaultVoidModifier;
-S_symbol s_defaultVoidDefinition;
+Symbol s_defaultVoidDefinition;
 S_typeModifiers s_errorModifier;
-S_symbol s_errorSymbol;
+Symbol s_errorSymbol;
 struct stat s_noStat;
 S_position s_noPos = {-1, 0, 0};
 
-S_symbol s_javaArrayObjectSymbol;
-S_symbol *s_javaStringSymbol;
-S_symbol *s_javaCloneableSymbol;
-S_symbol *s_javaIoSerializableSymbol;
-S_symbol *s_javaObjectSymbol;
+Symbol s_javaArrayObjectSymbol;
+Symbol *s_javaStringSymbol;
+Symbol *s_javaCloneableSymbol;
+Symbol *s_javaIoSerializableSymbol;
+Symbol *s_javaObjectSymbol;
 S_typeModifiers s_javaStringModifier;
 S_typeModifiers s_javaClassModifier;
 S_typeModifiers s_javaObjectModifier;

@@ -2,7 +2,7 @@
 #include "../semact.h"
 #include <cgreen/mocks.h>
 
-void unpackPointers(S_symbol *pp) {
+void unpackPointers(Symbol *pp) {
   mock(pp);
 }
 
@@ -14,48 +14,48 @@ void deleteSymDef(void *p) {
   mock(p);
 }
 
-void addSymbol(S_symbol *pp, S_symTab *tab) {
+void addSymbol(Symbol *pp, S_symTab *tab) {
   mock(pp, tab);
 }
 
-void recFindPush(S_symbol *sym, S_recFindStr *rfs) {
+void recFindPush(Symbol *sym, S_recFindStr *rfs) {
   mock(sym, rfs);
 }
 
-S_recFindStr *iniFind(S_symbol *s, S_recFindStr *rfs) {
+S_recFindStr *iniFind(Symbol *s, S_recFindStr *rfs) {
   return (S_recFindStr *) mock(s, rfs);
 }
 
-int javaOuterClassAccessible(S_symbol *cl) {
+int javaOuterClassAccessible(Symbol *cl) {
   return (int) mock(cl);
 }
 
-int javaRecordAccessible(S_recFindStr *rfs, S_symbol *applcl, S_symbol *funcl, S_symbol *rec, unsigned recAccessFlags) {
+int javaRecordAccessible(S_recFindStr *rfs, Symbol *applcl, Symbol *funcl, Symbol *rec, unsigned recAccessFlags) {
   return (int) mock(rfs, applcl, funcl, rec, recAccessFlags);
 }
 
-int javaRecordVisibleAndAccessible(S_recFindStr *rfs, S_symbol *applCl, S_symbol *funCl, S_symbol *r) {
+int javaRecordVisibleAndAccessible(S_recFindStr *rfs, Symbol *applCl, Symbol *funCl, Symbol *r) {
   return (int) mock(rfs, applCl, funCl, r);
 }
 
-int javaGetMinimalAccessibility(S_recFindStr *rfs, S_symbol *r) {
+int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r) {
   return (int) mock(rfs, r);
 }
 
-int findStrRecordSym(S_recFindStr *ss, char *recname, S_symbol **res, int javaClassif, int accessCheck, int visibilityCheck) {
+int findStrRecordSym(S_recFindStr *ss, char *recname, Symbol **res, int javaClassif, int accessCheck, int visibilityCheck) {
   return (int) mock(ss, recname, res, javaClassif, accessCheck, visibilityCheck);
 }
 
-S_symbol *addNewSymbolDef(S_symbol *p, unsigned storage, S_symTab *tab, int usage) {
-  return (S_symbol *) mock(p, storage, tab, usage);
+Symbol *addNewSymbolDef(Symbol *p, unsigned storage, S_symTab *tab, int usage) {
+  return (Symbol *) mock(p, storage, tab, usage);
 }
 
-S_symbol *addNewCopyOfSymbolDef(S_symbol *def, unsigned defaultStorage) {
-  return (S_symbol *) mock(def, defaultStorage);
+Symbol *addNewCopyOfSymbolDef(Symbol *def, unsigned defaultStorage) {
+  return (Symbol *) mock(def, defaultStorage);
 }
 
-S_symbol *addNewDeclaration(S_symbol *btype, S_symbol *decl, S_idIdentList *idl, unsigned storage, S_symTab *tab) {
-  return (S_symbol *) mock(btype, decl, idl, storage, tab);
+Symbol *addNewDeclaration(Symbol *btype, Symbol *decl, S_idIdentList *idl, unsigned storage, S_symTab *tab) {
+  return (Symbol *) mock(btype, decl, idl, storage, tab);
 }
 
 int styyerror(char *s) {
@@ -70,23 +70,23 @@ void setToNull(void *p) {
   mock(p);
 }
 
-S_symbol *typeSpecifier1(unsigned t) {
-  return (S_symbol *) mock(t);
+Symbol *typeSpecifier1(unsigned t) {
+  return (Symbol *) mock(t);
 }
 
-void declTypeSpecifier1(S_symbol *d, unsigned t) {
+void declTypeSpecifier1(Symbol *d, unsigned t) {
   mock(d, t);
 }
 
-S_symbol *typeSpecifier2(S_typeModifiers *t) {
-  return (S_symbol *) mock(t);
+Symbol *typeSpecifier2(S_typeModifiers *t) {
+  return (Symbol *) mock(t);
 }
 
-void declTypeSpecifier2(S_symbol *d, S_typeModifiers *t) {
+void declTypeSpecifier2(Symbol *d, S_typeModifiers *t) {
   mock(d, t);
 }
 
-void declTypeSpecifier21(S_typeModifiers *t, S_symbol *d) {
+void declTypeSpecifier21(S_typeModifiers *t, Symbol *d) {
   mock(t, d);
 }
 
@@ -98,11 +98,11 @@ S_typeModifiers *prependComposedType(S_typeModifiers *d, unsigned t) {
   return (S_typeModifiers *) mock(d, t);
 }
 
-void completeDeclarator(S_symbol *t, S_symbol *d) {
+void completeDeclarator(Symbol *t, Symbol *d) {
   mock(t, d);
 }
 
-void addFunctionParameterToSymTable(S_symbol *function, S_symbol *p, int i, S_symTab *tab) {
+void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, S_symTab *tab) {
   mock(function, p, i, tab);
 }
 
@@ -110,27 +110,27 @@ S_typeModifiers *crSimpleTypeModifier(unsigned t) {
   return (S_typeModifiers *) mock(t);
 }
 
-SymbolList *createDefinitionList(S_symbol *symbol) {
+SymbolList *createDefinitionList(Symbol *symbol) {
   return (SymbolList *) mock(symbol);
 }
 
-S_symbol *createSimpleDefinition(unsigned storage, unsigned t, S_idIdent *id) {
-  return (S_symbol *) mock(storage, t, id);
+Symbol *createSimpleDefinition(unsigned storage, unsigned t, S_idIdent *id) {
+  return (Symbol *) mock(storage, t, id);
 }
 
-int findStrRecord(S_symbol *s, char *recname, S_symbol **res, int javaClassif) {
+int findStrRecord(Symbol *s, char *recname, Symbol **res, int javaClassif) {
   return (int) mock(s, recname, res, javaClassif);
 }
 
-S_reference *findStrRecordFromSymbol(S_symbol *str, S_idIdent *record, S_symbol **res, int javaClassif, S_idIdent *super) {
+S_reference *findStrRecordFromSymbol(Symbol *str, S_idIdent *record, Symbol **res, int javaClassif, S_idIdent *super) {
   return (S_reference *) mock(str, record, res, javaClassif, super);
 }
 
-S_reference *findStrRecordFromType(S_typeModifiers *str, S_idIdent *record, S_symbol **res, int javaClassif) {
+S_reference *findStrRecordFromType(S_typeModifiers *str, S_idIdent *record, Symbol **res, int javaClassif) {
   return (S_reference *) mock(str, record, res, javaClassif);
 }
 
-int mergeArguments(S_symbol *id, S_symbol *ty) {
+int mergeArguments(Symbol *id, Symbol *ty) {
   return (int) mock(id, ty);
 }
 
@@ -142,7 +142,7 @@ S_typeModifiers *crNewAnnonymeStrUnion(S_idIdent *typeName) {
   return (S_typeModifiers *) mock(typeName);
 }
 
-void specializeStrUnionDef(S_symbol *sd, S_symbol *rec) {
+void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
   mock(sd, rec);
 }
 
@@ -150,7 +150,7 @@ S_typeModifiers *simpleEnumSpecifier(S_idIdent *id, int usage) {
   return (S_typeModifiers *) mock(id, usage);
 }
 
-void setGlobalFileDepNames(char *iname, S_symbol *pp, int memory) {
+void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
   mock(iname, pp, memory);
 }
 
@@ -174,11 +174,11 @@ void setParamPositionForParameterBeyondRange(S_position *rpar) {
   mock(rpar);
 }
 
-S_symbol *crEmptyField(void) {
-  return (S_symbol *) mock();
+Symbol *crEmptyField(void) {
+  return (Symbol *) mock();
 }
 
-void handleDeclaratorParamPositions(S_symbol *decl, S_position *lpar, S_positionList *commas, S_position *rpar, int hasParam) {
+void handleDeclaratorParamPositions(Symbol *decl, S_position *lpar, S_positionList *commas, S_position *rpar, int hasParam) {
   mock(decl, lpar, commas, rpar, hasParam);
 }
 

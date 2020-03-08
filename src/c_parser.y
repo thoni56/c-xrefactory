@@ -231,7 +231,7 @@
 %union {
     int                                     integer;
     unsigned                                unsign;
-    S_symbol                                *symbol;
+    Symbol                                *symbol;
     SymbolList                            *symbolList;
     S_typeModifiers                         *typeModif;
     S_typeModifiersList                     *typeModifList;
@@ -315,8 +315,8 @@
 
 primary_expr
     : IDENTIFIER			{
-        S_symbol *p;
-        S_symbol *dd;
+        Symbol *p;
+        Symbol *dd;
         p = $1.d->sd;
         if (p != NULL && p->bits.symType == TypeDefault) {
             assert(p && p);
@@ -332,13 +332,13 @@ primary_expr
         } else {
             /* implicit function declaration */
             S_typeModifiers *p;
-            S_symbol *d;
-            S_symbol *dd;
+            Symbol *d;
+            Symbol *dd;
             CrTypeModifier(p, TypeInt);
             $$.d.t = StackMemAlloc(S_typeModifiers);
             FILLF_typeModifiers($$.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
 
-            /*& d = StackMemAlloc(S_symbol); */
+            /*& d = StackMemAlloc(Symbol); */
             /*& FILL_symbolBits(&d->bits,0,0,0,0,0,TypeDefault, StorageExtern, 0); */
             /*& FILL_symbol(d,$1.d->name,$1.d->name,$1.d->p,d->bits,type,$$.d.t,NULL); */
             /*& REPLACED: StackMemAlloc() & FILL_symbol() with: */
@@ -423,14 +423,14 @@ postfix_expr
         assert($$.d.t);
     }
     | postfix_expr {SetStrCompl1($1.d.t);} '.' str_rec_identifier		{
-        S_symbol *rec=NULL;
+        Symbol *rec=NULL;
         $$.d.r = findStrRecordFromType($1.d.t, $4.d, &rec, CLASS_TO_ANY);
         assert(rec);
         $$.d.t = rec->u.type;
         assert($$.d.t);
     }
     | postfix_expr {SetStrCompl2($1.d.t);} PTR_OP str_rec_identifier	{
-        S_symbol *rec=NULL;
+        Symbol *rec=NULL;
         $$.d.r = NULL;
         if ($1.d.t->kind==TypePointer || $1.d.t->kind==TypeArray) {
             $$.d.r = findStrRecordFromType($1.d.t->next, $4.d, &rec, CLASS_TO_ANY);
@@ -980,14 +980,14 @@ struct_declaration_list
             $$.d = $1.d;
         } else {
             $$.d = $1.d;
-            LIST_APPEND(S_symbol, $$.d, $2.d);
+            LIST_APPEND(Symbol, $$.d, $2.d);
         }
     }
     ;
 
 struct_declaration
     : Sv_tmp type_specifier_list struct_declarator_list ';'     {
-        S_symbol *p;
+        Symbol *p;
         assert($2.d && $3.d);
         for(p=$3.d; p!=NULL; p=p->next) {
             completeDeclarator($2.d, p);
@@ -997,7 +997,7 @@ struct_declaration
     }
     | error												{
         /* $$.d = &s_errorSymbol; */
-        XX_ALLOC($$.d, S_symbol);
+        XX_ALLOC($$.d, Symbol);
         *$$.d = s_errorSymbol;
 #ifdef DEBUGPARSING
         char buffer[100];
@@ -1015,7 +1015,7 @@ struct_declarator_list
     | struct_declarator_list ',' struct_declarator		{
         $$.d = $1.d;
         assert($3.d->next == NULL);
-        LIST_APPEND(S_symbol, $$.d, $3.d);
+        LIST_APPEND(Symbol, $$.d, $3.d);
     }
     ;
 
@@ -1086,7 +1086,7 @@ enumerator
     }
     | error									{
         /* $$.d = &s_errorSymbol; */
-        XX_ALLOC($$.d, S_symbol);
+        XX_ALLOC($$.d, Symbol);
         *$$.d = s_errorSymbol;
 #ifdef DEBUGPARSING
         char buffer[100];
@@ -1108,7 +1108,7 @@ declarator
 
 declarator2
     : identifier										{
-        /*& $$.d = StackMemAlloc(S_symbol); */
+        /*& $$.d = StackMemAlloc(Symbol); */
         /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
         /*& FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->bits,type,NULL,NULL); */
         /*& REPLACED: StackMemAlloc() and FILL_symbol() with: */
@@ -1253,11 +1253,11 @@ type_specifier_list0
 parameter_identifier_list
     : identifier_list							/*& { $$.d = $1.d; } */
     | identifier_list ',' ELIPSIS				{
-        S_symbol *p;
+        Symbol *p;
         S_position pp;
         FILL_position(&pp, -1, 0, 0);
 
-        /*& p = StackMemAlloc(S_symbol); */
+        /*& p = StackMemAlloc(Symbol); */
         /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0); */
         /*& FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL); */
         /*& REPLACED: StackMemAlloc() and FILL_symbol() with: */
@@ -1265,15 +1265,15 @@ parameter_identifier_list
         FILL_symbolBits(&p->bits, 0, 0, 0, 0, 0, TypeElipsis, StorageDefault, 0);
         $$.d = $1.d;
 
-        LIST_APPEND(S_symbol, $$.d.s, p);
+        LIST_APPEND(Symbol, $$.d.s, p);
         appendPositionToList(&$$.d.p, &$2.d);
     }
     ;
 
 identifier_list
     : IDENTIFIER								{
-        S_symbol *p;
-        /*& p = StackMemAlloc(S_symbol); */
+        Symbol *p;
+        /*& p = StackMemAlloc(Symbol); */
         /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
         /*& FILL_symbol(p,$1.d->name,$1.d->name,$1.d->p,p->bits,type,NULL,NULL); */
         /*& REPLACED: StackMemAlloc()+FILL_symbol() with: */
@@ -1283,15 +1283,15 @@ identifier_list
         $$.d.p = NULL;
     }
     | identifier_list ',' identifier			{
-        S_symbol        *p;
-        /*& p = StackMemAlloc(S_symbol); */
+        Symbol        *p;
+        /*& p = StackMemAlloc(Symbol); */
         /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
         /*& FILL_symbol(p,$3.d->name,$3.d->name,$3.d->p,p->bits,type,NULL,NULL); */
         /*& REPLACED: StackMemAlloc()+FILL_symbol() with: */
         p = newSymbol($3.d->name, $3.d->name, $3.d->p);
         FILL_symbolBits(&p->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
         $$.d = $1.d;
-        LIST_APPEND(S_symbol, $$.d.s, p);
+        LIST_APPEND(Symbol, $$.d.s, p);
         appendPositionToList(&$$.d.p, &$2.d);
     }
     | COMPL_OTHER_NAME		{ assert(0); /* token never used */ }
@@ -1300,11 +1300,11 @@ identifier_list
 parameter_type_list
     : parameter_list					/*& { $$.d = $1.d; } */
     | parameter_list ',' ELIPSIS				{
-        S_symbol        *p;
+        Symbol        *p;
         S_position      pp;
         FILL_position(&pp, -1, 0, 0);
 
-        /*& p = StackMemAlloc(S_symbol); */
+        /*& p = StackMemAlloc(Symbol); */
         /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0); */
         /*& FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL); */
         /*& REPLACED StackMemAlloc() + FILL_symbol() with: */
@@ -1312,7 +1312,7 @@ parameter_type_list
         FILL_symbolBits(&p->bits, 0, 0, 0, 0, 0, TypeElipsis, StorageDefault, 0);
         $$.d = $1.d;
 
-        LIST_APPEND(S_symbol, $$.d.s, p);
+        LIST_APPEND(Symbol, $$.d.s, p);
         appendPositionToList(&$$.d.p, &$2.d);
     }
     ;
@@ -1324,7 +1324,7 @@ parameter_list
     }
     | parameter_list ',' parameter_declaration		{
         $$.d = $1.d;
-        LIST_APPEND(S_symbol, $1.d.s, $3.d);
+        LIST_APPEND(Symbol, $1.d.s, $3.d);
         appendPositionToList(&$$.d.p, &$2.d);
     }
     ;
@@ -1336,7 +1336,7 @@ parameter_declaration
         $$.d = $2.d;
     }
     | type_name									{
-        /*& $$.d = StackMemAlloc(S_symbol); */
+        /*& $$.d = StackMemAlloc(Symbol); */
         /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault, StorageDefault,0); */
         /*& FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,$1.d,NULL); */
         /*& REPLACED: StackMemAlloc()+FILL_symbol() with: */
@@ -1352,7 +1352,7 @@ parameter_declaration
             void toto(Mistype arg) {}
             In case of problems rather increase the tmpWorkMemory !!!
         */
-        XX_ALLOC($$.d, S_symbol);
+        XX_ALLOC($$.d, Symbol);
         *$$.d = s_errorSymbol;
 #ifdef DEBUGPARSING
         char buffer[100];
@@ -1767,7 +1767,7 @@ external_definition
         tmpWorkMemoryi = $1.d;
     }
     | Sv_tmp function_definition_head {
-        S_symbol *p;
+        Symbol *p;
         int i;
         assert($2.d);
         // I think that due to the following line sometimes
@@ -1849,7 +1849,7 @@ fun_arg_declaration
         $$.d = NULL;
     }
     | declaration_specifiers fun_arg_init_declarations ';'		{
-        S_symbol *p;
+        Symbol *p;
         assert($1.d && $2.d);
         for(p=$2.d; p!=NULL; p=p->next) {
             completeDeclarator($1.d, p);
@@ -1864,7 +1864,7 @@ fun_arg_init_declarations
     }
     | fun_arg_init_declarations ',' init_declarator eq_initializer_opt				{
         $$.d = $1.d;
-        LIST_APPEND(S_symbol, $$.d, $3.d);
+        LIST_APPEND(Symbol, $$.d, $3.d);
     }
     | fun_arg_init_declarations ',' error						{
         $$.d = $1.d;

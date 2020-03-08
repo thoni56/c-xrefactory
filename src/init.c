@@ -13,7 +13,7 @@
 static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {
     char *nn;
     int tok, ii, i, tlan;
-    S_symbol *pp;
+    Symbol *pp;
     for(i=0; tokenTabIni[i].name!=NULL; i++) {
         nn = tokenTabIni[i].name;
         tok = tokenTabIni[i].token;
@@ -22,7 +22,7 @@ static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {
         s_tokenLength[tok] = strlen(nn);
         if ((isalpha(*nn) || *nn=='_') && (tlan & s_language)) {
             /* looks like a keyword */
-            /*& XX_ALLOC(pp, S_symbol); */
+            /*& XX_ALLOC(pp, Symbol); */
             /*& FILL_symbolBits(&pp->bits,0,0, 0,0,0,TypeKeyword,StorageNone,0); */
             /*& FILL_symbol(pp,nn,nn,s_noPos,pp->bits,keyWordVal,tok,NULL); */
             /*& REPLACED: XX_ALLOC & FILL_symbol() with */
@@ -56,7 +56,7 @@ static char *autoDetectJavaVersion(void) {
 void initTokenNameTab(void) {
     char *jv;
     int ii;
-    S_symbol *pp;
+    Symbol *pp;
     static int messageWritten=0;
 
     if (! s_opt.strictAnsi) {
@@ -81,7 +81,7 @@ void initTokenNameTab(void) {
     /* regular tokentab at last, because we wish to have correct names */
     initTokensFromTab(s_tokenNameIniTab);
     /* and add the 'defined' keyword for #if */
-    /*& XX_ALLOC(pp, S_symbol); */
+    /*& XX_ALLOC(pp, Symbol); */
     /*& FILL_symbolBits(&pp->bits,0,0,0,0,0,TypeDefinedOp,StorageNone,0); */
     /*& FILL_symbol(pp,"defined","defined",s_noPos,pp->bits,type,NULL,NULL); */
     /*& REPLACED: XX_ALLOC()+FILL_symbol() with: */

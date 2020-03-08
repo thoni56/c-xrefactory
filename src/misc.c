@@ -378,7 +378,7 @@ void removeFromTrailUntil(S_freeTrail *untilP) {
     /*trailDump();*/
 }
 
-void symDump(S_symbol *s) {
+void symDump(Symbol *s) {
     fprintf(dumpOut,"[symbol] %s\n",s->name);
 }
 
@@ -438,7 +438,7 @@ int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos) {
 void typeSPrint(char *buff, int *size, S_typeModifiers *t,
                 char *name, int dclSepChar, int maxDeep, int typedefexp,
                 int longOrShortName, int *oNamePos) {
-    S_symbol *dd;   S_symbol *ddd;
+    Symbol *dd;   Symbol *ddd;
     char pref[COMPLETION_STRING_SIZE];
     char post[COMPLETION_STRING_SIZE];
     char type[COMPLETION_STRING_SIZE];
@@ -1591,7 +1591,7 @@ void javaMapDirectoryFiles2(
 static void scanClassFile(char *zip, char *file, void *arg) {
     char        ttt[MAX_FILE_NAME_SIZE];
     char        *tt, *suff;
-    S_symbol    *memb;
+    Symbol    *memb;
     int         cpi, fileInd;
     //&fprintf(dumpOut,"scanning %s ; %s\n", zip, file);
     suff = getFileSuffix(file);

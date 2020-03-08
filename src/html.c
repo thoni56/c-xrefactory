@@ -1718,7 +1718,7 @@ void htmlAddFunctionSeparatorReference(void) {
 }
 
 
-void htmlAddJavaDocReference(S_symbol  *p, S_position  *pos,
+void htmlAddJavaDocReference(Symbol  *p, S_position  *pos,
                              int  vFunClass, int  vApplClass) {
     S_position npos;
     if (s_opt.taskRegime == RegimeHtmlGenerate && s_opt.javaDoc) {

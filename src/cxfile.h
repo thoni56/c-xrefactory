@@ -11,7 +11,7 @@ extern void searchSymbolCheckReference(S_symbolRefItem  *ss, S_reference *rr);
 extern int cxFileHashNumber(char *sym);
 extern void genReferenceFile(int updateFlag, char *fname);
 extern void addSubClassItemToFileTab( int sup, int inf, int origin);
-extern void addSubClassesItemsToFileTab(S_symbol *ss, int origin);
+extern void addSubClassesItemsToFileTab(Symbol *ss, int origin);
 extern void scanCxFile(ScanFileFunctionStep *scanFuns);
 extern int scanReferenceFile(char *fname, char *fns1, char *fns2,
                              ScanFileFunctionStep *scanFunTab);

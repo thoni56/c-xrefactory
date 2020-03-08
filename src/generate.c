@@ -13,7 +13,7 @@ typedef enum {
 } GenerateKind;
 
 
-static bool isSubstructureToFill(S_symbol *symbol) {
+static bool isSubstructureToFill(Symbol *symbol) {
     if (symbol->bits.storage == StorageError) return false;
     assert(symbol->u.type);
     if (symbol->u.type->kind == TypeAnonymeField) return false;
@@ -33,12 +33,12 @@ static char *getFillArgumentName(int argument_number, int argument_count,
     return(res);
 }
 
-static int genFillStructArguments(S_symbol *symbol,
+static int genFillStructArguments(Symbol *symbol,
                                   int i,
                                   bool fullFlag
                                   ) {
-    S_symbol *records;
-    S_symbol *p;
+    Symbol *records;
+    Symbol *p;
     static int deep=0;
     assert(symbol->u.s);
     records = symbol->u.s->records;
@@ -73,10 +73,10 @@ static void fillField(char *prefix, char *name, int argument_number,
 }
 
 
-static int genFillStructBody(S_symbol *defin, int i, int argn, bool fullFlag,
+static int genFillStructBody(Symbol *defin, int i, int argn, bool fullFlag,
                              char *pref, GenerateKind action) {
-    S_symbol *rec;
-    S_symbol *p;
+    Symbol *rec;
+    Symbol *p;
     char prefix[TMP_STRING_SIZE];
     char rname[TMP_STRING_SIZE];
     int l1,l2;
@@ -133,7 +133,7 @@ static int genFillStructBody(S_symbol *defin, int i, int argn, bool fullFlag,
 
 /* ******************************************************************* */
 
-static void generateTypedefForStructOrUnion(S_symbol *symbol) {
+static void generateTypedefForStructOrUnion(Symbol *symbol) {
     char *name;
 
     assert(symbol);
@@ -148,7 +148,7 @@ static void generateTypedefForStructOrUnion(S_symbol *symbol) {
 }
 
 
-static void generateStructureFillMacros(S_symbol *symbol) {
+static void generateStructureFillMacros(Symbol *symbol) {
     char *name;
     int argn;
 
@@ -172,9 +172,9 @@ static void generateStructureFillMacros(S_symbol *symbol) {
 }
 
 
-static void generateUnionFillMacros(S_symbol *symbol) {
+static void generateUnionFillMacros(Symbol *symbol) {
     char *name;
-    S_symbol *rec,*p;
+    Symbol *rec,*p;
     assert(symbol);
     name = symbol->name;
     assert(symbol->u.s);
@@ -196,9 +196,9 @@ static void generateUnionFillMacros(S_symbol *symbol) {
 }
 
 
-static void generateStructCopyFunction(S_symbol *symbol) {
+static void generateStructCopyFunction(Symbol *symbol) {
     char *name;
-    S_symbol *rec;
+    Symbol *rec;
     assert(symbol);
     name = symbol->name;
     assert(symbol->u.s);
@@ -225,7 +225,7 @@ static void generateStructCopyFunction(S_symbol *symbol) {
     }
 }
 
-static void generateTypedefForEnum(S_symbol *symbol) {
+static void generateTypedefForEnum(Symbol *symbol) {
     char *name;
 
     assert(symbol);
@@ -233,7 +233,7 @@ static void generateTypedefForEnum(S_symbol *symbol) {
     assert(name);
 }
 
-static void generateEnumString(S_symbol *symbol) {
+static void generateEnumString(Symbol *symbol) {
     char *name;
     SymbolList *e;
     assert(symbol);
@@ -272,7 +272,7 @@ void generateArgumentSelectionMacros(int n) {
 /* ********************************************************************* */
 /* ********************************************************************* */
 
-void generate(S_symbol *symbol) {
+void generate(Symbol *symbol) {
     assert(symbol);
     if (symbol->name==NULL || symbol->name[0]==0) return;
     if (symbol->bits.symType==TypeStruct || symbol->bits.symType==TypeUnion) {

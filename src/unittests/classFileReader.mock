@@ -2,47 +2,46 @@
 #include "../classFileReader.h"
 #include <cgreen/mocks.h>
 
-void javaHumanizeLinkName(char *inn, char *outn, int size) { 
+void javaHumanizeLinkName(char *inn, char *outn, int size) {
   mock(inn, outn, size);
 }
 
-S_symbol *cfAddCastsToModule(S_symbol *memb, S_symbol *sup) { 
-  return (S_symbol *) mock(memb, sup);
+Symbol *cfAddCastsToModule(Symbol *memb, Symbol *sup) {
+  return (Symbol *) mock(memb, sup);
 }
 
-void addSuperClassOrInterface(S_symbol *memb, S_symbol *supp, int origin) { 
+void addSuperClassOrInterface(Symbol *memb, Symbol *supp, int origin) {
   mock(memb, supp, origin);
 }
 
-int javaCreateClassFileItem(S_symbol *memb) { 
+int javaCreateClassFileItem(Symbol *memb) {
   return (int) mock(memb);
 }
 
-void addSuperClassOrInterfaceByName(S_symbol *memb, char *super, int origin, int loadSuper) { 
+void addSuperClassOrInterfaceByName(Symbol *memb, char *super, int origin, int loadSuper) {
   mock(memb, super, origin, loadSuper);
 }
 
-void fsRecMapOnFiles(S_zipArchiveDir *dir, char *zip, char *path, void (*fun)(char *zip, char *file, void *arg), void *arg) { 
+void fsRecMapOnFiles(S_zipArchiveDir *dir, char *zip, char *path, void (*fun)(char *zip, char *file, void *arg), void *arg) {
   mock(dir, zip, path, fun, arg);
 }
 
-int fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset, int addFlag, S_zipArchiveDir **place) { 
+int fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset, int addFlag, S_zipArchiveDir **place) {
   return (int) mock(dir, fn, offset, addFlag, place);
 }
 
-int zipIndexArchive(char *name) { 
+int zipIndexArchive(char *name) {
   return (int) mock(name);
 }
 
-int zipFindFile(char *name, char **resName, S_zipFileTabItem *zipfile) { 
+int zipFindFile(char *name, char **resName, S_zipFileTabItem *zipfile) {
   return (int) mock(name, resName, zipfile);
 }
 
-void javaMapZipDirFile(S_zipFileTabItem *zipfile, char *packfile, S_completions *a1, void *a2, int *a3, void (*fun)(char *file, char *a1, char *a2, S_completions *a3, void *a4, int *a5), char *classPath, char *dirname) { 
+void javaMapZipDirFile(S_zipFileTabItem *zipfile, char *packfile, S_completions *a1, void *a2, int *a3, void (*fun)(char *file, char *a1, char *a2, S_completions *a3, void *a4, int *a5), char *classPath, char *dirname) {
   mock(zipfile, packfile, a1, a2, a3, fun, classPath, dirname);
 }
 
-void javaReadClassFile(char *name, S_symbol *cdef, int loadSuper) { 
+void javaReadClassFile(char *name, Symbol *cdef, int loadSuper) {
   mock(name, cdef, loadSuper);
 }
-

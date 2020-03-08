@@ -3,32 +3,32 @@
 
 #include "proto.h"
 
-extern S_symbol *jslTypeSpecifier1(unsigned t);
-extern S_symbol *jslTypeSpecifier2(S_typeModifiers *t);
+extern Symbol *jslTypeSpecifier1(unsigned t);
+extern Symbol *jslTypeSpecifier2(S_typeModifiers *t);
 
-extern void jslCompleteDeclarator(S_symbol *t, S_symbol *d);
+extern void jslCompleteDeclarator(Symbol *t, Symbol *d);
 extern S_typeModifiers *jslPrependComposedType(S_typeModifiers *d, unsigned t);
 extern S_typeModifiers *jslAppendComposedType(S_typeModifiers **d, unsigned t);
-extern S_symbol *jslPrependDirectEnclosingInstanceArgument(S_symbol *args);
-extern S_symbol *jslMethodHeader(unsigned modif, S_symbol *type, S_symbol *decl, int storage, SymbolList *throws);
-extern S_symbol *jslTypeNameDefinition(S_idIdentList *tname);
-extern S_symbol *jslTypeSymbolDefinition(char *ttt2, S_idIdentList *packid,
+extern Symbol *jslPrependDirectEnclosingInstanceArgument(Symbol *args);
+extern Symbol *jslMethodHeader(unsigned modif, Symbol *type, Symbol *decl, int storage, SymbolList *throws);
+extern Symbol *jslTypeNameDefinition(S_idIdentList *tname);
+extern Symbol *jslTypeSymbolDefinition(char *ttt2, S_idIdentList *packid,
                                          int add, int order, int isSingleImportedFlag);
-extern int jslClassifyAmbiguousTypeName(S_idIdentList *name, S_symbol **str);
-extern void jslAddNestedClassesToJslTypeTab( S_symbol *cc, int order);
-extern void jslAddSuperNestedClassesToJslTypeTab( S_symbol *cc);
+extern int jslClassifyAmbiguousTypeName(S_idIdentList *name, Symbol **str);
+extern void jslAddNestedClassesToJslTypeTab( Symbol *cc, int order);
+extern void jslAddSuperNestedClassesToJslTypeTab( Symbol *cc);
 
-extern void jslAddSuperClassOrInterfaceByName(S_symbol *memb,char *super);
+extern void jslAddSuperClassOrInterfaceByName(Symbol *memb,char *super);
 extern void jslNewClassDefinitionBegin(S_idIdent *name,
                                        int accessFlags,
-                                       S_symbol *anonInterf,
+                                       Symbol *anonInterf,
                                        int position
                                        );
-extern void jslAddDefaultConstructor(S_symbol *cl);
+extern void jslAddDefaultConstructor(Symbol *cl);
 extern void jslNewClassDefinitionEnd(void);
 extern void jslNewAnonClassDefinitionBegin(S_idIdent *interfName);
 
-extern void jslAddSuperClassOrInterface(S_symbol *memb,S_symbol *supp);
+extern void jslAddSuperClassOrInterface(Symbol *memb,Symbol *supp);
 extern void jslAddMapedImportTypeName(
                                       char *file,
                                       char *path,

@@ -114,11 +114,11 @@ S_reference *duplicateReference(S_reference *r) {
     return (S_reference *) mock(r);
 }
 
-S_reference *addCxReferenceNew(S_symbol *p, S_position *pos, S_usageBits *ub, int vFunCl, int vApplCl) {
+S_reference *addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *ub, int vFunCl, int vApplCl) {
     return (S_reference *) mock(p, pos, ub, vFunCl, vApplCl);
 }
 
-S_reference *addCxReference(S_symbol *p, S_position *pos, int usage, int vFunClass, int vApplClass) {
+S_reference *addCxReference(Symbol *p, S_position *pos, int usage, int vFunClass, int vApplClass) {
     return (S_reference *) mock(p, pos, usage, vFunClass, vApplClass);
 }
 
@@ -146,7 +146,7 @@ void olSetCallerPosition(S_position *pos) {
     mock(pos);
 }
 
-S_olCompletion *olCompletionListPrepend(char *name, char *fullText, char *vclass, int jindent, S_symbol *s, S_symbolRefItem *ri, S_reference *dfpos, int symType, int vFunClass, S_olcxReferences *stack) {
+S_olCompletion *olCompletionListPrepend(char *name, char *fullText, char *vclass, int jindent, Symbol *s, S_symbolRefItem *ri, S_reference *dfpos, int symType, int vFunClass, S_olcxReferences *stack) {
     return (S_olCompletion *) mock(name, fullText, vclass, jindent, s, ri, dfpos, symType, vFunClass, stack);
 }
 
@@ -262,7 +262,7 @@ void getLineColCursorPositionFromCommandLineOption(int *l, int *c) {
     mock(l, c);
 }
 
-void changeClassReferencesUsages(char *linkName, int category, int fnum, S_symbol *cclass) {
+void changeClassReferencesUsages(char *linkName, int category, int fnum, Symbol *cclass) {
     mock(linkName, category, fnum, cclass);
 }
 
@@ -270,7 +270,7 @@ int isStrictlyEnclosingClass(int enclosedClass, int enclosingClass) {
     return (int) mock(enclosedClass, enclosingClass);
 }
 
-void changeMethodReferencesUsages(char *linkName, int category, int fnum, S_symbol *cclass) {
+void changeMethodReferencesUsages(char *linkName, int category, int fnum, Symbol *cclass) {
     mock(linkName, category, fnum, cclass);
 }
 
@@ -310,8 +310,8 @@ void tpCheckFillMoveClassData(S_tpCheckMoveClassData *dd, char *spack, char *tpa
     mock(dd, spack, tpack);
 }
 
-S_symbol *getMoveTargetClass(void) {
-    return (S_symbol *) mock();
+Symbol *getMoveTargetClass(void) {
+    return (Symbol *) mock();
 }
 
 int javaGetSuperClassNumFromClassNum(int cn) {

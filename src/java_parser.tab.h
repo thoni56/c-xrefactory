@@ -201,7 +201,7 @@
 typedef union {
     int                                     integer;
     unsigned                                unsign;
-    S_symbol                                *symbol;
+    Symbol                                *symbol;
     SymbolList                            *symbolList;
     S_typeModifiers                         *typeModif;
     S_typeModifiersList                     *typeModifList;

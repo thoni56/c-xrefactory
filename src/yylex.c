@@ -56,7 +56,7 @@ int s_yyPositionBufi = 0;
 
 #define IS_IDENTIFIER_LEXEM(lex) (lex==IDENTIFIER || lex==IDENT_NO_CPP_EXPAND  || lex==IDENT_TO_COMPLETE)
 
-static int macroCallExpand(S_symbol *mdef, S_position *mpos);
+static int macroCallExpand(Symbol *mdef, S_position *mpos);
 
 /* ************************************************************ */
 
@@ -403,7 +403,7 @@ endOfFile:;
 
 /* ********************************* #INCLUDE ********************** */
 
-static void fillIncludeSymbolItem( S_symbol *ss,
+static void fillIncludeSymbolItem( Symbol *ss,
                                    int filenum, S_position *pos
     ){
     // should be different for HTML to be beatifull, however,
@@ -417,7 +417,7 @@ static void fillIncludeSymbolItem( S_symbol *ss,
 
 void addThisFileDefineIncludeReference(int filenum) {
     S_position dpos;
-    S_symbol        ss;
+    Symbol        ss;
     FILL_position(&dpos, filenum, 1, 0);
     fillIncludeSymbolItem( &ss,filenum, &dpos);
 //&fprintf(dumpOut,"adding reference on file %d==%s\n",filenum, s_fileTab.tab[filenum]->name);
@@ -425,7 +425,7 @@ void addThisFileDefineIncludeReference(int filenum) {
 }
 
 void addIncludeReference(int filenum, S_position *pos) {
-    S_symbol        ss;
+    Symbol        ss;
 //&fprintf(dumpOut,"adding reference on file %d==%s\n",filenum, s_fileTab.tab[filenum]->name);
     fillIncludeSymbolItem( &ss, filenum, pos);
     addCxReference(&ss, pos, UsageUsed, filenum, filenum);
@@ -519,7 +519,7 @@ static FILE *openInclude(char pchar, char *name, char **fileName) {
 static void processInclude2(S_position *ipos, char pchar, char *iname) {
     char *fname;
     FILE *nyyin;
-    S_symbol ss,*memb;
+    Symbol ss,*memb;
     int ii;
     sprintf(tmpBuff, "PragmaOnce-%s", iname);
 
@@ -580,9 +580,9 @@ assert(0);
     }\
 }
 
-static void addMacroToTabs(S_symbol *pp, char *name) {
+static void addMacroToTabs(Symbol *pp, char *name) {
     int ii,mm;
-    S_symbol *memb;
+    Symbol *memb;
     mm = symTabIsMember(s_symTab,pp,&ii,&memb);
     if (mm) {
         log_trace(": masking macro %s",name);
@@ -645,7 +645,7 @@ static void processDefine(int argFlag) {
     int lex,l,h,v;
     int bodyReadingFlag = 0;
     int sizei,ii,msize,argi,ellipsis,len;
-    S_symbol *pp;
+    Symbol *pp;
     S_macroArgTabElem *maca,mmaca;
     S_macroBody *macbody;
     S_position pos, macpos, ppb1, ppb2, *parpos1, *parpos2, *tmppp;
@@ -665,7 +665,7 @@ static void processDefine(int argFlag) {
     testCxrefCompletionId(&lex,cc,&macpos);    /* for cross-referencing */
     if (lex != IDENTIFIER) return;
 
-    PP_ALLOC(pp, S_symbol);
+    PP_ALLOC(pp, Symbol);
     fillSymbol(pp, NULL, NULL, macpos);
     FILL_symbolBits(&pp->bits, 0, 0, 0, 0, 0, TypeMacro, StorageNone, 0);
 
@@ -826,7 +826,7 @@ static void processUnDefine(void) {
     int lex,l,h,v,ii,len;
     char *cc;
     S_position pos;
-    S_symbol dd,*pp,*memb;
+    Symbol dd,*pp,*memb;
     GetLex(lex);
     cc = cInput.cc;
     PassLex(cInput.cc,lex,l,v,h,pos, len,1);
@@ -845,7 +845,7 @@ static void processUnDefine(void) {
                 addCxReference(memb, &pos, UsageUndefinedMacro,s_noneFileIndex, s_noneFileIndex);
             }
 
-            PP_ALLOC(pp, S_symbol);
+            PP_ALLOC(pp, Symbol);
             fillSymbol(pp, memb->name, memb->linkName, pos);
             FILL_symbolBits(&pp->bits,0,0, 0,0, 0, TypeMacro, StorageNone,0);
 
@@ -940,7 +940,7 @@ static void execCppIf(int deleteSource) {
 static void processIfdef(int isIfdef) {
     int lex,l,h,v;
     int ii,mm,len;
-    S_symbol pp,*memb;
+    Symbol pp,*memb;
     char *cc;
     S_position pos;
     int deleteSrc;
@@ -989,7 +989,7 @@ int cexpyylex(void) {
     int l,v,lex,par,ii,res,mm,len;
     char *cc;
     unsigned h;
-    S_symbol dd,*memb;
+    Symbol dd,*memb;
     S_position pos;
     lex = yylex();
     if (IS_IDENTIFIER_LEXEM(lex)) {
@@ -1055,7 +1055,7 @@ static void processPragma(void) {
     unsigned h;
     char *mname, *fname;
     S_position pos;
-    S_symbol *pp;
+    Symbol *pp;
 
     GetLex(lex);
     if (lex == IDENTIFIER && !strcmp(cInput.cc, "once")) {
@@ -1065,7 +1065,7 @@ static void processPragma(void) {
         PP_ALLOCC(mname, strlen(tmpBuff)+1, char);
         strcpy(mname, tmpBuff);
 
-        PP_ALLOC(pp, S_symbol);
+        PP_ALLOC(pp, Symbol);
         fillSymbol(pp, mname, mname, pos);
         FILL_symbolBits(&pp->bits, 0, 0, 0, 0, 0, TypeMacro, StorageNone, 0);
 
@@ -1209,7 +1209,7 @@ static int cyclicCall(S_macroBody *mb) {
 }
 
 static void expandMacroArgument(S_lexInput *argb) {
-    S_symbol sd,*memb;
+    Symbol sd,*memb;
     char *buf,*cc,*cc2,*bcc, *tbcc;
     int nn,ii,lex,line,val,bsize,failedMacroExpansion,len;
     S_position pos;
@@ -1596,7 +1596,7 @@ endOfFile:
 
 /* **************************************************************** */
 
-static void addMacroBaseUsageRef( S_symbol *mdef) {
+static void addMacroBaseUsageRef( Symbol *mdef) {
     int                 ii,rr;
     S_symbolRefItem     ppp,*memb;
     S_reference			*r;
@@ -1623,7 +1623,7 @@ static void addMacroBaseUsageRef( S_symbol *mdef) {
 }
 
 
-static int macroCallExpand(S_symbol *mdef, S_position *mpos) {
+static int macroCallExpand(Symbol *mdef, S_position *mpos) {
     int lex,line,val,len;
     char *cc2,*freeBase;
     S_position pos, lparpos;
@@ -1767,7 +1767,7 @@ static char constant[50];
 }
 
 static int processCIdent(unsigned hashval, char *id, S_position *idposa) {
-    S_symbol *sd,*memb;
+    Symbol *sd,*memb;
     memb = NULL;
 /*fprintf(dumpOut,"looking for %s in %d\n",id,s_symTab);*/
     for(sd=s_symTab->tab[hashval]; sd!=NULL; sd=sd->next) {
@@ -1795,7 +1795,7 @@ static int processCIdent(unsigned hashval, char *id, S_position *idposa) {
 
 
 static int processJavaIdent(unsigned hashval, char *id, S_position *idposa) {
-    S_symbol *sd,*memb;
+    Symbol *sd,*memb;
     memb = NULL;
 /*fprintf(dumpOut,"looking for %s in %d\n",id,s_symTab);*/
     for(sd=s_symTab->tab[hashval]; sd!=NULL; sd=sd->next) {
@@ -1816,7 +1816,7 @@ static int processJavaIdent(unsigned hashval, char *id, S_position *idposa) {
 
 
 static int processCccIdent(unsigned hashval, char *id, S_position *idposa) {
-    S_symbol *sd,*memb;
+    Symbol *sd,*memb;
     memb = NULL;
 /*fprintf(dumpOut,"looking for %s in %d\n",id,s_symTab);*/
     for(sd=s_symTab->tab[hashval]; sd!=NULL; sd=sd->next) {
@@ -1945,7 +1945,7 @@ int yylex(void) {
         register char *id;
         register unsigned h;
         int ii;
-        S_symbol symbol, *memberP;
+        Symbol symbol, *memberP;
 
         h = 0;//compiler
         id = yytext = cInput.cc;

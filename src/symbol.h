@@ -39,20 +39,20 @@ typedef struct symbol {
         int							keyWordVal; /* if symType == Keyword */
     } u;
     struct symbol                   *next;	/* next table item with the same hash */
-} S_symbol;
+} Symbol;
 
 
 /* Functions: */
 
 /* NOTE These will not fill bits-field, has to be done after allocation */
-extern S_symbol *newSymbol(char *name, char *linkName, struct position pos);
-extern S_symbol *newSymbolIsKeyword(char *name, char *linkName, struct position pos, int keyWordVal);
-extern S_symbol *newSymbolIsType(char *name, char *linkName, struct position pos, struct typeModifiers *type);
-extern S_symbol *newSymbolIsEnum(char *name, char *linkName, struct position pos, struct symbolList *enums);
-extern S_symbol *newSymbolIsLabel(char *name, char *linkName, struct position pos, int labelIndex);
-extern void fillSymbol(S_symbol *symbol, char *name, char *linkName, struct position pos);
-extern void fillSymbolWithType(S_symbol *symbol, char *name, char *linkName, struct position pos, struct typeModifiers *type);
-extern void fillSymbolWithLabel(S_symbol *symbol, char *name, char *linkName, struct position pos, int labelIndex);
-extern void fillSymbolWithStruct(S_symbol *symbol, char *name, char *linkName, struct position pos, struct symStructSpec *structSpec);
+extern Symbol *newSymbol(char *name, char *linkName, struct position pos);
+extern Symbol *newSymbolIsKeyword(char *name, char *linkName, struct position pos, int keyWordVal);
+extern Symbol *newSymbolIsType(char *name, char *linkName, struct position pos, struct typeModifiers *type);
+extern Symbol *newSymbolIsEnum(char *name, char *linkName, struct position pos, struct symbolList *enums);
+extern Symbol *newSymbolIsLabel(char *name, char *linkName, struct position pos, int labelIndex);
+extern void fillSymbol(Symbol *symbol, char *name, char *linkName, struct position pos);
+extern void fillSymbolWithType(Symbol *symbol, char *name, char *linkName, struct position pos, struct typeModifiers *type);
+extern void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName, struct position pos, int labelIndex);
+extern void fillSymbolWithStruct(Symbol *symbol, char *name, char *linkName, struct position pos, struct symStructSpec *structSpec);
 
 #endif

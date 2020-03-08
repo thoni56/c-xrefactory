@@ -89,8 +89,8 @@
     }\
 }
 
-static S_symbol *l_yaccUnion = NULL;
-static S_symbol *l_currentType = NULL;
+static Symbol *l_yaccUnion = NULL;
+static Symbol *l_currentType = NULL;
 
 static void addRuleLocalVariable(S_idIdent *name, int order);
 static void addYaccSymbolReference(S_idIdent *name, int usage);
@@ -99,7 +99,7 @@ static void addYaccSymbolReference(S_idIdent *name, int usage);
 typedef union {
     int                                     integer;
     unsigned                                unsign;
-    S_symbol                                *symbol;
+    Symbol                                *symbol;
     SymbolList                            *symbolList;
     S_typeModifiers                         *typeModif;
     S_typeModifiersList                     *typeModifList;
@@ -2499,7 +2499,7 @@ YYSTYPE yyvs[YYSTACKSIZE];
 #line 1762 "yacc_parser.y"
 
 static void addYaccSymbolReference(S_idIdent *name, int usage) {
-    S_symbol sss;
+    Symbol sss;
 
     fillSymbol(&sss, name->name, name->name, name->p);
     FILL_symbolBits(&sss.bits,0,0,0,0,0,TypeYaccSymbol,StorageNone,0);
@@ -2507,7 +2507,7 @@ static void addYaccSymbolReference(S_idIdent *name, int usage) {
 }
 
 static void addRuleLocalVariable(S_idIdent *name, int order) {
-    S_symbol *p,*ss;
+    Symbol *p,*ss;
     char	*nn;
 
     if (l_yaccUnion!=NULL) {
@@ -2518,7 +2518,7 @@ static void addRuleLocalVariable(S_idIdent *name, int order) {
             sprintf(nn,"$%d",order);
             if (order == 0) nn[1] = '$';
 
-            /*& ss = StackMemAlloc(S_symbol); */
+            /*& ss = StackMemAlloc(Symbol); */
             /*& FILL_symbolBits(&ss->bits,0,0,0,0,0,TypeDefault,StorageAuto,0); */
             /*& FILL_symbol(ss,nn,nn,name->p,ss->bits,type,NULL,NULL); */
             /*& REPLACED StackMemAlloc()+FILL_symbol() with */
@@ -2758,7 +2758,7 @@ break;
 case 10:
 #line 354 "yacc_parser.y"
 {
-            S_symbol   *res;
+            Symbol   *res;
             int rr;
             AddHtmlTrivialReference(yyvsp[-3].bbidIdent.d->p);
             l_currentType = NULL;
@@ -2773,9 +2773,9 @@ break;
 case 15:
 #line 371 "yacc_parser.y"
 {
-            S_symbol *ss;
+            Symbol *ss;
 
-            /*& ss = StackMemAlloc(S_symbol); */
+            /*& ss = StackMemAlloc(Symbol); */
             /*& FILL_symbolBits(&ss->bits,0,0,0,0,0,TypeDefault,StorageAuto,0); */
             /*& FILL_symbol(ss,$2.d->name,$2.d->name,$2.d->p,ss->bits,type,NULL,NULL); */
             /*& REPLACED StackMemAlloc()+FILL_symbol() with */
@@ -2885,8 +2885,8 @@ break;
 case 192:
 #line 524 "yacc_parser.y"
 {
-        S_symbol *p;
-        S_symbol *dd;
+        Symbol *p;
+        Symbol *dd;
         p = yyvsp[0].bbidIdent.d->sd;
         if (p != NULL && p->bits.symType == TypeDefault) {
             assert(p && p);
@@ -2900,14 +2900,14 @@ case 192:
         } else {
             /* implicit function declaration */
             S_typeModifiers *p;
-            S_symbol *d;
-            S_symbol *dd __attribute__((unused));
+            Symbol *d;
+            Symbol *dd __attribute__((unused));
 
             CrTypeModifier(p, TypeInt);
             yyval.bbexprType.d.t = StackMemAlloc(S_typeModifiers);
             FILLF_typeModifiers(yyval.bbexprType.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
 
-            /*& d = StackMemAlloc(S_symbol); */
+            /*& d = StackMemAlloc(Symbol); */
             /*& FILL_symbolBits(&d->bits,0,0,0,0,0,TypeDefault, StorageExtern,0); */
             /*& FILL_symbol(d,$1.d->name,$1.d->name,$1.d->p,d->bits,type,$$.d.t,NULL); */
             /*& REPLACED StackMemAlloc()+FILL_symbol with */
@@ -3009,7 +3009,7 @@ break;
 case 207:
 #line 609 "yacc_parser.y"
 {
-        S_symbol *rec=NULL;
+        Symbol *rec=NULL;
         yyval.bbexprType.d.r = findStrRecordFromType(yyvsp[-3].bbexprType.d.t, yyvsp[0].bbidIdent.d, &rec, CLASS_TO_ANY);
         assert(rec);
         yyval.bbexprType.d.t = rec->u.type;
@@ -3023,7 +3023,7 @@ break;
 case 209:
 #line 616 "yacc_parser.y"
 {
-        S_symbol *rec=NULL;
+        Symbol *rec=NULL;
 
         yyval.bbexprType.d.r = NULL;
         if (yyvsp[-3].bbexprType.d.t->kind==TypePointer || yyvsp[-3].bbexprType.d.t->kind==TypeArray) {
@@ -3306,7 +3306,7 @@ case 284:
 #line 874 "yacc_parser.y"
 {
         /*$$.d = &s_errorSymbol;*/
-        XX_ALLOC(yyval.bbsymbol.d, S_symbol);
+        XX_ALLOC(yyval.bbsymbol.d, Symbol);
         *yyval.bbsymbol.d = s_errorSymbol;
     }
 break;
@@ -3420,7 +3420,7 @@ case 301:
         typeModifiers = StackMemAlloc(S_typeModifiers);
         FILLF_typeModifiers(typeModifiers,TypeDefault,f,(NULL,NULL) ,NULL,NULL);
 
-        /*& $$.d = StackMemAlloc(S_symbol); */
+        /*& $$.d = StackMemAlloc(Symbol); */
         /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,$1.d,0); */
         /*& FILL_symbol($$.d,NULL,NULL,s_noPos,$$.d->bits,type,typeModifiers,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
@@ -3590,14 +3590,14 @@ case 343:
             yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
         } else {
             yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
-            LIST_APPEND(S_symbol, yyval.bbsymbol.d, yyvsp[0].bbsymbol.d);
+            LIST_APPEND(Symbol, yyval.bbsymbol.d, yyvsp[0].bbsymbol.d);
         }
     }
 break;
 case 344:
 #line 1074 "yacc_parser.y"
 {
-        S_symbol *p;
+        Symbol *p;
         assert(yyvsp[-2].bbsymbol.d && yyvsp[-1].bbsymbol.d);
         for(p=yyvsp[-1].bbsymbol.d; p!=NULL; p=p->next) {
             completeDeclarator(yyvsp[-2].bbsymbol.d, p);
@@ -3610,7 +3610,7 @@ case 345:
 #line 1083 "yacc_parser.y"
 {
         /*$$.d = &s_errorSymbol;*/
-        XX_ALLOC(yyval.bbsymbol.d, S_symbol);
+        XX_ALLOC(yyval.bbsymbol.d, Symbol);
         *yyval.bbsymbol.d = s_errorSymbol;
     }
 break;
@@ -3626,7 +3626,7 @@ case 347:
 {
         yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
         assert(yyvsp[0].bbsymbol.d->next == NULL);
-        LIST_APPEND(S_symbol, yyval.bbsymbol.d, yyvsp[0].bbsymbol.d);
+        LIST_APPEND(Symbol, yyval.bbsymbol.d, yyvsp[0].bbsymbol.d);
     }
 break;
 case 349:
@@ -3636,7 +3636,7 @@ case 349:
         p = StackMemAlloc(S_typeModifiers);
         FILLF_typeModifiers(p,TypeAnonymeField,f,( NULL,NULL) ,NULL,NULL);
 
-        /*& $$.d = StackMemAlloc(S_symbol); */
+        /*& $$.d = StackMemAlloc(Symbol); */
         /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
         /*& FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,p,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
@@ -3709,7 +3709,7 @@ case 363:
 #line 1172 "yacc_parser.y"
 {
         /*$$.d = &s_errorSymbol;*/
-        XX_ALLOC(yyval.bbsymbol.d, S_symbol);
+        XX_ALLOC(yyval.bbsymbol.d, Symbol);
         *yyval.bbsymbol.d = s_errorSymbol;
     }
 break;
@@ -3728,7 +3728,7 @@ break;
 case 367:
 #line 1190 "yacc_parser.y"
 {
-        /*& $$.d = StackMemAlloc(S_symbol); */
+        /*& $$.d = StackMemAlloc(Symbol); */
         /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
         /*& FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->bits,type,NULL,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
@@ -3911,11 +3911,11 @@ break;
 case 395:
 #line 1333 "yacc_parser.y"
 {
-        S_symbol *p;
+        Symbol *p;
         S_position pp;
         FILL_position(&pp, -1, 0, 0);
 
-        /*& p = StackMemAlloc(S_symbol); */
+        /*& p = StackMemAlloc(Symbol); */
         /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0); */
         /*& FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
@@ -3924,16 +3924,16 @@ case 395:
 
         yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
 
-        LIST_APPEND(S_symbol, yyval.bbsymbolPositionLstPair.d.s, p);
+        LIST_APPEND(Symbol, yyval.bbsymbolPositionLstPair.d.s, p);
         appendPositionToList(&yyval.bbsymbolPositionLstPair.d.p, &yyvsp[-1].bbposition.d);
     }
 break;
 case 396:
 #line 1353 "yacc_parser.y"
 {
-        S_symbol *p;
+        Symbol *p;
 
-        /*& p = StackMemAlloc(S_symbol); */
+        /*& p = StackMemAlloc(Symbol); */
         /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
         /*& FILL_symbol(p,$1.d->name,$1.d->name,$1.d->p,p->bits,type,NULL,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
@@ -3947,9 +3947,9 @@ break;
 case 397:
 #line 1366 "yacc_parser.y"
 {
-        S_symbol        *p;
+        Symbol        *p;
 
-        /*& p = StackMemAlloc(S_symbol); */
+        /*& p = StackMemAlloc(Symbol); */
         /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
         /*& FILL_symbol(p,$3.d->name,$3.d->name,$3.d->p,p->bits,type,NULL,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with:  */
@@ -3958,7 +3958,7 @@ case 397:
 
         yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
 
-        LIST_APPEND(S_symbol, yyval.bbsymbolPositionLstPair.d.s, p);
+        LIST_APPEND(Symbol, yyval.bbsymbolPositionLstPair.d.s, p);
         appendPositionToList(&yyval.bbsymbolPositionLstPair.d.p, &yyvsp[-1].bbposition.d);
     }
 break;
@@ -3969,11 +3969,11 @@ break;
 case 400:
 #line 1386 "yacc_parser.y"
 {
-        S_symbol        *p;
+        Symbol        *p;
         S_position      pp;
         FILL_position(&pp, -1, 0, 0);
 
-        /*& p = StackMemAlloc(S_symbol); */
+        /*& p = StackMemAlloc(Symbol); */
         /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0); */
         /*& FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
@@ -3981,7 +3981,7 @@ case 400:
         FILL_symbolBits(&p->bits, 0, 0, 0, 0, 0, TypeElipsis, StorageDefault, 0);
 
         yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
-        LIST_APPEND(S_symbol, yyval.bbsymbolPositionLstPair.d.s, p);
+        LIST_APPEND(Symbol, yyval.bbsymbolPositionLstPair.d.s, p);
         appendPositionToList(&yyval.bbsymbolPositionLstPair.d.p, &yyvsp[-1].bbposition.d);
     }
 break;
@@ -3996,7 +3996,7 @@ case 402:
 #line 1409 "yacc_parser.y"
 {
         yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
-        LIST_APPEND(S_symbol, yyvsp[-2].bbsymbolPositionLstPair.d.s, yyvsp[0].bbsymbol.d);
+        LIST_APPEND(Symbol, yyvsp[-2].bbsymbolPositionLstPair.d.s, yyvsp[0].bbsymbol.d);
         appendPositionToList(&yyval.bbsymbolPositionLstPair.d.p, &yyvsp[-1].bbposition.d);
     }
 break;
@@ -4010,7 +4010,7 @@ break;
 case 404:
 #line 1421 "yacc_parser.y"
 {
-        /*& $$.d = StackMemAlloc(S_symbol); */
+        /*& $$.d = StackMemAlloc(Symbol); */
         /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault, StorageDefault,0); */
         /*& FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,$1.d,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
@@ -4022,7 +4022,7 @@ case 405:
 #line 1429 "yacc_parser.y"
 {
         /*$$.d = &s_errorSymbol;*/
-        XX_ALLOC(yyval.bbsymbol.d, S_symbol);
+        XX_ALLOC(yyval.bbsymbol.d, Symbol);
         *yyval.bbsymbol.d = s_errorSymbol;
     }
 break;
@@ -4222,7 +4222,7 @@ break;
 case 471:
 #line 1637 "yacc_parser.y"
 {
-        S_symbol *p,*pa;
+        Symbol *p,*pa;
         int i;
         assert(yyvsp[0].bbsymbol.d);
         /*&if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern;*/
@@ -4235,7 +4235,7 @@ case 471:
             if (p->bits.symType == TypeElipsis) continue;
             if (p->u.type == NULL) p->u.type = &s_defaultIntModifier;
             if (p->name != NULL) {
-                XX_ALLOC(pa,S_symbol);
+                XX_ALLOC(pa,Symbol);
                 *pa = *p;
                 addNewSymbolDef(pa, StorageAuto, s_symTab, UsageDefined);
             }
@@ -4292,7 +4292,7 @@ case 480:
 #line 1689 "yacc_parser.y"
 {
         /*$$.d = &s_errorSymbol;*/
-        XX_ALLOC(yyval.bbsymbol.d, S_symbol);
+        XX_ALLOC(yyval.bbsymbol.d, Symbol);
         *yyval.bbsymbol.d = s_errorSymbol;
     }
 break;
@@ -4315,7 +4315,7 @@ break;
 case 484:
 #line 1711 "yacc_parser.y"
 {
-        S_symbol *p;
+        Symbol *p;
         assert(yyvsp[-2].bbsymbol.d && yyvsp[-1].bbsymbol.d);
         for(p=yyvsp[-1].bbsymbol.d; p!=NULL; p=p->next) {
             completeDeclarator(yyvsp[-2].bbsymbol.d, p);
@@ -4333,7 +4333,7 @@ case 486:
 #line 1725 "yacc_parser.y"
 {
         yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
-        LIST_APPEND(S_symbol, yyval.bbsymbol.d, yyvsp[0].bbsymbol.d);
+        LIST_APPEND(Symbol, yyval.bbsymbol.d, yyvsp[0].bbsymbol.d);
     }
 break;
 case 487:

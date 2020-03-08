@@ -4,10 +4,10 @@
 #include "proto.h"
 
 extern void javaHumanizeLinkName( char *inn, char *outn, int size);
-extern S_symbol *cfAddCastsToModule(S_symbol *memb, S_symbol *sup);
-extern void addSuperClassOrInterface( S_symbol *memb, S_symbol *supp, int origin );
-extern int javaCreateClassFileItem( S_symbol *memb);
-extern void addSuperClassOrInterfaceByName(S_symbol *memb, char *super, int origin, int loadSuper);
+extern Symbol *cfAddCastsToModule(Symbol *memb, Symbol *sup);
+extern void addSuperClassOrInterface( Symbol *memb, Symbol *supp, int origin );
+extern int javaCreateClassFileItem( Symbol *memb);
+extern void addSuperClassOrInterfaceByName(Symbol *memb, char *super, int origin, int loadSuper);
 extern void fsRecMapOnFiles(S_zipArchiveDir *dir, char *zip, char *path, void (*fun)(char *zip, char *file, void *arg), void *arg);
 extern int fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset,
                       int addFlag, S_zipArchiveDir **place);
@@ -23,6 +23,6 @@ extern void javaMapZipDirFile(
                               char *classPath,
                               char *dirname
                               );
-extern void javaReadClassFile(char *name, S_symbol *cdef, int loadSuper);
+extern void javaReadClassFile(char *name, Symbol *cdef, int loadSuper);
 
 #endif

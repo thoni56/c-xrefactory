@@ -63,7 +63,7 @@
 #define JslAddComposedType(ddd, ttt) jslAppendComposedType(&ddd->u.type, ttt)
 
 #define JslImportSingleDeclaration(iname) {\
-    S_symbol *sym;\
+    Symbol *sym;\
     jslClassifyAmbiguousTypeName(iname, &sym);\
     jslTypeSymbolDefinition(iname->idi.name, iname->next, TYPE_ADD_YES,ORDER_PREPEND, 1);\
 }
@@ -73,7 +73,7 @@
 /* then even if classified to type it should be reclassified dep on the case */
 
 #define JslImportOnDemandDeclaration(iname) {\
-    S_symbol *sym;\
+    Symbol *sym;\
     int st;\
     st = jslClassifyAmbiguousTypeName(iname, &sym);\
     if (st == TypeStruct) {\
@@ -281,7 +281,7 @@ static bool inSecondJslPass() {
 %union {
     int                                     integer;
     unsigned                                unsign;
-    S_symbol                                *symbol;
+    Symbol                                *symbol;
     SymbolList                            *symbolList;
     S_typeModifiers                         *typeModif;
     S_typeModifiersList                     *typeModifList;
@@ -621,7 +621,7 @@ ClassOrInterfaceType:
                 }
             };
             if (inSecondJslPass()) {
-                S_symbol *str;
+                Symbol *str;
                 jslClassifyAmbiguousTypeName($1.d, &str);
                 $$.d = jslTypeNameDefinition($1.d);
             }
@@ -641,7 +641,7 @@ ExtendClassOrInterfaceType:
                 }
             };
             if (inSecondJslPass()) {
-                S_symbol *str;
+                Symbol *str;
                 jslClassifyAmbiguousTypeName($1.d, &str);
                 $$.d = jslTypeNameDefinition($1.d);
             }
@@ -688,7 +688,7 @@ ArrayType:
                 $$.d.p = javaGetNameStartingPosition($1.d);
             };
             if (inSecondJslPass()) {
-                S_symbol *ss;
+                Symbol *ss;
                 jslClassifyAmbiguousTypeName($1.d, &ss);
                 $$.d.s = jslTypeNameDefinition($1.d);
                 $$.d.s->u.type = jslPrependComposedType($$.d.s->u.type, TypeArray);
@@ -1057,7 +1057,7 @@ SingleTypeImportDeclaration:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     S_reference *lastUselessRef;
-                    S_symbol *str;
+                    Symbol *str;
                     // it was type or packege, but I thing this would be better
                     lastUselessRef = javaClassifyToTypeName($2.d, UsageUsed, &str, USELESS_FQT_REFS_DISALLOWED);
                     // last useless reference is not useless here!
@@ -1080,7 +1080,7 @@ TypeImportOnDemandDeclaration:
             $$.d = $2.d;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_symbol *str;
+                    Symbol *str;
                     S_typeModifiers *expr;
                     S_reference *rr, *lastUselessRef;
                     int st __attribute__((unused));
@@ -1519,7 +1519,7 @@ FieldDeclaration:
         Modifiers_opt AssignementType VariableDeclarators ';'		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_symbol *p,*pp,*memb,*clas;
+                    Symbol *p,*pp,*memb,*clas;
                     int vClass;
                     S_recFindStr    rfs;
                     s_cps.lastAssignementStruct = NULL;
@@ -1543,7 +1543,7 @@ FieldDeclaration:
                         if (findStrRecordSym(&rfs, p->name, &memb, CLASS_TO_ANY,
                                              ACC_CHECK_NO,VISIB_CHECK_NO) == RETURN_NOT_FOUND) {
                             assert(clas->u.s);
-                            LIST_APPEND(S_symbol, clas->u.s->records, p);
+                            LIST_APPEND(Symbol, clas->u.s->records, p);
                         }
                         addCxReference(p, &p->pos, UsageDefined, vClass, vClass);
                         htmlAddJavaDocReference(p, &p->pos, vClass, vClass);
@@ -1567,9 +1567,9 @@ FieldDeclaration:
                 }
             }
             if (inSecondJslPass()) {
-                S_symbol *p;
-                S_symbol *pp;
-                S_symbol *clas;
+                Symbol *p;
+                Symbol *pp;
+                Symbol *clas;
                 int		vClass;
                 clas = s_jsl->classStat->thisClass;
                 assert(clas != NULL);
@@ -1589,7 +1589,7 @@ FieldDeclaration:
                     }
                     log_debug("[jsl] adding field %s to %s\n",
                               p->name,clas->linkName);
-                    LIST_APPEND(S_symbol, clas->u.s->records, p);
+                    LIST_APPEND(Symbol, clas->u.s->records, p);
                     assert(vClass!=s_noneFileIndex);
                     if (p->pos.file!=s_olOriginalFileNumber && s_opt.server_operation==OLO_PUSH) {
                         // pre load of saved file akes problem on move field/method, ...
@@ -1649,14 +1649,14 @@ VariableDeclarator:
     |	error											{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    XX_ALLOC($$.d, S_symbol);
+                    XX_ALLOC($$.d, Symbol);
                     *$$.d = s_errorSymbol;
                 } else {
                     SetNullBorns($$);
                 }
             }
             if (inSecondJslPass()) {
-                CF_ALLOC($$.d, S_symbol);
+                CF_ALLOC($$.d, Symbol);
                 *$$.d = s_errorSymbol;
             }
         }
@@ -1666,7 +1666,7 @@ VariableDeclaratorId:
         Identifier							{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    /*& $$.d = StackMemAlloc(S_symbol); */
+                    /*& $$.d = StackMemAlloc(Symbol); */
                     /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
                     /*& FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->bits,type,NULL,NULL); */
                     /*& REPLACED StackMemAlloc()+FILL_symbol() with: */
@@ -1680,7 +1680,7 @@ VariableDeclaratorId:
                 char *name;
                 CF_ALLOCC(name, strlen($1.d->name)+1, char);
                 strcpy(name, $1.d->name);
-                CF_ALLOC($$.d, S_symbol);
+                CF_ALLOC($$.d, Symbol);
                 fillSymbol($$.d, name, name, $1.d->p);
                 FILL_symbolBits(&$$.d->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
             }
@@ -1846,7 +1846,7 @@ FormalParameterList:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d = $1.d;
-                    LIST_APPEND(S_symbol, $$.d.s, $3.d);
+                    LIST_APPEND(Symbol, $$.d.s, $3.d);
                 } else {
                     appendPositionToList(&$$.d.p, &$2.d);
                     PropagateBorns($$, $1, $3);
@@ -1854,7 +1854,7 @@ FormalParameterList:
             }
             if (inSecondJslPass()) {
                 $$.d = $1.d;
-                LIST_APPEND(S_symbol, $$.d.s, $3.d);
+                LIST_APPEND(Symbol, $$.d.s, $3.d);
             }
         }
     ;
@@ -1891,14 +1891,14 @@ FormalParameter:
     |	error								{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    XX_ALLOC($$.d, S_symbol);
+                    XX_ALLOC($$.d, Symbol);
                     *$$.d = s_errorSymbol;
                 } else {
                     SetNullBorns($$);
                 }
             }
             if (inSecondJslPass()) {
-                CF_ALLOC($$.d, S_symbol);
+                CF_ALLOC($$.d, Symbol);
                 *$$.d = s_errorSymbol;
             }
         }
@@ -1961,7 +1961,7 @@ ConstructorDeclaration:
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        S_symbol *mh, *args;
+                        Symbol *mh, *args;
 
                         args = $2.d;
                         /*&
@@ -1984,7 +1984,7 @@ ConstructorDeclaration:
                     }
                 }
                 if (inSecondJslPass()) {
-                    S_symbol *args;
+                    Symbol *args;
                     args = $2.d;
                     jslMethodHeader($1.d,&s_defaultVoidDefinition,args,
                                     StorageConstructor, $3.d);
@@ -2095,7 +2095,7 @@ ExplicitConstructorInvocation:
             }   '(' ArgumentList_opt ')'			{
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        S_symbol *ss;
+                        Symbol *ss;
                         ss = javaCurrentSuperClass();
                         javaConstructorInvocation(ss, &($1.d->p), $5.d.t);
                         s_cp.erfsForParamsComplet = $2;
@@ -2113,7 +2113,7 @@ ExplicitConstructorInvocation:
             } '(' ArgumentList_opt ')'		{
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        S_symbol *ss;
+                        Symbol *ss;
                         ss = javaCurrentSuperClass();
                         javaConstructorInvocation(ss, &($3.d->p), $7.d.t);
                         s_cp.erfsForParamsComplet = $4;
@@ -2633,7 +2633,7 @@ WhileStatementPrefix:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (s_opt.server_operation == OLO_EXTRACT) {
-                        S_symbol *cl, *bl;
+                        Symbol *cl, *bl;
                         cl = bl = NULL;        // just to avoid warning message
                         cl = addContinueBreakLabelSymbol($2.data, CONTINUE_LABEL_NAME);
                         bl = addContinueBreakLabelSymbol($6.data, BREAK_LABEL_NAME);
@@ -2742,7 +2742,7 @@ ForStatementPrefix:
         /*8*/ _nlabel_  ForUpdate_opt ')' /*11*/ _nfork_    {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_symbol *ss __attribute__((unused));
+                    Symbol *ss __attribute__((unused));
                     genInternalLabelReference($4.data, UsageUsed);
                     genInternalLabelReference($7.data, UsageDefined);
                     ss = addContinueBreakLabelSymbol($8.data, CONTINUE_LABEL_NAME);
@@ -3090,7 +3090,7 @@ PrimaryNoNewArray:
     |	Name '.' CLASS						{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_symbol *str;
+                    Symbol *str;
                     javaClassifyToTypeName($1.d,UsageUsed, &str, USELESS_FQT_REFS_ALLOWED);
                     $$.d.t = &s_javaClassModifier;
                     $$.d.r = NULL;
@@ -3218,8 +3218,8 @@ NestedConstructorInvocation:
 NewName:
         Name	{
             if (ComputingPossibleParameterCompletion()) {
-                S_symbol            *ss;
-                S_symbol			*str;
+                Symbol            *ss;
+                Symbol			*str;
                 S_typeModifiers		*expr;
                 S_reference			*rr, *lastUselessRef;
                 javaClassifyAmbiguousName($1.d, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
@@ -3236,8 +3236,8 @@ ClassInstanceCreationExpression:
         New _erfs_ NewName '(' ArgumentList_opt ')'							{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_symbol *ss, *tt, *ei;
-                    S_symbol *str;
+                    Symbol *ss, *tt, *ei;
+                    Symbol *str;
                     S_typeModifiers *expr;
                     S_reference *rr, *lastUselessRef;
 
@@ -3286,7 +3286,7 @@ ClassInstanceCreationExpression:
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        S_symbol *ss;
+                        Symbol *ss;
                         s_cp.erfsForParamsComplet = $2;
                         javaClassifyToTypeName($3.d,UsageUsed, &ss, USELESS_FQT_REFS_ALLOWED);
                         $<symbol>$ = javaTypeNameDefinition($3.d);
@@ -3298,7 +3298,7 @@ ClassInstanceCreationExpression:
                         // interfaces are never inner.
                     }
                 } else {
-                    S_symbol *str, *cls;
+                    Symbol *str, *cls;
                     jslClassifyAmbiguousTypeName($3.d, &str);
                     cls = jslTypeNameDefinition($3.d);
                     jslNewClassDefinitionBegin(&s_javaAnonymousClassName,
@@ -3525,7 +3525,7 @@ FieldAccess:
         Primary '.' Identifier					{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_symbol *rec=NULL;
+                    Symbol *rec=NULL;
                     assert($1.d.t);
                     $$.d.r = NULL;
                     $$.d.pp = $1.d.pp;
@@ -3550,7 +3550,7 @@ FieldAccess:
     |	Super '.' Identifier					{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_symbol *ss,*rec=NULL;
+                    Symbol *ss,*rec=NULL;
 
                     $$.d.r = NULL;
                     $$.d.pp = &$1.d->p;
@@ -3575,7 +3575,7 @@ FieldAccess:
     |	Name '.' Super '.' Identifier					{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_symbol *ss,*rec=NULL;
+                    Symbol *ss,*rec=NULL;
 
                     ss = javaQualifiedThis($1.d, $3.d);
                     if (ss != &s_errorSymbol && ss->bits.symType!=TypeError) {
@@ -4370,7 +4370,7 @@ Stop_block:		{
 %%
 
 void javaParsingInitializations(void) {
-            S_symbol *ss;
+            Symbol *ss;
             //&javaMapDirectoryFiles2(s_javaLangName,
             //&			javaAddMapedTypeName, NULL, s_javaLangName, NULL);
             ss = javaTypeSymbolDefinition(s_javaLangObjectName,ACC_DEFAULT, TYPE_ADD_NO);

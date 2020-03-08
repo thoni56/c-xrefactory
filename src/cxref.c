@@ -274,7 +274,7 @@ static int htmlReferencableSymbol(int scope, int category, S_symbol *p) {
 #endif
 
 static void getSymbolCxrefCategories(
-                                     S_symbol *p,
+                                     Symbol *p,
                                      int *p_category,
                                      int *p_scope,
                                      int *p_storage
@@ -356,8 +356,8 @@ static void getSymbolCxrefCategories(
 }
 
 
-static void setClassTreeBaseType(S_classTreeData *ct, S_symbol *p) {
-    S_symbol        *rtcls;
+static void setClassTreeBaseType(S_classTreeData *ct, Symbol *p) {
+    Symbol        *rtcls;
     S_typeModifiers *tt;
     assert(s_javaObjectSymbol && s_javaObjectSymbol->u.s);
     assert(ct);
@@ -383,7 +383,7 @@ static void setClassTreeBaseType(S_classTreeData *ct, S_symbol *p) {
 
 S_reference *addSpecialFieldReference(char *name,int storage, int fnum,
                                       S_position *p, int usage){
-    S_symbol        ss;
+    Symbol        ss;
     S_reference     *res;
 
     /*& FILL_symbolBits(&bb,0,0, ACC_DEFAULT,0,0,TypeDefault, storage,0); */
@@ -485,7 +485,7 @@ void changeFieldRefUsages(S_symbolRefItem  *ri, void  *rrcd) {
 }
 
 void changeMethodReferencesUsages(char *linkName, int category, int fnum,
-                                  S_symbol *cclass){
+                                  Symbol *cclass){
     S_referencesChangeData rr;
     FILL_referencesChangeData(&rr, linkName, fnum, cclass, category,
                               s_cps.cxMemiAtMethodBeginning,
@@ -494,7 +494,7 @@ void changeMethodReferencesUsages(char *linkName, int category, int fnum,
 }
 
 void changeClassReferencesUsages(char *linkName, int category, int fnum,
-                                 S_symbol *cclass){
+                                 Symbol *cclass){
     S_referencesChangeData rr;
     FILL_referencesChangeData(&rr, linkName, fnum, cclass, category,
                               s_cps.cxMemiAtClassBeginning,
@@ -516,7 +516,7 @@ S_reference * getDefinitionRef(S_reference *rr) {
 }
 
 // used only with OLO_GET_SYMBOL_TYPE;
-static void setOlSymbolTypeForPrint(S_symbol *p) {
+static void setOlSymbolTypeForPrint(Symbol *p) {
     int             size, len;
     S_typeModifiers *tt;
     size = COMPLETION_STRING_SIZE;
@@ -537,7 +537,7 @@ static void setOlSymbolTypeForPrint(S_symbol *p) {
     }
 }
 
-static void setOlAvailableRefactorings(S_symbol *p, S_olSymbolsMenu *mmi, int usage) {
+static void setOlAvailableRefactorings(Symbol *p, S_olSymbolsMenu *mmi, int usage) {
     char *opt;
     if (strcmp(p->linkName, LINK_NAME_UNIMPORTED_QUALIFIED_ITEM)==0) {
         s_availableRefactorings[PPC_AVR_ADD_TO_IMPORT].available = 1;
@@ -679,7 +679,7 @@ static int olcxOnlyParseNoPushing(int opt) {
 /* ********************************************************************* */
 /* default vappClass == vFunClass == s_noneFileIndex !!!!!!!             */
 /*                                                                       */
-S_reference * addCxReferenceNew(S_symbol *p, S_position *pos, S_usageBits *usageb,
+S_reference * addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *usageb,
                                 int vFunCl, int vApplCl) {
     int ii,mm,category,scope,storage,defusage;
     char *linkName;
@@ -839,14 +839,14 @@ S_reference * addCxReferenceNew(S_symbol *p, S_position *pos, S_usageBits *usage
     return(*place);
 }
 
-S_reference * addCxReference(S_symbol *p, S_position *pos, int usage, int vFunCl, int vApplCl) {
+S_reference * addCxReference(Symbol *p, S_position *pos, int usage, int vFunCl, int vApplCl) {
     S_usageBits ub;
     FILL_usageBits(&ub, usage, MIN_REQUIRED_ACCESS, 0);
     return(addCxReferenceNew(p, pos, &ub, vFunCl, vApplCl));
 }
 
 void addTrivialCxReference(char *name,int symType,int storage,S_position *pos,int usage) {
-    S_symbol        ss;
+    Symbol        ss;
 
     /*& FILL_symbolBits(&bb,0,0, 0,0,0,symType,storage,0); */
     /*& FILL_symbol(&ss, name, name, *pos, bb,type,NULL, NULL); */
@@ -4355,8 +4355,8 @@ static int tpCheckStaticity(int require,char *fieldOrMethod) {
     return(1);
 }
 
-static S_symbol *javaGetClassSymbolFromClassDotName(char *fqName) {
-    S_symbol    *res;
+static Symbol *javaGetClassSymbolFromClassDotName(char *fqName) {
+    Symbol    *res;
     char        *dd, *sn;
     char        ttt[MAX_CX_SYMBOL_SIZE];
     strcpy(ttt, fqName);
@@ -4369,7 +4369,7 @@ static S_symbol *javaGetClassSymbolFromClassDotName(char *fqName) {
     return(res);
 }
 
-S_symbol *getMoveTargetClass(void) {
+Symbol *getMoveTargetClass(void) {
     if (s_opt.moveTargetClass == NULL) {
         error(ERR_INTERNAL,"pull up/push down pre-check without setting target class");
         return NULL;
@@ -5257,7 +5257,7 @@ void olSetCallerPosition(S_position *pos) {
 
 S_olCompletion * olCompletionListPrepend(   char *name,
                                             char *fullText, char *vclass, int jindent,
-                                            S_symbol *s,
+                                            Symbol *s,
                                             S_symbolRefItem *rr,
                                             S_reference *dfref,
                                             int cType,

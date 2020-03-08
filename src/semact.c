@@ -51,9 +51,9 @@ void setToNull(void *p) {
 }
 
 void deleteSymDef(void *p) {
-    S_symbol        *pp;
+    Symbol        *pp;
 
-    pp = (S_symbol *) p;
+    pp = (Symbol *) p;
     log_debug("deleting %s %s", pp->name, pp->linkName);
     if (symTabDelete(s_javaStat->locals,pp)) return;
     if (symTabDelete(s_symTab,pp)==0) {
@@ -64,7 +64,7 @@ void deleteSymDef(void *p) {
     }
 }
 
-void unpackPointers(S_symbol *pp) {
+void unpackPointers(Symbol *pp) {
     unsigned i;
     for (i=0; i<pp->bits.npointers; i++) {
         appendComposedType(&pp->u.type, TypePointer);
@@ -72,7 +72,7 @@ void unpackPointers(S_symbol *pp) {
     pp->bits.npointers=0;
 }
 
-void addSymbol(S_symbol *pp, S_symTab *tab) {
+void addSymbol(Symbol *pp, S_symTab *tab) {
     /*  a bug can produce, if you add a symbol into old table, and the same
         symbol exists in a newer one. Then it will be deleted from the newer
         one. All this story is about storing information in trail. It should
@@ -85,7 +85,7 @@ void addSymbol(S_symbol *pp, S_symTab *tab) {
     //if (WORK_NEST_LEVEL0()) {static int c=0;fprintf(dumpOut,"addsym0#%d\n",c++);}
 }
 
-void recFindPush(S_symbol *str, S_recFindStr *rfs) {
+void recFindPush(Symbol *str, S_recFindStr *rfs) {
     S_symStructSpec *ss;
 
     assert(str && (str->bits.symType==TypeStruct || str->bits.symType==TypeUnion));
@@ -103,7 +103,7 @@ void recFindPush(S_symbol *str, S_recFindStr *rfs) {
     //& }
 }
 
-S_recFindStr * iniFind(S_symbol *s, S_recFindStr *rfs) {
+S_recFindStr * iniFind(Symbol *s, S_recFindStr *rfs) {
     assert(s);
     assert(s->bits.symType == TypeStruct || s->bits.symType == TypeUnion);
     assert(s->u.s);
@@ -119,7 +119,7 @@ S_recFindStr * iniFind(S_symbol *s, S_recFindStr *rfs) {
 #define DAP(xxx)
 #endif
 
-int javaOuterClassAccessible(S_symbol *cl) {
+int javaOuterClassAccessible(Symbol *cl) {
     log_trace("testing class accessibility of %s",cl->linkName);
     if (cl->bits.accessFlags & ACC_PUBLIC) {
         log_trace("ret 1 access public");
@@ -136,7 +136,7 @@ int javaOuterClassAccessible(S_symbol *cl) {
 
 }
 
-static int javaRecordVisible(S_symbol *appcl, S_symbol *funcl, unsigned accessFlags) {
+static int javaRecordVisible(Symbol *appcl, Symbol *funcl, unsigned accessFlags) {
     // there is special case to check! Private symbols are not inherited!
     if (accessFlags & ACC_PRIVATE) {
         // check classes to string equality, just to be sure
@@ -145,9 +145,9 @@ static int javaRecordVisible(S_symbol *appcl, S_symbol *funcl, unsigned accessFl
     return(1);
 }
 
-static int accessibleByDefaultAccessibility(S_recFindStr *rfs, S_symbol *funcl) {
+static int accessibleByDefaultAccessibility(S_recFindStr *rfs, Symbol *funcl) {
     int             i;
-    S_symbol        *cc;
+    Symbol        *cc;
     SymbolList    *sups;
     if (rfs==NULL) {
         // nested class checking, just check without inheritance checking
@@ -176,7 +176,7 @@ static int accessibleByDefaultAccessibility(S_recFindStr *rfs, S_symbol *funcl) 
 // !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
 // when modifying this, you will need to change it there too
 // So, why don't we extract this common functionality?!?!?!?
-int javaRecordAccessible(S_recFindStr *rfs, S_symbol *appcl, S_symbol *funcl, S_symbol *rec, unsigned recAccessFlags) {
+int javaRecordAccessible(S_recFindStr *rfs, Symbol *appcl, Symbol *funcl, Symbol *rec, unsigned recAccessFlags) {
     S_javaStat          *cs, *lcs;
     int                 len;
     if (funcl == NULL) return(1);  /* argument or local variable */
@@ -239,7 +239,7 @@ int javaRecordAccessible(S_recFindStr *rfs, S_symbol *appcl, S_symbol *funcl, S_
     return 0;
 }
 
-int javaRecordVisibleAndAccessible(S_recFindStr *rfs, S_symbol *applCl, S_symbol *funCl, S_symbol *r) {
+int javaRecordVisibleAndAccessible(S_recFindStr *rfs, Symbol *applCl, Symbol *funCl, Symbol *r) {
     return(
            javaRecordVisible(rfs->baseClass, rfs->currClass, r->bits.accessFlags)
            &&
@@ -247,7 +247,7 @@ int javaRecordVisibleAndAccessible(S_recFindStr *rfs, S_symbol *applCl, S_symbol
            );
 }
 
-int javaGetMinimalAccessibility(S_recFindStr *rfs, S_symbol *r) {
+int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r) {
     int acc, i;
     for(i=MAX_REQUIRED_ACCESS; i>0; i--) {
         acc = s_javaRequiredeAccessibilitiesTable[i];
@@ -274,12 +274,12 @@ int javaGetMinimalAccessibility(S_recFindStr *rfs, S_symbol *r) {
 
 int findStrRecordSym(   S_recFindStr    *ss,
                         char            *recname,    /* can be NULL */
-                        S_symbol        **res,
+                        Symbol        **res,
                         int             javaClassif, /* classify to method/field*/
                         int             accCheck,    /* java check accessibility */
                         int             visibilityCheck /* redundant, always equal to accCheck? */
                         ) {
-    S_symbol            *s,*r,*cclass;
+    Symbol            *s,*r,*cclass;
     SymbolList        *sss;
     int                 m;
 
@@ -365,9 +365,9 @@ int findStrRecordSym(   S_recFindStr    *ss,
     }
 }
 
-int findStrRecord(  S_symbol        *s,
+int findStrRecord(  Symbol        *s,
                     char            *recname,   /* can be NULL */
-                    S_symbol        **res,
+                    Symbol        **res,
                     int             javaClassif
                     ) {
     S_recFindStr rfs;
@@ -377,9 +377,9 @@ int findStrRecord(  S_symbol        *s,
 
 /* and push reference */
 // this should be split into two copies, different for C and Java.
-S_reference *findStrRecordFromSymbol( S_symbol *sym,
+S_reference *findStrRecordFromSymbol( Symbol *sym,
                                       S_idIdent *record,
-                                      S_symbol **res,
+                                      Symbol **res,
                                       int javaClassif,
                                       S_idIdent *super /* covering special case when invoked
                                                           as SUPER.sym, berk */
@@ -419,7 +419,7 @@ S_reference *findStrRecordFromSymbol( S_symbol *sym,
 
 S_reference * findStrRecordFromType(    S_typeModifiers *str,
                                         S_idIdent *record,
-                                        S_symbol **res,
+                                        Symbol **res,
                                         int javaClassif
                                         ) {
     S_reference *ref;
@@ -500,7 +500,7 @@ void setLocalVariableLinkName(struct symbol *p) {
     strcpy(p->linkName,ttt);
 }
 
-static void setStaticFunctionLinkName( S_symbol *p, int usage ) {
+static void setStaticFunctionLinkName( Symbol *p, int usage ) {
     char        ttt[TMP_STRING_SIZE];
     int         len;
     char        *ss,*basefname;
@@ -533,10 +533,10 @@ static void setStaticFunctionLinkName( S_symbol *p, int usage ) {
                                       ((char*)ppp) < memory+s_topBlock->previousTopBlock->firstFreeIndex \
                                       )
 
-S_symbol *addNewSymbolDef(S_symbol *p, unsigned theDefaultStorage, S_symTab *tab,
+Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, S_symTab *tab,
                           int usage) {
     S_typeModifiers *tt;
-    S_symbol *pp;
+    Symbol *pp;
     int ii;
     if (p == &s_errorSymbol || p->bits.symType==TypeError) return(p);
     if (p->bits.symType == TypeError) return(p);
@@ -583,22 +583,22 @@ S_symbol *addNewSymbolDef(S_symbol *p, unsigned theDefaultStorage, S_symTab *tab
 }
 
 /* this function is dead man, nowhere used */
-S_symbol *addNewCopyOfSymbolDef(S_symbol *def, unsigned storage) {
-    S_symbol *p;
-    p = StackMemAlloc(S_symbol);
+Symbol *addNewCopyOfSymbolDef(Symbol *def, unsigned storage) {
+    Symbol *p;
+    p = StackMemAlloc(Symbol);
     *p = *def;
     addNewSymbolDef(p,storage, s_symTab, UsageDefined);
     return(p);
 }
 
-static void addInitializerRefs(S_symbol *decl,
+static void addInitializerRefs(Symbol *decl,
                                S_idIdentList *idl
                                ) {
     S_idIdentList *ll;
     S_idIdent* id;
     S_typeModifiers *tt;
     S_reference *ref;
-    S_symbol *rec=NULL;
+    Symbol *rec=NULL;
     for(ll=idl; ll!=NULL; ll=ll->next) {
         tt = decl->u.type;
         for (id = &ll->idi; id!=NULL; id=id->next) {
@@ -615,9 +615,9 @@ static void addInitializerRefs(S_symbol *decl,
     }
 }
 
-S_symbol *addNewDeclaration(
-                            S_symbol *btype,
-                            S_symbol *decl,
+Symbol *addNewDeclaration(
+                            Symbol *btype,
+                            Symbol *decl,
                             S_idIdentList *idl,
                             unsigned storage,
                             S_symTab *tab
@@ -637,12 +637,12 @@ S_symbol *addNewDeclaration(
     return(decl);
 }
 
-void addFunctionParameterToSymTable(S_symbol *function, S_symbol *p, int i, S_symTab *tab) {
-    S_symbol    *pp, *pa, *ppp;
+void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, S_symTab *tab) {
+    Symbol    *pp, *pa, *ppp;
     int         ii;
     if (p->name != NULL && p->bits.symType!=TypeError) {
         assert(s_javaStat->locals!=NULL);
-        XX_ALLOC(pa, S_symbol);
+        XX_ALLOC(pa, Symbol);
         *pa = *p;
         // here checks a special case, double argument definition do not
         // redefine him, so refactorings will detect problem
@@ -739,13 +739,13 @@ static S_typeModifiers * mergeBaseModTypes(S_typeModifiers *t1, S_typeModifiers 
     return(mergeBaseType(t1, t2));
 }
 
-S_symbol *typeSpecifier2(S_typeModifiers *t) {
-    S_symbol    *r;
+Symbol *typeSpecifier2(S_typeModifiers *t) {
+    Symbol    *r;
     /* this is temporary, as long as we do not have the tempmemory in java, c++ */
     if (LANGUAGE(LANG_C)) {
-        SM_ALLOC(tmpWorkMemory, r, S_symbol);
+        SM_ALLOC(tmpWorkMemory, r, Symbol);
     } else {
-        XX_ALLOC(r, S_symbol);
+        XX_ALLOC(r, Symbol);
     }
     fillSymbolWithType(r, NULL, NULL, s_noPos, t);
     FILL_symbolBits(&r->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
@@ -753,23 +753,23 @@ S_symbol *typeSpecifier2(S_typeModifiers *t) {
     return(r);
 }
 
-S_symbol *typeSpecifier1(unsigned t) {
-    S_symbol        *r;
+Symbol *typeSpecifier1(unsigned t) {
+    Symbol        *r;
     r = typeSpecifier2(crSimpleTypeModifier(t));
     return(r);
 }
 
-void declTypeSpecifier1(S_symbol *d, unsigned t) {
+void declTypeSpecifier1(Symbol *d, unsigned t) {
     assert(d && d->u.type);
     d->u.type = mergeBaseModTypes(d->u.type,crSimpleTypeModifier(t));
 }
 
-void declTypeSpecifier2(S_symbol *d, S_typeModifiers *t) {
+void declTypeSpecifier2(Symbol *d, S_typeModifiers *t) {
     assert(d && d->u.type);
     d->u.type = mergeBaseModTypes(d->u.type, t);
 }
 
-void declTypeSpecifier21(S_typeModifiers *t, S_symbol *d) {
+void declTypeSpecifier21(S_typeModifiers *t, Symbol *d) {
     assert(d && d->u.type);
     d->u.type = mergeBaseModTypes(t, d->u.type);
 }
@@ -799,7 +799,7 @@ void completeDeclarator(S_symbol *t, S_symbol *d) {
 }
 #endif
 
-void completeDeclarator(S_symbol *t, S_symbol *d) {
+void completeDeclarator(Symbol *t, Symbol *d) {
     S_typeModifiers *tt,**dt;
     //static int counter=0;
     assert(t && d);
@@ -834,19 +834,19 @@ void completeDeclarator(S_symbol *t, S_symbol *d) {
     LIST_APPEND(S_typeModifiers, *dt, tt);
 }
 
-S_symbol *createSimpleDefinition(unsigned storage, unsigned t, S_idIdent *id) {
+Symbol *createSimpleDefinition(unsigned storage, unsigned t, S_idIdent *id) {
     S_typeModifiers *typeModifiers;
-    S_symbol *r;
+    Symbol *r;
     typeModifiers = StackMemAlloc(S_typeModifiers);
     FILLF_typeModifiers(typeModifiers,t,f,( NULL,NULL) ,NULL,NULL);
     if (id!=NULL) {
-        /*& r = StackMemAlloc(S_symbol); */
+        /*& r = StackMemAlloc(Symbol); */
         /*& FILL_symbolBits(&r->bits,0,0,0,0,0,TypeDefault,storage,0); */
         /*& FILL_symbol(r,id->name,id->name,id->p,r->bits,type,typeModifiers,NULL); */
         /* REPLACED StackMemAlloc()+FILL_symbol() with */
         r = newSymbolIsType(id->name, id->name, id->p, typeModifiers);
     } else {
-        /*& r = StackMemAlloc(S_symbol); */
+        /*& r = StackMemAlloc(Symbol); */
         /*& FILL_symbolBits(&r->bits,0,0,0,0,0,TypeDefault,storage,0); */
         /*& FILL_symbol(r,NULL, NULL, s_noPos,r->bits,type,typeModifiers,NULL); */
         r = newSymbolIsType(NULL, NULL, s_noPos, typeModifiers);
@@ -855,7 +855,7 @@ S_symbol *createSimpleDefinition(unsigned storage, unsigned t, S_idIdent *id) {
     return(r);
 }
 
-SymbolList *createDefinitionList(S_symbol *symbol) {
+SymbolList *createDefinitionList(Symbol *symbol) {
     SymbolList *p;
 
     assert(symbol);
@@ -866,8 +866,8 @@ SymbolList *createDefinitionList(S_symbol *symbol) {
     return p;
 }
 
-int mergeArguments(S_symbol *id, S_symbol *ty) {
-    S_symbol *p;
+int mergeArguments(Symbol *id, Symbol *ty) {
+    Symbol *p;
     int res;
     res = RESULT_OK;
     /* if a type of non-exist. argument is declared, it is probably */
@@ -886,7 +886,7 @@ int mergeArguments(S_symbol *id, S_symbol *ty) {
     return(res);
 }
 
-static S_typeModifiers *crSimpleEnumType(S_symbol *edef, int type) {
+static S_typeModifiers *crSimpleEnumType(Symbol *edef, int type) {
     S_typeModifiers *res;
     res = StackMemAlloc(S_typeModifiers);
     FILLF_typeModifiers(res, type,t,edef,NULL,NULL);
@@ -898,7 +898,7 @@ S_typeModifiers *simpleStrUnionSpecifier(   S_idIdent *typeName,
                                             S_idIdent *id,
                                             int usage
                                             ) {
-    S_symbol p,*pp;
+    Symbol p,*pp;
     int ii,type;
     /*fprintf(dumpOut, "new str %s\n",id->name); fflush(dumpOut);*/
     assert(typeName && typeName->sd && typeName->sd->bits.symType == TypeKeyword);
@@ -915,7 +915,7 @@ S_typeModifiers *simpleStrUnionSpecifier(   S_idIdent *typeName,
     if (! symTabIsMember(s_symTab,&p,&ii,&pp)
         || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
         //{static int c=0;fprintf(dumpOut,"str#%d\n",c++);}
-        XX_ALLOC(pp, S_symbol);
+        XX_ALLOC(pp, Symbol);
         *pp = p;
         XX_ALLOC(pp->u.s, S_symStructSpec);
         FILLF_symStructSpec(pp->u.s, NULL,
@@ -931,10 +931,10 @@ S_typeModifiers *simpleStrUnionSpecifier(   S_idIdent *typeName,
     return(&pp->u.s->stype);
 }
 
-void setGlobalFileDepNames(char *iname, S_symbol *pp, int memory) {
+void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
     char            *mname, *fname;
     char            tmp[MACRO_NAME_SIZE];
-    S_symbol        *memb;
+    Symbol        *memb;
     int             ii,rr,filen, order, len, len2;
     if (iname == NULL) iname="";
     assert(pp);
@@ -1004,7 +1004,7 @@ void setGlobalFileDepNames(char *iname, S_symbol *pp, int memory) {
 #endif
 
 S_typeModifiers *crNewAnnonymeStrUnion(S_idIdent *typeName) {
-    S_symbol *pp;
+    Symbol *pp;
     int type;
 
     assert(typeName);
@@ -1017,7 +1017,7 @@ S_typeModifiers *crNewAnnonymeStrUnion(S_idIdent *typeName) {
     if (typeName->sd->u.keyWordVal == STRUCT) type = TypeStruct;
     else type = TypeUnion;
 
-    /*& pp = StackMemAlloc(S_symbol); */
+    /*& pp = StackMemAlloc(Symbol); */
     /*& FILL_symbolBits(&pp->bits,0,0, 0,0,0, type, StorageNone,0); */
     /*& FILL_symbol(pp, "", NULL, typeName->p,pp->bits,type,NULL, NULL); */
     /*& REPLACED StackMemAlloc()+FILL_symbol() with: */
@@ -1036,8 +1036,8 @@ S_typeModifiers *crNewAnnonymeStrUnion(S_idIdent *typeName) {
     return(&pp->u.s->stype);
 }
 
-void specializeStrUnionDef(S_symbol *sd, S_symbol *rec) {
-    S_symbol *dd;
+void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
+    Symbol *dd;
     assert(sd->bits.symType == TypeStruct || sd->bits.symType == TypeUnion);
     assert(sd->u.s);
     if (sd->u.s->records!=NULL) return;
@@ -1057,7 +1057,7 @@ void specializeStrUnionDef(S_symbol *sd, S_symbol *rec) {
 }
 
 S_typeModifiers *simpleEnumSpecifier(S_idIdent *id, int usage) {
-    S_symbol p,*pp;
+    Symbol p,*pp;
     int ii;
 
     fillSymbol(&p, id->name, id->name, id->p);
@@ -1065,7 +1065,7 @@ S_typeModifiers *simpleEnumSpecifier(S_idIdent *id, int usage) {
 
     if (! symTabIsMember(s_symTab,&p,&ii,&pp)
         || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
-        pp = StackMemAlloc(S_symbol);
+        pp = StackMemAlloc(Symbol);
         *pp = p;
         setGlobalFileDepNames(id->name, pp, MEM_XX);
         addSymbol(pp, s_symTab);
@@ -1075,9 +1075,9 @@ S_typeModifiers *simpleEnumSpecifier(S_idIdent *id, int usage) {
 }
 
 S_typeModifiers *createNewAnonymousEnum(SymbolList *enums) {
-    S_symbol *pp;
+    Symbol *pp;
 
-    /*& pp = StackMemAlloc(S_symbol); */
+    /*& pp = StackMemAlloc(Symbol); */
     /*& FILL_symbolBits(&pp->bits,0,0, 0,0,0, TypeEnum, StorageNone,0); */
     /*& FILL_symbol(pp, "", "", s_noPos,pp->bits,enums,enums, NULL); */
     /*& REPLACED StackMemAlloc()+FILL_symbol() with:  */
@@ -1143,14 +1143,14 @@ static void handleParameterPositions(S_position *lpar, S_positionList *commas,
     }
 }
 
-S_symbol *crEmptyField(void) {
-    S_symbol *res;
+Symbol *crEmptyField(void) {
+    Symbol *res;
     S_typeModifiers *p;
 
     p = StackMemAlloc(S_typeModifiers);
     FILLF_typeModifiers(p,TypeAnonymeField,f,( NULL,NULL) ,NULL,NULL);
 
-    /*& res = StackMemAlloc(S_symbol); */
+    /*& res = StackMemAlloc(Symbol); */
     /*& FILL_symbolBits(&res->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
     /*& FILL_symbol(res, "", "", s_noPos,res->bits,type,p,NULL); */
     /*& REPLACED StackMemAlloc()+FILL_symbol() with  */
@@ -1160,7 +1160,7 @@ S_symbol *crEmptyField(void) {
     return(res);
 }
 
-void handleDeclaratorParamPositions(S_symbol *decl, S_position *lpar,
+void handleDeclaratorParamPositions(Symbol *decl, S_position *lpar,
                                     S_positionList *commas, S_position *rpar,
                                     int hasParam
                                     ) {

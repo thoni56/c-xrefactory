@@ -785,7 +785,7 @@ typedef struct jslSymbolList {
     struct position			pos;
     int						isSingleImportedFlag;
     struct jslSymbolList	*next;
-} S_jslSymbolList;
+} JslSymbolList;
 
 
 /* ****************************************************************** */

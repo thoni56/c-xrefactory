@@ -195,7 +195,7 @@ void removeFromTrailUntil(S_freeTrail *untilP) {
   mock(untilP);
 }
 
-void symDump(S_symbol *symbol) {
+void symDump(Symbol *symbol) {
   mock(symbol);
 }
 

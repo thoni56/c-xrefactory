@@ -335,7 +335,7 @@
 
 #define AddSymbolNoTrail(pp,symtab) {\
     int i;\
-    S_symbol *memb;\
+    Symbol *memb;\
     symTabIsMember(symtab,pp,&i,&memb);\
     if (	LANGUAGE(LANG_CCC) && pp->bits.symType==TypeDefault \
             && pp->u.type->kind == TypeFunction) { \

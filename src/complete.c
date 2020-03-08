@@ -703,7 +703,7 @@ void processName(char *name, S_cline *compLine, int orderFlag, void *c) {
     }
 }
 
-static void completeFun(S_symbol *s, void *c) {
+static void completeFun(Symbol *s, void *c) {
     S_completionSymInfo *cc;
     S_cline compLine;
     cc = (S_completionSymInfo *) c;
@@ -732,7 +732,7 @@ static void completeFun(S_symbol *s, void *c) {
         }                                                               \
     }
 
-static void completeFunctionOrMethodName(S_completions *c, int orderFlag, int vlevel, S_symbol *r, S_symbol *vFunCl) {
+static void completeFunctionOrMethodName(S_completions *c, int orderFlag, int vlevel, Symbol *r, Symbol *vFunCl) {
     S_cline         compLine;
     int             cnamelen;
     char            *cn, *cname, *psuff, *msig;
@@ -766,7 +766,7 @@ static void completeFunctionOrMethodName(S_completions *c, int orderFlag, int vl
     processName(cn, &compLine, orderFlag, (void*) c);
 }
 
-static void completeSymFun(S_symbol *s, void *c) {
+static void completeSymFun(Symbol *s, void *c) {
     S_completionSymFunInfo *cc;
     S_cline compLine;
     char    *completionName;
@@ -804,7 +804,7 @@ static int javaLinkable(unsigned storage, unsigned accessFlags) {
     return(1);
 }
 
-static void processSpecialInheritedFullCompletion( S_completions *c, int orderFlag, int vlevel, S_symbol *r, S_symbol *vFunCl, char *cname) {
+static void processSpecialInheritedFullCompletion( S_completions *c, int orderFlag, int vlevel, Symbol *r, Symbol *vFunCl, char *cname) {
     int     size, ll;
     char    *fcc;
     char    tt[MAX_CX_SYMBOL_SIZE];
@@ -836,7 +836,7 @@ static int getAccCheckOption(void) {
 
 static void completeRecordsNames(
                                  S_completions *c,
-                                 S_symbol *s,
+                                 Symbol *s,
                                  unsigned accessMod,
                                  int classification,
                                  int constructorOpt,
@@ -845,7 +845,7 @@ static void completeRecordsNames(
                                  ) {
     S_cline         compLine;
     int             orderFlag,rr,vlevel, accCheck,  visibCheck;
-    S_symbol        *r, *vFunCl;
+    Symbol        *r, *vFunCl;
     S_recFindStr    rfs;
     char            *cname;
     if (s==NULL) return;
@@ -921,7 +921,7 @@ static void completeRecordsNames(
 
 void completeRecNames(S_completions *c) {
     S_typeModifiers *str;
-    S_symbol *s;
+    Symbol *s;
     assert(s_structRecordCompletionType);
     str = s_structRecordCompletionType;
     if (str->kind == TypeStruct || str->kind == TypeUnion) {
@@ -982,11 +982,11 @@ void completeOthers(S_completions *c) {
 }
 
 /* very costly function in time !!!! */
-static S_symbol * getSymFromRef(S_reference *rr) {
+static Symbol * getSymFromRef(S_reference *rr) {
     int                 i;
     S_symbolRefItem     *ss;
     S_reference         *r;
-    S_symbol            *sym;
+    Symbol            *sym;
     r = NULL; ss = NULL;
     // first visit all references, looking for symbol link name
     for(i=0; i<s_cxrefTab.size; i++) {
@@ -1011,7 +1011,7 @@ static S_symbol * getSymFromRef(S_reference *rr) {
 
 static int isEqualType(S_typeModifiers *t1, S_typeModifiers *t2) {
     S_typeModifiers *s1,*s2;
-    S_symbol        *ss1,*ss2;
+    Symbol        *ss1,*ss2;
     assert(t1 && t2);
     for(s1=t1,s2=t2; s1->next!=NULL&&s2->next!=NULL; s1=s1->next,s2=s2->next) {
         if (s1->kind!=s2->kind) return(0);
@@ -1038,7 +1038,7 @@ static int isEqualType(S_typeModifiers *t1, S_typeModifiers *t2) {
 static char *spComplFindNextRecord(S_exprTokenType *tok) {
     S_recFindStr    rfs;
     int             rr;
-    S_symbol        *r,*s;
+    Symbol        *r,*s;
     char            *cname,*res;
     static char     *cnext="next";
     static char     *cprevious="previous";
@@ -1069,10 +1069,10 @@ static char *spComplFindNextRecord(S_exprTokenType *tok) {
 
 static int isForCompletionSymbol(S_completions *c,
                                  S_exprTokenType *token,
-                                 S_symbol **sym,
+                                 Symbol **sym,
                                  char   **nextRecord
                                  ) {
-    S_symbol    *sy;
+    Symbol    *sy;
 
     if (s_opt.server_operation != OLO_COMPLETION)  return(0);
     if (token->t==NULL) return(0);
@@ -1093,7 +1093,7 @@ void completeForSpecial1(S_completions* c) {
     static char         ss[TMP_STRING_SIZE];
     char                *rec;
     S_cline             compLine;
-    S_symbol            *sym;
+    Symbol            *sym;
     if (isForCompletionSymbol(c,&s_forCompletionType,&sym,&rec)) {
         sprintf(ss,"%s!=NULL; ", sym->name);
         FILL_cline(&compLine,ss,NULL,TypeSpecialComplet,0,0,NULL,NULL);
@@ -1105,7 +1105,7 @@ void completeForSpecial2(S_completions* c) {
     static char         ss[TMP_STRING_SIZE];
     char                *rec;
     S_cline             compLine;
-    S_symbol            *sym;
+    Symbol            *sym;
     if (isForCompletionSymbol(c, &s_forCompletionType,&sym,&rec)) {
         if (rec!=NULL) {
             sprintf(ss,"%s=%s->%s) {", sym->name, sym->name, rec);
@@ -1116,13 +1116,13 @@ void completeForSpecial2(S_completions* c) {
 }
 
 void completeUpFunProfile(S_completions* c) {
-    S_symbol *dd;
+    Symbol *dd;
 
     if (s_upLevelFunctionCompletionType != NULL
         && c->idToProcess[0] == 0
         && c->ai == 0
         ) {
-        /*& XX_ALLOC(dd, S_symbol); */
+        /*& XX_ALLOC(dd, Symbol); */
         /*& FILL_symbolBits(&dd->bits,0,0, 0,0, 0, TypeDefault, StorageDefault,0); */
         /*& FILL_symbol(dd, "    ", "    ",s_noPos, dd->bits, type , */
         /*&             s_upLevelFunctionCompletionType,NULL); */
@@ -1139,9 +1139,9 @@ void completeUpFunProfile(S_completions* c) {
 
 /* *************************** JAVA completions ********************** */
 
-static S_symbol * javaGetFileNameClass(char *fname) {
+static Symbol * javaGetFileNameClass(char *fname) {
     char        *pp;
-    S_symbol    *res;
+    Symbol    *res;
     pp = javaCutClassPathFromFileName(fname);
     res = javaGetFieldClass(pp,NULL);
     return(res);
@@ -1149,7 +1149,7 @@ static S_symbol * javaGetFileNameClass(char *fname) {
 
 
 static void completeConstructorsFromFile(S_completions *c, char *fname) {
-    S_symbol *memb;
+    Symbol *memb;
     //&fprintf(dumpOut,"comp %s\n", fname);
     memb = javaGetFileNameClass(fname);
     //&fprintf(dumpOut,"comp %s <-> %s\n", memb->name, c->idToProcess);
@@ -1161,7 +1161,7 @@ static void completeConstructorsFromFile(S_completions *c, char *fname) {
     }
 }
 
-static void completeJavaConstructors(S_symbol *s, void *c) {
+static void completeJavaConstructors(Symbol *s, void *c) {
     if (s->bits.symType != TypeStruct) return;
     completeConstructorsFromFile((S_completions *)c, s->linkName);
 }
@@ -1202,7 +1202,7 @@ static void javaTypeNameCompletion(
     S_cline compLine;
     char *cname, *suff;
     int len, storage, complType;
-    S_symbol *memb = NULL;
+    Symbol *memb = NULL;
 
     if (pstorage == NULL) storage = StorageDefault;
     else storage = *pstorage;
@@ -1241,13 +1241,13 @@ static void javaTypeNameCompletion(
 }
 
 static void javaCompleteNestedClasses(  S_completions *c,
-                                        S_symbol *cclas,
+                                        Symbol *cclas,
                                         int storage
                                         ) {
     S_cline         compLine;
     int             i;
-    S_symbol        *memb;
-    S_symbol        *str;
+    Symbol        *memb;
+    Symbol        *str;
     str = cclas;
     // TODO count inheritance and virtual levels (at least for nested classes)
     for(str=cclas;
@@ -1285,7 +1285,7 @@ static void javaCompleteComposedName(
                                      int storage,
                                      int innerConstruct
                                      ) {
-    S_symbol        *str;
+    Symbol        *str;
     S_typeModifiers *expr;
     int             nameType;
     char            packName[MAX_FILE_NAME_SIZE];
@@ -1327,7 +1327,7 @@ static void javaCompleteComposedName(
 
 void javaHintCompleteMethodParameters(S_completions *c) {
     S_cline                 compLine;
-    S_symbol                *r, *vFunCl;
+    Symbol                *r, *vFunCl;
     S_recFindStr            *rfs;
     S_typeModifiersList     *aaa;
     int                     visibCheck, accCheck, vlevel, rr, actArgi;
@@ -1441,7 +1441,7 @@ static void completeFqtFromFileName(char *file, void *cfmpi) {
     S_cline                 compLine;
     S_completionFqtMapInfo  *fmi;
     S_completions           *c;
-    S_symbol                *memb;
+    Symbol                *memb;
 
     fmi = (S_completionFqtMapInfo *) cfmpi;
     c = fmi->res;
@@ -1632,7 +1632,7 @@ void javaCompleteConstructNestNameName(S_completions*c) {
 }
 
 void javaCompleteConstructNestPrimName(S_completions*c) {
-    S_symbol *memb;
+    Symbol *memb;
     if (s_javaCompletionLastPrimary == NULL) return;
     if (s_javaCompletionLastPrimary->kind == TypeStruct) {
         memb = s_javaCompletionLastPrimary->u.t;
@@ -1650,7 +1650,7 @@ void javaCompleteExprSingleName(S_completions*c) {
 }
 
 void javaCompleteThisConstructor (S_completions *c) {
-    S_symbol *memb;
+    Symbol *memb;
     if (strcmp(c->idToProcess,"this")!=0) return;
     if (s_opt.server_operation == OLO_SEARCH) return;
     memb = s_javaStat->thisClass;
@@ -1660,7 +1660,7 @@ void javaCompleteThisConstructor (S_completions *c) {
 }
 
 void javaCompleteSuperConstructor (S_completions *c) {
-    S_symbol *memb;
+    Symbol *memb;
     if (strcmp(c->idToProcess,"super")!=0) return;
     if (s_opt.server_operation == OLO_SEARCH) return;
     memb = javaCurrentSuperClass();
@@ -1679,7 +1679,7 @@ void javaCompleteExprCompName(S_completions*c) {
 }
 
 void javaCompleteStrRecordPrimary(S_completions*c) {
-    S_symbol *memb;
+    Symbol *memb;
     if (s_javaCompletionLastPrimary == NULL) return;
     if (s_javaCompletionLastPrimary->kind == TypeStruct) {
         memb = s_javaCompletionLastPrimary->u.t;
@@ -1693,7 +1693,7 @@ void javaCompleteStrRecordPrimary(S_completions*c) {
 }
 
 void javaCompleteStrRecordSuper(S_completions*c) {
-    S_symbol *memb;
+    Symbol *memb;
     memb = javaCurrentSuperClass();
     if (memb == &s_errorSymbol || memb->bits.symType==TypeError) return;
     assert(memb);
@@ -1702,7 +1702,7 @@ void javaCompleteStrRecordSuper(S_completions*c) {
 }
 
 void javaCompleteStrRecordQualifiedSuper(S_completions*c) {
-    S_symbol            *str;
+    Symbol            *str;
     S_typeModifiers     *expr;
     S_reference         *rr, *lastUselessRef;
     int                 ttype;

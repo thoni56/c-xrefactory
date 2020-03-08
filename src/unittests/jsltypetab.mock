@@ -9,39 +9,39 @@ void jslTypeTabNAInit(struct jslTypeTab *table, int size) {
   mock(table, size);
 }
 
-int jslTypeTabIsMember(struct jslTypeTab *table, S_jslSymbolList *element, int *position, S_jslSymbolList **origin) {
+int jslTypeTabIsMember(struct jslTypeTab *table, JslSymbolList *element, int *position, JslSymbolList **origin) {
   return (int) mock(table, element, position, origin);
 }
 
-int jslTypeTabMembEqual(S_jslSymbolList *e1, S_jslSymbolList *e2) {
+int jslTypeTabMembEqual(JslSymbolList *e1, JslSymbolList *e2) {
   return (int) mock(e1, e2);
 }
 
-int jslTypeTabNextMember(S_jslSymbolList *element, S_jslSymbolList **original) {
+int jslTypeTabNextMember(JslSymbolList *element, JslSymbolList **original) {
   return (int) mock(element, original);
 }
 
-void jslTypeTabSet(struct jslTypeTab *table, S_jslSymbolList *element, int position) {
+void jslTypeTabSet(struct jslTypeTab *table, JslSymbolList *element, int position) {
   mock(table, element, position);
 }
 
-void jslTypeTabSetLast(struct jslTypeTab *table, S_jslSymbolList *element, int position) {
+void jslTypeTabSetLast(struct jslTypeTab *table, JslSymbolList *element, int position) {
   mock(table, element, position);
 }
 
-void jslTypeTabAdd(struct jslTypeTab *table, S_jslSymbolList *element, int *position) {
+void jslTypeTabAdd(struct jslTypeTab *table, JslSymbolList *element, int *position) {
   mock(table, element, position);
 }
 
-int jslTypeTabDelete(struct jslTypeTab *table, S_jslSymbolList *element) {
+int jslTypeTabDelete(struct jslTypeTab *table, JslSymbolList *element) {
   return (int) mock(table, element);
 }
 
-int jslTypeTabDeleteExact(struct jslTypeTab *table, S_jslSymbolList *element) {
+int jslTypeTabDeleteExact(struct jslTypeTab *table, JslSymbolList *element) {
   return (int) mock(table, element);
 }
 
-int jslTypeTabDeleteLast(struct jslTypeTab *table, S_jslSymbolList *element) {
+int jslTypeTabDeleteLast(struct jslTypeTab *table, JslSymbolList *element) {
   return (int) mock(table, element);
 }
 
@@ -49,11 +49,11 @@ void jslTypeTabFree(struct jslTypeTab *tab) {
   mock(tab);
 }
 
-void jslTypeTabMap(struct jslTypeTab *table, void (*fun)(S_jslSymbolList *)) {
+void jslTypeTabMap(struct jslTypeTab *table, void (*fun)(JslSymbolList *)) {
   mock(table, fun);
 }
 
-void jslTypeTabMap2(struct jslTypeTab *table, void (*fun)(S_jslSymbolList *, void *), void *a) {
+void jslTypeTabMap2(struct jslTypeTab *table, void (*fun)(JslSymbolList *, void *), void *a) {
   mock(table, fun, a);
 }
 
@@ -69,11 +69,11 @@ void jslTypeTabMap32(struct jslTypeTab *table, void (*fun)(int, void *, void *, 
   mock(table, fun, arg1, arg2, arg3);
 }
 
-void jslTypeTabMap4(struct jslTypeTab *table, void (*fun)(S_jslSymbolList *, int), int a) {
+void jslTypeTabMap4(struct jslTypeTab *table, void (*fun)(JslSymbolList *, int), int a) {
   mock(table, fun, a);
 }
 
-void jslTypeTabMap5(struct jslTypeTab *table, void (*fun)(S_jslSymbolList *, void *), void *arg) {
+void jslTypeTabMap5(struct jslTypeTab *table, void (*fun)(JslSymbolList *, void *), void *arg) {
   mock(table, fun, arg);
 }
 

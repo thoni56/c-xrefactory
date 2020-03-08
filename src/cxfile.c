@@ -502,7 +502,7 @@ void addSubClassItemToFileTab( int sup, int inf, int origin) {
 }
 
 
-void addSubClassesItemsToFileTab(S_symbol *ss, int origin) {
+void addSubClassesItemsToFileTab(Symbol *ss, int origin) {
     int cf1;
     SymbolList *sups;
 

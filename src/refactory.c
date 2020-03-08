@@ -1101,7 +1101,7 @@ int tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
     S_olcxReferences *rstack;
     S_reference *rr;
     S_olSymbolsMenu *ss,*mm;
-    S_symbol *target;
+    Symbol *target;
     int srccn;
     char                ttt[MAX_CX_SYMBOL_SIZE];
     int targetcn;
@@ -1143,7 +1143,7 @@ int tpCheckTargetToBeDirectSubOrSupClass(int flag, char *subOrSuper) {
     char ttt[TMP_STRING_SIZE];
     char tt[TMP_STRING_SIZE];
     S_chReference *cl;
-    S_symbol *target;
+    Symbol *target;
     int res;
 
     res = 0;
@@ -1180,7 +1180,7 @@ int tpPullUpFieldLastPreconditions(void) {
     S_olcxReferences *rstack;
     S_olSymbolsMenu *ss,*mm;
     char ttt[TMP_STRING_SIZE];
-    S_symbol *target;
+    Symbol *target;
     int pcharFlag;
 
     pcharFlag = 0;
@@ -1219,7 +1219,7 @@ int tpPushDownFieldLastPreconditions(void) {
     S_olSymbolsMenu *ss,*mm, *sourcesm, *targetsm;
     char ttt[TMP_STRING_SIZE];
     S_reference *rr;
-    S_symbol *target;
+    Symbol *target;
     int thisclassi, res;
 
     res = 1;

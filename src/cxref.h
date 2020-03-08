@@ -41,9 +41,9 @@ extern char *getFullUrlOfJavaDoc_st(char *fileUrl);
 extern int htmlJdkDocAvailableForUrl(char *ss);
 extern void setIntToZero(void *p);
 extern S_reference *duplicateReference(S_reference *r);
-extern S_reference * addCxReferenceNew(S_symbol *p, S_position *pos,
+extern S_reference * addCxReferenceNew(Symbol *p, S_position *pos,
                                        S_usageBits *ub, int vFunCl, int vApplCl);
-extern S_reference * addCxReference(S_symbol *p, S_position *pos, int usage,
+extern S_reference * addCxReference(Symbol *p, S_position *pos, int usage,
                                     int vFunClass,int vApplClass);
 extern S_reference *addSpecialFieldReference(char *name, int storage,
                                              int fnum, S_position *p, int usage);
@@ -55,7 +55,7 @@ extern void olcxAddReferences(S_reference *list, S_reference **dlist, int fnum,
                               int bestMatchFlag);
 extern void olSetCallerPosition(S_position *pos);
 extern S_olCompletion * olCompletionListPrepend(char *name, char *fullText,
-                                                char *vclass, int jindent, S_symbol *s,
+                                                char *vclass, int jindent, Symbol *s,
                                                 S_symbolRefItem *ri, S_reference *dfpos,
                                                 int symType, int vFunClass,
                                                 S_olcxReferences *stack);
@@ -106,10 +106,10 @@ extern int olcxShowSelectionMenu(void);
 extern int getClassNumFromClassLinkName(char *name, int defaultResult);
 extern void getLineColCursorPositionFromCommandLineOption( int *l, int *c );
 extern void changeClassReferencesUsages(char *linkName, int category, int fnum,
-                                        S_symbol *cclass);
+                                        Symbol *cclass);
 extern int isStrictlyEnclosingClass(int enclosedClass, int enclosingClass);
 extern void changeMethodReferencesUsages(char *linkName, int category, int fnum,
-                                         S_symbol *cclass);
+                                         Symbol *cclass);
 extern void olcxPushSpecialCheckMenuSym(int command, char *symname);
 extern int refOccursInRefs(S_reference *r, S_reference *list);
 extern void olcxCheck1CxFileReference(S_symbolRefItem *ss, S_reference *r);
@@ -119,7 +119,7 @@ extern int symbolsCorrespondWrtMoving(S_olSymbolsMenu *osym, S_olSymbolsMenu *ns
                                       int command);
 extern void olcxPrintPushingAction(int opt, int afterMenu);
 extern void olPushAllReferencesInBetween(int minMemi, int maxMemi);
-extern S_symbol *getMoveTargetClass(void);
+extern Symbol *getMoveTargetClass(void);
 extern int javaGetSuperClassNumFromClassNum(int cn);
 extern int javaIsSuperClass(int superclas, int clas);
 extern void pushLocalUnusedSymbolsAction(void);

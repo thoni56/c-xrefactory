@@ -103,7 +103,7 @@ static void fileTabDeleteOutOfMemory(S_fileItem *p, int i) {
                                 ((char*)ppp) < memory+SIZE_workMemory   \
                                                                         )
 
-static void structCachingFree(S_symbol *pp) {
+static void structCachingFree(Symbol *pp) {
     SymbolList **tp;
     assert(pp->u.s);
     if (MEM_FREED_POINTER(pp->u.s->records) ||
@@ -132,7 +132,7 @@ static void structCachingFree(S_symbol *pp) {
 }
 
 static void symTabDeleteOutOfMemory(int i) {
-    S_symbol **pp;
+    Symbol **pp;
     pp = &s_symTab->tab[i];
     while (*pp!=NULL) {
         /*

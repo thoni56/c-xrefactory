@@ -751,13 +751,13 @@ S_typeModifiers * cfUnPackResultType(char *sig, char **restype) {
 
 static void cfAddRecordToClass( char *name,
                                 char *sig,
-                                S_symbol *clas,
+                                Symbol *clas,
                                 int accessFlags,
                                 int storage,
                                 SymbolList *exceptions
                                 ) {
     static char pp[MAX_PROFILE_SIZE];
-    S_symbol *symbol, *memb;
+    Symbol *symbol, *memb;
     char *linkName,*prof;
     S_typeModifiers *tt;
     char *restype;
@@ -806,12 +806,12 @@ static void cfAddRecordToClass( char *name,
 
     log_trace("adding definition of %s == %s\n", name, linkName);
     /* TODO If this was allocated in "normal" memory we could use newSymbol() */
-    CF_ALLOC(symbol, S_symbol);
+    CF_ALLOC(symbol, Symbol);
     fillSymbolWithType(symbol, name, linkName, s_noPos, tt);
     FILL_symbolBits(&symbol->bits,0,0,accessFlags,0, 0,TypeDefault, storage, 0);
     symbol->u.type = tt;
     assert(clas->u.s);
-    LIST_APPEND(S_symbol, clas->u.s->records, symbol);
+    LIST_APPEND(Symbol, clas->u.s->records, symbol);
     if (s_opt.allowClassFileRefs) {
         FILL_position(&dpos, clas->u.s->classFile, 1, 0);
         addCxReference(symbol, &dpos, UsageClassFileDefinition, vFunCl, vFunCl);
@@ -821,7 +821,7 @@ static void cfAddRecordToClass( char *name,
 static void cfReadFieldInfos(   char **accc,
                                 char **affin,
                                 CharacterBuffer *iBuf,
-                                S_symbol *memb,
+                                Symbol *memb,
                                 union constantPoolUnion *cp
                                 ) {
     char *ccc, *ffin;
@@ -860,7 +860,7 @@ static char *simpleClassNameFromFQTName(char *fqtName) {
 static void cfReadMethodInfos(  char **accc,
                                 char **affin,
                                 CharacterBuffer *iBuf,
-                                S_symbol *memb,
+                                Symbol *memb,
                                 union constantPoolUnion *cp
                                 ) {
     char *ccc, *ffin, *name, *sign, *sign2;
@@ -868,7 +868,7 @@ static void cfReadMethodInfos(  char **accc,
     unsigned aind, acount, aname, alen, excount;
     int i, access_flags, nameind, sigind, storage, exclass;
     char *exname, *exsname;
-    S_symbol *exc;
+    Symbol *exc;
     SymbolList *exclist, *ee;
     ccc = *accc; ffin = *affin;
     GetU2(count, ccc, ffin, iBuf);
@@ -980,7 +980,7 @@ static void cfReadMethodInfos(  char **accc,
     *accc = ccc; *affin = ffin;
 }
 
-S_symbol *cfAddCastsToModule(S_symbol *memb, S_symbol *sup) {
+Symbol *cfAddCastsToModule(Symbol *memb, Symbol *sup) {
     assert(memb->u.s);
     cctAddSimpleValue(&memb->u.s->casts, sup, 1);
     assert(sup->u.s);
@@ -988,7 +988,7 @@ S_symbol *cfAddCastsToModule(S_symbol *memb, S_symbol *sup) {
     return(sup);
 }
 
-void addSuperClassOrInterface( S_symbol *memb, S_symbol *supp, int origin ) {
+void addSuperClassOrInterface( Symbol *memb, Symbol *supp, int origin ) {
     SymbolList *ssl, *ss;
 
     supp = javaFQTypeSymbolDefinition(supp->name, supp->linkName);
@@ -1013,15 +1013,15 @@ void addSuperClassOrInterface( S_symbol *memb, S_symbol *supp, int origin ) {
                              origin);
 }
 
-void addSuperClassOrInterfaceByName(S_symbol *memb, char *super, int origin,
+void addSuperClassOrInterfaceByName(Symbol *memb, char *super, int origin,
                                     int loadSuper) {
-    S_symbol        *supp;
+    Symbol        *supp;
     supp = javaGetFieldClass(super,NULL);
     if (loadSuper==LOAD_SUPER) javaLoadClassSymbolsFromFile(supp);
     addSuperClassOrInterface( memb, supp, origin);
 }
 
-int javaCreateClassFileItem( S_symbol *memb) {
+int javaCreateClassFileItem( Symbol *memb) {
     char ftname[MAX_FILE_NAME_SIZE];
     int ii;
     int newItem;
@@ -1041,13 +1041,13 @@ int javaCreateClassFileItem( S_symbol *memb) {
 
 /* ********************************************************************* */
 
-void javaReadClassFile(char *name, S_symbol *memb, int loadSuper) {
+void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     int cval, i, inum, innval, rinners, modifs;
     FILE *ff;
     int upp, innNameInd, membFlag;
     char *ccc, *ffin;
     char *super, *interf, *innerCName, *zipsep;
-    S_symbol *inners;
+    Symbol *inners;
     int thisClass, superClass, accesFlags, cpSize;
     int fileInd, ind, count, aname, alen, cn;
     char *inner, *upper, *thisClassName;

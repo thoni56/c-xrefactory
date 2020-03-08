@@ -4,7 +4,7 @@
 #include "proto.h"
 
 #define HASH_TAB_NAME jslTypeTab
-#define HASH_ELEM_TYPE S_jslSymbolList
+#define HASH_ELEM_TYPE JslSymbolList
 
 #include "hashlist.th"
 

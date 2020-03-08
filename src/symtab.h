@@ -6,7 +6,7 @@
 #include "proto.h"
 
 #define HASH_TAB_NAME symTab
-#define HASH_ELEM_TYPE S_symbol
+#define HASH_ELEM_TYPE Symbol
 
 
 #include "hashlist.th"

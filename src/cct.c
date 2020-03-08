@@ -21,7 +21,7 @@
                                                                         )
 
 
-void cctAddSimpleValue(S_cctNode *cc, S_symbol *x, int deepFactor) {
+void cctAddSimpleValue(S_cctNode *cc, Symbol *x, int deepFactor) {
     S_cctNode *nn;
     int i,h;
     //&fprintf(dumpOut,"adding %d == %s to casts at %d at deep %d\n", x, x->linkName, cc, deepFactor);
@@ -42,7 +42,7 @@ void cctAddSimpleValue(S_cctNode *cc, S_symbol *x, int deepFactor) {
 }
 
 
-int cctIsMember(S_cctNode *cc, S_symbol *x, int deepFactor) {
+int cctIsMember(S_cctNode *cc, Symbol *x, int deepFactor) {
     int h,res;
     //&if (cc->node!=NULL) fprintf(dumpOut,"checking cast %s to %d == %s\n", cc->node->linkName, x, x->linkName);
     if (cc->node == x) return(1);
