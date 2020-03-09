@@ -91,10 +91,8 @@ static void fileTabDeleteOutOfMemory(S_fileItem *p, int i) {
     }
 }
 
-#define MEM_FREED_POINTER(ppp) (                                        \
-                                ((char*)ppp) >= memory+s_topBlock->firstFreeIndex && \
-                                ((char*)ppp) < memory+SIZE_workMemory   \
-                                                                        )
+#define MEM_FREED_POINTER(ppp) (((char*)ppp) >= memory+s_topBlock->firstFreeIndex && \
+                                ((char*)ppp) < memory+SIZE_workMemory)
 
 static void structCachingFree(Symbol *pp) {
     SymbolList **tp;
