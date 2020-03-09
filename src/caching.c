@@ -76,13 +76,6 @@ static void fileTabDeleteOutOfMemory(S_fileItem *p, int i) {
         if (DM_FREED_POINTER(cxMemory,*hh)) {
             *hh = (*hh)->next;
             goto contlabel;
-#if ZERO
-        } else {
-            if (((char*)*hh)< ((char*)&cxMemory->b)||((char*)*hh)>= ((char*)&cxMemory->b)+cxMemory->i){
-                fprintf(dumpOut,"!!!!!!keeping outsider %x: %s\n",*hh,p->name);
-                fflush(dumpOut);
-            }
-#endif
         }
         hh= &(*hh)->next;
     contlabel:;
