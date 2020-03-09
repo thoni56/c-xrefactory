@@ -20,44 +20,44 @@
 S_jslStat *s_jsl;
 
 
-static void jslFillTypeSymbolItem(Symbol *sd, JslSymbolList *ss ,
-                                  char *name) {
+static void jslCreateTypeSymbolInList(JslSymbolList *ss ,
+                                      char *name) {
+    Symbol *s;
     /*& FILL_symbolBits(&sd->bits,0,0, 0,0, 0, TypeStruct, StorageNone,0); */
     /*& FILL_symbol(sd,name,name,s_noPos,sd->bits,type,NULL,NULL); */
     /*& REPLACED: FILL_symbol() with */
-    sd = newSymbol(name, name, s_noPos);
-    FILL_symbolBits(&sd->bits, 0, 0, 0, 0, 0, TypeStruct, StorageNone, 0);
-    FILL_jslSymbolList(ss, sd, s_noPos, 0, NULL);
+    s = newSymbol(name, name, s_noPos);
+    FILL_symbolBits(&s->bits, 0, 0, 0, 0, 0, TypeStruct, StorageNone, 0);
+    FILL_jslSymbolList(ss, s, s_noPos, 0, NULL);
 }
 
 Symbol *jslTypeSpecifier2(S_typeModifiers *t) {
-    Symbol    *r;
+    Symbol *symbol;
 
-    CF_ALLOC(r, Symbol);
-    fillSymbolWithType(r, NULL, NULL, s_noPos, t);
-    FILL_symbolBits(&r->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
+    CF_ALLOC(symbol, Symbol);   /* Not in same memory as newSymbol() uses, why? */
+    fillSymbolWithType(symbol, NULL, NULL, s_noPos, t);
+    FILL_symbolBits(&symbol->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
 
-    return(r);
+    return symbol;
 }
 
 static S_typeModifiers *jslCrSimpleTypeModifier(unsigned t) {
     S_typeModifiers *p;
+
     assert(t>=0 && t<MAX_TYPE);
     if (s_preCrTypesTab[t] == NULL) {
         CF_ALLOC(p, S_typeModifiers);
-        FILLF_typeModifiers(p,t,f,( NULL,NULL) ,NULL,NULL);
+        FILLF_typeModifiers(p, t, f, (NULL,NULL), NULL, NULL);
     } else {
         p = s_preCrTypesTab[t];
     }
-    /*fprintf(dumpOut,"t,p->m == %d %d == %s %s\n",t,p->m,typesName[t],typesName[p->m]); fflush(dumpOut);*/
     assert(p->kind == t);
-    return(p);
+
+    return p;
 }
 
 Symbol *jslTypeSpecifier1(unsigned t) {
-    Symbol        *r;
-    r = jslTypeSpecifier2(jslCrSimpleTypeModifier(t));
-    return(r);
+    return jslTypeSpecifier2(jslCrSimpleTypeModifier(t));
 }
 
 S_typeModifiers *jslAppendComposedType(S_typeModifiers **d, unsigned t) {
@@ -99,13 +99,13 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, S_idIdentList *packid,
     char fqtName[MAX_FILE_NAME_SIZE];
     S_idIdentList dd2;
     int ii;
-    Symbol sd, *smemb;
+    Symbol *smemb;
     JslSymbolList ss, *xss, *memb;
     S_position *importPos;
     int mm;
     UNUSED mm;
 
-    jslFillTypeSymbolItem( &sd, &ss, ttt2);
+    jslCreateTypeSymbolInList(&ss, ttt2);
     FILLF_idIdentList(&dd2, ttt2,NULL,-1,0,0,NULL, ttt2,TypeStruct,packid);
     javaCreateComposedName(NULL,&dd2,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
     smemb = javaFQTypeSymbolDefinition(ttt2, fqtName);
@@ -133,10 +133,10 @@ static Symbol *jslTypeSymbolUsage(char *ttt2, S_idIdentList *packid) {
     char fqtName[MAX_FILE_NAME_SIZE];
     S_idIdentList dd2;
     int ii;
-    Symbol sd, *smemb;
+    Symbol *smemb;
     JslSymbolList ss, *memb;
 
-    jslFillTypeSymbolItem( &sd, &ss, ttt2);
+    jslCreateTypeSymbolInList(&ss, ttt2);
     if (packid==NULL && jslTypeTabIsMember(s_jsl->typeTab, &ss, &ii, &memb)) {
         smemb = memb->d;
         return(smemb);
@@ -166,10 +166,9 @@ Symbol *jslTypeNameDefinition(S_idIdentList *tname) {
 static int jslClassifySingleAmbigNameToTypeOrPack(S_idIdentList *name,
                                                   Symbol **str
                                                   ){
-    Symbol sd;
     JslSymbolList ss, *memb, *nextmemb;
     int ii, haveit;
-    jslFillTypeSymbolItem( &sd, &ss, name->idi.name);
+    jslCreateTypeSymbolInList(&ss, name->idi.name);
     //&fprintf(dumpOut,":looking for %s\n", name->idi.name); fflush(dumpOut);
     if (jslTypeTabIsMember(s_jsl->typeTab, &ss, &ii, &memb)) {
         /* a type */
