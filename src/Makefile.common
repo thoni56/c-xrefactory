@@ -79,11 +79,9 @@ compiler_defines.g.h: c-xref.bs Makefile.common
 	fi
 
 # Create a dependency file for proto.h since we need to know which files it includes
-#-include .objects/proto.d
-#$(OBJDIR)/proto.d: proto.h
-#	$(CC) $(CFLAGS) -MMD -MT proto.h -c proto.h -o $(OBJDIR)/proto.o
-#	sed 's/ proto.h / /' $(OBJDIR)/proto.d > /tmp/proto.d
-#	mv /tmp/proto.d $@
+$(OBJDIR)/proto.d: proto.h $(OBJDIR)
+	$(CC) $(CFLAGS) -MMD -MT proto.h -MF /tmp/proto.d -c proto.h -o /dev/null
+	sed 's/ proto.h / /' /tmp/proto.d > $@
 
 # Generate structure filler functions
 strFill.g.h: proto.h compiler_defines.g.h c-xref.bs .c-xrefrc Makefile.common
