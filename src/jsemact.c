@@ -458,9 +458,9 @@ int javaClassIsInCurrentPackage(Symbol *cl) {
 
 static Symbol *javaFQTypeSymbolDefinitionCreate(char *name,
                                                   char *fqName, int ii) {
-    Symbol        *memb;
-    SymbolList      *pppl;
-    char			*lname1,*sname;
+    Symbol *memb;
+    SymbolList *pppl;
+    char *lname1, *sname;
 
     CF_ALLOCC(sname, strlen(name)+1, char);
     strcpy(sname, name);
@@ -496,7 +496,7 @@ static Symbol *javaFQTypeSymbolDefinitionCreate(char *name,
     javaCreateClassFileItem(memb);
     // this would be too strong, javaLoadClassSymbolsFromFile(memb);
     /* so, this table is not freed by Trail */
-//&if (stringContainsSubstring(fqName, "ComboBoxTreeFilter")) {fprintf(dumpOut,"\nAAAAAAAAAAAAA : %s %s\n\n", name, fqName);} if (strcmp(fqName, "ComboBoxTreeFilter")==0) assert(0);
+    //&if (stringContainsSubstring(fqName, "ComboBoxTreeFilter")) {fprintf(dumpOut,"\nAAAAAAAAAAAAA : %s %s\n\n", name, fqName);} if (strcmp(fqName, "ComboBoxTreeFilter")==0) assert(0);
     return(memb);
 }
 
@@ -505,9 +505,12 @@ Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {
     SymbolList ppl, *pppl;
     int position;
 
+    /* This probably creates a SymbolList element so ..IsMember() can be used */
+    /* TODO: create a function to check if a *Symbol* is member... */
     fillSymbol(&symbol, name, fqName, s_noPos);
     FILL_symbolBits(&symbol.bits, 0, 0, 0, 0, 0, TypeStruct, StorageNone, 0);
-    FILL_symbolList(&ppl, &symbol, NULL);
+    /* REPLACED: FILL_symbolList(&ppl, &symbol, NULL); with */
+    ppl = (SymbolList){.d = &symbol, .next = NULL};
 
     if (javaFqtTabIsMember(&s_javaFqtTab, &ppl, &position, &pppl)) {
         member = pppl->d;
