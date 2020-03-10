@@ -294,21 +294,22 @@ void recoverCachePoint(int i, char *readedUntil, int activeCaching) {
 
 void recoverFromCache(void) {
     int i;
-    char *readedUntil;
+    char *readUntil;
+
     assert(s_cache.cpi >= 1);
     s_cache.activeCache = 0;
     /*  s_cache.recoveringFromCache = 1;*/
-    log_debug(": reading from cache");
-    readedUntil = s_cache.cp[0].lbcc;
+    log_debug("reading from cache");
+    readUntil = s_cache.cp[0].lbcc;
     for(i=1; i<s_cache.cpi; i++) {
         /*fprintf(dumpOut,"try to recover cache point %d\n",i);fflush(dumpOut);*/
-        if (cachedInputPass(i,&readedUntil) == 0) break;
+        if (cachedInputPass(i,&readUntil) == 0) break;
         if (cachedIncludedFilePass(i) == 0) break;
     }
     assert(i > 1);
     /* now, recover state from the cache point 'i-1' */
-    log_debug("recovering cache point %d",i-1);
-    recoverCachePoint(i-1, readedUntil, 1);
+    log_debug("recovering cache point %d", i-1);
+    recoverCachePoint(i-1, readUntil, 1);
 }
 
 void initCaching(void) {
@@ -339,10 +340,8 @@ void cacheInput(void) {
 
 void cacheInclude(int fileNum) {
     if (s_cache.activeCache == 0) return;
-    /*
-      fprintf(dumpOut,"caching include of file %d: %s\n",
-      s_cache.ibi, s_fileTab.tab[fileNum]->name);
-    */
+    log_debug("caching include of file %d: %s\n",
+              s_cache.ibi, s_fileTab.tab[fileNum]->name);
     checkFileModifiedTime(fileNum);
     assert(s_cache.ibi < INCLUDE_CACHE_SIZE);
     s_cache.ib[s_cache.ibi] = fileNum;
@@ -360,10 +359,9 @@ void poseCachePoint(int inputCaching) {
     }
     if (inputCaching) cacheInput();
     if (s_cache.activeCache == 0) return;
-    if (tmpWorkMemoryi != 0) return; /* something in non cached tmp memory */
+    if (tmpWorkMemoryi != 0) return; /* something in non-cached tmp memory */
     pp = &s_cache.cp[s_cache.cpi];
-    log_debug("posing cache point %d ",s_cache.cpi);
-    //&fprintf(dumpOut,"posing cache point %d\n",s_cache.cpi);
+    log_debug("placing cache point %d", s_cache.cpi);
     FILL_cachePoint(pp, s_topBlock, *s_topBlock,
                     ppmMemoryi, cxMemory->i, mbMemoryi,
                     s_cache.lbcc, s_cache.ibi,
