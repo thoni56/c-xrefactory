@@ -6,7 +6,7 @@
    since the whole point is that the compiler already automatically adds them.
  */
 #ifdef GENERATION
-#include "compiler_defines.g"
+#include "compiler_defines.g.h"
 #endif
 
 #if defined(__WIN32) && (! defined(__WIN32__))
