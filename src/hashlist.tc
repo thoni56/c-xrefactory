@@ -41,31 +41,25 @@ void CONCAT(HASH_FUN_PREFIX,Init)(HASH_TAB_TYPE *table, int size) {
 }
 
 
-int CONCAT(HASH_FUN_PREFIX,IsMember)(
-                                    HASH_TAB_TYPE *table,
-                                    HASH_ELEM_TYPE *element,
-                                    int *position,
-                                    HASH_ELEM_TYPE **original
-                                    ) {
+bool CONCAT(HASH_FUN_PREFIX,IsMember)(HASH_TAB_TYPE *table,
+                                      HASH_ELEM_TYPE *element,
+                                      int *position,
+                                      HASH_ELEM_TYPE **original) {
     unsigned posid;
     HASH_ELEM_TYPE *pp;
+
     posid = HASH_FUN(element);
     posid = posid % table->size;
     *position = posid;
-    assert(table->tab!=NULL);
-    /*fprintf(dumpOut,"new comp %d: ",posid);fflush(dumpOut);*/
+    assert(table->tab != NULL);
     for (pp=table->tab[posid]; pp!=NULL; pp=pp->next) {
-        /*fprintf(dumpOut," %d ",pp);fflush(dumpOut);*/
-        /*fprintf(dumpOut,"%s to %s\n",element->name, pp->name);fflush(dumpOut);*/
         if (HASH_ELEM_EQUAL(pp, element)) {
             *original = pp;
-            /*fprintf(dumpOut,"found\n");fflush(dumpOut);*/
-            return(1);
+            return true;
         }
     }
     *original = NULL;
-    /*fprintf(dumpOut,"not found\n");fflush(dumpOut);*/
-    return(0);
+    return false;
 }
 
 

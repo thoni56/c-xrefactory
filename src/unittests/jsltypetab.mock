@@ -9,7 +9,7 @@ void jslTypeTabNAInit(struct jslTypeTab *table, int size) {
   mock(table, size);
 }
 
-int jslTypeTabIsMember(struct jslTypeTab *table, JslSymbolList *element, int *position, JslSymbolList **origin) {
+bool jslTypeTabIsMember(struct jslTypeTab *table, JslSymbolList *element, int *position, JslSymbolList **origin) {
   return (int) mock(table, element, position, origin);
 }
 

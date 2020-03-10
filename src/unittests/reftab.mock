@@ -21,7 +21,7 @@ void refTabNAInit(
     mock(table, size);
 }
 
-int refTabIsMember (
+bool refTabIsMember (
                     struct refTab *table,
                     S_symbolRefItem *element,
                     int *position,
