@@ -59,8 +59,6 @@ c-xref.bs:
 #
 # .g = generated, .bs = bootstrap version
 #
-# They might possibly be dependent on any header file so make that all,
-# we are planning on removing this at some point anyway.
 
 compiler_defines.g.h: c-xref.bs Makefile.common
 	@echo | gcc -dM -E - > tmp-$@
