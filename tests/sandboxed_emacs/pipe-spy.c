@@ -56,13 +56,13 @@ int main(int argc, char **argv) {
 
     fileName = getenv("LOGFILE");
     if (fileName != NULL)
-        strcpy(logFileName, fileName);
+        sprintf(logFileName, "%s%d.log", fileName, getpid());
     else
         sprintf(logFileName, "/tmp/pipespy%d.log", getpid());
     logFile = fopen(logFileName, "w");
 
     if (target == NULL) {
-        fprintf(logFile, "*** ERROR: NO pipe-spy TARGET DEFINED, neither compile-time or environment ***");
+        fprintf(logFile, "*** ERROR: No pipe-spy TARGET defined, neither compile-time nor in the environment ***");
         exit(-1);
     }
 
