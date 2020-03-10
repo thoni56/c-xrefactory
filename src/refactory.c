@@ -657,10 +657,12 @@ static S_editorMarker *refactoryPointMark(S_editorBuffer *buf, int offset) {
     }
     return(point);
 }
+
 static S_editorMarker *refactoryGetPointFromRefactoryOptions(S_editorBuffer *buf) {
     assert(buf);
     return(refactoryPointMark(buf, s_ropt.olCursorPos));
 }
+
 static S_editorMarker *refactoryGetMarkFromRefactoryOptions(S_editorBuffer *buf) {
     assert(buf);
     return(refactoryPointMark(buf, s_ropt.olMarkPos));

@@ -549,16 +549,16 @@ static void editorSetBufferModifiedFlag(S_editorBuffer *buff) {
 }
 
 S_editorBuffer *editorGetOpenedBuffer(char *name) {
-    S_editorBuffer      dd;
-    S_editorBufferList  ddl, *memb;
-    int                 ii;
+    S_editorBuffer editorBuffer;
+    S_editorBufferList editorBufferList, *element;
+    int i;
 
-    fillEmptyEditorBuffer(&dd, name, 0, name);
-    FILL_editorBufferList(&ddl, &dd, NULL);
-    if (editorBufferTabIsMember(&s_editorBufferTab, &ddl, &ii, &memb)) {
-        return(memb->f);
+    fillEmptyEditorBuffer(&editorBuffer, name, 0, name);
+    FILL_editorBufferList(&editorBufferList, &editorBuffer, NULL);
+    if (editorBufferTabIsMember(&s_editorBufferTab, &editorBufferList, &i, &element)) {
+        return element->f;
     }
-    return(NULL);
+    return NULL;
 }
 
 S_editorBuffer *editorGetOpenedAndLoadedBuffer(char *name) {
