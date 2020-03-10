@@ -988,37 +988,39 @@ Symbol *cfAddCastsToModule(Symbol *memb, Symbol *sup) {
     return(sup);
 }
 
-void addSuperClassOrInterface( Symbol *memb, Symbol *supp, int origin ) {
-    SymbolList *ssl, *ss;
+void addSuperClassOrInterface(Symbol *member, Symbol *super, int origin) {
+    SymbolList *symbolList, *s;
 
-    supp = javaFQTypeSymbolDefinition(supp->name, supp->linkName);
-    for(ss=memb->u.s->super; ss!=NULL && ss->d!=supp; ss=ss->next)
+    super = javaFQTypeSymbolDefinition(super->name, super->linkName);
+    for(s = member->u.s->super; s != NULL && s->d != super; s = s->next)
         ;
-    if (ss!=NULL && ss->d==supp)
-        return; // avoid multiple occurences
-    log_debug(" adding superclass %s to %s", supp->linkName,memb->linkName);
-    if (cctIsMember(&supp->u.s->casts, memb, 1) || memb==supp) {
-        sprintf(tmpBuff,"detected cycle in super classes of %s",
-                memb->linkName);
+    if (s != NULL && s->d == super)
+        return; // avoid multiple occurrences
+    log_debug("adding superclass %s to %s", super->linkName, member->linkName);
+    if (cctIsMember(&super->u.s->casts, member, 1) || member == super) {
+        sprintf(tmpBuff, "detected cycle in super classes of %s",
+                member->linkName);
         error(ERR_ST, tmpBuff);
         return;
     }
-    cfAddCastsToModule(memb, supp);
-    CF_ALLOC(ssl, SymbolList);
+    cfAddCastsToModule(member, super);
+    CF_ALLOC(symbolList, SymbolList);
     /* REPLACED FILL_symbolList(ssl, supp, NULL); with: */
-    *ssl = (SymbolList){.d = supp, .next = NULL};
-    LIST_APPEND(SymbolList, memb->u.s->super, ssl);
-    addSubClassItemToFileTab(supp->u.s->classFile,
-                             memb->u.s->classFile,
+    *symbolList = (SymbolList){.d = super, .next = NULL};
+    LIST_APPEND(SymbolList, member->u.s->super, symbolList);
+    addSubClassItemToFileTab(super->u.s->classFile,
+                             member->u.s->classFile,
                              origin);
 }
 
-void addSuperClassOrInterfaceByName(Symbol *memb, char *super, int origin,
+void addSuperClassOrInterfaceByName(Symbol *member, char *super, int origin,
                                     int loadSuper) {
-    Symbol        *supp;
-    supp = javaGetFieldClass(super,NULL);
-    if (loadSuper==LOAD_SUPER) javaLoadClassSymbolsFromFile(supp);
-    addSuperClassOrInterface( memb, supp, origin);
+    Symbol *s;
+
+    s = javaGetFieldClass(super, NULL);
+    if (loadSuper == LOAD_SUPER)
+        javaLoadClassSymbolsFromFile(s);
+    addSuperClassOrInterface(member, s, origin);
 }
 
 int javaCreateClassFileItem( Symbol *memb) {
