@@ -2,9 +2,9 @@
 #define ENUMTXT_H
 
 #ifdef BOOTSTRAP
-#include "enumTxt.bs"
+#include "enumTxt.bs.h"
 #else
-#include "enumTxt.g"
+#include "enumTxt.g.h"
 #endif
 
 #endif

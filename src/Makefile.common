@@ -24,9 +24,6 @@ $(OBJDIR)/%.o: %.c | $(OBJDIR)
 
 ..always..:;
 
-$(OBJDIR)/%.o: %.c | $(OBJDIR)
-	$(CC) $(CFLAGS) $(OUTPUT_OPTION) -MMD -c $<
-
 $(ROOTDIR)/lib/zlib/libz.a: ..always..
 	make -C $(ROOTDIR)/lib/zlib libz.a
 
@@ -81,8 +78,15 @@ compiler_defines.g: c-xref.bs Makefile.common
 			mv -f tmp-$@ $@ ; \
 	fi
 
+# Create a dependency file for proto.h since we need to know which files it includes
+-include .objects/proto.d
+$(OBJDIR)/proto.d: proto.h
+	$(CC) $(CFLAGS) -MMD -MT proto.h -c proto.h -o $(OBJDIR)/proto.o
+	sed 's/ proto.h / /' $(OBJDIR)/proto.d > /tmp/proto.d
+	mv /tmp/proto.d $@
+
 # Generate structure filler functions
-strFill.g: $(wildcard *.h) compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
+strFill.g: proto.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
 	@./c-xref.bs -task_regime_generate $(CXREF_CFLAGS) -DGENERATION \
 		-str_fill -header -xrefrc .c-xrefrc proto.h \
 		> tmp-$@
@@ -101,7 +105,7 @@ strFill.g: $(wildcard *.h) compiler_defines.g c-xref.bs .c-xrefrc Makefile.commo
 	fi
 
 # Generate enum string representations header file
-enumTxt.g: $(wildcard *.h) compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
+enumTxt.g.h: proto.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
 	@./c-xref.bs -task_regime_generate $(CXREF_CFLAGS) -DGENERATION \
 		-enum_name -header -xrefrc .c-xrefrc proto.h \
 		> tmp-$@
@@ -120,7 +124,7 @@ enumTxt.g: $(wildcard *.h) compiler_defines.g c-xref.bs .c-xrefrc Makefile.commo
 	fi
 
 # Generate enum string representations
-enumTxt.g.c: $(wildcard *.h) compiler_defines.g .c-xrefrc c-xref.bs Makefile.common
+enumTxt.g.c: proto.h compiler_defines.g .c-xrefrc c-xref.bs Makefile.common
 	@./c-xref.bs -task_regime_generate $(CXREF_CFLAGS) -DGENERATION \
 		-enum_name -body -xrefrc .c-xrefrc proto.h \
 		> tmp-$@
