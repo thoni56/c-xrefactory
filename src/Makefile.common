@@ -62,7 +62,7 @@ c-xref.bs:
 # They might possibly be dependent on any header file so make that all,
 # we are planning on removing this at some point anyway.
 
-compiler_defines.g: c-xref.bs Makefile.common
+compiler_defines.g.h: c-xref.bs Makefile.common
 	@echo | gcc -dM -E - > tmp-$@
 	@if [ -e $@ ]; then \
 		if ! diff $@ tmp-$@ ; then \
@@ -79,14 +79,14 @@ compiler_defines.g: c-xref.bs Makefile.common
 	fi
 
 # Create a dependency file for proto.h since we need to know which files it includes
--include .objects/proto.d
-$(OBJDIR)/proto.d: proto.h
-	$(CC) $(CFLAGS) -MMD -MT proto.h -c proto.h -o $(OBJDIR)/proto.o
-	sed 's/ proto.h / /' $(OBJDIR)/proto.d > /tmp/proto.d
-	mv /tmp/proto.d $@
+#-include .objects/proto.d
+#$(OBJDIR)/proto.d: proto.h
+#	$(CC) $(CFLAGS) -MMD -MT proto.h -c proto.h -o $(OBJDIR)/proto.o
+#	sed 's/ proto.h / /' $(OBJDIR)/proto.d > /tmp/proto.d
+#	mv /tmp/proto.d $@
 
 # Generate structure filler functions
-strFill.g: proto.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
+strFill.g.h: proto.h compiler_defines.g.h c-xref.bs .c-xrefrc Makefile.common
 	@./c-xref.bs -task_regime_generate $(CXREF_CFLAGS) -DGENERATION \
 		-str_fill -header -xrefrc .c-xrefrc proto.h \
 		> tmp-$@
@@ -105,7 +105,7 @@ strFill.g: proto.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
 	fi
 
 # Generate enum string representations header file
-enumTxt.g.h: proto.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
+enumTxt.g.h: proto.h compiler_defines.g.h c-xref.bs .c-xrefrc Makefile.common
 	@./c-xref.bs -task_regime_generate $(CXREF_CFLAGS) -DGENERATION \
 		-enum_name -header -xrefrc .c-xrefrc proto.h \
 		> tmp-$@
@@ -124,7 +124,7 @@ enumTxt.g.h: proto.h compiler_defines.g c-xref.bs .c-xrefrc Makefile.common
 	fi
 
 # Generate enum string representations
-enumTxt.g.c: proto.h compiler_defines.g .c-xrefrc c-xref.bs Makefile.common
+enumTxt.g.c: proto.h compiler_defines.g.h .c-xrefrc c-xref.bs Makefile.common
 	@./c-xref.bs -task_regime_generate $(CXREF_CFLAGS) -DGENERATION \
 		-enum_name -body -xrefrc .c-xrefrc proto.h \
 		> tmp-$@
@@ -156,7 +156,7 @@ clean:;
 	-rm -rf $(OBJDIR)/*.o $(OBJDIR)/*.gc* c-xref
 
 cleaner: clean
-	-rm -rf $(OBJDIR) compiler_defines.g strFill.g.h enumTxt.g.[ch] c-xref.bs .c-xrefrc
+	-rm -rf $(OBJDIR) compiler_defines.g.h strFill.g.h enumTxt.g.[ch] c-xref.bs .c-xrefrc
 	-make -C unittests cleaner
 
 ########################################################################
@@ -174,4 +174,4 @@ coverage: clean all test
 	genhtml -o coverage coverage.info
 
 # Special dependecies to force rebuild of c-xref.bs to generate needed files
-$(SRCS) : strFill.g enumTxt.g enumTxt.g.c
+$(SRCS) : strFill.g.h enumTxt.g.h enumTxt.g.c

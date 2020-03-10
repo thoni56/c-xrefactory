@@ -4,11 +4,11 @@ c-xref.exe
 *.output
 y.tab.c
 c-xref.bs
-strFill.g
-enumTxt.g
+strFill.g.h
+enumTxt.g.h
 enumTxt.g.c
 tmp-*.g.[hc]
-compiler_defines.g
+compiler_defines.g.h
 *.backup
 .objects
 tmp-*.g
