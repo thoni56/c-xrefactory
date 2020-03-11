@@ -28,6 +28,7 @@ attack those one by one, maybe?
 ** TODO Remove generation of str_fill from build
 ** TODO Remove code for generation of str_fill
 * DOING Start using log.c functions to log to a separate log file
+* TODO Fix tests/olcx_refactor_rename gets "buf is not valid"
 * TODO Clean up documentation, primarily remove 'create_distribution'
 * TODO Document that the "distribution" method is unsupported
 * TODO Move XX_ALLOCC and friends to "memory" module
@@ -93,6 +94,7 @@ easier to mock and unit test other modules.
   with the naming strategy as for the others.
 
 * TODO Move all function prototypes from proto.h to <module>.h
+* DONE Create a map of how structs are dependent on each other
 * DONE Add an -exit option so that clients can take down server cleanly
 * DONE Ensure only externally used functions are visible in the modules
 header file. And that only those are "non-static" in the C file.
