@@ -18,7 +18,7 @@ all prod: $(ZLIB) c-xref
 include sources.mk
 
 $(OBJDIR)/%.o: %.c | $(OBJDIR)
-	$(CC) $(CFLAGS) $(OUTPUT_OPTION) -MMD -c $<
+	$(CC) $(CFLAGS) $(OUTPUT_OPTION) -MMD -MP -c $<
 
 #########################################################################
 
