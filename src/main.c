@@ -1979,7 +1979,7 @@ static void initFileTab(void) {
     int len;
     char *ff;
     struct fileItem *ffii;
-    fileTabNAInit( &s_fileTab,MAX_FILES);
+    fileTabNoAllocInit( &s_fileTab,MAX_FILES);
     len = strlen(NON_FILE_NAME);
     FT_ALLOCC(ff, len+1, char);
     strcpy(ff, NON_FILE_NAME);

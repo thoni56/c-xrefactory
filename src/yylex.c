@@ -66,7 +66,7 @@ void initAllInputs(void) {
     macroStackIndex=0;
     s_ifEvaluation = 0;
     s_cxRefFlag = 0;
-    maTabNAInit(&s_maTab, MAX_MACRO_ARGS);
+    maTabNoAllocInit(&s_maTab, MAX_MACRO_ARGS);
     ppMemoryi=0;
     s_olstring[0]=0;
     s_olstringFound = 0;
@@ -191,7 +191,7 @@ static void setOpenFileInfo(char *ss) {
 
 void ppMemInit(void) {
     PP_ALLOCC(s_maTab.tab, MAX_MACRO_ARGS, struct macroArgTabElem *);
-    maTabNAInit(&s_maTab, MAX_MACRO_ARGS);
+    maTabNoAllocInit(&s_maTab, MAX_MACRO_ARGS);
     ppMemoryi = 0;
 }
 
@@ -672,7 +672,7 @@ static void processDefine(int argFlag) {
     setGlobalFileDepNames(cc, pp, MEM_PP);
     mname = pp->name;
     /* process arguments */
-    maTabNAInit(&s_maTab,s_maTab.size);
+    maTabNoAllocInit(&s_maTab,s_maTab.size);
     argi = -1;
     if (argFlag) {
         GetNonBlankMaybeLexem(lex);

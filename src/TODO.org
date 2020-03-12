@@ -28,6 +28,10 @@ attack those one by one, maybe?
 ** TODO Remove generation of str_fill from build
 ** TODO Remove code for generation of str_fill
 * DOING Start using log.c functions to log to a separate log file
+* DOING Remove FILLF_fileItem() by replacing it with fillFileItem()
+** TODO Make s_noneFileIndex into a constant/define
+*** TODO Make TabAdd() take int rather than *int
+**** DOING Make IsMember() return position rather than out argument
 * TODO Fix tests/olcx_refactor_rename gets "buf is not valid"
 * TODO Clean up documentation, primarily remove 'create_distribution'
 * TODO Document that the "distribution" method is unsupported
