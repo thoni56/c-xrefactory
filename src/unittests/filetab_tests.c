@@ -28,3 +28,17 @@ Ensure(FileTab, can_fetch_a_stored_filename) {
     assert_that(fileTabIsMember(&fileTab, &fileItem, &fetched_position));
     assert_that(fetched_position, is_equal_to(position_1));
 }
+
+Ensure(FileTab, cannot_find_filename_not_in_tab) {
+    S_fileItem fileItem1 = {"exists.c"};
+    S_fileItem fileItem2 = {"donnot_exist.c"};
+    int position_1 = 1;
+
+    expect(hashFun, will_return(5));
+    expect(hashFun, will_return(6));
+
+    fileTabInit(&fileTab, 5);
+    fileTabAdd(&fileTab, &fileItem1, &position_1);
+
+    assert_that(!fileTabIsMember(&fileTab, &fileItem2, &position_1));
+}
