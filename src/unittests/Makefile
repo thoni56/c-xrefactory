@@ -23,10 +23,8 @@ coverage: clean all
 	lcov -d . -c -o coverage.info
 	genhtml -o coverage coverage.info
 
-LEX_DEPENDENCIES = log
-lex_tests.so: $(OBJDIR)/lex_tests.o $(patsubst %,$(OBJDIR)/%.o,$(LEX_DEPENDENCIES))
-	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
+# These link the modules .o and only tests the external behaviour
 symtab_tests.so: $(OBJDIR)/symtab_tests.o $(OBJDIR)/symtab.o $(OBJDIR)/hash.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
@@ -42,12 +40,18 @@ filetab_tests.so: $(OBJDIR)/filetab_tests.o $(OBJDIR)/filetab.o $(OBJDIR)/hash.o
 symbol_tests.so: $(OBJDIR)/symbol_tests.o $(OBJDIR)/symbol.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
+
+# These includes the modules .c to be able to test static functions
 cgram_tests.so: $(OBJDIR)/cgram_tests.o $(OBJDIR)/globals.o $(OBJDIR)/log.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
+LEX_DEPENDENCIES = log
+lex_tests.so: $(OBJDIR)/lex_tests.o $(patsubst %,$(OBJDIR)/%.o,$(LEX_DEPENDENCIES))
+	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 CXFILE_DEPENDENCIES = protocol log
-cxfile_tests.so:$(OBJDIR)/cxfile_tests.o $(patsubst %,$(OBJDIR)/%.o,$(CXFILE_DEPENDENCIES))
+CXFILE_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(CXFILE_DEPENDENCIES))
+cxfile_tests.so:$(OBJDIR)/cxfile_tests.o $(CXFILE_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 
