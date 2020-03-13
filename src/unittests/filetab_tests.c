@@ -30,15 +30,17 @@ Ensure(FileTab, can_fetch_a_stored_filename) {
 }
 
 Ensure(FileTab, cannot_find_filename_not_in_tab) {
-    S_fileItem fileItem1 = {"exists.c"};
-    S_fileItem fileItem2 = {"donnot_exist.c"};
-    int position_1 = 1;
+    S_fileItem exists = {"exists.c"};
+    S_fileItem donotexist = {"donot_exist.c"};
+    int position_1 = -1;
 
-    expect(hashFun, will_return(5));
-    expect(hashFun, will_return(6));
+    expect(hashFun, will_return(5)); /* Hash for exists - add */
+    expect(hashFun, will_return(5)); /* again - isMember */
+    expect(hashFun, will_return(6)); /* Has for donotexist - isMember */
 
     fileTabInit(&fileTab, 5);
-    fileTabAdd(&fileTab, &fileItem1, &position_1);
+    fileTabAdd(&fileTab, &exists, &position_1);
 
-    assert_that(!fileTabIsMember(&fileTab, &fileItem2, &position_1));
+    assert_that(fileTabIsMember(&fileTab, &exists, &position_1));
+    assert_that(!fileTabIsMember(&fileTab, &donotexist, &position_1));
 }
