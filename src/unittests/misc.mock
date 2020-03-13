@@ -223,10 +223,6 @@ char *string3ConcatInStackMem(char *str1, char *str2, char *str3) {
   return (char *) mock(str1, str2, str3);
 }
 
-unsigned hashFun(char *s) {
-  return (unsigned) mock(s);
-}
-
 void javaSignatureSPrint(char *buff, int *size, char *sig, int classstyle) {
   mock(buff, size, sig, classstyle);
 }
