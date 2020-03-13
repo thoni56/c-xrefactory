@@ -30,6 +30,7 @@
 #include <string.h>             /* For memset() */
 
 #include "misc.h"               /* For XX_ALLOCC */
+#include "log.h"
 
 #define GLUE(a,b) a ## b
 #define CONCAT(a,b) GLUE(a,b)
@@ -71,6 +72,7 @@ bool CONCAT(HASH_FUN_PREFIX,IsMember)(
         posid=(posid+HASH_SHIFT) % table->size;
     }
     *position = posid;
+    log_trace("not found, returning %d", posid);
     return false;
 }
 

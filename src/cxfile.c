@@ -959,7 +959,7 @@ static void cxReadFileName(int size,
     }
     ffi->b.isFromCxfile = 1;
     s_decodeFilesNum[ii]=dii;
-    /*&fprintf(dumpOut,"%d: '%s'\t scanned: added as %d\n",ii,id,dii);fflush(dumpOut);&*/
+    log_trace("%d: '%s' scanned: added as %d",ii,id,dii);
     *ccc = cc; *ffin = fin;
 }
 
