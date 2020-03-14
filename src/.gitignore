@@ -14,3 +14,4 @@ compiler_defines.g.h
 tmp-*.g
 coverage.info
 coverage
+doxygen
