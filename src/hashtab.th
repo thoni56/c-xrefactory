@@ -36,11 +36,6 @@ extern bool CONCAT(HASH_FUN_PREFIX, IsMember) (	/* IsMember */
                     HASH_ELEM_TYPE *element,
                     int *position
                 );
-extern void CONCAT(HASH_FUN_PREFIX, Set) (       /* Add element at position */
-                    HASH_TAB_TYPE *table,
-                    HASH_ELEM_TYPE *element,
-                    int position
-                );
 extern void CONCAT(HASH_FUN_PREFIX, Add) (		/* Add, returns position */
                     HASH_TAB_TYPE *table,
                     HASH_ELEM_TYPE *element,
