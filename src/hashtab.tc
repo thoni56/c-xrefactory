@@ -54,7 +54,7 @@ void CONCAT(HASH_FUN_PREFIX,Init)(HASH_TAB_TYPE *table, int size) {
     CONCAT(HASH_FUN_PREFIX,NoAllocInit)(table, size);
 }
 
-/* Check for membership, will return position if found */
+/* Check for membership, will return position if found, next free if not */
 bool CONCAT(HASH_FUN_PREFIX,IsMember)(
                                     HASH_TAB_TYPE *table,
                                     HASH_ELEM_TYPE *element,
@@ -71,7 +71,7 @@ bool CONCAT(HASH_FUN_PREFIX,IsMember)(
         }
         posid=(posid+HASH_SHIFT) % table->size;
     }
-    *position = posid;          /* TODO Is this useful when not found? */
+    *position = posid;
     log_trace("not found, returning %d", posid);
     return false;
 }
@@ -97,7 +97,26 @@ void CONCAT(HASH_FUN_PREFIX,Add) (
                                  int *position
                                  ) {
     if (! CONCAT(HASH_FUN_PREFIX,IsMember)(table,element,position)) {
-        CONCAT(HASH_FUN_PREFIX,Set) (table,element,*position);
+        /* In order to simplify things we do not want IsMember to
+           return a position, that should be done when needed. So we
+           recalculate the position here... */
+        unsigned posid;
+        posid = HASH_FUN(element);
+        posid = posid % table->size;
+        assert(table->tab!=NULL);
+        while (table->tab[posid] != NULL) {
+            posid=(posid+HASH_SHIFT) % table->size;
+        }
+        /* ... and for now ensure that this always results in the same
+           position as IsMember... */
+        assert(posid == *position);
+        if (table->tab[*position]==NULL) {
+            table->numberOfElements ++;
+            if ((table->numberOfElements * 9) / 8 >= table->size) {
+                fatalError(ERR_ST, "[hashAdd] file table overflowed", XREF_EXIT_ERR);
+            }
+        }
+        table->tab[*position] = element;
     }
 }
 
