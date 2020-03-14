@@ -321,7 +321,7 @@ void internalCheckFail(char *expr, char *file, int line) {
     char msg[TMP_BUFF_SIZE];
 
     if (errOut == NULL) errOut = stderr;
-    sprintf(msg,"'%s' is not valid in '%s:%d'",expr,file,line);
+    sprintf(msg,"'%s' is not true in '%s:%d'",expr,file,line);
     log_fatal(msg);
     writeErrorMessage(ERR_INTERNAL_CHECK,msg);
     if (s_opt.taskRegime == RegimeEditServer || s_opt.refactoringRegime == RegimeRefactory) {
