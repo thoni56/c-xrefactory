@@ -76,27 +76,11 @@ bool CONCAT(HASH_FUN_PREFIX,IsMember)(
     return false;
 }
 
-static void CONCAT(HASH_FUN_PREFIX,Set) (
-                                 HASH_TAB_TYPE *table,
-                                 HASH_ELEM_TYPE *element,
-                                 int position
-                                 ) {
-    if (table->tab[position]==NULL) {
-        table->numberOfElements ++;
-        if ((table->numberOfElements * 9) / 8 >= table->size) {
-            fatalError(ERR_ST, "[hashAdd] file table overflowed", XREF_EXIT_ERR);
-        }
-    }
-    table->tab[position] = element;
-    /*&fprintf(dumpOut,"adding %s\n",element->name);fflush(dumpOut);&*/
-}
-
 void CONCAT(HASH_FUN_PREFIX,Add) (
                                  HASH_TAB_TYPE *table,
                                  HASH_ELEM_TYPE *element,
                                  int *position
                                  ) {
-    if (! CONCAT(HASH_FUN_PREFIX,IsMember)(table,element,position)) {
         /* In order to simplify things we do not want IsMember to
            return a position, that should be done when needed. So we
            recalculate the position here... */
@@ -105,19 +89,18 @@ void CONCAT(HASH_FUN_PREFIX,Add) (
         posid = posid % table->size;
         assert(table->tab!=NULL);
         while (table->tab[posid] != NULL) {
+            if (HASH_ELEM_EQUAL(table->tab[posid], element)) {
+                *position = posid;
+                return;
+            }
             posid=(posid+HASH_SHIFT) % table->size;
         }
-        /* ... and for now ensure that this always results in the same
-           position as IsMember... */
-        assert(posid == *position);
-        if (table->tab[*position]==NULL) {
-            table->numberOfElements ++;
-            if ((table->numberOfElements * 9) / 8 >= table->size) {
-                fatalError(ERR_ST, "[hashAdd] file table overflowed", XREF_EXIT_ERR);
-            }
+        table->numberOfElements ++;
+        if ((table->numberOfElements * 9) / 8 >= table->size) {
+            fatalError(ERR_ST, "[hashAdd] file table overflowed", XREF_EXIT_ERR);
         }
-        table->tab[*position] = element;
-    }
+        table->tab[posid] = element;
+        *position = posid;
 }
 
 void CONCAT(HASH_FUN_PREFIX,Map)(
