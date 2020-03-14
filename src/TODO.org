@@ -1,10 +1,9 @@
 # -*- org-todo-keyword-faces: (("DOING" . "orange")) -*-
+#+TODO: TODO(t) DOING(i) | DONE(d)
 
 There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
-
-#+TODO: TODO(t) DOING(i) | DONE(d)
 
 * DOING Remove bootstrap step (strfill and local definitions)
 ** DOING Remove all FILL_xxx macros by using compound initializers or functions:
@@ -32,6 +31,7 @@ attack those one by one, maybe?
 ** TODO Make s_noneFileIndex into a constant/define
 *** TODO Make TabAdd() take int rather than *int
 **** DOING Make IsMember() return position rather than out argument
+**** DOING Make addFileTabItem return the position rather than out arg
 * TODO Fix tests/olcx_refactor_rename gets "buf is not valid"
 * TODO Clean up documentation, primarily remove 'create_distribution'
 * TODO Document that the "distribution" method is unsupported
