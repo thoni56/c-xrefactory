@@ -9,7 +9,7 @@ $(TEST): CXrefs
 	@$(EDIT_SERVER_DRIVER) commands.input $(CURDIR) buffer > output.tmp
 	@sed -e "s/len=[0-9]*/len=<n>/g" -e "s#$(CURDIR)#CURDIR#g" output.tmp > output
 	@diff output expected > /dev/null ; \
-	if [ $$? -ne 0 ] ; then \
+	@if [ $$? -ne 0 ] ; then \
 		echo "Tests in '$(TEST)': Failed" ; \
 		diff output expected ; \
 		exit 1 ; \

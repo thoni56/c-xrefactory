@@ -24,6 +24,7 @@ quick:
 	@$(MAKE) -C standard_includes
 	@$(MAKE) -C initializer_parsing
 	@$(MAKE) -C generate_str_fill
+	@$(MAKE) -C jar_reading
 	@$(MAKE) -C java_example
 	@$(MAKE) -C edit_server_test_example
 	@$(MAKE) -C olcx_push
