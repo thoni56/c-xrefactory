@@ -488,9 +488,9 @@ static FILE *openInclude(char pchar, char *name, char **fileName) {
     nmlen = strlen(name);
     copyDir(rdir, cFile.fileName, &fdlen);
     if (pchar!='<') {
-/*fprintf(dumpOut, "dlen == %d\n",dlen);*/
-        strcpy(nn,normalizeFileName(name, rdir));
-/*&fprintf(dumpOut, "try to open %s\n",nn);&*/
+        log_trace("dlen == %d", dlen);
+        strcpy(nn, normalizeFileName(name, rdir));
+        log_trace("try to open %s\n", nn);
         er = editorFindFile(nn);
         if (er==NULL) r = fopen(nn,"r");
     }
@@ -507,7 +507,7 @@ static FILE *openInclude(char pchar, char *name, char **fileName) {
             strcpy(nn+dlen, name);
             nnlen = dlen+nmlen;
             nn[nnlen]=0;
-//&fprintf(dumpOut, "try to open <%s>\n",nn);
+            log_trace("try to open <%s>", nn);
             er = editorFindFile(nn);
             if (er==NULL) r = fopen(nn,"r");
             if (er!=NULL || r!=NULL) goto found;
@@ -517,8 +517,8 @@ static FILE *openInclude(char pchar, char *name, char **fileName) {
  found:
     nnn = normalizeFileName(nn, s_cwd);
     strcpy(nn,nnn);
-//&fprintf(dumpOut, "file %s opened\n",nn);
-//&fprintf(dumpOut, "checking to  %s \n",s_fileTab.tab[s_olOriginalFileNumber]->name);
+    log_trace("file '%s' opened", nn);
+    log_trace("checking to  %s", s_fileTab.tab[s_olOriginalFileNumber]->name);
     pushNewInclude(r, er, nn, "\n");
     return(stdin);  // NOT NULL
 }
