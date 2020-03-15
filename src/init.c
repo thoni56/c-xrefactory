@@ -12,8 +12,9 @@
 
 static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {
     char *nn;
-    int tok, ii, i, tlan;
+    int tok, not_used, i, tlan;
     Symbol *pp;
+
     for(i=0; tokenTabIni[i].name!=NULL; i++) {
         nn = tokenTabIni[i].name;
         tok = tokenTabIni[i].token;
@@ -30,7 +31,7 @@ static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {
             FILL_symbolBits(&pp->bits,0,0, 0,0,0,TypeKeyword,StorageNone,0);
 
             /*fprintf(dumpOut,"adding keyword %s to tab %d\n",nn,s_symTab);*/
-            symTabAdd(s_symTab,pp,&ii);
+            symTabAdd(s_symTab,pp,&not_used);
         }
     }
 }
@@ -55,7 +56,7 @@ static char *autoDetectJavaVersion(void) {
 
 void initTokenNameTab(void) {
     char *jv;
-    int ii;
+    int not_used;
     Symbol *pp;
     static int messageWritten=0;
 
@@ -81,13 +82,9 @@ void initTokenNameTab(void) {
     /* regular tokentab at last, because we wish to have correct names */
     initTokensFromTab(s_tokenNameIniTab);
     /* and add the 'defined' keyword for #if */
-    /*& XX_ALLOC(pp, Symbol); */
-    /*& FILL_symbolBits(&pp->bits,0,0,0,0,0,TypeDefinedOp,StorageNone,0); */
-    /*& FILL_symbol(pp,"defined","defined",s_noPos,pp->bits,type,NULL,NULL); */
-    /*& REPLACED: XX_ALLOC()+FILL_symbol() with: */
     pp = newSymbol("defined", "defined", s_noPos);
     FILL_symbolBits(&pp->bits, 0, 0, 0, 0, 0, TypeDefinedOp, StorageNone, 0);
-    symTabAdd(s_symTab,pp,&ii);
+    symTabAdd(s_symTab, pp, &not_used);
 }
 
 #define CHANGE_MODIF_ENTRY(index,modifier) {                \

@@ -61,7 +61,7 @@ void reInitCwd(char *dffname, char *dffsect) {
 
 /* this is the the number 1 of program hacking */
 char *normalizeFileName(char *name, char *relativeto) {
-    static char res[MAX_FILE_NAME_SIZE];
+    static char normalizedFileName[MAX_FILE_NAME_SIZE];
     int l1,l2,i,j,s1,inzip=0;
     char *ss;
     /*fprintf(dumpOut,"normalizing %s  (%s)\n",name,s_cwd); fflush(dumpOut);*/
@@ -74,11 +74,11 @@ char *normalizeFileName(char *name, char *relativeto) {
         inzip = 1;
 #if defined (__WIN32__)    /*SBD*/
     } else if (name[0]=='\\' || name[0]=='/') {
-        res[0] = relativeto[0]; res[1] = ':';
+        normalizedFileName[0] = relativeto[0]; normalizedFileName[1] = ':';
         l1 = 1;
     } else if (name[0]!=0 && name[1]==':') {
-        res[0] = tolower(name[0]);      // normalize drive name
-        res[1] = ':';
+        normalizedFileName[0] = tolower(name[0]);      // normalize drive name
+        normalizedFileName[1] = ':';
         l1 = 1;
         s1 = 2;
 #else           /*SBD*/
@@ -89,41 +89,41 @@ char *normalizeFileName(char *name, char *relativeto) {
         if (l1+l2+2 >= MAX_FILE_NAME_SIZE) {
             l1 = -1;
         } else {
-            strcpy(res,relativeto);
+            strcpy(normalizedFileName,relativeto);
             if (! s_opt.fileNamesCaseSensitive) {
-                for(ss=res; *ss; ss++) *ss = tolower(*ss);
+                for(ss=normalizedFileName; *ss; ss++) *ss = tolower(*ss);
             }
-            if (l1>0 && res[l1-1] == SLASH) l1--;
-            else res[l1]=SLASH;
+            if (l1>0 && normalizedFileName[l1-1] == SLASH) l1--;
+            else normalizedFileName[l1]=SLASH;
         }
     }
     for(i=s1, j=l1+1; i<l2+1; ) {
         if (name[i]=='.' && (name[i+1]==SLASH||name[i+1]=='/')) {i+=2;
         } else if (name[i]=='.' && name[i+1]=='.' && (name[i+2]==SLASH||name[i+2]=='/')) {
-            for(j-=2; j>=0 && res[j]!=SLASH && res[j]!='/'; j--) ;
+            for(j-=2; j>=0 && normalizedFileName[j]!=SLASH && normalizedFileName[j]!='/'; j--) ;
             i+=3; j++;
             if (j==0) j++;
         } else {
             for(; name[i]!=0 && name[i]!=SLASH && name[i]!='/'; i++,j++) {
-                res[j]=name[i];
-                if (res[j]==ZIP_SEPARATOR_CHAR) inzip=1;
+                normalizedFileName[j]=name[i];
+                if (normalizedFileName[j]==ZIP_SEPARATOR_CHAR) inzip=1;
                 if ((!inzip) && ! s_opt.fileNamesCaseSensitive) {
-                    res[j]=tolower(res[j]);
+                    normalizedFileName[j]=tolower(normalizedFileName[j]);
                 }
             }
-            res[j]=name[i];
-            if (res[j]=='/' && !inzip) res[j]=SLASH;
+            normalizedFileName[j]=name[i];
+            if (normalizedFileName[j]=='/' && !inzip) normalizedFileName[j]=SLASH;
             i++; j++;
             if (i<l2+1 && (name[i]=='/' || name[i]==SLASH) && !inzip) i++;
         }
     }
-    /*fprintf(dumpOut,"returning %s\n",res); fflush(dumpOut);*/
-    if (j>=2 && res[j-2]==SLASH && !inzip) res[j-2]=0;
-    if (strlen(res) >= MAX_FILE_NAME_SIZE) {
-        sprintf(tmpBuff, "file name %s is too long", res);
+    log_trace("returning %s",normalizedFileName);
+    if (j>=2 && normalizedFileName[j-2]==SLASH && !inzip) normalizedFileName[j-2]=0;
+    if (strlen(normalizedFileName) >= MAX_FILE_NAME_SIZE) {
+        sprintf(tmpBuff, "file name %s is too long", normalizedFileName);
         fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
     }
-    return(res);
+    return normalizedFileName;  /* A static variable! */
 }
 
 

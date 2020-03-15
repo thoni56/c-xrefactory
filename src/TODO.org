@@ -32,6 +32,7 @@ attack those one by one, maybe?
 *** TODO Make TabAdd() take int rather than *int
 **** DOING Make IsMember() return position rather than out argument
 **** DOING Make addFileTabItem return the position rather than out arg
+***** DOING Cover jarFileParse() with test
 * TODO Fix tests/olcx_refactor_rename gets "buf is not valid"
 * TODO Clean up documentation, primarily remove 'create_distribution'
 * TODO Document that the "distribution" method is unsupported

@@ -1080,10 +1080,12 @@ void olcxInit(void) {
 
 S_userOlcx *olcxSetCurrentUser(char *user) {
     S_userOlcx  dd,*memb;
-    int         ii,sz;
-    char        *nn;
+    int not_used1, not_used2;
+    int sz;
+    char *nn;
+
     FILLF_userOlcx(&dd, user, NULL, NULL,NULL,NULL,NULL,NULL,s_noneFileIndex, NULL, NULL);
-    if (! olcxTabIsMember(&s_olcxTab, &dd, &ii, &memb)) {
+    if (! olcxTabIsMember(&s_olcxTab, &dd, &not_used1, &memb)) {
         // I have changed it to FT, so it never invokes freeing of OLCX
         FT_ALLOC(memb, S_userOlcx);
         sz = strlen(user)+1;
@@ -1091,7 +1093,7 @@ S_userOlcx *olcxSetCurrentUser(char *user) {
         FT_ALLOCC(nn, sz, char); // why this is in ftMem ?, some pb with free
         strcpy(nn, user);
         FILLF_userOlcx(memb, nn, NULL, NULL, NULL, NULL,  NULL, NULL, s_noneFileIndex, NULL, NULL);
-        olcxTabAdd(&s_olcxTab, memb, &ii);
+        olcxTabAdd(&s_olcxTab, memb, &not_used2);
     }
     s_olcxCurrentUser = memb;
     return(memb);

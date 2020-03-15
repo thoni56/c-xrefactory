@@ -512,7 +512,7 @@ static void fillEmptyEditorBuffer(S_editorBuffer *ff, char *aname, int ftnum,
 }
 
 static S_editorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct stat *st) {
-    int ii;
+    int not_used;
     char *aname, *nname, *afname, *nfileName;
     S_editorBuffer *ff;
     S_editorBufferList *ffl;
@@ -535,7 +535,7 @@ static S_editorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct 
     FILL_editorBufferList(ffl, ff, NULL);
     log_trace("creating buffer %s %s", ff->name, ff->fileName);
     //& ppcGenRecord(PPC_IGNORE, tmpBuff, "\n");
-    editorBufferTabAdd(&s_editorBufferTab, ffl, &ii);
+    editorBufferTabAdd(&s_editorBufferTab, ffl, &not_used);
     // set ftnum at the end, because, addfiletabitem calls back the statb
     // from editor, so be tip-top at this moment!
     addFileTabItem(aname, &ftnum);

@@ -1116,7 +1116,8 @@ static void cxrfSymbolName(int size,
                            ) {
     S_symbolRefItem *ddd, *memb;
     S_olSymbolsMenu *cms;
-    int ii, si, symType, len, rr, vApplClass, vFunClass, ols, accessFlags, storage;
+    int not_used1, not_used2;
+    int si, symType, len, rr, vApplClass, vFunClass, ols, accessFlags, storage;
     char *id;
     char *ss;
     char *cc, *fin;
@@ -1142,7 +1143,7 @@ static void cxrfSymbolName(int size,
     FILL_symbolRefItem(ddd,id,
                        cxFileHashNumber(id), // useless put 0
                        vApplClass,vFunClass,ddd->b,NULL,NULL);
-    rr = refTabIsMember(&s_cxrefTab, ddd, &ii,&memb);
+    rr = refTabIsMember(&s_cxrefTab, ddd, &not_used1,&memb);
     while (rr && memb->b.category!=CatGlobal) rr=refTabNextMember(ddd, &memb);
     assert(s_opt.taskRegime);
     if (s_opt.taskRegime == RegimeHtmlGenerate) {
@@ -1154,7 +1155,7 @@ static void cxrfSymbolName(int size,
                                    ScopeGlobal, accessFlags, CatGlobal,0);
             FILL_symbolRefItem(memb,ss,cxFileHashNumber(ss),
                                vApplClass,vFunClass,memb->b,NULL,NULL);
-            refTabAdd(&s_cxrefTab,memb, &ii);
+            refTabAdd(&s_cxrefTab,memb, &not_used2);
         }
         s_inLastInfos.symbolTab[si] = memb;
     }

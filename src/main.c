@@ -1979,13 +1979,18 @@ static void initFileTab(void) {
     int len;
     char *ff;
     struct fileItem *ffii;
-    fileTabNoAllocInit( &s_fileTab,MAX_FILES);
+
+    fileTabNoAllocInit(&s_fileTab, MAX_FILES);
+
+    /* Create a "NON_FILE" */
     len = strlen(NON_FILE_NAME);
     FT_ALLOCC(ff, len+1, char);
     strcpy(ff, NON_FILE_NAME);
     FT_ALLOC(ffii, S_fileItem);
     FILLF_fileItem(ffii,ff, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
                    NULL,NULL,s_noneFileIndex, NULL);
+
+    /* Add it to the fileTab and remember its index for future use */
     fileTabAdd(&s_fileTab, ffii, &s_noneFileIndex);
 }
 
@@ -3024,7 +3029,7 @@ static int dummy(   char **cxFreeBase0, char **cxFreeBase,
     return(0);
 }
 
-static void mainXrefProcessInputFile( int argc, char **argv, int *_inputIn, int *_firstPassing, int *_atLeastOneProcessed ) {
+static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *_firstPassing, int *_atLeastOneProcessed ) {
     int inputIn = *_inputIn;
     int firstPassing = *_firstPassing;
     int atLeastOneProcessed = *_atLeastOneProcessed;

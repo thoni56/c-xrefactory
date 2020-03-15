@@ -157,7 +157,7 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iB
         if (messagePrinted==0) {
             messagePrinted = 1;
             sprintf(tmpBuff,
-                    "archiv %s is corrupted or modified while xref task running",
+                    "archive %s is corrupted or modified while xref task running",
                     archivename);
             error(ERR_ST, tmpBuff);
             if (s_opt.taskRegime == RegimeEditServer) {

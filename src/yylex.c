@@ -114,54 +114,62 @@ static void dpnewline(int n) {
 
 /* *********************************************************** */
 
-int addFileTabItem(char *name, int *fileNumber) {
+int addFileTabItem(char *name, int *outFileNumber) {
     int ii, len;
-    char *fname, *nn;
-    struct fileItem ffi, *ffii;
+    char *fname, *normalizedFileName;
+    struct fileItem normalizedFileItem, *ffii;
 
-    nn = normalizeFileName(name,s_cwd);
-    FILLF_fileItem(&ffi,nn, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
+    /* Create a fileItem on the stack, with a static normalizedFileName, returned by normalizeFileName() */
+    normalizedFileName = normalizeFileName(name,s_cwd);
+    FILLF_fileItem(&normalizedFileItem, normalizedFileName, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
                    NULL,NULL,s_noneFileIndex,NULL);
-    if (fileTabIsMember(&s_fileTab, &ffi, fileNumber)) return(0);
-    len = strlen(nn);
+
+    /* Does it already exist? */
+    if (fileTabIsMember(&s_fileTab, &normalizedFileItem, outFileNumber))
+        return 0;
+
+    /* If not, add that, but then we need a filename and a fileitem in FT-memory  */
+    len = strlen(normalizedFileName);
     FT_ALLOCC(fname, len+1, char);
-    strcpy(fname, nn);
+    assert(strcmp(fname, normalizedFileName)); /* They are always the same!!!! */
+    strcpy(fname, normalizedFileName);
     FT_ALLOC(ffii, S_fileItem);
-    FILLF_fileItem(ffii,fname, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
+    FILLF_fileItem(ffii, fname, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
                    NULL,NULL,s_noneFileIndex,NULL);
     fileTabAdd(&s_fileTab, ffii, &ii);
     checkFileModifiedTime(ii); // it was too slow on load ?
-    *fileNumber = ii;
-    return(1);
+    *outFileNumber = ii;
+
+    return 1;
 }
 
 static void getOrCreateFileInfo(char *ss, int *fileNumber, char **fileName) {
-    int ii, newFileFlag,cxloading;
+    int fileIndex, newFileFlag,cxloading;
 
     if (ss==NULL) {
-        *fileNumber = ii = s_noneFileIndex;
-        *fileName = s_fileTab.tab[ii]->name;
+        *fileNumber = fileIndex = s_noneFileIndex;
+        *fileName = s_fileTab.tab[fileIndex]->name;
     } else {
-        newFileFlag = addFileTabItem(ss, &ii);
-        *fileNumber = ii;
-        *fileName = s_fileTab.tab[ii]->name;
-        checkFileModifiedTime(ii);
-        cxloading = s_fileTab.tab[ii]->b.cxLoading;
+        newFileFlag = addFileTabItem(ss, &fileIndex);
+        *fileNumber = fileIndex;
+        *fileName = s_fileTab.tab[fileIndex]->name;
+        checkFileModifiedTime(fileIndex);
+        cxloading = s_fileTab.tab[fileIndex]->b.cxLoading;
         if (newFileFlag) {
             cxloading = 1;
         } else if (s_opt.update==UP_FAST_UPDATE) {
-            if (s_fileTab.tab[ii]->b.scheduledToProcess) {
+            if (s_fileTab.tab[fileIndex]->b.scheduledToProcess) {
                 // references from headers are not loaded on fast update !
                 cxloading = 1;
             }
         } else if (s_opt.update==UP_FULL_UPDATE) {
-            if (s_fileTab.tab[ii]->b.scheduledToUpdate) {
+            if (s_fileTab.tab[fileIndex]->b.scheduledToUpdate) {
                 cxloading = 1;
             }
         } else {
             cxloading = 1;
         }
-        if (s_fileTab.tab[ii]->b.cxSaved==1 && ! s_opt.multiHeadRefsCare) {
+        if (s_fileTab.tab[fileIndex]->b.cxSaved==1 && ! s_opt.multiHeadRefsCare) {
             /* if multihead references care, load include refs each time */
             cxloading = 0;
         }
@@ -169,10 +177,10 @@ static void getOrCreateFileInfo(char *ss, int *fileNumber, char **fileName) {
             if (s_jsl!=NULL || s_javaPreScanOnly) {
                 // do not load (and save) references from jsl loaded files
                 // nor during prescanning
-                cxloading = s_fileTab.tab[ii]->b.cxLoading;
+                cxloading = s_fileTab.tab[fileIndex]->b.cxLoading;
             }
         }
-        s_fileTab.tab[ii]->b.cxLoading = cxloading;
+        s_fileTab.tab[fileIndex]->b.cxLoading = cxloading;
     }
 }
 

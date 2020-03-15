@@ -1621,19 +1621,23 @@ static void scanClassFile(char *zip, char *file, void *arg) {
 }
 
 void jarFileParse(void) {
-    int     archi,ii,rr;
-    archi = zipIndexArchive(s_input_file_name);
-    rr = addFileTabItem(s_input_file_name, &ii);
-    assert(rr==0); // filename has to be in the table
-    checkFileModifiedTime(ii);
+    int archive, fileIndex, rr;
+
+    archive = zipIndexArchive(s_input_file_name);
+    rr = addFileTabItem(s_input_file_name, &fileIndex);
+    assert(rr==0);
+    // filename has to be in the table, previously there was "assert(rr==0);" here
+    // when addFileTabItem() returned 0/1 if it existed and used an out arg for
+    // the actual index
+    checkFileModifiedTime(fileIndex);
     // set loading to 1, no matter whether saved (by overflow) or not
     // following make create a loop, but it is very unprobable
-    s_fileTab.tab[ii]->b.cxLoading = 1;
-    if (archi>=0 && archi<MAX_JAVA_ZIP_ARCHIVES) {
-        fsRecMapOnFiles(s_zipArchivTab[archi].dir, s_zipArchivTab[archi].fn,
+    s_fileTab.tab[fileIndex]->b.cxLoading = 1;
+    if (archive>=0 && archive<MAX_JAVA_ZIP_ARCHIVES) {
+        fsRecMapOnFiles(s_zipArchivTab[archive].dir, s_zipArchivTab[archive].fn,
                         "", scanClassFile, NULL);
     }
-    s_fileTab.tab[ii]->b.cxLoaded = 1;
+    s_fileTab.tab[fileIndex]->b.cxLoaded = 1;
 }
 
 void scanJarFilesForTagSearch(void) {
