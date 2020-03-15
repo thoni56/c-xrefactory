@@ -4,5 +4,5 @@ log
 log-command
 latest-invocation
 .cache
-logfile.log
+*.log
 pipe-spy

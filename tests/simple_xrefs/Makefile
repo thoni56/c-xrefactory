@@ -8,7 +8,7 @@ CHECK_FOR_CONTENT = python -c "content=open('$(1)').read(); target=open('output'
 
 $(TEST):
 	@printf "Tests in '$@': "
-	@rm -rf output $@.log CXrefs
+	@rm -rf output $@.log CXrefs Xrefs
 	@$(COMMAND)
 	@../../utils/cxref_reader.py > output
 	@while read -r line ; do \
