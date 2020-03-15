@@ -109,13 +109,13 @@ void log_log(LogLevel level, const char *file, int line, const char *fmt, ...) {
     buf[strftime(buf, sizeof(buf), "%H:%M:%S", lt)] = '\0';
 #ifdef LOG_USE_COLOR
     /* TODO: Only use colors if color capable */
-    fprintf(stderr, "%s %s%-5s %s%15s:%-5d: ",
+    fprintf(stderr, "%s %s%-5s %s%s:%d : ",
             buf, level_colors[level], level_names[level], RESET_COLOR,
 #else
     fprintf(stderr, "%s %-5s %s:%d: ", buf, level_names[level],
 #endif
     /* format, after possibly truncating, file name to standard field of 15 */
-    strlen(file)>15?file+strlen(file)-15:file, line);
+    file, line);
     va_start(args, fmt);
     vfprintf(stderr, fmt, args);
     va_end(args);
