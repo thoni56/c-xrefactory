@@ -1039,7 +1039,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
                                                 int additionalArg
                                                 ) {
     S_symbolRefItem *ddd, *memb;
-    int ii, si, symType, len, rr, vApplClass, vFunClass, accessFlags;
+    int out_index, si, symType, len, rr, vApplClass, vFunClass, accessFlags;
     int storage;
     char *id;
     char *ss;
@@ -1066,7 +1066,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
     FILL_symbolRefItem(ddd,id,
                        cxFileHashNumber(id), //useless, put 0
                        vApplClass,vFunClass,ddd->b,NULL,NULL);
-    rr = refTabIsMember(&s_cxrefTab, ddd, &ii,&memb);
+    rr = refTabIsMember(&s_cxrefTab, ddd, &out_index, &memb);
     if (rr == 0) {
         CX_ALLOCC(ss, len+1, char);
         strcpy(ss,id);
@@ -1075,7 +1075,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
                                ScopeGlobal,accessFlags,CatGlobal,0);
         FILL_symbolRefItem(memb,ss, cxFileHashNumber(ss),
                            vApplClass,vFunClass,memb->b,NULL,NULL);
-        refTabAdd(&s_cxrefTab, memb, &ii);
+        refTabAdd(&s_cxrefTab, memb, &out_index);
     }
     s_inLastInfos.symbolTab[si] = memb;
     s_inLastInfos.onLineReferencedSym = si;
