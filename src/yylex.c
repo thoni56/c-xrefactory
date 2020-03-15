@@ -128,10 +128,9 @@ int addFileTabItem(char *name, int *outFileNumber) {
     if (fileTabIsMember(&s_fileTab, &normalizedFileItem, outFileNumber))
         return 0;
 
-    /* If not, add that, but then we need a filename and a fileitem in FT-memory  */
+    /* If not, add it, but then we need a filename and a fileitem in FT-memory  */
     len = strlen(normalizedFileName);
     FT_ALLOCC(fname, len+1, char);
-    assert(strcmp(fname, normalizedFileName)); /* They are always the same!!!! */
     strcpy(fname, normalizedFileName);
     FT_ALLOC(ffii, S_fileItem);
     FILLF_fileItem(ffii, fname, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
