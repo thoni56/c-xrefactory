@@ -649,14 +649,14 @@ static void handleMacroUsageParameterPositions(int argi, S_position *macpos,
 }
 
 static void processDefine(int argFlag) {
-    int lex,l,h,v;
+    int lex, l, h, v;
     int bodyReadingFlag = 0;
-    int sizei,ii,msize,argi,ellipsis,len;
+    int sizei, foundIndex, msize, argi, ellipsis, len;
     Symbol *pp;
-    S_macroArgTabElem *maca,mmaca;
+    S_macroArgTabElem *maca, mmaca;
     S_macroBody *macbody;
     S_position pos, macpos, ppb1, ppb2, *parpos1, *parpos2, *tmppp;
-    char *cc,*mname,*aname,*mbody,*mm,*ddd;
+    char *cc, *mname, *aname, *mbody, *mm, *ddd;
     char **argNames, *argLinkName;
 
     sizei= -1;
@@ -679,11 +679,11 @@ static void processDefine(int argFlag) {
     setGlobalFileDepNames(cc, pp, MEM_PP);
     mname = pp->name;
     /* process arguments */
-    maTabNoAllocInit(&s_maTab,s_maTab.size);
+    maTabNoAllocInit(&s_maTab, s_maTab.size);
     argi = -1;
     if (argFlag) {
         GetNonBlankMaybeLexem(lex);
-        PassLex(cInput.cc,lex,l,v,h,*parpos2, len,1);
+        PassLex(cInput.cc, lex, l, v, h, *parpos2, len, 1);
         *parpos1 = *parpos2;
         if (lex != '(') goto errorlab;
         argi ++;
@@ -691,7 +691,7 @@ static void processDefine(int argFlag) {
         if (lex != ')') {
             for(;;) {
                 cc = aname = cInput.cc;
-                PassLex(cInput.cc,lex,l,v,h,pos, len,1);
+                PassLex(cInput.cc, lex, l, v, h, pos, len, 1);
                 ellipsis = 0;
                 if (lex == IDENTIFIER ) {
                     aname = cc;
@@ -701,27 +701,27 @@ static void processDefine(int argFlag) {
                     ellipsis = 1;
                 } else goto errorlab;
                 PP_ALLOCC(mm, strlen(aname)+1, char);
-                strcpy(mm,aname);
+                strcpy(mm, aname);
                 sprintf(tmpBuff, "%x-%x%c%s", pos.file, pos.line,
                         LINK_NAME_CUT_SYMBOL, aname);
                 PP_ALLOCC(argLinkName, strlen(tmpBuff)+1, char);
                 strcpy(argLinkName, tmpBuff);
-                SM_ALLOC(ppMemory,maca,S_macroArgTabElem);
+                SM_ALLOC(ppMemory, maca, S_macroArgTabElem);
                 FILL_macroArgTabElem(maca, mm, argLinkName, argi);
-                maTabAdd(&s_maTab, maca, &ii);
+                maTabAdd(&s_maTab, maca, &foundIndex);
                 argi ++;
                 GetNonBlankMaybeLexem(lex);
                 tmppp=parpos1; parpos1=parpos2; parpos2=tmppp;
-                PassLex(cInput.cc,lex,l,v,h,*parpos2, len,1);
+                PassLex(cInput.cc, lex, l, v, h, *parpos2, len, 1);
                 if (! ellipsis) {
-                    addTrivialCxReference(s_maTab.tab[ii]->linkName, TypeMacroArg,StorageDefault,
+                    addTrivialCxReference(s_maTab.tab[foundIndex]->linkName, TypeMacroArg,StorageDefault,
                                           &pos, UsageDefined);
                     handleMacroDefinitionParameterPositions(argi, &macpos, parpos1, &pos, parpos2, 0);
                 }
                 if (lex == ELIPSIS) {
                     // GNU ELLIPSIS ?????
                     GetNonBlankMaybeLexem(lex);
-                    PassLex(cInput.cc,lex,l,v,h,*parpos2, len,1);
+                    PassLex(cInput.cc, lex, l, v, h, *parpos2, len, 1);
                 }
                 if (lex == ')') break;
                 if (lex != ',') break;
@@ -737,21 +737,21 @@ static void processDefine(int argFlag) {
     msize = MACRO_UNIT_SIZE;
     sizei = 0;
     PP_ALLOC(macbody, S_macroBody);
-    PP_ALLOCC(mbody,msize+MAX_LEXEM_SIZE,char);
+    PP_ALLOCC(mbody, msize+MAX_LEXEM_SIZE, char);
     bodyReadingFlag = 1;
     GetNonBlankMaybeLexem(lex);
     cc = cInput.cc;
-    PassLex(cInput.cc,lex,l,v,h,pos, len,1);
+    PassLex(cInput.cc, lex, l, v, h, pos, len, 1);
     while (lex != '\n') {
         while(sizei<msize && lex != '\n') {
             FILL_macroArgTabElem(&mmaca,cc,NULL,0);
-            if (lex==IDENTIFIER && maTabIsMember(&s_maTab,&mmaca,&ii)){
+            if (lex==IDENTIFIER && maTabIsMember(&s_maTab,&mmaca,&foundIndex)){
                 /* macro argument */
-                addTrivialCxReference(s_maTab.tab[ii]->linkName, TypeMacroArg,StorageDefault,
+                addTrivialCxReference(s_maTab.tab[foundIndex]->linkName, TypeMacroArg,StorageDefault,
                                       &pos, UsageUsed);
                 ddd = mbody+sizei;
                 PutLexToken(CPP_MAC_ARG, ddd);
-                PutLexInt(s_maTab.tab[ii]->order, ddd);
+                PutLexInt(s_maTab.tab[foundIndex]->order, ddd);
                 PutLexPosition(pos.file, pos.line,pos.col,ddd);
                 sizei = ddd - mbody;
             } else {
@@ -778,17 +778,17 @@ static void processDefine(int argFlag) {
     }
 endOfBody:
     assert(sizei>=0);
-    PP_REALLOCC(mbody,sizei,char,msize+MAX_LEXEM_SIZE);
+    PP_REALLOCC(mbody, sizei, char, msize+MAX_LEXEM_SIZE);
     msize = sizei;
     if (argi > 0) {
 //{static int c=0;fprintf(dumpOut,"margs0#%d\n",c+=argi);}
         PP_ALLOCC(argNames, argi, char*);
-        memset(argNames,0,argi*sizeof(char*));
+        memset(argNames, 0, argi*sizeof(char*));
         maTabMap2(&s_maTab, setMacroArgumentName, argNames);
     } else argNames = NULL;
-    FILL_macroBody(macbody,argi,msize,mname,argNames,mbody);
+    FILL_macroBody(macbody, argi, msize, mname, argNames, mbody);
     pp->u.mbody = macbody;
-//{static int c=0;fprintf(dumpOut,"#def#%d\n",c++);}
+    //{static int c=0;fprintf(dumpOut,"#def#%d\n",c++);}
     addMacroToTabs(pp,mname);
     assert(s_opt.taskRegime);
     if (CX_REGIME()) {
