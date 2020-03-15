@@ -424,23 +424,23 @@ static void zipArchiveCdOffset(char **accc, char **affin, S_charBuf *iBuf,
 #endif
 
 int zipIndexArchive(char *name) {
-    int archi, namelen;
+    int archiveIndex, namelen;
     FILE *ff;
-    CharacterBuffer *bbb;
+    CharacterBuffer *buffer;
     struct stat fst;
 
-    bbb = &s_zipTmpBuff;
+    buffer = &s_zipTmpBuff;
     namelen = strlen(name);
-    for(archi=0;
-        archi<MAX_JAVA_ZIP_ARCHIVES && s_zipArchivTab[archi].fn[0]!=0;
-        archi++) {
-        if (strncmp(s_zipArchivTab[archi].fn,name,namelen)==0
-            && s_zipArchivTab[archi].fn[namelen]==ZIP_SEPARATOR_CHAR) {
+    for(archiveIndex=0;
+        archiveIndex<MAX_JAVA_ZIP_ARCHIVES && s_zipArchiveTab[archiveIndex].fn[0]!=0;
+        archiveIndex++) {
+        if (strncmp(s_zipArchiveTab[archiveIndex].fn,name,namelen)==0
+            && s_zipArchiveTab[archiveIndex].fn[namelen]==ZIP_SEPARATOR_CHAR) {
             goto forend;
         }
     }
  forend:;
-    if (archi<MAX_JAVA_ZIP_ARCHIVES && s_zipArchivTab[archi].fn[0] == 0) {
+    if (archiveIndex<MAX_JAVA_ZIP_ARCHIVES && s_zipArchiveTab[archiveIndex].fn[0] == 0) {
         // new file into the table
         log_debug("adding %s into index ",name);
         if (stat(name ,&fst)!=0) {
@@ -464,16 +464,16 @@ int zipIndexArchive(char *name) {
             }
             return(-1);
         }
-        FILL_CharacterBuffer(bbb, bbb->chars, bbb->chars, ff, 0, 0, 0, bbb->chars, 0, 0,INPUT_DIRECT,s_defaultZStream);
+        FILL_CharacterBuffer(buffer, buffer->chars, buffer->chars, ff, 0, 0, 0, buffer->chars, 0, 0,INPUT_DIRECT,s_defaultZStream);
         assert(namelen+2 < MAX_FILE_NAME_SIZE);
-        strcpy(s_zipArchivTab[archi].fn, name);
-        s_zipArchivTab[archi].fn[namelen] = ZIP_SEPARATOR_CHAR;
-        s_zipArchivTab[archi].fn[namelen+1] = 0;
-        FILL_zipFileTabItem(&s_zipArchivTab[archi], fst, NULL);
-        zipArchiveScan(&bbb->next,&bbb->end,bbb,&s_zipArchivTab[archi], fst.st_size);
+        strcpy(s_zipArchiveTab[archiveIndex].fn, name);
+        s_zipArchiveTab[archiveIndex].fn[namelen] = ZIP_SEPARATOR_CHAR;
+        s_zipArchiveTab[archiveIndex].fn[namelen+1] = 0;
+        FILL_zipFileTabItem(&s_zipArchiveTab[archiveIndex], fst, NULL);
+        zipArchiveScan(&buffer->next,&buffer->end,buffer,&s_zipArchiveTab[archiveIndex], fst.st_size);
         fclose(ff);
     }
-    return(archi);
+    return(archiveIndex);
 }
 
 static int zipSeekToFile(char **accc, char **affin, CharacterBuffer *iBuf,
@@ -491,21 +491,21 @@ static int zipSeekToFile(char **accc, char **affin, CharacterBuffer *iBuf,
     if (sep == NULL) {return(0);}
     *sep = 0;
     namelen = strlen(name);
-    for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && s_zipArchivTab[i].fn[0]!=0; i++) {
-        if (strncmp(s_zipArchivTab[i].fn, name,namelen)==0
-            && s_zipArchivTab[i].fn[namelen] == ZIP_SEPARATOR_CHAR) {
+    for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && s_zipArchiveTab[i].fn[0]!=0; i++) {
+        if (strncmp(s_zipArchiveTab[i].fn, name,namelen)==0
+            && s_zipArchiveTab[i].fn[namelen] == ZIP_SEPARATOR_CHAR) {
             break;
         }
     }
     *sep = ZIP_SEPARATOR_CHAR;
-    if (i>=MAX_JAVA_ZIP_ARCHIVES || s_zipArchivTab[i].fn[0]==0) {
+    if (i>=MAX_JAVA_ZIP_ARCHIVES || s_zipArchiveTab[i].fn[0]==0) {
         error(ERR_INTERNAL, "archive not indexed\n");
         goto fini;
     }
-    if (fsIsMember(&s_zipArchivTab[i].dir,sep+1,0,ADD_NO,&place)==0) goto fini;
+    if (fsIsMember(&s_zipArchiveTab[i].dir,sep+1,0,ADD_NO,&place)==0) goto fini;
     SeekToPosition(ccc,ffin,iBuf,place->u.offset);
     if (zipReadLocalFileHeader(&ccc, &ffin, iBuf, fn, &fsize,
-                               &lastSig, s_zipArchivTab[i].fn, place->u.offset) == 0) goto fini;
+                               &lastSig, s_zipArchiveTab[i].fn, place->u.offset) == 0) goto fini;
     assert(lastSig == 0x04034b50);
     assert(strcmp(fn,sep+1)==0);
     res = 1;

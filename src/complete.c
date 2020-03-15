@@ -1541,8 +1541,8 @@ static void javaFqtCompletions(S_completions *c, int completionType) {
     FILL_completionFqtMapInfo(&cfmi, c, completionType);
     if (s_opt.fqtNameToCompletions == 0) return;
     // fqt from .jars
-    for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && s_zipArchivTab[i].fn[0]!=0; i++) {
-        fsRecMapOnFiles(s_zipArchivTab[i].dir, s_zipArchivTab[i].fn,
+    for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && s_zipArchiveTab[i].fn[0]!=0; i++) {
+        fsRecMapOnFiles(s_zipArchiveTab[i].dir, s_zipArchiveTab[i].fn,
                         "", completeFqtClassFileFromZipArchiv, &cfmi);
     }
     if (s_opt.fqtNameToCompletions <= 1) return;

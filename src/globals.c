@@ -268,7 +268,7 @@ S_typeModifiers s_javaStringModifier;
 S_typeModifiers s_javaClassModifier;
 S_typeModifiers s_javaObjectModifier;
 
-S_zipFileTabItem s_zipArchivTab[MAX_JAVA_ZIP_ARCHIVES];
+S_zipFileTabItem s_zipArchiveTab[MAX_JAVA_ZIP_ARCHIVES];
 
 char s_cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
 char s_base[MAX_FILE_NAME_SIZE];
