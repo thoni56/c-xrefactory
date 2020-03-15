@@ -8,14 +8,10 @@ $(TEST):
 	@$(MAKE) --no-print-directory execute
 	@$(MAKE) --no-print-directory check
 
-setup:
-	@rm -rf $@.log CXrefs
+setup: clean
 	@if [ ! -e .emacs.d/el-get/c-xrefactory ] ; then \
 		ln -s $(CURDIR)/../.. .emacs.d/el-get/c-xrefactory ; \
 	fi
-	@# Copy c-example files here...
-	@rm -rf cexercise
-	@cp -r ../../doc/cexercise .
 	@# Ensure .c-xrefrc includes a project pointing to cexercise directory
 	@grep cexercise .c-xrefrc > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
@@ -26,10 +22,15 @@ setup:
 	@../../src/c-xref cexercise -xrefrc .c-xrefrc -refs $(CURDIR)/CXrefs -o $(TEST).log
 
 
+# emacs = startup emacs with correct settings
+# exec = also run the script for the exercise
+# execute = do that in batch (no window) mode
 execute: EMACS_STARTUP=-batch
-execute exec:
+execute: EMACS_RUN=-l emacs_c_exercise.el
+exec: EMACS_RUN=-l emacs_c_exercise.el
+execute exec emacs: setup
 	@# Run emacs with commands to execute the example sequence
-	@HOME=$(CURDIR) emacs --no-splash $(EMACS_STARTUP) -l .emacs.d/init.el -l .emacs.d/override-el-get-update.el -l emacs_c_exercise.el > /dev/null 2>&1
+	@HOME=$(CURDIR) emacs --no-splash $(EMACS_STARTUP) -l .emacs.d/init.el -l .emacs.d/override-el-get-update.el $(EMACS_RUN) > /dev/null 2>&1
 	@# Remove tilde-files after editing
 	@find cexercise -name \*~ -exec rm {} \;
 

@@ -44,7 +44,7 @@ void completions() {
     ;
 
     // partial completion
-    tm_zone
+    fpu
     ;
 
     // works inside complex expressions
