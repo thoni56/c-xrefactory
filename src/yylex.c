@@ -115,29 +115,29 @@ static void dpnewline(int n) {
 /* *********************************************************** */
 
 int addFileTabItem(char *name, int *outFileNumber) {
-    int ii, len;
+    int out_fileIndex, len;
     char *fname, *normalizedFileName;
-    struct fileItem normalizedFileItem, *ffii;
+    struct fileItem temporaryFileItem, *createdFileItem;
 
     /* Create a fileItem on the stack, with a static normalizedFileName, returned by normalizeFileName() */
     normalizedFileName = normalizeFileName(name,s_cwd);
-    FILLF_fileItem(&normalizedFileItem, normalizedFileName, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
+    FILLF_fileItem(&temporaryFileItem, normalizedFileName, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
                    NULL,NULL,s_noneFileIndex,NULL);
 
     /* Does it already exist? */
-    if (fileTabIsMember(&s_fileTab, &normalizedFileItem, outFileNumber))
+    if (fileTabIsMember(&s_fileTab, &temporaryFileItem, outFileNumber))
         return 0;
 
     /* If not, add it, but then we need a filename and a fileitem in FT-memory  */
     len = strlen(normalizedFileName);
     FT_ALLOCC(fname, len+1, char);
     strcpy(fname, normalizedFileName);
-    FT_ALLOC(ffii, S_fileItem);
-    FILLF_fileItem(ffii, fname, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
+    FT_ALLOC(createdFileItem, S_fileItem);
+    FILLF_fileItem(createdFileItem, fname, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
                    NULL,NULL,s_noneFileIndex,NULL);
-    fileTabAdd(&s_fileTab, ffii, &ii);
-    checkFileModifiedTime(ii); // it was too slow on load ?
-    *outFileNumber = ii;
+    fileTabAdd(&s_fileTab, createdFileItem, &out_fileIndex);
+    checkFileModifiedTime(out_fileIndex); // it was too slow on load ?
+    *outFileNumber = out_fileIndex;
 
     return 1;
 }
