@@ -457,7 +457,7 @@ int javaClassIsInCurrentPackage(Symbol *cl) {
 }
 
 static Symbol *javaFQTypeSymbolDefinitionCreate(char *name,
-                                                  char *fqName, int ii) {
+                                                char *fqName, int ii) {
     Symbol *memb;
     SymbolList *pppl;
     char *lname1, *sname;
@@ -486,11 +486,7 @@ static Symbol *javaFQTypeSymbolDefinitionCreate(char *name,
     /* REPLACED: FILL_symbolList(pppl, memb, NULL); with: */
     *pppl = (SymbolList){.d = memb, .next = NULL};
 
-    if (ii < 0) {
-        javaFqtTabAdd(&s_javaFqtTab,pppl,&ii);
-    } else {
-        javaFqtTabSet(&s_javaFqtTab,pppl,ii);
-    }
+    javaFqtTabAdd(&s_javaFqtTab,pppl,&ii);
 
     // I think this can be there, as it is very used
     javaCreateClassFileItem(memb);
@@ -515,6 +511,7 @@ Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {
     if (javaFqtTabIsMember(&s_javaFqtTab, &ppl, &position, &pppl)) {
         member = pppl->d;
     } else {
+        assert(position >= 0);
         member = javaFQTypeSymbolDefinitionCreate(name, fqName, position);
     }
     return member;
