@@ -38,11 +38,11 @@ check:
 	@# Compare output to expected resulting files
 	@diff -n -r cexercise expected > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
-		echo "Failed" ; \
+		echo "$(shell tput setaf 1)Failed$(shell tput sgr0)" ; \
 		diff -r cexercise expected ; \
 		exit 1 ; \
 	fi
-	@echo "Ok"
+	@echo "$(shell tput setaf 2)Ok$(shell tput sgr0)"
 	@exit 0
 
 clean:

@@ -4,14 +4,15 @@
 all: c-xref
 
 c-xref: .c-xrefrc
+	@printf "Tests in '$@': "
 	@rm -rf C-Xrefs $@.log
 	@../run-c-xref -p c-xref -o c-xref.log -refs $(CURDIR)/C-Xrefs/c-xref
 	@diff CXrefs/c-xref c-xref.expected > /dev/null ; \
 	if [ $$? -ne 1 ] ; then \
-		$(FAIL) ; \
+		echo "$(shell tput setaf 1)Failed$(shell tput sgr0)" ; \
 		exit 1 ; \
 	else \
-		$(OK) ; \
+		echo "$(shell tput setaf 2)Ok$(shell tput sgr0)" ; \
 		exit 0 ; \
 	fi
 

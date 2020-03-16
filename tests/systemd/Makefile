@@ -19,7 +19,7 @@ all:
 				echo "$(shell tput setaf 1)Failed (out)$(shell tput sgr0)" ; \
 				exit 1 ; \
 			else \
-				echo "$(shell tput setaf 1)Ok$(shell tput sgr0)" ; \
+				echo "$(shell tput setaf 2)Ok$(shell tput sgr0)" ; \
 			fi ; \
 		fi ; \
 	fi
