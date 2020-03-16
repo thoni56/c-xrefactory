@@ -490,9 +490,9 @@ static FILE *openInclude(char pchar, char *name, char **fileName) {
     nmlen = strlen(name);
     copyDir(rdir, cFile.fileName, &fdlen);
     if (pchar!='<') {
-        log_trace("dlen == %d", dlen);
+        log_trace("fdlen == %d", fdlen);
         strcpy(nn, normalizeFileName(name, rdir));
-        log_trace("try to open %s\n", nn);
+        log_trace("try to open %s", nn);
         er = editorFindFile(nn);
         if (er==NULL) r = fopen(nn,"r");
     }
