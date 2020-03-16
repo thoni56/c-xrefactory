@@ -236,8 +236,8 @@
     S_typeModifiers                         *typeModif;
     S_typeModifiersList                     *typeModifList;
     S_freeTrail                             *trail;
-    S_idIdent                               *idIdent;
-    S_idIdentList                           *idlist;
+    S_id                               *idIdent;
+    S_idList                           *idlist;
     S_exprTokenType                         exprType;
     S_intPair                               intpair;
     S_whileExtractData                      *whiledata;
@@ -1458,7 +1458,7 @@ initializer_list
         tmpWorkMemoryi = $1.d;
     }
     | initializer_list ',' Sv_tmp designation_opt Start_block initializer Stop_block	{
-        LIST_APPEND(S_idIdentList, $1.d, $4.d);
+        LIST_APPEND(S_idList, $1.d, $4.d);
         tmpWorkMemoryi = $3.d;
     }
     ;
@@ -1467,8 +1467,8 @@ designation_opt:				{
         $$.d = NULL;
     }
     | designator_list '='		{
-        $$.d = StackMemAlloc(S_idIdentList);
-        FILL_idIdentList($$.d, *$1.d, $1.d->name, TypeDefault, NULL);
+        $$.d = StackMemAlloc(S_idList);
+        FILL_idList($$.d, *$1.d, $1.d->name, TypeDefault, NULL);
     }
     ;
 
@@ -1477,17 +1477,17 @@ designator_list
         $$.d = $1.d;
     }
     | designator_list designator	{
-        LIST_APPEND(S_idIdent, $1.d, $2.d);
+        LIST_APPEND(S_id, $1.d, $2.d);
     }
     ;
 
 designator
     : '[' constant_expr ']'		{
-        $$.d = StackMemAlloc(S_idIdent);
-        FILL_idIdent($$.d, "", NULL, s_noPos, NULL);
+        $$.d = StackMemAlloc(S_id);
+        FILL_id($$.d, "", NULL, s_noPos, NULL);
     }
     | '.' str_rec_identifier	{
-        $$.d = StackMemAlloc(S_idIdent);
+        $$.d = StackMemAlloc(S_id);
         *($$.d) = *($2.d);
     }
     ;

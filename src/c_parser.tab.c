@@ -88,8 +88,8 @@ typedef union {
     S_typeModifiers                         *typeModif;
     S_typeModifiersList                     *typeModifList;
     S_freeTrail                             *trail;
-    S_idIdent                               *idIdent;
-    S_idIdentList                           *idlist;
+    S_id                               *idIdent;
+    S_idList                           *idlist;
     S_exprTokenType                         exprType;
     S_intPair                               intpair;
     S_whileExtractData                      *whiledata;
@@ -3716,7 +3716,7 @@ break;
 case 249:
 #line 1460 "c_parser.y"
 {
-        LIST_APPEND(S_idIdentList, yyvsp[-6].bbidlist.d, yyvsp[-3].bbidlist.d);
+        LIST_APPEND(S_idList, yyvsp[-6].bbidlist.d, yyvsp[-3].bbidlist.d);
         tmpWorkMemoryi = yyvsp[-4].bbunsign.d;
     }
 break;
@@ -3729,8 +3729,8 @@ break;
 case 251:
 #line 1469 "c_parser.y"
 {
-        yyval.bbidlist.d = StackMemAlloc(S_idIdentList);
-        FILL_idIdentList(yyval.bbidlist.d, *yyvsp[-1].bbidIdent.d, yyvsp[-1].bbidIdent.d->name, TypeDefault, NULL);
+        yyval.bbidlist.d = StackMemAlloc(S_idList);
+        FILL_idList(yyval.bbidlist.d, *yyvsp[-1].bbidIdent.d, yyvsp[-1].bbidIdent.d->name, TypeDefault, NULL);
     }
 break;
 case 252:
@@ -3742,20 +3742,20 @@ break;
 case 253:
 #line 1479 "c_parser.y"
 {
-        LIST_APPEND(S_idIdent, yyvsp[-1].bbidIdent.d, yyvsp[0].bbidIdent.d);
+        LIST_APPEND(S_id, yyvsp[-1].bbidIdent.d, yyvsp[0].bbidIdent.d);
     }
 break;
 case 254:
 #line 1485 "c_parser.y"
 {
-        yyval.bbidIdent.d = StackMemAlloc(S_idIdent);
-        FILL_idIdent(yyval.bbidIdent.d, "", NULL, s_noPos, NULL);
+        yyval.bbidIdent.d = StackMemAlloc(S_id);
+        FILL_id(yyval.bbidIdent.d, "", NULL, s_noPos, NULL);
     }
 break;
 case 255:
 #line 1489 "c_parser.y"
 {
-        yyval.bbidIdent.d = StackMemAlloc(S_idIdent);
+        yyval.bbidIdent.d = StackMemAlloc(S_id);
         *(yyval.bbidIdent.d) = *(yyvsp[0].bbidIdent.d);
     }
 break;

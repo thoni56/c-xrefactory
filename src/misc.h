@@ -116,7 +116,7 @@ extern void javaMapDirectoryFiles1(
         int *a3
     );
 extern void javaMapDirectoryFiles2(
-        S_idIdentList *packid,
+        S_idList *packid,
         void (*fun)(MAP_FUN_PROFILE),
         S_completions *a1,
         void *a2,

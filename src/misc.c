@@ -676,7 +676,7 @@ char *javaCutClassPathFromFileName(char *fname) {
     char            *res,*ss;
     res = fname;
     ss = strchr(fname, ZIP_SEPARATOR_CHAR);
-    if (ss!=NULL) {         // .zip archiv symbol
+    if (ss!=NULL) {         // .zip archive symbol
         res = ss+1;
         goto fini;
     }
@@ -697,7 +697,7 @@ char *javaCutSourcePathFromFileName(char *fname) {
     char            *res,*ss;
     res = fname;
     ss = strchr(fname, ZIP_SEPARATOR_CHAR);
-    if (ss!=NULL) return(ss+1);         // .zip archiv symbol
+    if (ss!=NULL) return(ss+1);         // .zip archive symbol
     JavaMapOnPaths(s_javaSourcePaths, {
             len = strlen(currentPath);
             if (fnnCmp(currentPath, fname, len) == 0) {
@@ -1573,7 +1573,7 @@ void javaMapDirectoryFiles1(
 }
 
 void javaMapDirectoryFiles2(
-                            S_idIdentList *packid,
+                            S_idList *packid,
                             void (*fun)(MAP_FUN_PROFILE),
                             S_completions *a1,
                             void *a2,

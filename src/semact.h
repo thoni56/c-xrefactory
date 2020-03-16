@@ -23,7 +23,7 @@ extern int findStrRecordSym(	S_recFindStr *ss,
                                 );
 extern Symbol *addNewSymbolDef(Symbol *p, unsigned storage, S_symTab *tab, int usage);
 extern Symbol *addNewCopyOfSymbolDef(Symbol *def, unsigned defaultStorage);
-extern Symbol *addNewDeclaration(Symbol *btype, Symbol *decl, S_idIdentList *idl,
+extern Symbol *addNewDeclaration(Symbol *btype, Symbol *decl, S_idList *idl,
                                    unsigned storage, S_symTab *tab);
 extern int styyerror(char *s);
 extern int styyErrorRecovery(void);
@@ -39,31 +39,31 @@ extern void completeDeclarator(Symbol *t, Symbol *d);
 extern void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, S_symTab *tab);
 extern S_typeModifiers *crSimpleTypeModifier (unsigned t);
 extern SymbolList *createDefinitionList(Symbol *symbol);
-extern Symbol *createSimpleDefinition(unsigned storage, unsigned t, S_idIdent *id);
+extern Symbol *createSimpleDefinition(unsigned storage, unsigned t, S_id *id);
 extern int findStrRecord(Symbol	*s,
                          char		*recname,	/* can be NULL */
                          Symbol	**res,
                          int		javaClassif
                          );
 extern S_reference * findStrRecordFromSymbol(Symbol *str,
-                                             S_idIdent *record,
+                                             S_id *record,
                                              Symbol **res,
                                              int javaClassif,
-                                             S_idIdent *super
+                                             S_id *super
                                              );
 extern S_reference * findStrRecordFromType(S_typeModifiers *str,
-                                           S_idIdent *record,
+                                           S_id *record,
                                            Symbol **res,
                                            int javaClassif
                                            );
 extern int mergeArguments(Symbol *id, Symbol *ty);
-extern S_typeModifiers *simpleStrUnionSpecifier(S_idIdent *typeName,
-                                                S_idIdent *id,
+extern S_typeModifiers *simpleStrUnionSpecifier(S_id *typeName,
+                                                S_id *id,
                                                 int usage
                                                 );
-extern S_typeModifiers *crNewAnnonymeStrUnion(S_idIdent *typeName);
+extern S_typeModifiers *crNewAnnonymeStrUnion(S_id *typeName);
 extern void specializeStrUnionDef(Symbol *sd, Symbol *rec);
-extern S_typeModifiers *simpleEnumSpecifier(S_idIdent *id, int usage);
+extern S_typeModifiers *simpleEnumSpecifier(S_id *id, int usage);
 extern void setGlobalFileDepNames(char *iname, Symbol *pp, int memory);
 extern S_typeModifiers *createNewAnonymousEnum(SymbolList *enums);
 extern void appendPositionToList(S_positionList **list, S_position *pos);
@@ -80,6 +80,6 @@ extern void handleInvocationParamPositions(S_reference *ref, S_position *lpar,
 extern void javaHandleDeclaratorParamPositions(S_position *sym, S_position *lpar,
                                                S_positionList *commas, S_position *rpar);
 extern void setLocalVariableLinkName(struct symbol *p);
-extern void labelReference(S_idIdent *id, int usage);
+extern void labelReference(S_id *id, int usage);
 
 #endif

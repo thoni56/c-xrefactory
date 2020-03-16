@@ -312,7 +312,7 @@ void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) {
         }                                                               \
     }
 
-#define PrependMacInput(macInput) {             \
+#define PrependMacroInput(macInput) {             \
         assert(macroStackIndex < MACSTACK_SIZE-1);    \
         macStack[macroStackIndex++] = cInput;         \
         cInput = macInput;                      \
@@ -1233,7 +1233,7 @@ static void expandMacroArgument(S_lexInput *argb) {
     int nn,ii,lex,line,val,bsize,failedMacroExpansion,len;
     S_position pos;
     unsigned hash;
-    PrependMacInput(*argb);
+    PrependMacroInput(*argb);
     cInput.margExpFlag = II_MACRO_ARG;
     bsize = MACRO_UNIT_SIZE;
     PP_ALLOCC(buf,bsize+MAX_LEXEM_SIZE,char);
@@ -1676,7 +1676,7 @@ static int macroCallExpand(Symbol *mdef, S_position *mpos) {
     }
 //&fprintf(dumpOut,"cr mbody '%s'\n", mb->name);fflush(dumpOut);
     crMacroBody(&macBody,mb,actArgs,mb->argn);
-    PrependMacInput(macBody);
+    PrependMacroInput(macBody);
 /*fprintf(dumpOut,"expanding macro '%s'\n", mb->name);fflush(dumpOut);*/
     PP_FREE_UNTIL(freeBase);
     return(1);

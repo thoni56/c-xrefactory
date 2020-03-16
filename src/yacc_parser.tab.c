@@ -92,8 +92,8 @@
 static Symbol *l_yaccUnion = NULL;
 static Symbol *l_currentType = NULL;
 
-static void addRuleLocalVariable(S_idIdent *name, int order);
-static void addYaccSymbolReference(S_idIdent *name, int usage);
+static void addRuleLocalVariable(S_id *name, int order);
+static void addYaccSymbolReference(S_id *name, int usage);
 
 #line 236 "yacc_parser.y"
 typedef union {
@@ -104,8 +104,8 @@ typedef union {
     S_typeModifiers                         *typeModif;
     S_typeModifiersList                     *typeModifList;
     S_freeTrail                             *trail;
-    S_idIdent                               *idIdent;
-    S_idIdentList                           *idlist;
+    S_id                               *idIdent;
+    S_idList                           *idlist;
     S_exprTokenType                         exprType;
     S_intPair                               intpair;
     S_whileExtractData                      *whiledata;
@@ -2498,7 +2498,7 @@ YYSTYPE yyvs[YYSTACKSIZE];
 #define yystacksize YYSTACKSIZE
 #line 1762 "yacc_parser.y"
 
-static void addYaccSymbolReference(S_idIdent *name, int usage) {
+static void addYaccSymbolReference(S_id *name, int usage) {
     Symbol sss;
 
     fillSymbol(&sss, name->name, name->name, name->p);
@@ -2506,7 +2506,7 @@ static void addYaccSymbolReference(S_idIdent *name, int usage) {
     addCxReference(&sss, &name->p, usage,s_noneFileIndex, s_noneFileIndex);
 }
 
-static void addRuleLocalVariable(S_idIdent *name, int order) {
+static void addRuleLocalVariable(S_id *name, int order) {
     Symbol *p,*ss;
     char	*nn;
 

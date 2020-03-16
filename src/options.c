@@ -699,7 +699,7 @@ static void processClassPathString(char *cp) {
         np = normalizeFileName(ttt,s_cwd);
         nlen = strlen(np); sfp = np+nlen-4;
         if (nlen>=4 && (strcmp(sfp,".zip")==0 || strcmp(sfp,".jar")==0)){
-            // probably zip archiv
+            // probably zip archive
             log_debug("Indexing '%s'",np);
             zipIndexArchive(np);
             log_debug("Done.");

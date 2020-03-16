@@ -378,10 +378,10 @@ int findStrRecord(  Symbol        *s,
 /* and push reference */
 // this should be split into two copies, different for C and Java.
 S_reference *findStrRecordFromSymbol( Symbol *sym,
-                                      S_idIdent *record,
+                                      S_id *record,
                                       Symbol **res,
                                       int javaClassif,
-                                      S_idIdent *super /* covering special case when invoked
+                                      S_id *super /* covering special case when invoked
                                                           as SUPER.sym, berk */
                                       ) {
     S_recFindStr    rfs;
@@ -418,7 +418,7 @@ S_reference *findStrRecordFromSymbol( Symbol *sym,
 }
 
 S_reference * findStrRecordFromType(    S_typeModifiers *str,
-                                        S_idIdent *record,
+                                        S_id *record,
                                         Symbol **res,
                                         int javaClassif
                                         ) {
@@ -434,7 +434,7 @@ S_reference * findStrRecordFromType(    S_typeModifiers *str,
     return(ref);
 }
 
-void labelReference(S_idIdent *id, int usage) {
+void labelReference(S_id *id, int usage) {
     char ttt[TMP_STRING_SIZE];
     char *tt;
     assert(id);
@@ -592,10 +592,10 @@ Symbol *addNewCopyOfSymbolDef(Symbol *def, unsigned storage) {
 }
 
 static void addInitializerRefs(Symbol *decl,
-                               S_idIdentList *idl
+                               S_idList *idl
                                ) {
-    S_idIdentList *ll;
-    S_idIdent* id;
+    S_idList *ll;
+    S_id* id;
     S_typeModifiers *tt;
     S_reference *ref;
     Symbol *rec=NULL;
@@ -618,7 +618,7 @@ static void addInitializerRefs(Symbol *decl,
 Symbol *addNewDeclaration(
                             Symbol *btype,
                             Symbol *decl,
-                            S_idIdentList *idl,
+                            S_idList *idl,
                             unsigned storage,
                             S_symTab *tab
                             ) {
@@ -834,7 +834,7 @@ void completeDeclarator(Symbol *t, Symbol *d) {
     LIST_APPEND(S_typeModifiers, *dt, tt);
 }
 
-Symbol *createSimpleDefinition(unsigned storage, unsigned t, S_idIdent *id) {
+Symbol *createSimpleDefinition(unsigned storage, unsigned t, S_id *id) {
     S_typeModifiers *typeModifiers;
     Symbol *r;
     typeModifiers = StackMemAlloc(S_typeModifiers);
@@ -894,8 +894,8 @@ static S_typeModifiers *crSimpleEnumType(Symbol *edef, int type) {
     return(res);
 }
 
-S_typeModifiers *simpleStrUnionSpecifier(   S_idIdent *typeName,
-                                            S_idIdent *id,
+S_typeModifiers *simpleStrUnionSpecifier(   S_id *typeName,
+                                            S_id *id,
                                             int usage
                                             ) {
     Symbol p,*pp;
@@ -1003,7 +1003,7 @@ void setGlobalFileDepNames(char *iname, S_symbol *pp, int memory) {
 }
 #endif
 
-S_typeModifiers *crNewAnnonymeStrUnion(S_idIdent *typeName) {
+S_typeModifiers *crNewAnnonymeStrUnion(S_id *typeName) {
     Symbol *pp;
     int type;
 
@@ -1056,7 +1056,7 @@ void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
     }
 }
 
-S_typeModifiers *simpleEnumSpecifier(S_idIdent *id, int usage) {
+S_typeModifiers *simpleEnumSpecifier(S_id *id, int usage) {
     Symbol p,*pp;
     int ii;
 

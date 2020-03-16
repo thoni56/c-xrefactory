@@ -59,7 +59,7 @@ static int charBuffReadFromUnzipFilter(struct CharacterBuffer *buffer, char *out
         } else if (res==Z_STREAM_END) {
             //&fprintf(dumpOut,"end of zip read\n");
         } else {
-            sprintf(tmpBuff, "something is going wrong while reading zipped .jar archiv, res == %d", res);
+            sprintf(tmpBuff, "something is going wrong while reading zipped .jar archive, res == %d", res);
             error(ERR_ST, tmpBuff);
             buffer->zipStream.next_out = (unsigned char *)outBuffer;
         }

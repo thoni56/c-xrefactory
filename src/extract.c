@@ -45,12 +45,12 @@ static void dumpProgram(S_programGraphNode *program) {
 
 void genInternalLabelReference(int counter, int usage) {
     char ttt[TMP_STRING_SIZE];
-    S_idIdent ll;
+    S_id ll;
 
     if (s_opt.server_operation != OLO_EXTRACT) return;
 
     LOCAL_LABEL_NAME(ttt,counter);
-    FILLF_idIdent(&ll, ttt, NULL, cFile.lb.buffer.fileNumber, 0,0,NULL);
+    FILLF_id(&ll, ttt, NULL, cFile.lb.buffer.fileNumber, 0,0,NULL);
     if (usage != UsageDefined) ll.p.line++;
     // line == 0 or 1 , (hack to get definition first)
     labelReference(&ll, usage);

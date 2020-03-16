@@ -119,7 +119,7 @@
 #define NULL_POS NULL
 
 #define AddComposedType(ddd, ttt) appendComposedType(&ddd->u.type, ttt)
-#define AllocIdCopy(copy, ident) {copy = StackMemAlloc(S_idIdent); *(copy) = *(ident);}
+#define AllocIdCopy(copy, ident) {copy = StackMemAlloc(S_id); *(copy) = *(ident);}
 
 
 static bool regularPass(void) { return s_jsl == NULL; }
@@ -286,8 +286,8 @@ static bool inSecondJslPass() {
     S_typeModifiers                         *typeModif;
     S_typeModifiersList                     *typeModifList;
     S_freeTrail                             *trail;
-    S_idIdent                               *idIdent;
-    S_idIdentList                           *idlist;
+    S_id                               *idIdent;
+    S_idList                           *idlist;
     S_exprTokenType                         exprType;
     S_intPair                               intpair;
     S_whileExtractData                      *whiledata;
@@ -782,16 +782,16 @@ Name:
 
 SimpleName:
         IDENTIFIER				{
-            $$.d = StackMemAlloc(S_idIdentList);
-            FILL_idIdentList($$.d, *$1.d, $1.d->name, TypeDefault, NULL);
+            $$.d = StackMemAlloc(S_idList);
+            FILL_idList($$.d, *$1.d, $1.d->name, TypeDefault, NULL);
             PropagateBornsIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 
 QualifiedName:
         Name '.' IDENTIFIER		{
-            $$.d = StackMemAlloc(S_idIdentList);
-            FILL_idIdentList($$.d, *$3.d, $3.d->name, TypeDefault, $1.d);
+            $$.d = StackMemAlloc(S_idList);
+            FILL_idList($$.d, *$3.d, $3.d->name, TypeDefault, $1.d);
             PropagateBornsIfRegularSyntaxPass($$, $1, $3);
         }
     ;

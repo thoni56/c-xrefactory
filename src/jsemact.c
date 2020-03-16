@@ -37,7 +37,7 @@ static int javaNotFqtUsageCorrection(Symbol *sym, int usage);
 
 char *javaCreateComposedName(
                              char *prefix,
-                             S_idIdentList *className,
+                             S_idList *className,
                              int classNameSeparator,
                              char *name,
                              char *resBuff,
@@ -46,7 +46,7 @@ char *javaCreateComposedName(
     int len, ll, sss;
     char *ln;
     char separator;
-    S_idIdentList *ii;
+    S_idList *ii;
 
     if (name == NULL) name = "";
     if (prefix == NULL) prefix = "";
@@ -108,8 +108,8 @@ void javaCheckForPrimaryStart(S_position *cpos, S_position *bpos) {
     }
 }
 
-void javaCheckForPrimaryStartInNameList(S_idIdentList *name, S_position *pp) {
-    S_idIdentList *ll;
+void javaCheckForPrimaryStartInNameList(S_idList *name, S_position *pp) {
+    S_idList *ll;
     if (s_opt.taskRegime != RegimeEditServer) return;
     for(ll=name; ll!=NULL; ll=ll->next) {
         javaCheckForPrimaryStart(&ll->idi.p, pp);
@@ -123,16 +123,16 @@ void javaCheckForStaticPrefixStart(S_position *cpos, S_position *bpos) {
     }
 }
 
-void javaCheckForStaticPrefixInNameList(S_idIdentList *name, S_position *pp) {
-    S_idIdentList *ll;
+void javaCheckForStaticPrefixInNameList(S_idList *name, S_position *pp) {
+    S_idList *ll;
     if (s_opt.taskRegime != RegimeEditServer) return;
     for(ll=name; ll!=NULL; ll=ll->next) {
         javaCheckForStaticPrefixStart(&ll->idi.p, pp);
     }
 }
 
-S_position *javaGetNameStartingPosition(S_idIdentList *name) {
-    S_idIdentList *ll;
+S_position *javaGetNameStartingPosition(S_idList *name) {
+    S_idList *ll;
     S_position *res;
     res = &s_noPos;
     for(ll=name; ll!=NULL; ll=ll->next) {
@@ -147,7 +147,7 @@ static S_reference *javaAddClassCxReference(Symbol *dd, S_position *pos, unsigne
     return(res);
 }
 
-static void javaAddNameCxReference(S_idIdentList *id, unsigned usage) {
+static void javaAddNameCxReference(S_idList *id, unsigned usage) {
     char *cname;
     Symbol dd;
 
@@ -160,7 +160,7 @@ static void javaAddNameCxReference(S_idIdentList *id, unsigned usage) {
     addCxReference(&dd, &id->idi.p, usage,s_noneFileIndex, s_noneFileIndex);
 }
 
-Symbol *javaAddType(S_idIdentList *clas, int accessFlags, S_position *p) {
+Symbol *javaAddType(S_idList *clas, int accessFlags, S_position *p) {
     Symbol *dd;
     dd = javaTypeSymbolDefinition(clas, accessFlags, TYPE_ADD_YES);
     dd->bits.accessFlags = accessFlags;
@@ -169,10 +169,10 @@ Symbol *javaAddType(S_idIdentList *clas, int accessFlags, S_position *p) {
     return(dd);
 }
 
-void javaAddNestedClassesAsTypeDefs(Symbol *cc, S_idIdentList *oclassname,
+void javaAddNestedClassesAsTypeDefs(Symbol *cc, S_idList *oclassname,
                                     int accessFlags) {
     S_symStructSpec *ss;
-    S_idIdentList	ll;
+    S_idList	ll;
     Symbol        *nn;
     int i;
 
@@ -183,9 +183,9 @@ void javaAddNestedClassesAsTypeDefs(Symbol *cc, S_idIdentList *oclassname,
         if (ss->nest[i].membFlag) {
             nn = ss->nest[i].cl;
             assert(nn);
-//& XX_ALLOC(ll, S_idIdentList);
-            FILL_idIdent(&ll.idi, nn->name, cc, s_noPos,NULL);
-            FILL_idIdentList(&ll, ll.idi, nn->name,TypeStruct,oclassname);
+//& XX_ALLOC(ll, S_idList);
+            FILL_id(&ll.idi, nn->name, cc, s_noPos,NULL);
+            FILL_idList(&ll, ll.idi, nn->name,TypeStruct,oclassname);
             javaTypeSymbolDefinition(&ll, accessFlags, TYPE_ADD_YES);
         }
     }
@@ -243,12 +243,12 @@ static int specialFileNameCasesCheck(char *fname) {
 }
 
 /* TODO this function strangely ressembles to javaFindFile, join them ????*/
-bool javaTypeFileExist(S_idIdentList *name) {
+bool javaTypeFileExist(S_idList *name) {
     char            *fname;
     struct stat		stt;
     S_stringList	*cp;
     int				i;
-    S_idIdentList	tname;
+    S_idList	tname;
     S_zipArchiveDir	*place;
 
     if (name==NULL) return false;
@@ -575,7 +575,7 @@ static Symbol *javaAddTypeToSymbolTable(Symbol *memb, int accessFlags, S_positio
     return(memb);
 }
 
-Symbol *javaTypeSymbolDefinition(S_idIdentList *tname,
+Symbol *javaTypeSymbolDefinition(S_idList *tname,
                                    int accessFlags,
                                    int addTyp){
     Symbol                pp,*memb;
@@ -595,7 +595,7 @@ Symbol *javaTypeSymbolDefinition(S_idIdentList *tname,
     return(memb);
 }
 
-Symbol *javaTypeSymbolUsage(S_idIdentList *tname,
+Symbol *javaTypeSymbolUsage(S_idList *tname,
                                    int accessFlags){
     Symbol                pp,*memb;
     int                     ii;
@@ -617,7 +617,7 @@ Symbol *javaTypeSymbolUsage(S_idIdentList *tname,
     return(memb);
 }
 
-Symbol *javaTypeNameDefinition(S_idIdentList *tname) {
+Symbol *javaTypeNameDefinition(S_idList *tname) {
     Symbol    *memb;
     Symbol		*dd;
     S_typeModifiers		*td;
@@ -676,7 +676,7 @@ void javaReadSymbolFromSourceFileInit( int sourceFileNum,
                  uniyylval, (S_yyGlobalState*)yyg, yygsize, s_jsl);
     memcpy(njsl->savedYYstate, s_yygstate, yygsize);
     memcpy(njsl->yyIdentBuf, s_yyIdentBuf,
-           sizeof(S_idIdent[YYBUFFERED_ID_INDEX]));
+           sizeof(S_id[YYBUFFERED_ID_INDEX]));
     s_jsl = njsl;
     s_language = LANG_JAVA;
 }
@@ -686,7 +686,7 @@ void javaReadSymbolFromSourceFileEnd(void) {
     uniyylval = s_jsl->savedyylval;
     memcpy(s_yygstate, s_jsl->savedYYstate, s_jsl->yyStateSize);
     memcpy(s_yyIdentBuf, s_jsl->yyIdentBuf,
-           sizeof(S_idIdent[YYBUFFERED_ID_INDEX]));
+           sizeof(S_id[YYBUFFERED_ID_INDEX]));
     s_jsl = s_jsl->next;
 }
 
@@ -1010,7 +1010,7 @@ int javaIsInnerAndCanGetUnnamedEnclosingInstance(Symbol *name, Symbol **outEi) {
     }\
 }
 
-int javaClassifySingleAmbigNameToTypeOrPack(S_idIdentList *name,
+int javaClassifySingleAmbigNameToTypeOrPack(S_idList *name,
                                             Symbol **str,
                                             int cxrefFlag
     ){
@@ -1130,7 +1130,7 @@ void javaAddImportConstructionReference(S_position *importPos, S_position *pos, 
     addSpecialFieldReference(isymName, StorageDefault, s_noneFileIndex, pos, usage);
 }
 
-static int javaClassifySingleAmbigName( S_idIdentList *name,
+static int javaClassifySingleAmbigName( S_idList *name,
                                         S_recFindStr *rfs,
                                         Symbol **str,
                                         S_typeModifiers **expr,
@@ -1193,7 +1193,7 @@ static int javaNotFqtUsageCorrection(Symbol *sym, int usage) {
     Symbol        *str;
     S_typeModifiers *expr;
     S_reference     *loref;
-    S_idIdentList   sname;
+    S_idList   sname;
     char            *pp, packname[TMP_STRING_SIZE];
 
     if (s_opt.taskRegime == RegimeHtmlGenerate) return(usage);
@@ -1205,12 +1205,12 @@ static int javaNotFqtUsageCorrection(Symbol *sym, int usage) {
     strncpy(packname, sym->linkName, pplen);
     packname[pplen] = 0;
 
-    FILLF_idIdentList(&sname, packname, NULL,
-                      s_noPos.file, s_noPos.line, s_noPos.col,NULL,
-                      packname, TypeExpression, NULL)
-    rr = javaClassifySingleAmbigName(&sname,&localRfs,&str,&expr,&loref,
-                                      CLASS_TO_EXPR, UsageNone, NO_CX_REFS);
-    if (rr!=TypePackage) {
+    FILLF_idList(&sname, packname, NULL,
+                 s_noPos.file, s_noPos.line, s_noPos.col,NULL,
+                 packname, TypeExpression, NULL)
+        rr = javaClassifySingleAmbigName(&sname,&localRfs,&str,&expr,&loref,
+                                         CLASS_TO_EXPR, UsageNone, NO_CX_REFS);
+    if (rr != TypePackage) {
         return(UsageNonExpandableNotFQTName);
     }
     return(usage);
@@ -1226,14 +1226,14 @@ static void javaResetUselessReference(S_reference *ref) {
  check whether name as single name will result to str, if yes add
  UsageUselessFqt reference
 */
-static void javaCheckForUselessFqt(S_idIdentList *name, int classif, Symbol *rstr,
+static void javaCheckForUselessFqt(S_idList *name, int classif, Symbol *rstr,
                                    S_reference **oref, S_reference *lref){
     int             rr, uselessFqt;
     S_recFindStr    localRfs;
     Symbol        *str;
     S_typeModifiers *expr;
     S_reference     *loref;
-    S_idIdentList   sname;
+    S_idList   sname;
 
     uselessFqt = 0;
 
@@ -1273,7 +1273,7 @@ static void javaCheckForUselessFqt(S_idIdentList *name, int classif, Symbol *rst
     }
 }
 
-static S_reference *javaCheckForUselessTypeName(S_idIdentList   *name,
+static S_reference *javaCheckForUselessTypeName(S_idList   *name,
                                                 int				classif,
                                                 S_recFindStr	*rfs,
                                                 S_reference     **oref,
@@ -1284,7 +1284,7 @@ static S_reference *javaCheckForUselessTypeName(S_idIdentList   *name,
     Symbol        *str;
     S_typeModifiers *expr;
     S_reference     *loref;
-    S_idIdentList   sname;
+    S_idList   sname;
     S_reference     *res;
 
     res = NULL;
@@ -1319,7 +1319,7 @@ static S_reference *javaCheckForUselessTypeName(S_idIdentList   *name,
     return(res);
 }
 
-static void javaClassifyNameToNestedType(S_idIdentList *name, Symbol *outerc, int uusage, Symbol **str, S_reference **oref) {
+static void javaClassifyNameToNestedType(S_idList *name, Symbol *outerc, int uusage, Symbol **str, S_reference **oref) {
     name->nameType = TypeStruct;
     *str = javaTypeSymbolUsage(name,ACC_DEFAULT);
     javaLoadClassSymbolsFromFile(*str);
@@ -1331,7 +1331,7 @@ static void javaClassifyNameToNestedType(S_idIdentList *name, Symbol *outerc, in
     }
 }
 
-static void classifiedToNestedClass(S_idIdentList *name, Symbol **str, S_reference **oref, S_reference **rdtoref, int classif, int uusage, Symbol *pstr, S_reference *prdtoref, int allowUselesFqtRefs) {
+static void classifiedToNestedClass(S_idList *name, Symbol **str, S_reference **oref, S_reference **rdtoref, int classif, int uusage, Symbol *pstr, S_reference *prdtoref, int allowUselesFqtRefs) {
     name->nameType = TypeStruct;
     //&*str=javaTypeSymbolUsage(name,ACC_DEFAULT);
     javaLoadClassSymbolsFromFile(*str);
@@ -1346,7 +1346,7 @@ static void classifiedToNestedClass(S_idIdentList *name, Symbol **str, S_referen
 
 
 int javaClassifyAmbiguousName(
-        S_idIdentList *name,
+        S_idList *name,
         S_recFindStr *rfs,	// can be NULL
         Symbol **str,
         S_typeModifiers **expr,
@@ -1473,7 +1473,7 @@ int javaClassifyAmbiguousName(
 
 #undef AddAmbCxRef
 
-S_typeModifiers *javaClassifyToExpressionName(S_idIdentList *name,
+S_typeModifiers *javaClassifyToExpressionName(S_idList *name,
                                               S_reference **oref) {
     Symbol    *str;
     S_typeModifiers		*expr,*res;
@@ -1489,7 +1489,7 @@ S_typeModifiers *javaClassifyToExpressionName(S_idIdentList *name,
 }
 
 // returns last useless reference (if any)
-S_reference *javaClassifyToTypeOrPackageName(S_idIdentList *tname, int usage, Symbol **str, int allowUselesFqtRefs) {
+S_reference *javaClassifyToTypeOrPackageName(S_idList *tname, int usage, Symbol **str, int allowUselesFqtRefs) {
     S_typeModifiers		*expr;
     S_reference			*rr, *lastUselessRef;
     lastUselessRef = NULL;
@@ -1498,7 +1498,7 @@ S_reference *javaClassifyToTypeOrPackageName(S_idIdentList *tname, int usage, Sy
     return(lastUselessRef);
 }
 
-S_reference *javaClassifyToTypeName(S_idIdentList *tname, int usage, Symbol **str, int allowUselesFqtRefs) {
+S_reference *javaClassifyToTypeName(S_idList *tname, int usage, Symbol **str, int allowUselesFqtRefs) {
     S_reference *res;
 
     res = javaClassifyToTypeOrPackageName(tname, usage, str, allowUselesFqtRefs);
@@ -1513,7 +1513,7 @@ S_reference *javaClassifyToTypeName(S_idIdentList *tname, int usage, Symbol **st
 }
 
 // !!! this is called also for qualified super
-Symbol * javaQualifiedThis(S_idIdentList *tname, S_idIdent *thisid) {
+Symbol * javaQualifiedThis(S_idList *tname, S_id *thisid) {
     Symbol			*str;
     S_typeModifiers		*expr;
     S_reference			*rr, *lastUselessRef;
@@ -1541,18 +1541,18 @@ Symbol * javaQualifiedThis(S_idIdentList *tname, S_idIdent *thisid) {
     return(str);
 }
 
-void javaClassifyToPackageName( S_idIdentList *id ) {
-    S_idIdentList *ii;
+void javaClassifyToPackageName( S_idList *id ) {
+    S_idList *ii;
     for (ii=id; ii!=NULL; ii=ii->next) ii->nameType = TypePackage;
 }
 
-void javaClassifyToPackageNameAndAddRefs(S_idIdentList *id, int usage) {
-    S_idIdentList *ii;
+void javaClassifyToPackageNameAndAddRefs(S_idList *id, int usage) {
+    S_idList *ii;
     javaClassifyToPackageName( id);
     for (ii=id; ii!=NULL; ii=ii->next) javaAddNameCxReference(ii, usage);
 }
 
-void javaAddPackageDefinition(S_idIdentList *id) {
+void javaAddPackageDefinition(S_idList *id) {
     javaClassifyToPackageNameAndAddRefs(id, UsageUsed); // UsageDefined);
 }
 
@@ -1883,10 +1883,10 @@ void javaAddMapedTypeName(
     char				*p;
     char                ttt2[MAX_FILE_NAME_SIZE];
     int					len2;
-    S_idIdentList       dd2,*packid;
+    S_idList       dd2,*packid;
     Symbol			*memb;
     /*&fprintf(dumpOut,":import type %s %s %s\n", file, path, pack);&*/
-    packid = (S_idIdentList *) vdirid;
+    packid = (S_idList *) vdirid;
     for(p=file; *p && *p!='.' && *p!='$'; p++) ;
     if (*p != '.') return;
     if (strcmp(p,".class")!=0 && strcmp(p,".java")!=0) return;
@@ -1894,12 +1894,12 @@ void javaAddMapedTypeName(
     strncpy(ttt2, file, len2);
     assert(len2+1 < MAX_FILE_NAME_SIZE);
     ttt2[len2] = 0;
-    FILLF_idIdentList(&dd2, ttt2,NULL,-1,0,0,NULL, ttt2,TypeStruct,packid);
+    FILLF_idList(&dd2, ttt2,NULL,-1,0,0,NULL, ttt2,TypeStruct,packid);
     memb = javaTypeSymbolDefinition(&dd2,ACC_DEFAULT, TYPE_ADD_YES);
     log_debug(":import type %s == %s", memb->name, memb->linkName);
 }
 
-S_typeModifiers *javaClassNameType(S_idIdentList *typeName) {
+S_typeModifiers *javaClassNameType(S_idList *typeName) {
     S_typeModifiers *tt; Symbol *st;
     assert(typeName);
     assert(typeName->nameType == TypeStruct);
@@ -1909,12 +1909,12 @@ S_typeModifiers *javaClassNameType(S_idIdentList *typeName) {
     return(tt);
 }
 
-S_typeModifiers *javaNestedNewType(Symbol *sym, S_idIdent *thenew,
-                                   S_idIdentList *idl) {
-    S_idIdentList       d1,d2;
+S_typeModifiers *javaNestedNewType(Symbol *sym, S_id *thenew,
+                                   S_idList *idl) {
+    S_idList       d1,d2;
     S_typeModifiers     *res;
     char                *id2;
-    S_idIdent			*id;
+    S_id			*id;
     Symbol			*str;
     S_reference			*rr;
     if (idl->next == NULL) {
@@ -1922,8 +1922,8 @@ S_typeModifiers *javaNestedNewType(Symbol *sym, S_idIdent *thenew,
         id = &idl->idi;
         assert(sym && sym->linkName);
         id2 = sym->linkName;
-        FILLF_idIdentList(&d2, id2, sym, -1,0,0,NULL, id2, TypeStruct, NULL);
-        FILL_idIdentList(&d1, *id, id->name, TypeStruct, &d2);
+        FILLF_idList(&d2, id2, sym, -1,0,0,NULL, id2, TypeStruct, NULL);
+        FILL_idList(&d1, *id, id->name, TypeStruct, &d2);
         javaClassifyNameToNestedType(&d1, sym, UsageUsed, &str, &rr);
         res = javaClassNameType(&d1);
     } else {
@@ -1944,7 +1944,7 @@ S_typeModifiers *javaNestedNewType(Symbol *sym, S_idIdent *thenew,
     return(res);
 }
 
-S_typeModifiers *javaNewAfterName(S_idIdentList *name, S_idIdent *thenew, S_idIdentList *idl) {
+S_typeModifiers *javaNewAfterName(S_idList *name, S_id *thenew, S_idList *idl) {
     Symbol *str;
     S_typeModifiers *expr, *res;
     int atype;
@@ -2142,7 +2142,7 @@ Symbol *javaCurrentSuperClass(void) {
 static S_typeModifiers *javaMethodInvocation(
                                         S_recFindStr *rfs,
                                         Symbol *memb,
-                                        S_idIdent *name,
+                                        S_id *name,
                                         S_typeModifiersList *args,
                                         int invocationType,
                                         S_position *superPos) {
@@ -2241,7 +2241,7 @@ static S_typeModifiers *javaMethodInvocation(
 }
 
 
-S_extRecFindStr *javaCrErfsForMethodInvocationN(S_idIdentList *name) {
+S_extRecFindStr *javaCrErfsForMethodInvocationN(S_idList *name) {
     S_extRecFindStr		*erfs;
     S_typeModifiers		*expr;
     S_reference			*rr;
@@ -2257,7 +2257,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationN(S_idIdentList *name) {
     return(erfs);
 }
 
-S_typeModifiers *javaMethodInvocationN(	S_idIdentList *name,
+S_typeModifiers *javaMethodInvocationN(	S_idList *name,
                                         S_typeModifiersList *args
                                     ) {
     S_extRecFindStr		*erfs;
@@ -2269,7 +2269,7 @@ S_typeModifiers *javaMethodInvocationN(	S_idIdentList *name,
 }
 
 S_extRecFindStr *javaCrErfsForMethodInvocationT(S_typeModifiers *tt,
-                                                S_idIdent *name
+                                                S_id *name
     ) {
     S_extRecFindStr		*erfs;
     int					rr;
@@ -2292,7 +2292,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationT(S_typeModifiers *tt,
 }
 
 S_typeModifiers *javaMethodInvocationT(	S_typeModifiers *tt,
-                                        S_idIdent *name,
+                                        S_id *name,
                                         S_typeModifiersList *args
                                     ) {
     S_extRecFindStr		*erfs;
@@ -2303,8 +2303,8 @@ S_typeModifiers *javaMethodInvocationT(	S_typeModifiers *tt,
     return(res);
 }
 
-S_extRecFindStr *javaCrErfsForMethodInvocationS(S_idIdent *super,
-                                                           S_idIdent *name
+S_extRecFindStr *javaCrErfsForMethodInvocationS(S_id *super,
+                                                           S_id *name
     ) {
     Symbol            *ss;
     S_extRecFindStr		*erfs;
@@ -2326,8 +2326,8 @@ S_extRecFindStr *javaCrErfsForMethodInvocationS(S_idIdent *super,
     return(erfs);
 }
 
-S_typeModifiers *javaMethodInvocationS(S_idIdent *super,
-                                       S_idIdent *name,
+S_typeModifiers *javaMethodInvocationS(S_id *super,
+                                       S_id *name,
                                        S_typeModifiersList *args
     ) {
     S_extRecFindStr		*erfs;
@@ -2362,11 +2362,11 @@ S_typeModifiers *javaConstructorInvocation(Symbol *clas,
     ) {
     S_extRecFindStr		*erfs;
     S_typeModifiers		*res;
-    S_idIdent			name;
+    S_id			name;
     erfs = javaCrErfsForConstructorInvocation(clas, pos);
     if (erfs == NULL) return(&s_errorModifier);
     if (erfs->s.baseClass != erfs->s.currClass) return(&s_errorModifier);
-    FILL_idIdent(&name, clas->name, NULL, *pos, NULL);
+    FILL_id(&name, clas->name, NULL, *pos, NULL);
     res = javaMethodInvocation(&erfs->s, erfs->memb, &name, args,CONSTRUCTOR_INVOCATION,&s_noPos);
     return(res);
 }
@@ -2547,17 +2547,17 @@ void javaAddSuperNestedClassToSymbolTab( Symbol *cc ) {
 }
 
 
-struct freeTrail * newClassDefinitionBegin(	S_idIdent *name,
+struct freeTrail * newClassDefinitionBegin(	S_id *name,
                                             int accessFlags,
                                             Symbol *anonInterf) {
-    S_idIdentList   *p;
+    S_idList   *p;
     Symbol        *dd,*ddd;
     S_freeTrail     *res;
     S_javaStat      *oldStat;
     int             nnest,noff,classf;
     S_nestedSpec	*nst,*nn;
     S_symTab		*locals;
-    S_idIdent		idi;
+    S_id		idi;
 
     assert(s_javaStat);
     oldStat = s_javaStat;
@@ -2585,17 +2585,17 @@ struct freeTrail * newClassDefinitionBegin(	S_idIdent *name,
 //&		innerNamesCorrect = (strcmp(nn->cl->name, name->name)==0);
 //&		assert(innerNamesCorrect);
         dd = nn->cl;
-        FILL_idIdent(&idi,dd->linkName, NULL, name->p, NULL);
-        XX_ALLOC(p, S_idIdentList);
-        FILL_idIdentList(p, idi, dd->linkName, TypeStruct, NULL);
+        FILL_id(&idi,dd->linkName, NULL, name->p, NULL);
+        XX_ALLOC(p, S_idList);
+        FILL_idList(p, idi, dd->linkName, TypeStruct, NULL);
         ddd = javaAddType(p, accessFlags, & name->p);
         assert(dd==ddd);
         res = s_topBlock->trail;
         //&javaCreateClassFileItem(dd);
     } else {
         /* probably base class */
-        XX_ALLOC(p,S_idIdentList);
-        FILL_idIdentList(p,*name,name->name,TypeStruct,s_javaStat->className);
+        XX_ALLOC(p,S_idList);
+        FILL_idList(p,*name,name->name,TypeStruct,s_javaStat->className);
         dd = javaAddType(p, accessFlags, & name->p);
         res = s_topBlock->trail;
         assert(dd->bits.symType == TypeStruct);
@@ -2612,12 +2612,12 @@ struct freeTrail * newClassDefinitionBegin(	S_idIdent *name,
     return(res);
 }
 
-struct freeTrail * newAnonClassDefinitionBegin(S_idIdent *interfName) {
+struct freeTrail * newAnonClassDefinitionBegin(S_id *interfName) {
     struct freeTrail * res;
-    S_idIdentList	*ll;
+    S_idList	*ll;
     Symbol		*interf, *str;
-    XX_ALLOC(ll, S_idIdentList);
-    FILL_idIdentList(ll, *interfName, interfName->name, TypeDefault, NULL);
+    XX_ALLOC(ll, S_idList);
+    FILL_idList(ll, *interfName, interfName->name, TypeDefault, NULL);
     javaClassifyToTypeName(ll,UsageUsed,&str, USELESS_FQT_REFS_ALLOWED);
     interf = javaTypeNameDefinition(ll);
     res = newClassDefinitionBegin(&s_javaAnonymousClassName, ACC_DEFAULT,
@@ -2669,7 +2669,7 @@ void javaInitArrayObject(void) {
                                    s_noneFileIndex, LOAD_SUPER);
 }
 
-S_typeModifiers *javaArrayFieldAccess(S_idIdent *id) {
+S_typeModifiers *javaArrayFieldAccess(S_id *id) {
     Symbol *rec=NULL;
     findStrRecordFromType(&s_javaArrayObjectSymbol.u.s->stype, id, &rec, CLASS_TO_EXPR);
     assert(rec);
@@ -2693,7 +2693,7 @@ void javaParsedSuperClass(Symbol *symbol) {
     }
 }
 
-void javaSetClassSourceInformation(char *package, S_idIdent *classId) {
+void javaSetClassSourceInformation(char *package, S_id *classId) {
     char    fqt[MAX_FILE_NAME_SIZE];
     char    className[MAX_FILE_NAME_SIZE];
     int		fileIndex;

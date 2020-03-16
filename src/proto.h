@@ -661,12 +661,12 @@ typedef struct cctNode {
 
 /* return value for IDENTIFIER token from yylex */
 
-typedef struct idIdent {
-    char			*name;
-    struct symbol	*sd;
+typedef struct id {
+    char *name;
+    struct symbol *sd;
     struct position	p;
-    struct idIdent  *next;
-} S_idIdent;
+    struct id *next;
+} S_id;
 
 typedef struct freeTrail {
     void             (*action)(void*);
@@ -1020,7 +1020,7 @@ typedef struct currentlyParsedStatics {
 /* ************************** JAVAS *********************************** */
 
 typedef struct javaStat {
-    struct idIdentList			*className;			/* this class name */
+    struct idList			*className;			/* this class name */
     struct typeModifiers		*thisType;			/* this class type */
     struct symbol				*thisClass;			/* this class definition */
     int							currentNestIndex;	/* currently parsed nested class */
@@ -1028,7 +1028,7 @@ typedef struct javaStat {
     char						*unNamedPackageDir;	/* directory for unnamed package */
     char						*namedPackageDir;	/* inferred source-path for named package */
     struct symTab				*locals;			/* args and local variables */
-    struct idIdentList          *lastParsedName;
+    struct idList          *lastParsedName;
     unsigned					cpMethodMods;		/* currently parsed method modifs */
     struct currentlyParsedCl	cp;					/* some parsing positions */
     int							classFileInd;		/* this file class index */
@@ -1037,12 +1037,12 @@ typedef struct javaStat {
 
 /* java composed names */
 
-typedef struct idIdentList {
-    struct idIdent      idi;
+typedef struct idList {
+    struct id      idi;
     char				*fname;			/* fqt name for java */
     uchar				nameType;		/* type of name segment for java */
-    struct idIdentList	*next;
-} S_idIdentList;
+    struct idList	*next;
+} S_idList;
 
 typedef struct zipArchiveDir {
     union {
@@ -1055,7 +1055,7 @@ typedef struct zipArchiveDir {
 
 typedef struct zipFileTabItem {
     char                    fn[MAX_FILE_NAME_SIZE];	/* stored with ';' at the end */
-    struct stat				st;						/* status of the archiv file */
+    struct stat				st;						/* status of the archive file */
     struct zipArchiveDir	*dir;
 } S_zipFileTabItem;
 
@@ -1245,7 +1245,7 @@ typedef struct exprTokenType {
 
 typedef struct nestedConstrTokenType {
     struct typeModifiers	*t;
-    struct idIdentList		*nid;
+    struct idList		*nid;
     struct position			*pp;
 } S_nestedConstrTokenType;
 
@@ -1318,7 +1318,7 @@ typedef struct tpCheckMoveClassData {
 
 
 typedef struct jslClassStat {
-    struct idIdentList	*className;
+    struct idList	*className;
     struct symbol		*thisClass;
     char				*thisPackage;
     int					annonInnerCounter;	/* counter for anonym inner classes*/
@@ -1336,7 +1336,7 @@ typedef struct jslStat {
     void/*YYSTYPE*/			*savedyylval;
     struct yyGlobalState    *savedYYstate;
     int						yyStateSize;
-    struct idIdent			yyIdentBuf[YYBUFFERED_ID_INDEX]; // pending idents
+    struct id			yyIdentBuf[YYBUFFERED_ID_INDEX]; // pending idents
     struct jslStat			*next;
 } S_jslStat;
 
@@ -1463,11 +1463,11 @@ typedef struct bb_freeTrail {
 } S_bb_freeTrail;
 typedef struct bb_idIdent {
     struct position      b, e;
-    struct idIdent		*d;
+    struct id		*d;
 } S_bb_idIdent;
 typedef struct bb_idIdentList {
     struct position          b, e;
-    struct idIdentList		*d;
+    struct idList		*d;
 } S_bb_idIdentList;
 typedef struct bb_exprTokenType {
     struct position          b, e;

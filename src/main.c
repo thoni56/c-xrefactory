@@ -236,7 +236,7 @@ void dirInputFile(MAP_FUN_PROFILE) {
             //& warning(ERR_ST,tmpBuff);
         }
     } else if (stt==0) {
-        // .class can be inside a jar archiv, but this makes problem on
+        // .class can be inside a jar archive, but this makes problem on
         // recursive read of a directory, it attempts to read .class
         if (    topCallFlag==0
                 &&  (! fileNameHasOneOfSuffixes(fname, s_opt.cFilesSuffixes))

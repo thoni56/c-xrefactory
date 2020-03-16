@@ -6,8 +6,8 @@
 #include "filetab.h"
 
 S_fileTab s_fileTab;
-S_idIdent s_javaAnonymousClassName = {"{Anonymous}", NULL, {-1,0,0}};
-S_idIdent s_javaConstructorName = {"<init>", NULL, {-1,0,0}};
+S_id s_javaAnonymousClassName = {"{Anonymous}", NULL, {-1,0,0}};
+S_id s_javaConstructorName = {"<init>", NULL, {-1,0,0}};
 S_typeModifiers * s_preCrTypesTab[MAX_TYPE];
 S_position s_noPos = {-1, 0, 0};
 Symbol s_errorSymbol;

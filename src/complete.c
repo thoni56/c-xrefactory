@@ -1180,7 +1180,7 @@ static void javaPackageNameCompletion(
     if (strchr(fname,'.')!=NULL) return;        /* not very proper */
     /*& // original; Why this is commented out?
       FILLF_idIdentList(&ttl, fname, NULL, -1, 0, 0, fname, TypePackage,
-                        (S_idIdentList *) idp);
+                        (S_idList *) idp);
       cname=javaCreateComposedName(path,&ttl,SLASH,NULL,tmpMemory,SIZE_TMP_MEM);
       if (statb(cname,&stt)!=0 || (stt.st_mode & S_IFMT) != S_IFDIR) return;
       &*/
@@ -1211,7 +1211,7 @@ static void javaTypeNameCompletion(
     /*&fprintf(dumpOut,":mapping %s\n",fname);fflush(dumpOut);&*/
     /*& // orig
       FILLF_idIdentList(&ttl, fname, NULL, -1, 0, 0, fname, TypePackage,
-                        (S_idIdentList *) idp);
+                        (S_idList *) idp);
       cname=javaCreateComposedName(path,&ttl,SLASH,NULL,tmpMemory,SIZE_TMP_MEM);
       if (statb(cname,&stt)!=0 || (stt.st_mode & S_IFMT) != S_IFDIR) { //& }
       &*/
