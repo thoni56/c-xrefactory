@@ -1621,14 +1621,11 @@ static void scanClassFile(char *zip, char *file, void *arg) {
 }
 
 void jarFileParse(char *file_name) {
-    int archive, fileIndex, rr;
+    int archive, fileIndex;
 
     archive = zipIndexArchive(file_name);
+    assert(fileTabExists(&s_fileTab, file_name)); /* Filename has to exist in the table */
     fileIndex = addFileTabItem(s_input_file_name);
-    /* assert(rr==0); */
-    // filename has to be in the table, previously there was "assert(rr==0);" here
-    // when addFileTabItem() returned 0/1 if it existed and used an out arg for
-    // the actual index
     checkFileModifiedTime(fileIndex);
     // set loading to 1, no matter whether saved (by overflow) or not
     // following make create a loop, but it is very unprobable
