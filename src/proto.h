@@ -21,7 +21,7 @@
  */
 
 #include "stdinc.h"
-#include "stdbool.h"
+#include <stdbool.h>
 
 #include "head.h"
 #include "zlib.h"

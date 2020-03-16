@@ -179,7 +179,6 @@ extern int s_currCppPass;
 extern int s_maximalCppPass;
 
 extern S_completions s_completions;
-//&extern S_olSymbolFoundInformation s_oli;
 extern S_userOlcx *s_olcxCurrentUser;
 extern unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL];
 extern int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL];
