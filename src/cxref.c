@@ -3479,13 +3479,15 @@ int getClassNumFromClassLinkName(char *name, int defaultResult) {
     int                 ii, clii;
     char                cfname[MAX_FILE_NAME_SIZE];
     S_fileItem          ffi;
+
     clii = defaultResult;
     SPRINT_FILE_TAB_CLASS_NAME(cfname, name);
     //&fprintf(dumpOut,"looking for class %s\n",cfname);fflush(dumpOut);
     FILLF_fileItem(&ffi,cfname, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,
                    s_noneFileIndex,NULL,NULL,s_noneFileIndex,NULL);
     if (fileTabIsMember(&s_fileTab, &ffi, &ii)) clii = ii;
-    return(clii);
+
+    return clii;
 }
 
 static int olSpecialFieldCreateSelection(char *fieldName, int storage) {

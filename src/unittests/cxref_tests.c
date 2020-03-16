@@ -38,5 +38,21 @@ BeforeEach(CxRef) {}
 AfterEach(CxRef) {}
 
 
-Ensure(CxRef, can_get_class_num_from_class_linkname) {
+Ensure(CxRef, get_class_num_from_class_linkname_will_return_default_value_if_not_member) {
+    int defaultValue = 14;
+
+    expect(fileTabIsMember, will_return(false));
+
+    assert_that(getClassNumFromClassLinkName("name", defaultValue), is_equal_to(defaultValue));
+}
+
+Ensure(CxRef, get_class_num_from_class_linkname_will_return_filenumber_if_member) {
+    int defaultValue = 14;
+    int position = 42;
+
+    expect(fileTabIsMember,
+           will_set_contents_of_parameter(position, &position, sizeof(int)),
+           will_return(true));
+
+    assert_that(getClassNumFromClassLinkName("name", defaultValue), is_equal_to(position));
 }
