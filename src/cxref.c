@@ -3087,16 +3087,14 @@ static void safetyCheckDiff(S_reference **anr1,
 }
 
 int getFileNumberFromName(char *name) {
-    char        *nn;
-    S_fileItem  dd;
-    int         ii;
-    nn = normalizeFileName(name, s_cwd);
-    FILLF_fileItem(&dd,nn, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
-                   NULL,NULL,s_noneFileIndex,NULL);
-    if (fileTabIsMember(&s_fileTab, &dd, &ii)) {
-        return(ii);
+    char *normalizedName;
+    int fileIndex;
+
+    normalizedName = normalizeFileName(name, s_cwd);
+    if ((fileIndex = fileTabLookup(&s_fileTab, normalizedName)) != -1) {
+        return fileIndex;
     } else {
-        return(s_noneFileIndex);
+        return s_noneFileIndex;
     }
 }
 
