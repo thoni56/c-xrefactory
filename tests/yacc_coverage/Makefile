@@ -22,11 +22,11 @@ $(TEST):
 		grep -q $$line output ; \
 		ecode=$$? ; \
 		if [ $$ecode -ne 0 ] ; then \
-			echo "Failed: output did not contain expected: '$$line'" ; \
+			echo "$(shell tput setaf 1)Failed: output did not contain expected: '$$line'$(shell tput sgr0)" ; \
 			exit 1 ; \
 		fi ; \
 	done < expected
-	@echo "Ok"
+	@$(OK)
 	@exit 0
 
 gdb:

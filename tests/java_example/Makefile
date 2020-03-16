@@ -1,26 +1,22 @@
 # Automated tests for parsing java (for the example)
 
-#include ../Makefile.boilerplate
+include ../Makefile.boilerplate
 
 TEST = java_example
 
 COMMAND = ../../src/c-xref -xrefrc .c-xrefrc src -o $(TEST).log
 
-$(TEST): .c-xrefrc
-	@printf "Tests in '$@': "
+$(TEST):
 	@rm -rf output $@.log CXrefs
 	@$(COMMAND)
 	@grep -i error $(TEST).log ; \
-	if [ $$? -eq 1 ] ; then \
-		echo "Ok" ; \
-	else \
-		echo "Failed" ; \
+	if [ $$? -ne 1 ] ; then \
+		$(FAIL) ; \
 		exit 1 ; \
+	else \
+		$(OK) ; \
+		exit 0 ; \
 	fi
-	@exit 0
 
 gdb:
 	gdb --args $(COMMAND)
-
-.c-xrefrc: ../c-xrefrc.tpl
-	@sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" ../c-xrefrc.tpl > .c-xrefrc

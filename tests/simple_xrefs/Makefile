@@ -7,7 +7,6 @@ COMMAND = ../../src/c-xref -xrefrc .c-xrefrc single_int*.c -o $(TEST).log
 CHECK_FOR_CONTENT = python -c "content=open('$(1)').read(); target=open('output').read(); exit(0 if content in target else 1);"
 
 $(TEST):
-	@printf "Tests in '$@': "
 	@rm -rf output $@.log CXrefs Xrefs
 	@$(COMMAND)
 	@../../utils/cxref_reader.py > output
@@ -15,11 +14,11 @@ $(TEST):
 		grep -q $$line output ; \
 		ecode=$$? ; \
 		if [ $$ecode -ne 0 ] ; then \
-			echo "Failed: output did not contain expected: '$$line'" ; \
+			echo "Tests in '$(TEST)': Failed - output did not contain expected: '$$line'" ; \
 			exit 1 ; \
 		fi ; \
 	done < expected
-	@echo "Ok"
+	@$(OK)
 	@exit 0
 
 gdb:

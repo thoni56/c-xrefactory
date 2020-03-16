@@ -2,15 +2,15 @@
 
 include ../Makefile.boilerplate
 
-$(TEST): .c-xrefrc
+$(TEST):
 	@../../src/c-xref -xrefrc .c-xrefrc abbot.jar > output
 	@if [ $$? -ne 0 ] ; then \
-		echo "Tests in '$(TEST)': Failed" ; \
+		$(FAIL) ; \
 		diff output expected ; \
 		exit 1 ; \
 	else \
-		echo "Tests in '$(TEST)': Ok" ; \
-		exit 0; \
+		$(OK) ; \
+		exit 0 ; \
 	fi
 
 clean:

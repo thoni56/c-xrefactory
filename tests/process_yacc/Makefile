@@ -15,7 +15,6 @@ YACC = ../../byacc-1.9/yacc
 #
 
 $(TEST): $(YACC)
-	@printf "Tests in '$(TEST)': "
 	@rm -rf $(TEST).log CXrefs
 	@$(YACC) file.y
 	@../../src/c-xref *.[cy] -xrefrc .c-xrefrc -refs "$(CURDIR)/CXrefs" -o $(TEST).log
@@ -24,10 +23,11 @@ $(TEST): $(YACC)
 	@f=`grep process_yacc/file.y CXrefs/* | awk '{print $$1}'` ; \
 	grep '	5/func	' CXrefs/* | grep '$f9l17cr' > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
-		echo "Failed" ; \
+		$(FAIL) ; \
 		exit 1 ; \
 	else \
-		echo "Ok" ; \
+		$(OK) ; \
+		exit 0 ; \
 	fi
 
 $(YACC):

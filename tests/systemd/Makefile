@@ -12,14 +12,14 @@ all:
 		printf "Tests in \"systemd\": " ; \
 		../run-c-xref -p systemd -o systemd.log ; \
 		if ! grep Generating systemd.log > /dev/null ; then \
-			echo "Failed (systemd.log)" ; \
+			echo "$(shell tput setaf 1)Failed (systemd.log)$(shell tput sgr0)" ; \
 			exit 1 ; \
 		else \
 			if grep -i "<error " out > /dev/null ; then \
-				echo "Failed (out)" ; \
+				echo "$(shell tput setaf 1)Failed (out)$(shell tput sgr0)" ; \
 				exit 1 ; \
 			else \
-				echo "Ok" ; \
+				echo "$(shell tput setaf 1)Ok$(shell tput sgr0)" ; \
 			fi ; \
 		fi ; \
 	fi

@@ -11,14 +11,14 @@ all: .c-xrefrc
 		printf "Tests in 'ffmpeg': " ; \
 		../run-c-xref -p ffmpeg -o ffmpeg.log ; \
 		if ! grep Generating ffmpeg.log > /dev/null ; then \
-			echo "Failed (ffmpeg.log)" ; \
+			echo "$(shell tput setaf 1)Failed (ffmpeg.log)$(shell tput sgr0)" ; \
 			exit 1 ; \
 		else \
 			if grep -i "<error " out > /dev/null ; then \
-				echo "Failed (out)" ; \
+				echo "$(shell tput setaf 1)Failed (out)$(shell tput sgr0)" ; \
 				exit 1 ; \
 			else \
-				echo "Ok" ; \
+				$(OK) ; \
 			fi ; \
 		fi ; \
 	fi

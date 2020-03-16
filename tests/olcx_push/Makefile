@@ -10,13 +10,13 @@ $(TEST): CXrefs
 	@sed -e "s/len=[0-9]*/len=<n>/g" -e "s#$(CURDIR)#CURDIR#g" output.tmp > output
 	@diff output expected > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
-		echo "Tests in '$(TEST)': Failed" ; \
+		$(FAIL) ; \
 		diff output expected ; \
 		exit 1 ; \
 	else \
-		echo "Tests in '$(TEST)': Ok" ; \
+		$(OK) ; \
+		exit 0 ; \
 	fi
-	@exit 0
 
 trace: CXREF+=-trace
 trace: $(TEST)

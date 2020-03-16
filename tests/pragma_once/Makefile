@@ -9,8 +9,9 @@ $(TEST):
 	@../../src/c-xref include1.h include2.h -xrefrc .c-xrefrc -refs "$(CURDIR)/CXrefs" -o $(TEST).log
 	@grep include1.h CXrefs/XFiles > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
-		echo "Failed" ; \
+		$(FAIL) ; \
 		exit 1 ; \
+	else \
+		$(OK) ; \
+		exit 0 ; \
 	fi
-	@echo "Ok"
-	@exit 0

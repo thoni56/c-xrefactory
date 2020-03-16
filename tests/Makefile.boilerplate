@@ -7,6 +7,10 @@
 # $(TEST) target where the execution of the test should go.
 #
 
+# OK and FAIL messages (with colour)
+OK = echo "Tests in '$(TEST)': $(shell tput setaf 2)Ok$(shell tput sgr0)"
+FAIL = echo "Tests in '$(TEST)': $(shell tput setaf 1)Failed$(shell tput sgr0)"
+
 TEST = $(shell basename '$(CURDIR)')
 
 all: .c-xrefrc $(TEST)
