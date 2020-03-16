@@ -30,6 +30,17 @@
 #include "utils.h"
 
 
+#define SET_IDENTIFIER_YYLVAL(name, symb, pos) {\
+    uniyylval->bbidIdent.d = &s_yyIdentBuf[s_yyIdentBufi];\
+    s_yyIdentBufi ++; s_yyIdentBufi %= (YYBUFFERED_ID_INDEX);\
+    FILL_id(uniyylval->bbidIdent.d, name, symb, pos, NULL);\
+    yytext = name;\
+    uniyylval->bbidIdent.b = pos;\
+    uniyylval->bbidIdent.e = pos;\
+    uniyylval->bbidIdent.e.col += strlen(yytext);\
+}
+
+
 /* !!!!!!!!!!!!!!!!!!! to caching !!!!!!!!!!!!!!! */
 
 #include "matab.h"

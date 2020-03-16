@@ -97,7 +97,6 @@
 #define WORK_NEST_LEVEL0()     (s_topBlock->previousTopBlock == NULL)
 #define WORK_NEST_LEVEL1()     (s_topBlock->previousTopBlock != NULL && \
                              s_topBlock->previousTopBlock->previousTopBlock == NULL)
-#define CLASS_NAME_FROM_NUM(cnum) (s_fileTab.tab[cnum]->name+1)
 
 /* *************************************************************** */
 
@@ -314,16 +313,6 @@
 )
 
 #define OL_VIEWABLE_REFS(rrr) ((rrr)->usg.base < UsageMaxOLUsages)
-
-#define SET_IDENTIFIER_YYLVAL(name, symb, pos) {\
-    uniyylval->bbidIdent.d = &s_yyIdentBuf[s_yyIdentBufi];\
-    s_yyIdentBufi ++; s_yyIdentBufi %= (YYBUFFERED_ID_INDEX);\
-    FILL_idIdent(uniyylval->bbidIdent.d, name, symb, pos, NULL);\
-    yytext = name;\
-    uniyylval->bbidIdent.b = pos;\
-    uniyylval->bbidIdent.e = pos;\
-    uniyylval->bbidIdent.e.col += strlen(yytext);\
-}
 
 #define SHOW_COMPLETION_WINDOW(ccc) (\
    (ccc)->comPrefix[0]==0\
