@@ -36,13 +36,13 @@ static int javaNotFqtUsageCorrection(Symbol *sym, int usage);
 
 
 char *javaCreateComposedName(
-                                    char			*prefix,
-                                    S_idIdentList   *className,
-                                    int             classNameSeparator,
-                                    char            *name,
-                                    char			*resBuff,
-                                    int				resBuffSize
-                                ) {
+                             char *prefix,
+                             S_idIdentList *className,
+                             int classNameSeparator,
+                             char *name,
+                             char *resBuff,
+                             int resBuffSize
+                             ) {
     int len, ll, sss;
     char *ln;
     char separator;
@@ -257,18 +257,22 @@ int javaTypeFileExist(S_idIdentList *name) {
     tname.nameType = TypeStruct;
 
     // first check if I have its class in file table
-    // hmm this is causing problems in on-line editing when some missspeled
+    // hmm this is causing problems in on-line editing when some misspelled
     // completion strings were added as types, then a package is resolved
     // as a type and a File from inside directory is not completed.
     // I try to solve it by requiring sourcefile index
-    fname = javaCreateComposedName(":",&tname,'/',"class",tmpMemory,SIZE_TMP_MEM);
+    fname = javaCreateComposedName(":", &tname, '/', "class", tmpMemory, SIZE_TMP_MEM);
     fname[1] = ZIP_SEPARATOR_CHAR;
     FILLF_fileItem(&dd,fname+1, 0,0,0,0,0,0,0,0,0,0,0,0,0,s_noneFileIndex,
                    NULL,NULL,s_noneFileIndex,NULL);
-    if  (fileTabIsMember(&s_fileTab, &dd, &ii) &&
-         s_fileTab.tab[ii]->b.sourceFile!=s_noneFileIndex) {
-        return(1);
+
+    if  (fileTabExists(&s_fileTab, fname+1)) {
+        ii = fileTabLookup(&s_fileTab, fname+1);
+        if (s_fileTab.tab[ii]->b.sourceFile != s_noneFileIndex) {
+            return(1);
+        }
     }
+
     if (s_javaStat->unNamedPackageDir != NULL) {		/* unnamed package */
         fname = javaCreateComposedName(NULL,&tname,SLASH,"java",tmpMemory,SIZE_TMP_MEM);
 /*fprintf(dumpOut,"\n[] testing existence of the file '%s'\n",fname);*/
