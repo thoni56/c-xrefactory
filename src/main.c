@@ -1991,7 +1991,7 @@ static void initFileTab(void) {
                    NULL,NULL,s_noneFileIndex, NULL);
 
     /* Add it to the fileTab and remember its index for future use */
-    fileTabAdd(&s_fileTab, ffii, &s_noneFileIndex);
+    s_noneFileIndex = fileTabAdd(&s_fileTab, ffii);
 }
 
 /*///////////////////////// parsing /////////////////////////////////// */

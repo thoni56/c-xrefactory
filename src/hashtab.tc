@@ -76,22 +76,21 @@ bool CONCAT(HASH_FUN_PREFIX,IsMember)(
     return false;
 }
 
-void CONCAT(HASH_FUN_PREFIX,Add) (
+int CONCAT(HASH_FUN_PREFIX,Add) (
                                  HASH_TAB_TYPE *table,
-                                 HASH_ELEM_TYPE *element,
-                                 int *position
+                                 HASH_ELEM_TYPE *element
                                  ) {
         /* In order to simplify things we do not want IsMember to
            return a position, that should be done when needed. So we
            recalculate the position here... */
         unsigned posid;
+
         posid = HASH_FUN(element);
         posid = posid % table->size;
         assert(table->tab!=NULL);
         while (table->tab[posid] != NULL) {
             if (HASH_ELEM_EQUAL(table->tab[posid], element)) {
-                *position = posid;
-                return;
+                return posid;
             }
             posid=(posid+HASH_SHIFT) % table->size;
         }
@@ -100,7 +99,7 @@ void CONCAT(HASH_FUN_PREFIX,Add) (
             fatalError(ERR_ST, "[hashAdd] file table overflowed", XREF_EXIT_ERR);
         }
         table->tab[posid] = element;
-        *position = posid;
+        return posid;
 }
 
 void CONCAT(HASH_FUN_PREFIX,Map)(

@@ -32,12 +32,11 @@ void fileTabSet (
     mock(table, element, position);
 }
 
-void fileTabAdd (
+int fileTabAdd (
                  struct fileTab *table,
-                 S_fileItem *element,
-                 int *position
+                 S_fileItem *element
                  ) {
-    mock(table, element, position);
+    return mock(table, element);
 }
 
 void fileTabFree (struct fileTab *table) {

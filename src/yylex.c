@@ -135,7 +135,7 @@ int addFileTabItem(char *name, int *outFileNumber) {
     FT_ALLOC(createdFileItem, S_fileItem);
     FILLF_fileItem(createdFileItem, fname, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
                    NULL,NULL,s_noneFileIndex,NULL);
-    fileTabAdd(&s_fileTab, createdFileItem, &out_fileIndex);
+    out_fileIndex = fileTabAdd(&s_fileTab, createdFileItem);
     checkFileModifiedTime(out_fileIndex); // it was too slow on load ?
     *outFileNumber = out_fileIndex;
 
@@ -484,6 +484,7 @@ static FILE *openInclude(char pchar, char *name, char **fileName) {
     char            rdir[MAX_FILE_NAME_SIZE];
     char            *nnn;
     int             nnlen,dlen,fdlen,nmlen;
+
     er = NULL; r = NULL;
     nmlen = strlen(name);
     copyDir(rdir, cFile.fileName, &fdlen);
@@ -708,7 +709,7 @@ static void processDefine(int argFlag) {
                 strcpy(argLinkName, tmpBuff);
                 SM_ALLOC(ppMemory, maca, S_macroArgTabElem);
                 FILL_macroArgTabElem(maca, mm, argLinkName, argi);
-                maTabAdd(&s_maTab, maca, &foundIndex);
+                foundIndex = maTabAdd(&s_maTab, maca);
                 argi ++;
                 GetNonBlankMaybeLexem(lex);
                 tmppp=parpos1; parpos1=parpos2; parpos2=tmppp;

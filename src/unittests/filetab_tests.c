@@ -18,8 +18,8 @@ Ensure(FileTab, can_fetch_a_stored_filename) {
     int fetched_position;
 
     fileTabInit(&fileTab, 5);
-    fileTabAdd(&fileTab, &fileItem, &position_1);
-    fileTabAdd(&fileTab, &fileItem, &position_3);
+    position_1 = fileTabAdd(&fileTab, &fileItem);
+    position_3 = fileTabAdd(&fileTab, &fileItem);
 
     assert_that(fileTabIsMember(&fileTab, &fileItem, &fetched_position));
     assert_that(fetched_position, is_equal_to(position_1));
@@ -31,7 +31,7 @@ Ensure(FileTab, cannot_find_filename_not_in_tab) {
     int out_position = -1;
 
     fileTabInit(&fileTab, 5);
-    fileTabAdd(&fileTab, &exists, &out_position);
+    out_position = fileTabAdd(&fileTab, &exists);
 
     assert_that(fileTabIsMember(&fileTab, &exists, &out_position));
     assert_that(!fileTabIsMember(&fileTab, &donotexist, &out_position));
@@ -45,17 +45,17 @@ Ensure(FileTab, can_add_and_find_multiple_files) {
     int out_position = -1;
 
     fileTabInit(&fileTab, 5);
-    fileTabAdd(&fileTab, &exists1, &out_position);
+    out_position = fileTabAdd(&fileTab, &exists1);
 
     assert_that(fileTabIsMember(&fileTab, &exists1, &out_position));
     assert_that(!fileTabIsMember(&fileTab, &donotexist, &out_position));
 
-    fileTabAdd(&fileTab, &exists2, &out_position);
+    out_position = fileTabAdd(&fileTab, &exists2);
     assert_that(fileTabIsMember(&fileTab, &exists1, &out_position));
     assert_that(fileTabIsMember(&fileTab, &exists2, &out_position));
     assert_that(!fileTabIsMember(&fileTab, &donotexist, &out_position));
 
-    fileTabAdd(&fileTab, &exists3, &out_position);
+    out_position = fileTabAdd(&fileTab, &exists3);
     assert_that(fileTabIsMember(&fileTab, &exists1, &out_position));
     assert_that(fileTabIsMember(&fileTab, &exists2, &out_position));
     assert_that(fileTabIsMember(&fileTab, &exists3, &out_position));
