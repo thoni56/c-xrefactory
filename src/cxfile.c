@@ -928,7 +928,7 @@ static void cxReadFileName(int size,
     FILLF_fileItem(&tffi, id, 0, 0,0, 0,
                    0,0,0,commandLineFlag,0,0,0,0,0,s_noneFileIndex,
                    NULL,NULL,s_noneFileIndex,NULL);
-    if (!fileTabIsMember(&s_fileTab, &tffi, &fileIndex)) {
+    if (!fileTabExists(&s_fileTab, id)) {
         fileIndex = addFileTabItem(id);
         ffi = s_fileTab.tab[fileIndex];
         ffi->b.commandLineEntered = commandLineFlag;
@@ -942,6 +942,7 @@ static void cxReadFileName(int size,
             }
         }
     } else {
+        fileIndex = fileTabLookup(&s_fileTab, id);
         ffi = s_fileTab.tab[fileIndex];
         if (cxrfFileItemShouldBeUpdatedFromCxFile(ffi)) {
             ffi->b.isInterface = isInterface;
