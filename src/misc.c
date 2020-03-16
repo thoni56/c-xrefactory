@@ -1620,10 +1620,10 @@ static void scanClassFile(char *zip, char *file, void *arg) {
     }
 }
 
-void jarFileParse(void) {
+void jarFileParse(char *file_name) {
     int archive, fileIndex, rr;
 
-    archive = zipIndexArchive(s_input_file_name);
+    archive = zipIndexArchive(file_name);
     rr = addFileTabItem(s_input_file_name, &fileIndex);
     assert(rr==0);
     // filename has to be in the table, previously there was "assert(rr==0);" here

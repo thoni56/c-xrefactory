@@ -110,8 +110,8 @@ void ppcGenMarker(S_editorMarker *m) {
   mock(m);
 }
 
-void jarFileParse(void) {
-  mock();
+void jarFileParse(char *file_name) {
+  mock(file_name);
 }
 
 void scanJarFilesForTagSearch(void) {

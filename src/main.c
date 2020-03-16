@@ -3050,7 +3050,7 @@ static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *
             cFile.lb.buffer.file = stdin;
             atLeastOneProcessed=1;
         } else if (LANGUAGE(LANG_JAR)) {
-            jarFileParse();
+            jarFileParse(s_input_file_name);
             atLeastOneProcessed=1;
         } else if (LANGUAGE(LANG_CLASS)) {
             classFileParse();

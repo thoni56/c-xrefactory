@@ -38,7 +38,7 @@ extern void ppcGenReferencePreCheckRecord(S_reference *r, char *text);
 extern void ppcGenGotoPositionRecord(S_position *p);
 extern void ppcGenOffsetPosition(char *fn, int offset);
 extern void ppcGenMarker(S_editorMarker *m);
-extern void jarFileParse(void);
+extern void jarFileParse(char *file_name);
 extern void scanJarFilesForTagSearch(void);
 extern void classFileParse(void);
 extern void fillTrivialSpecialRefItem( S_symbolRefItem *ddd , char *name);
