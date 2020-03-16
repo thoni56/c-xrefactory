@@ -1,0 +1,159 @@
+/* -*- c -*-*/
+#include "../olcxtab.h"
+#include <cgreen/mocks.h>
+
+S_olcxTab s_olcxTab;
+
+
+void olcxTabInit (
+                    struct olcxTab *table,
+                    int size
+                )
+{
+    mock(table, size);
+}
+
+void olcxTabNoAllocInit(
+                    struct olcxTab *table,
+                    int size
+                ) {
+    mock(table, size);
+}
+
+bool olcxTabIsMember (
+                    struct olcxTab *table,
+                    S_userOlcx *element,
+                    int *position,
+                    S_userOlcx **origin
+                ) {
+    return (int)mock(table, element, position, origin);
+}
+
+int olcxTabMembEqual(
+                    S_userOlcx *e1,
+                    S_userOlcx *e2
+            ) {
+    return (int)mock(e1, e2);
+}
+
+int olcxTabNextMember(
+                    S_userOlcx *element,
+                    S_userOlcx **original
+            ) {
+    return (int)mock(element, original);
+}
+
+void olcxTabSet (
+                    struct olcxTab *table,
+                    S_userOlcx *element,
+                    int position
+                ) {
+    mock(table, element, position);
+}
+
+void olcxTabSetLast (
+                    struct olcxTab *table,
+                    S_userOlcx *element,
+                    int position
+                ) {
+    mock(table, element, position);
+}
+
+void olcxTabAdd (
+                    struct olcxTab *table,
+                    S_userOlcx *element,
+                    int *position
+                ) {
+    mock(table, element, position);
+}
+
+int olcxTabDelete(
+                    struct olcxTab *table,
+                    S_userOlcx *element
+            ) {
+    return (int)mock(table, element);
+}
+
+
+int olcxTabDeleteExact(
+                    struct olcxTab *table,
+                    S_userOlcx *element
+            ) {
+    return (int)mock(table, element);
+}
+
+int olcxTabDeleteLast(
+                    struct olcxTab *table,
+                    S_userOlcx *element
+            ) {
+    return (int)mock(table, element);
+}
+
+void olcxTabFree(
+                    struct olcxTab *table
+                ) {
+    mock(table);
+}
+
+void olcxTabMap(
+                    struct olcxTab *table,
+                    void (*fun)(S_userOlcx *)
+                ) {
+    mock(table, fun);
+}
+
+void olcxTabMap2(
+                    struct olcxTab *table,
+                    void (*fun)(S_userOlcx *, void *),
+                    void *a
+                ) {
+    mock(table, fun);
+}
+
+void olcxTabMap3(
+                    struct olcxTab *table,
+                    void (*fun)(int)
+                ) {
+    mock(table, fun);
+}
+
+void olcxTabMap31(
+                    struct olcxTab *table,
+                    void (*fun)(int, void *, void *),
+                    void *arg1, void *arg2
+                ) {
+    mock(table, fun, arg1, arg2);
+}
+
+void olcxTabMap32(
+                    struct olcxTab *table,
+                    void (*fun)(int, void *, void *, void *),
+                    void *arg1, void *arg2, void *arg3
+                ) {
+    mock(table, fun, arg1, arg2, arg3);
+}
+
+void olcxTabMap4(
+                    struct olcxTab *table,
+                    void (*fun)(S_userOlcx *, int),
+                    int i
+                ) {
+    mock(table, fun, i);
+}
+
+void olcxTabMap5(
+                    struct olcxTab *table,
+                    void (*fun)(S_userOlcx *, void *),
+                    void *arg
+                ) {
+    mock(table, fun, arg);
+}
+
+void olcxTabStatistics(
+                    struct olcxTab *table,
+                    int *usedIndexes,
+                    int *elements,
+                    int *maxdepth
+                ) {
+    mock(table, usedIndexes, elements, maxdepth);
+}

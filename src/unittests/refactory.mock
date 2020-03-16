@@ -1,0 +1,68 @@
+/* -*- c -*-*/
+#include "../refactory.h"
+#include <cgreen/mocks.h>
+
+void refactoryAskForReallyContinueConfirmation(void) { 
+  mock();
+}
+
+void refactoryDisplayResolutionDialog(char *message, int messageType, int continuation) { 
+  mock(message, messageType, continuation);
+}
+
+void editorApplyUndos(S_editorUndo *undos, S_editorUndo *until, S_editorUndo **undoundo, int gen) { 
+  mock(undos, until, undoundo, gen);
+}
+
+void editorUndoUntil(S_editorUndo *until, S_editorUndo **undoUndo) { 
+  mock(until, undoUndo);
+}
+
+void mainRefactory(int argc, char **argv) { 
+  mock(argc, argv);
+}
+
+int tpCheckSourceIsNotInnerClass(void) { 
+  return (int) mock();
+}
+
+int tpCheckMoveClassAccessibilities(void) { 
+  return (int) mock();
+}
+
+int tpCheckSuperMethodReferencesForDynToSt(void) { 
+  return (int) mock();
+}
+
+int tpCheckOuterScopeUsagesForDynToSt(void) { 
+  return (int) mock();
+}
+
+int tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) { 
+  return (int) mock();
+}
+
+int tpCheckSuperMethodReferencesForPullUp(void) { 
+  return (int) mock();
+}
+
+int tpCheckSuperMethodReferencesAfterPushDown(void) { 
+  return (int) mock();
+}
+
+void tpCheckFillMoveClassData(S_tpCheckMoveClassData *dd, char *spack, char *tpack) { 
+  mock(dd, spack, tpack);
+}
+
+int tpCheckTargetToBeDirectSubOrSupClass(int flag, char *subOrSuper) { 
+  return (int) mock(flag, subOrSuper);
+}
+
+int tpPullUpFieldLastPreconditions(void) { 
+  return (int) mock();
+}
+
+int tpPushDownFieldLastPreconditions(void) { 
+  return (int) mock();
+}
+

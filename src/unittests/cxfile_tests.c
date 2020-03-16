@@ -74,7 +74,6 @@ Ensure(CxFile, can_get_char) {
     char next = ' ';
     char *characters;
     char *end;
-    int result;
 
     characters = cb->chars;
     strcpy(cb->chars, "123");

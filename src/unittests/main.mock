@@ -1,0 +1,76 @@
+/* -*- c -*-*/
+#include "../main.h"
+#include <cgreen/mocks.h>
+
+void dirInputFile(char *file, char *a1, char *a2, S_completions *a3, void *a4, int *a5) { 
+  mock(file, a1, a2, a3, a4, a5);
+}
+
+void xrefSetenv(char *name, char *val) { 
+  mock(name, val);
+}
+
+int addHtmlCutPath(char *ss) { 
+  return (int) mock(ss);
+}
+
+void createOptionString(char **dest, char *text) { 
+  mock(dest, text);
+}
+
+void copyOptions(S_options *dest, S_options *src) { 
+  mock(dest, src);
+}
+
+void searchDefaultOptionsFile(char *filename, char *options_filename, char *section) { 
+  mock(filename, options_filename, section);
+}
+
+void processOptions(int argc, char **argv, int infilesFlag) { 
+  mock(argc, argv, infilesFlag);
+}
+
+void getPipedOptions(int *outNargc, char ***outNargv) { 
+  mock(outNargc, outNargv);
+}
+
+char *getInputFile(int *fArgCount) { 
+  return (char *) mock(fArgCount);
+}
+
+void writeRelativeProgress(int progress) { 
+  mock(progress);
+}
+
+int mainHandleSetOption(int argc, char **argv, int i) { 
+  return (int) mock(argc, argv, i);
+}
+
+void mainSetLanguage(char *inFileName, int *outLanguage) { 
+  mock(inFileName, outLanguage);
+}
+
+void mainCallEditServerInit(int nargc, char **nargv) { 
+  mock(nargc, nargv);
+}
+
+void mainCallEditServer(int argc, char **argv, int nargc, char **nargv, int *firstPassing) { 
+  mock(argc, argv, nargc, nargv, firstPassing);
+}
+
+void mainCallXref(int argc, char **argv) { 
+  mock(argc, argv);
+}
+
+void mainTaskEntryInitialisations(int argc, char **argv) { 
+  mock(argc, argv);
+}
+
+void mainOpenOutputFile(char *ofile) { 
+  mock(ofile);
+}
+
+void mainCloseOutputFile(void) { 
+  mock();
+}
+

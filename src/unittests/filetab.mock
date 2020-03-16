@@ -1,5 +1,6 @@
 /* -*- c -*-*/
 #include "../filetab.h"
+#include <cgreen/mocks.h>
 
 void fileTabInit(
                  struct fileTab *table,

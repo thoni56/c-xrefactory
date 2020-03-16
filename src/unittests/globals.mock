@@ -1,0 +1,45 @@
+/* -*- c -*-*/
+#include "../globals.h"
+#include <cgreen/mocks.h>
+
+S_memory *cxMemory = NULL;
+FILE *dumpOut = NULL;
+S_usageBits s_noUsage;
+int olcxMemoryAllocatedBytes;
+char s_olSymbolType[COMPLETION_STRING_SIZE];
+S_caching s_cache;
+S_availableRefactoring s_availableRefactorings[MAX_AVAILABLE_REFACTORINGS];
+int s_language;
+S_completions s_completions;
+int s_input_file_number;
+Symbol *s_javaObjectSymbol;
+char ftMemory[SIZE_ftMemory];
+char s_olSymbolClassType[COMPLETION_STRING_SIZE];
+time_t s_fileProcessStartTime;
+S_currentlyParsedStatics s_cps;
+S_options s_ropt;
+int s_currCppPass;
+S_position s_paramPosition;
+S_position s_cxRefPos;
+int ftMemoryi;
+S_position s_primaryStartPosition;
+char s_cwd[MAX_FILE_NAME_SIZE];
+char tmpBuff[TMP_BUFF_SIZE];
+S_position s_noPos;
+char *s_input_file_name;
+Symbol s_errorSymbol;
+S_options s_opt;
+int s_olOriginalFileNumber;
+unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL];
+int s_olstringUsage;
+int s_noneFileIndex;
+S_userOlcx *s_olcxCurrentUser;
+int s_olOriginalComFileNumber;
+int s_wildCharSearch;
+int s_javaPreScanOnly;
+int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL];
+jmp_buf cxmemOverflow;
+z_stream s_defaultZStream;
+S_fileDesc cFile;
+FILE *ccOut;
+int s_olstringServed;

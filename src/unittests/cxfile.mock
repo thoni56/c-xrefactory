@@ -1,0 +1,67 @@
+/* -*- c -*-*/
+#include "../cxfile.h"
+#include <cgreen/mocks.h>
+
+ScanFileFunctionStep normalScanFunctionSequence[1];
+ScanFileFunctionStep fullScanFunctionSequence[1];
+ScanFileFunctionStep byPassFunctionSequence[1];
+ScanFileFunctionStep symbolMenuCreationFunctionSequence[1];
+ScanFileFunctionStep symbolLoadMenuRefsFunctionSequence[1];
+ScanFileFunctionStep secondPassMacroUsageFunctionSequence[1];
+ScanFileFunctionStep classHierarchyFunctionSequence[1];
+ScanFileFunctionStep fullUpdateFunctionSequence[1];
+ScanFileFunctionStep htmlGlobalReferencesFunctionSequence[1];
+ScanFileFunctionStep symbolSearchFunctionSequence[1];
+ScanFileFunctionStep deadCodeDetectionFunctionSequence[1];
+
+int searchStringFitness(char *cxtag, int slen) {
+  return (int) mock(cxtag, slen);
+}
+
+char *crTagSearchLineStatic(char *name, S_position *p, int *len1, int *len2, int *len3) {
+  return (char *) mock(name, p, len1, len2, len3);
+}
+
+int symbolNameShouldBeHiddenFromReports(char *name) {
+  return (int) mock(name);
+}
+
+void searchSymbolCheckReference(S_symbolRefItem *ss, S_reference *rr) {
+  mock(ss, rr);
+}
+
+int cxFileHashNumber(char *sym) {
+  return (int) mock(sym);
+}
+
+void genReferenceFile(int updateFlag, char *fname) {
+  mock(updateFlag, fname);
+}
+
+void addSubClassItemToFileTab(int sup, int inf, int origin) {
+  mock(sup, inf, origin);
+}
+
+void addSubClassesItemsToFileTab(Symbol *ss, int origin) {
+  mock(ss, origin);
+}
+
+void scanCxFile(ScanFileFunctionStep *scanFuns) {
+  mock(scanFuns);
+}
+
+int scanReferenceFile(char *fname, char *fns1, char *fns2, ScanFileFunctionStep *scanFunTab) {
+  return (int) mock(fname, fns1, fns2, scanFunTab);
+}
+
+void readOneAppropReferenceFile(char *symname, ScanFileFunctionStep *scanFunTab) {
+  mock(symname, scanFunTab);
+}
+
+void scanReferenceFiles(char *fname, ScanFileFunctionStep *scanFunTab) {
+  mock(fname, scanFunTab);
+}
+
+int smartReadFileTabFile(void) {
+  return (int) mock();
+}

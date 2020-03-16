@@ -1,10 +1,9 @@
 /* -*- c -*-*/
-/*
-typedef struct refTab {
-    int size;
-    S_symbolRefItem **tab;
-} S_refTab;
-*/
+#include <cgreen/mocks.h>
+#include "reftab.h"
+
+S_refTab s_cxrefTab;
+
 
 void refTabInit (
                     struct refTab *table,
