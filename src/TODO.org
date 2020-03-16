@@ -31,7 +31,7 @@ attack those one by one, maybe?
 ** TODO Make s_noneFileIndex into a constant/define?
 *** TODO Make hashTabAdd() return int rather than *int out arg
 **** DOING Make IsMember() return position rather than out argument
-**** DOING Replace fileTabIsMember() with fileTabExists()/fileTabLookup()
+**** DONE Replace fileTabIsMember() with fileTabExists()/fileTabLookup()
 ***** DONE Implement fileTabLookup()
 **** DONE Make addFileTabItem return the position rather than out arg
 ***** DONE Cover jarFileParse() with test

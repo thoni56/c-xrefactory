@@ -110,7 +110,7 @@ void javaAddNestedClassesAsTypeDefs(Symbol *cc, S_idIdentList *oclassname, int a
   mock(cc, oclassname, accessFlags);
 }
 
-int javaTypeFileExist(S_idIdentList *name) {
+bool javaTypeFileExist(S_idIdentList *name) {
   return (int) mock(name);
 }
 

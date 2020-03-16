@@ -905,7 +905,7 @@ static void cxReadFileName(int size,
                            int genFl
                            ) {
     char id[MAX_FILE_NAME_SIZE];
-    struct fileItem *ffi,tffi;
+    struct fileItem *ffi;
     int i, ii, fileIndex, len, commandLineFlag, isInterface;
     time_t fumtime, umtime;
     char *cc, *fin, cch;
@@ -925,9 +925,6 @@ static void cxReadFileName(int size,
     len = i;
     assert(len+1 < MAX_FILE_NAME_SIZE);
     assert(ii>=0 && ii<MAX_FILES);
-    FILLF_fileItem(&tffi, id, 0, 0,0, 0,
-                   0,0,0,commandLineFlag,0,0,0,0,0,s_noneFileIndex,
-                   NULL,NULL,s_noneFileIndex,NULL);
     if (!fileTabExists(&s_fileTab, id)) {
         fileIndex = addFileTabItem(id);
         ffi = s_fileTab.tab[fileIndex];

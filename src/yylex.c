@@ -117,16 +117,14 @@ static void dpnewline(int n) {
 int addFileTabItem(char *name) {
     int fileIndex, len;
     char *fname, *normalizedFileName;
-    struct fileItem temporaryFileItem, *createdFileItem;
+    struct fileItem *createdFileItem;
 
     /* Create a fileItem on the stack, with a static normalizedFileName, returned by normalizeFileName() */
     normalizedFileName = normalizeFileName(name,s_cwd);
-    FILLF_fileItem(&temporaryFileItem, normalizedFileName, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
-                   NULL,NULL,s_noneFileIndex,NULL);
 
     /* Does it already exist? */
-    if (fileTabIsMember(&s_fileTab, &temporaryFileItem, &fileIndex))
-        return fileIndex;
+    if (fileTabExists(&s_fileTab, normalizedFileName))
+        return fileTabLookup(&s_fileTab, normalizedFileName);
 
     /* If not, add it, but then we need a filename and a fileitem in FT-memory  */
     len = strlen(normalizedFileName);

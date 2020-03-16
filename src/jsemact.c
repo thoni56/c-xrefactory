@@ -243,16 +243,15 @@ static int specialFileNameCasesCheck(char *fname) {
 }
 
 /* TODO this function strangely ressembles to javaFindFile, join them ????*/
-int javaTypeFileExist(S_idIdentList *name) {
+bool javaTypeFileExist(S_idIdentList *name) {
     char            *fname;
     struct stat		stt;
     S_stringList	*cp;
-    int				i,ii;
+    int				i;
     S_idIdentList	tname;
-    S_fileItem		dd;
     S_zipArchiveDir	*place;
 
-    if (name==NULL) return(0);
+    if (name==NULL) return false;
     tname = *name;
     tname.nameType = TypeStruct;
 
@@ -263,44 +262,47 @@ int javaTypeFileExist(S_idIdentList *name) {
     // I try to solve it by requiring sourcefile index
     fname = javaCreateComposedName(":", &tname, '/', "class", tmpMemory, SIZE_TMP_MEM);
     fname[1] = ZIP_SEPARATOR_CHAR;
-    FILLF_fileItem(&dd,fname+1, 0,0,0,0,0,0,0,0,0,0,0,0,0,s_noneFileIndex,
-                   NULL,NULL,s_noneFileIndex,NULL);
 
     if  (fileTabExists(&s_fileTab, fname+1)) {
-        ii = fileTabLookup(&s_fileTab, fname+1);
-        if (s_fileTab.tab[ii]->b.sourceFile != s_noneFileIndex) {
-            return(1);
+        int fileIndex = fileTabLookup(&s_fileTab, fname+1);
+        if (s_fileTab.tab[fileIndex]->b.sourceFile != s_noneFileIndex) {
+            return true;
         }
     }
 
     if (s_javaStat->unNamedPackageDir != NULL) {		/* unnamed package */
         fname = javaCreateComposedName(NULL,&tname,SLASH,"java",tmpMemory,SIZE_TMP_MEM);
-/*fprintf(dumpOut,"\n[] testing existence of the file '%s'\n",fname);*/
-        if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname)) return(1);
+        log_trace("testing existence of file '%s'", fname);
+        if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname))
+            return true;
         //&fname = javaCreateComposedName(NULL,&tname,SLASH,"class",tmpMemory,SIZE_TMP_MEM);
-        //&if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname)) return(1);
+        //&if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname)) return true;
     }
     JavaMapOnPaths(s_javaSourcePaths, {
         fname = javaCreateComposedName(currentPath,&tname,SLASH,"java",tmpMemory,SIZE_TMP_MEM);
-/*fprintf(dumpOut,"\n[] testing existence of the file '%s'\n",fname);*/
-        if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname)) return(1);
+        log_trace("testing existence of file '%s'", fname);
+        if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname))
+            return true;
     });
     for (cp=s_javaClassPaths; cp!=NULL; cp=cp->next) {
         fname = javaCreateComposedName(cp->d,&tname,SLASH,"class",tmpMemory,SIZE_TMP_MEM);
         // hmm. do not need to check statb for .class files
-        if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname)) return(1);
+        if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname))
+            return true;
     }
     // databazes
     fname=javaCreateComposedName(NULL,&tname,'/',"class",tmpMemory,SIZE_TMP_MEM);
     for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && s_zipArchiveTab[i].fn[0]!=0; i++) {
-        if (fsIsMember(&s_zipArchiveTab[i].dir,fname,0,ADD_NO,&place))return(1);
+        if (fsIsMember(&s_zipArchiveTab[i].dir,fname,0,ADD_NO,&place))
+            return true;
     }
     // auto-inferred source-path
     if (s_javaStat->namedPackageDir != NULL) {
         fname = javaCreateComposedName(s_javaStat->namedPackageDir,&tname,SLASH,"java",tmpMemory,SIZE_TMP_MEM);
-        if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname)) return(1);
+        if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname))
+            return true;
     }
-    return(0);
+    return false;
 }
 
 static int javaFindClassFile(char *name, char **resName, struct stat *stt) {

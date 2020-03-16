@@ -168,11 +168,12 @@ static int jslClassifySingleAmbigNameToTypeOrPack(S_idIdentList *name,
                                                   ){
     JslSymbolList ss, *memb, *nextmemb;
     int ii, haveit;
+
     jslCreateTypeSymbolInList(&ss, name->idi.name);
-    //&fprintf(dumpOut,":looking for %s\n", name->idi.name); fflush(dumpOut);
+    log_trace("looking for '%s'", name->idi.name);
     if (jslTypeTabIsMember(s_jsl->typeTab, &ss, &ii, &memb)) {
         /* a type */
-        //&fprintf(dumpOut,":found %s\n", memb->d->linkName); fflush(dumpOut);
+        log_trace("found '%s'", memb->d->linkName);
         assert(memb);
         // O.K. I have to load the class in order to check its access flags
         for(; memb!=NULL; memb=nextmemb) {
@@ -186,7 +187,7 @@ static int jslClassifySingleAmbigNameToTypeOrPack(S_idIdentList *name,
                 haveit = javaOuterClassAccessible(memb->d);
             }
             if (haveit) {
-                //&fprintf(dumpOut,"!O.K. class %s is accessible\n", memb->linkName);
+                log_trace("O.K. class '%s' is accessible", memb->d->name);
                 *str = memb->d;
                 name->nameType = TypeStruct;
                 name->fname = memb->d->linkName;
@@ -519,7 +520,7 @@ void jslNewClassDefinitionBegin(S_idIdent *name,
                                      TYPE_ADD_NO,ORDER_PREPEND, 0);
     }
     cc->bits.accessFlags = accFlags;
-    //&fprintf(dumpOut,"reading class %s [%x] at %x\n", cc->linkName, cc->bits.accessFlags, cc);
+    log_trace("reading class %s [%x] at %x", cc->linkName, cc->bits.accessFlags, cc);
     if (s_jsl->classStat->next != NULL) {
         /* nested class, add it to its outer class list */
         if (s_jsl->classStat->thisClass->bits.accessFlags & ACC_INTERFACE) {
@@ -538,28 +539,29 @@ void jslNewClassDefinitionBegin(S_idIdent *name,
                 assert(s_jsl->classStat->thisClass && s_jsl->classStat->thisClass->u.s);
                 assert(s_jsl->classStat->thisClass->bits.symType==TypeStruct);
                 s_fileTab.tab[cn]->directEnclosingInstance = s_jsl->classStat->thisClass->u.s->classFile;
-                //&fprintf(dumpOut,"!setting dei %d->%d of %s, none==%d\n", cn,  s_jsl->classStat->thisClass->u.s->classFile, s_fileTab.tab[cn]->name, s_noneFileIndex);fflush(dumpOut);
-                // following line was commented, but consistency is checked by assert
-                // so I, have put it back
-                //&cc->u.s->existsDEIarg = 1;
+                log_trace("setting dei %d->%d of %s, none==%d", cn,  s_jsl->classStat->thisClass->u.s->classFile,
+                          s_fileTab.tab[cn]->name, s_noneFileIndex);
             } else {
-                //&cc->u.s->existsDEIarg = 0;
                 s_fileTab.tab[cn]->directEnclosingInstance = s_noneFileIndex;
             }
         }
     }
+
     // add main class name
     if (s_jsl->classStat->next==NULL && s_jsl->pass==1) {
         /* top level class */
         jslTypeSymbolDefinition(cc->name,s_jsl->classStat->className,
                                 TYPE_ADD_YES, ORDER_PREPEND, 0);
     }
+
     assert(cc && cc->u.s && s_fileTab.tab[cc->u.s->classFile]);
     assert(s_jsl->sourceFileNumber>=0 && s_jsl->sourceFileNumber!=s_noneFileIndex);
     assert(s_fileTab.tab[s_jsl->sourceFileNumber]);
     fileInd = cc->u.s->classFile;
-    //&fprintf(dumpOut,"setting source file of %s to %s\n", s_fileTab.tab[cc->u.s->classFile]->name, s_fileTab.tab[s_jsl->sourceFileNumber]->name);
+    log_trace("setting source file of %s to %s", s_fileTab.tab[cc->u.s->classFile]->name,
+              s_fileTab.tab[s_jsl->sourceFileNumber]->name);
     s_fileTab.tab[fileInd]->b.sourceFile = s_jsl->sourceFileNumber;
+
     if (accFlags & ACC_INTERFACE) s_fileTab.tab[fileInd]->b.isInterface=1;
     addClassTreeHierarchyReference(fileInd,&inname->p,UsageClassTreeDefinition);
     if (inname->p.file != s_olOriginalFileNumber && s_opt.server_operation == OLO_PUSH) {
@@ -573,7 +575,8 @@ void jslNewClassDefinitionBegin(S_idIdent *name,
     // here reset the innerclasses number, so the next call will
     // surely allocate the table and will start from the first one
     // it is a little bit HACKED :)
-    if (s_jsl->pass==1) cc->u.s->nnested = 0;
+    if (s_jsl->pass==1)
+        cc->u.s->nnested = 0;
 
     stackMemoryBlockStart();
     XX_ALLOC(ill, S_idIdentList);
