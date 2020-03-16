@@ -3476,18 +3476,16 @@ void getLineColCursorPositionFromCommandLineOption( int *l, int *c ) {
 }
 
 int getClassNumFromClassLinkName(char *name, int defaultResult) {
-    int                 ii, clii;
-    char                cfname[MAX_FILE_NAME_SIZE];
-    S_fileItem          ffi;
+    int fileIndex;
+    char classFileName[MAX_FILE_NAME_SIZE];
 
-    clii = defaultResult;
-    SPRINT_FILE_TAB_CLASS_NAME(cfname, name);
-    //&fprintf(dumpOut,"looking for class %s\n",cfname);fflush(dumpOut);
-    FILLF_fileItem(&ffi,cfname, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,
-                   s_noneFileIndex,NULL,NULL,s_noneFileIndex,NULL);
-    if (fileTabIsMember(&s_fileTab, &ffi, &ii)) clii = ii;
+    fileIndex = defaultResult;
+    SPRINT_FILE_TAB_CLASS_NAME(classFileName, name);
+    log_trace("looking for class file '%s'", classFileName);
+    if (fileTabExists(&s_fileTab, classFileName))
+        fileIndex = fileTabLookup(&s_fileTab, classFileName);
 
-    return clii;
+    return fileIndex;
 }
 
 static int olSpecialFieldCreateSelection(char *fieldName, int storage) {
