@@ -113,7 +113,7 @@ static void dpnewline(int n) {
 #endif
 
 /* *********************************************************** */
-
+/* Returns 0 if already existed, and 1 of actually adding      */
 int addFileTabItem(char *name, int *outFileNumber) {
     int out_fileIndex, len;
     char *fname, *normalizedFileName;
@@ -143,7 +143,7 @@ int addFileTabItem(char *name, int *outFileNumber) {
 }
 
 static void getOrCreateFileInfo(char *ss, int *fileNumber, char **fileName) {
-    int fileIndex, newFileFlag,cxloading;
+    int fileIndex, newFileFlag, cxloading;
 
     if (ss==NULL) {
         *fileNumber = fileIndex = s_noneFileIndex;
