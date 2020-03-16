@@ -2445,7 +2445,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     s_fileAbortionEnabled = 0;
 
     // supposing that file table is still here, but reinit it
-    fileTabMap3(&s_fileTab, mainReinitFileTabEntry);
+    fileTabMap(&s_fileTab, mainReinitFileTabEntry);
 
     DM_INIT(cxMemory);
     // the following causes long jump, berk.
