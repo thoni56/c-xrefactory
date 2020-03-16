@@ -1,4 +1,4 @@
-/* .c template for hashed table*/
+/* .c template for hashed list */
 
 /* requires macros:
     HASH_TAB_NAME (both name for struct and prefix for functions)
