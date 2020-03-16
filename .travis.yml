@@ -19,7 +19,7 @@ script:
     - cd unittests
     - make COVERAGE="--coverage -O0"
     # Use Codecov for unittest coverage
-    - bash <(curl -s https://codecov.io/bash)
+    #- bash <(curl -s https://codecov.io/bash)
     - cd ../..
     # Now reset coverage and run integration tests
     - find . -name *.gcda -exec rm {} \;
@@ -33,6 +33,8 @@ script:
     - lcov -d src -c -o coverage.info
     - lcov --remove coverage.info '/usr/*' -o coverage.info
     - coveralls-lcov coverage.info
+    # Try Codecov for coverage also
+    - bash <(curl -s https://codecov.io/bash)
 
 branches:
     except:
