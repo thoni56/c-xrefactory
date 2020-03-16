@@ -1,6 +1,6 @@
 vpath %.c ..
 
-CFLAGS = -g -MMD -fPIC -I.. $(COVERAGE)
+CFLAGS = -g -MMD -Wall -fPIC -I.. $(COVERAGE)
 
 OBJDIR=.objs
 
