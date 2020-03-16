@@ -183,15 +183,16 @@ static int fileNameShouldBePruned(char *fn) {
 }
 
 static void scheduleCommandLineEnteredFileToProcess(char *fn) {
-    int ii;
-    addFileTabItem(fn,&ii);
+    int fileIndex;
+
+    fileIndex = addFileTabItem(fn);
     if (s_opt.taskRegime!=RegimeEditServer) {
-        // yes in edit server you processa also headers, etc.
-        s_fileTab.tab[ii]->b.commandLineEntered = 1;
+        // yes in edit server you process also headers, etc.
+        s_fileTab.tab[fileIndex]->b.commandLineEntered = 1;
     }
-    log_trace("recursively process command line argument file '%s'", s_fileTab.tab[ii]->name);
+    log_trace("recursively process command line argument file '%s'", s_fileTab.tab[fileIndex]->name);
     if (s_opt.updateOnlyModifiedFiles==0) {
-        s_fileTab.tab[ii]->b.scheduledToProcess = 1;
+        s_fileTab.tab[fileIndex]->b.scheduledToProcess = 1;
     }
 }
 

@@ -4685,16 +4685,11 @@ static void answerPushGlobalUnusedSymbolsAction(void) {
 
 static void getCallerPositionFromCommandLineOption(S_position *opos) {
     int f,l,c;
-    assert(opos!=NULL);
+
+    assert(opos != NULL);
     f = s_olOriginalFileNumber;
-#ifdef ZERO
-    assert(s_opt.lineFileName!=NULL);
-    // this was here before putting out line_fileName
-    assert(s_opt.lineFileName!=NULL);
-    addFileTabItem(s_opt.lineFileName, &f);
-#endif
-    getLineColCursorPositionFromCommandLineOption( &l, &c);
-    FILL_position(opos, f,l,c);
+    getLineColCursorPositionFromCommandLineOption(&l, &c);
+    FILL_position(opos, f, l, c);
 }
 
 static void answerClassName(char *name) {

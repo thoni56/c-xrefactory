@@ -738,13 +738,14 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
 
 void javaReadSymbolsFromSourceFile(char *fname) {
     S_jslTypeTab    *typeTab;
-    int				ii;
+    int				fileIndex;
     int				memBalance;
-    addFileTabItem(fname, &ii);
+
+    fileIndex = addFileTabItem(fname);
     memBalance = s_topBlock->firstFreeIndex;
     stackMemoryBlockStart();
     XX_ALLOC(typeTab, S_jslTypeTab);
-    javaReadSymbolFromSourceFileInit(ii, typeTab);
+    javaReadSymbolFromSourceFileInit(fileIndex, typeTab);
     jslTypeTabInit(typeTab, MAX_JSL_SYMBOLS);
     javaReadSymbolsFromSourceFileNoFreeing(fname, fname);
     // there may be several unbalanced blocks
@@ -753,17 +754,16 @@ void javaReadSymbolsFromSourceFile(char *fname) {
 }
 
 static void addJavaFileDependency(int file, char *onfile) {
-    int         fn;
+    int         fileIndex;
     S_position	pos;
+
     // do dependencies only when doing cross reference file
     if (s_opt.taskRegime != RegimeXref) return;
     // also do it only for source files
     if (! s_fileTab.tab[file]->b.commandLineEntered) return;
-    fn = -1;
-    addFileTabItem(onfile, &fn);
-    assert(fn != -1 && fn != s_noneFileIndex);
+    fileIndex = addFileTabItem(onfile);
     FILL_position(&pos, file, 0, 0);
-    addIncludeReference(fn, &pos);
+    addIncludeReference(fileIndex, &pos);
 }
 
 
@@ -2687,19 +2687,20 @@ void javaParsedSuperClass(Symbol *symbol) {
     }
 }
 
-void javaSetClassSourceInformation(char *package, S_idIdent *cl) {
+void javaSetClassSourceInformation(char *package, S_idIdent *classId) {
     char    fqt[MAX_FILE_NAME_SIZE];
-    char    classItem[MAX_FILE_NAME_SIZE];
-    int		ii;
-    assert(cl!=NULL);
+    char    className[MAX_FILE_NAME_SIZE];
+    int		fileIndex;
+
+    assert(classId!=NULL);
     if (*package == 0) {
-        sprintf(fqt, "%s", cl->name);
+        sprintf(fqt, "%s", classId->name);
     } else {
-        sprintf(fqt, "%s/%s", package, cl->name);
+        sprintf(fqt, "%s/%s", package, classId->name);
     }
-    SPRINT_FILE_TAB_CLASS_NAME(classItem, fqt);
-    addFileTabItem(classItem, &ii);
-    s_fileTab.tab[ii]->b.sourceFile = cl->p.file;
+    SPRINT_FILE_TAB_CLASS_NAME(className, fqt);
+    fileIndex = addFileTabItem(className);
+    s_fileTab.tab[fileIndex]->b.sourceFile = classId->p.file;
 }
 
 

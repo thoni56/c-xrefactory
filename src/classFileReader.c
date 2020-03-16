@@ -1025,20 +1025,13 @@ void addSuperClassOrInterfaceByName(Symbol *member, char *super, int origin,
 
 int javaCreateClassFileItem( Symbol *memb) {
     char ftname[MAX_FILE_NAME_SIZE];
-    int ii;
-    int newItem;
-    UNUSED newItem;
+    int fileIndex;
 
     SPRINT_FILE_TAB_CLASS_NAME(ftname, memb->linkName);
-    newItem = addFileTabItem(ftname, &ii);
-    memb->u.s->classFile = ii;
-    // this is a hack, as this file is never on command line
-    // but why this was set to 1? This makes forgotting all class hierarchy
-    // from cxfile on update !!!!
-    // I am removing it, but dont know what will happen
-    //& s_fileTab.tab[ii]->b.cxLoading = 1;
-    //& s_fileTab.tab[ii]->b.cxLoaded = 1;
-    return(ii);
+    fileIndex = addFileTabItem(ftname);
+    memb->u.s->classFile = fileIndex;
+
+    return fileIndex;
 }
 
 /* ********************************************************************* */

@@ -513,34 +513,35 @@ static void fillEmptyEditorBuffer(S_editorBuffer *ff, char *aname, int ftnum,
 
 static S_editorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct stat *st) {
     int not_used;
-    char *aname, *nname, *afname, *nfileName;
-    S_editorBuffer *ff;
-    S_editorBufferList *ffl;
-    int ftnum;
+    char *allocatedName, *normalizedName, *afname, *normalizedFileName;
+    S_editorBuffer *buffer;
+    S_editorBufferList *bufferList;
 
-    nname = normalizeFileName(name, s_cwd);
-    ED_ALLOCC(aname, strlen(nname)+1, char);
-    strcpy(aname, nname);
-    nfileName = normalizeFileName(fileName, s_cwd);
-    if (strcmp(nfileName, aname)==0) {
-        afname = aname;
+    normalizedName = normalizeFileName(name, s_cwd);
+    ED_ALLOCC(allocatedName, strlen(normalizedName)+1, char);
+    strcpy(allocatedName, normalizedName);
+    normalizedFileName = normalizeFileName(fileName, s_cwd);
+    if (strcmp(normalizedFileName, allocatedName)==0) {
+        afname = allocatedName;
     } else {
-        ED_ALLOCC(afname, strlen(nfileName)+1, char);
-        strcpy(afname, nfileName);
+        ED_ALLOCC(afname, strlen(normalizedFileName)+1, char);
+        strcpy(afname, normalizedFileName);
     }
-    ED_ALLOC(ff, S_editorBuffer);
-    fillEmptyEditorBuffer(ff, aname, 0, afname);
-    ff->stat = *st;
-    ED_ALLOC(ffl, S_editorBufferList);
-    FILL_editorBufferList(ffl, ff, NULL);
-    log_trace("creating buffer %s %s", ff->name, ff->fileName);
-    //& ppcGenRecord(PPC_IGNORE, tmpBuff, "\n");
-    editorBufferTabAdd(&s_editorBufferTab, ffl, &not_used);
+    ED_ALLOC(buffer, S_editorBuffer);
+    fillEmptyEditorBuffer(buffer, allocatedName, 0, afname);
+    buffer->stat = *st;
+
+    ED_ALLOC(bufferList, S_editorBufferList);
+    FILL_editorBufferList(bufferList, buffer, NULL);
+    log_trace("creating buffer '%s' for '%s'", buffer->name, buffer->fileName);
+
+    editorBufferTabAdd(&s_editorBufferTab, bufferList, &not_used);
+
     // set ftnum at the end, because, addfiletabitem calls back the statb
     // from editor, so be tip-top at this moment!
-    addFileTabItem(aname, &ftnum);
-    ff->ftnum = ftnum;
-    return(ff);
+    buffer->ftnum = addFileTabItem(allocatedName);
+
+    return buffer;
 }
 
 static void editorSetBufferModifiedFlag(S_editorBuffer *buff) {
@@ -570,7 +571,7 @@ S_editorBuffer *editorGetOpenedAndLoadedBuffer(char *name) {
 
 void editorRenameBuffer(S_editorBuffer *buff, char *nName, S_editorUndo **undo) {
     char newName[MAX_FILE_NAME_SIZE];
-    int fti, ii, mem, deleted;
+    int fileIndex, ii, mem, deleted;
     S_editorBuffer dd, *removed;
     S_editorBufferList ddl, *memb, *memb2;
     S_editorUndo *uu;
@@ -593,9 +594,9 @@ void editorRenameBuffer(S_editorBuffer *buff, char *nName, S_editorUndo **undo) 
     ED_ALLOCC(buff->name, strlen(newName)+1, char);
     strcpy(buff->name, newName);
     // update also ftnum
-    addFileTabItem(newName, &fti);
-    s_fileTab.tab[fti]->b.commandLineEntered = s_fileTab.tab[buff->ftnum]->b.commandLineEntered;
-    buff->ftnum = fti;
+    fileIndex = addFileTabItem(newName);
+    s_fileTab.tab[fileIndex]->b.commandLineEntered = s_fileTab.tab[buff->ftnum]->b.commandLineEntered;
+    buff->ftnum = fileIndex;
 
     FILL_editorBufferList(memb, buff, NULL);
     if (editorBufferTabIsMember(&s_editorBufferTab, memb, &ii, &memb2)) {

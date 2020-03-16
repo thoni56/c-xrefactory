@@ -113,9 +113,9 @@ static void dpnewline(int n) {
 #endif
 
 /* *********************************************************** */
-/* Returns 0 if already existed, and 1 of actually adding      */
-int addFileTabItem(char *name, int *outFileNumber) {
-    int out_fileIndex, len;
+/* Always return the found index                               */
+int addFileTabItem(char *name) {
+    int fileIndex, len;
     char *fname, *normalizedFileName;
     struct fileItem temporaryFileItem, *createdFileItem;
 
@@ -125,8 +125,8 @@ int addFileTabItem(char *name, int *outFileNumber) {
                    NULL,NULL,s_noneFileIndex,NULL);
 
     /* Does it already exist? */
-    if (fileTabIsMember(&s_fileTab, &temporaryFileItem, outFileNumber))
-        return 0;
+    if (fileTabIsMember(&s_fileTab, &temporaryFileItem, &fileIndex))
+        return fileIndex;
 
     /* If not, add it, but then we need a filename and a fileitem in FT-memory  */
     len = strlen(normalizedFileName);
@@ -135,21 +135,24 @@ int addFileTabItem(char *name, int *outFileNumber) {
     FT_ALLOC(createdFileItem, S_fileItem);
     FILLF_fileItem(createdFileItem, fname, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
                    NULL,NULL,s_noneFileIndex,NULL);
-    out_fileIndex = fileTabAdd(&s_fileTab, createdFileItem);
-    checkFileModifiedTime(out_fileIndex); // it was too slow on load ?
-    *outFileNumber = out_fileIndex;
+    fileIndex = fileTabAdd(&s_fileTab, createdFileItem);
+    checkFileModifiedTime(fileIndex); // it was too slow on load ?
 
-    return 1;
+    return fileIndex;
 }
 
 static void getOrCreateFileInfo(char *ss, int *fileNumber, char **fileName) {
-    int fileIndex, newFileFlag, cxloading;
+    int fileIndex, cxloading;
+    bool newFileFlag = false;
 
     if (ss==NULL) {
         *fileNumber = fileIndex = s_noneFileIndex;
         *fileName = s_fileTab.tab[fileIndex]->name;
     } else {
-        newFileFlag = addFileTabItem(ss, &fileIndex);
+        /* TODO: Previously there was a test for existance,
+           newFileFlag was set if the file was actually added, how to
+           recreate that? IsMember? */
+        fileIndex = addFileTabItem(ss);
         *fileNumber = fileIndex;
         *fileName = s_fileTab.tab[fileIndex]->name;
         checkFileModifiedTime(fileIndex);

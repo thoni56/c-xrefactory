@@ -873,27 +873,28 @@ static void cxrfCheckNumber(int size,
 }
 
 static int cxrfFileItemShouldBeUpdatedFromCxFile(S_fileItem *ffi) {
-    int updateFromCxFile = 1;
-    //fprintf(dumpOut, "!testing cx retake finfo from %s for %s\n", s_cxref_file_name, ffi->name);
+    bool updateFromCxFile = true;
+
+    log_trace("re-read info from '%s' for '%s'?", s_opt.cxrefFileName, ffi->name);
     if (s_opt.taskRegime == RegimeXref) {
         if (ffi->b.cxLoading && ! ffi->b.cxSaved) {
-            updateFromCxFile = 0;
+            updateFromCxFile = false;
         } else {
-            updateFromCxFile = 1;
+            updateFromCxFile = true;
         }
     }
     if (s_opt.taskRegime == RegimeEditServer) {
-        //&fprintf(dumpOut, "!lit st == %d %d\n", ffi->lastInspected, s_fileProcessStartTime);
-        // Hmm, should be there testing on both intervals
-        // s_fileProcessStartTime < ffi->lastInspect < time(NULL) ????
+        log_trace("last inspected == %d, start at %d\n", ffi->lastInspected, s_fileProcessStartTime);
         if (ffi->lastInspected < s_fileProcessStartTime) {
-            updateFromCxFile = 1;
+            updateFromCxFile = true;
         } else {
-            updateFromCxFile = 0;
+            updateFromCxFile = false;
         }
     }
-    //&if (updateFromCxFile) fprintf(dumpOut, "!cx retake finfo from %s for %s\n", s_opt.cxrefFileName, ffi->name);
-    return(updateFromCxFile);
+    log_trace("%sre-read info from '%s' for '%s'", updateFromCxFile?"yes, ":"no, not necessary to ",
+              s_opt.cxrefFileName, ffi->name);
+
+    return updateFromCxFile;
 }
 
 static void cxReadFileName(int size,
@@ -905,7 +906,7 @@ static void cxReadFileName(int size,
                            ) {
     char id[MAX_FILE_NAME_SIZE];
     struct fileItem *ffi,tffi;
-    int i,ii,dii,len,commandLineFlag,isInterface;
+    int i, ii, fileIndex, len, commandLineFlag, isInterface;
     time_t fumtime, umtime;
     char *cc, *fin, cch;
 
@@ -927,26 +928,24 @@ static void cxReadFileName(int size,
     FILLF_fileItem(&tffi, id, 0, 0,0, 0,
                    0,0,0,commandLineFlag,0,0,0,0,0,s_noneFileIndex,
                    NULL,NULL,s_noneFileIndex,NULL);
-    if (! fileTabIsMember(&s_fileTab,&tffi,&dii)) {
-        addFileTabItem(id, &dii);
-        ffi = s_fileTab.tab[dii];
+    if (!fileTabIsMember(&s_fileTab, &tffi, &fileIndex)) {
+        fileIndex = addFileTabItem(id);
+        ffi = s_fileTab.tab[fileIndex];
         ffi->b.commandLineEntered = commandLineFlag;
         ffi->b.isInterface = isInterface;
         if (ffi->lastFullUpdateMtime == 0) ffi->lastFullUpdateMtime=fumtime;
         if (ffi->lastUpdateMtime == 0) ffi->lastUpdateMtime=umtime;
-        //&if (fumtime>ffi->lastFullUpdateMtime) ffi->lastFullUpdateMtime=fumtime;
-        //&if (umtime>ffi->lastUpdateMtime) ffi->lastUpdateMtime=umtime;
         assert(s_opt.taskRegime);
         if (s_opt.taskRegime == RegimeXref) {
             if (genFl == CX_GENERATE_OUTPUT) {
-                writeFileIndexItem(ffi, dii);
+                writeFileIndexItem(ffi, fileIndex);
             }
         }
     } else {
-        ffi = s_fileTab.tab[dii];
+        ffi = s_fileTab.tab[fileIndex];
         if (cxrfFileItemShouldBeUpdatedFromCxFile(ffi)) {
             ffi->b.isInterface = isInterface;
-            // put it to none, it will be updated by source item
+            // Set it to none, it will be updated by source item
             ffi->b.sourceFile = s_noneFileIndex;
         }
         if (s_opt.taskRegime == RegimeEditServer) {
@@ -958,8 +957,8 @@ static void cxReadFileName(int size,
         //&if (umtime>ffi->lastUpdateMtime) ffi->lastUpdateMtime=umtime;
     }
     ffi->b.isFromCxfile = 1;
-    s_decodeFilesNum[ii]=dii;
-    log_trace("%d: '%s' scanned: added as %d",ii,id,dii);
+    s_decodeFilesNum[ii]=fileIndex;
+    log_trace("%d: '%s' scanned: added as %d",ii,id,fileIndex);
     *ccc = cc; *ffin = fin;
 }
 

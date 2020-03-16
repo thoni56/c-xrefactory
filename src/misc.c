@@ -1624,8 +1624,8 @@ void jarFileParse(char *file_name) {
     int archive, fileIndex, rr;
 
     archive = zipIndexArchive(file_name);
-    rr = addFileTabItem(s_input_file_name, &fileIndex);
-    assert(rr==0);
+    fileIndex = addFileTabItem(s_input_file_name);
+    /* assert(rr==0); */
     // filename has to be in the table, previously there was "assert(rr==0);" here
     // when addFileTabItem() returned 0/1 if it existed and used an out arg for
     // the actual index
