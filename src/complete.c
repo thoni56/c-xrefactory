@@ -1281,7 +1281,7 @@ static void javaCompleteComposedName(
     nameType = javaClassifyAmbiguousName(s_javaStat->lastParsedName,NULL,&str,
                                          &expr,&orr,NULL, USELESS_FQT_REFS_ALLOWED,classif,UsageUsed);
     /*&
-      fprintf(dumpOut,"compl %s %s\n",s_javaStat->lastParsedName->idi.name,
+      fprintf(dumpOut,"compl %s %s\n",s_javaStat->lastParsedName->id.name,
       typesName[nameType]);fflush(dumpOut);
       &*/
     if (innerConstruct && nameType != TypeExpression) return;

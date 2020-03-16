@@ -65,7 +65,7 @@
 #define JslImportSingleDeclaration(iname) {\
     Symbol *sym;\
     jslClassifyAmbiguousTypeName(iname, &sym);\
-    jslTypeSymbolDefinition(iname->idi.name, iname->next, TYPE_ADD_YES,ORDER_PREPEND, 1);\
+    jslTypeSymbolDefinition(iname->id.name, iname->next, TYPE_ADD_YES,ORDER_PREPEND, 1);\
 }
 
 /* Import on demand has to solve following situation (not handled by JSL) */
@@ -760,8 +760,8 @@ Name:
                     s_javaStat->lastParsedName = $1.d;
                 } else {
                     PropagateBorns($$, $1, $1);
-                    javaCheckForPrimaryStart(&$1.d->idi.p, &$1.d->idi.p);
-                    javaCheckForStaticPrefixStart(&$1.d->idi.p, &$1.d->idi.p);
+                    javaCheckForPrimaryStart(&$1.d->id.p, &$1.d->id.p);
+                    javaCheckForStaticPrefixStart(&$1.d->id.p, &$1.d->id.p);
                 }
             };
         }
@@ -1064,7 +1064,7 @@ SingleTypeImportDeclaration:
                     if (lastUselessRef!=NULL) lastUselessRef->usg = s_noUsage;
                     s_cps.lastImportLine = $1.d->p.line;
                     if ($2.d->next!=NULL) {
-                        javaAddImportConstructionReference(&$2.d->next->idi.p, &$1.d->p, UsageDefined);
+                        javaAddImportConstructionReference(&$2.d->next->id.p, &$1.d->p, UsageDefined);
                     }
                 } else {
                     PropagateBorns($$, $1, $3);
@@ -1089,7 +1089,7 @@ TypeImportOnDemandDeclaration:
                                                    CLASS_TO_TYPE,UsageUsed);
                     if (lastUselessRef!=NULL) lastUselessRef->usg = s_noUsage;
                     s_cps.lastImportLine = $1.d->p.line;
-                    javaAddImportConstructionReference(&$2.d->idi.p, &$1.d->p, UsageDefined);
+                    javaAddImportConstructionReference(&$2.d->id.p, &$1.d->p, UsageDefined);
                 } else {
                     PropagateBorns($$, $1, $5);
                 }
@@ -3160,7 +3160,7 @@ NestedConstructorInvocation:
                     if ($1.d.t->kind == TypeStruct) {
                         mm = javaNestedNewType($1.d.t->u.t, $3.d, $4.d);
                         if (mm->kind != TypeError) {
-                            s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &($4.d->idi.p));
+                            s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &($4.d->id.p));
                         }
                     }
                 }
@@ -3174,11 +3174,11 @@ NestedConstructorInvocation:
                     } else {
                         $$.d.t = &s_errorModifier;
                     }
-                    javaHandleDeclaratorParamPositions(&$4.d->idi.p, &$7.d, $8.d.p, &$9.d);
+                    javaHandleDeclaratorParamPositions(&$4.d->id.p, &$7.d, $8.d.p, &$9.d);
                     assert($$.d.t);
                     $$.d.nid = $4.d;
                     if ($$.d.t->kind != TypeError) {
-                        javaConstructorInvocation($$.d.t->u.t, &($4.d->idi.p), $8.d.t);
+                        javaConstructorInvocation($$.d.t->u.t, &($4.d->id.p), $8.d.t);
                     }
                 } else {
                     $$.d.pp = $1.d.pp;
@@ -3193,7 +3193,7 @@ NestedConstructorInvocation:
                     s_cp.erfsForParamsComplet = NULL;
                     mm = javaNewAfterName($1.d, $3.d, $4.d);
                     if (mm->kind != TypeError) {
-                        s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &($4.d->idi.p));
+                        s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &($4.d->id.p));
                     }
                 }
             }
@@ -3204,11 +3204,11 @@ NestedConstructorInvocation:
                     $$.d.t = javaNewAfterName($1.d, $3.d, $4.d);
                     $$.d.nid = $4.d;
                     if ($$.d.t->kind != TypeError) {
-                        javaConstructorInvocation($$.d.t->u.t, &($4.d->idi.p), $8.d.t);
+                        javaConstructorInvocation($$.d.t->u.t, &($4.d->id.p), $8.d.t);
                     }
                 } else {
                     $$.d.pp = javaGetNameStartingPosition($1.d);
-                    javaHandleDeclaratorParamPositions(&$4.d->idi.p, &$7.d, $8.d.p, &$9.d);
+                    javaHandleDeclaratorParamPositions(&$4.d->id.p, &$7.d, $8.d.p, &$9.d);
                     PropagateBorns($$, $1, $9);
                 }
             }
@@ -3226,7 +3226,7 @@ NewName:
                                           CLASS_TO_TYPE,UsageUsed);
                 $1.d->nameType = TypeStruct;
                 ss = javaTypeSymbolUsage($1.d, ACC_DEFAULT);
-                s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(ss, &($1.d->idi.p));
+                s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(ss, &($1.d->id.p));
             }
             $$ = $1;
         }
@@ -3271,12 +3271,12 @@ ClassInstanceCreationExpression:
                             //&}
                         }
                     }
-                    javaConstructorInvocation(ss, &($3.d->idi.p), $5.d.t);
+                    javaConstructorInvocation(ss, &($3.d->id.p), $5.d.t);
                     tt = javaTypeNameDefinition($3.d);
                     $$.d.t = tt->u.type;
                     $$.d.r = NULL;
                 } else {
-                    javaHandleDeclaratorParamPositions(&$3.d->idi.p, &$4.d, $5.d.p, &$6.d);
+                    javaHandleDeclaratorParamPositions(&$3.d->id.p, &$4.d, $5.d.p, &$6.d);
                     $$.d.pp = &$1.d->p;
                     PropagateBorns($$, $1, $6);
                 }
@@ -3291,9 +3291,9 @@ ClassInstanceCreationExpression:
                         javaClassifyToTypeName($3.d,UsageUsed, &ss, USELESS_FQT_REFS_ALLOWED);
                         $<symbol>$ = javaTypeNameDefinition($3.d);
                         ss = javaTypeSymbolUsage($3.d, ACC_DEFAULT);
-                        javaConstructorInvocation(ss, &($3.d->idi.p), $5.d.t);
+                        javaConstructorInvocation(ss, &($3.d->id.p), $5.d.t);
                     } else {
-                        javaHandleDeclaratorParamPositions(&$3.d->idi.p, &$4.d, $5.d.p, &$6.d);
+                        javaHandleDeclaratorParamPositions(&$3.d->id.p, &$4.d, $5.d.p, &$6.d);
                         // seems that there is no problem like in previous case,
                         // interfaces are never inner.
                     }
@@ -3343,13 +3343,13 @@ ClassInstanceCreationExpression:
                         if ($$.d.t->kind != TypeError) {
                             $<trail>$ = newClassDefinitionBegin(&s_javaAnonymousClassName, ACC_DEFAULT, $$.d.t->u.t);
                         } else {
-                            $<trail>$ = newAnonClassDefinitionBegin(& $1.d.nid->idi);
+                            $<trail>$ = newAnonClassDefinitionBegin(& $1.d.nid->id);
                         }
                     } else {
                         $$.d.pp = $1.d.pp;
                     }
                 } else {
-                    jslNewAnonClassDefinitionBegin(& $1.d.nid->idi);
+                    jslNewAnonClassDefinitionBegin(& $1.d.nid->id);
                 }
             }
         ClassBody
@@ -3619,7 +3619,7 @@ MethodInvocation:
                     $$.d.pp = javaGetNameStartingPosition($1.d);
                     javaCheckForPrimaryStartInNameList($1.d, $$.d.pp);
                     javaCheckForStaticPrefixInNameList($1.d, $$.d.pp);
-                    javaHandleDeclaratorParamPositions(&$1.d->idi.p, &$4.d, $5.d.p, &$6.d);
+                    javaHandleDeclaratorParamPositions(&$1.d->id.p, &$4.d, $5.d.p, &$6.d);
                     PropagateBorns($$, $1, $6);
                 }
             }

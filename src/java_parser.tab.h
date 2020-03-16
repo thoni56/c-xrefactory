@@ -207,7 +207,7 @@ typedef union {
     S_typeModifiersList                     *typeModifList;
     S_freeTrail                             *trail;
     S_id                               *idIdent;
-    S_idIdentList                           *idlist;
+    S_idList                           *idlist;
     S_exprTokenType                         exprType;
     S_intPair                               intpair;
     S_whileExtractData                      *whiledata;

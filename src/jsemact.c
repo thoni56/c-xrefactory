@@ -112,7 +112,7 @@ void javaCheckForPrimaryStartInNameList(S_idList *name, S_position *pp) {
     S_idList *ll;
     if (s_opt.taskRegime != RegimeEditServer) return;
     for(ll=name; ll!=NULL; ll=ll->next) {
-        javaCheckForPrimaryStart(&ll->idi.p, pp);
+        javaCheckForPrimaryStart(&ll->id.p, pp);
     }
 }
 
@@ -127,7 +127,7 @@ void javaCheckForStaticPrefixInNameList(S_idList *name, S_position *pp) {
     S_idList *ll;
     if (s_opt.taskRegime != RegimeEditServer) return;
     for(ll=name; ll!=NULL; ll=ll->next) {
-        javaCheckForStaticPrefixStart(&ll->idi.p, pp);
+        javaCheckForStaticPrefixStart(&ll->id.p, pp);
     }
 }
 
@@ -136,7 +136,7 @@ S_position *javaGetNameStartingPosition(S_idList *name) {
     S_position *res;
     res = &s_noPos;
     for(ll=name; ll!=NULL; ll=ll->next) {
-        res = &ll->idi.p;
+        res = &ll->id.p;
     }
     return(res);
 }
@@ -153,11 +153,11 @@ static void javaAddNameCxReference(S_idList *id, unsigned usage) {
 
     assert(id != NULL);
     cname = javaCreateComposedName(NULL,id,'/',NULL,tmpMemory,SIZE_TMP_MEM);
-    fillSymbol(&dd, id->idi.name, cname, id->idi.p);
+    fillSymbol(&dd, id->id.name, cname, id->id.p);
     FILL_symbolBits(&dd.bits,0,0,0,0,0,id->nameType,StorageNone,0);
 
     /* if you do something else do attention on the union initialisation */
-    addCxReference(&dd, &id->idi.p, usage,s_noneFileIndex, s_noneFileIndex);
+    addCxReference(&dd, &id->id.p, usage,s_noneFileIndex, s_noneFileIndex);
 }
 
 Symbol *javaAddType(S_idList *clas, int accessFlags, S_position *p) {
@@ -184,8 +184,8 @@ void javaAddNestedClassesAsTypeDefs(Symbol *cc, S_idList *oclassname,
             nn = ss->nest[i].cl;
             assert(nn);
 //& XX_ALLOC(ll, S_idList);
-            FILL_id(&ll.idi, nn->name, cc, s_noPos,NULL);
-            FILL_idList(&ll, ll.idi, nn->name,TypeStruct,oclassname);
+            FILL_id(&ll.id, nn->name, cc, s_noPos,NULL);
+            FILL_idList(&ll, ll.id, nn->name,TypeStruct,oclassname);
             javaTypeSymbolDefinition(&ll, accessFlags, TYPE_ADD_YES);
         }
     }
@@ -584,11 +584,11 @@ Symbol *javaTypeSymbolDefinition(S_idList *tname,
     assert(tname);
     assert(tname->nameType == TypeStruct);
 
-    fillSymbol(&pp, tname->idi.name, tname->idi.name, s_noPos);
+    fillSymbol(&pp, tname->id.name, tname->id.name, s_noPos);
     FILL_symbolBits(&pp.bits, 0, 0, accessFlags, 0, 0, TypeStruct, StorageNone, 0);
 
     javaCreateComposedName(NULL,tname,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
-    memb = javaFQTypeSymbolDefinition(tname->idi.name, fqtName);
+    memb = javaFQTypeSymbolDefinition(tname->id.name, fqtName);
     if (addTyp == TYPE_ADD_YES) {
         memb = javaAddTypeToSymbolTable(memb, accessFlags, &s_noPos, 0);
     }
@@ -604,7 +604,7 @@ Symbol *javaTypeSymbolUsage(S_idList *tname,
     assert(tname);
     assert(tname->nameType == TypeStruct);
 
-    fillSymbol(&pp, tname->idi.name, tname->idi.name, s_noPos);
+    fillSymbol(&pp, tname->id.name, tname->id.name, s_noPos);
     FILL_symbolBits(&pp.bits,0,0, accessFlags,0, 0, TypeStruct, StorageNone,0);
 
     if (tname->next==NULL && symTabIsMember(s_symTab, &pp, &ii, &memb)) {
@@ -613,7 +613,7 @@ Symbol *javaTypeSymbolUsage(S_idList *tname,
         return(memb);
     }
     javaCreateComposedName(NULL,tname,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
-    memb = javaFQTypeSymbolDefinition(tname->idi.name, fqtName);
+    memb = javaFQTypeSymbolDefinition(tname->id.name, fqtName);
     return(memb);
 }
 
@@ -628,7 +628,7 @@ Symbol *javaTypeNameDefinition(S_idList *tname) {
     /* XX_ALLOC(dd, S_symbol); */
     /* FILL_symbolBits(&dd->bits,0,0,0,0,0,	TypeDefault, StorageDefault,0); */
     /* FILL_symbol(dd,memb->name,memb->linkName,tname->idi.p,dd->bits,type,td,NULL); */
-    dd = newSymbolIsType(memb->name, memb->linkName, tname->idi.p, td);
+    dd = newSymbolIsType(memb->name, memb->linkName, tname->id.p, td);
     FILL_symbolBits(&dd->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
     return(dd);
 }
@@ -1018,7 +1018,7 @@ int javaClassifySingleAmbigNameToTypeOrPack(S_idList *name,
     int         ii, haveit, accessible;
     S_position  *ipos;
 
-    fillSymbol(&sd, name->idi.name, name->idi.name, s_noPos);
+    fillSymbol(&sd, name->id.name, name->id.name, s_noPos);
     FILL_symbolBits(&sd.bits,0,0, 0,0, 0, TypeStruct, StorageNone,0);
 
     haveit = 0;
@@ -1143,12 +1143,12 @@ static int javaClassifySingleAmbigName( S_idList *name,
 
     if (classif==CLASS_TO_EXPR || classif==CLASS_TO_METHOD) {
         /* argument, local variable or class record */
-        if (findTopLevelName(name->idi.name,rfs,str,classif)==RETURN_OK) {
+        if (findTopLevelName(name->id.name,rfs,str,classif)==RETURN_OK) {
             *expr = (*str)->u.type;
             name->nameType = TypeExpression;
             if (cxrefFlag==ADD_CX_REFS) {
                 minacc = javaGetMinimalAccessibility(rfs, *str);
-                AddAmbCxRef(classif,*str, &name->idi.p, uusage, minacc, *oref, rfs);
+                AddAmbCxRef(classif,*str, &name->id.p, uusage, minacc, *oref, rfs);
                 if (rfs!=NULL && rfs->currClass != NULL) {
                     // the question is: is a reference to static field
                     // also reference to 'this'? If yes, it will
@@ -1157,9 +1157,9 @@ static int javaClassifySingleAmbigName( S_idList *name,
                         nfqtusage = javaNotFqtUsageCorrection(rfs->currClass,UsageNotFQField);
                         addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM,StorageField,
                                 rfs->currClass->u.s->classFile,
-                                &name->idi.p, nfqtusage);
+                                &name->id.p, nfqtusage);
                     } else {
-                        addThisCxReferences(rfs->baseClass->u.s->classFile, &name->idi.p);
+                        addThisCxReferences(rfs->baseClass->u.s->classFile, &name->id.p);
                     }
                 }
             }
@@ -1169,12 +1169,12 @@ static int javaClassifySingleAmbigName( S_idList *name,
     res = javaClassifySingleAmbigNameToTypeOrPack( name, str, cxrefFlag);
     if (res == TypeStruct) {
         if (cxrefFlag==ADD_CX_REFS) {
-            AddAmbCxRef(classif, *str, &name->idi.p, uusage, MIN_REQUIRED_ACCESS, *oref, nullRfs);
+            AddAmbCxRef(classif, *str, &name->id.p, uusage, MIN_REQUIRED_ACCESS, *oref, nullRfs);
             // the problem is here when invoked as nested "new Name()"?
             nfqtusage = javaNotFqtUsageCorrection((*str), UsageNotFQType);
             addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM, StorageField,
                                      (*str)->u.s->classFile,
-                                     &name->idi.p, nfqtusage);
+                                     &name->id.p, nfqtusage);
         }
     } else if (res == TypePackage) {
         if (cxrefFlag==ADD_CX_REFS) {
@@ -1260,8 +1260,8 @@ static void javaCheckForUselessFqt(S_idList *name, int classif, Symbol *rstr,
         assert(str->u.s!=NULL && rstr->u.s!=NULL);
         if (str->u.s->classFile == rstr->u.s->classFile) {
             assert(name && rstr->u.s);
-            *oref = addUselessFQTReference(rstr->u.s->classFile,&name->idi.p);
-//&fprintf(dumpOut,"!adding TYPE useless reference on %d,%d\n", name->idi.p.line, name->idi.p.col);
+            *oref = addUselessFQTReference(rstr->u.s->classFile,&name->id.p);
+//&fprintf(dumpOut,"!adding TYPE useless reference on %d,%d\n", name->id.p.line, name->id.p.col);
             javaResetUselessReference(lref);
             uselessFqt = 1;
         }
@@ -1269,7 +1269,7 @@ static void javaCheckForUselessFqt(S_idList *name, int classif, Symbol *rstr,
     if (! uselessFqt) {
         assert(name->next != NULL);			// it is long name
         assert(name && rstr->u.s);
-        addUnimportedTypeLongReference(rstr->u.s->classFile,&name->idi.p);
+        addUnimportedTypeLongReference(rstr->u.s->classFile,&name->id.p);
     }
 }
 
@@ -1311,8 +1311,8 @@ static S_reference *javaCheckForUselessTypeName(S_idList   *name,
 //&fprintf(dumpOut,"!checking %d(%s) == %d(%s)\n",rfs->currClass->u.s->classFile,rfs->currClass->linkName,localRfs.currClass->u.s->classFile,localRfs.currClass->linkName);
         // equality of pointers may be too strong ???
         if(rfs->currClass->u.s->classFile==localRfs.currClass->u.s->classFile){
-            *oref = addUselessFQTReference(rfs->currClass->u.s->classFile, &name->idi.p);
-//&fprintf(dumpOut,"!adding useless reference on %d,%d\n", name->idi.p.line, name->idi.p.col);
+            *oref = addUselessFQTReference(rfs->currClass->u.s->classFile, &name->id.p);
+//&fprintf(dumpOut,"!adding useless reference on %d,%d\n", name->id.p.line, name->id.p.col);
             javaResetUselessReference(lref);
         }
     }
@@ -1327,7 +1327,7 @@ static void javaClassifyNameToNestedType(S_idList *name, Symbol *outerc, int uus
 
     if ((s_opt.ooChecksBits & OOC_ALL_CHECKS)==0
         || javaRecordAccessible(NULL,outerc, outerc, *str, (*str)->bits.accessFlags)) {
-        *oref = javaAddClassCxReference(*str, &name->idi.p, uusage);
+        *oref = javaAddClassCxReference(*str, &name->id.p, uusage);
     }
 }
 
@@ -1337,7 +1337,7 @@ static void classifiedToNestedClass(S_idList *name, Symbol **str, S_reference **
     javaLoadClassSymbolsFromFile(*str);
     if ((s_opt.ooChecksBits & OOC_ALL_CHECKS)==0
         || javaRecordAccessible(NULL,pstr, pstr, *str, (*str)->bits.accessFlags)) {
-        *oref = javaAddClassCxReference(*str, &name->idi.p, uusage);
+        *oref = javaAddClassCxReference(*str, &name->id.p, uusage);
         if (allowUselesFqtRefs == USELESS_FQT_REFS_ALLOWED) {
             javaCheckForUselessFqt(name, classif, *str, rdtoref, prdtoref);
         }
@@ -1395,7 +1395,7 @@ int javaClassifyAmbiguousName(
                 javaLoadClassSymbolsFromFile(*str);
                 if ((s_opt.ooChecksBits & OOC_ALL_CHECKS)==0
                     || javaOuterClassAccessible(*str)) {
-                    *oref = javaAddClassCxReference(*str, &name->idi.p, uusage);
+                    *oref = javaAddClassCxReference(*str, &name->id.p, uusage);
                 }
             } else {
                 name->nameType = TypePackage;
@@ -1406,7 +1406,7 @@ int javaClassifyAmbiguousName(
             if (classif==CLASS_TO_TYPE) {
                 javaLoadClassSymbolsFromFile(pstr);
                 name->nameType = TypeStruct;
-                if (javaIsNestedClass(pstr,name->idi.name,str)) {
+                if (javaIsNestedClass(pstr,name->id.name,str)) {
                     classifiedToNestedClass(name, str, oref, rdtoref, classif, uusage, pstr, prdtoref, allowUselesFqtRefs);
                 } else {
                     javaClassifyNameToNestedType(name, pstr, uusage, str, oref);
@@ -1416,7 +1416,7 @@ int javaClassifyAmbiguousName(
                 }
             } else {
                 javaLoadClassSymbolsFromFile(pstr);
-                rf = findStrRecordSym(iniFind(pstr,rfs), name->idi.name, str,
+                rf = findStrRecordSym(iniFind(pstr,rfs), name->id.name, str,
                                       classif, ACC_CHECK_NO, VISIB_CHECK_NO);
                 *expr = (*str)->u.type;
                 if (rf == RETURN_OK) {
@@ -1424,18 +1424,18 @@ int javaClassifyAmbiguousName(
                     if ((s_opt.ooChecksBits & OOC_ALL_CHECKS)==0
                         || javaRecordVisibleAndAccessible(rfs, rfs->baseClass, rfs->currClass, *str)) {
                         minacc = javaGetMinimalAccessibility(rfs, *str);
-                        AddAmbCxRef(classif,*str,&name->idi.p, uusage, minacc, *oref, rfs);
+                        AddAmbCxRef(classif,*str,&name->id.p, uusage, minacc, *oref, rfs);
                         if (allowUselesFqtRefs == USELESS_FQT_REFS_ALLOWED) {
                             javaCheckForUselessTypeName(name, classif, rfs,
                                                         rdtoref, prdtoref);
                         }
                     }
                 } else {
-                    if (javaIsNestedClass(pstr,name->idi.name,str)) {
+                    if (javaIsNestedClass(pstr,name->id.name,str)) {
                         classifiedToNestedClass(name, str, oref, rdtoref, classif, uusage, pstr, prdtoref, allowUselesFqtRefs);
                     } else {		/* error, no such record found */
                         name->nameType = TypeExpression;
-                        noSuchRecordError(name->idi.name);
+                        noSuchRecordError(name->id.name);
                     }
                 }
             }
@@ -1444,22 +1444,22 @@ int javaClassifyAmbiguousName(
             if (pexpr->kind == TypeArray) pexpr = &s_javaArrayObjectSymbol.u.s->stype;
 //&			if (pexpr->kind == TypeError) {
 //&				addTrivialCxReference(LINK_NAME_INDUCED_ERROR,TypeInducedError,StorageDefault,
-//&                                   &name->idi.p, UsageUsed);
+//&                                   &name->id.p, UsageUsed);
 //&			}
             if (pexpr->kind != TypeStruct) {
                 *str = &s_errorSymbol;
             } else {
                 javaLoadClassSymbolsFromFile(pexpr->u.t);
-                rr = findStrRecordSym(iniFind(pexpr->u.t,rfs), name->idi.name,
+                rr = findStrRecordSym(iniFind(pexpr->u.t,rfs), name->id.name,
                                       str, classif, ACC_CHECK_NO, VISIB_CHECK_NO);
                 if (rr == RESULT_OK) {
                     if ((s_opt.ooChecksBits & OOC_ALL_CHECKS)==0
                         || javaRecordVisibleAndAccessible(rfs, rfs->baseClass, rfs->currClass, *str)) {
                         minacc = javaGetMinimalAccessibility(rfs, *str);
-                        AddAmbCxRef(classif,*str,&name->idi.p,uusage, minacc, *oref, rfs);
+                        AddAmbCxRef(classif,*str,&name->id.p,uusage, minacc, *oref, rfs);
                     }
                 } else {
-                    noSuchRecordError(name->idi.name);
+                    noSuchRecordError(name->id.name);
                 }
             }
             *expr = (*str)->u.type;
@@ -1919,7 +1919,7 @@ S_typeModifiers *javaNestedNewType(Symbol *sym, S_id *thenew,
     S_reference			*rr;
     if (idl->next == NULL) {
         // standard nested new
-        id = &idl->idi;
+        id = &idl->id;
         assert(sym && sym->linkName);
         id2 = sym->linkName;
         FILLF_idList(&d2, id2, sym, -1,0,0,NULL, id2, TypeStruct, NULL);
@@ -2250,7 +2250,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationN(S_idList *name) {
     erfs->params = NULL;
     nt = javaClassifyAmbiguousName(name, &erfs->s,&erfs->memb,&expr,&rr,NULL, USELESS_FQT_REFS_ALLOWED,CLASS_TO_METHOD,UsageUsed);
     if (nt != TypeExpression) {
-        methodNameNotRecognized(name->idi.name);
+        methodNameNotRecognized(name->id.name);
         return(NULL);
     }
     if (expr == &s_errorModifier) return(NULL);
@@ -2264,7 +2264,7 @@ S_typeModifiers *javaMethodInvocationN(	S_idList *name,
     S_typeModifiers		*res;
     erfs = javaCrErfsForMethodInvocationN(name);
     if (erfs == NULL) return(&s_errorModifier);
-    res = javaMethodInvocation(&erfs->s, erfs->memb, &name->idi, args,REGULAR_METHOD,&s_noPos);
+    res = javaMethodInvocation(&erfs->s, erfs->memb, &name->id, args,REGULAR_METHOD,&s_noPos);
     return(res);
 }
 

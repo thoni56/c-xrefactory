@@ -601,7 +601,7 @@ static void addInitializerRefs(Symbol *decl,
     Symbol *rec=NULL;
     for(ll=idl; ll!=NULL; ll=ll->next) {
         tt = decl->u.type;
-        for (id = &ll->idi; id!=NULL; id=id->next) {
+        for (id = &ll->id; id!=NULL; id=id->next) {
             if (tt->kind == TypeArray) {
                 tt = tt->next;
                 continue;

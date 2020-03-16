@@ -1038,10 +1038,10 @@ typedef struct javaStat {
 /* java composed names */
 
 typedef struct idList {
-    struct id      idi;
-    char				*fname;			/* fqt name for java */
-    uchar				nameType;		/* type of name segment for java */
-    struct idList	*next;
+    struct id id;
+    char *fname;                /* fqt name for java */
+    uchar nameType;             /* type of name segment for java */
+    struct idList *next;
 } S_idList;
 
 typedef struct zipArchiveDir {

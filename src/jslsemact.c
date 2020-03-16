@@ -111,7 +111,7 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, S_idList *packid,
     smemb = javaFQTypeSymbolDefinition(ttt2, fqtName);
     //&fprintf(ccOut, "[jsl] jslTypeSymbolDefinition %s, %s, %s, %s\n", ttt2, fqtName, smemb->name, smemb->linkName);
     if (add==TYPE_ADD_YES) {
-        if (packid!=NULL) importPos = &packid->idi.p;
+        if (packid!=NULL) importPos = &packid->id.p;
         else importPos = &s_noPos;
         XX_ALLOC(xss, JslSymbolList); // CF_ALLOC ???
         FILL_jslSymbolList(xss, smemb, *importPos, isSingleImportedFlag, NULL);
@@ -151,13 +151,13 @@ Symbol *jslTypeNameDefinition(S_idList *tname) {
     Symbol    *memb;
     Symbol        *dd;
     S_typeModifiers     *td;
-    memb = jslTypeSymbolUsage(tname->idi.name, tname->next);
+    memb = jslTypeSymbolUsage(tname->id.name, tname->next);
     CF_ALLOC(td, S_typeModifiers); //XX_ALLOC?
     FILLF_typeModifiers(td, TypeStruct,t,memb,NULL, NULL);
     td->u.t = memb;
 
     CF_ALLOC(dd, Symbol); //XX_ALLOC?
-    fillSymbolWithType(dd, memb->name, memb->linkName, tname->idi.p, td);
+    fillSymbolWithType(dd, memb->name, memb->linkName, tname->id.p, td);
     FILL_symbolBits(&dd->bits,0,0,0,0,0,   TypeDefault, StorageDefault,0);
 
     return(dd);
@@ -169,8 +169,8 @@ static int jslClassifySingleAmbigNameToTypeOrPack(S_idList *name,
     JslSymbolList ss, *memb, *nextmemb;
     int ii, haveit;
 
-    jslCreateTypeSymbolInList(&ss, name->idi.name);
-    log_trace("looking for '%s'", name->idi.name);
+    jslCreateTypeSymbolInList(&ss, name->id.name);
+    log_trace("looking for '%s'", name->id.name);
     if (jslTypeTabIsMember(s_jsl->typeTab, &ss, &ii, &memb)) {
         /* a type */
         log_trace("found '%s'", memb->d->linkName);
@@ -214,14 +214,14 @@ int jslClassifyAmbiguousTypeName(S_idList *name, Symbol **str) {
         case TypePackage:
             if (javaTypeFileExist(name)) {
                 name->nameType = TypeStruct;
-                *str = jslTypeSymbolUsage(name->idi.name, name->next);
+                *str = jslTypeSymbolUsage(name->id.name, name->next);
             } else {
                 name->nameType = TypePackage;
             }
             break;
         case TypeStruct:
             name->nameType = TypeStruct;
-            *str = jslTypeSymbolUsage(name->idi.name, name->next);
+            *str = jslTypeSymbolUsage(name->id.name, name->next);
             break;
         default: assert(0);
         }

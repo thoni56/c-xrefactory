@@ -69,7 +69,7 @@
 #define JslImportSingleDeclaration(iname) {\
     Symbol *sym;\
     jslClassifyAmbiguousTypeName(iname, &sym);\
-    jslTypeSymbolDefinition(iname->idi.name, iname->next, TYPE_ADD_YES,ORDER_PREPEND, 1);\
+    jslTypeSymbolDefinition(iname->id.name, iname->next, TYPE_ADD_YES,ORDER_PREPEND, 1);\
 }
 
 /* Import on demand has to solve following situation (not handled by JSL) */
@@ -3226,8 +3226,8 @@ case 45:
                     s_javaStat->lastParsedName = yyvsp[0].bbidlist.d;
                 } else {
                     PropagateBorns(yyval.bbidlist, yyvsp[0].bbidlist, yyvsp[0].bbidlist);
-                    javaCheckForPrimaryStart(&yyvsp[0].bbidlist.d->idi.p, &yyvsp[0].bbidlist.d->idi.p);
-                    javaCheckForStaticPrefixStart(&yyvsp[0].bbidlist.d->idi.p, &yyvsp[0].bbidlist.d->idi.p);
+                    javaCheckForPrimaryStart(&yyvsp[0].bbidlist.d->id.p, &yyvsp[0].bbidlist.d->id.p);
+                    javaCheckForStaticPrefixStart(&yyvsp[0].bbidlist.d->id.p, &yyvsp[0].bbidlist.d->id.p);
                 }
             };
         }
@@ -3505,7 +3505,7 @@ case 74:
                     if (lastUselessRef!=NULL) lastUselessRef->usg = s_noUsage;
                     s_cps.lastImportLine = yyvsp[-2].bbidIdent.d->p.line;
                     if (yyvsp[-1].bbidlist.d->next!=NULL) {
-                        javaAddImportConstructionReference(&yyvsp[-1].bbidlist.d->next->idi.p, &yyvsp[-2].bbidIdent.d->p, UsageDefined);
+                        javaAddImportConstructionReference(&yyvsp[-1].bbidlist.d->next->id.p, &yyvsp[-2].bbidIdent.d->p, UsageDefined);
                     }
                 } else {
                     PropagateBorns(yyval.bbidlist, yyvsp[-2].bbidIdent, yyvsp[0].bbposition);
@@ -3536,7 +3536,7 @@ case 77:
                                                    CLASS_TO_TYPE,UsageUsed);
                     if (lastUselessRef!=NULL) lastUselessRef->usg = s_noUsage;
                     s_cps.lastImportLine = yyvsp[-4].bbidIdent.d->p.line;
-                    javaAddImportConstructionReference(&yyvsp[-3].bbidlist.d->idi.p, &yyvsp[-4].bbidIdent.d->p, UsageDefined);
+                    javaAddImportConstructionReference(&yyvsp[-3].bbidlist.d->id.p, &yyvsp[-4].bbidIdent.d->p, UsageDefined);
                 } else {
                     PropagateBorns(yyval.bbidlist, yyvsp[-4].bbidIdent, yyvsp[0].bbposition);
                 }
@@ -5891,7 +5891,7 @@ case 360:
                     if (yyvsp[-4].bbexprType.d.t->kind == TypeStruct) {
                         mm = javaNestedNewType(yyvsp[-4].bbexprType.d.t->u.t, yyvsp[-2].bbidIdent.d, yyvsp[-1].bbidlist.d);
                         if (mm->kind != TypeError) {
-                            s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &(yyvsp[-1].bbidlist.d->idi.p));
+                            s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &(yyvsp[-1].bbidlist.d->id.p));
                         }
                     }
                 }
@@ -5908,11 +5908,11 @@ case 361:
                     } else {
                         yyval.bbnestedConstrTokenType.d.t = &s_errorModifier;
                     }
-                    javaHandleDeclaratorParamPositions(&yyvsp[-5].bbidlist.d->idi.p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbtypeModifiersListPositionLstPair.d.p, &yyvsp[0].bbposition.d);
+                    javaHandleDeclaratorParamPositions(&yyvsp[-5].bbidlist.d->id.p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbtypeModifiersListPositionLstPair.d.p, &yyvsp[0].bbposition.d);
                     assert(yyval.bbnestedConstrTokenType.d.t);
                     yyval.bbnestedConstrTokenType.d.nid = yyvsp[-5].bbidlist.d;
                     if (yyval.bbnestedConstrTokenType.d.t->kind != TypeError) {
-                        javaConstructorInvocation(yyval.bbnestedConstrTokenType.d.t->u.t, &(yyvsp[-5].bbidlist.d->idi.p), yyvsp[-1].bbtypeModifiersListPositionLstPair.d.t);
+                        javaConstructorInvocation(yyval.bbnestedConstrTokenType.d.t->u.t, &(yyvsp[-5].bbidlist.d->id.p), yyvsp[-1].bbtypeModifiersListPositionLstPair.d.t);
                     }
                 } else {
                     yyval.bbnestedConstrTokenType.d.pp = yyvsp[-8].bbexprType.d.pp;
@@ -5929,7 +5929,7 @@ case 362:
                     s_cp.erfsForParamsComplet = NULL;
                     mm = javaNewAfterName(yyvsp[-4].bbidlist.d, yyvsp[-2].bbidIdent.d, yyvsp[-1].bbidlist.d);
                     if (mm->kind != TypeError) {
-                        s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &(yyvsp[-1].bbidlist.d->idi.p));
+                        s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &(yyvsp[-1].bbidlist.d->id.p));
                     }
                 }
             }
@@ -5943,11 +5943,11 @@ case 363:
                     yyval.bbnestedConstrTokenType.d.t = javaNewAfterName(yyvsp[-8].bbidlist.d, yyvsp[-6].bbidIdent.d, yyvsp[-5].bbidlist.d);
                     yyval.bbnestedConstrTokenType.d.nid = yyvsp[-5].bbidlist.d;
                     if (yyval.bbnestedConstrTokenType.d.t->kind != TypeError) {
-                        javaConstructorInvocation(yyval.bbnestedConstrTokenType.d.t->u.t, &(yyvsp[-5].bbidlist.d->idi.p), yyvsp[-1].bbtypeModifiersListPositionLstPair.d.t);
+                        javaConstructorInvocation(yyval.bbnestedConstrTokenType.d.t->u.t, &(yyvsp[-5].bbidlist.d->id.p), yyvsp[-1].bbtypeModifiersListPositionLstPair.d.t);
                     }
                 } else {
                     yyval.bbnestedConstrTokenType.d.pp = javaGetNameStartingPosition(yyvsp[-8].bbidlist.d);
-                    javaHandleDeclaratorParamPositions(&yyvsp[-5].bbidlist.d->idi.p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbtypeModifiersListPositionLstPair.d.p, &yyvsp[0].bbposition.d);
+                    javaHandleDeclaratorParamPositions(&yyvsp[-5].bbidlist.d->id.p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbtypeModifiersListPositionLstPair.d.p, &yyvsp[0].bbposition.d);
                     PropagateBorns(yyval.bbnestedConstrTokenType, yyvsp[-8].bbidlist, yyvsp[0].bbposition);
                 }
             }
@@ -5965,7 +5965,7 @@ case 364:
                                           CLASS_TO_TYPE,UsageUsed);
                 yyvsp[0].bbidlist.d->nameType = TypeStruct;
                 ss = javaTypeSymbolUsage(yyvsp[0].bbidlist.d, ACC_DEFAULT);
-                s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(ss, &(yyvsp[0].bbidlist.d->idi.p));
+                s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(ss, &(yyvsp[0].bbidlist.d->id.p));
             }
             yyval.bbidlist = yyvsp[0].bbidlist;
         }
@@ -6010,12 +6010,12 @@ case 365:
                             /*&}*/
                         }
                     }
-                    javaConstructorInvocation(ss, &(yyvsp[-3].bbidlist.d->idi.p), yyvsp[-1].bbtypeModifiersListPositionLstPair.d.t);
+                    javaConstructorInvocation(ss, &(yyvsp[-3].bbidlist.d->id.p), yyvsp[-1].bbtypeModifiersListPositionLstPair.d.t);
                     tt = javaTypeNameDefinition(yyvsp[-3].bbidlist.d);
                     yyval.bbexprType.d.t = tt->u.type;
                     yyval.bbexprType.d.r = NULL;
                 } else {
-                    javaHandleDeclaratorParamPositions(&yyvsp[-3].bbidlist.d->idi.p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbtypeModifiersListPositionLstPair.d.p, &yyvsp[0].bbposition.d);
+                    javaHandleDeclaratorParamPositions(&yyvsp[-3].bbidlist.d->id.p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbtypeModifiersListPositionLstPair.d.p, &yyvsp[0].bbposition.d);
                     yyval.bbexprType.d.pp = &yyvsp[-5].bbidIdent.d->p;
                     PropagateBorns(yyval.bbexprType, yyvsp[-5].bbidIdent, yyvsp[0].bbposition);
                 }
@@ -6032,9 +6032,9 @@ case 366:
                         javaClassifyToTypeName(yyvsp[-3].bbidlist.d,UsageUsed, &ss, USELESS_FQT_REFS_ALLOWED);
                         yyval.symbol = javaTypeNameDefinition(yyvsp[-3].bbidlist.d);
                         ss = javaTypeSymbolUsage(yyvsp[-3].bbidlist.d, ACC_DEFAULT);
-                        javaConstructorInvocation(ss, &(yyvsp[-3].bbidlist.d->idi.p), yyvsp[-1].bbtypeModifiersListPositionLstPair.d.t);
+                        javaConstructorInvocation(ss, &(yyvsp[-3].bbidlist.d->id.p), yyvsp[-1].bbtypeModifiersListPositionLstPair.d.t);
                     } else {
-                        javaHandleDeclaratorParamPositions(&yyvsp[-3].bbidlist.d->idi.p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbtypeModifiersListPositionLstPair.d.p, &yyvsp[0].bbposition.d);
+                        javaHandleDeclaratorParamPositions(&yyvsp[-3].bbidlist.d->id.p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbtypeModifiersListPositionLstPair.d.p, &yyvsp[0].bbposition.d);
                         /* seems that there is no problem like in previous case,*/
                         /* interfaces are never inner.*/
                     }
@@ -6095,13 +6095,13 @@ case 370:
                         if (yyval.bbexprType.d.t->kind != TypeError) {
                             yyval.trail = newClassDefinitionBegin(&s_javaAnonymousClassName, ACC_DEFAULT, yyval.bbexprType.d.t->u.t);
                         } else {
-                            yyval.trail = newAnonClassDefinitionBegin(& yyvsp[0].bbnestedConstrTokenType.d.nid->idi);
+                            yyval.trail = newAnonClassDefinitionBegin(& yyvsp[0].bbnestedConstrTokenType.d.nid->id);
                         }
                     } else {
                         yyval.bbexprType.d.pp = yyvsp[0].bbnestedConstrTokenType.d.pp;
                     }
                 } else {
-                    jslNewAnonClassDefinitionBegin(& yyvsp[0].bbnestedConstrTokenType.d.nid->idi);
+                    jslNewAnonClassDefinitionBegin(& yyvsp[0].bbnestedConstrTokenType.d.nid->id);
                 }
             }
 break;
@@ -6416,7 +6416,7 @@ case 399:
                     yyval.bbexprType.d.pp = javaGetNameStartingPosition(yyvsp[-5].bbidlist.d);
                     javaCheckForPrimaryStartInNameList(yyvsp[-5].bbidlist.d, yyval.bbexprType.d.pp);
                     javaCheckForStaticPrefixInNameList(yyvsp[-5].bbidlist.d, yyval.bbexprType.d.pp);
-                    javaHandleDeclaratorParamPositions(&yyvsp[-5].bbidlist.d->idi.p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbtypeModifiersListPositionLstPair.d.p, &yyvsp[0].bbposition.d);
+                    javaHandleDeclaratorParamPositions(&yyvsp[-5].bbidlist.d->id.p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbtypeModifiersListPositionLstPair.d.p, &yyvsp[0].bbposition.d);
                     PropagateBorns(yyval.bbexprType, yyvsp[-5].bbidlist, yyvsp[0].bbposition);
                 }
             }
