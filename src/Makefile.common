@@ -13,7 +13,7 @@
 #
 
 all: CFLAGS+=-DDEBUG
-all prod: $(ZLIB) c-xref
+all prod: $(ZLIB) unit c-xref
 
 include sources.mk
 
