@@ -1423,8 +1423,8 @@ typedef struct editorUndo {
 /* *********************************************************** */
 
 typedef struct availableRefactoring {
-    unsigned    available;
-    char		*option;
+    bool available;
+    char *option;
 } S_availableRefactoring;
 
 /* **************     parse tree with positions    *********** */

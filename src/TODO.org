@@ -27,14 +27,6 @@ attack those one by one, maybe?
 ** TODO Remove generation of str_fill from build
 ** TODO Remove code for generation of str_fill
 * DOING Start using log.c functions to log to a separate log file
-* DOING Remove FILLF_fileItem() by replacing it with fillFileItem()
-** TODO Make s_noneFileIndex into a constant/define?
-*** TODO Make hashTabAdd() return int rather than *int out arg
-**** DOING Make IsMember() return position rather than out argument
-**** DONE Replace fileTabIsMember() with fileTabExists()/fileTabLookup()
-***** DONE Implement fileTabLookup()
-**** DONE Make addFileTabItem return the position rather than out arg
-***** DONE Cover jarFileParse() with test
 * TODO Fix tests/olcx_refactor_rename gets "buf is not valid"
 * TODO Rename reftab.[ch] to cxreftab.[ch]? Or s_cxreftab to s_reftab?
 * TODO Clean up documentation, primarily remove 'create_distribution'
@@ -102,6 +94,13 @@ easier to mock and unit test other modules.
   with the naming strategy as for the others.
 
 * TODO Move all function prototypes from proto.h to <module>.h
+* DONE Remove FILLF_fileItem() by replacing it with fillFileItem()
+** DONE Make hashTabAdd() return int rather than *int out arg
+*** DONE Make IsMember() return position rather than out argument
+**** DONE Replace fileTabIsMember() with fileTabExists()/fileTabLookup()
+**** DONE Implement fileTabLookup()
+*** DONE Make addFileTabItem return the position rather than out arg
+**** DONE Cover jarFileParse() with test
 * DONE Create a map of how structs are dependent on each other
 * DONE Add an -exit option so that clients can take down server cleanly
 * DONE Ensure only externally used functions are visible in the modules

@@ -2957,7 +2957,7 @@ static void mainEditServerProcessFile( int argc, char **argv,
 static void initAvailableRefactorings(void) {
     int i;
     for(i=0; i<MAX_AVAILABLE_REFACTORINGS; i++) {
-        s_availableRefactorings[i].available=0;
+        s_availableRefactorings[i].available = false;
         s_availableRefactorings[i].option = "";
     }
 }
