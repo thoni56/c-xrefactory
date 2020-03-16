@@ -80,3 +80,25 @@ Ensure(FileTab, can_check_filename_exists) {
     assert_that(fileTabExists(&fileTab, "exists2.c"));
     assert_that(fileTabExists(&fileTab, "exists3.c"));
 }
+
+Ensure(FileTab, can_lookup_filename) {
+    S_fileItem exists1 = {"exists1.c"};
+    S_fileItem exists2 = {"exists2.c"};
+    S_fileItem exists3 = {"exists3.c"};
+    int position = -1;
+
+    fileTabInit(&fileTab, 6);
+    assert_that(fileTabLookup(&fileTab, "donot_exist.c"), is_equal_to(-1));
+
+    position = fileTabAdd(&fileTab, &exists1);
+    assert_that(fileTabLookup(&fileTab, "donot_exist.c"), is_equal_to(-1));
+    assert_that(fileTabLookup(&fileTab, "exists1.c"), is_equal_to(position));
+
+    position = fileTabAdd(&fileTab, &exists2);
+    assert_that(fileTabLookup(&fileTab, "donot_exist.c"), is_equal_to(-1));
+    assert_that(fileTabLookup(&fileTab, "exists2.c"), is_equal_to(position));
+
+    position = fileTabAdd(&fileTab, &exists3);
+    assert_that(fileTabLookup(&fileTab, "donot_exist.c"), is_equal_to(-1));
+    assert_that(fileTabLookup(&fileTab, "exists3.c"), is_equal_to(position));
+}

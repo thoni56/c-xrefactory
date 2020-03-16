@@ -10,7 +10,11 @@
 
 #include "hashtab.tc"
 
-bool fileTabExists(S_fileTab *table, char *fileName) {
+/* This is searching for filenams as strings, not fileItems, which
+   fileTabIsMember() does. It can't be made into a hashtab macro since
+   it knows about how filenames are stored and compared. So there is
+   some duplication here, since this is also looking up things. */
+int fileTabLookup(S_fileTab *table, char *fileName) {
     unsigned posid;
 
     posid = hashFun(fileName);
@@ -18,9 +22,13 @@ bool fileTabExists(S_fileTab *table, char *fileName) {
     assert(table->tab!=NULL);
     while (table->tab[posid] != NULL) {
         if (strcmp(table->tab[posid]->name, fileName) == 0) {
-            return true;
+            return posid;
         }
         posid=(posid+HASH_SHIFT) % table->size;
     }
-    return false;
+    return -1;                  /* Not found */
+}
+
+bool fileTabExists(S_fileTab *table, char *fileName) {
+    return fileTabLookup(table, fileName) != -1;
 }

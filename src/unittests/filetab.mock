@@ -72,3 +72,11 @@ void fileTabMap3(
                  ) {
     mock(table, fun);
 }
+
+bool fileTabExists(struct fileTab *table, char *fileName) {
+    return mock(table, fileName);
+}
+
+int fileTabLookup(struct fileTab *table, char *fileName) {
+    return mock(table, fileName);
+}

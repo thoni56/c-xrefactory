@@ -14,5 +14,5 @@
 #endif
 
 extern bool fileTabExists(S_fileTab *table, char *fileName);
-
+extern int fileTabLookup(S_fileTab *table, char *fileName);
 #endif
