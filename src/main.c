@@ -1983,13 +1983,12 @@ static void initFileTab(void) {
 
     fileTabNoAllocInit(&s_fileTab, MAX_FILES);
 
-    /* Create a "NON_FILE" */
+    /* Create a "NON_FILE" in FT memory */
     len = strlen(NON_FILE_NAME);
     FT_ALLOCC(ff, len+1, char);
     strcpy(ff, NON_FILE_NAME);
     FT_ALLOC(ffii, S_fileItem);
-    FILLF_fileItem(ffii,ff, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
-                   NULL,NULL,s_noneFileIndex, NULL);
+    fillFileItem(ffii, ff, false);
 
     /* Add it to the fileTab and remember its index for future use */
     s_noneFileIndex = fileTabAdd(&s_fileTab, ffii);
@@ -2422,10 +2421,7 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
     editorInit();
 }
 
-static void mainReinitFileTabEntry(S_fileItem *ft, int i) {
-    // well be less strict
-    //&FILLF_fileItem(ft, ft->name, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
-    //&            NULL,NULL,s_noneFileIndex, NULL);
+static void mainReinitFileTabEntry(S_fileItem *ft) {
     ft->infs = ft->sups = NULL;
     ft->directEnclosingInstance = s_noneFileIndex;
     ft->b.scheduledToProcess = 0;

@@ -130,9 +130,10 @@ int addFileTabItem(char *name) {
     len = strlen(normalizedFileName);
     FT_ALLOCC(fname, len+1, char);
     strcpy(fname, normalizedFileName);
+
     FT_ALLOC(createdFileItem, S_fileItem);
-    FILLF_fileItem(createdFileItem, fname, 0, 0,0,0, 0,0,0,0,0,0,0,0,0,s_noneFileIndex,
-                   NULL,NULL,s_noneFileIndex,NULL);
+    fillFileItem(createdFileItem, fname, false);
+
     fileIndex = fileTabAdd(&s_fileTab, createdFileItem);
     checkFileModifiedTime(fileIndex); // it was too slow on load ?
 

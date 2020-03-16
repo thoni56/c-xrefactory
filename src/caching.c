@@ -242,7 +242,8 @@ void recoverMemoriesAfterOverflow(char *cxMemFreeBase) {
 
 void recoverCachePoint(int i, char *readedUntil, int activeCaching) {
     S_cachePoint *cp;
-    //&fprintf(dumpOut,"recovering cache point %d\n",i); fflush(dumpOut);
+
+    log_trace("recovering cache point %d", i);
     cp = &s_cache.cp[i];
     if (! CAN_CONTINUE_CACHING_CLASSES(cp)) {
         ppmMemoryi = cp->ppmMemoryi;
