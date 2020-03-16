@@ -61,3 +61,22 @@ Ensure(FileTab, can_add_and_find_multiple_files) {
     assert_that(fileTabIsMember(&fileTab, &exists3, &out_position));
     assert_that(!fileTabIsMember(&fileTab, &donotexist, &out_position));
 }
+
+Ensure(FileTab, can_check_filename_exists) {
+    S_fileItem exists1 = {"exists1.c"};
+    S_fileItem exists2 = {"exists2.c"};
+    S_fileItem exists3 = {"exists3.c"};
+    S_fileItem donotexist = {"donot_exist.c"};
+    int out_position = -1;
+
+    fileTabInit(&fileTab, 6);
+    out_position = fileTabAdd(&fileTab, &exists1);
+    out_position = fileTabAdd(&fileTab, &exists2);
+    out_position = fileTabAdd(&fileTab, &exists3);
+
+    assert_that(!fileTabExists(&fileTab, "anything"));
+    assert_that(!fileTabExists(&fileTab, "donot_exist.c"));
+    assert_that(fileTabExists(&fileTab, "exists1.c"));
+    assert_that(fileTabExists(&fileTab, "exists2.c"));
+    assert_that(fileTabExists(&fileTab, "exists3.c"));
+}

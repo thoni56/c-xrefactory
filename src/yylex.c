@@ -143,21 +143,19 @@ int addFileTabItem(char *name) {
 
 static void getOrCreateFileInfo(char *ss, int *fileNumber, char **fileName) {
     int fileIndex, cxloading;
-    bool newFileFlag = false;
+    bool existed = false;
 
     if (ss==NULL) {
         *fileNumber = fileIndex = s_noneFileIndex;
         *fileName = s_fileTab.tab[fileIndex]->name;
     } else {
-        /* TODO: Previously there was a test for existance,
-           newFileFlag was set if the file was actually added, how to
-           recreate that? IsMember? */
+        existed = fileTabExists(&s_fileTab, ss);
         fileIndex = addFileTabItem(ss);
         *fileNumber = fileIndex;
         *fileName = s_fileTab.tab[fileIndex]->name;
         checkFileModifiedTime(fileIndex);
         cxloading = s_fileTab.tab[fileIndex]->b.cxLoading;
-        if (newFileFlag) {
+        if (!existed) {
             cxloading = 1;
         } else if (s_opt.update==UP_FAST_UPDATE) {
             if (s_fileTab.tab[fileIndex]->b.scheduledToProcess) {

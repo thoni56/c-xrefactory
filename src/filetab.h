@@ -13,4 +13,6 @@
 #undef HASH_ELEM_TYPE
 #endif
 
+extern bool fileTabExists(S_fileTab *table, char *fileName);
+
 #endif
