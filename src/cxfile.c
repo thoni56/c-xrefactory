@@ -643,8 +643,8 @@ static void genPartialFileTabRefFile(   int updateFlag,
     assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
     openInOutReferenceFiles(updateFlag, fn);
     genCxFileHead();
-    fileTabMap3(&s_fileTab, mapfun);
-    if (mapfun2!=NULL) fileTabMap3(&s_fileTab, mapfun2);
+    fileTabMapWithIndex(&s_fileTab, mapfun);
+    if (mapfun2!=NULL) fileTabMapWithIndex(&s_fileTab, mapfun2);
     scanCxFile(fullScanFunctionSequence);
     referenceFileEnd(updateFlag, fn);
 }
@@ -694,9 +694,9 @@ void genReferenceFile(int updateFlag, char *fname) {
         openInOutReferenceFiles(updateFlag, fname);
         /*&     fileTabMap(&s_fileTab, javaInitSubClassInfo);&*/
         genCxFileHead();
-        fileTabMap3(&s_fileTab, writeFileIndexItem);
-        fileTabMap3(&s_fileTab, writeFileSourceIndexItem);
-        fileTabMap3(&s_fileTab, genClassHierarchyItems);
+        fileTabMapWithIndex(&s_fileTab, writeFileIndexItem);
+        fileTabMapWithIndex(&s_fileTab, writeFileSourceIndexItem);
+        fileTabMapWithIndex(&s_fileTab, genClassHierarchyItems);
         scanCxFile(fullScanFunctionSequence);
         refTabMap(&s_cxrefTab, genRefItem);
         referenceFileEnd(updateFlag, fname);

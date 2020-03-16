@@ -213,7 +213,7 @@ static int cachedIncludedFilePass(int cpi) {
 
 static void recoverCxMemory(char *cxMemFreeBase) {
     CX_FREE_UNTIL(cxMemFreeBase);
-    fileTabMap3(&s_fileTab, fileTabDeleteOutOfMemory);
+    fileTabMapWithIndex(&s_fileTab, fileTabDeleteOutOfMemory);
     refTabMap3(&s_cxrefTab, cxrefTabDeleteOutOfMemory);
 }
 
@@ -258,18 +258,20 @@ void recoverCachePoint(int i, char *readedUntil, int activeCaching) {
     assert(s_opt.taskRegime);
     if (s_opt.taskRegime==RegimeEditServer && s_currCppPass==1) {
         /* remove old references, only on first pass of edit server */
-        //&fprintf(dumpOut,":removing references !!!!!!!!\n",i); fflush(dumpOut);
+        log_trace("removing references");
         cxMemory->i = cp->cxMemoryi;
         refTabMap3(&s_cxrefTab, cxrefTabDeleteOutOfMemory);
-        fileTabMap3(&s_fileTab, fileTabDeleteOutOfMemory);
+        fileTabMapWithIndex(&s_fileTab, fileTabDeleteOutOfMemory);
     }
-    /*fprintf(dumpOut,"recovering 0\n"); fflush(dumpOut);*/
+    log_trace("recovering 0");
     symTabMap3(s_symTab, symTabDeleteOutOfMemory);
-    /*fprintf(dumpOut,"recovering 1\n"); fflush(dumpOut);*/
+    log_trace("recovering 1");
     javaFqtTabMap3(&s_javaFqtTab, javaFqtTabDeleteOutOfMemory);
-    /*fprintf(dumpOut,"recovering 2\n"); fflush(dumpOut);*/
-    /*& fileTabMap3(&s_fileTab, fileTabDeleteOutOfMemory); &*/
-    // do not forget that includes are listed in PP_MEMEORY too.
+    log_trace("recovering 2");
+
+    /*& fileTabMapWithIndex(&s_fileTab, fileTabDeleteOutOfMemory); &*/
+
+    // do not forget that includes are listed in PP_MEMORY too.
     includeListDeleteOutOfMemory();
 
     cFile.lineNumber = cp->lineNumber;
@@ -285,7 +287,7 @@ void recoverCachePoint(int i, char *readedUntil, int activeCaching) {
                  cInput.cc,
                  cInput.fin
                  );
-    /*fprintf(dumpOut,"recovering 3\n"); fflush(dumpOut);*/
+    log_trace("finished recovering");
 }
 
 /* ******************************************************************* */

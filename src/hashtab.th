@@ -49,7 +49,7 @@ extern void CONCAT(HASH_FUN_PREFIX, Map2)(
                     void (*fun)(HASH_ELEM_TYPE *, void *),
                     void *a
                 );
-extern void CONCAT(HASH_FUN_PREFIX, Map3)(
+extern void CONCAT(HASH_FUN_PREFIX, MapWithIndex)(
                     HASH_TAB_TYPE *table,
                     void (*fun)(HASH_ELEM_TYPE *, int)
                 );

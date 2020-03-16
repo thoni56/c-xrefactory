@@ -123,9 +123,9 @@ void CONCAT(HASH_FUN_PREFIX,Map2)(
     }
 }
 
-void CONCAT(HASH_FUN_PREFIX,Map3)(
+void CONCAT(HASH_FUN_PREFIX,MapWithIndex)(
                                  HASH_TAB_TYPE *table,
-                                 void (*fun)(HASH_ELEM_TYPE *, int)
+                                 void (*fun)(HASH_ELEM_TYPE *elem, int index)
                                  ) {
     int i;
     for(i=0; i<table->size; i++) {

@@ -67,9 +67,9 @@ void fileTabMap4(
     mock(table, fun, a, b);
 }
 
-void fileTabMap3(
+void fileTabMapWithIndex(
                  struct fileTab *table,
-                 void (*fun)(S_fileItem *, int)
+                 void (*fun)(S_fileItem *fileItem, int index)
                  ) {
     mock(table, fun);
 }
