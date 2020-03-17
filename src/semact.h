@@ -4,6 +4,9 @@
 #include "symbol.h"
 #include "symtab.h"
 
+#include "proto.h"              /* Requires at least S_recFindStr, probably others */
+
+
 extern void unpackPointers(Symbol *pp);
 extern int displayingErrorMessages(void);
 extern void deleteSymDef(void *p);
