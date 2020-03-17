@@ -749,8 +749,6 @@ typedef struct symStructSpec {
 } S_symStructSpec;
 
 
-#include "symbol.h"
-
 typedef struct symbolList {
     struct symbol        *d;
     struct symbolList    *next;
