@@ -35,5 +35,6 @@ for line in sys.stdin:
                 print(
                     "**** Line '{}' could not be split in (struct, type_name, rest)".format(line))
                 print(e)
-print(" }")
+if in_struct:
+    print(" }")
 print("}")
