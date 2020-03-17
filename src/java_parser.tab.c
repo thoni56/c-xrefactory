@@ -4206,7 +4206,7 @@ case 147:
                     /*& FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->bits,type,NULL,NULL); */
                     /*& REPLACED StackMemAlloc()+FILL_symbol() with: */
                     yyval.bbsymbol.d = newSymbol(yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->p);
-                    FILL_symbolBits(&yyval.bbsymbol.d->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
+                    fillSymbolBits(&yyval.bbsymbol.d->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
                 } else {
                     PropagateBorns(yyval.bbsymbol, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
                 }
@@ -4217,7 +4217,7 @@ case 147:
                 strcpy(name, yyvsp[0].bbidIdent.d->name);
                 CF_ALLOC(yyval.bbsymbol.d, Symbol);
                 fillSymbol(yyval.bbsymbol.d, name, name, yyvsp[0].bbidIdent.d->p);
-                FILL_symbolBits(&yyval.bbsymbol.d->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
+                fillSymbolBits(&yyval.bbsymbol.d->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
             }
         }
 break;

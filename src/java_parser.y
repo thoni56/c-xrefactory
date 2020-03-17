@@ -1671,7 +1671,7 @@ VariableDeclaratorId:
                     /*& FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->bits,type,NULL,NULL); */
                     /*& REPLACED StackMemAlloc()+FILL_symbol() with: */
                     $$.d = newSymbol($1.d->name, $1.d->name, $1.d->p);
-                    FILL_symbolBits(&$$.d->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
+                    fillSymbolBits(&$$.d->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
                 } else {
                     PropagateBorns($$, $1, $1);
                 }
@@ -1682,7 +1682,7 @@ VariableDeclaratorId:
                 strcpy(name, $1.d->name);
                 CF_ALLOC($$.d, Symbol);
                 fillSymbol($$.d, name, name, $1.d->p);
-                FILL_symbolBits(&$$.d->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
+                fillSymbolBits(&$$.d->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
             }
         }
     |	VariableDeclaratorId '[' ']'		{

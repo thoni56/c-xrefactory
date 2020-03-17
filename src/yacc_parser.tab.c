@@ -2502,7 +2502,7 @@ static void addYaccSymbolReference(S_id *name, int usage) {
     Symbol sss;
 
     fillSymbol(&sss, name->name, name->name, name->p);
-    FILL_symbolBits(&sss.bits,0,0,0,0,0,TypeYaccSymbol,StorageNone,0);
+    fillSymbolBits(&sss.bits, ACC_DEFAULT, TypeYaccSymbol, StorageNone);
     addCxReference(&sss, &name->p, usage,s_noneFileIndex, s_noneFileIndex);
 }
 
@@ -2524,7 +2524,7 @@ static void addRuleLocalVariable(S_id *name, int order) {
             /*& REPLACED StackMemAlloc()+FILL_symbol() with */
 
             ss = newSymbol(nn, nn, name->p);
-            FILL_symbolBits(&ss->bits,0,0,0,0,0,TypeDefault,StorageAuto,0);
+            fillSymbolBits(&ss->bits, ACC_DEFAULT, TypeDefault, StorageAuto);
 
             ss->pos.col ++ ; // to avoid ambiguity of NonTerminal <-> $$.d
             addNewDeclaration(p, ss, NULL, StorageAuto, s_symTab);
@@ -2780,7 +2780,7 @@ case 15:
             /*& FILL_symbol(ss,$2.d->name,$2.d->name,$2.d->p,ss->bits,type,NULL,NULL); */
             /*& REPLACED StackMemAlloc()+FILL_symbol() with */
             ss = newSymbol(yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->p);
-            FILL_symbolBits(&ss->bits,0,0,0,0,0,TypeDefault,StorageAuto,0);
+            fillSymbolBits(&ss->bits, ACC_DEFAULT, TypeDefault, StorageAuto);
 
             addYaccSymbolReference(yyvsp[0].bbidIdent.d,UsageDeclared);
             if (l_currentType!=NULL) {
@@ -2912,7 +2912,7 @@ case 192:
             /*& FILL_symbol(d,$1.d->name,$1.d->name,$1.d->p,d->bits,type,$$.d.t,NULL); */
             /*& REPLACED StackMemAlloc()+FILL_symbol with */
             d = newSymbolIsType(yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->p,yyval.bbexprType.d.t);
-            FILL_symbolBits(&d->bits,0,0,0,0,0,TypeDefault, StorageExtern,0);
+            fillSymbolBits(&d->bits, ACC_DEFAULT, TypeDefault, StorageExtern);
 
             dd = addNewSymbolDef(d, StorageExtern, s_symTab, UsageUsed);
             yyval.bbexprType.d.r = NULL;
@@ -3425,7 +3425,7 @@ case 301:
         /*& FILL_symbol($$.d,NULL,NULL,s_noPos,$$.d->bits,type,typeModifiers,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
         yyval.bbsymbol.d = newSymbolIsType(NULL, NULL, s_noPos, typeModifiers);
-        FILL_symbolBits(&yyval.bbsymbol.d->bits, 0, 0, 0, 0, 0, TypeDefault, yyvsp[0].bbunsign.d, 0);
+        fillSymbolBits(&yyval.bbsymbol.d->bits, ACC_DEFAULT, TypeDefault, yyvsp[0].bbunsign.d);
     }
 break;
 case 302:
@@ -3641,7 +3641,7 @@ case 349:
         /*& FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,p,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
         yyval.bbsymbol.d = newSymbolIsType(NULL, NULL, s_noPos, p);
-        FILL_symbolBits(&yyval.bbsymbol.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
+        fillSymbolBits(&yyval.bbsymbol.d->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
 
     }
 break;
@@ -3733,7 +3733,7 @@ case 367:
         /*& FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->bits,type,NULL,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
         yyval.bbsymbol.d = newSymbol(yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->p);
-        FILL_symbolBits(&yyval.bbsymbol.d->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
+        fillSymbolBits(&yyval.bbsymbol.d->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
     }
 break;
 case 368:
@@ -3920,7 +3920,7 @@ case 395:
         /*& FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
         p = newSymbol("", "", pp);
-        FILL_symbolBits(&p->bits, 0, 0, 0, 0, 0, TypeElipsis, StorageDefault, 0);
+        fillSymbolBits(&p->bits, ACC_DEFAULT, TypeElipsis, StorageDefault);
 
         yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
 
@@ -3938,7 +3938,7 @@ case 396:
         /*& FILL_symbol(p,$1.d->name,$1.d->name,$1.d->p,p->bits,type,NULL,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
         p = newSymbol(yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->p);
-        FILL_symbolBits(&p->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
+        fillSymbolBits(&p->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
 
         yyval.bbsymbolPositionLstPair.d.s = p;
         yyval.bbsymbolPositionLstPair.d.p = NULL;
@@ -3954,7 +3954,7 @@ case 397:
         /*& FILL_symbol(p,$3.d->name,$3.d->name,$3.d->p,p->bits,type,NULL,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with:  */
         p = newSymbol(yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->p);
-        FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
+        fillSymbolBits(&p->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
 
         yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
 
@@ -3978,7 +3978,7 @@ case 400:
         /*& FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
         p = newSymbol("", "", pp);
-        FILL_symbolBits(&p->bits, 0, 0, 0, 0, 0, TypeElipsis, StorageDefault, 0);
+        fillSymbolBits(&p->bits, ACC_DEFAULT, TypeElipsis, StorageDefault);
 
         yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
         LIST_APPEND(Symbol, yyval.bbsymbolPositionLstPair.d.s, p);
@@ -4015,7 +4015,7 @@ case 404:
         /*& FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,$1.d,NULL); */
         /*& REPLACED StackMemAlloc()+FILL_symbol() with */
         yyval.bbsymbol.d = newSymbolIsType(NULL, NULL, s_noPos, yyvsp[0].bbtypeModif.d);
-        FILL_symbolBits(&yyval.bbsymbol.d->bits,0,0,0,0,0,TypeDefault, StorageDefault,0);
+        fillSymbolBits(&yyval.bbsymbol.d->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
     }
 break;
 case 405:

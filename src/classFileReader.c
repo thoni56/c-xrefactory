@@ -808,8 +808,8 @@ static void cfAddRecordToClass( char *name,
     /* TODO If this was allocated in "normal" memory we could use newSymbol() */
     CF_ALLOC(symbol, Symbol);
     fillSymbolWithType(symbol, name, linkName, s_noPos, tt);
-    FILL_symbolBits(&symbol->bits,0,0,accessFlags,0, 0,TypeDefault, storage, 0);
-    symbol->u.type = tt;
+    fillSymbolBits(&symbol->bits, accessFlags, TypeDefault, storage);
+
     assert(clas->u.s);
     LIST_APPEND(Symbol, clas->u.s->records, symbol);
     if (s_opt.allowClassFileRefs) {

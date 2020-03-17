@@ -741,6 +741,7 @@ static S_typeModifiers * mergeBaseModTypes(S_typeModifiers *t1, S_typeModifiers 
 
 Symbol *typeSpecifier2(S_typeModifiers *t) {
     Symbol    *r;
+
     /* this is temporary, as long as we do not have the tempmemory in java, c++ */
     if (LANGUAGE(LANG_C)) {
         SM_ALLOC(tmpWorkMemory, r, Symbol);
@@ -748,9 +749,9 @@ Symbol *typeSpecifier2(S_typeModifiers *t) {
         XX_ALLOC(r, Symbol);
     }
     fillSymbolWithType(r, NULL, NULL, s_noPos, t);
-    FILL_symbolBits(&r->bits,0,0,0,0,0,TypeDefault,StorageDefault,0);
+    fillSymbolBits(&r->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
 
-    return(r);
+    return r;
 }
 
 Symbol *typeSpecifier1(unsigned t) {
@@ -837,6 +838,7 @@ void completeDeclarator(Symbol *t, Symbol *d) {
 Symbol *createSimpleDefinition(unsigned storage, unsigned t, S_id *id) {
     S_typeModifiers *typeModifiers;
     Symbol *r;
+
     typeModifiers = StackMemAlloc(S_typeModifiers);
     FILLF_typeModifiers(typeModifiers,t,f,( NULL,NULL) ,NULL,NULL);
     if (id!=NULL) {
@@ -851,8 +853,9 @@ Symbol *createSimpleDefinition(unsigned storage, unsigned t, S_id *id) {
         /*& FILL_symbol(r,NULL, NULL, s_noPos,r->bits,type,typeModifiers,NULL); */
         r = newSymbolIsType(NULL, NULL, s_noPos, typeModifiers);
     }
-    FILL_symbolBits(&r->bits, 0, 0, 0, 0, 0, TypeDefault, storage, 0);
-    return(r);
+    fillSymbolBits(&r->bits, ACC_DEFAULT, TypeDefault, storage);
+
+    return r;
 }
 
 SymbolList *createDefinitionList(Symbol *symbol) {
@@ -910,7 +913,7 @@ S_typeModifiers *simpleStrUnionSpecifier(   S_id *typeName,
     else type = TypeUnion;
 
     fillSymbol(&p, id->name, id->name, id->p);
-    FILL_symbolBits(&p.bits, 0, 0, 0, 0, 0, type, StorageNone, 0);
+    fillSymbolBits(&p.bits, ACC_DEFAULT, type, StorageNone);
 
     if (! symTabIsMember(s_symTab,&p,&ii,&pp)
         || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
@@ -1022,7 +1025,7 @@ S_typeModifiers *crNewAnnonymeStrUnion(S_id *typeName) {
     /*& FILL_symbol(pp, "", NULL, typeName->p,pp->bits,type,NULL, NULL); */
     /*& REPLACED StackMemAlloc()+FILL_symbol() with: */
     pp = newSymbol("", NULL, typeName->p);
-    FILL_symbolBits(&pp->bits, 0, 0, 0, 0, 0, type, StorageNone, 0);
+    fillSymbolBits(&pp->bits, ACC_DEFAULT, type, StorageNone);
 
     setGlobalFileDepNames("", pp, MEM_XX);
     XX_ALLOC(pp->u.s, S_symStructSpec);
@@ -1061,7 +1064,7 @@ S_typeModifiers *simpleEnumSpecifier(S_id *id, int usage) {
     int ii;
 
     fillSymbol(&p, id->name, id->name, id->p);
-    FILL_symbolBits(&p.bits, 0, 0, 0, 0, 0, TypeEnum, StorageNone, 0);
+    fillSymbolBits(&p.bits, ACC_DEFAULT, TypeEnum, StorageNone);
 
     if (! symTabIsMember(s_symTab,&p,&ii,&pp)
         || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
@@ -1082,7 +1085,7 @@ S_typeModifiers *createNewAnonymousEnum(SymbolList *enums) {
     /*& FILL_symbol(pp, "", "", s_noPos,pp->bits,enums,enums, NULL); */
     /*& REPLACED StackMemAlloc()+FILL_symbol() with:  */
     pp = newSymbolIsEnum("", "", s_noPos, enums);
-    FILL_symbolBits(&pp->bits, 0, 0, 0, 0, 0, TypeEnum, StorageNone, 0);
+    fillSymbolBits(&pp->bits, ACC_DEFAULT, TypeEnum, StorageNone);
 
     setGlobalFileDepNames("", pp, MEM_XX);
     pp->u.enums = enums;
@@ -1155,9 +1158,9 @@ Symbol *crEmptyField(void) {
     /*& FILL_symbol(res, "", "", s_noPos,res->bits,type,p,NULL); */
     /*& REPLACED StackMemAlloc()+FILL_symbol() with  */
     res = newSymbolIsType("", "", s_noPos, p);
-    FILL_symbolBits(&res->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
+    fillSymbolBits(&res->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
 
-    return(res);
+    return res;
 }
 
 void handleDeclaratorParamPositions(Symbol *decl, S_position *lpar,

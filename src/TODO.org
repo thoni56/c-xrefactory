@@ -11,6 +11,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 ***** DOING Remove #include "symbol" from proto.h
 ***** DOING semact.c requires FILL_symbolBits which are not strFill'ed
 if symbol.h is not in proto.h. We need to create fillSymbolBits()
+***** TODO Replace 0 with ACC_DEFAULT in calls to fillSymbolBits()
 ****** DONE symtab.h: unknown type name Symbol: include symbol instead of proto
 ******* DONE hashlist.th bool
 ***** DONE Replace all FILL_symbol() calls
@@ -31,6 +32,11 @@ attack those one by one, maybe?
 ** TODO Remove generation of str_fill from build
 ** TODO Remove code for generation of str_fill
 * DOING Start using log.c functions to log to a separate log file
+* TODO Cannot mock structs as arguments like in symbol.mock
+We need to change pos to *pos if that's gonna work
+* TODO Make fillSymbol() and newSymbol() set default symbolBits
+then we only need to set non-default values (which could be done
+using setType(), setStorage() and so on, functions
 * TODO Fix tests/olcx_refactor_rename gets "buf is not valid"
 * TODO Rename reftab.[ch] to cxreftab.[ch]? Or s_cxreftab to s_reftab?
 * TODO Clean up documentation, primarily remove 'create_distribution'

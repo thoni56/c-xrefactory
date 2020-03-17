@@ -27,7 +27,7 @@ static void jslCreateTypeSymbolInList(JslSymbolList *ss ,
     /*& FILL_symbol(sd,name,name,s_noPos,sd->bits,type,NULL,NULL); */
     /*& REPLACED: FILL_symbol() with */
     s = newSymbol(name, name, s_noPos);
-    FILL_symbolBits(&s->bits, 0, 0, 0, 0, 0, TypeStruct, StorageNone, 0);
+    fillSymbolBits(&s->bits, ACC_DEFAULT, TypeStruct, StorageNone);
     FILL_jslSymbolList(ss, s, s_noPos, 0, NULL);
 }
 
@@ -36,7 +36,7 @@ Symbol *jslTypeSpecifier2(S_typeModifiers *t) {
 
     CF_ALLOC(symbol, Symbol);   /* Not in same memory as newSymbol() uses, why? */
     fillSymbolWithType(symbol, NULL, NULL, s_noPos, t);
-    FILL_symbolBits(&symbol->bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
+    fillSymbolBits(&symbol->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
 
     return symbol;
 }
@@ -148,9 +148,10 @@ static Symbol *jslTypeSymbolUsage(char *ttt2, S_idList *packid) {
 }
 
 Symbol *jslTypeNameDefinition(S_idList *tname) {
-    Symbol    *memb;
-    Symbol        *dd;
-    S_typeModifiers     *td;
+    Symbol *memb;
+    Symbol *dd;
+    S_typeModifiers *td;
+
     memb = jslTypeSymbolUsage(tname->id.name, tname->next);
     CF_ALLOC(td, S_typeModifiers); //XX_ALLOC?
     FILLF_typeModifiers(td, TypeStruct,t,memb,NULL, NULL);
@@ -158,9 +159,9 @@ Symbol *jslTypeNameDefinition(S_idList *tname) {
 
     CF_ALLOC(dd, Symbol); //XX_ALLOC?
     fillSymbolWithType(dd, memb->name, memb->linkName, tname->id.p, td);
-    FILL_symbolBits(&dd->bits,0,0,0,0,0,   TypeDefault, StorageDefault,0);
+    fillSymbolBits(&dd->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
 
-    return(dd);
+    return dd;
 }
 
 static int jslClassifySingleAmbigNameToTypeOrPack(S_idList *name,
