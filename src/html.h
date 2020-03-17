@@ -2,6 +2,7 @@
 #define HTML_H
 
 #include "proto.h"
+#include "symbol.h"
 
 extern void genClassHierarchyItemLinks(FILE *ff, S_olSymbolsMenu *itt,
                                        int virtFlag);

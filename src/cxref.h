@@ -2,6 +2,7 @@
 #define CXREF_H
 
 #include "proto.h"
+#include "symbol.h"
 
 extern int olcxReferenceInternalLessFunction(S_reference *r1, S_reference *r2);
 extern int olSymbolRefItemLess(S_symbolRefItem *s1, S_symbolRefItem *s2);

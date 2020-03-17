@@ -2,6 +2,7 @@
 #define EXTRACT_H
 
 #include "proto.h"
+#include "symbol.h"
 
 enum extractModes {
     EXTR_FUNCTION,

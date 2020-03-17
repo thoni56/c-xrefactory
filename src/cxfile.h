@@ -2,6 +2,7 @@
 #define CXFILE_H
 
 #include "proto.h"
+#include "symbol.h"
 
 extern int searchStringFitness(char *cxtag, int slen);
 extern char *crTagSearchLineStatic(char *name, S_position *p,

@@ -2,6 +2,7 @@
 #define JSLSEMACT_H
 
 #include "proto.h"
+#include "symbol.h"
 
 extern Symbol *jslTypeSpecifier1(unsigned t);
 extern Symbol *jslTypeSpecifier2(S_typeModifiers *t);

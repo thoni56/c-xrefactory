@@ -2,6 +2,7 @@
 #define CFREAD_H
 
 #include "proto.h"
+#include "symbol.h"
 
 extern void javaHumanizeLinkName( char *inn, char *outn, int size);
 extern Symbol *cfAddCastsToModule(Symbol *memb, Symbol *sup);
