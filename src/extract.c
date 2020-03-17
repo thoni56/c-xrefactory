@@ -62,10 +62,6 @@ Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
 
     if (s_opt.server_operation != OLO_EXTRACT) return NULL;
 
-    /*& XX_ALLOC(s, Symbol); */
-    /*& FILL_symbolBits(&s->bits,0,0,0,0,0,TypeLabel,StorageAuto,0); */
-    /*& FILL_symbol(s,name,name,s_noPos,s->bits,labn,labn,NULL); */
-    /*& REPLACE XX_ALLOC()+FILL_symbol() with */
     s = newSymbolIsLabel(name, name, s_noPos, labn);
     fillSymbolBits(&s->bits, ACC_DEFAULT, TypeLabel, StorageAuto);
 
@@ -80,9 +76,6 @@ void deleteContinueBreakLabelSymbol(char *name) {
 
     if (s_opt.server_operation != OLO_EXTRACT) return;
 
-    /*& FILL_symbolBits(&ss.bits, 0,0,0,0,0,TypeLabel,StorageAuto,0); */
-    /*& FILL_symbol(&ss, name, name, s_noPos, ss.bits,labn,0, NULL); */
-    /* Above FILL_symbol() on local variable is replaced with fillSymbol() */
     fillSymbolWithLabel(&ss, name, name, s_noPos, 0);
     fillSymbolBits(&ss.bits, ACC_DEFAULT, TypeLabel, StorageAuto);
     if (symTabIsMember(s_symTab, &ss, &ii, &memb)) {
@@ -98,9 +91,6 @@ void genContinueBreakReference(char *name) {
 
     if (s_opt.server_operation != OLO_EXTRACT) return;
 
-    /*& FILL_symbolBits(&ss.bits, 0,0,0,0,0,TypeLabel,StorageAuto,0); */
-    /*& FILL_symbol(&ss, name, name, s_noPos, ss.bits,labn,0, NULL); */
-    /* Above FILL_symbol() on local variable is replaced by fillSymbol() */
     fillSymbolWithLabel(&ss, name, name, s_noPos, 0);
     fillSymbolBits(&ss.bits, ACC_DEFAULT, TypeLabel, StorageAuto);
 
@@ -115,9 +105,6 @@ void genSwitchCaseFork(int lastFlag) {
 
     if (s_opt.server_operation != OLO_EXTRACT) return;
 
-    /*& FILL_symbolBits(&ss.bits, 0,0,0,0,0,TypeLabel,StorageAuto,0); */
-    /*& FILL_symbol(&ss,SWITCH_LABEL_NAME,SWITCH_LABEL_NAME,s_noPos,ss.bits,labn,0,NULL); */
-    /* Above FILL_symbol() on local variable is replaced by fillSymbol() */
     fillSymbolWithLabel(&ss, SWITCH_LABEL_NAME, SWITCH_LABEL_NAME, s_noPos, 0);
     fillSymbolBits(&ss.bits, ACC_DEFAULT, TypeLabel, StorageAuto);
     if (symTabIsMember(s_symTab, &ss, &ii, &memb)) {

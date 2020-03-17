@@ -841,15 +841,8 @@ Symbol *createSimpleDefinition(unsigned storage, unsigned t, S_id *id) {
     typeModifiers = StackMemAlloc(S_typeModifiers);
     FILLF_typeModifiers(typeModifiers,t,f,( NULL,NULL) ,NULL,NULL);
     if (id!=NULL) {
-        /*& r = StackMemAlloc(Symbol); */
-        /*& FILL_symbolBits(&r->bits,0,0,0,0,0,TypeDefault,storage,0); */
-        /*& FILL_symbol(r,id->name,id->name,id->p,r->bits,type,typeModifiers,NULL); */
-        /* REPLACED StackMemAlloc()+FILL_symbol() with */
         r = newSymbolIsType(id->name, id->name, id->p, typeModifiers);
     } else {
-        /*& r = StackMemAlloc(Symbol); */
-        /*& FILL_symbolBits(&r->bits,0,0,0,0,0,TypeDefault,storage,0); */
-        /*& FILL_symbol(r,NULL, NULL, s_noPos,r->bits,type,typeModifiers,NULL); */
         r = newSymbolIsType(NULL, NULL, s_noPos, typeModifiers);
     }
     fillSymbolBits(&r->bits, ACC_DEFAULT, TypeDefault, storage);
@@ -1019,10 +1012,6 @@ S_typeModifiers *crNewAnnonymeStrUnion(S_id *typeName) {
     if (typeName->sd->u.keyWordVal == STRUCT) type = TypeStruct;
     else type = TypeUnion;
 
-    /*& pp = StackMemAlloc(Symbol); */
-    /*& FILL_symbolBits(&pp->bits,0,0, 0,0,0, type, StorageNone,0); */
-    /*& FILL_symbol(pp, "", NULL, typeName->p,pp->bits,type,NULL, NULL); */
-    /*& REPLACED StackMemAlloc()+FILL_symbol() with: */
     pp = newSymbol("", NULL, typeName->p);
     fillSymbolBits(&pp->bits, ACC_DEFAULT, type, StorageNone);
 
@@ -1079,10 +1068,6 @@ S_typeModifiers *simpleEnumSpecifier(S_id *id, int usage) {
 S_typeModifiers *createNewAnonymousEnum(SymbolList *enums) {
     Symbol *pp;
 
-    /*& pp = StackMemAlloc(Symbol); */
-    /*& FILL_symbolBits(&pp->bits,0,0, 0,0,0, TypeEnum, StorageNone,0); */
-    /*& FILL_symbol(pp, "", "", s_noPos,pp->bits,enums,enums, NULL); */
-    /*& REPLACED StackMemAlloc()+FILL_symbol() with:  */
     pp = newSymbolIsEnum("", "", s_noPos, enums);
     fillSymbolBits(&pp->bits, ACC_DEFAULT, TypeEnum, StorageNone);
 
@@ -1152,10 +1137,6 @@ Symbol *crEmptyField(void) {
     p = StackMemAlloc(S_typeModifiers);
     FILLF_typeModifiers(p,TypeAnonymeField,f,( NULL,NULL) ,NULL,NULL);
 
-    /*& res = StackMemAlloc(Symbol); */
-    /*& FILL_symbolBits(&res->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
-    /*& FILL_symbol(res, "", "", s_noPos,res->bits,type,p,NULL); */
-    /*& REPLACED StackMemAlloc()+FILL_symbol() with  */
     res = newSymbolIsType("", "", s_noPos, p);
 
     return res;

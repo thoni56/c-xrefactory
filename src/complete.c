@@ -1122,11 +1122,6 @@ void completeUpFunProfile(S_completions* c) {
         && c->idToProcess[0] == 0
         && c->ai == 0
         ) {
-        /*& XX_ALLOC(dd, Symbol); */
-        /*& FILL_symbolBits(&dd->bits,0,0, 0,0, 0, TypeDefault, StorageDefault,0); */
-        /*& FILL_symbol(dd, "    ", "    ",s_noPos, dd->bits, type , */
-        /*&             s_upLevelFunctionCompletionType,NULL); */
-        /*& Above was replaced (without coverage) with */
         dd = newSymbolIsType("    ", "    ", s_noPos, s_upLevelFunctionCompletionType);
 
         FILL_cline(&c->a[0], "    ", dd, TypeDefault, 0, 0, NULL, NULL);

@@ -23,9 +23,6 @@ S_jslStat *s_jsl;
 static void jslCreateTypeSymbolInList(JslSymbolList *ss ,
                                       char *name) {
     Symbol *s;
-    /*& FILL_symbolBits(&sd->bits,0,0, 0,0, 0, TypeStruct, StorageNone,0); */
-    /*& FILL_symbol(sd,name,name,s_noPos,sd->bits,type,NULL,NULL); */
-    /*& REPLACED: FILL_symbol() with */
     s = newSymbol(name, name, s_noPos);
     fillSymbolBits(&s->bits, ACC_DEFAULT, TypeStruct, StorageNone);
     FILL_jslSymbolList(ss, s, s_noPos, 0, NULL);

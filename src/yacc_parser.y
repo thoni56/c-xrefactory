@@ -371,10 +371,6 @@ symbol_to_type_seq:
     |   symbol_to_type_seq IDENTIFIER   {
             Symbol *ss;
 
-            /*& ss = StackMemAlloc(Symbol); */
-            /*& FILL_symbolBits(&ss->bits,0,0,0,0,0,TypeDefault,StorageAuto,0); */
-            /*& FILL_symbol(ss,$2.d->name,$2.d->name,$2.d->p,ss->bits,type,NULL,NULL); */
-            /*& REPLACED StackMemAlloc()+FILL_symbol() with */
             ss = newSymbol($2.d->name, $2.d->name, $2.d->p);
             fillSymbolBits(&ss->bits, ACC_DEFAULT, TypeDefault, StorageAuto);
 
@@ -544,10 +540,6 @@ primary_expr
             $$.d.t = StackMemAlloc(S_typeModifiers);
             FILLF_typeModifiers($$.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
 
-            /*& d = StackMemAlloc(Symbol); */
-            /*& FILL_symbolBits(&d->bits,0,0,0,0,0,TypeDefault, StorageExtern,0); */
-            /*& FILL_symbol(d,$1.d->name,$1.d->name,$1.d->p,d->bits,type,$$.d.t,NULL); */
-            /*& REPLACED StackMemAlloc()+FILL_symbol with */
             d = newSymbolIsType($1.d->name, $1.d->name, $1.d->p,$$.d.t);
             fillSymbolBits(&d->bits, ACC_DEFAULT, TypeDefault, StorageExtern);
 
@@ -956,10 +948,6 @@ declaration_modality_specifiers
         typeModifiers = StackMemAlloc(S_typeModifiers);
         FILLF_typeModifiers(typeModifiers,TypeDefault,f,(NULL,NULL) ,NULL,NULL);
 
-        /*& $$.d = StackMemAlloc(Symbol); */
-        /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,$1.d,0); */
-        /*& FILL_symbol($$.d,NULL,NULL,s_noPos,$$.d->bits,type,typeModifiers,NULL); */
-        /*& REPLACED StackMemAlloc()+FILL_symbol() with */
         $$.d = newSymbolIsType(NULL, NULL, s_noPos, typeModifiers);
         fillSymbolBits(&$$.d->bits, ACC_DEFAULT, TypeDefault, $1.d);
     }
@@ -1106,10 +1094,6 @@ struct_declarator
         p = StackMemAlloc(S_typeModifiers);
         FILLF_typeModifiers(p,TypeAnonymeField,f,( NULL,NULL) ,NULL,NULL);
 
-        /*& $$.d = StackMemAlloc(Symbol); */
-        /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
-        /*& FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,p,NULL); */
-        /*& REPLACED StackMemAlloc()+FILL_symbol() with */
         $$.d = newSymbolIsType(NULL, NULL, s_noPos, p);
 
     }
@@ -1187,10 +1171,6 @@ declarator
 
 declarator2
     : IDENTIFIER                                        {
-        /*& $$.d = StackMemAlloc(Symbol); */
-        /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
-        /*& FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->bits,type,NULL,NULL); */
-        /*& REPLACED StackMemAlloc()+FILL_symbol() with */
         $$.d = newSymbol($1.d->name, $1.d->name, $1.d->p);
     }
     | '(' declarator ')'                                {
@@ -1333,10 +1313,6 @@ parameter_identifier_list
         S_position pp;
         FILL_position(&pp, -1, 0, 0);
 
-        /*& p = StackMemAlloc(Symbol); */
-        /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0); */
-        /*& FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL); */
-        /*& REPLACED StackMemAlloc()+FILL_symbol() with */
         p = newSymbol("", "", pp);
         fillSymbolBits(&p->bits, ACC_DEFAULT, TypeElipsis, StorageDefault);
 
@@ -1351,10 +1327,6 @@ identifier_list
     : IDENTIFIER                                {
         Symbol *p;
 
-        /*& p = StackMemAlloc(Symbol); */
-        /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
-        /*& FILL_symbol(p,$1.d->name,$1.d->name,$1.d->p,p->bits,type,NULL,NULL); */
-        /*& REPLACED StackMemAlloc()+FILL_symbol() with */
         p = newSymbol($1.d->name, $1.d->name, $1.d->p);
 
         $$.d.s = p;
@@ -1363,10 +1335,6 @@ identifier_list
     | identifier_list ',' identifier            {
         Symbol        *p;
 
-        /*& p = StackMemAlloc(Symbol); */
-        /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeDefault,StorageDefault,0); */
-        /*& FILL_symbol(p,$3.d->name,$3.d->name,$3.d->p,p->bits,type,NULL,NULL); */
-        /*& REPLACED StackMemAlloc()+FILL_symbol() with:  */
         p = newSymbol($3.d->name, $3.d->name, $3.d->p);
 
         $$.d = $1.d;
@@ -1384,10 +1352,6 @@ parameter_type_list
         S_position      pp;
         FILL_position(&pp, -1, 0, 0);
 
-        /*& p = StackMemAlloc(Symbol); */
-        /*& FILL_symbolBits(&p->bits,0,0,0,0,0,TypeElipsis,StorageDefault,0); */
-        /*& FILL_symbol(p,"","",pp,p->bits,type,NULL,NULL); */
-        /*& REPLACED StackMemAlloc()+FILL_symbol() with */
         p = newSymbol("", "", pp);
         fillSymbolBits(&p->bits, ACC_DEFAULT, TypeElipsis, StorageDefault);
 
@@ -1415,10 +1379,6 @@ parameter_declaration
         $$.d = $2.d;
     }
     | type_name                                 {
-        /*& $$.d = StackMemAlloc(Symbol); */
-        /*& FILL_symbolBits(&$$.d->bits,0,0,0,0,0,TypeDefault, StorageDefault,0); */
-        /*& FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,$1.d,NULL); */
-        /*& REPLACED StackMemAlloc()+FILL_symbol() with */
         $$.d = newSymbolIsType(NULL, NULL, s_noPos, $1.d);
     }
     | error                                     {
@@ -1774,11 +1734,6 @@ static void addRuleLocalVariable(S_id *name, int order) {
             assert(order>=0 && order < 10000);
             sprintf(nn,"$%d",order);
             if (order == 0) nn[1] = '$';
-
-            /*& ss = StackMemAlloc(Symbol); */
-            /*& FILL_symbolBits(&ss->bits,0,0,0,0,0,TypeDefault,StorageAuto,0); */
-            /*& FILL_symbol(ss,nn,nn,name->p,ss->bits,type,NULL,NULL); */
-            /*& REPLACED StackMemAlloc()+FILL_symbol() with */
 
             ss = newSymbol(nn, nn, name->p);
             fillSymbolBits(&ss->bits, ACC_DEFAULT, TypeDefault, StorageAuto);

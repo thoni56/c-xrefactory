@@ -23,10 +23,6 @@ static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {
         s_tokenLength[tok] = strlen(nn);
         if ((isalpha(*nn) || *nn=='_') && (tlan & s_language)) {
             /* looks like a keyword */
-            /*& XX_ALLOC(pp, Symbol); */
-            /*& FILL_symbolBits(&pp->bits,0,0, 0,0,0,TypeKeyword,StorageNone,0); */
-            /*& FILL_symbol(pp,nn,nn,s_noPos,pp->bits,keyWordVal,tok,NULL); */
-            /*& REPLACED: XX_ALLOC & FILL_symbol() with */
             pp = newSymbolIsKeyword(nn, nn, s_noPos, tok);
             fillSymbolBits(&pp->bits, ACC_DEFAULT, TypeKeyword, StorageNone);
 

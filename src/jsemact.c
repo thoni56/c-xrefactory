@@ -627,9 +627,6 @@ Symbol *javaTypeNameDefinition(S_idList *tname) {
     XX_ALLOC(td, S_typeModifiers);
     FILLF_typeModifiers(td, TypeStruct, t, memb, NULL, NULL);
     td->u.t = memb;
-    /* XX_ALLOC(dd, S_symbol); */
-    /* FILL_symbolBits(&dd->bits,0,0,0,0,0,	TypeDefault, StorageDefault,0); */
-    /* FILL_symbol(dd,memb->name,memb->linkName,tname->idi.p,dd->bits,type,td,NULL); */
     dd = newSymbolIsType(memb->name, memb->linkName, tname->id.p, td);
 
     return dd;
