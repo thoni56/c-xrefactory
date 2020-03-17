@@ -1,2 +1,2 @@
 #! /bin/bash
-grep -w struct proto.h | ../utils/struct_grapher.py | grep -v ' { }'
+grep -wh struct proto.h | ../utils/struct_grapher.py | grep -v ' { }'

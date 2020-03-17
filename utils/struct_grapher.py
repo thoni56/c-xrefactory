@@ -20,13 +20,11 @@ print("digraph {")
 for line in sys.stdin:
     line = line.rstrip()
     if line.startswith('typedef'):
-        if not in_struct:
-            (_, _, type_name, rest) = line.split(' ', maxsplit=3)
-            print("  {0} -> {{".format(type_name), end="")
-            in_struct = True
-        else:
+        if in_struct:
             print(" }")
-            in_struct = False
+        (_, _, type_name, rest) = line.split(' ', maxsplit=3)
+        print("  {0} -> {{".format(type_name), end="")
+        in_struct = True
     else:
         if line != '' and in_struct:
             try:
@@ -35,6 +33,7 @@ for line in sys.stdin:
                     print(" {}".format(type_name), end="")
             except Exception as e:
                 print(
-                    "Line '{}' could not be split in (struct, type_name, rest)".format(line))
+                    "**** Line '{}' could not be split in (struct, type_name, rest)".format(line))
                 print(e)
+print(" }")
 print("}")
