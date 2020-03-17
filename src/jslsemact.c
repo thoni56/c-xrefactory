@@ -32,11 +32,10 @@ static void jslCreateTypeSymbolInList(JslSymbolList *ss ,
 }
 
 Symbol *jslTypeSpecifier2(S_typeModifiers *t) {
-    Symbol *symbol;
+   Symbol *symbol;
 
     CF_ALLOC(symbol, Symbol);   /* Not in same memory as newSymbol() uses, why? */
     fillSymbolWithType(symbol, NULL, NULL, s_noPos, t);
-    fillSymbolBits(&symbol->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
 
     return symbol;
 }
@@ -159,7 +158,6 @@ Symbol *jslTypeNameDefinition(S_idList *tname) {
 
     CF_ALLOC(dd, Symbol); //XX_ALLOC?
     fillSymbolWithType(dd, memb->name, memb->linkName, tname->id.p, td);
-    fillSymbolBits(&dd->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
 
     return dd;
 }

@@ -2,13 +2,20 @@
 
 #include "misc.h"               /* For XX_ALLOC() */
 
+void fillSymbolBits(S_symbolBits *bits, unsigned accessFlags, unsigned symType, unsigned storage) {
+    memset(bits, 0, sizeof(S_symbolBits));
+    bits->accessFlags = accessFlags;
+    bits->symType = symType;
+    bits->storage = storage;
+}
+
 void fillSymbol(Symbol *s, char *name, char *linkName, struct position  pos) {
     s->name = name;
     s->linkName = linkName;
     s->pos = pos;
-    /* s->bits is not assigned, all zeros? */
     s->u.type = NULL;
     s->next = NULL;
+    fillSymbolBits(&s->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
 }
 
 
@@ -58,11 +65,4 @@ Symbol *newSymbolIsLabel(char *name, char *linkName, struct position pos, int la
     Symbol *s = newSymbol(name, linkName, pos);
     s->u.labn = labelIndex;
     return s;
-}
-
-void fillSymbolBits(S_symbolBits *bits, unsigned accessFlags, unsigned symType, unsigned storage) {
-    memset(bits, 0, sizeof(S_symbolBits));
-    bits->accessFlags = accessFlags;
-    bits->symType = symType;
-    bits->storage = storage;
 }

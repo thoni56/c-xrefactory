@@ -749,7 +749,6 @@ Symbol *typeSpecifier2(S_typeModifiers *t) {
         XX_ALLOC(r, Symbol);
     }
     fillSymbolWithType(r, NULL, NULL, s_noPos, t);
-    fillSymbolBits(&r->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
 
     return r;
 }
@@ -1158,7 +1157,6 @@ Symbol *crEmptyField(void) {
     /*& FILL_symbol(res, "", "", s_noPos,res->bits,type,p,NULL); */
     /*& REPLACED StackMemAlloc()+FILL_symbol() with  */
     res = newSymbolIsType("", "", s_noPos, p);
-    fillSymbolBits(&res->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
 
     return res;
 }

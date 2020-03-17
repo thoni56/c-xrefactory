@@ -631,7 +631,6 @@ Symbol *javaTypeNameDefinition(S_idList *tname) {
     /* FILL_symbolBits(&dd->bits,0,0,0,0,0,	TypeDefault, StorageDefault,0); */
     /* FILL_symbol(dd,memb->name,memb->linkName,tname->idi.p,dd->bits,type,td,NULL); */
     dd = newSymbolIsType(memb->name, memb->linkName, tname->id.p, td);
-    fillSymbolBits(&dd->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
 
     return dd;
 }
@@ -1584,7 +1583,6 @@ Symbol *javaCreateNewMethod(char *nn, S_position *p, int mem) {
 
     FILLF_typeModifiers(m, TypeFunction, f, (NULL, NULL), NULL, NULL);
     fillSymbolWithType(res, name, name, *p, m);
-    fillSymbolBits(&res->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
 
     return(res);
 }
@@ -2647,8 +2645,6 @@ void javaInitArrayObject(void) {
 
     fillSymbolWithType(&s_lengthSymbol, "length", "java/lang/array.length",
                        s_noPos, &s_defaultIntModifier);
-    fillSymbolBits(&s_lengthSymbol.bits, ACC_PUBLIC, TypeDefault, StorageDefault);
-    s_lengthSymbol.u.type = & s_defaultIntModifier;
 
     FILLF_symStructSpec(&s_arraySpec, NULL,
                         &s_lengthSymbol, NULL,NULL,

@@ -1128,7 +1128,7 @@ void completeUpFunProfile(S_completions* c) {
         /*&             s_upLevelFunctionCompletionType,NULL); */
         /*& Above was replaced (without coverage) with */
         dd = newSymbolIsType("    ", "    ", s_noPos, s_upLevelFunctionCompletionType);
-        fillSymbolBits(&dd->bits, 0, TypeDefault, StorageDefault);
+
         FILL_cline(&c->a[0], "    ", dd, TypeDefault, 0, 0, NULL, NULL);
         // assert(0 && "Comments indicate that COMPL_UP_FUN_PROFILE is not used but this indicates that it is!");
         c->fullMatchFlag = 1;

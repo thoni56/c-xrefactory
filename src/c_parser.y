@@ -1112,7 +1112,6 @@ declarator2
         /*& FILL_symbol($$.d,$1.d->name,$1.d->name,$1.d->p,$$.d->bits,type,NULL,NULL); */
         /*& REPLACED: StackMemAlloc() and FILL_symbol() with: */
         $$.d = newSymbol($1.d->name, $1.d->name, $1.d->p);
-        fillSymbolBits(&$$.d->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
     }
     | '(' declarator ')'								{
         $$.d = $2.d;
@@ -1277,7 +1276,6 @@ identifier_list
         /*& FILL_symbol(p,$1.d->name,$1.d->name,$1.d->p,p->bits,type,NULL,NULL); */
         /*& REPLACED: StackMemAlloc()+FILL_symbol() with: */
         p = newSymbol($1.d->name, $1.d->name, $1.d->p);
-        fillSymbolBits(&p->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
         $$.d.s = p;
         $$.d.p = NULL;
     }
@@ -1288,7 +1286,6 @@ identifier_list
         /*& FILL_symbol(p,$3.d->name,$3.d->name,$3.d->p,p->bits,type,NULL,NULL); */
         /*& REPLACED: StackMemAlloc()+FILL_symbol() with: */
         p = newSymbol($3.d->name, $3.d->name, $3.d->p);
-        fillSymbolBits(&p->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
         $$.d = $1.d;
         LIST_APPEND(Symbol, $$.d.s, p);
         appendPositionToList(&$$.d.p, &$2.d);
@@ -1340,7 +1337,6 @@ parameter_declaration
         /*& FILL_symbol($$.d, NULL, NULL, s_noPos,$$.d->bits,type,$1.d,NULL); */
         /*& REPLACED: StackMemAlloc()+FILL_symbol() with: */
         $$.d = newSymbolIsType(NULL, NULL, s_noPos, $1.d);
-        fillSymbolBits(&$$.d->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
     }
     | error										{
         /*
