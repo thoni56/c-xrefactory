@@ -5,18 +5,7 @@
 
   Structures herein will be subject to the filler, structure typedef
   and enum strings generation done in the Makefile.common. See
-  description in NOTES.md.
-
-  In the beginning of c-xrefs modern life this was a huge pile of
-  anything, I'm trying to clean this up so that only things that
-  actually require the generation are in here.
-
-  - DONE: move prototypes to separate .h files
-  - DONE: introduce typedef's directly on the structs here
-  - DONE: change usage of typedef names inside structures to "struct ..." to
-    avoid depenency on other structures through typedefs names
-  - DONE: Remove the need for strTdef
-  - Rename this to something other than "proto.h"...
+  description on the wiki.
 
  */
 

@@ -9,7 +9,7 @@ void fillSymbolBits(S_symbolBits *bits, unsigned accessFlags, unsigned symType, 
     bits->storage = storage;
 }
 
-void fillSymbol(Symbol *s, char *name, char *linkName, struct position  pos) {
+void fillSymbol(Symbol *s, char *name, char *linkName, struct position pos) {
     s->name = name;
     s->linkName = linkName;
     s->pos = pos;

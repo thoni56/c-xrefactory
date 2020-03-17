@@ -1243,15 +1243,15 @@ type_specifier_list0
 parameter_identifier_list
     : identifier_list							/*& { $$.d = $1.d; } */
     | identifier_list ',' ELIPSIS				{
-        Symbol *p;
-        S_position pp;
-        FILL_position(&pp, -1, 0, 0);
+        Symbol *symbol;
+        S_position pos;
+        FILL_position(&pos, -1, 0, 0);
 
-        p = newSymbol("", "", pp);
-        fillSymbolBits(&p->bits, ACC_DEFAULT, TypeElipsis, StorageDefault);
+        symbol = newSymbol("", "", pos);
+        fillSymbolBits(&symbol->bits, ACC_DEFAULT, TypeElipsis, StorageDefault);
         $$.d = $1.d;
 
-        LIST_APPEND(Symbol, $$.d.s, p);
+        LIST_APPEND(Symbol, $$.d.s, symbol);
         appendPositionToList(&$$.d.p, &$2.d);
     }
     ;
@@ -1276,15 +1276,15 @@ identifier_list
 parameter_type_list
     : parameter_list					/*& { $$.d = $1.d; } */
     | parameter_list ',' ELIPSIS				{
-        Symbol        *p;
-        S_position      pp;
-        FILL_position(&pp, -1, 0, 0);
+        Symbol *symbol;
+        S_position position;
+        FILL_position(&position, -1, 0, 0);
 
-        p = newSymbol("", "", pp);
-        fillSymbolBits(&p->bits, ACC_DEFAULT, TypeElipsis, StorageDefault);
+        symbol = newSymbol("", "", position);
+        fillSymbolBits(&symbol->bits, ACC_DEFAULT, TypeElipsis, StorageDefault);
         $$.d = $1.d;
 
-        LIST_APPEND(Symbol, $$.d.s, p);
+        LIST_APPEND(Symbol, $$.d.s, symbol);
         appendPositionToList(&$$.d.p, &$2.d);
     }
     ;

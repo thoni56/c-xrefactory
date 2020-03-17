@@ -3444,15 +3444,15 @@ break;
 case 219:
 #line 1245 "c_parser.y"
 {
-        Symbol *p;
-        S_position pp;
-        FILL_position(&pp, -1, 0, 0);
+        Symbol *symbol;
+        S_position pos;
+        FILL_position(&pos, -1, 0, 0);
 
-        p = newSymbol("", "", pp);
-        fillSymbolBits(&p->bits, ACC_DEFAULT, TypeElipsis, StorageDefault);
+        symbol = newSymbol("", "", pos);
+        fillSymbolBits(&symbol->bits, ACC_DEFAULT, TypeElipsis, StorageDefault);
         yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
 
-        LIST_APPEND(Symbol, yyval.bbsymbolPositionLstPair.d.s, p);
+        LIST_APPEND(Symbol, yyval.bbsymbolPositionLstPair.d.s, symbol);
         appendPositionToList(&yyval.bbsymbolPositionLstPair.d.p, &yyvsp[-1].bbposition.d);
     }
 break;
@@ -3482,15 +3482,15 @@ break;
 case 224:
 #line 1278 "c_parser.y"
 {
-        Symbol        *p;
-        S_position      pp;
-        FILL_position(&pp, -1, 0, 0);
+        Symbol *symbol;
+        S_position position;
+        FILL_position(&position, -1, 0, 0);
 
-        p = newSymbol("", "", pp);
-        fillSymbolBits(&p->bits, ACC_DEFAULT, TypeElipsis, StorageDefault);
+        symbol = newSymbol("", "", position);
+        fillSymbolBits(&symbol->bits, ACC_DEFAULT, TypeElipsis, StorageDefault);
         yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
 
-        LIST_APPEND(Symbol, yyval.bbsymbolPositionLstPair.d.s, p);
+        LIST_APPEND(Symbol, yyval.bbsymbolPositionLstPair.d.s, symbol);
         appendPositionToList(&yyval.bbsymbolPositionLstPair.d.p, &yyvsp[-1].bbposition.d);
     }
 break;
