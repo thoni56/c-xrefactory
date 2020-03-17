@@ -7,6 +7,7 @@
 
 */
 
+#include <stdbool.h>
 
 #define GLUE(a,b) a ## b
 #define CONCAT(a,b) GLUE(a,b)
