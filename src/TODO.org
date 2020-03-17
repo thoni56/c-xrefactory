@@ -9,6 +9,10 @@ There are a *lot* of things to do to make c-xref into modern C.
 ** DOING Remove all FILL_xxx macros by using compound initializers or functions:
 *** DOING Remove FILL_symbol()
 ***** DOING Remove #include "symbol" from proto.h
+***** DOING semact.c requires FILL_symbolBits which are not strFill'ed
+if symbol.h is not in proto.h. We need to create fillSymbolBits()
+****** DONE symtab.h: unknown type name Symbol: include symbol instead of proto
+******* DONE hashlist.th bool
 ***** DONE Replace all FILL_symbol() calls
 ***** DONE Move Symbol struct to Symbol-module
 ***** DONE Create a Symbol module with newSymbolxxx() & fillSymbolxxx()

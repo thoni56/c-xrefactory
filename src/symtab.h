@@ -12,7 +12,7 @@
 #include "hashlist.th"
 
 /*
-  run the following command in shell to get the expanded declarations of hashlist
+  run the following command in shell to see the expanded declarations of hashlist
 
   gcc -E symtab.h
 
