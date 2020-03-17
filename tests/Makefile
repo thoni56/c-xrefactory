@@ -11,10 +11,9 @@ void:
 	@echo "'make slow' for only slow tests"
 	@echo "'make all' for both fast and slow tests"
 
-all: clean quick slow
+all: quick slow
 
 quick:
-	@echo "Quick tests..."
 	@$(MAKE) -C simple_xrefs
 	@$(MAKE) -C pragma_once
 	@$(MAKE) -C process_yacc
@@ -31,11 +30,7 @@ quick:
 	@$(MAKE) -C olcx_complete
 
 slow:
-	@echo "Slow tests..."
 	@$(MAKE) -C c-xref
 	@$(MAKE) -C emacs_c_exercise
 	@$(MAKE) -C ffmpeg
 	@$(MAKE) -C systemd
-
-clean:
-	-@rm /tmp/c-xref*.log /tmp/c-xref-temp-* /tmp/c-xref*.tmp
