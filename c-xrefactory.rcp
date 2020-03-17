@@ -1,6 +1,7 @@
 (:name c-xrefactory
        :description "C Refactoring tool"
-       :type github
+       :type "github"
+       :branch "stable"
        :pkgname "thoni56/c-xrefactory"
        :load-path "env/emacs"
        :build (("make"))
