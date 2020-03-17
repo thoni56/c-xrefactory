@@ -3,7 +3,7 @@
 
 /* symTab - an instance of hashlist */
 
-#include "proto.h"
+#include "symbol.h"
 
 #define HASH_TAB_NAME symTab
 #define HASH_ELEM_TYPE Symbol
