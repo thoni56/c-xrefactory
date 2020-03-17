@@ -67,7 +67,7 @@ Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
     /*& FILL_symbol(s,name,name,s_noPos,s->bits,labn,labn,NULL); */
     /*& REPLACE XX_ALLOC()+FILL_symbol() with */
     s = newSymbolIsLabel(name, name, s_noPos, labn);
-    FILL_symbolBits(&s->bits, 0, 0, 0, 0, 0, TypeLabel, StorageAuto, 0);
+    fillSymbolBits(&s->bits, ACC_DEFAULT, TypeLabel, StorageAuto);
 
     AddSymbolNoTrail(s, s_symTab);
     return(s);
@@ -84,7 +84,7 @@ void deleteContinueBreakLabelSymbol(char *name) {
     /*& FILL_symbol(&ss, name, name, s_noPos, ss.bits,labn,0, NULL); */
     /* Above FILL_symbol() on local variable is replaced with fillSymbol() */
     fillSymbolWithLabel(&ss, name, name, s_noPos, 0);
-    FILL_symbolBits(&ss.bits, 0, 0, 0, 0, 0, TypeLabel, StorageAuto, 0);
+    fillSymbolBits(&ss.bits, ACC_DEFAULT, TypeLabel, StorageAuto);
     if (symTabIsMember(s_symTab, &ss, &ii, &memb)) {
         ExtrDeleteContBreakSym(memb);
     } else {
@@ -102,7 +102,7 @@ void genContinueBreakReference(char *name) {
     /*& FILL_symbol(&ss, name, name, s_noPos, ss.bits,labn,0, NULL); */
     /* Above FILL_symbol() on local variable is replaced by fillSymbol() */
     fillSymbolWithLabel(&ss, name, name, s_noPos, 0);
-    FILL_symbolBits(&ss.bits, 0,0,0,0,0,TypeLabel,StorageAuto,0);
+    fillSymbolBits(&ss.bits, ACC_DEFAULT, TypeLabel, StorageAuto);
 
     if (symTabIsMember(s_symTab, &ss, &ii, &memb)) {
         genInternalLabelReference(memb->u.labn, UsageUsed);
@@ -119,7 +119,7 @@ void genSwitchCaseFork(int lastFlag) {
     /*& FILL_symbol(&ss,SWITCH_LABEL_NAME,SWITCH_LABEL_NAME,s_noPos,ss.bits,labn,0,NULL); */
     /* Above FILL_symbol() on local variable is replaced by fillSymbol() */
     fillSymbolWithLabel(&ss, SWITCH_LABEL_NAME, SWITCH_LABEL_NAME, s_noPos, 0);
-    FILL_symbolBits(&ss.bits, 0, 0, 0, 0, 0, TypeLabel, StorageAuto, 0);
+    fillSymbolBits(&ss.bits, ACC_DEFAULT, TypeLabel, StorageAuto);
     if (symTabIsMember(s_symTab, &ss, &ii, &memb)) {
         genInternalLabelReference(memb->u.labn, UsageDefined);
         if (! lastFlag) {

@@ -28,7 +28,7 @@ static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {
             /*& FILL_symbol(pp,nn,nn,s_noPos,pp->bits,keyWordVal,tok,NULL); */
             /*& REPLACED: XX_ALLOC & FILL_symbol() with */
             pp = newSymbolIsKeyword(nn, nn, s_noPos, tok);
-            FILL_symbolBits(&pp->bits,0,0, 0,0,0,TypeKeyword,StorageNone,0);
+            fillSymbolBits(&pp->bits, ACC_DEFAULT, TypeKeyword, StorageNone);
 
             /*fprintf(dumpOut,"adding keyword %s to tab %d\n",nn,s_symTab);*/
             symTabAdd(s_symTab,pp,&not_used);
@@ -83,7 +83,7 @@ void initTokenNameTab(void) {
     initTokensFromTab(s_tokenNameIniTab);
     /* and add the 'defined' keyword for #if */
     pp = newSymbol("defined", "defined", s_noPos);
-    FILL_symbolBits(&pp->bits, 0, 0, 0, 0, 0, TypeDefinedOp, StorageNone, 0);
+    fillSymbolBits(&pp->bits, ACC_DEFAULT, TypeDefinedOp, StorageNone);
     symTabAdd(s_symTab, pp, &not_used);
 }
 
@@ -160,7 +160,6 @@ void initArchaicTypes(void) {
 
     FILLF_typeModifiers(&s_defaultIntModifier, TypeInt, f, (NULL,NULL), NULL, NULL);
     fillSymbolWithType(&s_defaultIntDefinition, NULL, NULL, s_noPos, &s_defaultIntModifier);
-    FILL_symbolBits(&s_defaultIntDefinition.bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
 
     FILLF_typeModifiers(&s_defaultPackedTypeModifier, TypePackedType, f,
                         (NULL,NULL), NULL, NULL);
@@ -168,11 +167,10 @@ void initArchaicTypes(void) {
     FILLF_typeModifiers(&s_defaultVoidModifier,TypeVoid,f,( NULL,NULL) ,NULL,NULL);
     fillSymbolWithType(&s_defaultVoidDefinition, NULL, NULL, s_noPos,
                &s_defaultVoidModifier);
-    FILL_symbolBits(&s_defaultVoidDefinition.bits, 0, 0, 0, 0, 0, TypeDefault, StorageDefault, 0);
 
     FILLF_typeModifiers(&s_errorModifier, TypeError,f,( NULL,NULL) ,NULL,NULL);
     fillSymbolWithType(&s_errorSymbol,"__ERROR__", "__ERROR__", s_noPos, &s_errorModifier);
-    FILL_symbolBits(&s_errorSymbol.bits, 0, 0, 0, 0, 0, TypeError, StorageNone, 0);
+    fillSymbolBits(&s_errorSymbol.bits, ACC_DEFAULT, TypeError, StorageNone);
 }
 
 void initPreCreatedTypes(void) {

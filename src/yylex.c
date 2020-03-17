@@ -424,12 +424,12 @@ endOfFile:;
 static void fillIncludeSymbolItem( Symbol *ss,
                                    int filenum, S_position *pos
     ){
-    // should be different for HTML to be beatifull, however,
-    // all includes needs to be in the same cxfile, beacause of
-    // -update. On the other side in HTML I wish then to splitted
+    // should be different for HTML to be beatiful, however,
+    // all includes needs to be in the same cxfile, because of
+    // -update. On the other hand in HTML I wish them to split
     // by first letter of file name.
     fillSymbol(ss, LINK_NAME_INCLUDE_REFS, LINK_NAME_INCLUDE_REFS, *pos);
-    FILL_symbolBits(&ss->bits,0,0,0,0,0,TypeCppInclude,StorageDefault,0);
+    fillSymbolBits(&ss->bits, ACC_DEFAULT, TypeCppInclude, StorageDefault);
 }
 
 
@@ -543,7 +543,7 @@ static void processInclude2(S_position *ipos, char pchar, char *iname) {
     sprintf(tmpBuff, "PragmaOnce-%s", iname);
 
     fillSymbol(&ss, tmpBuff, tmpBuff, s_noPos);
-    FILL_symbolBits(&ss.bits, 0, 0, 0, 0, 0, TypeMacro, StorageNone, 0);
+    fillSymbolBits(&ss.bits, ACC_DEFAULT, TypeMacro, StorageNone);
 
     if (symTabIsMember(s_symTab, &ss, &ii, &memb)) return;
     nyyin = openInclude(pchar, iname, &fname);
@@ -686,7 +686,7 @@ static void processDefine(int argFlag) {
 
     PP_ALLOC(pp, Symbol);
     fillSymbol(pp, NULL, NULL, macpos);
-    FILL_symbolBits(&pp->bits, 0, 0, 0, 0, 0, TypeMacro, StorageNone, 0);
+    fillSymbolBits(&pp->bits, ACC_DEFAULT, TypeMacro, StorageNone);
 
     setGlobalFileDepNames(cc, pp, MEM_PP);
     mname = pp->name;
@@ -854,7 +854,7 @@ static void processUnDefine(void) {
         log_debug(": undef macro %s",cc);
 
         fillSymbol(&dd, cc, cc, pos);
-        FILL_symbolBits(&dd.bits,0,0,0,0,0,TypeMacro,StorageNone,0);
+        fillSymbolBits(&dd.bits, ACC_DEFAULT, TypeMacro, StorageNone);
 
         assert(s_opt.taskRegime);
         /* !!!!!!!!!!!!!! tricky, add macro with mbody == NULL !!!!!!!!!! */
@@ -866,7 +866,7 @@ static void processUnDefine(void) {
 
             PP_ALLOC(pp, Symbol);
             fillSymbol(pp, memb->name, memb->linkName, pos);
-            FILL_symbolBits(&pp->bits,0,0, 0,0, 0, TypeMacro, StorageNone,0);
+            fillSymbolBits(&pp->bits, ACC_DEFAULT, TypeMacro, StorageNone);
 
             addMacroToTabs(pp,memb->name);
         }
@@ -971,7 +971,7 @@ static void processIfdef(int isIfdef) {
     if (! IS_IDENTIFIER_LEXEM(lex)) return;
 
     fillSymbol(&pp, cc, cc, s_noPos);
-    FILL_symbolBits(&pp.bits,0,0,0,0,0,TypeMacro,StorageNone,0);
+    fillSymbolBits(&pp.bits, ACC_DEFAULT, TypeMacro, StorageNone);
 
     assert(s_opt.taskRegime);
     mm = symTabIsMember(s_symTab,&pp,&ii,&memb);
@@ -1030,7 +1030,7 @@ int cexpyylex(void) {
         if (! IS_IDENTIFIER_LEXEM(lex)) return(0);
 
         fillSymbol(&dd, cc, cc, s_noPos);
-        FILL_symbolBits(&dd.bits, 0, 0, 0, 0, 0, TypeMacro, StorageNone, 0);
+        fillSymbolBits(&dd.bits, ACC_DEFAULT, TypeMacro, StorageNone);
 
         log_debug("(%s)", dd.name);
 
@@ -1086,7 +1086,7 @@ static void processPragma(void) {
 
         PP_ALLOC(pp, Symbol);
         fillSymbol(pp, mname, mname, pos);
-        FILL_symbolBits(&pp->bits, 0, 0, 0, 0, 0, TypeMacro, StorageNone, 0);
+        fillSymbolBits(&pp->bits, ACC_DEFAULT, TypeMacro, StorageNone);
 
         symTabAdd(s_symTab,pp,&ii);
     }
@@ -1252,7 +1252,7 @@ static void expandMacroArgument(S_lexInput *argb) {
         failedMacroExpansion = 0;
         if (lex == IDENTIFIER) {
             fillSymbol(&sd, cc2, cc2, s_noPos);
-            FILL_symbolBits(&sd.bits,0,0,0,0,0,TypeMacro, StorageNone,0);
+            fillSymbolBits(&sd.bits, ACC_DEFAULT, TypeMacro, StorageNone);
             if (symTabIsMember(s_symTab,&sd,&ii,&memb)) {
                 /* it is a macro, provide macro expansion */
                 if (macroCallExpand(memb,&pos)) goto nextLexem;
@@ -1977,7 +1977,7 @@ int yylex(void) {
         log_trace("id %s position %d %d %d",yytext,idpos.file,idpos.line,idpos.col);
 
         fillSymbol(&symbol, yytext, yytext, s_noPos);
-        FILL_symbolBits(&symbol.bits,0,0,0,0,0,TypeMacro,StorageNone,0);
+        fillSymbolBits(&symbol.bits, ACC_DEFAULT, TypeMacro, StorageNone);
 
         if ((!LANGUAGE(LANG_JAVA))
             && lexem!=IDENT_NO_CPP_EXPAND
