@@ -55,4 +55,6 @@ extern void fillSymbolWithType(Symbol *symbol, char *name, char *linkName, struc
 extern void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName, struct position pos, int labelIndex);
 extern void fillSymbolWithStruct(Symbol *symbol, char *name, char *linkName, struct position pos, struct symStructSpec *structSpec);
 
+extern void fillSymbolBits(S_symbolBits *bits, unsigned accessFlags, unsigned symType, unsigned storage);
+
 #endif

@@ -59,3 +59,10 @@ Symbol *newSymbolIsLabel(char *name, char *linkName, struct position pos, int la
     s->u.labn = labelIndex;
     return s;
 }
+
+void fillSymbolBits(S_symbolBits *bits, unsigned accessFlags, unsigned symType, unsigned storage) {
+    memset(bits, 0, sizeof(S_symbolBits));
+    bits->accessFlags = accessFlags;
+    bits->symType = symType;
+    bits->storage = storage;
+}
