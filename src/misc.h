@@ -2,6 +2,8 @@
 #define MISC_H
 
 #include "proto.h"
+#include "symbol.h"
+
 
 /* stack memory synchronized with program block structure */
 #define XX_ALLOC(p,t)           {p = (t*) stackMemoryAlloc(sizeof(t)); }
