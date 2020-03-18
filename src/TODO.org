@@ -8,7 +8,10 @@ There are a *lot* of things to do to make c-xref into modern C.
 * DOING Remove bootstrap step (strfill and local definitions)
 ** DOING Remove all FILL_xxx macros by using compound initialisers
 At this point there are 66 FILL-macros that are in use
-*** DOING Remove fileItem from proto.h
+*** DONE Remove fileItem from proto.h
+*** TODO Remove chReference from proto.h
+*** TODO Rename classh to hierarchy
+*** TODO Replace FILL_intList so we can remove strFill-dependency from classh.c
 *** TODO Remove position from proto.h
 *** TODO Remove FILL_editor* from strFill
 **** TODO Remove FILL_editorBuffer from strFill
