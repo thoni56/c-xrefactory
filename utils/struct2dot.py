@@ -50,6 +50,8 @@ sys.path.extend(['.', '..'])
 
 def node2dot(node):
     if isinstance(node.type, c_ast.TypeDecl) and isinstance(node.type.type, c_ast.Struct):
+        if node.coord.file == sys.argv[-1]:
+            print("   ", node.type.type.name, "[style=filled,color=red]")
         print("   ", node.type.type.name, "-> {", end="")
         if node.type.type.decls:  # has fields?
             for field in node.type.type.decls:
