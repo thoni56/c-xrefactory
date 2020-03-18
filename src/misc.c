@@ -19,6 +19,7 @@
 #include "editor.h"
 #include "enumTxt.h"
 #include "strFill.h"
+#include "html.h"
 
 #include "log.h"
 

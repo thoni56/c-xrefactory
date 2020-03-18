@@ -4,6 +4,11 @@
 #include "proto.h"
 #include "symbol.h"
 
+typedef struct intlist {
+    int         i;
+    struct intlist   *next;
+} S_intlist;
+
 extern void genClassHierarchyItemLinks(FILE *ff, S_olSymbolsMenu *itt,
                                        int virtFlag);
 extern void htmlGenNonVirtualGlobSymList(FILE *ff, char *fn, S_symbolRefItem *p );

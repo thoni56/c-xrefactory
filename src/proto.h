@@ -1177,11 +1177,6 @@ typedef struct memory {
 
 /* ************************ HTML **************************** */
 
-typedef struct intlist {
-    int         i;
-    struct intlist   *next;
-} S_intlist;
-
 typedef struct disabledList {
     int             file;
     int             clas;

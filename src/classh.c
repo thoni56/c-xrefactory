@@ -365,9 +365,9 @@ static void descendTheClassHierarchy(   FILE *ff,
         while (snext!=NULL && THEBIT(tmpChRelevant,snext->clas)==0) {
             snext = snext->next;
         }
-        FILL_intlist(&snextbar, (snext!=NULL), nextbars)
-            descendTheClassHierarchy(ff, s->clas, vFunCl, rrr, level+1,
-                                     &snextbar, virtFlag, pass);
+        *nextbars = (S_intlist) {.i = (snext!=NULL), .next = nextbars};
+        descendTheClassHierarchy(ff, s->clas, vFunCl, rrr, level+1,
+                                 &snextbar, virtFlag, pass);
         s = snext;
     }
 }
