@@ -882,11 +882,6 @@ typedef struct userOlcx {
     struct userOlcx				*next;
 } S_userOlcx;
 
-/* ************************************************************* */
-/* **********************  file tab Item *********************** */
-
-#include "fileitem.h"
-
 
 /* ***************** COMPLETION STRUCTURES ********************** */
 

@@ -2,6 +2,7 @@
 #define _FILETAB_H_
 
 #include "proto.h"
+#include "fileitem.h"
 
 #define HASH_TAB_NAME fileTab
 #define HASH_ELEM_TYPE S_fileItem

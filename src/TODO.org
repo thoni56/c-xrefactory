@@ -6,7 +6,9 @@ There are a *lot* of things to do to make c-xref into modern C.
 (This file is structured for Emacs org-mode...)
 
 * DOING Remove bootstrap step (strfill and local definitions)
-** DOING Remove all FILL_xxx macros by using compound initializers or functions:
+** DOING Remove all FILL_xxx macros by using compound initialisers
+At this point there are 66 FILL-macros that are in use
+*** DOING Remove fileItem from proto.h
 *** TODO Remove position from proto.h
 *** TODO Remove FILL_editor* from strFill
 **** TODO Remove FILL_editorBuffer from strFill
