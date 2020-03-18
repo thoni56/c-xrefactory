@@ -7,7 +7,11 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 * DOING Remove bootstrap step (strfill and local definitions)
 ** DOING Remove all FILL_xxx macros by using compound initializers or functions:
-*** DOING Remove FILL_symbol()
+*** TODO Remove position from proto.h
+*** TODO Remove FILL_editor* from strFill
+**** TODO Remove FILL_editorBuffer from strFill
+***** TODO Move editorBuffer from proto.h to editor.h
+*** DONE Remove FILL_symbol()
 ***** DONE Remove #include "symbol" from proto.h
 ***** DONE semact.c requires FILL_symbolBits which are not strFill'ed
 if symbol.h is not in proto.h. We need to create fillSymbolBits()
