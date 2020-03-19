@@ -27,8 +27,6 @@ extern S_usageBits s_noUsage;
 extern int s_progressFactor;
 extern int s_progressOffset;
 
-extern S_availableRefactoring s_availableRefactorings[MAX_AVAILABLE_REFACTORINGS];
-
 extern S_editorUndo *s_editorUndo;
 extern z_stream s_defaultZStream;
 

@@ -26,7 +26,6 @@
 #include "log.h"
 #include "utils.h"
 
-
 #define SORTED_LIST_LESS(tmp,key) (POSITION_LESS((tmp)->p, (key).p))
 
 #define SORTED_LIST_NEQ(tmp,key) (                                  \
@@ -531,6 +530,22 @@ static void setOlSymbolTypeForPrint(Symbol *p) {
         len = strlen(s_olSymbolType);
         while (len > 0 && s_olSymbolType[len-1] == ' ') len--;
         s_olSymbolType[len]=0;
+    }
+}
+
+typedef struct availableRefactoring {
+    bool available;
+    char *option;
+} S_availableRefactoring;
+
+
+static S_availableRefactoring s_availableRefactorings[MAX_AVAILABLE_REFACTORINGS];
+
+void initAvailableRefactorings(void) {
+    int i;
+    for(i=0; i<MAX_AVAILABLE_REFACTORINGS; i++) {
+        s_availableRefactorings[i].available = false;
+        s_availableRefactorings[i].option = "";
     }
 }
 

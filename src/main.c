@@ -2954,15 +2954,6 @@ static void mainEditServerProcessFile( int argc, char **argv,
     s_fileTab.tab[s_olOriginalComFileNumber]->b.scheduledToProcess = 0;
 }
 
-static void initAvailableRefactorings(void) {
-    int i;
-    for(i=0; i<MAX_AVAILABLE_REFACTORINGS; i++) {
-        s_availableRefactorings[i].available = false;
-        s_availableRefactorings[i].option = "";
-    }
-}
-
-
 static char *presetEditServerFileDependingStatics(void) {
     int     i, fArgCount;
     char    *fileName;

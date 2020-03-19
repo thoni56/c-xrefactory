@@ -130,4 +130,6 @@ extern S_olSymbolsMenu *olcxFreeSymbolMenuItem(S_olSymbolsMenu *ll);
 extern void olcxFreeResolutionMenu( S_olSymbolsMenu *sym );
 extern int refCharCode(int usage);
 
+extern void initAvailableRefactorings(void);
+
 #endif

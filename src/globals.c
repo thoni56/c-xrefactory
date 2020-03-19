@@ -30,8 +30,6 @@ S_reference s_noRef = {{UsageNone, 0, }, {-1, 0, 0}, NULL};
 int s_progressOffset=0;
 int s_progressFactor=1;
 
-S_availableRefactoring s_availableRefactorings[MAX_AVAILABLE_REFACTORINGS];
-
 S_editorUndo *s_editorUndo = NULL;
 
 z_stream s_defaultZStream = {NULL,};

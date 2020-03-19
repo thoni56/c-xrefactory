@@ -1391,11 +1391,6 @@ typedef struct editorUndo {
 
 /* *********************************************************** */
 
-typedef struct availableRefactoring {
-    bool available;
-    char *option;
-} S_availableRefactoring;
-
 /* **************     parse tree with positions    *********** */
 
 // following structures are used in yacc parser, they are always
