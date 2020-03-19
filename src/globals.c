@@ -499,22 +499,6 @@ S_typeModifiers * s_preCrPtr2TypesTab[MAX_TYPE];
 /* ********************* TABLES TO INIT TABLES *************************** */
 /* *********************************************************************** */
 
-S_typeModificationsInit s_typeModificationsInit[] = {
-    //   type           short          long         signed        unsigned
-    {TypeDefault, TypeShortInt, TypeLongInt, TypeSignedInt, TypeUnsignedInt},
-    {TypeChar, -1, -1, TypeSignedChar, TypeUnsignedChar},
-    {TypeInt, TypeShortInt, TypeLongInt, TypeSignedInt, TypeUnsignedInt},
-    {TypeUnsignedInt, TypeShortUnsignedInt, TypeLongUnsignedInt, -1, -1},
-    {TypeSignedInt, TypeShortSignedInt, TypeLongSignedInt, -1, -1},
-    {TypeShortInt, -1, -1, TypeShortSignedInt, TypeShortUnsignedInt},
-    {TypeLongInt, -1, -1, TypeLongSignedInt, TypeLongUnsignedInt},
-    {TmodLong, -1, -1, TmodLongSigned, TmodLongUnsigned},
-    {TmodShort, -1, -1, TmodShortSigned, TmodShortUnsigned},
-    {TmodSigned, TmodShortSigned, TmodLongSigned, -1, -1},
-    {TmodUnsigned, TmodShortUnsigned, TmodLongUnsigned, -1, -1},
-    {-1,-1,-1,-1,-1}
-};
-
 S_tokenNameIni s_tokenNameIniTab[] = {
     {"asm",         ASM_KEYWORD     ,LANG_C | LAN_YACC | LANG_CCC},
     {"auto",        AUTO            ,LANG_C | LAN_YACC | LANG_CCC},

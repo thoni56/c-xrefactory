@@ -129,7 +129,6 @@ extern S_javaTypePCTIConvertIni s_javaTypePCTIConvertIniTab[];
 extern char s_javaPrimitiveWideningConversions[MAX_PCTIndex-1][MAX_PCTIndex-1];
 
 extern S_typeCharCodeIni s_baseTypeCharCodesIniTab[];
-extern S_typeModificationsInit s_typeModificationsInit[];
 
 extern S_position s_olcxByPassPos;
 extern S_position s_cxRefPos;

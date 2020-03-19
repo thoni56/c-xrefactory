@@ -2477,7 +2477,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     oldStdopFile[0] = 0;    oldStdopSection[0] = 0;
     initCwd();
     initTypeCharCodeTab();
-    initTypeModifiersTabs();
+    //initTypeModifiersTabs();
     initJavaTypePCTIConvertIniTab();
     initTypesNamesTab();
     initExtractStoragesNameTab();

@@ -83,30 +83,6 @@ void initTokenNameTab(void) {
     symTabAdd(s_symTab, pp, &not_used);
 }
 
-#define CHANGE_MODIF_ENTRY(index,modifier) {                \
-        int t,tmp;                                          \
-        t = s_typeModificationsInit[index].type;            \
-        tmp = s_typeModificationsInit[index].mod##modifier; \
-        if (tmp>=0) type##modifier##Change[t] = tmp;        \
-    }
-
-void initTypeModifiersTabs(void) {
-    int i;
-
-    for(i=0; i<MAX_TYPE; i++) {
-        typeShortChange[i] = i;
-        typeLongChange[i] = i;
-        typeSignedChange[i] = i;
-        typeUnsignedChange[i] = i;
-    }
-    for(i=0; s_typeModificationsInit[i].type >= 0; i++) {
-        CHANGE_MODIF_ENTRY(i,Short);
-        CHANGE_MODIF_ENTRY(i,Long);
-        CHANGE_MODIF_ENTRY(i,Signed);
-        CHANGE_MODIF_ENTRY(i,Unsigned);
-    }
-}
-
 void initJavaTypePCTIConvertIniTab(void) {
     int                         i;
     S_javaTypePCTIConvertIni    *s;

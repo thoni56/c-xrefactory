@@ -949,14 +949,6 @@ typedef struct javaTypePCTIConvertIni {
     int		PCTIndex;
 } S_javaTypePCTIConvertIni;
 
-typedef struct typeModificationsInit {
-    int	type;
-    int	modShort;
-    int	modLong;
-    int	modSigned;
-    int	modUnsigned;
-} S_typeModificationsInit;
-
 typedef struct intStringTab {
     int     i;
     char    *s;
