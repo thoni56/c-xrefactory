@@ -63,16 +63,18 @@ def node2dot(node):
 def struct_name_of(node):
     if isinstance(node, c_ast.Struct):
         return node.name
-    elif isinstance(node, c_ast.TypeDecl) or isinstance(node, c_ast.PtrDecl):
+    elif is_structured(node):
         return struct_name_of(node.type)
 
 
 def isstruct(node):
     if isinstance(node, c_ast.Struct):
         return True
-    elif isinstance(node, c_ast.TypeDecl) or isinstance(node, c_ast.PtrDecl):
+    elif is_structured(node):
         return isstruct(node.type)
 
+def is_structured(node):
+    return isinstance(node, c_ast.TypeDecl) or isinstance(node, c_ast.PtrDecl) or isinstance(node, c_ast.ArrayDecl)
 
 def struct2dot(args):
     # Note that cpp is used. Provide a path to your own cpp or
