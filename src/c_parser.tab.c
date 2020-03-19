@@ -3997,7 +3997,7 @@ case 330:
 #line 1715 "c_parser.y"
 {
         if (inStacki == 0) {
-            poseCachePoint(1);
+            placeCachePoint(1);
         }
     }
 break;
@@ -4005,7 +4005,7 @@ case 331:
 #line 1720 "c_parser.y"
 {
         if (inStacki == 0) {
-            poseCachePoint(1);
+            placeCachePoint(1);
         }
     }
 break;

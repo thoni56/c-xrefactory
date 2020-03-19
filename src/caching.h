@@ -7,7 +7,7 @@ extern void recoverCachePoint(int i, char *readedUntil, int activeCaching);
 extern void recoverFromCache(void);
 extern void cacheInput(void);
 extern void cacheInclude(int fileNum);
-extern void poseCachePoint(int inputCacheFlag);
+extern void placeCachePoint(int inputCacheFlag);
 extern void recoverCachePointZero(void);
 extern void recoverMemoriesAfterOverflow(char *cxMemFreeBase);
 

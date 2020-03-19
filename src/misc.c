@@ -1600,7 +1600,7 @@ static void scanClassFile(char *zip, char *file, void *arg) {
         cpi = s_cache.cpi;
         s_cache.activeCache = 1;
         //&fprintf(dumpOut,"%d ", s_topBlock->firstFreeIndex);
-        poseCachePoint(0);
+        placeCachePoint(0);
         s_cache.activeCache = 0;
         memb = javaGetFieldClass(file, &tt);
         fileInd = javaCreateClassFileItem( memb);

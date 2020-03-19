@@ -317,7 +317,7 @@ void recoverFromCache(void) {
 
 void initCaching(void) {
     FILL_caching(&s_cache, 1, 0, 0, s_cache.lb, cFile.lb.next, NULL,NULL);
-    poseCachePoint(0);
+    placeCachePoint(0);
     s_cache.activeCache = 0;
 }
 
@@ -352,7 +352,7 @@ void cacheInclude(int fileNum) {
     if (s_cache.ibi >= INCLUDE_CACHE_SIZE) s_cache.activeCache = 0;
 }
 
-void poseCachePoint(int inputCaching) {
+void placeCachePoint(int inputCaching) {
     struct cachePoint *pp;
     if (s_cache.activeCache == 0) return;
     if (inStacki != 0 || macroStackIndex != 0) return;

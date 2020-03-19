@@ -2727,7 +2727,7 @@ break;
 case 2:
 #line 327 "yacc_parser.y"
 {
-            poseCachePoint(1);
+            placeCachePoint(1);
         }
 break;
 case 7:

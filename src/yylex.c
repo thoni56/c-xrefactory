@@ -2063,7 +2063,7 @@ int yylex(void) {
  endOfFile:
     if ((!LANGUAGE(LANG_JAVA)) && inStacki != 0) {
         popInclude();
-        poseCachePoint(1);
+        placeCachePoint(1);
         goto nextYylex;
     }
     /* add the test whether in COMPLETION, communication string found */
