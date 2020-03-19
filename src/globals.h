@@ -74,8 +74,6 @@ extern S_typeModifiers s_javaStringModifier;
 extern S_typeModifiers s_javaClassModifier;
 extern S_typeModifiers s_javaObjectModifier;
 
-extern S_caching s_cache;
-
 extern FILE *cxOut;
 extern FILE *ccOut;
 

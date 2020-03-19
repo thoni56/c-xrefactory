@@ -11,6 +11,8 @@
 
 #include "log.h"
 
+S_caching s_cache;
+
 
 int checkFileModifiedTime(int fileIndex) {
     struct stat fst;
@@ -217,6 +219,25 @@ static void recoverCxMemory(char *cxMemFreeBase) {
     refTabMap3(&s_cxrefTab, cxrefTabDeleteOutOfMemory);
 }
 
+static void fillCaching(S_caching *caching,
+                         char activeCache,
+                         int cpi,
+                         int ibi,
+                         char *lbcc,
+                         char *lexcc,
+                         char *cc,
+                         char *cfin
+                         ) {
+    caching->activeCache = activeCache;
+    caching->cpi = cpi;
+    caching->ibi = ibi;
+    caching->lbcc = lbcc;
+    caching->lexcc = lexcc;
+    caching->cc = cc;
+    caching->cfin = cfin;
+}
+
+
 // before allowing it, fix problem when modifying .xrefrc during run!!!!
 #define CACHING_CLASSES 1
 #define CAN_CONTINUE_CACHING_CLASSES(cp) (                              \
@@ -279,7 +300,7 @@ void recoverCachePoint(int i, char *readedUntil, int activeCaching) {
     cFile.ifDeep = cp->ifDeep;
     cFile.ifstack = cp->ifstack;
     FILL_lexInput(&cInput, cp->lbcc, readedUntil, s_cache.lb, NULL, II_CACHE);
-    FILL_caching(&s_cache,
+    fillCaching(&s_cache,
                  activeCaching,
                  i+1,
                  cp->ibi,
@@ -315,8 +336,12 @@ void recoverFromCache(void) {
     recoverCachePoint(i-1, readUntil, 1);
 }
 
+void setupCaching(void) {
+    fillCaching(&s_cache,0,0,0,NULL,NULL,NULL,NULL);
+}
+
 void initCaching(void) {
-    FILL_caching(&s_cache, 1, 0, 0, s_cache.lb, cFile.lb.next, NULL,NULL);
+    fillCaching(&s_cache, 1, 0, 0, s_cache.lb, cFile.lb.next, NULL,NULL);
     placeCachePoint(0);
     s_cache.activeCache = 0;
 }

@@ -7,7 +7,6 @@ FILE *dumpOut = NULL;
 S_usageBits s_noUsage;
 int olcxMemoryAllocatedBytes;
 char s_olSymbolType[COMPLETION_STRING_SIZE];
-S_caching s_cache;
 int s_language;
 S_completions s_completions;
 int s_input_file_number;

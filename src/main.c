@@ -2481,7 +2481,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     initJavaTypePCTIConvertIniTab();
     initTypesNamesTab();
     initExtractStoragesNameTab();
-    FILL_caching(&s_cache,0,0,0,NULL,NULL,NULL,NULL);
+    setupCaching();
     initArchaicTypes();
     oldStdopFile[0] = oldStdopSection[0] = 0;
     /* now pre-read the option file */

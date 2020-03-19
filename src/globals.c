@@ -45,10 +45,6 @@ S_currentlyParsedStatics s_cpsInit = {0,};
 
 int s_javaPreScanOnly=0;
 
-/* **************** CACHING ********************** */
-
-S_caching s_cache;
-
 /* **************** cached symbols ********************** */
 
 S_topBlock *s_topBlock;
