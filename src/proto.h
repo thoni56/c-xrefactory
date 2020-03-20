@@ -1039,11 +1039,6 @@ typedef struct counters {
 
 /* ************************ PRE-PROCESSOR **************************** */
 
-typedef struct stringList {
-    char *d;
-    struct stringList *next;
-} S_stringList;
-
 typedef struct stringAddrList {
     char **d;
     struct stringAddrList *next;

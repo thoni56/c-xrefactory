@@ -700,7 +700,7 @@ static void processClassPathString(char *cp) {
         nlen = strlen(np); sfp = np+nlen-4;
         if (nlen>=4 && (strcmp(sfp,".zip")==0 || strcmp(sfp,".jar")==0)){
             // probably zip archive
-            log_debug("Indexing '%s'",np);
+            log_debug("Indexing '%s'", np);
             zipIndexArchive(np);
             log_debug("Done.");
         } else {
@@ -708,8 +708,8 @@ static void processClassPathString(char *cp) {
             PP_ALLOCC(nn, strlen(np)+1, char);
             strcpy(nn,np);
             PP_ALLOC(*ll, S_stringList);
-            FILL_stringList(*ll, nn, NULL);
-            ll = & (*ll)->next;
+            **ll = (S_stringList){.d = nn, .next = NULL};
+            ll = &(*ll)->next;
         }
         cp += ind;
         if (*cp == CLASS_PATH_SEPARATOR) cp++;

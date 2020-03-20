@@ -11,6 +11,10 @@ typedef struct int2StringTab {
     char    *s;
 } S_int2StringTab;
 
+typedef struct stringList {
+    char *d;
+    struct stringList *next;
+} S_stringList;
 
 extern char s_cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
 extern char s_base[MAX_FILE_NAME_SIZE];
