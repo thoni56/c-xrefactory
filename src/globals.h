@@ -2,7 +2,6 @@
 #define GLOBALS_H
 
 #include "constants.h"
-#include "proto.h"
 #include "symtab.h"
 #include "filetab.h"
 
