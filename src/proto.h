@@ -1109,15 +1109,15 @@ typedef struct fileDesc {
     char                *fileName ;
     int                 lineNumber ;
     int					ifDeep;						/* deep of #ifs (C only)*/
-    struct cppIfStack   *ifstack;					/* #if stack (C only) */
-    struct lexBuf       lb;
+    struct cppIfStack   *ifStack;					/* #if stack (C only) */
+    struct lexBuf       lexBuffer;
 } S_fileDesc;
 
 typedef struct lexInput {
-    char *cc;               /* pointer to current lexem */
-    char *fin;              /* end of buffer */
-    char *a;				/* beginning of buffer */
-    char *macname;			/* possible makro name */
+    char *currentLexem;
+    char *endOfBuffer;
+    char *beginningOfBuffer;
+    char *macroName;
     char margExpFlag;		/* input Flag */
 } S_lexInput;
 

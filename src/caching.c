@@ -261,7 +261,7 @@ void recoverMemoriesAfterOverflow(char *cxMemFreeBase) {
     recoverCachePointZero();
 }
 
-void recoverCachePoint(int i, char *readedUntil, int activeCaching) {
+void recoverCachePoint(int i, char *readUntil, int activeCaching) {
     S_cachePoint *cp;
 
     log_trace("recovering cache point %d", i);
@@ -298,16 +298,16 @@ void recoverCachePoint(int i, char *readedUntil, int activeCaching) {
 
     cFile.lineNumber = cp->lineNumber;
     cFile.ifDeep = cp->ifDeep;
-    cFile.ifstack = cp->ifstack;
-    FILL_lexInput(&cInput, cp->lbcc, readedUntil, s_cache.lb, NULL, II_CACHE);
+    cFile.ifStack = cp->ifstack;
+    FILL_lexInput(&cInput, cp->lbcc, readUntil, s_cache.lb, NULL, II_CACHE);
     fillCaching(&s_cache,
                  activeCaching,
                  i+1,
                  cp->ibi,
                  cp->lbcc,
-                 cInput.cc,
-                 cInput.cc,
-                 cInput.fin
+                 cInput.currentLexem,
+                 cInput.currentLexem,
+                 cInput.endOfBuffer
                  );
     log_trace("finished recovering");
 }
@@ -341,7 +341,7 @@ void setupCaching(void) {
 }
 
 void initCaching(void) {
-    fillCaching(&s_cache, 1, 0, 0, s_cache.lb, cFile.lb.next, NULL,NULL);
+    fillCaching(&s_cache, 1, 0, 0, s_cache.lb, cFile.lexBuffer.next, NULL,NULL);
     placeCachePoint(0);
     s_cache.activeCache = 0;
 }
@@ -355,7 +355,7 @@ void cacheInput(void) {
     /*fprintf(dumpOut,"enter cacheInput\n");*/
     if (s_cache.activeCache == 0) return;
     if (inStacki != 0 || macroStackIndex != 0) return;
-    size = cInput.cc - s_cache.lexcc;
+    size = cInput.currentLexem - s_cache.lexcc;
     if ( s_cache.lbcc - s_cache.lb + size >= LEX_BUF_CACHE_SIZE) {
         s_cache.activeCache = 0;
         return;
@@ -363,7 +363,7 @@ void cacheInput(void) {
     /* if from cache, don't copy on the same place */
     if (cInput.margExpFlag != II_CACHE) memcpy(s_cache.lbcc, s_cache.lexcc, size);
     s_cache.lbcc += size;
-    s_cache.lexcc = cInput.cc;
+    s_cache.lexcc = cInput.currentLexem;
 }
 
 void cacheInclude(int fileNum) {
@@ -412,7 +412,7 @@ void placeCachePoint(int inputCaching) {
     fillCachePoint(pp, s_topBlock, *s_topBlock,
                     ppmMemoryi, cxMemory->i, mbMemoryi,
                     s_cache.lbcc, s_cache.ibi,
-                    cFile.lineNumber, cFile.ifDeep, cFile.ifstack,
+                    cFile.lineNumber, cFile.ifDeep, cFile.ifStack,
                     s_javaStat, s_count
                     );
     s_cache.cpi ++;

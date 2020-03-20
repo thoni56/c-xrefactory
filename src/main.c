@@ -2327,7 +2327,7 @@ static void mainFileProcessingInitialisations(
     }
     // reset language once knowing all language suffixes
     mainSetLanguage(fileName,  outLanguage);
-    s_input_file_number = cFile.lb.buffer.fileNumber;
+    s_input_file_number = cFile.lexBuffer.buffer.fileNumber;
     assert(s_opt.taskRegime);
     if (    (s_opt.taskRegime==RegimeXref
              || s_opt.taskRegime==RegimeHtmlGenerate)
@@ -2582,18 +2582,18 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, int mess) {
         fatalError(ERR_ST,"sorry no file for cxrefs, use -refs option", XREF_EXIT_ERR);
     }
     for(i=0; i<inStacki; i++) {
-        if (inStack[i].lb.buffer.file != stdin) {
-            fi = inStack[i].lb.buffer.fileNumber;
+        if (inStack[i].lexBuffer.buffer.file != stdin) {
+            fi = inStack[i].lexBuffer.buffer.fileNumber;
             assert(s_fileTab.tab[fi]);
             s_fileTab.tab[fi]->b.cxLoading = 0;
-            if (inStack[i].lb.buffer.file!=NULL) charBuffClose(&inStack[i].lb.buffer);
+            if (inStack[i].lexBuffer.buffer.file!=NULL) charBuffClose(&inStack[i].lexBuffer.buffer);
         }
     }
-    if (cFile.lb.buffer.file != stdin) {
-        fi = cFile.lb.buffer.fileNumber;
+    if (cFile.lexBuffer.buffer.file != stdin) {
+        fi = cFile.lexBuffer.buffer.fileNumber;
         assert(s_fileTab.tab[fi]);
         s_fileTab.tab[fi]->b.cxLoading = 0;
-        if (cFile.lb.buffer.file!=NULL) charBuffClose(&cFile.lb.buffer);
+        if (cFile.lexBuffer.buffer.file!=NULL) charBuffClose(&cFile.lexBuffer.buffer);
     }
     if (s_opt.taskRegime==RegimeHtmlGenerate) {
         if (s_opt.noCxFile) {
@@ -2819,8 +2819,8 @@ static void setUpdateMtimesInFileTab(S_fileItem *fi) {
 
 static void mainCloseInputFile(int inputIn ) {
     if (inputIn) {
-        if (cFile.lb.buffer.file!=stdin) {
-            charBuffClose(&cFile.lb.buffer);
+        if (cFile.lexBuffer.buffer.file!=stdin) {
+            charBuffClose(&cFile.lexBuffer.buffer);
         }
     }
 }
@@ -2835,7 +2835,7 @@ static void mainEditSrvParseInputFile( int *firstPassing, int inputIn ) {
             //&fprintf(dumpOut,"parse stop\n");fflush(dumpOut);
             *firstPassing = 0;
         }
-        cFile.lb.buffer.isAtEOF = false;
+        cFile.lexBuffer.buffer.isAtEOF = false;
         mainCloseInputFile(inputIn);
     }
 }
@@ -3033,9 +3033,9 @@ static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *
             recoverFromCache();
             s_cache.activeCache = 0;    /* no caching in cxref */
             mainParseInputFile();
-            charBuffClose(&cFile.lb.buffer);
+            charBuffClose(&cFile.lexBuffer.buffer);
             inputIn = 0;
-            cFile.lb.buffer.file = stdin;
+            cFile.lexBuffer.buffer.file = stdin;
             atLeastOneProcessed=1;
         } else if (LANGUAGE(LANG_JAR)) {
             jarFileParse(s_input_file_name);
@@ -3049,7 +3049,7 @@ static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *
         }
         // no multiple passes for java programs
         firstPassing = 0;
-        cFile.lb.buffer.isAtEOF = false;
+        cFile.lexBuffer.buffer.isAtEOF = false;
         if (LANGUAGE(LANG_JAVA)) goto fileParsed;
     }
 
@@ -3339,7 +3339,7 @@ static void mainGenerate(int argc, char **argv) {
     if (inputIn) {
         recoverFromCache();
         mainParseInputFile();
-        cFile.lb.buffer.isAtEOF = false;
+        cFile.lexBuffer.buffer.isAtEOF = false;
     }
     if (s_opt.str_fill) generateArgumentSelectionMacros(20);
     symTabMap(s_symTab, generate);

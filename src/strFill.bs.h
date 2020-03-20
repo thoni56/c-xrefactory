@@ -323,7 +323,7 @@
     (STRUCTP)->ibi = ARG6;\
     (STRUCTP)->lineNumber = ARG7;\
     (STRUCTP)->ifDeep = ARG8;\
-    (STRUCTP)->ifstack = ARG9;\
+    (STRUCTP)->ifStack = ARG9;\
     (STRUCTP)->javaCached = ARG10;\
     (STRUCTP)->counts = ARG11;\
 }
@@ -340,7 +340,7 @@
     (STRUCTP)->ibi = ARG9;\
     (STRUCTP)->lineNumber = ARG10;\
     (STRUCTP)->ifDeep = ARG11;\
-    (STRUCTP)->ifstack = ARG12;\
+    (STRUCTP)->ifStack = ARG12;\
     (STRUCTP)->javaCached = ARG13;\
     (STRUCTP)->counts.localSym = ARG14;\
     (STRUCTP)->counts.localVar = ARG15;\
@@ -359,7 +359,7 @@
     (STRUCTP)->ibi = _ARG_9_OF_17 ARGS;\
     (STRUCTP)->lineNumber = _ARG_10_OF_17 ARGS;\
     (STRUCTP)->ifDeep = _ARG_11_OF_17 ARGS;\
-    (STRUCTP)->ifstack = _ARG_12_OF_17 ARGS;\
+    (STRUCTP)->ifStack = _ARG_12_OF_17 ARGS;\
     (STRUCTP)->javaCached = _ARG_13_OF_17 ARGS;\
     (STRUCTP)->counts.localSym = _ARG_14_OF_17 ARGS;\
     (STRUCTP)->counts.localVar = _ARG_15_OF_17 ARGS;\
@@ -842,24 +842,24 @@
     (STRUCTP)->p = _ARG_1_OF_2 ARGS;\
 }
 #define FILL_lexInput(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4) {\
-    (STRUCTP)->cc = ARG0;\
-    (STRUCTP)->fin = ARG1;\
-    (STRUCTP)->a = ARG2;\
-    (STRUCTP)->macname = ARG3;\
+    (STRUCTP)->currentLexem = ARG0;\
+    (STRUCTP)->endOfBuffer = ARG1;\
+    (STRUCTP)->beginningOfBuffer = ARG2;\
+    (STRUCTP)->macroName = ARG3;\
     (STRUCTP)->margExpFlag = ARG4;\
 }
 #define FILLF_lexInput(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4) {\
-    (STRUCTP)->cc = ARG0;\
-    (STRUCTP)->fin = ARG1;\
-    (STRUCTP)->a = ARG2;\
-    (STRUCTP)->macname = ARG3;\
+    (STRUCTP)->currentLexem = ARG0;\
+    (STRUCTP)->endOfBuffer = ARG1;\
+    (STRUCTP)->beginningOfBuffer = ARG2;\
+    (STRUCTP)->macroName = ARG3;\
     (STRUCTP)->margExpFlag = ARG4;\
 }
 #define _FILLF_lexInput(STRUCTP, ARGS) {\
-    (STRUCTP)->cc = _ARG_0_OF_5 ARGS;\
-    (STRUCTP)->fin = _ARG_1_OF_5 ARGS;\
-    (STRUCTP)->a = _ARG_2_OF_5 ARGS;\
-    (STRUCTP)->macname = _ARG_3_OF_5 ARGS;\
+    (STRUCTP)->currentLexem = _ARG_0_OF_5 ARGS;\
+    (STRUCTP)->endOfBuffer = _ARG_1_OF_5 ARGS;\
+    (STRUCTP)->beginningOfBuffer = _ARG_2_OF_5 ARGS;\
+    (STRUCTP)->macroName = _ARG_3_OF_5 ARGS;\
     (STRUCTP)->margExpFlag = _ARG_4_OF_5 ARGS;\
 }
 #define FILL_internal_state(STRUCTP) {\
@@ -3070,73 +3070,73 @@
     (STRUCTP)->lineNumber = ARG1;\
     (STRUCTP)->ifDeep = ARG2;\
     (STRUCTP)->ifstack = ARG3;\
-    (STRUCTP)->lb = ARG4;\
+    (STRUCTP)->lexBuffer = ARG4;\
 }
 #define FILLF_fileDesc(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13, ARG14, ARG15, ARG16, ARG17, ARG18, ARG19, ARG20, ARG21, ARG22, ARG23, ARG24, ARG25, ARG26, ARG27, ARG28, ARG29, ARG30) {\
     (STRUCTP)->fileName = ARG0;\
     (STRUCTP)->lineNumber = ARG1;\
     (STRUCTP)->ifDeep = ARG2;\
-    (STRUCTP)->ifstack = ARG3;\
-    (STRUCTP)->lb.next = ARG4;\
-    (STRUCTP)->lb.end = ARG5;\
-    (STRUCTP)->lb.posi = ARG6;\
-    (STRUCTP)->lb.buffer.next = ARG7;\
-    (STRUCTP)->lb.buffer.end = ARG8;\
-    (STRUCTP)->lb.buffer.file = ARG9;\
-    (STRUCTP)->lb.buffer.filePos = ARG10;\
-    (STRUCTP)->lb.buffer.fileNumber = ARG11;\
-    (STRUCTP)->lb.buffer.lineNum = ARG12;\
-    (STRUCTP)->lb.buffer.lineBegin = ARG13;\
-    (STRUCTP)->lb.buffer.columnOffset = ARG14;\
-    (STRUCTP)->lb.buffer.isAtEOF = ARG15;\
-    (STRUCTP)->lb.buffer.inputMethod = ARG16;\
-    (STRUCTP)->lb.buffer.zipStream.next_in = ARG17;\
-    (STRUCTP)->lb.buffer.zipStream.avail_in = ARG18;\
-    (STRUCTP)->lb.buffer.zipStream.total_in = ARG19;\
-    (STRUCTP)->lb.buffer.zipStream.next_out = ARG20;\
-    (STRUCTP)->lb.buffer.zipStream.avail_out = ARG21;\
-    (STRUCTP)->lb.buffer.zipStream.total_out = ARG22;\
-    (STRUCTP)->lb.buffer.zipStream.msg = ARG23;\
-    (STRUCTP)->lb.buffer.zipStream.state = ARG24;\
-    (STRUCTP)->lb.buffer.zipStream.zalloc = ARG25;\
-    (STRUCTP)->lb.buffer.zipStream.zfree = ARG26;\
-    (STRUCTP)->lb.buffer.zipStream.opaque = ARG27;\
-    (STRUCTP)->lb.buffer.zipStream.data_type = ARG28;\
-    (STRUCTP)->lb.buffer.zipStream.adler = ARG29;\
-    (STRUCTP)->lb.buffer.zipStream.reserved = ARG30;\
+    (STRUCTP)->ifStack = ARG3;\
+    (STRUCTP)->lexBuffer.next = ARG4;\
+    (STRUCTP)->lexBuffer.end = ARG5;\
+    (STRUCTP)->lexBuffer.posi = ARG6;\
+    (STRUCTP)->lexBuffer.buffer.next = ARG7;\
+    (STRUCTP)->lexBuffer.buffer.end = ARG8;\
+    (STRUCTP)->lexBuffer.buffer.file = ARG9;\
+    (STRUCTP)->lexBuffer.buffer.filePos = ARG10;\
+    (STRUCTP)->lexBuffer.buffer.fileNumber = ARG11;\
+    (STRUCTP)->lexBuffer.buffer.lineNum = ARG12;\
+    (STRUCTP)->lexBuffer.buffer.lineBegin = ARG13;\
+    (STRUCTP)->lexBuffer.buffer.columnOffset = ARG14;\
+    (STRUCTP)->lexBuffer.buffer.isAtEOF = ARG15;\
+    (STRUCTP)->lexBuffer.buffer.inputMethod = ARG16;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.next_in = ARG17;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.avail_in = ARG18;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.total_in = ARG19;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.next_out = ARG20;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.avail_out = ARG21;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.total_out = ARG22;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.msg = ARG23;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.state = ARG24;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.zalloc = ARG25;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.zfree = ARG26;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.opaque = ARG27;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.data_type = ARG28;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.adler = ARG29;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.reserved = ARG30;\
 }
 #define _FILLF_fileDesc(STRUCTP, ARGS) {\
     (STRUCTP)->fileName = _ARG_0_OF_31 ARGS;\
     (STRUCTP)->lineNumber = _ARG_1_OF_31 ARGS;\
     (STRUCTP)->ifDeep = _ARG_2_OF_31 ARGS;\
-    (STRUCTP)->ifstack = _ARG_3_OF_31 ARGS;\
-    (STRUCTP)->lb.next = _ARG_4_OF_31 ARGS;\
-    (STRUCTP)->lb.end = _ARG_5_OF_31 ARGS;\
-    (STRUCTP)->lb.posi = _ARG_6_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.next = _ARG_7_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.end = _ARG_8_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.file = _ARG_9_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.filePos = _ARG_10_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.fileNumber = _ARG_11_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.lineNum = _ARG_12_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.lineBegin = _ARG_13_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.columnOffset = _ARG_14_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.isAtEOF = _ARG_15_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.inputMethod = _ARG_16_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.zipStream.next_in = _ARG_17_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.zipStream.avail_in = _ARG_18_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.zipStream.total_in = _ARG_19_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.zipStream.next_out = _ARG_20_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.zipStream.avail_out = _ARG_21_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.zipStream.total_out = _ARG_22_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.zipStream.msg = _ARG_23_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.zipStream.state = _ARG_24_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.zipStream.zalloc = _ARG_25_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.zipStream.zfree = _ARG_26_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.zipStream.opaque = _ARG_27_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.zipStream.data_type = _ARG_28_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.zipStream.adler = _ARG_29_OF_31 ARGS;\
-    (STRUCTP)->lb.buffer.zipStream.reserved = _ARG_30_OF_31 ARGS;\
+    (STRUCTP)->ifStack = _ARG_3_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.next = _ARG_4_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.end = _ARG_5_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.posi = _ARG_6_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.next = _ARG_7_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.end = _ARG_8_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.file = _ARG_9_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.filePos = _ARG_10_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.fileNumber = _ARG_11_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.lineNum = _ARG_12_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.lineBegin = _ARG_13_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.columnOffset = _ARG_14_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.isAtEOF = _ARG_15_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.inputMethod = _ARG_16_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.next_in = _ARG_17_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.avail_in = _ARG_18_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.total_in = _ARG_19_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.next_out = _ARG_20_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.avail_out = _ARG_21_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.total_out = _ARG_22_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.msg = _ARG_23_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.state = _ARG_24_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.zalloc = _ARG_25_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.zfree = _ARG_26_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.opaque = _ARG_27_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.data_type = _ARG_28_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.adler = _ARG_29_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.reserved = _ARG_30_OF_31 ARGS;\
 }
 #define FILL_bb_exprTokenType(STRUCTP, ARG0, ARG1, ARG2) {\
     (STRUCTP)->b = ARG0;\

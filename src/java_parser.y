@@ -1433,15 +1433,15 @@ _bef_:	{
                             s_cp.thisMethodMemoriesStored = 1;
                             if (s_opt.server_operation == OLO_MAYBE_THIS) {
                                 changeMethodReferencesUsages(LINK_NAME_MAYBE_THIS_ITEM,
-                                                             CatLocal, cFile.lb.buffer.fileNumber,
+                                                             CatLocal, cFile.lexBuffer.buffer.fileNumber,
                                                              s_javaStat->thisClass);
                             } else if (s_opt.server_operation == OLO_NOT_FQT_REFS) {
                                 changeMethodReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
-                                                             CatLocal,cFile.lb.buffer.fileNumber,
+                                                             CatLocal,cFile.lexBuffer.buffer.fileNumber,
                                                              s_javaStat->thisClass);
                             } else if (s_opt.server_operation == OLO_USELESS_LONG_NAME) {
                                 changeMethodReferencesUsages(LINK_NAME_IMPORTED_QUALIFIED_ITEM,
-                                                             CatGlobal,cFile.lb.buffer.fileNumber,
+                                                             CatGlobal,cFile.lexBuffer.buffer.fileNumber,
                                                              s_javaStat->thisClass);
                             }
                             s_cps.cxMemiAtClassBeginning = s_cp.cxMemiAtClassBegin;
@@ -1450,11 +1450,11 @@ _bef_:	{
 //&fprintf(dumpOut,"!setting class end line to %d, cb==%d, ce==%d\n", s_cps.classCoordEndLine, s_cps.cxMemiAtClassBeginning, s_cps.cxMemiAtClassEnd);
                             if (s_opt.server_operation == OLO_NOT_FQT_REFS_IN_CLASS) {
                                 changeClassReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
-                                                            CatLocal,cFile.lb.buffer.fileNumber,
+                                                            CatLocal,cFile.lexBuffer.buffer.fileNumber,
                                                             s_javaStat->thisClass);
                             } else if (s_opt.server_operation == OLO_USELESS_LONG_NAME_IN_CLASS) {
                                 changeClassReferencesUsages(LINK_NAME_IMPORTED_QUALIFIED_ITEM,
-                                                            CatGlobal,cFile.lb.buffer.fileNumber,
+                                                            CatGlobal,cFile.lexBuffer.buffer.fileNumber,
                                                             s_javaStat->thisClass);
                             }
                         }

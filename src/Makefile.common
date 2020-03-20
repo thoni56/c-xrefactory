@@ -51,6 +51,11 @@ c-xref.bs:
 	@echo "BOOTSTRAPPING..."
 	make ROOTDIR=$(ROOTDIR) -f Makefile.bs
 
+# Copy all generated headers to .bs. so that compiling from scratch will work
+bs: strFill.g.h enumTxt.g.h enumTxt.g.c
+	cp strFill.g.h strFill.bs.h
+	cp enumTxt.g.h enumTxt.bs.h
+	cp enumTxt.g.c enumTxt.bs.c
 
 #########################################################################
 # Once we have bootstrapped a c-xref.bs it can generate definitions

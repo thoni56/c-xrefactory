@@ -712,7 +712,7 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
     // memset(s_yygstate, sizeof(struct yyGlobalState), 0);
     uniyylval = & s_yygstate->gyylval;
     pushNewInclude(ff, bb, asfname, "\n");
-    cfilenum = cFile.lb.buffer.fileNumber;
+    cfilenum = cFile.lexBuffer.buffer.fileNumber;
     s_jsl->pass = 1;
     javayyparse();
     popInclude();      // this will close the file
@@ -729,7 +729,7 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
         }
     }
     pushNewInclude(ff, bb, asfname, "\n");
-    cfilenum = cFile.lb.buffer.fileNumber;
+    cfilenum = cFile.lexBuffer.buffer.fileNumber;
     s_jsl->pass = 2;
     javayyparse();
     popInclude();      // this will close the file
@@ -2683,7 +2683,7 @@ void javaParsedSuperClass(Symbol *symbol) {
         //&assert(0); // this should never comed now
         javaLoadClassSymbolsFromFile(symbol);
         addSuperClassOrInterface(s_javaStat->thisClass, symbol,
-                                 cFile.lb.buffer.fileNumber);
+                                 cFile.lexBuffer.buffer.fileNumber);
     }
 }
 

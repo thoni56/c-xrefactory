@@ -50,7 +50,7 @@ void genInternalLabelReference(int counter, int usage) {
     if (s_opt.server_operation != OLO_EXTRACT) return;
 
     LOCAL_LABEL_NAME(ttt,counter);
-    FILLF_id(&ll, ttt, NULL, cFile.lb.buffer.fileNumber, 0,0,NULL);
+    FILLF_id(&ll, ttt, NULL, cFile.lexBuffer.buffer.fileNumber, 0,0,NULL);
     if (usage != UsageDefined) ll.p.line++;
     // line == 0 or 1 , (hack to get definition first)
     labelReference(&ll, usage);
@@ -1246,6 +1246,6 @@ void extractActionOnBlockMarker(void) {
         s_cps.cxMemiAtBlockEnd = cxMemory->i;
         s_cps.workMemiAtBlockEnd = s_topBlock->previousTopBlock;
     }
-    FILL_position(&pos, cFile.lb.buffer.fileNumber, 0, 0);
+    FILL_position(&pos, cFile.lexBuffer.buffer.fileNumber, 0, 0);
     addTrivialCxReference("Block", TypeBlockMarker,StorageDefault, &pos, UsageUsed);
 }

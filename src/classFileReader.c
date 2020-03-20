@@ -1077,11 +1077,11 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
 
     log_debug("reading file %s",name);
 
-    ccc = cFile.lb.buffer.next; ffin = cFile.lb.buffer.end;
+    ccc = cFile.lexBuffer.buffer.next; ffin = cFile.lexBuffer.buffer.end;
     if (zipsep != NULL) {
-        if (zipSeekToFile(&ccc,&ffin,&cFile.lb.buffer,name) == 0) goto fini;
+        if (zipSeekToFile(&ccc,&ffin,&cFile.lexBuffer.buffer,name) == 0) goto fini;
     }
-    GetU4(cval, ccc, ffin, &cFile.lb.buffer);
+    GetU4(cval, ccc, ffin, &cFile.lexBuffer.buffer);
     /*&fprintf(dumpOut, "magic is %x\n", cval); fflush(dumpOut);&*/
     if (cval != 0xcafebabe) {
         sprintf(tmpBuff,"%s is not a valid class file\n",name);
@@ -1089,20 +1089,20 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
         goto fini;
     }
     assert(cval == 0xcafebabe);
-    GetU4(cval, ccc, ffin, &cFile.lb.buffer);
+    GetU4(cval, ccc, ffin, &cFile.lexBuffer.buffer);
     /*&fprintf(dumpOut, "version is %d\n", cval);&*/
-    constantPool = cfReadConstantPool(&ccc, &ffin, &cFile.lb.buffer, &cpSize);
-    GetU2(accesFlags, ccc, ffin, &cFile.lb.buffer);
+    constantPool = cfReadConstantPool(&ccc, &ffin, &cFile.lexBuffer.buffer, &cpSize);
+    GetU2(accesFlags, ccc, ffin, &cFile.lexBuffer.buffer);
     memb->bits.accessFlags = accesFlags;
     //&fprintf(dumpOut,"reading accessFlags %s == %x\n", name, accesFlags);
     if (accesFlags & ACC_INTERFACE) s_fileTab.tab[fileInd]->b.isInterface=1;
-    GetU2(thisClass, ccc, ffin, &cFile.lb.buffer);
+    GetU2(thisClass, ccc, ffin, &cFile.lexBuffer.buffer);
     if (thisClass<0 || thisClass>=cpSize) goto corrupted;
     thisClassName = constantPool[constantPool[thisClass].clas.nameIndex].asciz;
     // TODO!!!, it may happen that name of class differ in cases from name of file,
     // what to do in such case? abandon with an error?
     //&fprintf(dumpOut,"this class == %s\n", thisClassName);fflush(dumpOut);
-    GetU2(superClass, ccc, ffin, &cFile.lb.buffer);
+    GetU2(superClass, ccc, ffin, &cFile.lexBuffer.buffer);
     if (superClass != 0) {
         if (superClass<0 || superClass>=cpSize) goto corrupted;
         super = constantPool[constantPool[superClass].clas.nameIndex].asciz;
@@ -1110,11 +1110,11 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
                                        loadSuper);
     }
 
-    GetU2(inum, ccc, ffin, &cFile.lb.buffer);
+    GetU2(inum, ccc, ffin, &cFile.lexBuffer.buffer);
     /* implemented interfaces */
 
     for(i=0; i<inum; i++) {
-        GetU2(cval, ccc, ffin, &cFile.lb.buffer);
+        GetU2(cval, ccc, ffin, &cFile.lexBuffer.buffer);
         if (cval != 0) {
             if (cval<0 || cval>=cpSize) goto corrupted;
             interf = constantPool[constantPool[cval].clas.nameIndex].asciz;
@@ -1124,17 +1124,17 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     }
     //& addSubClassesItemsToFileTab(memb, memb->u.s->classFile);
 
-    cfReadFieldInfos(&ccc, &ffin, &cFile.lb.buffer, memb, constantPool);
-    if (cFile.lb.buffer.isAtEOF) goto endOfFile;
-    cfReadMethodInfos(&ccc, &ffin, &cFile.lb.buffer, memb, constantPool);
-    if (cFile.lb.buffer.isAtEOF) goto endOfFile;
+    cfReadFieldInfos(&ccc, &ffin, &cFile.lexBuffer.buffer, memb, constantPool);
+    if (cFile.lexBuffer.buffer.isAtEOF) goto endOfFile;
+    cfReadMethodInfos(&ccc, &ffin, &cFile.lexBuffer.buffer, memb, constantPool);
+    if (cFile.lexBuffer.buffer.isAtEOF) goto endOfFile;
 
-    GetU2(count, ccc, ffin, &cFile.lb.buffer);
+    GetU2(count, ccc, ffin, &cFile.lexBuffer.buffer);
     for(ind=0; ind<count; ind++) {
-        GetU2(aname, ccc, ffin, &cFile.lb.buffer);
-        GetU4(alen, ccc, ffin, &cFile.lb.buffer);
+        GetU2(aname, ccc, ffin, &cFile.lexBuffer.buffer);
+        GetU4(alen, ccc, ffin, &cFile.lexBuffer.buffer);
         if (strcmp(constantPool[aname].asciz,"InnerClasses")==0) {
-            GetU2(inum, ccc, ffin, &cFile.lb.buffer);
+            GetU2(inum, ccc, ffin, &cFile.lexBuffer.buffer);
             memb->u.s->nnested = inum;
             // TODO: replace the inner tab by inner list
             if (inum >= MAX_INNERS_CLASSES) {
@@ -1148,11 +1148,11 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
                 CF_ALLOCC(memb->u.s->nest, inum, S_nestedSpec);
             }
             for(rinners=0; rinners<inum; rinners++) {
-                GetU2(innval, ccc, ffin, &cFile.lb.buffer);
+                GetU2(innval, ccc, ffin, &cFile.lexBuffer.buffer);
                 inner = constantPool[constantPool[innval].clas.nameIndex].asciz;
                 //&fprintf(dumpOut,"inner %s \n",inner);fflush(dumpOut);
-                GetU2(upp, ccc, ffin, &cFile.lb.buffer);
-                GetU2(innNameInd, ccc, ffin, &cFile.lb.buffer);
+                GetU2(upp, ccc, ffin, &cFile.lexBuffer.buffer);
+                GetU2(innNameInd, ccc, ffin, &cFile.lexBuffer.buffer);
                 if (innNameInd==0) innerCName = "";         // !!!!!!!! hack
                 else innerCName = constantPool[innNameInd].asciz;
                 //&fprintf(dumpOut,"class name %x='%s'\n",innerCName,innerCName);fflush(dumpOut);
@@ -1166,7 +1166,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
                         /*&fprintf(dumpOut,"set as member class \n"); fflush(dumpOut);&*/
                     }
                 }
-                GetU2(modifs, ccc, ffin, &cFile.lb.buffer);
+                GetU2(modifs, ccc, ffin, &cFile.lexBuffer.buffer);
                 //& inners->bits.accessFlags |= modifs;
                 //&fprintf(dumpOut,"modif? %x\n",modifs);fflush(dumpOut);
 
@@ -1192,7 +1192,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
             }
 #endif
         } else {
-            SkipNChars(alen, ccc, ffin, &cFile.lb.buffer);
+            SkipNChars(alen, ccc, ffin, &cFile.lexBuffer.buffer);
         }
     }
     s_fileTab.tab[fileInd]->b.cxLoaded = 1;
