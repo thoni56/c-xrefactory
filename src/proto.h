@@ -1305,10 +1305,6 @@ typedef struct editorBufferList {
     struct editorBufferList	*next;
 } S_editorBufferList;
 
-typedef struct editorMemoryBlock {
-    struct editorMemoryBlock *next;
-} S_editorMemoryBlock;
-
 typedef struct editorMarker {
     struct editorBuffer		*buffer;
     unsigned                offset;

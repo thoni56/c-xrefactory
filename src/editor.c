@@ -11,6 +11,10 @@
 
 #include "protocol.h"
 
+typedef struct editorMemoryBlock {
+    struct editorMemoryBlock *next;
+} S_editorMemoryBlock;
+
 
 #define MIN_EDITOR_MEMORY_BLOCK 11
 #define MAX_EDITOR_MEMORY_BLOCK 32
