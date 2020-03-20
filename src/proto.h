@@ -738,11 +738,6 @@ typedef struct symStructSpec {
 } S_symStructSpec;
 
 
-typedef struct symbolList {
-    struct symbol        *d;
-    struct symbolList    *next;
-} SymbolList;
-
 typedef struct jslSymbolList {
     struct symbol           *d;
     struct position			pos;

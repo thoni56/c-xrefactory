@@ -2,6 +2,7 @@
 #define _JAVAFQTTAB_H_
 
 #include "proto.h"
+#include "symbol.h"
 
 #define HASH_TAB_NAME javaFqtTab
 #define HASH_ELEM_TYPE SymbolList

@@ -41,6 +41,12 @@ typedef struct symbol {
     struct symbol                   *next;	/* next table item with the same hash */
 } Symbol;
 
+typedef struct symbolList {
+    struct symbol        *d;
+    struct symbolList    *next;
+} SymbolList;
+
+
 
 /* Functions: */
 

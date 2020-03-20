@@ -46,6 +46,7 @@ attack those one by one, maybe?
 ** TODO Remove code for generation of str_fill
 * DOING Start using log.c functions to log to a separate log file
 * TODO Refactor int2StringTabs, should not have Init in them
+* TODO Investigate to remove S_classTreeData
 * TODO Cannot mock structs as arguments like in symbol.mock
 We need to change pos to *pos if that's gonna work
 * TODO Fix tests/olcx_refactor_rename gets "buf is not valid"
