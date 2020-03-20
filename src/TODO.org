@@ -10,6 +10,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 At this point there are 66, 65, 64 FILL-macros that are in use
 *** TODO Remove chReference from proto.h
 *** TODO Rename classh to hierarchy
+*** TODO Remove cachePoint from proto.h
 *** DONE Remove caching from proto.h
 *** DONE Remove fileItem from proto.h
 *** DONE Remove FILL_intlist
