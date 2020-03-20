@@ -949,11 +949,6 @@ typedef struct javaTypePCTIConvertIni {
     int		PCTIndex;
 } S_javaTypePCTIConvertIni;
 
-typedef struct intStringTab {
-    int     i;
-    char    *s;
-} S_intStringTab;
-
 typedef struct currentlyParsedCl {		// class local, nested for classes
     struct symbol			*function;
     struct extRecFindStr	*erfsForParamsComplet;			// curently parsed method for param completion

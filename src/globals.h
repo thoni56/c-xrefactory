@@ -6,6 +6,11 @@
 #include "symtab.h"
 #include "filetab.h"
 
+typedef struct intStringTab {
+    int     i;
+    char    *s;
+} S_intStringTab;
+
 
 extern char s_cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
 extern char s_base[MAX_FILE_NAME_SIZE];
