@@ -740,7 +740,7 @@ S_javaTypePCTIConvertIni s_javaTypePCTIConvertIniTab[] = {
 
 char *s_extractStorageName[MAX_STORAGE];
 
-S_intStringTab s_extractStoragesNamesInitTab[] = {
+S_int2StringTab s_extractStoragesNamesInitTab[] = {
     {StorageExtern,     "extern "},
     {StorageStatic,     "static "},
     {StorageRegister,   "register "},
@@ -748,7 +748,7 @@ S_intStringTab s_extractStoragesNamesInitTab[] = {
     {-1, NULL}
 };
 
-S_intStringTab s_typesNamesInitTab[] = {
+S_int2StringTab s_typesNamesInitTab[] = {
     {TypeDefault ,          "Default"},
     {TypeChar ,             "char"},
     {TypeUnsignedChar ,     "unsigned char"},

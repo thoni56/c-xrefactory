@@ -7,7 +7,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 * DOING Remove bootstrap step (strfill and local definitions)
 ** DOING Remove all FILL_xxx macros by using compound initialisers
-At this point there are 66, 65, 64 FILL-macros that are in use
+At this point there are 66, 65, 64, 63 FILL-macros that are in use
 *** TODO Remove chReference from proto.h
 *** TODO Rename classh to hierarchy
 *** TODO Remove cachePoint from proto.h
@@ -45,11 +45,9 @@ attack those one by one, maybe?
 ** TODO Remove generation of str_fill from build
 ** TODO Remove code for generation of str_fill
 * DOING Start using log.c functions to log to a separate log file
+* TODO Refactor int2StringTabs, should not have Init in them
 * TODO Cannot mock structs as arguments like in symbol.mock
 We need to change pos to *pos if that's gonna work
-* TODO Make fillSymbol() and newSymbol() set default symbolBits
-then we only need to set non-default values (which could be done
-using setType(), setStorage() and so on, functions
 * TODO Fix tests/olcx_refactor_rename gets "buf is not valid"
 * TODO Rename reftab.[ch] to cxreftab.[ch]? Or s_cxreftab to s_reftab?
 * TODO Clean up documentation, primarily remove 'create_distribution'
@@ -116,7 +114,10 @@ easier to mock and unit test other modules.
   ACTUALLY: split generation of enumTxt header to its own header file
   with the naming strategy as for the others.
 
-* TODO Move all function prototypes from proto.h to <module>.h
+* DONE Move all function prototypes from proto.h to <module>.h
+* DONE Make fillSymbol() and newSymbol() set default symbolBits
+then we only need to set non-default values (which could be done
+using setType(), setStorage() and so on, functions
 * DONE Remove FILLF_fileItem() by replacing it with fillFileItem()
 ** DONE Make hashTabAdd() return int rather than *int out arg
 *** DONE Make IsMember() return position rather than out argument

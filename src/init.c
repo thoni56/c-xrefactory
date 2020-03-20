@@ -107,7 +107,7 @@ void initTypeCharCodeTab(void) {
 
 void initTypesNamesTab(void) {
     int                 i;
-    S_intStringTab      *s;
+    S_int2StringTab      *s;
     for (i=0; s_typesNamesInitTab[i].i != -1; i++) {
         s = &s_typesNamesInitTab[i];
         assert(s->i >= 0 && s->i < MAX_TYPE);
@@ -117,7 +117,7 @@ void initTypesNamesTab(void) {
 
 void initExtractStoragesNameTab(void) {
     int                 i;
-    S_intStringTab      *s;
+    S_int2StringTab      *s;
     for(i=0; i<MAX_STORAGE; i++) s_extractStorageName[i]="";
     for (i=0; s_extractStoragesNamesInitTab[i].i != -1; i++) {
         s = &s_extractStoragesNamesInitTab[i];

@@ -5,10 +5,11 @@
 #include "symtab.h"
 #include "filetab.h"
 
-typedef struct intStringTab {
+
+typedef struct int2StringTab {
     int     i;
     char    *s;
-} S_intStringTab;
+} S_int2StringTab;
 
 
 extern char s_cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
@@ -142,9 +143,9 @@ extern int s_olOriginalFileNumber;      /* original file name */
 extern int s_olOriginalComFileNumber;	/* original communication file */
 extern int s_noneFileIndex;
 
-extern S_intStringTab s_typesNamesInitTab[];
+extern S_int2StringTab s_typesNamesInitTab[];
 extern char *s_extractStorageName[MAX_STORAGE];
-extern S_intStringTab s_extractStoragesNamesInitTab[];
+extern S_int2StringTab s_extractStoragesNamesInitTab[];
 
 extern S_fileDesc cFile;
 
