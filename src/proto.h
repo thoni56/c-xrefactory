@@ -1041,22 +1041,6 @@ typedef struct counters {
     int anonymousClassCounter;
 } S_counters;
 
-/* **************************** CACHING ****************************** */
-
-typedef struct cachePoint {
-    struct topBlock			*topBlock;
-    struct topBlock             starTopBlock;
-    int                     ppmMemoryi;
-    int                     cxMemoryi;
-    int                     mbMemoryi;
-    char					*lbcc;		/* caching lbcc */
-    short int				ibi;		/* caching ibi */
-    short int               lineNumber;
-    short int               ifDeep;
-    struct cppIfStack       *ifstack;
-    struct javaStat			*javaCached;
-    struct counters			counts;
-} S_cachePoint;
 
 /* ************************ PRE-PROCESSOR **************************** */
 

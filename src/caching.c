@@ -377,8 +377,27 @@ void cacheInclude(int fileNum) {
     if (s_cache.ibi >= INCLUDE_CACHE_SIZE) s_cache.activeCache = 0;
 }
 
+static void fillCachePoint(S_cachePoint *cachePoint, struct topBlock *topBlock,
+                           struct topBlock starTopBlock, int ppmMemoryi,
+                           int cxMemoryi, int mbMemoryi, char *lbcc, short int ibi,
+                           short int lineNumber, short int ifDeep, struct cppIfStack *ifstack,
+                           struct javaStat *javaCached, struct counters counts) {
+    cachePoint->topBlock = topBlock;
+    cachePoint->starTopBlock = starTopBlock;
+    cachePoint->ppmMemoryi = ppmMemoryi;
+    cachePoint->cxMemoryi = cxMemoryi;
+    cachePoint->mbMemoryi = mbMemoryi;
+    cachePoint->lbcc = lbcc;
+    cachePoint->ibi = ibi;
+    cachePoint->lineNumber = lineNumber;
+    cachePoint->ifDeep = ifDeep;
+    cachePoint->ifstack = ifstack;
+    cachePoint->javaCached = javaCached;
+    cachePoint->counts = counts;
+}
+
 void placeCachePoint(int inputCaching) {
-    struct cachePoint *pp;
+    S_cachePoint *pp;
     if (s_cache.activeCache == 0) return;
     if (inStacki != 0 || macroStackIndex != 0) return;
     if (s_cache.cpi >= MAX_CACHE_POINTS) {
@@ -390,7 +409,7 @@ void placeCachePoint(int inputCaching) {
     if (tmpWorkMemoryi != 0) return; /* something in non-cached tmp memory */
     pp = &s_cache.cp[s_cache.cpi];
     log_debug("placing cache point %d", s_cache.cpi);
-    FILL_cachePoint(pp, s_topBlock, *s_topBlock,
+    fillCachePoint(pp, s_topBlock, *s_topBlock,
                     ppmMemoryi, cxMemory->i, mbMemoryi,
                     s_cache.lbcc, s_cache.ibi,
                     cFile.lineNumber, cFile.ifDeep, cFile.ifstack,
