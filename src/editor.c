@@ -9,12 +9,14 @@
 #include "strFill.h"
 #include "log.h"
 
+
 #include "protocol.h"
 
 typedef struct editorMemoryBlock {
     struct editorMemoryBlock *next;
 } S_editorMemoryBlock;
 
+S_editorUndo *s_editorUndo = NULL;
 
 #define MIN_EDITOR_MEMORY_BLOCK 11
 #define MAX_EDITOR_MEMORY_BLOCK 32
@@ -303,6 +305,30 @@ static void editorPerformEncodingAdjustemets(S_editorBuffer *buff) {
     }
 }
 
+S_editorMarker *newEditorMarker(S_editorBuffer *buffer, unsigned offset, S_editorMarker *previous, S_editorMarker *next) {
+    S_editorMarker *editorMarker;
+
+    ED_ALLOC(editorMarker, S_editorMarker);
+    editorMarker->buffer = buffer;
+    editorMarker->offset = offset;
+    editorMarker->previous = previous;
+    editorMarker->next = next;
+
+    return editorMarker;
+}
+
+S_editorRegionList *newEditorRegionList(S_editorMarker *begin, S_editorMarker *end, S_editorRegionList *next) {
+    S_editorRegionList *regionList;
+
+    ED_ALLOC(regionList, S_editorRegionList);
+    regionList->r.b = begin;
+    regionList->r.e = end;
+    regionList->next = next;
+
+    return regionList;
+}
+
+
 //////////////////////////////////////////////////////////////////////////////
 
 void editorInit(void) {
@@ -377,7 +403,7 @@ static void editorAffectMarkerToBuffer(S_editorBuffer *buff, S_editorMarker *mar
 S_editorMarker *editorCrNewMarker(S_editorBuffer *buff, int offset) {
     S_editorMarker *m;
     ED_ALLOC(m, S_editorMarker);
-    FILL_editorMarker(m, NULL, offset, NULL, NULL);
+    *m = (S_editorMarker){.buffer = NULL, .offset = offset, .previous = NULL, .next = NULL};
     editorAffectMarkerToBuffer(buff, m);
     return(m);
 }
@@ -500,19 +526,19 @@ static void allocNewEditorBufferTextSpace(S_editorBuffer *ff, int size) {
     } else {
         s_editorMemory[allocIndex] = s_editorMemory[allocIndex]->next;
     }
-    //&memset(space, '@', allocSize);
-    //&sprintf(tmpBuff,"allocating %d of size %d for %s\n", space, allocSize, ff->name);ppcGenTmpBuff();
-    FILL_editorBufferAllocationData(&ff->a,
-                                    size, space+EDITOR_FREE_PREFIX_SIZE,
-                                    EDITOR_FREE_PREFIX_SIZE, space, allocIndex, allocSize
-                                    );
+    ff->a = (S_editorBufferAllocationData){.bufferSize = size, .text = space+EDITOR_FREE_PREFIX_SIZE,
+                                           .allocatedFreePrefixSize = EDITOR_FREE_PREFIX_SIZE,
+                                           .allocatedBlock = space, .allocatedIndex = allocIndex,
+                                           .allocatedSize = allocSize};
 }
 
 static void fillEmptyEditorBuffer(S_editorBuffer *ff, char *aname, int ftnum,
                                   char*afname) {
-    FILL_editorBufferBits(&ff->b, 0, 0, 0);
-    FILL_editorBufferAllocationData(&ff->a, 0, NULL, 0, NULL, 0, 0);
-    FILL_editorBuffer(ff, aname, ftnum, afname, s_noStat, NULL, ff->a, ff->b);
+    ff->b = (S_editorBufferBits){.textLoaded = 0, .modified = 0, .modifiedSinceLastQuasiSave = 0};
+    ff->a = (S_editorBufferAllocationData){.bufferSize = 0, .text = NULL, .allocatedFreePrefixSize = 0,
+                                           .allocatedBlock = NULL, .allocatedIndex = 0, .allocatedSize = 0};
+    *ff = (S_editorBuffer){.name = aname, .ftnum = ftnum, .fileName = afname, .stat = s_noStat, .markers = NULL,
+                           .a = ff->a, .b = ff->b};
 }
 
 static S_editorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct stat *st) {
@@ -536,7 +562,7 @@ static S_editorBuffer *editorCreateNewBuffer(char *name, char *fileName, struct 
     buffer->stat = *st;
 
     ED_ALLOC(bufferList, S_editorBufferList);
-    FILL_editorBufferList(bufferList, buffer, NULL);
+    *bufferList = (S_editorBufferList){.f = buffer, .next = NULL};
     log_trace("creating buffer '%s' for '%s'", buffer->name, buffer->fileName);
 
     editorBufferTabAdd(&s_editorBufferTab, bufferList, &not_used);
@@ -559,7 +585,7 @@ S_editorBuffer *editorGetOpenedBuffer(char *name) {
     int i;
 
     fillEmptyEditorBuffer(&editorBuffer, name, 0, name);
-    FILL_editorBufferList(&editorBufferList, &editorBuffer, NULL);
+    editorBufferList = (S_editorBufferList){.f = &editorBuffer, .next = NULL};
     if (editorBufferTabIsMember(&s_editorBufferTab, &editorBufferList, &i, &element)) {
         return element->f;
     }
@@ -573,18 +599,63 @@ S_editorBuffer *editorGetOpenedAndLoadedBuffer(char *name) {
     return(NULL);
 }
 
+static S_editorUndo *newEditorUndoReplace(S_editorBuffer *buffer, unsigned offset, unsigned size,
+                                          unsigned length, char *str, struct editorUndo *next) {
+    S_editorUndo *undo;
+
+    ED_ALLOC(undo, S_editorUndo);
+    undo->buffer = buffer;
+    undo->operation = UNDO_REPLACE_STRING;
+    undo->u.replace.offset = offset;
+    undo->u.replace.size = size;
+    undo->u.replace.strlen = length;
+    undo->u.replace.str = str;
+    undo->next = next;
+
+    return undo;
+}
+
+static S_editorUndo *newEditorUndoRename(S_editorBuffer *buffer, char *name,
+                                         struct editorUndo *next) {
+    S_editorUndo *undo;
+
+    ED_ALLOC(undo, S_editorUndo);
+    undo->buffer = buffer;
+    undo->operation = UNDO_REPLACE_STRING;
+    undo->u.rename.name = name;
+    undo->next = next;
+
+    return undo;
+}
+
+static S_editorUndo *newEditorUndoMove(S_editorBuffer *buffer, unsigned offset, unsigned size,
+                                       S_editorBuffer *dbuffer, unsigned doffset,
+                                       struct editorUndo *next) {
+    S_editorUndo *undo;
+
+    ED_ALLOC(undo, S_editorUndo);
+    undo->buffer = buffer;
+    undo->operation = UNDO_MOVE_BLOCK;
+    undo->u.moveBlock.offset = offset;
+    undo->u.moveBlock.size = size;
+    undo->u.moveBlock.dbuffer = dbuffer;
+    undo->u.moveBlock.doffset = doffset;
+    undo->next = next;
+
+    return undo;
+}
+
 void editorRenameBuffer(S_editorBuffer *buff, char *nName, S_editorUndo **undo) {
     char newName[MAX_FILE_NAME_SIZE];
     int fileIndex, ii, mem, deleted;
     S_editorBuffer dd, *removed;
     S_editorBufferList ddl, *memb, *memb2;
-    S_editorUndo *uu;
     char *oldName;
 
     strcpy(newName, normalizeFileName(nName, s_cwd));
     //&sprintf(tmpBuff, "Renaming %s (at %d) to %s (at %d)", buff->name, buff->name, newName, newName);warning(ERR_INTERNAL, tmpBuff);
     fillEmptyEditorBuffer(&dd, buff->name, 0, buff->name);
-    FILL_editorBufferList(&ddl, &dd, NULL);
+    ddl = (S_editorBufferList){.f = &dd, .next = NULL};
     mem = editorBufferTabIsMember(&s_editorBufferTab, &ddl, &ii, &memb);
     if (! mem) {
         sprintf(tmpBuff, "Trying to rename non existing buffer %s", buff->name);
@@ -602,7 +673,7 @@ void editorRenameBuffer(S_editorBuffer *buff, char *nName, S_editorUndo **undo) 
     s_fileTab.tab[fileIndex]->b.commandLineEntered = s_fileTab.tab[buff->ftnum]->b.commandLineEntered;
     buff->ftnum = fileIndex;
 
-    FILL_editorBufferList(memb, buff, NULL);
+    *memb = (S_editorBufferList){.f = buff, .next = NULL};
     if (editorBufferTabIsMember(&s_editorBufferTab, memb, &ii, &memb2)) {
         editorBufferTabDeleteExact(&s_editorBufferTab, memb2);
         editorFreeBuffer(memb2);
@@ -611,11 +682,7 @@ void editorRenameBuffer(S_editorBuffer *buff, char *nName, S_editorUndo **undo) 
 
     // note undo operation
     if (undo!=NULL) {
-        ED_ALLOC(uu, S_editorUndo);
-        FILLF_editorUndo(uu, buff, UNDO_RENAME_BUFFER,
-                         rename, (oldName),
-                         *undo);
-        *undo = uu;
+        *undo = newEditorUndoRename(buff, oldName, *undo);
     }
     editorSetBufferModifiedFlag(buff);
 
@@ -722,10 +789,7 @@ void editorReplaceString(S_editorBuffer *buff, int position, int delsize,
         ED_ALLOCC(undotext, delsize+1, char);
         memcpy(undotext, buff->a.text+position, delsize);
         undotext[delsize]=0;
-        ED_ALLOC(uu, S_editorUndo);
-        FILLF_editorUndo(uu, buff, UNDO_REPLACE_STRING,
-                         replace, (position, undosize, delsize, undotext),
-                         *undo);
+        uu = newEditorUndoReplace(buff, position, undosize, delsize, undotext, *undo);
         *undo = uu;
     }
     // edit text
@@ -761,7 +825,6 @@ void editorMoveBlock(S_editorMarker *dest, S_editorMarker *src, int size,
                      S_editorUndo **undo) {
     S_editorMarker *tmp, *mm;
     S_editorBuffer *sb, *db;
-    S_editorUndo *uu;
     int off1, off2, offd, undodoffset;
 
     assert(size>=0);
@@ -807,11 +870,7 @@ void editorMoveBlock(S_editorMarker *dest, S_editorMarker *src, int size,
     editorSetBufferModifiedFlag(db);
     // add the whole operation into undo
     if (undo!=NULL) {
-        ED_ALLOC(uu, S_editorUndo);
-        FILLF_editorUndo(uu, db, UNDO_MOVE_BLOCK,
-                         moveBlock, (src->offset, off2-off1, sb, undodoffset),
-                         *undo);
-        *undo = uu;
+        *undo = newEditorUndoMove(db, src->offset, off2-off1, sb, undodoffset, *undo);
     }
 }
 
@@ -1035,7 +1094,7 @@ S_editorMarkerList *editorReferencesToMarkers(S_reference *refs,
                     if (ln==line && c==col) {
                         m = editorCrNewMarker(buff, s - buff->a.text);
                         ED_ALLOC(rrr, S_editorMarkerList);
-                        FILL_editorMarkerList(rrr, m, r->usg, res);
+                        *rrr = (S_editorMarkerList){.d = m, .usg = r->usg, .next = res};
                         res = rrr;
                         r = r->next;
                         while (r!=NULL && ! filter(r,filterParam)) r = r->next;
@@ -1049,7 +1108,7 @@ S_editorMarkerList *editorReferencesToMarkers(S_reference *refs,
                 while (r!=NULL && file == r->p.file) {
                     m = editorCrNewMarker(buff, maxoffset);
                     ED_ALLOC(rrr, S_editorMarkerList);
-                    FILL_editorMarkerList(rrr, m, r->usg, res);
+                    *rrr = (S_editorMarkerList){.d = m, .usg = r->usg, .next = res};
                     res = rrr;
                     r = r->next;
                     while (r!=NULL && ! filter(r,filterParam)) r = r->next;
@@ -1222,13 +1281,13 @@ void editorMarkersDifferences(S_editorMarkerList **list1, S_editorMarkerList **l
         if (editorMarkerListLess(l1, l2)) {
             m = editorCrNewMarker(l1->d->buffer, l1->d->offset);
             ED_ALLOC(ll, S_editorMarkerList);
-            FILL_editorMarkerList(ll, m, l1->usg, *diff1);
+            *ll = (S_editorMarkerList){.d = m, .usg = l1->usg, .next = *diff1};
             *diff1 = ll;
             l1 = l1->next;
         } else if (editorMarkerListLess(l2, l1)) {
             m = editorCrNewMarker(l2->d->buffer, l2->d->offset);
             ED_ALLOC(ll, S_editorMarkerList);
-            FILL_editorMarkerList(ll, m, l2->usg, *diff2);
+            *ll = (S_editorMarkerList){.d = m, .usg = l2->usg, .next = *diff2};
             *diff2 = ll;
             l2 = l2->next;
         } else {
@@ -1238,14 +1297,14 @@ void editorMarkersDifferences(S_editorMarkerList **list1, S_editorMarkerList **l
     while (l1 != NULL) {
         m = editorCrNewMarker(l1->d->buffer, l1->d->offset);
         ED_ALLOC(ll, S_editorMarkerList);
-        FILL_editorMarkerList(ll, m, l1->usg, *diff1);
+        *ll = (S_editorMarkerList){.d = m, .usg = l1->usg, .next = *diff1};
         *diff1 = ll;
         l1 = l1->next;
     }
     while (l2 != NULL) {
         m = editorCrNewMarker(l2->d->buffer, l2->d->offset);
         ED_ALLOC(ll, S_editorMarkerList);
-        FILL_editorMarkerList(ll, m, l2->usg, *diff2);
+        *ll = (S_editorMarkerList){.d = m, .usg = l2->usg, .next = *diff2};
         *diff2 = ll;
         l2 = l2->next;
     }
@@ -1347,14 +1406,17 @@ S_editorMarker *editorCrMarkerForBufferEnd(S_editorBuffer *buffer) {
 }
 
 S_editorRegionList *editorWholeBufferRegion(S_editorBuffer *buffer) {
-    S_editorMarker      *bufferBegin, *bufferEnd;
-    S_editorRegionList  *theBufferRegion;
+    S_editorMarker *bufferBegin, *bufferEnd;
+    S_editorRegion theBufferRegion;
+    S_editorRegionList *theBufferRegionList;
 
     bufferBegin = editorCrMarkerForBufferBegin(buffer);
     bufferEnd = editorCrMarkerForBufferEnd(buffer);
-    ED_ALLOC(theBufferRegion, S_editorRegionList);
-    FILLF_editorRegionList(theBufferRegion, bufferBegin, bufferEnd, NULL);
-    return(theBufferRegion);
+    theBufferRegion = (S_editorRegion){.b = bufferBegin, .e = bufferEnd};
+    ED_ALLOC(theBufferRegionList, S_editorRegionList);
+    *theBufferRegionList = (S_editorRegionList){.r = theBufferRegion, .next = NULL};
+
+    return theBufferRegionList;
 }
 
 void editorScheduleModifiedBuffersToUpdate(void) {
@@ -1363,7 +1425,6 @@ void editorScheduleModifiedBuffersToUpdate(void) {
     for(i=0; i<s_editorBufferTab.size; i++) {
         for(ll=s_editorBufferTab.tab[i]; ll!=NULL; ll=ll->next) {
             if (ll->f->b.modified) {
-                //&sprintf(tmpBuff,"scheduling %s == %s to update\n", ll->f->name, s_fileTab.tab[ll->f->ftnum]->name);ppcGenRecord(PPC_IGNORE, tmpBuff,"\n");
                 s_fileTab.tab[ll->f->ftnum]->b.scheduledToUpdate = 1;
             }
         }
@@ -1377,7 +1438,7 @@ static S_editorBufferList *editorComputeAllBuffersList(void) {
     for(i=0; i<s_editorBufferTab.size; i++) {
         for(ll=s_editorBufferTab.tab[i]; ll!=NULL; ll=ll->next) {
             ED_ALLOC(rr, S_editorBufferList);
-            FILL_editorBufferList(rr, ll->f, res);
+            *rr = (S_editorBufferList){.f = ll->f, .next = res};
             res = rr;
         }
     }
@@ -1500,7 +1561,7 @@ void editorCloseBufferIfClosable(char *name) {
     int ii;
 
     fillEmptyEditorBuffer(&dd, name, 0, name);
-    FILL_editorBufferList(&ddl, &dd, NULL);
+    ddl = (S_editorBufferList){.f = &dd, .next = NULL};
     if (editorBufferTabIsMember(&s_editorBufferTab, &ddl, &ii, &memb)) {
         if (BUFFER_IS_CLOSABLE(memb->f)) {
             editorCloseBuffer(memb, ii);
