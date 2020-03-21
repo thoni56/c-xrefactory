@@ -1,7 +1,7 @@
 #ifndef _EDITORBUFFERTAB_H_
 #define _EDITORBUFFERTAB_H_
 
-#include "proto.h"
+#include "editor.h"
 
 #define HASH_TAB_NAME editorBufferTab
 #define HASH_ELEM_TYPE S_editorBufferList

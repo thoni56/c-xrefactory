@@ -3,6 +3,7 @@
 
 #include "proto.h"
 #include "symbol.h"
+#include "editor.h"
 
 
 /* stack memory synchronized with program block structure */

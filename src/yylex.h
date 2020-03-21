@@ -2,8 +2,11 @@
 #define YYLEX_H
 
 #include "proto.h"
+#include "editor.h"
+
 
 extern char *yytext;
+
 
 extern void ppMemInit(void);
 extern void initAllInputs(void);

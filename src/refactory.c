@@ -450,7 +450,7 @@ void editorUndoUntil(S_editorUndo *until, S_editorUndo **undoundo) {
     s_editorUndo = until;
 }
 
-static void refactoryAplyWholeRefactoringFromUndo(void) {
+static void refactoryApplyWholeRefactoringFromUndo(void) {
     S_editorUndo        *redoTrack;
     redoTrack = NULL;
     editorUndoUntil(s_refactoringStartPoint, &redoTrack);
@@ -2205,7 +2205,7 @@ static void refactoryParameterManipulation(S_editorBuffer *buf, S_editorMarker *
                                            int manip, int argn1, int argn2) {
     refactoryApplyParameterManipulation(buf, point, manip, argn1, argn2);
     // and generate output
-    refactoryAplyWholeRefactoringFromUndo();
+    refactoryApplyWholeRefactoringFromUndo();
     ppcGenGotoMarkerRecord(point);
 }
 
@@ -2283,7 +2283,7 @@ static void refactoryApplyExpandShortNames(S_editorBuffer *buf, S_editorMarker *
 
 static void refactoryExpandShortNames(S_editorBuffer *buf, S_editorMarker *point) {
     refactoryApplyExpandShortNames(buf, point);
-    refactoryAplyWholeRefactoringFromUndo();
+    refactoryApplyWholeRefactoringFromUndo();
     ppcGenGotoMarkerRecord(point);
 }
 
@@ -2485,7 +2485,7 @@ static int refactoryInteractiveAskForAddImportAction(S_editorMarkerList *ppp, in
                                                      char *fqtName
                                                      ) {
     int action;
-    refactoryAplyWholeRefactoringFromUndo();  // make current state visible
+    refactoryApplyWholeRefactoringFromUndo();  // make current state visible
     ppcGenGotoMarkerRecord(ppp->d);
     ppcGenNumericRecord(PPC_ADD_TO_IMPORTS_DIALOG,defaultAction,fqtName,"\n");
     refactoryBeInteractive();
@@ -2608,23 +2608,27 @@ static void refactoryReduceLongNamesInTheFile(S_editorBuffer *buf, S_editorMarke
     // for <add-import-dialog>
     refactoryPerformReduceNamesAndAddImportsInSingleFile(point, &wholeBuffer, INTERACTIVE_NO);
     editorFreeMarkersAndRegionList(wholeBuffer);wholeBuffer=NULL;
-    refactoryAplyWholeRefactoringFromUndo();
+    refactoryApplyWholeRefactoringFromUndo();
     ppcGenGotoMarkerRecord(point);
 }
 
 // this is reduction of a single fqt, problem is with detection of applicable context
 static void refactoryAddToImports(S_editorBuffer *buf, S_editorMarker *point) {
-    S_editorMarker          *bb, *ee;
-    S_editorRegionList      *reg;
-    bb = editorDuplicateMarker(point);
-    ee = editorDuplicateMarker(point);
-    editorMoveMarkerBeyondIdentifier(bb, -1);
-    editorMoveMarkerBeyondIdentifier(ee, 1);
-    ED_ALLOC(reg, S_editorRegionList);
-    FILLF_editorRegionList(reg, bb, ee, NULL);
-    refactoryPerformReduceNamesAndAddImportsInSingleFile(point, &reg, INTERACTIVE_YES);
-    editorFreeMarkersAndRegionList(reg); reg=NULL;
-    refactoryAplyWholeRefactoringFromUndo();
+    S_editorMarker          *begin, *end;
+    S_editorRegionList      *regionList;
+
+    begin = editorDuplicateMarker(point);
+    end = editorDuplicateMarker(point);
+    editorMoveMarkerBeyondIdentifier(begin, -1);
+    editorMoveMarkerBeyondIdentifier(end, 1);
+
+    regionList = newEditorRegionList(begin, end, NULL);
+    ED_ALLOC(regionList, S_editorRegionList);
+    FILLF_editorRegionList(regionList, begin, end, NULL);
+
+    refactoryPerformReduceNamesAndAddImportsInSingleFile(point, &regionList, INTERACTIVE_YES);
+    editorFreeMarkersAndRegionList(regionList); regionList=NULL;
+    refactoryApplyWholeRefactoringFromUndo();
     ppcGenGotoMarkerRecord(point);
 }
 
@@ -2906,7 +2910,7 @@ static void refactoryMoveStaticFieldOrMethod(S_editorMarker *point, int limitInd
     refactoryRestrictAccessibility(point, limitIndex, accFlags);
 
     // and generate output
-    refactoryAplyWholeRefactoringFromUndo();
+    refactoryApplyWholeRefactoringFromUndo();
     ppcGenGotoMarkerRecord(point);
     ppcGenNumericRecord(PPC_INDENT, lines, "", "\n");
 }
@@ -3121,7 +3125,7 @@ static void refactoryMoveClass(S_editorMarker *point) {
     linenum = editorCountLinesBetweenMarkers(mstart, mend);
 
     // and generate output
-    refactoryAplyWholeRefactoringFromUndo();
+    refactoryApplyWholeRefactoringFromUndo();
     ppcGenGotoMarkerRecord(point);
     ppcGenNumericRecord(PPC_INDENT, linenum, "", "\n");
 
@@ -3188,7 +3192,7 @@ static void refactoryMoveClassToNewFile(S_editorMarker *point) {
     linenum = editorCountLinesBetweenMarkers(mstart, mend);
 
     // and generate output
-    refactoryAplyWholeRefactoringFromUndo();
+    refactoryApplyWholeRefactoringFromUndo();
 
     // indentation must be at the end (undo, redo does not work with)
     ppcGenGotoMarkerRecord(point);
@@ -3216,7 +3220,7 @@ static void refactoryAddCopyOfMarkerToList(S_editorMarkerList **ll, S_editorMark
     S_editorMarkerList      *lll;
     nn = editorCrNewMarker(mm->buffer, mm->offset);
     ED_ALLOC(lll, S_editorMarkerList);
-    FILL_editorMarkerList(lll, nn, *usage, *ll);
+    *lll = (S_editorMarkerList){.d = nn, .usg = *usage, .next = *ll};
     *ll = lll;
 }
 
@@ -3412,7 +3416,7 @@ static void refactoryTurnDynamicToStatic(S_editorMarker *point) {
 
     editorFreeMarkersAndMarkerList(allrefs); allrefs=NULL;
 
-    refactoryAplyWholeRefactoringFromUndo();
+    refactoryApplyWholeRefactoringFromUndo();
     ppcGenGotoMarkerRecord(point);
 }
 
@@ -3675,7 +3679,7 @@ static void refactoryTurnStaticToDynamic(S_editorMarker *point) {
     }
 
     // and generate output
-    refactoryAplyWholeRefactoringFromUndo();
+    refactoryApplyWholeRefactoringFromUndo();
     ppcGenGotoMarkerRecord(point);
 
     // DONE!
@@ -3929,7 +3933,7 @@ static void refactoryPerformEncapsulateField(S_editorMarker *point,
     indlines = editorCountLinesBetweenMarkers(tbeg, tend);
 
     // and generate output
-    refactoryAplyWholeRefactoringFromUndo();
+    refactoryApplyWholeRefactoringFromUndo();
 
     // put it here, undo-redo sometimes shifts markers
     de->offset = indoffset;
@@ -4070,7 +4074,7 @@ static S_editorMarkerList *refactoryPullUpPushDownDifferences(
             mm2 = refactoryFindSymbolCorrespondingToReferenceWrtPullUpPushDown(menu2, mm1, rr1);
             if (mm2==NULL) {
                 ED_ALLOC(rr, S_editorMarkerList);
-                FILL_editorMarkerList(rr, editorDuplicateMarker(rr1->d), rr1->usg, diff);
+                *rr = (S_editorMarkerList){.d = editorDuplicateMarker(rr1->d), .usg = rr1->usg, .next = diff};
                 diff = rr;
             }
         }
@@ -4370,7 +4374,7 @@ static void refactoryPushDownPullUp(S_editorMarker *point, int direction, int li
     refactoryPerformReduceNamesAndAddImports(&methodreg, INTERACTIVE_NO);
 
     // and generate output
-    refactoryAplyWholeRefactoringFromUndo();
+    refactoryApplyWholeRefactoringFromUndo();
 
 #if ZERO
     ppcGenGotoMarkerRecord(point);

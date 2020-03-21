@@ -2,6 +2,8 @@
 #define REFACTORY_H
 
 #include "proto.h"
+#include "editor.h"
+
 
 enum trivialPreChecks {
     TPC_NONE,                   /* Must be 0 because of initOpt in globals.h */
@@ -20,6 +22,7 @@ enum trivialPreChecks {
     TPC_PUSH_DOWN_FIELD,
     TPC_GET_LAST_IMPORT_LINE, // not really a check
 };
+
 
 extern void refactoryAskForReallyContinueConfirmation(void);
 extern void refactoryDisplayResolutionDialog(char *message,int messageType, int continuation);
