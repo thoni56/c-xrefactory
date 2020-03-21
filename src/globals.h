@@ -36,7 +36,6 @@ extern S_usageBits s_noUsage;
 extern int s_progressFactor;
 extern int s_progressOffset;
 
-extern S_editorUndo *s_editorUndo;
 extern z_stream s_defaultZStream;
 
 extern time_t s_expTime;

@@ -377,11 +377,11 @@ void cacheInclude(int fileNum) {
     if (s_cache.ibi >= INCLUDE_CACHE_SIZE) s_cache.activeCache = 0;
 }
 
-static void fillCachePoint(S_cachePoint *cachePoint, struct topBlock *topBlock,
-                           struct topBlock starTopBlock, int ppmMemoryi,
+static void fillCachePoint(S_cachePoint *cachePoint, S_topBlock *topBlock,
+                           S_topBlock starTopBlock, int ppmMemoryi,
                            int cxMemoryi, int mbMemoryi, char *lbcc, short int ibi,
-                           short int lineNumber, short int ifDeep, struct cppIfStack *ifstack,
-                           struct javaStat *javaCached, struct counters counts) {
+                           short int lineNumber, short int ifDeep, S_cppIfStack *ifstack,
+                           S_javaStat *javaCached, S_counters counts) {
     cachePoint->topBlock = topBlock;
     cachePoint->starTopBlock = starTopBlock;
     cachePoint->ppmMemoryi = ppmMemoryi;
