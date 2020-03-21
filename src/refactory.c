@@ -312,9 +312,9 @@ static void refactorySafetyCheck(char *project, S_editorBuffer *buf, S_editorMar
     olCreateSelectionMenu(s_olcxCurrentUser->browserStack.top->command);
     if (safetyCheck2ShouldWarn()) {
         if (LANGUAGE(LANG_JAVA)) {
-            sprintf(tmpBuff, "This is class hierarchy of given symbol as it will appear after the refactoring. It does not corresponf to the hierarchy before the refactoring. It is probable that the refactoring will not be behaviour preserving. If you are not sure about your action, you should abandon this refactoring!");
+            sprintf(tmpBuff, "This is class hierarchy of given symbol as it will appear after the refactoring. It does not correspond to the hierarchy before the refactoring. It is probable that the refactoring will not be behaviour preserving. If you are not sure about your action, you should abandon this refactoring!");
         } else {
-            sprintf(tmpBuff, "Those symbols will be refererred at this place after the refactoring. It is probable that the refactoring will not be behaviour preserving. If you are not sure about your action, you should abandon this refactoring!");
+            sprintf(tmpBuff, "These symbols will be refererred at this place after the refactoring. It is probable that the refactoring will not be behaviour preserving. If you are not sure about your action, you should abandon this refactoring!");
         }
         refactoryDisplayResolutionDialog(tmpBuff, PPCV_BROWSER_TYPE_WARNING,CONTINUATION_ENABLED);
     }
@@ -4511,8 +4511,10 @@ void mainRefactory(int argc, char **argv) {
     }
 
     buf = NULL;
-    if (file==NULL) fatalError(ERR_ST, "no input file", XREF_EXIT_ERR);
-    if (file!=NULL) buf = editorFindFile(file);
+    if (file==NULL)
+        fatalError(ERR_ST, "no input file", XREF_EXIT_ERR);
+
+    buf = editorFindFile(file);
 
     point = refactoryGetPointFromRefactoryOptions(buf);
     mark = refactoryGetMarkFromRefactoryOptions(buf);
