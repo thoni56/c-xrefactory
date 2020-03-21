@@ -31,7 +31,7 @@ does. At this point I've added a couple of smoke/functional tests,
 that at least should crash if something basic becomes broken.
 
 If you think you can help, I'll be happy to take it, even if it is
-only adding one line of understanding in _src/NOTES.md_...
+only adding one line of understanding in the wiki...
 
 
 ## The Story
@@ -47,12 +47,10 @@ Vittek](http://dai.fmph.uniba.sk/w/Marian_Vittek/en).
 
 Marián have been hard to track down and
 [http://www.xref.sk](http://www.xref.sk) seems to be going up and
-(mostly) down and there has been no support for many years.
-
-NOTE: It seems that
-[http://www.xrefactory.com/](http://www.xrefactory.com/) is a better
-and more stable URL to the original Xrefactory, where it is still
-available.
+(mostly) down and there has been no support for many years. But it
+seems that [http://www.xrefactory.com/](http://www.xrefactory.com/) is
+now a better and more stable URL to the original Xrefactory, where it
+is still available.
 
 Marián made a C-version, c-xref, available under GPL already 2009 on
 [SourceForge](http://sourceforge.net/projects/c-xref/). The reason
