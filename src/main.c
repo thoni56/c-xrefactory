@@ -537,7 +537,10 @@ static int processEOption(int *ii, int argc, char **argv) {
 
     if (0) {}
     else if (strcmp(argv[i],"-errors")==0)      s_opt.err = 1;
-    else if (strcmp(argv[i],"-exit")==0)        s_opt.exit = 1;
+    else if (strcmp(argv[i],"-exit")==0) {
+        log_debug("Exiting");
+        exit(XREF_EXIT_BASE);
+    }
     else if (strcmp(argv[i],"-enum_name")==0) s_opt.enum_name = 1;
     else if (strcmp(argv[i],"-editor=emacs")==0) {
         s_opt.editor = ED_EMACS;
