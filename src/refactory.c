@@ -2623,11 +2623,11 @@ static void refactoryAddToImports(S_editorBuffer *buf, S_editorMarker *point) {
     editorMoveMarkerBeyondIdentifier(end, 1);
 
     regionList = newEditorRegionList(begin, end, NULL);
-    ED_ALLOC(regionList, S_editorRegionList);
-    FILLF_editorRegionList(regionList, begin, end, NULL);
-
     refactoryPerformReduceNamesAndAddImportsInSingleFile(point, &regionList, INTERACTIVE_YES);
-    editorFreeMarkersAndRegionList(regionList); regionList=NULL;
+
+    editorFreeMarkersAndRegionList(regionList);
+    regionList=NULL;
+
     refactoryApplyWholeRefactoringFromUndo();
     ppcGenGotoMarkerRecord(point);
 }
@@ -2756,7 +2756,7 @@ static void refactoryPerformMovingOfStaticObjectAndMakeItPublic(
     S_olSymbolsMenu *mm1, *mm2;
     S_editorMarker *pp, *ppp, *movedEnd;
     S_editorMarkerList *occs, *ll;
-    S_editorRegionList *regions, *lll;
+    S_editorRegionList *regions;
     S_symbolRefItem *theMethod;
     int progressi, progressn;
 
@@ -2795,9 +2795,7 @@ static void refactoryPerformMovingOfStaticObjectAndMakeItPublic(
             pp = refactoryReplaceStaticPrefix(ll->d, fqtname);
             ppp = editorCrNewMarker(ll->d->buffer, ll->d->offset);
             editorMoveMarkerBeyondIdentifier(ppp, 1);
-            ED_ALLOC(lll, S_editorRegionList);
-            FILLF_editorRegionList(lll, pp, ppp, regions);
-            regions = lll;
+            regions = newEditorRegionList(pp, ppp, regions);
         }
         writeRelativeProgress((progressi++)*100/progressn);
     }
@@ -2828,9 +2826,7 @@ static void refactoryPerformMovingOfStaticObjectAndMakeItPublic(
     // reduce long names in the method
     pp = editorDuplicateMarker(mstart);
     ppp = editorDuplicateMarker(movedEnd);
-    ED_ALLOC(lll, S_editorRegionList);
-    FILLF_editorRegionList(lll, pp, ppp, regions);
-    regions = lll;
+    regions = newEditorRegionList(pp, ppp, regions);
 
     refactoryPerformReduceNamesAndAddImports(&regions, INTERACTIVE_NO);
 
@@ -2935,7 +2931,7 @@ static void refactoryMoveField(S_editorMarker *point) {
     S_editorMarker *target, *mstart, *mend, *movedEnd;
     S_editorMarkerList *occs, *ll;
     S_editorMarker *pp, *ppp;
-    S_editorRegionList *regions, *lll;
+    S_editorRegionList *regions;
     S_editorUndo *undoStartPoint, *redoTrack;
     int progressi, progressn;
 
@@ -2995,9 +2991,7 @@ static void refactoryMoveField(S_editorMarker *point) {
     // reduce long names in the method
     pp = editorDuplicateMarker(mstart);
     ppp = editorDuplicateMarker(movedEnd);
-    ED_ALLOC(lll, S_editorRegionList);
-    FILLF_editorRegionList(lll, pp, ppp, regions);
-    regions = lll;
+    regions = newEditorRegionList(pp, ppp, regions);
 
     refactoryPerformReduceNamesAndAddImports(&regions, INTERACTIVE_NO);
 
@@ -3313,8 +3307,9 @@ static void refactoryTurnDynamicToStatic(S_editorMarker *point) {
                 }
                 ppp = editorCrNewMarker(ll->d->buffer, ll->d->offset);
                 editorMoveMarkerBeyondIdentifier(ppp, 1);
-                ED_ALLOC(lll, S_editorRegionList);
-                FILLF_editorRegionList(lll, pp, ppp, NULL);
+
+                /* TODO: clean up... */
+                lll = newEditorRegionList(pp, ppp, NULL);
                 *reglast = lll;
                 reglast = &lll->next;
                 writeRelativeProgress((progressi++)*100/progressn);
@@ -3757,15 +3752,12 @@ static void refactoryAddMethodToForbiddenRegions(S_reference *methodRef,
                                                  S_editorRegionList **forbiddenRegions
                                                  ) {
     S_editorMarker *mm, *mb, *me;
-    S_editorRegionList *reg;
 
     mm = editorCrNewMarkerForPosition(&methodRef->p);
     refactoryMakeSyntaxPassOnSource(mm);
     mb = editorCrNewMarkerForPosition(&s_spp[SPP_METHOD_DECLARATION_BEGIN_POSITION]);
     me = editorCrNewMarkerForPosition(&s_spp[SPP_METHOD_DECLARATION_END_POSITION]);
-    ED_ALLOC(reg, S_editorRegionList);
-    FILLF_editorRegionList(reg, mb, me, *forbiddenRegions);
-    *forbiddenRegions = reg;
+    *forbiddenRegions = newEditorRegionList(mb, me, *forbiddenRegions);
     editorFreeMarker(mm);
 }
 
@@ -3967,8 +3959,7 @@ static void refactoryEncapsulateField(S_editorMarker *point) {
     cb = editorCrNewMarkerForPosition(&s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION]);
     ce = editorCrNewMarkerForPosition(&s_spp[SPP_CLASS_DECLARATION_END_POSITION]);
 
-    ED_ALLOC(forbiddenRegions, S_editorRegionList);
-    FILLF_editorRegionList(forbiddenRegions, cb, ce, NULL);
+    forbiddenRegions = newEditorRegionList(cb, ce, NULL);
 
     //&editorDumpMarker(point);
     refactoryPerformEncapsulateField(point, &forbiddenRegions);
@@ -4005,25 +3996,19 @@ static int refactoryIsMethodPartRedundantWrtPullUpPushDown(
     S_olSymbolsMenu *mm1, *mm2;
     S_editorMarkerList *rr1;
     int res;
-    S_editorRegionList *regions, *reg;
+    S_editorRegionList *regions;
     S_editorBuffer *buf;
 
     assert(m1->buffer == m2->buffer);
 
     regions = NULL;
     buf = m1->buffer;
-    ED_ALLOC(reg, S_editorRegionList);
-    FILLF_editorRegionList(reg,
-                           editorCrMarkerForBufferBegin(buf),
-                           editorDuplicateMarker(m1),
-                           regions);
-    regions = reg;
-    ED_ALLOC(reg, S_editorRegionList);
-    FILLF_editorRegionList(reg,
-                           editorDuplicateMarker(m2),
-                           editorCrMarkerForBufferEnd(buf),
-                           regions);
-    regions = reg;
+    regions = newEditorRegionList(editorCrMarkerForBufferBegin(buf),
+                              editorDuplicateMarker(m1),
+                              regions);
+    regions = newEditorRegionList(editorDuplicateMarker(m2),
+                                  editorCrMarkerForBufferEnd(buf),
+                                  regions);
 
     refactoryPushMethodSymbolsPlusThoseWithClearedRegion(m1, m2);
     assert(s_olcxCurrentUser->browserStack.top && s_olcxCurrentUser->browserStack.top->previous);
@@ -4277,7 +4262,7 @@ static void refactoryPushDownPullUp(S_editorMarker *point, int direction, int li
     char sourceFqtName[MAX_FILE_NAME_SIZE];
     char superFqtName[MAX_FILE_NAME_SIZE];
     char targetFqtName[MAX_FILE_NAME_SIZE];
-    S_editorMarker *target, *mstart, *mend, *movedEnd, *pp, *ppp;
+    S_editorMarker *target, *movedStart, *mend, *movedEnd, *startMarker, *endMarker;
     S_editorRegionList *methodreg;
     S_olSymbolsMenu *mm1, *mm2;
     S_symbolRefItem *theMethod;
@@ -4292,8 +4277,8 @@ static void refactoryPushDownPullUp(S_editorMarker *point, int direction, int li
 
     refactoryGetNameOfTheClassAndSuperClass(point, sourceFqtName, superFqtName);
     refactoryGetNameOfTheClassAndSuperClass(target, targetFqtName, NULL);
-    refactoryGetMethodLimitsForMoving(point, &mstart, &mend, limitIndex);
-    lines = editorCountLinesBetweenMarkers(mstart, mend);
+    refactoryGetMethodLimitsForMoving(point, &movedStart, &mend, limitIndex);
+    lines = editorCountLinesBetweenMarkers(movedStart, mend);
 
     // prechecks
     refactorySetMovingPrecheckStandardEnvironment(point, targetFqtName);
@@ -4325,8 +4310,7 @@ static void refactoryPushDownPullUp(S_editorMarker *point, int direction, int li
         }
     }
 
-    ED_ALLOC(methodreg, S_editorRegionList);
-    FILLF_editorRegionList(methodreg, mstart, mend, NULL);
+    methodreg = newEditorRegionList(movedStart, mend, NULL);
 
     refactoryExpandThissToCastedThisInTheMethod(point, sourceFqtName, superFqtName, methodreg);
 
@@ -4335,19 +4319,19 @@ static void refactoryPushDownPullUp(S_editorMarker *point, int direction, int li
 
     // perform moving
     refactoryApplyExpandShortNames(point->buffer, point);
-    size = mend->offset - mstart->offset;
+    size = mend->offset - movedStart->offset;
     refactoryPushAllReferencesOfMethod(point, "-olallchecks");
     createMarkersForAllReferencesInRegions(s_olcxCurrentUser->browserStack.top->menuSym, NULL);
     assert(s_olcxCurrentUser->browserStack.top!=NULL && s_olcxCurrentUser->browserStack.top->hkSelectedSym!=NULL);
     theMethod = &s_olcxCurrentUser->browserStack.top->hkSelectedSym->s;
-    editorMoveBlock(target, mstart, size, &s_editorUndo);
+    editorMoveBlock(target, movedStart, size, &s_editorUndo);
 
     // recompute methodregion, maybe free old methodreg before!!
-    pp = editorDuplicateMarker(mstart);
-    ppp = editorDuplicateMarker(movedEnd);
-    ppp->offset ++;
-    ED_ALLOC(methodreg, S_editorRegionList);
-    FILLF_editorRegionList(methodreg, pp, ppp, NULL);
+    startMarker = editorDuplicateMarker(movedStart);
+    endMarker = editorDuplicateMarker(movedEnd);
+    endMarker->offset++;
+
+    methodreg = newEditorRegionList(startMarker, endMarker, NULL);
 
     // checks correspondance
     refactoryPushAllReferencesOfMethod(point, "-olallchecks");
