@@ -2,75 +2,66 @@
 #include "../filetab.h"
 #include <cgreen/mocks.h>
 
-void fileTabInit(
-                 struct fileTab *table,
+void fileTabInit(struct fileTab *table,
                  int size
                  ) {
     mock(table, size);
 }
 
-void fileTabNAInit(
-                   struct fileTab *table,
+void fileTabNAInit(struct fileTab *table,
                    int size
                    ) {
     mock(table, size);
 }
 
 
-bool fileTabIsMember (
-                      struct fileTab *table,
-                      S_fileItem *element,
-                      int *position
-                      ) {
+bool fileTabIsMember(struct fileTab *table,
+                     S_fileItem *element,
+                     int *position
+                     ) {
     return (bool)mock(table, element, position);
 }
 
-void fileTabSet (
-                 struct fileTab *table,
-                 S_fileItem *element,
-                 int position
-                 ) {
+void fileTabSet(struct fileTab *table,
+                S_fileItem *element,
+                int position
+                ) {
     mock(table, element, position);
 }
 
-int fileTabAdd (
-                 struct fileTab *table,
-                 S_fileItem *element
-                 ) {
+int fileTabAdd(struct fileTab *table,
+               S_fileItem *element
+               ) {
     return mock(table, element);
 }
 
-void fileTabFree (struct fileTab *table) {
+void fileTabFree(struct fileTab *table) {
     mock(table);
 }
 
-void fileTabMap(
-                struct fileTab *table,
+void fileTabMap(struct fileTab *table,
                 void (*fun)(S_fileItem *)
                 ) {
     mock(table, fun);
 }
 
-void fileTabMap2(
-                 struct fileTab *table,
+void fileTabMap2(struct fileTab *table,
                  void (*fun)(S_fileItem *, void *),
                  void *a
                  ) {
     mock(table, fun, a);
 }
 
-void fileTabMap4(
-                 struct fileTab *table,
+void fileTabMap4(struct fileTab *table,
                  void (*fun)(int, void *, void *),
                  void *a, void *b
                  ) {
     mock(table, fun, a, b);
 }
 
-void fileTabMapWithIndex(
-                 struct fileTab *table,
-                 void (*fun)(S_fileItem *fileItem, int index)
-                 ) {
+void fileTabMapWithIndex(struct fileTab *table,
+                         void (*fun)(S_fileItem *fileItem, int index)
+                         ) {
     mock(table, fun);
 }
 

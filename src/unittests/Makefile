@@ -40,6 +40,9 @@ filetab_tests.so: $(OBJDIR)/filetab_tests.o $(OBJDIR)/filetab.o $(OBJDIR)/hash.o
 symbol_tests.so: $(OBJDIR)/symbol_tests.o $(OBJDIR)/symbol.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
+editor_tests.so: $(OBJDIR)/editor_tests.o $(OBJDIR)/editor.o
+	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
+
 cxref_tests.so: $(OBJDIR)/cxref_tests.o $(OBJDIR)/cxref.o $(OBJDIR)/protocol.o $(OBJDIR)/enumTxt.o $(OBJDIR)/hash.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 

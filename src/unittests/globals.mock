@@ -4,7 +4,9 @@
 
 S_memory *cxMemory = NULL;
 FILE *dumpOut = NULL;
+struct stat s_noStat;
 S_usageBits s_noUsage;
+S_fileTab s_fileTab;
 int olcxMemoryAllocatedBytes;
 char s_olSymbolType[COMPLETION_STRING_SIZE];
 int s_language;

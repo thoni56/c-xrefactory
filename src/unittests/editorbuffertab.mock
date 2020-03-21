@@ -1,0 +1,86 @@
+/* -*- c -*-*/
+#include <cgreen/mocks.h>
+#include "../editorbuffertab.h"
+
+S_editorBufferList *s_staticEditorBufferTabTab[EDITOR_BUFF_TAB_SIZE];
+S_editorBufferTab s_editorBufferTab;
+
+void editorBufferTabInit(struct editorBufferTab *table, int size) {
+  mock(table, size);
+}
+
+void editorBufferTabNoAllocInit(struct editorBufferTab *table, int size) {
+  mock(table, size);
+}
+
+bool editorBufferTabIsMember(struct editorBufferTab *table, S_editorBufferList *element, int *position, S_editorBufferList **origin) {
+  return (int) mock(table, element, position, origin);
+}
+
+int editorBufferTabMembEqual(S_editorBufferList *e1, S_editorBufferList *e2) {
+  return (int) mock(e1, e2);
+}
+
+int editorBufferTabNextMember(S_editorBufferList *element, S_editorBufferList **original) {
+  return (int) mock(element, original);
+}
+
+void editorBufferTabSet(struct editorBufferTab *table, S_editorBufferList *element, int position) {
+  mock(table, element, position);
+}
+
+void editorBufferTabSetLast(struct editorBufferTab *table, S_editorBufferList *element, int position) {
+  mock(table, element, position);
+}
+
+void editorBufferTabAdd(struct editorBufferTab *table, S_editorBufferList *element, int *position) {
+  mock(table, element, position);
+}
+
+int editorBufferTabDelete(struct editorBufferTab *table, S_editorBufferList *element) {
+  return (int) mock(table, element);
+}
+
+int editorBufferTabDeleteExact(struct editorBufferTab *table, S_editorBufferList *element) {
+  return (int) mock(table, element);
+}
+
+int editorBufferTabDeleteLast(struct editorBufferTab *table, S_editorBufferList *element) {
+  return (int) mock(table, element);
+}
+
+void editorBufferTabFree(struct editorBufferTab *tab) {
+  mock(tab);
+}
+
+void editorBufferTabMap(struct editorBufferTab *table, void (*fun)(S_editorBufferList *)) {
+  mock(table, fun);
+}
+
+void editorBufferTabMap2(struct editorBufferTab *table, void (*fun)(S_editorBufferList *, void *), void *a) {
+  mock(table, fun, a);
+}
+
+void editorBufferTabMap3(struct editorBufferTab *table, void (*fun)(int)) {
+  mock(table, fun);
+}
+
+void editorBufferTabMap31(struct editorBufferTab *table, void (*fun)(int, void *, void *), void *arg1, void *arg2) {
+  mock(table, fun, arg1, arg2);
+}
+
+void editorBufferTabMap32(struct editorBufferTab *table, void (*fun)(int, void *, void *, void *), void *arg1, void *arg2, void *arg3) {
+  mock(table, fun, arg1, arg2, arg3);
+}
+
+void editorBufferTabMap4(struct editorBufferTab *table, void (*fun)(S_editorBufferList *, int), int a) {
+  mock(table, fun, a);
+}
+
+void editorBufferTabMap5(struct editorBufferTab *table, void (*fun)(S_editorBufferList *, void *), void *arg) {
+  mock(table, fun, arg);
+}
+
+void editorBufferTabStatistics(struct editorBufferTab *table, int *usedIndexes, int *elements, int *maxdepth) {
+  mock(table, usedIndexes, elements, maxdepth);
+}

@@ -5,7 +5,7 @@ void jslTypeTabInit(struct jslTypeTab *table, int size) {
   mock(table, size);
 }
 
-void jslTypeTabNAInit(struct jslTypeTab *table, int size) {
+void jslTypeTabNoAllocInit(struct jslTypeTab *table, int size) {
   mock(table, size);
 }
 
