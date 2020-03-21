@@ -73,13 +73,18 @@
     mem->i = ((char*)(p)) - ((char*)&mem->b);\
 }
 
+/* editor allocations, for now, store it in olcxmemory */
+#define ED_ALLOCC(p,n,t) OLCX_ALLOCC(p,n,t)
+#define ED_ALLOC(p,t) ED_ALLOCC(p,1,t)
+#define ED_FREE(p,size) OLCX_FREE(p,size)
+
 
 /* ************* a supplementary level with free-lists ******************** */
 
 /* This is only used for olcxMemory so "mem" is always olcxMemory... */
-#define RLM_INIT(mem) {mem##AllocatedBytes = 0; CHECK_INIT();}
+#define REAL_MEMORY_INIT(mem) {mem##AllocatedBytes = 0; CHECK_INIT();}
 
-#define RLM_SOFT_ALLOCC(mem,p,nn,t) {\
+#define REAL_MEMORY_SOFT_ALLOCC(mem,p,nn,t) {\
     int n = (nn) * sizeof(t);\
     if (n+mem##AllocatedBytes > SIZE_##mem) {\
         p = NULL;\
@@ -89,9 +94,9 @@
         CHECK_ALLOC(p, n);\
     }\
 }
-#define RLM_FREE(mem,p,nn) {\
+#define REAL_MEMORY_FREE(mem,p,nn) {\
     CHECK_FREE(p, nn);\
-    mem##AllocatedBytes -= nn; /* discount first, free after (because of nn=strlen(p)) */\
+    mem##AllocatedBytes -= nn; /* decrement first, free after (because of nn=strlen(p)) */\
     free(p);\
 }
 

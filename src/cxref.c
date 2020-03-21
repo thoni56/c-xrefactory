@@ -943,7 +943,7 @@ int isSmallerOrEqClass(int inf, int sup) {
 }
 
 #define OLCX_FREE_REFERENCE(r) {                        \
-        RLM_FREE(olcxMemory, (r), sizeof(S_reference)); \
+        REAL_MEMORY_FREE(olcxMemory, (r), sizeof(S_reference)); \
     }
 
 
@@ -958,15 +958,15 @@ void olcxFreeReferences(S_reference *r) {
 
 static void olcxFreeCompletion(S_olCompletion *r) {
     int nlen;
-    RLM_FREE(olcxMemory, r->name, strlen(r->name)+1);
-    if (r->fullName!=NULL) RLM_FREE(olcxMemory, r->fullName, strlen(r->fullName)+1);
-    if (r->vclass!=NULL) RLM_FREE(olcxMemory, r->vclass, strlen(r->vclass)+1);
+    REAL_MEMORY_FREE(olcxMemory, r->name, strlen(r->name)+1);
+    if (r->fullName!=NULL) REAL_MEMORY_FREE(olcxMemory, r->fullName, strlen(r->fullName)+1);
+    if (r->vclass!=NULL) REAL_MEMORY_FREE(olcxMemory, r->vclass, strlen(r->vclass)+1);
     if (r->cat == CatGlobal) {
         assert(r->sym.name);
         nlen = strlen(r->sym.name);
-        RLM_FREE(olcxMemory, r->sym.name, nlen+1);
+        REAL_MEMORY_FREE(olcxMemory, r->sym.name, nlen+1);
     }
-    RLM_FREE(olcxMemory, r, sizeof(S_olCompletion));
+    REAL_MEMORY_FREE(olcxMemory, r, sizeof(S_olCompletion));
 }
 
 
@@ -1020,7 +1020,7 @@ static void deleteOlcxRefs(S_olcxReferences **rrefs, S_olcxReferencesStack *stac
         stack->root = refs->previous;
     }
     *rrefs = refs->previous;
-    RLM_FREE(olcxMemory, refs, sizeof(S_olcxReferences));
+    REAL_MEMORY_FREE(olcxMemory, refs, sizeof(S_olcxReferences));
 }
 
 #define CHECK_AND_SET_OLDEST(stack) {                                   \
@@ -1078,13 +1078,13 @@ int olcxFreeOldCompletionItems(S_olcxReferencesStack *stack) {
 void olcxInit(void) {
     int i;
     void * uu[OLCX_USER_RESERVE];
-    RLM_INIT(olcxMemory);
-    RLM_SOFT_ALLOCC(olcxMemory, s_olcxTab.tab, OLCX_TAB_SIZE, S_userOlcx *);
+    REAL_MEMORY_INIT(olcxMemory);
+    REAL_MEMORY_SOFT_ALLOCC(olcxMemory, s_olcxTab.tab, OLCX_TAB_SIZE, S_userOlcx *);
     //CHECK_FREE(s_olcxTab.tab);        // do not report non-freeing of olcxtable
     olcxTabNoAllocInit(&s_olcxTab, OLCX_TAB_SIZE);
     /* reserve place for some users */
     for(i=0; i<OLCX_USER_RESERVE; i++) OLCX_ALLOC(uu[i], S_userOlcx);
-    for(i=0; i<OLCX_USER_RESERVE; i++) RLM_FREE(olcxMemory, uu[i], sizeof(S_userOlcx));
+    for(i=0; i<OLCX_USER_RESERVE; i++) REAL_MEMORY_FREE(olcxMemory, uu[i], sizeof(S_userOlcx));
 }
 
 S_userOlcx *olcxSetCurrentUser(char *user) {

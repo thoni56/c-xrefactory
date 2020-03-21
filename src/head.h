@@ -178,19 +178,14 @@
 
 /* on-line dialogs allocation */
 #define OLCX_ALLOCC(p,n,t) {\
-    RLM_SOFT_ALLOCC(olcxMemory, p, n, t);\
+    REAL_MEMORY_SOFT_ALLOCC(olcxMemory, p, n, t);\
     while (p==NULL) {\
         freeOldestOlcx();\
-        RLM_SOFT_ALLOCC(olcxMemory, p, n, t);\
+        REAL_MEMORY_SOFT_ALLOCC(olcxMemory, p, n, t);\
     }\
 }
 #define OLCX_ALLOC(p,t) OLCX_ALLOCC(p,1,t)
-#define OLCX_FREE(p,size) RLM_FREE(olcxMemory, p, size)
-
-/* editor allocations, for now, store it in olcxmemory */
-#define ED_ALLOCC(p,n,t) OLCX_ALLOCC(p,n,t)
-#define ED_ALLOC(p,t) ED_ALLOCC(p,1,t)
-#define ED_FREE(p,size) OLCX_FREE(p,size)
+#define OLCX_FREE(p,size) REAL_MEMORY_FREE(olcxMemory, p, size)
 
 
 /* ********************************************************************** */
