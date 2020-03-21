@@ -1,10 +1,7 @@
 extern char * taskRegimesName[];
 extern char * editorUndoOperationsName[];
 extern char * usagesName[];
-extern char * trivialPreChecksName[];
 extern char * fileEncodingsName[];
-extern char * extractModesName[];
-extern char * copyFlagName[];
 extern char * syntaxPassParsedImportantPositionName[];
 extern char * olcxOptionsName[];
 extern char * refCategoriesName[];
@@ -21,5 +18,5 @@ extern char * sFunResultName[];
 extern char * menuFilterLevelsName[];
 extern char * miscellaneousName[];
 extern char * refScopesName[];
-extern char * commentMovingsName[];
+extern char * commentMovementName[];
 extern char * inputTypeName[];

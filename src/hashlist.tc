@@ -13,6 +13,7 @@
    #define HASH_ELEM_TYPE <element>
    #define HASH_FUN(elem) <hashfun>
    #define HASH_ELEM_EQUAL(e1,e2) <eqexpr>
+   #define MOCK --- OPTIONAL for mocking instead of real implementation - NIY!
 
    #include "hashlist.tc"
 
@@ -28,6 +29,7 @@
 /* Here we create TAB_TYPE and FUN_PREFIX from TAB_NAME */
 #define HASH_TAB_TYPE struct HASH_TAB_NAME
 #define HASH_FUN_PREFIX HASH_TAB_NAME
+
 
 void CONCAT(HASH_FUN_PREFIX,NoAllocInit)(HASH_TAB_TYPE *table, int size) {
     table->size = size;
