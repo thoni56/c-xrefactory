@@ -28,6 +28,7 @@ quick:
 	@$(MAKE) -C edit_server_test_example
 	@$(MAKE) -C olcx_push
 	@$(MAKE) -C olcx_complete
+	@$(MAKE) -C olcx_refactory_rename
 
 slow:
 	@$(MAKE) -C c-xref
