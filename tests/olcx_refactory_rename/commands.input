@@ -1,0 +1,2 @@
+/home/thoni/Utveckling/c-xrefactory/src/c-xref -xrefactory-II -o buffer -refactory -xrefrc /home/thoni/Utveckling/c-xrefactory/tests/olcx_refactory_rename/.c-xrefrc -p /home/thoni/Utveckling/c-xrefactory/tests/olcx_refactory_rename -user 1 -rfct-rename -renameto=single_int_on_line_1_col_44 -olmark=66 -olcursor=66 /home/thoni/Utveckling/c-xrefactory/tests/olcx_push/test_source/single_int1.c -log=log -trace
+<sync>
