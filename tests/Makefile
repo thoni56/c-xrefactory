@@ -29,7 +29,7 @@ quick:
 	@$(MAKE) -C olcx_push
 	@$(MAKE) -C olcx_complete
 	@$(MAKE) -C olcx_refactory_rename
-	@$(MAKE) -C olcx_refactory_extract
+	@$(MAKE) -C olcx_refactory_simple_extract
 
 slow:
 	@$(MAKE) -C c-xref
