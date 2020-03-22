@@ -1,0 +1,2 @@
+../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -o buffer2 -encoding=european -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -user 1 -rfct-rename -renameto=extracted -olcursor=179 -preload CURDIR/test_source/hello.c CURDIR/test_source/hello-extracted.c -addimportdefault=0 CURDIR/test_source/hello.c -log=log2 -trace
+<sync>
