@@ -1396,7 +1396,7 @@ typedef struct options {
     int cacheIncludes;
     int stdopFlag;		// does this serve to anything ?
     char *renameTo;
-    int refactoringRegime;
+    enum taskRegimes refactoringRegime;
     int xref2;
     char *moveTargetFile;
     char *cFilesSuffixes;
@@ -1490,7 +1490,7 @@ typedef struct options {
     int cIsCplusplus;
     int olCursorPos;
     int olMarkPos;
-    int taskRegime;
+    enum taskRegimes taskRegime;
     char *user;
     int debug;
     int trace;
