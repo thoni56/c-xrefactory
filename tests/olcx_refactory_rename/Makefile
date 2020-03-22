@@ -13,7 +13,9 @@ CXREF = ../../src/c-xref
 EDIT_SERVER_DRIVER = ../../utils/edit_server_driver.py
 
 $(TEST): CXrefs
-	$(EDIT_SERVER_DRIVER) commands.input $(CURDIR) buffer > output.tmp
+	-$(EDIT_SERVER_DRIVER) commands.input $(CURDIR) buffer > output.tmp
+	-cat buffer
+	-cat output.tmp
 	sed -e "s+$(CURDIR)+CURDIR+g" -e "s/len=[0-9]*/len=<n>/g" output.tmp > output
 	diff output expected > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
