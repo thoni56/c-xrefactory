@@ -12,7 +12,7 @@ include ../Makefile.boilerplate
 CXREF = ../../src/c-xref
 EDIT_SERVER_DRIVER = ../../utils/edit_server_driver.py
 
-$(TEST): CXrefs
+$(TEST):
 	@-$(EDIT_SERVER_DRIVER) commands.input $(CURDIR) buffer > output.tmp
 	@sed -e "s+$(CURDIR)+CURDIR+g" -e "s/len=[0-9]*/len=<n>/g" output.tmp > output
 	@diff output expected > /dev/null ; \
@@ -28,9 +28,6 @@ $(TEST): CXrefs
 
 trace: CXREF+=-trace
 trace: $(TEST)
-
-CXrefs:
-	@$(CXREF) -xrefrc=.c-xrefrc test_source -o $@.log
 
 clean:
 	rm -rf .c-xrefrc CXrefs output.log output.tmp
