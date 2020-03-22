@@ -1,32 +1,32 @@
-../../src/c-xref -xrefactory-II -o buffer -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -user 1 -rfct-rename -renameto=single_int_on_line_1_col_44 -olmark=66 -olcursor=66 /home/thoni/Utveckling/c-xrefactory/tests/olcx_push/test_source/single_int1.c -log=log -trace
+../../src/c-xref -xrefactory-II -o buffer -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -user 1 -rfct-rename -renameto=single_int_on_line_1_col_44 -olmark=66 -olcursor=66 CURDIR/test_source/single_int1.c -log=log -trace
 end-of-options
 
 <sync>
 <goto>
- <position-off off=3 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/olcx_push/test_source/single_int1.c</position-off>
+ <position-off off=3 len=<n>>CURDIR/test_source/single_int1.c</position-off>
 </goto>
 <precheck len=<n>> single_int_on_line_1_col_4;</precheck>
 <goto>
- <position-off off=65 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/olcx_push/test_source/single_int1.c</position-off>
+ <position-off off=65 len=<n>>CURDIR/test_source/single_int1.c</position-off>
 </goto>
 <precheck len=<n>>
 single_int_on_line_1_col_4 </precheck>
 <goto>
- <position-off off=67 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/olcx_push/test_source/single_int1.c</position-off>
+ <position-off off=67 len=<n>>CURDIR/test_source/single_int1.c</position-off>
 </goto>
 <goto>
- <position-off off=4 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/olcx_push/test_source/single_int1.c</position-off>
-</goto>
-<replacement>
- <str len=<n>>single_int_on_line_1_col_4</str>  <str len=<n>>single_int_on_line_1_col_44</str>
-</replacement>
-<goto>
- <position-off off=67 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/olcx_push/test_source/single_int1.c</position-off>
+ <position-off off=4 len=<n>>CURDIR/test_source/single_int1.c</position-off>
 </goto>
 <replacement>
  <str len=<n>>single_int_on_line_1_col_4</str>  <str len=<n>>single_int_on_line_1_col_44</str>
 </replacement>
 <goto>
- <position-off off=67 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/olcx_push/test_source/single_int1.c</position-off>
+ <position-off off=67 len=<n>>CURDIR/test_source/single_int1.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>single_int_on_line_1_col_4</str>  <str len=<n>>single_int_on_line_1_col_44</str>
+</replacement>
+<goto>
+ <position-off off=67 len=<n>>CURDIR/test_source/single_int1.c</position-off>
 </goto>
 
