@@ -279,7 +279,7 @@ void refactoryDisplayResolutionDialog(char *message,int messageType,int continua
     refactoryBeInteractive();
 }
 
-#define STANDARD_SELECT_SYMBOLS_MESSAGE "Select classes in left window. Those classes will be processed during refactoring. It is highly recommended to process whole hierarchy of related classes at once. Unselection of any class and its exclusion from refactoring may cause changes in your program behaviour. "
+#define STANDARD_SELECT_SYMBOLS_MESSAGE "Select classes in left window. These classes will be processed during refactoring. It is highly recommended to process whole hierarchy of related classes at once. Unselection of any class and its exclusion from refactoring may cause changes in your program behaviour. "
 #define STANDARD_C_SELECT_SYMBOLS_MESSAGE "There are several symbols referred from this place. Continuing this refactoring will process selected symbols in once."
 #define ERROR_SELECT_SYMBOLS_MESSAGE "If you see this screen, then probably something is going wrong. You are refactoring a virtual method when only statically linked symbol is required. It is strongly recommended to cancel the refactoring. "
 
@@ -881,14 +881,14 @@ int tpCheckMoveClassAccessibilities(void) {
         rstack->act = rstack->r;
         if (s_ropt.refactoringRegime==RegimeRefactory) {
             refactoryDisplayResolutionDialog(
-                                             "Those references inside moved class are refering to symbols which will be  inaccessible  at  new  class  location. You  should  adjust  their accessibilities first.  (Each symbol is listed only once)",
+                                             "These references inside moved class are refering to symbols which will be inaccessible at new class location. You should adjust their access first. (Each symbol is listed only once)",
                                              PPCV_BROWSER_TYPE_WARNING, CONTINUATION_DISABLED);
             refactoryAskForReallyContinueConfirmation();
 #if ZERO
         } else {
             olcxPrintRefList(";", rstack);
             fprintf(ccOut,
-                    " ** Those references inside moved class are refering to symbols which will  ** be  inaccessible  at  new  class  location. You  should  adjust  their  ** accessibilities first.  (Each symbol is listed only once)"
+                    " ** These references inside moved class are referring to symbols which will  ** be inaccessible at new class location. You should adjust their ** access first. (Each symbol is listed only once)"
                     );
 #endif
         }
@@ -905,14 +905,14 @@ int tpCheckMoveClassAccessibilities(void) {
         rstack->refsFilterLevel = RFilterDefinitions;
         if (s_ropt.refactoringRegime==RegimeRefactory) {
             refactoryDisplayResolutionDialog(
-                                             "Those symbols  defined inside moved  class and used outside  the class will be inaccessible  at new class location.  You  should adjust their accessibilities first.",
+                                             "These symbols defined inside moved class and used outside the class will be inaccessible at new class location. You should adjust their access first.",
                                              PPCV_BROWSER_TYPE_WARNING, CONTINUATION_DISABLED);
             refactoryAskForReallyContinueConfirmation();
 #if ZERO
         } else {
             olcxPrintRefList(";", rstack);
             fprintf(ccOut,
-                    " ** Those symbols defined inside moved class and used outside the class will  ** be  inaccessible  at  new  class  location.  You  should  adjust  their  ** accessibilities first."
+                    " ** These symbols defined inside the moved class and used outside it will  ** be inaccessible at new class location. You should adjust their ** access first."
                     );
 #endif
         }
@@ -1299,7 +1299,7 @@ static int refactoryHandleSafetyCheckDifferenceLists(
                                              PPCV_BROWSER_TYPE_WARNING, CONTINUATION_ENABLED);
         } else {
             refactoryDisplayResolutionDialog(
-                                             "Those references may be  misinterpreted after refactoring",
+                                             "These references may be  misinterpreted after refactoring",
                                              PPCV_BROWSER_TYPE_WARNING, CONTINUATION_ENABLED);
         }
     }
@@ -2729,9 +2729,9 @@ static void refactoryStaticMoveCheckCorrespondance(
     }
     if (totalDiff!=NULL) {
 #       ifdef EACH_SYMBOL_ONCE
-        refactoryShowSafetyCheckFailingDialog(&totalDiff,"Those references will be  misinterpreted after refactoring. Fix them first. (each symbol is reported only once)");
+        refactoryShowSafetyCheckFailingDialog(&totalDiff,"These references will be  misinterpreted after refactoring. Fix them first. (each symbol is reported only once)");
 #       else
-        refactoryShowSafetyCheckFailingDialog(&totalDiff, "Those references will be  misinterpreted after refactoring");
+        refactoryShowSafetyCheckFailingDialog(&totalDiff, "These references will be  misinterpreted after refactoring");
 #       endif
         editorFreeMarkersAndMarkerList(totalDiff); totalDiff=NULL;
         refactoryAskForReallyContinueConfirmation();
@@ -3243,7 +3243,7 @@ static void refactoryTurnDynamicToStatic(S_editorMarker *point) {
     strcpy(nameOnPoint, refactoryGetIdentifierOnMarker_st(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE-1);
     occs = refactoryPushGetAndPreCheckReferences(point->buffer, point, nameOnPoint,
-                                                 "If  you see  this  message it  is  highly probable  that turning  this virtual  method into  static will  not be  behaviour  preserving! This refactoring is  behaviour preserving only  if the method does  not use mechanism of virtual invocations. In this dialog you should select the application classes which are refering to the method which will become static. If  you can't unambiguously determine those  references do not continue in this refactoring!",
+                                                 "If  you see  this  message it  is  highly probable  that turning  this virtual  method into static will not be behaviour preserving! This refactoring is behaviour preserving only  if the method does not use mechanism of virtual invocations. In this dialog you should select the application classes which are refering to the method which will become static. If you can't unambiguously determine those references do not continue in this refactoring!",
                                                  PPCV_BROWSER_TYPE_WARNING);
     editorFreeMarkersAndMarkerList(occs);
 
@@ -4076,7 +4076,7 @@ static void refactoryPullUpPushDownCheckCorrespondance(
 
     diff = refactoryPullUpPushDownDifferences(menu1, menu2, theMethod);
     if (diff!=NULL) {
-        refactoryShowSafetyCheckFailingDialog(&diff, "Those references will be  misinterpreted after refactoring");
+        refactoryShowSafetyCheckFailingDialog(&diff, "These references will be  misinterpreted after refactoring");
         editorFreeMarkersAndMarkerList(diff); diff=NULL;
         refactoryAskForReallyContinueConfirmation();
     }
