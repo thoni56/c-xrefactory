@@ -51,10 +51,10 @@ def end_of_options(p):
 
 def wait_for_sync(p):
     line = p.stdout.readline().decode()[:-1]
-    print(line)
     while line != '<sync>':
-        eprint("ERROR: did not get expected <sync>")
+        eprint("Waiting for <sync>, got '{}'".format(line))
         line = p.stdout.readline().decode()[:-1]
+    print(line)
 
 
 def read_output(filename):
