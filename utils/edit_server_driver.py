@@ -33,6 +33,8 @@ import io
 import time
 from shutil import copy
 
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
 
 def send_command(p, command):
     print(command)
@@ -51,7 +53,7 @@ def wait_for_sync(p):
     line = p.stdout.readline().decode()[:-1]
     print(line)
     while line != '<sync>':
-        print("ERROR: did not get expected <sync>")
+        eprint("ERROR: did not get expected <sync>")
         line = p.stdout.readline().decode()[:-1]
 
 
@@ -105,3 +107,9 @@ with open(command_file, 'rb') as file:
             wait_for_sync(p)
             read_output(buffer)
             command = file.readline().decode().rstrip()
+
+        if command == '<update-report>':
+            eprint(command)
+            while command != '</update-report>':
+                command = file.readline().decode().rstrip()
+                eprint(command)
