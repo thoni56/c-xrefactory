@@ -8,7 +8,8 @@
 #
 # Format of commandsfile is just a sequence of lines which are sent to
 # the edit server interspersed with <sync> which will cause the driver
-# to listen wait for syncronization from the server.
+# to listen wait for syncronization from the server. Note that the edit
+# server might send <progress> a couple of times before sending the <sync>.
 #
 # The first line is always the invocation command.
 #
@@ -46,12 +47,12 @@ def end_of_options(p):
     p.stdin.flush()
 
 
-def expect_sync(p):
+def wait_for_sync(p):
     line = p.stdout.readline().decode()[:-1]
     print(line)
-    if line != '<sync>':
+    while line != '<sync>':
         print("ERROR: did not get expected <sync>")
-        sys.exit(-1)
+        line = p.stdout.readline().decode()[:-1]
 
 
 def read_output(filename):
@@ -101,6 +102,6 @@ with open(command_file, 'rb') as file:
 
         if command == '<sync>':
             end_of_options(p)
-            expect_sync(p)
+            wait_for_sync(p)
             read_output(buffer)
             command = file.readline().decode().rstrip()
