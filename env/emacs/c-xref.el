@@ -8719,7 +8719,7 @@ refactoring.
             )
           (setq ilen (- (point) mm))
           (c-xref-set-to-marker c-xref-extraction-marker)
-          (newline)
+          (newline 2)
           (setq bb (point))
           (insert mhead)
           (insert mbody)
