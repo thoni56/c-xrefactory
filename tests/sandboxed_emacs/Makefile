@@ -19,11 +19,11 @@ LOG=LOGFILE=$(CURDIR)/$(LOGFILE)
 
 
 # Run a sandboxed emacs
-all: bin/c-xref
+all: bin/c-xref clean
 	@if [ ! -e .emacs.d/el-get/c-xrefactory ] ; then \
 		ln -s $(CURDIR)/../../ .emacs.d/el-get/c-xrefactory ; \
 	fi
-	@$(ENV) $(TARGET) $(LOG) emacs -l $(PWD)/.emacs.d/init.el -l "$(PWD)"/.emacs.d/override-el-get-update.el --eval '(setq c-xref-home-directory "$(PWD)/bin/")' --eval '(setq c-xref-debug-mode t)' ../../src/cxref.c
+	@$(ENV) $(TARGET) $(LOG) emacs -l $(PWD)/.emacs.d/init.el -l "$(PWD)"/.emacs.d/override-el-get-update.el --eval '(setq c-xref-home-directory "$(PWD)/bin/")' --eval '(setq c-xref-debug-mode t)' --eval '(setq c-xref-debug-preserve-tmp-files t)' ../../src/cxref.c
 	@echo Interaction saved in $(LOGFILE)
 
 bin/c-xref: pipe-spy
@@ -32,3 +32,6 @@ bin/c-xref: pipe-spy
 
 pipe-spy: pipe-spy.c Makefile
 	$(CC) -o pipe-spy -g -Wall -DTARGET=\"$(TARGET_PATH)\" pipe-spy.c
+
+clean:
+	-rm $(LOGFILE)* /tmp/c-xrefx*.log
