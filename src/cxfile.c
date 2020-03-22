@@ -747,7 +747,7 @@ static void trace_buffer(CharacterBuffer *buffer) {
 }
 
 #define ScanInt(cch, ccc, ffin, buffer, result) {                                   \
-    log_trace("+++ScanInt");                                        \
+    log_trace("Enter macro: ScanInt");                                        \
     log_trace("cch='%c' (0x%x) @ 0x%x", cch, cch, &cch);                \
     log_trace("ffin='%x' @ 0x%x", ffin, &ffin);                         \
     trace_buffer(buffer);                                               \
@@ -762,7 +762,7 @@ static void trace_buffer(CharacterBuffer *buffer) {
     log_trace("ffin='%x' @ 0x%x", ffin, &ffin);                         \
     trace_buffer(buffer);                                               \
     log_trace("result='%d'", result);                                   \
-    log_trace("---ScanInt");                                            \
+    log_trace("Leaving macro: ScanInt");                                            \
 }
 
 #define SkipNChars(count, ccc, ffin, iBuf) {                \
@@ -1420,7 +1420,7 @@ static void cxrfSubClass(int size,
     }
     if (s_opt.taskRegime == RegimeEditServer) {
         if (file!=s_input_file_number) {
-            //&fprintf(dumpOut,":reading %s < %s\n", simpleFileName(s_fileTab.tab[inf]->name),simpleFileName(s_fileTab.tab[sup]->name));
+            log_trace("reading %s < %s", simpleFileName(s_fileTab.tab[inf]->name),simpleFileName(s_fileTab.tab[sup]->name));
             crSubClassInfo(sup, inf, file, NO_CX_FILE_ITEM_GEN);
         }
     }
@@ -1431,9 +1431,13 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
     int ch,i;
     char *cc, *cfin;
 
-    /*fprintf(dumpOut,"scanning ref. file start\n"); fflush(dumpOut);*/
-    if (fIn == NULL) return;
-    /*fprintf(dumpOut,"scanning ref. file start 2\n"); fflush(dumpOut);*/
+    ENTER();
+    if (fIn == NULL) {
+        log_trace("No fIn");
+        LEAVE();
+        return;
+    }
+
     memset(&s_inLastInfos, 0, sizeof(s_inLastInfos));
     s_inLastInfos.onLineReferencedSym = -1;
     s_inLastInfos.symbolToCheckForDeadness = -1;
@@ -1474,7 +1478,7 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
         // check if last symbol was dead
         cxfileCheckLastSymbolDeadness();
     }
-    /*fprintf(dumpOut,"ref. file scanned\n"); fflush(dumpOut);*/
+    LEAVE();
 }
 
 

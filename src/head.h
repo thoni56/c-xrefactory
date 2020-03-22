@@ -535,4 +535,7 @@
 
 /* *********************************************************************** */
 
+#define ENTER() {log_trace("Entering: %s", __func__);}
+#define LEAVE() {log_trace("Leaving: %s", __func__);}
+
 #endif	/* ifndef _HEAD__H */

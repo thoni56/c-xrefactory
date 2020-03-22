@@ -4222,8 +4222,7 @@ static void refactoryReduceRedundantCastedThissInMethod(
     }
 }
 
-static void refactoryExpandThissToCastedThisInTheMethod(
-                                                        S_editorMarker *point,
+static void refactoryExpandThissToCastedThisInTheMethod(S_editorMarker *point,
                                                         char *thiscFqtName, char *supercFqtName,
                                                         S_editorRegionList *methodreg
                                                         ) {
@@ -4232,6 +4231,7 @@ static void refactoryExpandThissToCastedThisInTheMethod(
     char                *ss;
     S_editorMarkerList  *ll;
     S_olSymbolsMenu     *mm;
+
     sprintf(thisCast, "((%s)this)", thiscFqtName);
     sprintf(superCast, "((%s)this)", supercFqtName);
 
@@ -4476,19 +4476,19 @@ static char * refactoryComputeUpdateOptionForSymbol(S_editorMarker *point) {
 
 void mainRefactory(int argc, char **argv) {
     int                 fArgCount;
-    char                *file, *fff;
-    char                ifile[MAX_FILE_NAME_SIZE];
+    char                *file, *argumentFile;
+    char                inputFileName[MAX_FILE_NAME_SIZE];
     S_editorBuffer      *buf;
     S_editorMarker      *point, *mark;
 
+    ENTER();
 
-    //
     copyOptions(&s_ropt, &s_opt);       // save command line options !!!!
     // in general in this file:
     //   s_ropt are options passed to c-xrefactory
     //   s_opt are options valid for interactive edit-server 'sub-task'
-    // this was commented out, but
     copyOptions(&s_cachedOptions, &s_opt);
+
     // MAGIC, fill something to restrict to browsing
     s_ropt.server_operation = OLO_LIST;
 
@@ -4502,12 +4502,13 @@ void mainRefactory(int argc, char **argv) {
                    XREF_EXIT_ERR);
     }
 
-    fArgCount = 0; fff = getInputFile(&fArgCount);
-    if (fff==NULL) {
+    fArgCount = 0;
+    argumentFile = getInputFile(&fArgCount);
+    if (argumentFile==NULL) {
         file = NULL;
     } else {
-        strcpy(ifile, fff);
-        file = ifile;
+        strcpy(inputFileName, argumentFile);
+        file = inputFileName;
     }
 
     buf = NULL;
@@ -4525,9 +4526,9 @@ void mainRefactory(int argc, char **argv) {
     mainTaskEntryInitialisations(argument_count(s_refactoryEditSrvInitOptions),
                                  s_refactoryEditSrvInitOptions);
     s_refactoryXrefEditSrvSubTaskFirstPassing = 1;
-    // ------------
 
     s_progressFactor = 1;
+    /* TODO: this should be a switch but the PPC_values are not constants... */
     if (s_ropt.theRefactoring==PPC_AVR_RENAME_SYMBOL
         || s_ropt.theRefactoring==PPC_AVR_RENAME_CLASS
         || s_ropt.theRefactoring==PPC_AVR_RENAME_PACKAGE) {
@@ -4622,6 +4623,8 @@ void mainRefactory(int argc, char **argv) {
     mainCloseOutputFile();
     ppcGenSynchroRecord();
 
-    // exiting, pu undefined, so that main will finish
+    // exiting, put undefined, so that main will finish
     s_opt.taskRegime = RegimeUndefined;
+
+    LEAVE();
 }

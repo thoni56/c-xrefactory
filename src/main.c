@@ -3219,7 +3219,7 @@ void mainCallXref(int argc, char **argv) {
 
 
 static void mainXref(int argc, char **argv) {
-    log_trace("Entering: %s", __FUNCTION__);
+    ENTER();
     mainOpenOutputFile(s_opt.outputFileName);
     editorLoadAllOpenedBufferFiles();
 
@@ -3235,7 +3235,7 @@ static void mainXref(int argc, char **argv) {
     }
     //& fprintf(dumpOut,"\n\nDUMP\n\n"); fflush(dumpOut);
     //& refTabMap(&s_cxrefTab, symbolRefItemDump);
-    log_trace("Leaving: %s", __FUNCTION__);
+    LEAVE();
 }
 
 /* *************************************************************** */
@@ -3247,7 +3247,8 @@ void mainCallEditServerInit(int nargc, char **nargv) {
     s_opt.classpath = "";
     processOptions(nargc, nargv, INFILES_ENABLED); /* no include or define options */
     mainScheduleInputFilesFromOptionsToFileTable();
-    if (s_opt.server_operation == OLO_EXTRACT) s_cache.cpi = 2; // !!!! no cache
+    if (s_opt.server_operation == OLO_EXTRACT)
+        s_cache.cpi = 2; // !!!! no cache, TODO why is 2 = no cache?
     olcxSetCurrentUser(s_opt.user);
     FILL_completions(&s_completions, 0, s_noPos, 0, 0, 0, 0, 0, 0);
 }
@@ -3256,7 +3257,8 @@ void mainCallEditServer(int argc, char **argv,
                         int nargc, char **nargv,
                         int *firstPassing
                         ) {
-    log_trace("Entering: %s", __func__);
+
+    ENTER();
     editorLoadAllOpenedBufferFiles();
     olcxSetCurrentUser(s_opt.user);
     if (creatingOlcxRefs()) olcxPushEmptyStackItem(&s_olcxCurrentUser->browserStack);
@@ -3281,14 +3283,14 @@ void mainCallEditServer(int argc, char **argv,
         }
 #endif
     }
-    log_trace("Leaving %s", __func__);
+    LEAVE();
 }
 
 static void mainEditServer(int argc, char **argv) {
     int     nargc;  char **nargv;
     int     firstPassing;
 
-    log_trace("Entering: %s", __func__);
+    ENTER();
     s_cxResizingBlocked = 1;
     firstPassing = 1;
     copyOptions(&s_cachedOptions, &s_opt);
@@ -3323,7 +3325,7 @@ static void mainEditServer(int argc, char **argv) {
         if (s_opt.xref2) ppcGenSynchroRecord();
         /*fprintf(dumpOut,"request answered\n\n");fflush(dumpOut);*/
     }
-    log_trace("Leaving: %s", __func__);
+    LEAVE();
 }
 
 /* *************************************************************** */
@@ -3404,7 +3406,7 @@ static void setupLogging(void) {
 int main(int argc, char **argv) {
     /* Options are read very late down below, so we need some sensible defaults until then */
     initLogging(argc, argv);
-    log_trace("Entering: %s", __func__);
+    ENTER();
 
     /* There is something interesting going on here, some mysterious
        CX_ALLOCC always makes one longjmp back to here before we can
@@ -3429,6 +3431,6 @@ int main(int argc, char **argv) {
     if (s_opt.taskRegime == RegimeEditServer) mainEditServer(argc, argv);
     if (s_opt.taskRegime == RegimeGenerate) mainGenerate(argc, argv);
 
-    log_trace("Leaving: %s", __func__);
+    LEAVE();
     return(0);
 }
