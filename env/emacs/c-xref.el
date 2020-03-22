@@ -2606,8 +2606,10 @@ tries to delete C-xrefactory windows first.
         (setq res (buffer-substring 1 (point-max)))
         ))
     (setq i 0)
+    (if c-xref-debug-mode
+        (write-region (point-min) (point-max) (c-xref-server-get-new-tmp-file-name))
     (kill-buffer c-xref-server-answer-buffer)
-    (delete-file c-xref-server-tasks-ofile)
+    (delete-file c-xref-server-tasks-ofile))
     (c-xref-server-remove-tmp-files tmp-files)
     (set-buffer cb)
     (setq i (c-xref-server-dispatch res i (length res) dispatch-data))
