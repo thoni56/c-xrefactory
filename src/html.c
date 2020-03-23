@@ -519,8 +519,8 @@ static int htmlRefListOrdering(S_reference *r1, S_reference *r2) {
     if (r1->p.line > r2->p.line) return(0);
     if (r1->p.col < r2->p.col) return(1);
     if (r1->p.col > r2->p.col) return(0);
-    if (r1->usg.base < r2->usg.base) return(1);
-    if (r1->usg.base > r2->usg.base) return(0);
+    if (r1->usage.base < r2->usage.base) return(1);
+    if (r1->usage.base > r2->usage.base) return(0);
     return(0);
 }
 
@@ -655,7 +655,7 @@ static S_reference * htmlGetDefinitionRef(S_htmlRefList *rrr, int usage) {
     res = NULL;
     if (rr->vApplClass == s_noneFileIndex) {
         for(r=rr->refs; r!=NULL; r=r->next) {
-            if (r->usg.base==usage) {
+            if (r->usage.base==usage) {
                 if (res==NULL || res<r /*!!tricky*/) res=r;
             }
         }
@@ -663,7 +663,7 @@ static S_reference * htmlGetDefinitionRef(S_htmlRefList *rrr, int usage) {
         for(cr=rrr->slist; cr!=NULL; cr=cr->next) {
             if (itIsSameCxSymbol(cr,rr)) {
                 for(r=cr->refs; r!=NULL; r=r->next) {
-                    if (    (r->usg.base==UsageDefined || r->usg.base==UsageDeclared)
+                    if (    (r->usage.base==UsageDefined || r->usage.base==UsageDeclared)
                             && cr->vFunClass==rr->vFunClass) {
                         res = r;
                         goto fini;
@@ -898,14 +898,14 @@ static int genRefListFileBody(FILE *ff, char *fname,
     r = p->refs;
     while (r!=NULL) {
         assert(r != oldr);
-        genflag = 0; filen=r->p.file; linen=r->p.line; usage=r->usg.base;
+        genflag = 0; filen=r->p.file; linen=r->p.line; usage=r->usage.base;
         groupedCount = 0;
         while (r!=NULL && ((filen==r->p.file && linen==r->p.line)
-                           || (r->usg.base>UsageMaxOLUsages))) {
-            if (r->usg.base<UsageMaxOLUsages
-                && (usages==USAGE_ANY || r->usg.base==usages)) {
+                           || (r->usage.base>UsageMaxOLUsages))) {
+            if (r->usage.base<UsageMaxOLUsages
+                && (usages==USAGE_ANY || r->usage.base==usages)) {
                 genflag=1; groupedCount ++;
-                if (usage>r->usg.base) usage=r->usg.base;
+                if (usage>r->usage.base) usage=r->usage.base;
             }
             r=r->next;
         }
@@ -993,8 +993,8 @@ static void htmlGetThisFileReferences(int fnum, S_htmlRefList **rrr, int kind){
             rrr0 = rrr;
             for(rr=d->refs; rr!=NULL; rr=rr->next) {
                 if (rr->p.file == fnum &&
-                    (kind==ALL_REFS || rr->usg.base<UsageMaxOLUsages)) {
-                    /*&fprintf(dumpOut,"checking ref [%s,%d,%d](%s) on %s:%x\n",s_fileTab.tab[rr->p.file]->name,rr->p.line,rr->p.col,usagesName[rr->usg.base],d->name,d);fflush(dumpOut);&*/
+                    (kind==ALL_REFS || rr->usage.base<UsageMaxOLUsages)) {
+                    /*&fprintf(dumpOut,"checking ref [%s,%d,%d](%s) on %s:%x\n",s_fileTab.tab[rr->p.file]->name,rr->p.line,rr->p.col,usagesName[rr->usage.base],d->name,d);fflush(dumpOut);&*/
                     //&                 if ((char*)rr<s_cxGlobalReferencesBase) continue;//!!tricky
                     FILL_htmlRefList(&rref,d,rr,dd,NULL);
                     SORTED_LIST_PLACE2(place, S_htmlRefList, rref, rrr0);
@@ -1005,7 +1005,7 @@ static void htmlGetThisFileReferences(int fnum, S_htmlRefList **rrr, int kind){
                         // ?? why PP_ALLOC ? Because called
                         // once per file and it is cleared after.
                         *r = rref;
-                        /*&fprintf(dumpOut,"adding ref [%s,%d,%d](%s) on %s:%x\n",s_fileTab.tab[r->r->p.file]->name,r->r->p.line,r->r->p.col,usagesName[r->r->usg.base],r->s->name,r->s);fflush(dumpOut);&*/
+                        /*&fprintf(dumpOut,"adding ref [%s,%d,%d](%s) on %s:%x\n",s_fileTab.tab[r->r->p.file]->name,r->r->p.line,r->r->p.col,usagesName[r->r->usage.base],r->s->name,r->s);fflush(dumpOut);&*/
                         LIST_CONS(r,(*place));
                     }
                     rrr0 = place;
@@ -1112,7 +1112,7 @@ static void shiftToTheBeginningOfClassList(S_fileItem *fi,S_chReference **orr){
 static int isThereSomethingPrintable(S_olSymbolsMenu *itt) {
     S_reference *r;
     for(r=itt->s.refs; r!=NULL; r=r->next) {
-        if (r->usg.base<UsageMaxOLUsages) return(1);
+        if (r->usage.base<UsageMaxOLUsages) return(1);
     }
     return(0);
 }
@@ -1123,8 +1123,8 @@ static int htmlIsThereSomethingPrintable(S_olSymbolsMenu *itt) {
     if (LANGUAGE(LANG_JAVA) && itt->s.b.symType==TypeCppInclude) return(0);
     for(r=itt->s.refs; r!=NULL; r=r->next) {
         //&fprintf(dumpOut,"hecking ref %d,%d\n", r->p.line, r->p.col);
-        if (r->usg.base==UsageClassTreeDefinition) return(1);
-        if (r->usg.base<UsageMaxOLUsages) return(1);
+        if (r->usage.base==UsageClassTreeDefinition) return(1);
+        if (r->usage.base<UsageMaxOLUsages) return(1);
     }
     //&fprintf(dumpOut,"nothing found\n");
     return(0);
@@ -1281,16 +1281,16 @@ static void htmlGetReferencesMetrics( S_symbolRefItem *p,
     rn = drn = 0;
     *defpos = s_noPos;
     for (r=p->refs; r!=NULL; r=r->next) {
-        if (r->usg.base == UsageDefined) {
-            *defusage = r->usg.base;
+        if (r->usage.base == UsageDefined) {
+            *defusage = r->usage.base;
             *defpos = r->p;
             drn ++;
-        } else if (r->usg.base == UsageDeclared) {
+        } else if (r->usage.base == UsageDeclared) {
             drn++;
-        } else if (r->usg.base == UsageClassTreeDefinition) {
-            *defusage = r->usg.base;
+        } else if (r->usage.base == UsageClassTreeDefinition) {
+            *defusage = r->usage.base;
             *defpos = r->p;
-        } else if (r->usg.base < UsageMaxOLUsages) {
+        } else if (r->usage.base < UsageMaxOLUsages) {
             rn++;
         }
     }
@@ -1394,7 +1394,7 @@ static void htmlScanCxFileAndGenRefLists(char *fn1, char *fn2,
 
 
 #define JAVA_DOC_SCOPE_DEF(xxx) (                                       \
-                                 (xxx->r->usg.base==UsageDefined &&  xxx->s->b.symType==TypeDefault) \
+                                 (xxx->r->usage.base==UsageDefined &&  xxx->s->b.symType==TypeDefault) \
                                  )                                      \
 
 static void htmlJavaDocPosProcess(  FILE **fff,
@@ -1408,14 +1408,14 @@ static void htmlJavaDocPosProcess(  FILE **fff,
     assert(rrr);
     rr = *rrr;
     assert(rr && rr->r);
-    if (rr->r->usg.base == UsageJavaDocFullEntry
-        || rr->r->usg.base == UsageJavaDoc) {
-        usage = rr->r->usg.base;
+    if (rr->r->usage.base == UsageJavaDocFullEntry
+        || rr->r->usage.base == UsageJavaDoc) {
+        usage = rr->r->usage.base;
         dr = rr;
         if (usage == UsageJavaDoc) {
             // invalidate full entry items until the next definition
             for(; dr!=NULL && !JAVA_DOC_SCOPE_DEF(dr); dr=dr->next) {
-                if (dr->r->usg.base == UsageJavaDocFullEntry) dr->r->usg.base=UsageNone;
+                if (dr->r->usage.base == UsageJavaDocFullEntry) dr->r->usage.base=UsageNone;
             }
         }
         if (dr!=NULL) {
@@ -1459,7 +1459,7 @@ static void htmlPosProcess( FILE **fff,
         }
         goto fini;
     } else if (cri->b.symType == TypeComment) {
-        if (rr->r->usg.base == UsageDefined) {
+        if (rr->r->usage.base == UsageDefined) {
             fprintf(ccOut,"<font color=\"green\">");
         } else {
             fprintf(ccOut,"</font>");
@@ -1478,7 +1478,7 @@ static void htmlPosProcess( FILE **fff,
                 suf0 = "</font>";
             }
         }
-        if (cri->b.symType==TypeCppInclude && rr->r->usg.base==UsageDefined) {
+        if (cri->b.symType==TypeCppInclude && rr->r->usage.base==UsageDefined) {
             goto fini;
         }
         htmlGetStaticHREFItems(rr,cp, &prf1, &suf1, &prf, &suf);
@@ -1529,7 +1529,7 @@ static void htmlPosProcess( FILE **fff,
         fprintf(ccOut,"%s%s",suf,suf0);
         cri->b.htmlWasLn = 1;
 #endif
-        if (rr->r->usg.base==UsageDefined) {
+        if (rr->r->usage.base==UsageDefined) {
             if ((rr->s->b.category==CatLocal && s_opt.htmllocalx)
                 || (rr->s->b.category==CatGlobal && s_opt.htmlglobalx)) {
                 fprintf(ccOut,"%s%s",prf0,prf1);

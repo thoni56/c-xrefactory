@@ -386,6 +386,8 @@ postfix_expr
         assert($$.d.t);
     }
 /*
+  TODO: Why is this commented out?
+
     | postfix_expr '(' ')'						{
         if ($1.d.t->m==TypeFunction) {
             $$.d.t=$1.d.t->next;
@@ -442,6 +444,12 @@ postfix_expr
         $$.d.t = $1.d.t;
         RESET_REFERENCE_USAGE($1.d.r, UsageAddrUsed);
     }
+/*
+  TODO Handle compound literals (from C99)
+
+    | '(' type_name ')' '{' initializer_list '}'
+    | '(' type_name ')' '{' initializer_list ',' '}'
+*/
     ;
 
 str_rec_identifier
@@ -663,7 +671,7 @@ assignment_expr
         if ($1.d.r != NULL && s_opt.server_operation == OLO_EXTRACT) {
             S_reference *rr;
             rr = duplicateReference($1.d.r);
-            $1.d.r->usg = s_noUsage;
+            $1.d.r->usage = s_noUsage;
             if ($2.data == '=') {
                 RESET_REFERENCE_USAGE(rr, UsageLvalUsed);
             } else {

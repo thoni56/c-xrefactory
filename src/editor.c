@@ -1094,7 +1094,7 @@ S_editorMarkerList *editorReferencesToMarkers(S_reference *refs,
                     if (ln==line && c==col) {
                         m = editorCrNewMarker(buff, s - buff->a.text);
                         ED_ALLOC(rrr, S_editorMarkerList);
-                        *rrr = (S_editorMarkerList){.d = m, .usg = r->usg, .next = res};
+                        *rrr = (S_editorMarkerList){.d = m, .usage = r->usage, .next = res};
                         res = rrr;
                         r = r->next;
                         while (r!=NULL && ! filter(r,filterParam)) r = r->next;
@@ -1108,7 +1108,7 @@ S_editorMarkerList *editorReferencesToMarkers(S_reference *refs,
                 while (r!=NULL && file == r->p.file) {
                     m = editorCrNewMarker(buff, maxoffset);
                     ED_ALLOC(rrr, S_editorMarkerList);
-                    *rrr = (S_editorMarkerList){.d = m, .usg = r->usg, .next = res};
+                    *rrr = (S_editorMarkerList){.d = m, .usage = r->usage, .next = res};
                     res = rrr;
                     r = r->next;
                     while (r!=NULL && ! filter(r,filterParam)) r = r->next;
@@ -1141,7 +1141,7 @@ S_reference *editorMarkersToReferences(S_editorMarkerList **mms) {
             if (s == off) {
                 OLCX_ALLOC(rr, S_reference);
                 FILL_position(&rr->p, buf->ftnum, ln, c);
-                FILL_reference(rr, mm->usg, rr->p, res);
+                FILL_reference(rr, mm->usage, rr->p, res);
                 res = rr;
                 mm = mm->next;
                 if (mm==NULL || mm->d->buffer != buf) break;
@@ -1152,7 +1152,7 @@ S_reference *editorMarkersToReferences(S_editorMarkerList **mms) {
         while (mm!=NULL && mm->d->buffer==buf) {
             OLCX_ALLOC(rr, S_reference);
             FILL_position(&rr->p, buf->ftnum, ln, 0);
-            FILL_reference(rr, mm->usg, rr->p, res);
+            FILL_reference(rr, mm->usage, rr->p, res);
             res = rr;
             mm = mm->next;
         }
@@ -1281,13 +1281,13 @@ void editorMarkersDifferences(S_editorMarkerList **list1, S_editorMarkerList **l
         if (editorMarkerListLess(l1, l2)) {
             m = editorCrNewMarker(l1->d->buffer, l1->d->offset);
             ED_ALLOC(ll, S_editorMarkerList);
-            *ll = (S_editorMarkerList){.d = m, .usg = l1->usg, .next = *diff1};
+            *ll = (S_editorMarkerList){.d = m, .usage = l1->usage, .next = *diff1};
             *diff1 = ll;
             l1 = l1->next;
         } else if (editorMarkerListLess(l2, l1)) {
             m = editorCrNewMarker(l2->d->buffer, l2->d->offset);
             ED_ALLOC(ll, S_editorMarkerList);
-            *ll = (S_editorMarkerList){.d = m, .usg = l2->usg, .next = *diff2};
+            *ll = (S_editorMarkerList){.d = m, .usage = l2->usage, .next = *diff2};
             *diff2 = ll;
             l2 = l2->next;
         } else {
@@ -1297,14 +1297,14 @@ void editorMarkersDifferences(S_editorMarkerList **list1, S_editorMarkerList **l
     while (l1 != NULL) {
         m = editorCrNewMarker(l1->d->buffer, l1->d->offset);
         ED_ALLOC(ll, S_editorMarkerList);
-        *ll = (S_editorMarkerList){.d = m, .usg = l1->usg, .next = *diff1};
+        *ll = (S_editorMarkerList){.d = m, .usage = l1->usage, .next = *diff1};
         *diff1 = ll;
         l1 = l1->next;
     }
     while (l2 != NULL) {
         m = editorCrNewMarker(l2->d->buffer, l2->d->offset);
         ED_ALLOC(ll, S_editorMarkerList);
-        *ll = (S_editorMarkerList){.d = m, .usg = l2->usg, .next = *diff2};
+        *ll = (S_editorMarkerList){.d = m, .usage = l2->usage, .next = *diff2};
         *diff2 = ll;
         l2 = l2->next;
     }

@@ -257,8 +257,8 @@
 }
 
 #define RESET_REFERENCE_USAGE(rrr,uuu) {\
-    if (rrr!=NULL && rrr->usg.base > uuu) {\
-        rrr->usg.base = uuu;\
+    if (rrr!=NULL && rrr->usage.base > uuu) {\
+        rrr->usage.base = uuu;\
     }\
 }
 
@@ -307,7 +307,7 @@
   || (usage)==UsageDeclared \
 )
 
-#define OL_VIEWABLE_REFS(rrr) ((rrr)->usg.base < UsageMaxOLUsages)
+#define OL_VIEWABLE_REFS(rrr) ((rrr)->usage.base < UsageMaxOLUsages)
 
 #define SHOW_COMPLETION_WINDOW(ccc) (\
    (ccc)->comPrefix[0]==0\

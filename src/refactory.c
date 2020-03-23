@@ -53,7 +53,7 @@ static int argument_count(char **margv) {
 }
 
 static int filter0(S_reference *rr, void *dummy) {
-    if (rr->usg.base < UsageMaxOLUsages) return(1);
+    if (rr->usage.base < UsageMaxOLUsages) return(1);
     return(0);
 }
 
@@ -729,11 +729,11 @@ static void tpCheckMoveClassPutClassDefaultSymbols(S_symbolRefItem *ri, void *dd
     for(rr=ri->refs; rr!=NULL; rr=rr->next) {
         //&fprintf(dumpOut,"checking %d.%d ref of %s\n", rr->p.line,rr->p.col,ri->name); fflush(dumpOut);
         if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, (&dd->mm))) {
-            if (IS_DEFINITION_OR_DECL_USAGE(rr->usg.base)) {
+            if (IS_DEFINITION_OR_DECL_USAGE(rr->usage.base)) {
                 // definition inside class, default or private acces to be checked
                 rstack = s_olcxCurrentUser->browserStack.top;
                 olAddBrowsedSymbol(ri, &rstack->hkSelectedSym, 1, 1,
-                                   0, UsageUsed, 0, &rr->p, rr->usg.base);
+                                   0, UsageUsed, 0, &rr->p, rr->usage.base);
                 break;
             }
         }
@@ -936,7 +936,7 @@ static void tpCheckSpecialReferencesMapFun(S_symbolRefItem *ri,
                 dd->foundRefNotToTestedClass = ri;
             }
             // TODO! check if it is reference to outer scope
-            if (rr->usg.base == UsageMaybeQualifiedThis) {
+            if (rr->usage.base == UsageMaybeQualifiedThis) {
                 dd->foundOuterScopeRef = rr;
             }
         }
@@ -1088,8 +1088,8 @@ int tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
                 // finally check there is some other reference than super.method()
                 // and definition
                 for (rr=mm->s.refs; rr!=NULL; rr=rr->next) {
-                    if ((! IS_DEFINITION_OR_DECL_USAGE(rr->usg.base))
-                        && rr->usg.base != UsageMethodInvokedViaSuper) {
+                    if ((! IS_DEFINITION_OR_DECL_USAGE(rr->usage.base))
+                        && rr->usage.base != UsageMethodInvokedViaSuper) {
                         // well there is, issue warning message and finish
                         linkNamePrettyPrint(ttt, ss->s.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
                         sprintf(tmpBuff,"%s is defined also in superclass and there are invocations syntactically refering to one of superclasses. Under some circumstances this may cause that pulling up of this method will not be behaviour preserving.", ttt);
@@ -1168,7 +1168,7 @@ int tpPullUpFieldLastPreconditions(void) {
     // an item found, it must be empty
     if (mm->s.refs == NULL) return(1);
     javaGetClassNameFromFileNum(target->u.s->classFile, ttt, DOTIFY_NAME);
-    if (IS_DEFINITION_OR_DECL_USAGE(mm->s.refs->usg.base) && mm->s.refs->next==NULL) {
+    if (IS_DEFINITION_OR_DECL_USAGE(mm->s.refs->usage.base) && mm->s.refs->next==NULL) {
         if (pcharFlag==0) {pcharFlag=1; fprintf(ccOut,":[warning] ");}
         sprintf(tmpBuff, "%s is yet defined in the superclass %s.  Pulling up will do nothing, but removing the definition from the subclass. You should be sure that both fields are initialized to the same value.", mm->s.name, ttt);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
@@ -1207,7 +1207,7 @@ int tpPushDownFieldLastPreconditions(void) {
     }
     if (targetsm != NULL) {
         rr = getDefinitionRef(targetsm->s.refs);
-        if (rr!=NULL && IS_DEFINITION_OR_DECL_USAGE(rr->usg.base)) {
+        if (rr!=NULL && IS_DEFINITION_OR_DECL_USAGE(rr->usage.base)) {
             javaGetClassNameFromFileNum(target->u.s->classFile, ttt, DOTIFY_NAME);
             sprintf(tmpBuff,"The field %s is yet defined in %s!",
                     targetsm->s.name, ttt);
@@ -1648,9 +1648,9 @@ static void refactoryRestrictAccessibility(S_editorMarker *point, int limitIndex
     assert(s_olcxCurrentUser->browserStack.top && s_olcxCurrentUser->browserStack.top->menuSym);
 
     for(rr=s_olcxCurrentUser->browserStack.top->r; rr!=NULL; rr=rr->next) {
-        if (! IS_DEFINITION_OR_DECL_USAGE(rr->usg.base)) {
-            if (rr->usg.requiredAccess < accIndex) {
-                accIndex = rr->usg.requiredAccess;
+        if (! IS_DEFINITION_OR_DECL_USAGE(rr->usage.base)) {
+            if (rr->usage.requiredAccess < accIndex) {
+                accIndex = rr->usage.requiredAccess;
             }
         }
     }
@@ -2057,13 +2057,13 @@ static void refactoryApplyParamManip(char *functionName, S_editorMarkerList *occ
     int progressi, progressn;
     LIST_LEN(progressn, S_editorMarkerList, occs); progressi=0;
     for(ll=occs; ll!=NULL; ll=ll->next) {
-        if (ll->usg.base != UsageUndefinedMacro) {
+        if (ll->usage.base != UsageUndefinedMacro) {
             if (manip==PPC_AVR_ADD_PARAMETER) {
                 refactoryAddParameter(ll->d, functionName, argn1,
-                                      ll->usg.base);
+                                      ll->usage.base);
             } else if (manip==PPC_AVR_DEL_PARAMETER) {
                 refactoryDeleteParameter(ll->d, functionName, argn1,
-                                         ll->usg.base);
+                                         ll->usage.base);
             } else if (manip==PPC_AVR_MOVE_PARAMETER) {
                 refactoryMoveParameter(ll->d, functionName,
                                        argn1, argn2
@@ -2174,13 +2174,13 @@ static void refactoryApplyExpandShortNames(S_editorBuffer *buf, S_editorMarker *
             }
             for(ppp=mm->markers; ppp!=NULL; ppp=ppp->next) {
                 //&fprintf(dumpOut,"expanding at %s:%d\n", ppp->d->buffer->name, ppp->d->offset);
-                if (ppp->usg.base == UsageNonExpandableNotFQTNameInClassOrMethod) {
+                if (ppp->usage.base == UsageNonExpandableNotFQTNameInClassOrMethod) {
                     ppcGenGotoMarkerRecord(ppp->d);
                     sprintf(tmpBuff, "This occurence of %s would be misinterpreted after expansion to %s.\nNo action made at this place.", shortName, fqtName);
                     warning(ERR_ST, tmpBuff);
-                } else if (ppp->usg.base == UsageNotFQFieldInClassOrMethod) {
+                } else if (ppp->usage.base == UsageNotFQFieldInClassOrMethod) {
                     refactoryReplaceString(ppp->d, 0, fqtNameDot);
-                } else if (ppp->usg.base == UsageNotFQTypeInClassOrMethod) {
+                } else if (ppp->usage.base == UsageNotFQTypeInClassOrMethod) {
                     refactoryCheckedReplaceString(ppp->d, shortNameLen, shortName, fqtName);
                 }
             }
@@ -2701,8 +2701,8 @@ static void refactoryPerformMovingOfStaticObjectAndMakeItPublic(
     LIST_LEN(progressn, S_editorMarkerList, occs); progressi=0;
     regions = NULL;
     for(ll=occs; ll!=NULL; ll=ll->next) {
-        if ((! IS_DEFINITION_OR_DECL_USAGE(ll->usg.base))
-            && ll->usg.base!=UsageConstructorDefinition) {
+        if ((! IS_DEFINITION_OR_DECL_USAGE(ll->usage.base))
+            && ll->usage.base!=UsageConstructorDefinition) {
             pp = refactoryReplaceStaticPrefix(ll->d, fqtname);
             ppp = editorCrNewMarker(ll->d->buffer, ll->d->offset);
             editorMoveMarkerBeyondIdentifier(ppp, 1);
@@ -2887,7 +2887,7 @@ static void refactoryMoveField(S_editorMarker *point) {
     LIST_LEN(progressn, S_editorMarkerList, occs); progressi=0;
     regions = NULL;
     for(ll=occs; ll!=NULL; ll=ll->next) {
-        if (! IS_DEFINITION_OR_DECL_USAGE(ll->usg.base)) {
+        if (! IS_DEFINITION_OR_DECL_USAGE(ll->usage.base)) {
             if (*prefixDot != 0) {
                 refactoryReplaceString(ll->d, 0, prefixDot);
             }
@@ -3116,7 +3116,7 @@ static void refactoryAddCopyOfMarkerToList(S_editorMarkerList **ll, S_editorMark
     S_editorMarkerList      *lll;
     nn = editorCrNewMarker(mm->buffer, mm->offset);
     ED_ALLOC(lll, S_editorMarkerList);
-    *lll = (S_editorMarkerList){.d = nn, .usg = *usage, .next = *ll};
+    *lll = (S_editorMarkerList){.d = nn, .usage = *usage, .next = *ll};
     *ll = lll;
 }
 
@@ -3177,9 +3177,9 @@ static void refactoryTurnDynamicToStatic(S_editorMarker *point) {
             javaDotifyClassName(fqthis);
             sprintf(fqthis+strlen(fqthis), ".this");
             for(ll=mm->markers; ll!=NULL; ll=ll->next) {
-                refactoryAddCopyOfMarkerToList(&allrefs, ll->d, &ll->usg);
+                refactoryAddCopyOfMarkerToList(&allrefs, ll->d, &ll->usage);
                 pp = NULL;
-                if (IS_DEFINITION_OR_DECL_USAGE(ll->usg.base)) {
+                if (IS_DEFINITION_OR_DECL_USAGE(ll->usage.base)) {
                     pp = editorCrNewMarker(ll->d->buffer, ll->d->offset);
                     pp->offset = refactoryAddStringAsParameter(ll->d, ll->d, nameOnPoint,
                                                                1, pardecl);
@@ -3249,12 +3249,12 @@ static void refactoryTurnDynamicToStatic(S_editorMarker *point) {
     for(mm=s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
         if (mm->selected && mm->visible) {
             for(ll=mm->markers; ll!=NULL; ll=ll->next) {
-                if (ll->usg.base == UsageMaybeQualifThisInClassOrMethod) {
+                if (ll->usage.base == UsageMaybeQualifThisInClassOrMethod) {
                     editorUndoUntil(undoStartPoint,NULL);
                     ppcGenGotoMarkerRecord(ll->d);
                     error(ERR_ST, "The method is using qualified this to access enclosed instance. Do not know how to make it static.");
                     return;
-                } else if (ll->usg.base == UsageMaybeThisInClassOrMethod) {
+                } else if (ll->usage.base == UsageMaybeThisInClassOrMethod) {
                     strncpy(cid, refactoryGetIdentifierOnMarker_st(ll->d), TMP_STRING_SIZE);
                     cid[TMP_STRING_SIZE-1]=0;
                     poffset = ll->d->offset;
@@ -3268,7 +3268,7 @@ static void refactoryTurnDynamicToStatic(S_editorMarker *point) {
                         refactoryReplaceString(ll->d, 0, parusage);
                     }
                     ll->d->offset = poffset;
-                    refactoryAddCopyOfMarkerToList(&npadded, ll->d, &ll->usg);
+                    refactoryAddCopyOfMarkerToList(&npadded, ll->d, &ll->usage);
                 }
                 writeRelativeProgress((progressi++)*100/progressn);
             }
@@ -3301,7 +3301,7 @@ static void refactoryTurnDynamicToStatic(S_editorMarker *point) {
         // but check it for being sure
         // maybe you should update references and delete the parameter
         // after, but for now, use computed references, it should work.
-        if (IS_DEFINITION_USAGE(npoccs->usg.base)) {
+        if (IS_DEFINITION_USAGE(npoccs->usage.base)) {
             refactoryApplyParamManip(nameOnPoint, allrefs, PPC_AVR_DEL_PARAMETER, 1, 1);
             //& refactoryDeleteParameter(point, nameOnPoint, 1, UsageDefined);
         }
@@ -3516,7 +3516,7 @@ static void refactoryTurnStaticToDynamic(S_editorMarker *point) {
 
     LIST_LEN(progressn, S_editorMarkerList, occs); progressi=0;
     for(ll=occs; ll!=NULL; ll=ll->next) {
-        if (! IS_DEFINITION_OR_DECL_USAGE(ll->usg.base)) {
+        if (! IS_DEFINITION_OR_DECL_USAGE(ll->usage.base)) {
             res = refactoryGetParamPosition(ll->d, nameOnPoint, argn);
             if (res == RETURN_OK) {
                 m1 = editorCrNewMarkerForPosition(&s_paramBeginPosition);
@@ -3557,7 +3557,7 @@ static void refactoryTurnStaticToDynamic(S_editorMarker *point) {
                                    STANDARD_SELECT_SYMBOLS_MESSAGE, PPCV_BROWSER_TYPE_INFO
                                    );
     for(ll=poccs; ll!=NULL; ll=ll->next) {
-        if (! IS_DEFINITION_OR_DECL_USAGE(ll->usg.base)) {
+        if (! IS_DEFINITION_OR_DECL_USAGE(ll->usage.base)) {
             if (ll->d->offset+plen <= ll->d->buffer->a.bufferSize
                 // TODO! do this at least little bit better, by skipping spaces, etc.
                 && staticToDynCanBeThisOccurence(ll->d, param, &rlen)) {
@@ -3613,7 +3613,7 @@ static S_reference *refactoryCheckEncapsulateGetterSetterForExistingMethods(char
             if (mm->s.vFunClass==hk->s.vFunClass) {
                 // find definition of another function
                 for(rr=mm->s.refs; rr!=NULL; rr=rr->next) {
-                    if (IS_DEFINITION_USAGE(rr->usg.base)) {
+                    if (IS_DEFINITION_USAGE(rr->usage.base)) {
                         if (POSITION_NEQ(rr->p, hk->defpos)) {
                             anotherDefinition = rr;
                             goto refbreak;
@@ -3692,7 +3692,7 @@ static void refactoryPerformEncapsulateField(S_editorMarker *point,
                                                  ERROR_SELECT_SYMBOLS_MESSAGE,
                                                  PPCV_BROWSER_TYPE_WARNING);
     for(ll=occs; ll!=NULL; ll=ll->next) {
-        if (ll->usg.base == UsageAddrUsed) {
+        if (ll->usage.base == UsageAddrUsed) {
             ppcGenGotoMarkerRecord(ll->d);
             sprintf(tmpBuff, "There is a combined l-value reference of the field. Current version of C-xrefactory doesn't  know how  to encapsulate such  assignment. Please, turn it into simple assignment (i.e. field = field 'op' ...;) first.");
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
@@ -3794,7 +3794,7 @@ static void refactoryPerformEncapsulateField(S_editorMarker *point,
     // generate getter and setter invocations
     editorSplitMarkersWithRespectToRegions(&occs, forbiddenRegions, &insiders, &outsiders);
     for(ll=outsiders; ll!=NULL; ll=ll->next) {
-        if (ll->usg.base == UsageLvalUsed) {
+        if (ll->usage.base == UsageLvalUsed) {
             refactoryMakeSyntaxPassOnSource(ll->d);
             if (s_spp[SPP_ASSIGNMENT_OPERATOR_POSITION].file == s_noneFileIndex) {
                 error(ERR_INTERNAL, "Can't get assignment coordinates");
@@ -3814,7 +3814,7 @@ static void refactoryPerformEncapsulateField(S_editorMarker *point,
                 editorFreeMarker(eqm);
                 editorFreeMarker(ee);
             }
-        } else if (! IS_DEFINITION_OR_DECL_USAGE(ll->usg.base)) {
+        } else if (! IS_DEFINITION_OR_DECL_USAGE(ll->usage.base)) {
             refactoryCheckedReplaceString(ll->d, nameOnPointLen, nameOnPoint, "");
             refactoryReplaceString(ll->d, 0, getter);
             refactoryReplaceString(ll->d, 0, "()");
@@ -3961,7 +3961,7 @@ static S_editorMarkerList *refactoryPullUpPushDownDifferences(
             mm2 = refactoryFindSymbolCorrespondingToReferenceWrtPullUpPushDown(menu2, mm1, rr1);
             if (mm2==NULL) {
                 ED_ALLOC(rr, S_editorMarkerList);
-                *rr = (S_editorMarkerList){.d = editorDuplicateMarker(rr1->d), .usg = rr1->usg, .next = diff};
+                *rr = (S_editorMarkerList){.d = editorDuplicateMarker(rr1->d), .usage = rr1->usage, .next = diff};
                 diff = rr;
             }
         }

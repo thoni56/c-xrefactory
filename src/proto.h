@@ -758,7 +758,7 @@ typedef struct usageBits {
 
 // !!! if you add a pointer to this structure, then update olcxCopyRefList
 typedef struct reference {
-    struct usageBits			usg;
+    struct usageBits			usage;
     struct position				p;
     struct reference            *next;
 } S_reference;

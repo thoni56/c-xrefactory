@@ -1632,7 +1632,7 @@ static void addMacroBaseUsageRef( Symbol *mdef) {
     if (rr) {
         // this is optimization to avoid multiple base references
         for(r=memb->refs; r!=NULL; r=r->next) {
-            if (r->usg.base == UsageMacroBaseFileUsage) break;
+            if (r->usage.base == UsageMacroBaseFileUsage) break;
         }
     }
     if (rr==0 || r==NULL) {

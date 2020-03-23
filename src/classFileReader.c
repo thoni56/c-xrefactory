@@ -804,7 +804,7 @@ static void cfAddRecordToClass( char *name,
         tt->u.m.exceptions = exceptions;
     }
 
-    log_trace("adding definition of %s == %s\n", name, linkName);
+    log_trace("adding definition of %s == %s", name, linkName);
     /* TODO If this was allocated in "normal" memory we could use newSymbol() */
     CF_ALLOC(symbol, Symbol);
     fillSymbolWithType(symbol, name, linkName, s_noPos, tt);

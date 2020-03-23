@@ -44,7 +44,7 @@ typedef struct editorMarker {
 
 typedef struct editorMarkerList {
     struct editorMarker		*d;
-    struct usageBits		usg;
+    struct usageBits		usage;
     struct editorMarkerList	*next;
 } S_editorMarkerList;
 

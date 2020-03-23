@@ -428,7 +428,7 @@ static void writeSymbolItem(int symIndex) {
     }
 
 static void writeCxReference(S_reference *reference, int symbolNum) {
-    writeCxReferenceBase(symbolNum, reference->usg.base, reference->usg.requiredAccess,
+    writeCxReferenceBase(symbolNum, reference->usage.base, reference->usage.requiredAccess,
                          reference->p.file, reference->p.line, reference->p.col);
 }
 
@@ -1277,15 +1277,15 @@ static void cxrfReference(int size,
         FILL_reference(&rr, usageBits, pos, NULL);
         assert(sym>=0 && sym<MAX_CX_SYMBOL_TAB);
         if (additionalArg==CX_HTML_SECOND_PASS) {
-            if (rr.usg.base<UsageMaxOLUsages || rr.usg.base==UsageClassTreeDefinition) {
+            if (rr.usage.base<UsageMaxOLUsages || rr.usage.base==UsageClassTreeDefinition) {
                 addToRefList(&s_inLastInfos.symbolTab[sym]->refs,
-                             &rr.usg,&rr.p,CatGlobal);
+                             &rr.usage,&rr.p,CatGlobal);
             }
-        } else if (rr.usg.base==UsageDefined || rr.usg.base==UsageDeclared
+        } else if (rr.usage.base==UsageDefined || rr.usage.base==UsageDeclared
                    ||  s_fileTab.tab[rr.p.file]->b.commandLineEntered==0 ) {
             /*&fprintf(dumpOut,"htmladdref %s on %s:%d\n",s_inLastInfos.symbolTab[sym]->name,s_fileTab.tab[rr.p.file]->name,rr.p.line);fflush(dumpOut);&*/
             addToRefList(&s_inLastInfos.symbolTab[sym]->refs,
-                         &rr.usg,&rr.p,CatGlobal);
+                         &rr.usage,&rr.p,CatGlobal);
         }
     } else if (s_opt.taskRegime == RegimeEditServer) {
         FILL_position(&pos,file,line,coll);
@@ -1295,27 +1295,27 @@ static void cxrfReference(int size,
             if (OL_VIEWABLE_REFS(&rr)) {
                 // restrict reported symbols to those defined in project
                 // input file
-                if (IS_DEFINITION_USAGE(rr.usg.base)
+                if (IS_DEFINITION_USAGE(rr.usage.base)
                     && s_fileTab.tab[rr.p.file]->b.commandLineEntered
                     ) {
                     s_inLastInfos.deadSymbolIsDefined = 1;
-                } else if (! IS_DEFINITION_OR_DECL_USAGE(rr.usg.base)) {
+                } else if (! IS_DEFINITION_OR_DECL_USAGE(rr.usage.base)) {
                     s_inLastInfos.symbolToCheckForDeadness = -1;
                 }
             }
         } else if (additionalArg == OL_LOOKING_2_PASS_MACRO_USAGE) {
             if (    s_inLastInfos.onLineReferencedSym ==
                     s_inLastInfos.counter[CXFI_SYM_INDEX]
-                    &&  rr.usg.base == UsageMacroBaseFileUsage) {
+                    &&  rr.usage.base == UsageMacroBaseFileUsage) {
                 s_olMacro2PassFile = rr.p.file;
             }
         } else {
             if (s_opt.server_operation == OLO_TAG_SEARCH) {
-                if (rr.usg.base==UsageDefined
+                if (rr.usage.base==UsageDefined
                     || ((s_opt.tagSearchSpecif==TSS_FULL_SEARCH
                          || s_opt.tagSearchSpecif==TSS_FULL_SEARCH_SHORT)
-                        &&  (rr.usg.base==UsageDeclared
-                             || rr.usg.base==UsageClassFileDefinition))) {
+                        &&  (rr.usage.base==UsageDeclared
+                             || rr.usage.base==UsageClassFileDefinition))) {
                     searchSymbolCheckReference(s_inLastInfos.symbolTab[sym],&rr);
                 }
             } else if (s_opt.server_operation == OLO_SAFETY_CHECK1) {

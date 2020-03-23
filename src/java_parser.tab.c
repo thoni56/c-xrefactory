@@ -3502,7 +3502,7 @@ case 74:
                     /* it was type or packege, but I thing this would be better*/
                     lastUselessRef = javaClassifyToTypeName(yyvsp[-1].bbidlist.d, UsageUsed, &str, USELESS_FQT_REFS_DISALLOWED);
                     /* last useless reference is not useless here!*/
-                    if (lastUselessRef!=NULL) lastUselessRef->usg = s_noUsage;
+                    if (lastUselessRef!=NULL) lastUselessRef->usage = s_noUsage;
                     s_cps.lastImportLine = yyvsp[-2].bbidIdent.d->p.line;
                     if (yyvsp[-1].bbidlist.d->next!=NULL) {
                         javaAddImportConstructionReference(&yyvsp[-1].bbidlist.d->next->id.p, &yyvsp[-2].bbidIdent.d->p, UsageDefined);
@@ -3534,7 +3534,7 @@ case 77:
                     st = javaClassifyAmbiguousName(yyvsp[-3].bbidlist.d, NULL,&str,&expr,&rr,
                                                    &lastUselessRef, USELESS_FQT_REFS_DISALLOWED,
                                                    CLASS_TO_TYPE,UsageUsed);
-                    if (lastUselessRef!=NULL) lastUselessRef->usg = s_noUsage;
+                    if (lastUselessRef!=NULL) lastUselessRef->usage = s_noUsage;
                     s_cps.lastImportLine = yyvsp[-4].bbidIdent.d->p.line;
                     javaAddImportConstructionReference(&yyvsp[-3].bbidlist.d->id.p, &yyvsp[-4].bbidIdent.d->p, UsageDefined);
                 } else {
@@ -7038,7 +7038,7 @@ case 463:
                     if (yyvsp[-3].bbexprType.d.r != NULL && s_opt.server_operation == OLO_EXTRACT) {
                         S_reference *rr;
                         rr = duplicateReference(yyvsp[-3].bbexprType.d.r);
-                        yyvsp[-3].bbexprType.d.r->usg = s_noUsage;
+                        yyvsp[-3].bbexprType.d.r->usage = s_noUsage;
                         if (yyvsp[-1].bbunsPositionPair.d.u == '=') {
                             RESET_REFERENCE_USAGE(rr, UsageLvalUsed);
                         } else {

@@ -142,7 +142,7 @@ static S_programGraphNode *getGraphAddress( S_programGraphNode  *program,
 
 static S_reference *getDefinitionReference(S_symbolRefItem *lab) {
     S_reference *res;
-    for(res=lab->refs; res!=NULL && res->usg.base!=UsageDefined; res=res->next) ;
+    for(res=lab->refs; res!=NULL && res->usage.base!=UsageDefined; res=res->next) ;
     if (res == NULL) {
         sprintf(tmpBuff,"jump to unknown label '%s'\n",lab->name);
         error(ERR_ST,tmpBuff);
@@ -172,7 +172,7 @@ static S_programGraphNode * extMakeProgramGraph(void) {
     LIST_SORT(S_programGraphNode, program, linearOrder);
     //&dumpProgram(program);
     for(p=program; p!=NULL; p=p->next) {
-        if (p->symRef->b.symType==TypeLabel && p->ref->usg.base!=UsageDefined) {
+        if (p->symRef->b.symType==TypeLabel && p->ref->usage.base!=UsageDefined) {
             // resolve the jump
             p->jump = getLabelGraphAddress(program, p->symRef);
         }
@@ -203,11 +203,11 @@ static void extSetSetStates(    S_programGraphNode *p,
         cstate = p->stateBits = (cstate | oldStateBits | INSP_VISITED);
         cpos = p->posBits | INSP_VISITED;
         if (p->symRef == symRef) {          // the examined variable
-            if (p->ref->usg.base == UsageAddrUsed) {
+            if (p->ref->usage.base == UsageAddrUsed) {
                 cstate = cpos;
                 // change only state, so usage is kept
-            } else if (p->ref->usg.base == UsageLvalUsed
-                       || (p->ref->usg.base == UsageDefined
+            } else if (p->ref->usage.base == UsageLvalUsed
+                       || (p->ref->usage.base == UsageDefined
                            && ! IS_STR_UNION_SYMBOL(p))
                        ) {
                 // change also current value, because there is no usage
@@ -226,10 +226,10 @@ static void extSetSetStates(    S_programGraphNode *p,
                 cstate |= INSP_INSIDE_PASSING;
             }
         } else if (p->symRef->b.symType==TypeLabel) {
-            if (p->ref->usg.base==UsageUsed) {  // goto
+            if (p->ref->usage.base==UsageUsed) {  // goto
                 p = p->jump;
                 goto cont;
-            } else if (p->ref->usg.base==UsageFork) {   // branching
+            } else if (p->ref->usage.base==UsageFork) {   // branching
                 extSetSetStates(p->jump, symRef, cstate);
             }
         }
@@ -251,7 +251,7 @@ static int extCategorizeLocalVar0(  S_programGraphNode *program,
     //&dumpProgram(program);
     inUsages = outUsages = outUsageBothExists = 0;
     for(p=program; p!=NULL; p=p->next) {
-        if (p->symRef == varRef->symRef && p->ref->usg.base != UsageNone) {
+        if (p->symRef == varRef->symRef && p->ref->usage.base != UsageNone) {
             if (p->posBits==INSP_INSIDE_BLOCK) {
                 inUsages |= p->stateBits;
             } else if (p->posBits==INSP_OUTSIDE_BLOCK) {
@@ -327,7 +327,7 @@ static int extIsJumpInOutBlock(S_programGraphNode *program) {
         assert(p->symRef!=NULL)
             if (p->symRef->b.symType==TypeLabel) {
                 assert(p->ref!=NULL);
-                if (p->ref->usg.base==UsageUsed || p->ref->usg.base==UsageFork) {
+                if (p->ref->usage.base==UsageUsed || p->ref->usage.base==UsageFork) {
                     assert(p->jump != NULL);
                     if (p->posBits != p->jump->posBits) {
                         //&fprintf(dumpOut,"jump in/out at %s : %x\n",p->symRef->name, p);
@@ -346,7 +346,7 @@ static int extIsJumpInOutBlock(S_programGraphNode *program) {
                                 )
 #else
 #define EXT_LOCAL_VAR_REF(ppp) (                                        \
-                                ppp->ref->usg.base==UsageDefined        \
+                                ppp->ref->usage.base==UsageDefined        \
                                 &&  ppp->symRef->b.symType==TypeDefault \
                                 &&  ppp->symRef->b.scope==ScopeAuto     \
                                 )
@@ -631,11 +631,11 @@ static S_symbolRefItemList *computeExceptionsThrownBetween(S_programGraphNode *b
 
     catched = NULL; noncatched = NULL; cl = &catched;
     for(p=bb; p!=NULL && p!=ee; p=p->next) {
-        if (p->symRef->b.symType == TypeTryCatchMarker && p->ref->usg.base == UsageTryCatchBegin) {
+        if (p->symRef->b.symType == TypeTryCatchMarker && p->ref->usage.base == UsageTryCatchBegin) {
             deep = 0;
             for(e=p; e!=NULL && e!=ee; e=e->next) {
                 if (e->symRef->b.symType == TypeTryCatchMarker) {
-                    if (e->ref->usg.base == UsageTryCatchBegin) deep++;
+                    if (e->ref->usage.base == UsageTryCatchBegin) deep++;
                     else deep --;
                     if (deep == 0) break;
                 }
@@ -647,10 +647,10 @@ static S_symbolRefItemList *computeExceptionsThrownBetween(S_programGraphNode *b
                 }
             }
         }
-        if (p->ref->usg.base == UsageThrown) {
+        if (p->ref->usage.base == UsageThrown) {
             // thrown exception add it to list
             addSymbolToSymRefList(cl, p->symRef);
-        } else if (p->ref->usg.base == UsageCatched) {
+        } else if (p->ref->usage.base == UsageCatched) {
             // catched, remove it from list
             removeSymbolFromSymRefList(&catched, p->symRef);
             cl = &noncatched;
@@ -781,7 +781,7 @@ static void extGenNewFunHead(S_programGraphNode *program) {
                     ||  p->classifBits == EXTRACT_OUT_ARGUMENT
                     ||  p->classifBits == EXTRACT_RESULT_VALUE
                     ||  (   p->symRef->b.storage == StorageExtern
-                            && p->ref->usg.base == UsageDeclared)
+                            && p->ref->usage.base == UsageDeclared)
                     ) {
             GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             if (strcmp(ldcla,dcla)==0) {
@@ -1054,7 +1054,7 @@ static void extJavaGenNewClassHead(S_programGraphNode *program) {
         if (    p->classifBits == EXTRACT_LOCAL_VAR
                 ||  p->classifBits == EXTRACT_RESULT_VALUE
                 ||  (   p->symRef->b.storage == StorageExtern
-                        && p->ref->usg.base == UsageDeclared)
+                        && p->ref->usage.base == UsageDeclared)
                 ) {
             GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
             if (strcmp(ldcla,dcla)==0) {
