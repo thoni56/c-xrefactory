@@ -31,6 +31,7 @@ import sys
 import subprocess
 import io
 import time
+import shlex
 from shutil import copy
 
 def eprint(*args, **kwargs):
@@ -84,7 +85,9 @@ with open(command_file, 'rb') as file:
 
     args = invocation.replace("CURDIR", CURDIR)
 
-    p = subprocess.Popen(args.split(' '),
+    # Need to find a way to read args that have spaces in them, '\ '?
+    # But how to split then?
+    p = subprocess.Popen(shlex.split(args),
                          stdout=subprocess.PIPE,
                          stdin=subprocess.PIPE)
 

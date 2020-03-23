@@ -30,6 +30,7 @@ quick:
 	@$(MAKE) -C olcx_complete
 	@$(MAKE) -C olcx_refactory_rename
 	@$(MAKE) -C olcx_refactory_simple_extract
+	@$(MAKE) -C olcx_refactory_add_parameter
 
 slow:
 	@$(MAKE) -C c-xref

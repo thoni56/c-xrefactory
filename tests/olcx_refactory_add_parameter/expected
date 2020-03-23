@@ -1,0 +1,22 @@
+../../src/c-xref -xrefactory-II -o buffer1 -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -user 1 -rfct-add-param -olcxparnum=2 "-rfct-param1=int arg" -rfct-param2=42 -olcursor=36 CURDIR/test_source/hello-extracted.c -log=log1 -trace
+end-of-options
+
+<sync>
+<goto>
+ <position-off off=36 len=<n>>CURDIR/test_source/hello-extracted.c</position-off>
+</goto>
+<goto>
+ <position-off off=55 len=<n>>CURDIR/test_source/hello-extracted.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>, int arg</str>
+</replacement>
+<goto>
+ <position-off off=197 len=<n>>CURDIR/test_source/hello-extracted.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>, 42</str>
+</replacement>
+<goto>
+ <position-off off=36 len=<n>>CURDIR/test_source/hello-extracted.c</position-off>
+</goto>
