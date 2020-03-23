@@ -3243,7 +3243,7 @@ static void refactoryTurnDynamicToStatic(S_editorMarker *point) {
     strcpy(nameOnPoint, refactoryGetIdentifierOnMarker_st(point));
     assert(strlen(nameOnPoint) < TMP_STRING_SIZE-1);
     occs = refactoryPushGetAndPreCheckReferences(point->buffer, point, nameOnPoint,
-                                                 "If  you see  this  message it  is  highly probable  that turning  this virtual  method into static will not be behaviour preserving! This refactoring is behaviour preserving only  if the method does not use mechanism of virtual invocations. In this dialog you should select the application classes which are refering to the method which will become static. If you can't unambiguously determine those references do not continue in this refactoring!",
+                                                 "If you see this message it is highly probable that turning this virtual method into static will not be behaviour preserving! This refactoring is behaviour preserving only  if the method does not use mechanism of virtual invocations. In this dialog you should select the application classes which are refering to the method which will become static. If you can't unambiguously determine those references do not continue in this refactoring!",
                                                  PPCV_BROWSER_TYPE_WARNING);
     editorFreeMarkersAndMarkerList(occs);
 
