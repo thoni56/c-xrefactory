@@ -2233,8 +2233,6 @@ static void mainFileProcessingInitialisations(
                                               int *outInputIn,
                                               int *outLanguage
                                               ) {
-    int             stargc;
-    char            **stargv;
     char            dffname[MAX_FILE_NAME_SIZE];
     char            dffsect[MAX_FILE_NAME_SIZE];
     struct stat     dffstat;
@@ -2242,7 +2240,7 @@ static void mainFileProcessingInitialisations(
     S_stringList    *tmpIncludeDirs;
 
     fileName = s_input_file_name;
-    mainSetLanguage(fileName,  outLanguage);
+    mainSetLanguage(fileName, outLanguage);
     getOptionsFile(fileName, dffname, dffsect,DEFAULT_VALUE);
     initAllInputs();
     if (dffname[0] != 0 ) stat(dffname, &dffstat);
@@ -2266,15 +2264,14 @@ static void mainFileProcessingInitialisations(
         }
         strcpy(oldOnLineClassPath, s_opt.classpath);
         assert(strlen(oldOnLineClassPath)<MAX_OPTION_LEN-1);
+
         s_opt.stdopFlag = 0;
+
         initPreCreatedTypes();
         initCwd();
         initOptions();
         initDefaultCxrefFileName(fileName);
-        // this maybe useless here, it is reseted after reading options
-        mainSetLanguage(fileName,  outLanguage);
-        getStandardOptions(&stargc,&stargv);
-        processOptions(stargc,stargv, INFILES_DISABLED); /* default options */
+
         processOptions(argc, argv, INFILES_DISABLED);   /* command line opts */
         /* piped options (no include or define options)
            must be befor .xrefrc file options, but, the s_cachedOPtions
