@@ -14,7 +14,6 @@ COMMAND = ../../src/c-xref -xrefrc .c-xrefrc simple_grammar.y -o $(TEST).log
 CHECK_FOR_CONTENT = python -c "content=open('$(1)').read(); target=open('output').read(); exit(0 if content in target else 1);"
 
 $(TEST):
-	@printf "Tests in '$@': "
 	@rm -rf output $@.log CXrefs
 	@$(COMMAND)
 	@../../utils/cxref_reader.py > output
