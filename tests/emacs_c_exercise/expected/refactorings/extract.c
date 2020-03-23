@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+
 static int extracted(int n) {
   int i, x, y, t;
   // region begin
