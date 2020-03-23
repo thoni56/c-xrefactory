@@ -129,15 +129,6 @@ static void refactorySetNargv(char *nargv[MAX_NARGV_OPTIONS_NUM],
         nargv[i] = buf->name;
         i++;
     }
-#if ZERO
-    assert(i < MAX_NARGV_OPTIONS_NUM);
-    if (s_ropt.outputFileName!=NULL) {
-        nargv[i] = "-o";
-        i++;
-        nargv[i] = s_ropt.outputFileName;
-        i++;
-    }
-#endif
     assert(i < MAX_NARGV_OPTIONS_NUM);
     if (s_ropt.user!=NULL) {
         nargv[i] = "-user";
@@ -383,18 +374,6 @@ static void editorFreeSingleUndo(S_editorUndo *uu) {
     }
     ED_FREE(uu, sizeof(S_editorUndo));
 }
-
-#if ZERO
-static void editorFreeUndos(S_editorUndo *undos) {
-    S_editorUndo *uu, *next;
-    uu=undos;
-    while (uu!=NULL) {
-        next = uu->next;
-        editorFreeSingleUndo(uu);
-        uu = next;
-    }
-}
-#endif
 
 void editorApplyUndos(S_editorUndo *undos, S_editorUndo *until,
                       S_editorUndo **undoundo, int gen) {
@@ -884,13 +863,6 @@ int tpCheckMoveClassAccessibilities(void) {
                                              "These references inside moved class are refering to symbols which will be inaccessible at new class location. You should adjust their access first. (Each symbol is listed only once)",
                                              PPCV_BROWSER_TYPE_WARNING, CONTINUATION_DISABLED);
             refactoryAskForReallyContinueConfirmation();
-#if ZERO
-        } else {
-            olcxPrintRefList(";", rstack);
-            fprintf(ccOut,
-                    " ** These references inside moved class are referring to symbols which will  ** be inaccessible at new class location. You should adjust their ** access first. (Each symbol is listed only once)"
-                    );
-#endif
         }
         return(0);
     }
@@ -908,13 +880,6 @@ int tpCheckMoveClassAccessibilities(void) {
                                              "These symbols defined inside moved class and used outside the class will be inaccessible at new class location. You should adjust their access first.",
                                              PPCV_BROWSER_TYPE_WARNING, CONTINUATION_DISABLED);
             refactoryAskForReallyContinueConfirmation();
-#if ZERO
-        } else {
-            olcxPrintRefList(";", rstack);
-            fprintf(ccOut,
-                    " ** These symbols defined inside the moved class and used outside it will  ** be inaccessible at new class location. You should adjust their ** access first."
-                    );
-#endif
         }
         return(0);
     }
@@ -1421,24 +1386,6 @@ static S_editorMarker *refactoryCrNewMarkerForExpressionBegin(S_editorMarker *d,
     }
 }
 
-#if ZERO
-static int refactoryShouldIMoveDirectoryNow(S_editorUndo *undoBase, char *dir) {
-    S_editorUndo *uu;
-    int dlen;
-    dlen = strlen(dir);
-    for(uu = s_editorUndo; uu!=NULL && uu!=undoBase; uu=uu->next) {
-        if (uu->operation == UNDO_RENAME_BUFFER) {
-            //&sprintf(tmpBuff,"new checking\n%s to\n%s", uu->u.rename.name, dir);ppcGenRecord(PPC_WARNING, tmpBuff, "\n");
-            if (fnnCmp(uu->u.rename.name, dir, dlen)==0
-                && (uu->u.rename.name[dlen] == '/'
-                    || uu->u.rename.name[dlen] == '\\')) {
-                return(0);
-            }
-        }
-    }
-    return(1);
-}
-#endif
 
 static void refactoryCheckedRenameBuffer(
                                          S_editorBuffer *buff, char *newName, S_editorUndo **undo
@@ -1536,16 +1483,6 @@ static void refactorySimplePackageRenaming(
                                                             slnlen, rpundo);
                     if (mvfile) goto moved;
                 });
-#if ZERO
-            // TODO! try to make this correct also for auto-inferred classpath !!!!!
-            // well this is big hack, get inferred classpath of only
-            // the LAST file !!!!
-            if (s_javaStat->namedPackageDir) {
-                mvfile = refactoryRenamePackageFileMove(s_javaStat->namedPackageDir, ll,
-                                                        symLinkName, slnlen, rpundo);
-                if (mvfile) goto moved;
-            }
-#endif
         moved:;
         }
     }
@@ -1902,32 +1839,6 @@ static int refactoryGetParamPosition(S_editorMarker *pos, char *fname, int argn)
     }
     return(res);
 }
-
-#if ZERO
-static void dumpContext(S_editorMarker *mm) {
-    int i, j, m;
-    char tt[REFACTORING_TMP_STRING_SIZE];
-    char *text;
-    text = mm->buffer->a.text;
-    sprintf(tt, "[dumping context at %s:%d]\n", mm->buffer->name, mm->offset);
-    j = strlen(tt);
-    i = mm->offset;
-    i -= 50;
-    if (i<0) i=0;
-    while (i<mm->offset) {
-        tt[j++] = text[i++];
-    }
-    sprintf(tt+j, "[MARKER]");
-    j = strlen(tt);
-    m = mm->offset+50;
-    if (m>mm->buffer->a.bufferSize) m = mm->buffer->a.bufferSize;
-    while (i<m) {
-        tt[j++] = text[i++];
-    }
-    tt[j++]=0;
-    ppcGenRecord(PPC_INFORMATION, tt, "\n");
-}
-#endif
 
 // !!!!!!!!! pos and endm can be the same marker !!!!!!
 static int refactoryAddStringAsParameter(S_editorMarker *pos, S_editorMarker *endm,
@@ -2291,7 +2202,7 @@ static S_editorMarker *refactoryReplaceStaticPrefix(S_editorMarker *d, char *npr
     int                 ppoffset, npreflen;
     S_editorMarker      *pp;
     char                pdot[MAX_FILE_NAME_SIZE];
-    // For speed reasons maybe make special parser for static prefix?
+
     pp = refactoryCrNewMarkerForExpressionBegin(d, GET_STATIC_PREFIX_START);
     if (pp==NULL) {
         // this is an error, this is just to avoid possible core dump in the future
@@ -3152,15 +3063,6 @@ static void refactoryInsertPackageStatToNewFile(S_editorMarker *src, S_editorMar
         sprintf(pack, "package %s;\n", tclass);
     }
     sprintf(pack+strlen(pack), "\n\n");
-#ifdef ZERO
-    refactoryGetPackageNameFromMarkerFileName(src, sclass);
-    // add default import, it is strong probable that will be used
-    if (sclass[0] == 0) {
-        sprintf(pack+strlen(pack), "\n");
-    } else {
-        sprintf(pack+strlen(pack), "import %s.*;\n\n\n", sclass);
-    }
-#endif
     refactoryReplaceString(target, 0, pack);
     target->offset --;
 }
@@ -4359,12 +4261,6 @@ static void refactoryPushDownPullUp(S_editorMarker *point, int direction, int li
 
     // and generate output
     refactoryApplyWholeRefactoringFromUndo();
-
-#if ZERO
-    ppcGenGotoMarkerRecord(point);
-    ppcGenNumericRecord(PPC_INDENT, lines, "", "\n");
-#endif
-
 }
 
 
