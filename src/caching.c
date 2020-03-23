@@ -326,7 +326,7 @@ void recoverFromCache(void) {
     log_debug("reading from cache");
     readUntil = s_cache.cp[0].lbcc;
     for(i=1; i<s_cache.cpi; i++) {
-        /*fprintf(dumpOut,"try to recover cache point %d\n",i);fflush(dumpOut);*/
+        log_trace("trying to recover cache point %d", i);
         if (cachedInputPass(i,&readUntil) == 0) break;
         if (cachedIncludedFilePass(i) == 0) break;
     }
