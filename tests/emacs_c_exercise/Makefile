@@ -36,7 +36,7 @@ execute exec emacs: setup
 
 check:
 	@# Compare output to expected resulting files
-	@diff -n -r cexercise expected > /dev/null ; \
+	@diff -B -n -r cexercise expected > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
 		echo "$(shell tput setaf 1)Failed$(shell tput sgr0)" ; \
 		diff -r cexercise expected ; \
