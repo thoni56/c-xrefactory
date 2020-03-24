@@ -1,2 +1,0 @@
-#! /bin/bash
-grep -wh struct $@ | ../utils/struct_grapher.py | grep -v ' { }'

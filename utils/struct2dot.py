@@ -73,8 +73,10 @@ def isstruct(node):
     elif is_structured(node):
         return isstruct(node.type)
 
+
 def is_structured(node):
     return isinstance(node, c_ast.TypeDecl) or isinstance(node, c_ast.PtrDecl) or isinstance(node, c_ast.ArrayDecl)
+
 
 def struct2dot(args):
     # Note that cpp is used. Provide a path to your own cpp or
@@ -93,10 +95,10 @@ def struct2dot(args):
         if verbose:
             print(
                 "Looking for fake_lib in directory of script ({0}...".format(path))
-        if os.path.isdir(os.path.dirname(os.path.join(os.path.abspath(__file__),
-                                                      'pycparser'))):
-            pycparser_path = os.path.dirname(os.path.join(os.path.abspath(__file__),
-                                                          'pycparser'))
+        if os.path.isdir(os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                      'pycparser')):
+            pycparser_path = os.path.join(os.path.dirname(os.path.abspath(__file__)),
+                                          'pycparser')
 
     if pycparser_path:
         pycparser_lib = reduce(
