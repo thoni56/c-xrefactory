@@ -44,16 +44,17 @@ static void dumpProgram(S_programGraphNode *program) {
     }
 
 void genInternalLabelReference(int counter, int usage) {
-    char ttt[TMP_STRING_SIZE];
-    S_id ll;
+    char labelName[TMP_STRING_SIZE];
+    S_id labelId;
 
     if (s_opt.server_operation != OLO_EXTRACT) return;
 
-    LOCAL_LABEL_NAME(ttt,counter);
-    FILLF_id(&ll, ttt, NULL, cFile.lexBuffer.buffer.fileNumber, 0,0,NULL);
-    if (usage != UsageDefined) ll.p.line++;
+    LOCAL_LABEL_NAME(labelName, counter);
+    FILLF_id(&labelId, labelName, NULL, cFile.lexBuffer.buffer.fileNumber, 0, 0, NULL);
+    if (usage != UsageDefined)
+        labelId.p.line++;
     // line == 0 or 1 , (hack to get definition first)
-    labelReference(&ll, usage);
+    labelReference(&labelId, usage);
 }
 
 
