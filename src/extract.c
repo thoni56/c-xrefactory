@@ -830,7 +830,7 @@ static void extGenNewFunTail(S_programGraphNode *program) {
             || p->classifBits == EXTRACT_LOCAL_RESULT_VALUE
             ) {
             GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
-            sprintf(rb+strlen(rb), "\treturn(%s);\n", name);
+            sprintf(rb+strlen(rb), "\n\treturn %s;\n", name);
         }
     }
     sprintf(rb+strlen(rb),"}\n\n");
