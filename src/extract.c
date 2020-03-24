@@ -38,19 +38,18 @@ static void dumpProgram(S_programGraphNode *program) {
 }
 #endif
 
-#define LOCAL_LABEL_NAME(ttt, counter) {                \
-        sprintf(ttt,"%%L%d",counter);                   \
-        assert(strlen(ttt) < TMP_STRING_SIZE-1); \
-    }
 
 void genInternalLabelReference(int counter, int usage) {
     char labelName[TMP_STRING_SIZE];
     S_id labelId;
 
-    if (s_opt.server_operation != OLO_EXTRACT) return;
+    if (s_opt.server_operation != OLO_EXTRACT)
+        return;
 
-    LOCAL_LABEL_NAME(labelName, counter);
+    snprintf(labelName, TMP_STRING_SIZE, "%%L%d", counter);              \
+
     FILLF_id(&labelId, labelName, NULL, cFile.lexBuffer.buffer.fileNumber, 0, 0, NULL);
+
     if (usage != UsageDefined)
         labelId.p.line++;
     // line == 0 or 1 , (hack to get definition first)
