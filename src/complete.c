@@ -16,6 +16,7 @@
 #include "reftab.h"
 #include "symbol.h"
 #include "list.h"
+#include "yylex.h"
 #include "strFill.h"
 
 

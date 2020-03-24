@@ -5,6 +5,15 @@
 #include "editor.h"
 
 
+typedef struct macroBody {
+    short int argn;
+    int size;
+    char *name;			/* the name of the macro */
+    char **args;		/* names of arguments */
+    char *body;
+} S_macroBody;
+
+
 extern char *yytext;
 
 

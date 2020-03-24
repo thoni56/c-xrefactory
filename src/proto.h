@@ -1025,14 +1025,6 @@ typedef struct macroArgTabElem {
     int order;
 } S_macroArgTabElem;
 
-typedef struct macroBody {
-    short int argn;
-    int size;
-    char *name;			/* the name of the macro */
-    char **args;		/* names of arguments */
-    char *body;
-} S_macroBody;
-
 typedef enum {
     INPUT_DIRECT,
     INPUT_VIA_UNZIP,
