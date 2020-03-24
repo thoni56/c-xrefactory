@@ -2,6 +2,10 @@
 #include "../complete.h"
 #include <cgreen/mocks.h>
 
+void initCompletions(S_completions *completions, int length, S_position position) {
+    mock(completions, length, (intptr_t)&position);
+}
+
 void processName(char *name, S_cline *t, int orderFlag, void *c) {
   mock(name, t, orderFlag, c);
 }

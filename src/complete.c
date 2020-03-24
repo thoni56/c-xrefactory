@@ -21,6 +21,17 @@
 
 #define FULL_COMPLETION_INDENT_CHARS    2
 
+void initCompletions(S_completions *completions, int length, S_position position) {
+    completions->idToProcessLen = length;
+    completions->idToProcessPos = position;
+    completions->fullMatchFlag = 0;
+    completions->isCompleteFlag = 0;
+    completions->noFocusOnCompletions = 0;
+    completions->abortFurtherCompletions = 0;
+    completions->maxLen = 0;
+    completions->ai = 0;
+}
+
 static void formatFullCompletions(char *tt, int indent, int inipos) {
     int     pos;
     char    *nlpos,*p;

@@ -1763,7 +1763,7 @@ void makeYaccCompletions(char *s, int len, S_position *pos) {
     log_trace("completing \"%s\"", s);
     strncpy(s_completions.idToProcess, s, MAX_FUN_NAME_SIZE);
     s_completions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
-    FILL_completions(&s_completions, len, *pos, 0, 0, 0, 0, 0, 0);
+    initCompletions(&s_completions, len, *pos);
     for (i=0;(token=completionsTab[i].token)!=0; i++) {
         /* See c_parser.y for an explanation... */
         if (((yyn = yysindex[lastyystate]) && (yyn += token) >= 0 &&

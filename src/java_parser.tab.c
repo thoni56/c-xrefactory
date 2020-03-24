@@ -2621,7 +2621,7 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
     log_trace("completing \"%s\" in state %d", s, lastyystate);
     strncpy(s_completions.idToProcess, s, MAX_FUN_NAME_SIZE);
     s_completions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
-    FILL_completions(&s_completions, len, *pos, 0, 0, 0, 0, 0, 0);
+    initCompletions(&s_completions, len, *pos);
 
     /* special wizard completions */
     for (i=0;(tok=spCompletionsTab[i].token)!=0; i++) {

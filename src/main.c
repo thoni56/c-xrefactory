@@ -3247,7 +3247,7 @@ void mainCallEditServerInit(int nargc, char **nargv) {
     if (s_opt.server_operation == OLO_EXTRACT)
         s_cache.cpi = 2; // !!!! no cache, TODO why is 2 = no cache?
     olcxSetCurrentUser(s_opt.user);
-    FILL_completions(&s_completions, 0, s_noPos, 0, 0, 0, 0, 0, 0);
+    initCompletions(&s_completions, 0, s_noPos);
 }
 
 void mainCallEditServer(int argc, char **argv,
