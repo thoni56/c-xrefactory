@@ -47,6 +47,8 @@ import os
 # your site-packages/ with setup.py
 sys.path.extend(['.', '..'])
 
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
 
 def node2dot(node):
     if isinstance(node.type, c_ast.TypeDecl) and isinstance(node.type.type, c_ast.Struct):
@@ -86,14 +88,14 @@ def struct2dot(args):
     # Try to find a fake_libc
     # In current directory?
     if verbose:
-        print("Looking for fake_lib in current directory...")
+        eprint("Looking for fake_lib in current directory...")
     if os.path.isdir('pycparser'):
         pycparser_path = r'./pycparser'
     else:
         # In the directory of this script?
         path = os.path.abspath(__file__)
         if verbose:
-            print(
+            eprint(
                 "Looking for fake_lib in directory of script ({0}...".format(path))
         if os.path.isdir(os.path.join(os.path.dirname(os.path.abspath(__file__)),
                                       'pycparser')):
@@ -104,7 +106,7 @@ def struct2dot(args):
         pycparser_lib = reduce(
             os.path.join, [pycparser_path, 'utils', 'fake_libc_include'])
     elif verbose:
-        print("Not found")
+        eprint("Not found")
 
     try:
         options = [
@@ -119,7 +121,7 @@ def struct2dot(args):
                 r'-D__inline='
             ]
         if verbose:
-            print("Parsing with options = {0}".format(options))
+            eprint("Parsing with options = {0}".format(options))
         cpp_args = list(filter(None, options))
         ast = parse_file(args[-1], use_cpp=True,
                          cpp_args=cpp_args + args[0:-1])
