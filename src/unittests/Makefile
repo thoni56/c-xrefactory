@@ -47,9 +47,6 @@ cxref_tests.so: $(OBJDIR)/cxref_tests.o $(OBJDIR)/cxref.o $(OBJDIR)/protocol.o $
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 # These includes the modules .c to be able to test static functions
-cgram_tests.so: $(OBJDIR)/cgram_tests.o $(OBJDIR)/globals.o $(OBJDIR)/log.o
-	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
-
 LEX_DEPENDENCIES = log
 lex_tests.so: $(OBJDIR)/lex_tests.o $(patsubst %,$(OBJDIR)/%.o,$(LEX_DEPENDENCIES))
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
