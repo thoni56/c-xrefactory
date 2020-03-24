@@ -135,7 +135,6 @@ enum miscellaneous {						/* misc. constants */
     KEEP_SLASHES,
     LOAD_SUPER,
     DO_NOT_LOAD_SUPER,
-    FQT_COMPLETE_ALSO_ON_PACKAGE,
     ADD_MAYBE_THIS_REFERENCE,
     TSS_FULL_SEARCH,
     TSS_SEARCH_DEFS_ONLY,
@@ -911,10 +910,6 @@ typedef struct completionFunTab {
     void (*fun)(S_completions*);
 } S_completionFunTab;
 
-typedef struct completionFqtMapInfo {
-    struct completions  *res;
-    int					completionType;
-} S_completionFqtMapInfo;
 
 /* ************************** INIT STRUCTURES ********************* */
 

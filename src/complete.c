@@ -21,18 +21,26 @@
 
 #define FULL_COMPLETION_INDENT_CHARS    2
 
+enum fqtCompletion {
+    FQT_COMPLETE_DEFAULT,
+    FQT_COMPLETE_ALSO_ON_PACKAGE
+};
+
 
 typedef struct completionSymInfo {
     struct completions	*res;
     enum types symType;
 } S_completionSymInfo;
 
-
 typedef struct completionSymFunInfo {
     struct completions	*res;
     unsigned storage;
 } S_completionSymFunInfo;
 
+typedef struct completionFqtMapInfo {
+    struct completions  *res;
+    int					completionType;
+} S_completionFqtMapInfo;
 
 
 void initCompletions(S_completions *completions, int length, S_position position) {
@@ -56,6 +64,12 @@ static void fillCompletionSymFunInfo(S_completionSymFunInfo *completionSymFunInf
                                      enum storage storage) {
     completionSymFunInfo->res = completions;
     completionSymFunInfo->storage = storage;
+}
+
+static void fillCompletionFqtMapInfo(S_completionFqtMapInfo *completionFqtMapInfo, S_completions *completions,
+                                     enum fqtCompletion completionType) {
+    completionFqtMapInfo->res = completions;
+    completionFqtMapInfo->completionType = completionType;
 }
 
 static void formatFullCompletions(char *tt, int indent, int inipos) {
@@ -1554,12 +1568,12 @@ static void completeRecursivelyFqtNamesFromDirectory(MAP_FUN_PROFILE) {
     }
 }
 
-static void javaFqtCompletions(S_completions *c, int completionType) {
+static void javaFqtCompletions(S_completions *c, enum fqtCompletion completionType) {
     S_completionFqtMapInfo  cfmi;
     int                     i;
     S_stringList            *pp;
 
-    FILL_completionFqtMapInfo(&cfmi, c, completionType);
+    fillCompletionFqtMapInfo(&cfmi, c, completionType);
     if (s_opt.fqtNameToCompletions == 0) return;
     // fqt from .jars
     for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && s_zipArchiveTab[i].fn[0]!=0; i++) {
@@ -1586,7 +1600,7 @@ static void javaFqtCompletions(S_completions *c, int completionType) {
 }
 
 void javaHintCompleteNonImportedTypes(S_completions*c) {
-    javaFqtCompletions(c, DEFAULT_VALUE);
+    javaFqtCompletions(c, FQT_COMPLETE_DEFAULT);
 }
 
 void javaHintImportFqt(S_completions*c) {
