@@ -32,6 +32,11 @@ void initCompletions(S_completions *completions, int length, S_position position
     completions->ai = 0;
 }
 
+static void fillCompletionSymInfo(S_completionSymInfo *completionSymInfo, S_completions *completions, unsigned symType) {
+    completionSymInfo->res = completions;
+    completionSymInfo->symType = symType;
+}
+
 static void formatFullCompletions(char *tt, int indent, int inipos) {
     int     pos;
     char    *nlpos,*p;
@@ -798,11 +803,12 @@ static void completeSymFun(Symbol *s, void *c) {
     }
 }
 
-void completeStructs(S_completions*c) {
+void completeStructs(S_completions *c) {
     S_completionSymInfo ii;
-    FILL_completionSymInfo(&ii, c, TypeStruct);
+
+    fillCompletionSymInfo(&ii, c, TypeStruct);
     symTabMap2(s_symTab, completeFun, (void*) &ii);
-    FILL_completionSymInfo(&ii, c, TypeUnion);
+    fillCompletionSymInfo(&ii, c, TypeUnion);
     symTabMap2(s_symTab, completeFun, (void*) &ii);
 }
 
@@ -969,19 +975,19 @@ static void completeFromSymTab( S_completions*c,
 
 void completeEnums(S_completions*c) {
     S_completionSymInfo ii;
-    FILL_completionSymInfo(&ii, c, TypeEnum);
+    fillCompletionSymInfo(&ii, c, TypeEnum);
     symTabMap2(s_symTab, completeFun, (void*) &ii);
 }
 
 void completeLabels(S_completions*c) {
     S_completionSymInfo ii;
-    FILL_completionSymInfo(&ii, c, TypeLabel);
+    fillCompletionSymInfo(&ii, c, TypeLabel);
     symTabMap2(s_symTab, completeFun, (void*) &ii);
 }
 
 void completeMacros(S_completions*c) {
     S_completionSymInfo ii;
-    FILL_completionSymInfo(&ii, c, TypeMacro);
+    fillCompletionSymInfo(&ii, c, TypeMacro);
     symTabMap2(s_symTab, completeFun, (void*) &ii);
 }
 
@@ -1410,7 +1416,7 @@ void javaCompleteClassDefinitionName(S_completions*c) {
     javaCompleteThisClassDefinitionName(c);
     // order is important because of hack in nestedcl Access modifs
     javaCompleteNestedClSingleName(c);
-    FILL_completionSymInfo(&ii, c, TypeStruct);
+    fillCompletionSymInfo(&ii, c, TypeStruct);
     symTabMap2(s_symTab, completeFun, (void*) &ii);
 }
 
@@ -1425,7 +1431,7 @@ void javaCompleteTypeSingleName(S_completions*c) {
     // order is important because of hack in nestedcl Access modifs
     javaCompleteNestedClSingleName(c);
     javaMapDirectoryFiles2(NULL, javaTypeNameCompletion, c, NULL, NULL);
-    FILL_completionSymInfo(&ii, c, TypeStruct);
+    fillCompletionSymInfo(&ii, c, TypeStruct);
     symTabMap2(s_symTab, completeFun, (void*) &ii);
 }
 
@@ -1639,7 +1645,7 @@ void javaCompleteConstructNestPrimName(S_completions*c) {
 void javaCompleteExprSingleName(S_completions*c) {
     S_completionSymInfo ii;
     javaMapDirectoryFiles1(NULL, javaTypeNameCompletion, c, NULL, NULL);
-    FILL_completionSymInfo(&ii, c, TypeStruct);
+    fillCompletionSymInfo(&ii, c, TypeStruct);
     symTabMap2(s_symTab, completeFun, (void*) &ii);
     completeFromSymTab(c, StorageDefault);
 }
@@ -1756,6 +1762,6 @@ static void completeFromXrefFun(S_symbolRefItem *s, void *c) {
 
 void completeYaccLexem(S_completions*c) {
     S_completionSymInfo ii;
-    FILL_completionSymInfo(&ii, c, TypeYaccSymbol);
+    fillCompletionSymInfo(&ii, c, TypeYaccSymbol);
     refTabMap2(&s_cxrefTab, completeFromXrefFun, (void*) &ii);
 }
