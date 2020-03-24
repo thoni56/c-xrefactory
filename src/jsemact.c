@@ -2289,10 +2289,10 @@ S_extRecFindStr *javaCrErfsForMethodInvocationT(S_typeModifiers *tt,
     return(erfs);
 }
 
-S_typeModifiers *javaMethodInvocationT(	S_typeModifiers *tt,
-                                        S_id *name,
-                                        S_typeModifiersList *args
-                                    ) {
+S_typeModifiers *javaMethodInvocationT(S_typeModifiers *tt,
+                                       S_id *name,
+                                       S_typeModifiersList *args
+                                       ) {
     S_extRecFindStr		*erfs;
     S_typeModifiers		*res;
     erfs = javaCrErfsForMethodInvocationT(tt, name);
@@ -2301,9 +2301,7 @@ S_typeModifiers *javaMethodInvocationT(	S_typeModifiers *tt,
     return(res);
 }
 
-S_extRecFindStr *javaCrErfsForMethodInvocationS(S_id *super,
-                                                           S_id *name
-    ) {
+S_extRecFindStr *javaCrErfsForMethodInvocationS(S_id *super, S_id *name) {
     Symbol            *ss;
     S_extRecFindStr		*erfs;
     int					rr;
