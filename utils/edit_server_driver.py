@@ -85,8 +85,6 @@ with open(command_file, 'rb') as file:
 
     args = invocation.replace("CURDIR", CURDIR)
 
-    # Need to find a way to read args that have spaces in them, '\ '?
-    # But how to split then?
     p = subprocess.Popen(shlex.split(args),
                          stdout=subprocess.PIPE,
                          stdin=subprocess.PIPE)
