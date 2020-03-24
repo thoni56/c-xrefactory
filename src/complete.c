@@ -806,13 +806,15 @@ void completeStructs(S_completions*c) {
     symTabMap2(s_symTab, completeFun, (void*) &ii);
 }
 
-static int javaLinkable(unsigned storage, unsigned accessFlags) {
+static bool javaLinkable(unsigned storage, unsigned accessFlags) {
+
     /*fprintf(dumpOut,"testing linkability %x %x\n",storage,accessFlags);fflush(dumpOut);*/
-    if (s_language != LANG_JAVA) return(1);
-    if (storage == ACC_ALL) return(1);
-    if ((s_opt.ooChecksBits & OOC_LINKAGE_CHECK) == 0) return(1);
+    if (s_language != LANG_JAVA) return true;
+    if (storage == ACC_ALL) return true;
+    if ((s_opt.ooChecksBits & OOC_LINKAGE_CHECK) == 0) return true;
     if (storage & ACC_STATIC) return((accessFlags & ACC_STATIC) != 0);
-    return(1);
+
+    return true;
 }
 
 static void processSpecialInheritedFullCompletion( S_completions *c, int orderFlag, int vlevel, Symbol *r, Symbol *vFunCl, char *cname) {
