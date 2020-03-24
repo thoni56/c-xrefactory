@@ -21,6 +21,20 @@
 
 #define FULL_COMPLETION_INDENT_CHARS    2
 
+
+typedef struct completionSymInfo {
+    struct completions	*res;
+    enum types symType;
+} S_completionSymInfo;
+
+
+typedef struct completionSymFunInfo {
+    struct completions	*res;
+    unsigned storage;
+} S_completionSymFunInfo;
+
+
+
 void initCompletions(S_completions *completions, int length, S_position position) {
     completions->idToProcessLen = length;
     completions->idToProcessPos = position;
@@ -32,9 +46,16 @@ void initCompletions(S_completions *completions, int length, S_position position
     completions->ai = 0;
 }
 
-static void fillCompletionSymInfo(S_completionSymInfo *completionSymInfo, S_completions *completions, unsigned symType) {
+static void fillCompletionSymInfo(S_completionSymInfo *completionSymInfo, S_completions *completions,
+                                  unsigned symType) {
     completionSymInfo->res = completions;
     completionSymInfo->symType = symType;
+}
+
+static void fillCompletionSymFunInfo(S_completionSymFunInfo *completionSymFunInfo, S_completions *completions,
+                                     enum storage storage) {
+    completionSymFunInfo->res = completions;
+    completionSymFunInfo->storage = storage;
 }
 
 static void formatFullCompletions(char *tt, int indent, int inipos) {
@@ -952,24 +973,23 @@ void completeRecNames(S_completions *c) {
     s_structRecordCompletionType = &s_errorModifier;
 }
 
-static void completeFromSymTab( S_completions*c,
-                                unsigned storage
-                                ){
-    S_completionSymFunInfo  ii;
+static void completeFromSymTab(S_completions*c, unsigned storage){
+    S_completionSymFunInfo  info;
     S_javaStat              *cs;
     int                     vlevelOffset;
-    FILL_completionSymFunInfo(&ii, c, storage);
+
+    fillCompletionSymFunInfo(&info, c, storage);
     if (s_language == LANG_JAVA) {
         vlevelOffset = 0;
         for(cs=s_javaStat; cs!=NULL && cs->thisClass!=NULL ;cs=cs->next) {
-            symTabMap2(cs->locals, completeSymFun, (void*) &ii);
+            symTabMap2(cs->locals, completeSymFun, (void*) &info);
             completeRecordsNames(c, cs->thisClass, s_javaStat->cpMethodMods,
                                  CLASS_TO_ANY,
                                  storage,TypeDefault,vlevelOffset);
             vlevelOffset += NEST_VIRT_COMPL_OFFSET;
         }
     } else {
-        symTabMap2(s_symTab, completeSymFun, (void*) &ii);
+        symTabMap2(s_symTab, completeSymFun, (void*) &info);
     }
 }
 

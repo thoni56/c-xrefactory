@@ -734,7 +734,7 @@ S_reference * addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *usageb,
     getSymbolCxrefCategories( p, &category, &scope, &storage);
     if (scope == ScopeAuto && s_opt.no_ref_locals) return NULL;
 
-    log_trace("adding reference on %s(%d,%d) at %d,%d,%d (%s) (%s) (%s)",p->linkName,vFunCl,vApplCl, pos->file,pos->line,pos->col,refCategoriesName[category],usagesName[usage],storagesName[p->bits.storage]);
+    log_trace("adding reference on %s(%d,%d) at %d,%d,%d (%s) (%s) (%s)",p->linkName,vFunCl,vApplCl, pos->file,pos->line,pos->col,refCategoriesName[category],usagesName[usage],storageName[p->bits.storage]);
     assert(s_opt.taskRegime);
     if (s_opt.taskRegime == RegimeEditServer) {
         if (s_opt.server_operation == OLO_EXTRACT) {

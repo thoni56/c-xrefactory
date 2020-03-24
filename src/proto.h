@@ -467,8 +467,8 @@ enum refsFilterLevels {
     MAX_REF_LIST_FILTER_LEVEL,
 };
 
-enum storages {
-    // standard C storages
+enum storage {
+    // standard C storage modes
     StorageError,
     StorageAuto,
     StorageGlobal,			/* not used anymore, backward compatibility */
@@ -910,16 +910,6 @@ typedef struct completionFunTab {
     int token;
     void (*fun)(S_completions*);
 } S_completionFunTab;
-
-typedef struct completionSymFunInfo {
-    struct completions	*res;
-    unsigned			storage;
-} S_completionSymFunInfo;
-
-typedef struct completionSymInfo {
-    struct completions	*res;
-    unsigned			symType;
-} S_completionSymInfo;
 
 typedef struct completionFqtMapInfo {
     struct completions  *res;

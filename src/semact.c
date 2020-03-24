@@ -78,7 +78,7 @@ void addSymbol(Symbol *pp, S_symTab *tab) {
         one. All this story is about storing information in trail. It should
         containt, both table and pointer !!!!
     */
-    log_debug("adding symbol %s: %s %s",pp->name, typesName[pp->bits.symType], storagesName[pp->bits.storage]);
+    log_debug("adding symbol %s: %s %s",pp->name, typesName[pp->bits.symType], storageName[pp->bits.storage]);
     assert(pp->bits.npointers==0);
     AddSymbolNoTrail(pp,tab);
     addToTrail(deleteSymDef, pp  /* AND ALSO!!! , tab */ );
