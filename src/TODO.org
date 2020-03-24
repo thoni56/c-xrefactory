@@ -49,6 +49,8 @@ attack those one by one, maybe?
 * TODO Refactor int2StringTabs, should not have Init in them
 * TODO Handle struct literals ("(type){.field = data, ...}")
 * TODO Investigate to remove S_classTreeData
+* TODO Rename maTab to macroArgTab
+* TODO Rename res fields in completion structs
 * TODO Cannot mock structs as arguments like in symbol.mock
 We need to change pos to *pos if that's gonna work
 * TODO Fix tests/olcx_refactor_rename gets "buf is not valid"
