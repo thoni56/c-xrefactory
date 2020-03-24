@@ -3,6 +3,12 @@
 
 #include "proto.h"
 
+typedef struct completionFunTab {
+    int token;
+    void (*fun)(S_completions*);
+} S_completionFunTab;
+
+
 extern void initCompletions(S_completions *completions, int length, S_position position);
 extern void processName(char *name, S_cline *t, int orderFlag, void *c);
 extern void completeForSpecial1(S_completions *c);

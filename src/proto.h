@@ -905,11 +905,6 @@ typedef struct completions {
     int             ai;
 } S_completions;
 
-typedef struct completionFunTab {
-    int token;
-    void (*fun)(S_completions*);
-} S_completionFunTab;
-
 
 /* ************************** INIT STRUCTURES ********************* */
 
