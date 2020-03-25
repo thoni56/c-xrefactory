@@ -128,9 +128,9 @@ S_olSymbolsMenu *olAddBrowsedSymbol(
     rr = *place;
     if (*place==NULL || olSymbolMenuLess(&ddd, *place)) {
         assert(sym);
-        rr = olCreateNewMenuItem( sym, sym->vApplClass, sym->vFunClass, defpos, defusage,
-                                  selected, visible, ooBits,
-                                  olusage, vlevel);
+        rr = olCreateNewMenuItem(sym, sym->vApplClass, sym->vFunClass, defpos, defusage,
+                                 selected, visible, ooBits,
+                                 olusage, vlevel);
         LIST_CONS(rr,(*place));
         //fprintf(dumpOut,":adding browsed symbol %s\n", sym->name);
     }
@@ -180,11 +180,11 @@ void setIntToZero(void *p) {
 }
 
 
-S_reference **addToRefList( S_reference **list,
-                            S_usageBits *pusage,
-                            S_position *pos,
-                            int category
-                            ) {
+S_reference **addToRefList(S_reference **list,
+                           S_usageBits *pusage,
+                           S_position *pos,
+                           int category
+                           ) {
     S_reference *rr, **place;
     S_reference ppp;
     FILL_reference(&ppp, *pusage, *pos, NULL);
@@ -970,7 +970,7 @@ static void olcxFreeCompletion(S_olCompletion *r) {
 }
 
 
-static void olcxFreeCompletions( S_olCompletion *r ) {
+static void olcxFreeCompletions(S_olCompletion *r ) {
     S_olCompletion *tmp;
 
     while (r!=NULL) {
@@ -993,7 +993,7 @@ S_olSymbolsMenu *olcxFreeSymbolMenuItem(S_olSymbolsMenu *ll) {
 }
 
 
-void olcxFreeResolutionMenu( S_olSymbolsMenu *sym ) {
+void olcxFreeResolutionMenu(S_olSymbolsMenu *sym ) {
     S_olSymbolsMenu *ll;
 
     ll = sym;
@@ -1258,12 +1258,12 @@ static void olcxAddReferencesToOlSymbolsMenu(S_olSymbolsMenu  *cms,
     }
 }
 
-void generateOnlineCxref(   S_position *p,
-                            char *commandString,
-                            int usage,
-                            char *suffix,
-                            char *suffix2
-                            ) {
+void generateOnlineCxref(S_position *p,
+                         char *commandString,
+                         int usage,
+                         char *suffix,
+                         char *suffix2
+                         ) {
     if (s_opt.xref2) {
         ppcGenGotoPositionRecord(p);
     } else {
@@ -1395,7 +1395,7 @@ static void olcxOrderRefsAndGotoFirst(void) {
 }
 
 // references has to be ordered according internal file numbers order !!!!
-static int olcxSetCurrentRefsOnCaller( S_olcxReferences *refs ) {
+static int olcxSetCurrentRefsOnCaller(S_olcxReferences *refs) {
     S_reference *rr;
     for(rr=refs->r; rr!=NULL; rr=rr->next){
         //&fprintf(dumpOut,"checking %d %d %d to %d %d %d\n",rr->p.file, rr->p.line,rr->p.col, refs->cpos.file,  refs->cpos.line,  refs->cpos.col);
@@ -1563,7 +1563,7 @@ char *getFullUrlOfJavaDoc_st(char *fileUrl) {
     return(fullUrl);
 }
 
-static int olcxBrowseSymbolInJavaDoc( S_symbolRefItem *rr ) {
+static int olcxBrowseSymbolInJavaDoc(S_symbolRefItem *rr) {
     char *url, *tmd, *lfn;
     char tmpfname[MAX_FILE_NAME_SIZE];
     char theUrl[MAX_FILE_NAME_SIZE];
@@ -1602,7 +1602,7 @@ static int olcxBrowseSymbolInJavaDoc( S_symbolRefItem *rr ) {
     return(1);
 }
 
-static int checkTheJavaDocBrowsing( S_olcxReferences *refs ) {
+static int checkTheJavaDocBrowsing(S_olcxReferences *refs) {
     S_olSymbolsMenu *mm;
     int res;
     res = 0;
@@ -1716,17 +1716,17 @@ static void passSourcePutChar(int c, FILE *ff) {
                                                      || (usages==USAGE_FILTER && rr->usage.base<usageFilter) \
                                                      )
 
-static void linePosProcess( FILE *off,
-                            char *ofname,
-                            int usages,
-                            int usageFilter, // only if usages==USAGE_FILTER
-                            char *fname,
-                            S_reference **rrr,
-                            S_position *callerp,
-                            S_position *cp,
-                            int *cch,
-                            CharacterBuffer *cxfBuf
-                            ) {
+static void linePosProcess(FILE *off,
+                           char *ofname,
+                           int usages,
+                           int usageFilter, // only if usages==USAGE_FILTER
+                           char *fname,
+                           S_reference **rrr,
+                           S_position *callerp,
+                           S_position *cp,
+                           int *cch,
+                           CharacterBuffer *cxfBuf
+                           ) {
     int             ch, pendingRefFlag, linerefn;
     S_reference     *rr, *r;
     char            *fn;
@@ -1951,7 +1951,7 @@ static void symbolHighlighNameSprint(char *output, S_olSymbolsMenu *ss) {
     }
 }
 
-static void olcxPrintRefList( char *commandString, S_olcxReferences *refs ) {
+static void olcxPrintRefList(char *commandString, S_olcxReferences *refs) {
     S_reference *rr;
     int         actn, len;
     char        ttt[MAX_CX_SYMBOL_SIZE];
@@ -1992,13 +1992,13 @@ static void olcxReferenceList(char *commandString) {
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs, CHECK_NULL);
     //& setRefSuffix(refs);
     //&LIST_MERGE_SORT(S_reference, refs->r, olcxListLessFunction);
-    olcxPrintRefList( commandString, refs);
+    olcxPrintRefList(commandString, refs);
 }
 
 static void olcxListTopReferences(char *commandString) {
     S_olcxReferences    *refs;
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs, DEFAULT_VALUE);
-    olcxPrintRefList( commandString, refs);
+    olcxPrintRefList(commandString, refs);
 }
 
 static void olcxGenGotoActReference(S_olcxReferences *refs) {
@@ -2221,7 +2221,7 @@ static void olcxReferenceMinus(void) {
             if (s_opt.xref2) {
                 ppcGenRecord(PPC_BOTTOM_INFORMATION, "Moving to the last reference", "\n");
             }
-            for( ; r!=NULL; r=r->next) {
+            for(; r!=NULL; r=r->next) {
                 if (r->usage.base < rlevel) l = r;
             }
         }
@@ -2271,7 +2271,7 @@ static void olcxReferenceGotoCaller(void) {
 
 #define MAX_SYMBOL_MESSAGE_LEN 50
 
-static void olcxPrintSymbolName( S_olcxReferences *refs ) {
+static void olcxPrintSymbolName(S_olcxReferences *refs) {
     char ttt[MAX_CX_SYMBOL_SIZE+MAX_SYMBOL_MESSAGE_LEN];
     S_olSymbolsMenu *ss;
     if (refs==NULL) {
@@ -2307,7 +2307,7 @@ static void olcxShowTopSymbol(void) {
 
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs, DEFAULT_VALUE);
     //& OLCX_MOVE_INIT(s_olcxCurrentUser,refs, CHECK_NULL);
-    olcxPrintSymbolName( refs);
+    olcxPrintSymbolName(refs);
 }
 
 static int referenceLess(S_reference *r1, S_reference *r2) {
@@ -2422,12 +2422,9 @@ int olcxItIsSameCxSymbol(S_symbolRefItem *p1, S_symbolRefItem *p2) {
     return(1);
 }
 
-void olStackDeleteSymbol( S_olcxReferences *refs) {
+void olStackDeleteSymbol(S_olcxReferences *refs) {
     S_olcxReferences **rr;
-    for(    rr= &s_olcxCurrentUser->browserStack.root;
-            *rr!=NULL&&*rr!=refs;
-            rr= &(*rr)->previous
-            )
+    for(rr= &s_olcxCurrentUser->browserStack.root; *rr!=NULL&&*rr!=refs; rr= &(*rr)->previous)
         ;
     assert(*rr != NULL);
     deleteOlcxRefs(rr, &s_olcxCurrentUser->browserStack);
@@ -2504,11 +2501,11 @@ void olProcessSelectedReferences(
         //&LIST_LEN(nn, S_reference, ss->s.refs);sprintf(tmpBuff,"xxx1 %d refs for %s", nn, s_fileTab.tab[ss->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
         referencesMapFun(rstack, ss);
     }
-    olcxSetCurrentRefsOnCaller( rstack);
+    olcxSetCurrentRefsOnCaller(rstack);
     LIST_MERGE_SORT(S_reference, rstack->r, olcxListLessFunction);
 }
 
-void olcxRecomputeSelRefs( S_olcxReferences *refs ) {
+void olcxRecomputeSelRefs(S_olcxReferences *refs) {
     // [28/12] putting it into comment, just to see, if it works
     // otherwise it clears stack on pop on empty stack
     //& olcxFreePopedStackItems(&s_olcxCurrentUser->browserStack);
@@ -2527,13 +2524,13 @@ static void olcxMenuToggleSelect(void) {
         line = SYMBOL_MENU_FIRST_LINE + ss->outOnLine;
         if (line == s_opt.olcxMenuSelectLineNum) {
             ss->selected = ss->selected ^ 1;
-            olcxRecomputeSelRefs( refs);
+            olcxRecomputeSelRefs(refs);
             break;
         }
     }
     if (s_opt.xref2) {
         if (ss!=NULL) {
-            olcxPrintRefList( ";", refs);
+            olcxPrintRefList(";", refs);
         }
     } else {
         if (ss==NULL) {
@@ -2575,7 +2572,7 @@ static void olcxMenuSelectOnly(void) {
         }
         return;
     }
-    olcxRecomputeSelRefs( refs);
+    olcxRecomputeSelRefs(refs);
     if (s_opt.xref2) {
         dref = getDefinitionRef(refs->r);
         if (dref != NULL) refs->act = dref;
@@ -2684,9 +2681,9 @@ static void olcxMenuSelectAll(int val) {
     for(ss=refs->menuSym; ss!=NULL; ss=ss->next) {
         if (ss->visible) ss->selected = val;
     }
-    olcxRecomputeSelRefs( refs);
+    olcxRecomputeSelRefs(refs);
     if (s_opt.xref2) {
-        olcxPrintRefList( ";", refs);
+        olcxPrintRefList(";", refs);
     } else {
         fprintf(ccOut, "*Done");
     }
@@ -2921,7 +2918,7 @@ static void olcxReferenceFilterSet(int flevel) {
     OLCX_MOVE_INIT(s_olcxCurrentUser, refs, DEFAULT_VALUE);
     if (refs!=NULL && flevel < MAX_REF_LIST_FILTER_LEVEL && flevel >= 0) {
         refs->refsFilterLevel = flevel;
-        //&     olcxPrintRefList( ";", refs);
+        //&     olcxPrintRefList(";", refs);
         //& } else {
         //&     olcxGenNoReferenceSignal();
     }
@@ -2975,7 +2972,7 @@ static void olcxReferencePop(void) {
     } else {
         olcxGenNoReferenceSignal();
     }
-    //& olStackDeleteSymbol( refs);  // this was before non deleting pop
+    //& olStackDeleteSymbol(refs);  // this was before non deleting pop
     s_olcxCurrentUser->browserStack.top = refs->previous;
     olcxPrintSymbolName(s_olcxCurrentUser->browserStack.top);
 }
@@ -2985,7 +2982,7 @@ void olcxPopOnly(void) {
 
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
     if (!s_opt.xref2) fprintf(ccOut, "*");
-    //& olStackDeleteSymbol( refs);
+    //& olStackDeleteSymbol(refs);
     s_olcxCurrentUser->browserStack.top = refs->previous;
 }
 
@@ -3022,10 +3019,10 @@ static void safetyCheckAddDiffRef(S_reference *r, S_olcxReferences *diffrefs,
     olcxAppendReference(r, diffrefs);
 }
 
-void olcxReferencesDiff(    S_reference **anr1,
-                            S_reference **aor2,
-                            S_reference **diff
-                            ) {
+void olcxReferencesDiff(S_reference **anr1,
+                        S_reference **aor2,
+                        S_reference **diff
+                        ) {
     S_reference *r, *nr1, *or2, **dd;
 
     LIST_MERGE_SORT(S_reference, *anr1, olcxReferenceInternalLessFunction);
@@ -3239,7 +3236,7 @@ static void olCompletionSelect(void) {
         generateOnlineCxref(&refs->cpos, COLCX_GOTO_REFERENCE, UsageUsed,
                             refs->refsuffix, rr->name);
     }
-    //& olStackDeleteSymbol( refs);
+    //& olStackDeleteSymbol(refs);
 }
 
 static void olcxReferenceSelectTagSearchItem(int refn) {
@@ -3310,7 +3307,7 @@ static int olcxCheckSymbolExists(void) {
     return(1);
 }
 
-static S_olSymbolsMenu *firstVisibleSymbol( S_olSymbolsMenu *first ) {
+static S_olSymbolsMenu *firstVisibleSymbol(S_olSymbolsMenu *first) {
     S_olSymbolsMenu *ss, *fvisible;
     fvisible = NULL;
     for(ss=first; ss!=NULL; ss=ss->next) {
@@ -3351,7 +3348,7 @@ int olcxShowSelectionMenu(void) {
         //&fprintf(dumpOut,"no resolve, no symbol\n"); fflush(dumpOut);
         return(0); // no symbol
     }
-    fvisible = firstVisibleSymbol( first);
+    fvisible = firstVisibleSymbol(first);
     if (fvisible==NULL) {
         //&fprintf(dumpOut,"no resolve, no visible\n"); fflush(dumpOut);
         return(0); // no visible
@@ -3370,8 +3367,8 @@ int olcxShowSelectionMenu(void) {
             if (ss->selected) {
                 if (first == NULL) {
                     first = ss;
-                } else if ( (! itIsSameCxSymbol(&first->s, &ss->s))
-                            || first->s.vFunClass!=ss->s.vFunClass) {
+                } else if ((! itIsSameCxSymbol(&first->s, &ss->s))
+                           || first->s.vFunClass!=ss->s.vFunClass) {
                     return(1);
                 }
             }
@@ -3487,7 +3484,7 @@ static int olMenuHashFileNumLess(S_olSymbolsMenu *s1, S_olSymbolsMenu *s2) {
     return(0);
 }
 
-void getLineColCursorPositionFromCommandLineOption( int *l, int *c ) {
+void getLineColCursorPositionFromCommandLineOption(int *l, int *c) {
     assert(s_opt.olcxlccursor!=NULL);
     sscanf(s_opt.olcxlccursor,"%d:%d", l, c);
 }
@@ -3606,10 +3603,10 @@ int refOccursInRefs(S_reference *r, S_reference *list) {
     return(1);
 }
 
-static void olcxSingleReferenceCheck1( S_symbolRefItem *p,
-                                       S_olcxReferences *rstack,
-                                       S_reference *r
-                                       ) {
+static void olcxSingleReferenceCheck1(S_symbolRefItem *p,
+                                      S_olcxReferences *rstack,
+                                      S_reference *r
+                                      ) {
     int prefixchar;
     if (refOccursInRefs(r, rstack->r)) {
         prefixchar = ' ';
@@ -3665,7 +3662,7 @@ static void olcxProceedSafetyCheck1OnInloadedRefs(S_olcxReferences *rstack, S_ol
     if ((! pushed) && olcxItIsSameCxSymbol(p, sss)) {
         //&fprintf(dumpOut,"checking %s references\n",p->name);
         for(r=p->refs; r!=NULL; r=r->next) {
-            olcxSingleReferenceCheck1( p, rstack, r);
+            olcxSingleReferenceCheck1(p, rstack, r);
         }
     }
 }
@@ -4005,10 +4002,10 @@ static void olcxTopReferencesIntersection(void) {
     fprintf(ccOut,"*");
 }
 
-static void olcxRemoveRefWinFromRefList( S_reference **r1,
-                                         int wdfile,
-                                         S_position *fp,
-                                         S_position *tp ) {
+static void olcxRemoveRefWinFromRefList(S_reference **r1,
+                                        int wdfile,
+                                        S_position *fp,
+                                        S_position *tp ) {
     S_reference **r, *cr, *nr;
     while (*r1!=NULL) {
         r = r1; r1 = &(*r1)->next;
@@ -4049,7 +4046,7 @@ static void olcxTopReferencesRemoveWindow(void) {
     fprintf(ccOut,"*");
 }
 
-char *getXrefEnvironmentValue( char *name ) {
+char *getXrefEnvironmentValue(char *name ) {
     char *val;
     int i, n;
     val = NULL;
@@ -4069,7 +4066,7 @@ static void olcxProcessGetRequest(void) {
 
     name = s_opt.getValue;
     //&fprintf(dumpOut,"![get] looking for %s\n", name);
-    val = getXrefEnvironmentValue( name);
+    val = getXrefEnvironmentValue(name);
     if (val != NULL) {
         // O.K. this is a special case, if input file is given
         // then make additional 'predefined' replacements
@@ -4098,7 +4095,7 @@ void olcxPrintPushingAction(int opt, int afterMenu) {
             //& if (s_opt.xref2) ppcGenRecord(PPC_NO_SYMBOL, "", "\n");
             //& else
             olcxNoSymbolFoundErrorMessage();
-            olStackDeleteSymbol( s_olcxCurrentUser->browserStack.top);
+            olStackDeleteSymbol(s_olcxCurrentUser->browserStack.top);
         }
         break;
     case OLO_PUSH_NAME:
@@ -4106,7 +4103,7 @@ void olcxPrintPushingAction(int opt, int afterMenu) {
             olcxOrderRefsAndGotoDefinition(afterMenu);
         } else {
             olcxNoSymbolFoundErrorMessage();
-            olStackDeleteSymbol( s_olcxCurrentUser->browserStack.top);
+            olStackDeleteSymbol(s_olcxCurrentUser->browserStack.top);
         }
         break;
     case OLO_PUSH_SPECIAL_NAME:
@@ -4117,7 +4114,7 @@ void olcxPrintPushingAction(int opt, int afterMenu) {
             olcxOrderRefsAndGotoFirst();
         } else {
             olcxNoSymbolFoundErrorMessage();
-            olStackDeleteSymbol( s_olcxCurrentUser->browserStack.top);
+            olStackDeleteSymbol(s_olcxCurrentUser->browserStack.top);
         }
         break;
     case OLO_GLOBAL_UNUSED:
@@ -4129,7 +4126,7 @@ void olcxPrintPushingAction(int opt, int afterMenu) {
             olcxReferenceList(";");
         } else {
             olcxNoSymbolFoundErrorMessage();
-            olStackDeleteSymbol( s_olcxCurrentUser->browserStack.top);
+            olStackDeleteSymbol(s_olcxCurrentUser->browserStack.top);
         }
         break;
     case OLO_USELESS_LONG_NAME:
@@ -4142,7 +4139,7 @@ void olcxPrintPushingAction(int opt, int afterMenu) {
             olcxPushOnly();
         } else {
             olcxNoSymbolFoundErrorMessage();
-            olStackDeleteSymbol( s_olcxCurrentUser->browserStack.top);
+            olStackDeleteSymbol(s_olcxCurrentUser->browserStack.top);
         }
         break;
     case OLO_PUSH_AND_CALL_MACRO:
@@ -4150,7 +4147,7 @@ void olcxPrintPushingAction(int opt, int afterMenu) {
             olcxPushAndCallMacro();
         } else {
             olcxNoSymbolFoundErrorMessage();
-            olStackDeleteSymbol( s_olcxCurrentUser->browserStack.top);
+            olStackDeleteSymbol(s_olcxCurrentUser->browserStack.top);
         }
         break;
     case OLO_PUSH_FOR_LOCALM:
@@ -4221,7 +4218,7 @@ void olcxPushSpecial(char *fieldName, int command) {
             ss->visible = ss->selected = 1;
         }
         olProcessSelectedReferences(refs, genOnLineReferences);
-        getLineColCursorPositionFromCommandLineOption( &line, &col);
+        getLineColCursorPositionFromCommandLineOption(&line, &col);
         FILL_position(&callerPos, s_input_file_number, line, col);
         olSetCallerPosition(&callerPos);
     }
@@ -5261,22 +5258,22 @@ void olSetCallerPosition(S_position *pos) {
 
 // if s==NULL, then the pos is taken as default position of this ref !!!
 
-S_olCompletion * olCompletionListPrepend(   char *name,
-                                            char *fullText, char *vclass, int jindent,
-                                            Symbol *s,
-                                            S_symbolRefItem *rr,
-                                            S_reference *dfref,
-                                            int cType,
-                                            int vFunClass,
-                                            S_olcxReferences *stack
-                                            ) {
+S_olCompletion * olCompletionListPrepend(char *name,
+                                         char *fullText, char *vclass, int jindent,
+                                         Symbol *s,
+                                         S_symbolRefItem *rr,
+                                         S_reference *dfref,
+                                         int cType,
+                                         int vFunClass,
+                                         S_olcxReferences *stack
+                                         ) {
     S_olCompletion  *cc;
     char            *ss,*nn, *fullnn, *vclnn;
     int             i, category, scope, storage, slen, nlen;
     S_symbolRefItem sri;
     S_symbolRefItemBits srib;
     S_reference     dref;
-    OLCX_ALLOC(cc, S_olCompletion);
+
     nlen = strlen(name);
     OLCX_ALLOCC(nn, nlen+1, char);
     strcpy(nn, name);
@@ -5298,6 +5295,7 @@ S_olCompletion * olCompletionListPrepend(   char *name,
         FILL_symbolRefItem(&sri, ss, cxFileHashNumber(ss),
                            rr->vApplClass, rr->vFunClass,
                            rr->b, NULL, NULL);
+        OLCX_ALLOC(cc, S_olCompletion);
         FILL_olCompletion(cc, nn, fullnn, vclnn, jindent, 1, rr->b.category, cType, *dfref, sri, NULL);
     } else if (s==NULL) {
         dref = *dfref;
@@ -5307,6 +5305,7 @@ S_olCompletion * olCompletionListPrepend(   char *name,
         FILL_symbolRefItem(&sri, "", cxFileHashNumber(""),
                            s_noneFileIndex, s_noneFileIndex,
                            srib, NULL, NULL);
+        OLCX_ALLOC(cc, S_olCompletion);
         FILL_olCompletion(cc, nn, fullnn, vclnn, jindent, 1, CatLocal, cType, dref, sri, NULL);
     } else {
         getSymbolCxrefCategories(s, &category, &scope, &storage);
@@ -5321,19 +5320,8 @@ S_olCompletion * olCompletionListPrepend(   char *name,
         FILL_symbolRefItem(&sri, ss, cxFileHashNumber(ss),
                            vFunClass, vFunClass,
                            srib, NULL, NULL);
+        OLCX_ALLOC(cc, S_olCompletion);
         FILL_olCompletion(cc, nn, fullnn, vclnn, jindent, 1, category, cType, dref, sri, NULL);
-#ifdef ZERO // original
-        if (category == CatLocal) {
-            TODO;
-        } else {
-            FILL_symbolRefItemBits(&srib, s->b.symType, storage,
-                                   scope, s->b.accessFlags, category, 0);
-            FILL_symbolRefItem(&sri, ss, cxFileHashNumber(ss),
-                               vFunClass, vFunClass,
-                               srib, NULL, NULL);
-            FILL_olCompletion(cc, nn, fullnn, vclnn, jindent, 1, CatGlobal, cType, *dfref, sri, NULL);
-        }
-#endif
     }
     if (fullText!=NULL) {
         for(i=0; fullText[i]; i++) {
