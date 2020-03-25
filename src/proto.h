@@ -840,7 +840,7 @@ typedef struct olcxReferences {
     struct reference        *act;		/* actual reference */
     char					command;	/* OLO_PUSH/OLO_LIST/OLO_COMPLETION */
     char					language;	/* C/JAVA/YACC */
-    time_t					atime;		/* last acces time */
+    time_t					atime;		/* last access time */
     // refsuffix is useless now, should be removed !!!!
     char					refsuffix[MAX_OLCX_SUFF_SIZE];
     struct position			cpos;		/* caller position */

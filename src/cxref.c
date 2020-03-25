@@ -1123,14 +1123,22 @@ static void olcxFreePopedStackItems(S_olcxReferencesStack *stack) {
     }
 }
 
+static S_olcxReferences *pushOlcxReference(S_olcxReferencesStack *stack) {
+    S_olcxReferences *res;
+
+    OLCX_ALLOC(res, S_olcxReferences);
+    *res = (S_olcxReferences){.r = NULL, .act = NULL, .command = s_opt.server_operation, .language = s_language,
+                              .atime = s_fileProcessStartTime, .cpos = s_noPos, .cpls = NULL, .hkSelectedSym = NULL,
+                              .menuFilterLevel = DEFAULT_MENU_FILTER_LEVEL, . refsFilterLevel = DEFAULT_REFS_FILTER_LEVEL,
+                              .previous = stack->top};
+    return res;
+}
+
+
 void olcxPushEmptyStackItem(S_olcxReferencesStack *stack) {
     S_olcxReferences *res;
     olcxFreePopedStackItems(stack);
-    OLCX_ALLOC(res, S_olcxReferences);  /* first alloc, to avoid surprise */
-    FILL_olcxReferences(res, NULL, NULL, s_opt.server_operation, s_language,
-                        s_fileProcessStartTime, s_noPos, NULL, NULL, NULL,
-                        DEFAULT_MENU_FILTER_LEVEL, DEFAULT_REFS_FILTER_LEVEL,
-                        stack->top);
+    res = pushOlcxReference(stack);
     setRefSuffix(res);
     stack->top = stack->root = res;
 }
