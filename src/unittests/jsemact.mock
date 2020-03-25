@@ -114,7 +114,7 @@ bool javaTypeFileExist(S_idList *name) {
   return (int) mock(name);
 }
 
-Symbol *javaTypeSymbolDefinition(S_idList *tname, int accessFlags, int addType) {
+Symbol *javaTypeSymbolDefinition(S_idList *tname, int accessFlags, enum addYesOrNo addType) {
   return (Symbol *) mock(tname, accessFlags, addType);
 }
 

@@ -61,7 +61,7 @@ extern Symbol * javaGetFieldClass(char *fieldLinkName, char **fieldAdr);
 extern void javaAddNestedClassesAsTypeDefs(Symbol *cc,
                                            S_idList *oclassname, int accessFlags);
 extern bool javaTypeFileExist(S_idList *name);
-extern Symbol *javaTypeSymbolDefinition(S_idList *tname, int accessFlags,int addType);
+extern Symbol *javaTypeSymbolDefinition(S_idList *tname, int accessFlags, enum addYesOrNo addType);
 extern Symbol *javaTypeSymbolUsage(S_idList *tname, int accessFlags);
 extern void javaReadSymbolFromSourceFileEnd(void);
 extern void javaReadSymbolFromSourceFileInit( int sourceFileNum,
