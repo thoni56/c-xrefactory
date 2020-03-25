@@ -124,8 +124,6 @@ struct olSymbolFoundInformation {
 };
 #endif
 
-//&S_olSymbolFoundInformation s_oli;
-S_userOlcx *s_olcxCurrentUser;
 unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL] = {
     (OOC_VIRT_ANY | OOC_PROFILE_ANY),
     //& (OOC_VIRT_RELATED | OOC_PROFILE_ANY),

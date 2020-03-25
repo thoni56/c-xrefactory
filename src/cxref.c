@@ -1087,13 +1087,29 @@ void olcxInit(void) {
     for(i=0; i<OLCX_USER_RESERVE; i++) REAL_MEMORY_FREE(olcxMemory, uu[i], sizeof(S_userOlcx));
 }
 
+
+static void initUserOlcx(S_userOlcx *dd, char *user) {
+    //FILLF_userOlcx(dd, user, NULL, NULL, NULL, NULL, NULL, NULL, s_noneFileIndex, NULL, NULL);
+    dd->name = user;
+    dd->browserStack.top = NULL;
+    dd->browserStack.root = NULL;
+    dd->completionsStack.top = NULL;
+    dd->completionsStack.root = NULL;
+    dd->retrieverStack.top = NULL;
+    dd->retrieverStack.root = NULL;
+    dd->classTree.baseClassIndex = s_noneFileIndex;
+    dd->classTree.tree = NULL;
+    dd->next = NULL;
+}
+
+
 S_userOlcx *olcxSetCurrentUser(char *user) {
-    S_userOlcx  dd,*memb;
+    S_userOlcx dd, *memb;
     int not_used1, not_used2;
     int sz;
     char *nn;
 
-    FILLF_userOlcx(&dd, user, NULL, NULL,NULL,NULL,NULL,NULL,s_noneFileIndex, NULL, NULL);
+    initUserOlcx(&dd, user);
     if (! olcxTabIsMember(&s_olcxTab, &dd, &not_used1, &memb)) {
         // I have changed it to FT, so it never invokes freeing of OLCX
         FT_ALLOC(memb, S_userOlcx);
@@ -1101,11 +1117,12 @@ S_userOlcx *olcxSetCurrentUser(char *user) {
         if (sz < sizeof(void*)) sz = sizeof(void*);
         FT_ALLOCC(nn, sz, char); // why this is in ftMem ?, some pb with free
         strcpy(nn, user);
-        FILLF_userOlcx(memb, nn, NULL, NULL, NULL, NULL,  NULL, NULL, s_noneFileIndex, NULL, NULL);
+        initUserOlcx(memb, nn);
         olcxTabAdd(&s_olcxTab, memb, &not_used2);
     }
     s_olcxCurrentUser = memb;
-    return(memb);
+
+    return memb;
 }
 
 static void setRefSuffix(S_olcxReferences *refs) {

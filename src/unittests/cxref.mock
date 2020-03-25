@@ -2,6 +2,8 @@
 #include "../cxref.h"
 #include <cgreen/mocks.h>
 
+#include "../olcxtab.h"
+
 int olcxReferenceInternalLessFunction(S_reference *r1, S_reference *r2) {
     return (int) mock(r1, r2);
 }

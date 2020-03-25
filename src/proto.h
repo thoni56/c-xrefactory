@@ -867,14 +867,6 @@ typedef struct olcxReferencesStack {
     struct olcxReferences	*root;
 } S_olcxReferencesStack;
 
-typedef struct userOlcx {
-    char                        *name;
-    struct olcxReferencesStack	browserStack;
-    struct olcxReferencesStack	completionsStack;
-    struct olcxReferencesStack	retrieverStack;
-    struct classTreeData		classTree;
-    struct userOlcx				*next;
-} S_userOlcx;
 
 
 /* ***************** COMPLETION STRUCTURES ********************** */
@@ -907,12 +899,6 @@ typedef struct completions {
 
 
 /* ************************** INIT STRUCTURES ********************* */
-
-typedef struct tokenNameIni {
-    char        *name;
-    int         token;
-    unsigned    languages;
-} S_tokenNameIni;
 
 typedef struct typeCharCodeIni {
     int         symType;

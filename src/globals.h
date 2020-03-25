@@ -16,6 +16,13 @@ typedef struct stringList {
     struct stringList *next;
 } S_stringList;
 
+typedef struct tokenNameIni {
+    char        *name;
+    int         token;
+    unsigned    languages;
+} S_tokenNameIni;
+
+
 extern char s_cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
 extern char s_base[MAX_FILE_NAME_SIZE];
 extern char ppcTmpBuff[MAX_PPC_RECORD_SIZE];
@@ -182,7 +189,6 @@ extern int s_currCppPass;
 extern int s_maximalCppPass;
 
 extern S_completions s_completions;
-extern S_userOlcx *s_olcxCurrentUser;
 extern unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL];
 extern int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL];
 
