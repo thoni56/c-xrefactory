@@ -3,13 +3,23 @@
 # This is a script that aims at running a virgin Emacs with minimal c-xrefactory setup
 # with the development versions of everything (which means that there should be a freshly
 # compiled src/c-xref available. This is to ensure no interference with your own setup.
+#
+# NB WIP
 
 PPWD=`pwd`
+PID=$$
 
-# Start by creating an init-file for emacs
-echo "(setq load-path (cons \"${PPWD}/env/emacs\" load-path))" > /tmp/dev-emacs.el
-echo "(setq exec-path (cons \"${PPWD}/src\" exec-path))" >> /tmp/dev-emacs.el
-echo "(load \"c-xrefactory\")" >> /tmp/dev-emacs.el
+DIR=/tmp/c-xref-emacs-$PID
+
+# Create a temporary directory
+mkdir $DIR
+
+# How to create an .emacs with an el-lisp installation including c-xrefactory?
+
+# Create an init-file for emacs
+echo "(setq load-path (cons \"${PPWD}/env/emacs\" load-path))" > $DIR/dev-emacs.el
+echo "(setq exec-path (cons \"${PPWD}/src\" exec-path))" >> $DIR/dev-emacs.el
+echo "(load \"c-xrefactory\")" >> $DIR/dev-emacs.el
 
 # Then start emacs with it, set HOME so not to create cx-ref-files in your home
-HOME=/tmp emacs --no-splash --load /tmp/dev-emacs.el $*
+HOME=$DIR emacs --no-splash --load $DIR/dev-emacs.el $*
