@@ -162,7 +162,7 @@ static void javaAddNameCxReference(S_idList *id, unsigned usage) {
 
 Symbol *javaAddType(S_idList *clas, int accessFlags, S_position *p) {
     Symbol *dd;
-    dd = javaTypeSymbolDefinition(clas, accessFlags, TYPE_ADD_YES);
+    dd = javaTypeSymbolDefinition(clas, accessFlags, ADD_YES);
     dd->bits.accessFlags = accessFlags;
     addCxReference(dd, p, UsageDefined,s_noneFileIndex, s_noneFileIndex);
     htmlAddJavaDocReference(dd, p, s_noneFileIndex, s_noneFileIndex);
@@ -186,7 +186,7 @@ void javaAddNestedClassesAsTypeDefs(Symbol *cc, S_idList *oclassname,
 //& XX_ALLOC(ll, S_idList);
             FILL_id(&ll.id, nn->name, cc, s_noPos,NULL);
             FILL_idList(&ll, ll.id, nn->name,TypeStruct,oclassname);
-            javaTypeSymbolDefinition(&ll, accessFlags, TYPE_ADD_YES);
+            javaTypeSymbolDefinition(&ll, accessFlags, ADD_YES);
         }
     }
 }
@@ -590,7 +590,7 @@ Symbol *javaTypeSymbolDefinition(S_idList *tname,
 
     javaCreateComposedName(NULL,tname,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
     memb = javaFQTypeSymbolDefinition(tname->id.name, fqtName);
-    if (addTyp == TYPE_ADD_YES) {
+    if (addTyp == ADD_YES) {
         memb = javaAddTypeToSymbolTable(memb, accessFlags, &s_noPos, 0);
     }
     return(memb);
@@ -1893,7 +1893,7 @@ void javaAddMapedTypeName(
     assert(len2+1 < MAX_FILE_NAME_SIZE);
     ttt2[len2] = 0;
     FILLF_idList(&dd2, ttt2,NULL,-1,0,0,NULL, ttt2,TypeStruct,packid);
-    memb = javaTypeSymbolDefinition(&dd2,ACC_DEFAULT, TYPE_ADD_YES);
+    memb = javaTypeSymbolDefinition(&dd2,ACC_DEFAULT, ADD_YES);
     log_debug(":import type %s == %s", memb->name, memb->linkName);
 }
 
