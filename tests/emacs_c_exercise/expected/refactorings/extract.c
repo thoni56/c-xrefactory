@@ -9,7 +9,8 @@ static int extracted(int n) {
     t=x+y; x=y; y=t;
   }
   // region end
-  return(x);
+
+  return x;
 }
 
 
