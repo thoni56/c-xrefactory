@@ -35,6 +35,13 @@
 #define HTML_PUTCH_REF_TABULATOR 1
 #define HTML_PUTCH_REF_TABN 6
 
+typedef struct htmlLocalListms {	// local xlist map structure
+    FILE    *ff;
+    int     fnum;
+    char	*fname;
+} S_htmlLocalListms;
+
+
 static char s_htmlEmptyRefs[MAX_FILE_NAME_SIZE];
 static S_olSymbolsMenu *s_htmlCurrentCxlist;
 static char *s_cxGlobalReferencesBase;
@@ -61,6 +68,12 @@ int isAbsolutePath(char *p) {
     return(p[0]==SLASH);
 }
 #endif                          /*SBD*/
+
+static void fillHtmlLocalListms(S_htmlLocalListms *s, FILE *file, int fnum, char *fname) {
+    s->ff = file;
+    s->fnum = fnum;
+    s->fname = fname;
+}
 
 static char *cutHtmlPath(char *path) {
     char *pp,*cutp;
@@ -1664,7 +1677,7 @@ static void htmlGenerateFile(int fnum) {
             if (ff==NULL) error(ERR_CANT_OPEN,ffn2);
             else {
                 htmlGenRefListFileHead(ff, -1);
-                FILL_htmlLocalListms(&sss, ff, fnum, ffn);
+                fillHtmlLocalListms(&sss, ff, fnum, ffn);
                 refTabMap2(&s_cxrefTab, htmlGenLocalRefLists, &sss);
                 htmlGenRefListTail(ff);
                 fclose(ff);

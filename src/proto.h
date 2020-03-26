@@ -1101,12 +1101,6 @@ typedef struct htmlRefList {
     struct htmlRefList		*next;
 } S_htmlRefList;
 
-typedef struct htmlLocalListms {	// local xlist map structure
-    FILE    *ff;
-    int     fnum;
-    char	*fname;
-} S_htmlLocalListms;
-
 /* *********************************************************** */
 
 typedef struct programGraphNode {
