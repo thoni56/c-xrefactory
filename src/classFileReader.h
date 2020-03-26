@@ -6,12 +6,12 @@
 
 extern void javaHumanizeLinkName( char *inn, char *outn, int size);
 extern Symbol *cfAddCastsToModule(Symbol *memb, Symbol *sup);
-extern void addSuperClassOrInterface( Symbol *memb, Symbol *supp, int origin);
+extern void addSuperClassOrInterface( Symbol *memb, Symbol *supp, int origin );
 extern int javaCreateClassFileItem( Symbol *memb);
 extern void addSuperClassOrInterfaceByName(Symbol *memb, char *super, int origin, int loadSuper);
 extern void fsRecMapOnFiles(S_zipArchiveDir *dir, char *zip, char *path, void (*fun)(char *zip, char *file, void *arg), void *arg);
 extern int fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset,
-                      enum addYesOrNo addFlag, S_zipArchiveDir **place);
+                      int addFlag, S_zipArchiveDir **place);
 extern int zipIndexArchive(char *name);
 extern int zipFindFile(char *name, char **resName, S_zipFileTabItem *zipfile);
 extern void javaMapZipDirFile(

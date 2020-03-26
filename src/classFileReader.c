@@ -258,7 +258,7 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iB
 static CharacterBuffer s_zipTmpBuff;
 
 int fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset,
-               enum addYesOrNo addFlag, S_zipArchiveDir **place) {
+               int addFlag, S_zipArchiveDir **place) {
     S_zipArchiveDir     *aa, **aaa, *p;
     int                 itemlen, res;
     char                *ss;

@@ -577,10 +577,10 @@ static Symbol *javaAddTypeToSymbolTable(Symbol *memb, int accessFlags, S_positio
 }
 
 Symbol *javaTypeSymbolDefinition(S_idList *tname,
-                                 int accessFlags,
-                                 enum addYesOrNo addTyp){
-    Symbol pp,*memb;
-    char fqtName[MAX_FILE_NAME_SIZE];
+                                   int accessFlags,
+                                   int addTyp){
+    Symbol                pp,*memb;
+    char                    fqtName[MAX_FILE_NAME_SIZE];
 
     assert(tname);
     assert(tname->nameType == TypeStruct);
@@ -593,7 +593,7 @@ Symbol *javaTypeSymbolDefinition(S_idList *tname,
     if (addTyp == TYPE_ADD_YES) {
         memb = javaAddTypeToSymbolTable(memb, accessFlags, &s_noPos, 0);
     }
-    return memb;
+    return(memb);
 }
 
 Symbol *javaTypeSymbolUsage(S_idList *tname,

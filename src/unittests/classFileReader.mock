@@ -26,7 +26,7 @@ void fsRecMapOnFiles(S_zipArchiveDir *dir, char *zip, char *path, void (*fun)(ch
   mock(dir, zip, path, fun, arg);
 }
 
-int fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset, enum addYesOrNo addFlag, S_zipArchiveDir **place) {
+int fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset, int addFlag, S_zipArchiveDir **place) {
   return (int) mock(dir, fn, offset, addFlag, place);
 }
 
