@@ -874,14 +874,6 @@ typedef struct olcxReferencesStack {
     struct olcxReferences	*root;
 } S_olcxReferencesStack;
 
-typedef struct userOlcx {
-    char                        *name;
-    struct olcxReferencesStack	browserStack;
-    struct olcxReferencesStack	completionsStack;
-    struct olcxReferencesStack	retrieverStack;
-    struct classTreeData		classTree;
-    struct userOlcx				*next;
-} S_userOlcx;
 
 
 /* ***************** COMPLETION STRUCTURES ********************** */
@@ -892,7 +884,6 @@ typedef struct cline {					/* should be a little bit union-ified */
     struct symbol   *t;
     short int		symType;
     short int		virtLevel;
-//	unsigned		virtClassOrder;		TODO !!!!
     short int		margn;
     char			**margs;
     struct symbol	*vFunClass;
@@ -914,12 +905,6 @@ typedef struct completions {
 
 
 /* ************************** INIT STRUCTURES ********************* */
-
-typedef struct tokenNameIni {
-    char        *name;
-    int         token;
-    unsigned    languages;
-} S_tokenNameIni;
 
 typedef struct typeCharCodeIni {
     int         symType;

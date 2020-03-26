@@ -2,6 +2,8 @@
 #include "../olcxtab.h"
 #include <cgreen/mocks.h>
 
+
+S_userOlcx *s_olcxCurrentUser;
 S_olcxTab s_olcxTab;
 
 

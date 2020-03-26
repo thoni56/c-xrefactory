@@ -33,7 +33,6 @@ int s_olOriginalFileNumber;
 unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL];
 int s_olstringUsage;
 int s_noneFileIndex;
-S_userOlcx *s_olcxCurrentUser;
 int s_olOriginalComFileNumber;
 int s_wildCharSearch;
 int s_javaPreScanOnly;
