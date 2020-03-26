@@ -1036,7 +1036,7 @@ typedef struct lexBuf {
     char            *next;				/* next to read */
     char            *end;				/* pointing *after* last valid char */
     char            chars[LEX_BUFF_SIZE];
-    struct position pRing[LEX_POSITIONS_RING_SIZE];		// file/line/coll position
+    struct position pRing[LEX_POSITIONS_RING_SIZE];		// file/line/col position
     unsigned        fpRing[LEX_POSITIONS_RING_SIZE];	// file offset position
     int             posi;				/* pRing[posi%LEX_POSITIONS_RING_SIZE] */
     struct CharacterBuffer buffer;
@@ -1054,14 +1054,6 @@ typedef struct fileDesc {
     struct cppIfStack   *ifStack;					/* #if stack (C only) */
     struct lexBuf       lexBuffer;
 } S_fileDesc;
-
-typedef struct lexInput {
-    char *currentLexem;
-    char *endOfBuffer;
-    char *beginningOfBuffer;
-    char *macroName;
-    char margExpFlag;		/* input Flag */
-} S_lexInput;
 
 /* **************** processing cxref file ************************* */
 

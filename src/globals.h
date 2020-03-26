@@ -209,10 +209,6 @@ extern int mbMemoryi;
 extern struct fileDesc inStack[INSTACK_SIZE];
 extern int inStacki;
 
-extern struct lexInput macStack[MACSTACK_SIZE];
-extern int macroStackIndex;
-
-extern S_lexInput cInput;
 extern int s_ifEvaluation;		/* flag for yylex, to not filter '\n' */
 
 extern S_options s_opt;			// current options

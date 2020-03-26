@@ -84,10 +84,7 @@ S_fileTab s_fileTab;
 
 S_fileDesc inStack[INSTACK_SIZE];
 int inStacki=0;
-S_lexInput macStack[MACSTACK_SIZE];
-int macroStackIndex=0;
 
-S_lexInput cInput;
 
 char tmpMemory[SIZE_TMP_MEM];
 char memory[SIZE_workMemory];

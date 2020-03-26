@@ -13,10 +13,22 @@ typedef struct macroBody {
     char *body;
 } S_macroBody;
 
+typedef struct lexInput {
+    char *currentLexem;
+    char *endOfBuffer;
+    char *beginningOfBuffer;
+    char *macroName;
+    char margExpFlag;		/* input Flag */
+} S_lexInput;
 
 extern char *yytext;
+extern S_lexInput macStack[MACSTACK_SIZE];
+extern int macroStackIndex;
+extern S_lexInput cInput;
 
 
+extern void fillLexInput(S_lexInput *lexInput, char *currentLexem, char *endOfBuffer,
+                         char *beginningOfBuffer, char *macroName, char margExpFlag);
 extern void ppMemInit(void);
 extern void initAllInputs(void);
 extern void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name);

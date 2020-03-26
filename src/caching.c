@@ -299,7 +299,7 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
     cFile.lineNumber = cp->lineNumber;
     cFile.ifDeep = cp->ifDeep;
     cFile.ifStack = cp->ifstack;
-    FILL_lexInput(&cInput, cp->lbcc, readUntil, s_cache.lb, NULL, II_CACHE);
+    fillLexInput(&cInput, cp->lbcc, readUntil, s_cache.lb, NULL, II_CACHE);
     fillCaching(&s_cache,
                  activeCaching,
                  i+1,

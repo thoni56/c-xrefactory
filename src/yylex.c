@@ -57,17 +57,26 @@ static int ppMemoryi=0;
 S_position s_yyPositionBuf[YYBUFFERED_ID_INDEX];
 int s_yyPositionBufi = 0;
 
+S_lexInput macStack[MACSTACK_SIZE];
+int macroStackIndex=0;
+
+S_lexInput cInput;
+
+
+
 #define SetCacheConsistency() {s_cache.cc = cInput.currentLexem;}
 #define SetCFileConsistency() {\
     cFile.lexBuffer.next = cInput.currentLexem;\
 }
 #define SetCInputConsistency() {\
-    FILL_lexInput(&cInput,cFile.lexBuffer.next,cFile.lexBuffer.end,cFile.lexBuffer.chars,NULL,II_NORMAL);\
+    fillLexInput(&cInput,cFile.lexBuffer.next,cFile.lexBuffer.end,cFile.lexBuffer.chars,NULL,II_NORMAL);\
 }
 
 #define IS_IDENTIFIER_LEXEM(lex) (lex==IDENTIFIER || lex==IDENT_NO_CPP_EXPAND  || lex==IDENT_TO_COMPLETE)
 
+
 static int macroCallExpand(Symbol *mdef, S_position *mpos);
+
 
 /* ************************************************************ */
 
@@ -85,6 +94,16 @@ void initAllInputs(void) {
     s_olstringInMbody = NULL;
     s_upLevelFunctionCompletionType = NULL;
     s_structRecordCompletionType = NULL;
+}
+
+
+void fillLexInput(S_lexInput *lexInput, char *currentLexem, char *endOfBuffer,
+                  char *beginningOfBuffer, char *macroName, char margExpFlag) {
+    lexInput->currentLexem = currentLexem;
+    lexInput->endOfBuffer = endOfBuffer;
+    lexInput->beginningOfBuffer = beginningOfBuffer;
+    lexInput->macroName = macroName;
+    lexInput->margExpFlag = margExpFlag;
 }
 
 
@@ -478,8 +497,7 @@ void popInclude(void) {
     if (inStacki != 0) {
         cFile = inStack[--inStacki];	/* buffers are copied !!!!!!, burk */
         if (inStacki == 0 && s_cache.cc!=NULL) {
-            FILL_lexInput(&cInput, s_cache.cc, s_cache.cfin, s_cache.lb,
-                        NULL, II_CACHE);
+            fillLexInput(&cInput, s_cache.cc, s_cache.cfin, s_cache.lb, NULL, II_CACHE);
         } else {
             SetCInputConsistency();
         }
@@ -1284,7 +1302,7 @@ static void expandMacroArgument(S_lexInput *argb) {
 endOfMacArg:
     cInput = macStack[--macroStackIndex];
     PP_REALLOCC(buf,bcc-buf,char,bsize+MAX_LEXEM_SIZE);
-    FILL_lexInput(argb,buf,bcc,buf,NULL,II_NORMAL);
+    fillLexInput(argb,buf,bcc,buf,NULL,II_NORMAL);
     return;
 endOfFile:
     assert(0);
@@ -1506,7 +1524,7 @@ static void crMacroBody(S_lexInput *macBody,
     }
     MB_REALLOCC(buf2,bcc-buf2,char,bsize+MAX_LEXEM_SIZE);
 
-    FILL_lexInput(macBody,buf2,bcc,buf2,mb->name,II_MACRO);
+    fillLexInput(macBody,buf2,bcc,buf2,mb->name,II_MACRO);
 
 }
 
@@ -1576,7 +1594,7 @@ endOfMacArg:;
         }
     }
     PP_REALLOCC(buf, bcc-buf, char, bufsize+MAX_LEXEM_SIZE);
-    FILL_lexInput(actArg,buf,bcc,buf,cInput.macroName,II_NORMAL);
+    fillLexInput(actArg,buf,bcc,buf,cInput.macroName,II_NORMAL);
     *llex = lex;
     return;
 }
@@ -1614,7 +1632,7 @@ static struct lexInput *getActualMacroArguments(S_macroBody *mb, S_position *mpo
     }
     /* fill mising arguments */
     for(;actArgi < mb->argn; actArgi++) {
-        FILL_lexInput(&actArgs[actArgi], NULL, NULL, NULL, NULL,II_NORMAL);
+        fillLexInput(&actArgs[actArgi], NULL, NULL, NULL, NULL,II_NORMAL);
     }
     return(actArgs);
 endOfMacArg:	assert(0);
