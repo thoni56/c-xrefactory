@@ -31,9 +31,10 @@ quick:
 	@$(MAKE) -C olcx_refactory_rename
 	@$(MAKE) -C olcx_refactory_simple_extract
 	@$(MAKE) -C olcx_refactory_add_parameter
-	@$(MAKE) -C emacs_c_exercise
+	@$(MAKE) -C extract_with_return
 
 slow:
+	@$(MAKE) -C emacs_c_exercise
 	@$(MAKE) -C c-xref
 	@$(MAKE) -C ffmpeg
 	@$(MAKE) -C systemd
