@@ -91,7 +91,7 @@ static void jslRemoveNestedClass(void  *ddv) {
 }
 
 Symbol *jslTypeSymbolDefinition(char *ttt2, S_idList *packid,
-                                enum addYesOrNo add, int order, int isSingleImportedFlag) {
+                                  int add, int order, int isSingleImportedFlag) {
     char fqtName[MAX_FILE_NAME_SIZE];
     S_idList dd2;
     int ii;
@@ -106,7 +106,7 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, S_idList *packid,
     javaCreateComposedName(NULL,&dd2,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
     smemb = javaFQTypeSymbolDefinition(ttt2, fqtName);
     //&fprintf(ccOut, "[jsl] jslTypeSymbolDefinition %s, %s, %s, %s\n", ttt2, fqtName, smemb->name, smemb->linkName);
-    if (add==ADD_YES) {
+    if (add==TYPE_ADD_YES) {
         if (packid!=NULL) importPos = &packid->id.p;
         else importPos = &s_noPos;
         XX_ALLOC(xss, JslSymbolList); // CF_ALLOC ???
@@ -280,7 +280,7 @@ void jslAddMapedImportTypeName(
     strncpy(ttt2, file, len2);
     assert(len2+1 < MAX_FILE_NAME_SIZE);
     ttt2[len2] = 0;
-    jslTypeSymbolDefinition(ttt2, packid,ADD_YES, ORDER_APPEND, 0);
+    jslTypeSymbolDefinition(ttt2, packid,TYPE_ADD_YES, ORDER_APPEND, 0);
 }
 
 void jslAddAllPackageClassesFromFileTab(S_idList *packid) {
@@ -311,7 +311,7 @@ void jslAddAllPackageClassesFromFileTab(S_idList *packid) {
                 }
             }
             if (c=='.') {
-                jslTypeSymbolDefinition(ttt, packid,ADD_YES, ORDER_APPEND, 0);
+                jslTypeSymbolDefinition(ttt, packid,TYPE_ADD_YES, ORDER_APPEND, 0);
             }
         }
     }
@@ -452,7 +452,7 @@ void jslAddNestedClassesToJslTypeTab( Symbol *str, int order) {
                              TypeStruct, NULL);
             log_trace("adding %s %s", ss->nest[i].cl->name, ss->nest[i].cl->linkName);
             jslTypeSymbolDefinition(ss->nest[i].cl->name, &oclassid,
-                                    ADD_YES, order, 0);
+                                    TYPE_ADD_YES, order, 0);
         }
     }
 }
@@ -501,19 +501,19 @@ void jslNewClassDefinitionBegin(S_id *name,
             // because method nested class will not be added as class nested
             // at the end of this function
             cc = jslTypeSymbolDefinition(ttt, &mntmp,
-                                         ADD_YES, ORDER_PREPEND, 0);
+                                         TYPE_ADD_YES, ORDER_PREPEND, 0);
         } else {
             /* anonymous class implementing an interface */
             s_jsl->classStat->annonInnerCounter++;
             sprintf(ttt, "%d$%s", s_jsl->classStat->annonInnerCounter,
                     inname->name);
             cc = jslTypeSymbolDefinition(ttt,s_jsl->classStat->className,
-                                         ADD_NO,ORDER_PREPEND, 0);
+                                         TYPE_ADD_NO,ORDER_PREPEND, 0);
         }
     } else {
         sprintf(ttt, "%s", inname->name);
         cc = jslTypeSymbolDefinition(ttt,s_jsl->classStat->className,
-                                     ADD_NO,ORDER_PREPEND, 0);
+                                     TYPE_ADD_NO,ORDER_PREPEND, 0);
     }
     cc->bits.accessFlags = accFlags;
     log_trace("reading class %s [%x] at %x", cc->linkName, cc->bits.accessFlags, cc);
@@ -547,7 +547,7 @@ void jslNewClassDefinitionBegin(S_id *name,
     if (s_jsl->classStat->next==NULL && s_jsl->pass==1) {
         /* top level class */
         jslTypeSymbolDefinition(cc->name,s_jsl->classStat->className,
-                                ADD_YES, ORDER_PREPEND, 0);
+                                TYPE_ADD_YES, ORDER_PREPEND, 0);
     }
 
     assert(cc && cc->u.s && s_fileTab.tab[cc->u.s->classFile]);

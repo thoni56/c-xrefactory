@@ -236,13 +236,12 @@ static void extSetSetStates(    S_programGraphNode *p,
     }
 }
 
-static enum extractMode extCategorizeLocalVar0(S_programGraphNode *program,
-                                               S_programGraphNode *varRef
-                                               ) {
+static int extCategorizeLocalVar0(  S_programGraphNode *program,
+                                    S_programGraphNode *varRef
+                                    ) {
     S_programGraphNode *p;
     S_symbolRefItem     *symRef;
     unsigned    inUsages,outUsages,outUsageBothExists;
-
     symRef = varRef->symRef;
     for(p=program; p!=NULL; p=p->next) {
         p->stateBits = 0;
@@ -283,10 +282,10 @@ static enum extractMode extCategorizeLocalVar0(S_programGraphNode *program,
                 return(EXTRACT_IN_OUT_ARGUMENT);
             }
         }
-        if (inUsages & INSP_INSIDE_REENTER) return EXTRACT_IN_OUT_ARGUMENT;
-        if (inUsages & INSP_OUTSIDE_BLOCK) return EXTRACT_VALUE_ARGUMENT;
-        if (inUsages) return EXTRACT_LOCAL_VAR;
-        return EXTRACT_NONE;
+        if (inUsages & INSP_INSIDE_REENTER) return(EXTRACT_IN_OUT_ARGUMENT);
+        if (inUsages & INSP_OUTSIDE_BLOCK) return(EXTRACT_VALUE_ARGUMENT);
+        if (inUsages) return(EXTRACT_LOCAL_VAR);
+        return(EXTRACT_NONE);
     } else {
         if (    outUsages & INSP_INSIDE_BLOCK
                 ||  outUsages & INSP_OUTSIDE_BLOCK) {
@@ -340,10 +339,18 @@ static int extIsJumpInOutBlock(S_programGraphNode *program) {
     return(0);
 }
 
-#define EXT_LOCAL_VAR_REF(ppp) (ppp->ref->usage.base==UsageDefined      \
+#if ZERO
+#define EXT_LOCAL_VAR_REF(ppp) (                                        \
+                                ppp->ref->usg.base==UsageDefined        \
+                                &&  ppp->symRef->b.symType==TypeDefault \
+                                )
+#else
+#define EXT_LOCAL_VAR_REF(ppp) (                                        \
+                                ppp->ref->usage.base==UsageDefined        \
                                 &&  ppp->symRef->b.symType==TypeDefault \
                                 &&  ppp->symRef->b.scope==ScopeAuto     \
                                 )
+#endif
 
 static void extClassifyLocalVariables(S_programGraphNode *program) {
     S_programGraphNode *p;
@@ -396,14 +403,14 @@ static void extReClassifyIOVars(S_programGraphNode *program) {
 
     op = NULL; uniqueOutFlag = 1;
     for(p=program; p!=NULL; p=p->next) {
-        if (s_opt.extractMode == EXTRACT_FUNCTION_ADDRESS_ARGS) {
+        if (s_opt.extractMode == EXTR_FUNCTION_ADDRESS_ARGS) {
             if (p->classifBits == EXTRACT_OUT_ARGUMENT
                 ||  p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
                 ||  p->classifBits == EXTRACT_IN_OUT_ARGUMENT
                 ) {
                 p->classifBits = EXTRACT_ADDRESS_ARGUMENT;
             }
-        } else if (s_opt.extractMode == EXTRACT_FUNCTION) {
+        } else if (s_opt.extractMode == EXTR_FUNCTION) {
             if (p->classifBits == EXTRACT_OUT_ARGUMENT
                 || p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
                 ) {
@@ -425,7 +432,7 @@ static void extReClassifyIOVars(S_programGraphNode *program) {
 
     op = NULL; uniqueOutFlag = 1;
     for(p=program; p!=NULL; p=p->next) {
-        if (s_opt.extractMode == EXTRACT_FUNCTION) {
+        if (s_opt.extractMode == EXTR_FUNCTION) {
             if (p->classifBits == EXTRACT_IN_OUT_ARGUMENT) {
                 if (op == NULL) op = p;
                 else uniqueOutFlag = 0;
@@ -443,7 +450,7 @@ static void extReClassifyIOVars(S_programGraphNode *program) {
 
 /* ************************** macro ******************************* */
 
-static void createMacroCall(S_programGraphNode *program) {
+static void extGenNewMacroCall(S_programGraphNode *program) {
     char dcla[TMP_STRING_SIZE];
     char decl[TMP_STRING_SIZE];
     char name[TMP_STRING_SIZE];
@@ -478,7 +485,7 @@ static void createMacroCall(S_programGraphNode *program) {
     }
 }
 
-static void createMacroHead(S_programGraphNode *program) {
+static void extGenNewMacroHead(S_programGraphNode *program) {
     char dcla[TMP_STRING_SIZE];
     char decl[MAX_EXTRACT_FUN_HEAD_SIZE];
     char name[MAX_EXTRACT_FUN_HEAD_SIZE];
@@ -511,7 +518,7 @@ static void createMacroHead(S_programGraphNode *program) {
     }
 }
 
-static void createMacroTail(S_programGraphNode *program) {
+static void extGenNewMacroTail(S_programGraphNode *program) {
     rb[0]=0;
 
     sprintf(rb+strlen(rb),"}\n\n");
@@ -529,7 +536,7 @@ static void createMacroTail(S_programGraphNode *program) {
 /* ********************** C function **************************** */
 
 
-static void createFunctionCall(S_programGraphNode *program) {
+static void extGenNewFunCall(S_programGraphNode *program) {
     char dcla[TMP_STRING_SIZE];
     char decl[TMP_STRING_SIZE];
     char name[TMP_STRING_SIZE];
@@ -687,7 +694,7 @@ static void extractSprintThrownExceptions(char *nhead, S_programGraphNode *progr
     }
 }
 
-static void createFunctionHead(S_programGraphNode *program) {
+static void extGenNewFunHead(S_programGraphNode *program) {
     char nhead[MAX_EXTRACT_FUN_HEAD_SIZE];
     int nhi, ldclaLen;
     char ldcla[TMP_STRING_SIZE];
@@ -799,7 +806,7 @@ static void createFunctionHead(S_programGraphNode *program) {
     }
 }
 
-static void createFunctionTail(S_programGraphNode *program) {
+static void extGenNewFunTail(S_programGraphNode *program) {
     char                dcla[TMP_STRING_SIZE];
     char                decl[TMP_STRING_SIZE];
     char                name[TMP_STRING_SIZE];
@@ -1147,7 +1154,7 @@ static void extMakeExtraction(void) {
     extSetInOutBlockFields(program);
     //&dumpProgram(program);
 
-    if (s_opt.extractMode!=EXTRACT_MACRO && extIsJumpInOutBlock(program)) {
+    if (s_opt.extractMode!=EXTR_MACRO && extIsJumpInOutBlock(program)) {
         error(ERR_ST, "There are jumps in or out of region");
         return;
     }
@@ -1161,7 +1168,7 @@ static void extMakeExtraction(void) {
         if (newClassExt) s_extractionName = "newClass_";
         else s_extractionName = "newMethod_";
     } else {
-        if (s_opt.extractMode==EXTRACT_MACRO) s_extractionName = "NEW_MACRO_";
+        if (s_opt.extractMode==EXTR_MACRO) s_extractionName = "NEW_MACRO_";
         else s_extractionName = "newFunction_";
     }
 
@@ -1172,30 +1179,23 @@ static void extMakeExtraction(void) {
         fprintf(ccOut,
                 "%%!\n------------------------ The Invocation ------------------------\n!\n");
     }
-    if (s_opt.extractMode==EXTRACT_MACRO) createMacroCall(program);
+    if (s_opt.extractMode==EXTR_MACRO) extGenNewMacroCall(program);
     else if (newClassExt) extJavaGenNewClassCall(program);
-    else createFunctionCall(program);
+    else extGenNewFunCall(program);
     if (! s_opt.xref2) {
         fprintf(ccOut,
                 "!\n--------------------------- The Head ---------------------------\n!\n");
     }
-    if (s_opt.extractMode==EXTRACT_MACRO)
-        createMacroHead(program);
-    else if (newClassExt)
-        extJavaGenNewClassHead(program);
-    else
-        createFunctionHead(program);
-
+    if (s_opt.extractMode==EXTR_MACRO) extGenNewMacroHead(program);
+    else if (newClassExt) extJavaGenNewClassHead(program);
+    else extGenNewFunHead(program);
     if (! s_opt.xref2) {
         fprintf(ccOut,
                 "!\n--------------------------- The Tail ---------------------------\n!\n");
     }
-    if (s_opt.extractMode==EXTRACT_MACRO)
-        createMacroTail(program);
-    else if (newClassExt)
-        extJavaGenNewClassTail(program);
-    else
-        createFunctionTail(program);
+    if (s_opt.extractMode==EXTR_MACRO) extGenNewMacroTail(program);
+    else if (newClassExt) extJavaGenNewClassTail(program);
+    else extGenNewFunTail(program);
 
     if (s_opt.xref2) {
         ppcGenNumericRecord(PPC_INT_VALUE, s_cp.funBegPosition, "", "\n");

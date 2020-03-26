@@ -14,7 +14,7 @@ extern Symbol *jslPrependDirectEnclosingInstanceArgument(Symbol *args);
 extern Symbol *jslMethodHeader(unsigned modif, Symbol *type, Symbol *decl, int storage, SymbolList *throws);
 extern Symbol *jslTypeNameDefinition(S_idList *tname);
 extern Symbol *jslTypeSymbolDefinition(char *ttt2, S_idList *packid,
-                                       enum addYesOrNo add, int order, int isSingleImportedFlag);
+                                         int add, int order, int isSingleImportedFlag);
 extern int jslClassifyAmbiguousTypeName(S_idList *name, Symbol **str);
 extern void jslAddNestedClassesToJslTypeTab( Symbol *cc, int order);
 extern void jslAddSuperNestedClassesToJslTypeTab( Symbol *cc);

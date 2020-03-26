@@ -23,30 +23,12 @@ typedef unsigned char uchar;
 
 /* *********************************************************************** */
 
-enum extractMode {
-    EXTRACT_NONE,
-    EXTRACT_FUNCTION,
-    EXTRACT_FUNCTION_ADDRESS_ARGS,
-    EXTRACT_MACRO,
-    EXTRACT_LOCAL_VAR,
-    EXTRACT_VALUE_ARGUMENT,
-    EXTRACT_LOCAL_OUT_ARGUMENT,
-    EXTRACT_OUT_ARGUMENT,
-    EXTRACT_IN_OUT_ARGUMENT,
-    EXTRACT_ADDRESS_ARGUMENT,
-    EXTRACT_RESULT_VALUE,
-    EXTRACT_IN_RESULT_VALUE,
-    EXTRACT_LOCAL_RESULT_VALUE,
-    EXTRACT_ERROR,
-};
-
-enum addYesOrNo {
-    ADD_YES,
-    ADD_NO,
-};
-
 enum miscellaneous {						/* misc. constants */
     DEFAULT_VALUE,
+    TYPE_ADD_YES,
+    TYPE_ADD_NO,
+    ADD_YES,
+    ADD_NO,
     CLASS_TO_TYPE,
     CLASS_TO_EXPR,
     CLASS_TO_METHOD,
@@ -78,6 +60,17 @@ enum miscellaneous {						/* misc. constants */
     BEFORE_BLOCK,
     INSIDE_BLOCK,
     AFTER_BLOCK,
+    EXTRACT_LOCAL_VAR,
+    EXTRACT_VALUE_ARGUMENT,
+    EXTRACT_LOCAL_OUT_ARGUMENT,
+    EXTRACT_OUT_ARGUMENT,
+    EXTRACT_IN_OUT_ARGUMENT,
+    EXTRACT_ADDRESS_ARGUMENT,
+    EXTRACT_RESULT_VALUE,
+    EXTRACT_IN_RESULT_VALUE,
+    EXTRACT_LOCAL_RESULT_VALUE,
+    EXTRACT_NONE,
+    EXTRACT_ERROR,
     INVOCATION_XREF,
     INVOCATION_SETUP,
     INVOCATION_SPELLER,
@@ -1438,7 +1431,7 @@ typedef struct options {
     int olineLen;
     char *htmlLinkSuffix;
     char *olExtractAddrParPrefix;
-    enum extractMode extractMode;
+    int extractMode;
     int htmlFunSeparate;
     int maxCompletions;
     int editor;

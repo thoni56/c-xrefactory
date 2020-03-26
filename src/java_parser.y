@@ -65,7 +65,7 @@
 #define JslImportSingleDeclaration(iname) {\
     Symbol *sym;\
     jslClassifyAmbiguousTypeName(iname, &sym);\
-    jslTypeSymbolDefinition(iname->id.name, iname->next, ADD_YES,ORDER_PREPEND, 1);\
+    jslTypeSymbolDefinition(iname->id.name, iname->next, TYPE_ADD_YES,ORDER_PREPEND, 1);\
 }
 
 /* Import on demand has to solve following situation (not handled by JSL) */
@@ -4367,21 +4367,21 @@ void javaParsingInitializations(void) {
             Symbol *ss;
             //&javaMapDirectoryFiles2(s_javaLangName,
             //&			javaAddMapedTypeName, NULL, s_javaLangName, NULL);
-            ss = javaTypeSymbolDefinition(s_javaLangObjectName,ACC_DEFAULT, ADD_NO);
+            ss = javaTypeSymbolDefinition(s_javaLangObjectName,ACC_DEFAULT, TYPE_ADD_NO);
             s_javaObjectSymbol = ss;
             FILLF_typeModifiers(&s_javaObjectModifier,TypeStruct,t,ss,NULL,NULL);
             s_javaObjectModifier.u.t = ss;
 
-            ss = javaTypeSymbolDefinition(s_javaLangStringName,ACC_DEFAULT, ADD_NO);
+            ss = javaTypeSymbolDefinition(s_javaLangStringName,ACC_DEFAULT, TYPE_ADD_NO);
             s_javaStringSymbol = ss;
             FILLF_typeModifiers(&s_javaStringModifier,TypeStruct,t,ss,NULL,NULL);
             s_javaStringModifier.u.t = ss;
 
-            ss = javaTypeSymbolDefinition(s_javaLangClassName,ACC_DEFAULT, ADD_NO);
+            ss = javaTypeSymbolDefinition(s_javaLangClassName,ACC_DEFAULT, TYPE_ADD_NO);
             FILLF_typeModifiers(&s_javaClassModifier,TypeStruct,t,ss,NULL,NULL);
             s_javaClassModifier.u.t = ss;
-            s_javaCloneableSymbol = javaTypeSymbolDefinition(s_javaLangCloneableName,ACC_DEFAULT, ADD_NO);
-            s_javaIoSerializableSymbol = javaTypeSymbolDefinition(s_javaIoSerializableName,ACC_DEFAULT, ADD_NO);
+            s_javaCloneableSymbol = javaTypeSymbolDefinition(s_javaLangCloneableName,ACC_DEFAULT, TYPE_ADD_NO);
+            s_javaIoSerializableSymbol = javaTypeSymbolDefinition(s_javaIoSerializableName,ACC_DEFAULT, TYPE_ADD_NO);
 
             javaInitArrayObject();
 }

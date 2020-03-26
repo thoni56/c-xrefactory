@@ -4,6 +4,11 @@
 #include "proto.h"
 #include "symbol.h"
 
+enum extractModes {
+    EXTR_FUNCTION,
+    EXTR_FUNCTION_ADDRESS_ARGS,
+    EXTR_MACRO,
+};
 
 extern Symbol * addContinueBreakLabelSymbol(int labn, char *name);
 extern void actionsBeforeAfterExternalDefinition(void);
