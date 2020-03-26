@@ -1004,12 +1004,6 @@ typedef struct stringAddrList {
     struct stringAddrList *next;
 } S_stringAddrList;
 
-typedef struct macroArgTabElem {
-    char *name;
-    char *linkName;
-    int order;
-} S_macroArgTabElem;
-
 typedef enum {
     INPUT_DIRECT,
     INPUT_VIA_UNZIP,

@@ -97,6 +97,13 @@ void initAllInputs(void) {
 }
 
 
+static void fillMacroArgTabElem(S_macroArgTabElem *macroArgTabElem, char *name, char *linkName,
+                                int order) {
+    macroArgTabElem->name = name;
+    macroArgTabElem->linkName = linkName;
+    macroArgTabElem->order = order;
+}
+
 void fillLexInput(S_lexInput *lexInput, char *currentLexem, char *endOfBuffer,
                   char *beginningOfBuffer, char *macroName, char margExpFlag) {
     lexInput->currentLexem = currentLexem;
@@ -227,7 +234,7 @@ static void setOpenFileInfo(char *ss) {
 /* ***************************************************************** */
 
 void ppMemInit(void) {
-    PP_ALLOCC(s_maTab.tab, MAX_MACRO_ARGS, struct macroArgTabElem *);
+    PP_ALLOCC(s_maTab.tab, MAX_MACRO_ARGS, S_macroArgTabElem *);
     maTabNoAllocInit(&s_maTab, MAX_MACRO_ARGS);
     ppMemoryi = 0;
 }
@@ -751,7 +758,7 @@ static void processDefine(int argFlag) {
                 PP_ALLOCC(argLinkName, strlen(tmpBuff)+1, char);
                 strcpy(argLinkName, tmpBuff);
                 SM_ALLOC(ppMemory, maca, S_macroArgTabElem);
-                FILL_macroArgTabElem(maca, mm, argLinkName, argi);
+                fillMacroArgTabElem(maca, mm, argLinkName, argi);
                 foundIndex = maTabAdd(&s_maTab, maca);
                 argi ++;
                 GetNonBlankMaybeLexem(lex);
@@ -787,7 +794,7 @@ static void processDefine(int argFlag) {
     PassLex(cInput.currentLexem, lex, l, v, h, pos, len, 1);
     while (lex != '\n') {
         while(sizei<msize && lex != '\n') {
-            FILL_macroArgTabElem(&mmaca,cc,NULL,0);
+            fillMacroArgTabElem(&mmaca,cc,NULL,0);
             if (lex==IDENTIFIER && maTabIsMember(&s_maTab,&mmaca,&foundIndex)){
                 /* macro argument */
                 addTrivialCxReference(s_maTab.tab[foundIndex]->linkName, TypeMacroArg,StorageDefault,

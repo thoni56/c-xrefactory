@@ -13,6 +13,12 @@ typedef struct macroBody {
     char *body;
 } S_macroBody;
 
+typedef struct macroArgTabElem {
+    char *name;
+    char *linkName;
+    int order;
+} S_macroArgTabElem;
+
 typedef struct lexInput {
     char *currentLexem;
     char *endOfBuffer;

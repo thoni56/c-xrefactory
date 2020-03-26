@@ -3,7 +3,7 @@
 
 /* Macro argument table - instance of hashtable */
 
-#include "proto.h"
+#include "yylex.h"
 
 #define HASH_TAB_NAME maTab
 #define HASH_ELEM_TYPE S_macroArgTabElem
