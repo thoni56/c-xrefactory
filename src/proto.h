@@ -877,7 +877,6 @@ typedef struct cline {					/* should be a little bit union-ified */
     struct symbol   *t;
     short int		symType;
     short int		virtLevel;
-//	unsigned		virtClassOrder;		TODO !!!!
     short int		margn;
     char			**margs;
     struct symbol	*vFunClass;
