@@ -26,11 +26,11 @@ quick:
 	@$(MAKE) -C jar_reading
 	@$(MAKE) -C java_example
 	@$(MAKE) -C edit_server_test_example
-	@$(MAKE) -C olcx_push
-	@$(MAKE) -C olcx_complete
-	@$(MAKE) -C olcx_refactory_rename
-	@$(MAKE) -C olcx_refactory_simple_extract
-	@$(MAKE) -C olcx_refactory_add_parameter
+	@$(MAKE) -C push
+	@$(MAKE) -C complete
+	@$(MAKE) -C rename
+	@$(MAKE) -C simple_extract
+	@$(MAKE) -C add_parameter
 	@$(MAKE) -C extract_with_return
 
 slow:
