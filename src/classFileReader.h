@@ -4,6 +4,16 @@
 #include "proto.h"
 #include "symbol.h"
 
+typedef struct zipArchiveDir {
+    union {
+        struct zipArchiveDir	*sub;
+        unsigned				offset;
+    } u;
+    struct zipArchiveDir		*next;
+    char                name[1];			/* array of char */
+} S_zipArchiveDir;
+
+
 extern void javaHumanizeLinkName( char *inn, char *outn, int size);
 extern Symbol *cfAddCastsToModule(Symbol *memb, Symbol *sup);
 extern void addSuperClassOrInterface( Symbol *memb, Symbol *supp, int origin );

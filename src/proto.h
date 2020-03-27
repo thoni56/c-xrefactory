@@ -973,15 +973,6 @@ typedef struct idList {
     struct idList *next;
 } S_idList;
 
-typedef struct zipArchiveDir {
-    union {
-        struct zipArchiveDir	*sub;
-        unsigned				offset;
-    } u;
-    struct zipArchiveDir		*next;
-    char                name[1];			/* array of char */
-} S_zipArchiveDir;
-
 typedef struct zipFileTabItem {
     char                    fn[MAX_FILE_NAME_SIZE];	/* stored with ';' at the end */
     struct stat				st;						/* status of the archive file */

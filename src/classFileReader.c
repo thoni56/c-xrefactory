@@ -257,6 +257,14 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iB
 
 static CharacterBuffer s_zipTmpBuff;
 
+
+static void initZipArchiveDir(S_zipArchiveDir *dir) {
+    dir->u.sub = NULL;
+    dir->next = NULL;
+    dir->name[0] = '\0';
+}
+
+
 int fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset,
                int addFlag, S_zipArchiveDir **place) {
     S_zipArchiveDir     *aa, **aaa, *p;
@@ -295,7 +303,7 @@ int fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset,
         if (addFlag == ADD_YES) {
             XX_ALLOCC(ss, sizeof(S_zipArchiveDir)+itemlen+1, char);
             p = (S_zipArchiveDir*)ss;
-            FILL_zipArchiveDir(p,sub,NULL,NULL);
+            initZipArchiveDir(p);
             strncpy(p->name, fn, itemlen);
             p->name[itemlen]=0;
             /*&fprintf(dumpOut,"adding new item\n", p->name);fflush(dumpOut);&*/
