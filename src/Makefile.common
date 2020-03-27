@@ -166,7 +166,7 @@ test: c-xref
 	$(MAKE) -C ../tests quick
 
 
-unit:
+unit: $(SRCS)
 	make COVERAGE="$(COVERAGE)" -C unittests
 
 coverage: COVERAGE=--coverage
