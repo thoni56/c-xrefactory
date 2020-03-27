@@ -1054,12 +1054,6 @@ typedef struct memory {
 
 /* ************************ HTML **************************** */
 
-typedef struct disabledList {
-    int             file;
-    int             clas;
-    struct disabledList  *next;
-} S_disabledList;
-
 typedef struct htmlData {
     struct position          *cp;
     struct reference         *np;

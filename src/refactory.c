@@ -23,6 +23,13 @@
 #define RRF_CHARS_TO_PRE_CHECK_AROUND       1
 #define MAX_NARGV_OPTIONS_NUM               50
 
+typedef struct disabledList {
+    int             file;
+    int             clas;
+    struct disabledList  *next;
+} S_disabledList;
+
+
 static S_editorUndo *s_refactoringStartPoint;
 
 static int s_refactoryXrefEditSrvSubTaskFirstPassing = 1;
@@ -2404,6 +2411,16 @@ static int refactoryInteractiveAskForAddImportAction(S_editorMarkerList *ppp, in
     return(action);
 }
 
+static S_disabledList *newDisabledList(S_olSymbolsMenu *mm, int cfile, S_disabledList *disabled) {
+    S_disabledList *dl;
+
+    ED_ALLOC(dl, S_disabledList);
+    *dl = (S_disabledList){.file = cfile, .clas = mm->s.vApplClass, .next = disabled};
+
+    return dl;
+}
+
+
 static void refactoryPerformReduceNamesAndAddImportsInSingleFile(
                                                                  S_editorMarker *point, S_editorRegionList **regions, int interactive
                                                                  ) {
@@ -2469,8 +2486,7 @@ static void refactoryPerformReduceNamesAndAddImportsInSingleFile(
                     defaultAction = NID_SINGLE_TYPE_IMPORT;
                     break;
                 case RC_CONTINUE:
-                    ED_ALLOC(dl, S_disabledList);
-                    FILL_disabledList(dl, cfile, mm->s.vApplClass, disabled);
+                    dl = newDisabledList(mm, cfile, disabled);
                     disabled = dl;
                     defaultAction = NID_KEPP_FQT_NAME;
                     break;
