@@ -123,7 +123,10 @@ def struct2dot(args):
         if verbose:
             eprint("Parsing with options = {0}".format(options))
         cpp_args = list(filter(None, options))
+        if verbose:
+            eprint("Calling 'parse_file({0}, use_cpp=True, {1})".format(args[-1], cpp_args + args[0:-1]))
         ast = parse_file(args[-1], use_cpp=True,
+                         cpp_path="/usr/local/bin/cpp-9",
                          cpp_args=cpp_args + args[0:-1])
     except ParseError as e:
         print("ERROR: {} - C99 parse error".format(e))
