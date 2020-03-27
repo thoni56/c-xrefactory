@@ -5,12 +5,15 @@
 # Create a DOT graph of struct dependencies
 #
 # Usage:
-#   struct2dot { <cpp_directive> } <headerfile>
+#   struct2dot { <cpp_directive> } <headerfile> [ <colouring> ]
 #
 # <cpp_directive>: any 'cpp' directive but most useful is e.g.
 #                  "-I <directory>" to ensure cpp finds files.
 #
 # <headerfile>: file with structs that you want a graph for
+#
+# <colouring>: optional text file that will colour all nodes with
+#              a name in this file in a different colour
 #
 # Simplistically adapted from pycparser example: func_defs.py
 # and on the cgreen-mocker in https://github.com/cgreen-devs/cgreen
@@ -52,8 +55,9 @@ def eprint(*args, **kwargs):
 
 def node2dot(node):
     if isinstance(node.type, c_ast.TypeDecl) and isinstance(node.type.type, c_ast.Struct):
-        if node.coord.file == sys.argv[-1]:
-            print("   ", node.type.type.name, "[style=filled,color=red]")
+        colour = "red" if node.type.type.name in coloured_nodes else "grey"
+        if node.coord.file == source_file:
+            print("   ", node.type.type.name, "[style=filled,color={0}]".format(colour))
         print("   ", node.type.type.name, "-> {", end="")
         if node.type.type.decls:  # has fields?
             for field in node.type.type.decls:
@@ -80,7 +84,7 @@ def is_structured(node):
     return isinstance(node, c_ast.TypeDecl) or isinstance(node, c_ast.PtrDecl) or isinstance(node, c_ast.ArrayDecl)
 
 
-def struct2dot(args):
+def struct2dot(source_file, args):
     # Note that cpp is used. Provide a path to your own cpp or
     # make sure one exists in PATH.
 
@@ -124,10 +128,9 @@ def struct2dot(args):
             eprint("Parsing with options = {0}".format(options))
         cpp_args = list(filter(None, options))
         if verbose:
-            eprint("Calling 'parse_file({0}, use_cpp=True, {1})".format(args[-1], cpp_args + args[0:-1]))
-        ast = parse_file(args[-1], use_cpp=True,
-                         cpp_path="/usr/local/bin/cpp-9",
-                         cpp_args=cpp_args + args[0:-1])
+            eprint("Calling 'parse_file({0}, use_cpp=True, {1})".format(source_file, cpp_args + args))
+        ast = parse_file(source_file, use_cpp=True,
+                         cpp_args=cpp_args + args)
     except ParseError as e:
         print("ERROR: {} - C99 parse error".format(e))
         return
@@ -169,14 +172,38 @@ if __name__ == "__main__":
     if len(sys.argv) <= 1:
         usage()
         exit(-1)
+
     if '-v' in sys.argv:
         verbose = True
         sys.argv.remove('-v')
     else:
         verbose = False
+
     if '-gnu' in sys.argv:
         add_gnuisms = True
         sys.argv.remove('-gnu')
     else:
         add_gnuisms = False
-    struct2dot(sys.argv[1:])
+
+    colour_option = '-colour-file'
+    coloured_nodes = []
+    if colour_option in sys.argv:
+        colour_file_index = sys.argv.index(colour_option)
+        colouring_file = sys.argv[colour_file_index+1]
+        if not os.path.exists(colouring_file):
+            eprint("Colouring file '{0}' does not exist".format(colouring_file))
+        sys.argv.remove(colour_option)
+        sys.argv.remove(colouring_file)
+        with open(colouring_file, 'r') as file:
+            coloured_nodes = file.read().split()
+            if verbose:
+                eprint("Coloured nodes: {0}".format(coloured_nodes))
+
+    if len(sys.argv) <= 1:
+        usage()
+        exit(-1)
+
+    source_file = sys.argv[-1]
+    if verbose:
+        eprint("Source file = '{0}'".format(source_file))
+    struct2dot(source_file, sys.argv[1:-1])
