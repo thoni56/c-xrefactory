@@ -249,7 +249,6 @@ bool javaTypeFileExist(S_idList *name) {
     S_stringList	*cp;
     int				i;
     S_idList	tname;
-    S_zipArchiveDir	*place;
 
     if (name==NULL) return false;
     tname = *name;
@@ -293,7 +292,7 @@ bool javaTypeFileExist(S_idList *name) {
     // databazes
     fname=javaCreateComposedName(NULL,&tname,'/',"class",tmpMemory,SIZE_TMP_MEM);
     for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && s_zipArchiveTab[i].fn[0]!=0; i++) {
-        if (fsIsMember(&s_zipArchiveTab[i].dir,fname,0,ADD_NO,&place))
+        if (fsIsMember(&s_zipArchiveTab[i].dir,fname,0,ADD_NO,NULL))
             return true;
     }
     // auto-inferred source-path

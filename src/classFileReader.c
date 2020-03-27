@@ -262,8 +262,12 @@ int fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset,
     S_zipArchiveDir     *aa, **aaa, *p;
     int                 itemlen, res;
     char                *ss;
+
     if (dir == NULL) return(0);
-    *place = *dir;
+
+    /* Allow NULL for place to indicate "not interested" */
+    if (place != NULL) *place = *dir;
+
     res = 1;
     if (fn[0] == 0) {
         error(ERR_INTERNAL,"looking for empty file name in 'fsdir'");
@@ -305,7 +309,10 @@ int fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset,
             return(0);
         }
     }
-    *place = aa;
+
+    if (place != NULL)
+        *place = aa;
+
     if (fn[itemlen-1] == '/') {
         dir = &(aa->u.sub);
         fn = fn+itemlen;
