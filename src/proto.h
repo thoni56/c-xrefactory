@@ -969,7 +969,7 @@ typedef struct javaStat {
 typedef struct idList {
     struct id id;
     char *fname;                /* fqt name for java */
-    uchar nameType;             /* type of name segment for java */
+    enum types nameType;             /* type of name segment for java */
     struct idList *next;
 } S_idList;
 
