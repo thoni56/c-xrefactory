@@ -13,13 +13,13 @@ typedef struct zipArchiveDir {
     char                name[1];			/* array of char */
 } S_zipArchiveDir;
 
-typedef struct zipFileTabItem {
+typedef struct zipFileTableItem {
     char                    fn[MAX_FILE_NAME_SIZE];	/* stored with ';' at the end */
     struct stat				st;						/* status of the archive file */
     struct zipArchiveDir	*dir;
-} S_zipFileTabItem;
+} S_zipFileTableItem;
 
-extern S_zipFileTabItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
+extern S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 
 
 extern void javaHumanizeLinkName( char *inn, char *outn, int size);
@@ -31,9 +31,9 @@ extern void fsRecMapOnFiles(S_zipArchiveDir *dir, char *zip, char *path, void (*
 extern int fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset,
                       int addFlag, S_zipArchiveDir **place);
 extern int zipIndexArchive(char *name);
-extern int zipFindFile(char *name, char **resName, S_zipFileTabItem *zipfile);
+extern int zipFindFile(char *name, char **resName, S_zipFileTableItem *zipfile);
 extern void javaMapZipDirFile(
-                              S_zipFileTabItem *zipfile,
+                              S_zipFileTableItem *zipfile,
                               char *packfile,
                               S_completions *a1,
                               void *a2,

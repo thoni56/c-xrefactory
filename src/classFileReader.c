@@ -39,7 +39,7 @@ union constantPoolUnion {
     struct javaCpRecordInfo         rec;
 };
 
-S_zipFileTabItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
+S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 
 /* *********************************************************************** */
 
@@ -267,7 +267,7 @@ static void initZipArchiveDir(S_zipArchiveDir *dir) {
 }
 
 
-static void fillZipFileTabItem(S_zipFileTabItem *fileItem, struct stat st, S_zipArchiveDir *dir) {
+static void fillZipFileTabItem(S_zipFileTableItem *fileItem, struct stat st, S_zipArchiveDir *dir) {
     fileItem->fn[0] = '\0';
     fileItem->st = st;
     fileItem->dir = dir;
@@ -383,7 +383,7 @@ static int findEndOfCentralDirectory(char **accc, char **affin,
 }
 
 static void zipArchiveScan(char **accc, char **affin, CharacterBuffer *iBuf,
-                           S_zipFileTabItem *zip, int fsize) {
+                           S_zipFileTableItem *zip, int fsize) {
     char fn[MAX_FILE_NAME_SIZE];
     char *ccc, *ffin;
     S_zipArchiveDir *place;
@@ -515,7 +515,7 @@ static int zipSeekToFile(char **accc, char **affin, CharacterBuffer *iBuf,
 
 int zipFindFile(char *name,
                 char **resName,             /* can be NULL !!! */
-                S_zipFileTabItem *zipfile
+                S_zipFileTableItem *zipfile
                 ) {
     char *pp;
     char fname[MAX_FILE_NAME_SIZE];
@@ -535,7 +535,7 @@ int zipFindFile(char *name,
 }
 
 void javaMapZipDirFile(
-                       S_zipFileTabItem *zipfile,
+                       S_zipFileTableItem *zipfile,
                        char *packfile,
                        S_completions *a1,
                        void *a2,
