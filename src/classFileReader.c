@@ -267,6 +267,12 @@ static void initZipArchiveDir(S_zipArchiveDir *dir) {
 }
 
 
+static void fillZipFileTabItem(S_zipFileTabItem *fileItem, struct stat st, S_zipArchiveDir *dir) {
+    fileItem->fn[0] = '\0';
+    fileItem->st = st;
+    fileItem->dir = dir;
+}
+
 int fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset,
                int addFlag, S_zipArchiveDir **place) {
     S_zipArchiveDir     *aa, **aaa, *p;
@@ -462,7 +468,7 @@ int zipIndexArchive(char *name) {
         strcpy(s_zipArchiveTable[archiveIndex].fn, name);
         s_zipArchiveTable[archiveIndex].fn[namelen] = ZIP_SEPARATOR_CHAR;
         s_zipArchiveTable[archiveIndex].fn[namelen+1] = 0;
-        FILL_zipFileTabItem(&s_zipArchiveTable[archiveIndex], fst, NULL);
+        fillZipFileTabItem(&s_zipArchiveTable[archiveIndex], fst, NULL);
         zipArchiveScan(&buffer->next,&buffer->end,buffer,&s_zipArchiveTable[archiveIndex], fst.st_size);
         fclose(ff);
     }

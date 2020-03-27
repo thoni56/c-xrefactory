@@ -973,11 +973,6 @@ typedef struct idList {
     struct idList *next;
 } S_idList;
 
-typedef struct zipFileTabItem {
-    char                    fn[MAX_FILE_NAME_SIZE];	/* stored with ';' at the end */
-    struct stat				st;						/* status of the archive file */
-    struct zipArchiveDir	*dir;
-} S_zipFileTabItem;
 
 /* ***************** unique counters  *********************** */
 

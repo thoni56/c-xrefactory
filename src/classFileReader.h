@@ -13,6 +13,11 @@ typedef struct zipArchiveDir {
     char                name[1];			/* array of char */
 } S_zipArchiveDir;
 
+typedef struct zipFileTabItem {
+    char                    fn[MAX_FILE_NAME_SIZE];	/* stored with ';' at the end */
+    struct stat				st;						/* status of the archive file */
+    struct zipArchiveDir	*dir;
+} S_zipFileTabItem;
 
 extern S_zipFileTabItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 
