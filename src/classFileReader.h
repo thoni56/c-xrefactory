@@ -14,6 +14,9 @@ typedef struct zipArchiveDir {
 } S_zipArchiveDir;
 
 
+extern S_zipFileTabItem s_zipArchiveTab[MAX_JAVA_ZIP_ARCHIVES];
+
+
 extern void javaHumanizeLinkName( char *inn, char *outn, int size);
 extern Symbol *cfAddCastsToModule(Symbol *memb, Symbol *sup);
 extern void addSuperClassOrInterface( Symbol *memb, Symbol *supp, int origin );

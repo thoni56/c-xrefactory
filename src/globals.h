@@ -222,6 +222,4 @@ extern S_javaStat s_initJavaStat;
 
 extern char *s_javaThisPackageName;
 
-extern S_zipFileTabItem s_zipArchiveTab[MAX_JAVA_ZIP_ARCHIVES];
-
 #endif

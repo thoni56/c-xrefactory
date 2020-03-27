@@ -39,6 +39,8 @@ union constantPoolUnion {
     struct javaCpRecordInfo         rec;
 };
 
+S_zipFileTabItem s_zipArchiveTab[MAX_JAVA_ZIP_ARCHIVES];
+
 /* *********************************************************************** */
 
 #define GetChar(cch, ccc, ffin, bbb) {                                  \
