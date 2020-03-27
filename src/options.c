@@ -714,8 +714,8 @@ void getJavaClassAndSourcePath(void) {
     int i;
 
     for(i=0; i<MAX_JAVA_ZIP_ARCHIVES; i++) {
-        if (s_zipArchiveTab[i].fn[0] == 0) break;
-        s_zipArchiveTab[i].fn[0]=0;
+        if (s_zipArchiveTable[i].fn[0] == 0) break;
+        s_zipArchiveTable[i].fn[0]=0;
     }
 
     // optimize wild char expand and getenv [5.2.2003]

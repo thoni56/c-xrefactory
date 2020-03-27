@@ -37,10 +37,10 @@ static char *autoDetectJavaVersion(void) {
     int i;
     char *res;
     // O.K. pass jars and look for rt.jar
-    for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && s_zipArchiveTab[i].fn[0]!=0; i++) {
-        if (stringContainsSubstring(s_zipArchiveTab[i].fn, "rt.jar")) {
+    for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && s_zipArchiveTable[i].fn[0]!=0; i++) {
+        if (stringContainsSubstring(s_zipArchiveTable[i].fn, "rt.jar")) {
             // I got it, detect java version
-            if (stringContainsSubstring(s_zipArchiveTab[i].fn, "1.4")) {
+            if (stringContainsSubstring(s_zipArchiveTable[i].fn, "1.4")) {
                 res = JAVA_VERSION_1_4;
                 goto fini;
             }

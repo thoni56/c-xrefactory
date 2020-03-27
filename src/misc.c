@@ -1559,9 +1559,9 @@ void javaMapDirectoryFiles1(
         }
     }
     // databazes
-    for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && s_zipArchiveTab[i].fn[0]!=0; i++) {
-        javaMapZipDirFile(&s_zipArchiveTab[i],packfile,a1,a2,a3,fun,
-                          s_zipArchiveTab[i].fn,packfile);
+    for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && s_zipArchiveTable[i].fn[0]!=0; i++) {
+        javaMapZipDirFile(&s_zipArchiveTable[i],packfile,a1,a2,a3,fun,
+                          s_zipArchiveTable[i].fn,packfile);
     }
     // auto-inferred source path
     if (s_javaStat->namedPackageDir != NULL) {
@@ -1632,7 +1632,7 @@ void jarFileParse(char *file_name) {
     // following make create a loop, but it is very unprobable
     s_fileTab.tab[fileIndex]->b.cxLoading = 1;
     if (archive>=0 && archive<MAX_JAVA_ZIP_ARCHIVES) {
-        fsRecMapOnFiles(s_zipArchiveTab[archive].dir, s_zipArchiveTab[archive].fn,
+        fsRecMapOnFiles(s_zipArchiveTable[archive].dir, s_zipArchiveTable[archive].fn,
                         "", scanClassFile, NULL);
     }
     s_fileTab.tab[fileIndex]->b.cxLoaded = 1;
@@ -1641,7 +1641,7 @@ void jarFileParse(char *file_name) {
 void scanJarFilesForTagSearch(void) {
     int i;
     for (i=0; i<MAX_JAVA_ZIP_ARCHIVES; i++) {
-        fsRecMapOnFiles(s_zipArchiveTab[i].dir, s_zipArchiveTab[i].fn,
+        fsRecMapOnFiles(s_zipArchiveTable[i].dir, s_zipArchiveTable[i].fn,
                         "", scanClassFile, NULL);
     }
 }
