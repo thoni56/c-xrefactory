@@ -406,30 +406,6 @@ static void zipArchiveScan(char **accc, char **affin, CharacterBuffer *iBuf,
     *accc = ccc; *affin = ffin;
 }
 
-#if 0
-static void zipArchiveCdOffset(char **accc, char **affin, S_charBuf *iBuf,
-                               unsigned *offset, char *archivename) {
-    char fn[MAX_FILE_NAME_SIZE];
-    char *ccc, *ffin;
-    int headSig,madeByVersion,extractVersion,bitFlags,compressionMethod;
-    int lastModTime,lastModDate,fnameLen,extraLen,fcommentLen,diskNumber;
-    int i,internFileAttribs;
-    unsigned externFileAttribs,localHeaderOffset;
-    unsigned crc32,compressedSize,unCompressedSize;
-    unsigned fsize, lastSig;
-    ccc = *accc; ffin = *affin;
-    for(;;) {
-        GetCurrentFileOffset(ccc,ffin,iBuf, (*offset));
-        zipReadLocalFileHeader(&ccc, &ffin, iBuf, fn, &fsize, &lastSig,
-                               archivename);
-        if (lastSig != 0x04034b50) break;
-        //&fprintf(dumpOut,"skipping %d\n",compressedSize);fflush(dumpOut);
-        SkipNChars(fsize,ccc,ffin,iBuf);
-    }
-    *accc = ccc; *affin = ffin;
-}
-#endif
-
 int zipIndexArchive(char *name) {
     int archiveIndex, namelen;
     FILE *ff;
