@@ -2,19 +2,6 @@
 # -----------------------------------------------------------------
 # struct2dot.py
 #
-# Create a DOT graph of struct dependencies
-#
-# Usage:
-#   struct2dot { <cpp_directive> } <headerfile> [ <colouring> ]
-#
-# <cpp_directive>: any 'cpp' directive but most useful is e.g.
-#                  "-I <directory>" to ensure cpp finds files.
-#
-# <headerfile>: file with structs that you want a graph for
-#
-# <colouring>: optional text file that will colour all nodes with
-#              a name in this file in a different colour
-#
 # Simplistically adapted from pycparser example: func_defs.py
 # and on the cgreen-mocker in https://github.com/cgreen-devs/cgreen
 #
@@ -145,13 +132,17 @@ def struct2dot(source_file, args):
 def usage():
     print("""
 Usage:
-    struct2dot.py { <cpp_directive> } <headerfile>
+    Create a DOT graph of struct dependencies
 
-    <cpp_directive>: any 'cpp' directive but most useful are e.g.
-                     "-I <directory>" to ensure cpp finds files and
-                     "-D <define>" to create an inline define
+        struct2dot { <cpp_directive> } <headerfile> [ <coloured> ]
 
-    <headerfile>:    file with structs to create structs to graph
+    <cpp_directive>: any 'cpp' directive but most useful is e.g.
+                     "-I <directory>" to ensure cpp finds files.
+
+    <headerfile>: file with structs that you want a graph for
+
+    <coloured>: optional text file that will colour all nodes with
+                a name in this file in a different colour
 
     struct2dot takes a header file and generates a DOT graph for the
     relation between any struct's in it and other structs.
