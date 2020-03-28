@@ -922,13 +922,13 @@ int isSmallerOrEqClassR(int inf, int sup, int level) {
     if (inf == sup) return(level);
     assert(s_fileTab.tab[inf]);
     for(p=s_fileTab.tab[inf]->sups; p!=NULL; p=p->next) {
-        if (p->clas == sup) {
+        if (p->superClass == sup) {
             //&fprintf(dumpOut,"return 1\n");
             return(level+1);
         }
     }
     for(p=s_fileTab.tab[inf]->sups; p!=NULL; p=p->next) {
-        smallerLevel = isSmallerOrEqClassR(p->clas, sup, level+1);
+        smallerLevel = isSmallerOrEqClassR(p->superClass, sup, level+1);
         if (smallerLevel) {
             //&fprintf(dumpOut,"return 1\n");
             return(smallerLevel);
@@ -4462,7 +4462,7 @@ int javaGetSuperClassNumFromClassNum(int cn) {
     int             res;
     S_chReference   *cl;
     for(cl = s_fileTab.tab[cn]->sups; cl!=NULL; cl=cl->next) {
-        res = cl->clas;
+        res = cl->superClass;
         if (! s_fileTab.tab[res]->b.isInterface) return(res);
     }
     return(s_noneFileIndex);

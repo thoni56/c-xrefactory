@@ -471,20 +471,9 @@ static void writeFileSourceIndexItem(struct fileItem *fileItem, int ii) {
 static void genClassHierarchyItems(struct fileItem *fi, int ii) {
     S_chReference *p;
     for(p=fi->sups; p!=NULL; p=p->next) {
-        writeSubClassInfo(p->clas, ii, p->ofile);
+        writeSubClassInfo(p->superClass, ii, p->ofile);
     }
 }
-
-static S_chReference *newClassHierarchyReference(int origin, int super, S_fileItem *ii) {
-    S_chReference *p;
-    CX_ALLOC(p, S_chReference);
-    p->ofile = origin;
-    p->clas = super;
-    p->next = ii->sups;
-    //FILL_chReference(p, origin, sup, ii->sups);
-    return(p);
-}
-
 
 static void crSubClassInfo(int sup, int inf, int origin, int genfl) {
     S_fileItem      *ii, *jj;
@@ -493,15 +482,15 @@ static void crSubClassInfo(int sup, int inf, int origin, int genfl) {
     ii = s_fileTab.tab[inf];
     jj = s_fileTab.tab[sup];
     assert(ii && jj);
-    for(p=ii->sups; p!=NULL && p->clas!=sup; p=p->next) ;
+    for(p=ii->sups; p!=NULL && p->superClass!=sup; p=p->next) ;
     if (p==NULL) {
-        p = newClassHierarchyReference(origin, sup, ii);
+        p = newClassHierarchyReference(origin, sup, ii->sups);
         ii->sups = p;
         assert(s_opt.taskRegime);
         if (s_opt.taskRegime == RegimeXref) {
             if (genfl == CX_FILE_ITEM_GEN) writeSubClassInfo(sup, inf, origin);
         }
-        pp = newClassHierarchyReference(origin, inf, jj);
+        pp = newClassHierarchyReference(origin, inf, jj->sups);
         jj->infs = pp;
     }
 }

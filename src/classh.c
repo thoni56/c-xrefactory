@@ -36,6 +36,19 @@ static void clearTmpClassBackPointersToMenu(void) {
     memset(tmpVApplClassBackPointersToMenu, 0, sizeof(tmpVApplClassBackPointersToMenu));
 }
 
+
+S_chReference *newClassHierarchyReference(int origin, int superClass, S_chReference *next) {
+    S_chReference *p;
+
+    CX_ALLOC(p, S_chReference);
+    p->ofile = origin;
+    p->superClass = superClass;
+    p->next = next;
+
+    return p;
+}
+
+
 int classHierarchyClassNameLess(int c1, int c2) {
     char *nn;
     S_fileItem *fi1, *fi2;
@@ -60,7 +73,7 @@ int classHierarchyClassNameLess(int c1, int c2) {
 }
 
 int classHierarchySupClassNameLess(S_chReference *c1, S_chReference *c2) {
-    return(classHierarchyClassNameLess(c1->clas, c2->clas));
+    return(classHierarchyClassNameLess(c1->superClass, c2->superClass));
 }
 
 static int markTransitiveRelevantSubsRec(int cind, int pass) {
@@ -71,14 +84,14 @@ static int markTransitiveRelevantSubsRec(int cind, int pass) {
     if (THEBIT(tmpChMarkProcessed,cind)) return(THEBIT(tmpChRelevant,cind));
     SETBIT(tmpChMarkProcessed, cind);
     for(s=fi->infs; s!=NULL; s=s->next) {
-        tt = s_fileTab.tab[s->clas];
+        tt = s_fileTab.tab[s->superClass];
         assert(tt);
         // do not descend from class to an
         // interface, because of Object -> interface lapsus ?
         // if ((! fi->b.isInterface) && tt->b.isInterface ) continue;
         // do not mix interfaces in first pass
         //&     if (pass==FIRST_PASS && tt->b.isInterface) continue;
-        if (markTransitiveRelevantSubsRec(s->clas, pass)) {
+        if (markTransitiveRelevantSubsRec(s->superClass, pass)) {
             //&fprintf(dumpOut,"setting %s relevant\n",fi->name);
             SETBIT(tmpChRelevant, cind);
         }
@@ -360,13 +373,13 @@ static void descendTheClassHierarchy(   FILE *ff,
     LIST_MERGE_SORT(S_chReference, fi->infs, classHierarchySupClassNameLess);
     s=fi->infs;
     while (s!=NULL) {
-        assert(s_fileTab.tab[s->clas]);
+        assert(s_fileTab.tab[s->superClass]);
         snext = s->next;
-        while (snext!=NULL && THEBIT(tmpChRelevant,snext->clas)==0) {
+        while (snext!=NULL && THEBIT(tmpChRelevant,snext->superClass)==0) {
             snext = snext->next;
         }
         *nextbars = (S_intlist) {.i = (snext!=NULL), .next = nextbars};
-        descendTheClassHierarchy(ff, s->clas, vFunCl, rrr, level+1,
+        descendTheClassHierarchy(ff, s->superClass, vFunCl, rrr, level+1,
                                  &snextbar, virtFlag, pass);
         s = snext;
     }
@@ -386,9 +399,9 @@ static int genThisClassHierarchy(int vApplCl, int oldvFunCl,
     if (THEBIT(tmpChRelevant,vApplCl)==0) return(0);
     // check if you are at the top of a sub-hierarchy
     for(s=fi->sups; s!=NULL; s=s->next) {
-        tt = s_fileTab.tab[s->clas];
+        tt = s_fileTab.tab[s->superClass];
         assert(tt);
-        if (THEBIT(tmpChRelevant,s->clas) && THEBIT(tmpChProcessed,s->clas)==0) return(0);
+        if (THEBIT(tmpChRelevant,s->superClass) && THEBIT(tmpChProcessed,s->superClass)==0) return(0);
     }
     //&fprintf(dumpOut,"getting %s %s\n",top->b.isInterface?"interface":"class",top->name);fflush(dumpOut);
     // yes I am on the top, recursively descent and print all subclasses
@@ -574,7 +587,7 @@ void splitMenuPerSymbolsAndMap(S_olSymbolsMenu *rrr,
         rrr->next = all;
     }
 }
-#endif
+
 
 void htmlGenGlobRefLists(S_olSymbolsMenu *rrr, FILE *ff, char *fn) {
     S_olSymbolsMenu *rr;

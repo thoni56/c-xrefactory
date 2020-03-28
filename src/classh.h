@@ -7,16 +7,16 @@
 
 typedef struct chReference {
     int					ofile;		/* file of origin */
-    int                 clas;		/* index of super-class */
+    int                 superClass;		/* index of super-class */
     struct chReference	*next;
 } S_chReference;
 
 
 
+ S_chReference *newClassHierarchyReference(int origin, int class, S_chReference *next);
 extern void classHierarchyGenInit(void);
 extern void setTmpClassBackPointersToMenu(S_olSymbolsMenu *menu);
-extern void splitMenuPerSymbolsAndMap(
-                                      S_olSymbolsMenu *rrr,
+extern void splitMenuPerSymbolsAndMap(S_olSymbolsMenu *rrr,
                                       void (*fun)(S_olSymbolsMenu *, void *, void *),
                                       void *p1,
                                       char *p2
