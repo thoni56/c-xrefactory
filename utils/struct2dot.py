@@ -10,7 +10,7 @@
 # the whole world of libc headers. To use it, make a soft link with
 # the name 'pycparser' in the directory you are running this from, or
 # in the directory of this script, to the top directory of the
-# pycparser source, and cgreen-mocker will pick it up
+# pycparser source, and the script will pick it up
 # automatically. Or you can point to the actual fake_lib directory in
 # a pycparser distribution using a command line 'cpp_directive' arg.
 #
@@ -19,9 +19,6 @@
 #    https://github.com/eliben/pycparser
 #
 # (C) 2020, Thomas Nilefalk
-#
-# Using pycparser for printing out all the functions defined in a
-# C file.
 #
 # PyCParser - Copyright (C) 2008-2015, Eli Bendersky
 # License: BSD
