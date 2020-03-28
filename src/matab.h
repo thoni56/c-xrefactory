@@ -10,7 +10,7 @@
 
 #include "hashtab.th"
 
-extern S_macroArgumentTable s_maTab;
+extern S_macroArgumentTable s_macroArgumentTable;
 
 #ifndef _MATAB_
 #undef HASH_TAB_NAME

@@ -86,7 +86,7 @@ void initAllInputs(void) {
     macroStackIndex=0;
     s_ifEvaluation = 0;
     s_cxRefFlag = 0;
-    macroArgumentTableNoAllocInit(&s_maTab, MAX_MACRO_ARGS);
+    macroArgumentTableNoAllocInit(&s_macroArgumentTable, MAX_MACRO_ARGS);
     ppMemoryi=0;
     s_olstring[0]=0;
     s_olstringFound = 0;
@@ -234,8 +234,8 @@ static void setOpenFileInfo(char *ss) {
 /* ***************************************************************** */
 
 void ppMemInit(void) {
-    PP_ALLOCC(s_maTab.tab, MAX_MACRO_ARGS, S_macroArgumentTableElement *);
-    macroArgumentTableNoAllocInit(&s_maTab, MAX_MACRO_ARGS);
+    PP_ALLOCC(s_macroArgumentTable.tab, MAX_MACRO_ARGS, S_macroArgumentTableElement *);
+    macroArgumentTableNoAllocInit(&s_macroArgumentTable, MAX_MACRO_ARGS);
     ppMemoryi = 0;
 }
 
@@ -730,7 +730,7 @@ static void processDefine(int argFlag) {
     setGlobalFileDepNames(cc, pp, MEM_PP);
     mname = pp->name;
     /* process arguments */
-    macroArgumentTableNoAllocInit(&s_maTab, s_maTab.size);
+    macroArgumentTableNoAllocInit(&s_macroArgumentTable, s_macroArgumentTable.size);
     argi = -1;
     if (argFlag) {
         GetNonBlankMaybeLexem(lex);
@@ -759,13 +759,13 @@ static void processDefine(int argFlag) {
                 strcpy(argLinkName, tmpBuff);
                 SM_ALLOC(ppMemory, maca, S_macroArgumentTableElement);
                 fillMacroArgTabElem(maca, mm, argLinkName, argi);
-                foundIndex = macroArgumentTableAdd(&s_maTab, maca);
+                foundIndex = macroArgumentTableAdd(&s_macroArgumentTable, maca);
                 argi ++;
                 GetNonBlankMaybeLexem(lex);
                 tmppp=parpos1; parpos1=parpos2; parpos2=tmppp;
                 PassLex(cInput.currentLexem, lex, l, v, h, *parpos2, len, 1);
                 if (! ellipsis) {
-                    addTrivialCxReference(s_maTab.tab[foundIndex]->linkName, TypeMacroArg,StorageDefault,
+                    addTrivialCxReference(s_macroArgumentTable.tab[foundIndex]->linkName, TypeMacroArg,StorageDefault,
                                           &pos, UsageDefined);
                     handleMacroDefinitionParameterPositions(argi, &macpos, parpos1, &pos, parpos2, 0);
                 }
@@ -795,13 +795,13 @@ static void processDefine(int argFlag) {
     while (lex != '\n') {
         while(sizei<msize && lex != '\n') {
             fillMacroArgTabElem(&mmaca,cc,NULL,0);
-            if (lex==IDENTIFIER && macroArgumentTableIsMember(&s_maTab,&mmaca,&foundIndex)){
+            if (lex==IDENTIFIER && macroArgumentTableIsMember(&s_macroArgumentTable,&mmaca,&foundIndex)){
                 /* macro argument */
-                addTrivialCxReference(s_maTab.tab[foundIndex]->linkName, TypeMacroArg,StorageDefault,
+                addTrivialCxReference(s_macroArgumentTable.tab[foundIndex]->linkName, TypeMacroArg,StorageDefault,
                                       &pos, UsageUsed);
                 ddd = body+sizei;
                 PutLexToken(CPP_MAC_ARG, ddd);
-                PutLexInt(s_maTab.tab[foundIndex]->order, ddd);
+                PutLexInt(s_macroArgumentTable.tab[foundIndex]->order, ddd);
                 PutLexPosition(pos.file, pos.line,pos.col,ddd);
                 sizei = ddd - body;
             } else {
@@ -833,7 +833,7 @@ endOfBody:
     if (argi > 0) {
         PP_ALLOCC(argNames, argi, char*);
         memset(argNames, 0, argi*sizeof(char*));
-        macroArgumentTableMap2(&s_maTab, setMacroArgumentName, argNames);
+        macroArgumentTableMap2(&s_macroArgumentTable, setMacroArgumentName, argNames);
     } else
         argNames = NULL;
     macroBody = newMacroBody(msize, argi, mname, body, argNames);
