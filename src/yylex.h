@@ -17,7 +17,7 @@ typedef struct macroArgTabElem {
     char *name;
     char *linkName;
     int order;
-} S_macroArgTabElem;
+} S_macroArgumentTableElement;
 
 typedef struct lexInput {
     char *currentLexem;

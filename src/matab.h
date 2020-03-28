@@ -6,7 +6,7 @@
 #include "yylex.h"
 
 #define HASH_TAB_NAME maTab
-#define HASH_ELEM_TYPE S_macroArgTabElem
+#define HASH_ELEM_TYPE S_macroArgumentTableElement
 
 #include "hashtab.th"
 

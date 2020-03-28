@@ -97,7 +97,7 @@ void initAllInputs(void) {
 }
 
 
-static void fillMacroArgTabElem(S_macroArgTabElem *macroArgTabElem, char *name, char *linkName,
+static void fillMacroArgTabElem(S_macroArgumentTableElement *macroArgTabElem, char *name, char *linkName,
                                 int order) {
     macroArgTabElem->name = name;
     macroArgTabElem->linkName = linkName;
@@ -234,7 +234,7 @@ static void setOpenFileInfo(char *ss) {
 /* ***************************************************************** */
 
 void ppMemInit(void) {
-    PP_ALLOCC(s_maTab.tab, MAX_MACRO_ARGS, S_macroArgTabElem *);
+    PP_ALLOCC(s_maTab.tab, MAX_MACRO_ARGS, S_macroArgumentTableElement *);
     maTabNoAllocInit(&s_maTab, MAX_MACRO_ARGS);
     ppMemoryi = 0;
 }
@@ -636,7 +636,7 @@ static void addMacroToTabs(Symbol *pp, char *name) {
     symTabSet(s_symTab,pp,ii);
 }
 
-static void setMacroArgumentName(S_macroArgTabElem *arg, void *at) {
+static void setMacroArgumentName(S_macroArgumentTableElement *arg, void *at) {
     char ** argTab;
     argTab = (char**)at;
     assert(arg->order>=0);
@@ -704,7 +704,7 @@ static void processDefine(int argFlag) {
     int bodyReadingFlag = 0;
     int sizei, foundIndex, msize, argi, ellipsis, len;
     Symbol *pp;
-    S_macroArgTabElem *maca, mmaca;
+    S_macroArgumentTableElement *maca, mmaca;
     S_macroBody *macroBody;
     S_position pos, macpos, ppb1, ppb2, *parpos1, *parpos2, *tmppp;
     char *cc, *mname, *aname, *body, *mm, *ddd;
@@ -757,7 +757,7 @@ static void processDefine(int argFlag) {
                         LINK_NAME_CUT_SYMBOL, aname);
                 PP_ALLOCC(argLinkName, strlen(tmpBuff)+1, char);
                 strcpy(argLinkName, tmpBuff);
-                SM_ALLOC(ppMemory, maca, S_macroArgTabElem);
+                SM_ALLOC(ppMemory, maca, S_macroArgumentTableElement);
                 fillMacroArgTabElem(maca, mm, argLinkName, argi);
                 foundIndex = maTabAdd(&s_maTab, maca);
                 argi ++;
