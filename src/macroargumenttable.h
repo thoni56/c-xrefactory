@@ -1,5 +1,5 @@
-#ifndef _MATAB_H_
-#define _MATAB_H_
+#ifndef _MACROARGUMENTTABLE_H_
+#define _MACROARGUMENTTABLE_H_
 
 /* Macro argument table - instance of hashtable */
 
@@ -12,7 +12,7 @@
 
 extern S_macroArgumentTable s_macroArgumentTable;
 
-#ifndef _MATAB_
+#ifndef _MACROARGUMENTTABLE_
 #undef HASH_TAB_NAME
 #undef HASH_ELEM_TYPE
 #endif

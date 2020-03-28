@@ -6,7 +6,7 @@ SRCS = main.c globals.c misc.c semact.c commons.c generate.c \
 	   caching.c jsemact.c classFileReader.c cct.c init.c \
 	   editor.c refactory.c protocol.c log.c \
 	   html.c extract.c classh.c jslsemact.c \
-	   filetab.c matab.c olcxtab.c editorbuffertab.c symtab.c javafqttab.c \
+	   filetab.c macroargumenttable.c olcxtab.c editorbuffertab.c symtab.c javafqttab.c \
 	   jsltypetab.c reftab.c memory.c utils.c charbuf.c hash.c symbol.c \
 	   c_parser.tab.c cexp_parser.tab.c java_parser.tab.c yacc_parser.tab.c \
 	   fileitem.c

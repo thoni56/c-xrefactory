@@ -28,6 +28,7 @@
 #include "hash.h"
 #include "log.h"
 #include "utils.h"
+#include "macroargumenttable.h"
 
 
 #define SET_IDENTIFIER_YYLVAL(name, symb, pos) {\
@@ -43,7 +44,6 @@
 
 /* !!!!!!!!!!!!!!!!!!! to caching !!!!!!!!!!!!!!! */
 
-#include "matab.h"
 
 #define MB_INIT()				{SM_INIT(mbMemory);}
 #define MB_ALLOC(p,t)           {SM_ALLOC(mbMemory,p,t);}

@@ -1,5 +1,5 @@
-#define _MATAB_
-#include "matab.h"
+#define _MACROARGUMENTTABLE_
+#include "macroargumenttable.h"
 
 #include "hash.h"
 #include "commons.h"
