@@ -470,7 +470,7 @@ static void writeFileSourceIndexItem(struct fileItem *fileItem, int ii) {
 
 static void genClassHierarchyItems(struct fileItem *fi, int ii) {
     S_chReference *p;
-    for(p=fi->sups; p!=NULL; p=p->next) {
+    for(p=fi->superClasses; p!=NULL; p=p->next) {
         writeSubClassInfo(p->superClass, ii, p->ofile);
     }
 }
@@ -482,16 +482,16 @@ static void crSubClassInfo(int sup, int inf, int origin, int genfl) {
     ii = s_fileTab.tab[inf];
     jj = s_fileTab.tab[sup];
     assert(ii && jj);
-    for(p=ii->sups; p!=NULL && p->superClass!=sup; p=p->next) ;
+    for(p=ii->superClasses; p!=NULL && p->superClass!=sup; p=p->next) ;
     if (p==NULL) {
-        p = newClassHierarchyReference(origin, sup, ii->sups);
-        ii->sups = p;
+        p = newClassHierarchyReference(origin, sup, ii->superClasses);
+        ii->superClasses = p;
         assert(s_opt.taskRegime);
         if (s_opt.taskRegime == RegimeXref) {
             if (genfl == CX_FILE_ITEM_GEN) writeSubClassInfo(sup, inf, origin);
         }
-        pp = newClassHierarchyReference(origin, inf, jj->sups);
-        jj->infs = pp;
+        pp = newClassHierarchyReference(origin, inf, jj->superClasses);
+        jj->inferiorClasses = pp;
     }
 }
 

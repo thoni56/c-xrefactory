@@ -2422,7 +2422,7 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
 }
 
 static void mainReinitFileTabEntry(S_fileItem *ft) {
-    ft->infs = ft->sups = NULL;
+    ft->inferiorClasses = ft->superClasses = NULL;
     ft->directEnclosingInstance = s_noneFileIndex;
     ft->b.scheduledToProcess = 0;
     ft->b.scheduledToUpdate = 0;

@@ -1752,7 +1752,7 @@ static int isJavaClassFile(S_fileItem *ffi) {
 /* ******************************************************************** */
 
 static void sortSubClassesList(S_fileItem *fi) {
-    LIST_MERGE_SORT(S_chReference, fi->infs, classHierarchySupClassNameLess);
+    LIST_MERGE_SORT(S_chReference, fi->inferiorClasses, classHierarchySupClassNameLess);
 }
 
 void htmlGenGlobalReferenceLists(char *cxMemFreeBase) {

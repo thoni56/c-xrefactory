@@ -83,7 +83,7 @@ static int markTransitiveRelevantSubsRec(int cind, int pass) {
     fi = s_fileTab.tab[cind];
     if (THEBIT(tmpChMarkProcessed,cind)) return(THEBIT(tmpChRelevant,cind));
     SETBIT(tmpChMarkProcessed, cind);
-    for(s=fi->infs; s!=NULL; s=s->next) {
+    for(s=fi->inferiorClasses; s!=NULL; s=s->next) {
         tt = s_fileTab.tab[s->superClass];
         assert(tt);
         // do not descend from class to an
@@ -370,8 +370,8 @@ static void descendTheClassHierarchy(   FILE *ff,
     // putting the following in commentary makes that for -refnum==1
     // subclasses will not be sorted !
     // also subclasses for on-line resolution would not be sorted!
-    LIST_MERGE_SORT(S_chReference, fi->infs, classHierarchySupClassNameLess);
-    s=fi->infs;
+    LIST_MERGE_SORT(S_chReference, fi->inferiorClasses, classHierarchySupClassNameLess);
+    s=fi->inferiorClasses;
     while (s!=NULL) {
         assert(s_fileTab.tab[s->superClass]);
         snext = s->next;
@@ -398,7 +398,7 @@ static int genThisClassHierarchy(int vApplCl, int oldvFunCl,
     if (THEBIT(tmpChProcessed,vApplCl)) return(0);
     if (THEBIT(tmpChRelevant,vApplCl)==0) return(0);
     // check if you are at the top of a sub-hierarchy
-    for(s=fi->sups; s!=NULL; s=s->next) {
+    for(s=fi->superClasses; s!=NULL; s=s->next) {
         tt = s_fileTab.tab[s->superClass];
         assert(tt);
         if (THEBIT(tmpChRelevant,s->superClass) && THEBIT(tmpChProcessed,s->superClass)==0) return(0);

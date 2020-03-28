@@ -921,13 +921,13 @@ int isSmallerOrEqClassR(int inf, int sup, int level) {
     //&fprintf(dumpOut,"testing hierarchy of %s\n<\t%s\n",s_fileTab.tab[inf]->name,s_fileTab.tab[sup]->name);
     if (inf == sup) return(level);
     assert(s_fileTab.tab[inf]);
-    for(p=s_fileTab.tab[inf]->sups; p!=NULL; p=p->next) {
+    for(p=s_fileTab.tab[inf]->superClasses; p!=NULL; p=p->next) {
         if (p->superClass == sup) {
             //&fprintf(dumpOut,"return 1\n");
             return(level+1);
         }
     }
-    for(p=s_fileTab.tab[inf]->sups; p!=NULL; p=p->next) {
+    for(p=s_fileTab.tab[inf]->superClasses; p!=NULL; p=p->next) {
         smallerLevel = isSmallerOrEqClassR(p->superClass, sup, level+1);
         if (smallerLevel) {
             //&fprintf(dumpOut,"return 1\n");
@@ -4461,7 +4461,7 @@ static int tpCheckPrintSelectedSymbol(void) {
 int javaGetSuperClassNumFromClassNum(int cn) {
     int             res;
     S_chReference   *cl;
-    for(cl = s_fileTab.tab[cn]->sups; cl!=NULL; cl=cl->next) {
+    for(cl = s_fileTab.tab[cn]->superClasses; cl!=NULL; cl=cl->next) {
         res = cl->superClass;
         if (! s_fileTab.tab[res]->b.isInterface) return(res);
     }

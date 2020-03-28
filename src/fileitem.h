@@ -21,11 +21,10 @@ typedef struct fileItem {	/* to be renamed to constant pool item */
         unsigned		fullUpdateIncludesProcessed : 1;
         unsigned		isInterface : 1;        // class/interface for .class
         unsigned		isFromCxfile : 1;       // is this file indexed in XFiles
-        //unsigned		classIsRelatedTo : 20;// tmp var for isRelated function
         unsigned		sourceFile : 20;// file containing the class definition
     } b;
-    struct chReference	*sups;			/* super-classes references */
-    struct chReference	*infs;			/* sub-classes references   */
+    struct chReference	*superClasses;			/* super-classes references */
+    struct chReference	*inferiorClasses;			/* sub-classes references   */
     int					directEnclosingInstance;  /* for Java Only  */
     struct fileItem		*next;
 } S_fileItem;

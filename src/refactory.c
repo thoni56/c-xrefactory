@@ -1132,8 +1132,8 @@ int tpCheckTargetToBeDirectSubOrSupClass(int flag, char *subOrSuper) {
     }
     readOneAppropReferenceFile(NULL, classHierarchyFunctionSequence);
     assert(target->u.s!=NULL&&target->u.s->classFile!=s_noneFileIndex);
-    if (flag == REQ_SUBCLASS) cl=s_fileTab.tab[ss->s.vApplClass]->infs;
-    else cl=s_fileTab.tab[ss->s.vApplClass]->sups;
+    if (flag == REQ_SUBCLASS) cl=s_fileTab.tab[ss->s.vApplClass]->inferiorClasses;
+    else cl=s_fileTab.tab[ss->s.vApplClass]->superClasses;
     for(; cl!=NULL; cl=cl->next) {
         //&sprintf(tmpBuff,"!checking %d(%s) <-> %d(%s) \n", cl->superClass, s_fileTab.tab[cl->superClass]->name, target->u.s->classFile, s_fileTab.tab[target->u.s->classFile]->name);ppcGenTmpBuff();
         if (cl->superClass == target->u.s->classFile) {
