@@ -2,31 +2,34 @@
 #include "../classh.h"
 #include <cgreen/mocks.h>
 
-void classHierarchyGenInit(void) { 
+S_chReference *newClassHierarchyReference(int origin, int class, S_chReference *next) {
+    return (S_chReference *)mock(origin, class, next);
+}
+
+void classHierarchyGenInit(void) {
   mock();
 }
 
-void setTmpClassBackPointersToMenu(S_olSymbolsMenu *menu) { 
+void setTmpClassBackPointersToMenu(S_olSymbolsMenu *menu) {
   mock(menu);
 }
 
-void splitMenuPerSymbolsAndMap(S_olSymbolsMenu *rrr, void (*fun)(S_olSymbolsMenu *, void *, void *), void *p1, char *p2) { 
+void splitMenuPerSymbolsAndMap(S_olSymbolsMenu *rrr, void (*fun)(S_olSymbolsMenu *, void *, void *), void *p1, char *p2) {
   mock(rrr, fun, p1, p2);
 }
 
-void htmlGenGlobRefLists(S_olSymbolsMenu *rrr, FILE *ff, char *fn) { 
+void htmlGenGlobRefLists(S_olSymbolsMenu *rrr, FILE *ff, char *fn) {
   mock(rrr, ff, fn);
 }
 
-void genClassHierarchies(FILE *ff, S_olSymbolsMenu *rrr, int virtFlag, int pass) { 
+void genClassHierarchies(FILE *ff, S_olSymbolsMenu *rrr, int virtFlag, int pass) {
   mock(ff, rrr, virtFlag, pass);
 }
 
-int classHierarchyClassNameLess(int c1, int c2) { 
+int classHierarchyClassNameLess(int c1, int c2) {
   return (int) mock(c1, c2);
 }
 
-int classHierarchySupClassNameLess(S_chReference *c1, S_chReference *c2) { 
+int classHierarchySupClassNameLess(S_chReference *c1, S_chReference *c2) {
   return (int) mock(c1, c2);
 }
-
