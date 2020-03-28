@@ -45,8 +45,6 @@ extern void jarFileParse(char *file_name);
 extern void scanJarFilesForTagSearch(void);
 extern void classFileParse(void);
 extern void fillTrivialSpecialRefItem( S_symbolRefItem *ddd , char *name);
-extern int optionsOverflowHandler(int n);
-extern int cxMemoryOverflowHandler(int n);
 
 extern void noSuchRecordError(char *rec);
 extern void methodAppliedOnNonClass(char *rec);

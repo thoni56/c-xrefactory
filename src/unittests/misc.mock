@@ -126,14 +126,6 @@ void fillTrivialSpecialRefItem(S_symbolRefItem *ddd, char *name) {
   mock(ddd, name);
 }
 
-int optionsOverflowHandler(int n) {
-  return (int) mock(n);
-}
-
-int cxMemoryOverflowHandler(int n) {
-  return (int) mock(n);
-}
-
 void noSuchRecordError(char *rec) {
   mock(rec);
 }

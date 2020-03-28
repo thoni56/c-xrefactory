@@ -150,6 +150,8 @@
 
 /* ********************************************************************** */
 
-void memoryResize(void);
+extern void memoryResize(void);
+extern int optionsOverflowHandler(int n);
+extern int cxMemoryOverflowHandler(int n);
 
 #endif

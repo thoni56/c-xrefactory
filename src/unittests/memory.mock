@@ -5,3 +5,11 @@
 void memoryResize(void) {
   mock();
 }
+
+int optionsOverflowHandler(int n) {
+  return (int) mock(n);
+}
+
+int cxMemoryOverflowHandler(int n) {
+  return (int) mock(n);
+}
