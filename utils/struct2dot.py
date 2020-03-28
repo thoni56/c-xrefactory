@@ -134,7 +134,7 @@ def usage():
 Usage:
     Create a DOT graph of struct dependencies
 
-        struct2dot { <cpp_directive> } <headerfile> [ <coloured> ]
+        struct2dot { <cpp_directive> } <headerfile> [ -coloured <coloured> ]
 
     <cpp_directive>: any 'cpp' directive but most useful is e.g.
                      "-I <directory>" to ensure cpp finds files.
@@ -176,13 +176,13 @@ if __name__ == "__main__":
     else:
         add_gnuisms = False
 
-    colour_option = '-colour-file'
+    colour_option = '-coloured'
     coloured_nodes = []
     if colour_option in sys.argv:
         colour_file_index = sys.argv.index(colour_option)
         colouring_file = sys.argv[colour_file_index+1]
         if not os.path.exists(colouring_file):
-            eprint("Colouring file '{0}' does not exist".format(colouring_file))
+            eprint("File '{0}' does not exist".format(colouring_file))
         sys.argv.remove(colour_option)
         sys.argv.remove(colouring_file)
         with open(colouring_file, 'r') as file:
