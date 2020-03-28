@@ -533,28 +533,6 @@ static void genNonVirtualsGlobRefLists( S_olSymbolsMenu *rrr,
     }
 }
 
-#if ZERO
-void splitMenuPerSymbolsAndMap(S_olSymbolsMenu *rrr,
-                               void (*fun)(S_olSymbolsMenu *, void *, void *),
-                               void *p1,
-                               char *p2
-                               ) {
-    S_olSymbolsMenu *rr, *ss, *nextl;
-    rr = rrr;
-    while (rr!=NULL) {
-        for(ss= rr;
-            ss!=NULL&&ss->next!=NULL && itIsSameCxSymbol(&ss->next->s,&rr->s);
-            ss = ss->next
-            ) ;
-        assert(ss!=NULL);
-        nextl = ss->next;
-        ss->next = NULL;
-        (*fun)(rr, p1, p2);
-        LIST_APPEND(S_olSymbolsMenu, rr, nextl);
-        rr = nextl;
-    }
-}
-#else
 void splitMenuPerSymbolsAndMap(S_olSymbolsMenu *rrr,
                                void (*fun)(S_olSymbolsMenu *, void *, void *),
                                void *p1,
