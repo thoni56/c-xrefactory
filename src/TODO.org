@@ -7,11 +7,11 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 * DOING Remove bootstrap step (strfill and local definitions)
 ** DOING Remove all FILL_xxx macros by using compound initialisers
-At this point there are 66, 65, 64, 63, 62 FILL-macros that are in use
+At this point there are 66, 65, 64, 63, 62, 41 FILL-macros that are in use
 *** TODO Remove chReference from proto.h
 *** TODO Rename classh to hierarchy
-*** TODO Remove cachePoint from proto.h
-*** TODO Remove editorBuffer from proto.h
+*** DONE Remove cachePoint from proto.h
+*** DONE Remove editorBuffer from proto.h
 *** DONE Remove caching from proto.h
 *** DONE Remove fileItem from proto.h
 *** DONE Remove FILL_intlist
