@@ -787,15 +787,6 @@ typedef struct symbolRefItemList {
     struct symbolRefItemList	*next;
 } S_symbolRefItemList;
 
-/* ************* class hierarchy  cross referencing ************** */
-
-typedef struct chReference {
-    int					ofile;		/* file of origin */
-    int                 clas;		/* index of super-class */
-    struct chReference	*next;
-} S_chReference;
-
-
 /* ***************** on - line cross referencing ***************** */
 
 typedef struct olCompletion {

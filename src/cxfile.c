@@ -14,10 +14,12 @@
 #include "reftab.h"
 #include "charbuf.h"
 #include "strFill.h"
+#include "classh.h"
 
 #include "hash.h"
 #include "log.h"
 #include "utils.h"
+
 
 /* *********************** INPUT/OUTPUT ************************** */
 
@@ -473,6 +475,17 @@ static void genClassHierarchyItems(struct fileItem *fi, int ii) {
     }
 }
 
+static S_chReference *newClassHierarchyReference(int origin, int super, S_fileItem *ii) {
+    S_chReference *p;
+    CX_ALLOC(p, S_chReference);
+    p->ofile = origin;
+    p->clas = super;
+    p->next = ii->sups;
+    //FILL_chReference(p, origin, sup, ii->sups);
+    return(p);
+}
+
+
 static void crSubClassInfo(int sup, int inf, int origin, int genfl) {
     S_fileItem      *ii, *jj;
     S_chReference   *p, *pp;
@@ -482,15 +495,13 @@ static void crSubClassInfo(int sup, int inf, int origin, int genfl) {
     assert(ii && jj);
     for(p=ii->sups; p!=NULL && p->clas!=sup; p=p->next) ;
     if (p==NULL) {
-        CX_ALLOC(p, S_chReference);
-        FILL_chReference(p, origin, sup, ii->sups);
+        p = newClassHierarchyReference(origin, sup, ii);
         ii->sups = p;
         assert(s_opt.taskRegime);
         if (s_opt.taskRegime == RegimeXref) {
             if (genfl == CX_FILE_ITEM_GEN) writeSubClassInfo(sup, inf, origin);
         }
-        CX_ALLOC(pp, S_chReference);
-        FILL_chReference(pp, origin, inf, jj->infs);
+        pp = newClassHierarchyReference(origin, inf, jj);
         jj->infs = pp;
     }
 }

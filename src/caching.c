@@ -8,6 +8,7 @@
 #include "reftab.h"
 #include "strFill.h"
 #include "javafqttab.h"
+#include "classh.h"
 
 #include "log.h"
 
