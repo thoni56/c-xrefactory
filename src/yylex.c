@@ -86,7 +86,7 @@ void initAllInputs(void) {
     macroStackIndex=0;
     s_ifEvaluation = 0;
     s_cxRefFlag = 0;
-    maTabNoAllocInit(&s_maTab, MAX_MACRO_ARGS);
+    macroArgumentTableNoAllocInit(&s_maTab, MAX_MACRO_ARGS);
     ppMemoryi=0;
     s_olstring[0]=0;
     s_olstringFound = 0;
@@ -235,7 +235,7 @@ static void setOpenFileInfo(char *ss) {
 
 void ppMemInit(void) {
     PP_ALLOCC(s_maTab.tab, MAX_MACRO_ARGS, S_macroArgumentTableElement *);
-    maTabNoAllocInit(&s_maTab, MAX_MACRO_ARGS);
+    macroArgumentTableNoAllocInit(&s_maTab, MAX_MACRO_ARGS);
     ppMemoryi = 0;
 }
 
@@ -730,7 +730,7 @@ static void processDefine(int argFlag) {
     setGlobalFileDepNames(cc, pp, MEM_PP);
     mname = pp->name;
     /* process arguments */
-    maTabNoAllocInit(&s_maTab, s_maTab.size);
+    macroArgumentTableNoAllocInit(&s_maTab, s_maTab.size);
     argi = -1;
     if (argFlag) {
         GetNonBlankMaybeLexem(lex);
@@ -759,7 +759,7 @@ static void processDefine(int argFlag) {
                 strcpy(argLinkName, tmpBuff);
                 SM_ALLOC(ppMemory, maca, S_macroArgumentTableElement);
                 fillMacroArgTabElem(maca, mm, argLinkName, argi);
-                foundIndex = maTabAdd(&s_maTab, maca);
+                foundIndex = macroArgumentTableAdd(&s_maTab, maca);
                 argi ++;
                 GetNonBlankMaybeLexem(lex);
                 tmppp=parpos1; parpos1=parpos2; parpos2=tmppp;
@@ -795,7 +795,7 @@ static void processDefine(int argFlag) {
     while (lex != '\n') {
         while(sizei<msize && lex != '\n') {
             fillMacroArgTabElem(&mmaca,cc,NULL,0);
-            if (lex==IDENTIFIER && maTabIsMember(&s_maTab,&mmaca,&foundIndex)){
+            if (lex==IDENTIFIER && macroArgumentTableIsMember(&s_maTab,&mmaca,&foundIndex)){
                 /* macro argument */
                 addTrivialCxReference(s_maTab.tab[foundIndex]->linkName, TypeMacroArg,StorageDefault,
                                       &pos, UsageUsed);
@@ -833,7 +833,7 @@ endOfBody:
     if (argi > 0) {
         PP_ALLOCC(argNames, argi, char*);
         memset(argNames, 0, argi*sizeof(char*));
-        maTabMap2(&s_maTab, setMacroArgumentName, argNames);
+        macroArgumentTableMap2(&s_maTab, setMacroArgumentName, argNames);
     } else
         argNames = NULL;
     macroBody = newMacroBody(msize, argi, mname, body, argNames);

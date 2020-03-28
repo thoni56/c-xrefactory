@@ -5,12 +5,12 @@
 
 #include "yylex.h"
 
-#define HASH_TAB_NAME maTab
+#define HASH_TAB_NAME macroArgumentTable
 #define HASH_ELEM_TYPE S_macroArgumentTableElement
 
 #include "hashtab.th"
 
-extern struct maTab s_maTab;
+extern S_macroArgumentTable s_maTab;
 
 #ifndef _MATAB_
 #undef HASH_TAB_NAME

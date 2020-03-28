@@ -9,4 +9,4 @@
 
 #include "hashtab.tc"
 
-struct maTab s_maTab;
+S_macroArgumentTable s_maTab;
