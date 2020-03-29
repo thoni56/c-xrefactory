@@ -552,7 +552,7 @@ Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, S_symbolTable *ta
         XX_ALLOC(tt, S_typeModifiers);
         *tt = *p->u.type;
         p->u.type = tt;
-        tt->typedefin = p;
+        tt->typedefSymbol = p;
     }
     if ((! WORK_NEST_LEVEL0() && LANGUAGE(LANG_C))
         || (! WORK_NEST_LEVEL1() && LANGUAGE(LAN_YACC))) {
@@ -810,20 +810,20 @@ void completeDeclarator(Symbol *t, Symbol *d) {
     dt = &(d->u.type); tt = t->u.type;
     if (d->bits.npointers) {
         if (d->bits.npointers>=1 && (tt->kind==TypeStruct||tt->kind==TypeUnion)
-            && tt->typedefin==NULL) {
+            && tt->typedefSymbol==NULL) {
             //fprintf(dumpOut,"saving 1 str pointer:%d\n",counter++);fflush(dumpOut);
             d->bits.npointers--;
             //if(d->b.npointers) {fprintf(dumpOut,"possible 2\n");fflush(dumpOut);}
             assert(tt->u.t && tt->u.t->bits.symType==tt->kind && tt->u.t->u.s);
             tt = & tt->u.t->u.s->sptrtype;
         } else if (d->bits.npointers>=2 && s_preCrPtr2TypesTab[tt->kind]!=NULL
-                   && tt->typedefin==NULL) {
+                   && tt->typedefSymbol==NULL) {
             assert(tt->next==NULL); /* not a user defined type */
             //fprintf(dumpOut,"saving 2 pointer\n");fflush(dumpOut);
             d->bits.npointers-=2;
             tt = s_preCrPtr2TypesTab[tt->kind];
         } else if (d->bits.npointers>=1 && s_preCrPtr1TypesTab[tt->kind]!=NULL
-                   && tt->typedefin==NULL) {
+                   && tt->typedefSymbol==NULL) {
             assert(tt->next==NULL); /* not a user defined type */
             //fprintf(dumpOut,"saving 1 pointer\n");fflush(dumpOut);
             d->bits.npointers--;

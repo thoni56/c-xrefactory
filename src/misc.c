@@ -427,9 +427,9 @@ int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos) {
 }
 
 #define CHECK_TYPEDEF(t,type,typedefexp,typebreak) {    \
-        if (t->typedefin != NULL && typedefexp) {       \
-            assert(t->typedefin->name);                 \
-            strcpy(type, t->typedefin->name);           \
+        if (t->typedefSymbol != NULL && typedefexp) {       \
+            assert(t->typedefSymbol->name);                 \
+            strcpy(type, t->typedefSymbol->name);           \
             goto typebreak;                             \
         }                                               \
         typedefexp = 1;                                 \

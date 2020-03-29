@@ -684,7 +684,7 @@ typedef struct typeModifiers {
         //char                *sig;          /* LAN_JAVA Function */
         struct symbol         *t;            /* Struct/Union/Enum */
     } u;
-    struct symbol             *typedefin;  /* the typedef symbol (if any) */
+    struct symbol             *typedefSymbol;  /* the typedef symbol (if any) */
     struct typeModifiers      *next;
 } S_typeModifiers;
 

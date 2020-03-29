@@ -1620,11 +1620,11 @@
     (STRUCTP)->nest = ARG5;\
     (STRUCTP)->stype.kind = ARG6;\
     _FILLUREC_typeModifUnion_##ARG7((&(STRUCTP)->stype.u), ARG8);\
-    (STRUCTP)->stype.typedefin = ARG9;\
+    (STRUCTP)->stype.typedefSymbol = ARG9;\
     (STRUCTP)->stype.next = ARG10;\
     (STRUCTP)->sptrtype.kind = ARG11;\
     _FILLUREC_typeModifUnion_##ARG12((&(STRUCTP)->sptrtype.u), ARG13);\
-    (STRUCTP)->sptrtype.typedefin = ARG14;\
+    (STRUCTP)->sptrtype.typedefSymbol = ARG14;\
     (STRUCTP)->sptrtype.next = ARG15;\
     (STRUCTP)->currPackage = ARG16;\
     (STRUCTP)->existsDEIarg = ARG17;\
@@ -2065,7 +2065,7 @@
 #define FILLF_typeModifiers(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4) {\
     (STRUCTP)->kind = ARG0;\
     _FILLUREC_typeModifUnion_##ARG1((&(STRUCTP)->u), ARG2);\
-    (STRUCTP)->typedefin = ARG3;\
+    (STRUCTP)->typedefSymbol = ARG3;\
     (STRUCTP)->next = ARG4;\
 }
 #define _FILLF_typeModifiers(STRUCTP, ARGS) {\
