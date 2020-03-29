@@ -302,7 +302,7 @@
 %type <bbtypeModif> enum_specifier enum_define_specifier
 %type <bbtypeModif> type_name abstract_declarator abstract_declarator2
 
-%type <bbexprType> primary_expr postfix_expr unary_expr cast_expr
+%type <bbexprType> primary_expr postfix_expr unary_expr cast_expr compound_literal
 %type <bbexprType> multiplicative_expr additive_expr shift_expr
 %type <bbexprType> relational_expr equality_expr and_expr exclusive_or_expr
 %type <bbexprType> inclusive_or_expr logical_and_expr logical_or_expr
@@ -444,12 +444,19 @@ postfix_expr
         $$.d.t = $1.d.t;
         RESET_REFERENCE_USAGE($1.d.r, UsageAddrUsed);
     }
-/*
-  TODO Handle compound literals (from C99)
+    | compound_literal
+    ;
 
-    | '(' type_name ')' '{' initializer_list '}'
-    | '(' type_name ')' '{' initializer_list ',' '}'
-*/
+compound_literal                /* Added in C99 */
+    /* TODO Does this capture the field references in the initializer_list? */
+    : '(' type_name ')' '{' initializer_list '}'		{
+        $$.d.t = $2.d;
+        $$.d.r = NULL;
+    }
+    | '(' type_name ')' '{' initializer_list ',' '}'	{
+        $$.d.t = $2.d;
+        $$.d.r = NULL;
+    }
     ;
 
 str_rec_identifier
@@ -527,14 +534,6 @@ cast_expr
     | '(' type_name ')' cast_expr		{
         $$.d.t = $2.d;
         $$.d.r = $4.d.r;
-    }
-    | '(' type_name ')' '{' initializer_list '}'		{ /* GNU-extension*/
-        $$.d.t = $2.d;
-        $$.d.r = NULL;
-    }
-    | '(' type_name ')' '{' initializer_list ',' '}'	{ /* GNU-extension*/
-        $$.d.t = $2.d;
-        $$.d.r = NULL;
     }
     ;
 
