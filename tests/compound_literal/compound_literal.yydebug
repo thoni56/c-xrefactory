@@ -1,0 +1,745 @@
+[C-xref] active project: '/home/thoni/Utveckling/c-xrefactory/tests/compound_literal'
+java version == 1.3
+yydebug: state 0, reducing by rule 315 (_bef_ :)
+yydebug: after reduction, shifting from state 0 to state 2
+yydebug: state 2, reading 313 (TYPEDEF)
+yydebug: state 2, reducing by rule 96 (Sv_tmp :)
+yydebug: after reduction, shifting from state 2 to state 4
+yydebug: state 4, shifting to state 19
+yydebug: state 19, reducing by rule 130 (storage_class_specifier : TYPEDEF)
+yydebug: after reduction, shifting from state 4 to state 46
+yydebug: state 46, reducing by rule 119 (declaration_modality_specifiers : storage_class_specifier)
+yydebug: after reduction, shifting from state 4 to state 54
+yydebug: state 54, reading 319 (STRUCT)
+yydebug: state 54, shifting to state 25
+yydebug: state 25, reducing by rule 164 (struct_or_union : STRUCT)
+yydebug: after reduction, shifting from state 54 to state 43
+yydebug: state 43, reading 445 (IDENTIFIER)
+yydebug: state 43, shifting to state 38
+yydebug: state 38, reducing by rule 359 (identifier : IDENTIFIER)
+yydebug: after reduction, shifting from state 43 to state 79
+yydebug: state 79, reducing by rule 162 (struct_identifier : identifier)
+yydebug: after reduction, shifting from state 43 to state 80
+yydebug: state 80, reading 123 ('{')
+yydebug: state 80, reducing by rule 160 (struct_or_union_define_specifier : struct_or_union struct_identifier)
+yydebug: after reduction, shifting from state 54 to state 60
+yydebug: state 60, shifting to state 110
+yydebug: state 110, reading 305 (INT)
+yydebug: state 110, reducing by rule 96 (Sv_tmp :)
+yydebug: after reduction, shifting from state 110 to state 194
+yydebug: state 194, shifting to state 14
+yydebug: state 14, reducing by rule 145 (type_specifier1 : INT)
+yydebug: after reduction, shifting from state 194 to state 278
+yydebug: state 278, reducing by rule 209 (type_specifier_list0 : type_specifier1)
+yydebug: after reduction, shifting from state 194 to state 281
+yydebug: state 281, reading 445 (IDENTIFIER)
+yydebug: state 281, reducing by rule 207 (type_specifier_list : type_specifier_list0)
+yydebug: after reduction, shifting from state 194 to state 279
+yydebug: state 279, shifting to state 38
+yydebug: state 38, reducing by rule 359 (identifier : IDENTIFIER)
+yydebug: after reduction, shifting from state 279 to state 42
+yydebug: state 42, reducing by rule 192 (declarator2 : identifier)
+yydebug: after reduction, shifting from state 279 to state 51
+yydebug: state 51, reading 59 (';')
+yydebug: state 51, reducing by rule 190 (declarator : declarator2)
+yydebug: after reduction, shifting from state 279 to state 354
+yydebug: state 354, reducing by rule 174 (struct_declarator : declarator)
+yydebug: after reduction, shifting from state 279 to state 355
+yydebug: state 355, reducing by rule 170 (struct_declarator_list : struct_declarator)
+yydebug: after reduction, shifting from state 279 to state 356
+yydebug: state 356, shifting to state 430
+yydebug: state 430, reducing by rule 168 (struct_declaration : Sv_tmp type_specifier_list struct_declarator_list ';')
+yydebug: after reduction, shifting from state 110 to state 196
+yydebug: state 196, reducing by rule 166 (struct_declaration_list : struct_declaration)
+yydebug: after reduction, shifting from state 110 to state 195
+yydebug: state 195, reading 294 (CHAR)
+yydebug: state 195, reducing by rule 96 (Sv_tmp :)
+yydebug: after reduction, shifting from state 195 to state 194
+yydebug: state 194, shifting to state 10
+yydebug: state 10, reducing by rule 143 (type_specifier1 : CHAR)
+yydebug: after reduction, shifting from state 194 to state 278
+yydebug: state 278, reducing by rule 209 (type_specifier_list0 : type_specifier1)
+yydebug: after reduction, shifting from state 194 to state 281
+yydebug: state 281, reading 42 ('*')
+yydebug: state 281, reducing by rule 207 (type_specifier_list : type_specifier_list0)
+yydebug: after reduction, shifting from state 194 to state 279
+yydebug: state 279, shifting to state 40
+yydebug: state 40, reading 445 (IDENTIFIER)
+yydebug: state 40, reducing by rule 200 (pointer : '*')
+yydebug: after reduction, shifting from state 279 to state 45
+yydebug: state 45, shifting to state 38
+yydebug: state 38, reducing by rule 359 (identifier : IDENTIFIER)
+yydebug: after reduction, shifting from state 45 to state 42
+yydebug: state 42, reducing by rule 192 (declarator2 : identifier)
+yydebug: after reduction, shifting from state 45 to state 81
+yydebug: state 81, reading 59 (';')
+yydebug: state 81, reducing by rule 191 (declarator : pointer declarator2)
+yydebug: after reduction, shifting from state 279 to state 354
+yydebug: state 354, reducing by rule 174 (struct_declarator : declarator)
+yydebug: after reduction, shifting from state 279 to state 355
+yydebug: state 355, reducing by rule 170 (struct_declarator_list : struct_declarator)
+yydebug: after reduction, shifting from state 279 to state 356
+yydebug: state 356, shifting to state 430
+yydebug: state 430, reducing by rule 168 (struct_declaration : Sv_tmp type_specifier_list struct_declarator_list ';')
+yydebug: after reduction, shifting from state 195 to state 284
+yydebug: state 284, reducing by rule 167 (struct_declaration_list : struct_declaration_list struct_declaration)
+yydebug: after reduction, shifting from state 110 to state 195
+yydebug: state 195, reading 125 ('}')
+yydebug: state 195, shifting to state 283
+yydebug: state 283, reducing by rule 158 (struct_or_union_specifier : struct_or_union_define_specifier '{' struct_declaration_list '}')
+yydebug: after reduction, shifting from state 54 to state 59
+yydebug: state 59, reducing by rule 153 (type_specifier2 : struct_or_union_specifier)
+yydebug: after reduction, shifting from state 54 to state 100
+yydebug: state 100, reducing by rule 111 (declaration_specifiers0 : declaration_modality_specifiers type_specifier2)
+yydebug: after reduction, shifting from state 4 to state 55
+yydebug: state 55, reading 445 (IDENTIFIER)
+yydebug: state 55, reducing by rule 104 (declaration_specifiers : declaration_specifiers0)
+yydebug: after reduction, shifting from state 4 to state 53
+yydebug: state 53, shifting to state 38
+yydebug: state 38, reducing by rule 359 (identifier : IDENTIFIER)
+yydebug: after reduction, shifting from state 53 to state 42
+yydebug: state 42, reducing by rule 192 (declarator2 : identifier)
+yydebug: after reduction, shifting from state 53 to state 51
+yydebug: state 51, reading 59 (';')
+yydebug: state 51, reducing by rule 190 (declarator : declarator2)
+yydebug: after reduction, shifting from state 53 to state 92
+yydebug: state 92, reducing by rule 125 (asm_opt :)
+yydebug: after reduction, shifting from state 92 to state 85
+yydebug: state 85, reducing by rule 129 (init_declarator : declarator asm_opt)
+yydebug: after reduction, shifting from state 53 to state 91
+yydebug: state 91, reducing by rule 127 (eq_initializer_opt :)
+yydebug: after reduction, shifting from state 91 to state 187
+yydebug: state 187, reducing by rule 344 (top_init_declarations : declaration_specifiers init_declarator eq_initializer_opt)
+yydebug: after reduction, shifting from state 4 to state 52
+yydebug: state 52, shifting to state 89
+yydebug: state 89, reducing by rule 335 (external_definition : Sv_tmp top_init_declarations ';')
+yydebug: after reduction, shifting from state 2 to state 6
+yydebug: state 6, reducing by rule 331 (cached_external_definition_list : external_definition)
+yydebug: after reduction, shifting from state 2 to state 5
+yydebug: state 5, reducing by rule 315 (_bef_ :)
+yydebug: after reduction, shifting from state 5 to state 64
+yydebug: state 64, reading 257 (TYPE_NAME)
+yydebug: state 64, reducing by rule 96 (Sv_tmp :)
+yydebug: after reduction, shifting from state 64 to state 4
+yydebug: state 4, shifting to state 8
+yydebug: state 8, reading 445 (IDENTIFIER)
+yydebug: state 8, reducing by rule 105 (user_defined_type : TYPE_NAME)
+yydebug: after reduction, shifting from state 4 to state 44
+yydebug: state 44, reducing by rule 106 (declaration_specifiers0 : user_defined_type)
+yydebug: after reduction, shifting from state 4 to state 55
+yydebug: state 55, reducing by rule 104 (declaration_specifiers : declaration_specifiers0)
+yydebug: after reduction, shifting from state 4 to state 53
+yydebug: state 53, shifting to state 38
+yydebug: state 38, reducing by rule 359 (identifier : IDENTIFIER)
+yydebug: after reduction, shifting from state 53 to state 42
+yydebug: state 42, reducing by rule 192 (declarator2 : identifier)
+yydebug: after reduction, shifting from state 53 to state 51
+yydebug: state 51, reading 59 (';')
+yydebug: state 51, reducing by rule 190 (declarator : declarator2)
+yydebug: after reduction, shifting from state 53 to state 92
+yydebug: state 92, reducing by rule 125 (asm_opt :)
+yydebug: after reduction, shifting from state 92 to state 85
+yydebug: state 85, reducing by rule 129 (init_declarator : declarator asm_opt)
+yydebug: after reduction, shifting from state 53 to state 91
+yydebug: state 91, reducing by rule 127 (eq_initializer_opt :)
+yydebug: after reduction, shifting from state 91 to state 187
+yydebug: state 187, reducing by rule 344 (top_init_declarations : declaration_specifiers init_declarator eq_initializer_opt)
+yydebug: after reduction, shifting from state 4 to state 52
+yydebug: state 52, shifting to state 89
+yydebug: state 89, reducing by rule 335 (external_definition : Sv_tmp top_init_declarations ';')
+yydebug: after reduction, shifting from state 64 to state 112
+yydebug: state 112, reducing by rule 332 (cached_external_definition_list : cached_external_definition_list _bef_ external_definition)
+yydebug: after reduction, shifting from state 2 to state 5
+yydebug: state 5, reducing by rule 315 (_bef_ :)
+yydebug: after reduction, shifting from state 5 to state 64
+yydebug: state 64, reading 257 (TYPE_NAME)
+yydebug: state 64, reducing by rule 96 (Sv_tmp :)
+yydebug: after reduction, shifting from state 64 to state 4
+yydebug: state 4, shifting to state 8
+yydebug: state 8, reading 42 ('*')
+yydebug: state 8, reducing by rule 105 (user_defined_type : TYPE_NAME)
+yydebug: after reduction, shifting from state 4 to state 44
+yydebug: state 44, reducing by rule 106 (declaration_specifiers0 : user_defined_type)
+yydebug: after reduction, shifting from state 4 to state 55
+yydebug: state 55, reducing by rule 104 (declaration_specifiers : declaration_specifiers0)
+yydebug: after reduction, shifting from state 4 to state 53
+yydebug: state 53, shifting to state 40
+yydebug: state 40, reading 445 (IDENTIFIER)
+yydebug: state 40, reducing by rule 200 (pointer : '*')
+yydebug: after reduction, shifting from state 53 to state 45
+yydebug: state 45, shifting to state 38
+yydebug: state 38, reducing by rule 359 (identifier : IDENTIFIER)
+yydebug: after reduction, shifting from state 45 to state 42
+yydebug: state 42, reducing by rule 192 (declarator2 : identifier)
+yydebug: after reduction, shifting from state 45 to state 81
+yydebug: state 81, reading 59 (';')
+yydebug: state 81, reducing by rule 191 (declarator : pointer declarator2)
+yydebug: after reduction, shifting from state 53 to state 92
+yydebug: state 92, reducing by rule 125 (asm_opt :)
+yydebug: after reduction, shifting from state 92 to state 85
+yydebug: state 85, reducing by rule 129 (init_declarator : declarator asm_opt)
+yydebug: after reduction, shifting from state 53 to state 91
+yydebug: state 91, reducing by rule 127 (eq_initializer_opt :)
+yydebug: after reduction, shifting from state 91 to state 187
+yydebug: state 187, reducing by rule 344 (top_init_declarations : declaration_specifiers init_declarator eq_initializer_opt)
+yydebug: after reduction, shifting from state 4 to state 52
+yydebug: state 52, shifting to state 89
+yydebug: state 89, reducing by rule 335 (external_definition : Sv_tmp top_init_declarations ';')
+yydebug: after reduction, shifting from state 64 to state 112
+yydebug: state 112, reducing by rule 332 (cached_external_definition_list : cached_external_definition_list _bef_ external_definition)
+yydebug: after reduction, shifting from state 2 to state 5
+yydebug: state 5, reducing by rule 315 (_bef_ :)
+yydebug: after reduction, shifting from state 5 to state 64
+yydebug: state 64, reading 305 (INT)
+yydebug: state 64, reducing by rule 96 (Sv_tmp :)
+yydebug: after reduction, shifting from state 64 to state 4
+yydebug: state 4, shifting to state 14
+yydebug: state 14, reducing by rule 145 (type_specifier1 : INT)
+yydebug: after reduction, shifting from state 4 to state 47
+yydebug: state 47, reducing by rule 107 (declaration_specifiers0 : type_specifier1)
+yydebug: after reduction, shifting from state 4 to state 55
+yydebug: state 55, reading 445 (IDENTIFIER)
+yydebug: state 55, reducing by rule 104 (declaration_specifiers : declaration_specifiers0)
+yydebug: after reduction, shifting from state 4 to state 53
+yydebug: state 53, shifting to state 38
+yydebug: state 38, reducing by rule 359 (identifier : IDENTIFIER)
+yydebug: after reduction, shifting from state 53 to state 42
+yydebug: state 42, reducing by rule 192 (declarator2 : identifier)
+yydebug: after reduction, shifting from state 53 to state 51
+yydebug: state 51, reading 40 ('(')
+yydebug: state 51, shifting to state 86
+yydebug: state 86, reading 41 (')')
+yydebug: state 86, shifting to state 173
+yydebug: state 173, reducing by rule 196 (declarator2 : declarator2 '(' ')')
+yydebug: after reduction, shifting from state 53 to state 51
+yydebug: state 51, reading 123 ('{')
+yydebug: state 51, reducing by rule 190 (declarator : declarator2)
+yydebug: after reduction, shifting from state 53 to state 92
+yydebug: state 92, reducing by rule 356 (function_head_declaration : declaration_specifiers declarator)
+yydebug: after reduction, shifting from state 4 to state 56
+yydebug: state 56, reducing by rule 348 (function_definition_head : function_head_declaration)
+yydebug: after reduction, shifting from state 4 to state 57
+yydebug: state 57, reducing by rule 336 ($$14 :)
+yydebug: after reduction, shifting from state 57 to state 109
+yydebug: state 109, shifting to state 65
+yydebug: state 65, reading 445 (IDENTIFIER)
+yydebug: state 65, reducing by rule 357 (Start_block :)
+yydebug: after reduction, shifting from state 65 to state 114
+yydebug: state 114, reducing by rule 276 (label_decls_opt :)
+yydebug: after reduction, shifting from state 114 to state 199
+yydebug: state 199, reducing by rule 96 (Sv_tmp :)
+yydebug: after reduction, shifting from state 199 to state 288
+yydebug: state 288, shifting to state 378
+yydebug: state 378, reading 282 (PTR_OP)
+yydebug: state 378, reducing by rule 1 (primary_expr : IDENTIFIER)
+yydebug: after reduction, shifting from state 288 to state 142
+yydebug: state 142, reducing by rule 13 (postfix_expr : primary_expr)
+yydebug: after reduction, shifting from state 288 to state 143
+yydebug: state 143, reducing by rule 19 ($$3 :)
+yydebug: after reduction, shifting from state 143 to state 223
+yydebug: state 223, shifting to state 307
+yydebug: state 307, reading 445 (IDENTIFIER)
+yydebug: state 307, shifting to state 38
+yydebug: state 38, reducing by rule 359 (identifier : IDENTIFIER)
+yydebug: after reduction, shifting from state 307 to state 407
+yydebug: state 407, reducing by rule 26 (str_rec_identifier : identifier)
+yydebug: after reduction, shifting from state 307 to state 409
+yydebug: state 409, reducing by rule 20 (postfix_expr : postfix_expr $$3 PTR_OP str_rec_identifier)
+yydebug: after reduction, shifting from state 288 to state 143
+yydebug: state 143, reading 61 ('=')
+yydebug: state 143, reducing by rule 34 (unary_expr : postfix_expr)
+yydebug: after reduction, shifting from state 288 to state 144
+yydebug: state 144, shifting to state 234
+yydebug: state 234, reducing by rule 82 (assignment_operator : '=')
+yydebug: after reduction, shifting from state 144 to state 235
+yydebug: state 235, reading 446 (CONSTANT)
+yydebug: state 235, shifting to state 129
+yydebug: state 129, reducing by rule 3 (primary_expr : CONSTANT)
+yydebug: after reduction, shifting from state 235 to state 142
+yydebug: state 142, reducing by rule 13 (postfix_expr : primary_expr)
+yydebug: after reduction, shifting from state 235 to state 143
+yydebug: state 143, reading 59 (';')
+yydebug: state 143, reducing by rule 34 (unary_expr : postfix_expr)
+yydebug: after reduction, shifting from state 235 to state 144
+yydebug: state 144, reducing by rule 47 (cast_expr : unary_expr)
+yydebug: after reduction, shifting from state 235 to state 145
+yydebug: state 145, reducing by rule 49 (multiplicative_expr : cast_expr)
+yydebug: after reduction, shifting from state 235 to state 147
+yydebug: state 147, reducing by rule 53 (additive_expr : multiplicative_expr)
+yydebug: after reduction, shifting from state 235 to state 148
+yydebug: state 148, reducing by rule 56 (shift_expr : additive_expr)
+yydebug: after reduction, shifting from state 235 to state 149
+yydebug: state 149, reducing by rule 59 (relational_expr : shift_expr)
+yydebug: after reduction, shifting from state 235 to state 150
+yydebug: state 150, reducing by rule 64 (equality_expr : relational_expr)
+yydebug: after reduction, shifting from state 235 to state 151
+yydebug: state 151, reducing by rule 67 (and_expr : equality_expr)
+yydebug: after reduction, shifting from state 235 to state 152
+yydebug: state 152, reducing by rule 69 (exclusive_or_expr : and_expr)
+yydebug: after reduction, shifting from state 235 to state 153
+yydebug: state 153, reducing by rule 71 (inclusive_or_expr : exclusive_or_expr)
+yydebug: after reduction, shifting from state 235 to state 154
+yydebug: state 154, reducing by rule 73 (logical_and_expr : inclusive_or_expr)
+yydebug: after reduction, shifting from state 235 to state 155
+yydebug: state 155, reducing by rule 75 (logical_or_expr : logical_and_expr)
+yydebug: after reduction, shifting from state 235 to state 156
+yydebug: state 156, reducing by rule 77 (conditional_expr : logical_or_expr)
+yydebug: after reduction, shifting from state 235 to state 157
+yydebug: state 157, reducing by rule 80 (assignment_expr : conditional_expr)
+yydebug: after reduction, shifting from state 235 to state 308
+yydebug: state 308, reducing by rule 81 (assignment_expr : unary_expr assignment_operator assignment_expr)
+yydebug: after reduction, shifting from state 288 to state 158
+yydebug: state 158, reducing by rule 93 (expr : assignment_expr)
+yydebug: after reduction, shifting from state 288 to state 382
+yydebug: state 382, reducing by rule 285 (maybe_expr : expr)
+yydebug: after reduction, shifting from state 288 to state 383
+yydebug: state 383, shifting to state 451
+yydebug: state 451, reducing by rule 286 (expression_statement : maybe_expr ';')
+yydebug: after reduction, shifting from state 288 to state 386
+yydebug: state 386, reducing by rule 259 (statement : Sv_tmp expression_statement)
+yydebug: after reduction, shifting from state 199 to state 290
+yydebug: state 290, reducing by rule 280 (statement_list : statement)
+yydebug: after reduction, shifting from state 199 to state 291
+yydebug: state 291, reading 445 (IDENTIFIER)
+yydebug: state 291, reducing by rule 96 (Sv_tmp :)
+yydebug: after reduction, shifting from state 291 to state 288
+yydebug: state 288, shifting to state 378
+yydebug: state 378, reading 282 (PTR_OP)
+yydebug: state 378, reducing by rule 1 (primary_expr : IDENTIFIER)
+yydebug: after reduction, shifting from state 288 to state 142
+yydebug: state 142, reducing by rule 13 (postfix_expr : primary_expr)
+yydebug: after reduction, shifting from state 288 to state 143
+yydebug: state 143, reducing by rule 19 ($$3 :)
+yydebug: after reduction, shifting from state 143 to state 223
+yydebug: state 223, shifting to state 307
+yydebug: state 307, reading 445 (IDENTIFIER)
+yydebug: state 307, shifting to state 38
+yydebug: state 38, reducing by rule 359 (identifier : IDENTIFIER)
+yydebug: after reduction, shifting from state 307 to state 407
+yydebug: state 407, reducing by rule 26 (str_rec_identifier : identifier)
+yydebug: after reduction, shifting from state 307 to state 409
+yydebug: state 409, reducing by rule 20 (postfix_expr : postfix_expr $$3 PTR_OP str_rec_identifier)
+yydebug: after reduction, shifting from state 288 to state 143
+yydebug: state 143, reading 61 ('=')
+yydebug: state 143, reducing by rule 34 (unary_expr : postfix_expr)
+yydebug: after reduction, shifting from state 288 to state 144
+yydebug: state 144, shifting to state 234
+yydebug: state 234, reducing by rule 82 (assignment_operator : '=')
+yydebug: after reduction, shifting from state 144 to state 235
+yydebug: state 235, reading 450 (STRING_LITERAL)
+yydebug: state 235, shifting to state 133
+yydebug: state 133, reading 59 (';')
+yydebug: state 133, reducing by rule 11 (string_literals : STRING_LITERAL)
+yydebug: after reduction, shifting from state 235 to state 160
+yydebug: state 160, reducing by rule 7 (primary_expr : string_literals)
+yydebug: after reduction, shifting from state 235 to state 142
+yydebug: state 142, reducing by rule 13 (postfix_expr : primary_expr)
+yydebug: after reduction, shifting from state 235 to state 143
+yydebug: state 143, reducing by rule 34 (unary_expr : postfix_expr)
+yydebug: after reduction, shifting from state 235 to state 144
+yydebug: state 144, reducing by rule 47 (cast_expr : unary_expr)
+yydebug: after reduction, shifting from state 235 to state 145
+yydebug: state 145, reducing by rule 49 (multiplicative_expr : cast_expr)
+yydebug: after reduction, shifting from state 235 to state 147
+yydebug: state 147, reducing by rule 53 (additive_expr : multiplicative_expr)
+yydebug: after reduction, shifting from state 235 to state 148
+yydebug: state 148, reducing by rule 56 (shift_expr : additive_expr)
+yydebug: after reduction, shifting from state 235 to state 149
+yydebug: state 149, reducing by rule 59 (relational_expr : shift_expr)
+yydebug: after reduction, shifting from state 235 to state 150
+yydebug: state 150, reducing by rule 64 (equality_expr : relational_expr)
+yydebug: after reduction, shifting from state 235 to state 151
+yydebug: state 151, reducing by rule 67 (and_expr : equality_expr)
+yydebug: after reduction, shifting from state 235 to state 152
+yydebug: state 152, reducing by rule 69 (exclusive_or_expr : and_expr)
+yydebug: after reduction, shifting from state 235 to state 153
+yydebug: state 153, reducing by rule 71 (inclusive_or_expr : exclusive_or_expr)
+yydebug: after reduction, shifting from state 235 to state 154
+yydebug: state 154, reducing by rule 73 (logical_and_expr : inclusive_or_expr)
+yydebug: after reduction, shifting from state 235 to state 155
+yydebug: state 155, reducing by rule 75 (logical_or_expr : logical_and_expr)
+yydebug: after reduction, shifting from state 235 to state 156
+yydebug: state 156, reducing by rule 77 (conditional_expr : logical_or_expr)
+yydebug: after reduction, shifting from state 235 to state 157
+yydebug: state 157, reducing by rule 80 (assignment_expr : conditional_expr)
+yydebug: after reduction, shifting from state 235 to state 308
+yydebug: state 308, reducing by rule 81 (assignment_expr : unary_expr assignment_operator assignment_expr)
+yydebug: after reduction, shifting from state 288 to state 158
+yydebug: state 158, reducing by rule 93 (expr : assignment_expr)
+yydebug: after reduction, shifting from state 288 to state 382
+yydebug: state 382, reducing by rule 285 (maybe_expr : expr)
+yydebug: after reduction, shifting from state 288 to state 383
+yydebug: state 383, shifting to state 451
+yydebug: state 451, reducing by rule 286 (expression_statement : maybe_expr ';')
+yydebug: after reduction, shifting from state 288 to state 386
+yydebug: state 386, reducing by rule 259 (statement : Sv_tmp expression_statement)
+yydebug: after reduction, shifting from state 291 to state 395
+yydebug: state 395, reducing by rule 281 (statement_list : statement_list statement)
+yydebug: after reduction, shifting from state 199 to state 291
+yydebug: state 291, reading 445 (IDENTIFIER)
+yydebug: state 291, reducing by rule 96 (Sv_tmp :)
+yydebug: after reduction, shifting from state 291 to state 288
+yydebug: state 288, shifting to state 378
+yydebug: state 378, reading 46 ('.')
+yydebug: state 378, reducing by rule 1 (primary_expr : IDENTIFIER)
+yydebug: after reduction, shifting from state 288 to state 142
+yydebug: state 142, reducing by rule 13 (postfix_expr : primary_expr)
+yydebug: after reduction, shifting from state 288 to state 143
+yydebug: state 143, reducing by rule 17 ($$2 :)
+yydebug: after reduction, shifting from state 143 to state 222
+yydebug: state 222, shifting to state 306
+yydebug: state 306, reading 445 (IDENTIFIER)
+yydebug: state 306, shifting to state 38
+yydebug: state 38, reducing by rule 359 (identifier : IDENTIFIER)
+yydebug: after reduction, shifting from state 306 to state 407
+yydebug: state 407, reducing by rule 26 (str_rec_identifier : identifier)
+yydebug: after reduction, shifting from state 306 to state 408
+yydebug: state 408, reducing by rule 18 (postfix_expr : postfix_expr $$2 '.' str_rec_identifier)
+yydebug: after reduction, shifting from state 288 to state 143
+yydebug: state 143, reading 61 ('=')
+yydebug: state 143, reducing by rule 34 (unary_expr : postfix_expr)
+yydebug: after reduction, shifting from state 288 to state 144
+yydebug: state 144, shifting to state 234
+yydebug: state 234, reducing by rule 82 (assignment_operator : '=')
+yydebug: after reduction, shifting from state 144 to state 235
+yydebug: state 235, reading 446 (CONSTANT)
+yydebug: state 235, shifting to state 129
+yydebug: state 129, reducing by rule 3 (primary_expr : CONSTANT)
+yydebug: after reduction, shifting from state 235 to state 142
+yydebug: state 142, reducing by rule 13 (postfix_expr : primary_expr)
+yydebug: after reduction, shifting from state 235 to state 143
+yydebug: state 143, reading 59 (';')
+yydebug: state 143, reducing by rule 34 (unary_expr : postfix_expr)
+yydebug: after reduction, shifting from state 235 to state 144
+yydebug: state 144, reducing by rule 47 (cast_expr : unary_expr)
+yydebug: after reduction, shifting from state 235 to state 145
+yydebug: state 145, reducing by rule 49 (multiplicative_expr : cast_expr)
+yydebug: after reduction, shifting from state 235 to state 147
+yydebug: state 147, reducing by rule 53 (additive_expr : multiplicative_expr)
+yydebug: after reduction, shifting from state 235 to state 148
+yydebug: state 148, reducing by rule 56 (shift_expr : additive_expr)
+yydebug: after reduction, shifting from state 235 to state 149
+yydebug: state 149, reducing by rule 59 (relational_expr : shift_expr)
+yydebug: after reduction, shifting from state 235 to state 150
+yydebug: state 150, reducing by rule 64 (equality_expr : relational_expr)
+yydebug: after reduction, shifting from state 235 to state 151
+yydebug: state 151, reducing by rule 67 (and_expr : equality_expr)
+yydebug: after reduction, shifting from state 235 to state 152
+yydebug: state 152, reducing by rule 69 (exclusive_or_expr : and_expr)
+yydebug: after reduction, shifting from state 235 to state 153
+yydebug: state 153, reducing by rule 71 (inclusive_or_expr : exclusive_or_expr)
+yydebug: after reduction, shifting from state 235 to state 154
+yydebug: state 154, reducing by rule 73 (logical_and_expr : inclusive_or_expr)
+yydebug: after reduction, shifting from state 235 to state 155
+yydebug: state 155, reducing by rule 75 (logical_or_expr : logical_and_expr)
+yydebug: after reduction, shifting from state 235 to state 156
+yydebug: state 156, reducing by rule 77 (conditional_expr : logical_or_expr)
+yydebug: after reduction, shifting from state 235 to state 157
+yydebug: state 157, reducing by rule 80 (assignment_expr : conditional_expr)
+yydebug: after reduction, shifting from state 235 to state 308
+yydebug: state 308, reducing by rule 81 (assignment_expr : unary_expr assignment_operator assignment_expr)
+yydebug: after reduction, shifting from state 288 to state 158
+yydebug: state 158, reducing by rule 93 (expr : assignment_expr)
+yydebug: after reduction, shifting from state 288 to state 382
+yydebug: state 382, reducing by rule 285 (maybe_expr : expr)
+yydebug: after reduction, shifting from state 288 to state 383
+yydebug: state 383, shifting to state 451
+yydebug: state 451, reducing by rule 286 (expression_statement : maybe_expr ';')
+yydebug: after reduction, shifting from state 288 to state 386
+yydebug: state 386, reducing by rule 259 (statement : Sv_tmp expression_statement)
+yydebug: after reduction, shifting from state 291 to state 395
+yydebug: state 395, reducing by rule 281 (statement_list : statement_list statement)
+yydebug: after reduction, shifting from state 199 to state 291
+yydebug: state 291, reading 445 (IDENTIFIER)
+yydebug: state 291, reducing by rule 96 (Sv_tmp :)
+yydebug: after reduction, shifting from state 291 to state 288
+yydebug: state 288, shifting to state 378
+yydebug: state 378, reading 46 ('.')
+yydebug: state 378, reducing by rule 1 (primary_expr : IDENTIFIER)
+yydebug: after reduction, shifting from state 288 to state 142
+yydebug: state 142, reducing by rule 13 (postfix_expr : primary_expr)
+yydebug: after reduction, shifting from state 288 to state 143
+yydebug: state 143, reducing by rule 17 ($$2 :)
+yydebug: after reduction, shifting from state 143 to state 222
+yydebug: state 222, shifting to state 306
+yydebug: state 306, reading 445 (IDENTIFIER)
+yydebug: state 306, shifting to state 38
+yydebug: state 38, reducing by rule 359 (identifier : IDENTIFIER)
+yydebug: after reduction, shifting from state 306 to state 407
+yydebug: state 407, reducing by rule 26 (str_rec_identifier : identifier)
+yydebug: after reduction, shifting from state 306 to state 408
+yydebug: state 408, reducing by rule 18 (postfix_expr : postfix_expr $$2 '.' str_rec_identifier)
+yydebug: after reduction, shifting from state 288 to state 143
+yydebug: state 143, reading 61 ('=')
+yydebug: state 143, reducing by rule 34 (unary_expr : postfix_expr)
+yydebug: after reduction, shifting from state 288 to state 144
+yydebug: state 144, shifting to state 234
+yydebug: state 234, reducing by rule 82 (assignment_operator : '=')
+yydebug: after reduction, shifting from state 144 to state 235
+yydebug: state 235, reading 450 (STRING_LITERAL)
+yydebug: state 235, shifting to state 133
+yydebug: state 133, reading 59 (';')
+yydebug: state 133, reducing by rule 11 (string_literals : STRING_LITERAL)
+yydebug: after reduction, shifting from state 235 to state 160
+yydebug: state 160, reducing by rule 7 (primary_expr : string_literals)
+yydebug: after reduction, shifting from state 235 to state 142
+yydebug: state 142, reducing by rule 13 (postfix_expr : primary_expr)
+yydebug: after reduction, shifting from state 235 to state 143
+yydebug: state 143, reducing by rule 34 (unary_expr : postfix_expr)
+yydebug: after reduction, shifting from state 235 to state 144
+yydebug: state 144, reducing by rule 47 (cast_expr : unary_expr)
+yydebug: after reduction, shifting from state 235 to state 145
+yydebug: state 145, reducing by rule 49 (multiplicative_expr : cast_expr)
+yydebug: after reduction, shifting from state 235 to state 147
+yydebug: state 147, reducing by rule 53 (additive_expr : multiplicative_expr)
+yydebug: after reduction, shifting from state 235 to state 148
+yydebug: state 148, reducing by rule 56 (shift_expr : additive_expr)
+yydebug: after reduction, shifting from state 235 to state 149
+yydebug: state 149, reducing by rule 59 (relational_expr : shift_expr)
+yydebug: after reduction, shifting from state 235 to state 150
+yydebug: state 150, reducing by rule 64 (equality_expr : relational_expr)
+yydebug: after reduction, shifting from state 235 to state 151
+yydebug: state 151, reducing by rule 67 (and_expr : equality_expr)
+yydebug: after reduction, shifting from state 235 to state 152
+yydebug: state 152, reducing by rule 69 (exclusive_or_expr : and_expr)
+yydebug: after reduction, shifting from state 235 to state 153
+yydebug: state 153, reducing by rule 71 (inclusive_or_expr : exclusive_or_expr)
+yydebug: after reduction, shifting from state 235 to state 154
+yydebug: state 154, reducing by rule 73 (logical_and_expr : inclusive_or_expr)
+yydebug: after reduction, shifting from state 235 to state 155
+yydebug: state 155, reducing by rule 75 (logical_or_expr : logical_and_expr)
+yydebug: after reduction, shifting from state 235 to state 156
+yydebug: state 156, reducing by rule 77 (conditional_expr : logical_or_expr)
+yydebug: after reduction, shifting from state 235 to state 157
+yydebug: state 157, reducing by rule 80 (assignment_expr : conditional_expr)
+yydebug: after reduction, shifting from state 235 to state 308
+yydebug: state 308, reducing by rule 81 (assignment_expr : unary_expr assignment_operator assignment_expr)
+yydebug: after reduction, shifting from state 288 to state 158
+yydebug: state 158, reducing by rule 93 (expr : assignment_expr)
+yydebug: after reduction, shifting from state 288 to state 382
+yydebug: state 382, reducing by rule 285 (maybe_expr : expr)
+yydebug: after reduction, shifting from state 288 to state 383
+yydebug: state 383, shifting to state 451
+yydebug: state 451, reducing by rule 286 (expression_statement : maybe_expr ';')
+yydebug: after reduction, shifting from state 288 to state 386
+yydebug: state 386, reducing by rule 259 (statement : Sv_tmp expression_statement)
+yydebug: after reduction, shifting from state 291 to state 395
+yydebug: state 395, reducing by rule 281 (statement_list : statement_list statement)
+yydebug: after reduction, shifting from state 199 to state 291
+yydebug: state 291, reading 445 (IDENTIFIER)
+yydebug: state 291, reducing by rule 96 (Sv_tmp :)
+yydebug: after reduction, shifting from state 291 to state 288
+yydebug: state 288, shifting to state 378
+yydebug: state 378, reading 61 ('=')
+yydebug: state 378, reducing by rule 1 (primary_expr : IDENTIFIER)
+yydebug: after reduction, shifting from state 288 to state 142
+yydebug: state 142, reducing by rule 13 (postfix_expr : primary_expr)
+yydebug: after reduction, shifting from state 288 to state 143
+yydebug: state 143, reducing by rule 34 (unary_expr : postfix_expr)
+yydebug: after reduction, shifting from state 288 to state 144
+yydebug: state 144, shifting to state 234
+yydebug: state 234, reducing by rule 82 (assignment_operator : '=')
+yydebug: after reduction, shifting from state 144 to state 235
+yydebug: state 235, reading 40 ('(')
+yydebug: state 235, shifting to state 135
+yydebug: state 135, reading 257 (TYPE_NAME)
+yydebug: state 135, shifting to state 93
+yydebug: state 93, reducing by rule 105 (user_defined_type : TYPE_NAME)
+yydebug: after reduction, shifting from state 135 to state 44
+yydebug: state 44, reducing by rule 106 (declaration_specifiers0 : user_defined_type)
+yydebug: after reduction, shifting from state 135 to state 55
+yydebug: state 55, reading 41 (')')
+yydebug: state 55, reducing by rule 104 (declaration_specifiers : declaration_specifiers0)
+yydebug: after reduction, shifting from state 135 to state 212
+yydebug: state 212, reducing by rule 231 (type_name : declaration_specifiers)
+yydebug: after reduction, shifting from state 135 to state 213
+yydebug: state 213, shifting to state 301
+yydebug: state 301, reading 123 ('{')
+yydebug: state 301, shifting to state 399
+yydebug: state 399, reducing by rule 96 (Sv_tmp :)
+yydebug: after reduction, shifting from state 399 to state 259
+yydebug: state 259, reading 46 ('.')
+yydebug: state 259, shifting to state 334
+yydebug: state 334, reading 445 (IDENTIFIER)
+yydebug: state 334, shifting to state 38
+yydebug: state 38, reducing by rule 359 (identifier : IDENTIFIER)
+yydebug: after reduction, shifting from state 334 to state 407
+yydebug: state 407, reducing by rule 26 (str_rec_identifier : identifier)
+yydebug: after reduction, shifting from state 334 to state 415
+yydebug: state 415, reducing by rule 256 (designator : '.' str_rec_identifier)
+yydebug: after reduction, shifting from state 259 to state 335
+yydebug: state 335, reducing by rule 253 (designator_list : designator)
+yydebug: after reduction, shifting from state 259 to state 336
+yydebug: state 336, reading 61 ('=')
+yydebug: state 336, shifting to state 416
+yydebug: state 416, reducing by rule 252 (designation_opt : designator_list '=')
+yydebug: after reduction, shifting from state 259 to state 337
+yydebug: state 337, reducing by rule 357 (Start_block :)
+yydebug: after reduction, shifting from state 337 to state 418
+yydebug: state 418, reading 446 (CONSTANT)
+yydebug: state 418, shifting to state 129
+yydebug: state 129, reducing by rule 3 (primary_expr : CONSTANT)
+yydebug: after reduction, shifting from state 418 to state 142
+yydebug: state 142, reducing by rule 13 (postfix_expr : primary_expr)
+yydebug: after reduction, shifting from state 418 to state 143
+yydebug: state 143, reading 44 (',')
+yydebug: state 143, reducing by rule 34 (unary_expr : postfix_expr)
+yydebug: after reduction, shifting from state 418 to state 144
+yydebug: state 144, reducing by rule 47 (cast_expr : unary_expr)
+yydebug: after reduction, shifting from state 418 to state 145
+yydebug: state 145, reducing by rule 49 (multiplicative_expr : cast_expr)
+yydebug: after reduction, shifting from state 418 to state 147
+yydebug: state 147, reducing by rule 53 (additive_expr : multiplicative_expr)
+yydebug: after reduction, shifting from state 418 to state 148
+yydebug: state 148, reducing by rule 56 (shift_expr : additive_expr)
+yydebug: after reduction, shifting from state 418 to state 149
+yydebug: state 149, reducing by rule 59 (relational_expr : shift_expr)
+yydebug: after reduction, shifting from state 418 to state 150
+yydebug: state 150, reducing by rule 64 (equality_expr : relational_expr)
+yydebug: after reduction, shifting from state 418 to state 151
+yydebug: state 151, reducing by rule 67 (and_expr : equality_expr)
+yydebug: after reduction, shifting from state 418 to state 152
+yydebug: state 152, reducing by rule 69 (exclusive_or_expr : and_expr)
+yydebug: after reduction, shifting from state 418 to state 153
+yydebug: state 153, reducing by rule 71 (inclusive_or_expr : exclusive_or_expr)
+yydebug: after reduction, shifting from state 418 to state 154
+yydebug: state 154, reducing by rule 73 (logical_and_expr : inclusive_or_expr)
+yydebug: after reduction, shifting from state 418 to state 155
+yydebug: state 155, reducing by rule 75 (logical_or_expr : logical_and_expr)
+yydebug: after reduction, shifting from state 418 to state 156
+yydebug: state 156, reducing by rule 77 (conditional_expr : logical_or_expr)
+yydebug: after reduction, shifting from state 418 to state 157
+yydebug: state 157, reducing by rule 80 (assignment_expr : conditional_expr)
+yydebug: after reduction, shifting from state 418 to state 168
+yydebug: state 168, reducing by rule 245 (initializer : assignment_expr)
+yydebug: after reduction, shifting from state 418 to state 462
+yydebug: state 462, reducing by rule 358 (Stop_block :)
+yydebug: after reduction, shifting from state 462 to state 486
+yydebug: state 486, reducing by rule 249 (initializer_list : Sv_tmp designation_opt Start_block initializer Stop_block)
+yydebug: after reduction, shifting from state 399 to state 456
+yydebug: state 456, shifting to state 481
+yydebug: state 481, reading 46 ('.')
+yydebug: state 481, reducing by rule 96 (Sv_tmp :)
+yydebug: after reduction, shifting from state 481 to state 413
+yydebug: state 413, shifting to state 334
+yydebug: state 334, reading 445 (IDENTIFIER)
+yydebug: state 334, shifting to state 38
+yydebug: state 38, reducing by rule 359 (identifier : IDENTIFIER)
+yydebug: after reduction, shifting from state 334 to state 407
+yydebug: state 407, reducing by rule 26 (str_rec_identifier : identifier)
+yydebug: after reduction, shifting from state 334 to state 415
+yydebug: state 415, reducing by rule 256 (designator : '.' str_rec_identifier)
+yydebug: after reduction, shifting from state 413 to state 335
+yydebug: state 335, reducing by rule 253 (designator_list : designator)
+yydebug: after reduction, shifting from state 413 to state 336
+yydebug: state 336, reading 61 ('=')
+yydebug: state 336, shifting to state 416
+yydebug: state 416, reducing by rule 252 (designation_opt : designator_list '=')
+yydebug: after reduction, shifting from state 413 to state 460
+yydebug: state 460, reducing by rule 357 (Start_block :)
+yydebug: after reduction, shifting from state 460 to state 485
+yydebug: state 485, reading 450 (STRING_LITERAL)
+yydebug: state 485, shifting to state 133
+yydebug: state 133, reading 125 ('}')
+yydebug: state 133, reducing by rule 11 (string_literals : STRING_LITERAL)
+yydebug: after reduction, shifting from state 485 to state 160
+yydebug: state 160, reducing by rule 7 (primary_expr : string_literals)
+yydebug: after reduction, shifting from state 485 to state 142
+yydebug: state 142, reducing by rule 13 (postfix_expr : primary_expr)
+yydebug: after reduction, shifting from state 485 to state 143
+yydebug: state 143, reducing by rule 34 (unary_expr : postfix_expr)
+yydebug: after reduction, shifting from state 485 to state 144
+yydebug: state 144, reducing by rule 47 (cast_expr : unary_expr)
+yydebug: after reduction, shifting from state 485 to state 145
+yydebug: state 145, reducing by rule 49 (multiplicative_expr : cast_expr)
+yydebug: after reduction, shifting from state 485 to state 147
+yydebug: state 147, reducing by rule 53 (additive_expr : multiplicative_expr)
+yydebug: after reduction, shifting from state 485 to state 148
+yydebug: state 148, reducing by rule 56 (shift_expr : additive_expr)
+yydebug: after reduction, shifting from state 485 to state 149
+yydebug: state 149, reducing by rule 59 (relational_expr : shift_expr)
+yydebug: after reduction, shifting from state 485 to state 150
+yydebug: state 150, reducing by rule 64 (equality_expr : relational_expr)
+yydebug: after reduction, shifting from state 485 to state 151
+yydebug: state 151, reducing by rule 67 (and_expr : equality_expr)
+yydebug: after reduction, shifting from state 485 to state 152
+yydebug: state 152, reducing by rule 69 (exclusive_or_expr : and_expr)
+yydebug: after reduction, shifting from state 485 to state 153
+yydebug: state 153, reducing by rule 71 (inclusive_or_expr : exclusive_or_expr)
+yydebug: after reduction, shifting from state 485 to state 154
+yydebug: state 154, reducing by rule 73 (logical_and_expr : inclusive_or_expr)
+yydebug: after reduction, shifting from state 485 to state 155
+yydebug: state 155, reducing by rule 75 (logical_or_expr : logical_and_expr)
+yydebug: after reduction, shifting from state 485 to state 156
+yydebug: state 156, reducing by rule 77 (conditional_expr : logical_or_expr)
+yydebug: after reduction, shifting from state 485 to state 157
+yydebug: state 157, reducing by rule 80 (assignment_expr : conditional_expr)
+yydebug: after reduction, shifting from state 485 to state 168
+yydebug: state 168, reducing by rule 245 (initializer : assignment_expr)
+yydebug: after reduction, shifting from state 485 to state 496
+yydebug: state 496, reducing by rule 358 (Stop_block :)
+yydebug: after reduction, shifting from state 496 to state 507
+yydebug: state 507, reducing by rule 250 (initializer_list : initializer_list ',' Sv_tmp designation_opt Start_block initializer Stop_block)
+yydebug: after reduction, shifting from state 399 to state 456
+yydebug: state 456, shifting to state 482
+yydebug: state 482, reducing by rule 24 (compound_literal : '(' type_name ')' '{' initializer_list '}')
+yydebug: after reduction, shifting from state 235 to state 146
+yydebug: state 146, reducing by rule 23 (postfix_expr : compound_literal)
+yydebug: after reduction, shifting from state 235 to state 143
+yydebug: state 143, reading 59 (';')
+yydebug: state 143, reducing by rule 34 (unary_expr : postfix_expr)
+yydebug: after reduction, shifting from state 235 to state 144
+yydebug: state 144, reducing by rule 47 (cast_expr : unary_expr)
+yydebug: after reduction, shifting from state 235 to state 145
+yydebug: state 145, reducing by rule 49 (multiplicative_expr : cast_expr)
+yydebug: after reduction, shifting from state 235 to state 147
+yydebug: state 147, reducing by rule 53 (additive_expr : multiplicative_expr)
+yydebug: after reduction, shifting from state 235 to state 148
+yydebug: state 148, reducing by rule 56 (shift_expr : additive_expr)
+yydebug: after reduction, shifting from state 235 to state 149
+yydebug: state 149, reducing by rule 59 (relational_expr : shift_expr)
+yydebug: after reduction, shifting from state 235 to state 150
+yydebug: state 150, reducing by rule 64 (equality_expr : relational_expr)
+yydebug: after reduction, shifting from state 235 to state 151
+yydebug: state 151, reducing by rule 67 (and_expr : equality_expr)
+yydebug: after reduction, shifting from state 235 to state 152
+yydebug: state 152, reducing by rule 69 (exclusive_or_expr : and_expr)
+yydebug: after reduction, shifting from state 235 to state 153
+yydebug: state 153, reducing by rule 71 (inclusive_or_expr : exclusive_or_expr)
+yydebug: after reduction, shifting from state 235 to state 154
+yydebug: state 154, reducing by rule 73 (logical_and_expr : inclusive_or_expr)
+yydebug: after reduction, shifting from state 235 to state 155
+yydebug: state 155, reducing by rule 75 (logical_or_expr : logical_and_expr)
+yydebug: after reduction, shifting from state 235 to state 156
+yydebug: state 156, reducing by rule 77 (conditional_expr : logical_or_expr)
+yydebug: after reduction, shifting from state 235 to state 157
+yydebug: state 157, reducing by rule 80 (assignment_expr : conditional_expr)
+yydebug: after reduction, shifting from state 235 to state 308
+yydebug: state 308, reducing by rule 81 (assignment_expr : unary_expr assignment_operator assignment_expr)
+yydebug: after reduction, shifting from state 288 to state 158
+yydebug: state 158, reducing by rule 93 (expr : assignment_expr)
+yydebug: after reduction, shifting from state 288 to state 382
+yydebug: state 382, reducing by rule 285 (maybe_expr : expr)
+yydebug: after reduction, shifting from state 288 to state 383
+yydebug: state 383, shifting to state 451
+yydebug: state 451, reducing by rule 286 (expression_statement : maybe_expr ';')
+yydebug: after reduction, shifting from state 288 to state 386
+yydebug: state 386, reducing by rule 259 (statement : Sv_tmp expression_statement)
+yydebug: after reduction, shifting from state 291 to state 395
+yydebug: state 395, reducing by rule 281 (statement_list : statement_list statement)
+yydebug: after reduction, shifting from state 199 to state 291
+yydebug: state 291, reading 125 ('}')
+yydebug: state 291, reducing by rule 358 (Stop_block :)
+yydebug: after reduction, shifting from state 291 to state 394
+yydebug: state 394, shifting to state 455
+yydebug: state 455, reducing by rule 275 (compound_statement : '{' Start_block label_decls_opt statement_list Stop_block '}')
+yydebug: after reduction, shifting from state 109 to state 191
+yydebug: state 191, reducing by rule 337 (external_definition : Sv_tmp function_definition_head $$14 compound_statement)
+yydebug: after reduction, shifting from state 64 to state 112
+yydebug: state 112, reducing by rule 332 (cached_external_definition_list : cached_external_definition_list _bef_ external_definition)
+yydebug: after reduction, shifting from state 2 to state 5
+yydebug: state 5, reducing by rule 315 (_bef_ :)
+yydebug: after reduction, shifting from state 5 to state 64
+yydebug: state 64, reading 0 (end-of-file)
+yydebug: state 64, reducing by rule 330 (file : _bef_ cached_external_definition_list _bef_)
+yydebug: after reduction, shifting from state 0 to state 1

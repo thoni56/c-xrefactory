@@ -700,7 +700,7 @@ declaration
     | Sv_tmp init_declarations ';'			{ tmpWorkMemoryi = $1.d; }
     | error
         {
-#ifdef DEBUGPARSING
+#if YYDEBUG
             char buffer[100];
             sprintf(buffer, "error parsing declaration, near '%s'\n", yytext);
             yyerror(buffer);
@@ -720,7 +720,7 @@ init_declarations
     | error												{
         /* $$.d = &s_errorSymbol; */
         $$.d = typeSpecifier2(&s_errorModifier);
-#ifdef DEBUGPARSING
+#if YYDEBUG
         char buffer[100];
         sprintf(buffer, "error parsing init_declarations, near '%s'\n", yytext);
         yyerror(buffer);
@@ -977,7 +977,7 @@ struct_declaration
         /* $$.d = &s_errorSymbol; */
         XX_ALLOC($$.d, Symbol);
         *$$.d = s_errorSymbol;
-#ifdef DEBUGPARSING
+#if YYDEBUG
         char buffer[100];
         sprintf(buffer, "DEBUG: error parsing struct_declaration near '%s'\n", yytext);
         yyerror(buffer);
@@ -1066,7 +1066,7 @@ enumerator
         /* $$.d = &s_errorSymbol; */
         XX_ALLOC($$.d, Symbol);
         *$$.d = s_errorSymbol;
-#ifdef DEBUGPARSING
+#if YYDEBUG
         char buffer[100];
         sprintf(buffer, "DEBUG: error parsing enumerator near '%s'\n", yytext);
         yyerror(buffer);
@@ -1303,7 +1303,7 @@ parameter_declaration
         */
         XX_ALLOC($$.d, Symbol);
         *$$.d = s_errorSymbol;
-#ifdef DEBUGPARSING
+#if YYDEBUG
         char buffer[100];
         sprintf(buffer, "DEBUG: error parsing parameter_declaration near '%s'\n", yytext);
         yyerror(buffer);
@@ -1393,7 +1393,7 @@ initializer
     }
     | error				{
         $$.d = NULL;
-#ifdef DEBUGPARSING
+#if YYDEBUG
         char buffer[100];
         sprintf(buffer, "error parsing initializer, near '%s'\n", yytext);
         yyerror(buffer);

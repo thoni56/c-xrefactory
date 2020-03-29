@@ -6,9 +6,12 @@ typedef struct s {
 S s;
 S *sp;
 
-sp->integer = 1;
-sp->string = "Hello,";
+int main() {
+    sp->integer = 1;
+    sp->string = "Hello,";
 
-s.integer = 2;
-s.string = "brave, new,";
-s = (S){.integer = 3, .string = "world!"};
+    s.integer = 2;
+    s.string = "brave, new,";
+
+    s = (S){.integer = 3, .string = "world!"};
+}
