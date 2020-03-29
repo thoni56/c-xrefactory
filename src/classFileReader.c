@@ -60,8 +60,6 @@ S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
         /*fprintf(dumpOut,"getting char *%x < %x == '0x%x'\n",ccc,ffin,cch);fflush(dumpOut);*/ \
     }
 
-#define UngetChar(cch, ccc, bbb) {*--ccc = cch;}
-
 
 #define GetU1(val, ccc, ffin, bbb) GetChar(val, ccc, ffin, bbb)
 
@@ -249,7 +247,7 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iB
             GetChar(fn[i],ccc,ffin,iBuf);                               \
         }                                                               \
         fn[i] = 0;                                                      \
-        /*&fprintf(dumpOut,"file %s in central dir\n",fn); fflush(dumpOut);&*/ \
+        log_trace("file '%s' in central dir", fn);                      \
         SkipNChars(extraLen+fcommentLen,ccc,ffin,iBuf);                 \
     }
 
@@ -275,20 +273,21 @@ bool fsIsMember(S_zipArchiveDir **dirPointer, char *fn, unsigned offset,
     int                 itemlen, res;
     char                *ss;
 
-    if (dirPointer == NULL) return(0);
+    if (dirPointer == NULL)
+        return false;
 
     /* Allow NULL to indicate "not interested" */
     if (outDirPointer != NULL)
         *outDirPointer = *dirPointer;
 
-    res = 1;
+    res = true;
     if (fn[0] == 0) {
         error(ERR_INTERNAL, "looking for empty file name in 'fsdir'");
-        return(0);
+        return false;
     }
     if (fn[0]=='/' && fn[1]==0) {
         error(ERR_INTERNAL, "looking for root in 'fsdir'");
-        return(0);  /* should not happen */
+        return false;  /* should not happen */
     }
  lastrecLabel:
     ss = strchr(fn,'/');
@@ -306,7 +305,7 @@ bool fsIsMember(S_zipArchiveDir **dirPointer, char *fn, unsigned offset,
     }
     assert(itemlen > 0);
     if (aa==NULL) {
-        res = 0;
+        res = false;
         if (addFlag == ADD_YES) {
             XX_ALLOCC(p, sizeof(S_zipArchiveDir)+itemlen+1, S_zipArchiveDir);
             initZipArchiveDir(p);
@@ -320,7 +319,7 @@ bool fsIsMember(S_zipArchiveDir **dirPointer, char *fn, unsigned offset,
             }
             *aaa = aa = p;
         } else {
-            return 0;
+            return false;
         }
     }
 
