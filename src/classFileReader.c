@@ -149,6 +149,7 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iB
     unsigned crc32,compressedSize,unCompressedSize;
     static int compressionErrorWritten=0;
     char    *zzz, ttt[MAX_FILE_NAME_SIZE];
+
     res = 1;
     ccc = *accc; ffin = *affin;
     GetZU4(headSig,ccc,ffin,iBuf);
@@ -267,53 +268,55 @@ static void initZipArchiveDir(S_zipArchiveDir *dir) {
 }
 
 
-static void fillZipFileTabItem(S_zipFileTableItem *fileItem, struct stat st, S_zipArchiveDir *dir) {
+static void fillZipFileTableItem(S_zipFileTableItem *fileItem, struct stat st, S_zipArchiveDir *dir) {
     fileItem->st = st;
     fileItem->dir = dir;
 }
 
-int fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset,
-               int addFlag, S_zipArchiveDir **place) {
+bool fsIsMember(S_zipArchiveDir **dirPointer, char *fn, unsigned offset,
+               int addFlag, S_zipArchiveDir **outDirPointer) {
     S_zipArchiveDir     *aa, **aaa, *p;
     int                 itemlen, res;
     char                *ss;
 
-    if (dir == NULL) return(0);
+    if (dirPointer == NULL) return(0);
 
-    /* Allow NULL for place to indicate "not interested" */
-    if (place != NULL) *place = *dir;
+    /* Allow NULL to indicate "not interested" */
+    if (outDirPointer != NULL)
+        *outDirPointer = *dirPointer;
 
     res = 1;
     if (fn[0] == 0) {
-        error(ERR_INTERNAL,"looking for empty file name in 'fsdir'");
+        error(ERR_INTERNAL, "looking for empty file name in 'fsdir'");
         return(0);
     }
     if (fn[0]=='/' && fn[1]==0) {
-        error(ERR_INTERNAL,"looking for root in 'fsdir'");
-        return(0);  /* should not arrive */
+        error(ERR_INTERNAL, "looking for root in 'fsdir'");
+        return(0);  /* should not happen */
     }
  lastrecLabel:
     ss = strchr(fn,'/');
     if (ss == NULL) {
         itemlen = strlen(fn);
-        if (itemlen == 0) return(res);  /* directory */
+        if (itemlen == 0)
+            return res;  /* directory */
     } else {
         itemlen = (ss-fn) + 1;
     }
-    for(aaa=dir, aa= *aaa; aa!=NULL; aaa= &(aa->next), aa = *aaa) {
-        /*&fprintf(dumpOut,"comparing %s <-> %s of len %d\n", fn, aa->name, itemlen);fflush(dumpOut);&*/
-        if (strncmp(fn,aa->name,itemlen)==0 && aa->name[itemlen]==0) break;
+    for(aaa=dirPointer, aa= *aaa; aa!=NULL; aaa= &(aa->next), aa = *aaa) {
+        log_trace("comparing %s <-> %s of len %d", fn, aa->name, itemlen);
+        if (strncmp(fn,aa->name,itemlen)==0 && aa->name[itemlen]==0)
+            break;
     }
     assert(itemlen > 0);
     if (aa==NULL) {
         res = 0;
         if (addFlag == ADD_YES) {
-            XX_ALLOCC(ss, sizeof(S_zipArchiveDir)+itemlen+1, char);
-            p = (S_zipArchiveDir*)ss;
+            XX_ALLOCC(p, sizeof(S_zipArchiveDir)+itemlen+1, S_zipArchiveDir);
             initZipArchiveDir(p);
             strncpy(p->name, fn, itemlen);
             p->name[itemlen]=0;
-            /*&fprintf(dumpOut,"adding new item\n", p->name);fflush(dumpOut);&*/
+            log_trace("adding new item '%s'", p->name);
             if (fn[itemlen-1] == '/') {         /* directory */
                 p->u.sub = NULL;
             } else {
@@ -321,19 +324,19 @@ int fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset,
             }
             *aaa = aa = p;
         } else {
-            return(0);
+            return 0;
         }
     }
 
-    if (place != NULL)
-        *place = aa;
+    if (outDirPointer != NULL)
+        *outDirPointer = aa;
 
     if (fn[itemlen-1] == '/') {
-        dir = &(aa->u.sub);
+        dirPointer = &(aa->u.sub);
         fn = fn+itemlen;
         goto lastrecLabel;
     } else {
-        return(res);                    /* yet in the table */
+        return res;
     }
 }
 
@@ -410,7 +413,7 @@ static void zipArchiveScan(char **accc, char **affin, CharacterBuffer *iBuf,
         GetCurrentFileOffset(ccc,ffin,iBuf, foffset);
         ReadZipCDRecord(ccc,ffin,iBuf);
         if (strncmp(fn,"META-INF/",9)!=0) {
-            //&fprintf(dumpOut,"adding %s\n",fn);fflush(dumpOut);
+            log_trace("adding '%s'", fn);
             fsIsMember(&zip->dir, fn, localHeaderOffset, ADD_YES, &place);
         }
     } endcd:;
@@ -467,7 +470,7 @@ int zipIndexArchive(char *name) {
         strcpy(s_zipArchiveTable[archiveIndex].fn, name);
         s_zipArchiveTable[archiveIndex].fn[namelen] = ZIP_SEPARATOR_CHAR;
         s_zipArchiveTable[archiveIndex].fn[namelen+1] = 0;
-        fillZipFileTabItem(&s_zipArchiveTable[archiveIndex], fst, NULL);
+        fillZipFileTableItem(&s_zipArchiveTable[archiveIndex], fst, NULL);
         zipArchiveScan(&buffer->next,&buffer->end,buffer,&s_zipArchiveTable[archiveIndex], fst.st_size);
         fclose(ff);
     }
