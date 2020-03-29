@@ -320,12 +320,12 @@
 #define AddSymbolNoTrail(pp,symtab) {\
     int i;\
     Symbol *memb;\
-    symTabIsMember(symtab,pp,&i,&memb);\
+    symbolTableIsMember(symtab,pp,&i,&memb);\
     if (	LANGUAGE(LANG_CCC) && pp->bits.symType==TypeDefault \
             && pp->u.type->kind == TypeFunction) { \
         pp->u.type->u.f.thisFunList = &(symtab->tab[i]); \
     } \
-    symTabSet(symtab,pp,i);\
+    symbolTableSet(symtab,pp,i);\
 }
 
 #define LINK_NAME_MAYBE_START(ccc) (\

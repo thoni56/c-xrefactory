@@ -3,7 +3,7 @@
 
 #include "jsltypetab.h"
 #include "symbol.h"
-#include "symtab.h"
+#include "symboltable.h"
 
 
 typedef struct javaStat {
@@ -14,7 +14,7 @@ typedef struct javaStat {
     char						*currentPackage;    /* current package */
     char						*unnamedPackagePath;	/* directory for unnamed package */
     char						*namedPackagePath;	/* inferred source-path for named package */
-    struct symTab				*locals;			/* args and local variables */
+    struct symbolTable			*locals;			/* args and local variables */
     struct idList               *lastParsedName;
     unsigned					methodModifiers;		/* currently parsed method modifs */
     struct currentlyParsedCl	cp;					/* some parsing positions */
@@ -29,7 +29,7 @@ extern S_javaStat s_initJavaStat;
 
 extern void fillJavaStat(S_javaStat *javaStat, S_idList *className, S_typeModifiers *thisType, Symbol *thisClass,
                          int currentNestedIndex, char *currentPackage, char *unnamedPackageDir,
-                         char *namedPackageDir, S_symTab *locals, S_idList *lastParsedName,
+                         char *namedPackageDir, S_symbolTable *locals, S_idList *lastParsedName,
                          unsigned methodModifiers, S_currentlyParsedCl parsingPositions, int classFileIndex,
                          S_javaStat *next);
 extern void javaCheckForPrimaryStart(S_position *cpos, S_position *pp);

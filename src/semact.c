@@ -55,8 +55,8 @@ void deleteSymDef(void *p) {
 
     pp = (Symbol *) p;
     log_debug("deleting %s %s", pp->name, pp->linkName);
-    if (symTabDelete(s_javaStat->locals,pp)) return;
-    if (symTabDelete(s_symTab,pp)==0) {
+    if (symbolTableDelete(s_javaStat->locals,pp)) return;
+    if (symbolTableDelete(s_symTab,pp)==0) {
         assert(s_opt.taskRegime);
         if (s_opt.taskRegime != RegimeEditServer) {
             error(ERR_INTERNAL,"symbol on deletion not found");
@@ -72,7 +72,7 @@ void unpackPointers(Symbol *pp) {
     pp->bits.npointers=0;
 }
 
-void addSymbol(Symbol *pp, S_symTab *tab) {
+void addSymbol(Symbol *pp, S_symbolTable *tab) {
     /*  a bug can produce, if you add a symbol into old table, and the same
         symbol exists in a newer one. Then it will be deleted from the newer
         one. All this story is about storing information in trail. It should
@@ -505,7 +505,7 @@ static void setStaticFunctionLinkName( Symbol *p, int usage ) {
     int         len;
     char        *ss,*basefname;
 
-    //& if (! symTabIsMember(s_symTab, p, &ii, &memb)) {
+    //& if (! symbolTableIsMember(s_symTab, p, &ii, &memb)) {
     // follwing unifies static symbols taken from the same header files.
     // Static symbols can be used only after being defined, so it is sufficient
     // to do this on definition usage?
@@ -533,7 +533,7 @@ static void setStaticFunctionLinkName( Symbol *p, int usage ) {
                                       ((char*)ppp) < memory+s_topBlock->previousTopBlock->firstFreeIndex \
                                       )
 
-Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, S_symTab *tab,
+Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, S_symbolTable *tab,
                           int usage) {
     S_typeModifiers *tt;
     Symbol *pp;
@@ -557,20 +557,20 @@ Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, S_symTab *tab,
     if ((! WORK_NEST_LEVEL0() && LANGUAGE(LANG_C))
         || (! WORK_NEST_LEVEL1() && LANGUAGE(LAN_YACC))) {
         // local scope symbol
-        if (! symTabIsMember(s_symTab,p,&ii,&pp)
+        if (! symbolTableIsMember(s_symTab,p,&ii,&pp)
             || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
             pp = p;
             setLocalVariableLinkName(pp);
             addSymbol(pp, tab);
         }
     } else if (p->bits.symType==TypeDefault && p->bits.storage==StorageStatic) {
-        if (! symTabIsMember(s_symTab,p,&ii,&pp)) {
+        if (! symbolTableIsMember(s_symTab,p,&ii,&pp)) {
             pp = p;
             setStaticFunctionLinkName(pp, usage);
             addSymbol(pp, tab);
         }
     } else {
-        if (! symTabIsMember(s_symTab,p,&ii,&pp)) {
+        if (! symbolTableIsMember(s_symTab,p,&ii,&pp)) {
             pp = p;
             if (s_opt.exactPositionResolve) {
                 setGlobalFileDepNames(pp->name, pp, MEM_XX);
@@ -620,7 +620,7 @@ Symbol *addNewDeclaration(
                             Symbol *decl,
                             S_idList *idl,
                             unsigned storage,
-                            S_symTab *tab
+                            S_symbolTable *tab
                             ) {
     int usage;
     if (decl == &s_errorSymbol || btype == &s_errorSymbol
@@ -637,7 +637,7 @@ Symbol *addNewDeclaration(
     return(decl);
 }
 
-void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, S_symTab *tab) {
+void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, S_symbolTable *tab) {
     Symbol    *pp, *pa, *ppp;
     int         ii;
     if (p->name != NULL && p->bits.symType!=TypeError) {
@@ -652,7 +652,7 @@ void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, S_symTab
             }
         }
         if (pp!=NULL && pp!=p) {
-            if (symTabIsMember(tab, pa, &ii, &ppp)) {
+            if (symbolTableIsMember(tab, pa, &ii, &ppp)) {
                 addCxReference(ppp, &p->pos, UsageUsed, s_noneFileIndex, s_noneFileIndex);
             }
         } else {
@@ -907,7 +907,7 @@ S_typeModifiers *simpleStrUnionSpecifier(   S_id *typeName,
     fillSymbol(&p, id->name, id->name, id->p);
     fillSymbolBits(&p.bits, ACC_DEFAULT, type, StorageNone);
 
-    if (! symTabIsMember(s_symTab,&p,&ii,&pp)
+    if (! symbolTableIsMember(s_symTab,&p,&ii,&pp)
         || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
         //{static int c=0;fprintf(dumpOut,"str#%d\n",c++);}
         XX_ALLOC(pp, Symbol);
@@ -944,10 +944,10 @@ void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
         filen = pp->pos.file;
         pp->name=iname; pp->linkName=iname;
         order = 0;
-        rr = symTabIsMember(s_symTab, pp, &ii, &memb);
+        rr = symbolTableIsMember(s_symTab, pp, &ii, &memb);
         while (rr) {
             if (memb->pos.file==filen) order++;
-            rr = symTabNextMember(pp, &memb);
+            rr = symbolTableNextMember(pp, &memb);
         }
         fname = simpleFileName(s_fileTab.tab[filen]->name);
         sprintf(tmp, "%s%c%d%c", fname, SLASH, order, LINK_NAME_CUT_SYMBOL);
@@ -1054,7 +1054,7 @@ S_typeModifiers *simpleEnumSpecifier(S_id *id, int usage) {
     fillSymbol(&p, id->name, id->name, id->p);
     fillSymbolBits(&p.bits, ACC_DEFAULT, TypeEnum, StorageNone);
 
-    if (! symTabIsMember(s_symTab,&p,&ii,&pp)
+    if (! symbolTableIsMember(s_symTab,&p,&ii,&pp)
         || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
         pp = StackMemAlloc(Symbol);
         *pp = p;

@@ -571,7 +571,7 @@ static void processInclude2(S_position *ipos, char pchar, char *iname) {
     fillSymbol(&ss, tmpBuff, tmpBuff, s_noPos);
     fillSymbolBits(&ss.bits, ACC_DEFAULT, TypeMacro, StorageNone);
 
-    if (symTabIsMember(s_symTab, &ss, &ii, &memb)) return;
+    if (symbolTableIsMember(s_symTab, &ss, &ii, &memb)) return;
     nyyin = openInclude(pchar, iname, &fname);
     if (nyyin == NULL) {
         assert(s_opt.taskRegime);
@@ -628,13 +628,13 @@ assert(0);
 static void addMacroToTabs(Symbol *pp, char *name) {
     int ii,mm;
     Symbol *memb;
-    mm = symTabIsMember(s_symTab,pp,&ii,&memb);
+    mm = symbolTableIsMember(s_symTab,pp,&ii,&memb);
     if (mm) {
         log_trace(": masking macro %s",name);
     } else {
         log_trace(": adding macro %s",name);
     }
-    symTabSet(s_symTab,pp,ii);
+    symbolTableSet(s_symTab,pp,ii);
 }
 
 static void setMacroArgumentName(S_macroArgumentTableElement *arg, void *at) {
@@ -898,7 +898,7 @@ static void processUnDefine(void) {
         assert(s_opt.taskRegime);
         /* !!!!!!!!!!!!!! tricky, add macro with mbody == NULL !!!!!!!!!! */
         /* this is because of monotonicity for caching, just adding symbol */
-        if (symTabIsMember(s_symTab, &dd, &ii, &memb)) {
+        if (symbolTableIsMember(s_symTab, &dd, &ii, &memb)) {
             if (CX_REGIME()) {
                 addCxReference(memb, &pos, UsageUndefinedMacro,s_noneFileIndex, s_noneFileIndex);
             }
@@ -1013,7 +1013,7 @@ static void processIfdef(int isIfdef) {
     fillSymbolBits(&pp.bits, ACC_DEFAULT, TypeMacro, StorageNone);
 
     assert(s_opt.taskRegime);
-    mm = symTabIsMember(s_symTab,&pp,&ii,&memb);
+    mm = symbolTableIsMember(s_symTab,&pp,&ii,&memb);
     if (mm && memb->u.mbody==NULL) mm = 0;	// undefined macro
     if (mm) {
         if (CX_REGIME()) {
@@ -1073,7 +1073,7 @@ int cexpyylex(void) {
 
         log_debug("(%s)", dd.name);
 
-        mm = symTabIsMember(s_symTab,&dd,&ii,&memb);
+        mm = symbolTableIsMember(s_symTab,&dd,&ii,&memb);
         if (mm && memb->u.mbody == NULL) mm = 0;   // undefined macro
         assert(s_opt.taskRegime);
         if (CX_REGIME()) {
@@ -1127,7 +1127,7 @@ static void processPragma(void) {
         fillSymbol(pp, mname, mname, pos);
         fillSymbolBits(&pp->bits, ACC_DEFAULT, TypeMacro, StorageNone);
 
-        symTabAdd(s_symTab,pp,&ii);
+        symbolTableAdd(s_symTab,pp,&ii);
     }
     while (lex != '\n') {PassLex(cInput.currentLexem,lex,l,v,h,pos, len,1); GetLex(lex);}
     PassLex(cInput.currentLexem,lex,l,v,h,pos, len,1);
@@ -1292,7 +1292,7 @@ static void expandMacroArgument(S_lexInput *argb) {
         if (lex == IDENTIFIER) {
             fillSymbol(&sd, cc2, cc2, s_noPos);
             fillSymbolBits(&sd.bits, ACC_DEFAULT, TypeMacro, StorageNone);
-            if (symTabIsMember(s_symTab,&sd,&ii,&memb)) {
+            if (symbolTableIsMember(s_symTab,&sd,&ii,&memb)) {
                 /* it is a macro, provide macro expansion */
                 if (macroCallExpand(memb,&pos)) goto nextLexem;
                 else failedMacroExpansion = 1;
@@ -2020,7 +2020,7 @@ int yylex(void) {
 
         if ((!LANGUAGE(LANG_JAVA))
             && lexem!=IDENT_NO_CPP_EXPAND
-            && symTabIsMember(s_symTab,&symbol,&ii,&memberP)) {
+            && symbolTableIsMember(s_symTab,&symbol,&ii,&memberP)) {
             // following is because the macro check can read new lexBuf,
             // so id would be destroyed
             //&assert(strcmp(id,memberP->name)==0);

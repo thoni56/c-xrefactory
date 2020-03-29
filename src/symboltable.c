@@ -1,5 +1,5 @@
 #define _SYMTAB_
-#include "symtab.h"
+#include "symboltable.h"
 
 #include "hash.h"
 

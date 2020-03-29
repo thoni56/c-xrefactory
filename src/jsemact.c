@@ -39,7 +39,7 @@ static int javaNotFqtUsageCorrection(Symbol *sym, int usage);
 
 void fillJavaStat(S_javaStat *javaStat, S_idList *className, S_typeModifiers *thisType, Symbol *thisClass,
                   int currentNestedIndex, char *currentPackage, char *unnamedPackagePath,
-                  char *namedPackagePath, S_symTab *locals, S_idList *lastParsedName,
+                  char *namedPackagePath, S_symbolTable *locals, S_idList *lastParsedName,
                   unsigned methodModifiers, S_currentlyParsedCl parsingPositions, int classFileIndex,
                   S_javaStat *next) {
 
@@ -583,9 +583,9 @@ static Symbol *javaAddTypeToSymbolTable(Symbol *memb, int accessFlags, S_positio
 
     memb->bits.accessFlags = accessFlags;
     memb->bits.isSingleImported = isSingleImported;
-    //&if (symTabIsMember(s_symTab, memb, &ii, &memb2)) {
+    //&if (symbolTableIsMember(s_symTab, memb, &ii, &memb2)) {
     //&	while (memb2!=NULL && strcmp(memb->linkName, memb2->linkName)!=0) {
-    //&		symTabNextMember(memb, &memb2);
+    //&		symbolTableNextMember(memb, &memb2);
     //&	}
     //&	if (memb2!=NULL) memb2->bits.accessFlags = accessFlags;
     //&}
@@ -630,7 +630,7 @@ Symbol *javaTypeSymbolUsage(S_idList *tname,
     fillSymbol(&pp, tname->id.name, tname->id.name, s_noPos);
     fillSymbolBits(&pp.bits, accessFlags, TypeStruct, StorageNone);
 
-    if (tname->next==NULL && symTabIsMember(s_symTab, &pp, &ii, &memb)) {
+    if (tname->next==NULL && symbolTableIsMember(s_symTab, &pp, &ii, &memb)) {
         // get canonical copy
         memb = javaFQTypeSymbolDefinition(memb->name, memb->linkName);
         return(memb);
@@ -885,7 +885,7 @@ static int findTopLevelNameInternal(
         cscope=cscope->next
         ) {
         assert(cscope->thisClass);
-        if (classif!=CLASS_TO_METHOD && symTabIsMember(cscope->locals, &sd, &ii, resMemb)) {
+        if (classif!=CLASS_TO_METHOD && symbolTableIsMember(cscope->locals, &sd, &ii, resMemb)) {
             /* it is an argument or local variable */
             /* this is tricky */
             /* I guess, you cannot have an overloaded function here, so ... */
@@ -1043,13 +1043,13 @@ int javaClassifySingleAmbigNameToTypeOrPack(S_idList *name,
     fillSymbolBits(&sd.bits, ACC_DEFAULT, TypeStruct, StorageNone);
 
     haveit = 0;
-    if (symTabIsMember(s_symTab, &sd, &ii, &memb)) {
+    if (symbolTableIsMember(s_symTab, &sd, &ii, &memb)) {
         /* a type */
         assert(memb);
         // O.K. I have to load the class in order to check its access flags
         for(; memb!=NULL; memb=nextmemb) {
             nextmemb = memb;
-            symTabNextMember(&sd, &nextmemb);
+            symbolTableNextMember(&sd, &nextmemb);
             // take canonical copy (as there can be more than one class
             // item in symtab
             mm = javaFQTypeSymbolDefinition(memb->name, memb->linkName);
@@ -2574,7 +2574,7 @@ struct freeTrail * newClassDefinitionBegin(	S_id *name,
     S_javaStat      *oldStat;
     int             nnest,noff,classf;
     S_nestedSpec	*nst,*nn;
-    S_symTab		*locals;
+    S_symbolTable	*locals;
     S_id		idi;
 
     assert(s_javaStat);
@@ -2582,8 +2582,8 @@ struct freeTrail * newClassDefinitionBegin(	S_id *name,
     XX_ALLOC(s_javaStat, S_javaStat);
     *s_javaStat = *oldStat;
     s_javaStat->next = oldStat;
-    XX_ALLOC(locals, S_symTab);
-    symTabInit(locals, MAX_CL_SYMBOLS);
+    XX_ALLOC(locals, S_symbolTable);
+    symbolTableInit(locals, MAX_CL_SYMBOLS);
 /*&fprintf(dumpOut,"adding new class %s\n",name->name);fflush(dumpOut);&*/
     if (oldStat->next!=NULL) {
         /* ** nested class ** */

@@ -28,7 +28,7 @@ static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {
             fillSymbolBits(&pp->bits, ACC_DEFAULT, TypeKeyword, StorageNone);
 
             /*fprintf(dumpOut,"adding keyword %s to tab %d\n",nn,s_symTab);*/
-            symTabAdd(s_symTab,pp,&not_used);
+            symbolTableAdd(s_symTab,pp,&not_used);
         }
     }
 }
@@ -81,7 +81,7 @@ void initTokenNameTab(void) {
     /* and add the 'defined' keyword for #if */
     pp = newSymbol("defined", "defined", s_noPos);
     fillSymbolBits(&pp->bits, ACC_DEFAULT, TypeDefinedOp, StorageNone);
-    symTabAdd(s_symTab, pp, &not_used);
+    symbolTableAdd(s_symTab, pp, &not_used);
 }
 
 void initJavaTypePCTIConvertIniTab(void) {

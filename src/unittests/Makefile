@@ -25,7 +25,7 @@ coverage: clean all
 
 
 # These link the modules .o and only tests the external behaviour
-symtab_tests.so: $(OBJDIR)/symtab_tests.o $(OBJDIR)/symtab.o $(OBJDIR)/hash.o
+symboltable_tests.so: $(OBJDIR)/symboltable_tests.o $(OBJDIR)/symboltable.o $(OBJDIR)/hash.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 jslsemact_tests.so: $(OBJDIR)/jslsemact_tests.o $(OBJDIR)/jslsemact.o $(OBJDIR)/symbol.o $(OBJDIR)/log.o

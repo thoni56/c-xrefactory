@@ -5,7 +5,7 @@
 
 #include "symbol.h"
 
-#define HASH_TAB_NAME symTab
+#define HASH_TAB_NAME symbolTable
 #define HASH_ELEM_TYPE Symbol
 
 

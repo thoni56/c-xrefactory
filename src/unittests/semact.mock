@@ -14,7 +14,7 @@ void deleteSymDef(void *p) {
   mock(p);
 }
 
-void addSymbol(Symbol *pp, S_symTab *tab) {
+void addSymbol(Symbol *pp, S_symbolTable *tab) {
   mock(pp, tab);
 }
 
@@ -46,7 +46,7 @@ int findStrRecordSym(S_recFindStr *ss, char *recname, Symbol **res, int javaClas
   return (int) mock(ss, recname, res, javaClassif, accessCheck, visibilityCheck);
 }
 
-Symbol *addNewSymbolDef(Symbol *p, unsigned storage, S_symTab *tab, int usage) {
+Symbol *addNewSymbolDef(Symbol *p, unsigned storage, S_symbolTable *tab, int usage) {
   return (Symbol *) mock(p, storage, tab, usage);
 }
 
@@ -54,7 +54,7 @@ Symbol *addNewCopyOfSymbolDef(Symbol *def, unsigned defaultStorage) {
   return (Symbol *) mock(def, defaultStorage);
 }
 
-Symbol *addNewDeclaration(Symbol *btype, Symbol *decl, S_idList *idl, unsigned storage, S_symTab *tab) {
+Symbol *addNewDeclaration(Symbol *btype, Symbol *decl, S_idList *idl, unsigned storage, S_symbolTable *tab) {
   return (Symbol *) mock(btype, decl, idl, storage, tab);
 }
 
@@ -102,7 +102,7 @@ void completeDeclarator(Symbol *t, Symbol *d) {
   mock(t, d);
 }
 
-void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, S_symTab *tab) {
+void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, S_symbolTable *tab) {
   mock(function, p, i, tab);
 }
 

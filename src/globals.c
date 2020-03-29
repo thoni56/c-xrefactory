@@ -79,7 +79,7 @@ S_completions s_completions;
 
 S_fileDesc cFile = {0};
 
-S_symTab *s_symTab;
+S_symbolTable *s_symTab;
 S_fileTab s_fileTab;
 
 S_fileDesc inStack[INSTACK_SIZE];

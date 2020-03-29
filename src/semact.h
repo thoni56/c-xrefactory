@@ -2,7 +2,7 @@
 #define SEMACT_H
 
 #include "symbol.h"
-#include "symtab.h"
+#include "symboltable.h"
 
 #include "proto.h"              /* Requires at least S_recFindStr, probably others */
 
@@ -10,7 +10,7 @@
 extern void unpackPointers(Symbol *pp);
 extern int displayingErrorMessages(void);
 extern void deleteSymDef(void *p);
-extern void addSymbol(Symbol *pp, S_symTab *tab);
+extern void addSymbol(Symbol *pp, S_symbolTable *tab);
 extern void recFindPush(Symbol *sym, S_recFindStr *rfs);
 extern S_recFindStr * iniFind(Symbol *s, S_recFindStr *rfs);
 extern int javaOuterClassAccessible(Symbol *cl);
@@ -24,10 +24,10 @@ extern int findStrRecordSym(	S_recFindStr *ss,
                                 int accessCheck,
                                 int visibilityCheck
                                 );
-extern Symbol *addNewSymbolDef(Symbol *p, unsigned storage, S_symTab *tab, int usage);
+extern Symbol *addNewSymbolDef(Symbol *p, unsigned storage, S_symbolTable *tab, int usage);
 extern Symbol *addNewCopyOfSymbolDef(Symbol *def, unsigned defaultStorage);
 extern Symbol *addNewDeclaration(Symbol *btype, Symbol *decl, S_idList *idl,
-                                   unsigned storage, S_symTab *tab);
+                                   unsigned storage, S_symbolTable *tab);
 extern int styyerror(char *s);
 extern int styyErrorRecovery(void);
 extern void setToNull(void *p);
@@ -39,7 +39,7 @@ extern void declTypeSpecifier21(S_typeModifiers *t, Symbol *d);
 extern S_typeModifiers *appendComposedType(S_typeModifiers **d, unsigned t);
 extern S_typeModifiers *prependComposedType(S_typeModifiers *d, unsigned t);
 extern void completeDeclarator(Symbol *t, Symbol *d);
-extern void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, S_symTab *tab);
+extern void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, S_symbolTable *tab);
 extern S_typeModifiers *crSimpleTypeModifier (unsigned t);
 extern SymbolList *createDefinitionList(Symbol *symbol);
 extern Symbol *createSimpleDefinition(unsigned storage, unsigned t, S_id *id);

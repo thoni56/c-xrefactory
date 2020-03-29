@@ -5971,7 +5971,7 @@ case 365:
                             /* I have removed following because it makes problems when*/
                             /* expanding to FQT names, WHY IT WAS HERE ???*/
                             /*&addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM,StorageField,*/
-                            /*&              s_javaStat->classFileIndex, &$1.d->p,*/
+                            /*&              s_javaStat->classFileInd, &$1.d->p,*/
                             /*&              UsageNotFQField);*/
                         } else {
                             /* here I should annulate class reference, as it is an error*/

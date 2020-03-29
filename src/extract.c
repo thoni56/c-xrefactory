@@ -79,7 +79,7 @@ void deleteContinueBreakLabelSymbol(char *name) {
 
     fillSymbolWithLabel(&ss, name, name, s_noPos, 0);
     fillSymbolBits(&ss.bits, ACC_DEFAULT, TypeLabel, StorageAuto);
-    if (symTabIsMember(s_symTab, &ss, &ii, &memb)) {
+    if (symbolTableIsMember(s_symTab, &ss, &ii, &memb)) {
         ExtrDeleteContBreakSym(memb);
     } else {
         assert(0);
@@ -95,7 +95,7 @@ void genContinueBreakReference(char *name) {
     fillSymbolWithLabel(&ss, name, name, s_noPos, 0);
     fillSymbolBits(&ss.bits, ACC_DEFAULT, TypeLabel, StorageAuto);
 
-    if (symTabIsMember(s_symTab, &ss, &ii, &memb)) {
+    if (symbolTableIsMember(s_symTab, &ss, &ii, &memb)) {
         genInternalLabelReference(memb->u.labn, UsageUsed);
     }
 }
@@ -108,7 +108,7 @@ void genSwitchCaseFork(int lastFlag) {
 
     fillSymbolWithLabel(&ss, SWITCH_LABEL_NAME, SWITCH_LABEL_NAME, s_noPos, 0);
     fillSymbolBits(&ss.bits, ACC_DEFAULT, TypeLabel, StorageAuto);
-    if (symTabIsMember(s_symTab, &ss, &ii, &memb)) {
+    if (symbolTableIsMember(s_symTab, &ss, &ii, &memb)) {
         genInternalLabelReference(memb->u.labn, UsageDefined);
         if (! lastFlag) {
             memb->u.labn++;

@@ -248,7 +248,7 @@ void dumpOptions(int nargc, char **nargv) {
 
 /* *********************************************************** */
 
-#include "symtab.h"
+#include "symboltable.h"
 #include "javafqttab.h"
 #include "jsltypetab.h"
 #include "reftab.h"

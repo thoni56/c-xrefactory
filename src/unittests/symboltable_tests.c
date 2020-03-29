@@ -1,17 +1,17 @@
 #include <cgreen/cgreen.h>
 
-#include "symtab.h"
+#include "symboltable.h"
 
 #include "misc.mock"
 
-Describe(symTab);
-BeforeEach(symTab) {}
-AfterEach(symTab) {}
+Describe(symbolTable);
+BeforeEach(symbolTable) {}
+AfterEach(symbolTable) {}
 
-static struct symTab symtab;
+static struct symbolTable symtab;
 
-Ensure(symTab, can_init) {
-    symTabInit(&symtab, 100);
+Ensure(symbolTable, can_init) {
+    symbolTableInit(&symtab, 100);
     assert_that(symtab.size, is_equal_to(100));
     for (int i=0; i<100; i++)
         if (symtab.tab[i] != NULL)

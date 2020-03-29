@@ -2045,7 +2045,7 @@ static void mainParseInputFile(void) {
         //&         s_cache.cp[s_cache.cpi-1].lbcc);
 #endif
 #if 1 //ZERO
-        symTabStatistics(s_symTab, &ui, &el,&mdp);
+        symbolTableStatistics(s_symTab, &ui, &el,&mdp);
         fprintf(dumpOut,": symtab == %d elems, usage %d/%d,\tratio %1.2f, maxdeep==%d\n",
                 el,ui,s_symTab->size, ((float)el)/(ui+1e-30), mdp);
         fflush(dumpOut);
@@ -2462,8 +2462,8 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     // init options as soon as possible! for exampl initCwd needs them
     initOptions();
 
-    XX_ALLOC(s_symTab, S_symTab);
-    symTabInit(s_symTab, MAX_SYMBOLS);
+    XX_ALLOC(s_symTab, S_symbolTable);
+    symbolTableInit(s_symTab, MAX_SYMBOLS);
     fillJavaStat(&s_initJavaStat,NULL,NULL,NULL,0, NULL, NULL, NULL,
                   s_symTab,NULL,ACC_DEFAULT,s_cpInit,s_noneFileIndex,NULL);
     XX_ALLOC(s_javaStat, S_javaStat);
@@ -3348,7 +3348,7 @@ static void mainGenerate(int argc, char **argv) {
         cFile.lexBuffer.buffer.isAtEOF = false;
     }
     if (s_opt.str_fill) generateArgumentSelectionMacros(20);
-    symTabMap(s_symTab, generate);
+    symbolTableMap(s_symTab, generate);
 }
 
 /* initLogging() is called as the first thing in main() so we look for log filename */
