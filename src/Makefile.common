@@ -164,12 +164,12 @@ cleaner: clean
 	-make -C unittests cleaner
 
 ########################################################################
-test: c-xref
+test: debug
 	@echo "Only running quick tests for now - 'cd ..; make test' to run all"
 	$(MAKE) -C ../tests quick
 
 
-unit: $(SRCS)
+unit: $(SRCS) debug
 	make COVERAGE="$(COVERAGE)" -C unittests
 
 coverage: COVERAGE=--coverage

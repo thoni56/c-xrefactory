@@ -48,9 +48,12 @@ attack those one by one, maybe?
 ** TODO Remove code for generation of str_fill
 * DOING Start using log.c functions to log to a separate log file
 * TODO Refactor int2StringTabs, should not have Init in them
-* TODO Handle struct literals ("(type){.field = data, ...}")
+* DOING Handle struct literals ("(type){.field = data, ...}")
+** DONE Create test case
+** DOING Create AST using parsing
 * TODO Investigate to remove S_classTreeData
-* TODO Rename maTab to macroArgTab
+* TODO Rename all bb -> ast
+* TODO Use Yacc's -p for "symbol_prefix" instead of the #defines?
 * TODO Rename res fields in completion structs
 * TODO Cannot mock structs as arguments like in symbol.mock
 We need to change pos to *pos if that's gonna work
@@ -121,6 +124,7 @@ easier to mock and unit test other modules.
   with the naming strategy as for the others.
 
 * DONE Move all function prototypes from proto.h to <module>.h
+* DONE Rename maTab to macroArgTab
 * DONE Make fillSymbol() and newSymbol() set default symbolBits
 then we only need to set non-default values (which could be done
 using setType(), setStorage() and so on, functions
