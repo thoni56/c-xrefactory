@@ -1131,18 +1131,6 @@ typedef struct tpCheckMoveClassData {
     char		*sclass;
 } S_tpCheckMoveClassData;
 
-/* ***************** Java simple load file ********************** */
-
-
-typedef struct jslClassStat {
-    struct idList	*className;
-    struct symbol		*thisClass;
-    char				*thisPackage;
-    int					annonInnerCounter;	/* counter for anonym inner classes*/
-    int					functionInnerCounter; /* counter for function inner class*/
-    struct jslClassStat	*next;
-} S_jslClassStat;
-
 
 /* *********************************************************** */
 

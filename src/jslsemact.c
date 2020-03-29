@@ -20,9 +20,24 @@
 S_jslStat *s_jsl;
 
 
-extern void fillJslStat(S_jslStat *jslStat, int pass, int sourceFileNumber, int language, S_jslTypeTab *typeTab,
-                        S_jslClassStat *classStat, SymbolList *waitList, void /*YYSTYPE*/ *savedyylval,
-                        void /*S_yyGlobalState*/ *savedYYstate, int yyStateSize, S_jslStat *next) {
+
+S_jslClassStat *newJslClassStat(S_idList *className, Symbol *thisClass, char *thisPackage, S_jslClassStat *next) {
+    S_jslClassStat *jslClassStat;
+
+    XX_ALLOC(jslClassStat, S_jslClassStat);
+    jslClassStat->className = className;
+    jslClassStat->thisClass = thisClass;
+    jslClassStat->thisPackage = thisPackage;
+    jslClassStat->annonInnerCounter = 0;
+    jslClassStat->functionInnerCounter = 0;
+    jslClassStat->next = next;
+
+    return jslClassStat;
+}
+
+void fillJslStat(S_jslStat *jslStat, int pass, int sourceFileNumber, int language, S_jslTypeTab *typeTab,
+                 S_jslClassStat *classStat, SymbolList *waitList, void /*YYSTYPE*/ *savedyylval,
+                 void /*S_yyGlobalState*/ *savedYYstate, int yyStateSize, S_jslStat *next) {
     jslStat->pass = pass;
     jslStat->sourceFileNumber = sourceFileNumber;
     jslStat->language = language;
@@ -595,9 +610,8 @@ void jslNewClassDefinitionBegin(S_id *name,
                       inname->p.file, inname->p.line, inname->p.col, NULL,
                       cc->name,TypeStruct,
                       s_jsl->classStat->className);
-    XX_ALLOC(nss, S_jslClassStat);
-    FILL_jslClassStat(nss, ill, cc, s_jsl->classStat->thisPackage,
-                      0, 0, s_jsl->classStat);
+    nss = newJslClassStat(ill, cc, s_jsl->classStat->thisPackage,
+                          s_jsl->classStat);
     s_jsl->classStat = nss;
     javaCreateClassFileItem(cc);
     cc->bits.javaFileLoaded = 1;

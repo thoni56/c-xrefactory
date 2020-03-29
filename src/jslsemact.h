@@ -1,9 +1,24 @@
 #ifndef JSLSEMACT_H
 #define JSLSEMACT_H
 
+/* JSL = Java Simple Load file... ? */
+
 #include "proto.h"
 #include "symbol.h"
 #include "jsltypetab.h"
+
+
+/* ***************** Java simple load file ********************** */
+
+
+typedef struct jslClassStat {
+    struct idList *className;
+    struct symbol *thisClass;
+    char          *thisPackage;
+    int           annonInnerCounter; /* counter for anonymous inner classes*/
+    int           functionInnerCounter; /* counter for function inner class*/
+    struct jslClassStat	*next;
+} S_jslClassStat;
 
 
 typedef struct jslStat {
@@ -13,7 +28,7 @@ typedef struct jslStat {
     struct jslTypeTab                *typeTab;
     struct jslClassStat              *classStat;
     struct symbolList                *waitList;
-    void/*YYSTYPE*/                  *savedyylval;
+    void /*YYSTYPE*/                 *savedyylval;
     void /*struct yyGlobalState*/    *savedYYstate;
     int                              yyStateSize;
     struct id                        yyIdentBuf[YYBUFFERED_ID_INDEX]; // pending idents
@@ -22,6 +37,8 @@ typedef struct jslStat {
 
 
 
+extern S_jslClassStat *newJslClassStat(S_idList *className, Symbol *thisClass, char *thisPackage,
+                                       S_jslClassStat *next);
 extern void fillJslStat(S_jslStat *jslStat, int pass, int sourceFileNumber, int language, S_jslTypeTab *typeTab,
                         S_jslClassStat *classStat, SymbolList *waitList, void *savedyylval,
                         void /*S_yyGlobalState*/ *savedYYstate, int yyStateSize, S_jslStat *next);

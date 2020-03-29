@@ -910,8 +910,8 @@ CompilationUnit: {
                 // -----------------------------------------------
                 // jsl pass initialisation
                 char            *pname;
-                S_jslClassStat  *ss;
                 char			ppp[MAX_FILE_NAME_SIZE];
+
                 s_jsl->waitList = NULL;
                 if ($2.d != NULL) {
                     javaClassifyToPackageName($2.d);
@@ -919,9 +919,7 @@ CompilationUnit: {
                 javaCreateComposedName(NULL,$2.d,'/',NULL,ppp,MAX_FILE_NAME_SIZE);
                 XX_ALLOCC(pname, strlen(ppp)+1, char);
                 strcpy(pname, ppp);
-                XX_ALLOC(ss, S_jslClassStat);
-                FILL_jslClassStat(ss, $2.d, NULL, pname, 0, 0, NULL);
-                s_jsl->classStat = ss;
+                s_jsl->classStat = newJslClassStat($2.d, NULL, pname, NULL);
                 if (inSecondJslPass()) {
                     char        cdir[MAX_FILE_NAME_SIZE];
                     int         i;
