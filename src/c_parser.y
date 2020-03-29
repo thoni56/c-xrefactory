@@ -51,7 +51,9 @@
 
 #include "log.h"
 
+#ifndef YYDEBUG
 #define YYDEBUG 0
+#endif
 #define yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
@@ -657,7 +659,7 @@ conditional_expr
         $$.d.t = $3.d.t;
         $$.d.r = NULL;
     }
-/* other GCC improvement, grrr */
+    /* another GCC "improvement", grrr */
     | logical_or_expr '?' ':' conditional_expr	{
         $$.d.t = $4.d.t;
         $$.d.r = NULL;

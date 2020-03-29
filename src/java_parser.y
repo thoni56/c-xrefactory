@@ -56,7 +56,9 @@
 #include "log.h"
 #include "utils.h"
 
+#ifndef YYDEBUG
 #define YYDEBUG 0
+#endif
 #define yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 

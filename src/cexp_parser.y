@@ -38,7 +38,9 @@
 #define yygindex cexpyygindex
 #define yyvsp cexpyyvsp
 
+#ifndef YYDEBUG
 #define YYDEBUG 0
+#endif
 #define yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
