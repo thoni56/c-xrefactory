@@ -9,6 +9,7 @@
 #include "strFill.h"
 #include "javafqttab.h"
 #include "classh.h"
+#include "jsemact.h"
 
 #include "log.h"
 

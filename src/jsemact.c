@@ -28,6 +28,10 @@
 #include "log.h"
 
 
+S_javaStat *s_javaStat;
+S_javaStat s_initJavaStat;
+
+
 #define IsJavaReferenceType(m) (m==TypeStruct || m==TypeArray)
 
 static int javaNotFqtUsageCorrection(Symbol *sym, int usage);

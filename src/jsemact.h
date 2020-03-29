@@ -4,6 +4,11 @@
 #include "jsltypetab.h"
 #include "symbol.h"
 
+
+extern S_javaStat *s_javaStat;
+extern S_javaStat s_initJavaStat;
+
+
 extern void javaCheckForPrimaryStart(S_position *cpos, S_position *pp);
 extern void javaCheckForPrimaryStartInNameList(S_idList *name, S_position *pp);
 extern void javaCheckForStaticPrefixStart(S_position *cpos, S_position *bpos);

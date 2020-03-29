@@ -211,8 +211,6 @@ char *yytext;
 
 S_options s_opt;        // current options
 S_options s_ropt;       // xref -refactory command line options
-S_javaStat *s_javaStat;
-S_javaStat s_initJavaStat;
 
 char *s_javaThisPackageName = "";
 

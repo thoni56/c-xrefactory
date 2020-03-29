@@ -217,9 +217,6 @@ extern S_options s_cachedOptions;
 extern int s_javaRequiredeAccessibilitiesTable[MAX_REQUIRED_ACCESS+1];
 extern S_options s_initOpt;
 
-extern S_javaStat *s_javaStat;
-extern S_javaStat s_initJavaStat;
-
 extern char *s_javaThisPackageName;
 
 #endif

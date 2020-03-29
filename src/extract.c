@@ -12,6 +12,7 @@
 #include "symbol.h"
 #include "list.h"
 #include "strFill.h"
+#include "jsemact.h"
 
 
 #define EXTRACT_GEN_BUFFER_SIZE 500000
