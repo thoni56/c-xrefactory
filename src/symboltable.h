@@ -18,6 +18,8 @@
 
 */
 
+extern S_symbolTable *s_symbolTable;
+
 #ifndef _SYMTAB_
 #undef HASH_TAB_NAME
 #undef HASH_ELEM_TYPE
