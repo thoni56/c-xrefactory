@@ -252,25 +252,25 @@
 
     S_extRecFindStr                         *erfs;
 
-    S_bb_int                                bbinteger;
-    S_bb_unsigned                           bbunsign;
-    S_bb_symbol                             bbsymbol;
-    S_bb_symbolList                         bbsymbolList;
-    S_bb_typeModifiers                      bbtypeModif;
-    S_bb_typeModifiersList                  bbtypeModifList;
-    S_bb_freeTrail                          bbtrail;
-    S_bb_idIdent                            bbidIdent;
-    S_bb_idIdentList                        bbidlist;
-    S_bb_exprTokenType                      bbexprType;
-    S_bb_intPair                            bbintpair;
-    S_bb_whileExtractData                   bbwhiledata;
-    S_bb_position                           bbposition;
-    S_bb_unsPositionPair                    bbunsPositionPair;
-    S_bb_symbolPositionPair                 bbsymbolPositionPair;
-    S_bb_symbolPositionLstPair              bbsymbolPositionLstPair;
-    S_bb_positionLst                        bbpositionLst;
-    S_bb_typeModifiersListPositionLstPair   bbtypeModifiersListPositionLstPair;
-    S_bb_nestedConstrTokenType              bbnestedConstrTokenType;
+    Ast_int                                bbinteger;
+    Ast_unsigned                           bbunsign;
+    Ast_symbol                             bbsymbol;
+    Ast_symbolList                         bbsymbolList;
+    Ast_typeModifiers                      bbtypeModif;
+    Ast_typeModifiersList                  bbtypeModifList;
+    Ast_freeTrail                          bbtrail;
+    Ast_idIdent                            bbidIdent;
+    Ast_idIdentList                        bbidlist;
+    Ast_exprTokenType                      bbexprType;
+    Ast_intPair                            bbintpair;
+    Ast_whileExtractData                   bbwhiledata;
+    Ast_position                           bbposition;
+    Ast_unsPositionPair                    bbunsPositionPair;
+    Ast_symbolPositionPair                 bbsymbolPositionPair;
+    Ast_symbolPositionLstPair              bbsymbolPositionLstPair;
+    Ast_positionLst                        bbpositionLst;
+    Ast_typeModifiersListPositionLstPair   bbtypeModifiersListPositionLstPair;
+    Ast_nestedConstrTokenType              bbnestedConstrTokenType;
 }
 
 
@@ -673,13 +673,13 @@ assignment_expr
             S_reference *rr;
             rr = duplicateReference($1.d.r);
             $1.d.r->usage = s_noUsage;
-            if ($2.data == '=') {
+            if ($2.d == '=') {
                 RESET_REFERENCE_USAGE(rr, UsageLvalUsed);
             } else {
                 RESET_REFERENCE_USAGE(rr, UsageAddrUsed);
             }
         } else {
-            if ($2.data == '=') {
+            if ($2.d == '=') {
                 RESET_REFERENCE_USAGE($1.d.r, UsageLvalUsed);
             } else {
                 RESET_REFERENCE_USAGE($1.d.r, UsageAddrUsed);
@@ -690,17 +690,17 @@ assignment_expr
     ;
 
 assignment_operator
-    : '='					{$$.data = '=';}
-    | MUL_ASSIGN			{$$.data = MUL_ASSIGN;}
-    | DIV_ASSIGN			{$$.data = DIV_ASSIGN;}
-    | MOD_ASSIGN			{$$.data = MOD_ASSIGN;}
-    | ADD_ASSIGN			{$$.data = ADD_ASSIGN;}
-    | SUB_ASSIGN			{$$.data = SUB_ASSIGN;}
-    | LEFT_ASSIGN			{$$.data = LEFT_ASSIGN;}
-    | RIGHT_ASSIGN			{$$.data = RIGHT_ASSIGN;}
-    | AND_ASSIGN			{$$.data = AND_ASSIGN;}
-    | XOR_ASSIGN			{$$.data = XOR_ASSIGN;}
-    | OR_ASSIGN				{$$.data = OR_ASSIGN;}
+    : '='					{$$.d = '=';}
+    | MUL_ASSIGN			{$$.d = MUL_ASSIGN;}
+    | DIV_ASSIGN			{$$.d = DIV_ASSIGN;}
+    | MOD_ASSIGN			{$$.d = MOD_ASSIGN;}
+    | ADD_ASSIGN			{$$.d = ADD_ASSIGN;}
+    | SUB_ASSIGN			{$$.d = SUB_ASSIGN;}
+    | LEFT_ASSIGN			{$$.d = LEFT_ASSIGN;}
+    | RIGHT_ASSIGN			{$$.d = RIGHT_ASSIGN;}
+    | AND_ASSIGN			{$$.d = AND_ASSIGN;}
+    | XOR_ASSIGN			{$$.d = XOR_ASSIGN;}
+    | OR_ASSIGN				{$$.d = OR_ASSIGN;}
     ;
 
 expr
@@ -1106,7 +1106,7 @@ declarator
     | pointer declarator2								{
         $$.d = $2.d;
         assert($$.d->bits.npointers == 0);
-        $$.d->bits.npointers = $1.data;
+        $$.d->bits.npointers = $1.d;
     }
     ;
 
@@ -1157,16 +1157,16 @@ declarator2
 
 pointer
     : '*'									{
-        $$.data = 1;
+        $$.d = 1;
     }
     | '*' type_mod_specifier_list				{
-        $$.data = 1;
+        $$.d = 1;
     }
     | '*' pointer							{
-        $$.data = $2.data+1;
+        $$.d = $2.d+1;
     }
     | '*' type_mod_specifier_list pointer		{
-        $$.data = $3.data+1;
+        $$.d = $3.d+1;
     }
     ;
 
@@ -1351,7 +1351,7 @@ abstract_declarator
     : pointer								{
         int i;
         CrTypeModifier($$.d,TypePointer);
-        for(i=1; i<$1.data; i++) appendComposedType(&($$.d), TypePointer);
+        for(i=1; i<$1.d; i++) appendComposedType(&($$.d), TypePointer);
     }
     | abstract_declarator2					{
         $$.d = $1.d;
@@ -1359,7 +1359,7 @@ abstract_declarator
     | pointer abstract_declarator2			{
         int i;
         $$.d = $2.d;
-        for(i=0; i<$1.data; i++) appendComposedType(&($$.d), TypePointer);
+        for(i=0; i<$1.d; i++) appendComposedType(&($$.d), TypePointer);
     }
     ;
 
@@ -1576,37 +1576,37 @@ expression_statement
     ;
 
 
-_ncounter_:  {EXTRACT_COUNTER_SEMACT($$.data);}
+_ncounter_:  {EXTRACT_COUNTER_SEMACT($$.d);}
     ;
 
-_nlabel_:	{EXTRACT_LABEL_SEMACT($$.data);}
+_nlabel_:	{EXTRACT_LABEL_SEMACT($$.d);}
     ;
 
-_ngoto_:	{EXTRACT_GOTO_SEMACT($$.data);}
+_ngoto_:	{EXTRACT_GOTO_SEMACT($$.d);}
     ;
 
-_nfork_:	{EXTRACT_FORK_SEMACT($$.data);}
+_nfork_:	{EXTRACT_FORK_SEMACT($$.d);}
     ;
 
 selection_statement
     : IF '(' expr ')' _nfork_ statement						{
-        genInternalLabelReference($5.data, UsageDefined);
+        genInternalLabelReference($5.d, UsageDefined);
     }
     | IF '(' expr ')' _nfork_ statement ELSE _ngoto_ {
-        genInternalLabelReference($5.data, UsageDefined);
+        genInternalLabelReference($5.d, UsageDefined);
     }	statement								{
-        genInternalLabelReference($8.data, UsageDefined);
+        genInternalLabelReference($8.d, UsageDefined);
     }
     | SWITCH '(' expr ')' /*5*/ _ncounter_  {/*6*/
-        $<symbol>$ = addContinueBreakLabelSymbol(1000*$5.data, SWITCH_LABEL_NAME);
+        $<symbol>$ = addContinueBreakLabelSymbol(1000*$5.d, SWITCH_LABEL_NAME);
     } {/*7*/
-        $<symbol>$ = addContinueBreakLabelSymbol($5.data, BREAK_LABEL_NAME);
-        genInternalLabelReference($5.data, UsageFork);
+        $<symbol>$ = addContinueBreakLabelSymbol($5.d, BREAK_LABEL_NAME);
+        genInternalLabelReference($5.d, UsageFork);
     } statement					{
         genSwitchCaseFork(1);
         ExtrDeleteContBreakSym($<symbol>7);
         ExtrDeleteContBreakSym($<symbol>6);
-        genInternalLabelReference($5.data, UsageDefined);
+        genInternalLabelReference($5.d, UsageDefined);
     }
     ;
 
@@ -1617,27 +1617,27 @@ for1maybe_expr:
 iteration_statement
     : WHILE _nlabel_ '(' expr ')' /*6*/ _nfork_
     {/*7*/
-        $<symbol>$ = addContinueBreakLabelSymbol($2.data, CONTINUE_LABEL_NAME);
+        $<symbol>$ = addContinueBreakLabelSymbol($2.d, CONTINUE_LABEL_NAME);
     } {/*8*/
-        $<symbol>$ = addContinueBreakLabelSymbol($6.data, BREAK_LABEL_NAME);
+        $<symbol>$ = addContinueBreakLabelSymbol($6.d, BREAK_LABEL_NAME);
     } statement					{
         ExtrDeleteContBreakSym($<symbol>8);
         ExtrDeleteContBreakSym($<symbol>7);
-        genInternalLabelReference($2.data, UsageUsed);
-        genInternalLabelReference($6.data, UsageDefined);
+        genInternalLabelReference($2.d, UsageUsed);
+        genInternalLabelReference($6.d, UsageDefined);
     }
 
     | DO _nlabel_ _ncounter_ _ncounter_ { /*5*/
-        $<symbol>$ = addContinueBreakLabelSymbol($3.data, CONTINUE_LABEL_NAME);
+        $<symbol>$ = addContinueBreakLabelSymbol($3.d, CONTINUE_LABEL_NAME);
     } {/*6*/
-        $<symbol>$ = addContinueBreakLabelSymbol($4.data, BREAK_LABEL_NAME);
+        $<symbol>$ = addContinueBreakLabelSymbol($4.d, BREAK_LABEL_NAME);
     } statement WHILE {
         ExtrDeleteContBreakSym($<symbol>6);
         ExtrDeleteContBreakSym($<symbol>5);
-        genInternalLabelReference($3.data, UsageDefined);
+        genInternalLabelReference($3.d, UsageDefined);
     } '(' expr ')' ';'			{
-        genInternalLabelReference($2.data, UsageFork);
-        genInternalLabelReference($4.data, UsageDefined);
+        genInternalLabelReference($2.d, UsageFork);
+        genInternalLabelReference($4.d, UsageDefined);
     }
 
     | FOR '(' for1maybe_expr ';'
@@ -1645,19 +1645,19 @@ iteration_statement
             /*9*/ _nlabel_  maybe_expr ')' /*12*/ _nfork_
         {
         /*13*/
-        genInternalLabelReference($5.data, UsageUsed);
-        genInternalLabelReference($8.data, UsageDefined);
-        $<symbol>$ = addContinueBreakLabelSymbol($9.data, CONTINUE_LABEL_NAME);
+        genInternalLabelReference($5.d, UsageUsed);
+        genInternalLabelReference($8.d, UsageDefined);
+        $<symbol>$ = addContinueBreakLabelSymbol($9.d, CONTINUE_LABEL_NAME);
         }
         {/*14*/
-            $<symbol>$ = addContinueBreakLabelSymbol($12.data, BREAK_LABEL_NAME);
+            $<symbol>$ = addContinueBreakLabelSymbol($12.d, BREAK_LABEL_NAME);
         }
             statement
         {
         ExtrDeleteContBreakSym($<symbol>14);
         ExtrDeleteContBreakSym($<symbol>13);
-        genInternalLabelReference($9.data, UsageUsed);
-        genInternalLabelReference($12.data, UsageDefined);
+        genInternalLabelReference($9.d, UsageUsed);
+        genInternalLabelReference($12.d, UsageDefined);
         }
     | FOR '(' for1maybe_expr ';' COMPL_FOR_SPECIAL1
     | FOR '(' for1maybe_expr ';' _nlabel_  maybe_expr ';' COMPL_FOR_SPECIAL2

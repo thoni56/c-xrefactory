@@ -118,25 +118,25 @@ typedef union {
 
     S_extRecFindStr                         *erfs;
 
-    S_bb_int                                bbinteger;
-    S_bb_unsigned                           bbunsign;
-    S_bb_symbol                             bbsymbol;
-    S_bb_symbolList                         bbsymbolList;
-    S_bb_typeModifiers                      bbtypeModif;
-    S_bb_typeModifiersList                  bbtypeModifList;
-    S_bb_freeTrail                          bbtrail;
-    S_bb_idIdent                            bbidIdent;
-    S_bb_idIdentList                        bbidlist;
-    S_bb_exprTokenType                      bbexprType;
-    S_bb_intPair                            bbintpair;
-    S_bb_whileExtractData                   bbwhiledata;
-    S_bb_position                           bbposition;
-    S_bb_unsPositionPair                    bbunsPositionPair;
-    S_bb_symbolPositionPair                 bbsymbolPositionPair;
-    S_bb_symbolPositionLstPair              bbsymbolPositionLstPair;
-    S_bb_positionLst                        bbpositionLst;
-    S_bb_typeModifiersListPositionLstPair   bbtypeModifiersListPositionLstPair;
-    S_bb_nestedConstrTokenType              bbnestedConstrTokenType;
+    Ast_int                                bbinteger;
+    Ast_unsigned                           bbunsign;
+    Ast_symbol                             bbsymbol;
+    Ast_symbolList                         bbsymbolList;
+    Ast_typeModifiers                      bbtypeModif;
+    Ast_typeModifiersList                  bbtypeModifList;
+    Ast_freeTrail                          bbtrail;
+    Ast_idIdent                            bbidIdent;
+    Ast_idIdentList                        bbidlist;
+    Ast_exprTokenType                      bbexprType;
+    Ast_intPair                            bbintpair;
+    Ast_whileExtractData                   bbwhiledata;
+    Ast_position                           bbposition;
+    Ast_unsPositionPair                    bbunsPositionPair;
+    Ast_symbolPositionPair                 bbsymbolPositionPair;
+    Ast_symbolPositionLstPair              bbsymbolPositionLstPair;
+    Ast_positionLst                        bbpositionLst;
+    Ast_typeModifiersListPositionLstPair   bbtypeModifiersListPositionLstPair;
+    Ast_nestedConstrTokenType              bbnestedConstrTokenType;
 } YYSTYPE;
 #line 142 "yacc_parser.tab.c"
 #define TYPE_NAME 257
@@ -2820,19 +2820,19 @@ case 31:
                 addYaccSymbolReference(yyvsp[0].bbidIdent.d, UsageUsed);
                 addRuleLocalVariable(yyvsp[0].bbidIdent.d, 1);
             }
-            yyval.bbinteger.data = 2;
+            yyval.bbinteger.d = 2;
         }
 break;
 case 32:
 #line 430 "yacc_parser.y"
 {
-            yyval.bbinteger.data = 2;
+            yyval.bbinteger.d = 2;
         }
 break;
 case 33:
 #line 433 "yacc_parser.y"
 {
-            yyval.bbinteger.data = 1;
+            yyval.bbinteger.d = 1;
         }
 break;
 case 34:
@@ -2840,21 +2840,21 @@ case 34:
 {
             if (yyvsp[0].bbidIdent.d != NULL) {
                 addYaccSymbolReference(yyvsp[0].bbidIdent.d, UsageUsed);
-                addRuleLocalVariable(yyvsp[0].bbidIdent.d, yyvsp[-1].bbinteger.data);
+                addRuleLocalVariable(yyvsp[0].bbidIdent.d, yyvsp[-1].bbinteger.d);
             }
-            yyval.bbinteger.data = yyvsp[-1].bbinteger.data + 1;
+            yyval.bbinteger.d = yyvsp[-1].bbinteger.d + 1;
         }
 break;
 case 35:
 #line 443 "yacc_parser.y"
 {
-            yyval.bbinteger.data = yyvsp[-1].bbinteger.data + 1;
+            yyval.bbinteger.d = yyvsp[-1].bbinteger.d + 1;
         }
 break;
 case 36:
 #line 446 "yacc_parser.y"
 {
-            yyval.bbinteger.data = yyvsp[-1].bbinteger.data;
+            yyval.bbinteger.d = yyvsp[-1].bbinteger.d;
         }
 break;
 case 38:
@@ -3700,7 +3700,7 @@ case 366:
 {
         int i;
         yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
-        for (i=0; i<yyvsp[-1].bbinteger.data; i++) AddComposedType(yyval.bbsymbol.d,TypePointer);
+        for (i=0; i<yyvsp[-1].bbinteger.d; i++) AddComposedType(yyval.bbsymbol.d,TypePointer);
     }
 break;
 case 367:
@@ -3770,25 +3770,25 @@ break;
 case 375:
 #line 1216 "yacc_parser.y"
 {
-        yyval.bbinteger.data = 1;
+        yyval.bbinteger.d = 1;
     }
 break;
 case 376:
 #line 1219 "yacc_parser.y"
 {
-        yyval.bbinteger.data = 1;
+        yyval.bbinteger.d = 1;
     }
 break;
 case 377:
 #line 1222 "yacc_parser.y"
 {
-        yyval.bbinteger.data = yyvsp[0].bbinteger.data+1;
+        yyval.bbinteger.d = yyvsp[0].bbinteger.d+1;
     }
 break;
 case 378:
 #line 1225 "yacc_parser.y"
 {
-        yyval.bbinteger.data = yyvsp[0].bbinteger.data+1;
+        yyval.bbinteger.d = yyvsp[0].bbinteger.d+1;
     }
 break;
 case 379:
@@ -3994,7 +3994,7 @@ case 408:
 {
         int i;
         CrTypeModifier(yyval.bbtypeModif.d,TypePointer);
-        for(i=1; i<yyvsp[0].bbinteger.data; i++) appendComposedType(&(yyval.bbtypeModif.d), TypePointer);
+        for(i=1; i<yyvsp[0].bbinteger.d; i++) appendComposedType(&(yyval.bbtypeModif.d), TypePointer);
     }
 break;
 case 409:
@@ -4008,7 +4008,7 @@ case 410:
 {
         int i;
         yyval.bbtypeModif.d = yyvsp[0].bbtypeModif.d;
-        for(i=0; i<yyvsp[-1].bbinteger.data; i++) appendComposedType(&(yyval.bbtypeModif.d), TypePointer);
+        for(i=0; i<yyvsp[-1].bbinteger.d; i++) appendComposedType(&(yyval.bbtypeModif.d), TypePointer);
     }
 break;
 case 411:

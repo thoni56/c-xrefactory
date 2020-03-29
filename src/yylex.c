@@ -1089,7 +1089,7 @@ int cexpyylex(void) {
         }
         lex = res;
     } else {
-        lex = cexpTranslateToken(lex, uniyylval->bbinteger.data);
+        lex = cexpTranslateToken(lex, uniyylval->bbinteger.d);
     }
     return(lex);
 endOfMacArg:	assert(0);
@@ -1962,7 +1962,7 @@ static void actionOnBlockMarker(void) {
 }
 
 #define SET_INTEGER_YYLVAL(val, pos, len) {\
-        uniyylval->bbinteger.data = val;\
+        uniyylval->bbinteger.d = val;\
         uniyylval->bbinteger.b = pos;\
         uniyylval->bbinteger.e = pos;\
         uniyylval->bbinteger.e.col += len;\

@@ -220,17 +220,17 @@ typedef union {
 
     S_extRecFindStr                         *erfs;
 
-    S_bb_int                                bbinteger;
-    S_bb_unsigned                           bbunsign;
-    S_bb_symbol                             bbsymbol;
-    S_bb_symbolList                         bbsymbolList;
-    S_bb_typeModifiers                      bbtypeModif;
-    S_bb_typeModifiersList                  bbtypeModifList;
-    S_bb_freeTrail                          bbtrail;
-    S_bb_idIdent                            bbidIdent;
-    S_bb_idIdentList                        bbidlist;
-    S_bb_exprTokenType                      bbexprType;
-    S_bb_intPair                            bbintpair;
+    Ast_int                                bbinteger;
+    Ast_unsigned                           bbunsign;
+    Ast_symbol                             bbsymbol;
+    Ast_symbolList                         bbsymbolList;
+    Ast_typeModifiers                      bbtypeModif;
+    Ast_typeModifiersList                  bbtypeModifList;
+    Ast_freeTrail                          bbtrail;
+    Ast_idIdent                            bbidIdent;
+    Ast_idIdentList                        bbidlist;
+    Ast_exprTokenType                      bbexprType;
+    Ast_intPair                            bbintpair;
     S_bb_whileExtractData                   bbwhiledata;
     S_bb_position                           bbposition;
     S_bb_unsPositionPair                    bbunsPositionPair;
@@ -238,6 +238,6 @@ typedef union {
     S_bb_symbolPositionLstPair              bbsymbolPositionLstPair;
     S_bb_positionLst                        bbpositionLst;
     S_bb_typeModifiersListPositionLstPair   bbtypeModifiersListPositionLstPair;
-    S_bb_nestedConstrTokenType              bbnestedConstrTokenType;
+    Ast_nestedConstrTokenType              bbnestedConstrTokenType;
 } YYSTYPE;
 extern YYSTYPE yylval;

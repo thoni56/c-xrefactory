@@ -255,25 +255,25 @@ static void addYaccSymbolReference(S_id *name, int usage);
 
     S_extRecFindStr                         *erfs;
 
-    S_bb_int                                bbinteger;
-    S_bb_unsigned                           bbunsign;
-    S_bb_symbol                             bbsymbol;
-    S_bb_symbolList                         bbsymbolList;
-    S_bb_typeModifiers                      bbtypeModif;
-    S_bb_typeModifiersList                  bbtypeModifList;
-    S_bb_freeTrail                          bbtrail;
-    S_bb_idIdent                            bbidIdent;
-    S_bb_idIdentList                        bbidlist;
-    S_bb_exprTokenType                      bbexprType;
-    S_bb_intPair                            bbintpair;
-    S_bb_whileExtractData                   bbwhiledata;
-    S_bb_position                           bbposition;
-    S_bb_unsPositionPair                    bbunsPositionPair;
-    S_bb_symbolPositionPair                 bbsymbolPositionPair;
-    S_bb_symbolPositionLstPair              bbsymbolPositionLstPair;
-    S_bb_positionLst                        bbpositionLst;
-    S_bb_typeModifiersListPositionLstPair   bbtypeModifiersListPositionLstPair;
-    S_bb_nestedConstrTokenType              bbnestedConstrTokenType;
+    Ast_int                                bbinteger;
+    Ast_unsigned                           bbunsign;
+    Ast_symbol                             bbsymbol;
+    Ast_symbolList                         bbsymbolList;
+    Ast_typeModifiers                      bbtypeModif;
+    Ast_typeModifiersList                  bbtypeModifList;
+    Ast_freeTrail                          bbtrail;
+    Ast_idIdent                            bbidIdent;
+    Ast_idIdentList                        bbidlist;
+    Ast_exprTokenType                      bbexprType;
+    Ast_intPair                            bbintpair;
+    Ast_whileExtractData                   bbwhiledata;
+    Ast_position                           bbposition;
+    Ast_unsPositionPair                    bbunsPositionPair;
+    Ast_symbolPositionPair                 bbsymbolPositionPair;
+    Ast_symbolPositionLstPair              bbsymbolPositionLstPair;
+    Ast_positionLst                        bbpositionLst;
+    Ast_typeModifiersListPositionLstPair   bbtypeModifiersListPositionLstPair;
+    Ast_nestedConstrTokenType              bbnestedConstrTokenType;
 }
 
 %type <bbidIdent> IDENTIFIER identifier struct_identifier enum_identifier
@@ -425,26 +425,26 @@ rule_body:
                 addYaccSymbolReference($1.d, UsageUsed);
                 addRuleLocalVariable($1.d, 1);
             }
-            $$.data = 2;
+            $$.d = 2;
         }
     |   compound_statement      {
-            $$.data = 2;
+            $$.d = 2;
         }
     |   precedence              {
-            $$.data = 1;
+            $$.d = 1;
         }
     |   rule_body lexem         {
             if ($2.d != NULL) {
                 addYaccSymbolReference($2.d, UsageUsed);
-                addRuleLocalVariable($2.d, $1.data);
+                addRuleLocalVariable($2.d, $1.d);
             }
-            $$.data = $1.data + 1;
+            $$.d = $1.d + 1;
         }
     |   rule_body compound_statement        {
-            $$.data = $1.data + 1;
+            $$.d = $1.d + 1;
         }
     |   rule_body precedence        {
-            $$.data = $1.data;
+            $$.d = $1.d;
         }
     ;
 
@@ -1165,7 +1165,7 @@ declarator
     | pointer declarator2                               {
         int i;
         $$.d = $2.d;
-        for (i=0; i<$1.data; i++) AddComposedType($$.d,TypePointer);
+        for (i=0; i<$1.d; i++) AddComposedType($$.d,TypePointer);
     }
     ;
 
@@ -1214,16 +1214,16 @@ declarator2
 
 pointer
     : '*'                                   {
-        $$.data = 1;
+        $$.d = 1;
     }
     | '*' type_mod_specifier_list               {
-        $$.data = 1;
+        $$.d = 1;
     }
     | '*' pointer                           {
-        $$.data = $2.data+1;
+        $$.d = $2.d+1;
     }
     | '*' type_mod_specifier_list pointer       {
-        $$.data = $3.data+1;
+        $$.d = $3.d+1;
     }
     ;
 
@@ -1402,7 +1402,7 @@ abstract_declarator
     : pointer                               {
         int i;
         CrTypeModifier($$.d,TypePointer);
-        for(i=1; i<$1.data; i++) appendComposedType(&($$.d), TypePointer);
+        for(i=1; i<$1.d; i++) appendComposedType(&($$.d), TypePointer);
     }
     | abstract_declarator2                  {
         $$.d = $1.d;
@@ -1410,7 +1410,7 @@ abstract_declarator
     | pointer abstract_declarator2          {
         int i;
         $$.d = $2.d;
-        for(i=0; i<$1.data; i++) appendComposedType(&($$.d), TypePointer);
+        for(i=0; i<$1.d; i++) appendComposedType(&($$.d), TypePointer);
     }
     ;
 

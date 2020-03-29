@@ -1182,82 +1182,82 @@ typedef struct jslStat {
 // containing 'b','e' records for begin and end position of parse tree
 // node and additional data 'd' for parsing.
 
-typedef struct bb_int {
+typedef struct {
     struct position  b, e;
-    int		data;
-} S_bb_int;
-typedef struct bb_unsigned {
-    struct position      b, e;
-    unsigned		d;
-} S_bb_unsigned;
-typedef struct bb_symbol {
-    struct position      b, e;
-    struct symbol		*d;
-} S_bb_symbol;
-typedef struct bb_symbolList {
-    struct position          b, e;
-    struct symbolList		*d;
-} S_bb_symbolList;
-typedef struct bb_typeModifiers {
+    int d;
+} Ast_int;
+typedef struct {
+    struct position b, e;
+    unsigned d;
+} Ast_unsigned;
+typedef struct {
+    struct position b, e;
+    struct symbol *d;
+} Ast_symbol;
+typedef struct {
+    struct position b, e;
+    struct symbolList *d;
+} Ast_symbolList;
+typedef struct {
     struct position          b, e;
     struct typeModifiers		*d;
-} S_bb_typeModifiers;
-typedef struct bb_typeModifiersList {
+} Ast_typeModifiers;
+typedef struct {
     struct position              b, e;
     struct typeModifiersList		*d;
-} S_bb_typeModifiersList;
-typedef struct bb_freeTrail {
+} Ast_typeModifiersList;
+typedef struct {
     struct position      b, e;
     struct freeTrail		*d;
-} S_bb_freeTrail;
-typedef struct bb_idIdent {
+} Ast_freeTrail;
+typedef struct {
     struct position      b, e;
     struct id		*d;
-} S_bb_idIdent;
-typedef struct bb_idIdentList {
+} Ast_idIdent;
+typedef struct {
     struct position          b, e;
     struct idList		*d;
-} S_bb_idIdentList;
-typedef struct bb_exprTokenType {
+} Ast_idIdentList;
+typedef struct {
     struct position          b, e;
     struct exprTokenType		d;
-} S_bb_exprTokenType;
-typedef struct bb_nestedConstrTokenType {
+} Ast_exprTokenType;
+typedef struct {
     struct position                  b, e;
     struct nestedConstrTokenType		d;
-} S_bb_nestedConstrTokenType;
-typedef struct bb_intPair {
+} Ast_nestedConstrTokenType;
+typedef struct {
     struct position      b, e;
     struct intPair		d;
-} S_bb_intPair;
-typedef struct bb_whileExtractData {
+} Ast_intPair;
+typedef struct {
     struct position              b, e;
     struct whileExtractData		*d;
-} S_bb_whileExtractData;
-typedef struct bb_position {
+} Ast_whileExtractData;
+typedef struct {
     struct position      b, e;
     struct position		d;
-} S_bb_position;
-typedef struct bb_unsPositionPair {
+} Ast_position;
+typedef struct {
     struct position              b, e;
     struct unsPositionPair		d;
-} S_bb_unsPositionPair;
-typedef struct bb_symbolPositionPair {
+} Ast_unsPositionPair;
+typedef struct {
     struct position                  b, e;
     struct symbolPositionPair		d;
-} S_bb_symbolPositionPair;
-typedef struct bb_symbolPositionLstPair {
+} Ast_symbolPositionPair;
+typedef struct {
     struct position                  b, e;
     struct symbolPositionLstPair		d;
-} S_bb_symbolPositionLstPair;
-typedef struct bb_positionLst {
+} Ast_symbolPositionLstPair;
+typedef struct {
     struct position          b, e;
     struct positionList		*d;
-} S_bb_positionLst;
-typedef struct bb_typeModifiersListPositionLstPair {
+} Ast_positionLst;
+typedef struct {
     struct position                                  b, e;
     struct typeModifiersListPositionLstPair			d;
-} S_bb_typeModifiersListPositionLstPair;
+} Ast_typeModifiersListPositionLstPair;
 
 
 

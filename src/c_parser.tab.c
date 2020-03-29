@@ -104,25 +104,25 @@ typedef union {
 
     S_extRecFindStr                         *erfs;
 
-    S_bb_int                                bbinteger;
-    S_bb_unsigned                           bbunsign;
-    S_bb_symbol                             bbsymbol;
-    S_bb_symbolList                         bbsymbolList;
-    S_bb_typeModifiers                      bbtypeModif;
-    S_bb_typeModifiersList                  bbtypeModifList;
-    S_bb_freeTrail                          bbtrail;
-    S_bb_idIdent                            bbidIdent;
-    S_bb_idIdentList                        bbidlist;
-    S_bb_exprTokenType                      bbexprType;
-    S_bb_intPair                            bbintpair;
-    S_bb_whileExtractData                   bbwhiledata;
-    S_bb_position                           bbposition;
-    S_bb_unsPositionPair                    bbunsPositionPair;
-    S_bb_symbolPositionPair                 bbsymbolPositionPair;
-    S_bb_symbolPositionLstPair              bbsymbolPositionLstPair;
-    S_bb_positionLst                        bbpositionLst;
-    S_bb_typeModifiersListPositionLstPair   bbtypeModifiersListPositionLstPair;
-    S_bb_nestedConstrTokenType              bbnestedConstrTokenType;
+    Ast_int                                bbinteger;
+    Ast_unsigned                           bbunsign;
+    Ast_symbol                             bbsymbol;
+    Ast_symbolList                         bbsymbolList;
+    Ast_typeModifiers                      bbtypeModif;
+    Ast_typeModifiersList                  bbtypeModifList;
+    Ast_freeTrail                          bbtrail;
+    Ast_idIdent                            bbidIdent;
+    Ast_idIdentList                        bbidlist;
+    Ast_exprTokenType                      bbexprType;
+    Ast_intPair                            bbintpair;
+    Ast_whileExtractData                   bbwhiledata;
+    Ast_position                           bbposition;
+    Ast_unsPositionPair                    bbunsPositionPair;
+    Ast_symbolPositionPair                 bbsymbolPositionPair;
+    Ast_symbolPositionLstPair              bbsymbolPositionLstPair;
+    Ast_positionLst                        bbpositionLst;
+    Ast_typeModifiersListPositionLstPair   bbtypeModifiersListPositionLstPair;
+    Ast_nestedConstrTokenType              bbnestedConstrTokenType;
 } YYSTYPE;
 #line 128 "c_parser.tab.c"
 #define TYPE_NAME 257
@@ -2710,13 +2710,13 @@ case 81:
             S_reference *rr;
             rr = duplicateReference(yyvsp[-2].bbexprType.d.r);
             yyvsp[-2].bbexprType.d.r->usage = s_noUsage;
-            if (yyvsp[-1].bbinteger.data == '=') {
+            if (yyvsp[-1].bbinteger.d == '=') {
                 RESET_REFERENCE_USAGE(rr, UsageLvalUsed);
             } else {
                 RESET_REFERENCE_USAGE(rr, UsageAddrUsed);
             }
         } else {
-            if (yyvsp[-1].bbinteger.data == '=') {
+            if (yyvsp[-1].bbinteger.d == '=') {
                 RESET_REFERENCE_USAGE(yyvsp[-2].bbexprType.d.r, UsageLvalUsed);
             } else {
                 RESET_REFERENCE_USAGE(yyvsp[-2].bbexprType.d.r, UsageAddrUsed);
@@ -2727,47 +2727,47 @@ case 81:
 break;
 case 82:
 #line 693 "c_parser.y"
-{yyval.bbinteger.data = '=';}
+{yyval.bbinteger.d = '=';}
 break;
 case 83:
 #line 694 "c_parser.y"
-{yyval.bbinteger.data = MUL_ASSIGN;}
+{yyval.bbinteger.d = MUL_ASSIGN;}
 break;
 case 84:
 #line 695 "c_parser.y"
-{yyval.bbinteger.data = DIV_ASSIGN;}
+{yyval.bbinteger.d = DIV_ASSIGN;}
 break;
 case 85:
 #line 696 "c_parser.y"
-{yyval.bbinteger.data = MOD_ASSIGN;}
+{yyval.bbinteger.d = MOD_ASSIGN;}
 break;
 case 86:
 #line 697 "c_parser.y"
-{yyval.bbinteger.data = ADD_ASSIGN;}
+{yyval.bbinteger.d = ADD_ASSIGN;}
 break;
 case 87:
 #line 698 "c_parser.y"
-{yyval.bbinteger.data = SUB_ASSIGN;}
+{yyval.bbinteger.d = SUB_ASSIGN;}
 break;
 case 88:
 #line 699 "c_parser.y"
-{yyval.bbinteger.data = LEFT_ASSIGN;}
+{yyval.bbinteger.d = LEFT_ASSIGN;}
 break;
 case 89:
 #line 700 "c_parser.y"
-{yyval.bbinteger.data = RIGHT_ASSIGN;}
+{yyval.bbinteger.d = RIGHT_ASSIGN;}
 break;
 case 90:
 #line 701 "c_parser.y"
-{yyval.bbinteger.data = AND_ASSIGN;}
+{yyval.bbinteger.d = AND_ASSIGN;}
 break;
 case 91:
 #line 702 "c_parser.y"
-{yyval.bbinteger.data = XOR_ASSIGN;}
+{yyval.bbinteger.d = XOR_ASSIGN;}
 break;
 case 92:
 #line 703 "c_parser.y"
-{yyval.bbinteger.data = OR_ASSIGN;}
+{yyval.bbinteger.d = OR_ASSIGN;}
 break;
 case 94:
 #line 708 "c_parser.y"
@@ -3261,7 +3261,7 @@ case 191:
 {
         yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
         assert(yyval.bbsymbol.d->bits.npointers == 0);
-        yyval.bbsymbol.d->bits.npointers = yyvsp[-1].bbinteger.data;
+        yyval.bbsymbol.d->bits.npointers = yyvsp[-1].bbinteger.d;
     }
 break;
 case 192:
@@ -3333,25 +3333,25 @@ break;
 case 200:
 #line 1159 "c_parser.y"
 {
-        yyval.bbinteger.data = 1;
+        yyval.bbinteger.d = 1;
     }
 break;
 case 201:
 #line 1162 "c_parser.y"
 {
-        yyval.bbinteger.data = 1;
+        yyval.bbinteger.d = 1;
     }
 break;
 case 202:
 #line 1165 "c_parser.y"
 {
-        yyval.bbinteger.data = yyvsp[0].bbinteger.data+1;
+        yyval.bbinteger.d = yyvsp[0].bbinteger.d+1;
     }
 break;
 case 203:
 #line 1168 "c_parser.y"
 {
-        yyval.bbinteger.data = yyvsp[0].bbinteger.data+1;
+        yyval.bbinteger.d = yyvsp[0].bbinteger.d+1;
     }
 break;
 case 204:
@@ -3562,7 +3562,7 @@ case 233:
 {
         int i;
         CrTypeModifier(yyval.bbtypeModif.d,TypePointer);
-        for(i=1; i<yyvsp[0].bbinteger.data; i++) appendComposedType(&(yyval.bbtypeModif.d), TypePointer);
+        for(i=1; i<yyvsp[0].bbinteger.d; i++) appendComposedType(&(yyval.bbtypeModif.d), TypePointer);
     }
 break;
 case 234:
@@ -3576,7 +3576,7 @@ case 235:
 {
         int i;
         yyval.bbtypeModif.d = yyvsp[0].bbtypeModif.d;
-        for(i=0; i<yyvsp[-1].bbinteger.data; i++) appendComposedType(&(yyval.bbtypeModif.d), TypePointer);
+        for(i=0; i<yyvsp[-1].bbinteger.d; i++) appendComposedType(&(yyval.bbtypeModif.d), TypePointer);
     }
 break;
 case 236:
@@ -3836,49 +3836,49 @@ case 285:
 break;
 case 287:
 #line 1579 "c_parser.y"
-{EXTRACT_COUNTER_SEMACT(yyval.bbinteger.data);}
+{EXTRACT_COUNTER_SEMACT(yyval.bbinteger.d);}
 break;
 case 288:
 #line 1582 "c_parser.y"
-{EXTRACT_LABEL_SEMACT(yyval.bbinteger.data);}
+{EXTRACT_LABEL_SEMACT(yyval.bbinteger.d);}
 break;
 case 289:
 #line 1585 "c_parser.y"
-{EXTRACT_GOTO_SEMACT(yyval.bbinteger.data);}
+{EXTRACT_GOTO_SEMACT(yyval.bbinteger.d);}
 break;
 case 290:
 #line 1588 "c_parser.y"
-{EXTRACT_FORK_SEMACT(yyval.bbinteger.data);}
+{EXTRACT_FORK_SEMACT(yyval.bbinteger.d);}
 break;
 case 291:
 #line 1592 "c_parser.y"
 {
-        genInternalLabelReference(yyvsp[-1].bbinteger.data, UsageDefined);
+        genInternalLabelReference(yyvsp[-1].bbinteger.d, UsageDefined);
     }
 break;
 case 292:
 #line 1595 "c_parser.y"
 {
-        genInternalLabelReference(yyvsp[-3].bbinteger.data, UsageDefined);
+        genInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
     }
 break;
 case 293:
 #line 1597 "c_parser.y"
 {
-        genInternalLabelReference(yyvsp[-2].bbinteger.data, UsageDefined);
+        genInternalLabelReference(yyvsp[-2].bbinteger.d, UsageDefined);
     }
 break;
 case 294:
 #line 1600 "c_parser.y"
 {/*6*/
-        yyval.symbol = addContinueBreakLabelSymbol(1000*yyvsp[0].bbinteger.data, SWITCH_LABEL_NAME);
+        yyval.symbol = addContinueBreakLabelSymbol(1000*yyvsp[0].bbinteger.d, SWITCH_LABEL_NAME);
     }
 break;
 case 295:
 #line 1602 "c_parser.y"
 {/*7*/
-        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.data, BREAK_LABEL_NAME);
-        genInternalLabelReference(yyvsp[-1].bbinteger.data, UsageFork);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME);
+        genInternalLabelReference(yyvsp[-1].bbinteger.d, UsageFork);
     }
 break;
 case 296:
@@ -3887,7 +3887,7 @@ case 296:
         genSwitchCaseFork(1);
         ExtrDeleteContBreakSym(yyvsp[-1].symbol);
         ExtrDeleteContBreakSym(yyvsp[-2].symbol);
-        genInternalLabelReference(yyvsp[-3].bbinteger.data, UsageDefined);
+        genInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
     }
 break;
 case 297:
@@ -3897,13 +3897,13 @@ break;
 case 298:
 #line 1619 "c_parser.y"
 {/*7*/
-        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-4].bbinteger.data, CONTINUE_LABEL_NAME);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-4].bbinteger.d, CONTINUE_LABEL_NAME);
     }
 break;
 case 299:
 #line 1621 "c_parser.y"
 {/*8*/
-        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.data, BREAK_LABEL_NAME);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME);
     }
 break;
 case 300:
@@ -3911,20 +3911,20 @@ case 300:
 {
         ExtrDeleteContBreakSym(yyvsp[-1].symbol);
         ExtrDeleteContBreakSym(yyvsp[-2].symbol);
-        genInternalLabelReference(yyvsp[-7].bbinteger.data, UsageUsed);
-        genInternalLabelReference(yyvsp[-3].bbinteger.data, UsageDefined);
+        genInternalLabelReference(yyvsp[-7].bbinteger.d, UsageUsed);
+        genInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
     }
 break;
 case 301:
 #line 1630 "c_parser.y"
 { /*5*/
-        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.data, CONTINUE_LABEL_NAME);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, CONTINUE_LABEL_NAME);
     }
 break;
 case 302:
 #line 1632 "c_parser.y"
 {/*6*/
-        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.data, BREAK_LABEL_NAME);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME);
     }
 break;
 case 303:
@@ -3932,29 +3932,29 @@ case 303:
 {
         ExtrDeleteContBreakSym(yyvsp[-2].symbol);
         ExtrDeleteContBreakSym(yyvsp[-3].symbol);
-        genInternalLabelReference(yyvsp[-5].bbinteger.data, UsageDefined);
+        genInternalLabelReference(yyvsp[-5].bbinteger.d, UsageDefined);
     }
 break;
 case 304:
 #line 1638 "c_parser.y"
 {
-        genInternalLabelReference(yyvsp[-11].bbinteger.data, UsageFork);
-        genInternalLabelReference(yyvsp[-9].bbinteger.data, UsageDefined);
+        genInternalLabelReference(yyvsp[-11].bbinteger.d, UsageFork);
+        genInternalLabelReference(yyvsp[-9].bbinteger.d, UsageDefined);
     }
 break;
 case 305:
 #line 1646 "c_parser.y"
 {
         /*13*/
-        genInternalLabelReference(yyvsp[-7].bbinteger.data, UsageUsed);
-        genInternalLabelReference(yyvsp[-4].bbinteger.data, UsageDefined);
-        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-3].bbinteger.data, CONTINUE_LABEL_NAME);
+        genInternalLabelReference(yyvsp[-7].bbinteger.d, UsageUsed);
+        genInternalLabelReference(yyvsp[-4].bbinteger.d, UsageDefined);
+        yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-3].bbinteger.d, CONTINUE_LABEL_NAME);
         }
 break;
 case 306:
 #line 1652 "c_parser.y"
 {/*14*/
-            yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.data, BREAK_LABEL_NAME);
+            yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME);
         }
 break;
 case 307:
@@ -3962,8 +3962,8 @@ case 307:
 {
         ExtrDeleteContBreakSym(yyvsp[-1].symbol);
         ExtrDeleteContBreakSym(yyvsp[-2].symbol);
-        genInternalLabelReference(yyvsp[-6].bbinteger.data, UsageUsed);
-        genInternalLabelReference(yyvsp[-3].bbinteger.data, UsageDefined);
+        genInternalLabelReference(yyvsp[-6].bbinteger.d, UsageUsed);
+        genInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
         }
 break;
 case 311:
