@@ -33,18 +33,20 @@ $(ROOTDIR)/lib/zlib/libz.a: ..always..
 # Unless we need to modify the grammar, which incidentally includes
 # both java and c++, we can use the already included .c-files instead
 # of generating from yacc
+#
+# We generate the parser interface only for C
 
 c_parser.tab.c c_parser.tab.h: c_parser.y $(YACC)
 	$(YACC) -v -d -b c_parser c_parser.y
 
-java_parser.tab.c java_parser.tab.h: java_parser.y $(YACC)
-	$(YACC) -v -d -b java_parser java_parser.y
+java_parser.tab.c: java_parser.y $(YACC)
+	$(YACC) -v -b java_parser java_parser.y
 
-yacc_parser.tab.c yacc_parser.tab.h: yacc_parser.y $(YACC)
-	$(YACC) -v -d -b yacc_parser yacc_parser.y
+yacc_parser.tab.c: yacc_parser.y $(YACC)
+	$(YACC) -v -b yacc_parser yacc_parser.y
 
-cexp_parser.tab.c cexp_parser.tab.h: cexp_parser.y $(YACC)
-	$(YACC) -v -d -b cexp_parser cexp_parser.y
+cexp_parser.tab.c: cexp_parser.y $(YACC)
+	$(YACC) -v -b cexp_parser cexp_parser.y
 
 
 #########################################################################
