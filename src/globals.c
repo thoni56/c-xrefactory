@@ -736,7 +736,7 @@ S_int2StringTab s_extractStoragesNamesInitTab[] = {
     {-1, NULL}
 };
 
-S_int2StringTab s_typesNamesInitTab[] = {
+S_int2StringTab s_typeNamesInitTab[] = {
     {TypeDefault ,          "Default"},
     {TypeChar ,             "char"},
     {TypeUnsignedChar ,     "unsigned char"},

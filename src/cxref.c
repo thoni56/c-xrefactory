@@ -2371,7 +2371,7 @@ static void olcxShowTopType(void) {
     if (mms==NULL) {
         olcxGenNoReferenceSignal();
     } else {
-        fprintf(ccOut, "*%s",typesName[mms->s.b.symType]);
+        fprintf(ccOut, "*%s",typeName[mms->s.b.symType]);
     }
 }
 
@@ -3540,7 +3540,7 @@ static int olSpecialFieldCreateSelection(char *fieldName, int storage) {
         if (ss->next->s.b.symType == TypeStruct) ss = ss->next;
     }
     if (ss != NULL) {
-        //&fprintf(dumpOut, "sym %s of %s\n", ss->s.name, typesName[ss->s.b.symType]);
+        //&fprintf(dumpOut, "sym %s of %s\n", ss->s.name, typeName[ss->s.b.symType]);
         if (ss->s.b.symType == TypeStruct) {
             clii = getClassNumFromClassLinkName(ss->s.name, clii);
         } else {

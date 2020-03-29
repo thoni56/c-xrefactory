@@ -2056,19 +2056,19 @@
     (STRUCTP)->p = _ARG_1_OF_3 ARGS;\
     (STRUCTP)->next = _ARG_2_OF_3 ARGS;\
 }
-#define FILL_typeModifiers(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4) {\
+#define FILL_typeModifier(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4) {\
     (STRUCTP)->kind = ARG0;\
     (STRUCTP)->u.ARG1 = ARG2;\
     (STRUCTP)->typedefin = ARG3;\
     (STRUCTP)->next = ARG4;\
 }
-#define FILLF_typeModifiers(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4) {\
+#define FILLF_typeModifier(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4) {\
     (STRUCTP)->kind = ARG0;\
     _FILLUREC_typeModifUnion_##ARG1((&(STRUCTP)->u), ARG2);\
     (STRUCTP)->typedefSymbol = ARG3;\
     (STRUCTP)->next = ARG4;\
 }
-#define _FILLF_typeModifiers(STRUCTP, ARGS) {\
+#define _FILLF_typeModifier(STRUCTP, ARGS) {\
     (STRUCTP)->kind = _ARG_0_OF_5 ARGS;\
     _FILLUREC_typeModifUnion_##_ARG_1_OF_5 ARGS((&(STRUCTP)->u), _ARG_2_OF_5 ARGS);\
     (STRUCTP)->typedefin = _ARG_3_OF_5 ARGS;\

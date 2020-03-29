@@ -237,7 +237,7 @@ char *crTagSearchLineStatic(char *name, S_position *p,
       char type[TMP_STRING_SIZE];
       type[0]=0;
       if (symType != TypeDefault) {
-      l2 = strmcpy(type,typesName[symType]+4) - type;
+      l2 = strmcpy(type,typeName[symType]+4) - type;
       }
       &*/
 
@@ -379,7 +379,7 @@ static void writeSymbolItem(int symIndex) {
     s_outLastInfos.macroBaseFileGeneratedForSym[symIndex] = 0;
     s_outLastInfos.symbolIsWritten[symIndex] = 1;
     if (s_opt.long_cxref) {
-        sprintf(ttt,"\t%s",typesName[d->b.symType]);
+        sprintf(ttt,"\t%s",typeName[d->b.symType]);
         writeStringRecord(CXFI_REMARK,ttt,"");
     }
     writeStringRecord(CXFI_SYM_NAME, d->name, "\t");

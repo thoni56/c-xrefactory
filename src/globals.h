@@ -152,7 +152,7 @@ extern int s_olOriginalFileNumber;      /* original file name */
 extern int s_olOriginalComFileNumber;	/* original communication file */
 extern int s_noneFileIndex;
 
-extern S_int2StringTab s_typesNamesInitTab[];
+extern S_int2StringTab s_typeNamesInitTab[];
 extern char *s_extractStorageName[MAX_STORAGE];
 extern S_int2StringTab s_extractStoragesNamesInitTab[];
 

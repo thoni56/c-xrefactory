@@ -109,10 +109,10 @@ void initTypeCharCodeTab(void) {
 void initTypesNamesTab(void) {
     int                 i;
     S_int2StringTab      *s;
-    for (i=0; s_typesNamesInitTab[i].i != -1; i++) {
-        s = &s_typesNamesInitTab[i];
+    for (i=0; s_typeNamesInitTab[i].i != -1; i++) {
+        s = &s_typeNamesInitTab[i];
         assert(s->i >= 0 && s->i < MAX_TYPE);
-        typesName[s->i] = s->s;
+        typeName[s->i] = s->s;
     }
 }
 

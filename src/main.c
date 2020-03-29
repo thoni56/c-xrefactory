@@ -2084,7 +2084,7 @@ void mainSetLanguage(char *inFileName, Language *outLanguage) {
         || (fnnCmp(simpleFileName(inFileName), "Untitled-", 9)==0)  // jEdit unnamed buffer
         ) {
         *outLanguage = LANG_JAVA;
-        typesName[TypeStruct] = "class";
+        typeName[TypeStruct] = "class";
     } else {
         suff = getFileSuffix(inFileName);
         if (fnCmp(suff,".zip")==0 || fnCmp(suff,".jar")==0) {
@@ -2093,15 +2093,15 @@ void mainSetLanguage(char *inFileName, Language *outLanguage) {
             *outLanguage = LANG_CLASS;
         } else if (fnCmp(suff,".y")==0) {
             *outLanguage = LAN_YACC;
-            typesName[TypeStruct] = "struct";
+            typeName[TypeStruct] = "struct";
 #   ifdef CCC_ALLOWED
         } else if (fileNameHasOneOfSuffixes(inFileName, s_opt.cppFilesSuffixes)) {
             *outLanguage = LAN_CCC;
-            typesName[TypeStruct] = "class";
+            typeName[TypeStruct] = "class";
 #   endif
         } else {
             *outLanguage = LANG_C;
-            typesName[TypeStruct] = "struct";
+            typeName[TypeStruct] = "struct";
         }
     }
 }

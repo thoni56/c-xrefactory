@@ -424,7 +424,7 @@ static void htmlGenRefListItemHead(FILE *ff, char *ln, char *symName,
         } else if (p->b.symType==TypeDefault && p->b.storage==StorageTypedef) {
             fprintf(ff,"typedef&nbsp;");
         } else if (p->b.symType!=TypeDefault) {
-            fprintf(ff,"%s&nbsp;", typesName[p->b.symType]);
+            fprintf(ff,"%s&nbsp;", typeName[p->b.symType]);
         }
         ld = sn;
         while ((d=strchr(ld, '.'))!=NULL) ld = d+1;
@@ -709,7 +709,7 @@ static char *htmlStSymbolCode(S_symbolRefItem *r, int usage) {
         sprintf(ss, "local.%lx", (unsigned long)r);
     } else {
         if (r->vApplClass == s_noneFileIndex) {
-            sprintf(ss,"%s.%s", typesName[r->b.symType], r->name);
+            sprintf(ss,"%s.%s", typeName[r->b.symType], r->name);
         } else {
             if (r->b.storage == StorageField) {
                 strcpy(ttt, s_fileTab.tab[r->vFunClass]->name);
@@ -723,7 +723,7 @@ static char *htmlStSymbolCode(S_symbolRefItem *r, int usage) {
             if (r->b.symType == TypeDefault) {
                 sprintf(ss,"%s.%s", tt, r->name);
             } else {
-                sprintf(ss,"%s.%s.%s", typesName[r->b.symType], tt, r->name);
+                sprintf(ss,"%s.%s.%s", typeName[r->b.symType], tt, r->name);
             }
         }
         for(sss=ss; *sss; sss++) {      // netscape don't like some chars

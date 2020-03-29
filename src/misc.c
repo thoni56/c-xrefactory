@@ -555,8 +555,8 @@ void typeSPrint(char *buff, int *size, S_typeModifiers *t,
             break;
         default:
             assert(t->kind >= 0 && t->kind < MAX_TYPE);
-            assert(strlen(typesName[t->kind]) < COMPLETION_STRING_SIZE);
-            strcpy(type, typesName[t->kind]);
+            assert(strlen(typeName[t->kind]) < COMPLETION_STRING_SIZE);
+            strcpy(type, typeName[t->kind]);
             r = strlen(type);
             break;
         }
@@ -834,7 +834,7 @@ void javaSignatureSPrint(char *buff, int *size, char *sig, int classstyle) {
         default:
             typ = s_javaCharCodeBaseTypes[*ssig];
             assert(typ > 0 && typ < MAX_TYPE);
-            sprintf(buff+j, "%s", typesName[typ]);
+            sprintf(buff+j, "%s", typeName[typ]);
             j += strlen(buff+j);
         }
         sprintf(buff+j, "%s",post);

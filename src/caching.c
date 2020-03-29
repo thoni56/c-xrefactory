@@ -131,7 +131,7 @@ static void symbolTableDeleteOutOfMemory(int i) {
     pp = &s_symbolTable->tab[i];
     while (*pp!=NULL) {
         /*
-          fprintf(dumpOut,"free *%x == %s %s, %x\n",*pp,typesName[(*pp)->symType],
+          fprintf(dumpOut,"free *%x == %s %s, %x\n",*pp,typeName[(*pp)->symType],
           (*pp)->linkName,(*pp)->next);
           fflush(dumpOut);
         */

@@ -1327,7 +1327,7 @@ static S_reference *javaCheckForUselessTypeName(S_idList   *name,
     rr = javaClassifySingleAmbigName(&sname,&localRfs,&str,&expr,&loref,
                                       classif, UsageNone, NO_CX_REFS);
     assert(rfs && rfs->currClass && rfs->currClass->u.s && name);
-//&fprintf(dumpOut,"!checking rr == %s, %x\n", typesName[rr], localRfs.currClass);
+//&fprintf(dumpOut,"!checking rr == %s, %x\n", typeName[rr], localRfs.currClass);
     if (rr==TypeExpression && localRfs.currClass!=NULL) {
 //&fprintf(dumpOut,"!checking %d(%s) == %d(%s)\n",rfs->currClass->u.s->classFile,rfs->currClass->linkName,localRfs.currClass->u.s->classFile,localRfs.currClass->linkName);
         // equality of pointers may be too strong ???
@@ -1611,7 +1611,7 @@ int javaTypeToString(S_typeModifiers *type, char *pp, int ppSize) {
     S_typeModifiers *tt;
     ppi=0;
     for (tt=type; tt!=NULL; tt=tt->next) {
-/*fprintf(dumpOut,"ttm == %d %s\n",tt->m,typesName[tt->m]); fflush(dumpOut);*/
+/*fprintf(dumpOut,"ttm == %d %s\n",tt->m,typeName[tt->m]); fflush(dumpOut);*/
         if (tt->kind == TypeArray) {
             sprintf(pp+ppi,"[");
             ppi += strlen(pp+ppi);
@@ -1986,7 +1986,7 @@ static int javaExistBaseTypeWideningConversion(int t1, int t2) {
     int i1,i2,res;
     assert(t1>=0 && t1<MAX_TYPE);
     assert(t2>=0 && t2<MAX_TYPE);
-/*fprintf(dumpOut,"testing base convertibility of %s to %s\n",typesName[t1],typesName[t2]);fflush(dumpOut);*/
+/*fprintf(dumpOut,"testing base convertibility of %s to %s\n",typeName[t1],typesName[t2]);fflush(dumpOut);*/
     if (t1 == t2) return(1);
     i1 = s_javaTypePCTIConvert[t1];
     i2 = s_javaTypePCTIConvert[t2];
@@ -2524,7 +2524,7 @@ void javaTypeDump(S_typeModifiers *tt) {
     } else if (tt->kind == TypeStruct) {
         fprintf(dumpOut,"%s",tt->u.t->linkName);
     } else {
-        fprintf(dumpOut,"%s",typesName[tt->kind]);
+        fprintf(dumpOut,"%s",typeName[tt->kind]);
     }
 }
 

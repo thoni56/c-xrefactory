@@ -30,7 +30,7 @@ enum fqtCompletion {
 
 typedef struct completionSymInfo {
     struct completions	*res;
-    enum types symType;
+    enum type symType;
 } S_completionSymInfo;
 
 typedef struct completionSymFunInfo {
@@ -254,15 +254,15 @@ static void sprintFullCompletionInfo(S_completions* c, int ii, int indent) {
         }
     } else if (c->a[ii].symType == TypeInheritedFullMethod) {
         if (c->a[ii].vFunClass!=NULL) {
-            sprintf(tt,"%s \t:%s", c->a[ii].vFunClass->name, typesName[c->a[ii].symType]);
+            sprintf(tt,"%s \t:%s", c->a[ii].vFunClass->name, typeName[c->a[ii].symType]);
             vFunCl = c->a[ii].vFunClass->u.s->classFile;
             if (vFunCl == -1) vFunCl = s_noneFileIndex;
         } else {
-            sprintf(tt,"%s", typesName[c->a[ii].symType]);
+            sprintf(tt,"%s", typeName[c->a[ii].symType]);
         }
     } else {
         assert(c->a[ii].symType>=0 && c->a[ii].symType<MAX_TYPE);
-        sprintf(tt,"%s", typesName[c->a[ii].symType]);
+        sprintf(tt,"%s", typeName[c->a[ii].symType]);
     }
     formatFullCompletions(tt, indent+FULL_COMPLETION_INDENT_CHARS+2, cindent);
     for(i=0; tt[i]; i++) {
@@ -1331,7 +1331,7 @@ static void javaCompleteComposedName(
                                          &expr,&orr,NULL, USELESS_FQT_REFS_ALLOWED,classif,UsageUsed);
     /*&
       fprintf(dumpOut,"compl %s %s\n",s_javaStat->lastParsedName->id.name,
-      typesName[nameType]);fflush(dumpOut);
+      typeName[nameType]);fflush(dumpOut);
       &*/
     if (innerConstruct && nameType != TypeExpression) return;
     if (nameType == TypeExpression) {

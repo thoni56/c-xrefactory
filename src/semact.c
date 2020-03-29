@@ -78,7 +78,7 @@ void addSymbol(Symbol *pp, S_symbolTable *tab) {
         one. All this story is about storing information in trail. It should
         containt, both table and pointer !!!!
     */
-    log_debug("adding symbol %s: %s %s",pp->name, typesName[pp->bits.symType], storageName[pp->bits.storage]);
+    log_debug("adding symbol %s: %s %s",pp->name, typeName[pp->bits.symType], storageName[pp->bits.storage]);
     assert(pp->bits.npointers==0);
     AddSymbolNoTrail(pp,tab);
     addToTrail(deleteSymDef, pp  /* AND ALSO!!! , tab */ );
@@ -679,7 +679,7 @@ S_typeModifiers *crSimpleTypeModifier(unsigned t) {
     } else {
         p = s_preCrTypesTab[t];
     }
-    /*fprintf(dumpOut,"t,p->m == %d %d == %s %s\n",t,p->m,typesName[t],typesName[p->m]); fflush(dumpOut);*/
+    /* log_trace("t,p->m == %d %d == %s %s",t,p->m,typeName[t],typeName[p->m]); */
     assert(p->kind == t);
     return(p);
 }

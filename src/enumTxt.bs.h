@@ -11,7 +11,7 @@ extern char * storagesName[];
 extern char * updateModifiersName[];
 extern char * addImportsDefaultName[];
 extern char * javaPCTIndexName[];
-extern char * typesName[];
+extern char * typeName[];
 extern char * __codecvt_resultName[];
 extern char * refsFilterLevelsName[];
 extern char * sFunResultName[];
