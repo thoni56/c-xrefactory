@@ -31,7 +31,7 @@ trace: CXREF+=-trace
 trace: $(TEST)
 
 clean:
-	@-rm -rf CXrefs output.log output.tmp output /tmp/c-xrefx*.tmp buffer
+	@-rm -rf CXrefs output.log output.tmp output buffer
 
 gdb:
 	@$(EDIT_SERVER_DRIVER) commands.input "$(CURDIR)" buffer 15 > output.tmp &
