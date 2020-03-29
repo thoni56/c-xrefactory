@@ -2462,10 +2462,10 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     // init options as soon as possible! for exampl initCwd needs them
     initOptions();
 
-    XX_ALLOC(s_symTab, S_symbolTable);
-    symbolTableInit(s_symTab, MAX_SYMBOLS);
+    XX_ALLOC(s_symbolTable, S_symbolTable);
+    symbolTableInit(s_symbolTable, MAX_SYMBOLS);
     fillJavaStat(&s_initJavaStat,NULL,NULL,NULL,0, NULL, NULL, NULL,
-                  s_symTab,NULL,ACC_DEFAULT,s_cpInit,s_noneFileIndex,NULL);
+                  s_symbolTable,NULL,ACC_DEFAULT,s_cpInit,s_noneFileIndex,NULL);
     XX_ALLOC(s_javaStat, S_javaStat);
     *s_javaStat = s_initJavaStat;
     javaFqtTabInit( &s_javaFqtTab, FQT_CLASS_TAB_SIZE);
@@ -3348,7 +3348,7 @@ static void mainGenerate(int argc, char **argv) {
         cFile.lexBuffer.buffer.isAtEOF = false;
     }
     if (s_opt.str_fill) generateArgumentSelectionMacros(20);
-    symbolTableMap(s_symTab, generate);
+    symbolTableMap(s_symbolTable, generate);
 }
 
 /* initLogging() is called as the first thing in main() so we look for log filename */

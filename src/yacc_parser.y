@@ -351,7 +351,7 @@ symbol_to_type_seq:
 
             addYaccSymbolReference($2.d,UsageDeclared);
             if (l_currentType!=NULL) {
-                addNewDeclaration(l_currentType, ss, NULL, StorageAuto,s_symTab);
+                addNewDeclaration(l_currentType, ss, NULL, StorageAuto,s_symbolTable);
             }
         }
     ;
@@ -518,7 +518,7 @@ primary_expr
             d = newSymbolIsType($1.d->name, $1.d->name, $1.d->p,$$.d.t);
             fillSymbolBits(&d->bits, ACC_DEFAULT, TypeDefault, StorageExtern);
 
-            dd = addNewSymbolDef(d, StorageExtern, s_symTab, UsageUsed);
+            dd = addNewSymbolDef(d, StorageExtern, s_symbolTable, UsageUsed);
             $$.d.r = NULL;
         }
     }
@@ -832,11 +832,11 @@ declaration
 init_declarations
     : declaration_specifiers init_declarator            {
         $$.d = $1.d;
-        addNewDeclaration($1.d, $2.d, NULL, StorageAuto,s_symTab);
+        addNewDeclaration($1.d, $2.d, NULL, StorageAuto,s_symbolTable);
     }
     | init_declarations ',' init_declarator             {
         $$.d = $1.d;
-        addNewDeclaration($1.d, $3.d, NULL, StorageAuto,s_symTab);
+        addNewDeclaration($1.d, $3.d, NULL, StorageAuto,s_symbolTable);
     }
     | error                                             {
         /*$$.d = &s_errorSymbol;*/
@@ -1121,11 +1121,11 @@ enumerator_list
 enumerator
     : identifier                            {
         $$.d = createSimpleDefinition(StorageConstant,TypeInt,$1.d);
-        addNewSymbolDef($$.d,StorageConstant, s_symTab, UsageDefined);
+        addNewSymbolDef($$.d,StorageConstant, s_symbolTable, UsageDefined);
     }
     | identifier '=' constant_expr          {
         $$.d = createSimpleDefinition(StorageConstant,TypeInt,$1.d);
-        addNewSymbolDef($$.d,StorageConstant, s_symTab, UsageDefined);
+        addNewSymbolDef($$.d,StorageConstant, s_symbolTable, UsageDefined);
     }
     | error                                 {
         /*$$.d = &s_errorSymbol;*/
@@ -1569,7 +1569,7 @@ external_definition
         int i;
         assert($2.d);
         //&if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern;
-        addNewSymbolDef($2.d, StorageExtern, s_symTab, UsageDefined);
+        addNewSymbolDef($2.d, StorageExtern, s_symbolTable, UsageDefined);
         tmpWorkMemoryi = $1.d;
         stackMemoryBlockStart();
         assert($2.d->u.type && $2.d->u.type->kind == TypeFunction);
@@ -1580,7 +1580,7 @@ external_definition
             if (p->name != NULL) {
                 XX_ALLOC(pa,Symbol);
                 *pa = *p;
-                addNewSymbolDef(pa, StorageAuto, s_symTab, UsageDefined);
+                addNewSymbolDef(pa, StorageAuto, s_symbolTable, UsageDefined);
             }
             if (s_opt.server_operation == OLO_GOTO_PARAM_NAME
                 && i == s_opt.olcxGotoVal
@@ -1606,15 +1606,15 @@ external_definition
 top_init_declarations
     : declaration_specifiers init_declarator            {
         $$.d = $1.d;
-        addNewDeclaration($1.d, $2.d, NULL, StorageExtern,s_symTab);
+        addNewDeclaration($1.d, $2.d, NULL, StorageExtern,s_symbolTable);
     }
     | init_declarator                                   {
         $$.d = & s_defaultIntDefinition;
-        addNewDeclaration($$.d, $1.d, NULL, StorageExtern,s_symTab);
+        addNewDeclaration($$.d, $1.d, NULL, StorageExtern,s_symbolTable);
     }
     | top_init_declarations ',' init_declarator         {
         $$.d = $1.d;
-        addNewDeclaration($1.d, $3.d, NULL, StorageExtern,s_symTab);
+        addNewDeclaration($1.d, $3.d, NULL, StorageExtern,s_symbolTable);
     }
     | error                                             {
         /*$$.d = &s_errorSymbol;*/
@@ -1714,7 +1714,7 @@ static void addRuleLocalVariable(S_id *name, int order) {
             fillSymbolBits(&ss->bits, ACC_DEFAULT, TypeDefault, StorageAuto);
 
             ss->pos.col ++ ; // to avoid ambiguity of NonTerminal <-> $$.d
-            addNewDeclaration(p, ss, NULL, StorageAuto, s_symTab);
+            addNewDeclaration(p, ss, NULL, StorageAuto, s_symbolTable);
         }
     }
 }

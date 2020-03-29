@@ -56,7 +56,7 @@ void deleteSymDef(void *p) {
     pp = (Symbol *) p;
     log_debug("deleting %s %s", pp->name, pp->linkName);
     if (symbolTableDelete(s_javaStat->locals,pp)) return;
-    if (symbolTableDelete(s_symTab,pp)==0) {
+    if (symbolTableDelete(s_symbolTable,pp)==0) {
         assert(s_opt.taskRegime);
         if (s_opt.taskRegime != RegimeEditServer) {
             error(ERR_INTERNAL,"symbol on deletion not found");
@@ -505,7 +505,7 @@ static void setStaticFunctionLinkName( Symbol *p, int usage ) {
     int         len;
     char        *ss,*basefname;
 
-    //& if (! symbolTableIsMember(s_symTab, p, &ii, &memb)) {
+    //& if (! symbolTableIsMember(s_symbolTable, p, &ii, &memb)) {
     // follwing unifies static symbols taken from the same header files.
     // Static symbols can be used only after being defined, so it is sufficient
     // to do this on definition usage?
@@ -557,20 +557,20 @@ Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, S_symbolTable *ta
     if ((! WORK_NEST_LEVEL0() && LANGUAGE(LANG_C))
         || (! WORK_NEST_LEVEL1() && LANGUAGE(LAN_YACC))) {
         // local scope symbol
-        if (! symbolTableIsMember(s_symTab,p,&ii,&pp)
+        if (! symbolTableIsMember(s_symbolTable,p,&ii,&pp)
             || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
             pp = p;
             setLocalVariableLinkName(pp);
             addSymbol(pp, tab);
         }
     } else if (p->bits.symType==TypeDefault && p->bits.storage==StorageStatic) {
-        if (! symbolTableIsMember(s_symTab,p,&ii,&pp)) {
+        if (! symbolTableIsMember(s_symbolTable,p,&ii,&pp)) {
             pp = p;
             setStaticFunctionLinkName(pp, usage);
             addSymbol(pp, tab);
         }
     } else {
-        if (! symbolTableIsMember(s_symTab,p,&ii,&pp)) {
+        if (! symbolTableIsMember(s_symbolTable,p,&ii,&pp)) {
             pp = p;
             if (s_opt.exactPositionResolve) {
                 setGlobalFileDepNames(pp->name, pp, MEM_XX);
@@ -587,7 +587,7 @@ Symbol *addNewCopyOfSymbolDef(Symbol *def, unsigned storage) {
     Symbol *p;
     p = StackMemAlloc(Symbol);
     *p = *def;
-    addNewSymbolDef(p,storage, s_symTab, UsageDefined);
+    addNewSymbolDef(p,storage, s_symbolTable, UsageDefined);
     return(p);
 }
 
@@ -907,7 +907,7 @@ S_typeModifiers *simpleStrUnionSpecifier(   S_id *typeName,
     fillSymbol(&p, id->name, id->name, id->p);
     fillSymbolBits(&p.bits, ACC_DEFAULT, type, StorageNone);
 
-    if (! symbolTableIsMember(s_symTab,&p,&ii,&pp)
+    if (! symbolTableIsMember(s_symbolTable,&p,&ii,&pp)
         || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
         //{static int c=0;fprintf(dumpOut,"str#%d\n",c++);}
         XX_ALLOC(pp, Symbol);
@@ -920,7 +920,7 @@ S_typeModifiers *simpleStrUnionSpecifier(   S_id *typeName,
                             0,0, -1,0);
         pp->u.s->stype.u.t = pp;
         setGlobalFileDepNames(id->name, pp, MEM_XX);
-        addSymbol(pp, s_symTab);
+        addSymbol(pp, s_symbolTable);
     }
     addCxReference(pp, &id->p, usage,s_noneFileIndex, s_noneFileIndex);
     return(&pp->u.s->stype);
@@ -944,7 +944,7 @@ void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
         filen = pp->pos.file;
         pp->name=iname; pp->linkName=iname;
         order = 0;
-        rr = symbolTableIsMember(s_symTab, pp, &ii, &memb);
+        rr = symbolTableIsMember(s_symbolTable, pp, &ii, &memb);
         while (rr) {
             if (memb->pos.file==filen) order++;
             rr = symbolTableNextMember(pp, &memb);
@@ -1023,7 +1023,7 @@ S_typeModifiers *crNewAnnonymeStrUnion(S_id *typeName) {
                         TypePointer,f,(NULL,NULL),NULL,&pp->u.s->stype,
                         0,0, -1,0);
     pp->u.s->stype.u.t = pp;
-    addSymbol(pp, s_symTab);
+    addSymbol(pp, s_symbolTable);
     return(&pp->u.s->stype);
 }
 
@@ -1054,12 +1054,12 @@ S_typeModifiers *simpleEnumSpecifier(S_id *id, int usage) {
     fillSymbol(&p, id->name, id->name, id->p);
     fillSymbolBits(&p.bits, ACC_DEFAULT, TypeEnum, StorageNone);
 
-    if (! symbolTableIsMember(s_symTab,&p,&ii,&pp)
+    if (! symbolTableIsMember(s_symbolTable,&p,&ii,&pp)
         || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
         pp = StackMemAlloc(Symbol);
         *pp = p;
         setGlobalFileDepNames(id->name, pp, MEM_XX);
-        addSymbol(pp, s_symTab);
+        addSymbol(pp, s_symbolTable);
     }
     addCxReference(pp, &id->p, usage,s_noneFileIndex, s_noneFileIndex);
     return(crSimpleEnumType(pp,TypeEnum));

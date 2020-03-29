@@ -583,7 +583,7 @@ static Symbol *javaAddTypeToSymbolTable(Symbol *memb, int accessFlags, S_positio
 
     memb->bits.accessFlags = accessFlags;
     memb->bits.isSingleImported = isSingleImported;
-    //&if (symbolTableIsMember(s_symTab, memb, &ii, &memb2)) {
+    //&if (symbolTableIsMember(s_symbolTable, memb, &ii, &memb2)) {
     //&	while (memb2!=NULL && strcmp(memb->linkName, memb2->linkName)!=0) {
     //&		symbolTableNextMember(memb, &memb2);
     //&	}
@@ -592,7 +592,7 @@ static Symbol *javaAddTypeToSymbolTable(Symbol *memb, int accessFlags, S_positio
     XX_ALLOC(nmemb, Symbol);
     *nmemb = *memb;
     nmemb->pos = *importPos;
-    addSymbol(nmemb, s_symTab);
+    addSymbol(nmemb, s_symbolTable);
     //&memb = nmemb;
 
     return(memb);
@@ -630,7 +630,7 @@ Symbol *javaTypeSymbolUsage(S_idList *tname,
     fillSymbol(&pp, tname->id.name, tname->id.name, s_noPos);
     fillSymbolBits(&pp.bits, accessFlags, TypeStruct, StorageNone);
 
-    if (tname->next==NULL && symbolTableIsMember(s_symTab, &pp, &ii, &memb)) {
+    if (tname->next==NULL && symbolTableIsMember(s_symbolTable, &pp, &ii, &memb)) {
         // get canonical copy
         memb = javaFQTypeSymbolDefinition(memb->name, memb->linkName);
         return(memb);
@@ -1043,7 +1043,7 @@ int javaClassifySingleAmbigNameToTypeOrPack(S_idList *name,
     fillSymbolBits(&sd.bits, ACC_DEFAULT, TypeStruct, StorageNone);
 
     haveit = 0;
-    if (symbolTableIsMember(s_symTab, &sd, &ii, &memb)) {
+    if (symbolTableIsMember(s_symbolTable, &sd, &ii, &memb)) {
         /* a type */
         assert(memb);
         // O.K. I have to load the class in order to check its access flags

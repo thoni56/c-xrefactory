@@ -100,7 +100,7 @@ extern S_currentlyParsedStatics s_cps;
 extern S_currentlyParsedStatics s_cpsInit;
 extern S_topBlock *s_topBlock;
 
-extern S_symbolTable *s_symTab;
+extern S_symbolTable *s_symbolTable;
 extern S_fileTab s_fileTab;
 
 extern S_typeModifiers s_defaultIntModifier;

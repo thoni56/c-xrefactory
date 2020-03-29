@@ -843,9 +843,9 @@ void completeStructs(S_completions *c) {
     S_completionSymInfo ii;
 
     fillCompletionSymInfo(&ii, c, TypeStruct);
-    symbolTableMap2(s_symTab, completeFun, (void*) &ii);
+    symbolTableMap2(s_symbolTable, completeFun, (void*) &ii);
     fillCompletionSymInfo(&ii, c, TypeUnion);
-    symbolTableMap2(s_symTab, completeFun, (void*) &ii);
+    symbolTableMap2(s_symbolTable, completeFun, (void*) &ii);
 }
 
 static bool javaLinkable(unsigned storage, unsigned accessFlags) {
@@ -1004,26 +1004,26 @@ static void completeFromSymTab(S_completions*c, unsigned storage){
             vlevelOffset += NEST_VIRT_COMPL_OFFSET;
         }
     } else {
-        symbolTableMap2(s_symTab, completeSymFun, (void*) &info);
+        symbolTableMap2(s_symbolTable, completeSymFun, (void*) &info);
     }
 }
 
 void completeEnums(S_completions*c) {
     S_completionSymInfo ii;
     fillCompletionSymInfo(&ii, c, TypeEnum);
-    symbolTableMap2(s_symTab, completeFun, (void*) &ii);
+    symbolTableMap2(s_symbolTable, completeFun, (void*) &ii);
 }
 
 void completeLabels(S_completions*c) {
     S_completionSymInfo ii;
     fillCompletionSymInfo(&ii, c, TypeLabel);
-    symbolTableMap2(s_symTab, completeFun, (void*) &ii);
+    symbolTableMap2(s_symbolTable, completeFun, (void*) &ii);
 }
 
 void completeMacros(S_completions*c) {
     S_completionSymInfo ii;
     fillCompletionSymInfo(&ii, c, TypeMacro);
-    symbolTableMap2(s_symTab, completeFun, (void*) &ii);
+    symbolTableMap2(s_symbolTable, completeFun, (void*) &ii);
 }
 
 void completeTypes(S_completions* c) {
@@ -1055,8 +1055,8 @@ static Symbol * getSymFromRef(S_reference *rr) {
     if (i>=s_cxrefTab.size) return(NULL);
     assert(r==rr);
     // now look symbol table to find the symbol , berk!
-    for(i=0; i<s_symTab->size; i++) {
-        for(sym=s_symTab->tab[i]; sym!=NULL; sym=sym->next) {
+    for(i=0; i<s_symbolTable->size; i++) {
+        for(sym=s_symbolTable->tab[i]; sym!=NULL; sym=sym->next) {
             if (strcmp(sym->linkName,ss->name)==0) return(sym);
         }
     }
@@ -1452,7 +1452,7 @@ void javaCompleteClassDefinitionName(S_completions*c) {
     // order is important because of hack in nestedcl Access modifs
     javaCompleteNestedClSingleName(c);
     fillCompletionSymInfo(&ii, c, TypeStruct);
-    symbolTableMap2(s_symTab, completeFun, (void*) &ii);
+    symbolTableMap2(s_symbolTable, completeFun, (void*) &ii);
 }
 
 void javaCompletePackageCompName(S_completions*c) {
@@ -1467,7 +1467,7 @@ void javaCompleteTypeSingleName(S_completions*c) {
     javaCompleteNestedClSingleName(c);
     javaMapDirectoryFiles2(NULL, javaTypeNameCompletion, c, NULL, NULL);
     fillCompletionSymInfo(&ii, c, TypeStruct);
-    symbolTableMap2(s_symTab, completeFun, (void*) &ii);
+    symbolTableMap2(s_symbolTable, completeFun, (void*) &ii);
 }
 
 static void completeFqtFromFileName(char *file, void *cfmpi) {
@@ -1644,7 +1644,7 @@ void javaCompleteTypeCompName(S_completions *c) {
 }
 
 void javaCompleteConstructSingleName(S_completions *c) {
-    symbolTableMap2(s_symTab, completeJavaConstructors, c);
+    symbolTableMap2(s_symbolTable, completeJavaConstructors, c);
 }
 
 void javaCompleteHintForConstructSingleName(S_completions *c) {
@@ -1681,7 +1681,7 @@ void javaCompleteExprSingleName(S_completions*c) {
     S_completionSymInfo ii;
     javaMapDirectoryFiles1(NULL, javaTypeNameCompletion, c, NULL, NULL);
     fillCompletionSymInfo(&ii, c, TypeStruct);
-    symbolTableMap2(s_symTab, completeFun, (void*) &ii);
+    symbolTableMap2(s_symbolTable, completeFun, (void*) &ii);
     completeFromSymTab(c, StorageDefault);
 }
 

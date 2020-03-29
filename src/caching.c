@@ -128,7 +128,7 @@ static void structCachingFree(Symbol *pp) {
 
 static void symbolTableDeleteOutOfMemory(int i) {
     Symbol **pp;
-    pp = &s_symTab->tab[i];
+    pp = &s_symbolTable->tab[i];
     while (*pp!=NULL) {
         /*
           fprintf(dumpOut,"free *%x == %s %s, %x\n",*pp,typesName[(*pp)->symType],
@@ -288,7 +288,7 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
         fileTabMapWithIndex(&s_fileTab, fileTabDeleteOutOfMemory);
     }
     log_trace("recovering 0");
-    symbolTableMap3(s_symTab, symbolTableDeleteOutOfMemory);
+    symbolTableMap3(s_symbolTable, symbolTableDeleteOutOfMemory);
     log_trace("recovering 1");
     javaFqtTabMap3(&s_javaFqtTab, javaFqtTabDeleteOutOfMemory);
     log_trace("recovering 2");
