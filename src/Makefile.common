@@ -12,8 +12,11 @@
 # files should be usable on all platforms.
 #
 
-all: CFLAGS+=-DDEBUG
-all prod: $(ZLIB) c-xref
+debug: CFLAGS+=-DDEBUG
+yydebug: CFLAGS+=-DYYDEBUG=1 -DDEBUG
+prod: CFLAGS+=-DYYDEBUG=0
+
+debug yydebug prod: $(ZLIB) c-xref
 
 include sources.mk
 
