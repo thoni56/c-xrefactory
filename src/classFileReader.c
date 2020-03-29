@@ -112,10 +112,6 @@ S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
         }                                       \
     }
 
-#define GetCurrentFileOffset(ccc,ffin,bbb,offset) { \
-        offset = ftell((bbb)->file) - (ffin-ccc);     \
-    }
-
 #define SeekToPosition(ccc,ffin,bbb,offset) {                           \
         fseek((bbb)->file,offset,SEEK_SET);                               \
         ccc = ffin = (bbb)->next = (bbb)->end = (bbb)->lineBegin = (bbb)->chars; \
@@ -410,7 +406,6 @@ static void zipArchiveScan(char **accc, char **affin, CharacterBuffer *iBuf,
     GetZU4(cdOffset,ccc,ffin,iBuf);
     SeekToPosition(ccc,ffin,iBuf,cdOffset);
     for(;;) {
-        GetCurrentFileOffset(ccc,ffin,iBuf, foffset);
         ReadZipCDRecord(ccc,ffin,iBuf);
         if (strncmp(fn,"META-INF/",9)!=0) {
             log_trace("adding '%s'", fn);
