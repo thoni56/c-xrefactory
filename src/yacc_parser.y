@@ -49,13 +49,13 @@
 
 #define CrTypeModifier(xxx,ttt) {\
         xxx = StackMemAlloc(S_typeModifiers);\
-        FILLF_typeModifiers(xxx, ttt,f,( NULL,NULL) ,NULL,NULL);\
+        FILLF_typeModifier(xxx, ttt,f,( NULL,NULL) ,NULL,NULL);\
 }
 
 #define PrependModifier(xxx,ttt) {\
         S_typeModifiers *p;\
         p = StackMemAlloc(S_typeModifiers);\
-        FILLF_typeModifiers(p, ttt, NULL,NULL,NULL,xxx);\
+        FILLF_typeModifier(p, ttt, NULL,NULL,NULL,xxx);\
         xxx = p;\
 }
 
@@ -502,7 +502,7 @@ primary_expr
 
             CrTypeModifier(p, TypeInt);
             $$.d.t = StackMemAlloc(S_typeModifiers);
-            FILLF_typeModifiers($$.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
+            FILLF_typeModifier($$.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
 
             d = newSymbolIsType($1.d->name, $1.d->name, $1.d->p,$$.d.t);
             fillSymbolBits(&d->bits, ACC_DEFAULT, TypeDefault, StorageExtern);
@@ -520,7 +520,7 @@ primary_expr
         S_typeModifiers *p;
         CrTypeModifier(p, TypeChar);
         $$.d.t = StackMemAlloc(S_typeModifiers);
-        FILLF_typeModifiers($$.d.t, TypePointer,f,( NULL,NULL) ,NULL,p);
+        FILLF_typeModifier($$.d.t, TypePointer,f,( NULL,NULL) ,NULL,p);
         $$.d.r = NULL;
     }
     | '(' expr ')'          {
@@ -606,7 +606,7 @@ unary_expr
     | unary_operator cast_expr      { $$.d.t = $2.d.t; $$.d.r = NULL;}
     | '&' cast_expr                 {
         $$.d.t = StackMemAlloc(S_typeModifiers);
-        FILLF_typeModifiers($$.d.t, TypePointer,f,( NULL,NULL) ,NULL,$2.d.t);
+        FILLF_typeModifier($$.d.t, TypePointer,f,( NULL,NULL) ,NULL,$2.d.t);
         RESET_REFERENCE_USAGE($2.d.r, UsageAddrUsed);
         $$.d.r = NULL;
     }
@@ -910,7 +910,7 @@ declaration_modality_specifiers
     : storage_class_specifier                               {
         S_typeModifiers *typeModifiers;
         typeModifiers = StackMemAlloc(S_typeModifiers);
-        FILLF_typeModifiers(typeModifiers,TypeDefault,f,(NULL,NULL) ,NULL,NULL);
+        FILLF_typeModifier(typeModifiers,TypeDefault,f,(NULL,NULL) ,NULL,NULL);
 
         $$.d = newSymbolIsType(NULL, NULL, s_noPos, typeModifiers);
         fillSymbolBits(&$$.d->bits, ACC_DEFAULT, TypeDefault, $1.d);
@@ -1056,7 +1056,7 @@ struct_declarator
     | ':' constant_expr             {
         S_typeModifiers *p;
         p = StackMemAlloc(S_typeModifiers);
-        FILLF_typeModifiers(p,TypeAnonymeField,f,( NULL,NULL) ,NULL,NULL);
+        FILLF_typeModifier(p,TypeAnonymeField,f,( NULL,NULL) ,NULL,NULL);
 
         $$.d = newSymbolIsType(NULL, NULL, s_noPos, p);
 

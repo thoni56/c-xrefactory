@@ -19,7 +19,7 @@ void fillSymbol(Symbol *s, char *name, char *linkName, struct position pos) {
 }
 
 
-void fillSymbolWithType(Symbol *symbol, char *name, char *linkName, struct position pos, struct typeModifiers *type) {
+void fillSymbolWithType(Symbol *symbol, char *name, char *linkName, struct position pos, struct typeModifier *type) {
     fillSymbol(symbol, name, linkName, pos);
     symbol->u.type = type;
 }
@@ -49,7 +49,7 @@ Symbol *newSymbolIsKeyword(char *name, char *linkName, struct position pos, int 
     return s;
 }
 
-Symbol *newSymbolIsType(char *name, char *linkName, struct position pos, struct typeModifiers *type) {
+Symbol *newSymbolIsType(char *name, char *linkName, struct position pos, struct typeModifier *type) {
     Symbol *s = newSymbol(name, linkName, pos);
     s->u.type = type;
     return s;

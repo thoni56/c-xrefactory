@@ -714,17 +714,17 @@ S_typeModifiers * cfUnPackResultType(char *sig, char **restype) {
         ares = &(tt->next);
         switch (*ssig) {
         case ')':
-            FILLF_typeModifiers(tt, TypeFunction,f,( NULL,NULL) ,NULL, NULL);
+            FILLF_typeModifier(tt, TypeFunction,f,( NULL,NULL) ,NULL, NULL);
             assert(*sig == '(');
             tt->u.m.sig = NULL; /* must be set later !!!!!!!!!! */
             break;
         case '[':
-            FILLF_typeModifiers(tt, TypeArray,f,( NULL,NULL) ,NULL, NULL);
+            FILLF_typeModifier(tt, TypeArray,f,( NULL,NULL) ,NULL, NULL);
             for(ssig++; *ssig && isdigit(*ssig); ssig++) ;
             ssig --;
             break;
         case 'L':
-            FILLF_typeModifiers(tt, TypeStruct,t, NULL,NULL, NULL);
+            FILLF_typeModifier(tt, TypeStruct,t, NULL,NULL, NULL);
             fqname = ++ssig;
             ccname = fqname;
             for(; *ssig && *ssig!=';'; ssig++) {
@@ -738,7 +738,7 @@ S_typeModifiers * cfUnPackResultType(char *sig, char **restype) {
         default:
             typ = s_javaCharCodeBaseTypes[*ssig];
             assert(typ != 0);
-            FILLF_typeModifiers(tt, typ,f,( NULL,NULL) ,NULL, NULL);
+            FILLF_typeModifier(tt, typ,f,( NULL,NULL) ,NULL, NULL);
         }
     }
     return(res);

@@ -73,7 +73,7 @@ static S_typeModifiers *jslCrSimpleTypeModifier(unsigned t) {
     assert(t>=0 && t<MAX_TYPE);
     if (s_preCrTypesTab[t] == NULL) {
         CF_ALLOC(p, S_typeModifiers);
-        FILLF_typeModifiers(p, t, f, (NULL,NULL), NULL, NULL);
+        FILLF_typeModifier(p, t, f, (NULL,NULL), NULL, NULL);
     } else {
         p = s_preCrTypesTab[t];
     }
@@ -89,7 +89,7 @@ Symbol *jslTypeSpecifier1(unsigned t) {
 S_typeModifiers *jslAppendComposedType(S_typeModifiers **d, unsigned t) {
     S_typeModifiers *p;
     CF_ALLOC(p, S_typeModifiers);
-    FILLF_typeModifiers(p, t,f,( NULL,NULL) ,NULL,NULL);
+    FILLF_typeModifier(p, t,f,( NULL,NULL) ,NULL,NULL);
     LIST_APPEND(S_typeModifiers, (*d), p);
     return(p);
 }
@@ -97,7 +97,7 @@ S_typeModifiers *jslAppendComposedType(S_typeModifiers **d, unsigned t) {
 S_typeModifiers *jslPrependComposedType(S_typeModifiers *d, unsigned t) {
     S_typeModifiers *p;
     CF_ALLOC(p, S_typeModifiers);
-    FILLF_typeModifiers(p, t,f,( NULL,NULL) ,NULL,d);
+    FILLF_typeModifier(p, t,f,( NULL,NULL) ,NULL,d);
     return(p);
 }
 
@@ -180,7 +180,7 @@ Symbol *jslTypeNameDefinition(S_idList *tname) {
 
     memb = jslTypeSymbolUsage(tname->id.name, tname->next);
     CF_ALLOC(td, S_typeModifiers); //XX_ALLOC?
-    FILLF_typeModifiers(td, TypeStruct,t,memb,NULL, NULL);
+    FILLF_typeModifier(td, TypeStruct,t,memb,NULL, NULL);
     td->u.t = memb;
 
     CF_ALLOC(dd, Symbol); //XX_ALLOC?

@@ -8,7 +8,7 @@
 
 typedef struct javaStat {
     struct idList               *className;			/* this class name */
-    struct typeModifiers		*thisType;			/* this class type */
+    struct typeModifier		*thisType;			/* this class type */
     struct symbol				*thisClass;			/* this class definition */
     int							currentNestedIndex;	/* currently parsed nested class */
     char						*currentPackage;    /* current package */

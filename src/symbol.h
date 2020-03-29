@@ -31,7 +31,7 @@ typedef struct symbol {
                                             */
     struct symbolBits bits;
     union defUnion {
-        struct typeModifiers		*type;		/* if symType == TypeDefault */
+        struct typeModifier		*type;		/* if symType == TypeDefault */
         struct symStructSpec	*s;			/* if symType == Struct/Union */
         struct symbolList			*enums;		/* if symType == Enum */
         struct macroBody			*mbody;     /* if symType == Macro ! can be NULL! */
@@ -53,11 +53,11 @@ typedef struct symbolList {
 /* NOTE These will not fill bits-field, has to be done after allocation */
 extern Symbol *newSymbol(char *name, char *linkName, struct position pos);
 extern Symbol *newSymbolIsKeyword(char *name, char *linkName, struct position pos, int keyWordVal);
-extern Symbol *newSymbolIsType(char *name, char *linkName, struct position pos, struct typeModifiers *type);
+extern Symbol *newSymbolIsType(char *name, char *linkName, struct position pos, struct typeModifier *type);
 extern Symbol *newSymbolIsEnum(char *name, char *linkName, struct position pos, struct symbolList *enums);
 extern Symbol *newSymbolIsLabel(char *name, char *linkName, struct position pos, int labelIndex);
 extern void fillSymbol(Symbol *symbol, char *name, char *linkName, struct position pos);
-extern void fillSymbolWithType(Symbol *symbol, char *name, char *linkName, struct position pos, struct typeModifiers *type);
+extern void fillSymbolWithType(Symbol *symbol, char *name, char *linkName, struct position pos, struct typeModifier *type);
 extern void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName, struct position pos, int labelIndex);
 extern void fillSymbolWithStruct(Symbol *symbol, char *name, char *linkName, struct position pos, struct symStructSpec *structSpec);
 

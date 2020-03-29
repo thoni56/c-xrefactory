@@ -647,7 +647,7 @@ Symbol *javaTypeNameDefinition(S_idList *tname) {
 
     memb = javaTypeSymbolUsage(tname, ACC_DEFAULT);
     XX_ALLOC(td, S_typeModifiers);
-    FILLF_typeModifiers(td, TypeStruct, t, memb, NULL, NULL);
+    FILLF_typeModifier(td, TypeStruct, t, memb, NULL, NULL);
     td->u.t = memb;
     dd = newSymbolIsType(memb->name, memb->linkName, tname->id.p, td);
 
@@ -1600,7 +1600,7 @@ Symbol *javaCreateNewMethod(char *nn, S_position *p, int mem) {
         res = StackMemAlloc(Symbol);
     }
 
-    FILLF_typeModifiers(m, TypeFunction, f, (NULL, NULL), NULL, NULL);
+    FILLF_typeModifier(m, TypeFunction, f, (NULL, NULL), NULL, NULL);
     fillSymbolWithType(res, name, name, *p, m);
 
     return(res);
@@ -1925,7 +1925,7 @@ S_typeModifiers *javaClassNameType(S_idList *typeName) {
     assert(typeName->nameType == TypeStruct);
     st = javaTypeSymbolUsage(typeName,ACC_DEFAULT);
     XX_ALLOC(tt,S_typeModifiers);
-    FILLF_typeModifiers(tt,TypeStruct,t,st,NULL,NULL);
+    FILLF_typeModifier(tt,TypeStruct,t,st,NULL,NULL);
     return(tt);
 }
 
@@ -2416,7 +2416,7 @@ S_typeModifiers *javaNumericPromotion(S_typeModifiers *tt) {
     switch (tt->kind) {
     case TypeByte: case TypeShort: case TypeChar:
         XX_ALLOC(rr,S_typeModifiers);
-        FILLF_typeModifiers(rr,TypeInt,t,NULL,NULL,NULL);
+        FILLF_typeModifier(rr,TypeInt,t,NULL,NULL,NULL);
         return(rr);
     case TypeInt: case TypeLong:
     case TypeDouble: case TypeFloat:
@@ -2439,7 +2439,7 @@ S_typeModifiers *javaBinaryNumericPromotion(	S_typeModifiers *t1,
     else if (m1 == TypeFloat || m2 == TypeFloat) res = TypeFloat;
     else if (m1 == TypeLong || m2 == TypeLong) res = TypeLong;
     XX_ALLOC(rr,S_typeModifiers);
-    FILLF_typeModifiers(rr,res,t,NULL,NULL,NULL);
+    FILLF_typeModifier(rr,res,t,NULL,NULL,NULL);
     return(rr);
 }
 

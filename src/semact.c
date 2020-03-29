@@ -675,7 +675,7 @@ S_typeModifiers *crSimpleTypeModifier(unsigned t) {
     assert(t>=0 && t<MAX_TYPE);
     if (s_preCrTypesTab[t] == NULL) {
         p = StackMemAlloc(S_typeModifiers);
-        FILLF_typeModifiers(p,t,f,( NULL,NULL) ,NULL,NULL);
+        FILLF_typeModifier(p,t,f,( NULL,NULL) ,NULL,NULL);
     } else {
         p = s_preCrTypesTab[t];
     }
@@ -777,7 +777,7 @@ void declTypeSpecifier21(S_typeModifiers *t, Symbol *d) {
 S_typeModifiers *appendComposedType(S_typeModifiers **d, unsigned t) {
     S_typeModifiers *p;
     p = StackMemAlloc(S_typeModifiers);
-    FILLF_typeModifiers(p, t,f,( NULL,NULL) ,NULL,NULL);
+    FILLF_typeModifier(p, t,f,( NULL,NULL) ,NULL,NULL);
     LIST_APPEND(S_typeModifiers, (*d), p);
     return(p);
 }
@@ -785,7 +785,7 @@ S_typeModifiers *appendComposedType(S_typeModifiers **d, unsigned t) {
 S_typeModifiers *prependComposedType(S_typeModifiers *d, unsigned t) {
     S_typeModifiers *p;
     p = StackMemAlloc(S_typeModifiers);
-    FILLF_typeModifiers(p, t,f,( NULL,NULL) ,NULL,d);
+    FILLF_typeModifier(p, t,f,( NULL,NULL) ,NULL,d);
     return(p);
 }
 
@@ -839,7 +839,7 @@ Symbol *createSimpleDefinition(unsigned storage, unsigned t, S_id *id) {
     Symbol *r;
 
     typeModifiers = StackMemAlloc(S_typeModifiers);
-    FILLF_typeModifiers(typeModifiers,t,f,( NULL,NULL) ,NULL,NULL);
+    FILLF_typeModifier(typeModifiers,t,f,( NULL,NULL) ,NULL,NULL);
     if (id!=NULL) {
         r = newSymbolIsType(id->name, id->name, id->p, typeModifiers);
     } else {
@@ -884,7 +884,7 @@ int mergeArguments(Symbol *id, Symbol *ty) {
 static S_typeModifiers *crSimpleEnumType(Symbol *edef, int type) {
     S_typeModifiers *res;
     res = StackMemAlloc(S_typeModifiers);
-    FILLF_typeModifiers(res, type,t,edef,NULL,NULL);
+    FILLF_typeModifier(res, type,t,edef,NULL,NULL);
     res->u.t = edef;
     return(res);
 }
@@ -1135,7 +1135,7 @@ Symbol *crEmptyField(void) {
     S_typeModifiers *p;
 
     p = StackMemAlloc(S_typeModifiers);
-    FILLF_typeModifiers(p,TypeAnonymeField,f,( NULL,NULL) ,NULL,NULL);
+    FILLF_typeModifier(p,TypeAnonymeField,f,( NULL,NULL) ,NULL,NULL);
 
     res = newSymbolIsType("", "", s_noPos, p);
 

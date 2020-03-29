@@ -669,27 +669,25 @@ typedef struct topBlock {
     struct topBlock  *previousTopBlock;
 } S_topBlock;
 
-typedef struct typeModifiers {
+typedef struct typeModifier {
     enum types                kind;
-    union typeModifUnion {
+    union typeModifierUnion {
         struct funTypeModif {                /* LAN_C/CPP Function */
             struct symbol     *args;
             struct symbol     **thisFunList; /* only for LAN_CPP overloaded */
         } f;
-        //struct symbol       *args;         /* LAN_C Function - why not used? */
         struct methodTypeModif {             /* LAN_JAVA Function/Method */
             char              *sig;
             struct symbolList *exceptions;
         } m;
-        //char                *sig;          /* LAN_JAVA Function */
         struct symbol         *t;            /* Struct/Union/Enum */
     } u;
     struct symbol             *typedefSymbol;  /* the typedef symbol (if any) */
-    struct typeModifiers      *next;
+    struct typeModifier      *next;
 } S_typeModifiers;
 
 typedef struct typeModifiersList {
-    struct typeModifiers		*d;
+    struct typeModifier		*d;
     struct typeModifiersList	*next;
 } S_typeModifiersList;
 
@@ -723,8 +721,8 @@ typedef struct symStructSpec {
     struct cctNode			casts;			/* possible casts                       */
     short int				nnested;		/* # of java nested classes     */
     struct nestedSpec		*nest;			/* array of nested classes		*/
-    struct typeModifiers	stype;			/* this structure type */
-    struct typeModifiers	sptrtype;		/* this structure pointer type */
+    struct typeModifier	stype;			/* this structure type */
+    struct typeModifier	sptrtype;		/* this structure pointer type */
     char                    currPackage;	/* am I in the currently processed package?, to be removed */
     char					existsDEIarg;   /* class direct enclosing instance exists?, to be removed */
     int						classFile;		/* in java, my class file index
@@ -1055,13 +1053,13 @@ typedef struct programGraphNode {
 } S_programGraphNode;
 
 typedef struct exprTokenType {
-    struct typeModifiers *t;
+    struct typeModifier *t;
     struct reference     *r;
     struct position      *pp;
 } S_exprTokenType;
 
 typedef struct nestedConstrTokenType {
-    struct typeModifiers	*t;
+    struct typeModifier	*t;
     struct idList		*nid;
     struct position			*pp;
 } S_nestedConstrTokenType;
@@ -1158,7 +1156,7 @@ typedef struct {
 } Ast_symbolList;
 typedef struct {
     struct position          b, e;
-    struct typeModifiers		*d;
+    struct typeModifier		*d;
 } Ast_typeModifiers;
 typedef struct {
     struct position              b, e;

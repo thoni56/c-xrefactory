@@ -14,11 +14,11 @@ Symbol *newSymbolIsKeyword(char *name, char *linkName, struct position pos, int 
     return NULL; // (S_symbol *)mock(name, linkName, pos, keyWordVal);
 }
 
-Symbol *newSymbolIsType(char *name, char *linkName, struct position pos, struct typeModifiers *type) {
+Symbol *newSymbolIsType(char *name, char *linkName, struct position pos, struct typeModifier *type) {
     return NULL; // (S_symbol *)mock(name, linkName, pos, type);
 }
 
-void fillSymbolWithType(Symbol *symbol, char *name, char *linkName, struct position pos, struct typeModifiers *type) {
+void fillSymbolWithType(Symbol *symbol, char *name, char *linkName, struct position pos, struct typeModifier *type) {
     // mock(symbol, name, linkName, pos, type);
 }
 

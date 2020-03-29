@@ -131,17 +131,17 @@ void initExtractStoragesNameTab(void) {
 void initArchaicTypes(void) {
     /* ******* some defaults and built-ins initialisations ********* */
 
-    FILLF_typeModifiers(&s_defaultIntModifier, TypeInt, f, (NULL,NULL), NULL, NULL);
+    FILLF_typeModifier(&s_defaultIntModifier, TypeInt, f, (NULL,NULL), NULL, NULL);
     fillSymbolWithType(&s_defaultIntDefinition, NULL, NULL, s_noPos, &s_defaultIntModifier);
 
-    FILLF_typeModifiers(&s_defaultPackedTypeModifier, TypePackedType, f,
+    FILLF_typeModifier(&s_defaultPackedTypeModifier, TypePackedType, f,
                         (NULL,NULL), NULL, NULL);
 
-    FILLF_typeModifiers(&s_defaultVoidModifier,TypeVoid,f,( NULL,NULL) ,NULL,NULL);
+    FILLF_typeModifier(&s_defaultVoidModifier,TypeVoid,f,( NULL,NULL) ,NULL,NULL);
     fillSymbolWithType(&s_defaultVoidDefinition, NULL, NULL, s_noPos,
                &s_defaultVoidModifier);
 
-    FILLF_typeModifiers(&s_errorModifier, TypeError,f,( NULL,NULL) ,NULL,NULL);
+    FILLF_typeModifier(&s_errorModifier, TypeError,f,( NULL,NULL) ,NULL,NULL);
     fillSymbolWithType(&s_errorSymbol,"__ERROR__", "__ERROR__", s_noPos, &s_errorModifier);
     fillSymbolBits(&s_errorSymbol.bits, ACC_DEFAULT, TypeError, StorageNone);
 }
@@ -158,16 +158,16 @@ void initPreCreatedTypes(void) {
         if (t<0) break;
         /* pre-create X */
         XX_ALLOC(tt, S_typeModifiers);
-        FILLF_typeModifiers(tt, t, t, NULL,NULL, NULL);
+        FILLF_typeModifier(tt, t, t, NULL,NULL, NULL);
         assert(t>=0 && t<MAX_TYPE);
         s_preCrTypesTab[t] = tt;
         /* pre-create *X */
         XX_ALLOC(tt, S_typeModifiers);
-        FILLF_typeModifiers(tt, TypePointer,t,NULL,NULL, s_preCrTypesTab[t]);
+        FILLF_typeModifier(tt, TypePointer,t,NULL,NULL, s_preCrTypesTab[t]);
         s_preCrPtr1TypesTab[t] = tt;
         /* pre-create **X */
         XX_ALLOC(tt, S_typeModifiers);
-        FILLF_typeModifiers(tt, TypePointer,t,NULL,NULL, s_preCrPtr1TypesTab[t]);
+        FILLF_typeModifier(tt, TypePointer,t,NULL,NULL, s_preCrPtr1TypesTab[t]);
         s_preCrPtr2TypesTab[t] = tt;
     }
 }

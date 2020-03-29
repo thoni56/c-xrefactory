@@ -76,7 +76,7 @@
 #define CrTypeModifier(xxx,ttt) {\
         xxx = crSimpleTypeModifier(ttt);\
         xxx = StackMemAlloc(S_typeModifiers);\
-        FILLF_typeModifiers(xxx, ttt,f,( NULL,NULL) ,NULL,NULL);\
+        FILLF_typeModifier(xxx, ttt,f,( NULL,NULL) ,NULL,NULL);\
 }
 
 #define AddComposedType(ddd, ttt) appendComposedType(&ddd->u.type, ttt)
@@ -2266,7 +2266,7 @@ case 1:
             Symbol *dd;
             CrTypeModifier(p, TypeInt);
             yyval.ast_expressionType.d.t = StackMemAlloc(S_typeModifiers);
-            FILLF_typeModifiers(yyval.ast_expressionType.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
+            FILLF_typeModifier(yyval.ast_expressionType.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
 
             d = newSymbolIsType(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->p, yyval.ast_expressionType.d.t);
             fillSymbolBits(&d->bits, ACC_DEFAULT, TypeDefault, StorageExtern);
@@ -2306,7 +2306,7 @@ case 7:
         S_typeModifiers *p;
         CrTypeModifier(p, TypeChar);
         yyval.ast_expressionType.d.t = StackMemAlloc(S_typeModifiers);
-        FILLF_typeModifiers(yyval.ast_expressionType.d.t, TypePointer,f,( NULL,NULL) ,NULL,p);
+        FILLF_typeModifier(yyval.ast_expressionType.d.t, TypePointer,f,( NULL,NULL) ,NULL,p);
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
@@ -2481,7 +2481,7 @@ case 38:
 #line 462 "c_parser.y"
 {
         yyval.ast_expressionType.d.t = StackMemAlloc(S_typeModifiers);
-        FILLF_typeModifiers(yyval.ast_expressionType.d.t, TypePointer,f,( NULL,NULL) ,NULL,yyvsp[0].ast_expressionType.d.t);
+        FILLF_typeModifier(yyval.ast_expressionType.d.t, TypePointer,f,( NULL,NULL) ,NULL,yyvsp[0].ast_expressionType.d.t);
         RESET_REFERENCE_USAGE(yyvsp[0].ast_expressionType.d.r, UsageAddrUsed);
         yyval.ast_expressionType.d.r = NULL;
     }

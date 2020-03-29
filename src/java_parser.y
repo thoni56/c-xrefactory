@@ -88,13 +88,13 @@
 
 #define CrTypeModifier(xxx,ttt) {\
         xxx = StackMemAlloc(S_typeModifiers);\
-        FILLF_typeModifiers(xxx, ttt,f,( NULL,NULL) ,NULL,NULL);\
+        FILLF_typeModifier(xxx, ttt,f,( NULL,NULL) ,NULL,NULL);\
 }
 
 #define PrependModifier(xxx,ttt) {\
         S_typeModifiers *p;\
         p = StackMemAlloc(S_typeModifiers);\
-        FILLF_typeModifiers(p, ttt,f,(NULL,NULL) ,NULL,xxx);\
+        FILLF_typeModifier(p, ttt,f,(NULL,NULL) ,NULL,xxx);\
         xxx = p;\
 }
 
@@ -3814,7 +3814,7 @@ CastExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     XX_ALLOC($$.d.t, S_typeModifiers);
-                    FILLF_typeModifiers($$.d.t,$2.d.u,t,NULL,NULL,NULL);
+                    FILLF_typeModifier($$.d.t,$2.d.u,t,NULL,NULL,NULL);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
@@ -4330,16 +4330,16 @@ void javaParsingInitializations(void) {
             //&			javaAddMapedTypeName, NULL, s_javaLangName, NULL);
             ss = javaTypeSymbolDefinition(s_javaLangObjectName,ACC_DEFAULT, TYPE_ADD_NO);
             s_javaObjectSymbol = ss;
-            FILLF_typeModifiers(&s_javaObjectModifier,TypeStruct,t,ss,NULL,NULL);
+            FILLF_typeModifier(&s_javaObjectModifier,TypeStruct,t,ss,NULL,NULL);
             s_javaObjectModifier.u.t = ss;
 
             ss = javaTypeSymbolDefinition(s_javaLangStringName,ACC_DEFAULT, TYPE_ADD_NO);
             s_javaStringSymbol = ss;
-            FILLF_typeModifiers(&s_javaStringModifier,TypeStruct,t,ss,NULL,NULL);
+            FILLF_typeModifier(&s_javaStringModifier,TypeStruct,t,ss,NULL,NULL);
             s_javaStringModifier.u.t = ss;
 
             ss = javaTypeSymbolDefinition(s_javaLangClassName,ACC_DEFAULT, TYPE_ADD_NO);
-            FILLF_typeModifiers(&s_javaClassModifier,TypeStruct,t,ss,NULL,NULL);
+            FILLF_typeModifier(&s_javaClassModifier,TypeStruct,t,ss,NULL,NULL);
             s_javaClassModifier.u.t = ss;
             s_javaCloneableSymbol = javaTypeSymbolDefinition(s_javaLangCloneableName,ACC_DEFAULT, TYPE_ADD_NO);
             s_javaIoSerializableSymbol = javaTypeSymbolDefinition(s_javaIoSerializableName,ACC_DEFAULT, TYPE_ADD_NO);
