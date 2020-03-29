@@ -1,6 +1,7 @@
 /* -*- c -*-*/
-#include "../globals.h"
 #include <cgreen/mocks.h>
+
+#include "../globals.h"
 
 S_memory *cxMemory = NULL;
 FILE *dumpOut = NULL;
@@ -9,6 +10,7 @@ S_usageBits s_noUsage;
 S_fileTab s_fileTab;
 int olcxMemoryAllocatedBytes;
 char s_olSymbolType[COMPLETION_STRING_SIZE];
+FILE *cxOut;
 Language s_language;
 S_completions s_completions;
 int s_input_file_number;
@@ -25,20 +27,23 @@ int ftMemoryi;
 S_position s_primaryStartPosition;
 char s_cwd[MAX_FILE_NAME_SIZE];
 char tmpBuff[TMP_BUFF_SIZE];
-S_position s_noPos;
+S_position s_noPos = {-1, 0, 0};
 char *s_input_file_name;
 Symbol s_errorSymbol;
 S_options s_opt;
-int s_olOriginalFileNumber;
+int s_olOriginalFileNumber = -1;
 unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL];
 int s_olstringUsage;
-int s_noneFileIndex;
+int s_noneFileIndex = -1;
 int s_olOriginalComFileNumber;
 int s_wildCharSearch;
 int s_javaPreScanOnly;
 int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL];
 jmp_buf cxmemOverflow;
-z_stream s_defaultZStream;
+z_stream s_defaultZStream = {NULL,};
 S_fileDesc cFile;
 FILE *ccOut;
 int s_olstringServed;
+S_position s_olcxByPassPos;
+int s_olMacro2PassFile;
+FILE *fIn;

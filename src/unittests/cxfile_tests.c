@@ -3,28 +3,8 @@
 /* Must #include it since we are (for now) unittesting an internal macro (ScanInt) */
 #include "cxfile.c"
 
-/* From globals.c */
-S_memory *cxMemory=NULL;
-Language s_language;
-FILE *cxOut;
-int s_input_file_number = -1;
-time_t s_fileProcessStartTime;
-S_position s_olcxByPassPos;
-S_fileTab s_fileTab;
-int s_olMacro2PassFile;
-char tmpBuff[TMP_BUFF_SIZE];
-S_position s_noPos = {-1, 0, 0};
-S_options s_opt;        // current options
-int s_olOriginalFileNumber = -1;
-int s_noneFileIndex = -1;
-S_userOlcx *s_olcxCurrentUser;
-int s_wildCharSearch;
-FILE *fIn;
-z_stream s_defaultZStream = {NULL,};
-
-/* From reftab.c */
-S_refTab s_cxrefTab;
-
+#include "globals.mock"
+#include "olcxtab.mock"
 #include "commons.mock"
 #include "misc.mock"
 #include "cxref.mock"
