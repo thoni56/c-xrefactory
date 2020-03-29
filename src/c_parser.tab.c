@@ -2767,7 +2767,7 @@ break;
 case 99:
 #line 702 "c_parser.y"
 {
-#ifdef DEBUGPARSING
+#if YYDEBUG
             char buffer[100];
             sprintf(buffer, "error parsing declaration, near '%s'\n", yytext);
             yyerror(buffer);
@@ -2793,7 +2793,7 @@ case 102:
 {
         /* $$.d = &s_errorSymbol; */
         yyval.ast_symbol.d = typeSpecifier2(&s_errorModifier);
-#ifdef DEBUGPARSING
+#if YYDEBUG
         char buffer[100];
         sprintf(buffer, "error parsing init_declarations, near '%s'\n", yytext);
         yyerror(buffer);
@@ -3116,7 +3116,7 @@ case 169:
         /* $$.d = &s_errorSymbol; */
         XX_ALLOC(yyval.ast_symbol.d, Symbol);
         *yyval.ast_symbol.d = s_errorSymbol;
-#ifdef DEBUGPARSING
+#if YYDEBUG
         char buffer[100];
         sprintf(buffer, "DEBUG: error parsing struct_declaration near '%s'\n", yytext);
         yyerror(buffer);
@@ -3219,7 +3219,7 @@ case 188:
         /* $$.d = &s_errorSymbol; */
         XX_ALLOC(yyval.ast_symbol.d, Symbol);
         *yyval.ast_symbol.d = s_errorSymbol;
-#ifdef DEBUGPARSING
+#if YYDEBUG
         char buffer[100];
         sprintf(buffer, "DEBUG: error parsing enumerator near '%s'\n", yytext);
         yyerror(buffer);
@@ -3511,7 +3511,7 @@ case 230:
         */
         XX_ALLOC(yyval.ast_symbol.d, Symbol);
         *yyval.ast_symbol.d = s_errorSymbol;
-#ifdef DEBUGPARSING
+#if YYDEBUG
         char buffer[100];
         sprintf(buffer, "DEBUG: error parsing parameter_declaration near '%s'\n", yytext);
         yyerror(buffer);
@@ -3642,7 +3642,7 @@ case 248:
 #line 1394 "c_parser.y"
 {
         yyval.ast_idList.d = NULL;
-#ifdef DEBUGPARSING
+#if YYDEBUG
         char buffer[100];
         sprintf(buffer, "error parsing initializer, near '%s'\n", yytext);
         yyerror(buffer);
