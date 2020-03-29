@@ -707,9 +707,9 @@ char *javaCutSourcePathFromFileName(char *fname) {
             }
         });
     // cut auto-detected source-path
-    if (s_javaStat!=NULL && s_javaStat->namedPackageDir != NULL) {
-        len = strlen(s_javaStat->namedPackageDir);
-        if (fnnCmp(s_javaStat->namedPackageDir, fname, len) == 0) {
+    if (s_javaStat!=NULL && s_javaStat->namedPackagePath != NULL) {
+        len = strlen(s_javaStat->namedPackagePath);
+        if (fnnCmp(s_javaStat->namedPackagePath, fname, len) == 0) {
             res = fname+len;
             goto fini;
         }
@@ -1564,11 +1564,11 @@ void javaMapDirectoryFiles1(
                           s_zipArchiveTable[i].fn,packfile);
     }
     // auto-inferred source path
-    if (s_javaStat->namedPackageDir != NULL) {
-        if ((! pathsStringContainsPath(s_javaSourcePaths, s_javaStat->namedPackageDir))
-            && (! classPathContainsPath(s_javaStat->namedPackageDir))) {
-            fname = concatFNameInTmpMemory(s_javaStat->namedPackageDir, packfile);
-            mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,s_javaStat->namedPackageDir,packfile,a1,a2,a3);
+    if (s_javaStat->namedPackagePath != NULL) {
+        if ((! pathsStringContainsPath(s_javaSourcePaths, s_javaStat->namedPackagePath))
+            && (! classPathContainsPath(s_javaStat->namedPackagePath))) {
+            fname = concatFNameInTmpMemory(s_javaStat->namedPackagePath, packfile);
+            mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,s_javaStat->namedPackagePath,packfile,a1,a2,a3);
         }
     }
 }

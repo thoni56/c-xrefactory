@@ -3318,7 +3318,7 @@ case 64:
                         XX_ALLOCC(cdir, j+1, char);  /* I prefer this*/
                         /*&SM_ALLOCC(ftMemory, cdir, j+1, char);  // will exhauste ftmemory*/
                         strncpy(cdir,cFile.fileName,j); cdir[j]=0;
-                        s_javaStat->unNamedPackageDir = cdir;
+                        s_javaStat->unnamedPackagePath = cdir;
                         javaCheckIfPackageDirectoryIsInClassOrSourcePath(cdir);
                     } else {
                         javaAddPackageDefinition(yyvsp[0].ast_idList.d);
@@ -3331,7 +3331,7 @@ case 64:
                             XX_ALLOCC(cdir, j-packlen, char); /* I prefer this*/
                             /*&SM_ALLOCC(ftMemory, cdir, j-packlen, char);  // will exhauste ftmemory*/
                             strncpy(cdir, cFile.fileName, j-packlen-1); cdir[j-packlen-1]=0;
-                            s_javaStat->namedPackageDir = cdir;
+                            s_javaStat->namedPackagePath = cdir;
                             s_javaStat->currentPackage = "";
                             javaCheckIfPackageDirectoryIsInClassOrSourcePath(cdir);
                         } else {
@@ -4043,7 +4043,7 @@ case 141:
                         if (p->bits.symType == TypeError) continue;
                         assert(p->bits.symType == TypeDefault);
                         completeDeclarator(yyvsp[-2].ast_symbol.d, p);
-                        vClass = s_javaStat->classFileInd;
+                        vClass = s_javaStat->classFileIndex;
                         p->bits.accessFlags = yyvsp[-3].ast_unsigned.d;
                         p->bits.storage = StorageField;
                         if (clas->bits.accessFlags&ACC_INTERFACE) {
@@ -4519,7 +4519,7 @@ case 176:
                         assert(yyvsp[-1].ast_symbol.d && yyvsp[-1].ast_symbol.d->u.type);
                         javaAddMethodParametersToSymTable(yyvsp[-1].ast_symbol.d);
                         mh->u.type->u.m.sig = strchr(mh->linkName, '(');
-                        s_javaStat->cpMethodMods = yyvsp[-2].ast_unsigned.d;
+                        s_javaStat->methodModifiers = yyvsp[-2].ast_unsigned.d;
                     }
                 }
                 if (inSecondJslPass()) {
@@ -5744,7 +5744,7 @@ case 347:
                     assert(s_javaStat && s_javaStat->thisType);
 /*fprintf(dumpOut,"this == %s\n",s_javaStat->thisType->u.t->linkName);*/
                     yyval.ast_expressionType.d.t = s_javaStat->thisType;
-                    addThisCxReferences(s_javaStat->classFileInd, &yyvsp[0].ast_id.d->p);
+                    addThisCxReferences(s_javaStat->classFileIndex, &yyvsp[0].ast_id.d->p);
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &yyvsp[0].ast_id.d->p;
@@ -5971,7 +5971,7 @@ case 365:
                             /* I have removed following because it makes problems when*/
                             /* expanding to FQT names, WHY IT WAS HERE ???*/
                             /*&addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM,StorageField,*/
-                            /*&              s_javaStat->classFileInd, &$1.d->p,*/
+                            /*&              s_javaStat->classFileIndex, &$1.d->p,*/
                             /*&              UsageNotFQField);*/
                         } else {
                             /* here I should annulate class reference, as it is an error*/

@@ -3,12 +3,35 @@
 
 #include "jsltypetab.h"
 #include "symbol.h"
+#include "symtab.h"
+
+
+typedef struct javaStat {
+    struct idList               *className;			/* this class name */
+    struct typeModifiers		*thisType;			/* this class type */
+    struct symbol				*thisClass;			/* this class definition */
+    int							currentNestedIndex;	/* currently parsed nested class */
+    char						*currentPackage;    /* current package */
+    char						*unnamedPackagePath;	/* directory for unnamed package */
+    char						*namedPackagePath;	/* inferred source-path for named package */
+    struct symTab				*locals;			/* args and local variables */
+    struct idList               *lastParsedName;
+    unsigned					methodModifiers;		/* currently parsed method modifs */
+    struct currentlyParsedCl	cp;					/* some parsing positions */
+    int							classFileIndex;		/* this file class index */
+    struct javaStat				*next;				/* outer class */
+} S_javaStat;
 
 
 extern S_javaStat *s_javaStat;
 extern S_javaStat s_initJavaStat;
 
 
+extern void fillJavaStat(S_javaStat *javaStat, S_idList *className, S_typeModifiers *thisType, Symbol *thisClass,
+                         int currentNestedIndex, char *currentPackage, char *unnamedPackageDir,
+                         char *namedPackageDir, S_symTab *locals, S_idList *lastParsedName,
+                         unsigned methodModifiers, S_currentlyParsedCl parsingPositions, int classFileIndex,
+                         S_javaStat *next);
 extern void javaCheckForPrimaryStart(S_position *cpos, S_position *pp);
 extern void javaCheckForPrimaryStartInNameList(S_idList *name, S_position *pp);
 extern void javaCheckForStaticPrefixStart(S_position *cpos, S_position *bpos);

@@ -874,7 +874,7 @@ CompilationUnit: {
                         XX_ALLOCC(cdir, j+1, char);  // I prefer this
                         //&SM_ALLOCC(ftMemory, cdir, j+1, char);  // will exhauste ftmemory
                         strncpy(cdir,cFile.fileName,j); cdir[j]=0;
-                        s_javaStat->unNamedPackageDir = cdir;
+                        s_javaStat->unnamedPackagePath = cdir;
                         javaCheckIfPackageDirectoryIsInClassOrSourcePath(cdir);
                     } else {
                         javaAddPackageDefinition($2.d);
@@ -887,7 +887,7 @@ CompilationUnit: {
                             XX_ALLOCC(cdir, j-packlen, char); // I prefer this
                             //&SM_ALLOCC(ftMemory, cdir, j-packlen, char);  // will exhauste ftmemory
                             strncpy(cdir, cFile.fileName, j-packlen-1); cdir[j-packlen-1]=0;
-                            s_javaStat->namedPackageDir = cdir;
+                            s_javaStat->namedPackagePath = cdir;
                             s_javaStat->currentPackage = "";
                             javaCheckIfPackageDirectoryIsInClassOrSourcePath(cdir);
                         } else {
@@ -1513,7 +1513,7 @@ FieldDeclaration:
                         if (p->bits.symType == TypeError) continue;
                         assert(p->bits.symType == TypeDefault);
                         completeDeclarator($2.d, p);
-                        vClass = s_javaStat->classFileInd;
+                        vClass = s_javaStat->classFileIndex;
                         p->bits.accessFlags = $1.d;
                         p->bits.storage = StorageField;
                         if (clas->bits.accessFlags&ACC_INTERFACE) {
@@ -1956,7 +1956,7 @@ ConstructorDeclaration:
                         assert($2.d && $2.d->u.type);
                         javaAddMethodParametersToSymTable($2.d);
                         mh->u.type->u.m.sig = strchr(mh->linkName, '(');
-                        s_javaStat->cpMethodMods = $1.d;
+                        s_javaStat->methodModifiers = $1.d;
                     }
                 }
                 if (inSecondJslPass()) {
@@ -3030,7 +3030,7 @@ PrimaryNoNewArray:
                     assert(s_javaStat && s_javaStat->thisType);
 //fprintf(dumpOut,"this == %s\n",s_javaStat->thisType->u.t->linkName);
                     $$.d.t = s_javaStat->thisType;
-                    addThisCxReferences(s_javaStat->classFileInd, &$1.d->p);
+                    addThisCxReferences(s_javaStat->classFileIndex, &$1.d->p);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &$1.d->p;

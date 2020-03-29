@@ -2463,8 +2463,8 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     initOptions();
 
     XX_ALLOC(s_symTab, S_symTab);
-    symTabInit( s_symTab, MAX_SYMBOLS);
-    FILL_javaStat(&s_initJavaStat,NULL,NULL,NULL,0, NULL, NULL, NULL,
+    symTabInit(s_symTab, MAX_SYMBOLS);
+    fillJavaStat(&s_initJavaStat,NULL,NULL,NULL,0, NULL, NULL, NULL,
                   s_symTab,NULL,ACC_DEFAULT,s_cpInit,s_noneFileIndex,NULL);
     XX_ALLOC(s_javaStat, S_javaStat);
     *s_javaStat = s_initJavaStat;

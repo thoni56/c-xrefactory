@@ -939,22 +939,6 @@ typedef struct currentlyParsedStatics {
 
 /* ************************** JAVAS *********************************** */
 
-typedef struct javaStat {
-    struct idList			*className;			/* this class name */
-    struct typeModifiers		*thisType;			/* this class type */
-    struct symbol				*thisClass;			/* this class definition */
-    int							currentNestIndex;	/* currently parsed nested class */
-    char						*currentPackage;    /* current package */
-    char						*unNamedPackageDir;	/* directory for unnamed package */
-    char						*namedPackageDir;	/* inferred source-path for named package */
-    struct symTab				*locals;			/* args and local variables */
-    struct idList          *lastParsedName;
-    unsigned					cpMethodMods;		/* currently parsed method modifs */
-    struct currentlyParsedCl	cp;					/* some parsing positions */
-    int							classFileInd;		/* this file class index */
-    struct javaStat				*next;				/* outer class */
-} S_javaStat;
-
 /* java composed names */
 
 typedef struct idList {

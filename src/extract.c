@@ -1240,7 +1240,7 @@ void extractActionOnBlockMarker(void) {
         s_cps.cxMemiAtBlockBegin = cxMemory->i;
         s_cps.workMemiAtBlockBegin = s_topBlock->previousTopBlock;
         if (LANGUAGE(LANG_JAVA)) {
-            s_javaExtractFromFunctionMods = s_javaStat->cpMethodMods;
+            s_javaExtractFromFunctionMods = s_javaStat->methodModifiers;
         }
     } else {
         assert(s_cps.cxMemiAtBlockEnd == 0);

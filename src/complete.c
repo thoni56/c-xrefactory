@@ -998,7 +998,7 @@ static void completeFromSymTab(S_completions*c, unsigned storage){
         vlevelOffset = 0;
         for(cs=s_javaStat; cs!=NULL && cs->thisClass!=NULL ;cs=cs->next) {
             symTabMap2(cs->locals, completeSymFun, (void*) &info);
-            completeRecordsNames(c, cs->thisClass, s_javaStat->cpMethodMods,
+            completeRecordsNames(c, cs->thisClass, s_javaStat->methodModifiers,
                                  CLASS_TO_ANY,
                                  storage,TypeDefault,vlevelOffset);
             vlevelOffset += NEST_VIRT_COMPL_OFFSET;
@@ -1734,7 +1734,7 @@ void javaCompleteStrRecordSuper(S_completions*c) {
     if (memb == &s_errorSymbol || memb->bits.symType==TypeError) return;
     assert(memb);
     javaLoadClassSymbolsFromFile(memb);
-    completeRecordsNames(c, memb, s_javaStat->cpMethodMods,CLASS_TO_ANY, StorageDefault,TypeDefault,0);
+    completeRecordsNames(c, memb, s_javaStat->methodModifiers,CLASS_TO_ANY, StorageDefault,TypeDefault,0);
 }
 
 void javaCompleteStrRecordQualifiedSuper(S_completions*c) {
@@ -1750,7 +1750,7 @@ void javaCompleteStrRecordQualifiedSuper(S_completions*c) {
     str = javaGetSuperClass(str);
     if (str == &s_errorSymbol || str->bits.symType==TypeError) return;
     assert(str);
-    completeRecordsNames(c, str, s_javaStat->cpMethodMods,CLASS_TO_ANY, StorageDefault,TypeDefault,0);
+    completeRecordsNames(c, str, s_javaStat->methodModifiers,CLASS_TO_ANY, StorageDefault,TypeDefault,0);
 }
 
 void javaCompleteUpMethodSingleName(S_completions*c) {

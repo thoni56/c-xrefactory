@@ -407,7 +407,7 @@ S_reference *findStrRecordFromSymbol( Symbol *sym,
                                     rfs.baseClass->u.s->classFile);
             // this is adding reference to 'super', not to the field!
             // for pull-up/push-down
-            if (super!=NULL) addThisCxReferences(s_javaStat->classFileInd,&super->p);
+            if (super!=NULL) addThisCxReferences(s_javaStat->classFileIndex,&super->p);
         }
     } else if (rr == RESULT_OK) {
         ref = addCxReference(*res,&record->p,UsageUsed, s_noneFileIndex, s_noneFileIndex);

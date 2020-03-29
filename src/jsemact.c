@@ -36,11 +36,30 @@ S_javaStat s_initJavaStat;
 
 static int javaNotFqtUsageCorrection(Symbol *sym, int usage);
 
-/* *********************** JAVA semact ************************* */
+
+void fillJavaStat(S_javaStat *javaStat, S_idList *className, S_typeModifiers *thisType, Symbol *thisClass,
+                  int currentNestedIndex, char *currentPackage, char *unnamedPackagePath,
+                  char *namedPackagePath, S_symTab *locals, S_idList *lastParsedName,
+                  unsigned methodModifiers, S_currentlyParsedCl parsingPositions, int classFileIndex,
+                  S_javaStat *next) {
+
+    javaStat->className = className;
+    javaStat->thisType = thisType;
+    javaStat->thisClass = thisClass;
+    javaStat->currentNestedIndex = currentNestedIndex;
+    javaStat->currentPackage = currentPackage;
+    javaStat->unnamedPackagePath = unnamedPackagePath;
+    javaStat->namedPackagePath = namedPackagePath;
+    javaStat->locals = locals;
+    javaStat->lastParsedName = lastParsedName;
+    javaStat->methodModifiers = methodModifiers;
+    javaStat->cp = parsingPositions;
+    javaStat->classFileIndex = classFileIndex;
+    javaStat->next = next;
+}
 
 
-char *javaCreateComposedName(
-                             char *prefix,
+char *javaCreateComposedName(char *prefix,
                              S_idList *className,
                              int classNameSeparator,
                              char *name,
@@ -273,7 +292,7 @@ bool javaTypeFileExist(S_idList *name) {
         }
     }
 
-    if (s_javaStat->unNamedPackageDir != NULL) {		/* unnamed package */
+    if (s_javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
         fname = javaCreateComposedName(NULL,&tname,SLASH,"java",tmpMemory,SIZE_TMP_MEM);
         log_trace("testing existence of file '%s'", fname);
         if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname))
@@ -300,8 +319,8 @@ bool javaTypeFileExist(S_idList *name) {
             return true;
     }
     // auto-inferred source-path
-    if (s_javaStat->namedPackageDir != NULL) {
-        fname = javaCreateComposedName(s_javaStat->namedPackageDir,&tname,SLASH,"java",tmpMemory,SIZE_TMP_MEM);
+    if (s_javaStat->namedPackagePath != NULL) {
+        fname = javaCreateComposedName(s_javaStat->namedPackagePath,&tname,SLASH,"java",tmpMemory,SIZE_TMP_MEM);
         if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname))
             return true;
     }
@@ -312,8 +331,8 @@ static int javaFindClassFile(char *name, char **resName, struct stat *stt) {
     S_stringList *cp;
     int i;
 
-    if (s_javaStat->unNamedPackageDir != NULL) {		/* unnamed package */
-        if (javaFindFile0( s_javaStat->unNamedPackageDir,"/",name, ".class",
+    if (s_javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
+        if (javaFindFile0( s_javaStat->unnamedPackagePath,"/",name, ".class",
                           resName, stt)) return(1);
     }
     // now other classpaths
@@ -334,9 +353,9 @@ static int javaFindClassFile(char *name, char **resName, struct stat *stt) {
 static int javaFindSourceFile(char *name, char **resName, struct stat *stt) {
     S_stringList	*cp;
 
-    if (s_javaStat->unNamedPackageDir != NULL) {		/* unnamed package */
+    if (s_javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
 /*fprintf(dumpOut,"searching for %s %s\n",s_javaStat->thisFileDir,name);fflush(dumpOut);*/
-        if (javaFindFile0( s_javaStat->unNamedPackageDir,"/",name, ".java",
+        if (javaFindFile0( s_javaStat->unnamedPackagePath,"/",name, ".java",
                           resName, stt)) return(1);
     }
     // sourcepaths
@@ -348,8 +367,8 @@ static int javaFindSourceFile(char *name, char **resName, struct stat *stt) {
         if (javaFindFile0( cp->d,"/",name, ".java", resName, stt)) return(1);
     }
     // auto-inferred source-path
-    if (s_javaStat->namedPackageDir != NULL) {
-        if (javaFindFile0(s_javaStat->namedPackageDir,"/",name, ".java", resName, stt)) return(1);
+    if (s_javaStat->namedPackagePath != NULL) {
+        if (javaFindFile0(s_javaStat->namedPackagePath,"/",name, ".java", resName, stt)) return(1);
     }
     return(0);
 }
@@ -1530,7 +1549,7 @@ Symbol * javaQualifiedThis(S_idList *tname, S_id *thisid) {
                                  str->u.s->classFile, &thisid->p,
                                  UsageMaybeThis);
 &*/
-        if (str->u.s->classFile == s_javaStat->classFileInd) {
+        if (str->u.s->classFile == s_javaStat->classFileIndex) {
             // redundant qualified this prefix
             addUselessFQTReference(str->u.s->classFile, &thisid->p);
 //&fprintf(dumpOut,"!adding useless reference on %d,%d\n", name->idi.p.line, name->idi.p.coll);
@@ -1770,7 +1789,7 @@ int javaLinkNameIsAnnonymousClass(char *linkname) {
 
 void addThisCxReferences(int classIndex, S_position *pos) {
     int usage;
-    if (classIndex == s_javaStat->classFileInd) {
+    if (classIndex == s_javaStat->classFileIndex) {
         usage = UsageMaybeThis;
     } else {
         usage = UsageMaybeQualifiedThis;
@@ -1827,7 +1846,7 @@ Symbol *javaMethodHeader(unsigned modif, Symbol *type,
     }
     newFun = javaSetFunctionLinkName(s_javaStat->thisClass, decl,MEM_XX);
     //&assert(newFun==0); // This should be allways zero now with jsl.
-    vClass = s_javaStat->classFileInd;
+    vClass = s_javaStat->classFileIndex;
     addMethodCxReferences(modif, decl, s_javaStat->thisClass);
     htmlAddJavaDocReference(decl, &decl->pos, vClass, vClass);
     if (newFun) {
@@ -1857,7 +1876,7 @@ void javaMethodBodyBeginning(Symbol *method) {
     s_count.localVar = 0;
     javaAddMethodParametersToSymTable(method);
     method->u.type->u.m.sig = strchr(method->linkName, '(');
-    s_javaStat->cpMethodMods = method->bits.accessFlags;
+    s_javaStat->methodModifiers = method->bits.accessFlags;
 }
 
 // this should be merged with _bef_ token!
@@ -2573,8 +2592,8 @@ struct freeTrail * newClassDefinitionBegin(	S_id *name,
         }
         nnest = oldStat->thisClass->u.s->nnested;
         nst = oldStat->thisClass->u.s->nest;
-        noff = oldStat->currentNestIndex;
-        oldStat->currentNestIndex ++;
+        noff = oldStat->currentNestedIndex;
+        oldStat->currentNestedIndex ++;
 //&sprintf(tmpBuff,"checking %d of %d of %s(%d)\n", noff,nnest,oldStat->thisClass->linkName, oldStat->thisClass);ppcGenTmpBuff();
         assert(noff >=0 && noff<nnest);
         nn = & nst[noff];
@@ -2602,8 +2621,8 @@ struct freeTrail * newClassDefinitionBegin(	S_id *name,
     }
     classf = dd->u.s->classFile;
     if (classf == -1) classf = s_noneFileIndex;
-    FILL_javaStat(s_javaStat,p,&dd->u.s->stype,dd,0, oldStat->currentPackage,
-                  oldStat->unNamedPackageDir, oldStat->namedPackageDir,
+    fillJavaStat(s_javaStat,p,&dd->u.s->stype,dd,0, oldStat->currentPackage,
+                  oldStat->unnamedPackagePath, oldStat->namedPackagePath,
                   locals, oldStat->lastParsedName,ACC_DEFAULT,s_cp,classf,oldStat);
     // added 8/8/2001 for clearing s_cp.function for SET_TARGET_POSITION check
     s_cp = s_cpInit;
