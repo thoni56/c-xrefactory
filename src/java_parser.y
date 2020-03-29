@@ -281,134 +281,114 @@ static bool inSecondJslPass() {
 /* *************************************************************** */
 
 %union {
-    int                                     integer;
-    unsigned                                unsign;
-    Symbol                                *symbol;
-    SymbolList                            *symbolList;
-    S_typeModifiers                         *typeModif;
-    S_typeModifiersList                     *typeModifList;
-    S_freeTrail                             *trail;
-    S_id                               *idIdent;
-    S_idList                           *idlist;
-    S_exprTokenType                         exprType;
-    S_intPair                               intpair;
-    S_whileExtractData                      *whiledata;
-    S_position                              position;
-    S_unsPositionPair                       unsPositionPair;
-    S_symbolPositionPair                    symbolPositionPair;
-    S_symbolPositionLstPair                 symbolPositionLstPair;
-    S_positionList                           *positionLst;
-    S_typeModifiersListPositionLstPair      typeModifiersListPositionLstPair;
+    Symbol                                 *symbol;
+    S_freeTrail                            *trail;
 
-    S_extRecFindStr                         *erfs;
+    S_extRecFindStr                        *erfs;
 
-    Ast_int                                bbinteger;
-    Ast_unsigned                           bbunsign;
-    Ast_symbol                             bbsymbol;
-    Ast_symbolList                         bbsymbolList;
-    Ast_typeModifiers                      bbtypeModif;
-    Ast_typeModifiersList                  bbtypeModifList;
-    Ast_freeTrail                          bbtrail;
-    Ast_idIdent                            bbidIdent;
-    Ast_idIdentList                        bbidlist;
-    Ast_exprTokenType                      bbexprType;
-    Ast_intPair                            bbintpair;
-    Ast_whileExtractData                   bbwhiledata;
-    Ast_position                           bbposition;
-    Ast_unsPositionPair                    bbunsPositionPair;
-    Ast_symbolPositionPair                 bbsymbolPositionPair;
-    Ast_symbolPositionLstPair              bbsymbolPositionLstPair;
-    Ast_positionLst                        bbpositionLst;
-    Ast_typeModifiersListPositionLstPair   bbtypeModifiersListPositionLstPair;
-    Ast_nestedConstrTokenType              bbnestedConstrTokenType;
+    Ast_int                                ast_integer;
+    Ast_unsigned                           ast_unsigned;
+    Ast_symbol                             ast_symbol;
+    Ast_symbolList                         ast_symbolList;
+    Ast_id                                 ast_id;
+    Ast_idList                             ast_idList;
+    Ast_exprTokenType                      ast_expressionType;
+    Ast_intPair                            ast_intPair;
+    Ast_whileExtractData                   ast_whileData;
+    Ast_position                           ast_position;
+    Ast_unsPositionPair                    ast_unsignedPositionPair;
+    Ast_symbolPositionPair                 ast_symbolPositionPair;
+    Ast_symbolPositionListPair             ast_symbolPositionListPair;
+    Ast_typeModifiersListPositionListPair  ast_typeModifiersListPositionListPair;
+    Ast_nestedConstrTokenType              ast_nestedConstrTokenType;
 }
 
 
 /* ********************************************************* */
 
-%type <bbidIdent> Identifier This Super New Package Import Throw Try Catch
-%type <bbidIdent> ClassDeclaration InterfaceDeclaration
-%type <bbinteger> DimExprs Dims_opt Dims
-%type <bbinteger> _ncounter_ _nlabel_ _ngoto_ _nfork_ IfThenElseStatementPrefix
-%type <bbintpair> ForStatementPrefix
-%type <bbwhiledata> WhileStatementPrefix
-%type <bbunsPositionPair> PrimitiveType NumericType IntegralType FloatingPointType
-%type <bbunsPositionPair> AssignmentOperator
-%type <bbunsign> Modifier Modifiers Modifiers_opt
-%type <bbidlist> Name SimpleName QualifiedName PackageDeclaration_opt NewName
-%type <bbidlist> SingleTypeImportDeclaration TypeImportOnDemandDeclaration
-%type <bbsymbol> Type AssignementType ReferenceType ClassOrInterfaceType
-%type <bbsymbol> ExtendClassOrInterfaceType
-%type <bbsymbol> ClassType InterfaceType
-%type <bbsymbol> FormalParameter
-%type <bbsymbol> VariableDeclarator VariableDeclaratorId
-%type <bbsymbol> MethodHeader MethodDeclarator AbstractMethodDeclaration
-%type <bbsymbol> FieldDeclaration ConstantDeclaration
-%type <bbsymbol> ConstructorDeclarator
-%type <bbsymbol> VariableDeclarators
-%type <bbsymbol> LocalVariableDeclaration LocalVarDeclUntilInit
-%type <bbsymbolList> Throws_opt ClassTypeList
-%type <bbtypeModifiersListPositionLstPair> ArgumentList_opt ArgumentList
-%type <bbsymbolPositionLstPair> FormalParameterList_opt FormalParameterList
+%type <ast_id> Identifier This Super New Package Import Throw Try Catch
+%type <ast_id> ClassDeclaration InterfaceDeclaration
+%type <ast_integer> DimExprs Dims_opt Dims
+%type <ast_integer> _ncounter_ _nlabel_ _ngoto_ _nfork_ IfThenElseStatementPrefix
+%type <ast_intPair> ForStatementPrefix
+%type <ast_whileData> WhileStatementPrefix
+%type <ast_unsignedPositionPair> PrimitiveType NumericType IntegralType FloatingPointType
+%type <ast_unsignedPositionPair> AssignmentOperator
+%type <ast_unsigned> Modifier Modifiers Modifiers_opt
+%type <ast_idList> Name SimpleName QualifiedName PackageDeclaration_opt NewName
+%type <ast_idList> SingleTypeImportDeclaration TypeImportOnDemandDeclaration
+%type <ast_symbol> Type AssignementType ReferenceType ClassOrInterfaceType
+%type <ast_symbol> ExtendClassOrInterfaceType
+%type <ast_symbol> ClassType InterfaceType
+%type <ast_symbol> FormalParameter
+%type <ast_symbol> VariableDeclarator VariableDeclaratorId
+%type <ast_symbol> MethodHeader MethodDeclarator AbstractMethodDeclaration
+%type <ast_symbol> FieldDeclaration ConstantDeclaration
+%type <ast_symbol> ConstructorDeclarator
+%type <ast_symbol> VariableDeclarators
+%type <ast_symbol> LocalVariableDeclaration LocalVarDeclUntilInit
+%type <ast_symbolList> Throws_opt ClassTypeList
+%type <ast_typeModifiersListPositionListPair> ArgumentList_opt ArgumentList
+%type <ast_symbolPositionListPair> FormalParameterList_opt FormalParameterList
 
-%type <bbexprType> Primary PrimaryNoNewArray ClassInstanceCreationExpression
-%type <bbexprType> ArrayCreationExpression FieldAccess MethodInvocation
-%type <bbexprType> ArrayAccess PostfixExpression PostIncrementExpression
-%type <bbexprType> PostDecrementExpression UnaryExpression
-%type <bbexprType> PreIncrementExpression PreDecrementExpression
-%type <bbexprType> UnaryExpressionNotPlusMinus CastExpression
-%type <bbexprType> MultiplicativeExpression AdditiveExpression
-%type <bbexprType> ShiftExpression RelationalExpression EqualityExpression
-%type <bbexprType> AndExpression ExclusiveOrExpression InclusiveOrExpression
-%type <bbexprType> ConditionalAndExpression ConditionalOrExpression
-%type <bbexprType> ConditionalExpression AssignmentExpression Assignment
-%type <bbexprType> LeftHandSide Expression ConstantExpression
-%type <bbexprType> StatementExpression
-%type <bbexprType> Literal VariableInitializer ArrayInitializer
-%type <bbsymbolPositionPair> ArrayType
-%type <bbposition> MethodBody Block
+%type <ast_expressionType> Primary PrimaryNoNewArray ClassInstanceCreationExpression
+%type <ast_expressionType> ArrayCreationExpression FieldAccess MethodInvocation
+%type <ast_expressionType> ArrayAccess PostfixExpression PostIncrementExpression
+%type <ast_expressionType> PostDecrementExpression UnaryExpression
+%type <ast_expressionType> PreIncrementExpression PreDecrementExpression
+%type <ast_expressionType> UnaryExpressionNotPlusMinus CastExpression
+%type <ast_expressionType> MultiplicativeExpression AdditiveExpression
+%type <ast_expressionType> ShiftExpression RelationalExpression EqualityExpression
+%type <ast_expressionType> AndExpression ExclusiveOrExpression InclusiveOrExpression
+%type <ast_expressionType> ConditionalAndExpression ConditionalOrExpression
+%type <ast_expressionType> ConditionalExpression AssignmentExpression Assignment
+%type <ast_expressionType> LeftHandSide Expression ConstantExpression
+%type <ast_expressionType> StatementExpression
+%type <ast_expressionType> Literal VariableInitializer ArrayInitializer
+%type <ast_symbolPositionPair> ArrayType
+%type <ast_position> MethodBody Block
 
-%type <bbidIdent> IDENTIFIER THIS SUPER NEW PACKAGE IMPORT CLASS VOID
-%type <bbidIdent> BOOLEAN CHAR LONG INT SHORT BYTE DOUBLE FLOAT THROW TRY CATCH
-%type <bbidIdent> NULL_LITERAL
-%type <bbinteger> CONSTANT
+%type <ast_id> IDENTIFIER THIS SUPER NEW PACKAGE IMPORT CLASS VOID
+%type <ast_id> BOOLEAN CHAR LONG INT SHORT BYTE DOUBLE FLOAT THROW TRY CATCH
+%type <ast_id> NULL_LITERAL
+%type <ast_integer> CONSTANT
 
-%type <bbposition> STRING_LITERAL '(' ',' ')' ';' '{' '}' '[' ']' ':' '+' '-' '~' '!' '='
-%type <bbposition> INC_OP DEC_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN SUB_ASSIGN
-%type <bbposition> LEFT_ASSIGN RIGHT_ASSIGN URIGHT_ASSIGN AND_ASSIGN XOR_ASSIGN OR_ASSIGN
+%type <ast_position> STRING_LITERAL '(' ',' ')' ';' '{' '}' '[' ']' ':' '+' '-' '~' '!' '='
+%type <ast_position> INC_OP DEC_OP MUL_ASSIGN DIV_ASSIGN MOD_ASSIGN ADD_ASSIGN SUB_ASSIGN
+%type <ast_position> LEFT_ASSIGN RIGHT_ASSIGN URIGHT_ASSIGN AND_ASSIGN XOR_ASSIGN OR_ASSIGN
 
-%type <bbposition> TRUE_LITERAL FALSE_LITERAL LONG_CONSTANT FLOAT_CONSTANT
-%type <bbposition> DOUBLE_CONSTANT CHAR_LITERAL STRING_LITERAL
+%type <ast_position> TRUE_LITERAL FALSE_LITERAL LONG_CONSTANT FLOAT_CONSTANT
+%type <ast_position> DOUBLE_CONSTANT CHAR_LITERAL STRING_LITERAL
 
-%type <bbposition> ImportDeclarations ImportDeclarations_opt
-%type <bbposition> LabelDefininigIdentifier LabelUseIdentifier
-%type <bbposition> TypeDeclarations_opt TypeDeclarations TypeDeclaration
-%type <bbposition> PUBLIC PROTECTED PRIVATE STATIC ABSTRACT FINAL NATIVE
-%type <bbposition> SYNCHRONIZED STRICTFP TRANSIENT VOLATILE EXTENDS
-%type <bbposition> IMPLEMENTS THROWS INTERFACE ASSERT IF ELSE SWITCH
-%type <bbposition> CASE DEFAULT WHILE DO FOR BREAK CONTINUE RETURN
-%type <bbposition> FINALLY
-%type <bbposition> ClassBody FunctionInnerClassDeclaration Super_opt
-%type <bbposition> Interfaces_opt InterfaceTypeList ClassBodyDeclarations
-%type <bbposition> ClassBodyDeclaration ClassMemberDeclaration ClassInitializer
-%type <bbposition> ConstructorDeclaration ConstructorBody ExplicitConstructorInvocation
-%type <bbposition> MethodDeclaration InterfaceMemberDeclarations InterfaceBody
-%type <bbposition> ExtendsInterfaces_opt ExtendsInterfaces InterfaceMemberDeclaration
-%type <bbposition> BlockStatements BlockStatement LocalVariableDeclarationStatement
-%type <bbposition> FunctionInnerClassDeclaration Statement StatementWithoutTrailingSubstatement
-%type <bbposition> LabeledStatement IfThenStatement IfThenElseStatement WhileStatement
-%type <bbposition> ForStatement StatementNoShortIf LabeledStatementNoShortIf
-%type <bbposition> IfThenElseStatementNoShortIf WhileStatementNoShortIf ForStatementNoShortIf
-%type <bbposition> EmptyStatement ExpressionStatement SwitchStatement DoStatement
-%type <bbposition> BreakStatement ContinueStatement ReturnStatement SynchronizedStatement
-%type <bbposition> ThrowStatement TryStatement AssertStatement
-%type <bbposition> SwitchBlockStatementGroups SwitchBlockStatementGroup SwitchLabels
-%type <bbposition> SwitchLabel ForInit_opt StatementExpressionList
-%type <bbposition> ForUpdate_opt TryCatches Catches Finally CatchClause
-%type <bbposition> VariableInitializers SwitchBlock MaybeExpression ForKeyword
-%type <bbposition> ForStatementBody ForStatementNoShortIfBody StatementExpressionList
-%type <bbposition> ForUpdate_opt DimExpr
-%type <bbnestedConstrTokenType> NestedConstructorInvocation
+%type <ast_position> ImportDeclarations ImportDeclarations_opt
+%type <ast_position> LabelDefininigIdentifier LabelUseIdentifier
+%type <ast_position> TypeDeclarations_opt TypeDeclarations TypeDeclaration
+%type <ast_position> PUBLIC PROTECTED PRIVATE STATIC ABSTRACT FINAL NATIVE
+%type <ast_position> SYNCHRONIZED STRICTFP TRANSIENT VOLATILE EXTENDS
+%type <ast_position> IMPLEMENTS THROWS INTERFACE ASSERT IF ELSE SWITCH
+%type <ast_position> CASE DEFAULT WHILE DO FOR BREAK CONTINUE RETURN
+%type <ast_position> FINALLY
+%type <ast_position> ClassBody FunctionInnerClassDeclaration Super_opt
+%type <ast_position> Interfaces_opt InterfaceTypeList ClassBodyDeclarations
+%type <ast_position> ClassBodyDeclaration ClassMemberDeclaration ClassInitializer
+%type <ast_position> ConstructorDeclaration ConstructorBody ExplicitConstructorInvocation
+%type <ast_position> MethodDeclaration InterfaceMemberDeclarations InterfaceBody
+%type <ast_position> ExtendsInterfaces_opt ExtendsInterfaces InterfaceMemberDeclaration
+%type <ast_position> BlockStatements BlockStatement LocalVariableDeclarationStatement
+%type <ast_position> FunctionInnerClassDeclaration Statement StatementWithoutTrailingSubstatement
+%type <ast_position> LabeledStatement IfThenStatement IfThenElseStatement WhileStatement
+%type <ast_position> ForStatement StatementNoShortIf LabeledStatementNoShortIf
+%type <ast_position> IfThenElseStatementNoShortIf WhileStatementNoShortIf ForStatementNoShortIf
+%type <ast_position> EmptyStatement ExpressionStatement SwitchStatement DoStatement
+%type <ast_position> BreakStatement ContinueStatement ReturnStatement SynchronizedStatement
+%type <ast_position> ThrowStatement TryStatement AssertStatement
+%type <ast_position> SwitchBlockStatementGroups SwitchBlockStatementGroup SwitchLabels
+%type <ast_position> SwitchLabel ForInit_opt StatementExpressionList
+%type <ast_position> ForUpdate_opt TryCatches Catches Finally CatchClause
+%type <ast_position> VariableInitializers SwitchBlock MaybeExpression ForKeyword
+%type <ast_position> ForStatementBody ForStatementNoShortIfBody StatementExpressionList
+%type <ast_position> ForUpdate_opt DimExpr
+%type <ast_nestedConstrTokenType> NestedConstructorInvocation
 
 %type <erfs> _erfs_
 

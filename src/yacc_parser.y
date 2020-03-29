@@ -234,82 +234,54 @@ static void addYaccSymbolReference(S_id *name, int usage);
 /* *************************************************************** */
 
 %union {
-    int                                     integer;
-    unsigned                                unsign;
-    Symbol                                *symbol;
-    SymbolList                            *symbolList;
-    S_typeModifiers                         *typeModif;
-    S_typeModifiersList                     *typeModifList;
-    S_freeTrail                             *trail;
-    S_id                               *idIdent;
-    S_idList                           *idlist;
-    S_exprTokenType                         exprType;
-    S_intPair                               intpair;
-    S_whileExtractData                      *whiledata;
-    S_position                              position;
-    S_unsPositionPair                       unsPositionPair;
-    S_symbolPositionPair                    symbolPositionPair;
-    S_symbolPositionLstPair                 symbolPositionLstPair;
-    S_positionList                           *positionLst;
-    S_typeModifiersListPositionLstPair      typeModifiersListPositionLstPair;
+    S_typeModifiers                        *typeModifiers;
 
-    S_extRecFindStr                         *erfs;
-
-    Ast_int                                bbinteger;
-    Ast_unsigned                           bbunsign;
-    Ast_symbol                             bbsymbol;
-    Ast_symbolList                         bbsymbolList;
-    Ast_typeModifiers                      bbtypeModif;
-    Ast_typeModifiersList                  bbtypeModifList;
-    Ast_freeTrail                          bbtrail;
-    Ast_idIdent                            bbidIdent;
-    Ast_idIdentList                        bbidlist;
-    Ast_exprTokenType                      bbexprType;
-    Ast_intPair                            bbintpair;
-    Ast_whileExtractData                   bbwhiledata;
-    Ast_position                           bbposition;
-    Ast_unsPositionPair                    bbunsPositionPair;
-    Ast_symbolPositionPair                 bbsymbolPositionPair;
-    Ast_symbolPositionLstPair              bbsymbolPositionLstPair;
-    Ast_positionLst                        bbpositionLst;
-    Ast_typeModifiersListPositionLstPair   bbtypeModifiersListPositionLstPair;
-    Ast_nestedConstrTokenType              bbnestedConstrTokenType;
+    Ast_int                                ast_integer;
+    Ast_unsigned                           ast_unsigned;
+    Ast_symbol                             ast_symbol;
+    Ast_symbolList                         ast_symbolList;
+    Ast_typeModifiers                      ast_typeModifiers;
+    Ast_id                                 ast_id;
+    Ast_exprTokenType                      ast_exprType;
+    Ast_position                           ast_position;
+    Ast_symbolPositionListPair             ast_symbolPositionListPair;
+    Ast_positionList                       ast_positionList;
 }
 
-%type <bbidIdent> IDENTIFIER identifier struct_identifier enum_identifier
-%type <bbidIdent> str_rec_identifier STRUCT UNION struct_or_union
-%type <bbidIdent> user_defined_type TYPE_NAME lexem
-%type <bbinteger> pointer CONSTANT rule_body
-%type <bbunsign> storage_class_specifier type_specifier1
-%type <bbunsign> type_modality_specifier Sv_tmp
-%type <bbsymbol> init_declarator declarator declarator2 struct_declarator
-%type <bbsymbol> type_specifier_list type_mod_specifier_list
-%type <bbsymbol> type_specifier_list0
-%type <bbsymbol> top_init_declarations
-%type <bbsymbol> declaration_specifiers init_declarations
-%type <bbsymbol> declaration_modality_specifiers declaration_specifiers0
-%type <bbsymbol> enumerator parameter_declaration
-%type <bbsymbol> function_head_declaration function_definition_head
-%type <bbsymbol> struct_declaration_list struct_declaration
-%type <bbsymbol> struct_declarator_list
-%type <bbsymbolList> enumerator_list enumerator_list_comma
-%type <bbsymbol> fun_arg_init_declarations fun_arg_declaration
-%type <bbsymbolPositionLstPair> parameter_list parameter_type_list
-%type <bbsymbolPositionLstPair> parameter_identifier_list identifier_list
-%type <bbpositionLst> argument_expr_list
+%type <ast_id> IDENTIFIER identifier struct_identifier enum_identifier
+%type <ast_id> str_rec_identifier STRUCT UNION struct_or_union
+%type <ast_id> user_defined_type TYPE_NAME lexem
+%type <ast_integer> pointer CONSTANT rule_body
+%type <ast_unsigned> storage_class_specifier type_specifier1
+%type <ast_unsigned> type_modality_specifier Sv_tmp
+%type <ast_symbol> init_declarator declarator declarator2 struct_declarator
+%type <ast_symbol> type_specifier_list type_mod_specifier_list
+%type <ast_symbol> type_specifier_list0
+%type <ast_symbol> top_init_declarations
+%type <ast_symbol> declaration_specifiers init_declarations
+%type <ast_symbol> declaration_modality_specifiers declaration_specifiers0
+%type <ast_symbol> enumerator parameter_declaration
+%type <ast_symbol> function_head_declaration function_definition_head
+%type <ast_symbol> struct_declaration_list struct_declaration
+%type <ast_symbol> struct_declarator_list
+%type <ast_symbolList> enumerator_list enumerator_list_comma
+%type <ast_symbol> fun_arg_init_declarations fun_arg_declaration
+%type <ast_symbolPositionListPair> parameter_list parameter_type_list
+%type <ast_symbolPositionListPair> parameter_identifier_list identifier_list
+%type <ast_positionList> argument_expr_list
 
-%type <bbtypeModif> type_specifier2
-%type <bbtypeModif> struct_or_union_specifier struct_or_union_define_specifier
-%type <bbtypeModif> enum_specifier enum_define_specifier
-%type <bbtypeModif> type_name abstract_declarator abstract_declarator2
+%type <ast_typeModifiers> type_specifier2
+%type <ast_typeModifiers> struct_or_union_specifier struct_or_union_define_specifier
+%type <ast_typeModifiers> enum_specifier enum_define_specifier
+%type <ast_typeModifiers> type_name abstract_declarator abstract_declarator2
 
-%type <bbexprType> primary_expr postfix_expr unary_expr cast_expr
-%type <bbexprType> multiplicative_expr additive_expr shift_expr
-%type <bbexprType> relational_expr equality_expr and_expr exclusive_or_expr
-%type <bbexprType> inclusive_or_expr logical_and_expr logical_or_expr
-%type <bbexprType> conditional_expr assignment_expr expr
+%type <ast_exprType> primary_expr postfix_expr unary_expr cast_expr
+%type <ast_exprType> multiplicative_expr additive_expr shift_expr
+%type <ast_exprType> relational_expr equality_expr and_expr exclusive_or_expr
+%type <ast_exprType> inclusive_or_expr logical_and_expr logical_or_expr
+%type <ast_exprType> conditional_expr assignment_expr expr
 
-%type <bbposition> STRING_LITERAL '(' ',' ')'
+%type <ast_position> STRING_LITERAL '(' ',' ')'
 
 /* *************************************************************** */
 /* *************************************************************** */
@@ -338,15 +310,18 @@ before_rules:
 before_rules_item:
 /*
         anytoken_not_yacc
+
+        NOTE: '$<typeModifiers>$' indicates an explict type for the symbol value,
+        used here since it is in referring to embedded actions.
 */
         any_token
     |   '%' UNION {
             AddHtmlTrivialReference($2.d->p);
-            $<typeModif>$ = crNewAnnonymeStrUnion($2.d);
+            $<typeModifiers>$ = crNewAnnonymeStrUnion($2.d);
         }
         '{' struct_declaration_list '}' {
-            specializeStrUnionDef($<typeModif>3->u.t, $5.d);
-            l_yaccUnion = $<typeModif>3->u.t;
+            specializeStrUnionDef($<typeModifiers>3->u.t, $5.d);
+            l_yaccUnion = $<typeModifiers>3->u.t;
         }
     |   '%' IDENTIFIER token_seq_opt    {
             AddHtmlTrivialReference($2.d->p);

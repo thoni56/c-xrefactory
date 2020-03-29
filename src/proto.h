@@ -1082,30 +1082,30 @@ typedef struct nestedConstrTokenType {
     struct position			*pp;
 } S_nestedConstrTokenType;
 
-typedef struct unsPositionPair {
+typedef struct unsignedPositionPair {
     unsigned		u;
     struct position	*p;
-} S_unsPositionPair;
+} S_unsignedPositionPair;
 
 typedef struct symbolPositionPair {
     struct symbol	*s;
     struct position	*p;
 } S_symbolPositionPair;
 
-typedef struct symbolPositionLstPair {
+typedef struct symbolPositionListPair {
     struct symbol		*s;
     struct positionList	*p;
-} S_symbolPositionLstPair;
+} S_symbolPositionListPair;
 
 typedef struct intPair {
     int i1;
     int i2;
 } S_intPair;
 
-typedef struct typeModifiersListPositionLstPair {
+typedef struct typeModifiersListPositionListPair {
     struct typeModifiersList	*t;
     struct positionList			*p;
-} S_typeModifiersListPositionLstPair;
+} S_typeModifiersListPositionListPair;
 
 typedef struct whileExtractData {
     int				i1;
@@ -1213,11 +1213,11 @@ typedef struct {
 typedef struct {
     struct position      b, e;
     struct id		*d;
-} Ast_idIdent;
+} Ast_id;
 typedef struct {
     struct position          b, e;
     struct idList		*d;
-} Ast_idIdentList;
+} Ast_idList;
 typedef struct {
     struct position          b, e;
     struct exprTokenType		d;
@@ -1240,7 +1240,7 @@ typedef struct {
 } Ast_position;
 typedef struct {
     struct position              b, e;
-    struct unsPositionPair		d;
+    struct unsignedPositionPair		d;
 } Ast_unsPositionPair;
 typedef struct {
     struct position                  b, e;
@@ -1248,16 +1248,16 @@ typedef struct {
 } Ast_symbolPositionPair;
 typedef struct {
     struct position                  b, e;
-    struct symbolPositionLstPair		d;
-} Ast_symbolPositionLstPair;
+    struct symbolPositionListPair		d;
+} Ast_symbolPositionListPair;
 typedef struct {
     struct position          b, e;
     struct positionList		*d;
-} Ast_positionLst;
+} Ast_positionList;
 typedef struct {
     struct position                                  b, e;
-    struct typeModifiersListPositionLstPair			d;
-} Ast_typeModifiersListPositionLstPair;
+    struct typeModifiersListPositionListPair			d;
+} Ast_typeModifiersListPositionListPair;
 
 
 

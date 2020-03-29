@@ -32,13 +32,13 @@
 
 
 #define SET_IDENTIFIER_YYLVAL(name, symb, pos) {\
-    uniyylval->bbidIdent.d = &s_yyIdentBuf[s_yyIdentBufi];\
+    uniyylval->ast_id.d = &s_yyIdentBuf[s_yyIdentBufi];\
     s_yyIdentBufi ++; s_yyIdentBufi %= (YYBUFFERED_ID_INDEX);\
-    FILL_id(uniyylval->bbidIdent.d, name, symb, pos, NULL);\
+    FILL_id(uniyylval->ast_id.d, name, symb, pos, NULL);\
     yytext = name;\
-    uniyylval->bbidIdent.b = pos;\
-    uniyylval->bbidIdent.e = pos;\
-    uniyylval->bbidIdent.e.col += strlen(yytext);\
+    uniyylval->ast_id.b = pos;\
+    uniyylval->ast_id.e = pos;\
+    uniyylval->ast_id.e.col += strlen(yytext);\
 }
 
 
@@ -1089,7 +1089,7 @@ int cexpyylex(void) {
         }
         lex = res;
     } else {
-        lex = cexpTranslateToken(lex, uniyylval->bbinteger.d);
+        lex = cexpTranslateToken(lex, uniyylval->ast_integer.d);
     }
     return(lex);
 endOfMacArg:	assert(0);
@@ -1955,17 +1955,17 @@ static void actionOnBlockMarker(void) {
 }
 
 #define SET_POSITION_YYLVAL(pos, len) {\
-    uniyylval->bbposition.d = pos;\
-    uniyylval->bbposition.b = pos;\
-    uniyylval->bbposition.e = pos;\
-    uniyylval->bbposition.e.col += len;\
+    uniyylval->ast_position.d = pos;\
+    uniyylval->ast_position.b = pos;\
+    uniyylval->ast_position.e = pos;\
+    uniyylval->ast_position.e.col += len;\
 }
 
 #define SET_INTEGER_YYLVAL(val, pos, len) {\
-        uniyylval->bbinteger.d = val;\
-        uniyylval->bbinteger.b = pos;\
-        uniyylval->bbinteger.e = pos;\
-        uniyylval->bbinteger.e.col += len;\
+        uniyylval->ast_integer.d = val;\
+        uniyylval->ast_integer.b = pos;\
+        uniyylval->ast_integer.e = pos;\
+        uniyylval->ast_integer.e.col += len;\
 }
 
 int yylex(void) {

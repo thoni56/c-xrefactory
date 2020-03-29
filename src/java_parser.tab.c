@@ -141,48 +141,28 @@ static bool inSecondJslPass() {
 
 #line 283 "java_parser.y"
 typedef union {
-    int                                     integer;
-    unsigned                                unsign;
-    Symbol                                *symbol;
-    SymbolList                            *symbolList;
-    S_typeModifiers                         *typeModif;
-    S_typeModifiersList                     *typeModifList;
-    S_freeTrail                             *trail;
-    S_id                               *idIdent;
-    S_idList                           *idlist;
-    S_exprTokenType                         exprType;
-    S_intPair                               intpair;
-    S_whileExtractData                      *whiledata;
-    S_position                              position;
-    S_unsPositionPair                       unsPositionPair;
-    S_symbolPositionPair                    symbolPositionPair;
-    S_symbolPositionLstPair                 symbolPositionLstPair;
-    S_positionList                           *positionLst;
-    S_typeModifiersListPositionLstPair      typeModifiersListPositionLstPair;
+    Symbol                                 *symbol;
+    S_freeTrail                            *trail;
 
-    S_extRecFindStr                         *erfs;
+    S_extRecFindStr                        *erfs;
 
-    Ast_int                                bbinteger;
-    Ast_unsigned                           bbunsign;
-    Ast_symbol                             bbsymbol;
-    Ast_symbolList                         bbsymbolList;
-    Ast_typeModifiers                      bbtypeModif;
-    Ast_typeModifiersList                  bbtypeModifList;
-    Ast_freeTrail                          bbtrail;
-    Ast_idIdent                            bbidIdent;
-    Ast_idIdentList                        bbidlist;
-    Ast_exprTokenType                      bbexprType;
-    Ast_intPair                            bbintpair;
-    Ast_whileExtractData                   bbwhiledata;
-    Ast_position                           bbposition;
-    Ast_unsPositionPair                    bbunsPositionPair;
-    Ast_symbolPositionPair                 bbsymbolPositionPair;
-    Ast_symbolPositionLstPair              bbsymbolPositionLstPair;
-    Ast_positionLst                        bbpositionLst;
-    Ast_typeModifiersListPositionLstPair   bbtypeModifiersListPositionLstPair;
-    Ast_nestedConstrTokenType              bbnestedConstrTokenType;
+    Ast_int                                ast_integer;
+    Ast_unsigned                           ast_unsigned;
+    Ast_symbol                             ast_symbol;
+    Ast_symbolList                         ast_symbolList;
+    Ast_id                                 ast_id;
+    Ast_idList                             ast_idList;
+    Ast_exprTokenType                      ast_expressionType;
+    Ast_intPair                            ast_intPair;
+    Ast_whileExtractData                   ast_whileData;
+    Ast_position                           ast_position;
+    Ast_unsPositionPair                    ast_unsignedPositionPair;
+    Ast_symbolPositionPair                 ast_symbolPositionPair;
+    Ast_symbolPositionListPair             ast_symbolPositionListPair;
+    Ast_typeModifiersListPositionListPair  ast_typeModifiersListPositionListPair;
+    Ast_nestedConstrTokenType              ast_nestedConstrTokenType;
 } YYSTYPE;
-#line 186 "java_parser.tab.c"
+#line 166 "java_parser.tab.c"
 #define TYPE_NAME 257
 #define CLASS_NAME 258
 #define TEMPLATE_NAME 259
@@ -2550,7 +2530,7 @@ YYSTYPE yyvs[YYSTACKSIZE];
 #include "recyacc.h"
 #endif
 #define yystacksize YYSTACKSIZE
-#line 4367 "java_parser.y"
+#line 4347 "java_parser.y"
 
 void javaParsingInitializations(void) {
             Symbol *ss;
@@ -2686,7 +2666,7 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
         }
     }
 }
-#line 2690 "java_parser.tab.c"
+#line 2670 "java_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -2826,480 +2806,480 @@ yyreduce:
     switch (yyn)
     {
 case 2:
-#line 426 "java_parser.y"
+#line 406 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier(yyval.bbexprType.d.t,TypeBoolean);
-                    yyval.bbexprType.d.r = NULL;
+                    CrTypeModifier(yyval.ast_expressionType.d.t,TypeBoolean);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = &s_noPos;
-                    PropagateBorns(yyval.bbexprType, yyvsp[0].bbposition, yyvsp[0].bbposition);
+                    yyval.ast_expressionType.d.pp = &s_noPos;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 3:
-#line 437 "java_parser.y"
+#line 417 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier(yyval.bbexprType.d.t,TypeBoolean);
-                    yyval.bbexprType.d.r = NULL;
+                    CrTypeModifier(yyval.ast_expressionType.d.t,TypeBoolean);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = &s_noPos;
-                    PropagateBorns(yyval.bbexprType, yyvsp[0].bbposition, yyvsp[0].bbposition);
+                    yyval.ast_expressionType.d.pp = &s_noPos;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 4:
-#line 448 "java_parser.y"
+#line 428 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier(yyval.bbexprType.d.t,TypeInt);
-                    yyval.bbexprType.d.r = NULL;
+                    CrTypeModifier(yyval.ast_expressionType.d.t,TypeInt);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = &s_noPos;
-                    PropagateBorns(yyval.bbexprType, yyvsp[0].bbinteger, yyvsp[0].bbinteger);
+                    yyval.ast_expressionType.d.pp = &s_noPos;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_integer, yyvsp[0].ast_integer);
                 }
             }
         }
 break;
 case 5:
-#line 459 "java_parser.y"
+#line 439 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier(yyval.bbexprType.d.t,TypeLong);
-                    yyval.bbexprType.d.r = NULL;
+                    CrTypeModifier(yyval.ast_expressionType.d.t,TypeLong);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = &s_noPos;
-                    PropagateBorns(yyval.bbexprType, yyvsp[0].bbposition, yyvsp[0].bbposition);
+                    yyval.ast_expressionType.d.pp = &s_noPos;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 6:
-#line 470 "java_parser.y"
+#line 450 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier(yyval.bbexprType.d.t,TypeFloat);
-                    yyval.bbexprType.d.r = NULL;
+                    CrTypeModifier(yyval.ast_expressionType.d.t,TypeFloat);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = &s_noPos;
-                    PropagateBorns(yyval.bbexprType, yyvsp[0].bbposition, yyvsp[0].bbposition);
+                    yyval.ast_expressionType.d.pp = &s_noPos;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 7:
-#line 481 "java_parser.y"
+#line 461 "java_parser.y"
 {
             if (regularPass()) {
-                CrTypeModifier(yyval.bbexprType.d.t,TypeDouble);
-                yyval.bbexprType.d.r = NULL;
-                yyval.bbexprType.d.pp = &s_noPos;
-                if (SyntaxPassOnly()) {PropagateBorns(yyval.bbexprType, yyvsp[0].bbposition, yyvsp[0].bbposition);}
+                CrTypeModifier(yyval.ast_expressionType.d.t,TypeDouble);
+                yyval.ast_expressionType.d.r = NULL;
+                yyval.ast_expressionType.d.pp = &s_noPos;
+                if (SyntaxPassOnly()) {PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);}
             }
         }
 break;
 case 8:
-#line 489 "java_parser.y"
+#line 469 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier(yyval.bbexprType.d.t,TypeChar);
-                    yyval.bbexprType.d.r = NULL;
+                    CrTypeModifier(yyval.ast_expressionType.d.t,TypeChar);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = &s_noPos;
-                    PropagateBorns(yyval.bbexprType, yyvsp[0].bbposition, yyvsp[0].bbposition);
+                    yyval.ast_expressionType.d.pp = &s_noPos;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 9:
-#line 500 "java_parser.y"
+#line 480 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = &s_javaStringModifier;
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = &s_javaStringModifier;
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    XX_ALLOC(yyval.bbexprType.d.pp, S_position);
-                    *yyval.bbexprType.d.pp = yyvsp[0].bbposition.d;
-                    PropagateBorns(yyval.bbexprType, yyvsp[0].bbposition, yyvsp[0].bbposition);
+                    XX_ALLOC(yyval.ast_expressionType.d.pp, S_position);
+                    *yyval.ast_expressionType.d.pp = yyvsp[0].ast_position.d;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 10:
-#line 512 "java_parser.y"
+#line 492 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier(yyval.bbexprType.d.t,TypeNull);
-                    yyval.bbexprType.d.r = NULL;
+                    CrTypeModifier(yyval.ast_expressionType.d.t,TypeNull);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    XX_ALLOC(yyval.bbexprType.d.pp, S_position);
-                    *yyval.bbexprType.d.pp = yyvsp[0].bbidIdent.d->p;
-                    PropagateBorns(yyval.bbexprType, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+                    XX_ALLOC(yyval.ast_expressionType.d.pp, S_position);
+                    *yyval.ast_expressionType.d.pp = yyvsp[0].ast_id.d->p;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_id, yyvsp[0].ast_id);
                 }
             }
         }
 break;
 case 11:
-#line 529 "java_parser.y"
+#line 509 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbsymbol.d = typeSpecifier1(yyvsp[0].bbunsPositionPair.d.u);
+                    yyval.ast_symbol.d = typeSpecifier1(yyvsp[0].ast_unsignedPositionPair.d.u);
                     s_cps.lastDeclaratorType = NULL;
                 } else {
-                    PropagateBorns(yyval.bbsymbol, yyvsp[0].bbunsPositionPair, yyvsp[0].bbunsPositionPair);
+                    PropagateBorns(yyval.ast_symbol, yyvsp[0].ast_unsignedPositionPair, yyvsp[0].ast_unsignedPositionPair);
                 }
             };
             if (inSecondJslPass()) {
-                yyval.bbsymbol.d = jslTypeSpecifier1(yyvsp[0].bbunsPositionPair.d.u);
+                yyval.ast_symbol.d = jslTypeSpecifier1(yyvsp[0].ast_unsignedPositionPair.d.u);
             }
         }
 break;
 case 12:
-#line 542 "java_parser.y"
+#line 522 "java_parser.y"
 {
-            yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbsymbol, yyvsp[0].bbsymbol, yyvsp[0].bbsymbol);
+            yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_symbol, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
         }
 break;
 case 14:
-#line 550 "java_parser.y"
+#line 530 "java_parser.y"
 {
-            yyval.bbunsPositionPair.d.u  = TypeBoolean;
+            yyval.ast_unsignedPositionPair.d.u  = TypeBoolean;
             if (regularPass()) {
-                SetPrimitiveTypePos(yyval.bbunsPositionPair.d.p, yyvsp[0].bbidIdent.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+                SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
+                PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
         }
 break;
 case 17:
-#line 565 "java_parser.y"
+#line 545 "java_parser.y"
 {
-            yyval.bbunsPositionPair.d.u  = TypeByte;
-            if (regularPass()) SetPrimitiveTypePos(yyval.bbunsPositionPair.d.p, yyvsp[0].bbidIdent.d);
-            PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+            yyval.ast_unsignedPositionPair.d.u  = TypeByte;
+            if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
 case 18:
-#line 570 "java_parser.y"
+#line 550 "java_parser.y"
 {
-            yyval.bbunsPositionPair.d.u  = TypeShort;
-            if (regularPass()) SetPrimitiveTypePos(yyval.bbunsPositionPair.d.p, yyvsp[0].bbidIdent.d);
-            PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+            yyval.ast_unsignedPositionPair.d.u  = TypeShort;
+            if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
 case 19:
-#line 575 "java_parser.y"
+#line 555 "java_parser.y"
 {
-            yyval.bbunsPositionPair.d.u  = TypeInt;
-            if (regularPass()) SetPrimitiveTypePos(yyval.bbunsPositionPair.d.p, yyvsp[0].bbidIdent.d);
-            PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+            yyval.ast_unsignedPositionPair.d.u  = TypeInt;
+            if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
 case 20:
-#line 580 "java_parser.y"
+#line 560 "java_parser.y"
 {
-            yyval.bbunsPositionPair.d.u  = TypeLong;
-            if (regularPass()) SetPrimitiveTypePos(yyval.bbunsPositionPair.d.p, yyvsp[0].bbidIdent.d);
-            PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+            yyval.ast_unsignedPositionPair.d.u  = TypeLong;
+            if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
 case 21:
-#line 585 "java_parser.y"
+#line 565 "java_parser.y"
 {
-            yyval.bbunsPositionPair.d.u  = TypeChar;
-            if (regularPass()) SetPrimitiveTypePos(yyval.bbunsPositionPair.d.p, yyvsp[0].bbidIdent.d);
-            PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+            yyval.ast_unsignedPositionPair.d.u  = TypeChar;
+            if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
 case 22:
-#line 593 "java_parser.y"
+#line 573 "java_parser.y"
 {
-            yyval.bbunsPositionPair.d.u  = TypeFloat;
-            if (regularPass()) SetPrimitiveTypePos(yyval.bbunsPositionPair.d.p, yyvsp[0].bbidIdent.d);
-            PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+            yyval.ast_unsignedPositionPair.d.u  = TypeFloat;
+            if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
 case 23:
-#line 598 "java_parser.y"
+#line 578 "java_parser.y"
 {
-            yyval.bbunsPositionPair.d.u  = TypeDouble;
-            if (regularPass()) SetPrimitiveTypePos(yyval.bbunsPositionPair.d.p, yyvsp[0].bbidIdent.d);
-            PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+            yyval.ast_unsignedPositionPair.d.u  = TypeDouble;
+            if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
 case 25:
-#line 607 "java_parser.y"
+#line 587 "java_parser.y"
 {
-            yyval.bbsymbol.d = yyvsp[0].bbsymbolPositionPair.d.s;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbsymbol, yyvsp[0].bbsymbolPositionPair, yyvsp[0].bbsymbolPositionPair);
+            yyval.ast_symbol.d = yyvsp[0].ast_symbolPositionPair.d.s;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_symbol, yyvsp[0].ast_symbolPositionPair, yyvsp[0].ast_symbolPositionPair);
         }
 break;
 case 26:
-#line 614 "java_parser.y"
+#line 594 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    javaClassifyToTypeName(yyvsp[0].bbidlist.d,UsageUsed, &yyval.bbsymbol.d, USELESS_FQT_REFS_ALLOWED);
-                    yyval.bbsymbol.d = javaTypeNameDefinition(yyvsp[0].bbidlist.d);
-                    assert(yyval.bbsymbol.d->u.type);
-                    s_cps.lastDeclaratorType = yyval.bbsymbol.d->u.type->u.t;
+                    javaClassifyToTypeName(yyvsp[0].ast_idList.d,UsageUsed, &yyval.ast_symbol.d, USELESS_FQT_REFS_ALLOWED);
+                    yyval.ast_symbol.d = javaTypeNameDefinition(yyvsp[0].ast_idList.d);
+                    assert(yyval.ast_symbol.d->u.type);
+                    s_cps.lastDeclaratorType = yyval.ast_symbol.d->u.type->u.t;
                 } else {
-                    PropagateBorns(yyval.bbsymbol, yyvsp[0].bbidlist, yyvsp[0].bbidlist);
+                    PropagateBorns(yyval.ast_symbol, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
                 }
             };
             if (inSecondJslPass()) {
                 Symbol *str;
-                jslClassifyAmbiguousTypeName(yyvsp[0].bbidlist.d, &str);
-                yyval.bbsymbol.d = jslTypeNameDefinition(yyvsp[0].bbidlist.d);
+                jslClassifyAmbiguousTypeName(yyvsp[0].ast_idList.d, &str);
+                yyval.ast_symbol.d = jslTypeNameDefinition(yyvsp[0].ast_idList.d);
             }
         }
 break;
 case 27:
-#line 631 "java_parser.y"
+#line 611 "java_parser.y"
 { /* rule never reduced */ }
 break;
 case 28:
-#line 636 "java_parser.y"
+#line 616 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    javaClassifyToTypeName(yyvsp[0].bbidlist.d, USAGE_EXTEND_USAGE, &yyval.bbsymbol.d, USELESS_FQT_REFS_ALLOWED);
-                    yyval.bbsymbol.d = javaTypeNameDefinition(yyvsp[0].bbidlist.d);
+                    javaClassifyToTypeName(yyvsp[0].ast_idList.d, USAGE_EXTEND_USAGE, &yyval.ast_symbol.d, USELESS_FQT_REFS_ALLOWED);
+                    yyval.ast_symbol.d = javaTypeNameDefinition(yyvsp[0].ast_idList.d);
                 } else {
-                    PropagateBorns(yyval.bbsymbol, yyvsp[0].bbidlist, yyvsp[0].bbidlist);
+                    PropagateBorns(yyval.ast_symbol, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
                 }
             };
             if (inSecondJslPass()) {
                 Symbol *str;
-                jslClassifyAmbiguousTypeName(yyvsp[0].bbidlist.d, &str);
-                yyval.bbsymbol.d = jslTypeNameDefinition(yyvsp[0].bbidlist.d);
+                jslClassifyAmbiguousTypeName(yyvsp[0].ast_idList.d, &str);
+                yyval.ast_symbol.d = jslTypeNameDefinition(yyvsp[0].ast_idList.d);
             }
         }
 break;
 case 29:
-#line 651 "java_parser.y"
+#line 631 "java_parser.y"
 { /* rule never reduced */ }
 break;
 case 32:
-#line 663 "java_parser.y"
+#line 643 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbsymbolPositionPair.d.s = typeSpecifier1(yyvsp[-2].bbunsPositionPair.d.u);
-                    yyval.bbsymbolPositionPair.d.s->u.type = prependComposedType(yyval.bbsymbolPositionPair.d.s->u.type, TypeArray);
+                    yyval.ast_symbolPositionPair.d.s = typeSpecifier1(yyvsp[-2].ast_unsignedPositionPair.d.u);
+                    yyval.ast_symbolPositionPair.d.s->u.type = prependComposedType(yyval.ast_symbolPositionPair.d.s->u.type, TypeArray);
                 } else {
-                    PropagateBorns(yyval.bbsymbolPositionPair, yyvsp[-2].bbunsPositionPair, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_symbolPositionPair, yyvsp[-2].ast_unsignedPositionPair, yyvsp[0].ast_position);
                 }
-                yyval.bbsymbolPositionPair.d.p = yyvsp[-2].bbunsPositionPair.d.p;
+                yyval.ast_symbolPositionPair.d.p = yyvsp[-2].ast_unsignedPositionPair.d.p;
                 s_cps.lastDeclaratorType = NULL;
             };
             if (inSecondJslPass()) {
-                yyval.bbsymbolPositionPair.d.s = jslTypeSpecifier1(yyvsp[-2].bbunsPositionPair.d.u);
-                yyval.bbsymbolPositionPair.d.s->u.type = jslPrependComposedType(yyval.bbsymbolPositionPair.d.s->u.type, TypeArray);
+                yyval.ast_symbolPositionPair.d.s = jslTypeSpecifier1(yyvsp[-2].ast_unsignedPositionPair.d.u);
+                yyval.ast_symbolPositionPair.d.s->u.type = jslPrependComposedType(yyval.ast_symbolPositionPair.d.s->u.type, TypeArray);
             }
         }
 break;
 case 33:
-#line 679 "java_parser.y"
+#line 659 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    javaClassifyToTypeName(yyvsp[-2].bbidlist.d,UsageUsed, &(yyval.bbsymbolPositionPair.d.s), USELESS_FQT_REFS_ALLOWED);
-                    yyval.bbsymbolPositionPair.d.s = javaTypeNameDefinition(yyvsp[-2].bbidlist.d);
-                    assert(yyval.bbsymbolPositionPair.d.s && yyval.bbsymbolPositionPair.d.s->u.type);
-                    s_cps.lastDeclaratorType = yyval.bbsymbolPositionPair.d.s->u.type->u.t;
-                    yyval.bbsymbolPositionPair.d.s->u.type = prependComposedType(yyval.bbsymbolPositionPair.d.s->u.type, TypeArray);
+                    javaClassifyToTypeName(yyvsp[-2].ast_idList.d,UsageUsed, &(yyval.ast_symbolPositionPair.d.s), USELESS_FQT_REFS_ALLOWED);
+                    yyval.ast_symbolPositionPair.d.s = javaTypeNameDefinition(yyvsp[-2].ast_idList.d);
+                    assert(yyval.ast_symbolPositionPair.d.s && yyval.ast_symbolPositionPair.d.s->u.type);
+                    s_cps.lastDeclaratorType = yyval.ast_symbolPositionPair.d.s->u.type->u.t;
+                    yyval.ast_symbolPositionPair.d.s->u.type = prependComposedType(yyval.ast_symbolPositionPair.d.s->u.type, TypeArray);
                 } else {
-                    PropagateBorns(yyval.bbsymbolPositionPair, yyvsp[-2].bbidlist, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_symbolPositionPair, yyvsp[-2].ast_idList, yyvsp[0].ast_position);
                 }
-                yyval.bbsymbolPositionPair.d.p = javaGetNameStartingPosition(yyvsp[-2].bbidlist.d);
+                yyval.ast_symbolPositionPair.d.p = javaGetNameStartingPosition(yyvsp[-2].ast_idList.d);
             };
             if (inSecondJslPass()) {
                 Symbol *ss;
-                jslClassifyAmbiguousTypeName(yyvsp[-2].bbidlist.d, &ss);
-                yyval.bbsymbolPositionPair.d.s = jslTypeNameDefinition(yyvsp[-2].bbidlist.d);
-                yyval.bbsymbolPositionPair.d.s->u.type = jslPrependComposedType(yyval.bbsymbolPositionPair.d.s->u.type, TypeArray);
+                jslClassifyAmbiguousTypeName(yyvsp[-2].ast_idList.d, &ss);
+                yyval.ast_symbolPositionPair.d.s = jslTypeNameDefinition(yyvsp[-2].ast_idList.d);
+                yyval.ast_symbolPositionPair.d.s->u.type = jslPrependComposedType(yyval.ast_symbolPositionPair.d.s->u.type, TypeArray);
             }
         }
 break;
 case 34:
-#line 699 "java_parser.y"
+#line 679 "java_parser.y"
 {
             if (regularPass()) {
-                yyval.bbsymbolPositionPair.d = yyvsp[-2].bbsymbolPositionPair.d;
+                yyval.ast_symbolPositionPair.d = yyvsp[-2].ast_symbolPositionPair.d;
                 if (! SyntaxPassOnly()) {
-                    yyval.bbsymbolPositionPair.d.s->u.type = prependComposedType(yyval.bbsymbolPositionPair.d.s->u.type, TypeArray);
+                    yyval.ast_symbolPositionPair.d.s->u.type = prependComposedType(yyval.ast_symbolPositionPair.d.s->u.type, TypeArray);
                 } else {
-                    PropagateBorns(yyval.bbsymbolPositionPair, yyvsp[-2].bbsymbolPositionPair, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_symbolPositionPair, yyvsp[-2].ast_symbolPositionPair, yyvsp[0].ast_position);
                 }
             };
             if (inSecondJslPass()) {
-                yyval.bbsymbolPositionPair.d = yyvsp[-2].bbsymbolPositionPair.d;
-                yyval.bbsymbolPositionPair.d.s->u.type = jslPrependComposedType(yyval.bbsymbolPositionPair.d.s->u.type, TypeArray);
+                yyval.ast_symbolPositionPair.d = yyvsp[-2].ast_symbolPositionPair.d;
+                yyval.ast_symbolPositionPair.d.s->u.type = jslPrependComposedType(yyval.ast_symbolPositionPair.d.s->u.type, TypeArray);
             }
         }
 break;
 case 35:
-#line 713 "java_parser.y"
+#line 693 "java_parser.y"
 { /* rule never used */ }
 break;
 case 36:
-#line 718 "java_parser.y"
+#line 698 "java_parser.y"
 {
-                if (regularPass()) AllocIdCopy(yyval.bbidIdent.d,yyvsp[0].bbidIdent.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.bbidIdent, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+                if (regularPass()) AllocIdCopy(yyval.ast_id.d,yyvsp[0].ast_id.d);
+                PropagateBornsIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
 break;
 case 37:
-#line 722 "java_parser.y"
+#line 702 "java_parser.y"
 {
-                if (regularPass()) AllocIdCopy(yyval.bbidIdent.d,yyvsp[0].bbidIdent.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.bbidIdent, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+                if (regularPass()) AllocIdCopy(yyval.ast_id.d,yyvsp[0].ast_id.d);
+                PropagateBornsIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
 break;
 case 38:
-#line 726 "java_parser.y"
+#line 706 "java_parser.y"
 {
-                if (regularPass()) AllocIdCopy(yyval.bbidIdent.d,yyvsp[0].bbidIdent.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.bbidIdent, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+                if (regularPass()) AllocIdCopy(yyval.ast_id.d,yyvsp[0].ast_id.d);
+                PropagateBornsIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
 break;
 case 39:
-#line 730 "java_parser.y"
+#line 710 "java_parser.y"
 {
-                if (regularPass()) AllocIdCopy(yyval.bbidIdent.d,yyvsp[0].bbidIdent.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.bbidIdent, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+                if (regularPass()) AllocIdCopy(yyval.ast_id.d,yyvsp[0].ast_id.d);
+                PropagateBornsIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
 break;
 case 40:
-#line 734 "java_parser.y"
+#line 714 "java_parser.y"
 {
-                if (regularPass()) AllocIdCopy(yyval.bbidIdent.d,yyvsp[0].bbidIdent.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.bbidIdent, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+                if (regularPass()) AllocIdCopy(yyval.ast_id.d,yyvsp[0].ast_id.d);
+                PropagateBornsIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
 break;
 case 41:
-#line 738 "java_parser.y"
+#line 718 "java_parser.y"
 {
-                if (regularPass()) AllocIdCopy(yyval.bbidIdent.d,yyvsp[0].bbidIdent.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.bbidIdent, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+                if (regularPass()) AllocIdCopy(yyval.ast_id.d,yyvsp[0].ast_id.d);
+                PropagateBornsIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
 break;
 case 42:
-#line 742 "java_parser.y"
+#line 722 "java_parser.y"
 {
-                if (regularPass()) AllocIdCopy(yyval.bbidIdent.d,yyvsp[0].bbidIdent.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.bbidIdent, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+                if (regularPass()) AllocIdCopy(yyval.ast_id.d,yyvsp[0].ast_id.d);
+                PropagateBornsIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
 break;
 case 43:
-#line 746 "java_parser.y"
+#line 726 "java_parser.y"
 {
-                if (regularPass()) AllocIdCopy(yyval.bbidIdent.d,yyvsp[0].bbidIdent.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.bbidIdent, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+                if (regularPass()) AllocIdCopy(yyval.ast_id.d,yyvsp[0].ast_id.d);
+                PropagateBornsIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
 break;
 case 44:
-#line 750 "java_parser.y"
+#line 730 "java_parser.y"
 {
-                if (regularPass()) AllocIdCopy(yyval.bbidIdent.d,yyvsp[0].bbidIdent.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.bbidIdent, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+                if (regularPass()) AllocIdCopy(yyval.ast_id.d,yyvsp[0].ast_id.d);
+                PropagateBornsIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
 break;
 case 45:
-#line 757 "java_parser.y"
+#line 737 "java_parser.y"
 {
-            yyval.bbidlist.d = yyvsp[0].bbidlist.d;
+            yyval.ast_idList.d = yyvsp[0].ast_idList.d;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert(s_javaStat);
-                    s_javaStat->lastParsedName = yyvsp[0].bbidlist.d;
+                    s_javaStat->lastParsedName = yyvsp[0].ast_idList.d;
                 } else {
-                    PropagateBorns(yyval.bbidlist, yyvsp[0].bbidlist, yyvsp[0].bbidlist);
-                    javaCheckForPrimaryStart(&yyvsp[0].bbidlist.d->id.p, &yyvsp[0].bbidlist.d->id.p);
-                    javaCheckForStaticPrefixStart(&yyvsp[0].bbidlist.d->id.p, &yyvsp[0].bbidlist.d->id.p);
+                    PropagateBorns(yyval.ast_idList, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
+                    javaCheckForPrimaryStart(&yyvsp[0].ast_idList.d->id.p, &yyvsp[0].ast_idList.d->id.p);
+                    javaCheckForStaticPrefixStart(&yyvsp[0].ast_idList.d->id.p, &yyvsp[0].ast_idList.d->id.p);
                 }
             };
         }
 break;
 case 46:
-#line 770 "java_parser.y"
+#line 750 "java_parser.y"
 {
-            yyval.bbidlist.d = yyvsp[0].bbidlist.d;
+            yyval.ast_idList.d = yyvsp[0].ast_idList.d;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert(s_javaStat);
-                    s_javaStat->lastParsedName = yyvsp[0].bbidlist.d;
+                    s_javaStat->lastParsedName = yyvsp[0].ast_idList.d;
                 } else {
-                    PropagateBorns(yyval.bbidlist, yyvsp[0].bbidlist, yyvsp[0].bbidlist);
-                    javaCheckForPrimaryStartInNameList(yyvsp[0].bbidlist.d, javaGetNameStartingPosition(yyvsp[0].bbidlist.d));
-                    javaCheckForStaticPrefixInNameList(yyvsp[0].bbidlist.d, javaGetNameStartingPosition(yyvsp[0].bbidlist.d));
+                    PropagateBorns(yyval.ast_idList, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
+                    javaCheckForPrimaryStartInNameList(yyvsp[0].ast_idList.d, javaGetNameStartingPosition(yyvsp[0].ast_idList.d));
+                    javaCheckForStaticPrefixInNameList(yyvsp[0].ast_idList.d, javaGetNameStartingPosition(yyvsp[0].ast_idList.d));
                 }
             };
         }
 break;
 case 47:
-#line 786 "java_parser.y"
+#line 766 "java_parser.y"
 {
-            yyval.bbidlist.d = StackMemAlloc(S_idList);
-            FILL_idList(yyval.bbidlist.d, *yyvsp[0].bbidIdent.d, yyvsp[0].bbidIdent.d->name, TypeDefault, NULL);
-            PropagateBornsIfRegularSyntaxPass(yyval.bbidlist, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+            yyval.ast_idList.d = StackMemAlloc(S_idList);
+            FILL_idList(yyval.ast_idList.d, *yyvsp[0].ast_id.d, yyvsp[0].ast_id.d->name, TypeDefault, NULL);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_idList, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
 case 48:
-#line 794 "java_parser.y"
+#line 774 "java_parser.y"
 {
-            yyval.bbidlist.d = StackMemAlloc(S_idList);
-            FILL_idList(yyval.bbidlist.d, *yyvsp[0].bbidIdent.d, yyvsp[0].bbidIdent.d->name, TypeDefault, yyvsp[-2].bbidlist.d);
-            PropagateBornsIfRegularSyntaxPass(yyval.bbidlist, yyvsp[-2].bbidlist, yyvsp[0].bbidIdent);
+            yyval.ast_idList.d = StackMemAlloc(S_idList);
+            FILL_idList(yyval.ast_idList.d, *yyvsp[0].ast_id.d, yyvsp[0].ast_id.d->name, TypeDefault, yyvsp[-2].ast_idList.d);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_idList, yyvsp[-2].ast_idList, yyvsp[0].ast_id);
         }
 break;
 case 59:
-#line 836 "java_parser.y"
+#line 816 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    labelReference(yyvsp[0].bbidIdent.d,UsageDefined);
+                    labelReference(yyvsp[0].ast_id.d,UsageDefined);
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+                    PropagateBorns(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);
                 }
             };
         }
 break;
 case 60:
-#line 845 "java_parser.y"
+#line 825 "java_parser.y"
 { assert(0); /* token never used */ }
 break;
 case 61:
-#line 849 "java_parser.y"
+#line 829 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    labelReference(yyvsp[0].bbidIdent.d,UsageUsed);
+                    labelReference(yyvsp[0].ast_id.d,UsageUsed);
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+                    PropagateBorns(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);
                 }
             };
         }
 break;
 case 62:
-#line 858 "java_parser.y"
+#line 838 "java_parser.y"
 { assert(0); /* token never used */ }
 break;
 case 63:
-#line 863 "java_parser.y"
+#line 843 "java_parser.y"
 {
             if (regularPass()) {
                 assert(s_javaStat);
@@ -3309,14 +3289,14 @@ case 63:
         }
 break;
 case 64:
-#line 869 "java_parser.y"
+#line 849 "java_parser.y"
 {
             if (regularPass()) {
-                if (yyvsp[0].bbidlist.d == NULL) {	/* anonymous package */
+                if (yyvsp[0].ast_idList.d == NULL) {	/* anonymous package */
                     s_javaThisPackageName = "";
                 } else {
-                    javaClassifyToPackageName(yyvsp[0].bbidlist.d);
-                    s_javaThisPackageName = javaCreateComposedName(NULL,yyvsp[0].bbidlist.d,'/',
+                    javaClassifyToPackageName(yyvsp[0].ast_idList.d);
+                    s_javaThisPackageName = javaCreateComposedName(NULL,yyvsp[0].ast_idList.d,'/',
                                                                    NULL,NULL,0);
                 }
                 s_javaStat->currentPackage = s_javaThisPackageName;
@@ -3330,7 +3310,7 @@ case 64:
                     /* else, as it must be set on class adding in order to set*/
                     /* isinCurrentPackage field. !!!!!!!!!!!!!!!!*/
                     /* this may be problem for CACHING !!!!*/
-                    if (yyvsp[0].bbidlist.d == NULL) {	/* anonymous package */
+                    if (yyvsp[0].ast_idList.d == NULL) {	/* anonymous package */
                         s_javaStat->className = NULL;
                         for(i=0,j=0; cFile.fileName[i]; i++) {
                             if (cFile.fileName[i] == SLASH) j=i;
@@ -3341,8 +3321,8 @@ case 64:
                         s_javaStat->unNamedPackageDir = cdir;
                         javaCheckIfPackageDirectoryIsInClassOrSourcePath(cdir);
                     } else {
-                        javaAddPackageDefinition(yyvsp[0].bbidlist.d);
-                        s_javaStat->className = yyvsp[0].bbidlist.d;
+                        javaAddPackageDefinition(yyvsp[0].ast_idList.d);
+                        s_javaStat->className = yyvsp[0].ast_idList.d;
                         for(i=0,j=0; cFile.fileName[i]; i++) {
                             if (cFile.fileName[i] == SLASH) j=i;
                         }
@@ -3396,21 +3376,21 @@ case 64:
                 S_jslClassStat  *ss;
                 char			ppp[MAX_FILE_NAME_SIZE];
                 s_jsl->waitList = NULL;
-                if (yyvsp[0].bbidlist.d != NULL) {
-                    javaClassifyToPackageName(yyvsp[0].bbidlist.d);
+                if (yyvsp[0].ast_idList.d != NULL) {
+                    javaClassifyToPackageName(yyvsp[0].ast_idList.d);
                 }
-                javaCreateComposedName(NULL,yyvsp[0].bbidlist.d,'/',NULL,ppp,MAX_FILE_NAME_SIZE);
+                javaCreateComposedName(NULL,yyvsp[0].ast_idList.d,'/',NULL,ppp,MAX_FILE_NAME_SIZE);
                 XX_ALLOCC(pname, strlen(ppp)+1, char);
                 strcpy(pname, ppp);
                 XX_ALLOC(ss, S_jslClassStat);
-                FILL_jslClassStat(ss, yyvsp[0].bbidlist.d, NULL, pname, 0, 0, NULL);
+                FILL_jslClassStat(ss, yyvsp[0].ast_idList.d, NULL, pname, 0, 0, NULL);
                 s_jsl->classStat = ss;
                 if (inSecondJslPass()) {
                     char        cdir[MAX_FILE_NAME_SIZE];
                     int         i;
                     int			j;
                     /* add this package types */
-                    if (yyvsp[0].bbidlist.d == NULL) {	/* anonymous package */
+                    if (yyvsp[0].ast_idList.d == NULL) {	/* anonymous package */
                         for(i=0,j=0; cFile.fileName[i]; i++) {
                             if (cFile.fileName[i] == SLASH) j=i;
                         }
@@ -3424,12 +3404,12 @@ case 64:
                         /* [2/8/2003] Maybe I should put it out*/
                         jslAddAllPackageClassesFromFileTab(NULL);
                     } else {
-                        javaMapDirectoryFiles2(yyvsp[0].bbidlist.d,jslAddMapedImportTypeName,
-                                                NULL,yyvsp[0].bbidlist.d,NULL);
+                        javaMapDirectoryFiles2(yyvsp[0].ast_idList.d,jslAddMapedImportTypeName,
+                                                NULL,yyvsp[0].ast_idList.d,NULL);
                         /* why this is there, it makes problem when moving a class*/
                         /* it stays in fileTab and there is a clash!*/
                         /* [2/8/2003] Maybe I should put it out*/
-                        jslAddAllPackageClassesFromFileTab(yyvsp[0].bbidlist.d);
+                        jslAddAllPackageClassesFromFileTab(yyvsp[0].ast_idList.d);
                     }
                     /* add java/lang package types */
                     javaMapDirectoryFiles2(s_javaLangName,
@@ -3440,7 +3420,7 @@ case 64:
         }
 break;
 case 65:
-#line 996 "java_parser.y"
+#line 976 "java_parser.y"
 {
             if (regularPass()) {
                 /* add this package types after imports! */
@@ -3452,271 +3432,271 @@ case 65:
         }
 break;
 case 68:
-#line 1009 "java_parser.y"
+#line 989 "java_parser.y"
 {
-            SetNullBorns(yyval.bbposition);
+            SetNullBorns(yyval.ast_position);
         }
 break;
 case 70:
-#line 1016 "java_parser.y"
+#line 996 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbidlist, yyvsp[0].bbidlist);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
             if (inSecondJslPass()) {
-                JslImportSingleDeclaration(yyvsp[0].bbidlist.d);
+                JslImportSingleDeclaration(yyvsp[0].ast_idList.d);
             }
         }
 break;
 case 71:
-#line 1022 "java_parser.y"
+#line 1002 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbidlist, yyvsp[0].bbidlist);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
             if (inSecondJslPass()) {
-                JslImportOnDemandDeclaration(yyvsp[0].bbidlist.d);
+                JslImportOnDemandDeclaration(yyvsp[0].ast_idList.d);
             }
         }
 break;
 case 72:
-#line 1028 "java_parser.y"
+#line 1008 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbidlist);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_idList);
             if (inSecondJslPass()) {
-                JslImportSingleDeclaration(yyvsp[0].bbidlist.d);
+                JslImportSingleDeclaration(yyvsp[0].ast_idList.d);
             }
         }
 break;
 case 73:
-#line 1034 "java_parser.y"
+#line 1014 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbidlist);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_idList);
             if (inSecondJslPass()) {
-                JslImportOnDemandDeclaration(yyvsp[0].bbidlist.d);
+                JslImportOnDemandDeclaration(yyvsp[0].ast_idList.d);
             }
         }
 break;
 case 74:
-#line 1057 "java_parser.y"
+#line 1037 "java_parser.y"
 {
-            yyval.bbidlist.d = yyvsp[-1].bbidlist.d;
+            yyval.ast_idList.d = yyvsp[-1].ast_idList.d;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     S_reference *lastUselessRef;
                     Symbol *str;
                     /* it was type or packege, but I thing this would be better*/
-                    lastUselessRef = javaClassifyToTypeName(yyvsp[-1].bbidlist.d, UsageUsed, &str, USELESS_FQT_REFS_DISALLOWED);
+                    lastUselessRef = javaClassifyToTypeName(yyvsp[-1].ast_idList.d, UsageUsed, &str, USELESS_FQT_REFS_DISALLOWED);
                     /* last useless reference is not useless here!*/
                     if (lastUselessRef!=NULL) lastUselessRef->usage = s_noUsage;
-                    s_cps.lastImportLine = yyvsp[-2].bbidIdent.d->p.line;
-                    if (yyvsp[-1].bbidlist.d->next!=NULL) {
-                        javaAddImportConstructionReference(&yyvsp[-1].bbidlist.d->next->id.p, &yyvsp[-2].bbidIdent.d->p, UsageDefined);
+                    s_cps.lastImportLine = yyvsp[-2].ast_id.d->p.line;
+                    if (yyvsp[-1].ast_idList.d->next!=NULL) {
+                        javaAddImportConstructionReference(&yyvsp[-1].ast_idList.d->next->id.p, &yyvsp[-2].ast_id.d->p, UsageDefined);
                     }
                 } else {
-                    PropagateBorns(yyval.bbidlist, yyvsp[-2].bbidIdent, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_idList, yyvsp[-2].ast_id, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 75:
-#line 1076 "java_parser.y"
+#line 1056 "java_parser.y"
 { /* rule never used */ }
 break;
 case 76:
-#line 1077 "java_parser.y"
+#line 1057 "java_parser.y"
 { /* rule never used */ }
 break;
 case 77:
-#line 1081 "java_parser.y"
+#line 1061 "java_parser.y"
 {
-            yyval.bbidlist.d = yyvsp[-3].bbidlist.d;
+            yyval.ast_idList.d = yyvsp[-3].ast_idList.d;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     Symbol *str;
                     S_typeModifiers *expr;
                     S_reference *rr, *lastUselessRef;
                     int st __attribute__((unused));
-                    st = javaClassifyAmbiguousName(yyvsp[-3].bbidlist.d, NULL,&str,&expr,&rr,
+                    st = javaClassifyAmbiguousName(yyvsp[-3].ast_idList.d, NULL,&str,&expr,&rr,
                                                    &lastUselessRef, USELESS_FQT_REFS_DISALLOWED,
                                                    CLASS_TO_TYPE,UsageUsed);
                     if (lastUselessRef!=NULL) lastUselessRef->usage = s_noUsage;
-                    s_cps.lastImportLine = yyvsp[-4].bbidIdent.d->p.line;
-                    javaAddImportConstructionReference(&yyvsp[-3].bbidlist.d->id.p, &yyvsp[-4].bbidIdent.d->p, UsageDefined);
+                    s_cps.lastImportLine = yyvsp[-4].ast_id.d->p.line;
+                    javaAddImportConstructionReference(&yyvsp[-3].ast_idList.d->id.p, &yyvsp[-4].ast_id.d->p, UsageDefined);
                 } else {
-                    PropagateBorns(yyval.bbidlist, yyvsp[-4].bbidIdent, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_idList, yyvsp[-4].ast_id, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 78:
-#line 1100 "java_parser.y"
+#line 1080 "java_parser.y"
 { /* rule never used */ }
 break;
 case 79:
-#line 1103 "java_parser.y"
+#line 1083 "java_parser.y"
 {
-            SetNullBorns(yyval.bbposition);
+            SetNullBorns(yyval.ast_position);
         }
 break;
 case 80:
-#line 1106 "java_parser.y"
+#line 1086 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[-1].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[-1].ast_position);
         }
 break;
 case 81:
-#line 1112 "java_parser.y"
+#line 1092 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 82:
-#line 1115 "java_parser.y"
+#line 1095 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 83:
-#line 1120 "java_parser.y"
+#line 1100 "java_parser.y"
 {
-            yyval.bbidlist.d = NULL;
+            yyval.ast_idList.d = NULL;
             if (regularPass()) {
                 s_cps.lastImportLine = 0;
-                SetNullBorns(yyval.bbidlist);
+                SetNullBorns(yyval.ast_idList);
             }
         }
 break;
 case 84:
-#line 1127 "java_parser.y"
+#line 1107 "java_parser.y"
 {
-            yyval.bbidlist.d = yyvsp[-1].bbidlist.d;
+            yyval.ast_idList.d = yyvsp[-1].ast_idList.d;
             if (regularPass()) {
-                s_cps.lastImportLine = yyvsp[-2].bbidIdent.d->p.line;
-                PropagateBornsIfRegularSyntaxPass(yyval.bbidlist, yyvsp[-2].bbidIdent, yyvsp[0].bbposition);
+                s_cps.lastImportLine = yyvsp[-2].ast_id.d->p.line;
+                PropagateBornsIfRegularSyntaxPass(yyval.ast_idList, yyvsp[-2].ast_id, yyvsp[0].ast_position);
             }
         }
 break;
 case 85:
-#line 1134 "java_parser.y"
+#line 1114 "java_parser.y"
 {
-            yyval.bbidlist.d = NULL;
+            yyval.ast_idList.d = NULL;
             if (regularPass()) {
-                s_cps.lastImportLine = yyvsp[-1].bbidIdent.d->p.line;
-                PropagateBornsIfRegularSyntaxPass(yyval.bbidlist, yyvsp[-1].bbidIdent, yyvsp[-1].bbidIdent);
+                s_cps.lastImportLine = yyvsp[-1].ast_id.d->p.line;
+                PropagateBornsIfRegularSyntaxPass(yyval.ast_idList, yyvsp[-1].ast_id, yyvsp[-1].ast_id);
             }
         }
 break;
 case 86:
-#line 1141 "java_parser.y"
+#line 1121 "java_parser.y"
 { /* rule never used */ }
 break;
 case 87:
-#line 1142 "java_parser.y"
+#line 1122 "java_parser.y"
 { /* rule never used */ }
 break;
 case 88:
-#line 1146 "java_parser.y"
+#line 1126 "java_parser.y"
 {
             if (regularPass()) {
-                javaSetClassSourceInformation(s_javaThisPackageName, yyvsp[0].bbidIdent.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+                javaSetClassSourceInformation(s_javaThisPackageName, yyvsp[0].ast_id.d);
+                PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
         }
 break;
 case 89:
-#line 1152 "java_parser.y"
+#line 1132 "java_parser.y"
 {
             if (regularPass()) {
-                javaSetClassSourceInformation(s_javaThisPackageName, yyvsp[0].bbidIdent.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+                javaSetClassSourceInformation(s_javaThisPackageName, yyvsp[0].ast_id.d);
+                PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
         }
 break;
 case 90:
-#line 1158 "java_parser.y"
+#line 1138 "java_parser.y"
 {}
 break;
 case 91:
-#line 1159 "java_parser.y"
+#line 1139 "java_parser.y"
 {}
 break;
 case 92:
-#line 1164 "java_parser.y"
+#line 1144 "java_parser.y"
 {
-            yyval.bbunsign.d = ACC_DEFAULT;
-            SetNullBorns(yyval.bbunsign);
+            yyval.ast_unsigned.d = ACC_DEFAULT;
+            SetNullBorns(yyval.ast_unsigned);
         }
 break;
 case 93:
-#line 1168 "java_parser.y"
+#line 1148 "java_parser.y"
 {
-            yyval.bbunsign.d = yyvsp[0].bbunsign.d;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbunsign, yyvsp[0].bbunsign);
+            yyval.ast_unsigned.d = yyvsp[0].ast_unsigned.d;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_unsigned, yyvsp[0].ast_unsigned);
         }
 break;
 case 95:
-#line 1176 "java_parser.y"
+#line 1156 "java_parser.y"
 {
-            yyval.bbunsign.d = yyvsp[-1].bbunsign.d | yyvsp[0].bbunsign.d;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[-1].bbunsign, yyvsp[0].bbunsign);
+            yyval.ast_unsigned.d = yyvsp[-1].ast_unsigned.d | yyvsp[0].ast_unsigned.d;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[-1].ast_unsigned, yyvsp[0].ast_unsigned);
         }
 break;
 case 96:
-#line 1183 "java_parser.y"
-{ yyval.bbunsign.d = ACC_PUBLIC; PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbposition, yyvsp[0].bbposition);}
+#line 1163 "java_parser.y"
+{ yyval.ast_unsigned.d = ACC_PUBLIC; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 97:
-#line 1184 "java_parser.y"
-{ yyval.bbunsign.d = ACC_PROTECTED; PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbposition, yyvsp[0].bbposition);}
+#line 1164 "java_parser.y"
+{ yyval.ast_unsigned.d = ACC_PROTECTED; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 98:
-#line 1185 "java_parser.y"
-{ yyval.bbunsign.d = ACC_PRIVATE; PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbposition, yyvsp[0].bbposition);}
+#line 1165 "java_parser.y"
+{ yyval.ast_unsigned.d = ACC_PRIVATE; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 99:
-#line 1186 "java_parser.y"
-{ yyval.bbunsign.d = ACC_STATIC; PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbposition, yyvsp[0].bbposition);}
+#line 1166 "java_parser.y"
+{ yyval.ast_unsigned.d = ACC_STATIC; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 100:
-#line 1187 "java_parser.y"
-{ yyval.bbunsign.d = ACC_ABSTRACT; PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbposition, yyvsp[0].bbposition);}
+#line 1167 "java_parser.y"
+{ yyval.ast_unsigned.d = ACC_ABSTRACT; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 101:
-#line 1188 "java_parser.y"
-{ yyval.bbunsign.d = ACC_FINAL; PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbposition, yyvsp[0].bbposition);}
+#line 1168 "java_parser.y"
+{ yyval.ast_unsigned.d = ACC_FINAL; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 102:
-#line 1189 "java_parser.y"
-{ yyval.bbunsign.d = ACC_NATIVE; PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbposition, yyvsp[0].bbposition);}
+#line 1169 "java_parser.y"
+{ yyval.ast_unsigned.d = ACC_NATIVE; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 103:
-#line 1190 "java_parser.y"
-{ yyval.bbunsign.d = ACC_SYNCHRONIZED; PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbposition, yyvsp[0].bbposition);}
+#line 1170 "java_parser.y"
+{ yyval.ast_unsigned.d = ACC_SYNCHRONIZED; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 104:
-#line 1191 "java_parser.y"
-{ yyval.bbunsign.d = 0; PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbposition, yyvsp[0].bbposition);}
+#line 1171 "java_parser.y"
+{ yyval.ast_unsigned.d = 0; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 105:
-#line 1192 "java_parser.y"
-{ yyval.bbunsign.d = ACC_TRANSIENT; PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbposition, yyvsp[0].bbposition);}
+#line 1172 "java_parser.y"
+{ yyval.ast_unsigned.d = ACC_TRANSIENT; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 106:
-#line 1193 "java_parser.y"
-{ yyval.bbunsign.d = 0; PropagateBornsIfRegularSyntaxPass(yyval.bbunsign, yyvsp[0].bbposition, yyvsp[0].bbposition);}
+#line 1173 "java_parser.y"
+{ yyval.ast_unsigned.d = 0; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 108:
-#line 1224 "java_parser.y"
+#line 1204 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        yyval.trail = newClassDefinitionBegin(yyvsp[0].bbidIdent.d, yyvsp[-2].bbunsign.d, NULL);
+                        yyval.trail = newClassDefinitionBegin(yyvsp[0].ast_id.d, yyvsp[-2].ast_unsigned.d, NULL);
                     }
                 } else {
-                    jslNewClassDefinitionBegin(yyvsp[0].bbidIdent.d, yyvsp[-2].bbunsign.d, NULL, CPOS_ST);
+                    jslNewClassDefinitionBegin(yyvsp[0].ast_id.d, yyvsp[-2].ast_unsigned.d, NULL, CPOS_ST);
                     jslAddDefaultConstructor(s_jsl->classStat->thisClass);
                 }
             }
 break;
 case 109:
-#line 1233 "java_parser.y"
+#line 1213 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -3728,21 +3708,21 @@ case 109:
             }
 break;
 case 110:
-#line 1241 "java_parser.y"
+#line 1221 "java_parser.y"
 {
                 if (regularPass()) {
-                    yyval.bbidIdent.d = yyvsp[-5].bbidIdent.d;
+                    yyval.ast_id.d = yyvsp[-5].ast_id.d;
                     if (! SyntaxPassOnly()) {
                         newClassDefinitionEnd(yyvsp[-4].trail);
                     } else {
-                        PropagateBorns(yyval.bbidIdent, yyvsp[-7].bbunsign, yyvsp[0].bbposition);
-                        if (yyval.bbidIdent.b.file == s_noneFileIndex) PropagateBorns(yyval.bbidIdent, yyvsp[-6].bbidIdent, yyval.bbidIdent);
-                        if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyval.bbidIdent.b, s_cxRefPos, yyval.bbidIdent.e)
+                        PropagateBorns(yyval.ast_id, yyvsp[-7].ast_unsigned, yyvsp[0].ast_position);
+                        if (yyval.ast_id.b.file == s_noneFileIndex) PropagateBorns(yyval.ast_id, yyvsp[-6].ast_id, yyval.ast_id);
+                        if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyval.ast_id.b, s_cxRefPos, yyval.ast_id.e)
                             && s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == s_noneFileIndex) {
-                            s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.bbidIdent.b;
-                            s_spp[SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-6].bbidIdent.b;
-                            s_spp[SPP_CLASS_DECLARATION_TYPE_END_POSITION] = yyvsp[-6].bbidIdent.e;
-                            s_spp[SPP_CLASS_DECLARATION_END_POSITION] = yyval.bbidIdent.e;
+                            s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.ast_id.b;
+                            s_spp[SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-6].ast_id.b;
+                            s_spp[SPP_CLASS_DECLARATION_TYPE_END_POSITION] = yyvsp[-6].ast_id.e;
+                            s_spp[SPP_CLASS_DECLARATION_END_POSITION] = yyval.ast_id.e;
                         }
                     }
                 } else {
@@ -3751,27 +3731,27 @@ case 110:
             }
 break;
 case 111:
-#line 1262 "java_parser.y"
+#line 1242 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        yyval.trail = newClassDefinitionBegin(yyvsp[0].bbidIdent.d, yyvsp[-2].bbunsign.d, NULL);
+                        yyval.trail = newClassDefinitionBegin(yyvsp[0].ast_id.d, yyvsp[-2].ast_unsigned.d, NULL);
                     }
                 } else {
-                    jslNewClassDefinitionBegin(yyvsp[0].bbidIdent.d, yyvsp[-2].bbunsign.d, NULL, CPOS_ST);
+                    jslNewClassDefinitionBegin(yyvsp[0].ast_id.d, yyvsp[-2].ast_unsigned.d, NULL, CPOS_ST);
                 }
             }
 break;
 case 112:
-#line 1272 "java_parser.y"
+#line 1252 "java_parser.y"
 {
                 if (regularPass()) {
-                    yyval.bbidIdent.d = yyvsp[-3].bbidIdent.d;
+                    yyval.ast_id.d = yyvsp[-3].ast_id.d;
                     if (! SyntaxPassOnly()) {
                         newClassDefinitionEnd(yyvsp[-2].trail);
                     } else {
-                        PropagateBorns(yyval.bbidIdent, yyvsp[-5].bbunsign, yyvsp[0].bbposition);
-                        if (yyval.bbidIdent.b.file == s_noneFileIndex) PropagateBorns(yyval.bbidIdent, yyvsp[-4].bbidIdent, yyvsp[0].bbposition);
+                        PropagateBorns(yyval.ast_id, yyvsp[-5].ast_unsigned, yyvsp[0].ast_position);
+                        if (yyval.ast_id.b.file == s_noneFileIndex) PropagateBorns(yyval.ast_id, yyvsp[-4].ast_id, yyvsp[0].ast_position);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -3779,23 +3759,23 @@ case 112:
             }
 break;
 case 113:
-#line 1285 "java_parser.y"
+#line 1265 "java_parser.y"
 { /* never used */ }
 break;
 case 114:
-#line 1290 "java_parser.y"
+#line 1270 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        yyval.trail = newClassDefinitionBegin(yyvsp[0].bbidIdent.d, yyvsp[-2].bbunsign.d, NULL);
+                        yyval.trail = newClassDefinitionBegin(yyvsp[0].ast_id.d, yyvsp[-2].ast_unsigned.d, NULL);
                     }
                 } else {
-                    jslNewClassDefinitionBegin(yyvsp[0].bbidIdent.d, yyvsp[-2].bbunsign.d, NULL, CPOS_FUNCTION_INNER);
+                    jslNewClassDefinitionBegin(yyvsp[0].ast_id.d, yyvsp[-2].ast_unsigned.d, NULL, CPOS_FUNCTION_INNER);
                 }
             }
 break;
 case 115:
-#line 1298 "java_parser.y"
+#line 1278 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -3807,17 +3787,17 @@ case 115:
             }
 break;
 case 116:
-#line 1306 "java_parser.y"
+#line 1286 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         newClassDefinitionEnd(yyvsp[-4].trail);
                     } else {
-                        PropagateBorns(yyval.bbposition, yyvsp[-7].bbunsign, yyvsp[0].bbposition);
-                        if (yyval.bbposition.b.file == s_noneFileIndex) PropagateBorns(yyval.bbposition, yyvsp[-6].bbidIdent, yyvsp[0].bbposition);
-                        if (POSITION_EQ(s_cxRefPos, yyvsp[-5].bbidIdent.d->p)) {
-                            s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.bbposition.b;
-                            s_spp[SPP_CLASS_DECLARATION_END_POSITION] = yyval.bbposition.e;
+                        PropagateBorns(yyval.ast_position, yyvsp[-7].ast_unsigned, yyvsp[0].ast_position);
+                        if (yyval.ast_position.b.file == s_noneFileIndex) PropagateBorns(yyval.ast_position, yyvsp[-6].ast_id, yyvsp[0].ast_position);
+                        if (POSITION_EQ(s_cxRefPos, yyvsp[-5].ast_id.d->p)) {
+                            s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.ast_position.b;
+                            s_spp[SPP_CLASS_DECLARATION_END_POSITION] = yyval.ast_position.e;
                         }
                     }
                 } else {
@@ -3826,26 +3806,26 @@ case 116:
             }
 break;
 case 117:
-#line 1323 "java_parser.y"
+#line 1303 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        yyval.trail = newClassDefinitionBegin(yyvsp[0].bbidIdent.d, yyvsp[-2].bbunsign.d, NULL);
+                        yyval.trail = newClassDefinitionBegin(yyvsp[0].ast_id.d, yyvsp[-2].ast_unsigned.d, NULL);
                     }
                 } else {
-                    jslNewClassDefinitionBegin(yyvsp[0].bbidIdent.d, yyvsp[-2].bbunsign.d, NULL, CPOS_FUNCTION_INNER);
+                    jslNewClassDefinitionBegin(yyvsp[0].ast_id.d, yyvsp[-2].ast_unsigned.d, NULL, CPOS_FUNCTION_INNER);
                 }
             }
 break;
 case 118:
-#line 1333 "java_parser.y"
+#line 1313 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         newClassDefinitionEnd(yyvsp[-2].trail);
                     } else {
-                        PropagateBorns(yyval.bbposition, yyvsp[-5].bbunsign, yyvsp[0].bbposition);
-                        if (yyval.bbposition.b.file == s_noneFileIndex) PropagateBorns(yyval.bbposition, yyvsp[-4].bbidIdent, yyvsp[0].bbposition);
+                        PropagateBorns(yyval.ast_position, yyvsp[-5].ast_unsigned, yyvsp[0].ast_position);
+                        if (yyval.ast_position.b.file == s_noneFileIndex) PropagateBorns(yyval.ast_position, yyvsp[-4].ast_id, yyvsp[0].ast_position);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -3853,11 +3833,11 @@ case 118:
             }
 break;
 case 119:
-#line 1345 "java_parser.y"
+#line 1325 "java_parser.y"
 { /* never used */ }
 break;
 case 120:
-#line 1351 "java_parser.y"
+#line 1331 "java_parser.y"
 {
             if (inSecondJslPass()) {
                 if (strcmp(s_jsl->classStat->thisClass->linkName,
@@ -3867,83 +3847,83 @@ case 120:
                         s_jsl->classStat->thisClass, s_javaLangObjectLinkName);
                 }
             }
-            SetNullBorns(yyval.bbposition);
+            SetNullBorns(yyval.ast_position);
         }
 break;
 case 121:
-#line 1362 "java_parser.y"
+#line 1342 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                    assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
-                    javaParsedSuperClass(yyvsp[0].bbsymbol.d->u.type->u.t);
+                    assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symType == TypeDefault && yyvsp[0].ast_symbol.d->u.type);
+                    assert(yyvsp[0].ast_symbol.d->u.type->kind == TypeStruct);
+                    javaParsedSuperClass(yyvsp[0].ast_symbol.d->u.type->u.t);
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbsymbol);
+                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
-                assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
+                assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symType == TypeDefault && yyvsp[0].ast_symbol.d->u.type);
+                assert(yyvsp[0].ast_symbol.d->u.type->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
-                                            yyvsp[0].bbsymbol.d->u.type->u.t);
+                                            yyvsp[0].ast_symbol.d->u.type->u.t);
             }
         }
 break;
 case 122:
-#line 1381 "java_parser.y"
+#line 1361 "java_parser.y"
 {
-            SetNullBorns(yyval.bbposition);
+            SetNullBorns(yyval.ast_position);
         }
 break;
 case 123:
-#line 1384 "java_parser.y"
+#line 1364 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 124:
-#line 1390 "java_parser.y"
+#line 1370 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                    assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
-                    javaParsedSuperClass(yyvsp[0].bbsymbol.d->u.type->u.t);
+                    assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symType == TypeDefault && yyvsp[0].ast_symbol.d->u.type);
+                    assert(yyvsp[0].ast_symbol.d->u.type->kind == TypeStruct);
+                    javaParsedSuperClass(yyvsp[0].ast_symbol.d->u.type->u.t);
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[0].bbsymbol, yyvsp[0].bbsymbol);
+                    PropagateBorns(yyval.ast_position, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
-                assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
+                assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symType == TypeDefault && yyvsp[0].ast_symbol.d->u.type);
+                assert(yyvsp[0].ast_symbol.d->u.type->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
-                                            yyvsp[0].bbsymbol.d->u.type->u.t);
+                                            yyvsp[0].ast_symbol.d->u.type->u.t);
             }
         }
 break;
 case 125:
-#line 1407 "java_parser.y"
+#line 1387 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                    assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
-                    javaParsedSuperClass(yyvsp[0].bbsymbol.d->u.type->u.t);
+                    assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symType == TypeDefault && yyvsp[0].ast_symbol.d->u.type);
+                    assert(yyvsp[0].ast_symbol.d->u.type->kind == TypeStruct);
+                    javaParsedSuperClass(yyvsp[0].ast_symbol.d->u.type->u.t);
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbsymbol);
+                    PropagateBorns(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
-                assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
+                assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symType == TypeDefault && yyvsp[0].ast_symbol.d->u.type);
+                assert(yyvsp[0].ast_symbol.d->u.type->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
-                                            yyvsp[0].bbsymbol.d->u.type->u.t);
+                                            yyvsp[0].ast_symbol.d->u.type->u.t);
             }
         }
 break;
 case 126:
-#line 1426 "java_parser.y"
+#line 1406 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -3990,64 +3970,64 @@ case 126:
         }
 break;
 case 127:
-#line 1473 "java_parser.y"
+#line 1453 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 128:
-#line 1476 "java_parser.y"
+#line 1456 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-3].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-3].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 129:
-#line 1482 "java_parser.y"
+#line 1462 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 130:
-#line 1485 "java_parser.y"
+#line 1465 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 135:
-#line 1495 "java_parser.y"
-{SetNullBorns(yyval.bbposition);}
+#line 1475 "java_parser.y"
+{SetNullBorns(yyval.ast_position);}
 break;
 case 136:
-#line 1499 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);}
+#line 1479 "java_parser.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);}
 break;
 case 137:
-#line 1500 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);}
+#line 1480 "java_parser.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);}
 break;
 case 138:
-#line 1501 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbsymbol, yyvsp[0].bbsymbol);}
+#line 1481 "java_parser.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);}
 break;
 case 139:
-#line 1502 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbposition, yyvsp[0].bbposition);}
+#line 1482 "java_parser.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 140:
-#line 1508 "java_parser.y"
+#line 1488 "java_parser.y"
 {
-            yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
+            yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    s_cps.lastAssignementStruct = yyvsp[0].bbsymbol.d;
+                    s_cps.lastAssignementStruct = yyvsp[0].ast_symbol.d;
                 } else {
-                    PropagateBorns(yyval.bbsymbol, yyvsp[0].bbsymbol, yyvsp[0].bbsymbol);
+                    PropagateBorns(yyval.ast_symbol, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
                 }
             }
     }
 break;
 case 141:
-#line 1521 "java_parser.y"
+#line 1501 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4057,14 +4037,14 @@ case 141:
                     s_cps.lastAssignementStruct = NULL;
                     clas = s_javaStat->thisClass;
                     assert(clas != NULL);
-                    for(p=yyvsp[-1].bbsymbol.d; p!=NULL; p=pp) {
+                    for(p=yyvsp[-1].ast_symbol.d; p!=NULL; p=pp) {
                         pp = p->next;
                         p->next = NULL;
                         if (p->bits.symType == TypeError) continue;
                         assert(p->bits.symType == TypeDefault);
-                        completeDeclarator(yyvsp[-2].bbsymbol.d, p);
+                        completeDeclarator(yyvsp[-2].ast_symbol.d, p);
                         vClass = s_javaStat->classFileInd;
-                        p->bits.accessFlags = yyvsp[-3].bbunsign.d;
+                        p->bits.accessFlags = yyvsp[-3].ast_unsigned.d;
                         p->bits.storage = StorageField;
                         if (clas->bits.accessFlags&ACC_INTERFACE) {
                             /* set interface default access flags*/
@@ -4080,21 +4060,21 @@ case 141:
                         addCxReference(p, &p->pos, UsageDefined, vClass, vClass);
                         htmlAddJavaDocReference(p, &p->pos, vClass, vClass);
                     }
-                    yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
+                    yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
                     if (s_opt.taskRegime == RegimeEditServer
                         && s_cp.parserPassedMarker
                         && !s_cp.thisMethodMemoriesStored){
                         s_cps.methodCoordEndLine = cFile.lineNumber+1;
                     }
                 } else {
-                    PropagateBorns(yyval.bbsymbol, yyvsp[-3].bbunsign, yyvsp[0].bbposition);
-                    if (yyval.bbsymbol.b.file == s_noneFileIndex) PropagateBorns(yyval.bbsymbol, yyvsp[-2].bbsymbol, yyvsp[0].bbposition);
-                    if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyval.bbsymbol.b, s_cxRefPos, yyval.bbsymbol.e)
+                    PropagateBorns(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_position);
+                    if (yyval.ast_symbol.b.file == s_noneFileIndex) PropagateBorns(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_position);
+                    if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyval.ast_symbol.b, s_cxRefPos, yyval.ast_symbol.e)
                         && s_spp[SPP_FIELD_DECLARATION_BEGIN_POSITION].file==s_noneFileIndex) {
-                        s_spp[SPP_FIELD_DECLARATION_BEGIN_POSITION] = yyval.bbsymbol.b;
-                        s_spp[SPP_FIELD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].bbsymbol.b;
-                        s_spp[SPP_FIELD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].bbsymbol.e;
-                        s_spp[SPP_FIELD_DECLARATION_END_POSITION] = yyval.bbsymbol.e;
+                        s_spp[SPP_FIELD_DECLARATION_BEGIN_POSITION] = yyval.ast_symbol.b;
+                        s_spp[SPP_FIELD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_symbol.b;
+                        s_spp[SPP_FIELD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].ast_symbol.e;
+                        s_spp[SPP_FIELD_DECLARATION_END_POSITION] = yyval.ast_symbol.e;
                     }
                 }
             }
@@ -4105,15 +4085,15 @@ case 141:
                 int		vClass;
                 clas = s_jsl->classStat->thisClass;
                 assert(clas != NULL);
-                for(p=yyvsp[-1].bbsymbol.d; p!=NULL; p=pp) {
+                for(p=yyvsp[-1].ast_symbol.d; p!=NULL; p=pp) {
                     pp = p->next;
                     p->next = NULL;
                     if (p->bits.symType == TypeError) continue;
                     assert(p->bits.symType == TypeDefault);
                     assert(clas->u.s);
                     vClass = clas->u.s->classFile;
-                    jslCompleteDeclarator(yyvsp[-2].bbsymbol.d, p);
-                    p->bits.accessFlags = yyvsp[-3].bbunsign.d;
+                    jslCompleteDeclarator(yyvsp[-2].ast_symbol.d, p);
+                    p->bits.accessFlags = yyvsp[-3].ast_unsigned.d;
                     p->bits.storage = StorageField;
                     if (clas->bits.accessFlags&ACC_INTERFACE) {
                         /* set interface default access flags*/
@@ -4128,407 +4108,407 @@ case 141:
                         addCxReference(p, &p->pos, UsageDefined, vClass, vClass);
                     }
                 }
-                yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
+                yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
             }
         }
 break;
 case 142:
-#line 1607 "java_parser.y"
+#line 1587 "java_parser.y"
 {
-            yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
+            yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(yyval.bbsymbol.d->bits.symType == TypeDefault || yyval.bbsymbol.d->bits.symType == TypeError);
+                    assert(yyval.ast_symbol.d->bits.symType == TypeDefault || yyval.ast_symbol.d->bits.symType == TypeError);
                 } else {
-                    PropagateBorns(yyval.bbsymbol, yyvsp[0].bbsymbol, yyvsp[0].bbsymbol);
+                    PropagateBorns(yyval.ast_symbol, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
                 }
             }
         }
 break;
 case 143:
-#line 1617 "java_parser.y"
+#line 1597 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(yyvsp[-2].bbsymbol.d && yyvsp[0].bbsymbol.d);
-                    if (yyvsp[0].bbsymbol.d->bits.storage == StorageError) {
-                        yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
+                    assert(yyvsp[-2].ast_symbol.d && yyvsp[0].ast_symbol.d);
+                    if (yyvsp[0].ast_symbol.d->bits.storage == StorageError) {
+                        yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
                     } else {
-                        yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
-                        yyval.bbsymbol.d->next = yyvsp[-2].bbsymbol.d;
+                        yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
+                        yyval.ast_symbol.d->next = yyvsp[-2].ast_symbol.d;
                     }
-                    assert(yyval.bbsymbol.d->bits.symType == TypeDefault || yyval.bbsymbol.d->bits.symType == TypeError);
+                    assert(yyval.ast_symbol.d->bits.symType == TypeDefault || yyval.ast_symbol.d->bits.symType == TypeError);
                 } else {
-                    PropagateBorns(yyval.bbsymbol, yyvsp[-2].bbsymbol, yyvsp[0].bbsymbol);
+                    PropagateBorns(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
-                assert(yyvsp[-2].bbsymbol.d && yyvsp[0].bbsymbol.d);
-                if (yyvsp[0].bbsymbol.d->bits.storage == StorageError) {
-                    yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
+                assert(yyvsp[-2].ast_symbol.d && yyvsp[0].ast_symbol.d);
+                if (yyvsp[0].ast_symbol.d->bits.storage == StorageError) {
+                    yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
                 } else {
-                    yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
-                    yyval.bbsymbol.d->next = yyvsp[-2].bbsymbol.d;
+                    yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
+                    yyval.ast_symbol.d->next = yyvsp[-2].ast_symbol.d;
                 }
-                assert(yyval.bbsymbol.d->bits.symType==TypeDefault || yyval.bbsymbol.d->bits.symType==TypeError);
+                assert(yyval.ast_symbol.d->bits.symType==TypeDefault || yyval.ast_symbol.d->bits.symType==TypeError);
             }
         }
 break;
 case 145:
-#line 1647 "java_parser.y"
+#line 1627 "java_parser.y"
 {
-            yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbsymbol, yyvsp[-2].bbsymbol, yyvsp[0].bbexprType);
+            yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_expressionType);
         }
 break;
 case 146:
-#line 1651 "java_parser.y"
+#line 1631 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    XX_ALLOC(yyval.bbsymbol.d, Symbol);
-                    *yyval.bbsymbol.d = s_errorSymbol;
+                    XX_ALLOC(yyval.ast_symbol.d, Symbol);
+                    *yyval.ast_symbol.d = s_errorSymbol;
                 } else {
-                    SetNullBorns(yyval.bbsymbol);
+                    SetNullBorns(yyval.ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
-                CF_ALLOC(yyval.bbsymbol.d, Symbol);
-                *yyval.bbsymbol.d = s_errorSymbol;
+                CF_ALLOC(yyval.ast_symbol.d, Symbol);
+                *yyval.ast_symbol.d = s_errorSymbol;
             }
         }
 break;
 case 147:
-#line 1668 "java_parser.y"
+#line 1648 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbsymbol.d = newSymbol(yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->name, yyvsp[0].bbidIdent.d->p);
+                    yyval.ast_symbol.d = newSymbol(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->p);
                 } else {
-                    PropagateBorns(yyval.bbsymbol, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+                    PropagateBorns(yyval.ast_symbol, yyvsp[0].ast_id, yyvsp[0].ast_id);
                 }
             }
             if (inSecondJslPass()) {
                 char *name;
-                CF_ALLOCC(name, strlen(yyvsp[0].bbidIdent.d->name)+1, char);
-                strcpy(name, yyvsp[0].bbidIdent.d->name);
-                CF_ALLOC(yyval.bbsymbol.d, Symbol);
-                fillSymbol(yyval.bbsymbol.d, name, name, yyvsp[0].bbidIdent.d->p);
+                CF_ALLOCC(name, strlen(yyvsp[0].ast_id.d->name)+1, char);
+                strcpy(name, yyvsp[0].ast_id.d->name);
+                CF_ALLOC(yyval.ast_symbol.d, Symbol);
+                fillSymbol(yyval.ast_symbol.d, name, name, yyvsp[0].ast_id.d->p);
             }
         }
 break;
 case 148:
-#line 1684 "java_parser.y"
+#line 1664 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(yyvsp[-2].bbsymbol.d);
-                    yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
-                    AddComposedType(yyval.bbsymbol.d, TypeArray);
+                    assert(yyvsp[-2].ast_symbol.d);
+                    yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
+                    AddComposedType(yyval.ast_symbol.d, TypeArray);
                 } else {
-                    PropagateBorns(yyval.bbsymbol, yyvsp[-2].bbsymbol, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_position);
                 }
             }
             if (inSecondJslPass()) {
-                assert(yyvsp[-2].bbsymbol.d);
-                yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
-                JslAddComposedType(yyval.bbsymbol.d, TypeArray);
+                assert(yyvsp[-2].ast_symbol.d);
+                yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
+                JslAddComposedType(yyval.ast_symbol.d, TypeArray);
             }
         }
 break;
 case 149:
-#line 1700 "java_parser.y"
+#line 1680 "java_parser.y"
 {/* rule never used */}
 break;
 case 152:
-#line 1712 "java_parser.y"
+#line 1692 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        javaMethodBodyBeginning(yyvsp[-1].bbsymbol.d);
+                        javaMethodBodyBeginning(yyvsp[-1].ast_symbol.d);
                     }
                 }
             }
 break;
 case 153:
-#line 1720 "java_parser.y"
+#line 1700 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        javaMethodBodyEnding(&yyvsp[-1].bbposition.d);
+                        javaMethodBodyEnding(&yyvsp[-1].ast_position.d);
                     } else {
-                        PropagateBorns(yyval.bbposition, yyvsp[-4].bbsymbol, yyvsp[-1].bbposition);
-                        if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyvsp[-4].bbsymbol.b, s_cxRefPos, yyvsp[-4].bbsymbol.e)) {
-                            s_spp[SPP_METHOD_DECLARATION_BEGIN_POSITION] = yyval.bbposition.b;
-                            s_spp[SPP_METHOD_DECLARATION_END_POSITION] = yyval.bbposition.e;
+                        PropagateBorns(yyval.ast_position, yyvsp[-4].ast_symbol, yyvsp[-1].ast_position);
+                        if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyvsp[-4].ast_symbol.b, s_cxRefPos, yyvsp[-4].ast_symbol.e)) {
+                            s_spp[SPP_METHOD_DECLARATION_BEGIN_POSITION] = yyval.ast_position.b;
+                            s_spp[SPP_METHOD_DECLARATION_END_POSITION] = yyval.ast_position.e;
                         }
                     }
                 }
             }
 break;
 case 154:
-#line 1736 "java_parser.y"
+#line 1716 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     s_cps.lastAssignementStruct = NULL;
-                    yyval.bbsymbol.d = javaMethodHeader(yyvsp[-3].bbunsign.d,yyvsp[-2].bbsymbol.d,yyvsp[-1].bbsymbol.d, StorageMethod);
+                    yyval.ast_symbol.d = javaMethodHeader(yyvsp[-3].ast_unsigned.d,yyvsp[-2].ast_symbol.d,yyvsp[-1].ast_symbol.d, StorageMethod);
                 } else {
-                    PropagateBorns(yyval.bbsymbol, yyvsp[-3].bbunsign, yyvsp[0].bbsymbolList);
-                    if (yyval.bbsymbol.b.file == s_noneFileIndex) PropagateBorns(yyval.bbsymbol, yyvsp[-2].bbsymbol, yyval.bbsymbol);
-                    if (yyval.bbsymbol.e.file == s_noneFileIndex) PropagateBorns(yyval.bbsymbol, yyval.bbsymbol, yyvsp[-1].bbsymbol);
-                    if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyval.bbsymbol.b, s_cxRefPos, yyvsp[-1].bbsymbol.e)) {
-                        s_spp[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].bbsymbol.b;
-                        s_spp[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].bbsymbol.e;
+                    PropagateBorns(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_symbolList);
+                    if (yyval.ast_symbol.b.file == s_noneFileIndex) PropagateBorns(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyval.ast_symbol);
+                    if (yyval.ast_symbol.e.file == s_noneFileIndex) PropagateBorns(yyval.ast_symbol, yyval.ast_symbol, yyvsp[-1].ast_symbol);
+                    if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyval.ast_symbol.b, s_cxRefPos, yyvsp[-1].ast_symbol.e)) {
+                        s_spp[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_symbol.b;
+                        s_spp[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].ast_symbol.e;
                     }
                 }
             }
             if (inSecondJslPass()) {
-                yyval.bbsymbol.d = jslMethodHeader(yyvsp[-3].bbunsign.d,yyvsp[-2].bbsymbol.d,yyvsp[-1].bbsymbol.d,StorageMethod, yyvsp[0].bbsymbolList.d);
+                yyval.ast_symbol.d = jslMethodHeader(yyvsp[-3].ast_unsigned.d,yyvsp[-2].ast_symbol.d,yyvsp[-1].ast_symbol.d,StorageMethod, yyvsp[0].ast_symbolList.d);
             }
         }
 break;
 case 155:
-#line 1755 "java_parser.y"
+#line 1735 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbsymbol.d = javaMethodHeader(yyvsp[-3].bbunsign.d,&s_defaultVoidDefinition,yyvsp[-1].bbsymbol.d,StorageMethod);
+                    yyval.ast_symbol.d = javaMethodHeader(yyvsp[-3].ast_unsigned.d,&s_defaultVoidDefinition,yyvsp[-1].ast_symbol.d,StorageMethod);
                 } else {
-                    PropagateBorns(yyval.bbsymbol, yyvsp[-3].bbunsign, yyvsp[0].bbsymbolList);
-                    if (yyval.bbsymbol.b.file == s_noneFileIndex) PropagateBorns(yyval.bbsymbol, yyvsp[-2].bbidIdent, yyval.bbsymbol);
-                    if (yyval.bbsymbol.e.file == s_noneFileIndex) PropagateBorns(yyval.bbsymbol, yyval.bbsymbol, yyvsp[-1].bbsymbol);
-                    if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyval.bbsymbol.b, s_cxRefPos, yyvsp[-1].bbsymbol.e)) {
-                        s_spp[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].bbidIdent.b;
-                        s_spp[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].bbidIdent.e;
+                    PropagateBorns(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_symbolList);
+                    if (yyval.ast_symbol.b.file == s_noneFileIndex) PropagateBorns(yyval.ast_symbol, yyvsp[-2].ast_id, yyval.ast_symbol);
+                    if (yyval.ast_symbol.e.file == s_noneFileIndex) PropagateBorns(yyval.ast_symbol, yyval.ast_symbol, yyvsp[-1].ast_symbol);
+                    if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyval.ast_symbol.b, s_cxRefPos, yyvsp[-1].ast_symbol.e)) {
+                        s_spp[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_id.b;
+                        s_spp[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].ast_id.e;
                     }
                 }
             }
             if (inSecondJslPass()) {
-                yyval.bbsymbol.d = jslMethodHeader(yyvsp[-3].bbunsign.d,&s_defaultVoidDefinition,yyvsp[-1].bbsymbol.d,StorageMethod, yyvsp[0].bbsymbolList.d);
+                yyval.ast_symbol.d = jslMethodHeader(yyvsp[-3].ast_unsigned.d,&s_defaultVoidDefinition,yyvsp[-1].ast_symbol.d,StorageMethod, yyvsp[0].ast_symbolList.d);
             }
         }
 break;
 case 156:
-#line 1773 "java_parser.y"
+#line 1753 "java_parser.y"
 {assert(0);}
 break;
 case 157:
-#line 1778 "java_parser.y"
+#line 1758 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        yyval.symbol = javaCreateNewMethod(yyvsp[0].bbidIdent.d->name, &(yyvsp[0].bbidIdent.d->p), MEM_XX);
+                        yyval.symbol = javaCreateNewMethod(yyvsp[0].ast_id.d->name, &(yyvsp[0].ast_id.d->p), MEM_XX);
                     }
                 }
                 if (inSecondJslPass()) {
-                    yyval.symbol = javaCreateNewMethod(yyvsp[0].bbidIdent.d->name,&(yyvsp[0].bbidIdent.d->p), MEM_CF);
+                    yyval.symbol = javaCreateNewMethod(yyvsp[0].ast_id.d->name,&(yyvsp[0].ast_id.d->p), MEM_CF);
                 }
             }
 break;
 case 158:
-#line 1789 "java_parser.y"
+#line 1769 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        yyval.bbsymbol.d = yyvsp[-3].symbol;
-                        assert(yyval.bbsymbol.d && yyval.bbsymbol.d->u.type && yyval.bbsymbol.d->u.type->kind == TypeFunction);
-                        FILL_funTypeModif(&yyval.bbsymbol.d->u.type->u.f , yyvsp[-1].bbsymbolPositionLstPair.d.s, NULL);
+                        yyval.ast_symbol.d = yyvsp[-3].symbol;
+                        assert(yyval.ast_symbol.d && yyval.ast_symbol.d->u.type && yyval.ast_symbol.d->u.type->kind == TypeFunction);
+                        FILL_funTypeModif(&yyval.ast_symbol.d->u.type->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
                     } else {
-                        javaHandleDeclaratorParamPositions(&yyvsp[-4].bbidIdent.d->p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbsymbolPositionLstPair.d.p, &yyvsp[0].bbposition.d);
-                        PropagateBorns(yyval.bbsymbol, yyvsp[-4].bbidIdent, yyvsp[0].bbposition);
+                        javaHandleDeclaratorParamPositions(&yyvsp[-4].ast_id.d->p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_symbolPositionListPair.d.p, &yyvsp[0].ast_position.d);
+                        PropagateBorns(yyval.ast_symbol, yyvsp[-4].ast_id, yyvsp[0].ast_position);
                     }
                 }
                 if (inSecondJslPass()) {
-                    yyval.bbsymbol.d = yyvsp[-3].symbol;
-                    assert(yyval.bbsymbol.d && yyval.bbsymbol.d->u.type && yyval.bbsymbol.d->u.type->kind == TypeFunction);
-                    FILL_funTypeModif(&yyval.bbsymbol.d->u.type->u.f , yyvsp[-1].bbsymbolPositionLstPair.d.s, NULL);
+                    yyval.ast_symbol.d = yyvsp[-3].symbol;
+                    assert(yyval.ast_symbol.d && yyval.ast_symbol.d->u.type && yyval.ast_symbol.d->u.type->kind == TypeFunction);
+                    FILL_funTypeModif(&yyval.ast_symbol.d->u.type->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
                 }
             }
 break;
 case 159:
-#line 1806 "java_parser.y"
+#line 1786 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
-                    AddComposedType(yyval.bbsymbol.d, TypeArray);
+                    yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
+                    AddComposedType(yyval.ast_symbol.d, TypeArray);
                 } else {
-                    PropagateBorns(yyval.bbsymbol, yyvsp[-2].bbsymbol, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_position);
                 }
             }
             if (inSecondJslPass()) {
-                yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
-                JslAddComposedType(yyval.bbsymbol.d, TypeArray);
+                yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
+                JslAddComposedType(yyval.ast_symbol.d, TypeArray);
             }
         }
 break;
 case 160:
-#line 1820 "java_parser.y"
+#line 1800 "java_parser.y"
 { assert(0);}
 break;
 case 161:
-#line 1823 "java_parser.y"
+#line 1803 "java_parser.y"
 {
-            yyval.bbsymbolPositionLstPair.d.s = NULL;
-            yyval.bbsymbolPositionLstPair.d.p = NULL;
-            SetNullBorns(yyval.bbsymbolPositionLstPair);
+            yyval.ast_symbolPositionListPair.d.s = NULL;
+            yyval.ast_symbolPositionListPair.d.p = NULL;
+            SetNullBorns(yyval.ast_symbolPositionListPair);
         }
 break;
 case 163:
-#line 1832 "java_parser.y"
+#line 1812 "java_parser.y"
 {
             if (! SyntaxPassOnly()) {
-                yyval.bbsymbolPositionLstPair.d.s = yyvsp[0].bbsymbol.d;
+                yyval.ast_symbolPositionListPair.d.s = yyvsp[0].ast_symbol.d;
             } else {
-                yyval.bbsymbolPositionLstPair.d.p = NULL;
-                appendPositionToList(&yyval.bbsymbolPositionLstPair.d.p, &s_noPos);
-                PropagateBorns(yyval.bbsymbolPositionLstPair, yyvsp[0].bbsymbol, yyvsp[0].bbsymbol);
+                yyval.ast_symbolPositionListPair.d.p = NULL;
+                appendPositionToList(&yyval.ast_symbolPositionListPair.d.p, &s_noPos);
+                PropagateBorns(yyval.ast_symbolPositionListPair, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
             }
         }
 break;
 case 164:
-#line 1841 "java_parser.y"
+#line 1821 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
-                    LIST_APPEND(Symbol, yyval.bbsymbolPositionLstPair.d.s, yyvsp[0].bbsymbol.d);
+                    yyval.ast_symbolPositionListPair.d = yyvsp[-2].ast_symbolPositionListPair.d;
+                    LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.d.s, yyvsp[0].ast_symbol.d);
                 } else {
-                    appendPositionToList(&yyval.bbsymbolPositionLstPair.d.p, &yyvsp[-1].bbposition.d);
-                    PropagateBorns(yyval.bbsymbolPositionLstPair, yyvsp[-2].bbsymbolPositionLstPair, yyvsp[0].bbsymbol);
+                    appendPositionToList(&yyval.ast_symbolPositionListPair.d.p, &yyvsp[-1].ast_position.d);
+                    PropagateBorns(yyval.ast_symbolPositionListPair, yyvsp[-2].ast_symbolPositionListPair, yyvsp[0].ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
-                yyval.bbsymbolPositionLstPair.d = yyvsp[-2].bbsymbolPositionLstPair.d;
-                LIST_APPEND(Symbol, yyval.bbsymbolPositionLstPair.d.s, yyvsp[0].bbsymbol.d);
+                yyval.ast_symbolPositionListPair.d = yyvsp[-2].ast_symbolPositionListPair.d;
+                LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.d.s, yyvsp[0].ast_symbol.d);
             }
         }
 break;
 case 165:
-#line 1859 "java_parser.y"
+#line 1839 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
-                    completeDeclarator(yyvsp[-1].bbsymbol.d, yyvsp[0].bbsymbol.d);
+                    yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
+                    completeDeclarator(yyvsp[-1].ast_symbol.d, yyvsp[0].ast_symbol.d);
                 } else {
-                    PropagateBorns(yyval.bbsymbol, yyvsp[-1].bbsymbol, yyvsp[0].bbsymbol);
+                    PropagateBorns(yyval.ast_symbol, yyvsp[-1].ast_symbol, yyvsp[0].ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
-                yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
-                completeDeclarator(yyvsp[-1].bbsymbol.d, yyvsp[0].bbsymbol.d);
+                yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
+                completeDeclarator(yyvsp[-1].ast_symbol.d, yyvsp[0].ast_symbol.d);
             }
         }
 break;
 case 166:
-#line 1873 "java_parser.y"
+#line 1853 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
-                    completeDeclarator(yyvsp[-1].bbsymbol.d, yyvsp[0].bbsymbol.d);
+                    yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
+                    completeDeclarator(yyvsp[-1].ast_symbol.d, yyvsp[0].ast_symbol.d);
                 } else {
-                    PropagateBorns(yyval.bbsymbol, yyvsp[-2].bbposition, yyvsp[0].bbsymbol);
+                    PropagateBorns(yyval.ast_symbol, yyvsp[-2].ast_position, yyvsp[0].ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
-                yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
-                completeDeclarator(yyvsp[-1].bbsymbol.d, yyvsp[0].bbsymbol.d);
+                yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
+                completeDeclarator(yyvsp[-1].ast_symbol.d, yyvsp[0].ast_symbol.d);
             }
         }
 break;
 case 167:
-#line 1887 "java_parser.y"
+#line 1867 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    XX_ALLOC(yyval.bbsymbol.d, Symbol);
-                    *yyval.bbsymbol.d = s_errorSymbol;
+                    XX_ALLOC(yyval.ast_symbol.d, Symbol);
+                    *yyval.ast_symbol.d = s_errorSymbol;
                 } else {
-                    SetNullBorns(yyval.bbsymbol);
+                    SetNullBorns(yyval.ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
-                CF_ALLOC(yyval.bbsymbol.d, Symbol);
-                *yyval.bbsymbol.d = s_errorSymbol;
+                CF_ALLOC(yyval.ast_symbol.d, Symbol);
+                *yyval.ast_symbol.d = s_errorSymbol;
             }
         }
 break;
 case 168:
-#line 1903 "java_parser.y"
+#line 1883 "java_parser.y"
 {
-            yyval.bbsymbolList.d = NULL;
-            SetNullBorns(yyval.bbsymbolList);
+            yyval.ast_symbolList.d = NULL;
+            SetNullBorns(yyval.ast_symbolList);
         }
 break;
 case 169:
-#line 1907 "java_parser.y"
+#line 1887 "java_parser.y"
 {
-            yyval.bbsymbolList.d = yyvsp[0].bbsymbolList.d;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbsymbolList, yyvsp[-1].bbposition, yyvsp[0].bbsymbolList);
+            yyval.ast_symbolList.d = yyvsp[0].ast_symbolList.d;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_symbolList, yyvsp[-1].ast_position, yyvsp[0].ast_symbolList);
         }
 break;
 case 170:
-#line 1914 "java_parser.y"
+#line 1894 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbsymbolList, yyvsp[0].bbsymbol, yyvsp[0].bbsymbol);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_symbolList, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
             if (inSecondJslPass()) {
-                assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
-                CF_ALLOC(yyval.bbsymbolList.d, SymbolList);
+                assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symType == TypeDefault && yyvsp[0].ast_symbol.d->u.type);
+                assert(yyvsp[0].ast_symbol.d->u.type->kind == TypeStruct);
+                CF_ALLOC(yyval.ast_symbolList.d, SymbolList);
                 /* REPLACED: FILL_symbolList($$.d, $1.d->u.type->u.t, NULL); with: */
-                *yyval.bbsymbolList.d = (SymbolList){.d = yyvsp[0].bbsymbol.d->u.type->u.t, .next = NULL};
+                *yyval.ast_symbolList.d = (SymbolList){.d = yyvsp[0].ast_symbol.d->u.type->u.t, .next = NULL};
             }
         }
 break;
 case 171:
-#line 1924 "java_parser.y"
+#line 1904 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbsymbolList, yyvsp[-2].bbsymbolList, yyvsp[0].bbsymbol);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_symbolList, yyvsp[-2].ast_symbolList, yyvsp[0].ast_symbol);
             if (inSecondJslPass()) {
-                assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
-                CF_ALLOC(yyval.bbsymbolList.d, SymbolList);
+                assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symType == TypeDefault && yyvsp[0].ast_symbol.d->u.type);
+                assert(yyvsp[0].ast_symbol.d->u.type->kind == TypeStruct);
+                CF_ALLOC(yyval.ast_symbolList.d, SymbolList);
                 /* REPLACED: FILL_symbolList($$.d, $3.d->u.type->u.t, $1.d); with: */
-                *yyval.bbsymbolList.d = (SymbolList){.d = yyvsp[0].bbsymbol.d->u.type->u.t, .next = yyvsp[-2].bbsymbolList.d};
+                *yyval.ast_symbolList.d = (SymbolList){.d = yyvsp[0].ast_symbol.d->u.type->u.t, .next = yyvsp[-2].ast_symbolList.d};
             }
         }
 break;
 case 173:
-#line 1938 "java_parser.y"
+#line 1918 "java_parser.y"
 {
-            yyval.bbposition.d = yyvsp[0].bbposition.d;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbposition, yyvsp[0].bbposition);
+            yyval.ast_position.d = yyvsp[0].ast_position.d;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 174:
-#line 1947 "java_parser.y"
+#line 1927 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 175:
-#line 1950 "java_parser.y"
+#line 1930 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 176:
-#line 1957 "java_parser.y"
+#line 1937 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         Symbol *mh, *args;
 
-                        args = yyvsp[-1].bbsymbol.d;
+                        args = yyvsp[-1].ast_symbol.d;
                         /*&
                           if (! ($1.d & ACC_STATIC)) {
                               args = javaPrependDirectEnclosingInstanceArgument($2.d);
                           }
                           &*/
-                        mh=javaMethodHeader(yyvsp[-2].bbunsign.d, &s_errorSymbol, args, StorageConstructor);
+                        mh=javaMethodHeader(yyvsp[-2].ast_unsigned.d, &s_errorSymbol, args, StorageConstructor);
                         /* TODO! Merge this with 'javaMethodBodyBeginning'!*/
                         assert(mh->u.type && mh->u.type->kind == TypeFunction);
                         stackMemoryBlockStart();  /* in order to remove arguments*/
@@ -4536,22 +4516,22 @@ case 176:
                         /* also needed for pushing label reference */
                         genInternalLabelReference(-1, UsageDefined);
                         s_count.localVar = 0;
-                        assert(yyvsp[-1].bbsymbol.d && yyvsp[-1].bbsymbol.d->u.type);
-                        javaAddMethodParametersToSymTable(yyvsp[-1].bbsymbol.d);
+                        assert(yyvsp[-1].ast_symbol.d && yyvsp[-1].ast_symbol.d->u.type);
+                        javaAddMethodParametersToSymTable(yyvsp[-1].ast_symbol.d);
                         mh->u.type->u.m.sig = strchr(mh->linkName, '(');
-                        s_javaStat->cpMethodMods = yyvsp[-2].bbunsign.d;
+                        s_javaStat->cpMethodMods = yyvsp[-2].ast_unsigned.d;
                     }
                 }
                 if (inSecondJslPass()) {
                     Symbol *args;
-                    args = yyvsp[-1].bbsymbol.d;
-                    jslMethodHeader(yyvsp[-2].bbunsign.d,&s_defaultVoidDefinition,args,
-                                    StorageConstructor, yyvsp[0].bbsymbolList.d);
+                    args = yyvsp[-1].ast_symbol.d;
+                    jslMethodHeader(yyvsp[-2].ast_unsigned.d,&s_defaultVoidDefinition,args,
+                                    StorageConstructor, yyvsp[0].ast_symbolList.d);
                 }
             }
 break;
 case 177:
-#line 1989 "java_parser.y"
+#line 1969 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4559,8 +4539,8 @@ case 177:
                     if (s_opt.taskRegime == RegimeHtmlGenerate) {
                         htmlAddFunctionSeparatorReference();
                     } else {
-                        PropagateBorns(yyval.bbposition, yyvsp[-6].bbunsign, yyvsp[-1].bbposition);
-                        if (yyval.bbposition.b.file == s_noneFileIndex) PropagateBorns(yyval.bbposition, yyvsp[-5].bbsymbol, yyval.bbposition);
+                        PropagateBorns(yyval.ast_position, yyvsp[-6].ast_unsigned, yyvsp[-1].ast_position);
+                        if (yyval.ast_position.b.file == s_noneFileIndex) PropagateBorns(yyval.ast_position, yyvsp[-5].ast_symbol, yyval.ast_position);
                     }
                 }
                 s_cp.function = NULL; /* added for set-target-position checks */
@@ -4568,186 +4548,186 @@ case 177:
         }
 break;
 case 178:
-#line 2007 "java_parser.y"
+#line 1987 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        if (strcmp(yyvsp[0].bbidIdent.d->name, s_javaStat->thisClass->name)==0) {
-                            addCxReference(s_javaStat->thisClass, &yyvsp[0].bbidIdent.d->p,
+                        if (strcmp(yyvsp[0].ast_id.d->name, s_javaStat->thisClass->name)==0) {
+                            addCxReference(s_javaStat->thisClass, &yyvsp[0].ast_id.d->p,
                                            UsageConstructorDefinition,s_noneFileIndex, s_noneFileIndex);
-                            yyval.symbol = javaCreateNewMethod(yyvsp[0].bbidIdent.d->name,/*JAVA_CONSTRUCTOR_NAME1,*/
-                                                             &(yyvsp[0].bbidIdent.d->p), MEM_XX);
+                            yyval.symbol = javaCreateNewMethod(yyvsp[0].ast_id.d->name,/*JAVA_CONSTRUCTOR_NAME1,*/
+                                                             &(yyvsp[0].ast_id.d->p), MEM_XX);
                         } else {
                             /* a type forgotten for a method?*/
-                            yyval.symbol = javaCreateNewMethod(yyvsp[0].bbidIdent.d->name,&(yyvsp[0].bbidIdent.d->p),MEM_XX);
+                            yyval.symbol = javaCreateNewMethod(yyvsp[0].ast_id.d->name,&(yyvsp[0].ast_id.d->p),MEM_XX);
                         }
                     }
                 }
                 if (inSecondJslPass()) {
-                    if (strcmp(yyvsp[0].bbidIdent.d->name, s_jsl->classStat->thisClass->name)==0) {
+                    if (strcmp(yyvsp[0].ast_id.d->name, s_jsl->classStat->thisClass->name)==0) {
                         yyval.symbol = javaCreateNewMethod(
-                                        yyvsp[0].bbidIdent.d->name, /*JAVA_CONSTRUCTOR_NAME1,*/
-                                        &(yyvsp[0].bbidIdent.d->p),
+                                        yyvsp[0].ast_id.d->name, /*JAVA_CONSTRUCTOR_NAME1,*/
+                                        &(yyvsp[0].ast_id.d->p),
                                         MEM_CF);
                     } else {
                         /* a type forgotten for a method?*/
-                        yyval.symbol = javaCreateNewMethod(yyvsp[0].bbidIdent.d->name, &(yyvsp[0].bbidIdent.d->p), MEM_CF);
+                        yyval.symbol = javaCreateNewMethod(yyvsp[0].ast_id.d->name, &(yyvsp[0].ast_id.d->p), MEM_CF);
                     }
                 }
             }
 break;
 case 179:
-#line 2034 "java_parser.y"
+#line 2014 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        yyval.bbsymbol.d = yyvsp[-3].symbol;
-                        assert(yyval.bbsymbol.d && yyval.bbsymbol.d->u.type && yyval.bbsymbol.d->u.type->kind == TypeFunction);
-                        FILL_funTypeModif(&yyval.bbsymbol.d->u.type->u.f , yyvsp[-1].bbsymbolPositionLstPair.d.s, NULL);
+                        yyval.ast_symbol.d = yyvsp[-3].symbol;
+                        assert(yyval.ast_symbol.d && yyval.ast_symbol.d->u.type && yyval.ast_symbol.d->u.type->kind == TypeFunction);
+                        FILL_funTypeModif(&yyval.ast_symbol.d->u.type->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
                     } else {
-                        javaHandleDeclaratorParamPositions(&yyvsp[-4].bbidIdent.d->p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbsymbolPositionLstPair.d.p, &yyvsp[0].bbposition.d);
-                        PropagateBorns(yyval.bbsymbol, yyvsp[-4].bbidIdent, yyvsp[0].bbposition);
+                        javaHandleDeclaratorParamPositions(&yyvsp[-4].ast_id.d->p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_symbolPositionListPair.d.p, &yyvsp[0].ast_position.d);
+                        PropagateBorns(yyval.ast_symbol, yyvsp[-4].ast_id, yyvsp[0].ast_position);
                     }
                 }
                 if (inSecondJslPass()) {
-                    yyval.bbsymbol.d = yyvsp[-3].symbol;
-                    assert(yyval.bbsymbol.d && yyval.bbsymbol.d->u.type && yyval.bbsymbol.d->u.type->kind == TypeFunction);
-                    FILL_funTypeModif(&yyval.bbsymbol.d->u.type->u.f , yyvsp[-1].bbsymbolPositionLstPair.d.s, NULL);
+                    yyval.ast_symbol.d = yyvsp[-3].symbol;
+                    assert(yyval.ast_symbol.d && yyval.ast_symbol.d->u.type && yyval.ast_symbol.d->u.type->kind == TypeFunction);
+                    FILL_funTypeModif(&yyval.ast_symbol.d->u.type->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
                 };
             }
 break;
 case 180:
-#line 2054 "java_parser.y"
+#line 2034 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-5].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-5].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 181:
-#line 2057 "java_parser.y"
+#line 2037 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-4].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-4].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 182:
-#line 2060 "java_parser.y"
+#line 2040 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-4].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-4].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 183:
-#line 2063 "java_parser.y"
+#line 2043 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 184:
-#line 2071 "java_parser.y"
+#line 2051 "java_parser.y"
 {
                 if (ComputingPossibleParameterCompletion()) {
-                    s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(s_javaStat->thisClass, &yyvsp[-1].bbidIdent.d->p);
+                    s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(s_javaStat->thisClass, &yyvsp[-1].ast_id.d->p);
                 }
             }
 break;
 case 185:
-#line 2075 "java_parser.y"
+#line 2055 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        javaConstructorInvocation(s_javaStat->thisClass, &(yyvsp[-5].bbidIdent.d->p), yyvsp[-1].bbtypeModifiersListPositionLstPair.d.t);
+                        javaConstructorInvocation(s_javaStat->thisClass, &(yyvsp[-5].ast_id.d->p), yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
                         s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
                     } else {
-                        javaHandleDeclaratorParamPositions(&yyvsp[-5].bbidIdent.d->p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbtypeModifiersListPositionLstPair.d.p, &yyvsp[0].bbposition.d);
-                        PropagateBorns(yyval.bbposition, yyvsp[-5].bbidIdent, yyvsp[0].bbposition);
+                        javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.d->p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
+                        PropagateBorns(yyval.ast_position, yyvsp[-5].ast_id, yyvsp[0].ast_position);
                     }
                 }
             }
 break;
 case 186:
-#line 2087 "java_parser.y"
+#line 2067 "java_parser.y"
 {
                 if (ComputingPossibleParameterCompletion()) {
-                    s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(javaCurrentSuperClass(), &yyvsp[-1].bbidIdent.d->p);
+                    s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(javaCurrentSuperClass(), &yyvsp[-1].ast_id.d->p);
                 }
             }
 break;
 case 187:
-#line 2091 "java_parser.y"
+#line 2071 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         Symbol *ss;
                         ss = javaCurrentSuperClass();
-                        javaConstructorInvocation(ss, &(yyvsp[-5].bbidIdent.d->p), yyvsp[-1].bbtypeModifiersListPositionLstPair.d.t);
+                        javaConstructorInvocation(ss, &(yyvsp[-5].ast_id.d->p), yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
                         s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
                     } else {
-                        javaHandleDeclaratorParamPositions(&yyvsp[-5].bbidIdent.d->p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbtypeModifiersListPositionLstPair.d.p, &yyvsp[0].bbposition.d);
-                        PropagateBorns(yyval.bbposition, yyvsp[-5].bbidIdent, yyvsp[0].bbposition);
+                        javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.d->p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
+                        PropagateBorns(yyval.ast_position, yyvsp[-5].ast_id, yyvsp[0].ast_position);
                     }
                 }
             }
 break;
 case 188:
-#line 2105 "java_parser.y"
+#line 2085 "java_parser.y"
 {
                 if (ComputingPossibleParameterCompletion()) {
-                    s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(javaCurrentSuperClass(), &(yyvsp[-1].bbidIdent.d->p));
+                    s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(javaCurrentSuperClass(), &(yyvsp[-1].ast_id.d->p));
                 }
             }
 break;
 case 189:
-#line 2109 "java_parser.y"
+#line 2089 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         Symbol *ss;
                         ss = javaCurrentSuperClass();
-                        javaConstructorInvocation(ss, &(yyvsp[-5].bbidIdent.d->p), yyvsp[-1].bbtypeModifiersListPositionLstPair.d.t);
+                        javaConstructorInvocation(ss, &(yyvsp[-5].ast_id.d->p), yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
                         s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
                     } else {
-                        javaHandleDeclaratorParamPositions(&yyvsp[-5].bbidIdent.d->p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbtypeModifiersListPositionLstPair.d.p, &yyvsp[0].bbposition.d);
-                        PropagateBorns(yyval.bbposition, yyvsp[-7].bbexprType, yyvsp[0].bbposition);
+                        javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.d->p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
+                        PropagateBorns(yyval.ast_position, yyvsp[-7].ast_expressionType, yyvsp[0].ast_position);
                     }
                 }
             }
 break;
 case 190:
-#line 2122 "java_parser.y"
-{SetNullBorns(yyval.bbposition);}
+#line 2102 "java_parser.y"
+{SetNullBorns(yyval.ast_position);}
 break;
 case 191:
-#line 2123 "java_parser.y"
-{SetNullBorns(yyval.bbposition);}
+#line 2103 "java_parser.y"
+{SetNullBorns(yyval.ast_position);}
 break;
 case 192:
-#line 2124 "java_parser.y"
-{SetNullBorns(yyval.bbposition);}
+#line 2104 "java_parser.y"
+{SetNullBorns(yyval.ast_position);}
 break;
 case 193:
-#line 2125 "java_parser.y"
+#line 2105 "java_parser.y"
 {assert(0);}
 break;
 case 194:
-#line 2126 "java_parser.y"
+#line 2106 "java_parser.y"
 {assert(0);}
 break;
 case 195:
-#line 2127 "java_parser.y"
+#line 2107 "java_parser.y"
 {assert(0);}
 break;
 case 196:
-#line 2134 "java_parser.y"
+#line 2114 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.trail=newClassDefinitionBegin(yyvsp[0].bbidIdent.d,(yyvsp[-2].bbunsign.d|ACC_INTERFACE),NULL);
+                    yyval.trail=newClassDefinitionBegin(yyvsp[0].ast_id.d,(yyvsp[-2].ast_unsigned.d|ACC_INTERFACE),NULL);
                 }
             } else {
-                jslNewClassDefinitionBegin(yyvsp[0].bbidIdent.d, (yyvsp[-2].bbunsign.d|ACC_INTERFACE), NULL, CPOS_ST);
+                jslNewClassDefinitionBegin(yyvsp[0].ast_id.d, (yyvsp[-2].ast_unsigned.d|ACC_INTERFACE), NULL, CPOS_ST);
             }
         }
 break;
 case 197:
-#line 2142 "java_parser.y"
+#line 2122 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4759,21 +4739,21 @@ case 197:
         }
 break;
 case 198:
-#line 2150 "java_parser.y"
+#line 2130 "java_parser.y"
 {
             if (regularPass()) {
-                yyval.bbidIdent.d = yyvsp[-4].bbidIdent.d;
+                yyval.ast_id.d = yyvsp[-4].ast_id.d;
                 if (! SyntaxPassOnly()) {
                     newClassDefinitionEnd(yyvsp[-3].trail);
                 } else {
-                    PropagateBorns(yyval.bbidIdent, yyvsp[-6].bbunsign, yyvsp[0].bbposition);
-                    if (yyval.bbidIdent.b.file == s_noneFileIndex) PropagateBorns(yyval.bbidIdent, yyvsp[-5].bbposition, yyval.bbidIdent);
-                    if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyval.bbidIdent.b, s_cxRefPos, yyval.bbidIdent.e)
+                    PropagateBorns(yyval.ast_id, yyvsp[-6].ast_unsigned, yyvsp[0].ast_position);
+                    if (yyval.ast_id.b.file == s_noneFileIndex) PropagateBorns(yyval.ast_id, yyvsp[-5].ast_position, yyval.ast_id);
+                    if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyval.ast_id.b, s_cxRefPos, yyval.ast_id.e)
                         && s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == s_noneFileIndex) {
-                        s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.bbidIdent.b;
-                        s_spp[SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-5].bbposition.b;
-                        s_spp[SPP_CLASS_DECLARATION_TYPE_END_POSITION] = yyvsp[-5].bbposition.e;
-                        s_spp[SPP_CLASS_DECLARATION_END_POSITION] = yyval.bbidIdent.e;
+                        s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.ast_id.b;
+                        s_spp[SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-5].ast_position.b;
+                        s_spp[SPP_CLASS_DECLARATION_TYPE_END_POSITION] = yyvsp[-5].ast_position.e;
+                        s_spp[SPP_CLASS_DECLARATION_END_POSITION] = yyval.ast_id.e;
                     }
                 }
             } else {
@@ -4782,27 +4762,27 @@ case 198:
         }
 break;
 case 199:
-#line 2171 "java_parser.y"
+#line 2151 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        yyval.trail=newClassDefinitionBegin(yyvsp[0].bbidIdent.d,(yyvsp[-2].bbunsign.d|ACC_INTERFACE),NULL);
+                        yyval.trail=newClassDefinitionBegin(yyvsp[0].ast_id.d,(yyvsp[-2].ast_unsigned.d|ACC_INTERFACE),NULL);
                     }
                 } else {
-                    jslNewClassDefinitionBegin(yyvsp[0].bbidIdent.d, (yyvsp[-2].bbunsign.d|ACC_INTERFACE), NULL, CPOS_ST);
+                    jslNewClassDefinitionBegin(yyvsp[0].ast_id.d, (yyvsp[-2].ast_unsigned.d|ACC_INTERFACE), NULL, CPOS_ST);
                 }
             }
 break;
 case 200:
-#line 2181 "java_parser.y"
+#line 2161 "java_parser.y"
 {
                 if (regularPass()) {
-                    yyval.bbidIdent.d = yyvsp[-3].bbidIdent.d;
+                    yyval.ast_id.d = yyvsp[-3].ast_id.d;
                     if (! SyntaxPassOnly()) {
                         newClassDefinitionEnd(yyvsp[-2].trail);
                     } else {
-                        PropagateBorns(yyval.bbidIdent, yyvsp[-5].bbunsign, yyvsp[0].bbposition);
-                        if (yyval.bbidIdent.b.file == s_noneFileIndex) PropagateBorns(yyval.bbidIdent, yyvsp[-4].bbposition, yyval.bbidIdent);
+                        PropagateBorns(yyval.ast_id, yyvsp[-5].ast_unsigned, yyvsp[0].ast_position);
+                        if (yyval.ast_id.b.file == s_noneFileIndex) PropagateBorns(yyval.ast_id, yyvsp[-4].ast_position, yyval.ast_id);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -4810,13 +4790,13 @@ case 200:
             }
 break;
 case 201:
-#line 2194 "java_parser.y"
+#line 2174 "java_parser.y"
 { /* never used */ }
 break;
 case 202:
-#line 2197 "java_parser.y"
+#line 2177 "java_parser.y"
 {
-            SetNullBorns(yyval.bbposition);
+            SetNullBorns(yyval.ast_position);
             if (inSecondJslPass()) {
                 jslAddSuperClassOrInterfaceByName(s_jsl->classStat->thisClass,
                                                 s_javaLangObjectLinkName);
@@ -4824,435 +4804,435 @@ case 202:
         }
 break;
 case 204:
-#line 2208 "java_parser.y"
+#line 2188 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                    assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
-                    javaParsedSuperClass(yyvsp[0].bbsymbol.d->u.type->u.t);
+                    assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symType == TypeDefault && yyvsp[0].ast_symbol.d->u.type);
+                    assert(yyvsp[0].ast_symbol.d->u.type->kind == TypeStruct);
+                    javaParsedSuperClass(yyvsp[0].ast_symbol.d->u.type->u.t);
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbsymbol);
+                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
-                assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
+                assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symType == TypeDefault && yyvsp[0].ast_symbol.d->u.type);
+                assert(yyvsp[0].ast_symbol.d->u.type->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
-                                            yyvsp[0].bbsymbol.d->u.type->u.t);
+                                            yyvsp[0].ast_symbol.d->u.type->u.t);
             }
         }
 break;
 case 205:
-#line 2225 "java_parser.y"
+#line 2205 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                    assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
-                    javaParsedSuperClass(yyvsp[0].bbsymbol.d->u.type->u.t);
+                    assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symType == TypeDefault && yyvsp[0].ast_symbol.d->u.type);
+                    assert(yyvsp[0].ast_symbol.d->u.type->kind == TypeStruct);
+                    javaParsedSuperClass(yyvsp[0].ast_symbol.d->u.type->u.t);
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbsymbol);
+                    PropagateBorns(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
-                assert(yyvsp[0].bbsymbol.d && yyvsp[0].bbsymbol.d->bits.symType == TypeDefault && yyvsp[0].bbsymbol.d->u.type);
-                assert(yyvsp[0].bbsymbol.d->u.type->kind == TypeStruct);
+                assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symType == TypeDefault && yyvsp[0].ast_symbol.d->u.type);
+                assert(yyvsp[0].ast_symbol.d->u.type->kind == TypeStruct);
                 jslAddSuperClassOrInterface(s_jsl->classStat->thisClass,
-                                            yyvsp[0].bbsymbol.d->u.type->u.t);
+                                            yyvsp[0].ast_symbol.d->u.type->u.t);
             }
         }
 break;
 case 206:
-#line 2245 "java_parser.y"
+#line 2225 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 207:
-#line 2248 "java_parser.y"
+#line 2228 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-3].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-3].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 209:
-#line 2255 "java_parser.y"
+#line 2235 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 210:
-#line 2261 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);}
+#line 2241 "java_parser.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);}
 break;
 case 211:
-#line 2262 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);}
+#line 2242 "java_parser.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);}
 break;
 case 212:
-#line 2263 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbsymbol, yyvsp[0].bbsymbol);}
+#line 2243 "java_parser.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);}
 break;
 case 213:
-#line 2264 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbsymbol, yyvsp[0].bbsymbol);}
+#line 2244 "java_parser.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);}
 break;
 case 214:
-#line 2265 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbposition, yyvsp[0].bbposition);}
+#line 2245 "java_parser.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 215:
-#line 2266 "java_parser.y"
-{SetNullBorns(yyval.bbposition);}
+#line 2246 "java_parser.y"
+{SetNullBorns(yyval.ast_position);}
 break;
 case 217:
-#line 2275 "java_parser.y"
+#line 2255 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        javaMethodBodyBeginning(yyvsp[-1].bbsymbol.d);
+                        javaMethodBodyBeginning(yyvsp[-1].ast_symbol.d);
                     }
                 }
             }
 break;
 case 218:
-#line 2283 "java_parser.y"
+#line 2263 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        javaMethodBodyEnding(&yyvsp[-1].bbposition.d);
+                        javaMethodBodyEnding(&yyvsp[-1].ast_position.d);
                     } else {
-                        PropagateBorns(yyval.bbsymbol, yyvsp[-4].bbsymbol, yyvsp[-1].bbposition);
+                        PropagateBorns(yyval.ast_symbol, yyvsp[-4].ast_symbol, yyvsp[-1].ast_position);
                     }
                 }
             }
 break;
 case 219:
-#line 2297 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[-3].bbposition, yyvsp[0].bbposition);}
+#line 2277 "java_parser.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_position);}
 break;
 case 220:
-#line 2298 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[-2].bbposition, yyvsp[0].bbposition);}
+#line 2278 "java_parser.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[-2].ast_position, yyvsp[0].ast_position);}
 break;
 case 221:
-#line 2299 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[-2].bbposition, yyvsp[0].bbposition);}
+#line 2279 "java_parser.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[-2].ast_position, yyvsp[0].ast_position);}
 break;
 case 222:
-#line 2300 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[-1].bbposition, yyvsp[0].bbposition);}
+#line 2280 "java_parser.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_position);}
 break;
 case 223:
-#line 2304 "java_parser.y"
+#line 2284 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbexprType, yyvsp[0].bbexprType);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);
         }
 break;
 case 224:
-#line 2307 "java_parser.y"
+#line 2287 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbexprType);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_expressionType);
         }
 break;
 case 225:
-#line 2315 "java_parser.y"
+#line 2295 "java_parser.y"
 {
-            yyval.bbposition.d = yyvsp[0].bbposition.d;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-4].bbposition, yyvsp[0].bbposition);
+            yyval.ast_position.d = yyvsp[0].ast_position.d;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-4].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 226:
-#line 2319 "java_parser.y"
+#line 2299 "java_parser.y"
 {
-            yyval.bbposition.d = yyvsp[0].bbposition.d;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
+            yyval.ast_position.d = yyvsp[0].ast_position.d;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 228:
-#line 2327 "java_parser.y"
+#line 2307 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 232:
-#line 2336 "java_parser.y"
-{SetNullBorns(yyval.bbposition);}
+#line 2316 "java_parser.y"
+{SetNullBorns(yyval.ast_position);}
 break;
 case 233:
-#line 2340 "java_parser.y"
+#line 2320 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbsymbol, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_symbol, yyvsp[0].ast_position);
         }
 break;
 case 234:
-#line 2346 "java_parser.y"
+#line 2326 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    addNewDeclaration(yyvsp[-1].bbsymbol.d,yyvsp[0].bbsymbol.d,NULL,StorageAuto,s_javaStat->locals);
-                    yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
+                    addNewDeclaration(yyvsp[-1].ast_symbol.d,yyvsp[0].ast_symbol.d,NULL,StorageAuto,s_javaStat->locals);
+                    yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
                 } else {
-                    PropagateBorns(yyval.bbsymbol, yyvsp[-1].bbsymbol, yyvsp[0].bbsymbol);
+                    PropagateBorns(yyval.ast_symbol, yyvsp[-1].ast_symbol, yyvsp[0].ast_symbol);
                 }
             }
         }
 break;
 case 235:
-#line 2356 "java_parser.y"
+#line 2336 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    addNewDeclaration(yyvsp[-1].bbsymbol.d,yyvsp[0].bbsymbol.d,NULL,StorageAuto,s_javaStat->locals);
-                    yyval.bbsymbol.d = yyvsp[-1].bbsymbol.d;
+                    addNewDeclaration(yyvsp[-1].ast_symbol.d,yyvsp[0].ast_symbol.d,NULL,StorageAuto,s_javaStat->locals);
+                    yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
                 } else {
-                    PropagateBorns(yyval.bbsymbol, yyvsp[-2].bbposition, yyvsp[0].bbsymbol);
+                    PropagateBorns(yyval.ast_symbol, yyvsp[-2].ast_position, yyvsp[0].ast_symbol);
                 }
             }
         }
 break;
 case 236:
-#line 2366 "java_parser.y"
+#line 2346 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if (yyvsp[-2].bbsymbol.d->bits.symType != TypeError) {
-                        addNewDeclaration(yyvsp[-2].bbsymbol.d,yyvsp[0].bbsymbol.d,NULL,StorageAuto,s_javaStat->locals);
+                    if (yyvsp[-2].ast_symbol.d->bits.symType != TypeError) {
+                        addNewDeclaration(yyvsp[-2].ast_symbol.d,yyvsp[0].ast_symbol.d,NULL,StorageAuto,s_javaStat->locals);
                     }
-                    yyval.bbsymbol.d = yyvsp[-2].bbsymbol.d;
+                    yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
                 } else {
-                    PropagateBorns(yyval.bbsymbol, yyvsp[-2].bbsymbol, yyvsp[0].bbsymbol);
+                    PropagateBorns(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_symbol);
                 }
             }
         }
 break;
 case 237:
-#line 2381 "java_parser.y"
+#line 2361 "java_parser.y"
 {
-            if (regularPass()) yyval.bbsymbol.d = yyvsp[0].bbsymbol.d;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbsymbol, yyvsp[0].bbsymbol, yyvsp[0].bbsymbol);
+            if (regularPass()) yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_symbol, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
         }
 break;
 case 238:
-#line 2385 "java_parser.y"
+#line 2365 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    s_cps.lastAssignementStruct = yyvsp[0].bbsymbol.d;
+                    s_cps.lastAssignementStruct = yyvsp[0].ast_symbol.d;
                 }
             }
         }
 break;
 case 239:
-#line 2391 "java_parser.y"
+#line 2371 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     s_cps.lastAssignementStruct = NULL;
-                    yyval.bbsymbol.d = yyvsp[-3].bbsymbol.d;
+                    yyval.ast_symbol.d = yyvsp[-3].ast_symbol.d;
                 } else {
-                    PropagateBorns(yyval.bbsymbol, yyvsp[-3].bbsymbol, yyvsp[0].bbexprType);
+                    PropagateBorns(yyval.ast_symbol, yyvsp[-3].ast_symbol, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 263:
-#line 2442 "java_parser.y"
+#line 2422 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 264:
-#line 2445 "java_parser.y"
+#line 2425 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-4].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-4].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 265:
-#line 2451 "java_parser.y"
+#line 2431 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 266:
-#line 2457 "java_parser.y"
+#line 2437 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 267:
-#line 2463 "java_parser.y"
+#line 2443 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 268:
-#line 2469 "java_parser.y"
+#line 2449 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbexprType, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_expressionType, yyvsp[0].ast_position);
         }
 break;
 case 269:
-#line 2475 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[0].bbexprType, yyvsp[0].bbexprType);}
+#line 2455 "java_parser.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);}
 break;
 case 270:
-#line 2476 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[0].bbexprType, yyvsp[0].bbexprType);}
+#line 2456 "java_parser.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);}
 break;
 case 271:
-#line 2477 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[0].bbexprType, yyvsp[0].bbexprType);}
+#line 2457 "java_parser.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);}
 break;
 case 272:
-#line 2478 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[0].bbexprType, yyvsp[0].bbexprType);}
+#line 2458 "java_parser.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);}
 break;
 case 273:
-#line 2479 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[0].bbexprType, yyvsp[0].bbexprType);}
+#line 2459 "java_parser.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);}
 break;
 case 274:
-#line 2480 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[0].bbexprType, yyvsp[0].bbexprType);}
+#line 2460 "java_parser.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);}
 break;
 case 275:
-#line 2481 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.bbexprType, yyvsp[0].bbexprType, yyvsp[0].bbexprType);}
+#line 2461 "java_parser.y"
+{PropagateBornsIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);}
 break;
 case 276:
-#line 2484 "java_parser.y"
-{if (regularPass()) EXTRACT_COUNTER_SEMACT(yyval.bbinteger.d);}
+#line 2464 "java_parser.y"
+{if (regularPass()) EXTRACT_COUNTER_SEMACT(yyval.ast_integer.d);}
 break;
 case 277:
-#line 2487 "java_parser.y"
-{if (regularPass()) EXTRACT_LABEL_SEMACT(yyval.bbinteger.d);}
+#line 2467 "java_parser.y"
+{if (regularPass()) EXTRACT_LABEL_SEMACT(yyval.ast_integer.d);}
 break;
 case 278:
-#line 2490 "java_parser.y"
-{if (regularPass()) EXTRACT_GOTO_SEMACT(yyval.bbinteger.d);}
+#line 2470 "java_parser.y"
+{if (regularPass()) EXTRACT_GOTO_SEMACT(yyval.ast_integer.d);}
 break;
 case 279:
-#line 2493 "java_parser.y"
-{if (regularPass()) EXTRACT_FORK_SEMACT(yyval.bbinteger.d);}
+#line 2473 "java_parser.y"
+{if (regularPass()) EXTRACT_FORK_SEMACT(yyval.ast_integer.d);}
 break;
 case 280:
-#line 2498 "java_parser.y"
+#line 2478 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference(yyvsp[-1].bbinteger.d, UsageDefined);
+                    genInternalLabelReference(yyvsp[-1].ast_integer.d, UsageDefined);
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[-5].bbposition, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_position, yyvsp[-5].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 281:
-#line 2510 "java_parser.y"
+#line 2490 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
-                    yyval.bbinteger.d = yyvsp[0].bbinteger.d;
+                    genInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
+                    yyval.ast_integer.d = yyvsp[0].ast_integer.d;
                 } else {
-                    PropagateBorns(yyval.bbinteger, yyvsp[-7].bbposition, yyvsp[-1].bbposition);
+                    PropagateBorns(yyval.ast_integer, yyvsp[-7].ast_position, yyvsp[-1].ast_position);
                 }
             }
         }
 break;
 case 282:
-#line 2523 "java_parser.y"
+#line 2503 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference(yyvsp[-1].bbinteger.d, UsageDefined);
+                    genInternalLabelReference(yyvsp[-1].ast_integer.d, UsageDefined);
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[-1].bbinteger, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_integer, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 283:
-#line 2535 "java_parser.y"
+#line 2515 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference(yyvsp[-1].bbinteger.d, UsageDefined);
+                    genInternalLabelReference(yyvsp[-1].ast_integer.d, UsageDefined);
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[-1].bbinteger, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_integer, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 284:
-#line 2547 "java_parser.y"
+#line 2527 "java_parser.y"
 {/*6*/
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.symbol = addContinueBreakLabelSymbol(1000*yyvsp[0].bbinteger.d,SWITCH_LABEL_NAME);
+                    yyval.symbol = addContinueBreakLabelSymbol(1000*yyvsp[0].ast_integer.d,SWITCH_LABEL_NAME);
                 }
             }
         }
 break;
 case 285:
-#line 2553 "java_parser.y"
+#line 2533 "java_parser.y"
 {/*7*/
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME);
-                    genInternalLabelReference(yyvsp[-1].bbinteger.d, UsageFork);
+                    yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.d, BREAK_LABEL_NAME);
+                    genInternalLabelReference(yyvsp[-1].ast_integer.d, UsageFork);
                 }
             }
         }
 break;
 case 286:
-#line 2560 "java_parser.y"
+#line 2540 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     genSwitchCaseFork(1);
                     ExtrDeleteContBreakSym(yyvsp[-1].symbol);
                     ExtrDeleteContBreakSym(yyvsp[-2].symbol);
-                    genInternalLabelReference(yyvsp[-3].bbinteger.d, UsageDefined);
+                    genInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[-7].bbposition, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_position, yyvsp[-7].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 287:
-#line 2575 "java_parser.y"
+#line 2555 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-5].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-5].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 288:
-#line 2578 "java_parser.y"
+#line 2558 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-4].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-4].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 289:
-#line 2581 "java_parser.y"
+#line 2561 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-4].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-4].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 290:
-#line 2584 "java_parser.y"
+#line 2564 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 292:
-#line 2591 "java_parser.y"
+#line 2571 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 293:
-#line 2597 "java_parser.y"
+#line 2577 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5262,429 +5242,429 @@ case 293:
         }
 break;
 case 294:
-#line 2603 "java_parser.y"
+#line 2583 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 296:
-#line 2610 "java_parser.y"
+#line 2590 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 297:
-#line 2613 "java_parser.y"
+#line 2593 "java_parser.y"
 {
-            SetNullBorns(yyval.bbposition);
+            SetNullBorns(yyval.ast_position);
         }
 break;
 case 298:
-#line 2619 "java_parser.y"
+#line 2599 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 299:
-#line 2622 "java_parser.y"
+#line 2602 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 300:
-#line 2628 "java_parser.y"
+#line 2608 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (s_opt.server_operation == OLO_EXTRACT) {
                         Symbol *cl, *bl;
                         cl = bl = NULL;        /* just to avoid warning message*/
-                        cl = addContinueBreakLabelSymbol(yyvsp[-4].bbinteger.d, CONTINUE_LABEL_NAME);
-                        bl = addContinueBreakLabelSymbol(yyvsp[0].bbinteger.d, BREAK_LABEL_NAME);
-                        XX_ALLOC(yyval.bbwhiledata.d, S_whileExtractData);
-                        FILL_whileExtractData(yyval.bbwhiledata.d, yyvsp[-4].bbinteger.d, yyvsp[0].bbinteger.d, cl, bl);
+                        cl = addContinueBreakLabelSymbol(yyvsp[-4].ast_integer.d, CONTINUE_LABEL_NAME);
+                        bl = addContinueBreakLabelSymbol(yyvsp[0].ast_integer.d, BREAK_LABEL_NAME);
+                        XX_ALLOC(yyval.ast_whileData.d, S_whileExtractData);
+                        FILL_whileExtractData(yyval.ast_whileData.d, yyvsp[-4].ast_integer.d, yyvsp[0].ast_integer.d, cl, bl);
                     } else {
-                        yyval.bbwhiledata.d = NULL;
+                        yyval.ast_whileData.d = NULL;
                     }
                 } else {
-                    PropagateBorns(yyval.bbwhiledata, yyvsp[-5].bbposition, yyvsp[-1].bbposition);
+                    PropagateBorns(yyval.ast_whileData, yyvsp[-5].ast_position, yyvsp[-1].ast_position);
                 }
             }
         }
 break;
 case 301:
-#line 2649 "java_parser.y"
+#line 2629 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if (yyvsp[-1].bbwhiledata.d != NULL) {
-                        ExtrDeleteContBreakSym(yyvsp[-1].bbwhiledata.d->i4);
-                        ExtrDeleteContBreakSym(yyvsp[-1].bbwhiledata.d->i3);
-                        genInternalLabelReference(yyvsp[-1].bbwhiledata.d->i1, UsageUsed);
-                        genInternalLabelReference(yyvsp[-1].bbwhiledata.d->i2, UsageDefined);
+                    if (yyvsp[-1].ast_whileData.d != NULL) {
+                        ExtrDeleteContBreakSym(yyvsp[-1].ast_whileData.d->i4);
+                        ExtrDeleteContBreakSym(yyvsp[-1].ast_whileData.d->i3);
+                        genInternalLabelReference(yyvsp[-1].ast_whileData.d->i1, UsageUsed);
+                        genInternalLabelReference(yyvsp[-1].ast_whileData.d->i2, UsageDefined);
                     }
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[-1].bbwhiledata, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_whileData, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 302:
-#line 2666 "java_parser.y"
+#line 2646 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if (yyvsp[-1].bbwhiledata.d != NULL) {
-                        ExtrDeleteContBreakSym(yyvsp[-1].bbwhiledata.d->i4);
-                        ExtrDeleteContBreakSym(yyvsp[-1].bbwhiledata.d->i3);
-                        genInternalLabelReference(yyvsp[-1].bbwhiledata.d->i1, UsageUsed);
-                        genInternalLabelReference(yyvsp[-1].bbwhiledata.d->i2, UsageDefined);
+                    if (yyvsp[-1].ast_whileData.d != NULL) {
+                        ExtrDeleteContBreakSym(yyvsp[-1].ast_whileData.d->i4);
+                        ExtrDeleteContBreakSym(yyvsp[-1].ast_whileData.d->i3);
+                        genInternalLabelReference(yyvsp[-1].ast_whileData.d->i1, UsageUsed);
+                        genInternalLabelReference(yyvsp[-1].ast_whileData.d->i2, UsageDefined);
                     }
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[-1].bbwhiledata, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_whileData, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 303:
-#line 2683 "java_parser.y"
+#line 2663 "java_parser.y"
 { /*5*/
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, CONTINUE_LABEL_NAME);
+                    yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.d, CONTINUE_LABEL_NAME);
                 }
             }
         }
 break;
 case 304:
-#line 2689 "java_parser.y"
+#line 2669 "java_parser.y"
 {/*6*/
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].bbinteger.d, BREAK_LABEL_NAME);
+                    yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.d, BREAK_LABEL_NAME);
                 }
             }
         }
 break;
 case 305:
-#line 2695 "java_parser.y"
+#line 2675 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     ExtrDeleteContBreakSym(yyvsp[-2].symbol);
                     ExtrDeleteContBreakSym(yyvsp[-3].symbol);
-                    genInternalLabelReference(yyvsp[-5].bbinteger.d, UsageDefined);
+                    genInternalLabelReference(yyvsp[-5].ast_integer.d, UsageDefined);
                 }
             }
         }
 break;
 case 306:
-#line 2703 "java_parser.y"
+#line 2683 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference(yyvsp[-11].bbinteger.d, UsageFork);
-                    genInternalLabelReference(yyvsp[-9].bbinteger.d, UsageDefined);
+                    genInternalLabelReference(yyvsp[-11].ast_integer.d, UsageFork);
+                    genInternalLabelReference(yyvsp[-9].ast_integer.d, UsageDefined);
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[-12].bbposition, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_position, yyvsp[-12].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 307:
-#line 2715 "java_parser.y"
+#line 2695 "java_parser.y"
 {
-            SetNullBorns(yyval.bbposition);
+            SetNullBorns(yyval.ast_position);
         }
 break;
 case 308:
-#line 2718 "java_parser.y"
+#line 2698 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbexprType, yyvsp[0].bbexprType);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);
         }
 break;
 case 309:
-#line 2724 "java_parser.y"
+#line 2704 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockStart();
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[0].bbposition, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 310:
-#line 2738 "java_parser.y"
+#line 2718 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     Symbol *ss __attribute__((unused));
-                    genInternalLabelReference(yyvsp[-7].bbinteger.d, UsageUsed);
-                    genInternalLabelReference(yyvsp[-4].bbinteger.d, UsageDefined);
-                    ss = addContinueBreakLabelSymbol(yyvsp[-3].bbinteger.d, CONTINUE_LABEL_NAME);
-                    ss = addContinueBreakLabelSymbol(yyvsp[0].bbinteger.d, BREAK_LABEL_NAME);
-                    yyval.bbintpair.d.i1 = yyvsp[-3].bbinteger.d;
-                    yyval.bbintpair.d.i2 = yyvsp[0].bbinteger.d;
+                    genInternalLabelReference(yyvsp[-7].ast_integer.d, UsageUsed);
+                    genInternalLabelReference(yyvsp[-4].ast_integer.d, UsageDefined);
+                    ss = addContinueBreakLabelSymbol(yyvsp[-3].ast_integer.d, CONTINUE_LABEL_NAME);
+                    ss = addContinueBreakLabelSymbol(yyvsp[0].ast_integer.d, BREAK_LABEL_NAME);
+                    yyval.ast_intPair.d.i1 = yyvsp[-3].ast_integer.d;
+                    yyval.ast_intPair.d.i2 = yyvsp[0].ast_integer.d;
                 } else {
-                    PropagateBorns(yyval.bbintpair, yyvsp[-10].bbposition, yyvsp[-1].bbposition);
+                    PropagateBorns(yyval.ast_intPair, yyvsp[-10].ast_position, yyvsp[-1].ast_position);
                 }
             }
         }
 break;
 case 311:
-#line 2756 "java_parser.y"
+#line 2736 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     deleteContinueBreakLabelSymbol(BREAK_LABEL_NAME);
                     deleteContinueBreakLabelSymbol(CONTINUE_LABEL_NAME);
-                    genInternalLabelReference(yyvsp[-1].bbintpair.d.i1, UsageUsed);
-                    genInternalLabelReference(yyvsp[-1].bbintpair.d.i2, UsageDefined);
+                    genInternalLabelReference(yyvsp[-1].ast_intPair.d.i1, UsageUsed);
+                    genInternalLabelReference(yyvsp[-1].ast_intPair.d.i2, UsageDefined);
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[-1].bbintpair, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_intPair, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 312:
-#line 2771 "java_parser.y"
+#line 2751 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     deleteContinueBreakLabelSymbol(BREAK_LABEL_NAME);
                     deleteContinueBreakLabelSymbol(CONTINUE_LABEL_NAME);
-                    genInternalLabelReference(yyvsp[-1].bbintpair.d.i1, UsageUsed);
-                    genInternalLabelReference(yyvsp[-1].bbintpair.d.i2, UsageDefined);
+                    genInternalLabelReference(yyvsp[-1].ast_intPair.d.i1, UsageUsed);
+                    genInternalLabelReference(yyvsp[-1].ast_intPair.d.i2, UsageDefined);
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[-1].bbintpair, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_intPair, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 313:
-#line 2786 "java_parser.y"
+#line 2766 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockFree();
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 314:
-#line 2795 "java_parser.y"
+#line 2775 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockFree();
                 } else {
-                    SetNullBorns(yyval.bbposition);
+                    SetNullBorns(yyval.ast_position);
                 }
             }
         }
 break;
 case 315:
-#line 2807 "java_parser.y"
+#line 2787 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockFree();
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 316:
-#line 2816 "java_parser.y"
+#line 2796 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockFree();
                 } else {
-                    SetNullBorns(yyval.bbposition);
+                    SetNullBorns(yyval.ast_position);
                 }
             }
         }
 break;
 case 317:
-#line 2828 "java_parser.y"
+#line 2808 "java_parser.y"
 {
-            SetNullBorns(yyval.bbposition);
+            SetNullBorns(yyval.ast_position);
         }
 break;
 case 318:
-#line 2831 "java_parser.y"
+#line 2811 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 319:
-#line 2834 "java_parser.y"
+#line 2814 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbsymbol, yyvsp[0].bbsymbol);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
         }
 break;
 case 320:
-#line 2839 "java_parser.y"
+#line 2819 "java_parser.y"
 {
-            SetNullBorns(yyval.bbposition);
+            SetNullBorns(yyval.ast_position);
         }
 break;
 case 321:
-#line 2842 "java_parser.y"
+#line 2822 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 322:
-#line 2848 "java_parser.y"
+#line 2828 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[0].bbexprType, yyvsp[0].bbexprType);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);
         }
 break;
 case 323:
-#line 2851 "java_parser.y"
+#line 2831 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbexprType);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_expressionType);
         }
 break;
 case 324:
-#line 2857 "java_parser.y"
+#line 2837 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 325:
-#line 2860 "java_parser.y"
+#line 2840 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     genContinueBreakReference(BREAK_LABEL_NAME);
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 326:
-#line 2872 "java_parser.y"
+#line 2852 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 327:
-#line 2875 "java_parser.y"
+#line 2855 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     genContinueBreakReference(CONTINUE_LABEL_NAME);
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 328:
-#line 2887 "java_parser.y"
+#line 2867 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     genInternalLabelReference(-1, UsageUsed);
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 329:
-#line 2896 "java_parser.y"
+#line 2876 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     genInternalLabelReference(-1, UsageUsed);
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 330:
-#line 2908 "java_parser.y"
+#line 2888 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (s_opt.server_operation==OLO_EXTRACT) {
-                        addCxReference(yyvsp[-1].bbexprType.d.t->u.t, &yyvsp[-2].bbidIdent.d->p, UsageThrown, s_noneFileIndex, s_noneFileIndex);
+                        addCxReference(yyvsp[-1].ast_expressionType.d.t->u.t, &yyvsp[-2].ast_id.d->p, UsageThrown, s_noneFileIndex, s_noneFileIndex);
                     }
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[-2].bbidIdent, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_position, yyvsp[-2].ast_id, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 331:
-#line 2922 "java_parser.y"
+#line 2902 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-4].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-4].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 334:
-#line 2930 "java_parser.y"
+#line 2910 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 335:
-#line 2937 "java_parser.y"
+#line 2917 "java_parser.y"
 {
                 if (s_opt.server_operation == OLO_EXTRACT) {
                     addTrivialCxReference("TryCatch", TypeTryCatchMarker,StorageDefault,
-                                            &yyvsp[-1].bbidIdent.d->p, UsageTryCatchBegin);
+                                            &yyvsp[-1].ast_id.d->p, UsageTryCatchBegin);
                 }
             }
 break;
 case 336:
-#line 2944 "java_parser.y"
+#line 2924 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        genInternalLabelReference(yyvsp[-2].bbinteger.d, UsageDefined);
+                        genInternalLabelReference(yyvsp[-2].ast_integer.d, UsageDefined);
                     }
                 }
             }
 break;
 case 337:
-#line 2951 "java_parser.y"
+#line 2931 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-5].bbidIdent, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-5].ast_id, yyvsp[0].ast_position);
             if (s_opt.server_operation == OLO_EXTRACT) {
                 addTrivialCxReference("TryCatch", TypeTryCatchMarker,StorageDefault,
-                                        &yyvsp[-5].bbidIdent.d->p, UsageTryCatchEnd);
+                                        &yyvsp[-5].ast_id.d->p, UsageTryCatchEnd);
             }
         }
 break;
 case 339:
-#line 2963 "java_parser.y"
+#line 2943 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-1].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 340:
-#line 2970 "java_parser.y"
+#line 2950 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        if (yyvsp[-3].bbsymbol.d->bits.symType != TypeError) {
-                            addNewSymbolDef(yyvsp[-3].bbsymbol.d, StorageAuto, s_javaStat->locals,
+                        if (yyvsp[-3].ast_symbol.d->bits.symType != TypeError) {
+                            addNewSymbolDef(yyvsp[-3].ast_symbol.d, StorageAuto, s_javaStat->locals,
                                             UsageDefined);
                             if (s_opt.server_operation == OLO_EXTRACT) {
-                                assert(yyvsp[-3].bbsymbol.d->bits.symType==TypeDefault);
-                                addCxReference(yyvsp[-3].bbsymbol.d->u.type->u.t, &yyvsp[-5].bbidIdent.d->p, UsageCatched, s_noneFileIndex, s_noneFileIndex);
+                                assert(yyvsp[-3].ast_symbol.d->bits.symType==TypeDefault);
+                                addCxReference(yyvsp[-3].ast_symbol.d->u.type->u.t, &yyvsp[-5].ast_id.d->p, UsageCatched, s_noneFileIndex, s_noneFileIndex);
                             }
                         }
                     }
@@ -5692,282 +5672,282 @@ case 340:
             }
 break;
 case 341:
-#line 2985 "java_parser.y"
+#line 2965 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        genInternalLabelReference(yyvsp[-4].bbinteger.d, UsageDefined);
+                        genInternalLabelReference(yyvsp[-4].ast_integer.d, UsageDefined);
                     } else {
-                        PropagateBorns(yyval.bbposition, yyvsp[-8].bbidIdent, yyvsp[-1].bbposition);
+                        PropagateBorns(yyval.ast_position, yyvsp[-8].ast_id, yyvsp[-1].ast_position);
                     }
                 }
             }
 break;
 case 342:
-#line 2994 "java_parser.y"
+#line 2974 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (s_opt.server_operation == OLO_EXTRACT) {
-                        assert(yyvsp[-2].bbsymbol.d->bits.symType==TypeDefault);
-                        addCxReference(yyvsp[-2].bbsymbol.d->u.type->u.t, &yyvsp[-4].bbidIdent.d->p, UsageCatched, s_noneFileIndex, s_noneFileIndex);
+                        assert(yyvsp[-2].ast_symbol.d->bits.symType==TypeDefault);
+                        addCxReference(yyvsp[-2].ast_symbol.d->u.type->u.t, &yyvsp[-4].ast_id.d->p, UsageCatched, s_noneFileIndex, s_noneFileIndex);
                     }
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[-4].bbidIdent, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_position, yyvsp[-4].ast_id, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 343:
-#line 3009 "java_parser.y"
+#line 2989 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference(yyvsp[-1].bbinteger.d, UsageDefined);
+                    genInternalLabelReference(yyvsp[-1].ast_integer.d, UsageDefined);
                 } else {
-                    PropagateBorns(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
+                    PropagateBorns(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 344:
-#line 3023 "java_parser.y"
+#line 3003 "java_parser.y"
 {
             if (regularPass()) {
-                yyval.bbexprType.d = yyvsp[0].bbexprType.d;
+                yyval.ast_expressionType.d = yyvsp[0].ast_expressionType.d;
                 if (! SyntaxPassOnly()) {
-                    s_javaCompletionLastPrimary = s_structRecordCompletionType = yyval.bbexprType.d.t;
+                    s_javaCompletionLastPrimary = s_structRecordCompletionType = yyval.ast_expressionType.d.t;
                 } else {
-                    PropagateBorns(yyval.bbexprType, yyvsp[0].bbexprType, yyvsp[0].bbexprType);
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 345:
-#line 3033 "java_parser.y"
+#line 3013 "java_parser.y"
 {
             if (regularPass()) {
-                yyval.bbexprType.d = yyvsp[0].bbexprType.d;
+                yyval.ast_expressionType.d = yyvsp[0].ast_expressionType.d;
                 if (! SyntaxPassOnly()) {
-                    s_javaCompletionLastPrimary = s_structRecordCompletionType = yyval.bbexprType.d.t;
+                    s_javaCompletionLastPrimary = s_structRecordCompletionType = yyval.ast_expressionType.d.t;
                 } else {
-                    PropagateBorns(yyval.bbexprType, yyvsp[0].bbexprType, yyvsp[0].bbexprType);
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 347:
-#line 3047 "java_parser.y"
+#line 3027 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert(s_javaStat && s_javaStat->thisType);
 /*fprintf(dumpOut,"this == %s\n",s_javaStat->thisType->u.t->linkName);*/
-                    yyval.bbexprType.d.t = s_javaStat->thisType;
-                    addThisCxReferences(s_javaStat->classFileInd, &yyvsp[0].bbidIdent.d->p);
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = s_javaStat->thisType;
+                    addThisCxReferences(s_javaStat->classFileInd, &yyvsp[0].ast_id.d->p);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = &yyvsp[0].bbidIdent.d->p;
-                    javaCheckForStaticPrefixStart(&yyvsp[0].bbidIdent.d->p, &yyvsp[0].bbidIdent.d->p);
-                    PropagateBorns(yyval.bbexprType, yyvsp[0].bbidIdent, yyvsp[0].bbidIdent);
+                    yyval.ast_expressionType.d.pp = &yyvsp[0].ast_id.d->p;
+                    javaCheckForStaticPrefixStart(&yyvsp[0].ast_id.d->p, &yyvsp[0].ast_id.d->p);
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_id, yyvsp[0].ast_id);
                 }
             }
         }
 break;
 case 348:
-#line 3062 "java_parser.y"
+#line 3042 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    javaQualifiedThis(yyvsp[-2].bbidlist.d, yyvsp[0].bbidIdent.d);
-                    yyval.bbexprType.d.t = javaClassNameType(yyvsp[-2].bbidlist.d);
-                    yyval.bbexprType.d.r = NULL;
+                    javaQualifiedThis(yyvsp[-2].ast_idList.d, yyvsp[0].ast_id.d);
+                    yyval.ast_expressionType.d.t = javaClassNameType(yyvsp[-2].ast_idList.d);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = javaGetNameStartingPosition(yyvsp[-2].bbidlist.d);
-                    javaCheckForStaticPrefixStart(&yyvsp[0].bbidIdent.d->p, javaGetNameStartingPosition(yyvsp[-2].bbidlist.d));
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbidlist, yyvsp[0].bbidIdent);
+                    yyval.ast_expressionType.d.pp = javaGetNameStartingPosition(yyvsp[-2].ast_idList.d);
+                    javaCheckForStaticPrefixStart(&yyvsp[0].ast_id.d->p, javaGetNameStartingPosition(yyvsp[-2].ast_idList.d));
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_idList, yyvsp[0].ast_id);
                 }
             }
         }
 break;
 case 349:
-#line 3075 "java_parser.y"
+#line 3055 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = &s_javaClassModifier;
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = &s_javaClassModifier;
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = yyvsp[-2].bbunsPositionPair.d.p;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbunsPositionPair, yyvsp[0].bbidIdent);
+                    yyval.ast_expressionType.d.pp = yyvsp[-2].ast_unsignedPositionPair.d.p;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_unsignedPositionPair, yyvsp[0].ast_id);
                 }
             }
         }
 break;
 case 350:
-#line 3086 "java_parser.y"
+#line 3066 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     Symbol *str;
-                    javaClassifyToTypeName(yyvsp[-2].bbidlist.d,UsageUsed, &str, USELESS_FQT_REFS_ALLOWED);
-                    yyval.bbexprType.d.t = &s_javaClassModifier;
-                    yyval.bbexprType.d.r = NULL;
+                    javaClassifyToTypeName(yyvsp[-2].ast_idList.d,UsageUsed, &str, USELESS_FQT_REFS_ALLOWED);
+                    yyval.ast_expressionType.d.t = &s_javaClassModifier;
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = javaGetNameStartingPosition(yyvsp[-2].bbidlist.d);
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbidlist, yyvsp[0].bbidIdent);
+                    yyval.ast_expressionType.d.pp = javaGetNameStartingPosition(yyvsp[-2].ast_idList.d);
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_idList, yyvsp[0].ast_id);
                 }
             }
         }
 break;
 case 351:
-#line 3099 "java_parser.y"
+#line 3079 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = &s_javaClassModifier;
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = &s_javaClassModifier;
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = yyvsp[-2].bbsymbolPositionPair.d.p;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbsymbolPositionPair, yyvsp[0].bbidIdent);
+                    yyval.ast_expressionType.d.pp = yyvsp[-2].ast_symbolPositionPair.d.p;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_symbolPositionPair, yyvsp[0].ast_id);
                 }
             }
         }
 break;
 case 352:
-#line 3110 "java_parser.y"
+#line 3090 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = &s_javaClassModifier;
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = &s_javaClassModifier;
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    SetPrimitiveTypePos(yyval.bbexprType.d.pp, yyvsp[-2].bbidIdent.d);
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbidIdent, yyvsp[0].bbidIdent);
+                    SetPrimitiveTypePos(yyval.ast_expressionType.d.pp, yyvsp[-2].ast_id.d);
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_id, yyvsp[0].ast_id);
                 }
             }
         }
 break;
 case 353:
-#line 3121 "java_parser.y"
+#line 3101 "java_parser.y"
 {
             if (regularPass()) {
-                yyval.bbexprType.d = yyvsp[-1].bbexprType.d;
+                yyval.ast_expressionType.d = yyvsp[-1].ast_expressionType.d;
                 if (SyntaxPassOnly()) {
-                    XX_ALLOC(yyval.bbexprType.d.pp, S_position);
-                    *yyval.bbexprType.d.pp = yyvsp[-2].bbposition.d;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbposition, yyvsp[0].bbposition);
-                    if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyval.bbexprType.b, s_cxRefPos, yyval.bbexprType.e)
+                    XX_ALLOC(yyval.ast_expressionType.d.pp, S_position);
+                    *yyval.ast_expressionType.d.pp = yyvsp[-2].ast_position.d;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_position, yyvsp[0].ast_position);
+                    if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyval.ast_expressionType.b, s_cxRefPos, yyval.ast_expressionType.e)
                         && s_spp[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file == s_noneFileIndex) {
-                        s_spp[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION] = yyvsp[-2].bbposition.b;
-                        s_spp[SPP_PARENTHESED_EXPRESSION_RPAR_POSITION] = yyvsp[0].bbposition.b;
-                        s_spp[SPP_PARENTHESED_EXPRESSION_BEGIN_POSITION] = yyvsp[-1].bbexprType.b;
-                        s_spp[SPP_PARENTHESED_EXPRESSION_END_POSITION] = yyvsp[-1].bbexprType.e;
+                        s_spp[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION] = yyvsp[-2].ast_position.b;
+                        s_spp[SPP_PARENTHESED_EXPRESSION_RPAR_POSITION] = yyvsp[0].ast_position.b;
+                        s_spp[SPP_PARENTHESED_EXPRESSION_BEGIN_POSITION] = yyvsp[-1].ast_expressionType.b;
+                        s_spp[SPP_PARENTHESED_EXPRESSION_END_POSITION] = yyvsp[-1].ast_expressionType.e;
                     }
                 }
             }
         }
 break;
 case 358:
-#line 3142 "java_parser.y"
+#line 3122 "java_parser.y"
 { assert(0); /* rule never used */ }
 break;
 case 359:
-#line 3145 "java_parser.y"
+#line 3125 "java_parser.y"
 {
             yyval.erfs = s_cp.erfsForParamsComplet;
         }
 break;
 case 360:
-#line 3152 "java_parser.y"
+#line 3132 "java_parser.y"
 {
                 if (ComputingPossibleParameterCompletion()) {
                     S_typeModifiers *mm;
                     s_cp.erfsForParamsComplet = NULL;
-                    if (yyvsp[-4].bbexprType.d.t->kind == TypeStruct) {
-                        mm = javaNestedNewType(yyvsp[-4].bbexprType.d.t->u.t, yyvsp[-2].bbidIdent.d, yyvsp[-1].bbidlist.d);
+                    if (yyvsp[-4].ast_expressionType.d.t->kind == TypeStruct) {
+                        mm = javaNestedNewType(yyvsp[-4].ast_expressionType.d.t->u.t, yyvsp[-2].ast_id.d, yyvsp[-1].ast_idList.d);
                         if (mm->kind != TypeError) {
-                            s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &(yyvsp[-1].bbidlist.d->id.p));
+                            s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &(yyvsp[-1].ast_idList.d->id.p));
                         }
                     }
                 }
             }
 break;
 case 361:
-#line 3164 "java_parser.y"
+#line 3144 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
-                    if (yyvsp[-8].bbexprType.d.t->kind == TypeStruct) {
-                        yyval.bbnestedConstrTokenType.d.t = javaNestedNewType(yyvsp[-8].bbexprType.d.t->u.t, yyvsp[-6].bbidIdent.d, yyvsp[-5].bbidlist.d);
+                    if (yyvsp[-8].ast_expressionType.d.t->kind == TypeStruct) {
+                        yyval.ast_nestedConstrTokenType.d.t = javaNestedNewType(yyvsp[-8].ast_expressionType.d.t->u.t, yyvsp[-6].ast_id.d, yyvsp[-5].ast_idList.d);
                     } else {
-                        yyval.bbnestedConstrTokenType.d.t = &s_errorModifier;
+                        yyval.ast_nestedConstrTokenType.d.t = &s_errorModifier;
                     }
-                    javaHandleDeclaratorParamPositions(&yyvsp[-5].bbidlist.d->id.p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbtypeModifiersListPositionLstPair.d.p, &yyvsp[0].bbposition.d);
-                    assert(yyval.bbnestedConstrTokenType.d.t);
-                    yyval.bbnestedConstrTokenType.d.nid = yyvsp[-5].bbidlist.d;
-                    if (yyval.bbnestedConstrTokenType.d.t->kind != TypeError) {
-                        javaConstructorInvocation(yyval.bbnestedConstrTokenType.d.t->u.t, &(yyvsp[-5].bbidlist.d->id.p), yyvsp[-1].bbtypeModifiersListPositionLstPair.d.t);
+                    javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_idList.d->id.p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
+                    assert(yyval.ast_nestedConstrTokenType.d.t);
+                    yyval.ast_nestedConstrTokenType.d.nid = yyvsp[-5].ast_idList.d;
+                    if (yyval.ast_nestedConstrTokenType.d.t->kind != TypeError) {
+                        javaConstructorInvocation(yyval.ast_nestedConstrTokenType.d.t->u.t, &(yyvsp[-5].ast_idList.d->id.p), yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
                     }
                 } else {
-                    yyval.bbnestedConstrTokenType.d.pp = yyvsp[-8].bbexprType.d.pp;
-                    PropagateBorns(yyval.bbnestedConstrTokenType, yyvsp[-8].bbexprType, yyvsp[0].bbposition);
+                    yyval.ast_nestedConstrTokenType.d.pp = yyvsp[-8].ast_expressionType.d.pp;
+                    PropagateBorns(yyval.ast_nestedConstrTokenType, yyvsp[-8].ast_expressionType, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 362:
-#line 3186 "java_parser.y"
+#line 3166 "java_parser.y"
 {
                 if (ComputingPossibleParameterCompletion()) {
                     S_typeModifiers *mm;
                     s_cp.erfsForParamsComplet = NULL;
-                    mm = javaNewAfterName(yyvsp[-4].bbidlist.d, yyvsp[-2].bbidIdent.d, yyvsp[-1].bbidlist.d);
+                    mm = javaNewAfterName(yyvsp[-4].ast_idList.d, yyvsp[-2].ast_id.d, yyvsp[-1].ast_idList.d);
                     if (mm->kind != TypeError) {
-                        s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &(yyvsp[-1].bbidlist.d->id.p));
+                        s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(mm->u.t, &(yyvsp[-1].ast_idList.d->id.p));
                     }
                 }
             }
 break;
 case 363:
-#line 3196 "java_parser.y"
+#line 3176 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
-                    yyval.bbnestedConstrTokenType.d.t = javaNewAfterName(yyvsp[-8].bbidlist.d, yyvsp[-6].bbidIdent.d, yyvsp[-5].bbidlist.d);
-                    yyval.bbnestedConstrTokenType.d.nid = yyvsp[-5].bbidlist.d;
-                    if (yyval.bbnestedConstrTokenType.d.t->kind != TypeError) {
-                        javaConstructorInvocation(yyval.bbnestedConstrTokenType.d.t->u.t, &(yyvsp[-5].bbidlist.d->id.p), yyvsp[-1].bbtypeModifiersListPositionLstPair.d.t);
+                    yyval.ast_nestedConstrTokenType.d.t = javaNewAfterName(yyvsp[-8].ast_idList.d, yyvsp[-6].ast_id.d, yyvsp[-5].ast_idList.d);
+                    yyval.ast_nestedConstrTokenType.d.nid = yyvsp[-5].ast_idList.d;
+                    if (yyval.ast_nestedConstrTokenType.d.t->kind != TypeError) {
+                        javaConstructorInvocation(yyval.ast_nestedConstrTokenType.d.t->u.t, &(yyvsp[-5].ast_idList.d->id.p), yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
                     }
                 } else {
-                    yyval.bbnestedConstrTokenType.d.pp = javaGetNameStartingPosition(yyvsp[-8].bbidlist.d);
-                    javaHandleDeclaratorParamPositions(&yyvsp[-5].bbidlist.d->id.p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbtypeModifiersListPositionLstPair.d.p, &yyvsp[0].bbposition.d);
-                    PropagateBorns(yyval.bbnestedConstrTokenType, yyvsp[-8].bbidlist, yyvsp[0].bbposition);
+                    yyval.ast_nestedConstrTokenType.d.pp = javaGetNameStartingPosition(yyvsp[-8].ast_idList.d);
+                    javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_idList.d->id.p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
+                    PropagateBorns(yyval.ast_nestedConstrTokenType, yyvsp[-8].ast_idList, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 364:
-#line 3215 "java_parser.y"
+#line 3195 "java_parser.y"
 {
             if (ComputingPossibleParameterCompletion()) {
                 Symbol            *ss;
                 Symbol			*str;
                 S_typeModifiers		*expr;
                 S_reference			*rr, *lastUselessRef;
-                javaClassifyAmbiguousName(yyvsp[0].bbidlist.d, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
+                javaClassifyAmbiguousName(yyvsp[0].ast_idList.d, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
                                           CLASS_TO_TYPE,UsageUsed);
-                yyvsp[0].bbidlist.d->nameType = TypeStruct;
-                ss = javaTypeSymbolUsage(yyvsp[0].bbidlist.d, ACC_DEFAULT);
-                s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(ss, &(yyvsp[0].bbidlist.d->id.p));
+                yyvsp[0].ast_idList.d->nameType = TypeStruct;
+                ss = javaTypeSymbolUsage(yyvsp[0].ast_idList.d, ACC_DEFAULT);
+                s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(ss, &(yyvsp[0].ast_idList.d->id.p));
             }
-            yyval.bbidlist = yyvsp[0].bbidlist;
+            yyval.ast_idList = yyvsp[0].ast_idList;
         }
 break;
 case 365:
-#line 3232 "java_parser.y"
+#line 3212 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5978,16 +5958,16 @@ case 365:
 
                     s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
                     lastUselessRef = NULL;
-                    javaClassifyAmbiguousName(yyvsp[-3].bbidlist.d, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
+                    javaClassifyAmbiguousName(yyvsp[-3].ast_idList.d, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
                                               CLASS_TO_TYPE,UsageUsed);
-                    yyvsp[-3].bbidlist.d->nameType = TypeStruct;
-                    ss = javaTypeSymbolUsage(yyvsp[-3].bbidlist.d, ACC_DEFAULT);
+                    yyvsp[-3].ast_idList.d->nameType = TypeStruct;
+                    ss = javaTypeSymbolUsage(yyvsp[-3].ast_idList.d, ACC_DEFAULT);
                     if (isANestedClass(ss)) {
                         if (javaIsInnerAndCanGetUnnamedEnclosingInstance(ss, &ei)) {
                             /* before it was s_javaStat->classFileInd, but be more precise*/
                             /* in reality you should keep both to discover references*/
                             /* to original class from class nested in method.*/
-                            addThisCxReferences(ei->u.s->classFile, &yyvsp[-5].bbidIdent.d->p);
+                            addThisCxReferences(ei->u.s->classFile, &yyvsp[-5].ast_id.d->p);
                             /* I have removed following because it makes problems when*/
                             /* expanding to FQT names, WHY IT WAS HERE ???*/
                             /*&addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM,StorageField,*/
@@ -6006,45 +5986,45 @@ case 365:
                             /*&}*/
                         }
                     }
-                    javaConstructorInvocation(ss, &(yyvsp[-3].bbidlist.d->id.p), yyvsp[-1].bbtypeModifiersListPositionLstPair.d.t);
-                    tt = javaTypeNameDefinition(yyvsp[-3].bbidlist.d);
-                    yyval.bbexprType.d.t = tt->u.type;
-                    yyval.bbexprType.d.r = NULL;
+                    javaConstructorInvocation(ss, &(yyvsp[-3].ast_idList.d->id.p), yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
+                    tt = javaTypeNameDefinition(yyvsp[-3].ast_idList.d);
+                    yyval.ast_expressionType.d.t = tt->u.type;
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    javaHandleDeclaratorParamPositions(&yyvsp[-3].bbidlist.d->id.p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbtypeModifiersListPositionLstPair.d.p, &yyvsp[0].bbposition.d);
-                    yyval.bbexprType.d.pp = &yyvsp[-5].bbidIdent.d->p;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-5].bbidIdent, yyvsp[0].bbposition);
+                    javaHandleDeclaratorParamPositions(&yyvsp[-3].ast_idList.d->id.p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
+                    yyval.ast_expressionType.d.pp = &yyvsp[-5].ast_id.d->p;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-5].ast_id, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 366:
-#line 3282 "java_parser.y"
+#line 3262 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         Symbol *ss;
                         s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
-                        javaClassifyToTypeName(yyvsp[-3].bbidlist.d,UsageUsed, &ss, USELESS_FQT_REFS_ALLOWED);
-                        yyval.symbol = javaTypeNameDefinition(yyvsp[-3].bbidlist.d);
-                        ss = javaTypeSymbolUsage(yyvsp[-3].bbidlist.d, ACC_DEFAULT);
-                        javaConstructorInvocation(ss, &(yyvsp[-3].bbidlist.d->id.p), yyvsp[-1].bbtypeModifiersListPositionLstPair.d.t);
+                        javaClassifyToTypeName(yyvsp[-3].ast_idList.d,UsageUsed, &ss, USELESS_FQT_REFS_ALLOWED);
+                        yyval.symbol = javaTypeNameDefinition(yyvsp[-3].ast_idList.d);
+                        ss = javaTypeSymbolUsage(yyvsp[-3].ast_idList.d, ACC_DEFAULT);
+                        javaConstructorInvocation(ss, &(yyvsp[-3].ast_idList.d->id.p), yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
                     } else {
-                        javaHandleDeclaratorParamPositions(&yyvsp[-3].bbidlist.d->id.p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbtypeModifiersListPositionLstPair.d.p, &yyvsp[0].bbposition.d);
+                        javaHandleDeclaratorParamPositions(&yyvsp[-3].ast_idList.d->id.p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
                         /* seems that there is no problem like in previous case,*/
                         /* interfaces are never inner.*/
                     }
                 } else {
                     Symbol *str, *cls;
-                    jslClassifyAmbiguousTypeName(yyvsp[-3].bbidlist.d, &str);
-                    cls = jslTypeNameDefinition(yyvsp[-3].bbidlist.d);
+                    jslClassifyAmbiguousTypeName(yyvsp[-3].ast_idList.d, &str);
+                    cls = jslTypeNameDefinition(yyvsp[-3].ast_idList.d);
                     jslNewClassDefinitionBegin(&s_javaAnonymousClassName,
                                                 ACC_DEFAULT, cls, CPOS_ST);
                 }
             }
 break;
 case 367:
-#line 3304 "java_parser.y"
+#line 3284 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -6054,17 +6034,17 @@ case 367:
             }
 break;
 case 368:
-#line 3311 "java_parser.y"
+#line 3291 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     newClassDefinitionEnd(yyvsp[-1].trail);
                     assert(yyvsp[-2].symbol && yyvsp[-2].symbol->u.type);
-                    yyval.bbexprType.d.t = yyvsp[-2].symbol->u.type;
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = yyvsp[-2].symbol->u.type;
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = &yyvsp[-8].bbidIdent.d->p;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-8].bbidIdent, yyvsp[0].bbposition);
+                    yyval.ast_expressionType.d.pp = &yyvsp[-8].ast_id.d->p;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-8].ast_id, yyvsp[0].ast_position);
                 }
             } else {
                 jslNewClassDefinitionEnd();
@@ -6072,43 +6052,43 @@ case 368:
         }
 break;
 case 369:
-#line 3326 "java_parser.y"
+#line 3306 "java_parser.y"
 {
-            yyval.bbexprType.d.t = yyvsp[0].bbnestedConstrTokenType.d.t;
-            yyval.bbexprType.d.pp = yyvsp[0].bbnestedConstrTokenType.d.pp;
-            yyval.bbexprType.d.r = NULL;
-            PropagateBorns(yyval.bbexprType, yyvsp[0].bbnestedConstrTokenType, yyvsp[0].bbnestedConstrTokenType);
+            yyval.ast_expressionType.d.t = yyvsp[0].ast_nestedConstrTokenType.d.t;
+            yyval.ast_expressionType.d.pp = yyvsp[0].ast_nestedConstrTokenType.d.pp;
+            yyval.ast_expressionType.d.r = NULL;
+            PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_nestedConstrTokenType, yyvsp[0].ast_nestedConstrTokenType);
         }
 break;
 case 370:
-#line 3333 "java_parser.y"
+#line 3313 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        yyval.bbexprType.d.t = yyvsp[0].bbnestedConstrTokenType.d.t;
-                        yyval.bbexprType.d.pp = yyvsp[0].bbnestedConstrTokenType.d.pp;
-                        yyval.bbexprType.d.r = NULL;
-                        if (yyval.bbexprType.d.t->kind != TypeError) {
-                            yyval.trail = newClassDefinitionBegin(&s_javaAnonymousClassName, ACC_DEFAULT, yyval.bbexprType.d.t->u.t);
+                        yyval.ast_expressionType.d.t = yyvsp[0].ast_nestedConstrTokenType.d.t;
+                        yyval.ast_expressionType.d.pp = yyvsp[0].ast_nestedConstrTokenType.d.pp;
+                        yyval.ast_expressionType.d.r = NULL;
+                        if (yyval.ast_expressionType.d.t->kind != TypeError) {
+                            yyval.trail = newClassDefinitionBegin(&s_javaAnonymousClassName, ACC_DEFAULT, yyval.ast_expressionType.d.t->u.t);
                         } else {
-                            yyval.trail = newAnonClassDefinitionBegin(& yyvsp[0].bbnestedConstrTokenType.d.nid->id);
+                            yyval.trail = newAnonClassDefinitionBegin(& yyvsp[0].ast_nestedConstrTokenType.d.nid->id);
                         }
                     } else {
-                        yyval.bbexprType.d.pp = yyvsp[0].bbnestedConstrTokenType.d.pp;
+                        yyval.ast_expressionType.d.pp = yyvsp[0].ast_nestedConstrTokenType.d.pp;
                     }
                 } else {
-                    jslNewAnonClassDefinitionBegin(& yyvsp[0].bbnestedConstrTokenType.d.nid->id);
+                    jslNewAnonClassDefinitionBegin(& yyvsp[0].ast_nestedConstrTokenType.d.nid->id);
                 }
             }
 break;
 case 371:
-#line 3352 "java_parser.y"
+#line 3332 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         newClassDefinitionEnd(yyvsp[-1].trail);
                     } else {
-                        PropagateBorns(yyval.bbexprType, yyvsp[-2].bbnestedConstrTokenType, yyvsp[0].bbposition);
+                        PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_nestedConstrTokenType, yyvsp[0].ast_position);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -6116,944 +6096,944 @@ case 371:
         }
 break;
 case 372:
-#line 3363 "java_parser.y"
+#line 3343 "java_parser.y"
 {
             assert(0); /* rule never used */
         }
 break;
 case 373:
-#line 3366 "java_parser.y"
+#line 3346 "java_parser.y"
 {
             assert(0); /* rule never used */
         }
 break;
 case 374:
-#line 3369 "java_parser.y"
+#line 3349 "java_parser.y"
 {
             assert(0); /* rule never used */
         }
 break;
 case 375:
-#line 3381 "java_parser.y"
+#line 3361 "java_parser.y"
 {
-            yyval.bbtypeModifiersListPositionLstPair.d.t = NULL;
-            yyval.bbtypeModifiersListPositionLstPair.d.p = NULL;
-            SetNullBorns(yyval.bbtypeModifiersListPositionLstPair);
+            yyval.ast_typeModifiersListPositionListPair.d.t = NULL;
+            yyval.ast_typeModifiersListPositionListPair.d.p = NULL;
+            SetNullBorns(yyval.ast_typeModifiersListPositionListPair);
         }
 break;
 case 377:
-#line 3390 "java_parser.y"
+#line 3370 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    XX_ALLOC(yyval.bbtypeModifiersListPositionLstPair.d.t, S_typeModifiersList);
-                    FILL_typeModifiersList(yyval.bbtypeModifiersListPositionLstPair.d.t, yyvsp[0].bbexprType.d.t, NULL);
+                    XX_ALLOC(yyval.ast_typeModifiersListPositionListPair.d.t, S_typeModifiersList);
+                    FILL_typeModifiersList(yyval.ast_typeModifiersListPositionListPair.d.t, yyvsp[0].ast_expressionType.d.t, NULL);
                     if (s_cp.erfsForParamsComplet!=NULL) {
-                        s_cp.erfsForParamsComplet->params = yyval.bbtypeModifiersListPositionLstPair.d.t;
+                        s_cp.erfsForParamsComplet->params = yyval.ast_typeModifiersListPositionListPair.d.t;
                     }
                 } else {
-                    yyval.bbtypeModifiersListPositionLstPair.d.p = NULL;
-                    appendPositionToList(&yyval.bbtypeModifiersListPositionLstPair.d.p, &s_noPos);
-                    PropagateBorns(yyval.bbtypeModifiersListPositionLstPair, yyvsp[0].bbexprType, yyvsp[0].bbexprType);
+                    yyval.ast_typeModifiersListPositionListPair.d.p = NULL;
+                    appendPositionToList(&yyval.ast_typeModifiersListPositionListPair.d.p, &s_noPos);
+                    PropagateBorns(yyval.ast_typeModifiersListPositionListPair, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 378:
-#line 3405 "java_parser.y"
+#line 3385 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     S_typeModifiersList *p;
-                    yyval.bbtypeModifiersListPositionLstPair.d = yyvsp[-2].bbtypeModifiersListPositionLstPair.d;
+                    yyval.ast_typeModifiersListPositionListPair.d = yyvsp[-2].ast_typeModifiersListPositionListPair.d;
                     XX_ALLOC(p, S_typeModifiersList);
-                    FILL_typeModifiersList(p, yyvsp[0].bbexprType.d.t, NULL);
-                    LIST_APPEND(S_typeModifiersList, yyval.bbtypeModifiersListPositionLstPair.d.t, p);
-                    if (s_cp.erfsForParamsComplet!=NULL) s_cp.erfsForParamsComplet->params = yyval.bbtypeModifiersListPositionLstPair.d.t;
+                    FILL_typeModifiersList(p, yyvsp[0].ast_expressionType.d.t, NULL);
+                    LIST_APPEND(S_typeModifiersList, yyval.ast_typeModifiersListPositionListPair.d.t, p);
+                    if (s_cp.erfsForParamsComplet!=NULL) s_cp.erfsForParamsComplet->params = yyval.ast_typeModifiersListPositionListPair.d.t;
                 } else {
-                    appendPositionToList(&yyval.bbtypeModifiersListPositionLstPair.d.p, &yyvsp[-1].bbposition.d);
-                    PropagateBorns(yyval.bbtypeModifiersListPositionLstPair, yyvsp[-2].bbtypeModifiersListPositionLstPair, yyvsp[0].bbexprType);
+                    appendPositionToList(&yyval.ast_typeModifiersListPositionListPair.d.p, &yyvsp[-1].ast_position.d);
+                    PropagateBorns(yyval.ast_typeModifiersListPositionListPair, yyvsp[-2].ast_typeModifiersListPositionListPair, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 379:
-#line 3420 "java_parser.y"
+#line 3400 "java_parser.y"
 {assert(0);}
 break;
 case 380:
-#line 3421 "java_parser.y"
+#line 3401 "java_parser.y"
 {assert(0);}
 break;
 case 381:
-#line 3426 "java_parser.y"
+#line 3406 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     int i;
-                    CrTypeModifier(yyval.bbexprType.d.t,yyvsp[-2].bbunsPositionPair.d.u);
-                    for(i=0; i<yyvsp[-1].bbinteger.d; i++) PrependModifier(yyval.bbexprType.d.t, TypeArray);
-                    yyval.bbexprType.d.r = NULL;
+                    CrTypeModifier(yyval.ast_expressionType.d.t,yyvsp[-2].ast_unsignedPositionPair.d.u);
+                    for(i=0; i<yyvsp[-1].ast_integer.d; i++) PrependModifier(yyval.ast_expressionType.d.t, TypeArray);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = &yyvsp[-4].bbidIdent.d->p;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-4].bbidIdent, yyvsp[0].bbinteger);
-                    if (yyval.bbexprType.e.file == s_noneFileIndex) PropagateBorns(yyval.bbexprType, yyval.bbexprType, yyvsp[-1].bbinteger);
+                    yyval.ast_expressionType.d.pp = &yyvsp[-4].ast_id.d->p;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-4].ast_id, yyvsp[0].ast_integer);
+                    if (yyval.ast_expressionType.e.file == s_noneFileIndex) PropagateBorns(yyval.ast_expressionType, yyval.ast_expressionType, yyvsp[-1].ast_integer);
                 }
             }
         }
 break;
 case 382:
-#line 3440 "java_parser.y"
+#line 3420 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     int i;
-                    CrTypeModifier(yyval.bbexprType.d.t,yyvsp[-2].bbunsPositionPair.d.u);
-                    for(i=0; i<yyvsp[-1].bbinteger.d; i++) PrependModifier(yyval.bbexprType.d.t, TypeArray);
-                    yyval.bbexprType.d.r = NULL;
+                    CrTypeModifier(yyval.ast_expressionType.d.t,yyvsp[-2].ast_unsignedPositionPair.d.u);
+                    for(i=0; i<yyvsp[-1].ast_integer.d; i++) PrependModifier(yyval.ast_expressionType.d.t, TypeArray);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = &yyvsp[-4].bbidIdent.d->p;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-4].bbidIdent, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = &yyvsp[-4].ast_id.d->p;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-4].ast_id, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 383:
-#line 3453 "java_parser.y"
+#line 3433 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     int i;
-                    assert(yyvsp[-2].bbsymbol.d && yyvsp[-2].bbsymbol.d->u.type);
-                    yyval.bbexprType.d.t = yyvsp[-2].bbsymbol.d->u.type;
-                    for(i=0; i<yyvsp[-1].bbinteger.d; i++) PrependModifier(yyval.bbexprType.d.t, TypeArray);
-                    yyval.bbexprType.d.r = NULL;
+                    assert(yyvsp[-2].ast_symbol.d && yyvsp[-2].ast_symbol.d->u.type);
+                    yyval.ast_expressionType.d.t = yyvsp[-2].ast_symbol.d->u.type;
+                    for(i=0; i<yyvsp[-1].ast_integer.d; i++) PrependModifier(yyval.ast_expressionType.d.t, TypeArray);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = &yyvsp[-4].bbidIdent.d->p;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-4].bbidIdent, yyvsp[0].bbinteger);
-                    if (yyval.bbexprType.e.file == s_noneFileIndex) PropagateBorns(yyval.bbexprType, yyval.bbexprType, yyvsp[-1].bbinteger);
+                    yyval.ast_expressionType.d.pp = &yyvsp[-4].ast_id.d->p;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-4].ast_id, yyvsp[0].ast_integer);
+                    if (yyval.ast_expressionType.e.file == s_noneFileIndex) PropagateBorns(yyval.ast_expressionType, yyval.ast_expressionType, yyvsp[-1].ast_integer);
                 }
             }
         }
 break;
 case 384:
-#line 3468 "java_parser.y"
+#line 3448 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     int i;
-                    assert(yyvsp[-2].bbsymbol.d && yyvsp[-2].bbsymbol.d->u.type);
-                    yyval.bbexprType.d.t = yyvsp[-2].bbsymbol.d->u.type;
-                    for(i=0; i<yyvsp[-1].bbinteger.d; i++) PrependModifier(yyval.bbexprType.d.t, TypeArray);
-                    yyval.bbexprType.d.r = NULL;
+                    assert(yyvsp[-2].ast_symbol.d && yyvsp[-2].ast_symbol.d->u.type);
+                    yyval.ast_expressionType.d.t = yyvsp[-2].ast_symbol.d->u.type;
+                    for(i=0; i<yyvsp[-1].ast_integer.d; i++) PrependModifier(yyval.ast_expressionType.d.t, TypeArray);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = &yyvsp[-4].bbidIdent.d->p;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-4].bbidIdent, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = &yyvsp[-4].ast_id.d->p;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-4].ast_id, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 385:
-#line 3486 "java_parser.y"
+#line 3466 "java_parser.y"
 {
-            if (regularPass()) yyval.bbinteger.d = 1;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbinteger, yyvsp[0].bbposition, yyvsp[0].bbposition);
+            if (regularPass()) yyval.ast_integer.d = 1;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_integer, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 386:
-#line 3490 "java_parser.y"
+#line 3470 "java_parser.y"
 {
-            if (regularPass()) yyval.bbinteger.d = yyvsp[-1].bbinteger.d+1;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbinteger, yyvsp[-1].bbinteger, yyvsp[0].bbposition);
+            if (regularPass()) yyval.ast_integer.d = yyvsp[-1].ast_integer.d+1;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_integer, yyvsp[-1].ast_integer, yyvsp[0].ast_position);
         }
 break;
 case 387:
-#line 3497 "java_parser.y"
+#line 3477 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.bbposition, yyvsp[-2].bbposition, yyvsp[0].bbposition);
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 388:
-#line 3502 "java_parser.y"
+#line 3482 "java_parser.y"
 {
-            if (regularPass()) yyval.bbinteger.d = 0;
-            SetNullBorns(yyval.bbinteger);
+            if (regularPass()) yyval.ast_integer.d = 0;
+            SetNullBorns(yyval.ast_integer);
         }
 break;
 case 390:
-#line 3510 "java_parser.y"
+#line 3490 "java_parser.y"
 {
-            if (regularPass()) yyval.bbinteger.d = 1;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbinteger, yyvsp[-1].bbposition, yyvsp[0].bbposition);
+            if (regularPass()) yyval.ast_integer.d = 1;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_integer, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 391:
-#line 3514 "java_parser.y"
+#line 3494 "java_parser.y"
 {
-            if (regularPass()) yyval.bbinteger.d = yyvsp[-2].bbinteger.d+1;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbinteger, yyvsp[-2].bbinteger, yyvsp[0].bbposition);
+            if (regularPass()) yyval.ast_integer.d = yyvsp[-2].ast_integer.d+1;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_integer, yyvsp[-2].ast_integer, yyvsp[0].ast_position);
         }
 break;
 case 392:
-#line 3521 "java_parser.y"
+#line 3501 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     Symbol *rec=NULL;
-                    assert(yyvsp[-2].bbexprType.d.t);
-                    yyval.bbexprType.d.r = NULL;
-                    yyval.bbexprType.d.pp = yyvsp[-2].bbexprType.d.pp;
-                    if (yyvsp[-2].bbexprType.d.t->kind == TypeStruct) {
-                        javaLoadClassSymbolsFromFile(yyvsp[-2].bbexprType.d.t->u.t);
-                        yyval.bbexprType.d.r = findStrRecordFromType(yyvsp[-2].bbexprType.d.t, yyvsp[0].bbidIdent.d, &rec, CLASS_TO_EXPR);
+                    assert(yyvsp[-2].ast_expressionType.d.t);
+                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.pp = yyvsp[-2].ast_expressionType.d.pp;
+                    if (yyvsp[-2].ast_expressionType.d.t->kind == TypeStruct) {
+                        javaLoadClassSymbolsFromFile(yyvsp[-2].ast_expressionType.d.t->u.t);
+                        yyval.ast_expressionType.d.r = findStrRecordFromType(yyvsp[-2].ast_expressionType.d.t, yyvsp[0].ast_id.d, &rec, CLASS_TO_EXPR);
                         assert(rec);
-                        yyval.bbexprType.d.t = rec->u.type;
+                        yyval.ast_expressionType.d.t = rec->u.type;
                     } else if (s_language == LANG_JAVA) {
-                        yyval.bbexprType.d.t = javaArrayFieldAccess(yyvsp[0].bbidIdent.d);
+                        yyval.ast_expressionType.d.t = javaArrayFieldAccess(yyvsp[0].ast_id.d);
                     } else {
-                        yyval.bbexprType.d.t = &s_errorModifier;
+                        yyval.ast_expressionType.d.t = &s_errorModifier;
                     }
-                    assert(yyval.bbexprType.d.t);
+                    assert(yyval.ast_expressionType.d.t);
                 } else {
-                    yyval.bbexprType.d.pp = yyvsp[-2].bbexprType.d.pp;
-                    javaCheckForPrimaryStart(&yyvsp[0].bbidIdent.d->p, yyval.bbexprType.d.pp);
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbexprType, yyvsp[0].bbidIdent);
+                    yyval.ast_expressionType.d.pp = yyvsp[-2].ast_expressionType.d.pp;
+                    javaCheckForPrimaryStart(&yyvsp[0].ast_id.d->p, yyval.ast_expressionType.d.pp);
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_id);
                 }
             }
         }
 break;
 case 393:
-#line 3546 "java_parser.y"
+#line 3526 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     Symbol *ss,*rec=NULL;
 
-                    yyval.bbexprType.d.r = NULL;
-                    yyval.bbexprType.d.pp = &yyvsp[-2].bbidIdent.d->p;
+                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.pp = &yyvsp[-2].ast_id.d->p;
                     ss = javaCurrentSuperClass();
                     if (ss != &s_errorSymbol && ss->bits.symType!=TypeError) {
                         javaLoadClassSymbolsFromFile(ss);
-                        yyval.bbexprType.d.r = findStrRecordFromSymbol(ss, yyvsp[0].bbidIdent.d, &rec, CLASS_TO_EXPR, yyvsp[-2].bbidIdent.d);
+                        yyval.ast_expressionType.d.r = findStrRecordFromSymbol(ss, yyvsp[0].ast_id.d, &rec, CLASS_TO_EXPR, yyvsp[-2].ast_id.d);
                         assert(rec);
-                        yyval.bbexprType.d.t = rec->u.type;
+                        yyval.ast_expressionType.d.t = rec->u.type;
                     } else {
-                        yyval.bbexprType.d.t = &s_errorModifier;
+                        yyval.ast_expressionType.d.t = &s_errorModifier;
                     }
-                    assert(yyval.bbexprType.d.t);
+                    assert(yyval.ast_expressionType.d.t);
                 } else {
-                    yyval.bbexprType.d.pp = &yyvsp[-2].bbidIdent.d->p;
-                    javaCheckForPrimaryStart(&yyvsp[0].bbidIdent.d->p, yyval.bbexprType.d.pp);
-                    javaCheckForStaticPrefixStart(&yyvsp[0].bbidIdent.d->p, yyval.bbexprType.d.pp);
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbidIdent, yyvsp[0].bbidIdent);
+                    yyval.ast_expressionType.d.pp = &yyvsp[-2].ast_id.d->p;
+                    javaCheckForPrimaryStart(&yyvsp[0].ast_id.d->p, yyval.ast_expressionType.d.pp);
+                    javaCheckForStaticPrefixStart(&yyvsp[0].ast_id.d->p, yyval.ast_expressionType.d.pp);
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_id, yyvsp[0].ast_id);
                 }
             }
         }
 break;
 case 394:
-#line 3571 "java_parser.y"
+#line 3551 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     Symbol *ss,*rec=NULL;
 
-                    ss = javaQualifiedThis(yyvsp[-4].bbidlist.d, yyvsp[-2].bbidIdent.d);
+                    ss = javaQualifiedThis(yyvsp[-4].ast_idList.d, yyvsp[-2].ast_id.d);
                     if (ss != &s_errorSymbol && ss->bits.symType!=TypeError) {
                         javaLoadClassSymbolsFromFile(ss);
                         ss = javaGetSuperClass(ss);
-                        yyval.bbexprType.d.r = findStrRecordFromSymbol(ss, yyvsp[0].bbidIdent.d, &rec, CLASS_TO_EXPR, NULL);
+                        yyval.ast_expressionType.d.r = findStrRecordFromSymbol(ss, yyvsp[0].ast_id.d, &rec, CLASS_TO_EXPR, NULL);
                         assert(rec);
-                        yyval.bbexprType.d.t = rec->u.type;
+                        yyval.ast_expressionType.d.t = rec->u.type;
                     } else {
-                        yyval.bbexprType.d.t = &s_errorModifier;
+                        yyval.ast_expressionType.d.t = &s_errorModifier;
                     }
-                    yyval.bbexprType.d.r = NULL;
-                    assert(yyval.bbexprType.d.t);
+                    yyval.ast_expressionType.d.r = NULL;
+                    assert(yyval.ast_expressionType.d.t);
                 } else {
-                    yyval.bbexprType.d.pp = javaGetNameStartingPosition(yyvsp[-4].bbidlist.d);
-                    javaCheckForPrimaryStart(&yyvsp[-2].bbidIdent.d->p, yyval.bbexprType.d.pp);
-                    javaCheckForPrimaryStart(&yyvsp[0].bbidIdent.d->p, yyval.bbexprType.d.pp);
-                    javaCheckForStaticPrefixStart(&yyvsp[-2].bbidIdent.d->p, yyval.bbexprType.d.pp);
-                    javaCheckForStaticPrefixStart(&yyvsp[0].bbidIdent.d->p, yyval.bbexprType.d.pp);
-                    PropagateBorns(yyval.bbexprType, yyvsp[-4].bbidlist, yyvsp[0].bbidIdent);
+                    yyval.ast_expressionType.d.pp = javaGetNameStartingPosition(yyvsp[-4].ast_idList.d);
+                    javaCheckForPrimaryStart(&yyvsp[-2].ast_id.d->p, yyval.ast_expressionType.d.pp);
+                    javaCheckForPrimaryStart(&yyvsp[0].ast_id.d->p, yyval.ast_expressionType.d.pp);
+                    javaCheckForStaticPrefixStart(&yyvsp[-2].ast_id.d->p, yyval.ast_expressionType.d.pp);
+                    javaCheckForStaticPrefixStart(&yyvsp[0].ast_id.d->p, yyval.ast_expressionType.d.pp);
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-4].ast_idList, yyvsp[0].ast_id);
                 }
             }
         }
 break;
 case 395:
-#line 3598 "java_parser.y"
+#line 3578 "java_parser.y"
 { assert(0); }
 break;
 case 396:
-#line 3599 "java_parser.y"
+#line 3579 "java_parser.y"
 { assert(0); }
 break;
 case 397:
-#line 3600 "java_parser.y"
+#line 3580 "java_parser.y"
 { assert(0); }
 break;
 case 398:
-#line 3604 "java_parser.y"
+#line 3584 "java_parser.y"
 {
             if (ComputingPossibleParameterCompletion()) {
-                s_cp.erfsForParamsComplet = javaCrErfsForMethodInvocationN(yyvsp[-1].bbidlist.d);
+                s_cp.erfsForParamsComplet = javaCrErfsForMethodInvocationN(yyvsp[-1].ast_idList.d);
             }
         }
 break;
 case 399:
-#line 3608 "java_parser.y"
+#line 3588 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = javaMethodInvocationN(yyvsp[-5].bbidlist.d,yyvsp[-1].bbtypeModifiersListPositionLstPair.d.t);
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = javaMethodInvocationN(yyvsp[-5].ast_idList.d,yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
+                    yyval.ast_expressionType.d.r = NULL;
                     s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
                 } else {
-                    yyval.bbexprType.d.pp = javaGetNameStartingPosition(yyvsp[-5].bbidlist.d);
-                    javaCheckForPrimaryStartInNameList(yyvsp[-5].bbidlist.d, yyval.bbexprType.d.pp);
-                    javaCheckForStaticPrefixInNameList(yyvsp[-5].bbidlist.d, yyval.bbexprType.d.pp);
-                    javaHandleDeclaratorParamPositions(&yyvsp[-5].bbidlist.d->id.p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbtypeModifiersListPositionLstPair.d.p, &yyvsp[0].bbposition.d);
-                    PropagateBorns(yyval.bbexprType, yyvsp[-5].bbidlist, yyvsp[0].bbposition);
+                    yyval.ast_expressionType.d.pp = javaGetNameStartingPosition(yyvsp[-5].ast_idList.d);
+                    javaCheckForPrimaryStartInNameList(yyvsp[-5].ast_idList.d, yyval.ast_expressionType.d.pp);
+                    javaCheckForStaticPrefixInNameList(yyvsp[-5].ast_idList.d, yyval.ast_expressionType.d.pp);
+                    javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_idList.d->id.p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-5].ast_idList, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 400:
-#line 3623 "java_parser.y"
+#line 3603 "java_parser.y"
 {
             if (ComputingPossibleParameterCompletion()) {
-                s_cp.erfsForParamsComplet = javaCrErfsForMethodInvocationT(yyvsp[-3].bbexprType.d.t, yyvsp[-1].bbidIdent.d);
+                s_cp.erfsForParamsComplet = javaCrErfsForMethodInvocationT(yyvsp[-3].ast_expressionType.d.t, yyvsp[-1].ast_id.d);
             }
         }
 break;
 case 401:
-#line 3627 "java_parser.y"
+#line 3607 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = javaMethodInvocationT(yyvsp[-7].bbexprType.d.t,yyvsp[-5].bbidIdent.d,yyvsp[-1].bbtypeModifiersListPositionLstPair.d.t);
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = javaMethodInvocationT(yyvsp[-7].ast_expressionType.d.t,yyvsp[-5].ast_id.d,yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
+                    yyval.ast_expressionType.d.r = NULL;
                     s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
                 } else {
-                    yyval.bbexprType.d.pp = yyvsp[-7].bbexprType.d.pp;
-                    javaCheckForPrimaryStart(&yyvsp[-5].bbidIdent.d->p, yyval.bbexprType.d.pp);
-                    javaHandleDeclaratorParamPositions(&yyvsp[-5].bbidIdent.d->p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbtypeModifiersListPositionLstPair.d.p, &yyvsp[0].bbposition.d);
-                    PropagateBorns(yyval.bbexprType, yyvsp[-7].bbexprType, yyvsp[0].bbposition);
+                    yyval.ast_expressionType.d.pp = yyvsp[-7].ast_expressionType.d.pp;
+                    javaCheckForPrimaryStart(&yyvsp[-5].ast_id.d->p, yyval.ast_expressionType.d.pp);
+                    javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.d->p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-7].ast_expressionType, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 402:
-#line 3641 "java_parser.y"
+#line 3621 "java_parser.y"
 {
             if (ComputingPossibleParameterCompletion()) {
-                s_cp.erfsForParamsComplet = javaCrErfsForMethodInvocationS(yyvsp[-3].bbidIdent.d, yyvsp[-1].bbidIdent.d);
+                s_cp.erfsForParamsComplet = javaCrErfsForMethodInvocationS(yyvsp[-3].ast_id.d, yyvsp[-1].ast_id.d);
             }
         }
 break;
 case 403:
-#line 3645 "java_parser.y"
+#line 3625 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = javaMethodInvocationS(yyvsp[-7].bbidIdent.d, yyvsp[-5].bbidIdent.d, yyvsp[-1].bbtypeModifiersListPositionLstPair.d.t);
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = javaMethodInvocationS(yyvsp[-7].ast_id.d, yyvsp[-5].ast_id.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
+                    yyval.ast_expressionType.d.r = NULL;
                     s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
                 } else {
-                    yyval.bbexprType.d.pp = &yyvsp[-7].bbidIdent.d->p;
-                    javaCheckForPrimaryStart(&yyvsp[-7].bbidIdent.d->p, yyval.bbexprType.d.pp);
-                    javaCheckForPrimaryStart(&yyvsp[-5].bbidIdent.d->p, yyval.bbexprType.d.pp);
-                    javaHandleDeclaratorParamPositions(&yyvsp[-5].bbidIdent.d->p, &yyvsp[-2].bbposition.d, yyvsp[-1].bbtypeModifiersListPositionLstPair.d.p, &yyvsp[0].bbposition.d);
-                    PropagateBorns(yyval.bbexprType, yyvsp[-7].bbidIdent, yyvsp[0].bbposition);
+                    yyval.ast_expressionType.d.pp = &yyvsp[-7].ast_id.d->p;
+                    javaCheckForPrimaryStart(&yyvsp[-7].ast_id.d->p, yyval.ast_expressionType.d.pp);
+                    javaCheckForPrimaryStart(&yyvsp[-5].ast_id.d->p, yyval.ast_expressionType.d.pp);
+                    javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.d->p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-7].ast_id, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 404:
-#line 3669 "java_parser.y"
+#line 3649 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     S_typeModifiers *tt;
-                    tt = javaClassifyToExpressionName(yyvsp[-3].bbidlist.d, &(yyval.bbexprType.d.r));
-                    if (tt->kind==TypeArray) yyval.bbexprType.d.t=tt->next;
-                    else yyval.bbexprType.d.t = &s_errorModifier;
-                    assert(yyval.bbexprType.d.t);
-                    yyval.bbexprType.d.r = NULL;
+                    tt = javaClassifyToExpressionName(yyvsp[-3].ast_idList.d, &(yyval.ast_expressionType.d.r));
+                    if (tt->kind==TypeArray) yyval.ast_expressionType.d.t=tt->next;
+                    else yyval.ast_expressionType.d.t = &s_errorModifier;
+                    assert(yyval.ast_expressionType.d.t);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = javaGetNameStartingPosition(yyvsp[-3].bbidlist.d);
-                    PropagateBorns(yyval.bbexprType, yyvsp[-3].bbidlist, yyvsp[0].bbposition);
+                    yyval.ast_expressionType.d.pp = javaGetNameStartingPosition(yyvsp[-3].ast_idList.d);
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-3].ast_idList, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 405:
-#line 3684 "java_parser.y"
+#line 3664 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if (yyvsp[-3].bbexprType.d.t->kind==TypeArray) yyval.bbexprType.d.t=yyvsp[-3].bbexprType.d.t->next;
-                    else yyval.bbexprType.d.t = &s_errorModifier;
-                    assert(yyval.bbexprType.d.t);
-                    yyval.bbexprType.d.r = NULL;
+                    if (yyvsp[-3].ast_expressionType.d.t->kind==TypeArray) yyval.ast_expressionType.d.t=yyvsp[-3].ast_expressionType.d.t->next;
+                    else yyval.ast_expressionType.d.t = &s_errorModifier;
+                    assert(yyval.ast_expressionType.d.t);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = yyvsp[-3].bbexprType.d.pp;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-3].bbexprType, yyvsp[0].bbposition);
+                    yyval.ast_expressionType.d.pp = yyvsp[-3].ast_expressionType.d.pp;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-3].ast_expressionType, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 406:
-#line 3697 "java_parser.y"
+#line 3677 "java_parser.y"
 { /* rule never used */ }
 break;
 case 408:
-#line 3702 "java_parser.y"
+#line 3682 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = javaClassifyToExpressionName(yyvsp[0].bbidlist.d, &(yyval.bbexprType.d.r));
+                    yyval.ast_expressionType.d.t = javaClassifyToExpressionName(yyvsp[0].ast_idList.d, &(yyval.ast_expressionType.d.r));
                 } else {
-                    yyval.bbexprType.d.pp = javaGetNameStartingPosition(yyvsp[0].bbidlist.d);
-                    javaCheckForPrimaryStartInNameList(yyvsp[0].bbidlist.d, yyval.bbexprType.d.pp);
-                    javaCheckForStaticPrefixInNameList(yyvsp[0].bbidlist.d, yyval.bbexprType.d.pp);
-                    PropagateBorns(yyval.bbexprType, yyvsp[0].bbidlist, yyvsp[0].bbidlist);
+                    yyval.ast_expressionType.d.pp = javaGetNameStartingPosition(yyvsp[0].ast_idList.d);
+                    javaCheckForPrimaryStartInNameList(yyvsp[0].ast_idList.d, yyval.ast_expressionType.d.pp);
+                    javaCheckForStaticPrefixInNameList(yyvsp[0].ast_idList.d, yyval.ast_expressionType.d.pp);
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
                 }
             }
         }
 break;
 case 411:
-#line 3716 "java_parser.y"
+#line 3696 "java_parser.y"
 { /* rule never used */ }
 break;
 case 412:
-#line 3720 "java_parser.y"
+#line 3700 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = javaCheckNumeric(yyvsp[-1].bbexprType.d.t);
-                    RESET_REFERENCE_USAGE(yyvsp[-1].bbexprType.d.r, UsageAddrUsed);
+                    yyval.ast_expressionType.d.t = javaCheckNumeric(yyvsp[-1].ast_expressionType.d.t);
+                    RESET_REFERENCE_USAGE(yyvsp[-1].ast_expressionType.d.r, UsageAddrUsed);
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-1].bbexprType, yyvsp[0].bbposition);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-1].ast_expressionType, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 413:
-#line 3734 "java_parser.y"
+#line 3714 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = javaCheckNumeric(yyvsp[-1].bbexprType.d.t);
-                    RESET_REFERENCE_USAGE(yyvsp[-1].bbexprType.d.r, UsageAddrUsed);
+                    yyval.ast_expressionType.d.t = javaCheckNumeric(yyvsp[-1].ast_expressionType.d.t);
+                    RESET_REFERENCE_USAGE(yyvsp[-1].ast_expressionType.d.r, UsageAddrUsed);
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-1].bbexprType, yyvsp[0].bbposition);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-1].ast_expressionType, yyvsp[0].ast_position);
                 }
             }
         }
 break;
 case 416:
-#line 3750 "java_parser.y"
+#line 3730 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = javaNumericPromotion(yyvsp[0].bbexprType.d.t);
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = javaNumericPromotion(yyvsp[0].ast_expressionType.d.t);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-1].bbposition, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 417:
-#line 3761 "java_parser.y"
+#line 3741 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = javaNumericPromotion(yyvsp[0].bbexprType.d.t);
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = javaNumericPromotion(yyvsp[0].ast_expressionType.d.t);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-1].bbposition, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 419:
-#line 3776 "java_parser.y"
+#line 3756 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = javaCheckNumeric(yyvsp[0].bbexprType.d.t);
-                    RESET_REFERENCE_USAGE(yyvsp[0].bbexprType.d.r, UsageAddrUsed);
+                    yyval.ast_expressionType.d.t = javaCheckNumeric(yyvsp[0].ast_expressionType.d.t);
+                    RESET_REFERENCE_USAGE(yyvsp[0].ast_expressionType.d.r, UsageAddrUsed);
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-1].bbposition, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 420:
-#line 3790 "java_parser.y"
+#line 3770 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = javaCheckNumeric(yyvsp[0].bbexprType.d.t);
-                    RESET_REFERENCE_USAGE(yyvsp[0].bbexprType.d.r, UsageAddrUsed);
+                    yyval.ast_expressionType.d.t = javaCheckNumeric(yyvsp[0].ast_expressionType.d.t);
+                    RESET_REFERENCE_USAGE(yyvsp[0].ast_expressionType.d.r, UsageAddrUsed);
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-1].bbposition, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 422:
-#line 3805 "java_parser.y"
+#line 3785 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = javaNumericPromotion(yyvsp[0].bbexprType.d.t);
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = javaNumericPromotion(yyvsp[0].ast_expressionType.d.t);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-1].bbposition, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 423:
-#line 3816 "java_parser.y"
+#line 3796 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if (yyvsp[0].bbexprType.d.t->kind == TypeBoolean) yyval.bbexprType.d.t = yyvsp[0].bbexprType.d.t;
-                    else yyval.bbexprType.d.t = &s_errorModifier;
-                    yyval.bbexprType.d.r = NULL;
+                    if (yyvsp[0].ast_expressionType.d.t->kind == TypeBoolean) yyval.ast_expressionType.d.t = yyvsp[0].ast_expressionType.d.t;
+                    else yyval.ast_expressionType.d.t = &s_errorModifier;
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-1].bbposition, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 425:
-#line 3832 "java_parser.y"
+#line 3812 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(yyvsp[-2].bbsymbolPositionPair.d.s && yyvsp[-2].bbsymbolPositionPair.d.s->u.type);
-                    yyval.bbexprType.d.t = yyvsp[-2].bbsymbolPositionPair.d.s->u.type;
-                    yyval.bbexprType.d.r = NULL;
-                    assert(yyval.bbexprType.d.t->kind == TypeArray);
+                    assert(yyvsp[-2].ast_symbolPositionPair.d.s && yyvsp[-2].ast_symbolPositionPair.d.s->u.type);
+                    yyval.ast_expressionType.d.t = yyvsp[-2].ast_symbolPositionPair.d.s->u.type;
+                    yyval.ast_expressionType.d.r = NULL;
+                    assert(yyval.ast_expressionType.d.t->kind == TypeArray);
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-3].bbposition, yyvsp[0].bbexprType);
-                    if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyvsp[0].bbexprType.b, s_cxRefPos, yyvsp[0].bbexprType.e)
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
+                    if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyvsp[0].ast_expressionType.b, s_cxRefPos, yyvsp[0].ast_expressionType.e)
                         && s_spp[SPP_CAST_LPAR_POSITION].file == s_noneFileIndex) {
-                        s_spp[SPP_CAST_LPAR_POSITION] = yyvsp[-3].bbposition.b;
-                        s_spp[SPP_CAST_RPAR_POSITION] = yyvsp[-1].bbposition.b;
-                        s_spp[SPP_CAST_TYPE_BEGIN_POSITION] = yyvsp[-2].bbsymbolPositionPair.b;
-                        s_spp[SPP_CAST_TYPE_END_POSITION] = yyvsp[-2].bbsymbolPositionPair.e;
-                        s_spp[SPP_CAST_EXPRESSION_BEGIN_POSITION] = yyvsp[0].bbexprType.b;
-                        s_spp[SPP_CAST_EXPRESSION_END_POSITION] = yyvsp[0].bbexprType.e;
+                        s_spp[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.b;
+                        s_spp[SPP_CAST_RPAR_POSITION] = yyvsp[-1].ast_position.b;
+                        s_spp[SPP_CAST_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_symbolPositionPair.b;
+                        s_spp[SPP_CAST_TYPE_END_POSITION] = yyvsp[-2].ast_symbolPositionPair.e;
+                        s_spp[SPP_CAST_EXPRESSION_BEGIN_POSITION] = yyvsp[0].ast_expressionType.b;
+                        s_spp[SPP_CAST_EXPRESSION_END_POSITION] = yyvsp[0].ast_expressionType.e;
                     }
                 }
             }
         }
 break;
 case 426:
-#line 3854 "java_parser.y"
+#line 3834 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    XX_ALLOC(yyval.bbexprType.d.t, S_typeModifiers);
-                    FILLF_typeModifiers(yyval.bbexprType.d.t,yyvsp[-2].bbunsPositionPair.d.u,t,NULL,NULL,NULL);
-                    yyval.bbexprType.d.r = NULL;
+                    XX_ALLOC(yyval.ast_expressionType.d.t, S_typeModifiers);
+                    FILLF_typeModifiers(yyval.ast_expressionType.d.t,yyvsp[-2].ast_unsignedPositionPair.d.u,t,NULL,NULL,NULL);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-3].bbposition, yyvsp[0].bbexprType);
-                    if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyvsp[0].bbexprType.b, s_cxRefPos, yyvsp[0].bbexprType.e)
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
+                    if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyvsp[0].ast_expressionType.b, s_cxRefPos, yyvsp[0].ast_expressionType.e)
                         && s_spp[SPP_CAST_LPAR_POSITION].file == s_noneFileIndex) {
-                        s_spp[SPP_CAST_LPAR_POSITION] = yyvsp[-3].bbposition.b;
-                        s_spp[SPP_CAST_RPAR_POSITION] = yyvsp[-1].bbposition.b;
-                        s_spp[SPP_CAST_TYPE_BEGIN_POSITION] = yyvsp[-2].bbunsPositionPair.b;
-                        s_spp[SPP_CAST_TYPE_END_POSITION] = yyvsp[-2].bbunsPositionPair.e;
-                        s_spp[SPP_CAST_EXPRESSION_BEGIN_POSITION] = yyvsp[0].bbexprType.b;
-                        s_spp[SPP_CAST_EXPRESSION_END_POSITION] = yyvsp[0].bbexprType.e;
+                        s_spp[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.b;
+                        s_spp[SPP_CAST_RPAR_POSITION] = yyvsp[-1].ast_position.b;
+                        s_spp[SPP_CAST_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_unsignedPositionPair.b;
+                        s_spp[SPP_CAST_TYPE_END_POSITION] = yyvsp[-2].ast_unsignedPositionPair.e;
+                        s_spp[SPP_CAST_EXPRESSION_BEGIN_POSITION] = yyvsp[0].ast_expressionType.b;
+                        s_spp[SPP_CAST_EXPRESSION_END_POSITION] = yyvsp[0].ast_expressionType.e;
                     }
                 }
             }
         }
 break;
 case 427:
-#line 3875 "java_parser.y"
+#line 3855 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = yyvsp[-2].bbexprType.d.t;
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = yyvsp[-2].ast_expressionType.d.t;
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-3].bbposition, yyvsp[0].bbexprType);
-                    if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyvsp[0].bbexprType.b, s_cxRefPos, yyvsp[0].bbexprType.e)
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
+                    if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyvsp[0].ast_expressionType.b, s_cxRefPos, yyvsp[0].ast_expressionType.e)
                         && s_spp[SPP_CAST_LPAR_POSITION].file == s_noneFileIndex) {
-                        s_spp[SPP_CAST_LPAR_POSITION] = yyvsp[-3].bbposition.b;
-                        s_spp[SPP_CAST_RPAR_POSITION] = yyvsp[-1].bbposition.b;
-                        s_spp[SPP_CAST_TYPE_BEGIN_POSITION] = yyvsp[-2].bbexprType.b;
-                        s_spp[SPP_CAST_TYPE_END_POSITION] = yyvsp[-2].bbexprType.e;
-                        s_spp[SPP_CAST_EXPRESSION_BEGIN_POSITION] = yyvsp[0].bbexprType.b;
-                        s_spp[SPP_CAST_EXPRESSION_END_POSITION] = yyvsp[0].bbexprType.e;
+                        s_spp[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.b;
+                        s_spp[SPP_CAST_RPAR_POSITION] = yyvsp[-1].ast_position.b;
+                        s_spp[SPP_CAST_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_expressionType.b;
+                        s_spp[SPP_CAST_TYPE_END_POSITION] = yyvsp[-2].ast_expressionType.e;
+                        s_spp[SPP_CAST_EXPRESSION_BEGIN_POSITION] = yyvsp[0].ast_expressionType.b;
+                        s_spp[SPP_CAST_EXPRESSION_END_POSITION] = yyvsp[0].ast_expressionType.e;
                     }
                 }
             }
         }
 break;
 case 429:
-#line 3910 "java_parser.y"
+#line 3890 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = javaBinaryNumericPromotion(yyvsp[-2].bbexprType.d.t,yyvsp[0].bbexprType.d.t);
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = javaBinaryNumericPromotion(yyvsp[-2].ast_expressionType.d.t,yyvsp[0].ast_expressionType.d.t);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbexprType, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 430:
-#line 3921 "java_parser.y"
+#line 3901 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = javaBinaryNumericPromotion(yyvsp[-2].bbexprType.d.t,yyvsp[0].bbexprType.d.t);
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = javaBinaryNumericPromotion(yyvsp[-2].ast_expressionType.d.t,yyvsp[0].ast_expressionType.d.t);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbexprType, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 431:
-#line 3932 "java_parser.y"
+#line 3912 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = javaBinaryNumericPromotion(yyvsp[-2].bbexprType.d.t,yyvsp[0].bbexprType.d.t);
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = javaBinaryNumericPromotion(yyvsp[-2].ast_expressionType.d.t,yyvsp[0].ast_expressionType.d.t);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbexprType, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 433:
-#line 3947 "java_parser.y"
+#line 3927 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     int st1, st2;
-                    st1 = javaIsStringType(yyvsp[-2].bbexprType.d.t);
-                    st2 = javaIsStringType(yyvsp[0].bbexprType.d.t);
+                    st1 = javaIsStringType(yyvsp[-2].ast_expressionType.d.t);
+                    st2 = javaIsStringType(yyvsp[0].ast_expressionType.d.t);
                     if (st1 && st2) {
-                        yyval.bbexprType.d.t = yyvsp[-2].bbexprType.d.t;
+                        yyval.ast_expressionType.d.t = yyvsp[-2].ast_expressionType.d.t;
                     } else if (st1) {
-                        yyval.bbexprType.d.t = yyvsp[-2].bbexprType.d.t;
+                        yyval.ast_expressionType.d.t = yyvsp[-2].ast_expressionType.d.t;
                         /* TODO add reference to 'toString' on $3.d*/
                     } else if (st2) {
-                        yyval.bbexprType.d.t = yyvsp[0].bbexprType.d.t;
+                        yyval.ast_expressionType.d.t = yyvsp[0].ast_expressionType.d.t;
                         /* TODO add reference to 'toString' on $1.d*/
                     } else {
-                        yyval.bbexprType.d.t = javaBinaryNumericPromotion(yyvsp[-2].bbexprType.d.t,yyvsp[0].bbexprType.d.t);
+                        yyval.ast_expressionType.d.t = javaBinaryNumericPromotion(yyvsp[-2].ast_expressionType.d.t,yyvsp[0].ast_expressionType.d.t);
                     }
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbexprType, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 434:
-#line 3971 "java_parser.y"
+#line 3951 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = javaBinaryNumericPromotion(yyvsp[-2].bbexprType.d.t, yyvsp[0].bbexprType.d.t);
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = javaBinaryNumericPromotion(yyvsp[-2].ast_expressionType.d.t, yyvsp[0].ast_expressionType.d.t);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbexprType, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 436:
-#line 3986 "java_parser.y"
+#line 3966 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = javaNumericPromotion(yyvsp[-2].bbexprType.d.t);
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = javaNumericPromotion(yyvsp[-2].ast_expressionType.d.t);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbexprType, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 437:
-#line 3997 "java_parser.y"
+#line 3977 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = javaNumericPromotion(yyvsp[-2].bbexprType.d.t);
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = javaNumericPromotion(yyvsp[-2].ast_expressionType.d.t);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbexprType, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 438:
-#line 4008 "java_parser.y"
+#line 3988 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = javaNumericPromotion(yyvsp[-2].bbexprType.d.t);
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = javaNumericPromotion(yyvsp[-2].ast_expressionType.d.t);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbexprType, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 440:
-#line 4023 "java_parser.y"
+#line 4003 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier(yyval.bbexprType.d.t,TypeBoolean);
-                    yyval.bbexprType.d.r = NULL;
+                    CrTypeModifier(yyval.ast_expressionType.d.t,TypeBoolean);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbexprType, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 441:
-#line 4034 "java_parser.y"
+#line 4014 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier(yyval.bbexprType.d.t,TypeBoolean);
-                    yyval.bbexprType.d.r = NULL;
+                    CrTypeModifier(yyval.ast_expressionType.d.t,TypeBoolean);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbexprType, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 442:
-#line 4045 "java_parser.y"
+#line 4025 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier(yyval.bbexprType.d.t,TypeBoolean);
-                    yyval.bbexprType.d.r = NULL;
+                    CrTypeModifier(yyval.ast_expressionType.d.t,TypeBoolean);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbexprType, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 443:
-#line 4056 "java_parser.y"
+#line 4036 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier(yyval.bbexprType.d.t,TypeBoolean);
-                    yyval.bbexprType.d.r = NULL;
+                    CrTypeModifier(yyval.ast_expressionType.d.t,TypeBoolean);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbexprType, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 444:
-#line 4067 "java_parser.y"
+#line 4047 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier(yyval.bbexprType.d.t,TypeBoolean);
-                    yyval.bbexprType.d.r = NULL;
+                    CrTypeModifier(yyval.ast_expressionType.d.t,TypeBoolean);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbexprType, yyvsp[0].bbsymbol);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_symbol);
                 }
             }
         }
 break;
 case 446:
-#line 4082 "java_parser.y"
+#line 4062 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier(yyval.bbexprType.d.t,TypeBoolean);
-                    yyval.bbexprType.d.r = NULL;
+                    CrTypeModifier(yyval.ast_expressionType.d.t,TypeBoolean);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbexprType, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 447:
-#line 4093 "java_parser.y"
+#line 4073 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier(yyval.bbexprType.d.t,TypeBoolean);
-                    yyval.bbexprType.d.r = NULL;
+                    CrTypeModifier(yyval.ast_expressionType.d.t,TypeBoolean);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbexprType, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 449:
-#line 4108 "java_parser.y"
+#line 4088 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = javaBitwiseLogicalPromotion(yyvsp[-2].bbexprType.d.t,yyvsp[0].bbexprType.d.t);
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = javaBitwiseLogicalPromotion(yyvsp[-2].ast_expressionType.d.t,yyvsp[0].ast_expressionType.d.t);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbexprType, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 451:
-#line 4123 "java_parser.y"
+#line 4103 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = javaBitwiseLogicalPromotion(yyvsp[-2].bbexprType.d.t,yyvsp[0].bbexprType.d.t);
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = javaBitwiseLogicalPromotion(yyvsp[-2].ast_expressionType.d.t,yyvsp[0].ast_expressionType.d.t);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbexprType, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 453:
-#line 4138 "java_parser.y"
+#line 4118 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = javaBitwiseLogicalPromotion(yyvsp[-2].bbexprType.d.t,yyvsp[0].bbexprType.d.t);
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = javaBitwiseLogicalPromotion(yyvsp[-2].ast_expressionType.d.t,yyvsp[0].ast_expressionType.d.t);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbexprType, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 455:
-#line 4153 "java_parser.y"
+#line 4133 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier(yyval.bbexprType.d.t,TypeBoolean);
-                    yyval.bbexprType.d.r = NULL;
+                    CrTypeModifier(yyval.ast_expressionType.d.t,TypeBoolean);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbexprType, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 457:
-#line 4168 "java_parser.y"
+#line 4148 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier(yyval.bbexprType.d.t,TypeBoolean);
-                    yyval.bbexprType.d.r = NULL;
+                    CrTypeModifier(yyval.ast_expressionType.d.t,TypeBoolean);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-2].bbexprType, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 459:
-#line 4183 "java_parser.y"
+#line 4163 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = javaConditionalPromotion(yyvsp[-2].bbexprType.d.t, yyvsp[0].bbexprType.d.t);
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = javaConditionalPromotion(yyvsp[-2].ast_expressionType.d.t, yyvsp[0].ast_expressionType.d.t);
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.bbexprType, yyvsp[-4].bbexprType, yyvsp[0].bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-4].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
 break;
 case 462:
-#line 4202 "java_parser.y"
+#line 4182 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if (yyvsp[0].bbexprType.d.t!=NULL && yyvsp[0].bbexprType.d.t->kind==TypeStruct) {
-                        s_cps.lastAssignementStruct = yyvsp[0].bbexprType.d.t->u.t;
+                    if (yyvsp[0].ast_expressionType.d.t!=NULL && yyvsp[0].ast_expressionType.d.t->kind==TypeStruct) {
+                        s_cps.lastAssignementStruct = yyvsp[0].ast_expressionType.d.t->u.t;
                     }
                 }
-                yyval.bbexprType.d = yyvsp[0].bbexprType.d;
+                yyval.ast_expressionType.d = yyvsp[0].ast_expressionType.d;
             }
         }
 break;
 case 463:
-#line 4211 "java_parser.y"
+#line 4191 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     s_cps.lastAssignementStruct = NULL;
-                    if (yyvsp[-3].bbexprType.d.r != NULL && s_opt.server_operation == OLO_EXTRACT) {
+                    if (yyvsp[-3].ast_expressionType.d.r != NULL && s_opt.server_operation == OLO_EXTRACT) {
                         S_reference *rr;
-                        rr = duplicateReference(yyvsp[-3].bbexprType.d.r);
-                        yyvsp[-3].bbexprType.d.r->usage = s_noUsage;
-                        if (yyvsp[-1].bbunsPositionPair.d.u == '=') {
+                        rr = duplicateReference(yyvsp[-3].ast_expressionType.d.r);
+                        yyvsp[-3].ast_expressionType.d.r->usage = s_noUsage;
+                        if (yyvsp[-1].ast_unsignedPositionPair.d.u == '=') {
                             RESET_REFERENCE_USAGE(rr, UsageLvalUsed);
                         } else {
                             RESET_REFERENCE_USAGE(rr, UsageAddrUsed);
                         }
                     } else {
-                        if (yyvsp[-1].bbunsPositionPair.d.u == '=') {
-                            RESET_REFERENCE_USAGE(yyvsp[-3].bbexprType.d.r, UsageLvalUsed);
+                        if (yyvsp[-1].ast_unsignedPositionPair.d.u == '=') {
+                            RESET_REFERENCE_USAGE(yyvsp[-3].ast_expressionType.d.r, UsageLvalUsed);
                         } else {
-                            RESET_REFERENCE_USAGE(yyvsp[-3].bbexprType.d.r, UsageAddrUsed);
+                            RESET_REFERENCE_USAGE(yyvsp[-3].ast_expressionType.d.r, UsageAddrUsed);
                         }
-                        yyval.bbexprType.d.t = yyvsp[-3].bbexprType.d.t;
-                        yyval.bbexprType.d.r = NULL;
+                        yyval.ast_expressionType.d.t = yyvsp[-3].ast_expressionType.d.t;
+                        yyval.ast_expressionType.d.r = NULL;
                         /*
                           fprintf(dumpOut,": java Type Dump\n"); fflush(dumpOut);
                           javaTypeDump($1.d.t);
@@ -7063,137 +7043,137 @@ case 463:
                         */
                     }
                 } else {
-                    PropagateBorns(yyval.bbexprType, yyvsp[-3].bbexprType, yyvsp[0].bbexprType);
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[-3].ast_expressionType, yyvsp[0].ast_expressionType);
                     if (s_opt.taskRegime == RegimeEditServer) {
-                        if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyvsp[-3].bbexprType.b, s_cxRefPos, yyvsp[-3].bbexprType.e)) {
-                            s_spp[SPP_ASSIGNMENT_OPERATOR_POSITION] = yyvsp[-1].bbunsPositionPair.b;
-                            s_spp[SPP_ASSIGNMENT_END_POSITION] = yyvsp[0].bbexprType.e;
+                        if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyvsp[-3].ast_expressionType.b, s_cxRefPos, yyvsp[-3].ast_expressionType.e)) {
+                            s_spp[SPP_ASSIGNMENT_OPERATOR_POSITION] = yyvsp[-1].ast_unsignedPositionPair.b;
+                            s_spp[SPP_ASSIGNMENT_END_POSITION] = yyvsp[0].ast_expressionType.e;
                         }
                     }
-                    yyval.bbexprType.d.pp = NULL_POS;
+                    yyval.ast_expressionType.d.pp = NULL_POS;
                 }
             }
         }
 break;
 case 464:
-#line 4255 "java_parser.y"
+#line 4235 "java_parser.y"
 {
             if (regularPass()) {
-                yyval.bbexprType.d.pp = javaGetNameStartingPosition(yyvsp[0].bbidlist.d);
+                yyval.ast_expressionType.d.pp = javaGetNameStartingPosition(yyvsp[0].ast_idList.d);
                 if (! SyntaxPassOnly()) {
                     S_reference *rr;
-                    yyval.bbexprType.d.t = javaClassifyToExpressionName(yyvsp[0].bbidlist.d, &rr);
-                    yyval.bbexprType.d.r = rr;
+                    yyval.ast_expressionType.d.t = javaClassifyToExpressionName(yyvsp[0].ast_idList.d, &rr);
+                    yyval.ast_expressionType.d.r = rr;
                 } else {
-                    PropagateBorns(yyval.bbexprType, yyvsp[0].bbidlist, yyvsp[0].bbidlist);
+                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
                 }
             }
         }
 break;
 case 467:
-#line 4269 "java_parser.y"
+#line 4249 "java_parser.y"
 { /* rule never used */ }
 break;
 case 468:
-#line 4273 "java_parser.y"
+#line 4253 "java_parser.y"
 {
-            if (regularPass()) yyval.bbunsPositionPair.d.u = '=';
-            PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
+            if (regularPass()) yyval.ast_unsignedPositionPair.d.u = '=';
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 469:
-#line 4277 "java_parser.y"
+#line 4257 "java_parser.y"
 {
-            if (regularPass()) yyval.bbunsPositionPair.d.u = MUL_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
+            if (regularPass()) yyval.ast_unsignedPositionPair.d.u = MUL_ASSIGN;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 470:
-#line 4281 "java_parser.y"
+#line 4261 "java_parser.y"
 {
-            if (regularPass()) yyval.bbunsPositionPair.d.u = DIV_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
+            if (regularPass()) yyval.ast_unsignedPositionPair.d.u = DIV_ASSIGN;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 471:
-#line 4285 "java_parser.y"
+#line 4265 "java_parser.y"
 {
-            if (regularPass()) yyval.bbunsPositionPair.d.u = MOD_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
+            if (regularPass()) yyval.ast_unsignedPositionPair.d.u = MOD_ASSIGN;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 472:
-#line 4289 "java_parser.y"
+#line 4269 "java_parser.y"
 {
-            if (regularPass()) yyval.bbunsPositionPair.d.u = ADD_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
+            if (regularPass()) yyval.ast_unsignedPositionPair.d.u = ADD_ASSIGN;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 473:
-#line 4293 "java_parser.y"
+#line 4273 "java_parser.y"
 {
-            if (regularPass()) yyval.bbunsPositionPair.d.u = SUB_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
+            if (regularPass()) yyval.ast_unsignedPositionPair.d.u = SUB_ASSIGN;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 474:
-#line 4297 "java_parser.y"
+#line 4277 "java_parser.y"
 {
-            if (regularPass()) yyval.bbunsPositionPair.d.u = LEFT_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
+            if (regularPass()) yyval.ast_unsignedPositionPair.d.u = LEFT_ASSIGN;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 475:
-#line 4301 "java_parser.y"
+#line 4281 "java_parser.y"
 {
-            if (regularPass()) yyval.bbunsPositionPair.d.u = RIGHT_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
+            if (regularPass()) yyval.ast_unsignedPositionPair.d.u = RIGHT_ASSIGN;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 476:
-#line 4305 "java_parser.y"
+#line 4285 "java_parser.y"
 {
-            if (regularPass()) yyval.bbunsPositionPair.d.u = URIGHT_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
+            if (regularPass()) yyval.ast_unsignedPositionPair.d.u = URIGHT_ASSIGN;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 477:
-#line 4309 "java_parser.y"
+#line 4289 "java_parser.y"
 {
-            if (regularPass()) yyval.bbunsPositionPair.d.u = AND_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
+            if (regularPass()) yyval.ast_unsignedPositionPair.d.u = AND_ASSIGN;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 478:
-#line 4313 "java_parser.y"
+#line 4293 "java_parser.y"
 {
-            if (regularPass()) yyval.bbunsPositionPair.d.u = XOR_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
+            if (regularPass()) yyval.ast_unsignedPositionPair.d.u = XOR_ASSIGN;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 479:
-#line 4317 "java_parser.y"
+#line 4297 "java_parser.y"
 {
-            if (regularPass()) yyval.bbunsPositionPair.d.u = OR_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass(yyval.bbunsPositionPair, yyvsp[0].bbposition, yyvsp[0].bbposition);
+            if (regularPass()) yyval.ast_unsignedPositionPair.d.u = OR_ASSIGN;
+            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 481:
-#line 4325 "java_parser.y"
+#line 4305 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.bbexprType.d.t = &s_errorModifier;
-                    yyval.bbexprType.d.r = NULL;
+                    yyval.ast_expressionType.d.t = &s_errorModifier;
+                    yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    yyval.bbexprType.d.pp = NULL_POS;
-                    SetNullBorns(yyval.bbexprType);
+                    yyval.ast_expressionType.d.pp = NULL_POS;
+                    SetNullBorns(yyval.ast_expressionType);
                 }
             }
         }
 break;
 case 483:
-#line 4345 "java_parser.y"
+#line 4325 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -7203,7 +7183,7 @@ case 483:
         }
 break;
 case 484:
-#line 4354 "java_parser.y"
+#line 4334 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -7212,7 +7192,7 @@ case 484:
             }
         }
 break;
-#line 7216 "java_parser.tab.c"
+#line 7196 "java_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;
