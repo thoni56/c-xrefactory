@@ -4,9 +4,10 @@ include ../Makefile.boilerplate
 
 $(TEST):
 	@../../src/c-xref -xrefrc .c-xrefrc abbot.jar > output
-	@if [ $$? -ne 0 ] ; then \
+	@grep abbot/tester/JFileChooserTester CXrefs/X0* > /dev/null ; \
+	if [ $$? -ne 0 ] ; then \
 		$(FAIL) ; \
-		diff output expected ; \
+		echo "Could not find abbot/tester/JFileChooserTester" ; \
 		exit 1 ; \
 	else \
 		$(OK) ; \
