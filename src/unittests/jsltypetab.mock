@@ -1,6 +1,8 @@
 /* -*- c -*-*/
 #include <cgreen/mocks.h>
 
+#include "jsltypetab.h"
+
 void jslTypeTabInit(struct jslTypeTab *table, int size) {
   mock(table, size);
 }

@@ -15,14 +15,29 @@
 
 #include "log.h"
 #include "utils.h"
-
+#include "recyacc.h"
 
 S_jslStat *s_jsl;
 
 
-static void jslCreateTypeSymbolInList(JslSymbolList *ss ,
-                                      char *name) {
+extern void fillJslStat(S_jslStat *jslStat, int pass, int sourceFileNumber, int language, S_jslTypeTab *typeTab,
+                        S_jslClassStat *classStat, SymbolList *waitList, void /*YYSTYPE*/ *savedyylval,
+                        void /*S_yyGlobalState*/ *savedYYstate, int yyStateSize, S_jslStat *next) {
+    jslStat->pass = pass;
+    jslStat->sourceFileNumber = sourceFileNumber;
+    jslStat->language = language;
+    jslStat->typeTab = typeTab;
+    jslStat->classStat = classStat;
+    jslStat->waitList = waitList;
+    jslStat->savedyylval = savedyylval;
+    jslStat->savedYYstate = savedYYstate;
+    jslStat->yyStateSize = yyStateSize;
+    jslStat->next = next;
+}
+
+static void jslCreateTypeSymbolInList(JslSymbolList *ss, char *name) {
     Symbol *s;
+
     s = newSymbol(name, name, s_noPos);
     fillSymbolBits(&s->bits, ACC_DEFAULT, TypeStruct, StorageNone);
     FILL_jslSymbolList(ss, s, s_noPos, 0, NULL);

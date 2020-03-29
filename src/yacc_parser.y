@@ -234,18 +234,7 @@ static void addYaccSymbolReference(S_id *name, int usage);
 /* *************************************************************** */
 
 %union {
-    S_typeModifiers                        *typeModifiers;
-
-    Ast_int                                ast_integer;
-    Ast_unsigned                           ast_unsigned;
-    Ast_symbol                             ast_symbol;
-    Ast_symbolList                         ast_symbolList;
-    Ast_typeModifiers                      ast_typeModifiers;
-    Ast_id                                 ast_id;
-    Ast_exprTokenType                      ast_exprType;
-    Ast_position                           ast_position;
-    Ast_symbolPositionListPair             ast_symbolPositionListPair;
-    Ast_positionList                       ast_positionList;
+#include "yystype.h"
 }
 
 %type <ast_id> IDENTIFIER identifier struct_identifier enum_identifier
@@ -275,11 +264,11 @@ static void addYaccSymbolReference(S_id *name, int usage);
 %type <ast_typeModifiers> enum_specifier enum_define_specifier
 %type <ast_typeModifiers> type_name abstract_declarator abstract_declarator2
 
-%type <ast_exprType> primary_expr postfix_expr unary_expr cast_expr
-%type <ast_exprType> multiplicative_expr additive_expr shift_expr
-%type <ast_exprType> relational_expr equality_expr and_expr exclusive_or_expr
-%type <ast_exprType> inclusive_or_expr logical_and_expr logical_or_expr
-%type <ast_exprType> conditional_expr assignment_expr expr
+%type <ast_expressionType> primary_expr postfix_expr unary_expr cast_expr
+%type <ast_expressionType> multiplicative_expr additive_expr shift_expr
+%type <ast_expressionType> relational_expr equality_expr and_expr exclusive_or_expr
+%type <ast_expressionType> inclusive_or_expr logical_and_expr logical_or_expr
+%type <ast_expressionType> conditional_expr assignment_expr expr
 
 %type <ast_position> STRING_LITERAL '(' ',' ')'
 

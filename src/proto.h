@@ -1143,20 +1143,6 @@ typedef struct jslClassStat {
     struct jslClassStat	*next;
 } S_jslClassStat;
 
-typedef struct jslStat {
-    int                     pass;
-    int                     sourceFileNumber;
-    int						language;
-    struct jslTypeTab       *typeTab;
-    struct jslClassStat     *classStat;
-    struct symbolList       *waitList;
-    void/*YYSTYPE*/			*savedyylval;
-    struct yyGlobalState    *savedYYstate;
-    int						yyStateSize;
-    struct id			yyIdentBuf[YYBUFFERED_ID_INDEX]; // pending idents
-    struct jslStat			*next;
-} S_jslStat;
-
 
 /* *********************************************************** */
 

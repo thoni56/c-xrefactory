@@ -3,7 +3,28 @@
 
 #include "proto.h"
 #include "symbol.h"
+#include "jsltypetab.h"
 
+
+typedef struct jslStat {
+    int                              pass;
+    int                              sourceFileNumber;
+    int                              language;
+    struct jslTypeTab                *typeTab;
+    struct jslClassStat              *classStat;
+    struct symbolList                *waitList;
+    void/*YYSTYPE*/                  *savedyylval;
+    void /*struct yyGlobalState*/    *savedYYstate;
+    int                              yyStateSize;
+    struct id                        yyIdentBuf[YYBUFFERED_ID_INDEX]; // pending idents
+    struct jslStat                   *next;
+} S_jslStat;
+
+
+
+extern void fillJslStat(S_jslStat *jslStat, int pass, int sourceFileNumber, int language, S_jslTypeTab *typeTab,
+                        S_jslClassStat *classStat, SymbolList *waitList, void *savedyylval,
+                        void /*S_yyGlobalState*/ *savedYYstate, int yyStateSize, S_jslStat *next);
 extern Symbol *jslTypeSpecifier1(unsigned t);
 extern Symbol *jslTypeSpecifier2(S_typeModifiers *t);
 

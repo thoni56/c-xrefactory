@@ -10,7 +10,6 @@
 #include "cxref.h"
 #include "classFileReader.h"
 #include "html.h"
-#include "jslsemact.h"
 #include "editor.h"
 #include "enumTxt.h"
 #include "symbol.h"
@@ -22,6 +21,7 @@
 
 #include "parsers.h"
 #include "recyacc.h"
+#include "jslsemact.h"
 
 #include "protocol.h"
 
@@ -681,8 +681,8 @@ static void javaJslLoadSuperClasses(Symbol *cc, int currentParsedFile) {
     nestCounter --;
 }
 
-void javaReadSymbolFromSourceFileInit( int sourceFileNum,
-                                       S_jslTypeTab *typeTab ) {
+void javaReadSymbolFromSourceFileInit(int sourceFileNum,
+                                      S_jslTypeTab *typeTab ) {
     S_jslStat           *njsl;
     char				*yyg;
     int					yygsize;
@@ -693,7 +693,7 @@ void javaReadSymbolFromSourceFileInit( int sourceFileNum,
     //yygsize = sizeof(struct yyGlobalState);
     yygsize = ((char*)(s_yygstate->gyyvsp+1)) - ((char *)s_yygstate);
     XX_ALLOCC(yyg, yygsize, char);
-    FILL_jslStat(njsl, 0, sourceFileNum, s_language, typeTab, NULL, NULL,
+    fillJslStat(njsl, 0, sourceFileNum, s_language, typeTab, NULL, NULL,
                  uniyylval, (S_yyGlobalState*)yyg, yygsize, s_jsl);
     memcpy(njsl->savedYYstate, s_yygstate, yygsize);
     memcpy(njsl->yyIdentBuf, s_yyIdentBuf,

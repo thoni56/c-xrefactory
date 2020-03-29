@@ -231,20 +231,7 @@
 /* *************************************************************** */
 
 %union {
-    Symbol                                  *symbol;
-    S_typeModifiers                         *typeModif;
-
-    Ast_int                                ast_integer;
-    Ast_unsigned                           ast_unsigned;
-    Ast_symbol                             ast_symbol;
-    Ast_symbolList                         ast_symbolList;
-    Ast_typeModifiers                      ast_typeModifiers;
-    Ast_id                                 ast_id;
-    Ast_idList                             ast_idList;
-    Ast_exprTokenType                      ast_expressionType;
-    Ast_position                           ast_position;
-    Ast_symbolPositionListPair             ast_symbolPositionListPair;
-    Ast_positionList                       ast_positionList;
+#include "yystype.h"
 }
 
 
@@ -377,11 +364,11 @@ postfix_expr
 */
     | postfix_expr
             {
-                $<typeModif>$ = s_upLevelFunctionCompletionType;
+                $<typeModifiers>$ = s_upLevelFunctionCompletionType;
                 s_upLevelFunctionCompletionType = $1.d.t;
             }
       '(' argument_expr_list_opt ')'	{
-        s_upLevelFunctionCompletionType = $<typeModif>2;
+        s_upLevelFunctionCompletionType = $<typeModifiers>2;
         if ($1.d.t->kind==TypeFunction) {
             $$.d.t=$1.d.t->next;
             if ($4.d==NULL) {
