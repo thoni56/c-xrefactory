@@ -108,7 +108,7 @@ int s_cxRefFlag=0;
 
 time_t s_fileProcessStartTime;
 
-int s_language;
+Language s_language;
 int s_currCppPass;
 int s_maximalCppPass;
 

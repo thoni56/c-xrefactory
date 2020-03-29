@@ -1923,8 +1923,8 @@ S_typeModifiers *javaClassNameType(S_idList *typeName) {
     S_typeModifiers *tt; Symbol *st;
     assert(typeName);
     assert(typeName->nameType == TypeStruct);
-    XX_ALLOC(tt,S_typeModifiers);
     st = javaTypeSymbolUsage(typeName,ACC_DEFAULT);
+    XX_ALLOC(tt,S_typeModifiers);
     FILLF_typeModifiers(tt,TypeStruct,t,st,NULL,NULL);
     return(tt);
 }

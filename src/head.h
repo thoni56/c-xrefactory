@@ -19,12 +19,14 @@
 /* ******************** language identification ****************** */
 
 /* bitwise different */
-#define LANG_C		2
-#define LANG_JAVA	4
-#define LAN_YACC	8
-#define LANG_CCC	16	/* ccc - standing for C++ */
-#define LANG_JAR	32
-#define LANG_CLASS	64
+typedef enum language {
+    LANG_C = 2,
+    LANG_JAVA = 4,
+    LAN_YACC = 8,
+    LANG_CCC = 16,              /* ccc - standing for C++ */
+    LANG_JAR = 32,
+    LANG_CLASS = 64
+} Language;
 
 /* ****************** end of line conversions ***************************** */
 

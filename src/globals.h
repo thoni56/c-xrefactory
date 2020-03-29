@@ -183,7 +183,7 @@ extern char *s_input_file_name;
 
 extern time_t s_fileProcessStartTime;
 
-extern int s_language;
+extern Language s_language;
 extern int s_currCppPass;
 extern int s_maximalCppPass;
 

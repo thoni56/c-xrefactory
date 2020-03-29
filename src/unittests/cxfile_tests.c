@@ -5,7 +5,7 @@
 
 /* From globals.c */
 S_memory *cxMemory=NULL;
-int s_language;
+Language s_language;
 FILE *cxOut;
 int s_input_file_number = -1;
 time_t s_fileProcessStartTime;

@@ -2077,7 +2077,7 @@ static void mainParseInputFile(void) {
 }
 
 
-void mainSetLanguage(char *inFileName, int *outLanguage) {
+void mainSetLanguage(char *inFileName, Language *outLanguage) {
     char *suff;
     if (inFileName == NULL
         || fileNameHasOneOfSuffixes(inFileName, s_opt.javaFilesSuffixes)
@@ -2232,7 +2232,7 @@ static void mainFileProcessingInitialisations(
                                               int argc, char **argv,      // command-line options
                                               int nargc, char **nargv,    // piped options
                                               int *outInputIn,
-                                              int *outLanguage
+                                              Language *outLanguage
                                               ) {
     char            dffname[MAX_FILE_NAME_SIZE];
     char            dffsect[MAX_FILE_NAME_SIZE];

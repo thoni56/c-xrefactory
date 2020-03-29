@@ -9,7 +9,7 @@ AfterEach(Lex) {}
 
 /* From globals.c */
 S_caching s_cache;
-int s_language;
+Language s_language;
 char s_olstring[MAX_FUN_NAME_SIZE];
 S_currentlyParsedStatics s_cps;
 S_position s_cxRefPos;

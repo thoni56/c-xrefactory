@@ -18,7 +18,7 @@ extern char *getInputFile(int *fArgCount);
 extern void writeRelativeProgress(int progress);
 
 extern int mainHandleSetOption(int argc, char **argv, int i );
-extern void mainSetLanguage(char *inFileName, int *outLanguage);
+extern void mainSetLanguage(char *inFileName, Language *outLanguage);
 extern void mainCallEditServerInit(int nargc, char **nargv);
 extern void mainCallEditServer(int argc, char **argv,
                                int nargc, char **nargv,
