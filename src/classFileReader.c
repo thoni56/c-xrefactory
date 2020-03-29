@@ -268,7 +268,6 @@ static void initZipArchiveDir(S_zipArchiveDir *dir) {
 
 
 static void fillZipFileTabItem(S_zipFileTableItem *fileItem, struct stat st, S_zipArchiveDir *dir) {
-    fileItem->fn[0] = '\0';
     fileItem->st = st;
     fileItem->dir = dir;
 }
