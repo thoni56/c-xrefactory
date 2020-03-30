@@ -6,14 +6,6 @@
 #include "editor.h"
 
 
-/* stack memory synchronized with program block structure */
-#define XX_ALLOC(p,t)           {p = (t*) stackMemoryAlloc(sizeof(t)); }
-#define XX_ALLOCC(p,n,t)        {p = (t*) stackMemoryAlloc((n)*sizeof(t)); }
-#define XX_FREE(p)              { }
-
-#define StackMemPush(x,t) ((t*) stackMemoryPush(x,sizeof(t)))
-#define StackMemAlloc(t) ((t*) stackMemoryAlloc(sizeof(t)))
-
 extern void ppcGenSynchroRecord(void);
 extern void ppcIndentOffset(void);
 extern void ppcGenGotoOffsetPosition(char *fname, int offset);
@@ -50,15 +42,6 @@ extern void noSuchRecordError(char *rec);
 extern void methodAppliedOnNonClass(char *rec);
 extern void methodNameNotRecognized(char *rec);
 extern void dumpOptions(int nargc, char **nargv);
-extern void stackMemoryInit(void);
-extern void *stackMemoryAlloc(int size);
-extern void *stackMemoryPush(void *p, int size);
-extern int  *stackMemoryPushInt(int x);
-extern char *stackMemoryPushString(char *s);
-extern void stackMemoryPop(void *p, int size);
-extern void stackMemoryBlockStart(void);
-extern void stackMemoryBlockFree(void);
-extern void stackMemoryDump(void);
 
 extern void addToTrail (void (*action)(void*),  void *p);
 extern void removeFromTrailUntil(S_freeTrail *untilP);

@@ -5,7 +5,6 @@
 #include "head.h"
 #include "position.h"
 
-/* Types: */
 
 /* ****************************************************************** */
 /*              symbol definition item in symbol table                */

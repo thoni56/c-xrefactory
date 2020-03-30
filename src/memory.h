@@ -40,7 +40,15 @@
     mem##i = ((char*)(p))-mem;\
 }
 
+/* ********************************************************************* */
 
+/* stack memory synchronized with program block structure */
+#define XX_ALLOC(p,t)           {p = (t*) stackMemoryAlloc(sizeof(t)); }
+#define XX_ALLOCC(p,n,t)        {p = (t*) stackMemoryAlloc((n)*sizeof(t)); }
+#define XX_FREE(p)              { }
+
+#define StackMemPush(x,t) ((t*) stackMemoryPush(x,sizeof(t)))
+#define StackMemAlloc(t) ((t*) stackMemoryAlloc(sizeof(t)))
 
 /* ********************************************************************* */
 
@@ -153,5 +161,15 @@
 extern void memoryResize(void);
 extern int optionsOverflowHandler(int n);
 extern int cxMemoryOverflowHandler(int n);
+
+extern void stackMemoryInit(void);
+extern void *stackMemoryAlloc(int size);
+extern void *stackMemoryPush(void *p, int size);
+extern int  *stackMemoryPushInt(int x);
+extern char *stackMemoryPushString(char *s);
+extern void stackMemoryPop(void *p, int size);
+extern void stackMemoryBlockStart(void);
+extern void stackMemoryBlockFree(void);
+extern void stackMemoryDump(void);
 
 #endif

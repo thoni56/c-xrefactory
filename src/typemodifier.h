@@ -1,7 +1,8 @@
-#ifndef _TYPEMODIFIERS_H_
-#define _TYPEMODIFIERS_H_
+#ifndef _TYPEMODIFIER_H_
+#define _TYPEMODIFIER_H_
 
 #include "types.h"
+#include "symbol.h"
 
 typedef struct typeModifier {
     enum type                kind;
@@ -26,6 +27,6 @@ typedef struct typeModifierList {
 } S_typeModifierList;
 
 
-extern S_typeModifier *newFunctionTypeModifier(void);
+extern S_typeModifier *newFunctionTypeModifier(Symbol *args, Symbol **overLoadList, Symbol *typedefSymbol, S_typeModifier *next);
 
-#endif /* _TYPEMODIFIERS_H_ */
+#endif /* _TYPEMODIFIER_H_ */

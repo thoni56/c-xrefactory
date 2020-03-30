@@ -1,7 +1,7 @@
 #ifndef _TYPES_H_
 #define _TYPES_H_
 
-enum type {
+typedef enum type {
     TypeDefault,
     TypeChar,
     TypeUnsignedChar,
