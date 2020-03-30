@@ -797,7 +797,7 @@ static void htmlGetStaticHREFItems(
                                    char **suffix
                                    ) {
     static char prf[MAX_HTML_REF_LEN];
-    static char prf1[MAX_HTML_REF_LEN];
+    static char prf1[2*MAX_HTML_REF_LEN];
     char tmp[MAX_HTML_REF_LEN];
     char tmp2[MAX_HTML_REF_LEN];
     S_reference *dr;
@@ -854,7 +854,7 @@ static void htmlGetStaticHREFItems(
     }
     df = htmlGetLinkFileNameStatic(tmp,thisfn);
     if (emph) {
-        sprintf(prf1,"<EM><A HREF=\"%s.html%s#%s\" target=\"packageFrame\">",
+        sprintf(prf1, "<EM><A HREF=\"%s.html%s#%s\" target=\"packageFrame\">",
                 df, s_opt.htmlLinkSuffix, tmp2);
         *suffix1 = "</A></EM>";
     } else {

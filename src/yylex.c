@@ -117,7 +117,7 @@ void fillLexInput(S_lexInput *lexInput, char *currentLexem, char *endOfBuffer,
 
 
 char *placeIdent(void) {
-    static char tt[MAX_HTML_REF_LEN];
+    static char tt[2*MAX_HTML_REF_LEN];
     char fn[MAX_FILE_NAME_SIZE];
     char mm[MAX_HTML_REF_LEN];
     int s;

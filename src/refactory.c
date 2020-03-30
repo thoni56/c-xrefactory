@@ -1409,9 +1409,9 @@ static void refactoryMoveFileAndDirForPackageRename(
                                                     char *currentPath, S_editorUndo *undoBase, S_editorMarker *lld,
                                                     char *symLinkName
                                                     ) {
-    char newfile[MAX_FILE_NAME_SIZE];
-    char packdir[MAX_FILE_NAME_SIZE];
-    char newpackdir[MAX_FILE_NAME_SIZE];
+    char newfile[2*MAX_FILE_NAME_SIZE];
+    char packdir[2*MAX_FILE_NAME_SIZE];
+    char newpackdir[2*MAX_FILE_NAME_SIZE];
     char path[MAX_FILE_NAME_SIZE];
     int plen;
     strcpy(path, currentPath);
@@ -2157,7 +2157,7 @@ static void refactoryApplyExpandShortNames(S_editorBuffer *buf, S_editorMarker *
     S_olSymbolsMenu *mm;
     S_editorMarkerList *ppp;
     char fqtName[MAX_FILE_NAME_SIZE];
-    char fqtNameDot[MAX_FILE_NAME_SIZE];
+    char fqtNameDot[2*MAX_FILE_NAME_SIZE];
     char *shortName;
     int shortNameLen;
 
@@ -3070,7 +3070,7 @@ static void refactoryGetPackageNameFromMarkerFileName(S_editorMarker *target, ch
 
 static void refactoryInsertPackageStatToNewFile(S_editorMarker *src, S_editorMarker *target) {
     char tclass[MAX_FILE_NAME_SIZE];
-    char pack[MAX_FILE_NAME_SIZE];
+    char pack[2*MAX_FILE_NAME_SIZE];
 
     refactoryGetPackageNameFromMarkerFileName(target, tclass);
     if (tclass[0] == 0) {
@@ -3143,7 +3143,7 @@ static void refactoryTurnDynamicToStatic(S_editorMarker *point) {
     char primary[REFACTORING_TMP_STRING_SIZE];
     char fqstaticname[REFACTORING_TMP_STRING_SIZE];
     char fqthis[REFACTORING_TMP_STRING_SIZE];
-    char pardecl[REFACTORING_TMP_STRING_SIZE];
+    char pardecl[2*REFACTORING_TMP_STRING_SIZE];
     char parusage[REFACTORING_TMP_STRING_SIZE];
     char cid[TMP_STRING_SIZE];
     int plen, ppoffset, poffset;
@@ -3447,7 +3447,7 @@ static void refactoryTurnStaticToDynamic(S_editorMarker *point) {
     char                nameOnPoint[TMP_STRING_SIZE];
     char                param[REFACTORING_TMP_STRING_SIZE];
     char                tparam[REFACTORING_TMP_STRING_SIZE];
-    char                testi[REFACTORING_TMP_STRING_SIZE];
+    char                testi[2*REFACTORING_TMP_STRING_SIZE];
     int                 plen, tplen, rlen, res, argn, bi;
     int                 classnum, parclassnum;
     int                 progressi, progressn;
@@ -3684,11 +3684,11 @@ static void refactoryPerformEncapsulateField(S_editorMarker *point,
                                              ) {
     char nameOnPoint[TMP_STRING_SIZE];
     char upcasedName[TMP_STRING_SIZE];
-    char getter[TMP_STRING_SIZE];
-    char setter[TMP_STRING_SIZE];
+    char getter[2*TMP_STRING_SIZE];
+    char setter[2*TMP_STRING_SIZE];
     char cclass[TMP_STRING_SIZE];
-    char getterBody[REFACTORING_TMP_STRING_SIZE];
-    char setterBody[REFACTORING_TMP_STRING_SIZE];
+    char getterBody[3*REFACTORING_TMP_STRING_SIZE];
+    char setterBody[3*REFACTORING_TMP_STRING_SIZE];
     char declarator[REFACTORING_TMP_STRING_SIZE];
     char *scclass;
     int nameOnPointLen, declLen, indlines, indoffset;

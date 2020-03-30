@@ -224,7 +224,7 @@ int searchStringFitness(char *cxtag, int len) {
 
 char *crTagSearchLineStatic(char *name, S_position *p,
                             int *len1, int *len2, int *len3) {
-    static char res[COMPLETION_STRING_SIZE];
+    static char res[2*COMPLETION_STRING_SIZE];
     char file[TMP_STRING_SIZE];
     char dir[TMP_STRING_SIZE];
     char *ffname;

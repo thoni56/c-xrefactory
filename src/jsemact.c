@@ -2710,7 +2710,7 @@ void javaParsedSuperClass(Symbol *symbol) {
 
 void javaSetClassSourceInformation(char *package, S_id *classId) {
     char    fqt[MAX_FILE_NAME_SIZE];
-    char    className[MAX_FILE_NAME_SIZE];
+    char    className[2*MAX_FILE_NAME_SIZE];
     int		fileIndex;
 
     assert(classId!=NULL);
