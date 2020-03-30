@@ -2978,9 +2978,10 @@ static void refactoryPerformMoveClass(S_editorMarker *point,
     S_tpCheckMoveClassData dd;
 
     *outstart = *outend = NULL;
+
     // get target place
-    refactoryEditServerParseBuffer( s_ropt.project, target->buffer,
-                                    target,NULL, "-olcxcurrentclass",NULL);
+    refactoryEditServerParseBuffer(s_ropt.project, target->buffer,
+                                   target, NULL, "-olcxcurrentclass", NULL);
     if (s_cps.currentPackageAnswer[0] == 0) {
         error(ERR_ST, "Can't get target class or package");
         return;
@@ -2994,7 +2995,7 @@ static void refactoryPerformMoveClass(S_editorMarker *point,
     }
     javaDotifyClassName(targetFqtName);
 
-    // get limites
+    // get limits
     refactoryMakeSyntaxPassOnSource(point);
     if (s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file==s_noneFileIndex
         ||s_spp[SPP_CLASS_DECLARATION_END_POSITION].file==s_noneFileIndex) {
