@@ -994,11 +994,21 @@ static void htmlGenLocalRefLists(S_symbolRefItem *p, void *ss) {
     }
 }
 
+static void fillHtmlRefList(S_htmlRefList *rref, S_symbolRefItem *s, S_reference *r,
+                             S_symbolRefItem *slist, S_htmlRefList *next) {
+    rref->s = s;
+    rref->r = r;
+    rref->slist = slist;
+    rref->next = next;
+}
+
+
 static void htmlGetThisFileReferences(int fnum, S_htmlRefList **rrr, int kind){
     S_symbolRefItem *d,*dd;
     S_reference     *rr;
     S_htmlRefList   **place,*r,rref,**rrr0;
     int i;
+
     *rrr = NULL;
     for(i=0; i<s_cxrefTab.size; i++) {
         dd = s_cxrefTab.tab[i];
@@ -1007,9 +1017,10 @@ static void htmlGetThisFileReferences(int fnum, S_htmlRefList **rrr, int kind){
             for(rr=d->refs; rr!=NULL; rr=rr->next) {
                 if (rr->p.file == fnum &&
                     (kind==ALL_REFS || rr->usage.base<UsageMaxOLUsages)) {
-                    /*&fprintf(dumpOut,"checking ref [%s,%d,%d](%s) on %s:%x\n",s_fileTab.tab[rr->p.file]->name,rr->p.line,rr->p.col,usagesName[rr->usage.base],d->name,d);fflush(dumpOut);&*/
+                    log_trace("checking ref [%s,%d,%d](%s) on %s:%x", s_fileTab.tab[rr->p.file]->name, rr->p.line,
+                              rr->p.col, usagesName[rr->usage.base], d->name, d);
                     //&                 if ((char*)rr<s_cxGlobalReferencesBase) continue;//!!tricky
-                    FILL_htmlRefList(&rref,d,rr,dd,NULL);
+                    fillHtmlRefList(&rref, d, rr, dd, NULL);
                     SORTED_LIST_PLACE2(place, S_htmlRefList, rref, rrr0);
                     if (*place==NULL
                         || SORTED_LIST_NEQ(*place,rref)
@@ -1018,7 +1029,8 @@ static void htmlGetThisFileReferences(int fnum, S_htmlRefList **rrr, int kind){
                         // ?? why PP_ALLOC ? Because called
                         // once per file and it is cleared after.
                         *r = rref;
-                        /*&fprintf(dumpOut,"adding ref [%s,%d,%d](%s) on %s:%x\n",s_fileTab.tab[r->r->p.file]->name,r->r->p.line,r->r->p.col,usagesName[r->r->usage.base],r->s->name,r->s);fflush(dumpOut);&*/
+                        log_trace("adding ref [%s,%d,%d](%s) on %s:%x", s_fileTab.tab[r->r->p.file]->name,
+                                  r->r->p.line, r->r->p.col, usagesName[r->r->usage.base], r->s->name,r->s);
                         LIST_CONS(r,(*place));
                     }
                     rrr0 = place;

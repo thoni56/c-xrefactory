@@ -920,20 +920,6 @@ typedef struct memory {
     double  b;		//  double in order to get it properly alligned
 } S_memory;
 
-/* ************************ HTML **************************** */
-
-typedef struct htmlData {
-    struct position          *cp;
-    struct reference         *np;
-    struct symbolRefItem     *nri;
-} S_htmlData;
-
-typedef struct htmlRefList {
-    struct symbolRefItem	*s;
-    struct reference		*r;
-    struct symbolRefItem	*slist;		/* the hash list containing s, for virtuals */
-    struct htmlRefList		*next;
-} S_htmlRefList;
 
 /* *********************************************************** */
 

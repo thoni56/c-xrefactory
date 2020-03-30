@@ -9,6 +9,19 @@ typedef struct intlist {
     struct intlist   *next;
 } S_intlist;
 
+typedef struct htmlData {
+    struct position          *cp;
+    struct reference         *np;
+    struct symbolRefItem     *nri;
+} S_htmlData;
+
+typedef struct htmlRefList {
+    struct symbolRefItem	*s;
+    struct reference		*r;
+    struct symbolRefItem	*slist;		/* the hash list containing s, for virtuals */
+    struct htmlRefList		*next;
+} S_htmlRefList;
+
 extern void genClassHierarchyItemLinks(FILE *ff, S_olSymbolsMenu *itt,
                                        int virtFlag);
 extern void htmlGenNonVirtualGlobSymList(FILE *ff, char *fn, S_symbolRefItem *p );
