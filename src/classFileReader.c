@@ -716,7 +716,6 @@ S_typeModifier * cfUnPackResultType(char *sig, char **restype) {
         switch (*ssig) {
         case ')':
             FILLF_typeModifier(tt, TypeFunction,f,( NULL,NULL) ,NULL, NULL);
-            tt = newFunctionTypeModifier(NULL, NULL, NULL, NULL);
             assert(*sig == '(');
             tt->u.m.sig = NULL; /* must be set later !!!!!!!!!! */
             break;
