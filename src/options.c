@@ -718,6 +718,7 @@ void getJavaClassAndSourcePath(void) {
         s_zipArchiveTable[i].fn[0]=0;
     }
 
+    // Keeping this comment as a historical artefact:
     // optimize wild char expand and getenv [5.2.2003]
     s_javaClassPaths = NULL;
 
