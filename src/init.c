@@ -148,7 +148,7 @@ void initArchaicTypes(void) {
 
 void initPreCreatedTypes(void) {
     int i,t;
-    S_typeModifier *tt;
+
     for(i=0; i<MAX_TYPE; i++) {
         s_preCrTypesTab[i] = NULL;
         s_preCrPtr1TypesTab[i] = NULL;
@@ -157,17 +157,11 @@ void initPreCreatedTypes(void) {
         t = s_preCrTypesIniTab[i];
         if (t<0) break;
         /* pre-create X */
-        XX_ALLOC(tt, S_typeModifier);
-        FILLF_typeModifier(tt, t, t, NULL,NULL, NULL);
         assert(t>=0 && t<MAX_TYPE);
-        s_preCrTypesTab[t] = tt;
+        s_preCrTypesTab[t] = newTypeModifier(t, NULL, NULL);
         /* pre-create *X */
-        XX_ALLOC(tt, S_typeModifier);
-        FILLF_typeModifier(tt, TypePointer,t,NULL,NULL, s_preCrTypesTab[t]);
-        s_preCrPtr1TypesTab[t] = tt;
+        s_preCrPtr1TypesTab[t] = newTypeModifier(TypePointer, NULL, s_preCrTypesTab[t]);
         /* pre-create **X */
-        XX_ALLOC(tt, S_typeModifier);
-        FILLF_typeModifier(tt, TypePointer,t,NULL,NULL, s_preCrPtr1TypesTab[t]);
-        s_preCrPtr2TypesTab[t] = tt;
+        s_preCrPtr2TypesTab[t] = newTypeModifier(TypePointer, NULL, s_preCrPtr1TypesTab[t]);
     }
 }
