@@ -538,12 +538,12 @@ static int htmlRefListOrdering(S_reference *r1, S_reference *r2) {
 }
 
 /* ordering on HtmlRefList */
-#define SORTED_LIST_LESS(tmp,key) (htmlRefListOrdering((tmp)->r, (key).r))
+#define SORTED_LIST_LESS(tmp,key) (htmlRefListOrdering((tmp)->reference, (key).reference))
 
 #define SORTED_LIST_NEQ(tmp,key) (                                      \
-                                  ((tmp)->r->p.file != (key).r->p.file) || \
-                                  ((tmp)->r->p.line != (key).r->p.line) || \
-                                  ((tmp)->r->p.col != (key).r->p.col) \
+                                  ((tmp)->reference->p.file != (key).reference->p.file) || \
+                                  ((tmp)->reference->p.line != (key).reference->p.line) || \
+                                  ((tmp)->reference->p.col != (key).reference->p.col) \
                                   )
 
 void htmlPutChar(FILE *ff, int c) {
@@ -663,8 +663,8 @@ void concatPaths(char *res, int rsize, char *p1, char *p2, char *p3) {
 static S_reference * htmlGetDefinitionRef(S_htmlRefList *rrr, int usage) {
     S_symbolRefItem *rr,*cr;
     register S_reference *r,*res;
-    assert(rrr && rrr->s && rrr->s->refs);
-    rr = rrr->s;
+    assert(rrr && rrr->symbolRefItem && rrr->symbolRefItem->refs);
+    rr = rrr->symbolRefItem;
     res = NULL;
     if (rr->vApplClass == s_noneFileIndex) {
         for(r=rr->refs; r!=NULL; r=r->next) {
@@ -817,7 +817,7 @@ static void htmlGetStaticHREFItems(
     int usage,emph;
     S_symbolRefItem *cri;
 
-    cri = ref->s;
+    cri = ref->symbolRefItem;
     usage = UsageUsed; // so many times modified !!!! rr->usage;
     *prefix = prf;
     *suffix = "</A>";
@@ -851,8 +851,8 @@ static void htmlGetStaticHREFItems(
             df = htmlCutLastSuffixStatic(df);
             sprintf(prf,"<A HREF=\"%s.html%s#%s%d\">",df,s_opt.htmlLinkSuffix,
                     s_opt.htmlLineNumLabel, dr->p.line);
-        } else if (EXTERN_JDOC_AVAILABLE(ref->s)) {
-            htmlPrintExternHtmlJavaDocReference(prf, ref->s);
+        } else if (EXTERN_JDOC_AVAILABLE(ref->symbolRefItem)) {
+            htmlPrintExternHtmlJavaDocReference(prf, ref->symbolRefItem);
         } else {
             sprintf(prf,"<A>");
         }
@@ -876,9 +876,9 @@ static void htmlGetStaticHREFItems(
 
 static int htmlNotYetInList(S_htmlRefList *place, S_htmlRefList *ref) {
     while (place!=NULL && ! SORTED_LIST_NEQ(place, *ref)) {
-        if (    place->s->b.symType == ref->s->b.symType
-                && strcmp(place->s->name,ref->s->name)==0
-                && place->s->b.category == ref->s->b.category) return(0);
+        if (    place->symbolRefItem->b.symType == ref->symbolRefItem->b.symType
+                && strcmp(place->symbolRefItem->name,ref->symbolRefItem->name)==0
+                && place->symbolRefItem->b.category == ref->symbolRefItem->b.category) return(0);
         place = place->next;
     }
     return(1);
@@ -994,10 +994,10 @@ static void htmlGenLocalRefLists(S_symbolRefItem *p, void *ss) {
     }
 }
 
-static void fillHtmlRefList(S_htmlRefList *rref, S_symbolRefItem *s, S_reference *r,
+static void fillHtmlRefList(S_htmlRefList *rref, S_symbolRefItem *symbolRefItem, S_reference *reference,
                              S_symbolRefItem *slist, S_htmlRefList *next) {
-    rref->s = s;
-    rref->r = r;
+    rref->symbolRefItem = symbolRefItem;
+    rref->reference = reference;
     rref->slist = slist;
     rref->next = next;
 }
@@ -1029,8 +1029,8 @@ static void htmlGetThisFileReferences(int fnum, S_htmlRefList **rrr, int kind){
                         // ?? why PP_ALLOC ? Because called
                         // once per file and it is cleared after.
                         *r = rref;
-                        log_trace("adding ref [%s,%d,%d](%s) on %s:%x", s_fileTab.tab[r->r->p.file]->name,
-                                  r->r->p.line, r->r->p.col, usagesName[r->r->usage.base], r->s->name,r->s);
+                        log_trace("adding ref [%s,%d,%d](%s) on %s:%x", s_fileTab.tab[r->reference->p.file]->name,
+                                  r->reference->p.line, r->reference->p.col, usagesName[r->reference->usage.base], r->symbolRefItem->name,r->symbolRefItem);
                         LIST_CONS(r,(*place));
                     }
                     rrr0 = place;
@@ -1419,7 +1419,7 @@ static void htmlScanCxFileAndGenRefLists(char *fn1, char *fn2,
 
 
 #define JAVA_DOC_SCOPE_DEF(xxx) (                                       \
-                                 (xxx->r->usage.base==UsageDefined &&  xxx->s->b.symType==TypeDefault) \
+                                 (xxx->reference->usage.base==UsageDefined &&  xxx->symbolRefItem->b.symType==TypeDefault) \
                                  )                                      \
 
 static void htmlJavaDocPosProcess(  FILE **fff,
@@ -1432,15 +1432,15 @@ static void htmlJavaDocPosProcess(  FILE **fff,
     int  usage;
     assert(rrr);
     rr = *rrr;
-    assert(rr && rr->r);
-    if (rr->r->usage.base == UsageJavaDocFullEntry
-        || rr->r->usage.base == UsageJavaDoc) {
-        usage = rr->r->usage.base;
+    assert(rr && rr->reference);
+    if (rr->reference->usage.base == UsageJavaDocFullEntry
+        || rr->reference->usage.base == UsageJavaDoc) {
+        usage = rr->reference->usage.base;
         dr = rr;
         if (usage == UsageJavaDoc) {
             // invalidate full entry items until the next definition
             for(; dr!=NULL && !JAVA_DOC_SCOPE_DEF(dr); dr=dr->next) {
-                if (dr->r->usage.base == UsageJavaDocFullEntry) dr->r->usage.base=UsageNone;
+                if (dr->reference->usage.base == UsageJavaDocFullEntry) dr->reference->usage.base=UsageNone;
             }
         }
         if (dr!=NULL) {
@@ -1470,11 +1470,11 @@ static void htmlPosProcess( FILE **fff,
     ff = *fff;
     rr = *rrr;
     ch = *cch;
-    cri = rr->s;
+    cri = rr->symbolRefItem;
     prf = suf = "";
     prf0 = suf0 = "";
     prf1 = suf1 = "";
-    /*&fprintf(dumpOut,"processing '%s' at %d,%d,%d\n",cri->name,rr->r->p.file,rr->r->p.line,rr->r->p.col);fflush(dumpOut);&*/
+    /*&fprintf(dumpOut,"processing '%s' at %d,%d,%d\n",cri->name,rr->reference->p.file,rr->reference->p.line,rr->reference->p.col);fflush(dumpOut);&*/
     if (cri->b.symType == TypeFunSep) {
         if (s_opt.htmlFunSeparate) {
             fprintf(ccOut, "</pre><font size= -1 color=\"red\"><hr><center>");
@@ -1484,7 +1484,7 @@ static void htmlPosProcess( FILE **fff,
         }
         goto fini;
     } else if (cri->b.symType == TypeComment) {
-        if (rr->r->usage.base == UsageDefined) {
+        if (rr->reference->usage.base == UsageDefined) {
             fprintf(ccOut,"<font color=\"green\">");
         } else {
             fprintf(ccOut,"</font>");
@@ -1503,19 +1503,19 @@ static void htmlPosProcess( FILE **fff,
                 suf0 = "</font>";
             }
         }
-        if (cri->b.symType==TypeCppInclude && rr->r->usage.base==UsageDefined) {
+        if (cri->b.symType==TypeCppInclude && rr->reference->usage.base==UsageDefined) {
             goto fini;
         }
         htmlGetStaticHREFItems(rr,cp, &prf1, &suf1, &prf, &suf);
         /*&
-          if (LANGUAGE(LANG_JAVA) && rr->s->vFunClass != s_noneFileIndex) {
+          if (LANGUAGE(LANG_JAVA) && rr->symbolRefItem->vFunClass != s_noneFileIndex) {
           // if virtual method, then point to cxrefs
           prf = prf1; suf=suf1;
           }
           &*/
     }
     if (ff == NULL) goto fini;
-    if (htmlPositionLess(&rr->r->p, cp)) {
+    if (htmlPositionLess(&rr->reference->p, cp)) {
         fprintf(ccOut,"%s%s",prf0,prf);
         fprintf(ccOut,"%s%s",suf,suf0);
     } else {
@@ -1525,7 +1525,7 @@ static void htmlPosProcess( FILE **fff,
                 ) {
 #ifdef DEBUG
             if (ch != '#') {
-                fprintf(dumpOut,"cpp ref on '%c' not at #: %s,%d,%d\n",ch,s_fileTab.tab[rr->r->p.file]->name,rr->r->p.line,rr->r->p.col);fflush(dumpOut);
+                fprintf(dumpOut,"cpp ref on '%c' not at #: %s,%d,%d\n",ch,s_fileTab.tab[rr->reference->p.file]->name,rr->reference->p.line,rr->reference->p.col);fflush(dumpOut);
             }
 #endif
             htmlPutCharLF(ccOut, ch, cp);
@@ -1554,9 +1554,9 @@ static void htmlPosProcess( FILE **fff,
         fprintf(ccOut,"%s%s",suf,suf0);
         cri->b.htmlWasLn = 1;
 #endif
-        if (rr->r->usage.base==UsageDefined) {
-            if ((rr->s->b.category==CatLocal && s_opt.htmllocalx)
-                || (rr->s->b.category==CatGlobal && s_opt.htmlglobalx)) {
+        if (rr->reference->usage.base==UsageDefined) {
+            if ((rr->symbolRefItem->b.category==CatLocal && s_opt.htmllocalx)
+                || (rr->symbolRefItem->b.category==CatGlobal && s_opt.htmlglobalx)) {
                 fprintf(ccOut,"%s%s",prf0,prf1);
                 HtmlPassSourceIdent(cp,ch,ff);
                 fprintf(ccOut,"%s%s",suf1,suf0);
@@ -1614,7 +1614,7 @@ static void htmlPassRefsThroughSourceFile(S_htmlRefList **rrr, int ifile,
     oldrr = NULL;
     while (rr != NULL) {
         assert(oldrr!=rr); oldrr=rr;    // because it is a dangerous loop
-        while (cofile!=NULL && htmlPositionLess(&cp, &rr->r->p)) {
+        while (cofile!=NULL && htmlPositionLess(&cp, &rr->reference->p)) {
             if (genFlag==GEN_HTML) htmlPutCharLF(ccOut, ch, &cp);
             else fputc(ch,ccOut);
             GetFileChar(ch, cofile, &cp);

@@ -16,9 +16,9 @@ typedef struct htmlData {
 } S_htmlData;
 
 typedef struct htmlRefList {
-    struct symbolRefItem	*s;
-    struct reference		*r;
-    struct symbolRefItem	*slist;		/* the hash list containing s, for virtuals */
+    struct symbolRefItem	*symbolRefItem;
+    struct reference		*reference;
+    struct symbolRefItem	*slist;		/* hash list containing symbolRefItem, for virtuals */
     struct htmlRefList		*next;
 } S_htmlRefList;
 
