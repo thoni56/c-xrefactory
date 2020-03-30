@@ -57,18 +57,6 @@ char *htmlNormalizedPath(char *p) {
 }
 #endif                                          /*SBD*/
 
-#if defined(__WIN32__)                          /*SBD*/
-int isAbsolutePath(char *p) {
-    if (p[0]!=0 && p[1]==':' && p[2]==SLASH) return(1);
-    if (p[0]==SLASH) return(1);
-    return(0);
-}
-#else                           /*SBD*/
-int isAbsolutePath(char *p) {
-    return(p[0]==SLASH);
-}
-#endif                          /*SBD*/
-
 static void fillHtmlLocalListms(S_htmlLocalListms *s, FILE *file, int fnum, char *fname) {
     s->ff = file;
     s->fnum = fnum;

@@ -275,6 +275,19 @@ void dirInputFile(MAP_FUN_PROFILE) {
     }
 }
 
+#if defined(__WIN32__)                          /*SBD*/
+static int isAbsolutePath(char *p) {
+    if (p[0]!=0 && p[1]==':' && p[2]==SLASH) return(1);
+    if (p[0]==SLASH) return(1);
+    return(0);
+}
+#else                           /*SBD*/
+static int isAbsolutePath(char *p) {
+    return(p[0]==SLASH);
+}
+#endif                          /*SBD*/
+
+
 static void optionAddToAllocatedList(char **dest) {
     S_stringAddrList *ll;
     for(ll=s_opt.allAllocatedStrings; ll!=NULL; ll=ll->next) {

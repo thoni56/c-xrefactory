@@ -28,7 +28,6 @@ extern void htmlGenNonVirtualGlobSymList(FILE *ff, char *fn, S_symbolRefItem *p 
 extern void htmlGenGlobRefsForVirtMethod(FILE *ff, char *fn,
                                          S_olSymbolsMenu *rrr);
 extern int htmlRefItemsOrderLess(S_olSymbolsMenu *ss1, S_olSymbolsMenu *ss2);
-extern int isAbsolutePath(char *p);
 extern char *htmlNormalizedPath(char *p);
 extern void recursivelyCreateFileDirIfNotExists(char *fpath);
 extern void concatPaths(char *res, int rsize, char *p1, char *p2, char *p3);
