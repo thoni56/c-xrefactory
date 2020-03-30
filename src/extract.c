@@ -43,13 +43,15 @@ static void dumpProgram(S_programGraphNode *program) {
 void genInternalLabelReference(int counter, int usage) {
     char labelName[TMP_STRING_SIZE];
     S_id labelId;
+    S_position position;
 
     if (s_opt.server_operation != OLO_EXTRACT)
         return;
 
-    snprintf(labelName, TMP_STRING_SIZE, "%%L%d", counter);              \
+    snprintf(labelName, TMP_STRING_SIZE, "%%L%d", counter);
 
-    FILLF_id(&labelId, labelName, NULL, cFile.lexBuffer.buffer.fileNumber, 0, 0, NULL);
+    position = (S_position){.file = cFile.lexBuffer.buffer.fileNumber, .line = 0, .col = 0};
+    FILL_id(&labelId, labelName, NULL, position, NULL);
 
     if (usage != UsageDefined)
         labelId.p.line++;
