@@ -242,28 +242,29 @@ void ppMemInit(void) {
 }
 
 // it is supposed that one of ff or buffer is NULL
-void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) {
-    int     plen, bsize, filepos;
-    char	*bbase;
-    plen = strlen(prepend);
-    if (buffer!=NULL) {
+void initInput(FILE *ff, S_editorBuffer *buffer, char *prefix, char *fileName) {
+    int     prefixLength, bufferSize, offset;
+    char	*bufferStart;
+
+    prefixLength = strlen(prefix);
+    if (buffer != NULL) {
         // read buffer
-        assert(plen < buffer->a.allocatedFreePrefixSize);
-        strncpy(buffer->a.text-plen, prepend, plen);
-        bbase = buffer->a.text-plen;
-        bsize = buffer->a.bufferSize+plen;
-        filepos = buffer->a.bufferSize;
-        assert(bbase > buffer->a.allocatedBlock);
+        assert(prefixLength < buffer->a.allocatedFreePrefixSize);
+        strncpy(buffer->a.text-prefixLength, prefix, prefixLength);
+        bufferStart = buffer->a.text-prefixLength;
+        bufferSize = buffer->a.bufferSize+prefixLength;
+        offset = buffer->a.bufferSize;
+        assert(bufferStart > buffer->a.allocatedBlock);
     } else {
         // read file
-        assert(plen < CHAR_BUFF_SIZE);
-        strcpy(cFile.lexBuffer.buffer.chars,prepend);
-        bbase = cFile.lexBuffer.buffer.chars;
-        bsize = plen;
-        filepos = 0;
+        assert(prefixLength < CHAR_BUFF_SIZE);
+        strcpy(cFile.lexBuffer.buffer.chars, prefix);
+        bufferStart = cFile.lexBuffer.buffer.chars;
+        bufferSize = prefixLength;
+        offset = 0;
     }
-    fillFileDescriptor(&cFile, name, bbase, bsize, ff, filepos, s_noneFileIndex);
-    setOpenFileInfo(name);
+    fillFileDescriptor(&cFile, fileName, bufferStart, bufferSize, ff, offset);
+    setOpenFileInfo(fileName);
     SetCInputConsistency();
     s_ifEvaluation = 0;				/* ??? */
 
