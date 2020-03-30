@@ -30,7 +30,7 @@ trace: CXREF+=-trace
 trace: $(TEST)
 
 clean:
-	@-rm -rf CXrefs output.log output.tmp output buffer
+	@-rm -rf CXrefs output.log output.tmp output buffer1
 
 gdb:
 	@$(EDIT_SERVER_DRIVER) commands1.input "$(CURDIR)" buffer1 15 > output.tmp &
