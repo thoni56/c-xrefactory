@@ -2265,6 +2265,7 @@ case 1:
             S_typeModifier *p;
             Symbol *d;
             Symbol *dd;
+
             CrTypeModifier(p, TypeInt);
             yyval.ast_expressionType.d.t = StackMemAlloc(S_typeModifier);
             FILLF_typeModifier(yyval.ast_expressionType.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);

@@ -142,7 +142,7 @@ void initArchaicTypes(void) {
                &s_defaultVoidModifier);
 
     FILLF_typeModifier(&s_errorModifier, TypeError,f,( NULL,NULL) ,NULL,NULL);
-    fillSymbolWithType(&s_errorSymbol,"__ERROR__", "__ERROR__", s_noPos, &s_errorModifier);
+    fillSymbolWithType(&s_errorSymbol, "__ERROR__", "__ERROR__", s_noPos, &s_errorModifier);
     fillSymbolBits(&s_errorSymbol.bits, ACC_DEFAULT, TypeError, StorageNone);
 }
 

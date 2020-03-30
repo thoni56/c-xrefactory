@@ -298,6 +298,7 @@ primary_expr
             S_typeModifier *p;
             Symbol *d;
             Symbol *dd;
+
             CrTypeModifier(p, TypeInt);
             $$.d.t = StackMemAlloc(S_typeModifier);
             FILLF_typeModifier($$.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
