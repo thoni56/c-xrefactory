@@ -1,5 +1,5 @@
     Symbol                                 *symbol;
-    S_typeModifiers                        *typeModifiers;
+    S_typeModifier                        *typeModifiers;
     S_freeTrail                            *trail;
 
     S_extRecFindStr                        *erfs;

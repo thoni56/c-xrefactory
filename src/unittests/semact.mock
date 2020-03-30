@@ -78,24 +78,24 @@ void declTypeSpecifier1(Symbol *d, unsigned t) {
   mock(d, t);
 }
 
-Symbol *typeSpecifier2(S_typeModifiers *t) {
+Symbol *typeSpecifier2(S_typeModifier *t) {
   return (Symbol *) mock(t);
 }
 
-void declTypeSpecifier2(Symbol *d, S_typeModifiers *t) {
+void declTypeSpecifier2(Symbol *d, S_typeModifier *t) {
   mock(d, t);
 }
 
-void declTypeSpecifier21(S_typeModifiers *t, Symbol *d) {
+void declTypeSpecifier21(S_typeModifier *t, Symbol *d) {
   mock(t, d);
 }
 
-S_typeModifiers *appendComposedType(S_typeModifiers **d, unsigned t) {
-  return (S_typeModifiers *) mock(d, t);
+S_typeModifier *appendComposedType(S_typeModifier **d, unsigned t) {
+  return (S_typeModifier *) mock(d, t);
 }
 
-S_typeModifiers *prependComposedType(S_typeModifiers *d, unsigned t) {
-  return (S_typeModifiers *) mock(d, t);
+S_typeModifier *prependComposedType(S_typeModifier *d, unsigned t) {
+  return (S_typeModifier *) mock(d, t);
 }
 
 void completeDeclarator(Symbol *t, Symbol *d) {
@@ -106,8 +106,8 @@ void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, S_symbol
   mock(function, p, i, tab);
 }
 
-S_typeModifiers *crSimpleTypeModifier(unsigned t) {
-  return (S_typeModifiers *) mock(t);
+S_typeModifier *crSimpleTypeModifier(unsigned t) {
+  return (S_typeModifier *) mock(t);
 }
 
 SymbolList *createDefinitionList(Symbol *symbol) {
@@ -126,7 +126,7 @@ S_reference *findStrRecordFromSymbol(Symbol *str, S_id *record, Symbol **res, in
   return (S_reference *) mock(str, record, res, javaClassif, super);
 }
 
-S_reference *findStrRecordFromType(S_typeModifiers *str, S_id *record, Symbol **res, int javaClassif) {
+S_reference *findStrRecordFromType(S_typeModifier *str, S_id *record, Symbol **res, int javaClassif) {
   return (S_reference *) mock(str, record, res, javaClassif);
 }
 
@@ -134,28 +134,28 @@ int mergeArguments(Symbol *id, Symbol *ty) {
   return (int) mock(id, ty);
 }
 
-S_typeModifiers *simpleStrUnionSpecifier(S_id *typeName, S_id *id, int usage) {
-  return (S_typeModifiers *) mock(typeName, id, usage);
+S_typeModifier *simpleStrUnionSpecifier(S_id *typeName, S_id *id, int usage) {
+  return (S_typeModifier *) mock(typeName, id, usage);
 }
 
-S_typeModifiers *crNewAnnonymeStrUnion(S_id *typeName) {
-  return (S_typeModifiers *) mock(typeName);
+S_typeModifier *crNewAnnonymeStrUnion(S_id *typeName) {
+  return (S_typeModifier *) mock(typeName);
 }
 
 void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
   mock(sd, rec);
 }
 
-S_typeModifiers *simpleEnumSpecifier(S_id *id, int usage) {
-  return (S_typeModifiers *) mock(id, usage);
+S_typeModifier *simpleEnumSpecifier(S_id *id, int usage) {
+  return (S_typeModifier *) mock(id, usage);
 }
 
 void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
   mock(iname, pp, memory);
 }
 
-S_typeModifiers *createNewAnonymousEnum(SymbolList *enums) {
-  return (S_typeModifiers *) mock(enums);
+S_typeModifier *createNewAnonymousEnum(SymbolList *enums) {
+  return (S_typeModifier *) mock(enums);
 }
 
 void appendPositionToList(S_positionList **list, S_position *pos) {

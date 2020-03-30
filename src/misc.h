@@ -64,10 +64,10 @@ extern void addToTrail (void (*action)(void*),  void *p);
 extern void removeFromTrailUntil(S_freeTrail *untilP);
 
 extern void symDump(Symbol *symbol);
-extern void typeDump(S_typeModifiers *typeModifiers);
+extern void typeDump(S_typeModifier *typeModifiers);
 extern void symbolRefItemDump(S_symbolRefItem *ss);
 extern int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos);
-extern void typeSPrint(char *buff,int *size,S_typeModifiers *t,char*name,
+extern void typeSPrint(char *buff,int *size,S_typeModifier *t,char*name,
                        int dclSepChar, int maxDeep, int typedefexp,
                        int longOrShortName, int *oNamePos);
 extern void throwsSprintf(char *out, int outsize, SymbolList *exceptions);

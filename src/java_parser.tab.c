@@ -91,13 +91,13 @@
 }
 
 #define CrTypeModifier(xxx,ttt) {\
-        xxx = StackMemAlloc(S_typeModifiers);\
+        xxx = StackMemAlloc(S_typeModifier);\
         FILLF_typeModifier(xxx, ttt,f,( NULL,NULL) ,NULL,NULL);\
 }
 
 #define PrependModifier(xxx,ttt) {\
-        S_typeModifiers *p;\
-        p = StackMemAlloc(S_typeModifiers);\
+        S_typeModifier *p;\
+        p = StackMemAlloc(S_typeModifier);\
         FILLF_typeModifier(p, ttt,f,(NULL,NULL) ,NULL,xxx);\
         xxx = p;\
 }
@@ -3489,7 +3489,7 @@ case 77:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     Symbol *str;
-                    S_typeModifiers *expr;
+                    S_typeModifier *expr;
                     S_reference *rr, *lastUselessRef;
                     int st __attribute__((unused));
                     st = javaClassifyAmbiguousName(yyvsp[-3].ast_idList.d, NULL,&str,&expr,&rr,
@@ -4292,7 +4292,7 @@ case 158:
                     if (! SyntaxPassOnly()) {
                         yyval.ast_symbol.d = yyvsp[-3].symbol;
                         assert(yyval.ast_symbol.d && yyval.ast_symbol.d->u.type && yyval.ast_symbol.d->u.type->kind == TypeFunction);
-                        FILL_funTypeModif(&yyval.ast_symbol.d->u.type->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
+                        FILL_functionTypeModifier(&yyval.ast_symbol.d->u.type->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
                     } else {
                         javaHandleDeclaratorParamPositions(&yyvsp[-4].ast_id.d->p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_symbolPositionListPair.d.p, &yyvsp[0].ast_position.d);
                         PropagateBorns(yyval.ast_symbol, yyvsp[-4].ast_id, yyvsp[0].ast_position);
@@ -4301,7 +4301,7 @@ case 158:
                 if (inSecondJslPass()) {
                     yyval.ast_symbol.d = yyvsp[-3].symbol;
                     assert(yyval.ast_symbol.d && yyval.ast_symbol.d->u.type && yyval.ast_symbol.d->u.type->kind == TypeFunction);
-                    FILL_funTypeModif(&yyval.ast_symbol.d->u.type->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
+                    FILL_functionTypeModifier(&yyval.ast_symbol.d->u.type->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
                 }
             }
 break;
@@ -4562,7 +4562,7 @@ case 179:
                     if (! SyntaxPassOnly()) {
                         yyval.ast_symbol.d = yyvsp[-3].symbol;
                         assert(yyval.ast_symbol.d && yyval.ast_symbol.d->u.type && yyval.ast_symbol.d->u.type->kind == TypeFunction);
-                        FILL_funTypeModif(&yyval.ast_symbol.d->u.type->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
+                        FILL_functionTypeModifier(&yyval.ast_symbol.d->u.type->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
                     } else {
                         javaHandleDeclaratorParamPositions(&yyvsp[-4].ast_id.d->p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_symbolPositionListPair.d.p, &yyvsp[0].ast_position.d);
                         PropagateBorns(yyval.ast_symbol, yyvsp[-4].ast_id, yyvsp[0].ast_position);
@@ -4571,7 +4571,7 @@ case 179:
                 if (inSecondJslPass()) {
                     yyval.ast_symbol.d = yyvsp[-3].symbol;
                     assert(yyval.ast_symbol.d && yyval.ast_symbol.d->u.type && yyval.ast_symbol.d->u.type->kind == TypeFunction);
-                    FILL_funTypeModif(&yyval.ast_symbol.d->u.type->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
+                    FILL_functionTypeModifier(&yyval.ast_symbol.d->u.type->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
                 };
             }
 break;
@@ -5841,7 +5841,7 @@ case 360:
 #line 3111 "java_parser.y"
 {
                 if (ComputingPossibleParameterCompletion()) {
-                    S_typeModifiers *mm;
+                    S_typeModifier *mm;
                     s_cp.erfsForParamsComplet = NULL;
                     if (yyvsp[-4].ast_expressionType.d.t->kind == TypeStruct) {
                         mm = javaNestedNewType(yyvsp[-4].ast_expressionType.d.t->u.t, yyvsp[-2].ast_id.d, yyvsp[-1].ast_idList.d);
@@ -5880,7 +5880,7 @@ case 362:
 #line 3145 "java_parser.y"
 {
                 if (ComputingPossibleParameterCompletion()) {
-                    S_typeModifiers *mm;
+                    S_typeModifier *mm;
                     s_cp.erfsForParamsComplet = NULL;
                     mm = javaNewAfterName(yyvsp[-4].ast_idList.d, yyvsp[-2].ast_id.d, yyvsp[-1].ast_idList.d);
                     if (mm->kind != TypeError) {
@@ -5914,7 +5914,7 @@ case 364:
             if (ComputingPossibleParameterCompletion()) {
                 Symbol            *ss;
                 Symbol			*str;
-                S_typeModifiers		*expr;
+                S_typeModifier		*expr;
                 S_reference			*rr, *lastUselessRef;
                 javaClassifyAmbiguousName(yyvsp[0].ast_idList.d, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
                                           CLASS_TO_TYPE,UsageUsed);
@@ -5932,7 +5932,7 @@ case 365:
                 if (! SyntaxPassOnly()) {
                     Symbol *ss, *tt, *ei;
                     Symbol *str;
-                    S_typeModifiers *expr;
+                    S_typeModifier *expr;
                     S_reference *rr, *lastUselessRef;
 
                     s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
@@ -6105,8 +6105,8 @@ case 377:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    XX_ALLOC(yyval.ast_typeModifiersListPositionListPair.d.t, S_typeModifiersList);
-                    FILL_typeModifiersList(yyval.ast_typeModifiersListPositionListPair.d.t, yyvsp[0].ast_expressionType.d.t, NULL);
+                    XX_ALLOC(yyval.ast_typeModifiersListPositionListPair.d.t, S_typeModifierList);
+                    FILL_typeModifierList(yyval.ast_typeModifiersListPositionListPair.d.t, yyvsp[0].ast_expressionType.d.t, NULL);
                     if (s_cp.erfsForParamsComplet!=NULL) {
                         s_cp.erfsForParamsComplet->params = yyval.ast_typeModifiersListPositionListPair.d.t;
                     }
@@ -6123,11 +6123,11 @@ case 378:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_typeModifiersList *p;
+                    S_typeModifierList *p;
                     yyval.ast_typeModifiersListPositionListPair.d = yyvsp[-2].ast_typeModifiersListPositionListPair.d;
-                    XX_ALLOC(p, S_typeModifiersList);
-                    FILL_typeModifiersList(p, yyvsp[0].ast_expressionType.d.t, NULL);
-                    LIST_APPEND(S_typeModifiersList, yyval.ast_typeModifiersListPositionListPair.d.t, p);
+                    XX_ALLOC(p, S_typeModifierList);
+                    FILL_typeModifierList(p, yyvsp[0].ast_expressionType.d.t, NULL);
+                    LIST_APPEND(S_typeModifierList, yyval.ast_typeModifiersListPositionListPair.d.t, p);
                     if (s_cp.erfsForParamsComplet!=NULL) s_cp.erfsForParamsComplet->params = yyval.ast_typeModifiersListPositionListPair.d.t;
                 } else {
                     appendPositionToList(&yyval.ast_typeModifiersListPositionListPair.d.p, &yyvsp[-1].ast_position.d);
@@ -6433,7 +6433,7 @@ case 404:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_typeModifiers *tt;
+                    S_typeModifier *tt;
                     tt = javaClassifyToExpressionName(yyvsp[-3].ast_idList.d, &(yyval.ast_expressionType.d.r));
                     if (tt->kind==TypeArray) yyval.ast_expressionType.d.t=tt->next;
                     else yyval.ast_expressionType.d.t = &s_errorModifier;
@@ -6628,7 +6628,7 @@ case 426:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    XX_ALLOC(yyval.ast_expressionType.d.t, S_typeModifiers);
+                    XX_ALLOC(yyval.ast_expressionType.d.t, S_typeModifier);
                     FILLF_typeModifier(yyval.ast_expressionType.d.t,yyvsp[-2].ast_unsignedPositionPair.d.u,t,NULL,NULL,NULL);
                     yyval.ast_expressionType.d.r = NULL;
                 } else {

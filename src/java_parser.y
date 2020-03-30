@@ -87,13 +87,13 @@
 }
 
 #define CrTypeModifier(xxx,ttt) {\
-        xxx = StackMemAlloc(S_typeModifiers);\
+        xxx = StackMemAlloc(S_typeModifier);\
         FILLF_typeModifier(xxx, ttt,f,( NULL,NULL) ,NULL,NULL);\
 }
 
 #define PrependModifier(xxx,ttt) {\
-        S_typeModifiers *p;\
-        p = StackMemAlloc(S_typeModifiers);\
+        S_typeModifier *p;\
+        p = StackMemAlloc(S_typeModifier);\
         FILLF_typeModifier(p, ttt,f,(NULL,NULL) ,NULL,xxx);\
         xxx = p;\
 }
@@ -1042,7 +1042,7 @@ TypeImportOnDemandDeclaration:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     Symbol *str;
-                    S_typeModifiers *expr;
+                    S_typeModifier *expr;
                     S_reference *rr, *lastUselessRef;
                     int st __attribute__((unused));
                     st = javaClassifyAmbiguousName($2.d, NULL,&str,&expr,&rr,
@@ -1750,7 +1750,7 @@ MethodDeclarator:
                     if (! SyntaxPassOnly()) {
                         $$.d = $<symbol>2;
                         assert($$.d && $$.d->u.type && $$.d->u.type->kind == TypeFunction);
-                        FILL_funTypeModif(&$$.d->u.type->u.f , $4.d.s, NULL);
+                        FILL_functionTypeModifier(&$$.d->u.type->u.f , $4.d.s, NULL);
                     } else {
                         javaHandleDeclaratorParamPositions(&$1.d->p, &$3.d, $4.d.p, &$5.d);
                         PropagateBorns($$, $1, $5);
@@ -1759,7 +1759,7 @@ MethodDeclarator:
                 if (inSecondJslPass()) {
                     $$.d = $<symbol>2;
                     assert($$.d && $$.d->u.type && $$.d->u.type->kind == TypeFunction);
-                    FILL_funTypeModif(&$$.d->u.type->u.f , $4.d.s, NULL);
+                    FILL_functionTypeModifier(&$$.d->u.type->u.f , $4.d.s, NULL);
                 }
             }
     |	MethodDeclarator '[' ']'						{
@@ -1995,7 +1995,7 @@ ConstructorDeclarator:
                     if (! SyntaxPassOnly()) {
                         $$.d = $<symbol>2;
                         assert($$.d && $$.d->u.type && $$.d->u.type->kind == TypeFunction);
-                        FILL_funTypeModif(&$$.d->u.type->u.f , $4.d.s, NULL);
+                        FILL_functionTypeModifier(&$$.d->u.type->u.f , $4.d.s, NULL);
                     } else {
                         javaHandleDeclaratorParamPositions(&$1.d->p, &$3.d, $4.d.p, &$5.d);
                         PropagateBorns($$, $1, $5);
@@ -2004,7 +2004,7 @@ ConstructorDeclarator:
                 if (inSecondJslPass()) {
                     $$.d = $<symbol>2;
                     assert($$.d && $$.d->u.type && $$.d->u.type->kind == TypeFunction);
-                    FILL_funTypeModif(&$$.d->u.type->u.f , $4.d.s, NULL);
+                    FILL_functionTypeModifier(&$$.d->u.type->u.f , $4.d.s, NULL);
                 };
             }
     ;
@@ -3110,7 +3110,7 @@ NestedConstructorInvocation:
         Primary '.' New Name _erfs_
             {
                 if (ComputingPossibleParameterCompletion()) {
-                    S_typeModifiers *mm;
+                    S_typeModifier *mm;
                     s_cp.erfsForParamsComplet = NULL;
                     if ($1.d.t->kind == TypeStruct) {
                         mm = javaNestedNewType($1.d.t->u.t, $3.d, $4.d);
@@ -3144,7 +3144,7 @@ NestedConstructorInvocation:
     |	Name '.' New Name _erfs_
             {
                 if (ComputingPossibleParameterCompletion()) {
-                    S_typeModifiers *mm;
+                    S_typeModifier *mm;
                     s_cp.erfsForParamsComplet = NULL;
                     mm = javaNewAfterName($1.d, $3.d, $4.d);
                     if (mm->kind != TypeError) {
@@ -3175,7 +3175,7 @@ NewName:
             if (ComputingPossibleParameterCompletion()) {
                 Symbol            *ss;
                 Symbol			*str;
-                S_typeModifiers		*expr;
+                S_typeModifier		*expr;
                 S_reference			*rr, *lastUselessRef;
                 javaClassifyAmbiguousName($1.d, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
                                           CLASS_TO_TYPE,UsageUsed);
@@ -3193,7 +3193,7 @@ ClassInstanceCreationExpression:
                 if (! SyntaxPassOnly()) {
                     Symbol *ss, *tt, *ei;
                     Symbol *str;
-                    S_typeModifiers *expr;
+                    S_typeModifier *expr;
                     S_reference *rr, *lastUselessRef;
 
                     s_cp.erfsForParamsComplet = $2;
@@ -3349,8 +3349,8 @@ ArgumentList:
         Expression									{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    XX_ALLOC($$.d.t, S_typeModifiersList);
-                    FILL_typeModifiersList($$.d.t, $1.d.t, NULL);
+                    XX_ALLOC($$.d.t, S_typeModifierList);
+                    FILL_typeModifierList($$.d.t, $1.d.t, NULL);
                     if (s_cp.erfsForParamsComplet!=NULL) {
                         s_cp.erfsForParamsComplet->params = $$.d.t;
                     }
@@ -3364,11 +3364,11 @@ ArgumentList:
     |	ArgumentList ',' Expression					{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_typeModifiersList *p;
+                    S_typeModifierList *p;
                     $$.d = $1.d;
-                    XX_ALLOC(p, S_typeModifiersList);
-                    FILL_typeModifiersList(p, $3.d.t, NULL);
-                    LIST_APPEND(S_typeModifiersList, $$.d.t, p);
+                    XX_ALLOC(p, S_typeModifierList);
+                    FILL_typeModifierList(p, $3.d.t, NULL);
+                    LIST_APPEND(S_typeModifierList, $$.d.t, p);
                     if (s_cp.erfsForParamsComplet!=NULL) s_cp.erfsForParamsComplet->params = $$.d.t;
                 } else {
                     appendPositionToList(&$$.d.p, &$2.d);
@@ -3628,7 +3628,7 @@ ArrayAccess:
         Name '[' Expression ']'							{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_typeModifiers *tt;
+                    S_typeModifier *tt;
                     tt = javaClassifyToExpressionName($1.d, &($$.d.r));
                     if (tt->kind==TypeArray) $$.d.t=tt->next;
                     else $$.d.t = &s_errorModifier;
@@ -3813,7 +3813,7 @@ CastExpression:
     |	'(' PrimitiveType ')' UnaryExpression				{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    XX_ALLOC($$.d.t, S_typeModifiers);
+                    XX_ALLOC($$.d.t, S_typeModifier);
                     FILLF_typeModifier($$.d.t,$2.d.u,t,NULL,NULL,NULL);
                     $$.d.r = NULL;
                 } else {

@@ -690,8 +690,8 @@ char * cfSkipFirstArgumentInSigString(char *sig) {
     return(ssig);
 }
 
-S_typeModifiers * cfUnPackResultType(char *sig, char **restype) {
-    S_typeModifiers *res, **ares, *tt;
+S_typeModifier * cfUnPackResultType(char *sig, char **restype) {
+    S_typeModifier *res, **ares, *tt;
     int typ;
     char *fqname;
     char *ssig, *ccname;
@@ -709,7 +709,7 @@ S_typeModifiers * cfUnPackResultType(char *sig, char **restype) {
     }
     assert(*ssig);
     for(; *ssig; ssig++) {
-        CF_ALLOC(tt, S_typeModifiers);
+        CF_ALLOC(tt, S_typeModifier);
         *ares = tt;
         ares = &(tt->next);
         switch (*ssig) {
@@ -754,7 +754,7 @@ static void cfAddRecordToClass( char *name,
     static char pp[MAX_PROFILE_SIZE];
     Symbol *symbol, *memb;
     char *linkName,*prof;
-    S_typeModifiers *tt;
+    S_typeModifier *tt;
     char *restype;
     int len, vFunCl;
     int rr,bc;

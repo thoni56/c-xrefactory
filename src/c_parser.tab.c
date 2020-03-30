@@ -75,7 +75,7 @@
 
 #define CrTypeModifier(xxx,ttt) {\
         xxx = crSimpleTypeModifier(ttt);\
-        xxx = StackMemAlloc(S_typeModifiers);\
+        xxx = StackMemAlloc(S_typeModifier);\
         FILLF_typeModifier(xxx, ttt,f,( NULL,NULL) ,NULL,NULL);\
 }
 
@@ -2261,11 +2261,11 @@ case 1:
             }
         } else {
             /* implicit function declaration */
-            S_typeModifiers *p;
+            S_typeModifier *p;
             Symbol *d;
             Symbol *dd;
             CrTypeModifier(p, TypeInt);
-            yyval.ast_expressionType.d.t = StackMemAlloc(S_typeModifiers);
+            yyval.ast_expressionType.d.t = StackMemAlloc(S_typeModifier);
             FILLF_typeModifier(yyval.ast_expressionType.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
 
             d = newSymbolIsType(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->p, yyval.ast_expressionType.d.t);
@@ -2303,9 +2303,9 @@ break;
 case 7:
 #line 320 "c_parser.y"
 {
-        S_typeModifiers *p;
+        S_typeModifier *p;
         CrTypeModifier(p, TypeChar);
-        yyval.ast_expressionType.d.t = StackMemAlloc(S_typeModifiers);
+        yyval.ast_expressionType.d.t = StackMemAlloc(S_typeModifier);
         FILLF_typeModifier(yyval.ast_expressionType.d.t, TypePointer,f,( NULL,NULL) ,NULL,p);
         yyval.ast_expressionType.d.r = NULL;
     }
@@ -2480,7 +2480,7 @@ break;
 case 38:
 #line 462 "c_parser.y"
 {
-        yyval.ast_expressionType.d.t = StackMemAlloc(S_typeModifiers);
+        yyval.ast_expressionType.d.t = StackMemAlloc(S_typeModifier);
         FILLF_typeModifier(yyval.ast_expressionType.d.t, TypePointer,f,( NULL,NULL) ,NULL,yyvsp[0].ast_expressionType.d.t);
         RESET_REFERENCE_USAGE(yyvsp[0].ast_expressionType.d.r, UsageAddrUsed);
         yyval.ast_expressionType.d.r = NULL;
@@ -3257,33 +3257,33 @@ break;
 case 196:
 #line 1092 "c_parser.y"
 {
-        S_typeModifiers *p;
+        S_typeModifier *p;
         assert(yyvsp[-2].ast_symbol.d);
         yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
         p = AddComposedType(yyval.ast_symbol.d, TypeFunction);
-        FILL_funTypeModif(&p->u.f , NULL, NULL);
+        FILL_functionTypeModifier(&p->u.f , NULL, NULL);
         handleDeclaratorParamPositions(yyvsp[-2].ast_symbol.d, &yyvsp[-1].ast_position.d, NULL, &yyvsp[0].ast_position.d, 0);
     }
 break;
 case 197:
 #line 1100 "c_parser.y"
 {
-        S_typeModifiers *p;
+        S_typeModifier *p;
         assert(yyvsp[-3].ast_symbol.d);
         yyval.ast_symbol.d = yyvsp[-3].ast_symbol.d;
         p = AddComposedType(yyval.ast_symbol.d, TypeFunction);
-        FILL_funTypeModif(&p->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
+        FILL_functionTypeModifier(&p->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
         handleDeclaratorParamPositions(yyvsp[-3].ast_symbol.d, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_symbolPositionListPair.d.p, &yyvsp[0].ast_position.d, 1);
     }
 break;
 case 198:
 #line 1108 "c_parser.y"
 {
-        S_typeModifiers *p;
+        S_typeModifier *p;
         assert(yyvsp[-3].ast_symbol.d);
         yyval.ast_symbol.d = yyvsp[-3].ast_symbol.d;
         p = AddComposedType(yyval.ast_symbol.d, TypeFunction);
-        FILL_funTypeModif(&p->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
+        FILL_functionTypeModifier(&p->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
         handleDeclaratorParamPositions(yyvsp[-3].ast_symbol.d, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_symbolPositionListPair.d.p, &yyvsp[0].ast_position.d, 1);
     }
 break;
@@ -3515,7 +3515,7 @@ case 232:
 #line 1305 "c_parser.y"
 {
         yyval.ast_typeModifiers.d = yyvsp[0].ast_typeModifiers.d;
-        LIST_APPEND(S_typeModifiers, yyval.ast_typeModifiers.d, yyvsp[-1].ast_symbol.d->u.type);
+        LIST_APPEND(S_typeModifier, yyval.ast_typeModifiers.d, yyvsp[-1].ast_symbol.d->u.type);
     }
 break;
 case 233:
@@ -3576,35 +3576,35 @@ case 241:
 #line 1345 "c_parser.y"
 {
         CrTypeModifier(yyval.ast_typeModifiers.d,TypeFunction);
-        FILL_funTypeModif(&yyval.ast_typeModifiers.d->u.f , NULL, NULL);
+        FILL_functionTypeModifier(&yyval.ast_typeModifiers.d->u.f , NULL, NULL);
     }
 break;
 case 242:
 #line 1349 "c_parser.y"
 {
         CrTypeModifier(yyval.ast_typeModifiers.d,TypeFunction);
-        FILL_funTypeModif(&yyval.ast_typeModifiers.d->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
+        FILL_functionTypeModifier(&yyval.ast_typeModifiers.d->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
     }
 break;
 case 243:
 #line 1353 "c_parser.y"
 {
-        S_typeModifiers *p;
+        S_typeModifier *p;
         yyval.ast_typeModifiers.d = yyvsp[-2].ast_typeModifiers.d;
         p = appendComposedType(&(yyval.ast_typeModifiers.d), TypeFunction);
-        FILL_funTypeModif(&p->u.f , NULL, NULL);
+        FILL_functionTypeModifier(&p->u.f , NULL, NULL);
     }
 break;
 case 244:
 #line 1359 "c_parser.y"
 {
-        S_typeModifiers *p;
+        S_typeModifier *p;
         yyval.ast_typeModifiers.d = yyvsp[-3].ast_typeModifiers.d;
         p = appendComposedType(&(yyval.ast_typeModifiers.d), TypeFunction);
         /* I think there should be the following, but in abstract*/
         /* declarator it does not matter*/
-        /*& FILL_funTypeModif(&p->u.f , $3.d.s, NULL);*/
-        FILL_funTypeModif(&p->u.f , NULL, NULL);
+        /*& FILL_functionTypeModifier(&p->u.f , $3.d.s, NULL);*/
+        FILL_functionTypeModifier(&p->u.f , NULL, NULL);
     }
 break;
 case 245:

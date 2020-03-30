@@ -601,7 +601,7 @@ typedef struct recFindStr {
 typedef struct extRecFindStr {
     struct recFindStr			s;
     struct symbol				*memb;
-    struct typeModifiersList	*params;
+    struct typeModifierList	*params;
 } S_extRecFindStr;
 
 typedef struct nestedSpec {
@@ -980,7 +980,7 @@ typedef struct intPair {
 } S_intPair;
 
 typedef struct typeModifiersListPositionListPair {
-    struct typeModifiersList	*t;
+    struct typeModifierList	*t;
     struct positionList			*p;
 } S_typeModifiersListPositionListPair;
 
@@ -1055,7 +1055,7 @@ typedef struct {
 } Ast_typeModifiers;
 typedef struct {
     struct position              b, e;
-    struct typeModifiersList		*d;
+    struct typeModifierList		*d;
 } Ast_typeModifiersList;
 typedef struct {
     struct position      b, e;

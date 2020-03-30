@@ -417,7 +417,7 @@ S_reference *findStrRecordFromSymbol( Symbol *sym,
     return(ref);
 }
 
-S_reference * findStrRecordFromType(    S_typeModifiers *str,
+S_reference * findStrRecordFromType(    S_typeModifier *str,
                                         S_id *record,
                                         Symbol **res,
                                         int javaClassif
@@ -535,7 +535,7 @@ static void setStaticFunctionLinkName( Symbol *p, int usage ) {
 
 Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, S_symbolTable *tab,
                           int usage) {
-    S_typeModifiers *tt;
+    S_typeModifier *tt;
     Symbol *pp;
     int ii;
     if (p == &s_errorSymbol || p->bits.symType==TypeError) return(p);
@@ -549,7 +549,7 @@ Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, S_symbolTable *ta
     }
     if (p->bits.symType==TypeDefault && p->bits.storage==StorageTypedef) {
         // typedef HACK !!!
-        XX_ALLOC(tt, S_typeModifiers);
+        XX_ALLOC(tt, S_typeModifier);
         *tt = *p->u.type;
         p->u.type = tt;
         tt->typedefSymbol = p;
@@ -596,7 +596,7 @@ static void addInitializerRefs(Symbol *decl,
                                ) {
     S_idList *ll;
     S_id* id;
-    S_typeModifiers *tt;
+    S_typeModifier *tt;
     S_reference *ref;
     Symbol *rec=NULL;
     for(ll=idl; ll!=NULL; ll=ll->next) {
@@ -670,11 +670,11 @@ void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, S_symbol
     }
 }
 
-S_typeModifiers *crSimpleTypeModifier(unsigned t) {
-    S_typeModifiers *p;
+S_typeModifier *crSimpleTypeModifier(unsigned t) {
+    S_typeModifier *p;
     assert(t>=0 && t<MAX_TYPE);
     if (s_preCrTypesTab[t] == NULL) {
-        p = StackMemAlloc(S_typeModifiers);
+        p = StackMemAlloc(S_typeModifier);
         FILLF_typeModifier(p,t,f,( NULL,NULL) ,NULL,NULL);
     } else {
         p = s_preCrTypesTab[t];
@@ -684,7 +684,7 @@ S_typeModifiers *crSimpleTypeModifier(unsigned t) {
     return(p);
 }
 
-static S_typeModifiers *mergeBaseType(S_typeModifiers *t1,S_typeModifiers *t2){
+static S_typeModifier *mergeBaseType(S_typeModifier *t1,S_typeModifier *t2){
     unsigned b,r;
     unsigned modif;
     assert(t1->kind<MODIFIERS_END && t2->kind<MODIFIERS_END);
@@ -728,7 +728,7 @@ static S_typeModifiers *mergeBaseType(S_typeModifiers *t1,S_typeModifiers *t2){
     return(crSimpleTypeModifier(r));
 }
 
-static S_typeModifiers * mergeBaseModTypes(S_typeModifiers *t1, S_typeModifiers *t2) {
+static S_typeModifier * mergeBaseModTypes(S_typeModifier *t1, S_typeModifier *t2) {
     assert(t1 && t2);
     if (t1->kind == TypeDefault) return(t2);
     if (t2->kind == TypeDefault) return(t1);
@@ -739,7 +739,7 @@ static S_typeModifiers * mergeBaseModTypes(S_typeModifiers *t1, S_typeModifiers 
     return(mergeBaseType(t1, t2));
 }
 
-Symbol *typeSpecifier2(S_typeModifiers *t) {
+Symbol *typeSpecifier2(S_typeModifier *t) {
     Symbol    *r;
 
     /* this is temporary, as long as we do not have the tempmemory in java, c++ */
@@ -764,27 +764,27 @@ void declTypeSpecifier1(Symbol *d, unsigned t) {
     d->u.type = mergeBaseModTypes(d->u.type,crSimpleTypeModifier(t));
 }
 
-void declTypeSpecifier2(Symbol *d, S_typeModifiers *t) {
+void declTypeSpecifier2(Symbol *d, S_typeModifier *t) {
     assert(d && d->u.type);
     d->u.type = mergeBaseModTypes(d->u.type, t);
 }
 
-void declTypeSpecifier21(S_typeModifiers *t, Symbol *d) {
+void declTypeSpecifier21(S_typeModifier *t, Symbol *d) {
     assert(d && d->u.type);
     d->u.type = mergeBaseModTypes(t, d->u.type);
 }
 
-S_typeModifiers *appendComposedType(S_typeModifiers **d, unsigned t) {
-    S_typeModifiers *p;
-    p = StackMemAlloc(S_typeModifiers);
+S_typeModifier *appendComposedType(S_typeModifier **d, unsigned t) {
+    S_typeModifier *p;
+    p = StackMemAlloc(S_typeModifier);
     FILLF_typeModifier(p, t,f,( NULL,NULL) ,NULL,NULL);
-    LIST_APPEND(S_typeModifiers, (*d), p);
+    LIST_APPEND(S_typeModifier, (*d), p);
     return(p);
 }
 
-S_typeModifiers *prependComposedType(S_typeModifiers *d, unsigned t) {
-    S_typeModifiers *p;
-    p = StackMemAlloc(S_typeModifiers);
+S_typeModifier *prependComposedType(S_typeModifier *d, unsigned t) {
+    S_typeModifier *p;
+    p = StackMemAlloc(S_typeModifier);
     FILLF_typeModifier(p, t,f,( NULL,NULL) ,NULL,d);
     return(p);
 }
@@ -800,7 +800,7 @@ void completeDeclarator(S_symbol *t, S_symbol *d) {
 #endif
 
 void completeDeclarator(Symbol *t, Symbol *d) {
-    S_typeModifiers *tt,**dt;
+    S_typeModifier *tt,**dt;
     //static int counter=0;
     assert(t && d);
     if (t == &s_errorSymbol || d == &s_errorSymbol
@@ -831,14 +831,14 @@ void completeDeclarator(Symbol *t, Symbol *d) {
         }
     }
     unpackPointers(d);
-    LIST_APPEND(S_typeModifiers, *dt, tt);
+    LIST_APPEND(S_typeModifier, *dt, tt);
 }
 
 Symbol *createSimpleDefinition(unsigned storage, unsigned t, S_id *id) {
-    S_typeModifiers *typeModifiers;
+    S_typeModifier *typeModifiers;
     Symbol *r;
 
-    typeModifiers = StackMemAlloc(S_typeModifiers);
+    typeModifiers = StackMemAlloc(S_typeModifier);
     FILLF_typeModifier(typeModifiers,t,f,( NULL,NULL) ,NULL,NULL);
     if (id!=NULL) {
         r = newSymbolIsType(id->name, id->name, id->p, typeModifiers);
@@ -881,15 +881,15 @@ int mergeArguments(Symbol *id, Symbol *ty) {
     return(res);
 }
 
-static S_typeModifiers *crSimpleEnumType(Symbol *edef, int type) {
-    S_typeModifiers *res;
-    res = StackMemAlloc(S_typeModifiers);
+static S_typeModifier *crSimpleEnumType(Symbol *edef, int type) {
+    S_typeModifier *res;
+    res = StackMemAlloc(S_typeModifier);
     FILLF_typeModifier(res, type,t,edef,NULL,NULL);
     res->u.t = edef;
     return(res);
 }
 
-S_typeModifiers *simpleStrUnionSpecifier(   S_id *typeName,
+S_typeModifier *simpleStrUnionSpecifier(   S_id *typeName,
                                             S_id *id,
                                             int usage
                                             ) {
@@ -998,7 +998,7 @@ void setGlobalFileDepNames(char *iname, S_symbol *pp, int memory) {
 }
 #endif
 
-S_typeModifiers *crNewAnnonymeStrUnion(S_id *typeName) {
+S_typeModifier *crNewAnnonymeStrUnion(S_id *typeName) {
     Symbol *pp;
     int type;
 
@@ -1047,7 +1047,7 @@ void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
     }
 }
 
-S_typeModifiers *simpleEnumSpecifier(S_id *id, int usage) {
+S_typeModifier *simpleEnumSpecifier(S_id *id, int usage) {
     Symbol p,*pp;
     int ii;
 
@@ -1065,7 +1065,7 @@ S_typeModifiers *simpleEnumSpecifier(S_id *id, int usage) {
     return(crSimpleEnumType(pp,TypeEnum));
 }
 
-S_typeModifiers *createNewAnonymousEnum(SymbolList *enums) {
+S_typeModifier *createNewAnonymousEnum(SymbolList *enums) {
     Symbol *pp;
 
     pp = newSymbolIsEnum("", "", s_noPos, enums);
@@ -1132,9 +1132,9 @@ static void handleParameterPositions(S_position *lpar, S_positionList *commas,
 
 Symbol *crEmptyField(void) {
     Symbol *res;
-    S_typeModifiers *p;
+    S_typeModifier *p;
 
-    p = StackMemAlloc(S_typeModifiers);
+    p = StackMemAlloc(S_typeModifier);
     FILLF_typeModifier(p,TypeAnonymeField,f,( NULL,NULL) ,NULL,NULL);
 
     res = newSymbolIsType("", "", s_noPos, p);

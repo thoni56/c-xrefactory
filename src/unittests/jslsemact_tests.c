@@ -8,7 +8,7 @@
 S_fileTab s_fileTab;
 S_id s_javaAnonymousClassName = {"{Anonymous}", NULL, {-1,0,0}};
 S_id s_javaConstructorName = {"<init>", NULL, {-1,0,0}};
-S_typeModifiers * s_preCrTypesTab[MAX_TYPE];
+S_typeModifier * s_preCrTypesTab[MAX_TYPE];
 S_position s_noPos = {-1, 0, 0};
 Symbol s_errorSymbol;
 S_options s_opt;        // current options

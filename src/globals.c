@@ -65,10 +65,10 @@ S_position s_staticPrefixStartPosition;
 S_id s_yyIdentBuf[YYBUFFERED_ID_INDEX];
 int s_yyIdentBufi = 0;
 
-S_typeModifiers *s_structRecordCompletionType;
-S_typeModifiers *s_upLevelFunctionCompletionType;
+S_typeModifier *s_structRecordCompletionType;
+S_typeModifier *s_upLevelFunctionCompletionType;
 S_exprTokenType s_forCompletionType;
-S_typeModifiers *s_javaCompletionLastPrimary;
+S_typeModifier *s_javaCompletionLastPrimary;
 
 YYSTYPE *uniyylval = &cyylval;
 struct yyGlobalState *s_yygstate;
@@ -233,12 +233,12 @@ int s_olOriginalComFileNumber = -1;
 int s_noneFileIndex = -1;
 time_t s_expiration;
 
-S_typeModifiers s_defaultIntModifier;
+S_typeModifier s_defaultIntModifier;
 Symbol s_defaultIntDefinition;
-S_typeModifiers s_defaultPackedTypeModifier;
-S_typeModifiers s_defaultVoidModifier;
+S_typeModifier s_defaultPackedTypeModifier;
+S_typeModifier s_defaultVoidModifier;
 Symbol s_defaultVoidDefinition;
-S_typeModifiers s_errorModifier;
+S_typeModifier s_errorModifier;
 Symbol s_errorSymbol;
 struct stat s_noStat;
 S_position s_noPos = {-1, 0, 0};
@@ -248,9 +248,9 @@ Symbol *s_javaStringSymbol;
 Symbol *s_javaCloneableSymbol;
 Symbol *s_javaIoSerializableSymbol;
 Symbol *s_javaObjectSymbol;
-S_typeModifiers s_javaStringModifier;
-S_typeModifiers s_javaClassModifier;
-S_typeModifiers s_javaObjectModifier;
+S_typeModifier s_javaStringModifier;
+S_typeModifier s_javaClassModifier;
+S_typeModifier s_javaObjectModifier;
 
 char s_cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
 char s_base[MAX_FILE_NAME_SIZE];
@@ -473,9 +473,9 @@ char s_javaPrimitiveWideningConversions[MAX_PCTIndex-1][MAX_PCTIndex-1] = {
 char *s_tokenName[LAST_TOKEN];
 int s_tokenLength[LAST_TOKEN];
 
-S_typeModifiers * s_preCrTypesTab[MAX_TYPE];
-S_typeModifiers * s_preCrPtr1TypesTab[MAX_TYPE];
-S_typeModifiers * s_preCrPtr2TypesTab[MAX_TYPE];
+S_typeModifier * s_preCrTypesTab[MAX_TYPE];
+S_typeModifier * s_preCrPtr1TypesTab[MAX_TYPE];
+S_typeModifier * s_preCrPtr2TypesTab[MAX_TYPE];
 
 /* *********************************************************************** */
 /* ********************* TABLES TO INIT TABLES *************************** */

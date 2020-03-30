@@ -48,7 +48,7 @@
 
 
 #define CrTypeModifier(xxx,ttt) {\
-        xxx = StackMemAlloc(S_typeModifiers);\
+        xxx = StackMemAlloc(S_typeModifier);\
         FILLF_typeModifier(xxx, ttt,f,( NULL,NULL) ,NULL,NULL);\
 }
 
@@ -496,12 +496,12 @@ primary_expr
             }
         } else {
             /* implicit function declaration */
-            S_typeModifiers *p;
+            S_typeModifier *p;
             Symbol *d;
             Symbol *dd __attribute__((unused));
 
             CrTypeModifier(p, TypeInt);
-            $$.d.t = StackMemAlloc(S_typeModifiers);
+            $$.d.t = StackMemAlloc(S_typeModifier);
             FILLF_typeModifier($$.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
 
             d = newSymbolIsType($1.d->name, $1.d->name, $1.d->p,$$.d.t);
@@ -517,9 +517,9 @@ primary_expr
     | FLOAT_CONSTANT        { CrTypeModifier($$.d.t, TypeFloat); $$.d.r = NULL;}
     | DOUBLE_CONSTANT       { CrTypeModifier($$.d.t, TypeDouble); $$.d.r = NULL;}
     | STRING_LITERAL        {
-        S_typeModifiers *p;
+        S_typeModifier *p;
         CrTypeModifier(p, TypeChar);
-        $$.d.t = StackMemAlloc(S_typeModifiers);
+        $$.d.t = StackMemAlloc(S_typeModifier);
         FILLF_typeModifier($$.d.t, TypePointer,f,( NULL,NULL) ,NULL,p);
         $$.d.r = NULL;
     }
@@ -605,7 +605,7 @@ unary_expr
     | DEC_OP unary_expr             { $$.d.t = $2.d.t; $$.d.r = NULL;}
     | unary_operator cast_expr      { $$.d.t = $2.d.t; $$.d.r = NULL;}
     | '&' cast_expr                 {
-        $$.d.t = StackMemAlloc(S_typeModifiers);
+        $$.d.t = StackMemAlloc(S_typeModifier);
         FILLF_typeModifier($$.d.t, TypePointer,f,( NULL,NULL) ,NULL,$2.d.t);
         RESET_REFERENCE_USAGE($2.d.r, UsageAddrUsed);
         $$.d.r = NULL;
@@ -908,8 +908,8 @@ declaration_specifiers0
 
 declaration_modality_specifiers
     : storage_class_specifier                               {
-        S_typeModifiers *typeModifiers;
-        typeModifiers = StackMemAlloc(S_typeModifiers);
+        S_typeModifier *typeModifiers;
+        typeModifiers = StackMemAlloc(S_typeModifier);
         FILLF_typeModifier(typeModifiers,TypeDefault,f,(NULL,NULL) ,NULL,NULL);
 
         $$.d = newSymbolIsType(NULL, NULL, s_noPos, typeModifiers);
@@ -1054,8 +1054,8 @@ struct_declarator_list
 struct_declarator
     : declarator                    /*& { $$.d = $1.d; } */
     | ':' constant_expr             {
-        S_typeModifiers *p;
-        p = StackMemAlloc(S_typeModifiers);
+        S_typeModifier *p;
+        p = StackMemAlloc(S_typeModifier);
         FILLF_typeModifier(p,TypeAnonymeField,f,( NULL,NULL) ,NULL,NULL);
 
         $$.d = newSymbolIsType(NULL, NULL, s_noPos, p);
@@ -1151,26 +1151,26 @@ declarator2
         AddComposedType($$.d, TypeArray);
     }
     | declarator2 '(' ')'                               {
-        S_typeModifiers *p;
+        S_typeModifier *p;
         assert($1.d);
         $$.d = $1.d;
         p = AddComposedType($$.d, TypeFunction);
-        FILL_funTypeModif(&p->u.f , NULL, NULL);
+        FILL_functionTypeModifier(&p->u.f , NULL, NULL);
     }
     | declarator2 '(' parameter_type_list ')'           {
-        S_typeModifiers *p;
+        S_typeModifier *p;
         assert($1.d);
         $$.d = $1.d;
         p = AddComposedType($$.d, TypeFunction);
-        FILL_funTypeModif(&p->u.f , $3.d.s, NULL);
+        FILL_functionTypeModifier(&p->u.f , $3.d.s, NULL);
         handleDeclaratorParamPositions($1.d, &$2.d, $3.d.p, &$4.d, 1);
     }
     | declarator2 '(' parameter_identifier_list ')'     {
-        S_typeModifiers *p;
+        S_typeModifier *p;
         assert($1.d);
         $$.d = $1.d;
         p = AddComposedType($$.d, TypeFunction);
-        FILL_funTypeModif(&p->u.f , $3.d.s, NULL);
+        FILL_functionTypeModifier(&p->u.f , $3.d.s, NULL);
         handleDeclaratorParamPositions($1.d, &$2.d, $3.d.p, &$4.d, 1);
     }
     | COMPL_OTHER_NAME      { assert(0); /* token never used */ }
@@ -1358,7 +1358,7 @@ type_name
     }
     | declaration_specifiers abstract_declarator    {
         $$.d = $2.d;
-        LIST_APPEND(S_typeModifiers, $$.d, $1.d->u.type);
+        LIST_APPEND(S_typeModifier, $$.d, $1.d->u.type);
     }
     ;
 
@@ -1398,25 +1398,25 @@ abstract_declarator2
     }
     | '(' ')'                                       {
         CrTypeModifier($$.d,TypeFunction);
-        FILL_funTypeModif(&$$.d->u.f , NULL, NULL);
+        FILL_functionTypeModifier(&$$.d->u.f , NULL, NULL);
     }
     | '(' parameter_type_list ')'                   {
         CrTypeModifier($$.d,TypeFunction);
-        FILL_funTypeModif(&$$.d->u.f , $2.d.s, NULL);
+        FILL_functionTypeModifier(&$$.d->u.f , $2.d.s, NULL);
     }
     | abstract_declarator2 '(' ')'                  {
-        S_typeModifiers *p;
+        S_typeModifier *p;
         $$.d = $1.d;
         p = appendComposedType(&($$.d), TypeFunction);
-        FILL_funTypeModif(&p->u.f , NULL, NULL);
+        FILL_functionTypeModifier(&p->u.f , NULL, NULL);
     }
     | abstract_declarator2 '(' parameter_type_list ')'          {
-        S_typeModifiers *p;
+        S_typeModifier *p;
         $$.d = $1.d;
         p = appendComposedType(&($$.d), TypeFunction);
         // why there was the following ?????
-        // FILL_funTypeModif(&p->u.f , NULL, NULL);
-        FILL_funTypeModif(&p->u.f , $3.d.s, NULL);
+        // FILL_functionTypeModifier(&p->u.f , NULL, NULL);
+        FILL_functionTypeModifier(&p->u.f , $3.d.s, NULL);
     }
     ;
 

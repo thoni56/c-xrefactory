@@ -37,7 +37,7 @@ S_javaStat s_initJavaStat;
 static int javaNotFqtUsageCorrection(Symbol *sym, int usage);
 
 
-void fillJavaStat(S_javaStat *javaStat, S_idList *className, S_typeModifiers *thisType, Symbol *thisClass,
+void fillJavaStat(S_javaStat *javaStat, S_idList *className, S_typeModifier *thisType, Symbol *thisClass,
                   int currentNestedIndex, char *currentPackage, char *unnamedPackagePath,
                   char *namedPackagePath, S_symbolTable *locals, S_idList *lastParsedName,
                   unsigned methodModifiers, S_currentlyParsedCl parsingPositions, int classFileIndex,
@@ -643,10 +643,10 @@ Symbol *javaTypeSymbolUsage(S_idList *tname,
 Symbol *javaTypeNameDefinition(S_idList *tname) {
     Symbol    *memb;
     Symbol		*dd;
-    S_typeModifiers		*td;
+    S_typeModifier		*td;
 
     memb = javaTypeSymbolUsage(tname, ACC_DEFAULT);
-    XX_ALLOC(td, S_typeModifiers);
+    XX_ALLOC(td, S_typeModifier);
     FILLF_typeModifier(td, TypeStruct, t, memb, NULL, NULL);
     td->u.t = memb;
     dd = newSymbolIsType(memb->name, memb->linkName, tname->id.p, td);
@@ -1154,7 +1154,7 @@ void javaAddImportConstructionReference(S_position *importPos, S_position *pos, 
 static int javaClassifySingleAmbigName( S_idList *name,
                                         S_recFindStr *rfs,
                                         Symbol **str,
-                                        S_typeModifiers **expr,
+                                        S_typeModifier **expr,
                                         S_reference **oref,
                                         int classif, int uusage,
                                         int cxrefFlag
@@ -1212,7 +1212,7 @@ static int javaNotFqtUsageCorrection(Symbol *sym, int usage) {
     int             rr,pplen;
     S_recFindStr    localRfs;
     Symbol        *str;
-    S_typeModifiers *expr;
+    S_typeModifier *expr;
     S_reference     *loref;
     S_idList   sname;
     char            *pp, packname[TMP_STRING_SIZE];
@@ -1252,7 +1252,7 @@ static void javaCheckForUselessFqt(S_idList *name, int classif, Symbol *rstr,
     int             rr, uselessFqt;
     S_recFindStr    localRfs;
     Symbol        *str;
-    S_typeModifiers *expr;
+    S_typeModifier *expr;
     S_reference     *loref;
     S_idList   sname;
 
@@ -1303,7 +1303,7 @@ static S_reference *javaCheckForUselessTypeName(S_idList   *name,
     int             rr;
     S_recFindStr    localRfs;
     Symbol        *str;
-    S_typeModifiers *expr;
+    S_typeModifier *expr;
     S_reference     *loref;
     S_idList   sname;
     S_reference     *res;
@@ -1370,7 +1370,7 @@ int javaClassifyAmbiguousName(
         S_idList *name,
         S_recFindStr *rfs,	// can be NULL
         Symbol **str,
-        S_typeModifiers **expr,
+        S_typeModifier **expr,
         S_reference **oref,
         S_reference **rdtoref,  // output last useless reference, can be NULL
         int allowUselesFqtRefs,
@@ -1380,7 +1380,7 @@ int javaClassifyAmbiguousName(
     int			uusage, minacc;
     Symbol    *pstr;
     S_recFindStr localRfs;
-    S_typeModifiers     *pexpr;
+    S_typeModifier     *pexpr;
     S_reference			*poref, *localrdref, *prdtoref;
     assert(classif==CLASS_TO_TYPE || classif==CLASS_TO_EXPR ||
            classif==CLASS_TO_METHOD);
@@ -1494,10 +1494,10 @@ int javaClassifyAmbiguousName(
 
 #undef AddAmbCxRef
 
-S_typeModifiers *javaClassifyToExpressionName(S_idList *name,
+S_typeModifier *javaClassifyToExpressionName(S_idList *name,
                                               S_reference **oref) {
     Symbol    *str;
-    S_typeModifiers		*expr,*res;
+    S_typeModifier		*expr,*res;
     int atype;
     atype = javaClassifyAmbiguousName(name,NULL,&str,&expr,oref,NULL, USELESS_FQT_REFS_ALLOWED,CLASS_TO_EXPR,UsageUsed);
     if (atype == TypeExpression) res = expr;
@@ -1511,7 +1511,7 @@ S_typeModifiers *javaClassifyToExpressionName(S_idList *name,
 
 // returns last useless reference (if any)
 S_reference *javaClassifyToTypeOrPackageName(S_idList *tname, int usage, Symbol **str, int allowUselesFqtRefs) {
-    S_typeModifiers		*expr;
+    S_typeModifier		*expr;
     S_reference			*rr, *lastUselessRef;
     lastUselessRef = NULL;
     javaClassifyAmbiguousName(tname, NULL, str, &expr, &rr, &lastUselessRef, allowUselesFqtRefs,
@@ -1536,7 +1536,7 @@ S_reference *javaClassifyToTypeName(S_idList *tname, int usage, Symbol **str, in
 // !!! this is called also for qualified super
 Symbol * javaQualifiedThis(S_idList *tname, S_id *thisid) {
     Symbol			*str;
-    S_typeModifiers		*expr;
+    S_typeModifier		*expr;
     S_reference			*rr, *lastUselessRef;
     int					ttype;
     lastUselessRef = NULL;
@@ -1586,17 +1586,17 @@ void javaSetFieldLinkName(Symbol *field) {
 
 
 Symbol *javaCreateNewMethod(char *nn, S_position *p, int mem) {
-    S_typeModifiers *m;
+    S_typeModifier *m;
     Symbol		*res;
     char            *name;
     if (mem==MEM_CF) {
         CF_ALLOCC(name, strlen(nn)+1, char);
         strcpy(name, nn);
-        CF_ALLOC(m, S_typeModifiers);
+        CF_ALLOC(m, S_typeModifier);
         CF_ALLOC(res, Symbol);
     } else {
         name = nn;
-        m = StackMemAlloc(S_typeModifiers);
+        m = StackMemAlloc(S_typeModifier);
         res = StackMemAlloc(Symbol);
     }
 
@@ -1606,9 +1606,9 @@ Symbol *javaCreateNewMethod(char *nn, S_position *p, int mem) {
     return(res);
 }
 
-int javaTypeToString(S_typeModifiers *type, char *pp, int ppSize) {
+int javaTypeToString(S_typeModifier *type, char *pp, int ppSize) {
     int ppi;
-    S_typeModifiers *tt;
+    S_typeModifier *tt;
     ppi=0;
     for (tt=type; tt!=NULL; tt=tt->next) {
 /*fprintf(dumpOut,"ttm == %d %s\n",tt->m,typeName[tt->m]); fflush(dumpOut);*/
@@ -1919,20 +1919,20 @@ void javaAddMapedTypeName(
     log_debug(":import type %s == %s", memb->name, memb->linkName);
 }
 
-S_typeModifiers *javaClassNameType(S_idList *typeName) {
-    S_typeModifiers *tt; Symbol *st;
+S_typeModifier *javaClassNameType(S_idList *typeName) {
+    S_typeModifier *tt; Symbol *st;
     assert(typeName);
     assert(typeName->nameType == TypeStruct);
     st = javaTypeSymbolUsage(typeName,ACC_DEFAULT);
-    XX_ALLOC(tt,S_typeModifiers);
+    XX_ALLOC(tt,S_typeModifier);
     FILLF_typeModifier(tt,TypeStruct,t,st,NULL,NULL);
     return(tt);
 }
 
-S_typeModifiers *javaNestedNewType(Symbol *sym, S_id *thenew,
+S_typeModifier *javaNestedNewType(Symbol *sym, S_id *thenew,
                                    S_idList *idl) {
     S_idList       d1,d2;
-    S_typeModifiers     *res;
+    S_typeModifier     *res;
     char                *id2;
     S_id			*id;
     Symbol			*str;
@@ -1964,9 +1964,9 @@ S_typeModifiers *javaNestedNewType(Symbol *sym, S_id *thenew,
     return(res);
 }
 
-S_typeModifiers *javaNewAfterName(S_idList *name, S_id *thenew, S_idList *idl) {
+S_typeModifier *javaNewAfterName(S_idList *name, S_id *thenew, S_idList *idl) {
     Symbol *str;
-    S_typeModifiers *expr, *res;
+    S_typeModifier *expr, *res;
     int atype;
     S_reference *rr;
 
@@ -2147,7 +2147,7 @@ Symbol *javaGetSuperClass(Symbol *cc) {
 }
 
 Symbol *javaCurrentSuperClass(void) {
-    S_typeModifiers     *tt;
+    S_typeModifier     *tt;
     Symbol			*cc;
 
     assert(s_javaStat);
@@ -2159,11 +2159,11 @@ Symbol *javaCurrentSuperClass(void) {
 
 /* ********************* method invocations ************************** */
 
-static S_typeModifiers *javaMethodInvocation(
+static S_typeModifier *javaMethodInvocation(
                                         S_recFindStr *rfs,
                                         Symbol *memb,
                                         S_id *name,
-                                        S_typeModifiersList *args,
+                                        S_typeModifierList *args,
                                         int invocationType,
                                         S_position *superPos) {
     char				actArg[MAX_PROFILE_SIZE];
@@ -2171,7 +2171,7 @@ static S_typeModifiers *javaMethodInvocation(
     int                 funCl[MAX_APPL_OVERLOAD_FUNS];
     unsigned			minacc[MAX_APPL_OVERLOAD_FUNS];
     SymbolList		*ee;
-    S_typeModifiersList *aaa;
+    S_typeModifierList *aaa;
     S_usageBits			ub;
     int					smallesti, baseCl, vApplCl, vFunCl, usedusage;
     int					i,appli,actArgi,rr;
@@ -2263,7 +2263,7 @@ static S_typeModifiers *javaMethodInvocation(
 
 S_extRecFindStr *javaCrErfsForMethodInvocationN(S_idList *name) {
     S_extRecFindStr		*erfs;
-    S_typeModifiers		*expr;
+    S_typeModifier		*expr;
     S_reference			*rr;
     int					nt;
     XX_ALLOC(erfs, S_extRecFindStr);
@@ -2277,18 +2277,18 @@ S_extRecFindStr *javaCrErfsForMethodInvocationN(S_idList *name) {
     return(erfs);
 }
 
-S_typeModifiers *javaMethodInvocationN(	S_idList *name,
-                                        S_typeModifiersList *args
+S_typeModifier *javaMethodInvocationN(	S_idList *name,
+                                        S_typeModifierList *args
                                     ) {
     S_extRecFindStr		*erfs;
-    S_typeModifiers		*res;
+    S_typeModifier		*res;
     erfs = javaCrErfsForMethodInvocationN(name);
     if (erfs == NULL) return(&s_errorModifier);
     res = javaMethodInvocation(&erfs->s, erfs->memb, &name->id, args,REGULAR_METHOD,&s_noPos);
     return(res);
 }
 
-S_extRecFindStr *javaCrErfsForMethodInvocationT(S_typeModifiers *tt,
+S_extRecFindStr *javaCrErfsForMethodInvocationT(S_typeModifier *tt,
                                                 S_id *name
     ) {
     S_extRecFindStr		*erfs;
@@ -2311,12 +2311,12 @@ S_extRecFindStr *javaCrErfsForMethodInvocationT(S_typeModifiers *tt,
     return(erfs);
 }
 
-S_typeModifiers *javaMethodInvocationT(S_typeModifiers *tt,
+S_typeModifier *javaMethodInvocationT(S_typeModifier *tt,
                                        S_id *name,
-                                       S_typeModifiersList *args
+                                       S_typeModifierList *args
                                        ) {
     S_extRecFindStr		*erfs;
-    S_typeModifiers		*res;
+    S_typeModifier		*res;
     erfs = javaCrErfsForMethodInvocationT(tt, name);
     if (erfs == NULL) return(&s_errorModifier);
     res = javaMethodInvocation(&erfs->s, erfs->memb, name, args,REGULAR_METHOD,&s_noPos);
@@ -2344,12 +2344,12 @@ S_extRecFindStr *javaCrErfsForMethodInvocationS(S_id *super, S_id *name) {
     return(erfs);
 }
 
-S_typeModifiers *javaMethodInvocationS(S_id *super,
+S_typeModifier *javaMethodInvocationS(S_id *super,
                                        S_id *name,
-                                       S_typeModifiersList *args
+                                       S_typeModifierList *args
     ) {
     S_extRecFindStr		*erfs;
-    S_typeModifiers		*res;
+    S_typeModifier		*res;
     erfs = javaCrErfsForMethodInvocationS(super, name);
     if (erfs==NULL) return(&s_errorModifier);
     res = javaMethodInvocation(&erfs->s, erfs->memb, name, args, SUPER_METHOD_INVOCATION,&super->p);
@@ -2374,12 +2374,12 @@ S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas,
     return(erfs);
 }
 
-S_typeModifiers *javaConstructorInvocation(Symbol *clas,
+S_typeModifier *javaConstructorInvocation(Symbol *clas,
                                            S_position *pos,
-                                           S_typeModifiersList *args
+                                           S_typeModifierList *args
     ) {
     S_extRecFindStr		*erfs;
-    S_typeModifiers		*res;
+    S_typeModifier		*res;
     S_id			name;
     erfs = javaCrErfsForConstructorInvocation(clas, pos);
     if (erfs == NULL) return(&s_errorModifier);
@@ -2393,7 +2393,7 @@ S_typeModifiers *javaConstructorInvocation(Symbol *clas,
 /* ************************ expression evaluations ********************* */
 
 
-static int javaIsNumeric(S_typeModifiers *tt) {
+static int javaIsNumeric(S_typeModifier *tt) {
     assert(tt);
     switch (tt->kind) {
     case TypeByte: case TypeShort: case TypeChar:
@@ -2405,17 +2405,17 @@ static int javaIsNumeric(S_typeModifiers *tt) {
     }
 }
 
-S_typeModifiers *javaCheckNumeric(S_typeModifiers *tt) {
+S_typeModifier *javaCheckNumeric(S_typeModifier *tt) {
     if (javaIsNumeric(tt)) return(tt);
     else return(&s_errorModifier);
 }
 
-S_typeModifiers *javaNumericPromotion(S_typeModifiers *tt) {
-    S_typeModifiers *rr;
+S_typeModifier *javaNumericPromotion(S_typeModifier *tt) {
+    S_typeModifier *rr;
     assert(tt);
     switch (tt->kind) {
     case TypeByte: case TypeShort: case TypeChar:
-        XX_ALLOC(rr,S_typeModifiers);
+        XX_ALLOC(rr,S_typeModifier);
         FILLF_typeModifier(rr,TypeInt,t,NULL,NULL,NULL);
         return(rr);
     case TypeInt: case TypeLong:
@@ -2426,11 +2426,11 @@ S_typeModifiers *javaNumericPromotion(S_typeModifiers *tt) {
     }
 }
 
-S_typeModifiers *javaBinaryNumericPromotion(	S_typeModifiers *t1,
-                                                S_typeModifiers *t2
+S_typeModifier *javaBinaryNumericPromotion(	S_typeModifier *t1,
+                                                S_typeModifier *t2
                                             ) {
     int m1,m2,res;
-    S_typeModifiers *rr;
+    S_typeModifier *rr;
     m1 = t1->kind;
     m2 = t2->kind;
     assert(t1 && t2);
@@ -2438,25 +2438,25 @@ S_typeModifiers *javaBinaryNumericPromotion(	S_typeModifiers *t1,
     if (m1 == TypeDouble || m2 == TypeDouble) res = TypeDouble;
     else if (m1 == TypeFloat || m2 == TypeFloat) res = TypeFloat;
     else if (m1 == TypeLong || m2 == TypeLong) res = TypeLong;
-    XX_ALLOC(rr,S_typeModifiers);
+    XX_ALLOC(rr,S_typeModifier);
     FILLF_typeModifier(rr,res,t,NULL,NULL,NULL);
     return(rr);
 }
 
-S_typeModifiers *javaBitwiseLogicalPromotion(	S_typeModifiers *t1,
-                                                S_typeModifiers *t2
+S_typeModifier *javaBitwiseLogicalPromotion(	S_typeModifier *t1,
+                                                S_typeModifier *t2
                                             ) {
     assert(t1 && t2);
     if (t1->kind == TypeBoolean && t2->kind == TypeBoolean) return(t1);
     return(javaBinaryNumericPromotion(t1,t2));
 }
 
-int javaIsStringType(S_typeModifiers *tt) {
+int javaIsStringType(S_typeModifier *tt) {
     if (tt->kind != TypeStruct) return(0);
     return(tt->u.t == s_javaStringSymbol);
 }
 
-static int javaEqualTypes(S_typeModifiers *t1,S_typeModifiers *t2) {
+static int javaEqualTypes(S_typeModifier *t1,S_typeModifier *t2) {
     int m;
 lastRecursionLabel:
     if (t1->kind != t2->kind) return(0);
@@ -2470,8 +2470,8 @@ lastRecursionLabel:
     return(1);
 }
 
-static int javaTypeConvertible(	S_typeModifiers *t1,
-                                S_typeModifiers *t2
+static int javaTypeConvertible(	S_typeModifier *t1,
+                                S_typeModifier *t2
                             ) {
     Symbol    *s1,*s2;
     int         res;
@@ -2496,8 +2496,8 @@ lastRecLabel:
     return(0);
 }
 
-S_typeModifiers *javaConditionalPromotion(	S_typeModifiers *t1,
-                                            S_typeModifiers *t2
+S_typeModifier *javaConditionalPromotion(	S_typeModifier *t1,
+                                            S_typeModifier *t2
                                         ) {
     if (javaEqualTypes(t1,t2)) return(t1);
     if (javaIsNumeric(t1) && javaIsNumeric(t2)) {
@@ -2516,7 +2516,7 @@ S_typeModifiers *javaConditionalPromotion(	S_typeModifiers *t1,
     return(&s_errorModifier);
 }
 
-void javaTypeDump(S_typeModifiers *tt) {
+void javaTypeDump(S_typeModifier *tt) {
     assert(tt);
     if (tt->kind == TypeArray) {
         javaTypeDump(tt->next);
@@ -2683,7 +2683,7 @@ void javaInitArrayObject(void) {
                                    s_noneFileIndex, LOAD_SUPER);
 }
 
-S_typeModifiers *javaArrayFieldAccess(S_id *id) {
+S_typeModifier *javaArrayFieldAccess(S_id *id) {
     Symbol *rec=NULL;
     findStrRecordFromType(&s_javaArrayObjectSymbol.u.s->stype, id, &rec, CLASS_TO_EXPR);
     assert(rec);

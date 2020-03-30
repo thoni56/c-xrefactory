@@ -975,7 +975,7 @@ static void completeRecordsNames(
 
 
 void completeRecNames(S_completions *c) {
-    S_typeModifiers *str;
+    S_typeModifier *str;
     Symbol *s;
     assert(s_structRecordCompletionType);
     str = s_structRecordCompletionType;
@@ -1063,8 +1063,8 @@ static Symbol * getSymFromRef(S_reference *rr) {
     return(NULL);
 }
 
-static int isEqualType(S_typeModifiers *t1, S_typeModifiers *t2) {
-    S_typeModifiers *s1,*s2;
+static int isEqualType(S_typeModifier *t1, S_typeModifier *t2) {
+    S_typeModifier *s1,*s2;
     Symbol        *ss1,*ss2;
     assert(t1 && t2);
     for(s1=t1,s2=t2; s1->next!=NULL&&s2->next!=NULL; s1=s1->next,s2=s2->next) {
@@ -1322,7 +1322,7 @@ static void javaCompleteComposedName(
                                      int innerConstruct
                                      ) {
     Symbol        *str;
-    S_typeModifiers *expr;
+    S_typeModifier *expr;
     int             nameType;
     char            packName[MAX_FILE_NAME_SIZE];
     unsigned        accs;
@@ -1365,7 +1365,7 @@ void javaHintCompleteMethodParameters(S_completions *c) {
     S_cline                 compLine;
     Symbol                *r, *vFunCl;
     S_recFindStr            *rfs;
-    S_typeModifiersList     *aaa;
+    S_typeModifierList     *aaa;
     int                     visibCheck, accCheck, vlevel, rr, actArgi;
     char                    *mname;
     char                    actArg[MAX_PROFILE_SIZE];
@@ -1739,7 +1739,7 @@ void javaCompleteStrRecordSuper(S_completions*c) {
 
 void javaCompleteStrRecordQualifiedSuper(S_completions*c) {
     Symbol            *str;
-    S_typeModifiers     *expr;
+    S_typeModifier     *expr;
     S_reference         *rr, *lastUselessRef;
     int                 ttype;
     lastUselessRef = NULL;

@@ -33,14 +33,14 @@ extern int styyErrorRecovery(void);
 extern void setToNull(void *p);
 extern Symbol *typeSpecifier1(unsigned t);
 extern void declTypeSpecifier1(Symbol *d, unsigned t);
-extern Symbol *typeSpecifier2(S_typeModifiers *t);
-extern void declTypeSpecifier2(Symbol *d, S_typeModifiers *t);
-extern void declTypeSpecifier21(S_typeModifiers *t, Symbol *d);
-extern S_typeModifiers *appendComposedType(S_typeModifiers **d, unsigned t);
-extern S_typeModifiers *prependComposedType(S_typeModifiers *d, unsigned t);
+extern Symbol *typeSpecifier2(S_typeModifier *t);
+extern void declTypeSpecifier2(Symbol *d, S_typeModifier *t);
+extern void declTypeSpecifier21(S_typeModifier *t, Symbol *d);
+extern S_typeModifier *appendComposedType(S_typeModifier **d, unsigned t);
+extern S_typeModifier *prependComposedType(S_typeModifier *d, unsigned t);
 extern void completeDeclarator(Symbol *t, Symbol *d);
 extern void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, S_symbolTable *tab);
-extern S_typeModifiers *crSimpleTypeModifier (unsigned t);
+extern S_typeModifier *crSimpleTypeModifier (unsigned t);
 extern SymbolList *createDefinitionList(Symbol *symbol);
 extern Symbol *createSimpleDefinition(unsigned storage, unsigned t, S_id *id);
 extern int findStrRecord(Symbol	*s,
@@ -54,21 +54,21 @@ extern S_reference * findStrRecordFromSymbol(Symbol *str,
                                              int javaClassif,
                                              S_id *super
                                              );
-extern S_reference * findStrRecordFromType(S_typeModifiers *str,
+extern S_reference * findStrRecordFromType(S_typeModifier *str,
                                            S_id *record,
                                            Symbol **res,
                                            int javaClassif
                                            );
 extern int mergeArguments(Symbol *id, Symbol *ty);
-extern S_typeModifiers *simpleStrUnionSpecifier(S_id *typeName,
+extern S_typeModifier *simpleStrUnionSpecifier(S_id *typeName,
                                                 S_id *id,
                                                 int usage
                                                 );
-extern S_typeModifiers *crNewAnnonymeStrUnion(S_id *typeName);
+extern S_typeModifier *crNewAnnonymeStrUnion(S_id *typeName);
 extern void specializeStrUnionDef(Symbol *sd, Symbol *rec);
-extern S_typeModifiers *simpleEnumSpecifier(S_id *id, int usage);
+extern S_typeModifier *simpleEnumSpecifier(S_id *id, int usage);
 extern void setGlobalFileDepNames(char *iname, Symbol *pp, int memory);
-extern S_typeModifiers *createNewAnonymousEnum(SymbolList *enums);
+extern S_typeModifier *createNewAnonymousEnum(SymbolList *enums);
 extern void appendPositionToList(S_positionList **list, S_position *pos);
 extern void setParamPositionForFunctionWithoutParams(S_position *lpar);
 extern void setParamPositionForParameter0(S_position *lpar);
