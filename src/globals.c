@@ -77,13 +77,7 @@ struct yyGlobalState *s_initYygstate;
 char *s_input_file_name="";
 S_completions s_completions;
 
-S_fileDesc cFile = {0};
-
 S_fileTab s_fileTab;
-
-S_fileDesc inStack[INSTACK_SIZE];
-int inStacki=0;
-
 
 char tmpMemory[SIZE_TMP_MEM];
 char memory[SIZE_workMemory];

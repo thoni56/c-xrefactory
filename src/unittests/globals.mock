@@ -41,7 +41,6 @@ int s_javaPreScanOnly;
 int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL];
 jmp_buf cxmemOverflow;
 z_stream s_defaultZStream = {NULL,};
-S_fileDesc cFile;
 FILE *ccOut;
 int s_olstringServed;
 S_position s_olcxByPassPos;

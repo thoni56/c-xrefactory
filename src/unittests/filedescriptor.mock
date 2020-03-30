@@ -1,0 +1,6 @@
+#include "filedescriptor.h"
+
+S_fileDesc cFile = {0};
+
+S_fileDesc inStack[INSTACK_SIZE];
+int inStacki=0;

@@ -156,8 +156,6 @@ extern S_int2StringTab s_typeNamesInitTab[];
 extern char *s_extractStorageName[MAX_STORAGE];
 extern S_int2StringTab s_extractStoragesNamesInitTab[];
 
-extern S_fileDesc cFile;
-
 extern char *s_editCommunicationString;
 
 extern time_t s_expiration;
@@ -204,9 +202,6 @@ extern int s_olMacro2PassFile;
 
 extern char mbMemory[SIZE_mbMemory];
 extern int mbMemoryi;
-
-extern struct fileDesc inStack[INSTACK_SIZE];
-extern int inStacki;
 
 extern int s_ifEvaluation;		/* flag for yylex, to not filter '\n' */
 

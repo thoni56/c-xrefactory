@@ -895,13 +895,6 @@ typedef struct cppIfStack {
     struct cppIfStack *next;
 } S_cppIfStack;
 
-typedef struct fileDesc {
-    char                *fileName ;
-    int                 lineNumber ;
-    int					ifDeep;						/* deep of #ifs (C only)*/
-    struct cppIfStack   *ifStack;					/* #if stack (C only) */
-    struct lexBuf       lexBuffer;
-} S_fileDesc;
 
 /* **************** processing cxref file ************************* */
 

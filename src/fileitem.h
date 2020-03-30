@@ -30,7 +30,6 @@ typedef struct fileItem {	/* to be renamed to constant pool item */
 } S_fileItem;
 
 
-/* Replacement for FILLF_fileItem() */
 extern void fillFileItem(S_fileItem *item, char *name, bool fromCommandLine);
 
 #endif

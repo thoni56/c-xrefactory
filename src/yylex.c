@@ -30,6 +30,7 @@
 #include "log.h"
 #include "utils.h"
 #include "macroargumenttable.h"
+#include "filedescriptor.h"
 
 
 #define SET_IDENTIFIER_YYLVAL(name, symb, pos) {\
@@ -261,20 +262,7 @@ void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) {
         bsize = plen;
         filepos = 0;
     }
-    FILLF_fileDesc(&cFile,name,0,0,NULL,
-                   /* lex buf */
-                   NULL,NULL,0,
-                   /* char buf */
-                   bbase, bbase+bsize, ff,
-                   filepos, s_noneFileIndex, 0, bbase,0,
-                   0, INPUT_DIRECT,
-                   /* z_stream */
-                   NULL, 0, 0,		// in
-                   NULL, 0, 0,		// out
-                   NULL, NULL,
-                   NULL, NULL,		// zlibAlloc, zlibFree,
-                   NULL, 0, 0, 0
-                   );
+    fillFileDescriptor(&cFile, name, bbase, bsize, ff, filepos, s_noneFileIndex);
     setOpenFileInfo(name);
     SetCInputConsistency();
     s_ifEvaluation = 0;				/* ??? */

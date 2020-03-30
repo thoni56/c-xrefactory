@@ -13,6 +13,7 @@
 #include "list.h"
 #include "strFill.h"
 #include "jsemact.h"
+#include "filedescriptor.h"
 
 
 #define EXTRACT_GEN_BUFFER_SIZE 500000

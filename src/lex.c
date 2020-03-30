@@ -7,6 +7,7 @@
 #include "charbuf.h"
 #include "strFill.h"
 #include "yylex.h"
+#include "filedescriptor.h"
 
 #include "caching.h"            /* cacheInput() */
 #include "jslsemact.h"          /* s_jsl */

@@ -10,6 +10,7 @@
 #include "javafqttab.h"
 #include "classh.h"
 #include "jsemact.h"
+#include "filedescriptor.h"
 
 #include "log.h"
 

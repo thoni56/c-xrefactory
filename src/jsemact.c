@@ -9,6 +9,7 @@
 #include "semact.h"
 #include "cxref.h"
 #include "classFileReader.h"
+#include "filedescriptor.h"
 #include "html.h"
 #include "editor.h"
 #include "enumTxt.h"

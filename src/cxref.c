@@ -22,6 +22,7 @@
 #include "symbol.h"
 #include "list.h"
 #include "strFill.h"
+#include "filedescriptor.h"
 
 #include "log.h"
 #include "utils.h"
@@ -1089,7 +1090,6 @@ void olcxInit(void) {
 
 
 static void initUserOlcx(S_userOlcx *dd, char *user) {
-    //FILLF_userOlcx(dd, user, NULL, NULL, NULL, NULL, NULL, NULL, s_noneFileIndex, NULL, NULL);
     dd->name = user;
     dd->browserStack.top = NULL;
     dd->browserStack.root = NULL;
@@ -1583,7 +1583,7 @@ char *getFullUrlOfJavaDoc_st(char *fileUrl) {
 static int olcxBrowseSymbolInJavaDoc(S_symbolRefItem *rr) {
     char *url, *tmd, *lfn;
     char tmpfname[MAX_FILE_NAME_SIZE];
-    char theUrl[MAX_FILE_NAME_SIZE];
+    char theUrl[2*MAX_FILE_NAME_SIZE];
     int rrr;
     url = getJavaDocUrl_st(rr);
     lfn = getLocalJavaDocFile_st(url);

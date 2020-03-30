@@ -33,6 +33,7 @@
 #include "lex.h"
 #include "log.h"
 #include "utils.h"
+#include "filedescriptor.h"
 
 #include "protocol.h"
 

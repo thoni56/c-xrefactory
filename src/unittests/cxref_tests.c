@@ -3,6 +3,7 @@
 #include "cxref.h"
 
 /* Dependencies: */
+#include "filedescriptor.mock"
 #include "filetab.mock"
 #include "olcxtab.mock"
 #include "globals.mock"
