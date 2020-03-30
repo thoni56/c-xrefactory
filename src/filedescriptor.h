@@ -16,4 +16,7 @@ extern S_fileDesc cFile;
 extern struct fileDesc inStack[INSTACK_SIZE];
 extern int inStacki;
 
+
+extern void fillFileDescriptor(S_fileDesc *fileDescriptor, char *name, char *bbase, int bsize, FILE *ff, unsigned filepos);
+
 #endif
