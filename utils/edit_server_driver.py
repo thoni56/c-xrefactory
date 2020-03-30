@@ -51,9 +51,9 @@ def end_of_options(p):
 
 
 def wait_for_sync(p):
-    line = p.stdout.readline().decode()[:-1]
+    line = p.stdout.readline()[:-1].decode()
     while line != '<sync>':
-        eprint("Waiting for <sync>, got '{}'".format(line))
+        eprint("Waiting for <sync>, got: '{0}'".format(line))
         line = p.stdout.readline().decode()[:-1]
     print(line)
 
@@ -86,7 +86,7 @@ with open(command_file, 'rb') as file:
     args = invocation.replace("CURDIR", CURDIR)
     process_args = shlex.split(args)
     if sleep:
-        process_args = process_args + ["-pause", sys.argv[4]]
+        process_args = [process_args[0]] + ["-pause", sys.argv[4]] + process_args[1:]
 
     p = subprocess.Popen(process_args,
                          stdout=subprocess.PIPE,
