@@ -106,17 +106,18 @@ def struct2dot(source_file, args):
                 r'-D__attribute__(x)=',
                 r'-D__extension__=',
                 r'-D__restrict=',
-                r'-D__inline='
+                r'-D__inline=',
+                r'-std=c99'
             ]
         if verbose:
             eprint("Parsing with options = {0}".format(options))
         cpp_args = list(filter(None, options))
         if verbose:
             eprint("Calling 'parse_file({0}, use_cpp=True, {1})".format(source_file, cpp_args + args))
-        ast = parse_file(source_file, use_cpp=True,
-                         cpp_args=cpp_args + args)
+        ast = parse_file(source_file, use_cpp=True, cpp_path="gcc",
+                         cpp_args=[r'-E'] + cpp_args + args)
     except ParseError as e:
-        print("ERROR: {} - C99 parse error".format(e))
+        print("ERROR: {} - Parse error".format(e))
         return
 
     print("digraph {")
