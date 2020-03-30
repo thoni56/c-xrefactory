@@ -819,13 +819,23 @@ static void tpCheckDefaultAccessibilitiesMoveClass(S_symbolRefItem *ri, void *dd
     }
 }
 
-void tpCheckFillMoveClassData(S_tpCheckMoveClassData *dd,
-                                     char *spack, char *tpack
-                                     ) {
+static void fillTpCheckMoveClassData(S_tpCheckMoveClassData *checkMoveClassData, int minMemi, int maxMemi,
+                                       char *spack, char *tpack, int transPackageMove, char *sclass) {
+    checkMoveClassData->mm.minMemi = minMemi;
+    checkMoveClassData->mm.maxMemi = maxMemi;
+    checkMoveClassData->spack = spack;
+    checkMoveClassData->tpack = tpack;
+    checkMoveClassData->transPackageMove = transPackageMove;
+    checkMoveClassData->sclass = sclass;
+}
+
+
+void tpCheckFillMoveClassData(S_tpCheckMoveClassData *dd, char *spack, char *tpack) {
     S_olcxReferences *rstack;
     S_olSymbolsMenu *sclass;
     char *targetfile, *srcfile;
     int transPackageMove;
+
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
     sclass = rstack->hkSelectedSym;
@@ -834,15 +844,15 @@ void tpCheckFillMoveClassData(S_tpCheckMoveClassData *dd,
     assert(targetfile);
     srcfile = s_input_file_name;
     assert(srcfile);
-    //
+
     javaGetPackageNameFromSourceFileName(srcfile, spack);
     javaGetPackageNameFromSourceFileName(targetfile, tpack);
+
     // O.K. moving from package spack to package tpack
     if (fnCmp(spack, tpack)==0) transPackageMove = 0;
     else transPackageMove = 1;
 
-    FILLF_tpCheckMoveClassData(dd, s_cps.cxMemiAtClassBeginning,
-                               s_cps.cxMemiAtClassEnd,
+    fillTpCheckMoveClassData(dd, s_cps.cxMemiAtClassBeginning, s_cps.cxMemiAtClassEnd,
                                spack, tpack, transPackageMove, sclass->s.name);
 
 }

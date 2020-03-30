@@ -1,7 +1,7 @@
 #include "typemodifiers.h"
 
 /* For typeModifiers we need to cater for two memory allocations (XX &
-   CF) as well as the ancient FILL_ semantics... */
+   CF) as well as the ancient FILL semantics... */
 
 /* The most common is to allocate in XX_memory == StackMemAlloc() */
 static S_typeModifiers *newTypeModifiers(enum type kind) {

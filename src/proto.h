@@ -995,14 +995,6 @@ typedef struct tpCheckSpecialReferencesData {
     struct reference            *foundOuterScopeRef;
 } S_tpCheckSpecialReferencesData;
 
-typedef struct tpCheckMoveClassData {
-    struct pushAllInBetweenData  mm;
-    char		*spack;
-    char		*tpack;
-    int			transPackageMove;
-    char		*sclass;
-} S_tpCheckMoveClassData;
-
 
 /* *********************************************************** */
 

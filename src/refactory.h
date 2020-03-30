@@ -5,7 +5,7 @@
 #include "editor.h"
 
 
-enum trivialPreChecks {
+typedef enum trivialPreChecks {
     TPC_NONE,                   /* Must be 0 because of initOpt in globals.h */
     TPC_MOVE_FIELD,
     TPC_RENAME_PACKAGE,
@@ -21,7 +21,15 @@ enum trivialPreChecks {
     TPC_PULL_UP_FIELD,
     TPC_PUSH_DOWN_FIELD,
     TPC_GET_LAST_IMPORT_LINE, // not really a check
-};
+} TrivialPreChecks;
+
+typedef struct tpCheckMoveClassData {
+    struct pushAllInBetweenData  mm;
+    char		*spack;
+    char		*tpack;
+    int			transPackageMove;
+    char		*sclass;
+} S_tpCheckMoveClassData;
 
 
 extern void refactoryAskForReallyContinueConfirmation(void);

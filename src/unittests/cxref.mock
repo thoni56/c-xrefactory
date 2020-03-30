@@ -308,10 +308,6 @@ void olPushAllReferencesInBetween(int minMemi, int maxMemi) {
     mock(minMemi, maxMemi);
 }
 
-void tpCheckFillMoveClassData(S_tpCheckMoveClassData *dd, char *spack, char *tpack) {
-    mock(dd, spack, tpack);
-}
-
 Symbol *getMoveTargetClass(void) {
     return (Symbol *) mock();
 }
