@@ -1191,6 +1191,11 @@ static int processPOption(int *ii, int argc, char **argv) {
     char    ttt[MAX_FILE_NAME_SIZE];
     int     i = * ii;
     if (0) {}
+    else if (strncmp(argv[i],"-pause",5)==0) {
+        /* Pause to be able to attach with debugger... */
+        NEXT_ARG();
+        sleep(atoi(argv[i]));
+    }
     else if (strncmp(argv[i],"-pass",5)==0) {
         error(ERR_ST,"'-pass' option can't be entered from command line");
     }
