@@ -84,13 +84,13 @@ with open(command_file, 'rb') as file:
     print(invocation)
 
     args = invocation.replace("CURDIR", CURDIR)
+    process_args = shlex.split(args)
+    if sleep:
+        process_args = process_args + ["-pause", sys.argv[4]]
 
-    p = subprocess.Popen(shlex.split(args),
+    p = subprocess.Popen(process_args,
                          stdout=subprocess.PIPE,
                          stdin=subprocess.PIPE)
-
-    if sleep:
-        time.sleep(sleep)
 
     command = file.readline().decode().rstrip()
     while command != '':
