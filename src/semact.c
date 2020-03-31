@@ -122,13 +122,7 @@ S_recFindStr * iniFind(Symbol *s, S_recFindStr *rfs) {
     return(rfs);
 }
 
-#if ZERO //DEBUG_ACCESS
-#define DAP(xxx) xxx
-#else
-#define DAP(xxx)
-#endif
-
-int javaOuterClassAccessible(Symbol *cl) {
+bool javaOuterClassAccessible(Symbol *cl) {
     log_trace("testing class accessibility of %s",cl->linkName);
     if (cl->bits.accessFlags & ACC_PUBLIC) {
         log_trace("ret 1 access public");

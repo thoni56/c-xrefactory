@@ -13,7 +13,7 @@ extern void deleteSymDef(void *p);
 extern void addSymbol(Symbol *pp, S_symbolTable *tab);
 extern void recFindPush(Symbol *sym, S_recFindStr *rfs);
 extern S_recFindStr * iniFind(Symbol *s, S_recFindStr *rfs);
-extern int javaOuterClassAccessible(Symbol *cl);
+extern bool javaOuterClassAccessible(Symbol *cl);
 extern int javaRecordAccessible(S_recFindStr *rfs, Symbol *applcl, Symbol *funcl, Symbol *rec, unsigned recAccessFlags);
 extern int javaRecordVisibleAndAccessible(S_recFindStr *rfs, Symbol *applCl, Symbol *funCl, Symbol *r);
 extern int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r);

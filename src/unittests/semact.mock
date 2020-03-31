@@ -26,7 +26,7 @@ S_recFindStr *iniFind(Symbol *s, S_recFindStr *rfs) {
   return (S_recFindStr *) mock(s, rfs);
 }
 
-int javaOuterClassAccessible(Symbol *cl) {
+bool javaOuterClassAccessible(Symbol *cl) {
   return (int) mock(cl);
 }
 
