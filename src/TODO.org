@@ -7,10 +7,14 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 * DOING Remove bootstrap step (strfill and local definitions)
 ** DOING Remove all FILL_xxx macros by using compound initialisers
-At this point there are 66, 65, 64, 63, 62, 41 FILL-macros that are in use
+At this point there are 66, 65, 64, 63, 62, 41, 33 FILL-macros that are in use
 *** TODO Remove chReference from proto.h
-*** DONE Remove FILL_chReference
 *** TODO Rename classh to hierarchy
+*** TODO Remove position from proto.h
+*** TODO Remove FILL_editor* from strFill
+**** TODO Remove FILL_editorBuffer from strFill
+***** TODO Move editorBuffer from proto.h to editor.h
+*** DONE Remove FILL_chReference
 *** DONE Remove cachePoint from proto.h
 *** DONE Remove editorBuffer from proto.h
 *** DONE Remove caching from proto.h
@@ -18,10 +22,6 @@ At this point there are 66, 65, 64, 63, 62, 41 FILL-macros that are in use
 *** DONE Remove FILL_intlist
 **** DONE Replace FILL_intList so we can remove strFill-dependency from classh.c
 **** DONE Move intlist from proto.h to html.h
-*** TODO Remove position from proto.h
-*** TODO Remove FILL_editor* from strFill
-**** TODO Remove FILL_editorBuffer from strFill
-***** TODO Move editorBuffer from proto.h to editor.h
 *** DONE Remove FILL_symbol()
 ***** DONE Remove #include "symbol" from proto.h
 ***** DONE semact.c requires FILL_symbolBits which are not strFill'ed
@@ -40,9 +40,6 @@ FILL_symbol macro takes one argument which is the name of the union
 field that the next argument should assign to (is this a general
 pattern for FILL-generation? Probably) Suggested solution is one
 newSymbol<field>() for each of the necessary fields that are actually used.
-*** TODO Move all structs that are used for FILL_xxx to a separate file
-In this way we can generate only those that are actually used and
-attack those one by one, maybe?
 *** DONE Remove FILL_symbollist() macro
 ** TODO Remove generation of str_fill from build
 ** TODO Remove code for generation of str_fill
@@ -53,7 +50,11 @@ attack those one by one, maybe?
 ** DOING Create AST using parsing
 * TODO Investigate to remove S_classTreeData
 * TODO Use Yacc's -p for "symbol_prefix" instead of the #defines?
+* TODO Fix the move_class test
+* TODO Rename some of the options, like -no_str -> -no-structs
+* TODO Why does -refactory read the users default .c-xrefrc?
 * TODO Rename res fields in completion structs
+* TODO Change all "-no_" options to modern "-no-"
 * TODO Cannot mock structs as arguments like in symbol.mock
 We need to change pos to *pos if that's gonna work
 * TODO Rename reftab.[ch] to cxreftab.[ch]? Or s_cxreftab to s_reftab?

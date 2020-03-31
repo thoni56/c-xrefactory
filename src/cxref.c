@@ -27,6 +27,17 @@
 #include "log.h"
 #include "utils.h"
 
+
+typedef struct referencesChangeData {
+    char			*linkName;
+    int				fnum;
+    struct symbol	*cclass;
+    int				category;
+    int				cxMemBegin;
+    int				cxMemEnd;
+} S_referencesChangeData;
+
+
 #define SORTED_LIST_LESS(tmp,key) (POSITION_LESS((tmp)->p, (key).p))
 
 #define SORTED_LIST_NEQ(tmp,key) (                                  \
@@ -481,10 +492,20 @@ void changeFieldRefUsages(S_symbolRefItem  *ri, void  *rrcd) {
     }
 }
 
+static void fillReferencesChangeData(S_referencesChangeData *referencesChangeData, char *linkName, int fnum,
+                                      Symbol *cclass, int category, int memBegin, int memEnd) {
+    referencesChangeData->linkName = linkName;
+    referencesChangeData->fnum = fnum;
+    referencesChangeData->cclass = cclass;
+    referencesChangeData->category = category;
+    referencesChangeData->cxMemBegin = memBegin;
+    referencesChangeData->cxMemEnd = memEnd;
+}
+
 void changeMethodReferencesUsages(char *linkName, int category, int fnum,
                                   Symbol *cclass){
     S_referencesChangeData rr;
-    FILL_referencesChangeData(&rr, linkName, fnum, cclass, category,
+    fillReferencesChangeData(&rr, linkName, fnum, cclass, category,
                               s_cps.cxMemiAtMethodBeginning,
                               s_cps.cxMemiAtMethodEnd);
     refTabMap2(&s_cxrefTab, changeFieldRefUsages, &rr);
@@ -493,7 +514,7 @@ void changeMethodReferencesUsages(char *linkName, int category, int fnum,
 void changeClassReferencesUsages(char *linkName, int category, int fnum,
                                  Symbol *cclass){
     S_referencesChangeData rr;
-    FILL_referencesChangeData(&rr, linkName, fnum, cclass, category,
+    fillReferencesChangeData(&rr, linkName, fnum, cclass, category,
                               s_cps.cxMemiAtClassBeginning,
                               s_cps.cxMemiAtClassEnd);
     refTabMap2(&s_cxrefTab, changeFieldRefUsages, &rr);

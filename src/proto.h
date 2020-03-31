@@ -970,15 +970,6 @@ typedef struct whileExtractData {
     struct symbol	*i4;
 } S_whileExtractData;
 
-typedef struct referencesChangeData {
-    char			*linkName;
-    int				fnum;
-    struct symbol	*cclass;
-    int				category;
-    int				cxMemBegin;
-    int				cxMemEnd;
-} S_referencesChangeData;
-
 typedef struct pushAllInBetweenData {
     int			minMemi;
     int			maxMemi;
@@ -1000,8 +991,8 @@ typedef struct tpCheckSpecialReferencesData {
 
 /* **************     parse tree with positions    *********** */
 
-// following structures are used in yacc parser, they are always
-// containing 'b','e' records for begin and end position of parse tree
+// following structures are used in yacc parser, they always
+// contain 'b','e' records for begin and end position of parse tree
 // node and additional data 'd' for parsing.
 
 typedef struct {
