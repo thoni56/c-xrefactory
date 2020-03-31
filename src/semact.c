@@ -18,6 +18,15 @@
 #include "log.h"
 
 
+void fillRecFindStr(S_recFindStr *recFindStr, Symbol *ARG0, Symbol *ARG1, Symbol *ARG2, unsigned ARG3) {
+    recFindStr->baseClass = ARG0;
+    recFindStr->currClass = ARG1;
+    recFindStr->nextRecord = ARG2;
+    recFindStr->recsClassCounter = ARG3;
+    recFindStr->sti = 0;
+    recFindStr->aui = 0;
+}
+
 int displayingErrorMessages(void) {
     // no error messages for file preloaded for symbols
     if (LANGUAGE(LANG_JAVA) && s_jsl!=NULL) return(0);
@@ -108,7 +117,7 @@ S_recFindStr * iniFind(Symbol *s, S_recFindStr *rfs) {
     assert(s->bits.symType == TypeStruct || s->bits.symType == TypeUnion);
     assert(s->u.s);
     assert(rfs);
-    FILL_recFindStr(rfs, s, NULL, NULL,s_recFindCl++, 0, 0);
+    fillRecFindStr(rfs, s, NULL, NULL,s_recFindCl++);
     recFindPush(s, rfs);
     return(rfs);
 }
