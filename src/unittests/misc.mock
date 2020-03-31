@@ -255,7 +255,7 @@ void expandWildCharactersInOnePath(char *fn, char *outpaths, int olen) {
   mock(fn, outpaths, olen);
 }
 
-void expandWildCharactersInPaths(char *paths, char *outpaths, int freeolen) {
+void expandWildcardsInPaths(char *paths, char *outpaths, int freeolen) {
   mock(paths, outpaths, freeolen);
 }
 

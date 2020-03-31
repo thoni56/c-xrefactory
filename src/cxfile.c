@@ -197,7 +197,7 @@ static int searchSingleStringFitness(char *cxtag, char *searchedStr, int len) {
     return(0);
 }
 
-int searchStringNonWildCharactersFitness(char *cxtag, int len) {
+int searchStringNonWildcardFitness(char *cxtag, int len) {
     char    *ss;
     int     r;
     ss = s_opt.olcxSearchString;
@@ -213,8 +213,8 @@ int searchStringNonWildCharactersFitness(char *cxtag, int len) {
 }
 
 int searchStringFitness(char *cxtag, int len) {
-    if (s_wildCharSearch) return(shellMatch(cxtag, len, s_opt.olcxSearchString, 0));
-    else return(searchStringNonWildCharactersFitness(cxtag, len));
+    if (s_wildcardSearch) return(shellMatch(cxtag, len, s_opt.olcxSearchString, 0));
+    else return(searchStringNonWildcardFitness(cxtag, len));
 }
 
 
@@ -318,7 +318,7 @@ void searchSymbolCheckReference(S_symbolRefItem  *ss, S_reference *rr) {
     if (searchStringFitness(sname, slen)) {
         static int count = 0;
         //& olCompletionListPrepend(sname, NULL, NULL, 0, NULL, NULL, rr, ss->vFunClass, s_olcxCurrentUser->retrieverStack.top);
-        //&sprintf(tmpBuff,"adding %s of %s(%d) matched %s %d", sname, s_fileTab.tab[rr->p.file]->name, rr->p.file, s_opt.olcxSearchString, s_wildCharSearch);ppcGenTmpBuff();
+        //&sprintf(tmpBuff,"adding %s of %s(%d) matched %s %d", sname, s_fileTab.tab[rr->p.file]->name, rr->p.file, s_opt.olcxSearchString, s_wildcardSearch);ppcGenTmpBuff();
         olCompletionListPrepend(sname, NULL, NULL, 0, NULL, ss, rr, ss->b.symType, ss->vFunClass, s_olcxCurrentUser->retrieverStack.top);
         // this is a hack for memory reduction
         // compact completions from time to time

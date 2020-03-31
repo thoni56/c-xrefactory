@@ -17,7 +17,7 @@ int s_olcx_check_array_sizes[OLCX_CHECK_ARRAY_SIZE];
 int s_olcx_check_arrayi = 0;
 #endif
 
-int s_wildCharSearch;
+int s_wildcardSearch;
 int s_lastReturnedLexem;
 
 S_position s_spp[SPP_MAX];

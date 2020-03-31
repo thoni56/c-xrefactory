@@ -36,7 +36,7 @@ unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL];
 int s_olstringUsage;
 int s_noneFileIndex = -1;
 int s_olOriginalComFileNumber;
-int s_wildCharSearch;
+int s_wildcardSearch;
 int s_javaPreScanOnly;
 int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL];
 jmp_buf cxmemOverflow;

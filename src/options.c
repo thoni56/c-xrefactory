@@ -464,7 +464,7 @@ void getOptionsFromMessage(char *qnxMsgBuff, int *nargc, char ***nargv) {
     *nargv = aargv;
 }
 
-static char *getClassPath(int defaultCpAllowed) {
+static char *getClassPath(bool defaultCpAllowed) {
     char *cp;
     cp = s_opt.classpath;
     if (cp == NULL || *cp==0) cp = getenv("CLASSPATH");
@@ -483,7 +483,7 @@ void javaSetSourcePath(int defaultCpAllowed) {
     if (cp == NULL) {
         s_javaSourcePaths = NULL;
     } else {
-        expandWildCharactersInPaths(cp, s_javaSourcePathStatic, MAX_OPTION_LEN);
+        expandWildcardsInPaths(cp, s_javaSourcePathStatic, MAX_OPTION_LEN);
         s_javaSourcePaths = s_javaSourcePathStatic;
     }
 }
@@ -732,8 +732,8 @@ void getJavaClassAndSourcePath(void) {
             s_javaSourcePaths = s_defaultClassPath;
         }
 
-        cp = getClassPath(1);
-        expandWildCharactersInPaths(cp, s_javaClassPathStatic, MAX_OPTION_LEN);
+        cp = getClassPath(true);
+        expandWildcardsInPaths(cp, s_javaClassPathStatic, MAX_OPTION_LEN);
         cp = s_javaClassPathStatic;
 
         createOptionString(&s_opt.classpath, cp);  //??? why is this, only optimisation of getenv?

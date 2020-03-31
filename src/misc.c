@@ -1177,7 +1177,7 @@ void expandWildCharactersInOnePath(char *fn, char *outpaths, int freeolen) {
     if (opaths != oop) *(opaths-1) = 0;
 }
 
-void expandWildCharactersInPaths(char *paths, char *outpaths, int freeolen) {
+void expandWildcardsInPaths(char *paths, char *outpaths, int freeolen) {
     char    *oop, *opaths;
     int     olen;
     assert(freeolen == MAX_OPTION_LEN);

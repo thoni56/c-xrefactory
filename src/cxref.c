@@ -1548,7 +1548,7 @@ char *getLocalJavaDocFile_st(char *fileUrl) {
     if (s_opt.javaDocPath==NULL) return NULL;
     strcpy(tmpfname, fileUrl);
     for(ss=tmpfname; *ss; ss++) if (*ss == '/') *ss = SLASH;
-    expandWildCharactersInPaths(s_opt.javaDocPath, wcJavaDocPath, MAX_OPTION_LEN);
+    expandWildcardsInPaths(s_opt.javaDocPath, wcJavaDocPath, MAX_OPTION_LEN);
     res = getExpandedLocalJavaDocFile_st(wcJavaDocPath, NULL, tmpfname);
     // O.K. try once more time with 'api' prefixed
     if (res == NULL) {
@@ -4782,9 +4782,9 @@ void mainAnswerEditAction(void) {
         olcxPushEmptyStackItem(&s_olcxCurrentUser->retrieverStack);
         s_olcxCurrentUser->retrieverStack.top->cpos = opos;
         if (containsWildcard(s_opt.olcxSearchString)) {
-            s_wildCharSearch = 1;
+            s_wildcardSearch = 1;
         } else {
-            s_wildCharSearch = 0;
+            s_wildcardSearch = 0;
         }
         if (s_opt.tagSearchSpecif==TSS_FULL_SEARCH) scanJarFilesForTagSearch();
         scanReferenceFiles(s_opt.cxrefFileName, symbolSearchFunctionSequence);

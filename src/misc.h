@@ -67,7 +67,7 @@ extern int containsWildcard(char *ss);
 extern int shellMatch(char *string, int stringLen, char *pattern, int caseSensitive);
 extern void expandWildCharactersInOnePathRec(char *fn, char **outpaths, int *freeolen);
 extern void expandWildCharactersInOnePath(char *fn, char *outpaths, int olen);
-extern void expandWildCharactersInPaths(char *paths, char *outpaths, int freeolen);
+extern void expandWildcardsInPaths(char *paths, char *outpaths, int freeolen);
 extern char * getRealFileNameStatic(char *fn);
 extern int substringIndexWithLimit(char *s, int limit, char *subs);
 extern int stringContainsSubstring(char *s, char *subs);
