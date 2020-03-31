@@ -18,11 +18,11 @@
 #include "log.h"
 
 
-void fillRecFindStr(S_recFindStr *recFindStr, Symbol *ARG0, Symbol *ARG1, Symbol *ARG2, unsigned ARG3) {
-    recFindStr->baseClass = ARG0;
-    recFindStr->currClass = ARG1;
-    recFindStr->nextRecord = ARG2;
-    recFindStr->recsClassCounter = ARG3;
+void fillRecFindStr(S_recFindStr *recFindStr, Symbol *baseClass, Symbol *currentClass, Symbol *nextRecord, unsigned recsClassCounter) {
+    recFindStr->baseClass = baseClass;
+    recFindStr->currClass = currentClass;
+    recFindStr->nextRecord = nextRecord;
+    recFindStr->recsClassCounter = recsClassCounter;
     recFindStr->sti = 0;
     recFindStr->aui = 0;
 }
@@ -125,17 +125,17 @@ S_recFindStr * iniFind(Symbol *s, S_recFindStr *rfs) {
 bool javaOuterClassAccessible(Symbol *cl) {
     log_trace("testing class accessibility of %s",cl->linkName);
     if (cl->bits.accessFlags & ACC_PUBLIC) {
-        log_trace("ret 1 access public");
-        return 1;
+        log_trace("return true for public access");
+        return true;
     }
     /* default access, check whether it is in current package */
     assert(s_javaStat);
     if (javaClassIsInCurrentPackage(cl)) {
-        log_trace("ret 1 default protection in current package");
-        return 1;
+        log_trace("return true for default protection in current package");
+        return true;
     }
-    log_trace("ret 0 on default");
-    return 0;
+    log_trace("return false on default");
+    return false;
 
 }
 

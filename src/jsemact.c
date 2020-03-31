@@ -207,7 +207,7 @@ void javaAddNestedClassesAsTypeDefs(Symbol *cc, S_idList *oclassname,
         if (ss->nest[i].membFlag) {
             nn = ss->nest[i].cl;
             assert(nn);
-//& XX_ALLOC(ll, S_idList);
+            //& XX_ALLOC(ll, S_idList);
             FILL_id(&ll.id, nn->name, cc, s_noPos,NULL);
             FILL_idList(&ll, ll.id, nn->name,TypeStruct,oclassname);
             javaTypeSymbolDefinition(&ll, accessFlags, TYPE_ADD_YES);
@@ -890,23 +890,17 @@ static int findTopLevelNameInternal(
             /* it is an argument or local variable */
             /* this is tricky */
             /* I guess, you cannot have an overloaded function here, so ... */
-
-//&fprintf(dumpOut,"%s is identified as local var or parameter\n", name);
-            FILL_recFindStr(resRfs, NULL, NULL, *resMemb,s_recFindCl++, 0, 0);
-
-            /* before ????????????? */
-            /*& FILL_recFindStr(resRfs, NULL, *resMemb, 0); */
-            /*& resRfs->st[0].sup = &cscope->thisClass; */
-            /*& resRfs->st[0].supern = 1; */
+            log_trace("%s is identified as local var or parameter", name);
+            fillRecFindStr(resRfs, NULL, NULL, *resMemb,s_recFindCl++);
             *rscope = NULL;
         } else {
             /* if present, then as a structure record */
-//&fprintf(dumpOut,"putting %s as base class\n",cscope->thisClass->name);
-            FILL_recFindStr(resRfs, cscope->thisClass, NULL, NULL,s_recFindCl++, 0, 0);
+            log_trace("putting %s as base class", cscope->thisClass->name);
+            fillRecFindStr(resRfs, cscope->thisClass, NULL, NULL,s_recFindCl++);
             recFindPush(cscope->thisClass, resRfs);
             *rscope = cscope;
         }
-//&fprintf(dumpOut," %s %s\n", miscellaneousName[classif], miscellaneousName[accCheck]);
+        log_trace("%s %s", miscellaneousName[classif], miscellaneousName[accCheck]);
         res = findStrRecordSym(resRfs, name, resMemb, classif, accCheck, visibCheck);
     }
     return(res);
@@ -1036,15 +1030,16 @@ int javaClassifySingleAmbigNameToTypeOrPack(S_idList *name,
                                             Symbol **str,
                                             int cxrefFlag
     ){
-    Symbol    sd, *mm, *memb, *nextmemb;
-    int         ii, haveit, accessible;
-    S_position  *ipos;
+    Symbol sd, *mm, *memb, *nextmemb;
+    int unused;
+    bool haveit;
+    S_position *ipos;
 
     fillSymbol(&sd, name->id.name, name->id.name, s_noPos);
     fillSymbolBits(&sd.bits, ACC_DEFAULT, TypeStruct, StorageNone);
 
-    haveit = 0;
-    if (symbolTableIsMember(s_symbolTable, &sd, &ii, &memb)) {
+    haveit = false;
+    if (symbolTableIsMember(s_symbolTable, &sd, &unused, &memb)) {
         /* a type */
         assert(memb);
         // O.K. I have to load the class in order to check its access flags
@@ -1056,21 +1051,19 @@ int javaClassifySingleAmbigNameToTypeOrPack(S_idList *name,
             mm = javaFQTypeSymbolDefinition(memb->name, memb->linkName);
             if ((s_opt.ooChecksBits & OOC_ALL_CHECKS)) {
                 // do carefully all checks
-                if (haveit==0) {
+                if (! haveit) {
                     javaLoadClassSymbolsFromFile(mm);
-                    accessible = javaOuterClassAccessible(mm);
-                    if (accessible == 1) {
+                    if (javaOuterClassAccessible(mm)) {
                         JAVA_CLASS_SAN_HAVE_IT(name, str, outImportPos, mm, memb, haveit);
                     }
                 } else {
                     if ((*str) != mm) {
                         javaLoadClassSymbolsFromFile(mm);
-                        accessible = javaOuterClassAccessible(mm);
-                        if (accessible == 1) {
+                        if (javaOuterClassAccessible(mm)) {
                             // multiple imports
                             if ((*str)->bits.isSingleImported == mm->bits.isSingleImported) {
                                 assert(strcmp((*str)->linkName, mm->linkName)!=0);
-                                haveit = 0;
+                                haveit = false;
                                 // this is tricky, mark the import as used
                                 // it is "used" to disqualify some references, so
                                 // during name reduction refactoring, it will not adding
@@ -1092,8 +1085,7 @@ int javaClassifySingleAmbigNameToTypeOrPack(S_idList *name,
                 } else {
                     // O.K. there may be an ambiguity resolved by accessibility
                     javaLoadClassSymbolsFromFile(mm);
-                    accessible = javaOuterClassAccessible(mm);
-                    if (accessible) {
+                    if (javaOuterClassAccessible(mm)) {
                         JAVA_CLASS_SAN_HAVE_IT(name, str, outImportPos, mm, memb, haveit);
                         goto breakcycle;
                     }
@@ -1102,16 +1094,11 @@ int javaClassifySingleAmbigNameToTypeOrPack(S_idList *name,
         }
     }
  breakcycle:
-    if (haveit) return(TypeStruct);
-#if ZERO		// I think it is uselles now.
-    if (javaSimpleNameIsInnerMemberClass(name->idi.name, str)) {
-        name->nameType = TypeStruct;
-        name->fname = (*str)->linkName;
-        return(TypeStruct);
-    }
-#endif
+    if (haveit)
+        return TypeStruct;
+
     name->nameType = TypePackage;
-    return(TypePackage);
+    return TypePackage;
 }
 
 #define AddAmbCxRef(classif,sym,pos,usage, minacc,oref, rfs) {\
@@ -2294,7 +2281,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationT(S_typeModifier *tt,
     ) {
     S_extRecFindStr		*erfs;
     int					rr;
-/*fprintf(dumpOut,"invocation of %s\n",name->name); fflush(dumpOut);*/
+    log_trace("invocation of %s", name->name);
     if (tt->kind == TypeArray) tt = &s_javaArrayObjectSymbol.u.s->stype;
     if (tt->kind != TypeStruct) {
         methodAppliedOnNonClass(name->name);

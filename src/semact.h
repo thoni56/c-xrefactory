@@ -4,9 +4,10 @@
 #include "symbol.h"
 #include "symboltable.h"
 
-#include "proto.h"              /* Requires at least S_recFindStr, probably others */
+#include "proto.h"
 
 
+extern void fillRecFindStr(S_recFindStr *recFindStr, Symbol *baseClass, Symbol *currentClass, Symbol *nextRecord, unsigned recsClassCounter);
 extern void unpackPointers(Symbol *pp);
 extern int displayingErrorMessages(void);
 extern void deleteSymDef(void *p);
