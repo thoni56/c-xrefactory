@@ -4,21 +4,25 @@
 # and generates the .c-xrefrc from a template. The tests will then
 # run with 'make'. They can be deactivated again by 'make clean'.
 
+TEST = $(shell basename '$(CURDIR)')
+OK = echo "Tests in '$(TEST)': $(shell tput setaf 2)Ok$(shell tput sgr0)"
+FAIL = echo "Tests in '$(TEST)': $(shell tput setaf 1)Failed$(shell tput sgr0)"
+
+
 all: .c-xrefrc
 	@if [ ! -d ffmpeg ] ; then \
 		echo "Tests in 'ffmpeg': not activated, run 'make init', 'make clean' to deactivate" ; \
 	else \
-		printf "Tests in 'ffmpeg': " ; \
 		../run-c-xref -p ffmpeg -o ffmpeg.log ; \
 		if ! grep Generating ffmpeg.log > /dev/null ; then \
-			echo "$(shell tput setaf 1)Failed (ffmpeg.log)$(shell tput sgr0)" ; \
+			$(FAIL) "(ffmpeg.log)" ; \
 			exit 1 ; \
 		else \
 			if grep -i "<error " out > /dev/null ; then \
-				echo "$(shell tput setaf 1)Failed (out)$(shell tput sgr0)" ; \
+				$(FAIL) "(out)" ; \
 				exit 1 ; \
 			else \
-				echo "$(shell tput setaf 2)Ok$(shell tput sgr0)" ; \
+				$(OK) ; \
 			fi ; \
 		fi ; \
 	fi

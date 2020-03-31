@@ -14,3 +14,7 @@ commands without paths, since they would be in CWD.)
 
 In that magic CURDIR is exchanged with the full path of the current
 directory.
+
+NOTE these tests can't be run in parallel, like with 'make -j', probably
+because c-xref can't generate temporary files uniquely in parallel.
+(I'm "kill-gissing", ...)

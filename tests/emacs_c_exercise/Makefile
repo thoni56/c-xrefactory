@@ -3,7 +3,6 @@
 include ../Makefile.boilerplate
 
 $(TEST):
-	@printf "Tests in '$@': "
 	@$(MAKE) --no-print-directory setup
 	@$(MAKE) --no-print-directory execute
 	@$(MAKE) --no-print-directory check
@@ -38,11 +37,11 @@ check:
 	@# Compare output to expected resulting files
 	@diff -B -n -r cexercise expected > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
-		echo "$(shell tput setaf 1)Failed$(shell tput sgr0)" ; \
+		$(FAIL) ; \
 		diff -r cexercise expected ; \
 		exit 1 ; \
 	fi
-	@echo "$(shell tput setaf 2)Ok$(shell tput sgr0)"
+	@$(OK)
 	@exit 0
 
 clean:

@@ -1,6 +1,11 @@
 # Automated test for running c-xref on itself and see if generated
 # cross references are the same
 
+TEST = $(shell basename '$(CURDIR)')
+OK = echo "Tests in '$(TEST)': $(shell tput setaf 2)Ok$(shell tput sgr0)"
+FAIL = echo "Tests in '$(TEST)': $(shell tput setaf 1)Failed$(shell tput sgr0)"
+
+
 all: c-xref
 
 c-xref: .c-xrefrc
@@ -8,10 +13,10 @@ c-xref: .c-xrefrc
 	@../run-c-xref -p c-xref -o c-xref.log -refs $(CURDIR)/C-Xrefs/c-xref
 	@diff CXrefs/c-xref c-xref.expected > /dev/null ; \
 	if [ $$? -ne 1 ] ; then \
-		echo "Tests in '$@': $(shell tput setaf 1)Failed$(shell tput sgr0)" ; \
+		$(FAIL) ; \
 		exit 1 ; \
 	else \
-		echo "Tests in '$@': $(shell tput setaf 2)Ok$(shell tput sgr0)" ; \
+		$(OK) ; \
 		exit 0 ; \
 	fi
 
