@@ -1,7 +1,7 @@
 # Test for moving a class
 #
-# TODO it does not really work, but it's kept for now so that we at least have
-# some code coverage for part of that code
+# TODO it does not really work, but it prints an error message and
+# exercises a lot of code, so let's keep this
 
 include ../Makefile.boilerplate
 
@@ -27,7 +27,7 @@ trace: CXREF+=-trace
 trace: $(TEST)
 
 clean:
-	@-rm -rf CXrefs output.log output.tmp output buffer
+	@-rm -rf CXrefs output.tmp output buffer log
 
 gdb:
 	@$(EDIT_SERVER_DRIVER_COMMAND) 15 > output.tmp &
