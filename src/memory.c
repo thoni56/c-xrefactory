@@ -48,9 +48,16 @@ int cxMemoryOverflowHandler(int n) {
 
 /* ***************************************************************** */
 
+static void fillTopBlock(S_topBlock *topBlock, int firstFreeIndex, int tmpMemoryBasei, S_freeTrail *trail, S_topBlock *previousTopBlock) {
+    topBlock->firstFreeIndex = firstFreeIndex;
+    topBlock->tmpMemoryBasei = tmpMemoryBasei;
+    topBlock->trail = trail;
+    topBlock->previousTopBlock = previousTopBlock;
+}
+
 void stackMemoryInit(void) {
     s_topBlock = (S_topBlock *) memory;
-    FILL_topBlock(s_topBlock, sizeof(S_topBlock), 0, NULL, NULL);
+    fillTopBlock(s_topBlock, sizeof(S_topBlock), 0, NULL, NULL);
 }
 
 void *stackMemoryAlloc(int size) {
@@ -101,8 +108,8 @@ void stackMemoryBlockStart(void) {
     p = StackMemPush(&top, S_topBlock);
     // trail can't be reset to NULL, because in case of syntax errors
     // this would avoid balancing of } at the end of class
-    /*& FILL_topBlock(s_topBlock, s_topBlock->firstFreeIndex, tmpWorkMemoryi, NULL, p); */
-    FILL_topBlock(s_topBlock, s_topBlock->firstFreeIndex, tmpWorkMemoryi, s_topBlock->trail, p);
+    /*& fillTopBlock(s_topBlock, s_topBlock->firstFreeIndex, tmpWorkMemoryi, NULL, p); */
+    fillTopBlock(s_topBlock, s_topBlock->firstFreeIndex, tmpWorkMemoryi, s_topBlock->trail, p);
 }
 
 void stackMemoryBlockFree(void) {
