@@ -1,0 +1,143 @@
+
+<update-report>
+</update-report>
+<goto>
+ <position-off off=866 len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<ask-confirmation len=43>parameter 'proj' is used, delete it anyway?</ask-confirmation>
+<update-report>
+ <information len=33>Prescanning classes, please wait.</information>
+ <information len=83>C-xrefactory project: /Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise</information>
+ <information len=19>java version == 1.3</information>
+ <information len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</information>
+ <information len=81>Generating '/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/CXrefs'</information>
+</update-report>
+<goto>
+ <position-off off=874 len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<replacement>
+ <str len=12>Project proj</str>  <str len=0></str>
+</replacement>
+<goto>
+ <position-off off=1345 len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<replacement>
+ <str len=2>pp</str>  <str len=0></str>
+</replacement>
+<goto>
+ <position-off off=1415 len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<replacement>
+ <str len=2>pp</str>  <str len=0></str>
+</replacement>
+<goto>
+ <position-off off=866 len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<sync>
+<update-report>
+ <information len=33>Prescanning classes, please wait.</information>
+ <information len=83>C-xrefactory project: /Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise</information>
+ <information len=19>java version == 1.3</information>
+ <information len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</information>
+ <information len=81>Generating '/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/CXrefs'</information>
+</update-report>
+<goto>
+ <position-off off=866 len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<update-report>
+ <information len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</information>
+ <information len=81>Generating '/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/CXrefs'</information>
+</update-report>
+<goto>
+ <position-off off=874 len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<replacement>
+ <str len=12>Project proj</str>  <str len=0></str>
+</replacement>
+<goto>
+ <position-off off=874 len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<replacement>
+ <str len=0></str>  <str len=12>Project proj</str>
+</replacement>
+<goto>
+ <position-off off=1357 len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<replacement>
+ <str len=2>pp</str>  <str len=0></str>
+</replacement>
+<goto>
+ <position-off off=1357 len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<replacement>
+ <str len=0></str>  <str len=2>pp</str>
+</replacement>
+<goto>
+ <position-off off=1429 len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<replacement>
+ <str len=2>pp</str>  <str len=0></str>
+</replacement>
+<goto>
+ <position-off off=1429 len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<replacement>
+ <str len=0></str>  <str len=2>pp</str>
+</replacement>
+<goto>
+ <position-off off=866 len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<sync>
+<update-report>
+ <information len=33>Prescanning classes, please wait.</information>
+ <information len=83>C-xrefactory project: /Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise</information>
+ <information len=19>java version == 1.3</information>
+ <information len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</information>
+ <information len=81>Generating '/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/CXrefs'</information>
+</update-report>
+<goto>
+ <position-off off=861 len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<precheck len=13> participate(</precheck>
+<goto>
+ <position-off off=1344 len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<precheck len=13>.participate(</precheck>
+<goto>
+ <position-off off=1416 len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<precheck len=13>.participate(</precheck>
+<goto>
+ <position-off off=866 len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<update-report>
+<progress>0 
+<progress>33 
+ <information len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</information>
+<progress>36 
+ <information len=81>Generating '/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/CXrefs'</information>
+<progress>66 
+</update-report>
+<goto>
+ <position-off off=862 len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<replacement>
+ <str len=11>participate</str>  <str len=6>tototo</str>
+</replacement>
+<goto>
+ <position-off off=1340 len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<replacement>
+ <str len=11>participate</str>  <str len=6>tototo</str>
+</replacement>
+<goto>
+ <position-off off=1407 len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<replacement>
+ <str len=11>participate</str>  <str len=6>tototo</str>
+</replacement>
+<goto>
+ <position-off off=866 len=115>/Users/thomas/Utveckling/c-xrefactory/tests/partial_jexercise/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
+</goto>
+<progress>100 
+<sync>
