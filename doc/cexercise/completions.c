@@ -3,10 +3,10 @@
 #include <assert.h>
 
 /*
- Check completion on following demonstration lines!  Each
- demonstration line is preceded by one line of explaining
- commentary. Put cursor at the end of demonstration lines and invoke
- completion by pressing F8.
+  Check completion on following demonstration lines!  Each
+  demonstration line is preceded by one line of explaining
+  commentary. Put cursor at the end of demonstration lines and invoke
+  completion by pressing F8.
 */
 
 
@@ -25,7 +25,7 @@ void completions() {
     // completion list
     fpr
     ;
-    /* In the proposed list:
+    /* In the proposals list:
          <return>            - select the completion.
          <space>             - inspect definition.
          C-q                 - return and close completion window

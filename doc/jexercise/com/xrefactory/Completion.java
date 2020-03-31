@@ -6,9 +6,9 @@ import java.awt.event.*;
 import javax.swing.*;
 
 /*
- Check   completion   on    following   demonstration   lines!    Each
- demonstration   line  is   preceded   by  one   line  of   explaining
- commentary. Put cursor  at the end of demonstration  lines and invoke
+ Check completion on following demonstration lines!  Each
+ demonstration line is preceded by one line of explaining
+ commentary. Put cursor at the end of demonstration lines and invoke
  completion by pressing F8.
 */
 
@@ -27,16 +27,16 @@ class Completion extends JFrame {
         // class name, multiple completions listed
         La
         ;
-        /* In the proposed list:
-             <return>            - select the completion.
+        /* In the proposals list:
+             <return>            - select the completion
              <space>             - inspect definition (or javadoc)
              C-q                 - return and close completion window
              letter & digits     - incremental search
              other characters    - leave completion window
              <escape>            - close completion window, no completion
            also:
-             mouse-button12      - select the completion.
-             mouse-button3       - pop-up menu for this item.
+             mouse-button12      - select the completion
+             mouse-button3       - pop-up menu for this item
            Everywhere:
              F7                  - close C-Xrefactory's window
         */
@@ -50,7 +50,7 @@ class Completion extends JFrame {
         Button
         ;
 
-        // empty string after 'new' in an assignement is completed to class name
+        // empty string after 'new' in an assignment is completed to class name
         Button mybutton = new
         ;
 
