@@ -1,0 +1,134 @@
+../../src/c-xref -xrefactory-II -o buffer -refactory -xrefrc CURDIR/.c-xrefrc -no_stdop -refs CURDIR/CXrefs -p CURDIR -user 1 -rfct-move-class -commentmovinglevel=0 -movetargetfile=CURDIR/test_sources/com/cxrefactory/Completion2.java -rfct-param1=10 -olmark=399 -olcursor=406 -addimportdefault=0 CURDIR/test_sources/com/xrefactory/Completion.java -sourcepath "CURDIR/test_sources" -log=log -trace
+end-of-options
+
+<sync>
+<error len=<n>>no classpath or sourcepath specified
+</error>
+<update-report>
+ <information len=<n>>Prescanning classes, please wait.</information>
+ <information len=<n>>C-xrefactory project: CURDIR</information>
+ <information len=<n>>java version == 1.3</information>
+ <information len=<n>>CURDIR/test_sources/Index.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/test_sources/Index.java#19" len=<n>>Index.java:19</A> Directory CURDIR/test_sources is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/test_sources/com/cxrefactory/Completion2.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/test_sources/com/cxrefactory/Completion2.java#1" len=<n>>Completion2.java:1</A> Directory CURDIR/test_sources is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/test_sources/com/xrefactory/Browsing.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/test_sources/com/xrefactory/Browsing.java#1" len=<n>>Browsing.java:1</A> Directory CURDIR/test_sources is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/test_sources/com/xrefactory/Completion.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/test_sources/com/xrefactory/Completion.java#1" len=<n>>Completion.java:1</A> Directory CURDIR/test_sources is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/test_sources/com/xrefactory/IdeCompileRun.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/test_sources/com/xrefactory/IdeCompileRun.java#1" len=<n>>IdeCompileRun.java:1</A> Directory CURDIR/test_sources is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/test_sources/com/xrefactory/refactorings/AddRemoveParameter.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/test_sources/com/xrefactory/refactorings/AddRemoveParameter.java#1" len=<n>>AddRemoveParameter.java:1</A> Directory CURDIR/test_sources is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/test_sources/com/xrefactory/refactorings/EncapsulateField.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/test_sources/com/xrefactory/refactorings/EncapsulateField.java#1" len=<n>>EncapsulateField.java:1</A> Directory CURDIR/test_sources is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/test_sources/com/xrefactory/refactorings/ExtractMethod.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/test_sources/com/xrefactory/refactorings/ExtractMethod.java#1" len=<n>>ExtractMethod.java:1</A> Directory CURDIR/test_sources is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/test_sources/com/xrefactory/refactorings/Index.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/test_sources/com/xrefactory/refactorings/Index.java#1" len=<n>>Index.java:1</A> Directory CURDIR/test_sources is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/test_sources/com/xrefactory/refactorings/MoveMethod.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/test_sources/com/xrefactory/refactorings/MoveMethod.java#1" len=<n>>MoveMethod.java:1</A> Directory CURDIR/test_sources is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/test_sources/com/xrefactory/refactorings/MoveStaticMethod.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/test_sources/com/xrefactory/refactorings/MoveStaticMethod.java#1" len=<n>>MoveStaticMethod.java:1</A> Directory CURDIR/test_sources is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/test_sources/com/xrefactory/refactorings/PullUpMethod.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/test_sources/com/xrefactory/refactorings/PullUpMethod.java#1" len=<n>>PullUpMethod.java:1</A> Directory CURDIR/test_sources is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/test_sources/com/xrefactory/refactorings/RenameSymbol.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/test_sources/com/xrefactory/refactorings/RenameSymbol.java#1" len=<n>>RenameSymbol.java:1</A> Directory CURDIR/test_sources is not listed in paths
+</warning>
+ <information len=<n>>Generating 'CURDIR/CXrefs'</information>
+ <error len=<n>> can't open file CURDIR/CXrefs/XFiles
+</error>
+ <warning len=<n>> can't open file /tmp/c-xref-temp
+</warning>
+ <error len=<n>> can't open file CURDIR/CXrefs/XClasses
+</error>
+ <warning len=<n>> can't open file /tmp/c-xref-temp
+</warning>
+ <error len=<n>> can't open file CURDIR/CXrefs/X0000
+</error>
+ <warning len=<n>> can't open file /tmp/c-xref-temp
+</warning>
+ <error len=<n>> can't open file CURDIR/CXrefs/X0001
+</error>
+ <warning len=<n>> can't open file /tmp/c-xref-temp
+</warning>
+ <error len=<n>> can't open file CURDIR/CXrefs/X0002
+</error>
+ <warning len=<n>> can't open file /tmp/c-xref-temp
+</warning>
+ <error len=<n>> can't open file CURDIR/CXrefs/X0003
+</error>
+ <warning len=<n>> can't open file /tmp/c-xref-temp
+</warning>
+ <error len=<n>> can't open file CURDIR/CXrefs/X0004
+</error>
+ <warning len=<n>> can't open file /tmp/c-xref-temp
+</warning>
+ <error len=<n>> can't open file CURDIR/CXrefs/X0005
+</error>
+ <warning len=<n>> can't open file /tmp/c-xref-temp
+</warning>
+ <error len=<n>> can't open file CURDIR/CXrefs/X0006
+</error>
+ <warning len=<n>> can't open file /tmp/c-xref-temp
+</warning>
+ <error len=<n>> can't open file CURDIR/CXrefs/X0007
+</error>
+ <warning len=<n>> can't open file /tmp/c-xref-temp
+</warning>
+ <error len=<n>> can't open file CURDIR/CXrefs/X0008
+</error>
+ <warning len=<n>> can't open file /tmp/c-xref-temp
+</warning>
+ <error len=<n>> can't open file CURDIR/CXrefs/X0009
+</error>
+ <warning len=<n>> can't open file /tmp/c-xref-temp
+</warning>
+</update-report>
+<error len=<n>>no classpath or sourcepath specified
+</error>
+<error len=<n>>This is  an inner class. Current  version of C-xrefactory  can only
+move nested classes declared  'static' and top level classes.  If the class
+does  not depend  on its  enclosing instances,  you should  declare it
+'static' and move it after.
+</error>
+<goto>
+ <position-off off=395 len=<n>>CURDIR/test_sources/com/xrefactory/Completion.java</position-off>
+</goto>
+<cut-block val=24 len=<n>></cut-block>
+<goto>
+ <position-off off=134 len=<n>>CURDIR/test_sources/com/cxrefactory/Completion2.java</position-off>
+</goto>
+<paste-block len=<n>></paste-block>
+<goto>
+ <position-off off=138 len=<n>>CURDIR/test_sources/com/cxrefactory/Completion2.java</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>public </str>
+</replacement>
+<goto>
+ <position-off off=138 len=<n>>CURDIR/test_sources/com/cxrefactory/Completion2.java</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>static </str>
+</replacement>
+<goto>
+ <position-off off=159 len=<n>>CURDIR/test_sources/com/cxrefactory/Completion2.java</position-off>
+</goto>
+<indent-block val=2 len=<n>></indent-block>
+<information len=<n>>
+Done.
+Do not forget to remove .class files of former class.</information>
+

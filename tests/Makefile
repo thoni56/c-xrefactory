@@ -32,6 +32,7 @@ quick:
 	@$(MAKE) -C rename
 	@$(MAKE) -C simple_extract
 	@$(MAKE) -C add_parameter
+	@$(MAKE) -C move_class
 	@$(MAKE) -C extract_with_return
 
 slow:
