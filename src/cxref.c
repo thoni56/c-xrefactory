@@ -4781,11 +4781,9 @@ void mainAnswerEditAction(void) {
         assert(s_olcxCurrentUser);
         olcxPushEmptyStackItem(&s_olcxCurrentUser->retrieverStack);
         s_olcxCurrentUser->retrieverStack.top->cpos = opos;
-        if (containsWildcard(s_opt.olcxSearchString)) {
-            s_wildcardSearch = 1;
-        } else {
-            s_wildcardSearch = 0;
-        }
+
+        s_wildcardSearch = containsWildcard(s_opt.olcxSearchString);
+
         if (s_opt.tagSearchSpecif==TSS_FULL_SEARCH) scanJarFilesForTagSearch();
         scanReferenceFiles(s_opt.cxrefFileName, symbolSearchFunctionSequence);
         printTagSearchResults();

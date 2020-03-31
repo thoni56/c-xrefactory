@@ -35,7 +35,7 @@ extern void *s_olcx_check_array[OLCX_CHECK_ARRAY_SIZE];
 extern int s_olcx_check_array_sizes[OLCX_CHECK_ARRAY_SIZE];
 extern int s_olcx_check_arrayi;
 #endif
-extern int s_wildcardSearch;
+extern bool s_wildcardSearch;
 extern int s_lastReturnedLexem;
 extern S_position s_spp[SPP_MAX];
 extern S_usageBits s_noUsage;
