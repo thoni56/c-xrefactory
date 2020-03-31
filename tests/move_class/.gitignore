@@ -4,3 +4,4 @@ log
 buffer
 CXrefs
 .c-xrefrc
+*.class
