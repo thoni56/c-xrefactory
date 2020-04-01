@@ -917,12 +917,29 @@ S_typeModifier *simpleStrUnionSpecifier(S_id *typeName,
         XX_ALLOC(pp, Symbol);
         *pp = p;
         XX_ALLOC(pp->u.s, S_symStructSpec);
+        /* This monster should be unwound and replaced by ... */
         FILLF_symStructSpec(pp->u.s, NULL,
                             NULL,NULL,NULL,0,NULL,
                             type,f,(NULL,NULL),NULL,NULL,
                             TypePointer,f,(NULL,NULL),NULL,&pp->u.s->stype,
                             -1,0);
         pp->u.s->stype.u.t = pp;
+
+#ifdef ZERO
+        /* ... this... */
+        fillSymStruct(pp->u.s, /*.records=*/NULL);
+        S_symStructSpec *stype = &pp->u.s->stype;
+        /* Assumed to be Struct/Union/Enum? */
+        initTypeModifierAsStructUnionOrEnum(stype, /*.kind=*/type, /*.u.t=*/pp, /*.next=*/NULL);
+        S_symStructSpec *sptrtype = &pp->u.s->sptrtype;
+        initTypeModifierAsFunction(sptrtype,
+                                   /*.u.f.args=*/NULL,
+                                   /*.u.f.thisFunList=*/NULL,
+                                   /*.typeDefSymbol=*/NULL,
+                                   /*.next=*/&pp->u.s->stype);
+        /* ... to here */
+#endif
+
         setGlobalFileDepNames(id->name, pp, MEM_XX);
         addSymbol(pp, s_symbolTable);
     }
