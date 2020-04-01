@@ -892,13 +892,14 @@ static S_typeModifier *crSimpleEnumType(Symbol *edef, int type) {
     return(res);
 }
 
-S_typeModifier *simpleStrUnionSpecifier(   S_id *typeName,
-                                            S_id *id,
-                                            int usage
-                                            ) {
+S_typeModifier *simpleStrUnionSpecifier(S_id *typeName,
+                                        S_id *id,
+                                        int usage
+                                        ) {
     Symbol p,*pp;
     int ii,type;
-    /*fprintf(dumpOut, "new str %s\n",id->name); fflush(dumpOut);*/
+
+    log_trace("new struct %s", id->name);
     assert(typeName && typeName->sd && typeName->sd->bits.symType == TypeKeyword);
     assert(     typeName->sd->u.keyWordVal == STRUCT
                 ||  typeName->sd->u.keyWordVal == CLASS

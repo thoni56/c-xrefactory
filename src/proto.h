@@ -466,7 +466,7 @@ enum refsFilterLevels {
     MAX_REF_LIST_FILTER_LEVEL,
 };
 
-enum storage {
+typedef enum storage {
     // standard C storage modes
     StorageError,
     StorageAuto,
@@ -487,7 +487,7 @@ enum storage {
     StorageNone,
     MAX_STORAGE,
     /* If this becomes greater than 32 increase STORAGES_LN !!!!!!!! */
-};
+} Storage;
 
 #include "types.h"
 
@@ -616,8 +616,8 @@ typedef struct symStructSpec {
     struct cctNode			casts;			/* possible casts                       */
     short int				nnested;		/* # of java nested classes     */
     struct nestedSpec		*nest;			/* array of nested classes		*/
-    struct typeModifier	stype;			/* this structure type */
-    struct typeModifier	sptrtype;		/* this structure pointer type */
+    struct typeModifier	stype;              /* this structure type */
+    struct typeModifier	sptrtype;           /* this structure pointer type */
     char                    currPackage;	/* am I in the currently processed package?, to be removed */
     char					existsDEIarg;   /* class direct enclosing instance exists?, to be removed */
     int						classFile;		/* in java, my class file index

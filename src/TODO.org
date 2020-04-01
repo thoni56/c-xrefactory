@@ -51,6 +51,7 @@ newSymbol<field>() for each of the necessary fields that are actually used.
 * TODO Investigate to remove S_classTreeData
 * TODO Use Yacc's -p for "symbol_prefix" instead of the #defines?
 * TODO Fix the move_class test
+* TODO Use enum types wherever possible Storage, SymbolType, ...
 * TODO Rename some of the options, like -no_str -> -no-structs
 * TODO Why does -refactory read the users default .c-xrefrc?
 * TODO Rename res fields in completion structs

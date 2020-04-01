@@ -745,13 +745,13 @@ S_typeModifier * cfUnPackResultType(char *sig, char **restype) {
     return(res);
 }
 
-static void cfAddRecordToClass( char *name,
-                                char *sig,
-                                Symbol *clas,
-                                int accessFlags,
-                                int storage,
-                                SymbolList *exceptions
-                                ) {
+static void cfAddRecordToClass(char *name,
+                               char *sig,
+                               Symbol *clas,
+                               int accessFlags,
+                               Storage storage,
+                               SymbolList *exceptions
+                               ) {
     static char pp[MAX_PROFILE_SIZE];
     Symbol *symbol, *memb;
     char *linkName,*prof;
@@ -760,6 +760,7 @@ static void cfAddRecordToClass( char *name,
     int len, vFunCl;
     int rr,bc;
     S_position dpos;
+
     tt = cfUnPackResultType(sig, &restype);
     if (tt->kind==TypeFunction) {
         // hack, this will temporary cut the result,
@@ -862,10 +863,12 @@ static void cfReadMethodInfos(  char **accc,
     char *ccc, *ffin, *name, *sign, *sign2;
     unsigned count, ind;
     unsigned aind, acount, aname, alen, excount;
-    int i, access_flags, nameind, sigind, storage, exclass;
+    int i, access_flags, nameind, sigind, exclass;
+    Storage storage;
     char *exname, *exsname;
     Symbol *exc;
     SymbolList *exclist, *ee;
+
     ccc = *accc; ffin = *affin;
     GetU2(count, ccc, ffin, iBuf);
     for(ind=0; ind<count; ind++) {

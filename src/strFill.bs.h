@@ -209,26 +209,26 @@
 #define _ARG_18_OF_20(ARG0,ARG1,ARG2,ARG3,ARG4,ARG5,ARG6,ARG7,ARG8,ARG9,ARG10,ARG11,ARG12,ARG13,ARG14,ARG15,ARG16,ARG17,ARG18,ARG19) ARG18
 #define _ARG_19_OF_20(ARG0,ARG1,ARG2,ARG3,ARG4,ARG5,ARG6,ARG7,ARG8,ARG9,ARG10,ARG11,ARG12,ARG13,ARG14,ARG15,ARG16,ARG17,ARG18,ARG19) ARG19
 #define FILL___jmp_buf_tag(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->__mask_was_saved = ARG0;\
-	(STRUCTP)->__saved_mask = ARG1;\
+    (STRUCTP)->__mask_was_saved = ARG0;\
+    (STRUCTP)->__saved_mask = ARG1;\
 }
 #define FILLF___jmp_buf_tag(STRUCTP, ARG0) {\
-	(STRUCTP)->__mask_was_saved = ARG0;\
+    (STRUCTP)->__mask_was_saved = ARG0;\
 }
 #define _FILLF___jmp_buf_tag(STRUCTP, ARGS) {\
-	(STRUCTP)->__mask_was_saved = _ARG_0_OF_1 ARGS;\
+    (STRUCTP)->__mask_was_saved = _ARG_0_OF_1 ARGS;\
 }
 #define FILL_timeval(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->tv_sec = ARG0;\
-	(STRUCTP)->tv_usec = ARG1;\
+    (STRUCTP)->tv_sec = ARG0;\
+    (STRUCTP)->tv_usec = ARG1;\
 }
 #define FILLF_timeval(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->tv_sec = ARG0;\
-	(STRUCTP)->tv_usec = ARG1;\
+    (STRUCTP)->tv_sec = ARG0;\
+    (STRUCTP)->tv_usec = ARG1;\
 }
 #define _FILLF_timeval(STRUCTP, ARGS) {\
-	(STRUCTP)->tv_sec = _ARG_0_OF_2 ARGS;\
-	(STRUCTP)->tv_usec = _ARG_1_OF_2 ARGS;\
+    (STRUCTP)->tv_sec = _ARG_0_OF_2 ARGS;\
+    (STRUCTP)->tv_usec = _ARG_1_OF_2 ARGS;\
 }
 #define FILL__IO_jump_t(STRUCTP) {\
 }
@@ -237,197 +237,197 @@
 #define _FILLF__IO_jump_t(STRUCTP, ARGS) {\
 }
 #define FILL_pushAllInBetweenData(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->minMemi = ARG0;\
-	(STRUCTP)->maxMemi = ARG1;\
+    (STRUCTP)->minMemi = ARG0;\
+    (STRUCTP)->maxMemi = ARG1;\
 }
 #define FILLF_pushAllInBetweenData(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->minMemi = ARG0;\
-	(STRUCTP)->maxMemi = ARG1;\
+    (STRUCTP)->minMemi = ARG0;\
+    (STRUCTP)->maxMemi = ARG1;\
 }
 #define _FILLF_pushAllInBetweenData(STRUCTP, ARGS) {\
-	(STRUCTP)->minMemi = _ARG_0_OF_2 ARGS;\
-	(STRUCTP)->maxMemi = _ARG_1_OF_2 ARGS;\
+    (STRUCTP)->minMemi = _ARG_0_OF_2 ARGS;\
+    (STRUCTP)->maxMemi = _ARG_1_OF_2 ARGS;\
 }
 #define FILL_cline(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6) {\
-	(STRUCTP)->s = ARG0;\
-	(STRUCTP)->t = ARG1;\
-	(STRUCTP)->symType = ARG2;\
-	(STRUCTP)->virtLevel = ARG3;\
-	(STRUCTP)->margn = ARG4;\
-	(STRUCTP)->margs = ARG5;\
-	(STRUCTP)->vFunClass = ARG6;\
+    (STRUCTP)->s = ARG0;\
+    (STRUCTP)->t = ARG1;\
+    (STRUCTP)->symType = ARG2;\
+    (STRUCTP)->virtLevel = ARG3;\
+    (STRUCTP)->margn = ARG4;\
+    (STRUCTP)->margs = ARG5;\
+    (STRUCTP)->vFunClass = ARG6;\
 }
 #define FILLF_cline(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6) {\
-	(STRUCTP)->s = ARG0;\
-	(STRUCTP)->t = ARG1;\
-	(STRUCTP)->symType = ARG2;\
-	(STRUCTP)->virtLevel = ARG3;\
-	(STRUCTP)->margn = ARG4;\
-	(STRUCTP)->margs = ARG5;\
-	(STRUCTP)->vFunClass = ARG6;\
+    (STRUCTP)->s = ARG0;\
+    (STRUCTP)->t = ARG1;\
+    (STRUCTP)->symType = ARG2;\
+    (STRUCTP)->virtLevel = ARG3;\
+    (STRUCTP)->margn = ARG4;\
+    (STRUCTP)->margs = ARG5;\
+    (STRUCTP)->vFunClass = ARG6;\
 }
 #define _FILLF_cline(STRUCTP, ARGS) {\
-	(STRUCTP)->s = _ARG_0_OF_7 ARGS;\
-	(STRUCTP)->t = _ARG_1_OF_7 ARGS;\
-	(STRUCTP)->symType = _ARG_2_OF_7 ARGS;\
-	(STRUCTP)->virtLevel = _ARG_3_OF_7 ARGS;\
-	(STRUCTP)->margn = _ARG_4_OF_7 ARGS;\
-	(STRUCTP)->margs = _ARG_5_OF_7 ARGS;\
-	(STRUCTP)->vFunClass = _ARG_6_OF_7 ARGS;\
+    (STRUCTP)->s = _ARG_0_OF_7 ARGS;\
+    (STRUCTP)->t = _ARG_1_OF_7 ARGS;\
+    (STRUCTP)->symType = _ARG_2_OF_7 ARGS;\
+    (STRUCTP)->virtLevel = _ARG_3_OF_7 ARGS;\
+    (STRUCTP)->margn = _ARG_4_OF_7 ARGS;\
+    (STRUCTP)->margs = _ARG_5_OF_7 ARGS;\
+    (STRUCTP)->vFunClass = _ARG_6_OF_7 ARGS;\
 }
 #define FILL_currentlyParsedCl(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9) {\
-	(STRUCTP)->function = ARG0;\
-	(STRUCTP)->erfsForParamsComplet = ARG1;\
-	(STRUCTP)->funBegPosition = ARG2;\
-	(STRUCTP)->cxMemiAtFunBegin = ARG3;\
-	(STRUCTP)->cxMemiAtFunEnd = ARG4;\
-	(STRUCTP)->cxMemiAtClassBegin = ARG5;\
-	(STRUCTP)->cxMemiAtClassEnd = ARG6;\
-	(STRUCTP)->thisMethodMemoriesStored = ARG7;\
-	(STRUCTP)->thisClassMemoriesStored = ARG8;\
-	(STRUCTP)->parserPassedMarker = ARG9;\
+    (STRUCTP)->function = ARG0;\
+    (STRUCTP)->erfsForParamsComplet = ARG1;\
+    (STRUCTP)->funBegPosition = ARG2;\
+    (STRUCTP)->cxMemiAtFunBegin = ARG3;\
+    (STRUCTP)->cxMemiAtFunEnd = ARG4;\
+    (STRUCTP)->cxMemiAtClassBegin = ARG5;\
+    (STRUCTP)->cxMemiAtClassEnd = ARG6;\
+    (STRUCTP)->thisMethodMemoriesStored = ARG7;\
+    (STRUCTP)->thisClassMemoriesStored = ARG8;\
+    (STRUCTP)->parserPassedMarker = ARG9;\
 }
 #define FILLF_currentlyParsedCl(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9) {\
-	(STRUCTP)->function = ARG0;\
-	(STRUCTP)->erfsForParamsComplet = ARG1;\
-	(STRUCTP)->funBegPosition = ARG2;\
-	(STRUCTP)->cxMemiAtFunBegin = ARG3;\
-	(STRUCTP)->cxMemiAtFunEnd = ARG4;\
-	(STRUCTP)->cxMemiAtClassBegin = ARG5;\
-	(STRUCTP)->cxMemiAtClassEnd = ARG6;\
-	(STRUCTP)->thisMethodMemoriesStored = ARG7;\
-	(STRUCTP)->thisClassMemoriesStored = ARG8;\
-	(STRUCTP)->parserPassedMarker = ARG9;\
+    (STRUCTP)->function = ARG0;\
+    (STRUCTP)->erfsForParamsComplet = ARG1;\
+    (STRUCTP)->funBegPosition = ARG2;\
+    (STRUCTP)->cxMemiAtFunBegin = ARG3;\
+    (STRUCTP)->cxMemiAtFunEnd = ARG4;\
+    (STRUCTP)->cxMemiAtClassBegin = ARG5;\
+    (STRUCTP)->cxMemiAtClassEnd = ARG6;\
+    (STRUCTP)->thisMethodMemoriesStored = ARG7;\
+    (STRUCTP)->thisClassMemoriesStored = ARG8;\
+    (STRUCTP)->parserPassedMarker = ARG9;\
 }
 #define _FILLF_currentlyParsedCl(STRUCTP, ARGS) {\
-	(STRUCTP)->function = _ARG_0_OF_10 ARGS;\
-	(STRUCTP)->erfsForParamsComplet = _ARG_1_OF_10 ARGS;\
-	(STRUCTP)->funBegPosition = _ARG_2_OF_10 ARGS;\
-	(STRUCTP)->cxMemiAtFunBegin = _ARG_3_OF_10 ARGS;\
-	(STRUCTP)->cxMemiAtFunEnd = _ARG_4_OF_10 ARGS;\
-	(STRUCTP)->cxMemiAtClassBegin = _ARG_5_OF_10 ARGS;\
-	(STRUCTP)->cxMemiAtClassEnd = _ARG_6_OF_10 ARGS;\
-	(STRUCTP)->thisMethodMemoriesStored = _ARG_7_OF_10 ARGS;\
-	(STRUCTP)->thisClassMemoriesStored = _ARG_8_OF_10 ARGS;\
-	(STRUCTP)->parserPassedMarker = _ARG_9_OF_10 ARGS;\
+    (STRUCTP)->function = _ARG_0_OF_10 ARGS;\
+    (STRUCTP)->erfsForParamsComplet = _ARG_1_OF_10 ARGS;\
+    (STRUCTP)->funBegPosition = _ARG_2_OF_10 ARGS;\
+    (STRUCTP)->cxMemiAtFunBegin = _ARG_3_OF_10 ARGS;\
+    (STRUCTP)->cxMemiAtFunEnd = _ARG_4_OF_10 ARGS;\
+    (STRUCTP)->cxMemiAtClassBegin = _ARG_5_OF_10 ARGS;\
+    (STRUCTP)->cxMemiAtClassEnd = _ARG_6_OF_10 ARGS;\
+    (STRUCTP)->thisMethodMemoriesStored = _ARG_7_OF_10 ARGS;\
+    (STRUCTP)->thisClassMemoriesStored = _ARG_8_OF_10 ARGS;\
+    (STRUCTP)->parserPassedMarker = _ARG_9_OF_10 ARGS;\
 }
 #define FILL_completions(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7) {\
-	(STRUCTP)->idToProcessLen = ARG0;\
-	(STRUCTP)->idToProcessPos = ARG1;\
-	(STRUCTP)->fullMatchFlag = ARG2;\
-	(STRUCTP)->isCompleteFlag = ARG3;\
-	(STRUCTP)->noFocusOnCompletions = ARG4;\
-	(STRUCTP)->abortFurtherCompletions = ARG5;\
-	(STRUCTP)->maxLen = ARG6;\
-	(STRUCTP)->ai = ARG7;\
+    (STRUCTP)->idToProcessLen = ARG0;\
+    (STRUCTP)->idToProcessPos = ARG1;\
+    (STRUCTP)->fullMatchFlag = ARG2;\
+    (STRUCTP)->isCompleteFlag = ARG3;\
+    (STRUCTP)->noFocusOnCompletions = ARG4;\
+    (STRUCTP)->abortFurtherCompletions = ARG5;\
+    (STRUCTP)->maxLen = ARG6;\
+    (STRUCTP)->ai = ARG7;\
 }
 #define FILLF_completions(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9) {\
-	(STRUCTP)->idToProcessLen = ARG0;\
-	(STRUCTP)->idToProcessPos.file = ARG1;\
-	(STRUCTP)->idToProcessPos.line = ARG2;\
-	(STRUCTP)->idToProcessPos.col = ARG3;\
-	(STRUCTP)->fullMatchFlag = ARG4;\
-	(STRUCTP)->isCompleteFlag = ARG5;\
-	(STRUCTP)->noFocusOnCompletions = ARG6;\
-	(STRUCTP)->abortFurtherCompletions = ARG7;\
-	(STRUCTP)->maxLen = ARG8;\
-	(STRUCTP)->ai = ARG9;\
+    (STRUCTP)->idToProcessLen = ARG0;\
+    (STRUCTP)->idToProcessPos.file = ARG1;\
+    (STRUCTP)->idToProcessPos.line = ARG2;\
+    (STRUCTP)->idToProcessPos.col = ARG3;\
+    (STRUCTP)->fullMatchFlag = ARG4;\
+    (STRUCTP)->isCompleteFlag = ARG5;\
+    (STRUCTP)->noFocusOnCompletions = ARG6;\
+    (STRUCTP)->abortFurtherCompletions = ARG7;\
+    (STRUCTP)->maxLen = ARG8;\
+    (STRUCTP)->ai = ARG9;\
 }
 #define _FILLF_completions(STRUCTP, ARGS) {\
-	(STRUCTP)->idToProcessLen = _ARG_0_OF_10 ARGS;\
-	(STRUCTP)->idToProcessPos.file = _ARG_1_OF_10 ARGS;\
-	(STRUCTP)->idToProcessPos.line = _ARG_2_OF_10 ARGS;\
-	(STRUCTP)->idToProcessPos.col = _ARG_3_OF_10 ARGS;\
-	(STRUCTP)->fullMatchFlag = _ARG_4_OF_10 ARGS;\
-	(STRUCTP)->isCompleteFlag = _ARG_5_OF_10 ARGS;\
-	(STRUCTP)->noFocusOnCompletions = _ARG_6_OF_10 ARGS;\
-	(STRUCTP)->abortFurtherCompletions = _ARG_7_OF_10 ARGS;\
-	(STRUCTP)->maxLen = _ARG_8_OF_10 ARGS;\
-	(STRUCTP)->ai = _ARG_9_OF_10 ARGS;\
+    (STRUCTP)->idToProcessLen = _ARG_0_OF_10 ARGS;\
+    (STRUCTP)->idToProcessPos.file = _ARG_1_OF_10 ARGS;\
+    (STRUCTP)->idToProcessPos.line = _ARG_2_OF_10 ARGS;\
+    (STRUCTP)->idToProcessPos.col = _ARG_3_OF_10 ARGS;\
+    (STRUCTP)->fullMatchFlag = _ARG_4_OF_10 ARGS;\
+    (STRUCTP)->isCompleteFlag = _ARG_5_OF_10 ARGS;\
+    (STRUCTP)->noFocusOnCompletions = _ARG_6_OF_10 ARGS;\
+    (STRUCTP)->abortFurtherCompletions = _ARG_7_OF_10 ARGS;\
+    (STRUCTP)->maxLen = _ARG_8_OF_10 ARGS;\
+    (STRUCTP)->ai = _ARG_9_OF_10 ARGS;\
 }
 #define FILL_nestedSpec(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->cl = ARG0;\
-	(STRUCTP)->membFlag = ARG1;\
-	(STRUCTP)->accFlags = ARG2;\
+    (STRUCTP)->cl = ARG0;\
+    (STRUCTP)->membFlag = ARG1;\
+    (STRUCTP)->accFlags = ARG2;\
 }
 #define FILLF_nestedSpec(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->cl = ARG0;\
-	(STRUCTP)->membFlag = ARG1;\
-	(STRUCTP)->accFlags = ARG2;\
+    (STRUCTP)->cl = ARG0;\
+    (STRUCTP)->membFlag = ARG1;\
+    (STRUCTP)->accFlags = ARG2;\
 }
 #define _FILLF_nestedSpec(STRUCTP, ARGS) {\
-	(STRUCTP)->cl = _ARG_0_OF_3 ARGS;\
-	(STRUCTP)->membFlag = _ARG_1_OF_3 ARGS;\
-	(STRUCTP)->accFlags = _ARG_2_OF_3 ARGS;\
+    (STRUCTP)->cl = _ARG_0_OF_3 ARGS;\
+    (STRUCTP)->membFlag = _ARG_1_OF_3 ARGS;\
+    (STRUCTP)->accFlags = _ARG_2_OF_3 ARGS;\
 }
 #define FILL_htmlCutPathsOpts(STRUCTP, ARG0) {\
-	(STRUCTP)->pathsNum = ARG0;\
+    (STRUCTP)->pathsNum = ARG0;\
 }
 #define FILLF_htmlCutPathsOpts(STRUCTP, ARG0) {\
-	(STRUCTP)->pathsNum = ARG0;\
+    (STRUCTP)->pathsNum = ARG0;\
 }
 #define _FILLF_htmlCutPathsOpts(STRUCTP, ARGS) {\
-	(STRUCTP)->pathsNum = _ARG_0_OF_1 ARGS;\
+    (STRUCTP)->pathsNum = _ARG_0_OF_1 ARGS;\
 }
 #define FILL_tpCheckMoveClassData(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4) {\
-	(STRUCTP)->mm = ARG0;\
-	(STRUCTP)->spack = ARG1;\
-	(STRUCTP)->tpack = ARG2;\
-	(STRUCTP)->transPackageMove = ARG3;\
-	(STRUCTP)->sclass = ARG4;\
+    (STRUCTP)->mm = ARG0;\
+    (STRUCTP)->spack = ARG1;\
+    (STRUCTP)->tpack = ARG2;\
+    (STRUCTP)->transPackageMove = ARG3;\
+    (STRUCTP)->sclass = ARG4;\
 }
 #define FILLF_tpCheckMoveClassData(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5) {\
-	(STRUCTP)->mm.minMemi = ARG0;\
-	(STRUCTP)->mm.maxMemi = ARG1;\
-	(STRUCTP)->spack = ARG2;\
-	(STRUCTP)->tpack = ARG3;\
-	(STRUCTP)->transPackageMove = ARG4;\
-	(STRUCTP)->sclass = ARG5;\
+    (STRUCTP)->mm.minMemi = ARG0;\
+    (STRUCTP)->mm.maxMemi = ARG1;\
+    (STRUCTP)->spack = ARG2;\
+    (STRUCTP)->tpack = ARG3;\
+    (STRUCTP)->transPackageMove = ARG4;\
+    (STRUCTP)->sclass = ARG5;\
 }
 #define _FILLF_tpCheckMoveClassData(STRUCTP, ARGS) {\
-	(STRUCTP)->mm.minMemi = _ARG_0_OF_6 ARGS;\
-	(STRUCTP)->mm.maxMemi = _ARG_1_OF_6 ARGS;\
-	(STRUCTP)->spack = _ARG_2_OF_6 ARGS;\
-	(STRUCTP)->tpack = _ARG_3_OF_6 ARGS;\
-	(STRUCTP)->transPackageMove = _ARG_4_OF_6 ARGS;\
-	(STRUCTP)->sclass = _ARG_5_OF_6 ARGS;\
+    (STRUCTP)->mm.minMemi = _ARG_0_OF_6 ARGS;\
+    (STRUCTP)->mm.maxMemi = _ARG_1_OF_6 ARGS;\
+    (STRUCTP)->spack = _ARG_2_OF_6 ARGS;\
+    (STRUCTP)->tpack = _ARG_3_OF_6 ARGS;\
+    (STRUCTP)->transPackageMove = _ARG_4_OF_6 ARGS;\
+    (STRUCTP)->sclass = _ARG_5_OF_6 ARGS;\
 }
 #define FILL_symbolRefItem(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6) {\
-	(STRUCTP)->name = ARG0;\
-	(STRUCTP)->fileHash = ARG1;\
-	(STRUCTP)->vApplClass = ARG2;\
-	(STRUCTP)->vFunClass = ARG3;\
-	(STRUCTP)->b = ARG4;\
-	(STRUCTP)->refs = ARG5;\
-	(STRUCTP)->next = ARG6;\
+    (STRUCTP)->name = ARG0;\
+    (STRUCTP)->fileHash = ARG1;\
+    (STRUCTP)->vApplClass = ARG2;\
+    (STRUCTP)->vFunClass = ARG3;\
+    (STRUCTP)->b = ARG4;\
+    (STRUCTP)->refs = ARG5;\
+    (STRUCTP)->next = ARG6;\
 }
 #define FILLF_symbolRefItem(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11) {\
-	(STRUCTP)->name = ARG0;\
-	(STRUCTP)->fileHash = ARG1;\
-	(STRUCTP)->vApplClass = ARG2;\
-	(STRUCTP)->vFunClass = ARG3;\
-	(STRUCTP)->b.symType = ARG4;\
-	(STRUCTP)->b.storage = ARG5;\
-	(STRUCTP)->b.scope = ARG6;\
-	(STRUCTP)->b.accessFlags = ARG7;\
-	(STRUCTP)->b.category = ARG8;\
-	(STRUCTP)->b.htmlWasLn = ARG9;\
-	(STRUCTP)->refs = ARG10;\
-	(STRUCTP)->next = ARG11;\
+    (STRUCTP)->name = ARG0;\
+    (STRUCTP)->fileHash = ARG1;\
+    (STRUCTP)->vApplClass = ARG2;\
+    (STRUCTP)->vFunClass = ARG3;\
+    (STRUCTP)->b.symType = ARG4;\
+    (STRUCTP)->b.storage = ARG5;\
+    (STRUCTP)->b.scope = ARG6;\
+    (STRUCTP)->b.accessFlags = ARG7;\
+    (STRUCTP)->b.category = ARG8;\
+    (STRUCTP)->b.htmlWasLn = ARG9;\
+    (STRUCTP)->refs = ARG10;\
+    (STRUCTP)->next = ARG11;\
 }
 #define _FILLF_symbolRefItem(STRUCTP, ARGS) {\
-	(STRUCTP)->name = _ARG_0_OF_12 ARGS;\
-	(STRUCTP)->fileHash = _ARG_1_OF_12 ARGS;\
-	(STRUCTP)->vApplClass = _ARG_2_OF_12 ARGS;\
-	(STRUCTP)->vFunClass = _ARG_3_OF_12 ARGS;\
-	(STRUCTP)->b.symType = _ARG_4_OF_12 ARGS;\
-	(STRUCTP)->b.storage = _ARG_5_OF_12 ARGS;\
-	(STRUCTP)->b.scope = _ARG_6_OF_12 ARGS;\
-	(STRUCTP)->b.accessFlags = _ARG_7_OF_12 ARGS;\
-	(STRUCTP)->b.category = _ARG_8_OF_12 ARGS;\
-	(STRUCTP)->b.htmlWasLn = _ARG_9_OF_12 ARGS;\
-	(STRUCTP)->refs = _ARG_10_OF_12 ARGS;\
-	(STRUCTP)->next = _ARG_11_OF_12 ARGS;\
+    (STRUCTP)->name = _ARG_0_OF_12 ARGS;\
+    (STRUCTP)->fileHash = _ARG_1_OF_12 ARGS;\
+    (STRUCTP)->vApplClass = _ARG_2_OF_12 ARGS;\
+    (STRUCTP)->vFunClass = _ARG_3_OF_12 ARGS;\
+    (STRUCTP)->b.symType = _ARG_4_OF_12 ARGS;\
+    (STRUCTP)->b.storage = _ARG_5_OF_12 ARGS;\
+    (STRUCTP)->b.scope = _ARG_6_OF_12 ARGS;\
+    (STRUCTP)->b.accessFlags = _ARG_7_OF_12 ARGS;\
+    (STRUCTP)->b.category = _ARG_8_OF_12 ARGS;\
+    (STRUCTP)->b.htmlWasLn = _ARG_9_OF_12 ARGS;\
+    (STRUCTP)->refs = _ARG_10_OF_12 ARGS;\
+    (STRUCTP)->next = _ARG_11_OF_12 ARGS;\
 }
 #define FILL_stringList(STRUCTP) {\
 }
@@ -442,133 +442,133 @@
 #define _FILLF_sigevent(STRUCTP, ARGS) {\
 }
 #define FILL_z_stream_s(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13) {\
-	(STRUCTP)->next_in = ARG0;\
-	(STRUCTP)->avail_in = ARG1;\
-	(STRUCTP)->total_in = ARG2;\
-	(STRUCTP)->next_out = ARG3;\
-	(STRUCTP)->avail_out = ARG4;\
-	(STRUCTP)->total_out = ARG5;\
-	(STRUCTP)->msg = ARG6;\
-	(STRUCTP)->state = ARG7;\
-	(STRUCTP)->zalloc = ARG8;\
-	(STRUCTP)->zfree = ARG9;\
-	(STRUCTP)->opaque = ARG10;\
-	(STRUCTP)->data_type = ARG11;\
-	(STRUCTP)->adler = ARG12;\
-	(STRUCTP)->reserved = ARG13;\
+    (STRUCTP)->next_in = ARG0;\
+    (STRUCTP)->avail_in = ARG1;\
+    (STRUCTP)->total_in = ARG2;\
+    (STRUCTP)->next_out = ARG3;\
+    (STRUCTP)->avail_out = ARG4;\
+    (STRUCTP)->total_out = ARG5;\
+    (STRUCTP)->msg = ARG6;\
+    (STRUCTP)->state = ARG7;\
+    (STRUCTP)->zalloc = ARG8;\
+    (STRUCTP)->zfree = ARG9;\
+    (STRUCTP)->opaque = ARG10;\
+    (STRUCTP)->data_type = ARG11;\
+    (STRUCTP)->adler = ARG12;\
+    (STRUCTP)->reserved = ARG13;\
 }
 #define FILLF_z_stream_s(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13) {\
-	(STRUCTP)->next_in = ARG0;\
-	(STRUCTP)->avail_in = ARG1;\
-	(STRUCTP)->total_in = ARG2;\
-	(STRUCTP)->next_out = ARG3;\
-	(STRUCTP)->avail_out = ARG4;\
-	(STRUCTP)->total_out = ARG5;\
-	(STRUCTP)->msg = ARG6;\
-	(STRUCTP)->state = ARG7;\
-	(STRUCTP)->zalloc = ARG8;\
-	(STRUCTP)->zfree = ARG9;\
-	(STRUCTP)->opaque = ARG10;\
-	(STRUCTP)->data_type = ARG11;\
-	(STRUCTP)->adler = ARG12;\
-	(STRUCTP)->reserved = ARG13;\
+    (STRUCTP)->next_in = ARG0;\
+    (STRUCTP)->avail_in = ARG1;\
+    (STRUCTP)->total_in = ARG2;\
+    (STRUCTP)->next_out = ARG3;\
+    (STRUCTP)->avail_out = ARG4;\
+    (STRUCTP)->total_out = ARG5;\
+    (STRUCTP)->msg = ARG6;\
+    (STRUCTP)->state = ARG7;\
+    (STRUCTP)->zalloc = ARG8;\
+    (STRUCTP)->zfree = ARG9;\
+    (STRUCTP)->opaque = ARG10;\
+    (STRUCTP)->data_type = ARG11;\
+    (STRUCTP)->adler = ARG12;\
+    (STRUCTP)->reserved = ARG13;\
 }
 #define _FILLF_z_stream_s(STRUCTP, ARGS) {\
-	(STRUCTP)->next_in = _ARG_0_OF_14 ARGS;\
-	(STRUCTP)->avail_in = _ARG_1_OF_14 ARGS;\
-	(STRUCTP)->total_in = _ARG_2_OF_14 ARGS;\
-	(STRUCTP)->next_out = _ARG_3_OF_14 ARGS;\
-	(STRUCTP)->avail_out = _ARG_4_OF_14 ARGS;\
-	(STRUCTP)->total_out = _ARG_5_OF_14 ARGS;\
-	(STRUCTP)->msg = _ARG_6_OF_14 ARGS;\
-	(STRUCTP)->state = _ARG_7_OF_14 ARGS;\
-	(STRUCTP)->zalloc = _ARG_8_OF_14 ARGS;\
-	(STRUCTP)->zfree = _ARG_9_OF_14 ARGS;\
-	(STRUCTP)->opaque = _ARG_10_OF_14 ARGS;\
-	(STRUCTP)->data_type = _ARG_11_OF_14 ARGS;\
-	(STRUCTP)->adler = _ARG_12_OF_14 ARGS;\
-	(STRUCTP)->reserved = _ARG_13_OF_14 ARGS;\
+    (STRUCTP)->next_in = _ARG_0_OF_14 ARGS;\
+    (STRUCTP)->avail_in = _ARG_1_OF_14 ARGS;\
+    (STRUCTP)->total_in = _ARG_2_OF_14 ARGS;\
+    (STRUCTP)->next_out = _ARG_3_OF_14 ARGS;\
+    (STRUCTP)->avail_out = _ARG_4_OF_14 ARGS;\
+    (STRUCTP)->total_out = _ARG_5_OF_14 ARGS;\
+    (STRUCTP)->msg = _ARG_6_OF_14 ARGS;\
+    (STRUCTP)->state = _ARG_7_OF_14 ARGS;\
+    (STRUCTP)->zalloc = _ARG_8_OF_14 ARGS;\
+    (STRUCTP)->zfree = _ARG_9_OF_14 ARGS;\
+    (STRUCTP)->opaque = _ARG_10_OF_14 ARGS;\
+    (STRUCTP)->data_type = _ARG_11_OF_14 ARGS;\
+    (STRUCTP)->adler = _ARG_12_OF_14 ARGS;\
+    (STRUCTP)->reserved = _ARG_13_OF_14 ARGS;\
 }
 #define FILL_typeModifier(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4) {\
-	(STRUCTP)->kind = ARG0;\
-	(STRUCTP)->u.ARG1 = ARG2;\
-	(STRUCTP)->typedefSymbol = ARG3;\
-	(STRUCTP)->next = ARG4;\
+    (STRUCTP)->kind = ARG0;\
+    (STRUCTP)->u.ARG1 = ARG2;\
+    (STRUCTP)->typedefSymbol = ARG3;\
+    (STRUCTP)->next = ARG4;\
 }
 #define FILLF_typeModifier(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4) {\
-	(STRUCTP)->kind = ARG0;\
-	_FILLUREC_typeModifierUnion_##ARG1((&(STRUCTP)->u), ARG2);\
-	(STRUCTP)->typedefSymbol = ARG3;\
-	(STRUCTP)->next = ARG4;\
+    (STRUCTP)->kind = ARG0;\
+    _FILLUREC_typeModifierUnion_##ARG1((&(STRUCTP)->u), ARG2);\
+    (STRUCTP)->typedefSymbol = ARG3;\
+    (STRUCTP)->next = ARG4;\
 }
 #define _FILLF_typeModifier(STRUCTP, ARGS) {\
-	(STRUCTP)->kind = _ARG_0_OF_5 ARGS;\
-	_FILLUREC_typeModifierUnion_##_ARG_1_OF_5 ARGS((&(STRUCTP)->u), _ARG_2_OF_5 ARGS);\
-	(STRUCTP)->typedefSymbol = _ARG_3_OF_5 ARGS;\
-	(STRUCTP)->next = _ARG_4_OF_5 ARGS;\
+    (STRUCTP)->kind = _ARG_0_OF_5 ARGS;\
+    _FILLUREC_typeModifierUnion_##_ARG_1_OF_5 ARGS((&(STRUCTP)->u), _ARG_2_OF_5 ARGS);\
+    (STRUCTP)->typedefSymbol = _ARG_3_OF_5 ARGS;\
+    (STRUCTP)->next = _ARG_4_OF_5 ARGS;\
 }
 #define FILL_cctNode(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->node = ARG0;\
-	(STRUCTP)->sub = ARG1;\
+    (STRUCTP)->node = ARG0;\
+    (STRUCTP)->sub = ARG1;\
 }
 #define FILLF_cctNode(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->node = ARG0;\
-	(STRUCTP)->sub = ARG1;\
+    (STRUCTP)->node = ARG0;\
+    (STRUCTP)->sub = ARG1;\
 }
 #define _FILLF_cctNode(STRUCTP, ARGS) {\
-	(STRUCTP)->node = _ARG_0_OF_2 ARGS;\
-	(STRUCTP)->sub = _ARG_1_OF_2 ARGS;\
+    (STRUCTP)->node = _ARG_0_OF_2 ARGS;\
+    (STRUCTP)->sub = _ARG_1_OF_2 ARGS;\
 }
 #define FILL___pthread_rwlock_arch_t(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10) {\
-	(STRUCTP)->__readers = ARG0;\
-	(STRUCTP)->__writers = ARG1;\
-	(STRUCTP)->__wrphase_futex = ARG2;\
-	(STRUCTP)->__writers_futex = ARG3;\
-	(STRUCTP)->__pad3 = ARG4;\
-	(STRUCTP)->__pad4 = ARG5;\
-	(STRUCTP)->__cur_writer = ARG6;\
-	(STRUCTP)->__shared = ARG7;\
-	(STRUCTP)->__rwelision = ARG8;\
-	(STRUCTP)->__pad2 = ARG9;\
-	(STRUCTP)->__flags = ARG10;\
+    (STRUCTP)->__readers = ARG0;\
+    (STRUCTP)->__writers = ARG1;\
+    (STRUCTP)->__wrphase_futex = ARG2;\
+    (STRUCTP)->__writers_futex = ARG3;\
+    (STRUCTP)->__pad3 = ARG4;\
+    (STRUCTP)->__pad4 = ARG5;\
+    (STRUCTP)->__cur_writer = ARG6;\
+    (STRUCTP)->__shared = ARG7;\
+    (STRUCTP)->__rwelision = ARG8;\
+    (STRUCTP)->__pad2 = ARG9;\
+    (STRUCTP)->__flags = ARG10;\
 }
 #define FILLF___pthread_rwlock_arch_t(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10) {\
-	(STRUCTP)->__readers = ARG0;\
-	(STRUCTP)->__writers = ARG1;\
-	(STRUCTP)->__wrphase_futex = ARG2;\
-	(STRUCTP)->__writers_futex = ARG3;\
-	(STRUCTP)->__pad3 = ARG4;\
-	(STRUCTP)->__pad4 = ARG5;\
-	(STRUCTP)->__cur_writer = ARG6;\
-	(STRUCTP)->__shared = ARG7;\
-	(STRUCTP)->__rwelision = ARG8;\
-	(STRUCTP)->__pad2 = ARG9;\
-	(STRUCTP)->__flags = ARG10;\
+    (STRUCTP)->__readers = ARG0;\
+    (STRUCTP)->__writers = ARG1;\
+    (STRUCTP)->__wrphase_futex = ARG2;\
+    (STRUCTP)->__writers_futex = ARG3;\
+    (STRUCTP)->__pad3 = ARG4;\
+    (STRUCTP)->__pad4 = ARG5;\
+    (STRUCTP)->__cur_writer = ARG6;\
+    (STRUCTP)->__shared = ARG7;\
+    (STRUCTP)->__rwelision = ARG8;\
+    (STRUCTP)->__pad2 = ARG9;\
+    (STRUCTP)->__flags = ARG10;\
 }
 #define _FILLF___pthread_rwlock_arch_t(STRUCTP, ARGS) {\
-	(STRUCTP)->__readers = _ARG_0_OF_11 ARGS;\
-	(STRUCTP)->__writers = _ARG_1_OF_11 ARGS;\
-	(STRUCTP)->__wrphase_futex = _ARG_2_OF_11 ARGS;\
-	(STRUCTP)->__writers_futex = _ARG_3_OF_11 ARGS;\
-	(STRUCTP)->__pad3 = _ARG_4_OF_11 ARGS;\
-	(STRUCTP)->__pad4 = _ARG_5_OF_11 ARGS;\
-	(STRUCTP)->__cur_writer = _ARG_6_OF_11 ARGS;\
-	(STRUCTP)->__shared = _ARG_7_OF_11 ARGS;\
-	(STRUCTP)->__rwelision = _ARG_8_OF_11 ARGS;\
-	(STRUCTP)->__pad2 = _ARG_9_OF_11 ARGS;\
-	(STRUCTP)->__flags = _ARG_10_OF_11 ARGS;\
+    (STRUCTP)->__readers = _ARG_0_OF_11 ARGS;\
+    (STRUCTP)->__writers = _ARG_1_OF_11 ARGS;\
+    (STRUCTP)->__wrphase_futex = _ARG_2_OF_11 ARGS;\
+    (STRUCTP)->__writers_futex = _ARG_3_OF_11 ARGS;\
+    (STRUCTP)->__pad3 = _ARG_4_OF_11 ARGS;\
+    (STRUCTP)->__pad4 = _ARG_5_OF_11 ARGS;\
+    (STRUCTP)->__cur_writer = _ARG_6_OF_11 ARGS;\
+    (STRUCTP)->__shared = _ARG_7_OF_11 ARGS;\
+    (STRUCTP)->__rwelision = _ARG_8_OF_11 ARGS;\
+    (STRUCTP)->__pad2 = _ARG_9_OF_11 ARGS;\
+    (STRUCTP)->__flags = _ARG_10_OF_11 ARGS;\
 }
 #define FILL_symbolPositionPair(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->s = ARG0;\
-	(STRUCTP)->p = ARG1;\
+    (STRUCTP)->s = ARG0;\
+    (STRUCTP)->p = ARG1;\
 }
 #define FILLF_symbolPositionPair(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->s = ARG0;\
-	(STRUCTP)->p = ARG1;\
+    (STRUCTP)->s = ARG0;\
+    (STRUCTP)->p = ARG1;\
 }
 #define _FILLF_symbolPositionPair(STRUCTP, ARGS) {\
-	(STRUCTP)->s = _ARG_0_OF_2 ARGS;\
-	(STRUCTP)->p = _ARG_1_OF_2 ARGS;\
+    (STRUCTP)->s = _ARG_0_OF_2 ARGS;\
+    (STRUCTP)->p = _ARG_1_OF_2 ARGS;\
 }
 #define FILL_internal_state(STRUCTP) {\
 }
@@ -577,46 +577,46 @@
 #define _FILLF_internal_state(STRUCTP, ARGS) {\
 }
 #define FILL_referencesChangeData(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5) {\
-	(STRUCTP)->linkName = ARG0;\
-	(STRUCTP)->fnum = ARG1;\
-	(STRUCTP)->cclass = ARG2;\
-	(STRUCTP)->category = ARG3;\
-	(STRUCTP)->cxMemBegin = ARG4;\
-	(STRUCTP)->cxMemEnd = ARG5;\
+    (STRUCTP)->linkName = ARG0;\
+    (STRUCTP)->fnum = ARG1;\
+    (STRUCTP)->cclass = ARG2;\
+    (STRUCTP)->category = ARG3;\
+    (STRUCTP)->cxMemBegin = ARG4;\
+    (STRUCTP)->cxMemEnd = ARG5;\
 }
 #define FILLF_referencesChangeData(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5) {\
-	(STRUCTP)->linkName = ARG0;\
-	(STRUCTP)->fnum = ARG1;\
-	(STRUCTP)->cclass = ARG2;\
-	(STRUCTP)->category = ARG3;\
-	(STRUCTP)->cxMemBegin = ARG4;\
-	(STRUCTP)->cxMemEnd = ARG5;\
+    (STRUCTP)->linkName = ARG0;\
+    (STRUCTP)->fnum = ARG1;\
+    (STRUCTP)->cclass = ARG2;\
+    (STRUCTP)->category = ARG3;\
+    (STRUCTP)->cxMemBegin = ARG4;\
+    (STRUCTP)->cxMemEnd = ARG5;\
 }
 #define _FILLF_referencesChangeData(STRUCTP, ARGS) {\
-	(STRUCTP)->linkName = _ARG_0_OF_6 ARGS;\
-	(STRUCTP)->fnum = _ARG_1_OF_6 ARGS;\
-	(STRUCTP)->cclass = _ARG_2_OF_6 ARGS;\
-	(STRUCTP)->category = _ARG_3_OF_6 ARGS;\
-	(STRUCTP)->cxMemBegin = _ARG_4_OF_6 ARGS;\
-	(STRUCTP)->cxMemEnd = _ARG_5_OF_6 ARGS;\
+    (STRUCTP)->linkName = _ARG_0_OF_6 ARGS;\
+    (STRUCTP)->fnum = _ARG_1_OF_6 ARGS;\
+    (STRUCTP)->cclass = _ARG_2_OF_6 ARGS;\
+    (STRUCTP)->category = _ARG_3_OF_6 ARGS;\
+    (STRUCTP)->cxMemBegin = _ARG_4_OF_6 ARGS;\
+    (STRUCTP)->cxMemEnd = _ARG_5_OF_6 ARGS;\
 }
 #define FILL_htmlRefList(STRUCTP, ARG0, ARG1, ARG2, ARG3) {\
-	(STRUCTP)->s = ARG0;\
-	(STRUCTP)->r = ARG1;\
-	(STRUCTP)->slist = ARG2;\
-	(STRUCTP)->next = ARG3;\
+    (STRUCTP)->s = ARG0;\
+    (STRUCTP)->r = ARG1;\
+    (STRUCTP)->slist = ARG2;\
+    (STRUCTP)->next = ARG3;\
 }
 #define FILLF_htmlRefList(STRUCTP, ARG0, ARG1, ARG2, ARG3) {\
-	(STRUCTP)->s = ARG0;\
-	(STRUCTP)->r = ARG1;\
-	(STRUCTP)->slist = ARG2;\
-	(STRUCTP)->next = ARG3;\
+    (STRUCTP)->s = ARG0;\
+    (STRUCTP)->r = ARG1;\
+    (STRUCTP)->slist = ARG2;\
+    (STRUCTP)->next = ARG3;\
 }
 #define _FILLF_htmlRefList(STRUCTP, ARGS) {\
-	(STRUCTP)->s = _ARG_0_OF_4 ARGS;\
-	(STRUCTP)->r = _ARG_1_OF_4 ARGS;\
-	(STRUCTP)->slist = _ARG_2_OF_4 ARGS;\
-	(STRUCTP)->next = _ARG_3_OF_4 ARGS;\
+    (STRUCTP)->s = _ARG_0_OF_4 ARGS;\
+    (STRUCTP)->r = _ARG_1_OF_4 ARGS;\
+    (STRUCTP)->slist = _ARG_2_OF_4 ARGS;\
+    (STRUCTP)->next = _ARG_3_OF_4 ARGS;\
 }
 #define FILL_symbol(STRUCTP) {\
 }
@@ -628,100 +628,100 @@
 #define _FILLUREC_typeModifierUnion_m(XX,ARGS) _FILLF_methodTypeModifier(&(XX->m),ARGS)
 #define _FILLUREC_typeModifierUnion_t(XX,ARG) XX->t = ARG;
 #define FILL_random_data(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6) {\
-	(STRUCTP)->fptr = ARG0;\
-	(STRUCTP)->rptr = ARG1;\
-	(STRUCTP)->state = ARG2;\
-	(STRUCTP)->rand_type = ARG3;\
-	(STRUCTP)->rand_deg = ARG4;\
-	(STRUCTP)->rand_sep = ARG5;\
-	(STRUCTP)->end_ptr = ARG6;\
+    (STRUCTP)->fptr = ARG0;\
+    (STRUCTP)->rptr = ARG1;\
+    (STRUCTP)->state = ARG2;\
+    (STRUCTP)->rand_type = ARG3;\
+    (STRUCTP)->rand_deg = ARG4;\
+    (STRUCTP)->rand_sep = ARG5;\
+    (STRUCTP)->end_ptr = ARG6;\
 }
 #define FILLF_random_data(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6) {\
-	(STRUCTP)->fptr = ARG0;\
-	(STRUCTP)->rptr = ARG1;\
-	(STRUCTP)->state = ARG2;\
-	(STRUCTP)->rand_type = ARG3;\
-	(STRUCTP)->rand_deg = ARG4;\
-	(STRUCTP)->rand_sep = ARG5;\
-	(STRUCTP)->end_ptr = ARG6;\
+    (STRUCTP)->fptr = ARG0;\
+    (STRUCTP)->rptr = ARG1;\
+    (STRUCTP)->state = ARG2;\
+    (STRUCTP)->rand_type = ARG3;\
+    (STRUCTP)->rand_deg = ARG4;\
+    (STRUCTP)->rand_sep = ARG5;\
+    (STRUCTP)->end_ptr = ARG6;\
 }
 #define _FILLF_random_data(STRUCTP, ARGS) {\
-	(STRUCTP)->fptr = _ARG_0_OF_7 ARGS;\
-	(STRUCTP)->rptr = _ARG_1_OF_7 ARGS;\
-	(STRUCTP)->state = _ARG_2_OF_7 ARGS;\
-	(STRUCTP)->rand_type = _ARG_3_OF_7 ARGS;\
-	(STRUCTP)->rand_deg = _ARG_4_OF_7 ARGS;\
-	(STRUCTP)->rand_sep = _ARG_5_OF_7 ARGS;\
-	(STRUCTP)->end_ptr = _ARG_6_OF_7 ARGS;\
+    (STRUCTP)->fptr = _ARG_0_OF_7 ARGS;\
+    (STRUCTP)->rptr = _ARG_1_OF_7 ARGS;\
+    (STRUCTP)->state = _ARG_2_OF_7 ARGS;\
+    (STRUCTP)->rand_type = _ARG_3_OF_7 ARGS;\
+    (STRUCTP)->rand_deg = _ARG_4_OF_7 ARGS;\
+    (STRUCTP)->rand_sep = _ARG_5_OF_7 ARGS;\
+    (STRUCTP)->end_ptr = _ARG_6_OF_7 ARGS;\
 }
 #define FILL_usageBits(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->base = ARG0;\
-	(STRUCTP)->requiredAccess = ARG1;\
-	(STRUCTP)->dummy = ARG2;\
+    (STRUCTP)->base = ARG0;\
+    (STRUCTP)->requiredAccess = ARG1;\
+    (STRUCTP)->dummy = ARG2;\
 }
 #define FILLF_usageBits(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->base = ARG0;\
-	(STRUCTP)->requiredAccess = ARG1;\
-	(STRUCTP)->dummy = ARG2;\
+    (STRUCTP)->base = ARG0;\
+    (STRUCTP)->requiredAccess = ARG1;\
+    (STRUCTP)->dummy = ARG2;\
 }
 #define _FILLF_usageBits(STRUCTP, ARGS) {\
-	(STRUCTP)->base = _ARG_0_OF_3 ARGS;\
-	(STRUCTP)->requiredAccess = _ARG_1_OF_3 ARGS;\
-	(STRUCTP)->dummy = _ARG_2_OF_3 ARGS;\
+    (STRUCTP)->base = _ARG_0_OF_3 ARGS;\
+    (STRUCTP)->requiredAccess = _ARG_1_OF_3 ARGS;\
+    (STRUCTP)->dummy = _ARG_2_OF_3 ARGS;\
 }
 #define FILL_olSymbolFoundInformation(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->symrefs = ARG0;\
-	(STRUCTP)->symRefsInfo = ARG1;\
-	(STRUCTP)->currentRef = ARG2;\
+    (STRUCTP)->symrefs = ARG0;\
+    (STRUCTP)->symRefsInfo = ARG1;\
+    (STRUCTP)->currentRef = ARG2;\
 }
 #define FILLF_olSymbolFoundInformation(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->symrefs = ARG0;\
-	(STRUCTP)->symRefsInfo = ARG1;\
-	(STRUCTP)->currentRef = ARG2;\
+    (STRUCTP)->symrefs = ARG0;\
+    (STRUCTP)->symRefsInfo = ARG1;\
+    (STRUCTP)->currentRef = ARG2;\
 }
 #define _FILLF_olSymbolFoundInformation(STRUCTP, ARGS) {\
-	(STRUCTP)->symrefs = _ARG_0_OF_3 ARGS;\
-	(STRUCTP)->symRefsInfo = _ARG_1_OF_3 ARGS;\
-	(STRUCTP)->currentRef = _ARG_2_OF_3 ARGS;\
+    (STRUCTP)->symrefs = _ARG_0_OF_3 ARGS;\
+    (STRUCTP)->symRefsInfo = _ARG_1_OF_3 ARGS;\
+    (STRUCTP)->currentRef = _ARG_2_OF_3 ARGS;\
 }
 #define FILL_htmlData(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->cp = ARG0;\
-	(STRUCTP)->np = ARG1;\
-	(STRUCTP)->nri = ARG2;\
+    (STRUCTP)->cp = ARG0;\
+    (STRUCTP)->np = ARG1;\
+    (STRUCTP)->nri = ARG2;\
 }
 #define FILLF_htmlData(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->cp = ARG0;\
-	(STRUCTP)->np = ARG1;\
-	(STRUCTP)->nri = ARG2;\
+    (STRUCTP)->cp = ARG0;\
+    (STRUCTP)->np = ARG1;\
+    (STRUCTP)->nri = ARG2;\
 }
 #define _FILLF_htmlData(STRUCTP, ARGS) {\
-	(STRUCTP)->cp = _ARG_0_OF_3 ARGS;\
-	(STRUCTP)->np = _ARG_1_OF_3 ARGS;\
-	(STRUCTP)->nri = _ARG_2_OF_3 ARGS;\
+    (STRUCTP)->cp = _ARG_0_OF_3 ARGS;\
+    (STRUCTP)->np = _ARG_1_OF_3 ARGS;\
+    (STRUCTP)->nri = _ARG_2_OF_3 ARGS;\
 }
 #define FILL_functionTypeModifier(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->args = ARG0;\
-	(STRUCTP)->thisFunList = ARG1;\
+    (STRUCTP)->args = ARG0;\
+    (STRUCTP)->thisFunList = ARG1;\
 }
 #define FILLF_functionTypeModifier(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->args = ARG0;\
-	(STRUCTP)->thisFunList = ARG1;\
+    (STRUCTP)->args = ARG0;\
+    (STRUCTP)->thisFunList = ARG1;\
 }
 #define _FILLF_functionTypeModifier(STRUCTP, ARGS) {\
-	(STRUCTP)->args = _ARG_0_OF_2 ARGS;\
-	(STRUCTP)->thisFunList = _ARG_1_OF_2 ARGS;\
+    (STRUCTP)->args = _ARG_0_OF_2 ARGS;\
+    (STRUCTP)->thisFunList = _ARG_1_OF_2 ARGS;\
 }
 #define FILL_stringAddrList(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->d = ARG0;\
-	(STRUCTP)->next = ARG1;\
+    (STRUCTP)->d = ARG0;\
+    (STRUCTP)->next = ARG1;\
 }
 #define FILLF_stringAddrList(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->d = ARG0;\
-	(STRUCTP)->next = ARG1;\
+    (STRUCTP)->d = ARG0;\
+    (STRUCTP)->next = ARG1;\
 }
 #define _FILLF_stringAddrList(STRUCTP, ARGS) {\
-	(STRUCTP)->d = _ARG_0_OF_2 ARGS;\
-	(STRUCTP)->next = _ARG_1_OF_2 ARGS;\
+    (STRUCTP)->d = _ARG_0_OF_2 ARGS;\
+    (STRUCTP)->next = _ARG_1_OF_2 ARGS;\
 }
 #define FILL_editorMarkerList(STRUCTP) {\
 }
@@ -730,1135 +730,1135 @@
 #define _FILLF_editorMarkerList(STRUCTP, ARGS) {\
 }
 #define FILL_whileExtractData(STRUCTP, ARG0, ARG1, ARG2, ARG3) {\
-	(STRUCTP)->i1 = ARG0;\
-	(STRUCTP)->i2 = ARG1;\
-	(STRUCTP)->i3 = ARG2;\
-	(STRUCTP)->i4 = ARG3;\
+    (STRUCTP)->i1 = ARG0;\
+    (STRUCTP)->i2 = ARG1;\
+    (STRUCTP)->i3 = ARG2;\
+    (STRUCTP)->i4 = ARG3;\
 }
 #define FILLF_whileExtractData(STRUCTP, ARG0, ARG1, ARG2, ARG3) {\
-	(STRUCTP)->i1 = ARG0;\
-	(STRUCTP)->i2 = ARG1;\
-	(STRUCTP)->i3 = ARG2;\
-	(STRUCTP)->i4 = ARG3;\
+    (STRUCTP)->i1 = ARG0;\
+    (STRUCTP)->i2 = ARG1;\
+    (STRUCTP)->i3 = ARG2;\
+    (STRUCTP)->i4 = ARG3;\
 }
 #define _FILLF_whileExtractData(STRUCTP, ARGS) {\
-	(STRUCTP)->i1 = _ARG_0_OF_4 ARGS;\
-	(STRUCTP)->i2 = _ARG_1_OF_4 ARGS;\
-	(STRUCTP)->i3 = _ARG_2_OF_4 ARGS;\
-	(STRUCTP)->i4 = _ARG_3_OF_4 ARGS;\
+    (STRUCTP)->i1 = _ARG_0_OF_4 ARGS;\
+    (STRUCTP)->i2 = _ARG_1_OF_4 ARGS;\
+    (STRUCTP)->i3 = _ARG_2_OF_4 ARGS;\
+    (STRUCTP)->i4 = _ARG_3_OF_4 ARGS;\
 }
 #define FILL_typeModifierList(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->d = ARG0;\
-	(STRUCTP)->next = ARG1;\
+    (STRUCTP)->d = ARG0;\
+    (STRUCTP)->next = ARG1;\
 }
 #define FILLF_typeModifierList(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->d = ARG0;\
-	(STRUCTP)->next = ARG1;\
+    (STRUCTP)->d = ARG0;\
+    (STRUCTP)->next = ARG1;\
 }
 #define _FILLF_typeModifierList(STRUCTP, ARGS) {\
-	(STRUCTP)->d = _ARG_0_OF_2 ARGS;\
-	(STRUCTP)->next = _ARG_1_OF_2 ARGS;\
+    (STRUCTP)->d = _ARG_0_OF_2 ARGS;\
+    (STRUCTP)->next = _ARG_1_OF_2 ARGS;\
 }
 #define FILL_extRecFindStr(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->s = ARG0;\
-	(STRUCTP)->memb = ARG1;\
-	(STRUCTP)->params = ARG2;\
+    (STRUCTP)->s = ARG0;\
+    (STRUCTP)->memb = ARG1;\
+    (STRUCTP)->params = ARG2;\
 }
 #define FILLF_extRecFindStr(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7) {\
-	(STRUCTP)->s.baseClass = ARG0;\
-	(STRUCTP)->s.currClass = ARG1;\
-	(STRUCTP)->s.nextRecord = ARG2;\
-	(STRUCTP)->s.recsClassCounter = ARG3;\
-	(STRUCTP)->s.sti = ARG4;\
-	(STRUCTP)->s.aui = ARG5;\
-	(STRUCTP)->memb = ARG6;\
-	(STRUCTP)->params = ARG7;\
+    (STRUCTP)->s.baseClass = ARG0;\
+    (STRUCTP)->s.currClass = ARG1;\
+    (STRUCTP)->s.nextRecord = ARG2;\
+    (STRUCTP)->s.recsClassCounter = ARG3;\
+    (STRUCTP)->s.sti = ARG4;\
+    (STRUCTP)->s.aui = ARG5;\
+    (STRUCTP)->memb = ARG6;\
+    (STRUCTP)->params = ARG7;\
 }
 #define _FILLF_extRecFindStr(STRUCTP, ARGS) {\
-	(STRUCTP)->s.baseClass = _ARG_0_OF_8 ARGS;\
-	(STRUCTP)->s.currClass = _ARG_1_OF_8 ARGS;\
-	(STRUCTP)->s.nextRecord = _ARG_2_OF_8 ARGS;\
-	(STRUCTP)->s.recsClassCounter = _ARG_3_OF_8 ARGS;\
-	(STRUCTP)->s.sti = _ARG_4_OF_8 ARGS;\
-	(STRUCTP)->s.aui = _ARG_5_OF_8 ARGS;\
-	(STRUCTP)->memb = _ARG_6_OF_8 ARGS;\
-	(STRUCTP)->params = _ARG_7_OF_8 ARGS;\
+    (STRUCTP)->s.baseClass = _ARG_0_OF_8 ARGS;\
+    (STRUCTP)->s.currClass = _ARG_1_OF_8 ARGS;\
+    (STRUCTP)->s.nextRecord = _ARG_2_OF_8 ARGS;\
+    (STRUCTP)->s.recsClassCounter = _ARG_3_OF_8 ARGS;\
+    (STRUCTP)->s.sti = _ARG_4_OF_8 ARGS;\
+    (STRUCTP)->s.aui = _ARG_5_OF_8 ARGS;\
+    (STRUCTP)->memb = _ARG_6_OF_8 ARGS;\
+    (STRUCTP)->params = _ARG_7_OF_8 ARGS;\
 }
 #define FILL_olCompletion(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9) {\
-	(STRUCTP)->name = ARG0;\
-	(STRUCTP)->fullName = ARG1;\
-	(STRUCTP)->vclass = ARG2;\
-	(STRUCTP)->jindent = ARG3;\
-	(STRUCTP)->lineCount = ARG4;\
-	(STRUCTP)->cat = ARG5;\
-	(STRUCTP)->csymType = ARG6;\
-	(STRUCTP)->ref = ARG7;\
-	(STRUCTP)->sym = ARG8;\
-	(STRUCTP)->next = ARG9;\
+    (STRUCTP)->name = ARG0;\
+    (STRUCTP)->fullName = ARG1;\
+    (STRUCTP)->vclass = ARG2;\
+    (STRUCTP)->jindent = ARG3;\
+    (STRUCTP)->lineCount = ARG4;\
+    (STRUCTP)->cat = ARG5;\
+    (STRUCTP)->csymType = ARG6;\
+    (STRUCTP)->ref = ARG7;\
+    (STRUCTP)->sym = ARG8;\
+    (STRUCTP)->next = ARG9;\
 }
 #define FILLF_olCompletion(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13, ARG14, ARG15, ARG16, ARG17, ARG18, ARG19, ARG20, ARG21, ARG22, ARG23, ARG24, ARG25, ARG26) {\
-	(STRUCTP)->name = ARG0;\
-	(STRUCTP)->fullName = ARG1;\
-	(STRUCTP)->vclass = ARG2;\
-	(STRUCTP)->jindent = ARG3;\
-	(STRUCTP)->lineCount = ARG4;\
-	(STRUCTP)->cat = ARG5;\
-	(STRUCTP)->csymType = ARG6;\
-	(STRUCTP)->ref.usage.base = ARG7;\
-	(STRUCTP)->ref.usage.requiredAccess = ARG8;\
-	(STRUCTP)->ref.usage.dummy = ARG9;\
-	(STRUCTP)->ref.p.file = ARG10;\
-	(STRUCTP)->ref.p.line = ARG11;\
-	(STRUCTP)->ref.p.col = ARG12;\
-	(STRUCTP)->ref.next = ARG13;\
-	(STRUCTP)->sym.name = ARG14;\
-	(STRUCTP)->sym.fileHash = ARG15;\
-	(STRUCTP)->sym.vApplClass = ARG16;\
-	(STRUCTP)->sym.vFunClass = ARG17;\
-	(STRUCTP)->sym.b.symType = ARG18;\
-	(STRUCTP)->sym.b.storage = ARG19;\
-	(STRUCTP)->sym.b.scope = ARG20;\
-	(STRUCTP)->sym.b.accessFlags = ARG21;\
-	(STRUCTP)->sym.b.category = ARG22;\
-	(STRUCTP)->sym.b.htmlWasLn = ARG23;\
-	(STRUCTP)->sym.refs = ARG24;\
-	(STRUCTP)->sym.next = ARG25;\
-	(STRUCTP)->next = ARG26;\
+    (STRUCTP)->name = ARG0;\
+    (STRUCTP)->fullName = ARG1;\
+    (STRUCTP)->vclass = ARG2;\
+    (STRUCTP)->jindent = ARG3;\
+    (STRUCTP)->lineCount = ARG4;\
+    (STRUCTP)->cat = ARG5;\
+    (STRUCTP)->csymType = ARG6;\
+    (STRUCTP)->ref.usage.base = ARG7;\
+    (STRUCTP)->ref.usage.requiredAccess = ARG8;\
+    (STRUCTP)->ref.usage.dummy = ARG9;\
+    (STRUCTP)->ref.p.file = ARG10;\
+    (STRUCTP)->ref.p.line = ARG11;\
+    (STRUCTP)->ref.p.col = ARG12;\
+    (STRUCTP)->ref.next = ARG13;\
+    (STRUCTP)->sym.name = ARG14;\
+    (STRUCTP)->sym.fileHash = ARG15;\
+    (STRUCTP)->sym.vApplClass = ARG16;\
+    (STRUCTP)->sym.vFunClass = ARG17;\
+    (STRUCTP)->sym.b.symType = ARG18;\
+    (STRUCTP)->sym.b.storage = ARG19;\
+    (STRUCTP)->sym.b.scope = ARG20;\
+    (STRUCTP)->sym.b.accessFlags = ARG21;\
+    (STRUCTP)->sym.b.category = ARG22;\
+    (STRUCTP)->sym.b.htmlWasLn = ARG23;\
+    (STRUCTP)->sym.refs = ARG24;\
+    (STRUCTP)->sym.next = ARG25;\
+    (STRUCTP)->next = ARG26;\
 }
 #define _FILLF_olCompletion(STRUCTP, ARGS) {\
-	(STRUCTP)->name = _ARG_0_OF_27 ARGS;\
-	(STRUCTP)->fullName = _ARG_1_OF_27 ARGS;\
-	(STRUCTP)->vclass = _ARG_2_OF_27 ARGS;\
-	(STRUCTP)->jindent = _ARG_3_OF_27 ARGS;\
-	(STRUCTP)->lineCount = _ARG_4_OF_27 ARGS;\
-	(STRUCTP)->cat = _ARG_5_OF_27 ARGS;\
-	(STRUCTP)->csymType = _ARG_6_OF_27 ARGS;\
-	(STRUCTP)->ref.usage.base = _ARG_7_OF_27 ARGS;\
-	(STRUCTP)->ref.usage.requiredAccess = _ARG_8_OF_27 ARGS;\
-	(STRUCTP)->ref.usage.dummy = _ARG_9_OF_27 ARGS;\
-	(STRUCTP)->ref.p.file = _ARG_10_OF_27 ARGS;\
-	(STRUCTP)->ref.p.line = _ARG_11_OF_27 ARGS;\
-	(STRUCTP)->ref.p.col = _ARG_12_OF_27 ARGS;\
-	(STRUCTP)->ref.next = _ARG_13_OF_27 ARGS;\
-	(STRUCTP)->sym.name = _ARG_14_OF_27 ARGS;\
-	(STRUCTP)->sym.fileHash = _ARG_15_OF_27 ARGS;\
-	(STRUCTP)->sym.vApplClass = _ARG_16_OF_27 ARGS;\
-	(STRUCTP)->sym.vFunClass = _ARG_17_OF_27 ARGS;\
-	(STRUCTP)->sym.b.symType = _ARG_18_OF_27 ARGS;\
-	(STRUCTP)->sym.b.storage = _ARG_19_OF_27 ARGS;\
-	(STRUCTP)->sym.b.scope = _ARG_20_OF_27 ARGS;\
-	(STRUCTP)->sym.b.accessFlags = _ARG_21_OF_27 ARGS;\
-	(STRUCTP)->sym.b.category = _ARG_22_OF_27 ARGS;\
-	(STRUCTP)->sym.b.htmlWasLn = _ARG_23_OF_27 ARGS;\
-	(STRUCTP)->sym.refs = _ARG_24_OF_27 ARGS;\
-	(STRUCTP)->sym.next = _ARG_25_OF_27 ARGS;\
-	(STRUCTP)->next = _ARG_26_OF_27 ARGS;\
+    (STRUCTP)->name = _ARG_0_OF_27 ARGS;\
+    (STRUCTP)->fullName = _ARG_1_OF_27 ARGS;\
+    (STRUCTP)->vclass = _ARG_2_OF_27 ARGS;\
+    (STRUCTP)->jindent = _ARG_3_OF_27 ARGS;\
+    (STRUCTP)->lineCount = _ARG_4_OF_27 ARGS;\
+    (STRUCTP)->cat = _ARG_5_OF_27 ARGS;\
+    (STRUCTP)->csymType = _ARG_6_OF_27 ARGS;\
+    (STRUCTP)->ref.usage.base = _ARG_7_OF_27 ARGS;\
+    (STRUCTP)->ref.usage.requiredAccess = _ARG_8_OF_27 ARGS;\
+    (STRUCTP)->ref.usage.dummy = _ARG_9_OF_27 ARGS;\
+    (STRUCTP)->ref.p.file = _ARG_10_OF_27 ARGS;\
+    (STRUCTP)->ref.p.line = _ARG_11_OF_27 ARGS;\
+    (STRUCTP)->ref.p.col = _ARG_12_OF_27 ARGS;\
+    (STRUCTP)->ref.next = _ARG_13_OF_27 ARGS;\
+    (STRUCTP)->sym.name = _ARG_14_OF_27 ARGS;\
+    (STRUCTP)->sym.fileHash = _ARG_15_OF_27 ARGS;\
+    (STRUCTP)->sym.vApplClass = _ARG_16_OF_27 ARGS;\
+    (STRUCTP)->sym.vFunClass = _ARG_17_OF_27 ARGS;\
+    (STRUCTP)->sym.b.symType = _ARG_18_OF_27 ARGS;\
+    (STRUCTP)->sym.b.storage = _ARG_19_OF_27 ARGS;\
+    (STRUCTP)->sym.b.scope = _ARG_20_OF_27 ARGS;\
+    (STRUCTP)->sym.b.accessFlags = _ARG_21_OF_27 ARGS;\
+    (STRUCTP)->sym.b.category = _ARG_22_OF_27 ARGS;\
+    (STRUCTP)->sym.b.htmlWasLn = _ARG_23_OF_27 ARGS;\
+    (STRUCTP)->sym.refs = _ARG_24_OF_27 ARGS;\
+    (STRUCTP)->sym.next = _ARG_25_OF_27 ARGS;\
+    (STRUCTP)->next = _ARG_26_OF_27 ARGS;\
 }
 #define FILL_nestedConstrTokenType(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->t = ARG0;\
-	(STRUCTP)->nid = ARG1;\
-	(STRUCTP)->pp = ARG2;\
+    (STRUCTP)->t = ARG0;\
+    (STRUCTP)->nid = ARG1;\
+    (STRUCTP)->pp = ARG2;\
 }
 #define FILLF_nestedConstrTokenType(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->t = ARG0;\
-	(STRUCTP)->nid = ARG1;\
-	(STRUCTP)->pp = ARG2;\
+    (STRUCTP)->t = ARG0;\
+    (STRUCTP)->nid = ARG1;\
+    (STRUCTP)->pp = ARG2;\
 }
 #define _FILLF_nestedConstrTokenType(STRUCTP, ARGS) {\
-	(STRUCTP)->t = _ARG_0_OF_3 ARGS;\
-	(STRUCTP)->nid = _ARG_1_OF_3 ARGS;\
-	(STRUCTP)->pp = _ARG_2_OF_3 ARGS;\
+    (STRUCTP)->t = _ARG_0_OF_3 ARGS;\
+    (STRUCTP)->nid = _ARG_1_OF_3 ARGS;\
+    (STRUCTP)->pp = _ARG_2_OF_3 ARGS;\
 }
 #define FILL_olcxReferencesStack(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->top = ARG0;\
-	(STRUCTP)->root = ARG1;\
+    (STRUCTP)->top = ARG0;\
+    (STRUCTP)->root = ARG1;\
 }
 #define FILLF_olcxReferencesStack(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->top = ARG0;\
-	(STRUCTP)->root = ARG1;\
+    (STRUCTP)->top = ARG0;\
+    (STRUCTP)->root = ARG1;\
 }
 #define _FILLF_olcxReferencesStack(STRUCTP, ARGS) {\
-	(STRUCTP)->top = _ARG_0_OF_2 ARGS;\
-	(STRUCTP)->root = _ARG_1_OF_2 ARGS;\
+    (STRUCTP)->top = _ARG_0_OF_2 ARGS;\
+    (STRUCTP)->root = _ARG_1_OF_2 ARGS;\
 }
 #define FILL__IO_FILE(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13, ARG14, ARG15, ARG16, ARG17, ARG18, ARG19, ARG20, ARG21, ARG22, ARG23, ARG24, ARG25, ARG26) {\
-	(STRUCTP)->_flags = ARG0;\
-	(STRUCTP)->_IO_read_ptr = ARG1;\
-	(STRUCTP)->_IO_read_end = ARG2;\
-	(STRUCTP)->_IO_read_base = ARG3;\
-	(STRUCTP)->_IO_write_base = ARG4;\
-	(STRUCTP)->_IO_write_ptr = ARG5;\
-	(STRUCTP)->_IO_write_end = ARG6;\
-	(STRUCTP)->_IO_buf_base = ARG7;\
-	(STRUCTP)->_IO_buf_end = ARG8;\
-	(STRUCTP)->_IO_save_base = ARG9;\
-	(STRUCTP)->_IO_backup_base = ARG10;\
-	(STRUCTP)->_IO_save_end = ARG11;\
-	(STRUCTP)->_markers = ARG12;\
-	(STRUCTP)->_chain = ARG13;\
-	(STRUCTP)->_fileno = ARG14;\
-	(STRUCTP)->_flags2 = ARG15;\
-	(STRUCTP)->_old_offset = ARG16;\
-	(STRUCTP)->_cur_column = ARG17;\
-	(STRUCTP)->_vtable_offset = ARG18;\
-	(STRUCTP)->_lock = ARG19;\
-	(STRUCTP)->_offset = ARG20;\
-	(STRUCTP)->__pad1 = ARG21;\
-	(STRUCTP)->__pad2 = ARG22;\
-	(STRUCTP)->__pad3 = ARG23;\
-	(STRUCTP)->__pad4 = ARG24;\
-	(STRUCTP)->__pad5 = ARG25;\
-	(STRUCTP)->_mode = ARG26;\
+    (STRUCTP)->_flags = ARG0;\
+    (STRUCTP)->_IO_read_ptr = ARG1;\
+    (STRUCTP)->_IO_read_end = ARG2;\
+    (STRUCTP)->_IO_read_base = ARG3;\
+    (STRUCTP)->_IO_write_base = ARG4;\
+    (STRUCTP)->_IO_write_ptr = ARG5;\
+    (STRUCTP)->_IO_write_end = ARG6;\
+    (STRUCTP)->_IO_buf_base = ARG7;\
+    (STRUCTP)->_IO_buf_end = ARG8;\
+    (STRUCTP)->_IO_save_base = ARG9;\
+    (STRUCTP)->_IO_backup_base = ARG10;\
+    (STRUCTP)->_IO_save_end = ARG11;\
+    (STRUCTP)->_markers = ARG12;\
+    (STRUCTP)->_chain = ARG13;\
+    (STRUCTP)->_fileno = ARG14;\
+    (STRUCTP)->_flags2 = ARG15;\
+    (STRUCTP)->_old_offset = ARG16;\
+    (STRUCTP)->_cur_column = ARG17;\
+    (STRUCTP)->_vtable_offset = ARG18;\
+    (STRUCTP)->_lock = ARG19;\
+    (STRUCTP)->_offset = ARG20;\
+    (STRUCTP)->__pad1 = ARG21;\
+    (STRUCTP)->__pad2 = ARG22;\
+    (STRUCTP)->__pad3 = ARG23;\
+    (STRUCTP)->__pad4 = ARG24;\
+    (STRUCTP)->__pad5 = ARG25;\
+    (STRUCTP)->_mode = ARG26;\
 }
 #define FILLF__IO_FILE(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13, ARG14, ARG15, ARG16, ARG17, ARG18, ARG19, ARG20, ARG21, ARG22, ARG23, ARG24, ARG25, ARG26) {\
-	(STRUCTP)->_flags = ARG0;\
-	(STRUCTP)->_IO_read_ptr = ARG1;\
-	(STRUCTP)->_IO_read_end = ARG2;\
-	(STRUCTP)->_IO_read_base = ARG3;\
-	(STRUCTP)->_IO_write_base = ARG4;\
-	(STRUCTP)->_IO_write_ptr = ARG5;\
-	(STRUCTP)->_IO_write_end = ARG6;\
-	(STRUCTP)->_IO_buf_base = ARG7;\
-	(STRUCTP)->_IO_buf_end = ARG8;\
-	(STRUCTP)->_IO_save_base = ARG9;\
-	(STRUCTP)->_IO_backup_base = ARG10;\
-	(STRUCTP)->_IO_save_end = ARG11;\
-	(STRUCTP)->_markers = ARG12;\
-	(STRUCTP)->_chain = ARG13;\
-	(STRUCTP)->_fileno = ARG14;\
-	(STRUCTP)->_flags2 = ARG15;\
-	(STRUCTP)->_old_offset = ARG16;\
-	(STRUCTP)->_cur_column = ARG17;\
-	(STRUCTP)->_vtable_offset = ARG18;\
-	(STRUCTP)->_lock = ARG19;\
-	(STRUCTP)->_offset = ARG20;\
-	(STRUCTP)->__pad1 = ARG21;\
-	(STRUCTP)->__pad2 = ARG22;\
-	(STRUCTP)->__pad3 = ARG23;\
-	(STRUCTP)->__pad4 = ARG24;\
-	(STRUCTP)->__pad5 = ARG25;\
-	(STRUCTP)->_mode = ARG26;\
+    (STRUCTP)->_flags = ARG0;\
+    (STRUCTP)->_IO_read_ptr = ARG1;\
+    (STRUCTP)->_IO_read_end = ARG2;\
+    (STRUCTP)->_IO_read_base = ARG3;\
+    (STRUCTP)->_IO_write_base = ARG4;\
+    (STRUCTP)->_IO_write_ptr = ARG5;\
+    (STRUCTP)->_IO_write_end = ARG6;\
+    (STRUCTP)->_IO_buf_base = ARG7;\
+    (STRUCTP)->_IO_buf_end = ARG8;\
+    (STRUCTP)->_IO_save_base = ARG9;\
+    (STRUCTP)->_IO_backup_base = ARG10;\
+    (STRUCTP)->_IO_save_end = ARG11;\
+    (STRUCTP)->_markers = ARG12;\
+    (STRUCTP)->_chain = ARG13;\
+    (STRUCTP)->_fileno = ARG14;\
+    (STRUCTP)->_flags2 = ARG15;\
+    (STRUCTP)->_old_offset = ARG16;\
+    (STRUCTP)->_cur_column = ARG17;\
+    (STRUCTP)->_vtable_offset = ARG18;\
+    (STRUCTP)->_lock = ARG19;\
+    (STRUCTP)->_offset = ARG20;\
+    (STRUCTP)->__pad1 = ARG21;\
+    (STRUCTP)->__pad2 = ARG22;\
+    (STRUCTP)->__pad3 = ARG23;\
+    (STRUCTP)->__pad4 = ARG24;\
+    (STRUCTP)->__pad5 = ARG25;\
+    (STRUCTP)->_mode = ARG26;\
 }
 #define _FILLF__IO_FILE(STRUCTP, ARGS) {\
-	(STRUCTP)->_flags = _ARG_0_OF_27 ARGS;\
-	(STRUCTP)->_IO_read_ptr = _ARG_1_OF_27 ARGS;\
-	(STRUCTP)->_IO_read_end = _ARG_2_OF_27 ARGS;\
-	(STRUCTP)->_IO_read_base = _ARG_3_OF_27 ARGS;\
-	(STRUCTP)->_IO_write_base = _ARG_4_OF_27 ARGS;\
-	(STRUCTP)->_IO_write_ptr = _ARG_5_OF_27 ARGS;\
-	(STRUCTP)->_IO_write_end = _ARG_6_OF_27 ARGS;\
-	(STRUCTP)->_IO_buf_base = _ARG_7_OF_27 ARGS;\
-	(STRUCTP)->_IO_buf_end = _ARG_8_OF_27 ARGS;\
-	(STRUCTP)->_IO_save_base = _ARG_9_OF_27 ARGS;\
-	(STRUCTP)->_IO_backup_base = _ARG_10_OF_27 ARGS;\
-	(STRUCTP)->_IO_save_end = _ARG_11_OF_27 ARGS;\
-	(STRUCTP)->_markers = _ARG_12_OF_27 ARGS;\
-	(STRUCTP)->_chain = _ARG_13_OF_27 ARGS;\
-	(STRUCTP)->_fileno = _ARG_14_OF_27 ARGS;\
-	(STRUCTP)->_flags2 = _ARG_15_OF_27 ARGS;\
-	(STRUCTP)->_old_offset = _ARG_16_OF_27 ARGS;\
-	(STRUCTP)->_cur_column = _ARG_17_OF_27 ARGS;\
-	(STRUCTP)->_vtable_offset = _ARG_18_OF_27 ARGS;\
-	(STRUCTP)->_lock = _ARG_19_OF_27 ARGS;\
-	(STRUCTP)->_offset = _ARG_20_OF_27 ARGS;\
-	(STRUCTP)->__pad1 = _ARG_21_OF_27 ARGS;\
-	(STRUCTP)->__pad2 = _ARG_22_OF_27 ARGS;\
-	(STRUCTP)->__pad3 = _ARG_23_OF_27 ARGS;\
-	(STRUCTP)->__pad4 = _ARG_24_OF_27 ARGS;\
-	(STRUCTP)->__pad5 = _ARG_25_OF_27 ARGS;\
-	(STRUCTP)->_mode = _ARG_26_OF_27 ARGS;\
+    (STRUCTP)->_flags = _ARG_0_OF_27 ARGS;\
+    (STRUCTP)->_IO_read_ptr = _ARG_1_OF_27 ARGS;\
+    (STRUCTP)->_IO_read_end = _ARG_2_OF_27 ARGS;\
+    (STRUCTP)->_IO_read_base = _ARG_3_OF_27 ARGS;\
+    (STRUCTP)->_IO_write_base = _ARG_4_OF_27 ARGS;\
+    (STRUCTP)->_IO_write_ptr = _ARG_5_OF_27 ARGS;\
+    (STRUCTP)->_IO_write_end = _ARG_6_OF_27 ARGS;\
+    (STRUCTP)->_IO_buf_base = _ARG_7_OF_27 ARGS;\
+    (STRUCTP)->_IO_buf_end = _ARG_8_OF_27 ARGS;\
+    (STRUCTP)->_IO_save_base = _ARG_9_OF_27 ARGS;\
+    (STRUCTP)->_IO_backup_base = _ARG_10_OF_27 ARGS;\
+    (STRUCTP)->_IO_save_end = _ARG_11_OF_27 ARGS;\
+    (STRUCTP)->_markers = _ARG_12_OF_27 ARGS;\
+    (STRUCTP)->_chain = _ARG_13_OF_27 ARGS;\
+    (STRUCTP)->_fileno = _ARG_14_OF_27 ARGS;\
+    (STRUCTP)->_flags2 = _ARG_15_OF_27 ARGS;\
+    (STRUCTP)->_old_offset = _ARG_16_OF_27 ARGS;\
+    (STRUCTP)->_cur_column = _ARG_17_OF_27 ARGS;\
+    (STRUCTP)->_vtable_offset = _ARG_18_OF_27 ARGS;\
+    (STRUCTP)->_lock = _ARG_19_OF_27 ARGS;\
+    (STRUCTP)->_offset = _ARG_20_OF_27 ARGS;\
+    (STRUCTP)->__pad1 = _ARG_21_OF_27 ARGS;\
+    (STRUCTP)->__pad2 = _ARG_22_OF_27 ARGS;\
+    (STRUCTP)->__pad3 = _ARG_23_OF_27 ARGS;\
+    (STRUCTP)->__pad4 = _ARG_24_OF_27 ARGS;\
+    (STRUCTP)->__pad5 = _ARG_25_OF_27 ARGS;\
+    (STRUCTP)->_mode = _ARG_26_OF_27 ARGS;\
 }
 #define FILL_unsignedPositionPair(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->u = ARG0;\
-	(STRUCTP)->p = ARG1;\
+    (STRUCTP)->u = ARG0;\
+    (STRUCTP)->p = ARG1;\
 }
 #define FILLF_unsignedPositionPair(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->u = ARG0;\
-	(STRUCTP)->p = ARG1;\
+    (STRUCTP)->u = ARG0;\
+    (STRUCTP)->p = ARG1;\
 }
 #define _FILLF_unsignedPositionPair(STRUCTP, ARGS) {\
-	(STRUCTP)->u = _ARG_0_OF_2 ARGS;\
-	(STRUCTP)->p = _ARG_1_OF_2 ARGS;\
+    (STRUCTP)->u = _ARG_0_OF_2 ARGS;\
+    (STRUCTP)->p = _ARG_1_OF_2 ARGS;\
 }
 #define FILL_topBlock(STRUCTP, ARG0, ARG1, ARG2, ARG3) {\
-	(STRUCTP)->firstFreeIndex = ARG0;\
-	(STRUCTP)->tmpMemoryBasei = ARG1;\
-	(STRUCTP)->trail = ARG2;\
-	(STRUCTP)->previousTopBlock = ARG3;\
+    (STRUCTP)->firstFreeIndex = ARG0;\
+    (STRUCTP)->tmpMemoryBasei = ARG1;\
+    (STRUCTP)->trail = ARG2;\
+    (STRUCTP)->previousTopBlock = ARG3;\
 }
 #define FILLF_topBlock(STRUCTP, ARG0, ARG1, ARG2, ARG3) {\
-	(STRUCTP)->firstFreeIndex = ARG0;\
-	(STRUCTP)->tmpMemoryBasei = ARG1;\
-	(STRUCTP)->trail = ARG2;\
-	(STRUCTP)->previousTopBlock = ARG3;\
+    (STRUCTP)->firstFreeIndex = ARG0;\
+    (STRUCTP)->tmpMemoryBasei = ARG1;\
+    (STRUCTP)->trail = ARG2;\
+    (STRUCTP)->previousTopBlock = ARG3;\
 }
 #define _FILLF_topBlock(STRUCTP, ARGS) {\
-	(STRUCTP)->firstFreeIndex = _ARG_0_OF_4 ARGS;\
-	(STRUCTP)->tmpMemoryBasei = _ARG_1_OF_4 ARGS;\
-	(STRUCTP)->trail = _ARG_2_OF_4 ARGS;\
-	(STRUCTP)->previousTopBlock = _ARG_3_OF_4 ARGS;\
+    (STRUCTP)->firstFreeIndex = _ARG_0_OF_4 ARGS;\
+    (STRUCTP)->tmpMemoryBasei = _ARG_1_OF_4 ARGS;\
+    (STRUCTP)->trail = _ARG_2_OF_4 ARGS;\
+    (STRUCTP)->previousTopBlock = _ARG_3_OF_4 ARGS;\
 }
 #define FILL_timespec(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->tv_sec = ARG0;\
-	(STRUCTP)->tv_nsec = ARG1;\
+    (STRUCTP)->tv_sec = ARG0;\
+    (STRUCTP)->tv_nsec = ARG1;\
 }
 #define FILLF_timespec(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->tv_sec = ARG0;\
-	(STRUCTP)->tv_nsec = ARG1;\
+    (STRUCTP)->tv_sec = ARG0;\
+    (STRUCTP)->tv_nsec = ARG1;\
 }
 #define _FILLF_timespec(STRUCTP, ARGS) {\
-	(STRUCTP)->tv_sec = _ARG_0_OF_2 ARGS;\
-	(STRUCTP)->tv_nsec = _ARG_1_OF_2 ARGS;\
+    (STRUCTP)->tv_sec = _ARG_0_OF_2 ARGS;\
+    (STRUCTP)->tv_nsec = _ARG_1_OF_2 ARGS;\
 }
 #define FILL_counters(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->localSym = ARG0;\
-	(STRUCTP)->localVar = ARG1;\
-	(STRUCTP)->anonymousClassCounter = ARG2;\
+    (STRUCTP)->localSym = ARG0;\
+    (STRUCTP)->localVar = ARG1;\
+    (STRUCTP)->anonymousClassCounter = ARG2;\
 }
 #define FILLF_counters(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->localSym = ARG0;\
-	(STRUCTP)->localVar = ARG1;\
-	(STRUCTP)->anonymousClassCounter = ARG2;\
+    (STRUCTP)->localSym = ARG0;\
+    (STRUCTP)->localVar = ARG1;\
+    (STRUCTP)->anonymousClassCounter = ARG2;\
 }
 #define _FILLF_counters(STRUCTP, ARGS) {\
-	(STRUCTP)->localSym = _ARG_0_OF_3 ARGS;\
-	(STRUCTP)->localVar = _ARG_1_OF_3 ARGS;\
-	(STRUCTP)->anonymousClassCounter = _ARG_2_OF_3 ARGS;\
+    (STRUCTP)->localSym = _ARG_0_OF_3 ARGS;\
+    (STRUCTP)->localVar = _ARG_1_OF_3 ARGS;\
+    (STRUCTP)->anonymousClassCounter = _ARG_2_OF_3 ARGS;\
 }
 #define FILL_javaTypePCTIConvertIni(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->symType = ARG0;\
-	(STRUCTP)->PCTIndex = ARG1;\
+    (STRUCTP)->symType = ARG0;\
+    (STRUCTP)->PCTIndex = ARG1;\
 }
 #define FILLF_javaTypePCTIConvertIni(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->symType = ARG0;\
-	(STRUCTP)->PCTIndex = ARG1;\
+    (STRUCTP)->symType = ARG0;\
+    (STRUCTP)->PCTIndex = ARG1;\
 }
 #define _FILLF_javaTypePCTIConvertIni(STRUCTP, ARGS) {\
-	(STRUCTP)->symType = _ARG_0_OF_2 ARGS;\
-	(STRUCTP)->PCTIndex = _ARG_1_OF_2 ARGS;\
+    (STRUCTP)->symType = _ARG_0_OF_2 ARGS;\
+    (STRUCTP)->PCTIndex = _ARG_1_OF_2 ARGS;\
 }
 #define FILL_olcxReferences(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11) {\
-	(STRUCTP)->r = ARG0;\
-	(STRUCTP)->act = ARG1;\
-	(STRUCTP)->command = ARG2;\
-	(STRUCTP)->language = ARG3;\
-	(STRUCTP)->atime = ARG4;\
-	(STRUCTP)->cpos = ARG5;\
-	(STRUCTP)->cpls = ARG6;\
-	(STRUCTP)->hkSelectedSym = ARG7;\
-	(STRUCTP)->menuSym = ARG8;\
-	(STRUCTP)->menuFilterLevel = ARG9;\
-	(STRUCTP)->refsFilterLevel = ARG10;\
-	(STRUCTP)->previous = ARG11;\
+    (STRUCTP)->r = ARG0;\
+    (STRUCTP)->act = ARG1;\
+    (STRUCTP)->command = ARG2;\
+    (STRUCTP)->language = ARG3;\
+    (STRUCTP)->atime = ARG4;\
+    (STRUCTP)->cpos = ARG5;\
+    (STRUCTP)->cpls = ARG6;\
+    (STRUCTP)->hkSelectedSym = ARG7;\
+    (STRUCTP)->menuSym = ARG8;\
+    (STRUCTP)->menuFilterLevel = ARG9;\
+    (STRUCTP)->refsFilterLevel = ARG10;\
+    (STRUCTP)->previous = ARG11;\
 }
 #define FILLF_olcxReferences(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13) {\
-	(STRUCTP)->r = ARG0;\
-	(STRUCTP)->act = ARG1;\
-	(STRUCTP)->command = ARG2;\
-	(STRUCTP)->language = ARG3;\
-	(STRUCTP)->atime = ARG4;\
-	(STRUCTP)->cpos.file = ARG5;\
-	(STRUCTP)->cpos.line = ARG6;\
-	(STRUCTP)->cpos.col = ARG7;\
-	(STRUCTP)->cpls = ARG8;\
-	(STRUCTP)->hkSelectedSym = ARG9;\
-	(STRUCTP)->menuSym = ARG10;\
-	(STRUCTP)->menuFilterLevel = ARG11;\
-	(STRUCTP)->refsFilterLevel = ARG12;\
-	(STRUCTP)->previous = ARG13;\
+    (STRUCTP)->r = ARG0;\
+    (STRUCTP)->act = ARG1;\
+    (STRUCTP)->command = ARG2;\
+    (STRUCTP)->language = ARG3;\
+    (STRUCTP)->atime = ARG4;\
+    (STRUCTP)->cpos.file = ARG5;\
+    (STRUCTP)->cpos.line = ARG6;\
+    (STRUCTP)->cpos.col = ARG7;\
+    (STRUCTP)->cpls = ARG8;\
+    (STRUCTP)->hkSelectedSym = ARG9;\
+    (STRUCTP)->menuSym = ARG10;\
+    (STRUCTP)->menuFilterLevel = ARG11;\
+    (STRUCTP)->refsFilterLevel = ARG12;\
+    (STRUCTP)->previous = ARG13;\
 }
 #define _FILLF_olcxReferences(STRUCTP, ARGS) {\
-	(STRUCTP)->r = _ARG_0_OF_14 ARGS;\
-	(STRUCTP)->act = _ARG_1_OF_14 ARGS;\
-	(STRUCTP)->command = _ARG_2_OF_14 ARGS;\
-	(STRUCTP)->language = _ARG_3_OF_14 ARGS;\
-	(STRUCTP)->atime = _ARG_4_OF_14 ARGS;\
-	(STRUCTP)->cpos.file = _ARG_5_OF_14 ARGS;\
-	(STRUCTP)->cpos.line = _ARG_6_OF_14 ARGS;\
-	(STRUCTP)->cpos.col = _ARG_7_OF_14 ARGS;\
-	(STRUCTP)->cpls = _ARG_8_OF_14 ARGS;\
-	(STRUCTP)->hkSelectedSym = _ARG_9_OF_14 ARGS;\
-	(STRUCTP)->menuSym = _ARG_10_OF_14 ARGS;\
-	(STRUCTP)->menuFilterLevel = _ARG_11_OF_14 ARGS;\
-	(STRUCTP)->refsFilterLevel = _ARG_12_OF_14 ARGS;\
-	(STRUCTP)->previous = _ARG_13_OF_14 ARGS;\
+    (STRUCTP)->r = _ARG_0_OF_14 ARGS;\
+    (STRUCTP)->act = _ARG_1_OF_14 ARGS;\
+    (STRUCTP)->command = _ARG_2_OF_14 ARGS;\
+    (STRUCTP)->language = _ARG_3_OF_14 ARGS;\
+    (STRUCTP)->atime = _ARG_4_OF_14 ARGS;\
+    (STRUCTP)->cpos.file = _ARG_5_OF_14 ARGS;\
+    (STRUCTP)->cpos.line = _ARG_6_OF_14 ARGS;\
+    (STRUCTP)->cpos.col = _ARG_7_OF_14 ARGS;\
+    (STRUCTP)->cpls = _ARG_8_OF_14 ARGS;\
+    (STRUCTP)->hkSelectedSym = _ARG_9_OF_14 ARGS;\
+    (STRUCTP)->menuSym = _ARG_10_OF_14 ARGS;\
+    (STRUCTP)->menuFilterLevel = _ARG_11_OF_14 ARGS;\
+    (STRUCTP)->refsFilterLevel = _ARG_12_OF_14 ARGS;\
+    (STRUCTP)->previous = _ARG_13_OF_14 ARGS;\
 }
 #define FILL___pthread_cond_s(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->__ERROR__ = ARG0;\
-	(STRUCTP)->__g1_orig_size = ARG1;\
-	(STRUCTP)->__wrefs = ARG2;\
+    (STRUCTP)->__ERROR__ = ARG0;\
+    (STRUCTP)->__g1_orig_size = ARG1;\
+    (STRUCTP)->__wrefs = ARG2;\
 }
 #define FILLF___pthread_cond_s(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->__ERROR__ = ARG0;\
-	(STRUCTP)->__g1_orig_size = ARG1;\
-	(STRUCTP)->__wrefs = ARG2;\
+    (STRUCTP)->__ERROR__ = ARG0;\
+    (STRUCTP)->__g1_orig_size = ARG1;\
+    (STRUCTP)->__wrefs = ARG2;\
 }
 #define _FILLF___pthread_cond_s(STRUCTP, ARGS) {\
-	(STRUCTP)->__ERROR__ = _ARG_0_OF_3 ARGS;\
-	(STRUCTP)->__g1_orig_size = _ARG_1_OF_3 ARGS;\
-	(STRUCTP)->__wrefs = _ARG_2_OF_3 ARGS;\
+    (STRUCTP)->__ERROR__ = _ARG_0_OF_3 ARGS;\
+    (STRUCTP)->__g1_orig_size = _ARG_1_OF_3 ARGS;\
+    (STRUCTP)->__wrefs = _ARG_2_OF_3 ARGS;\
 }
 #define FILL_setGetEnv(STRUCTP, ARG0) {\
-	(STRUCTP)->num = ARG0;\
+    (STRUCTP)->num = ARG0;\
 }
 #define FILLF_setGetEnv(STRUCTP, ARG0) {\
-	(STRUCTP)->num = ARG0;\
+    (STRUCTP)->num = ARG0;\
 }
 #define _FILLF_setGetEnv(STRUCTP, ARGS) {\
-	(STRUCTP)->num = _ARG_0_OF_1 ARGS;\
+    (STRUCTP)->num = _ARG_0_OF_1 ARGS;\
 }
 #define FILL_lexBuf(STRUCTP, ARG0, ARG1, ARG2, ARG3) {\
-	(STRUCTP)->next = ARG0;\
-	(STRUCTP)->end = ARG1;\
-	(STRUCTP)->posi = ARG2;\
-	(STRUCTP)->buffer = ARG3;\
+    (STRUCTP)->next = ARG0;\
+    (STRUCTP)->end = ARG1;\
+    (STRUCTP)->posi = ARG2;\
+    (STRUCTP)->buffer = ARG3;\
 }
 #define FILLF_lexBuf(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13, ARG14, ARG15, ARG16, ARG17, ARG18, ARG19, ARG20, ARG21, ARG22, ARG23, ARG24, ARG25, ARG26) {\
-	(STRUCTP)->next = ARG0;\
-	(STRUCTP)->end = ARG1;\
-	(STRUCTP)->posi = ARG2;\
-	(STRUCTP)->buffer.next = ARG3;\
-	(STRUCTP)->buffer.end = ARG4;\
-	(STRUCTP)->buffer.file = ARG5;\
-	(STRUCTP)->buffer.filePos = ARG6;\
-	(STRUCTP)->buffer.fileNumber = ARG7;\
-	(STRUCTP)->buffer.lineNum = ARG8;\
-	(STRUCTP)->buffer.lineBegin = ARG9;\
-	(STRUCTP)->buffer.columnOffset = ARG10;\
-	(STRUCTP)->buffer.isAtEOF = ARG11;\
-	(STRUCTP)->buffer.inputMethod = ARG12;\
-	(STRUCTP)->buffer.zipStream.next_in = ARG13;\
-	(STRUCTP)->buffer.zipStream.avail_in = ARG14;\
-	(STRUCTP)->buffer.zipStream.total_in = ARG15;\
-	(STRUCTP)->buffer.zipStream.next_out = ARG16;\
-	(STRUCTP)->buffer.zipStream.avail_out = ARG17;\
-	(STRUCTP)->buffer.zipStream.total_out = ARG18;\
-	(STRUCTP)->buffer.zipStream.msg = ARG19;\
-	(STRUCTP)->buffer.zipStream.state = ARG20;\
-	(STRUCTP)->buffer.zipStream.zalloc = ARG21;\
-	(STRUCTP)->buffer.zipStream.zfree = ARG22;\
-	(STRUCTP)->buffer.zipStream.opaque = ARG23;\
-	(STRUCTP)->buffer.zipStream.data_type = ARG24;\
-	(STRUCTP)->buffer.zipStream.adler = ARG25;\
-	(STRUCTP)->buffer.zipStream.reserved = ARG26;\
+    (STRUCTP)->next = ARG0;\
+    (STRUCTP)->end = ARG1;\
+    (STRUCTP)->posi = ARG2;\
+    (STRUCTP)->buffer.next = ARG3;\
+    (STRUCTP)->buffer.end = ARG4;\
+    (STRUCTP)->buffer.file = ARG5;\
+    (STRUCTP)->buffer.filePos = ARG6;\
+    (STRUCTP)->buffer.fileNumber = ARG7;\
+    (STRUCTP)->buffer.lineNum = ARG8;\
+    (STRUCTP)->buffer.lineBegin = ARG9;\
+    (STRUCTP)->buffer.columnOffset = ARG10;\
+    (STRUCTP)->buffer.isAtEOF = ARG11;\
+    (STRUCTP)->buffer.inputMethod = ARG12;\
+    (STRUCTP)->buffer.zipStream.next_in = ARG13;\
+    (STRUCTP)->buffer.zipStream.avail_in = ARG14;\
+    (STRUCTP)->buffer.zipStream.total_in = ARG15;\
+    (STRUCTP)->buffer.zipStream.next_out = ARG16;\
+    (STRUCTP)->buffer.zipStream.avail_out = ARG17;\
+    (STRUCTP)->buffer.zipStream.total_out = ARG18;\
+    (STRUCTP)->buffer.zipStream.msg = ARG19;\
+    (STRUCTP)->buffer.zipStream.state = ARG20;\
+    (STRUCTP)->buffer.zipStream.zalloc = ARG21;\
+    (STRUCTP)->buffer.zipStream.zfree = ARG22;\
+    (STRUCTP)->buffer.zipStream.opaque = ARG23;\
+    (STRUCTP)->buffer.zipStream.data_type = ARG24;\
+    (STRUCTP)->buffer.zipStream.adler = ARG25;\
+    (STRUCTP)->buffer.zipStream.reserved = ARG26;\
 }
 #define _FILLF_lexBuf(STRUCTP, ARGS) {\
-	(STRUCTP)->next = _ARG_0_OF_27 ARGS;\
-	(STRUCTP)->end = _ARG_1_OF_27 ARGS;\
-	(STRUCTP)->posi = _ARG_2_OF_27 ARGS;\
-	(STRUCTP)->buffer.next = _ARG_3_OF_27 ARGS;\
-	(STRUCTP)->buffer.end = _ARG_4_OF_27 ARGS;\
-	(STRUCTP)->buffer.file = _ARG_5_OF_27 ARGS;\
-	(STRUCTP)->buffer.filePos = _ARG_6_OF_27 ARGS;\
-	(STRUCTP)->buffer.fileNumber = _ARG_7_OF_27 ARGS;\
-	(STRUCTP)->buffer.lineNum = _ARG_8_OF_27 ARGS;\
-	(STRUCTP)->buffer.lineBegin = _ARG_9_OF_27 ARGS;\
-	(STRUCTP)->buffer.columnOffset = _ARG_10_OF_27 ARGS;\
-	(STRUCTP)->buffer.isAtEOF = _ARG_11_OF_27 ARGS;\
-	(STRUCTP)->buffer.inputMethod = _ARG_12_OF_27 ARGS;\
-	(STRUCTP)->buffer.zipStream.next_in = _ARG_13_OF_27 ARGS;\
-	(STRUCTP)->buffer.zipStream.avail_in = _ARG_14_OF_27 ARGS;\
-	(STRUCTP)->buffer.zipStream.total_in = _ARG_15_OF_27 ARGS;\
-	(STRUCTP)->buffer.zipStream.next_out = _ARG_16_OF_27 ARGS;\
-	(STRUCTP)->buffer.zipStream.avail_out = _ARG_17_OF_27 ARGS;\
-	(STRUCTP)->buffer.zipStream.total_out = _ARG_18_OF_27 ARGS;\
-	(STRUCTP)->buffer.zipStream.msg = _ARG_19_OF_27 ARGS;\
-	(STRUCTP)->buffer.zipStream.state = _ARG_20_OF_27 ARGS;\
-	(STRUCTP)->buffer.zipStream.zalloc = _ARG_21_OF_27 ARGS;\
-	(STRUCTP)->buffer.zipStream.zfree = _ARG_22_OF_27 ARGS;\
-	(STRUCTP)->buffer.zipStream.opaque = _ARG_23_OF_27 ARGS;\
-	(STRUCTP)->buffer.zipStream.data_type = _ARG_24_OF_27 ARGS;\
-	(STRUCTP)->buffer.zipStream.adler = _ARG_25_OF_27 ARGS;\
-	(STRUCTP)->buffer.zipStream.reserved = _ARG_26_OF_27 ARGS;\
+    (STRUCTP)->next = _ARG_0_OF_27 ARGS;\
+    (STRUCTP)->end = _ARG_1_OF_27 ARGS;\
+    (STRUCTP)->posi = _ARG_2_OF_27 ARGS;\
+    (STRUCTP)->buffer.next = _ARG_3_OF_27 ARGS;\
+    (STRUCTP)->buffer.end = _ARG_4_OF_27 ARGS;\
+    (STRUCTP)->buffer.file = _ARG_5_OF_27 ARGS;\
+    (STRUCTP)->buffer.filePos = _ARG_6_OF_27 ARGS;\
+    (STRUCTP)->buffer.fileNumber = _ARG_7_OF_27 ARGS;\
+    (STRUCTP)->buffer.lineNum = _ARG_8_OF_27 ARGS;\
+    (STRUCTP)->buffer.lineBegin = _ARG_9_OF_27 ARGS;\
+    (STRUCTP)->buffer.columnOffset = _ARG_10_OF_27 ARGS;\
+    (STRUCTP)->buffer.isAtEOF = _ARG_11_OF_27 ARGS;\
+    (STRUCTP)->buffer.inputMethod = _ARG_12_OF_27 ARGS;\
+    (STRUCTP)->buffer.zipStream.next_in = _ARG_13_OF_27 ARGS;\
+    (STRUCTP)->buffer.zipStream.avail_in = _ARG_14_OF_27 ARGS;\
+    (STRUCTP)->buffer.zipStream.total_in = _ARG_15_OF_27 ARGS;\
+    (STRUCTP)->buffer.zipStream.next_out = _ARG_16_OF_27 ARGS;\
+    (STRUCTP)->buffer.zipStream.avail_out = _ARG_17_OF_27 ARGS;\
+    (STRUCTP)->buffer.zipStream.total_out = _ARG_18_OF_27 ARGS;\
+    (STRUCTP)->buffer.zipStream.msg = _ARG_19_OF_27 ARGS;\
+    (STRUCTP)->buffer.zipStream.state = _ARG_20_OF_27 ARGS;\
+    (STRUCTP)->buffer.zipStream.zalloc = _ARG_21_OF_27 ARGS;\
+    (STRUCTP)->buffer.zipStream.zfree = _ARG_22_OF_27 ARGS;\
+    (STRUCTP)->buffer.zipStream.opaque = _ARG_23_OF_27 ARGS;\
+    (STRUCTP)->buffer.zipStream.data_type = _ARG_24_OF_27 ARGS;\
+    (STRUCTP)->buffer.zipStream.adler = _ARG_25_OF_27 ARGS;\
+    (STRUCTP)->buffer.zipStream.reserved = _ARG_26_OF_27 ARGS;\
 }
 #define FILL_idList(STRUCTP, ARG0, ARG1, ARG2, ARG3) {\
-	(STRUCTP)->id = ARG0;\
-	(STRUCTP)->fname = ARG1;\
-	(STRUCTP)->nameType = ARG2;\
-	(STRUCTP)->next = ARG3;\
+    (STRUCTP)->id = ARG0;\
+    (STRUCTP)->fname = ARG1;\
+    (STRUCTP)->nameType = ARG2;\
+    (STRUCTP)->next = ARG3;\
 }
 #define FILLF_idList(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8) {\
-	(STRUCTP)->id.name = ARG0;\
-	(STRUCTP)->id.sd = ARG1;\
-	(STRUCTP)->id.p.file = ARG2;\
-	(STRUCTP)->id.p.line = ARG3;\
-	(STRUCTP)->id.p.col = ARG4;\
-	(STRUCTP)->id.next = ARG5;\
-	(STRUCTP)->fname = ARG6;\
-	(STRUCTP)->nameType = ARG7;\
-	(STRUCTP)->next = ARG8;\
+    (STRUCTP)->id.name = ARG0;\
+    (STRUCTP)->id.sd = ARG1;\
+    (STRUCTP)->id.p.file = ARG2;\
+    (STRUCTP)->id.p.line = ARG3;\
+    (STRUCTP)->id.p.col = ARG4;\
+    (STRUCTP)->id.next = ARG5;\
+    (STRUCTP)->fname = ARG6;\
+    (STRUCTP)->nameType = ARG7;\
+    (STRUCTP)->next = ARG8;\
 }
 #define _FILLF_idList(STRUCTP, ARGS) {\
-	(STRUCTP)->id.name = _ARG_0_OF_9 ARGS;\
-	(STRUCTP)->id.sd = _ARG_1_OF_9 ARGS;\
-	(STRUCTP)->id.p.file = _ARG_2_OF_9 ARGS;\
-	(STRUCTP)->id.p.line = _ARG_3_OF_9 ARGS;\
-	(STRUCTP)->id.p.col = _ARG_4_OF_9 ARGS;\
-	(STRUCTP)->id.next = _ARG_5_OF_9 ARGS;\
-	(STRUCTP)->fname = _ARG_6_OF_9 ARGS;\
-	(STRUCTP)->nameType = _ARG_7_OF_9 ARGS;\
-	(STRUCTP)->next = _ARG_8_OF_9 ARGS;\
+    (STRUCTP)->id.name = _ARG_0_OF_9 ARGS;\
+    (STRUCTP)->id.sd = _ARG_1_OF_9 ARGS;\
+    (STRUCTP)->id.p.file = _ARG_2_OF_9 ARGS;\
+    (STRUCTP)->id.p.line = _ARG_3_OF_9 ARGS;\
+    (STRUCTP)->id.p.col = _ARG_4_OF_9 ARGS;\
+    (STRUCTP)->id.next = _ARG_5_OF_9 ARGS;\
+    (STRUCTP)->fname = _ARG_6_OF_9 ARGS;\
+    (STRUCTP)->nameType = _ARG_7_OF_9 ARGS;\
+    (STRUCTP)->next = _ARG_8_OF_9 ARGS;\
 }
 #define FILL_symbolRefItemBits(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5) {\
-	(STRUCTP)->symType = ARG0;\
-	(STRUCTP)->storage = ARG1;\
-	(STRUCTP)->scope = ARG2;\
-	(STRUCTP)->accessFlags = ARG3;\
-	(STRUCTP)->category = ARG4;\
-	(STRUCTP)->htmlWasLn = ARG5;\
+    (STRUCTP)->symType = ARG0;\
+    (STRUCTP)->storage = ARG1;\
+    (STRUCTP)->scope = ARG2;\
+    (STRUCTP)->accessFlags = ARG3;\
+    (STRUCTP)->category = ARG4;\
+    (STRUCTP)->htmlWasLn = ARG5;\
 }
 #define FILLF_symbolRefItemBits(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5) {\
-	(STRUCTP)->symType = ARG0;\
-	(STRUCTP)->storage = ARG1;\
-	(STRUCTP)->scope = ARG2;\
-	(STRUCTP)->accessFlags = ARG3;\
-	(STRUCTP)->category = ARG4;\
-	(STRUCTP)->htmlWasLn = ARG5;\
+    (STRUCTP)->symType = ARG0;\
+    (STRUCTP)->storage = ARG1;\
+    (STRUCTP)->scope = ARG2;\
+    (STRUCTP)->accessFlags = ARG3;\
+    (STRUCTP)->category = ARG4;\
+    (STRUCTP)->htmlWasLn = ARG5;\
 }
 #define _FILLF_symbolRefItemBits(STRUCTP, ARGS) {\
-	(STRUCTP)->symType = _ARG_0_OF_6 ARGS;\
-	(STRUCTP)->storage = _ARG_1_OF_6 ARGS;\
-	(STRUCTP)->scope = _ARG_2_OF_6 ARGS;\
-	(STRUCTP)->accessFlags = _ARG_3_OF_6 ARGS;\
-	(STRUCTP)->category = _ARG_4_OF_6 ARGS;\
-	(STRUCTP)->htmlWasLn = _ARG_5_OF_6 ARGS;\
+    (STRUCTP)->symType = _ARG_0_OF_6 ARGS;\
+    (STRUCTP)->storage = _ARG_1_OF_6 ARGS;\
+    (STRUCTP)->scope = _ARG_2_OF_6 ARGS;\
+    (STRUCTP)->accessFlags = _ARG_3_OF_6 ARGS;\
+    (STRUCTP)->category = _ARG_4_OF_6 ARGS;\
+    (STRUCTP)->htmlWasLn = _ARG_5_OF_6 ARGS;\
 }
 #define FILL__IO_marker(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->_next = ARG0;\
-	(STRUCTP)->_sbuf = ARG1;\
-	(STRUCTP)->_pos = ARG2;\
+    (STRUCTP)->_next = ARG0;\
+    (STRUCTP)->_sbuf = ARG1;\
+    (STRUCTP)->_pos = ARG2;\
 }
 #define FILLF__IO_marker(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->_next = ARG0;\
-	(STRUCTP)->_sbuf = ARG1;\
-	(STRUCTP)->_pos = ARG2;\
+    (STRUCTP)->_next = ARG0;\
+    (STRUCTP)->_sbuf = ARG1;\
+    (STRUCTP)->_pos = ARG2;\
 }
 #define _FILLF__IO_marker(STRUCTP, ARGS) {\
-	(STRUCTP)->_next = _ARG_0_OF_3 ARGS;\
-	(STRUCTP)->_sbuf = _ARG_1_OF_3 ARGS;\
-	(STRUCTP)->_pos = _ARG_2_OF_3 ARGS;\
+    (STRUCTP)->_next = _ARG_0_OF_3 ARGS;\
+    (STRUCTP)->_sbuf = _ARG_1_OF_3 ARGS;\
+    (STRUCTP)->_pos = _ARG_2_OF_3 ARGS;\
 }
 #define FILL_symStructSpec(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10) {\
-	(STRUCTP)->super = ARG0;\
-	(STRUCTP)->records = ARG1;\
-	(STRUCTP)->casts = ARG2;\
-	(STRUCTP)->nnested = ARG3;\
-	(STRUCTP)->nest = ARG4;\
-	(STRUCTP)->stype = ARG5;\
-	(STRUCTP)->sptrtype = ARG6;\
-	(STRUCTP)->currPackage = ARG7;\
-	(STRUCTP)->existsDEIarg = ARG8;\
-	(STRUCTP)->classFile = ARG9;\
-	(STRUCTP)->recSearchCounter = ARG10;\
+    (STRUCTP)->super = ARG0;\
+    (STRUCTP)->records = ARG1;\
+    (STRUCTP)->casts = ARG2;\
+    (STRUCTP)->nnested = ARG3;\
+    (STRUCTP)->nest = ARG4;\
+    (STRUCTP)->stype = ARG5;\
+    (STRUCTP)->sptrtype = ARG6;\
+    (STRUCTP)->currPackage = ARG7;\
+    (STRUCTP)->existsDEIarg = ARG8;\
+    (STRUCTP)->classFile = ARG9;\
+    (STRUCTP)->recSearchCounter = ARG10;\
 }
 #define FILLF_symStructSpec(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13, ARG14, ARG15, ARG16, ARG17, ARG18, ARG19) {\
-	(STRUCTP)->super = ARG0;\
-	(STRUCTP)->records = ARG1;\
-	(STRUCTP)->casts.node = ARG2;\
-	(STRUCTP)->casts.sub = ARG3;\
-	(STRUCTP)->nnested = ARG4;\
-	(STRUCTP)->nest = ARG5;\
-	(STRUCTP)->stype.kind = ARG6;\
-	_FILLUREC_typeModifierUnion_##ARG7((&(STRUCTP)->stype.u), ARG8);\
-	(STRUCTP)->stype.typedefSymbol = ARG9;\
-	(STRUCTP)->stype.next = ARG10;\
-	(STRUCTP)->sptrtype.kind = ARG11;\
-	_FILLUREC_typeModifierUnion_##ARG12((&(STRUCTP)->sptrtype.u), ARG13);\
-	(STRUCTP)->sptrtype.typedefSymbol = ARG14;\
-	(STRUCTP)->sptrtype.next = ARG15;\
-	(STRUCTP)->currPackage = ARG16;\
-	(STRUCTP)->existsDEIarg = ARG17;\
-	(STRUCTP)->classFile = ARG18;\
-	(STRUCTP)->recSearchCounter = ARG19;\
+    (STRUCTP)->super = ARG0;\
+    (STRUCTP)->records = ARG1;\
+    (STRUCTP)->casts.node = ARG2;\
+    (STRUCTP)->casts.sub = ARG3;\
+    (STRUCTP)->nnested = ARG4;\
+    (STRUCTP)->nest = ARG5;\
+    (STRUCTP)->stype.kind = ARG6;\
+    _FILLUREC_typeModifierUnion_##ARG7((&(STRUCTP)->stype.u), ARG8);\
+    (STRUCTP)->stype.typedefSymbol = ARG9;\
+    (STRUCTP)->stype.next = ARG10;\
+    (STRUCTP)->sptrtype.kind = ARG11;\
+    _FILLUREC_typeModifierUnion_##ARG12((&(STRUCTP)->sptrtype.u), ARG13);\
+    (STRUCTP)->sptrtype.typedefSymbol = ARG14;\
+    (STRUCTP)->sptrtype.next = ARG15;\
+    (STRUCTP)->currPackage = ARG16;\
+    (STRUCTP)->existsDEIarg = ARG17;\
+    (STRUCTP)->classFile = ARG18;\
+    (STRUCTP)->recSearchCounter = ARG19;\
 }
 #define _FILLF_symStructSpec(STRUCTP, ARGS) {\
-	(STRUCTP)->super = _ARG_0_OF_20 ARGS;\
-	(STRUCTP)->records = _ARG_1_OF_20 ARGS;\
-	(STRUCTP)->casts.node = _ARG_2_OF_20 ARGS;\
-	(STRUCTP)->casts.sub = _ARG_3_OF_20 ARGS;\
-	(STRUCTP)->nnested = _ARG_4_OF_20 ARGS;\
-	(STRUCTP)->nest = _ARG_5_OF_20 ARGS;\
-	(STRUCTP)->stype.kind = _ARG_6_OF_20 ARGS;\
-	_FILLUREC_typeModifierUnion_##_ARG_7_OF_20 ARGS((&(STRUCTP)->stype.u), _ARG_8_OF_20 ARGS);\
-	(STRUCTP)->stype.typedefSymbol = _ARG_9_OF_20 ARGS;\
-	(STRUCTP)->stype.next = _ARG_10_OF_20 ARGS;\
-	(STRUCTP)->sptrtype.kind = _ARG_11_OF_20 ARGS;\
-	_FILLUREC_typeModifierUnion_##_ARG_12_OF_20 ARGS((&(STRUCTP)->sptrtype.u), _ARG_13_OF_20 ARGS);\
-	(STRUCTP)->sptrtype.typedefSymbol = _ARG_14_OF_20 ARGS;\
-	(STRUCTP)->sptrtype.next = _ARG_15_OF_20 ARGS;\
-	(STRUCTP)->currPackage = _ARG_16_OF_20 ARGS;\
-	(STRUCTP)->existsDEIarg = _ARG_17_OF_20 ARGS;\
-	(STRUCTP)->classFile = _ARG_18_OF_20 ARGS;\
-	(STRUCTP)->recSearchCounter = _ARG_19_OF_20 ARGS;\
+    (STRUCTP)->super = _ARG_0_OF_20 ARGS;\
+    (STRUCTP)->records = _ARG_1_OF_20 ARGS;\
+    (STRUCTP)->casts.node = _ARG_2_OF_20 ARGS;\
+    (STRUCTP)->casts.sub = _ARG_3_OF_20 ARGS;\
+    (STRUCTP)->nnested = _ARG_4_OF_20 ARGS;\
+    (STRUCTP)->nest = _ARG_5_OF_20 ARGS;\
+    (STRUCTP)->stype.kind = _ARG_6_OF_20 ARGS;\
+    _FILLUREC_typeModifierUnion_##_ARG_7_OF_20 ARGS((&(STRUCTP)->stype.u), _ARG_8_OF_20 ARGS);\
+    (STRUCTP)->stype.typedefSymbol = _ARG_9_OF_20 ARGS;\
+    (STRUCTP)->stype.next = _ARG_10_OF_20 ARGS;\
+    (STRUCTP)->sptrtype.kind = _ARG_11_OF_20 ARGS;\
+    _FILLUREC_typeModifierUnion_##_ARG_12_OF_20 ARGS((&(STRUCTP)->sptrtype.u), _ARG_13_OF_20 ARGS);\
+    (STRUCTP)->sptrtype.typedefSymbol = _ARG_14_OF_20 ARGS;\
+    (STRUCTP)->sptrtype.next = _ARG_15_OF_20 ARGS;\
+    (STRUCTP)->currPackage = _ARG_16_OF_20 ARGS;\
+    (STRUCTP)->existsDEIarg = _ARG_17_OF_20 ARGS;\
+    (STRUCTP)->classFile = _ARG_18_OF_20 ARGS;\
+    (STRUCTP)->recSearchCounter = _ARG_19_OF_20 ARGS;\
 }
 #define FILL___pthread_internal_list(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->__prev = ARG0;\
-	(STRUCTP)->__next = ARG1;\
+    (STRUCTP)->__prev = ARG0;\
+    (STRUCTP)->__next = ARG1;\
 }
 #define FILLF___pthread_internal_list(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->__prev = ARG0;\
-	(STRUCTP)->__next = ARG1;\
+    (STRUCTP)->__prev = ARG0;\
+    (STRUCTP)->__next = ARG1;\
 }
 #define _FILLF___pthread_internal_list(STRUCTP, ARGS) {\
-	(STRUCTP)->__prev = _ARG_0_OF_2 ARGS;\
-	(STRUCTP)->__next = _ARG_1_OF_2 ARGS;\
+    (STRUCTP)->__prev = _ARG_0_OF_2 ARGS;\
+    (STRUCTP)->__next = _ARG_1_OF_2 ARGS;\
 }
 #define FILL_gzFile_s(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->have = ARG0;\
-	(STRUCTP)->next = ARG1;\
-	(STRUCTP)->pos = ARG2;\
+    (STRUCTP)->have = ARG0;\
+    (STRUCTP)->next = ARG1;\
+    (STRUCTP)->pos = ARG2;\
 }
 #define FILLF_gzFile_s(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->have = ARG0;\
-	(STRUCTP)->next = ARG1;\
-	(STRUCTP)->pos = ARG2;\
+    (STRUCTP)->have = ARG0;\
+    (STRUCTP)->next = ARG1;\
+    (STRUCTP)->pos = ARG2;\
 }
 #define _FILLF_gzFile_s(STRUCTP, ARGS) {\
-	(STRUCTP)->have = _ARG_0_OF_3 ARGS;\
-	(STRUCTP)->next = _ARG_1_OF_3 ARGS;\
-	(STRUCTP)->pos = _ARG_2_OF_3 ARGS;\
+    (STRUCTP)->have = _ARG_0_OF_3 ARGS;\
+    (STRUCTP)->next = _ARG_1_OF_3 ARGS;\
+    (STRUCTP)->pos = _ARG_2_OF_3 ARGS;\
 }
 #define FILL_mallinfo(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9) {\
-	(STRUCTP)->arena = ARG0;\
-	(STRUCTP)->ordblks = ARG1;\
-	(STRUCTP)->smblks = ARG2;\
-	(STRUCTP)->hblks = ARG3;\
-	(STRUCTP)->hblkhd = ARG4;\
-	(STRUCTP)->usmblks = ARG5;\
-	(STRUCTP)->fsmblks = ARG6;\
-	(STRUCTP)->uordblks = ARG7;\
-	(STRUCTP)->fordblks = ARG8;\
-	(STRUCTP)->keepcost = ARG9;\
+    (STRUCTP)->arena = ARG0;\
+    (STRUCTP)->ordblks = ARG1;\
+    (STRUCTP)->smblks = ARG2;\
+    (STRUCTP)->hblks = ARG3;\
+    (STRUCTP)->hblkhd = ARG4;\
+    (STRUCTP)->usmblks = ARG5;\
+    (STRUCTP)->fsmblks = ARG6;\
+    (STRUCTP)->uordblks = ARG7;\
+    (STRUCTP)->fordblks = ARG8;\
+    (STRUCTP)->keepcost = ARG9;\
 }
 #define FILLF_mallinfo(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9) {\
-	(STRUCTP)->arena = ARG0;\
-	(STRUCTP)->ordblks = ARG1;\
-	(STRUCTP)->smblks = ARG2;\
-	(STRUCTP)->hblks = ARG3;\
-	(STRUCTP)->hblkhd = ARG4;\
-	(STRUCTP)->usmblks = ARG5;\
-	(STRUCTP)->fsmblks = ARG6;\
-	(STRUCTP)->uordblks = ARG7;\
-	(STRUCTP)->fordblks = ARG8;\
-	(STRUCTP)->keepcost = ARG9;\
+    (STRUCTP)->arena = ARG0;\
+    (STRUCTP)->ordblks = ARG1;\
+    (STRUCTP)->smblks = ARG2;\
+    (STRUCTP)->hblks = ARG3;\
+    (STRUCTP)->hblkhd = ARG4;\
+    (STRUCTP)->usmblks = ARG5;\
+    (STRUCTP)->fsmblks = ARG6;\
+    (STRUCTP)->uordblks = ARG7;\
+    (STRUCTP)->fordblks = ARG8;\
+    (STRUCTP)->keepcost = ARG9;\
 }
 #define _FILLF_mallinfo(STRUCTP, ARGS) {\
-	(STRUCTP)->arena = _ARG_0_OF_10 ARGS;\
-	(STRUCTP)->ordblks = _ARG_1_OF_10 ARGS;\
-	(STRUCTP)->smblks = _ARG_2_OF_10 ARGS;\
-	(STRUCTP)->hblks = _ARG_3_OF_10 ARGS;\
-	(STRUCTP)->hblkhd = _ARG_4_OF_10 ARGS;\
-	(STRUCTP)->usmblks = _ARG_5_OF_10 ARGS;\
-	(STRUCTP)->fsmblks = _ARG_6_OF_10 ARGS;\
-	(STRUCTP)->uordblks = _ARG_7_OF_10 ARGS;\
-	(STRUCTP)->fordblks = _ARG_8_OF_10 ARGS;\
-	(STRUCTP)->keepcost = _ARG_9_OF_10 ARGS;\
+    (STRUCTP)->arena = _ARG_0_OF_10 ARGS;\
+    (STRUCTP)->ordblks = _ARG_1_OF_10 ARGS;\
+    (STRUCTP)->smblks = _ARG_2_OF_10 ARGS;\
+    (STRUCTP)->hblks = _ARG_3_OF_10 ARGS;\
+    (STRUCTP)->hblkhd = _ARG_4_OF_10 ARGS;\
+    (STRUCTP)->usmblks = _ARG_5_OF_10 ARGS;\
+    (STRUCTP)->fsmblks = _ARG_6_OF_10 ARGS;\
+    (STRUCTP)->uordblks = _ARG_7_OF_10 ARGS;\
+    (STRUCTP)->fordblks = _ARG_8_OF_10 ARGS;\
+    (STRUCTP)->keepcost = _ARG_9_OF_10 ARGS;\
 }
 #define FILL_id(STRUCTP, ARG0, ARG1, ARG2, ARG3) {\
-	(STRUCTP)->name = ARG0;\
-	(STRUCTP)->sd = ARG1;\
-	(STRUCTP)->p = ARG2;\
-	(STRUCTP)->next = ARG3;\
+    (STRUCTP)->name = ARG0;\
+    (STRUCTP)->sd = ARG1;\
+    (STRUCTP)->p = ARG2;\
+    (STRUCTP)->next = ARG3;\
 }
 #define FILLF_id(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5) {\
-	(STRUCTP)->name = ARG0;\
-	(STRUCTP)->sd = ARG1;\
-	(STRUCTP)->p.file = ARG2;\
-	(STRUCTP)->p.line = ARG3;\
-	(STRUCTP)->p.col = ARG4;\
-	(STRUCTP)->next = ARG5;\
+    (STRUCTP)->name = ARG0;\
+    (STRUCTP)->sd = ARG1;\
+    (STRUCTP)->p.file = ARG2;\
+    (STRUCTP)->p.line = ARG3;\
+    (STRUCTP)->p.col = ARG4;\
+    (STRUCTP)->next = ARG5;\
 }
 #define _FILLF_id(STRUCTP, ARGS) {\
-	(STRUCTP)->name = _ARG_0_OF_6 ARGS;\
-	(STRUCTP)->sd = _ARG_1_OF_6 ARGS;\
-	(STRUCTP)->p.file = _ARG_2_OF_6 ARGS;\
-	(STRUCTP)->p.line = _ARG_3_OF_6 ARGS;\
-	(STRUCTP)->p.col = _ARG_4_OF_6 ARGS;\
-	(STRUCTP)->next = _ARG_5_OF_6 ARGS;\
+    (STRUCTP)->name = _ARG_0_OF_6 ARGS;\
+    (STRUCTP)->sd = _ARG_1_OF_6 ARGS;\
+    (STRUCTP)->p.file = _ARG_2_OF_6 ARGS;\
+    (STRUCTP)->p.line = _ARG_3_OF_6 ARGS;\
+    (STRUCTP)->p.col = _ARG_4_OF_6 ARGS;\
+    (STRUCTP)->next = _ARG_5_OF_6 ARGS;\
 }
 #define FILL_cppIfStack(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->pos = ARG0;\
-	(STRUCTP)->next = ARG1;\
+    (STRUCTP)->pos = ARG0;\
+    (STRUCTP)->next = ARG1;\
 }
 #define FILLF_cppIfStack(STRUCTP, ARG0, ARG1, ARG2, ARG3) {\
-	(STRUCTP)->pos.file = ARG0;\
-	(STRUCTP)->pos.line = ARG1;\
-	(STRUCTP)->pos.col = ARG2;\
-	(STRUCTP)->next = ARG3;\
+    (STRUCTP)->pos.file = ARG0;\
+    (STRUCTP)->pos.line = ARG1;\
+    (STRUCTP)->pos.col = ARG2;\
+    (STRUCTP)->next = ARG3;\
 }
 #define _FILLF_cppIfStack(STRUCTP, ARGS) {\
-	(STRUCTP)->pos.file = _ARG_0_OF_4 ARGS;\
-	(STRUCTP)->pos.line = _ARG_1_OF_4 ARGS;\
-	(STRUCTP)->pos.col = _ARG_2_OF_4 ARGS;\
-	(STRUCTP)->next = _ARG_3_OF_4 ARGS;\
+    (STRUCTP)->pos.file = _ARG_0_OF_4 ARGS;\
+    (STRUCTP)->pos.line = _ARG_1_OF_4 ARGS;\
+    (STRUCTP)->pos.col = _ARG_2_OF_4 ARGS;\
+    (STRUCTP)->next = _ARG_3_OF_4 ARGS;\
 }
 #define FILL_gz_header_s(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12) {\
-	(STRUCTP)->text = ARG0;\
-	(STRUCTP)->time = ARG1;\
-	(STRUCTP)->xflags = ARG2;\
-	(STRUCTP)->os = ARG3;\
-	(STRUCTP)->extra = ARG4;\
-	(STRUCTP)->extra_len = ARG5;\
-	(STRUCTP)->extra_max = ARG6;\
-	(STRUCTP)->name = ARG7;\
-	(STRUCTP)->name_max = ARG8;\
-	(STRUCTP)->comment = ARG9;\
-	(STRUCTP)->comm_max = ARG10;\
-	(STRUCTP)->hcrc = ARG11;\
-	(STRUCTP)->done = ARG12;\
+    (STRUCTP)->text = ARG0;\
+    (STRUCTP)->time = ARG1;\
+    (STRUCTP)->xflags = ARG2;\
+    (STRUCTP)->os = ARG3;\
+    (STRUCTP)->extra = ARG4;\
+    (STRUCTP)->extra_len = ARG5;\
+    (STRUCTP)->extra_max = ARG6;\
+    (STRUCTP)->name = ARG7;\
+    (STRUCTP)->name_max = ARG8;\
+    (STRUCTP)->comment = ARG9;\
+    (STRUCTP)->comm_max = ARG10;\
+    (STRUCTP)->hcrc = ARG11;\
+    (STRUCTP)->done = ARG12;\
 }
 #define FILLF_gz_header_s(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12) {\
-	(STRUCTP)->text = ARG0;\
-	(STRUCTP)->time = ARG1;\
-	(STRUCTP)->xflags = ARG2;\
-	(STRUCTP)->os = ARG3;\
-	(STRUCTP)->extra = ARG4;\
-	(STRUCTP)->extra_len = ARG5;\
-	(STRUCTP)->extra_max = ARG6;\
-	(STRUCTP)->name = ARG7;\
-	(STRUCTP)->name_max = ARG8;\
-	(STRUCTP)->comment = ARG9;\
-	(STRUCTP)->comm_max = ARG10;\
-	(STRUCTP)->hcrc = ARG11;\
-	(STRUCTP)->done = ARG12;\
+    (STRUCTP)->text = ARG0;\
+    (STRUCTP)->time = ARG1;\
+    (STRUCTP)->xflags = ARG2;\
+    (STRUCTP)->os = ARG3;\
+    (STRUCTP)->extra = ARG4;\
+    (STRUCTP)->extra_len = ARG5;\
+    (STRUCTP)->extra_max = ARG6;\
+    (STRUCTP)->name = ARG7;\
+    (STRUCTP)->name_max = ARG8;\
+    (STRUCTP)->comment = ARG9;\
+    (STRUCTP)->comm_max = ARG10;\
+    (STRUCTP)->hcrc = ARG11;\
+    (STRUCTP)->done = ARG12;\
 }
 #define _FILLF_gz_header_s(STRUCTP, ARGS) {\
-	(STRUCTP)->text = _ARG_0_OF_13 ARGS;\
-	(STRUCTP)->time = _ARG_1_OF_13 ARGS;\
-	(STRUCTP)->xflags = _ARG_2_OF_13 ARGS;\
-	(STRUCTP)->os = _ARG_3_OF_13 ARGS;\
-	(STRUCTP)->extra = _ARG_4_OF_13 ARGS;\
-	(STRUCTP)->extra_len = _ARG_5_OF_13 ARGS;\
-	(STRUCTP)->extra_max = _ARG_6_OF_13 ARGS;\
-	(STRUCTP)->name = _ARG_7_OF_13 ARGS;\
-	(STRUCTP)->name_max = _ARG_8_OF_13 ARGS;\
-	(STRUCTP)->comment = _ARG_9_OF_13 ARGS;\
-	(STRUCTP)->comm_max = _ARG_10_OF_13 ARGS;\
-	(STRUCTP)->hcrc = _ARG_11_OF_13 ARGS;\
-	(STRUCTP)->done = _ARG_12_OF_13 ARGS;\
+    (STRUCTP)->text = _ARG_0_OF_13 ARGS;\
+    (STRUCTP)->time = _ARG_1_OF_13 ARGS;\
+    (STRUCTP)->xflags = _ARG_2_OF_13 ARGS;\
+    (STRUCTP)->os = _ARG_3_OF_13 ARGS;\
+    (STRUCTP)->extra = _ARG_4_OF_13 ARGS;\
+    (STRUCTP)->extra_len = _ARG_5_OF_13 ARGS;\
+    (STRUCTP)->extra_max = _ARG_6_OF_13 ARGS;\
+    (STRUCTP)->name = _ARG_7_OF_13 ARGS;\
+    (STRUCTP)->name_max = _ARG_8_OF_13 ARGS;\
+    (STRUCTP)->comment = _ARG_9_OF_13 ARGS;\
+    (STRUCTP)->comm_max = _ARG_10_OF_13 ARGS;\
+    (STRUCTP)->hcrc = _ARG_11_OF_13 ARGS;\
+    (STRUCTP)->done = _ARG_12_OF_13 ARGS;\
 }
 #define FILL_recFindStr(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5) {\
-	(STRUCTP)->baseClass = ARG0;\
-	(STRUCTP)->currClass = ARG1;\
-	(STRUCTP)->nextRecord = ARG2;\
-	(STRUCTP)->recsClassCounter = ARG3;\
-	(STRUCTP)->sti = ARG4;\
-	(STRUCTP)->aui = ARG5;\
+    (STRUCTP)->baseClass = ARG0;\
+    (STRUCTP)->currClass = ARG1;\
+    (STRUCTP)->nextRecord = ARG2;\
+    (STRUCTP)->recsClassCounter = ARG3;\
+    (STRUCTP)->sti = ARG4;\
+    (STRUCTP)->aui = ARG5;\
 }
 #define FILLF_recFindStr(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5) {\
-	(STRUCTP)->baseClass = ARG0;\
-	(STRUCTP)->currClass = ARG1;\
-	(STRUCTP)->nextRecord = ARG2;\
-	(STRUCTP)->recsClassCounter = ARG3;\
-	(STRUCTP)->sti = ARG4;\
-	(STRUCTP)->aui = ARG5;\
+    (STRUCTP)->baseClass = ARG0;\
+    (STRUCTP)->currClass = ARG1;\
+    (STRUCTP)->nextRecord = ARG2;\
+    (STRUCTP)->recsClassCounter = ARG3;\
+    (STRUCTP)->sti = ARG4;\
+    (STRUCTP)->aui = ARG5;\
 }
 #define _FILLF_recFindStr(STRUCTP, ARGS) {\
-	(STRUCTP)->baseClass = _ARG_0_OF_6 ARGS;\
-	(STRUCTP)->currClass = _ARG_1_OF_6 ARGS;\
-	(STRUCTP)->nextRecord = _ARG_2_OF_6 ARGS;\
-	(STRUCTP)->recsClassCounter = _ARG_3_OF_6 ARGS;\
-	(STRUCTP)->sti = _ARG_4_OF_6 ARGS;\
-	(STRUCTP)->aui = _ARG_5_OF_6 ARGS;\
+    (STRUCTP)->baseClass = _ARG_0_OF_6 ARGS;\
+    (STRUCTP)->currClass = _ARG_1_OF_6 ARGS;\
+    (STRUCTP)->nextRecord = _ARG_2_OF_6 ARGS;\
+    (STRUCTP)->recsClassCounter = _ARG_3_OF_6 ARGS;\
+    (STRUCTP)->sti = _ARG_4_OF_6 ARGS;\
+    (STRUCTP)->aui = _ARG_5_OF_6 ARGS;\
 }
 #define FILL_drand48_data(STRUCTP, ARG0, ARG1, ARG2, ARG3) {\
-	(STRUCTP)->__c = ARG0;\
-	(STRUCTP)->__init = ARG1;\
-	(STRUCTP)->__ERROR__ = ARG2;\
-	(STRUCTP)->__a = ARG3;\
+    (STRUCTP)->__c = ARG0;\
+    (STRUCTP)->__init = ARG1;\
+    (STRUCTP)->__ERROR__ = ARG2;\
+    (STRUCTP)->__a = ARG3;\
 }
 #define FILLF_drand48_data(STRUCTP, ARG0, ARG1, ARG2, ARG3) {\
-	(STRUCTP)->__c = ARG0;\
-	(STRUCTP)->__init = ARG1;\
-	(STRUCTP)->__ERROR__ = ARG2;\
-	(STRUCTP)->__a = ARG3;\
+    (STRUCTP)->__c = ARG0;\
+    (STRUCTP)->__init = ARG1;\
+    (STRUCTP)->__ERROR__ = ARG2;\
+    (STRUCTP)->__a = ARG3;\
 }
 #define _FILLF_drand48_data(STRUCTP, ARGS) {\
-	(STRUCTP)->__c = _ARG_0_OF_4 ARGS;\
-	(STRUCTP)->__init = _ARG_1_OF_4 ARGS;\
-	(STRUCTP)->__ERROR__ = _ARG_2_OF_4 ARGS;\
-	(STRUCTP)->__a = _ARG_3_OF_4 ARGS;\
+    (STRUCTP)->__c = _ARG_0_OF_4 ARGS;\
+    (STRUCTP)->__init = _ARG_1_OF_4 ARGS;\
+    (STRUCTP)->__ERROR__ = _ARG_2_OF_4 ARGS;\
+    (STRUCTP)->__a = _ARG_3_OF_4 ARGS;\
 }
 #define FILL_olSymbolsMenu(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12) {\
-	(STRUCTP)->s = ARG0;\
-	(STRUCTP)->selected = ARG1;\
-	(STRUCTP)->visible = ARG2;\
-	(STRUCTP)->ooBits = ARG3;\
-	(STRUCTP)->olUsage = ARG4;\
-	(STRUCTP)->vlevel = ARG5;\
-	(STRUCTP)->refn = ARG6;\
-	(STRUCTP)->defRefn = ARG7;\
-	(STRUCTP)->defUsage = ARG8;\
-	(STRUCTP)->defpos = ARG9;\
-	(STRUCTP)->outOnLine = ARG10;\
-	(STRUCTP)->markers = ARG11;\
-	(STRUCTP)->next = ARG12;\
+    (STRUCTP)->s = ARG0;\
+    (STRUCTP)->selected = ARG1;\
+    (STRUCTP)->visible = ARG2;\
+    (STRUCTP)->ooBits = ARG3;\
+    (STRUCTP)->olUsage = ARG4;\
+    (STRUCTP)->vlevel = ARG5;\
+    (STRUCTP)->refn = ARG6;\
+    (STRUCTP)->defRefn = ARG7;\
+    (STRUCTP)->defUsage = ARG8;\
+    (STRUCTP)->defpos = ARG9;\
+    (STRUCTP)->outOnLine = ARG10;\
+    (STRUCTP)->markers = ARG11;\
+    (STRUCTP)->next = ARG12;\
 }
 #define FILLF_olSymbolsMenu(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13, ARG14, ARG15, ARG16, ARG17, ARG18, ARG19, ARG20, ARG21, ARG22, ARG23, ARG24, ARG25) {\
-	(STRUCTP)->s.name = ARG0;\
-	(STRUCTP)->s.fileHash = ARG1;\
-	(STRUCTP)->s.vApplClass = ARG2;\
-	(STRUCTP)->s.vFunClass = ARG3;\
-	(STRUCTP)->s.b.symType = ARG4;\
-	(STRUCTP)->s.b.storage = ARG5;\
-	(STRUCTP)->s.b.scope = ARG6;\
-	(STRUCTP)->s.b.accessFlags = ARG7;\
-	(STRUCTP)->s.b.category = ARG8;\
-	(STRUCTP)->s.b.htmlWasLn = ARG9;\
-	(STRUCTP)->s.refs = ARG10;\
-	(STRUCTP)->s.next = ARG11;\
-	(STRUCTP)->selected = ARG12;\
-	(STRUCTP)->visible = ARG13;\
-	(STRUCTP)->ooBits = ARG14;\
-	(STRUCTP)->olUsage = ARG15;\
-	(STRUCTP)->vlevel = ARG16;\
-	(STRUCTP)->refn = ARG17;\
-	(STRUCTP)->defRefn = ARG18;\
-	(STRUCTP)->defUsage = ARG19;\
-	(STRUCTP)->defpos.file = ARG20;\
-	(STRUCTP)->defpos.line = ARG21;\
-	(STRUCTP)->defpos.col = ARG22;\
-	(STRUCTP)->outOnLine = ARG23;\
-	(STRUCTP)->markers = ARG24;\
-	(STRUCTP)->next = ARG25;\
+    (STRUCTP)->s.name = ARG0;\
+    (STRUCTP)->s.fileHash = ARG1;\
+    (STRUCTP)->s.vApplClass = ARG2;\
+    (STRUCTP)->s.vFunClass = ARG3;\
+    (STRUCTP)->s.b.symType = ARG4;\
+    (STRUCTP)->s.b.storage = ARG5;\
+    (STRUCTP)->s.b.scope = ARG6;\
+    (STRUCTP)->s.b.accessFlags = ARG7;\
+    (STRUCTP)->s.b.category = ARG8;\
+    (STRUCTP)->s.b.htmlWasLn = ARG9;\
+    (STRUCTP)->s.refs = ARG10;\
+    (STRUCTP)->s.next = ARG11;\
+    (STRUCTP)->selected = ARG12;\
+    (STRUCTP)->visible = ARG13;\
+    (STRUCTP)->ooBits = ARG14;\
+    (STRUCTP)->olUsage = ARG15;\
+    (STRUCTP)->vlevel = ARG16;\
+    (STRUCTP)->refn = ARG17;\
+    (STRUCTP)->defRefn = ARG18;\
+    (STRUCTP)->defUsage = ARG19;\
+    (STRUCTP)->defpos.file = ARG20;\
+    (STRUCTP)->defpos.line = ARG21;\
+    (STRUCTP)->defpos.col = ARG22;\
+    (STRUCTP)->outOnLine = ARG23;\
+    (STRUCTP)->markers = ARG24;\
+    (STRUCTP)->next = ARG25;\
 }
 #define _FILLF_olSymbolsMenu(STRUCTP, ARGS) {\
-	(STRUCTP)->s.name = _ARG_0_OF_26 ARGS;\
-	(STRUCTP)->s.fileHash = _ARG_1_OF_26 ARGS;\
-	(STRUCTP)->s.vApplClass = _ARG_2_OF_26 ARGS;\
-	(STRUCTP)->s.vFunClass = _ARG_3_OF_26 ARGS;\
-	(STRUCTP)->s.b.symType = _ARG_4_OF_26 ARGS;\
-	(STRUCTP)->s.b.storage = _ARG_5_OF_26 ARGS;\
-	(STRUCTP)->s.b.scope = _ARG_6_OF_26 ARGS;\
-	(STRUCTP)->s.b.accessFlags = _ARG_7_OF_26 ARGS;\
-	(STRUCTP)->s.b.category = _ARG_8_OF_26 ARGS;\
-	(STRUCTP)->s.b.htmlWasLn = _ARG_9_OF_26 ARGS;\
-	(STRUCTP)->s.refs = _ARG_10_OF_26 ARGS;\
-	(STRUCTP)->s.next = _ARG_11_OF_26 ARGS;\
-	(STRUCTP)->selected = _ARG_12_OF_26 ARGS;\
-	(STRUCTP)->visible = _ARG_13_OF_26 ARGS;\
-	(STRUCTP)->ooBits = _ARG_14_OF_26 ARGS;\
-	(STRUCTP)->olUsage = _ARG_15_OF_26 ARGS;\
-	(STRUCTP)->vlevel = _ARG_16_OF_26 ARGS;\
-	(STRUCTP)->refn = _ARG_17_OF_26 ARGS;\
-	(STRUCTP)->defRefn = _ARG_18_OF_26 ARGS;\
-	(STRUCTP)->defUsage = _ARG_19_OF_26 ARGS;\
-	(STRUCTP)->defpos.file = _ARG_20_OF_26 ARGS;\
-	(STRUCTP)->defpos.line = _ARG_21_OF_26 ARGS;\
-	(STRUCTP)->defpos.col = _ARG_22_OF_26 ARGS;\
-	(STRUCTP)->outOnLine = _ARG_23_OF_26 ARGS;\
-	(STRUCTP)->markers = _ARG_24_OF_26 ARGS;\
-	(STRUCTP)->next = _ARG_25_OF_26 ARGS;\
+    (STRUCTP)->s.name = _ARG_0_OF_26 ARGS;\
+    (STRUCTP)->s.fileHash = _ARG_1_OF_26 ARGS;\
+    (STRUCTP)->s.vApplClass = _ARG_2_OF_26 ARGS;\
+    (STRUCTP)->s.vFunClass = _ARG_3_OF_26 ARGS;\
+    (STRUCTP)->s.b.symType = _ARG_4_OF_26 ARGS;\
+    (STRUCTP)->s.b.storage = _ARG_5_OF_26 ARGS;\
+    (STRUCTP)->s.b.scope = _ARG_6_OF_26 ARGS;\
+    (STRUCTP)->s.b.accessFlags = _ARG_7_OF_26 ARGS;\
+    (STRUCTP)->s.b.category = _ARG_8_OF_26 ARGS;\
+    (STRUCTP)->s.b.htmlWasLn = _ARG_9_OF_26 ARGS;\
+    (STRUCTP)->s.refs = _ARG_10_OF_26 ARGS;\
+    (STRUCTP)->s.next = _ARG_11_OF_26 ARGS;\
+    (STRUCTP)->selected = _ARG_12_OF_26 ARGS;\
+    (STRUCTP)->visible = _ARG_13_OF_26 ARGS;\
+    (STRUCTP)->ooBits = _ARG_14_OF_26 ARGS;\
+    (STRUCTP)->olUsage = _ARG_15_OF_26 ARGS;\
+    (STRUCTP)->vlevel = _ARG_16_OF_26 ARGS;\
+    (STRUCTP)->refn = _ARG_17_OF_26 ARGS;\
+    (STRUCTP)->defRefn = _ARG_18_OF_26 ARGS;\
+    (STRUCTP)->defUsage = _ARG_19_OF_26 ARGS;\
+    (STRUCTP)->defpos.file = _ARG_20_OF_26 ARGS;\
+    (STRUCTP)->defpos.line = _ARG_21_OF_26 ARGS;\
+    (STRUCTP)->defpos.col = _ARG_22_OF_26 ARGS;\
+    (STRUCTP)->outOnLine = _ARG_23_OF_26 ARGS;\
+    (STRUCTP)->markers = _ARG_24_OF_26 ARGS;\
+    (STRUCTP)->next = _ARG_25_OF_26 ARGS;\
 }
 #define FILL_freeTrail(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->action = ARG0;\
-	(STRUCTP)->p = ARG1;\
-	(STRUCTP)->next = ARG2;\
+    (STRUCTP)->action = ARG0;\
+    (STRUCTP)->p = ARG1;\
+    (STRUCTP)->next = ARG2;\
 }
 #define FILLF_freeTrail(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->action = ARG0;\
-	(STRUCTP)->p = ARG1;\
-	(STRUCTP)->next = ARG2;\
+    (STRUCTP)->action = ARG0;\
+    (STRUCTP)->p = ARG1;\
+    (STRUCTP)->next = ARG2;\
 }
 #define _FILLF_freeTrail(STRUCTP, ARGS) {\
-	(STRUCTP)->action = _ARG_0_OF_3 ARGS;\
-	(STRUCTP)->p = _ARG_1_OF_3 ARGS;\
-	(STRUCTP)->next = _ARG_2_OF_3 ARGS;\
+    (STRUCTP)->action = _ARG_0_OF_3 ARGS;\
+    (STRUCTP)->p = _ARG_1_OF_3 ARGS;\
+    (STRUCTP)->next = _ARG_2_OF_3 ARGS;\
 }
 #define FILL_currentlyParsedStatics(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13, ARG14, ARG15, ARG16) {\
-	(STRUCTP)->extractProcessedFlag = ARG0;\
-	(STRUCTP)->cxMemiAtBlockBegin = ARG1;\
-	(STRUCTP)->cxMemiAtBlockEnd = ARG2;\
-	(STRUCTP)->workMemiAtBlockBegin = ARG3;\
-	(STRUCTP)->workMemiAtBlockEnd = ARG4;\
-	(STRUCTP)->marker1Flag = ARG5;\
-	(STRUCTP)->marker2Flag = ARG6;\
-	(STRUCTP)->moveTargetApproved = ARG7;\
-	(STRUCTP)->methodCoordEndLine = ARG8;\
-	(STRUCTP)->cxMemiAtMethodBeginning = ARG9;\
-	(STRUCTP)->cxMemiAtMethodEnd = ARG10;\
-	(STRUCTP)->classCoordEndLine = ARG11;\
-	(STRUCTP)->cxMemiAtClassBeginning = ARG12;\
-	(STRUCTP)->cxMemiAtClassEnd = ARG13;\
-	(STRUCTP)->lastImportLine = ARG14;\
-	(STRUCTP)->lastDeclaratorType = ARG15;\
-	(STRUCTP)->lastAssignementStruct = ARG16;\
+    (STRUCTP)->extractProcessedFlag = ARG0;\
+    (STRUCTP)->cxMemiAtBlockBegin = ARG1;\
+    (STRUCTP)->cxMemiAtBlockEnd = ARG2;\
+    (STRUCTP)->workMemiAtBlockBegin = ARG3;\
+    (STRUCTP)->workMemiAtBlockEnd = ARG4;\
+    (STRUCTP)->marker1Flag = ARG5;\
+    (STRUCTP)->marker2Flag = ARG6;\
+    (STRUCTP)->moveTargetApproved = ARG7;\
+    (STRUCTP)->methodCoordEndLine = ARG8;\
+    (STRUCTP)->cxMemiAtMethodBeginning = ARG9;\
+    (STRUCTP)->cxMemiAtMethodEnd = ARG10;\
+    (STRUCTP)->classCoordEndLine = ARG11;\
+    (STRUCTP)->cxMemiAtClassBeginning = ARG12;\
+    (STRUCTP)->cxMemiAtClassEnd = ARG13;\
+    (STRUCTP)->lastImportLine = ARG14;\
+    (STRUCTP)->lastDeclaratorType = ARG15;\
+    (STRUCTP)->lastAssignementStruct = ARG16;\
 }
 #define FILLF_currentlyParsedStatics(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13, ARG14, ARG15, ARG16) {\
-	(STRUCTP)->extractProcessedFlag = ARG0;\
-	(STRUCTP)->cxMemiAtBlockBegin = ARG1;\
-	(STRUCTP)->cxMemiAtBlockEnd = ARG2;\
-	(STRUCTP)->workMemiAtBlockBegin = ARG3;\
-	(STRUCTP)->workMemiAtBlockEnd = ARG4;\
-	(STRUCTP)->marker1Flag = ARG5;\
-	(STRUCTP)->marker2Flag = ARG6;\
-	(STRUCTP)->moveTargetApproved = ARG7;\
-	(STRUCTP)->methodCoordEndLine = ARG8;\
-	(STRUCTP)->cxMemiAtMethodBeginning = ARG9;\
-	(STRUCTP)->cxMemiAtMethodEnd = ARG10;\
-	(STRUCTP)->classCoordEndLine = ARG11;\
-	(STRUCTP)->cxMemiAtClassBeginning = ARG12;\
-	(STRUCTP)->cxMemiAtClassEnd = ARG13;\
-	(STRUCTP)->lastImportLine = ARG14;\
-	(STRUCTP)->lastDeclaratorType = ARG15;\
-	(STRUCTP)->lastAssignementStruct = ARG16;\
+    (STRUCTP)->extractProcessedFlag = ARG0;\
+    (STRUCTP)->cxMemiAtBlockBegin = ARG1;\
+    (STRUCTP)->cxMemiAtBlockEnd = ARG2;\
+    (STRUCTP)->workMemiAtBlockBegin = ARG3;\
+    (STRUCTP)->workMemiAtBlockEnd = ARG4;\
+    (STRUCTP)->marker1Flag = ARG5;\
+    (STRUCTP)->marker2Flag = ARG6;\
+    (STRUCTP)->moveTargetApproved = ARG7;\
+    (STRUCTP)->methodCoordEndLine = ARG8;\
+    (STRUCTP)->cxMemiAtMethodBeginning = ARG9;\
+    (STRUCTP)->cxMemiAtMethodEnd = ARG10;\
+    (STRUCTP)->classCoordEndLine = ARG11;\
+    (STRUCTP)->cxMemiAtClassBeginning = ARG12;\
+    (STRUCTP)->cxMemiAtClassEnd = ARG13;\
+    (STRUCTP)->lastImportLine = ARG14;\
+    (STRUCTP)->lastDeclaratorType = ARG15;\
+    (STRUCTP)->lastAssignementStruct = ARG16;\
 }
 #define _FILLF_currentlyParsedStatics(STRUCTP, ARGS) {\
-	(STRUCTP)->extractProcessedFlag = _ARG_0_OF_17 ARGS;\
-	(STRUCTP)->cxMemiAtBlockBegin = _ARG_1_OF_17 ARGS;\
-	(STRUCTP)->cxMemiAtBlockEnd = _ARG_2_OF_17 ARGS;\
-	(STRUCTP)->workMemiAtBlockBegin = _ARG_3_OF_17 ARGS;\
-	(STRUCTP)->workMemiAtBlockEnd = _ARG_4_OF_17 ARGS;\
-	(STRUCTP)->marker1Flag = _ARG_5_OF_17 ARGS;\
-	(STRUCTP)->marker2Flag = _ARG_6_OF_17 ARGS;\
-	(STRUCTP)->moveTargetApproved = _ARG_7_OF_17 ARGS;\
-	(STRUCTP)->methodCoordEndLine = _ARG_8_OF_17 ARGS;\
-	(STRUCTP)->cxMemiAtMethodBeginning = _ARG_9_OF_17 ARGS;\
-	(STRUCTP)->cxMemiAtMethodEnd = _ARG_10_OF_17 ARGS;\
-	(STRUCTP)->classCoordEndLine = _ARG_11_OF_17 ARGS;\
-	(STRUCTP)->cxMemiAtClassBeginning = _ARG_12_OF_17 ARGS;\
-	(STRUCTP)->cxMemiAtClassEnd = _ARG_13_OF_17 ARGS;\
-	(STRUCTP)->lastImportLine = _ARG_14_OF_17 ARGS;\
-	(STRUCTP)->lastDeclaratorType = _ARG_15_OF_17 ARGS;\
-	(STRUCTP)->lastAssignementStruct = _ARG_16_OF_17 ARGS;\
+    (STRUCTP)->extractProcessedFlag = _ARG_0_OF_17 ARGS;\
+    (STRUCTP)->cxMemiAtBlockBegin = _ARG_1_OF_17 ARGS;\
+    (STRUCTP)->cxMemiAtBlockEnd = _ARG_2_OF_17 ARGS;\
+    (STRUCTP)->workMemiAtBlockBegin = _ARG_3_OF_17 ARGS;\
+    (STRUCTP)->workMemiAtBlockEnd = _ARG_4_OF_17 ARGS;\
+    (STRUCTP)->marker1Flag = _ARG_5_OF_17 ARGS;\
+    (STRUCTP)->marker2Flag = _ARG_6_OF_17 ARGS;\
+    (STRUCTP)->moveTargetApproved = _ARG_7_OF_17 ARGS;\
+    (STRUCTP)->methodCoordEndLine = _ARG_8_OF_17 ARGS;\
+    (STRUCTP)->cxMemiAtMethodBeginning = _ARG_9_OF_17 ARGS;\
+    (STRUCTP)->cxMemiAtMethodEnd = _ARG_10_OF_17 ARGS;\
+    (STRUCTP)->classCoordEndLine = _ARG_11_OF_17 ARGS;\
+    (STRUCTP)->cxMemiAtClassBeginning = _ARG_12_OF_17 ARGS;\
+    (STRUCTP)->cxMemiAtClassEnd = _ARG_13_OF_17 ARGS;\
+    (STRUCTP)->lastImportLine = _ARG_14_OF_17 ARGS;\
+    (STRUCTP)->lastDeclaratorType = _ARG_15_OF_17 ARGS;\
+    (STRUCTP)->lastAssignementStruct = _ARG_16_OF_17 ARGS;\
 }
 #define FILL_typeCharCodeIni(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->symType = ARG0;\
-	(STRUCTP)->code = ARG1;\
+    (STRUCTP)->symType = ARG0;\
+    (STRUCTP)->code = ARG1;\
 }
 #define FILLF_typeCharCodeIni(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->symType = ARG0;\
-	(STRUCTP)->code = ARG1;\
+    (STRUCTP)->symType = ARG0;\
+    (STRUCTP)->code = ARG1;\
 }
 #define _FILLF_typeCharCodeIni(STRUCTP, ARGS) {\
-	(STRUCTP)->symType = _ARG_0_OF_2 ARGS;\
-	(STRUCTP)->code = _ARG_1_OF_2 ARGS;\
+    (STRUCTP)->symType = _ARG_0_OF_2 ARGS;\
+    (STRUCTP)->code = _ARG_1_OF_2 ARGS;\
 }
 #define FILL_memory(STRUCTP, ARG0, ARG1, ARG2, ARG3) {\
-	(STRUCTP)->overflowHandler = ARG0;\
-	(STRUCTP)->i = ARG1;\
-	(STRUCTP)->size = ARG2;\
-	(STRUCTP)->b = ARG3;\
+    (STRUCTP)->overflowHandler = ARG0;\
+    (STRUCTP)->i = ARG1;\
+    (STRUCTP)->size = ARG2;\
+    (STRUCTP)->b = ARG3;\
 }
 #define FILLF_memory(STRUCTP, ARG0, ARG1, ARG2, ARG3) {\
-	(STRUCTP)->overflowHandler = ARG0;\
-	(STRUCTP)->i = ARG1;\
-	(STRUCTP)->size = ARG2;\
-	(STRUCTP)->b = ARG3;\
+    (STRUCTP)->overflowHandler = ARG0;\
+    (STRUCTP)->i = ARG1;\
+    (STRUCTP)->size = ARG2;\
+    (STRUCTP)->b = ARG3;\
 }
 #define _FILLF_memory(STRUCTP, ARGS) {\
-	(STRUCTP)->overflowHandler = _ARG_0_OF_4 ARGS;\
-	(STRUCTP)->i = _ARG_1_OF_4 ARGS;\
-	(STRUCTP)->size = _ARG_2_OF_4 ARGS;\
-	(STRUCTP)->b = _ARG_3_OF_4 ARGS;\
+    (STRUCTP)->overflowHandler = _ARG_0_OF_4 ARGS;\
+    (STRUCTP)->i = _ARG_1_OF_4 ARGS;\
+    (STRUCTP)->size = _ARG_2_OF_4 ARGS;\
+    (STRUCTP)->b = _ARG_3_OF_4 ARGS;\
 }
 #define FILL_symbolRefItemList(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->d = ARG0;\
-	(STRUCTP)->next = ARG1;\
+    (STRUCTP)->d = ARG0;\
+    (STRUCTP)->next = ARG1;\
 }
 #define FILLF_symbolRefItemList(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->d = ARG0;\
-	(STRUCTP)->next = ARG1;\
+    (STRUCTP)->d = ARG0;\
+    (STRUCTP)->next = ARG1;\
 }
 #define _FILLF_symbolRefItemList(STRUCTP, ARGS) {\
-	(STRUCTP)->d = _ARG_0_OF_2 ARGS;\
-	(STRUCTP)->next = _ARG_1_OF_2 ARGS;\
+    (STRUCTP)->d = _ARG_0_OF_2 ARGS;\
+    (STRUCTP)->next = _ARG_1_OF_2 ARGS;\
 }
 #define FILL_tm(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10) {\
-	(STRUCTP)->tm_sec = ARG0;\
-	(STRUCTP)->tm_min = ARG1;\
-	(STRUCTP)->tm_hour = ARG2;\
-	(STRUCTP)->tm_mday = ARG3;\
-	(STRUCTP)->tm_mon = ARG4;\
-	(STRUCTP)->tm_year = ARG5;\
-	(STRUCTP)->tm_wday = ARG6;\
-	(STRUCTP)->tm_yday = ARG7;\
-	(STRUCTP)->tm_isdst = ARG8;\
-	(STRUCTP)->tm_gmtoff = ARG9;\
-	(STRUCTP)->tm_zone = ARG10;\
+    (STRUCTP)->tm_sec = ARG0;\
+    (STRUCTP)->tm_min = ARG1;\
+    (STRUCTP)->tm_hour = ARG2;\
+    (STRUCTP)->tm_mday = ARG3;\
+    (STRUCTP)->tm_mon = ARG4;\
+    (STRUCTP)->tm_year = ARG5;\
+    (STRUCTP)->tm_wday = ARG6;\
+    (STRUCTP)->tm_yday = ARG7;\
+    (STRUCTP)->tm_isdst = ARG8;\
+    (STRUCTP)->tm_gmtoff = ARG9;\
+    (STRUCTP)->tm_zone = ARG10;\
 }
 #define FILLF_tm(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10) {\
-	(STRUCTP)->tm_sec = ARG0;\
-	(STRUCTP)->tm_min = ARG1;\
-	(STRUCTP)->tm_hour = ARG2;\
-	(STRUCTP)->tm_mday = ARG3;\
-	(STRUCTP)->tm_mon = ARG4;\
-	(STRUCTP)->tm_year = ARG5;\
-	(STRUCTP)->tm_wday = ARG6;\
-	(STRUCTP)->tm_yday = ARG7;\
-	(STRUCTP)->tm_isdst = ARG8;\
-	(STRUCTP)->tm_gmtoff = ARG9;\
-	(STRUCTP)->tm_zone = ARG10;\
+    (STRUCTP)->tm_sec = ARG0;\
+    (STRUCTP)->tm_min = ARG1;\
+    (STRUCTP)->tm_hour = ARG2;\
+    (STRUCTP)->tm_mday = ARG3;\
+    (STRUCTP)->tm_mon = ARG4;\
+    (STRUCTP)->tm_year = ARG5;\
+    (STRUCTP)->tm_wday = ARG6;\
+    (STRUCTP)->tm_yday = ARG7;\
+    (STRUCTP)->tm_isdst = ARG8;\
+    (STRUCTP)->tm_gmtoff = ARG9;\
+    (STRUCTP)->tm_zone = ARG10;\
 }
 #define _FILLF_tm(STRUCTP, ARGS) {\
-	(STRUCTP)->tm_sec = _ARG_0_OF_11 ARGS;\
-	(STRUCTP)->tm_min = _ARG_1_OF_11 ARGS;\
-	(STRUCTP)->tm_hour = _ARG_2_OF_11 ARGS;\
-	(STRUCTP)->tm_mday = _ARG_3_OF_11 ARGS;\
-	(STRUCTP)->tm_mon = _ARG_4_OF_11 ARGS;\
-	(STRUCTP)->tm_year = _ARG_5_OF_11 ARGS;\
-	(STRUCTP)->tm_wday = _ARG_6_OF_11 ARGS;\
-	(STRUCTP)->tm_yday = _ARG_7_OF_11 ARGS;\
-	(STRUCTP)->tm_isdst = _ARG_8_OF_11 ARGS;\
-	(STRUCTP)->tm_gmtoff = _ARG_9_OF_11 ARGS;\
-	(STRUCTP)->tm_zone = _ARG_10_OF_11 ARGS;\
+    (STRUCTP)->tm_sec = _ARG_0_OF_11 ARGS;\
+    (STRUCTP)->tm_min = _ARG_1_OF_11 ARGS;\
+    (STRUCTP)->tm_hour = _ARG_2_OF_11 ARGS;\
+    (STRUCTP)->tm_mday = _ARG_3_OF_11 ARGS;\
+    (STRUCTP)->tm_mon = _ARG_4_OF_11 ARGS;\
+    (STRUCTP)->tm_year = _ARG_5_OF_11 ARGS;\
+    (STRUCTP)->tm_wday = _ARG_6_OF_11 ARGS;\
+    (STRUCTP)->tm_yday = _ARG_7_OF_11 ARGS;\
+    (STRUCTP)->tm_isdst = _ARG_8_OF_11 ARGS;\
+    (STRUCTP)->tm_gmtoff = _ARG_9_OF_11 ARGS;\
+    (STRUCTP)->tm_zone = _ARG_10_OF_11 ARGS;\
 }
 #define FILL_stat(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13) {\
-	(STRUCTP)->st_dev = ARG0;\
-	(STRUCTP)->st_ino = ARG1;\
-	(STRUCTP)->st_nlink = ARG2;\
-	(STRUCTP)->st_mode = ARG3;\
-	(STRUCTP)->st_uid = ARG4;\
-	(STRUCTP)->st_gid = ARG5;\
-	(STRUCTP)->__pad0 = ARG6;\
-	(STRUCTP)->st_rdev = ARG7;\
-	(STRUCTP)->st_size = ARG8;\
-	(STRUCTP)->st_blksize = ARG9;\
-	(STRUCTP)->st_blocks = ARG10;\
-	(STRUCTP)->st_atim = ARG11;\
-	(STRUCTP)->st_mtim = ARG12;\
-	(STRUCTP)->st_ctim = ARG13;\
+    (STRUCTP)->st_dev = ARG0;\
+    (STRUCTP)->st_ino = ARG1;\
+    (STRUCTP)->st_nlink = ARG2;\
+    (STRUCTP)->st_mode = ARG3;\
+    (STRUCTP)->st_uid = ARG4;\
+    (STRUCTP)->st_gid = ARG5;\
+    (STRUCTP)->__pad0 = ARG6;\
+    (STRUCTP)->st_rdev = ARG7;\
+    (STRUCTP)->st_size = ARG8;\
+    (STRUCTP)->st_blksize = ARG9;\
+    (STRUCTP)->st_blocks = ARG10;\
+    (STRUCTP)->st_atim = ARG11;\
+    (STRUCTP)->st_mtim = ARG12;\
+    (STRUCTP)->st_ctim = ARG13;\
 }
 #define FILLF_stat(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13, ARG14, ARG15, ARG16) {\
-	(STRUCTP)->st_dev = ARG0;\
-	(STRUCTP)->st_ino = ARG1;\
-	(STRUCTP)->st_nlink = ARG2;\
-	(STRUCTP)->st_mode = ARG3;\
-	(STRUCTP)->st_uid = ARG4;\
-	(STRUCTP)->st_gid = ARG5;\
-	(STRUCTP)->__pad0 = ARG6;\
-	(STRUCTP)->st_rdev = ARG7;\
-	(STRUCTP)->st_size = ARG8;\
-	(STRUCTP)->st_blksize = ARG9;\
-	(STRUCTP)->st_blocks = ARG10;\
-	(STRUCTP)->st_atim.tv_sec = ARG11;\
-	(STRUCTP)->st_atim.tv_nsec = ARG12;\
-	(STRUCTP)->st_mtim.tv_sec = ARG13;\
-	(STRUCTP)->st_mtim.tv_nsec = ARG14;\
-	(STRUCTP)->st_ctim.tv_sec = ARG15;\
-	(STRUCTP)->st_ctim.tv_nsec = ARG16;\
+    (STRUCTP)->st_dev = ARG0;\
+    (STRUCTP)->st_ino = ARG1;\
+    (STRUCTP)->st_nlink = ARG2;\
+    (STRUCTP)->st_mode = ARG3;\
+    (STRUCTP)->st_uid = ARG4;\
+    (STRUCTP)->st_gid = ARG5;\
+    (STRUCTP)->__pad0 = ARG6;\
+    (STRUCTP)->st_rdev = ARG7;\
+    (STRUCTP)->st_size = ARG8;\
+    (STRUCTP)->st_blksize = ARG9;\
+    (STRUCTP)->st_blocks = ARG10;\
+    (STRUCTP)->st_atim.tv_sec = ARG11;\
+    (STRUCTP)->st_atim.tv_nsec = ARG12;\
+    (STRUCTP)->st_mtim.tv_sec = ARG13;\
+    (STRUCTP)->st_mtim.tv_nsec = ARG14;\
+    (STRUCTP)->st_ctim.tv_sec = ARG15;\
+    (STRUCTP)->st_ctim.tv_nsec = ARG16;\
 }
 #define _FILLF_stat(STRUCTP, ARGS) {\
-	(STRUCTP)->st_dev = _ARG_0_OF_17 ARGS;\
-	(STRUCTP)->st_ino = _ARG_1_OF_17 ARGS;\
-	(STRUCTP)->st_nlink = _ARG_2_OF_17 ARGS;\
-	(STRUCTP)->st_mode = _ARG_3_OF_17 ARGS;\
-	(STRUCTP)->st_uid = _ARG_4_OF_17 ARGS;\
-	(STRUCTP)->st_gid = _ARG_5_OF_17 ARGS;\
-	(STRUCTP)->__pad0 = _ARG_6_OF_17 ARGS;\
-	(STRUCTP)->st_rdev = _ARG_7_OF_17 ARGS;\
-	(STRUCTP)->st_size = _ARG_8_OF_17 ARGS;\
-	(STRUCTP)->st_blksize = _ARG_9_OF_17 ARGS;\
-	(STRUCTP)->st_blocks = _ARG_10_OF_17 ARGS;\
-	(STRUCTP)->st_atim.tv_sec = _ARG_11_OF_17 ARGS;\
-	(STRUCTP)->st_atim.tv_nsec = _ARG_12_OF_17 ARGS;\
-	(STRUCTP)->st_mtim.tv_sec = _ARG_13_OF_17 ARGS;\
-	(STRUCTP)->st_mtim.tv_nsec = _ARG_14_OF_17 ARGS;\
-	(STRUCTP)->st_ctim.tv_sec = _ARG_15_OF_17 ARGS;\
-	(STRUCTP)->st_ctim.tv_nsec = _ARG_16_OF_17 ARGS;\
+    (STRUCTP)->st_dev = _ARG_0_OF_17 ARGS;\
+    (STRUCTP)->st_ino = _ARG_1_OF_17 ARGS;\
+    (STRUCTP)->st_nlink = _ARG_2_OF_17 ARGS;\
+    (STRUCTP)->st_mode = _ARG_3_OF_17 ARGS;\
+    (STRUCTP)->st_uid = _ARG_4_OF_17 ARGS;\
+    (STRUCTP)->st_gid = _ARG_5_OF_17 ARGS;\
+    (STRUCTP)->__pad0 = _ARG_6_OF_17 ARGS;\
+    (STRUCTP)->st_rdev = _ARG_7_OF_17 ARGS;\
+    (STRUCTP)->st_size = _ARG_8_OF_17 ARGS;\
+    (STRUCTP)->st_blksize = _ARG_9_OF_17 ARGS;\
+    (STRUCTP)->st_blocks = _ARG_10_OF_17 ARGS;\
+    (STRUCTP)->st_atim.tv_sec = _ARG_11_OF_17 ARGS;\
+    (STRUCTP)->st_atim.tv_nsec = _ARG_12_OF_17 ARGS;\
+    (STRUCTP)->st_mtim.tv_sec = _ARG_13_OF_17 ARGS;\
+    (STRUCTP)->st_mtim.tv_nsec = _ARG_14_OF_17 ARGS;\
+    (STRUCTP)->st_ctim.tv_sec = _ARG_15_OF_17 ARGS;\
+    (STRUCTP)->st_ctim.tv_nsec = _ARG_16_OF_17 ARGS;\
 }
 #define FILL___pthread_mutex_s(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7) {\
-	(STRUCTP)->__lock = ARG0;\
-	(STRUCTP)->__count = ARG1;\
-	(STRUCTP)->__owner = ARG2;\
-	(STRUCTP)->__nusers = ARG3;\
-	(STRUCTP)->__kind = ARG4;\
-	(STRUCTP)->__spins = ARG5;\
-	(STRUCTP)->__elision = ARG6;\
-	(STRUCTP)->__list = ARG7;\
+    (STRUCTP)->__lock = ARG0;\
+    (STRUCTP)->__count = ARG1;\
+    (STRUCTP)->__owner = ARG2;\
+    (STRUCTP)->__nusers = ARG3;\
+    (STRUCTP)->__kind = ARG4;\
+    (STRUCTP)->__spins = ARG5;\
+    (STRUCTP)->__elision = ARG6;\
+    (STRUCTP)->__list = ARG7;\
 }
 #define FILLF___pthread_mutex_s(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8) {\
-	(STRUCTP)->__lock = ARG0;\
-	(STRUCTP)->__count = ARG1;\
-	(STRUCTP)->__owner = ARG2;\
-	(STRUCTP)->__nusers = ARG3;\
-	(STRUCTP)->__kind = ARG4;\
-	(STRUCTP)->__spins = ARG5;\
-	(STRUCTP)->__elision = ARG6;\
-	(STRUCTP)->__list.__prev = ARG7;\
-	(STRUCTP)->__list.__next = ARG8;\
+    (STRUCTP)->__lock = ARG0;\
+    (STRUCTP)->__count = ARG1;\
+    (STRUCTP)->__owner = ARG2;\
+    (STRUCTP)->__nusers = ARG3;\
+    (STRUCTP)->__kind = ARG4;\
+    (STRUCTP)->__spins = ARG5;\
+    (STRUCTP)->__elision = ARG6;\
+    (STRUCTP)->__list.__prev = ARG7;\
+    (STRUCTP)->__list.__next = ARG8;\
 }
 #define _FILLF___pthread_mutex_s(STRUCTP, ARGS) {\
-	(STRUCTP)->__lock = _ARG_0_OF_9 ARGS;\
-	(STRUCTP)->__count = _ARG_1_OF_9 ARGS;\
-	(STRUCTP)->__owner = _ARG_2_OF_9 ARGS;\
-	(STRUCTP)->__nusers = _ARG_3_OF_9 ARGS;\
-	(STRUCTP)->__kind = _ARG_4_OF_9 ARGS;\
-	(STRUCTP)->__spins = _ARG_5_OF_9 ARGS;\
-	(STRUCTP)->__elision = _ARG_6_OF_9 ARGS;\
-	(STRUCTP)->__list.__prev = _ARG_7_OF_9 ARGS;\
-	(STRUCTP)->__list.__next = _ARG_8_OF_9 ARGS;\
+    (STRUCTP)->__lock = _ARG_0_OF_9 ARGS;\
+    (STRUCTP)->__count = _ARG_1_OF_9 ARGS;\
+    (STRUCTP)->__owner = _ARG_2_OF_9 ARGS;\
+    (STRUCTP)->__nusers = _ARG_3_OF_9 ARGS;\
+    (STRUCTP)->__kind = _ARG_4_OF_9 ARGS;\
+    (STRUCTP)->__spins = _ARG_5_OF_9 ARGS;\
+    (STRUCTP)->__elision = _ARG_6_OF_9 ARGS;\
+    (STRUCTP)->__list.__prev = _ARG_7_OF_9 ARGS;\
+    (STRUCTP)->__list.__next = _ARG_8_OF_9 ARGS;\
 }
 #define FILL_methodTypeModifier(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->sig = ARG0;\
-	(STRUCTP)->exceptions = ARG1;\
+    (STRUCTP)->sig = ARG0;\
+    (STRUCTP)->exceptions = ARG1;\
 }
 #define FILLF_methodTypeModifier(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->sig = ARG0;\
-	(STRUCTP)->exceptions = ARG1;\
+    (STRUCTP)->sig = ARG0;\
+    (STRUCTP)->exceptions = ARG1;\
 }
 #define _FILLF_methodTypeModifier(STRUCTP, ARGS) {\
-	(STRUCTP)->sig = _ARG_0_OF_2 ARGS;\
-	(STRUCTP)->exceptions = _ARG_1_OF_2 ARGS;\
+    (STRUCTP)->sig = _ARG_0_OF_2 ARGS;\
+    (STRUCTP)->exceptions = _ARG_1_OF_2 ARGS;\
 }
 #define FILL_cxScanFileFunctionLink(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->recordCode = ARG0;\
-	(STRUCTP)->handleFun = ARG1;\
-	(STRUCTP)->additionalArg = ARG2;\
+    (STRUCTP)->recordCode = ARG0;\
+    (STRUCTP)->handleFun = ARG1;\
+    (STRUCTP)->additionalArg = ARG2;\
 }
 #define FILLF_cxScanFileFunctionLink(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->recordCode = ARG0;\
-	(STRUCTP)->handleFun = ARG1;\
-	(STRUCTP)->additionalArg = ARG2;\
+    (STRUCTP)->recordCode = ARG0;\
+    (STRUCTP)->handleFun = ARG1;\
+    (STRUCTP)->additionalArg = ARG2;\
 }
 #define _FILLF_cxScanFileFunctionLink(STRUCTP, ARGS) {\
-	(STRUCTP)->recordCode = _ARG_0_OF_3 ARGS;\
-	(STRUCTP)->handleFun = _ARG_1_OF_3 ARGS;\
-	(STRUCTP)->additionalArg = _ARG_2_OF_3 ARGS;\
+    (STRUCTP)->recordCode = _ARG_0_OF_3 ARGS;\
+    (STRUCTP)->handleFun = _ARG_1_OF_3 ARGS;\
+    (STRUCTP)->additionalArg = _ARG_2_OF_3 ARGS;\
 }
 #define FILL_symbolPositionListPair(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->s = ARG0;\
-	(STRUCTP)->p = ARG1;\
+    (STRUCTP)->s = ARG0;\
+    (STRUCTP)->p = ARG1;\
 }
 #define FILLF_symbolPositionListPair(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->s = ARG0;\
-	(STRUCTP)->p = ARG1;\
+    (STRUCTP)->s = ARG0;\
+    (STRUCTP)->p = ARG1;\
 }
 #define _FILLF_symbolPositionListPair(STRUCTP, ARGS) {\
-	(STRUCTP)->s = _ARG_0_OF_2 ARGS;\
-	(STRUCTP)->p = _ARG_1_OF_2 ARGS;\
+    (STRUCTP)->s = _ARG_0_OF_2 ARGS;\
+    (STRUCTP)->p = _ARG_1_OF_2 ARGS;\
 }
 #define FILL_tpCheckSpecialReferencesData(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7) {\
-	(STRUCTP)->mm = ARG0;\
-	(STRUCTP)->symbolToTest = ARG1;\
-	(STRUCTP)->classToTest = ARG2;\
-	(STRUCTP)->foundSpecialRefItem = ARG3;\
-	(STRUCTP)->foundSpecialR = ARG4;\
-	(STRUCTP)->foundRefToTestedClass = ARG5;\
-	(STRUCTP)->foundRefNotToTestedClass = ARG6;\
-	(STRUCTP)->foundOuterScopeRef = ARG7;\
+    (STRUCTP)->mm = ARG0;\
+    (STRUCTP)->symbolToTest = ARG1;\
+    (STRUCTP)->classToTest = ARG2;\
+    (STRUCTP)->foundSpecialRefItem = ARG3;\
+    (STRUCTP)->foundSpecialR = ARG4;\
+    (STRUCTP)->foundRefToTestedClass = ARG5;\
+    (STRUCTP)->foundRefNotToTestedClass = ARG6;\
+    (STRUCTP)->foundOuterScopeRef = ARG7;\
 }
 #define FILLF_tpCheckSpecialReferencesData(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8) {\
-	(STRUCTP)->mm.minMemi = ARG0;\
-	(STRUCTP)->mm.maxMemi = ARG1;\
-	(STRUCTP)->symbolToTest = ARG2;\
-	(STRUCTP)->classToTest = ARG3;\
-	(STRUCTP)->foundSpecialRefItem = ARG4;\
-	(STRUCTP)->foundSpecialR = ARG5;\
-	(STRUCTP)->foundRefToTestedClass = ARG6;\
-	(STRUCTP)->foundRefNotToTestedClass = ARG7;\
-	(STRUCTP)->foundOuterScopeRef = ARG8;\
+    (STRUCTP)->mm.minMemi = ARG0;\
+    (STRUCTP)->mm.maxMemi = ARG1;\
+    (STRUCTP)->symbolToTest = ARG2;\
+    (STRUCTP)->classToTest = ARG3;\
+    (STRUCTP)->foundSpecialRefItem = ARG4;\
+    (STRUCTP)->foundSpecialR = ARG5;\
+    (STRUCTP)->foundRefToTestedClass = ARG6;\
+    (STRUCTP)->foundRefNotToTestedClass = ARG7;\
+    (STRUCTP)->foundOuterScopeRef = ARG8;\
 }
 #define _FILLF_tpCheckSpecialReferencesData(STRUCTP, ARGS) {\
-	(STRUCTP)->mm.minMemi = _ARG_0_OF_9 ARGS;\
-	(STRUCTP)->mm.maxMemi = _ARG_1_OF_9 ARGS;\
-	(STRUCTP)->symbolToTest = _ARG_2_OF_9 ARGS;\
-	(STRUCTP)->classToTest = _ARG_3_OF_9 ARGS;\
-	(STRUCTP)->foundSpecialRefItem = _ARG_4_OF_9 ARGS;\
-	(STRUCTP)->foundSpecialR = _ARG_5_OF_9 ARGS;\
-	(STRUCTP)->foundRefToTestedClass = _ARG_6_OF_9 ARGS;\
-	(STRUCTP)->foundRefNotToTestedClass = _ARG_7_OF_9 ARGS;\
-	(STRUCTP)->foundOuterScopeRef = _ARG_8_OF_9 ARGS;\
+    (STRUCTP)->mm.minMemi = _ARG_0_OF_9 ARGS;\
+    (STRUCTP)->mm.maxMemi = _ARG_1_OF_9 ARGS;\
+    (STRUCTP)->symbolToTest = _ARG_2_OF_9 ARGS;\
+    (STRUCTP)->classToTest = _ARG_3_OF_9 ARGS;\
+    (STRUCTP)->foundSpecialRefItem = _ARG_4_OF_9 ARGS;\
+    (STRUCTP)->foundSpecialR = _ARG_5_OF_9 ARGS;\
+    (STRUCTP)->foundRefToTestedClass = _ARG_6_OF_9 ARGS;\
+    (STRUCTP)->foundRefNotToTestedClass = _ARG_7_OF_9 ARGS;\
+    (STRUCTP)->foundOuterScopeRef = _ARG_8_OF_9 ARGS;\
 }
 #define FILL_symbolList(STRUCTP) {\
 }
@@ -1869,722 +1869,722 @@
 #define _FILLUREC_pthread_attr_t___size(XX,ARG) XX->__size = ARG;
 #define _FILLUREC_pthread_attr_t___align(XX,ARG) XX->__align = ARG;
 #define FILL_position(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->file = ARG0;\
-	(STRUCTP)->line = ARG1;\
-	(STRUCTP)->col = ARG2;\
+    (STRUCTP)->file = ARG0;\
+    (STRUCTP)->line = ARG1;\
+    (STRUCTP)->col = ARG2;\
 }
 #define FILLF_position(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->file = ARG0;\
-	(STRUCTP)->line = ARG1;\
-	(STRUCTP)->col = ARG2;\
+    (STRUCTP)->file = ARG0;\
+    (STRUCTP)->line = ARG1;\
+    (STRUCTP)->col = ARG2;\
 }
 #define _FILLF_position(STRUCTP, ARGS) {\
-	(STRUCTP)->file = _ARG_0_OF_3 ARGS;\
-	(STRUCTP)->line = _ARG_1_OF_3 ARGS;\
-	(STRUCTP)->col = _ARG_2_OF_3 ARGS;\
+    (STRUCTP)->file = _ARG_0_OF_3 ARGS;\
+    (STRUCTP)->line = _ARG_1_OF_3 ARGS;\
+    (STRUCTP)->col = _ARG_2_OF_3 ARGS;\
 }
 #define FILL_exprTokenType(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->t = ARG0;\
-	(STRUCTP)->r = ARG1;\
-	(STRUCTP)->pp = ARG2;\
+    (STRUCTP)->t = ARG0;\
+    (STRUCTP)->r = ARG1;\
+    (STRUCTP)->pp = ARG2;\
 }
 #define FILLF_exprTokenType(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->t = ARG0;\
-	(STRUCTP)->r = ARG1;\
-	(STRUCTP)->pp = ARG2;\
+    (STRUCTP)->t = ARG0;\
+    (STRUCTP)->r = ARG1;\
+    (STRUCTP)->pp = ARG2;\
 }
 #define _FILLF_exprTokenType(STRUCTP, ARGS) {\
-	(STRUCTP)->t = _ARG_0_OF_3 ARGS;\
-	(STRUCTP)->r = _ARG_1_OF_3 ARGS;\
-	(STRUCTP)->pp = _ARG_2_OF_3 ARGS;\
+    (STRUCTP)->t = _ARG_0_OF_3 ARGS;\
+    (STRUCTP)->r = _ARG_1_OF_3 ARGS;\
+    (STRUCTP)->pp = _ARG_2_OF_3 ARGS;\
 }
 #define FILL_classTreeData(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->baseClassIndex = ARG0;\
-	(STRUCTP)->tree = ARG1;\
+    (STRUCTP)->baseClassIndex = ARG0;\
+    (STRUCTP)->tree = ARG1;\
 }
 #define FILLF_classTreeData(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->baseClassIndex = ARG0;\
-	(STRUCTP)->tree = ARG1;\
+    (STRUCTP)->baseClassIndex = ARG0;\
+    (STRUCTP)->tree = ARG1;\
 }
 #define _FILLF_classTreeData(STRUCTP, ARGS) {\
-	(STRUCTP)->baseClassIndex = _ARG_0_OF_2 ARGS;\
-	(STRUCTP)->tree = _ARG_1_OF_2 ARGS;\
+    (STRUCTP)->baseClassIndex = _ARG_0_OF_2 ARGS;\
+    (STRUCTP)->tree = _ARG_1_OF_2 ARGS;\
 }
 #define FILL_fileDesc(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4) {\
-	(STRUCTP)->fileName = ARG0;\
-	(STRUCTP)->lineNumber = ARG1;\
-	(STRUCTP)->ifDeep = ARG2;\
-	(STRUCTP)->ifStack = ARG3;\
-	(STRUCTP)->lexBuffer = ARG4;\
+    (STRUCTP)->fileName = ARG0;\
+    (STRUCTP)->lineNumber = ARG1;\
+    (STRUCTP)->ifDeep = ARG2;\
+    (STRUCTP)->ifStack = ARG3;\
+    (STRUCTP)->lexBuffer = ARG4;\
 }
 #define FILLF_fileDesc(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13, ARG14, ARG15, ARG16, ARG17, ARG18, ARG19, ARG20, ARG21, ARG22, ARG23, ARG24, ARG25, ARG26, ARG27, ARG28, ARG29, ARG30) {\
-	(STRUCTP)->fileName = ARG0;\
-	(STRUCTP)->lineNumber = ARG1;\
-	(STRUCTP)->ifDeep = ARG2;\
-	(STRUCTP)->ifStack = ARG3;\
-	(STRUCTP)->lexBuffer.next = ARG4;\
-	(STRUCTP)->lexBuffer.end = ARG5;\
-	(STRUCTP)->lexBuffer.posi = ARG6;\
-	(STRUCTP)->lexBuffer.buffer.next = ARG7;\
-	(STRUCTP)->lexBuffer.buffer.end = ARG8;\
-	(STRUCTP)->lexBuffer.buffer.file = ARG9;\
-	(STRUCTP)->lexBuffer.buffer.filePos = ARG10;\
-	(STRUCTP)->lexBuffer.buffer.fileNumber = ARG11;\
-	(STRUCTP)->lexBuffer.buffer.lineNum = ARG12;\
-	(STRUCTP)->lexBuffer.buffer.lineBegin = ARG13;\
-	(STRUCTP)->lexBuffer.buffer.columnOffset = ARG14;\
-	(STRUCTP)->lexBuffer.buffer.isAtEOF = ARG15;\
-	(STRUCTP)->lexBuffer.buffer.inputMethod = ARG16;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.next_in = ARG17;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.avail_in = ARG18;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.total_in = ARG19;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.next_out = ARG20;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.avail_out = ARG21;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.total_out = ARG22;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.msg = ARG23;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.state = ARG24;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.zalloc = ARG25;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.zfree = ARG26;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.opaque = ARG27;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.data_type = ARG28;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.adler = ARG29;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.reserved = ARG30;\
+    (STRUCTP)->fileName = ARG0;\
+    (STRUCTP)->lineNumber = ARG1;\
+    (STRUCTP)->ifDeep = ARG2;\
+    (STRUCTP)->ifStack = ARG3;\
+    (STRUCTP)->lexBuffer.next = ARG4;\
+    (STRUCTP)->lexBuffer.end = ARG5;\
+    (STRUCTP)->lexBuffer.posi = ARG6;\
+    (STRUCTP)->lexBuffer.buffer.next = ARG7;\
+    (STRUCTP)->lexBuffer.buffer.end = ARG8;\
+    (STRUCTP)->lexBuffer.buffer.file = ARG9;\
+    (STRUCTP)->lexBuffer.buffer.filePos = ARG10;\
+    (STRUCTP)->lexBuffer.buffer.fileNumber = ARG11;\
+    (STRUCTP)->lexBuffer.buffer.lineNum = ARG12;\
+    (STRUCTP)->lexBuffer.buffer.lineBegin = ARG13;\
+    (STRUCTP)->lexBuffer.buffer.columnOffset = ARG14;\
+    (STRUCTP)->lexBuffer.buffer.isAtEOF = ARG15;\
+    (STRUCTP)->lexBuffer.buffer.inputMethod = ARG16;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.next_in = ARG17;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.avail_in = ARG18;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.total_in = ARG19;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.next_out = ARG20;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.avail_out = ARG21;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.total_out = ARG22;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.msg = ARG23;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.state = ARG24;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.zalloc = ARG25;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.zfree = ARG26;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.opaque = ARG27;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.data_type = ARG28;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.adler = ARG29;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.reserved = ARG30;\
 }
 #define _FILLF_fileDesc(STRUCTP, ARGS) {\
-	(STRUCTP)->fileName = _ARG_0_OF_31 ARGS;\
-	(STRUCTP)->lineNumber = _ARG_1_OF_31 ARGS;\
-	(STRUCTP)->ifDeep = _ARG_2_OF_31 ARGS;\
-	(STRUCTP)->ifStack = _ARG_3_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.next = _ARG_4_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.end = _ARG_5_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.posi = _ARG_6_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.next = _ARG_7_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.end = _ARG_8_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.file = _ARG_9_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.filePos = _ARG_10_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.fileNumber = _ARG_11_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.lineNum = _ARG_12_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.lineBegin = _ARG_13_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.columnOffset = _ARG_14_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.isAtEOF = _ARG_15_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.inputMethod = _ARG_16_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.next_in = _ARG_17_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.avail_in = _ARG_18_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.total_in = _ARG_19_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.next_out = _ARG_20_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.avail_out = _ARG_21_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.total_out = _ARG_22_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.msg = _ARG_23_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.state = _ARG_24_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.zalloc = _ARG_25_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.zfree = _ARG_26_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.opaque = _ARG_27_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.data_type = _ARG_28_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.adler = _ARG_29_OF_31 ARGS;\
-	(STRUCTP)->lexBuffer.buffer.zipStream.reserved = _ARG_30_OF_31 ARGS;\
+    (STRUCTP)->fileName = _ARG_0_OF_31 ARGS;\
+    (STRUCTP)->lineNumber = _ARG_1_OF_31 ARGS;\
+    (STRUCTP)->ifDeep = _ARG_2_OF_31 ARGS;\
+    (STRUCTP)->ifStack = _ARG_3_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.next = _ARG_4_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.end = _ARG_5_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.posi = _ARG_6_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.next = _ARG_7_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.end = _ARG_8_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.file = _ARG_9_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.filePos = _ARG_10_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.fileNumber = _ARG_11_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.lineNum = _ARG_12_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.lineBegin = _ARG_13_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.columnOffset = _ARG_14_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.isAtEOF = _ARG_15_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.inputMethod = _ARG_16_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.next_in = _ARG_17_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.avail_in = _ARG_18_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.total_in = _ARG_19_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.next_out = _ARG_20_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.avail_out = _ARG_21_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.total_out = _ARG_22_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.msg = _ARG_23_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.state = _ARG_24_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.zalloc = _ARG_25_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.zfree = _ARG_26_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.opaque = _ARG_27_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.data_type = _ARG_28_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.adler = _ARG_29_OF_31 ARGS;\
+    (STRUCTP)->lexBuffer.buffer.zipStream.reserved = _ARG_30_OF_31 ARGS;\
 }
 #define FILL_options(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13, ARG14, ARG15, ARG16, ARG17, ARG18, ARG19, ARG20, ARG21, ARG22, ARG23, ARG24, ARG25, ARG26, ARG27, ARG28, ARG29, ARG30, ARG31, ARG32, ARG33, ARG34, ARG35, ARG36, ARG37, ARG38, ARG39, ARG40, ARG41, ARG42, ARG43, ARG44, ARG45, ARG46, ARG47, ARG48, ARG49, ARG50, ARG51, ARG52, ARG53, ARG54, ARG55, ARG56, ARG57, ARG58, ARG59, ARG60, ARG61, ARG62, ARG63, ARG64, ARG65, ARG66, ARG67, ARG68, ARG69, ARG70, ARG71, ARG72, ARG73, ARG74, ARG75, ARG76, ARG77, ARG78, ARG79, ARG80, ARG81, ARG82, ARG83, ARG84, ARG85, ARG86, ARG87, ARG88, ARG89, ARG90, ARG91, ARG92, ARG93, ARG94, ARG95, ARG96, ARG97, ARG98, ARG99, ARG100, ARG101, ARG102, ARG103, ARG104, ARG105, ARG106, ARG107, ARG108, ARG109, ARG110, ARG111, ARG112, ARG113, ARG114, ARG115, ARG116, ARG117, ARG118, ARG119, ARG120, ARG121, ARG122, ARG123, ARG124, ARG125, ARG126, ARG127, ARG128, ARG129, ARG130, ARG131, ARG132, ARG133, ARG134, ARG135, ARG136, ARG137, ARG138, ARG139, ARG140, ARG141, ARG142, ARG143, ARG144, ARG145, ARG146, ARG147, ARG148, ARG149) {\
-	(STRUCTP)->fileEncoding = ARG0;\
-	(STRUCTP)->completeParenthesis = ARG1;\
-	(STRUCTP)->defaultAddImportStrategy = ARG2;\
-	(STRUCTP)->referenceListWithoutSource = ARG3;\
-	(STRUCTP)->jeditOldCompletions = ARG4;\
-	(STRUCTP)->completionOverloadWizardDeep = ARG5;\
-	(STRUCTP)->exit = ARG6;\
-	(STRUCTP)->commentMovingLevel = ARG7;\
-	(STRUCTP)->pruneNames = ARG8;\
-	(STRUCTP)->inputFiles = ARG9;\
-	(STRUCTP)->continueRefactoring = ARG10;\
-	(STRUCTP)->completionCaseSensitive = ARG11;\
-	(STRUCTP)->xrefrc = ARG12;\
-	(STRUCTP)->eolConversion = ARG13;\
-	(STRUCTP)->checkVersion = ARG14;\
-	(STRUCTP)->nestedClassDisplaying = ARG15;\
-	(STRUCTP)->pushName = ARG16;\
-	(STRUCTP)->parnum2 = ARG17;\
-	(STRUCTP)->refpar1 = ARG18;\
-	(STRUCTP)->refpar2 = ARG19;\
-	(STRUCTP)->theRefactoring = ARG20;\
-	(STRUCTP)->briefoutput = ARG21;\
-	(STRUCTP)->cacheIncludes = ARG22;\
-	(STRUCTP)->stdopFlag = ARG23;\
-	(STRUCTP)->renameTo = ARG24;\
-	(STRUCTP)->refactoringRegime = ARG25;\
-	(STRUCTP)->xref2 = ARG26;\
-	(STRUCTP)->moveTargetFile = ARG27;\
-	(STRUCTP)->cFilesSuffixes = ARG28;\
-	(STRUCTP)->javaFilesSuffixes = ARG29;\
-	(STRUCTP)->cppFilesSuffixes = ARG30;\
-	(STRUCTP)->fileNamesCaseSensitive = ARG31;\
-	(STRUCTP)->htmlLineNumLabel = ARG32;\
-	(STRUCTP)->htmlCutSuffix = ARG33;\
-	(STRUCTP)->tagSearchSpecif = ARG34;\
-	(STRUCTP)->javaVersion = ARG35;\
-	(STRUCTP)->olcxWinDelFile = ARG36;\
-	(STRUCTP)->olcxWinDelFromLine = ARG37;\
-	(STRUCTP)->olcxWinDelFromCol = ARG38;\
-	(STRUCTP)->olcxWinDelToLine = ARG39;\
-	(STRUCTP)->olcxWinDelToCol = ARG40;\
-	(STRUCTP)->moveFromUser = ARG41;\
-	(STRUCTP)->noErrors = ARG42;\
-	(STRUCTP)->fqtNameToCompletions = ARG43;\
-	(STRUCTP)->moveTargetClass = ARG44;\
-	(STRUCTP)->trivialPreCheckCode = ARG45;\
-	(STRUCTP)->urlGenTemporaryFile = ARG46;\
-	(STRUCTP)->urlAutoRedirect = ARG47;\
-	(STRUCTP)->javaFilesOnly = ARG48;\
-	(STRUCTP)->exactPositionResolve = ARG49;\
-	(STRUCTP)->outputFileName = ARG50;\
-	(STRUCTP)->lineFileName = ARG51;\
-	(STRUCTP)->includeDirs = ARG52;\
-	(STRUCTP)->cxrefFileName = ARG53;\
-	(STRUCTP)->checkFileMovedFrom = ARG54;\
-	(STRUCTP)->checkFileMovedTo = ARG55;\
-	(STRUCTP)->checkFirstMovedLine = ARG56;\
-	(STRUCTP)->checkLinesMoved = ARG57;\
-	(STRUCTP)->checkNewLineNumber = ARG58;\
-	(STRUCTP)->getValue = ARG59;\
-	(STRUCTP)->java2html = ARG60;\
-	(STRUCTP)->javaSlAllowed = ARG61;\
-	(STRUCTP)->xfileHashingMethod = ARG62;\
-	(STRUCTP)->htmlLineNumColor = ARG63;\
-	(STRUCTP)->htmlCxLineLen = ARG64;\
-	(STRUCTP)->htmlJdkDocAvailable = ARG65;\
-	(STRUCTP)->htmlGenJdkDocLinks = ARG66;\
-	(STRUCTP)->htmlJdkDocUrl = ARG67;\
-	(STRUCTP)->javaDocPath = ARG68;\
-	(STRUCTP)->allowPackagesOnCl = ARG69;\
-	(STRUCTP)->sourcePath = ARG70;\
-	(STRUCTP)->htmlDirectX = ARG71;\
-	(STRUCTP)->jdocTmpDir = ARG72;\
-	(STRUCTP)->noCxFile = ARG73;\
-	(STRUCTP)->javaDoc = ARG74;\
-	(STRUCTP)->noIncludeRefs = ARG75;\
-	(STRUCTP)->allowClassFileRefs = ARG76;\
-	(STRUCTP)->filterValue = ARG77;\
-	(STRUCTP)->jdkClassPath = ARG78;\
-	(STRUCTP)->manualResolve = ARG79;\
-	(STRUCTP)->browsedSymName = ARG80;\
-	(STRUCTP)->modifiedFlag = ARG81;\
-	(STRUCTP)->olcxMenuSelectLineNum = ARG82;\
-	(STRUCTP)->htmlNoUnderline = ARG83;\
-	(STRUCTP)->htmlLinkColor = ARG84;\
-	(STRUCTP)->htmlCutPath = ARG85;\
-	(STRUCTP)->htmlCutPathLen = ARG86;\
-	(STRUCTP)->ooChecksBits = ARG87;\
-	(STRUCTP)->htmlLineNums = ARG88;\
-	(STRUCTP)->htmlNoColors = ARG89;\
-	(STRUCTP)->cxMemoryFaktor = ARG90;\
-	(STRUCTP)->multiHeadRefsCare = ARG91;\
-	(STRUCTP)->strictAnsi = ARG92;\
-	(STRUCTP)->project = ARG93;\
-	(STRUCTP)->updateOnlyModifiedFiles = ARG94;\
-	(STRUCTP)->olcxlccursor = ARG95;\
-	(STRUCTP)->htmlZipCommand = ARG96;\
-	(STRUCTP)->olcxSearchString = ARG97;\
-	(STRUCTP)->olineLen = ARG98;\
-	(STRUCTP)->htmlLinkSuffix = ARG99;\
-	(STRUCTP)->olExtractAddrParPrefix = ARG100;\
-	(STRUCTP)->extractMode = ARG101;\
-	(STRUCTP)->htmlFunSeparate = ARG102;\
-	(STRUCTP)->maxCompletions = ARG103;\
-	(STRUCTP)->editor = ARG104;\
-	(STRUCTP)->create = ARG105;\
-	(STRUCTP)->olcxRefSuffix = ARG106;\
-	(STRUCTP)->recursivelyDirs = ARG107;\
-	(STRUCTP)->classpath = ARG108;\
-	(STRUCTP)->tabulator = ARG109;\
-	(STRUCTP)->htmlRoot = ARG110;\
-	(STRUCTP)->htmlRichLists = ARG111;\
-	(STRUCTP)->htmlglobalx = ARG112;\
-	(STRUCTP)->htmllocalx = ARG113;\
-	(STRUCTP)->cIsCplusplus = ARG114;\
-	(STRUCTP)->olCursorPos = ARG115;\
-	(STRUCTP)->olMarkPos = ARG116;\
-	(STRUCTP)->taskRegime = ARG117;\
-	(STRUCTP)->user = ARG118;\
-	(STRUCTP)->debug = ARG119;\
-	(STRUCTP)->trace = ARG120;\
-	(STRUCTP)->cpp_comment = ARG121;\
-	(STRUCTP)->c_struct_scope = ARG122;\
-	(STRUCTP)->server_operation = ARG123;\
-	(STRUCTP)->olcxGotoVal = ARG124;\
-	(STRUCTP)->originalDir = ARG125;\
-	(STRUCTP)->no_ref_locals = ARG126;\
-	(STRUCTP)->no_ref_records = ARG127;\
-	(STRUCTP)->no_ref_enumerator = ARG128;\
-	(STRUCTP)->no_ref_typedef = ARG129;\
-	(STRUCTP)->no_ref_macro = ARG130;\
-	(STRUCTP)->no_stdop = ARG131;\
-	(STRUCTP)->qnxMessages = ARG132;\
-	(STRUCTP)->typedefg = ARG133;\
-	(STRUCTP)->str_fill = ARG134;\
-	(STRUCTP)->enum_name = ARG135;\
-	(STRUCTP)->body = ARG136;\
-	(STRUCTP)->header = ARG137;\
-	(STRUCTP)->str_copy = ARG138;\
-	(STRUCTP)->err = ARG139;\
-	(STRUCTP)->long_cxref = ARG140;\
-	(STRUCTP)->brief = ARG141;\
-	(STRUCTP)->update = ARG142;\
-	(STRUCTP)->keep_old = ARG143;\
-	(STRUCTP)->last_message = ARG144;\
-	(STRUCTP)->refnum = ARG145;\
-	(STRUCTP)->setGetEnv = ARG146;\
-	(STRUCTP)->htmlCut = ARG147;\
-	(STRUCTP)->allAllocatedStrings = ARG148;\
-	(STRUCTP)->pendingMemory = ARG149;\
+    (STRUCTP)->fileEncoding = ARG0;\
+    (STRUCTP)->completeParenthesis = ARG1;\
+    (STRUCTP)->defaultAddImportStrategy = ARG2;\
+    (STRUCTP)->referenceListWithoutSource = ARG3;\
+    (STRUCTP)->jeditOldCompletions = ARG4;\
+    (STRUCTP)->completionOverloadWizardDeep = ARG5;\
+    (STRUCTP)->exit = ARG6;\
+    (STRUCTP)->commentMovingLevel = ARG7;\
+    (STRUCTP)->pruneNames = ARG8;\
+    (STRUCTP)->inputFiles = ARG9;\
+    (STRUCTP)->continueRefactoring = ARG10;\
+    (STRUCTP)->completionCaseSensitive = ARG11;\
+    (STRUCTP)->xrefrc = ARG12;\
+    (STRUCTP)->eolConversion = ARG13;\
+    (STRUCTP)->checkVersion = ARG14;\
+    (STRUCTP)->nestedClassDisplaying = ARG15;\
+    (STRUCTP)->pushName = ARG16;\
+    (STRUCTP)->parnum2 = ARG17;\
+    (STRUCTP)->refpar1 = ARG18;\
+    (STRUCTP)->refpar2 = ARG19;\
+    (STRUCTP)->theRefactoring = ARG20;\
+    (STRUCTP)->briefoutput = ARG21;\
+    (STRUCTP)->cacheIncludes = ARG22;\
+    (STRUCTP)->stdopFlag = ARG23;\
+    (STRUCTP)->renameTo = ARG24;\
+    (STRUCTP)->refactoringRegime = ARG25;\
+    (STRUCTP)->xref2 = ARG26;\
+    (STRUCTP)->moveTargetFile = ARG27;\
+    (STRUCTP)->cFilesSuffixes = ARG28;\
+    (STRUCTP)->javaFilesSuffixes = ARG29;\
+    (STRUCTP)->cppFilesSuffixes = ARG30;\
+    (STRUCTP)->fileNamesCaseSensitive = ARG31;\
+    (STRUCTP)->htmlLineNumLabel = ARG32;\
+    (STRUCTP)->htmlCutSuffix = ARG33;\
+    (STRUCTP)->tagSearchSpecif = ARG34;\
+    (STRUCTP)->javaVersion = ARG35;\
+    (STRUCTP)->olcxWinDelFile = ARG36;\
+    (STRUCTP)->olcxWinDelFromLine = ARG37;\
+    (STRUCTP)->olcxWinDelFromCol = ARG38;\
+    (STRUCTP)->olcxWinDelToLine = ARG39;\
+    (STRUCTP)->olcxWinDelToCol = ARG40;\
+    (STRUCTP)->moveFromUser = ARG41;\
+    (STRUCTP)->noErrors = ARG42;\
+    (STRUCTP)->fqtNameToCompletions = ARG43;\
+    (STRUCTP)->moveTargetClass = ARG44;\
+    (STRUCTP)->trivialPreCheckCode = ARG45;\
+    (STRUCTP)->urlGenTemporaryFile = ARG46;\
+    (STRUCTP)->urlAutoRedirect = ARG47;\
+    (STRUCTP)->javaFilesOnly = ARG48;\
+    (STRUCTP)->exactPositionResolve = ARG49;\
+    (STRUCTP)->outputFileName = ARG50;\
+    (STRUCTP)->lineFileName = ARG51;\
+    (STRUCTP)->includeDirs = ARG52;\
+    (STRUCTP)->cxrefFileName = ARG53;\
+    (STRUCTP)->checkFileMovedFrom = ARG54;\
+    (STRUCTP)->checkFileMovedTo = ARG55;\
+    (STRUCTP)->checkFirstMovedLine = ARG56;\
+    (STRUCTP)->checkLinesMoved = ARG57;\
+    (STRUCTP)->checkNewLineNumber = ARG58;\
+    (STRUCTP)->getValue = ARG59;\
+    (STRUCTP)->java2html = ARG60;\
+    (STRUCTP)->javaSlAllowed = ARG61;\
+    (STRUCTP)->xfileHashingMethod = ARG62;\
+    (STRUCTP)->htmlLineNumColor = ARG63;\
+    (STRUCTP)->htmlCxLineLen = ARG64;\
+    (STRUCTP)->htmlJdkDocAvailable = ARG65;\
+    (STRUCTP)->htmlGenJdkDocLinks = ARG66;\
+    (STRUCTP)->htmlJdkDocUrl = ARG67;\
+    (STRUCTP)->javaDocPath = ARG68;\
+    (STRUCTP)->allowPackagesOnCl = ARG69;\
+    (STRUCTP)->sourcePath = ARG70;\
+    (STRUCTP)->htmlDirectX = ARG71;\
+    (STRUCTP)->jdocTmpDir = ARG72;\
+    (STRUCTP)->noCxFile = ARG73;\
+    (STRUCTP)->javaDoc = ARG74;\
+    (STRUCTP)->noIncludeRefs = ARG75;\
+    (STRUCTP)->allowClassFileRefs = ARG76;\
+    (STRUCTP)->filterValue = ARG77;\
+    (STRUCTP)->jdkClassPath = ARG78;\
+    (STRUCTP)->manualResolve = ARG79;\
+    (STRUCTP)->browsedSymName = ARG80;\
+    (STRUCTP)->modifiedFlag = ARG81;\
+    (STRUCTP)->olcxMenuSelectLineNum = ARG82;\
+    (STRUCTP)->htmlNoUnderline = ARG83;\
+    (STRUCTP)->htmlLinkColor = ARG84;\
+    (STRUCTP)->htmlCutPath = ARG85;\
+    (STRUCTP)->htmlCutPathLen = ARG86;\
+    (STRUCTP)->ooChecksBits = ARG87;\
+    (STRUCTP)->htmlLineNums = ARG88;\
+    (STRUCTP)->htmlNoColors = ARG89;\
+    (STRUCTP)->cxMemoryFaktor = ARG90;\
+    (STRUCTP)->multiHeadRefsCare = ARG91;\
+    (STRUCTP)->strictAnsi = ARG92;\
+    (STRUCTP)->project = ARG93;\
+    (STRUCTP)->updateOnlyModifiedFiles = ARG94;\
+    (STRUCTP)->olcxlccursor = ARG95;\
+    (STRUCTP)->htmlZipCommand = ARG96;\
+    (STRUCTP)->olcxSearchString = ARG97;\
+    (STRUCTP)->olineLen = ARG98;\
+    (STRUCTP)->htmlLinkSuffix = ARG99;\
+    (STRUCTP)->olExtractAddrParPrefix = ARG100;\
+    (STRUCTP)->extractMode = ARG101;\
+    (STRUCTP)->htmlFunSeparate = ARG102;\
+    (STRUCTP)->maxCompletions = ARG103;\
+    (STRUCTP)->editor = ARG104;\
+    (STRUCTP)->create = ARG105;\
+    (STRUCTP)->olcxRefSuffix = ARG106;\
+    (STRUCTP)->recursivelyDirs = ARG107;\
+    (STRUCTP)->classpath = ARG108;\
+    (STRUCTP)->tabulator = ARG109;\
+    (STRUCTP)->htmlRoot = ARG110;\
+    (STRUCTP)->htmlRichLists = ARG111;\
+    (STRUCTP)->htmlglobalx = ARG112;\
+    (STRUCTP)->htmllocalx = ARG113;\
+    (STRUCTP)->cIsCplusplus = ARG114;\
+    (STRUCTP)->olCursorPos = ARG115;\
+    (STRUCTP)->olMarkPos = ARG116;\
+    (STRUCTP)->taskRegime = ARG117;\
+    (STRUCTP)->user = ARG118;\
+    (STRUCTP)->debug = ARG119;\
+    (STRUCTP)->trace = ARG120;\
+    (STRUCTP)->cpp_comment = ARG121;\
+    (STRUCTP)->c_struct_scope = ARG122;\
+    (STRUCTP)->server_operation = ARG123;\
+    (STRUCTP)->olcxGotoVal = ARG124;\
+    (STRUCTP)->originalDir = ARG125;\
+    (STRUCTP)->no_ref_locals = ARG126;\
+    (STRUCTP)->no_ref_records = ARG127;\
+    (STRUCTP)->no_ref_enumerator = ARG128;\
+    (STRUCTP)->no_ref_typedef = ARG129;\
+    (STRUCTP)->no_ref_macro = ARG130;\
+    (STRUCTP)->no_stdop = ARG131;\
+    (STRUCTP)->qnxMessages = ARG132;\
+    (STRUCTP)->typedefg = ARG133;\
+    (STRUCTP)->str_fill = ARG134;\
+    (STRUCTP)->enum_name = ARG135;\
+    (STRUCTP)->body = ARG136;\
+    (STRUCTP)->header = ARG137;\
+    (STRUCTP)->str_copy = ARG138;\
+    (STRUCTP)->err = ARG139;\
+    (STRUCTP)->long_cxref = ARG140;\
+    (STRUCTP)->brief = ARG141;\
+    (STRUCTP)->update = ARG142;\
+    (STRUCTP)->keep_old = ARG143;\
+    (STRUCTP)->last_message = ARG144;\
+    (STRUCTP)->refnum = ARG145;\
+    (STRUCTP)->setGetEnv = ARG146;\
+    (STRUCTP)->htmlCut = ARG147;\
+    (STRUCTP)->allAllocatedStrings = ARG148;\
+    (STRUCTP)->pendingMemory = ARG149;\
 }
 #define FILLF_options(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13, ARG14, ARG15, ARG16, ARG17, ARG18, ARG19, ARG20, ARG21, ARG22, ARG23, ARG24, ARG25, ARG26, ARG27, ARG28, ARG29, ARG30, ARG31, ARG32, ARG33, ARG34, ARG35, ARG36, ARG37, ARG38, ARG39, ARG40, ARG41, ARG42, ARG43, ARG44, ARG45, ARG46, ARG47, ARG48, ARG49, ARG50, ARG51, ARG52, ARG53, ARG54, ARG55, ARG56, ARG57, ARG58, ARG59, ARG60, ARG61, ARG62, ARG63, ARG64, ARG65, ARG66, ARG67, ARG68, ARG69, ARG70, ARG71, ARG72, ARG73, ARG74, ARG75, ARG76, ARG77, ARG78, ARG79, ARG80, ARG81, ARG82, ARG83, ARG84, ARG85, ARG86, ARG87, ARG88, ARG89, ARG90, ARG91, ARG92, ARG93, ARG94, ARG95, ARG96, ARG97, ARG98, ARG99, ARG100, ARG101, ARG102, ARG103, ARG104, ARG105, ARG106, ARG107, ARG108, ARG109, ARG110, ARG111, ARG112, ARG113, ARG114, ARG115, ARG116, ARG117, ARG118, ARG119, ARG120, ARG121, ARG122, ARG123, ARG124, ARG125, ARG126, ARG127, ARG128, ARG129, ARG130, ARG131, ARG132, ARG133, ARG134, ARG135, ARG136, ARG137, ARG138, ARG139, ARG140, ARG141, ARG142, ARG143, ARG144, ARG145, ARG146, ARG147, ARG148, ARG149, ARG150, ARG151, ARG152) {\
-	(STRUCTP)->fileEncoding = ARG0;\
-	(STRUCTP)->completeParenthesis = ARG1;\
-	(STRUCTP)->defaultAddImportStrategy = ARG2;\
-	(STRUCTP)->referenceListWithoutSource = ARG3;\
-	(STRUCTP)->jeditOldCompletions = ARG4;\
-	(STRUCTP)->completionOverloadWizardDeep = ARG5;\
-	(STRUCTP)->exit = ARG6;\
-	(STRUCTP)->commentMovingLevel = ARG7;\
-	(STRUCTP)->pruneNames = ARG8;\
-	(STRUCTP)->inputFiles = ARG9;\
-	(STRUCTP)->continueRefactoring = ARG10;\
-	(STRUCTP)->completionCaseSensitive = ARG11;\
-	(STRUCTP)->xrefrc = ARG12;\
-	(STRUCTP)->eolConversion = ARG13;\
-	(STRUCTP)->checkVersion = ARG14;\
-	(STRUCTP)->nestedClassDisplaying = ARG15;\
-	(STRUCTP)->pushName = ARG16;\
-	(STRUCTP)->parnum2 = ARG17;\
-	(STRUCTP)->refpar1 = ARG18;\
-	(STRUCTP)->refpar2 = ARG19;\
-	(STRUCTP)->theRefactoring = ARG20;\
-	(STRUCTP)->briefoutput = ARG21;\
-	(STRUCTP)->cacheIncludes = ARG22;\
-	(STRUCTP)->stdopFlag = ARG23;\
-	(STRUCTP)->renameTo = ARG24;\
-	(STRUCTP)->refactoringRegime = ARG25;\
-	(STRUCTP)->xref2 = ARG26;\
-	(STRUCTP)->moveTargetFile = ARG27;\
-	(STRUCTP)->cFilesSuffixes = ARG28;\
-	(STRUCTP)->javaFilesSuffixes = ARG29;\
-	(STRUCTP)->cppFilesSuffixes = ARG30;\
-	(STRUCTP)->fileNamesCaseSensitive = ARG31;\
-	(STRUCTP)->htmlLineNumLabel = ARG32;\
-	(STRUCTP)->htmlCutSuffix = ARG33;\
-	(STRUCTP)->tagSearchSpecif = ARG34;\
-	(STRUCTP)->javaVersion = ARG35;\
-	(STRUCTP)->olcxWinDelFile = ARG36;\
-	(STRUCTP)->olcxWinDelFromLine = ARG37;\
-	(STRUCTP)->olcxWinDelFromCol = ARG38;\
-	(STRUCTP)->olcxWinDelToLine = ARG39;\
-	(STRUCTP)->olcxWinDelToCol = ARG40;\
-	(STRUCTP)->moveFromUser = ARG41;\
-	(STRUCTP)->noErrors = ARG42;\
-	(STRUCTP)->fqtNameToCompletions = ARG43;\
-	(STRUCTP)->moveTargetClass = ARG44;\
-	(STRUCTP)->trivialPreCheckCode = ARG45;\
-	(STRUCTP)->urlGenTemporaryFile = ARG46;\
-	(STRUCTP)->urlAutoRedirect = ARG47;\
-	(STRUCTP)->javaFilesOnly = ARG48;\
-	(STRUCTP)->exactPositionResolve = ARG49;\
-	(STRUCTP)->outputFileName = ARG50;\
-	(STRUCTP)->lineFileName = ARG51;\
-	(STRUCTP)->includeDirs = ARG52;\
-	(STRUCTP)->cxrefFileName = ARG53;\
-	(STRUCTP)->checkFileMovedFrom = ARG54;\
-	(STRUCTP)->checkFileMovedTo = ARG55;\
-	(STRUCTP)->checkFirstMovedLine = ARG56;\
-	(STRUCTP)->checkLinesMoved = ARG57;\
-	(STRUCTP)->checkNewLineNumber = ARG58;\
-	(STRUCTP)->getValue = ARG59;\
-	(STRUCTP)->java2html = ARG60;\
-	(STRUCTP)->javaSlAllowed = ARG61;\
-	(STRUCTP)->xfileHashingMethod = ARG62;\
-	(STRUCTP)->htmlLineNumColor = ARG63;\
-	(STRUCTP)->htmlCxLineLen = ARG64;\
-	(STRUCTP)->htmlJdkDocAvailable = ARG65;\
-	(STRUCTP)->htmlGenJdkDocLinks = ARG66;\
-	(STRUCTP)->htmlJdkDocUrl = ARG67;\
-	(STRUCTP)->javaDocPath = ARG68;\
-	(STRUCTP)->allowPackagesOnCl = ARG69;\
-	(STRUCTP)->sourcePath = ARG70;\
-	(STRUCTP)->htmlDirectX = ARG71;\
-	(STRUCTP)->jdocTmpDir = ARG72;\
-	(STRUCTP)->noCxFile = ARG73;\
-	(STRUCTP)->javaDoc = ARG74;\
-	(STRUCTP)->noIncludeRefs = ARG75;\
-	(STRUCTP)->allowClassFileRefs = ARG76;\
-	(STRUCTP)->filterValue = ARG77;\
-	(STRUCTP)->jdkClassPath = ARG78;\
-	(STRUCTP)->manualResolve = ARG79;\
-	(STRUCTP)->browsedSymName = ARG80;\
-	(STRUCTP)->modifiedFlag = ARG81;\
-	(STRUCTP)->olcxMenuSelectLineNum = ARG82;\
-	(STRUCTP)->htmlNoUnderline = ARG83;\
-	(STRUCTP)->htmlLinkColor = ARG84;\
-	(STRUCTP)->htmlCutPath = ARG85;\
-	(STRUCTP)->htmlCutPathLen = ARG86;\
-	(STRUCTP)->ooChecksBits = ARG87;\
-	(STRUCTP)->htmlLineNums = ARG88;\
-	(STRUCTP)->htmlNoColors = ARG89;\
-	(STRUCTP)->cxMemoryFaktor = ARG90;\
-	(STRUCTP)->multiHeadRefsCare = ARG91;\
-	(STRUCTP)->strictAnsi = ARG92;\
-	(STRUCTP)->project = ARG93;\
-	(STRUCTP)->updateOnlyModifiedFiles = ARG94;\
-	(STRUCTP)->olcxlccursor = ARG95;\
-	(STRUCTP)->htmlZipCommand = ARG96;\
-	(STRUCTP)->olcxSearchString = ARG97;\
-	(STRUCTP)->olineLen = ARG98;\
-	(STRUCTP)->htmlLinkSuffix = ARG99;\
-	(STRUCTP)->olExtractAddrParPrefix = ARG100;\
-	(STRUCTP)->extractMode = ARG101;\
-	(STRUCTP)->htmlFunSeparate = ARG102;\
-	(STRUCTP)->maxCompletions = ARG103;\
-	(STRUCTP)->editor = ARG104;\
-	(STRUCTP)->create = ARG105;\
-	(STRUCTP)->olcxRefSuffix = ARG106;\
-	(STRUCTP)->recursivelyDirs = ARG107;\
-	(STRUCTP)->classpath = ARG108;\
-	(STRUCTP)->tabulator = ARG109;\
-	(STRUCTP)->htmlRoot = ARG110;\
-	(STRUCTP)->htmlRichLists = ARG111;\
-	(STRUCTP)->htmlglobalx = ARG112;\
-	(STRUCTP)->htmllocalx = ARG113;\
-	(STRUCTP)->cIsCplusplus = ARG114;\
-	(STRUCTP)->olCursorPos = ARG115;\
-	(STRUCTP)->olMarkPos = ARG116;\
-	(STRUCTP)->taskRegime = ARG117;\
-	(STRUCTP)->user = ARG118;\
-	(STRUCTP)->debug = ARG119;\
-	(STRUCTP)->trace = ARG120;\
-	(STRUCTP)->cpp_comment = ARG121;\
-	(STRUCTP)->c_struct_scope = ARG122;\
-	(STRUCTP)->server_operation = ARG123;\
-	(STRUCTP)->olcxGotoVal = ARG124;\
-	(STRUCTP)->originalDir = ARG125;\
-	(STRUCTP)->no_ref_locals = ARG126;\
-	(STRUCTP)->no_ref_records = ARG127;\
-	(STRUCTP)->no_ref_enumerator = ARG128;\
-	(STRUCTP)->no_ref_typedef = ARG129;\
-	(STRUCTP)->no_ref_macro = ARG130;\
-	(STRUCTP)->no_stdop = ARG131;\
-	(STRUCTP)->qnxMessages = ARG132;\
-	(STRUCTP)->typedefg = ARG133;\
-	(STRUCTP)->str_fill = ARG134;\
-	(STRUCTP)->enum_name = ARG135;\
-	(STRUCTP)->body = ARG136;\
-	(STRUCTP)->header = ARG137;\
-	(STRUCTP)->str_copy = ARG138;\
-	(STRUCTP)->err = ARG139;\
-	(STRUCTP)->long_cxref = ARG140;\
-	(STRUCTP)->brief = ARG141;\
-	(STRUCTP)->update = ARG142;\
-	(STRUCTP)->keep_old = ARG143;\
-	(STRUCTP)->last_message = ARG144;\
-	(STRUCTP)->refnum = ARG145;\
-	(STRUCTP)->setGetEnv.num = ARG146;\
-	(STRUCTP)->htmlCut.pathsNum = ARG147;\
-	(STRUCTP)->allAllocatedStrings = ARG148;\
-	(STRUCTP)->pendingMemory.overflowHandler = ARG149;\
-	(STRUCTP)->pendingMemory.i = ARG150;\
-	(STRUCTP)->pendingMemory.size = ARG151;\
-	(STRUCTP)->pendingMemory.b = ARG152;\
+    (STRUCTP)->fileEncoding = ARG0;\
+    (STRUCTP)->completeParenthesis = ARG1;\
+    (STRUCTP)->defaultAddImportStrategy = ARG2;\
+    (STRUCTP)->referenceListWithoutSource = ARG3;\
+    (STRUCTP)->jeditOldCompletions = ARG4;\
+    (STRUCTP)->completionOverloadWizardDeep = ARG5;\
+    (STRUCTP)->exit = ARG6;\
+    (STRUCTP)->commentMovingLevel = ARG7;\
+    (STRUCTP)->pruneNames = ARG8;\
+    (STRUCTP)->inputFiles = ARG9;\
+    (STRUCTP)->continueRefactoring = ARG10;\
+    (STRUCTP)->completionCaseSensitive = ARG11;\
+    (STRUCTP)->xrefrc = ARG12;\
+    (STRUCTP)->eolConversion = ARG13;\
+    (STRUCTP)->checkVersion = ARG14;\
+    (STRUCTP)->nestedClassDisplaying = ARG15;\
+    (STRUCTP)->pushName = ARG16;\
+    (STRUCTP)->parnum2 = ARG17;\
+    (STRUCTP)->refpar1 = ARG18;\
+    (STRUCTP)->refpar2 = ARG19;\
+    (STRUCTP)->theRefactoring = ARG20;\
+    (STRUCTP)->briefoutput = ARG21;\
+    (STRUCTP)->cacheIncludes = ARG22;\
+    (STRUCTP)->stdopFlag = ARG23;\
+    (STRUCTP)->renameTo = ARG24;\
+    (STRUCTP)->refactoringRegime = ARG25;\
+    (STRUCTP)->xref2 = ARG26;\
+    (STRUCTP)->moveTargetFile = ARG27;\
+    (STRUCTP)->cFilesSuffixes = ARG28;\
+    (STRUCTP)->javaFilesSuffixes = ARG29;\
+    (STRUCTP)->cppFilesSuffixes = ARG30;\
+    (STRUCTP)->fileNamesCaseSensitive = ARG31;\
+    (STRUCTP)->htmlLineNumLabel = ARG32;\
+    (STRUCTP)->htmlCutSuffix = ARG33;\
+    (STRUCTP)->tagSearchSpecif = ARG34;\
+    (STRUCTP)->javaVersion = ARG35;\
+    (STRUCTP)->olcxWinDelFile = ARG36;\
+    (STRUCTP)->olcxWinDelFromLine = ARG37;\
+    (STRUCTP)->olcxWinDelFromCol = ARG38;\
+    (STRUCTP)->olcxWinDelToLine = ARG39;\
+    (STRUCTP)->olcxWinDelToCol = ARG40;\
+    (STRUCTP)->moveFromUser = ARG41;\
+    (STRUCTP)->noErrors = ARG42;\
+    (STRUCTP)->fqtNameToCompletions = ARG43;\
+    (STRUCTP)->moveTargetClass = ARG44;\
+    (STRUCTP)->trivialPreCheckCode = ARG45;\
+    (STRUCTP)->urlGenTemporaryFile = ARG46;\
+    (STRUCTP)->urlAutoRedirect = ARG47;\
+    (STRUCTP)->javaFilesOnly = ARG48;\
+    (STRUCTP)->exactPositionResolve = ARG49;\
+    (STRUCTP)->outputFileName = ARG50;\
+    (STRUCTP)->lineFileName = ARG51;\
+    (STRUCTP)->includeDirs = ARG52;\
+    (STRUCTP)->cxrefFileName = ARG53;\
+    (STRUCTP)->checkFileMovedFrom = ARG54;\
+    (STRUCTP)->checkFileMovedTo = ARG55;\
+    (STRUCTP)->checkFirstMovedLine = ARG56;\
+    (STRUCTP)->checkLinesMoved = ARG57;\
+    (STRUCTP)->checkNewLineNumber = ARG58;\
+    (STRUCTP)->getValue = ARG59;\
+    (STRUCTP)->java2html = ARG60;\
+    (STRUCTP)->javaSlAllowed = ARG61;\
+    (STRUCTP)->xfileHashingMethod = ARG62;\
+    (STRUCTP)->htmlLineNumColor = ARG63;\
+    (STRUCTP)->htmlCxLineLen = ARG64;\
+    (STRUCTP)->htmlJdkDocAvailable = ARG65;\
+    (STRUCTP)->htmlGenJdkDocLinks = ARG66;\
+    (STRUCTP)->htmlJdkDocUrl = ARG67;\
+    (STRUCTP)->javaDocPath = ARG68;\
+    (STRUCTP)->allowPackagesOnCl = ARG69;\
+    (STRUCTP)->sourcePath = ARG70;\
+    (STRUCTP)->htmlDirectX = ARG71;\
+    (STRUCTP)->jdocTmpDir = ARG72;\
+    (STRUCTP)->noCxFile = ARG73;\
+    (STRUCTP)->javaDoc = ARG74;\
+    (STRUCTP)->noIncludeRefs = ARG75;\
+    (STRUCTP)->allowClassFileRefs = ARG76;\
+    (STRUCTP)->filterValue = ARG77;\
+    (STRUCTP)->jdkClassPath = ARG78;\
+    (STRUCTP)->manualResolve = ARG79;\
+    (STRUCTP)->browsedSymName = ARG80;\
+    (STRUCTP)->modifiedFlag = ARG81;\
+    (STRUCTP)->olcxMenuSelectLineNum = ARG82;\
+    (STRUCTP)->htmlNoUnderline = ARG83;\
+    (STRUCTP)->htmlLinkColor = ARG84;\
+    (STRUCTP)->htmlCutPath = ARG85;\
+    (STRUCTP)->htmlCutPathLen = ARG86;\
+    (STRUCTP)->ooChecksBits = ARG87;\
+    (STRUCTP)->htmlLineNums = ARG88;\
+    (STRUCTP)->htmlNoColors = ARG89;\
+    (STRUCTP)->cxMemoryFaktor = ARG90;\
+    (STRUCTP)->multiHeadRefsCare = ARG91;\
+    (STRUCTP)->strictAnsi = ARG92;\
+    (STRUCTP)->project = ARG93;\
+    (STRUCTP)->updateOnlyModifiedFiles = ARG94;\
+    (STRUCTP)->olcxlccursor = ARG95;\
+    (STRUCTP)->htmlZipCommand = ARG96;\
+    (STRUCTP)->olcxSearchString = ARG97;\
+    (STRUCTP)->olineLen = ARG98;\
+    (STRUCTP)->htmlLinkSuffix = ARG99;\
+    (STRUCTP)->olExtractAddrParPrefix = ARG100;\
+    (STRUCTP)->extractMode = ARG101;\
+    (STRUCTP)->htmlFunSeparate = ARG102;\
+    (STRUCTP)->maxCompletions = ARG103;\
+    (STRUCTP)->editor = ARG104;\
+    (STRUCTP)->create = ARG105;\
+    (STRUCTP)->olcxRefSuffix = ARG106;\
+    (STRUCTP)->recursivelyDirs = ARG107;\
+    (STRUCTP)->classpath = ARG108;\
+    (STRUCTP)->tabulator = ARG109;\
+    (STRUCTP)->htmlRoot = ARG110;\
+    (STRUCTP)->htmlRichLists = ARG111;\
+    (STRUCTP)->htmlglobalx = ARG112;\
+    (STRUCTP)->htmllocalx = ARG113;\
+    (STRUCTP)->cIsCplusplus = ARG114;\
+    (STRUCTP)->olCursorPos = ARG115;\
+    (STRUCTP)->olMarkPos = ARG116;\
+    (STRUCTP)->taskRegime = ARG117;\
+    (STRUCTP)->user = ARG118;\
+    (STRUCTP)->debug = ARG119;\
+    (STRUCTP)->trace = ARG120;\
+    (STRUCTP)->cpp_comment = ARG121;\
+    (STRUCTP)->c_struct_scope = ARG122;\
+    (STRUCTP)->server_operation = ARG123;\
+    (STRUCTP)->olcxGotoVal = ARG124;\
+    (STRUCTP)->originalDir = ARG125;\
+    (STRUCTP)->no_ref_locals = ARG126;\
+    (STRUCTP)->no_ref_records = ARG127;\
+    (STRUCTP)->no_ref_enumerator = ARG128;\
+    (STRUCTP)->no_ref_typedef = ARG129;\
+    (STRUCTP)->no_ref_macro = ARG130;\
+    (STRUCTP)->no_stdop = ARG131;\
+    (STRUCTP)->qnxMessages = ARG132;\
+    (STRUCTP)->typedefg = ARG133;\
+    (STRUCTP)->str_fill = ARG134;\
+    (STRUCTP)->enum_name = ARG135;\
+    (STRUCTP)->body = ARG136;\
+    (STRUCTP)->header = ARG137;\
+    (STRUCTP)->str_copy = ARG138;\
+    (STRUCTP)->err = ARG139;\
+    (STRUCTP)->long_cxref = ARG140;\
+    (STRUCTP)->brief = ARG141;\
+    (STRUCTP)->update = ARG142;\
+    (STRUCTP)->keep_old = ARG143;\
+    (STRUCTP)->last_message = ARG144;\
+    (STRUCTP)->refnum = ARG145;\
+    (STRUCTP)->setGetEnv.num = ARG146;\
+    (STRUCTP)->htmlCut.pathsNum = ARG147;\
+    (STRUCTP)->allAllocatedStrings = ARG148;\
+    (STRUCTP)->pendingMemory.overflowHandler = ARG149;\
+    (STRUCTP)->pendingMemory.i = ARG150;\
+    (STRUCTP)->pendingMemory.size = ARG151;\
+    (STRUCTP)->pendingMemory.b = ARG152;\
 }
 #define _FILLF_options(STRUCTP, ARGS) {\
-	(STRUCTP)->fileEncoding = _ARG_0_OF_153 ARGS;\
-	(STRUCTP)->completeParenthesis = _ARG_1_OF_153 ARGS;\
-	(STRUCTP)->defaultAddImportStrategy = _ARG_2_OF_153 ARGS;\
-	(STRUCTP)->referenceListWithoutSource = _ARG_3_OF_153 ARGS;\
-	(STRUCTP)->jeditOldCompletions = _ARG_4_OF_153 ARGS;\
-	(STRUCTP)->completionOverloadWizardDeep = _ARG_5_OF_153 ARGS;\
-	(STRUCTP)->exit = _ARG_6_OF_153 ARGS;\
-	(STRUCTP)->commentMovingLevel = _ARG_7_OF_153 ARGS;\
-	(STRUCTP)->pruneNames = _ARG_8_OF_153 ARGS;\
-	(STRUCTP)->inputFiles = _ARG_9_OF_153 ARGS;\
-	(STRUCTP)->continueRefactoring = _ARG_10_OF_153 ARGS;\
-	(STRUCTP)->completionCaseSensitive = _ARG_11_OF_153 ARGS;\
-	(STRUCTP)->xrefrc = _ARG_12_OF_153 ARGS;\
-	(STRUCTP)->eolConversion = _ARG_13_OF_153 ARGS;\
-	(STRUCTP)->checkVersion = _ARG_14_OF_153 ARGS;\
-	(STRUCTP)->nestedClassDisplaying = _ARG_15_OF_153 ARGS;\
-	(STRUCTP)->pushName = _ARG_16_OF_153 ARGS;\
-	(STRUCTP)->parnum2 = _ARG_17_OF_153 ARGS;\
-	(STRUCTP)->refpar1 = _ARG_18_OF_153 ARGS;\
-	(STRUCTP)->refpar2 = _ARG_19_OF_153 ARGS;\
-	(STRUCTP)->theRefactoring = _ARG_20_OF_153 ARGS;\
-	(STRUCTP)->briefoutput = _ARG_21_OF_153 ARGS;\
-	(STRUCTP)->cacheIncludes = _ARG_22_OF_153 ARGS;\
-	(STRUCTP)->stdopFlag = _ARG_23_OF_153 ARGS;\
-	(STRUCTP)->renameTo = _ARG_24_OF_153 ARGS;\
-	(STRUCTP)->refactoringRegime = _ARG_25_OF_153 ARGS;\
-	(STRUCTP)->xref2 = _ARG_26_OF_153 ARGS;\
-	(STRUCTP)->moveTargetFile = _ARG_27_OF_153 ARGS;\
-	(STRUCTP)->cFilesSuffixes = _ARG_28_OF_153 ARGS;\
-	(STRUCTP)->javaFilesSuffixes = _ARG_29_OF_153 ARGS;\
-	(STRUCTP)->cppFilesSuffixes = _ARG_30_OF_153 ARGS;\
-	(STRUCTP)->fileNamesCaseSensitive = _ARG_31_OF_153 ARGS;\
-	(STRUCTP)->htmlLineNumLabel = _ARG_32_OF_153 ARGS;\
-	(STRUCTP)->htmlCutSuffix = _ARG_33_OF_153 ARGS;\
-	(STRUCTP)->tagSearchSpecif = _ARG_34_OF_153 ARGS;\
-	(STRUCTP)->javaVersion = _ARG_35_OF_153 ARGS;\
-	(STRUCTP)->olcxWinDelFile = _ARG_36_OF_153 ARGS;\
-	(STRUCTP)->olcxWinDelFromLine = _ARG_37_OF_153 ARGS;\
-	(STRUCTP)->olcxWinDelFromCol = _ARG_38_OF_153 ARGS;\
-	(STRUCTP)->olcxWinDelToLine = _ARG_39_OF_153 ARGS;\
-	(STRUCTP)->olcxWinDelToCol = _ARG_40_OF_153 ARGS;\
-	(STRUCTP)->moveFromUser = _ARG_41_OF_153 ARGS;\
-	(STRUCTP)->noErrors = _ARG_42_OF_153 ARGS;\
-	(STRUCTP)->fqtNameToCompletions = _ARG_43_OF_153 ARGS;\
-	(STRUCTP)->moveTargetClass = _ARG_44_OF_153 ARGS;\
-	(STRUCTP)->trivialPreCheckCode = _ARG_45_OF_153 ARGS;\
-	(STRUCTP)->urlGenTemporaryFile = _ARG_46_OF_153 ARGS;\
-	(STRUCTP)->urlAutoRedirect = _ARG_47_OF_153 ARGS;\
-	(STRUCTP)->javaFilesOnly = _ARG_48_OF_153 ARGS;\
-	(STRUCTP)->exactPositionResolve = _ARG_49_OF_153 ARGS;\
-	(STRUCTP)->outputFileName = _ARG_50_OF_153 ARGS;\
-	(STRUCTP)->lineFileName = _ARG_51_OF_153 ARGS;\
-	(STRUCTP)->includeDirs = _ARG_52_OF_153 ARGS;\
-	(STRUCTP)->cxrefFileName = _ARG_53_OF_153 ARGS;\
-	(STRUCTP)->checkFileMovedFrom = _ARG_54_OF_153 ARGS;\
-	(STRUCTP)->checkFileMovedTo = _ARG_55_OF_153 ARGS;\
-	(STRUCTP)->checkFirstMovedLine = _ARG_56_OF_153 ARGS;\
-	(STRUCTP)->checkLinesMoved = _ARG_57_OF_153 ARGS;\
-	(STRUCTP)->checkNewLineNumber = _ARG_58_OF_153 ARGS;\
-	(STRUCTP)->getValue = _ARG_59_OF_153 ARGS;\
-	(STRUCTP)->java2html = _ARG_60_OF_153 ARGS;\
-	(STRUCTP)->javaSlAllowed = _ARG_61_OF_153 ARGS;\
-	(STRUCTP)->xfileHashingMethod = _ARG_62_OF_153 ARGS;\
-	(STRUCTP)->htmlLineNumColor = _ARG_63_OF_153 ARGS;\
-	(STRUCTP)->htmlCxLineLen = _ARG_64_OF_153 ARGS;\
-	(STRUCTP)->htmlJdkDocAvailable = _ARG_65_OF_153 ARGS;\
-	(STRUCTP)->htmlGenJdkDocLinks = _ARG_66_OF_153 ARGS;\
-	(STRUCTP)->htmlJdkDocUrl = _ARG_67_OF_153 ARGS;\
-	(STRUCTP)->javaDocPath = _ARG_68_OF_153 ARGS;\
-	(STRUCTP)->allowPackagesOnCl = _ARG_69_OF_153 ARGS;\
-	(STRUCTP)->sourcePath = _ARG_70_OF_153 ARGS;\
-	(STRUCTP)->htmlDirectX = _ARG_71_OF_153 ARGS;\
-	(STRUCTP)->jdocTmpDir = _ARG_72_OF_153 ARGS;\
-	(STRUCTP)->noCxFile = _ARG_73_OF_153 ARGS;\
-	(STRUCTP)->javaDoc = _ARG_74_OF_153 ARGS;\
-	(STRUCTP)->noIncludeRefs = _ARG_75_OF_153 ARGS;\
-	(STRUCTP)->allowClassFileRefs = _ARG_76_OF_153 ARGS;\
-	(STRUCTP)->filterValue = _ARG_77_OF_153 ARGS;\
-	(STRUCTP)->jdkClassPath = _ARG_78_OF_153 ARGS;\
-	(STRUCTP)->manualResolve = _ARG_79_OF_153 ARGS;\
-	(STRUCTP)->browsedSymName = _ARG_80_OF_153 ARGS;\
-	(STRUCTP)->modifiedFlag = _ARG_81_OF_153 ARGS;\
-	(STRUCTP)->olcxMenuSelectLineNum = _ARG_82_OF_153 ARGS;\
-	(STRUCTP)->htmlNoUnderline = _ARG_83_OF_153 ARGS;\
-	(STRUCTP)->htmlLinkColor = _ARG_84_OF_153 ARGS;\
-	(STRUCTP)->htmlCutPath = _ARG_85_OF_153 ARGS;\
-	(STRUCTP)->htmlCutPathLen = _ARG_86_OF_153 ARGS;\
-	(STRUCTP)->ooChecksBits = _ARG_87_OF_153 ARGS;\
-	(STRUCTP)->htmlLineNums = _ARG_88_OF_153 ARGS;\
-	(STRUCTP)->htmlNoColors = _ARG_89_OF_153 ARGS;\
-	(STRUCTP)->cxMemoryFaktor = _ARG_90_OF_153 ARGS;\
-	(STRUCTP)->multiHeadRefsCare = _ARG_91_OF_153 ARGS;\
-	(STRUCTP)->strictAnsi = _ARG_92_OF_153 ARGS;\
-	(STRUCTP)->project = _ARG_93_OF_153 ARGS;\
-	(STRUCTP)->updateOnlyModifiedFiles = _ARG_94_OF_153 ARGS;\
-	(STRUCTP)->olcxlccursor = _ARG_95_OF_153 ARGS;\
-	(STRUCTP)->htmlZipCommand = _ARG_96_OF_153 ARGS;\
-	(STRUCTP)->olcxSearchString = _ARG_97_OF_153 ARGS;\
-	(STRUCTP)->olineLen = _ARG_98_OF_153 ARGS;\
-	(STRUCTP)->htmlLinkSuffix = _ARG_99_OF_153 ARGS;\
-	(STRUCTP)->olExtractAddrParPrefix = _ARG_100_OF_153 ARGS;\
-	(STRUCTP)->extractMode = _ARG_101_OF_153 ARGS;\
-	(STRUCTP)->htmlFunSeparate = _ARG_102_OF_153 ARGS;\
-	(STRUCTP)->maxCompletions = _ARG_103_OF_153 ARGS;\
-	(STRUCTP)->editor = _ARG_104_OF_153 ARGS;\
-	(STRUCTP)->create = _ARG_105_OF_153 ARGS;\
-	(STRUCTP)->olcxRefSuffix = _ARG_106_OF_153 ARGS;\
-	(STRUCTP)->recursivelyDirs = _ARG_107_OF_153 ARGS;\
-	(STRUCTP)->classpath = _ARG_108_OF_153 ARGS;\
-	(STRUCTP)->tabulator = _ARG_109_OF_153 ARGS;\
-	(STRUCTP)->htmlRoot = _ARG_110_OF_153 ARGS;\
-	(STRUCTP)->htmlRichLists = _ARG_111_OF_153 ARGS;\
-	(STRUCTP)->htmlglobalx = _ARG_112_OF_153 ARGS;\
-	(STRUCTP)->htmllocalx = _ARG_113_OF_153 ARGS;\
-	(STRUCTP)->cIsCplusplus = _ARG_114_OF_153 ARGS;\
-	(STRUCTP)->olCursorPos = _ARG_115_OF_153 ARGS;\
-	(STRUCTP)->olMarkPos = _ARG_116_OF_153 ARGS;\
-	(STRUCTP)->taskRegime = _ARG_117_OF_153 ARGS;\
-	(STRUCTP)->user = _ARG_118_OF_153 ARGS;\
-	(STRUCTP)->debug = _ARG_119_OF_153 ARGS;\
-	(STRUCTP)->trace = _ARG_120_OF_153 ARGS;\
-	(STRUCTP)->cpp_comment = _ARG_121_OF_153 ARGS;\
-	(STRUCTP)->c_struct_scope = _ARG_122_OF_153 ARGS;\
-	(STRUCTP)->server_operation = _ARG_123_OF_153 ARGS;\
-	(STRUCTP)->olcxGotoVal = _ARG_124_OF_153 ARGS;\
-	(STRUCTP)->originalDir = _ARG_125_OF_153 ARGS;\
-	(STRUCTP)->no_ref_locals = _ARG_126_OF_153 ARGS;\
-	(STRUCTP)->no_ref_records = _ARG_127_OF_153 ARGS;\
-	(STRUCTP)->no_ref_enumerator = _ARG_128_OF_153 ARGS;\
-	(STRUCTP)->no_ref_typedef = _ARG_129_OF_153 ARGS;\
-	(STRUCTP)->no_ref_macro = _ARG_130_OF_153 ARGS;\
-	(STRUCTP)->no_stdop = _ARG_131_OF_153 ARGS;\
-	(STRUCTP)->qnxMessages = _ARG_132_OF_153 ARGS;\
-	(STRUCTP)->typedefg = _ARG_133_OF_153 ARGS;\
-	(STRUCTP)->str_fill = _ARG_134_OF_153 ARGS;\
-	(STRUCTP)->enum_name = _ARG_135_OF_153 ARGS;\
-	(STRUCTP)->body = _ARG_136_OF_153 ARGS;\
-	(STRUCTP)->header = _ARG_137_OF_153 ARGS;\
-	(STRUCTP)->str_copy = _ARG_138_OF_153 ARGS;\
-	(STRUCTP)->err = _ARG_139_OF_153 ARGS;\
-	(STRUCTP)->long_cxref = _ARG_140_OF_153 ARGS;\
-	(STRUCTP)->brief = _ARG_141_OF_153 ARGS;\
-	(STRUCTP)->update = _ARG_142_OF_153 ARGS;\
-	(STRUCTP)->keep_old = _ARG_143_OF_153 ARGS;\
-	(STRUCTP)->last_message = _ARG_144_OF_153 ARGS;\
-	(STRUCTP)->refnum = _ARG_145_OF_153 ARGS;\
-	(STRUCTP)->setGetEnv.num = _ARG_146_OF_153 ARGS;\
-	(STRUCTP)->htmlCut.pathsNum = _ARG_147_OF_153 ARGS;\
-	(STRUCTP)->allAllocatedStrings = _ARG_148_OF_153 ARGS;\
-	(STRUCTP)->pendingMemory.overflowHandler = _ARG_149_OF_153 ARGS;\
-	(STRUCTP)->pendingMemory.i = _ARG_150_OF_153 ARGS;\
-	(STRUCTP)->pendingMemory.size = _ARG_151_OF_153 ARGS;\
-	(STRUCTP)->pendingMemory.b = _ARG_152_OF_153 ARGS;\
+    (STRUCTP)->fileEncoding = _ARG_0_OF_153 ARGS;\
+    (STRUCTP)->completeParenthesis = _ARG_1_OF_153 ARGS;\
+    (STRUCTP)->defaultAddImportStrategy = _ARG_2_OF_153 ARGS;\
+    (STRUCTP)->referenceListWithoutSource = _ARG_3_OF_153 ARGS;\
+    (STRUCTP)->jeditOldCompletions = _ARG_4_OF_153 ARGS;\
+    (STRUCTP)->completionOverloadWizardDeep = _ARG_5_OF_153 ARGS;\
+    (STRUCTP)->exit = _ARG_6_OF_153 ARGS;\
+    (STRUCTP)->commentMovingLevel = _ARG_7_OF_153 ARGS;\
+    (STRUCTP)->pruneNames = _ARG_8_OF_153 ARGS;\
+    (STRUCTP)->inputFiles = _ARG_9_OF_153 ARGS;\
+    (STRUCTP)->continueRefactoring = _ARG_10_OF_153 ARGS;\
+    (STRUCTP)->completionCaseSensitive = _ARG_11_OF_153 ARGS;\
+    (STRUCTP)->xrefrc = _ARG_12_OF_153 ARGS;\
+    (STRUCTP)->eolConversion = _ARG_13_OF_153 ARGS;\
+    (STRUCTP)->checkVersion = _ARG_14_OF_153 ARGS;\
+    (STRUCTP)->nestedClassDisplaying = _ARG_15_OF_153 ARGS;\
+    (STRUCTP)->pushName = _ARG_16_OF_153 ARGS;\
+    (STRUCTP)->parnum2 = _ARG_17_OF_153 ARGS;\
+    (STRUCTP)->refpar1 = _ARG_18_OF_153 ARGS;\
+    (STRUCTP)->refpar2 = _ARG_19_OF_153 ARGS;\
+    (STRUCTP)->theRefactoring = _ARG_20_OF_153 ARGS;\
+    (STRUCTP)->briefoutput = _ARG_21_OF_153 ARGS;\
+    (STRUCTP)->cacheIncludes = _ARG_22_OF_153 ARGS;\
+    (STRUCTP)->stdopFlag = _ARG_23_OF_153 ARGS;\
+    (STRUCTP)->renameTo = _ARG_24_OF_153 ARGS;\
+    (STRUCTP)->refactoringRegime = _ARG_25_OF_153 ARGS;\
+    (STRUCTP)->xref2 = _ARG_26_OF_153 ARGS;\
+    (STRUCTP)->moveTargetFile = _ARG_27_OF_153 ARGS;\
+    (STRUCTP)->cFilesSuffixes = _ARG_28_OF_153 ARGS;\
+    (STRUCTP)->javaFilesSuffixes = _ARG_29_OF_153 ARGS;\
+    (STRUCTP)->cppFilesSuffixes = _ARG_30_OF_153 ARGS;\
+    (STRUCTP)->fileNamesCaseSensitive = _ARG_31_OF_153 ARGS;\
+    (STRUCTP)->htmlLineNumLabel = _ARG_32_OF_153 ARGS;\
+    (STRUCTP)->htmlCutSuffix = _ARG_33_OF_153 ARGS;\
+    (STRUCTP)->tagSearchSpecif = _ARG_34_OF_153 ARGS;\
+    (STRUCTP)->javaVersion = _ARG_35_OF_153 ARGS;\
+    (STRUCTP)->olcxWinDelFile = _ARG_36_OF_153 ARGS;\
+    (STRUCTP)->olcxWinDelFromLine = _ARG_37_OF_153 ARGS;\
+    (STRUCTP)->olcxWinDelFromCol = _ARG_38_OF_153 ARGS;\
+    (STRUCTP)->olcxWinDelToLine = _ARG_39_OF_153 ARGS;\
+    (STRUCTP)->olcxWinDelToCol = _ARG_40_OF_153 ARGS;\
+    (STRUCTP)->moveFromUser = _ARG_41_OF_153 ARGS;\
+    (STRUCTP)->noErrors = _ARG_42_OF_153 ARGS;\
+    (STRUCTP)->fqtNameToCompletions = _ARG_43_OF_153 ARGS;\
+    (STRUCTP)->moveTargetClass = _ARG_44_OF_153 ARGS;\
+    (STRUCTP)->trivialPreCheckCode = _ARG_45_OF_153 ARGS;\
+    (STRUCTP)->urlGenTemporaryFile = _ARG_46_OF_153 ARGS;\
+    (STRUCTP)->urlAutoRedirect = _ARG_47_OF_153 ARGS;\
+    (STRUCTP)->javaFilesOnly = _ARG_48_OF_153 ARGS;\
+    (STRUCTP)->exactPositionResolve = _ARG_49_OF_153 ARGS;\
+    (STRUCTP)->outputFileName = _ARG_50_OF_153 ARGS;\
+    (STRUCTP)->lineFileName = _ARG_51_OF_153 ARGS;\
+    (STRUCTP)->includeDirs = _ARG_52_OF_153 ARGS;\
+    (STRUCTP)->cxrefFileName = _ARG_53_OF_153 ARGS;\
+    (STRUCTP)->checkFileMovedFrom = _ARG_54_OF_153 ARGS;\
+    (STRUCTP)->checkFileMovedTo = _ARG_55_OF_153 ARGS;\
+    (STRUCTP)->checkFirstMovedLine = _ARG_56_OF_153 ARGS;\
+    (STRUCTP)->checkLinesMoved = _ARG_57_OF_153 ARGS;\
+    (STRUCTP)->checkNewLineNumber = _ARG_58_OF_153 ARGS;\
+    (STRUCTP)->getValue = _ARG_59_OF_153 ARGS;\
+    (STRUCTP)->java2html = _ARG_60_OF_153 ARGS;\
+    (STRUCTP)->javaSlAllowed = _ARG_61_OF_153 ARGS;\
+    (STRUCTP)->xfileHashingMethod = _ARG_62_OF_153 ARGS;\
+    (STRUCTP)->htmlLineNumColor = _ARG_63_OF_153 ARGS;\
+    (STRUCTP)->htmlCxLineLen = _ARG_64_OF_153 ARGS;\
+    (STRUCTP)->htmlJdkDocAvailable = _ARG_65_OF_153 ARGS;\
+    (STRUCTP)->htmlGenJdkDocLinks = _ARG_66_OF_153 ARGS;\
+    (STRUCTP)->htmlJdkDocUrl = _ARG_67_OF_153 ARGS;\
+    (STRUCTP)->javaDocPath = _ARG_68_OF_153 ARGS;\
+    (STRUCTP)->allowPackagesOnCl = _ARG_69_OF_153 ARGS;\
+    (STRUCTP)->sourcePath = _ARG_70_OF_153 ARGS;\
+    (STRUCTP)->htmlDirectX = _ARG_71_OF_153 ARGS;\
+    (STRUCTP)->jdocTmpDir = _ARG_72_OF_153 ARGS;\
+    (STRUCTP)->noCxFile = _ARG_73_OF_153 ARGS;\
+    (STRUCTP)->javaDoc = _ARG_74_OF_153 ARGS;\
+    (STRUCTP)->noIncludeRefs = _ARG_75_OF_153 ARGS;\
+    (STRUCTP)->allowClassFileRefs = _ARG_76_OF_153 ARGS;\
+    (STRUCTP)->filterValue = _ARG_77_OF_153 ARGS;\
+    (STRUCTP)->jdkClassPath = _ARG_78_OF_153 ARGS;\
+    (STRUCTP)->manualResolve = _ARG_79_OF_153 ARGS;\
+    (STRUCTP)->browsedSymName = _ARG_80_OF_153 ARGS;\
+    (STRUCTP)->modifiedFlag = _ARG_81_OF_153 ARGS;\
+    (STRUCTP)->olcxMenuSelectLineNum = _ARG_82_OF_153 ARGS;\
+    (STRUCTP)->htmlNoUnderline = _ARG_83_OF_153 ARGS;\
+    (STRUCTP)->htmlLinkColor = _ARG_84_OF_153 ARGS;\
+    (STRUCTP)->htmlCutPath = _ARG_85_OF_153 ARGS;\
+    (STRUCTP)->htmlCutPathLen = _ARG_86_OF_153 ARGS;\
+    (STRUCTP)->ooChecksBits = _ARG_87_OF_153 ARGS;\
+    (STRUCTP)->htmlLineNums = _ARG_88_OF_153 ARGS;\
+    (STRUCTP)->htmlNoColors = _ARG_89_OF_153 ARGS;\
+    (STRUCTP)->cxMemoryFaktor = _ARG_90_OF_153 ARGS;\
+    (STRUCTP)->multiHeadRefsCare = _ARG_91_OF_153 ARGS;\
+    (STRUCTP)->strictAnsi = _ARG_92_OF_153 ARGS;\
+    (STRUCTP)->project = _ARG_93_OF_153 ARGS;\
+    (STRUCTP)->updateOnlyModifiedFiles = _ARG_94_OF_153 ARGS;\
+    (STRUCTP)->olcxlccursor = _ARG_95_OF_153 ARGS;\
+    (STRUCTP)->htmlZipCommand = _ARG_96_OF_153 ARGS;\
+    (STRUCTP)->olcxSearchString = _ARG_97_OF_153 ARGS;\
+    (STRUCTP)->olineLen = _ARG_98_OF_153 ARGS;\
+    (STRUCTP)->htmlLinkSuffix = _ARG_99_OF_153 ARGS;\
+    (STRUCTP)->olExtractAddrParPrefix = _ARG_100_OF_153 ARGS;\
+    (STRUCTP)->extractMode = _ARG_101_OF_153 ARGS;\
+    (STRUCTP)->htmlFunSeparate = _ARG_102_OF_153 ARGS;\
+    (STRUCTP)->maxCompletions = _ARG_103_OF_153 ARGS;\
+    (STRUCTP)->editor = _ARG_104_OF_153 ARGS;\
+    (STRUCTP)->create = _ARG_105_OF_153 ARGS;\
+    (STRUCTP)->olcxRefSuffix = _ARG_106_OF_153 ARGS;\
+    (STRUCTP)->recursivelyDirs = _ARG_107_OF_153 ARGS;\
+    (STRUCTP)->classpath = _ARG_108_OF_153 ARGS;\
+    (STRUCTP)->tabulator = _ARG_109_OF_153 ARGS;\
+    (STRUCTP)->htmlRoot = _ARG_110_OF_153 ARGS;\
+    (STRUCTP)->htmlRichLists = _ARG_111_OF_153 ARGS;\
+    (STRUCTP)->htmlglobalx = _ARG_112_OF_153 ARGS;\
+    (STRUCTP)->htmllocalx = _ARG_113_OF_153 ARGS;\
+    (STRUCTP)->cIsCplusplus = _ARG_114_OF_153 ARGS;\
+    (STRUCTP)->olCursorPos = _ARG_115_OF_153 ARGS;\
+    (STRUCTP)->olMarkPos = _ARG_116_OF_153 ARGS;\
+    (STRUCTP)->taskRegime = _ARG_117_OF_153 ARGS;\
+    (STRUCTP)->user = _ARG_118_OF_153 ARGS;\
+    (STRUCTP)->debug = _ARG_119_OF_153 ARGS;\
+    (STRUCTP)->trace = _ARG_120_OF_153 ARGS;\
+    (STRUCTP)->cpp_comment = _ARG_121_OF_153 ARGS;\
+    (STRUCTP)->c_struct_scope = _ARG_122_OF_153 ARGS;\
+    (STRUCTP)->server_operation = _ARG_123_OF_153 ARGS;\
+    (STRUCTP)->olcxGotoVal = _ARG_124_OF_153 ARGS;\
+    (STRUCTP)->originalDir = _ARG_125_OF_153 ARGS;\
+    (STRUCTP)->no_ref_locals = _ARG_126_OF_153 ARGS;\
+    (STRUCTP)->no_ref_records = _ARG_127_OF_153 ARGS;\
+    (STRUCTP)->no_ref_enumerator = _ARG_128_OF_153 ARGS;\
+    (STRUCTP)->no_ref_typedef = _ARG_129_OF_153 ARGS;\
+    (STRUCTP)->no_ref_macro = _ARG_130_OF_153 ARGS;\
+    (STRUCTP)->no_stdop = _ARG_131_OF_153 ARGS;\
+    (STRUCTP)->qnxMessages = _ARG_132_OF_153 ARGS;\
+    (STRUCTP)->typedefg = _ARG_133_OF_153 ARGS;\
+    (STRUCTP)->str_fill = _ARG_134_OF_153 ARGS;\
+    (STRUCTP)->enum_name = _ARG_135_OF_153 ARGS;\
+    (STRUCTP)->body = _ARG_136_OF_153 ARGS;\
+    (STRUCTP)->header = _ARG_137_OF_153 ARGS;\
+    (STRUCTP)->str_copy = _ARG_138_OF_153 ARGS;\
+    (STRUCTP)->err = _ARG_139_OF_153 ARGS;\
+    (STRUCTP)->long_cxref = _ARG_140_OF_153 ARGS;\
+    (STRUCTP)->brief = _ARG_141_OF_153 ARGS;\
+    (STRUCTP)->update = _ARG_142_OF_153 ARGS;\
+    (STRUCTP)->keep_old = _ARG_143_OF_153 ARGS;\
+    (STRUCTP)->last_message = _ARG_144_OF_153 ARGS;\
+    (STRUCTP)->refnum = _ARG_145_OF_153 ARGS;\
+    (STRUCTP)->setGetEnv.num = _ARG_146_OF_153 ARGS;\
+    (STRUCTP)->htmlCut.pathsNum = _ARG_147_OF_153 ARGS;\
+    (STRUCTP)->allAllocatedStrings = _ARG_148_OF_153 ARGS;\
+    (STRUCTP)->pendingMemory.overflowHandler = _ARG_149_OF_153 ARGS;\
+    (STRUCTP)->pendingMemory.i = _ARG_150_OF_153 ARGS;\
+    (STRUCTP)->pendingMemory.size = _ARG_151_OF_153 ARGS;\
+    (STRUCTP)->pendingMemory.b = _ARG_152_OF_153 ARGS;\
 }
 #define FILL_positionList(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->p = ARG0;\
-	(STRUCTP)->next = ARG1;\
+    (STRUCTP)->p = ARG0;\
+    (STRUCTP)->next = ARG1;\
 }
 #define FILLF_positionList(STRUCTP, ARG0, ARG1, ARG2, ARG3) {\
-	(STRUCTP)->p.file = ARG0;\
-	(STRUCTP)->p.line = ARG1;\
-	(STRUCTP)->p.col = ARG2;\
-	(STRUCTP)->next = ARG3;\
+    (STRUCTP)->p.file = ARG0;\
+    (STRUCTP)->p.line = ARG1;\
+    (STRUCTP)->p.col = ARG2;\
+    (STRUCTP)->next = ARG3;\
 }
 #define _FILLF_positionList(STRUCTP, ARGS) {\
-	(STRUCTP)->p.file = _ARG_0_OF_4 ARGS;\
-	(STRUCTP)->p.line = _ARG_1_OF_4 ARGS;\
-	(STRUCTP)->p.col = _ARG_2_OF_4 ARGS;\
-	(STRUCTP)->next = _ARG_3_OF_4 ARGS;\
+    (STRUCTP)->p.file = _ARG_0_OF_4 ARGS;\
+    (STRUCTP)->p.line = _ARG_1_OF_4 ARGS;\
+    (STRUCTP)->p.col = _ARG_2_OF_4 ARGS;\
+    (STRUCTP)->next = _ARG_3_OF_4 ARGS;\
 }
 #define FILL_CharacterBuffer(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10) {\
-	(STRUCTP)->next = ARG0;\
-	(STRUCTP)->end = ARG1;\
-	(STRUCTP)->file = ARG2;\
-	(STRUCTP)->filePos = ARG3;\
-	(STRUCTP)->fileNumber = ARG4;\
-	(STRUCTP)->lineNum = ARG5;\
-	(STRUCTP)->lineBegin = ARG6;\
-	(STRUCTP)->columnOffset = ARG7;\
-	(STRUCTP)->isAtEOF = ARG8;\
-	(STRUCTP)->inputMethod = ARG9;\
-	(STRUCTP)->zipStream = ARG10;\
+    (STRUCTP)->next = ARG0;\
+    (STRUCTP)->end = ARG1;\
+    (STRUCTP)->file = ARG2;\
+    (STRUCTP)->filePos = ARG3;\
+    (STRUCTP)->fileNumber = ARG4;\
+    (STRUCTP)->lineNum = ARG5;\
+    (STRUCTP)->lineBegin = ARG6;\
+    (STRUCTP)->columnOffset = ARG7;\
+    (STRUCTP)->isAtEOF = ARG8;\
+    (STRUCTP)->inputMethod = ARG9;\
+    (STRUCTP)->zipStream = ARG10;\
 }
 #define FILLF_CharacterBuffer(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13, ARG14, ARG15, ARG16, ARG17, ARG18, ARG19, ARG20, ARG21, ARG22, ARG23) {\
-	(STRUCTP)->next = ARG0;\
-	(STRUCTP)->end = ARG1;\
-	(STRUCTP)->file = ARG2;\
-	(STRUCTP)->filePos = ARG3;\
-	(STRUCTP)->fileNumber = ARG4;\
-	(STRUCTP)->lineNum = ARG5;\
-	(STRUCTP)->lineBegin = ARG6;\
-	(STRUCTP)->columnOffset = ARG7;\
-	(STRUCTP)->isAtEOF = ARG8;\
-	(STRUCTP)->inputMethod = ARG9;\
-	(STRUCTP)->zipStream.next_in = ARG10;\
-	(STRUCTP)->zipStream.avail_in = ARG11;\
-	(STRUCTP)->zipStream.total_in = ARG12;\
-	(STRUCTP)->zipStream.next_out = ARG13;\
-	(STRUCTP)->zipStream.avail_out = ARG14;\
-	(STRUCTP)->zipStream.total_out = ARG15;\
-	(STRUCTP)->zipStream.msg = ARG16;\
-	(STRUCTP)->zipStream.state = ARG17;\
-	(STRUCTP)->zipStream.zalloc = ARG18;\
-	(STRUCTP)->zipStream.zfree = ARG19;\
-	(STRUCTP)->zipStream.opaque = ARG20;\
-	(STRUCTP)->zipStream.data_type = ARG21;\
-	(STRUCTP)->zipStream.adler = ARG22;\
-	(STRUCTP)->zipStream.reserved = ARG23;\
+    (STRUCTP)->next = ARG0;\
+    (STRUCTP)->end = ARG1;\
+    (STRUCTP)->file = ARG2;\
+    (STRUCTP)->filePos = ARG3;\
+    (STRUCTP)->fileNumber = ARG4;\
+    (STRUCTP)->lineNum = ARG5;\
+    (STRUCTP)->lineBegin = ARG6;\
+    (STRUCTP)->columnOffset = ARG7;\
+    (STRUCTP)->isAtEOF = ARG8;\
+    (STRUCTP)->inputMethod = ARG9;\
+    (STRUCTP)->zipStream.next_in = ARG10;\
+    (STRUCTP)->zipStream.avail_in = ARG11;\
+    (STRUCTP)->zipStream.total_in = ARG12;\
+    (STRUCTP)->zipStream.next_out = ARG13;\
+    (STRUCTP)->zipStream.avail_out = ARG14;\
+    (STRUCTP)->zipStream.total_out = ARG15;\
+    (STRUCTP)->zipStream.msg = ARG16;\
+    (STRUCTP)->zipStream.state = ARG17;\
+    (STRUCTP)->zipStream.zalloc = ARG18;\
+    (STRUCTP)->zipStream.zfree = ARG19;\
+    (STRUCTP)->zipStream.opaque = ARG20;\
+    (STRUCTP)->zipStream.data_type = ARG21;\
+    (STRUCTP)->zipStream.adler = ARG22;\
+    (STRUCTP)->zipStream.reserved = ARG23;\
 }
 #define _FILLF_CharacterBuffer(STRUCTP, ARGS) {\
-	(STRUCTP)->next = _ARG_0_OF_24 ARGS;\
-	(STRUCTP)->end = _ARG_1_OF_24 ARGS;\
-	(STRUCTP)->file = _ARG_2_OF_24 ARGS;\
-	(STRUCTP)->filePos = _ARG_3_OF_24 ARGS;\
-	(STRUCTP)->fileNumber = _ARG_4_OF_24 ARGS;\
-	(STRUCTP)->lineNum = _ARG_5_OF_24 ARGS;\
-	(STRUCTP)->lineBegin = _ARG_6_OF_24 ARGS;\
-	(STRUCTP)->columnOffset = _ARG_7_OF_24 ARGS;\
-	(STRUCTP)->isAtEOF = _ARG_8_OF_24 ARGS;\
-	(STRUCTP)->inputMethod = _ARG_9_OF_24 ARGS;\
-	(STRUCTP)->zipStream.next_in = _ARG_10_OF_24 ARGS;\
-	(STRUCTP)->zipStream.avail_in = _ARG_11_OF_24 ARGS;\
-	(STRUCTP)->zipStream.total_in = _ARG_12_OF_24 ARGS;\
-	(STRUCTP)->zipStream.next_out = _ARG_13_OF_24 ARGS;\
-	(STRUCTP)->zipStream.avail_out = _ARG_14_OF_24 ARGS;\
-	(STRUCTP)->zipStream.total_out = _ARG_15_OF_24 ARGS;\
-	(STRUCTP)->zipStream.msg = _ARG_16_OF_24 ARGS;\
-	(STRUCTP)->zipStream.state = _ARG_17_OF_24 ARGS;\
-	(STRUCTP)->zipStream.zalloc = _ARG_18_OF_24 ARGS;\
-	(STRUCTP)->zipStream.zfree = _ARG_19_OF_24 ARGS;\
-	(STRUCTP)->zipStream.opaque = _ARG_20_OF_24 ARGS;\
-	(STRUCTP)->zipStream.data_type = _ARG_21_OF_24 ARGS;\
-	(STRUCTP)->zipStream.adler = _ARG_22_OF_24 ARGS;\
-	(STRUCTP)->zipStream.reserved = _ARG_23_OF_24 ARGS;\
+    (STRUCTP)->next = _ARG_0_OF_24 ARGS;\
+    (STRUCTP)->end = _ARG_1_OF_24 ARGS;\
+    (STRUCTP)->file = _ARG_2_OF_24 ARGS;\
+    (STRUCTP)->filePos = _ARG_3_OF_24 ARGS;\
+    (STRUCTP)->fileNumber = _ARG_4_OF_24 ARGS;\
+    (STRUCTP)->lineNum = _ARG_5_OF_24 ARGS;\
+    (STRUCTP)->lineBegin = _ARG_6_OF_24 ARGS;\
+    (STRUCTP)->columnOffset = _ARG_7_OF_24 ARGS;\
+    (STRUCTP)->isAtEOF = _ARG_8_OF_24 ARGS;\
+    (STRUCTP)->inputMethod = _ARG_9_OF_24 ARGS;\
+    (STRUCTP)->zipStream.next_in = _ARG_10_OF_24 ARGS;\
+    (STRUCTP)->zipStream.avail_in = _ARG_11_OF_24 ARGS;\
+    (STRUCTP)->zipStream.total_in = _ARG_12_OF_24 ARGS;\
+    (STRUCTP)->zipStream.next_out = _ARG_13_OF_24 ARGS;\
+    (STRUCTP)->zipStream.avail_out = _ARG_14_OF_24 ARGS;\
+    (STRUCTP)->zipStream.total_out = _ARG_15_OF_24 ARGS;\
+    (STRUCTP)->zipStream.msg = _ARG_16_OF_24 ARGS;\
+    (STRUCTP)->zipStream.state = _ARG_17_OF_24 ARGS;\
+    (STRUCTP)->zipStream.zalloc = _ARG_18_OF_24 ARGS;\
+    (STRUCTP)->zipStream.zfree = _ARG_19_OF_24 ARGS;\
+    (STRUCTP)->zipStream.opaque = _ARG_20_OF_24 ARGS;\
+    (STRUCTP)->zipStream.data_type = _ARG_21_OF_24 ARGS;\
+    (STRUCTP)->zipStream.adler = _ARG_22_OF_24 ARGS;\
+    (STRUCTP)->zipStream.reserved = _ARG_23_OF_24 ARGS;\
 }
 #define FILL_jslSymbolList(STRUCTP, ARG0, ARG1, ARG2, ARG3) {\
-	(STRUCTP)->d = ARG0;\
-	(STRUCTP)->pos = ARG1;\
-	(STRUCTP)->isSingleImportedFlag = ARG2;\
-	(STRUCTP)->next = ARG3;\
+    (STRUCTP)->d = ARG0;\
+    (STRUCTP)->pos = ARG1;\
+    (STRUCTP)->isSingleImportedFlag = ARG2;\
+    (STRUCTP)->next = ARG3;\
 }
 #define FILLF_jslSymbolList(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5) {\
-	(STRUCTP)->d = ARG0;\
-	(STRUCTP)->pos.file = ARG1;\
-	(STRUCTP)->pos.line = ARG2;\
-	(STRUCTP)->pos.col = ARG3;\
-	(STRUCTP)->isSingleImportedFlag = ARG4;\
-	(STRUCTP)->next = ARG5;\
+    (STRUCTP)->d = ARG0;\
+    (STRUCTP)->pos.file = ARG1;\
+    (STRUCTP)->pos.line = ARG2;\
+    (STRUCTP)->pos.col = ARG3;\
+    (STRUCTP)->isSingleImportedFlag = ARG4;\
+    (STRUCTP)->next = ARG5;\
 }
 #define _FILLF_jslSymbolList(STRUCTP, ARGS) {\
-	(STRUCTP)->d = _ARG_0_OF_6 ARGS;\
-	(STRUCTP)->pos.file = _ARG_1_OF_6 ARGS;\
-	(STRUCTP)->pos.line = _ARG_2_OF_6 ARGS;\
-	(STRUCTP)->pos.col = _ARG_3_OF_6 ARGS;\
-	(STRUCTP)->isSingleImportedFlag = _ARG_4_OF_6 ARGS;\
-	(STRUCTP)->next = _ARG_5_OF_6 ARGS;\
+    (STRUCTP)->d = _ARG_0_OF_6 ARGS;\
+    (STRUCTP)->pos.file = _ARG_1_OF_6 ARGS;\
+    (STRUCTP)->pos.line = _ARG_2_OF_6 ARGS;\
+    (STRUCTP)->pos.col = _ARG_3_OF_6 ARGS;\
+    (STRUCTP)->isSingleImportedFlag = _ARG_4_OF_6 ARGS;\
+    (STRUCTP)->next = _ARG_5_OF_6 ARGS;\
 }
 #define FILL___locale_struct(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->__ctype_b = ARG0;\
-	(STRUCTP)->__ctype_tolower = ARG1;\
-	(STRUCTP)->__ctype_toupper = ARG2;\
+    (STRUCTP)->__ctype_b = ARG0;\
+    (STRUCTP)->__ctype_tolower = ARG1;\
+    (STRUCTP)->__ctype_toupper = ARG2;\
 }
 #define FILLF___locale_struct(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->__ctype_b = ARG0;\
-	(STRUCTP)->__ctype_tolower = ARG1;\
-	(STRUCTP)->__ctype_toupper = ARG2;\
+    (STRUCTP)->__ctype_b = ARG0;\
+    (STRUCTP)->__ctype_tolower = ARG1;\
+    (STRUCTP)->__ctype_toupper = ARG2;\
 }
 #define _FILLF___locale_struct(STRUCTP, ARGS) {\
-	(STRUCTP)->__ctype_b = _ARG_0_OF_3 ARGS;\
-	(STRUCTP)->__ctype_tolower = _ARG_1_OF_3 ARGS;\
-	(STRUCTP)->__ctype_toupper = _ARG_2_OF_3 ARGS;\
+    (STRUCTP)->__ctype_b = _ARG_0_OF_3 ARGS;\
+    (STRUCTP)->__ctype_tolower = _ARG_1_OF_3 ARGS;\
+    (STRUCTP)->__ctype_toupper = _ARG_2_OF_3 ARGS;\
 }
 #define FILL_reference(STRUCTP, ARG0, ARG1, ARG2) {\
-	(STRUCTP)->usage = ARG0;\
-	(STRUCTP)->p = ARG1;\
-	(STRUCTP)->next = ARG2;\
+    (STRUCTP)->usage = ARG0;\
+    (STRUCTP)->p = ARG1;\
+    (STRUCTP)->next = ARG2;\
 }
 #define FILLF_reference(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6) {\
-	(STRUCTP)->usage.base = ARG0;\
-	(STRUCTP)->usage.requiredAccess = ARG1;\
-	(STRUCTP)->usage.dummy = ARG2;\
-	(STRUCTP)->p.file = ARG3;\
-	(STRUCTP)->p.line = ARG4;\
-	(STRUCTP)->p.col = ARG5;\
-	(STRUCTP)->next = ARG6;\
+    (STRUCTP)->usage.base = ARG0;\
+    (STRUCTP)->usage.requiredAccess = ARG1;\
+    (STRUCTP)->usage.dummy = ARG2;\
+    (STRUCTP)->p.file = ARG3;\
+    (STRUCTP)->p.line = ARG4;\
+    (STRUCTP)->p.col = ARG5;\
+    (STRUCTP)->next = ARG6;\
 }
 #define _FILLF_reference(STRUCTP, ARGS) {\
-	(STRUCTP)->usage.base = _ARG_0_OF_7 ARGS;\
-	(STRUCTP)->usage.requiredAccess = _ARG_1_OF_7 ARGS;\
-	(STRUCTP)->usage.dummy = _ARG_2_OF_7 ARGS;\
-	(STRUCTP)->p.file = _ARG_3_OF_7 ARGS;\
-	(STRUCTP)->p.line = _ARG_4_OF_7 ARGS;\
-	(STRUCTP)->p.col = _ARG_5_OF_7 ARGS;\
-	(STRUCTP)->next = _ARG_6_OF_7 ARGS;\
+    (STRUCTP)->usage.base = _ARG_0_OF_7 ARGS;\
+    (STRUCTP)->usage.requiredAccess = _ARG_1_OF_7 ARGS;\
+    (STRUCTP)->usage.dummy = _ARG_2_OF_7 ARGS;\
+    (STRUCTP)->p.file = _ARG_3_OF_7 ARGS;\
+    (STRUCTP)->p.line = _ARG_4_OF_7 ARGS;\
+    (STRUCTP)->p.col = _ARG_5_OF_7 ARGS;\
+    (STRUCTP)->next = _ARG_6_OF_7 ARGS;\
 }
 #define FILL___locale_data(STRUCTP) {\
 }
@@ -2593,71 +2593,71 @@
 #define _FILLF___locale_data(STRUCTP, ARGS) {\
 }
 #define FILL_programGraphNode(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6) {\
-	(STRUCTP)->ref = ARG0;\
-	(STRUCTP)->symRef = ARG1;\
-	(STRUCTP)->jump = ARG2;\
-	(STRUCTP)->posBits = ARG3;\
-	(STRUCTP)->stateBits = ARG4;\
-	(STRUCTP)->classifBits = ARG5;\
-	(STRUCTP)->next = ARG6;\
+    (STRUCTP)->ref = ARG0;\
+    (STRUCTP)->symRef = ARG1;\
+    (STRUCTP)->jump = ARG2;\
+    (STRUCTP)->posBits = ARG3;\
+    (STRUCTP)->stateBits = ARG4;\
+    (STRUCTP)->classifBits = ARG5;\
+    (STRUCTP)->next = ARG6;\
 }
 #define FILLF_programGraphNode(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6) {\
-	(STRUCTP)->ref = ARG0;\
-	(STRUCTP)->symRef = ARG1;\
-	(STRUCTP)->jump = ARG2;\
-	(STRUCTP)->posBits = ARG3;\
-	(STRUCTP)->stateBits = ARG4;\
-	(STRUCTP)->classifBits = ARG5;\
-	(STRUCTP)->next = ARG6;\
+    (STRUCTP)->ref = ARG0;\
+    (STRUCTP)->symRef = ARG1;\
+    (STRUCTP)->jump = ARG2;\
+    (STRUCTP)->posBits = ARG3;\
+    (STRUCTP)->stateBits = ARG4;\
+    (STRUCTP)->classifBits = ARG5;\
+    (STRUCTP)->next = ARG6;\
 }
 #define _FILLF_programGraphNode(STRUCTP, ARGS) {\
-	(STRUCTP)->ref = _ARG_0_OF_7 ARGS;\
-	(STRUCTP)->symRef = _ARG_1_OF_7 ARGS;\
-	(STRUCTP)->jump = _ARG_2_OF_7 ARGS;\
-	(STRUCTP)->posBits = _ARG_3_OF_7 ARGS;\
-	(STRUCTP)->stateBits = _ARG_4_OF_7 ARGS;\
-	(STRUCTP)->classifBits = _ARG_5_OF_7 ARGS;\
-	(STRUCTP)->next = _ARG_6_OF_7 ARGS;\
+    (STRUCTP)->ref = _ARG_0_OF_7 ARGS;\
+    (STRUCTP)->symRef = _ARG_1_OF_7 ARGS;\
+    (STRUCTP)->jump = _ARG_2_OF_7 ARGS;\
+    (STRUCTP)->posBits = _ARG_3_OF_7 ARGS;\
+    (STRUCTP)->stateBits = _ARG_4_OF_7 ARGS;\
+    (STRUCTP)->classifBits = _ARG_5_OF_7 ARGS;\
+    (STRUCTP)->next = _ARG_6_OF_7 ARGS;\
 }
 #define FILL_itimerspec(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->it_interval = ARG0;\
-	(STRUCTP)->it_value = ARG1;\
+    (STRUCTP)->it_interval = ARG0;\
+    (STRUCTP)->it_value = ARG1;\
 }
 #define FILLF_itimerspec(STRUCTP, ARG0, ARG1, ARG2, ARG3) {\
-	(STRUCTP)->it_interval.tv_sec = ARG0;\
-	(STRUCTP)->it_interval.tv_nsec = ARG1;\
-	(STRUCTP)->it_value.tv_sec = ARG2;\
-	(STRUCTP)->it_value.tv_nsec = ARG3;\
+    (STRUCTP)->it_interval.tv_sec = ARG0;\
+    (STRUCTP)->it_interval.tv_nsec = ARG1;\
+    (STRUCTP)->it_value.tv_sec = ARG2;\
+    (STRUCTP)->it_value.tv_nsec = ARG3;\
 }
 #define _FILLF_itimerspec(STRUCTP, ARGS) {\
-	(STRUCTP)->it_interval.tv_sec = _ARG_0_OF_4 ARGS;\
-	(STRUCTP)->it_interval.tv_nsec = _ARG_1_OF_4 ARGS;\
-	(STRUCTP)->it_value.tv_sec = _ARG_2_OF_4 ARGS;\
-	(STRUCTP)->it_value.tv_nsec = _ARG_3_OF_4 ARGS;\
+    (STRUCTP)->it_interval.tv_sec = _ARG_0_OF_4 ARGS;\
+    (STRUCTP)->it_interval.tv_nsec = _ARG_1_OF_4 ARGS;\
+    (STRUCTP)->it_value.tv_sec = _ARG_2_OF_4 ARGS;\
+    (STRUCTP)->it_value.tv_nsec = _ARG_3_OF_4 ARGS;\
 }
 #define FILL_typeModifiersListPositionListPair(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->t = ARG0;\
-	(STRUCTP)->p = ARG1;\
+    (STRUCTP)->t = ARG0;\
+    (STRUCTP)->p = ARG1;\
 }
 #define FILLF_typeModifiersListPositionListPair(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->t = ARG0;\
-	(STRUCTP)->p = ARG1;\
+    (STRUCTP)->t = ARG0;\
+    (STRUCTP)->p = ARG1;\
 }
 #define _FILLF_typeModifiersListPositionListPair(STRUCTP, ARGS) {\
-	(STRUCTP)->t = _ARG_0_OF_2 ARGS;\
-	(STRUCTP)->p = _ARG_1_OF_2 ARGS;\
+    (STRUCTP)->t = _ARG_0_OF_2 ARGS;\
+    (STRUCTP)->p = _ARG_1_OF_2 ARGS;\
 }
 #define FILL_intPair(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->i1 = ARG0;\
-	(STRUCTP)->i2 = ARG1;\
+    (STRUCTP)->i1 = ARG0;\
+    (STRUCTP)->i2 = ARG1;\
 }
 #define FILLF_intPair(STRUCTP, ARG0, ARG1) {\
-	(STRUCTP)->i1 = ARG0;\
-	(STRUCTP)->i2 = ARG1;\
+    (STRUCTP)->i1 = ARG0;\
+    (STRUCTP)->i2 = ARG1;\
 }
 #define _FILLF_intPair(STRUCTP, ARGS) {\
-	(STRUCTP)->i1 = _ARG_0_OF_2 ARGS;\
-	(STRUCTP)->i2 = _ARG_1_OF_2 ARGS;\
+    (STRUCTP)->i1 = _ARG_0_OF_2 ARGS;\
+    (STRUCTP)->i2 = _ARG_1_OF_2 ARGS;\
 }
 #define FILL__IO_FILE_plus(STRUCTP) {\
 }
