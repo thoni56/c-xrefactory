@@ -2247,7 +2247,7 @@ void writeRelativeProgress(int val) {
 }
 
 static void mainFileProcessingInitialisations(
-                                              int *firstPassing,
+                                              int *firstPass,
                                               int argc, char **argv,      // command-line options
                                               int nargc, char **nargv,    // piped options
                                               int *outInputIn,
@@ -2267,7 +2267,7 @@ static void mainFileProcessingInitialisations(
     else dffstat.st_mtime = oldStdopTime;               // !!! just for now
     //&fprintf(dumpOut,"checking oldcp==%s\n",oldOnLineClassPath);
     //&fprintf(dumpOut,"checking newcp==%s\n",s_opt.classpath);
-    if (    *firstPassing
+    if (    *firstPass
             || oldCppPass != s_currCppPass
             || strcmp(oldStdopFile,dffname)
             || strcmp(oldStdopSection,dffsect)
@@ -2276,9 +2276,9 @@ static void mainFileProcessingInitialisations(
             || strcmp(oldOnLineClassPath, s_opt.classpath)
             || s_cache.cpi == 1     /* some kind of reset was made */
             ) {
-        if (*firstPassing) {
+        if (*firstPass) {
             initCaching();
-            *firstPassing = 0;
+            *firstPass = 0;
         } else {
             recoverCachePointZero();
         }
