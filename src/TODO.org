@@ -124,6 +124,7 @@ easier to mock and unit test other modules.
   with the naming strategy as for the others.
 
 * DONE Move all function prototypes from proto.h to <module>.h
+* DONE Create test case for converting virtual function to static
 * DONE Fix tests/olcx_refactor_rename gets "buf is not valid"
 * DONE Rename all bb -> ast
 * DONE Rename maTab to macroArgTab

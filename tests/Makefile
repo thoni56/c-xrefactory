@@ -33,6 +33,7 @@ quick:
 	@$(MAKE) -C simple_extract
 	@$(MAKE) -C add_parameter
 	@$(MAKE) -C move_class
+	@$(MAKE) -C turn_dynamic_method_to_static
 	@$(MAKE) -C extract_with_return
 
 slow:
