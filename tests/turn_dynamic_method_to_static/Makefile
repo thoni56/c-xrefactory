@@ -8,7 +8,7 @@ EDIT_SERVER_DRIVER = ../../utils/edit_server_driver.py
 EDIT_SERVER_DRIVER_COMMAND=$(EDIT_SERVER_DRIVER) commands.input "$(CURDIR)" buffer
 
 $(TEST): clean
-	@-export SOURCE_PATH=$(CURDIR)/test_sources ; $(EDIT_SERVER_DRIVER_COMMAND) > output.tmp
+	@-$(EDIT_SERVER_DRIVER_COMMAND) > output.tmp
 	@sed -e "s+$(CURDIR)+CURDIR+g" -e "s/len=[0-9]*/len=<n>/g" output.tmp > output
 	@diff output expected > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
