@@ -921,7 +921,7 @@ S_typeModifier *simpleStrUnionSpecifier(S_id *typeName,
                             NULL,NULL,NULL,0,NULL,
                             type,f,(NULL,NULL),NULL,NULL,
                             TypePointer,f,(NULL,NULL),NULL,&pp->u.s->stype,
-                            0,0, -1,0);
+                            0, -1,0);
         pp->u.s->stype.u.t = pp;
         setGlobalFileDepNames(id->name, pp, MEM_XX);
         addSymbol(pp, s_symbolTable);
@@ -1025,7 +1025,7 @@ S_typeModifier *crNewAnnonymeStrUnion(S_id *typeName) {
                         NULL, NULL, NULL, 0, NULL,
                         type,f,(NULL,NULL),NULL,NULL,
                         TypePointer,f,(NULL,NULL),NULL,&pp->u.s->stype,
-                        0,0, -1,0);
+                        0, -1,0);
     pp->u.s->stype.u.t = pp;
     addSymbol(pp, s_symbolTable);
     return(&pp->u.s->stype);
