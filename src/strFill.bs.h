@@ -1251,7 +1251,7 @@
     (STRUCTP)->classFile = ARG9;\
     (STRUCTP)->recSearchCounter = ARG10;\
 }
-#define FILLF_symStructSpec(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13, ARG14, ARG15, ARG16, ARG17, ARG18, ARG19) {\
+#define FILLF_symStructSpec(STRUCTP, ARG0, ARG1, ARG2, ARG3, ARG4, ARG5, ARG6, ARG7, ARG8, ARG9, ARG10, ARG11, ARG12, ARG13, ARG14, ARG15, ARG18, ARG19) {\
     (STRUCTP)->super = ARG0;\
     (STRUCTP)->records = ARG1;\
     (STRUCTP)->casts.node = ARG2;\
@@ -1266,8 +1266,6 @@
     _FILLUREC_typeModifierUnion_##ARG12((&(STRUCTP)->sptrtype.u), ARG13);\
     (STRUCTP)->sptrtype.typedefSymbol = ARG14;\
     (STRUCTP)->sptrtype.next = ARG15;\
-    (STRUCTP)->currPackage = ARG16;\
-    (STRUCTP)->existsDEIarg = ARG17;\
     (STRUCTP)->classFile = ARG18;\
     (STRUCTP)->recSearchCounter = ARG19;\
 }
