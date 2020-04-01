@@ -506,7 +506,7 @@ static Symbol *javaFQTypeSymbolDefinitionCreate(char *name,
                         NULL,NULL,NULL,0,NULL,
                         TypeStruct,t,NULL,NULL,NULL,
                         TypePointer,f,(NULL,NULL),NULL,&memb->u.s->stype,
-                        0, -1, 0);
+                        -1, 0);
     memb->u.s->stype.u.t = memb;
 
     CF_ALLOC(pppl, SymbolList);
@@ -2654,7 +2654,7 @@ void javaInitArrayObject(void) {
                         0, NULL,
                         TypeStruct,t,NULL,NULL,NULL,
                         TypePointer,f,(NULL,NULL),NULL,&s_arraySpec.stype,
-                        0, -1,0);
+                        -1,0);
     s_arraySpec.stype.u.t = &s_javaArrayObjectSymbol;
 
     // orig. javaFileLoaded==1, I changed, because of methodInvoc. reference

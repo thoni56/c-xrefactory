@@ -618,7 +618,6 @@ typedef struct symStructSpec {
     struct nestedSpec		*nest;			/* array of nested classes		*/
     struct typeModifier	stype;              /* this structure type */
     struct typeModifier	sptrtype;           /* this structure pointer type */
-    char					existsDEIarg;   /* class direct enclosing instance exists?, to be removed */
     int						classFile;		/* in java, my class file index
                                                == -1 for none, TODO to change
                                                it to s_noneFileIndex !!!

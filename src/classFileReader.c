@@ -892,23 +892,20 @@ static void cfReadMethodInfos(  char **accc,
             //&}
             // if constructor, put there type name as constructor name
             // instead of <init>
-            //&fprintf(dumpOut,"constructor %s of %s\n", name, memb->name);
+            log_trace("constructor %s of %s", name, memb->name);
             assert(memb && memb->bits.symType==TypeStruct && memb->u.s);
             name = memb->name;
             storage = StorageConstructor;
             if (s_fileTab.tab[memb->u.s->classFile]->directEnclosingInstance != s_noneFileIndex) {
-                //& assert(memb->u.s->existsDEIarg);
                 // the first argument is direct enclosing instance, remove it
                 sign2 = cfSkipFirstArgumentInSigString(sign);
                 CF_ALLOCC(sign, strlen(sign2)+2, char);
                 sign[0] = '(';  strcpy(sign+1, sign2);
-                //&fprintf(dumpOut,"it is nested constructor %s %s %d\n", name, sign, memb->u.s->existsDEIarg);
-            } else {
-                //& assert(memb->u.s->existsDEIarg == 0);
+                log_trace("it is nested constructor %s %s", name, sign);
             }
         } else if (name[0] == '<') {
             // still some strange constructor name?
-            //&fprintf(dumpOut,"strange constructor %s %s\n", name, sign);
+            log_trace("strange constructor %s %s", name, sign);
             storage = StorageConstructor;
         }
         GetU2(acount, ccc, ffin, iBuf);
@@ -1174,11 +1171,9 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
                 cn = inners->u.s->classFile;
                 if (membFlag && ! (modifs & ACC_STATIC)) {
                     // note that non-static direct enclosing class exists
-                    //&inners->u.s->existsDEIarg = 1;
                     assert(s_fileTab.tab[cn]);
                     s_fileTab.tab[cn]->directEnclosingInstance = memb->u.s->classFile;
                 } else {
-                    //&inners->u.s->existsDEIarg = 0;
                     s_fileTab.tab[cn]->directEnclosingInstance = s_noneFileIndex;
                 }
             }
