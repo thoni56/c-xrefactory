@@ -1,5 +1,5 @@
-#ifndef PROTO_H
-#define PROTO_H
+#ifndef _PROTO_H_
+#define _PROTO_H_
 
 /*
 
@@ -975,16 +975,6 @@ typedef struct pushAllInBetweenData {
     int			maxMemi;
 } S_pushAllInBetweenData;
 
-typedef struct tpCheckSpecialReferencesData {
-    struct pushAllInBetweenData	mm;
-    char						*symbolToTest;
-    int							classToTest;
-    struct symbolRefItem		*foundSpecialRefItem;
-    struct reference			*foundSpecialR;
-    struct symbolRefItem        *foundRefToTestedClass;
-    struct symbolRefItem        *foundRefNotToTestedClass;
-    struct reference            *foundOuterScopeRef;
-} S_tpCheckSpecialReferencesData;
 
 
 /* *********************************************************** */

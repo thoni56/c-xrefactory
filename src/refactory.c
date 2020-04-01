@@ -23,6 +23,17 @@
 #define RRF_CHARS_TO_PRE_CHECK_AROUND       1
 #define MAX_NARGV_OPTIONS_NUM               50
 
+typedef struct tpCheckSpecialReferencesData {
+    struct pushAllInBetweenData	mm;
+    char						*symbolToTest;
+    int							classToTest;
+    struct symbolRefItem		*foundSpecialRefItem;
+    struct reference			*foundSpecialR;
+    struct symbolRefItem        *foundRefToTestedClass;
+    struct symbolRefItem        *foundRefNotToTestedClass;
+    struct reference            *foundOuterScopeRef;
+} S_tpCheckSpecialReferencesData;
+
 typedef struct disabledList {
     int             file;
     int             clas;
@@ -960,7 +971,24 @@ static void tpCheckSpecialReferencesMapFun(S_symbolRefItem *ri,
     }
 }
 
-static int tpCheckSuperMethodReferencesInit(S_tpCheckSpecialReferencesData *rr) {
+static void initTpCheckSpecialReferencesData(S_tpCheckSpecialReferencesData *referencesData,
+                                               int minMemi,
+                                               int maxMemi,
+                                               char *symbolToTest,
+                                               int classToTest) {
+    referencesData->mm.minMemi = minMemi;
+    referencesData->mm.maxMemi = maxMemi;
+    referencesData->symbolToTest = symbolToTest;
+    referencesData->classToTest = classToTest;
+    referencesData->foundSpecialRefItem = NULL;
+    referencesData->foundSpecialR = NULL;
+    referencesData->foundRefToTestedClass = NULL;
+    referencesData->foundRefNotToTestedClass = NULL;
+    referencesData->foundOuterScopeRef = NULL;
+}
+
+
+static bool tpCheckSuperMethodReferencesInit(S_tpCheckSpecialReferencesData *rr) {
     S_olSymbolsMenu *ss;
     int scl;
     S_olcxReferences *rstack;
@@ -972,14 +1000,13 @@ static int tpCheckSuperMethodReferencesInit(S_tpCheckSpecialReferencesData *rr) 
     scl = javaGetSuperClassNumFromClassNum(ss->s.vApplClass);
     if (scl == s_noneFileIndex) {
         error(ERR_ST, "no super class, something is going wrong");
-        return(0);
+        return false;;
     }
-    FILLF_tpCheckSpecialReferencesData(rr, s_cps.cxMemiAtMethodBeginning,
-                                       s_cps.cxMemiAtMethodEnd,
-                                       LINK_NAME_SUPER_METHOD_ITEM, scl,
-                                       NULL, NULL, NULL, NULL, NULL);
+    initTpCheckSpecialReferencesData(rr, s_cps.cxMemiAtMethodBeginning,
+                                     s_cps.cxMemiAtMethodEnd,
+                                     LINK_NAME_SUPER_METHOD_ITEM, scl);
     refTabMap2(&s_cxrefTab, tpCheckSpecialReferencesMapFun, rr);
-    return(1);
+    return true;
 }
 
 int tpCheckSuperMethodReferencesForPullUp(void) {
@@ -1056,10 +1083,9 @@ int tpCheckOuterScopeUsagesForDynToSt(void) {
     rstack = s_olcxCurrentUser->browserStack.top;
     ss = rstack->hkSelectedSym;
     assert(ss);
-    FILLF_tpCheckSpecialReferencesData(&rr, s_cps.cxMemiAtMethodBeginning,
-                                       s_cps.cxMemiAtMethodEnd,
-                                       LINK_NAME_MAYBE_THIS_ITEM, ss->s.vApplClass,
-                                       NULL, NULL, NULL, NULL, NULL);
+    initTpCheckSpecialReferencesData(&rr, s_cps.cxMemiAtMethodBeginning,
+                                     s_cps.cxMemiAtMethodEnd,
+                                     LINK_NAME_MAYBE_THIS_ITEM, ss->s.vApplClass);
     refTabMap2(&s_cxrefTab, tpCheckSpecialReferencesMapFun, &rr);
     if (rr.foundOuterScopeRef!=NULL) {
         sprintf(tmpBuff,"Inner class method is using symbols from outer scope. Current version of C-xrefactory does not know how to make it static.");
