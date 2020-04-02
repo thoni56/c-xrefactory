@@ -1,44 +1,10 @@
-../../src/c-xref -xrefactory-II -o buffer -refactory -xrefrc CURDIR/.c-xrefrc -no_stdop -refs CURDIR/CXrefs -p CURDIR -user 1 -rfct-move-class -commentmovinglevel=0 -movetargetfile=CURDIR/test_sources/com/cxrefactory/Completion2.java -rfct-param1=10 -olmark=399 -olcursor=406 -addimportdefault=0 CURDIR/test_sources/com/xrefactory/Completion.java -sourcepath "CURDIR/test_sources" -log=log -trace
+../../src/c-xref -xrefactory-II -o buffer -refactory -xrefrc CURDIR/.c-xrefrc -no_stdop -refs CURDIR/CXrefs -p CURDIR -user 1 -rfct-move-class -commentmovinglevel=0 -movetargetfile=CURDIR/test_sources/com/cxrefactory/Completion2.java -rfct-param1=10 -olmark=399 -olcursor=406 -addimportdefault=0 CURDIR/test_sources/com/xrefactory/Completion.java -log=log
 end-of-options
 
 <sync>
 <error len=<n>>no classpath or sourcepath specified
 </error>
 <update-report>
- <information len=<n>>Prescanning classes, please wait.</information>
- <information len=<n>>C-xrefactory project: CURDIR</information>
- <information len=<n>>java version == 1.3</information>
- <information len=<n>>CURDIR/test_sources/com/cxrefactory/Completion2.java</information>
- <warning len=<n>><A HREF="file://CURDIR/test_sources/com/cxrefactory/Completion2.java#1" len=<n>>Completion2.java:1</A> Directory CURDIR/test_sources is not listed in paths
-</warning>
- <information len=<n>>CURDIR/test_sources/com/xrefactory/Completion.java</information>
- <warning len=<n>><A HREF="file://CURDIR/test_sources/com/xrefactory/Completion.java#1" len=<n>>Completion.java:1</A> Directory CURDIR/test_sources is not listed in paths
-</warning>
- <information len=<n>>Generating 'CURDIR/CXrefs'</information>
- <error len=<n>> can't open file CURDIR/CXrefs/XFiles for reading : No such file or directory
-</error>
- <error len=<n>> can't open file CURDIR/CXrefs/XClasses for reading : No such file or directory
-</error>
- <error len=<n>> can't open file CURDIR/CXrefs/X0000 for reading : No such file or directory
-</error>
- <error len=<n>> can't open file CURDIR/CXrefs/X0001 for reading : No such file or directory
-</error>
- <error len=<n>> can't open file CURDIR/CXrefs/X0002 for reading : No such file or directory
-</error>
- <error len=<n>> can't open file CURDIR/CXrefs/X0003 for reading : No such file or directory
-</error>
- <error len=<n>> can't open file CURDIR/CXrefs/X0004 for reading : No such file or directory
-</error>
- <error len=<n>> can't open file CURDIR/CXrefs/X0005 for reading : No such file or directory
-</error>
- <error len=<n>> can't open file CURDIR/CXrefs/X0006 for reading : No such file or directory
-</error>
- <error len=<n>> can't open file CURDIR/CXrefs/X0007 for reading : No such file or directory
-</error>
- <error len=<n>> can't open file CURDIR/CXrefs/X0008 for reading : No such file or directory
-</error>
- <error len=<n>> can't open file CURDIR/CXrefs/X0009 for reading : No such file or directory
-</error>
 </update-report>
 <error len=<n>>no classpath or sourcepath specified
 </error>

@@ -1,6 +1,6 @@
 # Test for moving a class
 #
-# TODO it does not really work, but it prints an error message and
+# TODO it does not really do the move, but it prints an error message and
 # exercises a lot of code, so let's keep this
 
 include ../Makefile.boilerplate
@@ -9,8 +9,8 @@ CXREF = ../../src/c-xref
 EDIT_SERVER_DRIVER = ../../utils/edit_server_driver.py
 EDIT_SERVER_DRIVER_COMMAND=$(EDIT_SERVER_DRIVER) commands.input "$(CURDIR)" buffer
 
-$(TEST): clean
-	@-export SOURCE_PATH=$(CURDIR)/test_sources ; $(EDIT_SERVER_DRIVER_COMMAND) > output.tmp
+$(TEST): CXrefs
+	@SOURCEPATH=. ; $(EDIT_SERVER_DRIVER_COMMAND) > output.tmp
 	@sed -e "s+$(CURDIR)+CURDIR+g" -e "s/len=[0-9]*/len=<n>/g" output.tmp > output
 	@diff output expected > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
@@ -25,6 +25,9 @@ $(TEST): clean
 
 trace: CXREF+=-trace
 trace: $(TEST)
+
+CXrefs:
+	@../../src/c-xref -p $(CURDIR) -xrefrc .c-xrefrc test_sources -sourcepath $(CURDIR)/test_sources -o CXrefs.output
 
 clean:
 	@-rm -rf CXrefs output.tmp output buffer log

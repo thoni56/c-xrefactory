@@ -1,2 +1,2 @@
-../../src/c-xref -xrefactory-II -o buffer -refactory -xrefrc CURDIR/.c-xrefrc -no_stdop -refs CURDIR/CXrefs -p CURDIR -user 1 -rfct-move-class -commentmovinglevel=0 -movetargetfile=CURDIR/test_sources/com/cxrefactory/Completion2.java -rfct-param1=10 -olmark=399 -olcursor=406 -addimportdefault=0 CURDIR/test_sources/com/xrefactory/Completion.java -sourcepath "CURDIR/test_sources" -log=log -trace
+../../src/c-xref -xrefactory-II -o buffer -refactory -xrefrc CURDIR/.c-xrefrc -no_stdop -refs CURDIR/CXrefs -p CURDIR -user 1 -rfct-move-class -commentmovinglevel=0 -movetargetfile=CURDIR/test_sources/com/cxrefactory/Completion2.java -rfct-param1=10 -olmark=399 -olcursor=406 -addimportdefault=0 CURDIR/test_sources/com/xrefactory/Completion.java -log=log
 <sync>
