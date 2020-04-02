@@ -65,6 +65,9 @@ def read_output(filename):
     with open(filename, 'rb') as file:
         print(file.read().decode())
 
+if len(sys.argv) < 4:
+    print("Error - not enough arguments", file=sys.stderr)
+    sys.exit(1)
 
 # First argument is the file with the commands
 command_file = sys.argv[1]
@@ -72,7 +75,8 @@ command_file = sys.argv[1]
 # Second argument is the value of CURDIR
 CURDIR = sys.argv[2]
 
-# Third argument is name of the communication buffer file
+# Third argument is name of the communication buffer file that edit
+# server will write its response in
 buffer = sys.argv[3]
 
 # If there is a fourth argument that is a sleep timer to
@@ -83,15 +87,14 @@ else:
     sleep = None
 
 with open(command_file, 'rb') as file:
-    invocation = file.readline().decode().rstrip()
+    invocation = file.readline().decode().rstrip().replace("CURDIR", CURDIR)
     print(invocation)
 
-    args = invocation.replace("CURDIR", CURDIR)
-    process_args = shlex.split(args)
+    args = shlex.split(invocation)
     if sleep:
-        process_args = [process_args[0]] + ["-pause", sys.argv[4]] + process_args[1:]
+        args = [args[0]] + ["-pause", sys.argv[4]] + args[1:]
 
-    p = subprocess.Popen(process_args,
+    p = subprocess.Popen(args,
                          stdout=subprocess.PIPE,
                          stdin=subprocess.PIPE)
 
