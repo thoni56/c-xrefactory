@@ -510,7 +510,7 @@ static int zipSeekToFile(char **accc, char **affin, CharacterBuffer *iBuf,
     return(res);
 }
 
-int zipFindFile(char *name,
+bool zipFindFile(char *name,
                 char **resName,             /* can be NULL !!! */
                 S_zipFileTableItem *zipfile
                 ) {
@@ -522,13 +522,13 @@ int zipFindFile(char *name,
     strcat(fname,".class");
     assert(strlen(fname)+1 < MAX_FILE_NAME_SIZE);
     /*&fprintf(dumpOut,"looking for file %s in %s\n",fname,zipfile->fn);fflush(dumpOut);&*/
-    if (fsIsMember(&zipfile->dir,fname,0,ADD_NO,&place)==0) return(0);
+    if (fsIsMember(&zipfile->dir,fname,0,ADD_NO,&place)==0) return false;
     if (resName != NULL) {
         XX_ALLOCC(*resName, strlen(zipfile->fn)+strlen(fname)+2, char);
         pp = strmcpy(*resName, zipfile->fn);
         strcpy(pp, fname);
     }
-    return(1);
+    return true;
 }
 
 void javaMapZipDirFile(
@@ -1045,6 +1045,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     union constantPoolUnion *constantPool;
     S_position pos;
 
+    ENTER();
     memb->bits.javaFileLoaded = 1;
     /*&
       fprintf(dumpOut,": ppmmem == %d/%d\n",ppmMemoryi,SIZE_ppmMemory);
@@ -1058,6 +1059,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
 
     if (ff == NULL) {
         error(ERR_CANT_OPEN, name);
+        LEAVE();
         return;
     }
 
@@ -1206,4 +1208,6 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     log_debug("closing file %s", name);
     //&{fprintf(dumpOut,": closing file %s\n",name);fflush(dumpOut);fprintf(dumpOut,": ppmmem == %d/%d\n",ppmMemoryi,SIZE_ppmMemory);fflush(dumpOut);}
     popInclude();
+
+    LEAVE();
 }

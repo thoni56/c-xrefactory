@@ -34,8 +34,8 @@ int zipIndexArchive(char *name) {
   return (int) mock(name);
 }
 
-int zipFindFile(char *name, char **resName, S_zipFileTableItem *zipfile) {
-  return (int) mock(name, resName, zipfile);
+bool zipFindFile(char *name, char **resName, S_zipFileTableItem *zipfile) {
+  return (bool) mock(name, resName, zipfile);
 }
 
 void javaMapZipDirFile(S_zipFileTableItem *zipfile, char *packfile, S_completions *a1, void *a2, int *a3, void (*fun)(char *file, char *a1, char *a2, S_completions *a3, void *a4, int *a5), char *classPath, char *dirname) {

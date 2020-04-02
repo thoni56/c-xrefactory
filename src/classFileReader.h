@@ -31,7 +31,7 @@ extern void fsRecMapOnFiles(S_zipArchiveDir *dir, char *zip, char *path, void (*
 extern bool fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset,
                       int addFlag, S_zipArchiveDir **place);
 extern int zipIndexArchive(char *name);
-extern int zipFindFile(char *name, char **resName, S_zipFileTableItem *zipfile);
+extern bool zipFindFile(char *name, char **resName, S_zipFileTableItem *zipfile);
 extern void javaMapZipDirFile(
                               S_zipFileTableItem *zipfile,
                               char *packfile,
