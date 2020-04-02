@@ -167,32 +167,33 @@ char *create_temporary_filename(void) {
     return temporary_name;
 }
 
-void copyFile(char *src, char *dest) {
-    FILE *fs,*fd;
-    int n,nn;
+void copyFile(char *source, char *destination) {
+    FILE *sourceFile, *destinationFile;
+    int readBytes, writtenBytes;
 
     ENTER();
-    fs = fopen(src,"r");
-    if (fs==NULL) {
-        error(ERR_CANT_OPEN_FOR_READ, src);
+    log_trace("attempting to copy '%s' to '%s'", source, destination);
+    sourceFile = fopen(source,"r");
+    if (sourceFile == NULL) {
+        error(ERR_CANT_OPEN_FOR_READ, source);
         LEAVE();
         return;
     }
-    fd = fopen(dest,"w");
-    if (fd==NULL) {
-        error(ERR_CANT_OPEN_FOR_WRITE, dest);
-        fclose(fs);
+    destinationFile = fopen(destination,"w");
+    if (destinationFile == NULL) {
+        error(ERR_CANT_OPEN_FOR_WRITE, destination);
+        fclose(sourceFile);
         LEAVE();
         return;
     }
     do {
-        n = fread(tmpBuff,1,TMP_BUFF_SIZE,fs);
-        nn = fwrite(tmpBuff,1,n,fd);
-        if (n!=nn)
+        readBytes = fread(tmpBuff , 1, TMP_BUFF_SIZE, sourceFile);
+        writtenBytes = fwrite(tmpBuff, 1, readBytes, destinationFile);
+        if (readBytes != writtenBytes)
             error(ERR_ST,"problem with writing to a file.");
-    } while (n > 0);
-    fclose(fd);
-    fclose(fs);
+    } while (readBytes > 0);
+    fclose(destinationFile);
+    fclose(sourceFile);
     LEAVE();
 }
 
@@ -205,7 +206,7 @@ void createDir(char *dirname) {
 }
 
 void removeFile(char *dirname) {
-    log_trace("removing file '%'", dirname);
+    log_trace("removing file '%s'", dirname);
     unlink(dirname);
 }
 
