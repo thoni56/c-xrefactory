@@ -205,6 +205,7 @@ void createDir(char *dirname) {
 }
 
 void removeFile(char *dirname) {
+    log_trace("removing file '%'", dirname);
     unlink(dirname);
 }
 
