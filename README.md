@@ -1,9 +1,9 @@
-[![Build Status](https://travis-ci.org/thoni56/c-xrefactory.svg?branch=master)](https://travis-ci.org/thoni56/c-xrefactory)[![Coverage Status](https://coveralls.io/repos/github/thoni56/c-xrefactory/badge.svg?branch=master)](https://coveralls.io/github/thoni56/c-xrefactory?branch=master)[![codecov](https://codecov.io/gh/thoni56/c-xrefactory/branch/master/graph/badge.svg)](https://codecov.io/gh/thoni56/c-xrefactory)
+[![Build Status](https://travis-ci.org/thoni56/c-xrefactory.svg?branch=master)](https://travis-ci.org/thoni56/c-xrefactory)[![Coverage Status](https://coveralls.io/repos/github/thoni56/c-xrefactory/badge.svg)](https://coveralls.io/github/thoni56/c-xrefactory)[![codecov](https://codecov.io/gh/thoni56/c-xrefactory/branch/master/graph/badge.svg)](https://codecov.io/gh/thoni56/c-xrefactory)
 # C-xrefactory - A refactoring tool for C/Java and Emacs
 
 ## TL;DR
 
-`c-xrefactory` is a free emacs refactoring tool and code browser for
+`c-xrefactory` is a free Emacs refactoring tool and code browser for
 C (and Java).
 
 Easiest way to install is using `el-get` (see note):
@@ -11,7 +11,7 @@ Easiest way to install is using `el-get` (see note):
     M-x el-get-install<ENTER>c-xrefactory<ENTER>
 
 Place cursor on an identifier and `go to definition` (F-6), navigate
-between occurrances (F-3, F-4), refactor (F-11) with `rename`, mark
+between occurrences (F-3, F-4), refactor (F-11) with `rename`, mark
 some code and `extract function` and so on. Your C programming and
 code will never be the same.
 
