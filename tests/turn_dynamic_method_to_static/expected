@@ -1,9 +1,75 @@
-../../src/c-xref -xrefactory-II -encoding=default -o buffer -refactory -xrefrc /home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc -p CURDIR/jexercise -user 1 -rfct-dynamic-to-static -rfct-param1=person -olcursor=864 -addimportdefault=0 CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java
+../../src/c-xref -xrefactory-II -encoding=default -o buffer -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -user 1 -rfct-dynamic-to-static -rfct-param1=person -olcursor=864 -addimportdefault=0 CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java
 end-of-options
 
 <sync>
 <update-report>
+ <information len=<n>>Prescanning classes, please wait.</information>
+ <information len=<n>>C-xrefactory project: CURDIR</information>
+ <information len=<n>>java version == 1.3</information>
+ <information len=<n>>CURDIR/jexercise/Index.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/jexercise/Index.java#19" len=<n>>Index.java:19</A> Directory CURDIR/jexercise is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/jexercise/com/xrefactory/Browsing.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/Browsing.java#1" len=<n>>Browsing.java:1</A> Directory CURDIR/jexercise is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/jexercise/com/xrefactory/Completion.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/Completion.java#1" len=<n>>Completion.java:1</A> Directory CURDIR/jexercise is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/jexercise/com/xrefactory/IdeCompileRun.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/IdeCompileRun.java#1" len=<n>>IdeCompileRun.java:1</A> Directory CURDIR/jexercise is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/AddRemoveParameter.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/AddRemoveParameter.java#1" len=<n>>AddRemoveParameter.java:1</A> Directory CURDIR/jexercise is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/EncapsulateField.java#1" len=<n>>EncapsulateField.java:1</A> Directory CURDIR/jexercise is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/ExtractMethod.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/ExtractMethod.java#1" len=<n>>ExtractMethod.java:1</A> Directory CURDIR/jexercise is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/Index.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/Index.java#1" len=<n>>Index.java:1</A> Directory CURDIR/jexercise is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java#1" len=<n>>MoveMethod.java:1</A> Directory CURDIR/jexercise is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveStaticMethod.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/MoveStaticMethod.java#1" len=<n>>MoveStaticMethod.java:1</A> Directory CURDIR/jexercise is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/PullUpMethod.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/PullUpMethod.java#1" len=<n>>PullUpMethod.java:1</A> Directory CURDIR/jexercise is not listed in paths
+</warning>
+ <information len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/RenameSymbol.java</information>
+ <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/RenameSymbol.java#1" len=<n>>RenameSymbol.java:1</A> Directory CURDIR/jexercise is not listed in paths
+</warning>
+ <information len=<n>>Generating 'CURDIR/CXrefs'</information>
+ <error len=<n>> can't open file CURDIR/CXrefs/XFiles
+</error>
+ <error len=<n>> can't open file CURDIR/CXrefs/XClasses
+</error>
+ <error len=<n>> can't open file CURDIR/CXrefs/X0000
+</error>
+ <error len=<n>> can't open file CURDIR/CXrefs/X0001
+</error>
+ <error len=<n>> can't open file CURDIR/CXrefs/X0002
+</error>
+ <error len=<n>> can't open file CURDIR/CXrefs/X0003
+</error>
+ <error len=<n>> can't open file CURDIR/CXrefs/X0004
+</error>
+ <error len=<n>> can't open file CURDIR/CXrefs/X0005
+</error>
+ <error len=<n>> can't open file CURDIR/CXrefs/X0006
+</error>
+ <error len=<n>> can't open file CURDIR/CXrefs/X0007
+</error>
+ <error len=<n>> can't open file CURDIR/CXrefs/X0008
+</error>
+ <error len=<n>> can't open file CURDIR/CXrefs/X0009
+</error>
 </update-report>
+<error len=<n>>no classpath or sourcepath specified
+</error>
 <goto>
  <position-off off=861 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
 </goto>
