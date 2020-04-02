@@ -52,9 +52,12 @@ def end_of_options(p):
 
 def wait_for_sync(p):
     line = p.stdout.readline()[:-1].decode()
-    while line != '<sync>':
+    while line != '<sync>' and line != '':
         eprint("Waiting for <sync>, got: '{0}'".format(line))
         line = p.stdout.readline().decode()[:-1]
+    if line == '':
+        eprint("Broken input")
+        sys.exit(-1)
     print(line)
 
 
@@ -114,3 +117,8 @@ with open(command_file, 'rb') as file:
             while command != '</update-report>':
                 command = file.readline().decode().rstrip()
                 eprint(command)
+
+    line = p.stdout.readline()[:-1].decode()
+    while line != '':
+        eprint("Waiting for end of communication, got: '{0}'".format(line))
+        line = p.stdout.readline().decode()[:-1]
