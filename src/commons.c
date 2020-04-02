@@ -227,6 +227,12 @@ static void errorMessage(char *out, int errCode, char *mess) {
         break;
     case ERR_CANT_EXECUTE:
         sprintf(out,"can't execute the command %s\n",mess);
+    case ERR_CANT_OPEN_FOR_READ:
+        sprintf(out,"can't open file %s for reading\n",mess);
+        out += strlen(out);
+        break;
+    case ERR_CANT_OPEN_FOR_WRITE:
+        sprintf(out,"can't open file %s for writing\n",mess);
         out += strlen(out);
         break;
     case ERR_NO_MEMORY:

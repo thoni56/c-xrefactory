@@ -231,6 +231,8 @@ enum {
   ERR_ST,				/* standard, no pre-prepared message*/
   ERR_CANT_OPEN,
   ERR_CANT_EXECUTE,
+  ERR_CANT_OPEN_FOR_READ,
+  ERR_CANT_OPEN_FOR_WRITE,
   ERR_NO_MEMORY,
   ERR_INTERNAL,
   ERR_INTERNAL_CHECK,
