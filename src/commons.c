@@ -153,7 +153,8 @@ char *create_temporary_filename(void) {
        close it in order to stay with the semantics of this
        function */
     int fd = mkstemp(temporary_name);
-    if (fd != -1)
+    if (fd == -1)
+        /* Error? Use only the base, this will not work well... */
         strcpy(temporary_name, "/tmp/c-xref-temp");
     else
         close(fd);

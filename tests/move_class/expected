@@ -17,52 +17,28 @@ end-of-options
  <information len=<n>>Generating 'CURDIR/CXrefs'</information>
  <error len=<n>> can't open file CURDIR/CXrefs/XFiles
 </error>
- <warning len=<n>> can't open file /tmp/c-xref-temp
-</warning>
  <error len=<n>> can't open file CURDIR/CXrefs/XClasses
 </error>
- <warning len=<n>> can't open file /tmp/c-xref-temp
-</warning>
  <error len=<n>> can't open file CURDIR/CXrefs/X0000
 </error>
- <warning len=<n>> can't open file /tmp/c-xref-temp
-</warning>
  <error len=<n>> can't open file CURDIR/CXrefs/X0001
 </error>
- <warning len=<n>> can't open file /tmp/c-xref-temp
-</warning>
  <error len=<n>> can't open file CURDIR/CXrefs/X0002
 </error>
- <warning len=<n>> can't open file /tmp/c-xref-temp
-</warning>
  <error len=<n>> can't open file CURDIR/CXrefs/X0003
 </error>
- <warning len=<n>> can't open file /tmp/c-xref-temp
-</warning>
  <error len=<n>> can't open file CURDIR/CXrefs/X0004
 </error>
- <warning len=<n>> can't open file /tmp/c-xref-temp
-</warning>
  <error len=<n>> can't open file CURDIR/CXrefs/X0005
 </error>
- <warning len=<n>> can't open file /tmp/c-xref-temp
-</warning>
  <error len=<n>> can't open file CURDIR/CXrefs/X0006
 </error>
- <warning len=<n>> can't open file /tmp/c-xref-temp
-</warning>
  <error len=<n>> can't open file CURDIR/CXrefs/X0007
 </error>
- <warning len=<n>> can't open file /tmp/c-xref-temp
-</warning>
  <error len=<n>> can't open file CURDIR/CXrefs/X0008
 </error>
- <warning len=<n>> can't open file /tmp/c-xref-temp
-</warning>
  <error len=<n>> can't open file CURDIR/CXrefs/X0009
 </error>
- <warning len=<n>> can't open file /tmp/c-xref-temp
-</warning>
 </update-report>
 <error len=<n>>no classpath or sourcepath specified
 </error>
