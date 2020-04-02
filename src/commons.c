@@ -1,11 +1,12 @@
 /* TODO: Make this independent on other modules */
-
 #include "commons.h"
 
+#include <errno.h>
+
 #include "globals.h"
-#include "misc.h"               /* ppcGenRecord() & ppcGenSynchroRecord() */
+#include "misc.h"               /* ppcGenRecord() & ppcGenSynchroRecord() - extract ppc module? */
 #include "yylex.h"              /* placeIdent() */
-#include "main.h"               /* mainCloseOutputFile() */
+#include "main.h"               /* mainCloseOutputFile() - move here? */
 
 #include "protocol.h"
 
@@ -169,24 +170,30 @@ char *create_temporary_filename(void) {
 void copyFile(char *src, char *dest) {
     FILE *fs,*fd;
     int n,nn;
+
+    ENTER();
     fs = fopen(src,"r");
     if (fs==NULL) {
-        error(ERR_CANT_OPEN, src);
+        error(ERR_CANT_OPEN_FOR_READ, src);
+        LEAVE();
         return;
     }
     fd = fopen(dest,"w");
     if (fd==NULL) {
-        error(ERR_CANT_OPEN, dest);
+        error(ERR_CANT_OPEN_FOR_WRITE, dest);
         fclose(fs);
+        LEAVE();
         return;
     }
     do {
         n = fread(tmpBuff,1,TMP_BUFF_SIZE,fs);
         nn = fwrite(tmpBuff,1,n,fd);
-        if (n!=nn) error(ERR_ST,"problem with writing to a file.");
+        if (n!=nn)
+            error(ERR_ST,"problem with writing to a file.");
     } while (n > 0);
     fclose(fd);
     fclose(fs);
+    LEAVE();
 }
 
 void createDir(char *dirname) {
@@ -222,15 +229,15 @@ static void errorMessage(char *out, int errCode, char *mess) {
     }
     switch (errCode) {
     case ERR_CANT_OPEN:
-        sprintf(out,"can't open file %s\n",mess);
+        sprintf(out,"can't open file %s : %s\n", mess, strerror(errno));
         out += strlen(out);
         break;
     case ERR_CANT_OPEN_FOR_READ:
-        sprintf(out,"can't open file %s for reading\n",mess);
+        sprintf(out,"can't open file %s for reading : %s\n", mess, strerror(errno));
         out += strlen(out);
         break;
     case ERR_CANT_OPEN_FOR_WRITE:
-        sprintf(out,"can't open file %s for writing\n",mess);
+        sprintf(out,"can't open file %s for writing : %s\n", mess, strerror(errno));
         out += strlen(out);
         break;
     case ERR_NO_MEMORY:
