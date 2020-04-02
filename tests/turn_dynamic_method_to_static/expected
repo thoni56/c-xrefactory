@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -encoding=default -o buffer -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -user 1 -rfct-dynamic-to-static -rfct-param1=person -olcursor=864 -addimportdefault=0 CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java
+../../src/c-xref -xrefactory-II -encoding=default -o buffer -refactory -xrefrc CURDIR/.c-xrefrc -p CURDIR -user 1 -rfct-dynamic-to-static -rfct-param1=person -olcursor=864 -addimportdefault=0 CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java -log=log -trace
 end-of-options
 
 <sync>
@@ -145,4 +145,3 @@ end-of-options
 <goto>
  <position-off off=871 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</position-off>
 </goto>
-
