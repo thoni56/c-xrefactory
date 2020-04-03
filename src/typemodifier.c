@@ -29,6 +29,10 @@ void initTypeModifierAsFunction(S_typeModifier *typeModifier, Symbol *args, Symb
 
 }
 
+void initTypeModifierAsPointer(S_typeModifier *typeModifier, S_typeModifier *next) {
+    fillTypeModifier(typeModifier, TypePointer, NULL, next);
+}
+
 /* For typeModifiers we need to cater for two memory allocations (XX &
    CF) as well as the ancient FILL semantics... */
 

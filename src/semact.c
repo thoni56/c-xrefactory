@@ -892,7 +892,7 @@ static S_typeModifier *crSimpleEnumType(Symbol *edef, int type) {
     return(res);
 }
 
-static void initSymStructSpec(S_symStructSpec *symStruct, Symbol *records) {
+void initSymStructSpec(S_symStructSpec *symStruct, Symbol *records) {
     memset((void*)symStruct, 0, sizeof(*symStruct));
     symStruct->records = records;
     symStruct->classFile = -1;  /* Should be s_noFile? */
@@ -924,33 +924,13 @@ S_typeModifier *simpleStrUnionSpecifier(S_id *typeName,
         *pp = p;
         XX_ALLOC(pp->u.s, S_symStructSpec);
 
-        /* This... */
         initSymStructSpec(pp->u.s, /*.records=*/NULL);
-        /* ... and this */
-        /* This should actually only write the same things as the above FILLF_... */
         S_typeModifier *stype = &pp->u.s->stype;
         /* Assumed to be Struct/Union/Enum? */
         initTypeModifierAsStructUnionOrEnum(stype, /*.kind=*/type, /*.u.t=*/pp,
-            /*.typedefSymbol=*/NULL, /*.next=*/NULL);
-        /* ... and this */
+                                            /*.typedefSymbol=*/NULL, /*.next=*/NULL);
         S_typeModifier *sptrtype = &pp->u.s->sptrtype;
-        initTypeModifierAsFunction(sptrtype,
-                                   /*.u.f.args=*/NULL,
-                                   /*.u.f.thisFunList=*/NULL,
-                                   /*.typedefSymbol=*/NULL,
-                                   /*.next=*/&pp->u.s->stype);
-        /* ... to here should replace ... */
-#ifdef SYMSTRUCTSPEC
-#endif
-        /* ... this monster: */
-        FILLF_symStructSpec(pp->u.s,
-                            /*0-1.super,records=*/NULL,NULL,
-                            /*2-3.casts.=*/NULL,NULL,
-                            /*4.nestedCount=*/0,NULL,
-                            /*5.stype=*/    type,       t, pp->u.s->stype.u.t = pp, NULL, NULL,
-                            /*11.sptrtype=*/TypePointer,f, (NULL,NULL),             NULL, &pp->u.s->stype,
-                            -1,0);
-
+        initTypeModifierAsPointer(sptrtype, &pp->u.s->stype);
 
         setGlobalFileDepNames(id->name, pp, MEM_XX);
         addSymbol(pp, s_symbolTable);
@@ -1049,14 +1029,19 @@ S_typeModifier *crNewAnnonymeStrUnion(S_id *typeName) {
     fillSymbolBits(&pp->bits, ACC_DEFAULT, type, StorageNone);
 
     setGlobalFileDepNames("", pp, MEM_XX);
+
     XX_ALLOC(pp->u.s, S_symStructSpec);
-    FILLF_symStructSpec(pp->u.s, NULL,
-                        NULL, NULL, NULL, 0, NULL,
-                        type,f,(NULL,NULL),NULL,NULL,
-                        TypePointer,f,(NULL,NULL),NULL,&pp->u.s->stype,
-                        -1,0);
-    pp->u.s->stype.u.t = pp;
+
+    initSymStructSpec(pp->u.s, /*.records=*/NULL);
+    S_typeModifier *stype = &pp->u.s->stype;
+    /* Assumed to be Struct/Union/Enum? */
+    initTypeModifierAsStructUnionOrEnum(stype, /*.kind=*/type, /*.u.t=*/pp,
+                                        /*.typedefSymbol=*/NULL, /*.next=*/NULL);
+    S_typeModifier *sptrtype = &pp->u.s->sptrtype;
+    initTypeModifierAsPointer(sptrtype, &pp->u.s->stype);
+
     addSymbol(pp, s_symbolTable);
+
     return(&pp->u.s->stype);
 }
 

@@ -502,12 +502,14 @@ static Symbol *javaFQTypeSymbolDefinitionCreate(char *name,
     fillSymbolBits(&memb->bits, ACC_DEFAULT, TypeStruct, StorageNone);
 
     CF_ALLOC(memb->u.s, S_symStructSpec);
-    FILLF_symStructSpec(memb->u.s,NULL,
-                        NULL,NULL,NULL,0,NULL,
-                        TypeStruct,t,NULL,NULL,NULL,
-                        TypePointer,f,(NULL,NULL),NULL,&memb->u.s->stype,
-                        -1, 0);
-    memb->u.s->stype.u.t = memb;
+
+    initSymStructSpec(memb->u.s, /*.records=*/NULL);
+    S_typeModifier *stype = &memb->u.s->stype;
+    /* Assumed to be Struct/Union/Enum? */
+    initTypeModifierAsStructUnionOrEnum(stype, /*.kind=*/TypeStruct, /*.u.t=*/memb,
+                                            /*.typedefSymbol=*/NULL, /*.next=*/NULL);
+    S_typeModifier *sptrtype = &memb->u.s->sptrtype;
+    initTypeModifierAsPointer(sptrtype, &memb->u.s->stype);
 
     CF_ALLOC(pppl, SymbolList);
     /* REPLACED: FILL_symbolList(pppl, memb, NULL); with: */
@@ -2649,15 +2651,12 @@ void javaInitArrayObject(void) {
     fillSymbolWithType(&s_lengthSymbol, "length", "java/lang/array.length",
                        s_noPos, &s_defaultIntModifier);
 
-    FILLF_symStructSpec(&s_arraySpec, NULL,
-                        &s_lengthSymbol, NULL,NULL,
-                        0, NULL,
-                        TypeStruct,t,NULL,NULL,NULL,
-                        TypePointer,f,(NULL,NULL),NULL,&s_arraySpec.stype,
-                        -1,0);
-    s_arraySpec.stype.u.t = &s_javaArrayObjectSymbol;
-
-    // orig. javaFileLoaded==1, I changed, because of methodInvoc. reference
+    initSymStructSpec(&s_arraySpec, /*.records=*/&s_lengthSymbol);
+    /* Assumed to be Struct/Union/Enum? */
+    initTypeModifierAsStructUnionOrEnum(&s_arraySpec.stype, /*.kind=*/TypeStruct,
+                                        /*.u.t=*/&s_javaArrayObjectSymbol,
+                                        /*.typedefSymbol=*/NULL, /*.next=*/NULL);
+    initTypeModifierAsPointer(&s_arraySpec.sptrtype, &s_arraySpec.stype);
 
     fillSymbolWithStruct(&s_javaArrayObjectSymbol, "__arrayObject__", "__arrayObject__",
                          s_noPos, &s_arraySpec);

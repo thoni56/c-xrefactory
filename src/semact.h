@@ -7,6 +7,7 @@
 #include "proto.h"
 
 
+extern void initSymStructSpec(S_symStructSpec *symStruct, Symbol *records);
 extern void fillRecFindStr(S_recFindStr *recFindStr, Symbol *baseClass, Symbol *currentClass, Symbol *nextRecord, unsigned recsClassCounter);
 extern void unpackPointers(Symbol *pp);
 extern int displayingErrorMessages(void);
