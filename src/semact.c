@@ -892,6 +892,12 @@ static S_typeModifier *crSimpleEnumType(Symbol *edef, int type) {
     return(res);
 }
 
+static void initSymStructSpec(S_symStructSpec *symStruct, Symbol *records) {
+    memset((void*)symStruct, 0, sizeof(*symStruct));
+    symStruct->records = records;
+    symStruct->classFile = -1;  /* Should be s_noFile? */
+}
+
 S_typeModifier *simpleStrUnionSpecifier(S_id *typeName,
                                         S_id *id,
                                         int usage
@@ -917,17 +923,9 @@ S_typeModifier *simpleStrUnionSpecifier(S_id *typeName,
         XX_ALLOC(pp, Symbol);
         *pp = p;
         XX_ALLOC(pp->u.s, S_symStructSpec);
-        /* This monster should be unwound and replaced by ... */
-        FILLF_symStructSpec(pp->u.s, NULL,
-                            NULL,NULL,NULL,0,NULL,
-                            type,f,(NULL,NULL),NULL,NULL,
-                            TypePointer,f,(NULL,NULL),NULL,&pp->u.s->stype,
-                            -1,0);
-        pp->u.s->stype.u.t = pp;
 
-#ifdef SYMSTRUCTSPEC
-        /* ... this... */
-        fillSymStructSpec(pp->u.s, /*.records=*/NULL);
+        /* This... */
+        initSymStructSpec(pp->u.s, /*.records=*/NULL);
         /* ... and this */
         /* This should actually only write the same things as the above FILLF_... */
         S_typeModifier *stype = &pp->u.s->stype;
@@ -941,8 +939,18 @@ S_typeModifier *simpleStrUnionSpecifier(S_id *typeName,
                                    /*.u.f.thisFunList=*/NULL,
                                    /*.typedefSymbol=*/NULL,
                                    /*.next=*/&pp->u.s->stype);
+        /* ... to here should replace ... */
+#ifdef SYMSTRUCTSPEC
 #endif
-        /* ... to here */
+        /* ... this monster: */
+        FILLF_symStructSpec(pp->u.s,
+                            /*0-1.super,records=*/NULL,NULL,
+                            /*2-3.casts.=*/NULL,NULL,
+                            /*4.nestedCount=*/0,NULL,
+                            /*5.stype=*/    type,       t, pp->u.s->stype.u.t = pp, NULL, NULL,
+                            /*11.sptrtype=*/TypePointer,f, (NULL,NULL),             NULL, &pp->u.s->stype,
+                            -1,0);
+
 
         setGlobalFileDepNames(id->name, pp, MEM_XX);
         addSymbol(pp, s_symbolTable);
