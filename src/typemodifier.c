@@ -2,6 +2,7 @@
 
 #include <stdio.h>
 #include <string.h>
+#include "commons.h"
 
 
 static void fillTypeModifier(S_typeModifier *typeModifier, Type kind, Symbol *typedefSymbol, S_typeModifier *next) {
@@ -11,6 +12,22 @@ static void fillTypeModifier(S_typeModifier *typeModifier, Type kind, Symbol *ty
     typeModifier->next = next;
 }
 
+void initTypeModifierAsStructUnionOrEnum(S_typeModifier *typeModifier, Type kind, Symbol *symbol, Symbol *typedefSymbol, S_typeModifier *next) {
+    assert(kind == TypeStruct || kind == TypeUnion || kind == TypeEnum);
+    typeModifier->kind = kind;
+    typeModifier->u.t = symbol;
+    typeModifier->typedefSymbol = typedefSymbol;
+    typeModifier->next = next;
+}
+
+void initTypeModifierAsFunction(S_typeModifier *typeModifier, Symbol *args, Symbol **overloadFunctionList, Symbol *typedefSymbol, S_typeModifier *next) {
+    typeModifier->kind = TypeFunction;
+    typeModifier->u.f.args = args;
+    typeModifier->u.f.thisFunList = overloadFunctionList;
+    typeModifier->typedefSymbol = typedefSymbol;
+    typeModifier->next = next;
+
+}
 
 /* For typeModifiers we need to cater for two memory allocations (XX &
    CF) as well as the ancient FILL semantics... */

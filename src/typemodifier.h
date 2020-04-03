@@ -27,9 +27,15 @@ typedef struct typeModifierList {
 } S_typeModifierList;
 
 
+/* Allocates in stack space, aka XX-memory */
 extern S_typeModifier *newTypeModifier(Type kind, Symbol *typedefSymbol, S_typeModifier *next);
 extern S_typeModifier *newFunctionTypeModifier(Symbol *args, Symbol **overLoadList, Symbol *typedefSymbol, S_typeModifier *next);
 extern S_typeModifier *newArrayTypeModifier(void);
 extern S_typeModifier *newStructTypeModifier(void);
+
+/* And here are some fill/init functions if you need them, e.g. if you allocate elsewhere */
+extern void initTypeModifierAsStructUnionOrEnum(S_typeModifier *typeModifier, Type kind, Symbol *symbol, Symbol *typedefSymbol, S_typeModifier *next);
+
+extern void initTypeModifierAsFunction(S_typeModifier *typeModifier, Symbol *args, Symbol **overloadFunctionList, Symbol *typedefSymbol, S_typeModifier *next);
 
 #endif /* _TYPEMODIFIER_H_ */
