@@ -22,7 +22,7 @@ quick:
 	@$(MAKE) -C basic_html_generation
 	@$(MAKE) -C standard_includes
 	@$(MAKE) -C initializer_parsing
-	@$(MAKE) -C generate_str_fill
+	# DISABLED - we are going to remove it : @$(MAKE) -C generate_str_fill
 	@$(MAKE) -C jar_reading
 	@$(MAKE) -C java_example
 	@$(MAKE) -C partial_jexercise
