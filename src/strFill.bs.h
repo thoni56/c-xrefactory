@@ -1242,7 +1242,7 @@
     (STRUCTP)->super = ARG0;\
     (STRUCTP)->records = ARG1;\
     (STRUCTP)->casts = ARG2;\
-    (STRUCTP)->nnested = ARG3;\
+    (STRUCTP)->nestedCount = ARG3;\
     (STRUCTP)->nest = ARG4;\
     (STRUCTP)->stype = ARG5;\
     (STRUCTP)->sptrtype = ARG6;\
@@ -1256,7 +1256,7 @@
     (STRUCTP)->records = ARG1;\
     (STRUCTP)->casts.node = ARG2;\
     (STRUCTP)->casts.sub = ARG3;\
-    (STRUCTP)->nnested = ARG4;\
+    (STRUCTP)->nestedCount = ARG4;\
     (STRUCTP)->nest = ARG5;\
     (STRUCTP)->stype.kind = ARG6;\
     _FILLUREC_typeModifierUnion_##ARG7((&(STRUCTP)->stype.u), ARG8);\
@@ -1274,7 +1274,7 @@
     (STRUCTP)->records = _ARG_1_OF_20 ARGS;\
     (STRUCTP)->casts.node = _ARG_2_OF_20 ARGS;\
     (STRUCTP)->casts.sub = _ARG_3_OF_20 ARGS;\
-    (STRUCTP)->nnested = _ARG_4_OF_20 ARGS;\
+    (STRUCTP)->nestedCount = _ARG_4_OF_20 ARGS;\
     (STRUCTP)->nest = _ARG_5_OF_20 ARGS;\
     (STRUCTP)->stype.kind = _ARG_6_OF_20 ARGS;\
     _FILLUREC_typeModifierUnion_##_ARG_7_OF_20 ARGS((&(STRUCTP)->stype.u), _ARG_8_OF_20 ARGS);\
