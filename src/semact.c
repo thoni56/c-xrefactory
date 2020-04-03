@@ -927,20 +927,21 @@ S_typeModifier *simpleStrUnionSpecifier(S_id *typeName,
 
 #ifdef SYMSTRUCTSPEC
         /* ... this... */
-        fillSymStruct(pp->u.s, /*.records=*/NULL);
-#endif
+        fillSymStructSpec(pp->u.s, /*.records=*/NULL);
         /* ... and this */
         /* This should actually only write the same things as the above FILLF_... */
         S_typeModifier *stype = &pp->u.s->stype;
         /* Assumed to be Struct/Union/Enum? */
         initTypeModifierAsStructUnionOrEnum(stype, /*.kind=*/type, /*.u.t=*/pp,
             /*.typedefSymbol=*/NULL, /*.next=*/NULL);
+        /* ... and this */
         S_typeModifier *sptrtype = &pp->u.s->sptrtype;
         initTypeModifierAsFunction(sptrtype,
                                    /*.u.f.args=*/NULL,
                                    /*.u.f.thisFunList=*/NULL,
                                    /*.typedefSymbol=*/NULL,
                                    /*.next=*/&pp->u.s->stype);
+#endif
         /* ... to here */
 
         setGlobalFileDepNames(id->name, pp, MEM_XX);
