@@ -1290,7 +1290,7 @@ static void javaCompleteNestedClasses(  S_completions *c,
         str!=NULL && str->u.s->super!=NULL;
         str=str->u.s->super->d) {
         assert(str && str->u.s);
-        for(i=0; i<str->u.s->nnested; i++) {
+        for(i=0; i<str->u.s->nestedCount; i++) {
             if (str->u.s->nest[i].membFlag) {
                 memb = str->u.s->nest[i].cl;
                 assert(memb);

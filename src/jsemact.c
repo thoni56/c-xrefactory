@@ -203,7 +203,7 @@ void javaAddNestedClassesAsTypeDefs(Symbol *cc, S_idList *oclassname,
     assert(cc && cc->bits.symType==TypeStruct);
     ss = cc->u.s;
     assert(ss);
-    for(i=0; i<ss->nnested; i++) {
+    for(i=0; i<ss->nestedCount; i++) {
         if (ss->nest[i].membFlag) {
             nn = ss->nest[i].cl;
             assert(nn);
@@ -938,7 +938,7 @@ static int javaIsNestedClass(Symbol *tclas, char *name, Symbol **innmemb) {
         clas!=NULL && clas->u.s->super!=NULL;
         clas=clas->u.s->super->d) {
         assert(clas->bits.symType == TypeStruct && clas->u.s);
-        n = clas->u.s->nnested;
+        n = clas->u.s->nestedCount;
         inners = clas->u.s->nest;
         for(i=0; i<n; i++) {
 //&fprintf(dumpOut,"checking %s<->%s\n",inners[i].cl->name, name);fflush(dumpOut);
@@ -965,7 +965,7 @@ static int javaClassIsInnerNonStaticMemberClass(Symbol *tclas, Symbol *name) {
         clas!=NULL && clas->u.s->super!=NULL;
         clas=clas->u.s->super->d) {
         assert(clas->bits.symType == TypeStruct && clas->u.s);
-        n = clas->u.s->nnested;
+        n = clas->u.s->nestedCount;
         inners = clas->u.s->nest;
         for(i=0; i<n; i++) {
 //&fprintf(dumpOut,"checking %s<->%s\n",inners[i].cl->name, name);fflush(dumpOut);
@@ -2535,7 +2535,7 @@ static void javaAddNestedClassToSymbolTab( Symbol *str ) {
     assert(str && str->bits.symType==TypeStruct);
     ss = str->u.s;
     assert(ss);
-    for(i=0; i<ss->nnested; i++) {
+    for(i=0; i<ss->nestedCount; i++) {
         if (ss->nest[i].membFlag && javaRecordAccessible(NULL,str, str, ss->nest[i].cl, ss->nest[i].accFlags)) {
             javaAddTypeToSymbolTable(ss->nest[i].cl, ss->nest[i].cl->bits.accessFlags, &s_noPos, 0);
         }
@@ -2576,7 +2576,7 @@ struct freeTrail * newClassDefinitionBegin(	S_id *name,
         if (oldStat->thisClass->bits.accessFlags & ACC_INTERFACE) {
             accessFlags |= (ACC_PUBLIC | ACC_STATIC);
         }
-        nnest = oldStat->thisClass->u.s->nnested;
+        nnest = oldStat->thisClass->u.s->nestedCount;
         nst = oldStat->thisClass->u.s->nest;
         noff = oldStat->currentNestedIndex;
         oldStat->currentNestedIndex ++;

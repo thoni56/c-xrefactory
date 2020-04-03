@@ -615,7 +615,7 @@ typedef struct symStructSpec {
     struct symbolList		*super;			/* list of super classes & interfaces */
     struct symbol			*records;		/* str. records, should be a table of   */
     struct cctNode			casts;			/* possible casts                       */
-    short int				nnested;		/* # of java nested classes     */
+    short int				nestedCount;		/* # of java nested classes     */
     struct nestedSpec		*nest;			/* array of nested classes		*/
     struct typeModifier	stype;              /* this structure type */
     struct typeModifier	sptrtype;           /* this structure pointer type */

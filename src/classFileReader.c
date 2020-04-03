@@ -1133,7 +1133,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
         GetU4(alen, ccc, ffin, &cFile.lexBuffer.buffer);
         if (strcmp(constantPool[aname].asciz,"InnerClasses")==0) {
             GetU2(inum, ccc, ffin, &cFile.lexBuffer.buffer);
-            memb->u.s->nnested = inum;
+            memb->u.s->nestedCount = inum;
             // TODO: replace the inner tab by inner list
             if (inum >= MAX_INNERS_CLASSES) {
                 fatalError(ERR_ST,"number of nested classes overflowed over MAX_INNERS_CLASSES", XREF_EXIT_ERR);
@@ -1203,7 +1203,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     error(ERR_ST, tmpBuff);
     goto emergency;
  emergency:
-    memb->u.s->nnested = 0;
+    memb->u.s->nestedCount = 0;
  fini:
     log_debug("closing file %s", name);
     //&{fprintf(dumpOut,": closing file %s\n",name);fflush(dumpOut);fprintf(dumpOut,": ppmmem == %d/%d\n",ppmMemoryi,SIZE_ppmMemory);fflush(dumpOut);}

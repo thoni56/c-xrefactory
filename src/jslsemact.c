@@ -378,7 +378,7 @@ static void jslAddNestedClass(Symbol *inner, Symbol *outer, int memb,
     int n;
 
     assert(outer && outer->bits.symType==TypeStruct && outer->u.s);
-    n = outer->u.s->nnested;
+    n = outer->u.s->nestedCount;
     //&sprintf(tmpBuff,"adding nested %s of %s(at %d)[%d] --> %s to %s\n", inner->name, outer->name, outer, n, inner->linkName, outer->linkName);ppcGenTmpBuff();
     log_debug("adding nested %s of %s(at %lx)[%d] --> %s to %s", inner->name, outer->name, (unsigned long)outer, n, inner->linkName, outer->linkName);
     if (n == 0) {
@@ -388,8 +388,8 @@ static void jslAddNestedClass(Symbol *inner, Symbol *outer, int memb,
     // file processing order
     //& for(i=0; i<n; i++) if (outer->u.s->nest[i].cl == inner) return;
     FILL_nestedSpec(&(outer->u.s->nest[n]), inner, memb, accessFlags);
-    outer->u.s->nnested ++;
-    if (outer->u.s->nnested >= MAX_INNERS_CLASSES) {
+    outer->u.s->nestedCount ++;
+    if (outer->u.s->nestedCount >= MAX_INNERS_CLASSES) {
         fatalError(ERR_ST,"number of nested classes overflowed over MAX_INNERS_CLASSES", XREF_EXIT_ERR);
     }
 }
@@ -473,8 +473,8 @@ void jslAddNestedClassesToJslTypeTab( Symbol *str, int order) {
     assert(str && str->bits.symType==TypeStruct);
     ss = str->u.s;
     assert(ss);
-    log_debug("appending %d nested classes of %s", ss->nnested, str->linkName);
-    for(i=0; i<ss->nnested; i++) {
+    log_debug("appending %d nested classes of %s", ss->nestedCount, str->linkName);
+    for(i=0; i<ss->nestedCount; i++) {
         log_trace("checking %s %s %d %d", ss->nest[i].cl->name, ss->nest[i].cl->linkName,ss->nest[i].membFlag, jslRecordAccessible(str, ss->nest[i].cl, ss->nest[i].accFlags));
         if (ss->nest[i].membFlag && jslRecordAccessible(str, ss->nest[i].cl, ss->nest[i].accFlags)) {
             FILL_id(&ocid, str->linkName, NULL, s_noPos, NULL);
@@ -602,7 +602,7 @@ void jslNewClassDefinitionBegin(S_id *name,
     // surely allocate the table and will start from the first one
     // it is a little bit HACKED :)
     if (s_jsl->pass==1)
-        cc->u.s->nnested = 0;
+        cc->u.s->nestedCount = 0;
 
     stackMemoryBlockStart();
     XX_ALLOC(ill, S_idList);
