@@ -15,7 +15,7 @@ all: quick slow
 
 
 # Here follows some GNU magic to automatically discover tests
-# If will assume that if there is a directory starting with "test_"
+# It will assume that if there is a directory starting with "test_"
 # it is a directory where you can run tests using "make"
 
 # Discover all test directories and a target rule to run all we found
