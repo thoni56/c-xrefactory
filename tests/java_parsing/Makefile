@@ -5,12 +5,12 @@
 
 include ../Makefile.boilerplate
 
-COMMAND = ../../src/c-xref -xrefrc .c-xrefrc src -o $(TEST).log
+COMMAND = ../../src/c-xref -xrefrc .c-xrefrc src -o $(TEST).output
 
 $(TEST):
-	@rm -rf output $@.log CXrefs
+	@rm -rf $(TEST).output CXrefs
 	@$(COMMAND)
-	@grep -i error $(TEST).log ; \
+	@grep -i error $(TEST).output ; \
 	if [ $$? -ne 1 ] ; then \
 		$(FAIL) ; \
 		exit 1 ; \
@@ -21,3 +21,6 @@ $(TEST):
 
 gdb:
 	gdb --args $(COMMAND)
+
+clean:
+	@rm -rf *.output *.log .c-xrefrc CXrefs
