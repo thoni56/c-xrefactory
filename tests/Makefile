@@ -50,6 +50,7 @@ quick:
 	@$(MAKE) -C complete
 	@$(MAKE) -C rename
 	@$(MAKE) -C simple_extract
+	@$(MAKE) -C c_extract_with_argument
 	@$(MAKE) -C add_parameter
 	@$(MAKE) -C move_class
 	@$(MAKE) -C turn_dynamic_method_to_static
