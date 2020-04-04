@@ -1032,6 +1032,7 @@ S_typeModifier *crNewAnnonymeStrUnion(S_id *typeName) {
 
     XX_ALLOC(pp->u.s, S_symStructSpec);
 
+    /* This is a recurring pattern, create a struct and the pointer type to it*/
     initSymStructSpec(pp->u.s, /*.records=*/NULL);
     S_typeModifier *stype = &pp->u.s->stype;
     /* Assumed to be Struct/Union/Enum? */
