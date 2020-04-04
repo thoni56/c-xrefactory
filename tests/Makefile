@@ -24,7 +24,7 @@ quick:
 	@$(MAKE) -C initializer_parsing
 	@$(MAKE) -C generate_str_fill
 	@$(MAKE) -C jar_reading
-	@$(MAKE) -C java_example
+	@$(MAKE) -C java_parsing
 	@$(MAKE) -C partial_jexercise
 	@$(MAKE) -C edit_server_test_example
 	@$(MAKE) -C push
