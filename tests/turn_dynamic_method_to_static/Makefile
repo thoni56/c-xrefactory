@@ -5,12 +5,11 @@
 
 include ../Makefile.boilerplate
 
-CXREF = ../../src/c-xref
 EDIT_SERVER_DRIVER = ../../utils/edit_server_driver.py
 EDIT_SERVER_DRIVER_COMMAND=$(EDIT_SERVER_DRIVER) commands.input "$(CURDIR)" buffer
 
 $(TEST): CXrefs
-	@-SOURCEPATH=. $(EDIT_SERVER_DRIVER_COMMAND) > output.tmp
+	@$(EDIT_SERVER_DRIVER_COMMAND) > output.tmp
 	@sed -e "s+$(CURDIR)+CURDIR+g" -e "s/len=[0-9]*/len=<n>/g" output.tmp > output
 	@diff output expected > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
@@ -22,9 +21,6 @@ $(TEST): CXrefs
 		$(OK) ; \
 		exit 0 ; \
 	fi
-
-trace: CXREF+=-trace
-trace: $(TEST)
 
 CXrefs:
 	@../../src/c-xref -p $(CURDIR) -xrefrc .c-xrefrc jexercise -sourcepath $(CURDIR)/jexercise -o CXrefs.output
