@@ -121,14 +121,33 @@ void genSwitchCaseFork(int lastFlag) {
     }
 }
 
+static S_programGraphNode *newProgramGraphNode(S_reference *ref, S_symbolRefItem *symRef,
+                                               S_programGraphNode *jump, char posBits,
+                                               char stateBits,
+                                               char classifBits,
+                                               S_programGraphNode *next) {
+    S_programGraphNode *programGraph;
+
+    CX_ALLOC(programGraph, S_programGraphNode);
+
+    programGraph->ref = ref;
+    programGraph->symRef = symRef;
+    programGraph->jump = jump;
+    programGraph->posBits = posBits;
+    programGraph->stateBits = stateBits;
+    programGraph->classifBits = classifBits;
+    programGraph->next = next;
+
+    return programGraph;
+}
+
 static void extractFunGraphRef(S_symbolRefItem *rr, void *prog) {
     S_reference *r;
     S_programGraphNode *p,**ap;
     ap = (S_programGraphNode **) prog;
     for(r=rr->refs; r!=NULL; r=r->next) {
         if (DM_IS_BETWEEN(cxMemory,r,s_cp.cxMemiAtFunBegin,s_cp.cxMemiAtFunEnd)){
-            CX_ALLOC(p, S_programGraphNode);
-            FILL_programGraphNode(p, r, rr, NULL, 0, 0, EXTRACT_NONE, *ap);
+            p = newProgramGraphNode(r, rr, NULL, 0, 0, EXTRACT_NONE, *ap);
             *ap = p;
         }
     }
