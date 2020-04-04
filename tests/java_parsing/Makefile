@@ -5,8 +5,6 @@
 
 include ../Makefile.boilerplate
 
-TEST = java_example
-
 COMMAND = ../../src/c-xref -xrefrc .c-xrefrc src -o $(TEST).log
 
 $(TEST):
