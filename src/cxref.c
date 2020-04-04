@@ -4327,13 +4327,14 @@ void olPushAllReferencesInBetween(int minMemi, int maxMemi) {
     S_olcxReferences        *rstack;
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
-    FILL_pushAllInBetweenData(&rr, minMemi, maxMemi);
+    rr.minMemi = minMemi;
+    rr.maxMemi = maxMemi;
     refTabMap2(&s_cxrefTab, olPushAllReferencesInBetweenMapFun, &rr);
     olProcessSelectedReferences(rstack, genOnLineReferences);
     //&olcxPrintSelectionMenu(s_olcxCurrentUser->browserStack.top->menuSym);
 }
 
-static int tpCheckUnicityOfSymbol(char *fieldOrMethod) {
+static int tpCheckUniquityOfSymbol(char *fieldOrMethod) {
     S_olcxReferences    *rstack;
     S_olSymbolsMenu     *ss;
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
