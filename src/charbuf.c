@@ -90,6 +90,18 @@ bool getCharBuf(struct CharacterBuffer *buffer) {
     return(buffer->next != buffer->end);
 }
 
+
+static void fillZipStreamFromBuffer(struct CharacterBuffer  *buffer, char *dd) {
+    memset(&buffer->zipStream, 0, sizeof(buffer->zipStream));
+    buffer->zipStream.next_in = (Bytef*)buffer->z;
+    buffer->zipStream.avail_in = dd-buffer->z;
+    buffer->zipStream.next_out = (Bytef*)buffer->chars;
+    buffer->zipStream.avail_out = CHAR_BUFF_SIZE;
+    buffer->zipStream.zalloc = zlibAlloc;
+    buffer->zipStream.zfree = zlibFree;
+}
+
+
 void switchToZippedCharBuff(struct CharacterBuffer *buffer) {
     char *dd;
     char *cc;
@@ -100,13 +112,9 @@ void switchToZippedCharBuff(struct CharacterBuffer *buffer) {
     fin = buffer->end;
     cc = buffer->next;
     for(dd=buffer->z; cc<fin; cc++,dd++) *dd = *cc;
-    FILL_z_stream_s(&buffer->zipStream,
-                    (Bytef*)buffer->z, dd-buffer->z, 0,
-                    (Bytef*)buffer->chars, CHAR_BUFF_SIZE, 0,
-                    NULL, NULL,
-                    zlibAlloc, zlibFree,
-                    NULL, 0, 0, 0
-                    );
+
+    fillZipStreamFromBuffer(buffer, dd);
+
     buffer->next = buffer->end = buffer->chars;
     buffer->inputMethod = INPUT_VIA_UNZIP;
     inflateInit2(&(buffer->zipStream), -MAX_WBITS);
