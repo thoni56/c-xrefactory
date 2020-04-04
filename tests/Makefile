@@ -13,15 +13,23 @@ void:
 
 all: quick slow
 
+
+# Here follows some GNU magic to automatically discover tests
+# If will assume that if there is a directory starting with "test_"
+# it is a directory where you can run tests using "make"
+
+# Discover all test directories and a target rule to run all we found
 TESTS = $(wildcard test_*)
 tests: $(TESTS)
 
+# Define a macro to generate a RULE for $1
 define RULE
 .PHONY: $(1)
 $(1):
 	@$(MAKE) -C $(1)
 endef
 
+# Loop over all test_ directories to create a rule for each
 $(foreach _t,$(TESTS),$(eval $(call RULE, $(_t))))
 
 quick:

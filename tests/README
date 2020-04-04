@@ -9,12 +9,11 @@ failing.
 
 The Makefiles in the subdirectories usually does some magic with
 paths.  c-xref expects full paths, at least in the CX-files and writes
-full paths in the output. (We should try to referencing files in the
-commands without paths, since they would be in CWD.)
+full paths in the output.
 
 In that magic CURDIR is exchanged with the full path of the current
 directory.
 
-NOTE these tests can't be run in parallel, like with 'make -j', probably
-because c-xref can't generate temporary files uniquely in parallel.
-(I'm "kill-gissing", ...)
+NOTE these tests can't be run in parallel yet, like with 'make -j',
+probably because c-xref can't generate temporary files uniquely in
+parallel.  (I'm "kill-gissing", ...)
