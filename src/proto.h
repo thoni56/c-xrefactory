@@ -962,12 +962,14 @@ typedef struct typeModifiersListPositionListPair {
     struct positionList			*p;
 } S_typeModifiersListPositionListPair;
 
+#ifndef WHILEEXTRACTDATA
 typedef struct whileExtractData {
     int				i1;
     int             i2;
     struct symbol	*i3;
     struct symbol	*i4;
 } S_whileExtractData;
+#endif
 
 typedef struct pushAllInBetweenData {
     int			minMemi;

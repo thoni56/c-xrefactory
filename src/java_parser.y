@@ -134,6 +134,26 @@ static bool inSecondJslPass() {
 
 #define ComputingPossibleParameterCompletion() (regularPass() && (! SyntaxPassOnly()) && s_opt.taskRegime==RegimeEditServer && s_opt.server_operation==OLO_COMPLETION)
 
+#ifdef WHILEEXTRACTDATA
+typedef struct whileExtractData {
+    int				i1;
+    int             i2;
+    struct symbol	*i3;
+    struct symbol	*i4;
+} S_whileExtractData;
+#endif
+
+static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbol *i4) {
+    S_whileExtractData *whileExtractData;
+
+    XX_ALLOC(whileExtractData, S_whileExtractData);
+    whileExtractData->i1 = i1;
+    whileExtractData->i2 = i2;
+    whileExtractData->i3 = i3;
+    whileExtractData->i4 = i4;
+
+    return whileExtractData;
+}
 
 
 %}
@@ -2593,8 +2613,11 @@ WhileStatementPrefix:
                         cl = bl = NULL;        // just to avoid warning message
                         cl = addContinueBreakLabelSymbol($2.d, CONTINUE_LABEL_NAME);
                         bl = addContinueBreakLabelSymbol($6.d, BREAK_LABEL_NAME);
+                        /* Replacing: */
                         XX_ALLOC($$.d, S_whileExtractData);
                         FILL_whileExtractData($$.d, $2.d, $6.d, cl, bl);
+                        /* with:
+                           $$.d = newWhileExtractData($2.d, $6.d, cl, bl); */
                     } else {
                         $$.d = NULL;
                     }
