@@ -13,6 +13,17 @@ void:
 
 all: quick slow
 
+TESTS = $(wildcard test_*)
+tests: $(TESTS)
+
+define RULE
+.PHONY: $(1)
+$(1):
+	@$(MAKE) -C $(1)
+endef
+
+$(foreach _t,$(TESTS),$(eval $(call RULE, $(_t))))
+
 quick:
 	@$(MAKE) -C simple_xrefs
 	@$(MAKE) -C pragma_once
