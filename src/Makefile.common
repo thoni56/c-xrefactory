@@ -184,12 +184,12 @@ unit: $(SRCS) debug
 	make COVERAGE="$(COVERAGE)" -C unittests
 
 coverage: COVERAGE=--coverage
-coverage: clean debug test
+coverage: clean test
 	lcov -d . -c -o coverage.info
 	genhtml -o coverage coverage.info
 
-coverage-report: debug
-	gcovr --html-details -o coverage.html
+coverage-report: test
+	gcovr -j -r . --html-details -o ../coverage/coverage.html
 
 
 # Special dependecies to force rebuild of c-xref.bs to generate needed files
