@@ -3,6 +3,6 @@ output.tmp
 log
 buffer
 CXrefs
-CXrefs.output
+*.output
 .c-xrefrc
 *.class

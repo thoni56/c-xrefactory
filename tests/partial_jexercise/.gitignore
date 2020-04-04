@@ -1,5 +1,5 @@
-output
 CXrefs
 .c-xrefrc
+output
 output.tmp
-partial_jexercise.log
+*.log

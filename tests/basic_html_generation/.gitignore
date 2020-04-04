@@ -1,4 +1,3 @@
 output
-basic_html_generation.log
-c-xref
+*.log
 .c-xrefrc

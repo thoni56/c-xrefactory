@@ -1,8 +1,8 @@
-.c-xrefrc
-commands.output
-output
-buffer
-output.tmp
 CXrefs
-output.log
-cxrefs.log
+.c-xrefrc
+buffer
+*.output
+output
+output.tmp
+log
+*.log
