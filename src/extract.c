@@ -14,6 +14,7 @@
 #include "strFill.h"
 #include "jsemact.h"
 #include "filedescriptor.h"
+#include "log.h"
 
 
 #define EXTRACT_GEN_BUFFER_SIZE 500000
@@ -22,21 +23,21 @@ static unsigned s_javaExtractFromFunctionMods=ACC_DEFAULT;
 static char *rb;
 static char *s_extractionName;
 
-#if ZERO
+#if DEBUG
 static void dumpProgram(S_programGraphNode *program) {
     S_programGraphNode *p;
-    fprintf(dumpOut,"[ProgramDump]\n");
+
+    log_trace("[ProgramDump begin]");
     for(p=program; p!=NULL; p=p->next) {
-        fprintf(dumpOut,"%lx: %2d %2d %s %s", (unsigned long)p,
+        log_trace("%p: %2d %2d %s %s", p,
                 p->posBits, p->stateBits,
                 p->symRef->name,
-                usagesName[p->ref->usg.base]+5);
-        if (p->symRef->b.symType==TypeLabel && p->ref->usg.base!=UsageDefined) {
-            fprintf(dumpOut," %lx", (unsigned long)p->jump);
+                usagesName[p->ref->usage.base]+5);
+        if (p->symRef->b.symType==TypeLabel && p->ref->usage.base!=UsageDefined) {
+            log_trace("    Jump: %p", p->jump);
         }
-        fprintf(dumpOut,"\n");
     }
-    fflush(dumpOut);
+    log_trace("[ProgramDump end]");
 }
 #endif
 
@@ -174,7 +175,9 @@ static S_programGraphNode * extMakeProgramGraph(void) {
     program = NULL;
     refTabMap5(&s_cxrefTab, extractFunGraphRef, ((void *) &program));
     LIST_SORT(S_programGraphNode, program, linearOrder);
-    //&dumpProgram(program);
+#ifdef DEBUG
+    dumpProgram(program);
+#endif
     for(p=program; p!=NULL; p=p->next) {
         if (p->symRef->b.symType==TypeLabel && p->ref->usage.base!=UsageDefined) {
             // resolve the jump
