@@ -13,8 +13,8 @@ CXREF = ../../src/c-xref
 EDIT_SERVER_DRIVER = ../../utils/edit_server_driver.py
 
 $(TEST): clean
-	@-$(EDIT_SERVER_DRIVER) commands1.input $(CURDIR) buffer1 > output1.tmp
-	@sed -e "s+$(CURDIR)+CURDIR+g" -e "s/len=[0-9]*/len=<n>/g" output1.tmp > output
+	@-$(EDIT_SERVER_DRIVER) commands.input $(CURDIR) buffer > output.tmp
+	@sed -e "s+$(CURDIR)+CURDIR+g" -e "s/len=[0-9]*/len=<n>/g" output.tmp > output
 	@diff output expected > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
 		$(FAIL) ; \
@@ -30,9 +30,9 @@ trace: CXREF+=-trace
 trace: $(TEST)
 
 clean:
-	@-rm -rf CXrefs output.log output.tmp output buffer1
+	@-rm -rf CXrefs output.log output.tmp output buffer
 
 gdb:
-	@$(EDIT_SERVER_DRIVER) commands1.input "$(CURDIR)" buffer1 15 > output.tmp &
+	@$(EDIT_SERVER_DRIVER) commands.input "$(CURDIR)" buffer 15 > output.tmp &
 	sleep 1
 	sudo gdb ../../src/c-xref -pid `pgrep c-xref | tail -1` -ex 'br mainRefactory'
