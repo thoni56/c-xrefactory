@@ -30,7 +30,7 @@ CXrefs:
 	@../../src/c-xref -p $(CURDIR) -xrefrc .c-xrefrc jexercise -sourcepath $(CURDIR)/jexercise -o CXrefs.output
 
 clean:
-	@-rm -rf CXrefs output.tmp output buffer log
+	@-rm -rf CXrefs output.tmp output buffer log *~ .c-xrefrc
 
 gdb:
 	@$(EDIT_SERVER_DRIVER_COMMAND) 15 > output.tmp &
