@@ -915,16 +915,6 @@ typedef struct memory {
 
 /* *********************************************************** */
 
-typedef struct programGraphNode {
-    struct reference            *ref;		/* original reference of node */
-    struct symbolRefItem        *symRef;
-    struct programGraphNode		*jump;
-    char						posBits;		/* INSIDE/OUSIDE block */
-    char						stateBits;		/* visited + where setted */
-    char						classifBits;	/* resulting classification */
-    struct programGraphNode		*next;
-} S_programGraphNode;
-
 typedef struct exprTokenType {
     struct typeModifier *t;
     struct reference     *r;

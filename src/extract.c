@@ -19,6 +19,17 @@
 
 #define EXTRACT_GEN_BUFFER_SIZE 500000
 
+typedef struct programGraphNode {
+    struct reference            *ref;		/* original reference of node */
+    struct symbolRefItem        *symRef;
+    struct programGraphNode		*jump;
+    char						posBits;		/* INSIDE/OUSIDE block */
+    char						stateBits;		/* visited + where setted */
+    char						classifBits;	/* resulting classification */
+    struct programGraphNode		*next;
+} S_programGraphNode;
+
+
 static unsigned s_javaExtractFromFunctionMods=ACC_DEFAULT;
 static char *rb;
 static char *s_extractionName;
