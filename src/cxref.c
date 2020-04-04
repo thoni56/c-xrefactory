@@ -112,18 +112,19 @@ S_olSymbolsMenu *olCreateNewMenuItem(
     strcpy(nn, sym->name);
     OLCX_ALLOC(rr, S_olSymbolsMenu);
     FILLF_olSymbolsMenu(rr,
-                        // symbolRefItem
+                        // symbolRefItem.<fields>
                         nn, cxFileHashNumber(nn),
                         vApplClass, vFunCl,
                         sym->b.symType, sym->b.storage, sym->b.scope,
                         sym->b.accessFlags, sym->b.category,
                         sym->b.htmlWasLn,
                         NULL, NULL,
-                        // symbolMenu
-                        selected, visible, ooBits, olusage, vlevel, 0,0,
-                        defusage, defpos->file, defpos->line, defpos->col,
-                        0, NULL,
-                        NULL);
+                        // selected,visible,ooBits,olUsage,vlevel,refn,defRefn,defUsage
+                        selected, visible, ooBits, olusage, vlevel, 0, 0, defusage,
+                        // defpos.file,line,col
+                        defpos->file, defpos->line, defpos->col,
+                        // outOnLine, markers, next
+                        0, NULL, NULL);
 
     return(rr);
 }
@@ -4304,18 +4305,18 @@ static void olPushAllReferencesInBetweenMapFun(S_symbolRefItem *ri,
             select = visible = 1;
             vlevel = 0;
             ooBits = (OOC_PROFILE_EQUAL | OOC_VIRT_SAME_FUN_CLASS);
-            //&fprintf(dumpOut,"adding symbol %s\n", ri->name);  fflush(dumpOut);
+            log_trace("adding symbol %s", ri->name);
             mm = olAddBrowsedSymbol(ri, &rstack->menuSym, select, visible, ooBits, USAGE_ANY, vlevel, &defpos, defusage);
             assert(mm!=NULL);
             for(; rr!=NULL; rr=rr->next) {
-                //&fprintf(dumpOut,"checking reference of line %d, usage %s\n",rr->p.line, usagesName[rr->usage.base]); fflush(dumpOut);
+                log_trace("checking reference of line %d, usage %s", rr->p.line, usagesName[rr->usage.base]);
                 if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr,dd)) {
                     //& olcxAddReferenceToOlSymbolsMenu(mm, rr, 0);
-                    //&fprintf(dumpOut,"adding reference of line %d\n",rr->p.line); fflush(dumpOut);
+                    log_trace("adding reference of line %d",rr->p.line);
                     olcxAddReferenceNoUsageCheck(&mm->s.refs, rr, 0);
                 }
             }
-            goto  fini;
+            goto fini;
         }
     }
  fini:;
