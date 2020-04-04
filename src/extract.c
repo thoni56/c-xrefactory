@@ -378,7 +378,7 @@ static void extClassifyLocalVariables(S_programGraphNode *program) {
 #define GetLocalVarStringFromLinkName(linkName,oDecla,oName,oDecl,declStar,cpName) { \
         register char *s,*d,*dn,*dd;                                    \
                                                                         \
-        /*&fprintf(dumpOut, ":analyzing '%s'\n",linkName);fflush(dumpOut);&*/ \
+        log_trace("analyzing '%s'",linkName);                           \
         for(    s=linkName+1,d=oDecl,dd=oDecla;                         \
                 *s!=0 && *s!=LINK_NAME_CUT_SYMBOL;                      \
                 s++,d++,dd++) {                                         \
