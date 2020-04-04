@@ -923,7 +923,8 @@ static void genCppIfElseReference(int level, S_position *pos, int usage) {
     S_cppIfStack       *ss;
     if (level > 0) {
       PP_ALLOC(ss, S_cppIfStack);
-      FILL_cppIfStack(ss, *pos, cFile.ifStack);
+      ss->pos = *pos;
+      ss->next = cFile.ifStack;
       cFile.ifStack = ss;
     }
     if (cFile.ifStack!=NULL) {
