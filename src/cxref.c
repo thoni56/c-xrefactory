@@ -4285,12 +4285,13 @@ static void olPushAllReferencesInBetweenMapFun(S_symbolRefItem *ri,
     S_olSymbolsMenu         *mm;
     S_pushAllInBetweenData  *dd;
     int                     defusage,select,visible,ooBits,vlevel;
+
     dd = (S_pushAllInBetweenData *) ddd;
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
     if (! isPushAllMethodsValidRefItem(ri)) return;
     for(rr=ri->refs; rr!=NULL; rr=rr->next) {
-        //&fprintf(dumpOut,"checking %d.%d ref of %s\n", rr->p.line,rr->p.col,ri->name); fflush(dumpOut);
+        log_trace("checking %d.%d ref of %s", rr->p.line,rr->p.col,ri->name);
         if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr, dd)) {
             defRef = getDefinitionRef(ri->refs);
             if (defRef!=NULL && IS_DEFINITION_OR_DECL_USAGE(defRef->usage.base)) {
