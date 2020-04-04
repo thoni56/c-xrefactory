@@ -1,4 +1,7 @@
-# Automated tests for parsing java (for the example)
+# Automated tests for parsing java
+#
+# Starting from the jexercise but adding more constructs
+# that we want to cover with tests
 
 include ../Makefile.boilerplate
 
