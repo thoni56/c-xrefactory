@@ -6,13 +6,22 @@
 # c-xref. If they need to be re-generated and c-xref.bs does not exist then
 # c-xref.bs is built from existing sources using Makefile.bs.
 #
-# In particular strFill.g and enumTxt.g/enumTxt.g.c are generated to
-# catch what's relevant for this machine. Bootstrap versions of them,
-# strFill.bs and enumTxt.bs/enumTxt.bs.c should be used when bootstraping, so those
-# files should be usable on all platforms.
+# In particular strFill.g and enumTxt.g/enumTxt.g.c are generated from the current
+# sources to get FILL-functions that match current versions of the structures.
+
+# Bootstrap versions of them, strFill.bs and enumTxt.bs/enumTxt.bs.c
+# should be used when bootstraping, so those files should be usable on
+# all platforms. Take care to ensure that they work by doing
 #
+#    make bs; make cleaner; make
+#
+# That should copy the working versions to the bootstrap versions and
+# force a bootstrap build. If that doesn't work you must either
+# manually fix the .bs. versions, or back up to a commit in which it
+# worked and try from there.
 
 debug: CFLAGS+=-DDEBUG
+debug: COVERAGE=--coverage
 yydebug: CFLAGS+=-DYYDEBUG=1 -DDEBUG
 prod: CFLAGS+=-DYYDEBUG=0
 
@@ -175,9 +184,13 @@ unit: $(SRCS) debug
 	make COVERAGE="$(COVERAGE)" -C unittests
 
 coverage: COVERAGE=--coverage
-coverage: clean all test
+coverage: clean debug test
 	lcov -d . -c -o coverage.info
 	genhtml -o coverage coverage.info
+
+coverage-report: debug
+	gcovr --html-details -o coverage.html
+
 
 # Special dependecies to force rebuild of c-xref.bs to generate needed files
 $(SRCS) : strFill.g.h enumTxt.g.h enumTxt.g.c
