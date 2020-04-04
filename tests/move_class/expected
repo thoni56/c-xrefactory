@@ -2,12 +2,8 @@
 end-of-options
 
 <sync>
-<error len=<n>>no classpath or sourcepath specified
-</error>
 <update-report>
 </update-report>
-<error len=<n>>no classpath or sourcepath specified
-</error>
 <error len=<n>>This is  an inner class. Current  version of C-xrefactory  can only
 move nested classes declared  'static' and top level classes.  If the class
 does  not depend  on its  enclosing instances,  you should  declare it
