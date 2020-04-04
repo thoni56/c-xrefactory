@@ -38,8 +38,8 @@
   ;; a linux/unix platform
   (defvar c-xref-slash ?/)
   (defvar c-xref-tmp-dir "/tmp")
-  (defvar c-xref-user-identification (concat "x" (getenv "LOGNAME")))
-  (defvar c-xref-run-batch-file (format "/tmp/c-xref%s.sh" c-xref-user-identification))
+  (defvar c-xref-user-identification (getenv "LOGNAME"))
+  (defvar c-xref-run-batch-file (format "%s/c-xref-%s-%d.sh" c-xref-tmp-dir c-xref-user-identification (emacs-pid)))
   (defvar c-xref-find-file-on-mouse-delimit "[^A-Za-z0-9_/.~-]")
   (defvar c-xref-path-separator ?\:)
 )
@@ -66,7 +66,7 @@
 
 (defun c-xref-server-get-new-tmp-file-name ()
   (let ((res))
-    (setq res (format "%s/c-xref%s%d.tmp" c-xref-tmp-dir c-xref-user-identification c-xref-server-tmp-file-counter))
+    (setq res (format "%s/c-xref%s-%d-%d.tmp" c-xref-tmp-dir c-xref-user-identification (emacs-pid) c-xref-server-tmp-file-counter))
     (setq c-xref-server-tmp-file-counter (+ c-xref-server-tmp-file-counter c-xref-server-tmp-file-increment))
     res
 ))
