@@ -4547,34 +4547,34 @@ static void olTrivialRefactoringPreCheck(int refcode) {
     tpchsymbol = s_olcxCurrentUser->browserStack.top;
     switch (refcode) {
     case TPC_MOVE_FIELD:
-        (void) (tpCheckUnicityOfSymbol("field") &&
+        (void) (tpCheckUniquityOfSymbol("field") &&
                 tpCheckItIsAFieldOrMethod(REQ_FIELD, "field") &&
                 tpCheckThatCurrentReferenceIsDefinition("field") &&
                 fprintf(ccOut,"*** move_static_field trivial precheck passed."));
         break;
     case TPC_MOVE_STATIC_FIELD:
-        (void) (tpCheckUnicityOfSymbol("field") &&
+        (void) (tpCheckUniquityOfSymbol("field") &&
                 tpCheckItIsAFieldOrMethod(REQ_FIELD, "field") &&
                 tpCheckThatCurrentReferenceIsDefinition("field") &&
                 tpCheckStaticity(REQ_STATIC,"field") &&
                 fprintf(ccOut,"*** move_static_field trivial precheck passed."));
         break;
     case TPC_MOVE_STATIC_METHOD:
-        (void) (tpCheckUnicityOfSymbol("method") &&
+        (void) (tpCheckUniquityOfSymbol("method") &&
                 tpCheckItIsAFieldOrMethod(REQ_METHOD, "method") &&
                 tpCheckThatCurrentReferenceIsDefinition("method") &&
                 tpCheckStaticity(REQ_STATIC,"method") &&
                 fprintf(ccOut,"*** move_static_method trivial precheck passed."));
         break;
     case TPC_TURN_STATIC_METHOD_TO_DYN:
-        (void) (tpCheckUnicityOfSymbol("method") &&
+        (void) (tpCheckUniquityOfSymbol("method") &&
                 tpCheckItIsAFieldOrMethod(REQ_METHOD, "method") &&
                 tpCheckThatCurrentReferenceIsDefinition("method") &&
                 tpCheckStaticity(REQ_STATIC,"method") &&
                 fprintf(ccOut,"*** turn_static_method_to_dyn trivial precheck passed."));
         break;
     case TPC_TURN_DYN_METHOD_TO_STATIC:
-        (void) (tpCheckUnicityOfSymbol("method") &&
+        (void) (tpCheckUniquityOfSymbol("method") &&
                 tpCheckItIsAFieldOrMethod(REQ_METHOD, "method") &&
                 tpCheckThatCurrentReferenceIsDefinition("method") &&
                 tpCheckStaticity(REQ_NONSTATIC,"method") &&
@@ -4583,7 +4583,7 @@ static void olTrivialRefactoringPreCheck(int refcode) {
                 fprintf(ccOut,"*** turn_static_method_to_dyn trivial precheck passed."));
         break;
     case TPC_PULL_UP_METHOD:
-        (void) (tpCheckUnicityOfSymbol("method") &&
+        (void) (tpCheckUniquityOfSymbol("method") &&
                 tpCheckItIsAFieldOrMethod(REQ_METHOD, "method") &&
                 tpCheckThatCurrentReferenceIsDefinition("method") &&
                 tpCheckStaticity(REQ_NONSTATIC,"method") &&
@@ -4593,7 +4593,7 @@ static void olTrivialRefactoringPreCheck(int refcode) {
                 fprintf(ccOut,"*** pull_up_method trivial precheck passed."));
         break;
     case TPC_PUSH_DOWN_METHOD:
-        (void) (tpCheckUnicityOfSymbol("method") &&
+        (void) (tpCheckUniquityOfSymbol("method") &&
                 tpCheckItIsAFieldOrMethod(REQ_METHOD, "method") &&
                 tpCheckThatCurrentReferenceIsDefinition("method") &&
                 tpCheckStaticity(REQ_NONSTATIC,"method") &&
@@ -4605,7 +4605,7 @@ static void olTrivialRefactoringPreCheck(int refcode) {
                 fprintf(ccOut,"*** push_down_method trivial postcheck passed."));
         break;
     case TPC_PULL_UP_FIELD:
-        (void) (tpCheckUnicityOfSymbol("field") &&
+        (void) (tpCheckUniquityOfSymbol("field") &&
                 tpCheckItIsAFieldOrMethod(REQ_FIELD, "field") &&
                 tpCheckThatCurrentReferenceIsDefinition("field") &&
                 tpCheckStaticity(REQ_NONSTATIC,"field") &&
@@ -4614,7 +4614,7 @@ static void olTrivialRefactoringPreCheck(int refcode) {
                 fprintf(ccOut,"*** pull_up_field trivial precheck passed."));
         break;
     case TPC_PUSH_DOWN_FIELD:
-        (void) (tpCheckUnicityOfSymbol("field") &&
+        (void) (tpCheckUniquityOfSymbol("field") &&
                 tpCheckItIsAFieldOrMethod(REQ_FIELD, "field") &&
                 tpCheckThatCurrentReferenceIsDefinition("field") &&
                 tpCheckStaticity(REQ_NONSTATIC,"field") &&
@@ -4623,17 +4623,17 @@ static void olTrivialRefactoringPreCheck(int refcode) {
                 fprintf(ccOut,"*** push_down_field trivial precheck passed."));
         break;
     case TPC_RENAME_PACKAGE:
-        (void) (tpCheckUnicityOfSymbol("package") &&
+        (void) (tpCheckUniquityOfSymbol("package") &&
                 tpCheckItIsAPackage(REQ_PACKAGE, "package") &&
                 tpCheckPrintSelectedSymbol());
         break;
     case TPC_RENAME_CLASS:
-        (void) (tpCheckUnicityOfSymbol("class") &&
+        (void) (tpCheckUniquityOfSymbol("class") &&
                 tpCheckItIsAPackage(REQ_CLASS, "class") &&
                 tpCheckPrintSelectedSymbol());
         break;
     case TPC_MOVE_CLASS:
-        (void) (tpCheckUnicityOfSymbol("class") &&
+        (void) (tpCheckUniquityOfSymbol("class") &&
                 tpCheckItIsAPackage(REQ_CLASS, "class") &&
                 tpCheckSourceIsNotInnerClass() &&
                 tpCheckMoveClassAccessibilities() &&
