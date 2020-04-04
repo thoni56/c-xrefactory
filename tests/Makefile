@@ -54,6 +54,7 @@ quick:
 	@$(MAKE) -C move_class
 	@$(MAKE) -C turn_dynamic_method_to_static
 	@$(MAKE) -C extract_with_return
+	@$(MAKE) -C java_simple_extract
 
 slow:
 	@$(MAKE) -C emacs_c_exercise
