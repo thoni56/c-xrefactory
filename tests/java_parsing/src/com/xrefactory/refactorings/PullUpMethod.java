@@ -13,6 +13,7 @@ package com.xrefactory.refactorings;
 class PullUpMethod {
     int x = 0;
     int y = 0;
+
     // set target here:
 
 }
@@ -22,6 +23,10 @@ class InferClass extends PullUpMethod {
 
     // put cursor on 'method' name
     void method() {
+        while (y < 1) {
+            y = 1;
+        }
+
         System.out.println("x == " + x);
         System.out.println("this.x == " + this.x);
         System.out.println("this.y == " + this.y);

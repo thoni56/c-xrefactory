@@ -23,7 +23,6 @@ import com.xrefactory.Browsing;
 import com.xrefactory.refactorings.Index;
 
 class Index {
-    while (true) {}
 }
 
 
