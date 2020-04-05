@@ -9,10 +9,18 @@
 S_memory *cxMemory=NULL;
 S_topBlock *s_topBlock;
 
+jmp_buf s_memoryResize;
+
+char memory[SIZE_workMemory];
+char tmpWorkMemory[SIZE_tmpWorkMemory];
+int tmpWorkMemoryi = 0;
+
+
 /* With this as a separate function it is possible to catch memory resize longjmps */
 void memoryResize(void) {
     longjmp(s_memoryResize,1);
 }
+
 
 /* ************************** Overflow Handlers ************************* */
 

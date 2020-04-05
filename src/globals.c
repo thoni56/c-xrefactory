@@ -79,13 +79,11 @@ S_completions s_completions;
 S_fileTab s_fileTab;
 
 char tmpMemory[SIZE_TMP_MEM];
-char memory[SIZE_workMemory];
 char ppmMemory[SIZE_ppmMemory];
 char mbMemory[SIZE_mbMemory];
 char ftMemory[SIZE_ftMemory];
 int ftMemoryi = 0;
-char tmpWorkMemory[SIZE_tmpWorkMemory];
-int tmpWorkMemoryi = 0;
+
 char tmpBuff[TMP_BUFF_SIZE];
 
 
@@ -241,7 +239,6 @@ char s_base[MAX_FILE_NAME_SIZE];
 char ppcTmpBuff[MAX_PPC_RECORD_SIZE];
 
 jmp_buf cxmemOverflow;
-jmp_buf s_memoryResize;
 
 S_options s_cachedOptions;
 

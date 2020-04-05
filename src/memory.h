@@ -1,9 +1,7 @@
 #ifndef _MEMMAC__H
 #define _MEMMAC__H
 
-#include <stdint.h>
-#include <stdbool.h>
-
+#include "stdinc.h"
 
 /* ******************** a simple memory handler ************************ */
 
@@ -173,8 +171,16 @@ typedef struct topBlock {
     struct topBlock  *previousTopBlock;
 } S_topBlock;
 
+
 extern S_memory *cxMemory;
 extern S_topBlock *s_topBlock;
+
+extern jmp_buf s_memoryResize;
+
+extern char memory[SIZE_workMemory];
+extern char tmpWorkMemory[SIZE_tmpWorkMemory];
+extern int tmpWorkMemoryi;
+
 
 extern void memoryResize(void);
 extern bool optionsOverflowHandler(int n);

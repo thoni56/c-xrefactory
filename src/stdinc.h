@@ -25,6 +25,8 @@
 #include <string.h>
 #include <time.h>
 #include <setjmp.h>
+#include <stdint.h>
+#include <stdbool.h>
 
 #include <sys/types.h>
 #include <sys/stat.h>

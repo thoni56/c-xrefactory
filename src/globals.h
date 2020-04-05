@@ -160,9 +160,6 @@ extern char *s_editCommunicationString;
 extern time_t s_expiration;
 
 extern char tmpMemory[SIZE_TMP_MEM];
-extern char memory[SIZE_workMemory];
-extern char tmpWorkMemory[SIZE_tmpWorkMemory];
-extern int tmpWorkMemoryi;
 extern char ppmMemory[SIZE_ppmMemory];
 extern int ppmMemoryi;
 extern char ftMemory[SIZE_ftMemory];
@@ -172,7 +169,6 @@ extern int olcxMemoryAllocatedBytes;
 
 
 extern jmp_buf cxmemOverflow;
-extern jmp_buf s_memoryResize;
 
 extern char *s_input_file_name;
 
