@@ -556,12 +556,6 @@ enum syntaxPassParsedImportantPosition {
 /*                               STRUCTURES                             */
 /* ******************************************************************** */
 
-/* class cast tree */
-typedef struct cctNode {
-    struct symbol	*node;
-    struct cctNode	*sub;       /* sub[CCT_TREE_INDEX]; */
-} S_cctNode;
-
 #include "position.h"
 
 /* return value for IDENTIFIER token from yylex */
@@ -603,6 +597,8 @@ typedef struct nestedSpec {
     char			membFlag;		/* flag whether it is nested in class */
     short unsigned  accFlags;
 } S_nestedSpec;
+
+#include "cct.h"
 
 typedef struct symStructSpec {
     struct symbolList		*super;			/* list of super classes & interfaces */

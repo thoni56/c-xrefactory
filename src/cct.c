@@ -10,21 +10,18 @@
 /* Data structure storing for each class all classes it can be */
 /* casted to */
 
-/*
-  #define CCT_TREE_HASH(xx,deepFactor) (\
-  (((long unsigned)xx) / sizeof(S_symbol)) / (deepFactor) % CCT_TREE_INDEX \
-  )
-*/
+#define CCT_TREE_HASH(xx,deepFactor) ((((long unsigned)xx) >> 4)/(deepFactor)%CCT_TREE_INDEX)
 
-#define CCT_TREE_HASH(xx,deepFactor) (                                  \
-                                      (((long unsigned)xx) >> 4) / (deepFactor) % CCT_TREE_INDEX \
-                                                                        )
-
+static void fillCctNode(S_cctNode *cct, Symbol *node, S_cctNode *subtree) {
+    cct->node = node;
+    cct->sub = subtree;
+}
 
 void cctAddSimpleValue(S_cctNode *cc, Symbol *x, int deepFactor) {
     S_cctNode *nn;
     int i,h;
-    //&fprintf(dumpOut,"adding %d == %s to casts at %d at deep %d\n", x, x->linkName, cc, deepFactor);
+
+    log_trace("adding %d == %s to casts at %d at deep %d", x, x->linkName, cc, deepFactor);
     if (cc->node == x) return;
     if (cc->node == NULL) {
         cc->node = x;           /* should be trailed ? */
@@ -33,7 +30,7 @@ void cctAddSimpleValue(S_cctNode *cc, Symbol *x, int deepFactor) {
     h = CCT_TREE_HASH(x, deepFactor);
     if (cc->sub == NULL) {
         CF_ALLOCC(nn, CCT_TREE_INDEX, S_cctNode);
-        for(i=0; i<CCT_TREE_INDEX; i++) FILL_cctNode(&nn[i], NULL, NULL);
+        for(i=0; i<CCT_TREE_INDEX; i++) fillCctNode(&nn[i], NULL, NULL);
         nn[h].node = x;
         cc->sub = nn;           /* should be trailed ? */
         return;
@@ -90,7 +87,7 @@ void cctDump(S_cctNode *cc, int deep) {
 // TODO: make these into unit tests...
 void cctTest(void) {
     S_cctNode nn,hh;
-    FILL_cctNode(&nn, NULL, NULL);
+    fillCctNode(&nn, NULL, NULL);
     cctDump(&nn, 0);
     fprintf(dumpOut,"----------\n"); fflush(dumpOut);
     cctAddSimpleValue(&nn, 0x10, 1);
@@ -106,7 +103,7 @@ void cctTest(void) {
     cctDump(&nn, 0);
     fprintf(dumpOut,"----------\n"); fflush(dumpOut);
 
-    FILL_cctNode(&hh, NULL, NULL);
+    fillCctNode(&hh, NULL, NULL);
     cctDump(&hh, 0);
     fprintf(dumpOut,"----------\n"); fflush(dumpOut);
     cctAddSimpleValue(&hh, 0x50, 1);
