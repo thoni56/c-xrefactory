@@ -40,7 +40,6 @@ quick: autodiscovered_tests
 	@$(MAKE) -C cgram_coverage
 	@$(MAKE) -C basic_html_generation
 	@$(MAKE) -C standard_includes
-	@$(MAKE) -C initializer_parsing
 	@$(MAKE) -C generate_str_fill
 	@$(MAKE) -C jar_reading
 	@$(MAKE) -C java_parsing
