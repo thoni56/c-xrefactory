@@ -14,13 +14,13 @@ void memoryResize(void) {
 
 /* ************************** Overflow Handlers ************************* */
 
-int optionsOverflowHandler(int n) {
+bool optionsOverflowHandler(int n) {
     fatalError(ERR_NO_MEMORY, "opiMemory", XREF_EXIT_ERR);
     return(1);
 }
 
-int cxMemoryOverflowHandler(int n) {
-    int ofaktor,faktor,oldsize, newsize;
+bool cxMemoryOverflowHandler(int n) {
+    int ofactor,factor,oldsize, newsize;
     S_memory *oldcxMemory;
 
     if (cxMemory!=NULL) {

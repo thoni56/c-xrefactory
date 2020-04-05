@@ -2,6 +2,7 @@
 #define _MEMMAC__H
 
 #include <stdint.h>
+#include <stdbool.h>
 
 
 /* ******************** a simple memory handler ************************ */
@@ -159,8 +160,8 @@
 /* ********************************************************************** */
 
 extern void memoryResize(void);
-extern int optionsOverflowHandler(int n);
-extern int cxMemoryOverflowHandler(int n);
+extern bool optionsOverflowHandler(int n);
+extern bool cxMemoryOverflowHandler(int n);
 
 extern void stackMemoryInit(void);
 extern void *stackMemoryAlloc(int size);

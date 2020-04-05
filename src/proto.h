@@ -906,10 +906,10 @@ typedef struct cxScanFileFunctionLink {
 /* ********************* MEMORIES *************************** */
 
 typedef struct memory {
-    int		(*overflowHandler)(int n);
+    bool	(*overflowHandler)(int n);
     int     i;
     int		size;
-    double  b;		//  double in order to get it properly alligned
+    double  b;		//  double in order to get it properly aligned
 } S_memory;
 
 

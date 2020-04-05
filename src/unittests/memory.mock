@@ -6,10 +6,10 @@ void memoryResize(void) {
   mock();
 }
 
-int optionsOverflowHandler(int n) {
+bool optionsOverflowHandler(int n) {
   return (int) mock(n);
 }
 
-int cxMemoryOverflowHandler(int n) {
+bool cxMemoryOverflowHandler(int n) {
   return (int) mock(n);
 }
