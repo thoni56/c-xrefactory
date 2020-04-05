@@ -29,12 +29,12 @@ bool cxMemoryOverflowHandler(int n) {
         oldsize = 0;
     }
 
-    ofaktor = oldsize / CX_MEMORY_CHUNK_SIZE;
-    faktor = ((n>1)?(n-1):0)/CX_MEMORY_CHUNK_SIZE + 1; // 1 no patience to wait ;
-    //& if (s_opt.cxMemoryFactor>=1) faktor *= s_opt.cxMemoryFactor;
-    faktor += ofaktor;
-    if (ofaktor*2 > faktor) faktor = ofaktor*2;
-    newsize = faktor * CX_MEMORY_CHUNK_SIZE;
+    ofactor = oldsize / CX_MEMORY_CHUNK_SIZE;
+    factor = ((n>1)?(n-1):0)/CX_MEMORY_CHUNK_SIZE + 1; // 1 no patience to wait ;
+    //& if (s_opt.cxMemoryFactor>=1) factor *= s_opt.cxMemoryFactor;
+    factor += ofactor;
+    if (ofactor*2 > factor) factor = ofactor*2;
+    newsize = factor * CX_MEMORY_CHUNK_SIZE;
     oldcxMemory = cxMemory;
     if (oldcxMemory!=NULL) free(oldcxMemory);
     cxMemory = malloc(newsize + sizeof(S_memory));
