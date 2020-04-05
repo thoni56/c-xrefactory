@@ -141,7 +141,6 @@ typedef struct whileExtractData {
     struct symbol	*i3;
     struct symbol	*i4;
 } S_whileExtractData;
-#endif
 
 static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbol *i4) {
     S_whileExtractData *whileExtractData;
@@ -154,6 +153,7 @@ static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbo
 
     return whileExtractData;
 }
+#endif
 
 
 %}
@@ -2613,11 +2613,13 @@ WhileStatementPrefix:
                         cl = bl = NULL;        // just to avoid warning message
                         cl = addContinueBreakLabelSymbol($2.d, CONTINUE_LABEL_NAME);
                         bl = addContinueBreakLabelSymbol($6.d, BREAK_LABEL_NAME);
-                        /* Replacing: */
+                        /* REPLACE: */
                         XX_ALLOC($$.d, S_whileExtractData);
                         FILL_whileExtractData($$.d, $2.d, $6.d, cl, bl);
                         /* with:
-                           $$.d = newWhileExtractData($2.d, $6.d, cl, bl); */
+                           $$.d = newWhileExtractData($2.d, $6.d, cl, bl);
+                           once we have a case where this executes ...*/
+                        assert(0);
                     } else {
                         $$.d = NULL;
                     }
