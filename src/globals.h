@@ -160,8 +160,6 @@ extern char *s_editCommunicationString;
 
 extern time_t s_expiration;
 
-extern S_memory *cxMemory;
-
 extern char tmpMemory[SIZE_TMP_MEM];
 extern char memory[SIZE_workMemory];
 extern char tmpWorkMemory[SIZE_tmpWorkMemory];

@@ -6,6 +6,7 @@
 #include "commons.h"
 #include "misc.h"               /* for removeFromTrailUntil() */
 
+S_memory *cxMemory=NULL;
 
 /* With this as a separate function it is possible to catch memory resize longjmps */
 void memoryResize(void) {

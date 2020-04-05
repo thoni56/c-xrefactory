@@ -92,8 +92,6 @@ char tmpBuff[TMP_BUFF_SIZE];
 
 int olcxMemoryAllocatedBytes;
 
-S_memory *cxMemory=NULL;
-
 int s_ifEvaluation = 0;     /* flag for yylex, to not filter '\n' */
 
 S_position s_olcxByPassPos;
@@ -105,14 +103,6 @@ time_t s_fileProcessStartTime;
 Language s_language;
 int s_currCppPass;
 int s_maximalCppPass;
-
-#if 0
-struct olSymbolFoundInformation {
-    S_symbolRefItem *symrefs;       /* this is valid */
-    S_symbolRefItem *symRefsInfo;   /* additional for error message */
-    S_reference *currentRef;
-};
-#endif
 
 unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL] = {
     (OOC_VIRT_ANY | OOC_PROFILE_ANY),
