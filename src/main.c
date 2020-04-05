@@ -291,15 +291,27 @@ static int isAbsolutePath(char *p) {
 #endif                          /*SBD*/
 
 
-static void optionAddToAllocatedList(char **dest) {
-    S_stringAddrList *ll;
+typedef struct stringPointerList {
+    char **destination;
+    struct stringPointerList *next;
+} StringPointerList;
+
+static StringPointerList *newStringPointerList(char **destination, StringPointerList *next) {
+    StringPointerList *list;
+    OPT_ALLOC(list, StringPointerList);
+    list->destination = destination;
+    list->next = next;
+    return list;
+}
+
+static void optionAddToAllocatedList(char **destination) {
+    StringPointerList *ll;
     for(ll=s_opt.allAllocatedStrings; ll!=NULL; ll=ll->next) {
         // reassignement, do not keep two copies
-        if (ll->d == dest) break;
+        if (ll->destination == destination) break;
     }
     if (ll==NULL) {
-        OPT_ALLOC(ll, S_stringAddrList);
-        FILL_stringAddrList(ll, dest, s_opt.allAllocatedStrings);
+        ll = newStringPointerList(destination, s_opt.allAllocatedStrings);
         s_opt.allAllocatedStrings = ll;
     }
 }
@@ -333,11 +345,11 @@ static void copyOptionShiftPointer(char **lld, S_options *dest, S_options *src) 
 }
 
 void copyOptions(S_options *dest, S_options *src) {
-    S_stringAddrList    **ll;
+    StringPointerList    **ll;
     memcpy(dest, src, sizeof(S_options));
     for(ll= &src->allAllocatedStrings; *ll!=NULL; ll = &(*ll)->next) {
-        copyOptionShiftPointer((*ll)->d, dest, src);
-        copyOptionShiftPointer(((char**)&(*ll)->d), dest, src);
+        copyOptionShiftPointer((*ll)->destination, dest, src);
+        copyOptionShiftPointer(((char**)&(*ll)->destination), dest, src);
         copyOptionShiftPointer(((char**)ll), dest, src);
     }
     //&fprintf(dumpOut,"options copied\n");

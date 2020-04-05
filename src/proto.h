@@ -845,11 +845,6 @@ typedef struct counters {
 
 /* ************************ PRE-PROCESSOR **************************** */
 
-typedef struct stringAddrList {
-    char **d;
-    struct stringAddrList *next;
-} S_stringAddrList;
-
 typedef enum {
     INPUT_DIRECT,
     INPUT_VIA_UNZIP,
@@ -1217,7 +1212,7 @@ typedef struct options {
     struct htmlCutPathsOpts htmlCut;
 
     // memory for strings
-    struct stringAddrList	*allAllocatedStrings;
+    struct stringPointerList	*allAllocatedStrings;
     struct memory			pendingMemory;
     char					pendingFreeSpace[SIZE_opiMemory];
 } S_options;
