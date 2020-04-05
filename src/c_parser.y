@@ -434,7 +434,7 @@ argument_expr_list_opt:				{
         }
     |	argument_expr_list			{
             XX_ALLOC($$.d, S_positionList);
-            FILL_positionList($$.d, s_noPos, $1.d);
+            fillPositionList($$.d, s_noPos, $1.d);
         }
     ;
 

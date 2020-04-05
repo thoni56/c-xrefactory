@@ -1098,7 +1098,7 @@ S_typeModifier *createNewAnonymousEnum(SymbolList *enums) {
 void appendPositionToList( S_positionList **list,S_position *pos) {
     S_positionList *ppl;
     XX_ALLOC(ppl, S_positionList);
-    FILL_positionList(ppl, *pos, NULL);
+    fillPositionList(ppl, *pos, NULL);
     LIST_APPEND(S_positionList, (*list), ppl);
 }
 

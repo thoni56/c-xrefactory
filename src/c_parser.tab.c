@@ -2437,7 +2437,7 @@ case 29:
 #line 435 "c_parser.y"
 {
             XX_ALLOC(yyval.ast_positionList.d, S_positionList);
-            FILL_positionList(yyval.ast_positionList.d, s_noPos, yyvsp[0].ast_positionList.d);
+            fillPositionList(yyval.ast_positionList.d, s_noPos, yyvsp[0].ast_positionList.d);
         }
 break;
 case 30:

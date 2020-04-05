@@ -6,4 +6,7 @@ void fillPosition(S_position *position, int file, int line, int col) {
     position->col = col;
 }
 
-void fillPositionList(S_positionList *positionList, S_position p, S_positionList *next);
+void fillPositionList(S_positionList *positionList, S_position p, S_positionList *next) {
+    positionList->p = p;
+    positionList->next = next;
+}
