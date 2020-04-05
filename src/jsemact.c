@@ -2612,7 +2612,7 @@ struct freeTrail * newClassDefinitionBegin(	S_id *name,
     return(res);
 }
 
-struct freeTrail * newAnonClassDefinitionBegin(S_id *interfName) {
+struct freeTrail *newAnonClassDefinitionBegin(S_id *interfName) {
     struct freeTrail * res;
     S_idList	*ll;
     Symbol		*interf, *str;
@@ -2628,6 +2628,7 @@ struct freeTrail * newAnonClassDefinitionBegin(S_id *interfName) {
 void newClassDefinitionEnd(S_freeTrail *trail) {
     assert(s_javaStat && s_javaStat->next);
     removeFromTrailUntil(trail);
+    /* TODO: WTF?!??! */
     // the following line makes that method extraction does not work,
     // make attention with it, ? really
     s_cp = s_javaStat->cp;

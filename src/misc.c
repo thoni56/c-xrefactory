@@ -258,7 +258,7 @@ static void trailDump(void) {
 }
 #endif
 
-void addToTrail (void (*a)(void*), void *p) {
+void addToTrail(void (*a)(void*), void *p) {
     S_freeTrail *t;
     /* no trail at level 0 in C*/
     if (WORK_NEST_LEVEL0() && (LANGUAGE(LANG_C)||LANGUAGE(LAN_YACC))) return;
