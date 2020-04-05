@@ -2398,6 +2398,11 @@ static int power(int x, int y) {
     return(res);
 }
 
+static bool optionsOverflowHandler(int n) {
+    fatalError(ERR_NO_MEMORY, "opiMemory", XREF_EXIT_ERR);
+    return(1);
+}
+
 static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
     int mm;
 

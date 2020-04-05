@@ -24,11 +24,6 @@ void memoryResize(void) {
 
 /* ************************** Overflow Handlers ************************* */
 
-bool optionsOverflowHandler(int n) {
-    fatalError(ERR_NO_MEMORY, "opiMemory", XREF_EXIT_ERR);
-    return(1);
-}
-
 bool cxMemoryOverflowHandler(int n) {
     int ofactor,factor,oldsize, newsize;
     S_memory *oldcxMemory;

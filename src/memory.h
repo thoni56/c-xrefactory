@@ -183,7 +183,6 @@ extern int tmpWorkMemoryi;
 
 
 extern void memoryResize(void);
-extern bool optionsOverflowHandler(int n);
 extern bool cxMemoryOverflowHandler(int n);
 
 extern void stackMemoryInit(void);
