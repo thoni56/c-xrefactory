@@ -159,6 +159,13 @@
 
 /* ********************************************************************** */
 
+typedef struct memory {
+    bool	(*overflowHandler)(int n);
+    int     i;
+    int		size;
+    double  b;		//  double in order to get it properly aligned
+} S_memory;
+
 extern void memoryResize(void);
 extern bool optionsOverflowHandler(int n);
 extern bool cxMemoryOverflowHandler(int n);

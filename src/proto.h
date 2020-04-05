@@ -903,16 +903,6 @@ typedef struct cxScanFileFunctionLink {
     int		additionalArg;
 } ScanFileFunctionStep;
 
-/* ********************* MEMORIES *************************** */
-
-typedef struct memory {
-    bool	(*overflowHandler)(int n);
-    int     i;
-    int		size;
-    double  b;		//  double in order to get it properly aligned
-} S_memory;
-
-
 /* *********************************************************** */
 
 typedef struct exprTokenType {
