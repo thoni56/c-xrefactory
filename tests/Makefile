@@ -13,7 +13,7 @@ void:
 
 all: quick slow
 
-
+#-------------------------------------------------------------------
 # Here follows some GNU magic to automatically discover tests
 # It will assume that if there is a directory starting with "test_"
 # it is a directory where you can run tests using "make"
@@ -31,6 +31,8 @@ endef
 
 # Loop over all test_ directories to create a rule for each
 $(foreach _t,$(TESTS),$(eval $(call RULE, $(_t))))
+
+#--------------------------------------------------------------------
 
 quick: autodiscovered_tests
 	@$(MAKE) -C simple_xrefs
