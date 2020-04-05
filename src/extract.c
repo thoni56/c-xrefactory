@@ -642,8 +642,17 @@ static void removeSymbolFromSymRefList(S_symbolRefItemList **ll, S_symbolRefItem
     }
 }
 
+static S_symbolRefItemList *concatRefItemList(S_symbolRefItemList **ll, S_symbolRefItem *s) {
+    S_symbolRefItemList *rr;
+    CX_ALLOC(rr, S_symbolRefItemList);
+    FILL_symbolRefItemList(rr, s, *ll);
+    return(rr);
+}
+
+
 static void addSymbolToSymRefList(S_symbolRefItemList **ll, S_symbolRefItem *s) {
     S_symbolRefItemList *r, *rr;
+    // S_symbolRefItemList *verifyConcatDoesTheSameAsFill;
     r = *ll;
     while (r!=NULL) {
         if (isSmallerOrEqClass(getClassNumFromClassLinkName(s->name, s_noneFileIndex),
@@ -654,9 +663,16 @@ static void addSymbolToSymRefList(S_symbolRefItemList **ll, S_symbolRefItem *s) 
     }
     // first remove all superceeded by this one
     removeSymbolFromSymRefList(ll, s);
+
+    /* This: */
     CX_ALLOC(rr, S_symbolRefItemList);
     FILL_symbolRefItemList(rr, s, *ll);
     *ll = rr;
+    /* ... should be replaced by: */
+    // verifyConcatDoesTheSameAsFill = concatRefItemList(ll, s);
+    /* ... once we can get this to execute ... */
+    //assert(*ll == *verifyConcatDoesTheSameAsFill);
+    assert(0);
 }
 
 static S_symbolRefItemList *computeExceptionsThrownBetween(S_programGraphNode *bb,
