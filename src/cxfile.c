@@ -1226,7 +1226,7 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
     coll = s_inLastInfos.counter[CXFI_COLL_INDEX];
     getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
     //&fprintf(dumpOut,"%d %d->%d %d  ", usage,file,s_decodeFilesNum[file],line);fflush(dumpOut);
-    FILL_position(&pos,file,line,coll);
+    fillPosition(&pos,file,line,coll);
     if (s_inLastInfos.onLineReferencedSym ==
         s_inLastInfos.counter[CXFI_SYM_INDEX]) {
         addToRefList(&s_inLastInfos.symbolTab[sym]->refs,
@@ -1263,7 +1263,7 @@ static void cxrfReference(int size,
             (s_fileTab.tab[file]->b.cxLoading&&s_fileTab.tab[file]->b.cxSaved)
             ) {
             /* if keep_old or if we repass refs after overflow */
-            FILL_position(&pos,file,line,coll);
+            fillPosition(&pos,file,line,coll);
             FILL_usageBits(&usageBits, usage, reqAcc, 0);
             copyrefFl = ! isInRefList(s_inLastInfos.symbolTab[sym]->refs,
                                       &usageBits, &pos, CatGlobal);
@@ -1272,7 +1272,7 @@ static void cxrfReference(int size,
         }
         if (copyrefFl) writeCxReferenceBase(sym, usage, reqAcc, file, line, coll);
     } else  if (s_opt.taskRegime == RegimeHtmlGenerate) {
-        FILL_position(&pos,file,line,coll);
+        fillPosition(&pos,file,line,coll);
         FILL_usageBits(&usageBits, usage, reqAcc, 0);
         FILL_reference(&rr, usageBits, pos, NULL);
         assert(sym>=0 && sym<MAX_CX_SYMBOL_TAB);
@@ -1288,7 +1288,7 @@ static void cxrfReference(int size,
                          &rr.usage,&rr.p,CatGlobal);
         }
     } else if (s_opt.taskRegime == RegimeEditServer) {
-        FILL_position(&pos,file,line,coll);
+        fillPosition(&pos,file,line,coll);
         FILL_usageBits(&usageBits, usage, reqAcc, 0);
         FILL_reference(&rr, usageBits, pos, NULL);
         if (additionalArg == DEAD_CODE_DETECTION) {

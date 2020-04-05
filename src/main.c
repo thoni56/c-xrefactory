@@ -2451,7 +2451,7 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
     SM_INIT(ftMemory);
     FT_ALLOCC(s_fileTab.tab, MAX_FILES, struct fileItem *);
     initFileTab();
-    FILL_position(&s_noPos, s_noneFileIndex, 0, 0);
+    fillPosition(&s_noPos, s_noneFileIndex, 0, 0);
     FILL_usageBits(&s_noUsage, UsageNone, 0, 0);
     FILL_reference(&s_noRef, s_noUsage, s_noPos, NULL);
     s_input_file_number = s_noneFileIndex;
@@ -2913,7 +2913,7 @@ static bool mainSymbolCanBeIdentifiedByPosition(int fnum) {
     // here read one reference file looking for the refs
     // assume s_opt.olcxlccursor is correctly set;
     getLineColCursorPositionFromCommandLineOption( &line, &col);
-    FILL_position(&s_olcxByPassPos, fnum, line, col);
+    fillPosition(&s_olcxByPassPos, fnum, line, col);
     olSetCallerPosition(&s_olcxByPassPos);
     readOneAppropReferenceFile(s_opt.browsedSymName, byPassFunctionSequence);
     // if no symbol found, it may be a local symbol, try by parsing
@@ -2954,7 +2954,7 @@ static void mainEditSrvFileSingleCppPass( int argc, char **argv,
         // special case, push the file as include reference
         if (creatingOlcxRefs()) {
             S_position dpos;
-            FILL_position(&dpos, s_input_file_number, 1, 0);
+            fillPosition(&dpos, s_input_file_number, 1, 0);
             gotOnLineCxRefs(&dpos);
         }
         addThisFileDefineIncludeReference(s_input_file_number);

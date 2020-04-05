@@ -3847,7 +3847,7 @@ case 395:
 {
         Symbol *p;
         S_position pp;
-        FILL_position(&pp, -1, 0, 0);
+        fillPosition(&pp, -1, 0, 0);
 
         p = newSymbol("", "", pp);
         fillSymbolBits(&p->bits, ACC_DEFAULT, TypeElipsis, StorageDefault);
@@ -3891,7 +3891,7 @@ case 400:
 {
         Symbol        *p;
         S_position      pp;
-        FILL_position(&pp, -1, 0, 0);
+        fillPosition(&pp, -1, 0, 0);
 
         p = newSymbol("", "", pp);
         fillSymbolBits(&p->bits, ACC_DEFAULT, TypeElipsis, StorageDefault);

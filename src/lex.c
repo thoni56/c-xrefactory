@@ -152,7 +152,7 @@ void gotOnLineCxRefs( S_position *ps ) {
                     GetChar(ch,ccc,cfin,cb, clb, clo);                  \
                 } else if (ch == CC_CXREF) {                            \
                     s_cache.activeCache = 0;                            \
-                    FILL_position(&s_cxRefPos,cfile,cline,idcoll);      \
+                    fillPosition(&s_cxRefPos,cfile,cline,idcoll);      \
                     goto identCont##lab;                                \
                 } else error(ERR_INTERNAL,"unknown communication char"); \
             } else {                                                    \
@@ -231,7 +231,7 @@ void gotOnLineCxRefs( S_position *ps ) {
             S_position  pos;                                            \
             char        ttt[TMP_STRING_SIZE];                           \
             lcoll = COLUMN_POS(ccc,clb,clo) -1;                         \
-            FILL_position(&pos, cfile, cline, lcoll);                   \
+            fillPosition(&pos, cfile, cline, lcoll);                   \
             sprintf(ttt,"%x/*",cfile);                                  \
             addTrivialCxReference(ttt,TypeComment,StorageDefault, &pos, UsageDefined); \
         }                                                               \
@@ -243,7 +243,7 @@ void gotOnLineCxRefs( S_position *ps ) {
             S_position  pos;                                            \
             char        ttt[TMP_STRING_SIZE];                           \
             lcoll = COLUMN_POS(ccc,clb,clo);                            \
-            FILL_position(&pos, cfile, cline, lcoll);                   \
+            fillPosition(&pos, cfile, cline, lcoll);                   \
             sprintf(ttt,"%x/*",cfile);                                  \
             if (s_opt.htmlNoColors==0) {                                \
                 addTrivialCxReference(ttt,TypeComment,StorageDefault, &pos, UsageUsed); \

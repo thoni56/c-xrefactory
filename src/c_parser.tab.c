@@ -3412,7 +3412,7 @@ case 220:
 {
         Symbol *symbol;
         S_position pos;
-        FILL_position(&pos, -1, 0, 0);
+        fillPosition(&pos, -1, 0, 0);
 
         symbol = newSymbol("", "", pos);
         fillSymbolBits(&symbol->bits, ACC_DEFAULT, TypeElipsis, StorageDefault);
@@ -3450,7 +3450,7 @@ case 225:
 {
         Symbol *symbol;
         S_position position;
-        FILL_position(&position, -1, 0, 0);
+        fillPosition(&position, -1, 0, 0);
 
         symbol = newSymbol("", "", position);
         fillSymbolBits(&symbol->bits, ACC_DEFAULT, TypeElipsis, StorageDefault);

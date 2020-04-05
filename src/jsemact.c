@@ -790,7 +790,7 @@ static void addJavaFileDependency(int file, char *onfile) {
     // also do it only for source files
     if (! s_fileTab.tab[file]->b.commandLineEntered) return;
     fileIndex = addFileTabItem(onfile);
-    FILL_position(&pos, file, 0, 0);
+    fillPosition(&pos, file, 0, 0);
     addIncludeReference(fileIndex, &pos);
 }
 

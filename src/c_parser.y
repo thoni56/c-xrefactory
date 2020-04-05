@@ -1217,7 +1217,7 @@ parameter_identifier_list
     | identifier_list ',' ELIPSIS				{
         Symbol *symbol;
         S_position pos;
-        FILL_position(&pos, -1, 0, 0);
+        fillPosition(&pos, -1, 0, 0);
 
         symbol = newSymbol("", "", pos);
         fillSymbolBits(&symbol->bits, ACC_DEFAULT, TypeElipsis, StorageDefault);
@@ -1250,7 +1250,7 @@ parameter_type_list
     | parameter_list ',' ELIPSIS				{
         Symbol *symbol;
         S_position position;
-        FILL_position(&position, -1, 0, 0);
+        fillPosition(&position, -1, 0, 0);
 
         symbol = newSymbol("", "", position);
         fillSymbolBits(&symbol->bits, ACC_DEFAULT, TypeElipsis, StorageDefault);

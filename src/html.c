@@ -1593,7 +1593,7 @@ static void htmlPassRefsThroughSourceFile(S_htmlRefList **rrr, int ifile,
     cofile = fopen(cofileName, "r");
     /*&fprintf(dumpOut,"[passRefsThrowSourceFile] openning file %s (%d)\n",cofileName,cofile!=NULL);fflush(dumpOut);&*/
     if (cofile==NULL) error(ERR_CANT_OPEN, cofileName);
-    FILL_position(&cp, ifile, 0, 0);
+    fillPosition(&cp, ifile, 0, 0);
     ch = '\n';
     if (genFlag==GEN_HTML) htmlPutCharLF(ccOut, ch, &cp);
     else fputc(ch,ccOut);
@@ -1626,7 +1626,7 @@ static void htmlGenerateFileToCcOut(int fnum) {
     /* free memories, especially ppmMemory */
     recoverCachePoint(1,s_cache.cp[1].lbcc,0);
     htmlGenHead(fnum);
-    FILL_position(&cp, fnum, 1, 0);
+    fillPosition(&cp, fnum, 1, 0);
     htmlGetThisFileReferences(fnum, &rr, ONLINE_ONLY);
     htmlPassRefsThroughSourceFile(&rr,fnum,GEN_HTML);
     htmlGenTail();
@@ -1724,7 +1724,7 @@ static void htmlGenerateJavaDocFile(int fnum) {
 void htmlAddFunctionSeparatorReference(void) {
     S_position pos;
     if (s_opt.taskRegime == RegimeHtmlGenerate) {
-        FILL_position(&pos, cFile.lexBuffer.buffer.fileNumber, cFile.lineNumber+1, -1);
+        fillPosition(&pos, cFile.lexBuffer.buffer.fileNumber, cFile.lineNumber+1, -1);
         addTrivialCxReference(LINK_NAME_FUNCTION_SEPARATOR, TypeFunSep,StorageDefault,
                               &pos, UsageUsed);
         return;
@@ -1736,7 +1736,7 @@ void htmlAddJavaDocReference(Symbol  *p, S_position  *pos,
                              int  vFunClass, int  vApplClass) {
     S_position npos;
     if (s_opt.taskRegime == RegimeHtmlGenerate && s_opt.javaDoc) {
-        FILL_position(&npos, pos->file, pos->line, 0);
+        fillPosition(&npos, pos->file, pos->line, 0);
         addCxReference(p, &npos, UsageJavaDocFullEntry, vFunClass, vApplClass);
     }
 }

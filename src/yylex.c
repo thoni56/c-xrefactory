@@ -452,7 +452,7 @@ static void fillIncludeSymbolItem( Symbol *ss,
 void addThisFileDefineIncludeReference(int filenum) {
     S_position dpos;
     Symbol        ss;
-    FILL_position(&dpos, filenum, 1, 0);
+    fillPosition(&dpos, filenum, 1, 0);
     fillIncludeSymbolItem( &ss,filenum, &dpos);
 //&fprintf(dumpOut,"adding reference on file %d==%s\n",filenum, s_fileTab.tab[filenum]->name);
     addCxReference(&ss, &dpos, UsageDefined, filenum, filenum);
@@ -1649,7 +1649,7 @@ static void addMacroBaseUsageRef( Symbol *mdef) {
     S_symbolRefItem     ppp,*memb;
     S_reference			*r;
     S_position          basePos;
-    FILL_position(&basePos, s_input_file_number, 0, 0);
+    fillPosition(&basePos, s_input_file_number, 0, 0);
     FILL_symbolRefItemBits(&ppp.b,TypeMacro,StorageDefault,ScopeGlobal,
                            mdef->bits.accessFlags, CatGlobal,0);
     FILL_symbolRefItem(&ppp,mdef->linkName,

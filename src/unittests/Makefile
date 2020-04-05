@@ -40,24 +40,24 @@ filetab_tests.so: $(OBJDIR)/filetab_tests.o $(OBJDIR)/filetab.o $(OBJDIR)/hash.o
 symbol_tests.so: $(OBJDIR)/symbol_tests.o $(OBJDIR)/symbol.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-editor_tests.so: $(OBJDIR)/editor_tests.o $(OBJDIR)/editor.o
+editor_tests.so: $(OBJDIR)/editor_tests.o $(OBJDIR)/editor.o $(OBJDIR)/position.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-cxref_tests.so: $(OBJDIR)/cxref_tests.o $(OBJDIR)/cxref.o $(OBJDIR)/protocol.o $(OBJDIR)/enumTxt.o $(OBJDIR)/hash.o
+cxref_tests.so: $(OBJDIR)/cxref_tests.o $(OBJDIR)/cxref.o $(OBJDIR)/protocol.o $(OBJDIR)/enumTxt.o $(OBJDIR)/hash.o $(OBJDIR)/position.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 
 # These includes the modules .c to be able to test static functions
-LEX_DEPENDENCIES = log
+LEX_DEPENDENCIES = log position
 lex_tests.so: $(OBJDIR)/lex_tests.o $(patsubst %,$(OBJDIR)/%.o,$(LEX_DEPENDENCIES))
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-CXFILE_DEPENDENCIES = protocol log
+CXFILE_DEPENDENCIES = protocol log position
 CXFILE_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(CXFILE_DEPENDENCIES))
 cxfile_tests.so:$(OBJDIR)/cxfile_tests.o $(CXFILE_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-EXTRACT_DEPENDENCIES = protocol log
+EXTRACT_DEPENDENCIES = protocol log position
 EXTRACT_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(EXTRACT_DEPENDENCIES))
 extract_tests.so:$(OBJDIR)/extract_tests.o $(EXTRACT_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)

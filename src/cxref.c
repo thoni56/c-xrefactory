@@ -45,11 +45,11 @@ typedef struct referencesChangeData {
                                   )
 
 #define POSITION_MINUS(res,p1,p2) {                                     \
-        FILL_position(&(res), (p1).file-(p2).file, (p1).line-(p2).line, (p1).col-(p2).col); \
+        fillPosition(&(res), (p1).file-(p2).file, (p1).line-(p2).line, (p1).col-(p2).col); \
     }
 
 #define POSITION_PLUS(res,p1,p2) {                                      \
-        FILL_position(&(res), (p1).file+(p2).file, (p1).line+(p2).line, (p1).col+(p2).col); \
+        fillPosition(&(res), (p1).file+(p2).file, (p1).line+(p2).line, (p1).col+(p2).col); \
     }
 
 #define CX_TEST_SPACE() {                                               \
@@ -895,7 +895,7 @@ void addClassTreeHierarchyReference(int fnum, S_position *p, int usage) {
 
 void addCfClassTreeHierarchyRef(int fnum, int usage) {
     S_position      p;
-    FILL_position(&p, fnum, 0, 0);
+    fillPosition(&p, fnum, 0, 0);
     addClassTreeHierarchyReference(fnum, &p, usage);
 }
 
@@ -1874,7 +1874,7 @@ static void passRefsThroughSourceFile(S_reference **rrr, S_position *callerp,
         FILL_CharacterBuffer(&cxfBuf, ebuf->a.text, ebuf->a.text+ebuf->a.bufferSize, NULL, ebuf->a.bufferSize, s_noneFileIndex, 0, ebuf->a.text, 0, 0,INPUT_DIRECT, s_defaultZStream);
         GetFileChar(ch, &cp, &cxfBuf);
     }
-    FILL_position(&cp, rr->p.file, 1, 0);
+    fillPosition(&cp, rr->p.file, 1, 0);
     oldrr=NULL;
     while (rr!=NULL && rr->p.file==cp.file && rr->p.line>=cp.line) {
         assert(oldrr!=rr); oldrr=rr;    // because it is a dangerous loop
@@ -3812,7 +3812,7 @@ static int mmPreCheckMakeDifference(S_olcxReferences *origrefs,
     S_reference     *rr;
     S_position      moveOffset;
 
-    FILL_position(&moveOffset, 0,0,0);
+    fillPosition(&moveOffset, 0,0,0);
     ofirstsym = mmPreCheckGetFirstDefinitionReferenceAndItsSymbol(origrefs->menuSym);
     nfirstsym = mmPreCheckGetFirstDefinitionReferenceAndItsSymbol(newrefs->menuSym);
     if (ofirstsym!=NULL && nfirstsym!=NULL) {
@@ -3920,7 +3920,7 @@ static int mmPreCheckMakeDifference(S_olcxReferences *origrefs,
     S_olSymbolsMenu *osym, *nsym, *diffsym, *ofirstsym, *nfirstsym;
     S_reference     *rr, *nsymrefs, *nrr, *drr, *ofirstref, *nfirstref;
     S_position      moveOffset;
-    FILL_position(&moveOffset, 0,0,0);
+    fillPosition(&moveOffset, 0,0,0);
     ofirstsym = mmPreCheckGetFirstDefinitionReferenceAndItsSymbol(origrefs->menuSym);
     nfirstsym = mmPreCheckGetFirstDefinitionReferenceAndItsSymbol(newrefs->menuSym);
     if (ofirstsym!=NULL && nfirstsym!=NULL) {
@@ -4074,8 +4074,8 @@ static void olcxTopReferencesRemoveWindow(void) {
     assert(s_olcxCurrentUser->browserStack.top->previous);
     assert(s_opt.server_operation == OLO_REMOVE_WIN);
     wdfile = getFileNumberFromName(s_opt.olcxWinDelFile);
-    FILL_position(&fp,wdfile,s_opt.olcxWinDelFromLine,s_opt.olcxWinDelFromCol);
-    FILL_position(&tp,wdfile,s_opt.olcxWinDelToLine,s_opt.olcxWinDelToCol);
+    fillPosition(&fp,wdfile,s_opt.olcxWinDelFromLine,s_opt.olcxWinDelFromCol);
+    fillPosition(&tp,wdfile,s_opt.olcxWinDelToLine,s_opt.olcxWinDelToCol);
     top1 = s_olcxCurrentUser->browserStack.top;
     olcxRemoveRefWinFromRefList(&top1->r, wdfile, &fp, &tp);
     for(mm=top1->menuSym; mm!=NULL; mm=mm->next) {
@@ -4258,7 +4258,7 @@ void olcxPushSpecial(char *fieldName, int command) {
         }
         olProcessSelectedReferences(refs, genOnLineReferences);
         getLineColCursorPositionFromCommandLineOption(&line, &col);
-        FILL_position(&callerPos, s_input_file_number, line, col);
+        fillPosition(&callerPos, s_input_file_number, line, col);
         olSetCallerPosition(&callerPos);
     }
 }
@@ -4742,7 +4742,7 @@ static void getCallerPositionFromCommandLineOption(S_position *opos) {
     assert(opos != NULL);
     f = s_olOriginalFileNumber;
     getLineColCursorPositionFromCommandLineOption(&l, &c);
-    FILL_position(opos, f, l, c);
+    fillPosition(opos, f, l, c);
 }
 
 static void answerClassName(char *name) {

@@ -1299,6 +1299,6 @@ void extractActionOnBlockMarker(void) {
         s_cps.cxMemiAtBlockEnd = cxMemory->i;
         s_cps.workMemiAtBlockEnd = s_topBlock->previousTopBlock;
     }
-    FILL_position(&pos, cFile.lexBuffer.buffer.fileNumber, 0, 0);
+    fillPosition(&pos, cFile.lexBuffer.buffer.fileNumber, 0, 0);
     addTrivialCxReference("Block", TypeBlockMarker,StorageDefault, &pos, UsageUsed);
 }
