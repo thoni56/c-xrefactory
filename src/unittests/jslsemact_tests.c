@@ -1,6 +1,8 @@
 #include <cgreen/cgreen.h>
 
 #include "classFileReader.mock"
+#include "memory.mock"
+
 
 /* From globals.c */
 #include "filetab.h"

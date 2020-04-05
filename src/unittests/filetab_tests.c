@@ -4,6 +4,8 @@
 
 #include "misc.mock"
 #include "commons.mock"
+#include "memory.mock"
+
 
 Describe(FileTab);
 BeforeEach(FileTab) {}

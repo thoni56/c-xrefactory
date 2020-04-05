@@ -1,8 +1,9 @@
 #include <cgreen/cgreen.h>
 
 #include "olcxtab.h"
-
+#include "memory.mock"
 #include "misc.mock"
+
 
 Describe(olcxTab);
 BeforeEach(olcxTab) {}

@@ -57,7 +57,7 @@ CXFILE_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(CXFILE_DEPENDENCIES))
 cxfile_tests.so:$(OBJDIR)/cxfile_tests.o $(CXFILE_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-EXTRACT_DEPENDENCIES = protocol log position
+EXTRACT_DEPENDENCIES = protocol log position memory
 EXTRACT_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(EXTRACT_DEPENDENCIES))
 extract_tests.so:$(OBJDIR)/extract_tests.o $(EXTRACT_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)

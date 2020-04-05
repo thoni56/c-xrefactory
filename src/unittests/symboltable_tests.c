@@ -1,8 +1,9 @@
 #include <cgreen/cgreen.h>
 
 #include "symboltable.h"
-
+#include "memory.mock"
 #include "misc.mock"
+
 
 Describe(symbolTable);
 BeforeEach(symbolTable) {}

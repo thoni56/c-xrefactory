@@ -142,43 +142,6 @@ void dumpOptions(int nargc, char **nargv) {
   mock(nargc, nargv);
 }
 
-void stackMemoryInit(void) {
-  mock();
-}
-
-/* No mock, just allocate memory as requested */
-void *stackMemoryAlloc(int size) {
-  return (void *)malloc(size);
-}
-
-void *stackMemoryPush(void *p, int size) {
-  return (void *) mock(p, size);
-}
-
-int *stackMemoryPushInt(int x) {
-  return (int *) mock(x);
-}
-
-char *stackMemoryPushString(char *s) {
-  return (char *) mock(s);
-}
-
-void stackMemoryPop(void *p, int size) {
-  mock(p, size);
-}
-
-void stackMemoryBlockStart(void) {
-  mock();
-}
-
-void stackMemoryBlockFree(void) {
-  mock();
-}
-
-void stackMemoryDump(void) {
-  mock();
-}
-
 void addToTrail(void (*action)(void *), void *p) {
   mock(action, p);
 }
