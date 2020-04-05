@@ -98,7 +98,6 @@ extern S_currentlyParsedCl s_cp;
 extern S_currentlyParsedCl s_cpInit;
 extern S_currentlyParsedStatics s_cps;
 extern S_currentlyParsedStatics s_cpsInit;
-extern S_topBlock *s_topBlock;
 
 extern S_fileTab s_fileTab;
 

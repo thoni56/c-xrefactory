@@ -45,7 +45,6 @@ int s_javaPreScanOnly=0;
 
 /* **************** cached symbols ********************** */
 
-S_topBlock *s_topBlock;
 int ppmMemoryi=0;
 int mbMemoryi=0;
 

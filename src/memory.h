@@ -166,8 +166,15 @@ typedef struct memory {
     double  b;		//  double in order to get it properly aligned
 } S_memory;
 
+typedef struct topBlock {
+    int              firstFreeIndex;
+    int              tmpMemoryBasei;
+    struct freeTrail *trail;
+    struct topBlock  *previousTopBlock;
+} S_topBlock;
 
 extern S_memory *cxMemory;
+extern S_topBlock *s_topBlock;
 
 extern void memoryResize(void);
 extern bool optionsOverflowHandler(int n);

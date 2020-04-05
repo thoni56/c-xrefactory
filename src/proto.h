@@ -579,13 +579,6 @@ typedef struct freeTrail {
     struct freeTrail *next;
 } S_freeTrail;
 
-typedef struct topBlock {
-    int              firstFreeIndex;
-    int              tmpMemoryBasei;
-    struct freeTrail *trail;
-    struct topBlock  *previousTopBlock;
-} S_topBlock;
-
 #include "typemodifier.h"
 
 typedef struct recFindStr {
