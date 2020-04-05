@@ -2859,7 +2859,7 @@ case 192:
             yyval.ast_expressionType.d.t = StackMemAlloc(S_typeModifier);
             FILLF_typeModifier(yyval.ast_expressionType.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
 
-            d = newSymbolIsType(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->p,yyval.ast_expressionType.d.t);
+            d = newSymbolAsType(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->p,yyval.ast_expressionType.d.t);
             fillSymbolBits(&d->bits, ACC_DEFAULT, TypeDefault, StorageExtern);
 
             dd = addNewSymbolDef(d, StorageExtern, s_symbolTable, UsageUsed);
@@ -3368,7 +3368,7 @@ case 301:
         typeModifiers = StackMemAlloc(S_typeModifier);
         FILLF_typeModifier(typeModifiers,TypeDefault,f,(NULL,NULL) ,NULL,NULL);
 
-        yyval.ast_symbol.d = newSymbolIsType(NULL, NULL, s_noPos, typeModifiers);
+        yyval.ast_symbol.d = newSymbolAsType(NULL, NULL, s_noPos, typeModifiers);
         fillSymbolBits(&yyval.ast_symbol.d->bits, ACC_DEFAULT, TypeDefault, yyvsp[0].ast_unsigned.d);
     }
 break;
@@ -3580,7 +3580,7 @@ case 349:
         p = StackMemAlloc(S_typeModifier);
         FILLF_typeModifier(p,TypeAnonymeField,f,( NULL,NULL) ,NULL,NULL);
 
-        yyval.ast_symbol.d = newSymbolIsType(NULL, NULL, s_noPos, p);
+        yyval.ast_symbol.d = newSymbolAsType(NULL, NULL, s_noPos, p);
 
     }
 break;
@@ -3926,7 +3926,7 @@ break;
 case 404:
 #line 1345 "yacc_parser.y"
 {
-        yyval.ast_symbol.d = newSymbolIsType(NULL, NULL, s_noPos, yyvsp[0].ast_typeModifiers.d);
+        yyval.ast_symbol.d = newSymbolAsType(NULL, NULL, s_noPos, yyvsp[0].ast_typeModifiers.d);
     }
 break;
 case 405:

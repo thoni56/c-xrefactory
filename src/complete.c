@@ -1176,7 +1176,7 @@ void completeUpFunProfile(S_completions* c) {
         && c->idToProcess[0] == 0
         && c->ai == 0
         ) {
-        dd = newSymbolIsType("    ", "    ", s_noPos, s_upLevelFunctionCompletionType);
+        dd = newSymbolAsType("    ", "    ", s_noPos, s_upLevelFunctionCompletionType);
 
         FILL_cline(&c->a[0], "    ", dd, TypeDefault, 0, 0, NULL, NULL);
         // assert(0 && "Comments indicate that COMPL_UP_FUN_PROFILE is not used but this indicates that it is!");

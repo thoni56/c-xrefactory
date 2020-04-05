@@ -303,7 +303,7 @@ primary_expr
             $$.d.t = StackMemAlloc(S_typeModifier);
             FILLF_typeModifier($$.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
 
-            d = newSymbolIsType($1.d->name, $1.d->name, $1.d->p, $$.d.t);
+            d = newSymbolAsType($1.d->name, $1.d->name, $1.d->p, $$.d.t);
             fillSymbolBits(&d->bits, ACC_DEFAULT, TypeDefault, StorageExtern);
 
             dd = addNewSymbolDef(d, StorageExtern, s_symbolTable, UsageUsed);
@@ -1280,7 +1280,7 @@ parameter_declaration
         $$.d = $2.d;
     }
     | type_name									{
-        $$.d = newSymbolIsType(NULL, NULL, s_noPos, $1.d);
+        $$.d = newSymbolAsType(NULL, NULL, s_noPos, $1.d);
     }
     | error										{
         /*

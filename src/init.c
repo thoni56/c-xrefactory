@@ -24,7 +24,7 @@ static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {
         s_tokenLength[tok] = strlen(nn);
         if ((isalpha(*nn) || *nn=='_') && (tlan & s_language)) {
             /* looks like a keyword */
-            pp = newSymbolIsKeyword(nn, nn, s_noPos, tok);
+            pp = newSymbolAsKeyword(nn, nn, s_noPos, tok);
             fillSymbolBits(&pp->bits, ACC_DEFAULT, TypeKeyword, StorageNone);
 
             /*fprintf(dumpOut,"adding keyword %s to tab %d\n",nn,s_symTab);*/

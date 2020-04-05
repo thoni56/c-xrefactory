@@ -2270,7 +2270,7 @@ case 1:
             yyval.ast_expressionType.d.t = StackMemAlloc(S_typeModifier);
             FILLF_typeModifier(yyval.ast_expressionType.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
 
-            d = newSymbolIsType(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->p, yyval.ast_expressionType.d.t);
+            d = newSymbolAsType(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->p, yyval.ast_expressionType.d.t);
             fillSymbolBits(&d->bits, ACC_DEFAULT, TypeDefault, StorageExtern);
 
             dd = addNewSymbolDef(d, StorageExtern, s_symbolTable, UsageUsed);
@@ -3485,7 +3485,7 @@ break;
 case 229:
 #line 1282 "c_parser.y"
 {
-        yyval.ast_symbol.d = newSymbolIsType(NULL, NULL, s_noPos, yyvsp[0].ast_typeModifiers.d);
+        yyval.ast_symbol.d = newSymbolAsType(NULL, NULL, s_noPos, yyvsp[0].ast_typeModifiers.d);
     }
 break;
 case 230:

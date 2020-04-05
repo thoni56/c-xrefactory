@@ -51,10 +51,10 @@ typedef struct symbolList {
 
 /* NOTE These will not fill bits-field, has to be done after allocation */
 extern Symbol *newSymbol(char *name, char *linkName, struct position pos);
-extern Symbol *newSymbolIsKeyword(char *name, char *linkName, struct position pos, int keyWordVal);
-extern Symbol *newSymbolIsType(char *name, char *linkName, struct position pos, struct typeModifier *type);
-extern Symbol *newSymbolIsEnum(char *name, char *linkName, struct position pos, struct symbolList *enums);
-extern Symbol *newSymbolIsLabel(char *name, char *linkName, struct position pos, int labelIndex);
+extern Symbol *newSymbolAsKeyword(char *name, char *linkName, struct position pos, int keyWordVal);
+extern Symbol *newSymbolAsType(char *name, char *linkName, struct position pos, struct typeModifier *type);
+extern Symbol *newSymbolAsEnum(char *name, char *linkName, struct position pos, struct symbolList *enums);
+extern Symbol *newSymbolAsLabel(char *name, char *linkName, struct position pos, int labelIndex);
 extern void fillSymbol(Symbol *symbol, char *name, char *linkName, struct position pos);
 extern void fillSymbolWithType(Symbol *symbol, char *name, char *linkName, struct position pos, struct typeModifier *type);
 extern void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName, struct position pos, int labelIndex);

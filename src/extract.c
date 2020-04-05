@@ -78,7 +78,7 @@ Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
 
     if (s_opt.server_operation != OLO_EXTRACT) return NULL;
 
-    s = newSymbolIsLabel(name, name, s_noPos, labn);
+    s = newSymbolAsLabel(name, name, s_noPos, labn);
     fillSymbolBits(&s->bits, ACC_DEFAULT, TypeLabel, StorageAuto);
 
     AddSymbolNoTrail(s, s_symbolTable);

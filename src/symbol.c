@@ -43,25 +43,25 @@ Symbol *newSymbol(char *name, char *linkName, struct position pos) {
     return s;
 }
 
-Symbol *newSymbolIsKeyword(char *name, char *linkName, struct position pos, int keyWordVal) {
+Symbol *newSymbolAsKeyword(char *name, char *linkName, struct position pos, int keyWordVal) {
     Symbol *s = newSymbol(name, linkName, pos);
     s->u.keyWordVal = keyWordVal;
     return s;
 }
 
-Symbol *newSymbolIsType(char *name, char *linkName, struct position pos, struct typeModifier *type) {
+Symbol *newSymbolAsType(char *name, char *linkName, struct position pos, struct typeModifier *type) {
     Symbol *s = newSymbol(name, linkName, pos);
     s->u.type = type;
     return s;
 }
 
-Symbol *newSymbolIsEnum(char *name, char *linkName, struct position pos, struct symbolList *enums) {
+Symbol *newSymbolAsEnum(char *name, char *linkName, struct position pos, struct symbolList *enums) {
     Symbol *s = newSymbol(name, linkName, pos);
     s->u.enums = enums;
     return s;
 }
 
-Symbol *newSymbolIsLabel(char *name, char *linkName, struct position pos, int labelIndex) {
+Symbol *newSymbolAsLabel(char *name, char *linkName, struct position pos, int labelIndex) {
     Symbol *s = newSymbol(name, linkName, pos);
     s->u.labn = labelIndex;
     return s;

@@ -844,9 +844,9 @@ Symbol *createSimpleDefinition(unsigned storage, unsigned t, S_id *id) {
     typeModifiers = StackMemAlloc(S_typeModifier);
     FILLF_typeModifier(typeModifiers,t,f,( NULL,NULL) ,NULL,NULL);
     if (id!=NULL) {
-        r = newSymbolIsType(id->name, id->name, id->p, typeModifiers);
+        r = newSymbolAsType(id->name, id->name, id->p, typeModifiers);
     } else {
-        r = newSymbolIsType(NULL, NULL, s_noPos, typeModifiers);
+        r = newSymbolAsType(NULL, NULL, s_noPos, typeModifiers);
     }
     fillSymbolBits(&r->bits, ACC_DEFAULT, TypeDefault, storage);
 
@@ -1087,7 +1087,7 @@ S_typeModifier *simpleEnumSpecifier(S_id *id, int usage) {
 S_typeModifier *createNewAnonymousEnum(SymbolList *enums) {
     Symbol *pp;
 
-    pp = newSymbolIsEnum("", "", s_noPos, enums);
+    pp = newSymbolAsEnum("", "", s_noPos, enums);
     fillSymbolBits(&pp->bits, ACC_DEFAULT, TypeEnum, StorageNone);
 
     setGlobalFileDepNames("", pp, MEM_XX);
@@ -1156,7 +1156,7 @@ Symbol *crEmptyField(void) {
     p = StackMemAlloc(S_typeModifier);
     FILLF_typeModifier(p,TypeAnonymeField,f,( NULL,NULL) ,NULL,NULL);
 
-    res = newSymbolIsType("", "", s_noPos, p);
+    res = newSymbolAsType("", "", s_noPos, p);
 
     return res;
 }

@@ -650,7 +650,7 @@ Symbol *javaTypeNameDefinition(S_idList *tname) {
     XX_ALLOC(td, S_typeModifier);
     FILLF_typeModifier(td, TypeStruct, t, memb, NULL, NULL);
     td->u.t = memb;
-    dd = newSymbolIsType(memb->name, memb->linkName, tname->id.p, td);
+    dd = newSymbolAsType(memb->name, memb->linkName, tname->id.p, td);
 
     return dd;
 }

@@ -10,11 +10,11 @@ void fillSymbol(Symbol *symbol, char *name, char *linkName, struct position pos)
     // mock(symbol, name, linkName, pos);
 }
 
-Symbol *newSymbolIsKeyword(char *name, char *linkName, struct position pos, int keyWordVal) {
+Symbol *newSymbolAsKeyword(char *name, char *linkName, struct position pos, int keyWordVal) {
     return NULL; // (S_symbol *)mock(name, linkName, pos, keyWordVal);
 }
 
-Symbol *newSymbolIsType(char *name, char *linkName, struct position pos, struct typeModifier *type) {
+Symbol *newSymbolAsType(char *name, char *linkName, struct position pos, struct typeModifier *type) {
     return NULL; // (S_symbol *)mock(name, linkName, pos, type);
 }
 
@@ -22,11 +22,11 @@ void fillSymbolWithType(Symbol *symbol, char *name, char *linkName, struct posit
     // mock(symbol, name, linkName, pos, type);
 }
 
-Symbol *newSymbolIsEnum(char *name, char *linkName, struct position pos, struct symbolList *enums) {
+Symbol *newSymbolAsEnum(char *name, char *linkName, struct position pos, struct symbolList *enums) {
     return NULL; // (S_symbol *)mock(name, linkName, pos, enums);
 }
 
-Symbol *newSymbolIsLabel(char *name, char *linkName, struct position pos, int labelIndex) {
+Symbol *newSymbolAsLabel(char *name, char *linkName, struct position pos, int labelIndex) {
     return NULL; // (S_symbol *)mock(name, linkName, pos, labelIndex);
 }
 

@@ -504,7 +504,7 @@ primary_expr
             $$.d.t = StackMemAlloc(S_typeModifier);
             FILLF_typeModifier($$.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
 
-            d = newSymbolIsType($1.d->name, $1.d->name, $1.d->p,$$.d.t);
+            d = newSymbolAsType($1.d->name, $1.d->name, $1.d->p,$$.d.t);
             fillSymbolBits(&d->bits, ACC_DEFAULT, TypeDefault, StorageExtern);
 
             dd = addNewSymbolDef(d, StorageExtern, s_symbolTable, UsageUsed);
@@ -912,7 +912,7 @@ declaration_modality_specifiers
         typeModifiers = StackMemAlloc(S_typeModifier);
         FILLF_typeModifier(typeModifiers,TypeDefault,f,(NULL,NULL) ,NULL,NULL);
 
-        $$.d = newSymbolIsType(NULL, NULL, s_noPos, typeModifiers);
+        $$.d = newSymbolAsType(NULL, NULL, s_noPos, typeModifiers);
         fillSymbolBits(&$$.d->bits, ACC_DEFAULT, TypeDefault, $1.d);
     }
     | declaration_modality_specifiers storage_class_specifier       {
@@ -1058,7 +1058,7 @@ struct_declarator
         p = StackMemAlloc(S_typeModifier);
         FILLF_typeModifier(p,TypeAnonymeField,f,( NULL,NULL) ,NULL,NULL);
 
-        $$.d = newSymbolIsType(NULL, NULL, s_noPos, p);
+        $$.d = newSymbolAsType(NULL, NULL, s_noPos, p);
 
     }
     | declarator ':' constant_expr  /*& { $$.d = $1.d; } */
@@ -1343,7 +1343,7 @@ parameter_declaration
         $$.d = $2.d;
     }
     | type_name                                 {
-        $$.d = newSymbolIsType(NULL, NULL, s_noPos, $1.d);
+        $$.d = newSymbolAsType(NULL, NULL, s_noPos, $1.d);
     }
     | error                                     {
         /*$$.d = &s_errorSymbol;*/
