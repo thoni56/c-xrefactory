@@ -28,7 +28,7 @@ void fatalError(int kod, char *sprava, int exitCode) {
 }
 
 void internalCheckFail(char *expr, char *file, int line) {
-  mock(expr, file, line);
+    printf("COMMONS MOCK: *** INTERNAL CHECK FAILED: %s in line %s:%d\n", expr, file, line);
 }
 
 char *create_temporary_filename() {
