@@ -46,6 +46,7 @@ editor_tests.so: $(OBJDIR)/editor_tests.o $(OBJDIR)/editor.o
 cxref_tests.so: $(OBJDIR)/cxref_tests.o $(OBJDIR)/cxref.o $(OBJDIR)/protocol.o $(OBJDIR)/enumTxt.o $(OBJDIR)/hash.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
+
 # These includes the modules .c to be able to test static functions
 LEX_DEPENDENCIES = log
 lex_tests.so: $(OBJDIR)/lex_tests.o $(patsubst %,$(OBJDIR)/%.o,$(LEX_DEPENDENCIES))
@@ -55,6 +56,12 @@ CXFILE_DEPENDENCIES = protocol log
 CXFILE_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(CXFILE_DEPENDENCIES))
 cxfile_tests.so:$(OBJDIR)/cxfile_tests.o $(CXFILE_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
+
+EXTRACT_DEPENDENCIES = protocol log
+EXTRACT_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(EXTRACT_DEPENDENCIES))
+extract_tests.so:$(OBJDIR)/extract_tests.o $(EXTRACT_DEPS)
+	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
+
 
 
 # A test lib for a module is built from its .o and the _test.o (and some extras)

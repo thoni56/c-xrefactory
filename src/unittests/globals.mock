@@ -3,6 +3,11 @@
 
 #include "../globals.h"
 
+S_currentlyParsedCl s_cp;
+S_currentlyParsedCl s_cpInit;
+S_currentlyParsedStatics s_cps;
+S_currentlyParsedStatics s_cpsInit;
+S_topBlock *s_topBlock;
 S_memory *cxMemory = NULL;
 FILE *dumpOut = NULL;
 struct stat s_noStat;
