@@ -642,12 +642,12 @@ static void removeSymbolFromSymRefList(S_symbolRefItemList **ll, S_symbolRefItem
     }
 }
 
-static S_symbolRefItemList *concatRefItemList(S_symbolRefItemList **ll, S_symbolRefItem *s) {
-    S_symbolRefItemList *rr;
-    CX_ALLOC(rr, S_symbolRefItemList);
-    FILL_symbolRefItemList(rr, s, *ll);
-    return(rr);
-}
+/* static S_symbolRefItemList *concatRefItemList(S_symbolRefItemList **ll, S_symbolRefItem *s) { */
+/*     S_symbolRefItemList *rr; */
+/*     CX_ALLOC(rr, S_symbolRefItemList); */
+/*     FILL_symbolRefItemList(rr, s, *ll); */
+/*     return(rr); */
+/* } */
 
 
 static void addSymbolToSymRefList(S_symbolRefItemList **ll, S_symbolRefItem *s) {
