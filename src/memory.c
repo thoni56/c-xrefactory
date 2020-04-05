@@ -128,14 +128,3 @@ void stackMemoryBlockFree(void) {
     //  if (LANGUAGE(LAN_JAVA)) s_topBlock->firstFreeIndex = memi;
     assert(s_topBlock != NULL);
 }
-
-void stackMemoryDump(void) {
-    int i;
-    fprintf(dumpOut,"start stackMemoryDump\n");
-    fprintf(dumpOut,"sorry, not yet implemented ");
-    for(i=0; i<s_topBlock->firstFreeIndex; i++) {
-        if (i%10 == 0) fprintf(dumpOut," ");
-        fprintf(dumpOut,".");
-    }
-    fprintf(dumpOut,"end stackMemoryDump\n");
-}

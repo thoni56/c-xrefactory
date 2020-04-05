@@ -181,6 +181,5 @@ extern char *stackMemoryPushString(char *s);
 extern void stackMemoryPop(void *p, int size);
 extern void stackMemoryBlockStart(void);
 extern void stackMemoryBlockFree(void);
-extern void stackMemoryDump(void);
 
 #endif
