@@ -182,6 +182,7 @@ extern char tmpWorkMemory[SIZE_tmpWorkMemory];
 extern int tmpWorkMemoryi;
 
 
+extern void initMemory(S_memory *memory, bool (*overflowHandler)(int n), int size);
 extern void memoryResize(void);
 extern bool cxMemoryOverflowHandler(int n);
 

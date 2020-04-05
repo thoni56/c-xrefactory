@@ -2437,8 +2437,8 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
     mm = cxMemoryOverflowHandler(1);
     assert(mm);
     // initoptions
-    FILL_memory(((S_memory*)&s_initOpt.pendingMemory),
-                optionsOverflowHandler, 0, SIZE_opiMemory, 0);
+    initMemory(((S_memory*)&s_initOpt.pendingMemory),
+               optionsOverflowHandler, SIZE_opiMemory);
 
     // just for very beginning
     s_fileProcessStartTime = time(NULL);

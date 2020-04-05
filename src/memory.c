@@ -21,6 +21,12 @@ void memoryResize(void) {
     longjmp(s_memoryResize,1);
 }
 
+void initMemory(S_memory *memory, bool (*overflowHandler)(int n), int size) {
+    memory->overflowHandler = overflowHandler;
+    memory->i = 0;
+    memory->size = size;
+    memory->b = 0;
+}
 
 /* ************************** Overflow Handlers ************************* */
 
@@ -44,7 +50,7 @@ bool cxMemoryOverflowHandler(int n) {
     if (oldcxMemory!=NULL) free(oldcxMemory);
     cxMemory = malloc(newsize + sizeof(S_memory));
     if (cxMemory!=NULL) {
-        FILL_memory(cxMemory, cxMemoryOverflowHandler, 0, newsize, 0);
+        initMemory(cxMemory, cxMemoryOverflowHandler, newsize);
     }
     log_debug("Reallocating cxMemory: %d -> %d", oldsize, newsize);
 
@@ -118,7 +124,6 @@ void stackMemoryBlockStart(void) {
 }
 
 void stackMemoryBlockFree(void) {
-
     /*fprintf(dumpOut,"finish block\n");*/
     //&removeFromTrailUntil(NULL);
     assert(s_topBlock && s_topBlock->previousTopBlock);
