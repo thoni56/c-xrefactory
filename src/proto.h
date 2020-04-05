@@ -1165,7 +1165,7 @@ typedef struct options {
     int ooChecksBits;
     int htmlLineNums;
     int htmlNoColors;
-    int cxMemoryFaktor;
+    int cxMemoryFactor;
     int multiHeadRefsCare;
     int strictAnsi;
     char * project;

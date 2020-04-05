@@ -854,7 +854,7 @@ static int processMOption(int *ii, int argc, char **argv) {
         if (newmf<=0 || newmf>255) {
             fatalError(ERR_ST, "memory factor out of range <1,255>", XREF_EXIT_ERR);
         }
-        s_opt.cxMemoryFaktor = newmf;
+        s_opt.cxMemoryFactor = newmf;
     }
     else if (strncmp(argv[i],"-maxCompls=",11)==0 || strncmp(argv[i],"-maxcompls=",11)==0)  {
         sscanf(argv[i]+11, "%d", &s_opt.maxCompletions);
@@ -2511,20 +2511,20 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     mainScheduleInputFilesFromOptionsToFileTable();
     if (s_opt.refactoringRegime == RegimeRefactory) {
         // some more memory for refactoring task
-        assert(s_opt.cxMemoryFaktor>=1);
-        CX_ALLOCC(sss, 6*s_opt.cxMemoryFaktor*CX_MEMORY_CHUNK_SIZE, char);
+        assert(s_opt.cxMemoryFactor>=1);
+        CX_ALLOCC(sss, 6*s_opt.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE, char);
         CX_FREE_UNTIL(sss);
     }
     if (s_opt.taskRegime==RegimeXref || s_opt.taskRegime==RegimeHtmlGenerate) {
         // get some memory if cross referencing
-        assert(s_opt.cxMemoryFaktor>=1);
-        CX_ALLOCC(sss, 3*s_opt.cxMemoryFaktor*CX_MEMORY_CHUNK_SIZE, char);
+        assert(s_opt.cxMemoryFactor>=1);
+        CX_ALLOCC(sss, 3*s_opt.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE, char);
         CX_FREE_UNTIL(sss);
     }
-    if (s_opt.cxMemoryFaktor > 1) {
+    if (s_opt.cxMemoryFactor > 1) {
         // reinit cxmemory taking into account -mf
         // just make an allocation provoking resizing
-        CX_ALLOCC(sss, s_opt.cxMemoryFaktor*CX_MEMORY_CHUNK_SIZE, char);
+        CX_ALLOCC(sss, s_opt.cxMemoryFactor*CX_MEMORY_CHUNK_SIZE, char);
         CX_FREE_UNTIL(sss);
     }
     // must be after processing command line options
