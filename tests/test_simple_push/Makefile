@@ -25,9 +25,9 @@ CXrefs:
 	@$(CXREF) -xrefrc=.c-xrefrc test_source -o cxrefs.log
 
 clean:
-	rm -rf CXrefs
+	rm -rf .c-xrefrc CXrefs output* buffer
 
 gdb:
-	@$(EDIT_SERVER_DRIVER) commands.input "$(CURDIR)" buffer 15 > output.tmp &
+	@$(EDIT_SERVER_DRIVER) commands.input "$(CURDIR)" buffer 5 > output.tmp &
 	sleep 1
-	sudo gdb -ex 'br mainAnswerEditAction' -pid `pgrep c-xref | tail -1`
+	sudo gdb -ex 'br mainAnswerEditAction' -pid `pgrep c-xref | tail -1` -ex 'continue'

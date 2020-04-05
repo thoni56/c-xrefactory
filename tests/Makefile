@@ -46,7 +46,6 @@ quick: autodiscovered_tests
 	@$(MAKE) -C java_parsing
 	@$(MAKE) -C partial_jexercise
 	@$(MAKE) -C edit_server_test_example
-	@$(MAKE) -C push
 	@$(MAKE) -C complete
 	@$(MAKE) -C rename
 	@$(MAKE) -C simple_extract
