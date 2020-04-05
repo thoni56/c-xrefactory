@@ -20,7 +20,7 @@ all: quick slow
 
 # Discover all test directories and a target rule to run all we found
 TESTS = $(wildcard test_*)
-tests: $(TESTS)
+autodiscovered_tests: $(TESTS)
 
 # Define a macro to generate a RULE for $1
 define RULE
@@ -32,7 +32,7 @@ endef
 # Loop over all test_ directories to create a rule for each
 $(foreach _t,$(TESTS),$(eval $(call RULE, $(_t))))
 
-quick:
+quick: autodiscovered_tests
 	@$(MAKE) -C simple_xrefs
 	@$(MAKE) -C pragma_once
 	@$(MAKE) -C process_yacc
@@ -52,12 +52,11 @@ quick:
 	@$(MAKE) -C simple_extract
 	@$(MAKE) -C c_extract_with_argument
 	@$(MAKE) -C add_parameter
-	@$(MAKE) -C move_class
 	@$(MAKE) -C turn_dynamic_method_to_static
 	@$(MAKE) -C extract_with_return
 	@$(MAKE) -C java_simple_extract
 
-slow:
+slow: autodiscovered_tests
 	@$(MAKE) -C emacs_c_exercise
 	@$(MAKE) -C c-xref
 	@$(MAKE) -C ffmpeg
