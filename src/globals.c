@@ -421,10 +421,10 @@ S_options s_initOpt = {
     {0, },      // get/set end
     {0, },      // -cutpaths
 
-    // penging memory for string values
-    NULL,
-    {0, },
-    {0, },
+    // pending memory for string values
+    NULL,                       /* allAllocatedStrings */
+    {0, },                      /* pendingMemory */
+    {0, },                      /* pendingFreeSpace[] */
 };
 
 char *s_editCommunicationString = "C@$./@mVeDitznAC";
