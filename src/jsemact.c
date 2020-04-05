@@ -1838,12 +1838,6 @@ Symbol *javaMethodHeader(unsigned modif, Symbol *type,
     addMethodCxReferences(modif, decl, s_javaStat->thisClass);
     htmlAddJavaDocReference(decl, &decl->pos, vClass, vClass);
     if (newFun) {
-#ifdef CORE_DUMP
-        if (s_opt.taskRegime==RegimeXref) {
-            sprintf(tmpBuff,"method %s appears in third pass", decl->linkName);
-            error(ERR_INTERNAL,tmpBuff);
-        }
-#endif
         LIST_APPEND(Symbol, s_javaStat->thisClass->u.s->records, decl);
     }
     return(decl);

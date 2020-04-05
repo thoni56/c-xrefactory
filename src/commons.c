@@ -301,19 +301,10 @@ void error(int errCode, char *mess) {
 }
 
 void emergencyExit(int exitStatus) {
-#   ifdef CORE_DUMP
-    if (! s_opt.xref2) {
-        fprintf(errOut, "\t dumping core!\n");
-    }
-    fflush(stdout); fflush(stderr);
-#   endif
     mainCloseOutputFile();
     if (s_opt.xref2) {
         ppcGenSynchroRecord();
     }
-#   ifdef CORE_DUMP
-    *((char *)NULL) = 0;
-#   endif
     exit(exitStatus);
 }
 
@@ -348,9 +339,6 @@ void internalCheckFail(char *expr, char *file, int line) {
             fprintf(errOut, "\t exiting!\n"); fflush(stderr);
         }
     }
-#   ifdef CORE_DUMP
-    emergencyExit(XREF_EXIT_ERR);
-#   endif
     if (s_opt.taskRegime == RegimeEditServer
         || s_opt.refactoringRegime == RegimeRefactory
         || s_fileAbortionEnabled == 0

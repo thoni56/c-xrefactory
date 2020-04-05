@@ -278,9 +278,6 @@ void removeFromTrailUntil(S_freeTrail *untilP) {
     }
     if (p!=untilP) {
         error(ERR_INTERNAL,"a block structure mismatch?");
-#ifdef CORE_DUMP
-        //      assert(0);
-#endif
     }
     s_topBlock->trail = p;
     /*trailDump();*/

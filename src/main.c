@@ -2996,11 +2996,7 @@ static char *presetEditServerFileDependingStatics(void) {
     assert(fArgCount>=0 && fArgCount<s_fileTab.size && s_fileTab.tab[fArgCount]->b.scheduledToProcess);
     for(i=fArgCount+1; i<s_fileTab.size; i++) {
         if (s_fileTab.tab[i] != NULL) {
-#ifdef CORE_DUMP
-            assert(s_fileTab.tab[i]->b.scheduledToProcess == 0);
-#else
             s_fileTab.tab[i]->b.scheduledToProcess = 0;
-#endif
         }
     }
     s_olOriginalComFileNumber = fArgCount;
