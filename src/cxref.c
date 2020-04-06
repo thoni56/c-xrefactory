@@ -129,18 +129,25 @@ static int olSymbolMenuLess(S_olSymbolsMenu *s1, S_olSymbolsMenu *s2) {
     return(olSymbolRefItemLess(&s1->s, &s2->s));
 }
 
+static char *olcxStringCopy(char *string) {
+    int length;
+    char *copy;
+    length = strlen(string);
+    OLCX_ALLOCC(copy, length+1, char);
+    strcpy(copy, string);
+    return copy;
+}
+
+
 S_olSymbolsMenu *olCreateNewMenuItem(S_symbolRefItem *symbol, int vApplClass, int vFunCl,
                                      S_position *defpos, int defusage,
                                      int selected, int visible,
                                      unsigned ooBits, int olusage, int vlevel) {
     S_olSymbolsMenu *symbolsMenu;
     S_symbolRefItem refItem;
-    int nameLength;
     char *allocatedNameCopy;
 
-    nameLength = strlen(symbol->name);
-    OLCX_ALLOCC(allocatedNameCopy, nameLength+1, char);
-    strcpy(allocatedNameCopy, symbol->name);
+    allocatedNameCopy = olcxStringCopy(symbol->name);
 
     FILL_symbolRefItem(&refItem, allocatedNameCopy, cxFileHashNumber(allocatedNameCopy),
                        vApplClass, vFunCl,
