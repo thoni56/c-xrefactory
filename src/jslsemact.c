@@ -387,7 +387,6 @@ static void jslAddNestedClass(Symbol *inner, Symbol *outer, int memb,
 
     assert(outer && outer->bits.symType==TypeStruct && outer->u.s);
     n = outer->u.s->nestedCount;
-    //&sprintf(tmpBuff,"adding nested %s of %s(at %d)[%d] --> %s to %s\n", inner->name, outer->name, outer, n, inner->linkName, outer->linkName);ppcGenTmpBuff();
     log_debug("adding nested %s of %s(at %lx)[%d] --> %s to %s", inner->name, outer->name, (unsigned long)outer, n, inner->linkName, outer->linkName);
     if (n == 0) {
         CF_ALLOCC(outer->u.s->nest, MAX_INNERS_CLASSES, S_nestedSpec);
