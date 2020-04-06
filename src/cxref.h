@@ -91,11 +91,10 @@ extern S_reference **addToRefList(S_reference **list,
                                   S_position *pos,
                                   int category
                                   );
-extern int isInRefList(S_reference *list,
-                       S_usageBits *pusage,
-                       S_position *pos,
-                       int category
-                       );
+extern bool isInRefList(S_reference *list,
+                        S_usageBits *pusage,
+                        S_position *pos,
+                        int category);
 extern char *getXrefEnvironmentValue( char *name );
 extern int byPassAcceptableSymbol(S_symbolRefItem *p);
 extern int itIsSymbolToPushOlRefences(S_symbolRefItem *p, S_olcxReferences *rstack,

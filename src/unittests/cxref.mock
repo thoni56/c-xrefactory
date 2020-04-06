@@ -172,7 +172,7 @@ S_reference **addToRefList(S_reference **list, S_usageBits *pusage, S_position *
     return (S_reference **) mock(list, pusage, pos, category);
 }
 
-int isInRefList(S_reference *list, S_usageBits *pusage, S_position *pos, int category) {
+bool isInRefList(S_reference *list, S_usageBits *pusage, S_position *pos, int category) {
     return (int) mock(list, pusage, pos, category);
 }
 

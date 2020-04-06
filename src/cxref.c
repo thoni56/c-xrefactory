@@ -831,7 +831,7 @@ S_reference * addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *usageb,
                        vApplCl,vFunCl,ppp.b,NULL,NULL);
     if (s_opt.taskRegime==RegimeEditServer && s_opt.server_operation==OLO_TAG_SEARCH && s_opt.tagSearchSpecif==TSS_FULL_SEARCH) {
         FILL_usageBits(&rr.usage, usage, 0, 0);
-        FILL_reference(&rr, rr.usage, *pos, NULL);
+        fill_reference(&rr, rr.usage, *pos, NULL);
         searchSymbolCheckReference(&ppp, &rr);
         return NULL;
     }
