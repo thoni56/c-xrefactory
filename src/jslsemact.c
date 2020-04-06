@@ -50,12 +50,20 @@ void fillJslStat(S_jslStat *jslStat, int pass, int sourceFileNumber, int languag
     jslStat->next = next;
 }
 
+static void fill_jslSymbolList(JslSymbolList *jslSymbolList, struct symbol *d, struct position pos,
+                               bool isSingleImportedFlag) {
+    jslSymbolList->d = d;
+    jslSymbolList->pos = pos;
+    jslSymbolList->isSingleImportedFlag = isSingleImportedFlag;
+    jslSymbolList->next = NULL;
+}
+
 static void jslCreateTypeSymbolInList(JslSymbolList *ss, char *name) {
     Symbol *s;
 
     s = newSymbol(name, name, s_noPos);
     fillSymbolBits(&s->bits, ACC_DEFAULT, TypeStruct, StorageNone);
-    FILL_jslSymbolList(ss, s, s_noPos, 0, NULL);
+    fill_jslSymbolList(ss, s, s_noPos, false);
 }
 
 Symbol *jslTypeSpecifier2(S_typeModifier *t) {
@@ -121,7 +129,7 @@ static void jslRemoveNestedClass(void  *ddv) {
 }
 
 Symbol *jslTypeSymbolDefinition(char *ttt2, S_idList *packid,
-                                  int add, int order, int isSingleImportedFlag) {
+                                int add, int order, bool isSingleImportedFlag) {
     char fqtName[MAX_FILE_NAME_SIZE];
     S_idList dd2;
     int ii;
@@ -140,7 +148,7 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, S_idList *packid,
         if (packid!=NULL) importPos = &packid->id.p;
         else importPos = &s_noPos;
         XX_ALLOC(xss, JslSymbolList); // CF_ALLOC ???
-        FILL_jslSymbolList(xss, smemb, *importPos, isSingleImportedFlag, NULL);
+        fill_jslSymbolList(xss, smemb, *importPos, isSingleImportedFlag);
         mm = jslTypeTabIsMember(s_jsl->typeTab, xss, &ii, &memb);
         if (order == ORDER_PREPEND) {
             log_debug("[jsl] prepending class %s to jsltab", smemb->name);
@@ -310,7 +318,7 @@ void jslAddMapedImportTypeName(
     strncpy(ttt2, file, len2);
     assert(len2+1 < MAX_FILE_NAME_SIZE);
     ttt2[len2] = 0;
-    jslTypeSymbolDefinition(ttt2, packid,TYPE_ADD_YES, ORDER_APPEND, 0);
+    jslTypeSymbolDefinition(ttt2, packid,TYPE_ADD_YES, ORDER_APPEND, false);
 }
 
 void jslAddAllPackageClassesFromFileTab(S_idList *packid) {
@@ -341,7 +349,7 @@ void jslAddAllPackageClassesFromFileTab(S_idList *packid) {
                 }
             }
             if (c=='.') {
-                jslTypeSymbolDefinition(ttt, packid,TYPE_ADD_YES, ORDER_APPEND, 0);
+                jslTypeSymbolDefinition(ttt, packid,TYPE_ADD_YES, ORDER_APPEND, false);
             }
         }
     }
@@ -482,7 +490,7 @@ void jslAddNestedClassesToJslTypeTab( Symbol *str, int order) {
                              TypeStruct, NULL);
             log_trace("adding %s %s", ss->nest[i].cl->name, ss->nest[i].cl->linkName);
             jslTypeSymbolDefinition(ss->nest[i].cl->name, &oclassid,
-                                    TYPE_ADD_YES, order, 0);
+                                    TYPE_ADD_YES, order, false);
         }
     }
 }
@@ -531,19 +539,19 @@ void jslNewClassDefinitionBegin(S_id *name,
             // because method nested class will not be added as class nested
             // at the end of this function
             cc = jslTypeSymbolDefinition(ttt, &mntmp,
-                                         TYPE_ADD_YES, ORDER_PREPEND, 0);
+                                         TYPE_ADD_YES, ORDER_PREPEND, false);
         } else {
             /* anonymous class implementing an interface */
             s_jsl->classStat->annonInnerCounter++;
             sprintf(ttt, "%d$%s", s_jsl->classStat->annonInnerCounter,
                     inname->name);
             cc = jslTypeSymbolDefinition(ttt,s_jsl->classStat->className,
-                                         TYPE_ADD_NO,ORDER_PREPEND, 0);
+                                         TYPE_ADD_NO,ORDER_PREPEND, false);
         }
     } else {
         sprintf(ttt, "%s", inname->name);
         cc = jslTypeSymbolDefinition(ttt,s_jsl->classStat->className,
-                                     TYPE_ADD_NO,ORDER_PREPEND, 0);
+                                     TYPE_ADD_NO,ORDER_PREPEND, false);
     }
     cc->bits.accessFlags = accFlags;
     log_trace("reading class %s [%x] at %x", cc->linkName, cc->bits.accessFlags, cc);
@@ -577,7 +585,7 @@ void jslNewClassDefinitionBegin(S_id *name,
     if (s_jsl->classStat->next==NULL && s_jsl->pass==1) {
         /* top level class */
         jslTypeSymbolDefinition(cc->name,s_jsl->classStat->className,
-                                TYPE_ADD_YES, ORDER_PREPEND, 0);
+                                TYPE_ADD_YES, ORDER_PREPEND, false);
     }
 
     assert(cc && cc->u.s && s_fileTab.tab[cc->u.s->classFile]);
