@@ -70,6 +70,13 @@ typedef struct referencesChangeData {
 /* *********************************************************************** */
 
 
+void fill_reference(S_reference *reference, S_usageBits usage, S_position position, S_reference *next) {
+    reference->usage = usage;
+    reference->p = position;
+    reference->next = next;
+}
+
+
 void fill_olSymbolsMenu(S_olSymbolsMenu *olSymbolsMenu,
                         struct symbolRefItem s,
                         char selected,
@@ -230,7 +237,7 @@ S_reference **addToRefList(S_reference **list,
                            ) {
     S_reference *rr, **place;
     S_reference ppp;
-    FILL_reference(&ppp, *pusage, *pos, NULL);
+    fill_reference(&ppp, *pusage, *pos, NULL);
     SORTED_LIST_PLACE2(place,S_reference,ppp,list);
     if (*place==NULL || SORTED_LIST_NEQ((*place),ppp)
         || s_opt.server_operation==OLO_EXTRACT) {
@@ -245,14 +252,14 @@ S_reference **addToRefList(S_reference **list,
 }
 
 
-int isInRefList(S_reference *list,
+bool isInRefList(S_reference *list,
                 S_usageBits *pusage,
                 S_position *pos,
                 int category
                 ) {
     S_reference *rr;
     S_reference ppp;
-    FILL_reference(&ppp, *pusage, *pos, NULL);
+    fill_reference(&ppp, *pusage, *pos, NULL);
     SORTED_LIST_FIND2(rr, S_reference, ppp, list);
     if (rr==NULL || SORTED_LIST_NEQ(rr,ppp)) return(0);
     return(1);
@@ -5404,7 +5411,7 @@ S_olCompletion * olCompletionListPrepend(char *name,
         OLCX_ALLOCC(ss, slen+1, char);
         strcpy(ss, s->linkName);
         FILL_usageBits(&dref.usage, UsageDefined, 0, 0);
-        FILL_reference(&dref, dref.usage, s->pos, NULL);
+        fill_reference(&dref, dref.usage, s->pos, NULL);
         FILL_symbolRefItemBits(&srib, s->bits.symType, storage,
                                scope, s->bits.accessFlags, category, 0);
         FILL_symbolRefItem(&sri, ss, cxFileHashNumber(ss),
