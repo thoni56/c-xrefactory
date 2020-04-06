@@ -4,6 +4,19 @@
 #include <zlib.h>
 #include "proto.h"
 
+
+extern void fill_CharacterBuffer(CharacterBuffer *characterBuffer,
+                                 char *next,
+                                 char *end,
+                                 FILE *file,
+                                 unsigned filePos,
+                                 int fileNumber,
+                                 int lineNum,
+                                 char *lineBegin,
+                                 int columnOffset,
+                                 bool isAtEOF,
+                                 InputMethod inputMethod,
+                                 z_stream zipStream);
 extern void charBuffClose(struct CharacterBuffer *buffer);
 extern voidpf zlibAlloc(voidpf opaque, uInt items, uInt size);
 extern void zlibFree(voidpf opaque, voidpf address);

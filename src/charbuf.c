@@ -1,10 +1,34 @@
 #include "charbuf.h"
 
 #include "globals.h"
-#include "strFill.h"
 
 #include "commons.h"            /* error() */
 
+
+void fill_CharacterBuffer(CharacterBuffer *characterBuffer,
+                          char *next,
+                          char *end,
+                          FILE *file,
+                          unsigned filePos,
+                          int fileNumber,
+                          int lineNum,
+                          char *lineBegin,
+                          int columnOffset,
+                          bool isAtEOF,
+                          InputMethod inputMethod,
+                          z_stream zipStream) {
+    characterBuffer->next = next;
+    characterBuffer->end = end;
+    characterBuffer->file = file;
+    characterBuffer->filePos = filePos;
+    characterBuffer->fileNumber = fileNumber;
+    characterBuffer->lineNum = 0;
+    characterBuffer->lineBegin = lineBegin;
+    characterBuffer->columnOffset = 0;
+    characterBuffer->isAtEOF = false;
+    characterBuffer->inputMethod = INPUT_DIRECT;
+    characterBuffer->zipStream = s_defaultZStream;
+}
 
 
 /* ***************************************************************** */
