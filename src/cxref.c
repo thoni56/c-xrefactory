@@ -5290,6 +5290,32 @@ void mapCreateSelectionMenu(S_symbolRefItem *p) {
 
 /* ********************************************************************** */
 
+static S_olCompletion *newOlCompletion(char *name,
+                              char *fullName,
+                              char *vclass,
+                              short int jindent,
+                              short int lineCount,
+                              char cat,
+                              char csymType,
+                              struct reference ref,
+                              struct symbolRefItem sym) {
+    S_olCompletion *olCompletion;
+    OLCX_ALLOC(olCompletion, S_olCompletion);
+
+    olCompletion->name = name;
+    olCompletion->fullName = fullName;
+    olCompletion->vclass = vclass;
+    olCompletion->jindent = jindent;
+    olCompletion->lineCount = lineCount;
+    olCompletion->cat = cat;
+    olCompletion->csymType = csymType;
+    olCompletion->ref = ref;
+    olCompletion->sym = sym;
+    olCompletion->next = NULL;
+
+    return olCompletion;
+}
+
 void olSetCallerPosition(S_position *pos) {
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     s_olcxCurrentUser->browserStack.top->cpos = *pos;
@@ -5334,8 +5360,7 @@ S_olCompletion * olCompletionListPrepend(char *name,
         FILL_symbolRefItem(&sri, ss, cxFileHashNumber(ss),
                            rr->vApplClass, rr->vFunClass,
                            rr->b, NULL, NULL);
-        OLCX_ALLOC(cc, S_olCompletion);
-        FILL_olCompletion(cc, nn, fullnn, vclnn, jindent, 1, rr->b.category, cType, *dfref, sri, NULL);
+        cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, rr->b.category, cType, *dfref, sri);
     } else if (s==NULL) {
         dref = *dfref;
         dref.next = NULL;
@@ -5344,8 +5369,7 @@ S_olCompletion * olCompletionListPrepend(char *name,
         FILL_symbolRefItem(&sri, "", cxFileHashNumber(""),
                            s_noneFileIndex, s_noneFileIndex,
                            srib, NULL, NULL);
-        OLCX_ALLOC(cc, S_olCompletion);
-        FILL_olCompletion(cc, nn, fullnn, vclnn, jindent, 1, CatLocal, cType, dref, sri, NULL);
+        cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, CatLocal, cType, dref, sri);
     } else {
         getSymbolCxrefCategories(s, &category, &scope, &storage);
         //&fprintf(dumpOut,":adding sym %s %d\n",s->linkName,category);fflush(dumpOut);
@@ -5359,8 +5383,7 @@ S_olCompletion * olCompletionListPrepend(char *name,
         FILL_symbolRefItem(&sri, ss, cxFileHashNumber(ss),
                            vFunClass, vFunClass,
                            srib, NULL, NULL);
-        OLCX_ALLOC(cc, S_olCompletion);
-        FILL_olCompletion(cc, nn, fullnn, vclnn, jindent, 1, category, cType, dref, sri, NULL);
+        cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, category, cType, dref, sri);
     }
     if (fullText!=NULL) {
         for(i=0; fullText[i]; i++) {
