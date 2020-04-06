@@ -38,6 +38,13 @@ S_javaStat s_initJavaStat;
 static int javaNotFqtUsageCorrection(Symbol *sym, int usage);
 
 
+void fill_nestedSpec(S_nestedSpec *nestedSpec, struct symbol *cl,
+                     char membFlag, short unsigned  accFlags) {
+    nestedSpec->cl = cl;
+    nestedSpec->membFlag = membFlag;
+    nestedSpec->accFlags = accFlags;
+}
+
 void fillJavaStat(S_javaStat *javaStat, S_idList *className, S_typeModifier *thisType, Symbol *thisClass,
                   int currentNestedIndex, char *currentPackage, char *unnamedPackagePath,
                   char *namedPackagePath, S_symbolTable *locals, S_idList *lastParsedName,
