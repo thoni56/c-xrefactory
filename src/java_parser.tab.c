@@ -72,7 +72,7 @@
 #define JslImportSingleDeclaration(iname) {\
     Symbol *sym;\
     jslClassifyAmbiguousTypeName(iname, &sym);\
-    jslTypeSymbolDefinition(iname->id.name, iname->next, TYPE_ADD_YES,ORDER_PREPEND, 1);\
+    jslTypeSymbolDefinition(iname->id.name, iname->next, TYPE_ADD_YES,ORDER_PREPEND, true);\
 }
 
 /* Import on demand has to solve following situation (not handled by JSL) */

@@ -51,7 +51,7 @@ extern Symbol *jslPrependDirectEnclosingInstanceArgument(Symbol *args);
 extern Symbol *jslMethodHeader(unsigned modif, Symbol *type, Symbol *decl, int storage, SymbolList *throws);
 extern Symbol *jslTypeNameDefinition(S_idList *tname);
 extern Symbol *jslTypeSymbolDefinition(char *ttt2, S_idList *packid,
-                                         int add, int order, int isSingleImportedFlag);
+                                       int add, int order, bool isSingleImportedFlag);
 extern int jslClassifyAmbiguousTypeName(S_idList *name, Symbol **str);
 extern void jslAddNestedClassesToJslTypeTab( Symbol *cc, int order);
 extern void jslAddSuperNestedClassesToJslTypeTab( Symbol *cc);
@@ -60,21 +60,18 @@ extern void jslAddSuperClassOrInterfaceByName(Symbol *memb,char *super);
 extern void jslNewClassDefinitionBegin(S_id *name,
                                        int accessFlags,
                                        Symbol *anonInterf,
-                                       int position
-                                       );
+                                       int position);
 extern void jslAddDefaultConstructor(Symbol *cl);
 extern void jslNewClassDefinitionEnd(void);
 extern void jslNewAnonClassDefinitionBegin(S_id *interfName);
 
 extern void jslAddSuperClassOrInterface(Symbol *memb,Symbol *supp);
-extern void jslAddMapedImportTypeName(
-                                      char *file,
+extern void jslAddMapedImportTypeName(char *file,
                                       char *path,
                                       char *pack,
                                       S_completions *c,
                                       void *vdirid,
-                                      int  *storage
-                                      );
+                                      int  *storage);
 extern void jslAddAllPackageClassesFromFileTab(S_idList *pack);
 
 

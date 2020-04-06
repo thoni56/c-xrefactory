@@ -621,7 +621,7 @@ typedef struct symStructSpec {
 typedef struct jslSymbolList {
     struct symbol           *d;
     struct position			pos;
-    int						isSingleImportedFlag;
+    bool					isSingleImportedFlag;
     struct jslSymbolList	*next;
 } JslSymbolList;
 
