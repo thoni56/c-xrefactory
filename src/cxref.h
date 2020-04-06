@@ -5,6 +5,7 @@
 #include "symbol.h"
 #include "olcxtab.h"
 
+extern void fill_reference(S_reference *reference, S_usageBits usage, S_position position, S_reference *next);
 extern void fill_olSymbolsMenu(S_olSymbolsMenu *olSymbolsMenu,
                                struct symbolRefItem	s,
                                char selected,

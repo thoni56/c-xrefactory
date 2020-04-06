@@ -4,6 +4,11 @@
 
 #include "../olcxtab.h"
 
+void fill_reference(S_reference *reference, S_usageBits usage, S_position position, S_reference *next) {
+    /* NOTE can't mock S_usageBits or S_position */
+    mock(reference, next);
+}
+
 int olcxReferenceInternalLessFunction(S_reference *r1, S_reference *r2) {
     return (int) mock(r1, r2);
 }

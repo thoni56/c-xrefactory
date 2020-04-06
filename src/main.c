@@ -2453,7 +2453,7 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
     initFileTab();
     fillPosition(&s_noPos, s_noneFileIndex, 0, 0);
     FILL_usageBits(&s_noUsage, UsageNone, 0, 0);
-    FILL_reference(&s_noRef, s_noUsage, s_noPos, NULL);
+    fill_reference(&s_noRef, s_noUsage, s_noPos, NULL);
     s_input_file_number = s_noneFileIndex;
     s_javaAnonymousClassName.p = s_noPos;
     olcxInit();

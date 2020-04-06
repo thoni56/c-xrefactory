@@ -1274,7 +1274,7 @@ static void cxrfReference(int size,
     } else  if (s_opt.taskRegime == RegimeHtmlGenerate) {
         fillPosition(&pos,file,line,coll);
         FILL_usageBits(&usageBits, usage, reqAcc, 0);
-        FILL_reference(&rr, usageBits, pos, NULL);
+        fill_reference(&rr, usageBits, pos, NULL);
         assert(sym>=0 && sym<MAX_CX_SYMBOL_TAB);
         if (additionalArg==CX_HTML_SECOND_PASS) {
             if (rr.usage.base<UsageMaxOLUsages || rr.usage.base==UsageClassTreeDefinition) {
@@ -1290,7 +1290,7 @@ static void cxrfReference(int size,
     } else if (s_opt.taskRegime == RegimeEditServer) {
         fillPosition(&pos,file,line,coll);
         FILL_usageBits(&usageBits, usage, reqAcc, 0);
-        FILL_reference(&rr, usageBits, pos, NULL);
+        fill_reference(&rr, usageBits, pos, NULL);
         if (additionalArg == DEAD_CODE_DETECTION) {
             if (OL_VIEWABLE_REFS(&rr)) {
                 // restrict reported symbols to those defined in project

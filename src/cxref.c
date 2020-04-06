@@ -242,7 +242,7 @@ S_reference **addToRefList(S_reference **list,
     if (*place==NULL || SORTED_LIST_NEQ((*place),ppp)
         || s_opt.server_operation==OLO_EXTRACT) {
         CX_ALLOC(rr, S_reference);
-        FILL_reference(rr, *pusage, *pos, NULL);
+        fill_reference(rr, *pusage, *pos, NULL);
         LIST_CONS(rr,(*place));
     } else {
         assert(*place);
