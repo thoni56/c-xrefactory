@@ -1035,7 +1035,8 @@ int javaCreateClassFileItem( Symbol *memb) {
 void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     int cval, i, inum, innval, rinners, modifs;
     FILE *ff;
-    int upp, innNameInd, membFlag;
+    int upp, innNameInd;
+    bool membFlag;
     char *ccc, *ffin;
     char *super, *interf, *innerCName, *zipsep;
     Symbol *inners;
@@ -1155,12 +1156,12 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
                 else innerCName = constantPool[innNameInd].asciz;
                 //&fprintf(dumpOut,"class name %x='%s'\n",innerCName,innerCName);fflush(dumpOut);
                 inners = javaFQTypeSymbolDefinition(innerCName, inner);
-                membFlag = 0;
+                membFlag = false;
                 if (upp != 0) {
                     upper = constantPool[constantPool[upp].clas.nameIndex].asciz;
                     //&{fprintf(dumpOut,"upper %s encloses %s\n",upper, inner);fflush(dumpOut);}
                     if (strcmp(upper,thisClassName)==0) {
-                        membFlag = 1;
+                        membFlag = true;
                         /*&fprintf(dumpOut,"set as member class \n"); fflush(dumpOut);&*/
                     }
                 }

@@ -594,7 +594,7 @@ typedef struct extRecFindStr {
 
 typedef struct nestedSpec {
     struct symbol		*cl;
-    char			membFlag;		/* flag whether it is nested in class */
+    bool membFlag;		/* flag whether it is nested in class */
     short unsigned  accFlags;
 } S_nestedSpec;
 
@@ -758,10 +758,10 @@ typedef struct completions {
     char            idToProcess[MAX_FUN_NAME_SIZE];
     int				idToProcessLen;
     struct position	idToProcessPos;
-    int             fullMatchFlag;
-    int             isCompleteFlag;
-    int             noFocusOnCompletions;
-    int             abortFurtherCompletions;
+    bool fullMatchFlag;
+    bool isCompleteFlag;
+    bool noFocusOnCompletions;
+    bool abortFurtherCompletions;
     char            comPrefix[TMP_STRING_SIZE];
     int				maxLen;
     struct cline    a[MAX_COMPLETIONS];

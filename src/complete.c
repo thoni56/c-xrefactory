@@ -47,10 +47,10 @@ typedef struct completionFqtMapInfo {
 void initCompletions(S_completions *completions, int length, S_position position) {
     completions->idToProcessLen = length;
     completions->idToProcessPos = position;
-    completions->fullMatchFlag = 0;
-    completions->isCompleteFlag = 0;
-    completions->noFocusOnCompletions = 0;
-    completions->abortFurtherCompletions = 0;
+    completions->fullMatchFlag = false;
+    completions->isCompleteFlag = false;
+    completions->noFocusOnCompletions = false;
+    completions->abortFurtherCompletions = false;
     completions->maxLen = 0;
     completions->ai = 0;
 }
@@ -661,7 +661,7 @@ static int completionTestPrefix(S_completions *ci, char *s) {
     d = ci->idToProcess;
     while (*d == *s || (s_opt.completionCaseSensitive==0 && tolower(*d)==tolower(*s))) {
         if (*d == 0) {
-            ci->isCompleteFlag = 1;    /* complete, but maybe not unique*/
+            ci->isCompleteFlag = true;    /* complete, but maybe not unique*/
             return(0);
         }
         d++; s++;
@@ -697,7 +697,7 @@ static void completionInsertName(char *name, S_cline *compLine, int orderFlag,
     } else {
         assert(ci->ai < MAX_COMPLETIONS-1);
         if (reallyInsert(ci->a, &ci->ai, name/*+len*/, compLine, orderFlag)) {
-            ci->fullMatchFlag = 0;
+            ci->fullMatchFlag = false;
             l = strlen(name/*+len*/);
             if (l > ci->maxLen) ci->maxLen = l;
             computeComPrefix( ci->comPrefix, name);
@@ -729,7 +729,7 @@ static void searchName(char *name, S_cline *compLine, int orderFlag,
     //&compLine->s = name;
     name = compLine->s;
     if (ci->ai == 0) {
-        ci->fullMatchFlag = 0;
+        ci->fullMatchFlag = false;
         ci->comPrefix[0]=0;
         ci->a[ci->ai] = *compLine;
         ci->a[ci->ai].s = name;
@@ -738,7 +738,7 @@ static void searchName(char *name, S_cline *compLine, int orderFlag,
     } else {
         assert(ci->ai < MAX_COMPLETIONS-1);
         if (reallyInsert(ci->a, &ci->ai, name, compLine, 1)) {
-            ci->fullMatchFlag = 0;
+            ci->fullMatchFlag = false;
             l = strlen(name);
             if (l > ci->maxLen) ci->maxLen = l;
         }
@@ -1180,7 +1180,7 @@ void completeUpFunProfile(S_completions* c) {
 
         FILL_cline(&c->a[0], "    ", dd, TypeDefault, 0, 0, NULL, NULL);
         // assert(0 && "Comments indicate that COMPL_UP_FUN_PROFILE is not used but this indicates that it is!");
-        c->fullMatchFlag = 1;
+        c->fullMatchFlag = true;
         c->comPrefix[0]=0;
         c->ai++;
     }
@@ -1398,10 +1398,10 @@ void javaHintCompleteMethodParameters(S_completions *c) {
     } while (rr == RETURN_OK);
     if (c->ai != 0) {
         c->comPrefix[0]=0;
-        c->fullMatchFlag = 1;
-        c->noFocusOnCompletions = 1;
+        c->fullMatchFlag = true;
+        c->noFocusOnCompletions = true;
     }
-    if (s_opt.server_operation != OLO_SEARCH) s_completions.abortFurtherCompletions = 1;
+    if (s_opt.server_operation != OLO_SEARCH) s_completions.abortFurtherCompletions = true;
 }
 
 
@@ -1510,7 +1510,7 @@ static void completeFqtFromFileName(char *file, void *cfmpi) {
                 }
                 // reset common prefix and full match in order to always show window
                 c->comPrefix[0] = 0;
-                c->fullMatchFlag = 1;
+                c->fullMatchFlag = true;
             }
         }
     }

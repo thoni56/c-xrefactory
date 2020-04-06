@@ -1,9 +1,5 @@
 #include <cgreen/cgreen.h>
 
-#include "classFileReader.mock"
-#include "memory.mock"
-
-
 /* From globals.c */
 #include "filetab.h"
 
@@ -22,13 +18,15 @@ char *s_javaLangObjectLinkName="java/lang/Object";
 Symbol s_defaultVoidDefinition;
 
 /* Mocks: */
-#include "jsltypetab.mock"
-#include "commons.mock"
-#include "jsemact.mock"
-#include "semact.mock"
-#include "cxref.mock"
-#include "misc.mock"
 #include "cct.mock"
+#include "classFileReader.mock"
+#include "commons.mock"
+#include "cxref.mock"
+#include "jsemact.mock"
+#include "jsltypetab.mock"
+#include "memory.mock"
+#include "misc.mock"
+#include "semact.mock"
 
 
 Describe(JslSemAct);
