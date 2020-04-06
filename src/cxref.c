@@ -71,7 +71,7 @@ typedef struct referencesChangeData {
 
 
 void fill_olSymbolsMenu(S_olSymbolsMenu *olSymbolsMenu,
-                        struct symbolRefItem	s,
+                        struct symbolRefItem s,
                         char selected,
                         char visible,
                         unsigned ooBits,
@@ -129,34 +129,28 @@ static int olSymbolMenuLess(S_olSymbolsMenu *s1, S_olSymbolsMenu *s2) {
     return(olSymbolRefItemLess(&s1->s, &s2->s));
 }
 
-S_olSymbolsMenu *olCreateNewMenuItem(
-                                     S_symbolRefItem *sym, int vApplClass, int vFunCl, S_position *defpos, int defusage,
+S_olSymbolsMenu *olCreateNewMenuItem(S_symbolRefItem *symbol, int vApplClass, int vFunCl,
+                                     S_position *defpos, int defusage,
                                      int selected, int visible,
-                                     unsigned ooBits, int olusage, int vlevel
-                                      ) {
-    S_olSymbolsMenu *rr;
-    int nlen;
-    char *nn;
-    nlen = strlen(sym->name);
-    OLCX_ALLOCC(nn, nlen+1, char);
-    strcpy(nn, sym->name);
-    OLCX_ALLOC(rr, S_olSymbolsMenu);
-    FILLF_olSymbolsMenu(rr,
-                        // symbolRefItem.<fields>
-                        nn, cxFileHashNumber(nn),
-                        vApplClass, vFunCl,
-                        sym->b.symType, sym->b.storage, sym->b.scope,
-                        sym->b.accessFlags, sym->b.category,
-                        sym->b.htmlWasLn,
-                        NULL, NULL,
-                        // selected,visible,ooBits,olUsage,vlevel,refn,defRefn,defUsage
-                        selected, visible, ooBits, olusage, vlevel, 0, 0, defusage,
-                        // defpos.file,line,col
-                        defpos->file, defpos->line, defpos->col,
-                        // outOnLine, markers, next
-                        0, NULL, NULL);
+                                     unsigned ooBits, int olusage, int vlevel) {
+    S_olSymbolsMenu *symbolsMenu;
+    S_symbolRefItem refItem;
+    int nameLength;
+    char *allocatedNameCopy;
 
-    return(rr);
+    nameLength = strlen(symbol->name);
+    OLCX_ALLOCC(allocatedNameCopy, nameLength+1, char);
+    strcpy(allocatedNameCopy, symbol->name);
+
+    FILL_symbolRefItem(&refItem, allocatedNameCopy, cxFileHashNumber(allocatedNameCopy),
+                       vApplClass, vFunCl,
+                       symbol->b,
+                       NULL, NULL);
+
+    OLCX_ALLOC(symbolsMenu, S_olSymbolsMenu);
+    fill_olSymbolsMenu(symbolsMenu, refItem, selected, visible, ooBits, olusage,
+                       vlevel, 0, 0, defusage, *defpos, 0, NULL, NULL);
+    return symbolsMenu;
 }
 
 S_olSymbolsMenu *olAddBrowsedSymbol(S_symbolRefItem *sym, S_olSymbolsMenu **list,
