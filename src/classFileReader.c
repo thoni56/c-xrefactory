@@ -460,7 +460,7 @@ int zipIndexArchive(char *name) {
             }
             return(-1);
         }
-        FILL_CharacterBuffer(buffer, buffer->chars, buffer->chars, ff, 0, 0, 0, buffer->chars, 0, 0,INPUT_DIRECT,s_defaultZStream);
+        fillCharacterBuffer(buffer, buffer->chars, buffer->chars, ff, 0, 0, buffer->chars);
         assert(namelen+2 < MAX_FILE_NAME_SIZE);
         strcpy(s_zipArchiveTable[archiveIndex].fn, name);
         s_zipArchiveTable[archiveIndex].fn[namelen] = ZIP_SEPARATOR_CHAR;

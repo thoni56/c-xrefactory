@@ -2,20 +2,15 @@
 #include "../charbuf.h"
 #include <cgreen/mocks.h>
 
-void fill_CharacterBuffer(CharacterBuffer *characterBuffer,
-                          char *next,
-                          char *end,
-                          FILE *file,
-                          unsigned filePos,
-                          int fileNumber,
-                          int lineNum,
-                          char *lineBegin,
-                          int columnOffset,
-                          bool isAtEOF,
-                          InputMethod inputMethod,
-                          z_stream zipStream) {
+void fillCharacterBuffer(CharacterBuffer *characterBuffer,
+                         char *next,
+                         char *end,
+                         FILE *file,
+                         unsigned filePos,
+                         int fileNumber,
+                         char *lineBegin) {
     /* NOTE can't mock z_stream compound type */
-    mock(next, end, file, filePos, fileNumber, lineNum, lineBegin, columnOffset, isAtEOF, inputMethod);
+    mock(next, end, file, filePos, fileNumber, lineBegin);
 }
 
 void charBuffClose(struct CharacterBuffer *buffer) {

@@ -5,18 +5,13 @@
 #include "commons.h"            /* error() */
 
 
-void fill_CharacterBuffer(CharacterBuffer *characterBuffer,
-                          char *next,
-                          char *end,
-                          FILE *file,
-                          unsigned filePos,
-                          int fileNumber,
-                          int lineNum,
-                          char *lineBegin,
-                          int columnOffset,
-                          bool isAtEOF,
-                          InputMethod inputMethod,
-                          z_stream zipStream) {
+void fillCharacterBuffer(CharacterBuffer *characterBuffer,
+                         char *next,
+                         char *end,
+                         FILE *file,
+                         unsigned filePos,
+                         int fileNumber,
+                         char *lineBegin) {
     characterBuffer->next = next;
     characterBuffer->end = end;
     characterBuffer->file = file;
