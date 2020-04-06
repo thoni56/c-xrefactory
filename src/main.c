@@ -2819,7 +2819,7 @@ static int scheduleFileUsingTheMacro(void) {
     //& assert(rr);
     //& if (rr==0) return(s_noneFileIndex);
 
-    FILL_olSymbolsMenu(&mm, ddd, 1,1,0,UsageUsed,0,0,0,UsageNone,s_noPos,0, NULL, NULL);
+    fill_olSymbolsMenu(&mm, ddd, 1,1,0,UsageUsed,0,0,0,UsageNone,s_noPos,0, NULL, NULL);
     if (s_olcxCurrentUser==NULL || s_olcxCurrentUser->browserStack.top==NULL) {
         olcxSetCurrentUser(s_opt.user);
         olcxPushEmptyStackItem(&s_olcxCurrentUser->browserStack);

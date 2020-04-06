@@ -69,6 +69,36 @@ typedef struct referencesChangeData {
 
 /* *********************************************************************** */
 
+
+void fill_olSymbolsMenu(S_olSymbolsMenu *olSymbolsMenu,
+                        struct symbolRefItem	s,
+                        char selected,
+                        char visible,
+                        unsigned ooBits,
+                        char olUsage,
+                        short int vlevel,
+                        short int refn,
+                        short int defRefn,
+                        char defUsage,
+                        struct position defpos,
+                        int outOnLine,
+                        struct editorMarkerList *markers,	/* for refactory only */
+                        struct olSymbolsMenu *next) {
+    olSymbolsMenu->s = s;
+    olSymbolsMenu->selected = selected;
+    olSymbolsMenu->visible = visible;
+    olSymbolsMenu->ooBits = ooBits;
+    olSymbolsMenu->olUsage = olUsage;
+    olSymbolsMenu->vlevel = vlevel;
+    olSymbolsMenu->refn = refn;
+    olSymbolsMenu->defRefn = defRefn;
+    olSymbolsMenu->defUsage = defUsage;
+    olSymbolsMenu->defpos = defpos;
+    olSymbolsMenu->outOnLine = outOnLine;
+    olSymbolsMenu->markers = markers;
+    olSymbolsMenu->next= next;
+}
+
 int olcxReferenceInternalLessFunction(S_reference *r1, S_reference *r2) {
     return(SORTED_LIST_LESS(r1, (*r2)));
 }
@@ -129,14 +159,13 @@ S_olSymbolsMenu *olCreateNewMenuItem(
     return(rr);
 }
 
-S_olSymbolsMenu *olAddBrowsedSymbol(
-                                    S_symbolRefItem *sym, S_olSymbolsMenu **list,
+S_olSymbolsMenu *olAddBrowsedSymbol(S_symbolRefItem *sym, S_olSymbolsMenu **list,
                                     int selected, int visible, unsigned ooBits,
                                     int olusage, int vlevel,
                                     S_position *defpos, int defusage) {
     S_olSymbolsMenu     *rr, **place, ddd;
 
-    FILL_olSymbolsMenu(&ddd, *sym, 0,0,0, olusage, vlevel,0,0, UsageNone,s_noPos,0, NULL, NULL);
+    fill_olSymbolsMenu(&ddd, *sym, 0,0,0, olusage, vlevel,0,0, UsageNone,s_noPos,0, NULL, NULL);
     SORTED_LIST_PLACE3(place, S_olSymbolsMenu, (&ddd), list, olSymbolMenuLess);
     rr = *place;
     if (*place==NULL || olSymbolMenuLess(&ddd, *place)) {
@@ -2130,7 +2159,7 @@ static void olcxFindDefinitionAndGenGoto(S_symbolRefItem *sym) {
     // preserve poped items from browser first
     oldtop = olcxPushUserOnPhysicalTopOfStack();
     refs = s_olcxCurrentUser->browserStack.top;
-    FILL_olSymbolsMenu(&mmm, *sym, 1,1,0,UsageUsed,0,0,0,UsageNone,s_noPos,0, NULL, NULL);
+    fill_olSymbolsMenu(&mmm, *sym, 1,1,0,UsageUsed,0,0,0,UsageNone,s_noPos,0, NULL, NULL);
     //&oldrefs = *refs;
     refs->menuSym = &mmm;
     readOneAppropReferenceFile(sym->name, fullScanFunctionSequence);

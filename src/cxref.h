@@ -5,6 +5,20 @@
 #include "symbol.h"
 #include "olcxtab.h"
 
+extern void fill_olSymbolsMenu(S_olSymbolsMenu *olSymbolsMenu,
+                               struct symbolRefItem	s,
+                               char selected,
+                               char visible,
+                               unsigned ooBits,
+                               char olUsage,
+                               short int vlevel,
+                               short int refn,
+                               short int defRefn,
+                               char defUsage,
+                               struct position defpos,
+                               int outOnLine,
+                               struct editorMarkerList *markers,	/* for refactory only */
+                               struct olSymbolsMenu *next);
 extern int olcxReferenceInternalLessFunction(S_reference *r1, S_reference *r2);
 extern int olSymbolRefItemLess(S_symbolRefItem *s1, S_symbolRefItem *s2);
 extern void tagSearchCompactShortResults(void);

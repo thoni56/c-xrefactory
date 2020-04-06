@@ -1328,7 +1328,7 @@ static void htmlCreateGlobSymList(int i, void *off, void *ffn, void *genfi) {
                 || genFileIndex == cxFileHashNumber(p->name)) {
                 htmlGetReferencesMetrics( p, &refn, &defRefn, &defusage,&defpos);
                 CX_ALLOC(hh, S_olSymbolsMenu);
-                FILL_olSymbolsMenu(hh, *p,
+                fill_olSymbolsMenu(hh, *p,
                                    0, 0,                      // selected/visible
                                    DEFAULT_SELECTION_OO_BITS, // ooBits
                                    UsageUsed,
