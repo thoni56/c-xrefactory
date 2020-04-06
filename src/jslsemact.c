@@ -50,8 +50,8 @@ void fillJslStat(S_jslStat *jslStat, int pass, int sourceFileNumber, int languag
     jslStat->next = next;
 }
 
-static void fill_jslSymbolList(JslSymbolList *jslSymbolList, struct symbol *d, struct position pos,
-                               bool isSingleImportedFlag) {
+static void fillJslSymbolList(JslSymbolList *jslSymbolList, struct symbol *d,
+                               struct position pos, bool isSingleImportedFlag) {
     jslSymbolList->d = d;
     jslSymbolList->pos = pos;
     jslSymbolList->isSingleImportedFlag = isSingleImportedFlag;
@@ -63,7 +63,7 @@ static void jslCreateTypeSymbolInList(JslSymbolList *ss, char *name) {
 
     s = newSymbol(name, name, s_noPos);
     fillSymbolBits(&s->bits, ACC_DEFAULT, TypeStruct, StorageNone);
-    fill_jslSymbolList(ss, s, s_noPos, false);
+    fillJslSymbolList(ss, s, s_noPos, false);
 }
 
 Symbol *jslTypeSpecifier2(S_typeModifier *t) {
@@ -148,7 +148,7 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, S_idList *packid,
         if (packid!=NULL) importPos = &packid->id.p;
         else importPos = &s_noPos;
         XX_ALLOC(xss, JslSymbolList); // CF_ALLOC ???
-        fill_jslSymbolList(xss, smemb, *importPos, isSingleImportedFlag);
+        fillJslSymbolList(xss, smemb, *importPos, isSingleImportedFlag);
         mm = jslTypeTabIsMember(s_jsl->typeTab, xss, &ii, &memb);
         if (order == ORDER_PREPEND) {
             log_debug("[jsl] prepending class %s to jsltab", smemb->name);
