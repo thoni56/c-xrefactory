@@ -5,6 +5,11 @@
 S_javaStat *s_javaStat;
 S_javaStat s_initJavaStat;
 
+void fill_nestedSpec(S_nestedSpec *nestedSpec, struct symbol *cl,
+                     char membFlag, short unsigned  accFlags) {
+    mock(nestedSpec, cl, membFlag, accFlags);
+}
+
 void javaCheckForPrimaryStart(S_position *cpos, S_position *pp) {
   mock(cpos, pp);
 }

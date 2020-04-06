@@ -1168,7 +1168,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
                 //& inners->bits.accessFlags |= modifs;
                 //&fprintf(dumpOut,"modif? %x\n",modifs);fflush(dumpOut);
 
-                FILL_nestedSpec(& memb->u.s->nest[rinners], inners, membFlag, modifs);
+                fill_nestedSpec(& memb->u.s->nest[rinners], inners, membFlag, modifs);
                 assert(inners && inners->bits.symType==TypeStruct && inners->u.s);
                 cn = inners->u.s->classFile;
                 if (membFlag && ! (modifs & ACC_STATIC)) {
