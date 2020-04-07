@@ -215,7 +215,7 @@ void javaAddNestedClassesAsTypeDefs(Symbol *cc, S_idList *oclassname,
             nn = ss->nest[i].cl;
             assert(nn);
             //& XX_ALLOC(ll, S_idList);
-            fill_id(&ll.id, nn->name, cc, s_noPos,NULL);
+            fill_id(&ll.id, nn->name, cc, s_noPos);
             FILL_idList(&ll, ll.id, nn->name,TypeStruct,oclassname);
             javaTypeSymbolDefinition(&ll, accessFlags, TYPE_ADD_YES);
         }
@@ -2373,7 +2373,7 @@ S_typeModifier *javaConstructorInvocation(Symbol *clas,
     erfs = javaCrErfsForConstructorInvocation(clas, pos);
     if (erfs == NULL) return(&s_errorModifier);
     if (erfs->s.baseClass != erfs->s.currClass) return(&s_errorModifier);
-    fill_id(&name, clas->name, NULL, *pos, NULL);
+    fill_id(&name, clas->name, NULL, *pos);
     res = javaMethodInvocation(&erfs->s, erfs->memb, &name, args,CONSTRUCTOR_INVOCATION,&s_noPos);
     return(res);
 }
@@ -2592,7 +2592,7 @@ struct freeTrail * newClassDefinitionBegin(	S_id *name,
 //&		innerNamesCorrect = (strcmp(nn->cl->name, name->name)==0);
 //&		assert(innerNamesCorrect);
         dd = nn->cl;
-        fill_id(&idi,dd->linkName, NULL, name->p, NULL);
+        fill_id(&idi,dd->linkName, NULL, name->p);
         XX_ALLOC(p, S_idList);
         FILL_idList(p, idi, dd->linkName, TypeStruct, NULL);
         ddd = javaAddType(p, accessFlags, & name->p);

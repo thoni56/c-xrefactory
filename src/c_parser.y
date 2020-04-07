@@ -1423,7 +1423,7 @@ designator_list
 designator
     : '[' constant_expr ']'		{
         $$.d = StackMemAlloc(S_id);
-        fill_id($$.d, "", NULL, s_noPos, NULL);
+        fill_id($$.d, "", NULL, s_noPos);
     }
     | '.' str_rec_identifier	{
         $$.d = StackMemAlloc(S_id);
