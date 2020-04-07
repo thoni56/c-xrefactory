@@ -49,6 +49,7 @@
 #include "list.h"
 #include "strFill.h"
 #include "filedescriptor.h"
+#include "id.h"
 
 #include "log.h"
 
@@ -1422,7 +1423,7 @@ designator_list
 designator
     : '[' constant_expr ']'		{
         $$.d = StackMemAlloc(S_id);
-        FILL_id($$.d, "", NULL, s_noPos, NULL);
+        fill_id($$.d, "", NULL, s_noPos, NULL);
     }
     | '.' str_rec_identifier	{
         $$.d = StackMemAlloc(S_id);

@@ -9,7 +9,7 @@ SRCS = main.c globals.c misc.c semact.c commons.c generate.c \
 	   filetab.c macroargumenttable.c olcxtab.c editorbuffertab.c symboltable.c javafqttab.c \
 	   jsltypetab.c reftab.c memory.c utils.c charbuf.c hash.c symbol.c \
 	   c_parser.tab.c cexp_parser.tab.c java_parser.tab.c yacc_parser.tab.c \
-	   fileitem.c filedescriptor.c typemodifier.c position.c
+	   fileitem.c filedescriptor.c typemodifier.c position.c id.c
 
 OBJDIR = .objects
 OBJS = $(addprefix $(OBJDIR)/,${SRCS:.c=.o})

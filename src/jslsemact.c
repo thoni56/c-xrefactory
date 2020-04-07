@@ -484,7 +484,7 @@ void jslAddNestedClassesToJslTypeTab( Symbol *str, int order) {
     for(i=0; i<ss->nestedCount; i++) {
         log_trace("checking %s %s %d %d", ss->nest[i].cl->name, ss->nest[i].cl->linkName,ss->nest[i].membFlag, jslRecordAccessible(str, ss->nest[i].cl, ss->nest[i].accFlags));
         if (ss->nest[i].membFlag && jslRecordAccessible(str, ss->nest[i].cl, ss->nest[i].accFlags)) {
-            FILL_id(&ocid, str->linkName, NULL, s_noPos, NULL);
+            fill_id(&ocid, str->linkName, NULL, s_noPos, NULL);
             FILL_idList(&oclassid, ocid, str->linkName,
                              TypeStruct, NULL);
             log_trace("adding %s %s", ss->nest[i].cl->name, ss->nest[i].cl->linkName);

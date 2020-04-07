@@ -28,7 +28,7 @@ coverage: clean all
 symboltable_tests.so: $(OBJDIR)/symboltable_tests.o $(OBJDIR)/symboltable.o $(OBJDIR)/hash.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-jslsemact_tests.so: $(OBJDIR)/jslsemact_tests.o $(OBJDIR)/jslsemact.o $(OBJDIR)/symbol.o $(OBJDIR)/log.o
+jslsemact_tests.so: $(OBJDIR)/jslsemact_tests.o $(OBJDIR)/jslsemact.o $(OBJDIR)/symbol.o $(OBJDIR)/log.o $(OBJDIR)/id.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 olcxtab_tests.so: $(OBJDIR)/olcxtab_tests.o $(OBJDIR)/olcxtab.o $(OBJDIR)/hash.o
@@ -47,7 +47,7 @@ cxref_tests.so: $(OBJDIR)/cxref_tests.o $(OBJDIR)/cxref.o $(OBJDIR)/protocol.o $
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 
-# These includes the modules .c to be able to test static functions
+# These includes the modules .c to be able to test internal functions or macros
 LEX_DEPENDENCIES = log position
 lex_tests.so: $(OBJDIR)/lex_tests.o $(patsubst %,$(OBJDIR)/%.o,$(LEX_DEPENDENCIES))
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
@@ -57,7 +57,7 @@ CXFILE_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(CXFILE_DEPENDENCIES))
 cxfile_tests.so:$(OBJDIR)/cxfile_tests.o $(CXFILE_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-EXTRACT_DEPENDENCIES = protocol log position memory
+EXTRACT_DEPENDENCIES = protocol log position memory id
 EXTRACT_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(EXTRACT_DEPENDENCIES))
 extract_tests.so:$(OBJDIR)/extract_tests.o $(EXTRACT_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
