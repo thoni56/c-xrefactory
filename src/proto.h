@@ -813,18 +813,6 @@ typedef struct currentlyParsedStatics {
     struct symbol	*lastAssignementStruct;
 } S_currentlyParsedStatics;
 
-/* ************************** JAVAS *********************************** */
-
-/* java composed names */
-
-typedef struct idList {
-    struct id id;
-    char *fname;                /* fqt name for java */
-    enum type nameType;             /* type of name segment for java */
-    struct idList *next;
-} S_idList;
-
-
 /* ***************** unique counters  *********************** */
 
 typedef struct counters {
