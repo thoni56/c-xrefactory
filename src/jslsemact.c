@@ -140,7 +140,7 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, S_idList *packid,
     UNUSED mm;
 
     jslCreateTypeSymbolInList(&ss, ttt2);
-    fillf_idList(&dd2, ttt2,NULL,-1,0,0,ttt2,TypeStruct,packid);
+    fillf_idList(&dd2, ttt2, NULL, s_noPos, ttt2, TypeStruct, packid);
     javaCreateComposedName(NULL,&dd2,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
     smemb = javaFQTypeSymbolDefinition(ttt2, fqtName);
     //&fprintf(ccOut, "[jsl] jslTypeSymbolDefinition %s, %s, %s, %s\n", ttt2, fqtName, smemb->name, smemb->linkName);
@@ -175,7 +175,7 @@ static Symbol *jslTypeSymbolUsage(char *ttt2, S_idList *packid) {
         smemb = memb->d;
         return(smemb);
     }
-    fillf_idList(&dd2, ttt2,NULL,-1,0,0,ttt2,TypeStruct,packid);
+    fillf_idList(&dd2, ttt2, NULL, s_noPos, ttt2, TypeStruct, packid);
     javaCreateComposedName(NULL,&dd2,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
     smemb = javaFQTypeSymbolDefinition(ttt2, fqtName);
     return(smemb);
@@ -529,7 +529,7 @@ void jslNewClassDefinitionBegin(S_id *name,
             s_jsl->classStat->functionInnerCounter++;
             sprintf(tttn, "%d", s_jsl->classStat->functionInnerCounter);
             sprintf(ttt, "%s", inname->name);
-            fillf_idList(&mntmp, tttn, NULL, s_noPos.file, s_noPos.line, s_noPos.col, tttn, TypeStruct, s_jsl->classStat->className);
+            fillf_idList(&mntmp, tttn, NULL, s_noPos, tttn, TypeStruct, s_jsl->classStat->className);
             // this is a very special reason why to do TYPE_ADD_YES here,
             // because method nested class will not be added as class nested
             // at the end of this function
@@ -609,7 +609,7 @@ void jslNewClassDefinitionBegin(S_id *name,
 
     stackMemoryBlockStart();
     XX_ALLOC(ill, S_idList);
-    fillf_idList(ill, cc->name, inname->sd, inname->p.file, inname->p.line, inname->p.col, cc->name,TypeStruct, s_jsl->classStat->className);
+    fillf_idList(ill, cc->name, inname->sd, inname->p, cc->name, TypeStruct, s_jsl->classStat->className);
     nss = newJslClassStat(ill, cc, s_jsl->classStat->thisPackage,
                           s_jsl->classStat);
     s_jsl->classStat = nss;

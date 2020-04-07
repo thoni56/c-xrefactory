@@ -24,7 +24,7 @@ typedef struct idList {
 extern void fill_id(S_id *id, char *name, Symbol *symbol, S_position position);
 
 extern void fill_idList(S_idList *idList, S_id id, char *fname, Type nameType, S_idList *next);
-extern void fillf_idList(S_idList *idList, char *name, Symbol *symbol, int file, int line, int col,
+extern void fillf_idList(S_idList *idList, char *name, Symbol *symbol, S_position position,
                          char *fname, Type nameType, S_idList *next);
 
 #endif

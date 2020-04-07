@@ -1221,7 +1221,7 @@ static int javaNotFqtUsageCorrection(Symbol *sym, int usage) {
     strncpy(packname, sym->linkName, pplen);
     packname[pplen] = 0;
 
-    fillf_idList(&sname, packname, NULL, s_noPos.file, s_noPos.line, s_noPos.col, packname, TypeExpression, NULL);
+    fillf_idList(&sname, packname, NULL, s_noPos, packname, TypeExpression, NULL);
         rr = javaClassifySingleAmbigName(&sname,&localRfs,&str,&expr,&loref,
                                          CLASS_TO_EXPR, UsageNone, NO_CX_REFS);
     if (rr != TypePackage) {
@@ -1901,8 +1901,8 @@ void javaAddMapedTypeName(
     strncpy(ttt2, file, len2);
     assert(len2+1 < MAX_FILE_NAME_SIZE);
     ttt2[len2] = 0;
-    fillf_idList(&dd2, ttt2,NULL,-1,0,0,ttt2,TypeStruct,packid);
-    memb = javaTypeSymbolDefinition(&dd2,ACC_DEFAULT, TYPE_ADD_YES);
+    fillf_idList(&dd2, ttt2, NULL, s_noPos, ttt2, TypeStruct, packid);
+    memb = javaTypeSymbolDefinition(&dd2, ACC_DEFAULT, TYPE_ADD_YES);
     log_debug(":import type %s == %s", memb->name, memb->linkName);
 }
 
@@ -1917,7 +1917,7 @@ S_typeModifier *javaClassNameType(S_idList *typeName) {
 }
 
 S_typeModifier *javaNestedNewType(Symbol *sym, S_id *thenew,
-                                   S_idList *idl) {
+                                  S_idList *idl) {
     S_idList       d1,d2;
     S_typeModifier     *res;
     char                *id2;
@@ -1929,7 +1929,7 @@ S_typeModifier *javaNestedNewType(Symbol *sym, S_id *thenew,
         id = &idl->id;
         assert(sym && sym->linkName);
         id2 = sym->linkName;
-        fillf_idList(&d2, id2, sym, -1,0,0,id2, TypeStruct, NULL);
+        fillf_idList(&d2, id2, sym, s_noPos, id2, TypeStruct, NULL);
         fill_idList(&d1, *id, id->name, TypeStruct, &d2);
         javaClassifyNameToNestedType(&d1, sym, UsageUsed, &str, &rr);
         res = javaClassNameType(&d1);
