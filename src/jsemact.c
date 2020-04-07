@@ -8,7 +8,7 @@
 #include "yylex.h"
 #include "semact.h"
 #include "cxref.h"
-#include "classFileReader.h"
+#include "classfilereader.h"
 #include "filedescriptor.h"
 #include "html.h"
 #include "editor.h"

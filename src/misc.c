@@ -15,7 +15,7 @@
 #include "yylex.h"
 #include "cxfile.h"
 #include "cxref.h"
-#include "classFileReader.h"
+#include "classfilereader.h"
 #include "editor.h"
 #include "enumTxt.h"
 #include "strFill.h"

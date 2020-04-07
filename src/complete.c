@@ -10,7 +10,7 @@
 #include "jsemact.h"
 #include "cxref.h"
 #include "cxfile.h"
-#include "classFileReader.h"
+#include "classfilereader.h"
 #include "editor.h"
 #include "enumTxt.h"
 #include "reftab.h"

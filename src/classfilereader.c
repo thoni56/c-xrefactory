@@ -1,4 +1,4 @@
-#include "classFileReader.h"
+#include "classfilereader.h"
 
 #include "commons.h"
 #include "globals.h"

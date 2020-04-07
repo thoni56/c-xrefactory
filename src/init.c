@@ -7,7 +7,7 @@
 #include "misc.h"
 #include "enumTxt.h"
 #include "symbol.h"
-#include "classFileReader.h"
+#include "classfilereader.h"
 #include "strFill.h"
 
 

@@ -5,7 +5,7 @@
 #include "misc.h"
 #include "cxref.h"
 #include "html.h"
-#include "classFileReader.h"
+#include "classfilereader.h"
 #include "editor.h"
 #include "main.h"
 #include "strFill.h"
