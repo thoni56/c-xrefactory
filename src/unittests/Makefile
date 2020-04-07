@@ -13,7 +13,7 @@ all: $(UNITTESTS)
 	cgreen-runner $(CGREEN_OUTPUT) --suite unittests $^
 
 clean:
-	-rm $(OBJDIR)/*.o *.so
+	-rm $(OBJDIR)/*.[od] *.so
 
 cleaner: clean
 	-rm -rf $(OBJDIR)
