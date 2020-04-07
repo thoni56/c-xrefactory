@@ -39,5 +39,6 @@ extern void initTypeModifierAsStructUnionOrEnum(S_typeModifier *typeModifier, Ty
 extern void initTypeModifierAsFunction(S_typeModifier *typeModifier, Symbol *args, Symbol **overloadFunctionList, Symbol *typedefSymbol, S_typeModifier *next);
 
 extern void initTypeModifierAsPointer(S_typeModifier *typeModifier, S_typeModifier *next);
+extern S_typeModifierList *newTypeModifierList(S_typeModifier *d);
 
 #endif /* _TYPEMODIFIER_H_ */

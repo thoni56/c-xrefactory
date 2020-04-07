@@ -53,6 +53,7 @@
 #include "list.h"
 #include "strFill.h"
 #include "filedescriptor.h"
+#include "typemodifier.h"
 
 #include "log.h"
 #include "utils.h"
@@ -3375,8 +3376,7 @@ ArgumentList:
         Expression									{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    XX_ALLOC($$.d.t, S_typeModifierList);
-                    FILL_typeModifierList($$.d.t, $1.d.t, NULL);
+                    $$.d.t = newTypeModifierList($1.d.t);
                     if (s_cp.erfsForParamsComplet!=NULL) {
                         s_cp.erfsForParamsComplet->params = $$.d.t;
                     }
@@ -3392,8 +3392,7 @@ ArgumentList:
                 if (! SyntaxPassOnly()) {
                     S_typeModifierList *p;
                     $$.d = $1.d;
-                    XX_ALLOC(p, S_typeModifierList);
-                    FILL_typeModifierList(p, $3.d.t, NULL);
+                    p = newTypeModifierList($3.d.t);
                     LIST_APPEND(S_typeModifierList, $$.d.t, p);
                     if (s_cp.erfsForParamsComplet!=NULL) s_cp.erfsForParamsComplet->params = $$.d.t;
                 } else {

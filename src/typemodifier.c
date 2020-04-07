@@ -63,3 +63,11 @@ S_typeModifier *newStructTypeModifier(void) {
     typeModifier->u.t = NULL;
     return typeModifier;
 }
+
+S_typeModifierList *newTypeModifierList(S_typeModifier *d) {
+    S_typeModifierList *list;
+    XX_ALLOC(list, S_typeModifierList);
+    list->d = d;
+    list->next = NULL;
+    return list;
+}
