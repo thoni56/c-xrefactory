@@ -768,8 +768,7 @@ static void completeFun(Symbol *s, void *c) {
         if (s->u.mbody==NULL) {
             FILL_cline(&compLine, s->name, s, TypeUndefMacro,0, 0, NULL,NULL);
         } else {
-            FILL_cline(&compLine, s->name, s, s->bits.symType,0,
-                       s->u.mbody->argn, s->u.mbody->args,NULL);
+            FILL_cline(&compLine, s->name, s, s->bits.symType,0, s->u.mbody->argn, s->u.mbody->args,NULL);
         }
     }
     processName(s->name, &compLine, 1, cc->res);
@@ -813,8 +812,7 @@ static void completeFunctionOrMethodName(S_completions *c, int orderFlag, int vl
         strcpy(cn, cname);
         strcpy(cn+cnamelen, psuff);
     }
-    FILL_cline(&compLine, cn, r, TypeDefault,
-               vlevel,0,NULL,vFunCl);
+    FILL_cline(&compLine, cn, r, TypeDefault, vlevel,0,NULL,vFunCl);
     processName(cn, &compLine, orderFlag, (void*) c);
 }
 
@@ -873,8 +871,7 @@ static void processSpecialInheritedFullCompletion( S_completions *c, int orderFl
     XX_ALLOCC(fcc, strlen(tt)+1, char);
     strcpy(fcc,tt);
     //&fprintf(dumpOut,":adding %s\n",fcc);fflush(dumpOut);
-    FILL_cline(&compLine, fcc, r, TypeInheritedFullMethod,
-               vlevel,0,NULL,vFunCl);
+    FILL_cline(&compLine, fcc, r, TypeInheritedFullMethod, vlevel,0,NULL,vFunCl);
     processName(fcc, &compLine, orderFlag, (void*) c);
 }
 static int getAccCheckOption(void) {
@@ -957,15 +954,13 @@ static void completeRecordsNames(
                 }
                 c->comPrefix[0]=0;
             } else if (completionType == TypeSpecialConstructorCompletion) {
-                FILL_cline(&compLine, c->idToProcess, r, TypeDefault,
-                           vlevel,0,NULL,vFunCl);
+                FILL_cline(&compLine, c->idToProcess, r, TypeDefault, vlevel,0,NULL,vFunCl);
                 completionInsertName(c->idToProcess, &compLine, orderFlag, (void*) c);
             } else if (s_opt.completeParenthesis
                        && (r->bits.storage==StorageMethod || r->bits.storage==StorageConstructor)) {
                 completeFunctionOrMethodName(c, orderFlag, vlevel, r, vFunCl);
             } else {
-                FILL_cline(&compLine, cname, r, TypeDefault,
-                           vlevel,0,NULL,vFunCl);
+                FILL_cline(&compLine, cname, r, TypeDefault, vlevel,0,NULL,vFunCl);
                 processName(cname, &compLine, orderFlag, (void*) c);
             }
         }
@@ -1390,8 +1385,7 @@ void javaHintCompleteMethodParameters(S_completions *c) {
                 vFunCl = NULL;
             }
             vlevel = rfs->sti;
-            FILL_cline(&compLine, r->name, r, TypeDefault,
-                       vlevel,0,NULL,vFunCl);
+            FILL_cline(&compLine, r->name, r, TypeDefault, vlevel,0,NULL,vFunCl);
             processName(r->name, &compLine, 0, (void*) c);
         }
         rr = findStrRecordSym(rfs, mname, &r, CLASS_TO_METHOD, accCheck, visibCheck);
@@ -1770,8 +1764,7 @@ void javaCompleteFullInheritedMethodHeader(S_completions*c) {
     // completing main is sometimes very strange, especially
     // in case there is no inherited method from direct superclass
     maindecl = "public static void main(String args[])";
-    FILL_cline(&compLine, maindecl, NULL, TypeInheritedFullMethod,
-               0,0,NULL,NULL);
+    FILL_cline(&compLine, maindecl, NULL, TypeInheritedFullMethod, 0,0,NULL,NULL);
     processName(maindecl, &compLine, 0, (void*) c);
 #endif
 }
