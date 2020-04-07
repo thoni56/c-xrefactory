@@ -560,12 +560,7 @@ enum syntaxPassParsedImportantPosition {
 
 /* return value for IDENTIFIER token from yylex */
 
-typedef struct id {
-    char *name;
-    struct symbol *sd;
-    struct position	p;
-    struct id *next;
-} S_id;
+#include "id.h"
 
 typedef struct freeTrail {
     void             (*action)(void*);
