@@ -3,7 +3,7 @@
 
 SRCS = main.c globals.c misc.c semact.c commons.c generate.c \
 	   enumTxt.c complete.c cxref.c cxfile.c lex.c yylex.c options.c \
-	   caching.c jsemact.c classFileReader.c cct.c init.c \
+	   caching.c jsemact.c classfilereader.c cct.c init.c \
 	   editor.c refactory.c protocol.c log.c \
 	   html.c extract.c classh.c jslsemact.c \
 	   filetab.c macroargumenttable.c olcxtab.c editorbuffertab.c symboltable.c javafqttab.c \
