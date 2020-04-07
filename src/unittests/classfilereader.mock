@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../classFileReader.h"
+#include "../classfilereader.h"
 #include <cgreen/mocks.h>
 
 void javaHumanizeLinkName(char *inn, char *outn, int size) {

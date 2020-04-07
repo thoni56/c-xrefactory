@@ -19,7 +19,7 @@ Symbol s_defaultVoidDefinition;
 
 /* Mocks: */
 #include "cct.mock"
-#include "classFileReader.mock"
+#include "classfilereader.mock"
 #include "commons.mock"
 #include "cxref.mock"
 #include "jsemact.mock"
