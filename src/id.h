@@ -21,10 +21,10 @@ typedef struct idList {
 } S_idList;
 
 
-extern void fill_id(S_id *id, char *name, Symbol *symbol, S_position position);
+extern void fillId(S_id *id, char *name, Symbol *symbol, S_position position);
 
-extern void fill_idList(S_idList *idList, S_id id, char *fname, Type nameType, S_idList *next);
-extern void fillf_idList(S_idList *idList, char *name, Symbol *symbol, S_position position,
+extern void fillIdList(S_idList *idList, S_id id, char *fname, Type nameType, S_idList *next);
+extern void fillfIdList(S_idList *idList, char *name, Symbol *symbol, S_position position,
                          char *fname, Type nameType, S_idList *next);
 
 #endif

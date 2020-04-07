@@ -3663,7 +3663,7 @@ case 252:
 #line 1408 "c_parser.y"
 {
         yyval.ast_idList.d = StackMemAlloc(S_idList);
-        fill_idList(yyval.ast_idList.d, *yyvsp[-1].ast_id.d, yyvsp[-1].ast_id.d->name, TypeDefault, NULL);
+        fillIdList(yyval.ast_idList.d, *yyvsp[-1].ast_id.d, yyvsp[-1].ast_id.d->name, TypeDefault, NULL);
     }
 break;
 case 253:
@@ -3682,7 +3682,7 @@ case 255:
 #line 1424 "c_parser.y"
 {
         yyval.ast_id.d = StackMemAlloc(S_id);
-        fill_id(yyval.ast_id.d, "", NULL, s_noPos);
+        fillId(yyval.ast_id.d, "", NULL, s_noPos);
     }
 break;
 case 256:

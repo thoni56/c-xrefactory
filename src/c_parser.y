@@ -1407,7 +1407,7 @@ designation_opt:				{
     }
     | designator_list '='		{
         $$.d = StackMemAlloc(S_idList);
-        fill_idList($$.d, *$1.d, $1.d->name, TypeDefault, NULL);
+        fillIdList($$.d, *$1.d, $1.d->name, TypeDefault, NULL);
     }
     ;
 
@@ -1423,7 +1423,7 @@ designator_list
 designator
     : '[' constant_expr ']'		{
         $$.d = StackMemAlloc(S_id);
-        fill_id($$.d, "", NULL, s_noPos);
+        fillId($$.d, "", NULL, s_noPos);
     }
     | '.' str_rec_identifier	{
         $$.d = StackMemAlloc(S_id);

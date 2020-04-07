@@ -64,7 +64,7 @@ void genInternalLabelReference(int counter, int usage) {
     snprintf(labelName, TMP_STRING_SIZE, "%%L%d", counter);
 
     position = (S_position){.file = cFile.lexBuffer.buffer.fileNumber, .line = 0, .col = 0};
-    fill_id(&labelId, labelName, NULL, position);
+    fillId(&labelId, labelName, NULL, position);
 
     if (usage != UsageDefined)
         labelId.p.line++;
