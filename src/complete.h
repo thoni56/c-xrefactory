@@ -9,6 +9,9 @@ typedef struct completionFunTab {
 } S_completionFunTab;
 
 
+extern void fill_cline(S_cline *cline, char *string, Symbol *symbol, short int symbolType,
+                       short int virtualLevel, short int margn, char **margs,
+                       Symbol *vFunClass);
 extern void initCompletions(S_completions *completions, int length, S_position position);
 extern void processName(char *name, S_cline *t, int orderFlag, void *c);
 extern void completeForSpecial1(S_completions *c);

@@ -55,6 +55,17 @@ void initCompletions(S_completions *completions, int length, S_position position
     completions->ai = 0;
 }
 
+void fill_cline(S_cline *cline, char *string, Symbol *symbol, short int symbolType,
+                short int virtualLevel, short int margn, char **margs, Symbol *vFunClass) {
+    cline->s = string;
+    cline->t = symbol;
+    cline->symType = symbolType;
+    cline->virtLevel = virtualLevel;
+    cline->margn = margn;
+    cline->margs = margs;
+    cline->vFunClass = vFunClass;                  \
+}
+
 static void fillCompletionSymInfo(S_completionSymInfo *completionSymInfo, S_completions *completions,
                                   unsigned symType) {
     completionSymInfo->res = completions;
@@ -601,7 +612,7 @@ static int completionOrderCmp(S_cline *c1, S_cline *c2) {
     }
 }
 
-static int reallyInsert( S_cline *a,
+static int reallyInsert(S_cline *a,
                         int *aip,
                         char *s,
                         S_cline *t,
@@ -763,12 +774,12 @@ static void completeFun(Symbol *s, void *c) {
     if (s->bits.symType != cc->symType) return;
     /*&fprintf(dumpOut,"testing %s\n",s->linkName);fflush(dumpOut);&*/
     if (s->bits.symType != TypeMacro) {
-        FILL_cline(&compLine, s->name, s, s->bits.symType,0, 0, NULL,NULL);
+        fill_cline(&compLine, s->name, s, s->bits.symType,0, 0, NULL,NULL);
     } else {
         if (s->u.mbody==NULL) {
-            FILL_cline(&compLine, s->name, s, TypeUndefMacro,0, 0, NULL,NULL);
+            fill_cline(&compLine, s->name, s, TypeUndefMacro,0, 0, NULL,NULL);
         } else {
-            FILL_cline(&compLine, s->name, s, s->bits.symType,0, s->u.mbody->argn, s->u.mbody->args,NULL);
+            fill_cline(&compLine, s->name, s, s->bits.symType,0, s->u.mbody->argn, s->u.mbody->args,NULL);
         }
     }
     processName(s->name, &compLine, 1, cc->res);
@@ -812,7 +823,7 @@ static void completeFunctionOrMethodName(S_completions *c, int orderFlag, int vl
         strcpy(cn, cname);
         strcpy(cn+cnamelen, psuff);
     }
-    FILL_cline(&compLine, cn, r, TypeDefault, vlevel,0,NULL,vFunCl);
+    fill_cline(&compLine, cn, r, TypeDefault, vlevel,0,NULL,vFunCl);
     processName(cn, &compLine, orderFlag, (void*) c);
 }
 
@@ -831,7 +842,7 @@ static void completeSymFun(Symbol *s, void *c) {
         if (s->bits.symType == TypeDefault && s->u.type!=NULL && s->u.type->kind == TypeFunction) {
             completeFunctionOrMethodName(cc->res, 1, 0, s, NULL);
         } else {
-            FILL_cline(&compLine, completionName, s, s->bits.symType,0, 0, NULL,NULL);
+            fill_cline(&compLine, completionName, s, s->bits.symType,0, 0, NULL,NULL);
             processName(completionName, &compLine, 1, cc->res);
         }
     }
@@ -871,7 +882,7 @@ static void processSpecialInheritedFullCompletion( S_completions *c, int orderFl
     XX_ALLOCC(fcc, strlen(tt)+1, char);
     strcpy(fcc,tt);
     //&fprintf(dumpOut,":adding %s\n",fcc);fflush(dumpOut);
-    FILL_cline(&compLine, fcc, r, TypeInheritedFullMethod, vlevel,0,NULL,vFunCl);
+    fill_cline(&compLine, fcc, r, TypeInheritedFullMethod, vlevel,0,NULL,vFunCl);
     processName(fcc, &compLine, orderFlag, (void*) c);
 }
 static int getAccCheckOption(void) {
@@ -954,13 +965,13 @@ static void completeRecordsNames(
                 }
                 c->comPrefix[0]=0;
             } else if (completionType == TypeSpecialConstructorCompletion) {
-                FILL_cline(&compLine, c->idToProcess, r, TypeDefault, vlevel,0,NULL,vFunCl);
+                fill_cline(&compLine, c->idToProcess, r, TypeDefault, vlevel,0,NULL,vFunCl);
                 completionInsertName(c->idToProcess, &compLine, orderFlag, (void*) c);
             } else if (s_opt.completeParenthesis
                        && (r->bits.storage==StorageMethod || r->bits.storage==StorageConstructor)) {
                 completeFunctionOrMethodName(c, orderFlag, vlevel, r, vFunCl);
             } else {
-                FILL_cline(&compLine, cname, r, TypeDefault, vlevel,0,NULL,vFunCl);
+                fill_cline(&compLine, cname, r, TypeDefault, vlevel,0,NULL,vFunCl);
                 processName(cname, &compLine, orderFlag, (void*) c);
             }
         }
@@ -1145,7 +1156,7 @@ void completeForSpecial1(S_completions* c) {
     Symbol            *sym;
     if (isForCompletionSymbol(c,&s_forCompletionType,&sym,&rec)) {
         sprintf(ss,"%s!=NULL; ", sym->name);
-        FILL_cline(&compLine,ss,NULL,TypeSpecialComplet,0,0,NULL,NULL);
+        fill_cline(&compLine,ss,NULL,TypeSpecialComplet,0,0,NULL,NULL);
         completeName(ss, &compLine, 0, c);
     }
 }
@@ -1158,7 +1169,7 @@ void completeForSpecial2(S_completions* c) {
     if (isForCompletionSymbol(c, &s_forCompletionType,&sym,&rec)) {
         if (rec!=NULL) {
             sprintf(ss,"%s=%s->%s) {", sym->name, sym->name, rec);
-            FILL_cline(&compLine,ss,NULL,TypeSpecialComplet,0,0,NULL,NULL);
+            fill_cline(&compLine,ss,NULL,TypeSpecialComplet,0,0,NULL,NULL);
             completeName(ss, &compLine, 0, c);
         }
     }
@@ -1173,7 +1184,7 @@ void completeUpFunProfile(S_completions* c) {
         ) {
         dd = newSymbolAsType("    ", "    ", s_noPos, s_upLevelFunctionCompletionType);
 
-        FILL_cline(&c->a[0], "    ", dd, TypeDefault, 0, 0, NULL, NULL);
+        fill_cline(&c->a[0], "    ", dd, TypeDefault, 0, 0, NULL, NULL);
         // assert(0 && "Comments indicate that COMPL_UP_FUN_PROFILE is not used but this indicates that it is!");
         c->fullMatchFlag = true;
         c->comPrefix[0]=0;
@@ -1210,21 +1221,19 @@ static void completeJavaConstructors(Symbol *s, void *c) {
     completeConstructorsFromFile((S_completions *)c, s->linkName);
 }
 
-static void javaPackageNameCompletion(
-                                      char            *fname,
+static void javaPackageNameCompletion(char            *fname,
                                       char            *path,
                                       char            *pack,
                                       S_completions   *c,
                                       void            *idp,
-                                      int             *pstorage
-                                      ) {
+                                      int             *pstorage) {
     S_cline compLine;
     char *cname;
 
     if (strchr(fname,'.')!=NULL) return;        /* not very proper */
     XX_ALLOCC(cname, strlen(fname)+1, char);
     strcpy(cname, fname);
-    FILL_cline(&compLine, cname, NULL, TypePackage,0, 0 , NULL,NULL);
+    fill_cline(&compLine, cname, NULL, TypePackage,0, 0 , NULL,NULL);
     processName(cname, &compLine, 1, (void*) c);
 }
 
@@ -1267,7 +1276,7 @@ static void javaTypeNameCompletion(
     XX_ALLOCC(cname, len+1, char);
     strncpy(cname, fname, len);
     cname[len]=0;
-    FILL_cline(&compLine, cname, memb, complType,0, 0 , NULL,NULL);
+    fill_cline(&compLine, cname, memb, complType,0, 0 , NULL,NULL);
     processName(cname, &compLine, 1, (void*) c);
 }
 
@@ -1290,7 +1299,7 @@ static void javaCompleteNestedClasses(  S_completions *c,
                 memb = str->u.s->nest[i].cl;
                 assert(memb);
                 memb->bits.accessFlags |= str->u.s->nest[i].accFlags;  // hack!!!
-                FILL_cline(&compLine, memb->name, memb, TypeStruct,0, 0 , NULL,NULL);
+                fill_cline(&compLine, memb->name, memb, TypeStruct,0, 0 , NULL,NULL);
                 processName(memb->name, &compLine, 1, (void*) c);
                 if (storage == StorageConstructor) {
                     javaLoadClassSymbolsFromFile(memb);
@@ -1385,7 +1394,7 @@ void javaHintCompleteMethodParameters(S_completions *c) {
                 vFunCl = NULL;
             }
             vlevel = rfs->sti;
-            FILL_cline(&compLine, r->name, r, TypeDefault, vlevel,0,NULL,vFunCl);
+            fill_cline(&compLine, r->name, r, TypeDefault, vlevel,0,NULL,vFunCl);
             processName(r->name, &compLine, 0, (void*) c);
         }
         rr = findStrRecordSym(rfs, mname, &r, CLASS_TO_METHOD, accCheck, visibCheck);
@@ -1416,7 +1425,7 @@ void javaCompleteThisPackageName(S_completions *c) {
     cc = lastOccurenceInString(cname, '.');
     if (cc==NULL) return;
     *cc++ = ';'; *cc = 0;
-    FILL_cline(&compLine,cname,NULL,TypeSpecialComplet,0,0,NULL,NULL);
+    fill_cline(&compLine,cname,NULL,TypeSpecialComplet,0,0,NULL,NULL);
     completeName(cname, &compLine, 0, c);
 }
 
@@ -1431,7 +1440,7 @@ static void javaCompleteThisClassDefinitionName(S_completions*c) {
     cc = lastOccurenceInString(cname, '.');
     if (cc==NULL) return;
     cc++;
-    FILL_cline(&compLine,cc,NULL,TypeSpecialComplet,0,0,NULL,NULL);
+    fill_cline(&compLine,cc,NULL,TypeSpecialComplet,0,0,NULL,NULL);
     completeName(cc, &compLine, 0, c);
 }
 
@@ -1496,7 +1505,7 @@ static void completeFqtFromFileName(char *file, void *cfmpi) {
             // do not complete names not containing dot (== not fqt)
             if (sname!=NULL) {
                 sname++;
-                FILL_cline(&compLine,ss,memb,TypeNonImportedClass,0,0,NULL,NULL);
+                fill_cline(&compLine,ss,memb,TypeNonImportedClass,0,0,NULL,NULL);
                 if (fmi->completionType == FQT_COMPLETE_ALSO_ON_PACKAGE) {
                     processName(ss, &compLine, 1, c);
                 } else {
@@ -1623,11 +1632,11 @@ void javaHintVariableName(S_completions*c) {
     sprintf(ss, "%s = null;", name);
     XX_ALLOCC(affect2, strlen(ss)+1, char);
     strcpy(affect2, ss);
-    FILL_cline(&compLine, affect1, NULL, TypeSpecialComplet,0,0,NULL,NULL);
+    fill_cline(&compLine, affect1, NULL, TypeSpecialComplet,0,0,NULL,NULL);
     processName(affect1, &compLine, 0, c);
-    FILL_cline(&compLine, affect2, NULL, TypeSpecialComplet,0,0,NULL,NULL);
+    fill_cline(&compLine, affect2, NULL, TypeSpecialComplet,0,0,NULL,NULL);
     processName(affect2, &compLine, 0, c);
-    FILL_cline(&compLine, name, NULL, TypeSpecialComplet,0,0,NULL,NULL);
+    fill_cline(&compLine, name, NULL, TypeSpecialComplet,0,0,NULL,NULL);
     processName(name, &compLine, 0, c);
     c->comPrefix[0] = 0;
 
@@ -1648,7 +1657,7 @@ void javaCompleteHintForConstructSingleName(S_completions *c) {
         // O.K. wizard completion
         if (s_cps.lastAssignementStruct!=NULL) {
             name = s_cps.lastAssignementStruct->name;
-            FILL_cline(&compLine, name, NULL, TypeSpecialComplet,0,0,NULL,NULL);
+            fill_cline(&compLine, name, NULL, TypeSpecialComplet,0,0,NULL,NULL);
             processName(name, &compLine, 0, c);                 }
     }
 }
@@ -1764,7 +1773,7 @@ void javaCompleteFullInheritedMethodHeader(S_completions*c) {
     // completing main is sometimes very strange, especially
     // in case there is no inherited method from direct superclass
     maindecl = "public static void main(String args[])";
-    FILL_cline(&compLine, maindecl, NULL, TypeInheritedFullMethod, 0,0,NULL,NULL);
+    fill_cline(&compLine, maindecl, NULL, TypeInheritedFullMethod, 0,0,NULL,NULL);
     processName(maindecl, &compLine, 0, (void*) c);
 #endif
 }
@@ -1784,7 +1793,7 @@ static void completeFromXrefFun(S_symbolRefItem *s, void *c) {
     assert(s && cc);
     if (s->b.symType != cc->symType) return;
     /*&fprintf(dumpOut,"testing %s\n",s->name);fflush(dumpOut);&*/
-    FILL_cline(&compLine, s->name, NULL, s->b.symType,0, 0, NULL,NULL);
+    fill_cline(&compLine, s->name, NULL, s->b.symType,0, 0, NULL,NULL);
     processName(s->name, &compLine, 1, cc->res);
 }
 

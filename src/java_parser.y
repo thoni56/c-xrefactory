@@ -4458,10 +4458,10 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
              yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
             if (s_tokenName[tok]!= NULL) {
                 if (isalpha(*s_tokenName[tok]) || *s_tokenName[tok]=='_') {
-                    FILL_cline(&compLine, s_tokenName[tok], NULL, TypeKeyword,0, 0, NULL,NULL);
+                    fill_cline(&compLine, s_tokenName[tok], NULL, TypeKeyword,0, 0, NULL,NULL);
                     processName(s_tokenName[tok], &compLine, 0, &s_completions);
                 } else {
-                    /*& FILL_cline(&compLine, s_tokenName[tok], NULL, TypeToken,0, 0, NULL,NULL); */
+                    /*& fill_cline(&compLine, s_tokenName[tok], NULL, TypeToken,0, 0, NULL,NULL); */
                 }
             }
         }
