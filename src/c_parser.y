@@ -1407,7 +1407,7 @@ designation_opt:				{
     }
     | designator_list '='		{
         $$.d = StackMemAlloc(S_idList);
-        FILL_idList($$.d, *$1.d, $1.d->name, TypeDefault, NULL);
+        fill_idList($$.d, *$1.d, $1.d->name, TypeDefault, NULL);
     }
     ;
 

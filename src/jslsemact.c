@@ -485,8 +485,7 @@ void jslAddNestedClassesToJslTypeTab( Symbol *str, int order) {
         log_trace("checking %s %s %d %d", ss->nest[i].cl->name, ss->nest[i].cl->linkName,ss->nest[i].membFlag, jslRecordAccessible(str, ss->nest[i].cl, ss->nest[i].accFlags));
         if (ss->nest[i].membFlag && jslRecordAccessible(str, ss->nest[i].cl, ss->nest[i].accFlags)) {
             fill_id(&ocid, str->linkName, NULL, s_noPos);
-            FILL_idList(&oclassid, ocid, str->linkName,
-                             TypeStruct, NULL);
+            fill_idList(&oclassid, ocid, str->linkName, TypeStruct, NULL);
             log_trace("adding %s %s", ss->nest[i].cl->name, ss->nest[i].cl->linkName);
             jslTypeSymbolDefinition(ss->nest[i].cl->name, &oclassid,
                                     TYPE_ADD_YES, order, false);
@@ -658,7 +657,7 @@ void jslNewAnonClassDefinitionBegin(S_id *interfName) {
     S_idList   ll;
     Symbol        *interf,*str;
     //& XX_ALLOC(ll, S_idList);
-    FILL_idList(&ll, *interfName, interfName->name, TypeDefault, NULL);
+    fill_idList(&ll, *interfName, interfName->name, TypeDefault, NULL);
     jslClassifyAmbiguousTypeName(&ll, &str);
     interf = jslTypeNameDefinition(&ll);
     jslNewClassDefinitionBegin(&s_javaAnonymousClassName, ACC_DEFAULT,

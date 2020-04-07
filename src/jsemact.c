@@ -216,7 +216,7 @@ void javaAddNestedClassesAsTypeDefs(Symbol *cc, S_idList *oclassname,
             assert(nn);
             //& XX_ALLOC(ll, S_idList);
             fill_id(&ll.id, nn->name, cc, s_noPos);
-            FILL_idList(&ll, ll.id, nn->name,TypeStruct,oclassname);
+            fill_idList(&ll, ll.id, nn->name,TypeStruct,oclassname);
             javaTypeSymbolDefinition(&ll, accessFlags, TYPE_ADD_YES);
         }
     }
@@ -1930,7 +1930,7 @@ S_typeModifier *javaNestedNewType(Symbol *sym, S_id *thenew,
         assert(sym && sym->linkName);
         id2 = sym->linkName;
         fillf_idList(&d2, id2, sym, -1,0,0,id2, TypeStruct, NULL);
-        FILL_idList(&d1, *id, id->name, TypeStruct, &d2);
+        fill_idList(&d1, *id, id->name, TypeStruct, &d2);
         javaClassifyNameToNestedType(&d1, sym, UsageUsed, &str, &rr);
         res = javaClassNameType(&d1);
     } else {
@@ -2592,7 +2592,7 @@ struct freeTrail * newClassDefinitionBegin(	S_id *name,
         dd = nn->cl;
         fill_id(&idi,dd->linkName, NULL, name->p);
         XX_ALLOC(p, S_idList);
-        FILL_idList(p, idi, dd->linkName, TypeStruct, NULL);
+        fill_idList(p, idi, dd->linkName, TypeStruct, NULL);
         ddd = javaAddType(p, accessFlags, & name->p);
         assert(dd==ddd);
         res = s_topBlock->trail;
@@ -2600,7 +2600,7 @@ struct freeTrail * newClassDefinitionBegin(	S_id *name,
     } else {
         /* probably base class */
         XX_ALLOC(p,S_idList);
-        FILL_idList(p,*name,name->name,TypeStruct,s_javaStat->className);
+        fill_idList(p,*name,name->name,TypeStruct,s_javaStat->className);
         dd = javaAddType(p, accessFlags, & name->p);
         res = s_topBlock->trail;
         assert(dd->bits.symType == TypeStruct);
@@ -2622,7 +2622,7 @@ struct freeTrail *newAnonClassDefinitionBegin(S_id *interfName) {
     S_idList	*ll;
     Symbol		*interf, *str;
     XX_ALLOC(ll, S_idList);
-    FILL_idList(ll, *interfName, interfName->name, TypeDefault, NULL);
+    fill_idList(ll, *interfName, interfName->name, TypeDefault, NULL);
     javaClassifyToTypeName(ll,UsageUsed,&str, USELESS_FQT_REFS_ALLOWED);
     interf = javaTypeNameDefinition(ll);
     res = newClassDefinitionBegin(&s_javaAnonymousClassName, ACC_DEFAULT,

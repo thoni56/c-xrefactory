@@ -768,7 +768,7 @@ Name:
 SimpleName:
         IDENTIFIER				{
             $$.d = StackMemAlloc(S_idList);
-            FILL_idList($$.d, *$1.d, $1.d->name, TypeDefault, NULL);
+            fill_idList($$.d, *$1.d, $1.d->name, TypeDefault, NULL);
             PropagateBornsIfRegularSyntaxPass($$, $1, $1);
         }
     ;
@@ -776,7 +776,7 @@ SimpleName:
 QualifiedName:
         Name '.' IDENTIFIER		{
             $$.d = StackMemAlloc(S_idList);
-            FILL_idList($$.d, *$3.d, $3.d->name, TypeDefault, $1.d);
+            fill_idList($$.d, *$3.d, $3.d->name, TypeDefault, $1.d);
             PropagateBornsIfRegularSyntaxPass($$, $1, $3);
         }
     ;

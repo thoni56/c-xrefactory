@@ -3237,7 +3237,7 @@ case 47:
 #line 769 "java_parser.y"
 {
             yyval.ast_idList.d = StackMemAlloc(S_idList);
-            FILL_idList(yyval.ast_idList.d, *yyvsp[0].ast_id.d, yyvsp[0].ast_id.d->name, TypeDefault, NULL);
+            fill_idList(yyval.ast_idList.d, *yyvsp[0].ast_id.d, yyvsp[0].ast_id.d->name, TypeDefault, NULL);
             PropagateBornsIfRegularSyntaxPass(yyval.ast_idList, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
@@ -3245,7 +3245,7 @@ case 48:
 #line 777 "java_parser.y"
 {
             yyval.ast_idList.d = StackMemAlloc(S_idList);
-            FILL_idList(yyval.ast_idList.d, *yyvsp[0].ast_id.d, yyvsp[0].ast_id.d->name, TypeDefault, yyvsp[-2].ast_idList.d);
+            fill_idList(yyval.ast_idList.d, *yyvsp[0].ast_id.d, yyvsp[0].ast_id.d->name, TypeDefault, yyvsp[-2].ast_idList.d);
             PropagateBornsIfRegularSyntaxPass(yyval.ast_idList, yyvsp[-2].ast_idList, yyvsp[0].ast_id);
         }
 break;
