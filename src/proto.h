@@ -356,9 +356,9 @@ enum editorUndoOperations {
 };
 
 enum editors {
-    ED_NONE,
-    ED_EMACS,
-    ED_JEDIT,
+    EDITOR_UNKNOWN,
+    EDITOR_EMACS,
+    EDITOR_JEDIT,
 };
 
 enum memories {

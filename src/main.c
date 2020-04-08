@@ -572,14 +572,14 @@ static int processEOption(int *ii, int argc, char **argv) {
     }
     else if (strcmp(argv[i],"-enum_name")==0) s_opt.enum_name = 1;
     else if (strcmp(argv[i],"-editor=emacs")==0) {
-        s_opt.editor = ED_EMACS;
+        s_opt.editor = EDITOR_EMACS;
     }
     else if (strcmp(argv[i],"-editor=jedit")==0) {
-        s_opt.editor = ED_JEDIT;
+        s_opt.editor = EDITOR_JEDIT;
     }
     else if (strcmp(argv[i],"-emacs")==0) {
         // obsolete
-        s_opt.editor = ED_EMACS;
+        s_opt.editor = EDITOR_EMACS;
     }
     else if (strncmp(argv[i],"-extractAddrParPrefix=",22)==0) {
         sprintf(ttt, "*%s", argv[i]+22);

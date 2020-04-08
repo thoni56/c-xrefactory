@@ -706,7 +706,7 @@ static void olGetAvailableRefactorings(void) {
         count += (s_availableRefactorings[i].available);
     }
     if (count==0) s_availableRefactorings[PPC_AVR_SET_MOVE_TARGET].available = true;
-    if (s_opt.editor == ED_EMACS) {
+    if (s_opt.editor == EDITOR_EMACS) {
         s_availableRefactorings[PPC_AVR_UNDO].available = true;
 #if ZERO
         if (LANGUAGE(LAN_JAVA)) {
