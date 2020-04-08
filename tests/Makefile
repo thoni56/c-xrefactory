@@ -48,7 +48,6 @@ quick: autodiscovered_tests
 	@$(MAKE) -C partial_jexercise
 	@$(MAKE) -C edit_server_test_example
 	@$(MAKE) -C complete
-	@$(MAKE) -C rename
 	@$(MAKE) -C simple_extract
 	@$(MAKE) -C c_extract_with_argument
 	@$(MAKE) -C add_parameter
