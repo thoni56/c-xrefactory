@@ -181,7 +181,7 @@ test: debug
 	$(MAKE) -C ../tests quick
 
 
-unit: $(SRCS) debug
+unit: debug	  # No actual dependecy, but nice to know that it compiles
 	make -C unittests debug
 
 coverage: COVERAGE=--coverage
