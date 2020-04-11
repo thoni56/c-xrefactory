@@ -51,6 +51,7 @@ newSymbol<field>() for each of the necessary fields that are actually used.
 ** DOING Create AST using parsing
 * DOING Start using log.c functions to log to a separate log file
 * TODO Refactor int2StringTabs, should not have Init in them
+* TODO Initialize memory's injected error functions in main.c
 * TODO Cleanup and separate commons, misc and make them independent utility modules
 * TODO Investigate to remove S_classTreeData
 * TODO Use Yacc's -p for "symbol_prefix" instead of the #defines?
