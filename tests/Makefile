@@ -35,7 +35,6 @@ $(foreach _t,$(TESTS),$(eval $(call RULE, $(_t))))
 #--------------------------------------------------------------------
 
 quick: autodiscovered_tests
-	@$(MAKE) -C generate_str_fill
 
 slow: autodiscovered_tests
 	@$(MAKE) -C emacs_c_exercise
