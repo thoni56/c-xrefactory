@@ -177,8 +177,8 @@ cleaner: clean
 
 ########################################################################
 test: debug
-	@echo "Only running quick tests for now - 'cd ..; make test' to run all"
-	$(MAKE) -C ../tests quick
+	@echo "Only running quick tests for now - 'cd ..; make all' to run all"
+	$(MAKE) -C ../tests -j1 quick
 
 
 unit: debug	  # No actual dependecy, but nice to know that it compiles
