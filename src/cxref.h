@@ -6,18 +6,13 @@
 #include "olcxtab.h"
 
 extern void fill_reference(S_reference *reference, S_usageBits usage, S_position position, S_reference *next);
-extern void fill_olSymbolsMenu(S_olSymbolsMenu *olSymbolsMenu,
-                               struct symbolRefItem	s,
-                               char selected,
-                               char visible,
-                               unsigned ooBits,
-                               char olUsage,
-                               short int vlevel,
-                               short int refn,
-                               short int defRefn,
-                               char defUsage,
-                               struct position defpos,
-                               int outOnLine,
+extern void fill_symbolRefItemBits(S_symbolRefItemBits *symbolRefItemBits, unsigned symType,
+                                   unsigned storage, unsigned scope, unsigned accessFlags,
+                                   unsigned category, unsigned htmlWasLn);
+extern void fill_olSymbolsMenu(S_olSymbolsMenu *olSymbolsMenu, struct symbolRefItem	s,
+                               char selected, char visible, unsigned ooBits, char olUsage,
+                               short int vlevel, short int refn, short int defRefn,
+                               char defUsage, struct position defpos, int outOnLine,
                                struct editorMarkerList *markers,	/* for refactory only */
                                struct olSymbolsMenu *next);
 extern void fill_usageBits(S_usageBits *STRUCTP, unsigned base, unsigned requiredAccess);
@@ -32,16 +27,14 @@ extern int itIsSameCxSymbolIncludingApplClass(S_symbolRefItem *p1, S_symbolRefIt
 extern int olcxItIsSameCxSymbol(S_symbolRefItem *p1, S_symbolRefItem *p2);
 extern void olcxRecomputeSelRefs( S_olcxReferences *refs );
 extern void olProcessSelectedReferences(S_olcxReferences *rstack,
-                                        void (*referencesMapFun)(S_olcxReferences *rstack, S_olSymbolsMenu *ss));
+                                        void (*referencesMapFun)(S_olcxReferences *rstack,
+                                                                 S_olSymbolsMenu *ss));
 extern void olcxPopOnly(void);
 extern S_reference * olcxCopyRefList(S_reference *ll);
 extern void olStackDeleteSymbol( S_olcxReferences *refs);
 extern int getFileNumberFromName(char *name);
-extern void generateOnlineCxref(S_position *p,
-                                char *commandString,
-                                int usage,
-                                char *suffix,
-                                char *suffix2
+extern void generateOnlineCxref(S_position *p, char *commandString, int usage,
+                                char *suffix, char *suffix2
                                 );
 extern S_reference *olcxAddReferenceNoUsageCheck(S_reference **rlist,
                                                  S_reference *ref,

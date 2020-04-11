@@ -4,9 +4,17 @@
 
 #include "../olcxtab.h"
 
-void fill_reference(S_reference *reference, S_usageBits usage, S_position position, S_reference *next) {
+void fill_reference(S_reference *reference, S_usageBits usage, S_position position,
+                    S_reference *next) {
     /* NOTE can't mock S_usageBits or S_position */
     mock(reference, next);
+}
+
+void fill_symbolRefItemBits(S_symbolRefItemBits *symbolRefItemBits, unsigned symType,
+                            unsigned storage, unsigned scope, unsigned accessFlags,
+                            unsigned category, unsigned htmlWasLn) {
+    mock(symbolRefItemBits, symType, storage, scope, accessFlags, category, htmlWasLn);
+
 }
 
 void fill_usageBits(S_usageBits *usageBits, unsigned base, unsigned requiredAccess) {

@@ -529,7 +529,7 @@ static void genRefItem0(S_symbolRefItem *d, int forceGen) {
     symIndex = 0;
     assert(strlen(d->name)+1 < MAX_CX_SYMBOL_SIZE);
     strcpy(s_outLastInfos._symbolTabNames[symIndex], d->name);
-    FILL_symbolRefItemBits(&s_outLastInfos._symbolTab[symIndex].b,
+    fill_symbolRefItemBits(&s_outLastInfos._symbolTab[symIndex].b,
                            d->b.symType, d->b.storage,
                            d->b.scope,d->b.accessFlags, d->b.category,0);
     FILL_symbolRefItem(&s_outLastInfos._symbolTab[symIndex],
@@ -1059,7 +1059,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
     }
     ddd = &s_inLastInfos._symbolTab[si];
     s_inLastInfos.symbolTab[si] = ddd;
-    FILL_symbolRefItemBits(&ddd->b,symType, storage,
+    fill_symbolRefItemBits(&ddd->b,symType, storage,
                            ScopeGlobal,accessFlags,CatGlobal,0);
     FILL_symbolRefItem(ddd,id,
                        cxFileHashNumber(id), //useless, put 0
@@ -1069,7 +1069,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
         CX_ALLOCC(ss, len+1, char);
         strcpy(ss,id);
         CX_ALLOC(memb, S_symbolRefItem);
-        FILL_symbolRefItemBits(&memb->b,symType, storage,
+        fill_symbolRefItemBits(&memb->b,symType, storage,
                                ScopeGlobal,accessFlags,CatGlobal,0);
         FILL_symbolRefItem(memb,ss, cxFileHashNumber(ss),
                            vApplClass,vFunClass,memb->b,NULL,NULL);
@@ -1136,7 +1136,7 @@ static void cxrfSymbolName(int size,
     /*fprintf(dumpOut,":scanning ref of %s %d %d: \n",id,symType,virtClass);fflush(dumpOut);*/
     ddd = &s_inLastInfos._symbolTab[si];
     s_inLastInfos.symbolTab[si] = ddd;
-    FILL_symbolRefItemBits(&ddd->b,symType, storage,
+    fill_symbolRefItemBits(&ddd->b,symType, storage,
                            ScopeGlobal,accessFlags, CatGlobal,0);
     FILL_symbolRefItem(ddd,id,
                        cxFileHashNumber(id), // useless put 0
@@ -1149,7 +1149,7 @@ static void cxrfSymbolName(int size,
             CX_ALLOCC(ss, len+1, char);
             strcpy(ss,id);
             CX_ALLOC(memb, S_symbolRefItem);
-            FILL_symbolRefItemBits(&memb->b,symType, storage,
+            fill_symbolRefItemBits(&memb->b,symType, storage,
                                    ScopeGlobal, accessFlags, CatGlobal,0);
             FILL_symbolRefItem(memb,ss,cxFileHashNumber(ss),
                                vApplClass,vFunClass,memb->b,NULL,NULL);

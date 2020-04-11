@@ -2687,7 +2687,7 @@ void getPipedOptions(int *outNargc,char ***outNargv){
 }
 
 static void fillIncludeRefItem( S_symbolRefItem *ddd , int fnum) {
-    FILL_symbolRefItemBits(&ddd->b,TypeCppInclude,StorageExtern,
+    fill_symbolRefItemBits(&ddd->b,TypeCppInclude,StorageExtern,
                            ScopeGlobal,ACC_DEFAULT,CatGlobal,0);
     FILL_symbolRefItem(ddd,LINK_NAME_INCLUDE_REFS,
                        cxFileHashNumber(LINK_NAME_INCLUDE_REFS),
@@ -2809,7 +2809,7 @@ static int scheduleFileUsingTheMacro(void) {
     S_olcxReferences    *tmpc;
     assert(s_olstringInMbody);
     tmpc = NULL;
-    FILL_symbolRefItemBits(&ddd.b, TypeMacro, StorageExtern,
+    fill_symbolRefItemBits(&ddd.b, TypeMacro, StorageExtern,
                            ScopeGlobal,ACC_DEFAULT,CatGlobal,0);
     FILL_symbolRefItem(&ddd,s_olstringInMbody,
                        cxFileHashNumber(s_olstringInMbody),
