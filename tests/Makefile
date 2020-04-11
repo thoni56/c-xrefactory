@@ -35,11 +35,7 @@ $(foreach _t,$(TESTS),$(eval $(call RULE, $(_t))))
 #--------------------------------------------------------------------
 
 quick: autodiscovered_tests
-	@$(MAKE) -C cgram_coverage
-	@$(MAKE) -C standard_includes
 	@$(MAKE) -C generate_str_fill
-	@$(MAKE) -C edit_server_test_example
-	@$(MAKE) -C c_extract_with_argument
 
 slow: autodiscovered_tests
 	@$(MAKE) -C emacs_c_exercise
