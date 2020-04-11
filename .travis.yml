@@ -15,19 +15,16 @@ before_install:
 
 script:
     - cd src
-    - make debug
-    - cd unittests
-    - make debug
+    - make -j debug unit
     # Coverage for unittest to Codecov
     #- bash <(curl -s https://codecov.io/bash)
-    - cd ../..
+    - cd ..
     # Now reset coverage and run integration tests
-    - find . -name *.gcda -exec rm {} \;
+    #- find . -name *.gcda -exec rm {} \;
     - cd tests
-    - make quick
     - cd ffmpeg ; make init ; cd ..
     - cd systemd ; make init ; cd ..
-    - make slow
+    - make -j all
     - cd ..
     # Coverage for tests to Coveralls
     - lcov -q -d src -c -o coverage.info
