@@ -642,17 +642,18 @@ static void removeSymbolFromSymRefList(S_symbolRefItemList **ll, S_symbolRefItem
     }
 }
 
-/* static S_symbolRefItemList *concatRefItemList(S_symbolRefItemList **ll, S_symbolRefItem *s) { */
-/*     S_symbolRefItemList *rr; */
-/*     CX_ALLOC(rr, S_symbolRefItemList); */
-/*     FILL_symbolRefItemList(rr, s, *ll); */
-/*     return(rr); */
-/* } */
+static S_symbolRefItemList *concatRefItemList(S_symbolRefItemList **ll, S_symbolRefItem *s) {
+    S_symbolRefItemList *refItemList;
+    CX_ALLOC(refItemList, S_symbolRefItemList);
+    refItemList->d = s;
+    refItemList->next = *ll;
+    return refItemList;
+}
 
 
 static void addSymbolToSymRefList(S_symbolRefItemList **ll, S_symbolRefItem *s) {
-    S_symbolRefItemList *r, *rr;
-    // S_symbolRefItemList *verifyConcatDoesTheSameAsFill;
+    S_symbolRefItemList *r;
+
     r = *ll;
     while (r!=NULL) {
         if (isSmallerOrEqClass(getClassNumFromClassLinkName(s->name, s_noneFileIndex),
@@ -662,17 +663,9 @@ static void addSymbolToSymRefList(S_symbolRefItemList **ll, S_symbolRefItem *s) 
         r= r->next;
     }
     // first remove all superceeded by this one
+    /* TODO: WTF, what does superceed mean here and why should we remove them? */
     removeSymbolFromSymRefList(ll, s);
-
-    /* This: */
-    CX_ALLOC(rr, S_symbolRefItemList);
-    FILL_symbolRefItemList(rr, s, *ll);
-    *ll = rr;
-    /* ... should be replaced by: */
-    // verifyConcatDoesTheSameAsFill = concatRefItemList(ll, s);
-    /* ... once we can get this to execute ... */
-    //assert(*ll == *verifyConcatDoesTheSameAsFill);
-    assert(0);
+    *ll = concatRefItemList(ll, s);
 }
 
 static S_symbolRefItemList *computeExceptionsThrownBetween(S_programGraphNode *bb,
