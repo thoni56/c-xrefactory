@@ -70,6 +70,15 @@ typedef struct referencesChangeData {
 /* *********************************************************************** */
 
 
+void fill_symbolRefItemBits(S_symbolRefItemBits *symbolRefItemBits, unsigned symType, unsigned storage, unsigned scope, unsigned accessFlags, unsigned category, unsigned htmlWasLn) {
+    symbolRefItemBits->symType = symType;
+    symbolRefItemBits->storage = storage;
+    symbolRefItemBits->scope = scope;
+    symbolRefItemBits->accessFlags = accessFlags;                \
+    symbolRefItemBits->category = category;
+    symbolRefItemBits->htmlWasLn = htmlWasLn;
+}
+
 void fill_reference(S_reference *reference, S_usageBits usage, S_position position, S_reference *next) {
     reference->usage = usage;
     reference->p = position;
@@ -298,7 +307,7 @@ static int newRefTabItem(S_refTab *reftab,
                          ) {
     int rr;
     S_symbolRefItem ppp;
-    FILL_symbolRefItemBits(&ppp.b,p->b.symType,storage,scope,
+    fill_symbolRefItemBits(&ppp.b,p->b.symType,storage,scope,
                            p->b.accessFlags,category,0);
     FILL_symbolRefItem(&ppp,p->linkName,
                        0,                  // cxFileHashNumber(p->linkName),
@@ -479,7 +488,7 @@ void changeFieldRefUsages(S_symbolRefItem  *ri, void  *rrcd) {
     S_symbolRefItem             ddd;
     S_reference                 *rr;
     rcd = (S_referencesChangeData*) rrcd;
-    FILL_symbolRefItemBits(&ddd.b,TypeDefault,StorageField,
+    fill_symbolRefItemBits(&ddd.b,TypeDefault,StorageField,
                            ScopeFile,ACC_DEFAULT, rcd->category ,0);
     FILL_symbolRefItem(&ddd,rcd->linkName,
                        cxFileHashNumber(rcd->linkName),
@@ -831,7 +840,7 @@ S_reference * addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *usageb,
             &&p->bits.symType==TypeCppIfElse) return NULL;
     }
     reftab = &s_cxrefTab;
-    FILL_symbolRefItemBits(&ppp.b,p->bits.symType,storage,scope,
+    fill_symbolRefItemBits(&ppp.b,p->bits.symType,storage,scope,
                            p->bits.accessFlags,category,0);
     FILL_symbolRefItem(&ppp,p->linkName,
                        0,                  // cxFileHashNumber(p->linkName),
@@ -849,7 +858,7 @@ S_reference * addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *usageb,
         CX_ALLOC(pp, S_symbolRefItem);
         CX_ALLOCC(linkName, strlen(p->linkName)+1, char);
         strcpy(linkName, p->linkName);
-        FILL_symbolRefItemBits(&pp->b,p->bits.symType,storage,scope,
+        fill_symbolRefItemBits(&pp->b,p->bits.symType,storage,scope,
                                p->bits.accessFlags,category,0);
         FILL_symbolRefItem(pp,linkName,cxFileHashNumber(linkName),
                            vApplCl,vFunCl,pp->b,NULL,NULL);
@@ -2446,7 +2455,7 @@ S_olSymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi,int storage){
     S_olSymbolsMenu     *res;
     S_symbolRefItemBits bb;
     S_symbolRefItem     ss;
-    FILL_symbolRefItemBits(&bb, TypeDefault, storage, ScopeGlobal,
+    fill_symbolRefItemBits(&bb, TypeDefault, storage, ScopeGlobal,
                            ACC_DEFAULT, CatGlobal, 0);
     FILL_symbolRefItem(&ss, fieldName, cxFileHashNumber(fieldName),
                        cfi, cfi, bb, NULL, NULL);
@@ -2514,7 +2523,7 @@ static void olcxGenInspectClassDefinitionRef(int classnum, char *refsuffix) {
     S_symbolRefItem     mmm;
     char                ccc[MAX_CX_SYMBOL_SIZE];
     javaGetClassNameFromFileNum(classnum, ccc, KEEP_SLASHES);
-    FILL_symbolRefItemBits(&mmm.b, TypeStruct, StorageExtern, ScopeGlobal,
+    fill_symbolRefItemBits(&mmm.b, TypeStruct, StorageExtern, ScopeGlobal,
                            ACC_DEFAULT, CatGlobal, 0);
     FILL_symbolRefItem(&mmm, ccc, cxFileHashNumber(ccc),
                        s_noneFileIndex, s_noneFileIndex, mmm.b,
@@ -5405,7 +5414,7 @@ S_olCompletion * olCompletionListPrepend(char *name,
     } else if (s==NULL) {
         dref = *dfref;
         dref.next = NULL;
-        FILL_symbolRefItemBits(&srib, TypeUnknown, StorageNone,
+        fill_symbolRefItemBits(&srib, TypeUnknown, StorageNone,
                                ScopeAuto, ACC_DEFAULT, CatLocal, 0);
         FILL_symbolRefItem(&sri, "", cxFileHashNumber(""),
                            s_noneFileIndex, s_noneFileIndex,
@@ -5419,7 +5428,7 @@ S_olCompletion * olCompletionListPrepend(char *name,
         strcpy(ss, s->linkName);
         fill_usageBits(&dref.usage, UsageDefined, 0);
         fill_reference(&dref, dref.usage, s->pos, NULL);
-        FILL_symbolRefItemBits(&srib, s->bits.symType, storage,
+        fill_symbolRefItemBits(&srib, s->bits.symType, storage,
                                scope, s->bits.accessFlags, category, 0);
         FILL_symbolRefItem(&sri, ss, cxFileHashNumber(ss),
                            vFunClass, vFunClass,
