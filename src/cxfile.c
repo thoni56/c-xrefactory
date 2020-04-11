@@ -1225,7 +1225,7 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
     line = s_inLastInfos.counter[CXFI_LINE_INDEX];
     coll = s_inLastInfos.counter[CXFI_COLL_INDEX];
     getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
-    //&fprintf(dumpOut,"%d %d->%d %d  ", usage,file,s_decodeFilesNum[file],line);fflush(dumpOut);
+    log_trace("%d %d->%d %d", usage, file, s_decodeFilesNum[file], line);
     fillPosition(&pos,file,line,coll);
     if (s_inLastInfos.onLineReferencedSym ==
         s_inLastInfos.counter[CXFI_SYM_INDEX]) {
