@@ -23,9 +23,10 @@
 debug: CFLAGS+=-DDEBUG
 debug: COVERAGE=--coverage
 yydebug: CFLAGS+=-DYYDEBUG=1 -DDEBUG
-prod: CFLAGS+=-DYYDEBUG=0
 
-debug yydebug prod: $(ZLIB) c-xref
+CFLAGS+=-DYYDEBUG=0
+
+prod debug yydebug: $(ZLIB) c-xref
 
 include sources.mk
 
@@ -181,15 +182,16 @@ test: debug
 
 
 unit: $(SRCS) debug
-	make COVERAGE="$(COVERAGE)" -C unittests
+	make -C unittests debug
 
 coverage: COVERAGE=--coverage
 coverage: clean test
-	lcov -d . -c -o coverage.info
-	genhtml -o coverage coverage.info
+	lcov -q --exclude \*.mock -d . -c -o coverage.info
+	genhtml -q -o ../coverage coverage.info
 
-coverage-report: test
-	gcovr -j -r . --html-details -o ../coverage/coverage.html
+coverage-report: test unit
+	lcov -q --exclude \*.mock -d . -c -o coverage.info
+	genhtml -q -o ../coverage coverage.info
 
 
 # Special dependecies to force rebuild of c-xref.bs to generate needed files

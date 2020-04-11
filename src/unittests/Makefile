@@ -9,11 +9,12 @@ UNITTESTS = $(patsubst %.c,%.so,$(wildcard *_tests.c))
 
 CGREEN = -L/usr/local/lib -lcgreen
 
-all: $(UNITTESTS)
+debug: COVERAGE=--coverage
+all debug: $(UNITTESTS)
 	cgreen-runner $(CGREEN_OUTPUT) --suite unittests $^
 
 clean:
-	-rm $(OBJDIR)/*.[od] *.so
+	-rm $(OBJDIR)/*.[od] *.so $(OBJDIR)/*.gc*
 
 cleaner: clean
 	-rm -rf $(OBJDIR)
