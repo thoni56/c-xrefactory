@@ -35,7 +35,6 @@ $(foreach _t,$(TESTS),$(eval $(call RULE, $(_t))))
 #--------------------------------------------------------------------
 
 quick: autodiscovered_tests
-	@$(MAKE) -C simple_xrefs
 	@$(MAKE) -C pragma_once
 	@$(MAKE) -C yacc_coverage
 	@$(MAKE) -C cgram_coverage
@@ -44,9 +43,7 @@ quick: autodiscovered_tests
 	@$(MAKE) -C generate_str_fill
 	@$(MAKE) -C partial_jexercise
 	@$(MAKE) -C edit_server_test_example
-	@$(MAKE) -C simple_extract
 	@$(MAKE) -C c_extract_with_argument
-	@$(MAKE) -C add_parameter
 	@$(MAKE) -C turn_dynamic_method_to_static
 	@$(MAKE) -C extract_with_return
 	@$(MAKE) -C java_simple_extract
