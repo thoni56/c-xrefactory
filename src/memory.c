@@ -14,6 +14,24 @@ char memory[SIZE_workMemory];
 char tmpWorkMemory[SIZE_tmpWorkMemory];
 int tmpWorkMemoryi = 0;
 
+/* Inject the function to call when fatalErrors occur */
+static void (*fatalError)(int errCode, char *mess, int exitStatus);
+void memoryUseFunctionForFatalError(void (*function)(int errCode, char *mess, int exitStatus)) {
+    fatalError = function;
+}
+
+/* Inject the function to call when assert() fails, a.k.a internalCheckFail() */
+static void (*internalCheckFail)(char *expr, char *file, int line);
+void memoryUseFunctionForInternalCheckFail(void (*function)(char *expr, char *file, int line)) {
+    internalCheckFail = function;
+}
+
+/* Inject the function to call for error() */
+static void (*error)(int code, char *message);
+void memoryUseFunctionForError(void (*function)(int code, char *message)) {
+    error = function;
+}
+
 
 /* With this as a separate function it is possible to catch memory resize longjmps */
 void memoryResize(void) {

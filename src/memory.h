@@ -189,9 +189,17 @@ extern char tmpWorkMemory[SIZE_tmpWorkMemory];
 extern int tmpWorkMemoryi;
 
 
+/* Inject some error functions to remove linkage dependency */
+extern void memoryUseFunctionForFatalError(void (*function)(int errCode, char *mess, int exitStatus));
+extern void memoryUseFunctionForInternalCheckFail(void (*function)(char *expr, char *file, int line));
+extern void memoryUseFunctionForError(void (*function)(int code, char *message));
+
 extern void initMemory(S_memory *memory, bool (*overflowHandler)(int n), int size);
 extern void memoryResize(void);
 extern bool cxMemoryOverflowHandler(int n);
+
+extern void addToTrail (void (*action)(void*),  void *p);
+extern void removeFromTrailUntil(S_freeTrail *untilP);
 
 extern void stackMemoryInit(void);
 extern void *stackMemoryAlloc(int size);
