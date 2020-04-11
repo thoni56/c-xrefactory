@@ -5,31 +5,7 @@
 
 #define RECURSIVE
 
-#define yylval javayylval
-
-#define yyparse javayyparse
-#define yylhs javayylhs
-#define yylen javayylen
-#define yydefred javayydefred
-#define yydgoto javayydgoto
-#define yysindex javayysindex
-#define yyrindex javayyrindex
-#define yytable javayytable
-#define yycheck javayycheck
-#define yyname javayyname
-#define yyrule javayyrule
-#define yydebug javayydebug
-#define yynerrs javayynerrs
-#define yyerrflag javayyerrflag
-#define yychar javayychar
-#define lastyystate javalastyystate
-#define yyssp javayyssp
-#define yyval javayyval
-#define yyss javayyss
-#define yyvs javayyvs
-#define yygindex javayygindex
-#define yyvsp javayyvsp
-
+#define javayylex yylex
 
 #include "java_parser.x"
 
@@ -61,7 +37,7 @@
 #ifndef YYDEBUG
 #define YYDEBUG 0
 #endif
-#define yyerror styyerror
+#define javayyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
 #define JslAddComposedType(ddd, ttt) jslAppendComposedType(&ddd->u.type, ttt)

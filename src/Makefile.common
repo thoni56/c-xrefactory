@@ -40,23 +40,20 @@ $(OBJDIR)/%.o: %.c | $(OBJDIR)
 $(ROOTDIR)/lib/zlib/libz.a: ..always..
 	make -C $(ROOTDIR)/lib/zlib libz.a
 
-# Unless we need to modify the grammar, which incidentally includes
-# both java and c++, we can use the already included .c-files instead
-# of generating from yacc
-#
-# We generate the parser interface only for C
+# We generate parsers for C, Yacc, Java and C expressions
+# Note the file prefix (-b) and symbol prefix (-p)
 
 c_parser.tab.c c_parser.tab.h: c_parser.y $(YACC)
-	$(YACC) -v -d -b c_parser c_parser.y
+	$(YACC) -v -d -b c_parser -p cyy c_parser.y
 
 java_parser.tab.c: java_parser.y $(YACC)
-	$(YACC) -v -b java_parser java_parser.y
+	$(YACC) -v -b java_parser -p javayy java_parser.y
 
 yacc_parser.tab.c: yacc_parser.y $(YACC)
-	$(YACC) -v -b yacc_parser yacc_parser.y
+	$(YACC) -v -b yacc_parser -p yaccyy yacc_parser.y
 
 cexp_parser.tab.c: cexp_parser.y $(YACC)
-	$(YACC) -v -b cexp_parser cexp_parser.y
+	$(YACC) -v -b cexp_parser -p cexpyy cexp_parser.y
 
 
 #########################################################################

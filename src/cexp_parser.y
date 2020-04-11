@@ -10,38 +10,10 @@
 #include "c_parser.tab.h"				/* tokens from grammars */
 #undef  YYSTYPE
 
-/* Redefine names which can clash with C parser */
-
-#define yylval cexpyylval
-
-#define yyparse cexpyyparse
-#define yylex cexpyylex
-#define yylhs cexpyylhs
-#define yylen cexpyylen
-#define yydefred cexpyydefred
-#define yydgoto cexpyydgoto
-#define yysindex cexpyysindex
-#define yyrindex cexpyyrindex
-#define yytable cexpyytable
-#define yycheck cexpyycheck
-#define yyname cexpyyname
-#define yyrule cexpyyrule
-#define yydebug cexpyydebug
-#define yynerrs cexpyynerrs
-#define yyerrflag cexpyyerrflag
-#define yychar cexpyychar
-#define lastyystate cexplastyystate
-#define yyssp cexpyyssp
-#define yyval cexpyyval
-#define yyss cexpyyss
-#define yyvs cexpyyvs
-#define yygindex cexpyygindex
-#define yyvsp cexpyyvsp
-
 #ifndef YYDEBUG
 #define YYDEBUG 0
 #endif
-#define yyerror styyerror
+#define cexpyyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
 %}

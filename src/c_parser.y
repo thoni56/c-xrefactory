@@ -8,30 +8,7 @@
 
 %{
 
-#define yylval cyylval
-
-#define yyparse cyyparse
-#define yylhs cyylhs
-#define yylen cyylen
-#define yydefred cyydefred
-#define yydgoto cyydgoto
-#define yysindex cyysindex
-#define yyrindex cyyrindex
-#define yytable cyytable
-#define yycheck cyycheck
-#define yyname cyyname
-#define yyrule cyyrule
-#define yydebug cyydebug
-#define yynerrs cyynerrs
-#define yyerrflag cyyerrflag
-#define yychar cyychar
-#define lastyystate clastyystate
-#define yyssp cyyssp
-#define yyval cyyval
-#define yyss cyyss
-#define yyvs cyyvs
-#define yygindex cyygindex
-#define yyvsp cyyvsp
+#define cyylex yylex
 
 #include "c_parser.x"
 
@@ -56,7 +33,7 @@
 #ifndef YYDEBUG
 #define YYDEBUG 0
 #endif
-#define yyerror styyerror
+#define cyyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
 #define SetStrCompl1(xxx) {\

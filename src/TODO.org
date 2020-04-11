@@ -6,9 +6,6 @@ There are a *lot* of things to do to make c-xref into modern C.
 (This file is structured for Emacs org-mode...)
 
 * DOING Remove bootstrap step (strfill and local definitions)
-* DOING make memory.c (linkage) independent on all other modules
-One way to do this to inject the remaining, problematic, dependencies
-such as internalCheckFail(), removeFromTrailUntil() and fatalError()
 ** DOING Remove the need for FILL_xxx macros
 At this point there are 66, 65, 64, 63, 62, 41, 33, 15, 8 FILL-macros that are in use
 *** TODO Rename classh to hierarchy
@@ -128,6 +125,9 @@ easier to mock and unit test other modules.
   ACTUALLY: split generation of enumTxt header to its own header file
   with the naming strategy as for the others.
 
+* DONE make memory.c (linkage) independent on all other modules
+One way to do this to inject the remaining, problematic, dependencies
+such as internalCheckFail(), removeFromTrailUntil() and fatalError()
 * DONE Move all function prototypes from proto.h to <module>.h
 * DONE Create test case for converting virtual function to static
 * DONE Fix tests/olcx_refactor_rename gets "buf is not valid"

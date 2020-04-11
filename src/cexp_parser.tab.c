@@ -4,7 +4,31 @@
 #define yyclearin (yychar=(-1))
 #define yyerrok (yyerrflag=0)
 #define YYRECOVERING (yyerrflag!=0)
-#define YYPREFIX "yy"
+#define yyparse cexpyyparse
+#define yylex cexpyylex
+#define yyerror cexpyyerror
+#define yychar cexpyychar
+#define yyval cexpyyval
+#define yylval cexpyylval
+#define yydebug cexpyydebug
+#define yynerrs cexpyynerrs
+#define yyerrflag cexpyyerrflag
+#define yyss cexpyyss
+#define yyssp cexpyyssp
+#define yyvs cexpyyvs
+#define yyvsp cexpyyvsp
+#define yylhs cexpyylhs
+#define yylen cexpyylen
+#define yydefred cexpyydefred
+#define yydgoto cexpyydgoto
+#define yysindex cexpyysindex
+#define yyrindex cexpyyrindex
+#define yygindex cexpyygindex
+#define yytable cexpyytable
+#define yycheck cexpyycheck
+#define yyname cexpyyname
+#define yyrule cexpyyrule
+#define YYPREFIX "cexpyy"
 #line 2 "cexp_parser.y"
 
 
@@ -48,10 +72,10 @@
 #ifndef YYDEBUG
 #define YYDEBUG 0
 #endif
-#define yyerror styyerror
+#define cexpyyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
-#line 55 "cexp_parser.tab.c"
+#line 79 "cexp_parser.tab.c"
 #define number 257
 #define DEFINED 258
 #define EQ 259
@@ -65,17 +89,17 @@
 #define UNKNOWN 267
 #define UMINUS 268
 #define YYERRCODE 256
-short yylhs[] = {                                        -1,
+short cexpyylhs[] = {                                        -1,
     0,    0,    1,    1,    1,    1,    1,    1,    1,    1,
     1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
     1,    1,    1,    1,    1,    1,    1,
 };
-short yylen[] = {                                         2,
+short cexpyylen[] = {                                         2,
     1,    1,    3,    3,    3,    3,    3,    3,    3,    3,
     3,    3,    3,    3,    3,    3,    3,    3,    3,    3,
     5,    3,    2,    2,    2,    3,    1,
 };
-short yydefred[] = {                                      0,
+short cexpyydefred[] = {                                      0,
     2,   27,    0,    0,    0,    0,    0,    0,   23,   24,
    25,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -83,10 +107,10 @@ short yydefred[] = {                                      0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     3,    4,    5,    0,    0,
 };
-short yydgoto[] = {                                       7,
+short cexpyydgoto[] = {                                       7,
     8,
 };
-short yysindex[] = {                                    -29,
+short cexpyysindex[] = {                                    -29,
     0,    0,  -19,  -19,  -19,  -19,    0,  414,    0,    0,
     0,  338,  -19,  -19,  -19,  -19,  -19,  -19,  -19,  -19,
   -19,  -19,  -19,  -19,  -19,  -19,  -19,  -19,  -19,  -19,
@@ -94,7 +118,7 @@ short yysindex[] = {                                    -29,
   454,  426,  366,  326,  326,  438,  -30,  -30,  -17,  -17,
     0,    0,    0,  -19,  426,
 };
-short yyrindex[] = {                                      0,
+short cexpyyrindex[] = {                                      0,
     0,    0,    0,    0,    0,    0,    0,    2,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -102,11 +126,11 @@ short yyrindex[] = {                                      0,
   161,   34,    0,  182,  188,  155,   91,  101,    1,    9,
     0,    0,    0,    0,   35,
 };
-short yygindex[] = {                                      0,
+short cexpyygindex[] = {                                      0,
   630,
 };
 #define YYTABLESIZE 744
-short yytable[] = {                                      32,
+short cexpyytable[] = {                                      32,
     6,    1,    0,    4,   30,   28,   32,   29,    7,   31,
     6,   30,   28,    4,   29,    3,   31,    0,    0,   32,
     6,    0,    0,    8,   30,    3,    0,    0,    0,   31,
@@ -183,7 +207,7 @@ short yytable[] = {                                      32,
    17,   18,    0,    0,    0,    0,    0,    0,    0,    0,
    15,   16,   17,   18,
 };
-short yycheck[] = {                                      37,
+short cexpyycheck[] = {                                      37,
     0,    0,   -1,   33,   42,   43,   37,   45,    0,   47,
    40,   42,   43,   33,   45,   45,   47,   -1,   -1,   37,
    40,   -1,   -1,    0,   42,   45,   -1,   -1,   -1,   47,
@@ -266,7 +290,7 @@ short yycheck[] = {                                      37,
 #endif
 #define YYMAXTOKEN 268
 #if YYDEBUG
-char *yyname[] = {
+char *cexpyyname[] = {
 "end-of-file",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 "'!'",0,0,0,"'%'","'&'",0,"'('","')'","'*'","'+'","','","'-'","'.'","'/'",0,0,0,
 0,0,0,0,0,0,0,"':'",0,"'<'","'='","'>'","'?'",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -277,7 +301,7 @@ char *yyname[] = {
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"number","DEFINED","EQ","NE","LE",
 "GE","LS","RS","ANDAND","OROR","UNKNOWN","UMINUS",
 };
-char *yyrule[] = {
+char *cexpyyrule[] = {
 "$accept : start",
 "start : e",
 "start : error",
@@ -363,7 +387,7 @@ int cexpTranslateToken(int tok, int val) {
     return(number);
     return(UNKNOWN);
 }
-#line 367 "cexp_parser.tab.c"
+#line 391 "cexp_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -616,7 +640,7 @@ case 27:
 #line 108 "cexp_parser.y"
 {yyval= yyvsp[0];}
 break;
-#line 620 "cexp_parser.tab.c"
+#line 644 "cexp_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

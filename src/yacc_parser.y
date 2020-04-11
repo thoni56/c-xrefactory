@@ -1,29 +1,6 @@
 %{
 
-#define yylval yaccyylval
-
-#define yyparse yaccyyparse
-#define yylhs yaccyylhs
-#define yylen yaccyylen
-#define yydefred yaccyydefred
-#define yydgoto yaccyydgoto
-#define yysindex yaccyysindex
-#define yyrindex yaccyyrindex
-#define yytable yaccyytable
-#define yycheck yaccyycheck
-#define yyname yaccyyname
-#define yyrule yaccyyrule
-#define yydebug yaccyydebug
-#define yynerrs yaccyynerrs
-#define yyerrflag yaccyyerrflag
-#define yychar yaccyychar
-#define lastyystate yacclastyystate
-#define yyssp yaccyyssp
-#define yyval yaccyyval
-#define yyss yaccyyss
-#define yyvs yaccyyvs
-#define yygindex yaccyygindex
-#define yyvsp yaccyyvsp
+#define yaccyylex yylex
 
 #include "yacc_parser.x"
 
@@ -43,7 +20,7 @@
 #include "utils.h"
 
 #define YYDEBUG 0
-#define yyerror styyerror
+#define yaccyyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
 
