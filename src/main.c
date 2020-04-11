@@ -2452,7 +2452,7 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
     FT_ALLOCC(s_fileTab.tab, MAX_FILES, struct fileItem *);
     initFileTab();
     fillPosition(&s_noPos, s_noneFileIndex, 0, 0);
-    FILL_usageBits(&s_noUsage, UsageNone, 0, 0);
+    fill_usageBits(&s_noUsage, UsageNone, 0);
     fill_reference(&s_noRef, s_noUsage, s_noPos, NULL);
     s_input_file_number = s_noneFileIndex;
     s_javaAnonymousClassName.p = s_noPos;

@@ -9,6 +9,10 @@ void fill_reference(S_reference *reference, S_usageBits usage, S_position positi
     mock(reference, next);
 }
 
+void fill_usageBits(S_usageBits *usageBits, unsigned base, unsigned requiredAccess) {
+    mock(usageBits, base, requiredAccess);
+}
+
 int olcxReferenceInternalLessFunction(S_reference *r1, S_reference *r2) {
     return (int) mock(r1, r2);
 }

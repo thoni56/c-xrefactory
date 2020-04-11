@@ -106,6 +106,13 @@ void fill_olSymbolsMenu(S_olSymbolsMenu *olSymbolsMenu,
     olSymbolsMenu->next= next;
 }
 
+
+void fill_usageBits(S_usageBits *usageBits, unsigned base, unsigned requiredAccess) {
+    usageBits->base = base;
+    usageBits->requiredAccess = requiredAccess;
+}
+
+
 int olcxReferenceInternalLessFunction(S_reference *r1, S_reference *r2) {
     return(SORTED_LIST_LESS(r1, (*r2)));
 }
@@ -830,7 +837,7 @@ S_reference * addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *usageb,
                        0,                  // cxFileHashNumber(p->linkName),
                        vApplCl,vFunCl,ppp.b,NULL,NULL);
     if (s_opt.taskRegime==RegimeEditServer && s_opt.server_operation==OLO_TAG_SEARCH && s_opt.tagSearchSpecif==TSS_FULL_SEARCH) {
-        FILL_usageBits(&rr.usage, usage, 0, 0);
+        fill_usageBits(&rr.usage, usage, 0);
         fill_reference(&rr, rr.usage, *pos, NULL);
         searchSymbolCheckReference(&ppp, &rr);
         return NULL;
@@ -913,7 +920,7 @@ S_reference * addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *usageb,
 
 S_reference * addCxReference(Symbol *p, S_position *pos, int usage, int vFunCl, int vApplCl) {
     S_usageBits ub;
-    FILL_usageBits(&ub, usage, MIN_REQUIRED_ACCESS, 0);
+    fill_usageBits(&ub, usage, MIN_REQUIRED_ACCESS);
     return(addCxReferenceNew(p, pos, &ub, vFunCl, vApplCl));
 }
 
@@ -5410,7 +5417,7 @@ S_olCompletion * olCompletionListPrepend(char *name,
         slen = strlen(s->linkName);
         OLCX_ALLOCC(ss, slen+1, char);
         strcpy(ss, s->linkName);
-        FILL_usageBits(&dref.usage, UsageDefined, 0, 0);
+        fill_usageBits(&dref.usage, UsageDefined, 0);
         fill_reference(&dref, dref.usage, s->pos, NULL);
         FILL_symbolRefItemBits(&srib, s->bits.symType, storage,
                                scope, s->bits.accessFlags, category, 0);

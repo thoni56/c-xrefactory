@@ -404,7 +404,7 @@ S_reference *findStrRecordFromSymbol( Symbol *sym,
         if ((s_opt.ooChecksBits & OOC_ALL_CHECKS)==0
             || javaRecordVisibleAndAccessible(&rfs, rfs.baseClass, rfs.currClass, *res)) {
             minacc = javaGetMinimalAccessibility(&rfs, *res);
-            FILL_usageBits(&ub, UsageUsed, minacc, 0);
+            fill_usageBits(&ub, UsageUsed, minacc);
             ref = addCxReferenceNew(*res,&record->p, &ub,
                                     rfs.currClass->u.s->classFile,
                                     rfs.baseClass->u.s->classFile);
