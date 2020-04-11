@@ -845,7 +845,7 @@ S_reference * addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *usageb,
     mm = refTabIsMember(reftab, &ppp, &ii, &memb);
     //& was if (newRefTabItem(reftab,&memb,usage,storage,scope,category,p,vApplCl,vFunCl,&ii));
     if (mm==0) {
-        //&fprintf(dumpOut,"allocating %s\n",p->linkName);fflush(dumpOut);
+        log_trace("allocating '%s'", p->linkName);
         CX_ALLOC(pp, S_symbolRefItem);
         CX_ALLOCC(linkName, strlen(p->linkName)+1, char);
         strcpy(linkName, p->linkName);
