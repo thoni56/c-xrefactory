@@ -24,7 +24,7 @@ script:
     - cd tests
     - cd ffmpeg ; make init ; cd ..
     - cd systemd ; make init ; cd ..
-    - make -j all
+    - make all
     - cd ..
     # Coverage for tests to Coveralls
     - lcov -q -d src -c -o coverage.info
