@@ -3,6 +3,7 @@
 
 #include "stdinc.h"
 
+
 /* ******************** a simple memory handler ************************ */
 
 #define ALIGNMENT_OFF(xxx,align) (align-1-((((uintptr_t)(xxx))-1) & (align-1)))
@@ -156,6 +157,12 @@
 
 
 /* ********************************************************************** */
+
+typedef struct freeTrail {
+    void             (*action)(void*);
+    void             *p;
+    struct freeTrail *next;
+} S_freeTrail;
 
 typedef struct memory {
     bool	(*overflowHandler)(int n);

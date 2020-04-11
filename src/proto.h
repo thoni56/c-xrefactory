@@ -562,12 +562,6 @@ enum syntaxPassParsedImportantPosition {
 
 #include "id.h"
 
-typedef struct freeTrail {
-    void             (*action)(void*);
-    void             *p;
-    struct freeTrail *next;
-} S_freeTrail;
-
 #include "typemodifier.h"
 
 typedef struct recFindStr {

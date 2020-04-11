@@ -20,6 +20,14 @@ void stackMemoryInit(void) {
   mock();
 }
 
+void addToTrail(void (*action)(void *), void *p) {
+  mock(action, p);
+}
+
+void removeFromTrailUntil(S_freeTrail *untilP) {
+  mock(untilP);
+}
+
 /* No mock, just allocate memory as requested */
 void *stackMemoryAlloc(int size) {
   return (void *)malloc(size);

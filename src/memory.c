@@ -3,7 +3,6 @@
 #include "memory.h"
 #include "strFill.h"
 #include "log.h"
-#include "commons.h"
 #include "misc.h"               /* for removeFromTrailUntil() */
 
 S_memory *cxMemory=NULL;
@@ -58,6 +57,41 @@ bool cxMemoryOverflowHandler(int n) {
 }
 
 /* ***************************************************************** */
+
+#if ZERO
+static void trailDump(void) {
+    S_freeTrail *t;
+    log_trace("*** start trailDump");
+    for(t=s_topBlock->trail; t!=NULL; t=t->next)
+        log_trace("%p ", t);
+    log_trace("***stop trailDump");
+}
+#endif
+
+void addToTrail(void (*a)(void*), void *p) {
+    S_freeTrail *t;
+    /* no trail at level 0 in C*/
+    if (WORK_NEST_LEVEL0() && (LANGUAGE(LANG_C)||LANGUAGE(LAN_YACC))) return;
+    t = StackMemAlloc(S_freeTrail);
+    t->action = a;
+    t->p = (void **) p;
+    t->next = s_topBlock->trail;
+    s_topBlock->trail = t;
+    /*trailDump();*/
+}
+
+void removeFromTrailUntil(S_freeTrail *untilP) {
+    S_freeTrail *p;
+    for(p=s_topBlock->trail; untilP<p; p=p->next) {
+        assert(p!=NULL);
+        (*(p->action))(p->p);
+    }
+    if (p!=untilP) {
+        error(ERR_INTERNAL,"block structure mismatch?");
+    }
+    s_topBlock->trail = p;
+    /*trailDump();*/
+}
 
 static void fillTopBlock(S_topBlock *topBlock, int firstFreeIndex, int tmpMemoryBasei, S_freeTrail *trail, S_topBlock *previousTopBlock) {
     topBlock->firstFreeIndex = firstFreeIndex;
@@ -114,7 +148,7 @@ char *stackMemoryPushString(char *s) {
 
 void stackMemoryBlockStart(void) {
     S_topBlock *p,top;
-    log_trace("start new block");
+    log_trace("start block");
     top = *s_topBlock;
     p = StackMemPush(&top, S_topBlock);
     // trail can't be reset to NULL, because in case of syntax errors
@@ -124,11 +158,11 @@ void stackMemoryBlockStart(void) {
 }
 
 void stackMemoryBlockFree(void) {
-    /*fprintf(dumpOut,"finish block\n");*/
+    log_trace("finish block");
     //&removeFromTrailUntil(NULL);
     assert(s_topBlock && s_topBlock->previousTopBlock);
     removeFromTrailUntil(s_topBlock->previousTopBlock->trail);
-    /*fprintf(dumpOut,"block free %d %d \n",tmpWorkMemoryi,s_topBlock->tmpMemoryBasei); fflush(dumpOut);*/
+    log_trace("block free %d %d",tmpWorkMemoryi,s_topBlock->tmpMemoryBasei);
     assert(tmpWorkMemoryi >= s_topBlock->tmpMemoryBasei);
     tmpWorkMemoryi = s_topBlock->tmpMemoryBasei;
     * s_topBlock =  * s_topBlock->previousTopBlock;

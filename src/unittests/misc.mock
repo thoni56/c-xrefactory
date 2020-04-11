@@ -142,14 +142,6 @@ void dumpOptions(int nargc, char **nargv) {
   mock(nargc, nargv);
 }
 
-void addToTrail(void (*action)(void *), void *p) {
-  mock(action, p);
-}
-
-void removeFromTrailUntil(S_freeTrail *untilP) {
-  mock(untilP);
-}
-
 void symDump(Symbol *symbol) {
   mock(symbol);
 }

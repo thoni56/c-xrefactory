@@ -43,9 +43,6 @@ extern void methodAppliedOnNonClass(char *rec);
 extern void methodNameNotRecognized(char *rec);
 extern void dumpOptions(int nargc, char **nargv);
 
-extern void addToTrail (void (*action)(void*),  void *p);
-extern void removeFromTrailUntil(S_freeTrail *untilP);
-
 extern void symDump(Symbol *symbol);
 extern void typeDump(S_typeModifier *typeModifiers);
 extern void symbolRefItemDump(S_symbolRefItem *ss);

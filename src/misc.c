@@ -249,40 +249,6 @@ void dumpOptions(int nargc, char **nargv) {
 /* *************************************************************************
  */
 
-#if ZERO
-static void trailDump(void) {
-    S_freeTrail *t;
-    fprintf(dumpOut,"\nstart trailDump\n");
-    for(t=s_topBlock->trail; t!=NULL; t=t->next) fprintf(dumpOut,"%p ",t);
-    fprintf(dumpOut,"\nstop trailDump\n");
-}
-#endif
-
-void addToTrail(void (*a)(void*), void *p) {
-    S_freeTrail *t;
-    /* no trail at level 0 in C*/
-    if (WORK_NEST_LEVEL0() && (LANGUAGE(LANG_C)||LANGUAGE(LAN_YACC))) return;
-    t = StackMemAlloc(S_freeTrail);
-    t->action = a;
-    t->p = (void **) p;
-    t->next = s_topBlock->trail;
-    s_topBlock->trail = t;
-    /*trailDump();*/
-}
-
-void removeFromTrailUntil(S_freeTrail *untilP) {
-    S_freeTrail *p;
-    for(p=s_topBlock->trail; untilP<p; p=p->next) {
-        assert(p!=NULL);
-        (*(p->action))(p->p);
-    }
-    if (p!=untilP) {
-        error(ERR_INTERNAL,"a block structure mismatch?");
-    }
-    s_topBlock->trail = p;
-    /*trailDump();*/
-}
-
 void symDump(Symbol *s) {
     fprintf(dumpOut,"[symbol] %s\n",s->name);
 }
