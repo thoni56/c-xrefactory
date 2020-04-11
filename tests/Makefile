@@ -40,7 +40,6 @@ quick: autodiscovered_tests
 	@$(MAKE) -C generate_str_fill
 	@$(MAKE) -C edit_server_test_example
 	@$(MAKE) -C c_extract_with_argument
-	@$(MAKE) -C java_simple_extract
 
 slow: autodiscovered_tests
 	@$(MAKE) -C emacs_c_exercise
