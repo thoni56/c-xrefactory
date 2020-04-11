@@ -15,11 +15,11 @@ before_install:
 
 script:
     - cd src
-    - make COVERAGE="--coverage -O0"
+    - make debug
     - cd unittests
-    - make COVERAGE="--coverage -O0"
+    - make debug
     # Coverage for unittest to Codecov
-    - bash <(curl -s https://codecov.io/bash)
+    #- bash <(curl -s https://codecov.io/bash)
     - cd ../..
     # Now reset coverage and run integration tests
     - find . -name *.gcda -exec rm {} \;
