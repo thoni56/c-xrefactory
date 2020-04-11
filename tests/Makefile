@@ -42,10 +42,8 @@ quick: autodiscovered_tests
 	@$(MAKE) -C basic_html_generation
 	@$(MAKE) -C standard_includes
 	@$(MAKE) -C generate_str_fill
-	@$(MAKE) -C java_parsing
 	@$(MAKE) -C partial_jexercise
 	@$(MAKE) -C edit_server_test_example
-	@$(MAKE) -C complete
 	@$(MAKE) -C simple_extract
 	@$(MAKE) -C c_extract_with_argument
 	@$(MAKE) -C add_parameter
