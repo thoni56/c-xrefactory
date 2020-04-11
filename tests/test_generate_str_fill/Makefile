@@ -2,7 +2,7 @@ include ../Makefile.boilerplate
 
 $(TEST):
 	@rm -rf output $@.log
-	@../../src/c-xref -xrefrc .c-xrefrc -task_regime_generate -str_fill structures.h -o $@.log > $(TEST).h
+	@../../src/c-xref -xrefrc .c-xrefrc -task_regime_generate -str_fill structures.h -o $@.log > generate_str_fill.h
 	@gcc -c -o /dev/null generate_str_fill.c ; \
 	if [ $$? -ne 0 ] ; then \
 		$(FAIL) ; \
