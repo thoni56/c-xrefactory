@@ -40,7 +40,6 @@ quick: autodiscovered_tests
 	@$(MAKE) -C basic_html_generation
 	@$(MAKE) -C standard_includes
 	@$(MAKE) -C generate_str_fill
-	@$(MAKE) -C partial_jexercise
 	@$(MAKE) -C edit_server_test_example
 	@$(MAKE) -C c_extract_with_argument
 	@$(MAKE) -C turn_dynamic_method_to_static
