@@ -42,8 +42,6 @@ quick: autodiscovered_tests
 	@$(MAKE) -C generate_str_fill
 	@$(MAKE) -C edit_server_test_example
 	@$(MAKE) -C c_extract_with_argument
-	@$(MAKE) -C turn_dynamic_method_to_static
-	@$(MAKE) -C extract_with_return
 	@$(MAKE) -C java_simple_extract
 
 slow: autodiscovered_tests
