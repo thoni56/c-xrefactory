@@ -1,0 +1,85 @@
+/* -*- c -*-*/
+#include "symboltable.h"
+#include <cgreen/mocks.h>
+
+S_symbolTable *s_symbolTable;
+
+void symbolTableInit(struct symbolTable *table, int size) {
+  mock(table, size);
+}
+
+void symbolTableNoAllocInit(struct symbolTable *table, int size) {
+  mock(table, size);
+}
+
+bool symbolTableIsMember(struct symbolTable *table, Symbol *element, int *position, Symbol **origin) {
+  return (int) mock(table, element, position, origin);
+}
+
+int symbolTableMembEqual(Symbol *e1, Symbol *e2) {
+  return (int) mock(e1, e2);
+}
+
+int symbolTableNextMember(Symbol *element, Symbol **original) {
+  return (int) mock(element, original);
+}
+
+void symbolTableSet(struct symbolTable *table, Symbol *element, int position) {
+  mock(table, element, position);
+}
+
+void symbolTableSetLast(struct symbolTable *table, Symbol *element, int position) {
+  mock(table, element, position);
+}
+
+void symbolTableAdd(struct symbolTable *table, Symbol *element, int *position) {
+  mock(table, element, position);
+}
+
+int symbolTableDelete(struct symbolTable *table, Symbol *element) {
+  return (int) mock(table, element);
+}
+
+int symbolTableDeleteExact(struct symbolTable *table, Symbol *element) {
+  return (int) mock(table, element);
+}
+
+int symbolTableDeleteLast(struct symbolTable *table, Symbol *element) {
+  return (int) mock(table, element);
+}
+
+void symbolTableFree(struct symbolTable *tab) {
+  mock(tab);
+}
+
+void symbolTableMap(struct symbolTable *table, void (*fun)(Symbol *)) {
+  mock(table, fun);
+}
+
+void symbolTableMap2(struct symbolTable *table, void (*fun)(Symbol *, void *), void *a) {
+  mock(table, fun, a);
+}
+
+void symbolTableMap3(struct symbolTable *table, void (*fun)(int)) {
+  mock(table, fun);
+}
+
+void symbolTableMap31(struct symbolTable *table, void (*fun)(int, void *, void *), void *arg1, void *arg2) {
+  mock(table, fun, arg1, arg2);
+}
+
+void symbolTableMap32(struct symbolTable *table, void (*fun)(int, void *, void *, void *), void *arg1, void *arg2, void *arg3) {
+  mock(table, fun, arg1, arg2, arg3);
+}
+
+void symbolTableMap4(struct symbolTable *table, void (*fun)(Symbol *, int), int a) {
+  mock(table, fun, a);
+}
+
+void symbolTableMap5(struct symbolTable *table, void (*fun)(Symbol *, void *), void *arg) {
+  mock(table, fun, arg);
+}
+
+void symbolTableStatistics(struct symbolTable *table, int *usedIndexes, int *elements, int *maxdepth) {
+  mock(table, usedIndexes, elements, maxdepth);
+}
