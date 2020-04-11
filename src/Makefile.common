@@ -21,7 +21,7 @@
 # worked and try from there.
 
 debug: CFLAGS+=-DDEBUG
-debug: COVERAGE=--coverage
+debug: COVERAGE=--coverage -O0
 yydebug: CFLAGS+=-DYYDEBUG=1 -DDEBUG
 
 CFLAGS+=-DYYDEBUG=0
