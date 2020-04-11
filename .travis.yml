@@ -1,5 +1,5 @@
 language: c
-sudo: false
+os: linux
 dist: xenial
 if: NOT tag = stable
 
