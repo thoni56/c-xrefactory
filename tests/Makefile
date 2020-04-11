@@ -36,7 +36,6 @@ $(foreach _t,$(TESTS),$(eval $(call RULE, $(_t))))
 
 quick: autodiscovered_tests
 	@$(MAKE) -C cgram_coverage
-	@$(MAKE) -C basic_html_generation
 	@$(MAKE) -C standard_includes
 	@$(MAKE) -C generate_str_fill
 	@$(MAKE) -C edit_server_test_example

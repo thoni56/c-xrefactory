@@ -3,12 +3,12 @@
 
 include ../Makefile.boilerplate
 
-COMMAND = ../../src/c-xref -xrefrc .c-xrefrc -html -htmlroot=output -htmlcutcwd $(TEST).[ch] -o $@.log
+COMMAND = ../../src/c-xref -xrefrc .c-xrefrc -html -htmlroot=output -htmlcutcwd basic_html_generation.[ch] -o $@.log
 
 $(TEST):
 	@rm -rf output $@.log
 	@$(COMMAND)
-	@grep '<A HREF="$@.h.html#:5">Options</A> options;' output/$@.c.html > /dev/null ; \
+	@grep '<A HREF="basic_html_generation.h.html#:5">Options</A> options;' output/basic_html_generation.c.html > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
 		$(FAIL) ; \
 		exit 1 ; \
