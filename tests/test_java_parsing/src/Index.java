@@ -31,6 +31,8 @@ class Index {
     float f = 3.14f;
     double pi = 3.1415926;
     String s = "hello";
+    int i = (int) 47;
+    int a = (a[10])x;
 }
 
 
