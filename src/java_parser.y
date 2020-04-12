@@ -1748,7 +1748,7 @@ MethodDeclarator:
                     if (! SyntaxPassOnly()) {
                         $$.d = $<symbol>2;
                         assert($$.d && $$.d->u.type && $$.d->u.type->kind == TypeFunction);
-                        FILL_functionTypeModifier(&$$.d->u.type->u.f , $4.d.s, NULL);
+                        initFunctionTypeModifier(&$$.d->u.type->u.f , $4.d.s);
                     } else {
                         javaHandleDeclaratorParamPositions(&$1.d->p, &$3.d, $4.d.p, &$5.d);
                         PropagateBorns($$, $1, $5);
@@ -1757,7 +1757,7 @@ MethodDeclarator:
                 if (inSecondJslPass()) {
                     $$.d = $<symbol>2;
                     assert($$.d && $$.d->u.type && $$.d->u.type->kind == TypeFunction);
-                    FILL_functionTypeModifier(&$$.d->u.type->u.f , $4.d.s, NULL);
+                    initFunctionTypeModifier(&$$.d->u.type->u.f , $4.d.s);
                 }
             }
     |	MethodDeclarator '[' ']'						{
@@ -1993,7 +1993,7 @@ ConstructorDeclarator:
                     if (! SyntaxPassOnly()) {
                         $$.d = $<symbol>2;
                         assert($$.d && $$.d->u.type && $$.d->u.type->kind == TypeFunction);
-                        FILL_functionTypeModifier(&$$.d->u.type->u.f , $4.d.s, NULL);
+                        initFunctionTypeModifier(&$$.d->u.type->u.f , $4.d.s);
                     } else {
                         javaHandleDeclaratorParamPositions(&$1.d->p, &$3.d, $4.d.p, &$5.d);
                         PropagateBorns($$, $1, $5);
@@ -2002,7 +2002,7 @@ ConstructorDeclarator:
                 if (inSecondJslPass()) {
                     $$.d = $<symbol>2;
                     assert($$.d && $$.d->u.type && $$.d->u.type->kind == TypeFunction);
-                    FILL_functionTypeModifier(&$$.d->u.type->u.f , $4.d.s, NULL);
+                    initFunctionTypeModifier(&$$.d->u.type->u.f , $4.d.s);
                 };
             }
     ;

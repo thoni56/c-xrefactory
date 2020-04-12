@@ -1132,14 +1132,14 @@ declarator2
         assert($1.d);
         $$.d = $1.d;
         p = AddComposedType($$.d, TypeFunction);
-        FILL_functionTypeModifier(&p->u.f , NULL, NULL);
+        initFunctionTypeModifier(&p->u.f , NULL);
     }
     | declarator2 '(' parameter_type_list ')'           {
         S_typeModifier *p;
         assert($1.d);
         $$.d = $1.d;
         p = AddComposedType($$.d, TypeFunction);
-        FILL_functionTypeModifier(&p->u.f , $3.d.s, NULL);
+        initFunctionTypeModifier(&p->u.f , $3.d.s);
         handleDeclaratorParamPositions($1.d, &$2.d, $3.d.p, &$4.d, 1);
     }
     | declarator2 '(' parameter_identifier_list ')'     {
@@ -1147,7 +1147,7 @@ declarator2
         assert($1.d);
         $$.d = $1.d;
         p = AddComposedType($$.d, TypeFunction);
-        FILL_functionTypeModifier(&p->u.f , $3.d.s, NULL);
+        initFunctionTypeModifier(&p->u.f , $3.d.s);
         handleDeclaratorParamPositions($1.d, &$2.d, $3.d.p, &$4.d, 1);
     }
     | COMPL_OTHER_NAME      { assert(0); /* token never used */ }
@@ -1375,25 +1375,25 @@ abstract_declarator2
     }
     | '(' ')'                                       {
         CrTypeModifier($$.d,TypeFunction);
-        FILL_functionTypeModifier(&$$.d->u.f , NULL, NULL);
+        initFunctionTypeModifier(&$$.d->u.f , NULL);
     }
     | '(' parameter_type_list ')'                   {
         CrTypeModifier($$.d,TypeFunction);
-        FILL_functionTypeModifier(&$$.d->u.f , $2.d.s, NULL);
+        initFunctionTypeModifier(&$$.d->u.f , $2.d.s);
     }
     | abstract_declarator2 '(' ')'                  {
         S_typeModifier *p;
         $$.d = $1.d;
         p = appendComposedType(&($$.d), TypeFunction);
-        FILL_functionTypeModifier(&p->u.f , NULL, NULL);
+        initFunctionTypeModifier(&p->u.f , NULL);
     }
     | abstract_declarator2 '(' parameter_type_list ')'          {
         S_typeModifier *p;
         $$.d = $1.d;
         p = appendComposedType(&($$.d), TypeFunction);
         // why there was the following ?????
-        // FILL_functionTypeModifier(&p->u.f , NULL, NULL);
-        FILL_functionTypeModifier(&p->u.f , $3.d.s, NULL);
+        // initFunctionTypeModifier(&p->u.f , NULL);
+        initFunctionTypeModifier(&p->u.f , $3.d.s);
     }
     ;
 

@@ -4314,7 +4314,7 @@ case 158:
                     if (! SyntaxPassOnly()) {
                         yyval.ast_symbol.d = yyvsp[-3].symbol;
                         assert(yyval.ast_symbol.d && yyval.ast_symbol.d->u.type && yyval.ast_symbol.d->u.type->kind == TypeFunction);
-                        FILL_functionTypeModifier(&yyval.ast_symbol.d->u.type->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
+                        initFunctionTypeModifier(&yyval.ast_symbol.d->u.type->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s);
                     } else {
                         javaHandleDeclaratorParamPositions(&yyvsp[-4].ast_id.d->p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_symbolPositionListPair.d.p, &yyvsp[0].ast_position.d);
                         PropagateBorns(yyval.ast_symbol, yyvsp[-4].ast_id, yyvsp[0].ast_position);
@@ -4323,7 +4323,7 @@ case 158:
                 if (inSecondJslPass()) {
                     yyval.ast_symbol.d = yyvsp[-3].symbol;
                     assert(yyval.ast_symbol.d && yyval.ast_symbol.d->u.type && yyval.ast_symbol.d->u.type->kind == TypeFunction);
-                    FILL_functionTypeModifier(&yyval.ast_symbol.d->u.type->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
+                    initFunctionTypeModifier(&yyval.ast_symbol.d->u.type->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s);
                 }
             }
 break;
@@ -4584,7 +4584,7 @@ case 179:
                     if (! SyntaxPassOnly()) {
                         yyval.ast_symbol.d = yyvsp[-3].symbol;
                         assert(yyval.ast_symbol.d && yyval.ast_symbol.d->u.type && yyval.ast_symbol.d->u.type->kind == TypeFunction);
-                        FILL_functionTypeModifier(&yyval.ast_symbol.d->u.type->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
+                        initFunctionTypeModifier(&yyval.ast_symbol.d->u.type->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s);
                     } else {
                         javaHandleDeclaratorParamPositions(&yyvsp[-4].ast_id.d->p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_symbolPositionListPair.d.p, &yyvsp[0].ast_position.d);
                         PropagateBorns(yyval.ast_symbol, yyvsp[-4].ast_id, yyvsp[0].ast_position);
@@ -4593,7 +4593,7 @@ case 179:
                 if (inSecondJslPass()) {
                     yyval.ast_symbol.d = yyvsp[-3].symbol;
                     assert(yyval.ast_symbol.d && yyval.ast_symbol.d->u.type && yyval.ast_symbol.d->u.type->kind == TypeFunction);
-                    FILL_functionTypeModifier(&yyval.ast_symbol.d->u.type->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
+                    initFunctionTypeModifier(&yyval.ast_symbol.d->u.type->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s);
                 };
             }
 break;

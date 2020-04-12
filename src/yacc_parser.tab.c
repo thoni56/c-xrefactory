@@ -3700,7 +3700,7 @@ case 371:
         assert(yyvsp[-2].ast_symbol.d);
         yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
         p = AddComposedType(yyval.ast_symbol.d, TypeFunction);
-        FILL_functionTypeModifier(&p->u.f , NULL, NULL);
+        initFunctionTypeModifier(&p->u.f , NULL);
     }
 break;
 case 372:
@@ -3710,7 +3710,7 @@ case 372:
         assert(yyvsp[-3].ast_symbol.d);
         yyval.ast_symbol.d = yyvsp[-3].ast_symbol.d;
         p = AddComposedType(yyval.ast_symbol.d, TypeFunction);
-        FILL_functionTypeModifier(&p->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
+        initFunctionTypeModifier(&p->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s);
         handleDeclaratorParamPositions(yyvsp[-3].ast_symbol.d, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_symbolPositionListPair.d.p, &yyvsp[0].ast_position.d, 1);
     }
 break;
@@ -3721,7 +3721,7 @@ case 373:
         assert(yyvsp[-3].ast_symbol.d);
         yyval.ast_symbol.d = yyvsp[-3].ast_symbol.d;
         p = AddComposedType(yyval.ast_symbol.d, TypeFunction);
-        FILL_functionTypeModifier(&p->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
+        initFunctionTypeModifier(&p->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s);
         handleDeclaratorParamPositions(yyvsp[-3].ast_symbol.d, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_symbolPositionListPair.d.p, &yyvsp[0].ast_position.d, 1);
     }
 break;
@@ -4009,14 +4009,14 @@ case 416:
 #line 1376 "yacc_parser.y"
 {
         CrTypeModifier(yyval.ast_typeModifiers.d,TypeFunction);
-        FILL_functionTypeModifier(&yyval.ast_typeModifiers.d->u.f , NULL, NULL);
+        initFunctionTypeModifier(&yyval.ast_typeModifiers.d->u.f , NULL);
     }
 break;
 case 417:
 #line 1380 "yacc_parser.y"
 {
         CrTypeModifier(yyval.ast_typeModifiers.d,TypeFunction);
-        FILL_functionTypeModifier(&yyval.ast_typeModifiers.d->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
+        initFunctionTypeModifier(&yyval.ast_typeModifiers.d->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s);
     }
 break;
 case 418:
@@ -4025,7 +4025,7 @@ case 418:
         S_typeModifier *p;
         yyval.ast_typeModifiers.d = yyvsp[-2].ast_typeModifiers.d;
         p = appendComposedType(&(yyval.ast_typeModifiers.d), TypeFunction);
-        FILL_functionTypeModifier(&p->u.f , NULL, NULL);
+        initFunctionTypeModifier(&p->u.f , NULL);
     }
 break;
 case 419:
@@ -4035,8 +4035,8 @@ case 419:
         yyval.ast_typeModifiers.d = yyvsp[-3].ast_typeModifiers.d;
         p = appendComposedType(&(yyval.ast_typeModifiers.d), TypeFunction);
         /* why there was the following ?????*/
-        /* FILL_functionTypeModifier(&p->u.f , NULL, NULL);*/
-        FILL_functionTypeModifier(&p->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s, NULL);
+        /* initFunctionTypeModifier(&p->u.f , NULL);*/
+        initFunctionTypeModifier(&p->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s);
     }
 break;
 case 423:

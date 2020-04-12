@@ -1074,7 +1074,7 @@ declarator2
         assert($1.d);
         $$.d = $1.d;
         p = AddComposedType($$.d, TypeFunction);
-        FILL_functionTypeModifier(&p->u.f , NULL, NULL);
+        initFunctionTypeModifier(&p->u.f , NULL);
         handleDeclaratorParamPositions($1.d, &$2.d, NULL, &$3.d, 0);
     }
     | declarator2 '(' parameter_type_list ')'			{
@@ -1082,7 +1082,7 @@ declarator2
         assert($1.d);
         $$.d = $1.d;
         p = AddComposedType($$.d, TypeFunction);
-        FILL_functionTypeModifier(&p->u.f , $3.d.s, NULL);
+        initFunctionTypeModifier(&p->u.f , $3.d.s);
         handleDeclaratorParamPositions($1.d, &$2.d, $3.d.p, &$4.d, 1);
     }
     | declarator2 '(' parameter_identifier_list ')'		{
@@ -1090,7 +1090,7 @@ declarator2
         assert($1.d);
         $$.d = $1.d;
         p = AddComposedType($$.d, TypeFunction);
-        FILL_functionTypeModifier(&p->u.f , $3.d.s, NULL);
+        initFunctionTypeModifier(&p->u.f , $3.d.s);
         handleDeclaratorParamPositions($1.d, &$2.d, $3.d.p, &$4.d, 1);
     }
     | COMPL_OTHER_NAME		{ assert(0); /* token never used */ }
@@ -1324,17 +1324,17 @@ abstract_declarator2
     }
     | '(' ')'										{
         CrTypeModifier($$.d,TypeFunction);
-        FILL_functionTypeModifier(&$$.d->u.f , NULL, NULL);
+        initFunctionTypeModifier(&$$.d->u.f , NULL);
     }
     | '(' parameter_type_list ')'					{
         CrTypeModifier($$.d,TypeFunction);
-        FILL_functionTypeModifier(&$$.d->u.f , $2.d.s, NULL);
+        initFunctionTypeModifier(&$$.d->u.f , $2.d.s);
     }
     | abstract_declarator2 '(' ')'					{
         S_typeModifier *p;
         $$.d = $1.d;
         p = appendComposedType(&($$.d), TypeFunction);
-        FILL_functionTypeModifier(&p->u.f , NULL, NULL);
+        initFunctionTypeModifier(&p->u.f , NULL);
     }
     | abstract_declarator2 '(' parameter_type_list ')'			{
         S_typeModifier *p;
@@ -1342,8 +1342,8 @@ abstract_declarator2
         p = appendComposedType(&($$.d), TypeFunction);
         // I think there should be the following, but in abstract
         // declarator it does not matter
-        //& FILL_functionTypeModifier(&p->u.f , $3.d.s, NULL);
-        FILL_functionTypeModifier(&p->u.f , NULL, NULL);
+        //& initFunctionTypeModifier(&p->u.f , $3.d.s);
+        initFunctionTypeModifier(&p->u.f , NULL);
     }
     ;
 
