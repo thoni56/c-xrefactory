@@ -796,16 +796,6 @@ S_typeModifier *prependComposedType(S_typeModifier *d, Type type) {
     return(p);
 }
 
-#if ZERO
-void completeDeclarator(S_symbol *t, S_symbol *d) {
-    assert(t && d);
-    if (t == &s_errorSymbol || d == &s_errorSymbol) return;
-    unpackPointers(d);
-    LIST_APPEND(S_typeModifiers, d->u.type, t->u.type);
-    d->b.storage = t->b.storage;
-}
-#endif
-
 void completeDeclarator(Symbol *t, Symbol *d) {
     S_typeModifier *tt,**dt;
     //static int counter=0;
