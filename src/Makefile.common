@@ -138,7 +138,7 @@ test: debug
 	$(MAKE) -C ../tests -j1 quick
 
 
-unit: debug	  # No actual dependecy, but nice to know that it compiles
+unit:
 	make -C unittests debug
 
 coverage: COVERAGE=--coverage
