@@ -1891,13 +1891,13 @@ void javaAddMapedTypeName(
 }
 
 S_typeModifier *javaClassNameType(S_idList *typeName) {
-    S_typeModifier *tt; Symbol *st;
+    Symbol *st;
+
     assert(typeName);
     assert(typeName->nameType == TypeStruct);
-    st = javaTypeSymbolUsage(typeName,ACCESS_DEFAULT);
-    XX_ALLOC(tt,S_typeModifier);
-    FILLF_typeModifier(tt,TypeStruct,t,st,NULL,NULL);
-    return(tt);
+    st = javaTypeSymbolUsage(typeName, ACCESS_DEFAULT);
+
+    return newStructTypeModifier(st);
 }
 
 S_typeModifier *javaNestedNewType(Symbol *sym, S_id *thenew,
@@ -2382,36 +2382,34 @@ S_typeModifier *javaCheckNumeric(S_typeModifier *tt) {
 }
 
 S_typeModifier *javaNumericPromotion(S_typeModifier *tt) {
-    S_typeModifier *rr;
     assert(tt);
     switch (tt->kind) {
-    case TypeByte: case TypeShort: case TypeChar:
-        XX_ALLOC(rr,S_typeModifier);
-        FILLF_typeModifier(rr,TypeInt,t,NULL,NULL,NULL);
-        return(rr);
-    case TypeInt: case TypeLong:
-    case TypeDouble: case TypeFloat:
+    case TypeByte:
+    case TypeShort:
+    case TypeChar:
+        return newSimpleTypeModifier(TypeInt);
+    case TypeInt:
+    case TypeLong:
+    case TypeDouble:
+    case TypeFloat:
         return(tt);
     default:
         return(&s_errorModifier);
     }
 }
 
-S_typeModifier *javaBinaryNumericPromotion(	S_typeModifier *t1,
-                                                S_typeModifier *t2
-                                            ) {
-    int m1,m2,res;
-    S_typeModifier *rr;
+S_typeModifier *javaBinaryNumericPromotion(S_typeModifier *t1, S_typeModifier *t2) {
+    int m1,m2,resultingType;
+
     m1 = t1->kind;
     m2 = t2->kind;
     assert(t1 && t2);
-    res = TypeInt;
-    if (m1 == TypeDouble || m2 == TypeDouble) res = TypeDouble;
-    else if (m1 == TypeFloat || m2 == TypeFloat) res = TypeFloat;
-    else if (m1 == TypeLong || m2 == TypeLong) res = TypeLong;
-    XX_ALLOC(rr,S_typeModifier);
-    FILLF_typeModifier(rr,res,t,NULL,NULL,NULL);
-    return(rr);
+    resultingType = TypeInt;
+    if (m1 == TypeDouble || m2 == TypeDouble) resultingType = TypeDouble;
+    else if (m1 == TypeFloat || m2 == TypeFloat) resultingType = TypeFloat;
+    else if (m1 == TypeLong || m2 == TypeLong) resultingType = TypeLong;
+
+    return newSimpleTypeModifier(resultingType);
 }
 
 S_typeModifier *javaBitwiseLogicalPromotion(	S_typeModifier *t1,

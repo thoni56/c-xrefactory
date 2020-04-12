@@ -75,7 +75,7 @@ Symbol *jslTypeSpecifier2(S_typeModifier *t) {
     return symbol;
 }
 
-static S_typeModifier *jslCrSimpleTypeModifier(unsigned t) {
+static S_typeModifier *jslCreateSimpleTypeModifier(unsigned t) {
     S_typeModifier *p;
 
     assert(t>=0 && t<MAX_TYPE);
@@ -91,7 +91,7 @@ static S_typeModifier *jslCrSimpleTypeModifier(unsigned t) {
 }
 
 Symbol *jslTypeSpecifier1(unsigned t) {
-    return jslTypeSpecifier2(jslCrSimpleTypeModifier(t));
+    return jslTypeSpecifier2(jslCreateSimpleTypeModifier(t));
 }
 
 S_typeModifier *jslAppendComposedType(S_typeModifier **d, unsigned t) {
