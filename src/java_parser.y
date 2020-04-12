@@ -64,11 +64,6 @@
     }\
 }
 
-#define CrTypeModifier(xxx,ttt) {\
-        xxx = StackMemAlloc(S_typeModifier);\
-        FILLF_typeModifier(xxx, ttt,f,( NULL,NULL) ,NULL,NULL);\
-}
-
 #define PrependModifier(xxx,ttt) {\
         S_typeModifier *p;\
         p = StackMemAlloc(S_typeModifier);\
@@ -385,7 +380,7 @@ Literal:
         TRUE_LITERAL		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier($$.d.t,TypeBoolean);
+                    $$.d.t = newSimpleTypeModifier(TypeBoolean);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &s_noPos;
@@ -396,7 +391,7 @@ Literal:
     |	FALSE_LITERAL		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier($$.d.t,TypeBoolean);
+                    $$.d.t = newSimpleTypeModifier(TypeBoolean);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &s_noPos;
@@ -407,7 +402,7 @@ Literal:
     |	CONSTANT			{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier($$.d.t,TypeInt);
+                    $$.d.t = newSimpleTypeModifier(TypeInt);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &s_noPos;
@@ -418,7 +413,7 @@ Literal:
     |	LONG_CONSTANT		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier($$.d.t,TypeLong);
+                    $$.d.t = newSimpleTypeModifier(TypeLong);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &s_noPos;
@@ -429,7 +424,7 @@ Literal:
     |	FLOAT_CONSTANT		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier($$.d.t,TypeFloat);
+                    $$.d.t = newSimpleTypeModifier(TypeFloat);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &s_noPos;
@@ -439,7 +434,7 @@ Literal:
         }
     |	DOUBLE_CONSTANT		{
             if (regularPass()) {
-                CrTypeModifier($$.d.t,TypeDouble);
+                $$.d.t = newSimpleTypeModifier(TypeDouble);
                 $$.d.r = NULL;
                 $$.d.pp = &s_noPos;
                 if (SyntaxPassOnly()) {PropagateBorns($$, $1, $1);}
@@ -448,7 +443,7 @@ Literal:
     |	CHAR_LITERAL		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier($$.d.t,TypeChar);
+                    $$.d.t = newSimpleTypeModifier(TypeChar);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &s_noPos;
@@ -471,7 +466,7 @@ Literal:
     |	NULL_LITERAL		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier($$.d.t,TypeNull);
+                    $$.d.t = newSimpleTypeModifier(TypeNull);
                     $$.d.r = NULL;
                 } else {
                     XX_ALLOC($$.d.pp, S_position);
@@ -3387,7 +3382,7 @@ ArrayCreationExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     int i;
-                    CrTypeModifier($$.d.t,$3.d.u);
+                    $$.d.t = newSimpleTypeModifier($3.d.u);
                     for(i=0; i<$4.d; i++) PrependModifier($$.d.t, TypeArray);
                     $$.d.r = NULL;
                 } else {
@@ -3401,7 +3396,7 @@ ArrayCreationExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     int i;
-                    CrTypeModifier($$.d.t,$3.d.u);
+                    $$.d.t = newSimpleTypeModifier($3.d.u);
                     for(i=0; i<$4.d; i++) PrependModifier($$.d.t, TypeArray);
                     $$.d.r = NULL;
                 } else {
@@ -3983,7 +3978,7 @@ RelationalExpression:
     |	RelationalExpression '<' ShiftExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier($$.d.t,TypeBoolean);
+                    $$.d.t = newSimpleTypeModifier(TypeBoolean);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
@@ -3994,7 +3989,7 @@ RelationalExpression:
     |	RelationalExpression '>' ShiftExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier($$.d.t,TypeBoolean);
+                    $$.d.t = newSimpleTypeModifier(TypeBoolean);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
@@ -4005,7 +4000,7 @@ RelationalExpression:
     |	RelationalExpression LE_OP ShiftExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier($$.d.t,TypeBoolean);
+                    $$.d.t = newSimpleTypeModifier(TypeBoolean);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
@@ -4016,7 +4011,7 @@ RelationalExpression:
     |	RelationalExpression GE_OP ShiftExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier($$.d.t,TypeBoolean);
+                    $$.d.t = newSimpleTypeModifier(TypeBoolean);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
@@ -4027,7 +4022,7 @@ RelationalExpression:
     |	RelationalExpression INSTANCEOF ReferenceType		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier($$.d.t,TypeBoolean);
+                    $$.d.t = newSimpleTypeModifier(TypeBoolean);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
@@ -4042,7 +4037,7 @@ EqualityExpression:
     |	EqualityExpression EQ_OP RelationalExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier($$.d.t,TypeBoolean);
+                    $$.d.t = newSimpleTypeModifier(TypeBoolean);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
@@ -4053,7 +4048,7 @@ EqualityExpression:
     |	EqualityExpression NE_OP RelationalExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier($$.d.t,TypeBoolean);
+                    $$.d.t = newSimpleTypeModifier(TypeBoolean);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
@@ -4113,7 +4108,7 @@ ConditionalAndExpression:
     |	ConditionalAndExpression AND_OP InclusiveOrExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier($$.d.t,TypeBoolean);
+                    $$.d.t = newSimpleTypeModifier(TypeBoolean);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
@@ -4128,7 +4123,7 @@ ConditionalOrExpression:
     |	ConditionalOrExpression OR_OP ConditionalAndExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    CrTypeModifier($$.d.t,TypeBoolean);
+                    $$.d.t = newSimpleTypeModifier(TypeBoolean);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
