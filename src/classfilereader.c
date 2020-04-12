@@ -1078,14 +1078,14 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
 
     ccc = cFile.lexBuffer.buffer.next; ffin = cFile.lexBuffer.buffer.end;
     if (zipsep != NULL) {
-        if (zipSeekToFile(&ccc,&ffin,&cFile.lexBuffer.buffer,name) == 0) goto fini;
+        if (zipSeekToFile(&ccc,&ffin,&cFile.lexBuffer.buffer,name) == 0) goto finish;
     }
     GetU4(cval, ccc, ffin, &cFile.lexBuffer.buffer);
     /*&fprintf(dumpOut, "magic is %x\n", cval); fflush(dumpOut);&*/
     if (cval != 0xcafebabe) {
         sprintf(tmpBuff,"%s is not a valid class file\n",name);
         error(ERR_ST,tmpBuff);
-        goto fini;
+        goto finish;
     }
     assert(cval == 0xcafebabe);
     GetU4(cval, ccc, ffin, &cFile.lexBuffer.buffer);
@@ -1193,7 +1193,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
         }
     }
     s_fileTab.tab[fileInd]->b.cxLoaded = 1;
-    goto fini;
+    goto finish;
 
  endOfFile:
     sprintf(tmpBuff,"unexpected end of file '%s'", name);
@@ -1205,7 +1205,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     goto emergency;
  emergency:
     memb->u.s->nestedCount = 0;
- fini:
+ finish:
     log_debug("closing file %s", name);
     //&{fprintf(dumpOut,": closing file %s\n",name);fflush(dumpOut);fprintf(dumpOut,": ppmmem == %d/%d\n",ppmMemoryi,SIZE_ppmMemory);fflush(dumpOut);}
     popInclude();
