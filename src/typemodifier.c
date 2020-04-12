@@ -76,6 +76,14 @@ S_typeModifier *newFunctionTypeModifier(Symbol *args, Symbol **overLoadList, Sym
     return typeModifier;
 }
 
+S_typeModifier *newSimpleTypeModifier(Type kind) {
+    return newTypeModifier(kind, NULL, NULL);
+}
+
+S_typeModifier *newPointerTypeModifier(S_typeModifier *next) {
+    return newTypeModifier(TypePointer, NULL, next);
+}
+
 S_typeModifier *newArrayTypeModifier(void) {
     return newTypeModifier(TypeArray, NULL, NULL);
 }

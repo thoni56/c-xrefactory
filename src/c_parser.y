@@ -54,7 +54,6 @@
 }
 
 #define CrTypeModifier(xxx,ttt) {\
-        xxx = crSimpleTypeModifier(ttt);\
         xxx = StackMemAlloc(S_typeModifier);\
         FILLF_typeModifier(xxx, ttt,f,( NULL,NULL) ,NULL,NULL);\
 }
@@ -277,9 +276,8 @@ primary_expr
             Symbol *d;
             Symbol *dd;
 
-            CrTypeModifier(p, TypeInt);
-            $$.d.t = StackMemAlloc(S_typeModifier);
-            FILLF_typeModifier($$.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
+            p = newTypeModifier(TypeInt, NULL, NULL);
+            $$.d.t = newFunctionTypeModifier(NULL, NULL, NULL, p);
 
             d = newSymbolAsType($1.d->name, $1.d->name, $1.d->p, $$.d.t);
             fillSymbolBits(&d->bits, ACC_DEFAULT, TypeDefault, StorageExtern);
@@ -292,16 +290,15 @@ primary_expr
             }
         }
     }
-    | CHAR_LITERAL			{ CrTypeModifier($$.d.t, TypeInt); $$.d.r = NULL;}
-    | CONSTANT				{ CrTypeModifier($$.d.t, TypeInt); $$.d.r = NULL;}
-    | LONG_CONSTANT			{ CrTypeModifier($$.d.t, TypeLong); $$.d.r = NULL;}
-    | FLOAT_CONSTANT		{ CrTypeModifier($$.d.t, TypeFloat); $$.d.r = NULL;}
-    | DOUBLE_CONSTANT		{ CrTypeModifier($$.d.t, TypeDouble); $$.d.r = NULL;}
+    | CHAR_LITERAL			{ $$.d.t = newSimpleTypeModifier(TypeInt); $$.d.r = NULL;}
+    | CONSTANT				{ $$.d.t = newSimpleTypeModifier(TypeInt); $$.d.r = NULL;}
+    | LONG_CONSTANT			{ $$.d.t = newSimpleTypeModifier(TypeLong); $$.d.r = NULL;}
+    | FLOAT_CONSTANT		{ $$.d.t = newSimpleTypeModifier(TypeFloat); $$.d.r = NULL;}
+    | DOUBLE_CONSTANT		{ $$.d.t = newSimpleTypeModifier(TypeDouble); $$.d.r = NULL;}
     | string_literals		{
         S_typeModifier *p;
-        CrTypeModifier(p, TypeChar);
-        $$.d.t = StackMemAlloc(S_typeModifier);
-        FILLF_typeModifier($$.d.t, TypePointer,f,( NULL,NULL) ,NULL,p);
+        p = newSimpleTypeModifier(TypeChar);
+        $$.d.t = newPointerTypeModifier(p);
         $$.d.r = NULL;
     }
     | '(' expr ')'			{
