@@ -673,8 +673,10 @@ void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, S_symbol
     }
 }
 
-S_typeModifier *crSimpleTypeModifier(unsigned t) {
+static S_typeModifier *createSimpleTypeModifier(unsigned t) {
     S_typeModifier *p;
+
+    /* This seems to look first in pre-created types... */
     assert(t>=0 && t<MAX_TYPE);
     if (s_preCrTypesTab[t] == NULL) {
         p = StackMemAlloc(S_typeModifier);
@@ -684,7 +686,8 @@ S_typeModifier *crSimpleTypeModifier(unsigned t) {
     }
     /* log_trace("t,p->m == %d %d == %s %s",t,p->m,typeName[t],typeName[p->m]); */
     assert(p->kind == t);
-    return(p);
+
+    return p;
 }
 
 static S_typeModifier *mergeBaseType(S_typeModifier *t1,S_typeModifier *t2){
@@ -728,7 +731,7 @@ static S_typeModifier *mergeBaseType(S_typeModifier *t1,S_typeModifier *t2){
         break;
     default: assert(0); r=0;
     }
-    return(crSimpleTypeModifier(r));
+    return(createSimpleTypeModifier(r));
 }
 
 static S_typeModifier * mergeBaseModTypes(S_typeModifier *t1, S_typeModifier *t2) {
@@ -758,13 +761,13 @@ Symbol *typeSpecifier2(S_typeModifier *t) {
 
 Symbol *typeSpecifier1(unsigned t) {
     Symbol        *r;
-    r = typeSpecifier2(crSimpleTypeModifier(t));
+    r = typeSpecifier2(createSimpleTypeModifier(t));
     return(r);
 }
 
 void declTypeSpecifier1(Symbol *d, unsigned t) {
     assert(d && d->u.type);
-    d->u.type = mergeBaseModTypes(d->u.type,crSimpleTypeModifier(t));
+    d->u.type = mergeBaseModTypes(d->u.type,createSimpleTypeModifier(t));
 }
 
 void declTypeSpecifier2(Symbol *d, S_typeModifier *t) {

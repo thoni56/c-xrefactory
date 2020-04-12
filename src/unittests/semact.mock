@@ -106,10 +106,6 @@ void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, S_symbol
   mock(function, p, i, tab);
 }
 
-S_typeModifier *crSimpleTypeModifier(unsigned t) {
-  return (S_typeModifier *) mock(t);
-}
-
 SymbolList *createDefinitionList(Symbol *symbol) {
   return (SymbolList *) mock(symbol);
 }
