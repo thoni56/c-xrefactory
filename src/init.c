@@ -131,17 +131,15 @@ void initExtractStoragesNameTab(void) {
 void initArchaicTypes(void) {
     /* ******* some defaults and built-ins initialisations ********* */
 
-    FILLF_typeModifier(&s_defaultIntModifier, TypeInt, f, (NULL,NULL), NULL, NULL);
+    initTypeModifier(&s_defaultIntModifier, TypeInt);
     fillSymbolWithType(&s_defaultIntDefinition, NULL, NULL, s_noPos, &s_defaultIntModifier);
 
-    FILLF_typeModifier(&s_defaultPackedTypeModifier, TypePackedType, f,
-                        (NULL,NULL), NULL, NULL);
+    initTypeModifier(&s_defaultPackedTypeModifier, TypePackedType);
 
-    FILLF_typeModifier(&s_defaultVoidModifier,TypeVoid,f,( NULL,NULL) ,NULL,NULL);
-    fillSymbolWithType(&s_defaultVoidDefinition, NULL, NULL, s_noPos,
-               &s_defaultVoidModifier);
+    initTypeModifier(&s_defaultVoidModifier,TypeVoid);
+    fillSymbolWithType(&s_defaultVoidDefinition, NULL, NULL, s_noPos, &s_defaultVoidModifier);
 
-    FILLF_typeModifier(&s_errorModifier, TypeError,f,( NULL,NULL) ,NULL,NULL);
+    initTypeModifier(&s_errorModifier, TypeError);
     fillSymbolWithType(&s_errorSymbol, "__ERROR__", "__ERROR__", s_noPos, &s_errorModifier);
     fillSymbolBits(&s_errorSymbol.bits, ACC_DEFAULT, TypeError, StorageNone);
 }
