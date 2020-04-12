@@ -790,10 +790,7 @@ S_typeModifier *appendComposedType(S_typeModifier **d, Type type) {
 }
 
 S_typeModifier *prependComposedType(S_typeModifier *d, Type type) {
-    S_typeModifier *p;
-    p = StackMemAlloc(S_typeModifier);
-    FILLF_typeModifier(p, type,f,( NULL,NULL) ,NULL,d);
-    return(p);
+    return newTypeModifier(type, NULL, d);
 }
 
 void completeDeclarator(Symbol *t, Symbol *d) {
