@@ -99,7 +99,6 @@ static bool inSecondJslPass() {
 
 #define ComputingPossibleParameterCompletion() (regularPass() && (! SyntaxPassOnly()) && s_opt.taskRegime==RegimeEditServer && s_opt.server_operation==OLO_COMPLETION)
 
-#ifdef WHILEEXTRACTDATA
 typedef struct whileExtractData {
     int				i1;
     int             i2;
@@ -118,7 +117,6 @@ static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbo
 
     return whileExtractData;
 }
-#endif
 
 
 %}
@@ -2578,13 +2576,7 @@ WhileStatementPrefix:
                         cl = bl = NULL;        // just to avoid warning message
                         cl = addContinueBreakLabelSymbol($2.d, CONTINUE_LABEL_NAME);
                         bl = addContinueBreakLabelSymbol($6.d, BREAK_LABEL_NAME);
-                        /* REPLACE: */
-                        XX_ALLOC($$.d, S_whileExtractData);
-                        FILL_whileExtractData($$.d, $2.d, $6.d, cl, bl);
-                        /* with:
-                           $$.d = newWhileExtractData($2.d, $6.d, cl, bl);
-                           once we have a case where this executes ...*/
-                        assert(0);
+                        $$.d = newWhileExtractData($2.d, $6.d, cl, bl);
                     } else {
                         $$.d = NULL;
                     }
