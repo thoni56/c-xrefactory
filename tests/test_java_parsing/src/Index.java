@@ -23,6 +23,14 @@ import com.xrefactory.Browsing;
 import com.xrefactory.refactorings.Index;
 
 class Index {
+    int i = 456;
+    short s = 3;
+    char c = 'c';
+    byte b = 5; /* ?? */
+    long l = 43l;
+    float f = 3.14f;
+    double pi = 3.1415926;
+    String s = "hello";
 }
 
 
