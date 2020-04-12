@@ -1650,7 +1650,7 @@ static void addMacroBaseUsageRef( Symbol *mdef) {
     S_reference			*r;
     S_position          basePos;
     fillPosition(&basePos, s_input_file_number, 0, 0);
-    FILL_symbolRefItemBits(&ppp.b,TypeMacro,StorageDefault,ScopeGlobal,
+    fill_symbolRefItemBits(&ppp.b,TypeMacro,StorageDefault,ScopeGlobal,
                            mdef->bits.accessFlags, CatGlobal,0);
     FILL_symbolRefItem(&ppp,mdef->linkName,
                        cxFileHashNumber(mdef->linkName), // useless, put 0
