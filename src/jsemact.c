@@ -554,7 +554,7 @@ Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {
     return member;
 }
 
-Symbol * javaGetFieldClass(char *fieldLinkName, char **fieldAdr) {
+Symbol *javaGetFieldClass(char *fieldLinkName, char **fieldAdr) {
     /* also .class suffix can be considered as field !!!!!!!!!!! */
     /* also ; is considered as the end of class fq name */
     /* so, this function is used to determine class file name also */
@@ -1862,7 +1862,7 @@ void javaMethodBodyBeginning(Symbol *method) {
     genInternalLabelReference(-1, UsageDefined);
     s_count.localVar = 0;
     javaAddMethodParametersToSymTable(method);
-    method->u.type->u.m.sig = strchr(method->linkName, '(');
+    method->u.type->u.m.signature = strchr(method->linkName, '(');
     s_javaStat->methodModifiers = method->bits.accessFlags;
 }
 
@@ -2089,11 +2089,11 @@ static int javaSmallerProfile(Symbol *s1, Symbol *s2) {
     int r;
     char *p1,*p2;
     assert(s1 && s1->bits.symType==TypeDefault && s1->u.type);
-    assert(s1->u.type->kind == TypeFunction && s1->u.type->u.m.sig);
+    assert(s1->u.type->kind == TypeFunction && s1->u.type->u.m.signature);
     assert(s2 && s2->bits.symType==TypeDefault && s2->u.type);
-    assert(s2->u.type->kind == TypeFunction && s2->u.type->u.m.sig);
-    p1 = s1->u.type->u.m.sig;
-    p2 = s2->u.type->u.m.sig;
+    assert(s2->u.type->kind == TypeFunction && s2->u.type->u.m.signature);
+    p1 = s1->u.type->u.m.signature;
+    p2 = s2->u.type->u.m.signature;
 /*fprintf(dumpOut,"comparing %s to %s\n",p1,p2); fflush(dumpOut);*/
     assert(*p1 == '(');
     assert(*p2 == '(');
@@ -2111,8 +2111,8 @@ int javaMethodApplicability(Symbol *memb, char *actArgs) {
     int r;
     char *fargs;
     assert(memb && memb->bits.symType==TypeDefault && memb->u.type);
-    assert(memb->u.type->kind == TypeFunction && memb->u.type->u.m.sig);
-    fargs = memb->u.type->u.m.sig;
+    assert(memb->u.type->kind == TypeFunction && memb->u.type->u.m.signature);
+    fargs = memb->u.type->u.m.signature;
 //&sprintf(tmpBuff,"testing applicability of %s to %s\n",fargs,actArgs);ppcGenTmpBuff();
     assert(*fargs == '(');
     fargs ++;
@@ -2210,7 +2210,7 @@ static S_typeModifier *javaMethodInvocation(
     smallesti = 0;
     for (i=1; i<appli; i++) {
         if (! javaSmallerProfile(appl[smallesti], appl[i])) smallesti = i;
-/*&		if (strcmp(appl[smallesti]->u.type->u.m.sig, appl[i]->u.type->u.m.sig)==0) {&*/
+/*&		if (strcmp(appl[smallesti]->u.type->u.m.signature, appl[i]->u.type->u.m.signature)==0) {&*/
             /* virtual application, take one from the super-class */
 /*&			smallesti = i;&*/
 /*&		}&*/

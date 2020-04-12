@@ -524,8 +524,8 @@ static int isTheSameSymbol(S_cline *c1, S_cline *c2) {
     if (c1->vFunClass != c2->vFunClass) return(0);
     if (c2->t->u.type->kind != TypeFunction) return(1);
     /*fprintf(dumpOut,"sigs %s %s\n",c1->t->u.type->u.sig,c2->t->u.type->u.sig);*/
-    assert(c1->t->u.type->u.m.sig && c2->t->u.type->u.m.sig);
-    if (strcmp(c1->t->u.type->u.m.sig,c2->t->u.type->u.m.sig)) return(0);
+    assert(c1->t->u.type->u.m.signature && c2->t->u.type->u.m.signature);
+    if (strcmp(c1->t->u.type->u.m.signature,c2->t->u.type->u.m.signature)) return(0);
     return(1);
 }
 
@@ -805,7 +805,7 @@ static void completeFunctionOrMethodName(S_completions *c, int orderFlag, int vl
     } else {
         assert(r->u.type!=NULL);
         if (LANGUAGE(LANG_JAVA)) {
-            msig = r->u.type->u.m.sig;
+            msig = r->u.type->u.m.signature;
             assert(msig!=NULL);
             if (msig[0]=='(' && msig[1]==')') {
                 psuff = "()";
@@ -1082,7 +1082,7 @@ static int isEqualType(S_typeModifier *t1, S_typeModifier *t2) {
         if (s1->u.t != s2->u.t) return(0);
     } else if (s1->kind==TypeFunction) {
         if (LANGUAGE(LANG_JAVA)) {
-            if (strcmp(s1->u.m.sig,s2->u.m.sig)!=0) return(0);
+            if (strcmp(s1->u.m.signature,s2->u.m.signature)!=0) return(0);
         } else {
             for(ss1=s1->u.f.args, ss2=s2->u.f.args;
                 ss1!=NULL&&ss2!=NULL;

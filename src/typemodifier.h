@@ -7,17 +7,17 @@
 typedef struct typeModifier {
     enum type                kind;
     union typeModifierUnion {
-        struct functionTypeModifier {                /* LAN_C/CPP Function */
+        struct functionTypeModifier {           /* LAN_C/CPP Function */
             struct symbol     *args;
-            struct symbol     **thisFunList; /* only for LAN_CPP overloaded */
+            struct symbol     **thisFunList;    /* only for LAN_CPP overloaded */
         } f;
         struct methodTypeModifier {             /* LAN_JAVA Function/Method */
-            char              *sig;
+            char              *signature;       /* NOTE: kind=TypeFunction */
             struct symbolList *exceptions;
         } m;
-        struct symbol         *t;            /* Struct/Union/Enum */
+        struct symbol         *t;               /* Struct/Union/Enum */
     } u;
-    struct symbol             *typedefSymbol;  /* the typedef symbol (if any) */
+    struct symbol             *typedefSymbol;   /* the typedef symbol (if any) */
     struct typeModifier      *next;
 } S_typeModifier;
 

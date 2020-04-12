@@ -291,7 +291,7 @@ Symbol *jslMethodHeader(unsigned modif, Symbol *type,
                   decl->linkName, s_jsl->classStat->thisClass->linkName, (unsigned long)decl);
         LIST_APPEND(Symbol, s_jsl->classStat->thisClass->u.s->records, decl);
     }
-    decl->u.type->u.m.sig = strchr(decl->linkName, '(');
+    decl->u.type->u.m.signature = strchr(decl->linkName, '(');
     decl->u.type->u.m.exceptions = throws;
     return(decl);
 }

@@ -344,7 +344,7 @@ void typeSPrint(char *buff, int *size, S_typeModifier *t,
             j += strlen(post+j);
             if (s_language == LANG_JAVA) {
                 jj = COMPLETION_STRING_SIZE - j - TYPE_STR_RESERVE;
-                javaSignatureSPrint(post+j, &jj, t->u.m.sig,longOrShortName);
+                javaSignatureSPrint(post+j, &jj, t->u.m.signature,longOrShortName);
                 j += jj;
             } else {
                 for(dd=t->u.f.args; dd!=NULL; dd=dd->next) {

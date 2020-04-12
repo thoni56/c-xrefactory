@@ -716,8 +716,9 @@ S_typeModifier * cfUnPackResultType(char *sig, char **restype) {
         switch (*ssig) {
         case ')':
             FILLF_typeModifier(tt, TypeFunction,f,( NULL,NULL) ,NULL, NULL);
+            initTypeModifierAsFunction(tt, NULL, NULL, NULL, NULL);
             assert(*sig == '(');
-            tt->u.m.sig = NULL; /* must be set later !!!!!!!!!! */
+            tt->u.m.signature = NULL; /* must be set later !!!!!!!!!! */
             break;
         case '[':
             FILLF_typeModifier(tt, TypeArray,f,( NULL,NULL) ,NULL, NULL);
@@ -797,7 +798,7 @@ static void cfAddRecordToClass(char *name,
     if (tt->kind == TypeFunction) {
         assert(*sig == '(');
         assert(*prof == '(');
-        tt->u.m.sig = prof;
+        tt->u.m.signature = prof;
         tt->u.m.exceptions = exceptions;
     }
 
@@ -922,7 +923,7 @@ static void cfReadMethodInfos(  char **accc,
                     exsname = simpleClassNameFromFQTName(exname);
                     exc = javaFQTypeSymbolDefinition(exsname, exname);
                     CF_ALLOC(ee, SymbolList);
-                    /* REPLACED: FILL_symbolList(ee, exc, exclist); with: */
+                    /* REPLACED: FILL_symbolList(ee, exc, exclist); with compound literal */
                     *ee = (SymbolList){.d = exc, .next = exclist};
                     exclist = ee;
                 }
@@ -1001,7 +1002,7 @@ void addSuperClassOrInterface(Symbol *member, Symbol *super, int origin) {
     }
     cfAddCastsToModule(member, super);
     CF_ALLOC(symbolList, SymbolList);
-    /* REPLACED FILL_symbolList(ssl, supp, NULL); with: */
+    /* REPLACED: FILL_symbolList(ssl, supp, NULL); with compound literal */
     *symbolList = (SymbolList){.d = super, .next = NULL};
     LIST_APPEND(SymbolList, member->u.s->super, symbolList);
     addSubClassItemToFileTab(super->u.s->classFile,

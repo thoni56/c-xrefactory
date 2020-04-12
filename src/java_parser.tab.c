@@ -4519,7 +4519,7 @@ case 176:
                         s_count.localVar = 0;
                         assert(yyvsp[-1].ast_symbol.d && yyvsp[-1].ast_symbol.d->u.type);
                         javaAddMethodParametersToSymTable(yyvsp[-1].ast_symbol.d);
-                        mh->u.type->u.m.sig = strchr(mh->linkName, '(');
+                        mh->u.type->u.m.signature = strchr(mh->linkName, '(');
                         s_javaStat->methodModifiers = yyvsp[-2].ast_unsigned.d;
                     }
                 }
