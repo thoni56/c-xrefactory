@@ -2042,7 +2042,7 @@ static void mainParseInputFile(void) {
         cccyyparse();
     }
 #   endif
-    else if (s_language == LAN_YACC) {
+    else if (s_language == LANG_YACC) {
         //printf("Parsing YACC-file\n");
         uniyylval = & yaccyylval;
         yaccyyparse();
@@ -2124,7 +2124,7 @@ void mainSetLanguage(char *inFileName, Language *outLanguage) {
         } else if (fnCmp(suff,".class")==0) {
             *outLanguage = LANG_CLASS;
         } else if (fnCmp(suff,".y")==0) {
-            *outLanguage = LAN_YACC;
+            *outLanguage = LANG_YACC;
             typeName[TypeStruct] = "struct";
 #   ifdef CCC_ALLOWED
         } else if (fileNameHasOneOfSuffixes(inFileName, s_opt.cppFilesSuffixes)) {
@@ -2165,7 +2165,7 @@ static void getAndProcessGccOptions(void) {
     char *tempfile_name, *lang;
     FILE *tempfile;
     struct stat stt;
-    if (LANGUAGE(LANG_C) || LANGUAGE(LAN_YACC)) {
+    if (LANGUAGE(LANG_C) || LANGUAGE(LANG_YACC)) {
         lang = "c";
     }
     else if (LANGUAGE(LANG_CCC)) {

@@ -5214,7 +5214,7 @@ static unsigned olcxOoBits(S_olSymbolsMenu *ols, S_symbolRefItem *p) {
     if (strcmp(ols->s.name,p->name)==0) {
         ooBits |= OOC_PROFILE_EQUAL;
     }
-    if (LANGUAGE(LANG_C) || LANGUAGE(LAN_YACC)
+    if (LANGUAGE(LANG_C) || LANGUAGE(LANG_YACC)
         || JAVA_STATICALLY_LINKED(ols->s.b.storage, ols->s.b.accessFlags)) {
         if (vFunCl == olvFunCl) ooBits |= OOC_VIRT_SAME_APPL_FUN_CLASS;
     } else {

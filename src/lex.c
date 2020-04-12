@@ -134,7 +134,7 @@ void gotOnLineCxRefs( S_position *ps ) {
             PutLexChar(ch,dd);                                          \
         identCont##lab:                                                 \
             GetChar(ch,ccc,cfin,cb, clb, clo);                          \
-        } while (isalpha(ch) || isdigit(ch) || ch=='_' || (ch=='$' && (LANGUAGE(LAN_YACC)||LANGUAGE(LANG_JAVA)))); \
+        } while (isalpha(ch) || isdigit(ch) || ch=='_' || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))); \
         if (ch == '@' && *(dd-1)=='C') {                                \
             int i,len;                                                  \
             len = strlen(s_editCommunicationString);                    \
@@ -305,7 +305,7 @@ int getLexBuf(struct lexBuf *lb) {
         /*  yytext = ccc; */
         lexStartDd = dd;
         lexStartCol = COLUMN_POS(ccc,clb,clo);
-        if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LAN_YACC)||LANGUAGE(LANG_JAVA)))) {
+        if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
             ProcessIdentifier(ch, ccc, cfin, cb, dd, cfile, cline, clb, clo, lab2);
             goto nextLexem;
         } else if (isdigit(ch)) {
@@ -358,7 +358,7 @@ int getLexBuf(struct lexBuf *lb) {
             case '.':
                 lexStartFilePos = ABS_FILE_POS(cb,cfin,ccc);
                 GetChar(ch,ccc,cfin,cb,clb,clo);
-                if (ch == '.' && LANGUAGE(LANG_C|LAN_YACC|LANG_CCC)) {
+                if (ch == '.' && LANGUAGE(LANG_C|LANG_YACC|LANG_CCC)) {
                     GetChar(ch,ccc,cfin,cb,clb,clo);
                     if (ch == '.') {
                         GetChar(ch,ccc,cfin,cb,clb,clo);
@@ -398,7 +398,7 @@ int getLexBuf(struct lexBuf *lb) {
                     PutLexToken(SUB_ASSIGN,dd); PutLexPosition(cfile, cline, lexStartCol, dd); GetChar(ch,ccc,cfin,cb,clb,clo);
                     goto nextLexem;
                 } else if (ch=='-') {PutLexToken(DEC_OP,dd); PutLexPosition(cfile, cline, lexStartCol, dd);GetChar(ch,ccc,cfin,cb,clb,clo); goto nextLexem;}
-                else if (ch=='>' && LANGUAGE(LANG_C|LAN_YACC|LANG_CCC)) {
+                else if (ch=='>' && LANGUAGE(LANG_C|LANG_YACC|LANG_CCC)) {
                     GetChar(ch,ccc,cfin,cb,clb,clo);
                     if (ch=='*' && LANGUAGE(LANG_CCC)) {PutLexToken(PTRM_OP,dd); PutLexPosition(cfile, cline, lexStartCol, dd);GetChar(ch,ccc,cfin,cb,clb,clo); goto nextLexem;}
                     else {PutLexToken(PTR_OP,dd); PutLexPosition(cfile, cline, lexStartCol, dd);goto nextLexem;}
@@ -441,8 +441,8 @@ int getLexBuf(struct lexBuf *lb) {
                 GetChar(ch,ccc,cfin,cb,clb,clo);
                 if (ch == '='){ PutLexToken(MOD_ASSIGN,dd); PutLexPosition(cfile, cline, lexStartCol, dd);GetChar(ch,ccc,cfin,cb,clb,clo); goto nextLexem; }
                 /*&
-                  else if (LANGUAGE(LAN_YACC) && ch == '{'){ PutLexToken(YACC_PERC_LPAR,dd); PutLexPosition(cfile, cline, lexStartCol, dd);GetChar(ch,ccc,cfin,cb,clb,clo); goto nextLexem; }
-                  else if (LANGUAGE(LAN_YACC) && ch == '}'){ PutLexToken(YACC_PERC_RPAR,dd); PutLexPosition(cfile, cline, lexStartCol, dd);GetChar(ch,ccc,cfin,cb,clb,clo); goto nextLexem; }
+                  else if (LANGUAGE(LANG_YACC) && ch == '{'){ PutLexToken(YACC_PERC_LPAR,dd); PutLexPosition(cfile, cline, lexStartCol, dd);GetChar(ch,ccc,cfin,cb,clb,clo); goto nextLexem; }
+                  else if (LANGUAGE(LANG_YACC) && ch == '}'){ PutLexToken(YACC_PERC_RPAR,dd); PutLexPosition(cfile, cline, lexStartCol, dd);GetChar(ch,ccc,cfin,cb,clb,clo); goto nextLexem; }
                   &*/
                 else {PutLexToken('%',dd); PutLexPosition(cfile, cline, lexStartCol, dd);goto nextLexem;}
 
@@ -634,7 +634,7 @@ int getLexBuf(struct lexBuf *lb) {
                 }
                 PutLexToken('\n',dd);
                 PutLexPosition(cfile, cline, lexStartCol, dd);
-                if (ch == '#' && LANGUAGE(LANG_C|LANG_CCC|LAN_YACC)) {
+                if (ch == '#' && LANGUAGE(LANG_C|LANG_CCC|LANG_YACC)) {
                     NOTE_NEW_LEXEM_POSITION(ccc,cfin,cb,lb,cfile,cline,clb,clo);
                     HandleCppToken(ch,ccc,cfin,cb,dd,cfile,cline,clb,clo);
                 }

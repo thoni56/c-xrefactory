@@ -967,7 +967,7 @@ static void htmlGenLocalRefList(FILE *ff, char *fname,
                                 S_symbolRefItem *p, int fnum) {
     if (p->b.category != CatLocal) return;
     if (p->b.htmlWasLn == 0) return;
-    if (LANGUAGE(LAN_YACC) && p->name[0] == '$') return;  // !!! hack
+    if (LANGUAGE(LANG_YACC) && p->name[0] == '$') return;  // !!! hack
     if (! htmlContainFileReference(p, fnum)) return;
     htmlGenLocalRefList2(ff, fname, p, fnum, UsageUsed);
     // other usages are useless, local symbols xrefs do not depends

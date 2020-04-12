@@ -557,7 +557,7 @@ Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, S_symbolTable *ta
         tt->typedefSymbol = p;
     }
     if ((! WORK_NEST_LEVEL0() && LANGUAGE(LANG_C))
-        || (! WORK_NEST_LEVEL1() && LANGUAGE(LAN_YACC))) {
+        || (! WORK_NEST_LEVEL1() && LANGUAGE(LANG_YACC))) {
         // local scope symbol
         if (! symbolTableIsMember(s_symbolTable,p,&ii,&pp)
             || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {

@@ -382,7 +382,7 @@ static void testCxrefCompletionId(int *llex, char *idd, S_position *pos) {
             if (s_language == LANG_JAVA) {
                 makeJavaCompletions(idd, strlen(idd), pos);
             }
-            else if (s_language == LAN_YACC) {
+            else if (s_language == LANG_YACC) {
                 makeYaccCompletions(idd, strlen(idd), pos);
             }
 #			ifdef CCC_ALLOWED
@@ -2017,7 +2017,7 @@ int yylex(void) {
             if (macroCallExpand(memberP,&idpos)) goto nextYylex;
         }
         h = h % s_symbolTable->size;
-        if(LANGUAGE(LANG_C)||LANGUAGE(LAN_YACC)) lexem=processCIdent(h,id,&idpos);
+        if(LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)) lexem=processCIdent(h,id,&idpos);
         else if (LANGUAGE(LANG_JAVA)) lexem = processJavaIdent(h, id, &idpos);
         else if (LANGUAGE(LANG_CCC)) lexem = processCccIdent(h, id, &idpos);
         else assert(0);

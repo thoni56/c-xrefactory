@@ -6,10 +6,10 @@ There are a *lot* of things to do to make c-xref into modern C.
 (This file is structured for Emacs org-mode...)
 
 * DOING Remove bootstrap step (strfill and local definitions)
-** DOING Remove the need for FILL_xxx macros
+** DONE Remove the need for FILL_xxx macros
 At this point there are 66, 65, 64, 63, 62, 41, 33, 15, 8 FILL-macros that are in use
-*** TODO Remove position from proto.h
-*** TODO Remove FILLF_typeModifier
+*** DONE Remove position from proto.h
+*** DONE Remove FILLF_typeModifier
 *** DONE Remove chReference from proto.h
 *** DONE Remove FILL_editor* from strFill
 **** DONE Remove FILL_editorBuffer from strFill
@@ -41,7 +41,7 @@ field that the next argument should assign to (is this a general
 pattern for FILL-generation? Probably) Suggested solution is one
 newSymbol<field>() for each of the necessary fields that are actually used.
 *** DONE Remove FILL_symbollist() macro
-** TODO Remove generation of str_fill from build
+** DONE Remove generation of str_fill from build
 ** TODO Remove code for generation of str_fill
 * DOING Handle struct literals ("(type){.field = data, ...}")
 ** DONE Create test case
