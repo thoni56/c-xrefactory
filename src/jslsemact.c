@@ -97,15 +97,16 @@ Symbol *jslTypeSpecifier1(Type t) {
 S_typeModifier *jslAppendComposedType(S_typeModifier **d, Type type) {
     S_typeModifier *p;
     CF_ALLOC(p, S_typeModifier);
-    FILLF_typeModifier(p, type,f,( NULL,NULL) ,NULL,NULL);
+    initTypeModifier(p, type);
     LIST_APPEND(S_typeModifier, (*d), p);
     return(p);
 }
 
-S_typeModifier *jslPrependComposedType(S_typeModifier *d, unsigned t) {
+S_typeModifier *jslPrependComposedType(S_typeModifier *d, Type type) {
     S_typeModifier *p;
     CF_ALLOC(p, S_typeModifier);
-    FILLF_typeModifier(p, t,f,( NULL,NULL) ,NULL,d);
+    initTypeModifier(p, type);
+    p->next = d;
     return(p);
 }
 
