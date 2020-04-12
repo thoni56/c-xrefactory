@@ -571,8 +571,7 @@ unary_expr
     | DEC_OP unary_expr             { $$.d.t = $2.d.t; $$.d.r = NULL;}
     | unary_operator cast_expr      { $$.d.t = $2.d.t; $$.d.r = NULL;}
     | '&' cast_expr                 {
-        $$.d.t = StackMemAlloc(S_typeModifier);
-        FILLF_typeModifier($$.d.t, TypePointer,f,(NULL,NULL) ,NULL,$2.d.t);
+        $$.d.t = newPointerTypeModifier($2.d.t);
         RESET_REFERENCE_USAGE($2.d.r, UsageAddrUsed);
         $$.d.r = NULL;
     }
@@ -874,12 +873,8 @@ declaration_specifiers0
 
 declaration_modality_specifiers
     : storage_class_specifier                               {
-        S_typeModifier *typeModifiers;
-        typeModifiers = StackMemAlloc(S_typeModifier);
-        FILLF_typeModifier(typeModifiers,TypeDefault,f,(NULL,NULL) ,NULL,NULL);
-
-        $$.d = newSymbolAsType(NULL, NULL, s_noPos, typeModifiers);
-        fillSymbolBits(&$$.d->bits, ACCESS_DEFAULT, TypeDefault, $1.d);
+        $$.d  = typeSpecifier1(TypeDefault);
+        $$.d->bits.storage = $1.d;
     }
     | declaration_modality_specifiers storage_class_specifier       {
         $$.d = $1.d;
