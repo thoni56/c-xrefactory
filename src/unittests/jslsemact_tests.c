@@ -17,6 +17,7 @@ Symbol s_defaultVoidDefinition;
 /* Mocks: */
 #include "cct.mock"
 #include "classfilereader.mock"
+#include "typemodifier.mock"
 #include "commons.mock"
 #include "cxref.mock"
 #include "jsemact.mock"
@@ -24,6 +25,7 @@ Symbol s_defaultVoidDefinition;
 #include "memory.mock"
 #include "misc.mock"
 #include "semact.mock"
+#include "globals.mock"
 
 
 Describe(JslSemAct);

@@ -41,7 +41,7 @@ extern S_jslClassStat *newJslClassStat(S_idList *className, Symbol *thisClass, c
 extern void fillJslStat(S_jslStat *jslStat, int pass, int sourceFileNumber, int language, S_jslTypeTab *typeTab,
                         S_jslClassStat *classStat, SymbolList *waitList, void *savedyylval,
                         void /*S_yyGlobalState*/ *savedYYstate, int yyStateSize, S_jslStat *next);
-extern Symbol *jslTypeSpecifier1(unsigned t);
+extern Symbol *jslTypeSpecifier1(Type t);
 extern Symbol *jslTypeSpecifier2(S_typeModifier *t);
 
 extern void jslCompleteDeclarator(Symbol *t, Symbol *d);
