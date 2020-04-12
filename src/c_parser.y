@@ -53,11 +53,6 @@
     }\
 }
 
-#define CrTypeModifier(xxx,ttt) {\
-        xxx = StackMemAlloc(S_typeModifier);\
-        FILLF_typeModifier(xxx, ttt,f,( NULL,NULL) ,NULL,NULL);\
-}
-
 #define AddComposedType(ddd, ttt) appendComposedType(&ddd->u.type, ttt)
 
 %}
@@ -449,11 +444,11 @@ unary_expr
         $$.d.r = NULL;
     }
     | SIZEOF unary_expr				{
-        CrTypeModifier($$.d.t, TypeInt);
+        $$.d.t = newSimpleTypeModifier(TypeInt);
         $$.d.r = NULL;
     }
     | SIZEOF '(' type_name ')'		{
-        CrTypeModifier($$.d.t, TypeInt);
+        $$.d.t = newSimpleTypeModifier(TypeInt);
         $$.d.r = NULL;
     }
     /* yet another GCC ext. */
@@ -1288,7 +1283,7 @@ type_name
 abstract_declarator
     : pointer								{
         int i;
-        CrTypeModifier($$.d,TypePointer);
+        $$.d = newPointerTypeModifier(NULL);
         for(i=1; i<$1.d; i++) appendComposedType(&($$.d), TypePointer);
     }
     | abstract_declarator2					{
@@ -1306,10 +1301,10 @@ abstract_declarator2
         $$.d = $2.d;
     }
     | '[' ']'								{
-        CrTypeModifier($$.d,TypeArray);
+        $$.d  = newArrayTypeModifier();
     }
     | '[' constant_expr ']'					{
-        CrTypeModifier($$.d,TypeArray);
+        $$.d = newArrayTypeModifier();
     }
     | abstract_declarator2 '[' ']'			{
         $$.d = $1.d;
@@ -1320,12 +1315,10 @@ abstract_declarator2
         appendComposedType(&($$.d), TypeArray);
     }
     | '(' ')'										{
-        CrTypeModifier($$.d,TypeFunction);
-        initFunctionTypeModifier(&$$.d->u.f , NULL);
+        $$.d = newFunctionTypeModifier(NULL, NULL, NULL, NULL);
     }
     | '(' parameter_type_list ')'					{
-        CrTypeModifier($$.d,TypeFunction);
-        initFunctionTypeModifier(&$$.d->u.f , $2.d.s);
+        $$.d = newFunctionTypeModifier($2.d.s, NULL, NULL, NULL);
     }
     | abstract_declarator2 '(' ')'					{
         S_typeModifier *p;
