@@ -3383,7 +3383,8 @@ ArrayCreationExpression:
                 if (! SyntaxPassOnly()) {
                     int i;
                     $$.d.t = newSimpleTypeModifier($3.d.u);
-                    for(i=0; i<$4.d; i++) PrependModifier($$.d.t, TypeArray);
+                    for(i=0; i<$4.d; i++)
+                        PrependModifier($$.d.t, TypeArray);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &$1.d->p;
@@ -3397,7 +3398,8 @@ ArrayCreationExpression:
                 if (! SyntaxPassOnly()) {
                     int i;
                     $$.d.t = newSimpleTypeModifier($3.d.u);
-                    for(i=0; i<$4.d; i++) PrependModifier($$.d.t, TypeArray);
+                    for(i=0; i<$4.d; i++)
+                        PrependModifier($$.d.t, TypeArray);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &$1.d->p;
@@ -3411,7 +3413,8 @@ ArrayCreationExpression:
                     int i;
                     assert($3.d && $3.d->u.type);
                     $$.d.t = $3.d->u.type;
-                    for(i=0; i<$4.d; i++) PrependModifier($$.d.t, TypeArray);
+                    for(i=0; i<$4.d; i++)
+                        PrependModifier($$.d.t, TypeArray);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &$1.d->p;
@@ -3426,7 +3429,8 @@ ArrayCreationExpression:
                     int i;
                     assert($3.d && $3.d->u.type);
                     $$.d.t = $3.d->u.type;
-                    for(i=0; i<$4.d; i++) PrependModifier($$.d.t, TypeArray);
+                    for(i=0; i<$4.d; i++)
+                        PrependModifier($$.d.t, TypeArray);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &$1.d->p;
