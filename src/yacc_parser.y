@@ -24,11 +24,6 @@
 #define yyErrorRecovery styyErrorRecovery
 
 
-#define CrTypeModifier(xxx,ttt) {\
-        xxx = StackMemAlloc(S_typeModifier);\
-        FILLF_typeModifier(xxx, ttt,f,( NULL,NULL) ,NULL,NULL);\
-}
-
 #define PrependModifier(xxx,ttt) {\
         S_typeModifiers *p;\
         p = StackMemAlloc(S_typeModifiers);\
@@ -454,6 +449,8 @@ any_token:
 /* *************************************************************** */
 /* *************************************************************** */
 /*                  NOW FOLLOWS THE COMPLETE C GRAMMAR             */
+/* TODO: check if this is exactly the same as c_parser.y and if so */
+/* extract the common parts and include the same code to avoid dup */
 /* *************************************************************** */
 /* *************************************************************** */
 
@@ -479,7 +476,7 @@ primary_expr
 
             p = newSimpleTypeModifier(TypeInt);
             $$.d.t = StackMemAlloc(S_typeModifier);
-            FILLF_typeModifier($$.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
+            FILLF_typeModifier($$.d.t, TypeFunction,f,(NULL,NULL) ,NULL,p);
 
             d = newSymbolAsType($1.d->name, $1.d->name, $1.d->p,$$.d.t);
             fillSymbolBits(&d->bits, ACC_DEFAULT, TypeDefault, StorageExtern);
@@ -488,16 +485,16 @@ primary_expr
             $$.d.r = NULL;
         }
     }
-    | CHAR_LITERAL          { CrTypeModifier($$.d.t, TypeInt); $$.d.r = NULL;}
-    | CONSTANT              { CrTypeModifier($$.d.t, TypeInt); $$.d.r = NULL;}
-    | LONG_CONSTANT         { CrTypeModifier($$.d.t, TypeLong); $$.d.r = NULL;}
-    | FLOAT_CONSTANT        { CrTypeModifier($$.d.t, TypeFloat); $$.d.r = NULL;}
-    | DOUBLE_CONSTANT       { CrTypeModifier($$.d.t, TypeDouble); $$.d.r = NULL;}
+| CHAR_LITERAL          { $$.d.t = newSimpleTypeModifier(TypeInt); $$.d.r = NULL;}
+| CONSTANT              { $$.d.t = newSimpleTypeModifier(TypeInt); $$.d.r = NULL;}
+| LONG_CONSTANT         { $$.d.t = newSimpleTypeModifier(TypeLong); $$.d.r = NULL;}
+| FLOAT_CONSTANT        { $$.d.t = newSimpleTypeModifier(TypeFloat); $$.d.r = NULL;}
+| DOUBLE_CONSTANT       { $$.d.t = newSimpleTypeModifier(TypeDouble); $$.d.r = NULL;}
     | STRING_LITERAL        {
         S_typeModifier *p;
-        CrTypeModifier(p, TypeChar);
+        p = newSimpleTypeModifier(TypeChar);
         $$.d.t = StackMemAlloc(S_typeModifier);
-        FILLF_typeModifier($$.d.t, TypePointer,f,( NULL,NULL) ,NULL,p);
+        FILLF_typeModifier($$.d.t, TypePointer,f,(NULL,NULL) ,NULL,p);
         $$.d.r = NULL;
     }
     | '(' expr ')'          {
@@ -583,7 +580,7 @@ unary_expr
     | unary_operator cast_expr      { $$.d.t = $2.d.t; $$.d.r = NULL;}
     | '&' cast_expr                 {
         $$.d.t = StackMemAlloc(S_typeModifier);
-        FILLF_typeModifier($$.d.t, TypePointer,f,( NULL,NULL) ,NULL,$2.d.t);
+        FILLF_typeModifier($$.d.t, TypePointer,f,(NULL,NULL) ,NULL,$2.d.t);
         RESET_REFERENCE_USAGE($2.d.r, UsageAddrUsed);
         $$.d.r = NULL;
     }
@@ -594,11 +591,11 @@ unary_expr
         $$.d.r = NULL;
     }
     | SIZEOF unary_expr             {
-        CrTypeModifier($$.d.t, TypeInt);
+        $$.d.t = newSimpleTypeModifier(TypeInt);
         $$.d.r = NULL;
     }
     | SIZEOF '(' type_name ')'      {
-        CrTypeModifier($$.d.t, TypeInt);
+        $$.d.t = newSimpleTypeModifier(TypeInt);
         $$.d.r = NULL;
     }
     ;
@@ -1033,7 +1030,7 @@ struct_declarator
     | ':' constant_expr             {
         S_typeModifier *p;
         p = StackMemAlloc(S_typeModifier);
-        FILLF_typeModifier(p,TypeAnonymeField,f,( NULL,NULL) ,NULL,NULL);
+        FILLF_typeModifier(p,TypeAnonymeField,f,(NULL,NULL) ,NULL,NULL);
 
         $$.d = newSymbolAsType(NULL, NULL, s_noPos, p);
 
@@ -1342,7 +1339,7 @@ type_name
 abstract_declarator
     : pointer                               {
         int i;
-        CrTypeModifier($$.d,TypePointer);
+        $$.d = newPointerTypeModifier(NULL);
         for(i=1; i<$1.d; i++) appendComposedType(&($$.d), TypePointer);
     }
     | abstract_declarator2                  {
@@ -1360,10 +1357,10 @@ abstract_declarator2
         $$.d = $2.d;
     }
     | '[' ']'                               {
-        CrTypeModifier($$.d,TypeArray);
+        $$.d = newArrayTypeModifier();
     }
     | '[' constant_expr ']'                 {
-        CrTypeModifier($$.d,TypeArray);
+        $$.d = newArrayTypeModifier();
     }
     | abstract_declarator2 '[' ']'          {
         $$.d = $1.d;
@@ -1374,11 +1371,11 @@ abstract_declarator2
         appendComposedType(&($$.d), TypeArray);
     }
     | '(' ')'                                       {
-        CrTypeModifier($$.d,TypeFunction);
+        $$.d = newFunctionTypeModifier(NULL, NULL, NULL, NULL);
         initFunctionTypeModifier(&$$.d->u.f , NULL);
     }
     | '(' parameter_type_list ')'                   {
-        CrTypeModifier($$.d,TypeFunction);
+        $$.d = newFunctionTypeModifier(NULL, NULL, NULL, NULL);
         initFunctionTypeModifier(&$$.d->u.f , $2.d.s);
     }
     | abstract_declarator2 '(' ')'                  {
