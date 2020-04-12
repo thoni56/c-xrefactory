@@ -78,6 +78,7 @@ e:    e '*' e					{$$ = $1 * $3;}
         short s = 4;
         float f = 0.3f;
         double d = 3.14;
+        char *s = "string";
 
         if ($3 == 0) $$ = $1;
         else $$ = $1 / $3;
