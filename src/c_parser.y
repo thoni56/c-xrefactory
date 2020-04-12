@@ -432,8 +432,7 @@ unary_expr
     }
     | unary_operator cast_expr		{ $$.d.t = $2.d.t; $$.d.r = NULL;}
     | '&' cast_expr					{
-        $$.d.t = StackMemAlloc(S_typeModifier);
-        FILLF_typeModifier($$.d.t, TypePointer,f,( NULL,NULL) ,NULL,$2.d.t);
+        $$.d.t = newPointerTypeModifier($2.d.t);
         RESET_REFERENCE_USAGE($2.d.r, UsageAddrUsed);
         $$.d.r = NULL;
     }
