@@ -94,6 +94,12 @@ S_typeModifier *newStructTypeModifier(Symbol *symbol) {
     return typeModifier;
 }
 
+S_typeModifier *newEnumTypeModifier(Symbol *symbol) {
+    S_typeModifier *typeModifier = newTypeModifier(TypeEnum, NULL, NULL);
+    typeModifier->u.t = symbol;
+    return typeModifier;
+}
+
 S_typeModifierList *newTypeModifierList(S_typeModifier *d) {
     S_typeModifierList *list;
     XX_ALLOC(list, S_typeModifierList);

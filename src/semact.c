@@ -874,12 +874,8 @@ int mergeArguments(Symbol *id, Symbol *ty) {
     return(res);
 }
 
-static S_typeModifier *crSimpleEnumType(Symbol *edef, int type) {
-    S_typeModifier *res;
-    res = StackMemAlloc(S_typeModifier);
-    FILLF_typeModifier(res, type,t,edef,NULL,NULL);
-    res->u.t = edef;
-    return(res);
+static S_typeModifier *createSimpleEnumType(Symbol *enumDefinition) {
+    return newEnumTypeModifier(enumDefinition);
 }
 
 void initSymStructSpec(S_symStructSpec *symStruct, Symbol *records) {
@@ -1071,7 +1067,7 @@ S_typeModifier *simpleEnumSpecifier(S_id *id, int usage) {
         addSymbol(pp, s_symbolTable);
     }
     addCxReference(pp, &id->p, usage,s_noneFileIndex, s_noneFileIndex);
-    return(crSimpleEnumType(pp,TypeEnum));
+    return(createSimpleEnumType(pp));
 }
 
 S_typeModifier *createNewAnonymousEnum(SymbolList *enums) {
@@ -1082,7 +1078,7 @@ S_typeModifier *createNewAnonymousEnum(SymbolList *enums) {
 
     setGlobalFileDepNames("", pp, MEM_XX);
     pp->u.enums = enums;
-    return(crSimpleEnumType(pp,TypeEnum));
+    return(createSimpleEnumType(pp));
 }
 
 void appendPositionToList( S_positionList **list,S_position *pos) {
