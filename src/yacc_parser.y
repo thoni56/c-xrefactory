@@ -1016,9 +1016,7 @@ struct_declarator
     : declarator                    /*& { $$.d = $1.d; } */
     | ':' constant_expr             {
         S_typeModifier *p;
-        p = StackMemAlloc(S_typeModifier);
-        FILLF_typeModifier(p,TypeAnonymousField,f,(NULL,NULL) ,NULL,NULL);
-
+        p = newSimpleTypeModifier(TypeAnonymousField);
         $$.d = newSymbolAsType(NULL, NULL, s_noPos, p);
 
     }
