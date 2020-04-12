@@ -1578,7 +1578,7 @@ Symbol *javaCreateNewMethod(char *nn, S_position *p, int mem) {
         res = StackMemAlloc(Symbol);
     }
 
-    FILLF_typeModifier(m, TypeFunction, f, (NULL, NULL), NULL, NULL);
+    initTypeModifierAsFunction(m, NULL, NULL, NULL, NULL);
     fillSymbolWithType(res, name, name, *p, m);
 
     return(res);
@@ -1589,7 +1589,6 @@ int javaTypeToString(S_typeModifier *type, char *pp, int ppSize) {
     S_typeModifier *tt;
     ppi=0;
     for (tt=type; tt!=NULL; tt=tt->next) {
-/*fprintf(dumpOut,"ttm == %d %s\n",tt->m,typeName[tt->m]); fflush(dumpOut);*/
         if (tt->kind == TypeArray) {
             sprintf(pp+ppi,"[");
             ppi += strlen(pp+ppi);
