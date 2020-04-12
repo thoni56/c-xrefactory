@@ -174,7 +174,8 @@ cleaner: clean
 
 ########################################################################
 test: debug
-	@echo "Only running quick tests for now - 'cd ..; make all' to run all"
+	@echo "Only running quick tests for now - 'cd ../test; make all' to run all"
+	# Tests cannot run in parallel because of gcov
 	$(MAKE) -C ../tests -j1 quick
 
 
