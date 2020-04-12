@@ -1932,7 +1932,7 @@ ConstructorDeclaration:
                         s_count.localVar = 0;
                         assert($2.d && $2.d->u.type);
                         javaAddMethodParametersToSymTable($2.d);
-                        mh->u.type->u.m.sig = strchr(mh->linkName, '(');
+                        mh->u.type->u.m.signature = strchr(mh->linkName, '(');
                         s_javaStat->methodModifiers = $1.d;
                     }
                 }
