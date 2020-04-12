@@ -525,7 +525,8 @@ void addSubClassesItemsToFileTab(Symbol *ss, int origin) {
 static void genRefItem0(S_symbolRefItem *d, int forceGen) {
     S_reference *rr;
     int symIndex;
-    //&fprintf(dumpOut,"function %s\n", d->name);
+
+    log_trace("function '%s'", d->name);
     symIndex = 0;
     assert(strlen(d->name)+1 < MAX_CX_SYMBOL_SIZE);
     strcpy(s_outLastInfos._symbolTabNames[symIndex], d->name);
@@ -633,53 +634,37 @@ static void createDirIfNotExists(char *dirname) {
 
 /* fnamesuff contains '/' at the beginning */
 
-static void genPartialFileTabRefFile(   int updateFlag,
-                                        char *dirname,
-                                        char *fnamesuff,
-                                        void mapfun(S_fileItem *, int),
-                                        void mapfun2(S_fileItem *, int)
-                                        ) {
+static void genPartialFileTabRefFile(int updateFlag,
+                                     char *dirname,
+                                     char *fnamesuff,
+                                     void mapfun(S_fileItem *, int),
+                                     void mapfun2(S_fileItem *, int)) {
     char fn[MAX_FILE_NAME_SIZE];
+
     sprintf(fn, "%s%s", dirname, fnamesuff);
     assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
     openInOutReferenceFiles(updateFlag, fn);
     genCxFileHead();
     fileTabMapWithIndex(&s_fileTab, mapfun);
-    if (mapfun2!=NULL) fileTabMapWithIndex(&s_fileTab, mapfun2);
+    if (mapfun2!=NULL)
+        fileTabMapWithIndex(&s_fileTab, mapfun2);
     scanCxFile(fullScanFunctionSequence);
     referenceFileEnd(updateFlag, fn);
 }
 
-#if ZERO
-static void genPartialRefItem(S_symbolRefItem *dd, int fileOrder) {
-    if (dd->b.category == CatLocal) return;
-    if (dd->refs == NULL) return;
-    //& assert(cxFileHashNumber(dd->name) == dd->fileHash);
-    if (dd->fileHash == fileOrder) genRefItem0(dd,0);
-#if ZERO // original
-    S_symbolRefItem *d;
-    for(d=dd; d!=NULL; d=d->next) {
-        if (cxFileHashNumber(d->name) == fileOrder) {
-            if (REF_ELEM_EQUAL(d,dd)) {     /* what does this test mean ? */
-                genRefItem0(d,0);
-            }
-        }
-    }
-#endif
-}
-#endif
-
 static void generateRefsFromMemory(int fileOrder) {
-    int                 i;
     int                 tsize;
     S_symbolRefItem *pp;
+
     tsize = s_cxrefTab.size;
-    for(i=0; i<tsize; i++) {
-        for(pp=s_cxrefTab.tab[i]; pp!=NULL; pp=pp->next) {
-            if (pp->b.category == CatLocal) goto nextitem;
-            if (pp->refs == NULL) goto nextitem;
-            if (pp->fileHash == fileOrder) genRefItem0(pp,0);
-        nextitem:;
+    for (int i=0; i<tsize; i++) {
+        for (pp=s_cxrefTab.tab[i]; pp!=NULL; pp=pp->next) {
+            if (pp->b.category == CatLocal)
+                continue;
+            if (pp->refs == NULL)
+                continue;
+            if (pp->fileHash == fileOrder)
+                genRefItem0(pp,0);
         }
     }
 }
