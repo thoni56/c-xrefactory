@@ -662,29 +662,16 @@ Symbol *javaTypeNameDefinition(S_idList *tname) {
 
 static void javaJslLoadSuperClasses(Symbol *cc, int currentParsedFile) {
     SymbolList *ss;
-    static int nestCounter = 0;
+    static int nestingCount = 0;
 
-    nestCounter ++;
-    if (nestCounter > MAX_CLASSES) {
+    nestingCount ++;
+    if (nestingCount > MAX_CLASSES) {
         fatalError(ERR_INTERNAL, "unexpected cycle in class hierarchy", XREF_EXIT_ERR);
     }
     for(ss=cc->u.s->super; ss!=NULL; ss=ss->next) {
-#if ZERO // it is useless now when superclasses are loaded during parsing
-        javaLoadClassSymbolsFromFile(ss->d);
-        assert(ss->d && ss->d->b.symType==TypeStruct && ss->d->u.s);
-        classfilenum = ss->d->u.s->classFile;
-        assert(classfilenum>=0 && classfilenum!=s_noneFileIndex);
-        sourcefilenum = s_fileTab.tab[classfilenum]->b.sourceFile;
-        if (sourcefilenum == currentParsedFile) {
-            // you will need to complete all its superclasses too,
-            // because when adding to cctTab it must be complete
-            // hope, there is no loop in supers there !!!!!!!!!!
-            javaJslLoadSuperClasses(ss->d, currentParsedFile);
-        }
-#endif
         cfAddCastsToModule(cc, ss->d);
     }
-    nestCounter --;
+    nestingCount --;
 }
 
 void javaReadSymbolFromSourceFileInit(int sourceFileNum,
