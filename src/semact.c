@@ -673,19 +673,21 @@ void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, S_symbol
     }
 }
 
-static S_typeModifier *createSimpleTypeModifier(unsigned t) {
+static S_typeModifier *createSimpleTypeModifier(Type type) {
     S_typeModifier *p;
 
     /* This seems to look first in pre-created types... */
-    assert(t>=0 && t<MAX_TYPE);
-    if (s_preCreatedTypesTable[t] == NULL) {
-        p = StackMemAlloc(S_typeModifier);
-        FILLF_typeModifier(p,t,f,( NULL,NULL) ,NULL,NULL);
+    assert(type>=0 && type<MAX_TYPE);
+    if (s_preCreatedTypesTable[type] == NULL) {
+        log_trace("creating simple type %d (='%s'), *not* found in pre-created types", type,
+                  typeName[type]);
+        p = newSimpleTypeModifier(type);
     } else {
-        p = s_preCreatedTypesTable[t];
+        log_trace("creating simple type %d (='%s'), found in pre-created types", type,
+                  typeName[type]);
+        p = s_preCreatedTypesTable[type];
     }
-    /* log_trace("t,p->m == %d %d == %s %s",t,p->m,typeName[t],typeName[p->m]); */
-    assert(p->kind == t);
+    assert(p->kind == type);
 
     return p;
 }
@@ -765,9 +767,9 @@ Symbol *typeSpecifier1(unsigned t) {
     return(r);
 }
 
-void declTypeSpecifier1(Symbol *d, unsigned t) {
+void declTypeSpecifier1(Symbol *d, Type type) {
     assert(d && d->u.type);
-    d->u.type = mergeBaseModTypes(d->u.type,createSimpleTypeModifier(t));
+    d->u.type = mergeBaseModTypes(d->u.type,createSimpleTypeModifier(type));
 }
 
 void declTypeSpecifier2(Symbol *d, S_typeModifier *t) {
@@ -780,18 +782,17 @@ void declTypeSpecifier21(S_typeModifier *t, Symbol *d) {
     d->u.type = mergeBaseModTypes(t, d->u.type);
 }
 
-S_typeModifier *appendComposedType(S_typeModifier **d, unsigned t) {
+S_typeModifier *appendComposedType(S_typeModifier **d, Type type) {
     S_typeModifier *p;
-    p = StackMemAlloc(S_typeModifier);
-    FILLF_typeModifier(p, t,f,( NULL,NULL) ,NULL,NULL);
+    p = newTypeModifier(type, NULL, NULL);
     LIST_APPEND(S_typeModifier, (*d), p);
     return(p);
 }
 
-S_typeModifier *prependComposedType(S_typeModifier *d, unsigned t) {
+S_typeModifier *prependComposedType(S_typeModifier *d, Type type) {
     S_typeModifier *p;
     p = StackMemAlloc(S_typeModifier);
-    FILLF_typeModifier(p, t,f,( NULL,NULL) ,NULL,d);
+    FILLF_typeModifier(p, type,f,( NULL,NULL) ,NULL,d);
     return(p);
 }
 
