@@ -930,8 +930,8 @@ int tpCheckSourceIsNotInnerClass(void) {
     assert(s_fileTab.tab[thisclassi]);
     deii = s_fileTab.tab[thisclassi]->directEnclosingInstance;
     if (deii != -1 && deii != s_noneFileIndex && (ss->s.b.accessFlags&ACCESS_INTERFACE)==0) {
-        // exists direct enclosing instance, it is an inner class
-        sprintf(tmpBuff, "This is  an inner class. Current  version of C-xrefactory  can only move nested classes declared  'static' and top level classes.  If the class does  not depend  on its  enclosing instances,  you should  declare it 'static' and move it after.");
+        // If there exists a direct enclosing instance, it is an inner class
+        sprintf(tmpBuff, "This is an inner class. Current version of C-xrefactory can only move nested classes declared 'static' and top level classes. If the class does not depend on its enclosing instances, you should declare it 'static' and then move it.");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         error(ERR_ST, tmpBuff);
         return(0);
