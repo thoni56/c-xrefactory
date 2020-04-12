@@ -68,7 +68,7 @@ S_typeModifier *newTypeModifier(Type kind, Symbol *typedefSymbol, S_typeModifier
 }
 
 S_typeModifier *newFunctionTypeModifier(Symbol *args, Symbol **overLoadList, Symbol *typedefSymbol, S_typeModifier *next) {
-    S_typeModifier *typeModifier = newTypeModifier(TypeFunction, NULL, NULL);
+    S_typeModifier *typeModifier = newTypeModifier(TypeFunction, typedefSymbol, next);
 
     typeModifier->u.f.args = args;
     typeModifier->u.f.thisFunList = overLoadList;
