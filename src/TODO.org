@@ -8,8 +8,8 @@ There are a *lot* of things to do to make c-xref into modern C.
 * DOING Remove bootstrap step (strfill and local definitions)
 ** DOING Remove the need for FILL_xxx macros
 At this point there are 66, 65, 64, 63, 62, 41, 33, 15, 8 FILL-macros that are in use
-*** TODO Rename classh to hierarchy
 *** TODO Remove position from proto.h
+*** TODO Remove FILLF_typeModifier
 *** DONE Remove chReference from proto.h
 *** DONE Remove FILL_editor* from strFill
 **** DONE Remove FILL_editorBuffer from strFill
@@ -48,9 +48,11 @@ newSymbol<field>() for each of the necessary fields that are actually used.
 ** DOING Create AST using parsing
 * DOING Start using log.c functions to log to a separate log file
 * TODO Refactor int2StringTabs, should not have Init in them
+* TODO Rename classh to hierarchy
 * TODO Initialize memory's injected error functions in main.c
 * TODO Cleanup and separate commons, misc and make them independent utility modules
 * TODO Investigate to remove S_classTreeData
+* TODO Check if the C-part of Yacc grammar is identical, and if so extract it
 * TODO Use Yacc's -p for "symbol_prefix" instead of the #defines?
 * TODO Fix the move_class test
 * TODO Use enum types wherever possible Storage, SymbolType, ...
