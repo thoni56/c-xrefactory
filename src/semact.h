@@ -74,7 +74,7 @@ extern void appendPositionToList(S_positionList **list, S_position *pos);
 extern void setParamPositionForFunctionWithoutParams(S_position *lpar);
 extern void setParamPositionForParameter0(S_position *lpar);
 extern void setParamPositionForParameterBeyondRange(S_position *rpar);
-extern Symbol *crEmptyField(void);
+extern Symbol *createEmptyField(void);
 extern void handleDeclaratorParamPositions(Symbol *decl, S_position *lpar,
                                            S_positionList *commas, S_position *rpar,
                                            int hasParam);

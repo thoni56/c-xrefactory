@@ -3123,13 +3123,13 @@ break;
 case 172:
 #line 958 "c_parser.y"
 { /* gcc extension allow empty field */
-        yyval.ast_symbol.d = crEmptyField();
+        yyval.ast_symbol.d = createEmptyField();
     }
 break;
 case 173:
 #line 961 "c_parser.y"
 {
-        yyval.ast_symbol.d = crEmptyField();
+        yyval.ast_symbol.d = createEmptyField();
     }
 break;
 case 176:

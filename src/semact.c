@@ -1135,16 +1135,11 @@ static void handleParameterPositions(S_position *lpar, S_positionList *commas,
     }
 }
 
-Symbol *crEmptyField(void) {
-    Symbol *res;
+Symbol *createEmptyField(void) {
     S_typeModifier *p;
 
-    p = StackMemAlloc(S_typeModifier);
-    FILLF_typeModifier(p,TypeAnonymeField,f,( NULL,NULL) ,NULL,NULL);
-
-    res = newSymbolAsType("", "", s_noPos, p);
-
-    return res;
+    p = newSimpleTypeModifier(TypeAnonymousField);
+    return newSymbolAsType("", "", s_noPos, p);
 }
 
 void handleDeclaratorParamPositions(Symbol *decl, S_position *lpar,

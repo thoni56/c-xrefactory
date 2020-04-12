@@ -170,7 +170,7 @@ void setParamPositionForParameterBeyondRange(S_position *rpar) {
   mock(rpar);
 }
 
-Symbol *crEmptyField(void) {
+Symbol *createEmptyField(void) {
   return (Symbol *) mock();
 }
 

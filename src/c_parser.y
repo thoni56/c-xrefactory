@@ -956,10 +956,10 @@ struct_declarator_list
     ;
 
 struct_declarator:					{ /* gcc extension allow empty field */
-        $$.d = crEmptyField();
+        $$.d = createEmptyField();
     }
     | ':' constant_expr				{
-        $$.d = crEmptyField();
+        $$.d = createEmptyField();
     }
     | declarator					/*& { $$.d = $1.d; } */
     | declarator ':' constant_expr	/*& { $$.d = $1.d; } */
