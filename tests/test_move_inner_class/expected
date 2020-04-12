@@ -5,9 +5,9 @@ end-of-options
 <update-report>
 </update-report>
 <error len=<n>>This is an inner class. Current version of C-xrefactory can only
-move nested classes declared 'static' and top level classes. If the class does
-not depend on its enclosing instances, you should declare it 'static' and then
-move it.
+move top level classes and nested classes that are declared 'static'. If the
+class does not depend on its enclosing instances, you should declare it
+'static' and then move it.
 </error>
 <goto>
  <position-off off=395 len=<n>>CURDIR/test_sources/com/xrefactory/Completion.java</position-off>
