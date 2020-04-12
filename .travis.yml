@@ -29,8 +29,7 @@ script:
     - make all
     - cd ..
     # Coverage for tests to Coveralls
-    - lcov -q -d src -c -o coverage.info
-    - lcov -q --remove coverage.info '/usr/*' -o coverage.info
+    - lcov -q -d src -c --exclude '*.mock' -o coverage.info
     - coveralls-lcov coverage.info
 
 branches:

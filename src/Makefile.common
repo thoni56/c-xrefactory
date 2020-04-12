@@ -187,7 +187,7 @@ coverage: clean test
 	genhtml -q -o ../coverage coverage.info
 
 coverage-report: test unit
-	lcov -q --exclude \*.mock -d . -c -o coverage.info
+	lcov -q --exclude '*.mock' -d . -c -o coverage.info
 	genhtml -q -o ../coverage coverage.info
 
 
