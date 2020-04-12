@@ -359,7 +359,7 @@ static void jslAddToLoadWaitList( Symbol *clas ) {
     SymbolList *ll;
 
     CF_ALLOC(ll, SymbolList);
-    /* REPLACED: FILL_symbolList(ll, clas, s_jsl->waitList); with: */
+    /* REPLACED: FILL_symbolList(ll, clas, s_jsl->waitList); with compound literal */
     *ll = (SymbolList){.d = clas, .next = s_jsl->waitList};
     s_jsl->waitList = ll;
 }

@@ -4459,7 +4459,7 @@ case 170:
                 assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symType == TypeDefault && yyvsp[0].ast_symbol.d->u.type);
                 assert(yyvsp[0].ast_symbol.d->u.type->kind == TypeStruct);
                 CF_ALLOC(yyval.ast_symbolList.d, SymbolList);
-                /* REPLACED: FILL_symbolList($$.d, $1.d->u.type->u.t, NULL); with: */
+                /* REPLACED: FILL_symbolList($$.d, $1.d->u.type->u.t, NULL); with compound literal */
                 *yyval.ast_symbolList.d = (SymbolList){.d = yyvsp[0].ast_symbol.d->u.type->u.t, .next = NULL};
             }
         }
@@ -4472,7 +4472,7 @@ case 171:
                 assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symType == TypeDefault && yyvsp[0].ast_symbol.d->u.type);
                 assert(yyvsp[0].ast_symbol.d->u.type->kind == TypeStruct);
                 CF_ALLOC(yyval.ast_symbolList.d, SymbolList);
-                /* REPLACED: FILL_symbolList($$.d, $3.d->u.type->u.t, $1.d); with: */
+                /* REPLACED: FILL_symbolList($$.d, $3.d->u.type->u.t, $1.d); with compound literal */
                 *yyval.ast_symbolList.d = (SymbolList){.d = yyvsp[0].ast_symbol.d->u.type->u.t, .next = yyvsp[-2].ast_symbolList.d};
             }
         }

@@ -519,7 +519,7 @@ static Symbol *javaFQTypeSymbolDefinitionCreate(char *name,
     initTypeModifierAsPointer(sptrtype, &memb->u.s->stype);
 
     CF_ALLOC(pppl, SymbolList);
-    /* REPLACED: FILL_symbolList(pppl, memb, NULL); with: */
+    /* REPLACED: FILL_symbolList(pppl, memb, NULL); with compound literal */
     *pppl = (SymbolList){.d = memb, .next = NULL};
 
     javaFqtTabAdd(&s_javaFqtTab,pppl,&ii);
@@ -542,7 +542,7 @@ Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {
     fillSymbol(&symbol, name, fqName, s_noPos);
     fillSymbolBits(&symbol.bits, ACC_DEFAULT, TypeStruct, StorageNone);
 
-    /* REPLACED: FILL_symbolList(&ppl, &symbol, NULL); with */
+    /* REPLACED: FILL_symbolList(&ppl, &symbol, NULL); with compound literal */
     ppl = (SymbolList){.d = &symbol, .next = NULL};
 
     if (javaFqtTabIsMember(&s_javaFqtTab, &ppl, &position, &pppl)) {

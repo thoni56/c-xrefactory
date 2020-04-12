@@ -858,7 +858,7 @@ SymbolList *createDefinitionList(Symbol *symbol) {
 
     assert(symbol);
     p = StackMemAlloc(SymbolList);
-    /* REPLACED: FILL_symbolList(p, symbol, NULL); with: */
+    /* REPLACED: FILL_symbolList(p, symbol, NULL); with compound literal */
     *p = (SymbolList){.d = symbol, .next = NULL};
 
     return p;
