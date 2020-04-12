@@ -2266,7 +2266,7 @@ case 1:
             yyval.ast_expressionType.d.t = newFunctionTypeModifier(NULL, NULL, NULL, p);
 
             d = newSymbolAsType(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->p, yyval.ast_expressionType.d.t);
-            fillSymbolBits(&d->bits, ACC_DEFAULT, TypeDefault, StorageExtern);
+            fillSymbolBits(&d->bits, ACCESS_DEFAULT, TypeDefault, StorageExtern);
 
             dd = addNewSymbolDef(d, StorageExtern, s_symbolTable, UsageUsed);
             if (CX_REGIME()) {
@@ -3408,7 +3408,7 @@ case 220:
         fillPosition(&pos, -1, 0, 0);
 
         symbol = newSymbol("", "", pos);
-        fillSymbolBits(&symbol->bits, ACC_DEFAULT, TypeElipsis, StorageDefault);
+        fillSymbolBits(&symbol->bits, ACCESS_DEFAULT, TypeElipsis, StorageDefault);
         yyval.ast_symbolPositionListPair.d = yyvsp[-2].ast_symbolPositionListPair.d;
 
         LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.d.s, symbol);
@@ -3446,7 +3446,7 @@ case 225:
         fillPosition(&position, -1, 0, 0);
 
         symbol = newSymbol("", "", position);
-        fillSymbolBits(&symbol->bits, ACC_DEFAULT, TypeElipsis, StorageDefault);
+        fillSymbolBits(&symbol->bits, ACCESS_DEFAULT, TypeElipsis, StorageDefault);
         yyval.ast_symbolPositionListPair.d = yyvsp[-2].ast_symbolPositionListPair.d;
 
         LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.d.s, symbol);

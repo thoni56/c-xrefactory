@@ -1114,7 +1114,7 @@ TypeDeclaration:
 /* ************************ LALR special ************************** */
 
 Modifiers_opt:					{
-            $$.d = ACC_DEFAULT;
+            $$.d = ACCESS_DEFAULT;
             SetNullBorns($$);
         }
     |	Modifiers				{
@@ -1132,16 +1132,16 @@ Modifiers:
     ;
 
 Modifier:
-        PUBLIC			{ $$.d = ACC_PUBLIC; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	PROTECTED		{ $$.d = ACC_PROTECTED; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	PRIVATE			{ $$.d = ACC_PRIVATE; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	STATIC			{ $$.d = ACC_STATIC; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	ABSTRACT		{ $$.d = ACC_ABSTRACT; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	FINAL			{ $$.d = ACC_FINAL; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	NATIVE			{ $$.d = ACC_NATIVE; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	SYNCHRONIZED	{ $$.d = ACC_SYNCHRONIZED; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
+        PUBLIC			{ $$.d = ACCESS_PUBLIC; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
+    |	PROTECTED		{ $$.d = ACCESS_PROTECTED; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
+    |	PRIVATE			{ $$.d = ACCESS_PRIVATE; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
+    |	STATIC			{ $$.d = ACCESS_STATIC; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
+    |	ABSTRACT		{ $$.d = ACCESS_ABSTRACT; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
+    |	FINAL			{ $$.d = ACCESS_FINAL; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
+    |	NATIVE			{ $$.d = ACCESS_NATIVE; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
+    |	SYNCHRONIZED	{ $$.d = ACCESS_SYNCHRONIZED; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
     |	STRICTFP		{ $$.d = 0; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	TRANSIENT		{ $$.d = ACC_TRANSIENT; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
+    |	TRANSIENT		{ $$.d = ACCESS_TRANSIENT; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
     |	VOLATILE		{ $$.d = 0; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
     ;
 
@@ -1488,9 +1488,9 @@ FieldDeclaration:
                         vClass = s_javaStat->classFileIndex;
                         p->bits.accessFlags = $1.d;
                         p->bits.storage = StorageField;
-                        if (clas->bits.accessFlags&ACC_INTERFACE) {
+                        if (clas->bits.accessFlags&ACCESS_INTERFACE) {
                             // set interface default access flags
-                            p->bits.accessFlags |= (ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
+                            p->bits.accessFlags |= (ACCESS_PUBLIC | ACCESS_STATIC | ACCESS_FINAL);
                         }
                         //&javaSetFieldLinkName(p);
                         iniFind(clas, &rfs);
@@ -1537,9 +1537,9 @@ FieldDeclaration:
                     jslCompleteDeclarator($2.d, p);
                     p->bits.accessFlags = $1.d;
                     p->bits.storage = StorageField;
-                    if (clas->bits.accessFlags&ACC_INTERFACE) {
+                    if (clas->bits.accessFlags&ACCESS_INTERFACE) {
                         // set interface default access flags
-                        p->bits.accessFlags |= (ACC_PUBLIC|ACC_STATIC|ACC_FINAL);
+                        p->bits.accessFlags |= (ACCESS_PUBLIC|ACCESS_STATIC|ACCESS_FINAL);
                     }
                     log_debug("[jsl] adding field %s to %s\n",
                               p->name,clas->linkName);
@@ -1913,7 +1913,7 @@ ConstructorDeclaration:
 
                         args = $2.d;
                         /*&
-                          if (! ($1.d & ACC_STATIC)) {
+                          if (! ($1.d & ACCESS_STATIC)) {
                               args = javaPrependDirectEnclosingInstanceArgument($2.d);
                           }
                           &*/
@@ -2086,10 +2086,10 @@ InterfaceDeclaration:
         Modifiers_opt INTERFACE Identifier          {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $<trail>$=newClassDefinitionBegin($3.d,($1.d|ACC_INTERFACE),NULL);
+                    $<trail>$=newClassDefinitionBegin($3.d,($1.d|ACCESS_INTERFACE),NULL);
                 }
             } else {
-                jslNewClassDefinitionBegin($3.d, ($1.d|ACC_INTERFACE), NULL, CPOS_ST);
+                jslNewClassDefinitionBegin($3.d, ($1.d|ACCESS_INTERFACE), NULL, CPOS_ST);
             }
         } ExtendsInterfaces_opt {
             if (regularPass()) {
@@ -2123,10 +2123,10 @@ InterfaceDeclaration:
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        $<trail>$=newClassDefinitionBegin($3.d,($1.d|ACC_INTERFACE),NULL);
+                        $<trail>$=newClassDefinitionBegin($3.d,($1.d|ACCESS_INTERFACE),NULL);
                     }
                 } else {
-                    jslNewClassDefinitionBegin($3.d, ($1.d|ACC_INTERFACE), NULL, CPOS_ST);
+                    jslNewClassDefinitionBegin($3.d, ($1.d|ACCESS_INTERFACE), NULL, CPOS_ST);
                 }
             }
         error InterfaceBody
@@ -3178,7 +3178,7 @@ NewName:
                 javaClassifyAmbiguousName($1.d, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
                                           CLASS_TO_TYPE,UsageUsed);
                 $1.d->nameType = TypeStruct;
-                ss = javaTypeSymbolUsage($1.d, ACC_DEFAULT);
+                ss = javaTypeSymbolUsage($1.d, ACCESS_DEFAULT);
                 s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(ss, &($1.d->id.p));
             }
             $$ = $1;
@@ -3199,7 +3199,7 @@ ClassInstanceCreationExpression:
                     javaClassifyAmbiguousName($3.d, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
                                               CLASS_TO_TYPE,UsageUsed);
                     $3.d->nameType = TypeStruct;
-                    ss = javaTypeSymbolUsage($3.d, ACC_DEFAULT);
+                    ss = javaTypeSymbolUsage($3.d, ACCESS_DEFAULT);
                     if (isANestedClass(ss)) {
                         if (javaIsInnerAndCanGetUnnamedEnclosingInstance(ss, &ei)) {
                             // before it was s_javaStat->classFileInd, but be more precise
@@ -3219,7 +3219,7 @@ ClassInstanceCreationExpression:
                             // and annulating of reference makes class renaming wrong!
                             // Well, it is legal only for static nested classes.
                             // But for security reasons, I will keep it in comment,
-                            //&if (! (ss->bits.accessFlags&ACC_STATIC)) {
+                            //&if (! (ss->bits.accessFlags&ACCESS_STATIC)) {
                             //&	if (rr!=NULL) rr->usg.base = s_noUsage;
                             //&}
                         }
@@ -3243,7 +3243,7 @@ ClassInstanceCreationExpression:
                         s_cp.erfsForParamsComplet = $2;
                         javaClassifyToTypeName($3.d,UsageUsed, &ss, USELESS_FQT_REFS_ALLOWED);
                         $<symbol>$ = javaTypeNameDefinition($3.d);
-                        ss = javaTypeSymbolUsage($3.d, ACC_DEFAULT);
+                        ss = javaTypeSymbolUsage($3.d, ACCESS_DEFAULT);
                         javaConstructorInvocation(ss, &($3.d->id.p), $5.d.t);
                     } else {
                         javaHandleDeclaratorParamPositions(&$3.d->id.p, &$4.d, $5.d.p, &$6.d);
@@ -3255,13 +3255,13 @@ ClassInstanceCreationExpression:
                     jslClassifyAmbiguousTypeName($3.d, &str);
                     cls = jslTypeNameDefinition($3.d);
                     jslNewClassDefinitionBegin(&s_javaAnonymousClassName,
-                                                ACC_DEFAULT, cls, CPOS_ST);
+                                                ACCESS_DEFAULT, cls, CPOS_ST);
                 }
             }
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        $<trail>$ = newClassDefinitionBegin(&s_javaAnonymousClassName,ACC_DEFAULT, $<symbol>6);
+                        $<trail>$ = newClassDefinitionBegin(&s_javaAnonymousClassName,ACCESS_DEFAULT, $<symbol>6);
                     }
                 }
             }
@@ -3294,7 +3294,7 @@ ClassInstanceCreationExpression:
                         $$.d.pp = $1.d.pp;
                         $$.d.r = NULL;
                         if ($$.d.t->kind != TypeError) {
-                            $<trail>$ = newClassDefinitionBegin(&s_javaAnonymousClassName, ACC_DEFAULT, $$.d.t->u.t);
+                            $<trail>$ = newClassDefinitionBegin(&s_javaAnonymousClassName, ACCESS_DEFAULT, $$.d.t->u.t);
                         } else {
                             $<trail>$ = newAnonClassDefinitionBegin(& $1.d.nid->id);
                         }
@@ -4324,21 +4324,21 @@ void javaParsingInitializations(void) {
             Symbol *ss;
             //&javaMapDirectoryFiles2(s_javaLangName,
             //&			javaAddMapedTypeName, NULL, s_javaLangName, NULL);
-            ss = javaTypeSymbolDefinition(s_javaLangObjectName,ACC_DEFAULT, TYPE_ADD_NO);
+            ss = javaTypeSymbolDefinition(s_javaLangObjectName,ACCESS_DEFAULT, TYPE_ADD_NO);
             s_javaObjectSymbol = ss;
             FILLF_typeModifier(&s_javaObjectModifier,TypeStruct,t,ss,NULL,NULL);
             s_javaObjectModifier.u.t = ss;
 
-            ss = javaTypeSymbolDefinition(s_javaLangStringName,ACC_DEFAULT, TYPE_ADD_NO);
+            ss = javaTypeSymbolDefinition(s_javaLangStringName,ACCESS_DEFAULT, TYPE_ADD_NO);
             s_javaStringSymbol = ss;
             FILLF_typeModifier(&s_javaStringModifier,TypeStruct,t,ss,NULL,NULL);
             s_javaStringModifier.u.t = ss;
 
-            ss = javaTypeSymbolDefinition(s_javaLangClassName,ACC_DEFAULT, TYPE_ADD_NO);
+            ss = javaTypeSymbolDefinition(s_javaLangClassName,ACCESS_DEFAULT, TYPE_ADD_NO);
             FILLF_typeModifier(&s_javaClassModifier,TypeStruct,t,ss,NULL,NULL);
             s_javaClassModifier.u.t = ss;
-            s_javaCloneableSymbol = javaTypeSymbolDefinition(s_javaLangCloneableName,ACC_DEFAULT, TYPE_ADD_NO);
-            s_javaIoSerializableSymbol = javaTypeSymbolDefinition(s_javaIoSerializableName,ACC_DEFAULT, TYPE_ADD_NO);
+            s_javaCloneableSymbol = javaTypeSymbolDefinition(s_javaLangCloneableName,ACCESS_DEFAULT, TYPE_ADD_NO);
+            s_javaIoSerializableSymbol = javaTypeSymbolDefinition(s_javaIoSerializableName,ACCESS_DEFAULT, TYPE_ADD_NO);
 
             javaInitArrayObject();
 }

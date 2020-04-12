@@ -2534,21 +2534,21 @@ void javaParsingInitializations(void) {
             Symbol *ss;
             //&javaMapDirectoryFiles2(s_javaLangName,
             //&			javaAddMapedTypeName, NULL, s_javaLangName, NULL);
-            ss = javaTypeSymbolDefinition(s_javaLangObjectName,ACC_DEFAULT, TYPE_ADD_NO);
+            ss = javaTypeSymbolDefinition(s_javaLangObjectName,ACCESS_DEFAULT, TYPE_ADD_NO);
             s_javaObjectSymbol = ss;
             FILLF_typeModifier(&s_javaObjectModifier,TypeStruct,t,ss,NULL,NULL);
             s_javaObjectModifier.u.t = ss;
 
-            ss = javaTypeSymbolDefinition(s_javaLangStringName,ACC_DEFAULT, TYPE_ADD_NO);
+            ss = javaTypeSymbolDefinition(s_javaLangStringName,ACCESS_DEFAULT, TYPE_ADD_NO);
             s_javaStringSymbol = ss;
             FILLF_typeModifier(&s_javaStringModifier,TypeStruct,t,ss,NULL,NULL);
             s_javaStringModifier.u.t = ss;
 
-            ss = javaTypeSymbolDefinition(s_javaLangClassName,ACC_DEFAULT, TYPE_ADD_NO);
+            ss = javaTypeSymbolDefinition(s_javaLangClassName,ACCESS_DEFAULT, TYPE_ADD_NO);
             FILLF_typeModifier(&s_javaClassModifier,TypeStruct,t,ss,NULL,NULL);
             s_javaClassModifier.u.t = ss;
-            s_javaCloneableSymbol = javaTypeSymbolDefinition(s_javaLangCloneableName,ACC_DEFAULT, TYPE_ADD_NO);
-            s_javaIoSerializableSymbol = javaTypeSymbolDefinition(s_javaIoSerializableName,ACC_DEFAULT, TYPE_ADD_NO);
+            s_javaCloneableSymbol = javaTypeSymbolDefinition(s_javaLangCloneableName,ACCESS_DEFAULT, TYPE_ADD_NO);
+            s_javaIoSerializableSymbol = javaTypeSymbolDefinition(s_javaIoSerializableName,ACCESS_DEFAULT, TYPE_ADD_NO);
 
             javaInitArrayObject();
 }
@@ -3616,7 +3616,7 @@ break;
 case 92:
 #line 1116 "java_parser.y"
 {
-            yyval.ast_unsigned.d = ACC_DEFAULT;
+            yyval.ast_unsigned.d = ACCESS_DEFAULT;
             SetNullBorns(yyval.ast_unsigned);
         }
 break;
@@ -3636,35 +3636,35 @@ case 95:
 break;
 case 96:
 #line 1135 "java_parser.y"
-{ yyval.ast_unsigned.d = ACC_PUBLIC; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+{ yyval.ast_unsigned.d = ACCESS_PUBLIC; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 97:
 #line 1136 "java_parser.y"
-{ yyval.ast_unsigned.d = ACC_PROTECTED; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+{ yyval.ast_unsigned.d = ACCESS_PROTECTED; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 98:
 #line 1137 "java_parser.y"
-{ yyval.ast_unsigned.d = ACC_PRIVATE; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+{ yyval.ast_unsigned.d = ACCESS_PRIVATE; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 99:
 #line 1138 "java_parser.y"
-{ yyval.ast_unsigned.d = ACC_STATIC; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+{ yyval.ast_unsigned.d = ACCESS_STATIC; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 100:
 #line 1139 "java_parser.y"
-{ yyval.ast_unsigned.d = ACC_ABSTRACT; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+{ yyval.ast_unsigned.d = ACCESS_ABSTRACT; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 101:
 #line 1140 "java_parser.y"
-{ yyval.ast_unsigned.d = ACC_FINAL; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+{ yyval.ast_unsigned.d = ACCESS_FINAL; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 102:
 #line 1141 "java_parser.y"
-{ yyval.ast_unsigned.d = ACC_NATIVE; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+{ yyval.ast_unsigned.d = ACCESS_NATIVE; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 103:
 #line 1142 "java_parser.y"
-{ yyval.ast_unsigned.d = ACC_SYNCHRONIZED; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+{ yyval.ast_unsigned.d = ACCESS_SYNCHRONIZED; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 104:
 #line 1143 "java_parser.y"
@@ -3672,7 +3672,7 @@ case 104:
 break;
 case 105:
 #line 1144 "java_parser.y"
-{ yyval.ast_unsigned.d = ACC_TRANSIENT; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+{ yyval.ast_unsigned.d = ACCESS_TRANSIENT; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 106:
 #line 1145 "java_parser.y"
@@ -4042,9 +4042,9 @@ case 141:
                         vClass = s_javaStat->classFileIndex;
                         p->bits.accessFlags = yyvsp[-3].ast_unsigned.d;
                         p->bits.storage = StorageField;
-                        if (clas->bits.accessFlags&ACC_INTERFACE) {
+                        if (clas->bits.accessFlags&ACCESS_INTERFACE) {
                             /* set interface default access flags*/
-                            p->bits.accessFlags |= (ACC_PUBLIC | ACC_STATIC | ACC_FINAL);
+                            p->bits.accessFlags |= (ACCESS_PUBLIC | ACCESS_STATIC | ACCESS_FINAL);
                         }
                         /*&javaSetFieldLinkName(p);*/
                         iniFind(clas, &rfs);
@@ -4091,9 +4091,9 @@ case 141:
                     jslCompleteDeclarator(yyvsp[-2].ast_symbol.d, p);
                     p->bits.accessFlags = yyvsp[-3].ast_unsigned.d;
                     p->bits.storage = StorageField;
-                    if (clas->bits.accessFlags&ACC_INTERFACE) {
+                    if (clas->bits.accessFlags&ACCESS_INTERFACE) {
                         /* set interface default access flags*/
-                        p->bits.accessFlags |= (ACC_PUBLIC|ACC_STATIC|ACC_FINAL);
+                        p->bits.accessFlags |= (ACCESS_PUBLIC|ACCESS_STATIC|ACCESS_FINAL);
                     }
                     log_debug("[jsl] adding field %s to %s\n",
                               p->name,clas->linkName);
@@ -4500,7 +4500,7 @@ case 176:
 
                         args = yyvsp[-1].ast_symbol.d;
                         /*&
-                          if (! ($1.d & ACC_STATIC)) {
+                          if (! ($1.d & ACCESS_STATIC)) {
                               args = javaPrependDirectEnclosingInstanceArgument($2.d);
                           }
                           &*/
@@ -4715,10 +4715,10 @@ case 196:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.trail=newClassDefinitionBegin(yyvsp[0].ast_id.d,(yyvsp[-2].ast_unsigned.d|ACC_INTERFACE),NULL);
+                    yyval.trail=newClassDefinitionBegin(yyvsp[0].ast_id.d,(yyvsp[-2].ast_unsigned.d|ACCESS_INTERFACE),NULL);
                 }
             } else {
-                jslNewClassDefinitionBegin(yyvsp[0].ast_id.d, (yyvsp[-2].ast_unsigned.d|ACC_INTERFACE), NULL, CPOS_ST);
+                jslNewClassDefinitionBegin(yyvsp[0].ast_id.d, (yyvsp[-2].ast_unsigned.d|ACCESS_INTERFACE), NULL, CPOS_ST);
             }
         }
 break;
@@ -4762,10 +4762,10 @@ case 199:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        yyval.trail=newClassDefinitionBegin(yyvsp[0].ast_id.d,(yyvsp[-2].ast_unsigned.d|ACC_INTERFACE),NULL);
+                        yyval.trail=newClassDefinitionBegin(yyvsp[0].ast_id.d,(yyvsp[-2].ast_unsigned.d|ACCESS_INTERFACE),NULL);
                     }
                 } else {
-                    jslNewClassDefinitionBegin(yyvsp[0].ast_id.d, (yyvsp[-2].ast_unsigned.d|ACC_INTERFACE), NULL, CPOS_ST);
+                    jslNewClassDefinitionBegin(yyvsp[0].ast_id.d, (yyvsp[-2].ast_unsigned.d|ACCESS_INTERFACE), NULL, CPOS_ST);
                 }
             }
 break;
@@ -5941,7 +5941,7 @@ case 364:
                 javaClassifyAmbiguousName(yyvsp[0].ast_idList.d, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
                                           CLASS_TO_TYPE,UsageUsed);
                 yyvsp[0].ast_idList.d->nameType = TypeStruct;
-                ss = javaTypeSymbolUsage(yyvsp[0].ast_idList.d, ACC_DEFAULT);
+                ss = javaTypeSymbolUsage(yyvsp[0].ast_idList.d, ACCESS_DEFAULT);
                 s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(ss, &(yyvsp[0].ast_idList.d->id.p));
             }
             yyval.ast_idList = yyvsp[0].ast_idList;
@@ -5962,7 +5962,7 @@ case 365:
                     javaClassifyAmbiguousName(yyvsp[-3].ast_idList.d, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
                                               CLASS_TO_TYPE,UsageUsed);
                     yyvsp[-3].ast_idList.d->nameType = TypeStruct;
-                    ss = javaTypeSymbolUsage(yyvsp[-3].ast_idList.d, ACC_DEFAULT);
+                    ss = javaTypeSymbolUsage(yyvsp[-3].ast_idList.d, ACCESS_DEFAULT);
                     if (isANestedClass(ss)) {
                         if (javaIsInnerAndCanGetUnnamedEnclosingInstance(ss, &ei)) {
                             /* before it was s_javaStat->classFileInd, but be more precise*/
@@ -5982,7 +5982,7 @@ case 365:
                             /* and annulating of reference makes class renaming wrong!*/
                             /* Well, it is legal only for static nested classes.*/
                             /* But for security reasons, I will keep it in comment,*/
-                            /*&if (! (ss->bits.accessFlags&ACC_STATIC)) {*/
+                            /*&if (! (ss->bits.accessFlags&ACCESS_STATIC)) {*/
                             /*&	if (rr!=NULL) rr->usg.base = s_noUsage;*/
                             /*&}*/
                         }
@@ -6008,7 +6008,7 @@ case 366:
                         s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
                         javaClassifyToTypeName(yyvsp[-3].ast_idList.d,UsageUsed, &ss, USELESS_FQT_REFS_ALLOWED);
                         yyval.symbol = javaTypeNameDefinition(yyvsp[-3].ast_idList.d);
-                        ss = javaTypeSymbolUsage(yyvsp[-3].ast_idList.d, ACC_DEFAULT);
+                        ss = javaTypeSymbolUsage(yyvsp[-3].ast_idList.d, ACCESS_DEFAULT);
                         javaConstructorInvocation(ss, &(yyvsp[-3].ast_idList.d->id.p), yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
                     } else {
                         javaHandleDeclaratorParamPositions(&yyvsp[-3].ast_idList.d->id.p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
@@ -6020,7 +6020,7 @@ case 366:
                     jslClassifyAmbiguousTypeName(yyvsp[-3].ast_idList.d, &str);
                     cls = jslTypeNameDefinition(yyvsp[-3].ast_idList.d);
                     jslNewClassDefinitionBegin(&s_javaAnonymousClassName,
-                                                ACC_DEFAULT, cls, CPOS_ST);
+                                                ACCESS_DEFAULT, cls, CPOS_ST);
                 }
             }
 break;
@@ -6029,7 +6029,7 @@ case 367:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        yyval.trail = newClassDefinitionBegin(&s_javaAnonymousClassName,ACC_DEFAULT, yyvsp[-1].symbol);
+                        yyval.trail = newClassDefinitionBegin(&s_javaAnonymousClassName,ACCESS_DEFAULT, yyvsp[-1].symbol);
                     }
                 }
             }
@@ -6070,7 +6070,7 @@ case 370:
                         yyval.ast_expressionType.d.pp = yyvsp[0].ast_nestedConstrTokenType.d.pp;
                         yyval.ast_expressionType.d.r = NULL;
                         if (yyval.ast_expressionType.d.t->kind != TypeError) {
-                            yyval.trail = newClassDefinitionBegin(&s_javaAnonymousClassName, ACC_DEFAULT, yyval.ast_expressionType.d.t->u.t);
+                            yyval.trail = newClassDefinitionBegin(&s_javaAnonymousClassName, ACCESS_DEFAULT, yyval.ast_expressionType.d.t->u.t);
                         } else {
                             yyval.trail = newAnonClassDefinitionBegin(& yyvsp[0].ast_nestedConstrTokenType.d.nid->id);
                         }

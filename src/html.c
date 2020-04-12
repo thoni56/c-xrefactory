@@ -337,7 +337,7 @@ static void htmlVirtualTableSymName(FILE *ff,S_olSymbolsMenu *rrr,char *color){
     char            ln[MAX_HTML_REF_LEN];
     fprintf(ff, "<tr><td bgcolor=\"%s\">\n", color);
     fprintf(ff, "<font FACE=\"arial,helvetica\">\n");
-    if ((rrr->s.b.accessFlags&ACC_STATIC) && rrr->s.b.storage!=StorageField){
+    if ((rrr->s.b.accessFlags&ACCESS_STATIC) && rrr->s.b.storage!=StorageField){
         fprintf(ff, "static ");
     }
     linkNamePrettyPrint(ln, rrr->s.name, MAX_HTML_REF_LEN,SHORT_NAME);
@@ -394,7 +394,7 @@ static void htmlGenRefListItemHead(FILE *ff, char *ln, char *symName,
             fprintf(ff,"<A NAME=\"%s.rf\"></A>",ln);
             fprintf(ff,"<B>%s</B>&nbsp;of&nbsp;%s", sn, apc);
             if (p->b.storage!=StorageField
-                && (p->b.accessFlags&ACC_STATIC)==0) {
+                && (p->b.accessFlags&ACCESS_STATIC)==0) {
                 apc =  javaGetNudePreTypeName_st(getRealFileNameStatic(
                                                                        s_fileTab.tab[p->vApplClass]->name), s_opt.nestedClassDisplaying);
                 fprintf(ff,"<br>at <B>%s</B>", apc);
@@ -405,7 +405,7 @@ static void htmlGenRefListItemHead(FILE *ff, char *ln, char *symName,
         htmlGenSmallTabHead( ff, HTML_COLOR_SMALL_TAB_HEAD, genFlag);
         fprintf(ff,"<A NAME=\"%s\"></A>",ln);
         if (p->b.symType==TypeStruct && LANGUAGE(LANG_JAVA)) {
-            if (p->b.accessFlags & ACC_INTERFACE) {
+            if (p->b.accessFlags & ACCESS_INTERFACE) {
                 fprintf(ff,"interface&nbsp;");
             } else {
                 fprintf(ff,"class&nbsp;");
@@ -752,7 +752,7 @@ static void htmlCrLocalRefsFileName(int fnum, S_symbolRefItem *cri,
 static int htmlJdkDocAvailable(S_symbolRefItem *rr){
     char *lfn, *url;
     // the following would remove also some classes, do no uncomment
-    //& if ((rr->b.accessFlags & ACC_PUBLIC)==0) return(0);
+    //& if ((rr->b.accessFlags & ACCESS_PUBLIC)==0) return(0);
     url = getJavaDocUrl_st(rr);
     lfn = getLocalJavaDocFile_st(url);
     if (lfn==NULL && ! htmlJdkDocAvailableForUrl(url)) return(0);

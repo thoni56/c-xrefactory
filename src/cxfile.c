@@ -455,9 +455,9 @@ static void writeFileIndexItem(struct fileItem *fi, int ii) {
     writeOptionalCompactRecord(CXFI_FILE_FUMTIME, fi->lastFullUpdateMtime, " ");
     writeOptionalCompactRecord(CXFI_INPUT_FROM_CL, fi->b.commandLineEntered, "");
     if (fi->b.isInterface) {
-        writeOptionalCompactRecord(CXFI_ACCESS_BITS, ACC_INTERFACE, "");
+        writeOptionalCompactRecord(CXFI_ACCESS_BITS, ACCESS_INTERFACE, "");
     } else {
-        writeOptionalCompactRecord(CXFI_ACCESS_BITS, ACC_DEFAULT, "");
+        writeOptionalCompactRecord(CXFI_ACCESS_BITS, ACCESS_DEFAULT, "");
     }
     writeStringRecord(CXFI_FILE_NAME, fi->name, " ");
 }
@@ -901,7 +901,7 @@ static void cxReadFileName(int size,
     fumtime = (time_t) s_inLastInfos.counter[CXFI_FILE_FUMTIME];
     umtime = (time_t) s_inLastInfos.counter[CXFI_FILE_UMTIME];
     commandLineFlag = s_inLastInfos.counter[CXFI_INPUT_FROM_CL];
-    isInterface=((s_inLastInfos.counter[CXFI_ACCESS_BITS] & ACC_INTERFACE)!=0);
+    isInterface=((s_inLastInfos.counter[CXFI_ACCESS_BITS] & ACCESS_INTERFACE)!=0);
     ii = s_inLastInfos.counter[CXFI_FILE_INDEX];
     for (i=0; i<size-1; i++) {
         GetChar(cch, cc, fin, cb);

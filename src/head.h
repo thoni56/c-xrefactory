@@ -351,7 +351,7 @@ typedef enum language {
 #define JAVA_STATICALLY_LINKED(storage, accessFlags) (\
     (storage==StorageField\
     || ((storage==StorageMethod || storage==StorageConstructor)\
-        && (accessFlags & ACC_STATIC)))\
+        && (accessFlags & ACCESS_STATIC)))\
 )
 
 #define JavaMapOnPaths(thePaths, COMMAND ) {\
@@ -398,9 +398,9 @@ typedef enum language {
         && ri->b.storage!=StorageMethod\
         && ri->b.storage!=StorageConstructor) return;\
     /* check that it has default accessibility*/\
-    if (ri->b.accessFlags & ACC_PUBLIC) return;\
-    if (ri->b.accessFlags & ACC_PROTECTED) return;\
-    if (! (ri->b.accessFlags & ACC_PRIVATE)) {\
+    if (ri->b.accessFlags & ACCESS_PUBLIC) return;\
+    if (ri->b.accessFlags & ACCESS_PROTECTED) return;\
+    if (! (ri->b.accessFlags & ACCESS_PRIVATE)) {\
         /* default accessibility, check only if transpackage move*/\
         if (! dd->transPackageMove) return;\
     }\
@@ -456,22 +456,22 @@ typedef enum language {
 /* *********************************************************************** */
 /*                       JAVA Attribute Item                               */
 
-#define ACC_PUBLIC				0x001
-#define ACC_PRIVATE				0x002
-#define ACC_PROTECTED			0x004
-#define ACC_STATIC				0x008
-#define ACC_FINAL				0x010
-#define ACC_SYNCHRONIZED		0x020
-#define ACC_THREADSAFE			0x040
-#define ACC_TRANSIENT			0x080
-#define ACC_NATIVE				0x100
-#define ACC_INTERFACE			0x200
-#define ACC_ABSTRACT			0x400
+#define ACCESS_DEFAULT				0x000
+#define ACCESS_PUBLIC				0x001
+#define ACCESS_PRIVATE				0x002
+#define ACCESS_PROTECTED			0x004
+#define ACCESS_STATIC				0x008
+#define ACCESS_FINAL				0x010
+#define ACCESS_SYNCHRONIZED			0x020
+#define ACCESS_THREADSAFE			0x040
+#define ACCESS_TRANSIENT			0x080
+#define ACCESS_NATIVE				0x100
+#define ACCESS_INTERFACE			0x200
+#define ACCESS_ABSTRACT				0x400
 
-#define ACC_DEFAULT				0x000
-#define ACC_ALL					0x800
+#define ACCESS_ALL					0x800
 
-#define ACC_PPP_MODIFER_MASK    0x007
+#define ACCESS_PPP_MODIFER_MASK    0x007
 
 /* *********************************************************************** */
 // this is maximal value of required access field in usg bits, it is index

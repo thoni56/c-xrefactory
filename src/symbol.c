@@ -15,7 +15,7 @@ void fillSymbol(Symbol *s, char *name, char *linkName, struct position pos) {
     s->pos = pos;
     s->u.type = NULL;
     s->next = NULL;
-    fillSymbolBits(&s->bits, ACC_DEFAULT, TypeDefault, StorageDefault);
+    fillSymbolBits(&s->bits, ACCESS_DEFAULT, TypeDefault, StorageDefault);
 }
 
 

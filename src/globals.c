@@ -247,10 +247,10 @@ S_options s_cachedOptions;
 /* ********************************************************************** */
 
 int s_javaRequiredeAccessibilitiesTable[MAX_REQUIRED_ACCESS+1] = {
-    ACC_PUBLIC,
-    ACC_PROTECTED,
-    ACC_DEFAULT,
-    ACC_PRIVATE,
+    ACCESS_PUBLIC,
+    ACCESS_PROTECTED,
+    ACCESS_DEFAULT,
+    ACCESS_PRIVATE,
 };
 
 S_options s_initOpt = {

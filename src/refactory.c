@@ -930,7 +930,7 @@ int tpCheckSourceIsNotInnerClass(void) {
     //& assert(target!=NULL);
     assert(s_fileTab.tab[thisclassi]);
     deii = s_fileTab.tab[thisclassi]->directEnclosingInstance;
-    if (deii != -1 && deii != s_noneFileIndex && (ss->s.b.accessFlags&ACC_INTERFACE)==0) {
+    if (deii != -1 && deii != s_noneFileIndex && (ss->s.b.accessFlags&ACCESS_INTERFACE)==0) {
         // exists direct enclosing instance, it is an inner class
         sprintf(tmpBuff, "This is  an inner class. Current  version of C-xrefactory  can only move nested classes declared  'static' and top level classes.  If the class does  not depend  on its  enclosing instances,  you should  declare it 'static' and move it after.");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
@@ -1679,7 +1679,7 @@ static void refactoryRestrictAccessibility(S_editorMarker *point, int limitIndex
     int             accIndex, access;
     S_reference     *rr;
 
-    minAccess &= ACC_PPP_MODIFER_MASK;
+    minAccess &= ACCESS_PPP_MODIFER_MASK;
     for(accIndex=0; accIndex<MAX_REQUIRED_ACCESS; accIndex++) {
         if (s_javaRequiredeAccessibilitiesTable[accIndex] == minAccess) break;
     }
@@ -1702,10 +1702,10 @@ static void refactoryRestrictAccessibility(S_editorMarker *point, int limitIndex
 
     access = s_javaRequiredeAccessibilitiesTable[accIndex];
 
-    if (access == ACC_PUBLIC) refactoryChangeAccessModifier(point, limitIndex, "public");
-    else if (access == ACC_PROTECTED) refactoryChangeAccessModifier(point, limitIndex, "protected");
-    else if (access == ACC_DEFAULT) refactoryChangeAccessModifier(point, limitIndex, "");
-    else if (access == ACC_PRIVATE) refactoryChangeAccessModifier(point, limitIndex, "private");
+    if (access == ACCESS_PUBLIC) refactoryChangeAccessModifier(point, limitIndex, "public");
+    else if (access == ACCESS_PROTECTED) refactoryChangeAccessModifier(point, limitIndex, "protected");
+    else if (access == ACCESS_DEFAULT) refactoryChangeAccessModifier(point, limitIndex, "");
+    else if (access == ACCESS_PRIVATE) refactoryChangeAccessModifier(point, limitIndex, "private");
     else error(ERR_INTERNAL, "No access modifier computed");
 }
 
@@ -3052,7 +3052,7 @@ static void refactoryPerformMoveClass(S_editorMarker *point,
     (*outend)->offset++;
 
     // finally fiddle modifiers
-    if (ss->s.b.accessFlags & ACC_STATIC) {
+    if (ss->s.b.accessFlags & ACCESS_STATIC) {
         if (! targetIsNestedInClass) {
             // nested -> top level
             //&sprintf(tmpBuff,"removing modifier"); ppcGenTmpBuff();
@@ -3758,7 +3758,7 @@ static void refactoryPerformEncapsulateField(S_editorMarker *point,
     accFlags = s_olcxCurrentUser->browserStack.top->hkSelectedSym->s.b.accessFlags;
 
     cclass[0] = 0; scclass = cclass;
-    if (accFlags&ACC_STATIC) {
+    if (accFlags&ACCESS_STATIC) {
         refactoryGetNameOfTheClassAndSuperClass(point, cclass, NULL);
         scclass = lastOccurenceInString(cclass, '.');
         if (scclass == NULL) scclass = cclass;
@@ -3784,12 +3784,12 @@ static void refactoryPerformEncapsulateField(S_editorMarker *point,
     declarator[declLen] = 0;
 
     sprintf(getterBody, "public %s%s %s() {\nreturn(%s);\n}\n",
-            ((accFlags&ACC_STATIC)?"static ":""),
+            ((accFlags&ACCESS_STATIC)?"static ":""),
             declarator, getter, nameOnPoint);
     sprintf(setterBody, "public %s%s %s(%s %s) {\n%s.%s = %s;\nreturn(%s);\n}\n",
-            ((accFlags&ACC_STATIC)?"static ":""),
+            ((accFlags&ACCESS_STATIC)?"static ":""),
             declarator, setter, declarator, nameOnPoint,
-            ((accFlags&ACC_STATIC)?scclass:"this"),
+            ((accFlags&ACCESS_STATIC)?scclass:"this"),
             nameOnPoint, nameOnPoint, nameOnPoint);
 
     beforeInsertionUndo = s_editorUndo;
@@ -3802,7 +3802,7 @@ static void refactoryPerformEncapsulateField(S_editorMarker *point,
     refactoryReplaceString(de, 0, getterBody);
     getterm->offset += substringIndex(getterBody, getter)+1;
 
-    if ((accFlags & ACC_FINAL) ==  0) {
+    if ((accFlags & ACCESS_FINAL) ==  0) {
         setterm = editorCrNewMarker(de->buffer, de->offset-1);
         refactoryReplaceString(de, 0, setterBody);
         setterm->offset += substringIndex(setterBody, setter)+1;
@@ -3815,7 +3815,7 @@ static void refactoryPerformEncapsulateField(S_editorMarker *point,
     refactoryPushReferences(getterm->buffer, getterm, "-olcxrename", NULL, 0);
     anotherGetter = refactoryCheckEncapsulateGetterSetterForExistingMethods(getter);
     editorFreeMarker(getterm);
-    if ((accFlags & ACC_FINAL) ==  0) {
+    if ((accFlags & ACCESS_FINAL) ==  0) {
         refactoryPushReferences(setterm->buffer, setterm, "-olcxrename", NULL, 0);
         anotherSetter = refactoryCheckEncapsulateGetterSetterForExistingMethods(setter);
         editorFreeMarker(setterm);
@@ -3834,14 +3834,14 @@ static void refactoryPerformEncapsulateField(S_editorMarker *point,
         if (! anotherGetter) {
             refactoryReplaceString(de, 0, getterBody);
         }
-        if ((accFlags & ACC_FINAL) ==  0 && ! anotherSetter) {
+        if ((accFlags & ACCESS_FINAL) ==  0 && ! anotherSetter) {
             refactoryReplaceString(de, 0, setterBody);
         }
         tend->offset = de->offset;
         tbeg->offset ++;
     }
     // do not move this before, as anotherdef reference would be freed!
-    if ((accFlags & ACC_FINAL) ==  0) olcxPopOnly();
+    if ((accFlags & ACCESS_FINAL) ==  0) olcxPopOnly();
     olcxPopOnly();
 
     // generate getter and setter invocations
@@ -3874,7 +3874,7 @@ static void refactoryPerformEncapsulateField(S_editorMarker *point,
         }
     }
 
-    refactoryRestrictAccessibility(point, SPP_FIELD_DECLARATION_BEGIN_POSITION, ACC_PRIVATE);
+    refactoryRestrictAccessibility(point, SPP_FIELD_DECLARATION_BEGIN_POSITION, ACCESS_PRIVATE);
 
     indoffset = tbeg->offset;
     indlines = editorCountLinesBetweenMarkers(tbeg, tend);
@@ -4378,7 +4378,7 @@ static char * refactoryComputeUpdateOptionForSymbol(S_editorMarker *point) {
             res = "";
         } else if (symtype==TypeDefault
                    && (storage == StorageMethod || storage == StorageField)
-                   && ((accflags & ACC_PRIVATE) != 0)
+                   && ((accflags & ACCESS_PRIVATE) != 0)
                    ) {
             // private field or method,
             // no update makes renaming after extract method much faster

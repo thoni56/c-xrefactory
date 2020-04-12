@@ -2503,7 +2503,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     XX_ALLOC(s_symbolTable, S_symbolTable);
     symbolTableInit(s_symbolTable, MAX_SYMBOLS);
     fillJavaStat(&s_initJavaStat,NULL,NULL,NULL,0, NULL, NULL, NULL,
-                  s_symbolTable,NULL,ACC_DEFAULT,s_cpInit,s_noneFileIndex,NULL);
+                  s_symbolTable,NULL,ACCESS_DEFAULT,s_cpInit,s_noneFileIndex,NULL);
     XX_ALLOC(s_javaStat, S_javaStat);
     *s_javaStat = s_initJavaStat;
     javaFqtTabInit( &s_javaFqtTab, FQT_CLASS_TAB_SIZE);
@@ -2688,7 +2688,7 @@ void getPipedOptions(int *outNargc,char ***outNargv){
 
 static void fillIncludeRefItem( S_symbolRefItem *ddd , int fnum) {
     fill_symbolRefItemBits(&ddd->b,TypeCppInclude,StorageExtern,
-                           ScopeGlobal,ACC_DEFAULT,CatGlobal,0);
+                           ScopeGlobal,ACCESS_DEFAULT,CatGlobal,0);
     fill_symbolRefItem(ddd,LINK_NAME_INCLUDE_REFS,
                        cxFileHashNumber(LINK_NAME_INCLUDE_REFS),
                        fnum, fnum, ddd->b);
@@ -2810,7 +2810,7 @@ static int scheduleFileUsingTheMacro(void) {
     assert(s_olstringInMbody);
     tmpc = NULL;
     fill_symbolRefItemBits(&ddd.b, TypeMacro, StorageExtern,
-                           ScopeGlobal,ACC_DEFAULT,CatGlobal,0);
+                           ScopeGlobal,ACCESS_DEFAULT,CatGlobal,0);
     fill_symbolRefItem(&ddd,s_olstringInMbody,
                        cxFileHashNumber(s_olstringInMbody),
                        s_noneFileIndex, s_noneFileIndex,ddd.b);
