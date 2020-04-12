@@ -73,6 +73,12 @@ start:	e						{ int func(p1, p2, p3); return($1); }
 
 e:    e '*' e					{$$ = $1 * $3;}
     | e '/' e					{
+        char c = 'c';
+        int i = 346;
+        short s = 4;
+        float f = 0.3f;
+        double d = 3.14;
+
         if ($3 == 0) $$ = $1;
         else $$ = $1 / $3;
     }

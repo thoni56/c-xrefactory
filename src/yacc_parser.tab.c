@@ -2856,7 +2856,7 @@ case 192:
             Symbol *d;
             Symbol *dd __attribute__((unused));
 
-            CrTypeModifier(p, TypeInt);
+            p = newSimpleTypeModifier(TypeInt);
             yyval.ast_expressionType.d.t = StackMemAlloc(S_typeModifier);
             FILLF_typeModifier(yyval.ast_expressionType.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
 

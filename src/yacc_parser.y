@@ -477,7 +477,7 @@ primary_expr
             Symbol *d;
             Symbol *dd __attribute__((unused));
 
-            CrTypeModifier(p, TypeInt);
+            p = newSimpleTypeModifier(TypeInt);
             $$.d.t = StackMemAlloc(S_typeModifier);
             FILLF_typeModifier($$.d.t, TypeFunction,f,( NULL,NULL) ,NULL,p);
 
