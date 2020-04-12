@@ -32,7 +32,7 @@ class Index {
     double pi = 3.1415926;
     String s = "hello";
     int i = (int) 47;
-    int a = (a[10])x;
+    short x = +x;
 }
 
 
