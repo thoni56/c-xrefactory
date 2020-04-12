@@ -37,6 +37,6 @@ clean:
 	@-rm -rf CXrefs output.log output.tmp output buffer
 
 gdb:
-	@$(EDIT_SERVER_DRIVER) commands.input "$(CURDIR)" buffer 15 > output.tmp &
+	@$(EDIT_SERVER_DRIVER) commands1.input "$(CURDIR)" buffer1 5 > output.tmp &
 	sleep 1
 	sudo gdb -pid `pgrep c-xref | tail -1` -ex 'br mainRefactory' -ex 'continue'
