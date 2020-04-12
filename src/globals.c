@@ -453,7 +453,7 @@ char s_javaPrimitiveWideningConversions[MAX_PCTIndex-1][MAX_PCTIndex-1] = {
 char *s_tokenName[LAST_TOKEN];
 int s_tokenLength[LAST_TOKEN];
 
-S_typeModifier * s_preCrTypesTab[MAX_TYPE];
+S_typeModifier * s_preCreatedTypesTable[MAX_TYPE];
 S_typeModifier * s_preCrPtr1TypesTab[MAX_TYPE];
 S_typeModifier * s_preCrPtr2TypesTab[MAX_TYPE];
 

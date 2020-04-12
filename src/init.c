@@ -148,7 +148,7 @@ void initPreCreatedTypes(void) {
     int i,t;
 
     for(i=0; i<MAX_TYPE; i++) {
-        s_preCrTypesTab[i] = NULL;
+        s_preCreatedTypesTable[i] = NULL;
         s_preCrPtr1TypesTab[i] = NULL;
     }
     for(i=0; ; i++) {
@@ -156,9 +156,9 @@ void initPreCreatedTypes(void) {
         if (t<0) break;
         /* pre-create X */
         assert(t>=0 && t<MAX_TYPE);
-        s_preCrTypesTab[t] = newTypeModifier(t, NULL, NULL);
+        s_preCreatedTypesTable[t] = newTypeModifier(t, NULL, NULL);
         /* pre-create *X */
-        s_preCrPtr1TypesTab[t] = newTypeModifier(TypePointer, NULL, s_preCrTypesTab[t]);
+        s_preCrPtr1TypesTab[t] = newTypeModifier(TypePointer, NULL, s_preCreatedTypesTable[t]);
         /* pre-create **X */
         s_preCrPtr2TypesTab[t] = newTypeModifier(TypePointer, NULL, s_preCrPtr1TypesTab[t]);
     }

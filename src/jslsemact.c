@@ -75,29 +75,29 @@ Symbol *jslTypeSpecifier2(S_typeModifier *t) {
     return symbol;
 }
 
-static S_typeModifier *jslCreateSimpleTypeModifier(unsigned t) {
+static S_typeModifier *jslCreateSimpleTypeModifier(Type type) {
     S_typeModifier *p;
 
-    assert(t>=0 && t<MAX_TYPE);
-    if (s_preCrTypesTab[t] == NULL) {
+    assert(type>=0 && type<MAX_TYPE);
+    if (s_preCreatedTypesTable[type] == NULL) {
         CF_ALLOC(p, S_typeModifier);
-        FILLF_typeModifier(p, t, f, (NULL,NULL), NULL, NULL);
+        initTypeModifier(p, type);
     } else {
-        p = s_preCrTypesTab[t];
+        p = s_preCreatedTypesTable[type];
     }
-    assert(p->kind == t);
+    assert(p->kind == type);
 
     return p;
 }
 
-Symbol *jslTypeSpecifier1(unsigned t) {
+Symbol *jslTypeSpecifier1(Type t) {
     return jslTypeSpecifier2(jslCreateSimpleTypeModifier(t));
 }
 
-S_typeModifier *jslAppendComposedType(S_typeModifier **d, unsigned t) {
+S_typeModifier *jslAppendComposedType(S_typeModifier **d, Type type) {
     S_typeModifier *p;
     CF_ALLOC(p, S_typeModifier);
-    FILLF_typeModifier(p, t,f,( NULL,NULL) ,NULL,NULL);
+    FILLF_typeModifier(p, type,f,( NULL,NULL) ,NULL,NULL);
     LIST_APPEND(S_typeModifier, (*d), p);
     return(p);
 }

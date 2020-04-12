@@ -127,7 +127,7 @@ extern S_tokenNameIni s_tokenNameIniTab[];
 extern S_tokenNameIni s_tokenNameIniTab2[];
 extern S_tokenNameIni s_tokenNameIniTab3[];
 extern int s_preCrTypesIniTab[];
-extern S_typeModifier * s_preCrTypesTab[MAX_TYPE];
+extern S_typeModifier * s_preCreatedTypesTable[MAX_TYPE];
 extern S_typeModifier * s_preCrPtr1TypesTab[MAX_TYPE];
 extern S_typeModifier * s_preCrPtr2TypesTab[MAX_TYPE];
 

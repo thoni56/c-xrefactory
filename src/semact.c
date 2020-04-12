@@ -678,11 +678,11 @@ static S_typeModifier *createSimpleTypeModifier(unsigned t) {
 
     /* This seems to look first in pre-created types... */
     assert(t>=0 && t<MAX_TYPE);
-    if (s_preCrTypesTab[t] == NULL) {
+    if (s_preCreatedTypesTable[t] == NULL) {
         p = StackMemAlloc(S_typeModifier);
         FILLF_typeModifier(p,t,f,( NULL,NULL) ,NULL,NULL);
     } else {
-        p = s_preCrTypesTab[t];
+        p = s_preCreatedTypesTable[t];
     }
     /* log_trace("t,p->m == %d %d == %s %s",t,p->m,typeName[t],typeName[p->m]); */
     assert(p->kind == t);
@@ -740,8 +740,8 @@ static S_typeModifier * mergeBaseModTypes(S_typeModifier *t1, S_typeModifier *t2
     if (t2->kind == TypeDefault) return(t1);
     assert(t1->kind >=0 && t1->kind<MAX_TYPE);
     assert(t2->kind >=0 && t2->kind<MAX_TYPE);
-    if (s_preCrTypesTab[t2->kind] == NULL) return(t2);  /* not base type*/
-    if (s_preCrTypesTab[t1->kind] == NULL) return(t1);  /* not base type*/
+    if (s_preCreatedTypesTable[t2->kind] == NULL) return(t2);  /* not base type*/
+    if (s_preCreatedTypesTable[t1->kind] == NULL) return(t1);  /* not base type*/
     return(mergeBaseType(t1, t2));
 }
 
