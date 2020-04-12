@@ -46,4 +46,6 @@ extern void initTypeModifierAsArray(S_typeModifier *typeModifier,Symbol *typedef
 
 extern void initFunctionTypeModifier(struct functionTypeModifier *modifier, Symbol *args);
 
+extern S_typeModifier *prependTypeModifierWith(S_typeModifier *this, Type kind);
+
 #endif /* _TYPEMODIFIER_H_ */

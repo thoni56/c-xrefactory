@@ -648,7 +648,7 @@ void jslNewClassDefinitionEnd(void) {
 
 void jslAddDefaultConstructor(Symbol *cl) {
     Symbol *cc;
-    cc = javaCreateNewMethod(cl->name, &s_noPos,    MEM_CF);
+    cc = javaCreateNewMethod(cl->name, &s_noPos, MEM_CF);
     jslMethodHeader(cl->bits.accessFlags, &s_defaultVoidDefinition, cc,
                     StorageConstructor, NULL);
 }

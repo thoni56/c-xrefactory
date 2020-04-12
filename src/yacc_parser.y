@@ -24,20 +24,14 @@
 #define yyErrorRecovery styyErrorRecovery
 
 
-#define PrependModifier(xxx,ttt) {\
-        S_typeModifiers *p;\
-        p = StackMemAlloc(S_typeModifiers);\
-        FILLF_typeModifier(p, ttt, NULL,NULL,NULL,xxx);\
-        xxx = p;\
-}
-
 #define SetStrCompl1(xxx) {\
     assert(s_opt.taskRegime);\
     if (s_opt.taskRegime == RegimeEditServer) {\
         s_structRecordCompletionType = xxx;\
     }\
 }
-#define SetStrCompl2(xxx) {\
+
+#define SetStrCompl2(xxx) {                     \
     assert(s_opt.taskRegime);\
     if (s_opt.taskRegime == RegimeEditServer) {\
         if (xxx->kind==TypePointer || xxx->kind==TypeArray) {\

@@ -64,13 +64,6 @@
     }\
 }
 
-#define PrependModifier(xxx,ttt) {\
-        S_typeModifier *p;\
-        p = StackMemAlloc(S_typeModifier);\
-        FILLF_typeModifier(p, ttt,f,(NULL,NULL) ,NULL,xxx);\
-        xxx = p;\
-}
-
 #define SetPrimitiveTypePos(res, typ) {\
         if (1 || SyntaxPassOnly()) {\
             XX_ALLOC(res, S_position);\
@@ -3384,7 +3377,7 @@ ArrayCreationExpression:
                     int i;
                     $$.d.t = newSimpleTypeModifier($3.d.u);
                     for(i=0; i<$4.d; i++)
-                        PrependModifier($$.d.t, TypeArray);
+                        prependTypeModifierWith($$.d.t, TypeArray);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &$1.d->p;
@@ -3399,7 +3392,7 @@ ArrayCreationExpression:
                     int i;
                     $$.d.t = newSimpleTypeModifier($3.d.u);
                     for(i=0; i<$4.d; i++)
-                        PrependModifier($$.d.t, TypeArray);
+                        prependTypeModifierWith($$.d.t, TypeArray);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &$1.d->p;
@@ -3414,7 +3407,7 @@ ArrayCreationExpression:
                     assert($3.d && $3.d->u.type);
                     $$.d.t = $3.d->u.type;
                     for(i=0; i<$4.d; i++)
-                        PrependModifier($$.d.t, TypeArray);
+                        prependTypeModifierWith($$.d.t, TypeArray);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &$1.d->p;
@@ -3430,7 +3423,7 @@ ArrayCreationExpression:
                     assert($3.d && $3.d->u.type);
                     $$.d.t = $3.d->u.type;
                     for(i=0; i<$4.d; i++)
-                        PrependModifier($$.d.t, TypeArray);
+                        prependTypeModifierWith($$.d.t, TypeArray);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &$1.d->p;

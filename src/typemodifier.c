@@ -101,3 +101,7 @@ S_typeModifierList *newTypeModifierList(S_typeModifier *d) {
     list->next = NULL;
     return list;
 }
+
+S_typeModifier *prependTypeModifierWith(S_typeModifier *this, Type kind) {
+    return newTypeModifier(kind, NULL, this);
+}
