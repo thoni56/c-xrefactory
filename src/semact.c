@@ -828,16 +828,15 @@ void completeDeclarator(Symbol *t, Symbol *d) {
     LIST_APPEND(S_typeModifier, *dt, tt);
 }
 
-Symbol *createSimpleDefinition(unsigned storage, unsigned t, S_id *id) {
-    S_typeModifier *typeModifiers;
+Symbol *createSimpleDefinition(Storage storage, Type type, S_id *id) {
+    S_typeModifier *typeModifier;
     Symbol *r;
 
-    typeModifiers = StackMemAlloc(S_typeModifier);
-    FILLF_typeModifier(typeModifiers,t,f,( NULL,NULL) ,NULL,NULL);
+    typeModifier = newTypeModifier(type, NULL, NULL);
     if (id!=NULL) {
-        r = newSymbolAsType(id->name, id->name, id->p, typeModifiers);
+        r = newSymbolAsType(id->name, id->name, id->p, typeModifier);
     } else {
-        r = newSymbolAsType(NULL, NULL, s_noPos, typeModifiers);
+        r = newSymbolAsType(NULL, NULL, s_noPos, typeModifier);
     }
     fillSymbolBits(&r->bits, ACCESS_DEFAULT, TypeDefault, storage);
 
