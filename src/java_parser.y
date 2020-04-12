@@ -3809,8 +3809,7 @@ CastExpression:
     |	'(' PrimitiveType ')' UnaryExpression				{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    XX_ALLOC($$.d.t, S_typeModifier);
-                    FILLF_typeModifier($$.d.t,$2.d.u,t,NULL,NULL,NULL);
+                    $$.d.t = newTypeModifier($2.d.u, NULL, NULL);
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
@@ -4321,26 +4320,31 @@ Stop_block:		{
 %%
 
 void javaParsingInitializations(void) {
-            Symbol *ss;
-            //&javaMapDirectoryFiles2(s_javaLangName,
-            //&			javaAddMapedTypeName, NULL, s_javaLangName, NULL);
-            ss = javaTypeSymbolDefinition(s_javaLangObjectName,ACCESS_DEFAULT, TYPE_ADD_NO);
-            s_javaObjectSymbol = ss;
-            FILLF_typeModifier(&s_javaObjectModifier,TypeStruct,t,ss,NULL,NULL);
-            s_javaObjectModifier.u.t = ss;
+    Symbol *symbol;
+    //&javaMapDirectoryFiles2(s_javaLangName,
+    //&			javaAddMapedTypeName, NULL, s_javaLangName, NULL);
+    symbol = javaTypeSymbolDefinition(s_javaLangObjectName, ACCESS_DEFAULT, TYPE_ADD_NO);
+    s_javaObjectSymbol = symbol;
+    initTypeModifierAsStructUnionOrEnum(&s_javaObjectModifier, TypeStruct, symbol,
+                                        NULL, NULL);
+    s_javaObjectModifier.u.t = symbol;
 
-            ss = javaTypeSymbolDefinition(s_javaLangStringName,ACCESS_DEFAULT, TYPE_ADD_NO);
-            s_javaStringSymbol = ss;
-            FILLF_typeModifier(&s_javaStringModifier,TypeStruct,t,ss,NULL,NULL);
-            s_javaStringModifier.u.t = ss;
+    symbol = javaTypeSymbolDefinition(s_javaLangStringName, ACCESS_DEFAULT, TYPE_ADD_NO);
+    s_javaStringSymbol = symbol;
+    initTypeModifierAsStructUnionOrEnum(&s_javaStringModifier, TypeStruct, symbol,
+                                        NULL, NULL);
+    s_javaStringModifier.u.t = symbol;
 
-            ss = javaTypeSymbolDefinition(s_javaLangClassName,ACCESS_DEFAULT, TYPE_ADD_NO);
-            FILLF_typeModifier(&s_javaClassModifier,TypeStruct,t,ss,NULL,NULL);
-            s_javaClassModifier.u.t = ss;
-            s_javaCloneableSymbol = javaTypeSymbolDefinition(s_javaLangCloneableName,ACCESS_DEFAULT, TYPE_ADD_NO);
-            s_javaIoSerializableSymbol = javaTypeSymbolDefinition(s_javaIoSerializableName,ACCESS_DEFAULT, TYPE_ADD_NO);
+    symbol = javaTypeSymbolDefinition(s_javaLangClassName, ACCESS_DEFAULT, TYPE_ADD_NO);
+    initTypeModifierAsStructUnionOrEnum(&s_javaClassModifier, TypeStruct, symbol,
+                                        NULL, NULL);
+    s_javaClassModifier.u.t = symbol;
+    s_javaCloneableSymbol = javaTypeSymbolDefinition(s_javaLangCloneableName,
+                                                     ACCESS_DEFAULT, TYPE_ADD_NO);
+    s_javaIoSerializableSymbol = javaTypeSymbolDefinition(s_javaIoSerializableName,
+                                                          ACCESS_DEFAULT, TYPE_ADD_NO);
 
-            javaInitArrayObject();
+    javaInitArrayObject();
 }
 
 static S_completionFunTab spCompletionsTab[]  = {
