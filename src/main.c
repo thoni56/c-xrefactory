@@ -2689,9 +2689,9 @@ void getPipedOptions(int *outNargc,char ***outNargv){
 static void fillIncludeRefItem( S_symbolRefItem *ddd , int fnum) {
     fill_symbolRefItemBits(&ddd->b,TypeCppInclude,StorageExtern,
                            ScopeGlobal,ACC_DEFAULT,CatGlobal,0);
-    FILL_symbolRefItem(ddd,LINK_NAME_INCLUDE_REFS,
+    fill_symbolRefItem(ddd,LINK_NAME_INCLUDE_REFS,
                        cxFileHashNumber(LINK_NAME_INCLUDE_REFS),
-                       fnum, fnum, ddd->b,NULL,NULL);
+                       fnum, fnum, ddd->b);
 }
 
 static void makeIncludeClosureOfFilesToUpdate(void) {
@@ -2811,9 +2811,9 @@ static int scheduleFileUsingTheMacro(void) {
     tmpc = NULL;
     fill_symbolRefItemBits(&ddd.b, TypeMacro, StorageExtern,
                            ScopeGlobal,ACC_DEFAULT,CatGlobal,0);
-    FILL_symbolRefItem(&ddd,s_olstringInMbody,
+    fill_symbolRefItem(&ddd,s_olstringInMbody,
                        cxFileHashNumber(s_olstringInMbody),
-                       s_noneFileIndex, s_noneFileIndex,ddd.b,NULL,NULL);
+                       s_noneFileIndex, s_noneFileIndex,ddd.b);
 
     //& rr = refTabIsMember(&s_cxrefTab, &ddd, &ii, &memb);
     //& assert(rr);
