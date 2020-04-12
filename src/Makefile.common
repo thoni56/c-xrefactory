@@ -76,30 +76,9 @@ bs: enumTxt.g.h enumTxt.g.c
 # .g = generated, .bs = bootstrap version
 #
 
-compiler_defines.g.h: c-xref.bs Makefile.common
-	@echo | gcc -dM -E - > tmp-$@
-	@if [ -e $@ ]; then \
-		if ! diff $@ tmp-$@ ; then \
-			mv -f $@ $@.backup ; \
-			mv -f tmp-$@ $@ ; \
-			echo "$@: regenerated." ; \
-		else \
-			echo "$@: no change." ; \
-			rm tmp-$@ ; \
-		fi \
-	else \
-			echo "$@: generated." ; \
-			mv -f tmp-$@ $@ ; \
-	fi
-
-# Create a dependency file for proto.h since we need to know which files it includes
-$(OBJDIR)/proto.d: proto.h $(OBJDIR)
-	$(CC) $(CFLAGS) -MMD -MT proto.h -MF /tmp/proto.d -c proto.h -o /dev/null
-	sed 's/ proto.h / /' /tmp/proto.d > $@
-
 # Generate enum string representations header file
-enumTxt.g.h: proto.h compiler_defines.g.h c-xref.bs .c-xrefrc Makefile.common
-	@./c-xref.bs -task_regime_generate $(CXREF_CFLAGS) -DGENERATION \
+enumTxt.g.h: proto.h c-xref.bs .c-xrefrc Makefile.common
+	@./c-xref.bs -task_regime_generate $(CXREF_CFLAGS) \
 		-enum_name -header -xrefrc .c-xrefrc proto.h \
 		> tmp-$@
 	@if [ -e $@ ]; then \
@@ -117,8 +96,8 @@ enumTxt.g.h: proto.h compiler_defines.g.h c-xref.bs .c-xrefrc Makefile.common
 	fi
 
 # Generate enum string representations
-enumTxt.g.c: proto.h compiler_defines.g.h .c-xrefrc c-xref.bs Makefile.common
-	@./c-xref.bs -task_regime_generate $(CXREF_CFLAGS) -DGENERATION \
+enumTxt.g.c: proto.h .c-xrefrc c-xref.bs Makefile.common
+	@./c-xref.bs -task_regime_generate $(CXREF_CFLAGS) \
 		-enum_name -body -xrefrc .c-xrefrc proto.h \
 		> tmp-$@
 	@if [ -e $@ ]; then \
@@ -149,7 +128,7 @@ clean:;
 	-rm -rf $(OBJDIR)/*.o $(OBJDIR)/*.gc* c-xref
 
 cleaner: clean
-	-rm -rf $(OBJDIR) compiler_defines.g.h enumTxt.g.[ch] c-xref.bs .c-xrefrc
+	-rm -rf $(OBJDIR) enumTxt.g.[ch] c-xref.bs .c-xrefrc
 	-make -C unittests cleaner
 
 ########################################################################
