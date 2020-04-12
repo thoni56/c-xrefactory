@@ -16,7 +16,7 @@ typedef enum {
 static bool isSubstructureToFill(Symbol *symbol) {
     if (symbol->bits.storage == StorageError) return false;
     assert(symbol->u.type);
-    if (symbol->u.type->kind == TypeAnonymeField) return false;
+    if (symbol->u.type->kind == TypeAnonymousField) return false;
     if (symbol->u.type->kind == TypeFunction) return false;
     if (symbol->u.type->kind == TypeArray) return false;
     return true;

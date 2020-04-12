@@ -24,7 +24,7 @@ typedef enum type {
     TypePointer,
     TypeArray,
     TypeFunction,
-    TypeAnonymeField,
+    TypeAnonymousField,
     TypeError,
     MODIFIERS_START,
     TmodLong,

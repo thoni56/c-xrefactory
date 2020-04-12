@@ -739,7 +739,7 @@ S_int2StringTab s_typeNamesInitTab[] = {
     {TypePointer,           "Pointer"},
     {TypeArray,             "Array"},
     {TypeFunction,          "Function"},
-    {TypeAnonymeField,      "AnonymeField"},
+    {TypeAnonymousField,    "AnonymousField"},
     {TypeError,             "Error"},
     {TypeCppIfElse,         "#if-else-fi"},
     {TypeCppInclude,        "#include"},
@@ -798,7 +798,7 @@ int s_preCrTypesIniTab[] = {
     TypeDouble ,
     TypeVoid ,
     TypeError ,
-    TypeAnonymeField ,
+    TypeAnonymousField ,
     /* MODIFIERS, */
     TmodLong,
     TmodShort,

@@ -299,7 +299,7 @@ int findStrRecordSym(   S_recFindStr    *ss,
         for(r=ss->nextRecord; r!=NULL; r=r->next) {
             // special gcc extension of anonymous struct record
             if (r->name!=NULL && *r->name==0 && r->bits.symType==TypeDefault
-                && r->u.type->kind==TypeAnonymeField
+                && r->u.type->kind==TypeAnonymousField
                 && r->u.type->next!=NULL
                 && (r->u.type->next->kind==TypeUnion || r->u.type->next->kind==TypeStruct)) {
                 // put the anonymous union as 'super class'
