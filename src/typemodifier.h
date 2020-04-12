@@ -35,11 +35,13 @@ extern S_typeModifier *newStructTypeModifier(void);
 extern S_typeModifierList *newTypeModifierList(S_typeModifier *d);
 
 /* And here are some fill/init functions if you need them, e.g. if you allocate elsewhere */
+extern void initTypeModifier(S_typeModifier *typeModifier, Type kind);
 extern void initTypeModifierAsStructUnionOrEnum(S_typeModifier *typeModifier, Type kind, Symbol *symbol, Symbol *typedefSymbol, S_typeModifier *next);
-
 extern void initTypeModifierAsFunction(S_typeModifier *typeModifier, Symbol *args, Symbol **overloadFunctionList, Symbol *typedefSymbol, S_typeModifier *next);
-
+extern void initTypeModifierAsMethod(S_typeModifier *typeModifier, char *signature, SymbolList *exceptions, Symbol *typedefSymbol, S_typeModifier *next);
 extern void initTypeModifierAsPointer(S_typeModifier *typeModifier, S_typeModifier *next);
+extern void initTypeModifierAsArray(S_typeModifier *typeModifier,Symbol *typedefSymbol, S_typeModifier *next);
+
 extern void initFunctionTypeModifier(struct functionTypeModifier *modifier, Symbol *args);
 
 #endif /* _TYPEMODIFIER_H_ */

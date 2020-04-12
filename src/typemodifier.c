@@ -12,10 +12,22 @@ static void fillTypeModifier(S_typeModifier *typeModifier, Type kind, Symbol *ty
     typeModifier->next = next;
 }
 
+void initTypeModifier(S_typeModifier *typeModifier, Type kind) {
+    fillTypeModifier(typeModifier, kind, NULL, NULL);
+}
+
 void initTypeModifierAsStructUnionOrEnum(S_typeModifier *typeModifier, Type kind, Symbol *symbol, Symbol *typedefSymbol, S_typeModifier *next) {
     assert(kind == TypeStruct || kind == TypeUnion || kind == TypeEnum);
     typeModifier->kind = kind;
     typeModifier->u.t = symbol;
+    typeModifier->typedefSymbol = typedefSymbol;
+    typeModifier->next = next;
+}
+
+void initTypeModifierAsMethod(S_typeModifier *typeModifier, char *signature, SymbolList *exceptions, Symbol *typedefSymbol, S_typeModifier *next) {
+    typeModifier->kind = TypeFunction;
+    typeModifier->u.m.signature = signature;
+    typeModifier->u.m.exceptions = exceptions;
     typeModifier->typedefSymbol = typedefSymbol;
     typeModifier->next = next;
 }
@@ -26,12 +38,16 @@ void initTypeModifierAsFunction(S_typeModifier *typeModifier, Symbol *args, Symb
     typeModifier->u.f.thisFunList = overloadFunctionList;
     typeModifier->typedefSymbol = typedefSymbol;
     typeModifier->next = next;
-
 }
 
 void initTypeModifierAsPointer(S_typeModifier *typeModifier, S_typeModifier *next) {
     fillTypeModifier(typeModifier, TypePointer, NULL, next);
 }
+
+void initTypeModifierAsArray(S_typeModifier *typeModifier,Symbol *typedefSymbol, S_typeModifier *next) {
+    fillTypeModifier(typeModifier, TypeArray, typedefSymbol, next);
+}
+
 
 void initFunctionTypeModifier(struct functionTypeModifier *modifier, Symbol *args) {
     modifier->args = args;

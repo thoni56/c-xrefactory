@@ -691,7 +691,7 @@ char * cfSkipFirstArgumentInSigString(char *sig) {
     return(ssig);
 }
 
-S_typeModifier * cfUnPackResultType(char *sig, char **restype) {
+S_typeModifier *cfUnPackResultType(char *sig, char **restype) {
     S_typeModifier *res, **ares, *tt;
     int typ;
     char *fqname;
@@ -715,18 +715,17 @@ S_typeModifier * cfUnPackResultType(char *sig, char **restype) {
         ares = &(tt->next);
         switch (*ssig) {
         case ')':
-            FILLF_typeModifier(tt, TypeFunction,f,( NULL,NULL) ,NULL, NULL);
-            initTypeModifierAsFunction(tt, NULL, NULL, NULL, NULL);
+            initTypeModifierAsMethod(tt, NULL, NULL, NULL, NULL);
             assert(*sig == '(');
-            tt->u.m.signature = NULL; /* must be set later !!!!!!!!!! */
+            /* signature must be set later !!!!!!!!!! */
             break;
         case '[':
-            FILLF_typeModifier(tt, TypeArray,f,( NULL,NULL) ,NULL, NULL);
+            initTypeModifierAsArray(tt, NULL, NULL);
             for(ssig++; *ssig && isdigit(*ssig); ssig++) ;
-            ssig --;
+            ssig--;
             break;
         case 'L':
-            FILLF_typeModifier(tt, TypeStruct,t, NULL,NULL, NULL);
+            initTypeModifierAsStructUnionOrEnum(tt, TypeStruct, NULL, NULL, NULL);
             fqname = ++ssig;
             ccname = fqname;
             for(; *ssig && *ssig!=';'; ssig++) {
@@ -740,7 +739,7 @@ S_typeModifier * cfUnPackResultType(char *sig, char **restype) {
         default:
             typ = s_javaCharCodeBaseTypes[*ssig];
             assert(typ != 0);
-            FILLF_typeModifier(tt, typ,f,( NULL,NULL) ,NULL, NULL);
+            initTypeModifier(tt, typ);
         }
     }
     return(res);
