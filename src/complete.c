@@ -17,7 +17,6 @@
 #include "symbol.h"
 #include "list.h"
 #include "yylex.h"
-#include "strFill.h"
 
 
 #define FULL_COMPLETION_INDENT_CHARS    2

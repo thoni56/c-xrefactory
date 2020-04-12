@@ -8,7 +8,6 @@
 #include "enumTxt.h"
 #include "symbol.h"
 #include "classfilereader.h"
-#include "strFill.h"
 
 
 static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {

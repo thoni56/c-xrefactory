@@ -8,7 +8,6 @@
 #include "classfilereader.h"
 #include "editor.h"
 #include "main.h"
-#include "strFill.h"
 
 #include "protocol.h"
 

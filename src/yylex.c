@@ -14,7 +14,6 @@
 #include "reftab.h"
 #include "charbuf.h"
 #include "symbol.h"
-#include "strFill.h"
 #include "jsemact.h"
 
 #include "c_parser.x"

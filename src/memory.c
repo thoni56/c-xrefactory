@@ -1,7 +1,6 @@
 #include "globals.h"
 
 #include "memory.h"
-#include "strFill.h"
 #include "log.h"
 #include "misc.h"               /* for removeFromTrailUntil() */
 

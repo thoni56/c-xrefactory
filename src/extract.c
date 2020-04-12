@@ -11,7 +11,6 @@
 #include "reftab.h"
 #include "symbol.h"
 #include "list.h"
-#include "strFill.h"
 #include "jsemact.h"
 #include "filedescriptor.h"
 #include "log.h"

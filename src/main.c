@@ -14,7 +14,6 @@
 #include "editor.h"
 #include "enumTxt.h"
 #include "reftab.h"
-#include "strFill.h"
 #include "javafqttab.h"
 #include "list.h"
 #include "jsemact.h"

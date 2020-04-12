@@ -6,12 +6,12 @@
 # c-xref. If they need to be re-generated and c-xref.bs does not exist then
 # c-xref.bs is built from existing sources using Makefile.bs.
 #
-# In particular strFill.g and enumTxt.g/enumTxt.g.c are generated from the current
+# In particular  enumTxt.g/enumTxt.g.c are generated from the current
 # sources to get FILL-functions that match current versions of the structures.
 
-# Bootstrap versions of them, strFill.bs and enumTxt.bs/enumTxt.bs.c
-# should be used when bootstraping, so those files should be usable on
-# all platforms. Take care to ensure that they work by doing
+# Bootstrap versions of enumTxt.bs/enumTxt.bs.c should be used when
+# bootstraping, so those files should be usable on all platforms. Take
+# care to ensure that they work by doing
 #
 #    make bs; make cleaner; make
 #
@@ -64,8 +64,7 @@ c-xref.bs:
 	make ROOTDIR=$(ROOTDIR) -f Makefile.bs
 
 # Copy all generated headers to .bs. so that compiling from scratch will work
-bs: strFill.g.h enumTxt.g.h enumTxt.g.c
-	cp strFill.g.h strFill.bs.h
+bs: enumTxt.g.h enumTxt.g.c
 	cp enumTxt.g.h enumTxt.bs.h
 	cp enumTxt.g.c enumTxt.bs.c
 
@@ -97,25 +96,6 @@ compiler_defines.g.h: c-xref.bs Makefile.common
 $(OBJDIR)/proto.d: proto.h $(OBJDIR)
 	$(CC) $(CFLAGS) -MMD -MT proto.h -MF /tmp/proto.d -c proto.h -o /dev/null
 	sed 's/ proto.h / /' /tmp/proto.d > $@
-
-# Generate structure filler functions
-strFill.g.h: proto.h compiler_defines.g.h c-xref.bs .c-xrefrc Makefile.common
-	@./c-xref.bs -task_regime_generate $(CXREF_CFLAGS) -DGENERATION \
-		-str_fill -header -xrefrc .c-xrefrc proto.h \
-		> tmp-$@
-	@if [ -e $@ ]; then \
-		if ! diff $@ tmp-$@ ; then \
-			mv -f $@ $@.backup ; \
-			mv -f tmp-$@ $@ ; \
-			echo "$@: generated." ; \
-		else \
-			echo "$@: no change." ; \
-			rm tmp-$@ ; \
-		fi \
-	else \
-			echo "$@: generated." ; \
-			mv -f tmp-$@ $@ ; \
-	fi
 
 # Generate enum string representations header file
 enumTxt.g.h: proto.h compiler_defines.g.h c-xref.bs .c-xrefrc Makefile.common
@@ -169,7 +149,7 @@ clean:;
 	-rm -rf $(OBJDIR)/*.o $(OBJDIR)/*.gc* c-xref
 
 cleaner: clean
-	-rm -rf $(OBJDIR) compiler_defines.g.h strFill.g.h enumTxt.g.[ch] c-xref.bs .c-xrefrc
+	-rm -rf $(OBJDIR) compiler_defines.g.h enumTxt.g.[ch] c-xref.bs .c-xrefrc
 	-make -C unittests cleaner
 
 ########################################################################
@@ -193,4 +173,4 @@ coverage-report: test unit
 
 
 # Special dependecies to force rebuild of c-xref.bs to generate needed files
-$(SRCS) : strFill.g.h enumTxt.g.h enumTxt.g.c
+$(SRCS) : enumTxt.g.h enumTxt.g.c
