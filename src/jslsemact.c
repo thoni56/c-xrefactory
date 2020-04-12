@@ -189,8 +189,7 @@ Symbol *jslTypeNameDefinition(S_idList *tname) {
 
     memb = jslTypeSymbolUsage(tname->id.name, tname->next);
     CF_ALLOC(td, S_typeModifier); //XX_ALLOC?
-    FILLF_typeModifier(td, TypeStruct,t,memb,NULL, NULL);
-    td->u.t = memb;
+    initTypeModifierAsStructUnionOrEnum(td, TypeStruct, memb, NULL, NULL);
 
     CF_ALLOC(dd, Symbol); //XX_ALLOC?
     fillSymbolWithType(dd, memb->name, memb->linkName, tname->id.p, td);
