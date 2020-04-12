@@ -2,8 +2,10 @@
 
 include ../Makefile.boilerplate
 
+COMMAND = ../../src/c-xref -xrefrc .c-xrefrc abbot.jar
+
 $(TEST):
-	@../../src/c-xref -xrefrc .c-xrefrc abbot.jar > output
+	@$(COMMAND) > output
 	@grep abbot/tester/JFileChooserTester CXrefs/X0* > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
 		$(FAIL) ; \
@@ -16,3 +18,6 @@ $(TEST):
 
 clean:
 	rm .c-xrefrc CXrefs
+
+gdb:
+	gdb --args $(COMMAND)
