@@ -88,9 +88,9 @@ S_typeModifier *newArrayTypeModifier(void) {
     return newTypeModifier(TypeArray, NULL, NULL);
 }
 
-S_typeModifier *newStructTypeModifier(void) {
+S_typeModifier *newStructTypeModifier(Symbol *symbol) {
     S_typeModifier *typeModifier = newTypeModifier(TypeStruct, NULL, NULL);
-    typeModifier->u.t = NULL;
+    typeModifier->u.t = symbol;
     return typeModifier;
 }
 

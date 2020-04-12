@@ -33,7 +33,7 @@ extern S_typeModifier *newSimpleTypeModifier(Type kind);
 extern S_typeModifier *newFunctionTypeModifier(Symbol *args, Symbol **overLoadList, Symbol *typedefSymbol, S_typeModifier *next);
 extern S_typeModifier *newPointerTypeModifier(S_typeModifier *next);
 extern S_typeModifier *newArrayTypeModifier(void);
-extern S_typeModifier *newStructTypeModifier(void);
+extern S_typeModifier *newStructTypeModifier(Symbol *symbol);
 extern S_typeModifierList *newTypeModifierList(S_typeModifier *d);
 
 /* And here are some fill/init functions if you need them, e.g. if you allocate elsewhere */
