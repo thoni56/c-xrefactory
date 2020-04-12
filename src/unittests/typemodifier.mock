@@ -1,0 +1,64 @@
+/* -*- c -*-*/
+#include "typemodifier.h"
+#include <cgreen/mocks.h>
+
+S_typeModifier *newTypeModifier(Type kind, Symbol *typedefSymbol, S_typeModifier *next) { 
+  return (S_typeModifier *) mock(kind, typedefSymbol, next);
+}
+
+S_typeModifier *newSimpleTypeModifier(Type kind) { 
+  return (S_typeModifier *) mock(kind);
+}
+
+S_typeModifier *newFunctionTypeModifier(Symbol *args, Symbol **overLoadList, Symbol *typedefSymbol, S_typeModifier *next) { 
+  return (S_typeModifier *) mock(args, overLoadList, typedefSymbol, next);
+}
+
+S_typeModifier *newPointerTypeModifier(S_typeModifier *next) { 
+  return (S_typeModifier *) mock(next);
+}
+
+S_typeModifier *newArrayTypeModifier(void) { 
+  return (S_typeModifier *) mock();
+}
+
+S_typeModifier *newStructTypeModifier(Symbol *symbol) { 
+  return (S_typeModifier *) mock(symbol);
+}
+
+S_typeModifierList *newTypeModifierList(S_typeModifier *d) { 
+  return (S_typeModifierList *) mock(d);
+}
+
+void initTypeModifier(S_typeModifier *typeModifier, Type kind) { 
+  mock(typeModifier, kind);
+}
+
+void initTypeModifierAsStructUnionOrEnum(S_typeModifier *typeModifier, Type kind, Symbol *symbol, Symbol *typedefSymbol, S_typeModifier *next) { 
+  mock(typeModifier, kind, symbol, typedefSymbol, next);
+}
+
+void initTypeModifierAsFunction(S_typeModifier *typeModifier, Symbol *args, Symbol **overloadFunctionList, Symbol *typedefSymbol, S_typeModifier *next) { 
+  mock(typeModifier, args, overloadFunctionList, typedefSymbol, next);
+}
+
+void initTypeModifierAsMethod(S_typeModifier *typeModifier, char *signature, SymbolList *exceptions, Symbol *typedefSymbol, S_typeModifier *next) { 
+  mock(typeModifier, signature, exceptions, typedefSymbol, next);
+}
+
+void initTypeModifierAsPointer(S_typeModifier *typeModifier, S_typeModifier *next) { 
+  mock(typeModifier, next);
+}
+
+void initTypeModifierAsArray(S_typeModifier *typeModifier, Symbol *typedefSymbol, S_typeModifier *next) { 
+  mock(typeModifier, typedefSymbol, next);
+}
+
+void initFunctionTypeModifier(struct functionTypeModifier *modifier, Symbol *args) { 
+  mock(modifier, args);
+}
+
+S_typeModifier *prependTypeModifierWith(S_typeModifier *this, Type kind) { 
+  return (S_typeModifier *) mock(this, kind);
+}
+
