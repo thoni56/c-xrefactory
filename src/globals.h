@@ -162,8 +162,6 @@ extern time_t s_expiration;
 extern char tmpMemory[SIZE_TMP_MEM];
 extern char ppmMemory[SIZE_ppmMemory];
 extern int ppmMemoryi;
-extern char ftMemory[SIZE_ftMemory];
-extern int ftMemoryi;
 
 extern int olcxMemoryAllocatedBytes;
 
@@ -196,7 +194,7 @@ extern int s_olMacro2PassFile;
 extern char mbMemory[SIZE_mbMemory];
 extern int mbMemoryi;
 
-extern int s_ifEvaluation;		/* flag for yylex, to not filter '\n' */
+extern bool s_ifEvaluation;		/* flag for yylex, to not filter '\n' */
 
 extern S_options s_opt;			// current options
 extern S_options s_ropt;		// xref -refactory command line options

@@ -4,6 +4,10 @@
 
 S_memory *cxMemory = NULL;
 
+char ftMemory[SIZE_ftMemory];
+int ftMemoryi = 0;
+
+
 void memoryResize(void) {
   mock();
 }

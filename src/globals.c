@@ -81,15 +81,13 @@ S_fileTab s_fileTab;
 char tmpMemory[SIZE_TMP_MEM];
 char ppmMemory[SIZE_ppmMemory];
 char mbMemory[SIZE_mbMemory];
-char ftMemory[SIZE_ftMemory];
-int ftMemoryi = 0;
 
 char tmpBuff[TMP_BUFF_SIZE];
 
 
 int olcxMemoryAllocatedBytes;
 
-int s_ifEvaluation = 0;     /* flag for yylex, to not filter '\n' TODO: move, duh!*/
+bool s_ifEvaluation = false;     /* flag for yylex, to not filter '\n' TODO: move, duh!*/
 
 S_position s_olcxByPassPos;
 S_position s_cxRefPos;

@@ -187,6 +187,8 @@ extern jmp_buf s_memoryResize;
 extern char memory[SIZE_workMemory];
 extern char tmpWorkMemory[SIZE_tmpWorkMemory];
 extern int tmpWorkMemoryi;
+extern char ftMemory[SIZE_ftMemory];
+extern int ftMemoryi;
 
 
 /* Inject some error functions to remove linkage dependency */

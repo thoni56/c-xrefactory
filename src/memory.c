@@ -9,9 +9,14 @@ S_topBlock *s_topBlock;
 
 jmp_buf s_memoryResize;
 
+/* Memory types: */
 char memory[SIZE_workMemory];
 char tmpWorkMemory[SIZE_tmpWorkMemory];
 int tmpWorkMemoryi = 0;
+
+char ftMemory[SIZE_ftMemory];
+int ftMemoryi = 0;
+
 
 /* Inject the function to call when fatalErrors occur */
 static void (*fatalError)(int errCode, char *mess, int exitStatus);
