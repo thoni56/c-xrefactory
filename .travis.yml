@@ -20,7 +20,8 @@ script:
     # Bootstrap
     - make -j c-xref.bs
     # For real
-    - make -j debug unit
+    - make -j debug
+    - make -j unit
     # Coverage for unittest to Codecov
     #- bash <(curl -s https://codecov.io/bash)
     - cd ..
