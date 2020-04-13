@@ -3,6 +3,7 @@
 
 #include "../globals.h"
 
+char mbMemory[SIZE_mbMemory];
 S_currentlyParsedCl s_cp;
 S_currentlyParsedCl s_cpInit;
 S_currentlyParsedStatics s_cps;

@@ -29,9 +29,5 @@ S_jslStat *s_jsl;
 #include "utils.mock"
 #include "characterbuffer.mock"
 
-Ensure(Lex, can_get_char) {
-    //struct lexBuf lexBuf;
-    //cgreen_mocks_are(learning_mocks);
-
-    //getLexBuf(&lexBuf);
+Ensure(Lex, can_run_an_empty_test) {
 }

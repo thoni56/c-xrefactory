@@ -52,6 +52,11 @@ OPTIONS_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(OPTIONS_DEPENDENCIES))
 options_tests.so: $(OBJDIR)/options_tests.o $(OPTIONS_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
+YYLEX_DEPENDENCIES = protocol log position memory filedescriptor
+YYLEX_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(YYLEX_DEPENDENCIES))
+yylex_tests.so: $(OBJDIR)/yylex_tests.o yylex.o $(YYLEX_DEPS)
+	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
+
 # These includes the modules .c to be able to test internal functions or macros
 LEX_DEPENDENCIES = log position
 LEX_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(LEX_DEPENDENCIES))
