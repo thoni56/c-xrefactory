@@ -1070,7 +1070,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     addCxReference(memb, &pos, UsageClassFileDefinition,
                    s_noneFileIndex, s_noneFileIndex);
     addCfClassTreeHierarchyRef(fileInd, UsageClassFileDefinition);
-    //&fprintf(dumpOut,"ftitem==%s\n", s_fileTab.tab[fileInd]->name);
+    log_trace("fileitem==%s", s_fileTab.tab[fileInd]->name);
     pushNewInclude( ff, NULL, s_fileTab.tab[fileInd]->name, "");
 
     log_debug("reading file %s",name);
@@ -1080,7 +1080,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
         if (zipSeekToFile(&ccc,&ffin,&cFile.lexBuffer.buffer,name) == 0) goto finish;
     }
     GetU4(cval, ccc, ffin, &cFile.lexBuffer.buffer);
-    /*&fprintf(dumpOut, "magic is %x\n", cval); fflush(dumpOut);&*/
+    log_trace("magic is %x", cval);
     if (cval != 0xcafebabe) {
         sprintf(tmpBuff,"%s is not a valid class file\n",name);
         error(ERR_ST,tmpBuff);

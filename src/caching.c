@@ -206,10 +206,7 @@ static int cachedIncludedFilePass(int cpi) {
     mi = s_cache.cp[cpi].ibi;
     for(i=s_cache.cp[cpi-1].ibi; i<mi; i++) {
         mt = checkFileModifiedTime(s_cache.ib[i]);
-        /*&
-          fprintf(dumpOut,"mtime of %s eval to %d\n",
-          s_fileTab.tab[s_cache.ib[i]]->name,mt);
-          &*/
+        log_debug("mtime of %s eval to %d", s_fileTab.tab[s_cache.ib[i]]->name,mt);
         if (mt == 0) return(0);
     }
     return(1);
