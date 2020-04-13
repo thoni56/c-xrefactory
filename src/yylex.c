@@ -522,7 +522,7 @@ static FILE *openInclude(char pchar, char *name, char **fileName) {
     }
     for (ll=s_opt.includeDirs; ll!=NULL && er==NULL && r==NULL; ll=ll->next) {
         strcpy(nn, normalizeFileName(ll->d, rdir));
-        expandWildCharactersInOnePath(nn, wcp, MAX_OPTION_LEN);
+        expandWildcardsInOnePath(nn, wcp, MAX_OPTION_LEN);
         JavaMapOnPaths(wcp, {
             strcpy(nn, currentPath);
             dlen = strlen(nn);

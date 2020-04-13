@@ -202,11 +202,11 @@ int shellMatch(char *string, int stringLen, char *pattern, int caseSensitive) {
   return (int) mock(string, stringLen, pattern, caseSensitive);
 }
 
-void expandWildCharactersInOnePathRec(char *fn, char **outpaths, int *freeolen) {
+void expandWildcardsInOnePathRecursiveMaybe(char *fn, char **outpaths, int *freeolen) {
   mock(fn, outpaths, freeolen);
 }
 
-void expandWildCharactersInOnePath(char *fn, char *outpaths, int olen) {
+void expandWildcardsInOnePath(char *fn, char *outpaths, int olen) {
   mock(fn, outpaths, olen);
 }
 

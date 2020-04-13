@@ -259,7 +259,7 @@ void dirInputFile(MAP_FUN_PROFILE) {
         }
         scheduleCommandLineEnteredFileToProcess(fn);
     } else if (containsWildcard(fn)) {
-        expandWildCharactersInOnePath(fn, wcPaths, MAX_OPTION_LEN);
+        expandWildcardsInOnePath(fn, wcPaths, MAX_OPTION_LEN);
         //&fprintf(dumpOut, "wildcard path %s expanded to %s\n", fn, wcPaths);
         JavaMapOnPaths(wcPaths,{
                 dirInputFile(currentPath,"",NULL,NULL,recurseFlag,&topCallFlag);

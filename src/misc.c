@@ -1081,12 +1081,13 @@ static void expandWildcardsMapFun(MAP_FUN_PROFILE) {
     }
     if (shellMatch(file, strlen(file), pattern, s_opt.fileNamesCaseSensitive)) {
         sprintf(ttt, "%s%s%s", dir1, file, dir2);
-        expandWildCharactersInOnePathRec(ttt, outpath, freeolen);
+        expandWildcardsInOnePathRecursiveMaybe(ttt, outpath, freeolen);
     }
 }
 
-// Dont use this function!!!! what you need is: expandWildCharactersInOnePath
-void expandWildCharactersInOnePathRec(char *fn, char **outpaths, int *freeolen) {
+// Dont use this function!!!! what you need is: expandWildcardsInOnePath
+/* TODO: WTF, why? we *are* using it... */
+void expandWildcardsInOnePathRecursiveMaybe(char *fn, char **outpaths, int *freeolen) {
     char                ttt[MAX_FILE_NAME_SIZE];
     int                 i, si,di, ldi, len;
     struct stat         st;
@@ -1129,12 +1130,12 @@ void expandWildCharactersInOnePathRec(char *fn, char **outpaths, int *freeolen) 
     }
 }
 
-void expandWildCharactersInOnePath(char *fn, char *outpaths, int freeolen) {
+void expandWildcardsInOnePath(char *fn, char *outpaths, int freeolen) {
     char    *oop, *opaths;
     int     olen;
     assert(freeolen == MAX_OPTION_LEN);
     oop = opaths = outpaths; olen = freeolen;
-    expandWildCharactersInOnePathRec(fn, &opaths, &olen);
+    expandWildcardsInOnePathRecursiveMaybe(fn, &opaths, &olen);
     *opaths = 0;
     if (opaths != oop) *(opaths-1) = 0;
 }
@@ -1145,7 +1146,7 @@ void expandWildcardsInPaths(char *paths, char *outpaths, int freeolen) {
     assert(freeolen == MAX_OPTION_LEN);
     oop = opaths = outpaths; olen = freeolen;
     JavaMapOnPaths(paths, {
-            expandWildCharactersInOnePathRec(currentPath, &opaths, &olen);
+            expandWildcardsInOnePathRecursiveMaybe(currentPath, &opaths, &olen);
         });
     *opaths = 0;
     if (opaths != oop) *(opaths-1) = 0;
