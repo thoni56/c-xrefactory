@@ -54,7 +54,7 @@ void initCompletions(S_completions *completions, int length, S_position position
     completions->ai = 0;
 }
 
-void fill_cline(S_cline *cline, char *string, Symbol *symbol, short int symbolType,
+void fill_cline(S_cline *cline, char *string, Symbol *symbol, Type symbolType,
                 short int virtualLevel, short int margn, char **margs, Symbol *vFunClass) {
     cline->s = string;
     cline->t = symbol;

@@ -712,7 +712,7 @@ typedef struct olcxReferencesStack {
 typedef struct cline {					/* should be a little bit union-ified */
     char            *s;
     struct symbol   *t;
-    short int		symType;
+    Type			symType;
     short int		virtLevel;
     short int		margn;
     char			**margs;
