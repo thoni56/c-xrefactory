@@ -34,40 +34,68 @@ FILE *dumpOut = NULL;
 z_stream s_defaultZStream = {NULL,};
 
 char *yytext;
-
-struct stat s_noStat;
-S_usageBits s_noUsage;
-S_fileTab s_fileTab;
-char s_olSymbolType[COMPLETION_STRING_SIZE];
-Language s_language;
-S_completions s_completions;
-int s_input_file_number;
-char s_olSymbolClassType[COMPLETION_STRING_SIZE];
-time_t s_fileProcessStartTime;
-S_currentlyParsedStatics s_cps;
-S_options s_ropt;
-int s_currCppPass;
-S_position s_paramPosition;
-char s_olstring[MAX_FUN_NAME_SIZE];
-S_typeModifier *s_upLevelFunctionCompletionType;
-S_position s_cxRefPos;
-S_position s_primaryStartPosition;
-char s_cwd[MAX_FILE_NAME_SIZE];
-char tmpBuff[TMP_BUFF_SIZE];
-S_position s_noPos = {-1, 0, 0};
-char *s_input_file_name;
+S_id s_yyIdentBuf[YYBUFFERED_ID_INDEX];
+int s_yyIdentBufi = 0;
 Symbol s_errorSymbol;
-S_options s_opt;
+
+int s_ifEvaluation = 0;     /* flag for yylex, to not filter '\n' */
+
+char *s_tokenName[LAST_TOKEN];
+int s_tokenLength[LAST_TOKEN];
+
+char *s_cppVarArgsName = "__VA_ARGS__";
+int s_currCppPass;
+
+char s_olstring[MAX_FUN_NAME_SIZE];
+int s_olstringFound = 0;
+int s_olstringServed = 0;
+char *s_olstringInMbody = NULL;
+int s_olstringUsage = 0;
+char s_olSymbolType[COMPLETION_STRING_SIZE];
+char s_olSymbolClassType[COMPLETION_STRING_SIZE];
 int s_olOriginalFileNumber = -1;
-unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL];
 int s_olstringUsage;
-int s_noneFileIndex = -1;
 int s_olOriginalComFileNumber;
-bool s_wildcardSearch;
-int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL];
 int s_olstringServed;
 S_position s_olcxByPassPos;
 int s_olMacro2PassFile;
+
+struct stat s_noStat;
+S_usageBits s_noUsage;
+S_position s_noPos = {-1, 0, 0};
+int s_noneFileIndex = -1;
+
+Language s_language;
+S_options s_opt;
+S_options s_ropt;
+
+S_typeModifier *s_structRecordCompletionType;
+S_completions s_completions;
+
+S_position s_paramPosition;
+S_position s_paramBeginPosition;
+S_position s_paramEndPosition;
+
+S_position s_cxRefPos;
+int s_cxRefFlag=0;
+
+S_fileTab s_fileTab;
+int s_input_file_number;
+char *s_input_file_name;
+time_t s_fileProcessStartTime;
+
+char s_cwd[MAX_FILE_NAME_SIZE];
+
+S_currentlyParsedStatics s_cps;
+S_typeModifier *s_upLevelFunctionCompletionType;
+S_position s_primaryStartPosition;
+char tmpBuff[TMP_BUFF_SIZE];
+unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL];
+
+bool s_wildcardSearch;
+int s_lastReturnedLexem;
+
+int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL];
 
 char *s_javaThisPackageName = "";
 int s_javaPreScanOnly;
