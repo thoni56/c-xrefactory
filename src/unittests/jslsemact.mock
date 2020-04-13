@@ -1,0 +1,5 @@
+/* -*- c -*-*/
+#include "jslsemact.h"
+#include <cgreen/mocks.h>
+
+S_jslStat *s_jsl;
