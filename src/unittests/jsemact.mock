@@ -322,8 +322,8 @@ void javaAddSuperNestedClassToSymbolTab(Symbol *cc) {
   mock(cc);
 }
 
-struct freeTrail *newClassDefinitionBegin(S_id *name, int accessFlags, Symbol *anonInterf) {
-  return (struct freeTrail *) mock(name, accessFlags, anonInterf);
+struct freeTrail *newClassDefinitionBegin(S_id *name, Access access, Symbol *anonymousInterface) {
+    return (struct freeTrail *) mock(name, access, anonymousInterface);
 }
 
 void newClassDefinitionEnd(S_freeTrail *trail) {

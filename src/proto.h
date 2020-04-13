@@ -609,10 +609,10 @@ typedef struct reference {
 } S_reference;
 
 typedef struct symbolRefItemBits {
-    unsigned				symType		: SYMTYPES_LN;
-    unsigned				storage		: STORAGES_LN;
+    Type					symType		: SYMTYPES_LN;
+    Storage					storage		: STORAGES_LN;
     unsigned				scope		: SCOPES_LN;
-    unsigned				accessFlags	: 12; /* java access bits */
+    Access					accessFlags	: 12; /* java access bits */
     unsigned				category	: 2;  /* local/global */
     unsigned				htmlWasLn	: 1;  /* html ln generated */
 } S_symbolRefItemBits;

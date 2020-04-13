@@ -451,33 +451,7 @@ typedef enum language {
 #define CONSTANT_InterfaceMethodref	11
 #define CONSTANT_NameandType		12
 
-/* *********************************************************************** */
-/*                       JAVA Attribute Item                               */
-
-#define ACCESS_DEFAULT				0x000
-#define ACCESS_PUBLIC				0x001
-#define ACCESS_PRIVATE				0x002
-#define ACCESS_PROTECTED			0x004
-#define ACCESS_STATIC				0x008
-#define ACCESS_FINAL				0x010
-#define ACCESS_SYNCHRONIZED			0x020
-#define ACCESS_THREADSAFE			0x040
-#define ACCESS_TRANSIENT			0x080
-#define ACCESS_NATIVE				0x100
-#define ACCESS_INTERFACE			0x200
-#define ACCESS_ABSTRACT				0x400
-
-#define ACCESS_ALL					0x800
-
-#define ACCESS_PPP_MODIFER_MASK    0x007
-
-/* *********************************************************************** */
-// this is maximal value of required access field in usg bits, it is index
-// into the table s_requiredeAccessTable
-
-#define MIN_REQUIRED_ACCESS 0
-#define MAX_REQUIRED_ACCESS 3
-#define MAX_REQUIRED_ACCESS_LN 2
+#include "access.h"
 
 /* *********************************************************************** */
 

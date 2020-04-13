@@ -190,9 +190,9 @@ static void javaAddNameCxReference(S_idList *id, unsigned usage) {
     addCxReference(&dd, &id->id.p, usage,s_noneFileIndex, s_noneFileIndex);
 }
 
-Symbol *javaAddType(S_idList *clas, int accessFlags, S_position *p) {
+Symbol *javaAddType(S_idList *class, int accessFlags, S_position *p) {
     Symbol *dd;
-    dd = javaTypeSymbolDefinition(clas, accessFlags, TYPE_ADD_YES);
+    dd = javaTypeSymbolDefinition(class, accessFlags, TYPE_ADD_YES);
     dd->bits.accessFlags = accessFlags;
     addCxReference(dd, p, UsageDefined,s_noneFileIndex, s_noneFileIndex);
     htmlAddJavaDocReference(dd, p, s_noneFileIndex, s_noneFileIndex);
@@ -2533,9 +2533,9 @@ void javaAddSuperNestedClassToSymbolTab( Symbol *cc ) {
 }
 
 
-struct freeTrail * newClassDefinitionBegin(	S_id *name,
-                                            int accessFlags,
-                                            Symbol *anonInterf) {
+struct freeTrail *newClassDefinitionBegin(S_id *name,
+                                          Access access,
+                                          Symbol *anonymousInterface) {
     S_idList   *p;
     Symbol        *dd,*ddd;
     S_freeTrail     *res;
@@ -2556,7 +2556,7 @@ struct freeTrail * newClassDefinitionBegin(	S_id *name,
     if (oldStat->next!=NULL) {
         /* ** nested class ** */
         if (oldStat->thisClass->bits.accessFlags & ACCESS_INTERFACE) {
-            accessFlags |= (ACCESS_PUBLIC | ACCESS_STATIC);
+            access |= (ACCESS_PUBLIC | ACCESS_STATIC);
         }
         nnest = oldStat->thisClass->u.s->nestedCount;
         nst = oldStat->thisClass->u.s->nest;
@@ -2574,7 +2574,7 @@ struct freeTrail * newClassDefinitionBegin(	S_id *name,
         fillId(&idi,dd->linkName, NULL, name->p);
         XX_ALLOC(p, S_idList);
         fillIdList(p, idi, dd->linkName, TypeStruct, NULL);
-        ddd = javaAddType(p, accessFlags, & name->p);
+        ddd = javaAddType(p, access, & name->p);
         assert(dd==ddd);
         res = s_topBlock->trail;
         //&javaCreateClassFileItem(dd);
@@ -2582,7 +2582,7 @@ struct freeTrail * newClassDefinitionBegin(	S_id *name,
         /* probably base class */
         XX_ALLOC(p,S_idList);
         fillIdList(p,*name,name->name,TypeStruct,s_javaStat->className);
-        dd = javaAddType(p, accessFlags, & name->p);
+        dd = javaAddType(p, access, & name->p);
         res = s_topBlock->trail;
         assert(dd->bits.symType == TypeStruct);
         s_spp[SPP_LAST_TOP_LEVEL_CLASS_POSITION] = name->p;
