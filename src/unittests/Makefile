@@ -47,10 +47,15 @@ editor_tests.so: $(OBJDIR)/editor_tests.o $(OBJDIR)/editor.o $(OBJDIR)/position.
 cxref_tests.so: $(OBJDIR)/cxref_tests.o $(OBJDIR)/cxref.o $(OBJDIR)/protocol.o $(OBJDIR)/enumTxt.o $(OBJDIR)/hash.o $(OBJDIR)/position.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
+OPTIONS_DEPENDENCIES = protocol log position memory
+OPTIONS_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(OPTIONS_DEPENDENCIES))
+options_tests.so: $(OBJDIR)/options_tests.o $(OPTIONS_DEPS)
+	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 # These includes the modules .c to be able to test internal functions or macros
 LEX_DEPENDENCIES = log position
-lex_tests.so: $(OBJDIR)/lex_tests.o $(patsubst %,$(OBJDIR)/%.o,$(LEX_DEPENDENCIES))
+LEX_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(LEX_DEPENDENCIES))
+lex_tests.so: $(OBJDIR)/lex_tests.o $(LEX_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 CXFILE_DEPENDENCIES = protocol log position
