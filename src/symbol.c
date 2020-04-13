@@ -2,9 +2,9 @@
 
 #include "misc.h"               /* For XX_ALLOC() */
 
-void fillSymbolBits(S_symbolBits *bits, unsigned accessFlags, unsigned symType, unsigned storage) {
+void fillSymbolBits(S_symbolBits *bits, Access access, Type symType, Storage storage) {
     memset(bits, 0, sizeof(S_symbolBits));
-    bits->accessFlags = accessFlags;
+    bits->access = access;
     bits->symType = symType;
     bits->storage = storage;
 }

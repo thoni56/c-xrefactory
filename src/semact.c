@@ -123,7 +123,7 @@ S_recFindStr * iniFind(Symbol *s, S_recFindStr *rfs) {
 
 bool javaOuterClassAccessible(Symbol *cl) {
     log_trace("testing class accessibility of %s",cl->linkName);
-    if (cl->bits.accessFlags & ACCESS_PUBLIC) {
+    if (cl->bits.access & ACCESS_PUBLIC) {
         log_trace("return true for public access");
         return true;
     }
@@ -243,9 +243,9 @@ int javaRecordAccessible(S_recFindStr *rfs, Symbol *appcl, Symbol *funcl, Symbol
 
 int javaRecordVisibleAndAccessible(S_recFindStr *rfs, Symbol *applCl, Symbol *funCl, Symbol *r) {
     return(
-           javaRecordVisible(rfs->baseClass, rfs->currClass, r->bits.accessFlags)
+           javaRecordVisible(rfs->baseClass, rfs->currClass, r->bits.access)
            &&
-           javaRecordAccessible(rfs, rfs->baseClass, rfs->currClass, r, r->bits.accessFlags)
+           javaRecordAccessible(rfs, rfs->baseClass, rfs->currClass, r, r->bits.access)
            );
 }
 
@@ -319,11 +319,11 @@ int findStrRecordSym(   S_recFindStr    *ss,
                     if (m==TypeFunction && javaClassif!=CLASS_TO_METHOD) goto nextRecord;
                     if (m!=TypeFunction && javaClassif==CLASS_TO_METHOD) goto nextRecord;
                 }
-                //&if(cclass!=NULL)fprintf(dumpOut,"name O.K., checking accesibility %xd %xd\n",cclass->bits.accessFlags,r->bits.accessFlags); fflush(dumpOut);
+                //&if(cclass!=NULL)fprintf(dumpOut,"name O.K., checking accesibility %xd %xd\n",cclass->bits.access,r->bits.access); fflush(dumpOut);
                 // I have it, check visibility and accessibility
                 assert(r);
                 if (visibilityCheck == VISIB_CHECK_YES) {
-                    if (! javaRecordVisible(ss->baseClass, cclass, r->bits.accessFlags)) {
+                    if (! javaRecordVisible(ss->baseClass, cclass, r->bits.access)) {
                         // WRONG? return, Doesn't it iverrides any other of this name
                         // Yes, definitely correct, in the first step determining
                         // class to search
@@ -331,7 +331,7 @@ int findStrRecordSym(   S_recFindStr    *ss,
                     }
                 }
                 if (accCheck == ACC_CHECK_YES) {
-                    if (! javaRecordAccessible(ss, ss->baseClass,cclass,r,r->bits.accessFlags)){
+                    if (! javaRecordAccessible(ss, ss->baseClass,cclass,r,r->bits.access)){
                         if (visibilityCheck == VISIB_CHECK_YES) {
                             FSRS_RETURN_WITH_FAIL(ss, res);
                         } else {

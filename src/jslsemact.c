@@ -272,11 +272,11 @@ Symbol *jslMethodHeader(unsigned modif, Symbol *type,
     int newFun;
 
     completeDeclarator(type,decl);
-    decl->bits.accessFlags = modif;
+    decl->bits.access = modif;
     assert(s_jsl && s_jsl->classStat && s_jsl->classStat->thisClass);
-    if (s_jsl->classStat->thisClass->bits.accessFlags & ACCESS_INTERFACE) {
+    if (s_jsl->classStat->thisClass->bits.access & ACCESS_INTERFACE) {
         // set interface default access flags
-        decl->bits.accessFlags |= (ACCESS_PUBLIC | ACCESS_ABSTRACT);
+        decl->bits.access |= (ACCESS_PUBLIC | ACCESS_ABSTRACT);
     }
     decl->bits.storage = storage;
     //& if (modif & ACCESS_STATIC) decl->bits.storage = StorageStaticMethod;
@@ -547,13 +547,13 @@ void jslNewClassDefinitionBegin(S_id *name,
         cc = jslTypeSymbolDefinition(ttt,s_jsl->classStat->className,
                                      TYPE_ADD_NO,ORDER_PREPEND, false);
     }
-    cc->bits.accessFlags = accFlags;
-    log_trace("reading class %s [%x] at %x", cc->linkName, cc->bits.accessFlags, cc);
+    cc->bits.access = accFlags;
+    log_trace("reading class %s [%x] at %x", cc->linkName, cc->bits.access, cc);
     if (s_jsl->classStat->next != NULL) {
         /* nested class, add it to its outer class list */
-        if (s_jsl->classStat->thisClass->bits.accessFlags & ACCESS_INTERFACE) {
+        if (s_jsl->classStat->thisClass->bits.access & ACCESS_INTERFACE) {
             accFlags |= (ACCESS_PUBLIC | ACCESS_STATIC);
-            cc->bits.accessFlags = accFlags;
+            cc->bits.access = accFlags;
         }
         membflag = (anonInterf==NULL && position!=CPOS_FUNCTION_INNER);
         if (s_jsl->pass==1) {
@@ -619,7 +619,7 @@ void jslNewClassDefinitionBegin(S_id *name,
         /* anonymous implementing an interface, one more time */
         /* now put there object as superclass and its interface */
         // it was originally in reverse order, changed at 13/1/2001
-        if (anonInterf->bits.accessFlags&ACCESS_INTERFACE) {
+        if (anonInterf->bits.access&ACCESS_INTERFACE) {
             jslAddSuperClassOrInterfaceByName(cc, s_javaLangObjectLinkName);
         }
         jslAddSuperClassOrInterfaceByName(cc, anonInterf->linkName);
@@ -648,7 +648,7 @@ void jslNewClassDefinitionEnd(void) {
 void jslAddDefaultConstructor(Symbol *cl) {
     Symbol *cc;
     cc = javaCreateNewMethod(cl->name, &s_noPos, MEM_CF);
-    jslMethodHeader(cl->bits.accessFlags, &s_defaultVoidDefinition, cc,
+    jslMethodHeader(cl->bits.access, &s_defaultVoidDefinition, cc,
                     StorageConstructor, NULL);
 }
 

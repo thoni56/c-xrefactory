@@ -15,9 +15,9 @@
 typedef struct symbolBits {
     bool			isRecord			: 1;  /* whether struct record */
     bool			isExplicitlyImported: 1;  /* whether not imported by * import */
-    unsigned		accessFlags			: 12; /* java access bits */
+    Access			access				: 12; /* java access bits */
     bool			javaSourceIsLoaded	: 1;  /* is jsl source file loaded ? */
-    bool			javaFileIsLoaded		: 1;  /* is class file loaded ? */
+    bool			javaFileIsLoaded	: 1;  /* is class file loaded ? */
 
     enum type		symType				: SYMTYPES_LN;
     /* can be Default/Struct/Union/Enum/Label/Keyword/Macro/Package */

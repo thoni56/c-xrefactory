@@ -90,8 +90,8 @@ void javaAddPackageDefinition(S_idList *id) {
   mock(id);
 }
 
-Symbol *javaAddType(S_idList *clas, int accessFlag, S_position *p) {
-  return (Symbol *) mock(clas, accessFlag, p);
+Symbol *javaAddType(S_idList *class, Access access, S_position *p) {
+  return (Symbol *) mock(class, access, p);
 }
 
 Symbol *javaCreateNewMethod(char *name, S_position *pos, int mem) {

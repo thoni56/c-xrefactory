@@ -4035,11 +4035,11 @@ case 141:
                         assert(p->bits.symType == TypeDefault);
                         completeDeclarator(yyvsp[-2].ast_symbol.d, p);
                         vClass = s_javaStat->classFileIndex;
-                        p->bits.accessFlags = yyvsp[-3].ast_unsigned.d;
+                        p->bits.access = yyvsp[-3].ast_unsigned.d;
                         p->bits.storage = StorageField;
-                        if (clas->bits.accessFlags&ACCESS_INTERFACE) {
+                        if (clas->bits.access&ACCESS_INTERFACE) {
                             /* set interface default access flags*/
-                            p->bits.accessFlags |= (ACCESS_PUBLIC | ACCESS_STATIC | ACCESS_FINAL);
+                            p->bits.access |= (ACCESS_PUBLIC | ACCESS_STATIC | ACCESS_FINAL);
                         }
                         /*&javaSetFieldLinkName(p);*/
                         iniFind(clas, &rfs);
@@ -4084,11 +4084,11 @@ case 141:
                     assert(clas->u.s);
                     vClass = clas->u.s->classFile;
                     jslCompleteDeclarator(yyvsp[-2].ast_symbol.d, p);
-                    p->bits.accessFlags = yyvsp[-3].ast_unsigned.d;
+                    p->bits.access = yyvsp[-3].ast_unsigned.d;
                     p->bits.storage = StorageField;
-                    if (clas->bits.accessFlags&ACCESS_INTERFACE) {
+                    if (clas->bits.access&ACCESS_INTERFACE) {
                         /* set interface default access flags*/
-                        p->bits.accessFlags |= (ACCESS_PUBLIC|ACCESS_STATIC|ACCESS_FINAL);
+                        p->bits.access |= (ACCESS_PUBLIC|ACCESS_STATIC|ACCESS_FINAL);
                     }
                     log_debug("[jsl] adding field %s to %s\n",
                               p->name,clas->linkName);
@@ -5971,7 +5971,7 @@ case 365:
                             /* and annulating of reference makes class renaming wrong!*/
                             /* Well, it is legal only for static nested classes.*/
                             /* But for security reasons, I will keep it in comment,*/
-                            /*&if (! (ss->bits.accessFlags&ACCESS_STATIC)) {*/
+                            /*&if (! (ss->bits.access&ACCESS_STATIC)) {*/
                             /*&	if (rr!=NULL) rr->usg.base = s_noUsage;*/
                             /*&}*/
                         }

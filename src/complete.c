@@ -162,7 +162,7 @@ static int printJavaModifiers(char *buf, int *size, unsigned acc) {
 
 static char *getCompletionClassFieldString( S_cline *cl) {
     char *cname;
-    //& if (cl->t->bits.accessFlags & ACCESS_STATIC) {
+    //& if (cl->t->bits.access & ACCESS_STATIC) {
     // statics, get class from link name
     //&     cname = javaGetNudePreTypeName_st(cl->t->linkName,CUT_OUTERS);
     //&             sprintf(tmpBuff,"%s", cname);
@@ -234,7 +234,7 @@ static void sprintFullCompletionInfo(S_completions* c, int ii, int indent) {
         pname = c->a[ii].t->name;
         //      }
         if (LANGUAGE(LANG_JAVA)) {
-            ll += printJavaModifiers(tt+ll, &size, c->a[ii].t->bits.accessFlags);
+            ll += printJavaModifiers(tt+ll, &size, c->a[ii].t->bits.access);
             if (c->a[ii].vFunClass!=NULL) {
                 vFunCl = c->a[ii].vFunClass->u.s->classFile;
                 if (vFunCl == -1) vFunCl = s_noneFileIndex;
@@ -251,8 +251,8 @@ static void sprintFullCompletionInfo(S_completions* c, int ii, int indent) {
                       c->a[ii].margn, c->a[ii].margs, NULL);
     } else if (LANGUAGE(LANG_JAVA) && c->a[ii].symType==TypeStruct ) {
         if (c->a[ii].t!=NULL) {
-            ll += printJavaModifiers(tt+ll, &size, c->a[ii].t->bits.accessFlags);
-            if (c->a[ii].t->bits.accessFlags & ACCESS_INTERFACE) {
+            ll += printJavaModifiers(tt+ll, &size, c->a[ii].t->bits.access);
+            if (c->a[ii].t->bits.access & ACCESS_INTERFACE) {
                 sprintf(tt+ll,"interface ");
             } else {
                 sprintf(tt+ll,"class ");
@@ -315,7 +315,7 @@ static void sprintFullJeditCompletionInfo(S_completions* c, int ii, int *nindent
         }
         pname = c->a[ii].t->name;
         if (LANGUAGE(LANG_JAVA)) {
-            ll += printJavaModifiers(ppcTmpBuff+ll, &size, c->a[ii].t->bits.accessFlags);
+            ll += printJavaModifiers(ppcTmpBuff+ll, &size, c->a[ii].t->bits.access);
         }
         typeSPrint(ppcTmpBuff+ll, &size, c->a[ii].t->u.type, pname,' ', 0, tdexpFlag,SHORT_NAME, nindent);
         *nindent += ll;
@@ -329,8 +329,8 @@ static void sprintFullJeditCompletionInfo(S_completions* c, int ii, int *nindent
                       c->a[ii].margn, c->a[ii].margs, nindent);
     } else if (LANGUAGE(LANG_JAVA) && c->a[ii].symType==TypeStruct ) {
         if (c->a[ii].t!=NULL) {
-            ll += printJavaModifiers(ppcTmpBuff+ll, &size, c->a[ii].t->bits.accessFlags);
-            if (c->a[ii].t->bits.accessFlags & ACCESS_INTERFACE) {
+            ll += printJavaModifiers(ppcTmpBuff+ll, &size, c->a[ii].t->bits.access);
+            if (c->a[ii].t->bits.access & ACCESS_INTERFACE) {
                 sprintf(ppcTmpBuff+ll,"interface ");
             } else {
                 sprintf(ppcTmpBuff+ll,"class ");
@@ -875,7 +875,7 @@ static void processSpecialInheritedFullCompletion( S_completions *c, int orderFl
 
     tt[0]=0; ll=0; size=MAX_CX_SYMBOL_SIZE;
     if (LANGUAGE(LANG_JAVA)) {
-        ll+=printJavaModifiers(tt+ll, &size, r->bits.accessFlags);
+        ll+=printJavaModifiers(tt+ll, &size, r->bits.access);
     }
     typeSPrint(tt+ll, &size, r->u.type, cname, ' ', 0, 1,SHORT_NAME, NULL);
     XX_ALLOCC(fcc, strlen(tt)+1, char);
@@ -944,7 +944,7 @@ static void completeRecordsNames(
                 && (! symbolNameShouldBeHiddenFromReports(r->linkName))
                 //  I do not know whether to check linkability or not
                 //  What is more natural ???
-                && javaLinkable(accessMod,r->bits.accessFlags)) {
+                && javaLinkable(accessMod,r->bits.access)) {
             //&fprintf(dumpOut,"passed\n", cname);
             assert(rfs.currClass && rfs.currClass->u.s);
             assert(r->bits.symType == TypeDefault);
@@ -957,8 +957,8 @@ static void completeRecordsNames(
                 // TODO customizable completion level
                 if (vlevel > 1
                     && vlevel <= s_opt.completionOverloadWizardDeep+1
-                    &&  (r->bits.accessFlags & ACCESS_PRIVATE)==0
-                    &&  (r->bits.accessFlags & ACCESS_STATIC)==0) {
+                    &&  (r->bits.access & ACCESS_PRIVATE)==0
+                    &&  (r->bits.access & ACCESS_STATIC)==0) {
                     processSpecialInheritedFullCompletion(c,orderFlag,vlevel,
                                                           r, vFunCl, cname);
                 }
@@ -1112,7 +1112,7 @@ static char *spComplFindNextRecord(S_exprTokenType *tok) {
         cname = r->name;
         CONST_CONSTRUCT_NAME(StorageDefault,r->bits.storage,cname);
         if (    cname!=NULL &&
-                javaLinkable(ACCESS_ALL,r->bits.accessFlags)) {
+                javaLinkable(ACCESS_ALL,r->bits.access)) {
             assert(rfs.currClass && rfs.currClass->u.s);
             assert(r->bits.symType == TypeDefault);
             if (isEqualType(r->u.type, tok->t)) {
@@ -1297,7 +1297,7 @@ static void javaCompleteNestedClasses(  S_completions *c,
             if (str->u.s->nest[i].membFlag) {
                 memb = str->u.s->nest[i].cl;
                 assert(memb);
-                memb->bits.accessFlags |= str->u.s->nest[i].accFlags;  // hack!!!
+                memb->bits.access |= str->u.s->nest[i].accFlags;  // hack!!!
                 fill_cline(&compLine, memb->name, memb, TypeStruct,0, 0 , NULL,NULL);
                 processName(memb->name, &compLine, 1, (void*) c);
                 if (storage == StorageConstructor) {

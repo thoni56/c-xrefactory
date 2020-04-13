@@ -78,7 +78,7 @@ extern S_typeModifier *javaClassifyToExpressionName(S_idList *name,S_reference *
 extern Symbol *javaTypeNameDefinition(S_idList *tname);
 extern void javaSetFieldLinkName(Symbol *d);
 extern void javaAddPackageDefinition(S_idList *id);
-extern Symbol *javaAddType(S_idList *class, int accessFlag, S_position *p);
+extern Symbol *javaAddType(S_idList *class, Access access, S_position *p);
 extern Symbol *javaCreateNewMethod(char *name, S_position *pos, int mem);
 extern int javaTypeToString(S_typeModifier *type, char *pp, int ppSize);
 extern int javaIsYetInTheClass(

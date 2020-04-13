@@ -1039,7 +1039,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     char *ccc, *ffin;
     char *super, *interf, *innerCName, *zipsep;
     Symbol *inners;
-    int thisClass, superClass, accesFlags, cpSize;
+    int thisClass, superClass, access, cpSize;
     int fileInd, ind, count, aname, alen, cn;
     char *inner, *upper, *thisClassName;
     union constantPoolUnion *constantPool;
@@ -1090,10 +1090,10 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     GetU4(cval, ccc, ffin, &cFile.lexBuffer.buffer);
     /*&fprintf(dumpOut, "version is %d\n", cval);&*/
     constantPool = cfReadConstantPool(&ccc, &ffin, &cFile.lexBuffer.buffer, &cpSize);
-    GetU2(accesFlags, ccc, ffin, &cFile.lexBuffer.buffer);
-    memb->bits.accessFlags = accesFlags;
-    //&fprintf(dumpOut,"reading accessFlags %s == %x\n", name, accesFlags);
-    if (accesFlags & ACCESS_INTERFACE) s_fileTab.tab[fileInd]->b.isInterface=1;
+    GetU2(access, ccc, ffin, &cFile.lexBuffer.buffer);
+    memb->bits.access = access;
+    //&fprintf(dumpOut,"reading accessFlags %s == %x\n", name, access);
+    if (access & ACCESS_INTERFACE) s_fileTab.tab[fileInd]->b.isInterface=1;
     GetU2(thisClass, ccc, ffin, &cFile.lexBuffer.buffer);
     if (thisClass<0 || thisClass>=cpSize) goto corrupted;
     thisClassName = constantPool[constantPool[thisClass].clas.nameIndex].asciz;
@@ -1165,7 +1165,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
                     }
                 }
                 GetU2(modifs, ccc, ffin, &cFile.lexBuffer.buffer);
-                //& inners->bits.accessFlags |= modifs;
+                //& inners->bits.access |= modifs;
                 //&fprintf(dumpOut,"modif? %x\n",modifs);fflush(dumpOut);
 
                 fill_nestedSpec(& memb->u.s->nest[rinners], inners, membFlag, modifs);

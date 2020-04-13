@@ -652,7 +652,7 @@ static void setOlAvailableRefactorings(Symbol *p, S_olSymbolsMenu *mmi, int usag
         }
         if (p->bits.storage == StorageField) {
             if (IS_DEFINITION_USAGE(usage)) {
-                if (p->bits.accessFlags & ACCESS_STATIC) {
+                if (p->bits.access & ACCESS_STATIC) {
                     s_availableRefactorings[PPC_AVR_MOVE_STATIC_FIELD].available = true;
                 } else {
                     //& TODO! restrict this better
@@ -668,7 +668,7 @@ static void setOlAvailableRefactorings(Symbol *p, S_olSymbolsMenu *mmi, int usag
             if (IS_DEFINITION_USAGE(usage)) {
                 //&s_availableRefactorings[PPC_AVR_EXPAND_NAMES].available = true;
                 //&s_availableRefactorings[PPC_AVR_REDUCE_NAMES].available = true;
-                if (p->bits.accessFlags & ACCESS_STATIC) {
+                if (p->bits.access & ACCESS_STATIC) {
                     s_availableRefactorings[PPC_AVR_MOVE_STATIC_METHOD].available = true;
                     if (p->bits.storage == StorageMethod) {
                         s_availableRefactorings[PPC_AVR_TURN_STATIC_METHOD_TO_DYNAMIC].available = true;
@@ -814,7 +814,7 @@ S_reference * addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *usageb,
     }
     reftab = &s_cxrefTab;
     fill_symbolRefItemBits(&ppp.b,p->bits.symType,storage,scope,
-                           p->bits.accessFlags,category,0);
+                           p->bits.access,category,0);
     fill_symbolRefItem(&ppp,p->linkName,
                        0,                  // cxFileHashNumber(p->linkName),
                        vApplCl,vFunCl,ppp.b);
@@ -832,7 +832,7 @@ S_reference * addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *usageb,
         CX_ALLOCC(linkName, strlen(p->linkName)+1, char);
         strcpy(linkName, p->linkName);
         fill_symbolRefItemBits(&pp->b,p->bits.symType,storage,scope,
-                               p->bits.accessFlags,category,0);
+                               p->bits.access,category,0);
         fill_symbolRefItem(pp,linkName,cxFileHashNumber(linkName),
                            vApplCl,vFunCl,pp->b);
         refTabSet(reftab, pp, ii);
@@ -841,7 +841,7 @@ S_reference * addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *usageb,
         // at least reset some maybe new informations
         // sometimes classes were added from directory listing,
         // without knowing if it is an interface or not
-        memb->b.accessFlags |= p->bits.accessFlags;
+        memb->b.accessFlags |= p->bits.access;
     }
     /*  category = reftab->category; */
     place = addToRefList(&memb->refs,usageb,pos,category);
@@ -5401,7 +5401,7 @@ S_olCompletion * olCompletionListPrepend(char *name,
         fill_usageBits(&dref.usage, UsageDefined, 0);
         fill_reference(&dref, dref.usage, s->pos, NULL);
         fill_symbolRefItemBits(&srib, s->bits.symType, storage,
-                               scope, s->bits.accessFlags, category, 0);
+                               scope, s->bits.access, category, 0);
         fill_symbolRefItem(&sri, ss, cxFileHashNumber(ss),
                            vFunClass, vFunClass,
                            srib);
