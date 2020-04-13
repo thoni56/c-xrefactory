@@ -1875,6 +1875,7 @@ void javaAddMapedTypeName(
     int					len2;
     S_idList       dd2,*packid;
     Symbol			*memb;
+
     /*&fprintf(dumpOut,":import type %s %s %s\n", file, path, pack);&*/
     packid = (S_idList *) vdirid;
     for(p=file; *p && *p!='.' && *p!='$'; p++) ;
@@ -1887,6 +1888,7 @@ void javaAddMapedTypeName(
     fillfIdList(&dd2, ttt2, NULL, s_noPos, ttt2, TypeStruct, packid);
     memb = javaTypeSymbolDefinition(&dd2, ACCESS_DEFAULT, TYPE_ADD_YES);
     log_debug(":import type %s == %s", memb->name, memb->linkName);
+    memb = memb;                /* If not DEBUG memb is "set but not used..." */
 }
 
 S_typeModifier *javaClassNameType(S_idList *typeName) {

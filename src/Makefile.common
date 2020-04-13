@@ -114,6 +114,8 @@ enumTxt.g.c: proto.h .c-xrefrc c-xref.bs Makefile.common
 			mv -f tmp-$@ $@ ; \
 	fi
 
+enumTxt.o: enumTxt.g.c enumTxt.g.h
+
 c-xref: .c-xrefrc $(OBJS)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
 

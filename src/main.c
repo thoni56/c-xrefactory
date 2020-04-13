@@ -3388,16 +3388,20 @@ static void mainGenerate(int argc, char **argv) {
 /* initLogging() is called as the first thing in main() so we look for log filename */
 static void initLogging(int argc, char *argv[]) {
     char fileName[MAX_FILE_NAME_SIZE+1] = "";
+#ifdef DEBUG
     bool debug = false;
     bool trace = false;
+#endif
 
     for (int i=0; i<argc; i++) {
         if (strncmp(argv[i], "-log=", 5)==0)
             strcpy(fileName, &argv[i][5]);
+#ifdef DEBUG
         if (strcmp(argv[i], "-debug") == 0)
             debug = true;
         if (strcmp(argv[i], "-trace") == 0)
             trace = true;
+#endif
     }
     if (fileName[0] != '\0') {
         FILE *tempFile = fopen(fileName, "w");
