@@ -62,7 +62,7 @@ typedef enum type {
     TypeCppCollate,		/* dummy, the Cpp ## joined string reference */
     TypePackage,		/* dummy, a package in java */
     TypeYaccSymbol,		/* dummy, for yacc grammar references */
-    MAX_HTML_LIST_TYPE, /* only types until this will be listed in html lists*/
+    MAX_HTML_LIST_TYPE, /* only types up to here will be listed in html lists*/
     TypeLabel,			/* dummy, a label in the symbol table*/
     TypeKeyword,		/* dummy, a keyword in the symbol table, + html ref. */
     TypeToken,			/* dummy, a token for completions */
@@ -85,5 +85,7 @@ typedef enum type {
     MAX_TYPE,
     /* if this becomes greater than 256, increase SYMTYPES_LN !!!!!!!!!!!!! */
 } Type;
+
+#define SYMTYPES_LN 7
 
 #endif /* _TYPES_H_ */
