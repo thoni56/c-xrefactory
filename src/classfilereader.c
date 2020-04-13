@@ -9,7 +9,7 @@
 #include "cxref.h"
 #include "cxfile.h"
 #include "jsemact.h"
-#include "charbuf.h"
+#include "characterbuffer.h"
 #include "symbol.h"
 #include "list.h"
 #include "filedescriptor.h"

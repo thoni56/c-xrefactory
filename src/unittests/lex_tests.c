@@ -27,7 +27,7 @@ S_jslStat *s_jsl;
 #include "caching.mock"
 #include "cxref.mock"
 #include "utils.mock"
-#include "charbuf.mock"
+#include "characterbuffer.mock"
 
 Ensure(Lex, can_get_char) {
     //struct lexBuf lexBuf;

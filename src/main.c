@@ -23,7 +23,7 @@
 #include "java_parser.x"
 #include "parsers.h"
 
-#include "charbuf.h"
+#include "characterbuffer.h"
 #include "cxref.h"
 #include "cxfile.h"
 #include "caching.h"

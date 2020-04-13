@@ -18,7 +18,7 @@
 #include "main.h"
 #include "enumTxt.h"
 #include "reftab.h"
-#include "charbuf.h"
+#include "characterbuffer.h"
 #include "symbol.h"
 #include "list.h"
 #include "filedescriptor.h"

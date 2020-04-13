@@ -1,4 +1,4 @@
-#include "charbuf.h"
+#include "characterbuffer.h"
 
 #include "globals.h"
 

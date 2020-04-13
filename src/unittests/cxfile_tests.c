@@ -16,7 +16,7 @@
 #include "lex.mock"
 #include "editor.mock"
 #include "memory.mock"
-#include "charbuf.mock"
+#include "characterbuffer.mock"
 #include "classhierarchy.mock"
 
 #include "enumTxt.c"

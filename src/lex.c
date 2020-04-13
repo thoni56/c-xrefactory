@@ -4,7 +4,7 @@
 #include "commons.h"
 #include "parsers.h"
 #include "cxref.h"
-#include "charbuf.h"
+#include "characterbuffer.h"
 #include "yylex.h"
 #include "filedescriptor.h"
 
@@ -272,7 +272,7 @@ void gotOnLineCxRefs( S_position *ps ) {
 
 int getLexBuf(struct lexBuf *lb) {
     int ch;
-    struct CharacterBuffer *cb;
+    CharacterBuffer *cb;
     char *ccc, *cfin;
     char *cc, *dd, *lmax, *lexStartDd;
     unsigned chval=0;

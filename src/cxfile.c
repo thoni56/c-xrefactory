@@ -12,7 +12,7 @@
 #include "editor.h"
 #include "enumTxt.h"
 #include "reftab.h"
-#include "charbuf.h"
+#include "characterbuffer.h"
 #include "classhierarchy.h"
 
 #include "hash.h"
