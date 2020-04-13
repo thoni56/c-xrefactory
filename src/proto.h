@@ -468,7 +468,7 @@ enum refsFilterLevels {
 };
 
 #include "storage.h"
-#include "types.h"
+#include "type.h"
 
 enum javaPCTIndex {		/* java Primitive Conversion Table Indexes */
     PCTIndexError=0,

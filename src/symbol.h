@@ -4,7 +4,7 @@
 /* Dependencies: */
 #include "head.h"
 #include "position.h"
-#include "types.h"
+#include "type.h"
 #include "storage.h"
 
 

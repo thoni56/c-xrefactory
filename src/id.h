@@ -1,7 +1,7 @@
 #ifndef _ID_H_
 #define _ID_H_
 
-#include "types.h"
+#include "type.h"
 #include "symbol.h"
 #include "position.h"
 

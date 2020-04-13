@@ -1,7 +1,7 @@
 #ifndef _TYPEMODIFIER_H_
 #define _TYPEMODIFIER_H_
 
-#include "types.h"
+#include "type.h"
 #include "symbol.h"
 
 typedef struct typeModifier {
