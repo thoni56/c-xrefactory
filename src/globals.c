@@ -89,7 +89,7 @@ char tmpBuff[TMP_BUFF_SIZE];
 
 int olcxMemoryAllocatedBytes;
 
-int s_ifEvaluation = 0;     /* flag for yylex, to not filter '\n' */
+int s_ifEvaluation = 0;     /* flag for yylex, to not filter '\n' TODO: move, duh!*/
 
 S_position s_olcxByPassPos;
 S_position s_cxRefPos;

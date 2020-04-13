@@ -35,6 +35,8 @@ typedef struct jslStat {
 } S_jslStat;
 
 
+extern S_jslStat *s_jsl;
+
 
 extern S_jslClassStat *newJslClassStat(S_idList *className, Symbol *thisClass, char *thisPackage,
                                        S_jslClassStat *next);
@@ -73,8 +75,5 @@ extern void jslAddMapedImportTypeName(char *file,
                                       void *vdirid,
                                       int  *storage);
 extern void jslAddAllPackageClassesFromFileTab(S_idList *pack);
-
-
-extern S_jslStat *s_jsl;
 
 #endif
