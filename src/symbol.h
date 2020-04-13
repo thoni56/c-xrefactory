@@ -4,6 +4,9 @@
 /* Dependencies: */
 #include "head.h"
 #include "position.h"
+#include "types.h"
+#include "storage.h"
+
 
 
 /* ****************************************************************** */
@@ -16,9 +19,9 @@ typedef struct symbolBits {
     unsigned			javaSourceLoaded: 1;  /* is jsl source file loaded ? */
     unsigned			javaFileLoaded	: 1;  /* is class file loaded ? */
 
-    unsigned			symType			: SYMTYPES_LN;
+    enum type			symType			: SYMTYPES_LN;
     /* can be Default/Struct/Union/Enum/Label/Keyword/Macro/Package */
-    unsigned			storage			: STORAGES_LN;
+    enum storage		storage			: STORAGES_LN;
     unsigned			npointers		: 4; /*tmp. stored #of dcl. ptrs*/
 } S_symbolBits;
 
