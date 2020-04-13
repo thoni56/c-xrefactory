@@ -48,7 +48,9 @@ newSymbol<field>() for each of the necessary fields that are actually used.
 ** DOING Create AST using parsing
 * DOING Re-work standard options, since reading included files may
 depend on them. Think about calling compiler to get defines, much
-like generation of "compiler_defines.g.h" was done.
+like generation of "compiler_defines.g.h" was done. It should be
+possible to piggyback on the command line options handling. That
+is performed by the last lines in addMacroDefinedByOption()
 * TODO Refactor int2StringTabs, should not have Init in them
 * TODO Rename classh to hierarchy
 * TODO Initialize memory's injected error functions in main.c
