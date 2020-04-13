@@ -1,7 +1,7 @@
 #include "fileitem.h"
-#include <string.h>
 
-#include "globals.h"            /* For s_noneFileIndex */
+#include <string.h>
+#include "filetab.h"
 
 
 void fillFileItem(S_fileItem *item, char *name, bool fromCommandLine) {

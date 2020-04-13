@@ -14,6 +14,15 @@
 #undef HASH_ELEM_TYPE
 #endif
 
+#define NON_FILE_NAME "___None___"
+
+
+/* Index into file table for the "NON FILE" */
+int s_noneFileIndex = -1;
+
+
+extern void initFileTab(S_fileTab *table);
 extern bool fileTabExists(S_fileTab *table, char *fileName);
 extern int fileTabLookup(S_fileTab *table, char *fileName);
+
 #endif
