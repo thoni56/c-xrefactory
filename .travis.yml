@@ -17,6 +17,7 @@ before_install:
 
 script:
     - cd src
+    - make c-xref.bs
     - make -j debug unit
     # Coverage for unittest to Codecov
     #- bash <(curl -s https://codecov.io/bash)
