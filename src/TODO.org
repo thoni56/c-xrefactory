@@ -52,7 +52,7 @@ like generation of "compiler_defines.g.h" was done. It should be
 possible to piggyback on the command line options handling. That
 is performed by the last lines in addMacroDefinedByOption()
 * TODO Refactor int2StringTabs, should not have Init in them
-* TODO Rename classh to hierarchy
+* TODO Make all modules independent on main
 * TODO Initialize memory's injected error functions in main.c
 * TODO Cleanup and separate commons, misc and make them independent utility modules
 * TODO Investigate to remove S_classTreeData
@@ -131,6 +131,7 @@ easier to mock and unit test other modules.
   ACTUALLY: split generation of enumTxt header to its own header file
   with the naming strategy as for the others.
 * DOING Start using log.c functions to log to a separate log file
+* DONE Rename classh to classhierarchy
 * DONE make memory.c (linkage) independent on all other modules
 One way to do this to inject the remaining, problematic, dependencies
 such as internalCheckFail(), removeFromTrailUntil() and fatalError()
