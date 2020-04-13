@@ -9,24 +9,24 @@
 /* Data structure storing for each class all classes it can be */
 /* casted to */
 
-#define CCT_TREE_HASH(xx,deepFactor) ((((long unsigned)xx) >> 4)/(deepFactor)%CCT_TREE_INDEX)
+#define CCT_TREE_HASH(xx,depthFactor) ((((long unsigned)xx) >> 4)/(depthFactor)%CCT_TREE_INDEX)
 
 static void fillCctNode(S_cctNode *cct, Symbol *node, S_cctNode *subtree) {
     cct->node = node;
     cct->sub = subtree;
 }
 
-void cctAddSimpleValue(S_cctNode *cc, Symbol *x, int deepFactor) {
+void cctAddSimpleValue(S_cctNode *cc, Symbol *x, int depthFactor) {
     S_cctNode *nn;
     int i,h;
 
-    log_trace("adding %d == %s to casts at %d at deep %d", x, x->linkName, cc, deepFactor);
+    log_trace("adding %d == %s to casts at %d at depth %d", x, x->linkName, cc, depthFactor);
     if (cc->node == x) return;
     if (cc->node == NULL) {
         cc->node = x;           /* should be trailed ? */
         return;
     }
-    h = CCT_TREE_HASH(x, deepFactor);
+    h = CCT_TREE_HASH(x, depthFactor);
     if (cc->sub == NULL) {
         CF_ALLOCC(nn, CCT_TREE_INDEX, S_cctNode);
         for(i=0; i<CCT_TREE_INDEX; i++) fillCctNode(&nn[i], NULL, NULL);
@@ -34,52 +34,52 @@ void cctAddSimpleValue(S_cctNode *cc, Symbol *x, int deepFactor) {
         cc->sub = nn;           /* should be trailed ? */
         return;
     }
-    cctAddSimpleValue(&cc->sub[h], x, deepFactor*CCT_TREE_INDEX);
+    cctAddSimpleValue(&cc->sub[h], x, depthFactor*CCT_TREE_INDEX);
 }
 
 
-int cctIsMember(S_cctNode *cc, Symbol *x, int deepFactor) {
+int cctIsMember(S_cctNode *cc, Symbol *x, int depthFactor) {
     int h,res;
     //&if (cc->node!=NULL) fprintf(dumpOut,"checking cast %s to %d == %s\n", cc->node->linkName, x, x->linkName);
     if (cc->node == x) return(1);
     if (cc->sub == NULL) return(0);
-    h = CCT_TREE_HASH(x, deepFactor);
+    h = CCT_TREE_HASH(x, depthFactor);
     assert(h>=0 && h<CCT_TREE_INDEX);
-    res = cctIsMember(&cc->sub[h], x, deepFactor*CCT_TREE_INDEX);
+    res = cctIsMember(&cc->sub[h], x, depthFactor*CCT_TREE_INDEX);
     return(res);
 }
 
 
-void cctAddCctTree(S_cctNode *cc, S_cctNode *x, int deepFactor) {
+void cctAddCctTree(S_cctNode *cc, S_cctNode *x, int depthFactor) {
     int i;
 
-    log_trace("adding %d tree to %d tree at deep == %d", x, cc, deepFactor);
+    log_trace("adding %d tree to %d tree at depth == %d", x, cc, depthFactor);
     if (x->node == NULL) return;
     if (cc->node == NULL) {
         *cc = *x;           /* should be trailed ? */
         return;
     }
-    cctAddSimpleValue(cc, x->node, deepFactor);
+    cctAddSimpleValue(cc, x->node, depthFactor);
     if (x->sub == NULL) return;
     if (cc->sub == NULL) {
         CF_ALLOCC(cc->sub, CCT_TREE_INDEX, S_cctNode);
         for(i=0; i<CCT_TREE_INDEX; i++) cc->sub[i] = x->sub[i];
     } else {
         for(i=0; i<CCT_TREE_INDEX; i++) {
-            cctAddCctTree(&cc->sub[i], &x->sub[i], deepFactor*CCT_TREE_INDEX);
+            cctAddCctTree(&cc->sub[i], &x->sub[i], depthFactor*CCT_TREE_INDEX);
         }
     }
 }
 
-void cctDump(S_cctNode *cc, int deep) {
+void cctDump(S_cctNode *cc, int depth) {
     int i;
     if (cc->node==NULL) {
-        log_trace("%*sNULL",deep,"");
+        log_trace("%*sNULL",depth,"");
         return;
     }
-    log_trace("%*s%lx",deep,"",(unsigned long)cc->node);
+    log_trace("%*s%lx",depth,"",(unsigned long)cc->node);
     if (cc->sub == NULL) return;
-    for(i=0; i<CCT_TREE_INDEX; i++) cctDump(&cc->sub[i], deep+2);
+    for(i=0; i<CCT_TREE_INDEX; i++) cctDump(&cc->sub[i], depth+2);
 }
 
 #if 0

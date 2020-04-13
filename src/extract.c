@@ -672,20 +672,20 @@ static S_symbolRefItemList *computeExceptionsThrownBetween(S_programGraphNode *b
                                                            ) {
     S_symbolRefItemList *res, *excs, *catched, *noncatched, **cl;
     S_programGraphNode *p, *e;
-    int deep;
+    int depth;
 
     catched = NULL; noncatched = NULL; cl = &catched;
     for(p=bb; p!=NULL && p!=ee; p=p->next) {
         if (p->symRef->b.symType == TypeTryCatchMarker && p->ref->usage.base == UsageTryCatchBegin) {
-            deep = 0;
+            depth = 0;
             for(e=p; e!=NULL && e!=ee; e=e->next) {
                 if (e->symRef->b.symType == TypeTryCatchMarker) {
-                    if (e->ref->usage.base == UsageTryCatchBegin) deep++;
-                    else deep --;
-                    if (deep == 0) break;
+                    if (e->ref->usage.base == UsageTryCatchBegin) depth++;
+                    else depth --;
+                    if (depth == 0) break;
                 }
             }
-            if (deep==0) {
+            if (depth==0) {
                 // add exceptions thrown in block
                 for(excs=computeExceptionsThrownBetween(p->next,e); excs!=NULL; excs=excs->next){
                     addSymbolToSymRefList(cl, excs->d);

@@ -1290,7 +1290,7 @@ int mapDirectoryFiles(
     // also files stored in renamed buffers
     if (s_ropt.refactoringRegime == RegimeRefactory
         && allowEditorFilesFlag==ALLOW_EDITOR_FILES) {
-        res |= editorMapOnNonexistantFiles(dirname, fun, DEEP_ONE, a1, a2, a3, a4, a5);
+        res |= editorMapOnNonexistantFiles(dirname, fun, DEPTH_ONE, a1, a2, a3, a4, a5);
     }
     return(res);
 }

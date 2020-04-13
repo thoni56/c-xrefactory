@@ -299,7 +299,7 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
     includeListDeleteOutOfMemory();
 
     cFile.lineNumber = cp->lineNumber;
-    cFile.ifDeep = cp->ifDeep;
+    cFile.ifDepth = cp->ifDeep;
     cFile.ifStack = cp->ifstack;
     fillLexInput(&cInput, cp->lbcc, readUntil, s_cache.lb, NULL, II_CACHE);
     fillCaching(&s_cache,
@@ -414,7 +414,7 @@ void placeCachePoint(int inputCaching) {
     fillCachePoint(pp, s_topBlock, *s_topBlock,
                     ppmMemoryi, cxMemory->i, mbMemoryi,
                     s_cache.lbcc, s_cache.ibi,
-                    cFile.lineNumber, cFile.ifDeep, cFile.ifStack,
+                    cFile.lineNumber, cFile.ifDepth, cFile.ifStack,
                     s_javaStat, s_count
                     );
     s_cache.cpi ++;

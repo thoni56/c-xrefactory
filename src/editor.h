@@ -146,7 +146,7 @@ extern void editorScheduleModifiedBuffersToUpdate(void);
 extern void editorFreeMarkersAndMarkerList(S_editorMarkerList *occs);
 extern int editorMapOnNonexistantFiles(char *dirname,
                                        void (*fun)(MAP_FUN_PROFILE),
-                                       int deep,
+                                       int depth,
                                        char *a1,
                                        char *a2,
                                        S_completions *a3,

@@ -231,7 +231,7 @@ void dirInputFile(MAP_FUN_PROFILE) {
             else nrecurseFlag = NULL;
             mapDirectoryFiles(fn, dirInputFile,DO_NOT_ALLOW_EDITOR_FILES,
                               fn, NULL, NULL, nrecurseFlag, &topCallFlag);
-            editorMapOnNonexistantFiles(fn, dirInputFile, DEEP_ANY,
+            editorMapOnNonexistantFiles(fn, dirInputFile, DEPTH_ANY,
                                         fn, NULL, NULL, nrecurseFlag, &topCallFlag);
         } else {
             // no error, let it be
@@ -1040,7 +1040,6 @@ static int processOOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i],"-olcxsyntaxpass")==0) s_opt.server_operation = OLO_SYNTAX_PASS_ONLY;
     else if (strcmp(argv[i],"-olcxprimarystart")==0) {
         s_opt.server_operation = OLO_GET_PRIMARY_START;
-        //&s_opt.parsingDeep = PD_ZERO;
     }
     else if (strcmp(argv[i],"-olcxuselesslongnames")==0) s_opt.server_operation = OLO_USELESS_LONG_NAME;
     else if (strcmp(argv[i],"-olcxuselesslongnamesinclass")==0) s_opt.server_operation = OLO_USELESS_LONG_NAME_IN_CLASS;
@@ -2081,11 +2080,11 @@ static void mainParseInputFile(void) {
 #endif
 #if 1 //ZERO
         symbolTableStatistics(s_symTab, &ui, &el,&mdp);
-        fprintf(dumpOut,": symtab == %d elems, usage %d/%d,\tratio %1.2f, maxdeep==%d\n",
+        fprintf(dumpOut,": symtab == %d elems, usage %d/%d,\tratio %1.2f, maxdepth==%d\n",
                 el,ui,s_symTab->size, ((float)el)/(ui+1e-30), mdp);
         fflush(dumpOut);
         refTabStatistics(&s_cxrefTab, &ui, &el,&mdp);
-        fprintf(dumpOut,": reftab == %d elems, usage %d/%d,\tratio %1.2f, maxdeep==%d\n",
+        fprintf(dumpOut,": reftab == %d elems, usage %d/%d,\tratio %1.2f, maxdepth==%d\n",
                 el,ui,s_cxrefTab.size, ((float)el)/(ui+1e-30), mdp);
         for(i=0; i< s_cxrefTab.size; i++) {
             cr = 0;

@@ -28,7 +28,7 @@ typedef struct lexInput {
 } S_lexInput;
 
 extern char *yytext;
-extern S_lexInput macStack[MACSTACK_SIZE];
+extern S_lexInput macStack[MACRO_STACK_SIZE];
 extern int macroStackIndex;
 extern S_lexInput cInput;
 

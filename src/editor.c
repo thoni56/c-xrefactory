@@ -1464,7 +1464,7 @@ static int editorBufferNameLess(S_editorBufferList*l1,S_editorBufferList*l2) {
 int editorMapOnNonexistantFiles(
                                 char *dirname,
                                 void (*fun)(MAP_FUN_PROFILE),
-                                int deep,
+                                int depth,
                                 char *a1,
                                 char *a2,
                                 S_completions *a3,
@@ -1489,7 +1489,7 @@ int editorMapOnNonexistantFiles(
     while(ll!=NULL) {
         if (fnnCmp(ll->f->name, dirname, dlen)==0
             && (ll->f->name[dlen]=='/' || ll->f->name[dlen]=='\\')) {
-            if (deep == DEEP_ONE) {
+            if (depth == DEPTH_ONE) {
                 ss = strchr(ll->f->name+dlen+1, '/');
                 if (ss==NULL) ss = strchr(ll->f->name+dlen+1, '\\');
                 if (ss==NULL) {

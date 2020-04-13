@@ -85,8 +85,8 @@
 #define MAX_OPTION_LEN         10000
 #define MAX_NESTED_ERR_ZONES     100
 #define MAX_COMPLETIONS        10002	/* max items in completion list */
-#define MAX_NESTED_DEEP          500	/* deep of nested structure defs. */
-#define MAX_NESTED_CPP_IF        100	/* deep of nested #if directives */
+#define MAX_NESTED_DEPTH          500	/* depth of nested structure defs. */
+#define MAX_NESTED_CPP_IF        100	/* depth of nested #if directives */
 #define MAX_INNERS_CLASSES       200	/* max number of inners classes */
 #define MAX_HTML_CUT_PATHES       50
 
@@ -103,8 +103,8 @@
 /* ************************ preprocessor constants ********************** */
 
 #define MAX_MACRO_ARGS		500		/* max number of macro args */
-#define INSTACK_SIZE         80		/* max include deep */
-#define MACSTACK_SIZE		500		/* max deep of macro bodies nesting */
+#define INCLUDE_STACK_SIZE   80		/* max include depth */
+#define MACRO_STACK_SIZE	500		/* max depth of macro bodies nesting */
 
 #define MACRO_UNIT_SIZE		20000		/* allocation unit for macro body */
 #define MACRO_ARG_UNIT_SIZE	20000		/* allocation unit for macro act arg */

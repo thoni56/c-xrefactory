@@ -58,7 +58,7 @@ static int ppMemoryi=0;
 S_position s_yyPositionBuf[YYBUFFERED_ID_INDEX];
 int s_yyPositionBufi = 0;
 
-S_lexInput macStack[MACSTACK_SIZE];
+S_lexInput macStack[MACRO_STACK_SIZE];
 int macroStackIndex=0;
 
 S_lexInput cInput;
@@ -328,7 +328,7 @@ void initInput(FILE *ff, S_editorBuffer *buffer, char *prefix, char *fileName) {
     }
 
 #define PrependMacroInput(macInput) {             \
-        assert(macroStackIndex < MACSTACK_SIZE-1);    \
+        assert(macroStackIndex < MACRO_STACK_SIZE-1);    \
         macStack[macroStackIndex++] = cInput;         \
         cInput = macInput;                      \
         cInput.currentLexem = cInput.beginningOfBuffer;                   \
@@ -476,7 +476,7 @@ void pushNewInclude(FILE *f, S_editorBuffer *buffer, char *name, char *prepend) 
         SetCFileConsistency();
     }
     inStack[inStacki] = cFile;		/* buffers are copied !!!!!!, burk */
-    if (inStacki+1 >= INSTACK_SIZE) {
+    if (inStacki+1 >= INCLUDE_STACK_SIZE) {
         fatalError(ERR_ST,"too deep nesting in includes", XREF_EXIT_ERR);
     }
     inStacki ++;
@@ -936,27 +936,27 @@ static void genCppIfElseReference(int level, S_position *pos, int usage) {
 
 static int cppDeleteUntilEndElse(bool untilEnd) {
     int lex,l,h,v,len;
-    int deep;
+    int depth;
     S_position pos;
-    deep = 1;
-    while (deep > 0) {
+    depth = 1;
+    while (depth > 0) {
         GetLex(lex);
         PassLex(cInput.currentLexem,lex,l,v,h,pos, len,1);
         if (lex==CPP_IF || lex==CPP_IFDEF || lex==CPP_IFNDEF) {
             genCppIfElseReference(1, &pos, UsageDefined);
-            deep++;
+            depth++;
         } else if (lex == CPP_ENDIF) {
-            deep--;
+            depth--;
             genCppIfElseReference(-1, &pos, UsageUsed);
         } else if (lex == CPP_ELIF) {
             genCppIfElseReference(0, &pos, UsageUsed);
-            if (deep == 1 && !untilEnd) {
+            if (depth == 1 && !untilEnd) {
                 log_debug("#elif ");
                 return(UNTIL_ELIF);
             }
         } else if (lex == CPP_ELSE) {
             genCppIfElseReference(0, &pos, UsageUsed);
-            if (deep == 1 && !untilEnd) {
+            if (depth == 1 && !untilEnd) {
                 log_debug("#else");
                 return(UNTIL_ELSE);
             }
@@ -974,12 +974,12 @@ endOfFile:;
 
 static void execCppIf(int deleteSource) {
     int onElse;
-    if (deleteSource==0) cFile.ifDeep ++;
+    if (deleteSource==0) cFile.ifDepth ++;
     else {
         onElse = cppDeleteUntilEndElse(false);
         if (onElse==UNTIL_ELSE) {
             /* #if #else */
-            cFile.ifDeep ++;
+            cFile.ifDepth ++;
         } else if (onElse==UNTIL_ELIF) processIf();
     }
 }
@@ -1172,9 +1172,9 @@ static int processCppConstruct(int lex) {
         break;
     case CPP_ELIF:
         log_debug("#elif");
-        if (cFile.ifDeep) {
+        if (cFile.ifDepth) {
             genCppIfElseReference(0, &pos, UsageUsed);
-            cFile.ifDeep --;
+            cFile.ifDepth --;
             cppDeleteUntilEndElse(true);
         } else if (s_opt.taskRegime!=RegimeEditServer) {
             warning(ERR_ST,"unmatched #elif");
@@ -1182,9 +1182,9 @@ static int processCppConstruct(int lex) {
         break;
     case CPP_ELSE:
         log_debug("#else");
-        if (cFile.ifDeep) {
+        if (cFile.ifDepth) {
             genCppIfElseReference(0, &pos, UsageUsed);
-            cFile.ifDeep --;
+            cFile.ifDepth --;
             cppDeleteUntilEndElse(true);
         } else if (s_opt.taskRegime!=RegimeEditServer) {
             warning(ERR_ST,"unmatched #else");
@@ -1192,8 +1192,8 @@ static int processCppConstruct(int lex) {
         break;
     case CPP_ENDIF:
         log_debug("#endif");
-        if (cFile.ifDeep) {
-            cFile.ifDeep --;
+        if (cFile.ifDepth) {
+            cFile.ifDepth --;
             genCppIfElseReference(-1, &pos, UsageUsed);
         } else if (s_opt.taskRegime!=RegimeEditServer) {
             warning(ERR_ST,"unmatched #endif");
@@ -1553,21 +1553,21 @@ static void getActMacroArgument(char *cc,
     int line,val,len, poffset;
     S_position pos;
     unsigned h;
-    int bufsize,lex,deep;
+    int bufsize,lex,depth;
     lex = *llex;
     bufsize = MACRO_ARG_UNIT_SIZE;
-    deep = 0;
+    depth = 0;
     PP_ALLOCC(buf, bufsize+MAX_LEXEM_SIZE, char);
     bcc = buf;
     /* if lastArgument, collect everything there */
     poffset = 0;
-    while (((lex != ',' || actArgi+1==mb->argn) && lex != ')') || deep > 0) {
+    while (((lex != ',' || actArgi+1==mb->argn) && lex != ')') || depth > 0) {
 /* The following should be equivalent to the loop condition
-        if (lex == ')' && deep <= 0) break;
-        if (lex == ',' && deep <= 0 && ! lastArgument) break;
+        if (lex == ')' && depth <= 0) break;
+        if (lex == ',' && depth <= 0 && ! lastArgument) break;
 */
-        if (lex == '(') deep ++;
-        if (lex == ')') deep --;
+        if (lex == '(') depth ++;
+        if (lex == ')') depth --;
         for(;cc < cInput.currentLexem; cc++,bcc++) *bcc = *cc;
         if (bcc-buf >= bufsize) {
             bufsize += MACRO_ARG_UNIT_SIZE;
@@ -1576,7 +1576,7 @@ static void getActMacroArgument(char *cc,
         }
         GetNotLineLexA(lex,cc);
         PassLex(cInput.currentLexem,lex,line,val,h, (**parpos2), len, macroStackIndex == 0);
-        if ((lex == ',' || lex == ')') && deep == 0) {
+        if ((lex == ',' || lex == ')') && depth == 0) {
             poffset ++;
             handleMacroUsageParameterPositions(actArgi+poffset, mpos, *parpos1, *parpos2, 0);
             **parpos1= **parpos2;

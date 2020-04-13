@@ -39,12 +39,12 @@ static int genFillStructArguments(Symbol *symbol,
                                   ) {
     Symbol *records;
     Symbol *p;
-    static int deep=0;
+    static int depth=0;
     assert(symbol->u.s);
     records = symbol->u.s->records;
-    deep++;
+    depth++;
 
-    if (deep > MAX_NESTED_DEEP) {
+    if (depth > MAX_NESTED_DEPTH) {
         fatalError(ERR_ST,"too much nested structures, probably recursive", XREF_EXIT_ERR);
     }
     for(p=records; p!=NULL; p=p->next) {
@@ -59,7 +59,7 @@ static int genFillStructArguments(Symbol *symbol,
             }
         }
     }
-    deep--;
+    depth--;
     return(i);
 }
 
@@ -80,11 +80,11 @@ static int genFillStructBody(Symbol *defin, int i, int argn, bool fullFlag,
     char prefix[TMP_STRING_SIZE];
     char rname[TMP_STRING_SIZE];
     int l1,l2;
-    static int deep=0;
+    static int depth=0;
     assert(defin->u.s);
     rec = defin->u.s->records;
-    deep++;
-    if (deep > MAX_NESTED_DEEP) {
+    depth++;
+    if (depth > MAX_NESTED_DEPTH) {
         fatalError(ERR_ST,"too much nested structures, probably recursive", XREF_EXIT_ERR);
     }
     for(p=rec; p!=NULL; p=p->next) {
@@ -127,7 +127,7 @@ static int genFillStructBody(Symbol *defin, int i, int argn, bool fullFlag,
             }
         }
     }
-    deep--;
+    depth--;
     return(i);
 }
 

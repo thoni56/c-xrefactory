@@ -2,5 +2,5 @@
 
 S_fileDesc cFile = {0};
 
-S_fileDesc inStack[INSTACK_SIZE];
+S_fileDesc inStack[INCLUDE_STACK_SIZE];
 int inStacki=0;

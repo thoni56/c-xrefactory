@@ -4,14 +4,14 @@
 
 S_fileDesc cFile = {0};
 
-S_fileDesc inStack[INSTACK_SIZE];
+S_fileDesc inStack[INCLUDE_STACK_SIZE];
 int inStacki=0;
 
 
 void fillFileDescriptor(S_fileDesc *fileDescriptor, char *fileName, char *bufferStart, int bufferSize, FILE *file, unsigned offset) {
     fileDescriptor->fileName = fileName;
     fileDescriptor->lineNumber = 0;
-    fileDescriptor->ifDeep = 0;
+    fileDescriptor->ifDepth = 0;
     fileDescriptor->ifStack = NULL; /* lex buf */
     fileDescriptor->lexBuffer.next = NULL;
     fileDescriptor->lexBuffer.end = NULL;

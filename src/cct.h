@@ -10,9 +10,9 @@ typedef struct cctNode {
 } S_cctNode;
 
 
-extern void cctAddSimpleValue(S_cctNode *cc, Symbol *x, int deepFactor);
-extern int cctIsMember(S_cctNode *cc, Symbol *x, int deepFactor);
-extern void cctAddCctTree(S_cctNode *cc, S_cctNode *x, int deepFactor);
-extern void cctDump(S_cctNode *cc, int deep);
+extern void cctAddSimpleValue(S_cctNode *cc, Symbol *x, int depthFactor);
+extern int cctIsMember(S_cctNode *cc, Symbol *x, int depthFactor);
+extern void cctAddCctTree(S_cctNode *cc, S_cctNode *x, int depthFactor);
+extern void cctDump(S_cctNode *cc, int depth);
 
 #endif
