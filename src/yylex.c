@@ -846,12 +846,12 @@ errorlab:
 
 void addMacroDefinedByOption(char *opt) {
     char *cc,*nopt;
-    int args;
+    bool args = false;
+
     PP_ALLOCC(nopt,strlen(opt)+3,char);
     strcpy(nopt,opt);
     cc = nopt;
     while (isalpha(*cc) || isdigit(*cc) || *cc == '_') cc++;
-    args = 0;
     if (*cc == '=') {
         *cc = ' ';
     } else if (*cc==0) {
@@ -859,7 +859,7 @@ void addMacroDefinedByOption(char *opt) {
         *cc++ = '1';
         *cc = 0;
     } else if (*cc=='(') {
-        args = 1;
+        args = true;
     }
     initInput(NULL, NULL,nopt,NULL);
     cFile.lineNumber = 1;
