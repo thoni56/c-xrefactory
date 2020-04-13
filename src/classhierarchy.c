@@ -1,4 +1,4 @@
-#include "classh.h"
+#include "classhierarchy.h"
 
 #include "misc.h"
 #include "commons.h"

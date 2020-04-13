@@ -11,7 +11,7 @@
 #include "editor.mock"
 #include "refactory.mock"
 #include "misc.mock"
-#include "classh.mock"
+#include "classhierarchy.mock"
 #include "html.mock"
 #include "complete.mock"
 #include "caching.mock"

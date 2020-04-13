@@ -3,7 +3,7 @@
 #include "commons.h"
 #include "lex.h"
 #include "yylex.h"
-#include "classh.h"
+#include "classhierarchy.h"
 #include "globals.h"
 #include "caching.h"
 #include "html.h"

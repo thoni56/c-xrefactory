@@ -13,7 +13,7 @@
 #include "editor.h"
 #include "reftab.h"
 #include "list.h"
-#include "classh.h"
+#include "classhierarchy.h"
 #include "protocol.h"
 
 #include "log.h"

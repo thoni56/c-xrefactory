@@ -7,7 +7,7 @@
 #include "editor.h"
 #include "reftab.h"
 #include "javafqttab.h"
-#include "classh.h"
+#include "classhierarchy.h"
 #include "jsemact.h"
 #include "filedescriptor.h"
 

@@ -1,7 +1,7 @@
 #include "html.h"
 
 #include "commons.h"
-#include "classh.h"
+#include "classhierarchy.h"
 #include "misc.h"
 #include "globals.h"
 #include "caching.h"
