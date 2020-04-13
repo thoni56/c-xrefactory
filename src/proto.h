@@ -467,29 +467,7 @@ enum refsFilterLevels {
     MAX_REF_LIST_FILTER_LEVEL,
 };
 
-typedef enum storage {
-    // standard C storage modes
-    StorageError,
-    StorageAuto,
-    StorageGlobal,			/* not used anymore, backward compatibility */
-    StorageDefault,
-    StorageExtern,
-    StorageConstant,		/* enumerator definition */
-    StorageStatic,
-    StorageThreadLocal,
-    StorageTypedef,
-    StorageMutable,
-    StorageRegister,
-    // some "artificial" Java storages
-    StorageConstructor,		/* storage for class constructors */
-    StorageField,			/* storage for class fields */
-    StorageMethod,			/* storage for class methods */
-    //
-    StorageNone,
-    MAX_STORAGE,
-    /* If this becomes greater than 32 increase STORAGES_LN !!!!!!!! */
-} Storage;
-
+#include "storage.h"
 #include "types.h"
 
 enum javaPCTIndex {		/* java Primitive Conversion Table Indexes */

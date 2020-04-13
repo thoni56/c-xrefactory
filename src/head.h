@@ -46,7 +46,6 @@ typedef enum language {
 
 /* *********************************************************************** */
 
-#define STORAGES_LN 5		/* logarithm of MAX_STORAGE */
 #define SYMTYPES_LN 7
 #define SCOPES_LN 3
 
