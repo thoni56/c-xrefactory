@@ -240,8 +240,8 @@ void ppMemInit(void) {
     ppMemoryi = 0;
 }
 
-// it is supposed that one of ff or buffer is NULL
-void initInput(FILE *ff, S_editorBuffer *buffer, char *prefix, char *fileName) {
+// it is supposed that one of file or buffer is NULL
+void initInput(FILE *file, S_editorBuffer *buffer, char *prefix, char *fileName) {
     int     prefixLength, bufferSize, offset;
     char	*bufferStart;
 
@@ -262,7 +262,7 @@ void initInput(FILE *ff, S_editorBuffer *buffer, char *prefix, char *fileName) {
         bufferSize = prefixLength;
         offset = 0;
     }
-    fillFileDescriptor(&cFile, fileName, bufferStart, bufferSize, ff, offset);
+    fillFileDescriptor(&cFile, fileName, bufferStart, bufferSize, file, offset);
     setOpenFileInfo(fileName);
     SetCInputConsistency();
     s_ifEvaluation = 0;				/* ??? */

@@ -37,7 +37,7 @@ extern void fillLexInput(S_lexInput *lexInput, char *currentLexem, char *endOfBu
                          char *beginningOfBuffer, char *macroName, char margExpFlag);
 extern void ppMemInit(void);
 extern void initAllInputs(void);
-extern void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name);
+extern void initInput(FILE *file, S_editorBuffer *buffer, char *prepend, char *name);
 extern void addIncludeReference(int filenum, S_position *pos);
 extern void addThisFileDefineIncludeReference(int filenum);
 extern void pushNewInclude(FILE *f, S_editorBuffer *buff, char *name, char *prepend);
