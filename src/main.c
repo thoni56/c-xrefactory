@@ -2159,12 +2159,13 @@ static int getLineFromFile(FILE *ff, char *tt, int ttsize, int *outI) {
     return(res);
 }
 
-static void getAndProcessGccOptions(void) {
+static void getAndProcessBuiltinIncludePaths(void) {
     char line[MAX_OPTION_LEN];
-    int len, isActiveSect;
+    int len;
     char *tempfile_name, *lang;
     FILE *tempfile;
     struct stat stt;
+
     if (LANGUAGE(LANG_C) || LANGUAGE(LANG_YACC)) {
         lang = "c";
     }
@@ -2174,30 +2175,27 @@ static void getAndProcessGccOptions(void) {
     else {
         return;
     }
-    isActiveSect = 0;
     tempfile_name = create_temporary_filename();
     assert(strlen(tempfile_name)+1 < MAX_FILE_NAME_SIZE);
+
+    /* Ensure output is in C locale */
     sprintf(tmpBuff, "LANG=C gcc -v -x %s -o /dev/null /dev/null >%s 2>&1", lang, tempfile_name);
 
-    int result = system(tmpBuff);
-    UNUSED result;
+    (void)system(tmpBuff);
 
-    tempfile = fopen(tempfile_name,"r");
+    tempfile = fopen(tempfile_name, "r");
     if (tempfile==NULL) return;
     while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF) {
-        if (strncmp(line,"#include <...> search starts here:",34)==0) {
-            isActiveSect = 1;
-        }
-        else if (strncmp(line,"End of search list.",19)==0) {
-            isActiveSect = 0;
+        if (strncmp(line,"#include <...> search starts here:",34)==0)
             break;
-        }
-        else if (isActiveSect
-                 && statb(line,&stt) == 0
-                 && (stt.st_mode & S_IFMT) == S_IFDIR) {
-            mainAddStringListOption(&s_opt.includeDirs, line);
-        }
     }
+    do {
+        if (strncmp(line, "End of search list.", 19) == 0)
+            break;
+        if (statb(line,&stt) == 0 && (stt.st_mode & S_IFMT) == S_IFDIR)
+            mainAddStringListOption(&s_opt.includeDirs, line);
+    } while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF);
+
     fclose(tempfile);
     removeFile(tempfile_name);
 }
@@ -2327,7 +2325,7 @@ static void mainFileProcessingInitialisations(
         tmpIncludeDirs = s_opt.includeDirs;
         s_opt.includeDirs = NULL;
         getAndProcessXrefrcOptions(dffname, dffsect, dffsect);
-        getAndProcessGccOptions();
+        getAndProcessBuiltinIncludePaths();
         LIST_APPEND(S_stringList, s_opt.includeDirs, tmpIncludeDirs);
         if (s_opt.taskRegime != RegimeEditServer && s_input_file_name == NULL) {
             *outInputIn = 0;
