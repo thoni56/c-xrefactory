@@ -29,10 +29,6 @@
 /* Needed: */
 S_fileTab s_fileTab;
 
-/* Hacks to resolve unresolved symbols... */
-#include "c_parser.tab.h"
-YYSTYPE cyylval;
-
 
 Describe(CxRef);
 BeforeEach(CxRef) {}

@@ -3,7 +3,19 @@
 
 #include "../globals.h"
 
+#define LAST_TOKEN 456          /* To not have to include parsers.h */
+char *s_tokenName[LAST_TOKEN];
+
 char mbMemory[SIZE_mbMemory];
+int mbMemoryi=0;
+char ppmMemory[SIZE_ppmMemory];
+int ppmMemoryi=0;
+char ftMemory[SIZE_ftMemory];
+int ftMemoryi = 0;
+int olcxMemoryAllocatedBytes;
+jmp_buf cxmemOverflow;
+jmp_buf s_memoryResize;
+
 S_currentlyParsedCl s_cp;
 S_currentlyParsedCl s_cpInit;
 S_currentlyParsedStatics s_cps;
@@ -12,29 +24,33 @@ S_topBlock *s_topBlock;
 int s_currCppPass;
 int s_maximalCppPass;
 char s_defaultClassPath[] = ".";
-int ppmMemoryi=0;
 char s_base[MAX_FILE_NAME_SIZE];
+
+
+FILE *fIn;
+FILE *cxOut;
+FILE *ccOut;
 FILE *dumpOut = NULL;
+z_stream s_defaultZStream = {NULL,};
+
+char *yytext;
+
 struct stat s_noStat;
 S_usageBits s_noUsage;
 S_fileTab s_fileTab;
-int olcxMemoryAllocatedBytes;
 char s_olSymbolType[COMPLETION_STRING_SIZE];
-FILE *cxOut;
 Language s_language;
 S_completions s_completions;
 int s_input_file_number;
-Symbol *s_javaObjectSymbol;
-char ftMemory[SIZE_ftMemory];
 char s_olSymbolClassType[COMPLETION_STRING_SIZE];
 time_t s_fileProcessStartTime;
 S_currentlyParsedStatics s_cps;
 S_options s_ropt;
 int s_currCppPass;
 S_position s_paramPosition;
+char s_olstring[MAX_FUN_NAME_SIZE];
+S_typeModifier *s_upLevelFunctionCompletionType;
 S_position s_cxRefPos;
-int ftMemoryi;
-jmp_buf s_memoryResize;
 S_position s_primaryStartPosition;
 char s_cwd[MAX_FILE_NAME_SIZE];
 char tmpBuff[TMP_BUFF_SIZE];
@@ -48,12 +64,13 @@ int s_olstringUsage;
 int s_noneFileIndex = -1;
 int s_olOriginalComFileNumber;
 bool s_wildcardSearch;
-int s_javaPreScanOnly;
 int s_refListFilters[MAX_REF_LIST_FILTER_LEVEL];
-jmp_buf cxmemOverflow;
-z_stream s_defaultZStream = {NULL,};
-FILE *ccOut;
 int s_olstringServed;
 S_position s_olcxByPassPos;
 int s_olMacro2PassFile;
-FILE *fIn;
+
+char *s_javaThisPackageName = "";
+int s_javaPreScanOnly;
+char *s_javaSourcePaths;
+S_stringList *s_javaClassPaths;
+Symbol *s_javaObjectSymbol;
