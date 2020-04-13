@@ -207,15 +207,6 @@ enum addImportsDefault {
     NID_KEPP_FQT_NAME,
 };
 
-/* *******************      parsing deep      *************** */
-
-enum {
-    PD_ZERO,
-    PD_SHALLOW,
-    PD_DEEP,
-    PD_DEEPEST,
-};
-
 /* *******************      refactoring continuations      *************** */
 
 enum {
