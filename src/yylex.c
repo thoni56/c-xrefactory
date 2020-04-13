@@ -687,8 +687,8 @@ static S_macroBody *newMacroBody(int msize, int argi, char *name, char *body, ch
     return macroBody;
 }
 
-
-static void processDefine(bool argFlag) {
+/* Make public only for unittesting */
+void processDefine(bool argFlag) {
     int lex, l, h, v;
     bool bodyReadingFlag = false;
     int sizei, foundIndex, msize, argCount, ellipsis, len;

@@ -25,6 +25,9 @@
 #include "semact.mock"
 #include "java_parser.mock"
 #include "cxref.mock"
+#include "extract.mock"
+#include "c_parser.mock"
+#include "yacc_parser.mock"
 
 
 Describe(Yylex);
