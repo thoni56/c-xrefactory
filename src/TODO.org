@@ -46,7 +46,9 @@ newSymbol<field>() for each of the necessary fields that are actually used.
 * DOING Handle struct literals ("(type){.field = data, ...}")
 ** DONE Create test case
 ** DOING Create AST using parsing
-* DOING Start using log.c functions to log to a separate log file
+* DOING Re-work standard options, since reading included files may
+depend on them. Think about calling compiler to get defines, much
+like generation of "compiler_defines.g.h" was done.
 * TODO Refactor int2StringTabs, should not have Init in them
 * TODO Rename classh to hierarchy
 * TODO Initialize memory's injected error functions in main.c
@@ -126,7 +128,7 @@ easier to mock and unit test other modules.
   better name, such as 'generated_enum_strings.h').
   ACTUALLY: split generation of enumTxt header to its own header file
   with the naming strategy as for the others.
-
+* DOING Start using log.c functions to log to a separate log file
 * DONE make memory.c (linkage) independent on all other modules
 One way to do this to inject the remaining, problematic, dependencies
 such as internalCheckFail(), removeFromTrailUntil() and fatalError()
