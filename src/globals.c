@@ -209,7 +209,6 @@ int s_input_file_number = -1;
 int s_olStringSecondProcessing=0;
 int s_olOriginalFileNumber = -1;
 int s_olOriginalComFileNumber = -1;
-int s_noneFileIndex = -1;
 time_t s_expiration;
 
 S_typeModifier s_defaultIntModifier;

@@ -36,8 +36,6 @@
 
 #include "protocol.h"
 
-#define NON_FILE_NAME "___None___"
-
 static char oldStdopFile[MAX_FILE_NAME_SIZE];
 static char oldStdopSection[MAX_FILE_NAME_SIZE];
 static char oldOnLineClassPath[MAX_OPTION_LEN];
@@ -2015,24 +2013,6 @@ static void initializationsPerInvocation(void) {
     s_javaObjectSymbol = NULL;
 }
 
-static void initFileTab(void) {
-    int len;
-    char *ff;
-    struct fileItem *ffii;
-
-    fileTabNoAllocInit(&s_fileTab, MAX_FILES);
-
-    /* Create a "NON_FILE" in FT memory */
-    len = strlen(NON_FILE_NAME);
-    FT_ALLOCC(ff, len+1, char);
-    strcpy(ff, NON_FILE_NAME);
-    FT_ALLOC(ffii, S_fileItem);
-    fillFileItem(ffii, ff, false);
-
-    /* Add it to the fileTab and remember its index for future use */
-    s_noneFileIndex = fileTabAdd(&s_fileTab, ffii);
-}
-
 /*///////////////////////// parsing /////////////////////////////////// */
 static void mainParseInputFile(void) {
     if (s_language == LANG_JAVA) {
@@ -2450,7 +2430,7 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
     s_opt.includeDirs = NULL;
     SM_INIT(ftMemory);
     FT_ALLOCC(s_fileTab.tab, MAX_FILES, struct fileItem *);
-    initFileTab();
+    initFileTab(&s_fileTab);
     fillPosition(&s_noPos, s_noneFileIndex, 0, 0);
     fill_usageBits(&s_noUsage, UsageNone, 0);
     fill_reference(&s_noRef, s_noUsage, s_noPos, NULL);
