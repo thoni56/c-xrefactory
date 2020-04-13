@@ -265,7 +265,7 @@ void initInput(FILE *file, S_editorBuffer *buffer, char *prefix, char *fileName)
     fillFileDescriptor(&cFile, fileName, bufferStart, bufferSize, file, offset);
     setOpenFileInfo(fileName);
     SetCInputConsistency();
-    s_ifEvaluation = 0;				/* ??? */
+    s_ifEvaluation = false;				/* ??? */
 
     /*	while (yylex());	exit(0); */
 
@@ -861,7 +861,7 @@ void addMacroDefinedByOption(char *opt) {
     } else if (*cc=='(') {
         args = true;
     }
-    initInput(NULL, NULL,nopt,NULL);
+    initInput(NULL, NULL, nopt, NULL);
     cFile.lineNumber = 1;
     processDefine(args);
 }
