@@ -36,7 +36,7 @@ AfterEach(Yylex) {}
 
 
 Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {
-    initInput(NULL, NULL, "#define __x86_64__", NULL);
+    initInput(NULL, NULL, "__x86_64__", NULL);
     cFile.lineNumber = 1;
     processDefine(false);
 }
