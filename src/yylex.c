@@ -934,7 +934,7 @@ static void genCppIfElseReference(int level, S_position *pos, int usage) {
     }
 }
 
-static int cppDeleteUntilEndElse(int untilEnd) {
+static int cppDeleteUntilEndElse(bool untilEnd) {
     int lex,l,h,v,len;
     int deep;
     S_position pos;
@@ -976,7 +976,7 @@ static void execCppIf(int deleteSource) {
     int onElse;
     if (deleteSource==0) cFile.ifDeep ++;
     else {
-        onElse = cppDeleteUntilEndElse(0);
+        onElse = cppDeleteUntilEndElse(false);
         if (onElse==UNTIL_ELSE) {
             /* #if #else */
             cFile.ifDeep ++;
@@ -984,7 +984,7 @@ static void execCppIf(int deleteSource) {
     }
 }
 
-static void processIfdef(int isIfdef) {
+static void processIfdef(bool isIfdef) {
     int lex,l,h,v;
     int ii,mm,len;
     Symbol pp,*memb;
@@ -1141,7 +1141,7 @@ static int processCppConstruct(int lex) {
     S_position pos;
 
     PassLex(cInput.currentLexem,lex,l,v,h,pos, len,1);
-/*	if (s_opt.debug) fprintf(dumpOut,"%s ",s_tokenName[lex]); */
+    log_debug("processing cpp-construct '%s' ", s_tokenName[lex]);
     switch (lex) {
     case CPP_INCLUDE:
         processInclude(&pos);
@@ -1160,11 +1160,11 @@ static int processCppConstruct(int lex) {
         break;
     case CPP_IFDEF:
         genCppIfElseReference(1, &pos, UsageDefined);
-        processIfdef(1);
+        processIfdef(true);
         break;
     case CPP_IFNDEF:
         genCppIfElseReference(1, &pos, UsageDefined);
-        processIfdef(0);
+        processIfdef(false);
         break;
     case CPP_IF:
         genCppIfElseReference(1, &pos, UsageDefined);
@@ -1175,7 +1175,7 @@ static int processCppConstruct(int lex) {
         if (cFile.ifDeep) {
             genCppIfElseReference(0, &pos, UsageUsed);
             cFile.ifDeep --;
-            cppDeleteUntilEndElse(1);
+            cppDeleteUntilEndElse(true);
         } else if (s_opt.taskRegime!=RegimeEditServer) {
             warning(ERR_ST,"unmatched #elif");
         }
@@ -1185,7 +1185,7 @@ static int processCppConstruct(int lex) {
         if (cFile.ifDeep) {
             genCppIfElseReference(0, &pos, UsageUsed);
             cFile.ifDeep --;
-            cppDeleteUntilEndElse(1);
+            cppDeleteUntilEndElse(true);
         } else if (s_opt.taskRegime!=RegimeEditServer) {
             warning(ERR_ST,"unmatched #else");
         }
