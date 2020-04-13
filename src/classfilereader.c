@@ -1046,7 +1046,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     S_position pos;
 
     ENTER();
-    memb->bits.javaFileLoaded = 1;
+    memb->bits.javaFileIsLoaded = 1;
     /*&
       fprintf(dumpOut,": ppmmem == %d/%d\n",ppmMemoryi,SIZE_ppmMemory);
       fprintf(dumpOut,":reading file %s arg class == %s == %s\n",

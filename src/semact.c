@@ -1041,7 +1041,7 @@ void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
     for(dd=rec; dd!=NULL; dd=dd->next) {
         if (dd->name!=NULL) {
             dd->linkName = string3ConcatInStackMem(sd->linkName,".",dd->name);
-            dd->bits.record = 1;
+            dd->bits.isRecord = 1;
             if (    LANGUAGE(LANG_CCC) && dd->bits.symType==TypeDefault
                     &&  dd->u.type->kind==TypeFunction) {
                 dd->u.type->u.f.thisFunList = &sd->u.s->records;

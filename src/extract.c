@@ -110,7 +110,7 @@ void genContinueBreakReference(char *name) {
     fillSymbolBits(&ss.bits, ACCESS_DEFAULT, TypeLabel, StorageAuto);
 
     if (symbolTableIsMember(s_symbolTable, &ss, &ii, &memb)) {
-        genInternalLabelReference(memb->u.labn, UsageUsed);
+        genInternalLabelReference(memb->u.labelIndex, UsageUsed);
     }
 }
 
@@ -123,10 +123,10 @@ void genSwitchCaseFork(int lastFlag) {
     fillSymbolWithLabel(&ss, SWITCH_LABEL_NAME, SWITCH_LABEL_NAME, s_noPos, 0);
     fillSymbolBits(&ss.bits, ACCESS_DEFAULT, TypeLabel, StorageAuto);
     if (symbolTableIsMember(s_symbolTable, &ss, &ii, &memb)) {
-        genInternalLabelReference(memb->u.labn, UsageDefined);
+        genInternalLabelReference(memb->u.labelIndex, UsageDefined);
         if (! lastFlag) {
-            memb->u.labn++;
-            genInternalLabelReference(memb->u.labn, UsageFork);
+            memb->u.labelIndex++;
+            genInternalLabelReference(memb->u.labelIndex, UsageFork);
         }
     }
 }

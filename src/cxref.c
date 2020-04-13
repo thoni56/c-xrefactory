@@ -777,7 +777,7 @@ S_reference * addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *usageb,
         if (s_opt.no_ref_macro) return NULL;
     }
     if (p->bits.symType==TypeDefault) {
-        if (p->bits.record && s_opt.no_ref_records) return NULL;
+        if (p->bits.isRecord && s_opt.no_ref_records) return NULL;
     }
 
     getSymbolCxrefCategories( p, &category, &scope, &storage);

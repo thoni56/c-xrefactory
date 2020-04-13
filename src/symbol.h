@@ -13,16 +13,16 @@
 /*              symbol definition item in symbol table                */
 
 typedef struct symbolBits {
-    unsigned			record			: 1;  /* whether struct record */
-    unsigned			isSingleImported: 1;  /* whether not imported by * import */
-    unsigned			accessFlags		: 12; /* java access bits */
-    unsigned			javaSourceLoaded: 1;  /* is jsl source file loaded ? */
-    unsigned			javaFileLoaded	: 1;  /* is class file loaded ? */
+    bool			isRecord			: 1;  /* whether struct record */
+    bool			isExplicitlyImported: 1;  /* whether not imported by * import */
+    unsigned		accessFlags			: 12; /* java access bits */
+    bool			javaSourceIsLoaded	: 1;  /* is jsl source file loaded ? */
+    bool			javaFileIsLoaded		: 1;  /* is class file loaded ? */
 
-    enum type			symType			: SYMTYPES_LN;
+    enum type		symType				: SYMTYPES_LN;
     /* can be Default/Struct/Union/Enum/Label/Keyword/Macro/Package */
-    enum storage		storage			: STORAGES_LN;
-    unsigned			npointers		: 4; /*tmp. stored #of dcl. ptrs*/
+    enum storage	storage				: STORAGES_LN;
+    unsigned		npointers			: 4; /*tmp. stored #of dcl. ptrs*/
 } S_symbolBits;
 
 typedef struct symbol {
@@ -32,15 +32,15 @@ typedef struct symbol {
                                               import position for imported classes!
                                             */
     struct symbolBits bits;
-    union defUnion {
+    union {
         struct typeModifier		*type;		/* if symType == TypeDefault */
         struct symStructSpec	*s;			/* if symType == Struct/Union */
-        struct symbolList			*enums;		/* if symType == Enum */
-        struct macroBody			*mbody;     /* if symType == Macro ! can be NULL! */
-        int							labn;		/* break/continue label index */
-        int							keyWordVal; /* if symType == Keyword */
+        struct symbolList		*enums;		/* if symType == Enum */
+        struct macroBody		*mbody;     /* if symType == Macro ! can be NULL! */
+        int						labelIndex;	/* break/continue label index */
+        int						keyWordVal; /* if symType == Keyword */
     } u;
-    struct symbol                   *next;	/* next table item with the same hash */
+    struct symbol               *next;      /* next table item with the same hash */
 } Symbol;
 
 typedef struct symbolList {

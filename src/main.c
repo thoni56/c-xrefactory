@@ -756,7 +756,10 @@ static int processHOption(int *ii, int argc, char **argv) {
 
 static void mainAddStringListOption(S_stringList **optlist, char *argvi) {
     S_stringList **ll;
-    for(ll=optlist; *ll!=NULL; ll= &(*ll)->next) ;
+    for(ll=optlist; *ll!=NULL; ll= &(*ll)->next)
+        ;
+
+    /* TODO refactor out to newOptionString()? */
     allocOptionSpace((void**)ll, sizeof(S_stringList));
     createOptionString(&(*ll)->d, argvi);
     (*ll)->next = NULL;

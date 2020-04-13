@@ -31,7 +31,7 @@ void fillSymbolWithStruct(Symbol *symbol, char *name, char *linkName, struct pos
 
 void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName, struct position pos, int labelIndex) {
     fillSymbol(symbol, name, linkName, pos);
-    symbol->u.labn = labelIndex;
+    symbol->u.labelIndex = labelIndex;
 }
 
 Symbol *newSymbol(char *name, char *linkName, struct position pos) {
@@ -63,6 +63,6 @@ Symbol *newSymbolAsEnum(char *name, char *linkName, struct position pos, struct 
 
 Symbol *newSymbolAsLabel(char *name, char *linkName, struct position pos, int labelIndex) {
     Symbol *s = newSymbol(name, linkName, pos);
-    s->u.labn = labelIndex;
+    s->u.labelIndex = labelIndex;
     return s;
 }

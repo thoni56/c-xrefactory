@@ -584,12 +584,12 @@ Symbol *javaGetFieldClass(char *fieldLinkName, char **fieldAdr) {
 }
 
 // I think that s_symTab should contain symbollist, not symbols!
-static Symbol *javaAddTypeToSymbolTable(Symbol *memb, int accessFlags, S_position *importPos, int isSingleImported) {
+static Symbol *javaAddTypeToSymbolTable(Symbol *memb, int accessFlags, S_position *importPos, bool isExplicitlyImported) {
     Symbol *nmemb;
     //&Symbol *memb2;
 
     memb->bits.accessFlags = accessFlags;
-    memb->bits.isSingleImported = isSingleImported;
+    memb->bits.isExplicitlyImported = isExplicitlyImported;
     //&if (symbolTableIsMember(s_symbolTable, memb, &ii, &memb2)) {
     //&	while (memb2!=NULL && strcmp(memb->linkName, memb2->linkName)!=0) {
     //&		symbolTableNextMember(memb, &memb2);
@@ -620,7 +620,7 @@ Symbol *javaTypeSymbolDefinition(S_idList *tname,
     javaCreateComposedName(NULL,tname,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
     memb = javaFQTypeSymbolDefinition(tname->id.name, fqtName);
     if (addTyp == TYPE_ADD_YES) {
-        memb = javaAddTypeToSymbolTable(memb, accessFlags, &s_noPos, 0);
+        memb = javaAddTypeToSymbolTable(memb, accessFlags, &s_noPos, false);
     }
     return(memb);
 }
@@ -789,11 +789,11 @@ static void addJavaFileDependency(int file, char *onfile) {
 static void javaHackCopySourceLoadedCopyPars(Symbol *memb) {
     Symbol *cl;
     cl = javaFQTypeSymbolDefinition(memb->name, memb->linkName);
-    if (cl->bits.javaSourceLoaded) {
+    if (cl->bits.javaSourceIsLoaded) {
         memb->bits.accessFlags = cl->bits.accessFlags;
         memb->bits.storage = cl->bits.storage;
         memb->bits.symType = cl->bits.symType;
-        memb->bits.javaSourceLoaded = cl->bits.javaSourceLoaded;
+        memb->bits.javaSourceIsLoaded = cl->bits.javaSourceIsLoaded;
     }
 }
 
@@ -804,11 +804,11 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
     if (memb == NULL) return;
 //&fprintf(dumpOut,"!requesting class (%d)%s\n", memb, memb->linkName);
     sname = cname = "";
-    if (memb->bits.javaFileLoaded == 0) {
-        memb->bits.javaFileLoaded = 1;
+    if (memb->bits.javaFileIsLoaded == 0) {
+        memb->bits.javaFileIsLoaded = 1;
         // following is a hack due to multiple items in symbol tab !!!
         cl = javaFQTypeSymbolDefinition(memb->name, memb->linkName);
-        if (cl!=NULL && cl!=memb) cl->bits.javaFileLoaded = 1;
+        if (cl!=NULL && cl!=memb) cl->bits.javaFileIsLoaded = 1;
         cInd = javaCreateClassFileItem(memb);
         addCfClassTreeHierarchyRef(cInd, UsageClassFileDefinition);
         ffound = javaFindFile(memb, &sname, &cname);
@@ -826,7 +826,7 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
                 // (moved inner class) retry searching for class file
                 ffound = javaFindFile(memb, &sname, &cname);
             }
-            if (memb->bits.javaSourceLoaded == 0){
+            if (memb->bits.javaSourceIsLoaded == 0){
                 // HACK, probably loaded into another possition of symboltab, make copy
                 javaHackCopySourceLoadedCopyPars(memb);
             }
@@ -1052,7 +1052,7 @@ int javaClassifySingleAmbigNameToTypeOrPack(S_idList *name,
                         javaLoadClassSymbolsFromFile(mm);
                         if (javaOuterClassAccessible(mm)) {
                             // multiple imports
-                            if ((*str)->bits.isSingleImported == mm->bits.isSingleImported) {
+                            if ((*str)->bits.isExplicitlyImported == mm->bits.isExplicitlyImported) {
                                 assert(strcmp((*str)->linkName, mm->linkName)!=0);
                                 haveit = false;
                                 // this is tricky, mark the import as used
@@ -2300,7 +2300,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationS(S_id *super, S_id *name) {
     ss = javaCurrentSuperClass();
     if (ss == &s_errorSymbol || ss->bits.symType==TypeError) return(NULL);
     assert(ss && ss->bits.symType == TypeStruct);
-    assert(ss->bits.javaFileLoaded);
+    assert(ss->bits.javaFileIsLoaded);
     XX_ALLOC(erfs, S_extRecFindStr);
     erfs->params = NULL;
 /*	I do not know, once will come the day I will know
@@ -2337,7 +2337,7 @@ S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas,
     javaLoadClassSymbolsFromFile(clas);
     XX_ALLOC(erfs, S_extRecFindStr);
     erfs->params = NULL;
-    assert(clas->bits.javaFileLoaded);
+    assert(clas->bits.javaFileIsLoaded);
     rr = findStrRecordSym(iniFind(clas, &erfs->s), clas->name, &erfs->memb,
                         CLASS_TO_METHOD,ACC_CHECK_NO,VISIB_CHECK_NO);
     if (rr != RETURN_OK) return(NULL);
@@ -2503,7 +2503,7 @@ void javaAddJslReadedTopLevelClasses(S_jslTypeTab  *jslTypeTab) {
         if (jslTypeTab->tab[i]!=NULL) {
             LIST_REVERSE(JslSymbolList, jslTypeTab->tab[i]);
             for(ss=jslTypeTab->tab[i]; ss!=NULL; ss=ss->next) {
-                javaAddTypeToSymbolTable(ss->d, ss->d->bits.accessFlags, &ss->pos, ss->isSingleImportedFlag);
+                javaAddTypeToSymbolTable(ss->d, ss->d->bits.accessFlags, &ss->pos, ss->isExplicitlyImported);
             }
             LIST_REVERSE(JslSymbolList, jslTypeTab->tab[i]);
         }
@@ -2519,7 +2519,7 @@ static void javaAddNestedClassToSymbolTab( Symbol *str ) {
     assert(ss);
     for(i=0; i<ss->nestedCount; i++) {
         if (ss->nest[i].membFlag && javaRecordAccessible(NULL,str, str, ss->nest[i].cl, ss->nest[i].accFlags)) {
-            javaAddTypeToSymbolTable(ss->nest[i].cl, ss->nest[i].cl->bits.accessFlags, &s_noPos, 0);
+            javaAddTypeToSymbolTable(ss->nest[i].cl, ss->nest[i].cl->bits.accessFlags, &s_noPos, false);
         }
     }
 }

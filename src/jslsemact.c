@@ -50,10 +50,10 @@ void fillJslStat(S_jslStat *jslStat, int pass, int sourceFileNumber, int languag
 }
 
 static void fillJslSymbolList(JslSymbolList *jslSymbolList, struct symbol *d,
-                               struct position pos, bool isSingleImportedFlag) {
+                              struct position pos, bool isExplicitlyImported) {
     jslSymbolList->d = d;
     jslSymbolList->pos = pos;
-    jslSymbolList->isSingleImportedFlag = isSingleImportedFlag;
+    jslSymbolList->isExplicitlyImported = isExplicitlyImported;
     jslSymbolList->next = NULL;
 }
 
@@ -129,7 +129,7 @@ static void jslRemoveNestedClass(void  *ddv) {
 }
 
 Symbol *jslTypeSymbolDefinition(char *ttt2, S_idList *packid,
-                                int add, int order, bool isSingleImportedFlag) {
+                                int add, int order, bool isExplicitlyImported) {
     char fqtName[MAX_FILE_NAME_SIZE];
     S_idList dd2;
     int ii;
@@ -148,7 +148,7 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, S_idList *packid,
         if (packid!=NULL) importPos = &packid->id.p;
         else importPos = &s_noPos;
         XX_ALLOC(xss, JslSymbolList); // CF_ALLOC ???
-        fillJslSymbolList(xss, smemb, *importPos, isSingleImportedFlag);
+        fillJslSymbolList(xss, smemb, *importPos, isExplicitlyImported);
         mm = jslTypeTabIsMember(s_jsl->typeTab, xss, &ii, &memb);
         if (order == ORDER_PREPEND) {
             log_debug("[jsl] prepending class %s to jsltab", smemb->name);
@@ -613,8 +613,8 @@ void jslNewClassDefinitionBegin(S_id *name,
                           s_jsl->classStat);
     s_jsl->classStat = nss;
     javaCreateClassFileItem(cc);
-    cc->bits.javaFileLoaded = 1;
-    cc->bits.javaSourceLoaded = 1;
+    cc->bits.javaFileIsLoaded = 1;
+    cc->bits.javaSourceIsLoaded = 1;
     if (anonInterf!=NULL && s_jsl->pass==2) {
         /* anonymous implementing an interface, one more time */
         /* now put there object as superclass and its interface */

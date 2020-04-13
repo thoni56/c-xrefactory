@@ -508,8 +508,9 @@ void addSubClassesItemsToFileTab(Symbol *ss, int origin) {
 
     if (ss->bits.symType != TypeStruct) return;
     /*fprintf(dumpOut,"testing %s\n",ss->name);*/
-    assert(ss->bits.javaFileLoaded);
-    if (ss->bits.javaFileLoaded == 0) return;
+    assert(ss->bits.javaFileIsLoaded);
+    if (!ss->bits.javaFileIsLoaded)
+        return;
     cf1 = ss->u.s->classFile;
     assert(cf1 >= 0 &&  cf1 < MAX_FILES);
     /*fprintf(dumpOut,"loaded: #sups == %d\n",ns);*/
