@@ -550,7 +550,8 @@ static int processDOption(int *ii, int argc, char **argv) {
     }
     // TODO, do this macro allocation differently!!!!!!!!!!!!!
     // just store macros in options and later add them into pp_memory
-    else if (strncmp(argv[i],"-D",2)==0) addMacroDefinedByOption(argv[i]+2);
+    else if (strncmp(argv[i],"-D",2)==0)
+        addMacroDefinedByOption(argv[i]+2);
     else if (strcmp(argv[i],"-displaynestedwithouters")==0) {
         s_opt.nestedClassDisplaying = NO_OUTERS_CUT;
     }
