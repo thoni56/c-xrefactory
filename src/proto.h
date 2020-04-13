@@ -383,6 +383,7 @@ enum refScopes {
 
 // !!!!!!!!!!!!! All this stuff is to be removed, new way of defining usages
 // !!!!!!!!!!!!! is to set various bits in usg structure
+/* TODO: well, they are still used, so there must be more to this... */
 
 enum usages {
 // filter3  == all filters
