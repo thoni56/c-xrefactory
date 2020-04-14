@@ -1,7 +1,6 @@
 #include <cgreen/cgreen.h>
 
-/* From globals.c */
-#include "filetab.h"
+#include "filetab.mock"
 
 S_fileTab s_fileTab;
 S_id s_javaAnonymousClassName = {"{Anonymous}", NULL, {-1,0,0}};
