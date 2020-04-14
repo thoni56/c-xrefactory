@@ -246,13 +246,6 @@ void renameCollationSymbols(S_olSymbolsMenu *sss) {
 */
 
 
-void setIntToZero(void *p) {
-    int *pp;
-    pp = (int *) p;
-    *pp = 0;
-}
-
-
 S_reference **addToRefList(S_reference **list,
                            S_usageBits *pusage,
                            S_position *pos,

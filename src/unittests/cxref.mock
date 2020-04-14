@@ -130,10 +130,6 @@ int htmlJdkDocAvailableForUrl(char *ss) {
     return (int) mock(ss);
 }
 
-void setIntToZero(void *p) {
-    mock(p);
-}
-
 S_reference *duplicateReference(S_reference *r) {
     return (S_reference *) mock(r);
 }

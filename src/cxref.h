@@ -51,7 +51,6 @@ extern char *getJavaDocUrl_st(S_symbolRefItem *rr);
 extern char *getLocalJavaDocFile_st(char *fileUrl);
 extern char *getFullUrlOfJavaDoc_st(char *fileUrl);
 extern int htmlJdkDocAvailableForUrl(char *ss);
-extern void setIntToZero(void *p);
 extern S_reference *duplicateReference(S_reference *r);
 extern S_reference * addCxReferenceNew(Symbol *p, S_position *pos,
                                        S_usageBits *ub, int vFunCl, int vApplCl);
