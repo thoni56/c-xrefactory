@@ -70,7 +70,7 @@ S_lexInput cInput;
     cFile.lexBuffer.next = cInput.currentLexem;\
 }
 #define SetCInputConsistency() {\
-    fillLexInput(&cInput,cFile.lexBuffer.next,cFile.lexBuffer.end,cFile.lexBuffer.chars,NULL,II_NORMAL);\
+    fillLexInput(&cInput,cFile.lexBuffer.next,cFile.lexBuffer.end,cFile.lexBuffer.chars,NULL,INPUT_NORMAL);\
 }
 
 #define IS_IDENTIFIER_LEXEM(lex) (lex==IDENTIFIER || lex==IDENT_NO_CPP_EXPAND  || lex==IDENT_TO_COMPLETE)
@@ -106,7 +106,7 @@ static void fillMacroArgTabElem(S_macroArgumentTableElement *macroArgTabElem, ch
 }
 
 void fillLexInput(S_lexInput *lexInput, char *currentLexem, char *endOfBuffer,
-                  char *beginningOfBuffer, char *macroName, char margExpFlag) {
+                  char *beginningOfBuffer, char *macroName, InputType margExpFlag) {
     lexInput->currentLexem = currentLexem;
     lexInput->endOfBuffer = endOfBuffer;
     lexInput->beginningOfBuffer = beginningOfBuffer;
@@ -332,18 +332,18 @@ void initInput(FILE *file, S_editorBuffer *buffer, char *prefix, char *fileName)
         macStack[macroStackIndex++] = cInput;         \
         cInput = macInput;                      \
         cInput.currentLexem = cInput.beginningOfBuffer;                   \
-        cInput.margExpFlag = II_MACRO;          \
+        cInput.margExpFlag = INPUT_MACRO;          \
     }
 
 #define GetLexA(lex,lastlexadd) {                                   \
         while (cInput.currentLexem >= cInput.endOfBuffer) {                           \
-            char margFlag;                                          \
+            InputType margFlag;                                          \
             margFlag = cInput.margExpFlag;                          \
             if (macroStackIndex > 0) {                                    \
-                if (margFlag == II_MACRO_ARG) goto endOfMacArg;     \
+                if (margFlag == INPUT_MACRO_ARGUMENT) goto endOfMacArg;     \
                 MB_FREE_UNTIL(cInput.beginningOfBuffer);                            \
                 cInput = macStack[--macroStackIndex];                     \
-            } else if (margFlag == II_NORMAL) {                     \
+            } else if (margFlag == INPUT_NORMAL) {                     \
                 SetCFileConsistency();                              \
                 getLexBuf(&cFile.lexBuffer);                               \
                 if (cFile.lexBuffer.next >= cFile.lexBuffer.end) goto endOfFile;    \
@@ -470,7 +470,7 @@ static void addIncludeReferences(int filenum, S_position *pos) {
 }
 
 void pushNewInclude(FILE *f, S_editorBuffer *buffer, char *name, char *prepend) {
-    if (cInput.margExpFlag == II_CACHE) {
+    if (cInput.margExpFlag == INPUT_CACHE) {
         SetCacheConsistency();
     } else {
         SetCFileConsistency();
@@ -493,7 +493,7 @@ void popInclude(void) {
     if (inStacki != 0) {
         cFile = inStack[--inStacki];	/* buffers are copied !!!!!!, burk */
         if (inStacki == 0 && s_cache.cc!=NULL) {
-            fillLexInput(&cInput, s_cache.cc, s_cache.cfin, s_cache.lb, NULL, II_CACHE);
+            fillLexInput(&cInput, s_cache.cc, s_cache.cfin, s_cache.lb, NULL, INPUT_CACHE);
         } else {
             SetCInputConsistency();
         }
@@ -635,8 +635,7 @@ static void setMacroArgumentName(S_macroArgumentTableElement *arg, void *at) {
 static void handleMacroDefinitionParameterPositions(int argi, S_position *macpos,
                                                     S_position *parpos1,
                                                     S_position *pos, S_position *parpos2,
-                                                    int final
-    ) {
+                                                    int final) {
     if ((s_opt.server_operation == OLO_GOTO_PARAM_NAME || s_opt.server_operation == OLO_GET_PARAM_COORDINATES)
         && POSITION_EQ(*macpos, s_cxRefPos)) {
         if (final) {
@@ -659,7 +658,7 @@ static void handleMacroUsageParameterPositions(int argi, S_position *macpos,
     ) {
     if (s_opt.server_operation == OLO_GET_PARAM_COORDINATES
         && POSITION_EQ(*macpos, s_cxRefPos)) {
-//&sprintf(tmpBuff,"checking param %d at %d,%d, final==%d", argi, parpos1->col, parpos2->col, final);ppcGenTmpBuff();
+        log_trace("checking param %d at %d,%d, final==%d", argi, parpos1->col, parpos2->col, final);
         if (final) {
             if (argi==0) {
                 setParamPositionForFunctionWithoutParams(parpos1);
@@ -706,9 +705,415 @@ void processDefine(bool argFlag) {
     ppb2 = s_noPos;
     parpos1 = &ppb1;
     parpos2 = &ppb2;
-    GetLex(lex);
+    //Expanded version of "GetLex(lex);" follows
+    {
+        char *lastlexcc;
+        (void) lastlexcc;
+        { while (cInput.currentLexem >= cInput.endOfBuffer) {
+                InputType margFlag;
+                margFlag = cInput.margExpFlag;
+                if (macroStackIndex > 0) {
+                    if (margFlag == INPUT_MACRO_ARGUMENT) goto endOfMacArg;
+                    {
+                        {
+                            {
+                                if (!((cInput.beginningOfBuffer)>=mbMemory && (cInput.beginningOfBuffer)<= mbMemory+mbMemoryi))
+                                    internalCheckFail("(cInput.beginningOfBuffer)>=mbMemory && (cInput.beginningOfBuffer)<= mbMemory+mbMemoryi", "yylex.c", 709);
+                            };
+                            mbMemoryi = ((char*)(cInput.beginningOfBuffer))-mbMemory;
+                        };
+                    };
+                    cInput = macStack[--macroStackIndex];
+                } else if (margFlag == INPUT_NORMAL) {
+                    {
+                        cFile.lexBuffer.next = cInput.currentLexem;
+                    };
+                    getLexBuf(&cFile.lexBuffer);
+                    if (cFile.lexBuffer.next >= cFile.lexBuffer.end)
+                        goto endOfFile;
+                    {
+                        fillLexInput(&cInput,cFile.lexBuffer.next,cFile.lexBuffer.end,cFile.lexBuffer.chars,
+# 709 "yylex.c" 3 4
+                                     ((void *)0)
+# 709 "yylex.c"
+                                     ,INPUT_NORMAL);
+                    };
+                } else {
+                    s_cache.cc = s_cache.cfin =
+# 709 "yylex.c" 3 4
+                        ((void *)0)
+# 709 "yylex.c"
+                        ;
+                    cacheInput();
+                    s_cache.lexcc = cFile.lexBuffer.next;
+                    {
+                        fillLexInput(&cInput,cFile.lexBuffer.next,cFile.lexBuffer.end,cFile.lexBuffer.chars,
+# 709 "yylex.c" 3 4
+                                     ((void *)0)
+# 709 "yylex.c"
+                                     ,INPUT_NORMAL);
+                    };
+                } lastlexcc = cInput.currentLexem;
+            } lastlexcc = cInput.currentLexem;
+            {
+                {
+                    lex = *((unsigned char*)cInput.currentLexem++);
+                    lex += 256 * *((unsigned char*)cInput.currentLexem++);
+                };
+            };
+        };
+    };
+
     cc = cInput.currentLexem;
-    PassLex(cInput.currentLexem,lex,l,v,h,macpos, len,1);
+
+    // Expanded version of "PassLex(cInput.currentLexem,lex,l,v,h,macpos, len,1);" follows:
+    {
+        if (lex > 444) {
+            if ((lex==445 || lex==454 || lex==452)){
+                register char *tmpcc,tmpch;
+                h = 0;
+                for(tmpcc=cInput.currentLexem,tmpch= *tmpcc;
+                    tmpch;
+                    tmpch = *++tmpcc) {
+                    {
+                        h+=tmpch;
+                        h+=(h<<10);
+                        h^=(h>>6);
+                    };
+                } {
+                    h+=(h<<3);
+                    h^=(h>>11);
+                    h+=(h<<15);
+                };
+                tmpcc ++;
+                {
+                    {
+                        (macpos).file = *((unsigned char*)tmpcc++);
+                        if (((unsigned)(macpos).file)>=128) {
+                            unsigned yyy = *((unsigned char*)tmpcc++);
+                            if (yyy >= 128) {
+                                (macpos).file = ((unsigned)(macpos).file)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)tmpcc++);
+                            } else {
+                                (macpos).file = ((unsigned)(macpos).file)-128 + 128 * yyy;
+                            } }};
+                    {
+                        (macpos).line = *((unsigned char*)tmpcc++);
+                        if (((unsigned)(macpos).line)>=128) {
+                            unsigned yyy = *((unsigned char*)tmpcc++);
+                            if (yyy >= 128) {
+                                (macpos).line = ((unsigned)(macpos).line)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)tmpcc++);
+                            } else {
+                                (macpos).line = ((unsigned)(macpos).line)-128 + 128 * yyy;
+                            } }};
+                    {
+                        (macpos).col = *((unsigned char*)tmpcc++);
+                        if (((unsigned)(macpos).col)>=128) {
+                            unsigned yyy = *((unsigned char*)tmpcc++);
+                            if (yyy >= 128) {
+                                (macpos).col = ((unsigned)(macpos).col)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)tmpcc++);
+                            } else {
+                                (macpos).col = ((unsigned)(macpos).col)-128 + 128 * yyy;
+                            } }};
+                };
+                cInput.currentLexem = tmpcc;
+            } else if (lex == 450) {
+                register char *tmpcc,tmpch;
+                for(tmpcc=cInput.currentLexem,tmpch= *tmpcc;
+                    tmpch;
+                    tmpch = *++tmpcc);
+                tmpcc ++;
+                {
+                    {
+                        (macpos).file = *((unsigned char*)tmpcc++);
+                        if (((unsigned)(macpos).file)>=128) {
+                            unsigned yyy = *((unsigned char*)tmpcc++);
+                            if (yyy >= 128) {
+                                (macpos).file = ((unsigned)(macpos).file)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)tmpcc++);
+                            } else {
+                                (macpos).file = ((unsigned)(macpos).file)-128 + 128 * yyy;
+                            } }};
+                    {
+                        (macpos).line = *((unsigned char*)tmpcc++);
+                        if (((unsigned)(macpos).line)>=128) {
+                            unsigned yyy = *((unsigned char*)tmpcc++);
+                            if (yyy >= 128) {
+                                (macpos).line = ((unsigned)(macpos).line)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)tmpcc++);
+                            } else {
+                                (macpos).line = ((unsigned)(macpos).line)-128 + 128 * yyy;
+                            } }};
+                    {
+                        (macpos).col = *((unsigned char*)tmpcc++);
+                        if (((unsigned)(macpos).col)>=128) {
+                            unsigned yyy = *((unsigned char*)tmpcc++);
+                            if (yyy >= 128) {
+                                (macpos).col = ((unsigned)(macpos).col)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)tmpcc++);
+                            } else {
+                                (macpos).col = ((unsigned)(macpos).col)-128 + 128 * yyy;
+                            } }};
+                };
+                cInput.currentLexem = tmpcc;
+            } else if (lex == 451) {
+                {
+                    {
+                        l = *((unsigned char*)cInput.currentLexem++);
+                        l += 256 * *((unsigned char*)cInput.currentLexem++);
+                    };
+                };
+                if (1) {
+                    if(s_opt.debug) {
+                    };
+                    cFile.lineNumber += l;
+                } } else if (lex == 446 || lex == 447) {
+                {
+                    v = *((unsigned char*)cInput.currentLexem++);
+                    v += 256 * *((unsigned char*)cInput.currentLexem++);
+                    v += 256 * 256 * *((unsigned char*)cInput.currentLexem++);
+                    v += 256 * 256 * 256 * *((unsigned char*)cInput.currentLexem++);
+                };
+                {
+                    {
+                        (macpos).file = *((unsigned char*)cInput.currentLexem++);
+                        if (((unsigned)(macpos).file)>=128) {
+                            unsigned yyy = *((unsigned char*)cInput.currentLexem++);
+                            if (yyy >= 128) {
+                                (macpos).file = ((unsigned)(macpos).file)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)cInput.currentLexem++);
+                            } else {
+                                (macpos).file = ((unsigned)(macpos).file)-128 + 128 * yyy;
+                            } }};
+                    {
+                        (macpos).line = *((unsigned char*)cInput.currentLexem++);
+                        if (((unsigned)(macpos).line)>=128) {
+                            unsigned yyy = *((unsigned char*)cInput.currentLexem++);
+                            if (yyy >= 128) {
+                                (macpos).line = ((unsigned)(macpos).line)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)cInput.currentLexem++);
+                            } else {
+                                (macpos).line = ((unsigned)(macpos).line)-128 + 128 * yyy;
+                            } }};
+                    {
+                        (macpos).col = *((unsigned char*)cInput.currentLexem++);
+                        if (((unsigned)(macpos).col)>=128) {
+                            unsigned yyy = *((unsigned char*)cInput.currentLexem++);
+                            if (yyy >= 128) {
+                                (macpos).col = ((unsigned)(macpos).col)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)cInput.currentLexem++);
+                            } else {
+                                (macpos).col = ((unsigned)(macpos).col)-128 + 128 * yyy;
+                            } }};
+                };
+                {
+                    len = *((unsigned char*)cInput.currentLexem++);
+                    len += 256 * *((unsigned char*)cInput.currentLexem++);
+                    len += 256 * 256 * *((unsigned char*)cInput.currentLexem++);
+                    len += 256 * 256 * 256 * *((unsigned char*)cInput.currentLexem++);
+                };
+            } else if (lex == 449 || lex == 448) {
+                {
+                    {
+                        (macpos).file = *((unsigned char*)cInput.currentLexem++);
+                        if (((unsigned)(macpos).file)>=128) {
+                            unsigned yyy = *((unsigned char*)cInput.currentLexem++);
+                            if (yyy >= 128) {
+                                (macpos).file = ((unsigned)(macpos).file)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)cInput.currentLexem++);
+                            } else {
+                                (macpos).file = ((unsigned)(macpos).file)-128 + 128 * yyy;
+                            } }};
+                    {
+                        (macpos).line = *((unsigned char*)cInput.currentLexem++);
+                        if (((unsigned)(macpos).line)>=128) {
+                            unsigned yyy = *((unsigned char*)cInput.currentLexem++);
+                            if (yyy >= 128) {
+                                (macpos).line = ((unsigned)(macpos).line)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)cInput.currentLexem++);
+                            } else {
+                                (macpos).line = ((unsigned)(macpos).line)-128 + 128 * yyy;
+                            } }};
+                    {
+                        (macpos).col = *((unsigned char*)cInput.currentLexem++);
+                        if (((unsigned)(macpos).col)>=128) {
+                            unsigned yyy = *((unsigned char*)cInput.currentLexem++);
+                            if (yyy >= 128) {
+                                (macpos).col = ((unsigned)(macpos).col)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)cInput.currentLexem++);
+                            } else {
+                                (macpos).col = ((unsigned)(macpos).col)-128 + 128 * yyy;
+                            } }};
+                };
+                {
+                    len = *((unsigned char*)cInput.currentLexem++);
+                    len += 256 * *((unsigned char*)cInput.currentLexem++);
+                    len += 256 * 256 * *((unsigned char*)cInput.currentLexem++);
+                    len += 256 * 256 * 256 * *((unsigned char*)cInput.currentLexem++);
+                };
+            } else if (lex == 453) {
+                {
+                    v = *((unsigned char*)cInput.currentLexem++);
+                    v += 256 * *((unsigned char*)cInput.currentLexem++);
+                    v += 256 * 256 * *((unsigned char*)cInput.currentLexem++);
+                    v += 256 * 256 * 256 * *((unsigned char*)cInput.currentLexem++);
+                };
+                {
+                    {
+                        (macpos).file = *((unsigned char*)cInput.currentLexem++);
+                        if (((unsigned)(macpos).file)>=128) {
+                            unsigned yyy = *((unsigned char*)cInput.currentLexem++);
+                            if (yyy >= 128) {
+                                (macpos).file = ((unsigned)(macpos).file)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)cInput.currentLexem++);
+                            } else {
+                                (macpos).file = ((unsigned)(macpos).file)-128 + 128 * yyy;
+                            } }};
+                    {
+                        (macpos).line = *((unsigned char*)cInput.currentLexem++);
+                        if (((unsigned)(macpos).line)>=128) {
+                            unsigned yyy = *((unsigned char*)cInput.currentLexem++);
+                            if (yyy >= 128) {
+                                (macpos).line = ((unsigned)(macpos).line)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)cInput.currentLexem++);
+                            } else {
+                                (macpos).line = ((unsigned)(macpos).line)-128 + 128 * yyy;
+                            } }};
+                    {
+                        (macpos).col = *((unsigned char*)cInput.currentLexem++);
+                        if (((unsigned)(macpos).col)>=128) {
+                            unsigned yyy = *((unsigned char*)cInput.currentLexem++);
+                            if (yyy >= 128) {
+                                (macpos).col = ((unsigned)(macpos).col)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)cInput.currentLexem++);
+                            } else {
+                                (macpos).col = ((unsigned)(macpos).col)-128 + 128 * yyy;
+                            } }};
+                };
+            } else if (lex == 455) {
+                {
+                    v = *((unsigned char*)cInput.currentLexem++);
+                    v += 256 * *((unsigned char*)cInput.currentLexem++);
+                    v += 256 * 256 * *((unsigned char*)cInput.currentLexem++);
+                    v += 256 * 256 * 256 * *((unsigned char*)cInput.currentLexem++);
+                };
+                {
+                    {
+                        (macpos).file = *((unsigned char*)cInput.currentLexem++);
+                        if (((unsigned)(macpos).file)>=128) {
+                            unsigned yyy = *((unsigned char*)cInput.currentLexem++);
+                            if (yyy >= 128) {
+                                (macpos).file = ((unsigned)(macpos).file)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)cInput.currentLexem++);
+                            } else {
+                                (macpos).file = ((unsigned)(macpos).file)-128 + 128 * yyy;
+                            } }};
+                    {
+                        (macpos).line = *((unsigned char*)cInput.currentLexem++);
+                        if (((unsigned)(macpos).line)>=128) {
+                            unsigned yyy = *((unsigned char*)cInput.currentLexem++);
+                            if (yyy >= 128) {
+                                (macpos).line = ((unsigned)(macpos).line)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)cInput.currentLexem++);
+                            } else {
+                                (macpos).line = ((unsigned)(macpos).line)-128 + 128 * yyy;
+                            } }};
+                    {
+                        (macpos).col = *((unsigned char*)cInput.currentLexem++);
+                        if (((unsigned)(macpos).col)>=128) {
+                            unsigned yyy = *((unsigned char*)cInput.currentLexem++);
+                            if (yyy >= 128) {
+                                (macpos).col = ((unsigned)(macpos).col)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)cInput.currentLexem++);
+                            } else {
+                                (macpos).col = ((unsigned)(macpos).col)-128 + 128 * yyy;
+                            } }};
+                };
+                {
+                    len = *((unsigned char*)cInput.currentLexem++);
+                    len += 256 * *((unsigned char*)cInput.currentLexem++);
+                    len += 256 * 256 * *((unsigned char*)cInput.currentLexem++);
+                    len += 256 * 256 * 256 * *((unsigned char*)cInput.currentLexem++);
+                };
+            } } else if (lex>419 && lex<432) {
+            {
+                {
+                    (macpos).file = *((unsigned char*)cInput.currentLexem++);
+                    if (((unsigned)(macpos).file)>=128) {
+                        unsigned yyy = *((unsigned char*)cInput.currentLexem++);
+                        if (yyy >= 128) {
+                            (macpos).file = ((unsigned)(macpos).file)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)cInput.currentLexem++);
+                        } else {
+                            (macpos).file = ((unsigned)(macpos).file)-128 + 128 * yyy;
+                        } }};
+                {
+                    (macpos).line = *((unsigned char*)cInput.currentLexem++);
+                    if (((unsigned)(macpos).line)>=128) {
+                        unsigned yyy = *((unsigned char*)cInput.currentLexem++);
+                        if (yyy >= 128) {
+                            (macpos).line = ((unsigned)(macpos).line)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)cInput.currentLexem++);
+                        } else {
+                            (macpos).line = ((unsigned)(macpos).line)-128 + 128 * yyy;
+                        } }};
+                {
+                    (macpos).col = *((unsigned char*)cInput.currentLexem++);
+                    if (((unsigned)(macpos).col)>=128) {
+                        unsigned yyy = *((unsigned char*)cInput.currentLexem++);
+                        if (yyy >= 128) {
+                            (macpos).col = ((unsigned)(macpos).col)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)cInput.currentLexem++);
+                        } else {
+                            (macpos).col = ((unsigned)(macpos).col)-128 + 128 * yyy;
+                        } }};
+            };
+        } else if (lex == '\n' && (1)) {
+            {
+                {
+                    (macpos).file = *((unsigned char*)cInput.currentLexem++);
+                    if (((unsigned)(macpos).file)>=128) {
+                        unsigned yyy = *((unsigned char*)cInput.currentLexem++);
+                        if (yyy >= 128) {
+                            (macpos).file = ((unsigned)(macpos).file)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)cInput.currentLexem++);
+                        } else {
+                            (macpos).file = ((unsigned)(macpos).file)-128 + 128 * yyy;
+                        } }};
+                {
+                    (macpos).line = *((unsigned char*)cInput.currentLexem++);
+                    if (((unsigned)(macpos).line)>=128) {
+                        unsigned yyy = *((unsigned char*)cInput.currentLexem++);
+                        if (yyy >= 128) {
+                            (macpos).line = ((unsigned)(macpos).line)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)cInput.currentLexem++);
+                        } else {
+                            (macpos).line = ((unsigned)(macpos).line)-128 + 128 * yyy;
+                        } }};
+                {
+                    (macpos).col = *((unsigned char*)cInput.currentLexem++);
+                    if (((unsigned)(macpos).col)>=128) {
+                        unsigned yyy = *((unsigned char*)cInput.currentLexem++);
+                        if (yyy >= 128) {
+                            (macpos).col = ((unsigned)(macpos).col)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)cInput.currentLexem++);
+                        } else {
+                            (macpos).col = ((unsigned)(macpos).col)-128 + 128 * yyy;
+                        } }};
+            };
+            if (s_opt.debug) {
+            };
+            cFile.lineNumber ++;
+        } else {
+            {
+                {
+                    (macpos).file = *((unsigned char*)cInput.currentLexem++);
+                    if (((unsigned)(macpos).file)>=128) {
+                        unsigned yyy = *((unsigned char*)cInput.currentLexem++);
+                        if (yyy >= 128) {
+                            (macpos).file = ((unsigned)(macpos).file)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)cInput.currentLexem++);
+                        } else {
+                            (macpos).file = ((unsigned)(macpos).file)-128 + 128 * yyy;
+                        } }};
+                {
+                    (macpos).line = *((unsigned char*)cInput.currentLexem++);
+                    if (((unsigned)(macpos).line)>=128) {
+                        unsigned yyy = *((unsigned char*)cInput.currentLexem++);
+                        if (yyy >= 128) {
+                            (macpos).line = ((unsigned)(macpos).line)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)cInput.currentLexem++);
+                        } else {
+                            (macpos).line = ((unsigned)(macpos).line)-128 + 128 * yyy;
+                        } }};
+                {
+                    (macpos).col = *((unsigned char*)cInput.currentLexem++);
+                    if (((unsigned)(macpos).col)>=128) {
+                        unsigned yyy = *((unsigned char*)cInput.currentLexem++);
+                        if (yyy >= 128) {
+                            (macpos).col = ((unsigned)(macpos).col)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)cInput.currentLexem++);
+                        } else {
+                            (macpos).col = ((unsigned)(macpos).col)-128 + 128 * yyy;
+                        } }};
+            };
+        } };
+
     testCxrefCompletionId(&lex,cc,&macpos);    /* for cross-referencing */
     if (lex != IDENTIFIER) return;
 
@@ -1262,7 +1667,7 @@ static void expandMacroArgument(S_lexInput *argb) {
     S_position pos;
     unsigned hash;
     PrependMacroInput(*argb);
-    cInput.margExpFlag = II_MACRO_ARG;
+    cInput.margExpFlag = INPUT_MACRO_ARGUMENT;
     bsize = MACRO_UNIT_SIZE;
     PP_ALLOCC(buf,bsize+MAX_LEXEM_SIZE,char);
     bcc = buf;
@@ -1299,7 +1704,7 @@ static void expandMacroArgument(S_lexInput *argb) {
 endOfMacArg:
     cInput = macStack[--macroStackIndex];
     PP_REALLOCC(buf,bcc-buf,char,bsize+MAX_LEXEM_SIZE);
-    fillLexInput(argb,buf,bcc,buf,NULL,II_NORMAL);
+    fillLexInput(argb,buf,bcc,buf,NULL,INPUT_NORMAL);
     return;
 endOfFile:
     assert(0);
@@ -1521,7 +1926,7 @@ static void crMacroBody(S_lexInput *macBody,
     }
     MB_REALLOCC(buf2,bcc-buf2,char,bsize+MAX_LEXEM_SIZE);
 
-    fillLexInput(macBody,buf2,bcc,buf2,mb->name,II_MACRO);
+    fillLexInput(macBody,buf2,bcc,buf2,mb->name,INPUT_MACRO);
 
 }
 
@@ -1591,7 +1996,7 @@ endOfMacArg:;
         }
     }
     PP_REALLOCC(buf, bcc-buf, char, bufsize+MAX_LEXEM_SIZE);
-    fillLexInput(actArg,buf,bcc,buf,cInput.macroName,II_NORMAL);
+    fillLexInput(actArg,buf,bcc,buf,cInput.macroName,INPUT_NORMAL);
     *llex = lex;
     return;
 }
@@ -1629,7 +2034,7 @@ static struct lexInput *getActualMacroArguments(S_macroBody *mb, S_position *mpo
     }
     /* fill mising arguments */
     for(;actArgi < mb->argn; actArgi++) {
-        fillLexInput(&actArgs[actArgi], NULL, NULL, NULL, NULL,II_NORMAL);
+        fillLexInput(&actArgs[actArgi], NULL, NULL, NULL, NULL,INPUT_NORMAL);
     }
     return(actArgs);
 endOfMacArg:	assert(0);

@@ -298,7 +298,7 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
     cFile.lineNumber = cp->lineNumber;
     cFile.ifDepth = cp->ifDeep;
     cFile.ifStack = cp->ifstack;
-    fillLexInput(&cInput, cp->lbcc, readUntil, s_cache.lb, NULL, II_CACHE);
+    fillLexInput(&cInput, cp->lbcc, readUntil, s_cache.lb, NULL, INPUT_CACHE);
     fillCaching(&s_cache,
                  activeCaching,
                  i+1,
@@ -360,7 +360,7 @@ void cacheInput(void) {
         return;
     }
     /* if from cache, don't copy on the same place */
-    if (cInput.margExpFlag != II_CACHE) memcpy(s_cache.lbcc, s_cache.lexcc, size);
+    if (cInput.margExpFlag != INPUT_CACHE) memcpy(s_cache.lbcc, s_cache.lexcc, size);
     s_cache.lbcc += size;
     s_cache.lexcc = cInput.currentLexem;
 }

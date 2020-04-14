@@ -34,7 +34,7 @@ extern S_lexInput cInput;
 
 
 extern void fillLexInput(S_lexInput *lexInput, char *currentLexem, char *endOfBuffer,
-                         char *beginningOfBuffer, char *macroName, char margExpFlag);
+                         char *beginningOfBuffer, char *macroName, InputType margExpFlag);
 extern void ppMemInit(void);
 extern void initAllInputs(void);
 extern void initInput(FILE *file, S_editorBuffer *buffer, char *prepend, char *name);

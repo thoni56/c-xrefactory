@@ -479,12 +479,12 @@ enum sFunResult {
     RESULT_ERR
 };
 
-enum inputType {
-    II_NORMAL,
-    II_MACRO,
-    II_MACRO_ARG,
-    II_CACHE,
-};
+typedef enum inputType {
+    INPUT_NORMAL,
+    INPUT_MACRO,
+    INPUT_MACRO_ARGUMENT,
+    INPUT_CACHE,
+} InputType;
 
 enum updateModifiers {
     UP_NO_UPDATE = 0,			// must be zero !
