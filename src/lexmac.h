@@ -124,7 +124,10 @@
 }
 /*#define PutLexPosition(cfile,cline,idcoll,dd) {}*/
 
-
+/* WTF Lexems are coded in compacted form in the lexBuffer, that's why
+ * the first char is taken and then the second is add 256**(next char)
+ * so \275\001 means \275 + 256 * 1 = \275
+ */
 #define GetLexChar(xxx,dd) {xxx = *((unsigned char*)dd++);}
 #define GetLexToken(xxx,dd) {GetLexShort(xxx,dd);}
 #define GetLexShort(xxx,dd) {\
