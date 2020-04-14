@@ -127,11 +127,6 @@ S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 
 /* *************** first something to read zip-files ************** */
 
-struct zipIndexItem {
-    unsigned offset;
-    char name;              /* array of char    */
-};
-
 static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iBuf,
                                   char *fn, unsigned *fsize, unsigned *lastSig,
                                   char *archivename, unsigned fileOffset) {
