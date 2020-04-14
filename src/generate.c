@@ -274,16 +274,21 @@ void generateArgumentSelectionMacros(int n) {
 
 void generate(Symbol *symbol) {
     assert(symbol);
-    if (symbol->name==NULL || symbol->name[0]==0) return;
+    if (symbol->name==NULL || symbol->name[0]==0)
+        return;
     if (symbol->bits.symType==TypeStruct || symbol->bits.symType==TypeUnion) {
-        if (s_opt.typedefg) generateTypedefForStructOrUnion(symbol);
+        if (s_opt.typedefg)
+            generateTypedefForStructOrUnion(symbol);
         if (s_opt.str_fill) {
             if (symbol->bits.symType==TypeStruct) generateStructureFillMacros(symbol);
             if (symbol->bits.symType==TypeUnion) generateUnionFillMacros(symbol);
         }
-        if (s_opt.str_copy) generateStructCopyFunction(symbol);
+        if (s_opt.str_copy)
+            generateStructCopyFunction(symbol);
     } else if (symbol->bits.symType == TypeEnum) {
-        if (s_opt.typedefg) generateTypedefForEnum(symbol);
-        if (s_opt.enum_name) generateEnumString(symbol);
+        if (s_opt.typedefg)
+            generateTypedefForEnum(symbol);
+        if (s_opt.enum_name)
+            generateEnumString(symbol);
     }
 }
