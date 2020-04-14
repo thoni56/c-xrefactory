@@ -129,7 +129,7 @@ S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 
 static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iBuf,
                                   char *fn, unsigned *fsize, unsigned *lastSig,
-                                  char *archivename, unsigned fileOffset) {
+                                  char *archivename) {
     int res;
     char *ccc, *ffin;
     int i;
@@ -495,7 +495,7 @@ static int zipSeekToFile(char **accc, char **affin, CharacterBuffer *iBuf,
     if (fsIsMember(&s_zipArchiveTable[i].dir,sep+1,0,ADD_NO,&place)==0) goto fini;
     SeekToPosition(ccc,ffin,iBuf,place->u.offset);
     if (zipReadLocalFileHeader(&ccc, &ffin, iBuf, fn, &fsize,
-                               &lastSig, s_zipArchiveTable[i].fn, place->u.offset) == 0) goto fini;
+                               &lastSig, s_zipArchiveTable[i].fn) == 0) goto fini;
     assert(lastSig == 0x04034b50);
     assert(strcmp(fn,sep+1)==0);
     res = 1;
