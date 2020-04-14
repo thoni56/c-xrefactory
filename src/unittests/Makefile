@@ -9,7 +9,7 @@ UNITTESTS = $(patsubst %.c,%.so,$(wildcard *_tests.c))
 
 CGREEN = -L/usr/local/lib -lcgreen
 
-debug: COVERAGE=--coverage -O0
+debug: COVERAGE=--coverage
 all debug: $(UNITTESTS)
 	cgreen-runner $(CGREEN_OUTPUT) --suite unittests $^
 
