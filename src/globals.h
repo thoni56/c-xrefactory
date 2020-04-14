@@ -27,7 +27,6 @@ extern char s_cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
 extern char s_base[MAX_FILE_NAME_SIZE];
 extern char ppcTmpBuff[MAX_PPC_RECORD_SIZE];
 
-extern char *s_debugSurveyPointer;
 extern int s_fileAbortionEnabled;
 
 #ifdef OLCX_MEMORY_CHECK

@@ -8,7 +8,6 @@
 #include "protocol.h"
 
 
-char *s_debugSurveyPointer;
 int s_fileAbortionEnabled;
 
 #ifdef OLCX_MEMORY_CHECK
