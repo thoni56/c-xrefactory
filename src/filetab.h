@@ -18,7 +18,7 @@
 
 
 /* Index into file table for the "NON FILE" */
-int s_noneFileIndex = -1;
+extern int s_noneFileIndex;
 
 
 extern void initFileTab(S_fileTab *table);

@@ -61,7 +61,6 @@ int s_olMacro2PassFile;
 struct stat s_noStat;
 S_usageBits s_noUsage;
 S_position s_noPos = {-1, 0, 0};
-int s_noneFileIndex = -1;
 
 Language s_language;
 S_options s_opt;

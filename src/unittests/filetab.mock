@@ -2,6 +2,8 @@
 #include "../filetab.h"
 #include <cgreen/mocks.h>
 
+int s_noneFileIndex = -1;
+
 void fileTabInit(struct fileTab *table,
                  int size
                  ) {
@@ -71,4 +73,8 @@ bool fileTabExists(struct fileTab *table, char *fileName) {
 
 int fileTabLookup(struct fileTab *table, char *fileName) {
     return mock(table, fileName);
+}
+
+void initFileTab(S_fileTab *table) {
+    mock(table);
 }
