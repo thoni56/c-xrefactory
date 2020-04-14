@@ -1,6 +1,6 @@
 extern char * taskRegimesName[];
 extern char * editorUndoOperationsName[];
-extern char * usagesName[];
+extern char * usageName[];
 extern char * fileEncodingsName[];
 extern char * storageName[];
 extern char * syntaxPassParsedImportantPositionName[];

@@ -423,7 +423,7 @@ static void writeSymbolItem(int symIndex) {
         writeOptionalCompactRecord(CXFI_COLL_INDEX, coll, "");                 \
         writeCompactRecord(CXFI_REFERENCE, 0, "");                        \
         if (s_opt.long_cxref) {                                         \
-            sprintf(ttt,"\t%-7s in %30s:%u:%d\n",usagesName[usage]+5,   \
+            sprintf(ttt,"\t%-7s in %30s:%u:%d\n",usageName[usage]+5,   \
                     s_fileTab.tab[file]->name,line,coll);               \
             writeStringRecord(CXFI_REMARK,ttt,"");                        \
         }                                                               \
@@ -1343,8 +1343,8 @@ static void cxrfReference(int size,
                                  &*/
                                ) {
                         // this is only goto definition from completion menu?
-                        //&sprintf(tmpBuff,"%s %s:%d\n", usagesName[usage],s_fileTab.tab[file]->name,line);ppcGenRecord(PPC_INFORMATION,tmpBuff,"\n");
-                        //&fprintf(dumpOut,"%s %s:%d\n", usagesName[usage],s_fileTab.tab[file]->name,line);fflush(dumpOut);
+                        //&sprintf(tmpBuff,"%s %s:%d\n", usageName[usage],s_fileTab.tab[file]->name,line);ppcGenRecord(PPC_INFORMATION,tmpBuff,"\n");
+                        //&fprintf(dumpOut,"%s %s:%d\n", usageName[usage],s_fileTab.tab[file]->name,line);fflush(dumpOut);
                         olcxAddReference(&s_olcxCurrentUser->browserStack.top->r, &rr,
                                          s_inLastInfos.onLineRefIsBestMatchFlag);
                     }

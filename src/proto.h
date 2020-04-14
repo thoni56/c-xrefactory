@@ -376,7 +376,7 @@ enum refScopes {
 // !!!!!!!!!!!!! is to set various bits in usg structure
 /* TODO: well, they are still used, so there must be more to this... */
 
-enum usages {
+typedef enum usage {
 // filter3  == all filters
     ureserve0,
     UsageOLBestFitDefined,
@@ -440,7 +440,7 @@ enum usages {
     MAX_USAGES,
     USAGE_ANY,
     USAGE_FILTER,
-};
+} Usage;
 
 enum menuFilterLevels {
     FilterAllOfSameName,

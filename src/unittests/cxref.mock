@@ -142,8 +142,8 @@ S_reference *addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *ub, int 
     return (S_reference *) mock(p, pos, ub, vFunCl, vApplCl);
 }
 
-S_reference *addCxReference(Symbol *p, S_position *pos, int usage, int vFunClass, int vApplClass) {
     return (S_reference *) mock(p, pos, usage, vFunClass, vApplClass);
+S_reference *addCxReference(Symbol *p, S_position *pos, Usage usage, int vFunClass, int vApplClass) {
 }
 
 S_reference *addSpecialFieldReference(char *name, int storage, int fnum, S_position *p, int usage) {

@@ -55,7 +55,7 @@ extern void setIntToZero(void *p);
 extern S_reference *duplicateReference(S_reference *r);
 extern S_reference * addCxReferenceNew(Symbol *p, S_position *pos,
                                        S_usageBits *ub, int vFunCl, int vApplCl);
-extern S_reference * addCxReference(Symbol *p, S_position *pos, int usage,
+extern S_reference * addCxReference(Symbol *p, S_position *pos, Usage usage,
                                     int vFunClass,int vApplClass);
 extern S_reference *addSpecialFieldReference(char *name, int storage,
                                              int fnum, S_position *p, int usage);

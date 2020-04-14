@@ -1006,7 +1006,7 @@ static void htmlGetThisFileReferences(int fnum, S_htmlRefList **rrr, int kind){
                 if (rr->p.file == fnum &&
                     (kind==ALL_REFS || rr->usage.base<UsageMaxOLUsages)) {
                     log_trace("checking ref [%s,%d,%d](%s) on %s:%x", s_fileTab.tab[rr->p.file]->name, rr->p.line,
-                              rr->p.col, usagesName[rr->usage.base], d->name, d);
+                              rr->p.col, usageName[rr->usage.base], d->name, d);
                     //&                 if ((char*)rr<s_cxGlobalReferencesBase) continue;//!!tricky
                     fillHtmlRefList(&rref, d, rr, dd, NULL);
                     SORTED_LIST_PLACE2(place, S_htmlRefList, rref, rrr0);
@@ -1018,7 +1018,7 @@ static void htmlGetThisFileReferences(int fnum, S_htmlRefList **rrr, int kind){
                         // once per file and it is cleared after.
                         *r = rref;
                         log_trace("adding ref [%s,%d,%d](%s) on %s:%x", s_fileTab.tab[r->reference->p.file]->name,
-                                  r->reference->p.line, r->reference->p.col, usagesName[r->reference->usage.base], r->symbolRefItem->name,r->symbolRefItem);
+                                  r->reference->p.line, r->reference->p.col, usageName[r->reference->usage.base], r->symbolRefItem->name,r->symbolRefItem);
                         LIST_CONS(r,(*place));
                     }
                     rrr0 = place;

@@ -509,7 +509,7 @@ void changeFieldRefUsages(S_symbolRefItem  *ri, void  *rrcd) {
                     // some problems with UsageNone ??
 #if ZERO
                     sprintf(tmpBuff,"unexpected usage %s restricted to class/method",
-                            usagesName[rr->usg.base]);
+                            usageName[rr->usg.base]);
                     error(ERR_INTERNAL, tmpBuff);
 #endif
                     break;
@@ -783,7 +783,7 @@ S_reference * addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *usageb,
     getSymbolCxrefCategories( p, &category, &scope, &storage);
     if (scope == ScopeAuto && s_opt.no_ref_locals) return NULL;
 
-    log_trace("adding reference on %s(%d,%d) at %d,%d,%d (%s) (%s) (%s)",p->linkName,vFunCl,vApplCl, pos->file,pos->line,pos->col,refCategoriesName[category],usagesName[usage],storageName[p->bits.storage]);
+    log_trace("adding reference on %s(%d,%d) at %d,%d,%d (%s) (%s) (%s)",p->linkName,vFunCl,vApplCl, pos->file,pos->line,pos->col,refCategoriesName[category],usageName[usage],storageName[p->bits.storage]);
     assert(s_opt.taskRegime);
     if (s_opt.taskRegime == RegimeEditServer) {
         if (s_opt.server_operation == OLO_EXTRACT) {
@@ -875,7 +875,7 @@ S_reference * addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *usageb,
                 mmi = olAddBrowsedSymbol(memb,&s_olcxCurrentUser->browserStack.top->hkSelectedSym,
                                          1,1,0,usage,0, defpos, defusage);
                 // hack added for EncapsulateField
-                // to determine whether there is yet definiton of getter/setter
+                // to determine whether there is already definitions of getter/setter
                 if (IS_DEFINITION_USAGE(usage)) {
                     mmi->defpos = *pos;
                     mmi->defUsage = usage;
@@ -896,11 +896,11 @@ S_reference * addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *usageb,
 
     CX_TEST_SPACE();
     assert(place);
-    /*&fprintf(dumpOut,":returning %x == %s %s:%d\n",*place,usagesName[(*place)->usage.base],s_fileTab.tab[(*place)->p.file]->name,(*place)->p.line);&*/
+    /*&fprintf(dumpOut,":returning %x == %s %s:%d\n",*place,usageName[(*place)->usage.base],s_fileTab.tab[(*place)->p.file]->name,(*place)->p.line);&*/
     return(*place);
 }
 
-S_reference * addCxReference(Symbol *p, S_position *pos, int usage, int vFunCl, int vApplCl) {
+S_reference * addCxReference(Symbol *p, S_position *pos, Usage usage, int vFunCl, int vApplCl) {
     S_usageBits ub;
     fill_usageBits(&ub, usage, MIN_REQUIRED_ACCESS);
     return(addCxReferenceNew(p, pos, &ub, vFunCl, vApplCl));
@@ -1212,7 +1212,7 @@ static int olcxVirtualyUsageAdequate(int vApplCl, int vFunCl,
                                      int olUsage, int olApplCl, int olFunCl) {
     int res;
     res = 0;
-    //&fprintf(dumpOut,"\n:checking %s\n%s\n%s\n<->\n%s\n%s\n",usagesName[olUsage],s_fileTab.tab[olFunCl]->name,s_fileTab.tab[olApplCl]->name,s_fileTab.tab[vFunCl]->name,s_fileTab.tab[vApplCl]->name); fflush(dumpOut);
+    //&fprintf(dumpOut,"\n:checking %s\n%s\n%s\n<->\n%s\n%s\n",usageName[olUsage],s_fileTab.tab[olFunCl]->name,s_fileTab.tab[olApplCl]->name,s_fileTab.tab[vFunCl]->name,s_fileTab.tab[vApplCl]->name); fflush(dumpOut);
     if (IS_DEFINITION_OR_DECL_USAGE(olUsage)) {
         if (vFunCl == olFunCl) res = 1;
         if (isSmallerOrEqClass(olFunCl, vApplCl)) res = 1;
@@ -1240,7 +1240,7 @@ S_reference *olcxAddReferenceNoUsageCheck(S_reference **rlist, S_reference *ref,
             }
         }
         LIST_CONS(rr,(*place));
-        //&fprintf(dumpOut,"olcx adding %s %s:%d:%d\n",usagesName[ref->usage.base], s_fileTab.tab[ref->p.file]->name,ref->p.line,ref->p.col); fflush(dumpOut);
+        //&fprintf(dumpOut,"olcx adding %s %s:%d:%d\n",usageName[ref->usage.base], s_fileTab.tab[ref->p.file]->name,ref->p.line,ref->p.col); fflush(dumpOut);
     }
     return(rr);
 }
@@ -1248,7 +1248,7 @@ S_reference *olcxAddReferenceNoUsageCheck(S_reference **rlist, S_reference *ref,
 
 S_reference *olcxAddReference(S_reference **rlist,S_reference *ref,int bestMatchFlag) {
     S_reference *rr;
-    //&sprintf(tmpBuff,"checking ref %s %s:%d:%d at %d\n",usagesName[ref->usage.base], simpleFileName(s_fileTab.tab[ref->p.file]->name),ref->p.line,ref->p.col, ref); ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+    //&sprintf(tmpBuff,"checking ref %s %s:%d:%d at %d\n",usageName[ref->usage.base], simpleFileName(s_fileTab.tab[ref->p.file]->name),ref->p.line,ref->p.col, ref); ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
     if (! OL_VIEWABLE_REFS(ref)) return NULL; // no regular on-line refs
     rr = olcxAddReferenceNoUsageCheck(rlist, ref, bestMatchFlag);
     return(rr);
@@ -1266,7 +1266,7 @@ void olcxAppendReference(S_reference *ref, S_olcxReferences *refs) {
     S_reference *rr;
     rr = olcxCopyReference(ref);
     LIST_APPEND(S_reference, refs->r, rr);
-    //&fprintf(dumpOut,"olcx appending %s %s:%d:%d\n",usagesName[ref->usage.base], s_fileTab.tab[ref->p.file]->name,ref->p.line,ref->p.col); fflush(dumpOut);
+    //&fprintf(dumpOut,"olcx appending %s %s:%d:%d\n",usageName[ref->usage.base], s_fileTab.tab[ref->p.file]->name,ref->p.line,ref->p.col); fflush(dumpOut);
 }
 
 /* fnum is file number of which references are added, can be ANY_FILE
@@ -4331,7 +4331,7 @@ static void olPushAllReferencesInBetweenMapFun(S_symbolRefItem *ri,
             mm = olAddBrowsedSymbol(ri, &rstack->menuSym, select, visible, ooBits, USAGE_ANY, vlevel, &defpos, defusage);
             assert(mm!=NULL);
             for(; rr!=NULL; rr=rr->next) {
-                log_trace("checking reference of line %d, usage %s", rr->p.line, usagesName[rr->usage.base]);
+                log_trace("checking reference of line %d, usage %s", rr->p.line, usageName[rr->usage.base]);
                 if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr,dd)) {
                     //& olcxAddReferenceToOlSymbolsMenu(mm, rr, 0);
                     log_trace("adding reference of line %d",rr->p.line);
