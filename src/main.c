@@ -2480,6 +2480,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     // init options as soon as possible! for exampl initCwd needs them
     initOptions();
 
+    /* TODO: should go into a newSymbolTable() function... */
     XX_ALLOC(s_symbolTable, S_symbolTable);
     symbolTableInit(s_symbolTable, MAX_SYMBOLS);
     fillJavaStat(&s_initJavaStat,NULL,NULL,NULL,0, NULL, NULL, NULL,
