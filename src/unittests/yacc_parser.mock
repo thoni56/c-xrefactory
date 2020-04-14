@@ -1,0 +1,11 @@
+/* -*- c -*-*/
+#include "yacc_parser.x"
+#include <cgreen/mocks.h>
+
+int yaccyyparse() {
+  return (int) mock();
+}
+
+void makeYaccCompletions(char *s, int len, S_position *pos) {
+     (void)mock(s, len, pos);
+}
