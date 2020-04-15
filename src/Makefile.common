@@ -127,7 +127,8 @@ c-xref: .c-xrefrc $(OBJS) enumTxt.o
 clean:;
 	-make -C $(ROOTDIR)/lib/zlib clean
 	-make -C unittests clean
-	-rm -rf $(OBJDIR)/*.o $(OBJDIR)/*.gc* c-xref
+	-rm -rf $(OBJDIR) c-xref
+	-make -C ../tests clean
 
 cleaner: clean
 	-rm -rf $(OBJDIR) enumTxt.g.[ch] c-xref.bs .c-xrefrc

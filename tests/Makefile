@@ -21,6 +21,9 @@ all: quick slow
 list:
 	echo $(TESTS)
 
+clean:
+	rm -rf *.coverage */.coverage
+
 #-------------------------------------------------------------------
 # Here follows some GNU magic to automatically discover tests
 # It will assume that if there is a directory starting with "test_"
