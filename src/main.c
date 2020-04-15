@@ -504,18 +504,7 @@ static int processCOption(int *ii, int argc, char **argv) {
     }
     else if (strcmp(argv[i],"-classpath")==0) {
         NEXT_FILE_ARG();
-#if ZERO
-        if (s_opt.classpath!=NULL && *s_opt.classpath!=0
-            && strcmp(s_opt.classpath,argv[i])!=0) {
-            if (s_opt.taskRegime != RegimeEditServer) {
-                warning(ERR_ST,"redefinition of classpath, new value ignored");
-            }
-        } else {
-#endif
             createOptionString(&s_opt.classpath, argv[i]);
-#if ZERO
-        }
-#endif
     }
     else if (strncmp(argv[i],"-csuffixes=",11)==0) {
         createOptionString(&s_opt.cFilesSuffixes, argv[i]+11);
@@ -581,11 +570,6 @@ static int processEOption(int *ii, int argc, char **argv) {
     else if (strncmp(argv[i],"-extractAddrParPrefix=",22)==0) {
         sprintf(ttt, "*%s", argv[i]+22);
         createOptionString(&s_opt.olExtractAddrParPrefix, ttt);
-#if ZERO
-        olExtractAddrParPrefixStatChar[0]='*';
-        strcpy(olExtractAddrParPrefixStatChar+1, argv[i]+22);
-        s_opt.olExtractAddrParPrefix = olExtractAddrParPrefixStatChar;
-#endif
     }
     else if (strcmp(argv[i],"-exactpositionresolve")==0) {
         s_opt.exactPositionResolve = 1;
@@ -639,12 +623,6 @@ static int processFOption(int *ii, int argc, char **argv) {
         s_opt.update = UP_FULL_UPDATE;
         s_opt.updateOnlyModifiedFiles = 0;
     }
-#ifdef ZERO
-    else if (strcmp(argv[i],"-file")==0) {
-        NEXT_FILE_ARG();
-        crOptionStr(&s_opt.lineFileName, argv[i]);
-    }
-#endif
     else return(0);
     *ii = i;
     return(1);
@@ -1961,13 +1939,6 @@ static int computeAndOpenInputFile(void) {
             if (inputIn == NULL) {
                 error(ERR_CANT_OPEN, s_input_file_name);
             }
-#if ZERO
-        } else {
-            ppcGenRecord(PPC_IGNORE,"LOADING BUFFERED FILE","");
-            ppcGenRecord(PPC_IGNORE,s_input_file_name,"\n");
-            inputBuff->a.text[inputBuff->a.bufferSize]=0;
-            ppcGenRecord(PPC_IGNORE,inputBuff->a.text,"\n");
-#endif
         }
     }
     initInput(inputIn, inputBuff, "\n", s_input_file_name);
@@ -2792,19 +2763,6 @@ static void scheduleModifiedFilesToUpdate(void) {
 }
 
 
-#if ZERO
-static void resetPendingSymbolMenuData(void) {
-    S_olcxReferences *rstack;
-    olcxSetCurrentUser(s_opt.user);
-    rstack = s_olcxCurrentUser->browserStack.top;
-    if (rstack == NULL) return;
-    if (rstack->menuSym != NULL) {
-        olcxFreeResolutionMenu(rstack->menuSym);
-        rstack->menuSym = NULL;
-    }
-}
-#endif
-
 void mainCloseOutputFile(void) {
     if (ccOut!=stdout) {
         //&fprintf(dumpOut,"CLOSING OUTPUT FILE\n");
@@ -2819,12 +2777,12 @@ void mainOpenOutputFile(char *ofile) {
     mainCloseOutputFile();
     if (ofile!=NULL) {
         //&fprintf(dumpOut,"OPENING OUTPUT FILE %s\n", s_opt.outputFileName);
-#if defined (__WIN32__)    /*SBD*/
+#if defined (__WIN32__)
         // open it as binary file, so that record lengths will be correct
         ccOut = fopen(ofile,"wb");
-#else                   /*SBD*/
+#else
         ccOut = fopen(ofile,"w");
-#endif                  /*SBD*/
+#endif
     } else {
         ccOut = stdout;
     }
@@ -2880,14 +2838,6 @@ static void setFullUpdateMtimesInFileTab(S_fileItem *fi) {
         fi->lastFullUpdateMtime = fi->lastModified;
     }
 }
-
-#if ZERO
-static void setUpdateMtimesInFileTab(S_fileItem *fi) {
-    if (fi->b.scheduledToUpdate || s_opt.create) {
-        fi->lastUpdateMtime = fi->lastModif;
-    }
-}
-#endif
 
 static void mainCloseInputFile(int inputIn ) {
     if (inputIn) {
@@ -3259,7 +3209,6 @@ void mainCallXref(int argc, char **argv) {
             //& if (s_opt.htmlglobalx || s_opt.htmllocalx) htmlGenEmptyRefsFile();
         }
         if (s_opt.taskRegime==RegimeXref) {
-            //&         fileTabMap(&s_fileTab, setUpdateMtimesInFileTab);
             if (s_opt.update==0 || s_opt.update==UP_FULL_UPDATE) {
                 fileTabMap(&s_fileTab, setFullUpdateMtimesInFileTab);
             }
@@ -3331,7 +3280,6 @@ void mainCallEditServer(int argc, char **argv,
         if (presetEditServerFileDependingStatics() == NULL) {
             error(ERR_ST, "No input file");
         } else {
-            //&resetPendingSymbolMenuData();
             mainEditServerProcessFile(argc,argv,nargc,nargv,firstPassing);
         }
     } else {
@@ -3340,13 +3288,6 @@ void mainCallEditServer(int argc, char **argv,
             // added [26.12.2002] because of loading options without input file
             s_input_file_name = NULL;
         }
-#if ZERO
-        if (needToLoadOptions()) {
-            assert(s_input_file_name == NULL);
-            mainFileProcessingInitialisations(firstPassing, argc, argv, nargc, nargv,
-                                              &inputIn, &s_language);
-        }
-#endif
     }
     LEAVE();
 }

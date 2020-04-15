@@ -499,12 +499,6 @@ void changeFieldRefUsages(S_symbolRefItem  *ri, void  *rrcd) {
                     // do not care if it is yet requalified
                     break;
                 default:
-                    // some problems with UsageNone ??
-#if ZERO
-                    sprintf(tmpBuff,"unexpected usage %s restricted to class/method",
-                            usageName[rr->usg.base]);
-                    error(ERR_INTERNAL, tmpBuff);
-#endif
                     break;
                 }
             }
@@ -919,42 +913,6 @@ void addCfClassTreeHierarchyRef(int fnum, int usage) {
 }
 
 /* ***************************************************************** */
-
-#if ZERO
-static void markRelatedClasses(int cl, int originCl) {
-    S_chReference *p;
-    //&fprintf(dumpOut,"relation mark %s\n",s_fileTab.tab[cl]->name);
-    assert(s_fileTab.tab[cl]);
-    for(p=s_fileTab.tab[cl]->sups; p!=NULL; p=p->next) {
-        assert(s_fileTab.tab[p->clas]);
-        s_fileTab.tab[p->clas]->b.classIsRelatedTo = originCl;
-        if (s_fileTab.tab[p->clas]->sups!=NULL) {
-            markRelatedClasses(p->clas, originCl);
-        }
-    }
-}
-static int searchRelatedClass(int cl, int originCl) {
-    S_chReference *p;
-    //&fprintf(dumpOut,"relation mark %s\n",s_fileTab.tab[cl]->name);
-    assert(s_fileTab.tab[cl]);
-    for(p=s_fileTab.tab[cl]->sups; p!=NULL; p=p->next) {
-        assert(s_fileTab.tab[p->clas]);
-        if (s_fileTab.tab[p->clas]->b.classIsRelatedTo==originCl) return(1);
-        if (s_fileTab.tab[p->clas]->sups!=NULL) {
-            if (searchRelatedClass(p->clas, originCl)) return(1);
-        }
-    }
-    return(0);
-}
-int isRelatedClass(int cl1, int cl2) {
-    S_chReference *p;
-    /*&fprintf(dumpOut,"searching relation betwee %s\t%s\n",s_fileTab.tab[cl1]->name,s_fileTab.tab[cl2]->name);&*/
-    if (cl1 == cl2) return(1);
-    markRelatedClasses(cl1, cl1);
-    if (searchRelatedClass(cl2, cl1)) return(1);
-    return(0);
-}
-#endif
 
 int isSmallerOrEqClassR(int inf, int sup, int level) {
     S_chReference *p;
@@ -1407,24 +1365,6 @@ int olcxListLessFunction(S_reference *r1, S_reference *r2) {
         return(olcxListLessFunction(r1, r2));
     }
 
-
-#if ZERO
-static int olcxFastPushLessFunction(S_reference *r1, S_reference *r2) {
-    char *s1,*s2;
-    if (UsageImportantInOrder(r1,r2)) {
-        // in definition, declaration usage is important
-        if (r1->usg.base < r2->usg.base) return(1);
-        if (r1->usg.base > r2->usg.base) return(0);
-    }
-    if (r1->p.file < r2->p.file) return(1);
-    if (r1->p.file > r2->p.file) return(0);
-    if (r1->p.line < r2->p.line) return(1);
-    if (r1->p.line > r2->p.line) return(0);
-    if (r1->p.coll < r2->p.coll) return(1);
-    if (r1->p.coll > r2->p.coll) return(0);
-    return(0);
-}
-#endif
 
 static void olcxNaturalReorder(S_olcxReferences *refs) {
     LIST_MERGE_SORT(S_reference, refs->r, olcxPushLessFunction);
@@ -3629,27 +3569,6 @@ void olCreateSelectionMenu(int command) {
                     htmlRefItemsOrderLess);
 }
 
-#if ZERO
-static void olLoadSelectionMenu(void) {
-    S_olcxReferences    *rstack;
-    S_olSymbolsMenu     *ss;
-    int                 fnum;
-    assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
-    rstack = s_olcxCurrentUser->browserStack.top;
-    ss = rstack->menuSym;
-    if (ss == NULL) return;
-    LIST_SORT(S_olSymbolsMenu, rstack->menuSym, olMenuHashFileNumLess);
-    ss = rstack->menuSym;
-    while (ss!=NULL) {
-        readOneAppropReferenceFile(ss->s.name, s_cxSymbolLoadMenuRefs);
-        fnum = cxFileHashNumber(ss->s.name);
-        //&fprintf(dumpOut,"file %d readed\n", fnum);
-        while (ss!=NULL && fnum==cxFileHashNumber(ss->s.name)) ss = ss->next;
-    }
-    refTabMap(&s_cxrefTab, putOnLineLoadedReferences);
-}
-#endif
-
 int refOccursInRefs(S_reference *r, S_reference *list) {
     S_reference *place;
     SORTED_LIST_FIND2(place,S_reference, (*r),list);
@@ -3673,7 +3592,7 @@ static void olcxSingleReferenceCheck1(S_symbolRefItem *p,
         printSymbolLinkNameString(ccOut, p->name);
         fprintf(ccOut,"' lost\n");
         olcxAppendReference(r, s_olcxCurrentUser->browserStack.top);
-#if ZERO    // for the momet, it is difficult to get def. reference from cxfile
+#if ZERO    // for the moment, it is difficult to get def. reference from cxfile
         dr = getDefinitionRef(p->refs);
         if (dr!=NULL && (dr->usg.base==UsageDefined || dr->usg.base==UsageDeclared)){
             fprintf(ccOut, "        defined at %s:%d\n",
@@ -5223,10 +5142,6 @@ static unsigned olcxOoBits(S_olSymbolsMenu *ols, S_symbolRefItem *p) {
         } else if (isSmallerOrEqClass(olvApplCl, vApplCl)
                    || isSmallerOrEqClass(vApplCl, olvApplCl)) {
             ooBits |= OOC_VIRT_RELATED;
-            // following can be too slow !!!!!!!!! , if so, some marks must be put once
-            // moreover it is missplaced, all classes have common superclass Object.
-            //&     } else if (isRelatedClass(olvApplCl, vApplCl)) {
-            //&         ooBits |= OOC_VIRT_COMMON_SUP;
         }
     }
  fini:
@@ -5284,15 +5199,6 @@ S_olSymbolsMenu *createSelectionMenu(S_symbolRefItem *p) {
     }
     if (flag) {
         select = visible = 0;  // for debug would be better 1 !
-#if ZERO       // now moved into setSelectVisibleItems
-        select = 0;
-        visible = ooBitsGreaterOrEqual(ooBits, s_opt.ooChecksBits);
-        //&fprintf(dumpOut,"%s.%s bits==%o visible == %d\n", s_fileTab.tab[p->vApplClass]->name, p->name, ooBits, visible);
-        if (visible) {
-            select=ooBitsGreaterOrEqual(ooBits, DEFAULT_SELECTION_OO_BITS);
-            if (p->b.symType==TypeCppCollate) select=0;
-        }
-#endif
         res = olAddBrowsedSymbol(p, &rstack->menuSym, select, visible, ooBits, USAGE_ANY, vlevel, defpos, defusage);
     }
     return(res);

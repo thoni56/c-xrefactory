@@ -970,12 +970,6 @@ static void cxrfSourceIndex(int size,
         if (! s_fileTab.tab[file]->b.cxLoading) {
             s_fileTab.tab[file]->b.sourceFile = sfile;
         }
-        // I think that following was a bug
-#if ZERO
-        if (s_opt.taskRegime==RegimeXref && genFl==CX_GENERATE_OUTPUT) {
-            genFileSourceIndexItem(s_fileTab.tab[file], file);
-        }
-#endif
     }
     *ccc = cc; *ffin = fin;
 }

@@ -141,12 +141,6 @@ static int printJavaModifiers(char *buf, int *size, unsigned acc) {
             sprintf(buf+i,"protected "); i+=strlen(buf+i);
             assert(i< *size);
         }
-#if ZERO
-        if (acc & ACC_NATIVE) {
-            sprintf(buf+i,"native "); i+=strlen(buf+i);
-            assert(i< *size);
-        }
-#endif
     }
     if (acc & ACCESS_STATIC) {
         sprintf(buf+i,"static "); i+=strlen(buf+i);
@@ -1777,7 +1771,7 @@ void javaCompleteFullInheritedMethodHeader(S_completions*c) {
 #endif
 }
 
-/* this is unused */
+/* this is only used in completionsTab */
 void javaCompleteMethodCompName(S_completions*c) {
     javaCompleteExprCompName(c);
 }

@@ -1087,12 +1087,6 @@ static void htmlGenGlobRefList(FILE *ff, char *fname,
 /* ******************************************************************** */
 
 
-#if ZERO
-static int chUpperAdequate(S_fileItem *s, S_fileItem *origin) {
-    return(origin->b.isInterface == s->b.isInterface);
-}
-#endif
-
 int htmlRefItemsOrderLess(S_olSymbolsMenu *ss1, S_olSymbolsMenu *ss2) {
     S_symbolRefItem *s1, *s2;
     int r;
@@ -1112,15 +1106,6 @@ int htmlRefItemsOrderLess(S_olSymbolsMenu *ss1, S_olSymbolsMenu *ss2) {
     r = classHierarchyClassNameLess(ss1->s.vApplClass,ss2->s.vApplClass);
     return(r);
 }
-
-#if ZERO
-static void shiftToTheBeginningOfClassList(S_fileItem *fi,S_chReference **orr){
-    S_chReference *rr;
-    assert(orr!=NULL);
-    for(rr= *orr; rr!=NULL && s_fileTab.tab[rr->clas]!=fi; rr=rr->next) ;
-    if (rr==NULL) return;
-}
-#endif
 
 static int isThereSomethingPrintable(S_olSymbolsMenu *itt) {
     S_reference *r;
@@ -1175,20 +1160,6 @@ void genClassHierarchyItemLinks( FILE *ff, S_olSymbolsMenu *itt,
         df = htmlCutLastSuffixStatic(df);
         fprintf(ff,"<A HREF=\"%s.html%s#%s%d\">s</A> ",df,
                 s_opt.htmlLinkSuffix, s_opt.htmlLineNumLabel, dr->line);
-#if ZERO
-        if (s_opt.javaDoc) {
-            linkNamePrettyPrint(tmp, rr->name,MAX_HTML_REF_LEN,LONG_NAME);
-            strcpy(ttt, df);
-            ccc = lastOccurenceInString(ttt, '.');
-            if (ccc!=NULL) {
-                *ccc = 0;
-                fprintf(ff," <A HREF=\"%s.html#%s\">d</A>", ttt, tmp);
-            }
-        }
-    } else if (EXTERN_JDOC_AVAILABLE(rr) && rr->vApplClass==rr->vFunClass) {
-        fprintf(ff, " <A HREF=\"%s\">d</A>",
-                getFullUrlOfJavaDoc_st(getJavaDocUrl_st(rr)));
-#endif
     } else {
         fprintf(ff, "  ");
     }
@@ -1523,25 +1494,6 @@ static void htmlPosProcess( FILE **fff,
                 GetFileChar(ch, ff, cp);
             }
         }
-#if ZERO       // this was with first char cxlink only
-        if ((cri->b.category == CatGlobal && s_opt.htmlglobalx)
-            || (cri->b.category == CatLocal && s_opt.htmllocalx)) {
-            fprintf(ccOut,"%s%s",prf0,prf1);
-            if (ch!=EOF && (isalpha(ch)||isdigit(ch)||ch=='_'||ch=='$')) {
-                htmlPutCharLF(ccOut, ch, cp);
-                GetFileChar(ch, ff, cp);
-            }
-            fprintf(ccOut,"%s%s",suf1,prf);
-        } else {
-            fprintf(ccOut,"%s%s",prf0,prf);
-        }
-        while (ch!=EOF && (isalpha(ch)||isdigit(ch)||ch=='_'||ch=='$')) {
-            htmlPutCharLF(ccOut, ch, cp);
-            GetFileChar(ch, ff, cp);
-        }
-        fprintf(ccOut,"%s%s",suf,suf0);
-        cri->b.htmlWasLn = 1;
-#endif
         if (rr->reference->usage.base==UsageDefined) {
             if ((rr->symbolRefItem->b.category==CatLocal && s_opt.htmllocalx)
                 || (rr->symbolRefItem->b.category==CatGlobal && s_opt.htmlglobalx)) {

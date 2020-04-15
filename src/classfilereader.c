@@ -1174,14 +1174,6 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
                     s_fileTab.tab[cn]->directEnclosingInstance = s_noneFileIndex;
                 }
             }
-#if ZERO
-            // no, do not load them, it seems that important access flags were readed
-            // in its enclosing class
-            for(rinners=0; rinners<inum; rinners++) {
-                // now load inner classes, I will need their access flags for visibilities
-                javaLoadClassSymbolsFromFile(memb->u.s->nest[rinners].cl);
-            }
-#endif
         } else {
             SkipNChars(alen, ccc, ffin, &cFile.lexBuffer.buffer);
         }

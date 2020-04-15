@@ -416,16 +416,6 @@ static int javaFindFile(Symbol *clas,
     rc = javaFindClassFile(lname, resClassFile, &classStat);
     if (rc==0) *resClassFile = NULL;
 //&fprintf(dumpOut,": checking to input name '%s' '%s'\n",*resSourceFile, s_fileTab.tab[s_olOriginalFileNumber]->name);
-#if ZERO
-    assert(s_olOriginalFileNumber>=0 && s_olOriginalComFileNumber>=0);
-    if (rs && strcmp(*resSourceFile, s_fileTab.tab[s_olOriginalFileNumber]->name)==0){
-        // it can happened only if currently edited field is corrupted
-        // and a class from this file is loaded from saved source.
-        *resSourceFile = s_fileTab.tab[s_olOriginalComFileNumber]->name;
-        statb(*resSourceFile, &sourceStat);
-        return(RESULT_IS_JAVA_FILE);
-    }
-#endif
     if (rs==0) *resSourceFile = NULL;
 //&fprintf(dumpOut,"O.K. here we are rc, rs == %d, %d\n", rc,rs);
     if (s_opt.javaSlAllowed == 0) {
@@ -1605,33 +1595,6 @@ int javaTypeToString(S_typeModifier *type, char *pp, int ppSize) {
     return(ppi);
 }
 
-#if ZERO
-// the original function looking for virtuals ...
-int javaExistEquallyProfiledFun(	S_symbol	*clas,
-                                    char		*name,
-                                    char		*profil,
-                                    S_symbol	**eq
-                                ) {
-    S_symbol        *memb;
-    S_recFindStr	rfs;
-    int				ii,mm;
-    *eq = NULL;
-    iniFind(clas, &rfs);
-    while (findStrRecordSym(&rfs, name, &memb, CLASS_TO_METHOD, ACC_CHECK_NO,VISIB_CHECK_NO)
-            == RETURN_OK) {
-        assert(strcmp(memb->name,name)==0);
-        assert(memb->b.symType == TypeDefault && memb->u.type);
-        assert(memb->u.type->m == TypeFunction);
-        assert(memb->u.type->u.m.sig);
-        if (strcmp(memb->u.type->u.m.sig, profil)==0) {
-            *eq = memb;
-            return(1);
-        }
-    }
-    return(0);
-}
-#endif
-
 int javaIsYetInTheClass(Symbol *clas, char *lname, Symbol **eq) {
     Symbol        *r;
     assert(clas && clas->u.s);
@@ -1688,7 +1651,6 @@ int javaSetFunctionLinkName(Symbol *clas, Symbol *decl,int mem) {
     sprintf(pp+ppi,")");
     ppi += strlen(pp+ppi);
     assert(ppi<MAX_PROFILE_SIZE);
-//	if (javaExistEquallyProfiledFun(clas, decl->name, pp+profilei, &memb)) {
     if (javaIsYetInTheClass(clas, pp, &memb)) {
         decl->linkName = memb->linkName;
     } else {

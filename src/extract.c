@@ -375,18 +375,11 @@ static int extIsJumpInOutBlock(S_programGraphNode *program) {
     return(0);
 }
 
-#if ZERO
-#define EXT_LOCAL_VAR_REF(ppp) (                                        \
-                                ppp->ref->usg.base==UsageDefined        \
-                                &&  ppp->symRef->b.symType==TypeDefault \
-                                )
-#else
 #define EXT_LOCAL_VAR_REF(ppp) (                                        \
                                 ppp->ref->usage.base==UsageDefined        \
                                 &&  ppp->symRef->b.symType==TypeDefault \
                                 &&  ppp->symRef->b.scope==ScopeAuto     \
                                 )
-#endif
 
 static void extClassifyLocalVariables(S_programGraphNode *program) {
     S_programGraphNode *p;
@@ -914,20 +907,6 @@ static void extJavaGenNewClassCall(S_programGraphNode *program) {
     rb[0]=0;
 
     classname = extJavaNewClassName();
-
-#if ZERO
-    // declarations of local out variables
-    fFlag = 1;
-    for(p=program; p!=NULL; p=p->next) {
-        if (p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT) {
-            GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
-            if (fFlag) sprintf(rb+strlen(rb), "\t\t");
-            sprintf(rb+strlen(rb), "%s; ", decl);
-            fFlag = 0;
-        }
-    }
-    sprintf(rb+strlen(rb), "\n");
-#endif
 
     // constructor invocation
     sprintf(rb+strlen(rb),"\t\t%s %s = new %s",classname, s_extractionName,classname);

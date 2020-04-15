@@ -1930,11 +1930,6 @@ static void actionOnBlockMarker(void) {
     } else if (s_opt.server_operation == OLO_EXTRACT) {
         extractActionOnBlockMarker();
     } else {
-#if ZERO
-    } else if (s_opt.cxrefs == OLO_GET_CURRENT_CLASS ||
-               s_opt.cxrefs == OLO_GET_CURRENT_SUPER_CLASS ||
-               s_opt.cxrefs == OLO_GET_ENV_VALUE) {
-#endif
         s_cps.currentPackageAnswer[0] = 0;
         s_cps.currentClassAnswer[0] = 0;
         s_cps.currentSuperClassAnswer[0] = 0;

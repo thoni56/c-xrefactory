@@ -436,16 +436,6 @@ static int jslRecordAccessible(Symbol *cl, Symbol *rec, unsigned recAccessFlags)
         return 0;
     }
     if (recAccessFlags & ACCESS_PRIVATE) {
-        // finally it seems that following is wrong and that private field
-        // can be accessed from all classes within same major class
-#if ZERO
-        for(cs=s_jsl->classStat; cs!=NULL && cs->thisClass!=NULL; cs=cs->next) {
-            if (cs->thisClass == cl) return(1);
-        }
-#endif
-        // I thinked it was wrong, but it seems that it is definitely O.K.
-        // )old comment: THIS IS WRONG, MUST BE DEFINED IN THE CLASS WHEN IT IS USED)
-        // it seems that if cl is defined inside top class, than it is O.K.
         for(lcs=cs=s_jsl->classStat; cs!=NULL && cs->thisClass!=NULL; cs=cs->next) {
             lcs = cs;
         }
@@ -516,12 +506,6 @@ void jslNewClassDefinitionBegin(S_id *name,
     int                 fileInd, membflag, cn;
 
     inname = name;
-#if ZERO
-    XX_ALLOC(inname, S_idIdent);
-    *inname = *name;
-    XX_ALLOCC(inname->name, strlen(name->name)+1, char);
-    strcpy(inname->name, name->name);
-#endif
     if (position==CPOS_FUNCTION_INNER || anonInterf!=NULL) {
         if (position==CPOS_FUNCTION_INNER) {
             /* inner class defined inside a method */

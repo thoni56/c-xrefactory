@@ -208,15 +208,6 @@ int javaRecordAccessible(S_recFindStr *rfs, Symbol *appcl, Symbol *funcl, Symbol
         return 0;
     }
     if (recAccessFlags & ACCESS_PRIVATE) {
-        // finally it seems that following is wrong and that private field
-        // can be accessed from all classes within same major class
-#if ZERO
-        for(cs=s_javaStat; cs!=NULL && cs->thisClass!=NULL; cs=cs->next) {
-            if (cs->thisClass == funcl) return(1);
-        }
-#endif
-        // I thinked it was wrong, but it seems that it is definitely O.K.
-        // it seems that if cl is defined inside top class, than it is O.K.
         for(lcs=cs=s_javaStat; cs!=NULL && cs->thisClass!=NULL; cs=cs->next) {
             lcs = cs;
         }
@@ -960,32 +951,6 @@ void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
     pp->name = mname + len;
     pp->linkName = mname;
 }
-
-#if ZERO
-void setGlobalFileDepNames(char *iname, S_symbol *pp, int memory) {
-    char            *mname, *fname;
-    char            tmp[MACRO_NAME_SIZE];
-    S_symbol        *memb;
-    int             ii,rr, order, len, len2;
-    if (iname == NULL) iname="";
-
-    assert(pp);
-    sprintf(tmp, "%x-%x%c", pp->pos.file, pp->pos.line, LINK_NAME_CUT_SYMBOL);
-
-    len = strlen(tmp);
-    len2 = len + strlen(iname);
-    assert(len < MACRO_NAME_SIZE-2);
-    if (memory == MEM_XX) {
-        XX_ALLOCC(mname, len2+1, char);
-    } else {
-        PP_ALLOCC(mname, len2+1, char);
-    }
-    strcpy(mname, tmp);
-    strcpy(mname+len,iname);
-    pp->name = mname + len;
-    pp->linkName = mname;
-}
-#endif
 
 S_typeModifier *crNewAnnonymeStrUnion(S_id *typeName) {
     Symbol *pp;

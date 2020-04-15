@@ -159,16 +159,6 @@ static void refactorySetNargv(char *nargv[MAX_NARGV_OPTIONS_NUM],
     assert(i < MAX_NARGV_OPTIONS_NUM);
 }
 
-#if ZERO
-static void dumpNargv(int argc, char **argv) {
-    int i;
-    tmpBuff[0]=0;
-    for (i=0; i<argc; i++) {
-        sprintf(tmpBuff+strlen(tmpBuff), " %s", argv[i]);
-    }
-    ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
-}
-#endif
 
 ////////////////////////////////////////////////////////////////////////////////////////
 // ----------------------- interface to edit server sub-task --------------------------
@@ -245,7 +235,6 @@ static void refactoryEditServerParseBuffer(char *project,
     if (pushOption2!=NULL) {
         nargv[nargc++] = pushOption2;
     }
-    //&dumpNargv(nargc, nargv);
     mainCallEditServerInit(nargc, nargv);
     mainCallEditServer(argument_count(s_refactoryEditSrvInitOptions),
                        s_refactoryEditSrvInitOptions,

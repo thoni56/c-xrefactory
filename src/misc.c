@@ -443,24 +443,8 @@ void typeSPrint(char *buff, int *size, S_typeModifier *t,
         }
         *size = strlen(buff);
         if (oNamePos!=NULL) *oNamePos = *size;
-#if ZERO
-        // I think that following was interesting only for
-        // old coding of static fields/method.
-        if (LANGUAGE(LAN_JAVA)) {
-            int ttt;
-            char *pp;
-            ttt = javaTypeStringSPrint(buff+ *size, name,longOrShortName, NULL);
-            pp = strchr(buff+ *size,'(');
-            if (pp!=NULL) ttt = pp-(buff+ *size);
-            *size += ttt;
-            buff[*size] = 0;
-        } else {
-#endif
             sprintf(buff+ *size,"%s", name);
             *size += strlen(buff+ *size);
-#if ZERO
-        }
-#endif
         sprintf(buff+ *size,"%s", post);
         *size += strlen(buff+ *size);
     } else {
