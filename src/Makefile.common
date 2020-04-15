@@ -116,7 +116,7 @@ enumTxt.g.c: proto.h .c-xrefrc c-xref.bs Makefile.common
 
 enumTxt.o: enumTxt.g.c enumTxt.g.h
 
-c-xref: .c-xrefrc $(OBJS)
+c-xref: .c-xrefrc $(OBJS) enumTxt.o
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
 
 .c-xrefrc: c-xrefrc.tpl
@@ -136,8 +136,7 @@ cleaner: clean
 ########################################################################
 test: debug
 	@echo "Only running quick tests for now - 'cd ../test; make all' to run all"
-	# Tests cannot run in parallel because of gcov
-	$(MAKE) -C ../tests -j1 quick
+	$(MAKE) -C ../tests -j quick
 
 
 unit:
@@ -145,12 +144,21 @@ unit:
 
 coverage: COVERAGE=--coverage
 coverage: clean test
-	lcov -q --exclude \*.mock -d . -c -o coverage.info
-	genhtml -q -o ../coverage coverage.info
+	lcov -q --exclude \*.mock -d . -c -o total.coverage
+	genhtml -q -o ../coverage total.coverage
 
-coverage-report: test unit
-	lcov -q --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' -d . -c -o coverage.info
-	genhtml -q -o ../coverage coverage.info
+coverage-report: unit test
+	@echo Doing the coverage reporting in the background
+	@$(MAKE) the-actual-coverage-report &
+
+the-actual-coverage-report:
+	@lcov -q --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' -d . -c -t unittests -o ../coverage/total.coverage
+	@for f in ../tests/*.coverage ; do \
+		echo Adding coverage from $$f ; \
+		lcov -q -a $$f -a ../coverage/total.coverage --exclude '*.tab.c' -o ../coverage/total.coverage.tmp ; \
+		mv ../coverage/total.coverage.tmp ../coverage/total.coverage ; \
+	done
+	genhtml -q -o ../coverage ../coverage/total.coverage
 
 
 # Special dependecies to force rebuild of c-xref.bs to generate needed files

@@ -19,7 +19,7 @@ script:
     - cd src
     # Bootstrap
     - make -j c-xref.bs
-    # For real
+    # For real, with coverage
     - make -j debug
     - make -j unit
     # Coverage for unittest to Codecov
@@ -30,7 +30,8 @@ script:
     - cd tests
     - cd ffmpeg ; make init ; cd ..
     - cd systemd ; make init ; cd ..
-    - make all
+    # Run and create coverage in standard place
+    - make GCOV= all
     - cd ..
     # Coverage for tests to Coveralls
     - lcov -q -d src -c -o coverage.info

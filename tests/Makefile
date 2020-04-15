@@ -9,7 +9,7 @@ endif
 # Create GCOV settings so that tests can be run in parallel by
 # directing all coverage to a separate directory under src/.objects
 # for each autodiscovered test
-GCOV = GCOV_PREFIX=../../src/.objects/tests/$(1) GCOV_PREFIX_STRIP=`pwd | awk -F"/" '{print NF}'`
+GCOV = GCOV_PREFIX=.coverage GCOV_PREFIX_STRIP=`pwd | awk -F"/" '{print NF}'`
 
 void:
 	@echo "'make quick' for only fast tests"
@@ -18,20 +18,26 @@ void:
 
 all: quick slow
 
+list:
+	echo $(TESTS)
+
 #-------------------------------------------------------------------
 # Here follows some GNU magic to automatically discover tests
 # It will assume that if there is a directory starting with "test_"
 # it is a directory where you can run tests using "make"
 
 # Discover all test directories and a target rule to run all we found
-TESTS = $(wildcard test_*)
+TESTS = $(patsubst %/.,%,$(wildcard test_*/.))
 autodiscovered_tests: $(TESTS)
 
 # Define a macro to generate a RULE for $1
 define RULE
 .PHONY: $(1)
 $(1):
-	$(MAKE) $(GCOV) -C $(1)
+	@cd $(1) ; lcov -q -z -d .
+	@$(MAKE) $(GCOV) -C $(1)
+	@cp ../src/.objects/*.gcno $(1)/.coverage
+	@lcov -q -t $(1) -d $(1)/.coverage -c -o $(1).coverage
 endef
 
 # Loop over all test_ directories to create a rule for each
