@@ -154,7 +154,7 @@ coverage-report: unit test
 
 LCOV=lcov -q --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*'
 the-actual-coverage-report:
-	@$(LCOV) -d . -c -t unittests -o ../coverage/total.coverage
+	@$(LCOV) -d . -c -t unittests -o ../coverage/unittests.coverage
 	@ls -1q ../tests/*.coverage | sed "s/^/-a /g" | xargs $(LCOV) -o ../coverage/total.coverage
 	@printf "\\r"
 	genhtml -q -o ../coverage ../coverage/total.coverage
