@@ -142,7 +142,6 @@ extern void editorRestrictMarkersToRegions(S_editorMarkerList **mm, S_editorRegi
 extern S_editorMarker *editorCrMarkerForBufferBegin(S_editorBuffer *buffer);
 extern S_editorMarker *editorCrMarkerForBufferEnd(S_editorBuffer *buffer);
 extern S_editorRegionList *editorWholeBufferRegion(S_editorBuffer *buffer);
-extern void editorScheduleModifiedBuffersToUpdate(void);
 extern void editorFreeMarkersAndMarkerList(S_editorMarkerList *occs);
 extern int editorMapOnNonexistantFiles(char *dirname,
                                        void (*fun)(MAP_FUN_PROFILE),

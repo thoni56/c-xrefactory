@@ -27,7 +27,6 @@ extern int findStrRecordSym(	S_recFindStr *ss,
                                 int visibilityCheck
                                 );
 extern Symbol *addNewSymbolDef(Symbol *p, unsigned storage, S_symbolTable *tab, int usage);
-extern Symbol *addNewCopyOfSymbolDef(Symbol *def, unsigned defaultStorage);
 extern Symbol *addNewDeclaration(Symbol *btype, Symbol *decl, S_idList *idl,
                                    unsigned storage, S_symbolTable *tab);
 extern int styyerror(char *s);

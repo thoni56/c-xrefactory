@@ -584,15 +584,6 @@ Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, S_symbolTable *ta
     return(pp);
 }
 
-/* this function is dead man, nowhere used */
-Symbol *addNewCopyOfSymbolDef(Symbol *def, unsigned storage) {
-    Symbol *p;
-    p = StackMemAlloc(Symbol);
-    *p = *def;
-    addNewSymbolDef(p,storage, s_symbolTable, UsageDefined);
-    return(p);
-}
-
 static void addInitializerRefs(Symbol *decl,
                                S_idList *idl
                                ) {

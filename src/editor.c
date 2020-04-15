@@ -1418,18 +1418,6 @@ S_editorRegionList *editorWholeBufferRegion(S_editorBuffer *buffer) {
     return theBufferRegionList;
 }
 
-void editorScheduleModifiedBuffersToUpdate(void) {
-    int                     i;
-    S_editorBufferList      *ll;
-    for(i=0; i<s_editorBufferTab.size; i++) {
-        for(ll=s_editorBufferTab.tab[i]; ll!=NULL; ll=ll->next) {
-            if (ll->f->b.modified) {
-                s_fileTab.tab[ll->f->ftnum]->b.scheduledToUpdate = 1;
-            }
-        }
-    }
-}
-
 static S_editorBufferList *editorComputeAllBuffersList(void) {
     int                 i;
     S_editorBufferList  *ll, *rr, *res;

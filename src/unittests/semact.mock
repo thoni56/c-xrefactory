@@ -50,10 +50,6 @@ Symbol *addNewSymbolDef(Symbol *p, unsigned storage, S_symbolTable *tab, int usa
   return (Symbol *) mock(p, storage, tab, usage);
 }
 
-Symbol *addNewCopyOfSymbolDef(Symbol *def, unsigned defaultStorage) {
-  return (Symbol *) mock(def, defaultStorage);
-}
-
 Symbol *addNewDeclaration(Symbol *btype, Symbol *decl, S_idList *idl, unsigned storage, S_symbolTable *tab) {
   return (Symbol *) mock(btype, decl, idl, storage, tab);
 }
