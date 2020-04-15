@@ -1251,7 +1251,7 @@ int mapDirectoryFiles(
                       int *a5
                       ){
     int res=0;
-#ifdef __WIN32__                /*SBD*/
+#ifdef __WIN32__
     WIN32_FIND_DATA     fdata;
     HANDLE              han;
     char                *s,*d;
@@ -1263,21 +1263,18 @@ int mapDirectoryFiles(
     assert(d-ttt < MAX_FILE_NAME_SIZE-3);
     sprintf(d,"%c*",SLASH);
     res = mapPatternFiles( ttt, fun, a1, a2, a3, a4, a5);
-#else                       /*SBD*/
+#else
     struct stat     stt;
     DIR             *fd;
     struct dirent   *dirbuf;
 
-    if (    statb(dirname,&stt) == 0
-            && (stt.st_mode & S_IFMT) == S_IFDIR
-            && (fd = opendir(dirname)) != NULL) {
+    if (  statb(dirname,&stt) == 0
+          && (stt.st_mode & S_IFMT) == S_IFDIR
+          && (fd = opendir(dirname)) != NULL) {
         while ((dirbuf=readdir(fd)) != NULL) {
-            if (
-#ifndef __QNX__             /*SBD*/
-                dirbuf->d_ino != 0 &&
-#endif                      /*SBD*/
-                strcmp(dirbuf->d_name, ".") != 0
-                && strcmp(dirbuf->d_name, "..") != 0) {
+            if (  dirbuf->d_ino != 0 &&
+                  strcmp(dirbuf->d_name, ".") != 0
+                  && strcmp(dirbuf->d_name, "..") != 0) {
                 /*fprintf(dumpOut,"mapping file %s\n",dirbuf->d_name);fflush(dumpOut);*/
                 (*fun)(dirbuf->d_name, a1, a2, a3, a4, a5);
                 res = 1;
@@ -1285,7 +1282,7 @@ int mapDirectoryFiles(
         }
         closedir(fd);
     }
-#endif                      /*SBD*/
+#endif
     // as special case, during refactorings you have to examine
     // also files stored in renamed buffers
     if (s_ropt.refactoringRegime == RegimeRefactory

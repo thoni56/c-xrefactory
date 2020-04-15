@@ -81,7 +81,6 @@
 #define MAX_INHERITANCE_DEEP     200
 #define MAX_ANONYMOUS_FIELDS     200
 #define MAX_APPL_OVERLOAD_FUNS	1000	/* max applicable overloaded funs */
-#define QNX_MSG_BUF_SIZE        1000
 #define MAX_OPTION_LEN         10000
 #define MAX_NESTED_ERR_ZONES     100
 #define MAX_COMPLETIONS        10002	/* max items in completion list */
@@ -146,8 +145,6 @@
 #define MAX_BUFFERED_SIZE_olcxMemory    (MAX_OLCX_SUFF_SIZE+500)
 
 #define TMP_BUFF_SIZE   50000
-
-#define QNX_COMPL_SRV_NAME "CCREF/COMPLSRV"
 
 #define EXTRACT_REFERENCE_ARG_STRING "&"
 

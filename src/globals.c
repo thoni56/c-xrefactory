@@ -392,7 +392,6 @@ S_options s_initOpt = {
     0,
     0,
     0,
-    0,
 
     /* GENERATE options */
 

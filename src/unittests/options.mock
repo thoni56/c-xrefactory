@@ -46,10 +46,6 @@ void javaSetSourcePath(int defaultCpAllowed) {
   mock(defaultCpAllowed);
 }
 
-void getOptionsFromMessage(char *qnxMsgBuff, int *nargc, char ***nargv) {
-  mock(qnxMsgBuff, nargc, nargv);
-}
-
 int changeRefNumOption(int newRefNum) {
   return (int) mock(newRefNum);
 }

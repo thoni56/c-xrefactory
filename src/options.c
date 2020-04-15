@@ -444,25 +444,6 @@ void readOptionPipe(char *comm, int *nargc, char ***nargv, char *sectionFile) {
     fclose(ff);
 }
 
-void getOptionsFromMessage(char *qnxMsgBuff, int *nargc, char ***nargv) {
-    int i;
-    int argc;
-    char **aargv,*argv[MAX_STD_ARGS];
-    i=0; argc = 1;
-    SM_INIT(optMemory);
-    while (qnxMsgBuff[i]) {
-        argv[argc] = qnxMsgBuff+i;
-        argc++;
-        while (qnxMsgBuff[i]!=' ' && qnxMsgBuff[i]) i++;
-        qnxMsgBuff[i]=0;
-        i++;
-    }
-    SM_ALLOCC(optMemory,aargv, argc, char*);
-    for(i=1; i<argc; i++) aargv[i] = argv[i];
-    *nargc = argc;
-    *nargv = aargv;
-}
-
 static char *getClassPath(bool defaultCpAllowed) {
     char *cp;
     cp = s_opt.classpath;

@@ -16,7 +16,6 @@ extern bool readOptionFromFile(FILE *ff, int *nargc, char ***nargv,
 extern void readOptionFile(char *name, int *nargc, char ***nargv,char *sectionFile, char *project);
 extern void readOptionPipe(char *command, int *nargc, char ***nargv,char *sectionFile);
 extern void javaSetSourcePath(int defaultCpAllowed);
-extern void getOptionsFromMessage(char *qnxMsgBuff, int *nargc, char ***nargv);
 extern int changeRefNumOption(int newRefNum);
 
 #endif

@@ -1118,7 +1118,6 @@ typedef struct options {
     int no_ref_typedef;
     int no_ref_macro;
     int no_stdop;
-    int qnxMessages;
 
     /* GENERATE options */
 

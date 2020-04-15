@@ -98,7 +98,6 @@ static void usage(char *s) {
     fprintf(stdout,"\t-olcxgoto<n>              - go to the n-th on-line reference\n");
     fprintf(stdout,"\t-user                     - user logname for olcx\n");
     fprintf(stdout,"\t-o <file>                 - log output to <file>\n");
-    fprintf(stdout,"\t-qnxmsg                   - xrefsrv will receives QNX mesages\n");
     fprintf(stdout,"\t-file <file>              - name of the file given to stdin\n");
 #endif
     fprintf(stdout,"\t-refs <file>              - name of file with cxrefs\n");
