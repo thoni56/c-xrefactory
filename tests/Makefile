@@ -8,7 +8,8 @@ endif
 
 # Create GCOV settings so that tests can be run in parallel by
 # directing all coverage to a separate directory under src/.objects
-# for each autodiscovered test
+# for each autodiscovered test. If GCOV="" then coverage is written
+# to the original object directory (required by Travis build. e.g)
 GCOV = GCOV_PREFIX=.coverage GCOV_PREFIX_STRIP=`pwd | awk -F"/" '{print NF}'`
 
 void:
