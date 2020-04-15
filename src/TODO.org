@@ -59,11 +59,12 @@ addMacroDefinedByOption().
 
 * TODO Refactor int2StringTabs, should not have Init in them
 * TODO Make all modules independent on main
-* TODO Initialize memory's injected error functions in main.c
+* TODO Remove all QNX-stuff
+* TODO Remove the global tmpBuff
+* TODO Initialize memory's injected error functions in main.c, but it still works?
 * TODO Cleanup and separate commons, misc and make them independent utility modules
 * TODO Investigate to remove S_classTreeData
 * TODO Check if the C-part of Yacc grammar is identical, and if so extract it
-* DONE Use Yacc's -p for "symbol_prefix" instead of the #defines?
 * TODO Fix the move_class test
 * TODO Use enum types wherever possible Storage, SymbolType, ...
 * TODO Rename some of the options, like -no_str -> -no-structs
@@ -137,6 +138,7 @@ easier to mock and unit test other modules.
   ACTUALLY: split generation of enumTxt header to its own header file
   with the naming strategy as for the others.
 * DOING Start using log.c functions to log to a separate log file
+* DONE Use Yacc's -p for "symbol_prefix" instead of the #defines?
 * DONE Rename classh to classhierarchy
 * DONE make memory.c (linkage) independent on all other modules
 One way to do this to inject the remaining, problematic, dependencies
