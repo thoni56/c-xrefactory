@@ -1,4 +1,4 @@
-[![Build Status](https://travis-ci.org/thoni56/c-xrefactory.svg?branch=master)](https://travis-ci.org/thoni56/c-xrefactory)[![Coverage Status](https://coveralls.io/repos/github/thoni56/c-xrefactory/badge.svg)](https://coveralls.io/github/thoni56/c-xrefactory)[![codecov](https://codecov.io/gh/thoni56/c-xrefactory/branch/master/graph/badge.svg)](https://codecov.io/gh/thoni56/c-xrefactory)
+[![Build Status](https://travis-ci.org/thoni56/c-xrefactory.svg?branch=master)](https://travis-ci.org/thoni56/c-xrefactory)[![Coverage Status](https://coveralls.io/repos/github/thoni56/c-xrefactory/badge.svg?branch=master)](https://coveralls.io/github/thoni56/c-xrefactory?branch=master)[![codecov](https://codecov.io/gh/thoni56/c-xrefactory/branch/master/graph/badge.svg)](https://codecov.io/gh/thoni56/c-xrefactory)
 # C-xrefactory - A refactoring tool for C/Java and Emacs
 
 ## TL;DR
@@ -12,8 +12,14 @@ Easiest way to install is using `el-get` (see note):
 
 Place cursor on an identifier and `go to definition` (F-6), navigate
 between occurrences (F-3, F-4), refactor (F-11) with `rename`, mark
-some code and `extract function` and so on. Your C programming and
-code will never be the same.
+some code and `extract function`. Your C programming and
+code will never be the same. Some highlights:
+
+- navigate through all usages of any type of symbol
+- rename any type of symbol, variable, macro, parameter, or Yacc grammar rule
+- add or delete function parameter
+- extract function or macro
+- detect unused symbols locally or in the complete project
 
 When installed correctly there will be an Emacs menu called `C-xref`
 for easy access to most functions.
