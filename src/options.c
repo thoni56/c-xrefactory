@@ -240,7 +240,7 @@ static int getOptionFromFile(FILE *file, char *text, int text_size, int *chars_r
             static int messageWritten=0;
             if (! messageWritten) {
                 messageWritten = 1;
-                sprintf(tmpBuff,"option '%s' contains quotas.", text);
+                sprintf(tmpBuff,"option '%s' contains quotes.", text);
                 warning(ERR_ST, tmpBuff);
             }
         }
