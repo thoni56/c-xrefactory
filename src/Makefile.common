@@ -140,7 +140,7 @@ test: debug
 	$(MAKE) -C ../tests -j quick
 
 
-unit:
+unit: enumTxt.[ch]
 	make -C unittests debug
 
 coverage: COVERAGE=--coverage
