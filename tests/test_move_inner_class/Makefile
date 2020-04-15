@@ -10,7 +10,6 @@ EDIT_SERVER_DRIVER = ../../utils/edit_server_driver.py
 EDIT_SERVER_DRIVER_COMMAND=$(EDIT_SERVER_DRIVER) commands.input "$(CURDIR)" buffer
 
 $(TEST): CXrefs
-	@echo "NOTE: this will print ERROR: commons.c: This is an inner class..."
 	@$(EDIT_SERVER_DRIVER_COMMAND) > output.tmp
 	@sed -e "s+$(CURDIR)+CURDIR+g" -e "s/len=[0-9]*/len=<n>/g" output.tmp > output
 	@diff output expected > /dev/null ; \

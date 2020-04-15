@@ -1,0 +1,1 @@
+../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -create -errors -xrefrc CURDIR/.c-xrefrc -p CURDIR -user 1
