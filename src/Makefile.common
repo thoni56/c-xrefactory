@@ -151,13 +151,11 @@ coverage-report: unit test
 	@echo Doing the coverage reporting in the background
 	@$(MAKE) the-actual-coverage-report &
 
+LCOV=lcov -q --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*'
 the-actual-coverage-report:
-	@lcov -q --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' -d . -c -t unittests -o ../coverage/total.coverage
-	@for f in ../tests/*.coverage ; do \
-		echo Adding coverage from $$f ; \
-		lcov -q -a $$f -a ../coverage/total.coverage --exclude '*.tab.c' -o ../coverage/total.coverage.tmp ; \
-		mv ../coverage/total.coverage.tmp ../coverage/total.coverage ; \
-	done
+	@$(LCOV) -d . -c -t unittests -o ../coverage/total.coverage
+	@ls ../tests/*.coverage | sed "s/^/-a /g" | xargs $(LCOV) -o ../coverage/total.coverage
+	@printf "\\r"
 	genhtml -q -o ../coverage ../coverage/total.coverage
 
 
