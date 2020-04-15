@@ -2188,6 +2188,51 @@ static void getAndProcessBuiltinIncludePaths(void) {
     removeFile(tempfile_name);
 }
 
+
+static char *gnuisms[] = {
+                          "__attribute__(xxx)",
+                          "__alignof__(xxx) 8",
+                          "__typeof__(xxx) int",
+                          "__gnuc_va_list void",
+                          "__leaf__",
+                          "__restrict=",
+                          "__restrict__="
+                          "__extension__="
+};
+
+static void getAndProcessStandardDefines(void) {
+   char line[MAX_OPTION_LEN];
+    int len;
+    char *tempfile_name;
+    FILE *tempfile;
+    char command[TMP_BUFF_SIZE];
+
+    if (!(LANGUAGE(LANG_C) || LANGUAGE(LANG_YACC) || LANGUAGE(LANG_CCC))) {
+        return;
+    }
+    tempfile_name = create_temporary_filename();
+    assert(strlen(tempfile_name)+1 < MAX_FILE_NAME_SIZE);
+
+    sprintf(command, "gcc -E -dM - >%s 2>&1", tempfile_name);
+
+    /* Need to pipe an empty file into gcc, an alternative would be to
+       create an empty file, but that seems as much work */
+    FILE *p = popen(command, "w");
+    fclose(p);
+
+    tempfile = fopen(tempfile_name, "r");
+    if (tempfile==NULL) return;
+    while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF) {
+        if (strncmp(line, "#define", strlen("#define")))
+            log_error("Expected #define from compiler standard definitions");
+        addMacroDefinedByOption(&line[strlen("#define")+1]);
+    }
+
+    /* Also define some GNU-isms */
+    for (int i=0; i<sizeof(gnuisms)/sizeof(gnuisms[0]); i++)
+        addMacroDefinedByOption(gnuisms[i]);
+ }
+
 static void getAndProcessXrefrcOptions(char *dffname, char *dffsect,char *project) {
     int dfargc;
     char **dfargv;
@@ -2312,8 +2357,11 @@ static void mainFileProcessingInitialisations(
         reInitCwd(dffname, dffsect);
         tmpIncludeDirs = s_opt.includeDirs;
         s_opt.includeDirs = NULL;
+
         getAndProcessXrefrcOptions(dffname, dffsect, dffsect);
+        getAndProcessStandardDefines();
         getAndProcessBuiltinIncludePaths();
+
         LIST_APPEND(S_stringList, s_opt.includeDirs, tmpIncludeDirs);
         if (s_opt.taskRegime != RegimeEditServer && s_input_file_name == NULL) {
             *outInputIn = 0;

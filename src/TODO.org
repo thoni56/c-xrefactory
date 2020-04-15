@@ -46,16 +46,6 @@ newSymbol<field>() for each of the necessary fields that are actually used.
 * DOING Handle struct literals ("(type){.field = data, ...}")
 ** DONE Create test case
 ** DOING Create AST using parsing
-* DOING Re-work standard options, since reading included system files may
-depend on them. Think about calling compiler to get defines, much like
-generation of "compiler_defines.g.h" was done. Here's what that did to
-get a list of #defines:
-
- echo | gcc -dM -E -
-
-It should be possible to piggyback on the command line options
-handling. That is performed by the last lines in
-addMacroDefinedByOption().
 
 * TODO Refactor int2StringTabs, should not have Init in them
 * TODO Make all modules independent on main
@@ -138,6 +128,16 @@ easier to mock and unit test other modules.
   ACTUALLY: split generation of enumTxt header to its own header file
   with the naming strategy as for the others.
 * DOING Start using log.c functions to log to a separate log file
+* DONE Re-work standard options, since reading included system files may
+depend on them. Think about calling compiler to get defines, much like
+generation of "compiler_defines.g.h" was done. Here's what that did to
+get a list of #defines:
+
+ echo | gcc -dM -E -
+
+It should be possible to piggyback on the command line options
+handling. That is performed by the last lines in
+addMacroDefinedByOption().
 * DONE Use Yacc's -p for "symbol_prefix" instead of the #defines?
 * DONE Rename classh to classhierarchy
 * DONE make memory.c (linkage) independent on all other modules
