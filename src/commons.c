@@ -285,10 +285,10 @@ void warning(int errCode, char *mess) {
 static void writeErrorMessage(int errCode, char *mess) {
     if (! s_opt.xref2) fprintf(errOut,"![error] ");
     errorMessage(ppcTmpBuff,errCode, mess);
-        log_error("%s", ppcTmpBuff);
     if (s_opt.xref2) {
         ppcGenRecord(PPC_ERROR, ppcTmpBuff,"\n");
     } else {
+        log_error("%s", ppcTmpBuff);
         fprintf(errOut, "%s", ppcTmpBuff);
         fflush(errOut);
     }

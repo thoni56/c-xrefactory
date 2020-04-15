@@ -6,7 +6,7 @@ CXREF = ../../src/c-xref -xrefrc $(CURDIR)/.c-xrefrc
 EDIT_SERVER_DRIVER = ../../utils/edit_server_driver.py
 
 $(TEST): CXrefs
-	@$(EDIT_SERVER_DRIVER) commands.input $(CURDIR) buffer >output.tmp 2>errors.tmp
+	@$(EDIT_SERVER_DRIVER) commands.input $(CURDIR) buffer >output.tmp 2>&1
 	@sed -e "s/len=[0-9]*/len=<n>/g" -e "s#$(CURDIR)#CURDIR#g" output.tmp > output
 	@if grep -q "ERROR.*commons.c:" output > /dev/null ; then \
 		$(FAIL) ; \
