@@ -2148,6 +2148,8 @@ static void getAndProcessBuiltinIncludePaths(void) {
     char *tempfile_name, *lang;
     FILE *tempfile;
     struct stat stt;
+    char command[TMP_BUFF_SIZE];
+    bool found = false;
 
     if (LANGUAGE(LANG_C) || LANGUAGE(LANG_YACC)) {
         lang = "c";
@@ -2162,22 +2164,25 @@ static void getAndProcessBuiltinIncludePaths(void) {
     assert(strlen(tempfile_name)+1 < MAX_FILE_NAME_SIZE);
 
     /* Ensure output is in C locale */
-    sprintf(tmpBuff, "LANG=C gcc -v -x %s -o /dev/null /dev/null >%s 2>&1", lang, tempfile_name);
+    sprintf(command, "LANG=C gcc -v -x %s -o /dev/null /dev/null >%s 2>&1", lang, tempfile_name);
 
-    (void)system(tmpBuff);
+    (void)system(command);
 
     tempfile = fopen(tempfile_name, "r");
     if (tempfile==NULL) return;
     while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF) {
-        if (strncmp(line,"#include <...> search starts here:",34)==0)
+        if (strncmp(line,"#include <...> search starts here:",34)==0) {
+            found = true;
             break;
+        }
     }
-    do {
-        if (strncmp(line, "End of search list.", 19) == 0)
-            break;
-        if (statb(line,&stt) == 0 && (stt.st_mode & S_IFMT) == S_IFDIR)
-            mainAddStringListOption(&s_opt.includeDirs, line);
-    } while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF);
+    if (found)
+        do {
+            if (strncmp(line, "End of search list.", 19) == 0)
+                break;
+            if (statb(line,&stt) == 0 && (stt.st_mode & S_IFMT) == S_IFDIR)
+                mainAddStringListOption(&s_opt.includeDirs, line);
+        } while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF);
 
     fclose(tempfile);
     removeFile(tempfile_name);
