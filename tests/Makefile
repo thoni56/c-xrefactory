@@ -6,6 +6,11 @@ ifndef VERBOSE
 MAKEFLAGS+=--no-print-directory
 endif
 
+# Create GCOV settings so that tests can be run in parallel by
+# directing all coverage to a separate directory under src/.objects
+# for each autodiscovered test
+GCOV = GCOV_PREFIX=../../src/.objects/tests/$(1) GCOV_PREFIX_STRIP=`pwd | awk -F"/" '{print NF}'`
+
 void:
 	@echo "'make quick' for only fast tests"
 	@echo "'make slow' for only slow tests"
@@ -26,11 +31,11 @@ autodiscovered_tests: $(TESTS)
 define RULE
 .PHONY: $(1)
 $(1):
-	@$(MAKE) -C $(1)
+	$(MAKE) $(GCOV) -C $(1)
 endef
 
 # Loop over all test_ directories to create a rule for each
-$(foreach _t,$(TESTS),$(eval $(call RULE, $(_t))))
+$(foreach _t,$(TESTS),$(eval $(call RULE,$(_t))))
 
 #--------------------------------------------------------------------
 
