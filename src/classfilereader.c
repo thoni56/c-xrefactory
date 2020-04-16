@@ -648,7 +648,7 @@ static union constantPoolUnion * cfReadConstantPool(
 void javaHumanizeLinkName( char *inn, char *outn, int size) {
     int     i;
     char    *cut;
-    cut = strchr(inn, LINK_NAME_CUT_SYMBOL);
+    cut = strchr(inn, LINK_NAME_SEPARATOR);
     if (cut==NULL) cut = inn;
     else cut ++;
     for(i=0; cut[i]; i++) {

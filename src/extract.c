@@ -402,25 +402,25 @@ static void extClassifyLocalVariables(S_programGraphNode *program) {
                                                                         \
         log_trace("analyzing '%s'",linkName);                           \
         for(    s=linkName+1,d=oDecl,dd=oDecla;                         \
-                *s!=0 && *s!=LINK_NAME_CUT_SYMBOL;                      \
+                *s!=0 && *s!=LINK_NAME_SEPARATOR;                      \
                 s++,d++,dd++) {                                         \
             *d = *dd = *s;                                              \
         }                                                               \
         *dd = 0;                                                        \
         assert(*s);                                                     \
-        for(s++; *s!=0 && *s!=LINK_NAME_CUT_SYMBOL; s++,d++) {          \
+        for(s++; *s!=0 && *s!=LINK_NAME_SEPARATOR; s++,d++) {          \
             *d = *s;                                                    \
         }                                                               \
         assert(*s);                                                     \
         d = strmcpy(d, declStar);                                       \
-        for(dn=oName,s++; *s!=0 && *s!=LINK_NAME_CUT_SYMBOL; s++,dn++) { \
+        for(dn=oName,s++; *s!=0 && *s!=LINK_NAME_SEPARATOR; s++,dn++) { \
             *dn = *s;                                                   \
             if (cpName) *d++ = *s;                                      \
         }                                                               \
         assert(*s);                                                     \
         *dn = 0;                                                        \
         assert(*s);                                                     \
-        for(s++; *s!=0 && *s!=LINK_NAME_CUT_SYMBOL; s++,d++) {          \
+        for(s++; *s!=0 && *s!=LINK_NAME_SEPARATOR; s++,d++) {          \
             *d = *s;                                                    \
         }                                                               \
         *d = 0;                                                         \

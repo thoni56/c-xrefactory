@@ -456,9 +456,8 @@ void setLocalVariableLinkName(struct symbol *p) {
     char nnn[TMP_STRING_SIZE];
     int len,tti;
     if (s_opt.server_operation == OLO_EXTRACT) {
-        // extract variable, I must pass all needed informations in linkname
-        sprintf(nnn,"%c%s%c",   LINK_NAME_CUT_SYMBOL, p->name,
-                LINK_NAME_CUT_SYMBOL);
+        // extract variable, must pass all needed informations in linkname
+        sprintf(nnn, "%c%s%c", LINK_NAME_SEPARATOR, p->name, LINK_NAME_SEPARATOR);
         ttt[0] = LINK_NAME_EXTRACT_DEFAULT_FLAG;
         // why it commented out ?
         //& if ((!LANGUAGE(LANG_JAVA))
@@ -468,8 +467,8 @@ void setLocalVariableLinkName(struct symbol *p) {
         sprintf(ttt+1,"%s", s_extractStorageName[p->bits.storage]);
         tti = strlen(ttt);
         len = TMP_STRING_SIZE - tti;
-        typeSPrint(ttt+tti, &len, p->u.type, nnn, LINK_NAME_CUT_SYMBOL, 0,1,SHORT_NAME, NULL);
-        sprintf(ttt+tti+len,"%c%x-%x-%x-%x", LINK_NAME_CUT_SYMBOL,
+        typeSPrint(ttt+tti, &len, p->u.type, nnn, LINK_NAME_SEPARATOR, 0,1,SHORT_NAME, NULL);
+        sprintf(ttt+tti+len,"%c%x-%x-%x-%x", LINK_NAME_SEPARATOR,
                 p->pos.file,p->pos.line,p->pos.col, s_count.localVar++);
     } else {
         if (p->bits.storage==StorageExtern && ! s_opt.exactPositionResolve) {
@@ -479,7 +478,7 @@ void setLocalVariableLinkName(struct symbol *p) {
             //&         if (s_opt.taskRegime == RegimeHtmlGenerate) {
             // html symbol, must pass the name for cxreference list item
             sprintf(ttt,"%x-%x-%x%c%s",p->pos.file,p->pos.line,p->pos.col,
-                    LINK_NAME_CUT_SYMBOL, p->name);
+                    LINK_NAME_SEPARATOR, p->name);
             /*&
               } else {
               // no special information need to pass
@@ -918,7 +917,7 @@ void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
         sprintf(tmp, "%x-%s-%x-%x%c",
                 hashFun(s_fileTab.tab[pp->pos.file]->name),
                 fname, pp->pos.line, pp->pos.col,
-                LINK_NAME_CUT_SYMBOL);
+                LINK_NAME_SEPARATOR);
     } else if (iname[0]==0) {
         // anonymous enum/structure/union ...
         filen = pp->pos.file;
@@ -930,10 +929,10 @@ void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
             rr = symbolTableNextMember(pp, &memb);
         }
         fname = simpleFileName(s_fileTab.tab[filen]->name);
-        sprintf(tmp, "%s%c%d%c", fname, SLASH, order, LINK_NAME_CUT_SYMBOL);
+        sprintf(tmp, "%s%c%d%c", fname, SLASH, order, LINK_NAME_SEPARATOR);
         /*&     // macros will be identified by name only?
           } else if (pp->bits.symType == TypeMacro) {
-          sprintf(tmp, "%x%c", pp->pos.file, LINK_NAME_CUT_SYMBOL);
+          sprintf(tmp, "%x%c", pp->pos.file, LINK_NAME_SEPARATOR);
           &*/
     } else {
         tmp[0] = 0;

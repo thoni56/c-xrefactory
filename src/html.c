@@ -942,7 +942,7 @@ static void htmlGenLocalRefList2(FILE *ff, char *fname, S_symbolRefItem *p,
     htmlCrLocalRefsFileName(fnum,p,usage, fn2, fn3); // !!!!!!! redund ?
     //&fprintf(dumpOut,"%s <-> %s\n",fn2,fname);fflush(dumpOut);
     //& assert(strcmp(fn2,fname)==0);
-    cut = strchr(p->name, LINK_NAME_CUT_SYMBOL);
+    cut = strchr(p->name, LINK_NAME_SEPARATOR);
     if (cut==NULL) cut = p->name;
     else cut ++;
     fprintf(ff,"\n<br>");

@@ -611,7 +611,7 @@ void javaGetClassNameFromFileNum(int nn, char *tmpOut, int dotify) {
 char *javaGetShortClassName(char *inn) {
     int     i;
     char    *cut,*res;
-    cut = strchr(inn, LINK_NAME_CUT_SYMBOL);
+    cut = strchr(inn, LINK_NAME_SEPARATOR);
     if (cut==NULL) cut = inn;
     else cut ++;
     res = cut;
@@ -634,7 +634,7 @@ char *javaGetNudePreTypeName_st( char *inn, int cutMode) {
     char            *cut,*res,*res2;
     static char     ttt[TMP_STRING_SIZE];
     //&fprintf(dumpOut,"getting type name from %s\n", inn);
-    cut = strchr(inn, LINK_NAME_CUT_SYMBOL);
+    cut = strchr(inn, LINK_NAME_SEPARATOR);
     if (cut==NULL) cut = inn;
     else cut ++;
     res = res2 = cut;
@@ -715,7 +715,7 @@ void linkNamePrettyPrint(char *ff, char *javaLinkName, int maxlen,
     char *tt;
 
     //& tt = javaLinkName;
-    tt = strchr(javaLinkName, LINK_NAME_CUT_SYMBOL);
+    tt = strchr(javaLinkName, LINK_NAME_SEPARATOR);
     if (tt==NULL) tt = javaLinkName;
     else tt ++;
     for(; *tt && *tt!='('; tt++) {

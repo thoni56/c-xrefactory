@@ -82,7 +82,7 @@ typedef enum language {
 #define LINK_NAME_INDUCED_ERROR                 "  References Misinterpreted due to previous Errors"
 #define LINK_NAME_MOVE_CLASS_MISSED             "  Symbols Inaccessible After Class Moving"
 
-#define LINK_NAME_CUT_SYMBOL '!'
+#define LINK_NAME_SEPARATOR '!'
 #define LINK_NAME_COLLATE_SYMBOL '#'
 #define LINK_NAME_EXTRACT_STR_UNION_TYPE_FLAG '*'
 #define LINK_NAME_EXTRACT_DEFAULT_FLAG ' '
@@ -329,7 +329,7 @@ typedef enum language {
 }
 
 #define LINK_NAME_MAYBE_START(ccc) (\
-    ccc=='.' || ccc=='/' || ccc==LINK_NAME_CUT_SYMBOL \
+    ccc=='.' || ccc=='/' || ccc==LINK_NAME_SEPARATOR \
     || ccc==LINK_NAME_COLLATE_SYMBOL \
     || ccc=='$'\
 )

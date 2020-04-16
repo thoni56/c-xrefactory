@@ -1107,7 +1107,7 @@ char *javaImportSymbolName_st(int file, int line, int coll) {
     static char res[MAX_CX_SYMBOL_SIZE];
     sprintf(res, "%s:%x:%x:%x%cimport on line %3d", LINK_NAME_IMPORT_STATEMENT,
             file, line, coll,
-            LINK_NAME_CUT_SYMBOL,
+            LINK_NAME_SEPARATOR,
             /*& simpleFileName(getRealFileNameStatic(s_fileTab.tab[file]->name)), &*/
             line);
     return(res);

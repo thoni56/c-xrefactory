@@ -748,7 +748,7 @@ void processDefine(bool argFlag) {
                 PP_ALLOCC(mm, strlen(aname)+1, char);
                 strcpy(mm, aname);
                 sprintf(tmpBuff, "%x-%x%c%s", pos.file, pos.line,
-                        LINK_NAME_CUT_SYMBOL, aname);
+                        LINK_NAME_SEPARATOR, aname);
                 PP_ALLOCC(argLinkName, strlen(tmpBuff)+1, char);
                 strcpy(argLinkName, tmpBuff);
                 SM_ALLOC(ppMemory, maca, S_macroArgumentTableElement);
