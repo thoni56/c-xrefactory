@@ -1,9 +1,6 @@
 /*
-  enumTxt.c - only includes a generated enumTxt.g.c, or when bootstrapping, enumTxt.bs.c
+  enumTxt.c - only includes a generated enumTxt.g.c, see enumTxt.h for
+  an explanation
 */
 
-#ifdef BOOTSTRAP
-#include "enumTxt.bs.c"
-#else
 #include "enumTxt.g.c"
-#endif
