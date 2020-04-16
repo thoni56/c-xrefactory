@@ -9,7 +9,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 ** DONE Create test case
 ** DOING Create AST using parsing
 * TODO Remove code for generation of str_fill
-* TODO Refactor int2StringTabs, should not have Init in them
+* TODO Remove the global tmpBuff
 * TODO Make all modules independent on main
 ** DONE Document why main.h is needed
 ** TODO Make commons.c independent on main
@@ -20,16 +20,20 @@ This probably requires a lot more understanding of refactory.c and why
 it is structured the way it is, it seems to be calling on itself and
 main processing. Also refactory task is always performed in a separate
 process, what happens if we specify -refactory as a PPC command?
-* TODO Remove the global tmpBuff
+* TODO Refactor int2StringTabs, should not have Init in them
 * TODO Initialize memory's injected error functions in main.c, but it still works?
 * TODO Cleanup and separate commons, misc and make them independent utility modules
 * TODO Investigate to remove S_classTreeData
 * TODO Check if the C-part of Yacc grammar is identical, and if so extract it
+* TODO Change -generate -enum-xxx so that you have to specify which enums you need
+Currently all enums included are generated, but that includes ones
+that are in the systems headers which in turns creates different
+output. It is better to be precise about which you want to be generated.
 * TODO Fix the move_class test
 * TODO Use enum types wherever possible Storage, SymbolType, ...
 * TODO Rename some of the options, like -no_str -> -no-structs
-* TODO Why does -refactory read the users default .c-xrefrc?
 * TODO Rename res fields in completion structs
+* TODO Why does -refactory read the users default .c-xrefrc?
 * TODO Change all "-no_" options to modern "-no-"
 * TODO Cannot mock structs as arguments like in symbol.mock
 We need to change pos to *pos if that's gonna work
@@ -47,12 +51,12 @@ are a small as possible. This is why IWYU exists!! It means "Include
 What You Use" and is a Clang related project at
 https://github.com/include-what-you-use/include-what-you-use)
 
-* TODO Rather than "fprintf(dumpOut...". Adjust options so that we can better
-control logging for various modules(?)
-
+* TODO Rather than "fprintf(dumpOut..." use log()
+Adjust options so that we can better control logging for various
+modules(?)
 ** DONE Include and start using log()
 
-** TODO Move output from log() from dumpOut to some logFile
+** DONE Move output from log() from dumpOut to some logFile
 * TODO Ensure all ANSI-C, C99 and C11 keywords (and macros for them?) are
   recognized (list e.g. at
   http://www.c-programming-simple-steps.com/c-keywords.html)
