@@ -30,9 +30,6 @@ prod debug yydebug: $(ZLIB) c-xref
 
 include sources.mk
 
-$(OBJDIR)/%.o: %.c | $(OBJDIR)
-	$(CC) $(CFLAGS) $(OUTPUT_OPTION) -MMD -MP -c $<
-
 #########################################################################
 
 ..always..:;

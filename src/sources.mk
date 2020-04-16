@@ -13,14 +13,17 @@ SRCS = main.c globals.c misc.c semact.c commons.c generate.c \
 
 OBJDIR = .objects
 OBJS = $(addprefix $(OBJDIR)/,${SRCS:.c=.o})
-
--include $(OBJDIR)/*.d
+DEPS = $(addprefix $(OBJDIR)/,${SRCS:.c=.d})
 
 $(OBJDIR)/%.o: %.c | $(OBJDIR)
-	$(CC) $(OUTPUT_OPTION) -MMD -c $<
+	$(CC) $(CFLAGS) $(OUTPUT_OPTION) -MMD -MP -c $<
 
 $(OBJDIR):
-	@mkdir $(OBJDIR)
+	mkdir $(OBJDIR)
+
+$(OBJS) $(DEPS): $(OBJDIR)
+
+-include $(OBJDIR)/*.d
 
 $(ZLIB_LIB):
 	make -C $(ROOTDIR)/lib/zlib libz.a
