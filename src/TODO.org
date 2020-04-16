@@ -6,6 +6,12 @@ There are a *lot* of things to do to make c-xref into modern C.
 (This file is structured for Emacs org-mode...)
 
 * DOING Remove bootstrap step (strfill and local definitions)
+** TODO Remove enumTxt generation
+This is easy to do but we want to retain the feature that some enums
+have there values as strings, and be sure that if we change the enum,
+those will change too. Is it possible to do as a check "after the
+fact"? Instead of generating them as a pre-requisite, generate and
+check that they are the same?
 ** DONE Remove the need for FILL_xxx macros
 At this point there are 66, 65, 64, 63, 62, 41, 33, 15, 8 FILL-macros that are in use
 *** DONE Remove position from proto.h
@@ -42,13 +48,23 @@ pattern for FILL-generation? Probably) Suggested solution is one
 newSymbol<field>() for each of the necessary fields that are actually used.
 *** DONE Remove FILL_symbollist() macro
 ** DONE Remove generation of str_fill from build
+** DONE Remove compiler_defines.h
+*** DONE Re-work standard options, since reading included system files may
 ** TODO Remove code for generation of str_fill
 * DOING Handle struct literals ("(type){.field = data, ...}")
 ** DONE Create test case
 ** DOING Create AST using parsing
-
 * TODO Refactor int2StringTabs, should not have Init in them
 * TODO Make all modules independent on main
+** DONE Document why main.h is needed
+** TODO Make commons.c independent on main
+** TODO Make cxref.c independent on main
+** TODO Make options.c independent on main
+** TODO Make refactory.c independent on main
+This probably requires a lot more understanding of refactory.c and why
+it is structured the way it is, it seems to be calling on itself and
+main processing. Also refactory task is always performed in a separate
+process, what happens if we specify -refactory as a PPC command?
 * TODO Remove the global tmpBuff
 * TODO Initialize memory's injected error functions in main.c, but it still works?
 * TODO Cleanup and separate commons, misc and make them independent utility modules
@@ -128,7 +144,6 @@ easier to mock and unit test other modules.
   with the naming strategy as for the others.
 * DOING Start using log.c functions to log to a separate log file
 * DONE Remove all QNX-stuff
-* DONE Re-work standard options, since reading included system files may
 depend on them. Think about calling compiler to get defines, much like
 generation of "compiler_defines.g.h" was done. Here's what that did to
 get a list of #defines:

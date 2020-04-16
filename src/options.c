@@ -7,6 +7,15 @@
 #include "html.h"
 #include "classfilereader.h"
 #include "editor.h"
+
+/* The following are currently needed from main:
+   xrefSetenv -> common?
+   mainHandleSetOption
+   dirInputFile
+   addHtmlCutPath
+   createOptionsString -> here?
+
+ */
 #include "main.h"
 
 #include "protocol.h"

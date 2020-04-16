@@ -1,5 +1,19 @@
 #include "refactory.h"
 
+/* Main is currently needed for:
+   writeRelativeProgress
+   copyOptions
+   mainTaskEntryInitialisations
+   mainCallXref
+   mainCallEditServerInit
+   mainCallEditServer
+   mainCloseOutputFile
+   processOptions
+   getPipedOptions
+   mainOpenOutputFile
+   mainSetLanguage
+   getInputFile
+ */
 #include "main.h"
 #include "html.h"
 #include "misc.h"
