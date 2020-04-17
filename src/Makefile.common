@@ -57,7 +57,7 @@ enumTxt:
 		> tmp-$@.g.c
 	@if ! diff $@.g.c tmp-$@.g.c ; then \
 		mv -f $@.g.c $@.g.c.backup ; \
-		mv -f tmp-$@.g.c $@ ; \
+		mv -f tmp-$@.g.c $@.g.c ; \
 		echo "$@.g.c: REGENERATED" ; \
 	else \
 		echo "$@.g.c: no change" ; \
