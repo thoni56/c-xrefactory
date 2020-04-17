@@ -41,8 +41,10 @@ $(1):
 	@cd $(1) ; lcov -q -z -d .
 	@$(MAKE) $(GCOV) -C $(1)
 	@if [ ! -z "$(GCOV)" ] ; then \
-		cp ../src/.objects/*.gcno $(1)/.coverage ; \
-		lcov -q -t $(1) -d $(1)/.coverage -c -o $(1).coverage ; \
+		if [ -d .coverage ] ; then \
+			cp ../src/.objects/*.gcno $(1)/.coverage ; \
+			lcov -q -t $(1) -d $(1)/.coverage -c -o $(1).coverage ; \
+		fi \
 	fi
 endef
 
