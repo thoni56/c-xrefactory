@@ -41,7 +41,8 @@ cexp_parser.tab.c: cexp_parser.y $(YACC)
 # representations .c and .h files too see if they differ
 .PHONY: enumTxt
 enumTxt:
-	@./c-xref -task_regime_generate $(CXREF_CFLAGS) \
+	@EXT=.g.h ; \
+	./c-xref -task_regime_generate $(CXREF_CFLAGS) \
 		-enum_name -header -xrefrc .c-xrefrc proto.h \
 		> tmp-$@.g.h ; \
 	if ! diff $@.g.h tmp-$@.g.h ; then \
@@ -49,10 +50,11 @@ enumTxt:
 		mv -f tmp-$@.g.h $@.g.h ; \
 		echo "$@.g.h: REGENERATED" ; \
 	else \
-		echo "$@.g.h: no change" ; \
-		rm tmp-$@.g.h ; \
+		echo "$@$(EXT): no change" ; \
+		rm tmp-$@$(EXT) ; \
 	fi
-	@./c-xref -task_regime_generate $(CXREF_CFLAGS) \
+	@EXT=.g.c ; \
+	./c-xref -task_regime_generate $(CXREF_CFLAGS) \
 		-enum_name -body -xrefrc .c-xrefrc proto.h \
 		> tmp-$@.g.c ; \
 	if ! diff $@.g.c tmp-$@.g.c ; then \
@@ -60,8 +62,8 @@ enumTxt:
 		mv -f tmp-$@.g.c $@.g.c ; \
 		echo "$@.g.c: REGENERATED" ; \
 	else \
-		echo "$@.g.c: no change" ; \
-		rm tmp-$@.g.c ; \
+		echo "$@$(EXT): no change" ; \
+		rm tmp-$@$(EXT) ; \
 	fi
 
 c-xref: .c-xrefrc $(OBJS)
