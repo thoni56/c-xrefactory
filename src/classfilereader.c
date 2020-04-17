@@ -180,7 +180,6 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iB
     SkipNChars(extraLen,ccc,ffin,iBuf);
     if (compressionMethod == 0) {
     }
-#if defined(USE_LIBZ)       /*SBD*/
     else if (compressionMethod == Z_DEFLATED) {
         iBuf->next = ccc;
         iBuf->end = ffin;
@@ -188,7 +187,6 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iB
         ccc = iBuf->next;
         ffin = iBuf->end;
     }
-#endif                      /*SBD*/
     else {
         res = 0;
         if (compressionErrorWritten==0) {

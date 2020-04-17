@@ -41,11 +41,9 @@ static int charBuffReadFromFile(struct CharacterBuffer  *buffer, char *outBuffer
 
 void charBuffClose(struct CharacterBuffer *buffer) {
     if (buffer->file!=NULL) fclose(buffer->file);
-#if defined(USE_LIBZ)       /*SBD*/
     if (buffer->inputMethod == INPUT_VIA_UNZIP) {
         inflateEnd(&buffer->zipStream);
     }
-#endif                      /*SBD*/
 }
 
 voidpf zlibAlloc(voidpf opaque, uInt items, uInt size) {
@@ -60,7 +58,6 @@ static int charBuffReadFromUnzipFilter(struct CharacterBuffer *buffer, char *out
     int n, fn, res;
     buffer->zipStream.next_out = (unsigned char *)outBuffer;
     buffer->zipStream.avail_out = max_size;
-#if defined(USE_LIBZ)       /*SBD*/
     do {
         if (buffer->zipStream.avail_in == 0) {
             fn = charBuffReadFromFile(buffer, buffer->z, CHAR_BUFF_SIZE);
@@ -83,7 +80,6 @@ static int charBuffReadFromUnzipFilter(struct CharacterBuffer *buffer, char *out
             buffer->zipStream.next_out = (unsigned char *)outBuffer;
         }
     } while (((char*)buffer->zipStream.next_out)==outBuffer && res==Z_OK);
-#endif                      /*SBD*/
     n = ((char*)buffer->zipStream.next_out) - outBuffer;
     return(n);
 }
@@ -127,7 +123,6 @@ void switchToZippedCharBuff(struct CharacterBuffer *buffer) {
     char *fin;
 
     getCharBuf(buffer);     // just for now
-#if defined(USE_LIBZ)
     fin = buffer->end;
     cc = buffer->next;
     for(dd=buffer->z; cc<fin; cc++,dd++) *dd = *cc;
@@ -141,7 +136,6 @@ void switchToZippedCharBuff(struct CharacterBuffer *buffer) {
         fprintf(stderr, "initialization: %s\n", buffer->zipStream.msg);
         exit(1);
     }
-#endif
 }
 
 int skipNCharsInCharBuf(struct CharacterBuffer *buffer, unsigned count) {
