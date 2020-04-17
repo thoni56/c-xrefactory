@@ -53,8 +53,8 @@ enumTxt:
 		echo "$@$(EXT): no change" ; \
 		rm tmp-$@$(EXT) ; \
 	fi
-	EXT=.g.c ; \
-	@./c-xref -task_regime_generate $(CXREF_CFLAGS) \
+	@EXT=.g.c ; \
+	./c-xref -task_regime_generate $(CXREF_CFLAGS) \
 		-enum_name -body -xrefrc .c-xrefrc proto.h \
 		> tmp-$@$(EXT) ; \
 	if ! diff $@$(EXT) tmp-$@$(EXT) ; then \
@@ -66,7 +66,7 @@ enumTxt:
 		rm tmp-$@$(EXT) ; \
 	fi
 
-c-xref: .c-xrefrc $(OBJS) enumTxt.o
+c-xref: .c-xrefrc $(OBJS)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
 	@make enumTxt
 
