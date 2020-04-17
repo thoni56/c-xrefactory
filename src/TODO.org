@@ -10,6 +10,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 ** DOING Create AST using parsing
 ** TODO Add as reference to the field
 * TODO Remove code for generation of str_fill
+* TODO enum-generation does not do automatical compiler defines discovery?
 * TODO Remove the global tmpBuff
 * TODO Make all modules independent on main
 ** DONE Document why main.h is needed
