@@ -12,7 +12,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 * TODO Remove the global tmpBuff
 * TODO Make all modules independent on main
 ** DONE Document why main.h is needed
-** TODO Make commons.c independent on main
+** DONE Make commons.c independent on main
 ** TODO Make cxref.c independent on main
 ** TODO Make options.c independent on main
 ** TODO Make refactory.c independent on main
