@@ -4,7 +4,7 @@
 #include "globals.h"
 #include "lex.h"
 #include "yylex.h"
-#include "cct.h"
+#include "classcaster.h"
 #include "misc.h"
 #include "cxref.h"
 #include "cxfile.h"

@@ -1,6 +1,6 @@
 /* -*- c -*-*/
 #include <cgreen/mocks.h>
-#include "../editorbuffertab.h"
+#include "editorbuffertab.h"
 
 S_editorBufferList *s_staticEditorBufferTabTab[EDITOR_BUFF_TAB_SIZE];
 S_editorBufferTab s_editorBufferTab;

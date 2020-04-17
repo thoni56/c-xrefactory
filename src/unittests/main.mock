@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../main.h"
+#include "main.h"
 #include <cgreen/mocks.h>
 
 void dirInputFile(char *file, char *a1, char *a2, S_completions *a3, void *a4, int *a5) {

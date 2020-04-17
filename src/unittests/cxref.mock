@@ -1,8 +1,8 @@
 /* -*- c -*-*/
-#include "../cxref.h"
+#include "cxref.h"
 #include <cgreen/mocks.h>
 
-#include "../olcxtab.h"
+#include "olcxtab.h"
 
 void fill_reference(S_reference *reference, S_usageBits usage, S_position position,
                     S_reference *next) {

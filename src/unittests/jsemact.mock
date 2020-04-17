@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../jsemact.h"
+#include "jsemact.h"
 #include <cgreen/mocks.h>
 
 S_javaStat *s_javaStat;

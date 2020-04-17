@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../memory.h"
+#include "memory.h"
 #include <cgreen/mocks.h>
 
 S_memory *cxMemory = NULL;

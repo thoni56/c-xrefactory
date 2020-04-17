@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../filetab.h"
+#include "filetab.h"
 #include <cgreen/mocks.h>
 
 int s_noneFileIndex = -1;

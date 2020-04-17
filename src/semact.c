@@ -4,7 +4,7 @@
 #include "globals.h"
 #include "parsers.h"
 #include "misc.h"
-#include "cct.h"
+#include "classcaster.h"
 #include "yylex.h"
 #include "cxref.h"
 #include "jsemact.h"

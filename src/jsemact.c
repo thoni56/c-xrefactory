@@ -2,7 +2,7 @@
 
 #include "commons.h"
 #include "globals.h"
-#include "cct.h"
+#include "classcaster.h"
 #include "misc.h"
 #include "extract.h"
 #include "yylex.h"

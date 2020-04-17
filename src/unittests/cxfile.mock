@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../cxfile.h"
+#include "cxfile.h"
 #include <cgreen/mocks.h>
 
 ScanFileFunctionStep normalScanFunctionSequence[1];

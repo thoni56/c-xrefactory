@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../classfilereader.h"
+#include "classfilereader.h"
 #include <cgreen/mocks.h>
 
 S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];

@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../options.h"
+#include "options.h"
 #include <cgreen/mocks.h>
 
 void addSourcePathsCut(void) {

@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../cct.h"
+#include "classcaster.h"
 #include <cgreen/mocks.h>
 
 void cctAddSimpleValue(S_cctNode *cc, Symbol *x, int depthFactor) {

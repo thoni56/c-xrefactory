@@ -13,7 +13,7 @@ char *s_javaLangObjectLinkName="java/lang/Object";
 Symbol s_defaultVoidDefinition;
 
 /* Mocks: */
-#include "cct.mock"
+#include "classcaster.mock"
 #include "classfilereader.mock"
 #include "typemodifier.mock"
 #include "commons.mock"

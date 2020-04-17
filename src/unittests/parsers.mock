@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../parsers.h"
+#include "parsers.h"
 #include <cgreen/mocks.h>
 
 YYSTYPE *uniyylval;

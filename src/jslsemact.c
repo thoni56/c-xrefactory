@@ -4,7 +4,7 @@
 #include "commons.h"
 #include "globals.h"
 #include "parsers.h"
-#include "cct.h"
+#include "classcaster.h"
 #include "semact.h"
 #include "cxref.h"
 #include "classfilereader.h"

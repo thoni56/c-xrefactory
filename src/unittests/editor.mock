@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../editor.h"
+#include "editor.h"
 #include <cgreen/mocks.h>
 
 void editorInit(void) {

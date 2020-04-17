@@ -557,7 +557,7 @@ typedef struct nestedSpec {
     short unsigned  accFlags;
 } S_nestedSpec;
 
-#include "cct.h"
+#include "classcaster.h"
 
 typedef struct symStructSpec {
     struct symbolList		*super;			/* list of super classes & interfaces */

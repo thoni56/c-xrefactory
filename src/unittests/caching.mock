@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../caching.h"
+#include "caching.h"
 #include <cgreen/mocks.h>
 
 S_caching s_cache;

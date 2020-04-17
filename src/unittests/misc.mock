@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../misc.h"
+#include "misc.h"
 #include <cgreen/mocks.h>
 
 void ppcGenSynchroRecord(void) {

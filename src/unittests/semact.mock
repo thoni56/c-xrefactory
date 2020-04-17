@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../semact.h"
+#include "semact.h"
 #include <cgreen/mocks.h>
 
 void unpackPointers(Symbol *pp) {

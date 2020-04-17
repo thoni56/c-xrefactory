@@ -1,5 +1,5 @@
-#ifndef _CCT_H_
-#define _CCT_H_
+#ifndef _CLASSCASTTREE_H_
+#define _CLASSCASTTREE_H_
 
 #include "symbol.h"
 

@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../extract.h"
+#include "extract.h"
 #include <cgreen/mocks.h>
 
 Symbol *addContinueBreakLabelSymbol(int labn, char *name) {

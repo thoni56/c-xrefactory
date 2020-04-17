@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../commons.h"
+#include "commons.h"
 
 #include <cgreen/mocks.h>
 

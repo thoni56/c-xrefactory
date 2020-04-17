@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../complete.h"
+#include "complete.h"
 #include <cgreen/mocks.h>
 
 void initCompletions(S_completions *completions, int length, S_position position) {

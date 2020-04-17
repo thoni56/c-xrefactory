@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../characterbuffer.h"
+#include "characterbuffer.h"
 #include <cgreen/mocks.h>
 
 void fillCharacterBuffer(CharacterBuffer *characterBuffer,

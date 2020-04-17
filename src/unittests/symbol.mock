@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../symbol.h"
+#include "symbol.h"
 #include <cgreen/mocks.h>
 
 Symbol *newSymbol(char *name, char *linkName, struct position pos) {

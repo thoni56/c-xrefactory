@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../classhierarchy.h"
+#include "classhierarchy.h"
 #include <cgreen/mocks.h>
 
 S_chReference *newClassHierarchyReference(int origin, int class, S_chReference *next) {

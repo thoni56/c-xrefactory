@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../olcxtab.h"
+#include "olcxtab.h"
 #include <cgreen/mocks.h>
 
 

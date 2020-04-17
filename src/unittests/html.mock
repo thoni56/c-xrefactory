@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../html.h"
+#include "html.h"
 #include <cgreen/mocks.h>
 
 void genClassHierarchyItemLinks(FILE *ff, S_olSymbolsMenu *itt, int virtFlag) {

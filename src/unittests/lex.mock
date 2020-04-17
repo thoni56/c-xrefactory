@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "../lex.h"
+#include "lex.h"
 #include <cgreen/mocks.h>
 
 int getLexBuf(struct lexBuf *buffer) {
