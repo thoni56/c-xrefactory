@@ -11,9 +11,9 @@
 extern void initCwd(void);
 extern void reInitCwd(char *dffname, char *dffsect);
 extern void emergencyExit(int exitStatus);
-extern void warning(int kod, char *sprava);
-extern void error(int kod, char *sprava);
-extern void fatalError(int kod, char *sprava, int exitCode);
+extern void warning(int code, char *message);
+extern void error(int code, char *message);
+extern void fatalError(int code, char *message, int exitCode);
 extern void internalCheckFail(char *expr, char *file, int line);
 
 extern char *create_temporary_filename(void);

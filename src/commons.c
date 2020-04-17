@@ -276,10 +276,10 @@ static void errorMessage(char *out, int errCode, char *mess) {
     assert(strlen(ppcTmpBuff) < MAX_PPC_RECORD_SIZE-1);
 }
 
-void warning(int errCode, char *mess) {
+void warning(int errCode, char *message) {
     if ((! s_opt.noErrors) && (! s_javaPreScanOnly)) {
         if (! s_opt.xref2) fprintf(errOut,"![warning] ");
-        errorMessage(ppcTmpBuff,errCode, mess);
+        errorMessage(ppcTmpBuff,errCode, message);
         if (s_opt.xref2) {
             ppcGenRecord(PPC_WARNING, ppcTmpBuff,"\n");
         } else {

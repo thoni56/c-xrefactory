@@ -19,16 +19,16 @@ void emergencyExit(int exitStatus) {
   mock(exitStatus);
 }
 
-void warning(int kod, char *sprava) {
-  mock(kod, sprava);
+void warning(int code, char *message) {
+  mock(code, message);
 }
 
-void error(int kod, char *sprava) {
-  mock(kod, sprava);
+void error(int code, char *message) {
+  mock(code, message);
 }
 
-void fatalError(int kod, char *sprava, int exitCode) {
-  mock(kod, sprava, exitCode);
+void fatalError(int code, char *message, int exitCode) {
+  mock(code, message, exitCode);
 }
 
 void internalCheckFail(char *expr, char *file, int line) {
