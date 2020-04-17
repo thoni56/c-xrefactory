@@ -23,6 +23,6 @@ extern void copyFile(char *src, char *dest);
 extern void createDir(char *dirname);
 extern void copyDir(char *dest, char *s, int *i);
 extern void removeFile(char *dirname);
-
+extern void closeMainOutputFile(void);
 
 #endif

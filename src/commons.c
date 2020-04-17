@@ -6,11 +6,20 @@
 #include "globals.h"
 #include "misc.h"               /* ppcGenRecord() & ppcGenSynchroRecord() - extract ppc module? */
 #include "yylex.h"              /* placeIdent() */
-#include "main.h"               /* mainCloseOutputFile() - move here? */
 #include "protocol.h"
 
 #include "log.h"
 
+
+void closeMainOutputFile(void) {
+    if (ccOut!=stdout) {
+        //&fprintf(dumpOut,"CLOSING OUTPUT FILE\n");
+        fclose(ccOut);
+        ccOut = stdout;
+    }
+    errOut = ccOut;
+    dumpOut = ccOut;
+}
 
 void initCwd(void) {
     char *rr;
@@ -300,7 +309,7 @@ void error(int errCode, char *mess) {
 }
 
 void emergencyExit(int exitStatus) {
-    mainCloseOutputFile();
+    closeMainOutputFile();
     if (s_opt.xref2) {
         ppcGenSynchroRecord();
     }
@@ -332,7 +341,7 @@ void internalCheckFail(char *expr, char *file, int line) {
     if (s_opt.taskRegime == RegimeEditServer || s_opt.refactoringRegime == RegimeRefactory) {
         if (s_opt.xref2) {
             ppcGenRecord(PPC_INFORMATION,"Exiting","\n");
-            mainCloseOutputFile();
+            closeMainOutputFile();
             ppcGenSynchroRecord();
         } else {
             fprintf(errOut, "\t exiting!\n"); fflush(stderr);

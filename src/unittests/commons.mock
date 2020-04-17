@@ -3,6 +3,10 @@
 
 #include <cgreen/mocks.h>
 
+void closeMainOutputFile(void) {
+  mock();
+}
+
 void initCwd(void) {
   mock();
 }

@@ -260,7 +260,7 @@ static void refactoryBeInteractive(void) {
     char                **pargv;
     copyOptions(&s_cachedOptions, &s_opt);
     for(;;) {
-        mainCloseOutputFile();
+        closeMainOutputFile();
         ppcGenSynchroRecord();
         copyOptions(&s_opt, &s_cachedOptions);
         processOptions(argument_count(s_refactoryEditSrvInitOptions),
@@ -4571,7 +4571,7 @@ void mainRefactory(int argc, char **argv) {
     // synchronisation, wait so files can not be saved with the same time
     editorQuasiSaveModifiedBuffers();
 
-    mainCloseOutputFile();
+    closeMainOutputFile();
     ppcGenSynchroRecord();
 
     // exiting, put undefined, so that main will finish

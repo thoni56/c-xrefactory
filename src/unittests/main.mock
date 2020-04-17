@@ -69,7 +69,3 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 void mainOpenOutputFile(char *ofile) {
   mock(ofile);
 }
-
-void mainCloseOutputFile(void) {
-  mock();
-}

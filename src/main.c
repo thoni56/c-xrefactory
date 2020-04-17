@@ -2763,18 +2763,8 @@ static void scheduleModifiedFilesToUpdate(void) {
 }
 
 
-void mainCloseOutputFile(void) {
-    if (ccOut!=stdout) {
-        //&fprintf(dumpOut,"CLOSING OUTPUT FILE\n");
-        fclose(ccOut);
-        ccOut = stdout;
-    }
-    errOut = ccOut;
-    dumpOut = ccOut;
-}
-
 void mainOpenOutputFile(char *ofile) {
-    mainCloseOutputFile();
+    closeMainOutputFile();
     if (ofile!=NULL) {
         //&fprintf(dumpOut,"OPENING OUTPUT FILE %s\n", s_opt.outputFileName);
 #if defined (__WIN32__)
@@ -3238,7 +3228,7 @@ static void mainXref(int argc, char **argv) {
     editorLoadAllOpenedBufferFiles();
 
     mainCallXref(argc, argv);
-    mainCloseOutputFile();
+    closeMainOutputFile();
     if (s_opt.xref2) {
         ppcGenSynchroRecord();
     }
@@ -3322,7 +3312,7 @@ static void mainEditServer(int argc, char **argv) {
         //& s_opt.outputFileName = NULL;  // why this was here ???
         //editorCloseBufferIfNotUsedElsewhere(s_input_file_name);
         editorCloseAllBuffers();
-        mainCloseOutputFile();
+        closeMainOutputFile();
         if (s_opt.server_operation == OLO_EXTRACT) s_cache.cpi = 2; // !!!! no cache
         if (s_opt.last_message != NULL) {
             fprintf(ccOut,"%s",s_opt.last_message);
