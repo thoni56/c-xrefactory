@@ -10,25 +10,8 @@ Development:
 First, you will need to build a special patched version of Berkeley
 yacc, which is stored in byacc-1.9 directory.
 
-c-xref is partially bootstrapped (read more about this in NOTES.md) so
-the build will be in two steps (performed automatically):
+From the src directory you can to development and coverage builds using
 
-  - build a c-xref.bs from pre-generated sources if required
-  - generate new versions of strFill and enumTxt, then using that..
-  - build actual c-xref
+  make debug unit test coverage-report
 
-NOTE: since we want to distribute c-xref in source form, you should
-always check that bootstrapping works. (Making incompatible changes to
-some structures will break this for example.) Check this with
-
-     make cleaner; make
-
-It should put your directory in a very clean state so that c-xref has
-to be bootstrapped.
-
-If you change any grammar files or anything they might depend on you
-can run regenerate the parsers (c, java, yacc, cexp) with
-
-   make yacc
-
-which will also generate new parsers.
+Those should also work with -j (parallel builds).

@@ -1,6 +1,3 @@
-# Sources and link settings common to bootstrap (Makefile.bs) and the
-# real target build (Makefile.common)
-
 SRCS = main.c globals.c misc.c semact.c commons.c generate.c \
 	   enumTxt.c complete.c cxref.c cxfile.c lex.c yylex.c options.c \
 	   caching.c jsemact.c classfilereader.c cct.c init.c \

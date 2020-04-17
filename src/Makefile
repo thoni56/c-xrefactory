@@ -3,11 +3,7 @@ CC = gcc
 
 WARNINGS = -Wall -Wno-char-subscripts
 
-# CFLAGS for bootstrap compilation
-BS_CFLAGS = -g $(INCLUDES) $(ZLIB_OPT) -MMD
-
-# Real CFLAGS
-CFLAGS = $(BS_CFLAGS) -funsigned-char $(WARNINGS) $(COVERAGE)
+CFLAGS = -g $(INCLUDES) $(ZLIB_OPT) -MMD -funsigned-char $(WARNINGS) $(COVERAGE)
 
 LDFLAGS = $(COVERAGE)
 
