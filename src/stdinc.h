@@ -1,5 +1,5 @@
-#ifndef STDINC__H
-#define STDINC__H
+#ifndef _STDINC_H_
+#define _STDINC_H_
 
 #if defined(__WIN32) && (! defined(__WIN32__))
 #define __WIN32__ 1

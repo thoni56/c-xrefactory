@@ -28,7 +28,7 @@ $(OBJS) $(DEPS): $(OBJDIR)
 $(ZLIB_LIB):
 	make -C $(ROOTDIR)/lib/zlib libz.a
 
-# Put the following into comments if you wish to build without zlib
+# Put the following into comments if you must build without zlib
 # library, i.e. without possibility to read compressed .jar files
 ZLIB_OPT=-DUSE_LIBZ
 ZLIB_LIB= -lz

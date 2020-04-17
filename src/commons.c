@@ -7,7 +7,6 @@
 #include "misc.h"               /* ppcGenRecord() & ppcGenSynchroRecord() - extract ppc module? */
 #include "yylex.h"              /* placeIdent() */
 #include "main.h"               /* mainCloseOutputFile() - move here? */
-
 #include "protocol.h"
 
 #include "log.h"
