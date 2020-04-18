@@ -690,7 +690,7 @@ static S_reference * htmlGetDefinitionRef(S_htmlRefList *rrr, int usage) {
 }
 
 static char *htmlStSymbolCode(S_symbolRefItem *r, int usage) {
-    static char ss[MAX_CX_SYMBOL_SIZE];
+    static char ss[MAX_CX_SYMBOL_SIZE+2];
     char ttt[MAX_CX_SYMBOL_SIZE];
     char *sss, *tt;
     if (r->b.category==CatLocal) {
