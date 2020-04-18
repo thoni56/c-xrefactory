@@ -3,7 +3,7 @@
 # Do not use it directly
 #
 
-debug: CFLAGS+=-DDEBUG
+debug: CFLAGS+=-DDEBUG -Og
 debug: COVERAGE=--coverage
 yydebug: CFLAGS+=-DYYDEBUG=1 -DDEBUG
 
