@@ -2357,9 +2357,6 @@ static void mainFileProcessingInitialisations(
     } else {
         copyOptions(&s_opt, &s_cachedOptions);
         processOptions(nargc, nargv, INFILES_DISABLED); /* no include or define options */
-        /*& // if someone understand why this is here, I will uncomment it
-          searchDefaultOptionsFile(s_input_file_name, dffname, dffsect);
-          &*/
         *outInputIn = computeAndOpenInputFile();
     }
     // reset language once knowing all language suffixes
