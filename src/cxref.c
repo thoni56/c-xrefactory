@@ -1495,7 +1495,7 @@ static int olcxGenHtmlFileWithIndirectLink(char *ofname, char *url) {
 }
 
 static char *getExpandedLocalJavaDocFile_st(char *expandedPath, char *prefix, char *tmpfname) {
-    static char     fullurl[MAX_FILE_NAME_SIZE];
+    static char     fullurl[11*MAX_FILE_NAME_SIZE];
     char            fullfname[MAX_FILE_NAME_SIZE];
     char            *s;
     struct stat     st;
