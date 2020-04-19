@@ -1,4 +1,4 @@
-char * taskRegimesName[] = {
+char * taskRegimesEnumName[] = {
 	"RegimeUndefined",
 	"RegimeXref",
 	"RegimeHtmlGenerate",
@@ -7,13 +7,13 @@ char * taskRegimesName[] = {
 	"RegimeGenerate"
 };
 
-char * editorUndoOperationsName[] = {
+char * editorUndoOperationsEnumName[] = {
 	"UNDO_REPLACE_STRING",
 	"UNDO_RENAME_BUFFER",
 	"UNDO_MOVE_BLOCK"
 };
 
-char * fileEncodingsName[] = {
+char * fileEncodingsEnumName[] = {
 	"MULE_DEFAULT",
 	"MULE_EUROPEAN",
 	"MULE_EUC",
@@ -25,7 +25,7 @@ char * fileEncodingsName[] = {
 	"MULE_UTF_16BE"
 };
 
-char * storageName[] = {
+char * storageEnumName[] = {
 	"StorageError",
 	"StorageAuto",
 	"StorageGlobal",
@@ -44,7 +44,13 @@ char * storageName[] = {
 	"MAX_STORAGE"
 };
 
-char * syntaxPassParsedImportantPositionName[] = {
+char * referenceCategoryEnumName[] = {
+	"CategoryGlobal",
+	"CategoryLocal",
+	"MAX_CATEGORIES"
+};
+
+char * syntaxPassParsedImportantPositionEnumName[] = {
 	"SPP_LAST_TOP_LEVEL_CLASS_POSITION",
 	"SPP_ASSIGNMENT_OPERATOR_POSITION",
 	"SPP_ASSIGNMENT_END_POSITION",
@@ -73,7 +79,13 @@ char * syntaxPassParsedImportantPositionName[] = {
 	"SPP_MAX"
 };
 
-char * olcxOptionsName[] = {
+char * memoryClassEnumName[] = {
+	"MEMORY_CF",
+	"MEMORY_XX",
+	"MEMORY_PP"
+};
+
+char * olcxOptionsEnumName[] = {
 	"OLO_COMPLETION",
 	"OLO_SEARCH",
 	"OLO_TAG_SEARCH",
@@ -168,25 +180,13 @@ char * olcxOptionsName[] = {
 	"OLO_ABOUT"
 };
 
-char * refCategoriesName[] = {
-	"CatGlobal",
-	"CatLocal",
-	"MAX_CATEGORIES"
-};
-
-char * memoriesName[] = {
-	"MEM_CF",
-	"MEM_XX",
-	"MEM_PP"
-};
-
-char * editorsName[] = {
+char * editorsEnumName[] = {
 	"EDITOR_UNKNOWN",
 	"EDITOR_EMACS",
 	"EDITOR_JEDIT"
 };
 
-char * usageName[] = {
+char * usageEnumName[] = {
 	"ureserve0",
 	"UsageOLBestFitDefined",
 	"UsageJavaNativeDeclared",
@@ -242,7 +242,7 @@ char * usageName[] = {
 	"USAGE_FILTER"
 };
 
-char * typeName[] = {
+char * typeEnumName[] = {
 	"TypeDefault",
 	"TypeChar",
 	"TypeUnsignedChar",
@@ -326,13 +326,13 @@ char * typeName[] = {
 	"MAX_TYPE"
 };
 
-char * updateModifiersName[] = {
+char * updateModifiersEnumName[] = {
 	"UP_NO_UPDATE",
 	"UP_FAST_UPDATE",
 	"UP_FULL_UPDATE"
 };
 
-char * languageName[] = {
+char * languageEnumName[] = {
 	"LANG_C",
 	"LANG_JAVA",
 	"LANG_YACC",
@@ -341,13 +341,13 @@ char * languageName[] = {
 	"LANG_CLASS"
 };
 
-char * addImportsDefaultName[] = {
+char * addImportsDefaultEnumName[] = {
 	"NID_IMPORT_ON_DEMAND",
 	"NID_SINGLE_TYPE_IMPORT",
 	"NID_KEPP_FQT_NAME"
 };
 
-char * javaPCTIndexName[] = {
+char * javaPCTIndexEnumName[] = {
 	"PCTIndexError",
 	"PCTIndexByte",
 	"PCTIndexShort",
@@ -359,7 +359,7 @@ char * javaPCTIndexName[] = {
 	"MAX_PCTIndex"
 };
 
-char * refsFilterLevelsName[] = {
+char * refsFilterLevelsEnumName[] = {
 	"RFilterAll",
 	"RFilterAddrVal",
 	"RFilterLVal",
@@ -367,12 +367,12 @@ char * refsFilterLevelsName[] = {
 	"MAX_REF_LIST_FILTER_LEVEL"
 };
 
-char * sFunResultName[] = {
+char * sFunResultEnumName[] = {
 	"RESULT_OK",
 	"RESULT_ERR"
 };
 
-char * menuFilterLevelsName[] = {
+char * menuFilterLevelsEnumName[] = {
 	"FilterAllOfSameName",
 	"FilterSameProfile",
 	"FilterSameProfileRelatedClass",
@@ -381,7 +381,7 @@ char * menuFilterLevelsName[] = {
 	"MAX_MENU_FILTER_LEVEL"
 };
 
-char * miscellaneousName[] = {
+char * miscellaneousEnumName[] = {
 	"DEFAULT_VALUE",
 	"TYPE_ADD_YES",
 	"TYPE_ADD_NO",
@@ -530,7 +530,7 @@ char * miscellaneousName[] = {
 	"PUSHING_DOWN"
 };
 
-char * refScopesName[] = {
+char * refScopesEnumName[] = {
 	"ScopeDefault",
 	"ScopeGlobal",
 	"ScopeFile",
@@ -538,7 +538,7 @@ char * refScopesName[] = {
 	"MAX_SCOPES"
 };
 
-char * commentMovementName[] = {
+char * commentMovementEnumName[] = {
 	"CM_NO_COMMENT",
 	"CM_SINGLE_SLASHED",
 	"CM_SINGLE_STARED",
@@ -548,14 +548,14 @@ char * commentMovementName[] = {
 	"CM_ALL_SLASHED_AND_STARED"
 };
 
-char * inputTypeName[] = {
+char * inputTypeEnumName[] = {
 	"INPUT_NORMAL",
 	"INPUT_MACRO",
 	"INPUT_MACRO_ARGUMENT",
 	"INPUT_CACHE"
 };
 
-char * accessName[] = {
+char * accessEnumName[] = {
 	"ACCESS_DEFAULT",
 	"ACCESS_PUBLIC",
 	"ACCESS_PRIVATE",

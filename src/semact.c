@@ -86,7 +86,7 @@ void addSymbol(Symbol *pp, S_symbolTable *tab) {
         one. All this story is about storing information in trail. It should
         containt, both table and pointer !!!!
     */
-    log_debug("adding symbol %s: %s %s",pp->name, typeName[pp->bits.symType], storageName[pp->bits.storage]);
+    log_debug("adding symbol %s: %s %s",pp->name, typeEnumName[pp->bits.symType], storageEnumName[pp->bits.storage]);
     assert(pp->bits.npointers==0);
     AddSymbolNoTrail(pp,tab);
     addToTrail(deleteSymDef, pp  /* AND ALSO!!! , tab */ );
@@ -565,7 +565,7 @@ Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, S_symbolTable *ta
         if (! symbolTableIsMember(s_symbolTable,p,&ii,&pp)) {
             pp = p;
             if (s_opt.exactPositionResolve) {
-                setGlobalFileDepNames(pp->name, pp, MEM_XX);
+                setGlobalFileDepNames(pp->name, pp, MEMORY_XX);
             }
             addSymbol(pp, tab);
         }
@@ -660,11 +660,11 @@ static S_typeModifier *createSimpleTypeModifier(Type type) {
     assert(type>=0 && type<MAX_TYPE);
     if (s_preCreatedTypesTable[type] == NULL) {
         log_trace("creating simple type %d (='%s'), *not* found in pre-created types", type,
-                  typeName[type]);
+                  typeEnumName[type]);
         p = newSimpleTypeModifier(type);
     } else {
         log_trace("creating simple type %d (='%s'), found in pre-created types", type,
-                  typeName[type]);
+                  typeEnumName[type]);
         p = s_preCreatedTypesTable[type];
     }
     assert(p->kind == type);
@@ -898,7 +898,7 @@ S_typeModifier *simpleStrUnionSpecifier(S_id *typeName,
         S_typeModifier *sptrtype = &pp->u.s->sptrtype;
         initTypeModifierAsPointer(sptrtype, &pp->u.s->stype);
 
-        setGlobalFileDepNames(id->name, pp, MEM_XX);
+        setGlobalFileDepNames(id->name, pp, MEMORY_XX);
         addSymbol(pp, s_symbolTable);
     }
     addCxReference(pp, &id->p, usage,s_noneFileIndex, s_noneFileIndex);
@@ -940,7 +940,7 @@ void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
     len = strlen(tmp);
     len2 = len + strlen(iname);
     assert(len < MACRO_NAME_SIZE-2);
-    if (memory == MEM_XX) {
+    if (memory == MEMORY_XX) {
         XX_ALLOCC(mname, len2+1, char);
     } else {
         PP_ALLOCC(mname, len2+1, char);
@@ -968,7 +968,7 @@ S_typeModifier *crNewAnnonymeStrUnion(S_id *typeName) {
     pp = newSymbol("", NULL, typeName->p);
     fillSymbolBits(&pp->bits, ACCESS_DEFAULT, type, StorageNone);
 
-    setGlobalFileDepNames("", pp, MEM_XX);
+    setGlobalFileDepNames("", pp, MEMORY_XX);
 
     XX_ALLOC(pp->u.s, S_symStructSpec);
 
@@ -1017,7 +1017,7 @@ S_typeModifier *simpleEnumSpecifier(S_id *id, int usage) {
         || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
         pp = StackMemAlloc(Symbol);
         *pp = p;
-        setGlobalFileDepNames(id->name, pp, MEM_XX);
+        setGlobalFileDepNames(id->name, pp, MEMORY_XX);
         addSymbol(pp, s_symbolTable);
     }
     addCxReference(pp, &id->p, usage,s_noneFileIndex, s_noneFileIndex);
@@ -1030,7 +1030,7 @@ S_typeModifier *createNewAnonymousEnum(SymbolList *enums) {
     pp = newSymbolAsEnum("", "", s_noPos, enums);
     fillSymbolBits(&pp->bits, ACCESS_DEFAULT, TypeEnum, StorageNone);
 
-    setGlobalFileDepNames("", pp, MEM_XX);
+    setGlobalFileDepNames("", pp, MEMORY_XX);
     pp->u.enums = enums;
     return(createSimpleEnumType(pp));
 }

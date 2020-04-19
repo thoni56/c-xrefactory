@@ -352,15 +352,15 @@ enum editors {
     EDITOR_JEDIT,
 };
 
-enum memories {
-    MEM_CF,
-    MEM_XX,
-    MEM_PP,
+enum memoryClass {
+    MEMORY_CF,
+    MEMORY_XX,
+    MEMORY_PP,
 };
 
-enum refCategories {
-    CatGlobal,
-    CatLocal,
+enum referenceCategory {
+    CategoryGlobal,
+    CategoryLocal,
     MAX_CATEGORIES
 };
 

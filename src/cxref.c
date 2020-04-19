@@ -311,7 +311,7 @@ static void getSymbolCxrefCategories(
                                      int *p_storage
                                       ) {
     int category, scope, storage;
-    category = CatLocal; scope = ScopeAuto; storage=StorageAuto;
+    category = CategoryLocal; scope = ScopeAuto; storage=StorageAuto;
     /* default */
     if (p->bits.symType==TypeDefault) {
         storage = p->bits.storage;
@@ -326,59 +326,59 @@ static void getSymbolCxrefCategories(
                 ) {
             if (p->linkName[0]==' ' && p->linkName[1]==' ') {
                 // a special symbol local linkname
-                category = CatLocal;
+                category = CategoryLocal;
             } else {
-                category = CatGlobal;
+                category = CategoryGlobal;
             }
             scope = ScopeGlobal;
         }
     }
     /* enumeration constants */
     if (p->bits.symType==TypeDefault && p->bits.storage==StorageConstant) {
-        category = CatGlobal;  scope = ScopeGlobal; storage=StorageExtern;
+        category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
     }
     /* struct, union, enum */
     if ((p->bits.symType==TypeStruct||p->bits.symType==TypeUnion||p->bits.symType==TypeEnum)){
-        category = CatGlobal;  scope = ScopeGlobal; storage=StorageExtern;
+        category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
     }
     /* macros */
     if (p->bits.symType == TypeMacro) {
-        category = CatGlobal;  scope = ScopeGlobal; storage=StorageExtern;
+        category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
     }
     if (p->bits.symType == TypeLabel) {
-        category = CatLocal; scope = ScopeFile; storage=StorageStatic;
+        category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
     }
     if (p->bits.symType == TypeCppIfElse) {
-        category = CatLocal; scope = ScopeFile; storage=StorageStatic;
+        category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
     }
     if (p->bits.symType == TypeCppInclude) {
-        category = CatGlobal; scope = ScopeGlobal; storage=StorageExtern;
+        category = CategoryGlobal; scope = ScopeGlobal; storage=StorageExtern;
     }
     if (p->bits.symType == TypeCppCollate) {
-        category = CatGlobal; scope = ScopeGlobal; storage=StorageExtern;
+        category = CategoryGlobal; scope = ScopeGlobal; storage=StorageExtern;
     }
     if (p->bits.symType == TypeYaccSymbol) {
-        category = CatLocal; scope = ScopeFile; storage=StorageStatic;
+        category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
     }
     if (s_opt.taskRegime == RegimeHtmlGenerate) {
         if (p->bits.symType == TypeKeyword) {
-            category = CatGlobal; scope = ScopeFile; storage=StorageStatic;
+            category = CategoryGlobal; scope = ScopeFile; storage=StorageStatic;
             /* global because I dont want them from processed include files */
         }
         if (p->bits.symType == TypeComment) {
-            category = CatGlobal; scope = ScopeFile; storage=StorageStatic;
+            category = CategoryGlobal; scope = ScopeFile; storage=StorageStatic;
         }
         if (p->bits.symType == TypeCppAny) {
-            category = CatGlobal; scope = ScopeFile; storage=StorageStatic;
+            category = CategoryGlobal; scope = ScopeFile; storage=StorageStatic;
         }
         if (p->bits.symType == TypeCppIfElse) {
             /* it tooks too much memory on first pass */
-            category = CatLocal; scope = ScopeFile; storage=StorageStatic;
+            category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
         }
     }
     /* JAVA packages */
     if (p->bits.symType == TypePackage) {
-        category = CatGlobal;  scope = ScopeGlobal; storage=StorageExtern;
+        category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
     }
 
     *p_category = category;
@@ -770,13 +770,15 @@ S_reference * addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *usageb,
     getSymbolCxrefCategories( p, &category, &scope, &storage);
     if (scope == ScopeAuto && s_opt.no_ref_locals) return NULL;
 
-    log_trace("adding reference on %s(%d,%d) at %d,%d,%d (%s) (%s) (%s)",p->linkName,vFunCl,vApplCl, pos->file,pos->line,pos->col,refCategoriesName[category],usageName[usage],storageName[p->bits.storage]);
+    log_trace("adding reference on %s(%d,%d) at %d,%d,%d (%s) (%s) (%s)", p->linkName,
+              vFunCl,vApplCl, pos->file, pos->line,pos->col, referenceCategoryEnumName[category],
+              usageEnumName[usage], storageEnumName[p->bits.storage]);
     assert(s_opt.taskRegime);
     if (s_opt.taskRegime == RegimeEditServer) {
         if (s_opt.server_operation == OLO_EXTRACT) {
             if (s_input_file_number != cFile.lexBuffer.buffer.fileNumber) return NULL;
         } else {
-            if (category==CatGlobal && p->bits.symType!=TypeCppInclude && s_opt.server_operation!=OLO_TAG_SEARCH) {
+            if (category==CategoryGlobal && p->bits.symType!=TypeCppInclude && s_opt.server_operation!=OLO_TAG_SEARCH) {
                 // do not load references if not the currently edited file
                 if (s_olOriginalFileNumber!=pos->file
                     && s_opt.noIncludeRefs) return NULL;
@@ -788,14 +790,14 @@ S_reference * addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *usageb,
     }
     if (s_opt.taskRegime == RegimeGenerate) return NULL;
     if (s_opt.taskRegime == RegimeXref) {
-        if (category == CatLocal) return NULL; /* dont cxref local symbols */
+        if (category == CategoryLocal) return NULL; /* dont cxref local symbols */
         if (s_fileTab.tab[pos->file]->b.cxLoading==0) return NULL;
     }
     if (s_opt.taskRegime == RegimeHtmlGenerate) {
         //&     scope = ScopeFile;  /* do not forget any reference */
         //&     if (! htmlReferencableSymbol(scope, category, p)) return NULL;
         //&     if (s_fileTab.tab[pos->file]->b.cxLoading==0) return NULL;
-        if (s_fileTab.tab[pos->file]->b.cxLoading==0&&category==CatGlobal) return NULL;
+        if (s_fileTab.tab[pos->file]->b.cxLoading==0&&category==CategoryGlobal) return NULL;
         if (s_fileTab.tab[pos->file]->b.cxLoaded
             &&p->bits.symType==TypeCppIfElse) return NULL;
     }
@@ -961,7 +963,7 @@ static void olcxFreeCompletion(S_olCompletion *r) {
     REAL_MEMORY_FREE(olcxMemory, r->name, strlen(r->name)+1);
     if (r->fullName!=NULL) REAL_MEMORY_FREE(olcxMemory, r->fullName, strlen(r->fullName)+1);
     if (r->vclass!=NULL) REAL_MEMORY_FREE(olcxMemory, r->vclass, strlen(r->vclass)+1);
-    if (r->cat == CatGlobal) {
+    if (r->cat == CategoryGlobal) {
         assert(r->sym.name);
         nlen = strlen(r->sym.name);
         REAL_MEMORY_FREE(olcxMemory, r->sym.name, nlen+1);
@@ -2106,7 +2108,7 @@ static void olcxReferenceGotoCompletion(int refn) {
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
     rr = olCompletionNthLineRef(refs->cpls, refn);
     if (rr != NULL) {
-        if (rr->cat == CatLocal /*& || refs->command == OLO_TAG_SEARCH &*/) {
+        if (rr->cat == CategoryLocal /*& || refs->command == OLO_TAG_SEARCH &*/) {
             if (rr->ref.usage.base != UsageClassFileDefinition
                 && rr->ref.usage.base != UsageClassTreeDefinition
                 && POSITION_NEQ(rr->ref.p, s_noPos)) {
@@ -2155,7 +2157,7 @@ static void olcxReferenceBrowseCompletion(int refn) {
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
     rr = olCompletionNthLineRef(refs->cpls, refn);
     if (rr != NULL) {
-        if (rr->cat == CatLocal) {
+        if (rr->cat == CategoryLocal) {
             fprintf(ccOut,"* ** no JavaDoc is available for local symbols **");
         } else {
             aa = olcxBrowseSymbolInJavaDoc(&rr->sym);
@@ -2349,7 +2351,7 @@ static void olcxShowTopType(void) {
     if (mms==NULL) {
         olcxGenNoReferenceSignal();
     } else {
-        fprintf(ccOut, "*%s",typeName[mms->s.b.symType]);
+        fprintf(ccOut, "*%s",typeEnumName[mms->s.b.symType]);
     }
 }
 
@@ -2362,7 +2364,7 @@ S_olSymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi,int storage){
     S_symbolRefItemBits bb;
     S_symbolRefItem     ss;
     fill_symbolRefItemBits(&bb, TypeDefault, storage, ScopeGlobal,
-                           ACCESS_DEFAULT, CatGlobal, 0);
+                           ACCESS_DEFAULT, CategoryGlobal, 0);
     fill_symbolRefItem(&ss, fieldName, cxFileHashNumber(fieldName),
                        cfi, cfi, bb);
     res = olCreateNewMenuItem(&ss, ss.vApplClass, ss.vFunClass, &s_noPos, UsageNone,
@@ -2430,7 +2432,7 @@ static void olcxGenInspectClassDefinitionRef(int classnum, char *refsuffix) {
     char                ccc[MAX_CX_SYMBOL_SIZE];
     javaGetClassNameFromFileNum(classnum, ccc, KEEP_SLASHES);
     fill_symbolRefItemBits(&mmm.b, TypeStruct, StorageExtern, ScopeGlobal,
-                           ACCESS_DEFAULT, CatGlobal, 0);
+                           ACCESS_DEFAULT, CategoryGlobal, 0);
     fill_symbolRefItem(&mmm, ccc, cxFileHashNumber(ccc),
                        s_noneFileIndex, s_noneFileIndex, mmm.b);
     //&sprintf(tmpBuff, "looking for %s (%s)", mmm.name, s_fileTab.tab[mmm.vApplClass]->name);ppcGenTmpBuff();
@@ -3472,8 +3474,8 @@ static int olMenuHashFileNumLess(S_olSymbolsMenu *s1, S_olSymbolsMenu *s2) {
     fi2 = cxFileHashNumber(s2->s.name);
     if (fi1 < fi2) return(1);
     if (fi1 > fi2) return(0);
-    if (s1->s.b.category == CatLocal) return(1);
-    if (s1->s.b.category == CatLocal) return(0);
+    if (s1->s.b.category == CategoryLocal) return(1);
+    if (s1->s.b.category == CategoryLocal) return(0);
     // both files and categories equals ?
     return(0);
 }
@@ -3517,7 +3519,7 @@ static int olSpecialFieldCreateSelection(char *fieldName, int storage) {
         if (ss->next->s.b.symType == TypeStruct) ss = ss->next;
     }
     if (ss != NULL) {
-        //&fprintf(dumpOut, "sym %s of %s\n", ss->s.name, typeName[ss->s.b.symType]);
+        //&fprintf(dumpOut, "sym %s of %s\n", ss->s.name, typeEnumName[ss->s.b.symType]);
         if (ss->s.b.symType == TypeStruct) {
             clii = getClassNumFromClassLinkName(ss->s.name, clii);
         } else {
@@ -4243,7 +4245,7 @@ static void olPushAllReferencesInBetweenMapFun(S_symbolRefItem *ri,
             mm = olAddBrowsedSymbol(ri, &rstack->menuSym, select, visible, ooBits, USAGE_ANY, vlevel, &defpos, defusage);
             assert(mm!=NULL);
             for(; rr!=NULL; rr=rr->next) {
-                log_trace("checking reference of line %d, usage %s", rr->p.line, usageName[rr->usage.base]);
+                log_trace("checking reference of line %d, usage %s", rr->p.line, usageEnumName[rr->usage.base]);
                 if (IS_PUSH_ALL_METHODS_VALID_REFERENCE(rr,dd)) {
                     //& olcxAddReferenceToOlSymbolsMenu(mm, rr, 0);
                     log_trace("adding reference of line %d",rr->p.line);
@@ -4617,7 +4619,7 @@ static void mapAddLocalUnusedSymbolsToHkSelection(S_symbolRefItem *ss) {
 
     dr = NULL;
     used = 0;
-    if (ss->b.category != CatLocal) return;
+    if (ss->b.category != CategoryLocal) return;
     for(rr = ss->refs; rr!=NULL; rr=rr->next) {
         if (IS_DEFINITION_OR_DECL_USAGE(rr->usage.base)) {
             if (rr->p.file == s_input_file_number) {
@@ -5286,11 +5288,11 @@ S_olCompletion * olCompletionListPrepend(char *name,
         dref = *dfref;
         dref.next = NULL;
         fill_symbolRefItemBits(&srib, TypeUnknown, StorageNone,
-                               ScopeAuto, ACCESS_DEFAULT, CatLocal, 0);
+                               ScopeAuto, ACCESS_DEFAULT, CategoryLocal, 0);
         fill_symbolRefItem(&sri, "", cxFileHashNumber(""),
                            s_noneFileIndex, s_noneFileIndex,
                            srib);
-        cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, CatLocal, cType, dref, sri);
+        cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, CategoryLocal, cType, dref, sri);
     } else {
         getSymbolCxrefCategories(s, &category, &scope, &storage);
         //&fprintf(dumpOut,":adding sym %s %d\n",s->linkName,category);fflush(dumpOut);

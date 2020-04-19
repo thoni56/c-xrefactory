@@ -379,7 +379,7 @@ static void writeSymbolItem(int symIndex) {
     s_outLastInfos.macroBaseFileGeneratedForSym[symIndex] = 0;
     s_outLastInfos.symbolIsWritten[symIndex] = 1;
     if (s_opt.long_cxref) {
-        sprintf(ttt,"\t%s",typeName[d->b.symType]);
+        sprintf(ttt,"\t%s",typeEnumName[d->b.symType]);
         writeStringRecord(CXFI_REMARK,ttt,"");
     }
     writeStringRecord(CXFI_SYM_NAME, d->name, "\t");
@@ -423,7 +423,7 @@ static void writeSymbolItem(int symIndex) {
         writeOptionalCompactRecord(CXFI_COLL_INDEX, coll, "");                 \
         writeCompactRecord(CXFI_REFERENCE, 0, "");                        \
         if (s_opt.long_cxref) {                                         \
-            sprintf(ttt,"\t%-7s in %30s:%u:%d\n",usageName[usage]+5,   \
+            sprintf(ttt,"\t%-7s in %30s:%u:%d\n",usageEnumName[usage]+5,   \
                     s_fileTab.tab[file]->name,line,coll);               \
             writeStringRecord(CXFI_REMARK,ttt,"");                        \
         }                                                               \
@@ -540,7 +540,7 @@ static void genRefItem0(S_symbolRefItem *d, int forceGen) {
                        s_outLastInfos._symbolTab[symIndex].b);
     s_outLastInfos.symbolTab[symIndex] = &s_outLastInfos._symbolTab[symIndex];
     s_outLastInfos.symbolIsWritten[symIndex] = 0;
-    if ( d->b.category == CatLocal) return;
+    if ( d->b.category == CategoryLocal) return;
     if ( d->refs == NULL && ! forceGen) return;
     for(rr = d->refs; rr!=NULL; rr=rr->next) {
         //&fprintf(ccOut,"checking ref %d --< %s:%d\n", s_fileTab.tab[rr->p.file]->b.cxLoading, s_fileTab.tab[rr->p.file]->name, rr->p.line);
@@ -659,7 +659,7 @@ static void generateRefsFromMemory(int fileOrder) {
     tsize = s_cxrefTab.size;
     for (int i=0; i<tsize; i++) {
         for (pp=s_cxrefTab.tab[i]; pp!=NULL; pp=pp->next) {
-            if (pp->b.category == CatLocal)
+            if (pp->b.category == CategoryLocal)
                 continue;
             if (pp->refs == NULL)
                 continue;
@@ -1039,7 +1039,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
     ddd = &s_inLastInfos._symbolTab[si];
     s_inLastInfos.symbolTab[si] = ddd;
     fill_symbolRefItemBits(&ddd->b,symType, storage,
-                           ScopeGlobal,accessFlags,CatGlobal,0);
+                           ScopeGlobal,accessFlags,CategoryGlobal,0);
     fill_symbolRefItem(ddd,id,
                        cxFileHashNumber(id), //useless, put 0
                        vApplClass,vFunClass,ddd->b);
@@ -1049,7 +1049,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
         strcpy(ss,id);
         CX_ALLOC(memb, S_symbolRefItem);
         fill_symbolRefItemBits(&memb->b,symType, storage,
-                               ScopeGlobal,accessFlags,CatGlobal,0);
+                               ScopeGlobal,accessFlags,CategoryGlobal,0);
         fill_symbolRefItem(memb,ss, cxFileHashNumber(ss),
                            vApplClass,vFunClass,memb->b);
         refTabAdd(&s_cxrefTab, memb, &out_index);
@@ -1116,12 +1116,12 @@ static void cxrfSymbolName(int size,
     ddd = &s_inLastInfos._symbolTab[si];
     s_inLastInfos.symbolTab[si] = ddd;
     fill_symbolRefItemBits(&ddd->b,symType, storage,
-                           ScopeGlobal,accessFlags, CatGlobal,0);
+                           ScopeGlobal,accessFlags, CategoryGlobal,0);
     fill_symbolRefItem(ddd,id,
                        cxFileHashNumber(id), // useless put 0
                        vApplClass,vFunClass,ddd->b);
     rr = refTabIsMember(&s_cxrefTab, ddd, &not_used1,&memb);
-    while (rr && memb->b.category!=CatGlobal) rr=refTabNextMember(ddd, &memb);
+    while (rr && memb->b.category!=CategoryGlobal) rr=refTabNextMember(ddd, &memb);
     assert(s_opt.taskRegime);
     if (s_opt.taskRegime == RegimeHtmlGenerate) {
         if (memb==NULL) {
@@ -1129,7 +1129,7 @@ static void cxrfSymbolName(int size,
             strcpy(ss,id);
             CX_ALLOC(memb, S_symbolRefItem);
             fill_symbolRefItemBits(&memb->b,symType, storage,
-                                   ScopeGlobal, accessFlags, CatGlobal,0);
+                                   ScopeGlobal, accessFlags, CategoryGlobal,0);
             fill_symbolRefItem(memb,ss,cxFileHashNumber(ss),
                                vApplClass,vFunClass,memb->b);
             refTabAdd(&s_cxrefTab,memb, &not_used2);
@@ -1210,7 +1210,7 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
     if (s_inLastInfos.onLineReferencedSym ==
         s_inLastInfos.counter[CXFI_SYM_INDEX]) {
         addToRefList(&s_inLastInfos.symbolTab[sym]->refs,
-                     &usageBits,&pos,CatGlobal);
+                     &usageBits,&pos,CategoryGlobal);
     }
 }
 
@@ -1246,7 +1246,7 @@ static void cxrfReference(int size,
             fillPosition(&pos,file,line,coll);
             fill_usageBits(&usageBits, usage, reqAcc);
             copyrefFl = ! isInRefList(s_inLastInfos.symbolTab[sym]->refs,
-                                      &usageBits, &pos, CatGlobal);
+                                      &usageBits, &pos, CategoryGlobal);
         } else {
             copyrefFl = ! s_fileTab.tab[file]->b.cxLoading;
         }
@@ -1259,13 +1259,13 @@ static void cxrfReference(int size,
         if (additionalArg==CX_HTML_SECOND_PASS) {
             if (rr.usage.base<UsageMaxOLUsages || rr.usage.base==UsageClassTreeDefinition) {
                 addToRefList(&s_inLastInfos.symbolTab[sym]->refs,
-                             &rr.usage,&rr.p,CatGlobal);
+                             &rr.usage,&rr.p,CategoryGlobal);
             }
         } else if (rr.usage.base==UsageDefined || rr.usage.base==UsageDeclared
                    ||  s_fileTab.tab[rr.p.file]->b.commandLineEntered==0 ) {
             /*&fprintf(dumpOut,"htmladdref %s on %s:%d\n",s_inLastInfos.symbolTab[sym]->name,s_fileTab.tab[rr.p.file]->name,rr.p.line);fflush(dumpOut);&*/
             addToRefList(&s_inLastInfos.symbolTab[sym]->refs,
-                         &rr.usage,&rr.p,CatGlobal);
+                         &rr.usage,&rr.p,CategoryGlobal);
         }
     } else if (s_opt.taskRegime == RegimeEditServer) {
         fillPosition(&pos,file,line,coll);
@@ -1337,8 +1337,8 @@ static void cxrfReference(int size,
                                  &*/
                                ) {
                         // this is only goto definition from completion menu?
-                        //&sprintf(tmpBuff,"%s %s:%d\n", usageName[usage],s_fileTab.tab[file]->name,line);ppcGenRecord(PPC_INFORMATION,tmpBuff,"\n");
-                        //&fprintf(dumpOut,"%s %s:%d\n", usageName[usage],s_fileTab.tab[file]->name,line);fflush(dumpOut);
+                        //&sprintf(tmpBuff,"%s %s:%d\n", usageEnumName[usage],s_fileTab.tab[file]->name,line);ppcGenRecord(PPC_INFORMATION,tmpBuff,"\n");
+                        //&fprintf(dumpOut,"%s %s:%d\n", usageEnumName[usage],s_fileTab.tab[file]->name,line);fflush(dumpOut);
                         olcxAddReference(&s_olcxCurrentUser->browserStack.top->r, &rr,
                                          s_inLastInfos.onLineRefIsBestMatchFlag);
                     }

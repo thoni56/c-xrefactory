@@ -111,7 +111,7 @@ void initTypesNamesTab(void) {
     for (i=0; s_typeNamesInitTab[i].i != -1; i++) {
         s = &s_typeNamesInitTab[i];
         assert(s->i >= 0 && s->i < MAX_TYPE);
-        typeName[s->i] = s->s;
+        typeEnumName[s->i] = s->s;
     }
 }
 

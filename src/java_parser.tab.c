@@ -3927,15 +3927,15 @@ case 126:
                             s_cp.thisMethodMemoriesStored = 1;
                             if (s_opt.server_operation == OLO_MAYBE_THIS) {
                                 changeMethodReferencesUsages(LINK_NAME_MAYBE_THIS_ITEM,
-                                                             CatLocal, cFile.lexBuffer.buffer.fileNumber,
+                                                             CategoryLocal, cFile.lexBuffer.buffer.fileNumber,
                                                              s_javaStat->thisClass);
                             } else if (s_opt.server_operation == OLO_NOT_FQT_REFS) {
                                 changeMethodReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
-                                                             CatLocal,cFile.lexBuffer.buffer.fileNumber,
+                                                             CategoryLocal,cFile.lexBuffer.buffer.fileNumber,
                                                              s_javaStat->thisClass);
                             } else if (s_opt.server_operation == OLO_USELESS_LONG_NAME) {
                                 changeMethodReferencesUsages(LINK_NAME_IMPORTED_QUALIFIED_ITEM,
-                                                             CatGlobal,cFile.lexBuffer.buffer.fileNumber,
+                                                             CategoryGlobal,cFile.lexBuffer.buffer.fileNumber,
                                                              s_javaStat->thisClass);
                             }
                             s_cps.cxMemiAtClassBeginning = s_cp.cxMemiAtClassBegin;
@@ -3944,11 +3944,11 @@ case 126:
 /*&fprintf(dumpOut,"!setting class end line to %d, cb==%d, ce==%d\n", s_cps.classCoordEndLine, s_cps.cxMemiAtClassBeginning, s_cps.cxMemiAtClassEnd);*/
                             if (s_opt.server_operation == OLO_NOT_FQT_REFS_IN_CLASS) {
                                 changeClassReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
-                                                            CatLocal,cFile.lexBuffer.buffer.fileNumber,
+                                                            CategoryLocal,cFile.lexBuffer.buffer.fileNumber,
                                                             s_javaStat->thisClass);
                             } else if (s_opt.server_operation == OLO_USELESS_LONG_NAME_IN_CLASS) {
                                 changeClassReferencesUsages(LINK_NAME_IMPORTED_QUALIFIED_ITEM,
-                                                            CatGlobal,cFile.lexBuffer.buffer.fileNumber,
+                                                            CategoryGlobal,cFile.lexBuffer.buffer.fileNumber,
                                                             s_javaStat->thisClass);
                             }
                         }
@@ -4289,11 +4289,11 @@ case 157:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        yyval.symbol = javaCreateNewMethod(yyvsp[0].ast_id.d->name, &(yyvsp[0].ast_id.d->p), MEM_XX);
+                        yyval.symbol = javaCreateNewMethod(yyvsp[0].ast_id.d->name, &(yyvsp[0].ast_id.d->p), MEMORY_XX);
                     }
                 }
                 if (inSecondJslPass()) {
-                    yyval.symbol = javaCreateNewMethod(yyvsp[0].ast_id.d->name,&(yyvsp[0].ast_id.d->p), MEM_CF);
+                    yyval.symbol = javaCreateNewMethod(yyvsp[0].ast_id.d->name,&(yyvsp[0].ast_id.d->p), MEMORY_CF);
                 }
             }
 break;
@@ -4547,10 +4547,10 @@ case 178:
                             addCxReference(s_javaStat->thisClass, &yyvsp[0].ast_id.d->p,
                                            UsageConstructorDefinition,s_noneFileIndex, s_noneFileIndex);
                             yyval.symbol = javaCreateNewMethod(yyvsp[0].ast_id.d->name,/*JAVA_CONSTRUCTOR_NAME1,*/
-                                                             &(yyvsp[0].ast_id.d->p), MEM_XX);
+                                                             &(yyvsp[0].ast_id.d->p), MEMORY_XX);
                         } else {
                             /* a type forgotten for a method?*/
-                            yyval.symbol = javaCreateNewMethod(yyvsp[0].ast_id.d->name,&(yyvsp[0].ast_id.d->p),MEM_XX);
+                            yyval.symbol = javaCreateNewMethod(yyvsp[0].ast_id.d->name,&(yyvsp[0].ast_id.d->p),MEMORY_XX);
                         }
                     }
                 }
@@ -4559,10 +4559,10 @@ case 178:
                         yyval.symbol = javaCreateNewMethod(
                                         yyvsp[0].ast_id.d->name, /*JAVA_CONSTRUCTOR_NAME1,*/
                                         &(yyvsp[0].ast_id.d->p),
-                                        MEM_CF);
+                                        MEMORY_CF);
                     } else {
                         /* a type forgotten for a method?*/
-                        yyval.symbol = javaCreateNewMethod(yyvsp[0].ast_id.d->name, &(yyvsp[0].ast_id.d->p), MEM_CF);
+                        yyval.symbol = javaCreateNewMethod(yyvsp[0].ast_id.d->name, &(yyvsp[0].ast_id.d->p), MEMORY_CF);
                     }
                 }
             }

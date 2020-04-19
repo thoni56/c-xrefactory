@@ -412,7 +412,7 @@ static void htmlGenRefListItemHead(FILE *ff, char *ln, char *symName,
         } else if (p->b.symType==TypeDefault && p->b.storage==StorageTypedef) {
             fprintf(ff,"typedef&nbsp;");
         } else if (p->b.symType!=TypeDefault) {
-            fprintf(ff,"%s&nbsp;", typeName[p->b.symType]);
+            fprintf(ff,"%s&nbsp;", typeEnumName[p->b.symType]);
         }
         ld = sn;
         while ((d=strchr(ld, '.'))!=NULL) ld = d+1;
@@ -693,11 +693,11 @@ static char *htmlStSymbolCode(S_symbolRefItem *r, int usage) {
     static char ss[MAX_CX_SYMBOL_SIZE+2];
     char ttt[MAX_CX_SYMBOL_SIZE];
     char *sss, *tt;
-    if (r->b.category==CatLocal) {
+    if (r->b.category==CategoryLocal) {
         sprintf(ss, "local.%lx", (unsigned long)r);
     } else {
         if (r->vApplClass == s_noneFileIndex) {
-            sprintf(ss,"%s.%s", typeName[r->b.symType], r->name);
+            sprintf(ss,"%s.%s", typeEnumName[r->b.symType], r->name);
         } else {
             if (r->b.storage == StorageField) {
                 strcpy(ttt, s_fileTab.tab[r->vFunClass]->name);
@@ -711,7 +711,7 @@ static char *htmlStSymbolCode(S_symbolRefItem *r, int usage) {
             if (r->b.symType == TypeDefault) {
                 sprintf(ss,"%s.%s", tt, r->name);
             } else {
-                sprintf(ss,"%s.%s.%s", typeName[r->b.symType], tt, r->name);
+                sprintf(ss,"%s.%s.%s", typeEnumName[r->b.symType], tt, r->name);
             }
         }
         for(sss=ss; *sss; sss++) {      // netscape don't like some chars
@@ -846,7 +846,7 @@ static void htmlGetStaticHREFItems(
         }
     }
     assert(strlen(prf)<MAX_HTML_REF_LEN-2);
-    if (cri->b.category == CatLocal) {
+    if (cri->b.category == CategoryLocal) {
         htmlCrLocalRefsFileName(cp->file, cri, usage, tmp, tmp2);
     } else {
         htmlCrGlobalXrefsFileName(cri, usage, tmp, tmp2);
@@ -965,7 +965,7 @@ static int htmlContainFileReference(S_symbolRefItem *p, int fnum) {
 
 static void htmlGenLocalRefList(FILE *ff, char *fname,
                                 S_symbolRefItem *p, int fnum) {
-    if (p->b.category != CatLocal) return;
+    if (p->b.category != CategoryLocal) return;
     if (p->b.htmlWasLn == 0) return;
     if (LANGUAGE(LANG_YACC) && p->name[0] == '$') return;  // !!! hack
     if (! htmlContainFileReference(p, fnum)) return;
@@ -977,7 +977,7 @@ static void htmlGenLocalRefList(FILE *ff, char *fname,
 static void htmlGenLocalRefLists(S_symbolRefItem *p, void *ss) {
     S_htmlLocalListms *s;
     s = (S_htmlLocalListms *)ss;
-    if (p->b.category==CatLocal && p->b.htmlWasLn) {
+    if (p->b.category==CategoryLocal && p->b.htmlWasLn) {
         htmlGenLocalRefList(s->ff, s->fname, p, s->fnum);
     }
 }
@@ -1006,7 +1006,7 @@ static void htmlGetThisFileReferences(int fnum, S_htmlRefList **rrr, int kind){
                 if (rr->p.file == fnum &&
                     (kind==ALL_REFS || rr->usage.base<UsageMaxOLUsages)) {
                     log_trace("checking ref [%s,%d,%d](%s) on %s:%x", s_fileTab.tab[rr->p.file]->name, rr->p.line,
-                              rr->p.col, usageName[rr->usage.base], d->name, d);
+                              rr->p.col, usageEnumName[rr->usage.base], d->name, d);
                     //&                 if ((char*)rr<s_cxGlobalReferencesBase) continue;//!!tricky
                     fillHtmlRefList(&rref, d, rr, dd, NULL);
                     SORTED_LIST_PLACE2(place, S_htmlRefList, rref, rrr0);
@@ -1017,8 +1017,11 @@ static void htmlGetThisFileReferences(int fnum, S_htmlRefList **rrr, int kind){
                         // ?? why PP_ALLOC ? Because called
                         // once per file and it is cleared after.
                         *r = rref;
-                        log_trace("adding ref [%s,%d,%d](%s) on %s:%x", s_fileTab.tab[r->reference->p.file]->name,
-                                  r->reference->p.line, r->reference->p.col, usageName[r->reference->usage.base], r->symbolRefItem->name,r->symbolRefItem);
+                        log_trace("adding ref [%s,%d,%d](%s) on %s:%x",
+                                  s_fileTab.tab[r->reference->p.file]->name,
+                                  r->reference->p.line, r->reference->p.col,
+                                  usageEnumName[r->reference->usage.base],
+                                  r->symbolRefItem->name,r->symbolRefItem);
                         LIST_CONS(r,(*place));
                     }
                     rrr0 = place;
@@ -1293,7 +1296,7 @@ static void htmlCreateGlobSymList(int i, void *off, void *ffn, void *genfi) {
     genFileIndex = *((int *)genfi);
     pp = s_cxrefTab.tab[i];
     for (p=pp; p!=NULL; p=p->next) {
-        if (p->b.category == CatGlobal && p->b.symType<MAX_HTML_LIST_TYPE) {
+        if (p->b.category == CategoryGlobal && p->b.symType<MAX_HTML_LIST_TYPE) {
             if (genFileIndex==HTML_GXANY
                 || genFileIndex == cxFileHashNumber(p->name)) {
                 htmlGetReferencesMetrics( p, &refn, &defRefn, &defusage,&defpos);
@@ -1495,8 +1498,8 @@ static void htmlPosProcess( FILE **fff,
             }
         }
         if (rr->reference->usage.base==UsageDefined) {
-            if ((rr->symbolRefItem->b.category==CatLocal && s_opt.htmllocalx)
-                || (rr->symbolRefItem->b.category==CatGlobal && s_opt.htmlglobalx)) {
+            if ((rr->symbolRefItem->b.category==CategoryLocal && s_opt.htmllocalx)
+                || (rr->symbolRefItem->b.category==CategoryGlobal && s_opt.htmlglobalx)) {
                 fprintf(ccOut,"%s%s",prf0,prf1);
                 HtmlPassSourceIdent(cp,ch,ff);
                 fprintf(ccOut,"%s%s",suf1,suf0);
@@ -1506,8 +1509,8 @@ static void htmlPosProcess( FILE **fff,
                 fprintf(ccOut,"%s",suf0);
             }
         } else if (s_opt.htmlDirectX &&
-                   ((cri->b.category == CatGlobal && s_opt.htmlglobalx)
-                    ||  (cri->b.category == CatLocal && s_opt.htmllocalx))) {
+                   ((cri->b.category == CategoryGlobal && s_opt.htmlglobalx)
+                    ||  (cri->b.category == CategoryLocal && s_opt.htmllocalx))) {
             fprintf(ccOut,"%s%s",prf0,prf1);
             if (ch!=EOF && (isalpha(ch)||isdigit(ch)||ch=='_'||ch=='$')) {
                 htmlPutCharLF(ccOut, ch, cp);

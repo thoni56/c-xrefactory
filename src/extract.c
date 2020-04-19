@@ -42,7 +42,7 @@ static void dumpProgram(S_programGraphNode *program) {
         log_trace("%p: %2d %2d %s %s", p,
                 p->posBits, p->stateBits,
                 p->symRef->name,
-                usageName[p->ref->usage.base]+5);
+                usageEnumName[p->ref->usage.base]+5);
         if (p->symRef->b.symType==TypeLabel && p->ref->usage.base!=UsageDefined) {
             log_trace("    Jump: %p", p->jump);
         }

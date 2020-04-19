@@ -721,7 +721,7 @@ void processDefine(bool argFlag) {
     fillSymbol(pp, NULL, NULL, macpos);
     fillSymbolBits(&pp->bits, ACCESS_DEFAULT, TypeMacro, StorageNone);
 
-    setGlobalFileDepNames(cc, pp, MEM_PP);
+    setGlobalFileDepNames(cc, pp, MEMORY_PP);
     mname = pp->name;
     /* process arguments */
     macroArgumentTableNoAllocInit(&s_macroArgumentTable, s_macroArgumentTable.size);
@@ -1661,7 +1661,7 @@ static void addMacroBaseUsageRef(Symbol *mdef) {
     S_position          basePos;
     fillPosition(&basePos, s_input_file_number, 0, 0);
     fill_symbolRefItemBits(&ppp.b,TypeMacro,StorageDefault,ScopeGlobal,
-                           mdef->bits.access, CatGlobal, 0);
+                           mdef->bits.access, CategoryGlobal, 0);
     fill_symbolRefItem(&ppp,mdef->linkName,
                        cxFileHashNumber(mdef->linkName), // useless, put 0
                        s_noneFileIndex,s_noneFileIndex,

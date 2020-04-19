@@ -424,8 +424,8 @@ void typeSPrint(char *buff, int *size, S_typeModifier *t,
             break;
         default:
             assert(t->kind >= 0 && t->kind < MAX_TYPE);
-            assert(strlen(typeName[t->kind]) < COMPLETION_STRING_SIZE);
-            strcpy(type, typeName[t->kind]);
+            assert(strlen(typeEnumName[t->kind]) < COMPLETION_STRING_SIZE);
+            strcpy(type, typeEnumName[t->kind]);
             r = strlen(type);
             break;
         }
@@ -687,7 +687,7 @@ void javaSignatureSPrint(char *buff, int *size, char *sig, int classstyle) {
         default:
             typ = s_javaCharCodeBaseTypes[*ssig];
             assert(typ > 0 && typ < MAX_TYPE);
-            sprintf(buff+j, "%s", typeName[typ]);
+            sprintf(buff+j, "%s", typeEnumName[typ]);
             j += strlen(buff+j);
         }
         sprintf(buff+j, "%s",post);
@@ -777,7 +777,7 @@ void printSymbolLinkName(FILE *ff, S_olSymbolsMenu *ss) {
 
 void fillTrivialSpecialRefItem( S_symbolRefItem *ddd , char *name) {
     fill_symbolRefItemBits(&ddd->b,TypeUnknown,StorageAuto,
-                           ScopeAuto,ACCESS_DEFAULT,CatLocal,0);
+                           ScopeAuto,ACCESS_DEFAULT,CategoryLocal,0);
     fill_symbolRefItem(ddd, name, cxFileHashNumber(name),
                        s_noneFileIndex, s_noneFileIndex, ddd->b);
 }

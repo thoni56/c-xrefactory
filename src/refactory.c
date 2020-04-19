@@ -4375,7 +4375,7 @@ static char * refactoryComputeUpdateOptionForSymbol(S_editorMarker *point) {
     }
 
     if (LANGUAGE(LANG_JAVA)) {
-        if (cat == CatLocal) {
+        if (cat == CategoryLocal) {
             // useless to update when there is nothing about the symbol in Tags
             res = "";
         } else if (symtype==TypeDefault
@@ -4389,7 +4389,7 @@ static char * refactoryComputeUpdateOptionForSymbol(S_editorMarker *point) {
             res = "-fastupdate";
         }
     } else {
-        if (cat == CatLocal) {
+        if (cat == CategoryLocal) {
             // useless to update when there is nothing about the symbol in Tags
             res = "";
         } else if (hasHeaderReferenceFlag) {
@@ -4568,7 +4568,7 @@ void mainRefactory(int argc, char **argv) {
         ppcGenRecord(PPC_DEBUG_INFORMATION, tmpBuff, "\n");
     }
 
-    // synchronisation, wait so files can not be saved with the same time
+    // synchronisation, wait so files won't be saved with the same time
     editorQuasiSaveModifiedBuffers();
 
     closeMainOutputFile();

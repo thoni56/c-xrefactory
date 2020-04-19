@@ -2069,7 +2069,7 @@ void mainSetLanguage(char *inFileName, Language *outLanguage) {
         || (fnnCmp(simpleFileName(inFileName), "Untitled-", 9)==0)  // jEdit unnamed buffer
         ) {
         *outLanguage = LANG_JAVA;
-        typeName[TypeStruct] = "class";
+        typeEnumName[TypeStruct] = "class";
     } else {
         suff = getFileSuffix(inFileName);
         if (fnCmp(suff,".zip")==0 || fnCmp(suff,".jar")==0) {
@@ -2078,7 +2078,7 @@ void mainSetLanguage(char *inFileName, Language *outLanguage) {
             *outLanguage = LANG_CLASS;
         } else if (fnCmp(suff,".y")==0) {
             *outLanguage = LANG_YACC;
-            typeName[TypeStruct] = "struct";
+            typeEnumName[TypeStruct] = "struct";
 #   ifdef CCC_ALLOWED
         } else if (fileNameHasOneOfSuffixes(inFileName, s_opt.cppFilesSuffixes)) {
             *outLanguage = LAN_CCC;
@@ -2086,7 +2086,7 @@ void mainSetLanguage(char *inFileName, Language *outLanguage) {
 #   endif
         } else {
             *outLanguage = LANG_C;
-            typeName[TypeStruct] = "struct";
+            typeEnumName[TypeStruct] = "struct";
         }
     }
 }
@@ -2691,7 +2691,7 @@ void getPipedOptions(int *outNargc,char ***outNargv){
 
 static void fillIncludeRefItem( S_symbolRefItem *ddd , int fnum) {
     fill_symbolRefItemBits(&ddd->b,TypeCppInclude,StorageExtern,
-                           ScopeGlobal,ACCESS_DEFAULT,CatGlobal,0);
+                           ScopeGlobal,ACCESS_DEFAULT,CategoryGlobal,0);
     fill_symbolRefItem(ddd,LINK_NAME_INCLUDE_REFS,
                        cxFileHashNumber(LINK_NAME_INCLUDE_REFS),
                        fnum, fnum, ddd->b);
@@ -2790,7 +2790,7 @@ static int scheduleFileUsingTheMacro(void) {
     assert(s_olstringInMbody);
     tmpc = NULL;
     fill_symbolRefItemBits(&ddd.b, TypeMacro, StorageExtern,
-                           ScopeGlobal,ACCESS_DEFAULT,CatGlobal,0);
+                           ScopeGlobal,ACCESS_DEFAULT,CategoryGlobal,0);
     fill_symbolRefItem(&ddd,s_olstringInMbody,
                        cxFileHashNumber(s_olstringInMbody),
                        s_noneFileIndex, s_noneFileIndex,ddd.b);
@@ -3424,6 +3424,8 @@ int main(int argc, char **argv) {
     //&editorTest();
 
     // Ok, so there are these five main operating modes
+    /* TODO: Is there an underlying reason for not doing this as a switch()? */
+    /* And why s_opt.refactoringRegime and not s_opt.taskRegime == RegimeRefactory? */
     if (s_opt.refactoringRegime == RegimeRefactory) mainRefactory(argc, argv);
     if (s_opt.taskRegime == RegimeXref) mainXref(argc, argv);
     if (s_opt.taskRegime == RegimeHtmlGenerate) mainXref(argc, argv);

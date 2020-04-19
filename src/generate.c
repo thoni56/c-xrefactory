@@ -241,10 +241,10 @@ static void generateEnumString(Symbol *symbol) {
     e = symbol->u.enums;
     assert(name);
     if (s_opt.header) {
-        fprintf(cxOut,"extern char * %sName[];\n",name);
+        fprintf(cxOut,"extern char * %sEnumName[];\n",name);
     }
     if (s_opt.body) {
-        fprintf(cxOut,"char * %sName[] = {\n",name);
+        fprintf(cxOut,"char * %sEnumName[] = {\n",name);
         for(;e!=NULL;e=e->next) {
             assert(e->d);
             assert(e->d->name);

@@ -881,7 +881,7 @@ static int findTopLevelNameInternal(
             recFindPush(cscope->thisClass, resRfs);
             *rscope = cscope;
         }
-        log_trace("%s %s", miscellaneousName[classif], miscellaneousName[accCheck]);
+        log_trace("%s %s", miscellaneousEnumName[classif], miscellaneousEnumName[accCheck]);
         res = findStrRecordSym(resRfs, name, resMemb, classif, accCheck, visibCheck);
     }
     return(res);
@@ -1556,7 +1556,7 @@ Symbol *javaCreateNewMethod(char *nn, S_position *p, int mem) {
     S_typeModifier *m;
     Symbol		*res;
     char            *name;
-    if (mem==MEM_CF) {
+    if (mem==MEMORY_CF) {
         CF_ALLOCC(name, strlen(nn)+1, char);
         strcpy(name, nn);
         CF_ALLOC(m, S_typeModifier);
@@ -1654,10 +1654,10 @@ int javaSetFunctionLinkName(Symbol *clas, Symbol *decl,int mem) {
     if (javaIsYetInTheClass(clas, pp, &memb)) {
         decl->linkName = memb->linkName;
     } else {
-        if (mem == MEM_CF) {
+        if (mem == MEMORY_CF) {
             CF_ALLOCC(ln, ppi+1, char);
         } else {
-            assert(mem==MEM_XX);
+            assert(mem==MEMORY_XX);
             XX_ALLOCC(ln, ppi+1, char);
         }
         strcpy(ln,pp);
@@ -1782,7 +1782,7 @@ Symbol *javaMethodHeader(unsigned modif, Symbol *type,
         // set interface default access flags
         decl->bits.access |= (ACCESS_PUBLIC | ACCESS_ABSTRACT);
     }
-    newFun = javaSetFunctionLinkName(s_javaStat->thisClass, decl,MEM_XX);
+    newFun = javaSetFunctionLinkName(s_javaStat->thisClass, decl,MEMORY_XX);
     //&assert(newFun==0); // This should be allways zero now with jsl.
     vClass = s_javaStat->classFileIndex;
     addMethodCxReferences(modif, decl, s_javaStat->thisClass);
@@ -2456,7 +2456,7 @@ void javaTypeDump(S_typeModifier *tt) {
     } else if (tt->kind == TypeStruct) {
         fprintf(dumpOut,"%s",tt->u.t->linkName);
     } else {
-        fprintf(dumpOut,"%s",typeName[tt->kind]);
+        fprintf(dumpOut,"%s",typeEnumName[tt->kind]);
     }
 }
 

@@ -280,7 +280,7 @@ Symbol *jslMethodHeader(unsigned modif, Symbol *type,
     }
     decl->bits.storage = storage;
     //& if (modif & ACCESS_STATIC) decl->bits.storage = StorageStaticMethod;
-    newFun = javaSetFunctionLinkName(s_jsl->classStat->thisClass, decl, MEM_CF);
+    newFun = javaSetFunctionLinkName(s_jsl->classStat->thisClass, decl, MEMORY_CF);
     if (decl->pos.file != s_olOriginalFileNumber && s_opt.server_operation == OLO_PUSH) {
         // pre load of saved file akes problem on move field/method, ...
         addMethodCxReferences(modif, decl, s_jsl->classStat->thisClass);
@@ -631,7 +631,7 @@ void jslNewClassDefinitionEnd(void) {
 
 void jslAddDefaultConstructor(Symbol *cl) {
     Symbol *cc;
-    cc = javaCreateNewMethod(cl->name, &s_noPos, MEM_CF);
+    cc = javaCreateNewMethod(cl->name, &s_noPos, MEMORY_CF);
     jslMethodHeader(cl->bits.access, &s_defaultVoidDefinition, cc,
                     StorageConstructor, NULL);
 }
