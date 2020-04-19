@@ -29,6 +29,15 @@ process, what happens if we specify -refactory as a PPC command?
 Currently all enums included are generated, but that includes ones
 that are in the systems headers which in turns creates different
 output. It is better to be precise about which you want to be generated.
+
+Currently only the following are actually used:
+- miscellaneous
+- referenceCategory
+- storage
+- type
+- usage
+
+Re-test this with "ls *.c | grep -v enumTxt | xargs grep -h -o '[^ ("*,]*EnumName\[[^ ]*' | sed -e 's/\[.*//g' | sort | uniq"
 * TODO Fix the move_class test
 * TODO Use enum types wherever possible Storage, SymbolType, ...
 * TODO Rename some of the options, like -no_str -> -no-structs
