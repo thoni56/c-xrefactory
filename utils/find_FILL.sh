@@ -1,1 +1,0 @@
-grep -E 'FILLF?_' *.c | grep -v strFill.h | grep -v REPLACED | grep -v '/\*' | grep -v '//' | grep -v fprintf | grep -v for | grep -v '#define' | grep -v FILL_ARGUMENT_NAME | tr -d ' ' | cut -f1 -d'(' | cut -f2 -d':' | sort | uniq -c | sort -nr
