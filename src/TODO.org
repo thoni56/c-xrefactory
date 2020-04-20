@@ -8,6 +8,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 * DOING Handle struct literals ("(type){.field = data, ...}")
 ** DONE Create test case
 ** DOING Create AST using parsing
+** TODO Add as reference to the field
 * TODO Remove code for generation of str_fill
 * TODO Remove the global tmpBuff
 * TODO Make all modules independent on main

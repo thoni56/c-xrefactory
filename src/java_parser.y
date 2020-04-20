@@ -1377,15 +1377,15 @@ _bef_:	{
                             s_cp.thisMethodMemoriesStored = 1;
                             if (s_opt.server_operation == OLO_MAYBE_THIS) {
                                 changeMethodReferencesUsages(LINK_NAME_MAYBE_THIS_ITEM,
-                                                             CatLocal, cFile.lexBuffer.buffer.fileNumber,
+                                                             CategoryLocal, cFile.lexBuffer.buffer.fileNumber,
                                                              s_javaStat->thisClass);
                             } else if (s_opt.server_operation == OLO_NOT_FQT_REFS) {
                                 changeMethodReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
-                                                             CatLocal,cFile.lexBuffer.buffer.fileNumber,
+                                                             CategoryLocal,cFile.lexBuffer.buffer.fileNumber,
                                                              s_javaStat->thisClass);
                             } else if (s_opt.server_operation == OLO_USELESS_LONG_NAME) {
                                 changeMethodReferencesUsages(LINK_NAME_IMPORTED_QUALIFIED_ITEM,
-                                                             CatGlobal,cFile.lexBuffer.buffer.fileNumber,
+                                                             CategoryGlobal,cFile.lexBuffer.buffer.fileNumber,
                                                              s_javaStat->thisClass);
                             }
                             s_cps.cxMemiAtClassBeginning = s_cp.cxMemiAtClassBegin;
@@ -1394,11 +1394,11 @@ _bef_:	{
 //&fprintf(dumpOut,"!setting class end line to %d, cb==%d, ce==%d\n", s_cps.classCoordEndLine, s_cps.cxMemiAtClassBeginning, s_cps.cxMemiAtClassEnd);
                             if (s_opt.server_operation == OLO_NOT_FQT_REFS_IN_CLASS) {
                                 changeClassReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
-                                                            CatLocal,cFile.lexBuffer.buffer.fileNumber,
+                                                            CategoryLocal,cFile.lexBuffer.buffer.fileNumber,
                                                             s_javaStat->thisClass);
                             } else if (s_opt.server_operation == OLO_USELESS_LONG_NAME_IN_CLASS) {
                                 changeClassReferencesUsages(LINK_NAME_IMPORTED_QUALIFIED_ITEM,
-                                                            CatGlobal,cFile.lexBuffer.buffer.fileNumber,
+                                                            CategoryGlobal,cFile.lexBuffer.buffer.fileNumber,
                                                             s_javaStat->thisClass);
                             }
                         }
@@ -1720,11 +1720,11 @@ MethodDeclarator:
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        $<symbol>$ = javaCreateNewMethod($1.d->name, &($1.d->p), MEM_XX);
+                        $<symbol>$ = javaCreateNewMethod($1.d->name, &($1.d->p), MEMORY_XX);
                     }
                 }
                 if (inSecondJslPass()) {
-                    $<symbol>$ = javaCreateNewMethod($1.d->name,&($1.d->p), MEM_CF);
+                    $<symbol>$ = javaCreateNewMethod($1.d->name,&($1.d->p), MEMORY_CF);
                 }
             }
         '(' FormalParameterList_opt ')'
@@ -1953,10 +1953,10 @@ ConstructorDeclarator:
                             addCxReference(s_javaStat->thisClass, &$1.d->p,
                                            UsageConstructorDefinition,s_noneFileIndex, s_noneFileIndex);
                             $<symbol>$ = javaCreateNewMethod($1.d->name,//JAVA_CONSTRUCTOR_NAME1,
-                                                             &($1.d->p), MEM_XX);
+                                                             &($1.d->p), MEMORY_XX);
                         } else {
                             // a type forgotten for a method?
-                            $<symbol>$ = javaCreateNewMethod($1.d->name,&($1.d->p),MEM_XX);
+                            $<symbol>$ = javaCreateNewMethod($1.d->name,&($1.d->p),MEMORY_XX);
                         }
                     }
                 }
@@ -1965,10 +1965,10 @@ ConstructorDeclarator:
                         $<symbol>$ = javaCreateNewMethod(
                                         $1.d->name, //JAVA_CONSTRUCTOR_NAME1,
                                         &($1.d->p),
-                                        MEM_CF);
+                                        MEMORY_CF);
                     } else {
                         // a type forgotten for a method?
-                        $<symbol>$ = javaCreateNewMethod($1.d->name, &($1.d->p), MEM_CF);
+                        $<symbol>$ = javaCreateNewMethod($1.d->name, &($1.d->p), MEMORY_CF);
                     }
                 }
             }
