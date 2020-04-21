@@ -3,9 +3,8 @@
 
 /*
 
-  Structures herein will be subject to the filler, structure typedef
-  and enum strings generation done in the Makefile.common. See
-  description on the wiki.
+  Structures herein will be subject to the enum strings generation
+  done in the Makefile.common. See description on the wiki.
 
  */
 
