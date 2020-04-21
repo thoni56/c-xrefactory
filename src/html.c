@@ -1714,7 +1714,7 @@ void htmlGenGlobalReferenceLists(char *cxMemFreeBase) {
     char    fn[MAX_FILE_NAME_SIZE];
     char    *dirname,*fname,*newFreeBase;
     int     i;
-    if (s_opt.htmlglobalx == 0) return;
+    if (!s_opt.htmlglobalx) return;
     if (!s_opt.xref2) {
         fprintf(dumpOut,"\nGenerating global symbol reference lists");
         fflush(dumpOut);

@@ -370,27 +370,26 @@ S_options s_initOpt = {
     "",                         // default classpath
     8,                          /* tabulator */
     "",                     // -htmlroot
-    0,
-    0,
-    0,
+    false,                  /* htmlglobalx */
+    false,                  /* htmllocalx */
     -1,
     -1,
     RegimeXref,
     "nouser",           // -user
-    0,
-    0,
-    1,
+    false,              /* debug */
+    false,              /* trace */
+    true,               /* cpp_comment */
     0,
     0,
     0,
     "",
 
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    false,                      /* no_ref_locals */
+    false,                      /* no_ref_records */
+    false,                      /* no_ref_enum */
+    false,                      /* no_ref_typedef */
+    false,                      /* no_ref_macro */
+    false,                      /* no_stdop */
 
     /* GENERATE options */
 

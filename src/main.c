@@ -484,7 +484,6 @@ static int processCOption(int *ii, int argc, char **argv) {
     if (0) {}
     else if (strcmp(argv[i],"-c_struct_scope")==0)  s_opt.c_struct_scope=1;
     else if (strcmp(argv[i],"-cacheincludes")==0)   s_opt.cacheIncludes=1;
-    else if (strcmp(argv[i],"-cplusplus")==0)       s_opt.cIsCplusplus=1;
     else if (strcmp(argv[i],"-crlfconversion")==0)  s_opt.eolConversion|=CR_LF_EOL_CONVERSION;
     else if (strcmp(argv[i],"-crconversion")==0)    s_opt.eolConversion|=CR_EOL_CONVERSION;
     else if (strcmp(argv[i],"-completioncasesensitive")==0) s_opt.completionCaseSensitive=1;
@@ -651,8 +650,8 @@ static int processHOption(int *ii, int argc, char **argv) {
     }
     else if (strcmp(argv[i],"-htmllinenums")==0)    s_opt.htmlLineNums = 1;
     else if (strcmp(argv[i],"-htmlnocolors")==0)    s_opt.htmlNoColors = 1;
-    else if (strcmp(argv[i],"-htmlgxlist")==0)  s_opt.htmlglobalx = 1;
-    else if (strcmp(argv[i],"-htmllxlist")==0)  s_opt.htmllocalx = 1;
+    else if (strcmp(argv[i],"-htmlgxlist")==0)  s_opt.htmlglobalx = true;
+    else if (strcmp(argv[i],"-htmllxlist")==0)  s_opt.htmllocalx = true;
     else if (strcmp(argv[i],"-htmlrichlist")==0)    {
         warning(ERR_ST,"-htmlrichlist option is no longer supported");
         //&         s_opt.htmlRichLists= 1;
@@ -866,16 +865,16 @@ static int processNOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i],"-noincluderefs")==0)       s_opt.noIncludeRefs = true;
     else if (strcmp(argv[i],"-noincluderefresh")==0)    s_opt.noIncludeRefs=true;
     else if (strcmp(argv[i],"-nocxfile")==0)            s_opt.noCxFile = 1;
-    else if (strcmp(argv[i],"-no_cpp_comment")==0)      s_opt.cpp_comment = 0;
+    else if (strcmp(argv[i],"-no_cpp_comment")==0)      s_opt.cpp_comment = false;
     else if (strcmp(argv[i],"-nobrief")==0)             s_opt.brief = 0;
-    else if (strcmp(argv[i],"-no_enum")==0)             s_opt.no_ref_enumerator = 1;
-    else if (strcmp(argv[i],"-no_mac")==0)              s_opt.no_ref_macro = 1;
-    else if (strcmp(argv[i],"-no_type")==0)             s_opt.no_ref_typedef = 1;
-    else if (strcmp(argv[i],"-no_str")==0)              s_opt.no_ref_records = 1;
-    else if (strcmp(argv[i],"-no_local")==0)            s_opt.no_ref_locals = 1;
+    else if (strcmp(argv[i],"-no_enum")==0)             s_opt.no_ref_enumerator = true;
+    else if (strcmp(argv[i],"-no_mac")==0)              s_opt.no_ref_macro = true;
+    else if (strcmp(argv[i],"-no_type")==0)             s_opt.no_ref_typedef = true;
+    else if (strcmp(argv[i],"-no_str")==0)              s_opt.no_ref_records = true;
+    else if (strcmp(argv[i],"-no_local")==0)            s_opt.no_ref_locals = true;
     else if (strcmp(argv[i],"-no_cfrefs")==0)           s_opt.allowClassFileRefs = false;
     else if (strcmp(argv[i],"-no_stdop")==0
-             || strcmp(argv[i],"-nostdop")==0)          s_opt.no_stdop = 1;
+             || strcmp(argv[i],"-nostdop")==0)          s_opt.no_stdop = true;
     else if (strcmp(argv[i],"-noautoupdatefromsrc")==0) s_opt.javaSlAllowed = 0;
     else if (strcmp(argv[i],"-noerrors")==0)            s_opt.noErrors=1;
     else return(0);
@@ -2208,7 +2207,7 @@ static void getAndProcessStandardDefines(void) {
 static void getAndProcessXrefrcOptions(char *dffname, char *dffsect,char *project) {
     int dfargc;
     char **dfargv;
-    if (*dffname != 0 && s_opt.stdopFlag==0 && s_opt.no_stdop==0) {
+    if (*dffname != 0 && s_opt.stdopFlag==0 && !s_opt.no_stdop) {
         readOptionFile(dffname,&dfargc,&dfargv,dffsect,project);
         // warning, the following can overwrite variables like
         // 's_cxref_file_name' allocated in PPM_MEMORY, then when memory

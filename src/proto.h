@@ -1096,27 +1096,26 @@ typedef struct options {
     char *classpath;
     int tabulator;
     char *htmlRoot;
-    int	htmlglobalx;
-    int	htmllocalx;
-    int cIsCplusplus;
+    bool htmlglobalx;
+    bool htmllocalx;
     int olCursorPos;
     int olMarkPos;
     enum taskRegimes taskRegime;
     char *user;
-    int debug;
-    int trace;
-    int cpp_comment;
+    bool debug;
+    bool trace;
+    bool cpp_comment;
     int c_struct_scope;
     enum olcxOptions server_operation;
     int olcxGotoVal;
     char *originalDir;
 
-    int no_ref_locals;
-    int no_ref_records;
-    int no_ref_enumerator;
-    int no_ref_typedef;
-    int no_ref_macro;
-    int no_stdop;
+    bool no_ref_locals;
+    bool no_ref_records;
+    bool no_ref_enumerator;
+    bool no_ref_typedef;
+    bool no_ref_macro;
+    bool no_stdop;
 
     /* GENERATE options */
 
