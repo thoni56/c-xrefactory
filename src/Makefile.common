@@ -88,7 +88,7 @@ unit:
 
 coverage: COVERAGE=--coverage
 coverage: clean test
-	lcov -q --exclude \*.mock -d . -c -o total.coverage
+	lcov -q --exclude \*.mock -exclude /usr -d . -c -o total.coverage
 	genhtml -q -o ../coverage total.coverage
 
 coverage-report: unit test

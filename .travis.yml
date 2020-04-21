@@ -34,6 +34,7 @@ script:
     - lcov -q -d src -c -o coverage.info
     - lcov -q --remove coverage.info *.mock -o coverage.info
     - lcov -q --remove coverage.info *.tab.c -o coverage.info
+    - lcov -q --remove coverage.info /usr/* -o coverage.info
     - coveralls-lcov coverage.info
 
 branches:
