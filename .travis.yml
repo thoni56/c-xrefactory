@@ -30,17 +30,16 @@ script:
     # Run all tests, creating coverage in standard place
     - make GCOV= all
     - cd ..
-    # Coverage for tests to Coveralls
-    - lcov -q -d src -c -o coverage.info
-    - lcov -q --remove coverage.info *.mock -o coverage.info
-    - lcov -q --remove coverage.info *.tab.c -o coverage.info
-    - lcov -q --remove coverage.info /usr/* -o coverage.info
-    - coveralls-lcov coverage.info
 
 branches:
     except:
         - stable
 
 after_success:
+    # Coverage for tests to Coveralls
+    - lcov -q -d src -c -o coverage.info
+    - lcov -q --remove coverage.info *.mock -o coverage.info
+    - lcov -q --remove coverage.info *.tab.c -o coverage.info
+    - lcov -q --remove coverage.info /usr/* -o coverage.info
     # Move "stable" tag if on master
     - ./.travis.merge_to_stable_maybe.sh
