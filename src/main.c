@@ -190,7 +190,7 @@ static void scheduleCommandLineEnteredFileToProcess(char *fn) {
         s_fileTab.tab[fileIndex]->b.commandLineEntered = 1;
     }
     log_trace("recursively process command line argument file #%d '%s'", fileIndex, s_fileTab.tab[fileIndex]->name);
-    if (s_opt.updateOnlyModifiedFiles==0) {
+    if (!s_opt.updateOnlyModifiedFiles) {
         s_fileTab.tab[fileIndex]->b.scheduledToProcess = 1;
     }
     LEAVE();
@@ -444,7 +444,7 @@ static int processNegativeOption(int *ii, int argc, char **argv, int infilesFlag
     int i = * ii;
     if (0) {}
     else if (strcmp(argv[i],"--r")==0) {
-        if (infilesFlag == INFILES_ENABLED) s_opt.recursivelyDirs = 0;
+        if (infilesFlag == INFILES_ENABLED) s_opt.recursivelyDirs = false;
     }
     else return(0);
     *ii = i;
@@ -617,11 +617,11 @@ static int processFOption(int *ii, int argc, char **argv) {
     }
     else if (strcmp(argv[i],"-fastupdate")==0)  {
         s_opt.update = UP_FAST_UPDATE;
-        s_opt.updateOnlyModifiedFiles = 1;
+        s_opt.updateOnlyModifiedFiles = true;
     }
     else if (strcmp(argv[i],"-fupdate")==0) {
         s_opt.update = UP_FULL_UPDATE;
-        s_opt.updateOnlyModifiedFiles = 0;
+        s_opt.updateOnlyModifiedFiles = false;
     }
     else return(0);
     *ii = i;
@@ -657,7 +657,7 @@ static int processHOption(int *ii, int argc, char **argv) {
         warning(ERR_ST,"-htmlrichlist option is no longer supported");
         //&         s_opt.htmlRichLists= 1;
     }
-    else if (strcmp(argv[i],"-htmlfunseparate")==0)s_opt.htmlFunSeparate=1;
+    else if (strcmp(argv[i],"-htmlfunseparate")==0)s_opt.htmlFunSeparate=true;
     else if (strcmp(argv[i],"-html")==0) {
         s_opt.taskRegime = RegimeHtmlGenerate;
         s_opt.fileEncoding = MULE_EUROPEAN; // no multibyte encodings
@@ -700,10 +700,10 @@ static int processHOption(int *ii, int argc, char **argv) {
         createOptionString(&s_opt.htmlLineNumLabel, argv[i]+18);
     }
     else if (strcmp(argv[i],"-htmlnounderline")==0) {
-        s_opt.htmlNoUnderline = 1;
+        s_opt.htmlNoUnderline = true;
     }
     else if (strcmp(argv[i],"-htmldirectx")==0) {
-        s_opt.htmlDirectX = 1;
+        s_opt.htmlDirectX = true;
     }
     else if (strncmp(argv[i],"-htmllinkcolor=",15)==0)  {
         createOptionString(&s_opt.htmlLinkColor, argv[i]+15);
@@ -758,7 +758,7 @@ static int processIOption(int *ii, int argc, char **argv) {
         mainAddStringListOption(&s_opt.includeDirs, argv[i]+2);
     }
     else if (strcmp(argv[i],"-include")==0) {
-        warning(ERR_ST,"-include option is depreciated, use -optinclude instead");
+        warning(ERR_ST,"-include option is deprecated, use -optinclude instead");
         i = mainHandleIncludeOption(argc, argv, i);
     }
     else return(0);
@@ -769,8 +769,8 @@ static int processIOption(int *ii, int argc, char **argv) {
 static int processJOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strcmp(argv[i],"-javadoc")==0)     s_opt.javaDoc = 1;
-    else if (strcmp(argv[i],"-java2html")==0)   s_opt.java2html = 1;
+    else if (strcmp(argv[i],"-javadoc")==0)     s_opt.javaDoc = true;
+    else if (strcmp(argv[i],"-java2html")==0)   s_opt.java2html = true;
     else if (strcmp(argv[i],"-java1.4")==0)     {
         createOptionString(&s_opt.javaVersion, JAVA_VERSION_1_4);
     }
@@ -863,8 +863,8 @@ static int processMOption(int *ii, int argc, char **argv) {
 static int processNOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strcmp(argv[i],"-noincluderefs")==0)       s_opt.noIncludeRefs = 1;
-    else if (strcmp(argv[i],"-noincluderefresh")==0)    s_opt.noIncludeRefs=1;
+    else if (strcmp(argv[i],"-noincluderefs")==0)       s_opt.noIncludeRefs = true;
+    else if (strcmp(argv[i],"-noincluderefresh")==0)    s_opt.noIncludeRefs=true;
     else if (strcmp(argv[i],"-nocxfile")==0)            s_opt.noCxFile = 1;
     else if (strcmp(argv[i],"-no_cpp_comment")==0)      s_opt.cpp_comment = 0;
     else if (strcmp(argv[i],"-nobrief")==0)             s_opt.brief = 0;
@@ -873,7 +873,7 @@ static int processNOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i],"-no_type")==0)             s_opt.no_ref_typedef = 1;
     else if (strcmp(argv[i],"-no_str")==0)              s_opt.no_ref_records = 1;
     else if (strcmp(argv[i],"-no_local")==0)            s_opt.no_ref_locals = 1;
-    else if (strcmp(argv[i],"-no_cfrefs")==0)           s_opt.allowClassFileRefs = 0;
+    else if (strcmp(argv[i],"-no_cfrefs")==0)           s_opt.allowClassFileRefs = false;
     else if (strcmp(argv[i],"-no_stdop")==0
              || strcmp(argv[i],"-nostdop")==0)          s_opt.no_stdop = 1;
     else if (strcmp(argv[i],"-noautoupdatefromsrc")==0) s_opt.javaSlAllowed = 0;
@@ -944,10 +944,10 @@ static int processOOption(int *ii, int argc, char **argv) {
     }
     else if (strcmp(argv[i],"-olexmacro")==0) s_opt.extractMode=EXTR_MACRO;
     else if (strcmp(argv[i],"-olcxunmodified")==0)  {
-        s_opt.modifiedFlag = 0;
+        s_opt.modifiedFlag = false;
     }
     else if (strcmp(argv[i],"-olcxmodified")==0)    {
-        s_opt.modifiedFlag = 1;
+        s_opt.modifiedFlag = true;
     }
     else if (strcmp(argv[i],"-olcxrename")==0)  s_opt.server_operation = OLO_RENAME;
     else if (strcmp(argv[i],"-olcxencapsulate")==0) s_opt.server_operation = OLO_ENCAPSULATE;
@@ -1263,7 +1263,7 @@ static int processROption(int *ii, int argc, char **argv, int infilesFlag) {
         }
     }
     else if (strcmp(argv[i],"-r")==0) {
-        if (infilesFlag == INFILES_ENABLED) s_opt.recursivelyDirs = 1;
+        if (infilesFlag == INFILES_ENABLED) s_opt.recursivelyDirs = true;
     }
     else if (strncmp(argv[i],"-renameto=", 10)==0) {
         createOptionString(&s_opt.renameTo, argv[i]+10);
@@ -1382,7 +1382,7 @@ static int processSOption(int *ii, int argc, char **argv) {
     int i = * ii;
     char *name, *val;
     if (0) {}
-    else if (strcmp(argv[i],"-strict")==0)      s_opt.strictAnsi = 1;
+    else if (strcmp(argv[i],"-strict")==0)      s_opt.strictAnsi = true;
     else if (strcmp(argv[i],"-str_fill")==0)    s_opt.str_fill = 1;
     else if (strcmp(argv[i],"-str_copy")==0)    s_opt.str_copy = 1;
     else if (strcmp(argv[i],"-stderr")==0)          errOut = stdout;
@@ -1507,11 +1507,11 @@ static bool processUOption(int *argIndexP, int argc, char **argv) {
     }
     else if (strcmp(argv[i],"-update")==0)  {
         s_opt.update = UP_FULL_UPDATE;
-        s_opt.updateOnlyModifiedFiles = 1;
+        s_opt.updateOnlyModifiedFiles = true;
     }
     else if (strcmp(argv[i],"-updatem")==0) {
         s_opt.update = UP_FULL_UPDATE;
-        s_opt.updateOnlyModifiedFiles = 1;
+        s_opt.updateOnlyModifiedFiles = false;
     }
     else
         return(false);
@@ -2379,7 +2379,7 @@ static void mainFileProcessingInitialisations(
     // some final touch to options
     if (s_opt.keep_old) {
         s_opt.update = UP_FAST_UPDATE;
-        s_opt.updateOnlyModifiedFiles = 0;
+        s_opt.updateOnlyModifiedFiles = false;
     }
     if (s_opt.brief) s_opt.long_cxref = 0;
     else s_opt.long_cxref = 1;
@@ -2864,7 +2864,7 @@ static bool mainSymbolCanBeIdentifiedByPosition(int fnum) {
     log_trace("looking for sym %s on %s",s_opt.browsedSymName,s_opt.olcxlccursor);
     // modified file, can't identify the reference
     log_trace(":modif flag == %d", s_opt.modifiedFlag);
-    if (s_opt.modifiedFlag == 1)
+    if (s_opt.modifiedFlag)
         return false;
 
     // here I will need also the symbol name

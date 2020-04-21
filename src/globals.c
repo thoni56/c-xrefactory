@@ -318,7 +318,7 @@ S_options s_initOpt = {
     0,                  // new line number of the first line
 
     "",     // getValue
-    0,      // java2html
+    false,  // java2html
     1,      // javaSlAllowed (autoUpdateFromSrc)
     XFILE_HASH_DEFAULT,
     NULL,
@@ -327,50 +327,49 @@ S_options s_initOpt = {
     0,
     NULL,       // "http://java.sun.com/j2se/1.3/docs/api",
     "",         // javaDocPath
-    0,
+    0,          // allowPackagesOnCl
     NULL,       // sourcepath
-    0,          // htmlDirectX
-    "/tmp",
-    0,
-    0,
-    0,
-    1,          // allowClassFileRefs
+    false,      // htmlDirectX
+    "/tmp",     // jdocTmpDir
+    0,          // noCxFile
+    false,      // javaDoc
+    false,      // noIncludeRefs
+    true,       // allowClassFileRefs
     0,
     "",
     DEFAULT_VALUE,      // manual symbol resolution
     NULL,       // browsed symbol name
-    1,
+    true,       // modifiedFlag
     0,
-    0,          // htmlNoUnderline
+    false,                      // htmlNoUnderline
     "navy",     // htmlLinkColor
     "",         // htmlCutPath
     0,          // htmlCutPathLen
     (OOC_VIRT_SUBCLASS_OF_RELATED | OOC_PROFILE_APPLICABLE), // ooChecksBits
     0,
     0,
-    1,          // memory factor ?
+    1,          // cxMemoryFactor
     1,
     0,
     NULL,
-    0,
+    false,                      // updateOnlyModifiedFiles
     "0:3",      // olcxlccursor
-    NULL,
-    "",
-    79,
-    "",
-    "*_",
-    0,          // EXTR_FUNCTION, must be zero
-    0,
+    NULL,       /* htmlZipCommand */
+    "",         /* olcxSearchString */
+    79,         /* olineLen */
+    "",         /* htmlLinkSuffix */
+    "*_",       /* olExtractAddrParPrefix */
+    0,          // extractMode, must be zero
+    false,      /* htmlFunSeparate */
     //& "__newFunction__",  // extractName
     MAX_COMPLETIONS,
     0,
     0,
     "",
-    1,                      // recursively dirs
-    "",                     // default classpath
-    8,
-    "",                     // -htmlroot ?
-    0,
+    true,                       // recursively dirs
+    "",                         // default classpath
+    8,                          /* tabulator */
+    "",                     // -htmlroot
     0,
     0,
     0,
