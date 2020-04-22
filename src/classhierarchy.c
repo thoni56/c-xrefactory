@@ -4,7 +4,6 @@
 #include "commons.h"
 #include "globals.h"
 #include "html.h"
-#include "bitmaps.h"
 #include "cxref.h"
 #include "enumTxt.h"
 #include "list.h"

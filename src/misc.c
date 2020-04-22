@@ -9,7 +9,6 @@
 #include "globals.h"
 #include "jsemact.h"
 #include "commons.h"
-#include "bitmaps.h"
 #include "caching.h"
 #include "protocol.h"
 #include "yylex.h"
