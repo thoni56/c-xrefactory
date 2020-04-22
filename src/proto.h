@@ -1109,7 +1109,6 @@ typedef struct options {
     int enum_name;
     int body;
     int header;
-    int str_copy;
 
     /* CXREF options  */
 

@@ -9,7 +9,6 @@ There are a *lot* of things to do to make c-xref into modern C.
 ** DONE Create test case
 ** DOING Create AST using parsing
 ** TODO Add as reference to the field
-* TODO Remove code for generation of str_fill
 * TODO enum-generation does not do automatical compiler defines discovery?
 * TODO Remove the global tmpBuff
 * TODO Make all modules independent on main
@@ -113,6 +112,7 @@ easier to mock and unit test other modules.
   ACTUALLY: split generation of enumTxt header to its own header file
   with the naming strategy as for the others.
 * DOING Start using log.c functions to log to a separate log file
+* DONE Remove code for generation of str_fill & str_copy
 * DONE Remove bootstrap step (strfill and local definitions)
 ** DONE Remove bootstrap enumTxt generation
 To retain the feature that some enums have there values as strings,
