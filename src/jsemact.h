@@ -86,7 +86,7 @@ extern int javaIsYetInTheClass(
                                char		*lname,
                                Symbol	**eq
                                );
-extern int javaSetFunctionLinkName(Symbol *clas, Symbol *decl, int mem);
+extern int javaSetFunctionLinkName(Symbol *clas, Symbol *decl, enum memoryClass mem);
 extern Symbol * javaGetFieldClass(char *fieldLinkName, char **fieldAdr);
 extern void javaAddNestedClassesAsTypeDefs(Symbol *cc,
                                            S_idList *oclassname, int accessFlags);

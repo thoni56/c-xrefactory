@@ -106,7 +106,7 @@ int javaIsYetInTheClass(Symbol *clas, char *lname, Symbol **eq) {
   return (int) mock(clas, lname, eq);
 }
 
-int javaSetFunctionLinkName(Symbol *clas, Symbol *decl, int mem) {
+int javaSetFunctionLinkName(Symbol *clas, Symbol *decl, enum memoryClass mem) {
   return (int) mock(clas, decl, mem);
 }
 

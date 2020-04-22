@@ -1625,7 +1625,7 @@ static int javaNumberOfNativeMethodsWithThisName(Symbol *clas, char *name) {
 }
 
 
-int javaSetFunctionLinkName(Symbol *clas, Symbol *decl,int mem) {
+int javaSetFunctionLinkName(Symbol *clas, Symbol *decl, enum memoryClass mem) {
     static char pp[MAX_PROFILE_SIZE];
     char *ln;
     int ppi, res;
