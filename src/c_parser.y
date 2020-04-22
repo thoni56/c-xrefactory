@@ -402,7 +402,7 @@ argument_expr_list_opt:				{
             $$.d = NULL;
         }
     |	argument_expr_list			{
-            XX_ALLOC($$.d, S_positionList);
+            XX_ALLOC($$.d, PositionList);
             fillPositionList($$.d, s_noPos, $1.d);
         }
     ;
@@ -1180,7 +1180,7 @@ parameter_identifier_list
     : identifier_list							/*& { $$.d = $1.d; } */
     | identifier_list ',' ELIPSIS				{
         Symbol *symbol;
-        S_position pos;
+        Position pos;
         fillPosition(&pos, -1, 0, 0);
 
         symbol = newSymbol("", "", pos);
@@ -1213,7 +1213,7 @@ parameter_type_list
     : parameter_list					/*& { $$.d = $1.d; } */
     | parameter_list ',' ELIPSIS				{
         Symbol *symbol;
-        S_position position;
+        Position position;
         fillPosition(&position, -1, 0, 0);
 
         symbol = newSymbol("", "", position);
@@ -1826,7 +1826,7 @@ static bool exists_valid_parser_action_on(int token) {
    replacement of YACC variables so that we can have multiple parsers
    linked together. Therefore it is not straight forward to refactor
    out commonalities. */
-void makeCCompletions(char *s, int len, S_position *pos) {
+void makeCCompletions(char *s, int len, Position *pos) {
     int token, i;
     CompletionLine compLine;
 

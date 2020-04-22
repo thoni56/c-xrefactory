@@ -15,7 +15,7 @@
 #include "utils.h"              /* creatingOlcxRefs() */
 
 
-void gotOnLineCxRefs( S_position *ps ) {
+void gotOnLineCxRefs( Position *ps ) {
     if (creatingOlcxRefs()) {
         s_cache.activeCache = 0;
         s_cxRefPos = *ps;
@@ -227,7 +227,7 @@ void gotOnLineCxRefs( S_position *ps ) {
 #define CommentaryBegRef(ccc, cfile, cline, clb, clo) {   \
         if (s_opt.taskRegime==RegimeHtmlGenerate && s_opt.htmlNoColors==0) { \
             int         lcoll;                                          \
-            S_position  pos;                                            \
+            Position  pos;                                            \
             char        ttt[TMP_STRING_SIZE];                           \
             lcoll = COLUMN_POS(ccc,clb,clo) -1;                         \
             fillPosition(&pos, cfile, cline, lcoll);                   \
@@ -239,7 +239,7 @@ void gotOnLineCxRefs( S_position *ps ) {
 #define CommentaryEndRef(ccc, cfile, cline, clb, clo, jdoc) { \
         if (s_opt.taskRegime==RegimeHtmlGenerate) {                     \
             int         lcoll;                                          \
-            S_position  pos;                                            \
+            Position  pos;                                            \
             char        ttt[TMP_STRING_SIZE];                           \
             lcoll = COLUMN_POS(ccc,clb,clo);                            \
             fillPosition(&pos, cfile, cline, lcoll);                   \
@@ -667,7 +667,7 @@ int getLexBuf(struct lexBuf *lb) {
     nextLexem:
         if (s_opt.taskRegime == RegimeEditServer) {
             int pi,len,lastlex,parChar,apos;
-            S_position *ps;
+            Position *ps;
             int pos1,currentLexemPosition;
             pi = (lb->posi-1) % LEX_POSITIONS_RING_SIZE;
             ps = & lb->pRing[pi];

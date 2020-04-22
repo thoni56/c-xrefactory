@@ -12,7 +12,7 @@
 #include "proto.h"
 
 extern int cyyparse();
-extern void makeCCompletions(char *s, int len, S_position *pos);
+extern void makeCCompletions(char *s, int len, Position *pos);
 
 #endif
 

@@ -1226,7 +1226,7 @@ parameter_identifier_list
     : identifier_list                           /*& { $$.d = $1.d; } */
     | identifier_list ',' ELIPSIS               {
         Symbol *p;
-        S_position pp;
+        Position pp;
         fillPosition(&pp, -1, 0, 0);
 
         p = newSymbol("", "", pp);
@@ -1265,7 +1265,7 @@ parameter_type_list
     : parameter_list                    /*& { $$.d = $1.d; } */
     | parameter_list ',' ELIPSIS                {
         Symbol        *p;
-        S_position      pp;
+        Position      pp;
         fillPosition(&pp, -1, 0, 0);
 
         p = newSymbol("", "", pp);
@@ -1683,7 +1683,7 @@ static bool exists_valid_parser_action_on(int token) {
    replacement of YACC variables so that we can have multiple parsers
    linked together. Therefore it is not straight forward to refactor
    out commonalities. */
-void makeYaccCompletions(char *s, int len, S_position *pos) {
+void makeYaccCompletions(char *s, int len, Position *pos) {
     int token, i;
     CompletionLine compLine;
 

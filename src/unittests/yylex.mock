@@ -14,7 +14,7 @@ void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) {
   mock(ff, buffer, prepend, name);
 }
 
-void addIncludeReference(int filenum, S_position *pos) {
+void addIncludeReference(int filenum, Position *pos) {
   mock(filenum, pos);
 }
 

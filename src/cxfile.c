@@ -222,7 +222,7 @@ int searchStringFitness(char *cxtag, int len) {
         if (val > max) max = val;               \
     }
 
-char *crTagSearchLineStatic(char *name, S_position *p,
+char *crTagSearchLineStatic(char *name, Position *p,
                             int *len1, int *len2, int *len3) {
     static char res[2*COMPLETION_STRING_SIZE];
     char file[TMP_STRING_SIZE];
@@ -1189,7 +1189,7 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
                                                CharacterBuffer *cb,
                                                int additionalArg
                                                ) {
-    S_position pos;
+    Position pos;
     S_usageBits usageBits;
     int file, line, coll, usage, sym, vApplClass, vFunClass;
     int symType,reqAcc;
@@ -1221,7 +1221,7 @@ static void cxrfReference(int size,
                           CharacterBuffer *cb,
                           int additionalArg
                           ) {
-    S_position pos;
+    Position pos;
     S_reference rr;
     S_usageBits usageBits;
     int file, line, coll, usage, sym, reqAcc;

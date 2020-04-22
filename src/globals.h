@@ -36,7 +36,7 @@ extern int s_olcx_check_arrayi;
 #endif
 extern bool s_wildcardSearch;
 extern int s_lastReturnedLexem;
-extern S_position s_spp[SPP_MAX];
+extern Position s_spp[SPP_MAX];
 extern S_usageBits s_noUsage;
 
 extern int s_progressFactor;
@@ -56,11 +56,11 @@ extern char tmpBuff[TMP_BUFF_SIZE];
 
 extern char s_olSymbolType[COMPLETION_STRING_SIZE];
 extern char s_olSymbolClassType[COMPLETION_STRING_SIZE];
-extern S_position s_paramPosition;
-extern S_position s_paramBeginPosition;
-extern S_position s_paramEndPosition;
-extern S_position s_primaryStartPosition;
-extern S_position s_staticPrefixStartPosition;
+extern Position s_paramPosition;
+extern Position s_paramBeginPosition;
+extern Position s_paramEndPosition;
+extern Position s_primaryStartPosition;
+extern Position s_staticPrefixStartPosition;
 extern S_id s_yyIdentBuf[YYBUFFERED_ID_INDEX];
 extern int s_yyIdentBufi;
 
@@ -108,7 +108,7 @@ extern Symbol s_defaultVoidDefinition;
 extern TypeModifier s_errorModifier;
 extern Symbol s_errorSymbol;
 extern struct stat s_noStat;
-extern S_position s_noPos;
+extern Position s_noPos;
 extern S_reference s_noRef;
 
 extern uchar typeLongChange[MAX_TYPE];
@@ -138,8 +138,8 @@ extern char s_javaPrimitiveWideningConversions[MAX_PCTIndex-1][MAX_PCTIndex-1];
 
 extern S_typeCharCodeIni s_baseTypeCharCodesIniTab[];
 
-extern S_position s_olcxByPassPos;
-extern S_position s_cxRefPos;
+extern Position s_olcxByPassPos;
+extern Position s_cxRefPos;
 extern int s_cxRefFlag;
 
 extern FILE *fIn;

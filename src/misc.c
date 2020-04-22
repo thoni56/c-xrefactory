@@ -33,7 +33,7 @@ void ppcIndentOffset(void) {
     for(i=0; i<s_ppcIndentOffset; i++) fputc(' ', ccOut);
 }
 
-void ppcGenPosition(S_position *p) {
+void ppcGenPosition(Position *p) {
     char *fn;
     assert(p!=NULL);
     fn = s_fileTab.tab[p->file]->name;
@@ -48,7 +48,7 @@ void ppcGenPosition(S_position *p) {
     //&ppcGenNumericRecord(PPC_COL, p->col,"","");
 }
 
-void ppcGenGotoPositionRecord(S_position *p) {
+void ppcGenGotoPositionRecord(Position *p) {
     ppcGenRecordBegin(PPC_GOTO);
     ppcGenPosition(p);
     ppcGenRecordEnd(PPC_GOTO);

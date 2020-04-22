@@ -6,6 +6,6 @@ int yaccyyparse() {
   return (int) mock();
 }
 
-void makeYaccCompletions(char *s, int len, S_position *pos) {
+void makeYaccCompletions(char *s, int len, Position *pos) {
      (void)mock(s, len, pos);
 }

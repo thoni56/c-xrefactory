@@ -4,9 +4,9 @@
 
 #include "olcxtab.h"
 
-void fill_reference(S_reference *reference, S_usageBits usage, S_position position,
+void fill_reference(S_reference *reference, S_usageBits usage, Position position,
                     S_reference *next) {
-    /* NOTE can't mock S_usageBits or S_position */
+    /* NOTE can't mock S_usageBits or Position */
     mock(reference, next);
 }
 
@@ -86,7 +86,7 @@ int getFileNumberFromName(char *name) {
     return (int) mock(name);
 }
 
-void generateOnlineCxref(S_position *p, char *commandString, int usage, char *suffix, char *suffix2) {
+void generateOnlineCxref(Position *p, char *commandString, int usage, char *suffix, char *suffix2) {
     mock(p, commandString, usage, suffix, suffix2);
 }
 
@@ -134,20 +134,20 @@ S_reference *duplicateReference(S_reference *r) {
     return (S_reference *) mock(r);
 }
 
-S_reference *addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *ub, int vFunCl, int vApplCl) {
+S_reference *addCxReferenceNew(Symbol *p, Position *pos, S_usageBits *ub, int vFunCl, int vApplCl) {
     return (S_reference *) mock(p, pos, ub, vFunCl, vApplCl);
 }
 
-S_reference *addCxReference(Symbol *p, S_position *pos, Usage usage, int vFunClass, int vApplClass) {
+S_reference *addCxReference(Symbol *p, Position *pos, Usage usage, int vFunClass, int vApplClass) {
     char *p_name = p->name;
     return (S_reference *) mock(p, p_name, pos, usage, vFunClass, vApplClass);
 }
 
-S_reference *addSpecialFieldReference(char *name, int storage, int fnum, S_position *p, int usage) {
+S_reference *addSpecialFieldReference(char *name, int storage, int fnum, Position *p, int usage) {
     return (S_reference *) mock(name, storage, fnum, p, usage);
 }
 
-void addClassTreeHierarchyReference(int fnum, S_position *p, int usage) {
+void addClassTreeHierarchyReference(int fnum, Position *p, int usage) {
     mock(fnum, p, usage);
 }
 
@@ -155,7 +155,7 @@ void addCfClassTreeHierarchyRef(int fnum, int usage) {
     mock(fnum, usage);
 }
 
-void addTrivialCxReference(char *name, int symType, int storage, S_position *pos, int usage) {
+void addTrivialCxReference(char *name, int symType, int storage, Position *pos, int usage) {
     mock(name, symType, storage, pos, usage);
 }
 
@@ -163,7 +163,7 @@ void olcxAddReferences(S_reference *list, S_reference **dlist, int fnum, int bes
     mock(list, dlist, fnum, bestMatchFlag);
 }
 
-void olSetCallerPosition(S_position *pos) {
+void olSetCallerPosition(Position *pos) {
     mock(pos);
 }
 
@@ -171,11 +171,11 @@ S_olCompletion *olCompletionListPrepend(char *name, char *fullText, char *vclass
     return (S_olCompletion *) mock(name, fullText, vclass, jindent, s, ri, dfpos, symType, vFunClass, stack);
 }
 
-S_olSymbolsMenu *olCreateNewMenuItem(S_symbolRefItem *sym, int vApplClass, int vFunCl, S_position *defpos, int defusage, int selected, int visible, unsigned ooBits, int olusage, int vlevel) {
+S_olSymbolsMenu *olCreateNewMenuItem(S_symbolRefItem *sym, int vApplClass, int vFunCl, Position *defpos, int defusage, int selected, int visible, unsigned ooBits, int olusage, int vlevel) {
     return (S_olSymbolsMenu *) mock(sym, vApplClass, vFunCl, defpos, defusage, selected, visible, ooBits, olusage, vlevel);
 }
 
-S_olSymbolsMenu *olAddBrowsedSymbol(S_symbolRefItem *sym, S_olSymbolsMenu **list, int selected, int visible, unsigned ooBits, int olusage, int vlevel, S_position *defpos, int defusage) {
+S_olSymbolsMenu *olAddBrowsedSymbol(S_symbolRefItem *sym, S_olSymbolsMenu **list, int selected, int visible, unsigned ooBits, int olusage, int vlevel, Position *defpos, int defusage) {
     return (S_olSymbolsMenu *) mock(sym, list, selected, visible, ooBits, olusage, vlevel, defpos, defusage);
 }
 
@@ -187,11 +187,11 @@ void olCompletionListReverse(void) {
     mock();
 }
 
-S_reference **addToRefList(S_reference **list, S_usageBits *pusage, S_position *pos, int category) {
+S_reference **addToRefList(S_reference **list, S_usageBits *pusage, Position *pos, int category) {
     return (S_reference **) mock(list, pusage, pos, category);
 }
 
-bool isInRefList(S_reference *list, S_usageBits *pusage, S_position *pos, int category) {
+bool isInRefList(S_reference *list, S_usageBits *pusage, Position *pos, int category) {
     return (int) mock(list, pusage, pos, category);
 }
 

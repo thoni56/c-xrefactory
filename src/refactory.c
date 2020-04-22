@@ -1402,7 +1402,7 @@ static void refactoryMakeSyntaxPassOnSource(S_editorMarker *point) {
 static S_editorMarker *refactoryCrNewMarkerForExpressionBegin(S_editorMarker *d, int kind) {
     S_editorMarker  *pp;
     S_editorBuffer  *bb;
-    S_position      *pos;
+    Position      *pos;
     refactoryEditServerParseBuffer( s_ropt.project, d->buffer,
                                     d,NULL, "-olcxprimarystart",NULL);
     olStackDeleteSymbol(s_olcxCurrentUser->browserStack.top);

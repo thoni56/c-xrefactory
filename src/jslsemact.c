@@ -135,7 +135,7 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, S_idList *packid,
     int ii;
     Symbol *smemb;
     JslSymbolList ss, *xss, *memb;
-    S_position *importPos;
+    Position *importPos;
     int mm;
     UNUSED mm;
 

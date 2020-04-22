@@ -87,7 +87,7 @@ void fill_symbolRefItemBits(S_symbolRefItemBits *symbolRefItemBits, unsigned sym
     symbolRefItemBits->htmlWasLn = htmlWasLn;
 }
 
-void fill_reference(S_reference *reference, S_usageBits usage, S_position position, S_reference *next) {
+void fill_reference(S_reference *reference, S_usageBits usage, Position position, S_reference *next) {
     reference->usage = usage;
     reference->p = position;
     reference->next = next;
@@ -171,7 +171,7 @@ static char *olcxStringCopy(char *string) {
 
 
 S_olSymbolsMenu *olCreateNewMenuItem(S_symbolRefItem *symbol, int vApplClass, int vFunCl,
-                                     S_position *defpos, int defusage,
+                                     Position *defpos, int defusage,
                                      int selected, int visible,
                                      unsigned ooBits, int olusage, int vlevel) {
     S_olSymbolsMenu *symbolsMenu;
@@ -193,7 +193,7 @@ S_olSymbolsMenu *olCreateNewMenuItem(S_symbolRefItem *symbol, int vApplClass, in
 S_olSymbolsMenu *olAddBrowsedSymbol(S_symbolRefItem *sym, S_olSymbolsMenu **list,
                                     int selected, int visible, unsigned ooBits,
                                     int olusage, int vlevel,
-                                    S_position *defpos, int defusage) {
+                                    Position *defpos, int defusage) {
     S_olSymbolsMenu     *rr, **place, ddd;
 
     fill_olSymbolsMenu(&ddd, *sym, 0,0,0, olusage, vlevel,0,0, UsageNone,s_noPos,0, NULL, NULL);
@@ -248,7 +248,7 @@ void renameCollationSymbols(S_olSymbolsMenu *sss) {
 
 S_reference **addToRefList(S_reference **list,
                            S_usageBits *pusage,
-                           S_position *pos,
+                           Position *pos,
                            int category
                            ) {
     S_reference *rr, **place;
@@ -270,7 +270,7 @@ S_reference **addToRefList(S_reference **list,
 
 bool isInRefList(S_reference *list,
                 S_usageBits *pusage,
-                S_position *pos,
+                Position *pos,
                 int category
                 ) {
     S_reference *rr;
@@ -413,7 +413,7 @@ static void setClassTreeBaseType(S_classTreeData *ct, Symbol *p) {
 }
 
 S_reference *addSpecialFieldReference(char *name,int storage, int fnum,
-                                      S_position *p, int usage){
+                                      Position *p, int usage){
     Symbol        ss;
     S_reference     *res;
 
@@ -727,12 +727,12 @@ static int olcxOnlyParseNoPushing(int opt) {
 /* ********************************************************************* */
 /* default vappClass == vFunClass == s_noneFileIndex !!!!!!!             */
 /*                                                                       */
-S_reference * addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *usageb,
+S_reference * addCxReferenceNew(Symbol *p, Position *pos, S_usageBits *usageb,
                                 int vFunCl, int vApplCl) {
     int ii,mm,category,scope,storage,defusage;
     char *linkName;
     S_reference rr, **place;
-    S_position *defpos;
+    Position *defpos;
     S_symbolRefItem *pp,*memb, ppp;
     S_olSymbolsMenu *mmi;
     S_refTab *reftab;
@@ -834,7 +834,7 @@ S_reference * addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *usageb,
     }
     /*  category = reftab->category; */
     place = addToRefList(&memb->refs,usageb,pos,category);
-    //&fprintf(dumpOut,"checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s\n", s_fileTab.tab[s_cxRefPos.file]->name, s_cxRefPos.file, s_cxRefPos.line, s_cxRefPos.col, s_fileTab.tab[pos->file]->name, pos->file, pos->line, pos->col, memcmp(&s_cxRefPos, pos, sizeof(S_position)), POSITION_EQ(s_cxRefPos, *pos), usage, p->linkName);
+    //&fprintf(dumpOut,"checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s\n", s_fileTab.tab[s_cxRefPos.file]->name, s_cxRefPos.file, s_cxRefPos.line, s_cxRefPos.col, s_fileTab.tab[pos->file]->name, pos->file, pos->line, pos->col, memcmp(&s_cxRefPos, pos, sizeof(Position)), POSITION_EQ(s_cxRefPos, *pos), usage, p->linkName);
 
     if (s_opt.taskRegime == RegimeEditServer
         && POSITION_EQ(s_cxRefPos, *pos)
@@ -889,13 +889,13 @@ S_reference * addCxReferenceNew(Symbol *p, S_position *pos, S_usageBits *usageb,
     return(*place);
 }
 
-S_reference * addCxReference(Symbol *p, S_position *pos, Usage usage, int vFunCl, int vApplCl) {
+S_reference * addCxReference(Symbol *p, Position *pos, Usage usage, int vFunCl, int vApplCl) {
     S_usageBits ub;
     fill_usageBits(&ub, usage, MIN_REQUIRED_ACCESS);
     return(addCxReferenceNew(p, pos, &ub, vFunCl, vApplCl));
 }
 
-void addTrivialCxReference(char *name,int symType,int storage,S_position *pos,int usage) {
+void addTrivialCxReference(char *name,int symType,int storage,Position *pos,int usage) {
     Symbol ss;
 
     fillSymbol(&ss, name, name, *pos);
@@ -903,13 +903,13 @@ void addTrivialCxReference(char *name,int symType,int storage,S_position *pos,in
     addCxReference(&ss, pos, usage, s_noneFileIndex, s_noneFileIndex);
 }
 
-void addClassTreeHierarchyReference(int fnum, S_position *p, int usage) {
+void addClassTreeHierarchyReference(int fnum, Position *p, int usage) {
     addSpecialFieldReference(LINK_NAME_CLASS_TREE_ITEM,StorageMethod,
                              fnum, p, usage);
 }
 
 void addCfClassTreeHierarchyRef(int fnum, int usage) {
-    S_position      p;
+    Position      p;
     fillPosition(&p, fnum, 0, 0);
     addClassTreeHierarchyReference(fnum, &p, usage);
 }
@@ -1276,7 +1276,7 @@ static void olcxAddReferencesToOlSymbolsMenu(S_olSymbolsMenu  *cms,
     }
 }
 
-void generateOnlineCxref(S_position *p,
+void generateOnlineCxref(Position *p,
                          char *commandString,
                          int usage,
                          char *suffix,
@@ -1722,8 +1722,8 @@ static void linePosProcess(FILE *off,
                            int usageFilter, // only if usages==USAGE_FILTER
                            char *fname,
                            S_reference **rrr,
-                           S_position *callerp,
-                           S_position *cp,
+                           Position *callerp,
+                           Position *cp,
                            int *cch,
                            CharacterBuffer *cxfBuf
                            ) {
@@ -1795,14 +1795,14 @@ S_reference *rr;
  return(rr);
 }
 
-static void passRefsThroughSourceFile(S_reference **rrr, S_position *callerp,
+static void passRefsThroughSourceFile(S_reference **rrr, Position *callerp,
                                       FILE *off,
                                       char *ofname, int usages, int usageFilter) {
     S_reference         *rr,*oldrr;
     int                 ch,fnum;
     S_editorBuffer      *ebuf;
     char                *cofileName;
-    S_position          cp;
+    Position          cp;
     CharacterBuffer     cxfBuf;
 
     rr = *rrr;
@@ -3677,7 +3677,7 @@ static S_olSymbolsMenu *mmPreCheckGetFirstDefinitionReferenceAndItsSymbol(
 static S_olSymbolsMenu *mmFindSymWithCorrespondingRef(S_reference *ref,
                                                       S_olSymbolsMenu *osym,
                                                       S_olcxReferences *refs,
-                                                      S_position *moveOffset
+                                                      Position *moveOffset
                                                       ) {
     S_reference         sr, *place;
     S_olSymbolsMenu     *mm;
@@ -3746,7 +3746,7 @@ static int mmPreCheckMakeDifference(S_olcxReferences *origrefs,
                                     ) {
     S_olSymbolsMenu *osym, *nsym, *diffsym, *ofirstsym, *nfirstsym;
     S_reference     *rr;
-    S_position      moveOffset;
+    Position      moveOffset;
 
     fillPosition(&moveOffset, 0,0,0);
     ofirstsym = mmPreCheckGetFirstDefinitionReferenceAndItsSymbol(origrefs->menuSym);
@@ -3979,8 +3979,8 @@ static void olcxTopReferencesIntersection(void) {
 
 static void olcxRemoveRefWinFromRefList(S_reference **r1,
                                         int wdfile,
-                                        S_position *fp,
-                                        S_position *tp ) {
+                                        Position *fp,
+                                        Position *tp ) {
     S_reference **r, *cr, *nr;
     while (*r1!=NULL) {
         r = r1; r1 = &(*r1)->next;
@@ -4003,7 +4003,7 @@ static void olcxTopReferencesRemoveWindow(void) {
     S_olcxReferences    *top1;
     S_olSymbolsMenu     *mm;
     int                 wdfile;
-    S_position          fp, tp;
+    Position          fp, tp;
     // in reality this is a hack, it takes references kept from
     // last file processing
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
@@ -4177,7 +4177,7 @@ void olcxPushSpecial(char *fieldName, int command) {
     int                 clii, line, col;
     S_olcxReferences    *refs;
     S_olSymbolsMenu     *ss;
-    S_position          callerPos;
+    Position          callerPos;
     clii = olSpecialFieldCreateSelection(fieldName,StorageField);
     olCreateSelectionMenu(s_olcxCurrentUser->browserStack.top->command);
     assert(s_javaObjectSymbol && s_javaObjectSymbol->u.s);
@@ -4216,7 +4216,7 @@ static void olPushAllReferencesInBetweenMapFun(S_symbolRefItem *ri,
                                                void *ddd
                                                ) {
     S_reference             *rr, *defRef;
-    S_position              defpos;
+    Position              defpos;
     S_olcxReferences        *rstack;
     S_olSymbolsMenu         *mm;
     S_pushAllInBetweenData  *dd;
@@ -4671,7 +4671,7 @@ static void answerPushGlobalUnusedSymbolsAction(void) {
     ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "", "\n");
 }
 
-static void getCallerPositionFromCommandLineOption(S_position *opos) {
+static void getCallerPositionFromCommandLineOption(Position *opos) {
     int f,l,c;
 
     assert(opos != NULL);
@@ -4710,7 +4710,7 @@ static void pushSymbolByName(char *name) {
 
 void mainAnswerEditAction(void) {
     S_olcxReferences    *rstack, *nextrr;
-    S_position          opos;
+    Position          opos;
     char                *ifname, *jdkcp;
     char                dffname[MAX_FILE_NAME_SIZE];
     char                dffsect[MAX_FILE_NAME_SIZE];
@@ -5168,7 +5168,7 @@ static unsigned ooBitsMax(unsigned oo1, unsigned oo2) {
 S_olSymbolsMenu *createSelectionMenu(S_symbolRefItem *p) {
     S_olSymbolsMenu     *ss, *res;
     S_olcxReferences    *rstack;
-    S_position          *defpos;
+    Position          *defpos;
     unsigned            ooBits, oo, flag;
     int                 select,visible,vlev,vlevel,defusage;
     res = NULL;
@@ -5238,7 +5238,7 @@ static S_olCompletion *newOlCompletion(char *name,
     return olCompletion;
 }
 
-void olSetCallerPosition(S_position *pos) {
+void olSetCallerPosition(Position *pos) {
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     s_olcxCurrentUser->browserStack.top->cpos = *pos;
 }

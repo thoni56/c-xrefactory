@@ -131,14 +131,14 @@ char *javaCreateComposedName(char *prefix,
     return(ln);
 }
 
-void javaCheckForPrimaryStart(S_position *cpos, S_position *bpos) {
+void javaCheckForPrimaryStart(Position *cpos, Position *bpos) {
     if (s_opt.taskRegime != RegimeEditServer) return;
     if (POSITION_EQ(s_cxRefPos, *cpos)) {
         s_primaryStartPosition = *bpos;
     }
 }
 
-void javaCheckForPrimaryStartInNameList(S_idList *name, S_position *pp) {
+void javaCheckForPrimaryStartInNameList(S_idList *name, Position *pp) {
     S_idList *ll;
     if (s_opt.taskRegime != RegimeEditServer) return;
     for(ll=name; ll!=NULL; ll=ll->next) {
@@ -146,14 +146,14 @@ void javaCheckForPrimaryStartInNameList(S_idList *name, S_position *pp) {
     }
 }
 
-void javaCheckForStaticPrefixStart(S_position *cpos, S_position *bpos) {
+void javaCheckForStaticPrefixStart(Position *cpos, Position *bpos) {
     if (s_opt.taskRegime != RegimeEditServer) return;
     if (POSITION_EQ(s_cxRefPos, *cpos)) {
         s_staticPrefixStartPosition = *bpos;
     }
 }
 
-void javaCheckForStaticPrefixInNameList(S_idList *name, S_position *pp) {
+void javaCheckForStaticPrefixInNameList(S_idList *name, Position *pp) {
     S_idList *ll;
     if (s_opt.taskRegime != RegimeEditServer) return;
     for(ll=name; ll!=NULL; ll=ll->next) {
@@ -161,9 +161,9 @@ void javaCheckForStaticPrefixInNameList(S_idList *name, S_position *pp) {
     }
 }
 
-S_position *javaGetNameStartingPosition(S_idList *name) {
+Position *javaGetNameStartingPosition(S_idList *name) {
     S_idList *ll;
-    S_position *res;
+    Position *res;
     res = &s_noPos;
     for(ll=name; ll!=NULL; ll=ll->next) {
         res = &ll->id.p;
@@ -171,7 +171,7 @@ S_position *javaGetNameStartingPosition(S_idList *name) {
     return(res);
 }
 
-static S_reference *javaAddClassCxReference(Symbol *dd, S_position *pos, unsigned usage) {
+static S_reference *javaAddClassCxReference(Symbol *dd, Position *pos, unsigned usage) {
     S_reference *res;
     res = addCxReference(dd, pos, usage, s_noneFileIndex, s_noneFileIndex);
     return(res);
@@ -190,7 +190,7 @@ static void javaAddNameCxReference(S_idList *id, unsigned usage) {
     addCxReference(&dd, &id->id.p, usage,s_noneFileIndex, s_noneFileIndex);
 }
 
-Symbol *javaAddType(S_idList *class, Access access, S_position *p) {
+Symbol *javaAddType(S_idList *class, Access access, Position *p) {
     Symbol *dd;
     dd = javaTypeSymbolDefinition(class, access, TYPE_ADD_YES);
     dd->bits.access = access;
@@ -574,7 +574,7 @@ Symbol *javaGetFieldClass(char *fieldLinkName, char **fieldAdr) {
 }
 
 // I think that s_symTab should contain symbollist, not symbols!
-static Symbol *javaAddTypeToSymbolTable(Symbol *memb, int accessFlags, S_position *importPos, bool isExplicitlyImported) {
+static Symbol *javaAddTypeToSymbolTable(Symbol *memb, int accessFlags, Position *importPos, bool isExplicitlyImported) {
     Symbol *nmemb;
     //&Symbol *memb2;
 
@@ -764,7 +764,7 @@ void javaReadSymbolsFromSourceFile(char *fname) {
 
 static void addJavaFileDependency(int file, char *onfile) {
     int         fileIndex;
-    S_position	pos;
+    Position	pos;
 
     // do dependencies only when doing cross reference file
     if (s_opt.taskRegime != RegimeXref) return;
@@ -1014,7 +1014,7 @@ int javaClassifySingleAmbigNameToTypeOrPack(S_idList *name,
     Symbol sd, *mm, *memb, *nextmemb;
     int unused;
     bool haveit;
-    S_position *ipos;
+    Position *ipos;
 
     fillSymbol(&sd, name->id.name, name->id.name, s_noPos);
     fillSymbolBits(&sd.bits, ACCESS_DEFAULT, TypeStruct, StorageNone);
@@ -1113,7 +1113,7 @@ char *javaImportSymbolName_st(int file, int line, int coll) {
     return(res);
 }
 
-void javaAddImportConstructionReference(S_position *importPos, S_position *pos, int usage) {
+void javaAddImportConstructionReference(Position *importPos, Position *pos, int usage) {
     char *isymName;
     isymName = javaImportSymbolName_st(importPos->file, importPos->line, importPos->col);
 //&fprintf(dumpOut,"using import on %s:%d (%d)  at %s:%d\n", simpleFileName(s_fileTab.tab[importPos->file]->name), importPos->line, importPos->col, simpleFileName(s_fileTab.tab[pos->file]->name), pos->line);
@@ -1552,7 +1552,7 @@ void javaSetFieldLinkName(Symbol *field) {
 }
 
 
-Symbol *javaCreateNewMethod(char *nn, S_position *p, int mem) {
+Symbol *javaCreateNewMethod(char *nn, Position *p, int mem) {
     TypeModifier *m;
     Symbol *symbol;
     char *name;
@@ -1726,7 +1726,7 @@ int javaLinkNameIsAnnonymousClass(char *linkname) {
     return(0);
 }
 
-void addThisCxReferences(int classIndex, S_position *pos) {
+void addThisCxReferences(int classIndex, Position *pos) {
     int usage;
     if (classIndex == s_javaStat->classFileIndex) {
         usage = UsageMaybeThis;
@@ -1737,21 +1737,21 @@ void addThisCxReferences(int classIndex, S_position *pos) {
                              classIndex, pos, usage);
 }
 
-S_reference *addUselessFQTReference(int classIndex, S_position *pos) {
+S_reference *addUselessFQTReference(int classIndex, Position *pos) {
     S_reference *res;
     res = addSpecialFieldReference(LINK_NAME_IMPORTED_QUALIFIED_ITEM,StorageField,
                                    classIndex, pos, UsageLastUseless);
     return(res);
 }
 
-S_reference *addUnimportedTypeLongReference(int classIndex, S_position *pos) {
+S_reference *addUnimportedTypeLongReference(int classIndex, Position *pos) {
     S_reference *res;
     res = addSpecialFieldReference(LINK_NAME_UNIMPORTED_QUALIFIED_ITEM, StorageField,
                                    classIndex, pos, UsageUsed);
     return(res);
 }
 
-void addSuperMethodCxReferences(int classIndex, S_position *pos) {
+void addSuperMethodCxReferences(int classIndex, Position *pos) {
     addSpecialFieldReference(LINK_NAME_SUPER_METHOD_ITEM,StorageField,
                              classIndex, pos,
                              UsageSuperMethod);
@@ -1813,7 +1813,7 @@ void javaMethodBodyBeginning(Symbol *method) {
 }
 
 // this should be merged with _bef_ token!
-void javaMethodBodyEnding(S_position *endpos) {
+void javaMethodBodyEnding(Position *endpos) {
     if (s_opt.taskRegime == RegimeHtmlGenerate) {
         htmlAddFunctionSeparatorReference();
     } else if (s_opt.taskRegime == RegimeEditServer) {
@@ -2100,7 +2100,7 @@ static TypeModifier *javaMethodInvocation(
                                         S_id *name,
                                         S_typeModifierList *args,
                                         int invocationType,
-                                        S_position *superPos) {
+                                        Position *superPos) {
     char				actArg[MAX_PROFILE_SIZE];
     Symbol            * appl[MAX_APPL_OVERLOAD_FUNS];
     int                 funCl[MAX_APPL_OVERLOAD_FUNS];
@@ -2293,7 +2293,7 @@ TypeModifier *javaMethodInvocationS(S_id *super,
 }
 
 S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas,
-                                                    S_position *pos
+                                                    Position *pos
     ) {
     S_extRecFindStr		*erfs;
     int					rr;
@@ -2310,7 +2310,7 @@ S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas,
 }
 
 TypeModifier *javaConstructorInvocation(Symbol *clas,
-                                           S_position *pos,
+                                           Position *pos,
                                            S_typeModifierList *args
     ) {
     S_extRecFindStr		*erfs;

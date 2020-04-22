@@ -55,14 +55,14 @@ static void dumpProgram(S_programGraphNode *program) {
 void genInternalLabelReference(int counter, int usage) {
     char labelName[TMP_STRING_SIZE];
     S_id labelId;
-    S_position position;
+    Position position;
 
     if (s_opt.server_operation != OLO_EXTRACT)
         return;
 
     snprintf(labelName, TMP_STRING_SIZE, "%%L%d", counter);
 
-    position = (S_position){.file = cFile.lexBuffer.buffer.fileNumber, .line = 0, .col = 0};
+    position = (Position){.file = cFile.lexBuffer.buffer.fileNumber, .line = 0, .col = 0};
     fillId(&labelId, labelName, NULL, position);
 
     if (usage != UsageDefined)
@@ -1258,7 +1258,7 @@ void actionsBeforeAfterExternalDefinition(void) {
 
 
 void extractActionOnBlockMarker(void) {
-    S_position pos;
+    Position pos;
     if (s_cps.cxMemiAtBlockBegin == 0) {
         s_cps.cxMemiAtBlockBegin = cxMemory->i;
         s_cps.workMemiAtBlockBegin = s_topBlock->previousTopBlock;

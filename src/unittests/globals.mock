@@ -55,12 +55,12 @@ int s_olOriginalFileNumber = -1;
 int s_olstringUsage;
 int s_olOriginalComFileNumber;
 int s_olstringServed;
-S_position s_olcxByPassPos;
+Position s_olcxByPassPos;
 int s_olMacro2PassFile;
 
 struct stat s_noStat;
 S_usageBits s_noUsage;
-S_position s_noPos = {-1, 0, 0};
+Position s_noPos = {-1, 0, 0};
 
 Language s_language;
 S_options s_opt;
@@ -69,11 +69,11 @@ S_options s_ropt;
 TypeModifier *s_structRecordCompletionType;
 Completions s_completions;
 
-S_position s_paramPosition;
-S_position s_paramBeginPosition;
-S_position s_paramEndPosition;
+Position s_paramPosition;
+Position s_paramBeginPosition;
+Position s_paramEndPosition;
 
-S_position s_cxRefPos;
+Position s_cxRefPos;
 int s_cxRefFlag=0;
 
 S_fileTab s_fileTab;
@@ -85,7 +85,7 @@ char s_cwd[MAX_FILE_NAME_SIZE];
 
 S_currentlyParsedStatics s_cps;
 TypeModifier *s_upLevelFunctionCompletionType;
-S_position s_primaryStartPosition;
+Position s_primaryStartPosition;
 char tmpBuff[TMP_BUFF_SIZE];
 unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL];
 

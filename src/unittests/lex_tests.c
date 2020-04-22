@@ -12,7 +12,7 @@ S_caching s_cache;
 Language s_language;
 char s_olstring[MAX_FUN_NAME_SIZE];
 S_currentlyParsedStatics s_cps;
-S_position s_cxRefPos;
+Position s_cxRefPos;
 S_options s_opt;        // current options
 char *s_editCommunicationString = "C@$./@mVeDitznAC";
 int s_olOriginalFileNumber = -1;

@@ -74,7 +74,7 @@ void ppcGenGotoMarkerRecord(S_editorMarker *pos) {
   mock(pos);
 }
 
-void ppcGenPosition(S_position *p) {
+void ppcGenPosition(Position *p) {
   mock(p);
 }
 
@@ -98,7 +98,7 @@ void ppcGenReferencePreCheckRecord(S_reference *r, char *text) {
   mock(r, text);
 }
 
-void ppcGenGotoPositionRecord(S_position *p) {
+void ppcGenGotoPositionRecord(Position *p) {
   mock(p);
 }
 

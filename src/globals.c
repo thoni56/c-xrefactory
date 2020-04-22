@@ -19,7 +19,7 @@ int s_olcx_check_arrayi = 0;
 bool s_wildcardSearch;
 int s_lastReturnedLexem;
 
-S_position s_spp[SPP_MAX];
+Position s_spp[SPP_MAX];
 
 // !!! if changing this, change also s_noRef!!!
 S_usageBits s_noUsage = {UsageNone, 0, };
@@ -54,11 +54,11 @@ time_t s_expTime;
 char s_olSymbolType[COMPLETION_STRING_SIZE];
 char s_olSymbolClassType[COMPLETION_STRING_SIZE];
 
-S_position s_paramPosition;
-S_position s_paramBeginPosition;
-S_position s_paramEndPosition;
-S_position s_primaryStartPosition;
-S_position s_staticPrefixStartPosition;
+Position s_paramPosition;
+Position s_paramBeginPosition;
+Position s_paramEndPosition;
+Position s_primaryStartPosition;
+Position s_staticPrefixStartPosition;
 
 S_id s_yyIdentBuf[YYBUFFERED_ID_INDEX];
 int s_yyIdentBufi = 0;
@@ -88,8 +88,8 @@ int olcxMemoryAllocatedBytes;
 
 bool s_ifEvaluation = false;     /* flag for yylex, to not filter '\n' TODO: move, duh!*/
 
-S_position s_olcxByPassPos;
-S_position s_cxRefPos;
+Position s_olcxByPassPos;
+Position s_cxRefPos;
 int s_cxRefFlag=0;
 
 time_t s_fileProcessStartTime;
@@ -218,7 +218,7 @@ Symbol s_defaultVoidDefinition;
 TypeModifier s_errorModifier;
 Symbol s_errorSymbol;
 struct stat s_noStat;
-S_position s_noPos = {-1, 0, 0};
+Position s_noPos = {-1, 0, 0};
 
 Symbol s_javaArrayObjectSymbol;
 Symbol *s_javaStringSymbol;

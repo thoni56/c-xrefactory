@@ -12,7 +12,7 @@ typedef struct completionFunTab {
 extern void fillCompletionLine(CompletionLine *cline, char *string, Symbol *symbol, Type symbolType,
                        short int virtualLevel, short int margn, char **margs,
                        Symbol *vFunClass);
-extern void initCompletions(Completions *completions, int length, S_position position);
+extern void initCompletions(Completions *completions, int length, Position position);
 extern void processName(char *name, CompletionLine *t, int orderFlag, void *c);
 extern void completeForSpecial1(Completions *c);
 extern void completeForSpecial2(Completions *c);
@@ -53,7 +53,7 @@ extern void javaCompleteSuperConstructor(Completions *c);
 extern void javaCompleteSuperNestedConstructor(Completions *c);
 extern void completeYaccLexem(Completions *c);
 
-extern void olCompletionListInit(S_position *originalPos);
+extern void olCompletionListInit(Position *originalPos);
 extern void formatOutputLine(char *tt, int startingColumn);
 extern void printCompletionsList(int noFocus);
 extern void printCompletions(Completions *c);

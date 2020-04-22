@@ -4,6 +4,6 @@
 #include "proto.h"
 
 extern int getLexBuf(struct lexBuf *lb);
-extern void gotOnLineCxRefs(S_position *position);
+extern void gotOnLineCxRefs(Position *position);
 
 #endif

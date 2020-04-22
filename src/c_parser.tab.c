@@ -2052,7 +2052,7 @@ static bool exists_valid_parser_action_on(int token) {
    replacement of YACC variables so that we can have multiple parsers
    linked together. Therefore it is not straight forward to refactor
    out commonalities. */
-void makeCCompletions(char *s, int len, S_position *pos) {
+void makeCCompletions(char *s, int len, Position *pos) {
     int token, i;
     CompletionLine compLine;
 
@@ -2434,7 +2434,7 @@ break;
 case 29:
 #line 404 "c_parser.y"
 {
-            XX_ALLOC(yyval.ast_positionList.d, S_positionList);
+            XX_ALLOC(yyval.ast_positionList.d, PositionList);
             fillPositionList(yyval.ast_positionList.d, s_noPos, yyvsp[0].ast_positionList.d);
         }
 break;
@@ -3404,7 +3404,7 @@ case 220:
 #line 1181 "c_parser.y"
 {
         Symbol *symbol;
-        S_position pos;
+        Position pos;
         fillPosition(&pos, -1, 0, 0);
 
         symbol = newSymbol("", "", pos);
@@ -3442,7 +3442,7 @@ case 225:
 #line 1214 "c_parser.y"
 {
         Symbol *symbol;
-        S_position position;
+        Position position;
         fillPosition(&position, -1, 0, 0);
 
         symbol = newSymbol("", "", position);

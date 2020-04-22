@@ -4,7 +4,7 @@
 #include "proto.h"
 
 extern int yaccyyparse();
-extern void makeYaccCompletions(char *s, int len, S_position *pos);
+extern void makeYaccCompletions(char *s, int len, Position *pos);
 
 #endif
 

@@ -69,19 +69,19 @@ extern void specializeStrUnionDef(Symbol *sd, Symbol *rec);
 extern TypeModifier *simpleEnumSpecifier(S_id *id, int usage);
 extern void setGlobalFileDepNames(char *iname, Symbol *pp, int memory);
 extern TypeModifier *createNewAnonymousEnum(SymbolList *enums);
-extern void appendPositionToList(S_positionList **list, S_position *pos);
-extern void setParamPositionForFunctionWithoutParams(S_position *lpar);
-extern void setParamPositionForParameter0(S_position *lpar);
-extern void setParamPositionForParameterBeyondRange(S_position *rpar);
+extern void appendPositionToList(PositionList **list, Position *pos);
+extern void setParamPositionForFunctionWithoutParams(Position *lpar);
+extern void setParamPositionForParameter0(Position *lpar);
+extern void setParamPositionForParameterBeyondRange(Position *rpar);
 extern Symbol *createEmptyField(void);
-extern void handleDeclaratorParamPositions(Symbol *decl, S_position *lpar,
-                                           S_positionList *commas, S_position *rpar,
+extern void handleDeclaratorParamPositions(Symbol *decl, Position *lpar,
+                                           PositionList *commas, Position *rpar,
                                            int hasParam);
-extern void handleInvocationParamPositions(S_reference *ref, S_position *lpar,
-                                           S_positionList *commas, S_position *rpar,
+extern void handleInvocationParamPositions(S_reference *ref, Position *lpar,
+                                           PositionList *commas, Position *rpar,
                                            int hasParam);
-extern void javaHandleDeclaratorParamPositions(S_position *sym, S_position *lpar,
-                                               S_positionList *commas, S_position *rpar);
+extern void javaHandleDeclaratorParamPositions(Position *sym, Position *lpar,
+                                               PositionList *commas, Position *rpar);
 extern void setLocalVariableLinkName(struct symbol *p);
 extern void labelReference(S_id *id, int usage);
 

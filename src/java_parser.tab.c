@@ -93,13 +93,13 @@
 
 #define SetPrimitiveTypePos(res, typ) {\
         if (1 || SyntaxPassOnly()) {\
-            XX_ALLOC(res, S_position);\
+            XX_ALLOC(res, Position);\
             *res = typ->p;\
         }\
 }
 #define SetAssignmentPos(res, tok) {\
         if (1 || SyntaxPassOnly()) {\
-            XX_ALLOC(res.p, S_position);\
+            XX_ALLOC(res.p, Position);\
             *res.p = tok;\
         }\
 }
@@ -2604,7 +2604,7 @@ static bool exists_valid_parser_action_on(int token) {
    replacement of YACC variables so that we can have multiple parsers
    linked together. Therefore it is not straight forward to refactor
    out commonalities. */
-void makeJavaCompletions(char *s, int len, S_position *pos) {
+void makeJavaCompletions(char *s, int len, Position *pos) {
     int token, i;
     CompletionLine compLine;
 
@@ -2904,7 +2904,7 @@ case 9:
                     yyval.ast_expressionType.d.t = &s_javaStringModifier;
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    XX_ALLOC(yyval.ast_expressionType.d.pp, S_position);
+                    XX_ALLOC(yyval.ast_expressionType.d.pp, Position);
                     *yyval.ast_expressionType.d.pp = yyvsp[0].ast_position.d;
                     PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
                 }
@@ -2919,7 +2919,7 @@ case 10:
                     yyval.ast_expressionType.d.t = newSimpleTypeModifier(TypeNull);
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
-                    XX_ALLOC(yyval.ast_expressionType.d.pp, S_position);
+                    XX_ALLOC(yyval.ast_expressionType.d.pp, Position);
                     *yyval.ast_expressionType.d.pp = yyvsp[0].ast_id.d->p;
                     PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_id, yyvsp[0].ast_id);
                 }
@@ -5825,7 +5825,7 @@ case 353:
             if (regularPass()) {
                 yyval.ast_expressionType.d = yyvsp[-1].ast_expressionType.d;
                 if (SyntaxPassOnly()) {
-                    XX_ALLOC(yyval.ast_expressionType.d.pp, S_position);
+                    XX_ALLOC(yyval.ast_expressionType.d.pp, Position);
                     *yyval.ast_expressionType.d.pp = yyvsp[-2].ast_position.d;
                     PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_position, yyvsp[0].ast_position);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyval.ast_expressionType.b, s_cxRefPos, yyval.ast_expressionType.e)

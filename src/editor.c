@@ -407,7 +407,7 @@ S_editorMarker *editorCrNewMarker(S_editorBuffer *buff, int offset) {
     return(m);
 }
 
-S_editorMarker *editorCrNewMarkerForPosition(S_position *pos) {
+S_editorMarker *editorCrNewMarkerForPosition(Position *pos) {
     S_editorBuffer  *buf;
     S_editorMarker  *mm;
     if (pos->file==s_noneFileIndex || pos->file<0) {

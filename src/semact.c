@@ -1035,33 +1035,33 @@ TypeModifier *createNewAnonymousEnum(SymbolList *enums) {
     return(createSimpleEnumType(pp));
 }
 
-void appendPositionToList( S_positionList **list,S_position *pos) {
-    S_positionList *ppl;
-    XX_ALLOC(ppl, S_positionList);
+void appendPositionToList( PositionList **list,Position *pos) {
+    PositionList *ppl;
+    XX_ALLOC(ppl, PositionList);
     fillPositionList(ppl, *pos, NULL);
-    LIST_APPEND(S_positionList, (*list), ppl);
+    LIST_APPEND(PositionList, (*list), ppl);
 }
 
-void setParamPositionForFunctionWithoutParams(S_position *lpar) {
+void setParamPositionForFunctionWithoutParams(Position *lpar) {
     s_paramBeginPosition = *lpar;
     s_paramEndPosition = *lpar;
 }
 
-void setParamPositionForParameter0(S_position *lpar) {
+void setParamPositionForParameter0(Position *lpar) {
     s_paramBeginPosition = *lpar;
     s_paramEndPosition = *lpar;
 }
 
-void setParamPositionForParameterBeyondRange(S_position *rpar) {
+void setParamPositionForParameterBeyondRange(Position *rpar) {
     s_paramBeginPosition = *rpar;
     s_paramEndPosition = *rpar;
 }
 
-static void handleParameterPositions(S_position *lpar, S_positionList *commas,
-                                     S_position *rpar, int hasParam) {
+static void handleParameterPositions(Position *lpar, PositionList *commas,
+                                     Position *rpar, int hasParam) {
     int i, argn;
-    S_position *p1, *p2;
-    S_positionList *pp;
+    Position *p1, *p2;
+    PositionList *pp;
     if (! hasParam) {
         setParamPositionForFunctionWithoutParams(lpar);
         return;
@@ -1096,8 +1096,8 @@ Symbol *createEmptyField(void) {
     return newSymbolAsType("", "", s_noPos, p);
 }
 
-void handleDeclaratorParamPositions(Symbol *decl, S_position *lpar,
-                                    S_positionList *commas, S_position *rpar,
+void handleDeclaratorParamPositions(Symbol *decl, Position *lpar,
+                                    PositionList *commas, Position *rpar,
                                     int hasParam
                                     ) {
     if (s_opt.taskRegime != RegimeEditServer) return;
@@ -1106,8 +1106,8 @@ void handleDeclaratorParamPositions(Symbol *decl, S_position *lpar,
     handleParameterPositions(lpar, commas, rpar, hasParam);
 }
 
-void handleInvocationParamPositions(S_reference *ref, S_position *lpar,
-                                    S_positionList *commas, S_position *rpar,
+void handleInvocationParamPositions(S_reference *ref, Position *lpar,
+                                    PositionList *commas, Position *rpar,
                                     int hasParam
                                     ) {
     if (s_opt.taskRegime != RegimeEditServer) return;
@@ -1116,8 +1116,8 @@ void handleInvocationParamPositions(S_reference *ref, S_position *lpar,
     handleParameterPositions(lpar, commas, rpar, hasParam);
 }
 
-void javaHandleDeclaratorParamPositions(S_position *sym, S_position *lpar,
-                                        S_positionList *commas, S_position *rpar
+void javaHandleDeclaratorParamPositions(Position *sym, Position *lpar,
+                                        PositionList *commas, Position *rpar
                                         ) {
     if (s_opt.taskRegime != RegimeEditServer) return;
     if (s_opt.server_operation != OLO_GOTO_PARAM_NAME && s_opt.server_operation != OLO_GET_PARAM_COORDINATES) return;

@@ -5,7 +5,7 @@
 #include "symbol.h"
 #include "olcxtab.h"
 
-extern void fill_reference(S_reference *reference, S_usageBits usage, S_position position, S_reference *next);
+extern void fill_reference(S_reference *reference, S_usageBits usage, Position position, S_reference *next);
 extern void fill_symbolRefItem(S_symbolRefItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass, int vFunClass, struct symbolRefItemBits bits);
 extern void fill_symbolRefItemBits(S_symbolRefItemBits *symbolRefItemBits, unsigned symType,
                                    unsigned storage, unsigned scope, unsigned accessFlags,
@@ -34,7 +34,7 @@ extern void olcxPopOnly(void);
 extern S_reference * olcxCopyRefList(S_reference *ll);
 extern void olStackDeleteSymbol( S_olcxReferences *refs);
 extern int getFileNumberFromName(char *name);
-extern void generateOnlineCxref(S_position *p, char *commandString, int usage,
+extern void generateOnlineCxref(Position *p, char *commandString, int usage,
                                 char *suffix, char *suffix2
                                 );
 extern S_reference *olcxAddReferenceNoUsageCheck(S_reference **rlist,
@@ -52,43 +52,43 @@ extern char *getLocalJavaDocFile_st(char *fileUrl);
 extern char *getFullUrlOfJavaDoc_st(char *fileUrl);
 extern int htmlJdkDocAvailableForUrl(char *ss);
 extern S_reference *duplicateReference(S_reference *r);
-extern S_reference * addCxReferenceNew(Symbol *p, S_position *pos,
+extern S_reference * addCxReferenceNew(Symbol *p, Position *pos,
                                        S_usageBits *ub, int vFunCl, int vApplCl);
-extern S_reference * addCxReference(Symbol *p, S_position *pos, Usage usage,
+extern S_reference * addCxReference(Symbol *p, Position *pos, Usage usage,
                                     int vFunClass,int vApplClass);
 extern S_reference *addSpecialFieldReference(char *name, int storage,
-                                             int fnum, S_position *p, int usage);
-extern void addClassTreeHierarchyReference(int fnum, S_position *p, int usage);
+                                             int fnum, Position *p, int usage);
+extern void addClassTreeHierarchyReference(int fnum, Position *p, int usage);
 extern void addCfClassTreeHierarchyRef(int fnum, int usage);
 extern void addTrivialCxReference (char *name, int symType, int storage,
-                                   S_position *pos, int usage);
+                                   Position *pos, int usage);
 extern void olcxAddReferences(S_reference *list, S_reference **dlist, int fnum,
                               int bestMatchFlag);
-extern void olSetCallerPosition(S_position *pos);
+extern void olSetCallerPosition(Position *pos);
 extern S_olCompletion * olCompletionListPrepend(char *name, char *fullText,
                                                 char *vclass, int jindent, Symbol *s,
                                                 S_symbolRefItem *ri, S_reference *dfpos,
                                                 int symType, int vFunClass,
                                                 S_olcxReferences *stack);
 extern S_olSymbolsMenu *olCreateNewMenuItem(S_symbolRefItem *sym, int vApplClass,
-                                            int vFunCl, S_position *defpos, int defusage,
+                                            int vFunCl, Position *defpos, int defusage,
                                             int selected, int visible,
                                             unsigned ooBits, int olusage, int vlevel
                                             );
 extern S_olSymbolsMenu *olAddBrowsedSymbol(S_symbolRefItem *sym, S_olSymbolsMenu **list,
                                            int selected, int visible, unsigned ooBits,
                                            int olusage, int vlevel,
-                                           S_position *defpos, int defusage);
+                                           Position *defpos, int defusage);
 extern void renameCollationSymbols(S_olSymbolsMenu *sss);
 extern void olCompletionListReverse(void);
 extern S_reference **addToRefList(S_reference **list,
                                   S_usageBits *pusage,
-                                  S_position *pos,
+                                  Position *pos,
                                   int category
                                   );
 extern bool isInRefList(S_reference *list,
                         S_usageBits *pusage,
-                        S_position *pos,
+                        Position *pos,
                         int category);
 extern char *getXrefEnvironmentValue( char *name );
 extern int byPassAcceptableSymbol(S_symbolRefItem *p);

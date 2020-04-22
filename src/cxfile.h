@@ -5,7 +5,7 @@
 #include "symbol.h"
 
 extern int searchStringFitness(char *cxtag, int slen);
-extern char *crTagSearchLineStatic(char *name, S_position *p,
+extern char *crTagSearchLineStatic(char *name, Position *p,
                                    int *len1, int *len2, int *len3);
 extern int symbolNameShouldBeHiddenFromReports(char *name);
 extern void searchSymbolCheckReference(S_symbolRefItem  *ss, S_reference *rr);

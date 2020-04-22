@@ -581,7 +581,7 @@ static void htmlPrint(FILE *file, char *string) {
     for(c=string; *c; c++) htmlPutChar(file, *c);
 }
 
-static void htmlPutCharLF(FILE *ff, int c, S_position *cp) {
+static void htmlPutCharLF(FILE *ff, int c, Position *cp) {
     htmlPutChar(ff,c);
     if (c=='\n') {
         fprintf(ff,"<A NAME=\"%s%d\"></A>",s_opt.htmlLineNumLabel, cp->line+1);
@@ -597,7 +597,7 @@ static void htmlPutCharLF(FILE *ff, int c, S_position *cp) {
     }
 }
 
-static int htmlPositionLess(S_position *p1, S_position *p2) {
+static int htmlPositionLess(Position *p1, Position *p2) {
     return(     p1->line < p2->line
                 ||  (p1->line == p2->line && p1->col < p2->col)
                 );
@@ -789,7 +789,7 @@ static void htmlPrintExternHtmlJavaDocReference(char *prf,S_symbolRefItem *rr){
 
 static void htmlGetStaticHREFItems(
                                    S_htmlRefList *ref,
-                                   S_position *cp,
+                                   Position *cp,
                                    char **prefix1,
                                    char **suffix1,
                                    char **prefix,
@@ -1136,7 +1136,7 @@ void genClassHierarchyItemLinks( FILE *ff, S_olSymbolsMenu *itt,
     char thisFileName[MAX_HTML_REF_LEN];
     char tmp2[MAX_HTML_REF_LEN];
     S_symbolRefItem *rr;
-    S_position *dr;
+    Position *dr;
     char *df;
 
     assert(itt);
@@ -1261,7 +1261,7 @@ static void htmlGetReferencesMetrics( S_symbolRefItem *p,
                                       int *refn,
                                       int *defRefn,
                                       int *defusage,
-                                      S_position *defpos
+                                      Position *defpos
                                       ) {
     S_reference *r;
     int rn, drn;
@@ -1290,7 +1290,7 @@ static void htmlCreateGlobSymList(int i, void *off, void *ffn, void *genfi) {
     int genFileIndex, refn, defRefn, defusage;
     S_symbolRefItem *p,*pp;
     S_olSymbolsMenu *hh;
-    S_position defpos;
+    Position defpos;
 
     assert(genfi);
     genFileIndex = *((int *)genfi);
@@ -1386,7 +1386,7 @@ static void htmlScanCxFileAndGenRefLists(char *fn1, char *fn2,
 
 static void htmlJavaDocPosProcess(  FILE **fff,
                                     S_htmlRefList **rrr,
-                                    S_position *cp,
+                                    Position *cp,
                                     int *cch
                                     ) {
     S_htmlRefList *dr,*rr;
@@ -1419,7 +1419,7 @@ static void htmlJavaDocPosProcess(  FILE **fff,
 
 static void htmlPosProcess( FILE **fff,
                             S_htmlRefList **rrr,
-                            S_position *cp,
+                            Position *cp,
                             int *cch
                             ) {
     int ch;
@@ -1539,7 +1539,7 @@ static void htmlPassRefsThroughSourceFile(S_htmlRefList **rrr, int ifile,
     int ch;
     FILE *cofile;
     char *cofileName;
-    S_position cp;
+    Position cp;
 
     rr = *rrr;
     assert(s_fileTab.tab[ifile]);
@@ -1576,7 +1576,7 @@ static void htmlPassRefsThroughSourceFile(S_htmlRefList **rrr, int ifile,
 
 static void htmlGenerateFileToCcOut(int fnum) {
     S_htmlRefList       *rr;
-    S_position          cp;
+    Position          cp;
     /* free memories, especially ppmMemory */
     recoverCachePoint(1,s_cache.cp[1].lbcc,0);
     htmlGenHead(fnum);
@@ -1676,7 +1676,7 @@ static void htmlGenerateJavaDocFile(int fnum) {
 }
 
 void htmlAddFunctionSeparatorReference(void) {
-    S_position pos;
+    Position pos;
     if (s_opt.taskRegime == RegimeHtmlGenerate) {
         fillPosition(&pos, cFile.lexBuffer.buffer.fileNumber, cFile.lineNumber+1, -1);
         addTrivialCxReference(LINK_NAME_FUNCTION_SEPARATOR, TypeFunSep,StorageDefault,
@@ -1686,9 +1686,9 @@ void htmlAddFunctionSeparatorReference(void) {
 }
 
 
-void htmlAddJavaDocReference(Symbol  *p, S_position  *pos,
+void htmlAddJavaDocReference(Symbol  *p, Position  *pos,
                              int  vFunClass, int  vApplClass) {
-    S_position npos;
+    Position npos;
     if (s_opt.taskRegime == RegimeHtmlGenerate && s_opt.javaDoc) {
         fillPosition(&npos, pos->file, pos->line, 0);
         addCxReference(p, &npos, UsageJavaDocFullEntry, vFunClass, vApplClass);

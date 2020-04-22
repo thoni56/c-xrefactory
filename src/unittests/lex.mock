@@ -6,6 +6,6 @@ int getLexBuf(struct lexBuf *buffer) {
   return (int) mock(buffer);
 }
 
-void gotOnLineCxRefs(S_position *position) {
+void gotOnLineCxRefs(Position *position) {
   mock(position);
 }

@@ -2,7 +2,7 @@
 #include "complete.h"
 #include <cgreen/mocks.h>
 
-void initCompletions(Completions *completions, int length, S_position position) {
+void initCompletions(Completions *completions, int length, Position position) {
     mock(completions, length, (intptr_t)&position);
 }
 
@@ -166,7 +166,7 @@ char *javaGetShortClassName(char *inn) {
   return (char *) mock(inn);
 }
 
-void olCompletionListInit(S_position *originalPos) {
+void olCompletionListInit(Position *originalPos) {
   mock(originalPos);
 }
 

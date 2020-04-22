@@ -2916,7 +2916,7 @@ static void mainEditSrvFileSingleCppPass( int argc, char **argv,
     if (s_opt.olCursorPos==0 && !LANGUAGE(LANG_JAVA)) {
         // special case, push the file as include reference
         if (creatingOlcxRefs()) {
-            S_position dpos;
+            Position dpos;
             fillPosition(&dpos, s_input_file_number, 1, 0);
             gotOnLineCxRefs(&dpos);
         }

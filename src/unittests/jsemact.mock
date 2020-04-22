@@ -10,24 +10,24 @@ void fill_nestedSpec(S_nestedSpec *nestedSpec, struct symbol *cl,
     mock(nestedSpec, cl, membFlag, accFlags);
 }
 
-void javaCheckForPrimaryStart(S_position *cpos, S_position *pp) {
+void javaCheckForPrimaryStart(Position *cpos, Position *pp) {
   mock(cpos, pp);
 }
 
-void javaCheckForPrimaryStartInNameList(S_idList *name, S_position *pp) {
+void javaCheckForPrimaryStartInNameList(S_idList *name, Position *pp) {
   mock(name, pp);
 }
 
-void javaCheckForStaticPrefixStart(S_position *cpos, S_position *bpos) {
+void javaCheckForStaticPrefixStart(Position *cpos, Position *bpos) {
   mock(cpos, bpos);
 }
 
-void javaCheckForStaticPrefixInNameList(S_idList *name, S_position *pp) {
+void javaCheckForStaticPrefixInNameList(S_idList *name, Position *pp) {
   mock(name, pp);
 }
 
-S_position *javaGetNameStartingPosition(S_idList *name) {
-  return (S_position *) mock(name);
+Position *javaGetNameStartingPosition(S_idList *name) {
+  return (Position *) mock(name);
 }
 
 char *javaCreateComposedName(char *prefix, S_idList *className, int classNameSeparator, char *name, char *resBuff, int resBufSize) {
@@ -42,7 +42,7 @@ int javaClassifySingleAmbigNameToTypeOrPack(S_idList *name, Symbol **str, int cx
   return (int) mock(name, str, cxrefFlag);
 }
 
-void javaAddImportConstructionReference(S_position *importPos, S_position *pos, int usage) {
+void javaAddImportConstructionReference(Position *importPos, Position *pos, int usage) {
   mock(importPos, pos, usage);
 }
 
@@ -90,11 +90,11 @@ void javaAddPackageDefinition(S_idList *id) {
   mock(id);
 }
 
-Symbol *javaAddType(S_idList *class, Access access, S_position *p) {
+Symbol *javaAddType(S_idList *class, Access access, Position *p) {
   return (Symbol *) mock(class, access, p);
 }
 
-Symbol *javaCreateNewMethod(char *name, S_position *pos, int mem) {
+Symbol *javaCreateNewMethod(char *name, Position *pos, int mem) {
   return (Symbol *) mock(name, pos, mem);
 }
 
@@ -158,19 +158,19 @@ int isANestedClass(Symbol *ss) {
   return (int) mock(ss);
 }
 
-void addSuperMethodCxReferences(int classIndex, S_position *pos) {
+void addSuperMethodCxReferences(int classIndex, Position *pos) {
   mock(classIndex, pos);
 }
 
-S_reference *addUselessFQTReference(int classIndex, S_position *pos) {
+S_reference *addUselessFQTReference(int classIndex, Position *pos) {
   return (S_reference *) mock(classIndex, pos);
 }
 
-S_reference *addUnimportedTypeLongReference(int classIndex, S_position *pos) {
+S_reference *addUnimportedTypeLongReference(int classIndex, Position *pos) {
   return (S_reference *) mock(classIndex, pos);
 }
 
-void addThisCxReferences(int classIndex, S_position *pos) {
+void addThisCxReferences(int classIndex, Position *pos) {
   mock(classIndex, pos);
 }
 
@@ -198,7 +198,7 @@ void javaMethodBodyBeginning(Symbol *method) {
   mock(method);
 }
 
-void javaMethodBodyEnding(S_position *pos) {
+void javaMethodBodyEnding(Position *pos) {
   mock(pos);
 }
 
@@ -242,7 +242,7 @@ TypeModifier *javaMethodInvocationS(S_id *super, S_id *name, S_typeModifierList 
   return (TypeModifier *) mock(super, name, args);
 }
 
-TypeModifier *javaConstructorInvocation(Symbol *class, S_position *pos, S_typeModifierList *args) {
+TypeModifier *javaConstructorInvocation(Symbol *class, Position *pos, S_typeModifierList *args) {
   return (TypeModifier *) mock(class, pos, args);
 }
 
@@ -258,7 +258,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationS(S_id *super, S_id *name) {
   return (S_extRecFindStr *) mock(super, name);
 }
 
-S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas, S_position *pos) {
+S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas, Position *pos) {
   return (S_extRecFindStr *) mock(clas, pos);
 }
 

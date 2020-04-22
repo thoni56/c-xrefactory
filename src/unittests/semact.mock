@@ -151,19 +151,19 @@ TypeModifier *createNewAnonymousEnum(SymbolList *enums) {
   return (TypeModifier *) mock(enums);
 }
 
-void appendPositionToList(S_positionList **list, S_position *pos) {
+void appendPositionToList(PositionList **list, Position *pos) {
   mock(list, pos);
 }
 
-void setParamPositionForFunctionWithoutParams(S_position *lpar) {
+void setParamPositionForFunctionWithoutParams(Position *lpar) {
   mock(lpar);
 }
 
-void setParamPositionForParameter0(S_position *lpar) {
+void setParamPositionForParameter0(Position *lpar) {
   mock(lpar);
 }
 
-void setParamPositionForParameterBeyondRange(S_position *rpar) {
+void setParamPositionForParameterBeyondRange(Position *rpar) {
   mock(rpar);
 }
 
@@ -171,15 +171,15 @@ Symbol *createEmptyField(void) {
   return (Symbol *) mock();
 }
 
-void handleDeclaratorParamPositions(Symbol *decl, S_position *lpar, S_positionList *commas, S_position *rpar, int hasParam) {
+void handleDeclaratorParamPositions(Symbol *decl, Position *lpar, PositionList *commas, Position *rpar, int hasParam) {
   mock(decl, lpar, commas, rpar, hasParam);
 }
 
-void handleInvocationParamPositions(S_reference *ref, S_position *lpar, S_positionList *commas, S_position *rpar, int hasParam) {
+void handleInvocationParamPositions(S_reference *ref, Position *lpar, PositionList *commas, Position *rpar, int hasParam) {
   mock(ref, lpar, commas, rpar, hasParam);
 }
 
-void javaHandleDeclaratorParamPositions(S_position *sym, S_position *lpar, S_positionList *commas, S_position *rpar) {
+void javaHandleDeclaratorParamPositions(Position *sym, Position *lpar, PositionList *commas, Position *rpar) {
   mock(sym, lpar, commas, rpar);
 }
 

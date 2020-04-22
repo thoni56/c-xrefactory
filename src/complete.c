@@ -43,7 +43,7 @@ typedef struct completionFqtMapInfo {
 } S_completionFqtMapInfo;
 
 
-void initCompletions(Completions *completions, int length, S_position position) {
+void initCompletions(Completions *completions, int length, Position position) {
     completions->idToProcessLen = length;
     completions->idToProcessPos = position;
     completions->fullMatchFlag = false;
@@ -350,7 +350,7 @@ static void sprintFullJeditCompletionInfo(Completions *c, int ii, int *nindent, 
     }
 }
 
-void olCompletionListInit(S_position *originalPos) {
+void olCompletionListInit(Position *originalPos) {
     olcxSetCurrentUser(s_opt.user);
     olcxFreeOldCompletionItems(&s_olcxCurrentUser->completionsStack);
     olcxPushEmptyStackItem(&s_olcxCurrentUser->completionsStack);

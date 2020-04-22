@@ -18,7 +18,7 @@ int searchStringFitness(char *cxtag, int slen) {
   return (int) mock(cxtag, slen);
 }
 
-char *crTagSearchLineStatic(char *name, S_position *p, int *len1, int *len2, int *len3) {
+char *crTagSearchLineStatic(char *name, Position *p, int *len1, int *len2, int *len3) {
   return (char *) mock(name, p, len1, len2, len3);
 }
 

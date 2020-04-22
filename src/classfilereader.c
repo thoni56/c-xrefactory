@@ -751,7 +751,7 @@ static void cfAddRecordToClass(char *name,
     char *restype;
     int len, vFunCl;
     int rr,bc;
-    S_position dpos;
+    Position dpos;
 
     tt = cfUnPackResultType(sig, &restype);
     if (tt->kind==TypeFunction) {
@@ -1036,7 +1036,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     int fileInd, ind, count, aname, alen, cn;
     char *inner, *upper, *thisClassName;
     union constantPoolUnion *constantPool;
-    S_position pos;
+    Position pos;
 
     ENTER();
     memb->bits.javaFileIsLoaded = 1;

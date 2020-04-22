@@ -4,7 +4,7 @@
 #include "proto.h"
 
 extern int javayyparse();
-extern void makeJavaCompletions(char *s, int len, S_position *pos);
+extern void makeJavaCompletions(char *s, int len, Position *pos);
 
 #endif
 

@@ -6,6 +6,6 @@ int cyyparse() {
   return (int) mock();
 }
 
-void makeCCompletions(char *s, int len, S_position *pos) {
+void makeCCompletions(char *s, int len, Position *pos) {
      (void)mock(s, len, pos);
 }

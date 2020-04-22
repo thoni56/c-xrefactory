@@ -65,13 +65,13 @@
 
 #define SetPrimitiveTypePos(res, typ) {\
         if (1 || SyntaxPassOnly()) {\
-            XX_ALLOC(res, S_position);\
+            XX_ALLOC(res, Position);\
             *res = typ->p;\
         }\
 }
 #define SetAssignmentPos(res, tok) {\
         if (1 || SyntaxPassOnly()) {\
-            XX_ALLOC(res.p, S_position);\
+            XX_ALLOC(res.p, Position);\
             *res.p = tok;\
         }\
 }
@@ -447,7 +447,7 @@ Literal:
                     $$.d.t = &s_javaStringModifier;
                     $$.d.r = NULL;
                 } else {
-                    XX_ALLOC($$.d.pp, S_position);
+                    XX_ALLOC($$.d.pp, Position);
                     *$$.d.pp = $1.d;
                     PropagateBorns($$, $1, $1);
                 }
@@ -459,7 +459,7 @@ Literal:
                     $$.d.t = newSimpleTypeModifier(TypeNull);
                     $$.d.r = NULL;
                 } else {
-                    XX_ALLOC($$.d.pp, S_position);
+                    XX_ALLOC($$.d.pp, Position);
                     *$$.d.pp = $1.d->p;
                     PropagateBorns($$, $1, $1);
                 }
@@ -3061,7 +3061,7 @@ PrimaryNoNewArray:
             if (regularPass()) {
                 $$.d = $2.d;
                 if (SyntaxPassOnly()) {
-                    XX_ALLOC($$.d.pp, S_position);
+                    XX_ALLOC($$.d.pp, Position);
                     *$$.d.pp = $1.d;
                     PropagateBorns($$, $1, $3);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE($$.b, s_cxRefPos, $$.e)
@@ -4389,9 +4389,9 @@ static bool exists_valid_parser_action_on(int token) {
    replacement of YACC variables so that we can have multiple parsers
    linked together. Therefore it is not straight forward to refactor
    out commonalities. */
-void makeJavaCompletions(char *s, int len, S_position *pos) {
+void makeJavaCompletions(char *s, int len, Position *pos) {
     int token, i;
-    S_cline compLine;
+    CompletionLine compLine;
 
     log_trace("completing \"%s\" in state %d", s, lastyystate);
     strncpy(s_completions.idToProcess, s, MAX_FUN_NAME_SIZE);

@@ -2,6 +2,6 @@
 #include "java_parser.x"
 #include <cgreen/mocks.h>
 
-void makeJavaCompletions(char *s, int len, S_position *pos) {
+void makeJavaCompletions(char *s, int len, Position *pos) {
      (void)mock(s, len, pos);
 }

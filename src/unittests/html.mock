@@ -38,7 +38,7 @@ void htmlGenGlobalReferenceLists(char *cxMemFreeBase) {
     mock(cxMemFreeBase);
 }
 
-void htmlAddJavaDocReference(Symbol *p, S_position *pos, int vFunClass, int vApplClass) {
+void htmlAddJavaDocReference(Symbol *p, Position *pos, int vFunClass, int vApplClass) {
     mock(p, pos, vFunClass, vApplClass);
 }
 

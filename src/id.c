@@ -1,6 +1,6 @@
 #include "id.h"
 
-void fillId(S_id *id, char *name, Symbol *symbol, S_position position) {
+void fillId(S_id *id, char *name, Symbol *symbol, Position position) {
     id->name = name;
     id->sd = symbol;
     id->p = position;
@@ -15,7 +15,7 @@ void fillIdList(S_idList *idList, S_id id, char *fname, Type nameType, S_idList 
 }
 
 void fillfIdList(S_idList *idList, char *name, Symbol *symbol,
-                  S_position position,
+                  Position position,
                   char *fname, Type nameType, S_idList *next) {
     idList->id.name = name;
     idList->id.sd = symbol;
