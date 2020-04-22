@@ -299,7 +299,7 @@ void jslAddMapedImportTypeName(
                                char *file,
                                char *path,
                                char *pack,
-                               S_completions *c,
+                               Completions *c,
                                void *vdirid,
                                int  *storage
                                ) {

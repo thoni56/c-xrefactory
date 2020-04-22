@@ -1091,7 +1091,7 @@ void expandWildcardsInOnePathRecursiveMaybe(char *fn, char **outpaths, int *free
                 ttt[ldi]=0;
                 //&fprintf(dumpOut,"mapdirectoryfiles(%s, %s, %s)\n", ttt, ttt+ldi+1, fn+si);fflush(dumpOut);
                 mapDirectoryFiles(ttt, expandWildcardsMapFun, 0, ttt, ttt+ldi+1,
-                                  (S_completions*)(fn+si), outpaths, freeolen);
+                                  (Completions*)(fn+si), outpaths, freeolen);
             } else {
                 ttt[di] = fn[si];
                 if (fn[si]) { di++; si++; }
@@ -1230,7 +1230,7 @@ int mapDirectoryFiles(
                       int allowEditorFilesFlag,
                       char *a1,
                       char *a2,
-                      S_completions *a3,
+                      Completions *a3,
                       void *a4,
                       int *a5
                       ){
@@ -1380,7 +1380,7 @@ void javaGetPackageNameFromSourceFileName(char *src, char *opack) {
 void javaMapDirectoryFiles1(
                             char *packfile,
                             void (*fun)(MAP_FUN_PROFILE),
-                            S_completions *a1,
+                            Completions *a1,
                             void *a2,
                             int *a3
                             ){
@@ -1427,7 +1427,7 @@ void javaMapDirectoryFiles1(
 void javaMapDirectoryFiles2(
                             S_idList *packid,
                             void (*fun)(MAP_FUN_PROFILE),
-                            S_completions *a1,
+                            Completions *a1,
                             void *a2,
                             int *a3
                             ){

@@ -5,57 +5,57 @@
 
 typedef struct completionFunTab {
     int token;
-    void (*fun)(S_completions*);
+    void (*fun)(Completions*);
 } S_completionFunTab;
 
 
 extern void fill_cline(S_cline *cline, char *string, Symbol *symbol, Type symbolType,
                        short int virtualLevel, short int margn, char **margs,
                        Symbol *vFunClass);
-extern void initCompletions(S_completions *completions, int length, S_position position);
+extern void initCompletions(Completions *completions, int length, S_position position);
 extern void processName(char *name, S_cline *t, int orderFlag, void *c);
-extern void completeForSpecial1(S_completions *c);
-extern void completeForSpecial2(S_completions *c);
-extern void completeUpFunProfile(S_completions *c);
-extern void completeTypes(S_completions *c);
-extern void completeStructs(S_completions *c);
-extern void completeRecNames(S_completions *c);
-extern void completeEnums(S_completions *c);
-extern void completeLabels(S_completions *c);
-extern void completeMacros(S_completions *c);
-extern void completeOthers(S_completions *c);
-extern void javaCompleteTypeSingleName(S_completions *c);
-extern void javaHintImportFqt(S_completions *c);
-extern void javaHintVariableName(S_completions *c);
-extern void javaHintCompleteNonImportedTypes(S_completions *c);
-extern void javaHintCompleteMethodParameters(S_completions *c);
-extern void javaCompleteTypeCompName(S_completions *c);
-extern void javaCompleteThisPackageName(S_completions *c);
-extern void javaCompletePackageSingleName(S_completions *c);
-extern void javaCompleteExprSingleName(S_completions *c);
-extern void javaCompleteUpMethodSingleName(S_completions *c);
-extern void javaCompleteFullInheritedMethodHeader(S_completions *c);
-extern void javaCompletePackageCompName(S_completions *c);
-extern void javaCompleteExprCompName(S_completions *c);
-extern void javaCompleteMethodCompName(S_completions *c);
-extern void javaCompleteHintForConstructSingleName(S_completions *c);
-extern void javaCompleteConstructSingleName(S_completions *c);
-extern void javaCompleteConstructCompName(S_completions *c);
-extern void javaCompleteConstructNestNameName(S_completions *c);
-extern void javaCompleteConstructNestPrimName(S_completions *c);
-extern void javaCompleteStrRecordPrimary(S_completions *c);
-extern void javaCompleteStrRecordSuper(S_completions *c);
-extern void javaCompleteStrRecordQualifiedSuper(S_completions *c);
-extern void javaCompleteClassDefinitionNameSpecial(S_completions *c);
-extern void javaCompleteClassDefinitionName(S_completions *c);
-extern void javaCompleteThisConstructor(S_completions *c);
-extern void javaCompleteSuperConstructor(S_completions *c);
-extern void javaCompleteSuperNestedConstructor(S_completions *c);
-extern void completeYaccLexem(S_completions *c);
+extern void completeForSpecial1(Completions *c);
+extern void completeForSpecial2(Completions *c);
+extern void completeUpFunProfile(Completions *c);
+extern void completeTypes(Completions *c);
+extern void completeStructs(Completions *c);
+extern void completeRecNames(Completions *c);
+extern void completeEnums(Completions *c);
+extern void completeLabels(Completions *c);
+extern void completeMacros(Completions *c);
+extern void completeOthers(Completions *c);
+extern void javaCompleteTypeSingleName(Completions *c);
+extern void javaHintImportFqt(Completions *c);
+extern void javaHintVariableName(Completions *c);
+extern void javaHintCompleteNonImportedTypes(Completions *c);
+extern void javaHintCompleteMethodParameters(Completions *c);
+extern void javaCompleteTypeCompName(Completions *c);
+extern void javaCompleteThisPackageName(Completions *c);
+extern void javaCompletePackageSingleName(Completions *c);
+extern void javaCompleteExprSingleName(Completions *c);
+extern void javaCompleteUpMethodSingleName(Completions *c);
+extern void javaCompleteFullInheritedMethodHeader(Completions *c);
+extern void javaCompletePackageCompName(Completions *c);
+extern void javaCompleteExprCompName(Completions *c);
+extern void javaCompleteMethodCompName(Completions *c);
+extern void javaCompleteHintForConstructSingleName(Completions *c);
+extern void javaCompleteConstructSingleName(Completions *c);
+extern void javaCompleteConstructCompName(Completions *c);
+extern void javaCompleteConstructNestNameName(Completions *c);
+extern void javaCompleteConstructNestPrimName(Completions *c);
+extern void javaCompleteStrRecordPrimary(Completions *c);
+extern void javaCompleteStrRecordSuper(Completions *c);
+extern void javaCompleteStrRecordQualifiedSuper(Completions *c);
+extern void javaCompleteClassDefinitionNameSpecial(Completions *c);
+extern void javaCompleteClassDefinitionName(Completions *c);
+extern void javaCompleteThisConstructor(Completions *c);
+extern void javaCompleteSuperConstructor(Completions *c);
+extern void javaCompleteSuperNestedConstructor(Completions *c);
+extern void completeYaccLexem(Completions *c);
 
 extern void olCompletionListInit(S_position *originalPos);
 extern void formatOutputLine(char *tt, int startingColumn);
 extern void printCompletionsList(int noFocus);
-extern void printCompletions(S_completions *c);
+extern void printCompletions(Completions *c);
 
 #endif

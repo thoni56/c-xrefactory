@@ -202,7 +202,7 @@ void javaMethodBodyEnding(S_position *pos) {
   mock(pos);
 }
 
-void javaAddMapedTypeName(char *file, char *path, char *pack, S_completions *c, void *vdirid, int *storage) {
+void javaAddMapedTypeName(char *file, char *path, char *pack, Completions *c, void *vdirid, int *storage) {
   mock(file, path, pack, c, vdirid, storage);
 }
 

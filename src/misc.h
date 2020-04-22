@@ -85,21 +85,21 @@ extern int mapDirectoryFiles(
         int allowEditorFilesFlag,
         char *a1,
         char *a2,
-        S_completions *a3,
+        Completions *a3,
         void *a4,
         int *a5
     );
 extern void javaMapDirectoryFiles1(
         char *packfile,
         void (*fun)(MAP_FUN_PROFILE),
-        S_completions *a1,
+        Completions *a1,
         void *a2,
         int *a3
     );
 extern void javaMapDirectoryFiles2(
         S_idList *packid,
         void (*fun)(MAP_FUN_PROFILE),
-        S_completions *a1,
+        Completions *a1,
         void *a2,
         int *a3
     );

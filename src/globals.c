@@ -73,7 +73,7 @@ struct yyGlobalState *s_yygstate;
 struct yyGlobalState *s_initYygstate;
 
 char *s_input_file_name="";
-S_completions s_completions;
+Completions s_completions;
 
 S_fileTab s_fileTab;
 

@@ -67,7 +67,7 @@ S_options s_opt;
 S_options s_ropt;
 
 S_typeModifier *s_structRecordCompletionType;
-S_completions s_completions;
+Completions s_completions;
 
 S_position s_paramPosition;
 S_position s_paramBeginPosition;

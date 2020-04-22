@@ -722,7 +722,7 @@ typedef struct completions {
     int				maxLen;
     struct cline    alternatives[MAX_COMPLETIONS];
     int             alternativeIndex;
-} S_completions;
+} Completions;
 
 
 /* ************************** INIT STRUCTURES ********************* */

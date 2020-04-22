@@ -1455,7 +1455,7 @@ int editorMapOnNonexistantFiles(
                                 int depth,
                                 char *a1,
                                 char *a2,
-                                S_completions *a3,
+                                Completions *a3,
                                 void *a4,
                                 int *a5
                                 ) {

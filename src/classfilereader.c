@@ -526,7 +526,7 @@ bool zipFindFile(char *name,
 void javaMapZipDirFile(
                        S_zipFileTableItem *zipfile,
                        char *packfile,
-                       S_completions *a1,
+                       Completions *a1,
                        void *a2,
                        int *a3,
                        void (*fun)(MAP_FUN_PROFILE),
