@@ -33,37 +33,6 @@ static char *getFillArgumentName(int argument_number, int argument_count,
     return(res);
 }
 
-static int genFillStructArguments(Symbol *symbol,
-                                  int i,
-                                  bool fullFlag
-                                  ) {
-    Symbol *records;
-    Symbol *p;
-    static int depth=0;
-    assert(symbol->u.s);
-    records = symbol->u.s->records;
-    depth++;
-
-    if (depth > MAX_NESTED_DEPTH) {
-        fatalError(ERR_ST,"too much nested structures, probably recursive", XREF_EXIT_ERR);
-    }
-    for(p=records; p!=NULL; p=p->next) {
-        if (isSubstructureToFill(p)) {
-            if (p->u.type->kind == TypeStruct  && fullFlag) {
-                i = genFillStructArguments(p->u.type->u.t,i,1);
-            } else if (p->u.type->kind == TypeUnion) {
-                fprintf(cxOut, ", %s", getFillArgumentName(i++, 0, GenerateStructureFill));
-                fprintf(cxOut, ", %s", getFillArgumentName(i++, 0, GenerateStructureFill));
-            } else {
-                fprintf(cxOut, ", %s", getFillArgumentName(i++, 0, GenerateStructureFill));
-            }
-        }
-    }
-    depth--;
-    return(i);
-}
-
-
 #define FILL_ARGUMENT_NAME "STRUCTP"
 
 static void fillField(char *prefix, char *name, int argument_number,
@@ -144,54 +113,6 @@ static void generateTypedefForStructOrUnion(Symbol *symbol) {
         fprintf(cxOut,"typedef struct %s S_%s;\n", name, name);
     } else {
         fprintf(cxOut,"typedef union %s U_%s;\n", name, name);
-    }
-}
-
-
-static void generateStructureFillMacros(Symbol *symbol) {
-    char *name;
-    int argn;
-
-    assert(symbol);
-    name = symbol->name;
-    assert(symbol->u.s);
-    assert(name);
-    fprintf(cxOut,"#define FILL_%s(%s", name, FILL_ARGUMENT_NAME);
-    argn = genFillStructArguments(symbol, 0, 0);
-    fprintf(cxOut,") {\\\n");
-    genFillStructBody(symbol, 0, argn, 0, "", GenerateStructureFill);
-    fprintf(cxOut,"}\n");
-    fprintf(cxOut,"#define FILLF_%s(%s", name, FILL_ARGUMENT_NAME);
-    argn = genFillStructArguments(symbol, 0, 1);
-    fprintf(cxOut,") {\\\n");
-    genFillStructBody(symbol, 0, argn, 1, "", GenerateStructureFill);
-    fprintf(cxOut,"}\n");
-    fprintf(cxOut,"#define _FILLF_%s(%s, ARGS) {\\\n", name, FILL_ARGUMENT_NAME);
-    genFillStructBody(symbol, 0, argn, 1, "", GenerateInternalFill);
-    fprintf(cxOut,"}\n");
-}
-
-
-static void generateUnionFillMacros(Symbol *symbol) {
-    char *name;
-    Symbol *rec,*p;
-    assert(symbol);
-    name = symbol->name;
-    assert(symbol->u.s);
-    rec = symbol->u.s->records;
-    assert(name);
-    for(p=rec; p!=NULL; p=p->next) {
-        if (p->bits.symType == TypeDefault) {
-            if (p->u.type->kind == TypeStruct) {
-                fprintf(cxOut,
-                        "#define _FILLUREC_%s_%s(XX,ARGS) _FILLF_%s(&(XX->%s),ARGS)\n",
-                        name, p->name, p->u.type->u.t->name, p->name);
-            } else {
-                fprintf(cxOut,
-                        "#define _FILLUREC_%s_%s(XX,ARG) XX->%s = ARG;\n",
-                        name, p->name, p->name);
-            }
-        }
     }
 }
 
@@ -279,10 +200,6 @@ void generate(Symbol *symbol) {
     if (symbol->bits.symType==TypeStruct || symbol->bits.symType==TypeUnion) {
         if (s_opt.typedefg)
             generateTypedefForStructOrUnion(symbol);
-        if (s_opt.str_fill) {
-            if (symbol->bits.symType==TypeStruct) generateStructureFillMacros(symbol);
-            if (symbol->bits.symType==TypeUnion) generateUnionFillMacros(symbol);
-        }
         if (s_opt.str_copy)
             generateStructCopyFunction(symbol);
     } else if (symbol->bits.symType == TypeEnum) {
