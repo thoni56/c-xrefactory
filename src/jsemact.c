@@ -1554,23 +1554,24 @@ void javaSetFieldLinkName(Symbol *field) {
 
 Symbol *javaCreateNewMethod(char *nn, S_position *p, int mem) {
     TypeModifier *m;
-    Symbol		*res;
-    char            *name;
+    Symbol *symbol;
+    char *name;
+
     if (mem==MEMORY_CF) {
         CF_ALLOCC(name, strlen(nn)+1, char);
         strcpy(name, nn);
         CF_ALLOC(m, TypeModifier);
-        CF_ALLOC(res, Symbol);
+        CF_ALLOC(symbol, Symbol);
     } else {
         name = nn;
         m = StackMemAlloc(TypeModifier);
-        res = StackMemAlloc(Symbol);
+        symbol = StackMemAlloc(Symbol);
     }
 
     initTypeModifierAsFunction(m, NULL, NULL, NULL, NULL);
-    fillSymbolWithType(res, name, name, *p, m);
+    fillSymbolWithType(symbol, name, name, *p, m);
 
-    return(res);
+    return(symbol);
 }
 
 int javaTypeToString(TypeModifier *type, char *pp, int ppSize) {
