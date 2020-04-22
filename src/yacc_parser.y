@@ -1706,9 +1706,9 @@ void makeYaccCompletions(char *s, int len, S_position *pos) {
                 yyn <= YYTABLESIZE && yycheck[yyn] == token)) {
                 if (s_tokenName[token]!= NULL) {
                     if (isalpha(*s_tokenName[token]) || *s_tokenName[token]=='_') {
-                        fill_cline(&compLine, s_tokenName[token], NULL, TypeKeyword,0, 0, NULL,NULL);
+                        fillCompletionLine(&compLine, s_tokenName[token], NULL, TypeKeyword,0, 0, NULL,NULL);
                     } else {
-                        fill_cline(&compLine, s_tokenName[token], NULL, TypeToken,0, 0, NULL,NULL);
+                        fillCompletionLine(&compLine, s_tokenName[token], NULL, TypeToken,0, 0, NULL,NULL);
                     }
                     processName(s_tokenName[token], &compLine, 0, &s_completions);
                 }

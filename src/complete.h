@@ -9,7 +9,7 @@ typedef struct completionFunTab {
 } S_completionFunTab;
 
 
-extern void fill_cline(S_cline *cline, char *string, Symbol *symbol, Type symbolType,
+extern void fillCompletionLine(S_cline *cline, char *string, Symbol *symbol, Type symbolType,
                        short int virtualLevel, short int margn, char **margs,
                        Symbol *vFunClass);
 extern void initCompletions(Completions *completions, int length, S_position position);

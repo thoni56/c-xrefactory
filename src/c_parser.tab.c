@@ -2089,9 +2089,9 @@ void makeCCompletions(char *s, int len, S_position *pos) {
         if (exists_valid_parser_action_on(token)) {
             if (s_tokenName[token] != NULL) {
                 if (isalpha(*s_tokenName[token]) || *s_tokenName[token]=='_') {
-                    fill_cline(&compLine, s_tokenName[token], NULL, TypeKeyword, 0, 0, NULL, NULL);
+                    fillCompletionLine(&compLine, s_tokenName[token], NULL, TypeKeyword, 0, 0, NULL, NULL);
                 } else {
-                    fill_cline(&compLine, s_tokenName[token], NULL, TypeToken, 0, 0, NULL, NULL);
+                    fillCompletionLine(&compLine, s_tokenName[token], NULL, TypeToken, 0, 0, NULL, NULL);
                 }
                 log_trace("completing %d==%s(%s) in state %d", token, s_tokenName[token], s_tokenName[token], lastyystate);
                 processName(s_tokenName[token], &compLine, 0, &s_completions);
