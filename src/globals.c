@@ -393,12 +393,11 @@ S_options s_initOpt = {
 
     /* GENERATE options */
 
-    0,
-    0,
-    0,
-    0,
-    0,
-    0,
+    0,                          /* typedefg */
+    0,                          /* enum_name */
+    0,                          /* body */
+    0,                          /* header */
+    0,                          /* str_copy */
 
     /* CXREF options  */
 

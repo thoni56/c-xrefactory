@@ -3341,7 +3341,6 @@ static void mainGenerate(int argc, char **argv) {
         mainParseInputFile();
         cFile.lexBuffer.buffer.isAtEOF = false;
     }
-    if (s_opt.str_fill) generateArgumentSelectionMacros(20);
     symbolTableMap(s_symbolTable, generate);
 }
 
