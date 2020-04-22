@@ -2505,7 +2505,7 @@ static bool exists_valid_parser_action_on(int token) {
    linked together. Therefore it is not straight forward to refactor
    out commonalities. */
 void makeYaccCompletions(char *s, int len, S_position *pos) {
-    int token, yyn, i;
+    int token, i;
     S_cline compLine;
 
     log_trace("completing \"%s\"", s);
