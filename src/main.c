@@ -111,7 +111,6 @@ static void usage(char *s) {
     fprintf(stdout,"\t-trace                    - produce trace output of the execution\n");
 #   endif
 #if 0
-    fprintf(stdout,"\t-typedefs                 - generate structure/enums typedefs\n");
     fprintf(stdout,"\t-enum_name                - generate enum text names\n");
     fprintf(stdout,"\t-str_copy                 - generate structure copy functions\n");
     fprintf(stdout,"\t-header                   - output is headers file\n");
@@ -1432,9 +1431,6 @@ static int processTOption(int *ii, int argc, char **argv) {
         s_opt.trace = true;
     }
 #endif
-    else if (strcmp(argv[i],"-typedefs")==0) {
-        s_opt.typedefg = 1;
-    }
     else if (strcmp(argv[i],"-task_regime_server")==0) {
         s_opt.taskRegime = RegimeEditServer;
     }

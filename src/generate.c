@@ -102,21 +102,6 @@ static int genFillStructBody(Symbol *defin, int i, int argn, bool fullFlag,
 
 /* ******************************************************************* */
 
-static void generateTypedefForStructOrUnion(Symbol *symbol) {
-    char *name;
-
-    assert(symbol);
-    name = symbol->name;
-    assert(symbol->u.s);
-    assert(name);
-    if (symbol->bits.symType == TypeStruct) {
-        fprintf(cxOut,"typedef struct %s S_%s;\n", name, name);
-    } else {
-        fprintf(cxOut,"typedef union %s U_%s;\n", name, name);
-    }
-}
-
-
 static void generateStructCopyFunction(Symbol *symbol) {
     char *name;
     Symbol *rec;
@@ -144,14 +129,6 @@ static void generateStructCopyFunction(Symbol *symbol) {
         fprintf(cxOut,"  return(d);\n");
         fprintf(cxOut,"}\n\n");
     }
-}
-
-static void generateTypedefForEnum(Symbol *symbol) {
-    char *name;
-
-    assert(symbol);
-    name = symbol->name;
-    assert(name);
 }
 
 static void generateEnumString(Symbol *symbol) {
@@ -198,13 +175,9 @@ void generate(Symbol *symbol) {
     if (symbol->name==NULL || symbol->name[0]==0)
         return;
     if (symbol->bits.symType==TypeStruct || symbol->bits.symType==TypeUnion) {
-        if (s_opt.typedefg)
-            generateTypedefForStructOrUnion(symbol);
         if (s_opt.str_copy)
             generateStructCopyFunction(symbol);
     } else if (symbol->bits.symType == TypeEnum) {
-        if (s_opt.typedefg)
-            generateTypedefForEnum(symbol);
         if (s_opt.enum_name)
             generateEnumString(symbol);
     }

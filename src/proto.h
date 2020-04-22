@@ -1106,7 +1106,6 @@ typedef struct options {
 
     /* GENERATE options */
 
-    int typedefg;
     int enum_name;
     int body;
     int header;
