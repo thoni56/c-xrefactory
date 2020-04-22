@@ -2606,7 +2606,7 @@ static bool exists_valid_parser_action_on(int token) {
    out commonalities. */
 void makeJavaCompletions(char *s, int len, S_position *pos) {
     int token, i;
-    S_cline compLine;
+    CompletionLine compLine;
 
     log_trace("completing \"%s\" in state %d", s, lastyystate);
     strncpy(s_completions.idToProcess, s, MAX_FUN_NAME_SIZE);

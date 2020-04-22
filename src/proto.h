@@ -685,7 +685,7 @@ typedef struct olcxReferencesStack {
 /* ***************** COMPLETION STRUCTURES ********************** */
 
 
-typedef struct cline {
+typedef struct completionLine {
     char            *string;
     struct symbol   *symbol;
     Type			symbolType;
@@ -693,7 +693,7 @@ typedef struct cline {
     short int		margn;
     char			**margs;
     struct symbol	*vFunClass;
-} S_cline;
+} CompletionLine;
 
 typedef struct completions {
     char            idToProcess[MAX_FUN_NAME_SIZE];
@@ -705,7 +705,7 @@ typedef struct completions {
     bool abortFurtherCompletions;
     char            comPrefix[TMP_STRING_SIZE];
     int				maxLen;
-    struct cline    alternatives[MAX_COMPLETIONS];
+    struct completionLine    alternatives[MAX_COMPLETIONS];
     int             alternativeIndex;
 } Completions;
 

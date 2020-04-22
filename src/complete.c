@@ -54,7 +54,7 @@ void initCompletions(Completions *completions, int length, S_position position) 
     completions->alternativeIndex = 0;
 }
 
-void fillCompletionLine(S_cline *cline, char *string, Symbol *symbol, Type symbolType,
+void fillCompletionLine(CompletionLine *cline, char *string, Symbol *symbol, Type symbolType,
                 short int virtualLevel, short int margn, char **margs, Symbol *vFunClass) {
     cline->string = string;
     cline->symbol = symbol;
@@ -154,7 +154,7 @@ static int printJavaModifiers(char *buf, int *size, unsigned acc) {
     return(i);
 }
 
-static char *getCompletionClassFieldString( S_cline *cl) {
+static char *getCompletionClassFieldString( CompletionLine *cl) {
     char *cname;
     //& if (cl->symbol->bits.access & ACCESS_STATIC) {
     // statics, get class from link name
@@ -499,7 +499,7 @@ void printCompletions(Completions* c) {
 
 /* *********************************************************************** */
 
-static int isTheSameSymbol(S_cline *c1, S_cline *c2) {
+static int isTheSameSymbol(CompletionLine *c1, CompletionLine *c2) {
     if (strcmp(c1->string, c2->string) != 0) return(0);
     /*fprintf(dumpOut,"st %d %d\n",c1->symType,c2->symType);*/
     if (c1->symbolType != c2->symbolType) return(0);
@@ -522,7 +522,7 @@ static int isTheSameSymbol(S_cline *c1, S_cline *c2) {
     return(1);
 }
 
-static int symbolIsInTab(S_cline *a, int ai, int *ii, char *s, S_cline *t) {
+static int symbolIsInTab(CompletionLine *a, int ai, int *ii, char *s, CompletionLine *t) {
     int i,j;
     for(i= *ii-1; i>=0 && strcmp(a[i].string,s)==0; i--) ;
     for(j= *ii+1; j<ai && strcmp(a[j].string,s)==0; j++) ;
@@ -531,7 +531,7 @@ static int symbolIsInTab(S_cline *a, int ai, int *ii, char *s, S_cline *t) {
     return(0);
 }
 
-static int compareCompletionClassName(S_cline *c1, S_cline *c2) {
+static int compareCompletionClassName(CompletionLine *c1, CompletionLine *c2) {
     char    n1[TMP_STRING_SIZE];
     int     c;
     char    *n2;
@@ -543,7 +543,7 @@ static int compareCompletionClassName(S_cline *c1, S_cline *c2) {
     return(0);
 }
 
-static int completionOrderCmp(S_cline *c1, S_cline *c2) {
+static int completionOrderCmp(CompletionLine *c1, CompletionLine *c2) {
     int     c, l1, l2;
     char    *s1, *s2;
     if (! LANGUAGE(LANG_JAVA)) {
@@ -605,10 +605,10 @@ static int completionOrderCmp(S_cline *c1, S_cline *c2) {
     }
 }
 
-static int reallyInsert(S_cline *a,
+static int reallyInsert(CompletionLine *a,
                         int *aip,
                         char *s,
-                        S_cline *t,
+                        CompletionLine *t,
                         int orderFlag
                         ) {
     int ai;
@@ -640,7 +640,7 @@ static int reallyInsert(S_cline *a,
     if (orderFlag) {
         //& for(i=ai-1; i>=l; i--) a[i+1] = a[i];
         // should be faster, but frankly the weak point is not here.
-        memmove(a+l+1, a+l, sizeof(S_cline)*(ai-l));
+        memmove(a+l+1, a+l, sizeof(CompletionLine)*(ai-l));
     } else {
         l = ai;
     }
@@ -683,7 +683,7 @@ static int stringContainsCaseInsensitive(char *s1, char *s2) {
     return(0);
 }
 
-static void completionInsertName(char *name, S_cline *completionLine, int orderFlag,
+static void completionInsertName(char *name, CompletionLine *completionLine, int orderFlag,
                                  Completions *ci) {
     int len,l;
     //&completionLine->string  = name;
@@ -709,14 +709,14 @@ static void completionInsertName(char *name, S_cline *completionLine, int orderF
     }
 }
 
-static void completeName(char *name, S_cline *compLine, int orderFlag,
+static void completeName(char *name, CompletionLine *compLine, int orderFlag,
                   Completions *ci) {
     if (name == NULL) return;
     if (completionTestPrefix(ci, name)) return;
     completionInsertName(name, compLine, orderFlag, ci);
 }
 
-static void searchName(char *name, S_cline *compLine, int orderFlag,
+static void searchName(char *name, CompletionLine *compLine, int orderFlag,
                 Completions *ci) {
     int l;
     if (name == NULL) return;
@@ -749,7 +749,7 @@ static void searchName(char *name, S_cline *compLine, int orderFlag,
     }
 }
 
-void processName(char *name, S_cline *compLine, int orderFlag, void *c) {
+void processName(char *name, CompletionLine *compLine, int orderFlag, void *c) {
     Completions *ci;
     ci = (Completions *) c;
     if (s_opt.server_operation == OLO_SEARCH) {
@@ -761,7 +761,7 @@ void processName(char *name, S_cline *compLine, int orderFlag, void *c) {
 
 static void completeFun(Symbol *s, void *c) {
     S_completionSymInfo *cc;
-    S_cline compLine;
+    CompletionLine compLine;
     cc = (S_completionSymInfo *) c;
     assert(s && cc);
     if (s->bits.symType != cc->symType) return;
@@ -788,7 +788,7 @@ static void completeFun(Symbol *s, void *c) {
     }
 
 static void completeFunctionOrMethodName(Completions *c, int orderFlag, int vlevel, Symbol *r, Symbol *vFunCl) {
-    S_cline         compLine;
+    CompletionLine         compLine;
     int             cnamelen;
     char            *cn, *cname, *psuff, *msig;
     cname = r->name;
@@ -822,7 +822,7 @@ static void completeFunctionOrMethodName(Completions *c, int orderFlag, int vlev
 
 static void completeSymFun(Symbol *s, void *c) {
     S_completionSymFunInfo *cc;
-    S_cline compLine;
+    CompletionLine compLine;
     char    *completionName;
     cc = (S_completionSymFunInfo *) c;
     assert(s);
@@ -865,7 +865,7 @@ static void processSpecialInheritedFullCompletion( Completions *c, int orderFlag
     int     size, ll;
     char    *fcc;
     char    tt[MAX_CX_SYMBOL_SIZE];
-    S_cline compLine;
+    CompletionLine compLine;
 
     tt[0]=0; ll=0; size=MAX_CX_SYMBOL_SIZE;
     if (LANGUAGE(LANG_JAVA)) {
@@ -899,7 +899,7 @@ static void completeRecordsNames(
                                  int completionType,
                                  int vlevelOffset
                                  ) {
-    S_cline         completionLine;
+    CompletionLine         completionLine;
     int             orderFlag,rr,vlevel, accCheck,  visibCheck;
     Symbol        *r, *vFunCl;
     S_recFindStr    rfs;
@@ -1145,7 +1145,7 @@ static int isForCompletionSymbol(Completions *c,
 void completeForSpecial1(Completions* c) {
     static char         ss[TMP_STRING_SIZE];
     char                *rec;
-    S_cline             compLine;
+    CompletionLine             compLine;
     Symbol            *sym;
     if (isForCompletionSymbol(c,&s_forCompletionType,&sym,&rec)) {
         sprintf(ss,"%s!=NULL; ", sym->name);
@@ -1157,7 +1157,7 @@ void completeForSpecial1(Completions* c) {
 void completeForSpecial2(Completions* c) {
     static char         ss[TMP_STRING_SIZE];
     char                *rec;
-    S_cline             compLine;
+    CompletionLine             compLine;
     Symbol            *sym;
     if (isForCompletionSymbol(c, &s_forCompletionType,&sym,&rec)) {
         if (rec!=NULL) {
@@ -1220,7 +1220,7 @@ static void javaPackageNameCompletion(char            *fname,
                                       Completions   *c,
                                       void            *idp,
                                       int             *pstorage) {
-    S_cline compLine;
+    CompletionLine compLine;
     char *cname;
 
     if (strchr(fname,'.')!=NULL) return;        /* not very proper */
@@ -1239,7 +1239,7 @@ static void javaTypeNameCompletion(
                                    int             *pstorage
                                    ) {
     char cfname[MAX_FILE_NAME_SIZE];
-    S_cline compLine;
+    CompletionLine compLine;
     char *cname, *suff;
     int len, storage, complType;
     Symbol *memb = NULL;
@@ -1277,7 +1277,7 @@ static void javaCompleteNestedClasses(  Completions *c,
                                         Symbol *cclas,
                                         int storage
                                         ) {
-    S_cline         compLine;
+    CompletionLine         compLine;
     int             i;
     Symbol        *memb;
     Symbol        *str;
@@ -1359,7 +1359,7 @@ static void javaCompleteComposedName(
 }
 
 void javaHintCompleteMethodParameters(Completions *c) {
-    S_cline                 compLine;
+    CompletionLine                 compLine;
     Symbol                *r, *vFunCl;
     S_recFindStr            *rfs;
     S_typeModifierList     *aaa;
@@ -1406,7 +1406,7 @@ void javaCompletePackageSingleName(Completions*c) {
 }
 
 void javaCompleteThisPackageName(Completions *c) {
-    S_cline     compLine;
+    CompletionLine     compLine;
     static char cname[TMP_STRING_SIZE];
     char        *cc, *ss, *dd;
     if (c->idToProcessLen != 0) return;
@@ -1423,7 +1423,7 @@ void javaCompleteThisPackageName(Completions *c) {
 }
 
 static void javaCompleteThisClassDefinitionName(Completions*c) {
-    S_cline     compLine;
+    CompletionLine     compLine;
     static char cname[TMP_STRING_SIZE];
     char        *cc;
     javaGetClassNameFromFileNum(s_olOriginalFileNumber, cname, DOTIFY_NAME);
@@ -1470,7 +1470,7 @@ static void completeFqtFromFileName(char *file, void *cfmpi) {
     char                    ttt[MAX_FILE_NAME_SIZE];
     char                    sss[MAX_FILE_NAME_SIZE];
     char                    *suff, *sname, *ss;
-    S_cline                 compLine;
+    CompletionLine                 compLine;
     S_completionFqtMapInfo  *fmi;
     Completions           *c;
     Symbol                *memb;
@@ -1605,7 +1605,7 @@ void javaHintImportFqt(Completions*c) {
 }
 
 void javaHintVariableName(Completions*c) {
-    S_cline compLine;
+    CompletionLine compLine;
     char    ss[TMP_STRING_SIZE];
     char    *name, *affect1, *affect2;
 
@@ -1644,7 +1644,7 @@ void javaCompleteConstructSingleName(Completions *c) {
 }
 
 void javaCompleteHintForConstructSingleName(Completions *c) {
-    S_cline     compLine;
+    CompletionLine     compLine;
     char        *name;
     if (c->idToProcessLen == 0 && s_opt.server_operation == OLO_COMPLETION) {
         // O.K. wizard completion
@@ -1781,7 +1781,7 @@ void javaCompleteMethodCompName(Completions*c) {
 
 static void completeFromXrefFun(S_symbolRefItem *s, void *c) {
     S_completionSymInfo *cc;
-    S_cline compLine;
+    CompletionLine compLine;
     cc = (S_completionSymInfo *) c;
     assert(s && cc);
     if (s->b.symType != cc->symType) return;

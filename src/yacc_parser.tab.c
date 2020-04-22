@@ -2506,7 +2506,7 @@ static bool exists_valid_parser_action_on(int token) {
    out commonalities. */
 void makeYaccCompletions(char *s, int len, S_position *pos) {
     int token, i;
-    S_cline compLine;
+    CompletionLine compLine;
 
     log_trace("completing \"%s\"", s);
     strncpy(s_completions.idToProcess, s, MAX_FUN_NAME_SIZE);
