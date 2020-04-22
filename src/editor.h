@@ -5,6 +5,18 @@
 
 /* ***************** editor structures ********************** */
 
+enum editorUndoOperations {
+    UNDO_REPLACE_STRING,
+    UNDO_RENAME_BUFFER,
+    UNDO_MOVE_BLOCK,
+};
+
+enum editors {
+    EDITOR_UNKNOWN,
+    EDITOR_EMACS,
+    EDITOR_JEDIT,
+};
+
 typedef     struct editorBufferAllocationData {
     int     bufferSize;
     char	*text;
@@ -60,7 +72,7 @@ typedef struct editorRegionList {
 
 typedef struct editorUndo {
     struct editorBuffer	*buffer;
-    int					operation;
+    enum editorUndoOperations operation;
     union editorUndoUnion {
         struct editorUndoStrReplace {
             unsigned			offset;

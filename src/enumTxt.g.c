@@ -7,12 +7,6 @@ char * taskRegimesEnumName[] = {
 	"RegimeGenerate"
 };
 
-char * editorUndoOperationsEnumName[] = {
-	"UNDO_REPLACE_STRING",
-	"UNDO_RENAME_BUFFER",
-	"UNDO_MOVE_BLOCK"
-};
-
 char * fileEncodingsEnumName[] = {
 	"MULE_DEFAULT",
 	"MULE_EUROPEAN",
@@ -178,12 +172,6 @@ char * olcxOptionsEnumName[] = {
 	"OLO_GET_PRIMARY_START",
 	"OLO_GET_PARAM_COORDINATES",
 	"OLO_ABOUT"
-};
-
-char * editorsEnumName[] = {
-	"EDITOR_UNKNOWN",
-	"EDITOR_EMACS",
-	"EDITOR_JEDIT"
 };
 
 char * usageEnumName[] = {

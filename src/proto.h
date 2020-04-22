@@ -339,18 +339,6 @@ enum olcxOptions {
 
 /* ************************** refactorings **************************** */
 
-enum editorUndoOperations {
-    UNDO_REPLACE_STRING,
-    UNDO_RENAME_BUFFER,
-    UNDO_MOVE_BLOCK,
-};
-
-enum editors {
-    EDITOR_UNKNOWN,
-    EDITOR_EMACS,
-    EDITOR_JEDIT,
-};
-
 enum memoryClass {
     MEMORY_CF,
     MEMORY_XX,
