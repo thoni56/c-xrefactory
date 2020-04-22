@@ -4160,7 +4160,6 @@ static void olcxCreateClassTree(void) {
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
     olCreateSelectionMenu(rstack->command);
-    strcpy(s_olcxCurrentUser->classTree.refsuffix, rstack->refsuffix);
     s_olcxCurrentUser->classTree.tree = rstack->menuSym;
     rstack->menuSym = NULL;
     olcxPrintClassTree(s_olcxCurrentUser->classTree.tree);

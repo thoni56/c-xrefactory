@@ -670,10 +670,7 @@ typedef struct olcxReferences {
     struct olcxReferences	*previous;
 } S_olcxReferences;
 
-// this is useless, (refsuffix is not used), but I keep it for
-// some time for case if something more is needed in class tree
 typedef struct classTreeData {
-    char					refsuffix[MAX_OLCX_SUFF_SIZE];
     int						baseClassIndex;
     struct olSymbolsMenu	*tree;
 } S_classTreeData;

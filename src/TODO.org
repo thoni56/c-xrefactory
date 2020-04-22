@@ -24,7 +24,6 @@ process, what happens if we specify -refactory as a PPC command?
 * TODO Refactor int2StringTabs, should not have Init in them
 * TODO Initialize memory's injected error functions in main.c, but it still works?
 * TODO Cleanup and separate commons, misc and make them independent utility modules
-* TODO Investigate to remove S_classTreeData
 * TODO Check if the C-part of Yacc grammar is identical, and if so extract it
 * TODO Change -generate -enum-xxx so that you have to specify which enums you need
 Currently all enums included are generated, but that includes ones
@@ -42,7 +41,6 @@ Re-test this with "ls *.c | grep -v enumTxt | xargs grep -h -o '[^ ("*,]*EnumNam
 * TODO Fix the move_class test
 * TODO Use enum types wherever possible Storage, SymbolType, ...
 * TODO Rename some of the options, like -no_str -> -no-structs
-* TODO Rename res fields in completion structs
 * TODO Why does -refactory read the users default .c-xrefrc?
 * TODO Change all "-no_" options to modern "-no-"
 * TODO Cannot mock structs as arguments like in symbol.mock
@@ -112,6 +110,7 @@ easier to mock and unit test other modules.
   ACTUALLY: split generation of enumTxt header to its own header file
   with the naming strategy as for the others.
 * DOING Start using log.c functions to log to a separate log file
+* DONE Investigate to remove S_classTreeData
 * DONE Remove code for generation of str_fill & str_copy
 * DONE Remove bootstrap step (strfill and local definitions)
 ** DONE Remove bootstrap enumTxt generation
