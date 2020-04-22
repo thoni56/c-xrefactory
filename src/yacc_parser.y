@@ -1678,6 +1678,17 @@ static S_completionFunTab completionsTab[]  = {
 };
 
 
+static bool exists_valid_parser_action_on(int token) {
+    int yyn1, yyn2;
+    bool shift_action = (yyn1 = yysindex[lastyystate]) && (yyn1 += token) >= 0 &&
+        yyn1 <= YYTABLESIZE && yycheck[yyn1] == token;
+    bool reduce_action = (yyn2 = yyrindex[lastyystate]) && (yyn2 += token) >= 0 &&
+        yyn2 <= YYTABLESIZE && yycheck[yyn2] == token;
+    bool valid = shift_action || reduce_action;
+
+    return valid;
+}
+
 void makeYaccCompletions(char *s, int len, S_position *pos) {
     int token, yyn, i;
     S_cline compLine;
@@ -1686,30 +1697,29 @@ void makeYaccCompletions(char *s, int len, S_position *pos) {
     strncpy(s_completions.idToProcess, s, MAX_FUN_NAME_SIZE);
     s_completions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
     initCompletions(&s_completions, len, *pos);
-    for (i=0;(token=completionsTab[i].token)!=0; i++) {
-        /* See c_parser.y for an explanation... */
-        if (((yyn = yysindex[lastyystate]) && (yyn += token) >= 0 &&
-             yyn <= YYTABLESIZE && yycheck[yyn] == token) ||
-            ((yyn = yyrindex[lastyystate]) && (yyn += token) >= 0 &&
-             yyn <= YYTABLESIZE && yycheck[yyn] == token)) {
+
+    for (i=0; (token=completionsTab[i].token) != 0; i++) {
+        log_trace("trying token %d", s_tokenName[token]);
+        if (exists_valid_parser_action_on(token)) {
             log_trace("completing %d==%s in state %d", i, s_tokenName[token], lastyystate);
             (*completionsTab[i].fun)(&s_completions);
-            if (s_completions.abortFurtherCompletions) return;
+            if (s_completions.abortFurtherCompletions)
+                return;
         }
     }
+
     /* basic language tokens */
     for (token=0; token<LAST_TOKEN; token++) {
-        if (token==IDENTIFIER) continue;
-        if (((yyn = yysindex[lastyystate]) && (yyn += token) >= 0 &&
-                yyn <= YYTABLESIZE && yycheck[yyn] == token) ||
-            ((yyn = yyrindex[lastyystate]) && (yyn += token) >= 0 &&
-                yyn <= YYTABLESIZE && yycheck[yyn] == token)) {
-                if (s_tokenName[token]!= NULL) {
+        if (token == IDENTIFIER)
+            continue;
+        if (exists_valid_parser_action_on(token)) {
+                if (s_tokenName[token] != NULL) {
                     if (isalpha(*s_tokenName[token]) || *s_tokenName[token]=='_') {
-                        fillCompletionLine(&compLine, s_tokenName[token], NULL, TypeKeyword,0, 0, NULL,NULL);
+                        fillCompletionLine(&compLine, s_tokenName[token], NULL, TypeKeyword, 0, 0, NULL, NULL);
                     } else {
-                        fillCompletionLine(&compLine, s_tokenName[token], NULL, TypeToken,0, 0, NULL,NULL);
+                        fillCompletionLine(&compLine, s_tokenName[token], NULL, TypeToken, 0, 0, NULL, NULL);
                     }
+                    log_trace("completing %d==%s(%s) in state %d", token, s_tokenName[token], s_tokenName[token], lastyystate);
                     processName(s_tokenName[token], &compLine, 0, &s_completions);
                 }
         }

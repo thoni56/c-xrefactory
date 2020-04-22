@@ -700,7 +700,7 @@ typedef struct olcxReferencesStack {
 /* ***************** COMPLETION STRUCTURES ********************** */
 
 
-typedef struct cline {					/* should be a little bit union-ified */
+typedef struct cline {
     char            *string;
     struct symbol   *symbol;
     Type			symbolType;

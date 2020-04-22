@@ -1025,7 +1025,7 @@ TypeImportOnDemandDeclaration:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     Symbol *str;
-                    S_typeModifier *expr;
+                    TypeModifier *expr;
                     S_reference *rr, *lastUselessRef;
                     int st __attribute__((unused));
                     st = javaClassifyAmbiguousName($2.d, NULL,&str,&expr,&rr,
@@ -3092,7 +3092,7 @@ NestedConstructorInvocation:
         Primary '.' New Name _erfs_
             {
                 if (ComputingPossibleParameterCompletion()) {
-                    S_typeModifier *mm;
+                    TypeModifier *mm;
                     s_cp.erfsForParamsComplet = NULL;
                     if ($1.d.t->kind == TypeStruct) {
                         mm = javaNestedNewType($1.d.t->u.t, $3.d, $4.d);
@@ -3126,7 +3126,7 @@ NestedConstructorInvocation:
     |	Name '.' New Name _erfs_
             {
                 if (ComputingPossibleParameterCompletion()) {
-                    S_typeModifier *mm;
+                    TypeModifier *mm;
                     s_cp.erfsForParamsComplet = NULL;
                     mm = javaNewAfterName($1.d, $3.d, $4.d);
                     if (mm->kind != TypeError) {
@@ -3157,7 +3157,7 @@ NewName:
             if (ComputingPossibleParameterCompletion()) {
                 Symbol            *ss;
                 Symbol			*str;
-                S_typeModifier		*expr;
+                TypeModifier		*expr;
                 S_reference			*rr, *lastUselessRef;
                 javaClassifyAmbiguousName($1.d, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
                                           CLASS_TO_TYPE,UsageUsed);
@@ -3175,7 +3175,7 @@ ClassInstanceCreationExpression:
                 if (! SyntaxPassOnly()) {
                     Symbol *ss, *tt, *ei;
                     Symbol *str;
-                    S_typeModifier *expr;
+                    TypeModifier *expr;
                     S_reference *rr, *lastUselessRef;
 
                     s_cp.erfsForParamsComplet = $2;
@@ -3612,7 +3612,7 @@ ArrayAccess:
         Name '[' Expression ']'							{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_typeModifier *tt;
+                    TypeModifier *tt;
                     tt = javaClassifyToExpressionName($1.d, &($$.d.r));
                     if (tt->kind==TypeArray) $$.d.t=tt->next;
                     else $$.d.t = &s_errorModifier;
@@ -4376,8 +4376,19 @@ static S_completionFunTab hintCompletionsTab[]  = {
     {0,NULL}
 };
 
+static bool exists_valid_parser_action_on(int token) {
+    int yyn1, yyn2;
+    bool shift_action = (yyn1 = yysindex[lastyystate]) && (yyn1 += token) >= 0 &&
+        yyn1 <= YYTABLESIZE && yycheck[yyn1] == token;
+    bool reduce_action = (yyn2 = yyrindex[lastyystate]) && (yyn2 += token) >= 0 &&
+        yyn2 <= YYTABLESIZE && yycheck[yyn2] == token;
+    bool valid = shift_action || reduce_action;
+
+    return valid;
+}
+
 void makeJavaCompletions(char *s, int len, S_position *pos) {
-    int tok, yyn, i;
+    int token, i;
     S_cline compLine;
 
     log_trace("completing \"%s\" in state %d", s, lastyystate);
@@ -4386,12 +4397,9 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
     initCompletions(&s_completions, len, *pos);
 
     /* special wizard completions */
-    for (i=0;(tok=spCompletionsTab[i].token)!=0; i++) {
-        if (((yyn = yysindex[lastyystate]) && (yyn += tok) >= 0 &&
-             yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
-            ((yyn = yyrindex[lastyystate]) && (yyn += tok) >= 0 &&
-             yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
-            log_trace("completing %d==%s in state %d", i, s_tokenName[tok], lastyystate);
+    for (i=0;(token=spCompletionsTab[i].token)!=0; i++) {
+        if (exists_valid_parser_action_on(token)) {
+            log_trace("completing %d==%s in state %d", i, s_tokenName[token], lastyystate);
             (*spCompletionsTab[i].fun)(&s_completions);
             if (s_completions.abortFurtherCompletions)
                 return;
@@ -4400,12 +4408,9 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
 
     /* If there is a wizard completion, RETURN now */
     if (s_completions.alternativeIndex != 0 && s_opt.server_operation != OLO_SEARCH) return;
-    for (i=0;(tok=completionsTab[i].token)!=0; i++) {
-        if (((yyn = yysindex[lastyystate]) && (yyn += tok) >= 0 &&
-             yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
-            ((yyn = yyrindex[lastyystate]) && (yyn += tok) >= 0 &&
-             yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
-            log_trace("completing %d==%s in state %d", i, s_tokenName[tok], lastyystate);
+    for (i=0;(token=completionsTab[i].token)!=0; i++) {
+        if (exists_valid_parser_action_on(token)) {
+            log_trace("completing %d==%s in state %d", i, s_tokenName[token], lastyystate);
             (*completionsTab[i].fun)(&s_completions);
             if (s_completions.abortFurtherCompletions)
                 return;
@@ -4413,18 +4418,15 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
     }
 
     /* basic language tokens */
-    for (tok=0; tok<LAST_TOKEN; tok++) {
-        if (tok==IDENTIFIER) continue;
-        if (((yyn = yysindex[lastyystate]) && (yyn += tok) >= 0 &&
-             yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
-            ((yyn = yyrindex[lastyystate]) && (yyn += tok) >= 0 &&
-             yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
-            if (s_tokenName[tok]!= NULL) {
-                if (isalpha(*s_tokenName[tok]) || *s_tokenName[tok]=='_') {
-                    fill_cline(&compLine, s_tokenName[tok], NULL, TypeKeyword,0, 0, NULL,NULL);
-                    processName(s_tokenName[tok], &compLine, 0, &s_completions);
+    for (token=0; token<LAST_TOKEN; token++) {
+        if (token==IDENTIFIER) continue;
+        if (exists_valid_parser_action_on(token)) {
+            if (s_tokenName[token]!= NULL) {
+                if (isalpha(*s_tokenName[token]) || *s_tokenName[token]=='_') {
+                    fillCompletionLine(&compLine, s_tokenName[token], NULL, TypeKeyword,0, 0, NULL,NULL);
+                    processName(s_tokenName[token], &compLine, 0, &s_completions);
                 } else {
-                    /*& fill_cline(&compLine, s_tokenName[tok], NULL, TypeToken,0, 0, NULL,NULL); */
+                    /*& fillCompletionLine(&compLine, s_tokenName[token], NULL, TypeToken,0, 0, NULL,NULL); */
                 }
             }
         }
@@ -4435,11 +4437,8 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
     //&if (s_completions.comPrefix[0]!=0  && (s_completions.alternativeIndex != 0)
     //&	&& s_opt.cxrefs != OLO_SEARCH) return;
 
-    for (i=0;(tok=hintCompletionsTab[i].token)!=0; i++) {
-        if (((yyn = yysindex[lastyystate]) && (yyn += tok) >= 0 &&
-             yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
-            ((yyn = yyrindex[lastyystate]) && (yyn += tok) >= 0 &&
-             yyn <= YYTABLESIZE && yycheck[yyn] == tok)) {
+    for (i=0;(token=hintCompletionsTab[i].token)!=0; i++) {
+        if (exists_valid_parser_action_on(token)) {
             (*hintCompletionsTab[i].fun)(&s_completions);
             if (s_completions.abortFurtherCompletions)
                 return;

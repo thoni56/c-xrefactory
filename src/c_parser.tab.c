@@ -2052,7 +2052,7 @@ void makeCCompletions(char *s, int len, S_position *pos) {
     int token, i;
     S_cline compLine;
 
-    log_trace("completing \"%s\"",s);
+    log_trace("completing \"%s\"", s);
     strncpy(s_completions.idToProcess, s, MAX_FUN_NAME_SIZE);
     s_completions.idToProcess[MAX_FUN_NAME_SIZE-1] = 0;
     initCompletions(&s_completions, len, *pos);
@@ -2074,6 +2074,7 @@ void makeCCompletions(char *s, int len, S_position *pos) {
 
     /* basic language tokens */
     for (i=0; (token=completionsTab[i].token) != 0; i++) {
+        log_trace("trying token %d", s_tokenName[token]);
         if (exists_valid_parser_action_on(token)) {
             log_trace("completing %d==%s in state %d", i, s_tokenName[token], lastyystate);
             (*completionsTab[i].fun)(&s_completions);
@@ -2099,7 +2100,7 @@ void makeCCompletions(char *s, int len, S_position *pos) {
         }
     }
 }
-#line 2103 "c_parser.tab.c"
+#line 2104 "c_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -4148,7 +4149,7 @@ case 358:
 #line 1797 "c_parser.y"
 { stackMemoryBlockFree(); }
 break;
-#line 4152 "c_parser.tab.c"
+#line 4153 "c_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;
