@@ -1593,8 +1593,7 @@ VariableDeclarator:
     |	error											{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    XX_ALLOC($$.d, Symbol);
-                    *$$.d = s_errorSymbol;
+                    $$.d = newSymbolAsCopyOf(s_errorSymbol);
                 } else {
                     SetNullBorns($$);
                 }
@@ -1829,8 +1828,7 @@ FormalParameter:
     |	error								{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    XX_ALLOC($$.d, Symbol);
-                    *$$.d = s_errorSymbol;
+                    $$.d = newSymbolAsCopyOf(s_errorSymbol);
                 } else {
                     SetNullBorns($$);
                 }

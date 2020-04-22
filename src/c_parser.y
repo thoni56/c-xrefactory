@@ -931,9 +931,7 @@ struct_declaration
         tmpWorkMemoryi = $1.d;
     }
     | error												{
-        /* $$.d = &s_errorSymbol; */
-        XX_ALLOC($$.d, Symbol);
-        *$$.d = s_errorSymbol;
+        $$.d = newSymbolAsCopyOf(s_errorSymbol);
 #if YYDEBUG
         char buffer[100];
         sprintf(buffer, "DEBUG: error parsing struct_declaration near '%s'\n", yytext);
@@ -1020,9 +1018,7 @@ enumerator
         addNewSymbolDef($$.d,StorageConstant, s_symbolTable, UsageDefined);
     }
     | error									{
-        /* $$.d = &s_errorSymbol; */
-        XX_ALLOC($$.d, Symbol);
-        *$$.d = s_errorSymbol;
+        $$.d = newSymbolAsCopyOf(s_errorSymbol);
 #if YYDEBUG
         char buffer[100];
         sprintf(buffer, "DEBUG: error parsing enumerator near '%s'\n", yytext);
@@ -1251,15 +1247,7 @@ parameter_declaration
         $$.d = newSymbolAsType(NULL, NULL, s_noPos, $1.d);
     }
     | error										{
-        /*
-            this was commented out, because of excess of tmpWorkMemory
-            but I am putting it in, because in many cases, this helps
-            to index a function with wrong typedefed parameters, like:
-            void toto(Mistype arg) {}
-            In case of problems rather increase the tmpWorkMemory !!!
-        */
-        XX_ALLOC($$.d, Symbol);
-        *$$.d = s_errorSymbol;
+        $$.d = newSymbolAsCopyOf(s_errorSymbol);
 #if YYDEBUG
         char buffer[100];
         sprintf(buffer, "DEBUG: error parsing parameter_declaration near '%s'\n", yytext);

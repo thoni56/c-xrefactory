@@ -43,6 +43,15 @@ Symbol *newSymbol(char *name, char *linkName, struct position pos) {
     return s;
 }
 
+Symbol *newSymbolAsCopyOf(struct symbol original) {
+    Symbol *s;
+
+    XX_ALLOC(s, Symbol);
+    *s = original;
+
+    return s;
+}
+
 Symbol *newSymbolAsKeyword(char *name, char *linkName, struct position pos, int keyWordVal) {
     Symbol *s = newSymbol(name, linkName, pos);
     s->u.keyWordVal = keyWordVal;
