@@ -2600,8 +2600,12 @@ static bool exists_valid_parser_action_on(int token) {
     return valid;
 }
 
+/* These are similar in the three parsers, except that we have macro
+   replacement of YACC variables so that we can have multiple parsers
+   linked together. Therefore it is not straight forward to refactor
+   out commonalities. */
 void makeJavaCompletions(char *s, int len, S_position *pos) {
-    int token, yyn, i;
+    int token, i;
     S_cline compLine;
 
     log_trace("completing \"%s\" in state %d", s, lastyystate);
@@ -2658,7 +2662,7 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
         }
     }
 }
-#line 2662 "java_parser.tab.c"
+#line 2666 "java_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -7182,7 +7186,7 @@ case 484:
             }
         }
 break;
-#line 7186 "java_parser.tab.c"
+#line 7190 "java_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

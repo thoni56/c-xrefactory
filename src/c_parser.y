@@ -1834,6 +1834,10 @@ static bool exists_valid_parser_action_on(int token) {
     return valid;
 }
 
+/* These are similar in the three parsers, except that we have macro
+   replacement of YACC variables so that we can have multiple parsers
+   linked together. Therefore it is not straight forward to refactor
+   out commonalities. */
 void makeCCompletions(char *s, int len, S_position *pos) {
     int token, i;
     S_cline compLine;
