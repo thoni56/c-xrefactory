@@ -2840,7 +2840,7 @@ case 192:
             }
         } else {
             /* implicit function declaration */
-            S_typeModifier *p;
+            TypeModifier *p;
             Symbol *d;
             Symbol *dd __attribute__((unused));
 
@@ -2878,7 +2878,7 @@ break;
 case 198:
 #line 485 "yacc_parser.y"
 {
-        S_typeModifier *p;
+        TypeModifier *p;
         p = newSimpleTypeModifier(TypeChar);
         yyval.ast_expressionType.d.t = newPointerTypeModifier(p);
         yyval.ast_expressionType.d.r = NULL;
@@ -3558,7 +3558,7 @@ break;
 case 349:
 #line 1016 "yacc_parser.y"
 {
-        S_typeModifier *p;
+        TypeModifier *p;
         p = newSimpleTypeModifier(TypeAnonymousField);
         yyval.ast_symbol.d = newSymbolAsType(NULL, NULL, s_noPos, p);
 
@@ -3675,7 +3675,7 @@ break;
 case 371:
 #line 1111 "yacc_parser.y"
 {
-        S_typeModifier *p;
+        TypeModifier *p;
         assert(yyvsp[-2].ast_symbol.d);
         yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
         p = AddComposedType(yyval.ast_symbol.d, TypeFunction);
@@ -3685,7 +3685,7 @@ break;
 case 372:
 #line 1118 "yacc_parser.y"
 {
-        S_typeModifier *p;
+        TypeModifier *p;
         assert(yyvsp[-3].ast_symbol.d);
         yyval.ast_symbol.d = yyvsp[-3].ast_symbol.d;
         p = AddComposedType(yyval.ast_symbol.d, TypeFunction);
@@ -3696,7 +3696,7 @@ break;
 case 373:
 #line 1126 "yacc_parser.y"
 {
-        S_typeModifier *p;
+        TypeModifier *p;
         assert(yyvsp[-3].ast_symbol.d);
         yyval.ast_symbol.d = yyvsp[-3].ast_symbol.d;
         p = AddComposedType(yyval.ast_symbol.d, TypeFunction);
@@ -3927,7 +3927,7 @@ case 407:
 #line 1317 "yacc_parser.y"
 {
         yyval.ast_typeModifiers.d = yyvsp[0].ast_typeModifiers.d;
-        LIST_APPEND(S_typeModifier, yyval.ast_typeModifiers.d, yyvsp[-1].ast_symbol.d->u.type);
+        LIST_APPEND(TypeModifier, yyval.ast_typeModifiers.d, yyvsp[-1].ast_symbol.d->u.type);
     }
 break;
 case 408:
@@ -4001,7 +4001,7 @@ break;
 case 418:
 #line 1365 "yacc_parser.y"
 {
-        S_typeModifier *p;
+        TypeModifier *p;
         yyval.ast_typeModifiers.d = yyvsp[-2].ast_typeModifiers.d;
         p = appendComposedType(&(yyval.ast_typeModifiers.d), TypeFunction);
         initFunctionTypeModifier(&p->u.f , NULL);
@@ -4010,7 +4010,7 @@ break;
 case 419:
 #line 1371 "yacc_parser.y"
 {
-        S_typeModifier *p;
+        TypeModifier *p;
         yyval.ast_typeModifiers.d = yyvsp[-3].ast_typeModifiers.d;
         p = appendComposedType(&(yyval.ast_typeModifiers.d), TypeFunction);
         /* why there was the following ?????*/

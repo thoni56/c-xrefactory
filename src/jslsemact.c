@@ -65,7 +65,7 @@ static void jslCreateTypeSymbolInList(JslSymbolList *ss, char *name) {
     fillJslSymbolList(ss, s, s_noPos, false);
 }
 
-Symbol *jslTypeSpecifier2(S_typeModifier *t) {
+Symbol *jslTypeSpecifier2(TypeModifier *t) {
    Symbol *symbol;
 
     CF_ALLOC(symbol, Symbol);   /* Not in same memory as newSymbol() uses, why? */
@@ -74,12 +74,12 @@ Symbol *jslTypeSpecifier2(S_typeModifier *t) {
     return symbol;
 }
 
-static S_typeModifier *jslCreateSimpleTypeModifier(Type type) {
-    S_typeModifier *p;
+static TypeModifier *jslCreateSimpleTypeModifier(Type type) {
+    TypeModifier *p;
 
     assert(type>=0 && type<MAX_TYPE);
     if (s_preCreatedTypesTable[type] == NULL) {
-        CF_ALLOC(p, S_typeModifier);
+        CF_ALLOC(p, TypeModifier);
         initTypeModifier(p, type);
     } else {
         p = s_preCreatedTypesTable[type];
@@ -93,17 +93,17 @@ Symbol *jslTypeSpecifier1(Type t) {
     return jslTypeSpecifier2(jslCreateSimpleTypeModifier(t));
 }
 
-S_typeModifier *jslAppendComposedType(S_typeModifier **d, Type type) {
-    S_typeModifier *p;
-    CF_ALLOC(p, S_typeModifier);
+TypeModifier *jslAppendComposedType(TypeModifier **d, Type type) {
+    TypeModifier *p;
+    CF_ALLOC(p, TypeModifier);
     initTypeModifier(p, type);
-    LIST_APPEND(S_typeModifier, (*d), p);
+    LIST_APPEND(TypeModifier, (*d), p);
     return(p);
 }
 
-S_typeModifier *jslPrependComposedType(S_typeModifier *d, Type type) {
-    S_typeModifier *p;
-    CF_ALLOC(p, S_typeModifier);
+TypeModifier *jslPrependComposedType(TypeModifier *d, Type type) {
+    TypeModifier *p;
+    CF_ALLOC(p, TypeModifier);
     initTypeModifier(p, type);
     p->next = d;
     return(p);
@@ -113,7 +113,7 @@ void jslCompleteDeclarator(Symbol *t, Symbol *d) {
     assert(t && d);
     if (t == &s_errorSymbol || d == &s_errorSymbol
         || t->bits.symType==TypeError || d->bits.symType==TypeError) return;
-    LIST_APPEND(S_typeModifier, d->u.type, t->u.type);
+    LIST_APPEND(TypeModifier, d->u.type, t->u.type);
     d->bits.storage = t->bits.storage;
 }
 
@@ -184,10 +184,10 @@ static Symbol *jslTypeSymbolUsage(char *ttt2, S_idList *packid) {
 Symbol *jslTypeNameDefinition(S_idList *tname) {
     Symbol *memb;
     Symbol *dd;
-    S_typeModifier *td;
+    TypeModifier *td;
 
     memb = jslTypeSymbolUsage(tname->id.name, tname->next);
-    CF_ALLOC(td, S_typeModifier); //XX_ALLOC?
+    CF_ALLOC(td, TypeModifier); //XX_ALLOC?
     initTypeModifierAsStructUnionOrEnum(td, TypeStruct, memb, NULL, NULL);
 
     CF_ALLOC(dd, Symbol); //XX_ALLOC?

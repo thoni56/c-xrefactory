@@ -74,24 +74,24 @@ void declTypeSpecifier1(Symbol *d, unsigned t) {
   mock(d, t);
 }
 
-Symbol *typeSpecifier2(S_typeModifier *t) {
+Symbol *typeSpecifier2(TypeModifier *t) {
   return (Symbol *) mock(t);
 }
 
-void declTypeSpecifier2(Symbol *d, S_typeModifier *t) {
+void declTypeSpecifier2(Symbol *d, TypeModifier *t) {
   mock(d, t);
 }
 
-void declTypeSpecifier21(S_typeModifier *t, Symbol *d) {
+void declTypeSpecifier21(TypeModifier *t, Symbol *d) {
   mock(t, d);
 }
 
-S_typeModifier *appendComposedType(S_typeModifier **d, unsigned t) {
-  return (S_typeModifier *) mock(d, t);
+TypeModifier *appendComposedType(TypeModifier **d, unsigned t) {
+  return (TypeModifier *) mock(d, t);
 }
 
-S_typeModifier *prependComposedType(S_typeModifier *d, unsigned t) {
-  return (S_typeModifier *) mock(d, t);
+TypeModifier *prependComposedType(TypeModifier *d, unsigned t) {
+  return (TypeModifier *) mock(d, t);
 }
 
 void completeDeclarator(Symbol *t, Symbol *d) {
@@ -118,7 +118,7 @@ S_reference *findStrRecordFromSymbol(Symbol *str, S_id *record, Symbol **res, in
   return (S_reference *) mock(str, record, res, javaClassif, super);
 }
 
-S_reference *findStrRecordFromType(S_typeModifier *str, S_id *record, Symbol **res, int javaClassif) {
+S_reference *findStrRecordFromType(TypeModifier *str, S_id *record, Symbol **res, int javaClassif) {
   return (S_reference *) mock(str, record, res, javaClassif);
 }
 
@@ -126,20 +126,20 @@ int mergeArguments(Symbol *id, Symbol *ty) {
   return (int) mock(id, ty);
 }
 
-S_typeModifier *simpleStrUnionSpecifier(S_id *typeName, S_id *id, int usage) {
-  return (S_typeModifier *) mock(typeName, id, usage);
+TypeModifier *simpleStrUnionSpecifier(S_id *typeName, S_id *id, int usage) {
+  return (TypeModifier *) mock(typeName, id, usage);
 }
 
-S_typeModifier *crNewAnnonymeStrUnion(S_id *typeName) {
-  return (S_typeModifier *) mock(typeName);
+TypeModifier *crNewAnnonymeStrUnion(S_id *typeName) {
+  return (TypeModifier *) mock(typeName);
 }
 
 void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
   mock(sd, rec);
 }
 
-S_typeModifier *simpleEnumSpecifier(S_id *id, int usage) {
-  return (S_typeModifier *) mock(id, usage);
+TypeModifier *simpleEnumSpecifier(S_id *id, int usage) {
+  return (TypeModifier *) mock(id, usage);
 }
 
 void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
@@ -147,8 +147,8 @@ void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
     mock(iname, pp, pp_name, memory);
 }
 
-S_typeModifier *createNewAnonymousEnum(SymbolList *enums) {
-  return (S_typeModifier *) mock(enums);
+TypeModifier *createNewAnonymousEnum(SymbolList *enums) {
+  return (TypeModifier *) mock(enums);
 }
 
 void appendPositionToList(S_positionList **list, S_position *pos) {

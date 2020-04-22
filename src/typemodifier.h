@@ -19,7 +19,7 @@ typedef struct typeModifier {
     } u;
     struct symbol             *typedefSymbol;   /* the typedef symbol (if any) */
     struct typeModifier      *next;
-} S_typeModifier;
+} TypeModifier;
 
 typedef struct typeModifierList {
     struct typeModifier		*d;
@@ -28,25 +28,25 @@ typedef struct typeModifierList {
 
 
 /* Allocates in stack space, aka XX-memory */
-extern S_typeModifier *newTypeModifier(Type kind, Symbol *typedefSymbol, S_typeModifier *next);
-extern S_typeModifier *newSimpleTypeModifier(Type kind);
-extern S_typeModifier *newFunctionTypeModifier(Symbol *args, Symbol **overLoadList, Symbol *typedefSymbol, S_typeModifier *next);
-extern S_typeModifier *newPointerTypeModifier(S_typeModifier *next);
-extern S_typeModifier *newArrayTypeModifier(void);
-extern S_typeModifier *newStructTypeModifier(Symbol *symbol);
-extern S_typeModifier *newEnumTypeModifier(Symbol *symbol);
-extern S_typeModifierList *newTypeModifierList(S_typeModifier *d);
+extern TypeModifier *newTypeModifier(Type kind, Symbol *typedefSymbol, TypeModifier *next);
+extern TypeModifier *newSimpleTypeModifier(Type kind);
+extern TypeModifier *newFunctionTypeModifier(Symbol *args, Symbol **overLoadList, Symbol *typedefSymbol, TypeModifier *next);
+extern TypeModifier *newPointerTypeModifier(TypeModifier *next);
+extern TypeModifier *newArrayTypeModifier(void);
+extern TypeModifier *newStructTypeModifier(Symbol *symbol);
+extern TypeModifier *newEnumTypeModifier(Symbol *symbol);
+extern S_typeModifierList *newTypeModifierList(TypeModifier *d);
 
 /* And here are some fill/init functions if you need them, e.g. if you allocate elsewhere */
-extern void initTypeModifier(S_typeModifier *typeModifier, Type kind);
-extern void initTypeModifierAsStructUnionOrEnum(S_typeModifier *typeModifier, Type kind, Symbol *symbol, Symbol *typedefSymbol, S_typeModifier *next);
-extern void initTypeModifierAsFunction(S_typeModifier *typeModifier, Symbol *args, Symbol **overloadFunctionList, Symbol *typedefSymbol, S_typeModifier *next);
-extern void initTypeModifierAsMethod(S_typeModifier *typeModifier, char *signature, SymbolList *exceptions, Symbol *typedefSymbol, S_typeModifier *next);
-extern void initTypeModifierAsPointer(S_typeModifier *typeModifier, S_typeModifier *next);
-extern void initTypeModifierAsArray(S_typeModifier *typeModifier,Symbol *typedefSymbol, S_typeModifier *next);
+extern void initTypeModifier(TypeModifier *typeModifier, Type kind);
+extern void initTypeModifierAsStructUnionOrEnum(TypeModifier *typeModifier, Type kind, Symbol *symbol, Symbol *typedefSymbol, TypeModifier *next);
+extern void initTypeModifierAsFunction(TypeModifier *typeModifier, Symbol *args, Symbol **overloadFunctionList, Symbol *typedefSymbol, TypeModifier *next);
+extern void initTypeModifierAsMethod(TypeModifier *typeModifier, char *signature, SymbolList *exceptions, Symbol *typedefSymbol, TypeModifier *next);
+extern void initTypeModifierAsPointer(TypeModifier *typeModifier, TypeModifier *next);
+extern void initTypeModifierAsArray(TypeModifier *typeModifier,Symbol *typedefSymbol, TypeModifier *next);
 
 extern void initFunctionTypeModifier(struct functionTypeModifier *modifier, Symbol *args);
 
-extern S_typeModifier *prependTypeModifierWith(S_typeModifier *this, Type kind);
+extern TypeModifier *prependTypeModifierWith(TypeModifier *this, Type kind);
 
 #endif /* _TYPEMODIFIER_H_ */

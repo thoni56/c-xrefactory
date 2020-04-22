@@ -44,10 +44,10 @@ extern void methodNameNotRecognized(char *rec);
 extern void dumpOptions(int nargc, char **nargv);
 
 extern void symDump(Symbol *symbol);
-extern void typeDump(S_typeModifier *typeModifiers);
+extern void typeDump(TypeModifier *typeModifiers);
 extern void symbolRefItemDump(S_symbolRefItem *ss);
 extern int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos);
-extern void typeSPrint(char *buff,int *size,S_typeModifier *t,char*name,
+extern void typeSPrint(char *buff,int *size,TypeModifier *t,char*name,
                        int dclSepChar, int maxDeep, int typedefexp,
                        int longOrShortName, int *oNamePos);
 extern void throwsSprintf(char *out, int outsize, SymbolList *exceptions);

@@ -252,7 +252,7 @@ void symDump(Symbol *s) {
     fprintf(dumpOut,"[symbol] %s\n",s->name);
 }
 
-void typeDump(S_typeModifier *t) {
+void typeDump(TypeModifier *t) {
     fprintf(dumpOut,"dumpStart\n");
     for(; t!=NULL; t=t->next) {
         fprintf(dumpOut," %x\n",t->kind);
@@ -305,7 +305,7 @@ int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos) {
     }
 
 
-void typeSPrint(char *buff, int *size, S_typeModifier *t,
+void typeSPrint(char *buff, int *size, TypeModifier *t,
                 char *name, int dclSepChar, int maxDeep, int typedefexp,
                 int longOrShortName, int *oNamePos) {
     Symbol *dd;   Symbol *ddd;

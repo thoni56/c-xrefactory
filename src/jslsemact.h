@@ -44,11 +44,11 @@ extern void fillJslStat(S_jslStat *jslStat, int pass, int sourceFileNumber, int 
                         S_jslClassStat *classStat, SymbolList *waitList, void *savedyylval,
                         void /*S_yyGlobalState*/ *savedYYstate, int yyStateSize, S_jslStat *next);
 extern Symbol *jslTypeSpecifier1(Type t);
-extern Symbol *jslTypeSpecifier2(S_typeModifier *t);
+extern Symbol *jslTypeSpecifier2(TypeModifier *t);
 
 extern void jslCompleteDeclarator(Symbol *t, Symbol *d);
-extern S_typeModifier *jslPrependComposedType(S_typeModifier *d, Type type);
-extern S_typeModifier *jslAppendComposedType(S_typeModifier **d, Type type);
+extern TypeModifier *jslPrependComposedType(TypeModifier *d, Type type);
+extern TypeModifier *jslAppendComposedType(TypeModifier **d, Type type);
 extern Symbol *jslPrependDirectEnclosingInstanceArgument(Symbol *args);
 extern Symbol *jslMethodHeader(unsigned modif, Symbol *type, Symbol *decl, int storage, SymbolList *throws);
 extern Symbol *jslTypeNameDefinition(S_idList *tname);

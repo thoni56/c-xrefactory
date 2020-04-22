@@ -389,7 +389,7 @@ static void getSymbolCxrefCategories(
 
 static void setClassTreeBaseType(S_classTreeData *ct, Symbol *p) {
     Symbol        *rtcls;
-    S_typeModifier *tt;
+    TypeModifier *tt;
     assert(s_javaObjectSymbol && s_javaObjectSymbol->u.s);
     assert(ct);
     //&fprintf(dumpOut,"!looking for result of %s\n",p->linkName);fflush(dumpOut);
@@ -550,7 +550,7 @@ S_reference * getDefinitionRef(S_reference *rr) {
 // used only with OLO_GET_SYMBOL_TYPE;
 static void setOlSymbolTypeForPrint(Symbol *p) {
     int             size, len;
-    S_typeModifier *tt;
+    TypeModifier *tt;
     size = COMPLETION_STRING_SIZE;
     s_olSymbolType[0]=0;
     s_olSymbolClassType[0]=0;

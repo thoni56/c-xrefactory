@@ -266,7 +266,7 @@ primary_expr
             }
         } else {
             /* implicit function declaration */
-            S_typeModifier *p;
+            TypeModifier *p;
             Symbol *d;
             Symbol *dd;
 
@@ -290,7 +290,7 @@ primary_expr
     | FLOAT_CONSTANT		{ $$.d.t = newSimpleTypeModifier(TypeFloat); $$.d.r = NULL;}
     | DOUBLE_CONSTANT		{ $$.d.t = newSimpleTypeModifier(TypeDouble); $$.d.r = NULL;}
     | string_literals		{
-        S_typeModifier *p;
+        TypeModifier *p;
         p = newSimpleTypeModifier(TypeChar);
         $$.d.t = newPointerTypeModifier(p);
         $$.d.r = NULL;
@@ -1060,7 +1060,7 @@ declarator2
         AddComposedType($$.d, TypeArray);
     }
     | declarator2 '(' ')'								{
-        S_typeModifier *p;
+        TypeModifier *p;
         assert($1.d);
         $$.d = $1.d;
         p = AddComposedType($$.d, TypeFunction);
@@ -1068,7 +1068,7 @@ declarator2
         handleDeclaratorParamPositions($1.d, &$2.d, NULL, &$3.d, 0);
     }
     | declarator2 '(' parameter_type_list ')'			{
-        S_typeModifier *p;
+        TypeModifier *p;
         assert($1.d);
         $$.d = $1.d;
         p = AddComposedType($$.d, TypeFunction);
@@ -1076,7 +1076,7 @@ declarator2
         handleDeclaratorParamPositions($1.d, &$2.d, $3.d.p, &$4.d, 1);
     }
     | declarator2 '(' parameter_identifier_list ')'		{
-        S_typeModifier *p;
+        TypeModifier *p;
         assert($1.d);
         $$.d = $1.d;
         p = AddComposedType($$.d, TypeFunction);
@@ -1274,7 +1274,7 @@ type_name
     }
     | declaration_specifiers abstract_declarator	{
         $$.d = $2.d;
-        LIST_APPEND(S_typeModifier, $$.d, $1.d->u.type);
+        LIST_APPEND(TypeModifier, $$.d, $1.d->u.type);
     }
     ;
 
@@ -1319,13 +1319,13 @@ abstract_declarator2
         $$.d = newFunctionTypeModifier($2.d.s, NULL, NULL, NULL);
     }
     | abstract_declarator2 '(' ')'					{
-        S_typeModifier *p;
+        TypeModifier *p;
         $$.d = $1.d;
         p = appendComposedType(&($$.d), TypeFunction);
         initFunctionTypeModifier(&p->u.f , NULL);
     }
     | abstract_declarator2 '(' parameter_type_list ')'			{
-        S_typeModifier *p;
+        TypeModifier *p;
         $$.d = $1.d;
         p = appendComposedType(&($$.d), TypeFunction);
         // I think there should be the following, but in abstract

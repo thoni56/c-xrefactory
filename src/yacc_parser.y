@@ -463,7 +463,7 @@ primary_expr
             }
         } else {
             /* implicit function declaration */
-            S_typeModifier *p;
+            TypeModifier *p;
             Symbol *d;
             Symbol *dd __attribute__((unused));
 
@@ -483,7 +483,7 @@ primary_expr
     | FLOAT_CONSTANT        { $$.d.t = newSimpleTypeModifier(TypeFloat); $$.d.r = NULL;}
     | DOUBLE_CONSTANT       { $$.d.t = newSimpleTypeModifier(TypeDouble); $$.d.r = NULL;}
     | STRING_LITERAL        {
-        S_typeModifier *p;
+        TypeModifier *p;
         p = newSimpleTypeModifier(TypeChar);
         $$.d.t = newPointerTypeModifier(p);
         $$.d.r = NULL;
@@ -1014,7 +1014,7 @@ struct_declarator_list
 struct_declarator
     : declarator                    /*& { $$.d = $1.d; } */
     | ':' constant_expr             {
-        S_typeModifier *p;
+        TypeModifier *p;
         p = newSimpleTypeModifier(TypeAnonymousField);
         $$.d = newSymbolAsType(NULL, NULL, s_noPos, p);
 
@@ -1109,14 +1109,14 @@ declarator2
         AddComposedType($$.d, TypeArray);
     }
     | declarator2 '(' ')'                               {
-        S_typeModifier *p;
+        TypeModifier *p;
         assert($1.d);
         $$.d = $1.d;
         p = AddComposedType($$.d, TypeFunction);
         initFunctionTypeModifier(&p->u.f , NULL);
     }
     | declarator2 '(' parameter_type_list ')'           {
-        S_typeModifier *p;
+        TypeModifier *p;
         assert($1.d);
         $$.d = $1.d;
         p = AddComposedType($$.d, TypeFunction);
@@ -1124,7 +1124,7 @@ declarator2
         handleDeclaratorParamPositions($1.d, &$2.d, $3.d.p, &$4.d, 1);
     }
     | declarator2 '(' parameter_identifier_list ')'     {
-        S_typeModifier *p;
+        TypeModifier *p;
         assert($1.d);
         $$.d = $1.d;
         p = AddComposedType($$.d, TypeFunction);
@@ -1316,7 +1316,7 @@ type_name
     }
     | declaration_specifiers abstract_declarator    {
         $$.d = $2.d;
-        LIST_APPEND(S_typeModifier, $$.d, $1.d->u.type);
+        LIST_APPEND(TypeModifier, $$.d, $1.d->u.type);
     }
     ;
 
@@ -1363,13 +1363,13 @@ abstract_declarator2
         initFunctionTypeModifier(&$$.d->u.f , $2.d.s);
     }
     | abstract_declarator2 '(' ')'                  {
-        S_typeModifier *p;
+        TypeModifier *p;
         $$.d = $1.d;
         p = appendComposedType(&($$.d), TypeFunction);
         initFunctionTypeModifier(&p->u.f , NULL);
     }
     | abstract_declarator2 '(' parameter_type_list ')'          {
-        S_typeModifier *p;
+        TypeModifier *p;
         $$.d = $1.d;
         p = appendComposedType(&($$.d), TypeFunction);
         // why there was the following ?????

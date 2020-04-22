@@ -46,7 +46,7 @@ void javaAddImportConstructionReference(S_position *importPos, S_position *pos, 
   mock(importPos, pos, usage);
 }
 
-int javaClassifyAmbiguousName(S_idList *name, S_recFindStr *rfs, Symbol **str, S_typeModifier **expr, S_reference **oref, S_reference **rdtoref, int allowUselesFqtRefs, int classif, int usage) {
+int javaClassifyAmbiguousName(S_idList *name, S_recFindStr *rfs, Symbol **str, TypeModifier **expr, S_reference **oref, S_reference **rdtoref, int allowUselesFqtRefs, int classif, int usage) {
   return (int) mock(name, rfs, str, expr, oref, rdtoref, allowUselesFqtRefs, classif, usage);
 }
 
@@ -74,8 +74,8 @@ char *javaImportSymbolName_st(int file, int line, int coll) {
   return (char *) mock(file, line, coll);
 }
 
-S_typeModifier *javaClassifyToExpressionName(S_idList *name, S_reference **oref) {
-  return (S_typeModifier *) mock(name, oref);
+TypeModifier *javaClassifyToExpressionName(S_idList *name, S_reference **oref) {
+  return (TypeModifier *) mock(name, oref);
 }
 
 Symbol *javaTypeNameDefinition(S_idList *tname) {
@@ -98,7 +98,7 @@ Symbol *javaCreateNewMethod(char *name, S_position *pos, int mem) {
   return (Symbol *) mock(name, pos, mem);
 }
 
-int javaTypeToString(S_typeModifier *type, char *pp, int ppSize) {
+int javaTypeToString(TypeModifier *type, char *pp, int ppSize) {
   return (int) mock(type, pp, ppSize);
 }
 
@@ -210,47 +210,47 @@ Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {
   return (Symbol *) mock(name, fqName);
 }
 
-S_typeModifier *javaClassNameType(S_idList *typeName) {
-  return (S_typeModifier *) mock(typeName);
+TypeModifier *javaClassNameType(S_idList *typeName) {
+  return (TypeModifier *) mock(typeName);
 }
 
-S_typeModifier *javaNewAfterName(S_idList *name, S_id *id, S_idList *idl) {
-  return (S_typeModifier *) mock(name, id, idl);
+TypeModifier *javaNewAfterName(S_idList *name, S_id *id, S_idList *idl) {
+  return (TypeModifier *) mock(name, id, idl);
 }
 
 int javaIsInnerAndCanGetUnnamedEnclosingInstance(Symbol *name, Symbol **outEi) {
   return (int) mock(name, outEi);
 }
 
-S_typeModifier *javaNestedNewType(Symbol *expr, S_id *thenew, S_idList *idl) {
-  return (S_typeModifier *) mock(expr, thenew, idl);
+TypeModifier *javaNestedNewType(Symbol *expr, S_id *thenew, S_idList *idl) {
+  return (TypeModifier *) mock(expr, thenew, idl);
 }
 
-S_typeModifier *javaArrayFieldAccess(S_id *id) {
-  return (S_typeModifier *) mock(id);
+TypeModifier *javaArrayFieldAccess(S_id *id) {
+  return (TypeModifier *) mock(id);
 }
 
-S_typeModifier *javaMethodInvocationN(S_idList *name, S_typeModifierList *args) {
-  return (S_typeModifier *) mock(name, args);
+TypeModifier *javaMethodInvocationN(S_idList *name, S_typeModifierList *args) {
+  return (TypeModifier *) mock(name, args);
 }
 
-S_typeModifier *javaMethodInvocationT(S_typeModifier *tt, S_id *name, S_typeModifierList *args) {
-  return (S_typeModifier *) mock(tt, name, args);
+TypeModifier *javaMethodInvocationT(TypeModifier *tt, S_id *name, S_typeModifierList *args) {
+  return (TypeModifier *) mock(tt, name, args);
 }
 
-S_typeModifier *javaMethodInvocationS(S_id *super, S_id *name, S_typeModifierList *args) {
-  return (S_typeModifier *) mock(super, name, args);
+TypeModifier *javaMethodInvocationS(S_id *super, S_id *name, S_typeModifierList *args) {
+  return (TypeModifier *) mock(super, name, args);
 }
 
-S_typeModifier *javaConstructorInvocation(Symbol *class, S_position *pos, S_typeModifierList *args) {
-  return (S_typeModifier *) mock(class, pos, args);
+TypeModifier *javaConstructorInvocation(Symbol *class, S_position *pos, S_typeModifierList *args) {
+  return (TypeModifier *) mock(class, pos, args);
 }
 
 S_extRecFindStr *javaCrErfsForMethodInvocationN(S_idList *name) {
   return (S_extRecFindStr *) mock(name);
 }
 
-S_extRecFindStr *javaCrErfsForMethodInvocationT(S_typeModifier *tt, S_id *name) {
+S_extRecFindStr *javaCrErfsForMethodInvocationT(TypeModifier *tt, S_id *name) {
   return (S_extRecFindStr *) mock(tt, name);
 }
 
@@ -282,31 +282,31 @@ Symbol *javaCurrentSuperClass(void) {
   return (Symbol *) mock();
 }
 
-S_typeModifier *javaCheckNumeric(S_typeModifier *tt) {
-  return (S_typeModifier *) mock(tt);
+TypeModifier *javaCheckNumeric(TypeModifier *tt) {
+  return (TypeModifier *) mock(tt);
 }
 
-S_typeModifier *javaNumericPromotion(S_typeModifier *tt) {
-  return (S_typeModifier *) mock(tt);
+TypeModifier *javaNumericPromotion(TypeModifier *tt) {
+  return (TypeModifier *) mock(tt);
 }
 
-S_typeModifier *javaBinaryNumericPromotion(S_typeModifier *t1, S_typeModifier *t2) {
-  return (S_typeModifier *) mock(t1, t2);
+TypeModifier *javaBinaryNumericPromotion(TypeModifier *t1, TypeModifier *t2) {
+  return (TypeModifier *) mock(t1, t2);
 }
 
-S_typeModifier *javaBitwiseLogicalPromotion(S_typeModifier *t1, S_typeModifier *t2) {
-  return (S_typeModifier *) mock(t1, t2);
+TypeModifier *javaBitwiseLogicalPromotion(TypeModifier *t1, TypeModifier *t2) {
+  return (TypeModifier *) mock(t1, t2);
 }
 
-S_typeModifier *javaConditionalPromotion(S_typeModifier *t1, S_typeModifier *t2) {
-  return (S_typeModifier *) mock(t1, t2);
+TypeModifier *javaConditionalPromotion(TypeModifier *t1, TypeModifier *t2) {
+  return (TypeModifier *) mock(t1, t2);
 }
 
-int javaIsStringType(S_typeModifier *tt) {
+int javaIsStringType(TypeModifier *tt) {
   return (int) mock(tt);
 }
 
-void javaTypeDump(S_typeModifier *tt) {
+void javaTypeDump(TypeModifier *tt) {
   mock(tt);
 }
 

@@ -84,9 +84,9 @@ extern Symbol *s_javaStringSymbol;
 extern Symbol *s_javaObjectSymbol;
 extern Symbol *s_javaCloneableSymbol;
 extern Symbol *s_javaIoSerializableSymbol;
-extern S_typeModifier s_javaStringModifier;
-extern S_typeModifier s_javaClassModifier;
-extern S_typeModifier s_javaObjectModifier;
+extern TypeModifier s_javaStringModifier;
+extern TypeModifier s_javaClassModifier;
+extern TypeModifier s_javaObjectModifier;
 
 extern FILE *cxOut;
 extern FILE *ccOut;
@@ -100,12 +100,12 @@ extern S_currentlyParsedStatics s_cpsInit;
 
 extern S_fileTab s_fileTab;
 
-extern S_typeModifier s_defaultIntModifier;
+extern TypeModifier s_defaultIntModifier;
 extern Symbol s_defaultIntDefinition;
-extern S_typeModifier s_defaultPackedTypeModifier;
-extern S_typeModifier s_defaultVoidModifier;
+extern TypeModifier s_defaultPackedTypeModifier;
+extern TypeModifier s_defaultVoidModifier;
 extern Symbol s_defaultVoidDefinition;
-extern S_typeModifier s_errorModifier;
+extern TypeModifier s_errorModifier;
 extern Symbol s_errorSymbol;
 extern struct stat s_noStat;
 extern S_position s_noPos;
@@ -116,19 +116,19 @@ extern uchar typeShortChange[MAX_TYPE];
 extern uchar typeSignedChange[MAX_TYPE];
 extern uchar typeUnsignedChange[MAX_TYPE];
 
-extern S_typeModifier *s_structRecordCompletionType;
-extern S_typeModifier *s_upLevelFunctionCompletionType;
+extern TypeModifier *s_structRecordCompletionType;
+extern TypeModifier *s_upLevelFunctionCompletionType;
 extern S_exprTokenType s_forCompletionType;
-extern S_typeModifier *s_javaCompletionLastPrimary;
+extern TypeModifier *s_javaCompletionLastPrimary;
 extern char *s_tokenName[];
 extern int s_tokenLength[];
 extern S_tokenNameIni s_tokenNameIniTab[];
 extern S_tokenNameIni s_tokenNameIniTab2[];
 extern S_tokenNameIni s_tokenNameIniTab3[];
 extern int s_preCrTypesIniTab[];
-extern S_typeModifier * s_preCreatedTypesTable[MAX_TYPE];
-extern S_typeModifier * s_preCrPtr1TypesTab[MAX_TYPE];
-extern S_typeModifier * s_preCrPtr2TypesTab[MAX_TYPE];
+extern TypeModifier * s_preCreatedTypesTable[MAX_TYPE];
+extern TypeModifier * s_preCrPtr1TypesTab[MAX_TYPE];
+extern TypeModifier * s_preCrPtr2TypesTab[MAX_TYPE];
 
 extern char s_javaBaseTypeCharCodes[MAX_TYPE];
 extern int s_javaCharCodeBaseTypes[MAX_CHARS];

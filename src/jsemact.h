@@ -29,7 +29,7 @@ extern S_javaStat s_initJavaStat;
 
 extern void fill_nestedSpec(S_nestedSpec *nestedSpec, struct symbol *cl,
                             char membFlag, short unsigned  accFlags);
-extern void fillJavaStat(S_javaStat *javaStat, S_idList *className, S_typeModifier *thisType, Symbol *thisClass,
+extern void fillJavaStat(S_javaStat *javaStat, S_idList *className, TypeModifier *thisType, Symbol *thisClass,
                          int currentNestedIndex, char *currentPackage, char *unnamedPackageDir,
                          char *namedPackageDir, S_symbolTable *locals, S_idList *lastParsedName,
                          unsigned methodModifiers, S_currentlyParsedCl parsingPositions, int classFileIndex,
@@ -62,7 +62,7 @@ extern int javaClassifyAmbiguousName(
                                      S_idList *name,
                                      S_recFindStr *rfs,
                                      Symbol **str,
-                                     S_typeModifier **expr,
+                                     TypeModifier **expr,
                                      S_reference **oref,
                                      S_reference **rdtoref, int allowUselesFqtRefs,
                                      int classif,
@@ -74,13 +74,13 @@ extern Symbol * javaQualifiedThis(S_idList *tname, S_id *thisid);
 extern void javaClassifyToPackageName( S_idList *id );
 extern void javaClassifyToPackageNameAndAddRefs(S_idList *id, int usage);
 extern char *javaImportSymbolName_st(int file, int line, int coll);
-extern S_typeModifier *javaClassifyToExpressionName(S_idList *name,S_reference **oref);
+extern TypeModifier *javaClassifyToExpressionName(S_idList *name,S_reference **oref);
 extern Symbol *javaTypeNameDefinition(S_idList *tname);
 extern void javaSetFieldLinkName(Symbol *d);
 extern void javaAddPackageDefinition(S_idList *id);
 extern Symbol *javaAddType(S_idList *class, Access access, S_position *p);
 extern Symbol *javaCreateNewMethod(char *name, S_position *pos, int mem);
-extern int javaTypeToString(S_typeModifier *type, char *pp, int ppSize);
+extern int javaTypeToString(TypeModifier *type, char *pp, int ppSize);
 extern int javaIsYetInTheClass(
                                Symbol	*clas,
                                char		*lname,
@@ -121,29 +121,29 @@ extern void javaAddMapedTypeName(
                                  int  *storage
                                  );
 extern Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName);
-extern S_typeModifier *javaClassNameType(S_idList *typeName);
-extern S_typeModifier *javaNewAfterName(S_idList *name, S_id *id, S_idList *idl);
+extern TypeModifier *javaClassNameType(S_idList *typeName);
+extern TypeModifier *javaNewAfterName(S_idList *name, S_id *id, S_idList *idl);
 extern int javaIsInnerAndCanGetUnnamedEnclosingInstance(Symbol *name, Symbol **outEi);
-extern S_typeModifier *javaNestedNewType(Symbol *expr, S_id *thenew, S_idList *idl);
-extern S_typeModifier *javaArrayFieldAccess(S_id *id);
-extern S_typeModifier *javaMethodInvocationN(
+extern TypeModifier *javaNestedNewType(Symbol *expr, S_id *thenew, S_idList *idl);
+extern TypeModifier *javaArrayFieldAccess(S_id *id);
+extern TypeModifier *javaMethodInvocationN(
                                               S_idList *name,
                                               S_typeModifierList *args
                                               );
-extern S_typeModifier *javaMethodInvocationT(	S_typeModifier *tt,
+extern TypeModifier *javaMethodInvocationT(	TypeModifier *tt,
                                                 S_id *name,
                                                 S_typeModifierList *args
                                                 );
-extern S_typeModifier *javaMethodInvocationS(	S_id *super,
+extern TypeModifier *javaMethodInvocationS(	S_id *super,
                                                 S_id *name,
                                                 S_typeModifierList *args
                                                 );
-extern S_typeModifier *javaConstructorInvocation(Symbol *class,
+extern TypeModifier *javaConstructorInvocation(Symbol *class,
                                                   S_position *pos,
                                                   S_typeModifierList *args
                                                   );
 extern S_extRecFindStr *javaCrErfsForMethodInvocationN(S_idList *name);
-extern S_extRecFindStr *javaCrErfsForMethodInvocationT(S_typeModifier *tt,S_id *name);
+extern S_extRecFindStr *javaCrErfsForMethodInvocationT(TypeModifier *tt,S_id *name);
 extern S_extRecFindStr *javaCrErfsForMethodInvocationS(S_id *super,S_id *name);
 extern S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas, S_position *pos);
 extern int javaClassIsInCurrentPackage(Symbol *cl);
@@ -151,19 +151,19 @@ extern int javaFqtNamesAreFromTheSamePackage(char *classFqName, char *fqname2);
 extern int javaMethodApplicability(Symbol *memb, char *actArgs);
 extern Symbol *javaGetSuperClass(Symbol *cc);
 extern Symbol *javaCurrentSuperClass(void);
-extern S_typeModifier *javaCheckNumeric(S_typeModifier *tt);
-extern S_typeModifier *javaNumericPromotion(S_typeModifier *tt);
-extern S_typeModifier *javaBinaryNumericPromotion(S_typeModifier *t1,
-                                                   S_typeModifier *t2
+extern TypeModifier *javaCheckNumeric(TypeModifier *tt);
+extern TypeModifier *javaNumericPromotion(TypeModifier *tt);
+extern TypeModifier *javaBinaryNumericPromotion(TypeModifier *t1,
+                                                   TypeModifier *t2
                                                    );
-extern S_typeModifier *javaBitwiseLogicalPromotion(S_typeModifier *t1,
-                                                    S_typeModifier *t2
+extern TypeModifier *javaBitwiseLogicalPromotion(TypeModifier *t1,
+                                                    TypeModifier *t2
                                                     );
-extern S_typeModifier *javaConditionalPromotion(S_typeModifier *t1,
-                                                 S_typeModifier *t2
+extern TypeModifier *javaConditionalPromotion(TypeModifier *t1,
+                                                 TypeModifier *t2
                                                  );
-extern int javaIsStringType(S_typeModifier *tt);
-extern void javaTypeDump(S_typeModifier *tt);
+extern int javaIsStringType(TypeModifier *tt);
+extern void javaTypeDump(TypeModifier *tt);
 extern void javaAddJslReadedTopLevelClasses(S_jslTypeTab  *typeTab);
 extern struct freeTrail * newAnonClassDefinitionBegin(S_id *interfName);
 extern void javaAddSuperNestedClassToSymbolTab( Symbol *cc);

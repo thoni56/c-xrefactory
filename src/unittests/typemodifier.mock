@@ -2,63 +2,62 @@
 #include "typemodifier.h"
 #include <cgreen/mocks.h>
 
-S_typeModifier *newTypeModifier(Type kind, Symbol *typedefSymbol, S_typeModifier *next) { 
-  return (S_typeModifier *) mock(kind, typedefSymbol, next);
+TypeModifier *newTypeModifier(Type kind, Symbol *typedefSymbol, TypeModifier *next) {
+  return (TypeModifier *) mock(kind, typedefSymbol, next);
 }
 
-S_typeModifier *newSimpleTypeModifier(Type kind) { 
-  return (S_typeModifier *) mock(kind);
+TypeModifier *newSimpleTypeModifier(Type kind) {
+  return (TypeModifier *) mock(kind);
 }
 
-S_typeModifier *newFunctionTypeModifier(Symbol *args, Symbol **overLoadList, Symbol *typedefSymbol, S_typeModifier *next) { 
-  return (S_typeModifier *) mock(args, overLoadList, typedefSymbol, next);
+TypeModifier *newFunctionTypeModifier(Symbol *args, Symbol **overLoadList, Symbol *typedefSymbol, TypeModifier *next) {
+  return (TypeModifier *) mock(args, overLoadList, typedefSymbol, next);
 }
 
-S_typeModifier *newPointerTypeModifier(S_typeModifier *next) { 
-  return (S_typeModifier *) mock(next);
+TypeModifier *newPointerTypeModifier(TypeModifier *next) {
+  return (TypeModifier *) mock(next);
 }
 
-S_typeModifier *newArrayTypeModifier(void) { 
-  return (S_typeModifier *) mock();
+TypeModifier *newArrayTypeModifier(void) {
+  return (TypeModifier *) mock();
 }
 
-S_typeModifier *newStructTypeModifier(Symbol *symbol) { 
-  return (S_typeModifier *) mock(symbol);
+TypeModifier *newStructTypeModifier(Symbol *symbol) {
+  return (TypeModifier *) mock(symbol);
 }
 
-S_typeModifierList *newTypeModifierList(S_typeModifier *d) { 
+S_typeModifierList *newTypeModifierList(TypeModifier *d) {
   return (S_typeModifierList *) mock(d);
 }
 
-void initTypeModifier(S_typeModifier *typeModifier, Type kind) { 
+void initTypeModifier(TypeModifier *typeModifier, Type kind) {
   mock(typeModifier, kind);
 }
 
-void initTypeModifierAsStructUnionOrEnum(S_typeModifier *typeModifier, Type kind, Symbol *symbol, Symbol *typedefSymbol, S_typeModifier *next) { 
+void initTypeModifierAsStructUnionOrEnum(TypeModifier *typeModifier, Type kind, Symbol *symbol, Symbol *typedefSymbol, TypeModifier *next) {
   mock(typeModifier, kind, symbol, typedefSymbol, next);
 }
 
-void initTypeModifierAsFunction(S_typeModifier *typeModifier, Symbol *args, Symbol **overloadFunctionList, Symbol *typedefSymbol, S_typeModifier *next) { 
+void initTypeModifierAsFunction(TypeModifier *typeModifier, Symbol *args, Symbol **overloadFunctionList, Symbol *typedefSymbol, TypeModifier *next) {
   mock(typeModifier, args, overloadFunctionList, typedefSymbol, next);
 }
 
-void initTypeModifierAsMethod(S_typeModifier *typeModifier, char *signature, SymbolList *exceptions, Symbol *typedefSymbol, S_typeModifier *next) { 
+void initTypeModifierAsMethod(TypeModifier *typeModifier, char *signature, SymbolList *exceptions, Symbol *typedefSymbol, TypeModifier *next) {
   mock(typeModifier, signature, exceptions, typedefSymbol, next);
 }
 
-void initTypeModifierAsPointer(S_typeModifier *typeModifier, S_typeModifier *next) { 
+void initTypeModifierAsPointer(TypeModifier *typeModifier, TypeModifier *next) {
   mock(typeModifier, next);
 }
 
-void initTypeModifierAsArray(S_typeModifier *typeModifier, Symbol *typedefSymbol, S_typeModifier *next) { 
+void initTypeModifierAsArray(TypeModifier *typeModifier, Symbol *typedefSymbol, TypeModifier *next) {
   mock(typeModifier, typedefSymbol, next);
 }
 
-void initFunctionTypeModifier(struct functionTypeModifier *modifier, Symbol *args) { 
+void initFunctionTypeModifier(struct functionTypeModifier *modifier, Symbol *args) {
   mock(modifier, args);
 }
 
-S_typeModifier *prependTypeModifierWith(S_typeModifier *this, Type kind) { 
-  return (S_typeModifier *) mock(this, kind);
+TypeModifier *prependTypeModifierWith(TypeModifier *this, Type kind) {
+  return (TypeModifier *) mock(this, kind);
 }
-

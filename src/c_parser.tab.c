@@ -2257,7 +2257,7 @@ case 1:
             }
         } else {
             /* implicit function declaration */
-            S_typeModifier *p;
+            TypeModifier *p;
             Symbol *d;
             Symbol *dd;
 
@@ -2299,7 +2299,7 @@ break;
 case 7:
 #line 292 "c_parser.y"
 {
-        S_typeModifier *p;
+        TypeModifier *p;
         p = newSimpleTypeModifier(TypeChar);
         yyval.ast_expressionType.d.t = newPointerTypeModifier(p);
         yyval.ast_expressionType.d.r = NULL;
@@ -3251,7 +3251,7 @@ break;
 case 196:
 #line 1062 "c_parser.y"
 {
-        S_typeModifier *p;
+        TypeModifier *p;
         assert(yyvsp[-2].ast_symbol.d);
         yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
         p = AddComposedType(yyval.ast_symbol.d, TypeFunction);
@@ -3262,7 +3262,7 @@ break;
 case 197:
 #line 1070 "c_parser.y"
 {
-        S_typeModifier *p;
+        TypeModifier *p;
         assert(yyvsp[-3].ast_symbol.d);
         yyval.ast_symbol.d = yyvsp[-3].ast_symbol.d;
         p = AddComposedType(yyval.ast_symbol.d, TypeFunction);
@@ -3273,7 +3273,7 @@ break;
 case 198:
 #line 1078 "c_parser.y"
 {
-        S_typeModifier *p;
+        TypeModifier *p;
         assert(yyvsp[-3].ast_symbol.d);
         yyval.ast_symbol.d = yyvsp[-3].ast_symbol.d;
         p = AddComposedType(yyval.ast_symbol.d, TypeFunction);
@@ -3509,7 +3509,7 @@ case 232:
 #line 1275 "c_parser.y"
 {
         yyval.ast_typeModifiers.d = yyvsp[0].ast_typeModifiers.d;
-        LIST_APPEND(S_typeModifier, yyval.ast_typeModifiers.d, yyvsp[-1].ast_symbol.d->u.type);
+        LIST_APPEND(TypeModifier, yyval.ast_typeModifiers.d, yyvsp[-1].ast_symbol.d->u.type);
     }
 break;
 case 233:
@@ -3581,7 +3581,7 @@ break;
 case 243:
 #line 1321 "c_parser.y"
 {
-        S_typeModifier *p;
+        TypeModifier *p;
         yyval.ast_typeModifiers.d = yyvsp[-2].ast_typeModifiers.d;
         p = appendComposedType(&(yyval.ast_typeModifiers.d), TypeFunction);
         initFunctionTypeModifier(&p->u.f , NULL);
@@ -3590,7 +3590,7 @@ break;
 case 244:
 #line 1327 "c_parser.y"
 {
-        S_typeModifier *p;
+        TypeModifier *p;
         yyval.ast_typeModifiers.d = yyvsp[-3].ast_typeModifiers.d;
         p = appendComposedType(&(yyval.ast_typeModifiers.d), TypeFunction);
         /* I think there should be the following, but in abstract*/

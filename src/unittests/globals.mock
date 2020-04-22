@@ -66,7 +66,7 @@ Language s_language;
 S_options s_opt;
 S_options s_ropt;
 
-S_typeModifier *s_structRecordCompletionType;
+TypeModifier *s_structRecordCompletionType;
 Completions s_completions;
 
 S_position s_paramPosition;
@@ -84,7 +84,7 @@ time_t s_fileProcessStartTime;
 char s_cwd[MAX_FILE_NAME_SIZE];
 
 S_currentlyParsedStatics s_cps;
-S_typeModifier *s_upLevelFunctionCompletionType;
+TypeModifier *s_upLevelFunctionCompletionType;
 S_position s_primaryStartPosition;
 char tmpBuff[TMP_BUFF_SIZE];
 unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL];

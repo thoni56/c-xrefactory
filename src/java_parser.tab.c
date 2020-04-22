@@ -3501,7 +3501,7 @@ case 77:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     Symbol *str;
-                    S_typeModifier *expr;
+                    TypeModifier *expr;
                     S_reference *rr, *lastUselessRef;
                     int st __attribute__((unused));
                     st = javaClassifyAmbiguousName(yyvsp[-3].ast_idList.d, NULL,&str,&expr,&rr,
@@ -5852,7 +5852,7 @@ case 360:
 #line 3093 "java_parser.y"
 {
                 if (ComputingPossibleParameterCompletion()) {
-                    S_typeModifier *mm;
+                    TypeModifier *mm;
                     s_cp.erfsForParamsComplet = NULL;
                     if (yyvsp[-4].ast_expressionType.d.t->kind == TypeStruct) {
                         mm = javaNestedNewType(yyvsp[-4].ast_expressionType.d.t->u.t, yyvsp[-2].ast_id.d, yyvsp[-1].ast_idList.d);
@@ -5891,7 +5891,7 @@ case 362:
 #line 3127 "java_parser.y"
 {
                 if (ComputingPossibleParameterCompletion()) {
-                    S_typeModifier *mm;
+                    TypeModifier *mm;
                     s_cp.erfsForParamsComplet = NULL;
                     mm = javaNewAfterName(yyvsp[-4].ast_idList.d, yyvsp[-2].ast_id.d, yyvsp[-1].ast_idList.d);
                     if (mm->kind != TypeError) {
@@ -5925,7 +5925,7 @@ case 364:
             if (ComputingPossibleParameterCompletion()) {
                 Symbol            *ss;
                 Symbol			*str;
-                S_typeModifier		*expr;
+                TypeModifier		*expr;
                 S_reference			*rr, *lastUselessRef;
                 javaClassifyAmbiguousName(yyvsp[0].ast_idList.d, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
                                           CLASS_TO_TYPE,UsageUsed);
@@ -5943,7 +5943,7 @@ case 365:
                 if (! SyntaxPassOnly()) {
                     Symbol *ss, *tt, *ei;
                     Symbol *str;
-                    S_typeModifier *expr;
+                    TypeModifier *expr;
                     S_reference *rr, *lastUselessRef;
 
                     s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
@@ -6446,7 +6446,7 @@ case 404:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_typeModifier *tt;
+                    TypeModifier *tt;
                     tt = javaClassifyToExpressionName(yyvsp[-3].ast_idList.d, &(yyval.ast_expressionType.d.r));
                     if (tt->kind==TypeArray) yyval.ast_expressionType.d.t=tt->next;
                     else yyval.ast_expressionType.d.t = &s_errorModifier;
