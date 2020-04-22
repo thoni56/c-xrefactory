@@ -4399,7 +4399,7 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
     }
 
     /* If there is a wizard completion, RETURN now */
-    if (s_completions.ai != 0 && s_opt.server_operation != OLO_SEARCH) return;
+    if (s_completions.alternativeIndex != 0 && s_opt.server_operation != OLO_SEARCH) return;
     for (i=0;(tok=completionsTab[i].token)!=0; i++) {
         if (((yyn = yysindex[lastyystate]) && (yyn += tok) >= 0 &&
              yyn <= YYTABLESIZE && yycheck[yyn] == tok) ||
@@ -4432,7 +4432,7 @@ void makeJavaCompletions(char *s, int len, S_position *pos) {
 
     /* If the completion window is shown, or there is no completion,
        add also hints (should be optionally) */
-    //&if (s_completions.comPrefix[0]!=0  && (s_completions.ai != 0)
+    //&if (s_completions.comPrefix[0]!=0  && (s_completions.alternativeIndex != 0)
     //&	&& s_opt.cxrefs != OLO_SEARCH) return;
 
     for (i=0;(tok=hintCompletionsTab[i].token)!=0; i++) {

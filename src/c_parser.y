@@ -1855,7 +1855,7 @@ void makeCCompletions(char *s, int len, S_position *pos) {
     }
 
     /* If there is a wizard completion, RETURN now */
-    if (s_completions.ai != 0 && s_opt.server_operation != OLO_SEARCH)
+    if (s_completions.alternativeIndex != 0 && s_opt.server_operation != OLO_SEARCH)
         return;
 
     /* basic language tokens */

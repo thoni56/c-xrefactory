@@ -242,7 +242,7 @@ enum taskRegimes {
 /* ************** on-line (browsing) operations for c-xref server  ********** */
 
 enum olcxOptions {
-    OLO_COMPLETION,             /* must be zero */
+    OLO_COMPLETION = 0,             /* must be zero */
     OLO_SEARCH,
     OLO_TAG_SEARCH,
     OLO_RENAME,        /* same as push, just another ordering */
@@ -701,9 +701,9 @@ typedef struct olcxReferencesStack {
 
 
 typedef struct cline {					/* should be a little bit union-ified */
-    char            *s;
-    struct symbol   *t;
-    Type			symType;
+    char            *string;
+    struct symbol   *symbol;
+    Type			symbolType;
     short int		virtLevel;
     short int		margn;
     char			**margs;
@@ -720,8 +720,8 @@ typedef struct completions {
     bool abortFurtherCompletions;
     char            comPrefix[TMP_STRING_SIZE];
     int				maxLen;
-    struct cline    a[MAX_COMPLETIONS];
-    int             ai;
+    struct cline    alternatives[MAX_COMPLETIONS];
+    int             alternativeIndex;
 } S_completions;
 
 
