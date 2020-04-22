@@ -46,7 +46,7 @@ enumTxt:
 	if ! diff $@.g.h tmp-$@.g.h ; then \
 		mv -f $@.g.h $@.g.h.backup ; \
 		mv -f tmp-$@.g.h $@.g.h ; \
-		echo "$@.g.h: REGENERATED" ; \
+		echo "$@.g.h: REGENERATED. Please rebuild to ensure compilation with new version." ; \
 	else \
 		echo "$@.g.h: no change" ; \
 		rm tmp-$@.g.h ; \
