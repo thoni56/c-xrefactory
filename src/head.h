@@ -52,7 +52,6 @@ typedef enum language {
 #define XREF_EXIT_BASE          64	// base for exit status
 #define XREF_EXIT_ERR           65
 #define XREF_EXIT_NO_PROJECT    66
-#define XREF_EXIT_LICENSE		67
 
 /* *********************************************************************** */
 
@@ -110,7 +109,6 @@ typedef enum language {
 
 #define CC_COMPLETION   'c'
 #define CC_CXREF        'x'
-#define CC_EOF          '\n'
 
 /* ***************** OLCX COMMUNICATION CHARS ******************** */
 
