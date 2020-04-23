@@ -562,7 +562,7 @@ void addSourcePathsCut(void) {
 }
 
 
-static char * canItBeJavaBinPath(char *ttt) {
+static char *canItBeJavaBinPath(char *ttt) {
     static char     res[MAX_FILE_NAME_SIZE];
     char            *np;
     struct stat     st;
@@ -591,7 +591,7 @@ static char * canItBeJavaBinPath(char *ttt) {
 }
 
 
-static char *getJdk12AutoClassPathFastly(void) {
+static char *getJdk12AutoClassPathQuickly(void) {
     char            ttt[MAX_FILE_NAME_SIZE];
     char            *res;
     char            *cp;
@@ -615,11 +615,11 @@ static char *getJdk12AutoClassPathFastly(void) {
     return(NULL);
 }
 
-static char *getJdkClassPathFastly(void) {
+static char *getJdkClassPathQuickly(void) {
     char *jdkcp;
     jdkcp = s_opt.jdkClassPath;
     if (jdkcp == NULL || *jdkcp==0) jdkcp = getenv("JDKCLASSPATH");
-    if (jdkcp == NULL || *jdkcp==0) jdkcp = getJdk12AutoClassPathFastly();
+    if (jdkcp == NULL || *jdkcp==0) jdkcp = getJdk12AutoClassPathQuickly();
     return(jdkcp);
 }
 
@@ -670,9 +670,9 @@ static char *getJdkClassPath(void) {
     char *res;
     int i;
 
-    res = getJdkClassPathFastly();
+    res = getJdkClassPathQuickly();
     if (res!=NULL && *res!=0) return(res);
-    // Can't determine it fastly, try other methods
+    // Can't determine it with quick method, try other methods
     for(i=0; s_defaultPossibleJavaBinPaths[i]!=NULL; i++) {
         res = canItBeJavaBinPath(s_defaultPossibleJavaBinPaths[i]);
         if (res!=NULL && *res!=0) return(res);
@@ -727,7 +727,7 @@ void getJavaClassAndSourcePath(void) {
 
         createOptionString(&s_opt.classpath, cp);  //??? why is this, only optimisation of getenv?
         processClassPathString(cp);
-        jdkcp = getJdkClassPathFastly();
+        jdkcp = getJdkClassPathQuickly();
         if (jdkcp != NULL && *jdkcp!=0) {
             createOptionString(&s_opt.jdkClassPath, jdkcp);  //only optimisation of getenv?
             processClassPathString( jdkcp);
