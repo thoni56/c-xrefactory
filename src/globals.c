@@ -399,13 +399,13 @@ S_options s_initOpt = {
 
     /* CXREF options  */
 
-    0,
-    0,
-    1,
-    0,
-    0,
-    NULL,
-    0,
+    0,                          /* err */
+    0,                          /* long_cxref */
+    1,                          /* brief */
+    0,                          /* update */
+    0,                          /* keep_old */
+    NULL,                       /* last_message */
+    0,                          /* refnum */
 
     // all the rest is initialized to zeros
     {0, },      // get/set end
