@@ -1197,7 +1197,7 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
     assert(ri == CXFI_REFERENCE);
     usage = s_inLastInfos.counter[CXFI_USAGE];
     reqAcc = s_inLastInfos.counter[CXFI_REQ_ACCESS];
-    fill_usageBits(&usageBits, usage, reqAcc);
+    fillUsageBits(&usageBits, usage, reqAcc);
     sym = s_inLastInfos.counter[CXFI_SYM_INDEX];
     file = s_inLastInfos.counter[CXFI_FILE_INDEX];
     file = s_decodeFilesNum[file];
@@ -1244,7 +1244,7 @@ static void cxrfReference(int size,
             ) {
             /* if keep_old or if we repass refs after overflow */
             fillPosition(&pos,file,line,coll);
-            fill_usageBits(&usageBits, usage, reqAcc);
+            fillUsageBits(&usageBits, usage, reqAcc);
             copyrefFl = ! isInRefList(s_inLastInfos.symbolTab[sym]->refs,
                                       &usageBits, &pos, CategoryGlobal);
         } else {
@@ -1253,7 +1253,7 @@ static void cxrfReference(int size,
         if (copyrefFl) writeCxReferenceBase(sym, usage, reqAcc, file, line, coll);
     } else  if (s_opt.taskRegime == RegimeHtmlGenerate) {
         fillPosition(&pos,file,line,coll);
-        fill_usageBits(&usageBits, usage, reqAcc);
+        fillUsageBits(&usageBits, usage, reqAcc);
         fill_reference(&rr, usageBits, pos, NULL);
         assert(sym>=0 && sym<MAX_CX_SYMBOL_TAB);
         if (additionalArg==CX_HTML_SECOND_PASS) {
@@ -1269,7 +1269,7 @@ static void cxrfReference(int size,
         }
     } else if (s_opt.taskRegime == RegimeEditServer) {
         fillPosition(&pos,file,line,coll);
-        fill_usageBits(&usageBits, usage, reqAcc);
+        fillUsageBits(&usageBits, usage, reqAcc);
         fill_reference(&rr, usageBits, pos, NULL);
         if (additionalArg == DEAD_CODE_DETECTION) {
             if (OL_VIEWABLE_REFS(&rr)) {

@@ -16,7 +16,7 @@ extern void fill_olSymbolsMenu(S_olSymbolsMenu *olSymbolsMenu, struct symbolRefI
                                char defUsage, struct position defpos, int outOnLine,
                                struct editorMarkerList *markers,	/* for refactory only */
                                struct olSymbolsMenu *next);
-extern void fill_usageBits(UsageBits *STRUCTP, unsigned base, unsigned requiredAccess);
+extern void fillUsageBits(UsageBits *STRUCTP, unsigned base, unsigned requiredAccess);
 extern int olcxReferenceInternalLessFunction(S_reference *r1, S_reference *r2);
 extern int olSymbolRefItemLess(S_symbolRefItem *s1, S_symbolRefItem *s2);
 extern void tagSearchCompactShortResults(void);

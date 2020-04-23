@@ -3298,7 +3298,7 @@ static void refactoryTurnDynamicToStatic(S_editorMarker *point) {
 
     // passing references inside method and change them to the new parameter
     npadded = NULL;
-    fill_usageBits(&defusage, UsageDefined, 0);
+    fillUsageBits(&defusage, UsageDefined, 0);
     refactoryAddCopyOfMarkerToList(&npadded, nparamdefpos, &defusage);
 
     for(mm=s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {

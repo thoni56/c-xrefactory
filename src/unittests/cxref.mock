@@ -22,7 +22,7 @@ void fill_symbolRefItemBits(S_symbolRefItemBits *symbolRefItemBits, unsigned sym
 
 }
 
-void fill_usageBits(UsageBits *usageBits, unsigned base, unsigned requiredAccess) {
+void fillUsageBits(UsageBits *usageBits, unsigned base, unsigned requiredAccess) {
     mock(usageBits, base, requiredAccess);
 }
 

@@ -124,7 +124,7 @@ void fill_olSymbolsMenu(S_olSymbolsMenu *olSymbolsMenu,
 }
 
 
-void fill_usageBits(UsageBits *usageBits, unsigned base, unsigned requiredAccess) {
+void fillUsageBits(UsageBits *usageBits, unsigned base, unsigned requiredAccess) {
     usageBits->base = base;
     usageBits->requiredAccess = requiredAccess;
 }
@@ -806,7 +806,7 @@ S_reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
                        0,                  // cxFileHashNumber(p->linkName),
                        vApplCl,vFunCl,ppp.b);
     if (s_opt.taskRegime==RegimeEditServer && s_opt.server_operation==OLO_TAG_SEARCH && s_opt.tagSearchSpecif==TSS_FULL_SEARCH) {
-        fill_usageBits(&rr.usage, usage, 0);
+        fillUsageBits(&rr.usage, usage, 0);
         fill_reference(&rr, rr.usage, *pos, NULL);
         searchSymbolCheckReference(&ppp, &rr);
         return NULL;
@@ -889,8 +889,8 @@ S_reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
 
 S_reference * addCxReference(Symbol *p, Position *pos, Usage usage, int vFunCl, int vApplCl) {
     UsageBits ub;
-    fill_usageBits(&ub, usage, MIN_REQUIRED_ACCESS);
-    return(addCxReferenceNew(p, pos, &ub, vFunCl, vApplCl));
+    fillUsageBits(&ub, usage, MIN_REQUIRED_ACCESS);
+    return addCxReferenceNew(p, pos, &ub, vFunCl, vApplCl);
 }
 
 void addTrivialCxReference(char *name,int symType,int storage,Position *pos,int usage) {
@@ -5296,7 +5296,7 @@ S_olCompletion * olCompletionListPrepend(char *name,
         slen = strlen(s->linkName);
         OLCX_ALLOCC(ss, slen+1, char);
         strcpy(ss, s->linkName);
-        fill_usageBits(&dref.usage, UsageDefined, 0);
+        fillUsageBits(&dref.usage, UsageDefined, 0);
         fill_reference(&dref, dref.usage, s->pos, NULL);
         fill_symbolRefItemBits(&srib, s->bits.symType, storage,
                                scope, s->bits.access, category, 0);
