@@ -87,7 +87,7 @@ void fill_symbolRefItemBits(S_symbolRefItemBits *symbolRefItemBits, unsigned sym
     symbolRefItemBits->htmlWasLn = htmlWasLn;
 }
 
-void fill_reference(S_reference *reference, S_usageBits usage, Position position, S_reference *next) {
+void fill_reference(S_reference *reference, UsageBits usage, Position position, S_reference *next) {
     reference->usage = usage;
     reference->p = position;
     reference->next = next;
@@ -124,7 +124,7 @@ void fill_olSymbolsMenu(S_olSymbolsMenu *olSymbolsMenu,
 }
 
 
-void fill_usageBits(S_usageBits *usageBits, unsigned base, unsigned requiredAccess) {
+void fill_usageBits(UsageBits *usageBits, unsigned base, unsigned requiredAccess) {
     usageBits->base = base;
     usageBits->requiredAccess = requiredAccess;
 }
@@ -247,7 +247,7 @@ void renameCollationSymbols(S_olSymbolsMenu *sss) {
 
 
 S_reference **addToRefList(S_reference **list,
-                           S_usageBits *pusage,
+                           UsageBits *pusage,
                            Position *pos,
                            int category
                            ) {
@@ -269,7 +269,7 @@ S_reference **addToRefList(S_reference **list,
 
 
 bool isInRefList(S_reference *list,
-                S_usageBits *pusage,
+                UsageBits *pusage,
                 Position *pos,
                 int category
                 ) {
@@ -725,7 +725,7 @@ static int htmlReferencableSymbol(int scope, int category, S_symbol *p) {
 /* ********************************************************************* */
 /* default vappClass == vFunClass == s_noneFileIndex !!!!!!!             */
 /*                                                                       */
-S_reference * addCxReferenceNew(Symbol *p, Position *pos, S_usageBits *usageb,
+S_reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
                                 int vFunCl, int vApplCl) {
     int ii,mm,category,scope,storage,defusage;
     char *linkName;
@@ -888,7 +888,7 @@ S_reference * addCxReferenceNew(Symbol *p, Position *pos, S_usageBits *usageb,
 }
 
 S_reference * addCxReference(Symbol *p, Position *pos, Usage usage, int vFunCl, int vApplCl) {
-    S_usageBits ub;
+    UsageBits ub;
     fill_usageBits(&ub, usage, MIN_REQUIRED_ACCESS);
     return(addCxReferenceNew(p, pos, &ub, vFunCl, vApplCl));
 }

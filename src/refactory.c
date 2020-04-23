@@ -3166,7 +3166,7 @@ static void refactoryMoveAllClassesToNewFile(S_editorMarker *point) {
 
 }
 
-static void refactoryAddCopyOfMarkerToList(S_editorMarkerList **ll, S_editorMarker *mm, S_usageBits *usage) {
+static void refactoryAddCopyOfMarkerToList(S_editorMarkerList **ll, S_editorMarker *mm, UsageBits *usage) {
     S_editorMarker          *nn;
     S_editorMarkerList      *lll;
     nn = editorCrNewMarker(mm->buffer, mm->offset);
@@ -3193,7 +3193,7 @@ static void refactoryTurnDynamicToStatic(S_editorMarker *point) {
     S_editorRegionList *regions, **reglast, *lll;
     S_olSymbolsMenu *csym, *mm;
     S_editorUndo *undoStartPoint;
-    S_usageBits defusage;
+    UsageBits defusage;
 
     nparamdefpos = NULL;
     refactoryUpdateReferences(s_ropt.project);

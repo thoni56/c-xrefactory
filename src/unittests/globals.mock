@@ -59,7 +59,7 @@ Position s_olcxByPassPos;
 int s_olMacro2PassFile;
 
 struct stat s_noStat;
-S_usageBits s_noUsage;
+UsageBits s_noUsage;
 Position s_noPos = {-1, 0, 0};
 
 Language s_language;

@@ -4,7 +4,7 @@
 
 #include "olcxtab.h"
 
-void fill_reference(S_reference *reference, S_usageBits usage, Position position,
+void fill_reference(S_reference *reference, UsageBits usage, Position position,
                     S_reference *next) {
     /* NOTE can't mock S_usageBits or Position */
     mock(reference, next);
@@ -22,7 +22,7 @@ void fill_symbolRefItemBits(S_symbolRefItemBits *symbolRefItemBits, unsigned sym
 
 }
 
-void fill_usageBits(S_usageBits *usageBits, unsigned base, unsigned requiredAccess) {
+void fill_usageBits(UsageBits *usageBits, unsigned base, unsigned requiredAccess) {
     mock(usageBits, base, requiredAccess);
 }
 
@@ -134,7 +134,7 @@ S_reference *duplicateReference(S_reference *r) {
     return (S_reference *) mock(r);
 }
 
-S_reference *addCxReferenceNew(Symbol *p, Position *pos, S_usageBits *ub, int vFunCl, int vApplCl) {
+S_reference *addCxReferenceNew(Symbol *p, Position *pos, UsageBits *ub, int vFunCl, int vApplCl) {
     return (S_reference *) mock(p, pos, ub, vFunCl, vApplCl);
 }
 
@@ -187,11 +187,11 @@ void olCompletionListReverse(void) {
     mock();
 }
 
-S_reference **addToRefList(S_reference **list, S_usageBits *pusage, Position *pos, int category) {
+S_reference **addToRefList(S_reference **list, UsageBits *pusage, Position *pos, int category) {
     return (S_reference **) mock(list, pusage, pos, category);
 }
 
-bool isInRefList(S_reference *list, S_usageBits *pusage, Position *pos, int category) {
+bool isInRefList(S_reference *list, UsageBits *pusage, Position *pos, int category) {
     return (int) mock(list, pusage, pos, category);
 }
 

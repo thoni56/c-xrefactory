@@ -379,7 +379,7 @@ S_reference *findStrRecordFromSymbol( Symbol *sym,
                                       ) {
     S_recFindStr    rfs;
     S_reference     *ref;
-    S_usageBits     ub;
+    UsageBits     ub;
     int rr, minacc;
     ref = NULL;
     // when in java, then always in qualified name, so access and visibility checks

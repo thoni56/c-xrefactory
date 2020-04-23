@@ -1083,7 +1083,7 @@ int javaClassifySingleAmbigNameToTypeOrPack(S_idList *name,
 }
 
 #define AddAmbCxRef(classif,sym,pos,usage, minacc,oref, rfs) {\
-    S_usageBits ub;\
+    UsageBits ub;\
     if (classif!=CLASS_TO_METHOD) {\
         if (rfs != NULL && rfs->currClass!=NULL) {\
             assert(rfs && rfs->currClass && \
@@ -2107,7 +2107,7 @@ static TypeModifier *javaMethodInvocation(
     unsigned			minacc[MAX_APPL_OVERLOAD_FUNS];
     SymbolList		*ee;
     S_typeModifierList *aaa;
-    S_usageBits			ub;
+    UsageBits			ub;
     int					smallesti, baseCl, vApplCl, vFunCl, usedusage;
     int					i,appli,actArgi,rr;
 

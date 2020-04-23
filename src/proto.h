@@ -581,7 +581,7 @@ typedef struct jslSymbolList {
 typedef struct usageBits {
     unsigned base:8;								// 0 - 128, it should not grow anymore
     unsigned requiredAccess:MAX_REQUIRED_ACCESS_LN;	// required accessibility of the reference
-} S_usageBits;
+} UsageBits;
 
 // !!! if you add a pointer to this structure, then update olcxCopyRefList
 typedef struct reference {

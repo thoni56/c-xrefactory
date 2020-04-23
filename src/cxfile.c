@@ -1190,7 +1190,7 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
                                                int additionalArg
                                                ) {
     Position pos;
-    S_usageBits usageBits;
+    UsageBits usageBits;
     int file, line, coll, usage, sym, vApplClass, vFunClass;
     int symType,reqAcc;
 
@@ -1223,7 +1223,7 @@ static void cxrfReference(int size,
                           ) {
     Position pos;
     S_reference rr;
-    S_usageBits usageBits;
+    UsageBits usageBits;
     int file, line, coll, usage, sym, reqAcc;
     int copyrefFl;
 

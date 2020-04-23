@@ -22,7 +22,7 @@ int s_lastReturnedLexem;
 Position s_spp[SPP_MAX];
 
 // !!! if changing this, change also s_noRef!!!
-S_usageBits s_noUsage = {UsageNone, 0, };
+UsageBits s_noUsage = {UsageNone, 0, };
 
 S_reference s_noRef = {{UsageNone, 0, }, {-1, 0, 0}, NULL};
 

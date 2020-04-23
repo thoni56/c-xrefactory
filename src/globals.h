@@ -37,7 +37,7 @@ extern int s_olcx_check_arrayi;
 extern bool s_wildcardSearch;
 extern int s_lastReturnedLexem;
 extern Position s_spp[SPP_MAX];
-extern S_usageBits s_noUsage;
+extern UsageBits s_noUsage;
 
 extern int s_progressFactor;
 extern int s_progressOffset;

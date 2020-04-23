@@ -5,7 +5,7 @@
 #include "symbol.h"
 #include "olcxtab.h"
 
-extern void fill_reference(S_reference *reference, S_usageBits usage, Position position, S_reference *next);
+extern void fill_reference(S_reference *reference, UsageBits usage, Position position, S_reference *next);
 extern void fill_symbolRefItem(S_symbolRefItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass, int vFunClass, struct symbolRefItemBits bits);
 extern void fill_symbolRefItemBits(S_symbolRefItemBits *symbolRefItemBits, unsigned symType,
                                    unsigned storage, unsigned scope, unsigned accessFlags,
@@ -16,7 +16,7 @@ extern void fill_olSymbolsMenu(S_olSymbolsMenu *olSymbolsMenu, struct symbolRefI
                                char defUsage, struct position defpos, int outOnLine,
                                struct editorMarkerList *markers,	/* for refactory only */
                                struct olSymbolsMenu *next);
-extern void fill_usageBits(S_usageBits *STRUCTP, unsigned base, unsigned requiredAccess);
+extern void fill_usageBits(UsageBits *STRUCTP, unsigned base, unsigned requiredAccess);
 extern int olcxReferenceInternalLessFunction(S_reference *r1, S_reference *r2);
 extern int olSymbolRefItemLess(S_symbolRefItem *s1, S_symbolRefItem *s2);
 extern void tagSearchCompactShortResults(void);
@@ -53,7 +53,7 @@ extern char *getFullUrlOfJavaDoc_st(char *fileUrl);
 extern int htmlJdkDocAvailableForUrl(char *ss);
 extern S_reference *duplicateReference(S_reference *r);
 extern S_reference * addCxReferenceNew(Symbol *p, Position *pos,
-                                       S_usageBits *ub, int vFunCl, int vApplCl);
+                                       UsageBits *ub, int vFunCl, int vApplCl);
 extern S_reference * addCxReference(Symbol *p, Position *pos, Usage usage,
                                     int vFunClass,int vApplClass);
 extern S_reference *addSpecialFieldReference(char *name, int storage,
@@ -82,12 +82,12 @@ extern S_olSymbolsMenu *olAddBrowsedSymbol(S_symbolRefItem *sym, S_olSymbolsMenu
 extern void renameCollationSymbols(S_olSymbolsMenu *sss);
 extern void olCompletionListReverse(void);
 extern S_reference **addToRefList(S_reference **list,
-                                  S_usageBits *pusage,
+                                  UsageBits *pusage,
                                   Position *pos,
                                   int category
                                   );
 extern bool isInRefList(S_reference *list,
-                        S_usageBits *pusage,
+                        UsageBits *pusage,
                         Position *pos,
                         int category);
 extern char *getXrefEnvironmentValue( char *name );
