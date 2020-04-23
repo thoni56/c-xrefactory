@@ -891,7 +891,7 @@ static void cxReadFileName(int size,
                            int genFl
                            ) {
     char id[MAX_FILE_NAME_SIZE];
-    struct fileItem *ffi;
+    struct fileItem *fileItem;
     int i, ii, fileIndex, len, commandLineFlag, isInterface;
     time_t fumtime, umtime;
     char *cc, *fin, cch;
@@ -913,34 +913,34 @@ static void cxReadFileName(int size,
     assert(ii>=0 && ii<MAX_FILES);
     if (!fileTabExists(&s_fileTab, id)) {
         fileIndex = addFileTabItem(id);
-        ffi = s_fileTab.tab[fileIndex];
-        ffi->b.commandLineEntered = commandLineFlag;
-        ffi->b.isInterface = isInterface;
-        if (ffi->lastFullUpdateMtime == 0) ffi->lastFullUpdateMtime=fumtime;
-        if (ffi->lastUpdateMtime == 0) ffi->lastUpdateMtime=umtime;
+        fileItem = s_fileTab.tab[fileIndex];
+        fileItem->b.commandLineEntered = commandLineFlag;
+        fileItem->b.isInterface = isInterface;
+        if (fileItem->lastFullUpdateMtime == 0) fileItem->lastFullUpdateMtime=fumtime;
+        if (fileItem->lastUpdateMtime == 0) fileItem->lastUpdateMtime=umtime;
         assert(s_opt.taskRegime);
         if (s_opt.taskRegime == RegimeXref) {
             if (genFl == CX_GENERATE_OUTPUT) {
-                writeFileIndexItem(ffi, fileIndex);
+                writeFileIndexItem(fileItem, fileIndex);
             }
         }
     } else {
         fileIndex = fileTabLookup(&s_fileTab, id);
-        ffi = s_fileTab.tab[fileIndex];
-        if (cxrfFileItemShouldBeUpdatedFromCxFile(ffi)) {
-            ffi->b.isInterface = isInterface;
+        fileItem = s_fileTab.tab[fileIndex];
+        if (cxrfFileItemShouldBeUpdatedFromCxFile(fileItem)) {
+            fileItem->b.isInterface = isInterface;
             // Set it to none, it will be updated by source item
-            ffi->b.sourceFile = s_noneFileIndex;
+            fileItem->b.sourceFile = s_noneFileIndex;
         }
         if (s_opt.taskRegime == RegimeEditServer) {
-            ffi->b.commandLineEntered = commandLineFlag;
+            fileItem->b.commandLineEntered = commandLineFlag;
         }
-        if (ffi->lastFullUpdateMtime == 0) ffi->lastFullUpdateMtime=fumtime;
-        if (ffi->lastUpdateMtime == 0) ffi->lastUpdateMtime=umtime;
-        //&if (fumtime>ffi->lastFullUpdateMtime) ffi->lastFullUpdateMtime=fumtime;
-        //&if (umtime>ffi->lastUpdateMtime) ffi->lastUpdateMtime=umtime;
+        if (fileItem->lastFullUpdateMtime == 0) fileItem->lastFullUpdateMtime=fumtime;
+        if (fileItem->lastUpdateMtime == 0) fileItem->lastUpdateMtime=umtime;
+        //&if (fumtime>fileItem->lastFullUpdateMtime) fileItem->lastFullUpdateMtime=fumtime;
+        //&if (umtime>fileItem->lastUpdateMtime) fileItem->lastUpdateMtime=umtime;
     }
-    ffi->b.isFromCxfile = true;
+    fileItem->b.isFromCxfile = true;
     s_decodeFilesNum[ii]=fileIndex;
     log_trace("%d: '%s' scanned: added as %d",ii,id,fileIndex);
     *ccc = cc; *ffin = fin;

@@ -15,29 +15,29 @@
 int s_noneFileIndex = -1;
 
 
-void initFileTab(S_fileTab *s_fileTab) {
+void initFileTab(S_fileTab *fileTable) {
     int len;
-    char *ff;
-    struct fileItem *ffii;
+    char *fileName;
+    struct fileItem *fileItem;
 
     SM_INIT(ftMemory);
-    FT_ALLOCC(s_fileTab->tab, MAX_FILES, struct fileItem *);
+    FT_ALLOCC(fileTable->tab, MAX_FILES, struct fileItem *);
 
-    fileTabNoAllocInit(s_fileTab, MAX_FILES);
+    fileTabNoAllocInit(fileTable, MAX_FILES);
 
     /* Create a "NON_FILE" in FT memory */
     len = strlen(NON_FILE_NAME);
-    FT_ALLOCC(ff, len+1, char);
-    strcpy(ff, NON_FILE_NAME);
-    FT_ALLOC(ffii, S_fileItem);
-    fillFileItem(ffii, ff, false);
+    FT_ALLOCC(fileName, len+1, char);
+    strcpy(fileName, NON_FILE_NAME);
+    FT_ALLOC(fileItem, S_fileItem);
+    fillFileItem(fileItem, fileName, false);
 
     /* Add it to the fileTab and remember its index for future use */
-    s_noneFileIndex = fileTabAdd(s_fileTab, ffii);
+    s_noneFileIndex = fileTabAdd(fileTable, fileItem);
 }
 
 
-/* This is searching for filenams as strings, not fileItems, which
+/* This is searching for filenames as strings, not fileItems, which
    fileTabIsMember() does. It can't be made into a hashtab macro since
    it knows about how filenames are stored and compared. So there is
    some duplication here, since this is also looking up things. */
