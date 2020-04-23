@@ -1111,7 +1111,7 @@ typedef struct options {
 
     int err;
     int long_cxref;
-    int brief;
+    bool brief;
     int update;
     int keep_old;
     char *last_message;
