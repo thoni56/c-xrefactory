@@ -294,16 +294,6 @@ S_reference *duplicateReference(S_reference *r) {
 }
 
 
-#if ZERO
-static int htmlReferencableSymbol(int scope, int category, S_symbol *p) {
-    //& if (p->b.symType==TypeCppIfElse) return(0); /* takes too much memory */
-    if (scope==ScopeFile) return(1);
-    if (category==CatGlobal) return(1);
-    if (p->b.symType==TypeDefault && p->b.storage==StorageStatic) return(1);
-    return(0);
-}
-#endif
-
 static void getSymbolCxrefCategories(Symbol *symbol,
                                      int *p_category,
                                      int *p_scope,
@@ -720,6 +710,16 @@ static int olcxOnlyParseNoPushing(int opt) {
            );
 }
 
+
+#if ZERO
+static int htmlReferencableSymbol(int scope, int category, S_symbol *p) {
+    //& if (p->b.symType==TypeCppIfElse) return(0); /* takes too much memory */
+    if (scope==ScopeFile) return(1);
+    if (category==CatGlobal) return(1);
+    if (p->b.symType==TypeDefault && p->b.storage==StorageStatic) return(1);
+    return(0);
+}
+#endif
 
 /* ********************************************************************* */
 /* ********************************************************************* */
