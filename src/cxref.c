@@ -304,27 +304,25 @@ static int htmlReferencableSymbol(int scope, int category, S_symbol *p) {
 }
 #endif
 
-static void getSymbolCxrefCategories(
-                                     Symbol *p,
+static void getSymbolCxrefCategories(Symbol *symbol,
                                      int *p_category,
                                      int *p_scope,
-                                     int *p_storage
-                                      ) {
+                                     int *p_storage) {
     int category, scope, storage;
     category = CategoryLocal; scope = ScopeAuto; storage=StorageAuto;
     /* default */
-    if (p->bits.symType==TypeDefault) {
-        storage = p->bits.storage;
-        if (    p->bits.storage==StorageExtern
-                ||  p->bits.storage==StorageDefault
-                ||  p->bits.storage==StorageTypedef
-                ||  p->bits.storage==StorageField
-                ||  p->bits.storage==StorageMethod
-                ||  p->bits.storage==StorageConstructor
-                ||  p->bits.storage==StorageStatic
-                ||  p->bits.storage==StorageThreadLocal
+    if (symbol->bits.symType==TypeDefault) {
+        storage = symbol->bits.storage;
+        if (    symbol->bits.storage==StorageExtern
+                ||  symbol->bits.storage==StorageDefault
+                ||  symbol->bits.storage==StorageTypedef
+                ||  symbol->bits.storage==StorageField
+                ||  symbol->bits.storage==StorageMethod
+                ||  symbol->bits.storage==StorageConstructor
+                ||  symbol->bits.storage==StorageStatic
+                ||  symbol->bits.storage==StorageThreadLocal
                 ) {
-            if (p->linkName[0]==' ' && p->linkName[1]==' ') {
+            if (symbol->linkName[0]==' ' && symbol->linkName[1]==' ') {
                 // a special symbol local linkname
                 category = CategoryLocal;
             } else {
@@ -334,50 +332,50 @@ static void getSymbolCxrefCategories(
         }
     }
     /* enumeration constants */
-    if (p->bits.symType==TypeDefault && p->bits.storage==StorageConstant) {
+    if (symbol->bits.symType==TypeDefault && symbol->bits.storage==StorageConstant) {
         category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
     }
     /* struct, union, enum */
-    if ((p->bits.symType==TypeStruct||p->bits.symType==TypeUnion||p->bits.symType==TypeEnum)){
+    if ((symbol->bits.symType==TypeStruct||symbol->bits.symType==TypeUnion||symbol->bits.symType==TypeEnum)){
         category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
     }
     /* macros */
-    if (p->bits.symType == TypeMacro) {
+    if (symbol->bits.symType == TypeMacro) {
         category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
     }
-    if (p->bits.symType == TypeLabel) {
+    if (symbol->bits.symType == TypeLabel) {
         category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
     }
-    if (p->bits.symType == TypeCppIfElse) {
+    if (symbol->bits.symType == TypeCppIfElse) {
         category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
     }
-    if (p->bits.symType == TypeCppInclude) {
+    if (symbol->bits.symType == TypeCppInclude) {
         category = CategoryGlobal; scope = ScopeGlobal; storage=StorageExtern;
     }
-    if (p->bits.symType == TypeCppCollate) {
+    if (symbol->bits.symType == TypeCppCollate) {
         category = CategoryGlobal; scope = ScopeGlobal; storage=StorageExtern;
     }
-    if (p->bits.symType == TypeYaccSymbol) {
+    if (symbol->bits.symType == TypeYaccSymbol) {
         category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
     }
     if (s_opt.taskRegime == RegimeHtmlGenerate) {
-        if (p->bits.symType == TypeKeyword) {
+        if (symbol->bits.symType == TypeKeyword) {
             category = CategoryGlobal; scope = ScopeFile; storage=StorageStatic;
             /* global because I dont want them from processed include files */
         }
-        if (p->bits.symType == TypeComment) {
+        if (symbol->bits.symType == TypeComment) {
             category = CategoryGlobal; scope = ScopeFile; storage=StorageStatic;
         }
-        if (p->bits.symType == TypeCppAny) {
+        if (symbol->bits.symType == TypeCppAny) {
             category = CategoryGlobal; scope = ScopeFile; storage=StorageStatic;
         }
-        if (p->bits.symType == TypeCppIfElse) {
+        if (symbol->bits.symType == TypeCppIfElse) {
             /* it tooks too much memory on first pass */
             category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
         }
     }
     /* JAVA packages */
-    if (p->bits.symType == TypePackage) {
+    if (symbol->bits.symType == TypePackage) {
         category = CategoryGlobal;  scope = ScopeGlobal; storage=StorageExtern;
     }
 
