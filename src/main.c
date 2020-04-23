@@ -466,7 +466,7 @@ static int processBOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
     else if (strcmp(argv[i],"-brief")==0)           s_opt.brief = true;
-    else if (strcmp(argv[i],"-briefoutput")==0)     s_opt.briefoutput = 1;
+    else if (strcmp(argv[i],"-briefoutput")==0)     s_opt.briefoutput = true;
     else if (strcmp(argv[i],"-body")==0)            s_opt.body = 1;
     else if (strncmp(argv[i],"-browsedsym=",12)==0)     {
         createOptionString(&s_opt.browsedSymName, argv[i]+12);

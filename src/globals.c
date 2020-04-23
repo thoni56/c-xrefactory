@@ -271,7 +271,7 @@ S_options s_initOpt = {
     "",                 // refactoring parameter 1
     "",                 // refactoring parameter 2
     0,                  // refactoring
-    0,                  // briefoutput
+    false,              // briefoutput
     0,                  // cacheIncludes
     0,                  // stdopFlag
     NULL,               // renameTo

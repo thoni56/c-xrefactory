@@ -988,7 +988,7 @@ typedef struct options {
     char *refpar1;
     char *refpar2;
     int theRefactoring;
-    int briefoutput;
+    bool briefoutput;
     int cacheIncludes;
     int stdopFlag;		// does this serve to anything ?
     char *renameTo;
