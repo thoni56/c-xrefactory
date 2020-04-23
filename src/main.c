@@ -184,11 +184,11 @@ static void scheduleCommandLineEnteredFileToProcess(char *fn) {
     fileIndex = addFileTabItem(fn);
     if (s_opt.taskRegime!=RegimeEditServer) {
         // yes in edit server you process also headers, etc.
-        s_fileTab.tab[fileIndex]->b.commandLineEntered = 1;
+        s_fileTab.tab[fileIndex]->b.commandLineEntered = true;
     }
     log_trace("recursively process command line argument file #%d '%s'", fileIndex, s_fileTab.tab[fileIndex]->name);
     if (!s_opt.updateOnlyModifiedFiles) {
-        s_fileTab.tab[fileIndex]->b.scheduledToProcess = 1;
+        s_fileTab.tab[fileIndex]->b.scheduledToProcess = true;
     }
     LEAVE();
 }
@@ -1700,8 +1700,8 @@ static char * getInputFileFromFtab(int *fArgCount, int flag) {
     for(i= *fArgCount; i<s_fileTab.size; i++) {
         fi = s_fileTab.tab[i];
         if (fi!=NULL) {
-            if (flag==FF_SCHEDULED_TO_PROCESS&&fi->b.scheduledToProcess)break;
-            if (flag==FF_COMMAND_LINE_ENTERED&&fi->b.commandLineEntered)break;
+            if (flag==FF_SCHEDULED_TO_PROCESS&&fi->b.scheduledToProcess) break;
+            if (flag==FF_COMMAND_LINE_ENTERED&&fi->b.commandLineEntered) break;
         }
     }
     *fArgCount = i;
@@ -1730,7 +1730,7 @@ static void mainGenerateReferenceFile(void) {
 
 static void schedulingUpdateToProcess(S_fileItem *p) {
     if (p->b.scheduledToUpdate && p->b.commandLineEntered) {
-        p->b.scheduledToProcess = 1;
+        p->b.scheduledToProcess = true;
     }
 }
 
@@ -1739,7 +1739,7 @@ static void schedulingToUpdate(S_fileItem *p, void *rs) {
     char sss[MAX_FILE_NAME_SIZE];
 
     if (p == s_fileTab.tab[s_noneFileIndex]) return;
-    //& if (s_opt.update==UP_FAST_UPDATE && p->b.commandLineEntered == 0) return;
+    //& if (s_opt.update==UP_FAST_UPDATE && !p->b.commandLineEntered) return;
     //&fprintf(dumpOut,"checking %s for update\n",p->name); fflush(dumpOut);
     if (statb(p->name, &fstat)) {
         // removed file, remove it from watched updates, load no reference
@@ -1750,31 +1750,31 @@ static void schedulingToUpdate(S_fileItem *p, void *rs) {
                 warning(ERR_ST, tmpBuff);
             }
         }
-        p->b.commandLineEntered = 0;
-        p->b.scheduledToProcess = 0;
-        p->b.scheduledToUpdate = 0;
+        p->b.commandLineEntered = false;
+        p->b.scheduledToProcess = false;
+        p->b.scheduledToUpdate = false;
         // (missing of following if) has caused that all class hierarchy items
         // as well as all cxreferences based in .class files were lost
         // on -update, a very serious bug !!!!
         if (p->name[0] != ZIP_SEPARATOR_CHAR) {
-            p->b.cxLoading = 1;     /* Hack, to remove references from file */
+            p->b.cxLoading = true;     /* Hack, to remove references from file */
         }
     } else if (s_opt.taskRegime == RegimeHtmlGenerate) {
         concatPaths(sss,MAX_FILE_NAME_SIZE,s_opt.htmlRoot,p->name,".html");
         strcat(sss, s_opt.htmlLinkSuffix);
         assert(strlen(sss) < MAX_FILE_NAME_SIZE-2);
         if (statb(sss, &hstat) || fstat.st_mtime >= hstat.st_mtime) {
-            p->b.scheduledToUpdate = 1;
+            p->b.scheduledToUpdate = true;
         }
     } else if (s_opt.update == UP_FULL_UPDATE) {
         if (fstat.st_mtime != p->lastFullUpdateMtime) {
-            p->b.scheduledToUpdate = 1;
+            p->b.scheduledToUpdate = true;
             //&         p->lastFullUpdateMtime = fstat.st_mtime;
             //&         p->lastUpdateMtime = fstat.st_mtime;
         }
     } else {
         if (fstat.st_mtime != p->lastUpdateMtime) {
-            p->b.scheduledToUpdate = 1;
+            p->b.scheduledToUpdate = true;
             //&         p->lastUpdateMtime = fstat.st_mtime;
         }
     }
@@ -2454,10 +2454,10 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
 static void mainReinitFileTabEntry(S_fileItem *ft) {
     ft->inferiorClasses = ft->superClasses = NULL;
     ft->directEnclosingInstance = s_noneFileIndex;
-    ft->b.scheduledToProcess = 0;
-    ft->b.scheduledToUpdate = 0;
-    ft->b.fullUpdateIncludesProcessed = 0;
-    ft->b.cxLoaded = ft->b.cxLoading = ft->b.cxSaved = 0;
+    ft->b.scheduledToProcess = false;
+    ft->b.scheduledToUpdate = false;
+    ft->b.fullUpdateIncludesProcessed = false;
+    ft->b.cxLoaded = ft->b.cxLoading = ft->b.cxSaved = false;
 }
 
 void mainTaskEntryInitialisations(int argc, char **argv) {
@@ -2616,14 +2616,14 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, int mess) {
         if (inStack[i].lexBuffer.buffer.file != stdin) {
             fi = inStack[i].lexBuffer.buffer.fileNumber;
             assert(s_fileTab.tab[fi]);
-            s_fileTab.tab[fi]->b.cxLoading = 0;
+            s_fileTab.tab[fi]->b.cxLoading = false;
             if (inStack[i].lexBuffer.buffer.file!=NULL) charBuffClose(&inStack[i].lexBuffer.buffer);
         }
     }
     if (cFile.lexBuffer.buffer.file != stdin) {
         fi = cFile.lexBuffer.buffer.fileNumber;
         assert(s_fileTab.tab[fi]);
-        s_fileTab.tab[fi]->b.cxLoading = 0;
+        s_fileTab.tab[fi]->b.cxLoading = false;
         if (cFile.lexBuffer.buffer.file!=NULL) charBuffClose(&cFile.lexBuffer.buffer);
     }
     if (s_opt.taskRegime==RegimeHtmlGenerate) {
@@ -2640,7 +2640,7 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, int mess) {
     for(i=0; i<s_fileTab.size; i++) {
         if (s_fileTab.tab[i]!=NULL) {
             if (s_fileTab.tab[i]->b.cxLoading) {
-                s_fileTab.tab[i]->b.cxLoading = 0;
+                s_fileTab.tab[i]->b.cxLoading = false;
                 s_fileTab.tab[i]->b.cxSaved = 1;
                 if (s_fileTab.tab[i]->b.commandLineEntered
                     || !s_opt.multiHeadRefsCare) savingFlag = 1;
@@ -2703,19 +2703,19 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
             fi = s_fileTab.tab[i];
             if (fi!=NULL && fi->b.scheduledToUpdate
                 && !fi->b.fullUpdateIncludesProcessed) {
-                fi->b.fullUpdateIncludesProcessed = 1;
+                fi->b.fullUpdateIncludesProcessed = true;
                 isJavaFileFlag = fileNameHasOneOfSuffixes(fi->name, s_opt.javaFilesSuffixes);
                 fillIncludeRefItem( &ddd, i);
                 if (refTabIsMember(&s_cxrefTab, &ddd, &ii,&memb)) {
                     for(rr=memb->refs; rr!=NULL; rr=rr->next) {
                         includer = s_fileTab.tab[rr->p.file];
                         assert(includer);
-                        if (includer->b.scheduledToUpdate == 0) {
-                            includer->b.scheduledToUpdate = 1;
+                        if (!includer->b.scheduledToUpdate) {
+                            includer->b.scheduledToUpdate = true;
                             fileAddedFlag = 1;
                             if (isJavaFileFlag) {
                                 // no transitive closure for Java
-                                includer->b.fullUpdateIncludesProcessed = 1;
+                                includer->b.fullUpdateIncludesProcessed = true;
                             }
                         }
                     }
@@ -2951,7 +2951,7 @@ static void mainEditServerProcessFile( int argc, char **argv,
         if (LANGUAGE(LANG_JAVA)) goto fileParsed;
     }
  fileParsed:
-    s_fileTab.tab[s_olOriginalComFileNumber]->b.scheduledToProcess = 0;
+    s_fileTab.tab[s_olOriginalComFileNumber]->b.scheduledToProcess = false;
 }
 
 static char *presetEditServerFileDependingStatics(void) {
@@ -2974,7 +2974,7 @@ static char *presetEditServerFileDependingStatics(void) {
     assert(fArgCount>=0 && fArgCount<s_fileTab.size && s_fileTab.tab[fArgCount]->b.scheduledToProcess);
     for(i=fArgCount+1; i<s_fileTab.size; i++) {
         if (s_fileTab.tab[i] != NULL) {
-            s_fileTab.tab[i]->b.scheduledToProcess = 0;
+            s_fileTab.tab[i]->b.scheduledToProcess = false;
         }
     }
     s_olOriginalComFileNumber = fArgCount;
@@ -3166,8 +3166,8 @@ void mainCallXref(int argc, char **argv) {
             s_fileAbortionEnabled = 1;
             for(; ffc!=NULL; ffc=ffc->next) {
                 mainXrefOneWholeFileProcessing(argc, argv, ffc, &firstPassing, &atLeastOneProcessed);
-                ffc->b.scheduledToProcess = 0;
-                ffc->b.scheduledToUpdate = 0;
+                ffc->b.scheduledToProcess = false;
+                ffc->b.scheduledToUpdate = false;
                 if (s_opt.xref2) writeRelativeProgress(10+90*inputCounter/numberOfInputs);
                 inputCounter++;
                 CHECK_FINAL();
@@ -3262,7 +3262,7 @@ void mainCallEditServer(int argc, char **argv,
         }
     } else {
         if (presetEditServerFileDependingStatics() != NULL) {
-            s_fileTab.tab[s_olOriginalComFileNumber]->b.scheduledToProcess = 0;
+            s_fileTab.tab[s_olOriginalComFileNumber]->b.scheduledToProcess = false;
             // added [26.12.2002] because of loading options without input file
             s_input_file_name = NULL;
         }

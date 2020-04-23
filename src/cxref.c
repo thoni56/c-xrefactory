@@ -789,13 +789,13 @@ S_reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
     if (s_opt.taskRegime == RegimeGenerate) return NULL;
     if (s_opt.taskRegime == RegimeXref) {
         if (category == CategoryLocal) return NULL; /* dont cxref local symbols */
-        if (s_fileTab.tab[pos->file]->b.cxLoading==0) return NULL;
+        if (!s_fileTab.tab[pos->file]->b.cxLoading) return NULL;
     }
     if (s_opt.taskRegime == RegimeHtmlGenerate) {
         //&     scope = ScopeFile;  /* do not forget any reference */
         //&     if (! htmlReferencableSymbol(scope, category, p)) return NULL;
-        //&     if (s_fileTab.tab[pos->file]->b.cxLoading==0) return NULL;
-        if (s_fileTab.tab[pos->file]->b.cxLoading==0&&category==CategoryGlobal) return NULL;
+        //&     if (!s_fileTab.tab[pos->file]->b.cxLoading) return NULL;
+        if (!s_fileTab.tab[pos->file]->b.cxLoading && category==CategoryGlobal) return NULL;
         if (s_fileTab.tab[pos->file]->b.cxLoaded
             &&p->bits.symType==TypeCppIfElse) return NULL;
     }

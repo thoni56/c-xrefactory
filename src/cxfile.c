@@ -940,7 +940,7 @@ static void cxReadFileName(int size,
         //&if (fumtime>ffi->lastFullUpdateMtime) ffi->lastFullUpdateMtime=fumtime;
         //&if (umtime>ffi->lastUpdateMtime) ffi->lastUpdateMtime=umtime;
     }
-    ffi->b.isFromCxfile = 1;
+    ffi->b.isFromCxfile = true;
     s_decodeFilesNum[ii]=fileIndex;
     log_trace("%d: '%s' scanned: added as %d",ii,id,fileIndex);
     *ccc = cc; *ffin = fin;
@@ -1262,7 +1262,7 @@ static void cxrfReference(int size,
                              &rr.usage,&rr.p,CategoryGlobal);
             }
         } else if (rr.usage.base==UsageDefined || rr.usage.base==UsageDeclared
-                   ||  s_fileTab.tab[rr.p.file]->b.commandLineEntered==0 ) {
+                   ||  !s_fileTab.tab[rr.p.file]->b.commandLineEntered ) {
             /*&fprintf(dumpOut,"htmladdref %s on %s:%d\n",s_inLastInfos.symbolTab[sym]->name,s_fileTab.tab[rr.p.file]->name,rr.p.line);fflush(dumpOut);&*/
             addToRefList(&s_inLastInfos.symbolTab[sym]->refs,
                          &rr.usage,&rr.p,CategoryGlobal);
@@ -1311,7 +1311,7 @@ static void cxrfReference(int size,
                         assert(s_inLastInfos.onLineRefMenuItem);
                         if (s_opt.keep_old
                             || file!=s_olOriginalFileNumber
-                            || s_fileTab.tab[file]->b.commandLineEntered==0
+                            || !s_fileTab.tab[file]->b.commandLineEntered
                             || s_opt.server_operation==OLO_GOTO
                             || s_opt.server_operation==OLO_CGOTO
                             || s_opt.server_operation==OLO_PUSH_NAME
@@ -1332,7 +1332,7 @@ static void cxrfReference(int size,
                                /*&
                                  s_opt.keep_old
                                  || file!=s_olOriginalFileNumber
-                                 || s_fileTab.tab[file]->b.commandLineEntered==0
+                                 || !s_fileTab.tab[file]->b.commandLineEntered
                                  || s_opt.server_operation==OLO_GOTO || s_opt.server_operation==OLO_CGOTO
                                  &*/
                                ) {
@@ -1392,7 +1392,7 @@ static void cxrfSubClass(int size,
         crSubClassInfo(sup, inf, file, NO_CX_FILE_ITEM_GEN);
     }
     if (s_opt.taskRegime == RegimeXref) {
-        if (s_fileTab.tab[file]->b.cxLoading==0 &&
+        if (!s_fileTab.tab[file]->b.cxLoading &&
             additionalArg==CX_GENERATE_OUTPUT) {
             writeSubClassInfo(sup, inf, file);  // updating refs
             //&         crSubClassInfo(sup, inf, file, CX_FILE_ITEM_GEN);

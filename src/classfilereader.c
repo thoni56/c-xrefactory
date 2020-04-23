@@ -1057,7 +1057,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     }
 
     fileInd = javaCreateClassFileItem( memb);
-    s_fileTab.tab[fileInd]->b.cxLoading = 1;
+    s_fileTab.tab[fileInd]->b.cxLoading = true;
 
     fillPosition(&pos, fileInd,1,0);
     addCxReference(memb, &pos, UsageClassFileDefinition,
@@ -1086,7 +1086,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     GetU2(access, ccc, ffin, &cFile.lexBuffer.buffer);
     memb->bits.access = access;
     //&fprintf(dumpOut,"reading accessFlags %s == %x\n", name, access);
-    if (access & ACCESS_INTERFACE) s_fileTab.tab[fileInd]->b.isInterface=1;
+    if (access & ACCESS_INTERFACE) s_fileTab.tab[fileInd]->b.isInterface = true;
     GetU2(thisClass, ccc, ffin, &cFile.lexBuffer.buffer);
     if (thisClass<0 || thisClass>=cpSize) goto corrupted;
     thisClassName = constantPool[constantPool[thisClass].clas.nameIndex].asciz;
@@ -1176,7 +1176,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
             SkipNChars(alen, ccc, ffin, &cFile.lexBuffer.buffer);
         }
     }
-    s_fileTab.tab[fileInd]->b.cxLoaded = 1;
+    s_fileTab.tab[fileInd]->b.cxLoaded = true;
     goto finish;
 
  endOfFile:

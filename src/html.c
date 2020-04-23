@@ -1757,7 +1757,7 @@ void generateHtml(void) {
     for(i=0; i<MAX_FILES; i++) {
         fi = s_fileTab.tab[i];
         if (fi == NULL) continue;
-        if (fi->b.cxLoading==0) continue;
+        if (!fi->b.cxLoading) continue;
         if (isJavaClassFile(fi)) continue;
         htmlGenerateFile(i);
         if (s_opt.javaDoc) htmlGenerateJavaDocFile(i);

@@ -1480,12 +1480,12 @@ void jarFileParse(char *file_name) {
     checkFileModifiedTime(fileIndex);
     // set loading to 1, no matter whether saved (by overflow) or not
     // following make create a loop, but it is very unprobable
-    s_fileTab.tab[fileIndex]->b.cxLoading = 1;
+    s_fileTab.tab[fileIndex]->b.cxLoading = true;
     if (archive>=0 && archive<MAX_JAVA_ZIP_ARCHIVES) {
         fsRecMapOnFiles(s_zipArchiveTable[archive].dir, s_zipArchiveTable[archive].fn,
                         "", scanClassFile, NULL);
     }
-    s_fileTab.tab[fileIndex]->b.cxLoaded = 1;
+    s_fileTab.tab[fileIndex]->b.cxLoaded = true;
 }
 
 void scanJarFilesForTagSearch(void) {

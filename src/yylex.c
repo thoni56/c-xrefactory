@@ -487,7 +487,7 @@ void pushNewInclude(FILE *f, S_editorBuffer *buffer, char *name, char *prepend) 
 void popInclude(void) {
     assert(s_fileTab.tab[cFile.lexBuffer.buffer.fileNumber]);
     if (s_fileTab.tab[cFile.lexBuffer.buffer.fileNumber]->b.cxLoading) {
-        s_fileTab.tab[cFile.lexBuffer.buffer.fileNumber]->b.cxLoaded = 1;
+        s_fileTab.tab[cFile.lexBuffer.buffer.fileNumber]->b.cxLoaded = true;
     }
     charBuffClose(&cFile.lexBuffer.buffer);
     if (inStacki != 0) {

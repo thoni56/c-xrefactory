@@ -12,16 +12,16 @@ typedef struct fileItem {	/* to be renamed to constant pool item */
     time_t				lastUpdateMtime;
     time_t				lastFullUpdateMtime;
     struct fileItemBits {
-        unsigned		cxLoading: 1;
-        unsigned		cxLoaded : 1;
-        unsigned		cxSaved  : 1;
-        unsigned		commandLineEntered : 1;
-        unsigned		scheduledToProcess : 1;
-        unsigned		scheduledToUpdate : 1;
-        unsigned		fullUpdateIncludesProcessed : 1;
-        unsigned		isInterface : 1;        // class/interface for .class
-        unsigned		isFromCxfile : 1;       // is this file indexed in XFiles
-        unsigned		sourceFile : 20;// file containing the class definition
+        bool cxLoading : 1;
+        bool cxLoaded : 1;
+        bool cxSaved : 1;
+        bool commandLineEntered : 1;
+        bool scheduledToProcess : 1;
+        bool scheduledToUpdate : 1;
+        bool fullUpdateIncludesProcessed : 1;
+        bool isInterface : 1;        // class/interface for .class
+        bool isFromCxfile : 1;       // is this file indexed in XFiles
+        unsigned sourceFile : 20;    // file number containing the class definition
     } b;
     struct chReference	*superClasses;			/* super-classes references */
     struct chReference	*inferiorClasses;			/* sub-classes references   */
