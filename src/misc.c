@@ -588,7 +588,7 @@ void javaDotifyClassName(char *ss) {
 void javaSlashifyDotName(char *ss) {
     char *s;
     for (s=ss; *s; s++) {
-        if (*s == '.') *s = SLASH;
+        if (*s == '.') *s = FILE_PATH_SEPARATOR;
     }
 }
 
@@ -828,14 +828,14 @@ char * getFileSuffix(char *fn) {
     char *cc;
     if (fn == NULL) return("");
     cc = fn + strlen(fn);
-    while (*cc != '.' && *cc != SLASH && cc > fn) cc--;
+    while (*cc != '.' && *cc != FILE_PATH_SEPARATOR && cc > fn) cc--;
     return(cc);
 }
 
 char *simpleFileName(char *fullFileName) {
     char *pp,*fn;
     for(fn=pp=fullFileName; *pp!=0; pp++) {
-        if (*pp == '/' || *pp == SLASH) fn = pp+1;
+        if (*pp == '/' || *pp == FILE_PATH_SEPARATOR) fn = pp+1;
     }
     return(fn);
 }
@@ -845,7 +845,7 @@ char *simpleFileNameWithoutSuffix_st(char *fullFileName) {
     char *pp,*fn;
     int i;
     for(fn=pp=fullFileName; *pp!=0; pp++) {
-        if (*pp == '/' || *pp == SLASH) fn = pp+1;
+        if (*pp == '/' || *pp == FILE_PATH_SEPARATOR) fn = pp+1;
     }
     for (i=0; *fn!='.' && *fn; i++,fn++) {
         res[i] = *fn;
@@ -859,7 +859,7 @@ char *directoryName_st(char *fullFileName) {
     int ii;
     copyDir(res, fullFileName, &ii);
     assert(ii < MAX_FILE_NAME_SIZE-1);
-    if (ii>2 && res[ii-1]==SLASH) res[ii-1] = 0;
+    if (ii>2 && res[ii-1]==FILE_PATH_SEPARATOR) res[ii-1] = 0;
     return(res);
 }
 
@@ -1057,7 +1057,7 @@ static void expandWildcardsMapFun(MAP_FUN_PROFILE) {
     outpath = (char **) a4;
     freeolen = a5;
     //&fprintf(dumpOut,"checking match %s <-> %s   %s\n", file, pattern, dir2);fflush(dumpOut);
-    if (dir2[0] == SLASH) {
+    if (dir2[0] == FILE_PATH_SEPARATOR) {
         // small optimisation, restrict search to directories
         sprintf(ttt, "%s%s", dir1, file);
         if (statb(ttt, &st)!=0 || (st.st_mode & S_IFMT) != S_IFDIR) return;
@@ -1080,7 +1080,7 @@ void expandWildcardsInOnePathRecursiveMaybe(char *fn, char **outpaths, int *free
         si = 0; di = 0;
         while (fn[si]) {
             ldi = di;
-            while (fn[si] && fn[si]!=SLASH)  {
+            while (fn[si] && fn[si]!=FILE_PATH_SEPARATOR)  {
                 ttt[di] = fn[si];
                 si++; di++;
             }
@@ -1144,11 +1144,11 @@ char * getRealFileNameStatic(char *fn) {
     HANDLE              han;
     int                 si,di,bdi;
     // there is only drive name before the first slash, copy it.
-    for(si=0,di=0; fn[si]&&fn[si]!=SLASH; si++,di++) ttt[di]=fn[si];
+    for(si=0,di=0; fn[si]&&fn[si]!=FILE_PATH_SEPARATOR; si++,di++) ttt[di]=fn[si];
     if (fn[si]) ttt[di++]=fn[si++];
     while (fn[si] && fn[si]!=ZIP_SEPARATOR_CHAR) {
         bdi = di;
-        while (fn[si] && fn[si]!=SLASH && fn[si]!=ZIP_SEPARATOR_CHAR)  {
+        while (fn[si] && fn[si]!=FILE_PATH_SEPARATOR && fn[si]!=ZIP_SEPARATOR_CHAR)  {
             ttt[di] = fn[si];
             si++; di++;
         }
@@ -1240,11 +1240,11 @@ int mapDirectoryFiles(
     char                *s,*d;
     char                ttt[MAX_FILE_NAME_SIZE];
     for (s=dirname,d=ttt; *s; s++,d++) {
-        if (*s=='/') *d=SLASH;
+        if (*s=='/') *d=FILE_PATH_SEPARATOR;
         else *d = *s;
     }
     assert(d-ttt < MAX_FILE_NAME_SIZE-3);
-    sprintf(d,"%c*",SLASH);
+    sprintf(d,"%c*",FILE_PATH_SEPARATOR);
     res = mapPatternFiles( ttt, fun, a1, a2, a3, a4, a5);
 #else
     struct stat     stt;
@@ -1280,10 +1280,10 @@ static char *concatFNameInTmpMemory( char *dirname , char *packfile) {
     fname = tmpMemory;
     tt = strmcpy(fname, dirname);
     if (*packfile) {
-        *tt = SLASH;
+        *tt = FILE_PATH_SEPARATOR;
         strcpy(tt+1,packfile);
 #if defined (__WIN32__)        /*SBD*/
-        for(s=tt+1; *s; s++) if (*s=='/') *s=SLASH;
+        for(s=tt+1; *s; s++) if (*s=='/') *s=FILE_PATH_SEPARATOR;
 #endif                                              /*SBD*/
     }
     return(fname);

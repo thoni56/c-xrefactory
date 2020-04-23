@@ -300,21 +300,21 @@ bool javaTypeFileExist(S_idList *name) {
     }
 
     if (s_javaStat->unnamedPackagePath != NULL) {		/* unnamed package */
-        fname = javaCreateComposedName(NULL,&tname,SLASH,"java",tmpMemory,SIZE_TMP_MEM);
+        fname = javaCreateComposedName(NULL,&tname,FILE_PATH_SEPARATOR,"java",tmpMemory,SIZE_TMP_MEM);
         log_trace("testing existence of file '%s'", fname);
         if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname))
             return true;
-        //&fname = javaCreateComposedName(NULL,&tname,SLASH,"class",tmpMemory,SIZE_TMP_MEM);
+        //&fname = javaCreateComposedName(NULL,&tname,FILE_PATH_SEPARATOR,"class",tmpMemory,SIZE_TMP_MEM);
         //&if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname)) return true;
     }
     JavaMapOnPaths(s_javaSourcePaths, {
-        fname = javaCreateComposedName(currentPath,&tname,SLASH,"java",tmpMemory,SIZE_TMP_MEM);
+        fname = javaCreateComposedName(currentPath,&tname,FILE_PATH_SEPARATOR,"java",tmpMemory,SIZE_TMP_MEM);
         log_trace("testing existence of file '%s'", fname);
         if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname))
             return true;
     });
     for (cp=s_javaClassPaths; cp!=NULL; cp=cp->next) {
-        fname = javaCreateComposedName(cp->d,&tname,SLASH,"class",tmpMemory,SIZE_TMP_MEM);
+        fname = javaCreateComposedName(cp->d,&tname,FILE_PATH_SEPARATOR,"class",tmpMemory,SIZE_TMP_MEM);
         // hmm. do not need to check statb for .class files
         if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname))
             return true;
@@ -327,7 +327,7 @@ bool javaTypeFileExist(S_idList *name) {
     }
     // auto-inferred source-path
     if (s_javaStat->namedPackagePath != NULL) {
-        fname = javaCreateComposedName(s_javaStat->namedPackagePath,&tname,SLASH,"java",tmpMemory,SIZE_TMP_MEM);
+        fname = javaCreateComposedName(s_javaStat->namedPackagePath,&tname,FILE_PATH_SEPARATOR,"java",tmpMemory,SIZE_TMP_MEM);
         if (statb(fname,&stt)==0 && specialFileNameCasesCheck(fname))
             return true;
     }

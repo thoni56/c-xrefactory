@@ -206,7 +206,7 @@ void dirInputFile(MAP_FUN_PROFILE) {
         if (strcmp(fname,".")==0) return;
         if (strcmp(fname,"..")==0) return;
         if (fileNameShouldBePruned(fname)) return;
-        sprintf(fn,"%s%c%s",dir,SLASH,fname);
+        sprintf(fn,"%s%c%s",dir,FILE_PATH_SEPARATOR,fname);
         strcpy(fn, normalizeFileName(fn, s_cwd));
         if (fileNameShouldBePruned(fn)) return;
     } else {
@@ -273,13 +273,13 @@ void dirInputFile(MAP_FUN_PROFILE) {
 
 #if defined(__WIN32__)                          /*SBD*/
 static int isAbsolutePath(char *p) {
-    if (p[0]!=0 && p[1]==':' && p[2]==SLASH) return(1);
-    if (p[0]==SLASH) return(1);
+    if (p[0]!=0 && p[1]==':' && p[2]==FILE_PATH_SEPARATOR) return(1);
+    if (p[0]==FILE_PATH_SEPARATOR) return(1);
     return(0);
 }
 #else                           /*SBD*/
 static int isAbsolutePath(char *p) {
-    return(p[0]==SLASH);
+    return(p[0]==FILE_PATH_SEPARATOR);
 }
 #endif                          /*SBD*/
 
@@ -399,7 +399,7 @@ int addHtmlCutPath(char *ss) {
     res = 0;
     ss = htmlNormalizedPath(ss);
     ln = strlen(ss);
-    if (ln>=1 && ss[ln-1] == SLASH) {
+    if (ln>=1 && ss[ln-1] == FILE_PATH_SEPARATOR) {
         warning(ERR_ST,"slash at the end of -htmlcutpath path, ignoring it");
         return(res);
     }
@@ -522,7 +522,7 @@ static int processDOption(int *ii, int argc, char **argv) {
         int ln;
         NEXT_FILE_ARG();
         ln=strlen(argv[i]);
-        if (ln>1 && argv[i][ln-1] == SLASH) {
+        if (ln>1 && argv[i][ln-1] == FILE_PATH_SEPARATOR) {
             warning(ERR_ST,"slash at the end of -d path");
         }
         if (! isAbsolutePath(argv[i])) {
@@ -662,7 +662,7 @@ static int processHOption(int *ii, int argc, char **argv) {
     else if (strncmp(argv[i],"-htmlroot=",10)==0)   {
         int ln;
         ln=strlen(argv[i]);
-        if (ln>11 && argv[i][ln-1] == SLASH) {
+        if (ln>11 && argv[i][ln-1] == FILE_PATH_SEPARATOR) {
             warning(ERR_ST,"slash at the end of -htmlroot path");
         }
         createOptionString(&s_opt.htmlRoot, argv[i]+10);
@@ -773,7 +773,7 @@ static int processJOption(int *ii, int argc, char **argv) {
     else if (strncmp(argv[i],"-jdoctmpdir=",12)==0) {
         int ln;
         ln=strlen(argv[i]);
-        if (ln>13 && argv[i][ln-1] == SLASH) {
+        if (ln>13 && argv[i][ln-1] == FILE_PATH_SEPARATOR) {
             warning(ERR_ST,"slash at the end of -jdoctmpdir path");
         }
         createOptionString(&s_opt.jdocTmpDir, argv[i]+12);
@@ -2546,7 +2546,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     s_input_file_name = cmdlnInputFile = getCommandLineFile(&argcount);
     if (s_input_file_name==NULL) {
         ss = strmcpy(tt, s_cwd);
-        if (ss!=tt && ss[-1] == SLASH) ss[-1]=0;
+        if (ss!=tt && ss[-1] == FILE_PATH_SEPARATOR) ss[-1]=0;
         assert(strlen(tt)+1<MAX_FILE_NAME_SIZE);
         s_input_file_name=tt;
         //&fprintf(dumpOut,"here we are '%s'\n",tt);fflush(dumpOut);

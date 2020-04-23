@@ -368,7 +368,7 @@ typedef enum language {
             jmop_ind++) ;\
         currentPath[jmop_ind] = 0;\
         jmop_i = jmop_ind;\
-        if (jmop_i>0 && currentPath[jmop_i-1]==SLASH) currentPath[--jmop_i] = 0;\
+        if (jmop_i>0 && currentPath[jmop_i-1]==FILE_PATH_SEPARATOR) currentPath[--jmop_i] = 0;\
         COMMAND;\
         currentPath += jmop_ind;\
         currentPath++;\

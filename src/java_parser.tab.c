@@ -3309,7 +3309,7 @@ case 64:
                     if (yyvsp[0].ast_idList.d == NULL) {	/* anonymous package */
                         s_javaStat->className = NULL;
                         for(i=0,j=0; cFile.fileName[i]; i++) {
-                            if (cFile.fileName[i] == SLASH) j=i;
+                            if (cFile.fileName[i] == FILE_PATH_SEPARATOR) j=i;
                         }
                         XX_ALLOCC(cdir, j+1, char);  /* I prefer this*/
                         /*&SM_ALLOCC(ftMemory, cdir, j+1, char);  // will exhauste ftmemory*/
@@ -3320,7 +3320,7 @@ case 64:
                         javaAddPackageDefinition(yyvsp[0].ast_idList.d);
                         s_javaStat->className = yyvsp[0].ast_idList.d;
                         for(i=0,j=0; cFile.fileName[i]; i++) {
-                            if (cFile.fileName[i] == SLASH) j=i;
+                            if (cFile.fileName[i] == FILE_PATH_SEPARATOR) j=i;
                         }
                         packlen = strlen(s_javaThisPackageName);
                         if (j>packlen && fnnCmp(s_javaThisPackageName,&cFile.fileName[j-packlen],packlen)==0){
@@ -3386,7 +3386,7 @@ case 64:
                     /* add this package types */
                     if (yyvsp[0].ast_idList.d == NULL) {	/* anonymous package */
                         for(i=0,j=0; cFile.fileName[i]; i++) {
-                            if (cFile.fileName[i] == SLASH) j=i;
+                            if (cFile.fileName[i] == FILE_PATH_SEPARATOR) j=i;
                         }
                         strncpy(cdir,cFile.fileName,j);
                         cdir[j]=0;

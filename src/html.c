@@ -106,19 +106,19 @@ static char *htmlGetLinkFileNameStatic(char *link, char *file) {
     p1=ls1=cutHtmlPath(p1);
     p2=ls2=cutHtmlPath(p2);
     for(; *p1 && *p1==*p2; p1++,p2++) {
-        if (*p1 == SLASH) {ls1=p1+1; ls2=p2+1;}
+        if (*p1 == FILE_PATH_SEPARATOR) {ls1=p1+1; ls2=p2+1;}
     }
     //& if (*p1==0 && *p2==0) return("");
     resp = fn;
     for(; *p1; p1++) {
-        if (*p1 == SLASH) {
-            sprintf(resp,"..%c",HTML_SLASH); resp+=3;
+        if (*p1 == FILE_PATH_SEPARATOR) {
+            sprintf(resp,"..%c",HTML_DIRECTORY_SEPARATOR); resp+=3;
             assert(resp-fn < MAX_FILE_NAME_SIZE-2);
         }
     }
     strcpy(resp,ls2);
     ls = resp;
-    while ((ls=strchr(ls+1, SLASH))!=NULL) *ls = HTML_SLASH;
+    while ((ls=strchr(ls+1, FILE_PATH_SEPARATOR))!=NULL) *ls = HTML_DIRECTORY_SEPARATOR;
     assert(resp-fn < MAX_FILE_NAME_SIZE-2);
     /*&fprintf(dumpOut,"result is '%s'\n",fn);fflush(dumpOut);&*/
     return(fn);
@@ -166,7 +166,7 @@ static char *htmlAuxFileNameStatic(int fnum, char *subdir,
     fd = lastOccurenceOfSlashOrAntiSlash(fn);
     n = fd - fn;
     strncpy(res, fn, n);
-    sprintf(res+n,"%c%s%s%s%s",SLASH,subdir,fd,suff1,suff2);
+    sprintf(res+n,"%c%s%s%s%s",FILE_PATH_SEPARATOR,subdir,fd,suff1,suff2);
     assert(strlen(res)<MAX_FILE_NAME_SIZE-1);
     return(res);
 }
@@ -197,7 +197,7 @@ static void htmlGenHead(int fn) {
     if (GENERATE_FRAMES()) {
         fprintf(ccOut,"<font size=-1>");
         fprintf(ccOut,"<A HREF=\"XFRM%c%s.frm.html%s\" ",
-                HTML_SLASH, simpleFileName(fname),s_opt.htmlLinkSuffix);
+                HTML_DIRECTORY_SEPARATOR, simpleFileName(fname),s_opt.htmlLinkSuffix);
         //      fprintf(ccOut,"target=\"_top\"");
         fprintf(ccOut,">");
         fprintf(ccOut,"Create Xref-Html Frames</A>");
@@ -211,18 +211,18 @@ static void htmlGenHead(int fn) {
     }
     fprintf(ccOut,"file:<B>");
     sn = 0;
-    for(i=0; fname[i]; i++) if (fname[i]==SLASH) sn++;
+    for(i=0; fname[i]; i++) if (fname[i]==FILE_PATH_SEPARATOR) sn++;
     ss0 = fname;
     while (sn > 0) {
-        for(ss=ss0; *ss && *ss!=SLASH; ss++)
+        for(ss=ss0; *ss && *ss!=FILE_PATH_SEPARATOR; ss++)
             ;
         assert(*ss);
         ch = *ss; *ss = 0;
         if (cutFlag && ss0<cutfn) {
             fprintf(ccOut,"%s/", ss0);
         } else {
-            fprintf(ccOut,"<A HREF=\".%c",HTML_SLASH);
-            for(i=1; i<sn; i++) fprintf(ccOut,"..%c",HTML_SLASH);
+            fprintf(ccOut,"<A HREF=\".%c",HTML_DIRECTORY_SEPARATOR);
+            for(i=1; i<sn; i++) fprintf(ccOut,"..%c",HTML_DIRECTORY_SEPARATOR);
             fprintf(ccOut,"\">%s</A>/", ss0);
         }
         *ss = ch;
@@ -612,7 +612,7 @@ void recursivelyCreateFileDirIfNotExists(char *fpath) {
     len = strlen(fpath);
     loopFlag = 1;
     for (p=fpath+len; p>fpath && loopFlag; p--) {
-        if (*p!=SLASH) continue;
+        if (*p!=FILE_PATH_SEPARATOR) continue;
         ch = *p; *p = 0;
         if (stat(fpath, &st)==0 && (st.st_mode & S_IFMT) == S_IFDIR) {
             loopFlag=0;
@@ -620,7 +620,7 @@ void recursivelyCreateFileDirIfNotExists(char *fpath) {
         *p = ch;
     }
     for(p+=2; *p; p++) {
-        if (*p!=SLASH) continue;
+        if (*p!=FILE_PATH_SEPARATOR) continue;
         ch = *p; *p = 0;
         createDir(fpath);
         *p = ch;

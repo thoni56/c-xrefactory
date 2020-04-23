@@ -929,7 +929,7 @@ void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
             rr = symbolTableNextMember(pp, &memb);
         }
         fname = simpleFileName(s_fileTab.tab[filen]->name);
-        sprintf(tmp, "%s%c%d%c", fname, SLASH, order, LINK_NAME_SEPARATOR);
+        sprintf(tmp, "%s%c%d%c", fname, FILE_PATH_SEPARATOR, order, LINK_NAME_SEPARATOR);
         /*&     // macros will be identified by name only?
           } else if (pp->bits.symType == TypeMacro) {
           sprintf(tmp, "%x%c", pp->pos.file, LINK_NAME_SEPARATOR);

@@ -59,9 +59,9 @@ void reInitCwd(char *dffname, char *dffsect) {
     }
     if (dffsect[0]!=0
 #if defined (__WIN32__)    /*SBD*/
-        && dffsect[1]==':' && dffsect[2]==SLASH
+        && dffsect[1]==':' && dffsect[2]==FILE_PATH_SEPARATOR
 #else                   /*SBD*/
-        && dffsect[0]==SLASH
+        && dffsect[0]==FILE_PATH_SEPARATOR
 #endif                  /*SBD*/
         ) {
         strcpy(s_cwd, dffsect);
@@ -91,7 +91,7 @@ char *normalizeFileName(char *name, char *relativeto) {
         l1 = 1;
         s1 = 2;
 #else           /*SBD*/
-    } else if (name[0] == SLASH) {
+    } else if (name[0] == FILE_PATH_SEPARATOR) {
         l1 = -1;
 #endif          /*SBD*/
     } else {
@@ -102,18 +102,18 @@ char *normalizeFileName(char *name, char *relativeto) {
             if (! s_opt.fileNamesCaseSensitive) {
                 for(ss=normalizedFileName; *ss; ss++) *ss = tolower(*ss);
             }
-            if (l1>0 && normalizedFileName[l1-1] == SLASH) l1--;
-            else normalizedFileName[l1]=SLASH;
+            if (l1>0 && normalizedFileName[l1-1] == FILE_PATH_SEPARATOR) l1--;
+            else normalizedFileName[l1]=FILE_PATH_SEPARATOR;
         }
     }
     for(i=s1, j=l1+1; i<l2+1; ) {
-        if (name[i]=='.' && (name[i+1]==SLASH||name[i+1]=='/')) {i+=2;
-        } else if (name[i]=='.' && name[i+1]=='.' && (name[i+2]==SLASH||name[i+2]=='/')) {
-            for(j-=2; j>=0 && normalizedFileName[j]!=SLASH && normalizedFileName[j]!='/'; j--) ;
+        if (name[i]=='.' && (name[i+1]==FILE_PATH_SEPARATOR||name[i+1]=='/')) {i+=2;
+        } else if (name[i]=='.' && name[i+1]=='.' && (name[i+2]==FILE_PATH_SEPARATOR||name[i+2]=='/')) {
+            for(j-=2; j>=0 && normalizedFileName[j]!=FILE_PATH_SEPARATOR && normalizedFileName[j]!='/'; j--) ;
             i+=3; j++;
             if (j==0) j++;
         } else {
-            for(; name[i]!=0 && name[i]!=SLASH && name[i]!='/'; i++,j++) {
+            for(; name[i]!=0 && name[i]!=FILE_PATH_SEPARATOR && name[i]!='/'; i++,j++) {
                 normalizedFileName[j]=name[i];
                 if (normalizedFileName[j]==ZIP_SEPARATOR_CHAR) inzip=1;
                 if ((!inzip) && ! s_opt.fileNamesCaseSensitive) {
@@ -121,13 +121,13 @@ char *normalizeFileName(char *name, char *relativeto) {
                 }
             }
             normalizedFileName[j]=name[i];
-            if (normalizedFileName[j]=='/' && !inzip) normalizedFileName[j]=SLASH;
+            if (normalizedFileName[j]=='/' && !inzip) normalizedFileName[j]=FILE_PATH_SEPARATOR;
             i++; j++;
-            if (i<l2+1 && (name[i]=='/' || name[i]==SLASH) && !inzip) i++;
+            if (i<l2+1 && (name[i]=='/' || name[i]==FILE_PATH_SEPARATOR) && !inzip) i++;
         }
     }
     log_trace("returning %s",normalizedFileName);
-    if (j>=2 && normalizedFileName[j-2]==SLASH && !inzip) normalizedFileName[j-2]=0;
+    if (j>=2 && normalizedFileName[j-2]==FILE_PATH_SEPARATOR && !inzip) normalizedFileName[j-2]=0;
     if (strlen(normalizedFileName) >= MAX_FILE_NAME_SIZE) {
         sprintf(tmpBuff, "file name %s is too long", normalizedFileName);
         fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);

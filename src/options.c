@@ -520,7 +520,7 @@ int packageOnCommandLine(char *fn) {
     void            *recursFlag;
     res = 0;
     for(dd=ppp,ss=fn; *ss; dd++,ss++) {
-        if (*ss == '.') *dd = SLASH;
+        if (*ss == '.') *dd = FILE_PATH_SEPARATOR;
         else *dd = *ss;
     }
     *dd = 0;
@@ -532,8 +532,8 @@ int packageOnCommandLine(char *fn) {
         }
         ttt[ind] = 0;
         i = ind;
-        if (i==0 || ttt[i-1]!=SLASH) {
-            ttt[i++] = SLASH;
+        if (i==0 || ttt[i-1]!=FILE_PATH_SEPARATOR) {
+            ttt[i++] = FILE_PATH_SEPARATOR;
         }
         strcpy(ttt+i, ppp);
         assert(strlen(ttt)<MAX_FILE_NAME_SIZE-1);
@@ -570,16 +570,16 @@ static char * canItBeJavaBinPath(char *ttt) {
     np = normalizeFileName(ttt, s_cwd);
     len = strlen(np);
 #if defined (__WIN32__)            /*SBD*/
-    sprintf(res,"%s%cjava.exe", np, SLASH);
+    sprintf(res,"%s%cjava.exe", np, FILE_PATH_SEPARATOR);
 #else                                                   /*SBD*/
-    sprintf(res,"%s%cjava", np, SLASH);
+    sprintf(res,"%s%cjava", np, FILE_PATH_SEPARATOR);
 #endif                                                  /*SBD*/
     assert(len+6<MAX_FILE_NAME_SIZE);
     stt = stat(res, &st);
     if (stt==0  && (st.st_mode & S_IFMT)!=S_IFDIR) {
         res[len]=0;
-        if (len>4 && fnCmp(res+len-3,"bin")==0 && res[len-4]==SLASH) {
-            sprintf(res+len-3,"jre%clib%crt.jar",SLASH,SLASH);
+        if (len>4 && fnCmp(res+len-3,"bin")==0 && res[len-4]==FILE_PATH_SEPARATOR) {
+            sprintf(res+len-3,"jre%clib%crt.jar",FILE_PATH_SEPARATOR,FILE_PATH_SEPARATOR);
             assert(strlen(res)<MAX_FILE_NAME_SIZE-1);
             stt = stat(res,&st);
             if (stt==0) {
@@ -601,7 +601,7 @@ static char *getJdk12AutoClassPathFastly(void) {
         strcpy(ttt,cp);
         len = strlen(ttt);
         if (len>0 && (ttt[len-1]=='/' || ttt[len-1]=='\\')) len--;
-        sprintf(ttt+len, "%cbin", SLASH);
+        sprintf(ttt+len, "%cbin", FILE_PATH_SEPARATOR);
         res = canItBeJavaBinPath(ttt);
         if (res!=NULL) return(res);
     }
@@ -789,7 +789,7 @@ void getXrefrcFileName(char *filename) {
     if (hlen>0 && (hh[hlen-1]=='/' || hh[hlen-1]=='\\')) {
         sprintf(filename, "%s%cc-xrefrc", hh, FILE_BEGIN_DOT);
     } else {
-        sprintf(filename, "%s%c%cc-xrefrc", hh, SLASH, FILE_BEGIN_DOT);
+        sprintf(filename, "%s%c%cc-xrefrc", hh, FILE_PATH_SEPARATOR, FILE_BEGIN_DOT);
     }
     assert(strlen(filename) < MAX_FILE_NAME_SIZE-1);
 }

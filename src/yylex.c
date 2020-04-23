@@ -419,7 +419,7 @@ static  void processLine(void) {
         i = 0;
         cc = cInput.currentLexem;
         ch = *cc;
-        if (ch != SLASH) copyDir(ss,s_opt.originalDir,&i);
+        if (ch != FILE_PATH_SEPARATOR) copyDir(ss,s_opt.originalDir,&i);
         for(; ch; ch= *++cc) {
             ss[i++] = ch;
             assert(i+2<TMP_STRING_SIZE);
@@ -526,8 +526,8 @@ static FILE *openInclude(char pchar, char *name, char **fileName) {
         JavaMapOnPaths(wcp, {
             strcpy(nn, currentPath);
             dlen = strlen(nn);
-            if (dlen>0 && nn[dlen-1]!=SLASH) {
-                nn[dlen] = SLASH;
+            if (dlen>0 && nn[dlen-1]!=FILE_PATH_SEPARATOR) {
+                nn[dlen] = FILE_PATH_SEPARATOR;
                 dlen++;
             }
             strcpy(nn+dlen, name);

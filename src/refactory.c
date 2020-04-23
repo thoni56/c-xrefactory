@@ -1458,8 +1458,8 @@ static void refactoryMoveFileAndDirForPackageRename(
         plen--;
         path[plen]=0;
     }
-    sprintf(packdir, "%s%c%s", path, SLASH, symLinkName);
-    sprintf(newpackdir, "%s%c%s", path, SLASH, s_ropt.renameTo);
+    sprintf(packdir, "%s%c%s", path, FILE_PATH_SEPARATOR, symLinkName);
+    sprintf(newpackdir, "%s%c%s", path, FILE_PATH_SEPARATOR, s_ropt.renameTo);
     javaSlashifyDotName(newpackdir+strlen(path));
     sprintf(newfile, "%s%s", newpackdir, lld->buffer->name+strlen(packdir));
     refactoryCheckedRenameBuffer(lld->buffer, newfile, &s_editorUndo);
@@ -1474,7 +1474,7 @@ static int refactoryRenamePackageFileMove(char *currentPath, S_editorMarkerList 
     plen = strlen(currentPath);
     //&sprintf(tmpBuff,"checking %s<->%s, %s<->%s\n",ll->d->buffer->name, currentPath,ll->d->buffer->name+plen+1, symLinkName);ppcGenRecord(PPC_WARNING,tmpBuff,"\n");
     if (fnnCmp(ll->d->buffer->name, currentPath, plen)==0
-        && ll->d->buffer->name[plen] == SLASH
+        && ll->d->buffer->name[plen] == FILE_PATH_SEPARATOR
         && fnnCmp(ll->d->buffer->name+plen+1, symLinkName, slnlen)==0) {
         refactoryMoveFileAndDirForPackageRename( currentPath, rpundo, ll->d, symLinkName);
         res = 1;

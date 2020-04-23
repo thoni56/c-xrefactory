@@ -1504,17 +1504,17 @@ static char *getExpandedLocalJavaDocFile_st(char *expandedPath, char *prefix, ch
     int             cplen;
     JavaMapOnPaths(expandedPath, {
             cplen = strlen(currentPath);
-            if (cplen>0 && currentPath[cplen-1]==SLASH) {
+            if (cplen>0 && currentPath[cplen-1]==FILE_PATH_SEPARATOR) {
                 if (prefix == NULL) {
                     sprintf(fullurl, "%s%s", currentPath, tmpfname);
                 } else {
-                    sprintf(fullurl, "%sapi%c%s", currentPath, SLASH, tmpfname);
+                    sprintf(fullurl, "%sapi%c%s", currentPath, FILE_PATH_SEPARATOR, tmpfname);
                 }
             } else {
                 if (prefix == NULL) {
-                    sprintf(fullurl, "%s%c%s", currentPath, SLASH, tmpfname);
+                    sprintf(fullurl, "%s%c%s", currentPath, FILE_PATH_SEPARATOR, tmpfname);
                 } else {
-                    sprintf(fullurl, "%s%capi%c%s", currentPath, SLASH, SLASH, tmpfname);
+                    sprintf(fullurl, "%s%capi%c%s", currentPath, FILE_PATH_SEPARATOR, FILE_PATH_SEPARATOR, tmpfname);
                 }
             }
             strcpy(fullfname, fullurl);
@@ -1530,7 +1530,7 @@ char *getLocalJavaDocFile_st(char *fileUrl) {
     char *ss, *res;
     if (s_opt.javaDocPath==NULL) return NULL;
     strcpy(tmpfname, fileUrl);
-    for(ss=tmpfname; *ss; ss++) if (*ss == '/') *ss = SLASH;
+    for(ss=tmpfname; *ss; ss++) if (*ss == '/') *ss = FILE_PATH_SEPARATOR;
     expandWildcardsInPaths(s_opt.javaDocPath, wcJavaDocPath, MAX_OPTION_LEN);
     res = getExpandedLocalJavaDocFile_st(wcJavaDocPath, NULL, tmpfname);
     // O.K. try once more time with 'api' prefixed

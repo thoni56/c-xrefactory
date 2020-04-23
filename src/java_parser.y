@@ -833,7 +833,7 @@ CompilationUnit: {
                     if ($2.d == NULL) {	/* anonymous package */
                         s_javaStat->className = NULL;
                         for(i=0,j=0; cFile.fileName[i]; i++) {
-                            if (cFile.fileName[i] == SLASH) j=i;
+                            if (cFile.fileName[i] == FILE_PATH_SEPARATOR) j=i;
                         }
                         XX_ALLOCC(cdir, j+1, char);  // I prefer this
                         //&SM_ALLOCC(ftMemory, cdir, j+1, char);  // will exhauste ftmemory
@@ -844,7 +844,7 @@ CompilationUnit: {
                         javaAddPackageDefinition($2.d);
                         s_javaStat->className = $2.d;
                         for(i=0,j=0; cFile.fileName[i]; i++) {
-                            if (cFile.fileName[i] == SLASH) j=i;
+                            if (cFile.fileName[i] == FILE_PATH_SEPARATOR) j=i;
                         }
                         packlen = strlen(s_javaThisPackageName);
                         if (j>packlen && fnnCmp(s_javaThisPackageName,&cFile.fileName[j-packlen],packlen)==0){
@@ -910,7 +910,7 @@ CompilationUnit: {
                     /* add this package types */
                     if ($2.d == NULL) {	/* anonymous package */
                         for(i=0,j=0; cFile.fileName[i]; i++) {
-                            if (cFile.fileName[i] == SLASH) j=i;
+                            if (cFile.fileName[i] == FILE_PATH_SEPARATOR) j=i;
                         }
                         strncpy(cdir,cFile.fileName,j);
                         cdir[j]=0;

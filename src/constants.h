@@ -153,14 +153,14 @@
 
 #define DEFAULT_CXREF_FILE "Xrefs"
 
-#define MAX_COMPLETIONS_HISTORY_DEEP 10   /* maximal lenght of completion history */
+#define MAX_COMPLETIONS_HISTORY_DEEP 10   /* maximal length of completion history */
 #define MIN_COMPLETION_INDENT_REST 40     /* minimal columns for symbol informations */
 #define MIN_COMPLETION_INDENT 20          /* minimal colums for symbol */
 #define MAX_COMPLETION_INDENT 70          /* maximal completion indent with scroll bar */
 #define MAX_TAG_SEARCH_INDENT 80          /* maximal tag search indentation with scroll */
 #define MAX_TAG_SEARCH_INDENT_RATIO 66    /* maximal tag search indentation screen ratio in % */
 
-#define HTML_SLASH '/'               /* directory separator for generated HTML */
+#define HTML_DIRECTORY_SEPARATOR '/'               /* directory separator for generated HTML */
 
 /* just constants to be checked, that are data type limits              */
 /* do not modify those constants, rather compile sources with XREF_HUGE */
@@ -174,15 +174,15 @@
 #define MAX_REFERENCABLE_COLUMN     4194304
 #endif
 
-/* ************************** PORT SPECIFICS ********************* */
+/* ************************** PLATFORM SPECIFICS ********************* */
 
 #ifdef __WIN32__
-#define SLASH '\\'
+#define FILE_PATH_SEPARATOR '\\'
 #define CLASS_PATH_SEPARATOR ';'
 #define FILE_BEGIN_DOT '_'
 /*typedef int pid_t;*/
 #else
-#define SLASH '/'
+#define FILE_PATH_SEPARATOR '/'
 #define CLASS_PATH_SEPARATOR ':'
 #define FILE_BEGIN_DOT '.'
 #endif
