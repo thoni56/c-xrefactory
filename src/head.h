@@ -20,12 +20,12 @@
 
 /* bitwise different */
 typedef enum language {
-    LANG_C = 2,
-    LANG_JAVA = 4,
-    LANG_YACC = 8,
-    LANG_CCC = 16,              /* ccc - standing for C++ */
-    LANG_JAR = 32,
-    LANG_CLASS = 64
+    LANG_C     = 1<<1,
+    LANG_JAVA  = 1<<2,
+    LANG_YACC  = 1<<3,
+    LANG_CCC   = 1<<4,              /* ccc - standing for C++ */
+    LANG_JAR   = 1<<5,
+    LANG_CLASS = 1<<6
 } Language;
 
 /* ****************** end of line conversions ***************************** */
