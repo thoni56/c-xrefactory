@@ -378,18 +378,18 @@ static void writeSymbolItem(int symIndex) {
     writeOptionalCompactRecord(CXFI_STORAGE, d->b.storage, "");
     s_outLastInfos.macroBaseFileGeneratedForSym[symIndex] = 0;
     s_outLastInfos.symbolIsWritten[symIndex] = 1;
-    if (s_opt.long_cxref) {
+    if (!s_opt.brief_cxref) {
         sprintf(ttt,"\t%s",typeEnumName[d->b.symType]);
         writeStringRecord(CXFI_REMARK,ttt,"");
     }
     writeStringRecord(CXFI_SYM_NAME, d->name, "\t");
-    if (s_opt.long_cxref) {
+    if (!s_opt.brief_cxref) {
         if (d->vApplClass != s_noneFileIndex) {
             sprintf(ttt,"\ton %s",s_fileTab.tab[d->vApplClass]->name);
             writeStringRecord(CXFI_REMARK,ttt,"\n");
         }
     }
-    if (s_opt.long_cxref) {
+    if (!s_opt.brief_cxref) {
         if (d->vApplClass != s_noneFileIndex) {
             sprintf(ttt,"\tfun %s",s_fileTab.tab[d->vFunClass]->name);
             writeStringRecord(CXFI_REMARK,ttt,"\n");
@@ -422,7 +422,7 @@ static void writeSymbolItem(int symIndex) {
         writeOptionalCompactRecord(CXFI_LINE_INDEX, line, "");                 \
         writeOptionalCompactRecord(CXFI_COLL_INDEX, coll, "");                 \
         writeCompactRecord(CXFI_REFERENCE, 0, "");                        \
-        if (s_opt.long_cxref) {                                         \
+        if (!s_opt.brief_cxref) {                                         \
             sprintf(ttt,"\t%-7s in %30s:%u:%d\n",usageEnumName[usage]+5,   \
                     s_fileTab.tab[file]->name,line,coll);               \
             writeStringRecord(CXFI_REMARK,ttt,"");                        \
@@ -440,7 +440,7 @@ static void writeSubClassInfo(int sup, int inf, int origin) {
     writeOptionalCompactRecord(CXFI_SUPER_CLASS, sup, "");
     writeOptionalCompactRecord(CXFI_INFER_CLASS, inf, "");
     writeCompactRecord(CXFI_CLASS_EXT, 0, "");
-    if (s_opt.long_cxref) {
+    if (!s_opt.brief_cxref) {
         sprintf(ttt,"\t\t%s",s_fileTab.tab[inf]->name);
         writeStringRecord(CXFI_REMARK,ttt,"\n");
         sprintf(ttt,"  extends\t%s",s_fileTab.tab[sup]->name);

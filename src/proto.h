@@ -1113,8 +1113,7 @@ typedef struct options {
     /* CXREF options  */
 
     int err;
-    int long_cxref;
-    bool brief;
+    bool brief_cxref;
     int update;
     int keep_old;
     char *last_message;

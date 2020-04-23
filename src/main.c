@@ -465,7 +465,7 @@ static int processAOption(int *ii, int argc, char **argv) {
 static int processBOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strcmp(argv[i],"-brief")==0)           s_opt.brief = true;
+    else if (strcmp(argv[i],"-brief")==0)           s_opt.brief_cxref = true;
     else if (strcmp(argv[i],"-briefoutput")==0)     s_opt.briefoutput = true;
     else if (strcmp(argv[i],"-body")==0)            s_opt.body = 1;
     else if (strncmp(argv[i],"-browsedsym=",12)==0)     {
@@ -863,7 +863,7 @@ static int processNOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i],"-noincluderefresh")==0)    s_opt.noIncludeRefs=true;
     else if (strcmp(argv[i],"-nocxfile")==0)            s_opt.noCxFile = 1;
     else if (strcmp(argv[i],"-no_cpp_comment")==0)      s_opt.cpp_comment = false;
-    else if (strcmp(argv[i],"-nobrief")==0)             s_opt.brief = false;
+    else if (strcmp(argv[i],"-nobrief")==0)             s_opt.brief_cxref = false;
     else if (strcmp(argv[i],"-no_enum")==0)             s_opt.no_ref_enumerator = true;
     else if (strcmp(argv[i],"-no_mac")==0)              s_opt.no_ref_macro = true;
     else if (strcmp(argv[i],"-no_type")==0)             s_opt.no_ref_typedef = true;
@@ -2372,8 +2372,6 @@ static void mainFileProcessingInitialisations(
         s_opt.update = UP_FAST_UPDATE;
         s_opt.updateOnlyModifiedFiles = false;
     }
-    if (s_opt.brief) s_opt.long_cxref = 0;
-    else s_opt.long_cxref = 1;
     if (s_opt.debug) errOut = dumpOut;
     checkExactPositionUpdate(0);
     // so s_input_file_number is not set if the file is not really opened!!!

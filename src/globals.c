@@ -400,8 +400,7 @@ S_options s_initOpt = {
     /* CXREF options  */
 
     0,                          /* err */
-    0,                          /* long_cxref */
-    true,                       /* brief */
+    true,                       /* brief_cxref */
     0,                          /* update */
     0,                          /* keep_old */
     NULL,                       /* last_message */
