@@ -737,8 +737,8 @@ void getJavaClassAndSourcePath(void) {
             && s_opt.taskRegime != RegimeEditServer
             && s_opt.taskRegime != RegimeGenerate
             ) {
-            static int messageFlag=0;
-            if (messageFlag==0 && ! s_opt.briefoutput) {
+            static bool messageFlag=false;
+            if (messageFlag && ! s_opt.briefoutput) {
                 if (s_opt.xref2) {
                     if (jdkcp!=NULL && *jdkcp!=0) {
                         sprintf(tmpBuff,"java runtime == %s", jdkcp);
@@ -756,7 +756,7 @@ void getJavaClassAndSourcePath(void) {
                     fprintf(dumpOut,"sourcepath == %s\n", s_javaSourcePaths);
                     fflush(dumpOut);
                 }
-                messageFlag = 1;
+                messageFlag = true;
             }
         }
     }
