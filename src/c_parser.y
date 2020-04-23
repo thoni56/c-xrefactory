@@ -260,7 +260,7 @@ primary_expr
             $$.d.t = dd->u.type;
             assert(s_opt.taskRegime);
             if (CX_REGIME()) {
-                $$.d.r = addCxReference(p, &$1.d->p, UsageUsed,s_noneFileIndex, s_noneFileIndex);
+                $$.d.r = addCxReference(p, &$1.d->p, UsageUsed, s_noneFileIndex, s_noneFileIndex);
             } else {
                 $$.d.r = NULL;
             }
@@ -398,9 +398,10 @@ str_rec_identifier
     | COMPL_STRUCT_REC_NAME		{ assert(0); /* token never used */ }
     ;
 
-argument_expr_list_opt:				{
-            $$.d = NULL;
-        }
+argument_expr_list_opt
+    :											{
+        $$.d = NULL;
+    }
     |	argument_expr_list			{
             XX_ALLOC($$.d, PositionList);
             fillPositionList($$.d, s_noPos, $1.d);
@@ -808,7 +809,8 @@ asm_opt:
     |	ASM_KEYWORD '(' string_literals ')'
     ;
 
-eq_initializer_opt:		{
+eq_initializer_opt
+    :			        {
         $$.d = NULL;
     }
     | '=' initializer	{
@@ -952,7 +954,8 @@ struct_declarator_list
     }
     ;
 
-struct_declarator:					{ /* gcc extension allow empty field */
+struct_declarator
+    : /* gcc extension allow empty field */ {
         $$.d = createEmptyField();
     }
     | ':' constant_expr				{
@@ -1355,7 +1358,8 @@ initializer_list
     }
     ;
 
-designation_opt:				{
+designation_opt
+    :                           {
         $$.d = NULL;
     }
     | designator_list '='		{
