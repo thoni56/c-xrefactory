@@ -1095,7 +1095,7 @@ static char *spComplFindNextRecord(S_exprTokenType *tok) {
     char            *cname,*res;
     static char     *cnext="next";
     static char     *cprevious="previous";
-    s = tok->t->next->u.t;
+    s = tok->typeModifier->next->u.t;
     res = NULL;
     assert(s->u.s);
     iniFind(s, &rfs);
@@ -1109,7 +1109,7 @@ static char *spComplFindNextRecord(S_exprTokenType *tok) {
                 javaLinkable(ACCESS_ALL,r->bits.access)) {
             assert(rfs.currClass && rfs.currClass->u.s);
             assert(r->bits.symType == TypeDefault);
-            if (isEqualType(r->u.type, tok->t)) {
+            if (isEqualType(r->u.type, tok->typeModifier)) {
                 // there is a record of the same type
                 if (res == NULL) res = cname;
                 else if (strcmp(cname,cnext)==0) res = cnext;
@@ -1128,11 +1128,11 @@ static int isForCompletionSymbol(Completions *c,
     Symbol    *sy;
 
     if (s_opt.server_operation != OLO_COMPLETION)  return(0);
-    if (token->t==NULL) return(0);
+    if (token->typeModifier==NULL) return(0);
     if (c->idToProcessLen != 0) return(0);
-    if (token->t->kind == TypePointer) {
-        assert(token->t->next);
-        if (token->t->next->kind == TypeStruct) {
+    if (token->typeModifier->kind == TypePointer) {
+        assert(token->typeModifier->next);
+        if (token->typeModifier->next->kind == TypeStruct) {
             *sym = sy = getSymFromRef(token->r);
             if (sy==NULL) return(0);
             *nextRecord = spComplFindNextRecord(token);

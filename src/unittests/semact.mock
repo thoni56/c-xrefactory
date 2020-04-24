@@ -130,7 +130,7 @@ TypeModifier *simpleStrUnionSpecifier(S_id *typeName, S_id *id, int usage) {
   return (TypeModifier *) mock(typeName, id, usage);
 }
 
-TypeModifier *crNewAnnonymeStrUnion(S_id *typeName) {
+TypeModifier *createNewAnonymousStructOrUnion(S_id *typeName) {
   return (TypeModifier *) mock(typeName);
 }
 

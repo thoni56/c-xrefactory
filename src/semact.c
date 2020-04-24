@@ -951,7 +951,7 @@ void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
     pp->linkName = mname;
 }
 
-TypeModifier *crNewAnnonymeStrUnion(S_id *typeName) {
+TypeModifier *createNewAnonymousStructOrUnion(S_id *typeName) {
     Symbol *pp;
     int type;
 

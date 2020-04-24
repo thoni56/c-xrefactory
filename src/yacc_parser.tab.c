@@ -2698,14 +2698,14 @@ case 7:
 #line 272 "yacc_parser.y"
 {
             AddHtmlTrivialReference(yyvsp[0].ast_id.d->p);
-            yyval.typeModifiers = crNewAnnonymeStrUnion(yyvsp[0].ast_id.d);
+            yyval.typeModifier = createNewAnonymousStructOrUnion(yyvsp[0].ast_id.d);
         }
 break;
 case 8:
 #line 276 "yacc_parser.y"
 {
-            specializeStrUnionDef(yyvsp[-3].typeModifiers->u.t, yyvsp[-1].ast_symbol.d);
-            l_yaccUnion = yyvsp[-3].typeModifiers->u.t;
+            specializeStrUnionDef(yyvsp[-3].typeModifier->u.t, yyvsp[-1].ast_symbol.d);
+            l_yaccUnion = yyvsp[-3].typeModifier->u.t;
         }
 break;
 case 9:
@@ -2847,7 +2847,7 @@ case 192:
             assert(p && p);
             dd = p;
             assert(dd->bits.storage != StorageTypedef);
-            yyval.ast_expressionType.d.t = dd->u.type;
+            yyval.ast_expressionType.d.typeModifier = dd->u.type;
             assert(s_opt.taskRegime);
             if (CX_REGIME()) {
                 yyval.ast_expressionType.d.r = addCxReference(p, &yyvsp[0].ast_id.d->p, UsageUsed,s_noneFileIndex, s_noneFileIndex);
@@ -2859,9 +2859,9 @@ case 192:
             Symbol *dd __attribute__((unused));
 
             p = newSimpleTypeModifier(TypeInt);
-            yyval.ast_expressionType.d.t = newFunctionTypeModifier(NULL, NULL, NULL, p);
+            yyval.ast_expressionType.d.typeModifier = newFunctionTypeModifier(NULL, NULL, NULL, p);
 
-            d = newSymbolAsType(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->p,yyval.ast_expressionType.d.t);
+            d = newSymbolAsType(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->p,yyval.ast_expressionType.d.typeModifier);
             fillSymbolBits(&d->bits, ACCESS_DEFAULT, TypeDefault, StorageExtern);
 
             dd = addNewSymbolDef(d, StorageExtern, s_symbolTable, UsageUsed);
@@ -2871,30 +2871,30 @@ case 192:
 break;
 case 193:
 #line 480 "yacc_parser.y"
-{ yyval.ast_expressionType.d.t = newSimpleTypeModifier(TypeInt); yyval.ast_expressionType.d.r = NULL;}
+{ yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeInt); yyval.ast_expressionType.d.r = NULL;}
 break;
 case 194:
 #line 481 "yacc_parser.y"
-{ yyval.ast_expressionType.d.t = newSimpleTypeModifier(TypeInt); yyval.ast_expressionType.d.r = NULL;}
+{ yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeInt); yyval.ast_expressionType.d.r = NULL;}
 break;
 case 195:
 #line 482 "yacc_parser.y"
-{ yyval.ast_expressionType.d.t = newSimpleTypeModifier(TypeLong); yyval.ast_expressionType.d.r = NULL;}
+{ yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeLong); yyval.ast_expressionType.d.r = NULL;}
 break;
 case 196:
 #line 483 "yacc_parser.y"
-{ yyval.ast_expressionType.d.t = newSimpleTypeModifier(TypeFloat); yyval.ast_expressionType.d.r = NULL;}
+{ yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeFloat); yyval.ast_expressionType.d.r = NULL;}
 break;
 case 197:
 #line 484 "yacc_parser.y"
-{ yyval.ast_expressionType.d.t = newSimpleTypeModifier(TypeDouble); yyval.ast_expressionType.d.r = NULL;}
+{ yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeDouble); yyval.ast_expressionType.d.r = NULL;}
 break;
 case 198:
 #line 485 "yacc_parser.y"
 {
         TypeModifier *p;
         p = newSimpleTypeModifier(TypeChar);
-        yyval.ast_expressionType.d.t = newPointerTypeModifier(p);
+        yyval.ast_expressionType.d.typeModifier = newPointerTypeModifier(p);
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
@@ -2907,7 +2907,7 @@ break;
 case 200:
 #line 494 "yacc_parser.y"
 {       /* GNU's shit */
-        yyval.ast_expressionType.d.t = &s_errorModifier;
+        yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
@@ -2918,56 +2918,56 @@ break;
 case 203:
 #line 503 "yacc_parser.y"
 {
-        if (yyvsp[-3].ast_expressionType.d.t->kind==TypePointer || yyvsp[-3].ast_expressionType.d.t->kind==TypeArray) yyval.ast_expressionType.d.t=yyvsp[-3].ast_expressionType.d.t->next;
-        else if (yyvsp[-1].ast_expressionType.d.t->kind==TypePointer || yyvsp[-1].ast_expressionType.d.t->kind==TypeArray) yyval.ast_expressionType.d.t=yyvsp[-1].ast_expressionType.d.t->next;
-        else yyval.ast_expressionType.d.t = &s_errorModifier;
+        if (yyvsp[-3].ast_expressionType.d.typeModifier->kind==TypePointer || yyvsp[-3].ast_expressionType.d.typeModifier->kind==TypeArray) yyval.ast_expressionType.d.typeModifier=yyvsp[-3].ast_expressionType.d.typeModifier->next;
+        else if (yyvsp[-1].ast_expressionType.d.typeModifier->kind==TypePointer || yyvsp[-1].ast_expressionType.d.typeModifier->kind==TypeArray) yyval.ast_expressionType.d.typeModifier=yyvsp[-1].ast_expressionType.d.typeModifier->next;
+        else yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
         yyval.ast_expressionType.d.r = NULL;
-        assert(yyval.ast_expressionType.d.t);
+        assert(yyval.ast_expressionType.d.typeModifier);
     }
 break;
 case 204:
 #line 510 "yacc_parser.y"
 {
-        if (yyvsp[-2].ast_expressionType.d.t->kind==TypeFunction) {
-            yyval.ast_expressionType.d.t=yyvsp[-2].ast_expressionType.d.t->next;
+        if (yyvsp[-2].ast_expressionType.d.typeModifier->kind==TypeFunction) {
+            yyval.ast_expressionType.d.typeModifier=yyvsp[-2].ast_expressionType.d.typeModifier->next;
             handleInvocationParamPositions(yyvsp[-2].ast_expressionType.d.r, &yyvsp[-1].ast_position.d, NULL, &yyvsp[0].ast_position.d, 0);
         } else {
-            yyval.ast_expressionType.d.t = &s_errorModifier;
+            yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
         }
         yyval.ast_expressionType.d.r = NULL;
-        assert(yyval.ast_expressionType.d.t);
+        assert(yyval.ast_expressionType.d.typeModifier);
     }
 break;
 case 205:
 #line 520 "yacc_parser.y"
 {
-        if (yyvsp[-3].ast_expressionType.d.t->kind==TypeFunction) {
-            yyval.ast_expressionType.d.t=yyvsp[-3].ast_expressionType.d.t->next;
+        if (yyvsp[-3].ast_expressionType.d.typeModifier->kind==TypeFunction) {
+            yyval.ast_expressionType.d.typeModifier=yyvsp[-3].ast_expressionType.d.typeModifier->next;
             handleInvocationParamPositions(yyvsp[-3].ast_expressionType.d.r, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_positionList.d, &yyvsp[0].ast_position.d, 1);
         } else {
-            yyval.ast_expressionType.d.t = &s_errorModifier;
+            yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
         }
         yyval.ast_expressionType.d.r = NULL;
-        assert(yyval.ast_expressionType.d.t);
+        assert(yyval.ast_expressionType.d.typeModifier);
     }
 break;
 case 206:
 #line 530 "yacc_parser.y"
-{SetStrCompl1(yyvsp[0].ast_expressionType.d.t);}
+{SetStrCompl1(yyvsp[0].ast_expressionType.d.typeModifier);}
 break;
 case 207:
 #line 530 "yacc_parser.y"
 {
         Symbol *rec=NULL;
-        yyval.ast_expressionType.d.r = findStrRecordFromType(yyvsp[-3].ast_expressionType.d.t, yyvsp[0].ast_id.d, &rec, CLASS_TO_ANY);
+        yyval.ast_expressionType.d.r = findStrRecordFromType(yyvsp[-3].ast_expressionType.d.typeModifier, yyvsp[0].ast_id.d, &rec, CLASS_TO_ANY);
         assert(rec);
-        yyval.ast_expressionType.d.t = rec->u.type;
-        assert(yyval.ast_expressionType.d.t);
+        yyval.ast_expressionType.d.typeModifier = rec->u.type;
+        assert(yyval.ast_expressionType.d.typeModifier);
     }
 break;
 case 208:
 #line 537 "yacc_parser.y"
-{SetStrCompl2(yyvsp[0].ast_expressionType.d.t);}
+{SetStrCompl2(yyvsp[0].ast_expressionType.d.typeModifier);}
 break;
 case 209:
 #line 537 "yacc_parser.y"
@@ -2975,21 +2975,21 @@ case 209:
         Symbol *rec=NULL;
 
         yyval.ast_expressionType.d.r = NULL;
-        if (yyvsp[-3].ast_expressionType.d.t->kind==TypePointer || yyvsp[-3].ast_expressionType.d.t->kind==TypeArray) {
-            yyval.ast_expressionType.d.r = findStrRecordFromType(yyvsp[-3].ast_expressionType.d.t->next, yyvsp[0].ast_id.d, &rec, CLASS_TO_ANY);
+        if (yyvsp[-3].ast_expressionType.d.typeModifier->kind==TypePointer || yyvsp[-3].ast_expressionType.d.typeModifier->kind==TypeArray) {
+            yyval.ast_expressionType.d.r = findStrRecordFromType(yyvsp[-3].ast_expressionType.d.typeModifier->next, yyvsp[0].ast_id.d, &rec, CLASS_TO_ANY);
             assert(rec);
-            yyval.ast_expressionType.d.t = rec->u.type;
-        } else yyval.ast_expressionType.d.t = &s_errorModifier;
-        assert(yyval.ast_expressionType.d.t);
+            yyval.ast_expressionType.d.typeModifier = rec->u.type;
+        } else yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
+        assert(yyval.ast_expressionType.d.typeModifier);
     }
 break;
 case 210:
 #line 548 "yacc_parser.y"
-{ yyval.ast_expressionType.d.t = yyvsp[-1].ast_expressionType.d.t; yyval.ast_expressionType.d.r = NULL;}
+{ yyval.ast_expressionType.d.typeModifier = yyvsp[-1].ast_expressionType.d.typeModifier; yyval.ast_expressionType.d.r = NULL;}
 break;
 case 211:
 #line 549 "yacc_parser.y"
-{ yyval.ast_expressionType.d.t = yyvsp[-1].ast_expressionType.d.t; yyval.ast_expressionType.d.r = NULL;}
+{ yyval.ast_expressionType.d.typeModifier = yyvsp[-1].ast_expressionType.d.typeModifier; yyval.ast_expressionType.d.r = NULL;}
 break;
 case 213:
 #line 554 "yacc_parser.y"
@@ -3010,20 +3010,20 @@ case 215:
 break;
 case 217:
 #line 569 "yacc_parser.y"
-{ yyval.ast_expressionType.d.t = yyvsp[0].ast_expressionType.d.t; yyval.ast_expressionType.d.r = NULL;}
+{ yyval.ast_expressionType.d.typeModifier = yyvsp[0].ast_expressionType.d.typeModifier; yyval.ast_expressionType.d.r = NULL;}
 break;
 case 218:
 #line 570 "yacc_parser.y"
-{ yyval.ast_expressionType.d.t = yyvsp[0].ast_expressionType.d.t; yyval.ast_expressionType.d.r = NULL;}
+{ yyval.ast_expressionType.d.typeModifier = yyvsp[0].ast_expressionType.d.typeModifier; yyval.ast_expressionType.d.r = NULL;}
 break;
 case 219:
 #line 571 "yacc_parser.y"
-{ yyval.ast_expressionType.d.t = yyvsp[0].ast_expressionType.d.t; yyval.ast_expressionType.d.r = NULL;}
+{ yyval.ast_expressionType.d.typeModifier = yyvsp[0].ast_expressionType.d.typeModifier; yyval.ast_expressionType.d.r = NULL;}
 break;
 case 220:
 #line 572 "yacc_parser.y"
 {
-        yyval.ast_expressionType.d.t = newPointerTypeModifier(yyvsp[0].ast_expressionType.d.t);
+        yyval.ast_expressionType.d.typeModifier = newPointerTypeModifier(yyvsp[0].ast_expressionType.d.typeModifier);
         RESET_REFERENCE_USAGE(yyvsp[0].ast_expressionType.d.r, UsageAddrUsed);
         yyval.ast_expressionType.d.r = NULL;
     }
@@ -3031,179 +3031,179 @@ break;
 case 221:
 #line 577 "yacc_parser.y"
 {
-        if (yyvsp[0].ast_expressionType.d.t->kind==TypePointer || yyvsp[0].ast_expressionType.d.t->kind==TypeArray) yyval.ast_expressionType.d.t=yyvsp[0].ast_expressionType.d.t->next;
-        else yyval.ast_expressionType.d.t = &s_errorModifier;
-        assert(yyval.ast_expressionType.d.t);
+        if (yyvsp[0].ast_expressionType.d.typeModifier->kind==TypePointer || yyvsp[0].ast_expressionType.d.typeModifier->kind==TypeArray) yyval.ast_expressionType.d.typeModifier=yyvsp[0].ast_expressionType.d.typeModifier->next;
+        else yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
+        assert(yyval.ast_expressionType.d.typeModifier);
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 222:
 #line 583 "yacc_parser.y"
 {
-        yyval.ast_expressionType.d.t = newSimpleTypeModifier(TypeInt);
+        yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeInt);
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 223:
 #line 587 "yacc_parser.y"
 {
-        yyval.ast_expressionType.d.t = newSimpleTypeModifier(TypeInt);
+        yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeInt);
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 229:
 #line 602 "yacc_parser.y"
 {
-        yyval.ast_expressionType.d.t = yyvsp[-2].ast_typeModifiers.d;
+        yyval.ast_expressionType.d.typeModifier = yyvsp[-2].ast_typeModifiers.d;
         yyval.ast_expressionType.d.r = yyvsp[0].ast_expressionType.d.r;
     }
 break;
 case 230:
 #line 606 "yacc_parser.y"
 { /* GNU-extension*/
-        yyval.ast_expressionType.d.t = yyvsp[-4].ast_typeModifiers.d;
+        yyval.ast_expressionType.d.typeModifier = yyvsp[-4].ast_typeModifiers.d;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 231:
 #line 610 "yacc_parser.y"
 { /* GNU-extension*/
-        yyval.ast_expressionType.d.t = yyvsp[-5].ast_typeModifiers.d;
+        yyval.ast_expressionType.d.typeModifier = yyvsp[-5].ast_typeModifiers.d;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 233:
 #line 618 "yacc_parser.y"
 {
-        yyval.ast_expressionType.d.t = &s_defaultIntModifier;
+        yyval.ast_expressionType.d.typeModifier = &s_defaultIntModifier;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 234:
 #line 622 "yacc_parser.y"
 {
-        yyval.ast_expressionType.d.t = &s_defaultIntModifier;
+        yyval.ast_expressionType.d.typeModifier = &s_defaultIntModifier;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 235:
 #line 626 "yacc_parser.y"
 {
-        yyval.ast_expressionType.d.t = &s_defaultIntModifier;
+        yyval.ast_expressionType.d.typeModifier = &s_defaultIntModifier;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 237:
 #line 634 "yacc_parser.y"
 {
-        if (yyvsp[0].ast_expressionType.d.t->kind==TypePointer || yyvsp[0].ast_expressionType.d.t->kind==TypeArray) yyval.ast_expressionType.d.t = yyvsp[0].ast_expressionType.d.t;
-        else yyval.ast_expressionType.d.t = yyvsp[-2].ast_expressionType.d.t;
+        if (yyvsp[0].ast_expressionType.d.typeModifier->kind==TypePointer || yyvsp[0].ast_expressionType.d.typeModifier->kind==TypeArray) yyval.ast_expressionType.d.typeModifier = yyvsp[0].ast_expressionType.d.typeModifier;
+        else yyval.ast_expressionType.d.typeModifier = yyvsp[-2].ast_expressionType.d.typeModifier;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 238:
 #line 639 "yacc_parser.y"
 {
-        if (yyvsp[0].ast_expressionType.d.t->kind==TypePointer || yyvsp[0].ast_expressionType.d.t->kind==TypeArray) yyval.ast_expressionType.d.t = yyvsp[0].ast_expressionType.d.t;
-        else yyval.ast_expressionType.d.t = yyvsp[-2].ast_expressionType.d.t;
+        if (yyvsp[0].ast_expressionType.d.typeModifier->kind==TypePointer || yyvsp[0].ast_expressionType.d.typeModifier->kind==TypeArray) yyval.ast_expressionType.d.typeModifier = yyvsp[0].ast_expressionType.d.typeModifier;
+        else yyval.ast_expressionType.d.typeModifier = yyvsp[-2].ast_expressionType.d.typeModifier;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 240:
 #line 648 "yacc_parser.y"
 {
-        yyval.ast_expressionType.d.t = &s_defaultIntModifier;
+        yyval.ast_expressionType.d.typeModifier = &s_defaultIntModifier;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 241:
 #line 652 "yacc_parser.y"
 {
-        yyval.ast_expressionType.d.t = &s_defaultIntModifier;
+        yyval.ast_expressionType.d.typeModifier = &s_defaultIntModifier;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 243:
 #line 660 "yacc_parser.y"
 {
-        yyval.ast_expressionType.d.t = &s_defaultIntModifier;
+        yyval.ast_expressionType.d.typeModifier = &s_defaultIntModifier;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 244:
 #line 664 "yacc_parser.y"
 {
-        yyval.ast_expressionType.d.t = &s_defaultIntModifier;
+        yyval.ast_expressionType.d.typeModifier = &s_defaultIntModifier;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 245:
 #line 668 "yacc_parser.y"
 {
-        yyval.ast_expressionType.d.t = &s_defaultIntModifier;
+        yyval.ast_expressionType.d.typeModifier = &s_defaultIntModifier;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 246:
 #line 672 "yacc_parser.y"
 {
-        yyval.ast_expressionType.d.t = &s_defaultIntModifier;
+        yyval.ast_expressionType.d.typeModifier = &s_defaultIntModifier;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 248:
 #line 680 "yacc_parser.y"
 {
-        yyval.ast_expressionType.d.t = &s_defaultIntModifier;
+        yyval.ast_expressionType.d.typeModifier = &s_defaultIntModifier;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 249:
 #line 684 "yacc_parser.y"
 {
-        yyval.ast_expressionType.d.t = &s_defaultIntModifier;
+        yyval.ast_expressionType.d.typeModifier = &s_defaultIntModifier;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 251:
 #line 692 "yacc_parser.y"
 {
-        yyval.ast_expressionType.d.t = &s_defaultIntModifier;
+        yyval.ast_expressionType.d.typeModifier = &s_defaultIntModifier;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 253:
 #line 700 "yacc_parser.y"
 {
-        yyval.ast_expressionType.d.t = &s_defaultIntModifier;
+        yyval.ast_expressionType.d.typeModifier = &s_defaultIntModifier;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 255:
 #line 708 "yacc_parser.y"
 {
-        yyval.ast_expressionType.d.t = &s_defaultIntModifier;
+        yyval.ast_expressionType.d.typeModifier = &s_defaultIntModifier;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 257:
 #line 716 "yacc_parser.y"
 {
-        yyval.ast_expressionType.d.t = &s_defaultIntModifier;
+        yyval.ast_expressionType.d.typeModifier = &s_defaultIntModifier;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 259:
 #line 724 "yacc_parser.y"
 {
-        yyval.ast_expressionType.d.t = &s_defaultIntModifier;
+        yyval.ast_expressionType.d.typeModifier = &s_defaultIntModifier;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 261:
 #line 732 "yacc_parser.y"
 {
-        yyval.ast_expressionType.d.t = yyvsp[-2].ast_expressionType.d.t;
+        yyval.ast_expressionType.d.typeModifier = yyvsp[-2].ast_expressionType.d.typeModifier;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
@@ -3211,14 +3211,14 @@ case 263:
 #line 740 "yacc_parser.y"
 {
         RESET_REFERENCE_USAGE(yyvsp[-2].ast_expressionType.d.r, UsageLvalUsed);
-        yyval.ast_expressionType.d.t = yyvsp[-2].ast_expressionType.d.t;
+        yyval.ast_expressionType.d.typeModifier = yyvsp[-2].ast_expressionType.d.typeModifier;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
 case 276:
 #line 763 "yacc_parser.y"
 {
-        yyval.ast_expressionType.d.t = yyvsp[0].ast_expressionType.d.t;
+        yyval.ast_expressionType.d.typeModifier = yyvsp[0].ast_expressionType.d.typeModifier;
         yyval.ast_expressionType.d.r = NULL;
     }
 break;
@@ -3504,7 +3504,7 @@ break;
 case 337:
 #line 954 "yacc_parser.y"
 {
-        yyval.ast_typeModifiers.d = crNewAnnonymeStrUnion(yyvsp[0].ast_id.d);
+        yyval.ast_typeModifiers.d = createNewAnonymousStructOrUnion(yyvsp[0].ast_id.d);
     }
 break;
 case 339:

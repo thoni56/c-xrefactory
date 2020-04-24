@@ -64,7 +64,7 @@ extern TypeModifier *simpleStrUnionSpecifier(S_id *typeName,
                                                 S_id *id,
                                                 int usage
                                                 );
-extern TypeModifier *crNewAnnonymeStrUnion(S_id *typeName);
+extern TypeModifier *createNewAnonymousStructOrUnion(S_id *typeName);
 extern void specializeStrUnionDef(Symbol *sd, Symbol *rec);
 extern TypeModifier *simpleEnumSpecifier(S_id *id, int usage);
 extern void setGlobalFileDepNames(char *iname, Symbol *pp, int memory);
