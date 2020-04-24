@@ -536,7 +536,7 @@ void splitMenuPerSymbolsAndMap(S_olSymbolsMenu *rrr,
         ss= &rr; cs= &rr->s;
         while (*ss!=NULL) {
             cc = *ss;
-            if (itIsSameCxSymbol(&cc->s, cs)) {
+            if (isSameCxSymbol(&cc->s, cs)) {
                 // move cc it into map list
                 *ss = (*ss)->next;
                 cc->next = mp;

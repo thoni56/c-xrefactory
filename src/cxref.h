@@ -22,10 +22,10 @@ extern bool olSymbolRefItemLess(SymbolReferenceItem *s1, SymbolReferenceItem *s2
 extern void tagSearchCompactShortResults(void);
 extern void printTagSearchResults(void);
 extern S_olSymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi,int storage);
-extern int itIsSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2);
-extern int itIsSameCxSymbolIncludingFunClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2);
-extern int itIsSameCxSymbolIncludingApplClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2);
-extern int olcxItIsSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2);
+extern bool isSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2);
+extern bool isSameCxSymbolIncludingFunctionClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2);
+extern bool isSameCxSymbolIncludingApplicationClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2);
+extern bool olcxIsSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2);
 extern void olcxRecomputeSelRefs( S_olcxReferences *refs );
 extern void olProcessSelectedReferences(S_olcxReferences *rstack,
                                         void (*referencesMapFun)(S_olcxReferences *rstack,
@@ -44,7 +44,7 @@ extern S_reference *olcxAddReference(S_reference **rlist,
                                      S_reference *ref,
                                      int bestMatchFlag);
 extern void olcxFreeReferences(S_reference *r);
-extern int isSmallerOrEqClass(int inf, int sup);
+extern bool isSmallerOrEqClass(int inf, int sup);
 extern int olcxPushLessFunction(S_reference *r1, S_reference *r2);
 extern int olcxListLessFunction(S_reference *r1, S_reference *r2);
 extern char *getJavaDocUrl_st(SymbolReferenceItem *rr);

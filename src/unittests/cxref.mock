@@ -46,19 +46,19 @@ S_olSymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi, int storage) 
     return (S_olSymbolsMenu *) mock(fieldName, cfi, storage);
 }
 
-int itIsSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
+bool isSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
     return (int) mock(p1, p2);
 }
 
-int itIsSameCxSymbolIncludingFunClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
+bool isSameCxSymbolIncludingFunctionClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
     return (int) mock(p1, p2);
 }
 
-int itIsSameCxSymbolIncludingApplClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
+bool isSameCxSymbolIncludingApplicationClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
     return (int) mock(p1, p2);
 }
 
-int olcxItIsSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
+bool olcxIsSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
     return (int) mock(p1, p2);
 }
 
@@ -102,7 +102,7 @@ void olcxFreeReferences(S_reference *r) {
     mock(r);
 }
 
-int isSmallerOrEqClass(int inf, int sup) {
+bool isSmallerOrEqClass(int inf, int sup) {
     return (int) mock(inf, sup);
 }
 

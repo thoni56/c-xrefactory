@@ -447,7 +447,7 @@ void changeFieldRefUsages(SymbolReferenceItem  *ri, void  *rrcd) {
     fill_symbolRefItem(&ddd,rcd->linkName,
                        cxFileHashNumber(rcd->linkName),
                        s_noneFileIndex, s_noneFileIndex, ddd.b);
-    if (itIsSameCxSymbol(ri, &ddd)) {
+    if (isSameCxSymbol(ri, &ddd)) {
         //&sprintf(tmpBuff, "checking %s <-> %s, %d,%d", ri->name, rcd->linkName, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
         for(rr = ri->refs; rr!=NULL; rr=rr->next) {
             //&sprintf(tmpBuff, "checking %d,%d %d,%d,%d", rr->p.file, rcd->fnum, rr, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
@@ -938,8 +938,8 @@ int isSmallerOrEqClassR(int inf, int sup, int level) {
     return(0);
 }
 
-int isSmallerOrEqClass(int inf, int sup) {
-    return(isSmallerOrEqClassR(inf, sup, 1)!=0);
+bool isSmallerOrEqClass(int inf, int sup) {
+    return isSmallerOrEqClassR(inf, sup, 1) != 0;
 }
 
 #define OLCX_FREE_REFERENCE(r) {                        \
@@ -2392,21 +2392,23 @@ static void olcxTopSymbolResolution(void) {
         if (p1->b.storage!=p2->b.storage) return(0);                    \
     }
 
-int itIsSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
+bool isSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
     CHECK_ATTRIBUTES(p1,p2);
-    if (strcmp(p1->name,p2->name)) return(0);
-    return(1);
+    if (strcmp(p1->name,p2->name)) return false;
+    return true;
 }
 
-int itIsSameCxSymbolIncludingFunClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
-    if (p1->vFunClass != p2->vFunClass) return(0);
-    return(itIsSameCxSymbol(p1, p2));
+bool isSameCxSymbolIncludingFunctionClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
+    if (p1->vFunClass != p2->vFunClass) return false;
+    return isSameCxSymbol(p1, p2);
 }
-int itIsSameCxSymbolIncludingApplClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
-    if (p1->vApplClass != p2->vApplClass) return(0);
-    return(itIsSameCxSymbol(p1, p2));
+
+bool isSameCxSymbolIncludingApplicationClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
+    if (p1->vApplClass != p2->vApplClass) return false;
+    return isSameCxSymbol(p1, p2);
 }
-int olcxItIsSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
+
+bool olcxIsSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
     int n1len, n2len;
     char *n1start, *n2start;
     //& CHECK_ATTRIBUTES(p1,p2);  // to show panic macro and panic symbol and to make safetycheck working
@@ -3361,7 +3363,7 @@ int olcxShowSelectionMenu(void) {
             if (ss->selected) {
                 if (first == NULL) {
                     first = ss;
-                } else if ((! itIsSameCxSymbol(&first->s, &ss->s))
+                } else if ((! isSameCxSymbol(&first->s, &ss->s))
                            || first->s.vFunClass!=ss->s.vFunClass) {
                     return(1);
                 }
@@ -3615,7 +3617,7 @@ void olcxCheck1CxFileReference(SymbolReferenceItem *ss, S_reference *r) {
     //&fprintf(dumpOut,"checking 1 file refs %s at %s:%d\n", ss->name,simpleFileNameFromFileNum(r->p.file),r->p.line);
     pushed = itIsSymbolToPushOlRefences(ss, rstack, &cms, DEFAULT_VALUE);
     // this is very slow to check the symbol name for each reference
-    if ((!pushed) && olcxItIsSameCxSymbol(ss, sss)) {
+    if ((!pushed) && olcxIsSameCxSymbol(ss, sss)) {
         olcxSingleReferenceCheck1(ss, rstack, r);
     }
 }
@@ -3632,7 +3634,7 @@ static void olcxProceedSafetyCheck1OnInloadedRefs(S_olcxReferences *rstack, S_ol
     pushed = itIsSymbolToPushOlRefences(p, rstack, &cms, DEFAULT_VALUE);
     // TODO, this can be simplified, as ccms == cms.
     //&fprintf(dumpOut,":checking %s to %s (%d)\n",p->name, sss->name, pushed);
-    if ((! pushed) && olcxItIsSameCxSymbol(p, sss)) {
+    if ((! pushed) && olcxIsSameCxSymbol(p, sss)) {
         //&fprintf(dumpOut,"checking %s references\n",p->name);
         for(r=p->refs; r!=NULL; r=r->next) {
             olcxSingleReferenceCheck1(p, rstack, r);
@@ -3710,13 +3712,13 @@ int symbolsCorrespondWrtMoving(S_olSymbolsMenu *osym,
     res = 0;
     switch (command) {
     case OLO_MM_PRE_CHECK:
-        if (itIsSameCxSymbol(&osym->s, &nsym->s)
+        if (isSameCxSymbol(&osym->s, &nsym->s)
             && osym->s.vApplClass == nsym->s.vApplClass) {
             res = 1;
         }
         break;
     case OLO_PP_PRE_CHECK:
-        if (itIsSameCxSymbol(&osym->s, &nsym->s)) {
+        if (isSameCxSymbol(&osym->s, &nsym->s)) {
             if (osym->s.vApplClass == nsym->s.vApplClass) {
                 res = 1;
             }
@@ -5057,7 +5059,7 @@ int itIsSymbolToPushOlRefences(SymbolReferenceItem *p,
         if ((ss->selected || checkSelFlag==DO_NOT_CHECK_IF_SELECTED)
             && ss->s.vApplClass == p->vApplClass
             && ss->s.vFunClass == p->vFunClass
-            && itIsSameCxSymbol(p, &ss->s)) {
+            && isSameCxSymbol(p, &ss->s)) {
             *rss = ss;
             if (IS_BEST_FIT_MATCH(ss)) {
                 return(2);
@@ -5111,7 +5113,7 @@ static unsigned olcxOoBits(S_olSymbolsMenu *ols, SymbolReferenceItem *p) {
     unsigned ooBits;
     int olusage,vFunCl,olvFunCl,vApplCl,olvApplCl;
     ooBits = 0;
-    assert(olcxItIsSameCxSymbol(&ols->s,p));
+    assert(olcxIsSameCxSymbol(&ols->s,p));
     olvFunCl = ols->s.vFunClass;
     olvApplCl = ols->s.vApplClass;
     olusage = ols->olUsage;
@@ -5175,7 +5177,7 @@ S_olSymbolsMenu *createSelectionMenu(SymbolReferenceItem *p) {
     defpos = &s_noPos; defusage = UsageNone;
     //&fprintf(dumpOut,"ooBits for %s\n", s_fileTab.tab[p->vApplClass]->name);
     for(ss=rstack->hkSelectedSym; ss!=NULL; ss=ss->next) {
-        if (olcxItIsSameCxSymbol(p, &ss->s)) {
+        if (olcxIsSameCxSymbol(p, &ss->s)) {
             flag = 1;
             oo = olcxOoBits(ss, p);
             ooBits = ooBitsMax(oo, ooBits);

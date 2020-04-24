@@ -703,7 +703,7 @@ static S_olSymbolsMenu *javaGetRelevantHkSelectedItem(SymbolReferenceItem *ri) {
     S_olcxReferences    *rstack;
     rstack = s_olcxCurrentUser->browserStack.top;
     for(ss=rstack->hkSelectedSym; ss!=NULL; ss=ss->next) {
-        if (itIsSameCxSymbol(ri, &ss->s)
+        if (isSameCxSymbol(ri, &ss->s)
             && ri->vFunClass == ss->s.vFunClass) {
             break;
         }
@@ -1128,7 +1128,7 @@ int tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
     assert(target!=NULL && target->u.s);
     targetcn = target->u.s->classFile;
     for (mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
-        if (itIsSameCxSymbol(&ss->s, &mm->s)) {
+        if (isSameCxSymbol(&ss->s, &mm->s)) {
             if (javaIsSuperClass(mm->s.vApplClass, srccn)) {
                 // finally check there is some other reference than super.method()
                 // and definition
@@ -1204,7 +1204,7 @@ int tpPullUpFieldLastPreconditions(void) {
     assert(target!=NULL);
     assert(target->u.s!=NULL&&target->u.s->classFile!=s_noneFileIndex);
     for(mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
-        if (itIsSameCxSymbol(&ss->s,&mm->s)
+        if (isSameCxSymbol(&ss->s,&mm->s)
             && mm->s.vApplClass == target->u.s->classFile) goto cont2;
     }
     // it is O.K. no item found
@@ -1245,7 +1245,7 @@ int tpPushDownFieldLastPreconditions(void) {
     assert(target->u.s!=NULL&&target->u.s->classFile!=s_noneFileIndex);
     sourcesm = targetsm = NULL;
     for(mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
-        if (itIsSameCxSymbol(&ss->s,&mm->s)) {
+        if (isSameCxSymbol(&ss->s,&mm->s)) {
             if (mm->s.vApplClass == target->u.s->classFile) targetsm = mm;
             if (mm->s.vApplClass == thisclassi) sourcesm = mm;
         }
@@ -1736,7 +1736,7 @@ static void refactoryCheckForMultipleReferencesOnSinglePlace(S_olcxReferences *r
     pushed = itIsSymbolToPushOlRefences(p, rstack, &cms, DEFAULT_VALUE);
     // TODO, this can be simplified, as ccms == cms.
     //&fprintf(dumpOut,":checking %s to %s (%d)\n",p->name, sss->name, pushed);
-    if ((! pushed) && olcxItIsSameCxSymbol(p, sss)) {
+    if ((! pushed) && olcxIsSameCxSymbol(p, sss)) {
         //&fprintf(dumpOut,"checking %s references\n",p->name);
         for(r=p->refs; r!=NULL; r=r->next) {
             refactoryCheckForMultipleReferencesOnSinglePlace2( p, rstack, r);
@@ -2640,7 +2640,7 @@ static void refactoryStaticMoveCheckCorrespondance(
     mm1=menu1;
     while (mm1!=NULL) {
         // do not check recursive calls
-        if (itIsSameCxSymbolIncludingFunClass(&mm1->s, theMethod)) goto cont;
+        if (isSameCxSymbolIncludingFunctionClass(&mm1->s, theMethod)) goto cont;
         // nor local variables
         if (mm1->s.b.storage == StorageAuto) goto cont;
         // nor labels
@@ -2652,7 +2652,7 @@ static void refactoryStaticMoveCheckCorrespondance(
         //&fprintf(dumpOut, "Looking for correspondance to %s\n", mm1->s.name);
         for(mm2=menu2; mm2!=NULL; mm2=mm2->next) {
             //&fprintf(dumpOut, "Checking %s\n", mm2->s.name);
-            if (itIsSameCxSymbolIncludingApplClass(&mm1->s, &mm2->s)) break;
+            if (isSameCxSymbolIncludingApplicationClass(&mm1->s, &mm2->s)) break;
         }
         if (mm2==NULL) {
             // O(n^2) !!!
@@ -3664,7 +3664,7 @@ static S_reference *refactoryCheckEncapsulateGetterSetterForExistingMethods(char
     anotherDefinition = NULL;
     hk = s_olcxCurrentUser->browserStack.top->hkSelectedSym;
     for(mm=s_olcxCurrentUser->browserStack.top->menuSym; mm!=NULL; mm=mm->next) {
-        if (itIsSameCxSymbol(&mm->s, &hk->s) && mm->defRefn != 0) {
+        if (isSameCxSymbol(&mm->s, &hk->s) && mm->defRefn != 0) {
             if (mm->s.vFunClass==hk->s.vFunClass) {
                 // find definition of another function
                 for(rr=mm->s.refs; rr!=NULL; rr=rr->next) {
@@ -4002,7 +4002,7 @@ static S_editorMarkerList *refactoryPullUpPushDownDifferences(
     mm1 = menu1;
     while (mm1!=NULL) {
         // do not check recursive calls
-        if (itIsSameCxSymbolIncludingFunClass(&mm1->s, theMethod)) goto cont;
+        if (isSameCxSymbolIncludingFunctionClass(&mm1->s, theMethod)) goto cont;
         // nor local variables
         if (mm1->s.b.storage == StorageAuto) goto cont;
         // nor labels

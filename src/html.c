@@ -662,7 +662,7 @@ static S_reference * htmlGetDefinitionRef(S_htmlRefList *rrr, int usage) {
         }
     } else {
         for(cr=rrr->slist; cr!=NULL; cr=cr->next) {
-            if (itIsSameCxSymbol(cr,rr)) {
+            if (isSameCxSymbol(cr,rr)) {
                 for(r=cr->refs; r!=NULL; r=r->next) {
                     if (    (r->usage.base==UsageDefined || r->usage.base==UsageDeclared)
                             && cr->vFunClass==rr->vFunClass) {
