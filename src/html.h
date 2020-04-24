@@ -12,13 +12,13 @@ typedef struct intlist {
 typedef struct htmlData {
     struct position          *cp;
     struct reference         *np;
-    struct symbolRefItem     *nri;
+    struct symbolReferenceItem     *nri;
 } S_htmlData;
 
 typedef struct htmlRefList {
-    struct symbolRefItem	*symbolRefItem;
+    struct symbolReferenceItem	*symbolRefItem;
     struct reference		*reference;
-    struct symbolRefItem	*slist;		/* hash list containing symbolRefItem, for virtuals */
+    struct symbolReferenceItem	*slist;		/* hash list containing symbolRefItem, for virtuals */
     struct htmlRefList		*next;
 } S_htmlRefList;
 

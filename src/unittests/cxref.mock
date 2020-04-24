@@ -10,7 +10,7 @@ void fill_reference(S_reference *reference, UsageBits usage, Position position,
     mock(reference, next);
 }
 
-void fill_symbolRefItem(SymbolReferenceItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass, int vFunClass, struct symbolRefItemBits bits) {
+void fill_symbolRefItem(SymbolReferenceItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass, int vFunClass, struct symbolReferenceItemBits bits) {
     /* NOTE: can't mock 'bits' */
     mock(symbolRefItem, name, fileHash, vApplClass, vFunClass);
 }

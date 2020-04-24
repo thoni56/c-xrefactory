@@ -68,7 +68,7 @@ typedef struct referencesChangeData {
 
 /* *********************************************************************** */
 
-void fill_symbolRefItem(SymbolReferenceItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass, int vFunClass, struct symbolRefItemBits bits) {
+void fill_symbolRefItem(SymbolReferenceItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass, int vFunClass, struct symbolReferenceItemBits bits) {
     symbolRefItem->name = name;
     symbolRefItem->fileHash = fileHash;
     symbolRefItem->vApplClass = vApplClass;
@@ -95,7 +95,7 @@ void fill_reference(S_reference *reference, UsageBits usage, Position position, 
 
 
 void fill_olSymbolsMenu(S_olSymbolsMenu *olSymbolsMenu,
-                        struct symbolRefItem s,
+                        struct symbolReferenceItem s,
                         char selected,
                         char visible,
                         unsigned ooBits,
@@ -5218,7 +5218,7 @@ static S_olCompletion *newOlCompletion(char *name,
                               char cat,
                               char csymType,
                               struct reference ref,
-                              struct symbolRefItem sym) {
+                              struct symbolReferenceItem sym) {
     S_olCompletion *olCompletion;
     OLCX_ALLOC(olCompletion, S_olCompletion);
 

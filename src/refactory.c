@@ -40,10 +40,10 @@ typedef struct tpCheckSpecialReferencesData {
     struct pushAllInBetweenData	mm;
     char						*symbolToTest;
     int							classToTest;
-    struct symbolRefItem		*foundSpecialRefItem;
+    struct symbolReferenceItem		*foundSpecialRefItem;
     struct reference			*foundSpecialR;
-    struct symbolRefItem        *foundRefToTestedClass;
-    struct symbolRefItem        *foundRefNotToTestedClass;
+    struct symbolReferenceItem        *foundRefToTestedClass;
+    struct symbolReferenceItem        *foundRefNotToTestedClass;
     struct reference            *foundOuterScopeRef;
 } S_tpCheckSpecialReferencesData;
 

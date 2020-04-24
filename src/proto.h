@@ -590,7 +590,7 @@ typedef struct reference {
     struct reference            *next;
 } S_reference;
 
-typedef struct symbolRefItemBits {
+typedef struct symbolReferenceItemBits {
     Type					symType		: SYMTYPES_LN;
     Storage					storage		: STORAGES_LN;
     unsigned				scope		: SCOPES_LN;
@@ -600,20 +600,20 @@ typedef struct symbolRefItemBits {
 } SymbolReferenceItemBits;
 
 // !!! if you add a pointer to this structure, then update olcxCopyRefItem!
-typedef struct symbolRefItem {
+typedef struct symbolReferenceItem {
     char						*name;
     unsigned					fileHash;
     int							vApplClass;	/* appl class for java virtuals */
     int							vFunClass;	/* fun class for java virtuals */
-    struct symbolRefItemBits b;
+    struct symbolReferenceItemBits b;
     struct reference			*refs;
-    struct symbolRefItem        *next;
+    struct symbolReferenceItem        *next;
 } SymbolReferenceItem;
 
-typedef struct symbolRefItemList {
-    struct symbolRefItem		*d;
-    struct symbolRefItemList	*next;
-} S_symbolRefItemList;
+typedef struct symbolReferenceItemList {
+    struct symbolReferenceItem		*d;
+    struct symbolReferenceItemList	*next;
+} SymbolReferenceItemList;
 
 /* ***************** on - line cross referencing ***************** */
 
@@ -626,18 +626,18 @@ typedef struct olCompletion {
     char					cat;			/* CatGlobal/CatLocal */
     char					csymType;		/* symtype of completion */
     struct reference		ref;
-    struct symbolRefItem	sym;
+    struct symbolReferenceItem	sym;
     struct olCompletion		*next;
 } S_olCompletion;
 
 typedef struct olSymbolFoundInformation {
-    struct symbolRefItem	*symrefs;		/* this is valid */
-    struct symbolRefItem	*symRefsInfo;	/* additional for error message */
+    struct symbolReferenceItem	*symrefs;		/* this is valid */
+    struct symbolReferenceItem	*symRefsInfo;	/* additional for error message */
     struct reference		*currentRef;
 } S_olSymbolFoundInformation;
 
 typedef struct olSymbolsMenu {
-    struct symbolRefItem	s;
+    struct symbolReferenceItem	s;
     char					selected;
     char					visible;
     unsigned				ooBits;

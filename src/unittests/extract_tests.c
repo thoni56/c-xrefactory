@@ -56,7 +56,7 @@ AfterEach(Extract) {}
 
 
 Ensure(Extract, can_concat_symRefItemList_when_null) {
-    S_symbolRefItemList *lp = NULL;
+    SymbolReferenceItemList *lp = NULL;
     SymbolReferenceItem s = {"s", 0, 0, 0, {}, NULL, NULL};
 
     addSymbolToSymRefList(&lp, &s);
@@ -66,8 +66,8 @@ Ensure(Extract, can_concat_symRefItemList_when_null) {
 Ensure(Extract, can_concat_symRefItemList_before_existing) {
     SymbolReferenceItem s1 = {"s1", 0, 0, 0, {}, NULL, NULL};
     SymbolReferenceItem s2 = {"s2", 0, 0, 0, {}, NULL, NULL};
-    S_symbolRefItemList l = {&s1, NULL};
-    S_symbolRefItemList *lp = &l;
+    SymbolReferenceItemList l = {&s1, NULL};
+    SymbolReferenceItemList *lp = &l;
 
     expect(getClassNumFromClassLinkName, times(4));
     expect(isSmallerOrEqClass, will_return(false), times(2));

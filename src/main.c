@@ -2481,7 +2481,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     // the following causes long jump, berk.
     CX_ALLOCC(sss, CX_MEMORY_CHUNK_SIZE, char);
     CX_FREE_UNTIL(sss);
-    CX_ALLOCC(s_cxrefTab.tab,MAX_CXREF_SYMBOLS, struct symbolRefItem *);
+    CX_ALLOCC(s_cxrefTab.tab,MAX_CXREF_SYMBOLS, struct symbolReferenceItem *);
     refTabNoAllocInit( &s_cxrefTab,MAX_CXREF_SYMBOLS);
     if (firstmemory==0) {firstmemory=1;}
     SM_INIT(ppmMemory);
