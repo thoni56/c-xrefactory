@@ -75,13 +75,13 @@
             *res.p = tok;\
         }\
 }
-#define PropagateBorns(res, beg, end) {res.b=beg.b; res.e=end.e;}
-#define PropagateBornsIfRegularSyntaxPass(res, beg, end) {\
+#define PropagateBoundaries(res, beg, end) {res.b=beg.b; res.e=end.e;}
+#define PropagateBoundariesIfRegularSyntaxPass(res, beg, end) {\
     if (regularPass()) {\
-        if (SyntaxPassOnly()) {PropagateBorns(res, beg, end);}\
+        if (SyntaxPassOnly()) {PropagateBoundaries(res, beg, end);}\
     }\
 }
-#define SetNullBorns(res) {res.b=s_noPos; res.e=s_noPos;}
+#define SetNullBoundaries(res) {res.b=s_noPos; res.e=s_noPos;}
 
 #define NULL_POS NULL
 
@@ -374,7 +374,7 @@ Literal:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &s_noPos;
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             }
         }
@@ -385,7 +385,7 @@ Literal:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &s_noPos;
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             }
         }
@@ -396,7 +396,7 @@ Literal:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &s_noPos;
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             }
         }
@@ -407,7 +407,7 @@ Literal:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &s_noPos;
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             }
         }
@@ -418,7 +418,7 @@ Literal:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &s_noPos;
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             }
         }
@@ -427,7 +427,7 @@ Literal:
                 $$.d.t = newSimpleTypeModifier(TypeDouble);
                 $$.d.r = NULL;
                 $$.d.pp = &s_noPos;
-                if (SyntaxPassOnly()) {PropagateBorns($$, $1, $1);}
+                if (SyntaxPassOnly()) {PropagateBoundaries($$, $1, $1);}
             }
         }
     |	CHAR_LITERAL		{
@@ -437,7 +437,7 @@ Literal:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &s_noPos;
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             }
         }
@@ -449,7 +449,7 @@ Literal:
                 } else {
                     XX_ALLOC($$.d.pp, Position);
                     *$$.d.pp = $1.d;
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             }
         }
@@ -461,7 +461,7 @@ Literal:
                 } else {
                     XX_ALLOC($$.d.pp, Position);
                     *$$.d.pp = $1.d->p;
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             }
         }
@@ -476,7 +476,7 @@ Type:
                     $$.d = typeSpecifier1($1.d.u);
                     s_cps.lastDeclaratorType = NULL;
                 } else {
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             };
             if (inSecondJslPass()) {
@@ -485,7 +485,7 @@ Type:
         }
     |	ReferenceType	{
             $$.d = $1.d;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 
@@ -495,7 +495,7 @@ PrimitiveType:
             $$.d.u  = TypeBoolean;
             if (regularPass()) {
                 SetPrimitiveTypePos($$.d.p, $1.d);
-                PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+                PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             }
         }
     ;
@@ -509,27 +509,27 @@ IntegralType:
         BYTE			{
             $$.d.u  = TypeByte;
             if (regularPass()) SetPrimitiveTypePos($$.d.p, $1.d);
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	SHORT			{
             $$.d.u  = TypeShort;
             if (regularPass()) SetPrimitiveTypePos($$.d.p, $1.d);
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	INT				{
             $$.d.u  = TypeInt;
             if (regularPass()) SetPrimitiveTypePos($$.d.p, $1.d);
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	LONG			{
             $$.d.u  = TypeLong;
             if (regularPass()) SetPrimitiveTypePos($$.d.p, $1.d);
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	CHAR			{
             $$.d.u  = TypeChar;
             if (regularPass()) SetPrimitiveTypePos($$.d.p, $1.d);
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 
@@ -537,12 +537,12 @@ FloatingPointType:
         FLOAT			{
             $$.d.u  = TypeFloat;
             if (regularPass()) SetPrimitiveTypePos($$.d.p, $1.d);
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	DOUBLE			{
             $$.d.u  = TypeDouble;
             if (regularPass()) SetPrimitiveTypePos($$.d.p, $1.d);
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 
@@ -550,7 +550,7 @@ ReferenceType:
         ClassOrInterfaceType		/*& { $$.d = $1.d; } */
     |	ArrayType					{
             $$.d = $1.d.s;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 
@@ -563,7 +563,7 @@ ClassOrInterfaceType:
                     assert($$.d->u.type);
                     s_cps.lastDeclaratorType = $$.d->u.type->u.t;
                 } else {
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             };
             if (inSecondJslPass()) {
@@ -583,7 +583,7 @@ ExtendClassOrInterfaceType:
                     javaClassifyToTypeName($1.d, USAGE_EXTEND_USAGE, &$$.d, USELESS_FQT_REFS_ALLOWED);
                     $$.d = javaTypeNameDefinition($1.d);
                 } else {
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             };
             if (inSecondJslPass()) {
@@ -610,7 +610,7 @@ ArrayType:
                     $$.d.s = typeSpecifier1($1.d.u);
                     $$.d.s->u.type = prependComposedType($$.d.s->u.type, TypeArray);
                 } else {
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
                 $$.d.p = $1.d.p;
                 s_cps.lastDeclaratorType = NULL;
@@ -629,7 +629,7 @@ ArrayType:
                     s_cps.lastDeclaratorType = $$.d.s->u.type->u.t;
                     $$.d.s->u.type = prependComposedType($$.d.s->u.type, TypeArray);
                 } else {
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
                 $$.d.p = javaGetNameStartingPosition($1.d);
             };
@@ -646,7 +646,7 @@ ArrayType:
                 if (! SyntaxPassOnly()) {
                     $$.d.s->u.type = prependComposedType($$.d.s->u.type, TypeArray);
                 } else {
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             };
             if (inSecondJslPass()) {
@@ -661,39 +661,39 @@ ArrayType:
 
 Identifier:	IDENTIFIER			{
                 if (regularPass()) AllocIdCopy($$.d,$1.d);
-                PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+                PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             };
 This:		THIS				{
                 if (regularPass()) AllocIdCopy($$.d,$1.d);
-                PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+                PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             };
 Super:		SUPER				{
                 if (regularPass()) AllocIdCopy($$.d,$1.d);
-                PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+                PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             };
 New:		NEW					{
                 if (regularPass()) AllocIdCopy($$.d,$1.d);
-                PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+                PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             };
 Import:		IMPORT				{
                 if (regularPass()) AllocIdCopy($$.d,$1.d);
-                PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+                PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             };
 Package:	PACKAGE				{
                 if (regularPass()) AllocIdCopy($$.d,$1.d);
-                PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+                PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             };
 Throw:		THROW				{
                 if (regularPass()) AllocIdCopy($$.d,$1.d);
-                PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+                PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             };
 Try:		TRY					{
                 if (regularPass()) AllocIdCopy($$.d,$1.d);
-                PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+                PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             };
 Catch:		CATCH				{
                 if (regularPass()) AllocIdCopy($$.d,$1.d);
-                PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+                PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             };
 
 
@@ -705,7 +705,7 @@ Name:
                     assert(s_javaStat);
                     s_javaStat->lastParsedName = $1.d;
                 } else {
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                     javaCheckForPrimaryStart(&$1.d->id.p, &$1.d->id.p);
                     javaCheckForStaticPrefixStart(&$1.d->id.p, &$1.d->id.p);
                 }
@@ -718,7 +718,7 @@ Name:
                     assert(s_javaStat);
                     s_javaStat->lastParsedName = $1.d;
                 } else {
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                     javaCheckForPrimaryStartInNameList($1.d, javaGetNameStartingPosition($1.d));
                     javaCheckForStaticPrefixInNameList($1.d, javaGetNameStartingPosition($1.d));
                 }
@@ -730,7 +730,7 @@ SimpleName:
         IDENTIFIER				{
             $$.d = StackMemAlloc(S_idList);
             fillIdList($$.d, *$1.d, $1.d->name, TypeDefault, NULL);
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 
@@ -738,7 +738,7 @@ QualifiedName:
         Name '.' IDENTIFIER		{
             $$.d = StackMemAlloc(S_idList);
             fillIdList($$.d, *$3.d, $3.d->name, TypeDefault, $1.d);
-            PropagateBornsIfRegularSyntaxPass($$, $1, $3);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     ;
 
@@ -782,7 +782,7 @@ LabelDefininigIdentifier:
                 if (! SyntaxPassOnly()) {
                     labelReference($1.d,UsageDefined);
                 } else {
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             };
         }
@@ -795,7 +795,7 @@ LabelUseIdentifier:
                 if (! SyntaxPassOnly()) {
                     labelReference($1.d,UsageUsed);
                 } else {
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             };
         }
@@ -949,32 +949,32 @@ CompilationUnit: {
     ;
 
 ImportDeclarations_opt:						{
-            SetNullBorns($$);
+            SetNullBoundaries($$);
         }
     |	ImportDeclarations					/* $$ = $1; */
     ;
 
 ImportDeclarations:
         SingleTypeImportDeclaration			{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             if (inSecondJslPass()) {
                 JslImportSingleDeclaration($1.d);
             }
         }
     |	TypeImportOnDemandDeclaration			{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             if (inSecondJslPass()) {
                 JslImportOnDemandDeclaration($1.d);
             }
         }
     |	ImportDeclarations SingleTypeImportDeclaration			{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $2);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
             if (inSecondJslPass()) {
                 JslImportSingleDeclaration($2.d);
             }
         }
     |	ImportDeclarations TypeImportOnDemandDeclaration		{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $2);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
             if (inSecondJslPass()) {
                 JslImportOnDemandDeclaration($2.d);
             }
@@ -985,7 +985,7 @@ ImportDeclarations:
 ImportDeclarations:
         ImportDeclaration
     |	ImportDeclarations ImportDeclaration		{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $2);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
@@ -1011,7 +1011,7 @@ SingleTypeImportDeclaration:
                         javaAddImportConstructionReference(&$2.d->next->id.p, &$1.d->p, UsageDefined);
                     }
                 } else {
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -1035,7 +1035,7 @@ TypeImportOnDemandDeclaration:
                     s_cps.lastImportLine = $1.d->p.line;
                     javaAddImportConstructionReference(&$2.d->id.p, &$1.d->p, UsageDefined);
                 } else {
-                    PropagateBorns($$, $1, $5);
+                    PropagateBoundaries($$, $1, $5);
                 }
             }
         }
@@ -1043,19 +1043,19 @@ TypeImportOnDemandDeclaration:
     ;
 
 TypeDeclarations_opt:							{
-            SetNullBorns($$);
+            SetNullBoundaries($$);
         }
     |	TypeDeclarations _bef_					{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 
 TypeDeclarations:
         _bef_ TypeDeclaration					{
-            PropagateBornsIfRegularSyntaxPass($$, $2, $2);
+            PropagateBoundariesIfRegularSyntaxPass($$, $2, $2);
         }
     |	TypeDeclarations _bef_ TypeDeclaration					{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $3);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     ;
 
@@ -1063,21 +1063,21 @@ PackageDeclaration_opt:							{
             $$.d = NULL;
             if (regularPass()) {
                 s_cps.lastImportLine = 0;
-                SetNullBorns($$);
+                SetNullBoundaries($$);
             }
         }
     |	Package Name ';'						{
             $$.d = $2.d;
             if (regularPass()) {
                 s_cps.lastImportLine = $1.d->p.line;
-                PropagateBornsIfRegularSyntaxPass($$, $1, $3);
+                PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
             }
         }
     |	Package error							{
             $$.d = NULL;
             if (regularPass()) {
                 s_cps.lastImportLine = $1.d->p.line;
-                PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+                PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             }
         }
     |	Package CompletionPackageName ';'		{ /* rule never used */ }
@@ -1088,13 +1088,13 @@ TypeDeclaration:
         ClassDeclaration		{
             if (regularPass()) {
                 javaSetClassSourceInformation(s_javaThisPackageName, $1.d);
-                PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+                PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             }
         }
     |	InterfaceDeclaration	{
             if (regularPass()) {
                 javaSetClassSourceInformation(s_javaThisPackageName, $1.d);
-                PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+                PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             }
         }
     |	';'						{}
@@ -1105,11 +1105,11 @@ TypeDeclaration:
 
 Modifiers_opt:					{
             $$.d = ACCESS_DEFAULT;
-            SetNullBorns($$);
+            SetNullBoundaries($$);
         }
     |	Modifiers				{
             $$.d = $1.d;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 
@@ -1117,22 +1117,22 @@ Modifiers:
         Modifier				/*& { $$ = $1; } */
     |	Modifiers Modifier		{
             $$.d = $1.d | $2.d;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $2);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
 Modifier:
-        PUBLIC			{ $$.d = ACCESS_PUBLIC; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	PROTECTED		{ $$.d = ACCESS_PROTECTED; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	PRIVATE			{ $$.d = ACCESS_PRIVATE; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	STATIC			{ $$.d = ACCESS_STATIC; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	ABSTRACT		{ $$.d = ACCESS_ABSTRACT; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	FINAL			{ $$.d = ACCESS_FINAL; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	NATIVE			{ $$.d = ACCESS_NATIVE; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	SYNCHRONIZED	{ $$.d = ACCESS_SYNCHRONIZED; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	STRICTFP		{ $$.d = 0; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	TRANSIENT		{ $$.d = ACCESS_TRANSIENT; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	VOLATILE		{ $$.d = 0; PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
+        PUBLIC			{ $$.d = ACCESS_PUBLIC; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	PROTECTED		{ $$.d = ACCESS_PROTECTED; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	PRIVATE			{ $$.d = ACCESS_PRIVATE; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	STATIC			{ $$.d = ACCESS_STATIC; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	ABSTRACT		{ $$.d = ACCESS_ABSTRACT; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	FINAL			{ $$.d = ACCESS_FINAL; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	NATIVE			{ $$.d = ACCESS_NATIVE; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	SYNCHRONIZED	{ $$.d = ACCESS_SYNCHRONIZED; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	STRICTFP		{ $$.d = 0; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	TRANSIENT		{ $$.d = ACCESS_TRANSIENT; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	VOLATILE		{ $$.d = 0; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
     ;
 
 /* *************************** Classes *************************** */
@@ -1154,10 +1154,10 @@ TopLevelClassDeclaration:
                 }
             }
         Super_opt Interfaces_opt ClassBody		{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $7);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $7);
         }
     |	Modifiers_opt CLASS error ClassBody		{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $4);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $4);
         }
     ;
 */
@@ -1186,8 +1186,8 @@ ClassDeclaration:
                     if (! SyntaxPassOnly()) {
                         newClassDefinitionEnd($<trail>4);
                     } else {
-                        PropagateBorns($$, $1, $8);
-                        if ($$.b.file == s_noneFileIndex) PropagateBorns($$, $2, $$);
+                        PropagateBoundaries($$, $1, $8);
+                        if ($$.b.file == s_noneFileIndex) PropagateBoundaries($$, $2, $$);
                         if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE($$.b, s_cxRefPos, $$.e)
                             && s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == s_noneFileIndex) {
                             s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = $$.b;
@@ -1217,8 +1217,8 @@ ClassDeclaration:
                     if (! SyntaxPassOnly()) {
                         newClassDefinitionEnd($<trail>4);
                     } else {
-                        PropagateBorns($$, $1, $6);
-                        if ($$.b.file == s_noneFileIndex) PropagateBorns($$, $2, $6);
+                        PropagateBoundaries($$, $1, $6);
+                        if ($$.b.file == s_noneFileIndex) PropagateBoundaries($$, $2, $6);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -1250,8 +1250,8 @@ FunctionInnerClassDeclaration:
                     if (! SyntaxPassOnly()) {
                         newClassDefinitionEnd($<trail>4);
                     } else {
-                        PropagateBorns($$, $1, $8);
-                        if ($$.b.file == s_noneFileIndex) PropagateBorns($$, $2, $8);
+                        PropagateBoundaries($$, $1, $8);
+                        if ($$.b.file == s_noneFileIndex) PropagateBoundaries($$, $2, $8);
                         if (POSITION_EQ(s_cxRefPos, $3.d->p)) {
                             s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = $$.b;
                             s_spp[SPP_CLASS_DECLARATION_END_POSITION] = $$.e;
@@ -1277,8 +1277,8 @@ FunctionInnerClassDeclaration:
                     if (! SyntaxPassOnly()) {
                         newClassDefinitionEnd($<trail>4);
                     } else {
-                        PropagateBorns($$, $1, $6);
-                        if ($$.b.file == s_noneFileIndex) PropagateBorns($$, $2, $6);
+                        PropagateBoundaries($$, $1, $6);
+                        if ($$.b.file == s_noneFileIndex) PropagateBoundaries($$, $2, $6);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -1299,7 +1299,7 @@ Super_opt:
                         s_jsl->classStat->thisClass, s_javaLangObjectLinkName);
                 }
             }
-            SetNullBorns($$);
+            SetNullBoundaries($$);
         }
     |	EXTENDS ExtendClassOrInterfaceType			{
             if (regularPass()) {
@@ -1308,7 +1308,7 @@ Super_opt:
                     assert($2.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass($2.d->u.type->u.t);
                 } else {
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
             if (inSecondJslPass()) {
@@ -1321,10 +1321,10 @@ Super_opt:
     ;
 
 Interfaces_opt:								{
-            SetNullBorns($$);
+            SetNullBoundaries($$);
         }
     |	IMPLEMENTS InterfaceTypeList		{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $2);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
@@ -1336,7 +1336,7 @@ InterfaceTypeList:
                     assert($1.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass($1.d->u.type->u.t);
                 } else {
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             }
             if (inSecondJslPass()) {
@@ -1353,7 +1353,7 @@ InterfaceTypeList:
                     assert($3.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass($3.d->u.type->u.t);
                 } else {
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
             if (inSecondJslPass()) {
@@ -1368,7 +1368,7 @@ InterfaceTypeList:
 _bef_:	{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    // TODO, REDO all this stuff around class/method borns !!!!!!
+                    // TODO, REDO all this stuff around class/method boundaries !!!!!!
                     if (s_opt.taskRegime == RegimeEditServer) {
                         if (s_cp.parserPassedMarker && !s_cp.thisMethodMemoriesStored){
                             s_cps.cxMemiAtMethodBeginning = s_cp.cxMemiAtFunBegin;
@@ -1413,19 +1413,19 @@ _bef_:	{
 
 ClassBody:
         _bef_ '{' '}'								{
-            PropagateBornsIfRegularSyntaxPass($$, $2, $3);
+            PropagateBoundariesIfRegularSyntaxPass($$, $2, $3);
         }
     |	_bef_ '{' ClassBodyDeclarations _bef_ '}'   {
-            PropagateBornsIfRegularSyntaxPass($$, $2, $5);
+            PropagateBoundariesIfRegularSyntaxPass($$, $2, $5);
         }
     ;
 
 ClassBodyDeclarations:
         ClassBodyDeclaration                                    {
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	ClassBodyDeclarations _bef_ ClassBodyDeclaration		{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $3);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     ;
 
@@ -1434,14 +1434,14 @@ ClassBodyDeclaration:
     |	ClassInitializer
     |	ConstructorDeclaration
     |	';'
-    |	error							{SetNullBorns($$);}
+    |	error							{SetNullBoundaries($$);}
     ;
 
 ClassMemberDeclaration:
-        ClassDeclaration				{PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	InterfaceDeclaration			{PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	FieldDeclaration				{PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	MethodDeclaration				{PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
+        ClassDeclaration				{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	InterfaceDeclaration			{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	FieldDeclaration				{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	MethodDeclaration				{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
     ;
 
 /* ****************** Field Declarations ****************** */
@@ -1453,7 +1453,7 @@ AssignementType:
                 if (! SyntaxPassOnly()) {
                     s_cps.lastAssignementStruct = $1.d;
                 } else {
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             }
     }
@@ -1499,8 +1499,8 @@ FieldDeclaration:
                         s_cps.methodCoordEndLine = cFile.lineNumber+1;
                     }
                 } else {
-                    PropagateBorns($$, $1, $4);
-                    if ($$.b.file == s_noneFileIndex) PropagateBorns($$, $2, $4);
+                    PropagateBoundaries($$, $1, $4);
+                    if ($$.b.file == s_noneFileIndex) PropagateBoundaries($$, $2, $4);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE($$.b, s_cxRefPos, $$.e)
                         && s_spp[SPP_FIELD_DECLARATION_BEGIN_POSITION].file==s_noneFileIndex) {
                         s_spp[SPP_FIELD_DECLARATION_BEGIN_POSITION] = $$.b;
@@ -1552,7 +1552,7 @@ VariableDeclarators:
                 if (! SyntaxPassOnly()) {
                     assert($$.d->bits.symType == TypeDefault || $$.d->bits.symType == TypeError);
                 } else {
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             }
         }
@@ -1568,7 +1568,7 @@ VariableDeclarators:
                     }
                     assert($$.d->bits.symType == TypeDefault || $$.d->bits.symType == TypeError);
                 } else {
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
             if (inSecondJslPass()) {
@@ -1588,14 +1588,14 @@ VariableDeclarator:
         VariableDeclaratorId							/*	{ $$ = $1; } */
     |	VariableDeclaratorId '=' VariableInitializer	{
             $$.d = $1.d;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $3);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     |	error											{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d = newSymbolAsCopyOf(s_errorSymbol);
                 } else {
-                    SetNullBorns($$);
+                    SetNullBoundaries($$);
                 }
             }
             if (inSecondJslPass()) {
@@ -1611,7 +1611,7 @@ VariableDeclaratorId:
                 if (! SyntaxPassOnly()) {
                     $$.d = newSymbol($1.d->name, $1.d->name, $1.d->p);
                 } else {
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             }
             if (inSecondJslPass()) {
@@ -1629,7 +1629,7 @@ VariableDeclaratorId:
                     $$.d = $1.d;
                     AddComposedType($$.d, TypeArray);
                 } else {
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
             if (inSecondJslPass()) {
@@ -1663,7 +1663,7 @@ MethodDeclaration:
                     if (! SyntaxPassOnly()) {
                         javaMethodBodyEnding(&$4.d);
                     } else {
-                        PropagateBorns($$, $1, $4);
+                        PropagateBoundaries($$, $1, $4);
                         if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE($1.b, s_cxRefPos, $1.e)) {
                             s_spp[SPP_METHOD_DECLARATION_BEGIN_POSITION] = $$.b;
                             s_spp[SPP_METHOD_DECLARATION_END_POSITION] = $$.e;
@@ -1680,9 +1680,9 @@ MethodHeader:
                     s_cps.lastAssignementStruct = NULL;
                     $$.d = javaMethodHeader($1.d,$2.d,$3.d, StorageMethod);
                 } else {
-                    PropagateBorns($$, $1, $4);
-                    if ($$.b.file == s_noneFileIndex) PropagateBorns($$, $2, $$);
-                    if ($$.e.file == s_noneFileIndex) PropagateBorns($$, $$, $3);
+                    PropagateBoundaries($$, $1, $4);
+                    if ($$.b.file == s_noneFileIndex) PropagateBoundaries($$, $2, $$);
+                    if ($$.e.file == s_noneFileIndex) PropagateBoundaries($$, $$, $3);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE($$.b, s_cxRefPos, $3.e)) {
                         s_spp[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = $2.b;
                         s_spp[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = $2.e;
@@ -1698,9 +1698,9 @@ MethodHeader:
                 if (! SyntaxPassOnly()) {
                     $$.d = javaMethodHeader($1.d,&s_defaultVoidDefinition,$3.d,StorageMethod);
                 } else {
-                    PropagateBorns($$, $1, $4);
-                    if ($$.b.file == s_noneFileIndex) PropagateBorns($$, $2, $$);
-                    if ($$.e.file == s_noneFileIndex) PropagateBorns($$, $$, $3);
+                    PropagateBoundaries($$, $1, $4);
+                    if ($$.b.file == s_noneFileIndex) PropagateBoundaries($$, $2, $$);
+                    if ($$.e.file == s_noneFileIndex) PropagateBoundaries($$, $$, $3);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE($$.b, s_cxRefPos, $3.e)) {
                         s_spp[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = $2.b;
                         s_spp[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = $2.e;
@@ -1735,7 +1735,7 @@ MethodDeclarator:
                         initFunctionTypeModifier(&$$.d->u.type->u.f , $4.d.s);
                     } else {
                         javaHandleDeclaratorParamPositions(&$1.d->p, &$3.d, $4.d.p, &$5.d);
-                        PropagateBorns($$, $1, $5);
+                        PropagateBoundaries($$, $1, $5);
                     }
                 }
                 if (inSecondJslPass()) {
@@ -1750,7 +1750,7 @@ MethodDeclarator:
                     $$.d = $1.d;
                     AddComposedType($$.d, TypeArray);
                 } else {
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
             if (inSecondJslPass()) {
@@ -1764,7 +1764,7 @@ MethodDeclarator:
 FormalParameterList_opt:					{
             $$.d.s = NULL;
             $$.d.p = NULL;
-            SetNullBorns($$);
+            SetNullBoundaries($$);
         }
     |	FormalParameterList					/*& {$$ = $1;} */
     ;
@@ -1776,7 +1776,7 @@ FormalParameterList:
             } else {
                 $$.d.p = NULL;
                 appendPositionToList(&$$.d.p, &s_noPos);
-                PropagateBorns($$, $1, $1);
+                PropagateBoundaries($$, $1, $1);
             }
         }
     |	FormalParameterList ',' FormalParameter		{
@@ -1786,7 +1786,7 @@ FormalParameterList:
                     LIST_APPEND(Symbol, $$.d.s, $3.d);
                 } else {
                     appendPositionToList(&$$.d.p, &$2.d);
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
             if (inSecondJslPass()) {
@@ -1803,7 +1803,7 @@ FormalParameter:
                     $$.d = $2.d;
                     completeDeclarator($1.d, $2.d);
                 } else {
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
             if (inSecondJslPass()) {
@@ -1817,7 +1817,7 @@ FormalParameter:
                     $$.d = $3.d;
                     completeDeclarator($2.d, $3.d);
                 } else {
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
             if (inSecondJslPass()) {
@@ -1830,7 +1830,7 @@ FormalParameter:
                 if (! SyntaxPassOnly()) {
                     $$.d = newSymbolAsCopyOf(s_errorSymbol);
                 } else {
-                    SetNullBorns($$);
+                    SetNullBoundaries($$);
                 }
             }
             if (inSecondJslPass()) {
@@ -1842,17 +1842,17 @@ FormalParameter:
 
 Throws_opt:								{
             $$.d = NULL;
-            SetNullBorns($$);
+            SetNullBoundaries($$);
         }
     |	THROWS ClassTypeList			{
             $$.d = $2.d;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $2);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
 ClassTypeList:
         ClassType						{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             if (inSecondJslPass()) {
                 assert($1.d && $1.d->bits.symType == TypeDefault && $1.d->u.type);
                 assert($1.d->u.type->kind == TypeStruct);
@@ -1862,7 +1862,7 @@ ClassTypeList:
             }
         }
     |	ClassTypeList ',' ClassType		{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $3);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
             if (inSecondJslPass()) {
                 assert($3.d && $3.d->bits.symType == TypeDefault && $3.d->u.type);
                 assert($3.d->u.type->kind == TypeStruct);
@@ -1877,7 +1877,7 @@ MethodBody:
         Block				/*& { $$ = $1; } */
     |	';'					{
             $$.d = $1.d;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 
@@ -1885,10 +1885,10 @@ MethodBody:
 
 ClassInitializer:
         STATIC Block		{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $2);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     |	Block				{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 
@@ -1933,8 +1933,8 @@ ConstructorDeclaration:
                     if (s_opt.taskRegime == RegimeHtmlGenerate) {
                         htmlAddFunctionSeparatorReference();
                     } else {
-                        PropagateBorns($$, $1, $6);
-                        if ($$.b.file == s_noneFileIndex) PropagateBorns($$, $2, $$);
+                        PropagateBoundaries($$, $1, $6);
+                        if ($$.b.file == s_noneFileIndex) PropagateBoundaries($$, $2, $$);
                     }
                 }
                 s_cp.function = NULL; /* added for set-target-position checks */
@@ -1979,7 +1979,7 @@ ConstructorDeclarator:
                         initFunctionTypeModifier(&$$.d->u.type->u.f , $4.d.s);
                     } else {
                         javaHandleDeclaratorParamPositions(&$1.d->p, &$3.d, $4.d.p, &$5.d);
-                        PropagateBorns($$, $1, $5);
+                        PropagateBoundaries($$, $1, $5);
                     }
                 }
                 if (inSecondJslPass()) {
@@ -1992,16 +1992,16 @@ ConstructorDeclarator:
 
 ConstructorBody:
         '{' Start_block ExplicitConstructorInvocation BlockStatements Stop_block '}'	{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $6);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $6);
         }
     |	'{' Start_block ExplicitConstructorInvocation Stop_block '}'					{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $5);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $5);
         }
     |	'{' Start_block BlockStatements Stop_block '}'									{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $5);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $5);
         }
     |	'{' '}'																			{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $2);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
@@ -2019,7 +2019,7 @@ ExplicitConstructorInvocation:
                         s_cp.erfsForParamsComplet = $2;
                     } else {
                         javaHandleDeclaratorParamPositions(&$1.d->p, &$4.d, $5.d.p, &$6.d);
-                        PropagateBorns($$, $1, $6);
+                        PropagateBoundaries($$, $1, $6);
                     }
                 }
             }
@@ -2037,7 +2037,7 @@ ExplicitConstructorInvocation:
                         s_cp.erfsForParamsComplet = $2;
                     } else {
                         javaHandleDeclaratorParamPositions(&$1.d->p, &$4.d, $5.d.p, &$6.d);
-                        PropagateBorns($$, $1, $6);
+                        PropagateBoundaries($$, $1, $6);
                     }
                 }
             }
@@ -2055,13 +2055,13 @@ ExplicitConstructorInvocation:
                         s_cp.erfsForParamsComplet = $4;
                     } else {
                         javaHandleDeclaratorParamPositions(&$3.d->p, &$6.d, $7.d.p, &$8.d);
-                        PropagateBorns($$, $1, $8);
+                        PropagateBoundaries($$, $1, $8);
                     }
                 }
             }
-    |	This error					{SetNullBorns($$);}
-    |	Super error					{SetNullBorns($$);}
-    |	Primary error				{SetNullBorns($$);}
+    |	This error					{SetNullBoundaries($$);}
+    |	Super error					{SetNullBoundaries($$);}
+    |	Primary error				{SetNullBoundaries($$);}
     |	COMPL_SUPER_CONSTRUCTOR1						{assert(0);}
     |	COMPL_THIS_CONSTRUCTOR							{assert(0);}
     |	Primary '.' COMPL_SUPER_CONSTRUCTOR1			{assert(0);}
@@ -2093,8 +2093,8 @@ InterfaceDeclaration:
                 if (! SyntaxPassOnly()) {
                     newClassDefinitionEnd($<trail>4);
                 } else {
-                    PropagateBorns($$, $1, $7);
-                    if ($$.b.file == s_noneFileIndex) PropagateBorns($$, $2, $$);
+                    PropagateBoundaries($$, $1, $7);
+                    if ($$.b.file == s_noneFileIndex) PropagateBoundaries($$, $2, $$);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE($$.b, s_cxRefPos, $$.e)
                         && s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == s_noneFileIndex) {
                         s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = $$.b;
@@ -2124,8 +2124,8 @@ InterfaceDeclaration:
                     if (! SyntaxPassOnly()) {
                         newClassDefinitionEnd($<trail>4);
                     } else {
-                        PropagateBorns($$, $1, $6);
-                        if ($$.b.file == s_noneFileIndex) PropagateBorns($$, $2, $$);
+                        PropagateBoundaries($$, $1, $6);
+                        if ($$.b.file == s_noneFileIndex) PropagateBoundaries($$, $2, $$);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -2135,7 +2135,7 @@ InterfaceDeclaration:
     ;
 
 ExtendsInterfaces_opt:					{
-            SetNullBorns($$);
+            SetNullBoundaries($$);
             if (inSecondJslPass()) {
                 jslAddSuperClassOrInterfaceByName(s_jsl->classStat->thisClass,
                                                 s_javaLangObjectLinkName);
@@ -2152,7 +2152,7 @@ ExtendsInterfaces:
                     assert($2.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass($2.d->u.type->u.t);
                 } else {
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
             if (inSecondJslPass()) {
@@ -2169,7 +2169,7 @@ ExtendsInterfaces:
                     assert($3.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass($3.d->u.type->u.t);
                 } else {
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
             if (inSecondJslPass()) {
@@ -2183,27 +2183,27 @@ ExtendsInterfaces:
 
 InterfaceBody:
         _bef_ '{' '}'											{
-            PropagateBornsIfRegularSyntaxPass($$, $2, $3);
+            PropagateBoundariesIfRegularSyntaxPass($$, $2, $3);
         }
     |	_bef_ '{' InterfaceMemberDeclarations _bef_ '}'			{
-            PropagateBornsIfRegularSyntaxPass($$, $2, $5);
+            PropagateBoundariesIfRegularSyntaxPass($$, $2, $5);
         }
     ;
 
 InterfaceMemberDeclarations:
         InterfaceMemberDeclaration
     |	InterfaceMemberDeclarations _bef_ InterfaceMemberDeclaration	{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $3);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     ;
 
 InterfaceMemberDeclaration:
-        ClassDeclaration				{PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	InterfaceDeclaration			{PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	ConstantDeclaration				{PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	AbstractMethodDeclaration		{PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	';'								{PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	error							{SetNullBorns($$);}
+        ClassDeclaration				{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	InterfaceDeclaration			{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	ConstantDeclaration				{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	AbstractMethodDeclaration		{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	';'								{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	error							{SetNullBoundaries($$);}
     ;
 
 ConstantDeclaration:
@@ -2225,7 +2225,7 @@ AbstractMethodDeclaration:
                     if (! SyntaxPassOnly()) {
                         javaMethodBodyEnding(&$4.d);
                     } else {
-                        PropagateBorns($$, $1, $4);
+                        PropagateBoundaries($$, $1, $4);
                     }
                 }
             }
@@ -2234,18 +2234,18 @@ AbstractMethodDeclaration:
 /* ***************************** Arrays *************************** */
 
 ArrayInitializer:
-        '{' VariableInitializers ',' '}'		{PropagateBornsIfRegularSyntaxPass($$, $1, $4);}
-    |	'{' VariableInitializers     '}'		{PropagateBornsIfRegularSyntaxPass($$, $1, $3);}
-    |	'{' ',' '}'								{PropagateBornsIfRegularSyntaxPass($$, $1, $3);}
-    |	'{' '}'									{PropagateBornsIfRegularSyntaxPass($$, $1, $2);}
+        '{' VariableInitializers ',' '}'		{PropagateBoundariesIfRegularSyntaxPass($$, $1, $4);}
+    |	'{' VariableInitializers     '}'		{PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);}
+    |	'{' ',' '}'								{PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);}
+    |	'{' '}'									{PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);}
     ;
 
 VariableInitializers:
         VariableInitializer							{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	VariableInitializers ',' VariableInitializer		{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $3);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     ;
 
@@ -2254,18 +2254,18 @@ VariableInitializers:
 Block:
         '{' Start_block BlockStatements Stop_block '}'		{
             $$.d = $5.d;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $5);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $5);
         }
     |	'{' '}'												{
             $$.d = $2.d;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $2);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
 BlockStatements:
         BlockStatement						/*& {$$ = $1;} */
     |	BlockStatements BlockStatement		{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $2);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
@@ -2273,12 +2273,12 @@ BlockStatement:
         LocalVariableDeclarationStatement		/*& {$$ = $1;} */
     |	FunctionInnerClassDeclaration			/*& {$$ = $1;} */
     |	Statement								/*& {$$ = $1;} */
-    |	error									{SetNullBorns($$);}
+    |	error									{SetNullBoundaries($$);}
     ;
 
 LocalVariableDeclarationStatement:
         LocalVariableDeclaration ';'			{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $2);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
@@ -2289,7 +2289,7 @@ LocalVarDeclUntilInit:
                     addNewDeclaration($1.d,$2.d,NULL,StorageAuto,s_javaStat->locals);
                     $$.d = $1.d;
                 } else {
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
         }
@@ -2299,7 +2299,7 @@ LocalVarDeclUntilInit:
                     addNewDeclaration($2.d,$3.d,NULL,StorageAuto,s_javaStat->locals);
                     $$.d = $2.d;
                 } else {
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -2311,7 +2311,7 @@ LocalVarDeclUntilInit:
                     }
                     $$.d = $1.d;
                 } else {
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -2320,7 +2320,7 @@ LocalVarDeclUntilInit:
 LocalVariableDeclaration:
         LocalVarDeclUntilInit								{
             if (regularPass()) $$.d = $1.d;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	LocalVarDeclUntilInit {
             if (regularPass()) {
@@ -2334,14 +2334,14 @@ LocalVariableDeclaration:
                     s_cps.lastAssignementStruct = NULL;
                     $$.d = $1.d;
                 } else {
-                    PropagateBorns($$, $1, $4);
+                    PropagateBoundaries($$, $1, $4);
                 }
             }
         }
     /*
     |   error			{
             $$.d = &s_errorSymbol;
-            SetNullBorns($$);
+            SetNullBoundaries($$);
         }
     */
     ;
@@ -2380,45 +2380,45 @@ StatementWithoutTrailingSubstatement:
 
 AssertStatement:
         ASSERT Expression ';'						{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $3);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     |	ASSERT Expression ':' Expression ';'		{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $5);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $5);
         }
     ;
 
 EmptyStatement:
         ';'										{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 
 LabeledStatement:
         LabelDefininigIdentifier ':' Statement		{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $3);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     ;
 
 LabeledStatementNoShortIf:
         LabelDefininigIdentifier ':' StatementNoShortIf         {
-            PropagateBornsIfRegularSyntaxPass($$, $1, $3);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     ;
 
 ExpressionStatement:
         StatementExpression ';'		{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $2);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
 StatementExpression:
-        Assignment						{PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	PreIncrementExpression			{PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	PreDecrementExpression			{PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	PostIncrementExpression			{PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	PostDecrementExpression			{PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	MethodInvocation				{PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
-    |	ClassInstanceCreationExpression	{PropagateBornsIfRegularSyntaxPass($$, $1, $1);}
+        Assignment						{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	PreIncrementExpression			{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	PreDecrementExpression			{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	PostIncrementExpression			{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	PostDecrementExpression			{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	MethodInvocation				{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+    |	ClassInstanceCreationExpression	{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
     ;
 
 _ncounter_:  {if (regularPass()) EXTRACT_COUNTER_SEMACT($$.d);}
@@ -2440,7 +2440,7 @@ IfThenStatement:
                 if (! SyntaxPassOnly()) {
                     genInternalLabelReference($5.d, UsageDefined);
                 } else {
-                    PropagateBorns($$, $1, $6);
+                    PropagateBoundaries($$, $1, $6);
                 }
             }
         }
@@ -2453,7 +2453,7 @@ IfThenElseStatementPrefix:
                     genInternalLabelReference($5.d, UsageDefined);
                     $$.d = $8.d;
                 } else {
-                    PropagateBorns($$, $1, $7);
+                    PropagateBoundaries($$, $1, $7);
                 }
             }
         }
@@ -2465,7 +2465,7 @@ IfThenElseStatement:
                 if (! SyntaxPassOnly()) {
                     genInternalLabelReference($1.d, UsageDefined);
                 } else {
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
         }
@@ -2477,7 +2477,7 @@ IfThenElseStatementNoShortIf:
                 if (! SyntaxPassOnly()) {
                     genInternalLabelReference($1.d, UsageDefined);
                 } else {
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
         }
@@ -2505,7 +2505,7 @@ SwitchStatement:
                     ExtrDeleteContBreakSym($<symbol>6);
                     genInternalLabelReference($5.d, UsageDefined);
                 } else {
-                    PropagateBorns($$, $1, $8);
+                    PropagateBoundaries($$, $1, $8);
                 }
             }
         }
@@ -2513,23 +2513,23 @@ SwitchStatement:
 
 SwitchBlock:
         '{' Start_block SwitchBlockStatementGroups SwitchLabels Stop_block '}'	{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $6);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $6);
         }
     |	'{' Start_block SwitchBlockStatementGroups Stop_block '}'				{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $5);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $5);
         }
     |	'{' Start_block SwitchLabels Stop_block '}'								{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $5);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $5);
         }
     |	'{' '}'																	{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $2);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
 SwitchBlockStatementGroups:
         SwitchBlockStatementGroup								/*& {$$=$1;} */
     |	SwitchBlockStatementGroups SwitchBlockStatementGroup	{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $2);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
@@ -2541,26 +2541,26 @@ SwitchBlockStatementGroup:
                 }
             }
         } BlockStatements						{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $3);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     ;
 
 SwitchLabels:
         SwitchLabel								/*& {$$=$1;} */
     |	SwitchLabels SwitchLabel				{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $2);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     |	error									{
-            SetNullBorns($$);
+            SetNullBoundaries($$);
         }
     ;
 
 SwitchLabel:
         CASE ConstantExpression ':'				{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $3);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     |	DEFAULT ':'								{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $2);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
@@ -2578,7 +2578,7 @@ WhileStatementPrefix:
                         $$.d = NULL;
                     }
                 } else {
-                    PropagateBorns($$, $1, $5);
+                    PropagateBoundaries($$, $1, $5);
                 }
             }
         }
@@ -2595,7 +2595,7 @@ WhileStatement:
                         genInternalLabelReference($1.d->i2, UsageDefined);
                     }
                 } else {
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
         }
@@ -2612,7 +2612,7 @@ WhileStatementNoShortIf:
                         genInternalLabelReference($1.d->i2, UsageDefined);
                     }
                 } else {
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
         }
@@ -2645,17 +2645,17 @@ DoStatement:
                     genInternalLabelReference($2.d, UsageFork);
                     genInternalLabelReference($4.d, UsageDefined);
                 } else {
-                    PropagateBorns($$, $1, $13);
+                    PropagateBoundaries($$, $1, $13);
                 }
             }
         }
     ;
 
 MaybeExpression:							{
-            SetNullBorns($$);
+            SetNullBoundaries($$);
         }
         | Expression						{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
         ;
 
@@ -2665,7 +2665,7 @@ ForKeyword:
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockStart();
                 } else {
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             }
         }
@@ -2685,7 +2685,7 @@ ForStatementPrefix:
                     $$.d.i1 = $8.d;
                     $$.d.i2 = $11.d;
                 } else {
-                    PropagateBorns($$, $1, $10);
+                    PropagateBoundaries($$, $1, $10);
                 }
             }
         }
@@ -2700,7 +2700,7 @@ ForStatementBody:
                     genInternalLabelReference($1.d.i1, UsageUsed);
                     genInternalLabelReference($1.d.i2, UsageDefined);
                 } else {
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
         }
@@ -2715,7 +2715,7 @@ ForStatementNoShortIfBody:
                     genInternalLabelReference($1.d.i1, UsageUsed);
                     genInternalLabelReference($1.d.i2, UsageDefined);
                 } else {
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
         }
@@ -2727,7 +2727,7 @@ ForStatement:
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockFree();
                 } else {
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
         }
@@ -2736,7 +2736,7 @@ ForStatement:
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockFree();
                 } else {
-                    SetNullBorns($$);
+                    SetNullBoundaries($$);
                 }
             }
         }
@@ -2748,7 +2748,7 @@ ForStatementNoShortIf:
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockFree();
                 } else {
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
         }
@@ -2757,7 +2757,7 @@ ForStatementNoShortIf:
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockFree();
                 } else {
-                    SetNullBorns($$);
+                    SetNullBoundaries($$);
                 }
             }
         }
@@ -2765,43 +2765,43 @@ ForStatementNoShortIf:
 
 
 ForInit_opt:							{
-            SetNullBorns($$);
+            SetNullBoundaries($$);
         }
     |	StatementExpressionList			{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	LocalVariableDeclaration		{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 
 ForUpdate_opt:							{
-            SetNullBorns($$);
+            SetNullBoundaries($$);
         }
     |	StatementExpressionList			{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 
 StatementExpressionList:
         StatementExpression									{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	StatementExpressionList ',' StatementExpression		{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $3);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     ;
 
 BreakStatement:
         BREAK LabelUseIdentifier ';'		{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $3);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     |	BREAK ';'						{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     genContinueBreakReference(BREAK_LABEL_NAME);
                 } else {
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
         }
@@ -2809,14 +2809,14 @@ BreakStatement:
 
 ContinueStatement:
         CONTINUE LabelUseIdentifier ';'		{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $3);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     |	CONTINUE ';'					{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     genContinueBreakReference(CONTINUE_LABEL_NAME);
                 } else {
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
         }
@@ -2828,7 +2828,7 @@ ReturnStatement:
                 if (! SyntaxPassOnly()) {
                     genInternalLabelReference(-1, UsageUsed);
                 } else {
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -2837,7 +2837,7 @@ ReturnStatement:
                 if (! SyntaxPassOnly()) {
                     genInternalLabelReference(-1, UsageUsed);
                 } else {
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
         }
@@ -2851,7 +2851,7 @@ ThrowStatement:
                         addCxReference($2.d.t->u.t, &$1.d->p, UsageThrown, s_noneFileIndex, s_noneFileIndex);
                     }
                 } else {
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -2859,7 +2859,7 @@ ThrowStatement:
 
 SynchronizedStatement:
         SYNCHRONIZED '(' Expression ')' Block				{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $5);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $5);
         }
     ;
 
@@ -2867,7 +2867,7 @@ TryCatches:
         Catches				/* $$ = $1; */
     |	Finally				/* $$ = $1; */
     |	Catches Finally		{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $2);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
@@ -2888,7 +2888,7 @@ TryStatement:
                 }
             }
         TryCatches		{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $6);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $6);
             if (s_opt.server_operation == OLO_EXTRACT) {
                 addTrivialCxReference("TryCatch", TypeTryCatchMarker,StorageDefault,
                                         &$1.d->p, UsageTryCatchEnd);
@@ -2900,7 +2900,7 @@ TryStatement:
 Catches:
         CatchClause						/* $$ = $1; */
     |	Catches CatchClause		{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $2);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
@@ -2926,7 +2926,7 @@ CatchClause:
                     if (! SyntaxPassOnly()) {
                         genInternalLabelReference($5.d, UsageDefined);
                     } else {
-                        PropagateBorns($$, $1, $8);
+                        PropagateBoundaries($$, $1, $8);
                     }
                 }
             }
@@ -2938,7 +2938,7 @@ CatchClause:
                         addCxReference($3.d->u.type->u.t, &$1.d->p, UsageCatched, s_noneFileIndex, s_noneFileIndex);
                     }
                 } else {
-                    PropagateBorns($$, $1, $5);
+                    PropagateBoundaries($$, $1, $5);
                 }
             }
         }
@@ -2950,7 +2950,7 @@ Finally:
                 if (! SyntaxPassOnly()) {
                     genInternalLabelReference($2.d, UsageDefined);
                 } else {
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -2965,7 +2965,7 @@ Primary:
                 if (! SyntaxPassOnly()) {
                     s_javaCompletionLastPrimary = s_structRecordCompletionType = $$.d.t;
                 } else {
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             }
         }
@@ -2975,7 +2975,7 @@ Primary:
                 if (! SyntaxPassOnly()) {
                     s_javaCompletionLastPrimary = s_structRecordCompletionType = $$.d.t;
                 } else {
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             }
         }
@@ -2994,7 +2994,7 @@ PrimaryNoNewArray:
                 } else {
                     $$.d.pp = &$1.d->p;
                     javaCheckForStaticPrefixStart(&$1.d->p, &$1.d->p);
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             }
         }
@@ -3007,7 +3007,7 @@ PrimaryNoNewArray:
                 } else {
                     $$.d.pp = javaGetNameStartingPosition($1.d);
                     javaCheckForStaticPrefixStart(&$3.d->p, javaGetNameStartingPosition($1.d));
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -3018,7 +3018,7 @@ PrimaryNoNewArray:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = $1.d.p;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -3031,7 +3031,7 @@ PrimaryNoNewArray:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = javaGetNameStartingPosition($1.d);
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -3042,7 +3042,7 @@ PrimaryNoNewArray:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = $1.d.p;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -3053,7 +3053,7 @@ PrimaryNoNewArray:
                     $$.d.r = NULL;
                 } else {
                     SetPrimitiveTypePos($$.d.pp, $1.d);
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -3063,7 +3063,7 @@ PrimaryNoNewArray:
                 if (SyntaxPassOnly()) {
                     XX_ALLOC($$.d.pp, Position);
                     *$$.d.pp = $1.d;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE($$.b, s_cxRefPos, $$.e)
                         && s_spp[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file == s_noneFileIndex) {
                         s_spp[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION] = $1.b;
@@ -3117,7 +3117,7 @@ NestedConstructorInvocation:
                     }
                 } else {
                     $$.d.pp = $1.d.pp;
-                    PropagateBorns($$, $1, $9);
+                    PropagateBoundaries($$, $1, $9);
                 }
             }
         }
@@ -3144,7 +3144,7 @@ NestedConstructorInvocation:
                 } else {
                     $$.d.pp = javaGetNameStartingPosition($1.d);
                     javaHandleDeclaratorParamPositions(&$4.d->id.p, &$7.d, $8.d.p, &$9.d);
-                    PropagateBorns($$, $1, $9);
+                    PropagateBoundaries($$, $1, $9);
                 }
             }
         }
@@ -3213,7 +3213,7 @@ ClassInstanceCreationExpression:
                 } else {
                     javaHandleDeclaratorParamPositions(&$3.d->id.p, &$4.d, $5.d.p, &$6.d);
                     $$.d.pp = &$1.d->p;
-                    PropagateBorns($$, $1, $6);
+                    PropagateBoundaries($$, $1, $6);
                 }
             }
         }
@@ -3256,7 +3256,7 @@ ClassInstanceCreationExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &$1.d->p;
-                    PropagateBorns($$, $1, $9);
+                    PropagateBoundaries($$, $1, $9);
                 }
             } else {
                 jslNewClassDefinitionEnd();
@@ -3266,7 +3266,7 @@ ClassInstanceCreationExpression:
             $$.d.t = $1.d.t;
             $$.d.pp = $1.d.pp;
             $$.d.r = NULL;
-            PropagateBorns($$, $1, $1);
+            PropagateBoundaries($$, $1, $1);
         }
     |	NestedConstructorInvocation
             {
@@ -3293,7 +3293,7 @@ ClassInstanceCreationExpression:
                     if (! SyntaxPassOnly()) {
                         newClassDefinitionEnd($<trail>2);
                     } else {
-                        PropagateBorns($$, $1, $3);
+                        PropagateBoundaries($$, $1, $3);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -3320,7 +3320,7 @@ ClassInstanceCreationExpression:
 ArgumentList_opt:				{
             $$.d.t = NULL;
             $$.d.p = NULL;
-            SetNullBorns($$);
+            SetNullBoundaries($$);
         }
     | ArgumentList				/*& { $$.d = $1.d; } */
     ;
@@ -3336,7 +3336,7 @@ ArgumentList:
                 } else {
                     $$.d.p = NULL;
                     appendPositionToList(&$$.d.p, &s_noPos);
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             }
         }
@@ -3350,7 +3350,7 @@ ArgumentList:
                     if (s_cp.erfsForParamsComplet!=NULL) s_cp.erfsForParamsComplet->params = $$.d.t;
                 } else {
                     appendPositionToList(&$$.d.p, &$2.d);
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -3370,8 +3370,8 @@ ArrayCreationExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &$1.d->p;
-                    PropagateBorns($$, $1, $5);
-                    if ($$.e.file == s_noneFileIndex) PropagateBorns($$, $$, $4);
+                    PropagateBoundaries($$, $1, $5);
+                    if ($$.e.file == s_noneFileIndex) PropagateBoundaries($$, $$, $4);
                 }
             }
         }
@@ -3385,7 +3385,7 @@ ArrayCreationExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &$1.d->p;
-                    PropagateBorns($$, $1, $5);
+                    PropagateBoundaries($$, $1, $5);
                 }
             }
         }
@@ -3400,8 +3400,8 @@ ArrayCreationExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &$1.d->p;
-                    PropagateBorns($$, $1, $5);
-                    if ($$.e.file == s_noneFileIndex) PropagateBorns($$, $$, $4);
+                    PropagateBoundaries($$, $1, $5);
+                    if ($$.e.file == s_noneFileIndex) PropagateBoundaries($$, $$, $4);
                 }
             }
         }
@@ -3416,7 +3416,7 @@ ArrayCreationExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = &$1.d->p;
-                    PropagateBorns($$, $1, $5);
+                    PropagateBoundaries($$, $1, $5);
                 }
             }
         }
@@ -3426,23 +3426,23 @@ ArrayCreationExpression:
 DimExprs:
         DimExpr						{
             if (regularPass()) $$.d = 1;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	DimExprs DimExpr			{
             if (regularPass()) $$.d = $1.d+1;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $2);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
 DimExpr:
         '[' Expression ']'			{
-            PropagateBornsIfRegularSyntaxPass($$, $1, $3);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     ;
 
 Dims_opt:							{
             if (regularPass()) $$.d = 0;
-            SetNullBorns($$);
+            SetNullBoundaries($$);
         }
     |	Dims						/*& { $$ = $1; } */
     ;
@@ -3450,11 +3450,11 @@ Dims_opt:							{
 Dims:
         '[' ']'						{
             if (regularPass()) $$.d = 1;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $2);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     |	Dims '[' ']'				{
             if (regularPass()) $$.d = $1.d+1;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $3);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     ;
 
@@ -3480,7 +3480,7 @@ FieldAccess:
                 } else {
                     $$.d.pp = $1.d.pp;
                     javaCheckForPrimaryStart(&$3.d->p, $$.d.pp);
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -3505,7 +3505,7 @@ FieldAccess:
                     $$.d.pp = &$1.d->p;
                     javaCheckForPrimaryStart(&$3.d->p, $$.d.pp);
                     javaCheckForStaticPrefixStart(&$3.d->p, $$.d.pp);
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -3532,7 +3532,7 @@ FieldAccess:
                     javaCheckForPrimaryStart(&$5.d->p, $$.d.pp);
                     javaCheckForStaticPrefixStart(&$3.d->p, $$.d.pp);
                     javaCheckForStaticPrefixStart(&$5.d->p, $$.d.pp);
-                    PropagateBorns($$, $1, $5);
+                    PropagateBoundaries($$, $1, $5);
                 }
             }
         }
@@ -3557,7 +3557,7 @@ MethodInvocation:
                     javaCheckForPrimaryStartInNameList($1.d, $$.d.pp);
                     javaCheckForStaticPrefixInNameList($1.d, $$.d.pp);
                     javaHandleDeclaratorParamPositions(&$1.d->id.p, &$4.d, $5.d.p, &$6.d);
-                    PropagateBorns($$, $1, $6);
+                    PropagateBoundaries($$, $1, $6);
                 }
             }
         }
@@ -3575,7 +3575,7 @@ MethodInvocation:
                     $$.d.pp = $1.d.pp;
                     javaCheckForPrimaryStart(&$3.d->p, $$.d.pp);
                     javaHandleDeclaratorParamPositions(&$3.d->p, &$6.d, $7.d.p, &$8.d);
-                    PropagateBorns($$, $1, $8);
+                    PropagateBoundaries($$, $1, $8);
                 }
             }
         }
@@ -3594,7 +3594,7 @@ MethodInvocation:
                     javaCheckForPrimaryStart(&$1.d->p, $$.d.pp);
                     javaCheckForPrimaryStart(&$3.d->p, $$.d.pp);
                     javaHandleDeclaratorParamPositions(&$3.d->p, &$6.d, $7.d.p, &$8.d);
-                    PropagateBorns($$, $1, $8);
+                    PropagateBoundaries($$, $1, $8);
                 }
             }
         }
@@ -3618,7 +3618,7 @@ ArrayAccess:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = javaGetNameStartingPosition($1.d);
-                    PropagateBorns($$, $1, $4);
+                    PropagateBoundaries($$, $1, $4);
                 }
             }
         }
@@ -3631,7 +3631,7 @@ ArrayAccess:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = $1.d.pp;
-                    PropagateBorns($$, $1, $4);
+                    PropagateBoundaries($$, $1, $4);
                 }
             }
         }
@@ -3648,7 +3648,7 @@ PostfixExpression:
                     $$.d.pp = javaGetNameStartingPosition($1.d);
                     javaCheckForPrimaryStartInNameList($1.d, $$.d.pp);
                     javaCheckForStaticPrefixInNameList($1.d, $$.d.pp);
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             }
         }
@@ -3665,7 +3665,7 @@ PostIncrementExpression:
                     RESET_REFERENCE_USAGE($1.d.r, UsageAddrUsed);
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
         }
@@ -3679,7 +3679,7 @@ PostDecrementExpression:
                     RESET_REFERENCE_USAGE($1.d.r, UsageAddrUsed);
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
         }
@@ -3695,7 +3695,7 @@ UnaryExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
         }
@@ -3706,7 +3706,7 @@ UnaryExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
         }
@@ -3721,7 +3721,7 @@ PreIncrementExpression:
                     RESET_REFERENCE_USAGE($2.d.r, UsageAddrUsed);
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
         }
@@ -3735,7 +3735,7 @@ PreDecrementExpression:
                     RESET_REFERENCE_USAGE($2.d.r, UsageAddrUsed);
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
         }
@@ -3750,7 +3750,7 @@ UnaryExpressionNotPlusMinus:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
         }
@@ -3762,7 +3762,7 @@ UnaryExpressionNotPlusMinus:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $2);
+                    PropagateBoundaries($$, $1, $2);
                 }
             }
         }
@@ -3779,7 +3779,7 @@ CastExpression:
                     assert($$.d.t->kind == TypeArray);
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $4);
+                    PropagateBoundaries($$, $1, $4);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE($4.b, s_cxRefPos, $4.e)
                         && s_spp[SPP_CAST_LPAR_POSITION].file == s_noneFileIndex) {
                         s_spp[SPP_CAST_LPAR_POSITION] = $1.b;
@@ -3799,7 +3799,7 @@ CastExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $4);
+                    PropagateBoundaries($$, $1, $4);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE($4.b, s_cxRefPos, $4.e)
                         && s_spp[SPP_CAST_LPAR_POSITION].file == s_noneFileIndex) {
                         s_spp[SPP_CAST_LPAR_POSITION] = $1.b;
@@ -3819,7 +3819,7 @@ CastExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $4);
+                    PropagateBoundaries($$, $1, $4);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE($4.b, s_cxRefPos, $4.e)
                         && s_spp[SPP_CAST_LPAR_POSITION].file == s_noneFileIndex) {
                         s_spp[SPP_CAST_LPAR_POSITION] = $1.b;
@@ -3838,7 +3838,7 @@ CastExpression:
             if (! SyntaxPassOnly()) {
             javaClassifyToTypeName($1.d);
             } else {
-                PropagateBorns($$, $1, $4);
+                PropagateBoundaries($$, $1, $4);
             }
             }
         }
@@ -3854,7 +3854,7 @@ MultiplicativeExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -3865,7 +3865,7 @@ MultiplicativeExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -3876,7 +3876,7 @@ MultiplicativeExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -3904,7 +3904,7 @@ AdditiveExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -3915,7 +3915,7 @@ AdditiveExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -3930,7 +3930,7 @@ ShiftExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -3941,7 +3941,7 @@ ShiftExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -3952,7 +3952,7 @@ ShiftExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -3967,7 +3967,7 @@ RelationalExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -3978,7 +3978,7 @@ RelationalExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -3989,7 +3989,7 @@ RelationalExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -4000,7 +4000,7 @@ RelationalExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -4011,7 +4011,7 @@ RelationalExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -4026,7 +4026,7 @@ EqualityExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -4037,7 +4037,7 @@ EqualityExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -4052,7 +4052,7 @@ AndExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -4067,7 +4067,7 @@ ExclusiveOrExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -4082,7 +4082,7 @@ InclusiveOrExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -4097,7 +4097,7 @@ ConditionalAndExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -4112,7 +4112,7 @@ ConditionalOrExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $3);
+                    PropagateBoundaries($$, $1, $3);
                 }
             }
         }
@@ -4127,7 +4127,7 @@ ConditionalExpression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    PropagateBorns($$, $1, $5);
+                    PropagateBoundaries($$, $1, $5);
                 }
             }
         }
@@ -4178,7 +4178,7 @@ Assignment:
                         */
                     }
                 } else {
-                    PropagateBorns($$, $1, $4);
+                    PropagateBoundaries($$, $1, $4);
                     if (s_opt.taskRegime == RegimeEditServer) {
                         if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE($1.b, s_cxRefPos, $1.e)) {
                             s_spp[SPP_ASSIGNMENT_OPERATOR_POSITION] = $3.b;
@@ -4200,7 +4200,7 @@ LeftHandSide:
                     $$.d.t = javaClassifyToExpressionName($1.d, &rr);
                     $$.d.r = rr;
                 } else {
-                    PropagateBorns($$, $1, $1);
+                    PropagateBoundaries($$, $1, $1);
                 }
             }
         }
@@ -4212,51 +4212,51 @@ LeftHandSide:
 AssignmentOperator:
         '='					{
             if (regularPass()) $$.d.u = '=';
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |   MUL_ASSIGN          {
             if (regularPass()) $$.d.u = MUL_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |   DIV_ASSIGN			{
             if (regularPass()) $$.d.u = DIV_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |   MOD_ASSIGN			{
             if (regularPass()) $$.d.u = MOD_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |   ADD_ASSIGN			{
             if (regularPass()) $$.d.u = ADD_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |   SUB_ASSIGN			{
             if (regularPass()) $$.d.u = SUB_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |   LEFT_ASSIGN			{
             if (regularPass()) $$.d.u = LEFT_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |   RIGHT_ASSIGN		{
             if (regularPass()) $$.d.u = RIGHT_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |   URIGHT_ASSIGN		{
             if (regularPass()) $$.d.u = URIGHT_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |   AND_ASSIGN			{
             if (regularPass()) $$.d.u = AND_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |   XOR_ASSIGN			{
             if (regularPass()) $$.d.u = XOR_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |   OR_ASSIGN			{
             if (regularPass()) $$.d.u = OR_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass($$, $1, $1);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 
@@ -4269,7 +4269,7 @@ Expression:
                     $$.d.r = NULL;
                 } else {
                     $$.d.pp = NULL_POS;
-                    SetNullBorns($$);
+                    SetNullBoundaries($$);
                 }
             }
         }

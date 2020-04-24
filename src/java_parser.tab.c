@@ -103,13 +103,13 @@
             *res.p = tok;\
         }\
 }
-#define PropagateBorns(res, beg, end) {res.b=beg.b; res.e=end.e;}
-#define PropagateBornsIfRegularSyntaxPass(res, beg, end) {\
+#define PropagateBoundaries(res, beg, end) {res.b=beg.b; res.e=end.e;}
+#define PropagateBoundariesIfRegularSyntaxPass(res, beg, end) {\
     if (regularPass()) {\
-        if (SyntaxPassOnly()) {PropagateBorns(res, beg, end);}\
+        if (SyntaxPassOnly()) {PropagateBoundaries(res, beg, end);}\
     }\
 }
-#define SetNullBorns(res) {res.b=s_noPos; res.e=s_noPos;}
+#define SetNullBoundaries(res) {res.b=s_noPos; res.e=s_noPos;}
 
 #define NULL_POS NULL
 
@@ -2810,7 +2810,7 @@ case 2:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &s_noPos;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
@@ -2824,7 +2824,7 @@ case 3:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &s_noPos;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
@@ -2838,7 +2838,7 @@ case 4:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &s_noPos;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_integer, yyvsp[0].ast_integer);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_integer, yyvsp[0].ast_integer);
                 }
             }
         }
@@ -2852,7 +2852,7 @@ case 5:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &s_noPos;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
@@ -2866,7 +2866,7 @@ case 6:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &s_noPos;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
@@ -2878,7 +2878,7 @@ case 7:
                 yyval.ast_expressionType.d.t = newSimpleTypeModifier(TypeDouble);
                 yyval.ast_expressionType.d.r = NULL;
                 yyval.ast_expressionType.d.pp = &s_noPos;
-                if (SyntaxPassOnly()) {PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+                if (SyntaxPassOnly()) {PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);}
             }
         }
 break;
@@ -2891,7 +2891,7 @@ case 8:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &s_noPos;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
@@ -2906,7 +2906,7 @@ case 9:
                 } else {
                     XX_ALLOC(yyval.ast_expressionType.d.pp, Position);
                     *yyval.ast_expressionType.d.pp = yyvsp[0].ast_position.d;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
@@ -2921,7 +2921,7 @@ case 10:
                 } else {
                     XX_ALLOC(yyval.ast_expressionType.d.pp, Position);
                     *yyval.ast_expressionType.d.pp = yyvsp[0].ast_id.d->p;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_id, yyvsp[0].ast_id);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_id, yyvsp[0].ast_id);
                 }
             }
         }
@@ -2934,7 +2934,7 @@ case 11:
                     yyval.ast_symbol.d = typeSpecifier1(yyvsp[0].ast_unsignedPositionPair.d.u);
                     s_cps.lastDeclaratorType = NULL;
                 } else {
-                    PropagateBorns(yyval.ast_symbol, yyvsp[0].ast_unsignedPositionPair, yyvsp[0].ast_unsignedPositionPair);
+                    PropagateBoundaries(yyval.ast_symbol, yyvsp[0].ast_unsignedPositionPair, yyvsp[0].ast_unsignedPositionPair);
                 }
             };
             if (inSecondJslPass()) {
@@ -2946,7 +2946,7 @@ case 12:
 #line 486 "java_parser.y"
 {
             yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_symbol, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_symbol, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
         }
 break;
 case 14:
@@ -2955,7 +2955,7 @@ case 14:
             yyval.ast_unsignedPositionPair.d.u  = TypeBoolean;
             if (regularPass()) {
                 SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
+                PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
         }
 break;
@@ -2964,7 +2964,7 @@ case 17:
 {
             yyval.ast_unsignedPositionPair.d.u  = TypeByte;
             if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
 case 18:
@@ -2972,7 +2972,7 @@ case 18:
 {
             yyval.ast_unsignedPositionPair.d.u  = TypeShort;
             if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
 case 19:
@@ -2980,7 +2980,7 @@ case 19:
 {
             yyval.ast_unsignedPositionPair.d.u  = TypeInt;
             if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
 case 20:
@@ -2988,7 +2988,7 @@ case 20:
 {
             yyval.ast_unsignedPositionPair.d.u  = TypeLong;
             if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
 case 21:
@@ -2996,7 +2996,7 @@ case 21:
 {
             yyval.ast_unsignedPositionPair.d.u  = TypeChar;
             if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
 case 22:
@@ -3004,7 +3004,7 @@ case 22:
 {
             yyval.ast_unsignedPositionPair.d.u  = TypeFloat;
             if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
 case 23:
@@ -3012,14 +3012,14 @@ case 23:
 {
             yyval.ast_unsignedPositionPair.d.u  = TypeDouble;
             if (regularPass()) SetPrimitiveTypePos(yyval.ast_unsignedPositionPair.d.p, yyvsp[0].ast_id.d);
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
 case 25:
 #line 551 "java_parser.y"
 {
             yyval.ast_symbol.d = yyvsp[0].ast_symbolPositionPair.d.s;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_symbol, yyvsp[0].ast_symbolPositionPair, yyvsp[0].ast_symbolPositionPair);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_symbol, yyvsp[0].ast_symbolPositionPair, yyvsp[0].ast_symbolPositionPair);
         }
 break;
 case 26:
@@ -3032,7 +3032,7 @@ case 26:
                     assert(yyval.ast_symbol.d->u.type);
                     s_cps.lastDeclaratorType = yyval.ast_symbol.d->u.type->u.t;
                 } else {
-                    PropagateBorns(yyval.ast_symbol, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
+                    PropagateBoundaries(yyval.ast_symbol, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
                 }
             };
             if (inSecondJslPass()) {
@@ -3054,7 +3054,7 @@ case 28:
                     javaClassifyToTypeName(yyvsp[0].ast_idList.d, USAGE_EXTEND_USAGE, &yyval.ast_symbol.d, USELESS_FQT_REFS_ALLOWED);
                     yyval.ast_symbol.d = javaTypeNameDefinition(yyvsp[0].ast_idList.d);
                 } else {
-                    PropagateBorns(yyval.ast_symbol, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
+                    PropagateBoundaries(yyval.ast_symbol, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
                 }
             };
             if (inSecondJslPass()) {
@@ -3076,7 +3076,7 @@ case 32:
                     yyval.ast_symbolPositionPair.d.s = typeSpecifier1(yyvsp[-2].ast_unsignedPositionPair.d.u);
                     yyval.ast_symbolPositionPair.d.s->u.type = prependComposedType(yyval.ast_symbolPositionPair.d.s->u.type, TypeArray);
                 } else {
-                    PropagateBorns(yyval.ast_symbolPositionPair, yyvsp[-2].ast_unsignedPositionPair, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_symbolPositionPair, yyvsp[-2].ast_unsignedPositionPair, yyvsp[0].ast_position);
                 }
                 yyval.ast_symbolPositionPair.d.p = yyvsp[-2].ast_unsignedPositionPair.d.p;
                 s_cps.lastDeclaratorType = NULL;
@@ -3098,7 +3098,7 @@ case 33:
                     s_cps.lastDeclaratorType = yyval.ast_symbolPositionPair.d.s->u.type->u.t;
                     yyval.ast_symbolPositionPair.d.s->u.type = prependComposedType(yyval.ast_symbolPositionPair.d.s->u.type, TypeArray);
                 } else {
-                    PropagateBorns(yyval.ast_symbolPositionPair, yyvsp[-2].ast_idList, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_symbolPositionPair, yyvsp[-2].ast_idList, yyvsp[0].ast_position);
                 }
                 yyval.ast_symbolPositionPair.d.p = javaGetNameStartingPosition(yyvsp[-2].ast_idList.d);
             };
@@ -3118,7 +3118,7 @@ case 34:
                 if (! SyntaxPassOnly()) {
                     yyval.ast_symbolPositionPair.d.s->u.type = prependComposedType(yyval.ast_symbolPositionPair.d.s->u.type, TypeArray);
                 } else {
-                    PropagateBorns(yyval.ast_symbolPositionPair, yyvsp[-2].ast_symbolPositionPair, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_symbolPositionPair, yyvsp[-2].ast_symbolPositionPair, yyvsp[0].ast_position);
                 }
             };
             if (inSecondJslPass()) {
@@ -3135,63 +3135,63 @@ case 36:
 #line 662 "java_parser.y"
 {
                 if (regularPass()) AllocIdCopy(yyval.ast_id.d,yyvsp[0].ast_id.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
+                PropagateBoundariesIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
 break;
 case 37:
 #line 666 "java_parser.y"
 {
                 if (regularPass()) AllocIdCopy(yyval.ast_id.d,yyvsp[0].ast_id.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
+                PropagateBoundariesIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
 break;
 case 38:
 #line 670 "java_parser.y"
 {
                 if (regularPass()) AllocIdCopy(yyval.ast_id.d,yyvsp[0].ast_id.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
+                PropagateBoundariesIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
 break;
 case 39:
 #line 674 "java_parser.y"
 {
                 if (regularPass()) AllocIdCopy(yyval.ast_id.d,yyvsp[0].ast_id.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
+                PropagateBoundariesIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
 break;
 case 40:
 #line 678 "java_parser.y"
 {
                 if (regularPass()) AllocIdCopy(yyval.ast_id.d,yyvsp[0].ast_id.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
+                PropagateBoundariesIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
 break;
 case 41:
 #line 682 "java_parser.y"
 {
                 if (regularPass()) AllocIdCopy(yyval.ast_id.d,yyvsp[0].ast_id.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
+                PropagateBoundariesIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
 break;
 case 42:
 #line 686 "java_parser.y"
 {
                 if (regularPass()) AllocIdCopy(yyval.ast_id.d,yyvsp[0].ast_id.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
+                PropagateBoundariesIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
 break;
 case 43:
 #line 690 "java_parser.y"
 {
                 if (regularPass()) AllocIdCopy(yyval.ast_id.d,yyvsp[0].ast_id.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
+                PropagateBoundariesIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
 break;
 case 44:
 #line 694 "java_parser.y"
 {
                 if (regularPass()) AllocIdCopy(yyval.ast_id.d,yyvsp[0].ast_id.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
+                PropagateBoundariesIfRegularSyntaxPass(yyval.ast_id, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
 break;
 case 45:
@@ -3203,7 +3203,7 @@ case 45:
                     assert(s_javaStat);
                     s_javaStat->lastParsedName = yyvsp[0].ast_idList.d;
                 } else {
-                    PropagateBorns(yyval.ast_idList, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
+                    PropagateBoundaries(yyval.ast_idList, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
                     javaCheckForPrimaryStart(&yyvsp[0].ast_idList.d->id.p, &yyvsp[0].ast_idList.d->id.p);
                     javaCheckForStaticPrefixStart(&yyvsp[0].ast_idList.d->id.p, &yyvsp[0].ast_idList.d->id.p);
                 }
@@ -3219,7 +3219,7 @@ case 46:
                     assert(s_javaStat);
                     s_javaStat->lastParsedName = yyvsp[0].ast_idList.d;
                 } else {
-                    PropagateBorns(yyval.ast_idList, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
+                    PropagateBoundaries(yyval.ast_idList, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
                     javaCheckForPrimaryStartInNameList(yyvsp[0].ast_idList.d, javaGetNameStartingPosition(yyvsp[0].ast_idList.d));
                     javaCheckForStaticPrefixInNameList(yyvsp[0].ast_idList.d, javaGetNameStartingPosition(yyvsp[0].ast_idList.d));
                 }
@@ -3231,7 +3231,7 @@ case 47:
 {
             yyval.ast_idList.d = StackMemAlloc(S_idList);
             fillIdList(yyval.ast_idList.d, *yyvsp[0].ast_id.d, yyvsp[0].ast_id.d->name, TypeDefault, NULL);
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_idList, yyvsp[0].ast_id, yyvsp[0].ast_id);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_idList, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
 break;
 case 48:
@@ -3239,7 +3239,7 @@ case 48:
 {
             yyval.ast_idList.d = StackMemAlloc(S_idList);
             fillIdList(yyval.ast_idList.d, *yyvsp[0].ast_id.d, yyvsp[0].ast_id.d->name, TypeDefault, yyvsp[-2].ast_idList.d);
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_idList, yyvsp[-2].ast_idList, yyvsp[0].ast_id);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_idList, yyvsp[-2].ast_idList, yyvsp[0].ast_id);
         }
 break;
 case 59:
@@ -3249,7 +3249,7 @@ case 59:
                 if (! SyntaxPassOnly()) {
                     labelReference(yyvsp[0].ast_id.d,UsageDefined);
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);
                 }
             };
         }
@@ -3265,7 +3265,7 @@ case 61:
                 if (! SyntaxPassOnly()) {
                     labelReference(yyvsp[0].ast_id.d,UsageUsed);
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);
                 }
             };
         }
@@ -3428,13 +3428,13 @@ break;
 case 68:
 #line 951 "java_parser.y"
 {
-            SetNullBorns(yyval.ast_position);
+            SetNullBoundaries(yyval.ast_position);
         }
 break;
 case 70:
 #line 958 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
             if (inSecondJslPass()) {
                 JslImportSingleDeclaration(yyvsp[0].ast_idList.d);
             }
@@ -3443,7 +3443,7 @@ break;
 case 71:
 #line 964 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
             if (inSecondJslPass()) {
                 JslImportOnDemandDeclaration(yyvsp[0].ast_idList.d);
             }
@@ -3452,7 +3452,7 @@ break;
 case 72:
 #line 970 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_idList);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_idList);
             if (inSecondJslPass()) {
                 JslImportSingleDeclaration(yyvsp[0].ast_idList.d);
             }
@@ -3461,7 +3461,7 @@ break;
 case 73:
 #line 976 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_idList);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_idList);
             if (inSecondJslPass()) {
                 JslImportOnDemandDeclaration(yyvsp[0].ast_idList.d);
             }
@@ -3484,7 +3484,7 @@ case 74:
                         javaAddImportConstructionReference(&yyvsp[-1].ast_idList.d->next->id.p, &yyvsp[-2].ast_id.d->p, UsageDefined);
                     }
                 } else {
-                    PropagateBorns(yyval.ast_idList, yyvsp[-2].ast_id, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_idList, yyvsp[-2].ast_id, yyvsp[0].ast_position);
                 }
             }
         }
@@ -3514,7 +3514,7 @@ case 77:
                     s_cps.lastImportLine = yyvsp[-4].ast_id.d->p.line;
                     javaAddImportConstructionReference(&yyvsp[-3].ast_idList.d->id.p, &yyvsp[-4].ast_id.d->p, UsageDefined);
                 } else {
-                    PropagateBorns(yyval.ast_idList, yyvsp[-4].ast_id, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_idList, yyvsp[-4].ast_id, yyvsp[0].ast_position);
                 }
             }
         }
@@ -3526,25 +3526,25 @@ break;
 case 79:
 #line 1045 "java_parser.y"
 {
-            SetNullBorns(yyval.ast_position);
+            SetNullBoundaries(yyval.ast_position);
         }
 break;
 case 80:
 #line 1048 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[-1].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[-1].ast_position);
         }
 break;
 case 81:
 #line 1054 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 82:
 #line 1057 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 83:
@@ -3553,7 +3553,7 @@ case 83:
             yyval.ast_idList.d = NULL;
             if (regularPass()) {
                 s_cps.lastImportLine = 0;
-                SetNullBorns(yyval.ast_idList);
+                SetNullBoundaries(yyval.ast_idList);
             }
         }
 break;
@@ -3563,7 +3563,7 @@ case 84:
             yyval.ast_idList.d = yyvsp[-1].ast_idList.d;
             if (regularPass()) {
                 s_cps.lastImportLine = yyvsp[-2].ast_id.d->p.line;
-                PropagateBornsIfRegularSyntaxPass(yyval.ast_idList, yyvsp[-2].ast_id, yyvsp[0].ast_position);
+                PropagateBoundariesIfRegularSyntaxPass(yyval.ast_idList, yyvsp[-2].ast_id, yyvsp[0].ast_position);
             }
         }
 break;
@@ -3573,7 +3573,7 @@ case 85:
             yyval.ast_idList.d = NULL;
             if (regularPass()) {
                 s_cps.lastImportLine = yyvsp[-1].ast_id.d->p.line;
-                PropagateBornsIfRegularSyntaxPass(yyval.ast_idList, yyvsp[-1].ast_id, yyvsp[-1].ast_id);
+                PropagateBoundariesIfRegularSyntaxPass(yyval.ast_idList, yyvsp[-1].ast_id, yyvsp[-1].ast_id);
             }
         }
 break;
@@ -3590,7 +3590,7 @@ case 88:
 {
             if (regularPass()) {
                 javaSetClassSourceInformation(s_javaThisPackageName, yyvsp[0].ast_id.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);
+                PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
         }
 break;
@@ -3599,7 +3599,7 @@ case 89:
 {
             if (regularPass()) {
                 javaSetClassSourceInformation(s_javaThisPackageName, yyvsp[0].ast_id.d);
-                PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);
+                PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);
             }
         }
 break;
@@ -3615,66 +3615,66 @@ case 92:
 #line 1106 "java_parser.y"
 {
             yyval.ast_unsigned.d = ACCESS_DEFAULT;
-            SetNullBorns(yyval.ast_unsigned);
+            SetNullBoundaries(yyval.ast_unsigned);
         }
 break;
 case 93:
 #line 1110 "java_parser.y"
 {
             yyval.ast_unsigned.d = yyvsp[0].ast_unsigned.d;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_unsigned, yyvsp[0].ast_unsigned);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_unsigned, yyvsp[0].ast_unsigned);
         }
 break;
 case 95:
 #line 1118 "java_parser.y"
 {
             yyval.ast_unsigned.d = yyvsp[-1].ast_unsigned.d | yyvsp[0].ast_unsigned.d;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[-1].ast_unsigned, yyvsp[0].ast_unsigned);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[-1].ast_unsigned, yyvsp[0].ast_unsigned);
         }
 break;
 case 96:
 #line 1125 "java_parser.y"
-{ yyval.ast_unsigned.d = ACCESS_PUBLIC; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+{ yyval.ast_unsigned.d = ACCESS_PUBLIC; PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 97:
 #line 1126 "java_parser.y"
-{ yyval.ast_unsigned.d = ACCESS_PROTECTED; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+{ yyval.ast_unsigned.d = ACCESS_PROTECTED; PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 98:
 #line 1127 "java_parser.y"
-{ yyval.ast_unsigned.d = ACCESS_PRIVATE; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+{ yyval.ast_unsigned.d = ACCESS_PRIVATE; PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 99:
 #line 1128 "java_parser.y"
-{ yyval.ast_unsigned.d = ACCESS_STATIC; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+{ yyval.ast_unsigned.d = ACCESS_STATIC; PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 100:
 #line 1129 "java_parser.y"
-{ yyval.ast_unsigned.d = ACCESS_ABSTRACT; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+{ yyval.ast_unsigned.d = ACCESS_ABSTRACT; PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 101:
 #line 1130 "java_parser.y"
-{ yyval.ast_unsigned.d = ACCESS_FINAL; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+{ yyval.ast_unsigned.d = ACCESS_FINAL; PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 102:
 #line 1131 "java_parser.y"
-{ yyval.ast_unsigned.d = ACCESS_NATIVE; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+{ yyval.ast_unsigned.d = ACCESS_NATIVE; PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 103:
 #line 1132 "java_parser.y"
-{ yyval.ast_unsigned.d = ACCESS_SYNCHRONIZED; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+{ yyval.ast_unsigned.d = ACCESS_SYNCHRONIZED; PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 104:
 #line 1133 "java_parser.y"
-{ yyval.ast_unsigned.d = 0; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+{ yyval.ast_unsigned.d = 0; PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 105:
 #line 1134 "java_parser.y"
-{ yyval.ast_unsigned.d = ACCESS_TRANSIENT; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+{ yyval.ast_unsigned.d = ACCESS_TRANSIENT; PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 106:
 #line 1135 "java_parser.y"
-{ yyval.ast_unsigned.d = 0; PropagateBornsIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+{ yyval.ast_unsigned.d = 0; PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsigned, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 108:
 #line 1166 "java_parser.y"
@@ -3709,8 +3709,8 @@ case 110:
                     if (! SyntaxPassOnly()) {
                         newClassDefinitionEnd(yyvsp[-4].trail);
                     } else {
-                        PropagateBorns(yyval.ast_id, yyvsp[-7].ast_unsigned, yyvsp[0].ast_position);
-                        if (yyval.ast_id.b.file == s_noneFileIndex) PropagateBorns(yyval.ast_id, yyvsp[-6].ast_id, yyval.ast_id);
+                        PropagateBoundaries(yyval.ast_id, yyvsp[-7].ast_unsigned, yyvsp[0].ast_position);
+                        if (yyval.ast_id.b.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_id, yyvsp[-6].ast_id, yyval.ast_id);
                         if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyval.ast_id.b, s_cxRefPos, yyval.ast_id.e)
                             && s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == s_noneFileIndex) {
                             s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.ast_id.b;
@@ -3744,8 +3744,8 @@ case 112:
                     if (! SyntaxPassOnly()) {
                         newClassDefinitionEnd(yyvsp[-2].trail);
                     } else {
-                        PropagateBorns(yyval.ast_id, yyvsp[-5].ast_unsigned, yyvsp[0].ast_position);
-                        if (yyval.ast_id.b.file == s_noneFileIndex) PropagateBorns(yyval.ast_id, yyvsp[-4].ast_id, yyvsp[0].ast_position);
+                        PropagateBoundaries(yyval.ast_id, yyvsp[-5].ast_unsigned, yyvsp[0].ast_position);
+                        if (yyval.ast_id.b.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_id, yyvsp[-4].ast_id, yyvsp[0].ast_position);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -3787,8 +3787,8 @@ case 116:
                     if (! SyntaxPassOnly()) {
                         newClassDefinitionEnd(yyvsp[-4].trail);
                     } else {
-                        PropagateBorns(yyval.ast_position, yyvsp[-7].ast_unsigned, yyvsp[0].ast_position);
-                        if (yyval.ast_position.b.file == s_noneFileIndex) PropagateBorns(yyval.ast_position, yyvsp[-6].ast_id, yyvsp[0].ast_position);
+                        PropagateBoundaries(yyval.ast_position, yyvsp[-7].ast_unsigned, yyvsp[0].ast_position);
+                        if (yyval.ast_position.b.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_position, yyvsp[-6].ast_id, yyvsp[0].ast_position);
                         if (POSITION_EQ(s_cxRefPos, yyvsp[-5].ast_id.d->p)) {
                             s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.ast_position.b;
                             s_spp[SPP_CLASS_DECLARATION_END_POSITION] = yyval.ast_position.e;
@@ -3818,8 +3818,8 @@ case 118:
                     if (! SyntaxPassOnly()) {
                         newClassDefinitionEnd(yyvsp[-2].trail);
                     } else {
-                        PropagateBorns(yyval.ast_position, yyvsp[-5].ast_unsigned, yyvsp[0].ast_position);
-                        if (yyval.ast_position.b.file == s_noneFileIndex) PropagateBorns(yyval.ast_position, yyvsp[-4].ast_id, yyvsp[0].ast_position);
+                        PropagateBoundaries(yyval.ast_position, yyvsp[-5].ast_unsigned, yyvsp[0].ast_position);
+                        if (yyval.ast_position.b.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_position, yyvsp[-4].ast_id, yyvsp[0].ast_position);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -3841,7 +3841,7 @@ case 120:
                         s_jsl->classStat->thisClass, s_javaLangObjectLinkName);
                 }
             }
-            SetNullBorns(yyval.ast_position);
+            SetNullBoundaries(yyval.ast_position);
         }
 break;
 case 121:
@@ -3853,7 +3853,7 @@ case 121:
                     assert(yyvsp[0].ast_symbol.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass(yyvsp[0].ast_symbol.d->u.type->u.t);
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_symbol);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
@@ -3867,13 +3867,13 @@ break;
 case 122:
 #line 1323 "java_parser.y"
 {
-            SetNullBorns(yyval.ast_position);
+            SetNullBoundaries(yyval.ast_position);
         }
 break;
 case 123:
 #line 1326 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 124:
@@ -3885,7 +3885,7 @@ case 124:
                     assert(yyvsp[0].ast_symbol.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass(yyvsp[0].ast_symbol.d->u.type->u.t);
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
@@ -3905,7 +3905,7 @@ case 125:
                     assert(yyvsp[0].ast_symbol.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass(yyvsp[0].ast_symbol.d->u.type->u.t);
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_symbol);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
@@ -3921,7 +3921,7 @@ case 126:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    /* TODO, REDO all this stuff around class/method borns !!!!!!*/
+                    /* TODO, REDO all this stuff around class/method boundaries !!!!!!*/
                     if (s_opt.taskRegime == RegimeEditServer) {
                         if (s_cp.parserPassedMarker && !s_cp.thisMethodMemoriesStored){
                             s_cps.cxMemiAtMethodBeginning = s_cp.cxMemiAtFunBegin;
@@ -3966,46 +3966,46 @@ break;
 case 127:
 #line 1415 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 128:
 #line 1418 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-3].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-3].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 129:
 #line 1424 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 130:
 #line 1427 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 135:
 #line 1437 "java_parser.y"
-{SetNullBorns(yyval.ast_position);}
+{SetNullBoundaries(yyval.ast_position);}
 break;
 case 136:
 #line 1441 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);}
+{PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);}
 break;
 case 137:
 #line 1442 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);}
+{PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);}
 break;
 case 138:
 #line 1443 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);}
+{PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);}
 break;
 case 139:
 #line 1444 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+{PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 140:
 #line 1450 "java_parser.y"
@@ -4015,7 +4015,7 @@ case 140:
                 if (! SyntaxPassOnly()) {
                     s_cps.lastAssignementStruct = yyvsp[0].ast_symbol.d;
                 } else {
-                    PropagateBorns(yyval.ast_symbol, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
+                    PropagateBoundaries(yyval.ast_symbol, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
                 }
             }
     }
@@ -4061,8 +4061,8 @@ case 141:
                         s_cps.methodCoordEndLine = cFile.lineNumber+1;
                     }
                 } else {
-                    PropagateBorns(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_position);
-                    if (yyval.ast_symbol.b.file == s_noneFileIndex) PropagateBorns(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_position);
+                    if (yyval.ast_symbol.b.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_position);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyval.ast_symbol.b, s_cxRefPos, yyval.ast_symbol.e)
                         && s_spp[SPP_FIELD_DECLARATION_BEGIN_POSITION].file==s_noneFileIndex) {
                         s_spp[SPP_FIELD_DECLARATION_BEGIN_POSITION] = yyval.ast_symbol.b;
@@ -4114,7 +4114,7 @@ case 142:
                 if (! SyntaxPassOnly()) {
                     assert(yyval.ast_symbol.d->bits.symType == TypeDefault || yyval.ast_symbol.d->bits.symType == TypeError);
                 } else {
-                    PropagateBorns(yyval.ast_symbol, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
+                    PropagateBoundaries(yyval.ast_symbol, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
                 }
             }
         }
@@ -4133,7 +4133,7 @@ case 143:
                     }
                     assert(yyval.ast_symbol.d->bits.symType == TypeDefault || yyval.ast_symbol.d->bits.symType == TypeError);
                 } else {
-                    PropagateBorns(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_symbol);
+                    PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
@@ -4152,7 +4152,7 @@ case 145:
 #line 1589 "java_parser.y"
 {
             yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_expressionType);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_expressionType);
         }
 break;
 case 146:
@@ -4162,7 +4162,7 @@ case 146:
                 if (! SyntaxPassOnly()) {
                     yyval.ast_symbol.d = newSymbolAsCopyOf(s_errorSymbol);
                 } else {
-                    SetNullBorns(yyval.ast_symbol);
+                    SetNullBoundaries(yyval.ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
@@ -4178,7 +4178,7 @@ case 147:
                 if (! SyntaxPassOnly()) {
                     yyval.ast_symbol.d = newSymbol(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->p);
                 } else {
-                    PropagateBorns(yyval.ast_symbol, yyvsp[0].ast_id, yyvsp[0].ast_id);
+                    PropagateBoundaries(yyval.ast_symbol, yyvsp[0].ast_id, yyvsp[0].ast_id);
                 }
             }
             if (inSecondJslPass()) {
@@ -4199,7 +4199,7 @@ case 148:
                     yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
                     AddComposedType(yyval.ast_symbol.d, TypeArray);
                 } else {
-                    PropagateBorns(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_position);
                 }
             }
             if (inSecondJslPass()) {
@@ -4230,7 +4230,7 @@ case 153:
                     if (! SyntaxPassOnly()) {
                         javaMethodBodyEnding(&yyvsp[-1].ast_position.d);
                     } else {
-                        PropagateBorns(yyval.ast_position, yyvsp[-4].ast_symbol, yyvsp[-1].ast_position);
+                        PropagateBoundaries(yyval.ast_position, yyvsp[-4].ast_symbol, yyvsp[-1].ast_position);
                         if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyvsp[-4].ast_symbol.b, s_cxRefPos, yyvsp[-4].ast_symbol.e)) {
                             s_spp[SPP_METHOD_DECLARATION_BEGIN_POSITION] = yyval.ast_position.b;
                             s_spp[SPP_METHOD_DECLARATION_END_POSITION] = yyval.ast_position.e;
@@ -4247,9 +4247,9 @@ case 154:
                     s_cps.lastAssignementStruct = NULL;
                     yyval.ast_symbol.d = javaMethodHeader(yyvsp[-3].ast_unsigned.d,yyvsp[-2].ast_symbol.d,yyvsp[-1].ast_symbol.d, StorageMethod);
                 } else {
-                    PropagateBorns(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_symbolList);
-                    if (yyval.ast_symbol.b.file == s_noneFileIndex) PropagateBorns(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyval.ast_symbol);
-                    if (yyval.ast_symbol.e.file == s_noneFileIndex) PropagateBorns(yyval.ast_symbol, yyval.ast_symbol, yyvsp[-1].ast_symbol);
+                    PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_symbolList);
+                    if (yyval.ast_symbol.b.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyval.ast_symbol);
+                    if (yyval.ast_symbol.e.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_symbol, yyval.ast_symbol, yyvsp[-1].ast_symbol);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyval.ast_symbol.b, s_cxRefPos, yyvsp[-1].ast_symbol.e)) {
                         s_spp[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_symbol.b;
                         s_spp[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].ast_symbol.e;
@@ -4268,9 +4268,9 @@ case 155:
                 if (! SyntaxPassOnly()) {
                     yyval.ast_symbol.d = javaMethodHeader(yyvsp[-3].ast_unsigned.d,&s_defaultVoidDefinition,yyvsp[-1].ast_symbol.d,StorageMethod);
                 } else {
-                    PropagateBorns(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_symbolList);
-                    if (yyval.ast_symbol.b.file == s_noneFileIndex) PropagateBorns(yyval.ast_symbol, yyvsp[-2].ast_id, yyval.ast_symbol);
-                    if (yyval.ast_symbol.e.file == s_noneFileIndex) PropagateBorns(yyval.ast_symbol, yyval.ast_symbol, yyvsp[-1].ast_symbol);
+                    PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_symbolList);
+                    if (yyval.ast_symbol.b.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_id, yyval.ast_symbol);
+                    if (yyval.ast_symbol.e.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_symbol, yyval.ast_symbol, yyvsp[-1].ast_symbol);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyval.ast_symbol.b, s_cxRefPos, yyvsp[-1].ast_symbol.e)) {
                         s_spp[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_id.b;
                         s_spp[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].ast_id.e;
@@ -4309,7 +4309,7 @@ case 158:
                         initFunctionTypeModifier(&yyval.ast_symbol.d->u.type->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s);
                     } else {
                         javaHandleDeclaratorParamPositions(&yyvsp[-4].ast_id.d->p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_symbolPositionListPair.d.p, &yyvsp[0].ast_position.d);
-                        PropagateBorns(yyval.ast_symbol, yyvsp[-4].ast_id, yyvsp[0].ast_position);
+                        PropagateBoundaries(yyval.ast_symbol, yyvsp[-4].ast_id, yyvsp[0].ast_position);
                     }
                 }
                 if (inSecondJslPass()) {
@@ -4327,7 +4327,7 @@ case 159:
                     yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
                     AddComposedType(yyval.ast_symbol.d, TypeArray);
                 } else {
-                    PropagateBorns(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_position);
                 }
             }
             if (inSecondJslPass()) {
@@ -4345,7 +4345,7 @@ case 161:
 {
             yyval.ast_symbolPositionListPair.d.s = NULL;
             yyval.ast_symbolPositionListPair.d.p = NULL;
-            SetNullBorns(yyval.ast_symbolPositionListPair);
+            SetNullBoundaries(yyval.ast_symbolPositionListPair);
         }
 break;
 case 163:
@@ -4356,7 +4356,7 @@ case 163:
             } else {
                 yyval.ast_symbolPositionListPair.d.p = NULL;
                 appendPositionToList(&yyval.ast_symbolPositionListPair.d.p, &s_noPos);
-                PropagateBorns(yyval.ast_symbolPositionListPair, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
+                PropagateBoundaries(yyval.ast_symbolPositionListPair, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
             }
         }
 break;
@@ -4369,7 +4369,7 @@ case 164:
                     LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.d.s, yyvsp[0].ast_symbol.d);
                 } else {
                     appendPositionToList(&yyval.ast_symbolPositionListPair.d.p, &yyvsp[-1].ast_position.d);
-                    PropagateBorns(yyval.ast_symbolPositionListPair, yyvsp[-2].ast_symbolPositionListPair, yyvsp[0].ast_symbol);
+                    PropagateBoundaries(yyval.ast_symbolPositionListPair, yyvsp[-2].ast_symbolPositionListPair, yyvsp[0].ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
@@ -4386,7 +4386,7 @@ case 165:
                     yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
                     completeDeclarator(yyvsp[-1].ast_symbol.d, yyvsp[0].ast_symbol.d);
                 } else {
-                    PropagateBorns(yyval.ast_symbol, yyvsp[-1].ast_symbol, yyvsp[0].ast_symbol);
+                    PropagateBoundaries(yyval.ast_symbol, yyvsp[-1].ast_symbol, yyvsp[0].ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
@@ -4403,7 +4403,7 @@ case 166:
                     yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
                     completeDeclarator(yyvsp[-1].ast_symbol.d, yyvsp[0].ast_symbol.d);
                 } else {
-                    PropagateBorns(yyval.ast_symbol, yyvsp[-2].ast_position, yyvsp[0].ast_symbol);
+                    PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_position, yyvsp[0].ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
@@ -4419,7 +4419,7 @@ case 167:
                 if (! SyntaxPassOnly()) {
                     yyval.ast_symbol.d = newSymbolAsCopyOf(s_errorSymbol);
                 } else {
-                    SetNullBorns(yyval.ast_symbol);
+                    SetNullBoundaries(yyval.ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
@@ -4432,20 +4432,20 @@ case 168:
 #line 1843 "java_parser.y"
 {
             yyval.ast_symbolList.d = NULL;
-            SetNullBorns(yyval.ast_symbolList);
+            SetNullBoundaries(yyval.ast_symbolList);
         }
 break;
 case 169:
 #line 1847 "java_parser.y"
 {
             yyval.ast_symbolList.d = yyvsp[0].ast_symbolList.d;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_symbolList, yyvsp[-1].ast_position, yyvsp[0].ast_symbolList);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_symbolList, yyvsp[-1].ast_position, yyvsp[0].ast_symbolList);
         }
 break;
 case 170:
 #line 1854 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_symbolList, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_symbolList, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
             if (inSecondJslPass()) {
                 assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symType == TypeDefault && yyvsp[0].ast_symbol.d->u.type);
                 assert(yyvsp[0].ast_symbol.d->u.type->kind == TypeStruct);
@@ -4458,7 +4458,7 @@ break;
 case 171:
 #line 1864 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_symbolList, yyvsp[-2].ast_symbolList, yyvsp[0].ast_symbol);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_symbolList, yyvsp[-2].ast_symbolList, yyvsp[0].ast_symbol);
             if (inSecondJslPass()) {
                 assert(yyvsp[0].ast_symbol.d && yyvsp[0].ast_symbol.d->bits.symType == TypeDefault && yyvsp[0].ast_symbol.d->u.type);
                 assert(yyvsp[0].ast_symbol.d->u.type->kind == TypeStruct);
@@ -4472,19 +4472,19 @@ case 173:
 #line 1878 "java_parser.y"
 {
             yyval.ast_position.d = yyvsp[0].ast_position.d;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 174:
 #line 1887 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 175:
 #line 1890 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 176:
@@ -4531,8 +4531,8 @@ case 177:
                     if (s_opt.taskRegime == RegimeHtmlGenerate) {
                         htmlAddFunctionSeparatorReference();
                     } else {
-                        PropagateBorns(yyval.ast_position, yyvsp[-6].ast_unsigned, yyvsp[-1].ast_position);
-                        if (yyval.ast_position.b.file == s_noneFileIndex) PropagateBorns(yyval.ast_position, yyvsp[-5].ast_symbol, yyval.ast_position);
+                        PropagateBoundaries(yyval.ast_position, yyvsp[-6].ast_unsigned, yyvsp[-1].ast_position);
+                        if (yyval.ast_position.b.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_position, yyvsp[-5].ast_symbol, yyval.ast_position);
                     }
                 }
                 s_cp.function = NULL; /* added for set-target-position checks */
@@ -4578,7 +4578,7 @@ case 179:
                         initFunctionTypeModifier(&yyval.ast_symbol.d->u.type->u.f , yyvsp[-1].ast_symbolPositionListPair.d.s);
                     } else {
                         javaHandleDeclaratorParamPositions(&yyvsp[-4].ast_id.d->p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_symbolPositionListPair.d.p, &yyvsp[0].ast_position.d);
-                        PropagateBorns(yyval.ast_symbol, yyvsp[-4].ast_id, yyvsp[0].ast_position);
+                        PropagateBoundaries(yyval.ast_symbol, yyvsp[-4].ast_id, yyvsp[0].ast_position);
                     }
                 }
                 if (inSecondJslPass()) {
@@ -4591,25 +4591,25 @@ break;
 case 180:
 #line 1994 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-5].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-5].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 181:
 #line 1997 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-4].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-4].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 182:
 #line 2000 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-4].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-4].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 183:
 #line 2003 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 184:
@@ -4629,7 +4629,7 @@ case 185:
                         s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
                     } else {
                         javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.d->p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
-                        PropagateBorns(yyval.ast_position, yyvsp[-5].ast_id, yyvsp[0].ast_position);
+                        PropagateBoundaries(yyval.ast_position, yyvsp[-5].ast_id, yyvsp[0].ast_position);
                     }
                 }
             }
@@ -4653,7 +4653,7 @@ case 187:
                         s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
                     } else {
                         javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.d->p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
-                        PropagateBorns(yyval.ast_position, yyvsp[-5].ast_id, yyvsp[0].ast_position);
+                        PropagateBoundaries(yyval.ast_position, yyvsp[-5].ast_id, yyvsp[0].ast_position);
                     }
                 }
             }
@@ -4677,22 +4677,22 @@ case 189:
                         s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
                     } else {
                         javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.d->p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
-                        PropagateBorns(yyval.ast_position, yyvsp[-7].ast_expressionType, yyvsp[0].ast_position);
+                        PropagateBoundaries(yyval.ast_position, yyvsp[-7].ast_expressionType, yyvsp[0].ast_position);
                     }
                 }
             }
 break;
 case 190:
 #line 2062 "java_parser.y"
-{SetNullBorns(yyval.ast_position);}
+{SetNullBoundaries(yyval.ast_position);}
 break;
 case 191:
 #line 2063 "java_parser.y"
-{SetNullBorns(yyval.ast_position);}
+{SetNullBoundaries(yyval.ast_position);}
 break;
 case 192:
 #line 2064 "java_parser.y"
-{SetNullBorns(yyval.ast_position);}
+{SetNullBoundaries(yyval.ast_position);}
 break;
 case 193:
 #line 2065 "java_parser.y"
@@ -4738,8 +4738,8 @@ case 198:
                 if (! SyntaxPassOnly()) {
                     newClassDefinitionEnd(yyvsp[-3].trail);
                 } else {
-                    PropagateBorns(yyval.ast_id, yyvsp[-6].ast_unsigned, yyvsp[0].ast_position);
-                    if (yyval.ast_id.b.file == s_noneFileIndex) PropagateBorns(yyval.ast_id, yyvsp[-5].ast_position, yyval.ast_id);
+                    PropagateBoundaries(yyval.ast_id, yyvsp[-6].ast_unsigned, yyvsp[0].ast_position);
+                    if (yyval.ast_id.b.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_id, yyvsp[-5].ast_position, yyval.ast_id);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyval.ast_id.b, s_cxRefPos, yyval.ast_id.e)
                         && s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == s_noneFileIndex) {
                         s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.ast_id.b;
@@ -4773,8 +4773,8 @@ case 200:
                     if (! SyntaxPassOnly()) {
                         newClassDefinitionEnd(yyvsp[-2].trail);
                     } else {
-                        PropagateBorns(yyval.ast_id, yyvsp[-5].ast_unsigned, yyvsp[0].ast_position);
-                        if (yyval.ast_id.b.file == s_noneFileIndex) PropagateBorns(yyval.ast_id, yyvsp[-4].ast_position, yyval.ast_id);
+                        PropagateBoundaries(yyval.ast_id, yyvsp[-5].ast_unsigned, yyvsp[0].ast_position);
+                        if (yyval.ast_id.b.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_id, yyvsp[-4].ast_position, yyval.ast_id);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -4788,7 +4788,7 @@ break;
 case 202:
 #line 2137 "java_parser.y"
 {
-            SetNullBorns(yyval.ast_position);
+            SetNullBoundaries(yyval.ast_position);
             if (inSecondJslPass()) {
                 jslAddSuperClassOrInterfaceByName(s_jsl->classStat->thisClass,
                                                 s_javaLangObjectLinkName);
@@ -4804,7 +4804,7 @@ case 204:
                     assert(yyvsp[0].ast_symbol.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass(yyvsp[0].ast_symbol.d->u.type->u.t);
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_symbol);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
@@ -4824,7 +4824,7 @@ case 205:
                     assert(yyvsp[0].ast_symbol.d->u.type->kind == TypeStruct);
                     javaParsedSuperClass(yyvsp[0].ast_symbol.d->u.type->u.t);
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_symbol);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
@@ -4838,44 +4838,44 @@ break;
 case 206:
 #line 2185 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 207:
 #line 2188 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-3].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-3].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 209:
 #line 2195 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 210:
 #line 2201 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);}
+{PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);}
 break;
 case 211:
 #line 2202 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);}
+{PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_id, yyvsp[0].ast_id);}
 break;
 case 212:
 #line 2203 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);}
+{PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);}
 break;
 case 213:
 #line 2204 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);}
+{PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);}
 break;
 case 214:
 #line 2205 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);}
+{PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);}
 break;
 case 215:
 #line 2206 "java_parser.y"
-{SetNullBorns(yyval.ast_position);}
+{SetNullBoundaries(yyval.ast_position);}
 break;
 case 217:
 #line 2215 "java_parser.y"
@@ -4894,67 +4894,67 @@ case 218:
                     if (! SyntaxPassOnly()) {
                         javaMethodBodyEnding(&yyvsp[-1].ast_position.d);
                     } else {
-                        PropagateBorns(yyval.ast_symbol, yyvsp[-4].ast_symbol, yyvsp[-1].ast_position);
+                        PropagateBoundaries(yyval.ast_symbol, yyvsp[-4].ast_symbol, yyvsp[-1].ast_position);
                     }
                 }
             }
 break;
 case 219:
 #line 2237 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_position);}
+{PropagateBoundariesIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_position);}
 break;
 case 220:
 #line 2238 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[-2].ast_position, yyvsp[0].ast_position);}
+{PropagateBoundariesIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[-2].ast_position, yyvsp[0].ast_position);}
 break;
 case 221:
 #line 2239 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[-2].ast_position, yyvsp[0].ast_position);}
+{PropagateBoundariesIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[-2].ast_position, yyvsp[0].ast_position);}
 break;
 case 222:
 #line 2240 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_position);}
+{PropagateBoundariesIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_position);}
 break;
 case 223:
 #line 2244 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);
         }
 break;
 case 224:
 #line 2247 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_expressionType);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_expressionType);
         }
 break;
 case 225:
 #line 2255 "java_parser.y"
 {
             yyval.ast_position.d = yyvsp[0].ast_position.d;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-4].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-4].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 226:
 #line 2259 "java_parser.y"
 {
             yyval.ast_position.d = yyvsp[0].ast_position.d;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 228:
 #line 2267 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 232:
 #line 2276 "java_parser.y"
-{SetNullBorns(yyval.ast_position);}
+{SetNullBoundaries(yyval.ast_position);}
 break;
 case 233:
 #line 2280 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_symbol, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_symbol, yyvsp[0].ast_position);
         }
 break;
 case 234:
@@ -4965,7 +4965,7 @@ case 234:
                     addNewDeclaration(yyvsp[-1].ast_symbol.d,yyvsp[0].ast_symbol.d,NULL,StorageAuto,s_javaStat->locals);
                     yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
                 } else {
-                    PropagateBorns(yyval.ast_symbol, yyvsp[-1].ast_symbol, yyvsp[0].ast_symbol);
+                    PropagateBoundaries(yyval.ast_symbol, yyvsp[-1].ast_symbol, yyvsp[0].ast_symbol);
                 }
             }
         }
@@ -4978,7 +4978,7 @@ case 235:
                     addNewDeclaration(yyvsp[-1].ast_symbol.d,yyvsp[0].ast_symbol.d,NULL,StorageAuto,s_javaStat->locals);
                     yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
                 } else {
-                    PropagateBorns(yyval.ast_symbol, yyvsp[-2].ast_position, yyvsp[0].ast_symbol);
+                    PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_position, yyvsp[0].ast_symbol);
                 }
             }
         }
@@ -4993,7 +4993,7 @@ case 236:
                     }
                     yyval.ast_symbol.d = yyvsp[-2].ast_symbol.d;
                 } else {
-                    PropagateBorns(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_symbol);
+                    PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_symbol);
                 }
             }
         }
@@ -5002,7 +5002,7 @@ case 237:
 #line 2321 "java_parser.y"
 {
             if (regularPass()) yyval.ast_symbol.d = yyvsp[0].ast_symbol.d;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_symbol, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_symbol, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
         }
 break;
 case 238:
@@ -5023,7 +5023,7 @@ case 239:
                     s_cps.lastAssignementStruct = NULL;
                     yyval.ast_symbol.d = yyvsp[-3].ast_symbol.d;
                 } else {
-                    PropagateBorns(yyval.ast_symbol, yyvsp[-3].ast_symbol, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_symbol, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -5031,66 +5031,66 @@ break;
 case 263:
 #line 2382 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 264:
 #line 2385 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-4].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-4].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 265:
 #line 2391 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 266:
 #line 2397 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 267:
 #line 2403 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 268:
 #line 2409 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_expressionType, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_expressionType, yyvsp[0].ast_position);
         }
 break;
 case 269:
 #line 2415 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);}
+{PropagateBoundariesIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);}
 break;
 case 270:
 #line 2416 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);}
+{PropagateBoundariesIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);}
 break;
 case 271:
 #line 2417 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);}
+{PropagateBoundariesIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);}
 break;
 case 272:
 #line 2418 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);}
+{PropagateBoundariesIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);}
 break;
 case 273:
 #line 2419 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);}
+{PropagateBoundariesIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);}
 break;
 case 274:
 #line 2420 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);}
+{PropagateBoundariesIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);}
 break;
 case 275:
 #line 2421 "java_parser.y"
-{PropagateBornsIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);}
+{PropagateBoundariesIfRegularSyntaxPass(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);}
 break;
 case 276:
 #line 2424 "java_parser.y"
@@ -5115,7 +5115,7 @@ case 280:
                 if (! SyntaxPassOnly()) {
                     genInternalLabelReference(yyvsp[-1].ast_integer.d, UsageDefined);
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[-5].ast_position, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[-5].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
@@ -5128,7 +5128,7 @@ case 281:
                     genInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
                     yyval.ast_integer.d = yyvsp[0].ast_integer.d;
                 } else {
-                    PropagateBorns(yyval.ast_integer, yyvsp[-7].ast_position, yyvsp[-1].ast_position);
+                    PropagateBoundaries(yyval.ast_integer, yyvsp[-7].ast_position, yyvsp[-1].ast_position);
                 }
             }
         }
@@ -5140,7 +5140,7 @@ case 282:
                 if (! SyntaxPassOnly()) {
                     genInternalLabelReference(yyvsp[-1].ast_integer.d, UsageDefined);
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_integer, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_integer, yyvsp[0].ast_position);
                 }
             }
         }
@@ -5152,7 +5152,7 @@ case 283:
                 if (! SyntaxPassOnly()) {
                     genInternalLabelReference(yyvsp[-1].ast_integer.d, UsageDefined);
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_integer, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_integer, yyvsp[0].ast_position);
                 }
             }
         }
@@ -5188,7 +5188,7 @@ case 286:
                     ExtrDeleteContBreakSym(yyvsp[-2].symbol);
                     genInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[-7].ast_position, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[-7].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
@@ -5196,31 +5196,31 @@ break;
 case 287:
 #line 2515 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-5].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-5].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 288:
 #line 2518 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-4].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-4].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 289:
 #line 2521 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-4].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-4].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 290:
 #line 2524 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 292:
 #line 2531 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 293:
@@ -5236,31 +5236,31 @@ break;
 case 294:
 #line 2543 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 296:
 #line 2550 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 297:
 #line 2553 "java_parser.y"
 {
-            SetNullBorns(yyval.ast_position);
+            SetNullBoundaries(yyval.ast_position);
         }
 break;
 case 298:
 #line 2559 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 299:
 #line 2562 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 300:
@@ -5278,7 +5278,7 @@ case 300:
                         yyval.ast_whileData.d = NULL;
                     }
                 } else {
-                    PropagateBorns(yyval.ast_whileData, yyvsp[-5].ast_position, yyvsp[-1].ast_position);
+                    PropagateBoundaries(yyval.ast_whileData, yyvsp[-5].ast_position, yyvsp[-1].ast_position);
                 }
             }
         }
@@ -5295,7 +5295,7 @@ case 301:
                         genInternalLabelReference(yyvsp[-1].ast_whileData.d->i2, UsageDefined);
                     }
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_whileData, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_whileData, yyvsp[0].ast_position);
                 }
             }
         }
@@ -5312,7 +5312,7 @@ case 302:
                         genInternalLabelReference(yyvsp[-1].ast_whileData.d->i2, UsageDefined);
                     }
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_whileData, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_whileData, yyvsp[0].ast_position);
                 }
             }
         }
@@ -5357,7 +5357,7 @@ case 306:
                     genInternalLabelReference(yyvsp[-11].ast_integer.d, UsageFork);
                     genInternalLabelReference(yyvsp[-9].ast_integer.d, UsageDefined);
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[-12].ast_position, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[-12].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
@@ -5365,13 +5365,13 @@ break;
 case 307:
 #line 2654 "java_parser.y"
 {
-            SetNullBorns(yyval.ast_position);
+            SetNullBoundaries(yyval.ast_position);
         }
 break;
 case 308:
 #line 2657 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);
         }
 break;
 case 309:
@@ -5381,7 +5381,7 @@ case 309:
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockStart();
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
@@ -5399,7 +5399,7 @@ case 310:
                     yyval.ast_intPair.d.i1 = yyvsp[-3].ast_integer.d;
                     yyval.ast_intPair.d.i2 = yyvsp[0].ast_integer.d;
                 } else {
-                    PropagateBorns(yyval.ast_intPair, yyvsp[-10].ast_position, yyvsp[-1].ast_position);
+                    PropagateBoundaries(yyval.ast_intPair, yyvsp[-10].ast_position, yyvsp[-1].ast_position);
                 }
             }
         }
@@ -5414,7 +5414,7 @@ case 311:
                     genInternalLabelReference(yyvsp[-1].ast_intPair.d.i1, UsageUsed);
                     genInternalLabelReference(yyvsp[-1].ast_intPair.d.i2, UsageDefined);
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_intPair, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_intPair, yyvsp[0].ast_position);
                 }
             }
         }
@@ -5429,7 +5429,7 @@ case 312:
                     genInternalLabelReference(yyvsp[-1].ast_intPair.d.i1, UsageUsed);
                     genInternalLabelReference(yyvsp[-1].ast_intPair.d.i2, UsageDefined);
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_intPair, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_intPair, yyvsp[0].ast_position);
                 }
             }
         }
@@ -5441,7 +5441,7 @@ case 313:
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockFree();
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
@@ -5453,7 +5453,7 @@ case 314:
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockFree();
                 } else {
-                    SetNullBorns(yyval.ast_position);
+                    SetNullBoundaries(yyval.ast_position);
                 }
             }
         }
@@ -5465,7 +5465,7 @@ case 315:
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockFree();
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
@@ -5477,7 +5477,7 @@ case 316:
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockFree();
                 } else {
-                    SetNullBorns(yyval.ast_position);
+                    SetNullBoundaries(yyval.ast_position);
                 }
             }
         }
@@ -5485,49 +5485,49 @@ break;
 case 317:
 #line 2767 "java_parser.y"
 {
-            SetNullBorns(yyval.ast_position);
+            SetNullBoundaries(yyval.ast_position);
         }
 break;
 case 318:
 #line 2770 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 319:
 #line 2773 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_symbol, yyvsp[0].ast_symbol);
         }
 break;
 case 320:
 #line 2778 "java_parser.y"
 {
-            SetNullBorns(yyval.ast_position);
+            SetNullBoundaries(yyval.ast_position);
         }
 break;
 case 321:
 #line 2781 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 322:
 #line 2787 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);
         }
 break;
 case 323:
 #line 2790 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_expressionType);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_expressionType);
         }
 break;
 case 324:
 #line 2796 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 325:
@@ -5537,7 +5537,7 @@ case 325:
                 if (! SyntaxPassOnly()) {
                     genContinueBreakReference(BREAK_LABEL_NAME);
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
@@ -5545,7 +5545,7 @@ break;
 case 326:
 #line 2811 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 327:
@@ -5555,7 +5555,7 @@ case 327:
                 if (! SyntaxPassOnly()) {
                     genContinueBreakReference(CONTINUE_LABEL_NAME);
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
@@ -5567,7 +5567,7 @@ case 328:
                 if (! SyntaxPassOnly()) {
                     genInternalLabelReference(-1, UsageUsed);
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
@@ -5579,7 +5579,7 @@ case 329:
                 if (! SyntaxPassOnly()) {
                     genInternalLabelReference(-1, UsageUsed);
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
@@ -5593,7 +5593,7 @@ case 330:
                         addCxReference(yyvsp[-1].ast_expressionType.d.t->u.t, &yyvsp[-2].ast_id.d->p, UsageThrown, s_noneFileIndex, s_noneFileIndex);
                     }
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[-2].ast_id, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[-2].ast_id, yyvsp[0].ast_position);
                 }
             }
         }
@@ -5601,13 +5601,13 @@ break;
 case 331:
 #line 2861 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-4].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-4].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 334:
 #line 2869 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 335:
@@ -5632,7 +5632,7 @@ break;
 case 337:
 #line 2890 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-5].ast_id, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-5].ast_id, yyvsp[0].ast_position);
             if (s_opt.server_operation == OLO_EXTRACT) {
                 addTrivialCxReference("TryCatch", TypeTryCatchMarker,StorageDefault,
                                         &yyvsp[-5].ast_id.d->p, UsageTryCatchEnd);
@@ -5642,7 +5642,7 @@ break;
 case 339:
 #line 2902 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 340:
@@ -5669,7 +5669,7 @@ case 341:
                     if (! SyntaxPassOnly()) {
                         genInternalLabelReference(yyvsp[-4].ast_integer.d, UsageDefined);
                     } else {
-                        PropagateBorns(yyval.ast_position, yyvsp[-8].ast_id, yyvsp[-1].ast_position);
+                        PropagateBoundaries(yyval.ast_position, yyvsp[-8].ast_id, yyvsp[-1].ast_position);
                     }
                 }
             }
@@ -5684,7 +5684,7 @@ case 342:
                         addCxReference(yyvsp[-2].ast_symbol.d->u.type->u.t, &yyvsp[-4].ast_id.d->p, UsageCatched, s_noneFileIndex, s_noneFileIndex);
                     }
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[-4].ast_id, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[-4].ast_id, yyvsp[0].ast_position);
                 }
             }
         }
@@ -5696,7 +5696,7 @@ case 343:
                 if (! SyntaxPassOnly()) {
                     genInternalLabelReference(yyvsp[-1].ast_integer.d, UsageDefined);
                 } else {
-                    PropagateBorns(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
                 }
             }
         }
@@ -5709,7 +5709,7 @@ case 344:
                 if (! SyntaxPassOnly()) {
                     s_javaCompletionLastPrimary = s_structRecordCompletionType = yyval.ast_expressionType.d.t;
                 } else {
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -5722,7 +5722,7 @@ case 345:
                 if (! SyntaxPassOnly()) {
                     s_javaCompletionLastPrimary = s_structRecordCompletionType = yyval.ast_expressionType.d.t;
                 } else {
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -5740,7 +5740,7 @@ case 347:
                 } else {
                     yyval.ast_expressionType.d.pp = &yyvsp[0].ast_id.d->p;
                     javaCheckForStaticPrefixStart(&yyvsp[0].ast_id.d->p, &yyvsp[0].ast_id.d->p);
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_id, yyvsp[0].ast_id);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_id, yyvsp[0].ast_id);
                 }
             }
         }
@@ -5756,7 +5756,7 @@ case 348:
                 } else {
                     yyval.ast_expressionType.d.pp = javaGetNameStartingPosition(yyvsp[-2].ast_idList.d);
                     javaCheckForStaticPrefixStart(&yyvsp[0].ast_id.d->p, javaGetNameStartingPosition(yyvsp[-2].ast_idList.d));
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_idList, yyvsp[0].ast_id);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_idList, yyvsp[0].ast_id);
                 }
             }
         }
@@ -5770,7 +5770,7 @@ case 349:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = yyvsp[-2].ast_unsignedPositionPair.d.p;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_unsignedPositionPair, yyvsp[0].ast_id);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_unsignedPositionPair, yyvsp[0].ast_id);
                 }
             }
         }
@@ -5786,7 +5786,7 @@ case 350:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = javaGetNameStartingPosition(yyvsp[-2].ast_idList.d);
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_idList, yyvsp[0].ast_id);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_idList, yyvsp[0].ast_id);
                 }
             }
         }
@@ -5800,7 +5800,7 @@ case 351:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = yyvsp[-2].ast_symbolPositionPair.d.p;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_symbolPositionPair, yyvsp[0].ast_id);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_symbolPositionPair, yyvsp[0].ast_id);
                 }
             }
         }
@@ -5814,7 +5814,7 @@ case 352:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     SetPrimitiveTypePos(yyval.ast_expressionType.d.pp, yyvsp[-2].ast_id.d);
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_id, yyvsp[0].ast_id);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_id, yyvsp[0].ast_id);
                 }
             }
         }
@@ -5827,7 +5827,7 @@ case 353:
                 if (SyntaxPassOnly()) {
                     XX_ALLOC(yyval.ast_expressionType.d.pp, Position);
                     *yyval.ast_expressionType.d.pp = yyvsp[-2].ast_position.d;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_position, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_position, yyvsp[0].ast_position);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyval.ast_expressionType.b, s_cxRefPos, yyval.ast_expressionType.e)
                         && s_spp[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file == s_noneFileIndex) {
                         s_spp[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION] = yyvsp[-2].ast_position.b;
@@ -5883,7 +5883,7 @@ case 361:
                     }
                 } else {
                     yyval.ast_nestedConstrTokenType.d.pp = yyvsp[-8].ast_expressionType.d.pp;
-                    PropagateBorns(yyval.ast_nestedConstrTokenType, yyvsp[-8].ast_expressionType, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_nestedConstrTokenType, yyvsp[-8].ast_expressionType, yyvsp[0].ast_position);
                 }
             }
         }
@@ -5915,7 +5915,7 @@ case 363:
                 } else {
                     yyval.ast_nestedConstrTokenType.d.pp = javaGetNameStartingPosition(yyvsp[-8].ast_idList.d);
                     javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_idList.d->id.p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
-                    PropagateBorns(yyval.ast_nestedConstrTokenType, yyvsp[-8].ast_idList, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_nestedConstrTokenType, yyvsp[-8].ast_idList, yyvsp[0].ast_position);
                 }
             }
         }
@@ -5984,7 +5984,7 @@ case 365:
                 } else {
                     javaHandleDeclaratorParamPositions(&yyvsp[-3].ast_idList.d->id.p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
                     yyval.ast_expressionType.d.pp = &yyvsp[-5].ast_id.d->p;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-5].ast_id, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-5].ast_id, yyvsp[0].ast_position);
                 }
             }
         }
@@ -6035,7 +6035,7 @@ case 368:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &yyvsp[-8].ast_id.d->p;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-8].ast_id, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-8].ast_id, yyvsp[0].ast_position);
                 }
             } else {
                 jslNewClassDefinitionEnd();
@@ -6048,7 +6048,7 @@ case 369:
             yyval.ast_expressionType.d.t = yyvsp[0].ast_nestedConstrTokenType.d.t;
             yyval.ast_expressionType.d.pp = yyvsp[0].ast_nestedConstrTokenType.d.pp;
             yyval.ast_expressionType.d.r = NULL;
-            PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_nestedConstrTokenType, yyvsp[0].ast_nestedConstrTokenType);
+            PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_nestedConstrTokenType, yyvsp[0].ast_nestedConstrTokenType);
         }
 break;
 case 370:
@@ -6079,7 +6079,7 @@ case 371:
                     if (! SyntaxPassOnly()) {
                         newClassDefinitionEnd(yyvsp[-1].trail);
                     } else {
-                        PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_nestedConstrTokenType, yyvsp[0].ast_position);
+                        PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_nestedConstrTokenType, yyvsp[0].ast_position);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -6109,7 +6109,7 @@ case 375:
 {
             yyval.ast_typeModifiersListPositionListPair.d.t = NULL;
             yyval.ast_typeModifiersListPositionListPair.d.p = NULL;
-            SetNullBorns(yyval.ast_typeModifiersListPositionListPair);
+            SetNullBoundaries(yyval.ast_typeModifiersListPositionListPair);
         }
 break;
 case 377:
@@ -6124,7 +6124,7 @@ case 377:
                 } else {
                     yyval.ast_typeModifiersListPositionListPair.d.p = NULL;
                     appendPositionToList(&yyval.ast_typeModifiersListPositionListPair.d.p, &s_noPos);
-                    PropagateBorns(yyval.ast_typeModifiersListPositionListPair, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_typeModifiersListPositionListPair, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6141,7 +6141,7 @@ case 378:
                     if (s_cp.erfsForParamsComplet!=NULL) s_cp.erfsForParamsComplet->params = yyval.ast_typeModifiersListPositionListPair.d.t;
                 } else {
                     appendPositionToList(&yyval.ast_typeModifiersListPositionListPair.d.p, &yyvsp[-1].ast_position.d);
-                    PropagateBorns(yyval.ast_typeModifiersListPositionListPair, yyvsp[-2].ast_typeModifiersListPositionListPair, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_typeModifiersListPositionListPair, yyvsp[-2].ast_typeModifiersListPositionListPair, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6166,8 +6166,8 @@ case 381:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &yyvsp[-4].ast_id.d->p;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-4].ast_id, yyvsp[0].ast_integer);
-                    if (yyval.ast_expressionType.e.file == s_noneFileIndex) PropagateBorns(yyval.ast_expressionType, yyval.ast_expressionType, yyvsp[-1].ast_integer);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-4].ast_id, yyvsp[0].ast_integer);
+                    if (yyval.ast_expressionType.e.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_expressionType, yyval.ast_expressionType, yyvsp[-1].ast_integer);
                 }
             }
         }
@@ -6184,7 +6184,7 @@ case 382:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &yyvsp[-4].ast_id.d->p;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-4].ast_id, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-4].ast_id, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6202,8 +6202,8 @@ case 383:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &yyvsp[-4].ast_id.d->p;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-4].ast_id, yyvsp[0].ast_integer);
-                    if (yyval.ast_expressionType.e.file == s_noneFileIndex) PropagateBorns(yyval.ast_expressionType, yyval.ast_expressionType, yyvsp[-1].ast_integer);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-4].ast_id, yyvsp[0].ast_integer);
+                    if (yyval.ast_expressionType.e.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_expressionType, yyval.ast_expressionType, yyvsp[-1].ast_integer);
                 }
             }
         }
@@ -6221,7 +6221,7 @@ case 384:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &yyvsp[-4].ast_id.d->p;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-4].ast_id, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-4].ast_id, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6230,41 +6230,41 @@ case 385:
 #line 3427 "java_parser.y"
 {
             if (regularPass()) yyval.ast_integer.d = 1;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_integer, yyvsp[0].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_integer, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 386:
 #line 3431 "java_parser.y"
 {
             if (regularPass()) yyval.ast_integer.d = yyvsp[-1].ast_integer.d+1;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_integer, yyvsp[-1].ast_integer, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_integer, yyvsp[-1].ast_integer, yyvsp[0].ast_position);
         }
 break;
 case 387:
 #line 3438 "java_parser.y"
 {
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 388:
 #line 3443 "java_parser.y"
 {
             if (regularPass()) yyval.ast_integer.d = 0;
-            SetNullBorns(yyval.ast_integer);
+            SetNullBoundaries(yyval.ast_integer);
         }
 break;
 case 390:
 #line 3451 "java_parser.y"
 {
             if (regularPass()) yyval.ast_integer.d = 1;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_integer, yyvsp[-1].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_integer, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 391:
 #line 3455 "java_parser.y"
 {
             if (regularPass()) yyval.ast_integer.d = yyvsp[-2].ast_integer.d+1;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_integer, yyvsp[-2].ast_integer, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_integer, yyvsp[-2].ast_integer, yyvsp[0].ast_position);
         }
 break;
 case 392:
@@ -6290,7 +6290,7 @@ case 392:
                 } else {
                     yyval.ast_expressionType.d.pp = yyvsp[-2].ast_expressionType.d.pp;
                     javaCheckForPrimaryStart(&yyvsp[0].ast_id.d->p, yyval.ast_expressionType.d.pp);
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_id);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_id);
                 }
             }
         }
@@ -6318,7 +6318,7 @@ case 393:
                     yyval.ast_expressionType.d.pp = &yyvsp[-2].ast_id.d->p;
                     javaCheckForPrimaryStart(&yyvsp[0].ast_id.d->p, yyval.ast_expressionType.d.pp);
                     javaCheckForStaticPrefixStart(&yyvsp[0].ast_id.d->p, yyval.ast_expressionType.d.pp);
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_id, yyvsp[0].ast_id);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_id, yyvsp[0].ast_id);
                 }
             }
         }
@@ -6348,7 +6348,7 @@ case 394:
                     javaCheckForPrimaryStart(&yyvsp[0].ast_id.d->p, yyval.ast_expressionType.d.pp);
                     javaCheckForStaticPrefixStart(&yyvsp[-2].ast_id.d->p, yyval.ast_expressionType.d.pp);
                     javaCheckForStaticPrefixStart(&yyvsp[0].ast_id.d->p, yyval.ast_expressionType.d.pp);
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-4].ast_idList, yyvsp[0].ast_id);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-4].ast_idList, yyvsp[0].ast_id);
                 }
             }
         }
@@ -6386,7 +6386,7 @@ case 399:
                     javaCheckForPrimaryStartInNameList(yyvsp[-5].ast_idList.d, yyval.ast_expressionType.d.pp);
                     javaCheckForStaticPrefixInNameList(yyvsp[-5].ast_idList.d, yyval.ast_expressionType.d.pp);
                     javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_idList.d->id.p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-5].ast_idList, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-5].ast_idList, yyvsp[0].ast_position);
                 }
             }
         }
@@ -6411,7 +6411,7 @@ case 401:
                     yyval.ast_expressionType.d.pp = yyvsp[-7].ast_expressionType.d.pp;
                     javaCheckForPrimaryStart(&yyvsp[-5].ast_id.d->p, yyval.ast_expressionType.d.pp);
                     javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.d->p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-7].ast_expressionType, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-7].ast_expressionType, yyvsp[0].ast_position);
                 }
             }
         }
@@ -6437,7 +6437,7 @@ case 403:
                     javaCheckForPrimaryStart(&yyvsp[-7].ast_id.d->p, yyval.ast_expressionType.d.pp);
                     javaCheckForPrimaryStart(&yyvsp[-5].ast_id.d->p, yyval.ast_expressionType.d.pp);
                     javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_id.d->p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-7].ast_id, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-7].ast_id, yyvsp[0].ast_position);
                 }
             }
         }
@@ -6455,7 +6455,7 @@ case 404:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = javaGetNameStartingPosition(yyvsp[-3].ast_idList.d);
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-3].ast_idList, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_idList, yyvsp[0].ast_position);
                 }
             }
         }
@@ -6471,7 +6471,7 @@ case 405:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = yyvsp[-3].ast_expressionType.d.pp;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-3].ast_expressionType, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_expressionType, yyvsp[0].ast_position);
                 }
             }
         }
@@ -6490,7 +6490,7 @@ case 408:
                     yyval.ast_expressionType.d.pp = javaGetNameStartingPosition(yyvsp[0].ast_idList.d);
                     javaCheckForPrimaryStartInNameList(yyvsp[0].ast_idList.d, yyval.ast_expressionType.d.pp);
                     javaCheckForStaticPrefixInNameList(yyvsp[0].ast_idList.d, yyval.ast_expressionType.d.pp);
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
                 }
             }
         }
@@ -6508,7 +6508,7 @@ case 412:
                     RESET_REFERENCE_USAGE(yyvsp[-1].ast_expressionType.d.r, UsageAddrUsed);
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-1].ast_expressionType, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_expressionType, yyvsp[0].ast_position);
                 }
             }
         }
@@ -6522,7 +6522,7 @@ case 413:
                     RESET_REFERENCE_USAGE(yyvsp[-1].ast_expressionType.d.r, UsageAddrUsed);
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-1].ast_expressionType, yyvsp[0].ast_position);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_expressionType, yyvsp[0].ast_position);
                 }
             }
         }
@@ -6536,7 +6536,7 @@ case 416:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6550,7 +6550,7 @@ case 417:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6564,7 +6564,7 @@ case 419:
                     RESET_REFERENCE_USAGE(yyvsp[0].ast_expressionType.d.r, UsageAddrUsed);
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6578,7 +6578,7 @@ case 420:
                     RESET_REFERENCE_USAGE(yyvsp[0].ast_expressionType.d.r, UsageAddrUsed);
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6592,7 +6592,7 @@ case 422:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6607,7 +6607,7 @@ case 423:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6623,7 +6623,7 @@ case 425:
                     assert(yyval.ast_expressionType.d.t->kind == TypeArray);
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyvsp[0].ast_expressionType.b, s_cxRefPos, yyvsp[0].ast_expressionType.e)
                         && s_spp[SPP_CAST_LPAR_POSITION].file == s_noneFileIndex) {
                         s_spp[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.b;
@@ -6646,7 +6646,7 @@ case 426:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyvsp[0].ast_expressionType.b, s_cxRefPos, yyvsp[0].ast_expressionType.e)
                         && s_spp[SPP_CAST_LPAR_POSITION].file == s_noneFileIndex) {
                         s_spp[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.b;
@@ -6669,7 +6669,7 @@ case 427:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyvsp[0].ast_expressionType.b, s_cxRefPos, yyvsp[0].ast_expressionType.e)
                         && s_spp[SPP_CAST_LPAR_POSITION].file == s_noneFileIndex) {
                         s_spp[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.b;
@@ -6692,7 +6692,7 @@ case 429:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6706,7 +6706,7 @@ case 430:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6720,7 +6720,7 @@ case 431:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6747,7 +6747,7 @@ case 433:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6761,7 +6761,7 @@ case 434:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6775,7 +6775,7 @@ case 436:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6789,7 +6789,7 @@ case 437:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6803,7 +6803,7 @@ case 438:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6817,7 +6817,7 @@ case 440:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6831,7 +6831,7 @@ case 441:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6845,7 +6845,7 @@ case 442:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6859,7 +6859,7 @@ case 443:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6873,7 +6873,7 @@ case 444:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_symbol);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_symbol);
                 }
             }
         }
@@ -6887,7 +6887,7 @@ case 446:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6901,7 +6901,7 @@ case 447:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6915,7 +6915,7 @@ case 449:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6929,7 +6929,7 @@ case 451:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6943,7 +6943,7 @@ case 453:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6957,7 +6957,7 @@ case 455:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6971,7 +6971,7 @@ case 457:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -6985,7 +6985,7 @@ case 459:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-4].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-4].ast_expressionType, yyvsp[0].ast_expressionType);
                 }
             }
         }
@@ -7035,7 +7035,7 @@ case 463:
                         */
                     }
                 } else {
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[-3].ast_expressionType, yyvsp[0].ast_expressionType);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_expressionType, yyvsp[0].ast_expressionType);
                     if (s_opt.taskRegime == RegimeEditServer) {
                         if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE(yyvsp[-3].ast_expressionType.b, s_cxRefPos, yyvsp[-3].ast_expressionType.e)) {
                             s_spp[SPP_ASSIGNMENT_OPERATOR_POSITION] = yyvsp[-1].ast_unsignedPositionPair.b;
@@ -7057,7 +7057,7 @@ case 464:
                     yyval.ast_expressionType.d.t = javaClassifyToExpressionName(yyvsp[0].ast_idList.d, &rr);
                     yyval.ast_expressionType.d.r = rr;
                 } else {
-                    PropagateBorns(yyval.ast_expressionType, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
+                    PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
                 }
             }
         }
@@ -7070,84 +7070,84 @@ case 468:
 #line 4213 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = '=';
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 469:
 #line 4217 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = MUL_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 470:
 #line 4221 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = DIV_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 471:
 #line 4225 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = MOD_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 472:
 #line 4229 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = ADD_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 473:
 #line 4233 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = SUB_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 474:
 #line 4237 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = LEFT_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 475:
 #line 4241 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = RIGHT_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 476:
 #line 4245 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = URIGHT_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 477:
 #line 4249 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = AND_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 478:
 #line 4253 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = XOR_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 479:
 #line 4257 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = OR_ASSIGN;
-            PropagateBornsIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
+            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 481:
@@ -7159,7 +7159,7 @@ case 481:
                     yyval.ast_expressionType.d.r = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
-                    SetNullBorns(yyval.ast_expressionType);
+                    SetNullBoundaries(yyval.ast_expressionType);
                 }
             }
         }
