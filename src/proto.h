@@ -821,10 +821,10 @@ typedef struct cxScanFileFunctionLink {
 
 /* *********************************************************** */
 
-typedef struct exprTokenType {
-    struct typeModifier *typeModifier;
+typedef struct expressionTokenType {
+    struct typeModifier  *typeModifier;
     struct reference     *reference;
-    struct position      *pp;
+    struct position      *position;
 } S_exprTokenType;
 
 typedef struct nestedConstrTokenType {
@@ -911,7 +911,7 @@ typedef struct {
 } Ast_idList;
 typedef struct {
     struct position          b, e;
-    struct exprTokenType		d;
+    struct expressionTokenType		d;
 } Ast_exprTokenType;
 typedef struct {
     struct position                  b, e;

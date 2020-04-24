@@ -373,7 +373,7 @@ Literal:
                     $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
                     $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = &s_noPos;
+                    $$.d.position = &s_noPos;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -384,7 +384,7 @@ Literal:
                     $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
                     $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = &s_noPos;
+                    $$.d.position = &s_noPos;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -395,7 +395,7 @@ Literal:
                     $$.d.typeModifier = newSimpleTypeModifier(TypeInt);
                     $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = &s_noPos;
+                    $$.d.position = &s_noPos;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -406,7 +406,7 @@ Literal:
                     $$.d.typeModifier = newSimpleTypeModifier(TypeLong);
                     $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = &s_noPos;
+                    $$.d.position = &s_noPos;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -417,7 +417,7 @@ Literal:
                     $$.d.typeModifier = newSimpleTypeModifier(TypeFloat);
                     $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = &s_noPos;
+                    $$.d.position = &s_noPos;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -426,7 +426,7 @@ Literal:
             if (regularPass()) {
                 $$.d.typeModifier = newSimpleTypeModifier(TypeDouble);
                 $$.d.reference = NULL;
-                $$.d.pp = &s_noPos;
+                $$.d.position = &s_noPos;
                 if (SyntaxPassOnly()) {PropagateBoundaries($$, $1, $1);}
             }
         }
@@ -436,7 +436,7 @@ Literal:
                     $$.d.typeModifier = newSimpleTypeModifier(TypeChar);
                     $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = &s_noPos;
+                    $$.d.position = &s_noPos;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -447,8 +447,8 @@ Literal:
                     $$.d.typeModifier = &s_javaStringModifier;
                     $$.d.reference = NULL;
                 } else {
-                    XX_ALLOC($$.d.pp, Position);
-                    *$$.d.pp = $1.d;
+                    XX_ALLOC($$.d.position, Position);
+                    *$$.d.position = $1.d;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -459,8 +459,8 @@ Literal:
                     $$.d.typeModifier = newSimpleTypeModifier(TypeNull);
                     $$.d.reference = NULL;
                 } else {
-                    XX_ALLOC($$.d.pp, Position);
-                    *$$.d.pp = $1.d->p;
+                    XX_ALLOC($$.d.position, Position);
+                    *$$.d.position = $1.d->p;
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -2981,8 +2981,8 @@ Primary:
         }
     ;
 
-PrimaryNoNewArray:
-        Literal								/* $$ = $1; */
+PrimaryNoNewArray
+    :   Literal								/* $$ = $1; */
     |	This								{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -2990,9 +2990,9 @@ PrimaryNoNewArray:
 //fprintf(dumpOut,"this == %s\n",s_javaStat->thisType->u.t->linkName);
                     $$.d.typeModifier = s_javaStat->thisType;
                     addThisCxReferences(s_javaStat->classFileIndex, &$1.d->p);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = &$1.d->p;
+                    $$.d.position = &$1.d->p;
                     javaCheckForStaticPrefixStart(&$1.d->p, &$1.d->p);
                     PropagateBoundaries($$, $1, $1);
                 }
@@ -3003,9 +3003,9 @@ PrimaryNoNewArray:
                 if (! SyntaxPassOnly()) {
                     javaQualifiedThis($1.d, $3.d);
                     $$.d.typeModifier = javaClassNameType($1.d);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = javaGetNameStartingPosition($1.d);
+                    $$.d.position = javaGetNameStartingPosition($1.d);
                     javaCheckForStaticPrefixStart(&$3.d->p, javaGetNameStartingPosition($1.d));
                     PropagateBoundaries($$, $1, $3);
                 }
@@ -3015,9 +3015,9 @@ PrimaryNoNewArray:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = &s_javaClassModifier;
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = $1.d.p;
+                    $$.d.position = $1.d.p;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3028,9 +3028,9 @@ PrimaryNoNewArray:
                     Symbol *str;
                     javaClassifyToTypeName($1.d,UsageUsed, &str, USELESS_FQT_REFS_ALLOWED);
                     $$.d.typeModifier = &s_javaClassModifier;
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = javaGetNameStartingPosition($1.d);
+                    $$.d.position = javaGetNameStartingPosition($1.d);
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3039,9 +3039,9 @@ PrimaryNoNewArray:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = &s_javaClassModifier;
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = $1.d.p;
+                    $$.d.position = $1.d.p;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3050,9 +3050,9 @@ PrimaryNoNewArray:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = &s_javaClassModifier;
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    SetPrimitiveTypePos($$.d.pp, $1.d);
+                    SetPrimitiveTypePos($$.d.position, $1.d);
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3061,8 +3061,8 @@ PrimaryNoNewArray:
             if (regularPass()) {
                 $$.d = $2.d;
                 if (SyntaxPassOnly()) {
-                    XX_ALLOC($$.d.pp, Position);
-                    *$$.d.pp = $1.d;
+                    XX_ALLOC($$.d.position, Position);
+                    *$$.d.position = $1.d;
                     PropagateBoundaries($$, $1, $3);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE($$.b, s_cxRefPos, $$.e)
                         && s_spp[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file == s_noneFileIndex) {
@@ -3116,7 +3116,7 @@ NestedConstructorInvocation:
                         javaConstructorInvocation($$.d.t->u.t, &($4.d->id.p), $8.d.t);
                     }
                 } else {
-                    $$.d.pp = $1.d.pp;
+                    $$.d.pp = $1.d.position;
                     PropagateBoundaries($$, $1, $9);
                 }
             }
@@ -3209,10 +3209,10 @@ ClassInstanceCreationExpression:
                     javaConstructorInvocation(ss, &($3.d->id.p), $5.d.t);
                     tt = javaTypeNameDefinition($3.d);
                     $$.d.typeModifier = tt->u.type;
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
                     javaHandleDeclaratorParamPositions(&$3.d->id.p, &$4.d, $5.d.p, &$6.d);
-                    $$.d.pp = &$1.d->p;
+                    $$.d.position = &$1.d->p;
                     PropagateBoundaries($$, $1, $6);
                 }
             }
@@ -3253,9 +3253,9 @@ ClassInstanceCreationExpression:
                     newClassDefinitionEnd($<trail>8);
                     assert($<symbol>7 && $<symbol>7->u.type);
                     $$.d.typeModifier = $<symbol>7->u.type;
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = &$1.d->p;
+                    $$.d.position = &$1.d->p;
                     PropagateBoundaries($$, $1, $9);
                 }
             } else {
@@ -3264,8 +3264,8 @@ ClassInstanceCreationExpression:
         }
     |	NestedConstructorInvocation								{
             $$.d.typeModifier = $1.d.t;
-            $$.d.pp = $1.d.pp;
-            $$.d.r = NULL;
+            $$.d.position = $1.d.pp;
+            $$.d.reference = NULL;
             PropagateBoundaries($$, $1, $1);
         }
     |	NestedConstructorInvocation
@@ -3273,15 +3273,15 @@ ClassInstanceCreationExpression:
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         $$.d.typeModifier = $1.d.t;
-                        $$.d.pp = $1.d.pp;
-                        $$.d.r = NULL;
+                        $$.d.position = $1.d.pp;
+                        $$.d.reference = NULL;
                         if ($$.d.typeModifier->kind != TypeError) {
                             $<trail>$ = newClassDefinitionBegin(&s_javaAnonymousClassName, ACCESS_DEFAULT, $$.d.typeModifier->u.t);
                         } else {
                             $<trail>$ = newAnonClassDefinitionBegin(& $1.d.nid->id);
                         }
                     } else {
-                        $$.d.pp = $1.d.pp;
+                        $$.d.position = $1.d.pp;
                     }
                 } else {
                     jslNewAnonClassDefinitionBegin(& $1.d.nid->id);
@@ -3367,9 +3367,9 @@ ArrayCreationExpression:
                     $$.d.typeModifier = newSimpleTypeModifier($3.d.u);
                     for(i=0; i<$4.d; i++)
                         prependTypeModifierWith($$.d.typeModifier, TypeArray);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = &$1.d->p;
+                    $$.d.position = &$1.d->p;
                     PropagateBoundaries($$, $1, $5);
                     if ($$.e.file == s_noneFileIndex) PropagateBoundaries($$, $$, $4);
                 }
@@ -3382,9 +3382,9 @@ ArrayCreationExpression:
                     $$.d.typeModifier = newSimpleTypeModifier($3.d.u);
                     for(i=0; i<$4.d; i++)
                         prependTypeModifierWith($$.d.typeModifier, TypeArray);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = &$1.d->p;
+                    $$.d.position = &$1.d->p;
                     PropagateBoundaries($$, $1, $5);
                 }
             }
@@ -3397,9 +3397,9 @@ ArrayCreationExpression:
                     $$.d.typeModifier = $3.d->u.type;
                     for(i=0; i<$4.d; i++)
                         prependTypeModifierWith($$.d.typeModifier, TypeArray);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = &$1.d->p;
+                    $$.d.position = &$1.d->p;
                     PropagateBoundaries($$, $1, $5);
                     if ($$.e.file == s_noneFileIndex) PropagateBoundaries($$, $$, $4);
                 }
@@ -3413,9 +3413,9 @@ ArrayCreationExpression:
                     $$.d.typeModifier = $3.d->u.type;
                     for(i=0; i<$4.d; i++)
                         prependTypeModifierWith($$.d.typeModifier, TypeArray);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = &$1.d->p;
+                    $$.d.position = &$1.d->p;
                     PropagateBoundaries($$, $1, $5);
                 }
             }
@@ -3464,11 +3464,11 @@ FieldAccess:
                 if (! SyntaxPassOnly()) {
                     Symbol *rec=NULL;
                     assert($1.d.typeModifier);
-                    $$.d.r = NULL;
-                    $$.d.pp = $1.d.pp;
+                    $$.d.reference = NULL;
+                    $$.d.position = $1.d.position;
                     if ($1.d.typeModifier->kind == TypeStruct) {
                         javaLoadClassSymbolsFromFile($1.d.typeModifier->u.t);
-                        $$.d.r = findStrRecordFromType($1.d.typeModifier, $3.d, &rec, CLASS_TO_EXPR);
+                        $$.d.reference = findStrRecordFromType($1.d.typeModifier, $3.d, &rec, CLASS_TO_EXPR);
                         assert(rec);
                         $$.d.typeModifier = rec->u.type;
                     } else if (s_language == LANG_JAVA) {
@@ -3478,8 +3478,8 @@ FieldAccess:
                     }
                     assert($$.d.typeModifier);
                 } else {
-                    $$.d.pp = $1.d.pp;
-                    javaCheckForPrimaryStart(&$3.d->p, $$.d.pp);
+                    $$.d.position = $1.d.position;
+                    javaCheckForPrimaryStart(&$3.d->p, $$.d.position);
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3489,12 +3489,13 @@ FieldAccess:
                 if (! SyntaxPassOnly()) {
                     Symbol *ss,*rec=NULL;
 
-                    $$.d.r = NULL;
-                    $$.d.pp = &$1.d->p;
+                    $$.d.reference = NULL;
+                    $$.d.position = &$1.d->p;
                     ss = javaCurrentSuperClass();
                     if (ss != &s_errorSymbol && ss->bits.symType!=TypeError) {
                         javaLoadClassSymbolsFromFile(ss);
-                        $$.d.r = findStrRecordFromSymbol(ss, $3.d, &rec, CLASS_TO_EXPR, $1.d);
+                        $$.d.reference = findStrRecordFromSymbol(ss, $3.d, &rec,
+                                                                 CLASS_TO_EXPR, $1.d);
                         assert(rec);
                         $$.d.typeModifier = rec->u.type;
                     } else {
@@ -3502,9 +3503,9 @@ FieldAccess:
                     }
                     assert($$.d.typeModifier);
                 } else {
-                    $$.d.pp = &$1.d->p;
-                    javaCheckForPrimaryStart(&$3.d->p, $$.d.pp);
-                    javaCheckForStaticPrefixStart(&$3.d->p, $$.d.pp);
+                    $$.d.position = &$1.d->p;
+                    javaCheckForPrimaryStart(&$3.d->p, $$.d.position);
+                    javaCheckForStaticPrefixStart(&$3.d->p, $$.d.position);
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3518,20 +3519,21 @@ FieldAccess:
                     if (ss != &s_errorSymbol && ss->bits.symType!=TypeError) {
                         javaLoadClassSymbolsFromFile(ss);
                         ss = javaGetSuperClass(ss);
-                        $$.d.r = findStrRecordFromSymbol(ss, $5.d, &rec, CLASS_TO_EXPR, NULL);
+                        $$.d.reference = findStrRecordFromSymbol(ss, $5.d, &rec,
+                                                                 CLASS_TO_EXPR, NULL);
                         assert(rec);
                         $$.d.typeModifier = rec->u.type;
                     } else {
                         $$.d.typeModifier = &s_errorModifier;
                     }
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                     assert($$.d.typeModifier);
                 } else {
-                    $$.d.pp = javaGetNameStartingPosition($1.d);
-                    javaCheckForPrimaryStart(&$3.d->p, $$.d.pp);
-                    javaCheckForPrimaryStart(&$5.d->p, $$.d.pp);
-                    javaCheckForStaticPrefixStart(&$3.d->p, $$.d.pp);
-                    javaCheckForStaticPrefixStart(&$5.d->p, $$.d.pp);
+                    $$.d.position = javaGetNameStartingPosition($1.d);
+                    javaCheckForPrimaryStart(&$3.d->p, $$.d.position);
+                    javaCheckForPrimaryStart(&$5.d->p, $$.d.position);
+                    javaCheckForStaticPrefixStart(&$3.d->p, $$.d.position);
+                    javaCheckForStaticPrefixStart(&$5.d->p, $$.d.position);
                     PropagateBoundaries($$, $1, $5);
                 }
             }
@@ -3550,12 +3552,12 @@ MethodInvocation:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaMethodInvocationN($1.d,$5.d.t);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                     s_cp.erfsForParamsComplet = $2;
                 } else {
-                    $$.d.pp = javaGetNameStartingPosition($1.d);
-                    javaCheckForPrimaryStartInNameList($1.d, $$.d.pp);
-                    javaCheckForStaticPrefixInNameList($1.d, $$.d.pp);
+                    $$.d.position = javaGetNameStartingPosition($1.d);
+                    javaCheckForPrimaryStartInNameList($1.d, $$.d.position);
+                    javaCheckForStaticPrefixInNameList($1.d, $$.d.position);
                     javaHandleDeclaratorParamPositions(&$1.d->id.p, &$4.d, $5.d.p, &$6.d);
                     PropagateBoundaries($$, $1, $6);
                 }
@@ -3569,11 +3571,11 @@ MethodInvocation:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaMethodInvocationT($1.d.typeModifier, $3.d, $7.d.t);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                     s_cp.erfsForParamsComplet = $4;
                 } else {
-                    $$.d.pp = $1.d.pp;
-                    javaCheckForPrimaryStart(&$3.d->p, $$.d.pp);
+                    $$.d.position = $1.d.position;
+                    javaCheckForPrimaryStart(&$3.d->p, $$.d.position);
                     javaHandleDeclaratorParamPositions(&$3.d->p, &$6.d, $7.d.p, &$8.d);
                     PropagateBoundaries($$, $1, $8);
                 }
@@ -3587,12 +3589,12 @@ MethodInvocation:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaMethodInvocationS($1.d, $3.d, $7.d.t);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                     s_cp.erfsForParamsComplet = $4;
                 } else {
-                    $$.d.pp = &$1.d->p;
-                    javaCheckForPrimaryStart(&$1.d->p, $$.d.pp);
-                    javaCheckForPrimaryStart(&$3.d->p, $$.d.pp);
+                    $$.d.position = &$1.d->p;
+                    javaCheckForPrimaryStart(&$1.d->p, $$.d.position);
+                    javaCheckForPrimaryStart(&$3.d->p, $$.d.position);
                     javaHandleDeclaratorParamPositions(&$3.d->p, &$6.d, $7.d.p, &$8.d);
                     PropagateBoundaries($$, $1, $8);
                 }
@@ -3611,13 +3613,13 @@ ArrayAccess:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     TypeModifier *tt;
-                    tt = javaClassifyToExpressionName($1.d, &($$.d.r));
+                    tt = javaClassifyToExpressionName($1.d, &($$.d.reference));
                     if (tt->kind==TypeArray) $$.d.typeModifier = tt->next;
                     else $$.d.typeModifier = &s_errorModifier;
                     assert($$.d.typeModifier);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = javaGetNameStartingPosition($1.d);
+                    $$.d.position = javaGetNameStartingPosition($1.d);
                     PropagateBoundaries($$, $1, $4);
                 }
             }
@@ -3628,9 +3630,9 @@ ArrayAccess:
                     if ($1.d.typeModifier->kind==TypeArray) $$.d.typeModifier = $1.d.typeModifier->next;
                     else $$.d.typeModifier = &s_errorModifier;
                     assert($$.d.typeModifier);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = $1.d.pp;
+                    $$.d.position = $1.d.position;
                     PropagateBoundaries($$, $1, $4);
                 }
             }
@@ -3643,11 +3645,11 @@ PostfixExpression:
     |	Name											{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.typeModifier = javaClassifyToExpressionName($1.d, &($$.d.r));
+                    $$.d.typeModifier = javaClassifyToExpressionName($1.d, &($$.d.reference));
                 } else {
-                    $$.d.pp = javaGetNameStartingPosition($1.d);
-                    javaCheckForPrimaryStartInNameList($1.d, $$.d.pp);
-                    javaCheckForStaticPrefixInNameList($1.d, $$.d.pp);
+                    $$.d.position = javaGetNameStartingPosition($1.d);
+                    javaCheckForPrimaryStartInNameList($1.d, $$.d.position);
+                    javaCheckForStaticPrefixInNameList($1.d, $$.d.position);
                     PropagateBoundaries($$, $1, $1);
                 }
             }
@@ -3662,9 +3664,9 @@ PostIncrementExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaCheckNumeric($1.d.typeModifier);
-                    RESET_REFERENCE_USAGE($1.d.r, UsageAddrUsed);
+                    RESET_REFERENCE_USAGE($1.d.reference, UsageAddrUsed);
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
                 }
             }
@@ -3676,9 +3678,9 @@ PostDecrementExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaCheckNumeric($1.d.typeModifier);
-                    RESET_REFERENCE_USAGE($1.d.r, UsageAddrUsed);
+                    RESET_REFERENCE_USAGE($1.d.reference, UsageAddrUsed);
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
                 }
             }
@@ -3692,9 +3694,9 @@ UnaryExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaNumericPromotion($2.d.typeModifier);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
                 }
             }
@@ -3703,9 +3705,9 @@ UnaryExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaNumericPromotion($2.d.typeModifier);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
                 }
             }
@@ -3718,9 +3720,9 @@ PreIncrementExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaCheckNumeric($2.d.typeModifier);
-                    RESET_REFERENCE_USAGE($2.d.r, UsageAddrUsed);
+                    RESET_REFERENCE_USAGE($2.d.reference, UsageAddrUsed);
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
                 }
             }
@@ -3732,9 +3734,9 @@ PreDecrementExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaCheckNumeric($2.d.typeModifier);
-                    RESET_REFERENCE_USAGE($2.d.r, UsageAddrUsed);
+                    RESET_REFERENCE_USAGE($2.d.reference, UsageAddrUsed);
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
                 }
             }
@@ -3747,9 +3749,9 @@ UnaryExpressionNotPlusMinus:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaNumericPromotion($2.d.typeModifier);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
                 }
             }
@@ -3759,9 +3761,9 @@ UnaryExpressionNotPlusMinus:
                 if (! SyntaxPassOnly()) {
                     if ($2.d.typeModifier->kind == TypeBoolean) $$.d.typeModifier = $2.d.typeModifier;
                     else $$.d.typeModifier = &s_errorModifier;
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $2);
                 }
             }
@@ -3775,10 +3777,10 @@ CastExpression:
                 if (! SyntaxPassOnly()) {
                     assert($2.d.s && $2.d.s->u.type);
                     $$.d.typeModifier = $2.d.s->u.type;
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                     assert($$.d.typeModifier->kind == TypeArray);
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $4);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE($4.b, s_cxRefPos, $4.e)
                         && s_spp[SPP_CAST_LPAR_POSITION].file == s_noneFileIndex) {
@@ -3796,9 +3798,9 @@ CastExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = newTypeModifier($2.d.u, NULL, NULL);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $4);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE($4.b, s_cxRefPos, $4.e)
                         && s_spp[SPP_CAST_LPAR_POSITION].file == s_noneFileIndex) {
@@ -3816,9 +3818,9 @@ CastExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = $2.d.typeModifier;
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $4);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE($4.b, s_cxRefPos, $4.e)
                         && s_spp[SPP_CAST_LPAR_POSITION].file == s_noneFileIndex) {
@@ -3852,9 +3854,9 @@ MultiplicativeExpression:
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaBinaryNumericPromotion($1.d.typeModifier,
                                                                    $3.d.typeModifier);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3864,9 +3866,9 @@ MultiplicativeExpression:
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaBinaryNumericPromotion($1.d.typeModifier,
                                                                    $3.d.typeModifier);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3876,9 +3878,9 @@ MultiplicativeExpression:
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaBinaryNumericPromotion($1.d.typeModifier,
                                                                    $3.d.typeModifier);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3905,9 +3907,9 @@ AdditiveExpression:
                         $$.d.typeModifier = javaBinaryNumericPromotion($1.d.typeModifier,
                                                                        $3.d.typeModifier);
                     }
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3917,9 +3919,9 @@ AdditiveExpression:
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaBinaryNumericPromotion($1.d.typeModifier,
                                                                    $3.d.typeModifier);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3932,9 +3934,9 @@ ShiftExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaNumericPromotion($1.d.typeModifier);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3943,9 +3945,9 @@ ShiftExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaNumericPromotion($1.d.typeModifier);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3954,9 +3956,9 @@ ShiftExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaNumericPromotion($1.d.typeModifier);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3969,9 +3971,9 @@ RelationalExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3980,9 +3982,9 @@ RelationalExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -3991,9 +3993,9 @@ RelationalExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -4002,9 +4004,9 @@ RelationalExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -4013,9 +4015,9 @@ RelationalExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -4028,9 +4030,9 @@ EqualityExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -4039,9 +4041,9 @@ EqualityExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -4055,9 +4057,9 @@ AndExpression:
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaBitwiseLogicalPromotion($1.d.typeModifier,
                                                                     $3.d.typeModifier);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -4071,9 +4073,9 @@ ExclusiveOrExpression:
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaBitwiseLogicalPromotion($1.d.typeModifier,
                                                                     $3.d.typeModifier);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -4087,9 +4089,9 @@ InclusiveOrExpression:
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaBitwiseLogicalPromotion($1.d.typeModifier,
                                                                     $3.d.typeModifier);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -4102,9 +4104,9 @@ ConditionalAndExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -4117,9 +4119,9 @@ ConditionalOrExpression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
@@ -4133,9 +4135,9 @@ ConditionalExpression:
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaConditionalPromotion($3.d.typeModifier,
                                                                  $5.d.typeModifier);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $5);
                 }
             }
@@ -4161,10 +4163,10 @@ Assignment:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     s_cps.lastAssignementStruct = NULL;
-                    if ($1.d.r != NULL && s_opt.server_operation == OLO_EXTRACT) {
+                    if ($1.d.reference != NULL && s_opt.server_operation == OLO_EXTRACT) {
                         S_reference *rr;
-                        rr = duplicateReference($1.d.r);
-                        $1.d.r->usage = s_noUsage;
+                        rr = duplicateReference($1.d.reference);
+                        $1.d.reference->usage = s_noUsage;
                         if ($3.d.u == '=') {
                             RESET_REFERENCE_USAGE(rr, UsageLvalUsed);
                         } else {
@@ -4172,12 +4174,12 @@ Assignment:
                         }
                     } else {
                         if ($3.d.u == '=') {
-                            RESET_REFERENCE_USAGE($1.d.r, UsageLvalUsed);
+                            RESET_REFERENCE_USAGE($1.d.reference, UsageLvalUsed);
                         } else {
-                            RESET_REFERENCE_USAGE($1.d.r, UsageAddrUsed);
+                            RESET_REFERENCE_USAGE($1.d.reference, UsageAddrUsed);
                         }
                         $$.d.typeModifier = $1.d.typeModifier;
-                        $$.d.r = NULL;
+                        $$.d.reference = NULL;
                         /*
                           fprintf(dumpOut,": java Type Dump\n"); fflush(dumpOut);
                           javaTypeDump($1.d.t);
@@ -4194,7 +4196,7 @@ Assignment:
                             s_spp[SPP_ASSIGNMENT_END_POSITION] = $4.e;
                         }
                     }
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                 }
             }
         }
@@ -4203,11 +4205,11 @@ Assignment:
 LeftHandSide:
         Name					{
             if (regularPass()) {
-                $$.d.pp = javaGetNameStartingPosition($1.d);
+                $$.d.position = javaGetNameStartingPosition($1.d);
                 if (! SyntaxPassOnly()) {
                     S_reference *rr;
                     $$.d.typeModifier = javaClassifyToExpressionName($1.d, &rr);
-                    $$.d.r = rr;
+                    $$.d.reference = rr;
                 } else {
                     PropagateBoundaries($$, $1, $1);
                 }
@@ -4275,9 +4277,9 @@ Expression:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = &s_errorModifier;
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
-                    $$.d.pp = NULL_POS;
+                    $$.d.position = NULL_POS;
                     SetNullBoundaries($$);
                 }
             }
