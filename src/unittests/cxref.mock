@@ -30,7 +30,7 @@ int olcxReferenceInternalLessFunction(S_reference *r1, S_reference *r2) {
     return (int) mock(r1, r2);
 }
 
-int olSymbolRefItemLess(S_symbolRefItem *s1, S_symbolRefItem *s2) {
+bool olSymbolRefItemLess(S_symbolRefItem *s1, S_symbolRefItem *s2) {
     return (int) mock(s1, s2);
 }
 

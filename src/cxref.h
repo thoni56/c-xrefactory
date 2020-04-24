@@ -18,7 +18,7 @@ extern void fill_olSymbolsMenu(S_olSymbolsMenu *olSymbolsMenu, struct symbolRefI
                                struct olSymbolsMenu *next);
 extern void fillUsageBits(UsageBits *STRUCTP, unsigned base, unsigned requiredAccess);
 extern int olcxReferenceInternalLessFunction(S_reference *r1, S_reference *r2);
-extern int olSymbolRefItemLess(S_symbolRefItem *s1, S_symbolRefItem *s2);
+extern bool olSymbolRefItemLess(S_symbolRefItem *s1, S_symbolRefItem *s2);
 extern void tagSearchCompactShortResults(void);
 extern void printTagSearchResults(void);
 extern S_olSymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi,int storage);

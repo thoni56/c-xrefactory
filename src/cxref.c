@@ -134,27 +134,27 @@ int olcxReferenceInternalLessFunction(S_reference *r1, S_reference *r2) {
     return(SORTED_LIST_LESS(r1, (*r2)));
 }
 
-int olSymbolRefItemLess(S_symbolRefItem *s1, S_symbolRefItem *s2) {
+bool olSymbolRefItemLess(S_symbolRefItem *s1, S_symbolRefItem *s2) {
     int cmp;
     //& if (s1->vlevel < s2->vlevel) return(1);
     //& else if (s2->vlevel < s1->vlevel) return(0);
     cmp = strcmp(s1->name, s2->name);
-    if (cmp < 0) return(1);
-    else if (cmp > 0) return(0);
-    if (s1->vFunClass < s2->vFunClass) return(1);
-    else if (s1->vFunClass > s2->vFunClass) return(0);
-    if (s1->vApplClass < s2->vApplClass) return(1);
-    else if (s1->vApplClass > s2->vApplClass) return(0);
-    if (s1->b.symType < s2->b.symType) return(1);
-    else if (s1->b.symType > s2->b.symType) return(0);
-    if (s1->b.storage < s2->b.storage) return(1);
-    else if (s1->b.storage > s2->b.storage) return(0);
-    if (s1->b.category < s2->b.category) return(1);
-    else if (s1->b.category > s2->b.category) return(0);
-    return(0);
+    if (cmp < 0) return true;
+    else if (cmp > 0) return false;
+    if (s1->vFunClass < s2->vFunClass) return true;
+    else if (s1->vFunClass > s2->vFunClass) return false;
+    if (s1->vApplClass < s2->vApplClass) return true;
+    else if (s1->vApplClass > s2->vApplClass) return false;
+    if (s1->b.symType < s2->b.symType) return true;
+    else if (s1->b.symType > s2->b.symType) return false;
+    if (s1->b.storage < s2->b.storage) return true;
+    else if (s1->b.storage > s2->b.storage) return false;
+    if (s1->b.category < s2->b.category) return true;
+    else if (s1->b.category > s2->b.category) return false;
+    return false;
 }
 
-static int olSymbolMenuLess(S_olSymbolsMenu *s1, S_olSymbolsMenu *s2) {
+static bool olSymbolMenuLess(S_olSymbolsMenu *s1, S_olSymbolsMenu *s2) {
     //& if (s1->vlevel < s2->vlevel) return(1);
     //& else if (s2->vlevel < s1->vlevel) return(0);
     return(olSymbolRefItemLess(&s1->s, &s2->s));
