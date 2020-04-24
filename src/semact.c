@@ -958,10 +958,10 @@ TypeModifier *createNewAnonymousStructOrUnion(S_id *typeName) {
     assert(typeName);
     assert(typeName->sd);
     assert(typeName->sd->bits.symType == TypeKeyword);
-    assert(     typeName->sd->u.keyWordVal == STRUCT
-                ||  typeName->sd->u.keyWordVal == CLASS
-                ||  typeName->sd->u.keyWordVal == UNION
-                );
+    assert(typeName->sd->u.keyWordVal == STRUCT
+           ||  typeName->sd->u.keyWordVal == CLASS
+           ||  typeName->sd->u.keyWordVal == UNION
+           );
     if (typeName->sd->u.keyWordVal == STRUCT) type = TypeStruct;
     else type = TypeUnion;
 

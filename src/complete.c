@@ -1133,7 +1133,7 @@ static int isForCompletionSymbol(Completions *c,
     if (token->typeModifier->kind == TypePointer) {
         assert(token->typeModifier->next);
         if (token->typeModifier->next->kind == TypeStruct) {
-            *sym = sy = getSymFromRef(token->r);
+            *sym = sy = getSymFromRef(token->reference);
             if (sy==NULL) return(0);
             *nextRecord = spComplFindNextRecord(token);
             return(1);

@@ -823,7 +823,7 @@ typedef struct cxScanFileFunctionLink {
 
 typedef struct exprTokenType {
     struct typeModifier *typeModifier;
-    struct reference     *r;
+    struct reference     *reference;
     struct position      *pp;
 } S_exprTokenType;
 

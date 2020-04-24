@@ -260,9 +260,9 @@ primary_expr
             $$.d.typeModifier = dd->u.type;
             assert(s_opt.taskRegime);
             if (CX_REGIME()) {
-                $$.d.r = addCxReference(p, &$1.d->p, UsageUsed, s_noneFileIndex, s_noneFileIndex);
+                $$.d.reference = addCxReference(p, &$1.d->p, UsageUsed, s_noneFileIndex, s_noneFileIndex);
             } else {
-                $$.d.r = NULL;
+                $$.d.reference = NULL;
             }
         } else {
             /* implicit function declaration */
@@ -278,29 +278,29 @@ primary_expr
 
             dd = addNewSymbolDef(d, StorageExtern, s_symbolTable, UsageUsed);
             if (CX_REGIME()) {
-                $$.d.r = addCxReference(dd, &$1.d->p, UsageUsed, s_noneFileIndex, s_noneFileIndex);
+                $$.d.reference = addCxReference(dd, &$1.d->p, UsageUsed, s_noneFileIndex, s_noneFileIndex);
             } else {
-                $$.d.r = NULL;
+                $$.d.reference = NULL;
             }
         }
     }
-    | CHAR_LITERAL			{ $$.d.typeModifier = newSimpleTypeModifier(TypeInt); $$.d.r = NULL;}
-    | CONSTANT				{ $$.d.typeModifier = newSimpleTypeModifier(TypeInt); $$.d.r = NULL;}
-    | LONG_CONSTANT			{ $$.d.typeModifier = newSimpleTypeModifier(TypeLong); $$.d.r = NULL;}
-    | FLOAT_CONSTANT		{ $$.d.typeModifier = newSimpleTypeModifier(TypeFloat); $$.d.r = NULL;}
-    | DOUBLE_CONSTANT		{ $$.d.typeModifier = newSimpleTypeModifier(TypeDouble); $$.d.r = NULL;}
+    | CHAR_LITERAL			{ $$.d.typeModifier = newSimpleTypeModifier(TypeInt); $$.d.reference = NULL;}
+    | CONSTANT				{ $$.d.typeModifier = newSimpleTypeModifier(TypeInt); $$.d.reference = NULL;}
+    | LONG_CONSTANT			{ $$.d.typeModifier = newSimpleTypeModifier(TypeLong); $$.d.reference = NULL;}
+    | FLOAT_CONSTANT		{ $$.d.typeModifier = newSimpleTypeModifier(TypeFloat); $$.d.reference = NULL;}
+    | DOUBLE_CONSTANT		{ $$.d.typeModifier = newSimpleTypeModifier(TypeDouble); $$.d.reference = NULL;}
     | string_literals		{
         TypeModifier *p;
         p = newSimpleTypeModifier(TypeChar);
         $$.d.typeModifier = newPointerTypeModifier(p);
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     | '(' expr ')'			{
         $$.d = $2.d;
     }
     | '(' compound_statement ')'			{       /* GNU's shit */
         $$.d.typeModifier = &s_errorModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     | COMPL_OTHER_NAME		{ assert(0); /* token never used */ }
     ;
@@ -316,7 +316,7 @@ postfix_expr
         if ($1.d.typeModifier->kind==TypePointer || $1.d.typeModifier->kind==TypeArray) $$.d.typeModifier=$1.d.typeModifier->next;
         else if ($3.d.typeModifier->kind==TypePointer || $3.d.typeModifier->kind==TypeArray) $$.d.typeModifier=$3.d.typeModifier->next;
         else $$.d.typeModifier = &s_errorModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
         assert($$.d.typeModifier);
     }
 /*
@@ -343,28 +343,28 @@ postfix_expr
         if ($1.d.typeModifier->kind==TypeFunction) {
             $$.d.typeModifier=$1.d.typeModifier->next;
             if ($4.d==NULL) {
-                handleInvocationParamPositions($1.d.r, &$3.d, NULL, &$5.d, 0);
+                handleInvocationParamPositions($1.d.reference, &$3.d, NULL, &$5.d, 0);
             } else {
-                handleInvocationParamPositions($1.d.r, &$3.d, $4.d->next, &$5.d, 1);
+                handleInvocationParamPositions($1.d.reference, &$3.d, $4.d->next, &$5.d, 1);
             }
         } else {
             $$.d.typeModifier = &s_errorModifier;
         }
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
         assert($$.d.typeModifier);
     }
     | postfix_expr {SetStrCompl1($1.d.typeModifier);} '.' str_rec_identifier		{
         Symbol *rec=NULL;
-        $$.d.r = findStrRecordFromType($1.d.typeModifier, $4.d, &rec, CLASS_TO_ANY);
+        $$.d.reference = findStrRecordFromType($1.d.typeModifier, $4.d, &rec, CLASS_TO_ANY);
         assert(rec);
         $$.d.typeModifier = rec->u.type;
         assert($$.d.typeModifier);
     }
     | postfix_expr {SetStrCompl2($1.d.typeModifier);} PTR_OP str_rec_identifier	{
         Symbol *rec=NULL;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
         if ($1.d.typeModifier->kind==TypePointer || $1.d.typeModifier->kind==TypeArray) {
-            $$.d.r = findStrRecordFromType($1.d.typeModifier->next, $4.d, &rec, CLASS_TO_ANY);
+            $$.d.reference = findStrRecordFromType($1.d.typeModifier->next, $4.d, &rec, CLASS_TO_ANY);
             assert(rec);
             $$.d.typeModifier = rec->u.type;
         } else $$.d.typeModifier = &s_errorModifier;
@@ -372,11 +372,11 @@ postfix_expr
     }
     | postfix_expr INC_OP						{
         $$.d.typeModifier = $1.d.typeModifier;
-        RESET_REFERENCE_USAGE($1.d.r, UsageAddrUsed);
+        RESET_REFERENCE_USAGE($1.d.reference, UsageAddrUsed);
     }
     | postfix_expr DEC_OP						{
         $$.d.typeModifier = $1.d.typeModifier;
-        RESET_REFERENCE_USAGE($1.d.r, UsageAddrUsed);
+        RESET_REFERENCE_USAGE($1.d.reference, UsageAddrUsed);
     }
     | compound_literal
     ;
@@ -385,11 +385,11 @@ compound_literal                /* Added in C99 */
     /* TODO Does this capture the field references in the initializer_list? */
     : '(' type_name ')' '{' initializer_list '}'		{
         $$.d.typeModifier = $2.d;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     | '(' type_name ')' '{' initializer_list ',' '}'	{
         $$.d.typeModifier = $2.d;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     ;
 
@@ -424,31 +424,31 @@ unary_expr
     : postfix_expr					/*& { $$.d = $1.d; } */
     | INC_OP unary_expr				{
         $$.d.typeModifier = $2.d.typeModifier;
-        RESET_REFERENCE_USAGE($2.d.r, UsageAddrUsed);
+        RESET_REFERENCE_USAGE($2.d.reference, UsageAddrUsed);
     }
     | DEC_OP unary_expr				{
         $$.d.typeModifier = $2.d.typeModifier;
-        RESET_REFERENCE_USAGE($2.d.r, UsageAddrUsed);
+        RESET_REFERENCE_USAGE($2.d.reference, UsageAddrUsed);
     }
-    | unary_operator cast_expr		{ $$.d.typeModifier = $2.d.typeModifier; $$.d.r = NULL;}
+    | unary_operator cast_expr		{ $$.d.typeModifier = $2.d.typeModifier; $$.d.reference = NULL;}
     | '&' cast_expr					{
         $$.d.typeModifier = newPointerTypeModifier($2.d.typeModifier);
-        RESET_REFERENCE_USAGE($2.d.r, UsageAddrUsed);
-        $$.d.r = NULL;
+        RESET_REFERENCE_USAGE($2.d.reference, UsageAddrUsed);
+        $$.d.reference = NULL;
     }
     | '*' cast_expr					{
         if ($2.d.typeModifier->kind==TypePointer || $2.d.typeModifier->kind==TypeArray) $$.d.typeModifier=$2.d.typeModifier->next;
         else $$.d.typeModifier = &s_errorModifier;
         assert($$.d.typeModifier);
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     | SIZEOF unary_expr				{
         $$.d.typeModifier = newSimpleTypeModifier(TypeInt);
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     | SIZEOF '(' type_name ')'		{
         $$.d.typeModifier = newSimpleTypeModifier(TypeInt);
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     /* yet another GCC ext. */
     | AND_OP identifier		{
@@ -467,7 +467,7 @@ cast_expr
     : unary_expr						/*& { $$.d = $1.d; } */
     | '(' type_name ')' cast_expr		{
         $$.d.typeModifier = $2.d;
-        $$.d.r = $4.d.r;
+        $$.d.reference = $4.d.reference;
     }
     ;
 
@@ -475,15 +475,15 @@ multiplicative_expr
     : cast_expr							/*& { $$.d = $1.d; } */
     | multiplicative_expr '*' cast_expr	{
         $$.d.typeModifier = &s_defaultIntModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     | multiplicative_expr '/' cast_expr	{
         $$.d.typeModifier = &s_defaultIntModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     | multiplicative_expr '%' cast_expr	{
         $$.d.typeModifier = &s_defaultIntModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     ;
 
@@ -492,12 +492,12 @@ additive_expr
     | additive_expr '+' multiplicative_expr		{
         if ($3.d.typeModifier->kind==TypePointer || $3.d.typeModifier->kind==TypeArray) $$.d.typeModifier = $3.d.typeModifier;
         else $$.d.typeModifier = $1.d.typeModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     | additive_expr '-' multiplicative_expr		{
         if ($3.d.typeModifier->kind==TypePointer || $3.d.typeModifier->kind==TypeArray) $$.d.typeModifier = $3.d.typeModifier;
         else $$.d.typeModifier = $1.d.typeModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     ;
 
@@ -505,11 +505,11 @@ shift_expr
     : additive_expr								/*& { $$.d = $1.d; } */
     | shift_expr LEFT_OP additive_expr			{
         $$.d.typeModifier = &s_defaultIntModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     | shift_expr RIGHT_OP additive_expr			{
         $$.d.typeModifier = &s_defaultIntModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     ;
 
@@ -517,19 +517,19 @@ relational_expr
     : shift_expr								/*& { $$.d = $1.d; } */
     | relational_expr '<' shift_expr			{
         $$.d.typeModifier = &s_defaultIntModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     | relational_expr '>' shift_expr			{
         $$.d.typeModifier = &s_defaultIntModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     | relational_expr LE_OP shift_expr			{
         $$.d.typeModifier = &s_defaultIntModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     | relational_expr GE_OP shift_expr			{
         $$.d.typeModifier = &s_defaultIntModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     ;
 
@@ -537,11 +537,11 @@ equality_expr
     : relational_expr							/*& { $$.d = $1.d; } */
     | equality_expr EQ_OP relational_expr		{
         $$.d.typeModifier = &s_defaultIntModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     | equality_expr NE_OP relational_expr		{
         $$.d.typeModifier = &s_defaultIntModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     ;
 
@@ -549,7 +549,7 @@ and_expr
     : equality_expr								/*& { $$.d = $1.d; } */
     | and_expr '&' equality_expr				{
         $$.d.typeModifier = &s_defaultIntModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     ;
 
@@ -557,7 +557,7 @@ exclusive_or_expr
     : and_expr									/*& { $$.d = $1.d; } */
     | exclusive_or_expr '^' and_expr			{
         $$.d.typeModifier = &s_defaultIntModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     ;
 
@@ -565,7 +565,7 @@ inclusive_or_expr
     : exclusive_or_expr							/*& { $$.d = $1.d; } */
     | inclusive_or_expr '|' exclusive_or_expr	{
         $$.d.typeModifier = &s_defaultIntModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     ;
 
@@ -573,7 +573,7 @@ logical_and_expr
     : inclusive_or_expr							/*& { $$.d = $1.d; } */
     | logical_and_expr AND_OP inclusive_or_expr	{
         $$.d.typeModifier = &s_defaultIntModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     ;
 
@@ -581,7 +581,7 @@ logical_or_expr
     : logical_and_expr							/*& { $$.d = $1.d; } */
     | logical_or_expr OR_OP logical_and_expr	{
         $$.d.typeModifier = &s_defaultIntModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     ;
 
@@ -589,22 +589,22 @@ conditional_expr
     : logical_or_expr											/*& { $$.d = $1.d; } */
     | logical_or_expr '?' logical_or_expr ':' conditional_expr	{
         $$.d.typeModifier = $3.d.typeModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     /* another GCC "improvement", grrr */
     | logical_or_expr '?' ':' conditional_expr	{
         $$.d.typeModifier = $4.d.typeModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     ;
 
 assignment_expr
     : conditional_expr									/*& { $$.d = $1.d; } */
     | unary_expr assignment_operator assignment_expr	{
-        if ($1.d.r != NULL && s_opt.server_operation == OLO_EXTRACT) {
+        if ($1.d.reference != NULL && s_opt.server_operation == OLO_EXTRACT) {
             S_reference *rr;
-            rr = duplicateReference($1.d.r);
-            $1.d.r->usage = s_noUsage;
+            rr = duplicateReference($1.d.reference);
+            $1.d.reference->usage = s_noUsage;
             if ($2.d == '=') {
                 RESET_REFERENCE_USAGE(rr, UsageLvalUsed);
             } else {
@@ -612,9 +612,9 @@ assignment_expr
             }
         } else {
             if ($2.d == '=') {
-                RESET_REFERENCE_USAGE($1.d.r, UsageLvalUsed);
+                RESET_REFERENCE_USAGE($1.d.reference, UsageLvalUsed);
             } else {
-                RESET_REFERENCE_USAGE($1.d.r, UsageAddrUsed);
+                RESET_REFERENCE_USAGE($1.d.reference, UsageAddrUsed);
             }
         }
         $$.d = $1.d;    /* $$.d.r will be used for FOR completions ! */
@@ -639,7 +639,7 @@ expr
     : assignment_expr							/*& { $$.d = $1.d; } */
     | expr ',' assignment_expr					{
         $$.d.typeModifier = $3.d.typeModifier;
-        $$.d.r = NULL;
+        $$.d.reference = NULL;
     }
     ;
 
@@ -1488,7 +1488,7 @@ statement_list
     ;
 
 maybe_expr
-    :					{ $$.d.typeModifier = NULL; $$.d.r = NULL; }
+    :					{ $$.d.typeModifier = NULL; $$.d.reference = NULL; }
     | expr				{ $$.d = $1.d; }
     ;
 

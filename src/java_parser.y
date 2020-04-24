@@ -371,7 +371,7 @@ Literal:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
                     $$.d.pp = &s_noPos;
                     PropagateBoundaries($$, $1, $1);
@@ -382,7 +382,7 @@ Literal:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
                     $$.d.pp = &s_noPos;
                     PropagateBoundaries($$, $1, $1);
@@ -393,7 +393,7 @@ Literal:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = newSimpleTypeModifier(TypeInt);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
                     $$.d.pp = &s_noPos;
                     PropagateBoundaries($$, $1, $1);
@@ -404,7 +404,7 @@ Literal:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = newSimpleTypeModifier(TypeLong);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
                     $$.d.pp = &s_noPos;
                     PropagateBoundaries($$, $1, $1);
@@ -415,7 +415,7 @@ Literal:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = newSimpleTypeModifier(TypeFloat);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
                     $$.d.pp = &s_noPos;
                     PropagateBoundaries($$, $1, $1);
@@ -425,7 +425,7 @@ Literal:
     |	DOUBLE_CONSTANT		{
             if (regularPass()) {
                 $$.d.typeModifier = newSimpleTypeModifier(TypeDouble);
-                $$.d.r = NULL;
+                $$.d.reference = NULL;
                 $$.d.pp = &s_noPos;
                 if (SyntaxPassOnly()) {PropagateBoundaries($$, $1, $1);}
             }
@@ -434,7 +434,7 @@ Literal:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = newSimpleTypeModifier(TypeChar);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
                     $$.d.pp = &s_noPos;
                     PropagateBoundaries($$, $1, $1);
@@ -445,7 +445,7 @@ Literal:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = &s_javaStringModifier;
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
                     XX_ALLOC($$.d.pp, Position);
                     *$$.d.pp = $1.d;
@@ -457,7 +457,7 @@ Literal:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = newSimpleTypeModifier(TypeNull);
-                    $$.d.r = NULL;
+                    $$.d.reference = NULL;
                 } else {
                     XX_ALLOC($$.d.pp, Position);
                     *$$.d.pp = $1.d->p;

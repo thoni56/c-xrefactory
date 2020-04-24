@@ -2807,7 +2807,7 @@ case 2:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &s_noPos;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
@@ -2821,7 +2821,7 @@ case 3:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &s_noPos;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
@@ -2835,7 +2835,7 @@ case 4:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeInt);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &s_noPos;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_integer, yyvsp[0].ast_integer);
@@ -2849,7 +2849,7 @@ case 5:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeLong);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &s_noPos;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
@@ -2863,7 +2863,7 @@ case 6:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeFloat);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &s_noPos;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
@@ -2876,7 +2876,7 @@ case 7:
 {
             if (regularPass()) {
                 yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeDouble);
-                yyval.ast_expressionType.d.r = NULL;
+                yyval.ast_expressionType.d.reference = NULL;
                 yyval.ast_expressionType.d.pp = &s_noPos;
                 if (SyntaxPassOnly()) {PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);}
             }
@@ -2888,7 +2888,7 @@ case 8:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeChar);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &s_noPos;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_position, yyvsp[0].ast_position);
@@ -2902,7 +2902,7 @@ case 9:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = &s_javaStringModifier;
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     XX_ALLOC(yyval.ast_expressionType.d.pp, Position);
                     *yyval.ast_expressionType.d.pp = yyvsp[0].ast_position.d;
@@ -2917,7 +2917,7 @@ case 10:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeNull);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     XX_ALLOC(yyval.ast_expressionType.d.pp, Position);
                     *yyval.ast_expressionType.d.pp = yyvsp[0].ast_id.d->p;
@@ -5736,7 +5736,7 @@ case 347:
 /*fprintf(dumpOut,"this == %s\n",s_javaStat->thisType->u.t->linkName);*/
                     yyval.ast_expressionType.d.typeModifier = s_javaStat->thisType;
                     addThisCxReferences(s_javaStat->classFileIndex, &yyvsp[0].ast_id.d->p);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &yyvsp[0].ast_id.d->p;
                     javaCheckForStaticPrefixStart(&yyvsp[0].ast_id.d->p, &yyvsp[0].ast_id.d->p);
@@ -5752,7 +5752,7 @@ case 348:
                 if (! SyntaxPassOnly()) {
                     javaQualifiedThis(yyvsp[-2].ast_idList.d, yyvsp[0].ast_id.d);
                     yyval.ast_expressionType.d.typeModifier = javaClassNameType(yyvsp[-2].ast_idList.d);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = javaGetNameStartingPosition(yyvsp[-2].ast_idList.d);
                     javaCheckForStaticPrefixStart(&yyvsp[0].ast_id.d->p, javaGetNameStartingPosition(yyvsp[-2].ast_idList.d));
@@ -5767,7 +5767,7 @@ case 349:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = &s_javaClassModifier;
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = yyvsp[-2].ast_unsignedPositionPair.d.p;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_unsignedPositionPair, yyvsp[0].ast_id);
@@ -5783,7 +5783,7 @@ case 350:
                     Symbol *str;
                     javaClassifyToTypeName(yyvsp[-2].ast_idList.d,UsageUsed, &str, USELESS_FQT_REFS_ALLOWED);
                     yyval.ast_expressionType.d.typeModifier = &s_javaClassModifier;
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = javaGetNameStartingPosition(yyvsp[-2].ast_idList.d);
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_idList, yyvsp[0].ast_id);
@@ -5797,7 +5797,7 @@ case 351:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = &s_javaClassModifier;
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = yyvsp[-2].ast_symbolPositionPair.d.p;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_symbolPositionPair, yyvsp[0].ast_id);
@@ -5811,7 +5811,7 @@ case 352:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = &s_javaClassModifier;
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     SetPrimitiveTypePos(yyval.ast_expressionType.d.pp, yyvsp[-2].ast_id.d);
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_id, yyvsp[0].ast_id);
@@ -5980,7 +5980,7 @@ case 365:
                     javaConstructorInvocation(ss, &(yyvsp[-3].ast_idList.d->id.p), yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
                     tt = javaTypeNameDefinition(yyvsp[-3].ast_idList.d);
                     yyval.ast_expressionType.d.typeModifier = tt->u.type;
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     javaHandleDeclaratorParamPositions(&yyvsp[-3].ast_idList.d->id.p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
                     yyval.ast_expressionType.d.pp = &yyvsp[-5].ast_id.d->p;
@@ -6032,7 +6032,7 @@ case 368:
                     newClassDefinitionEnd(yyvsp[-1].trail);
                     assert(yyvsp[-2].symbol && yyvsp[-2].symbol->u.type);
                     yyval.ast_expressionType.d.typeModifier = yyvsp[-2].symbol->u.type;
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &yyvsp[-8].ast_id.d->p;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-8].ast_id, yyvsp[0].ast_position);
@@ -6047,7 +6047,7 @@ case 369:
 {
             yyval.ast_expressionType.d.typeModifier = yyvsp[0].ast_nestedConstrTokenType.d.t;
             yyval.ast_expressionType.d.pp = yyvsp[0].ast_nestedConstrTokenType.d.pp;
-            yyval.ast_expressionType.d.r = NULL;
+            yyval.ast_expressionType.d.reference = NULL;
             PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_nestedConstrTokenType, yyvsp[0].ast_nestedConstrTokenType);
         }
 break;
@@ -6058,7 +6058,7 @@ case 370:
                     if (! SyntaxPassOnly()) {
                         yyval.ast_expressionType.d.typeModifier = yyvsp[0].ast_nestedConstrTokenType.d.t;
                         yyval.ast_expressionType.d.pp = yyvsp[0].ast_nestedConstrTokenType.d.pp;
-                        yyval.ast_expressionType.d.r = NULL;
+                        yyval.ast_expressionType.d.reference = NULL;
                         if (yyval.ast_expressionType.d.typeModifier->kind != TypeError) {
                             yyval.trail = newClassDefinitionBegin(&s_javaAnonymousClassName, ACCESS_DEFAULT, yyval.ast_expressionType.d.typeModifier->u.t);
                         } else {
@@ -6163,7 +6163,7 @@ case 381:
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(yyvsp[-2].ast_unsignedPositionPair.d.u);
                     for(i=0; i<yyvsp[-1].ast_integer.d; i++)
                         prependTypeModifierWith(yyval.ast_expressionType.d.typeModifier, TypeArray);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &yyvsp[-4].ast_id.d->p;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-4].ast_id, yyvsp[0].ast_integer);
@@ -6181,7 +6181,7 @@ case 382:
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(yyvsp[-2].ast_unsignedPositionPair.d.u);
                     for(i=0; i<yyvsp[-1].ast_integer.d; i++)
                         prependTypeModifierWith(yyval.ast_expressionType.d.typeModifier, TypeArray);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &yyvsp[-4].ast_id.d->p;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-4].ast_id, yyvsp[0].ast_expressionType);
@@ -6199,7 +6199,7 @@ case 383:
                     yyval.ast_expressionType.d.typeModifier = yyvsp[-2].ast_symbol.d->u.type;
                     for(i=0; i<yyvsp[-1].ast_integer.d; i++)
                         prependTypeModifierWith(yyval.ast_expressionType.d.typeModifier, TypeArray);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &yyvsp[-4].ast_id.d->p;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-4].ast_id, yyvsp[0].ast_integer);
@@ -6218,7 +6218,7 @@ case 384:
                     yyval.ast_expressionType.d.typeModifier = yyvsp[-2].ast_symbol.d->u.type;
                     for(i=0; i<yyvsp[-1].ast_integer.d; i++)
                         prependTypeModifierWith(yyval.ast_expressionType.d.typeModifier, TypeArray);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = &yyvsp[-4].ast_id.d->p;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-4].ast_id, yyvsp[0].ast_expressionType);
@@ -6274,11 +6274,11 @@ case 392:
                 if (! SyntaxPassOnly()) {
                     Symbol *rec=NULL;
                     assert(yyvsp[-2].ast_expressionType.d.typeModifier);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                     yyval.ast_expressionType.d.pp = yyvsp[-2].ast_expressionType.d.pp;
                     if (yyvsp[-2].ast_expressionType.d.typeModifier->kind == TypeStruct) {
                         javaLoadClassSymbolsFromFile(yyvsp[-2].ast_expressionType.d.typeModifier->u.t);
-                        yyval.ast_expressionType.d.r = findStrRecordFromType(yyvsp[-2].ast_expressionType.d.typeModifier, yyvsp[0].ast_id.d, &rec, CLASS_TO_EXPR);
+                        yyval.ast_expressionType.d.reference = findStrRecordFromType(yyvsp[-2].ast_expressionType.d.typeModifier, yyvsp[0].ast_id.d, &rec, CLASS_TO_EXPR);
                         assert(rec);
                         yyval.ast_expressionType.d.typeModifier = rec->u.type;
                     } else if (s_language == LANG_JAVA) {
@@ -6302,12 +6302,12 @@ case 393:
                 if (! SyntaxPassOnly()) {
                     Symbol *ss,*rec=NULL;
 
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                     yyval.ast_expressionType.d.pp = &yyvsp[-2].ast_id.d->p;
                     ss = javaCurrentSuperClass();
                     if (ss != &s_errorSymbol && ss->bits.symType!=TypeError) {
                         javaLoadClassSymbolsFromFile(ss);
-                        yyval.ast_expressionType.d.r = findStrRecordFromSymbol(ss, yyvsp[0].ast_id.d, &rec, CLASS_TO_EXPR, yyvsp[-2].ast_id.d);
+                        yyval.ast_expressionType.d.reference = findStrRecordFromSymbol(ss, yyvsp[0].ast_id.d, &rec, CLASS_TO_EXPR, yyvsp[-2].ast_id.d);
                         assert(rec);
                         yyval.ast_expressionType.d.typeModifier = rec->u.type;
                     } else {
@@ -6334,13 +6334,13 @@ case 394:
                     if (ss != &s_errorSymbol && ss->bits.symType!=TypeError) {
                         javaLoadClassSymbolsFromFile(ss);
                         ss = javaGetSuperClass(ss);
-                        yyval.ast_expressionType.d.r = findStrRecordFromSymbol(ss, yyvsp[0].ast_id.d, &rec, CLASS_TO_EXPR, NULL);
+                        yyval.ast_expressionType.d.reference = findStrRecordFromSymbol(ss, yyvsp[0].ast_id.d, &rec, CLASS_TO_EXPR, NULL);
                         assert(rec);
                         yyval.ast_expressionType.d.typeModifier = rec->u.type;
                     } else {
                         yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
                     }
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                     assert(yyval.ast_expressionType.d.typeModifier);
                 } else {
                     yyval.ast_expressionType.d.pp = javaGetNameStartingPosition(yyvsp[-4].ast_idList.d);
@@ -6379,7 +6379,7 @@ case 399:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaMethodInvocationN(yyvsp[-5].ast_idList.d,yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                     s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
                 } else {
                     yyval.ast_expressionType.d.pp = javaGetNameStartingPosition(yyvsp[-5].ast_idList.d);
@@ -6405,7 +6405,7 @@ case 401:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaMethodInvocationT(yyvsp[-7].ast_expressionType.d.typeModifier, yyvsp[-5].ast_id.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                     s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
                 } else {
                     yyval.ast_expressionType.d.pp = yyvsp[-7].ast_expressionType.d.pp;
@@ -6430,7 +6430,7 @@ case 403:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaMethodInvocationS(yyvsp[-7].ast_id.d, yyvsp[-5].ast_id.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                     s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
                 } else {
                     yyval.ast_expressionType.d.pp = &yyvsp[-7].ast_id.d->p;
@@ -6448,11 +6448,11 @@ case 404:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     TypeModifier *tt;
-                    tt = javaClassifyToExpressionName(yyvsp[-3].ast_idList.d, &(yyval.ast_expressionType.d.r));
+                    tt = javaClassifyToExpressionName(yyvsp[-3].ast_idList.d, &(yyval.ast_expressionType.d.reference));
                     if (tt->kind==TypeArray) yyval.ast_expressionType.d.typeModifier = tt->next;
                     else yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
                     assert(yyval.ast_expressionType.d.typeModifier);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = javaGetNameStartingPosition(yyvsp[-3].ast_idList.d);
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_idList, yyvsp[0].ast_position);
@@ -6468,7 +6468,7 @@ case 405:
                     if (yyvsp[-3].ast_expressionType.d.typeModifier->kind==TypeArray) yyval.ast_expressionType.d.typeModifier = yyvsp[-3].ast_expressionType.d.typeModifier->next;
                     else yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
                     assert(yyval.ast_expressionType.d.typeModifier);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = yyvsp[-3].ast_expressionType.d.pp;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_expressionType, yyvsp[0].ast_position);
@@ -6485,7 +6485,7 @@ case 408:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.ast_expressionType.d.typeModifier = javaClassifyToExpressionName(yyvsp[0].ast_idList.d, &(yyval.ast_expressionType.d.r));
+                    yyval.ast_expressionType.d.typeModifier = javaClassifyToExpressionName(yyvsp[0].ast_idList.d, &(yyval.ast_expressionType.d.reference));
                 } else {
                     yyval.ast_expressionType.d.pp = javaGetNameStartingPosition(yyvsp[0].ast_idList.d);
                     javaCheckForPrimaryStartInNameList(yyvsp[0].ast_idList.d, yyval.ast_expressionType.d.pp);
@@ -6505,7 +6505,7 @@ case 412:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaCheckNumeric(yyvsp[-1].ast_expressionType.d.typeModifier);
-                    RESET_REFERENCE_USAGE(yyvsp[-1].ast_expressionType.d.r, UsageAddrUsed);
+                    RESET_REFERENCE_USAGE(yyvsp[-1].ast_expressionType.d.reference, UsageAddrUsed);
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_expressionType, yyvsp[0].ast_position);
@@ -6519,7 +6519,7 @@ case 413:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaCheckNumeric(yyvsp[-1].ast_expressionType.d.typeModifier);
-                    RESET_REFERENCE_USAGE(yyvsp[-1].ast_expressionType.d.r, UsageAddrUsed);
+                    RESET_REFERENCE_USAGE(yyvsp[-1].ast_expressionType.d.reference, UsageAddrUsed);
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_expressionType, yyvsp[0].ast_position);
@@ -6533,7 +6533,7 @@ case 416:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaNumericPromotion(yyvsp[0].ast_expressionType.d.typeModifier);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
@@ -6547,7 +6547,7 @@ case 417:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaNumericPromotion(yyvsp[0].ast_expressionType.d.typeModifier);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
@@ -6561,7 +6561,7 @@ case 419:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaCheckNumeric(yyvsp[0].ast_expressionType.d.typeModifier);
-                    RESET_REFERENCE_USAGE(yyvsp[0].ast_expressionType.d.r, UsageAddrUsed);
+                    RESET_REFERENCE_USAGE(yyvsp[0].ast_expressionType.d.reference, UsageAddrUsed);
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
@@ -6575,7 +6575,7 @@ case 420:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaCheckNumeric(yyvsp[0].ast_expressionType.d.typeModifier);
-                    RESET_REFERENCE_USAGE(yyvsp[0].ast_expressionType.d.r, UsageAddrUsed);
+                    RESET_REFERENCE_USAGE(yyvsp[0].ast_expressionType.d.reference, UsageAddrUsed);
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
@@ -6589,7 +6589,7 @@ case 422:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaNumericPromotion(yyvsp[0].ast_expressionType.d.typeModifier);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
@@ -6604,7 +6604,7 @@ case 423:
                 if (! SyntaxPassOnly()) {
                     if (yyvsp[0].ast_expressionType.d.typeModifier->kind == TypeBoolean) yyval.ast_expressionType.d.typeModifier = yyvsp[0].ast_expressionType.d.typeModifier;
                     else yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-1].ast_position, yyvsp[0].ast_expressionType);
@@ -6619,7 +6619,7 @@ case 425:
                 if (! SyntaxPassOnly()) {
                     assert(yyvsp[-2].ast_symbolPositionPair.d.s && yyvsp[-2].ast_symbolPositionPair.d.s->u.type);
                     yyval.ast_expressionType.d.typeModifier = yyvsp[-2].ast_symbolPositionPair.d.s->u.type;
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                     assert(yyval.ast_expressionType.d.typeModifier->kind == TypeArray);
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
@@ -6643,7 +6643,7 @@ case 426:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = newTypeModifier(yyvsp[-2].ast_unsignedPositionPair.d.u, NULL, NULL);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
@@ -6666,7 +6666,7 @@ case 427:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = yyvsp[-2].ast_expressionType.d.typeModifier;
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
@@ -6690,7 +6690,7 @@ case 429:
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaBinaryNumericPromotion(yyvsp[-2].ast_expressionType.d.typeModifier,
                                                                    yyvsp[0].ast_expressionType.d.typeModifier);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
@@ -6705,7 +6705,7 @@ case 430:
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaBinaryNumericPromotion(yyvsp[-2].ast_expressionType.d.typeModifier,
                                                                    yyvsp[0].ast_expressionType.d.typeModifier);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
@@ -6720,7 +6720,7 @@ case 431:
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaBinaryNumericPromotion(yyvsp[-2].ast_expressionType.d.typeModifier,
                                                                    yyvsp[0].ast_expressionType.d.typeModifier);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
@@ -6748,7 +6748,7 @@ case 433:
                         yyval.ast_expressionType.d.typeModifier = javaBinaryNumericPromotion(yyvsp[-2].ast_expressionType.d.typeModifier,
                                                                        yyvsp[0].ast_expressionType.d.typeModifier);
                     }
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
@@ -6763,7 +6763,7 @@ case 434:
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaBinaryNumericPromotion(yyvsp[-2].ast_expressionType.d.typeModifier,
                                                                    yyvsp[0].ast_expressionType.d.typeModifier);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
@@ -6777,7 +6777,7 @@ case 436:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaNumericPromotion(yyvsp[-2].ast_expressionType.d.typeModifier);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
@@ -6791,7 +6791,7 @@ case 437:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaNumericPromotion(yyvsp[-2].ast_expressionType.d.typeModifier);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
@@ -6805,7 +6805,7 @@ case 438:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaNumericPromotion(yyvsp[-2].ast_expressionType.d.typeModifier);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
@@ -6819,7 +6819,7 @@ case 440:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
@@ -6833,7 +6833,7 @@ case 441:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
@@ -6847,7 +6847,7 @@ case 442:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
@@ -6861,7 +6861,7 @@ case 443:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
@@ -6875,7 +6875,7 @@ case 444:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_symbol);
@@ -6889,7 +6889,7 @@ case 446:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
@@ -6903,7 +6903,7 @@ case 447:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
@@ -6918,7 +6918,7 @@ case 449:
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaBitwiseLogicalPromotion(yyvsp[-2].ast_expressionType.d.typeModifier,
                                                                     yyvsp[0].ast_expressionType.d.typeModifier);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
@@ -6933,7 +6933,7 @@ case 451:
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaBitwiseLogicalPromotion(yyvsp[-2].ast_expressionType.d.typeModifier,
                                                                     yyvsp[0].ast_expressionType.d.typeModifier);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
@@ -6948,7 +6948,7 @@ case 453:
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaBitwiseLogicalPromotion(yyvsp[-2].ast_expressionType.d.typeModifier,
                                                                     yyvsp[0].ast_expressionType.d.typeModifier);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
@@ -6962,7 +6962,7 @@ case 455:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
@@ -6976,7 +6976,7 @@ case 457:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_expressionType, yyvsp[0].ast_expressionType);
@@ -6991,7 +6991,7 @@ case 459:
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = javaConditionalPromotion(yyvsp[-2].ast_expressionType.d.typeModifier,
                                                                  yyvsp[0].ast_expressionType.d.typeModifier);
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-4].ast_expressionType, yyvsp[0].ast_expressionType);
@@ -7018,10 +7018,10 @@ case 463:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     s_cps.lastAssignementStruct = NULL;
-                    if (yyvsp[-3].ast_expressionType.d.r != NULL && s_opt.server_operation == OLO_EXTRACT) {
+                    if (yyvsp[-3].ast_expressionType.d.reference != NULL && s_opt.server_operation == OLO_EXTRACT) {
                         S_reference *rr;
-                        rr = duplicateReference(yyvsp[-3].ast_expressionType.d.r);
-                        yyvsp[-3].ast_expressionType.d.r->usage = s_noUsage;
+                        rr = duplicateReference(yyvsp[-3].ast_expressionType.d.reference);
+                        yyvsp[-3].ast_expressionType.d.reference->usage = s_noUsage;
                         if (yyvsp[-1].ast_unsignedPositionPair.d.u == '=') {
                             RESET_REFERENCE_USAGE(rr, UsageLvalUsed);
                         } else {
@@ -7029,12 +7029,12 @@ case 463:
                         }
                     } else {
                         if (yyvsp[-1].ast_unsignedPositionPair.d.u == '=') {
-                            RESET_REFERENCE_USAGE(yyvsp[-3].ast_expressionType.d.r, UsageLvalUsed);
+                            RESET_REFERENCE_USAGE(yyvsp[-3].ast_expressionType.d.reference, UsageLvalUsed);
                         } else {
-                            RESET_REFERENCE_USAGE(yyvsp[-3].ast_expressionType.d.r, UsageAddrUsed);
+                            RESET_REFERENCE_USAGE(yyvsp[-3].ast_expressionType.d.reference, UsageAddrUsed);
                         }
                         yyval.ast_expressionType.d.typeModifier = yyvsp[-3].ast_expressionType.d.typeModifier;
-                        yyval.ast_expressionType.d.r = NULL;
+                        yyval.ast_expressionType.d.reference = NULL;
                         /*
                           fprintf(dumpOut,": java Type Dump\n"); fflush(dumpOut);
                           javaTypeDump($1.d.t);
@@ -7064,7 +7064,7 @@ case 464:
                 if (! SyntaxPassOnly()) {
                     S_reference *rr;
                     yyval.ast_expressionType.d.typeModifier = javaClassifyToExpressionName(yyvsp[0].ast_idList.d, &rr);
-                    yyval.ast_expressionType.d.r = rr;
+                    yyval.ast_expressionType.d.reference = rr;
                 } else {
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_idList, yyvsp[0].ast_idList);
                 }
@@ -7165,7 +7165,7 @@ case 481:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.ast_expressionType.d.typeModifier = &s_errorModifier;
-                    yyval.ast_expressionType.d.r = NULL;
+                    yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.pp = NULL_POS;
                     SetNullBoundaries(yyval.ast_expressionType);
