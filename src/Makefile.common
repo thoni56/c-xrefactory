@@ -7,8 +7,6 @@ debug: CFLAGS+=-DDEBUG -Og
 debug: COVERAGE=--coverage
 yydebug: CFLAGS+=-DYYDEBUG=1 -DDEBUG
 
-CFLAGS+=-DYYDEBUG=0
-
 prod debug yydebug: $(ZLIB) c-xref
 
 include sources.mk
