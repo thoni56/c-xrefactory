@@ -22,30 +22,30 @@ void refTabNAInit(
 
 bool refTabIsMember (
                     struct refTab *table,
-                    S_symbolRefItem *element,
+                    SymbolReferenceItem *element,
                     int *position,
-                    S_symbolRefItem **origin
+                    SymbolReferenceItem **origin
                 ) {
     return (int)mock(table, element, position, origin);
 }
 
 int refTabMembEqual(
-                    S_symbolRefItem *e1,
-                    S_symbolRefItem *e2
+                    SymbolReferenceItem *e1,
+                    SymbolReferenceItem *e2
             ) {
     return (int)mock(e1, e2);
 }
 
 int refTabNextMember(
-                    S_symbolRefItem *element,
-                    S_symbolRefItem **original
+                    SymbolReferenceItem *element,
+                    SymbolReferenceItem **original
             ) {
     return (int)mock(element, original);
 }
 
 void refTabSet (
                     struct refTab *table,
-                    S_symbolRefItem *element,
+                    SymbolReferenceItem *element,
                     int position
                 ) {
     mock(table, element, position);
@@ -53,7 +53,7 @@ void refTabSet (
 
 void refTabSetLast (
                     struct refTab *table,
-                    S_symbolRefItem *element,
+                    SymbolReferenceItem *element,
                     int position
                 ) {
     mock(table, element, position);
@@ -61,7 +61,7 @@ void refTabSetLast (
 
 void refTabAdd (
                     struct refTab *table,
-                    S_symbolRefItem *element,
+                    SymbolReferenceItem *element,
                     int *position
                 ) {
     mock(table, element, position);
@@ -69,7 +69,7 @@ void refTabAdd (
 
 int refTabDelete(
                     struct refTab *table,
-                    S_symbolRefItem *element
+                    SymbolReferenceItem *element
             ) {
     return (int)mock(table, element);
 }
@@ -77,14 +77,14 @@ int refTabDelete(
 
 int refTabDeleteExact(
                     struct refTab *table,
-                    S_symbolRefItem *element
+                    SymbolReferenceItem *element
             ) {
     return (int)mock(table, element);
 }
 
 int refTabDeleteLast(
                     struct refTab *table,
-                    S_symbolRefItem *element
+                    SymbolReferenceItem *element
             ) {
     return (int)mock(table, element);
 }
@@ -97,14 +97,14 @@ void refTabFree(
 
 void refTabMap(
                     struct refTab *table,
-                    void (*fun)(S_symbolRefItem *)
+                    void (*fun)(SymbolReferenceItem *)
                 ) {
     mock(table, fun);
 }
 
 void refTabMap2(
                     struct refTab *table,
-                    void (*fun)(S_symbolRefItem *, void *),
+                    void (*fun)(SymbolReferenceItem *, void *),
                     void *a
                 ) {
     mock(table, fun);
@@ -135,7 +135,7 @@ void refTabMap32(
 
 void refTabMap4(
                     struct refTab *table,
-                    void (*fun)(S_symbolRefItem *, int),
+                    void (*fun)(SymbolReferenceItem *, int),
                     int i
                 ) {
     mock(table, fun, i);
@@ -143,7 +143,7 @@ void refTabMap4(
 
 void refTabMap5(
                     struct refTab *table,
-                    void (*fun)(S_symbolRefItem *, void *),
+                    void (*fun)(SymbolReferenceItem *, void *),
                     void *arg
                 ) {
     mock(table, fun, arg);

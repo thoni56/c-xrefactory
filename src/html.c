@@ -362,7 +362,7 @@ static void htmlGenSmallTabTail( FILE *ff, int genFlag ) {
 }
 
 static void htmlGenRefListItemHead(FILE *ff, char *ln, char *symName,
-                                   S_symbolRefItem *p, int usage, int genFlag){
+                                   SymbolReferenceItem *p, int usage, int genFlag){
     char *s, *sn, *d, *ld, *apc;
 
     sn = symName;
@@ -649,7 +649,7 @@ void concatPaths(char *res, int rsize, char *p1, char *p2, char *p3) {
 }
 
 static S_reference * htmlGetDefinitionRef(S_htmlRefList *rrr, int usage) {
-    S_symbolRefItem *rr,*cr;
+    SymbolReferenceItem *rr,*cr;
     register S_reference *r,*res;
     assert(rrr && rrr->symbolRefItem && rrr->symbolRefItem->refs);
     rr = rrr->symbolRefItem;
@@ -689,7 +689,7 @@ static S_reference * htmlGetDefinitionRef(S_htmlRefList *rrr, int usage) {
     return(res);
 }
 
-static char *htmlStSymbolCode(S_symbolRefItem *r, int usage) {
+static char *htmlStSymbolCode(SymbolReferenceItem *r, int usage) {
     static char ss[MAX_CX_SYMBOL_SIZE+2];
     char ttt[MAX_CX_SYMBOL_SIZE];
     char *sss, *tt;
@@ -722,7 +722,7 @@ static char *htmlStSymbolCode(S_symbolRefItem *r, int usage) {
     return(ss);
 }
 
-static void htmlCrGlobalXrefsFileName(S_symbolRefItem *cri, int usage,
+static void htmlCrGlobalXrefsFileName(SymbolReferenceItem *cri, int usage,
                                       char *fout, char *lout) {
     char *s;
     if (s_opt.refnum > 1) {
@@ -737,7 +737,7 @@ static void htmlCrGlobalXrefsFileName(S_symbolRefItem *cri, int usage,
     for(s=lout; *s; s++) if (*s=='/' || *s=='\\' || *s=='#') *s='.';
 }
 
-static void htmlCrLocalRefsFileName(int fnum, S_symbolRefItem *cri,
+static void htmlCrLocalRefsFileName(int fnum, SymbolReferenceItem *cri,
                                     int usage, char *fout, char *lout) {
     char *s;
 
@@ -748,7 +748,7 @@ static void htmlCrLocalRefsFileName(int fnum, S_symbolRefItem *cri,
     for(s=lout; *s; s++) if (*s=='/' || *s=='\\') *s='.';
 }
 
-static int htmlJdkDocAvailable(S_symbolRefItem *rr){
+static int htmlJdkDocAvailable(SymbolReferenceItem *rr){
     char *lfn, *url;
     // the following would remove also some classes, do no uncomment
     //& if ((rr->b.accessFlags & ACCESS_PUBLIC)==0) return(0);
@@ -759,7 +759,7 @@ static int htmlJdkDocAvailable(S_symbolRefItem *rr){
     //& return(htmlJdkDocAvailableForUrl(getJavaDocUrl_st(rr)));
 }
 
-static void htmlPrintExternHtmlJavaDocReference(char *prf,S_symbolRefItem *rr){
+static void htmlPrintExternHtmlJavaDocReference(char *prf,SymbolReferenceItem *rr){
 #if 1
     sprintf(prf, "<A HREF=\"%s\">", getFullUrlOfJavaDoc_st(getJavaDocUrl_st(rr)));
 #else
@@ -803,7 +803,7 @@ static void htmlGetStaticHREFItems(
     char *df;
     char *thisfn;
     int usage,emph;
-    S_symbolRefItem *cri;
+    SymbolReferenceItem *cri;
 
     cri = ref->symbolRefItem;
     usage = UsageUsed; // so many times modified !!!! rr->usage;
@@ -888,7 +888,7 @@ static void htmlGenListLink(FILE *off,char *lname,char *lfile,int line,
 }
 
 static int genRefListFileBody(FILE *ff, char *fname,
-                              S_symbolRefItem *p, int usages, int option){
+                              SymbolReferenceItem *p, int usages, int option){
     S_reference *r,*oldr;
     char *ln;
     int genflag, filen, linen, usage, count, groupedCount, lastFilen;
@@ -934,7 +934,7 @@ static int genRefListFileBody(FILE *ff, char *fname,
     return(count);
 }
 
-static void htmlGenLocalRefList2(FILE *ff, char *fname, S_symbolRefItem *p,
+static void htmlGenLocalRefList2(FILE *ff, char *fname, SymbolReferenceItem *p,
                                  int fnum, int usage){
     static char fn2[MAX_HTML_REF_LEN];
     static char fn3[MAX_HTML_REF_LEN];
@@ -954,7 +954,7 @@ static void htmlGenLocalRefList2(FILE *ff, char *fname, S_symbolRefItem *p,
     htmlSymbolCxTableEnd(ff);
 }
 
-static int htmlContainFileReference(S_symbolRefItem *p, int fnum) {
+static int htmlContainFileReference(SymbolReferenceItem *p, int fnum) {
     S_reference *r;
     if (p==NULL) return(0);
     for(r=p->refs; r!=NULL; r=r->next) {
@@ -964,7 +964,7 @@ static int htmlContainFileReference(S_symbolRefItem *p, int fnum) {
 }
 
 static void htmlGenLocalRefList(FILE *ff, char *fname,
-                                S_symbolRefItem *p, int fnum) {
+                                SymbolReferenceItem *p, int fnum) {
     if (p->b.category != CategoryLocal) return;
     if (p->b.htmlWasLn == 0) return;
     if (LANGUAGE(LANG_YACC) && p->name[0] == '$') return;  // !!! hack
@@ -974,7 +974,7 @@ static void htmlGenLocalRefList(FILE *ff, char *fname,
     // on the usage (because there are no virtuals).
 }
 
-static void htmlGenLocalRefLists(S_symbolRefItem *p, void *ss) {
+static void htmlGenLocalRefLists(SymbolReferenceItem *p, void *ss) {
     S_htmlLocalListms *s;
     s = (S_htmlLocalListms *)ss;
     if (p->b.category==CategoryLocal && p->b.htmlWasLn) {
@@ -982,8 +982,8 @@ static void htmlGenLocalRefLists(S_symbolRefItem *p, void *ss) {
     }
 }
 
-static void fillHtmlRefList(S_htmlRefList *rref, S_symbolRefItem *symbolRefItem, S_reference *reference,
-                             S_symbolRefItem *slist, S_htmlRefList *next) {
+static void fillHtmlRefList(S_htmlRefList *rref, SymbolReferenceItem *symbolRefItem, S_reference *reference,
+                             SymbolReferenceItem *slist, S_htmlRefList *next) {
     rref->symbolRefItem = symbolRefItem;
     rref->reference = reference;
     rref->slist = slist;
@@ -992,7 +992,7 @@ static void fillHtmlRefList(S_htmlRefList *rref, S_symbolRefItem *symbolRefItem,
 
 
 static void htmlGetThisFileReferences(int fnum, S_htmlRefList **rrr, int kind){
-    S_symbolRefItem *d,*dd;
+    SymbolReferenceItem *d,*dd;
     S_reference     *rr;
     S_htmlRefList   **place,*r,rref,**rrr0;
     int i;
@@ -1033,7 +1033,7 @@ static void htmlGetThisFileReferences(int fnum, S_htmlRefList **rrr, int kind){
 
 /* ************************************************************* */
 
-static int htmlGenGlobRefListBody(FILE *ff, S_symbolRefItem *pp,
+static int htmlGenGlobRefListBody(FILE *ff, SymbolReferenceItem *pp,
                                   char *fname, int usage, int opt) {
 #if 1
     int count = 0;
@@ -1061,7 +1061,7 @@ static int htmlGenGlobRefListBody(FILE *ff, S_symbolRefItem *pp,
 }
 
 static void htmlGenGlobRefList(FILE *ff, char *fname,
-                               S_symbolRefItem *p, int usage,
+                               SymbolReferenceItem *p, int usage,
                                int genFlag) {
     static char sn[MAX_HTML_REF_LEN];
     static char ln[MAX_HTML_REF_LEN];
@@ -1091,7 +1091,7 @@ static void htmlGenGlobRefList(FILE *ff, char *fname,
 
 
 int htmlRefItemsOrderLess(S_olSymbolsMenu *ss1, S_olSymbolsMenu *ss2) {
-    S_symbolRefItem *s1, *s2;
+    SymbolReferenceItem *s1, *s2;
     int r;
     char *n1, *n2;
     int len1;
@@ -1135,7 +1135,7 @@ void genClassHierarchyItemLinks( FILE *ff, S_olSymbolsMenu *itt,
                                  int virtFlag) {
     char thisFileName[MAX_HTML_REF_LEN];
     char tmp2[MAX_HTML_REF_LEN];
-    S_symbolRefItem *rr;
+    SymbolReferenceItem *rr;
     Position *dr;
     char *df;
 
@@ -1168,7 +1168,7 @@ void genClassHierarchyItemLinks( FILE *ff, S_olSymbolsMenu *itt,
     }
 }
 
-void htmlGenNonVirtualGlobSymList( FILE *ff, char *fn, S_symbolRefItem *p ) {
+void htmlGenNonVirtualGlobSymList( FILE *ff, char *fn, SymbolReferenceItem *p ) {
     fprintf(ff,"<br><br><br>");
     htmlSymbolCxTableBeg(ff);
     htmlGenGlobRefList(ff, fn, p, UsageDefined,
@@ -1179,7 +1179,7 @@ void htmlGenNonVirtualGlobSymList( FILE *ff, char *fn, S_symbolRefItem *p ) {
 static void genVirtualsGlobRefLists2( S_olSymbolsMenu *rrr, FILE *ff,
                                       char *fn, int genFlag ){
     S_olSymbolsMenu *ss;
-    S_symbolRefItem *p;
+    SymbolReferenceItem *p;
     int             loop, cmin, minline;
     loop = 1; minline = 0; p=NULL;
     while (loop) {
@@ -1257,7 +1257,7 @@ void htmlGenGlobRefsForVirtMethod(FILE *ff, char *fn, S_olSymbolsMenu *rrr) {
     htmlSymbolCxTableEnd(ff);
 }
 
-static void htmlGetReferencesMetrics( S_symbolRefItem *p,
+static void htmlGetReferencesMetrics( SymbolReferenceItem *p,
                                       int *refn,
                                       int *defRefn,
                                       int *defusage,
@@ -1288,7 +1288,7 @@ static void htmlGetReferencesMetrics( S_symbolRefItem *p,
 
 static void htmlCreateGlobSymList(int i, void *off, void *ffn, void *genfi) {
     int genFileIndex, refn, defRefn, defusage;
-    S_symbolRefItem *p,*pp;
+    SymbolReferenceItem *p,*pp;
     S_olSymbolsMenu *hh;
     Position defpos;
 
@@ -1424,7 +1424,7 @@ static void htmlPosProcess( FILE **fff,
                             ) {
     int ch;
     S_htmlRefList *rr;
-    S_symbolRefItem *cri;
+    SymbolReferenceItem *cri;
     char *prf, *suf, *prf1, *suf1;
     char *prf0, *suf0;
     FILE *ff;

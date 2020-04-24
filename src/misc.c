@@ -259,7 +259,7 @@ void typeDump(TypeModifier *t) {
     fprintf(dumpOut,"dumpStop\n");
 }
 
-void symbolRefItemDump(S_symbolRefItem *ss) {
+void symbolRefItemDump(SymbolReferenceItem *ss) {
     fprintf(dumpOut,"%s\t%s %s %d %d %d %d %d\n",
             ss->name,
             s_fileTab.tab[ss->vApplClass]->name,
@@ -774,7 +774,7 @@ void printSymbolLinkName(FILE *ff, S_olSymbolsMenu *ss) {
     fprintf(ff, "%s", ttt);
 }
 
-void fillTrivialSpecialRefItem( S_symbolRefItem *ddd , char *name) {
+void fillTrivialSpecialRefItem( SymbolReferenceItem *ddd , char *name) {
     fill_symbolRefItemBits(&ddd->b,TypeUnknown,StorageAuto,
                            ScopeAuto,ACCESS_DEFAULT,CategoryLocal,0);
     fill_symbolRefItem(ddd, name, cxFileHashNumber(name),

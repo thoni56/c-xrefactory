@@ -6,7 +6,7 @@ void genClassHierarchyItemLinks(FILE *ff, S_olSymbolsMenu *itt, int virtFlag) {
     mock(ff, itt, virtFlag);
 }
 
-void htmlGenNonVirtualGlobSymList(FILE *ff, char *fn, S_symbolRefItem *p) {
+void htmlGenNonVirtualGlobSymList(FILE *ff, char *fn, SymbolReferenceItem *p) {
     mock(ff, fn, p);
 }
 

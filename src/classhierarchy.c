@@ -466,7 +466,7 @@ static void htmlMarkVisibleAllClassesHavingDefinition( S_olSymbolsMenu *rrr ) {
     }
 }
 
-static int isVirtualMenuItem(S_symbolRefItem *p) {
+static int isVirtualMenuItem(SymbolReferenceItem *p) {
     return (p->b.storage == StorageField
             || p->b.storage == StorageMethod
             || p->b.storage == StorageConstructor);
@@ -477,7 +477,7 @@ static void genVirtualsGlobRefLists(    S_olSymbolsMenu *rrr,
                                         char *fn
                                         ) {
     S_olSymbolsMenu *ss;
-    S_symbolRefItem *p;
+    SymbolReferenceItem *p;
 
     // first count if there are some references at all
     for(ss=rrr; ss!=NULL && ss->visible==0; ss=ss->next) ;
@@ -501,7 +501,7 @@ static void genNonVirtualsGlobRefLists( S_olSymbolsMenu *rrr,
                                         char *fn
                                         ) {
     S_olSymbolsMenu *ss;
-    S_symbolRefItem *p;
+    SymbolReferenceItem *p;
 
     // first count if there are some references at all
     for(ss=rrr; ss!=NULL && ss->visible==0; ss=ss->next) ;
@@ -528,7 +528,7 @@ void splitMenuPerSymbolsAndMap(S_olSymbolsMenu *rrr,
                                char *p2
                                ) {
     S_olSymbolsMenu *rr, *mp, **ss, *cc, *all;
-    S_symbolRefItem *cs;
+    SymbolReferenceItem *cs;
     all = NULL;
     rr = rrr;
     while (rr!=NULL) {

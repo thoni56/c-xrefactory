@@ -68,7 +68,7 @@ typedef struct referencesChangeData {
 
 /* *********************************************************************** */
 
-void fill_symbolRefItem(S_symbolRefItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass, int vFunClass, struct symbolRefItemBits bits) {
+void fill_symbolRefItem(SymbolReferenceItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass, int vFunClass, struct symbolRefItemBits bits) {
     symbolRefItem->name = name;
     symbolRefItem->fileHash = fileHash;
     symbolRefItem->vApplClass = vApplClass;
@@ -134,7 +134,7 @@ int olcxReferenceInternalLessFunction(S_reference *r1, S_reference *r2) {
     return(SORTED_LIST_LESS(r1, (*r2)));
 }
 
-bool olSymbolRefItemLess(S_symbolRefItem *s1, S_symbolRefItem *s2) {
+bool olSymbolRefItemLess(SymbolReferenceItem *s1, SymbolReferenceItem *s2) {
     int cmp;
     //& if (s1->vlevel < s2->vlevel) return(1);
     //& else if (s2->vlevel < s1->vlevel) return(0);
@@ -170,12 +170,12 @@ static char *olcxStringCopy(char *string) {
 }
 
 
-S_olSymbolsMenu *olCreateNewMenuItem(S_symbolRefItem *symbol, int vApplClass, int vFunCl,
+S_olSymbolsMenu *olCreateNewMenuItem(SymbolReferenceItem *symbol, int vApplClass, int vFunCl,
                                      Position *defpos, int defusage,
                                      int selected, int visible,
                                      unsigned ooBits, int olusage, int vlevel) {
     S_olSymbolsMenu *symbolsMenu;
-    S_symbolRefItem refItem;
+    SymbolReferenceItem refItem;
     char *allocatedNameCopy;
 
     allocatedNameCopy = olcxStringCopy(symbol->name);
@@ -190,7 +190,7 @@ S_olSymbolsMenu *olCreateNewMenuItem(S_symbolRefItem *symbol, int vApplClass, in
     return symbolsMenu;
 }
 
-S_olSymbolsMenu *olAddBrowsedSymbol(S_symbolRefItem *sym, S_olSymbolsMenu **list,
+S_olSymbolsMenu *olAddBrowsedSymbol(SymbolReferenceItem *sym, S_olSymbolsMenu **list,
                                     int selected, int visible, unsigned ooBits,
                                     int olusage, int vlevel,
                                     Position *defpos, int defusage) {
@@ -437,9 +437,9 @@ int isStrictlyEnclosingClass(int enclosedClass, int enclosingClass) {
 }
 
 // TODO, all this stuff should be done differently!
-void changeFieldRefUsages(S_symbolRefItem  *ri, void  *rrcd) {
+void changeFieldRefUsages(SymbolReferenceItem  *ri, void  *rrcd) {
     S_referencesChangeData      *rcd;
-    S_symbolRefItem             ddd;
+    SymbolReferenceItem             ddd;
     S_reference                 *rr;
     rcd = (S_referencesChangeData*) rrcd;
     fill_symbolRefItemBits(&ddd.b,TypeDefault,StorageField,
@@ -731,7 +731,7 @@ S_reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
     char *linkName;
     S_reference rr, **place;
     Position *defpos;
-    S_symbolRefItem *pp,*memb, ppp;
+    SymbolReferenceItem *pp,*memb, ppp;
     S_olSymbolsMenu *mmi;
     S_refTab *reftab;
     int usage;
@@ -815,7 +815,7 @@ S_reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
     //& was if (newRefTabItem(reftab,&memb,usage,storage,scope,category,p,vApplCl,vFunCl,&ii));
     if (mm==0) {
         log_trace("allocating '%s'", p->linkName);
-        CX_ALLOC(pp, S_symbolRefItem);
+        CX_ALLOC(pp, SymbolReferenceItem);
         CX_ALLOCC(linkName, strlen(p->linkName)+1, char);
         strcpy(linkName, p->linkName);
         fill_symbolRefItemBits(&pp->b,p->bits.symType,storage,scope,
@@ -1409,7 +1409,7 @@ static int olcxSetCurrentRefsOnCaller(S_olcxReferences *refs) {
     }
 }
 
-char *getJavaDocUrl_st(S_symbolRefItem *rr) {
+char *getJavaDocUrl_st(SymbolReferenceItem *rr) {
     static char res[MAX_HTML_REF_LEN];
     char *tt;
     int len = MAX_HTML_REF_LEN;
@@ -1561,7 +1561,7 @@ char *getFullUrlOfJavaDoc_st(char *fileUrl) {
     return(fullUrl);
 }
 
-static int olcxBrowseSymbolInJavaDoc(S_symbolRefItem *rr) {
+static int olcxBrowseSymbolInJavaDoc(SymbolReferenceItem *rr) {
     char *url, *tmd, *lfn;
     char tmpfname[MAX_FILE_NAME_SIZE];
     char theUrl[2*MAX_FILE_NAME_SIZE];
@@ -2080,7 +2080,7 @@ static void olcxPopAndFreeAndPopsUntil(S_olcxReferences *oldtop) {
     }
 }
 
-static void olcxFindDefinitionAndGenGoto(S_symbolRefItem *sym) {
+static void olcxFindDefinitionAndGenGoto(SymbolReferenceItem *sym) {
     S_olcxReferences    *refs, *oldtop;
     S_olSymbolsMenu     mmm;
     // preserve poped items from browser first
@@ -2360,7 +2360,7 @@ static void olcxShowClassTree(void) {
 S_olSymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi,int storage){
     S_olSymbolsMenu     *res;
     S_symbolRefItemBits bb;
-    S_symbolRefItem     ss;
+    SymbolReferenceItem     ss;
     fill_symbolRefItemBits(&bb, TypeDefault, storage, ScopeGlobal,
                            ACCESS_DEFAULT, CategoryGlobal, 0);
     fill_symbolRefItem(&ss, fieldName, cxFileHashNumber(fieldName),
@@ -2392,21 +2392,21 @@ static void olcxTopSymbolResolution(void) {
         if (p1->b.storage!=p2->b.storage) return(0);                    \
     }
 
-int itIsSameCxSymbol(S_symbolRefItem *p1, S_symbolRefItem *p2) {
+int itIsSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
     CHECK_ATTRIBUTES(p1,p2);
     if (strcmp(p1->name,p2->name)) return(0);
     return(1);
 }
 
-int itIsSameCxSymbolIncludingFunClass(S_symbolRefItem *p1, S_symbolRefItem *p2) {
+int itIsSameCxSymbolIncludingFunClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
     if (p1->vFunClass != p2->vFunClass) return(0);
     return(itIsSameCxSymbol(p1, p2));
 }
-int itIsSameCxSymbolIncludingApplClass(S_symbolRefItem *p1, S_symbolRefItem *p2) {
+int itIsSameCxSymbolIncludingApplClass(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
     if (p1->vApplClass != p2->vApplClass) return(0);
     return(itIsSameCxSymbol(p1, p2));
 }
-int olcxItIsSameCxSymbol(S_symbolRefItem *p1, S_symbolRefItem *p2) {
+int olcxItIsSameCxSymbol(SymbolReferenceItem *p1, SymbolReferenceItem *p2) {
     int n1len, n2len;
     char *n1start, *n2start;
     //& CHECK_ATTRIBUTES(p1,p2);  // to show panic macro and panic symbol and to make safetycheck working
@@ -2426,7 +2426,7 @@ void olStackDeleteSymbol(S_olcxReferences *refs) {
 }
 
 static void olcxGenInspectClassDefinitionRef(int classnum, char *refsuffix) {
-    S_symbolRefItem     mmm;
+    SymbolReferenceItem     mmm;
     char                ccc[MAX_CX_SYMBOL_SIZE];
     javaGetClassNameFromFileNum(classnum, ccc, KEEP_SLASHES);
     fill_symbolRefItemBits(&mmm.b, TypeStruct, StorageExtern, ScopeGlobal,
@@ -3576,7 +3576,7 @@ int refOccursInRefs(S_reference *r, S_reference *list) {
     return(1);
 }
 
-static void olcxSingleReferenceCheck1(S_symbolRefItem *p,
+static void olcxSingleReferenceCheck1(SymbolReferenceItem *p,
                                       S_olcxReferences *rstack,
                                       S_reference *r
                                       ) {
@@ -3603,8 +3603,8 @@ static void olcxSingleReferenceCheck1(S_symbolRefItem *p,
     }
 }
 
-void olcxCheck1CxFileReference(S_symbolRefItem *ss, S_reference *r) {
-    S_symbolRefItem     *sss;
+void olcxCheck1CxFileReference(SymbolReferenceItem *ss, S_reference *r) {
+    SymbolReferenceItem     *sss;
     S_olcxReferences    *rstack;
     S_olSymbolsMenu     *cms;
     int                 pushed;
@@ -3621,8 +3621,8 @@ void olcxCheck1CxFileReference(S_symbolRefItem *ss, S_reference *r) {
 }
 
 static void olcxProceedSafetyCheck1OnInloadedRefs(S_olcxReferences *rstack, S_olSymbolsMenu *ccms) {
-    S_symbolRefItem     *p;
-    S_symbolRefItem     *sss;
+    SymbolReferenceItem     *p;
+    SymbolReferenceItem     *sss;
     S_reference         *r;
     S_olSymbolsMenu     *cms;
     int                 pushed;
@@ -3793,7 +3793,7 @@ static int mmPreCheckMakeDifference(S_olcxReferences *origrefs,
 
 static void olcxMMPreCheck(void) {
     S_olcxReferences    *diffrefs, *origrefs, *newrefs;
-    S_symbolRefItem     dri;
+    SymbolReferenceItem     dri;
     int     precheck;
     olcxSetCurrentUser(s_opt.user);
     olcxPushEmptyStackItem(&s_olcxCurrentUser->browserStack);
@@ -4203,14 +4203,14 @@ static void olcxListSpecial(char *fieldName) {
     olcxPrintPushingAction(s_opt.server_operation, DEFAULT_VALUE);
 }
 
-int isPushAllMethodsValidRefItem(S_symbolRefItem *ri) {
+int isPushAllMethodsValidRefItem(SymbolReferenceItem *ri) {
     if (ri->name[0]!=' ') return(1);
     if (ri->b.symType==TypeInducedError) return(1);
     //& if (strcmp(ri->name, LINK_NAME_MAYBE_THIS_ITEM)==0) return(1);
     return(0);
 }
 
-static void olPushAllReferencesInBetweenMapFun(S_symbolRefItem *ri,
+static void olPushAllReferencesInBetweenMapFun(SymbolReferenceItem *ri,
                                                void *ddd
                                                ) {
     S_reference             *rr, *defRef;
@@ -4610,7 +4610,7 @@ static void mainAnswerReferencePushingAction(int command) {
     }
 }
 
-static void mapAddLocalUnusedSymbolsToHkSelection(S_symbolRefItem *ss) {
+static void mapAddLocalUnusedSymbolsToHkSelection(SymbolReferenceItem *ss) {
     S_reference *rr, *dr;
     int used;
 
@@ -5038,7 +5038,7 @@ void mainAnswerEditAction(void) {
     //&RLM_FREE_COUNT(olcxMemory);
 }
 
-int byPassAcceptableSymbol(S_symbolRefItem *p) {
+int byPassAcceptableSymbol(SymbolReferenceItem *p) {
     int nlen,len;
     char *nn, *nnn;
     GET_BARE_NAME(p->name, nn, len);
@@ -5048,7 +5048,7 @@ int byPassAcceptableSymbol(S_symbolRefItem *p) {
     return(1);
 }
 
-int itIsSymbolToPushOlRefences(S_symbolRefItem *p,
+int itIsSymbolToPushOlRefences(SymbolReferenceItem *p,
                                S_olcxReferences *rstack,
                                S_olSymbolsMenu **rss,
                                int checkSelFlag) {
@@ -5071,7 +5071,7 @@ int itIsSymbolToPushOlRefences(S_symbolRefItem *p,
 }
 
 
-void putOnLineLoadedReferences(S_symbolRefItem *p) {
+void putOnLineLoadedReferences(SymbolReferenceItem *p) {
     int                 ols;
     S_olSymbolsMenu     *cms;
     S_reference         *rr;
@@ -5107,7 +5107,7 @@ static int classCmp(int cl1, int cl2) {
     return(res);
 }
 
-static unsigned olcxOoBits(S_olSymbolsMenu *ols, S_symbolRefItem *p) {
+static unsigned olcxOoBits(S_olSymbolsMenu *ols, SymbolReferenceItem *p) {
     unsigned ooBits;
     int olusage,vFunCl,olvFunCl,vApplCl,olvApplCl;
     ooBits = 0;
@@ -5163,7 +5163,7 @@ static unsigned ooBitsMax(unsigned oo1, unsigned oo2) {
     return(res);
 }
 
-S_olSymbolsMenu *createSelectionMenu(S_symbolRefItem *p) {
+S_olSymbolsMenu *createSelectionMenu(SymbolReferenceItem *p) {
     S_olSymbolsMenu     *ss, *res;
     S_olcxReferences    *rstack;
     Position          *defpos;
@@ -5203,7 +5203,7 @@ S_olSymbolsMenu *createSelectionMenu(S_symbolRefItem *p) {
     return(res);
 }
 
-void mapCreateSelectionMenu(S_symbolRefItem *p) {
+void mapCreateSelectionMenu(SymbolReferenceItem *p) {
     createSelectionMenu(p);
 }
 
@@ -5246,7 +5246,7 @@ void olSetCallerPosition(Position *pos) {
 S_olCompletion * olCompletionListPrepend(char *name,
                                          char *fullText, char *vclass, int jindent,
                                          Symbol *s,
-                                         S_symbolRefItem *rr,
+                                         SymbolReferenceItem *rr,
                                          S_reference *dfref,
                                          int cType,
                                          int vFunClass,
@@ -5255,7 +5255,7 @@ S_olCompletion * olCompletionListPrepend(char *name,
     S_olCompletion  *cc;
     char            *ss,*nn, *fullnn, *vclnn;
     int             i, category, scope, storage, slen, nlen;
-    S_symbolRefItem sri;
+    SymbolReferenceItem sri;
     S_symbolRefItemBits srib;
     S_reference     dref;
 

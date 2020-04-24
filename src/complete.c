@@ -1037,7 +1037,7 @@ void completeOthers(Completions *c) {
 /* very costly function in time !!!! */
 static Symbol * getSymFromRef(S_reference *rr) {
     int                 i;
-    S_symbolRefItem     *ss;
+    SymbolReferenceItem     *ss;
     S_reference         *r;
     Symbol            *sym;
     r = NULL; ss = NULL;
@@ -1779,7 +1779,7 @@ void javaCompleteMethodCompName(Completions*c) {
 
 /* ************************** Yacc stuff ************************ */
 
-static void completeFromXrefFun(S_symbolRefItem *s, void *c) {
+static void completeFromXrefFun(SymbolReferenceItem *s, void *c) {
     S_completionSymInfo *cc;
     CompletionLine compLine;
     cc = (S_completionSymInfo *) c;

@@ -26,7 +26,7 @@ int symbolNameShouldBeHiddenFromReports(char *name) {
   return (int) mock(name);
 }
 
-void searchSymbolCheckReference(S_symbolRefItem *ss, S_reference *rr) {
+void searchSymbolCheckReference(SymbolReferenceItem *ss, S_reference *rr) {
   mock(ss, rr);
 }
 

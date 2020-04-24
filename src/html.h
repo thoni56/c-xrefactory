@@ -24,7 +24,7 @@ typedef struct htmlRefList {
 
 extern void genClassHierarchyItemLinks(FILE *ff, S_olSymbolsMenu *itt,
                                        int virtFlag);
-extern void htmlGenNonVirtualGlobSymList(FILE *ff, char *fn, S_symbolRefItem *p );
+extern void htmlGenNonVirtualGlobSymList(FILE *ff, char *fn, SymbolReferenceItem *p );
 extern void htmlGenGlobRefsForVirtMethod(FILE *ff, char *fn,
                                          S_olSymbolsMenu *rrr);
 extern int htmlRefItemsOrderLess(S_olSymbolsMenu *ss1, S_olSymbolsMenu *ss2);

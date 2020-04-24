@@ -57,15 +57,15 @@ AfterEach(Extract) {}
 
 Ensure(Extract, can_concat_symRefItemList_when_null) {
     S_symbolRefItemList *lp = NULL;
-    S_symbolRefItem s = {"s", 0, 0, 0, {}, NULL, NULL};
+    SymbolReferenceItem s = {"s", 0, 0, 0, {}, NULL, NULL};
 
     addSymbolToSymRefList(&lp, &s);
     assert_that(lp->d, is_equal_to(&s));
 }
 
 Ensure(Extract, can_concat_symRefItemList_before_existing) {
-    S_symbolRefItem s1 = {"s1", 0, 0, 0, {}, NULL, NULL};
-    S_symbolRefItem s2 = {"s2", 0, 0, 0, {}, NULL, NULL};
+    SymbolReferenceItem s1 = {"s1", 0, 0, 0, {}, NULL, NULL};
+    SymbolReferenceItem s2 = {"s2", 0, 0, 0, {}, NULL, NULL};
     S_symbolRefItemList l = {&s1, NULL};
     S_symbolRefItemList *lp = &l;
 

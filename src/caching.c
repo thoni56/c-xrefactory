@@ -57,7 +57,7 @@ static void deleteReferencesOutOfMemory(S_reference **rr) {
 }
 
 static void cxrefTabDeleteOutOfMemory(int i) {
-    S_symbolRefItem **pp;
+    SymbolReferenceItem **pp;
     pp = &s_cxrefTab.tab[i];
     while (*pp!=NULL) {
         if (DM_FREED_POINTER(cxMemory,*pp)) {

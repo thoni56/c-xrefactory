@@ -4,7 +4,7 @@
 #include "proto.h"
 
 #define HASH_TAB_NAME refTab
-#define HASH_ELEM_TYPE S_symbolRefItem
+#define HASH_ELEM_TYPE SymbolReferenceItem
 
 #include "hashlist.th"
 

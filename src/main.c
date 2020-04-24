@@ -2678,7 +2678,7 @@ void getPipedOptions(int *outNargc,char ***outNargv){
     }
 }
 
-static void fillIncludeRefItem( S_symbolRefItem *ddd , int fnum) {
+static void fillIncludeRefItem( SymbolReferenceItem *ddd , int fnum) {
     fill_symbolRefItemBits(&ddd->b,TypeCppInclude,StorageExtern,
                            ScopeGlobal,ACCESS_DEFAULT,CategoryGlobal,0);
     fill_symbolRefItem(ddd,LINK_NAME_INCLUDE_REFS,
@@ -2690,7 +2690,7 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
     char                *cxFreeBase;
     int                 i,ii,fileAddedFlag, isJavaFileFlag;
     S_fileItem          *fi,*includer;
-    S_symbolRefItem     ddd,*memb;
+    SymbolReferenceItem     ddd,*memb;
     S_reference         *rr;
     CX_ALLOCC(cxFreeBase,0,char);
     readOneAppropReferenceFile(LINK_NAME_INCLUDE_REFS,
@@ -2773,7 +2773,7 @@ void mainOpenOutputFile(char *ofile) {
 }
 
 static int scheduleFileUsingTheMacro(void) {
-    S_symbolRefItem     ddd;
+    SymbolReferenceItem     ddd;
     S_olSymbolsMenu     mm, *oldMenu;
     S_olcxReferences    *tmpc;
     assert(s_olstringInMbody);

@@ -84,7 +84,7 @@ struct lastCxFileInfos {
     int                 onLineReferencedSym;
     S_olSymbolsMenu     *onLineRefMenuItem;
     int                 onLineRefIsBestMatchFlag; // vyhodit ?
-    S_symbolRefItem     *symbolTab[MAX_CX_SYMBOL_TAB];
+    SymbolReferenceItem     *symbolTab[MAX_CX_SYMBOL_TAB];
     char                symbolIsWritten[MAX_CX_SYMBOL_TAB];
     char                *symbolBestMatchFlag[MAX_CX_SYMBOL_TAB];
     int                 macroBaseFileGeneratedForSym[MAX_CX_SYMBOL_TAB];
@@ -99,7 +99,7 @@ struct lastCxFileInfos {
 
     // following item can be used only via symbolTab,
     // it is just to smplifie memoru handling !!!!!!!!!!!!!!!!
-    S_symbolRefItem     _symbolTab[MAX_CX_SYMBOL_TAB];
+    SymbolReferenceItem     _symbolTab[MAX_CX_SYMBOL_TAB];
     char                _symbolTabNames[MAX_CX_SYMBOL_TAB][MAX_CX_SYMBOL_SIZE];
 };
 
@@ -292,7 +292,7 @@ int symbolNameShouldBeHiddenFromReports(char *name) {
     return(0);
 }
 
-void searchSymbolCheckReference(S_symbolRefItem  *ss, S_reference *rr) {
+void searchSymbolCheckReference(SymbolReferenceItem  *ss, S_reference *rr) {
     char ssname[MAX_CX_SYMBOL_SIZE];
     char *s, *sname;
     int slen;
@@ -368,7 +368,7 @@ static void writeStringRecord(int recNum, char *s, char *blankPrefix) {
 
 static void writeSymbolItem(int symIndex) {
     char ttt[TMP_STRING_SIZE];
-    S_symbolRefItem *d;
+    SymbolReferenceItem *d;
     writeOptionalCompactRecord(CXFI_SYM_INDEX, symIndex, "");
     d = s_outLastInfos.symbolTab[symIndex];
     writeOptionalCompactRecord(CXFI_SYM_TYPE, d->b.symType, "\n");
@@ -522,7 +522,7 @@ void addSubClassesItemsToFileTab(Symbol *ss, int origin) {
 
 /* *************************************************************** */
 
-static void genRefItem0(S_symbolRefItem *d, int forceGen) {
+static void genRefItem0(SymbolReferenceItem *d, int forceGen) {
     S_reference *rr;
     int symIndex;
 
@@ -552,7 +552,7 @@ static void genRefItem0(S_symbolRefItem *d, int forceGen) {
     //&fflush(cxOut);
 }
 
-static void genRefItem(S_symbolRefItem *dd) {
+static void genRefItem(SymbolReferenceItem *dd) {
     genRefItem0(dd,0);
 }
 
@@ -654,7 +654,7 @@ static void genPartialFileTabRefFile(int updateFlag,
 
 static void generateRefsFromMemory(int fileOrder) {
     int                 tsize;
-    S_symbolRefItem *pp;
+    SymbolReferenceItem *pp;
 
     tsize = s_cxrefTab.size;
     for (int i=0; i<tsize; i++) {
@@ -1015,7 +1015,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
                                                 CharacterBuffer *cb,
                                                 int additionalArg
                                                 ) {
-    S_symbolRefItem *ddd, *memb;
+    SymbolReferenceItem *ddd, *memb;
     int out_index, si, symType, len, rr, vApplClass, vFunClass, accessFlags;
     int storage;
     char *id;
@@ -1047,7 +1047,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
     if (rr == 0) {
         CX_ALLOCC(ss, len+1, char);
         strcpy(ss,id);
-        CX_ALLOC(memb, S_symbolRefItem);
+        CX_ALLOC(memb, SymbolReferenceItem);
         fill_symbolRefItemBits(&memb->b,symType, storage,
                                ScopeGlobal,accessFlags,CategoryGlobal,0);
         fill_symbolRefItem(memb,ss, cxFileHashNumber(ss),
@@ -1070,7 +1070,7 @@ static void cxfileCheckLastSymbolDeadness(void) {
 }
 
 
-static int symbolIsReportableAsDead(S_symbolRefItem *ss) {
+static int symbolIsReportableAsDead(SymbolReferenceItem *ss) {
     if (ss==NULL) return(0);
     if (ss->name[0]==' ') return(0);
     // you need to be strong here, in fact struct record can be used
@@ -1091,7 +1091,7 @@ static void cxrfSymbolName(int size,
                            CharacterBuffer *cb,
                            int additionalArg
                            ) {
-    S_symbolRefItem *ddd, *memb;
+    SymbolReferenceItem *ddd, *memb;
     S_olSymbolsMenu *cms;
     int not_used1, not_used2;
     int si, symType, len, rr, vApplClass, vFunClass, ols, accessFlags, storage;
@@ -1127,7 +1127,7 @@ static void cxrfSymbolName(int size,
         if (memb==NULL) {
             CX_ALLOCC(ss, len+1, char);
             strcpy(ss,id);
-            CX_ALLOC(memb, S_symbolRefItem);
+            CX_ALLOC(memb, SymbolReferenceItem);
             fill_symbolRefItemBits(&memb->b,symType, storage,
                                    ScopeGlobal, accessFlags, CategoryGlobal,0);
             fill_symbolRefItem(memb,ss,cxFileHashNumber(ss),

@@ -608,7 +608,7 @@ typedef struct symbolRefItem {
     struct symbolRefItemBits b;
     struct reference			*refs;
     struct symbolRefItem        *next;
-} S_symbolRefItem;
+} SymbolReferenceItem;
 
 typedef struct symbolRefItemList {
     struct symbolRefItem		*d;

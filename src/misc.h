@@ -66,7 +66,7 @@ extern void ppcGenMarker(S_editorMarker *m);
 extern void jarFileParse(char *file_name);
 extern void scanJarFilesForTagSearch(void);
 extern void classFileParse(void);
-extern void fillTrivialSpecialRefItem( S_symbolRefItem *ddd , char *name);
+extern void fillTrivialSpecialRefItem( SymbolReferenceItem *ddd , char *name);
 
 extern void noSuchRecordError(char *rec);
 extern void methodAppliedOnNonClass(char *rec);
@@ -75,7 +75,7 @@ extern void dumpOptions(int nargc, char **nargv);
 
 extern void symDump(Symbol *symbol);
 extern void typeDump(TypeModifier *typeModifiers);
-extern void symbolRefItemDump(S_symbolRefItem *ss);
+extern void symbolRefItemDump(SymbolReferenceItem *ss);
 extern int javaTypeStringSPrint(char *buff, char *str, int nameStyle, int *oNamePos);
 extern void typeSPrint(char *buff,int *size,TypeModifier *t,char*name,
                        int dclSepChar, int maxDeep, int typedefexp,

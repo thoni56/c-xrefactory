@@ -698,7 +698,7 @@ static int validTargetPlace(S_editorMarker *target, char *checkOpt) {
 
 // ------------------------- Trivial prechecks --------------------------------------
 
-static S_olSymbolsMenu *javaGetRelevantHkSelectedItem(S_symbolRefItem *ri) {
+static S_olSymbolsMenu *javaGetRelevantHkSelectedItem(SymbolReferenceItem *ri) {
     S_olSymbolsMenu     *ss;
     S_olcxReferences    *rstack;
     rstack = s_olcxCurrentUser->browserStack.top;
@@ -711,7 +711,7 @@ static S_olSymbolsMenu *javaGetRelevantHkSelectedItem(S_symbolRefItem *ri) {
     return(ss);
 }
 
-static void tpCheckFutureAccOfLocalReferences(S_symbolRefItem *ri, void *ddd) {
+static void tpCheckFutureAccOfLocalReferences(SymbolReferenceItem *ri, void *ddd) {
     S_reference *rr;
     S_tpCheckMoveClassData *dd;
     S_olSymbolsMenu *ss;
@@ -737,7 +737,7 @@ static void tpCheckFutureAccOfLocalReferences(S_symbolRefItem *ri, void *ddd) {
     }
 }
 
-static void tpCheckMoveClassPutClassDefaultSymbols(S_symbolRefItem *ri, void *ddd) {
+static void tpCheckMoveClassPutClassDefaultSymbols(SymbolReferenceItem *ri, void *ddd) {
     S_reference *rr;
     S_olcxReferences *rstack;
     S_tpCheckMoveClassData *dd;
@@ -806,7 +806,7 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(
     }
 }
 
-static void tpCheckDefaultAccessibilitiesMoveClass(S_symbolRefItem *ri, void *ddd) {
+static void tpCheckDefaultAccessibilitiesMoveClass(SymbolReferenceItem *ri, void *ddd) {
     S_reference             *rr;
     S_olcxReferences        *rstack;
     S_tpCheckMoveClassData  *dd;
@@ -942,7 +942,7 @@ int tpCheckSourceIsNotInnerClass(void) {
     return(1);
 }
 
-static void tpCheckSpecialReferencesMapFun(S_symbolRefItem *ri,
+static void tpCheckSpecialReferencesMapFun(SymbolReferenceItem *ri,
                                            void *ddd
                                            ) {
     S_reference *rr;
@@ -1712,7 +1712,7 @@ static void refactoryRestrictAccessibility(S_editorMarker *point, int limitIndex
 }
 
 
-static void refactoryCheckForMultipleReferencesOnSinglePlace2( S_symbolRefItem *p,
+static void refactoryCheckForMultipleReferencesOnSinglePlace2( SymbolReferenceItem *p,
                                                                S_olcxReferences *rstack,
                                                                S_reference *r
                                                                ) {
@@ -1726,7 +1726,7 @@ static void refactoryCheckForMultipleReferencesOnSinglePlace2( S_symbolRefItem *
 }
 
 static void refactoryCheckForMultipleReferencesOnSinglePlace(S_olcxReferences *rstack, S_olSymbolsMenu *ccms) {
-    S_symbolRefItem     *p, *sss;
+    SymbolReferenceItem     *p, *sss;
     S_reference         *r;
     S_olSymbolsMenu     *cms;
     int                 pushed;
@@ -2631,7 +2631,7 @@ static void refactoryShowSafetyCheckFailingDialog(S_editorMarkerList **totalDiff
 static void refactoryStaticMoveCheckCorrespondance(
                                                    S_olSymbolsMenu *menu1,
                                                    S_olSymbolsMenu *menu2,
-                                                   S_symbolRefItem *theMethod
+                                                   SymbolReferenceItem *theMethod
                                                    ) {
     S_olSymbolsMenu *mm1, *mm2;
     S_editorMarkerList *diff1, *diff2, *totalDiff;
@@ -2722,7 +2722,7 @@ static void refactoryPerformMovingOfStaticObjectAndMakeItPublic(
     S_editorMarker *pp, *ppp, *movedEnd;
     S_editorMarkerList *occs, *ll;
     S_editorRegionList *regions;
-    S_symbolRefItem *theMethod;
+    SymbolReferenceItem *theMethod;
     int progressi, progressn;
 
 
@@ -3993,7 +3993,7 @@ static int refactoryIsMethodPartRedundantWrtPullUpPushDown(
 }
 
 static S_editorMarkerList *refactoryPullUpPushDownDifferences(
-                                                              S_olSymbolsMenu *menu1, S_olSymbolsMenu *menu2, S_symbolRefItem *theMethod
+                                                              S_olSymbolsMenu *menu1, S_olSymbolsMenu *menu2, SymbolReferenceItem *theMethod
                                                               ) {
     S_olSymbolsMenu *mm1, *mm2;
     S_editorMarkerList *rr, *rr1, *diff;
@@ -4027,7 +4027,7 @@ static S_editorMarkerList *refactoryPullUpPushDownDifferences(
 }
 
 static void refactoryPullUpPushDownCheckCorrespondance(
-                                                       S_olSymbolsMenu *menu1, S_olSymbolsMenu *menu2, S_symbolRefItem *theMethod
+                                                       S_olSymbolsMenu *menu1, S_olSymbolsMenu *menu2, SymbolReferenceItem *theMethod
                                                        ) {
     S_editorMarkerList *diff;
 
@@ -4222,7 +4222,7 @@ static void refactoryPushDownPullUp(S_editorMarker *point, int direction, int li
     S_editorMarker *target, *movedStart, *mend, *movedEnd, *startMarker, *endMarker;
     S_editorRegionList *methodreg;
     S_olSymbolsMenu *mm1, *mm2;
-    S_symbolRefItem *theMethod;
+    SymbolReferenceItem *theMethod;
     int size;
     int lines;
     UNUSED lines;
