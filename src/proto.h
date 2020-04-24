@@ -597,7 +597,7 @@ typedef struct symbolRefItemBits {
     Access					accessFlags	: 12; /* java access bits */
     unsigned				category	: 2;  /* local/global */
     unsigned				htmlWasLn	: 1;  /* html ln generated */
-} S_symbolRefItemBits;
+} SymbolReferenceItemBits;
 
 // !!! if you add a pointer to this structure, then update olcxCopyRefItem!
 typedef struct symbolRefItem {

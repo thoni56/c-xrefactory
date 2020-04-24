@@ -78,7 +78,7 @@ void fill_symbolRefItem(SymbolReferenceItem *symbolRefItem, char *name, unsigned
     symbolRefItem->next = NULL;
 }
 
-void fill_symbolRefItemBits(S_symbolRefItemBits *symbolRefItemBits, unsigned symType, unsigned storage, unsigned scope, unsigned accessFlags, unsigned category, unsigned htmlWasLn) {
+void fill_symbolRefItemBits(SymbolReferenceItemBits *symbolRefItemBits, unsigned symType, unsigned storage, unsigned scope, unsigned accessFlags, unsigned category, unsigned htmlWasLn) {
     symbolRefItemBits->symType = symType;
     symbolRefItemBits->storage = storage;
     symbolRefItemBits->scope = scope;
@@ -712,7 +712,7 @@ static int olcxOnlyParseNoPushing(int opt) {
 
 
 #if ZERO
-static int htmlReferencableSymbol(int scope, int category, S_symbol *p) {
+static int htmlReferencableSymbol(int scope, int category, Symbol *p) {
     //& if (p->b.symType==TypeCppIfElse) return(0); /* takes too much memory */
     if (scope==ScopeFile) return(1);
     if (category==CatGlobal) return(1);
@@ -2359,7 +2359,7 @@ static void olcxShowClassTree(void) {
 
 S_olSymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi,int storage){
     S_olSymbolsMenu     *res;
-    S_symbolRefItemBits bb;
+    SymbolReferenceItemBits bb;
     SymbolReferenceItem     ss;
     fill_symbolRefItemBits(&bb, TypeDefault, storage, ScopeGlobal,
                            ACCESS_DEFAULT, CategoryGlobal, 0);
@@ -5256,7 +5256,7 @@ S_olCompletion * olCompletionListPrepend(char *name,
     char            *ss,*nn, *fullnn, *vclnn;
     int             i, category, scope, storage, slen, nlen;
     SymbolReferenceItem sri;
-    S_symbolRefItemBits srib;
+    SymbolReferenceItemBits srib;
     S_reference     dref;
 
     nlen = strlen(name);

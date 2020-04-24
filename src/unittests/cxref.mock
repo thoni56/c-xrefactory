@@ -15,7 +15,7 @@ void fill_symbolRefItem(SymbolReferenceItem *symbolRefItem, char *name, unsigned
     mock(symbolRefItem, name, fileHash, vApplClass, vFunClass);
 }
 
-void fill_symbolRefItemBits(S_symbolRefItemBits *symbolRefItemBits, unsigned symType,
+void fill_symbolRefItemBits(SymbolReferenceItemBits *symbolRefItemBits, unsigned symType,
                             unsigned storage, unsigned scope, unsigned accessFlags,
                             unsigned category, unsigned htmlWasLn) {
     mock(symbolRefItemBits, symType, storage, scope, accessFlags, category, htmlWasLn);

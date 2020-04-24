@@ -7,7 +7,7 @@
 
 extern void fill_reference(S_reference *reference, UsageBits usage, Position position, S_reference *next);
 extern void fill_symbolRefItem(SymbolReferenceItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass, int vFunClass, struct symbolRefItemBits bits);
-extern void fill_symbolRefItemBits(S_symbolRefItemBits *symbolRefItemBits, unsigned symType,
+extern void fill_symbolRefItemBits(SymbolReferenceItemBits *symbolRefItemBits, unsigned symType,
                                    unsigned storage, unsigned scope, unsigned accessFlags,
                                    unsigned category, unsigned htmlWasLn);
 extern void fill_olSymbolsMenu(S_olSymbolsMenu *olSymbolsMenu, struct symbolRefItem	s,
