@@ -1965,9 +1965,9 @@ static void actionOnBlockMarker(void) {
 }
 
 int yylex(void) {
-    int         lexem, line, val, len;
-    Position  pos, idpos;
-    char		*ch;
+    int lexem, line, val, len;
+    Position pos, idpos;
+    char *ch;
     unsigned h;
 
     len = 0;
@@ -2009,7 +2009,6 @@ int yylex(void) {
             testCxrefCompletionId(&lexem,yytext,&idpos);
         }
         log_trace("id %s position %d %d %d",yytext,idpos.file,idpos.line,idpos.col);
-
         fillSymbol(&symbol, yytext, yytext, s_noPos);
         fillSymbolBits(&symbol.bits, ACCESS_DEFAULT, TypeMacro, StorageNone);
 
@@ -2027,6 +2026,7 @@ int yylex(void) {
         else if (LANGUAGE(LANG_JAVA)) lexem = processJavaIdent(h, id, &idpos);
         else if (LANGUAGE(LANG_CCC)) lexem = processCccIdent(h, id, &idpos);
         else assert(0);
+        pos = idpos;            /* To simplify debug - pos is always current at finish: */
         goto finish;
     }
     if (lexem == OL_MARKER_TOKEN) {
