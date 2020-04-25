@@ -468,7 +468,8 @@ Literal:
     ;
 
 /* ************************* Types, Values, Variables ******************* */
-
+/* TODO: c-xref analysis somehow stops here. After this point no rules
+   of C variables are recognised. */
 Type:
         PrimitiveType	{
             if (regularPass()) {
