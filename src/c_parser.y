@@ -305,9 +305,9 @@ primary_expr
     | COMPL_OTHER_NAME		{ assert(0); /* token never used */ }
     ;
 
-string_literals:
-        STRING_LITERAL
-    |	STRING_LITERAL string_literals
+string_literals
+    : STRING_LITERAL
+    | STRING_LITERAL string_literals
     ;
 
 postfix_expr
@@ -647,8 +647,8 @@ constant_expr
     : conditional_expr
     ;
 
-Sv_tmp:
-    {
+Sv_tmp
+    :    {
         $$.d = tmpWorkMemoryi;
     }
     ;
@@ -783,18 +783,18 @@ declaration_modality_specifiers
     ;
 
 /*& // an experiment
-declaration_specifier0:
-        storage_class_specifier
+declaration_specifier0
+    :   storage_class_specifier
     |	type_modality_specifier
     ;
 
-declaration_specifiers0:
-        declaration_specifier0
+declaration_specifiers0
+    :   declaration_specifier0
     |	declaration_specifiers0 declaration_specifier0
     ;
 
-declaration_specifiers:
-        user_defined_type
+declaration_specifiers
+    :   user_defined_type
     |	declaration_specifiers0 user_defined_type
     |	declaration_specifiers0 type_specifier1
     |	declaration_specifiers0 type_specifier2
@@ -805,7 +805,8 @@ declaration_specifiers:
 &*/
 
 /* a gcc extensions ? */
-asm_opt:
+asm_opt
+    :
     |	ASM_KEYWORD '(' string_literals ')'
     ;
 
@@ -845,7 +846,8 @@ type_modality_specifier
     | ANONYME_MOD	{ $$.d = TypeDefault; }
     ;
 
-type_modality_specifier_opt:
+type_modality_specifier_opt
+    :
     | type_modality_specifier
     ;
 
@@ -1415,8 +1417,8 @@ statement
     }
     ;
 
-label:
-        label_def_name ':'
+label
+    :   label_def_name ':'
     |	CASE constant_expr ':' {
             genSwitchCaseFork(0);
     }
@@ -1455,12 +1457,13 @@ compound_statement
 &*/
     ;
 
-label_decls_opt:
+label_decls_opt
+    :
     |	label_decls
     ;
 
-label_decls:
-        LABEL identifier {
+label_decls
+    :   LABEL identifier {
         labelReference($2.d,UsageDeclared);
     }
     |	label_decls LABEL identifier {
@@ -1531,8 +1534,8 @@ selection_statement
     }
     ;
 
-for1maybe_expr:
-        maybe_expr			{s_forCompletionType=$1.d;}
+for1maybe_expr
+    : maybe_expr			{s_forCompletionType=$1.d;}
     ;
 
 iteration_statement
@@ -1608,29 +1611,31 @@ _bef_:			{
 /* ****************** following is some gcc asm support ************ */
 /* it is not exactly as in gcc, but I hope it is suf. general */
 
-gcc_asm_symbolic_name_opt:
+gcc_asm_symbolic_name_opt
+    :
     |	'[' IDENTIFIER ']'
     ;
 
-gcc_asm_item_opt:
+gcc_asm_item_opt
+    :
     |	gcc_asm_symbolic_name_opt IDENTIFIER
     |	gcc_asm_symbolic_name_opt IDENTIFIER '(' expr ')'
     |	gcc_asm_symbolic_name_opt string_literals
     |	gcc_asm_symbolic_name_opt string_literals '(' expr ')'
     ;
 
-gcc_asm_item_list:
-        gcc_asm_item_opt
+gcc_asm_item_list
+    :   gcc_asm_item_opt
     |	gcc_asm_item_list ',' gcc_asm_item_opt
     ;
 
-gcc_asm_oper:
-        ':' gcc_asm_item_list
+gcc_asm_oper
+    :   ':' gcc_asm_item_list
     |	gcc_asm_oper ':' gcc_asm_item_list
     ;
 
-asm_statement:
-        ASM_KEYWORD type_modality_specifier_opt '(' expr ')' ';'
+asm_statement
+    :   ASM_KEYWORD type_modality_specifier_opt '(' expr ')' ';'
     |	ASM_KEYWORD type_modality_specifier_opt '(' expr gcc_asm_oper ')' ';'
     ;
 
