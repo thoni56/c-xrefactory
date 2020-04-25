@@ -18,7 +18,9 @@
 #include "log.h"
 #include "utils.h"
 
+#ifndef YYDEBUG
 #define YYDEBUG 0
+#endif
 #define yaccyyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
@@ -243,8 +245,8 @@ static void addYaccSymbolReference(S_id *name, int usage);
 %start yaccfile
 %%
 
-yaccfile:
-        Start_block {
+yaccfile
+    : Start_block {
             s_cache.activeCache = 0;    /* no caching in yaccgram */
             // initialize locals
             l_yaccUnion = NULL;
@@ -256,12 +258,13 @@ yaccfile:
         rules '%' '%' file
     ;
 
-before_rules:
-        before_rules_item
-    |   before_rules before_rules_item
+before_rules
+    : before_rules_item
+    | before_rules before_rules_item
     ;
 
-before_rules_item:
+before_rules_item
+    :
 /*
         anytoken_not_yacc
 
@@ -296,7 +299,8 @@ before_rules_item:
     |   error
     ;
 
-symbol_to_type_seq:
+symbol_to_type_seq
+    :
     |   symbol_to_type_seq IDENTIFIER   {
             Symbol *ss;
 
@@ -310,12 +314,13 @@ symbol_to_type_seq:
         }
     ;
 
-token_seq_opt:
+token_seq_opt
+    :
     |   token_seq
     ;
 
-token_seq:
-        IDENTIFIER              {
+token_seq
+    :   IDENTIFIER              {
             addYaccSymbolReference($1.d, UsageDeclared);
         }
     |   token_seq IDENTIFIER    {
@@ -323,8 +328,8 @@ token_seq:
         }
     ;
 
-rules:
-        Start_block IDENTIFIER ':'                          {
+rules
+    :    Start_block IDENTIFIER ':'                          {
             addYaccSymbolReference($2.d, UsageDefined);
             addRuleLocalVariable($2.d, 0);
         }
@@ -338,18 +343,19 @@ rules:
     | rules COMPL_YACC_LEXEM_NAME       { assert(0); /* token never used */ }
     ;
 
-rule_bodies:
-        rule_body_opt
+rule_bodies
+    :   rule_body_opt
     |   rule_bodies '|' rule_body_opt
     |   error
     ;
 
-rule_body_opt:
+rule_body_opt
+    :
     |   Start_block rule_body Stop_block
     ;
 
-rule_body:
-        lexem                   {
+rule_body
+    : lexem                   {
             if ($1.d != NULL) {
                 addYaccSymbolReference($1.d, UsageUsed);
                 addRuleLocalVariable($1.d, 1);
@@ -377,34 +383,32 @@ rule_body:
         }
     ;
 
-precedence:
-        '%' IDENTIFIER lexem
-    ;
+precedence : '%' IDENTIFIER lexem ;
 
-lexem:
-        IDENTIFIER              {
+lexem
+    : IDENTIFIER              {
             $$.d = $1.d;
         }
-    |   CHAR_LITERAL            {
+    | CHAR_LITERAL            {
             $$.d = NULL;
         }
-    |   COMPL_YACC_LEXEM_NAME   { assert(0); /* token never used */ }
+    | COMPL_YACC_LEXEM_NAME   { assert(0); /* token never used */ }
     ;
 
-any_char_not_perc_par:
-        '!' | '"' | '#' | '$' | '&' | '\'' | '(' | ')' | '*'
+any_char_not_perc_par
+    :   '!' | '"' | '#' | '$' | '&' | '\'' | '(' | ')' | '*'
     |   '+' | ',' | '-' | '.' | '/' | ':' | ';' | '<' | '=' | '>' | '?'
     |   '@' | '[' | '\\' | ']' | '^' | '`' | '|' | '~'
     ;
 
-anytoken_not_yacc:
-        any_token_not_perc_par
+anytoken_not_yacc
+    :   any_token_not_perc_par
     |   '{'
     |   '}'
     ;
 
-any_token_not_perc_par:
-        any_char_not_perc_par
+any_token_not_perc_par
+    :   any_char_not_perc_par
     |   TYPE_NAME
     |   FLOAT_CONSTANT | DOUBLE_CONSTANT
     |   IDENTIFIER | CONSTANT | LONG_CONSTANT
@@ -433,8 +437,8 @@ any_token_not_perc_par:
     | DYNAMIC_CAST | STATIC_CAST | REINTERPRET_CAST | CONST_CAST | TYPEID
     ;
 
-any_token:
-        anytoken_not_yacc
+any_token
+    :   anytoken_not_yacc
     |   '%'
     ;
 
