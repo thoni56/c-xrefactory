@@ -11,6 +11,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 ** TODO Add as reference to the field
 * TODO enum-generation does not do automatical compiler defines discovery?
 * TODO Remove the global tmpBuff
+* TODO Some code in yacc semantic actions is not detected (try F6 on .reference)
 * TODO Make all modules independent on main
 ** DONE Document why main.h is needed
 ** DONE Make commons.c independent on main

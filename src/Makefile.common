@@ -1,11 +1,11 @@
 #
-# This makefile is included by Makefile and Makefile.platform makefiles.
+# This makefile is included by Makefile
 # Do not use it directly
 #
 
 debug: CFLAGS+=-DDEBUG -Og
 debug: COVERAGE=--coverage
-yydebug: CFLAGS+=-DYYDEBUG=1 -DDEBUG
+yydebug: CFLAGS+= -DDEBUG -DYYDEBUG
 
 prod debug yydebug: $(ZLIB) c-xref
 
