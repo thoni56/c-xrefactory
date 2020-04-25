@@ -2242,7 +2242,7 @@ ArrayInitializer
 
 VariableInitializers
     :   VariableInitializer							{
-            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
+        PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	VariableInitializers ',' VariableInitializer		{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
@@ -3074,10 +3074,10 @@ PrimaryNoNewArray
                 }
             }
         }
-    |	ClassInstanceCreationExpression		/*& { $$.d = $1.d' } */
-    |	FieldAccess							/*& { $$.d = $1.d' } */
-    |	MethodInvocation					/*& { $$.d = $1.d' } */
-    |	ArrayAccess							/*& { $$.d = $1.d' } */
+    |	ClassInstanceCreationExpression		/*& { $$.d = $1.d } */
+    |	FieldAccess							/*& { $$.d = $1.d } */
+    |	MethodInvocation					/*& { $$.d = $1.d } */
+    |	ArrayAccess							/*& { $$.d = $1.d } */
     |	CompletionTypeName '.'		{ assert(0); /* rule never used */ }
     ;
 
@@ -3105,15 +3105,15 @@ NestedConstructorInvocation
                 if (! SyntaxPassOnly()) {
                     s_cp.erfsForParamsComplet = $5;
                     if ($1.d.typeModifier->kind == TypeStruct) {
-                        $$.d.t = javaNestedNewType($1.d.typeModifier->u.t, $3.d, $4.d);
+                        $$.d.typeModifier = javaNestedNewType($1.d.typeModifier->u.t, $3.d, $4.d);
                     } else {
-                        $$.d.t = &s_errorModifier;
+                        $$.d.typeModifier = &s_errorModifier;
                     }
                     javaHandleDeclaratorParamPositions(&$4.d->id.p, &$7.d, $8.d.p, &$9.d);
-                    assert($$.d.t);
-                    $$.d.nid = $4.d;
-                    if ($$.d.t->kind != TypeError) {
-                        javaConstructorInvocation($$.d.t->u.t, &($4.d->id.p), $8.d.t);
+                    assert($$.d.typeModifier);
+                    $$.d.idList = $4.d;
+                    if ($$.d.typeModifier->kind != TypeError) {
+                        javaConstructorInvocation($$.d.typeModifier->u.t, &($4.d->id.p), $8.d.t);
                     }
                 } else {
                     $$.d.pp = $1.d.position;
@@ -3136,10 +3136,10 @@ NestedConstructorInvocation
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     s_cp.erfsForParamsComplet = $5;
-                    $$.d.t = javaNewAfterName($1.d, $3.d, $4.d);
-                    $$.d.nid = $4.d;
-                    if ($$.d.t->kind != TypeError) {
-                        javaConstructorInvocation($$.d.t->u.t, &($4.d->id.p), $8.d.t);
+                    $$.d.typeModifier = javaNewAfterName($1.d, $3.d, $4.d);
+                    $$.d.idList = $4.d;
+                    if ($$.d.typeModifier->kind != TypeError) {
+                        javaConstructorInvocation($$.d.typeModifier->u.t, &($4.d->id.p), $8.d.t);
                     }
                 } else {
                     $$.d.pp = javaGetNameStartingPosition($1.d);
@@ -3263,7 +3263,7 @@ ClassInstanceCreationExpression
             }
         }
     |	NestedConstructorInvocation								{
-            $$.d.typeModifier = $1.d.t;
+            $$.d.typeModifier = $1.d.typeModifier;
             $$.d.position = $1.d.pp;
             $$.d.reference = NULL;
             PropagateBoundaries($$, $1, $1);
@@ -3272,19 +3272,19 @@ ClassInstanceCreationExpression
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        $$.d.typeModifier = $1.d.t;
+                        $$.d.typeModifier = $1.d.typeModifier;
                         $$.d.position = $1.d.pp;
                         $$.d.reference = NULL;
                         if ($$.d.typeModifier->kind != TypeError) {
                             $<trail>$ = newClassDefinitionBegin(&s_javaAnonymousClassName, ACCESS_DEFAULT, $$.d.typeModifier->u.t);
                         } else {
-                            $<trail>$ = newAnonClassDefinitionBegin(& $1.d.nid->id);
+                            $<trail>$ = newAnonClassDefinitionBegin(& $1.d.idList->id);
                         }
                     } else {
                         $$.d.position = $1.d.pp;
                     }
                 } else {
-                    jslNewAnonClassDefinitionBegin(& $1.d.nid->id);
+                    jslNewAnonClassDefinitionBegin(&$1.d.idList->id);
                 }
             }
         ClassBody
@@ -3776,8 +3776,8 @@ CastExpression
     :   '(' ArrayType ')' UnaryExpression					{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert($2.d.s && $2.d.s->u.type);
-                    $$.d.typeModifier = $2.d.s->u.type;
+                    assert($2.d.symbol && $2.d.symbol->u.type);
+                    $$.d.typeModifier = $2.d.symbol->u.type;
                     $$.d.reference = NULL;
                     assert($$.d.typeModifier->kind == TypeArray);
                 } else {

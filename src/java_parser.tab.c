@@ -5871,15 +5871,15 @@ case 361:
                 if (! SyntaxPassOnly()) {
                     s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
                     if (yyvsp[-8].ast_expressionType.d.typeModifier->kind == TypeStruct) {
-                        yyval.ast_nestedConstrTokenType.d.t = javaNestedNewType(yyvsp[-8].ast_expressionType.d.typeModifier->u.t, yyvsp[-6].ast_id.d, yyvsp[-5].ast_idList.d);
+                        yyval.ast_nestedConstrTokenType.d.typeModifier = javaNestedNewType(yyvsp[-8].ast_expressionType.d.typeModifier->u.t, yyvsp[-6].ast_id.d, yyvsp[-5].ast_idList.d);
                     } else {
-                        yyval.ast_nestedConstrTokenType.d.t = &s_errorModifier;
+                        yyval.ast_nestedConstrTokenType.d.typeModifier = &s_errorModifier;
                     }
                     javaHandleDeclaratorParamPositions(&yyvsp[-5].ast_idList.d->id.p, &yyvsp[-2].ast_position.d, yyvsp[-1].ast_typeModifiersListPositionListPair.d.p, &yyvsp[0].ast_position.d);
-                    assert(yyval.ast_nestedConstrTokenType.d.t);
-                    yyval.ast_nestedConstrTokenType.d.nid = yyvsp[-5].ast_idList.d;
-                    if (yyval.ast_nestedConstrTokenType.d.t->kind != TypeError) {
-                        javaConstructorInvocation(yyval.ast_nestedConstrTokenType.d.t->u.t, &(yyvsp[-5].ast_idList.d->id.p), yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
+                    assert(yyval.ast_nestedConstrTokenType.d.typeModifier);
+                    yyval.ast_nestedConstrTokenType.d.idList = yyvsp[-5].ast_idList.d;
+                    if (yyval.ast_nestedConstrTokenType.d.typeModifier->kind != TypeError) {
+                        javaConstructorInvocation(yyval.ast_nestedConstrTokenType.d.typeModifier->u.t, &(yyvsp[-5].ast_idList.d->id.p), yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
                     }
                 } else {
                     yyval.ast_nestedConstrTokenType.d.pp = yyvsp[-8].ast_expressionType.d.position;
@@ -5907,10 +5907,10 @@ case 363:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
-                    yyval.ast_nestedConstrTokenType.d.t = javaNewAfterName(yyvsp[-8].ast_idList.d, yyvsp[-6].ast_id.d, yyvsp[-5].ast_idList.d);
-                    yyval.ast_nestedConstrTokenType.d.nid = yyvsp[-5].ast_idList.d;
-                    if (yyval.ast_nestedConstrTokenType.d.t->kind != TypeError) {
-                        javaConstructorInvocation(yyval.ast_nestedConstrTokenType.d.t->u.t, &(yyvsp[-5].ast_idList.d->id.p), yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
+                    yyval.ast_nestedConstrTokenType.d.typeModifier = javaNewAfterName(yyvsp[-8].ast_idList.d, yyvsp[-6].ast_id.d, yyvsp[-5].ast_idList.d);
+                    yyval.ast_nestedConstrTokenType.d.idList = yyvsp[-5].ast_idList.d;
+                    if (yyval.ast_nestedConstrTokenType.d.typeModifier->kind != TypeError) {
+                        javaConstructorInvocation(yyval.ast_nestedConstrTokenType.d.typeModifier->u.t, &(yyvsp[-5].ast_idList.d->id.p), yyvsp[-1].ast_typeModifiersListPositionListPair.d.t);
                     }
                 } else {
                     yyval.ast_nestedConstrTokenType.d.pp = javaGetNameStartingPosition(yyvsp[-8].ast_idList.d);
@@ -6045,7 +6045,7 @@ break;
 case 369:
 #line 3265 "java_parser.y"
 {
-            yyval.ast_expressionType.d.typeModifier = yyvsp[0].ast_nestedConstrTokenType.d.t;
+            yyval.ast_expressionType.d.typeModifier = yyvsp[0].ast_nestedConstrTokenType.d.typeModifier;
             yyval.ast_expressionType.d.position = yyvsp[0].ast_nestedConstrTokenType.d.pp;
             yyval.ast_expressionType.d.reference = NULL;
             PropagateBoundaries(yyval.ast_expressionType, yyvsp[0].ast_nestedConstrTokenType, yyvsp[0].ast_nestedConstrTokenType);
@@ -6056,19 +6056,19 @@ case 370:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        yyval.ast_expressionType.d.typeModifier = yyvsp[0].ast_nestedConstrTokenType.d.t;
+                        yyval.ast_expressionType.d.typeModifier = yyvsp[0].ast_nestedConstrTokenType.d.typeModifier;
                         yyval.ast_expressionType.d.position = yyvsp[0].ast_nestedConstrTokenType.d.pp;
                         yyval.ast_expressionType.d.reference = NULL;
                         if (yyval.ast_expressionType.d.typeModifier->kind != TypeError) {
                             yyval.trail = newClassDefinitionBegin(&s_javaAnonymousClassName, ACCESS_DEFAULT, yyval.ast_expressionType.d.typeModifier->u.t);
                         } else {
-                            yyval.trail = newAnonClassDefinitionBegin(& yyvsp[0].ast_nestedConstrTokenType.d.nid->id);
+                            yyval.trail = newAnonClassDefinitionBegin(& yyvsp[0].ast_nestedConstrTokenType.d.idList->id);
                         }
                     } else {
                         yyval.ast_expressionType.d.position = yyvsp[0].ast_nestedConstrTokenType.d.pp;
                     }
                 } else {
-                    jslNewAnonClassDefinitionBegin(& yyvsp[0].ast_nestedConstrTokenType.d.nid->id);
+                    jslNewAnonClassDefinitionBegin(&yyvsp[0].ast_nestedConstrTokenType.d.idList->id);
                 }
             }
 break;

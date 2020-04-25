@@ -828,9 +828,9 @@ typedef struct expressionTokenType {
 } S_exprTokenType;
 
 typedef struct nestedConstrTokenType {
-    struct typeModifier	*t;
-    struct idList		*nid;
-    struct position			*pp;
+    struct typeModifier	*typeModifier;
+    struct idList *idList;
+    struct position *pp;
 } S_nestedConstrTokenType;
 
 typedef struct unsignedPositionPair {
