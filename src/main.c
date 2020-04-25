@@ -2159,7 +2159,7 @@ static char *gnuisms[] = {
                           "__gnuc_va_list void",
                           "__leaf__",
                           "__restrict=",
-                          "__restrict__="
+                          "__restrict__=",
                           "__extension__="
 };
 
