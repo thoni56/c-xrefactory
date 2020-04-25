@@ -774,8 +774,8 @@ constant_expr
     : conditional_expr
     ;
 
-Sv_tmp:
-    {
+Sv_tmp
+    :    {
         $$.d = tmpWorkMemoryi;
     }
     ;
