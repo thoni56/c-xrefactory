@@ -4,8 +4,8 @@
 #
 
 debug: CFLAGS+=-DDEBUG -Og
-debug: COVERAGE=--coverage
-yydebug: CFLAGS+= -DDEBUG -DYYDEBUG
+debug yydebug: COVERAGE=--coverage
+yydebug: CFLAGS+= -DDEBUG -DYYDEBUG -Og
 
 prod debug yydebug: $(ZLIB) c-xref
 
