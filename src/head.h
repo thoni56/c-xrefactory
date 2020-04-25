@@ -23,9 +23,8 @@ typedef enum language {
     LANG_C     = 1<<1,
     LANG_JAVA  = 1<<2,
     LANG_YACC  = 1<<3,
-    LANG_CCC   = 1<<4,              /* ccc - standing for C++ */
-    LANG_JAR   = 1<<5,
-    LANG_CLASS = 1<<6
+    LANG_JAR   = 1<<4,
+    LANG_CLASS = 1<<5
 } Language;
 
 /* ****************** end of line conversions ***************************** */
@@ -318,10 +317,6 @@ typedef enum language {
     int i;\
     Symbol *memb;\
     symbolTableIsMember(symtab,pp,&i,&memb);\
-    if (	LANGUAGE(LANG_CCC) && pp->bits.symType==TypeDefault \
-            && pp->u.type->kind == TypeFunction) { \
-        pp->u.type->u.f.thisFunList = &(symtab->tab[i]); \
-    } \
     symbolTableSet(symtab,pp,i);\
 }
 

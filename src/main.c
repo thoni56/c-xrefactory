@@ -1980,12 +1980,6 @@ static void mainParseInputFile(void) {
         uniyylval = & s_yygstate->gyylval;
         javayyparse();
     }
-#   ifdef CCC_ALLOWED
-    else if (s_language == LAN_CCC) {
-        uniyylval = & cccyylval;
-        cccyyparse();
-    }
-#   endif
     else if (s_language == LANG_YACC) {
         //printf("Parsing YACC-file\n");
         uniyylval = & yaccyylval;
@@ -2116,9 +2110,6 @@ static void getAndProcessBuiltinIncludePaths(void) {
     if (LANGUAGE(LANG_C) || LANGUAGE(LANG_YACC)) {
         lang = "c";
     }
-    else if (LANGUAGE(LANG_CCC)) {
-        lang = "c++";
-    }
     else {
         return;
     }
@@ -2170,7 +2161,7 @@ static void getAndProcessStandardDefines(void) {
     FILE *tempfile;
     char command[TMP_BUFF_SIZE];
 
-    if (!(LANGUAGE(LANG_C) || LANGUAGE(LANG_YACC) || LANGUAGE(LANG_CCC))) {
+    if (!(LANGUAGE(LANG_C) || LANGUAGE(LANG_YACC))) {
         return;
     }
     tempfile_name = create_temporary_filename();

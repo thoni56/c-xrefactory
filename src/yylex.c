@@ -1873,26 +1873,6 @@ static int processJavaIdent(unsigned hashval, char *id, Position *idposa) {
 }
 
 
-static int processCccIdent(unsigned hashval, char *id, Position *idposa) {
-    Symbol *sd,*memb;
-    memb = NULL;
-/*fprintf(dumpOut,"looking for %s in %d\n",id,s_symTab);*/
-    for(sd=s_symbolTable->tab[hashval]; sd!=NULL; sd=sd->next) {
-        if (strcmp(sd->name, id) == 0) {
-            if (memb == NULL) memb = sd;
-            CHECK_ID_FOR_KEYWORD(sd, idposa);
-            if (sd->bits.symType == TypeDefinedOp && s_ifEvaluation) {
-                return(CPP_DEFINED_OP);
-            }
-            break;	// I hope it will work.
-        }
-    }
-    if (memb == NULL) id = stackMemoryPushString(id);
-    else id = memb->name;
-    SET_IDENTIFIER_YYLVAL(id, memb, *idposa);
-    return(IDENTIFIER);
-}
-
 static void actionOnBlockMarker(void) {
     if (s_opt.server_operation == OLO_SET_MOVE_TARGET) {
         s_cps.setTargetAnswerClass[0] = 0;
@@ -2024,7 +2004,6 @@ int yylex(void) {
         h = h % s_symbolTable->size;
         if(LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)) lexem=processCIdent(h,id,&idpos);
         else if (LANGUAGE(LANG_JAVA)) lexem = processJavaIdent(h, id, &idpos);
-        else if (LANGUAGE(LANG_CCC)) lexem = processCccIdent(h, id, &idpos);
         else assert(0);
         pos = idpos;            /* To simplify debug - pos is always current at finish: */
         goto finish;

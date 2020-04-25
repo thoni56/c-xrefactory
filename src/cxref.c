@@ -868,7 +868,7 @@ S_reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
                     mmi->defUsage = usage;
                 }
                 if (s_opt.server_operation == OLO_CLASS_TREE
-                    && (LANGUAGE(LANG_JAVA) || LANGUAGE(LANG_CCC))) {
+                    && LANGUAGE(LANG_JAVA)) {
                     setClassTreeBaseType(&s_olcxCurrentUser->classTree, p);
                 }
                 if (s_opt.server_operation == OLO_GET_SYMBOL_TYPE) {

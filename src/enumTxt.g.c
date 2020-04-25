@@ -324,7 +324,6 @@ char * languageEnumName[] = {
 	"LANG_C",
 	"LANG_JAVA",
 	"LANG_YACC",
-	"LANG_CCC",
 	"LANG_JAR",
 	"LANG_CLASS"
 };

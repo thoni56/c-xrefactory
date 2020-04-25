@@ -358,7 +358,7 @@ int getLexBuf(struct lexBuf *lb) {
             case '.':
                 lexStartFilePos = ABS_FILE_POS(cb,cfin,ccc);
                 GetChar(ch,ccc,cfin,cb,clb,clo);
-                if (ch == '.' && LANGUAGE(LANG_C|LANG_YACC|LANG_CCC)) {
+                if (ch == '.' && LANGUAGE(LANG_C|LANG_YACC)) {
                     GetChar(ch,ccc,cfin,cb,clb,clo);
                     if (ch == '.') {
                         GetChar(ch,ccc,cfin,cb,clb,clo);
@@ -370,11 +370,6 @@ int getLexBuf(struct lexBuf *lb) {
                         ch = '.';
                     }
                     PutLexToken('.',dd);
-                    PutLexPosition(cfile, cline, lexStartCol, dd);
-                    goto nextLexem;
-                } else if (ch=='*' && LANGUAGE(LANG_CCC)) {
-                    GetChar(ch,ccc,cfin,cb,clb,clo);
-                    PutLexToken(POINTM_OP,dd);
                     PutLexPosition(cfile, cline, lexStartCol, dd);
                     goto nextLexem;
                 } else if (isdigit(ch)) {
@@ -398,10 +393,9 @@ int getLexBuf(struct lexBuf *lb) {
                     PutLexToken(SUB_ASSIGN,dd); PutLexPosition(cfile, cline, lexStartCol, dd); GetChar(ch,ccc,cfin,cb,clb,clo);
                     goto nextLexem;
                 } else if (ch=='-') {PutLexToken(DEC_OP,dd); PutLexPosition(cfile, cline, lexStartCol, dd);GetChar(ch,ccc,cfin,cb,clb,clo); goto nextLexem;}
-                else if (ch=='>' && LANGUAGE(LANG_C|LANG_YACC|LANG_CCC)) {
+                else if (ch=='>' && LANGUAGE(LANG_C|LANG_YACC)) {
                     GetChar(ch,ccc,cfin,cb,clb,clo);
-                    if (ch=='*' && LANGUAGE(LANG_CCC)) {PutLexToken(PTRM_OP,dd); PutLexPosition(cfile, cline, lexStartCol, dd);GetChar(ch,ccc,cfin,cb,clb,clo); goto nextLexem;}
-                    else {PutLexToken(PTR_OP,dd); PutLexPosition(cfile, cline, lexStartCol, dd);goto nextLexem;}
+                    PutLexToken(PTR_OP,dd); PutLexPosition(cfile, cline, lexStartCol, dd);goto nextLexem;
                 } else {PutLexToken('-',dd); PutLexPosition(cfile, cline, lexStartCol, dd);goto nextLexem;}
 
             case '+':
@@ -486,8 +480,8 @@ int getLexBuf(struct lexBuf *lb) {
 
             case ':':
                 GetChar(ch,ccc,cfin,cb,clb,clo);
-                if (ch == ':' && LANGUAGE(LANG_CCC)){ PutLexToken(DPOINT,dd); PutLexPosition(cfile, cline, lexStartCol, dd);GetChar(ch,ccc,cfin,cb,clb,clo); goto nextLexem; }
-                else {PutLexToken(':',dd); PutLexPosition(cfile, cline, lexStartCol, dd);goto nextLexem;}
+                PutLexToken(':',dd); PutLexPosition(cfile, cline, lexStartCol, dd);
+                goto nextLexem;
 
             case '\'':
                 chval = 0;
@@ -634,7 +628,7 @@ int getLexBuf(struct lexBuf *lb) {
                 }
                 PutLexToken('\n',dd);
                 PutLexPosition(cfile, cline, lexStartCol, dd);
-                if (ch == '#' && LANGUAGE(LANG_C|LANG_CCC|LANG_YACC)) {
+                if (ch == '#' && LANGUAGE(LANG_C|LANG_YACC)) {
                     NOTE_NEW_LEXEM_POSITION(ccc,cfin,cb,lb,cfile,cline,clb,clo);
                     HandleCppToken(ch,ccc,cfin,cb,dd,cfile,cline,clb,clo);
                 }

@@ -997,10 +997,6 @@ void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
         if (dd->name!=NULL) {
             dd->linkName = string3ConcatInStackMem(sd->linkName,".",dd->name);
             dd->bits.isRecord = 1;
-            if (    LANGUAGE(LANG_CCC) && dd->bits.symType==TypeDefault
-                    &&  dd->u.type->kind==TypeFunction) {
-                dd->u.type->u.f.thisFunList = &sd->u.s->records;
-            }
             addCxReference(dd,&dd->pos,UsageDefined,s_noneFileIndex, s_noneFileIndex);
         }
     }
