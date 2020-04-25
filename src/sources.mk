@@ -18,8 +18,6 @@ $(OBJDIR)/%.o: %.c | $(OBJDIR)
 $(OBJDIR):
 	mkdir $(OBJDIR)
 
-$(OBJS) $(DEPS): $(OBJDIR)
-
 -include $(OBJDIR)/*.d
 
 $(ZLIB_LIB):
