@@ -281,7 +281,7 @@ static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbo
 %type <ast_unsigned> Modifier Modifiers Modifiers_opt
 %type <ast_idList> Name SimpleName QualifiedName PackageDeclaration_opt NewName
 %type <ast_idList> SingleTypeImportDeclaration TypeImportOnDemandDeclaration
-%type <ast_symbol> Type AssignementType ReferenceType ClassOrInterfaceType
+%type <ast_symbol> JavaType AssignmentType ReferenceType ClassOrInterfaceType
 %type <ast_symbol> ExtendClassOrInterfaceType
 %type <ast_symbol> ClassType InterfaceType
 %type <ast_symbol> FormalParameter
@@ -366,8 +366,8 @@ Goal:	CompilationUnit
 
 /* *************************** Literals ********************************* */
 
-Literal:
-        TRUE_LITERAL		{
+Literal
+    :   TRUE_LITERAL		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = newSimpleTypeModifier(TypeBoolean);
@@ -469,9 +469,9 @@ Literal:
 
 /* ************************* Types, Values, Variables ******************* */
 /* TODO: c-xref analysis somehow stops here. After this point no rules
-   of C variables are recognised. */
-Type:
-        PrimitiveType	{
+   or C variables are recognised. */
+JavaType
+    :   PrimitiveType	{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d = typeSpecifier1($1.d.u);
@@ -490,8 +490,8 @@ Type:
         }
     ;
 
-PrimitiveType:
-        NumericType		/* $$ = $1 */
+PrimitiveType
+    :   NumericType		/* $$ = $1 */
     |	BOOLEAN			{
             $$.d.u  = TypeBoolean;
             if (regularPass()) {
@@ -501,13 +501,13 @@ PrimitiveType:
         }
     ;
 
-NumericType:
-        IntegralType			/* $$ = $1 */
+NumericType
+    :   IntegralType			/* $$ = $1 */
     |	FloatingPointType		/* $$ = $1 */
     ;
 
-IntegralType:
-        BYTE			{
+IntegralType
+    :   BYTE			{
             $$.d.u  = TypeByte;
             if (regularPass()) SetPrimitiveTypePos($$.d.p, $1.d);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
@@ -534,8 +534,8 @@ IntegralType:
         }
     ;
 
-FloatingPointType:
-        FLOAT			{
+FloatingPointType
+    :   FLOAT			{
             $$.d.u  = TypeFloat;
             if (regularPass()) SetPrimitiveTypePos($$.d.p, $1.d);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
@@ -547,16 +547,16 @@ FloatingPointType:
         }
     ;
 
-ReferenceType:
-        ClassOrInterfaceType		/*& { $$.d = $1.d; } */
+ReferenceType
+    :   ClassOrInterfaceType		/*& { $$.d = $1.d; } */
     |	ArrayType					{
             $$.d = $1.d.s;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 
-ClassOrInterfaceType:
-        Name			{
+ClassOrInterfaceType
+    :   Name			{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     javaClassifyToTypeName($1.d,UsageUsed, &$$.d, USELESS_FQT_REFS_ALLOWED);
@@ -577,8 +577,8 @@ ClassOrInterfaceType:
     ;
 
 /* following is the same, just to distinguish type after EXTEND keyword */
-ExtendClassOrInterfaceType:
-        Name			{
+ExtendClassOrInterfaceType
+    :   Name			{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     javaClassifyToTypeName($1.d, USAGE_EXTEND_USAGE, &$$.d, USELESS_FQT_REFS_ALLOWED);
@@ -596,16 +596,16 @@ ExtendClassOrInterfaceType:
     |	CompletionTypeName	{ /* rule never reduced */ }
     ;
 
-ClassType:
-        ClassOrInterfaceType		/*& { $$.d = $1.d; } */
+ClassType
+    :   ClassOrInterfaceType		/*& { $$.d = $1.d; } */
     ;
 
-InterfaceType:
-        ClassOrInterfaceType		/*& { $$.d = $1.d; } */
+InterfaceType
+    :   ClassOrInterfaceType		/*& { $$.d = $1.d; } */
     ;
 
-ArrayType:
-        PrimitiveType '[' ']'		{
+ArrayType
+    :   PrimitiveType '[' ']'		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.s = typeSpecifier1($1.d.u);
@@ -698,8 +698,8 @@ Catch:		CATCH				{
             };
 
 
-Name:
-        SimpleName				{
+Name
+    :   SimpleName				{
             $$.d = $1.d;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -727,16 +727,16 @@ Name:
         }
     ;
 
-SimpleName:
-        IDENTIFIER				{
+SimpleName
+    :   IDENTIFIER				{
             $$.d = StackMemAlloc(S_idList);
             fillIdList($$.d, *$1.d, $1.d->name, TypeDefault, NULL);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 
-QualifiedName:
-        Name '.' IDENTIFIER		{
+QualifiedName
+    :   Name '.' IDENTIFIER		{
             $$.d = StackMemAlloc(S_idList);
             fillIdList($$.d, *$3.d, $3.d->name, TypeDefault, $1.d);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
@@ -745,40 +745,40 @@ QualifiedName:
 
 /* following rules are never reduced, they keep completion information */
 
-CompletionTypeName:
-        COMPL_TYPE_NAME0
+CompletionTypeName
+    :   COMPL_TYPE_NAME0
     |	Name '.' COMPL_TYPE_NAME1
     ;
 
-CompletionFQTypeName:
-        COMPL_PACKAGE_NAME0
+CompletionFQTypeName
+    :   COMPL_PACKAGE_NAME0
     |	Name '.' COMPL_TYPE_NAME1
     ;
 
-CompletionPackageName:
-        COMPL_PACKAGE_NAME0
+CompletionPackageName
+    :   COMPL_PACKAGE_NAME0
     |	Name '.' COMPL_PACKAGE_NAME1
     ;
 
-CompletionExpressionName:
-        COMPL_EXPRESSION_NAME0
+CompletionExpressionName
+    :   COMPL_EXPRESSION_NAME0
     |	Name '.' COMPL_EXPRESSION_NAME1
     ;
 
-CompletionConstructorName:
-        COMPL_CONSTRUCTOR_NAME0
+CompletionConstructorName
+    :   COMPL_CONSTRUCTOR_NAME0
     |	Name '.' COMPL_CONSTRUCTOR_NAME1
     ;
 
 /*
-CompletionMethodName:
-        COMPL_METHOD_NAME0
+CompletionMethodName
+    :   COMPL_METHOD_NAME0
     |	Name '.' COMPL_METHOD_NAME1
     ;
 */
 
-LabelDefininigIdentifier:
-        IDENTIFIER          {
+LabelDefininigIdentifier
+    :   IDENTIFIER          {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     labelReference($1.d,UsageDefined);
@@ -790,8 +790,8 @@ LabelDefininigIdentifier:
     |	COMPL_LABEL_NAME		{ assert(0); /* token never used */ }
     ;
 
-LabelUseIdentifier:
-        IDENTIFIER          {
+LabelUseIdentifier
+    :   IDENTIFIER          {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     labelReference($1.d,UsageUsed);
@@ -955,8 +955,8 @@ ImportDeclarations_opt:						{
     |	ImportDeclarations					/* $$ = $1; */
     ;
 
-ImportDeclarations:
-        SingleTypeImportDeclaration			{
+ImportDeclarations
+    :   SingleTypeImportDeclaration			{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             if (inSecondJslPass()) {
                 JslImportSingleDeclaration($1.d);
@@ -983,21 +983,21 @@ ImportDeclarations:
     ;
 
 /* this is original from JSL
-ImportDeclarations:
-        ImportDeclaration
+ImportDeclarations
+    :   ImportDeclaration
     |	ImportDeclarations ImportDeclaration		{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
-ImportDeclaration:
-        SingleTypeImportDeclaration
+ImportDeclaration
+    :   SingleTypeImportDeclaration
     |	TypeImportOnDemandDeclaration
     ;
 */
 
-SingleTypeImportDeclaration:
-        Import Name ';'						{
+SingleTypeImportDeclaration
+    :   Import Name ';'						{
             $$.d = $2.d;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -1020,8 +1020,8 @@ SingleTypeImportDeclaration:
     |	Import COMPL_IMPORT_SPECIAL ';'		{ /* rule never used */ }
     ;
 
-TypeImportOnDemandDeclaration:
-        Import Name '.' '*' ';'				{
+TypeImportOnDemandDeclaration
+    :   Import Name '.' '*' ';'				{
             $$.d = $2.d;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -1051,8 +1051,8 @@ TypeDeclarations_opt:							{
         }
     ;
 
-TypeDeclarations:
-        _bef_ TypeDeclaration					{
+TypeDeclarations
+    :   _bef_ TypeDeclaration					{
             PropagateBoundariesIfRegularSyntaxPass($$, $2, $2);
         }
     |	TypeDeclarations _bef_ TypeDeclaration					{
@@ -1085,8 +1085,8 @@ PackageDeclaration_opt:							{
     |	PACKAGE COMPL_THIS_PACKAGE_SPECIAL ';'		{ /* rule never used */ }
     ;
 
-TypeDeclaration:
-        ClassDeclaration		{
+TypeDeclaration
+    :   ClassDeclaration		{
             if (regularPass()) {
                 javaSetClassSourceInformation(s_javaThisPackageName, $1.d);
                 PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
@@ -1114,16 +1114,16 @@ Modifiers_opt:					{
         }
     ;
 
-Modifiers:
-        Modifier				/*& { $$ = $1; } */
+Modifiers
+    :   Modifier				/*& { $$ = $1; } */
     |	Modifiers Modifier		{
             $$.d = $1.d | $2.d;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
-Modifier:
-        PUBLIC			{ $$.d = ACCESS_PUBLIC; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+Modifier
+    :   PUBLIC			{ $$.d = ACCESS_PUBLIC; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
     |	PROTECTED		{ $$.d = ACCESS_PROTECTED; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
     |	PRIVATE			{ $$.d = ACCESS_PRIVATE; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
     |	STATIC			{ $$.d = ACCESS_STATIC; PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
@@ -1138,15 +1138,15 @@ Modifier:
 
 /* *************************** Classes *************************** */
 
-InCachingRecovery:
-        CACHING1_TOKEN ClassBody
+InCachingRecovery
+    :   CACHING1_TOKEN ClassBody
     ;
 
 /* **************** Class Declaration ****************** */
 
 /* !!!!!!!! here is a problem if there are two in the same unit !!!!
-TopLevelClassDeclaration:
-        Modifiers_opt CLASS Identifier
+TopLevelClassDeclaration
+    :   Modifiers_opt CLASS Identifier
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -1163,8 +1163,8 @@ TopLevelClassDeclaration:
     ;
 */
 
-ClassDeclaration:
-        Modifiers_opt CLASS Identifier {
+ClassDeclaration
+    :   Modifiers_opt CLASS Identifier {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         $<trail>$ = newClassDefinitionBegin($3.d, $1.d, NULL);
@@ -1229,8 +1229,8 @@ ClassDeclaration:
     ;
 
 
-FunctionInnerClassDeclaration:
-        Modifiers_opt CLASS Identifier {
+FunctionInnerClassDeclaration
+    :   Modifiers_opt CLASS Identifier {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
                         $<trail>$ = newClassDefinitionBegin($3.d, $1.d, NULL);
@@ -1290,8 +1290,8 @@ FunctionInnerClassDeclaration:
 
 
 
-Super_opt:
-        {
+Super_opt
+    :   {
             if (inSecondJslPass()) {
                 if (strcmp(s_jsl->classStat->thisClass->linkName,
                             s_javaLangObjectLinkName)!=0) {
@@ -1329,8 +1329,8 @@ Interfaces_opt:								{
         }
     ;
 
-InterfaceTypeList:
-        InterfaceType							{
+InterfaceTypeList
+    :   InterfaceType							{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert($1.d && $1.d->bits.symType == TypeDefault && $1.d->u.type);
@@ -1412,8 +1412,8 @@ _bef_:	{
         }
     ;
 
-ClassBody:
-        _bef_ '{' '}'								{
+ClassBody
+    :   _bef_ '{' '}'								{
             PropagateBoundariesIfRegularSyntaxPass($$, $2, $3);
         }
     |	_bef_ '{' ClassBodyDeclarations _bef_ '}'   {
@@ -1421,8 +1421,8 @@ ClassBody:
         }
     ;
 
-ClassBodyDeclarations:
-        ClassBodyDeclaration                                    {
+ClassBodyDeclarations
+    :   ClassBodyDeclaration                                    {
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	ClassBodyDeclarations _bef_ ClassBodyDeclaration		{
@@ -1430,16 +1430,16 @@ ClassBodyDeclarations:
         }
     ;
 
-ClassBodyDeclaration:
-        ClassMemberDeclaration
+ClassBodyDeclaration
+    :   ClassMemberDeclaration
     |	ClassInitializer
     |	ConstructorDeclaration
     |	';'
     |	error							{SetNullBoundaries($$);}
     ;
 
-ClassMemberDeclaration:
-        ClassDeclaration				{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+ClassMemberDeclaration
+    :   ClassDeclaration				{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
     |	InterfaceDeclaration			{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
     |	FieldDeclaration				{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
     |	MethodDeclaration				{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
@@ -1447,8 +1447,8 @@ ClassMemberDeclaration:
 
 /* ****************** Field Declarations ****************** */
 
-AssignementType:
-        Type					{
+AssignmentType
+    :   JAvaType					{
             $$.d = $1.d;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -1460,8 +1460,8 @@ AssignementType:
     }
     ;
 
-FieldDeclaration:
-        Modifiers_opt AssignementType VariableDeclarators ';'		{
+FieldDeclaration
+    :   Modifiers_opt AssignmentType VariableDeclarators ';'		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     Symbol *p,*pp,*memb,*clas;
@@ -1546,8 +1546,8 @@ FieldDeclaration:
         }
     ;
 
-VariableDeclarators:
-        VariableDeclarator								{
+VariableDeclarators
+    :   VariableDeclarator								{
             $$.d = $1.d;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -1585,8 +1585,8 @@ VariableDeclarators:
         }
     ;
 
-VariableDeclarator:
-        VariableDeclaratorId							/*	{ $$ = $1; } */
+VariableDeclarator
+    :   VariableDeclaratorId							/*	{ $$ = $1; } */
     |	VariableDeclaratorId '=' VariableInitializer	{
             $$.d = $1.d;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
@@ -1606,8 +1606,8 @@ VariableDeclarator:
         }
     ;
 
-VariableDeclaratorId:
-        Identifier							{
+VariableDeclaratorId
+    :   Identifier							{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d = newSymbol($1.d->name, $1.d->name, $1.d->p);
@@ -1642,15 +1642,15 @@ VariableDeclaratorId:
     |	COMPL_VARIABLE_NAME_HINT {/* rule never used */}
     ;
 
-VariableInitializer:
-        Expression
+VariableInitializer
+    :   Expression
     |	ArrayInitializer
     ;
 
 /* **************** Method Declarations **************** */
 
-MethodDeclaration:
-        MethodHeader Start_block
+MethodDeclaration
+    :   MethodHeader Start_block
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -1674,8 +1674,8 @@ MethodDeclaration:
             }
     ;
 
-MethodHeader:
-        Modifiers_opt AssignementType MethodDeclarator Throws_opt	{
+MethodHeader
+    :   Modifiers_opt AssignmentType MethodDeclarator Throws_opt	{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     s_cps.lastAssignementStruct = NULL;
@@ -1715,8 +1715,8 @@ MethodHeader:
     |	COMPL_FULL_INHERITED_HEADER		{assert(0);}
     ;
 
-MethodDeclarator:
-        Identifier
+MethodDeclarator
+    :   Identifier
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -1770,8 +1770,8 @@ FormalParameterList_opt:					{
     |	FormalParameterList					/*& {$$ = $1;} */
     ;
 
-FormalParameterList:
-        FormalParameter								{
+FormalParameterList
+    :   FormalParameter								{
             if (! SyntaxPassOnly()) {
                 $$.d.s = $1.d;
             } else {
@@ -1797,8 +1797,8 @@ FormalParameterList:
         }
     ;
 
-FormalParameter:
-        Type VariableDeclaratorId			{
+FormalParameter
+    :   JavaType VariableDeclaratorId			{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d = $2.d;
@@ -1812,7 +1812,7 @@ FormalParameter:
                 completeDeclarator($1.d, $2.d);
             }
         }
-    |	FINAL Type VariableDeclaratorId		{
+    |	FINAL JAvaType VariableDeclaratorId		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d = $3.d;
@@ -1851,8 +1851,8 @@ Throws_opt:								{
         }
     ;
 
-ClassTypeList:
-        ClassType						{
+ClassTypeList
+    :   ClassType						{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
             if (inSecondJslPass()) {
                 assert($1.d && $1.d->bits.symType == TypeDefault && $1.d->u.type);
@@ -1874,8 +1874,8 @@ ClassTypeList:
         }
     ;
 
-MethodBody:
-        Block				/*& { $$ = $1; } */
+MethodBody
+    :   Block				/*& { $$ = $1; } */
     |	';'					{
             $$.d = $1.d;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
@@ -1884,8 +1884,8 @@ MethodBody:
 
 /* ************** Static Initializers ************** */
 
-ClassInitializer:
-        STATIC Block		{
+ClassInitializer
+    :   STATIC Block		{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     |	Block				{
@@ -1893,8 +1893,8 @@ ClassInitializer:
         }
     ;
 
-ConstructorDeclaration:
-        Modifiers_opt ConstructorDeclarator Throws_opt
+ConstructorDeclaration
+    :   Modifiers_opt ConstructorDeclarator Throws_opt
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -1943,8 +1943,8 @@ ConstructorDeclaration:
         }
     ;
 
-ConstructorDeclarator:
-        Identifier
+ConstructorDeclarator
+    :   Identifier
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -1991,8 +1991,8 @@ ConstructorDeclarator:
             }
     ;
 
-ConstructorBody:
-        '{' Start_block ExplicitConstructorInvocation BlockStatements Stop_block '}'	{
+ConstructorBody
+    :   '{' Start_block ExplicitConstructorInvocation BlockStatements Stop_block '}'	{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $6);
         }
     |	'{' Start_block ExplicitConstructorInvocation Stop_block '}'					{
@@ -2007,8 +2007,8 @@ ConstructorBody:
     ;
 
 /* TO FINISH the constructors signatures */
-ExplicitConstructorInvocation:
-        This _erfs_
+ExplicitConstructorInvocation
+    :   This _erfs_
             {
                 if (ComputingPossibleParameterCompletion()) {
                     s_cp.erfsForParamsComplet = javaCrErfsForConstructorInvocation(s_javaStat->thisClass, &$1.d->p);
@@ -2071,8 +2071,8 @@ ExplicitConstructorInvocation:
 /* ******************************* Interfaces ******************** */
 /* ************************ Interface Declarations *************** */
 
-InterfaceDeclaration:
-        Modifiers_opt INTERFACE Identifier          {
+InterfaceDeclaration
+    :   Modifiers_opt INTERFACE Identifier          {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $<trail>$=newClassDefinitionBegin($3.d,($1.d|ACCESS_INTERFACE),NULL);
@@ -2145,8 +2145,8 @@ ExtendsInterfaces_opt:					{
     |	ExtendsInterfaces
     ;
 
-ExtendsInterfaces:
-        EXTENDS ExtendClassOrInterfaceType		{
+ExtendsInterfaces
+    :   EXTENDS ExtendClassOrInterfaceType		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert($2.d && $2.d->bits.symType == TypeDefault && $2.d->u.type);
@@ -2182,8 +2182,8 @@ ExtendsInterfaces:
         }
     ;
 
-InterfaceBody:
-        _bef_ '{' '}'											{
+InterfaceBody
+    :   _bef_ '{' '}'											{
             PropagateBoundariesIfRegularSyntaxPass($$, $2, $3);
         }
     |	_bef_ '{' InterfaceMemberDeclarations _bef_ '}'			{
@@ -2191,15 +2191,15 @@ InterfaceBody:
         }
     ;
 
-InterfaceMemberDeclarations:
-        InterfaceMemberDeclaration
+InterfaceMemberDeclarations
+    :   InterfaceMemberDeclaration
     |	InterfaceMemberDeclarations _bef_ InterfaceMemberDeclaration	{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     ;
 
-InterfaceMemberDeclaration:
-        ClassDeclaration				{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+InterfaceMemberDeclaration
+    :   ClassDeclaration				{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
     |	InterfaceDeclaration			{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
     |	ConstantDeclaration				{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
     |	AbstractMethodDeclaration		{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
@@ -2207,12 +2207,12 @@ InterfaceMemberDeclaration:
     |	error							{SetNullBoundaries($$);}
     ;
 
-ConstantDeclaration:
-        FieldDeclaration				/*& {$$=$1;} */
+ConstantDeclaration
+    :   FieldDeclaration				/*& {$$=$1;} */
     ;
 
-AbstractMethodDeclaration:
-        MethodHeader Start_block
+AbstractMethodDeclaration
+    :   MethodHeader Start_block
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -2234,15 +2234,15 @@ AbstractMethodDeclaration:
 
 /* ***************************** Arrays *************************** */
 
-ArrayInitializer:
-        '{' VariableInitializers ',' '}'		{PropagateBoundariesIfRegularSyntaxPass($$, $1, $4);}
+ArrayInitializer
+    :   '{' VariableInitializers ',' '}'		{PropagateBoundariesIfRegularSyntaxPass($$, $1, $4);}
     |	'{' VariableInitializers     '}'		{PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);}
     |	'{' ',' '}'								{PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);}
     |	'{' '}'									{PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);}
     ;
 
-VariableInitializers:
-        VariableInitializer							{
+VariableInitializers
+    :   VariableInitializer							{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	VariableInitializers ',' VariableInitializer		{
@@ -2252,8 +2252,8 @@ VariableInitializers:
 
 /* *********************** Blocks and Statements ***************** */
 
-Block:
-        '{' Start_block BlockStatements Stop_block '}'		{
+Block
+    :   '{' Start_block BlockStatements Stop_block '}'		{
             $$.d = $5.d;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $5);
         }
@@ -2263,28 +2263,28 @@ Block:
         }
     ;
 
-BlockStatements:
-        BlockStatement						/*& {$$ = $1;} */
+BlockStatements
+    :   BlockStatement						/*& {$$ = $1;} */
     |	BlockStatements BlockStatement		{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
-BlockStatement:
-        LocalVariableDeclarationStatement		/*& {$$ = $1;} */
+BlockStatement
+    :   LocalVariableDeclarationStatement		/*& {$$ = $1;} */
     |	FunctionInnerClassDeclaration			/*& {$$ = $1;} */
     |	Statement								/*& {$$ = $1;} */
     |	error									{SetNullBoundaries($$);}
     ;
 
-LocalVariableDeclarationStatement:
-        LocalVariableDeclaration ';'			{
+LocalVariableDeclarationStatement
+    :   LocalVariableDeclaration ';'			{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
-LocalVarDeclUntilInit:
-        Type VariableDeclaratorId							{
+LocalVarDeclUntilInit
+    :   JavaType VariableDeclaratorId							{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     addNewDeclaration($1.d,$2.d,NULL,StorageAuto,s_javaStat->locals);
@@ -2294,7 +2294,7 @@ LocalVarDeclUntilInit:
                 }
             }
         }
-    |	FINAL Type VariableDeclaratorId						{
+    |	FINAL JavaType VariableDeclaratorId						{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     addNewDeclaration($2.d,$3.d,NULL,StorageAuto,s_javaStat->locals);
@@ -2318,8 +2318,8 @@ LocalVarDeclUntilInit:
         }
     ;
 
-LocalVariableDeclaration:
-        LocalVarDeclUntilInit								{
+LocalVariableDeclaration
+    :   LocalVarDeclUntilInit								{
             if (regularPass()) $$.d = $1.d;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
@@ -2347,8 +2347,8 @@ LocalVariableDeclaration:
     */
     ;
 
-Statement:
-        StatementWithoutTrailingSubstatement
+Statement
+    :   StatementWithoutTrailingSubstatement
     |	LabeledStatement
     |	IfThenStatement
     |	IfThenElseStatement
@@ -2356,16 +2356,16 @@ Statement:
     |	ForStatement
     ;
 
-StatementNoShortIf:
-        StatementWithoutTrailingSubstatement
+StatementNoShortIf
+    :   StatementWithoutTrailingSubstatement
     |	LabeledStatementNoShortIf
     |	IfThenElseStatementNoShortIf
     |	WhileStatementNoShortIf
     |	ForStatementNoShortIf
     ;
 
-StatementWithoutTrailingSubstatement:
-        Block
+StatementWithoutTrailingSubstatement
+    :   Block
     |	EmptyStatement
     |	ExpressionStatement
     |	SwitchStatement
@@ -2379,8 +2379,8 @@ StatementWithoutTrailingSubstatement:
     |	AssertStatement
     ;
 
-AssertStatement:
-        ASSERT Expression ';'						{
+AssertStatement
+    :   ASSERT Expression ';'						{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     |	ASSERT Expression ':' Expression ';'		{
@@ -2388,32 +2388,32 @@ AssertStatement:
         }
     ;
 
-EmptyStatement:
-        ';'										{
+EmptyStatement
+    :   ';'										{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
 
-LabeledStatement:
-        LabelDefininigIdentifier ':' Statement		{
+LabeledStatement
+    :   LabelDefininigIdentifier ':' Statement		{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     ;
 
-LabeledStatementNoShortIf:
-        LabelDefininigIdentifier ':' StatementNoShortIf         {
+LabeledStatementNoShortIf
+    :   LabelDefininigIdentifier ':' StatementNoShortIf         {
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     ;
 
-ExpressionStatement:
-        StatementExpression ';'		{
+ExpressionStatement
+    :   StatementExpression ';'		{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
-StatementExpression:
-        Assignment						{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
+StatementExpression
+    :   Assignment						{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
     |	PreIncrementExpression			{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
     |	PreDecrementExpression			{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
     |	PostIncrementExpression			{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
@@ -2435,8 +2435,8 @@ _nfork_:	{if (regularPass()) EXTRACT_FORK_SEMACT($$.d);}
     ;
 
 
-IfThenStatement:
-        IF '(' Expression ')' _nfork_ Statement                     {
+IfThenStatement
+    :   IF '(' Expression ')' _nfork_ Statement                     {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     genInternalLabelReference($5.d, UsageDefined);
@@ -2447,8 +2447,8 @@ IfThenStatement:
         }
     ;
 
-IfThenElseStatementPrefix:
-        IF '(' Expression ')' _nfork_ StatementNoShortIf ELSE _ngoto_ {
+IfThenElseStatementPrefix
+    :   IF '(' Expression ')' _nfork_ StatementNoShortIf ELSE _ngoto_ {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     genInternalLabelReference($5.d, UsageDefined);
@@ -2460,8 +2460,8 @@ IfThenElseStatementPrefix:
         }
     ;
 
-IfThenElseStatement:
-        IfThenElseStatementPrefix Statement {
+IfThenElseStatement
+    :   IfThenElseStatementPrefix Statement {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     genInternalLabelReference($1.d, UsageDefined);
@@ -2472,8 +2472,8 @@ IfThenElseStatement:
         }
     ;
 
-IfThenElseStatementNoShortIf:
-        IfThenElseStatementPrefix StatementNoShortIf {
+IfThenElseStatementNoShortIf
+    :   IfThenElseStatementPrefix StatementNoShortIf {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     genInternalLabelReference($1.d, UsageDefined);
@@ -2484,8 +2484,8 @@ IfThenElseStatementNoShortIf:
         }
     ;
 
-SwitchStatement:
-        SWITCH '(' Expression ')' /*5*/ _ncounter_  {/*6*/
+SwitchStatement
+    :   SWITCH '(' Expression ')' /*5*/ _ncounter_  {/*6*/
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $<symbol>$ = addContinueBreakLabelSymbol(1000*$5.d,SWITCH_LABEL_NAME);
@@ -2512,8 +2512,8 @@ SwitchStatement:
         }
     ;
 
-SwitchBlock:
-        '{' Start_block SwitchBlockStatementGroups SwitchLabels Stop_block '}'	{
+SwitchBlock
+    :   '{' Start_block SwitchBlockStatementGroups SwitchLabels Stop_block '}'	{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $6);
         }
     |	'{' Start_block SwitchBlockStatementGroups Stop_block '}'				{
@@ -2527,15 +2527,15 @@ SwitchBlock:
         }
     ;
 
-SwitchBlockStatementGroups:
-        SwitchBlockStatementGroup								/*& {$$=$1;} */
+SwitchBlockStatementGroups
+    :   SwitchBlockStatementGroup								/*& {$$=$1;} */
     |	SwitchBlockStatementGroups SwitchBlockStatementGroup	{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
-SwitchBlockStatementGroup:
-        SwitchLabels                            {
+SwitchBlockStatementGroup
+    :   SwitchLabels                            {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     genSwitchCaseFork(0);
@@ -2546,8 +2546,8 @@ SwitchBlockStatementGroup:
         }
     ;
 
-SwitchLabels:
-        SwitchLabel								/*& {$$=$1;} */
+SwitchLabels
+    :   SwitchLabel								/*& {$$=$1;} */
     |	SwitchLabels SwitchLabel				{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
@@ -2556,8 +2556,8 @@ SwitchLabels:
         }
     ;
 
-SwitchLabel:
-        CASE ConstantExpression ':'				{
+SwitchLabel
+    :   CASE ConstantExpression ':'				{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     |	DEFAULT ':'								{
@@ -2565,8 +2565,8 @@ SwitchLabel:
         }
     ;
 
-WhileStatementPrefix:
-        WHILE _nlabel_ '(' Expression ')' /*6*/ _nfork_ {
+WhileStatementPrefix
+    :   WHILE _nlabel_ '(' Expression ')' /*6*/ _nfork_ {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (s_opt.server_operation == OLO_EXTRACT) {
@@ -2585,8 +2585,8 @@ WhileStatementPrefix:
         }
     ;
 
-WhileStatement:
-        WhileStatementPrefix Statement					{
+WhileStatement
+    :   WhileStatementPrefix Statement					{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if ($1.d != NULL) {
@@ -2602,8 +2602,8 @@ WhileStatement:
         }
     ;
 
-WhileStatementNoShortIf:
-        WhileStatementPrefix StatementNoShortIf			{
+WhileStatementNoShortIf
+    :   WhileStatementPrefix StatementNoShortIf			{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if ($1.d != NULL) {
@@ -2619,8 +2619,8 @@ WhileStatementNoShortIf:
         }
     ;
 
-DoStatement:
-        DO _nlabel_ _ncounter_ _ncounter_ { /*5*/
+DoStatement
+    :   DO _nlabel_ _ncounter_ _ncounter_ { /*5*/
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $<symbol>$ = addContinueBreakLabelSymbol($3.d, CONTINUE_LABEL_NAME);
@@ -2660,8 +2660,8 @@ MaybeExpression:							{
         }
         ;
 
-ForKeyword:
-        FOR			{
+ForKeyword
+    :   FOR			{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockStart();
@@ -2672,8 +2672,8 @@ ForKeyword:
         }
     ;
 
-ForStatementPrefix:
-        '(' ForInit_opt ';' /*4*/ _nlabel_
+ForStatementPrefix
+    :   '(' ForInit_opt ';' /*4*/ _nlabel_
         MaybeExpression ';' /*7*/_ngoto_
         /*8*/ _nlabel_  ForUpdate_opt ')' /*11*/ _nfork_    {
             if (regularPass()) {
@@ -2692,8 +2692,8 @@ ForStatementPrefix:
         }
     ;
 
-ForStatementBody:
-        ForStatementPrefix  Statement		{
+ForStatementBody
+    :   ForStatementPrefix  Statement		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     deleteContinueBreakLabelSymbol(BREAK_LABEL_NAME);
@@ -2707,8 +2707,8 @@ ForStatementBody:
         }
     ;
 
-ForStatementNoShortIfBody:
-        ForStatementPrefix  StatementNoShortIf		{
+ForStatementNoShortIfBody
+    :   ForStatementPrefix  StatementNoShortIf		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     deleteContinueBreakLabelSymbol(BREAK_LABEL_NAME);
@@ -2722,8 +2722,8 @@ ForStatementNoShortIfBody:
         }
     ;
 
-ForStatement:
-        ForKeyword ForStatementBody {
+ForStatement
+    :   ForKeyword ForStatementBody {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockFree();
@@ -2743,8 +2743,8 @@ ForStatement:
         }
     ;
 
-ForStatementNoShortIf:
-        ForKeyword ForStatementNoShortIfBody {
+ForStatementNoShortIf
+    :   ForKeyword ForStatementNoShortIfBody {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockFree();
@@ -2784,8 +2784,8 @@ ForUpdate_opt:							{
         }
     ;
 
-StatementExpressionList:
-        StatementExpression									{
+StatementExpressionList
+    :   StatementExpression									{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     |	StatementExpressionList ',' StatementExpression		{
@@ -2793,8 +2793,8 @@ StatementExpressionList:
         }
     ;
 
-BreakStatement:
-        BREAK LabelUseIdentifier ';'		{
+BreakStatement
+    :   BREAK LabelUseIdentifier ';'		{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     |	BREAK ';'						{
@@ -2808,8 +2808,8 @@ BreakStatement:
         }
     ;
 
-ContinueStatement:
-        CONTINUE LabelUseIdentifier ';'		{
+ContinueStatement
+    :   CONTINUE LabelUseIdentifier ';'		{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     |	CONTINUE ';'					{
@@ -2823,8 +2823,8 @@ ContinueStatement:
         }
     ;
 
-ReturnStatement:
-        RETURN Expression ';'			{
+ReturnStatement
+    :   RETURN Expression ';'			{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     genInternalLabelReference(-1, UsageUsed);
@@ -2844,8 +2844,8 @@ ReturnStatement:
         }
     ;
 
-ThrowStatement:
-        Throw Expression ';'		{
+ThrowStatement
+    :   Throw Expression ';'		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (s_opt.server_operation==OLO_EXTRACT) {
@@ -2858,22 +2858,22 @@ ThrowStatement:
         }
     ;
 
-SynchronizedStatement:
-        SYNCHRONIZED '(' Expression ')' Block				{
+SynchronizedStatement
+    :   SYNCHRONIZED '(' Expression ')' Block				{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $5);
         }
     ;
 
-TryCatches:
-        Catches				/* $$ = $1; */
+TryCatches
+    :   Catches				/* $$ = $1; */
     |	Finally				/* $$ = $1; */
     |	Catches Finally		{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
-TryStatement:
-        Try  _nfork_
+TryStatement
+    :   Try  _nfork_
             {
                 if (s_opt.server_operation == OLO_EXTRACT) {
                     addTrivialCxReference("TryCatch", TypeTryCatchMarker,StorageDefault,
@@ -2898,15 +2898,15 @@ TryStatement:
 
     ;
 
-Catches:
-        CatchClause						/* $$ = $1; */
+Catches
+    :   CatchClause						/* $$ = $1; */
     |	Catches CatchClause		{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
-CatchClause:
-        Catch '(' FormalParameter ')' _nfork_ Start_block
+CatchClause
+    :   Catch '(' FormalParameter ')' _nfork_ Start_block
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -2945,8 +2945,8 @@ CatchClause:
         }
     ;
 
-Finally:
-        FINALLY _nfork_ Block {
+Finally
+    :   FINALLY _nfork_ Block {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     genInternalLabelReference($2.d, UsageDefined);
@@ -2959,8 +2959,8 @@ Finally:
 
 /* *********************** expressions ************************** */
 
-Primary:
-        PrimaryNoNewArray					{
+Primary
+    :   PrimaryNoNewArray					{
             if (regularPass()) {
                 $$.d = $1.d;
                 if (! SyntaxPassOnly()) {
@@ -3087,8 +3087,8 @@ _erfs_:		{
         }
     ;
 
-NestedConstructorInvocation:
-        Primary '.' New Name _erfs_
+NestedConstructorInvocation
+    :   Primary '.' New Name _erfs_
             {
                 if (ComputingPossibleParameterCompletion()) {
                     TypeModifier *mm;
@@ -3151,8 +3151,8 @@ NestedConstructorInvocation:
         }
     ;
 
-NewName:
-        Name	{
+NewName
+    :   Name	{
             if (ComputingPossibleParameterCompletion()) {
                 Symbol            *ss;
                 Symbol			*str;
@@ -3168,8 +3168,8 @@ NewName:
         }
     ;
 
-ClassInstanceCreationExpression:
-        New _erfs_ NewName '(' ArgumentList_opt ')'							{
+ClassInstanceCreationExpression
+    :   New _erfs_ NewName '(' ArgumentList_opt ')'							{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     Symbol *ss, *tt, *ei;
@@ -3326,8 +3326,8 @@ ArgumentList_opt:				{
     | ArgumentList				/*& { $$.d = $1.d; } */
     ;
 
-ArgumentList:
-        Expression									{
+ArgumentList
+    :   Expression									{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.t = newTypeModifierList($1.d.typeModifier);
@@ -3360,8 +3360,8 @@ ArgumentList:
     ;
 
 
-ArrayCreationExpression:
-        New _erfs_ PrimitiveType DimExprs Dims_opt			{
+ArrayCreationExpression
+    :   New _erfs_ PrimitiveType DimExprs Dims_opt			{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     int i;
@@ -3424,8 +3424,8 @@ ArrayCreationExpression:
     ;
 
 
-DimExprs:
-        DimExpr						{
+DimExprs
+    :   DimExpr						{
             if (regularPass()) $$.d = 1;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
@@ -3435,21 +3435,22 @@ DimExprs:
         }
     ;
 
-DimExpr:
-        '[' Expression ']'			{
+DimExpr
+    :   '[' Expression ']'			{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }
     ;
 
-Dims_opt:							{
-            if (regularPass()) $$.d = 0;
+Dims_opt
+    :							{
+        if (regularPass()) $$.d = 0;
             SetNullBoundaries($$);
         }
     |	Dims						/*& { $$ = $1; } */
     ;
 
-Dims:
-        '[' ']'						{
+Dims
+    :   '[' ']'						{
             if (regularPass()) $$.d = 1;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
@@ -3459,8 +3460,8 @@ Dims:
         }
     ;
 
-FieldAccess:
-        Primary '.' Identifier					{
+FieldAccess
+    :   Primary '.' Identifier					{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     Symbol *rec=NULL;
@@ -3544,8 +3545,8 @@ FieldAccess:
     |	Name '.' Super '.' COMPL_QUALIF_SUPER	{ assert(0); }
     ;
 
-MethodInvocation:
-        Name _erfs_ {
+MethodInvocation
+    :   Name _erfs_ {
             if (ComputingPossibleParameterCompletion()) {
                 s_cp.erfsForParamsComplet = javaCrErfsForMethodInvocationN($1.d);
             }
@@ -3609,8 +3610,8 @@ MethodInvocation:
 */
     ;
 
-ArrayAccess:
-        Name '[' Expression ']'							{
+ArrayAccess
+    :   Name '[' Expression ']'							{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     TypeModifier *tt;
@@ -3641,8 +3642,8 @@ ArrayAccess:
     |	CompletionExpressionName '['				{ /* rule never used */ }
     ;
 
-PostfixExpression:
-        Primary
+PostfixExpression
+    :   Primary
     |	Name											{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -3660,8 +3661,8 @@ PostfixExpression:
     |	CompletionExpressionName                    { /* rule never used */ }
     ;
 
-PostIncrementExpression:
-        PostfixExpression INC_OP		{
+PostIncrementExpression
+    :   PostfixExpression INC_OP		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaCheckNumeric($1.d.typeModifier);
@@ -3674,8 +3675,8 @@ PostIncrementExpression:
         }
     ;
 
-PostDecrementExpression:
-        PostfixExpression DEC_OP		{
+PostDecrementExpression
+    :   PostfixExpression DEC_OP		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaCheckNumeric($1.d.typeModifier);
@@ -3688,8 +3689,8 @@ PostDecrementExpression:
         }
     ;
 
-UnaryExpression:
-        PreIncrementExpression
+UnaryExpression
+    :   PreIncrementExpression
     |	PreDecrementExpression
     |	'+' UnaryExpression		{
             if (regularPass()) {
@@ -3716,8 +3717,8 @@ UnaryExpression:
     |	UnaryExpressionNotPlusMinus
     ;
 
-PreIncrementExpression:
-        INC_OP UnaryExpression		{
+PreIncrementExpression
+    :   INC_OP UnaryExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaCheckNumeric($2.d.typeModifier);
@@ -3730,8 +3731,8 @@ PreIncrementExpression:
         }
     ;
 
-PreDecrementExpression:
-        DEC_OP UnaryExpression		{
+PreDecrementExpression
+    :   DEC_OP UnaryExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d.typeModifier = javaCheckNumeric($2.d.typeModifier);
@@ -3744,8 +3745,8 @@ PreDecrementExpression:
         }
     ;
 
-UnaryExpressionNotPlusMinus:
-        PostfixExpression
+UnaryExpressionNotPlusMinus
+    :   PostfixExpression
     |	'~' UnaryExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -3772,8 +3773,8 @@ UnaryExpressionNotPlusMinus:
     |	CastExpression
     ;
 
-CastExpression:
-        '(' ArrayType ')' UnaryExpression					{
+CastExpression
+    :   '(' ArrayType ')' UnaryExpression					{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     assert($2.d.s && $2.d.s->u.type);
@@ -3848,8 +3849,8 @@ CastExpression:
 */
     ;
 
-MultiplicativeExpression:
-        UnaryExpression
+MultiplicativeExpression
+    :   UnaryExpression
     |	MultiplicativeExpression '*' UnaryExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -3888,8 +3889,8 @@ MultiplicativeExpression:
         }
     ;
 
-AdditiveExpression:
-        MultiplicativeExpression
+AdditiveExpression
+    :   MultiplicativeExpression
     |	AdditiveExpression '+' MultiplicativeExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -3929,8 +3930,8 @@ AdditiveExpression:
         }
     ;
 
-ShiftExpression:
-        AdditiveExpression
+ShiftExpression
+    :   AdditiveExpression
     |	ShiftExpression LEFT_OP AdditiveExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -3966,8 +3967,8 @@ ShiftExpression:
         }
     ;
 
-RelationalExpression:
-        ShiftExpression
+RelationalExpression
+    :   ShiftExpression
     |	RelationalExpression '<' ShiftExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4025,8 +4026,8 @@ RelationalExpression:
         }
     ;
 
-EqualityExpression:
-        RelationalExpression
+EqualityExpression
+    :   RelationalExpression
     |	EqualityExpression EQ_OP RelationalExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4051,8 +4052,8 @@ EqualityExpression:
         }
     ;
 
-AndExpression:
-        EqualityExpression
+AndExpression
+    :   EqualityExpression
     |	AndExpression '&' EqualityExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4067,8 +4068,8 @@ AndExpression:
         }
     ;
 
-ExclusiveOrExpression:
-        AndExpression
+ExclusiveOrExpression
+    :   AndExpression
     |	ExclusiveOrExpression '^' AndExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4083,8 +4084,8 @@ ExclusiveOrExpression:
         }
     ;
 
-InclusiveOrExpression:
-        ExclusiveOrExpression
+InclusiveOrExpression
+    :   ExclusiveOrExpression
     |	InclusiveOrExpression '|' ExclusiveOrExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4099,8 +4100,8 @@ InclusiveOrExpression:
         }
     ;
 
-ConditionalAndExpression:
-        InclusiveOrExpression
+ConditionalAndExpression
+    :   InclusiveOrExpression
     |	ConditionalAndExpression AND_OP InclusiveOrExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4114,8 +4115,8 @@ ConditionalAndExpression:
         }
     ;
 
-ConditionalOrExpression:
-        ConditionalAndExpression
+ConditionalOrExpression
+    :   ConditionalAndExpression
     |	ConditionalOrExpression OR_OP ConditionalAndExpression		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4129,8 +4130,8 @@ ConditionalOrExpression:
         }
     ;
 
-ConditionalExpression:
-        ConditionalOrExpression
+ConditionalExpression
+    :   ConditionalOrExpression
     |	ConditionalOrExpression '?' Expression ':' ConditionalExpression	{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4145,13 +4146,13 @@ ConditionalExpression:
         }
     ;
 
-AssignmentExpression:
-        ConditionalExpression
+AssignmentExpression
+    :   ConditionalExpression
     |	Assignment
     ;
 
-Assignment:
-        LeftHandSide {
+Assignment
+    :   LeftHandSide {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if ($1.d.typeModifier!=NULL && $1.d.typeModifier->kind == TypeStruct) {
@@ -4203,8 +4204,8 @@ Assignment:
         }
     ;
 
-LeftHandSide:
-        Name					{
+LeftHandSide
+    :   Name					{
             if (regularPass()) {
                 $$.d.position = javaGetNameStartingPosition($1.d);
                 if (! SyntaxPassOnly()) {
@@ -4221,8 +4222,8 @@ LeftHandSide:
     |	CompletionExpressionName                    { /* rule never used */ }
     ;
 
-AssignmentOperator:
-        '='					{
+AssignmentOperator
+    :   '='					{
             if (regularPass()) $$.d.u = '=';
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
@@ -4272,8 +4273,8 @@ AssignmentOperator:
         }
     ;
 
-Expression:
-        AssignmentExpression
+Expression
+    :   AssignmentExpression
     |	error					{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -4287,8 +4288,8 @@ Expression:
         }
     ;
 
-ConstantExpression:
-        Expression
+ConstantExpression
+    :   Expression
     ;
 
 /* ****************************************************************** */
