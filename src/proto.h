@@ -839,8 +839,8 @@ typedef struct unsignedPositionPair {
 } S_unsignedPositionPair;
 
 typedef struct symbolPositionPair {
-    struct symbol	*s;
-    struct position	*p;
+    struct symbol	*symbol;
+    struct position	*position;
 } S_symbolPositionPair;
 
 typedef struct symbolPositionListPair {

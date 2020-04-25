@@ -3018,7 +3018,7 @@ break;
 case 25:
 #line 551 "java_parser.y"
 {
-            yyval.ast_symbol.d = yyvsp[0].ast_symbolPositionPair.d.s;
+            yyval.ast_symbol.d = yyvsp[0].ast_symbolPositionPair.d.symbol;
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_symbol, yyvsp[0].ast_symbolPositionPair, yyvsp[0].ast_symbolPositionPair);
         }
 break;
@@ -3073,17 +3073,17 @@ case 32:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.ast_symbolPositionPair.d.s = typeSpecifier1(yyvsp[-2].ast_unsignedPositionPair.d.u);
-                    yyval.ast_symbolPositionPair.d.s->u.type = prependComposedType(yyval.ast_symbolPositionPair.d.s->u.type, TypeArray);
+                    yyval.ast_symbolPositionPair.d.symbol = typeSpecifier1(yyvsp[-2].ast_unsignedPositionPair.d.u);
+                    yyval.ast_symbolPositionPair.d.symbol->u.type = prependComposedType(yyval.ast_symbolPositionPair.d.symbol->u.type, TypeArray);
                 } else {
                     PropagateBoundaries(yyval.ast_symbolPositionPair, yyvsp[-2].ast_unsignedPositionPair, yyvsp[0].ast_position);
                 }
-                yyval.ast_symbolPositionPair.d.p = yyvsp[-2].ast_unsignedPositionPair.d.p;
+                yyval.ast_symbolPositionPair.d.position = yyvsp[-2].ast_unsignedPositionPair.d.p;
                 s_cps.lastDeclaratorType = NULL;
             };
             if (inSecondJslPass()) {
-                yyval.ast_symbolPositionPair.d.s = jslTypeSpecifier1(yyvsp[-2].ast_unsignedPositionPair.d.u);
-                yyval.ast_symbolPositionPair.d.s->u.type = jslPrependComposedType(yyval.ast_symbolPositionPair.d.s->u.type, TypeArray);
+                yyval.ast_symbolPositionPair.d.symbol = jslTypeSpecifier1(yyvsp[-2].ast_unsignedPositionPair.d.u);
+                yyval.ast_symbolPositionPair.d.symbol->u.type = jslPrependComposedType(yyval.ast_symbolPositionPair.d.symbol->u.type, TypeArray);
             }
         }
 break;
@@ -3092,21 +3092,21 @@ case 33:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    javaClassifyToTypeName(yyvsp[-2].ast_idList.d,UsageUsed, &(yyval.ast_symbolPositionPair.d.s), USELESS_FQT_REFS_ALLOWED);
-                    yyval.ast_symbolPositionPair.d.s = javaTypeNameDefinition(yyvsp[-2].ast_idList.d);
-                    assert(yyval.ast_symbolPositionPair.d.s && yyval.ast_symbolPositionPair.d.s->u.type);
-                    s_cps.lastDeclaratorType = yyval.ast_symbolPositionPair.d.s->u.type->u.t;
-                    yyval.ast_symbolPositionPair.d.s->u.type = prependComposedType(yyval.ast_symbolPositionPair.d.s->u.type, TypeArray);
+                    javaClassifyToTypeName(yyvsp[-2].ast_idList.d,UsageUsed, &(yyval.ast_symbolPositionPair.d.symbol), USELESS_FQT_REFS_ALLOWED);
+                    yyval.ast_symbolPositionPair.d.symbol = javaTypeNameDefinition(yyvsp[-2].ast_idList.d);
+                    assert(yyval.ast_symbolPositionPair.d.symbol && yyval.ast_symbolPositionPair.d.symbol->u.type);
+                    s_cps.lastDeclaratorType = yyval.ast_symbolPositionPair.d.symbol->u.type->u.t;
+                    yyval.ast_symbolPositionPair.d.symbol->u.type = prependComposedType(yyval.ast_symbolPositionPair.d.symbol->u.type, TypeArray);
                 } else {
                     PropagateBoundaries(yyval.ast_symbolPositionPair, yyvsp[-2].ast_idList, yyvsp[0].ast_position);
                 }
-                yyval.ast_symbolPositionPair.d.p = javaGetNameStartingPosition(yyvsp[-2].ast_idList.d);
+                yyval.ast_symbolPositionPair.d.position = javaGetNameStartingPosition(yyvsp[-2].ast_idList.d);
             };
             if (inSecondJslPass()) {
                 Symbol *ss;
                 jslClassifyAmbiguousTypeName(yyvsp[-2].ast_idList.d, &ss);
-                yyval.ast_symbolPositionPair.d.s = jslTypeNameDefinition(yyvsp[-2].ast_idList.d);
-                yyval.ast_symbolPositionPair.d.s->u.type = jslPrependComposedType(yyval.ast_symbolPositionPair.d.s->u.type, TypeArray);
+                yyval.ast_symbolPositionPair.d.symbol = jslTypeNameDefinition(yyvsp[-2].ast_idList.d);
+                yyval.ast_symbolPositionPair.d.symbol->u.type = jslPrependComposedType(yyval.ast_symbolPositionPair.d.symbol->u.type, TypeArray);
             }
         }
 break;
@@ -3116,14 +3116,14 @@ case 34:
             if (regularPass()) {
                 yyval.ast_symbolPositionPair.d = yyvsp[-2].ast_symbolPositionPair.d;
                 if (! SyntaxPassOnly()) {
-                    yyval.ast_symbolPositionPair.d.s->u.type = prependComposedType(yyval.ast_symbolPositionPair.d.s->u.type, TypeArray);
+                    yyval.ast_symbolPositionPair.d.symbol->u.type = prependComposedType(yyval.ast_symbolPositionPair.d.symbol->u.type, TypeArray);
                 } else {
                     PropagateBoundaries(yyval.ast_symbolPositionPair, yyvsp[-2].ast_symbolPositionPair, yyvsp[0].ast_position);
                 }
             };
             if (inSecondJslPass()) {
                 yyval.ast_symbolPositionPair.d = yyvsp[-2].ast_symbolPositionPair.d;
-                yyval.ast_symbolPositionPair.d.s->u.type = jslPrependComposedType(yyval.ast_symbolPositionPair.d.s->u.type, TypeArray);
+                yyval.ast_symbolPositionPair.d.symbol->u.type = jslPrependComposedType(yyval.ast_symbolPositionPair.d.symbol->u.type, TypeArray);
             }
         }
 break;
@@ -5799,7 +5799,7 @@ case 351:
                     yyval.ast_expressionType.d.typeModifier = &s_javaClassModifier;
                     yyval.ast_expressionType.d.reference = NULL;
                 } else {
-                    yyval.ast_expressionType.d.position = yyvsp[-2].ast_symbolPositionPair.d.p;
+                    yyval.ast_expressionType.d.position = yyvsp[-2].ast_symbolPositionPair.d.position;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_symbolPositionPair, yyvsp[0].ast_id);
                 }
             }
@@ -6619,8 +6619,8 @@ case 425:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    assert(yyvsp[-2].ast_symbolPositionPair.d.s && yyvsp[-2].ast_symbolPositionPair.d.s->u.type);
-                    yyval.ast_expressionType.d.typeModifier = yyvsp[-2].ast_symbolPositionPair.d.s->u.type;
+                    assert(yyvsp[-2].ast_symbolPositionPair.d.symbol && yyvsp[-2].ast_symbolPositionPair.d.symbol->u.type);
+                    yyval.ast_expressionType.d.typeModifier = yyvsp[-2].ast_symbolPositionPair.d.symbol->u.type;
                     yyval.ast_expressionType.d.reference = NULL;
                     assert(yyval.ast_expressionType.d.typeModifier->kind == TypeArray);
                 } else {

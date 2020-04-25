@@ -549,7 +549,7 @@ FloatingPointType
 ReferenceType
     :   ClassOrInterfaceType		/*& { $$.d = $1.d; } */
     |	ArrayType					{
-            $$.d = $1.d.s;
+            $$.d = $1.d.symbol;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
     ;
@@ -607,51 +607,51 @@ ArrayType
     :   PrimitiveType '[' ']'		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d.s = typeSpecifier1($1.d.u);
-                    $$.d.s->u.type = prependComposedType($$.d.s->u.type, TypeArray);
+                    $$.d.symbol = typeSpecifier1($1.d.u);
+                    $$.d.symbol->u.type = prependComposedType($$.d.symbol->u.type, TypeArray);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
-                $$.d.p = $1.d.p;
+                $$.d.position = $1.d.p;
                 s_cps.lastDeclaratorType = NULL;
             };
             if (inSecondJslPass()) {
-                $$.d.s = jslTypeSpecifier1($1.d.u);
-                $$.d.s->u.type = jslPrependComposedType($$.d.s->u.type, TypeArray);
+                $$.d.symbol = jslTypeSpecifier1($1.d.u);
+                $$.d.symbol->u.type = jslPrependComposedType($$.d.symbol->u.type, TypeArray);
             }
         }
     |	Name '[' ']'				{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    javaClassifyToTypeName($1.d,UsageUsed, &($$.d.s), USELESS_FQT_REFS_ALLOWED);
-                    $$.d.s = javaTypeNameDefinition($1.d);
-                    assert($$.d.s && $$.d.s->u.type);
-                    s_cps.lastDeclaratorType = $$.d.s->u.type->u.t;
-                    $$.d.s->u.type = prependComposedType($$.d.s->u.type, TypeArray);
+                    javaClassifyToTypeName($1.d,UsageUsed, &($$.d.symbol), USELESS_FQT_REFS_ALLOWED);
+                    $$.d.symbol = javaTypeNameDefinition($1.d);
+                    assert($$.d.symbol && $$.d.symbol->u.type);
+                    s_cps.lastDeclaratorType = $$.d.symbol->u.type->u.t;
+                    $$.d.symbol->u.type = prependComposedType($$.d.symbol->u.type, TypeArray);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
-                $$.d.p = javaGetNameStartingPosition($1.d);
+                $$.d.position = javaGetNameStartingPosition($1.d);
             };
             if (inSecondJslPass()) {
                 Symbol *ss;
                 jslClassifyAmbiguousTypeName($1.d, &ss);
-                $$.d.s = jslTypeNameDefinition($1.d);
-                $$.d.s->u.type = jslPrependComposedType($$.d.s->u.type, TypeArray);
+                $$.d.symbol = jslTypeNameDefinition($1.d);
+                $$.d.symbol->u.type = jslPrependComposedType($$.d.symbol->u.type, TypeArray);
             }
         }
     |	ArrayType '[' ']'			{
             if (regularPass()) {
                 $$.d = $1.d;
                 if (! SyntaxPassOnly()) {
-                    $$.d.s->u.type = prependComposedType($$.d.s->u.type, TypeArray);
+                    $$.d.symbol->u.type = prependComposedType($$.d.symbol->u.type, TypeArray);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
             };
             if (inSecondJslPass()) {
                 $$.d = $1.d;
-                $$.d.s->u.type = jslPrependComposedType($$.d.s->u.type, TypeArray);
+                $$.d.symbol->u.type = jslPrependComposedType($$.d.symbol->u.type, TypeArray);
             }
         }
     |   CompletionTypeName '[' ']'	{ /* rule never used */ }
@@ -3041,7 +3041,7 @@ PrimaryNoNewArray
                     $$.d.typeModifier = &s_javaClassModifier;
                     $$.d.reference = NULL;
                 } else {
-                    $$.d.position = $1.d.p;
+                    $$.d.position = $1.d.position;
                     PropagateBoundaries($$, $1, $3);
                 }
             }
