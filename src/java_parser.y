@@ -281,7 +281,7 @@ static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbo
 %type <ast_unsigned> Modifier Modifiers Modifiers_opt
 %type <ast_idList> Name SimpleName QualifiedName PackageDeclaration_opt NewName
 %type <ast_idList> SingleTypeImportDeclaration TypeImportOnDemandDeclaration
-%type <ast_symbol> Type AssignmentType ReferenceType ClassOrInterfaceType
+%type <ast_symbol> JavaType AssignmentType ReferenceType ClassOrInterfaceType
 %type <ast_symbol> ExtendClassOrInterfaceType
 %type <ast_symbol> ClassType InterfaceType
 %type <ast_symbol> FormalParameter
@@ -468,9 +468,8 @@ Literal
     ;
 
 /* ************************* Types, Values, Variables ******************* */
-/* TODO: c-xref analysis somehow stops here. After this point no rules
-   or C variables are recognised. */
-Type
+
+JavaType
     :   PrimitiveType	{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -1448,7 +1447,7 @@ ClassMemberDeclaration
 /* ****************** Field Declarations ****************** */
 
 AssignmentType
-    :   JAvaType					{
+    :   JavaType					{
             $$.d = $1.d;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -1798,7 +1797,7 @@ FormalParameterList
     ;
 
 FormalParameter
-    :   Type VariableDeclaratorId			{
+    :   JavaType VariableDeclaratorId			{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d = $2.d;
@@ -1812,7 +1811,7 @@ FormalParameter
                 completeDeclarator($1.d, $2.d);
             }
         }
-    |	FINAL JAvaType VariableDeclaratorId		{
+    |	FINAL JavaType VariableDeclaratorId		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $$.d = $3.d;
@@ -2284,7 +2283,7 @@ LocalVariableDeclarationStatement
     ;
 
 LocalVarDeclUntilInit
-    :   Type VariableDeclaratorId							{
+    :   JavaType VariableDeclaratorId							{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     addNewDeclaration($1.d,$2.d,NULL,StorageAuto,s_javaStat->locals);
@@ -2294,7 +2293,7 @@ LocalVarDeclUntilInit
                 }
             }
         }
-    |	FINAL Type VariableDeclaratorId						{
+    |	FINAL JavaType VariableDeclaratorId						{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     addNewDeclaration($2.d,$3.d,NULL,StorageAuto,s_javaStat->locals);
