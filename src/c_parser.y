@@ -56,11 +56,9 @@
 
 %}
 
-/*
-   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-         Token definition part must be the same in all grammars
-   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-*/
+/* Token definitions *must* be the same in all parsers. The following
+   is a marker, it must be the same as in the Makefile check */
+/* START OF COMMON TOKEN DEFINITIONS */
 
 /* ************************* SPECIALS ****************************** */
 /* c+c++ */
@@ -144,7 +142,6 @@
 %token COMPL_VARIABLE_NAME_HINT COMPL_CONSTRUCTOR_HINT
 %token COMPL_METHOD_PARAM1 COMPL_METHOD_PARAM2 COMPL_METHOD_PARAM3
 
-
 /* yacc-special */
 %token COMPL_YACC_LEXEM_NAME
 
@@ -154,11 +151,11 @@
 %token CPP_INCLUDE CPP_DEFINE CPP_IFDEF CPP_IFNDEF CPP_IF CPP_ELSE CPP_ENDIF
 %token CPP_ELIF CPP_UNDEF
 %token CPP_PRAGMA CPP_LINE
-%token CPP_DEFINE0      /* macro with no argument */
+%token CPP_DEFINE0       /* macro with no argument */
 %token CPP_TOKENS_END
 
-%token CPP_COLLATION	/* ## in macro body */
-%token CPP_DEFINED_OP	/* defined(xxx) in #if */
+%token CPP_COLLATION     /* ## in macro body */
+%token CPP_DEFINED_OP    /* defined(xxx) in #if */
 
 /* ******************************************************************** */
 /* special token signalizing end of program */
@@ -181,10 +178,9 @@
 /* commons */
 %token IDENTIFIER CONSTANT LONG_CONSTANT
 %token FLOAT_CONSTANT DOUBLE_CONSTANT
-
 %token STRING_LITERAL
 %token LINE_TOK
-%token IDENT_TO_COMPLETE		/* identifier under cursor */
+%token IDENT_TO_COMPLETE        /* identifier under cursor */
 
 /* c-only */
 %token CPP_MAC_ARG IDENT_NO_CPP_EXPAND
@@ -198,9 +194,9 @@
 
 %token LAST_TOKEN
 
-
-
-/* *************************************************************** */
+/* END OF COMMON TOKEN DEFINITIONS */
+/* Token definitions *must* be the same in all parsers. The above
+   is a marker, it must be the same as in the Makefile check */
 
 %union {
 #include "yystype.h"

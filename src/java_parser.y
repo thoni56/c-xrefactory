@@ -119,11 +119,10 @@ static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbo
 
 
 %}
-/*
-   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-         Token definition part must be the same in all grammars
-   !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
-*/
+
+/* Token definitions *must* be the same in all parsers. The following
+   is a marker, it must be the same as in the Makefile check */
+/* START OF COMMON TOKEN DEFINITIONS */
 
 /* ************************* SPECIALS ****************************** */
 /* c+c++ */
@@ -183,7 +182,6 @@ static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbo
 /* gcc specials */
 %token LABEL
 
-
 /* ******************** COMPLETION SPECIAL TOKENS ******************** */
 
 %token COMPL_FOR_SPECIAL1 COMPL_FOR_SPECIAL2
@@ -217,11 +215,11 @@ static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbo
 %token CPP_INCLUDE CPP_DEFINE CPP_IFDEF CPP_IFNDEF CPP_IF CPP_ELSE CPP_ENDIF
 %token CPP_ELIF CPP_UNDEF
 %token CPP_PRAGMA CPP_LINE
-%token CPP_DEFINE0      /* macro with no argument */
+%token CPP_DEFINE0       /* macro with no argument */
 %token CPP_TOKENS_END
 
-%token CPP_COLLATION    /* ## in macro body */
-%token CPP_DEFINED_OP   /* defined(xxx) in #if */
+%token CPP_COLLATION     /* ## in macro body */
+%token CPP_DEFINED_OP    /* defined(xxx) in #if */
 
 /* ******************************************************************** */
 /* special token signalizing end of program */
@@ -260,8 +258,9 @@ static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbo
 
 %token LAST_TOKEN
 
-
-/* *************************************************************** */
+/* END OF COMMON TOKEN DEFINITIONS */
+/* Token definitions *must* be the same in all parsers. The above
+   is a marker, it must be the same as in the Makefile check */
 
 %union {
 #include "yystype.h"

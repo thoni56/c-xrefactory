@@ -9,3 +9,4 @@ tmp-*.g
 coverage.info
 coverage
 doxygen
+*_parser.tokens
