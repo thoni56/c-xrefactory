@@ -234,45 +234,36 @@ void copyDir(char *dest, char *s, int *i) {
 
 static void errorMessage(char *out, int errCode, char *mess) {
     if (s_opt.taskRegime != RegimeEditServer) {
-        sprintf(out,"%s ", placeIdent());
+        sprintf(out, "%s ", placeIdent());
         out += strlen(out);
     }
     switch (errCode) {
     case ERR_CANT_OPEN:
-        sprintf(out,"can't open file %s : %s\n", mess, strerror(errno));
-        out += strlen(out);
+        sprintf(out, "can't open file %s : %s", mess, strerror(errno));
         break;
     case ERR_CANT_OPEN_FOR_READ:
-        sprintf(out,"can't open file %s for reading : %s\n", mess, strerror(errno));
-        out += strlen(out);
+        sprintf(out, "can't open file %s for reading : %s", mess, strerror(errno));
         break;
     case ERR_CANT_OPEN_FOR_WRITE:
-        sprintf(out,"can't open file %s for writing : %s\n", mess, strerror(errno));
-        out += strlen(out);
+        sprintf(out, "can't open file %s for writing : %s", mess, strerror(errno));
         break;
     case ERR_NO_MEMORY:
-        sprintf(out,"sorry, memory %s overflowed over borne\n",mess);
-        out += strlen(out);
-        sprintf(out,"\tread the TROUBLES section of the README file.\n");
-        out += strlen(out);
+        sprintf(out, "memory %s overflowed, read TROUBLES section of README file.", mess);
         break;
     case ERR_INTERNAL:
-        sprintf(out,"internal error, %s\n",mess);
-        out += strlen(out);
+        sprintf(out, "internal error, %s", mess);
         break;
     case ERR_INTERNAL_CHECK:
-        sprintf(out,"internal check %s\n",mess);
-        out += strlen(out);
+        sprintf(out, "internal check %s", mess);
         break;
     case ERR_CFG:
-        sprintf(out,"a problem while reading config record %s\n",mess);
-        out += strlen(out);
+        sprintf(out, "a problem while reading config record %s", mess);
         break;
     default:
-        sprintf(out,"%s\n",mess);
-        out += strlen(out);
+        sprintf(out, "%s", mess);
         break;
     }
+    out += strlen(out);
     assert(strlen(ppcTmpBuff) < MAX_PPC_RECORD_SIZE-1);
 }
 
@@ -284,19 +275,19 @@ void warning(int errCode, char *message) {
             ppcGenRecord(PPC_WARNING, ppcTmpBuff,"\n");
         } else {
             log_warning("%s", ppcTmpBuff);
-            fprintf(errOut, "%s", ppcTmpBuff);
+            fprintf(errOut, "%s\n", ppcTmpBuff);
             fflush(errOut);
         }
     }
 }
 
 static void writeErrorMessage(int errCode, char *mess) {
-    if (! s_opt.xref2) fprintf(errOut,"![error] ");
     errorMessage(ppcTmpBuff,errCode, mess);
     if (s_opt.xref2) {
-        ppcGenRecord(PPC_ERROR, ppcTmpBuff,"\n");
+        ppcGenRecord(PPC_ERROR, ppcTmpBuff, "\n");
     } else {
         log_error("%s", ppcTmpBuff);
+        fprintf(errOut,"![error] ");
         fprintf(errOut, "%s", ppcTmpBuff);
         fflush(errOut);
     }
