@@ -799,7 +799,5 @@ int s_preCrTypesIniTab[] = {
     TypeLong,
     TypeBoolean,
     TypeNull,
-    /* C++ */
-    TypeWchar_t,
     -1,
 };
