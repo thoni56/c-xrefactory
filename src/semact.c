@@ -36,12 +36,11 @@ bool displayingErrorMessages(void) {
 }
 
 int styyerror(char *s) {
-    if (strcmp(s,"syntax error")!=0) {
-        sprintf(tmpBuff,"YACC error: %s",s);
-        error(ERR_INTERNAL,tmpBuff);
-    }
-    if (displayingErrorMessages()) {
-        sprintf(tmpBuff,"on: %s", yytext);
+    if (strcmp(s, "syntax error") != 0) {
+        sprintf(tmpBuff,"YACC error: %s", s);
+        error(ERR_INTERNAL, tmpBuff);
+    } else if (displayingErrorMessages()) {
+        sprintf(tmpBuff, "Syntax error on: %s", yytext);
         error(ERR_ST, tmpBuff);
     }
     return(0);

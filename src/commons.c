@@ -269,14 +269,16 @@ static void errorMessage(char *out, int errCode, char *mess) {
 
 void warning(int errCode, char *message) {
     if ((! s_opt.noErrors) && (! s_javaPreScanOnly)) {
-        if (! s_opt.xref2) fprintf(errOut,"![warning] ");
         errorMessage(ppcTmpBuff,errCode, message);
         if (s_opt.xref2) {
             ppcGenRecord(PPC_WARNING, ppcTmpBuff,"\n");
         } else {
-            log_warning("%s", ppcTmpBuff);
-            fprintf(errOut, "%s\n", ppcTmpBuff);
-            fflush(errOut);
+            if (displayingErrorMessages())
+                log_warning("%s", ppcTmpBuff);
+            else {
+                fprintf(errOut,"![warning] %s\n", ppcTmpBuff);
+                fflush(errOut);
+            }
         }
     }
 }
@@ -286,10 +288,12 @@ static void writeErrorMessage(int errCode, char *mess) {
     if (s_opt.xref2) {
         ppcGenRecord(PPC_ERROR, ppcTmpBuff, "\n");
     } else {
-        log_error("%s", ppcTmpBuff);
-        fprintf(errOut,"![error] ");
-        fprintf(errOut, "%s", ppcTmpBuff);
-        fflush(errOut);
+        if (displayingErrorMessages())
+            log_error("%s", ppcTmpBuff);
+        else {
+            fprintf(errOut,"![error] %s\n", ppcTmpBuff);
+            fflush(errOut);
+        }
     }
 }
 
