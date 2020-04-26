@@ -6,7 +6,7 @@ void unpackPointers(Symbol *pp) {
   mock(pp);
 }
 
-int displayingErrorMessages(void) {
+bool displayingErrorMessages(void) {
   return (int) mock();
 }
 

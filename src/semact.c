@@ -26,7 +26,7 @@ void fillRecFindStr(S_recFindStr *recFindStr, Symbol *baseClass, Symbol *current
     recFindStr->aui = 0;
 }
 
-int displayingErrorMessages(void) {
+bool displayingErrorMessages(void) {
     // no error messages for file preloaded for symbols
     if (LANGUAGE(LANG_JAVA) && s_jsl!=NULL) return(0);
     if (s_opt.debug || s_opt.err) return(1);
