@@ -3075,6 +3075,8 @@ PrimaryNoNewArray
             }
         }
     |	ClassInstanceCreationExpression		/*& { $$.d = $1.d } */
+        /* TODO: Here c-xref parsing/analysis stops, anything beyond
+           this point does not register */
     |	FieldAccess							/*& { $$.d = $1.d } */
     |	MethodInvocation					/*& { $$.d = $1.d } */
     |	ArrayAccess							/*& { $$.d = $1.d } */

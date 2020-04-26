@@ -2518,7 +2518,7 @@ YYSTYPE yyvs[YYSTACKSIZE];
 #include "recyacc.h"
 #endif
 #define yystacksize YYSTACKSIZE
-#line 4319 "java_parser.y"
+#line 4321 "java_parser.y"
 
 void javaParsingInitializations(void) {
     Symbol *symbol;
@@ -4918,7 +4918,7 @@ break;
 case 223:
 #line 2244 "java_parser.y"
 {
-            PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);
+        PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[0].ast_expressionType, yyvsp[0].ast_expressionType);
         }
 break;
 case 224:
@@ -5840,17 +5840,17 @@ case 353:
         }
 break;
 case 358:
-#line 3081 "java_parser.y"
+#line 3083 "java_parser.y"
 { assert(0); /* rule never used */ }
 break;
 case 359:
-#line 3084 "java_parser.y"
+#line 3086 "java_parser.y"
 {
             yyval.erfs = s_cp.erfsForParamsComplet;
         }
 break;
 case 360:
-#line 3091 "java_parser.y"
+#line 3093 "java_parser.y"
 {
                 if (ComputingPossibleParameterCompletion()) {
                     TypeModifier *mm;
@@ -5865,7 +5865,7 @@ case 360:
             }
 break;
 case 361:
-#line 3103 "java_parser.y"
+#line 3105 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5889,7 +5889,7 @@ case 361:
         }
 break;
 case 362:
-#line 3125 "java_parser.y"
+#line 3127 "java_parser.y"
 {
                 if (ComputingPossibleParameterCompletion()) {
                     TypeModifier *mm;
@@ -5902,7 +5902,7 @@ case 362:
             }
 break;
 case 363:
-#line 3135 "java_parser.y"
+#line 3137 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5921,7 +5921,7 @@ case 363:
         }
 break;
 case 364:
-#line 3154 "java_parser.y"
+#line 3156 "java_parser.y"
 {
             if (ComputingPossibleParameterCompletion()) {
                 Symbol            *ss;
@@ -5938,7 +5938,7 @@ case 364:
         }
 break;
 case 365:
-#line 3171 "java_parser.y"
+#line 3173 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -5990,7 +5990,7 @@ case 365:
         }
 break;
 case 366:
-#line 3221 "java_parser.y"
+#line 3223 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -6015,7 +6015,7 @@ case 366:
             }
 break;
 case 367:
-#line 3243 "java_parser.y"
+#line 3245 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -6025,7 +6025,7 @@ case 367:
             }
 break;
 case 368:
-#line 3250 "java_parser.y"
+#line 3252 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6043,7 +6043,7 @@ case 368:
         }
 break;
 case 369:
-#line 3265 "java_parser.y"
+#line 3267 "java_parser.y"
 {
             yyval.ast_expressionType.d.typeModifier = yyvsp[0].ast_nestedConstrTokenType.d.typeModifier;
             yyval.ast_expressionType.d.position = yyvsp[0].ast_nestedConstrTokenType.d.pp;
@@ -6052,7 +6052,7 @@ case 369:
         }
 break;
 case 370:
-#line 3272 "java_parser.y"
+#line 3274 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -6073,7 +6073,7 @@ case 370:
             }
 break;
 case 371:
-#line 3291 "java_parser.y"
+#line 3293 "java_parser.y"
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
@@ -6087,25 +6087,25 @@ case 371:
         }
 break;
 case 372:
-#line 3302 "java_parser.y"
+#line 3304 "java_parser.y"
 {
             assert(0); /* rule never used */
         }
 break;
 case 373:
-#line 3305 "java_parser.y"
+#line 3307 "java_parser.y"
 {
             assert(0); /* rule never used */
         }
 break;
 case 374:
-#line 3308 "java_parser.y"
+#line 3310 "java_parser.y"
 {
             assert(0); /* rule never used */
         }
 break;
 case 375:
-#line 3320 "java_parser.y"
+#line 3322 "java_parser.y"
 {
             yyval.ast_typeModifiersListPositionListPair.d.t = NULL;
             yyval.ast_typeModifiersListPositionListPair.d.p = NULL;
@@ -6113,7 +6113,7 @@ case 375:
         }
 break;
 case 377:
-#line 3329 "java_parser.y"
+#line 3331 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6130,7 +6130,7 @@ case 377:
         }
 break;
 case 378:
-#line 3343 "java_parser.y"
+#line 3345 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6147,15 +6147,15 @@ case 378:
         }
 break;
 case 379:
-#line 3357 "java_parser.y"
+#line 3359 "java_parser.y"
 {assert(0);}
 break;
 case 380:
-#line 3358 "java_parser.y"
+#line 3360 "java_parser.y"
 {assert(0);}
 break;
 case 381:
-#line 3363 "java_parser.y"
+#line 3365 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6173,7 +6173,7 @@ case 381:
         }
 break;
 case 382:
-#line 3378 "java_parser.y"
+#line 3380 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6190,7 +6190,7 @@ case 382:
         }
 break;
 case 383:
-#line 3392 "java_parser.y"
+#line 3394 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6209,7 +6209,7 @@ case 383:
         }
 break;
 case 384:
-#line 3408 "java_parser.y"
+#line 3410 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6227,48 +6227,48 @@ case 384:
         }
 break;
 case 385:
-#line 3427 "java_parser.y"
+#line 3429 "java_parser.y"
 {
             if (regularPass()) yyval.ast_integer.d = 1;
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_integer, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 386:
-#line 3431 "java_parser.y"
+#line 3433 "java_parser.y"
 {
             if (regularPass()) yyval.ast_integer.d = yyvsp[-1].ast_integer.d+1;
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_integer, yyvsp[-1].ast_integer, yyvsp[0].ast_position);
         }
 break;
 case 387:
-#line 3438 "java_parser.y"
+#line 3440 "java_parser.y"
 {
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 388:
-#line 3444 "java_parser.y"
+#line 3446 "java_parser.y"
 {
         if (regularPass()) yyval.ast_integer.d = 0;
             SetNullBoundaries(yyval.ast_integer);
         }
 break;
 case 390:
-#line 3452 "java_parser.y"
+#line 3454 "java_parser.y"
 {
             if (regularPass()) yyval.ast_integer.d = 1;
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_integer, yyvsp[-1].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 391:
-#line 3456 "java_parser.y"
+#line 3458 "java_parser.y"
 {
             if (regularPass()) yyval.ast_integer.d = yyvsp[-2].ast_integer.d+1;
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_integer, yyvsp[-2].ast_integer, yyvsp[0].ast_position);
         }
 break;
 case 392:
-#line 3463 "java_parser.y"
+#line 3465 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6296,7 +6296,7 @@ case 392:
         }
 break;
 case 393:
-#line 3488 "java_parser.y"
+#line 3490 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6325,7 +6325,7 @@ case 393:
         }
 break;
 case 394:
-#line 3514 "java_parser.y"
+#line 3516 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6356,19 +6356,19 @@ case 394:
         }
 break;
 case 395:
-#line 3542 "java_parser.y"
-{ assert(0); }
-break;
-case 396:
-#line 3543 "java_parser.y"
-{ assert(0); }
-break;
-case 397:
 #line 3544 "java_parser.y"
 { assert(0); }
 break;
+case 396:
+#line 3545 "java_parser.y"
+{ assert(0); }
+break;
+case 397:
+#line 3546 "java_parser.y"
+{ assert(0); }
+break;
 case 398:
-#line 3548 "java_parser.y"
+#line 3550 "java_parser.y"
 {
             if (ComputingPossibleParameterCompletion()) {
                 s_cp.erfsForParamsComplet = javaCrErfsForMethodInvocationN(yyvsp[-1].ast_idList.d);
@@ -6376,7 +6376,7 @@ case 398:
         }
 break;
 case 399:
-#line 3552 "java_parser.y"
+#line 3554 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6394,7 +6394,7 @@ case 399:
         }
 break;
 case 400:
-#line 3567 "java_parser.y"
+#line 3569 "java_parser.y"
 {
             if (ComputingPossibleParameterCompletion()) {
                 s_cp.erfsForParamsComplet = javaCrErfsForMethodInvocationT(yyvsp[-3].ast_expressionType.d.typeModifier, yyvsp[-1].ast_id.d);
@@ -6402,7 +6402,7 @@ case 400:
         }
 break;
 case 401:
-#line 3571 "java_parser.y"
+#line 3573 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6419,7 +6419,7 @@ case 401:
         }
 break;
 case 402:
-#line 3585 "java_parser.y"
+#line 3587 "java_parser.y"
 {
             if (ComputingPossibleParameterCompletion()) {
                 s_cp.erfsForParamsComplet = javaCrErfsForMethodInvocationS(yyvsp[-3].ast_id.d, yyvsp[-1].ast_id.d);
@@ -6427,7 +6427,7 @@ case 402:
         }
 break;
 case 403:
-#line 3589 "java_parser.y"
+#line 3591 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6445,7 +6445,7 @@ case 403:
         }
 break;
 case 404:
-#line 3613 "java_parser.y"
+#line 3615 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6463,7 +6463,7 @@ case 404:
         }
 break;
 case 405:
-#line 3628 "java_parser.y"
+#line 3630 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6479,11 +6479,11 @@ case 405:
         }
 break;
 case 406:
-#line 3641 "java_parser.y"
+#line 3643 "java_parser.y"
 { /* rule never used */ }
 break;
 case 408:
-#line 3646 "java_parser.y"
+#line 3648 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6498,11 +6498,11 @@ case 408:
         }
 break;
 case 411:
-#line 3660 "java_parser.y"
+#line 3662 "java_parser.y"
 { /* rule never used */ }
 break;
 case 412:
-#line 3664 "java_parser.y"
+#line 3666 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6516,7 +6516,7 @@ case 412:
         }
 break;
 case 413:
-#line 3678 "java_parser.y"
+#line 3680 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6530,7 +6530,7 @@ case 413:
         }
 break;
 case 416:
-#line 3694 "java_parser.y"
+#line 3696 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6544,7 +6544,7 @@ case 416:
         }
 break;
 case 417:
-#line 3705 "java_parser.y"
+#line 3707 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6558,7 +6558,7 @@ case 417:
         }
 break;
 case 419:
-#line 3720 "java_parser.y"
+#line 3722 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6572,7 +6572,7 @@ case 419:
         }
 break;
 case 420:
-#line 3734 "java_parser.y"
+#line 3736 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6586,7 +6586,7 @@ case 420:
         }
 break;
 case 422:
-#line 3749 "java_parser.y"
+#line 3751 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6600,7 +6600,7 @@ case 422:
         }
 break;
 case 423:
-#line 3760 "java_parser.y"
+#line 3762 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6615,7 +6615,7 @@ case 423:
         }
 break;
 case 425:
-#line 3776 "java_parser.y"
+#line 3778 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6640,7 +6640,7 @@ case 425:
         }
 break;
 case 426:
-#line 3798 "java_parser.y"
+#line 3800 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6663,7 +6663,7 @@ case 426:
         }
 break;
 case 427:
-#line 3818 "java_parser.y"
+#line 3820 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6686,7 +6686,7 @@ case 427:
         }
 break;
 case 429:
-#line 3853 "java_parser.y"
+#line 3855 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6701,7 +6701,7 @@ case 429:
         }
 break;
 case 430:
-#line 3865 "java_parser.y"
+#line 3867 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6716,7 +6716,7 @@ case 430:
         }
 break;
 case 431:
-#line 3877 "java_parser.y"
+#line 3879 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6731,7 +6731,7 @@ case 431:
         }
 break;
 case 433:
-#line 3893 "java_parser.y"
+#line 3895 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6759,7 +6759,7 @@ case 433:
         }
 break;
 case 434:
-#line 3918 "java_parser.y"
+#line 3920 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6774,7 +6774,7 @@ case 434:
         }
 break;
 case 436:
-#line 3934 "java_parser.y"
+#line 3936 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6788,7 +6788,7 @@ case 436:
         }
 break;
 case 437:
-#line 3945 "java_parser.y"
+#line 3947 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6802,7 +6802,7 @@ case 437:
         }
 break;
 case 438:
-#line 3956 "java_parser.y"
+#line 3958 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6816,7 +6816,7 @@ case 438:
         }
 break;
 case 440:
-#line 3971 "java_parser.y"
+#line 3973 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6830,7 +6830,7 @@ case 440:
         }
 break;
 case 441:
-#line 3982 "java_parser.y"
+#line 3984 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6844,7 +6844,7 @@ case 441:
         }
 break;
 case 442:
-#line 3993 "java_parser.y"
+#line 3995 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6858,7 +6858,7 @@ case 442:
         }
 break;
 case 443:
-#line 4004 "java_parser.y"
+#line 4006 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6872,7 +6872,7 @@ case 443:
         }
 break;
 case 444:
-#line 4015 "java_parser.y"
+#line 4017 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6886,7 +6886,7 @@ case 444:
         }
 break;
 case 446:
-#line 4030 "java_parser.y"
+#line 4032 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6900,7 +6900,7 @@ case 446:
         }
 break;
 case 447:
-#line 4041 "java_parser.y"
+#line 4043 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6914,7 +6914,7 @@ case 447:
         }
 break;
 case 449:
-#line 4056 "java_parser.y"
+#line 4058 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6929,7 +6929,7 @@ case 449:
         }
 break;
 case 451:
-#line 4072 "java_parser.y"
+#line 4074 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6944,7 +6944,7 @@ case 451:
         }
 break;
 case 453:
-#line 4088 "java_parser.y"
+#line 4090 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6959,7 +6959,7 @@ case 453:
         }
 break;
 case 455:
-#line 4104 "java_parser.y"
+#line 4106 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6973,7 +6973,7 @@ case 455:
         }
 break;
 case 457:
-#line 4119 "java_parser.y"
+#line 4121 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -6987,7 +6987,7 @@ case 457:
         }
 break;
 case 459:
-#line 4134 "java_parser.y"
+#line 4136 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -7002,7 +7002,7 @@ case 459:
         }
 break;
 case 462:
-#line 4154 "java_parser.y"
+#line 4156 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -7015,7 +7015,7 @@ case 462:
         }
 break;
 case 463:
-#line 4163 "java_parser.y"
+#line 4165 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -7059,7 +7059,7 @@ case 463:
         }
 break;
 case 464:
-#line 4207 "java_parser.y"
+#line 4209 "java_parser.y"
 {
             if (regularPass()) {
                 yyval.ast_expressionType.d.position = javaGetNameStartingPosition(yyvsp[0].ast_idList.d);
@@ -7074,95 +7074,95 @@ case 464:
         }
 break;
 case 467:
-#line 4221 "java_parser.y"
+#line 4223 "java_parser.y"
 { /* rule never used */ }
 break;
 case 468:
-#line 4225 "java_parser.y"
+#line 4227 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = '=';
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 469:
-#line 4229 "java_parser.y"
+#line 4231 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = MUL_ASSIGN;
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 470:
-#line 4233 "java_parser.y"
+#line 4235 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = DIV_ASSIGN;
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 471:
-#line 4237 "java_parser.y"
+#line 4239 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = MOD_ASSIGN;
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 472:
-#line 4241 "java_parser.y"
+#line 4243 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = ADD_ASSIGN;
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 473:
-#line 4245 "java_parser.y"
+#line 4247 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = SUB_ASSIGN;
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 474:
-#line 4249 "java_parser.y"
+#line 4251 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = LEFT_ASSIGN;
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 475:
-#line 4253 "java_parser.y"
+#line 4255 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = RIGHT_ASSIGN;
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 476:
-#line 4257 "java_parser.y"
+#line 4259 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = URIGHT_ASSIGN;
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 477:
-#line 4261 "java_parser.y"
+#line 4263 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = AND_ASSIGN;
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 478:
-#line 4265 "java_parser.y"
+#line 4267 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = XOR_ASSIGN;
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 479:
-#line 4269 "java_parser.y"
+#line 4271 "java_parser.y"
 {
             if (regularPass()) yyval.ast_unsignedPositionPair.d.u = OR_ASSIGN;
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_unsignedPositionPair, yyvsp[0].ast_position, yyvsp[0].ast_position);
         }
 break;
 case 481:
-#line 4277 "java_parser.y"
+#line 4279 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -7176,7 +7176,7 @@ case 481:
         }
 break;
 case 483:
-#line 4297 "java_parser.y"
+#line 4299 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
@@ -7186,7 +7186,7 @@ case 483:
         }
 break;
 case 484:
-#line 4306 "java_parser.y"
+#line 4308 "java_parser.y"
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
