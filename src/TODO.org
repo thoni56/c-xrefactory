@@ -12,6 +12,10 @@ There are a *lot* of things to do to make c-xref into modern C.
 * TODO enum-generation does not do automatical compiler defines discovery?
 * TODO Remove the global tmpBuff
 * TODO Some code in yacc semantic actions is not detected (try F6 on .reference)
+It seems that it is primarily java_parser.y that has this problem. See
+issue on github. One theory might be that "/*&" is not handled in
+yacc-files under some circumstances. There is a line in lex.c that
+handles this, we could see if it triggers...
 * TODO Make all modules independent on main
 ** DONE Document why main.h is needed
 ** DONE Make commons.c independent on main
@@ -111,6 +115,8 @@ easier to mock and unit test other modules.
   ACTUALLY: split generation of enumTxt header to its own header file
   with the naming strategy as for the others.
 * DOING Start using log.c functions to log to a separate log file
+* DONE Ensure that token declarations in the parsers are exactly the same
+They must be, but Yacc does not allow #include of a common file.
 * DONE Investigate to remove S_classTreeData
 * DONE Remove code for generation of str_fill & str_copy
 * DONE Remove bootstrap step (strfill and local definitions)
