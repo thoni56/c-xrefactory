@@ -28,9 +28,11 @@ void fillRecFindStr(S_recFindStr *recFindStr, Symbol *baseClass, Symbol *current
 
 bool displayingErrorMessages(void) {
     // no error messages for file preloaded for symbols
-    if (LANGUAGE(LANG_JAVA) && s_jsl!=NULL) return(0);
-    if (s_opt.debug || s_opt.err) return(1);
-    return(0);
+    if (LANGUAGE(LANG_JAVA) && s_jsl!=NULL)
+        return false;
+    if (s_opt.debug || s_opt.err)
+        return true;
+    return false;
 }
 
 int styyerror(char *s) {
@@ -39,7 +41,7 @@ int styyerror(char *s) {
         error(ERR_INTERNAL,tmpBuff);
     }
     if (displayingErrorMessages()) {
-        sprintf(tmpBuff,"on: %s",yytext);
+        sprintf(tmpBuff,"on: %s", yytext);
         error(ERR_ST, tmpBuff);
     }
     return(0);
@@ -47,7 +49,7 @@ int styyerror(char *s) {
 
 int styyErrorRecovery(void) {
     if (s_opt.debug && displayingErrorMessages()) {
-        error(ERR_ST, " recovery");
+        error(ERR_ST, "recovery");
     }
     return(0);
 }
