@@ -5,10 +5,6 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
-* DOING Handle struct literals ("(type){.field = data, ...}")
-** DONE Create test case
-** DOING Create AST using parsing
-** TODO Add as reference to the field
 * TODO enum-generation does not do automatical compiler defines discovery?
 * TODO Remove the global tmpBuff
 * TODO Some code in yacc semantic actions is not detected (try F6 on .reference)
@@ -115,6 +111,10 @@ easier to mock and unit test other modules.
   ACTUALLY: split generation of enumTxt header to its own header file
   with the naming strategy as for the others.
 * DOING Start using log.c functions to log to a separate log file
+* DONE Handle struct literals ("(type){.field = data, ...}")
+** DONE Create test case
+** DONE Create AST using parsing
+** DONE Add as reference to the field
 * DONE Add a test for reading class files (note only 1.4 max for now...)
 * DONE Ensure that token declarations in the parsers are exactly the same
 They must be, but Yacc does not allow #include of a common file.

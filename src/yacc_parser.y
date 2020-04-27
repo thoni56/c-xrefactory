@@ -556,8 +556,11 @@ postfix_expr
     ;
 
 compound_literal                /* Added in C99 */
-    /* TODO Does this capture the field references in the initializer_list? */
     : '(' type_name ')' '{' initializer_list optional_comma '}'		{
+        for (IdList *idList = $5.d; idList != NULL; idList = idList->next) {
+            Symbol *rec=NULL;
+            (void) findStructureFieldFromType($2.d, &idList->id, &rec, CLASS_TO_ANY);
+        }
         $$.d.typeModifier = $2.d;
         $$.d.reference = NULL;
     }
