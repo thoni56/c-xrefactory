@@ -54,11 +54,11 @@ extern S_reference * findStrRecordFromSymbol(Symbol *str,
                                              int javaClassif,
                                              S_id *super
                                              );
-extern S_reference * findStrRecordFromType(TypeModifier *str,
-                                           S_id *record,
-                                           Symbol **res,
-                                           int javaClassif
-                                           );
+extern S_reference * findStructureFieldFromType(TypeModifier *structure,
+                                                S_id *field,
+                                                Symbol **resultingSymbol,
+                                                int javaClassifier
+                                                );
 extern int mergeArguments(Symbol *id, Symbol *ty);
 extern TypeModifier *simpleStrUnionSpecifier(S_id *typeName,
                                                 S_id *id,

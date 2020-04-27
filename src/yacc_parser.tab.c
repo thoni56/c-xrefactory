@@ -2986,7 +2986,7 @@ case 207:
 #line 533 "yacc_parser.y"
 {
         Symbol *rec=NULL;
-        yyval.ast_expressionType.d.reference = findStrRecordFromType(yyvsp[-3].ast_expressionType.d.typeModifier, yyvsp[0].ast_id.d, &rec, CLASS_TO_ANY);
+        yyval.ast_expressionType.d.reference = findStructureFieldFromType(yyvsp[-3].ast_expressionType.d.typeModifier, yyvsp[0].ast_id.d, &rec, CLASS_TO_ANY);
         assert(rec);
         yyval.ast_expressionType.d.typeModifier = rec->u.type;
         assert(yyval.ast_expressionType.d.typeModifier);
@@ -3003,7 +3003,7 @@ case 209:
 
         yyval.ast_expressionType.d.reference = NULL;
         if (yyvsp[-3].ast_expressionType.d.typeModifier->kind==TypePointer || yyvsp[-3].ast_expressionType.d.typeModifier->kind==TypeArray) {
-            yyval.ast_expressionType.d.reference = findStrRecordFromType(yyvsp[-3].ast_expressionType.d.typeModifier->next, yyvsp[0].ast_id.d, &rec, CLASS_TO_ANY);
+            yyval.ast_expressionType.d.reference = findStructureFieldFromType(yyvsp[-3].ast_expressionType.d.typeModifier->next, yyvsp[0].ast_id.d, &rec, CLASS_TO_ANY);
             assert(rec);
             yyval.ast_expressionType.d.typeModifier = rec->u.type;
         } else yyval.ast_expressionType.d.typeModifier = &s_errorModifier;

@@ -3470,7 +3470,7 @@ FieldAccess
                     $$.d.position = $1.d.position;
                     if ($1.d.typeModifier->kind == TypeStruct) {
                         javaLoadClassSymbolsFromFile($1.d.typeModifier->u.t);
-                        $$.d.reference = findStrRecordFromType($1.d.typeModifier, $3.d, &rec, CLASS_TO_EXPR);
+                        $$.d.reference = findStructureFieldFromType($1.d.typeModifier, $3.d, &rec, CLASS_TO_EXPR);
                         assert(rec);
                         $$.d.typeModifier = rec->u.type;
                     } else if (s_language == LANG_JAVA) {

@@ -6278,7 +6278,7 @@ case 392:
                     yyval.ast_expressionType.d.position = yyvsp[-2].ast_expressionType.d.position;
                     if (yyvsp[-2].ast_expressionType.d.typeModifier->kind == TypeStruct) {
                         javaLoadClassSymbolsFromFile(yyvsp[-2].ast_expressionType.d.typeModifier->u.t);
-                        yyval.ast_expressionType.d.reference = findStrRecordFromType(yyvsp[-2].ast_expressionType.d.typeModifier, yyvsp[0].ast_id.d, &rec, CLASS_TO_EXPR);
+                        yyval.ast_expressionType.d.reference = findStructureFieldFromType(yyvsp[-2].ast_expressionType.d.typeModifier, yyvsp[0].ast_id.d, &rec, CLASS_TO_EXPR);
                         assert(rec);
                         yyval.ast_expressionType.d.typeModifier = rec->u.type;
                     } else if (s_language == LANG_JAVA) {

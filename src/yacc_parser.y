@@ -532,7 +532,7 @@ postfix_expr
     }
     | postfix_expr {SetDirectStructureCompletionType($1.d.typeModifier);} '.' str_rec_identifier       {
         Symbol *rec=NULL;
-        $$.d.reference = findStrRecordFromType($1.d.typeModifier, $4.d, &rec, CLASS_TO_ANY);
+        $$.d.reference = findStructureFieldFromType($1.d.typeModifier, $4.d, &rec, CLASS_TO_ANY);
         assert(rec);
         $$.d.typeModifier = rec->u.type;
         assert($$.d.typeModifier);
@@ -542,7 +542,7 @@ postfix_expr
 
         $$.d.reference = NULL;
         if ($1.d.typeModifier->kind==TypePointer || $1.d.typeModifier->kind==TypeArray) {
-            $$.d.reference = findStrRecordFromType($1.d.typeModifier->next, $4.d, &rec, CLASS_TO_ANY);
+            $$.d.reference = findStructureFieldFromType($1.d.typeModifier->next, $4.d, &rec, CLASS_TO_ANY);
             assert(rec);
             $$.d.typeModifier = rec->u.type;
         } else $$.d.typeModifier = &s_errorModifier;

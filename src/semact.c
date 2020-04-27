@@ -411,21 +411,20 @@ S_reference *findStrRecordFromSymbol( Symbol *sym,
     return(ref);
 }
 
-S_reference * findStrRecordFromType(    TypeModifier *str,
-                                        S_id *record,
-                                        Symbol **res,
-                                        int javaClassif
-                                        ) {
-    S_reference *ref;
-    assert(str);
-    ref = NULL;
-    if (str->kind != TypeStruct && str->kind != TypeUnion) {
-        *res = &s_errorSymbol;
+S_reference *findStructureFieldFromType(TypeModifier *structure,
+                                        S_id *field,
+                                        Symbol **resultingSymbol,
+                                        int javaClassifier) {
+    S_reference *reference = NULL;
+
+    assert(structure);
+    if (structure->kind != TypeStruct && structure->kind != TypeUnion) {
+        *resultingSymbol = &s_errorSymbol;
         goto fini;
     }
-    ref = findStrRecordFromSymbol( str->u.t, record, res, javaClassif, NULL);
+    reference = findStrRecordFromSymbol(structure->u.t, field, resultingSymbol, javaClassifier, NULL);
  fini:
-    return(ref);
+    return(reference);
 }
 
 void labelReference(S_id *id, int usage) {
@@ -591,7 +590,7 @@ static void addInitializerRefs(Symbol *decl,
                 continue;
             }
             if (tt->kind != TypeStruct && tt->kind != TypeUnion) return;
-            ref = findStrRecordFromType(tt, id, &rec, CLASS_TO_ANY);
+            ref = findStructureFieldFromType(tt, id, &rec, CLASS_TO_ANY);
             if (NULL == ref) return;
             assert(rec);
             tt = rec->u.type;

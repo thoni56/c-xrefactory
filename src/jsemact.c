@@ -2616,7 +2616,7 @@ void javaInitArrayObject(void) {
 
 TypeModifier *javaArrayFieldAccess(S_id *id) {
     Symbol *rec=NULL;
-    findStrRecordFromType(&s_javaArrayObjectSymbol.u.s->stype, id, &rec, CLASS_TO_EXPR);
+    findStructureFieldFromType(&s_javaArrayObjectSymbol.u.s->stype, id, &rec, CLASS_TO_EXPR);
     assert(rec);
     return(rec->u.type);
 }

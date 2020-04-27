@@ -118,8 +118,8 @@ S_reference *findStrRecordFromSymbol(Symbol *str, S_id *record, Symbol **res, in
   return (S_reference *) mock(str, record, res, javaClassif, super);
 }
 
-S_reference *findStrRecordFromType(TypeModifier *str, S_id *record, Symbol **res, int javaClassif) {
-  return (S_reference *) mock(str, record, res, javaClassif);
+S_reference *findStructureFieldFromType(TypeModifier *structure, S_id *field, Symbol **resultingSymbol, int javaClassifier) {
+  return (S_reference *) mock(structure, field, resultingSymbol, javaClassifier);
 }
 
 int mergeArguments(Symbol *id, Symbol *ty) {
