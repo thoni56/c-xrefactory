@@ -1,7 +1,8 @@
 include ../Makefile.boilerplate
 
+COMMAND = ../../src/c-xref -p $(CURDIR) -xrefrc .c-xrefrc test_sources/source.c -o output
 $(TEST):
-	@../../src/c-xref -p $(CURDIR) -xrefrc .c-xrefrc test_sources/source.c -o output
+	@$(COMMAND)
 	@# Is there a reference to the integer field on line with compound literal?
 	@grep integer CXrefs/* | grep -q 16l ; \
 	if [ $$? -ne 0 ] ; then \
@@ -9,3 +10,6 @@ $(TEST):
 	else \
 		$(OK) ; \
 	fi
+
+gdb:
+	gdb --args $(COMMAND)
