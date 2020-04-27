@@ -25,14 +25,14 @@
 #define yyErrorRecovery styyErrorRecovery
 
 
-#define SetStrCompl1(xxx) {\
+#define SetDirectStructureCompletionType(xxx) {\
     assert(s_opt.taskRegime);\
     if (s_opt.taskRegime == RegimeEditServer) {\
         s_structRecordCompletionType = xxx;\
     }\
 }
 
-#define SetStrCompl2(xxx) {                     \
+#define SetIndirectStructureCompletionType2(xxx) {                     \
     assert(s_opt.taskRegime);\
     if (s_opt.taskRegime == RegimeEditServer) {\
         if (xxx->kind==TypePointer || xxx->kind==TypeArray) {\
@@ -530,14 +530,14 @@ postfix_expr
         $$.d.reference = NULL;
         assert($$.d.typeModifier);
     }
-    | postfix_expr {SetStrCompl1($1.d.typeModifier);} '.' str_rec_identifier       {
+    | postfix_expr {SetDirectStructureCompletionType($1.d.typeModifier);} '.' str_rec_identifier       {
         Symbol *rec=NULL;
         $$.d.reference = findStrRecordFromType($1.d.typeModifier, $4.d, &rec, CLASS_TO_ANY);
         assert(rec);
         $$.d.typeModifier = rec->u.type;
         assert($$.d.typeModifier);
     }
-    | postfix_expr {SetStrCompl2($1.d.typeModifier);} PTR_OP str_rec_identifier    {
+    | postfix_expr {SetIndirectStructureCompletionType2($1.d.typeModifier);} PTR_OP str_rec_identifier    {
         Symbol *rec=NULL;
 
         $$.d.reference = NULL;

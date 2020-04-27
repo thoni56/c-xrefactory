@@ -56,14 +56,14 @@
 #define yyErrorRecovery styyErrorRecovery
 
 
-#define SetStrCompl1(xxx) {\
+#define SetDirectStructureCompletionType(xxx) {\
     assert(s_opt.taskRegime);\
     if (s_opt.taskRegime == RegimeEditServer) {\
         s_structRecordCompletionType = xxx;\
     }\
 }
 
-#define SetStrCompl2(xxx) {                     \
+#define SetIndirectStructureCompletionType2(xxx) {                     \
     assert(s_opt.taskRegime);\
     if (s_opt.taskRegime == RegimeEditServer) {\
         if (xxx->kind==TypePointer || xxx->kind==TypeArray) {\
@@ -2955,7 +2955,7 @@ case 205:
 break;
 case 206:
 #line 533 "yacc_parser.y"
-{SetStrCompl1(yyvsp[0].ast_expressionType.d.typeModifier);}
+{SetDirectStructureCompletionType(yyvsp[0].ast_expressionType.d.typeModifier);}
 break;
 case 207:
 #line 533 "yacc_parser.y"
@@ -2969,7 +2969,7 @@ case 207:
 break;
 case 208:
 #line 540 "yacc_parser.y"
-{SetStrCompl2(yyvsp[0].ast_expressionType.d.typeModifier);}
+{SetIndirectStructureCompletionType2(yyvsp[0].ast_expressionType.d.typeModifier);}
 break;
 case 209:
 #line 540 "yacc_parser.y"
