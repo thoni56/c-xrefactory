@@ -230,7 +230,7 @@ static void addYaccSymbolReference(S_id *name, int usage);
 %type <ast_typeModifiers> enum_specifier enum_define_specifier
 %type <ast_typeModifiers> type_name abstract_declarator abstract_declarator2
 
-%type <ast_expressionType> primary_expr postfix_expr unary_expr cast_expr
+%type <ast_expressionType> primary_expr postfix_expr unary_expr cast_expr compound_literal
 %type <ast_expressionType> multiplicative_expr additive_expr shift_expr
 %type <ast_expressionType> relational_expr equality_expr and_expr exclusive_or_expr
 %type <ast_expressionType> inclusive_or_expr logical_and_expr logical_or_expr
@@ -550,6 +550,20 @@ postfix_expr
     }
     | postfix_expr INC_OP                       { $$.d.typeModifier = $1.d.typeModifier; $$.d.reference = NULL;}
     | postfix_expr DEC_OP                       { $$.d.typeModifier = $1.d.typeModifier; $$.d.reference = NULL;}
+    | compound_literal
+    ;
+
+compound_literal                /* Added in C99 */
+    /* TODO Does this capture the field references in the initializer_list? */
+    : '(' type_name ')' '{' initializer_list optional_comma '}'		{
+        $$.d.typeModifier = $2.d;
+        $$.d.reference = NULL;
+    }
+    ;
+
+optional_comma
+    :
+    | ','
     ;
 
 str_rec_identifier

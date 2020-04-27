@@ -379,14 +379,15 @@ postfix_expr
 
 compound_literal                /* Added in C99 */
     /* TODO Does this capture the field references in the initializer_list? */
-    : '(' type_name ')' '{' initializer_list '}'		{
+    : '(' type_name ')' '{' initializer_list optional_comma '}'		{
         $$.d.typeModifier = $2.d;
         $$.d.reference = NULL;
     }
-    | '(' type_name ')' '{' initializer_list ',' '}'	{
-        $$.d.typeModifier = $2.d;
-        $$.d.reference = NULL;
-    }
+    ;
+
+optional_comma
+    :
+    | ','
     ;
 
 str_rec_identifier
