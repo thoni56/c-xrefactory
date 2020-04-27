@@ -3,7 +3,7 @@ CC = gcc
 
 WARNINGS = -Wall -Wno-char-subscripts
 
-CFLAGS = -g $(INCLUDES) $(ZLIB_OPT) -MMD -funsigned-char $(WARNINGS) $(COVERAGE)
+CFLAGS = -g $(INCLUDES) -MMD -funsigned-char $(WARNINGS) $(COVERAGE)
 
 LDFLAGS = $(COVERAGE)
 
@@ -11,6 +11,8 @@ ROOTDIR=..
 
 # We need our own patched yacc
 YACC=$(ROOTDIR)/byacc-1.9/yacc
+
+# If there is no ZLIB on the system you can activate that in sources.mk
 
 #########################################################################
 #
@@ -97,7 +99,7 @@ enumTxt:
 		rm tmp-$@.g.c ; \
 	fi
 
-c-xref: .c-xrefrc $(OBJS)
+c-xref: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
 	@make enumTxt
 	@make check-tokens

@@ -20,11 +20,11 @@ $(OBJDIR):
 
 -include $(OBJDIR)/*.d
 
-$(ZLIB_LIB):
+$(OPTIONAL_ZLIB_LIB):
 	make -C $(ROOTDIR)/lib/zlib libz.a
 
 # If you are using your systems zlib use these
 LIBS+=-lz
 # Else build the local, included, version and use these
-# ZLIB_LIB=$(ROOTDIR)/lib/zlib/libz.a
-# ZLIB_INCLUDE=-I$(ROOTDIR)/lib/zlib
+# OPTIONAL_ZLIB_LIB=$(ROOTDIR)/lib/zlib/libz.a
+# INCLUDES += -I$(ROOTDIR)/lib/zlib
