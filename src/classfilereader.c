@@ -1081,18 +1081,18 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     }
     assert(cval == 0xcafebabe);
     GetU4(cval, ccc, ffin, &cFile.lexBuffer.buffer);
-    /*&fprintf(dumpOut, "version is %d\n", cval);&*/
+    log_trace("version is %d", cval);
     constantPool = cfReadConstantPool(&ccc, &ffin, &cFile.lexBuffer.buffer, &cpSize);
     GetU2(access, ccc, ffin, &cFile.lexBuffer.buffer);
     memb->bits.access = access;
-    //&fprintf(dumpOut,"reading accessFlags %s == %x\n", name, access);
+    log_trace("reading accessFlags %s == %x", name, access);
     if (access & ACCESS_INTERFACE) s_fileTab.tab[fileInd]->b.isInterface = true;
     GetU2(thisClass, ccc, ffin, &cFile.lexBuffer.buffer);
     if (thisClass<0 || thisClass>=cpSize) goto corrupted;
     thisClassName = constantPool[constantPool[thisClass].clas.nameIndex].asciz;
     // TODO!!!, it may happen that name of class differ in cases from name of file,
     // what to do in such case? abandon with an error?
-    //&fprintf(dumpOut,"this class == %s\n", thisClassName);fflush(dumpOut);
+    log_trace("this class == %s", thisClassName);
     GetU2(superClass, ccc, ffin, &cFile.lexBuffer.buffer);
     if (superClass != 0) {
         if (superClass<0 || superClass>=cpSize) goto corrupted;
