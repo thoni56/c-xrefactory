@@ -543,8 +543,7 @@ static FILE *openInclude(char pchar, char *name, char **fileName) {
  found:
     nnn = normalizeFileName(nn, s_cwd);
     strcpy(nn,nnn);
-    log_trace("file '%s' opened", nn);
-    log_trace("checking to  %s", s_fileTab.tab[s_olOriginalFileNumber]->name);
+    log_trace("file '%s' opened, checking to %s", nn, s_fileTab.tab[s_olOriginalFileNumber]->name);
     pushNewInclude(r, er, nn, "\n");
     return(stdin);  // NOT NULL
 }
@@ -2066,7 +2065,7 @@ int yylex(void) {
     goto endOfFile;
 
  finish:
-    log_trace("!%s(%d) ",yytext, cxMemory->i);
+    log_trace("!%s(%d)", yytext, cxMemory->i);
     s_lastReturnedLexem = lexem;
     return(lexem);
 
