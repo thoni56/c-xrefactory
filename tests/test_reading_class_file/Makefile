@@ -3,7 +3,7 @@ include ../Makefile.boilerplate
 COMMAND = ../../src/c-xref -xrefrc .c-xrefrc -log=log -trace Completion2.class
 
 $(TEST):
-	$(COMMAND) > output.tmp
+	@$(COMMAND) > output.tmp
 	@grep classfilereader log | sed -E 's/[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2} [[:digit:]]{2}:[[:digit:]]{2}:[[:digit:]]{2}/0000-00-00 00:00:00/' >> output.tmp
 	@sed -e "s+$(CURDIR)+CURDIR+g" -e "s/len=[0-9]*/len=<n>/g" output.tmp > output
 	@diff output expected > /dev/null ; \
