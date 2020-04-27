@@ -33,15 +33,16 @@ yacc_parser.tab.c: yacc_parser.y $(YACC)
 cexp_parser.tab.c: cexp_parser.y $(YACC)
 	$(YACC) -v -b cexp_parser -p cexpyy cexp_parser.y
 
+EXTRACT_TOKEN_DEFINITIONS = sed -E '/END OF COMMON TOKEN DEFINITIONS/,$$d' | sed -E '/START OF COMMON TOKEN DEFINITIONS/,$$!d'
 # Check that the token definitions in the grammars are exactly the same
 c_parser.tokens: c_parser.y
-	cat c_parser.y | sed -E '/END OF COMMON TOKEN DEFINITIONS/,$$d' | sed -E '0,/START OF COMMON TOKEN/d' > c_parser.tokens
+	@cat c_parser.y | $(EXTRACT_TOKEN_DEFINITIONS) > c_parser.tokens
 
 yacc_parser.tokens: yacc_parser.y
-	cat yacc_parser.y | sed -E '/END OF COMMON TOKEN DEFINITIONS/,$$d' | sed -E '0,/START OF COMMON TOKEN/d' > yacc_parser.tokens
+	@cat yacc_parser.y | $(EXTRACT_TOKEN_DEFINITIONS) > yacc_parser.tokens
 
 java_parser.tokens: java_parser.y
-	cat java_parser.y | sed -E '/END OF COMMON TOKEN DEFINITIONS/,$$d' | sed -E '0,/START OF COMMON TOKEN/d' > java_parser.tokens
+	@cat java_parser.y | $(EXTRACT_TOKEN_DEFINITIONS) > java_parser.tokens
 
 check-tokens: c_parser.tokens yacc_parser.tokens java_parser.tokens
 	@if ! diff -q c_parser.tokens yacc_parser.tokens ; then \
