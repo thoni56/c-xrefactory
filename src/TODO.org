@@ -10,6 +10,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 ** DOING Create AST using parsing
 ** TODO Add as reference to the field
 * TODO enum-generation does not do automatical compiler defines discovery?
+* TODO Add a test for reading class files (note only 1.4 max for now...)
 * TODO Remove the global tmpBuff
 * TODO Some code in yacc semantic actions is not detected (try F6 on .reference)
 It seems that it is primarily java_parser.y that has this problem. See

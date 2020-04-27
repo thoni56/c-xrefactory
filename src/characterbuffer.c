@@ -31,7 +31,7 @@ void fillCharacterBuffer(CharacterBuffer *characterBuffer,
 /* ***************************************************************** */
 
 
-static int charBuffReadFromFile(struct CharacterBuffer  *buffer, char *outBuffer, int max_size) {
+static int readFromFileToBuffer(struct CharacterBuffer  *buffer, char *outBuffer, int max_size) {
     int n;
 
     if (buffer->file == NULL) n = 0;
@@ -54,13 +54,13 @@ void zlibFree(voidpf opaque, voidpf address) {
     free(address);
 }
 
-static int charBuffReadFromUnzipFilter(struct CharacterBuffer *buffer, char *outBuffer, int max_size) {
+static int readFromUnzipFilterToBuffer(struct CharacterBuffer *buffer, char *outBuffer, int max_size) {
     int n, fn, res;
     buffer->zipStream.next_out = (unsigned char *)outBuffer;
     buffer->zipStream.avail_out = max_size;
     do {
         if (buffer->zipStream.avail_in == 0) {
-            fn = charBuffReadFromFile(buffer, buffer->z, CHAR_BUFF_SIZE);
+            fn = readFromFileToBuffer(buffer, buffer->z, CHAR_BUFF_SIZE);
             buffer->zipStream.next_in = (unsigned char *)buffer->z;
             buffer->zipStream.avail_in = fn;
         }
@@ -84,25 +84,30 @@ static int charBuffReadFromUnzipFilter(struct CharacterBuffer *buffer, char *out
     return(n);
 }
 
-bool getCharBuf(struct CharacterBuffer *buffer) {
-    char *dd;
-    char *cc;
-    char *fin;
-    int n;
+bool fillBuffer(struct CharacterBuffer *buffer) {
+    char *cp;
+    char *next;
+    char *end;
+    int charactersRead;
     int max_size;
-    fin = buffer->end;
-    cc = buffer->next;
-    for(dd=buffer->chars+MAX_UNGET_CHARS; cc<fin; cc++,dd++) *dd = *cc;
-    max_size = CHAR_BUFF_SIZE - (dd - buffer->chars);
+
+    end = buffer->end;
+    next = buffer->next;
+
+    for(cp=buffer->chars+MAX_UNGET_CHARS; next<end; next++,cp++) *cp = *next;
+
+    max_size = CHAR_BUFF_SIZE - (cp - buffer->chars);
     if (buffer->inputMethod == INPUT_DIRECT) {
-        n = charBuffReadFromFile(buffer, dd, max_size);
+        charactersRead = readFromFileToBuffer(buffer, cp, max_size);
     } else {
-        n = charBuffReadFromUnzipFilter(buffer, dd, max_size);
+        charactersRead = readFromUnzipFilterToBuffer(buffer, cp, max_size);
     }
-    buffer->filePos += n;
-    buffer->end = dd+n;
+
+    buffer->filePos += charactersRead;
+    buffer->end = cp+charactersRead;
     buffer->next = buffer->chars+MAX_UNGET_CHARS;
-    return(buffer->next != buffer->end);
+
+    return buffer->next != buffer->end;
 }
 
 
@@ -122,7 +127,7 @@ void switchToZippedCharBuff(struct CharacterBuffer *buffer) {
     char *cc;
     char *fin;
 
-    getCharBuf(buffer);     // just for now
+    fillBuffer(buffer);     // just for now
     fin = buffer->end;
     cc = buffer->next;
     for(dd=buffer->z; cc<fin; cc++,dd++) *dd = *cc;
@@ -155,7 +160,7 @@ int skipNCharsInCharBuf(struct CharacterBuffer *buffer, unsigned count) {
         // TODO FINISH THIS
         count -= fin-cc;
         buffer->next = buffer->end;
-        getCharBuf(buffer);
+        fillBuffer(buffer);
         if (buffer->end != buffer->next) {
             // TODO remove last recursion
             skipNCharsInCharBuf(buffer, count);

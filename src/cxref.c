@@ -1657,7 +1657,7 @@ static void olcxOrderRefsAndGotoDefinition(int afterMenuFlag) {
 
 #define GetBufChar(cch, bbb) {                                          \
         if ((bbb)->next >= (bbb)->end) {                                \
-            if ((bbb)->isAtEOF || getCharBuf(bbb) == 0) {               \
+            if ((bbb)->isAtEOF || fillBuffer(bbb) == 0) {               \
                 cch = EOF;                                              \
                 (bbb)->isAtEOF = true;                                  \
             } else {                                                    \

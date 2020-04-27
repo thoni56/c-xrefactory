@@ -8,26 +8,27 @@
 #include "enumTxt.h"
 #include "symbol.h"
 #include "classfilereader.h"
+#include "log.h"
 
 
 static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {
-    char *nn;
-    int tok, not_used, i, tlan;
+    char *name;
+    int token, not_used, i, languages;
     Symbol *pp;
 
     for(i=0; tokenTabIni[i].name!=NULL; i++) {
-        nn = tokenTabIni[i].name;
-        tok = tokenTabIni[i].token;
-        tlan = tokenTabIni[i].languages;
-        s_tokenName[tok] = nn;
-        s_tokenLength[tok] = strlen(nn);
-        if ((isalpha(*nn) || *nn=='_') && (tlan & s_language)) {
+        name = tokenTabIni[i].name;
+        token = tokenTabIni[i].token;
+        languages = tokenTabIni[i].languages;
+        s_tokenName[token] = name;
+        s_tokenLength[token] = strlen(name);
+        if ((isalpha(*name) || *name=='_') && (languages & s_language)) {
             /* looks like a keyword */
-            pp = newSymbolAsKeyword(nn, nn, s_noPos, tok);
+            pp = newSymbolAsKeyword(name, name, s_noPos, token);
             fillSymbolBits(&pp->bits, ACCESS_DEFAULT, TypeKeyword, StorageNone);
 
-            /*fprintf(dumpOut,"adding keyword %s to tab %d\n",nn,s_symTab);*/
-            symbolTableAdd(s_symbolTable,pp,&not_used);
+            log_trace("adding keyword %s to symbol table", name);
+            symbolTableAdd(s_symbolTable, pp, &not_used);
         }
     }
 }

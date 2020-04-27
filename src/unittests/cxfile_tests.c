@@ -41,7 +41,7 @@ Ensure(CxFile, can_scan_int) {
     cb->end = &cb->chars[strlen("123")];
     end = cb->end;
 
-    expect(getCharBuf,
+    expect(fillBuffer,
            when(buffer, is_equal_to_hex(&characterBuffer)));
 
     ScanInt(next, characters, end, &characterBuffer, result);
