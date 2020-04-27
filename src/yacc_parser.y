@@ -206,6 +206,8 @@ static void addYaccSymbolReference(S_id *name, int usage);
 %type <ast_id> IDENTIFIER identifier struct_identifier enum_identifier
 %type <ast_id> str_rec_identifier STRUCT UNION struct_or_union
 %type <ast_id> user_defined_type TYPE_NAME lexem
+%type <ast_id> designator, designator_list
+%type <ast_idList> designation_opt, initializer, initializer_list, eq_initializer_opt
 %type <ast_integer> pointer CONSTANT rule_body
 %type <ast_unsigned> storage_class_specifier type_specifier1
 %type <ast_unsigned> type_modality_specifier Sv_tmp
@@ -1388,19 +1390,66 @@ abstract_declarator2
     ;
 
 initializer
-    : assignment_expr
-    | '{' Start_block initializer_list Stop_block '}'
-    | '{' Start_block initializer_list ',' Stop_block '}'
+    : assignment_expr		{
+        $$.d = NULL;
+    }
+      /* it is enclosed because on linux kernel it overflows memory */
+    | '{' initializer_list '}'	{
+        $$.d = $2.d;
+    }
+    | '{' initializer_list ',' '}'	{
+        $$.d = $2.d;
+    }
+    | error				{
+        $$.d = NULL;
+#if YYDEBUG
+        char buffer[100];
+        sprintf(buffer, "error parsing initializer, near '%s'\n", yytext);
+        yyerror(buffer);
+#endif
+    }
     ;
 
 initializer_list
-    : Sv_tmp initializer    {
+    : Sv_tmp designation_opt Start_block initializer Stop_block {
+        $$.d = $2.d;
         tmpWorkMemoryi = $1.d;
     }
-    | initializer_list ',' Sv_tmp initializer   {
+    | initializer_list ',' Sv_tmp designation_opt Start_block initializer Stop_block {
+        LIST_APPEND(S_idList, $1.d, $4.d);
         tmpWorkMemoryi = $3.d;
     }
     | error
+    ;
+
+designation_opt
+    :                           {
+        $$.d = NULL;
+    }
+    | designator_list '='		{
+        $$.d = StackMemAlloc(S_idList);
+        fillIdList($$.d, *$1.d, $1.d->name, TypeDefault, NULL);
+    }
+    ;
+
+designator_list
+    : designator					{
+        $$.d = $1.d;
+    }
+    | designator_list designator	{
+        LIST_APPEND(S_id, $1.d, $2.d);
+    }
+    ;
+
+designator
+    : '[' constant_expr ']'		{
+        $$.d = StackMemAlloc(S_id);
+        fillId($$.d, "", NULL, s_noPos);
+    }
+    | '.' str_rec_identifier	{
+        $$.d = StackMemAlloc(S_id);
+        *($$.d) = *($2.d);
+    }
     ;
 
 statement

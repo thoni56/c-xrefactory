@@ -1351,7 +1351,7 @@ initializer_list
         $$.d = $2.d;
         tmpWorkMemoryi = $1.d;
     }
-    | initializer_list ',' Sv_tmp designation_opt Start_block initializer Stop_block	{
+    | initializer_list ',' Sv_tmp designation_opt Start_block initializer Stop_block {
         LIST_APPEND(S_idList, $1.d, $4.d);
         tmpWorkMemoryi = $3.d;
     }
