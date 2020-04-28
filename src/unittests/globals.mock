@@ -3,6 +3,8 @@
 
 #include "globals.h"
 
+char *s_editCommunicationString = "C@$./@mVeDitznAC";
+
 #define LAST_TOKEN 456          /* To not have to include parsers.h */
 char *s_tokenName[LAST_TOKEN];
 

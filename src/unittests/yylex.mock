@@ -2,6 +2,9 @@
 #include "yylex.h"
 #include <cgreen/mocks.h>
 
+int macroStackIndex=0;
+
+
 void ppMemInit(void) {
   mock();
 }

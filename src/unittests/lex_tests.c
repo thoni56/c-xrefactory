@@ -3,31 +3,22 @@
 /* Including the source since we are testing macros */
 #include "lex.c"
 
-Describe(Lex);
-BeforeEach(Lex) {}
-AfterEach(Lex) {}
-
-/* From globals.c */
-S_caching s_cache;
-Language s_language;
-char s_olstring[MAX_FUN_NAME_SIZE];
-S_currentlyParsedStatics s_cps;
-Position s_cxRefPos;
-S_options s_opt;        // current options
-char *s_editCommunicationString = "C@$./@mVeDitznAC";
-int s_olOriginalFileNumber = -1;
-int macroStackIndex=0;
-int s_noneFileIndex = -1;
-int inStacki=0;
-
-/* From jslsemact.c */
-S_jslStat *s_jsl;
-
+#include "globals.mock"
 #include "commons.mock"
 #include "caching.mock"
 #include "cxref.mock"
 #include "utils.mock"
+#include "jslsemact.mock"
 #include "characterbuffer.mock"
+#include "yylex.mock"
+#include "filetab.mock"
+#include "filedescriptor.mock"
+
+
+Describe(Lex);
+BeforeEach(Lex) {}
+AfterEach(Lex) {}
+
 
 Ensure(Lex, can_run_an_empty_test) {
 }
