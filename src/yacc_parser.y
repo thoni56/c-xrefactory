@@ -456,7 +456,7 @@ primary_expr
     : IDENTIFIER            {
         Symbol *p;
         Symbol *dd;
-        p = $1.d->sd;
+        p = $1.d->symbol;
         if (p != NULL && p->bits.symType == TypeDefault) {
             assert(p && p);
             dd = p;
@@ -829,8 +829,8 @@ user_defined_type
         assert(s_opt.taskRegime);
         if (CX_REGIME()) {
             assert($1.d);
-            assert($1.d->sd);
-            addCxReference($1.d->sd, &$1.d->p, UsageUsed,s_noneFileIndex, s_noneFileIndex);
+            assert($1.d->symbol);
+            addCxReference($1.d->symbol, &$1.d->p, UsageUsed,s_noneFileIndex, s_noneFileIndex);
         }
     }
     ;
@@ -838,9 +838,9 @@ user_defined_type
 declaration_specifiers0
     : user_defined_type                                     {
         assert($1.d);
-        assert($1.d->sd);
-        assert($1.d->sd);
-        $$.d = typeSpecifier2($1.d->sd->u.type);
+        assert($1.d->symbol);
+        assert($1.d->symbol);
+        $$.d = typeSpecifier2($1.d->symbol->u.type);
     }
     | type_specifier1                                       {
         $$.d  = typeSpecifier1($1.d);
@@ -850,10 +850,10 @@ declaration_specifiers0
     }
     | declaration_modality_specifiers  user_defined_type    {
         assert($2.d);
-        assert($2.d->sd);
-        assert($2.d->sd);
+        assert($2.d->symbol);
+        assert($2.d->symbol);
         $$.d = $1.d;
-        declTypeSpecifier2($1.d,$2.d->sd->u.type);
+        declTypeSpecifier2($1.d,$2.d->symbol->u.type);
     }
     | declaration_modality_specifiers type_specifier1       {
         $$.d = $1.d;
@@ -1199,9 +1199,9 @@ type_specifier_list
 type_specifier_list0
     : user_defined_type                                     {
         assert($1.d);
-        assert($1.d->sd);
-        assert($1.d->sd);
-        $$.d = typeSpecifier2($1.d->sd->u.type);
+        assert($1.d->symbol);
+        assert($1.d->symbol);
+        $$.d = typeSpecifier2($1.d->symbol->u.type);
     }
     | type_specifier1                                       {
         $$.d  = typeSpecifier1($1.d);
@@ -1211,10 +1211,10 @@ type_specifier_list0
     }
     | type_mod_specifier_list user_defined_type             {
         assert($2.d);
-        assert($2.d->sd);
-        assert($2.d->sd);
+        assert($2.d->symbol);
+        assert($2.d->symbol);
         $$.d = $1.d;
-        declTypeSpecifier2($1.d,$2.d->sd->u.type);
+        declTypeSpecifier2($1.d,$2.d->symbol->u.type);
     }
     | type_mod_specifier_list type_specifier1       {
         $$.d = $1.d;
@@ -1709,7 +1709,7 @@ static void addRuleLocalVariable(Id *name, int order) {
     char	*nn;
 
     if (l_yaccUnion!=NULL) {
-        p = name->sd;
+        p = name->symbol;
         if (p != NULL && p->bits.symType == TypeDefault) {
             nn = stackMemoryAlloc(10*sizeof(char));
             assert(order>=0 && order < 10000);

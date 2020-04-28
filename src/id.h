@@ -8,7 +8,7 @@
 
 typedef struct id {
     char *name;
-    struct symbol *sd;
+    struct symbol *symbol;
     struct position	p;
     struct id *next;
 } Id;

@@ -592,7 +592,7 @@ void jslNewClassDefinitionBegin(Id *name,
 
     stackMemoryBlockStart();
     XX_ALLOC(ill, IdList);
-    fillfIdList(ill, cc->name, inname->sd, inname->p, cc->name, TypeStruct, s_jsl->classStat->className);
+    fillfIdList(ill, cc->name, inname->symbol, inname->p, cc->name, TypeStruct, s_jsl->classStat->className);
     nss = newJslClassStat(ill, cc, s_jsl->classStat->thisPackage,
                           s_jsl->classStat);
     s_jsl->classStat = nss;

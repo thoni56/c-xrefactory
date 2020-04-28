@@ -2453,7 +2453,7 @@ static void addRuleLocalVariable(Id *name, int order) {
     char	*nn;
 
     if (l_yaccUnion!=NULL) {
-        p = name->sd;
+        p = name->symbol;
         if (p != NULL && p->bits.symType == TypeDefault) {
             nn = stackMemoryAlloc(10*sizeof(char));
             assert(order>=0 && order < 10000);
@@ -2834,7 +2834,7 @@ case 192:
 {
         Symbol *p;
         Symbol *dd;
-        p = yyvsp[0].ast_id.d->sd;
+        p = yyvsp[0].ast_id.d->symbol;
         if (p != NULL && p->bits.symType == TypeDefault) {
             assert(p && p);
             dd = p;
@@ -3266,8 +3266,8 @@ case 291:
         assert(s_opt.taskRegime);
         if (CX_REGIME()) {
             assert(yyvsp[0].ast_id.d);
-            assert(yyvsp[0].ast_id.d->sd);
-            addCxReference(yyvsp[0].ast_id.d->sd, &yyvsp[0].ast_id.d->p, UsageUsed,s_noneFileIndex, s_noneFileIndex);
+            assert(yyvsp[0].ast_id.d->symbol);
+            addCxReference(yyvsp[0].ast_id.d->symbol, &yyvsp[0].ast_id.d->p, UsageUsed,s_noneFileIndex, s_noneFileIndex);
         }
     }
 break;
@@ -3275,9 +3275,9 @@ case 292:
 #line 839 "yacc_parser.y"
 {
         assert(yyvsp[0].ast_id.d);
-        assert(yyvsp[0].ast_id.d->sd);
-        assert(yyvsp[0].ast_id.d->sd);
-        yyval.ast_symbol.d = typeSpecifier2(yyvsp[0].ast_id.d->sd->u.type);
+        assert(yyvsp[0].ast_id.d->symbol);
+        assert(yyvsp[0].ast_id.d->symbol);
+        yyval.ast_symbol.d = typeSpecifier2(yyvsp[0].ast_id.d->symbol->u.type);
     }
 break;
 case 293:
@@ -3296,10 +3296,10 @@ case 295:
 #line 851 "yacc_parser.y"
 {
         assert(yyvsp[0].ast_id.d);
-        assert(yyvsp[0].ast_id.d->sd);
-        assert(yyvsp[0].ast_id.d->sd);
+        assert(yyvsp[0].ast_id.d->symbol);
+        assert(yyvsp[0].ast_id.d->symbol);
         yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
-        declTypeSpecifier2(yyvsp[-1].ast_symbol.d,yyvsp[0].ast_id.d->sd->u.type);
+        declTypeSpecifier2(yyvsp[-1].ast_symbol.d,yyvsp[0].ast_id.d->symbol->u.type);
     }
 break;
 case 296:
@@ -3759,9 +3759,9 @@ case 387:
 #line 1200 "yacc_parser.y"
 {
         assert(yyvsp[0].ast_id.d);
-        assert(yyvsp[0].ast_id.d->sd);
-        assert(yyvsp[0].ast_id.d->sd);
-        yyval.ast_symbol.d = typeSpecifier2(yyvsp[0].ast_id.d->sd->u.type);
+        assert(yyvsp[0].ast_id.d->symbol);
+        assert(yyvsp[0].ast_id.d->symbol);
+        yyval.ast_symbol.d = typeSpecifier2(yyvsp[0].ast_id.d->symbol->u.type);
     }
 break;
 case 388:
@@ -3780,10 +3780,10 @@ case 390:
 #line 1212 "yacc_parser.y"
 {
         assert(yyvsp[0].ast_id.d);
-        assert(yyvsp[0].ast_id.d->sd);
-        assert(yyvsp[0].ast_id.d->sd);
+        assert(yyvsp[0].ast_id.d->symbol);
+        assert(yyvsp[0].ast_id.d->symbol);
         yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
-        declTypeSpecifier2(yyvsp[-1].ast_symbol.d,yyvsp[0].ast_id.d->sd->u.type);
+        declTypeSpecifier2(yyvsp[-1].ast_symbol.d,yyvsp[0].ast_id.d->symbol->u.type);
     }
 break;
 case 391:

@@ -2245,7 +2245,7 @@ case 1:
 {
         Symbol *p;
         Symbol *dd;
-        p = yyvsp[0].ast_id.d->sd;
+        p = yyvsp[0].ast_id.d->symbol;
         if (p != NULL && p->bits.symType == TypeDefault) {
             assert(p && p);
             dd = p;
@@ -2788,10 +2788,10 @@ case 106:
         assert(s_opt.taskRegime);
         if (CX_REGIME()) {
             assert(yyvsp[0].ast_id.d);
-            assert(yyvsp[0].ast_id.d->sd);
+            assert(yyvsp[0].ast_id.d->symbol);
             if (WORK_NEST_LEVEL0()) usage = USAGE_TOP_LEVEL_USED;
             else usage = UsageUsed;
-            addCxReference(yyvsp[0].ast_id.d->sd,&yyvsp[0].ast_id.d->p,usage,s_noneFileIndex,s_noneFileIndex);
+            addCxReference(yyvsp[0].ast_id.d->symbol,&yyvsp[0].ast_id.d->p,usage,s_noneFileIndex,s_noneFileIndex);
         }
     }
 break;
@@ -2799,8 +2799,8 @@ case 107:
 #line 710 "c_parser.y"
 {
         assert(yyvsp[0].ast_id.d);
-        assert(yyvsp[0].ast_id.d->sd);
-        yyval.ast_symbol.d = typeSpecifier2(yyvsp[0].ast_id.d->sd->u.type);
+        assert(yyvsp[0].ast_id.d->symbol);
+        yyval.ast_symbol.d = typeSpecifier2(yyvsp[0].ast_id.d->symbol->u.type);
     }
 break;
 case 108:
@@ -2819,9 +2819,9 @@ case 110:
 #line 721 "c_parser.y"
 {
         assert(yyvsp[0].ast_id.d);
-        assert(yyvsp[0].ast_id.d->sd);
+        assert(yyvsp[0].ast_id.d->symbol);
         yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
-        declTypeSpecifier2(yyvsp[-1].ast_symbol.d,yyvsp[0].ast_id.d->sd->u.type);
+        declTypeSpecifier2(yyvsp[-1].ast_symbol.d,yyvsp[0].ast_id.d->symbol->u.type);
     }
 break;
 case 111:
@@ -3320,9 +3320,9 @@ case 209:
 #line 1137 "c_parser.y"
 {
         assert(yyvsp[0].ast_id.d);
-        assert(yyvsp[0].ast_id.d->sd);
-        assert(yyvsp[0].ast_id.d->sd);
-        yyval.ast_symbol.d = typeSpecifier2(yyvsp[0].ast_id.d->sd->u.type);
+        assert(yyvsp[0].ast_id.d->symbol);
+        assert(yyvsp[0].ast_id.d->symbol);
+        yyval.ast_symbol.d = typeSpecifier2(yyvsp[0].ast_id.d->symbol->u.type);
     }
 break;
 case 210:
@@ -3341,10 +3341,10 @@ case 212:
 #line 1149 "c_parser.y"
 {
         assert(yyvsp[0].ast_id.d);
-        assert(yyvsp[0].ast_id.d->sd);
-        assert(yyvsp[0].ast_id.d->sd);
+        assert(yyvsp[0].ast_id.d->symbol);
+        assert(yyvsp[0].ast_id.d->symbol);
         yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
-        declTypeSpecifier2(yyvsp[-1].ast_symbol.d,yyvsp[0].ast_id.d->sd->u.type);
+        declTypeSpecifier2(yyvsp[-1].ast_symbol.d,yyvsp[0].ast_id.d->symbol->u.type);
     }
 break;
 case 213:

@@ -872,12 +872,12 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
     int ii,type;
 
     log_trace("new struct %s", id->name);
-    assert(typeName && typeName->sd && typeName->sd->bits.symType == TypeKeyword);
-    assert(     typeName->sd->u.keyWordVal == STRUCT
-                ||  typeName->sd->u.keyWordVal == CLASS
-                ||  typeName->sd->u.keyWordVal == UNION
+    assert(typeName && typeName->symbol && typeName->symbol->bits.symType == TypeKeyword);
+    assert(     typeName->symbol->u.keyWordVal == STRUCT
+                ||  typeName->symbol->u.keyWordVal == CLASS
+                ||  typeName->symbol->u.keyWordVal == UNION
                 );
-    if (typeName->sd->u.keyWordVal != UNION) type = TypeStruct;
+    if (typeName->symbol->u.keyWordVal != UNION) type = TypeStruct;
     else type = TypeUnion;
 
     fillSymbol(&p, id->name, id->name, id->p);
@@ -956,13 +956,13 @@ TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
     int type;
 
     assert(typeName);
-    assert(typeName->sd);
-    assert(typeName->sd->bits.symType == TypeKeyword);
-    assert(typeName->sd->u.keyWordVal == STRUCT
-           ||  typeName->sd->u.keyWordVal == CLASS
-           ||  typeName->sd->u.keyWordVal == UNION
+    assert(typeName->symbol);
+    assert(typeName->symbol->bits.symType == TypeKeyword);
+    assert(typeName->symbol->u.keyWordVal == STRUCT
+           ||  typeName->symbol->u.keyWordVal == CLASS
+           ||  typeName->symbol->u.keyWordVal == UNION
            );
-    if (typeName->sd->u.keyWordVal == STRUCT) type = TypeStruct;
+    if (typeName->symbol->u.keyWordVal == STRUCT) type = TypeStruct;
     else type = TypeUnion;
 
     pp = newSymbol("", NULL, typeName->p);
