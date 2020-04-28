@@ -52,8 +52,8 @@
 static Symbol *l_yaccUnion = NULL;
 static Symbol *l_currentType = NULL;
 
-static void addRuleLocalVariable(S_id *name, int order);
-static void addYaccSymbolReference(S_id *name, int usage);
+static void addRuleLocalVariable(Id *name, int order);
+static void addYaccSymbolReference(Id *name, int usage);
 
 %}
 
@@ -1419,7 +1419,7 @@ initializer_list
         tmpWorkMemoryi = $1.d;
     }
     | initializer_list ',' Sv_tmp designation_opt Start_block initializer Stop_block {
-        LIST_APPEND(S_idList, $1.d, $4.d);
+        LIST_APPEND(IdList, $1.d, $4.d);
         tmpWorkMemoryi = $3.d;
     }
     | error
@@ -1430,7 +1430,7 @@ designation_opt
         $$.d = NULL;
     }
     | designator_list '='		{
-        $$.d = StackMemAlloc(S_idList);
+        $$.d = StackMemAlloc(IdList);
         fillIdList($$.d, *$1.d, $1.d->name, TypeDefault, NULL);
     }
     ;
@@ -1440,17 +1440,17 @@ designator_list
         $$.d = $1.d;
     }
     | designator_list designator	{
-        LIST_APPEND(S_id, $1.d, $2.d);
+        LIST_APPEND(Id, $1.d, $2.d);
     }
     ;
 
 designator
     : '[' constant_expr ']'		{
-        $$.d = StackMemAlloc(S_id);
+        $$.d = StackMemAlloc(Id);
         fillId($$.d, "", NULL, s_noPos);
     }
     | '.' str_rec_identifier	{
-        $$.d = StackMemAlloc(S_id);
+        $$.d = StackMemAlloc(Id);
         *($$.d) = *($2.d);
     }
     ;
@@ -1696,7 +1696,7 @@ identifier
 
 %%
 
-static void addYaccSymbolReference(S_id *name, int usage) {
+static void addYaccSymbolReference(Id *name, int usage) {
     Symbol sss;
 
     fillSymbol(&sss, name->name, name->name, name->p);
@@ -1704,7 +1704,7 @@ static void addYaccSymbolReference(S_id *name, int usage) {
     addCxReference(&sss, &name->p, usage,s_noneFileIndex, s_noneFileIndex);
 }
 
-static void addRuleLocalVariable(S_id *name, int order) {
+static void addRuleLocalVariable(Id *name, int order) {
     Symbol *p,*ss;
     char	*nn;
 

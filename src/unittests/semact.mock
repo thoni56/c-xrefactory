@@ -50,7 +50,7 @@ Symbol *addNewSymbolDef(Symbol *p, unsigned storage, S_symbolTable *tab, int usa
   return (Symbol *) mock(p, storage, tab, usage);
 }
 
-Symbol *addNewDeclaration(Symbol *btype, Symbol *decl, S_idList *idl, unsigned storage, S_symbolTable *tab) {
+Symbol *addNewDeclaration(Symbol *btype, Symbol *decl, IdList *idl, unsigned storage, S_symbolTable *tab) {
   return (Symbol *) mock(btype, decl, idl, storage, tab);
 }
 
@@ -106,7 +106,7 @@ SymbolList *createDefinitionList(Symbol *symbol) {
   return (SymbolList *) mock(symbol);
 }
 
-Symbol *createSimpleDefinition(unsigned storage, unsigned t, S_id *id) {
+Symbol *createSimpleDefinition(unsigned storage, unsigned t, Id *id) {
   return (Symbol *) mock(storage, t, id);
 }
 
@@ -114,11 +114,11 @@ int findStrRecord(Symbol *s, char *recname, Symbol **res, int javaClassif) {
   return (int) mock(s, recname, res, javaClassif);
 }
 
-Reference *findStrRecordFromSymbol(Symbol *str, S_id *record, Symbol **res, int javaClassif, S_id *super) {
+Reference *findStrRecordFromSymbol(Symbol *str, Id *record, Symbol **res, int javaClassif, Id *super) {
   return (Reference *) mock(str, record, res, javaClassif, super);
 }
 
-Reference *findStructureFieldFromType(TypeModifier *structure, S_id *field, Symbol **resultingSymbol, int javaClassifier) {
+Reference *findStructureFieldFromType(TypeModifier *structure, Id *field, Symbol **resultingSymbol, int javaClassifier) {
   return (Reference *) mock(structure, field, resultingSymbol, javaClassifier);
 }
 
@@ -126,11 +126,11 @@ int mergeArguments(Symbol *id, Symbol *ty) {
   return (int) mock(id, ty);
 }
 
-TypeModifier *simpleStrUnionSpecifier(S_id *typeName, S_id *id, int usage) {
+TypeModifier *simpleStrUnionSpecifier(Id *typeName, Id *id, int usage) {
   return (TypeModifier *) mock(typeName, id, usage);
 }
 
-TypeModifier *createNewAnonymousStructOrUnion(S_id *typeName) {
+TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
   return (TypeModifier *) mock(typeName);
 }
 
@@ -138,7 +138,7 @@ void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
   mock(sd, rec);
 }
 
-TypeModifier *simpleEnumSpecifier(S_id *id, int usage) {
+TypeModifier *simpleEnumSpecifier(Id *id, int usage) {
   return (TypeModifier *) mock(id, usage);
 }
 
@@ -187,6 +187,6 @@ void setLocalVariableLinkName(struct symbol *p) {
   mock(p);
 }
 
-void labelReference(S_id *id, int usage) {
+void labelReference(Id *id, int usage) {
   mock(id, usage);
 }

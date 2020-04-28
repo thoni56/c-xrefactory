@@ -3,8 +3,8 @@
 #include "filetab.mock"
 
 S_fileTab s_fileTab;
-S_id s_javaAnonymousClassName = {"{Anonymous}", NULL, {-1,0,0}};
-S_id s_javaConstructorName = {"<init>", NULL, {-1,0,0}};
+Id s_javaAnonymousClassName = {"{Anonymous}", NULL, {-1,0,0}};
+Id s_javaConstructorName = {"<init>", NULL, {-1,0,0}};
 TypeModifier * s_preCreatedTypesTable[MAX_TYPE];
 Symbol s_errorSymbol;
 S_options s_opt;        // current options

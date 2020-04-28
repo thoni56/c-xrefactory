@@ -1424,7 +1424,7 @@ void javaMapDirectoryFiles1(
 }
 
 void javaMapDirectoryFiles2(
-                            S_idList *packid,
+                            IdList *packid,
                             void (*fun)(MAP_FUN_PROFILE),
                             Completions *a1,
                             void *a2,

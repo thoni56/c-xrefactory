@@ -20,7 +20,7 @@ S_jslStat *s_jsl;
 
 
 
-S_jslClassStat *newJslClassStat(S_idList *className, Symbol *thisClass, char *thisPackage, S_jslClassStat *next) {
+S_jslClassStat *newJslClassStat(IdList *className, Symbol *thisClass, char *thisPackage, S_jslClassStat *next) {
     S_jslClassStat *jslClassStat;
 
     XX_ALLOC(jslClassStat, S_jslClassStat);
@@ -128,10 +128,10 @@ static void jslRemoveNestedClass(void  *ddv) {
     assert(check);
 }
 
-Symbol *jslTypeSymbolDefinition(char *ttt2, S_idList *packid,
+Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
                                 int add, int order, bool isExplicitlyImported) {
     char fqtName[MAX_FILE_NAME_SIZE];
-    S_idList dd2;
+    IdList dd2;
     int ii;
     Symbol *smemb;
     JslSymbolList ss, *xss, *memb;
@@ -163,9 +163,9 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, S_idList *packid,
     return(smemb);
 }
 
-static Symbol *jslTypeSymbolUsage(char *ttt2, S_idList *packid) {
+static Symbol *jslTypeSymbolUsage(char *ttt2, IdList *packid) {
     char fqtName[MAX_FILE_NAME_SIZE];
-    S_idList dd2;
+    IdList dd2;
     int ii;
     Symbol *smemb;
     JslSymbolList ss, *memb;
@@ -181,7 +181,7 @@ static Symbol *jslTypeSymbolUsage(char *ttt2, S_idList *packid) {
     return(smemb);
 }
 
-Symbol *jslTypeNameDefinition(S_idList *tname) {
+Symbol *jslTypeNameDefinition(IdList *tname) {
     Symbol *memb;
     Symbol *dd;
     TypeModifier *td;
@@ -196,7 +196,7 @@ Symbol *jslTypeNameDefinition(S_idList *tname) {
     return dd;
 }
 
-static int jslClassifySingleAmbigNameToTypeOrPack(S_idList *name,
+static int jslClassifySingleAmbigNameToTypeOrPack(IdList *name,
                                                   Symbol **str
                                                   ){
     JslSymbolList ss, *memb, *nextmemb;
@@ -232,7 +232,7 @@ static int jslClassifySingleAmbigNameToTypeOrPack(S_idList *name,
     return(TypePackage);
 }
 
-int jslClassifyAmbiguousTypeName(S_idList *name, Symbol **str) {
+int jslClassifyAmbiguousTypeName(IdList *name, Symbol **str) {
     int         pres;
     Symbol    *pstr;
     assert(name);
@@ -306,10 +306,10 @@ void jslAddMapedImportTypeName(
     char *p;
     char ttt2[MAX_FILE_NAME_SIZE];
     int len2;
-    S_idList *packid;
+    IdList *packid;
 
     //&fprintf(ccOut,":jsl import type %s %s %s\n", file, path, pack);
-    packid = (S_idList *) vdirid;
+    packid = (IdList *) vdirid;
     for(p=file; *p && *p!='.' && *p!='$'; p++) ;
     if (*p != '.') return;
     if (strcmp(p,".class")!=0 && strcmp(p,".java")!=0) return;
@@ -320,7 +320,7 @@ void jslAddMapedImportTypeName(
     jslTypeSymbolDefinition(ttt2, packid,TYPE_ADD_YES, ORDER_APPEND, false);
 }
 
-void jslAddAllPackageClassesFromFileTab(S_idList *packid) {
+void jslAddAllPackageClassesFromFileTab(IdList *packid) {
     register                int i;
     register S_fileItem     *ff;
     register int            pnlen, c;
@@ -462,8 +462,8 @@ static int jslRecordAccessible(Symbol *cl, Symbol *rec, unsigned recAccessFlags)
 
 void jslAddNestedClassesToJslTypeTab( Symbol *str, int order) {
     S_symStructSpec *ss;
-    S_id ocid;
-    S_idList oclassid;
+    Id ocid;
+    IdList oclassid;
     int i;
 
     assert(str && str->bits.symType==TypeStruct);
@@ -492,7 +492,7 @@ void jslAddSuperNestedClassesToJslTypeTab( Symbol *cc) {
 }
 
 
-void jslNewClassDefinitionBegin(S_id *name,
+void jslNewClassDefinitionBegin(Id *name,
                                 int accFlags,
                                 Symbol *anonInterf,
                                 int position
@@ -500,8 +500,8 @@ void jslNewClassDefinitionBegin(S_id *name,
     char                ttt[TMP_STRING_SIZE];
     char                tttn[TMP_STRING_SIZE];
     S_jslClassStat      *nss;
-    S_id           *inname;
-    S_idList       *ill, mntmp;
+    Id           *inname;
+    IdList       *ill, mntmp;
     Symbol            *cc;
     int                 fileInd, membflag, cn;
 
@@ -591,7 +591,7 @@ void jslNewClassDefinitionBegin(S_id *name,
         cc->u.s->nestedCount = 0;
 
     stackMemoryBlockStart();
-    XX_ALLOC(ill, S_idList);
+    XX_ALLOC(ill, IdList);
     fillfIdList(ill, cc->name, inname->sd, inname->p, cc->name, TypeStruct, s_jsl->classStat->className);
     nss = newJslClassStat(ill, cc, s_jsl->classStat->thisPackage,
                           s_jsl->classStat);
@@ -636,10 +636,10 @@ void jslAddDefaultConstructor(Symbol *cl) {
                     StorageConstructor, NULL);
 }
 
-void jslNewAnonClassDefinitionBegin(S_id *interfName) {
-    S_idList   ll;
+void jslNewAnonClassDefinitionBegin(Id *interfName) {
+    IdList   ll;
     Symbol        *interf,*str;
-    //& XX_ALLOC(ll, S_idList);
+    //& XX_ALLOC(ll, IdList);
     fillIdList(&ll, *interfName, interfName->name, TypeDefault, NULL);
     jslClassifyAmbiguousTypeName(&ll, &str);
     interf = jslTypeNameDefinition(&ll);

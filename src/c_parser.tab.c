@@ -2407,7 +2407,7 @@ break;
 case 24:
 #line 381 "c_parser.y"
 {
-        for (S_idList *idList = yyvsp[-2].ast_idList.d; idList != NULL; idList = idList->next) {
+        for (IdList *idList = yyvsp[-2].ast_idList.d; idList != NULL; idList = idList->next) {
             Symbol *rec=NULL;
             (void) findStructureFieldFromType(yyvsp[-5].ast_typeModifiers.d, &idList->id, &rec, CLASS_TO_ANY);
         }
@@ -3625,7 +3625,7 @@ break;
 case 251:
 #line 1357 "c_parser.y"
 {
-        LIST_APPEND(S_idList, yyvsp[-6].ast_idList.d, yyvsp[-3].ast_idList.d);
+        LIST_APPEND(IdList, yyvsp[-6].ast_idList.d, yyvsp[-3].ast_idList.d);
         tmpWorkMemoryi = yyvsp[-4].ast_unsigned.d;
     }
 break;
@@ -3638,7 +3638,7 @@ break;
 case 253:
 #line 1367 "c_parser.y"
 {
-        yyval.ast_idList.d = StackMemAlloc(S_idList);
+        yyval.ast_idList.d = StackMemAlloc(IdList);
         fillIdList(yyval.ast_idList.d, *yyvsp[-1].ast_id.d, yyvsp[-1].ast_id.d->name, TypeDefault, NULL);
     }
 break;
@@ -3651,20 +3651,20 @@ break;
 case 255:
 #line 1377 "c_parser.y"
 {
-        LIST_APPEND(S_id, yyvsp[-1].ast_id.d, yyvsp[0].ast_id.d);
+        LIST_APPEND(Id, yyvsp[-1].ast_id.d, yyvsp[0].ast_id.d);
     }
 break;
 case 256:
 #line 1383 "c_parser.y"
 {
-        yyval.ast_id.d = StackMemAlloc(S_id);
+        yyval.ast_id.d = StackMemAlloc(Id);
         fillId(yyval.ast_id.d, "", NULL, s_noPos);
     }
 break;
 case 257:
 #line 1387 "c_parser.y"
 {
-        yyval.ast_id.d = StackMemAlloc(S_id);
+        yyval.ast_id.d = StackMemAlloc(Id);
         *(yyval.ast_id.d) = *(yyvsp[0].ast_id.d);
     }
 break;

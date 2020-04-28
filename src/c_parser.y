@@ -379,7 +379,7 @@ postfix_expr
 
 compound_literal                /* Added in C99 */
     : '(' type_name ')' '{' initializer_list optional_comma '}'		{
-        for (S_idList *idList = $5.d; idList != NULL; idList = idList->next) {
+        for (IdList *idList = $5.d; idList != NULL; idList = idList->next) {
             Symbol *rec=NULL;
             (void) findStructureFieldFromType($2.d, &idList->id, &rec, CLASS_TO_ANY);
         }
@@ -1355,7 +1355,7 @@ initializer_list
         tmpWorkMemoryi = $1.d;
     }
     | initializer_list ',' Sv_tmp designation_opt Start_block initializer Stop_block {
-        LIST_APPEND(S_idList, $1.d, $4.d);
+        LIST_APPEND(IdList, $1.d, $4.d);
         tmpWorkMemoryi = $3.d;
     }
     ;
@@ -1365,7 +1365,7 @@ designation_opt
         $$.d = NULL;
     }
     | designator_list '='		{
-        $$.d = StackMemAlloc(S_idList);
+        $$.d = StackMemAlloc(IdList);
         fillIdList($$.d, *$1.d, $1.d->name, TypeDefault, NULL);
     }
     ;
@@ -1375,17 +1375,17 @@ designator_list
         $$.d = $1.d;
     }
     | designator_list designator	{
-        LIST_APPEND(S_id, $1.d, $2.d);
+        LIST_APPEND(Id, $1.d, $2.d);
     }
     ;
 
 designator
     : '[' constant_expr ']'		{
-        $$.d = StackMemAlloc(S_id);
+        $$.d = StackMemAlloc(Id);
         fillId($$.d, "", NULL, s_noPos);
     }
     | '.' str_rec_identifier	{
-        $$.d = StackMemAlloc(S_id);
+        $$.d = StackMemAlloc(Id);
         *($$.d) = *($2.d);
     }
     ;

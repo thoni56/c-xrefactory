@@ -11,20 +11,20 @@ typedef struct id {
     struct symbol *sd;
     struct position	p;
     struct id *next;
-} S_id;
+} Id;
 
 typedef struct idList {
     struct id id;
     char *fname;                /* fqt name for java */
     enum type nameType;             /* type of name segment for java */
     struct idList *next;
-} S_idList;
+} IdList;
 
 
-extern void fillId(S_id *id, char *name, Symbol *symbol, Position position);
+extern void fillId(Id *id, char *name, Symbol *symbol, Position position);
 
-extern void fillIdList(S_idList *idList, S_id id, char *fname, Type nameType, S_idList *next);
-extern void fillfIdList(S_idList *idList, char *name, Symbol *symbol, Position position,
-                         char *fname, Type nameType, S_idList *next);
+extern void fillIdList(IdList *idList, Id id, char *fname, Type nameType, IdList *next);
+extern void fillfIdList(IdList *idList, char *name, Symbol *symbol, Position position,
+                         char *fname, Type nameType, IdList *next);
 
 #endif

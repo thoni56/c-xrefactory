@@ -38,7 +38,7 @@ typedef struct jslStat {
 extern S_jslStat *s_jsl;
 
 
-extern S_jslClassStat *newJslClassStat(S_idList *className, Symbol *thisClass, char *thisPackage,
+extern S_jslClassStat *newJslClassStat(IdList *className, Symbol *thisClass, char *thisPackage,
                                        S_jslClassStat *next);
 extern void fillJslStat(S_jslStat *jslStat, int pass, int sourceFileNumber, int language, S_jslTypeTab *typeTab,
                         S_jslClassStat *classStat, SymbolList *waitList, void *savedyylval,
@@ -51,21 +51,21 @@ extern TypeModifier *jslPrependComposedType(TypeModifier *d, Type type);
 extern TypeModifier *jslAppendComposedType(TypeModifier **d, Type type);
 extern Symbol *jslPrependDirectEnclosingInstanceArgument(Symbol *args);
 extern Symbol *jslMethodHeader(unsigned modif, Symbol *type, Symbol *decl, int storage, SymbolList *throws);
-extern Symbol *jslTypeNameDefinition(S_idList *tname);
-extern Symbol *jslTypeSymbolDefinition(char *ttt2, S_idList *packid,
+extern Symbol *jslTypeNameDefinition(IdList *tname);
+extern Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
                                        int add, int order, bool isExplicitlyImported);
-extern int jslClassifyAmbiguousTypeName(S_idList *name, Symbol **str);
+extern int jslClassifyAmbiguousTypeName(IdList *name, Symbol **str);
 extern void jslAddNestedClassesToJslTypeTab( Symbol *cc, int order);
 extern void jslAddSuperNestedClassesToJslTypeTab( Symbol *cc);
 
 extern void jslAddSuperClassOrInterfaceByName(Symbol *memb,char *super);
-extern void jslNewClassDefinitionBegin(S_id *name,
+extern void jslNewClassDefinitionBegin(Id *name,
                                        int accessFlags,
                                        Symbol *anonInterf,
                                        int position);
 extern void jslAddDefaultConstructor(Symbol *cl);
 extern void jslNewClassDefinitionEnd(void);
-extern void jslNewAnonClassDefinitionBegin(S_id *interfName);
+extern void jslNewAnonClassDefinitionBegin(Id *interfName);
 
 extern void jslAddSuperClassOrInterface(Symbol *memb,Symbol *supp);
 extern void jslAddMapedImportTypeName(char *file,
@@ -74,6 +74,6 @@ extern void jslAddMapedImportTypeName(char *file,
                                       Completions *c,
                                       void *vdirid,
                                       int  *storage);
-extern void jslAddAllPackageClassesFromFileTab(S_idList *pack);
+extern void jslAddAllPackageClassesFromFileTab(IdList *pack);
 
 #endif

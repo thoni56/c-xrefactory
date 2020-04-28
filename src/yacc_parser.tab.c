@@ -83,8 +83,8 @@
 static Symbol *l_yaccUnion = NULL;
 static Symbol *l_currentType = NULL;
 
-static void addRuleLocalVariable(S_id *name, int order);
-static void addYaccSymbolReference(S_id *name, int usage);
+static void addRuleLocalVariable(Id *name, int order);
+static void addYaccSymbolReference(Id *name, int usage);
 
 #line 202 "yacc_parser.y"
 typedef union {
@@ -2440,7 +2440,7 @@ YYSTYPE yyvs[YYSTACKSIZE];
 #define yystacksize YYSTACKSIZE
 #line 1698 "yacc_parser.y"
 
-static void addYaccSymbolReference(S_id *name, int usage) {
+static void addYaccSymbolReference(Id *name, int usage) {
     Symbol sss;
 
     fillSymbol(&sss, name->name, name->name, name->p);
@@ -2448,7 +2448,7 @@ static void addYaccSymbolReference(S_id *name, int usage) {
     addCxReference(&sss, &name->p, usage,s_noneFileIndex, s_noneFileIndex);
 }
 
-static void addRuleLocalVariable(S_id *name, int order) {
+static void addRuleLocalVariable(Id *name, int order) {
     Symbol *p,*ss;
     char	*nn;
 
@@ -2986,7 +2986,7 @@ break;
 case 213:
 #line 559 "yacc_parser.y"
 {
-        for (S_idList *idList = yyvsp[-2].ast_idList.d; idList != NULL; idList = idList->next) {
+        for (IdList *idList = yyvsp[-2].ast_idList.d; idList != NULL; idList = idList->next) {
             Symbol *rec=NULL;
             (void) findStructureFieldFromType(yyvsp[-5].ast_typeModifiers.d, &idList->id, &rec, CLASS_TO_ANY);
         }
@@ -4066,7 +4066,7 @@ break;
 case 429:
 #line 1421 "yacc_parser.y"
 {
-        LIST_APPEND(S_idList, yyvsp[-6].ast_idList.d, yyvsp[-3].ast_idList.d);
+        LIST_APPEND(IdList, yyvsp[-6].ast_idList.d, yyvsp[-3].ast_idList.d);
         tmpWorkMemoryi = yyvsp[-4].ast_unsigned.d;
     }
 break;
@@ -4079,7 +4079,7 @@ break;
 case 432:
 #line 1432 "yacc_parser.y"
 {
-        yyval.ast_idList.d = StackMemAlloc(S_idList);
+        yyval.ast_idList.d = StackMemAlloc(IdList);
         fillIdList(yyval.ast_idList.d, *yyvsp[-1].ast_id.d, yyvsp[-1].ast_id.d->name, TypeDefault, NULL);
     }
 break;
@@ -4092,20 +4092,20 @@ break;
 case 434:
 #line 1442 "yacc_parser.y"
 {
-        LIST_APPEND(S_id, yyvsp[-1].ast_id.d, yyvsp[0].ast_id.d);
+        LIST_APPEND(Id, yyvsp[-1].ast_id.d, yyvsp[0].ast_id.d);
     }
 break;
 case 435:
 #line 1448 "yacc_parser.y"
 {
-        yyval.ast_id.d = StackMemAlloc(S_id);
+        yyval.ast_id.d = StackMemAlloc(Id);
         fillId(yyval.ast_id.d, "", NULL, s_noPos);
     }
 break;
 case 436:
 #line 1452 "yacc_parser.y"
 {
-        yyval.ast_id.d = StackMemAlloc(S_id);
+        yyval.ast_id.d = StackMemAlloc(Id);
         *(yyval.ast_id.d) = *(yyvsp[0].ast_id.d);
     }
 break;

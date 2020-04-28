@@ -32,7 +32,7 @@ FILE *dumpOut = NULL;
 z_stream s_defaultZStream = {NULL,};
 
 char *yytext;
-S_id s_yyIdentBuf[YYBUFFERED_ID_INDEX];
+Id s_yyIdentBuf[YYBUFFERED_ID_INDEX];
 int s_yyIdentBufi = 0;
 Symbol s_errorSymbol;
 

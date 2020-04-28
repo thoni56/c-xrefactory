@@ -60,7 +60,7 @@ Position s_paramEndPosition;
 Position s_primaryStartPosition;
 Position s_staticPrefixStartPosition;
 
-S_id s_yyIdentBuf[YYBUFFERED_ID_INDEX];
+Id s_yyIdentBuf[YYBUFFERED_ID_INDEX];
 int s_yyIdentBufi = 0;
 
 TypeModifier *s_structRecordCompletionType;
@@ -122,54 +122,54 @@ char s_defaultClassPath[] = ".";
 S_stringList *s_javaClassPaths;
 char *s_javaSourcePaths;
 
-S_id s_javaAnonymousClassName = {"{Anonymous}", NULL, {-1,0,0}};
-S_id s_javaConstructorName = {"<init>", NULL, {-1,0,0}};
+Id s_javaAnonymousClassName = {"{Anonymous}", NULL, {-1,0,0}};
+Id s_javaConstructorName = {"<init>", NULL, {-1,0,0}};
 
-static S_idList s_javaDefaultPackageNameBody[] = {
+static IdList s_javaDefaultPackageNameBody[] = {
     {{"", NULL, {-1,0,0}, NULL}, "", TypePackage, NULL},
 };
-S_idList *s_javaDefaultPackageName = s_javaDefaultPackageNameBody;
+IdList *s_javaDefaultPackageName = s_javaDefaultPackageNameBody;
 
-static S_idList s_javaLangNameBody[] = {
+static IdList s_javaLangNameBody[] = {
     {{"lang", NULL, {-1,0,0}, NULL}, "lang", TypePackage, &s_javaLangNameBody[1]},
     {{"java", NULL, {-1,0,0}, NULL}, "java", TypePackage, NULL},
 };
-S_idList *s_javaLangName = s_javaLangNameBody;
+IdList *s_javaLangName = s_javaLangNameBody;
 
-static S_idList s_javaLangStringNameBody[] = {
+static IdList s_javaLangStringNameBody[] = {
     {{"String", NULL, {-1,0,0}, NULL}, "String", TypeStruct, &s_javaLangStringNameBody[1]},
     {{"lang",   NULL, {-1,0,0}, NULL}, "lang", TypePackage, &s_javaLangStringNameBody[2]},
     {{"java",   NULL, {-1,0,0}, NULL}, "java", TypePackage, NULL},
 };
-S_idList *s_javaLangStringName = s_javaLangStringNameBody;
+IdList *s_javaLangStringName = s_javaLangStringNameBody;
 
-static S_idList s_javaLangCloneableNameBody[] = {
+static IdList s_javaLangCloneableNameBody[] = {
     {{"Cloneable", NULL, {-1,0,0}, NULL}, "Cloneable", TypeStruct, &s_javaLangCloneableNameBody[1]},
     {{"lang",   NULL, {-1,0,0}, NULL}, "lang", TypePackage, &s_javaLangCloneableNameBody[2]},
     {{"java",   NULL, {-1,0,0}, NULL}, "java", TypePackage, NULL},
 };
-S_idList *s_javaLangCloneableName = s_javaLangCloneableNameBody;
+IdList *s_javaLangCloneableName = s_javaLangCloneableNameBody;
 
-static S_idList s_javaIoSerializableNameBody[] = {
+static IdList s_javaIoSerializableNameBody[] = {
     {{"Serializable", NULL, {-1,0,0}, NULL}, "Serializable", TypeStruct, &s_javaIoSerializableNameBody[1]},
     {{"io",   NULL, {-1,0,0}, NULL}, "io", TypePackage, &s_javaIoSerializableNameBody[2]},
     {{"java",   NULL, {-1,0,0}, NULL}, "java", TypePackage, NULL},
 };
-S_idList *s_javaIoSerializableName = s_javaIoSerializableNameBody;
+IdList *s_javaIoSerializableName = s_javaIoSerializableNameBody;
 
-static S_idList s_javaLangClassNameBody[] = {
+static IdList s_javaLangClassNameBody[] = {
     {{"Class", NULL, {-1,0,0}, NULL}, "Class", TypeStruct, &s_javaLangClassNameBody[1]},
     {{"lang",   NULL, {-1,0,0}, NULL}, "lang", TypePackage, &s_javaLangClassNameBody[2]},
     {{"java",   NULL, {-1,0,0}, NULL}, "java", TypePackage, NULL},
 };
-S_idList *s_javaLangClassName = s_javaLangClassNameBody;
+IdList *s_javaLangClassName = s_javaLangClassNameBody;
 
-static S_idList s_javaLangObjectNameBody[] = {
+static IdList s_javaLangObjectNameBody[] = {
     {{"Object", NULL, {-1,0,0}, NULL}, "Object", TypeStruct, &s_javaLangObjectNameBody[1]},
     {{"lang",   NULL, {-1,0,0}, NULL}, "lang", TypePackage, &s_javaLangObjectNameBody[2]},
     {{"java",   NULL, {-1,0,0}, NULL}, "java", TypePackage, NULL},
 };
-S_idList *s_javaLangObjectName = s_javaLangObjectNameBody;
+IdList *s_javaLangObjectName = s_javaLangObjectNameBody;
 char *s_javaLangObjectLinkName="java/lang/Object";
 
 /* ********* vars for on-line additions after EOF ****** */

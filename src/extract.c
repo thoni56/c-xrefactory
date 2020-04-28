@@ -54,7 +54,7 @@ static void dumpProgram(S_programGraphNode *program) {
 
 void genInternalLabelReference(int counter, int usage) {
     char labelName[TMP_STRING_SIZE];
-    S_id labelId;
+    Id labelId;
     Position position;
 
     if (s_opt.server_operation != OLO_EXTRACT)
