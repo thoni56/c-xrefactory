@@ -148,8 +148,8 @@ void ppcGenNumericRecord(char *kind, int val,char *message,char *suff) {
 
 void ppcGenRecord(char *kind, char *message, char *suffix) {
     ppcIndentOffset();
-    fprintf(ccOut, "<%s %s=%ld>%s</%s>%s", kind, PPCA_LEN, (unsigned long)strlen(message), message,
-            kind, suffix);
+    fprintf(ccOut, "<%s %s=%ld>%s</%s>%s", kind, PPCA_LEN, (unsigned long)strlen(message),
+            message, kind, suffix);
 }
 
 // use this for debugging purposes only!!!

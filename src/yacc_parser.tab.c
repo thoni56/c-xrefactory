@@ -4051,7 +4051,7 @@ case 427:
         yyval.ast_idList.d = NULL;
 #if YYDEBUG
         char buffer[100];
-        sprintf(buffer, "error parsing initializer, near '%s'\n", yytext);
+        sprintf(buffer, "error parsing initializer, near '%s'", yytext);
         yyerror(buffer);
 #endif
     }

@@ -6,6 +6,8 @@ There are a *lot* of things to do to make c-xref into modern C.
 (This file is structured for Emacs org-mode...)
 
 * TODO enum-generation does not do automatical compiler defines discovery?
+* TODO Handle for-loops with declarations ("for (int i = 0;...")
+This requires grammar changes for C and Yacc
 * TODO Remove the global tmpBuff
 * TODO Some code in yacc semantic actions is not detected (try F6 on .reference)
 It seems that it is primarily java_parser.y that has this problem. See
@@ -59,13 +61,6 @@ whatever other things it needs...)
 are a small as possible. This is why IWYU exists!! It means "Include
 What You Use" and is a Clang related project at
 https://github.com/include-what-you-use/include-what-you-use)
-
-* TODO Rather than "fprintf(dumpOut..." use log()
-Adjust options so that we can better control logging for various
-modules(?)
-** DONE Include and start using log()
-
-** DONE Move output from log() from dumpOut to some logFile
 * TODO Ensure all ANSI-C, C99 and C11 keywords (and macros for them?) are
   recognized (list e.g. at
   http://www.c-programming-simple-steps.com/c-keywords.html)
@@ -111,6 +106,10 @@ easier to mock and unit test other modules.
   ACTUALLY: split generation of enumTxt header to its own header file
   with the naming strategy as for the others.
 * DOING Start using log.c functions to log to a separate log file
+Adjust options so that we can better control logging for various
+modules(?)
+** DONE Include and start using log()
+** DONE Move output from log() from dumpOut to some logFile
 * DONE Handle struct literals ("(type){.field = data, ...}")
 ** DONE Create test case
 ** DONE Create AST using parsing

@@ -106,6 +106,7 @@ void log_log(LogLevel level, const char *file, int line, const char *fmt, ...) {
   if (level >= L.console_level) {
     va_list args;
     char buf[16];
+
     buf[strftime(buf, sizeof(buf), "%H:%M:%S", lt)] = '\0';
 #ifdef LOG_USE_COLOR
     /* TODO: Only use colors if color capable */
@@ -114,8 +115,7 @@ void log_log(LogLevel level, const char *file, int line, const char *fmt, ...) {
 #else
     fprintf(stderr, "%s %-5s %s:%d: ", buf, level_names[level],
 #endif
-    /* format, after possibly truncating, file name to standard field of 15 */
-    file, line);
+            file, line);
     va_start(args, fmt);
     vfprintf(stderr, fmt, args);
     va_end(args);

@@ -264,7 +264,6 @@ static void errorMessage(char *out, int errCode, char *mess) {
         sprintf(out, "%s", mess);
         break;
     }
-    strcat(out, "\n");
     out += strlen(out);
     assert(strlen(ppcTmpBuff) < MAX_PPC_RECORD_SIZE-1);
 }
@@ -273,6 +272,7 @@ void warning(int errCode, char *message) {
     if ((! s_opt.noErrors) && (! s_javaPreScanOnly)) {
         errorMessage(ppcTmpBuff,errCode, message);
         if (s_opt.xref2) {
+            strcat(ppcTmpBuff, "\n");
             ppcGenRecord(PPC_WARNING, ppcTmpBuff,"\n");
         } else {
             if (displayingErrorMessages())
@@ -288,6 +288,7 @@ void warning(int errCode, char *message) {
 static void writeErrorMessage(int errCode, char *mess) {
     errorMessage(ppcTmpBuff,errCode, mess);
     if (s_opt.xref2) {
+        strcat(ppcTmpBuff, "\n");
         ppcGenRecord(PPC_ERROR, ppcTmpBuff, "\n");
     } else {
         if (displayingErrorMessages())

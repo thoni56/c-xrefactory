@@ -660,7 +660,7 @@ declaration
         {
 #if YYDEBUG
             char buffer[100];
-            sprintf(buffer, "error parsing declaration, near '%s'\n", yytext);
+            sprintf(buffer, "error parsing declaration, near '%s'", yytext);
             yyerror(buffer);
 #endif
         }
@@ -680,7 +680,7 @@ init_declarations
         $$.d = typeSpecifier2(&s_errorModifier);
 #if YYDEBUG
         char buffer[100];
-        sprintf(buffer, "error parsing init_declarations, near '%s'\n", yytext);
+        sprintf(buffer, "error parsing init_declarations, near '%s'", yytext);
         yyerror(buffer);
 #endif
     }
@@ -938,7 +938,7 @@ struct_declaration
         $$.d = newSymbolAsCopyOf(s_errorSymbol);
 #if YYDEBUG
         char buffer[100];
-        sprintf(buffer, "DEBUG: error parsing struct_declaration near '%s'\n", yytext);
+        sprintf(buffer, "DEBUG: error parsing struct_declaration near '%s'", yytext);
         yyerror(buffer);
 #endif
     }
@@ -1026,7 +1026,7 @@ enumerator
         $$.d = newSymbolAsCopyOf(s_errorSymbol);
 #if YYDEBUG
         char buffer[100];
-        sprintf(buffer, "DEBUG: error parsing enumerator near '%s'\n", yytext);
+        sprintf(buffer, "DEBUG: error parsing enumerator near '%s'", yytext);
         yyerror(buffer);
 #endif
     }
@@ -1255,7 +1255,7 @@ parameter_declaration
         $$.d = newSymbolAsCopyOf(s_errorSymbol);
 #if YYDEBUG
         char buffer[100];
-        sprintf(buffer, "DEBUG: error parsing parameter_declaration near '%s'\n", yytext);
+        sprintf(buffer, "DEBUG: error parsing parameter_declaration near '%s'", yytext);
         yyerror(buffer);
 #endif
     }
@@ -1343,7 +1343,7 @@ initializer
         $$.d = NULL;
 #if YYDEBUG
         char buffer[100];
-        sprintf(buffer, "error parsing initializer, near '%s'\n", yytext);
+        sprintf(buffer, "error parsing initializer, near '%s'", yytext);
         yyerror(buffer);
 #endif
     }
