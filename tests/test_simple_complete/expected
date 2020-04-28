@@ -61,6 +61,15 @@ __stdcall      :keyword
 asm            :keyword
 inline         :keyword</all-completions>
 
+-olcxcomplet CURDIR/test_source/single_int1.c -olcursor=161 -xrefrc CURDIR/.c-xrefrc -p CURDIR
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=9 col=0 len=<n>>CURDIR/test_source/single_int1.c</position-lc>
+</goto>
+<single-completion len=<n>>function</single-completion>
+
 -exit
 end-of-options
 

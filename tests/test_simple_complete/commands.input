@@ -7,4 +7,6 @@
 <sync>
 -olcxcomplet CURDIR/test_source/single_int1.c -olcursor=172 -xrefrc CURDIR/.c-xrefrc -p CURDIR
 <sync>
+-olcxcomplet CURDIR/test_source/single_int1.c -olcursor=161 -xrefrc CURDIR/.c-xrefrc -p CURDIR
+<sync>
 <exit>
