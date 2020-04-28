@@ -2661,7 +2661,7 @@ case 82:
 #line 603 "c_parser.y"
 {
         if (yyvsp[-2].ast_expressionType.d.reference != NULL && s_opt.server_operation == OLO_EXTRACT) {
-            S_reference *rr;
+            Reference *rr;
             rr = duplicateReference(yyvsp[-2].ast_expressionType.d.reference);
             yyvsp[-2].ast_expressionType.d.reference->usage = s_noUsage;
             if (yyvsp[-1].ast_integer.d == '=') {

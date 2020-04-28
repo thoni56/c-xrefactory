@@ -94,7 +94,7 @@ void ppcGenPreCheckRecord(S_editorMarker *pos, int oldLen) {
   mock(pos, oldLen);
 }
 
-void ppcGenReferencePreCheckRecord(S_reference *r, char *text) {
+void ppcGenReferencePreCheckRecord(Reference *r, char *text) {
   mock(r, text);
 }
 

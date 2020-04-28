@@ -588,7 +588,7 @@ typedef struct reference {
     struct usageBits			usage;
     struct position				p;
     struct reference            *next;
-} S_reference;
+} Reference;
 
 typedef struct symbolReferenceItemBits {
     Type					symType		: SYMTYPES_LN;

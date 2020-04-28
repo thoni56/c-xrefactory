@@ -602,7 +602,7 @@ assignment_expr
     : conditional_expr									/*& { $$.d = $1.d; } */
     | unary_expr assignment_operator assignment_expr	{
         if ($1.d.reference != NULL && s_opt.server_operation == OLO_EXTRACT) {
-            S_reference *rr;
+            Reference *rr;
             rr = duplicateReference($1.d.reference);
             $1.d.reference->usage = s_noUsage;
             if ($2.d == '=') {

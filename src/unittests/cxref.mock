@@ -4,8 +4,8 @@
 
 #include "olcxtab.h"
 
-void fill_reference(S_reference *reference, UsageBits usage, Position position,
-                    S_reference *next) {
+void fill_reference(Reference *reference, UsageBits usage, Position position,
+                    Reference *next) {
     /* NOTE can't mock S_usageBits or Position */
     mock(reference, next);
 }
@@ -26,7 +26,7 @@ void fillUsageBits(UsageBits *usageBits, unsigned base, unsigned requiredAccess)
     mock(usageBits, base, requiredAccess);
 }
 
-int olcxReferenceInternalLessFunction(S_reference *r1, S_reference *r2) {
+int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
     return (int) mock(r1, r2);
 }
 
@@ -74,8 +74,8 @@ void olcxPopOnly(void) {
     mock();
 }
 
-S_reference *olcxCopyRefList(S_reference *ll) {
-    return (S_reference *) mock(ll);
+Reference *olcxCopyRefList(Reference *ll) {
+    return (Reference *) mock(ll);
 }
 
 void olStackDeleteSymbol(S_olcxReferences *refs) {
@@ -90,15 +90,15 @@ void generateOnlineCxref(Position *p, char *commandString, int usage, char *suff
     mock(p, commandString, usage, suffix, suffix2);
 }
 
-S_reference *olcxAddReferenceNoUsageCheck(S_reference **rlist, S_reference *ref, int bestMatchFlag) {
-    return (S_reference *) mock(rlist, ref, bestMatchFlag);
+Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref, int bestMatchFlag) {
+    return (Reference *) mock(rlist, ref, bestMatchFlag);
 }
 
-S_reference *olcxAddReference(S_reference **rlist, S_reference *ref, int bestMatchFlag) {
-    return (S_reference *) mock(rlist, ref, bestMatchFlag);
+Reference *olcxAddReference(Reference **rlist, Reference *ref, int bestMatchFlag) {
+    return (Reference *) mock(rlist, ref, bestMatchFlag);
 }
 
-void olcxFreeReferences(S_reference *r) {
+void olcxFreeReferences(Reference *r) {
     mock(r);
 }
 
@@ -106,11 +106,11 @@ bool isSmallerOrEqClass(int inf, int sup) {
     return (int) mock(inf, sup);
 }
 
-int olcxPushLessFunction(S_reference *r1, S_reference *r2) {
+int olcxPushLessFunction(Reference *r1, Reference *r2) {
     return (int) mock(r1, r2);
 }
 
-int olcxListLessFunction(S_reference *r1, S_reference *r2) {
+int olcxListLessFunction(Reference *r1, Reference *r2) {
     return (int) mock(r1, r2);
 }
 
@@ -130,21 +130,21 @@ int htmlJdkDocAvailableForUrl(char *ss) {
     return (int) mock(ss);
 }
 
-S_reference *duplicateReference(S_reference *r) {
-    return (S_reference *) mock(r);
+Reference *duplicateReference(Reference *r) {
+    return (Reference *) mock(r);
 }
 
-S_reference *addCxReferenceNew(Symbol *p, Position *pos, UsageBits *ub, int vFunCl, int vApplCl) {
-    return (S_reference *) mock(p, pos, ub, vFunCl, vApplCl);
+Reference *addCxReferenceNew(Symbol *p, Position *pos, UsageBits *ub, int vFunCl, int vApplCl) {
+    return (Reference *) mock(p, pos, ub, vFunCl, vApplCl);
 }
 
-S_reference *addCxReference(Symbol *p, Position *pos, Usage usage, int vFunClass, int vApplClass) {
+Reference *addCxReference(Symbol *p, Position *pos, Usage usage, int vFunClass, int vApplClass) {
     char *p_name = p->name;
-    return (S_reference *) mock(p, p_name, pos, usage, vFunClass, vApplClass);
+    return (Reference *) mock(p, p_name, pos, usage, vFunClass, vApplClass);
 }
 
-S_reference *addSpecialFieldReference(char *name, int storage, int fnum, Position *p, int usage) {
-    return (S_reference *) mock(name, storage, fnum, p, usage);
+Reference *addSpecialFieldReference(char *name, int storage, int fnum, Position *p, int usage) {
+    return (Reference *) mock(name, storage, fnum, p, usage);
 }
 
 void addClassTreeHierarchyReference(int fnum, Position *p, int usage) {
@@ -159,7 +159,7 @@ void addTrivialCxReference(char *name, int symType, int storage, Position *pos, 
     mock(name, symType, storage, pos, usage);
 }
 
-void olcxAddReferences(S_reference *list, S_reference **dlist, int fnum, int bestMatchFlag) {
+void olcxAddReferences(Reference *list, Reference **dlist, int fnum, int bestMatchFlag) {
     mock(list, dlist, fnum, bestMatchFlag);
 }
 
@@ -167,7 +167,7 @@ void olSetCallerPosition(Position *pos) {
     mock(pos);
 }
 
-S_olCompletion *olCompletionListPrepend(char *name, char *fullText, char *vclass, int jindent, Symbol *s, SymbolReferenceItem *ri, S_reference *dfpos, int symType, int vFunClass, S_olcxReferences *stack) {
+S_olCompletion *olCompletionListPrepend(char *name, char *fullText, char *vclass, int jindent, Symbol *s, SymbolReferenceItem *ri, Reference *dfpos, int symType, int vFunClass, S_olcxReferences *stack) {
     return (S_olCompletion *) mock(name, fullText, vclass, jindent, s, ri, dfpos, symType, vFunClass, stack);
 }
 
@@ -187,11 +187,11 @@ void olCompletionListReverse(void) {
     mock();
 }
 
-S_reference **addToRefList(S_reference **list, UsageBits *pusage, Position *pos, int category) {
-    return (S_reference **) mock(list, pusage, pos, category);
+Reference **addToRefList(Reference **list, UsageBits *pusage, Position *pos, int category) {
+    return (Reference **) mock(list, pusage, pos, category);
 }
 
-bool isInRefList(S_reference *list, UsageBits *pusage, Position *pos, int category) {
+bool isInRefList(Reference *list, UsageBits *pusage, Position *pos, int category) {
     return (int) mock(list, pusage, pos, category);
 }
 
@@ -207,7 +207,7 @@ int itIsSymbolToPushOlRefences(SymbolReferenceItem *p, S_olcxReferences *rstack,
     return (int) mock(p, rstack, rss, checkSelFlag);
 }
 
-void olcxAddReferenceToOlSymbolsMenu(S_olSymbolsMenu *cms, S_reference *rr, int bestFitTlag) {
+void olcxAddReferenceToOlSymbolsMenu(S_olSymbolsMenu *cms, Reference *rr, int bestFitTlag) {
     mock(cms, rr, bestFitTlag);
 }
 
@@ -239,8 +239,8 @@ S_userOlcx *olcxSetCurrentUser(char *user) {
     return (S_userOlcx *) mock(user);
 }
 
-S_reference *getDefinitionRef(S_reference *rr) {
-    return (S_reference *) mock(rr);
+Reference *getDefinitionRef(Reference *rr) {
+    return (Reference *) mock(rr);
 }
 
 int safetyCheck2ShouldWarn(void) {
@@ -267,7 +267,7 @@ void olcxPrintClassTree(S_olSymbolsMenu *sss) {
     mock(sss);
 }
 
-void olcxReferencesDiff(S_reference **anr1, S_reference **aor2, S_reference **diff) {
+void olcxReferencesDiff(Reference **anr1, Reference **aor2, Reference **diff) {
     mock(anr1, aor2, diff);
 }
 
@@ -299,11 +299,11 @@ void olcxPushSpecialCheckMenuSym(int command, char *symname) {
     mock(command, symname);
 }
 
-int refOccursInRefs(S_reference *r, S_reference *list) {
+int refOccursInRefs(Reference *r, Reference *list) {
     return (int) mock(r, list);
 }
 
-void olcxCheck1CxFileReference(SymbolReferenceItem *ss, S_reference *r) {
+void olcxCheck1CxFileReference(SymbolReferenceItem *ss, Reference *r) {
     mock(ss, r);
 }
 

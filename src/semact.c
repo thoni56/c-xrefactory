@@ -371,7 +371,7 @@ int findStrRecord(  Symbol        *s,
 
 /* and push reference */
 // this should be split into two copies, different for C and Java.
-S_reference *findStrRecordFromSymbol( Symbol *sym,
+Reference *findStrRecordFromSymbol( Symbol *sym,
                                       S_id *record,
                                       Symbol **res,
                                       int javaClassif,
@@ -379,7 +379,7 @@ S_reference *findStrRecordFromSymbol( Symbol *sym,
                                                           as SUPER.sym, berk */
                                       ) {
     S_recFindStr    rfs;
-    S_reference     *ref;
+    Reference     *ref;
     UsageBits     ub;
     int rr, minacc;
     ref = NULL;
@@ -411,11 +411,11 @@ S_reference *findStrRecordFromSymbol( Symbol *sym,
     return(ref);
 }
 
-S_reference *findStructureFieldFromType(TypeModifier *structure,
+Reference *findStructureFieldFromType(TypeModifier *structure,
                                         S_id *field,
                                         Symbol **resultingSymbol,
                                         int javaClassifier) {
-    S_reference *reference = NULL;
+    Reference *reference = NULL;
 
     assert(structure);
     if (structure->kind != TypeStruct && structure->kind != TypeUnion) {
@@ -580,7 +580,7 @@ static void addInitializerRefs(Symbol *decl,
     S_idList *ll;
     S_id* id;
     TypeModifier *tt;
-    S_reference *ref;
+    Reference *ref;
     Symbol *rec=NULL;
     for(ll=idl; ll!=NULL; ll=ll->next) {
         tt = decl->u.type;
@@ -1102,7 +1102,7 @@ void handleDeclaratorParamPositions(Symbol *decl, Position *lpar,
     handleParameterPositions(lpar, commas, rpar, hasParam);
 }
 
-void handleInvocationParamPositions(S_reference *ref, Position *lpar,
+void handleInvocationParamPositions(Reference *ref, Position *lpar,
                                     PositionList *commas, Position *rpar,
                                     int hasParam
                                     ) {

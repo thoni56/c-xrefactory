@@ -1656,7 +1656,7 @@ endOfFile:
 static void addMacroBaseUsageRef(Symbol *mdef) {
     int                 ii,rr;
     SymbolReferenceItem     ppp,*memb;
-    S_reference			*r;
+    Reference			*r;
     Position          basePos;
     fillPosition(&basePos, s_input_file_number, 0, 0);
     fill_symbolRefItemBits(&ppp.b,TypeMacro,StorageDefault,ScopeGlobal,

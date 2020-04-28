@@ -171,8 +171,8 @@ Position *javaGetNameStartingPosition(S_idList *name) {
     return(res);
 }
 
-static S_reference *javaAddClassCxReference(Symbol *dd, Position *pos, unsigned usage) {
-    S_reference *res;
+static Reference *javaAddClassCxReference(Symbol *dd, Position *pos, unsigned usage) {
+    Reference *res;
     res = addCxReference(dd, pos, usage, s_noneFileIndex, s_noneFileIndex);
     return(res);
 }
@@ -1124,7 +1124,7 @@ static int javaClassifySingleAmbigName( S_idList *name,
                                         S_recFindStr *rfs,
                                         Symbol **str,
                                         TypeModifier **expr,
-                                        S_reference **oref,
+                                        Reference **oref,
                                         int classif, int uusage,
                                         int cxrefFlag
     ) {
@@ -1182,7 +1182,7 @@ static int javaNotFqtUsageCorrection(Symbol *sym, int usage) {
     S_recFindStr    localRfs;
     Symbol        *str;
     TypeModifier *expr;
-    S_reference     *loref;
+    Reference     *loref;
     S_idList   sname;
     char            *pp, packname[TMP_STRING_SIZE];
 
@@ -1204,7 +1204,7 @@ static int javaNotFqtUsageCorrection(Symbol *sym, int usage) {
     return(usage);
 }
 
-static void javaResetUselessReference(S_reference *ref) {
+static void javaResetUselessReference(Reference *ref) {
     if (ref != NULL /*& && ref->usage.base == UsageLastUseless &*/) {
         ref->usage.base = UsageOtherUseless;
     }
@@ -1215,12 +1215,12 @@ static void javaResetUselessReference(S_reference *ref) {
  UsageUselessFqt reference
 */
 static void javaCheckForUselessFqt(S_idList *name, int classif, Symbol *rstr,
-                                   S_reference **oref, S_reference *lref){
+                                   Reference **oref, Reference *lref){
     int             rr, uselessFqt;
     S_recFindStr    localRfs;
     Symbol        *str;
     TypeModifier *expr;
-    S_reference     *loref;
+    Reference     *loref;
     S_idList   sname;
 
     uselessFqt = 0;
@@ -1261,19 +1261,19 @@ static void javaCheckForUselessFqt(S_idList *name, int classif, Symbol *rstr,
     }
 }
 
-static S_reference *javaCheckForUselessTypeName(S_idList   *name,
+static Reference *javaCheckForUselessTypeName(S_idList   *name,
                                                 int				classif,
                                                 S_recFindStr	*rfs,
-                                                S_reference     **oref,
-                                                S_reference     *lref
+                                                Reference     **oref,
+                                                Reference     *lref
     ) {
     int             rr;
     S_recFindStr    localRfs;
     Symbol        *str;
     TypeModifier *expr;
-    S_reference     *loref;
+    Reference     *loref;
     S_idList   sname;
-    S_reference     *res;
+    Reference     *res;
 
     res = NULL;
 
@@ -1307,7 +1307,7 @@ static S_reference *javaCheckForUselessTypeName(S_idList   *name,
     return(res);
 }
 
-static void javaClassifyNameToNestedType(S_idList *name, Symbol *outerc, int uusage, Symbol **str, S_reference **oref) {
+static void javaClassifyNameToNestedType(S_idList *name, Symbol *outerc, int uusage, Symbol **str, Reference **oref) {
     name->nameType = TypeStruct;
     *str = javaTypeSymbolUsage(name,ACCESS_DEFAULT);
     javaLoadClassSymbolsFromFile(*str);
@@ -1319,7 +1319,7 @@ static void javaClassifyNameToNestedType(S_idList *name, Symbol *outerc, int uus
     }
 }
 
-static void classifiedToNestedClass(S_idList *name, Symbol **str, S_reference **oref, S_reference **rdtoref, int classif, int uusage, Symbol *pstr, S_reference *prdtoref, int allowUselesFqtRefs) {
+static void classifiedToNestedClass(S_idList *name, Symbol **str, Reference **oref, Reference **rdtoref, int classif, int uusage, Symbol *pstr, Reference *prdtoref, int allowUselesFqtRefs) {
     name->nameType = TypeStruct;
     //&*str=javaTypeSymbolUsage(name,ACCESS_DEFAULT);
     javaLoadClassSymbolsFromFile(*str);
@@ -1338,8 +1338,8 @@ int javaClassifyAmbiguousName(
         S_recFindStr *rfs,	// can be NULL
         Symbol **str,
         TypeModifier **expr,
-        S_reference **oref,
-        S_reference **rdtoref,  // output last useless reference, can be NULL
+        Reference **oref,
+        Reference **rdtoref,  // output last useless reference, can be NULL
         int allowUselesFqtRefs,
         int classif,
         int usage) {
@@ -1348,7 +1348,7 @@ int javaClassifyAmbiguousName(
     Symbol    *pstr;
     S_recFindStr localRfs;
     TypeModifier     *pexpr;
-    S_reference			*poref, *localrdref, *prdtoref;
+    Reference			*poref, *localrdref, *prdtoref;
     assert(classif==CLASS_TO_TYPE || classif==CLASS_TO_EXPR ||
            classif==CLASS_TO_METHOD);
     uusage = usage;
@@ -1462,7 +1462,7 @@ int javaClassifyAmbiguousName(
 #undef AddAmbCxRef
 
 TypeModifier *javaClassifyToExpressionName(S_idList *name,
-                                              S_reference **oref) {
+                                              Reference **oref) {
     Symbol    *str;
     TypeModifier		*expr,*res;
     int atype;
@@ -1477,17 +1477,17 @@ TypeModifier *javaClassifyToExpressionName(S_idList *name,
 }
 
 // returns last useless reference (if any)
-S_reference *javaClassifyToTypeOrPackageName(S_idList *tname, int usage, Symbol **str, int allowUselesFqtRefs) {
+Reference *javaClassifyToTypeOrPackageName(S_idList *tname, int usage, Symbol **str, int allowUselesFqtRefs) {
     TypeModifier		*expr;
-    S_reference			*rr, *lastUselessRef;
+    Reference			*rr, *lastUselessRef;
     lastUselessRef = NULL;
     javaClassifyAmbiguousName(tname, NULL, str, &expr, &rr, &lastUselessRef, allowUselesFqtRefs,
                               CLASS_TO_TYPE, usage);
     return(lastUselessRef);
 }
 
-S_reference *javaClassifyToTypeName(S_idList *tname, int usage, Symbol **str, int allowUselesFqtRefs) {
-    S_reference *res;
+Reference *javaClassifyToTypeName(S_idList *tname, int usage, Symbol **str, int allowUselesFqtRefs) {
+    Reference *res;
 
     res = javaClassifyToTypeOrPackageName(tname, usage, str, allowUselesFqtRefs);
     if (tname->nameType != TypeStruct) {
@@ -1504,7 +1504,7 @@ S_reference *javaClassifyToTypeName(S_idList *tname, int usage, Symbol **str, in
 Symbol * javaQualifiedThis(S_idList *tname, S_id *thisid) {
     Symbol			*str;
     TypeModifier		*expr;
-    S_reference			*rr, *lastUselessRef;
+    Reference			*rr, *lastUselessRef;
     int					ttype;
     lastUselessRef = NULL;
     ttype = javaClassifyAmbiguousName(tname, NULL,&str,&expr,&rr,
@@ -1737,15 +1737,15 @@ void addThisCxReferences(int classIndex, Position *pos) {
                              classIndex, pos, usage);
 }
 
-S_reference *addUselessFQTReference(int classIndex, Position *pos) {
-    S_reference *res;
+Reference *addUselessFQTReference(int classIndex, Position *pos) {
+    Reference *res;
     res = addSpecialFieldReference(LINK_NAME_IMPORTED_QUALIFIED_ITEM,StorageField,
                                    classIndex, pos, UsageLastUseless);
     return(res);
 }
 
-S_reference *addUnimportedTypeLongReference(int classIndex, Position *pos) {
-    S_reference *res;
+Reference *addUnimportedTypeLongReference(int classIndex, Position *pos) {
+    Reference *res;
     res = addSpecialFieldReference(LINK_NAME_UNIMPORTED_QUALIFIED_ITEM, StorageField,
                                    classIndex, pos, UsageUsed);
     return(res);
@@ -1871,7 +1871,7 @@ TypeModifier *javaNestedNewType(Symbol *sym, S_id *thenew,
     char                *id2;
     S_id			*id;
     Symbol			*str;
-    S_reference			*rr;
+    Reference			*rr;
     if (idl->next == NULL) {
         // standard nested new
         id = &idl->id;
@@ -1903,7 +1903,7 @@ TypeModifier *javaNewAfterName(S_idList *name, S_id *thenew, S_idList *idl) {
     Symbol *str;
     TypeModifier *expr, *res;
     int atype;
-    S_reference *rr;
+    Reference *rr;
 
     atype = javaClassifyAmbiguousName(name,NULL,&str,&expr,&rr,NULL, USELESS_FQT_REFS_ALLOWED,CLASS_TO_EXPR,UsageUsed);
     if (atype == TypeExpression) {
@@ -2199,7 +2199,7 @@ static TypeModifier *javaMethodInvocation(
 S_extRecFindStr *javaCrErfsForMethodInvocationN(S_idList *name) {
     S_extRecFindStr		*erfs;
     TypeModifier		*expr;
-    S_reference			*rr;
+    Reference			*rr;
     int					nt;
     XX_ALLOC(erfs, S_extRecFindStr);
     erfs->params = NULL;

@@ -3473,7 +3473,7 @@ case 74:
             yyval.ast_idList.d = yyvsp[-1].ast_idList.d;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_reference *lastUselessRef;
+                    Reference *lastUselessRef;
                     Symbol *str;
                     /* it was type or packege, but I thing this would be better*/
                     lastUselessRef = javaClassifyToTypeName(yyvsp[-1].ast_idList.d, UsageUsed, &str, USELESS_FQT_REFS_DISALLOWED);
@@ -3505,7 +3505,7 @@ case 77:
                 if (! SyntaxPassOnly()) {
                     Symbol *str;
                     TypeModifier *expr;
-                    S_reference *rr, *lastUselessRef;
+                    Reference *rr, *lastUselessRef;
                     int st __attribute__((unused));
                     st = javaClassifyAmbiguousName(yyvsp[-3].ast_idList.d, NULL,&str,&expr,&rr,
                                                    &lastUselessRef, USELESS_FQT_REFS_DISALLOWED,
@@ -5927,7 +5927,7 @@ case 364:
                 Symbol            *ss;
                 Symbol			*str;
                 TypeModifier		*expr;
-                S_reference			*rr, *lastUselessRef;
+                Reference			*rr, *lastUselessRef;
                 javaClassifyAmbiguousName(yyvsp[0].ast_idList.d, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
                                           CLASS_TO_TYPE,UsageUsed);
                 yyvsp[0].ast_idList.d->nameType = TypeStruct;
@@ -5945,7 +5945,7 @@ case 365:
                     Symbol *ss, *tt, *ei;
                     Symbol *str;
                     TypeModifier *expr;
-                    S_reference *rr, *lastUselessRef;
+                    Reference *rr, *lastUselessRef;
 
                     s_cp.erfsForParamsComplet = yyvsp[-4].erfs;
                     lastUselessRef = NULL;
@@ -7021,7 +7021,7 @@ case 463:
                 if (! SyntaxPassOnly()) {
                     s_cps.lastAssignementStruct = NULL;
                     if (yyvsp[-3].ast_expressionType.d.reference != NULL && s_opt.server_operation == OLO_EXTRACT) {
-                        S_reference *rr;
+                        Reference *rr;
                         rr = duplicateReference(yyvsp[-3].ast_expressionType.d.reference);
                         yyvsp[-3].ast_expressionType.d.reference->usage = s_noUsage;
                         if (yyvsp[-1].ast_unsignedPositionPair.d.u == '=') {
@@ -7064,7 +7064,7 @@ case 464:
             if (regularPass()) {
                 yyval.ast_expressionType.d.position = javaGetNameStartingPosition(yyvsp[0].ast_idList.d);
                 if (! SyntaxPassOnly()) {
-                    S_reference *rr;
+                    Reference *rr;
                     yyval.ast_expressionType.d.typeModifier = javaClassifyToExpressionName(yyvsp[0].ast_idList.d, &rr);
                     yyval.ast_expressionType.d.reference = rr;
                 } else {

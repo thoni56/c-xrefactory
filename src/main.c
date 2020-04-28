@@ -2682,7 +2682,7 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
     int                 i,ii,fileAddedFlag, isJavaFileFlag;
     S_fileItem          *fi,*includer;
     SymbolReferenceItem     ddd,*memb;
-    S_reference         *rr;
+    Reference         *rr;
     CX_ALLOCC(cxFreeBase,0,char);
     readOneAppropReferenceFile(LINK_NAME_INCLUDE_REFS,
                                fullUpdateFunctionSequence); // get include refs

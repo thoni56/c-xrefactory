@@ -131,7 +131,7 @@ void genSwitchCaseFork(int lastFlag) {
     }
 }
 
-static S_programGraphNode *newProgramGraphNode(S_reference *ref, SymbolReferenceItem *symRef,
+static S_programGraphNode *newProgramGraphNode(Reference *ref, SymbolReferenceItem *symRef,
                                                S_programGraphNode *jump, char posBits,
                                                char stateBits,
                                                char classifBits,
@@ -152,7 +152,7 @@ static S_programGraphNode *newProgramGraphNode(S_reference *ref, SymbolReference
 }
 
 static void extractFunGraphRef(SymbolReferenceItem *rr, void *prog) {
-    S_reference *r;
+    Reference *r;
     S_programGraphNode *p,**ap;
     ap = (S_programGraphNode **) prog;
     for(r=rr->refs; r!=NULL; r=r->next) {
@@ -164,7 +164,7 @@ static void extractFunGraphRef(SymbolReferenceItem *rr, void *prog) {
 }
 
 static S_programGraphNode *getGraphAddress( S_programGraphNode  *program,
-                                            S_reference         *ref
+                                            Reference         *ref
                                             ) {
     S_programGraphNode *p,*res;
     res = NULL;
@@ -174,8 +174,8 @@ static S_programGraphNode *getGraphAddress( S_programGraphNode  *program,
     return(res);
 }
 
-static S_reference *getDefinitionReference(SymbolReferenceItem *lab) {
-    S_reference *res;
+static Reference *getDefinitionReference(SymbolReferenceItem *lab) {
+    Reference *res;
     for(res=lab->refs; res!=NULL && res->usage.base!=UsageDefined; res=res->next) ;
     if (res == NULL) {
         sprintf(tmpBuff,"jump to unknown label '%s'\n",lab->name);
@@ -188,7 +188,7 @@ static S_programGraphNode *getLabelGraphAddress(S_programGraphNode *program,
                                                 SymbolReferenceItem     *lab
                                                 ) {
     S_programGraphNode  *res;
-    S_reference         *defref;
+    Reference         *defref;
     assert(lab->b.symType == TypeLabel);
     defref = getDefinitionReference(lab);
     res = getGraphAddress(program, defref);

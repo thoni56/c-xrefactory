@@ -45,7 +45,7 @@ int checkFileModifiedTime(int fileIndex) {
 }
 
 
-static void deleteReferencesOutOfMemory(S_reference **rr) {
+static void deleteReferencesOutOfMemory(Reference **rr) {
     while (*rr!=NULL) {
         if (DM_FREED_POINTER(cxMemory,*rr)) {
             /*fprintf(dumpOut,"deleting reference on %s:%d\n",s_fileTab.tab[(*rr)->p.file]->name,(*rr)->p.line);*/

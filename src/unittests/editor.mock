@@ -58,12 +58,12 @@ S_editorMarker *editorCrNewMarkerForPosition(Position *pos) {
   return (S_editorMarker *) mock(pos);
 }
 
-S_editorMarkerList *editorReferencesToMarkers(S_reference *refs, int (*filter)(S_reference *, void *), void *filterParam) {
+S_editorMarkerList *editorReferencesToMarkers(Reference *refs, int (*filter)(Reference *, void *), void *filterParam) {
   return (S_editorMarkerList *) mock(refs, filter, filterParam);
 }
 
-S_reference *editorMarkersToReferences(S_editorMarkerList **mms) {
-  return (S_reference *) mock(mms);
+Reference *editorMarkersToReferences(S_editorMarkerList **mms) {
+  return (Reference *) mock(mms);
 }
 
 void editorRenameBuffer(S_editorBuffer *buff, char *newName, S_editorUndo **undo) {

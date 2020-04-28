@@ -87,7 +87,7 @@ void fill_symbolRefItemBits(SymbolReferenceItemBits *symbolRefItemBits, unsigned
     symbolRefItemBits->htmlWasLn = htmlWasLn;
 }
 
-void fill_reference(S_reference *reference, UsageBits usage, Position position, S_reference *next) {
+void fill_reference(Reference *reference, UsageBits usage, Position position, Reference *next) {
     reference->usage = usage;
     reference->p = position;
     reference->next = next;
@@ -130,7 +130,7 @@ void fillUsageBits(UsageBits *usageBits, unsigned base, unsigned requiredAccess)
 }
 
 
-int olcxReferenceInternalLessFunction(S_reference *r1, S_reference *r2) {
+int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
     return(SORTED_LIST_LESS(r1, (*r2)));
 }
 
@@ -246,18 +246,18 @@ void renameCollationSymbols(S_olSymbolsMenu *sss) {
 */
 
 
-S_reference **addToRefList(S_reference **list,
+Reference **addToRefList(Reference **list,
                            UsageBits *pusage,
                            Position *pos,
                            int category
                            ) {
-    S_reference *rr, **place;
-    S_reference ppp;
+    Reference *rr, **place;
+    Reference ppp;
     fill_reference(&ppp, *pusage, *pos, NULL);
-    SORTED_LIST_PLACE2(place,S_reference,ppp,list);
+    SORTED_LIST_PLACE2(place,Reference,ppp,list);
     if (*place==NULL || SORTED_LIST_NEQ((*place),ppp)
         || s_opt.server_operation==OLO_EXTRACT) {
-        CX_ALLOC(rr, S_reference);
+        CX_ALLOC(rr, Reference);
         fill_reference(rr, *pusage, *pos, NULL);
         LIST_CONS(rr,(*place));
     } else {
@@ -268,26 +268,26 @@ S_reference **addToRefList(S_reference **list,
 }
 
 
-bool isInRefList(S_reference *list,
+bool isInRefList(Reference *list,
                 UsageBits *pusage,
                 Position *pos,
                 int category
                 ) {
-    S_reference *rr;
-    S_reference ppp;
+    Reference *rr;
+    Reference ppp;
     fill_reference(&ppp, *pusage, *pos, NULL);
-    SORTED_LIST_FIND2(rr, S_reference, ppp, list);
+    SORTED_LIST_FIND2(rr, Reference, ppp, list);
     if (rr==NULL || SORTED_LIST_NEQ(rr,ppp)) return(0);
     return(1);
 }
 
 
-S_reference *duplicateReference(S_reference *r) {
+Reference *duplicateReference(Reference *r) {
     // this is used in extract x=x+2; to re-arrange order of references
     // i.e. usage must be first, lValue second.
-    S_reference *rr;
+    Reference *rr;
     r->usage = s_noUsage;
-    CX_ALLOC(rr, S_reference);
+    CX_ALLOC(rr, Reference);
     *rr = *r;
     r->next = rr;
     return(rr);
@@ -400,10 +400,10 @@ static void setClassTreeBaseType(S_classTreeData *ct, Symbol *p) {
     }
 }
 
-S_reference *addSpecialFieldReference(char *name,int storage, int fnum,
+Reference *addSpecialFieldReference(char *name,int storage, int fnum,
                                       Position *p, int usage){
     Symbol        ss;
-    S_reference     *res;
+    Reference     *res;
 
     fillSymbol(&ss, name, name, *p);
     fillSymbolBits(&ss.bits, ACCESS_DEFAULT, TypeDefault, storage);
@@ -440,7 +440,7 @@ int isStrictlyEnclosingClass(int enclosedClass, int enclosingClass) {
 void changeFieldRefUsages(SymbolReferenceItem  *ri, void  *rrcd) {
     S_referencesChangeData      *rcd;
     SymbolReferenceItem             ddd;
-    S_reference                 *rr;
+    Reference                 *rr;
     rcd = (S_referencesChangeData*) rrcd;
     fill_symbolRefItemBits(&ddd.b,TypeDefault,StorageField,
                            ScopeFile,ACCESS_DEFAULT, rcd->category ,0);
@@ -522,9 +522,9 @@ void changeClassReferencesUsages(char *linkName, int category, int fnum,
     refTabMap2(&s_cxrefTab, changeFieldRefUsages, &rr);
 }
 
-S_reference * getDefinitionRef(S_reference *rr) {
-    S_reference *r;
-    S_reference *res;
+Reference * getDefinitionRef(Reference *rr) {
+    Reference *r;
+    Reference *res;
     res = NULL;
     for(r=rr; r!=NULL; r=r->next) {
         if (r->usage.base==UsageDefined || r->usage.base==UsageOLBestFitDefined) {
@@ -725,11 +725,11 @@ static int htmlReferencableSymbol(int scope, int category, Symbol *p) {
 /* ********************************************************************* */
 /* default vappClass == vFunClass == s_noneFileIndex !!!!!!!             */
 /*                                                                       */
-S_reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
+Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
                                 int vFunCl, int vApplCl) {
     int ii,mm,category,scope,storage,defusage;
     char *linkName;
-    S_reference rr, **place;
+    Reference rr, **place;
     Position *defpos;
     SymbolReferenceItem *pp,*memb, ppp;
     S_olSymbolsMenu *mmi;
@@ -887,7 +887,7 @@ S_reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
     return(*place);
 }
 
-S_reference * addCxReference(Symbol *p, Position *pos, Usage usage, int vFunCl, int vApplCl) {
+Reference * addCxReference(Symbol *p, Position *pos, Usage usage, int vFunCl, int vApplCl) {
     UsageBits ub;
     fillUsageBits(&ub, usage, MIN_REQUIRED_ACCESS);
     return addCxReferenceNew(p, pos, &ub, vFunCl, vApplCl);
@@ -943,12 +943,12 @@ bool isSmallerOrEqClass(int inf, int sup) {
 }
 
 #define OLCX_FREE_REFERENCE(r) {                        \
-        REAL_MEMORY_FREE(olcxMemory, (r), sizeof(S_reference)); \
+        REAL_MEMORY_FREE(olcxMemory, (r), sizeof(Reference)); \
     }
 
 
-void olcxFreeReferences(S_reference *r) {
-    S_reference *tmp;
+void olcxFreeReferences(Reference *r) {
+    Reference *tmp;
     while (r!=NULL) {
         tmp = r->next;
         OLCX_FREE_REFERENCE(r);
@@ -1178,12 +1178,12 @@ static int olcxVirtualyUsageAdequate(int vApplCl, int vFunCl,
     return(res);
 }
 
-S_reference *olcxAddReferenceNoUsageCheck(S_reference **rlist, S_reference *ref, int bestMatchFlag) {
-    S_reference **place, *rr;
+Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref, int bestMatchFlag) {
+    Reference **place, *rr;
     rr = NULL;
-    SORTED_LIST_PLACE2(place,S_reference, *ref, rlist);
+    SORTED_LIST_PLACE2(place,Reference, *ref, rlist);
     if (*place==NULL || SORTED_LIST_NEQ(*place,*ref)) {
-        OLCX_ALLOC(rr, S_reference);
+        OLCX_ALLOC(rr, Reference);
         *rr = *ref;
         if (LANGUAGE(LANG_JAVA)) {
             if (ref->usage.base==UsageDefined &&  bestMatchFlag) {
@@ -1197,34 +1197,34 @@ S_reference *olcxAddReferenceNoUsageCheck(S_reference **rlist, S_reference *ref,
 }
 
 
-S_reference *olcxAddReference(S_reference **rlist,S_reference *ref,int bestMatchFlag) {
-    S_reference *rr;
+Reference *olcxAddReference(Reference **rlist,Reference *ref,int bestMatchFlag) {
+    Reference *rr;
     //&sprintf(tmpBuff,"checking ref %s %s:%d:%d at %d\n",usageName[ref->usage.base], simpleFileName(s_fileTab.tab[ref->p.file]->name),ref->p.line,ref->p.col, ref); ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
     if (! OL_VIEWABLE_REFS(ref)) return NULL; // no regular on-line refs
     rr = olcxAddReferenceNoUsageCheck(rlist, ref, bestMatchFlag);
     return(rr);
 }
 
-static S_reference *olcxCopyReference(S_reference *ref) {
-    S_reference *rr;
-    OLCX_ALLOC(rr, S_reference);
+static Reference *olcxCopyReference(Reference *ref) {
+    Reference *rr;
+    OLCX_ALLOC(rr, Reference);
     *rr = *ref;
     rr->next = NULL;
     return(rr);
 }
 
-void olcxAppendReference(S_reference *ref, S_olcxReferences *refs) {
-    S_reference *rr;
+void olcxAppendReference(Reference *ref, S_olcxReferences *refs) {
+    Reference *rr;
     rr = olcxCopyReference(ref);
-    LIST_APPEND(S_reference, refs->r, rr);
+    LIST_APPEND(Reference, refs->r, rr);
     //&fprintf(dumpOut,"olcx appending %s %s:%d:%d\n",usageName[ref->usage.base], s_fileTab.tab[ref->p.file]->name,ref->p.line,ref->p.col); fflush(dumpOut);
 }
 
 /* fnum is file number of which references are added, can be ANY_FILE
  */
-void olcxAddReferences(S_reference *list, S_reference **dlist,
+void olcxAddReferences(Reference *list, Reference **dlist,
                        int fnum, int bestMatchFlag) {
-    S_reference *revlist,*tmp;
+    Reference *revlist,*tmp;
     /* from now, you should add it to macros as REVERSE_LIST_MAP() */
     revlist = NULL;
     while (list!=NULL) {
@@ -1243,9 +1243,9 @@ void olcxAddReferences(S_reference *list, S_reference **dlist,
     list = revlist;
 }
 
-void olcxAddReferenceToOlSymbolsMenu(S_olSymbolsMenu  *cms, S_reference *rr,
+void olcxAddReferenceToOlSymbolsMenu(S_olSymbolsMenu  *cms, Reference *rr,
                                      int bestFitTlag) {
-    S_reference *added;
+    Reference *added;
     added = olcxAddReference(&cms->s.refs, rr, bestFitTlag);
     if (rr->usage.base == UsageClassTreeDefinition) cms->defpos = rr->p;
     if (added!=NULL) {
@@ -1265,10 +1265,10 @@ void olcxAddReferenceToOlSymbolsMenu(S_olSymbolsMenu  *cms, S_reference *rr,
 }
 
 static void olcxAddReferencesToOlSymbolsMenu(S_olSymbolsMenu  *cms,
-                                             S_reference *rlist,
+                                             Reference *rlist,
                                              int bestFitFlag
                                              ) {
-    S_reference *rr;
+    Reference *rr;
     for(rr=rlist; rr!=NULL; rr=rr->next) {
         olcxAddReferenceToOlSymbolsMenu(cms, rr, bestFitFlag);
     }
@@ -1332,7 +1332,7 @@ static void olcxRenameInit(void) {
 }
 
 
-int olcxListLessFunction(S_reference *r1, S_reference *r2) {
+int olcxListLessFunction(Reference *r1, Reference *r2) {
     int fc;
     char *s1,*s2;
     s1 = simpleFileName(s_fileTab.tab[r1->p.file]->name);
@@ -1356,7 +1356,7 @@ int olcxListLessFunction(S_reference *r1, S_reference *r2) {
                                       || r2->usage.base==UsageOLBestFitDefined \
                                                                         )
 
-    int olcxPushLessFunction(S_reference *r1, S_reference *r2) {
+    int olcxPushLessFunction(Reference *r1, Reference *r2) {
         if (UsageImportantInOrder(r1,r2)) {
             // in definition, declaration usage is important
             if (r1->usage.base < r2->usage.base) return(1);
@@ -1367,7 +1367,7 @@ int olcxListLessFunction(S_reference *r1, S_reference *r2) {
 
 
 static void olcxNaturalReorder(S_olcxReferences *refs) {
-    LIST_MERGE_SORT(S_reference, refs->r, olcxPushLessFunction);
+    LIST_MERGE_SORT(Reference, refs->r, olcxPushLessFunction);
 }
 
 static void olcxGenNoReferenceSignal(void) {
@@ -1382,7 +1382,7 @@ static void olcxOrderRefsAndGotoFirst(void) {
     S_olcxReferences *refs;
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
     //& setRefSuffix(refs);
-    LIST_MERGE_SORT(S_reference, refs->r, olcxListLessFunction);
+    LIST_MERGE_SORT(Reference, refs->r, olcxListLessFunction);
     refs->act = refs->r;
     if (refs->r != NULL) {
         generateOnlineCxref(&refs->act->p, COLCX_GOTO_REFERENCE,
@@ -1394,7 +1394,7 @@ static void olcxOrderRefsAndGotoFirst(void) {
 
 // references has to be ordered according internal file numbers order !!!!
 static int olcxSetCurrentRefsOnCaller(S_olcxReferences *refs) {
-    S_reference *rr;
+    Reference *rr;
     for(rr=refs->r; rr!=NULL; rr=rr->next){
         //&fprintf(dumpOut,"checking %d %d %d to %d %d %d\n",rr->p.file, rr->p.line,rr->p.col, refs->cpos.file,  refs->cpos.line,  refs->cpos.col);
         if (! POSITION_LESS(rr->p, refs->cpos)) break;
@@ -1719,14 +1719,14 @@ static void linePosProcess(FILE *off,
                            int usages,
                            int usageFilter, // only if usages==USAGE_FILTER
                            char *fname,
-                           S_reference **rrr,
+                           Reference **rrr,
                            Position *callerp,
                            Position *cp,
                            int *cch,
                            CharacterBuffer *cxfBuf
                            ) {
     int             ch, pendingRefFlag, linerefn;
-    S_reference     *rr, *r;
+    Reference     *rr, *r;
     char            *fn;
 
     rr = *rrr;
@@ -1782,21 +1782,21 @@ static void linePosProcess(FILE *off,
     *cch = ch;
 }
 
-static S_reference *passNonPrintableRefsForFile(S_reference *r,
+static Reference *passNonPrintableRefsForFile(Reference *r,
                                                     int fnum,
                                                     int usages, int usageFilter
                                                     ) {
-S_reference *rr;
+Reference *rr;
  for(rr=r; rr!=NULL && rr->p.file == fnum; rr=rr->next) {
      if (LISTABLE_USAGE(rr, usages, usageFilter)) return(rr);
  }
  return(rr);
 }
 
-static void passRefsThroughSourceFile(S_reference **rrr, Position *callerp,
+static void passRefsThroughSourceFile(Reference **rrr, Position *callerp,
                                       FILE *off,
                                       char *ofname, int usages, int usageFilter) {
-    S_reference         *rr,*oldrr;
+    Reference         *rr,*oldrr;
     int                 ch,fnum;
     S_editorBuffer      *ebuf;
     char                *cofileName;
@@ -1914,7 +1914,7 @@ void olcxPrintSelectionMenu(S_olSymbolsMenu *sss) {
 }
 
 static int getCurrentRefPosition(S_olcxReferences *refs) {
-    S_reference     *rr;
+    Reference     *rr;
     int             actn;
     int             rlevel;
     actn = 0;
@@ -1947,7 +1947,7 @@ static void symbolHighlighNameSprint(char *output, S_olSymbolsMenu *ss) {
 }
 
 static void olcxPrintRefList(char *commandString, S_olcxReferences *refs) {
-    S_reference *rr;
+    Reference *rr;
     int         actn, len;
     char        ttt[MAX_CX_SYMBOL_SIZE];
 
@@ -1986,7 +1986,7 @@ static void olcxReferenceList(char *commandString) {
     S_olcxReferences    *refs;
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs, CHECK_NULL);
     //& setRefSuffix(refs);
-    //&LIST_MERGE_SORT(S_reference, refs->r, olcxListLessFunction);
+    //&LIST_MERGE_SORT(Reference, refs->r, olcxListLessFunction);
     olcxPrintRefList(commandString, refs);
 }
 
@@ -2008,17 +2008,17 @@ static void olcxGenGotoActReference(S_olcxReferences *refs) {
 static void olcxPushOnly(void) {
     S_olcxReferences    *refs;
     OLCX_MOVE_INIT(s_olcxCurrentUser, refs, CHECK_NULL);
-    //&LIST_MERGE_SORT(S_reference, refs->r, olcxListLessFunction);
+    //&LIST_MERGE_SORT(Reference, refs->r, olcxListLessFunction);
     olcxGenGotoActReference(refs);
 }
 
 static void olcxPushAndCallMacro(void) {
     S_olcxReferences    *refs;
-    S_reference         *rr;
+    Reference         *rr;
     char                symbol[MAX_CX_SYMBOL_SIZE];
     OLCX_MOVE_INIT(s_olcxCurrentUser, refs, CHECK_NULL);
-    LIST_MERGE_SORT(S_reference, refs->r, olcxListLessFunction);
-    LIST_REVERSE(S_reference, refs->r);
+    LIST_MERGE_SORT(Reference, refs->r, olcxListLessFunction);
+    LIST_REVERSE(Reference, refs->r);
     assert(s_opt.xref2);
     symbolHighlighNameSprint(symbol, refs->hkSelectedSym);
     // precheck first
@@ -2029,12 +2029,12 @@ static void olcxPushAndCallMacro(void) {
         ppcGenReferencePreCheckRecord(rr, symbol);
         ppcGenRecord(PPC_CALL_MACRO, "", "\n");
     }
-    LIST_REVERSE(S_reference, refs->r);
+    LIST_REVERSE(Reference, refs->r);
 }
 
 static void olcxReferenceGotoRef(int refn) {
     S_olcxReferences    *refs;
-    S_reference         *rr;
+    Reference         *rr;
     int                 i,rfilter;
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
     rfilter = s_refListFilters[refs->refsFilterLevel];
@@ -2171,7 +2171,7 @@ static void olcxReferenceBrowseCompletion(int refn) {
     }
 }
 
-static void olcxSetActReferenceToFirstVisible(S_olcxReferences *refs, S_reference *r) {
+static void olcxSetActReferenceToFirstVisible(S_olcxReferences *refs, Reference *r) {
     int                 rlevel;
     rlevel = s_refListFilters[refs->refsFilterLevel];
     while (r!=NULL && r->usage.base>=rlevel) r = r->next;
@@ -2189,7 +2189,7 @@ static void olcxSetActReferenceToFirstVisible(S_olcxReferences *refs, S_referenc
 
 static void olcxReferencePlus(void) {
     S_olcxReferences    *refs;
-    S_reference         *r;
+    Reference         *r;
     OLCX_MOVE_INIT(s_olcxCurrentUser, refs, CHECK_NULL);
     if (refs->act == NULL) refs->act = refs->r;
     else {
@@ -2201,7 +2201,7 @@ static void olcxReferencePlus(void) {
 
 static void olcxReferenceMinus(void) {
     S_olcxReferences    *refs;
-    S_reference         *r,*l,*act;
+    Reference         *r,*l,*act;
     int                 rlevel;
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
     rlevel = s_refListFilters[refs->refsFilterLevel];
@@ -2227,7 +2227,7 @@ static void olcxReferenceMinus(void) {
 
 static void olcxReferenceGotoDef(void) {
     S_olcxReferences    *refs;
-    S_reference         *dr;
+    Reference         *dr;
 
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
     dr = getDefinitionRef(refs->r);
@@ -2305,18 +2305,18 @@ static void olcxShowTopSymbol(void) {
     olcxPrintSymbolName(refs);
 }
 
-static int referenceLess(S_reference *r1, S_reference *r2) {
+static int referenceLess(Reference *r1, Reference *r2) {
     return(POSITION_LESS(r1->p, r2->p));
 }
 
 static S_olSymbolsMenu *findSymbolCorrespondingToReference(
                                                            S_olSymbolsMenu *menu,
-                                                           S_reference *ref
+                                                           Reference *ref
                                                            ) {
     S_olSymbolsMenu *ss;
-    S_reference *rr;
+    Reference *rr;
     for(ss=menu; ss!=NULL; ss=ss->next) {
-        SORTED_LIST_FIND3(rr, S_reference, ref, ss->s.refs, referenceLess);
+        SORTED_LIST_FIND3(rr, Reference, ref, ss->s.refs, referenceLess);
         if (rr!=NULL && POSITION_EQ(rr->p, ref->p)) {
             return(ss);
         }
@@ -2492,13 +2492,13 @@ void olProcessSelectedReferences(
     ss = rstack->menuSym;
     if (ss == NULL) return;
     //& renameCollationSymbols(ss);
-    LIST_MERGE_SORT(S_reference, rstack->r, olcxReferenceInternalLessFunction);
+    LIST_MERGE_SORT(Reference, rstack->r, olcxReferenceInternalLessFunction);
     for(ss=rstack->menuSym; ss!=NULL; ss=ss->next) {
-        //&LIST_LEN(nn, S_reference, ss->s.refs);sprintf(tmpBuff,"xxx1 %d refs for %s", nn, s_fileTab.tab[ss->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+        //&LIST_LEN(nn, Reference, ss->s.refs);sprintf(tmpBuff,"xxx1 %d refs for %s", nn, s_fileTab.tab[ss->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
         referencesMapFun(rstack, ss);
     }
     olcxSetCurrentRefsOnCaller(rstack);
-    LIST_MERGE_SORT(S_reference, rstack->r, olcxListLessFunction);
+    LIST_MERGE_SORT(Reference, rstack->r, olcxListLessFunction);
 }
 
 void olcxRecomputeSelRefs(S_olcxReferences *refs) {
@@ -2547,7 +2547,7 @@ static void olcxMenuToggleSelect(void) {
 static void olcxMenuSelectOnly(void) {
     S_olcxReferences    *refs;
     S_olSymbolsMenu     *ss, *sel;
-    S_reference         *dref;
+    Reference         *dref;
     int                 line, jd;
     char                ttt[MAX_CX_SYMBOL_SIZE];
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
@@ -2982,11 +2982,11 @@ void olcxPopOnly(void) {
     s_olcxCurrentUser->browserStack.top = refs->previous;
 }
 
-S_reference * olcxCopyRefList(S_reference *ll) {
-    S_reference *rr, *res, *a, **aa;
+Reference * olcxCopyRefList(Reference *ll) {
+    Reference *rr, *res, *a, **aa;
     res = NULL; aa= &res;
     for(rr=ll; rr!=NULL; rr=rr->next) {
-        OLCX_ALLOC(a, S_reference);
+        OLCX_ALLOC(a, Reference);
         *a = *rr;
         a->next = NULL;
         *aa = a;
@@ -2995,7 +2995,7 @@ S_reference * olcxCopyRefList(S_reference *ll) {
     return(res);
 }
 
-static void safetyCheckAddDiffRef(S_reference *r, S_olcxReferences *diffrefs,
+static void safetyCheckAddDiffRef(Reference *r, S_olcxReferences *diffrefs,
                                   int mode) {
     int prefixchar;
     prefixchar = ' ';
@@ -3015,14 +3015,14 @@ static void safetyCheckAddDiffRef(S_reference *r, S_olcxReferences *diffrefs,
     olcxAppendReference(r, diffrefs);
 }
 
-void olcxReferencesDiff(S_reference **anr1,
-                        S_reference **aor2,
-                        S_reference **diff
+void olcxReferencesDiff(Reference **anr1,
+                        Reference **aor2,
+                        Reference **diff
                         ) {
-    S_reference *r, *nr1, *or2, **dd;
+    Reference *r, *nr1, *or2, **dd;
 
-    LIST_MERGE_SORT(S_reference, *anr1, olcxReferenceInternalLessFunction);
-    LIST_MERGE_SORT(S_reference, *aor2, olcxReferenceInternalLessFunction);
+    LIST_MERGE_SORT(Reference, *anr1, olcxReferenceInternalLessFunction);
+    LIST_MERGE_SORT(Reference, *aor2, olcxReferenceInternalLessFunction);
     nr1 = *anr1; or2 = *aor2; dd = diff;
     *dd = NULL;
     while (nr1!=NULL && or2!=NULL) {
@@ -3055,14 +3055,14 @@ void olcxReferencesDiff(S_reference **anr1,
     }
 }
 
-static void safetyCheckDiff(S_reference **anr1,
-                            S_reference **aor2,
+static void safetyCheckDiff(Reference **anr1,
+                            Reference **aor2,
                             S_olcxReferences *diffrefs
                             ) {
-    S_reference *r, *nr1, *or2;
+    Reference *r, *nr1, *or2;
     int mode;
-    LIST_MERGE_SORT(S_reference, *anr1, olcxReferenceInternalLessFunction);
-    LIST_MERGE_SORT(S_reference, *aor2, olcxReferenceInternalLessFunction);
+    LIST_MERGE_SORT(Reference, *anr1, olcxReferenceInternalLessFunction);
+    LIST_MERGE_SORT(Reference, *aor2, olcxReferenceInternalLessFunction);
     nr1 = *anr1; or2 = *aor2;
     while (nr1!=NULL && or2!=NULL) {
         if (nr1->p.file==or2->p.file && nr1->p.line==or2->p.line) {
@@ -3108,8 +3108,8 @@ int getFileNumberFromName(char *name) {
     }
 }
 
-static S_reference *olcxCreateFileShiftedRefListForCheck(S_reference *rr) {
-    S_reference *res, *r, *tt, **resa;
+static Reference *olcxCreateFileShiftedRefListForCheck(Reference *rr) {
+    Reference *res, *r, *tt, **resa;
     int ofn, nfn, fmline, lmline;
     //&fprintf(dumpOut,"!shifting enter\n");
     if (s_opt.checkFileMovedFrom==NULL) return NULL;
@@ -3124,7 +3124,7 @@ static S_reference *olcxCreateFileShiftedRefListForCheck(S_reference *rr) {
     lmline = s_opt.checkFirstMovedLine + s_opt.checkLinesMoved;
     res = NULL; resa = &res;
     for(r=rr; r!=NULL; r=r->next) {
-        OLCX_ALLOC(tt, S_reference);
+        OLCX_ALLOC(tt, Reference);
         *tt = *r;
         if (tt->p.file==ofn && tt->p.line>=fmline && tt->p.line<lmline) {
             tt->p.file = nfn;
@@ -3133,13 +3133,13 @@ static S_reference *olcxCreateFileShiftedRefListForCheck(S_reference *rr) {
         }
         *resa=tt; tt->next=NULL; resa= &(tt->next);
     }
-    LIST_MERGE_SORT(S_reference, res, olcxReferenceInternalLessFunction);
+    LIST_MERGE_SORT(Reference, res, olcxReferenceInternalLessFunction);
     return(res);
 }
 
 static void olcxSafetyCheck2(void) {
     S_olcxReferences *refs, *origrefs, *newrefs, *diffrefs;
-    S_reference *shifted;
+    Reference *shifted;
     int pbflag=0;
     origrefs = newrefs = diffrefs = NULL;
     SAFETY_CHECK2_GET_SYM_LISTS(refs,origrefs,newrefs,diffrefs, pbflag);
@@ -3167,8 +3167,8 @@ static void olcxSafetyCheck2(void) {
 }
 
 static int olRemoveCallerReference(S_olcxReferences *refs) {
-    S_reference *rr, **rrr;
-    LIST_MERGE_SORT(S_reference, refs->r, olcxReferenceInternalLessFunction);
+    Reference *rr, **rrr;
+    LIST_MERGE_SORT(Reference, refs->r, olcxReferenceInternalLessFunction);
     for(rrr= &refs->r, rr=refs->r; rr!=NULL; rrr= &rr->next, rr=rr->next){
         //&fprintf(dumpOut,"checking %d %d %d to %d %d %d\n",rr->p.file, rr->p.line,rr->p.col, refs->cpos.file,  refs->cpos.line,  refs->cpos.col);
         if (! POSITION_LESS(rr->p, refs->cpos)) break;
@@ -3571,16 +3571,16 @@ void olCreateSelectionMenu(int command) {
                     htmlRefItemsOrderLess);
 }
 
-int refOccursInRefs(S_reference *r, S_reference *list) {
-    S_reference *place;
-    SORTED_LIST_FIND2(place,S_reference, (*r),list);
+int refOccursInRefs(Reference *r, Reference *list) {
+    Reference *place;
+    SORTED_LIST_FIND2(place,Reference, (*r),list);
     if (place==NULL || SORTED_LIST_NEQ(place, *r)) return(0);
     return(1);
 }
 
 static void olcxSingleReferenceCheck1(SymbolReferenceItem *p,
                                       S_olcxReferences *rstack,
-                                      S_reference *r
+                                      Reference *r
                                       ) {
     int prefixchar;
     if (refOccursInRefs(r, rstack->r)) {
@@ -3605,7 +3605,7 @@ static void olcxSingleReferenceCheck1(SymbolReferenceItem *p,
     }
 }
 
-void olcxCheck1CxFileReference(SymbolReferenceItem *ss, S_reference *r) {
+void olcxCheck1CxFileReference(SymbolReferenceItem *ss, Reference *r) {
     SymbolReferenceItem     *sss;
     S_olcxReferences    *rstack;
     S_olSymbolsMenu     *cms;
@@ -3625,7 +3625,7 @@ void olcxCheck1CxFileReference(SymbolReferenceItem *ss, S_reference *r) {
 static void olcxProceedSafetyCheck1OnInloadedRefs(S_olcxReferences *rstack, S_olSymbolsMenu *ccms) {
     SymbolReferenceItem     *p;
     SymbolReferenceItem     *sss;
-    S_reference         *r;
+    Reference         *r;
     S_olSymbolsMenu     *cms;
     int                 pushed;
     p = &ccms->s;
@@ -3674,12 +3674,12 @@ static S_olSymbolsMenu *mmPreCheckGetFirstDefinitionReferenceAndItsSymbol(
     return(res);
 }
 
-static S_olSymbolsMenu *mmFindSymWithCorrespondingRef(S_reference *ref,
+static S_olSymbolsMenu *mmFindSymWithCorrespondingRef(Reference *ref,
                                                       S_olSymbolsMenu *osym,
                                                       S_olcxReferences *refs,
                                                       Position *moveOffset
                                                       ) {
-    S_reference         sr, *place;
+    Reference         sr, *place;
     S_olSymbolsMenu     *mm;
     sr = *ref;
     POSITION_PLUS(sr.p, ref->p, *moveOffset);
@@ -3695,7 +3695,7 @@ static S_olSymbolsMenu *mmFindSymWithCorrespondingRef(S_reference *ref,
         //& if (mm->s.name[0]!=' ' || osym->s.name[0]!=' ') continue;
         //&}
         //&fprintf(dumpOut,";looking references\n");
-        SORTED_LIST_FIND2(place,S_reference, sr, mm->s.refs);
+        SORTED_LIST_FIND2(place,Reference, sr, mm->s.refs);
         if (place!=NULL && ! SORTED_LIST_NEQ(place, sr)) {
             // I have got it
             //&fprintf(dumpOut,";I have got it!\n");
@@ -3745,7 +3745,7 @@ static int mmPreCheckMakeDifference(S_olcxReferences *origrefs,
                                     S_olcxReferences *diffrefs
                                     ) {
     S_olSymbolsMenu *osym, *nsym, *diffsym, *ofirstsym, *nfirstsym;
-    S_reference     *rr;
+    Reference     *rr;
     Position      moveOffset;
 
     fillPosition(&moveOffset, 0,0,0);
@@ -3941,10 +3941,10 @@ static void olcxSafetyCheck1(void) {
     fflush(ccOut);
 }
 
-static int refOccursInRefsCompareFileAndLineOnly(S_reference *rr,
-                                                 S_reference *list
+static int refOccursInRefsCompareFileAndLineOnly(Reference *rr,
+                                                 Reference *list
                                                  ) {
-    S_reference *r;
+    Reference *r;
     for(r=list; r!=NULL; r=r->next) {
         if (r->p.file==rr->p.file && r->p.line==rr->p.line) return(1);
     }
@@ -3953,7 +3953,7 @@ static int refOccursInRefsCompareFileAndLineOnly(S_reference *rr,
 
 static void olcxTopReferencesIntersection(void) {
     S_olcxReferences    *top1,*top2;
-    S_reference         **r1,**r, *nr;
+    Reference         **r1,**r, *nr;
     // in reality this is a hack, it takes references kept from
     // last file processing
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
@@ -3977,11 +3977,11 @@ static void olcxTopReferencesIntersection(void) {
     fprintf(ccOut,"*");
 }
 
-static void olcxRemoveRefWinFromRefList(S_reference **r1,
+static void olcxRemoveRefWinFromRefList(Reference **r1,
                                         int wdfile,
                                         Position *fp,
                                         Position *tp ) {
-    S_reference **r, *cr, *nr;
+    Reference **r, *cr, *nr;
     while (*r1!=NULL) {
         r = r1; r1 = &(*r1)->next;
         cr = *r;
@@ -4215,7 +4215,7 @@ int isPushAllMethodsValidRefItem(SymbolReferenceItem *ri) {
 static void olPushAllReferencesInBetweenMapFun(SymbolReferenceItem *ri,
                                                void *ddd
                                                ) {
-    S_reference             *rr, *defRef;
+    Reference             *rr, *defRef;
     Position              defpos;
     S_olcxReferences        *rstack;
     S_olSymbolsMenu         *mm;
@@ -4613,7 +4613,7 @@ static void mainAnswerReferencePushingAction(int command) {
 }
 
 static void mapAddLocalUnusedSymbolsToHkSelection(SymbolReferenceItem *ss) {
-    S_reference *rr, *dr;
+    Reference *rr, *dr;
     int used;
 
     dr = NULL;
@@ -5076,17 +5076,17 @@ int itIsSymbolToPushOlRefences(SymbolReferenceItem *p,
 void putOnLineLoadedReferences(SymbolReferenceItem *p) {
     int                 ols;
     S_olSymbolsMenu     *cms;
-    S_reference         *rr;
+    Reference         *rr;
 
     ols = itIsSymbolToPushOlRefences(p,s_olcxCurrentUser->browserStack.top,
                                      &cms, DO_NOT_CHECK_IF_SELECTED);
     if (ols) {
         assert(cms);
-        //&LIST_LEN(nn, S_reference, p->refs);sprintf(tmpBuff,"!putting %d references of %s\n", nn, s_fileTab.tab[p->vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+        //&LIST_LEN(nn, Reference, p->refs);sprintf(tmpBuff,"!putting %d references of %s\n", nn, s_fileTab.tab[p->vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
         for(rr=p->refs; rr!=NULL; rr=rr->next) {
             olcxAddReferenceToOlSymbolsMenu(cms, rr, (ols == 2));
         }
-        //&LIST_LEN(nn, S_reference, cms->s.refs);sprintf(tmpBuff,"added %d refs for %s", nn, s_fileTab.tab[cms->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+        //&LIST_LEN(nn, Reference, cms->s.refs);sprintf(tmpBuff,"added %d refs for %s", nn, s_fileTab.tab[cms->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
     }
 }
 
@@ -5249,7 +5249,7 @@ S_olCompletion * olCompletionListPrepend(char *name,
                                          char *fullText, char *vclass, int jindent,
                                          Symbol *s,
                                          SymbolReferenceItem *rr,
-                                         S_reference *dfref,
+                                         Reference *dfref,
                                          int cType,
                                          int vFunClass,
                                          S_olcxReferences *stack
@@ -5259,7 +5259,7 @@ S_olCompletion * olCompletionListPrepend(char *name,
     int             i, category, scope, storage, slen, nlen;
     SymbolReferenceItem sri;
     SymbolReferenceItemBits srib;
-    S_reference     dref;
+    Reference     dref;
 
     nlen = strlen(name);
     OLCX_ALLOCC(nn, nlen+1, char);

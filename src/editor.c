@@ -1061,10 +1061,10 @@ void editorMoveMarkerToLineCol(S_editorMarker *m, int line, int col) {
     assert(m->offset>=0 && m->offset<=buff->a.bufferSize);
 }
 
-S_editorMarkerList *editorReferencesToMarkers(S_reference *refs,
-                                              int (*filter)(S_reference *, void *),
+S_editorMarkerList *editorReferencesToMarkers(Reference *refs,
+                                              int (*filter)(Reference *, void *),
                                               void *filterParam) {
-    S_reference         *r;
+    Reference         *r;
     S_editorMarker      *m;
     S_editorMarkerList  *res, *rrr;
     int                 line, col, file, maxoffset;
@@ -1121,12 +1121,12 @@ S_editorMarkerList *editorReferencesToMarkers(S_reference *refs,
     return(res);
 }
 
-S_reference *editorMarkersToReferences(S_editorMarkerList **mms) {
+Reference *editorMarkersToReferences(S_editorMarkerList **mms) {
     S_editorMarkerList  *mm;
     S_editorBuffer      *buf;
     char                *s, *smax, *off;
     int                 ln, c;
-    S_reference         *res, *rr;
+    Reference         *res, *rr;
     LIST_MERGE_SORT(S_editorMarkerList, *mms, editorMarkerListLess);
     res = NULL;
     mm = *mms;
@@ -1138,7 +1138,7 @@ S_reference *editorMarkersToReferences(S_editorMarkerList **mms) {
         ln = 1; c = 0;
         for( ; s<smax; s++, c++) {
             if (s == off) {
-                OLCX_ALLOC(rr, S_reference);
+                OLCX_ALLOC(rr, Reference);
                 fillPosition(&rr->p, buf->ftnum, ln, c);
                 fill_reference(rr, mm->usage, rr->p, res);
                 res = rr;
@@ -1149,14 +1149,14 @@ S_reference *editorMarkersToReferences(S_editorMarkerList **mms) {
             if (*s=='\n') {ln++; c = -1;}
         }
         while (mm!=NULL && mm->d->buffer==buf) {
-            OLCX_ALLOC(rr, S_reference);
+            OLCX_ALLOC(rr, Reference);
             fillPosition(&rr->p, buf->ftnum, ln, 0);
             fill_reference(rr, mm->usage, rr->p, res);
             res = rr;
             mm = mm->next;
         }
     }
-    LIST_MERGE_SORT(S_reference, res, olcxReferenceInternalLessFunction);
+    LIST_MERGE_SORT(Reference, res, olcxReferenceInternalLessFunction);
     return(res);
 }
 

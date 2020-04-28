@@ -48,13 +48,13 @@ extern int findStrRecord(Symbol	*s,
                          Symbol	**res,
                          int		javaClassif
                          );
-extern S_reference * findStrRecordFromSymbol(Symbol *str,
+extern Reference * findStrRecordFromSymbol(Symbol *str,
                                              S_id *record,
                                              Symbol **res,
                                              int javaClassif,
                                              S_id *super
                                              );
-extern S_reference * findStructureFieldFromType(TypeModifier *structure,
+extern Reference * findStructureFieldFromType(TypeModifier *structure,
                                                 S_id *field,
                                                 Symbol **resultingSymbol,
                                                 int javaClassifier
@@ -77,7 +77,7 @@ extern Symbol *createEmptyField(void);
 extern void handleDeclaratorParamPositions(Symbol *decl, Position *lpar,
                                            PositionList *commas, Position *rpar,
                                            int hasParam);
-extern void handleInvocationParamPositions(S_reference *ref, Position *lpar,
+extern void handleInvocationParamPositions(Reference *ref, Position *lpar,
                                            PositionList *commas, Position *rpar,
                                            int hasParam);
 extern void javaHandleDeclaratorParamPositions(Position *sym, Position *lpar,

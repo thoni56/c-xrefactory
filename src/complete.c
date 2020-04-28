@@ -1035,10 +1035,10 @@ void completeOthers(Completions *c) {
 }
 
 /* very costly function in time !!!! */
-static Symbol * getSymFromRef(S_reference *rr) {
+static Symbol * getSymFromRef(Reference *rr) {
     int                 i;
     SymbolReferenceItem     *ss;
-    S_reference         *r;
+    Reference         *r;
     Symbol            *sym;
     r = NULL; ss = NULL;
     // first visit all references, looking for symbol link name
@@ -1323,7 +1323,7 @@ static void javaCompleteComposedName(
     int             nameType;
     char            packName[MAX_FILE_NAME_SIZE];
     unsigned        accs;
-    S_reference     *orr;
+    Reference     *orr;
     nameType = javaClassifyAmbiguousName(s_javaStat->lastParsedName,NULL,&str,
                                          &expr,&orr,NULL, USELESS_FQT_REFS_ALLOWED,classif,UsageUsed);
     /*&
@@ -1736,7 +1736,7 @@ void javaCompleteStrRecordSuper(Completions*c) {
 void javaCompleteStrRecordQualifiedSuper(Completions*c) {
     Symbol            *str;
     TypeModifier     *expr;
-    S_reference         *rr, *lastUselessRef;
+    Reference         *rr, *lastUselessRef;
     int                 ttype;
     lastUselessRef = NULL;
     ttype = javaClassifyAmbiguousName(s_javaStat->lastParsedName, NULL,&str,&expr,&rr,

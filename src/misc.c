@@ -191,7 +191,7 @@ void ppcGenPreCheckRecord(S_editorMarker *pos, int oldLen) {
     fprintf(ccOut, "</%s>\n", PPC_REFACTORING_PRECHECK);
 }
 
-void ppcGenReferencePreCheckRecord(S_reference *r, char *text) {
+void ppcGenReferencePreCheckRecord(Reference *r, char *text) {
     int     len;
     len = strlen(text);
     ppcGenGotoPositionRecord(&r->p);

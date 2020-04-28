@@ -114,12 +114,12 @@ int findStrRecord(Symbol *s, char *recname, Symbol **res, int javaClassif) {
   return (int) mock(s, recname, res, javaClassif);
 }
 
-S_reference *findStrRecordFromSymbol(Symbol *str, S_id *record, Symbol **res, int javaClassif, S_id *super) {
-  return (S_reference *) mock(str, record, res, javaClassif, super);
+Reference *findStrRecordFromSymbol(Symbol *str, S_id *record, Symbol **res, int javaClassif, S_id *super) {
+  return (Reference *) mock(str, record, res, javaClassif, super);
 }
 
-S_reference *findStructureFieldFromType(TypeModifier *structure, S_id *field, Symbol **resultingSymbol, int javaClassifier) {
-  return (S_reference *) mock(structure, field, resultingSymbol, javaClassifier);
+Reference *findStructureFieldFromType(TypeModifier *structure, S_id *field, Symbol **resultingSymbol, int javaClassifier) {
+  return (Reference *) mock(structure, field, resultingSymbol, javaClassifier);
 }
 
 int mergeArguments(Symbol *id, Symbol *ty) {
@@ -175,7 +175,7 @@ void handleDeclaratorParamPositions(Symbol *decl, Position *lpar, PositionList *
   mock(decl, lpar, commas, rpar, hasParam);
 }
 
-void handleInvocationParamPositions(S_reference *ref, Position *lpar, PositionList *commas, Position *rpar, int hasParam) {
+void handleInvocationParamPositions(Reference *ref, Position *lpar, PositionList *commas, Position *rpar, int hasParam) {
   mock(ref, lpar, commas, rpar, hasParam);
 }
 

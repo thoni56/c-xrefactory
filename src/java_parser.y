@@ -999,7 +999,7 @@ SingleTypeImportDeclaration
             $$.d = $2.d;
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    S_reference *lastUselessRef;
+                    Reference *lastUselessRef;
                     Symbol *str;
                     // it was type or packege, but I thing this would be better
                     lastUselessRef = javaClassifyToTypeName($2.d, UsageUsed, &str, USELESS_FQT_REFS_DISALLOWED);
@@ -1025,7 +1025,7 @@ TypeImportOnDemandDeclaration
                 if (! SyntaxPassOnly()) {
                     Symbol *str;
                     TypeModifier *expr;
-                    S_reference *rr, *lastUselessRef;
+                    Reference *rr, *lastUselessRef;
                     int st __attribute__((unused));
                     st = javaClassifyAmbiguousName($2.d, NULL,&str,&expr,&rr,
                                                    &lastUselessRef, USELESS_FQT_REFS_DISALLOWED,
@@ -3157,7 +3157,7 @@ NewName
                 Symbol            *ss;
                 Symbol			*str;
                 TypeModifier		*expr;
-                S_reference			*rr, *lastUselessRef;
+                Reference			*rr, *lastUselessRef;
                 javaClassifyAmbiguousName($1.d, NULL,&str,&expr,&rr, &lastUselessRef, USELESS_FQT_REFS_ALLOWED,
                                           CLASS_TO_TYPE,UsageUsed);
                 $1.d->nameType = TypeStruct;
@@ -3175,7 +3175,7 @@ ClassInstanceCreationExpression
                     Symbol *ss, *tt, *ei;
                     Symbol *str;
                     TypeModifier *expr;
-                    S_reference *rr, *lastUselessRef;
+                    Reference *rr, *lastUselessRef;
 
                     s_cp.erfsForParamsComplet = $2;
                     lastUselessRef = NULL;
@@ -4166,7 +4166,7 @@ Assignment
                 if (! SyntaxPassOnly()) {
                     s_cps.lastAssignementStruct = NULL;
                     if ($1.d.reference != NULL && s_opt.server_operation == OLO_EXTRACT) {
-                        S_reference *rr;
+                        Reference *rr;
                         rr = duplicateReference($1.d.reference);
                         $1.d.reference->usage = s_noUsage;
                         if ($3.d.u == '=') {
@@ -4209,7 +4209,7 @@ LeftHandSide
             if (regularPass()) {
                 $$.d.position = javaGetNameStartingPosition($1.d);
                 if (! SyntaxPassOnly()) {
-                    S_reference *rr;
+                    Reference *rr;
                     $$.d.typeModifier = javaClassifyToExpressionName($1.d, &rr);
                     $$.d.reference = rr;
                 } else {

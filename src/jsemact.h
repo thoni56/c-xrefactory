@@ -63,18 +63,18 @@ extern int javaClassifyAmbiguousName(
                                      S_recFindStr *rfs,
                                      Symbol **str,
                                      TypeModifier **expr,
-                                     S_reference **oref,
-                                     S_reference **rdtoref, int allowUselesFqtRefs,
+                                     Reference **oref,
+                                     Reference **rdtoref, int allowUselesFqtRefs,
                                      int classif,
                                      int usage
                                      );
-extern S_reference *javaClassifyToTypeOrPackageName(S_idList *tname, int usage, Symbol **str, int allowUselesFqtRefs);
-extern S_reference *javaClassifyToTypeName(S_idList *tname, int usage, Symbol **str, int allowUselesFqtRefs);
+extern Reference *javaClassifyToTypeOrPackageName(S_idList *tname, int usage, Symbol **str, int allowUselesFqtRefs);
+extern Reference *javaClassifyToTypeName(S_idList *tname, int usage, Symbol **str, int allowUselesFqtRefs);
 extern Symbol * javaQualifiedThis(S_idList *tname, S_id *thisid);
 extern void javaClassifyToPackageName( S_idList *id );
 extern void javaClassifyToPackageNameAndAddRefs(S_idList *id, int usage);
 extern char *javaImportSymbolName_st(int file, int line, int coll);
-extern TypeModifier *javaClassifyToExpressionName(S_idList *name,S_reference **oref);
+extern TypeModifier *javaClassifyToExpressionName(S_idList *name,Reference **oref);
 extern Symbol *javaTypeNameDefinition(S_idList *tname);
 extern void javaSetFieldLinkName(Symbol *d);
 extern void javaAddPackageDefinition(S_idList *id);
@@ -102,8 +102,8 @@ extern int javaLinkNameIsAnnonymousClass(char *linkname);
 extern int javaLinkNameIsANestedClass(char *cname);
 extern int isANestedClass(Symbol *ss);
 extern void addSuperMethodCxReferences(int classIndex, Position *pos);
-extern S_reference * addUselessFQTReference(int classIndex, Position *pos);
-extern S_reference *addUnimportedTypeLongReference(int classIndex, Position *pos);
+extern Reference * addUselessFQTReference(int classIndex, Position *pos);
+extern Reference *addUnimportedTypeLongReference(int classIndex, Position *pos);
 extern void addThisCxReferences(int classIndex, Position *pos);
 extern void javaLoadClassSymbolsFromFile(Symbol *memb);
 extern Symbol *javaPrependDirectEnclosingInstanceArgument(Symbol *args);

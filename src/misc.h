@@ -59,7 +59,7 @@ extern void ppcGenDefinitionNotFoundWarning(void);
 extern void ppcGenDefinitionNotFoundWarningAtBottom(void);
 extern void ppcGenReplaceRecord(char *file, int offset, char *oldName, int oldNameLen, char *newName);
 extern void ppcGenPreCheckRecord(S_editorMarker *pos, int oldLen);
-extern void ppcGenReferencePreCheckRecord(S_reference *r, char *text);
+extern void ppcGenReferencePreCheckRecord(Reference *r, char *text);
 extern void ppcGenGotoPositionRecord(Position *p);
 extern void ppcGenOffsetPosition(char *fn, int offset);
 extern void ppcGenMarker(S_editorMarker *m);

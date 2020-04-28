@@ -83,7 +83,7 @@ static int argument_count(char **margv) {
     return(res);
 }
 
-static int filter0(S_reference *rr, void *dummy) {
+static int filter0(Reference *rr, void *dummy) {
     if (rr->usage.base < UsageMaxOLUsages) return(1);
     return(0);
 }
@@ -670,7 +670,7 @@ static S_editorMarker *refactoryGetMarkFromRefactoryOptions(S_editorBuffer *buf)
 static void refactoryPushMarkersAsReferences(S_editorMarkerList **markers,
                                              S_olcxReferences *refs, char *sym) {
     S_olSymbolsMenu     *mm;
-    S_reference         *r, *rr;
+    Reference         *r, *rr;
     rr = editorMarkersToReferences(markers);
     for(mm=refs->menuSym; mm!=NULL; mm=mm->next) {
         if (strcmp(mm->s.name, sym)==0) {
@@ -712,7 +712,7 @@ static S_olSymbolsMenu *javaGetRelevantHkSelectedItem(SymbolReferenceItem *ri) {
 }
 
 static void tpCheckFutureAccOfLocalReferences(SymbolReferenceItem *ri, void *ddd) {
-    S_reference *rr;
+    Reference *rr;
     S_tpCheckMoveClassData *dd;
     S_olSymbolsMenu *ss;
 
@@ -738,7 +738,7 @@ static void tpCheckFutureAccOfLocalReferences(SymbolReferenceItem *ri, void *ddd
 }
 
 static void tpCheckMoveClassPutClassDefaultSymbols(SymbolReferenceItem *ri, void *ddd) {
-    S_reference *rr;
+    Reference *rr;
     S_olcxReferences *rstack;
     S_tpCheckMoveClassData *dd;
 
@@ -765,7 +765,7 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(
                                                                          ) {
     S_olcxReferences *rstack;
     S_olSymbolsMenu *ss, **sss, *mm;
-    S_reference *rr;
+    Reference *rr;
 
     rstack = s_olcxCurrentUser->browserStack.top;
     rstack->hkSelectedSym = olCreateSpecialMenuItem(
@@ -807,7 +807,7 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(
 }
 
 static void tpCheckDefaultAccessibilitiesMoveClass(SymbolReferenceItem *ri, void *ddd) {
-    S_reference             *rr;
+    Reference             *rr;
     S_olcxReferences        *rstack;
     S_tpCheckMoveClassData  *dd;
     char                    symclass[MAX_FILE_NAME_SIZE];
@@ -945,7 +945,7 @@ int tpCheckSourceIsNotInnerClass(void) {
 static void tpCheckSpecialReferencesMapFun(SymbolReferenceItem *ri,
                                            void *ddd
                                            ) {
-    S_reference *rr;
+    Reference *rr;
     S_tpCheckSpecialReferencesData *dd;
 
     dd = (S_tpCheckSpecialReferencesData *) ddd;
@@ -1111,7 +1111,7 @@ int tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
     // when the method is invoked as single name, am I right?
     // No. Do not consider only invocations of form super.method().
     S_olcxReferences *rstack;
-    S_reference *rr;
+    Reference *rr;
     S_olSymbolsMenu *ss,*mm;
     Symbol *target;
     int srccn;
@@ -1230,7 +1230,7 @@ int tpPushDownFieldLastPreconditions(void) {
     S_olcxReferences *rstack;
     S_olSymbolsMenu *ss,*mm, *sourcesm, *targetsm;
     char ttt[TMP_STRING_SIZE];
-    S_reference *rr;
+    Reference *rr;
     Symbol *target;
     int thisclassi, res;
 
@@ -1679,7 +1679,7 @@ static void refactoryChangeAccessModifier(
 
 static void refactoryRestrictAccessibility(S_editorMarker *point, int limitIndex, int minAccess) {
     int             accIndex, access;
-    S_reference     *rr;
+    Reference     *rr;
 
     minAccess &= ACCESS_PPP_MODIFER_MASK;
     for(accIndex=0; accIndex<MAX_REQUIRED_ACCESS; accIndex++) {
@@ -1714,7 +1714,7 @@ static void refactoryRestrictAccessibility(S_editorMarker *point, int limitIndex
 
 static void refactoryCheckForMultipleReferencesOnSinglePlace2( SymbolReferenceItem *p,
                                                                S_olcxReferences *rstack,
-                                                               S_reference *r
+                                                               Reference *r
                                                                ) {
     if (refOccursInRefs(r, rstack->r)) {
         ppcGenGotoPositionRecord(&r->p);
@@ -1727,7 +1727,7 @@ static void refactoryCheckForMultipleReferencesOnSinglePlace2( SymbolReferenceIt
 
 static void refactoryCheckForMultipleReferencesOnSinglePlace(S_olcxReferences *rstack, S_olSymbolsMenu *ccms) {
     SymbolReferenceItem     *p, *sss;
-    S_reference         *r;
+    Reference         *r;
     S_olSymbolsMenu     *cms;
     int                 pushed;
     p = &ccms->s;
@@ -1953,7 +1953,7 @@ static int refactoryAddStringAsParameter(S_editorMarker *pos, S_editorMarker *en
 static int refactoryIsThisSymbolUsed(S_editorMarker *pos) {
     int refn;
     refactoryPushReferences( pos->buffer, pos, "-olcxpushforlm",STANDARD_SELECT_SYMBOLS_MESSAGE,PPCV_BROWSER_TYPE_INFO);
-    LIST_LEN(refn, S_reference, s_olcxCurrentUser->browserStack.top->r);
+    LIST_LEN(refn, Reference, s_olcxCurrentUser->browserStack.top->r);
     olcxPopOnly();
     return(refn > 1);
 }
@@ -2175,7 +2175,7 @@ static int createMarkersForAllReferencesInRegions(
     for(mm=menu; mm!=NULL; mm=mm->next) {
         assert(mm->markers==NULL);
         if (mm->selected && mm->visible) {
-            //&LIST_LEN(nn, S_reference, mm->s.refs);sprintf(tmpBuff,"there are %d refs for %s", nn, s_fileTab.tab[mm->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+            //&LIST_LEN(nn, Reference, mm->s.refs);sprintf(tmpBuff,"there are %d refs for %s", nn, s_fileTab.tab[mm->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
             mm->markers = editorReferencesToMarkers(mm->s.refs,filter0, NULL);
             if (regions != NULL) {
                 editorRestrictMarkersToRegions(&mm->markers, regions);
@@ -3408,7 +3408,7 @@ static int refactoryIsMethodPartRedundant(
                                           S_editorMarker *m2
                                           ) {
     S_olSymbolsMenu *mm1, *mm2;
-    S_reference *diff;
+    Reference *diff;
     S_editorMarkerList *lll, *ll;
     int res;
 
@@ -3652,11 +3652,11 @@ static void refactoryExtractMacro(S_editorMarker *point, S_editorMarker *mark) {
 
 // ------------------------------------------------------- Encapsulate
 
-static S_reference *refactoryCheckEncapsulateGetterSetterForExistingMethods(char *mname) {
+static Reference *refactoryCheckEncapsulateGetterSetterForExistingMethods(char *mname) {
     S_olSymbolsMenu     *mm, *hk;
     char                clist[REFACTORING_TMP_STRING_SIZE];
     char                cn[TMP_STRING_SIZE];
-    S_reference         *rr, *anotherDefinition;
+    Reference         *rr, *anotherDefinition;
     clist[0] = 0;
     assert(s_olcxCurrentUser->browserStack.top);
     assert(s_olcxCurrentUser->browserStack.top->hkSelectedSym);
@@ -3705,7 +3705,7 @@ static S_reference *refactoryCheckEncapsulateGetterSetterForExistingMethods(char
     return(anotherDefinition);
 }
 
-static void refactoryAddMethodToForbiddenRegions(S_reference *methodRef,
+static void refactoryAddMethodToForbiddenRegions(Reference *methodRef,
                                                  S_editorRegionList **forbiddenRegions
                                                  ) {
     S_editorMarker *mm, *mb, *me;
@@ -3731,7 +3731,7 @@ static void refactoryPerformEncapsulateField(S_editorMarker *point,
     char declarator[REFACTORING_TMP_STRING_SIZE];
     char *scclass;
     int nameOnPointLen, declLen, indlines, indoffset;
-    S_reference *anotherGetter, *anotherSetter;
+    Reference *anotherGetter, *anotherSetter;
     unsigned accFlags;
     S_editorMarkerList  *ll, *occs, *insiders, *outsiders;
     S_editorMarker *dte, *dtb, *de;

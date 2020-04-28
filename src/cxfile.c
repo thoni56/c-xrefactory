@@ -292,7 +292,7 @@ int symbolNameShouldBeHiddenFromReports(char *name) {
     return(0);
 }
 
-void searchSymbolCheckReference(SymbolReferenceItem  *ss, S_reference *rr) {
+void searchSymbolCheckReference(SymbolReferenceItem  *ss, Reference *rr) {
     char ssname[MAX_CX_SYMBOL_SIZE];
     char *s, *sname;
     int slen;
@@ -429,7 +429,7 @@ static void writeSymbolItem(int symIndex) {
         }                                                               \
     }
 
-static void writeCxReference(S_reference *reference, int symbolNum) {
+static void writeCxReference(Reference *reference, int symbolNum) {
     writeCxReferenceBase(symbolNum, reference->usage.base, reference->usage.requiredAccess,
                          reference->p.file, reference->p.line, reference->p.col);
 }
@@ -523,7 +523,7 @@ void addSubClassesItemsToFileTab(Symbol *ss, int origin) {
 /* *************************************************************** */
 
 static void genRefItem0(SymbolReferenceItem *d, int forceGen) {
-    S_reference *rr;
+    Reference *rr;
     int symIndex;
 
     log_trace("function '%s'", d->name);
@@ -1222,7 +1222,7 @@ static void cxrfReference(int size,
                           int additionalArg
                           ) {
     Position pos;
-    S_reference rr;
+    Reference rr;
     UsageBits usageBits;
     int file, line, coll, usage, sym, reqAcc;
     int copyrefFl;

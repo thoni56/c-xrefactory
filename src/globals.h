@@ -109,7 +109,7 @@ extern TypeModifier s_errorModifier;
 extern Symbol s_errorSymbol;
 extern struct stat s_noStat;
 extern Position s_noPos;
-extern S_reference s_noRef;
+extern Reference s_noRef;
 
 extern uchar typeLongChange[MAX_TYPE];
 extern uchar typeShortChange[MAX_TYPE];
