@@ -264,6 +264,7 @@ static void errorMessage(char *out, int errCode, char *mess) {
         sprintf(out, "%s", mess);
         break;
     }
+    strcat(out, "\n");
     out += strlen(out);
     assert(strlen(ppcTmpBuff) < MAX_PPC_RECORD_SIZE-1);
 }

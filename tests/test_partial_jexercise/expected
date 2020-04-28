@@ -10,7 +10,8 @@
  <information len=<n>>C-xrefactory project: CURDIR</information>
  <information len=<n>>java version == 1.3</information>
  <information len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</information>
- <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java#1" len=<n>>MoveMethod.java:1</A> Directory CURDIR/jexercise is not listed in paths</warning>
+ <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java#1" len=<n>>MoveMethod.java:1</A> Directory CURDIR/jexercise is not listed in paths
+</warning>
  <information len=<n>>Generating 'CURDIR/CXrefs'</information>
 </update-report>
 <goto>
@@ -40,7 +41,8 @@
  <information len=<n>>C-xrefactory project: CURDIR</information>
  <information len=<n>>java version == 1.3</information>
  <information len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</information>
- <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java#1" len=<n>>MoveMethod.java:1</A> Directory CURDIR/jexercise is not listed in paths</warning>
+ <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java#1" len=<n>>MoveMethod.java:1</A> Directory CURDIR/jexercise is not listed in paths
+</warning>
  <information len=<n>>Generating 'CURDIR/CXrefs'</information>
 </update-report>
 <goto>
@@ -48,7 +50,8 @@
 </goto>
 <update-report>
  <information len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</information>
- <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java#1" len=<n>>MoveMethod.java:1</A> Directory CURDIR/jexercise is not listed in paths</warning>
+ <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java#1" len=<n>>MoveMethod.java:1</A> Directory CURDIR/jexercise is not listed in paths
+</warning>
  <information len=<n>>Generating 'CURDIR/CXrefs'</information>
 </update-report>
 <goto>
@@ -96,7 +99,8 @@
  <information len=<n>>C-xrefactory project: CURDIR</information>
  <information len=<n>>java version == 1.3</information>
  <information len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</information>
- <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java#1" len=<n>>MoveMethod.java:1</A> Directory CURDIR/jexercise is not listed in paths</warning>
+ <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java#1" len=<n>>MoveMethod.java:1</A> Directory CURDIR/jexercise is not listed in paths
+</warning>
  <information len=<n>>Generating 'CURDIR/CXrefs'</information>
 </update-report>
 <goto>
@@ -116,7 +120,8 @@
 </goto>
 <update-report>
  <information len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java</information>
- <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java#1" len=<n>>MoveMethod.java:1</A> Directory CURDIR/jexercise is not listed in paths</warning>
+ <warning len=<n>><A HREF="file://CURDIR/jexercise/com/xrefactory/refactorings/MoveMethod.java#1" len=<n>>MoveMethod.java:1</A> Directory CURDIR/jexercise is not listed in paths
+</warning>
  <information len=<n>>Generating 'CURDIR/CXrefs'</information>
 </update-report>
 <goto>
