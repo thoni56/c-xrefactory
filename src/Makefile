@@ -109,7 +109,7 @@ c-xref: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB)
 
 #########################################################################
 
-clean:;
+clean:
 	-make -C $(ROOTDIR)/lib/zlib clean
 	-make -C unittests clean
 	-rm -rf $(OBJDIR) c-xref
@@ -126,19 +126,19 @@ unit:
 
 coverage: COVERAGE=--coverage
 coverage: clean test
-	lcov -q --exclude \*.mock -exclude /usr -d . -c -o total.coverage
+	lcov -q --exclude \*.mock -exclude /usr -exclude /Library -d . -c -o total.coverage
 	genhtml -q -o ../coverage total.coverage
 
 coverage-report: unit test
 	@echo Doing the coverage reporting in the background
 	@$(MAKE) the-actual-coverage-report &
 
-LCOV=lcov -q --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*'
+LCOV=lcov -q --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' --exclude '/Library/*'
 the-actual-coverage-report:
 	@$(LCOV) -d . -c -t unittests -o ../coverage/unittests.coverage
 	@ls -1q ../tests/*.coverage | sed "s/^/-a /g" | xargs $(LCOV) -o ../coverage/total.coverage -a ../coverage/unittests.coverage
 	@printf "\\r"
-	@lcov -q --remove ../coverage/total.coverage '*.tab.c' '/usr/*' -o ../coverage/total.coverage
+	@lcov -q --remove ../coverage/total.coverage '*.tab.c' '/usr/*' '/Library/*' -o ../coverage/total.coverage
 	genhtml -q -o ../coverage ../coverage/total.coverage
 
 #########################################################################
