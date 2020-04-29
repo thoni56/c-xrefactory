@@ -13,7 +13,7 @@
 #ifndef YYDEBUG
 #define YYDEBUG 0
 #endif
-#define cexpyyerror styyerror
+#define cexp_yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
 %}

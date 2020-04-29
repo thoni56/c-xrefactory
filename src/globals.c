@@ -68,7 +68,6 @@ TypeModifier *s_upLevelFunctionCompletionType;
 S_exprTokenType s_forCompletionType;
 TypeModifier *s_javaCompletionLastPrimary;
 
-YYSTYPE *uniyylval = &cyylval;
 struct yyGlobalState *s_yygstate;
 struct yyGlobalState *s_initYygstate;
 

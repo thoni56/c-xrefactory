@@ -3,7 +3,7 @@
 
 #include "proto.h"
 
-extern int javayyparse();
+extern int java_yyparse();
 extern void makeJavaCompletions(char *s, int len, Position *pos);
 
 #endif

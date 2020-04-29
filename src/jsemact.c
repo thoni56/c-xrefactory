@@ -718,7 +718,7 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
     pushNewInclude(ff, bb, asfname, "\n");
     cfilenum = cFile.lexBuffer.buffer.fileNumber;
     s_jsl->pass = 1;
-    javayyparse();
+    java_yyparse();
     popInclude();      // this will close the file
     log_debug("[jsl] CLOSE file %s level %d", fname, nestDeep);
     log_debug("[jsl] SECOND PASS through %s level %d", fname, nestDeep);
@@ -735,7 +735,7 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
     pushNewInclude(ff, bb, asfname, "\n");
     cfilenum = cFile.lexBuffer.buffer.fileNumber;
     s_jsl->pass = 2;
-    javayyparse();
+    java_yyparse();
     popInclude();      // this will close the file
     log_debug("[jsl] CLOSE file %s level %d", fname, nestDeep);
     for(ll=s_jsl->waitList; ll!=NULL; ll=ll->next) {

@@ -4,34 +4,34 @@
 #define yyclearin (yychar=(-1))
 #define yyerrok (yyerrflag=0)
 #define YYRECOVERING (yyerrflag!=0)
-#define yyparse yaccyyparse
-#define yylex yaccyylex
-#define yyerror yaccyyerror
-#define yychar yaccyychar
-#define yyval yaccyyval
-#define yylval yaccyylval
-#define yydebug yaccyydebug
-#define yynerrs yaccyynerrs
-#define yyerrflag yaccyyerrflag
-#define yyss yaccyyss
-#define yyssp yaccyyssp
-#define yyvs yaccyyvs
-#define yyvsp yaccyyvsp
-#define yylhs yaccyylhs
-#define yylen yaccyylen
-#define yydefred yaccyydefred
-#define yydgoto yaccyydgoto
-#define yysindex yaccyysindex
-#define yyrindex yaccyyrindex
-#define yygindex yaccyygindex
-#define yytable yaccyytable
-#define yycheck yaccyycheck
-#define yyname yaccyyname
-#define yyrule yaccyyrule
-#define YYPREFIX "yaccyy"
+#define yyparse yacc_yyparse
+#define yylex yacc_yylex
+#define yyerror yacc_yyerror
+#define yychar yacc_yychar
+#define yyval yacc_yyval
+#define yylval yacc_yylval
+#define yydebug yacc_yydebug
+#define yynerrs yacc_yynerrs
+#define yyerrflag yacc_yyerrflag
+#define yyss yacc_yyss
+#define yyssp yacc_yyssp
+#define yyvs yacc_yyvs
+#define yyvsp yacc_yyvsp
+#define yylhs yacc_yylhs
+#define yylen yacc_yylen
+#define yydefred yacc_yydefred
+#define yydgoto yacc_yydgoto
+#define yysindex yacc_yysindex
+#define yyrindex yacc_yyrindex
+#define yygindex yacc_yygindex
+#define yytable yacc_yytable
+#define yycheck yacc_yycheck
+#define yyname yacc_yyname
+#define yyrule yacc_yyrule
+#define YYPREFIX "yacc_yy"
 #line 2 "yacc_parser.y"
 
-#define yaccyylex yylex
+#define yacc_yylex yylex
 
 #include "yacc_parser.x"
 
@@ -52,7 +52,7 @@
 #ifndef YYDEBUG
 #define YYDEBUG 0
 #endif
-#define yaccyyerror styyerror
+#define yacc_yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
 
@@ -293,7 +293,7 @@ typedef union {
 #define LAST_TOKEN 456
 #define eq_initializer_opt 457
 #define YYERRCODE 256
-short yaccyylhs[] = {                                        -1,
+short yacc_yylhs[] = {                                        -1,
    75,   77,    0,   74,   74,   79,   81,   79,   79,   84,
    79,   79,   79,   83,   83,   82,   82,   85,   85,   87,
    76,   89,   76,   76,   76,   86,   86,   86,   90,   90,
@@ -346,7 +346,7 @@ short yaccyylhs[] = {                                        -1,
    26,   34,   34,   41,   41,   40,   40,   40,   33,   33,
    73,   88,    1,    1,
 };
-short yaccyylen[] = {                                         2,
+short yacc_yylen[] = {                                         2,
     0,    0,   10,    1,    2,    1,    0,    6,    3,    0,
     7,    5,    1,    0,    2,    0,    1,    1,    2,    0,
     7,    0,    8,    1,    2,    1,    3,    1,    0,    3,
@@ -399,7 +399,7 @@ short yaccyylen[] = {                                         2,
     1,    1,    2,    2,    3,    1,    3,    3,    1,    2,
     0,    0,    1,    1,
 };
-short yaccyydefred[] = {                                    501,
+short yacc_yydefred[] = {                                    501,
     0,    1,    0,   13,   73,   81,   82,   83,   84,   85,
    86,   87,   88,   89,   90,   91,   92,   93,   94,   95,
    96,   97,   98,   99,  100,  101,  102,  103,  104,  105,
@@ -472,7 +472,7 @@ short yaccyydefred[] = {                                    501,
     0,   34,   30,   35,   36,   27,   21,    0,    0,  467,
     0,  464,  235,  213,  502,   37,   23,    0,  429,  468,
 };
-short yaccyydgoto[] = {                                       1,
+short yacc_yydgoto[] = {                                       1,
   377,  265,  258,  633,  216,  217,  674,  593,  594,  595,
   387,  508,  218,  675,  219,  220,  221,  249,  222,  405,
   224,  419,  301,  262,  303,  225,  393,  432,  227,  228,
@@ -486,7 +486,7 @@ short yaccyydgoto[] = {                                       1,
   403,  310,  236,  250,  364,  365,  366,  367,  368,  369,
   448,  251,  312,  370,  173,  174,  290,
 };
-short yaccyysindex[] = {                                      0,
+short yacc_yysindex[] = {                                      0,
     0,    0,  651,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -559,7 +559,7 @@ short yaccyysindex[] = {                                      0,
  -121,    0,    0,    0,    0,    0,    0,  645,    0,    0,
   675,    0,    0,    0,    0,    0,    0,  -51,    0,    0,
 };
-short yaccyyrindex[] = {                                      0,
+short yacc_yyrindex[] = {                                      0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -632,7 +632,7 @@ short yaccyyrindex[] = {                                      0,
     0,    0,    0,    0,    0,    0,    0,    0,  347,    0,
     0,    0,    0,    0,    0,    0,    0, 3680,    0,    0,
 };
-short yaccyygindex[] = {                                      0,
+short yacc_yygindex[] = {                                      0,
   -95,    0,    0, -407,    0,  -92, -425,  161,    0,  117,
  -489, -410,  120,    0,  123,  426,   81, -161,  543,  -65,
  -190,  227,    0,  514,    0,    0,  412,    0,    0,    0,
@@ -647,7 +647,7 @@ short yaccyygindex[] = {                                      0,
     0, -119,    0, -422,  409, -136,    0,
 };
 #define YYTABLESIZE 5989
-short yaccyytable[] = {                                     171,
+short yacc_yytable[] = {                                     171,
     2,  372,  181,  337,  415,  175,  396,  463,  338,  510,
   336,  171,  339,  340,  242,  341,  166,  214,  673,  289,
   289,  289,  546,  289,  290,  290,  290,  266,  290,  379,
@@ -1248,7 +1248,7 @@ short yaccyytable[] = {                                     171,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,  210,
 };
-short yaccyycheck[] = {                                     161,
+short yacc_yycheck[] = {                                     161,
     0,  251,  169,   33,   37,   37,  268,    0,   38,   40,
    40,  173,   42,   43,  176,   45,   60,   40,   37,   40,
    41,   42,  445,   44,   40,   41,   42,  218,   44,   40,
@@ -1855,7 +1855,7 @@ short yaccyycheck[] = {                                     161,
 #endif
 #define YYMAXTOKEN 457
 #if YYDEBUG
-char *yaccyyname[] = {
+char *yacc_yyname[] = {
 "end-of-file",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 "'!'","'\"'","'#'","'$'","'%'","'&'","'\\''","'('","')'","'*'","'+'","','",
 "'-'","'.'","'/'",0,0,0,0,0,0,0,0,0,0,"':'","';'","'<'","'='","'>'","'?'","'@'",
@@ -1903,7 +1903,7 @@ char *yaccyyname[] = {
 "DOUBLE_CONSTANT","STRING_LITERAL","LINE_TOK","IDENT_TO_COMPLETE","CPP_MAC_ARG",
 "IDENT_NO_CPP_EXPAND","CHAR_LITERAL","LAST_TOKEN","eq_initializer_opt",
 };
-char *yaccyyrule[] = {
+char *yacc_yyrule[] = {
 "$accept : yaccfile",
 "$$1 :",
 "$$2 :",

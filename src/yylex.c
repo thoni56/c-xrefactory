@@ -1042,7 +1042,7 @@ endOfFile:;
 
 /* ********************************* #IF ************************** */
 
-int cexpyylex(void) {
+int cexp_yylex(void) {
     int l,v,lex,par,ii,res,mm,len;
     char *cc;
     unsigned h;
@@ -1101,7 +1101,7 @@ static void processIf(void) {
     int res=1,lex;
     s_ifEvaluation = 1;
     log_debug(": #if");
-    res = cexpyyparse();
+    res = cexp_yyparse();
     do lex = yylex(); while (lex != '\n');
     s_ifEvaluation = 0;
     execCppIf(! res);

@@ -37,16 +37,16 @@ $(ROOTDIR)/lib/zlib/libz.a: ..always..
 # Note the file prefix (-b) and symbol prefix (-p)
 
 c_parser.tab.c c_parser.tab.h: c_parser.y $(YACC)
-	$(YACC) -v -d -b c_parser -p cyy c_parser.y
+	$(YACC) -v -d -b c_parser -p c_yy c_parser.y
 
 java_parser.tab.c: java_parser.y $(YACC)
-	$(YACC) -v -b java_parser -p javayy java_parser.y
+	$(YACC) -v -b java_parser -p java_yy java_parser.y
 
 yacc_parser.tab.c: yacc_parser.y $(YACC)
-	$(YACC) -v -b yacc_parser -p yaccyy yacc_parser.y
+	$(YACC) -v -b yacc_parser -p yacc_yy yacc_parser.y
 
 cexp_parser.tab.c: cexp_parser.y $(YACC)
-	$(YACC) -v -b cexp_parser -p cexpyy cexp_parser.y
+	$(YACC) -v -b cexp_parser -p cexp_yy cexp_parser.y
 
 EXTRACT_TOKEN_DEFINITIONS = sed -E '/END OF COMMON TOKEN DEFINITIONS/,$$d' | sed -E '/START OF COMMON TOKEN DEFINITIONS/,$$!d'
 # Check that the token definitions in the three main grammars are exactly the same

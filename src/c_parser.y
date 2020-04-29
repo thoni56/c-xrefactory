@@ -8,7 +8,7 @@
 
 %{
 
-#define cyylex yylex
+#define c_yylex yylex
 
 #include "c_parser.x"
 
@@ -32,7 +32,7 @@
 #ifndef YYDEBUG
 #define YYDEBUG 0
 #endif
-#define cyyerror styyerror
+#define c_yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
 #define SetDirectStructureCompletionType(xxx) {\

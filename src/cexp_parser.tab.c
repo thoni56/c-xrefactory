@@ -4,31 +4,31 @@
 #define yyclearin (yychar=(-1))
 #define yyerrok (yyerrflag=0)
 #define YYRECOVERING (yyerrflag!=0)
-#define yyparse cexpyyparse
-#define yylex cexpyylex
-#define yyerror cexpyyerror
-#define yychar cexpyychar
-#define yyval cexpyyval
-#define yylval cexpyylval
-#define yydebug cexpyydebug
-#define yynerrs cexpyynerrs
-#define yyerrflag cexpyyerrflag
-#define yyss cexpyyss
-#define yyssp cexpyyssp
-#define yyvs cexpyyvs
-#define yyvsp cexpyyvsp
-#define yylhs cexpyylhs
-#define yylen cexpyylen
-#define yydefred cexpyydefred
-#define yydgoto cexpyydgoto
-#define yysindex cexpyysindex
-#define yyrindex cexpyyrindex
-#define yygindex cexpyygindex
-#define yytable cexpyytable
-#define yycheck cexpyycheck
-#define yyname cexpyyname
-#define yyrule cexpyyrule
-#define YYPREFIX "cexpyy"
+#define yyparse cexp_yyparse
+#define yylex cexp_yylex
+#define yyerror cexp_yyerror
+#define yychar cexp_yychar
+#define yyval cexp_yyval
+#define yylval cexp_yylval
+#define yydebug cexp_yydebug
+#define yynerrs cexp_yynerrs
+#define yyerrflag cexp_yyerrflag
+#define yyss cexp_yyss
+#define yyssp cexp_yyssp
+#define yyvs cexp_yyvs
+#define yyvsp cexp_yyvsp
+#define yylhs cexp_yylhs
+#define yylen cexp_yylen
+#define yydefred cexp_yydefred
+#define yydgoto cexp_yydgoto
+#define yysindex cexp_yysindex
+#define yyrindex cexp_yyrindex
+#define yygindex cexp_yygindex
+#define yytable cexp_yytable
+#define yycheck cexp_yycheck
+#define yyname cexp_yyname
+#define yyrule cexp_yyrule
+#define YYPREFIX "cexp_yy"
 #line 2 "cexp_parser.y"
 
 
@@ -44,7 +44,7 @@
 #ifndef YYDEBUG
 #define YYDEBUG 0
 #endif
-#define cexpyyerror styyerror
+#define cexp_yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
 #line 51 "cexp_parser.tab.c"
@@ -61,17 +61,17 @@
 #define UNKNOWN 267
 #define UMINUS 268
 #define YYERRCODE 256
-short cexpyylhs[] = {                                        -1,
+short cexp_yylhs[] = {                                        -1,
     0,    0,    1,    1,    1,    1,    1,    1,    1,    1,
     1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
     1,    1,    1,    1,    1,    1,    1,
 };
-short cexpyylen[] = {                                         2,
+short cexp_yylen[] = {                                         2,
     1,    1,    3,    3,    3,    3,    3,    3,    3,    3,
     3,    3,    3,    3,    3,    3,    3,    3,    3,    3,
     5,    3,    2,    2,    2,    3,    1,
 };
-short cexpyydefred[] = {                                      0,
+short cexp_yydefred[] = {                                      0,
     2,   27,    0,    0,    0,    0,    0,    0,   23,   24,
    25,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -79,10 +79,10 @@ short cexpyydefred[] = {                                      0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     3,    4,    5,    0,    0,
 };
-short cexpyydgoto[] = {                                       7,
+short cexp_yydgoto[] = {                                       7,
     8,
 };
-short cexpyysindex[] = {                                    -29,
+short cexp_yysindex[] = {                                    -29,
     0,    0,  -19,  -19,  -19,  -19,    0,  414,    0,    0,
     0,  338,  -19,  -19,  -19,  -19,  -19,  -19,  -19,  -19,
   -19,  -19,  -19,  -19,  -19,  -19,  -19,  -19,  -19,  -19,
@@ -90,7 +90,7 @@ short cexpyysindex[] = {                                    -29,
   454,  426,  366,  326,  326,  438,  -30,  -30,  -17,  -17,
     0,    0,    0,  -19,  426,
 };
-short cexpyyrindex[] = {                                      0,
+short cexp_yyrindex[] = {                                      0,
     0,    0,    0,    0,    0,    0,    0,    2,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -98,11 +98,11 @@ short cexpyyrindex[] = {                                      0,
   161,   34,    0,  182,  188,  155,   91,  101,    1,    9,
     0,    0,    0,    0,   35,
 };
-short cexpyygindex[] = {                                      0,
+short cexp_yygindex[] = {                                      0,
   630,
 };
 #define YYTABLESIZE 744
-short cexpyytable[] = {                                      32,
+short cexp_yytable[] = {                                      32,
     6,    1,    0,    4,   30,   28,   32,   29,    7,   31,
     6,   30,   28,    4,   29,    3,   31,    0,    0,   32,
     6,    0,    0,    8,   30,    3,    0,    0,    0,   31,
@@ -179,7 +179,7 @@ short cexpyytable[] = {                                      32,
    17,   18,    0,    0,    0,    0,    0,    0,    0,    0,
    15,   16,   17,   18,
 };
-short cexpyycheck[] = {                                      37,
+short cexp_yycheck[] = {                                      37,
     0,    0,   -1,   33,   42,   43,   37,   45,    0,   47,
    40,   42,   43,   33,   45,   45,   47,   -1,   -1,   37,
    40,   -1,   -1,    0,   42,   45,   -1,   -1,   -1,   47,
@@ -262,7 +262,7 @@ short cexpyycheck[] = {                                      37,
 #endif
 #define YYMAXTOKEN 268
 #if YYDEBUG
-char *cexpyyname[] = {
+char *cexp_yyname[] = {
 "end-of-file",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 "'!'",0,0,0,"'%'","'&'",0,"'('","')'","'*'","'+'","','","'-'","'.'","'/'",0,0,0,
 0,0,0,0,0,0,0,"':'",0,"'<'","'='","'>'","'?'",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -273,7 +273,7 @@ char *cexpyyname[] = {
 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,"number","DEFINED","EQ","NE","LE",
 "GE","LS","RS","ANDAND","OROR","UNKNOWN","UMINUS",
 };
-char *cexpyyrule[] = {
+char *cexp_yyrule[] = {
 "$accept : start",
 "start : e",
 "start : error",

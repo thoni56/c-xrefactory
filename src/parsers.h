@@ -21,25 +21,27 @@
 
 #endif
 
+#include "proto.h"
+
 /* Include one of the generated parser definitions for common token codes */
 #include "c_parser.tab.h"
 
-extern YYSTYPE cyylval;
-extern YYSTYPE cccyylval;
+extern YYSTYPE c_yylval;
 #ifdef YYDEBUG
-extern int cyydebug;
+extern int c_yydebug;
 #endif
 
-extern YYSTYPE javayylval;
+extern YYSTYPE java_yylval;
 extern YYSTYPE javaslyylval;
 #ifdef YYDEBUG
-/* Java parser is recursive so we need to set this in the stack of parsers */
-/* extern int javayydebug; */
+/* Java parser is recursive so we need to set this in the stack of
+   parsers when we start parsing */
+extern int java_yydebug;
 #endif
 
-extern YYSTYPE yaccyylval;
+extern YYSTYPE yacc_yylval;
 #ifdef YYDEBUG
-extern int yaccyydebug;
+extern int yacc_yydebug;
 #endif
 
 extern YYSTYPE *uniyylval;

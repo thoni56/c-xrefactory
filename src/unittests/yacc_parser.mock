@@ -2,7 +2,7 @@
 #include "yacc_parser.x"
 #include <cgreen/mocks.h>
 
-int yaccyyparse() {
+int yacc_yyparse() {
   return (int) mock();
 }
 

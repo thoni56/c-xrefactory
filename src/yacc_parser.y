@@ -1,6 +1,6 @@
 %{
 
-#define yaccyylex yylex
+#define yacc_yylex yylex
 
 #include "yacc_parser.x"
 
@@ -21,7 +21,7 @@
 #ifndef YYDEBUG
 #define YYDEBUG 0
 #endif
-#define yaccyyerror styyerror
+#define yacc_yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
 

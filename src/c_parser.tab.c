@@ -4,34 +4,34 @@
 #define yyclearin (yychar=(-1))
 #define yyerrok (yyerrflag=0)
 #define YYRECOVERING (yyerrflag!=0)
-#define yyparse cyyparse
-#define yylex cyylex
-#define yyerror cyyerror
-#define yychar cyychar
-#define yyval cyyval
-#define yylval cyylval
-#define yydebug cyydebug
-#define yynerrs cyynerrs
-#define yyerrflag cyyerrflag
-#define yyss cyyss
-#define yyssp cyyssp
-#define yyvs cyyvs
-#define yyvsp cyyvsp
-#define yylhs cyylhs
-#define yylen cyylen
-#define yydefred cyydefred
-#define yydgoto cyydgoto
-#define yysindex cyysindex
-#define yyrindex cyyrindex
-#define yygindex cyygindex
-#define yytable cyytable
-#define yycheck cyycheck
-#define yyname cyyname
-#define yyrule cyyrule
-#define YYPREFIX "cyy"
+#define yyparse c_yyparse
+#define yylex c_yylex
+#define yyerror c_yyerror
+#define yychar c_yychar
+#define yyval c_yyval
+#define yylval c_yylval
+#define yydebug c_yydebug
+#define yynerrs c_yynerrs
+#define yyerrflag c_yyerrflag
+#define yyss c_yyss
+#define yyssp c_yyssp
+#define yyvs c_yyvs
+#define yyvsp c_yyvsp
+#define yylhs c_yylhs
+#define yylen c_yylen
+#define yydefred c_yydefred
+#define yydgoto c_yydgoto
+#define yysindex c_yysindex
+#define yyrindex c_yyrindex
+#define yygindex c_yygindex
+#define yytable c_yytable
+#define yycheck c_yycheck
+#define yyname c_yyname
+#define yyrule c_yyrule
+#define YYPREFIX "c_yy"
 #line 10 "c_parser.y"
 
-#define cyylex yylex
+#define c_yylex yylex
 
 #include "c_parser.x"
 
@@ -55,7 +55,7 @@
 #ifndef YYDEBUG
 #define YYDEBUG 0
 #endif
-#define cyyerror styyerror
+#define c_yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
 #define SetDirectStructureCompletionType(xxx) {\
@@ -283,7 +283,7 @@ typedef union {
 #define CHAR_LITERAL 455
 #define LAST_TOKEN 456
 #define YYERRCODE 256
-short cyylhs[] = {                                        -1,
+short c_yylhs[] = {                                        -1,
    60,   60,   60,   60,   60,   60,   60,   60,   60,   60,
    79,   79,   61,   61,   81,   61,   82,   61,   83,   61,
    61,   61,   61,   64,   84,   84,    4,    4,   51,   51,
@@ -322,7 +322,7 @@ short cyylhs[] = {                                        -1,
    45,   45,   44,   44,   44,   37,   37,   91,   92,    1,
     1,
 };
-short cyylen[] = {                                         2,
+short c_yylen[] = {                                         2,
     1,    1,    1,    1,    1,    1,    1,    3,    3,    1,
     1,    2,    1,    4,    0,    5,    0,    4,    0,    4,
     2,    2,    1,    7,    0,    1,    1,    1,    0,    1,
@@ -361,7 +361,7 @@ short cyylen[] = {                                         2,
     2,    3,    2,    4,    3,    1,    2,    0,    0,    1,
     1,
 };
-short cyydefred[] = {                                    316,
+short c_yydefred[] = {                                    316,
     0,    0,  334,    0,  316,  332,    0,    0,  133,  144,
   137,  151,  150,  146,  147,  145,  152,  139,  131,    0,
   135,  136,  148,  149,  165,  166,    0,  138,  140,  153,
@@ -419,7 +419,7 @@ short cyydefred[] = {                                    316,
     0,    0,   97,  301,    0,    0,    0,    0,  294,  321,
   323,    0,  291,    0,  306,  305,  307,   97,  308,
 };
-short cyydgoto[] = {                                       1,
+short c_yydgoto[] = {                                       1,
    42,   80,   72,  408,   43,   44,  335,  336,  337,  167,
   258,   83,  235,   45,  469,  435,  533,  501,   46,   47,
    48,  452,   49,  186,   51,  355,  279,   77,  281,   52,
@@ -434,7 +434,7 @@ short cyydgoto[] = {                                       1,
   536,  498,  508,  541,  557,  558,    2,  515,  516,  517,
   506,    5,    6,  109,
 };
-short cyysindex[] = {                                      0,
+short c_yysindex[] = {                                      0,
     0, -182,    0, 2766,    0,    0,   -3,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0, -321,
     0,    0,    0,    0,    0,    0,  -96,    0,    0,    0,
@@ -492,7 +492,7 @@ short cyysindex[] = {                                      0,
   648, 2252,    0,    0,  503,  531, 2252,  649,    0,    0,
     0,  544,    0,  630,    0,    0,    0,    0,    0,
 };
-short cyyrindex[] = {                                      0,
+short c_yyrindex[] = {                                      0,
     0,  207,    0,    0,    0,    0,  125, 2476,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0, 3198,
     0,    0,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -550,7 +550,7 @@ short cyyrindex[] = {                                      0,
     0,  675,    0,    0,    0,    0,    0,    0,    0,    0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,
 };
-short cyygindex[] = {                                      0,
+short c_yygindex[] = {                                      0,
    87,    0,    0, -240,    0,  -28,  381,    0,  307, -380,
   320,   26,    0,  524, -385, -339,  202, -464,  224,  -20,
   204,   -2,  187,    3,  -24,  296,    0,  532,    0,    0,
@@ -566,7 +566,7 @@ short cyygindex[] = {                                      0,
     0,  674,  -52,    0,
 };
 #define YYTABLESIZE 4988
-short cyytable[] = {                                       4,
+short c_yytable[] = {                                       4,
   144,   66,  177,  468,  211,  159,   50,  319,   39,  144,
   319,  112,  254,  411,  116,   68,  331,  105,  105,  105,
    81,  105,   64,  395,  319,   96,   70,  220,   68,  245,
@@ -1067,7 +1067,7 @@ short cyytable[] = {                                       4,
    26,   27,    0,   28,   29,   30,    0,    0,   33,    0,
     0,    0,    0,    0,    0,    0,    0,   35,
 };
-short cyycheck[] = {                                       2,
+short c_yycheck[] = {                                       2,
    73,    7,   86,   58,  133,   73,    4,   41,   40,   82,
    44,   64,   63,   58,   67,  257,    0,   40,   41,   42,
    45,   44,    5,  291,   58,   54,  123,   91,  257,   60,
@@ -1574,7 +1574,7 @@ short cyycheck[] = {                                       2,
 #endif
 #define YYMAXTOKEN 456
 #if YYDEBUG
-char *cyyname[] = {
+char *c_yyname[] = {
 "end-of-file",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 "'!'",0,0,0,"'%'","'&'",0,"'('","')'","'*'","'+'","','","'-'","'.'","'/'",0,0,0,
 0,0,0,0,0,0,0,"':'","';'","'<'","'='","'>'","'?'",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -1621,7 +1621,7 @@ char *cyyname[] = {
 "DOUBLE_CONSTANT","STRING_LITERAL","LINE_TOK","IDENT_TO_COMPLETE","CPP_MAC_ARG",
 "IDENT_NO_CPP_EXPAND","CHAR_LITERAL","LAST_TOKEN",
 };
-char *cyyrule[] = {
+char *c_yyrule[] = {
 "$accept : file",
 "primary_expr : IDENTIFIER",
 "primary_expr : CHAR_LITERAL",

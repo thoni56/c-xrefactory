@@ -201,4 +201,4 @@
 typedef union {
 #include "yystype.h"
 } YYSTYPE;
-extern YYSTYPE cyylval;
+extern YYSTYPE c_yylval;

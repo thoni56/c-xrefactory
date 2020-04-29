@@ -1552,10 +1552,9 @@ static int processYOption(int *ii, int argc, char **argv) {
     if (0) {}
 #ifdef YYDEBUG
     else if (strcmp(argv[i],"-yydebug") == 0){
-        cyydebug = 1;
-        yaccyydebug = 1;
-        /* Java parser is recursive so we need to set this in the stack of parsers */
-        /* javayydebug = 1; */
+        c_yydebug = 1;
+        yacc_yydebug = 1;
+        java_yydebug = 1;
     }
 #endif
     else return(0);
@@ -1986,16 +1985,16 @@ static void initializationsPerInvocation(void) {
 static void mainParseInputFile(void) {
     if (s_language == LANG_JAVA) {
         uniyylval = & s_yygstate->gyylval;
-        javayyparse();
+        java_yyparse();
     }
     else if (s_language == LANG_YACC) {
         //printf("Parsing YACC-file\n");
-        uniyylval = & yaccyylval;
-        yaccyyparse();
+        uniyylval = & yacc_yylval;
+        yacc_yyparse();
     }
     else {
-        uniyylval = & cyylval;
-        cyyparse();
+        uniyylval = & c_yylval;
+        c_yyparse();
     }
     s_cache.activeCache = 0;
     cFile.fileName = NULL;

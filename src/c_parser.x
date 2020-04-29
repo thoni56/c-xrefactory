@@ -11,7 +11,7 @@
 
 #include "proto.h"
 
-extern int cyyparse();
+extern int c_yyparse();
 extern void makeCCompletions(char *s, int len, Position *pos);
 
 #endif

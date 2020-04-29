@@ -4,36 +4,36 @@
 #define yyclearin (yychar=(-1))
 #define yyerrok (yyerrflag=0)
 #define YYRECOVERING (yyerrflag!=0)
-#define yyparse javayyparse
-#define yylex javayylex
-#define yyerror javayyerror
-#define yychar javayychar
-#define yyval javayyval
-#define yylval javayylval
-#define yydebug javayydebug
-#define yynerrs javayynerrs
-#define yyerrflag javayyerrflag
-#define yyss javayyss
-#define yyssp javayyssp
-#define yyvs javayyvs
-#define yyvsp javayyvsp
-#define yylhs javayylhs
-#define yylen javayylen
-#define yydefred javayydefred
-#define yydgoto javayydgoto
-#define yysindex javayysindex
-#define yyrindex javayyrindex
-#define yygindex javayygindex
-#define yytable javayytable
-#define yycheck javayycheck
-#define yyname javayyname
-#define yyrule javayyrule
-#define YYPREFIX "javayy"
+#define yyparse java_yyparse
+#define yylex java_yylex
+#define yyerror java_yyerror
+#define yychar java_yychar
+#define yyval java_yyval
+#define yylval java_yylval
+#define yydebug java_yydebug
+#define yynerrs java_yynerrs
+#define yyerrflag java_yyerrflag
+#define yyss java_yyss
+#define yyssp java_yyssp
+#define yyvs java_yyvs
+#define yyvsp java_yyvsp
+#define yylhs java_yylhs
+#define yylen java_yylen
+#define yydefred java_yydefred
+#define yydgoto java_yydgoto
+#define yysindex java_yysindex
+#define yyrindex java_yyrindex
+#define yygindex java_yygindex
+#define yytable java_yytable
+#define yycheck java_yycheck
+#define yyname java_yyname
+#define yyrule java_yyrule
+#define YYPREFIX "java_yy"
 #line 5 "java_parser.y"
 
 #define RECURSIVE
 
-#define javayylex yylex
+#define java_yylex yylex
 
 #include "java_parser.x"
 
@@ -64,7 +64,7 @@
 #ifndef YYDEBUG
 #define YYDEBUG 0
 #endif
-#define javayyerror styyerror
+#define java_yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
 #define JslAddComposedType(ddd, ttt) jslAppendComposedType(&ddd->u.type, ttt)
@@ -352,7 +352,7 @@ typedef union {
 #define CHAR_LITERAL 455
 #define LAST_TOKEN 456
 #define YYERRCODE 256
-short javayylhs[] = {                                        -1,
+short java_yylhs[] = {                                        -1,
     0,   94,   94,   94,   94,   94,   94,   94,   94,   94,
    37,   37,   22,   22,   23,   23,   24,   24,   24,   24,
    24,   25,   25,   39,   39,   40,   40,   41,   41,   42,
@@ -403,7 +403,7 @@ short javayylhs[] = {                                        -1,
    26,   26,   26,   26,   26,   26,   26,   26,   26,   91,
    91,   92,  188,  190,
 };
-short javayylen[] = {                                         2,
+short java_yylen[] = {                                         2,
     1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
     1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
     1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
@@ -454,7 +454,7 @@ short javayylen[] = {                                         2,
     1,    1,    1,    1,    1,    1,    1,    1,    1,    1,
     1,    1,    0,    0,
 };
-short javayydefred[] = {                                      0,
+short java_yydefred[] = {                                      0,
   126,    0,    1,    0,   67,  107,    0,    0,    0,   64,
     0,    0,   85,   53,   47,    0,   45,   46,    0,    0,
   135,    0,  106,  100,  101,  102,   98,   97,   96,  103,
@@ -535,7 +535,7 @@ short javayydefred[] = {                                      0,
   298,    0,  288,  289,    0,    0,  310,    0,  306,  287,
   484,  189,  341,
 };
-short javayydgoto[] = {                                       2,
+short java_yydgoto[] = {                                       2,
   298,  138,  139,  140,    9,   56,  141,  142,  631,   37,
    38,  507,  567,  568,  366,  259,  703,  289,  143,  315,
   144,  235,   81,   82,   83,  436,   39,   40,  146,  263,
@@ -559,7 +559,7 @@ short javayydgoto[] = {                                       2,
   302,  622,  675,  764,  557,  609,  726,  407,  579,  776,
   641,  638,  677,  708,  317,  417,  588,  564,  307,
 };
-short javayysindex[] = {                                   -365,
+short java_yysindex[] = {                                   -365,
     0,    0,    0, -254,    0,    0,  -50, -259, -215,    0,
  3493,   92,    0,    0,    0,  262,    0,    0,  112, -147,
     0,   95,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -640,7 +640,7 @@ short javayysindex[] = {                                   -365,
     0,  768,    0,    0, 2968,   95,    0,  853,    0,    0,
     0,    0,    0,
 };
-short javayyrindex[] = {                                   1894,
+short java_yyrindex[] = {                                   1894,
     0,    0,    0, 2870,    0,    0,    0, -212,    0,    0,
  3846,    0,    0,    0,    0,    0,    0,    0,    0, 3367,
     0, 4215,    0,    0,    0,    0,    0,    0,    0,    0,
@@ -721,7 +721,7 @@ short javayyrindex[] = {                                   1894,
     0,    0,    0,    0,  -34,    0,    0,    0,    0,    0,
     0,    0,    0,
 };
-short javayygindex[] = {                                      0,
+short java_yygindex[] = {                                      0,
   -30,  328, -279, -277,    0,    0,    0,    0,    0, -221,
  -216,  530,  425,  175, -311, -113,  251, -421, -490,  322,
  -465,  -35,    0,    0,    0,    0,  903,    0,   -1,   -9,
@@ -746,7 +746,7 @@ short javayygindex[] = {                                      0,
     0,    0,    0,    0,    0,    0,    0,    0,    0,
 };
 #define YYTABLESIZE 5997
-short javayytable[] = {                                      16,
+short java_yytable[] = {                                      16,
   255,  281,   91,   44,   92,   80,  321,  353,   90,   41,
    79,  287,  354,  311,   61,  337,  415,   93,  416,  442,
    28,  314,  359,   36,  194,  422,  314,  145,  347,   47,
@@ -1348,7 +1348,7 @@ short javayytable[] = {                                      16,
     0,    0,    0,    0,    0,    0,    0,    0,  440,    0,
     0,    0,    0,    0,    0,    0,  441,
 };
-short javayycheck[] = {                                       9,
+short java_yycheck[] = {                                       9,
    59,  115,   41,   11,   42,   41,   91,  229,   41,   11,
    41,  140,  229,  171,   22,  215,  296,   45,  296,  314,
    44,   40,   40,   40,   63,  303,   40,   63,   46,   46,
@@ -1956,7 +1956,7 @@ short javayycheck[] = {                                       9,
 #endif
 #define YYMAXTOKEN 456
 #if YYDEBUG
-char *javayyname[] = {
+char *java_yyname[] = {
 "end-of-file",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
 "'!'",0,0,0,"'%'","'&'",0,"'('","')'","'*'","'+'","','","'-'","'.'","'/'",0,0,0,
 0,0,0,0,0,0,0,"':'","';'","'<'","'='","'>'","'?'",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -2003,7 +2003,7 @@ char *javayyname[] = {
 "DOUBLE_CONSTANT","STRING_LITERAL","LINE_TOK","IDENT_TO_COMPLETE","CPP_MAC_ARG",
 "IDENT_NO_CPP_EXPAND","CHAR_LITERAL","LAST_TOKEN",
 };
-char *javayyrule[] = {
+char *java_yyrule[] = {
 "$accept : Goal",
 "Goal : CompilationUnit",
 "Literal : TRUE_LITERAL",

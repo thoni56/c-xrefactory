@@ -46,7 +46,7 @@ extern int addFileTabItem(char *name);
 extern void addMacroDefinedByOption(char *opt);
 extern char *placeIdent(void);
 extern int cachedInputPass(int cpoint, char **cfromto);
-extern int cexpyylex(void);
+extern int cexp_yylex(void);
 extern int yylex(void);
 
 #endif

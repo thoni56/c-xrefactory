@@ -5,7 +5,7 @@
 
 #define RECURSIVE
 
-#define javayylex yylex
+#define java_yylex yylex
 
 #include "java_parser.x"
 
@@ -36,7 +36,7 @@
 #ifndef YYDEBUG
 #define YYDEBUG 0
 #endif
-#define javayyerror styyerror
+#define java_yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
 #define JslAddComposedType(ddd, ttt) jslAppendComposedType(&ddd->u.type, ttt)

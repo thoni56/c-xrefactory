@@ -2,7 +2,7 @@
 #include "cexp_parser.x"
 #include <cgreen/mocks.h>
 
-int cexpyyparse() {
+int cexp_yyparse() {
   return (int) mock();
 }
 

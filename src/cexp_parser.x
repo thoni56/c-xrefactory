@@ -1,7 +1,7 @@
 #ifndef CEXP_X
 #define CEXP_X
 
-extern int cexpyyparse();
+extern int cexp_yyparse();
 extern int cexpTranslateToken(int tok, int val);
 
 #endif
