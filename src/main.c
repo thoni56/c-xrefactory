@@ -1550,6 +1550,14 @@ static int processXOption(int *ii, int argc, char **argv) {
 static int processYOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
+#ifdef YYDEBUG
+    else if (strcmp(argv[i],"-yydebug") == 0){
+        cyydebug = 1;
+        yaccyydebug = 1;
+        /* Java parser is recursive so we need to set this in the stack of parsers */
+        /* javayydebug = 1; */
+    }
+#endif
     else return(0);
     *ii = i;
     return(1);

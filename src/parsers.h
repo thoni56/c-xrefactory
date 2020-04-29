@@ -25,10 +25,22 @@
 #include "c_parser.tab.h"
 
 extern YYSTYPE cyylval;
+extern YYSTYPE cccyylval;
+#ifdef YYDEBUG
+extern int cyydebug;
+#endif
+
 extern YYSTYPE javayylval;
 extern YYSTYPE javaslyylval;
-extern YYSTYPE cccyylval;
+#ifdef YYDEBUG
+/* Java parser is recursive so we need to set this in the stack of parsers */
+/* extern int javayydebug; */
+#endif
+
 extern YYSTYPE yaccyylval;
+#ifdef YYDEBUG
+extern int yaccyydebug;
+#endif
 
 extern YYSTYPE *uniyylval;
 
