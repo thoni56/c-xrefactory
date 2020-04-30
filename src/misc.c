@@ -215,21 +215,21 @@ void ppcGenDefinitionNotFoundWarningAtBottom(void) {
 
 void noSuchRecordError(char *rec) {
     if (s_opt.debug || s_opt.err) {
-        sprintf(tmpBuff," member %s not found\n", rec);
+        sprintf(tmpBuff," member %s not found", rec);
         error(ERR_ST, tmpBuff);
     }
 }
 
 void methodAppliedOnNonClass(char *rec) {
     if (s_opt.debug || s_opt.err) {
-        sprintf(tmpBuff," %s not applied on a class\n", rec);
+        sprintf(tmpBuff," %s not applied on a class", rec);
         error(ERR_ST, tmpBuff);
     }
 }
 
 void methodNameNotRecognized(char *rec) {
     if (s_opt.debug || s_opt.err) {
-        sprintf(tmpBuff," %s not recognized as method name\n", rec);
+        sprintf(tmpBuff," %s not recognized as method name", rec);
         error(ERR_ST, tmpBuff);
     }
 }
@@ -238,7 +238,7 @@ void dumpOptions(int nargc, char **nargv) {
     int i;
     tmpBuff[0]=0;
     for(i=0; i<nargc; i++) {
-        sprintf(tmpBuff+strlen(tmpBuff), "%s\n", nargv[i]);
+        sprintf(tmpBuff+strlen(tmpBuff), "%s", nargv[i]);
     }
     assert(strlen(tmpBuff)<TMP_BUFF_SIZE-1);
     ppcGenRecord(PPC_INFORMATION,tmpBuff,"\n");
