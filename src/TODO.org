@@ -52,6 +52,7 @@ We need to change pos to *pos if that's gonna work
 * TODO Clean up documentation, primarily remove 'create_distribution'
 * TODO Document that the "distribution" method is unsupported
 * TODO Move XX_ALLOCC and friends to "memory" module
+* TODO Figure out a way to remove "commons.c 295" from all parser error messages
 * TODO Ensure each header file is not dependent on the fact that some other
 header file is included before it. (Could this be done by taking each
 header file and try to compile it in isolation? It should include
