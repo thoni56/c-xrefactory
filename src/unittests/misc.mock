@@ -126,7 +126,7 @@ void fillTrivialSpecialRefItem(SymbolReferenceItem *ddd, char *name) {
   mock(ddd, name);
 }
 
-void noSuchRecordError(char *rec) {
+void noSuchFieldError(char *rec) {
   mock(rec);
 }
 

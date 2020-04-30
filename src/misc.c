@@ -213,9 +213,9 @@ void ppcGenDefinitionNotFoundWarningAtBottom(void) {
 /* ***********************************************************
  */
 
-void noSuchRecordError(char *rec) {
+void noSuchFieldError(char *rec) {
     if (s_opt.debug || s_opt.err) {
-        sprintf(tmpBuff," member %s not found", rec);
+        sprintf(tmpBuff," field/member %s not found", rec);
         error(ERR_ST, tmpBuff);
     }
 }

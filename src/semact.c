@@ -406,7 +406,7 @@ Reference *findStrRecordFromSymbol( Symbol *sym,
     } else if (rr == RESULT_OK) {
         ref = addCxReference(*res,&record->p,UsageUsed, s_noneFileIndex, s_noneFileIndex);
     } else {
-        noSuchRecordError(record->name);
+        noSuchFieldError(record->name);
     }
     return(ref);
 }

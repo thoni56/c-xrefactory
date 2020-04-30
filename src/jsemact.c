@@ -1421,9 +1421,9 @@ int javaClassifyAmbiguousName(
                 } else {
                     if (javaIsNestedClass(pstr,name->id.name,str)) {
                         classifiedToNestedClass(name, str, oref, rdtoref, classif, uusage, pstr, prdtoref, allowUselesFqtRefs);
-                    } else {		/* error, no such record found */
+                    } else {		/* error, no such field found */
                         name->nameType = TypeExpression;
-                        noSuchRecordError(name->id.name);
+                        noSuchFieldError(name->id.name);
                     }
                 }
             }
@@ -1447,7 +1447,7 @@ int javaClassifyAmbiguousName(
                         AddAmbCxRef(classif,*str,&name->id.p,uusage, minacc, *oref, rfs);
                     }
                 } else {
-                    noSuchRecordError(name->id.name);
+                    noSuchFieldError(name->id.name);
                 }
             }
             *expr = (*str)->u.type;
@@ -2240,7 +2240,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationT(TypeModifier *tt,
     rr = findStrRecordSym(iniFind(tt->u.t,&erfs->s), name->name, &erfs->memb,
                         CLASS_TO_METHOD, ACC_CHECK_NO,VISIB_CHECK_NO);
     if (rr != RETURN_OK) {
-        noSuchRecordError(name->name);
+        noSuchFieldError(name->name);
         return(NULL);
     }
     return(erfs);
