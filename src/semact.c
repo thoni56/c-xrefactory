@@ -30,7 +30,7 @@ bool displayingErrorMessages(void) {
     // no error messages for file preloaded for symbols
     if (LANGUAGE(LANG_JAVA) && s_jsl!=NULL)
         return false;
-    if (s_opt.debug || s_opt.err)
+    if (s_opt.debug || s_opt.show_errors)
         return true;
     return false;
 }

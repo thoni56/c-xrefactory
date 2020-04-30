@@ -520,7 +520,7 @@ int getLexBuf(struct lexBuf *lb) {
                     }
                     if (ch == '\n') {
                         currentLineNumber ++; currentLineBeginning = ccc; currentLineOffset = 0;
-                        if (s_opt.strictAnsi && (s_opt.debug || s_opt.err)) {
+                        if (s_opt.strictAnsi && (s_opt.debug || s_opt.show_errors)) {
                             warningMessage(ERR_ST,"string constant through end of line");
                         }
                     }
