@@ -80,7 +80,7 @@ void gotOnLineCxRefs( Position *ps ) {
             if (ch=='\n') {cline ++; clb = ccc; clo = 0;}               \
             /* TODO test on cpp directive */                            \
         } while ((oldCh != '*' || ch != '/') && ch != -1);              \
-        if (ch == -1) warning(ERR_ST,"comment through eof");            \
+        if (ch == -1) warningMessage(ERR_ST,"comment through eof");            \
         PutLexLine(cline-line,dd);                                      \
         GetChar(ch,ccc,cfin,cb,clb,clo);                                \
     }
@@ -153,7 +153,7 @@ void gotOnLineCxRefs( Position *ps ) {
                     s_cache.activeCache = 0;                            \
                     fillPosition(&s_cxRefPos,cfile,cline,idcoll);      \
                     goto identCont##lab;                                \
-                } else error(ERR_INTERNAL,"unknown communication char"); \
+                } else errorMessage(ERR_INTERNAL,"unknown communication char"); \
             } else {                                                    \
                 /* not a place marker, undo reading */                  \
                 for(i--;i>=1;i--) {                                     \
@@ -521,7 +521,7 @@ int getLexBuf(struct lexBuf *lb) {
                     if (ch == '\n') {
                         currentLineNumber ++; currentLineBeginning = ccc; currentLineOffset = 0;
                         if (s_opt.strictAnsi && (s_opt.debug || s_opt.err)) {
-                            warning(ERR_ST,"string constant through end of line");
+                            warningMessage(ERR_ST,"string constant through end of line");
                         }
                     }
                     // in Java CR LF can't be a part of string, even there
@@ -529,7 +529,7 @@ int getLexBuf(struct lexBuf *lb) {
                     // is a part of strings
                 } while (ch != '\"' && (ch != '\n' || !s_opt.strictAnsi) && ch != -1);
                 if (ch == -1 && s_opt.taskRegime!=RegimeEditServer) {
-                    warning(ERR_ST,"string constant through EOF");
+                    warningMessage(ERR_ST,"string constant through EOF");
                 }
                 PutLexChar(0,dd);
                 PutLexPosition(cfile, currentLineNumber, lexStartCol, dd);

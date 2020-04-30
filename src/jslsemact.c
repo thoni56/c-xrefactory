@@ -263,7 +263,7 @@ int jslClassifyAmbiguousTypeName(IdList *name, Symbol **str) {
 }
 
 Symbol *jslPrependDirectEnclosingInstanceArgument(Symbol *args) {
-    warning(ERR_ST,"[jslPrependDirectEnclosingInstanceArgument] not yet implemented");
+    warningMessage(ERR_ST,"[jslPrependDirectEnclosingInstanceArgument] not yet implemented");
     return(args);
 }
 

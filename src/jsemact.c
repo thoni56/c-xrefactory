@@ -708,7 +708,7 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
     if (bb==NULL) {
         ff = fopen(fname, "r");
         if (ff==NULL) {
-            error(ERR_CANT_OPEN, fname);
+            errorMessage(ERR_CANT_OPEN, fname);
             goto fini;
         }
     }
@@ -728,7 +728,7 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
     if (bb==NULL) {
         ff = fopen(fname, "r");
         if (ff==NULL) {
-            error(ERR_CANT_OPEN, fname);
+            errorMessage(ERR_CANT_OPEN, fname);
             goto fini;
         }
     }
@@ -826,7 +826,7 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
         } else if (ffound == RESULT_NO_FILE_FOUND) {
             if (displayingErrorMessages()) {
                 sprintf(tmpBuff, "class %s not found", memb->name);
-                error(ERR_ST, tmpBuff);
+                errorMessage(ERR_ST, tmpBuff);
             }
         }
         // I need to get also accessflags for example
@@ -1758,7 +1758,7 @@ void addSuperMethodCxReferences(int classIndex, Position *pos) {
 }
 
 Symbol *javaPrependDirectEnclosingInstanceArgument(Symbol *args) {
-    warning(ERR_ST,"[javaPrependDirectEnclosingInstanceArgument] not yet implemented");
+    warningMessage(ERR_ST,"[javaPrependDirectEnclosingInstanceArgument] not yet implemented");
     return(args);
 }
 
@@ -2665,5 +2665,5 @@ void javaCheckIfPackageDirectoryIsInClassOrSourcePath(char *dir) {
         if (fnCmp(dir, currentPath)==0) return;
     });
     sprintf(tmpBuff, "Directory %s is not listed in paths", dir);
-    warning(ERR_ST, tmpBuff);
+    warningMessage(ERR_ST, tmpBuff);
 }

@@ -151,7 +151,7 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iB
             sprintf(tmpBuff,
                     "archive %s is corrupted or modified while xref task running",
                     archivename);
-            error(ERR_ST, tmpBuff);
+            errorMessage(ERR_ST, tmpBuff);
             if (s_opt.taskRegime == RegimeEditServer) {
                 fprintf(errOut,"\t\tplease, kill xref process and retry.\n");
             }
@@ -200,14 +200,14 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iB
             sprintf(tmpBuff+strlen(tmpBuff),
                     "\tRun 'jar2jar0 %s' command to uncompress them.\n", ttt);
             assert(strlen(tmpBuff)+1 < TMP_BUFF_SIZE);
-            error(ERR_ST,tmpBuff);
+            errorMessage(ERR_ST,tmpBuff);
             //&}
             compressionErrorWritten = 1;
         }
     }
     goto fin;
  endOfFile:
-    error(ERR_ST,"unexpected end of file");
+    errorMessage(ERR_ST,"unexpected end of file");
  fin:
     *accc = ccc; *affin = ffin;
     return(res);
@@ -275,11 +275,11 @@ bool fsIsMember(S_zipArchiveDir **dirPointer, char *fn, unsigned offset,
 
     res = true;
     if (fn[0] == 0) {
-        error(ERR_INTERNAL, "looking for empty file name in 'fsdir'");
+        errorMessage(ERR_INTERNAL, "looking for empty file name in 'fsdir'");
         return false;
     }
     if (fn[0]=='/' && fn[1]==0) {
-        error(ERR_INTERNAL, "looking for root in 'fsdir'");
+        errorMessage(ERR_INTERNAL, "looking for root in 'fsdir'");
         return false;  /* should not happen */
     }
  lastrecLabel:
@@ -363,7 +363,7 @@ static int findEndOfCentralDirectory(char **accc, char **affin,
         res = 0;
         assert(s_opt.taskRegime);
         if (s_opt.taskRegime!=RegimeEditServer) {
-            warning(ERR_INTERNAL,"can't find end of central dir in archive");
+            warningMessage(ERR_INTERNAL,"can't find end of central dir in archive");
         }
         goto fini;
     }
@@ -406,7 +406,7 @@ static void zipArchiveScan(char **accc, char **affin, CharacterBuffer *iBuf,
     } endcd:;
     goto fini;
  endOfFile:
-    error(ERR_ST,"unexpected end of file");
+    errorMessage(ERR_ST,"unexpected end of file");
  fini:
     *accc = ccc; *affin = ffin;
 }
@@ -435,7 +435,7 @@ int zipIndexArchive(char *name) {
             assert(s_opt.taskRegime);
             if (s_opt.taskRegime!=RegimeEditServer) {
                 static int singleOut=0;
-                if (singleOut==0) warning(ERR_CANT_OPEN, name);
+                if (singleOut==0) warningMessage(ERR_CANT_OPEN, name);
                 singleOut=1;
             }
             return(-1);
@@ -448,7 +448,7 @@ int zipIndexArchive(char *name) {
         if (ff == NULL) {
             assert(s_opt.taskRegime);
             if (s_opt.taskRegime!=RegimeEditServer) {
-                warning(ERR_CANT_OPEN, name);
+                warningMessage(ERR_CANT_OPEN, name);
             }
             return(-1);
         }
@@ -487,7 +487,7 @@ static int zipSeekToFile(char **accc, char **affin, CharacterBuffer *iBuf,
     }
     *sep = ZIP_SEPARATOR_CHAR;
     if (i>=MAX_JAVA_ZIP_ARCHIVES || s_zipArchiveTable[i].fn[0]==0) {
-        error(ERR_INTERNAL, "archive not indexed\n");
+        errorMessage(ERR_INTERNAL, "archive not indexed\n");
         goto fini;
     }
     if (fsIsMember(&s_zipArchiveTable[i].dir,sep+1,0,ADD_NO,&place)==0) goto fini;
@@ -553,7 +553,7 @@ void javaMapZipDirFile(
     for(; aa!=NULL; aa=aa->next) {
         ss = strmcpy(fn, aa->name);
         if (fn[0]==0) {
-            error(ERR_INTERNAL,"empty name in .zip directory structure");
+            errorMessage(ERR_INTERNAL,"empty name in .zip directory structure");
             continue;
         }
         if (*(ss-1) == '/') *(ss-1) = 0;
@@ -594,7 +594,7 @@ static union constantPoolUnion * cfReadConstantPool(
             cp[ind].asciz = str;
             break;
         case CONSTANT_Unicode:
-            error(ERR_ST,"[cfReadConstantPool] Unicode not yet implemented");
+            errorMessage(ERR_ST,"[cfReadConstantPool] Unicode not yet implemented");
             GetU2(size, ccc, ffin, iBuf);
             SkipNChars(size*2, ccc, ffin, iBuf);
             cp[ind].asciz = "Unicode ??";
@@ -632,12 +632,12 @@ static union constantPoolUnion * cfReadConstantPool(
             break;
         default:
             sprintf(tmpBuff,"unknown tag %d in constant pool of %s\n",tag,cFile.fileName);
-            error(ERR_ST,tmpBuff);
+            errorMessage(ERR_ST,tmpBuff);
         }
     }
     goto fin;
  endOfFile:
-    error(ERR_ST,"unexpected end of file");
+    errorMessage(ERR_ST,"unexpected end of file");
  fin:
     *accc = ccc; *affin = ffin; *cpSize = count;
     return(cp);
@@ -832,7 +832,7 @@ static void cfReadFieldInfos(   char **accc,
     }
     goto fin;
  endOfFile:
-    error(ERR_ST,"unexpected end of file");
+    errorMessage(ERR_ST,"unexpected end of file");
  fin:
     *accc = ccc; *affin = ffin;
 }
@@ -963,7 +963,7 @@ static void cfReadMethodInfos(  char **accc,
     }
     goto fin;
  endOfFile:
-    error(ERR_ST,"unexpected end of file");
+    errorMessage(ERR_ST,"unexpected end of file");
  fin:
     *accc = ccc; *affin = ffin;
 }
@@ -988,7 +988,7 @@ void addSuperClassOrInterface(Symbol *member, Symbol *super, int origin) {
     if (cctIsMember(&super->u.s->casts, member, 1) || member == super) {
         sprintf(tmpBuff, "detected cycle in super classes of %s",
                 member->linkName);
-        error(ERR_ST, tmpBuff);
+        errorMessage(ERR_ST, tmpBuff);
         return;
     }
     cfAddCastsToModule(member, super);
@@ -1051,7 +1051,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     if (zipsep != NULL) *zipsep = ZIP_SEPARATOR_CHAR;
 
     if (ff == NULL) {
-        error(ERR_CANT_OPEN, name);
+        errorMessage(ERR_CANT_OPEN, name);
         LEAVE();
         return;
     }
@@ -1076,7 +1076,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     log_trace("magic is %x", cval);
     if (cval != 0xcafebabe) {
         sprintf(tmpBuff,"%s is not a valid class file\n",name);
-        error(ERR_ST,tmpBuff);
+        errorMessage(ERR_ST,tmpBuff);
         goto finish;
     }
     assert(cval == 0xcafebabe);
@@ -1181,11 +1181,11 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
 
  endOfFile:
     sprintf(tmpBuff,"unexpected end of file '%s'", name);
-    error(ERR_ST, tmpBuff);
+    errorMessage(ERR_ST, tmpBuff);
     goto emergency;
  corrupted:
     sprintf(tmpBuff,"corrupted file '%s'", name);
-    error(ERR_ST, tmpBuff);
+    errorMessage(ERR_ST, tmpBuff);
     goto emergency;
  emergency:
     memb->u.s->nestedCount = 0;

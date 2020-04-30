@@ -151,7 +151,7 @@ static void aboutMessage(void) {
         i++;                                                            \
         if (i >= argc) {                                                \
             sprintf(tmpBuff,"file name expected after %s\n",argv[i-1]); \
-            error(ERR_ST,tmpBuff);                                      \
+            errorMessage(ERR_ST,tmpBuff);                                      \
             usage(argv[0]);                                             \
             exit(1);                                                    \
         }                                                               \
@@ -161,7 +161,7 @@ static void aboutMessage(void) {
         i++;                                                            \
         if (i >= argc) {                                                \
             sprintf(tmpBuff,"further argument(s) expected after %s\n",argv[i-1]); \
-            error(ERR_ST,tmpBuff);                                      \
+            errorMessage(ERR_ST,tmpBuff);                                      \
             usage(argv[0]);                                             \
             exit(1);                                                    \
         }                                                               \
@@ -230,7 +230,7 @@ void dirInputFile(MAP_FUN_PROFILE) {
         } else {
             // no error, let it be
             //& sprintf(tmpBuff,"omitting directory %s, missing '-r' option ?",fn);
-            //& warning(ERR_ST,tmpBuff);
+            //& warningMessage(ERR_ST,tmpBuff);
         }
     } else if (stt==0) {
         // .class can be inside a jar archive, but this makes problem on
@@ -262,7 +262,7 @@ void dirInputFile(MAP_FUN_PROFILE) {
                && ((!s_opt.allowPackagesOnCl)
                    || packageOnCommandLine(fname)==0)) {
         if (s_opt.taskRegime!=RegimeEditServer) {
-            error(ERR_CANT_OPEN, fn);
+            errorMessage(ERR_CANT_OPEN, fn);
         } else {
             // hacked 16.4.2003 in order to can complete in buffers
             // without existing file
@@ -355,7 +355,7 @@ void xrefSetenv(char *name, char *val) {
     n = sge->num;
     if (n+1>=MAX_SET_GET_OPTIONS) {
         sprintf(tmpBuff, "maximum of %d -set options reached", MAX_SET_GET_OPTIONS);
-        error(ERR_ST, tmpBuff);
+        errorMessage(ERR_ST, tmpBuff);
         sge->num--; n--;
     }
     for(j=0; j<n; j++) {
@@ -400,7 +400,7 @@ int addHtmlCutPath(char *ss) {
     ss = htmlNormalizedPath(ss);
     ln = strlen(ss);
     if (ln>=1 && ss[ln-1] == FILE_PATH_SEPARATOR) {
-        warning(ERR_ST,"slash at the end of -htmlcutpath path, ignoring it");
+        warningMessage(ERR_ST,"slash at the end of -htmlcutpath path, ignoring it");
         return(res);
     }
     for(i=0; i<s_opt.htmlCut.pathsNum; i++) {
@@ -418,7 +418,7 @@ int addHtmlCutPath(char *ss) {
             sprintf(tmpBuff,
                     "htmlcutpath: '%s' supersede \n\t\t'%s', exchanging them",
                     s_opt.htmlCut.path[i], ss);
-            warning(ERR_ST, tmpBuff);
+            warningMessage(ERR_ST, tmpBuff);
             res = 1;
             s_opt.htmlCut.path[s_opt.htmlCut.pathsNum]=s_opt.htmlCut.path[i];
             s_opt.htmlCut.plen[s_opt.htmlCut.pathsNum]=s_opt.htmlCut.plen[i];
@@ -427,7 +427,7 @@ int addHtmlCutPath(char *ss) {
         }
     }
     if (s_opt.htmlCut.pathsNum+2 >= MAX_HTML_CUT_PATHES) {
-        error(ERR_ST,"# of htmlcutpaths overflow over MAX_HTML_CUT_PATHES");
+        errorMessage(ERR_ST,"# of htmlcutpaths overflow over MAX_HTML_CUT_PATHES");
     } else {
         s_opt.htmlCut.pathsNum++;
     }
@@ -523,10 +523,10 @@ static int processDOption(int *ii, int argc, char **argv) {
         NEXT_FILE_ARG();
         ln=strlen(argv[i]);
         if (ln>1 && argv[i][ln-1] == FILE_PATH_SEPARATOR) {
-            warning(ERR_ST,"slash at the end of -d path");
+            warningMessage(ERR_ST,"slash at the end of -d path");
         }
         if (! isAbsolutePath(argv[i])) {
-            warning(ERR_ST,"'-d' option should be followed by an ABSOLUTE path!");
+            warningMessage(ERR_ST,"'-d' option should be followed by an ABSOLUTE path!");
         }
         createOptionString(&s_opt.htmlRoot, argv[i]);
     }
@@ -593,7 +593,7 @@ static int processEOption(int *ii, int argc, char **argv) {
             } else {
                 sprintf(tmpBuff,"unsupported encoding, available values are 'default', 'european', 'euc', 'sjis', 'utf', 'utf-8', 'utf-16', 'utf-16le' and 'utf-16be'.");
                 formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-                error(ERR_ST, tmpBuff);
+                errorMessage(ERR_ST, tmpBuff);
             }
         }
     }
@@ -650,7 +650,7 @@ static int processHOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i],"-htmlgxlist")==0)  s_opt.htmlglobalx = true;
     else if (strcmp(argv[i],"-htmllxlist")==0)  s_opt.htmllocalx = true;
     else if (strcmp(argv[i],"-htmlrichlist")==0)    {
-        warning(ERR_ST,"-htmlrichlist option is no longer supported");
+        warningMessage(ERR_ST,"-htmlrichlist option is no longer supported");
         //&         s_opt.htmlRichLists= 1;
     }
     else if (strcmp(argv[i],"-htmlfunseparate")==0)s_opt.htmlFunSeparate=true;
@@ -663,7 +663,7 @@ static int processHOption(int *ii, int argc, char **argv) {
         int ln;
         ln=strlen(argv[i]);
         if (ln>11 && argv[i][ln-1] == FILE_PATH_SEPARATOR) {
-            warning(ERR_ST,"slash at the end of -htmlroot path");
+            warningMessage(ERR_ST,"slash at the end of -htmlroot path");
         }
         createOptionString(&s_opt.htmlRoot, argv[i]+10);
     }
@@ -745,7 +745,7 @@ static int processIOption(int *ii, int argc, char **argv) {
         i++;
         if (i >= argc) {
             sprintf(tmpBuff,"directory name expected after -I\n");
-            error(ERR_ST,tmpBuff);
+            errorMessage(ERR_ST,tmpBuff);
             usage(argv[0]);
         }
         mainAddStringListOption(&s_opt.includeDirs, argv[i]);
@@ -754,7 +754,7 @@ static int processIOption(int *ii, int argc, char **argv) {
         mainAddStringListOption(&s_opt.includeDirs, argv[i]+2);
     }
     else if (strcmp(argv[i],"-include")==0) {
-        warning(ERR_ST,"-include option is deprecated, use -optinclude instead");
+        warningMessage(ERR_ST,"-include option is deprecated, use -optinclude instead");
         i = mainHandleIncludeOption(argc, argv, i);
     }
     else return(0);
@@ -774,7 +774,7 @@ static int processJOption(int *ii, int argc, char **argv) {
         int ln;
         ln=strlen(argv[i]);
         if (ln>13 && argv[i][ln-1] == FILE_PATH_SEPARATOR) {
-            warning(ERR_ST,"slash at the end of -jdoctmpdir path");
+            warningMessage(ERR_ST,"slash at the end of -jdoctmpdir path");
         }
         createOptionString(&s_opt.jdocTmpDir, argv[i]+12);
     }
@@ -1184,7 +1184,7 @@ static int processPOption(int *ii, int argc, char **argv) {
         sleep(atoi(argv[i]));
     }
     else if (strncmp(argv[i],"-pass",5)==0) {
-        error(ERR_ST,"'-pass' option can't be entered from command line");
+        errorMessage(ERR_ST,"'-pass' option can't be entered from command line");
     }
     else if (strcmp(argv[i],"-packages")==0) {
         s_opt.allowPackagesOnCl = 1;
@@ -1228,7 +1228,7 @@ static void setXrefsFile(char *argvi) {
     if (s_opt.taskRegime==RegimeXref && message==0 && ! isAbsolutePath(argvi)) {
         message = 1;
         sprintf(tmpBuff,"'%s' is not an absolute path, correct -refs option",argvi);
-        warning(ERR_ST, tmpBuff);
+        warningMessage(ERR_ST, tmpBuff);
     }
     createOptionString(&s_opt.cxrefFileName, normalizeFileName(argvi, s_cwd));
 }
@@ -1385,7 +1385,7 @@ static int processSOption(int *ii, int argc, char **argv) {
         if (strcmp(argv[i], JAVA_VERSION_1_3)!=0 && strcmp(argv[i], JAVA_VERSION_1_4)!=0) {
             sprintf(tmpBuff,"wrong -javaversion=<value>, available values are %s, %s",
                     JAVA_VERSION_1_3, JAVA_VERSION_1_4);
-            error(ERR_ST, tmpBuff);
+            errorMessage(ERR_ST, tmpBuff);
         } else {
             createOptionString(&s_opt.javaVersion, argv[i]);
         }
@@ -1682,7 +1682,7 @@ void processOptions(int argc, char **argv, int infilesFlag) {
         }
         if (! processed) {
             sprintf(tmpBuff,"unknown option %s, (try xref -help)\n",argv[i]);
-            error(ERR_ST,tmpBuff);
+            errorMessage(ERR_ST,tmpBuff);
             if (    s_opt.taskRegime==RegimeXref
                     ||  s_opt.taskRegime==RegimeHtmlGenerate) {
                 emergencyExit(XREF_EXIT_ERR);
@@ -1754,7 +1754,7 @@ static void schedulingToUpdate(S_fileItem *p, void *rs) {
             // no messages during refactorings
             if (s_ropt.refactoringRegime != RegimeRefactory) {
                 sprintf(tmpBuff,"file %s not accessible",   p->name);
-                warning(ERR_ST, tmpBuff);
+                warningMessage(ERR_ST, tmpBuff);
             }
         }
         p->b.commandLineEntered = false;
@@ -1840,7 +1840,7 @@ static void writeOptionsFileMessage( char *file,
             sprintf(tmpBuff,"'%s' project options not found",
                     s_opt.project);
             if (s_opt.taskRegime == RegimeEditServer) {
-                error(ERR_ST, tmpBuff);
+                errorMessage(ERR_ST, tmpBuff);
             } else {
                 fatalError(ERR_ST, tmpBuff, XREF_EXIT_NO_PROJECT);
             }
@@ -1849,7 +1849,7 @@ static void writeOptionsFileMessage( char *file,
                 ppcGenRecord(PPC_NO_PROJECT,file,"\n");
             } else {
                 sprintf(tmpBuff,"no project name covers '%s'",file);
-                warning(ERR_ST, tmpBuff);
+                warningMessage(ERR_ST, tmpBuff);
             }
         }
         //&} else if (s_opt.xref2) {
@@ -1882,7 +1882,7 @@ static void handlePathologicProjectCases(char *file,char *outFName,char *outSect
             }
         } else {
             if (outFName[0]==0 || outSect[0]==0) {
-                warning(ERR_ST,"no project name covers this file");
+                warningMessage(ERR_ST,"no project name covers this file");
             }
             if (outFName[0]==0 && outSect[0]==0) {
                 strcpy(outSect, oldStdopSection);
@@ -1935,7 +1935,7 @@ static int computeAndOpenInputFile(void) {
             inputIn = fopen(s_input_file_name,"r");
 #endif                  /*SBD*/
             if (inputIn == NULL) {
-                error(ERR_CANT_OPEN, s_input_file_name);
+                errorMessage(ERR_CANT_OPEN, s_input_file_name);
             }
         }
     }
@@ -2210,7 +2210,7 @@ static void checkExactPositionUpdate(int message) {
     if (s_opt.update == UP_FAST_UPDATE && s_opt.exactPositionResolve) {
         s_opt.update = UP_FULL_UPDATE;
         if (message) {
-            warning(ERR_ST,"-exactpositionresolve implies full update");
+            warningMessage(ERR_ST,"-exactpositionresolve implies full update");
         }
     }
 }
@@ -2763,7 +2763,7 @@ void mainOpenOutputFile(char *ofile) {
         ccOut = stdout;
     }
     if (ccOut == NULL) {
-        error(ERR_CANT_OPEN, ofile);
+        errorMessage(ERR_CANT_OPEN, ofile);
         ccOut = stdout;
     }
     errOut = ccOut;
@@ -3038,7 +3038,7 @@ static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *
             classFileParse();
             atLeastOneProcessed=1;
         } else {
-            error(ERR_CANT_OPEN,s_input_file_name);
+            errorMessage(ERR_CANT_OPEN,s_input_file_name);
             fprintf(dumpOut,"\tmaybe forgotten -p option?\n");
         }
         // no multiple passes for java programs
@@ -3200,7 +3200,7 @@ void mainCallXref(int argc, char **argv) {
         aboutMessage();
     } else if (! s_opt.update)  {
         sprintf(tmpBuff,"no input file");
-        error(ERR_ST, tmpBuff);
+        errorMessage(ERR_ST, tmpBuff);
     }
     if (s_opt.xref2) {
         writeRelativeProgress(100);
@@ -3254,7 +3254,7 @@ void mainCallEditServer(int argc, char **argv,
     if (creatingOlcxRefs()) olcxPushEmptyStackItem(&s_olcxCurrentUser->browserStack);
     if (needToProcessInputFile()) {
         if (presetEditServerFileDependingStatics() == NULL) {
-            error(ERR_ST, "No input file");
+            errorMessage(ERR_ST, "No input file");
         } else {
             mainEditServerProcessFile(argc,argv,nargc,nargv,firstPassing);
         }

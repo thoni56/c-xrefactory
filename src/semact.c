@@ -38,17 +38,17 @@ bool displayingErrorMessages(void) {
 int styyerror(char *s) {
     if (strcmp(s, "syntax error") != 0) {
         sprintf(tmpBuff,"YACC error: %s", s);
-        error(ERR_INTERNAL, tmpBuff);
+        errorMessage(ERR_INTERNAL, tmpBuff);
     } else if (displayingErrorMessages()) {
         sprintf(tmpBuff, "Syntax error on: %s", yytext);
-        error(ERR_ST, tmpBuff);
+        errorMessage(ERR_ST, tmpBuff);
     }
     return(0);
 }
 
 int styyErrorRecovery(void) {
     if (s_opt.debug && displayingErrorMessages()) {
-        error(ERR_ST, "recovery");
+        errorMessage(ERR_ST, "recovery");
     }
     return(0);
 }
@@ -68,7 +68,7 @@ void deleteSymDef(void *p) {
     if (symbolTableDelete(s_symbolTable,pp)==0) {
         assert(s_opt.taskRegime);
         if (s_opt.taskRegime != RegimeEditServer) {
-            error(ERR_INTERNAL,"symbol on deletion not found");
+            errorMessage(ERR_INTERNAL,"symbol on deletion not found");
         }
     }
 }

@@ -372,7 +372,7 @@ typedef enum language {
 /*&fprintf(ccOut,";safetyCheck2!!!\n");fflush(dumpOut);&*/\
     refs = s_olcxCurrentUser->browserStack.top;\
     if (refs==NULL || refs->previous==NULL || refs->previous->previous==NULL){\
-        error(ERR_INTERNAL, "something goes wrong at safety check");\
+        errorMessage(ERR_INTERNAL, "something goes wrong at safety check");\
         pbflag = 1;\
     } else {\
         newrefs = refs;\

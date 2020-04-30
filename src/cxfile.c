@@ -606,7 +606,7 @@ static void openInOutReferenceFiles(int updateFlag, char *filename) {
     if (cxOut == NULL) fatalError(ERR_CANT_OPEN, filename, XREF_EXIT_ERR);
     if (updateFlag) {
         fIn = fopen(tmpFileName, "r");
-        if (fIn==NULL) warning(ERR_CANT_OPEN, tmpFileName);
+        if (fIn==NULL) warningMessage(ERR_CANT_OPEN, tmpFileName);
     } else {
         fIn = NULL;
     }
@@ -785,7 +785,7 @@ static void writeCxFileCompatibilityError(char *message) {
     static time_t lastMessageTime;
     if (s_opt.taskRegime == RegimeEditServer) {
         if (lastMessageTime < s_fileProcessStartTime) {
-            error(ERR_ST, message);
+            errorMessage(ERR_ST, message);
             lastMessageTime = time(NULL);
         }
     } else {
@@ -1475,7 +1475,7 @@ int scanReferenceFile(char *fname, char *fns1, char *fns2,
     if (fIn==NULL) {
         //&       sprintf(tmpBuff,
         //&           "can't open TAG file %s\n\tcreate the TAG file first",fn);
-        //& error(ERR_ST,tmpBuff);
+        //& errorMessage(ERR_ST,tmpBuff);
         return(0);
     } else {
         scanCxFile(scanFunTab);

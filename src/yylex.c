@@ -562,7 +562,7 @@ static void processInclude2(Position *ipos, char pchar, char *iname) {
     nyyin = openInclude(pchar, iname, &fname);
     if (nyyin == NULL) {
         assert(s_opt.taskRegime);
-        if (s_opt.taskRegime!=RegimeEditServer) warning(ERR_CANT_OPEN, iname);
+        if (s_opt.taskRegime!=RegimeEditServer) warningMessage(ERR_CANT_OPEN, iname);
     } else if (CX_REGIME()) {
         addIncludeReferences(cFile.lexBuffer.buffer.fileNumber, ipos);
     }
@@ -578,7 +578,7 @@ static void processInclude(Position *ipos) {
     if (lex == STRING_LITERAL) {
         PassLex(cInput.currentLexem,lex,l,v,h,pos, len,1);
         if (macroStackIndex != 0) {
-            error(ERR_INTERNAL,"include directive in macro body?");
+            errorMessage(ERR_INTERNAL,"include directive in macro body?");
 assert(0);
             cInput = macStack[0];
             macroStackIndex = 0;
@@ -593,7 +593,7 @@ assert(0);
             processInclude2(ipos, '\"', yytext);
         } else if (lex == '<') {
             // TODO!!!!
-            warning(ERR_ST,"Include <> after macro expansion not yet implemented, sorry\n\tuse \"\" instead");
+            warningMessage(ERR_ST,"Include <> after macro expansion not yet implemented, sorry\n\tuse \"\" instead");
         }
         //do lex = yylex(); while (lex != '\n');
     }
@@ -977,7 +977,7 @@ static int cppDeleteUntilEndElse(bool untilEnd) {
 endOfMacArg:	assert(0);
 endOfFile:;
     if (s_opt.taskRegime!=RegimeEditServer) {
-        warning(ERR_ST,"end of file in cpp conditional");
+        warningMessage(ERR_ST,"end of file in cpp conditional");
     }
     return(UNTIL_ENDIF);
 }
@@ -1084,7 +1084,7 @@ int cexp_yylex(void) {
             GetNonBlankMaybeLexem(lex);
             PassLex(cInput.currentLexem,lex,l,v,h,pos, len,1);
             if (lex != ')' && s_opt.taskRegime!=RegimeEditServer) {
-                warning(ERR_ST,"missing ')' after defined( ");
+                warningMessage(ERR_ST,"missing ')' after defined( ");
             }
         }
         lex = res;
@@ -1187,7 +1187,7 @@ static int processCppConstruct(int lex) {
             cFile.ifDepth --;
             cppDeleteUntilEndElse(true);
         } else if (s_opt.taskRegime!=RegimeEditServer) {
-            warning(ERR_ST,"unmatched #elif");
+            warningMessage(ERR_ST,"unmatched #elif");
         }
         break;
     case CPP_ELSE:
@@ -1197,7 +1197,7 @@ static int processCppConstruct(int lex) {
             cFile.ifDepth --;
             cppDeleteUntilEndElse(true);
         } else if (s_opt.taskRegime!=RegimeEditServer) {
-            warning(ERR_ST,"unmatched #else");
+            warningMessage(ERR_ST,"unmatched #else");
         }
         break;
     case CPP_ENDIF:
@@ -1206,7 +1206,7 @@ static int processCppConstruct(int lex) {
             cFile.ifDepth --;
             genCppIfElseReference(-1, &pos, UsageUsed);
         } else if (s_opt.taskRegime!=RegimeEditServer) {
-            warning(ERR_ST,"unmatched #endif");
+            warningMessage(ERR_ST,"unmatched #endif");
         }
         break;
     case CPP_PRAGMA:
@@ -1519,7 +1519,7 @@ static void crMacroBody(S_lexInput *macBody,
             bcc += len;
             PutLexPosition(hpos.file, hpos.line, hpos.col, bcc);
             if (len >= MACRO_UNIT_SIZE-15) {
-                error(ERR_INTERNAL,"size of #macro_argument exceeded MACRO_UNIT_SIZE");
+                errorMessage(ERR_INTERNAL,"size of #macro_argument exceeded MACRO_UNIT_SIZE");
             }
         } else {
             TestMBBufOverflow(bcc,(cc0-cc),buf2,bsize);
@@ -1597,7 +1597,7 @@ endOfFile:;
 endOfMacArg:;
         assert(s_opt.taskRegime);
         if (s_opt.taskRegime!=RegimeEditServer) {
-            warning(ERR_ST,"[getActMacroArgument] unterminated macro call");
+            warningMessage(ERR_ST,"[getActMacroArgument] unterminated macro call");
         }
     }
     PP_REALLOCC(buf, bcc-buf, char, bufsize+MAX_LEXEM_SIZE);
@@ -1646,7 +1646,7 @@ endOfMacArg:	assert(0);
 endOfFile:
     assert(s_opt.taskRegime);
     if (s_opt.taskRegime!=RegimeEditServer) {
-        warning(ERR_ST,"[getActualMacroArguments] unterminated macro call");
+        warningMessage(ERR_ST,"[getActualMacroArguments] unterminated macro call");
     }
     return(NULL);
 }
@@ -1727,7 +1727,7 @@ endOfMacArg:
 endOfFile:
     assert(s_opt.taskRegime);
     if (s_opt.taskRegime!=RegimeEditServer) {
-        warning(ERR_ST,"[macroCallExpand] unterminated macro call");
+        warningMessage(ERR_ST,"[macroCallExpand] unterminated macro call");
     }
     cInput.currentLexem = cc2;
     PP_FREE_UNTIL(freeBase);

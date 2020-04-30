@@ -353,7 +353,7 @@ int statb(char *path, struct stat *statbuf) {
 }
 
 static void editorError(int errCode, char *message) {
-    error(errCode, message);
+    errorMessage(errCode, message);
 }
 
 int editorMarkerLess(S_editorMarker *m1, S_editorMarker *m2) {
@@ -411,7 +411,7 @@ S_editorMarker *editorCrNewMarkerForPosition(Position *pos) {
     S_editorBuffer  *buf;
     S_editorMarker  *mm;
     if (pos->file==s_noneFileIndex || pos->file<0) {
-        error(ERR_INTERNAL, "[editor] creating marker for nonexistant position");
+        errorMessage(ERR_INTERNAL, "[editor] creating marker for nonexistant position");
     }
     buf = editorFindFile(s_fileTab.tab[pos->file]->name);
     mm = editorCrNewMarker(buf, 0);
@@ -652,13 +652,13 @@ void editorRenameBuffer(S_editorBuffer *buff, char *nName, S_editorUndo **undo) 
     char *oldName;
 
     strcpy(newName, normalizeFileName(nName, s_cwd));
-    //&sprintf(tmpBuff, "Renaming %s (at %d) to %s (at %d)", buff->name, buff->name, newName, newName);warning(ERR_INTERNAL, tmpBuff);
+    //&sprintf(tmpBuff, "Renaming %s (at %d) to %s (at %d)", buff->name, buff->name, newName, newName);warningMessage(ERR_INTERNAL, tmpBuff);
     fillEmptyEditorBuffer(&dd, buff->name, 0, buff->name);
     ddl = (S_editorBufferList){.f = &dd, .next = NULL};
     mem = editorBufferTabIsMember(&s_editorBufferTab, &ddl, &ii, &memb);
     if (! mem) {
         sprintf(tmpBuff, "Trying to rename non existing buffer %s", buff->name);
-        error(ERR_INTERNAL, tmpBuff);
+        errorMessage(ERR_INTERNAL, tmpBuff);
         return;
     }
     assert(memb->f == buff);
@@ -830,7 +830,7 @@ void editorMoveBlock(S_editorMarker *dest, S_editorMarker *src, int size,
     if (dest->buffer == src->buffer
         && dest->offset > src->offset
         && dest->offset < src->offset+size) {
-        error(ERR_INTERNAL, "[editor] moving block to its original place");
+        errorMessage(ERR_INTERNAL, "[editor] moving block to its original place");
         return;
     }
     sb = src->buffer;
@@ -1081,7 +1081,7 @@ S_editorMarkerList *editorReferencesToMarkers(Reference *refs,
             col = r->p.col;
             buff = editorFindFile(s_fileTab.tab[file]->name);
             if (buff==NULL) {
-                error(ERR_CANT_OPEN, s_fileTab.tab[file]->name);
+                errorMessage(ERR_CANT_OPEN, s_fileTab.tab[file]->name);
                 while (r!=NULL && file == r->p.file) r = r->next;
             } else {
                 s = buff->a.text;
@@ -1260,7 +1260,7 @@ void editorDumpUndoList(S_editorUndo *uu) {
             fprintf(dumpOut,"%s\n",tmpBuff);
             break;
         default:
-            error(ERR_INTERNAL,"Unknown operation to undo");
+            errorMessage(ERR_INTERNAL,"Unknown operation to undo");
         }
         uu = uu->next;
     }

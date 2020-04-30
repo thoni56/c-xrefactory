@@ -84,7 +84,7 @@ static void htmlCompressFile(char *fname) {
     s = strchr(s_opt.htmlZipCommand, '!');
     if (s==NULL) {
         static int message=1;
-        if (message) error(ERR_ST,"missing the ! meta-char in the zip command");
+        if (message) errorMessage(ERR_ST,"missing the ! meta-char in the zip command");
         message = 0;
         return;
     }
@@ -1327,7 +1327,7 @@ static void htmlScanCxFileAndGenRefLists(char *fn1, char *fn2,
     if (! s_opt.noCxFile) {
         fIn = fopen(fn, "r");
         if (fIn == NULL) {
-            error(ERR_CANT_OPEN, fn);
+            errorMessage(ERR_CANT_OPEN, fn);
         } else {
             scanCxFile(htmlGlobalReferencesFunctionSequence);
             fclose(fIn);
@@ -1344,7 +1344,7 @@ static void htmlScanCxFileAndGenRefLists(char *fn1, char *fn2,
         concatPaths(ln,MAX_FILE_NAME_SIZE, s_opt.htmlRoot, ffn,".html");
         recursivelyCreateFileDirIfNotExists(ln);
         ff = fopen(ln, "w");
-        if (ff==NULL) error(ERR_CANT_OPEN, ln);
+        if (ff==NULL) errorMessage(ERR_CANT_OPEN, ln);
         else {
             htmlGenRefListFileHead(ff,fi);
             s_htmlCurrentCxlist = NULL;
@@ -1546,7 +1546,7 @@ static void htmlPassRefsThroughSourceFile(S_htmlRefList **rrr, int ifile,
     cofileName = s_fileTab.tab[ifile]->name;
     cofile = fopen(cofileName, "r");
     /*&fprintf(dumpOut,"[passRefsThrowSourceFile] openning file %s (%d)\n",cofileName,cofile!=NULL);fflush(dumpOut);&*/
-    if (cofile==NULL) error(ERR_CANT_OPEN, cofileName);
+    if (cofile==NULL) errorMessage(ERR_CANT_OPEN, cofileName);
     fillPosition(&cp, ifile, 0, 0);
     ch = '\n';
     if (genFlag==GEN_HTML) htmlPutCharLF(ccOut, ch, &cp);
@@ -1601,7 +1601,7 @@ static void htmlGenerateFile(int fnum) {
     if (GENERATE_FRAMES()) {
         recursivelyCreateFileDirIfNotExists(ffn);
         ff = fopen(ffn,"w");
-        if (ff==NULL) error(ERR_CANT_OPEN,ffn);
+        if (ff==NULL) errorMessage(ERR_CANT_OPEN,ffn);
         else {
             htmlGenFrameFile(ff,fnum, ffn);
             fclose(ff);
@@ -1613,7 +1613,7 @@ static void htmlGenerateFile(int fnum) {
     recursivelyCreateFileDirIfNotExists(ffn);
     ccOut = fopen(ffn,"w");
     if (ccOut==NULL) {
-        warning(ERR_CANT_OPEN,ffn);
+        warningMessage(ERR_CANT_OPEN,ffn);
         ccOut=stdout;
     } else {
         if (!s_opt.xref2) {
@@ -1629,7 +1629,7 @@ static void htmlGenerateFile(int fnum) {
             concatPaths(ffn2,MAX_FILE_NAME_SIZE,s_opt.htmlRoot,ffn,".html");
             recursivelyCreateFileDirIfNotExists(ffn2);
             ff = fopen(ffn2,"w");
-            if (ff==NULL) error(ERR_CANT_OPEN,ffn2);
+            if (ff==NULL) errorMessage(ERR_CANT_OPEN,ffn2);
             else {
                 htmlGenRefListFileHead(ff, -1);
                 fillHtmlLocalListms(&sss, ff, fnum, ffn);
@@ -1661,12 +1661,12 @@ static void htmlGenerateJavaDocFile(int fnum) {
     stt = stat(ffn,&st);
     if (stt==0) {
         sprintf(tmpBuff, "file %s exists, not overwriting it", ffn);
-        warning(ERR_ST, tmpBuff);
+        warningMessage(ERR_ST, tmpBuff);
         return;
     }
     ccOut = fopen(ffn,"w");
     if (ccOut==NULL) {
-        warning(ERR_CANT_OPEN,ffn);
+        warningMessage(ERR_CANT_OPEN,ffn);
         ccOut=stdout;
     } else {
         htmlGetThisFileReferences(fnum, &rr, ALL_REFS);

@@ -217,7 +217,7 @@ void noSuchFieldError(char *rec) {
     char message[TMP_BUFF_SIZE];
     if (s_opt.debug || s_opt.err) {
         sprintf(message, "Field/member '%s' not found", rec);
-        error(ERR_ST, message);
+        errorMessage(ERR_ST, message);
     }
 }
 
@@ -225,7 +225,7 @@ void methodAppliedOnNonClass(char *rec) {
     char message[TMP_BUFF_SIZE];
     if (s_opt.debug || s_opt.err) {
         sprintf(message, "'%s' not applied on a class", rec);
-        error(ERR_ST, message);
+        errorMessage(ERR_ST, message);
     }
 }
 
@@ -233,7 +233,7 @@ void methodNameNotRecognized(char *rec) {
     char message[TMP_BUFF_SIZE];
     if (s_opt.debug || s_opt.err) {
         sprintf(message, "'%s' not recognized as method name", rec);
-        error(ERR_ST, message);
+        errorMessage(ERR_ST, message);
     }
 }
 
@@ -978,7 +978,7 @@ static int shellMatchParseBracketPattern(char *pattern, int pi, int caseSensitiv
         }
     }
     if (pattern[i] != ']') {
-        error(ERR_ST,"wrong [] pattern in regexp");
+        errorMessage(ERR_ST,"wrong [] pattern in regexp");
     }
     return(i);
 }

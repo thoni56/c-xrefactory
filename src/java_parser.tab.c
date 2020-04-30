@@ -3332,7 +3332,7 @@ case 64:
                             javaCheckIfPackageDirectoryIsInClassOrSourcePath(cdir);
                         } else {
                             if (s_opt.taskRegime != RegimeEditServer) {
-                                warning(ERR_ST, "package name does not match directory name");
+                                warningMessage(ERR_ST, "package name does not match directory name");
                             }
                         }
                     }

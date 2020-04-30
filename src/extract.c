@@ -179,7 +179,7 @@ static Reference *getDefinitionReference(SymbolReferenceItem *lab) {
     for(res=lab->refs; res!=NULL && res->usage.base!=UsageDefined; res=res->next) ;
     if (res == NULL) {
         sprintf(tmpBuff,"jump to unknown label '%s'\n",lab->name);
-        error(ERR_ST,tmpBuff);
+        errorMessage(ERR_ST,tmpBuff);
     }
     return(res);
 }
@@ -1165,7 +1165,7 @@ static void extMakeExtraction(void) {
         || s_cps.cxMemiAtBlockBegin > s_cps.cxMemiAtBlockEnd
         || s_cps.cxMemiAtBlockEnd > s_cp.cxMemiAtFunEnd
         || s_cps.workMemiAtBlockBegin != s_cps.workMemiAtBlockEnd) {
-        error(ERR_ST, "Region / program structure mismatch");
+        errorMessage(ERR_ST, "Region / program structure mismatch");
         return;
     }
     //&fprintf(dumpOut,"!cxMemories: funBeg, blockBeb, blockEnd, funEnd: %x, %x, %x, %x\n", s_cp.cxMemiAtFunBegin, s_cps.cxMemiAtBlockBegin, s_cps.cxMemiAtBlockEnd, s_cp.cxMemiAtFunEnd);
@@ -1179,7 +1179,7 @@ static void extMakeExtraction(void) {
     //&dumpProgram(program);
 
     if (s_opt.extractMode!=EXTR_MACRO && extIsJumpInOutBlock(program)) {
-        error(ERR_ST, "There are jumps in or out of region");
+        errorMessage(ERR_ST, "There are jumps in or out of region");
         return;
     }
     extClassifyLocalVariables(program);

@@ -303,7 +303,7 @@ static void refactoryPushReferences(S_editorBuffer *buf, S_editorMarker *point,
 
     assert(s_olcxCurrentUser!=NULL && s_olcxCurrentUser->browserStack.top!=NULL);
     if (s_olcxCurrentUser->browserStack.top->hkSelectedSym==NULL) {
-        error(ERR_INTERNAL, "no symbol found for refactoring push");
+        errorMessage(ERR_INTERNAL, "no symbol found for refactoring push");
     }
     olCreateSelectionMenu(s_olcxCurrentUser->browserStack.top->command);
     if (resolveMessage!=NULL && olcxShowSelectionMenu()) {
@@ -318,7 +318,7 @@ static void refactorySafetyCheck(char *project, S_editorBuffer *buf, S_editorMar
 
     assert(s_olcxCurrentUser!=NULL && s_olcxCurrentUser->browserStack.top!=NULL);
     if (s_olcxCurrentUser->browserStack.top->hkSelectedSym==NULL) {
-        error(ERR_ST, "No symbol found for refactoring safety check");
+        errorMessage(ERR_ST, "No symbol found for refactoring safety check");
     }
     olCreateSelectionMenu(s_olcxCurrentUser->browserStack.top->command);
     if (safetyCheck2ShouldWarn()) {
@@ -371,7 +371,7 @@ static void refactoryCheckedReplaceString(S_editorMarker *pos, int len,
         d = strlen(tmpBuff);
         for(i=0; i<len; i++) tmpBuff[d++] = bVal[i];
         tmpBuff[d++]=0;
-        error(ERR_INTERNAL, tmpBuff);
+        errorMessage(ERR_INTERNAL, tmpBuff);
     }
 }
 
@@ -389,7 +389,7 @@ static void editorFreeSingleUndo(S_editorUndo *uu) {
         case UNDO_MOVE_BLOCK:
             break;
         default:
-            error(ERR_INTERNAL,"Unknown operation to undo");
+            errorMessage(ERR_INTERNAL,"Unknown operation to undo");
         }
     }
     ED_FREE(uu, sizeof(S_editorUndo));
@@ -435,7 +435,7 @@ void editorApplyUndos(S_editorUndo *undos, S_editorUndo *until,
             editorFreeMarker(m1);
             break;
         default:
-            error(ERR_INTERNAL,"Unknown operation to undo");
+            errorMessage(ERR_INTERNAL,"Unknown operation to undo");
         }
         next = uu->next;
         editorFreeSingleUndo(uu);
@@ -631,7 +631,7 @@ static void refactoryMoveMarkerToTheBeginOfDefinitionScope(S_editorMarker *mm) {
             slashedCommentsProcessed ++;
             mm->offset = comBeginOffset;
         } else {
-            warning(ERR_INTERNAL, "A new commentary?");
+            warningMessage(ERR_INTERNAL, "A new commentary?");
             goto fini;
         }
     }
@@ -691,7 +691,7 @@ static int validTargetPlace(S_editorMarker *target, char *checkOpt) {
     refactoryEditServerParseBuffer(s_ropt.project, target->buffer, target,NULL, checkOpt, NULL);
     if (!s_cps.moveTargetApproved) {
         res = 0;
-        error(ERR_ST, "Invalid target place");
+        errorMessage(ERR_ST, "Invalid target place");
     }
     return(res);
 }
@@ -936,7 +936,7 @@ int tpCheckSourceIsNotInnerClass(void) {
         // If there exists a direct enclosing instance, it is an inner class
         sprintf(tmpBuff, "This is an inner class. Current version of C-xrefactory can only move top level classes and nested classes that are declared 'static'. If the class does not depend on its enclosing instances, you should declare it 'static' and then move it.");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-        error(ERR_ST, tmpBuff);
+        errorMessage(ERR_ST, tmpBuff);
         return(0);
     }
     return(1);
@@ -1001,7 +1001,7 @@ static bool tpCheckSuperMethodReferencesInit(S_tpCheckSpecialReferencesData *rr)
     assert(ss);
     scl = javaGetSuperClassNumFromClassNum(ss->s.vApplClass);
     if (scl == s_noneFileIndex) {
-        error(ERR_ST, "no super class, something is going wrong");
+        errorMessage(ERR_ST, "no super class, something is going wrong");
         return false;;
     }
     initTpCheckSpecialReferencesData(rr, s_cps.cxMemiAtMethodBeginning,
@@ -1030,7 +1030,7 @@ int tpCheckSuperMethodReferencesForPullUp(void) {
         javaGetClassNameFromFileNum(rr.foundRefToTestedClass->vFunClass, tt, DOTIFY_NAME);
         sprintf(tmpBuff,"'%s' invokes another method using the keyword \"super\" and this invocation is refering to class '%s', i.e. to the class where '%s' will be moved. In consequence, it is not possible to ensure behaviour preseving pulling-up of this method.", ttt, tt, ttt);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-        error(ERR_ST, tmpBuff);
+        errorMessage(ERR_ST, tmpBuff);
         return(0);
     }
     return(1);
@@ -1055,7 +1055,7 @@ int tpCheckSuperMethodReferencesAfterPushDown(void) {
         sprintf(tmpBuff,"'%s' invokes another method using the keyword \"super\" and the invoked method is also defined in current class. After pushing down, the reference will be misrelated. In consequence, it is not possible to ensure behaviour preseving pushing-down of this method.", ttt);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         fprintf(ccOut,":[warning] %s", tmpBuff);
-        //&error(ERR_ST, tmpBuff);
+        //&errorMessage(ERR_ST, tmpBuff);
         return(0);
     }
     return(1);
@@ -1071,7 +1071,7 @@ int tpCheckSuperMethodReferencesForDynToSt(void) {
         if (s_opt.xref2) ppcGenGotoPositionRecord(&rr.foundSpecialR->p);
         sprintf(tmpBuff,"This method invokes another method using the keyword \"super\". Current version of C-xrefactory does not know how to make it static.");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-        error(ERR_ST, tmpBuff);
+        errorMessage(ERR_ST, tmpBuff);
         return(0);
     }
     return(1);
@@ -1099,7 +1099,7 @@ int tpCheckOuterScopeUsagesForDynToSt(void) {
         } else {
             fprintf(ccOut, ":[warning] %s", tmpBuff);
         }
-        //& error(ERR_ST, tmpBuff);
+        //& errorMessage(ERR_ST, tmpBuff);
         return(0);
     }
     return(1);
@@ -1139,7 +1139,7 @@ int tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
                         linkNamePrettyPrint(ttt, ss->s.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
                         sprintf(tmpBuff,"%s is defined also in superclass and there are invocations syntactically refering to one of superclasses. Under some circumstances this may cause that pulling up of this method will not be behaviour preserving.", ttt);
                         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-                        warning(ERR_ST, tmpBuff);
+                        warningMessage(ERR_ST, tmpBuff);
                         return(0);
                     }
                 }
@@ -1165,7 +1165,7 @@ int tpCheckTargetToBeDirectSubOrSupClass(int flag, char *subOrSuper) {
     assert(ss);
     target = getMoveTargetClass();
     if (target==NULL) {
-        error(ERR_ST, "moving to NULL target class?");
+        errorMessage(ERR_ST, "moving to NULL target class?");
         return(0);
     }
     readOneAppropReferenceFile(NULL, classHierarchyFunctionSequence);
@@ -1184,7 +1184,7 @@ int tpCheckTargetToBeDirectSubOrSupClass(int flag, char *subOrSuper) {
     javaGetClassNameFromFileNum(ss->s.vApplClass, ttt, DOTIFY_NAME);
     sprintf(tmpBuff,"Class %s is not direct %s of %s. This refactoring provides moving to direct %ses only.", tt, subOrSuper, ttt, subOrSuper);
     formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-    error(ERR_ST,tmpBuff);
+    errorMessage(ERR_ST,tmpBuff);
     return(0);
 }
 
@@ -1217,12 +1217,12 @@ int tpPullUpFieldLastPreconditions(void) {
         if (pcharFlag==0) {pcharFlag=1; fprintf(ccOut,":[warning] ");}
         sprintf(tmpBuff, "%s is yet defined in the superclass %s.  Pulling up will do nothing, but removing the definition from the subclass. You should be sure that both fields are initialized to the same value.", mm->s.name, ttt);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-        warning(ERR_ST, tmpBuff);
+        warningMessage(ERR_ST, tmpBuff);
         return(0);
     }
     sprintf(tmpBuff,"There are yet references of the field %s syntactically applied on the superclass %s, pulling up this field would cause confusion!", mm->s.name, ttt);
     formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-    error(ERR_ST, tmpBuff);
+    errorMessage(ERR_ST, tmpBuff);
     return(0);
 }
 
@@ -1257,7 +1257,7 @@ int tpPushDownFieldLastPreconditions(void) {
             sprintf(tmpBuff,"The field %s is yet defined in %s!",
                     targetsm->s.name, ttt);
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-            error(ERR_ST, tmpBuff);
+            errorMessage(ERR_ST, tmpBuff);
             return(0);
         }
     }
@@ -1267,7 +1267,7 @@ int tpPushDownFieldLastPreconditions(void) {
             javaGetClassNameFromFileNum(thisclassi, ttt, DOTIFY_NAME);
             sprintf(tmpBuff, "There are several references of %s syntactically applied on %s. This may cause that the refactoring will not be behaviour preserving!", sourcesm->s.name, ttt);
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-            warning(ERR_ST, tmpBuff);
+            warningMessage(ERR_ST, tmpBuff);
             res = 0;
         }
     }
@@ -1379,7 +1379,7 @@ static void refactoryPreCheckThatSymbolRefsCorresponds(char *oldName, S_editorMa
                     "something goes wrong: expecting %s\ninstead of %s at %s, offset:%d",
                     oldName, cid, simpleFileName(getRealFileNameStatic(pos->buffer->name)),
                     pos->offset);
-            error(ERR_INTERNAL, tmpBuff);
+            errorMessage(ERR_INTERNAL, tmpBuff);
             return;
         }
         // O.K. check also few characters around
@@ -1540,11 +1540,11 @@ static void refactorySimpleRenaming(S_editorMarkerList *occs, S_editorMarker *po
     S_editorMarkerList  *ll;
     if (symtype == TypeStruct && LANGUAGE(LANG_JAVA)
         && s_ropt.theRefactoring != PPC_AVR_RENAME_CLASS) {
-        error(ERR_INTERNAL, "Use Rename Class to rename classes");
+        errorMessage(ERR_INTERNAL, "Use Rename Class to rename classes");
     }
     if (symtype == TypePackage && LANGUAGE(LANG_JAVA)
         && s_ropt.theRefactoring != PPC_AVR_RENAME_PACKAGE) {
-        error(ERR_INTERNAL, "Use Rename Package to rename packages");
+        errorMessage(ERR_INTERNAL, "Use Rename Package to rename packages");
     }
 
     if (s_ropt.theRefactoring == PPC_AVR_RENAME_PACKAGE) {
@@ -1608,7 +1608,7 @@ static S_editorMarker *refactoryFindModifierAndCrMarker(
     mlen = strlen(modifier);
     refactoryMakeSyntaxPassOnSource(point);
     if (s_spp[limitIndex].file == s_noneFileIndex) {
-        warning(ERR_INTERNAL, "cant get field declaration");
+        warningMessage(ERR_INTERNAL, "cant get field declaration");
         mini = point->offset;
         while (mini>0 && text[mini]!='\n') mini --;
         i = point->offset;
@@ -1654,7 +1654,7 @@ static void refactoryAddModifier(S_editorMarker *point, int limit, char *modifie
     S_editorMarker  *mm;
     refactoryMakeSyntaxPassOnSource(point);
     if (s_spp[limit].file == s_noneFileIndex) {
-        error(ERR_INTERNAL, "cant find beginning of field declaration");
+        errorMessage(ERR_INTERNAL, "cant find beginning of field declaration");
     }
     mm = editorCrNewMarkerForPosition(&s_spp[limit]);
     sprintf(modifSpace, "%s ", modifier);
@@ -1708,7 +1708,7 @@ static void refactoryRestrictAccessibility(S_editorMarker *point, int limitIndex
     else if (access == ACCESS_PROTECTED) refactoryChangeAccessModifier(point, limitIndex, "protected");
     else if (access == ACCESS_DEFAULT) refactoryChangeAccessModifier(point, limitIndex, "");
     else if (access == ACCESS_PRIVATE) refactoryChangeAccessModifier(point, limitIndex, "private");
-    else error(ERR_INTERNAL, "No access modifier computed");
+    else errorMessage(ERR_INTERNAL, "No access modifier computed");
 }
 
 
@@ -1763,7 +1763,7 @@ static void refactoryRename(S_editorBuffer *buf, S_editorMarker *point) {
     S_olSymbolsMenu     *csym;
 
     if (s_ropt.renameTo == NULL) {
-        error(ERR_ST, "this refactoring requires -renameto=<new name> option");
+        errorMessage(ERR_ST, "this refactoring requires -renameto=<new name> option");
     }
 
     refactoryUpdateReferences(s_ropt.project);
@@ -1845,7 +1845,7 @@ static int refactoryGetParamPosition(S_editorMarker *pos, char *fname, int argn)
         ppcGenGotoMarkerRecord(pos);
         sprintf(tmpBuff, "This reference is not pointing to the function/method name. Maybe a composed symbol. Sorry, do not know how to handle this case.");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-        error(ERR_ST, tmpBuff);
+        errorMessage(ERR_ST, tmpBuff);
     }
 
     clearParamPositions();
@@ -1860,7 +1860,7 @@ static int refactoryGetParamPosition(S_editorMarker *pos, char *fname, int argn)
         || s_paramEndPosition.file == -1
         ) {
         ppcGenGotoMarkerRecord(pos);
-        error(ERR_INTERNAL, "Can't get end of parameter");
+        errorMessage(ERR_INTERNAL, "Can't get end of parameter");
         res = RETURN_ERROR;
     }
     // check some logical preconditions,
@@ -1871,7 +1871,7 @@ static int refactoryGetParamPosition(S_editorMarker *pos, char *fname, int argn)
         ppcGenGotoMarkerRecord(pos);
         sprintf(tmpBuff, "Something goes wrong at this occurence, can't get reasonable parameter limites");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-        error(ERR_ST, tmpBuff);
+        errorMessage(ERR_ST, tmpBuff);
         res = RETURN_ERROR;
     }
     if (! LANGUAGE(LANG_JAVA)) {
@@ -1897,7 +1897,7 @@ static int refactoryAddStringAsParameter(S_editorMarker *pos, S_editorMarker *en
     insertionOffset = -1;
     rr = refactoryGetParamPosition(pos, fname, argn);
     if (rr != RETURN_OK) {
-        error(ERR_INTERNAL, "Problem while adding parameter");
+        errorMessage(ERR_INTERNAL, "Problem while adding parameter");
         return(insertionOffset);
     }
     text = pos->buffer->a.text;
@@ -2028,7 +2028,7 @@ static void refactoryDeleteParameter(S_editorMarker *pos, char *fname,
             fatalError(ERR_INTERNAL,"Something goes wrong, probably different parameter coordinates at different cpp passes.", XREF_EXIT_ERR);
             assert(0);
         }
-        error(ERR_ST, "Parameter out of limit");
+        errorMessage(ERR_ST, "Parameter out of limit");
     } else {
         if (text[m1->offset] == '(') {
             m1->offset ++;
@@ -2077,7 +2077,7 @@ static void refactoryMoveParameter(S_editorMarker *pos, char *fname,
             fatalError(ERR_INTERNAL,"Something goes wrong, probably different parameter coordinates at different cpp passes.", XREF_EXIT_ERR);
             assert(0);
         }
-        error(ERR_ST, "Parameter out of limit");
+        errorMessage(ERR_ST, "Parameter out of limit");
     } else {
         m1->offset++;
         editorMoveMarkerToNonBlank(m1, 1);
@@ -2114,7 +2114,7 @@ static void refactoryApplyParamManip(char *functionName, S_editorMarkerList *occ
                                        argn1, argn2
                                        );
             } else {
-                error(ERR_INTERNAL, "unknown parameter manipulation");
+                errorMessage(ERR_INTERNAL, "unknown parameter manipulation");
             }
         }
         writeRelativeProgress((progressi++)*100/progressn);
@@ -2222,7 +2222,7 @@ static void refactoryApplyExpandShortNames(S_editorBuffer *buf, S_editorMarker *
                 if (ppp->usage.base == UsageNonExpandableNotFQTNameInClassOrMethod) {
                     ppcGenGotoMarkerRecord(ppp->d);
                     sprintf(tmpBuff, "This occurence of %s would be misinterpreted after expansion to %s.\nNo action made at this place.", shortName, fqtName);
-                    warning(ERR_ST, tmpBuff);
+                    warningMessage(ERR_ST, tmpBuff);
                 } else if (ppp->usage.base == UsageNotFQFieldInClassOrMethod) {
                     refactoryReplaceString(ppp->d, 0, fqtNameDot);
                 } else if (ppp->usage.base == UsageNotFQTypeInClassOrMethod) {
@@ -2388,7 +2388,7 @@ static int refactoryAddImport(S_editorMarker *point, S_editorRegionList **region
         }
     }
     if (ld1 == NULL) {
-        error(ERR_INTERNAL, "can't find imported package");
+        errorMessage(ERR_INTERNAL, "can't find imported package");
     } else {
 
         icoll = ld1 - istat + 1;
@@ -2432,7 +2432,7 @@ static int translatePassToAddImportAction(int pass) {
     case 0: return(RC_IMPORT_ON_DEMAND);
     case 1: return(RC_IMPORT_SINGLE_TYPE);
     case 2: return(RC_CONTINUE);
-    default: error(ERR_INTERNAL, "wrong code for noninteractive add import");
+    default: errorMessage(ERR_INTERNAL, "wrong code for noninteractive add import");
     }
     return(0);
 }
@@ -3011,7 +3011,7 @@ static void refactoryPerformMoveClass(S_editorMarker *point,
     refactoryEditServerParseBuffer(s_ropt.project, target->buffer,
                                    target, NULL, "-olcxcurrentclass", NULL);
     if (s_cps.currentPackageAnswer[0] == 0) {
-        error(ERR_ST, "Can't get target class or package");
+        errorMessage(ERR_ST, "Can't get target class or package");
         return;
     }
     if (s_cps.currentClassAnswer[0] == 0) {
@@ -3307,7 +3307,7 @@ static void refactoryTurnDynamicToStatic(S_editorMarker *point) {
                 if (ll->usage.base == UsageMaybeQualifThisInClassOrMethod) {
                     editorUndoUntil(undoStartPoint,NULL);
                     ppcGenGotoMarkerRecord(ll->d);
-                    error(ERR_ST, "The method is using qualified this to access enclosed instance. Do not know how to make it static.");
+                    errorMessage(ERR_ST, "The method is using qualified this to access enclosed instance. Do not know how to make it static.");
                     return;
                 } else if (ll->usage.base == UsageMaybeThisInClassOrMethod) {
                     strncpy(cid, refactoryGetIdentifierOnMarker_st(ll->d), TMP_STRING_SIZE);
@@ -3505,7 +3505,7 @@ static void refactoryTurnStaticToDynamic(S_editorMarker *point) {
     res = refactoryGetParamNamePosition(point, nameOnPoint, argn);
     if (res != RETURN_OK) {
         ppcGenGotoMarkerRecord(point);
-        error(ERR_INTERNAL, "Can't determine position of parameter");
+        errorMessage(ERR_INTERNAL, "Can't determine position of parameter");
         return;
     }
     mm = editorCrNewMarkerForPosition(&s_paramPosition);
@@ -3520,12 +3520,12 @@ static void refactoryTurnStaticToDynamic(S_editorMarker *point) {
     refactoryEditServerParseBuffer( s_ropt.project, point->buffer,
                                     point,NULL, "-olcxcurrentclass",NULL);
     if (s_cps.currentClassAnswer[0] == 0) {
-        error(ERR_INTERNAL, "Can't get current class");
+        errorMessage(ERR_INTERNAL, "Can't get current class");
         return;
     }
     classnum = getClassNumFromClassLinkName(s_cps.currentClassAnswer, s_noneFileIndex);
     if (classnum==s_noneFileIndex) {
-        error(ERR_INTERNAL, "Problem when getting current class");
+        errorMessage(ERR_INTERNAL, "Problem when getting current class");
         return;
     }
 
@@ -3533,7 +3533,7 @@ static void refactoryTurnStaticToDynamic(S_editorMarker *point) {
     pp = editorCrNewMarker(point->buffer, point->offset);
     res = editorRunWithMarkerUntil(pp, isMethodBeg, 1);
     if (! res) {
-        error(ERR_INTERNAL, "Can't find beginning of method");
+        errorMessage(ERR_INTERNAL, "Can't find beginning of method");
         return;
     }
     pp->offset ++;
@@ -3546,16 +3546,16 @@ static void refactoryTurnStaticToDynamic(S_editorMarker *point) {
     // -noerrors is basically very dangerous in this context, recover it in s_opt
     s_opt.noErrors = 0;
     if (! s_olstringServed) {
-        error(ERR_ST, "Can't infer type for parameter/field");
+        errorMessage(ERR_ST, "Can't infer type for parameter/field");
         return;
     }
     parclassnum = getClassNumFromClassLinkName(s_olSymbolClassType, s_noneFileIndex);
     if (parclassnum==s_noneFileIndex) {
-        error(ERR_INTERNAL, "Problem when getting parameter/field class");
+        errorMessage(ERR_INTERNAL, "Problem when getting parameter/field class");
         return;
     }
     if (! isSmallerOrEqClass(parclassnum, classnum)) {
-        error(ERR_ST, "Type of parameter.field must be current class or its subclass");
+        errorMessage(ERR_ST, "Type of parameter.field must be current class or its subclass");
         return;
     }
 
@@ -3751,7 +3751,7 @@ static void refactoryPerformEncapsulateField(S_editorMarker *point,
             ppcGenGotoMarkerRecord(ll->d);
             sprintf(tmpBuff, "There is a combined l-value reference of the field. Current version of C-xrefactory doesn't  know how  to encapsulate such  assignment. Please, turn it into simple assignment (i.e. field = field 'op' ...;) first.");
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-            error(ERR_ST, tmpBuff);
+            errorMessage(ERR_ST, tmpBuff);
             return;
         }
     }
@@ -3852,7 +3852,7 @@ static void refactoryPerformEncapsulateField(S_editorMarker *point,
         if (ll->usage.base == UsageLvalUsed) {
             refactoryMakeSyntaxPassOnSource(ll->d);
             if (s_spp[SPP_ASSIGNMENT_OPERATOR_POSITION].file == s_noneFileIndex) {
-                error(ERR_INTERNAL, "Can't get assignment coordinates");
+                errorMessage(ERR_INTERNAL, "Can't get assignment coordinates");
             } else {
                 eqm = editorCrNewMarkerForPosition(&s_spp[SPP_ASSIGNMENT_OPERATOR_POSITION]);
                 ee = editorCrNewMarkerForPosition(&s_spp[SPP_ASSIGNMENT_END_POSITION]);
@@ -4398,7 +4398,7 @@ static char * refactoryComputeUpdateOptionForSymbol(S_editorMarker *point) {
         } else if (scope==ScopeAuto || scope==ScopeFile) {
             // for example a local var or a static function not used in any header
             if (multiFileRefsFlag) {
-                error(ERR_INTERNAL, "something goes wrong, a local symbol is used in several files");
+                errorMessage(ERR_INTERNAL, "something goes wrong, a local symbol is used in several files");
                 res = "-update";
             } else {
                 res = "";
@@ -4556,7 +4556,7 @@ void mainRefactory(int argc, char **argv) {
         s_progressFactor = 3;
         refactoryEncapsulateField(point);
     } else {
-        error(ERR_INTERNAL, "unknown refactoring");
+        errorMessage(ERR_INTERNAL, "unknown refactoring");
     }
 
     // always finish once more time

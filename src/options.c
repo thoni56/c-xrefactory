@@ -223,7 +223,7 @@ static int getOptionFromFile(FILE *file, char *text, int text_size, int *chars_r
             if (i < text_size-1)
                 text[i++]=c;
             if (c!='`'  && s_opt.taskRegime!=RegimeEditServer) {
-                error(ERR_ST, "option string through end of line");
+                errorMessage(ERR_ST, "option string through end of line");
             }
         } else if (c=='[') {
             text[i++] = c;
@@ -250,7 +250,7 @@ static int getOptionFromFile(FILE *file, char *text, int text_size, int *chars_r
             if (! messageWritten) {
                 messageWritten = 1;
                 sprintf(tmpBuff,"option '%s' contains quotes.", text);
-                warning(ERR_ST, tmpBuff);
+                warningMessage(ERR_ST, tmpBuff);
             }
         }
         /* because QNX paths can start with // */
@@ -424,7 +424,7 @@ bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
             ADD_OPTION_TO_ARGS(memFl,text,len,argv,argc);
         }
     }
-    if (argc >= MAX_STD_ARGS-1) error(ERR_ST,"too many options");
+    if (argc >= MAX_STD_ARGS-1) errorMessage(ERR_ST,"too many options");
     if (found && memFl!=MEM_NO_ALLOC) {
         OPTION_SPACE_ALLOCC(memFl, aargv, argc, char*);
         for(i=1; i<argc; i++) aargv[i] = argv[i];
@@ -716,7 +716,7 @@ void getJavaClassAndSourcePath(void) {
 
         if (s_javaSourcePaths==NULL) {
             if (LANGUAGE(LANG_JAVA)) {
-                error(ERR_ST,"no classpath or sourcepath specified");
+                errorMessage(ERR_ST,"no classpath or sourcepath specified");
             }
             s_javaSourcePaths = s_defaultClassPath;
         }

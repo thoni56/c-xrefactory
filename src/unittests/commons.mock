@@ -19,11 +19,11 @@ void emergencyExit(int exitStatus) {
   mock(exitStatus);
 }
 
-void warning(int code, char *message) {
+void warningMessage(int code, char *message) {
   mock(code, message);
 }
 
-void error(int code, char *message) {
+void errorMessage(int code, char *message) {
   mock(code, message);
 }
 

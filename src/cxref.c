@@ -1817,7 +1817,7 @@ static void passRefsThroughSourceFile(Reference **rrr, Position *callerp,
         if (ebuf==NULL) {
             if (s_opt.xref2) {
                 sprintf(tmpBuff, "file %s not accessible", cofileName);
-                error(ERR_ST, tmpBuff);
+                errorMessage(ERR_ST, tmpBuff);
             } else {
                 fprintf(off,"  !!! file %s is not accessible: ", cofileName);
             }
@@ -3186,7 +3186,7 @@ static void olEncapsulationSafetyCheck(void) {
     assert(s_olcxCurrentUser);
     refs = s_olcxCurrentUser->browserStack.top;
     if (refs==NULL || refs->previous==NULL){
-        error(ERR_INTERNAL,"something goes wrong at encapsulate safety check");
+        errorMessage(ERR_INTERNAL,"something goes wrong at encapsulate safety check");
         return;
     }
     // remove definition reference, so they do not interfere
@@ -3217,7 +3217,7 @@ static void olCompletionSelect(void) {
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs, CHECK_NULL);
     rr = olCompletionNthLineRef(refs->cpls, s_opt.olcxGotoVal);
     if (rr==NULL) {
-        error(ERR_ST, "selection out of range.");
+        errorMessage(ERR_ST, "selection out of range.");
         return;
     }
     if (s_opt.xref2) {
@@ -3245,7 +3245,7 @@ static void olcxReferenceSelectTagSearchItem(int refn) {
     refs = s_olcxCurrentUser->retrieverStack.top;
     rr = olCompletionNthLineRef(refs->cpls, refn);
     if (rr == NULL) {
-        error(ERR_ST, "selection out of range.");
+        errorMessage(ERR_ST, "selection out of range.");
         return;
     }
     assert(s_olcxCurrentUser->retrieverStack.root!=NULL);
@@ -3506,7 +3506,7 @@ static int olSpecialFieldCreateSelection(char *fieldName, int storage) {
     rstack = s_olcxCurrentUser->browserStack.top;
     if (! LANGUAGE(LANG_JAVA)) {
         rstack->hkSelectedSym = NULL;
-        error(ERR_ST,"This function is available only in Java language");
+        errorMessage(ERR_ST,"This function is available only in Java language");
         return(s_noneFileIndex);
     }
     assert(s_javaObjectSymbol && s_javaObjectSymbol->u.s);
@@ -3757,7 +3757,7 @@ static int mmPreCheckMakeDifference(S_olcxReferences *origrefs,
         POSITION_MINUS(moveOffset,nfirstsym->s.refs->p,ofirstsym->s.refs->p);
         //&fprintf(dumpOut,"!ofirstsym, nfirstsym == %s %s at %d,%d %d,%d\n", ofirstsym->s.name, nfirstsym->s.name, ofirstsym->s.refs->p.line, ofirstsym->s.refs->p.col, nfirstsym->s.refs->p.line, nfirstsym->s.refs->p.col);
         if (moveOffset.col!=0) {
-            error(ERR_ST, "method has to be moved into an empty line");
+            errorMessage(ERR_ST, "method has to be moved into an empty line");
             return(1);
         }
     }
@@ -4056,7 +4056,7 @@ static void olcxProcessGetRequest(void) {
         } else {
             sprintf(tmpBuff,"No \"-set %s <command>\" option specified for active project", name);
         }
-        error(ERR_ST, tmpBuff);
+        errorMessage(ERR_ST, tmpBuff);
     }
 }
 
@@ -4277,11 +4277,11 @@ static int tpCheckUniquityOfSymbol(char *fieldOrMethod) {
     ss = rstack->hkSelectedSym;
     if (ss == NULL) {
         sprintf(tmpBuff,"No symbol selected, please position the cursor on a definition of a %s (on its name) before invoking this refactoring.", fieldOrMethod);
-        error(ERR_ST, tmpBuff);
+        errorMessage(ERR_ST, tmpBuff);
         return(0);
     }
     if (ss->next != NULL) {
-        error(ERR_ST,"Ambiguous symbol. You are probably trying to refactor a constructor or a native method. C-xrefactory does not know to handle those cases, sorry.");
+        errorMessage(ERR_ST,"Ambiguous symbol. You are probably trying to refactor a constructor or a native method. C-xrefactory does not know to handle those cases, sorry.");
         return(0);
     }
     return(1);
@@ -4296,7 +4296,7 @@ static int tpCheckThatCurrentReferenceIsDefinition(char *fieldOrMethod) {
         || ! IS_DEFINITION_OR_DECL_USAGE(rstack->act->usage.base)) {
         sprintf(tmpBuff,"This refactoring requires cursor (point) to be positioned at the definition of a %s (on its name). Please move to the definition first.", fieldOrMethod);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-        error(ERR_ST, tmpBuff);
+        errorMessage(ERR_ST, tmpBuff);
         return(0);
     }
     return(1);
@@ -4314,7 +4314,7 @@ static int tpCheckItIsAFieldOrMethod(int require, char *fieldOrMethod) {
         sprintf(tmpBuff, "This does not look like a %s, please position the cursor on a definition of a %s (on its name) before invoking this refactoring.",
                 fieldOrMethod, fieldOrMethod);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-        error(ERR_ST, tmpBuff);
+        errorMessage(ERR_ST, tmpBuff);
         return(0);
     }
     return(1);
@@ -4333,13 +4333,13 @@ static int tpCheckStaticity(int require,char *fieldOrMethod) {
         linkNamePrettyPrint(ttt, ss->s.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
         sprintf(tmpBuff,"%c%s %s is not static, this refactoring requires a static %s.",
                 toupper(*fieldOrMethod), fieldOrMethod+1, ttt, fieldOrMethod);
-        error(ERR_ST, tmpBuff);
+        errorMessage(ERR_ST, tmpBuff);
         return(0);
     } else if (require==REQ_NONSTATIC && (ss->s.b.accessFlags & ACCESS_STATIC)) {
         linkNamePrettyPrint(ttt, ss->s.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
         sprintf(tmpBuff,"%c%s %s is declared static, this refactoring requires a non static %s.",
                 toupper(*fieldOrMethod), fieldOrMethod+1, ttt, fieldOrMethod);
-        error(ERR_ST, tmpBuff);
+        errorMessage(ERR_ST, tmpBuff);
         return(0);
     }
     return(1);
@@ -4361,7 +4361,7 @@ static Symbol *javaGetClassSymbolFromClassDotName(char *fqName) {
 
 Symbol *getMoveTargetClass(void) {
     if (s_opt.moveTargetClass == NULL) {
-        error(ERR_INTERNAL,"pull up/push down pre-check without setting target class");
+        errorMessage(ERR_INTERNAL,"pull up/push down pre-check without setting target class");
         return NULL;
     }
     return(javaGetClassSymbolFromClassDotName(s_opt.moveTargetClass));
@@ -4377,7 +4377,7 @@ static int tpCheckItIsAPackage(int req, char *classOrPack) {
         (req==REQ_CLASS && ss->s.b.symType!=TypeStruct)) {
         sprintf(tmpBuff, "This does not look like a %s name, please position the cursor on a %s name before invoking this refactoring.", classOrPack, classOrPack);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-        error(ERR_ST, tmpBuff);
+        errorMessage(ERR_ST, tmpBuff);
         return(0);
     }
     return(1);
@@ -4583,7 +4583,7 @@ static void olTrivialRefactoringPreCheck(int refcode) {
         }
         break;
     default:
-        error(ERR_INTERNAL,"trivial precheck called with no valid check code");
+        errorMessage(ERR_INTERNAL,"trivial precheck called with no valid check code");
     }
     // remove the checked symbol from stack
     olStackDeleteSymbol(tpchsymbol);
@@ -4690,7 +4690,7 @@ static void answerClassName(char *name) {
             fprintf(ccOut,"*%s", ttt);
         }
     } else {
-        error(ERR_ST, "Not inside a class. Can't get curent class.");
+        errorMessage(ERR_ST, "Not inside a class. Can't get curent class.");
     }
 }
 
@@ -4931,7 +4931,7 @@ void mainAnswerEditAction(void) {
             // very risky, will need a lot of adjustements in xref.el
             fprintf(ccOut, "%s", s_cps.setTargetAnswerClass);
         } else {
-            error(ERR_ST, "Not a valid target position. The cursor has to be on a place where a new field/method can be inserted.");
+            errorMessage(ERR_ST, "Not a valid target position. The cursor has to be on a place where a new field/method can be inserted.");
         }
         break;
     case OLO_SET_MOVE_CLASS_TARGET: case OLO_SET_MOVE_METHOD_TARGET:    // xref2 target
@@ -4950,14 +4950,14 @@ void mainAnswerEditAction(void) {
         if (s_cps.methodCoordEndLine!=0) {
             fprintf(ccOut,"*%d", s_cps.methodCoordEndLine);
         } else {
-            error(ERR_ST, "No method found.");
+            errorMessage(ERR_ST, "No method found.");
         }
         break;
     case OLO_GET_CLASS_COORD:
         if (s_cps.classCoordEndLine!=0) {
             fprintf(ccOut,"*%d", s_cps.classCoordEndLine);
         } else {
-            error(ERR_ST, "No class found.");
+            errorMessage(ERR_ST, "No class found.");
         }
         break;
     case OLO_GET_SYMBOL_TYPE:
@@ -4966,7 +4966,7 @@ void mainAnswerEditAction(void) {
         } else if (s_opt.noErrors) {
             fprintf(ccOut,"*");
         } else {
-            error(ERR_ST, "No symbol found.");
+            errorMessage(ERR_ST, "No symbol found.");
         }
         olStackDeleteSymbol(s_olcxCurrentUser->browserStack.top);
         break;
@@ -4978,7 +4978,7 @@ void mainAnswerEditAction(void) {
             olStackDeleteSymbol(s_olcxCurrentUser->browserStack.top);
         } else {
             sprintf(tmpBuff, "Parameter %d not found.", s_opt.olcxGotoVal);
-            error(ERR_ST, tmpBuff);
+            errorMessage(ERR_ST, tmpBuff);
         }
         break;
     case OLO_GET_PRIMARY_START:
@@ -4987,7 +4987,7 @@ void mainAnswerEditAction(void) {
                                 UsageDefined, s_olcxCurrentUser->browserStack.top->refsuffix, "");
             olStackDeleteSymbol(s_olcxCurrentUser->browserStack.top);
         } else {
-            error(ERR_ST, "Begin of primary expression not found.");
+            errorMessage(ERR_ST, "Begin of primary expression not found.");
         }
         break;
     case OLO_PUSH_ALL_IN_METHOD:
@@ -5026,7 +5026,7 @@ void mainAnswerEditAction(void) {
              rstack->hkSelectedSym->s.b.storage!=StorageMethod &&
              rstack->hkSelectedSym->s.b.storage!=StorageConstructor)) {
             sprintf(tmpBuff,"Cursor (point) has to be positioned on a method or contructor name before invocation of this refactoring, not on the parameter itself. Please move the cursor onto the method (contructor) name and reinvoke the refactoring.");
-            error(ERR_ST, tmpBuff);
+            errorMessage(ERR_ST, tmpBuff);
         } else {
             mainAnswerReferencePushingAction(s_opt.server_operation);
         }
