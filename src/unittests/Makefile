@@ -24,6 +24,7 @@ coverage: clean all
 	lcov -d . -c -o coverage.info
 	genhtml -o coverage coverage.info
 
+.PRECIOUS: $(OBJDIR)/*.o
 
 # These link the modules .o and only tests the external behaviour
 symboltable_tests.so: $(OBJDIR)/symboltable_tests.o $(OBJDIR)/symboltable.o $(OBJDIR)/hash.o
@@ -39,6 +40,9 @@ filetab_tests.so: $(OBJDIR)/filetab_tests.o $(OBJDIR)/filetab.o $(OBJDIR)/hash.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 symbol_tests.so: $(OBJDIR)/symbol_tests.o $(OBJDIR)/symbol.o
+	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
+
+misc_tests.so: $(OBJDIR)/misc.o $(OBJDIR)/protocol.o $(OBJDIR)/enumTxt.o $(OBJDIR)/misc_tests.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 editor_tests.so: $(OBJDIR)/editor_tests.o $(OBJDIR)/editor.o $(OBJDIR)/position.o
