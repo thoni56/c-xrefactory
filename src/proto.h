@@ -1112,7 +1112,7 @@ typedef struct options {
 
     /* CXREF options  */
 
-    int show_errors;
+    bool show_errors;
     bool brief_cxref;
     int update;
     int keep_old;

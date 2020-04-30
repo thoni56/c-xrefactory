@@ -548,7 +548,7 @@ static int processEOption(int *ii, int argc, char **argv) {
 
     if (0) {}
     else if (strcmp(argv[i],"-errors")==0) {
-        s_opt.show_errors = 1;
+        s_opt.show_errors = true;
     } else if (strcmp(argv[i],"-exit")==0) {
         log_debug("Exiting");
         exit(XREF_EXIT_BASE);
