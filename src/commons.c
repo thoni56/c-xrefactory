@@ -31,7 +31,7 @@ void initCwd(void) {
         // getcwd does not work.
         rr = getenv("PWD");
         if (rr==NULL) {
-            error(ERR_ST, "can't get current working directory");
+            errorMessage(ERR_ST, "can't get current working directory");
             sprintf(s_cwd, ".");
         } else {
             assert(strlen(rr) < MAX_FILE_NAME_SIZE);
@@ -184,13 +184,13 @@ void copyFile(char *source, char *destination) {
     log_trace("attempting to copy '%s' to '%s'", source, destination);
     sourceFile = fopen(source,"r");
     if (sourceFile == NULL) {
-        error(ERR_CANT_OPEN_FOR_READ, source);
+        errorMessage(ERR_CANT_OPEN_FOR_READ, source);
         LEAVE();
         return;
     }
     destinationFile = fopen(destination,"w");
     if (destinationFile == NULL) {
-        error(ERR_CANT_OPEN_FOR_WRITE, destination);
+        errorMessage(ERR_CANT_OPEN_FOR_WRITE, destination);
         fclose(sourceFile);
         LEAVE();
         return;
@@ -199,7 +199,7 @@ void copyFile(char *source, char *destination) {
         readBytes = fread(tmpBuff , 1, TMP_BUFF_SIZE, sourceFile);
         writtenBytes = fwrite(tmpBuff, 1, readBytes, destinationFile);
         if (readBytes != writtenBytes)
-            error(ERR_ST,"problem with writing to a file.");
+            errorMessage(ERR_ST,"problem with writing to a file.");
     } while (readBytes > 0);
     fclose(destinationFile);
     fclose(sourceFile);
@@ -233,7 +233,7 @@ void copyDir(char *dest, char *s, int *i) {
 /* ***********************************************************************
  */
 
-static void errorMessage(char *out, int errCode, char *mess) {
+static void formatMessage(char *out, int errCode, char *mess) {
     if (s_opt.taskRegime != RegimeEditServer) {
         sprintf(out, "%s ", placeIdent());
         out += strlen(out);
@@ -268,9 +268,9 @@ static void errorMessage(char *out, int errCode, char *mess) {
     assert(strlen(ppcTmpBuff) < MAX_PPC_RECORD_SIZE-1);
 }
 
-void warning(int errCode, char *message) {
+void warningMessage(int errCode, char *message) {
     if ((! s_opt.noErrors) && (! s_javaPreScanOnly)) {
-        errorMessage(ppcTmpBuff, errCode, message);
+        formatMessage(ppcTmpBuff, errCode, message);
         if (s_opt.xref2) {
             strcat(ppcTmpBuff, "\n");
             ppcGenRecord(PPC_WARNING, ppcTmpBuff,"\n");
@@ -286,7 +286,7 @@ void warning(int errCode, char *message) {
 }
 
 static void writeErrorMessage(int errCode, char *mess) {
-    errorMessage(ppcTmpBuff, errCode, mess);
+    formatMessage(ppcTmpBuff, errCode, mess);
     if (s_opt.xref2) {
         strcat(ppcTmpBuff, "\n");
         ppcGenRecord(PPC_ERROR, ppcTmpBuff, "\n");
@@ -300,7 +300,7 @@ static void writeErrorMessage(int errCode, char *mess) {
     }
 }
 
-void error(int errCode, char *mess) {
+void errorMessage(int errCode, char *mess) {
     if ((! s_opt.noErrors) && (! s_javaPreScanOnly)) {
         writeErrorMessage(errCode, mess);
     }
@@ -317,7 +317,7 @@ void emergencyExit(int exitStatus) {
 
 void fatalError(int errCode, char *mess, int exitStatus) {
     if (! s_opt.xref2) fprintf(errOut,"![error] ");
-    errorMessage(ppcTmpBuff, errCode, mess);
+    formatMessage(ppcTmpBuff, errCode, mess);
     log_error(ppcTmpBuff);
     if (s_opt.xref2) {
         ppcGenRecord(PPC_FATAL_ERROR, ppcTmpBuff,"\n");
