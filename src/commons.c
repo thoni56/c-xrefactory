@@ -270,7 +270,7 @@ static void errorMessage(char *out, int errCode, char *mess) {
 
 void warning(int errCode, char *message) {
     if ((! s_opt.noErrors) && (! s_javaPreScanOnly)) {
-        errorMessage(ppcTmpBuff,errCode, message);
+        errorMessage(ppcTmpBuff, errCode, message);
         if (s_opt.xref2) {
             strcat(ppcTmpBuff, "\n");
             ppcGenRecord(PPC_WARNING, ppcTmpBuff,"\n");
@@ -286,7 +286,7 @@ void warning(int errCode, char *message) {
 }
 
 static void writeErrorMessage(int errCode, char *mess) {
-    errorMessage(ppcTmpBuff,errCode, mess);
+    errorMessage(ppcTmpBuff, errCode, mess);
     if (s_opt.xref2) {
         strcat(ppcTmpBuff, "\n");
         ppcGenRecord(PPC_ERROR, ppcTmpBuff, "\n");

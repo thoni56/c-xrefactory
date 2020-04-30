@@ -214,23 +214,26 @@ void ppcGenDefinitionNotFoundWarningAtBottom(void) {
  */
 
 void noSuchFieldError(char *rec) {
+    char message[TMP_BUFF_SIZE];
     if (s_opt.debug || s_opt.err) {
-        sprintf(tmpBuff," field/member %s not found", rec);
-        error(ERR_ST, tmpBuff);
+        sprintf(message, "Field/member '%s' not found", rec);
+        error(ERR_ST, message);
     }
 }
 
 void methodAppliedOnNonClass(char *rec) {
+    char message[TMP_BUFF_SIZE];
     if (s_opt.debug || s_opt.err) {
-        sprintf(tmpBuff," %s not applied on a class", rec);
-        error(ERR_ST, tmpBuff);
+        sprintf(message, "'%s' not applied on a class", rec);
+        error(ERR_ST, message);
     }
 }
 
 void methodNameNotRecognized(char *rec) {
+    char message[TMP_BUFF_SIZE];
     if (s_opt.debug || s_opt.err) {
-        sprintf(tmpBuff," %s not recognized as method name", rec);
-        error(ERR_ST, tmpBuff);
+        sprintf(message, "'%s' not recognized as method name", rec);
+        error(ERR_ST, message);
     }
 }
 
