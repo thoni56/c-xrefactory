@@ -413,7 +413,7 @@ static void zipArchiveScan(char **accc, char **affin, CharacterBuffer *iBuf,
 
 int zipIndexArchive(char *name) {
     int archiveIndex, namelen;
-    FILE *ff;
+    FILE *file;
     CharacterBuffer *buffer;
     struct stat fst;
 
@@ -441,25 +441,25 @@ int zipIndexArchive(char *name) {
             return(-1);
         }
 #if defined (__WIN32__)                                     /*SBD*/
-        ff = fopen(name,"rb");
+        file = fopen(name,"rb");
 #else                                                       /*SBD*/
-        ff = fopen(name,"r");
+        file = fopen(name,"r");
 #endif                                                      /*SBD*/
-        if (ff == NULL) {
+        if (file == NULL) {
             assert(s_opt.taskRegime);
             if (s_opt.taskRegime!=RegimeEditServer) {
                 warningMessage(ERR_CANT_OPEN, name);
             }
             return(-1);
         }
-        fillCharacterBuffer(buffer, buffer->chars, buffer->chars, ff, 0, 0, buffer->chars);
+        fillCharacterBuffer(buffer, buffer->chars, buffer->chars, file, 0, 0, buffer->chars);
         assert(namelen+2 < MAX_FILE_NAME_SIZE);
         strcpy(s_zipArchiveTable[archiveIndex].fn, name);
         s_zipArchiveTable[archiveIndex].fn[namelen] = ZIP_SEPARATOR_CHAR;
         s_zipArchiveTable[archiveIndex].fn[namelen+1] = 0;
         fillZipFileTableItem(&s_zipArchiveTable[archiveIndex], fst, NULL);
         zipArchiveScan(&buffer->next,&buffer->end,buffer,&s_zipArchiveTable[archiveIndex], fst.st_size);
-        fclose(ff);
+        fclose(file);
     }
     return(archiveIndex);
 }
