@@ -779,14 +779,14 @@ typedef enum {
     INPUT_VIA_EDITOR
 } InputMethod;
 
-typedef struct CharacterBuffer {
+typedef struct characterBuffer {
     char        *next;				/* first unread */
     char        *end;				/* pointing after valid characters */
     char        chars[CHAR_BUFF_SIZE];
     FILE        *file;
     unsigned	filePos;			/* how many chars was read from file */
     int			fileNumber;
-    int         lineNum;
+    int         lineNumber;
     char        *lineBegin;
     int         columnOffset;		/* column == cc-lineBegin + columnOffset */
     bool		isAtEOF;
@@ -799,10 +799,10 @@ typedef struct lexBuf {
     char            *next;				/* next to read */
     char            *end;				/* pointing *after* last valid char */
     char            chars[LEX_BUFF_SIZE];
-    struct position pRing[LEX_POSITIONS_RING_SIZE];		// file/line/col position
-    unsigned        fpRing[LEX_POSITIONS_RING_SIZE];	// file offset position
-    int             posi;				/* pRing[posi%LEX_POSITIONS_RING_SIZE] */
-    struct CharacterBuffer buffer;
+    struct position positionRing[LEX_POSITIONS_RING_SIZE];		// file/line/col position
+    unsigned        fileOffsetRing[LEX_POSITIONS_RING_SIZE];	// file offset position
+    int             index;				/* pRing[posi%LEX_POSITIONS_RING_SIZE] */
+    struct characterBuffer buffer;
 } S_lexBuf;
 
 typedef struct cppIfStack {

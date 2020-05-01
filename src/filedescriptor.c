@@ -15,13 +15,13 @@ void fillFileDescriptor(S_fileDesc *fileDescriptor, char *fileName, char *buffer
     fileDescriptor->ifStack = NULL; /* lex buf */
     fileDescriptor->lexBuffer.next = NULL;
     fileDescriptor->lexBuffer.end = NULL;
-    fileDescriptor->lexBuffer.posi = 0; /* char buf */
+    fileDescriptor->lexBuffer.index = 0; /* char buf */
     fileDescriptor->lexBuffer.buffer.next = bufferStart;
     fileDescriptor->lexBuffer.buffer.end = bufferStart+bufferSize;
     fileDescriptor->lexBuffer.buffer.file = file;
     fileDescriptor->lexBuffer.buffer.filePos = offset;
     fileDescriptor->lexBuffer.buffer.fileNumber = s_noneFileIndex;
-    fileDescriptor->lexBuffer.buffer.lineNum = 0;
+    fileDescriptor->lexBuffer.buffer.lineNumber = 0;
     fileDescriptor->lexBuffer.buffer.lineBegin = bufferStart;
     fileDescriptor->lexBuffer.buffer.columnOffset = 0;
     fileDescriptor->lexBuffer.buffer.isAtEOF = 0;

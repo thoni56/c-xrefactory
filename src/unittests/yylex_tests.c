@@ -50,7 +50,7 @@ static void setup_lexBuffer_for_reading(void *data) {
     *strchr(&cFile.lexBuffer.chars[2], ' ') = '\0';
     cFile.lexBuffer.next = cFile.lexBuffer.chars;
     cFile.lexBuffer.end = strchr(cFile.lexBuffer.chars, '\0');
-    cFile.lexBuffer.posi = 2;
+    cFile.lexBuffer.index = 2;
 }
 
 Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {

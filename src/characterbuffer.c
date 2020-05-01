@@ -17,7 +17,7 @@ void fillCharacterBuffer(CharacterBuffer *characterBuffer,
     characterBuffer->file = file;
     characterBuffer->filePos = filePos;
     characterBuffer->fileNumber = fileNumber;
-    characterBuffer->lineNum = 0;
+    characterBuffer->lineNumber = 0;
     characterBuffer->lineBegin = lineBegin;
     characterBuffer->columnOffset = 0;
     characterBuffer->isAtEOF = false;
@@ -31,7 +31,7 @@ void fillCharacterBuffer(CharacterBuffer *characterBuffer,
 /* ***************************************************************** */
 
 
-static int readFromFileToBuffer(struct CharacterBuffer  *buffer, char *outBuffer, int max_size) {
+static int readFromFileToBuffer(struct characterBuffer  *buffer, char *outBuffer, int max_size) {
     int n;
 
     if (buffer->file == NULL) n = 0;
@@ -39,7 +39,7 @@ static int readFromFileToBuffer(struct CharacterBuffer  *buffer, char *outBuffer
     return(n);
 }
 
-void charBuffClose(struct CharacterBuffer *buffer) {
+void charBuffClose(struct characterBuffer *buffer) {
     if (buffer->file!=NULL) fclose(buffer->file);
     if (buffer->inputMethod == INPUT_VIA_UNZIP) {
         inflateEnd(&buffer->zipStream);
@@ -54,7 +54,7 @@ void zlibFree(voidpf opaque, voidpf address) {
     free(address);
 }
 
-static int readFromUnzipFilterToBuffer(struct CharacterBuffer *buffer, char *outBuffer, int max_size) {
+static int readFromUnzipFilterToBuffer(struct characterBuffer *buffer, char *outBuffer, int max_size) {
     int n, fn, res;
     buffer->zipStream.next_out = (unsigned char *)outBuffer;
     buffer->zipStream.avail_out = max_size;
@@ -84,7 +84,7 @@ static int readFromUnzipFilterToBuffer(struct CharacterBuffer *buffer, char *out
     return(n);
 }
 
-bool fillBuffer(struct CharacterBuffer *buffer) {
+bool fillBuffer(struct characterBuffer *buffer) {
     char *cp;
     char *next;
     char *end;
@@ -111,7 +111,7 @@ bool fillBuffer(struct CharacterBuffer *buffer) {
 }
 
 
-static void fillZipStreamFromBuffer(struct CharacterBuffer  *buffer, char *dd) {
+static void fillZipStreamFromBuffer(struct characterBuffer  *buffer, char *dd) {
     memset(&buffer->zipStream, 0, sizeof(buffer->zipStream));
     buffer->zipStream.next_in = (Bytef*)buffer->z;
     buffer->zipStream.avail_in = dd-buffer->z;
@@ -122,7 +122,7 @@ static void fillZipStreamFromBuffer(struct CharacterBuffer  *buffer, char *dd) {
 }
 
 
-void switchToZippedCharBuff(struct CharacterBuffer *buffer) {
+void switchToZippedCharBuff(struct characterBuffer *buffer) {
     char *dd;
     char *cc;
     char *fin;
@@ -143,7 +143,7 @@ void switchToZippedCharBuff(struct CharacterBuffer *buffer) {
     }
 }
 
-int skipNCharsInCharBuf(struct CharacterBuffer *buffer, unsigned count) {
+int skipNCharsInCharBuf(struct characterBuffer *buffer, unsigned count) {
     char *dd;
     char *cc;
     char *fin;

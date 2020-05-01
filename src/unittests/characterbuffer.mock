@@ -13,7 +13,7 @@ void fillCharacterBuffer(CharacterBuffer *characterBuffer,
     mock(next, end, file, filePos, fileNumber, lineBegin);
 }
 
-void charBuffClose(struct CharacterBuffer *buffer) {
+void charBuffClose(struct characterBuffer *buffer) {
     mock(buffer);
 }
 
@@ -25,14 +25,14 @@ void zlibFree(voidpf opaque, voidpf address) {
     mock(opaque, address);
 }
 
-bool fillBuffer(struct CharacterBuffer *buffer) {
+bool fillBuffer(struct characterBuffer *buffer) {
     return (int) mock(buffer);
 }
 
-void switchToZippedCharBuff(struct CharacterBuffer *buffer) {
+void switchToZippedCharBuff(struct characterBuffer *buffer) {
     mock(buffer);
 }
 
-int skipNCharsInCharBuf(struct CharacterBuffer *buffer, unsigned count) {
+int skipNCharsInCharBuf(struct characterBuffer *buffer, unsigned count) {
     return (int) mock(buffer, count);
 }

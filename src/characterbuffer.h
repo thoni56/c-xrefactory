@@ -12,11 +12,11 @@ extern void fillCharacterBuffer(CharacterBuffer *characterBuffer,
                                 unsigned filePos,
                                 int fileNumber,
                                 char *lineBegin);
-extern void charBuffClose(struct CharacterBuffer *buffer);
+extern void charBuffClose(struct characterBuffer *buffer);
 extern voidpf zlibAlloc(voidpf opaque, uInt items, uInt size);
 extern void zlibFree(voidpf opaque, voidpf address);
-extern bool fillBuffer(struct CharacterBuffer *buffer);
-extern void switchToZippedCharBuff(struct CharacterBuffer *buffer);
-extern int skipNCharsInCharBuf(struct CharacterBuffer *buffer, unsigned count);
+extern bool fillBuffer(struct characterBuffer *buffer);
+extern void switchToZippedCharBuff(struct characterBuffer *buffer);
+extern int skipNCharsInCharBuf(struct characterBuffer *buffer, unsigned count);
 
 #endif
