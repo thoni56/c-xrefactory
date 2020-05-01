@@ -402,7 +402,7 @@ bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
             } else {
                 isActivePass = 0;
             }
-            if (passn > s_maximalCppPass) s_maximalCppPass = passn;
+            if (passn > s_cppPassMax) s_cppPassMax = passn;
         } else if (strcmp(text,"-set")==0 && ACTIVE_OPTION()
                    && memFl!=MEM_NO_ALLOC) {
             // pre-evaluation of -set

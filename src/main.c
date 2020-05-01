@@ -2937,9 +2937,9 @@ static void mainEditServerProcessFile( int argc, char **argv,
                                        int *firstPassing
                                        ) {
     assert(s_fileTab.tab[s_olOriginalComFileNumber]->b.scheduledToProcess);
-    s_maximalCppPass = 1;
+    s_cppPassMax = 1;
     s_currCppPass = 1;
-    for(s_currCppPass=1; s_currCppPass<=s_maximalCppPass; s_currCppPass++) {
+    for(s_currCppPass=1; s_currCppPass<=s_cppPassMax; s_currCppPass++) {
         s_input_file_name = s_fileTab.tab[s_olOriginalComFileNumber]->name;
         assert(s_input_file_name!=NULL);
         mainEditSrvFileSingleCppPass( argc, argv, nargc, nargv, firstPassing);
@@ -3008,8 +3008,8 @@ static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *
     int inputIn = *_inputIn;
     int firstPassing = *_firstPassing;
     int atLeastOneProcessed = *_atLeastOneProcessed;
-    s_maximalCppPass = 1;
-    for(s_currCppPass=1; s_currCppPass<=s_maximalCppPass; s_currCppPass++) {
+    s_cppPassMax = 1;
+    for(s_currCppPass=1; s_currCppPass<=s_cppPassMax; s_currCppPass++) {
         if (! firstPassing) copyOptions(&s_opt, &s_cachedOptions);
         mainFileProcessingInitialisations(&firstPassing,
                                           argc, argv, 0, NULL, &inputIn,
@@ -3310,7 +3310,7 @@ static void mainGenerate(int argc, char **argv) {
     s_currCppPass = ANY_CPP_PASS;
     s_fileProcessStartTime = time(NULL);
     fArgCount = 0; s_input_file_name = getInputFile(&fArgCount);
-    s_maximalCppPass = 0;
+    s_cppPassMax = 0;
     firstPassing = 1;
     mainFileProcessingInitialisations(&firstPassing, argc, argv, 0, NULL,
                                       &inputIn, &s_language);

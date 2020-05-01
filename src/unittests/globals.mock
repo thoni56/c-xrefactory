@@ -23,7 +23,7 @@ S_currentlyParsedStatics s_cps;
 S_currentlyParsedStatics s_cpsInit;
 S_topBlock *s_topBlock;
 int s_currCppPass;
-int s_maximalCppPass;
+int s_cppPassMax;
 char s_defaultClassPath[] = ".";
 char s_base[MAX_FILE_NAME_SIZE];
 
