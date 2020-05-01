@@ -46,6 +46,9 @@ void closeCharacterBuffer(struct characterBuffer *buffer) {
     }
 }
 
+/* Need to match zlib'z alloc_func
+   alloc_func zlibAlloc() ?
+ */
 voidpf zlibAlloc(voidpf opaque, uInt items, uInt size) {
     return(calloc(items, size));
 }
