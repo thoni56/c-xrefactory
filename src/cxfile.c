@@ -1542,7 +1542,7 @@ int smartReadFileTabFile(void) {
 
 // symbolName can be NULL !!!!!!
 void readOneAppropReferenceFile(char *symbolName,
-                                ScanFileFunctionStep  *scanFunTab
+                                ScanFileFunctionStep  *scanFileFunctionTable
                                 ) {
     static char fns[MAX_FILE_NAME_SIZE];
     int i,tmp;
@@ -1550,13 +1550,13 @@ void readOneAppropReferenceFile(char *symbolName,
     if (s_opt.cxrefFileName == NULL) return;
     cxOut = stdout;
     if (s_opt.refnum <= 1) {
-        tmp = scanReferenceFile(s_opt.cxrefFileName,"","",scanFunTab);
+        tmp = scanReferenceFile(s_opt.cxrefFileName,"","",scanFileFunctionTable);
         if (tmp == 0) return;
     } else {
         tmp = smartReadFileTabFile();
         if (tmp == 0) return;
         tmp = scanReferenceFile(s_opt.cxrefFileName, REFERENCE_FILENAME_CLASSES, "",
-                                scanFunTab);
+                                scanFileFunctionTable);
         if (tmp == 0) return;
         if (symbolName == NULL) return;
         /* following must be after reading XFiles*/
@@ -1565,7 +1565,7 @@ void readOneAppropReferenceFile(char *symbolName,
         sprintf(fns, "%04d", i);
         assert(strlen(fns) < MAX_FILE_NAME_SIZE-1);
         tmp = scanReferenceFile(s_opt.cxrefFileName,REFERENCE_FILENAME_PREFIX,fns,
-                                scanFunTab);
+                                scanFileFunctionTable);
         if (tmp == 0) return;
     }
 }
