@@ -22,8 +22,8 @@ char *crTagSearchLineStatic(char *name, Position *p, int *len1, int *len2, int *
   return (char *) mock(name, p, len1, len2, len3);
 }
 
-int symbolNameShouldBeHiddenFromReports(char *name) {
-  return (int) mock(name);
+bool symbolNameShouldBeHiddenFromReports(char *name) {
+  return (bool) mock(name);
 }
 
 void searchSymbolCheckReference(SymbolReferenceItem *ss, Reference *rr) {

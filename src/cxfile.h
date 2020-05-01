@@ -7,7 +7,7 @@
 extern int searchStringFitness(char *cxtag, int slen);
 extern char *crTagSearchLineStatic(char *name, Position *p,
                                    int *len1, int *len2, int *len3);
-extern int symbolNameShouldBeHiddenFromReports(char *name);
+extern bool symbolNameShouldBeHiddenFromReports(char *name);
 extern void searchSymbolCheckReference(SymbolReferenceItem  *ss, Reference *rr);
 extern int cxFileHashNumber(char *sym);
 extern void genReferenceFile(int updateFlag, char *fname);

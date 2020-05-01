@@ -264,32 +264,37 @@ char *crTagSearchLineStatic(char *name, Position *p,
     return(res);
 }
 
-// filter out symbols which polluating search reports
-int symbolNameShouldBeHiddenFromReports(char *name) {
-    char        *s;
+// Filter out symbols which pollute search reports
+bool symbolNameShouldBeHiddenFromReports(char *name) {
+    char *s;
 
-    // commons symbols
-    if (name[0] == ' ') return(1);  // internal xref symbol
+    // internal xref symbol?
+    if (name[0] == ' ')
+        return true;
 
-    // only java specific pollution
-    if (! LANGUAGE(LANG_JAVA)) return(0);
+    // Only Java specific pollution
+    if (! LANGUAGE(LANG_JAVA))
+        return false;
 
-    // class$ fields
-    if (strncmp(name, "class$", 6)==0) return(1);
+    // Hide class$ fields
+    if (strncmp(name, "class$", 6)==0)
+        return true;
 
-    // filter anonymous classes
-    //&if (s_opt.tagSearchSpecif==TSS_FULL_SEARCH || s_opt.tagSearchSpecif==TSS_SEARCH_DEFS_ONLY_SHORT) {
-    // anonymous classes
-    if (isdigit(name[0])) return(1);
+    // Hide anonymous classes
+    if (isdigit(name[0]))
+        return true;
+
+    // And what is this?
     s = name;
     while ((s=strchr(s, '$'))!=NULL) {
         s++;
-        while (isdigit(*s)) s++;
-        if (*s == '.' || *s=='(' || *s=='$' || *s==0) return(1);
+        while (isdigit(*s))
+            s++;
+        if (*s == '.' || *s=='(' || *s=='$' || *s==0)
+            return true;
     }
-    //&}
 
-    return(0);
+    return false;
 }
 
 void searchSymbolCheckReference(SymbolReferenceItem  *ss, Reference *rr) {
@@ -297,8 +302,10 @@ void searchSymbolCheckReference(SymbolReferenceItem  *ss, Reference *rr) {
     char *s, *sname;
     int slen;
 
-    if (ss->b.symType == TypeCppInclude) return;   // no %%i symbols
-    if (symbolNameShouldBeHiddenFromReports(ss->name)) return;
+    if (ss->b.symType == TypeCppInclude)
+        return;   // no %%i symbols
+    if (symbolNameShouldBeHiddenFromReports(ss->name))
+        return;
 
     linkNamePrettyPrint(ssname, ss->name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
     sname = ssname;
