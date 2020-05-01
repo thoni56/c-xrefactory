@@ -3004,12 +3004,6 @@ static int needToProcessInputFile(void) {
 /* *************************************************************** */
 /*                          Xref regime                            */
 /* *************************************************************** */
-static int dummy(   char **cxFreeBase0, char **cxFreeBase,
-                    S_fileItem **ffc, S_fileItem **pffc,
-                    int *inputIn,   int *firstPassing) {
-    return(0);
-}
-
 static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *_firstPassing, int *_atLeastOneProcessed ) {
     int inputIn = *_inputIn;
     int firstPassing = *_firstPassing;
@@ -3116,14 +3110,11 @@ static S_fileItem *mainCreateListOfInputFiles(void) {
 
 void mainCallXref(int argc, char **argv) {
     static char *cxFreeBase0, *cxFreeBase;
-    static int inputIn;
     static int firstPassing, mess, atLeastOneProcessed;
     static S_fileItem *ffc, *pffc;
     static int messagePrinted = 0;
     static int numberOfInputs, inputCounter, pinputCounter;
 
-    /* some compilers have problems with restoring regs after longjmp */
-    dummy(&cxFreeBase0, &cxFreeBase, &ffc, &pffc, &inputIn, &firstPassing);
     s_currCppPass = ANY_CPP_PASS;
     CX_ALLOCC(cxFreeBase0,0,char);
     if (s_opt.taskRegime == RegimeHtmlGenerate && ! s_opt.noCxFile) {
