@@ -39,7 +39,7 @@ static int readFromFileToBuffer(struct characterBuffer  *buffer, char *outBuffer
     return(n);
 }
 
-void charBuffClose(struct characterBuffer *buffer) {
+void closeCharacterBuffer(struct characterBuffer *buffer) {
     if (buffer->file!=NULL) fclose(buffer->file);
     if (buffer->inputMethod == INPUT_VIA_UNZIP) {
         inflateEnd(&buffer->zipStream);

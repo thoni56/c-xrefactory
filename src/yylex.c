@@ -489,7 +489,7 @@ void popInclude(void) {
     if (s_fileTab.tab[cFile.lexBuffer.buffer.fileNumber]->b.cxLoading) {
         s_fileTab.tab[cFile.lexBuffer.buffer.fileNumber]->b.cxLoaded = true;
     }
-    charBuffClose(&cFile.lexBuffer.buffer);
+    closeCharacterBuffer(&cFile.lexBuffer.buffer);
     if (inStacki != 0) {
         cFile = inStack[--inStacki];	/* buffers are copied !!!!!!, burk */
         if (inStacki == 0 && s_cache.cc!=NULL) {

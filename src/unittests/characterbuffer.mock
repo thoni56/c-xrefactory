@@ -13,7 +13,7 @@ void fillCharacterBuffer(CharacterBuffer *characterBuffer,
     mock(next, end, file, filePos, fileNumber, lineBegin);
 }
 
-void charBuffClose(struct characterBuffer *buffer) {
+void closeCharacterBuffer(struct characterBuffer *buffer) {
     mock(buffer);
 }
 

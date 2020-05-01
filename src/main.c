@@ -2612,14 +2612,16 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, int mess) {
             fi = inStack[i].lexBuffer.buffer.fileNumber;
             assert(s_fileTab.tab[fi]);
             s_fileTab.tab[fi]->b.cxLoading = false;
-            if (inStack[i].lexBuffer.buffer.file!=NULL) charBuffClose(&inStack[i].lexBuffer.buffer);
+            if (inStack[i].lexBuffer.buffer.file!=NULL)
+                closeCharacterBuffer(&inStack[i].lexBuffer.buffer);
         }
     }
     if (cFile.lexBuffer.buffer.file != stdin) {
         fi = cFile.lexBuffer.buffer.fileNumber;
         assert(s_fileTab.tab[fi]);
         s_fileTab.tab[fi]->b.cxLoading = false;
-        if (cFile.lexBuffer.buffer.file!=NULL) charBuffClose(&cFile.lexBuffer.buffer);
+        if (cFile.lexBuffer.buffer.file!=NULL)
+            closeCharacterBuffer(&cFile.lexBuffer.buffer);
     }
     if (s_opt.taskRegime==RegimeHtmlGenerate) {
         if (s_opt.noCxFile) {
@@ -2815,7 +2817,7 @@ static void setFullUpdateMtimesInFileTab(S_fileItem *fi) {
 static void mainCloseInputFile(int inputIn ) {
     if (inputIn) {
         if (cFile.lexBuffer.buffer.file!=stdin) {
-            charBuffClose(&cFile.lexBuffer.buffer);
+            closeCharacterBuffer(&cFile.lexBuffer.buffer);
         }
     }
 }
@@ -3024,7 +3026,7 @@ static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *
             recoverFromCache();
             s_cache.activeCache = 0;    /* no caching in cxref */
             mainParseInputFile();
-            charBuffClose(&cFile.lexBuffer.buffer);
+            closeCharacterBuffer(&cFile.lexBuffer.buffer);
             inputIn = 0;
             cFile.lexBuffer.buffer.file = stdin;
             atLeastOneProcessed=1;
