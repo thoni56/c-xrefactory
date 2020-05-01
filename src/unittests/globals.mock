@@ -28,7 +28,7 @@ char s_defaultClassPath[] = ".";
 char s_base[MAX_FILE_NAME_SIZE];
 
 
-FILE *fIn;
+FILE *inputFile;
 FILE *cxOut;
 FILE *ccOut;
 FILE *dumpOut = NULL;

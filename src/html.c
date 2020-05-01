@@ -1325,12 +1325,12 @@ static void htmlScanCxFileAndGenRefLists(char *fn1, char *fn2,
     sprintf(fn, "%s%s", getRealFileNameStatic(normalizeFileName(fn1,s_cwd)), fn2);
     assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
     if (! s_opt.noCxFile) {
-        fIn = fopen(fn, "r");
-        if (fIn == NULL) {
+        inputFile = fopen(fn, "r");
+        if (inputFile == NULL) {
             errorMessage(ERR_CANT_OPEN, fn);
         } else {
             scanCxFile(htmlGlobalReferencesFunctionSequence);
-            fclose(fIn);
+            fclose(inputFile);
         }
     }
     ffn = cutHtmlPath(fn);

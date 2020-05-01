@@ -605,17 +605,18 @@ static void openInOutReferenceFiles(int updateFlag, char *filename) {
     cxOut = fopen(filename,"w");
     if (cxOut == NULL) fatalError(ERR_CANT_OPEN, filename, XREF_EXIT_ERR);
     if (updateFlag) {
-        fIn = fopen(tmpFileName, "r");
-        if (fIn==NULL) warningMessage(ERR_CANT_OPEN, tmpFileName);
+        inputFile = fopen(tmpFileName, "r");
+        if (inputFile==NULL)
+            warningMessage(ERR_CANT_OPEN_FOR_READ, tmpFileName);
     } else {
-        fIn = NULL;
+        inputFile = NULL;
     }
 }
 
 static void referenceFileEnd(int updateFlag, char *fname) {
-    if (fIn != NULL) {
-        fclose(fIn);
-        fIn = NULL;
+    if (inputFile != NULL) {
+        fclose(inputFile);
+        inputFile = NULL;
         removeFile(tmpFileName);
     }
     fclose(cxOut);
@@ -1412,8 +1413,8 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
     char *cc, *cfin;
 
     ENTER();
-    if (fIn == NULL) {
-        log_trace("No fIn");
+    if (inputFile == NULL) {
+        log_trace("No input file");
         LEAVE();
         return;
     }
@@ -1431,7 +1432,7 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
         s_inLastInfos.fun[ch] = scanFuns[i].handleFun;
         s_inLastInfos.additional[ch] = scanFuns[i].additionalArg;
     }
-    fillCharacterBuffer(&cxfBuf, cxfBuf.chars, cxfBuf.chars, fIn, 0, -1, 0);
+    fillCharacterBuffer(&cxfBuf, cxfBuf.chars, cxfBuf.chars, inputFile, 0, -1, 0);
     ch = ' '; cc = cxfBuf.chars; cfin = cxfBuf.end;
     while(! cxfBuf.isAtEOF) {
         ScanInt(ch, cc, cfin, &cxfBuf, scannedInt);
@@ -1471,16 +1472,16 @@ int scanReferenceFile(char *fname, char *fns1, char *fns2,
     sprintf(fn, "%s%s%s", fname, fns1, fns2);
     assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
     //&fprintf(dumpOut,":scanning file %s\n",fn);
-    fIn = fopen(fn,"r");
-    if (fIn==NULL) {
+    inputFile = fopen(fn,"r");
+    if (inputFile==NULL) {
         //&       sprintf(tmpBuff,
         //&           "can't open TAG file %s\n\tcreate the TAG file first",fn);
         //& errorMessage(ERR_ST,tmpBuff);
         return(0);
     } else {
         scanCxFile(scanFunTab);
-        fclose(fIn);
-        fIn = NULL;
+        fclose(inputFile);
+        inputFile = NULL;
         return(1);
     }
 }

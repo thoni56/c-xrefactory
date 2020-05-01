@@ -142,7 +142,7 @@ extern Position s_olcxByPassPos;
 extern Position s_cxRefPos;
 extern int s_cxRefFlag;
 
-extern FILE *fIn;
+extern FILE *inputFile;
 
 extern int s_input_file_number;
 extern int s_olStringSecondProcessing;  /* am I in macro body pass ? */
