@@ -318,7 +318,7 @@ static void htmlGenRefListFileHead(FILE *ff, int fi) {
                 fprintf(ff,"    "); // UNKOWN: had extra argument ",fi-1);"
             }
             fprintf(ff," X%04d ",fi);
-            if (fi<s_opt.refnum-1) {
+            if (fi<s_opt.referenceFileCount-1) {
                 fprintf(ff,"<A HREF=\"X%04d.html%s\" target=\"packageFrame\">next</A>",fi+1, s_opt.htmlLinkSuffix);
                 fprintf(ff,"</pre>\n");
             }
@@ -450,7 +450,7 @@ static char * getDefaultCxFileStatic(void) {
     char *ss;
     UNUSED ss;
 
-    if (s_opt.refnum <= 1) {
+    if (s_opt.referenceFileCount <= 1) {
         sprintf(tt,"%s.html", s_opt.cxrefFileName);
     } else {
         sprintf(tt,"%s%s%04d.html",
@@ -725,7 +725,7 @@ static char *htmlStSymbolCode(SymbolReferenceItem *r, int usage) {
 static void htmlCrGlobalXrefsFileName(SymbolReferenceItem *cri, int usage,
                                       char *fout, char *lout) {
     char *s;
-    if (s_opt.refnum > 1) {
+    if (s_opt.referenceFileCount > 1) {
         sprintf(fout,"%s%s%04d", normalizeFileName(s_opt.cxrefFileName,s_cwd),
                 REFERENCE_FILENAME_PREFIX, cxFileHashNumber(cri->name));
     } else {
@@ -1720,7 +1720,7 @@ void htmlGenGlobalReferenceLists(char *cxMemFreeBase) {
         fflush(dumpOut);
     }
     fname = s_opt.cxrefFileName;
-    if (s_opt.refnum <= 1) {
+    if (s_opt.referenceFileCount <= 1) {
         /* single reference file */
         recoverMemoriesAfterOverflow(cxMemFreeBase);
         htmlScanCxFileAndGenRefLists(fname, "",HTML_GXANY, HTML_GEN);
@@ -1733,7 +1733,7 @@ void htmlGenGlobalReferenceLists(char *cxMemFreeBase) {
                                      HTML_GXANY, HTML_NO_GEN);
         fileTabMap(&s_fileTab, sortSubClassesList);
         CX_ALLOCC(newFreeBase, 0, char);
-        for (i=0; i<s_opt.refnum; i++) {
+        for (i=0; i<s_opt.referenceFileCount; i++) {
             recoverMemoriesAfterOverflow(newFreeBase);
             sprintf(fn, "%s%04d", REFERENCE_FILENAME_PREFIX, i);
             htmlScanCxFileAndGenRefLists(dirname,fn, i, HTML_GEN);

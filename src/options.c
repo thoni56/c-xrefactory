@@ -764,10 +764,10 @@ void getJavaClassAndSourcePath(void) {
 
 int changeRefNumOption(int newRefNum) {
     int check;
-    if (s_opt.refnum == 0) check=1;
-    else if (s_opt.refnum == 1) check = (newRefNum <= 1);
-    else check = (newRefNum == s_opt.refnum);
-    s_opt.refnum = newRefNum;
+    if (s_opt.referenceFileCount == 0) check=1;
+    else if (s_opt.referenceFileCount == 1) check = (newRefNum <= 1);
+    else check = (newRefNum == s_opt.referenceFileCount);
+    s_opt.referenceFileCount = newRefNum;
     return(check);
 }
 

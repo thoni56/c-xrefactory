@@ -1234,7 +1234,7 @@ static int processROption(int *ii, int argc, char **argv, int infilesFlag) {
     int i = * ii;
     if (0) {}
     else if (strncmp(argv[i],"-refnum=",8)==0)  {
-        sscanf(argv[i]+8, "%d", &s_opt.refnum);
+        sscanf(argv[i]+8, "%d", &s_opt.referenceFileCount);
     }
     else if (strcmp(argv[i],"-refalphahash")==0
              || strcmp(argv[i],"-refalpha1hash")==0)    {
@@ -2727,19 +2727,19 @@ static void scheduleModifiedFilesToUpdate(void) {
     char        ttt[MAX_FILE_NAME_SIZE];
     char        *filestab;
     struct stat refStat;
-    char        *fnamesuff;
+    char        *suffix;
     checkExactPositionUpdate(1);
-    if (s_opt.refnum <= 1) {
-        fnamesuff = "";
+    if (s_opt.referenceFileCount <= 1) {
+        suffix = "";
         filestab = s_opt.cxrefFileName;
     } else {
-        fnamesuff = REFERENCE_FILENAME_FILES;
-        sprintf(ttt,"%s%s", s_opt.cxrefFileName, fnamesuff);
+        suffix = REFERENCE_FILENAME_FILES;
+        sprintf(ttt,"%s%s", s_opt.cxrefFileName, suffix);
         assert(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
         filestab = ttt;
     }
     if (statb(filestab, &refStat)) refStat.st_mtime = 0;
-    scanReferenceFile(s_opt.cxrefFileName, fnamesuff,"", normalScanFunctionSequence);
+    scanReferenceFile(s_opt.cxrefFileName, suffix,"", normalScanFunctionSequence);
     fileTabMap2(&s_fileTab, schedulingToUpdate, &refStat);
     if (s_opt.update==UP_FULL_UPDATE /*& && !LANGUAGE(LANG_JAVA) &*/) {
         makeIncludeClosureOfFilesToUpdate();

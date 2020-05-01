@@ -1117,7 +1117,7 @@ typedef struct options {
     int update;
     int keep_old;
     char *last_message;
-    int refnum;
+    int referenceFileCount;
 
     // all the rest initialized to zeros by default
     struct setGetEnv setGetEnv;

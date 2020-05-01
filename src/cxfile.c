@@ -121,7 +121,7 @@ int cxFileHashNumber(char *sym) {
     register unsigned   res,r;
     register char       *ss,*bb;
     register int        c;
-    if (s_opt.refnum <= 1) return(0);
+    if (s_opt.referenceFileCount <= 1) return(0);
     if (s_opt.xfileHashingMethod == XFILE_HASH_DEFAULT) {
         res = 0;
         ss = sym;
@@ -132,10 +132,10 @@ int cxFileHashNumber(char *sym) {
             ss++;
         }
         SYMTAB_HASH_FUN_FINAL(res);
-        res %= s_opt.refnum;
+        res %= s_opt.referenceFileCount;
         return(res);
     } else if (s_opt.xfileHashingMethod == XFILE_HASH_ALPHA1) {
-        assert(s_opt.refnum == XFILE_HASH_ALPHA1_REFNUM);
+        assert(s_opt.referenceFileCount == XFILE_HASH_ALPHA1_REFNUM);
         for(ss = bb = sym; *ss && *ss!='('; ss++) {
             c = *ss;
             if (LINK_NAME_MAYBE_START(c)) bb = ss+1;
@@ -144,7 +144,7 @@ int cxFileHashNumber(char *sym) {
         c = tolower(c);
         if (c>='a' && c<='z') res = c-'a';
         else res = ('z'-'a')+1;
-        assert(res>=0 && res<s_opt.refnum);
+        assert(res>=0 && res<s_opt.referenceFileCount);
         return(res);
     } else if (s_opt.xfileHashingMethod == XFILE_HASH_ALPHA2) {
         for(ss = bb = sym; *ss && *ss!='('; ss++) {
@@ -163,7 +163,7 @@ int cxFileHashNumber(char *sym) {
             else res = ('z'-'a')+1;
         }
         res = r*XFILE_HASH_ALPHA1_REFNUM + res;
-        assert(res>=0 && res<s_opt.refnum);
+        assert(res>=0 && res<s_opt.referenceFileCount);
         return(res);
     } else {
         assert(0);
@@ -593,7 +593,7 @@ static void genCxFileHead(void) {
     assert(i < MAX_CHARS);
     sr[i]=0;
     writeStringRecord(CXFI_SINGLE_RECORDS, sr, "");
-    writeCompactRecord(CXFI_REFNUM, s_opt.refnum, " ");
+    writeCompactRecord(CXFI_REFNUM, s_opt.referenceFileCount, " ");
     writeCompactRecord(CXFI_CHECK_NUMBER, COMPOSE_CXFI_CHECK_NUM(
                                                                MAX_FILES,
                                                                s_opt.xfileHashingMethod,
@@ -678,12 +678,15 @@ static void generateRefsFromMemory(int fileOrder) {
 }
 
 void genReferenceFile(int updateFlag, char *fname) {
-    char    fn[MAX_FILE_NAME_SIZE];
+    char    fileName[MAX_FILE_NAME_SIZE];
     char    *dirname;
     int     i;
-    if (updateFlag==0) removeFile(fname);
-    recursivelyCreateFileDirIfNotExists(fname);
-    if (s_opt.refnum <= 1) {
+
+    if (updateFlag==0)
+        removeFile(fileName);
+
+    recursivelyCreateFileDirIfNotExists(fileName);
+    if (s_opt.referenceFileCount <= 1) {
         /* single reference file */
         openInOutReferenceFiles(updateFlag, fname);
         /*&     fileTabMap(&s_fileTab, javaInitSubClassInfo);&*/
@@ -702,15 +705,15 @@ void genReferenceFile(int updateFlag, char *fname) {
                                  writeFileIndexItem, writeFileSourceIndexItem);
         genPartialFileTabRefFile(updateFlag,dirname,REFERENCE_FILENAME_CLASSES,
                                  genClassHierarchyItems, NULL);
-        for (i=0; i<s_opt.refnum; i++) {
-            sprintf(fn, "%s%s%04d", dirname, REFERENCE_FILENAME_PREFIX, i);
-            assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
-            openInOutReferenceFiles(updateFlag, fn);
+        for (i=0; i<s_opt.referenceFileCount; i++) {
+            sprintf(fileName, "%s%s%04d", dirname, REFERENCE_FILENAME_PREFIX, i);
+            assert(strlen(fileName) < MAX_FILE_NAME_SIZE-1);
+            openInOutReferenceFiles(updateFlag, fileName);
             genCxFileHead();
             scanCxFile(fullScanFunctionSequence);
             //&refTabMap4(&s_cxrefTab, genPartialRefItem, i);
             generateRefsFromMemory(i);
-            referenceFileEnd(updateFlag, fn);
+            referenceFileEnd(updateFlag, fileName);
         }
     }
 }
@@ -1476,6 +1479,7 @@ int scanReferenceFile(char *fname, char *fns1, char *fns2,
                       ScanFileFunctionStep *scanFunTab
                       ) {
     char fn[MAX_FILE_NAME_SIZE];
+
     sprintf(fn, "%s%s%s", fname, fns1, fns2);
     assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
     //&fprintf(dumpOut,":scanning file %s\n",fn);
@@ -1497,12 +1501,12 @@ void scanReferenceFiles(char *fname, ScanFileFunctionStep *scanFunTab) {
     char nn[MAX_FILE_NAME_SIZE];
     int i;
 
-    if (s_opt.refnum <= 1) {
+    if (s_opt.referenceFileCount <= 1) {
         scanReferenceFile(fname,"","",scanFunTab);
     } else {
-        for (i=0; i<s_opt.refnum; i++) {
         scanReferenceFile(fname,REFERENCE_FILENAME_FILES,"",scanFunTab);
         scanReferenceFile(fname,REFERENCE_FILENAME_CLASSES,"",scanFunTab);
+        for (i=0; i<s_opt.referenceFileCount; i++) {
             sprintf(nn,"%04d",i);
             scanReferenceFile(fname,REFERENCE_FILENAME_PREFIX,nn,scanFunTab);
         }
@@ -1516,7 +1520,7 @@ int smartReadFileTabFile(void) {
     char            tt[MAX_FILE_NAME_SIZE];
     struct stat     st;
     int             tmp;
-    if (s_opt.refnum > 1) {
+    if (s_opt.referenceFileCount > 1) {
         sprintf(tt, "%s%s", s_opt.cxrefFileName, REFERENCE_FILENAME_FILES);
     } else {
         sprintf(tt, "%s", s_opt.cxrefFileName);
@@ -1549,7 +1553,7 @@ void readOneAppropReferenceFile(char *symbolName,
     //& if (s_opt.server_operation!=OLO_CGOTO && ! creatingOlcxRefs()) return;
     if (s_opt.cxrefFileName == NULL) return;
     cxOut = stdout;
-    if (s_opt.refnum <= 1) {
+    if (s_opt.referenceFileCount <= 1) {
         tmp = scanReferenceFile(s_opt.cxrefFileName,"","",scanFileFunctionTable);
         if (tmp == 0) return;
     } else {
