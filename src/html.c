@@ -455,7 +455,7 @@ static char * getDefaultCxFileStatic(void) {
     } else {
         sprintf(tt,"%s%s%04d.html",
                 normalizeFileName(s_opt.cxrefFileName,s_cwd),
-                PRF_REF_PREFIX, 0);
+                REFERENCE_FILENAME_PREFIX, 0);
     }
     ss = cutHtmlPath(tt);
     concatPaths(ttt,MAX_FILE_NAME_SIZE,
@@ -727,7 +727,7 @@ static void htmlCrGlobalXrefsFileName(SymbolReferenceItem *cri, int usage,
     char *s;
     if (s_opt.refnum > 1) {
         sprintf(fout,"%s%s%04d", normalizeFileName(s_opt.cxrefFileName,s_cwd),
-                PRF_REF_PREFIX, cxFileHashNumber(cri->name));
+                REFERENCE_FILENAME_PREFIX, cxFileHashNumber(cri->name));
     } else {
         sprintf(fout,"%s", normalizeFileName(s_opt.cxrefFileName,s_cwd));
     }
@@ -1728,14 +1728,14 @@ void htmlGenGlobalReferenceLists(char *cxMemFreeBase) {
         /* several reference files */
         dirname = fname;
         recoverMemoriesAfterOverflow(cxMemFreeBase);
-        htmlScanCxFileAndGenRefLists(dirname,PRF_FILES,HTML_GXANY,HTML_NO_GEN);
-        htmlScanCxFileAndGenRefLists(dirname,PRF_CLASS,
+        htmlScanCxFileAndGenRefLists(dirname,REFERENCE_FILENAME_FILES,HTML_GXANY,HTML_NO_GEN);
+        htmlScanCxFileAndGenRefLists(dirname,REFERENCE_FILENAME_CLASSES,
                                      HTML_GXANY, HTML_NO_GEN);
         fileTabMap(&s_fileTab, sortSubClassesList);
         CX_ALLOCC(newFreeBase, 0, char);
         for (i=0; i<s_opt.refnum; i++) {
             recoverMemoriesAfterOverflow(newFreeBase);
-            sprintf(fn, "%s%04d", PRF_REF_PREFIX, i);
+            sprintf(fn, "%s%04d", REFERENCE_FILENAME_PREFIX, i);
             htmlScanCxFileAndGenRefLists(dirname,fn, i, HTML_GEN);
         }
     }

@@ -191,18 +191,18 @@
 /* ***************************  cxref files  ********************* */
 
 
-#if defined(__WIN32__)                  /*SBD*/
+#if defined(__WIN32__)
 
-#define PRF_FILES       "\\XFiles"		/*SBD*/
-#define PRF_CLASS       "\\XClasses"	/*SBD*/
-#define PRF_REF_PREFIX  "\\X"			/*SBD*/
+#define REFERENCE_FILENAME_FILES       "\\XFiles"
+#define REFERENCE_FILENAME_CLASSES       "\\XClasses"
+#define REFERENCE_FILENAME_PREFIX  "\\X"
 
-#else									/*SBD*/
+#else
 
-#define PRF_FILES       "/XFiles"		/*SBD*/
-#define PRF_CLASS       "/XClasses"		/*SBD*/
-#define PRF_REF_PREFIX  "/X"			/*SBD*/
+#define REFERENCE_FILENAME_FILES       "/XFiles"
+#define REFERENCE_FILENAME_CLASSES       "/XClasses"
+#define REFERENCE_FILENAME_PREFIX  "/X"
 
-#endif									/*SBD*/
+#endif
 
 #endif

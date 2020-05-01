@@ -2733,7 +2733,7 @@ static void scheduleModifiedFilesToUpdate(void) {
         fnamesuff = "";
         filestab = s_opt.cxrefFileName;
     } else {
-        fnamesuff = PRF_FILES;
+        fnamesuff = REFERENCE_FILENAME_FILES;
         sprintf(ttt,"%s%s", s_opt.cxrefFileName, fnamesuff);
         assert(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
         filestab = ttt;

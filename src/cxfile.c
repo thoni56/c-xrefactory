@@ -691,12 +691,12 @@ void genReferenceFile(int updateFlag, char *fname) {
         /* several reference files */
         dirname = fname;
         createDirIfNotExists(dirname);
-        genPartialFileTabRefFile(updateFlag,dirname,PRF_FILES,
+        genPartialFileTabRefFile(updateFlag,dirname,REFERENCE_FILENAME_FILES,
                                  writeFileIndexItem, writeFileSourceIndexItem);
-        genPartialFileTabRefFile(updateFlag,dirname,PRF_CLASS,
+        genPartialFileTabRefFile(updateFlag,dirname,REFERENCE_FILENAME_CLASSES,
                                  genClassHierarchyItems, NULL);
         for (i=0; i<s_opt.refnum; i++) {
-            sprintf(fn, "%s%s%04d", dirname, PRF_REF_PREFIX, i);
+            sprintf(fn, "%s%s%04d", dirname, REFERENCE_FILENAME_PREFIX, i);
             assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
             openInOutReferenceFiles(updateFlag, fn);
             genCxFileHead();
@@ -1493,11 +1493,11 @@ void scanReferenceFiles(char *fname, ScanFileFunctionStep *scanFunTab) {
     if (s_opt.refnum <= 1) {
         scanReferenceFile(fname,"","",scanFunTab);
     } else {
-        scanReferenceFile(fname,PRF_FILES,"",scanFunTab);
-        scanReferenceFile(fname,PRF_CLASS,"",scanFunTab);
         for (i=0; i<s_opt.refnum; i++) {
+        scanReferenceFile(fname,REFERENCE_FILENAME_FILES,"",scanFunTab);
+        scanReferenceFile(fname,REFERENCE_FILENAME_CLASSES,"",scanFunTab);
             sprintf(nn,"%04d",i);
-            scanReferenceFile(fname,PRF_REF_PREFIX,nn,scanFunTab);
+            scanReferenceFile(fname,REFERENCE_FILENAME_PREFIX,nn,scanFunTab);
         }
     }
 }
@@ -1510,7 +1510,7 @@ int smartReadFileTabFile(void) {
     struct stat     st;
     int             tmp;
     if (s_opt.refnum > 1) {
-        sprintf(tt, "%s%s", s_opt.cxrefFileName, PRF_FILES);
+        sprintf(tt, "%s%s", s_opt.cxrefFileName, REFERENCE_FILENAME_FILES);
     } else {
         sprintf(tt, "%s", s_opt.cxrefFileName);
     }
@@ -1548,7 +1548,7 @@ void readOneAppropReferenceFile(char *symbolName,
     } else {
         tmp = smartReadFileTabFile();
         if (tmp == 0) return;
-        tmp = scanReferenceFile(s_opt.cxrefFileName,PRF_CLASS,"",
+        tmp = scanReferenceFile(s_opt.cxrefFileName, REFERENCE_FILENAME_CLASSES, "",
                                 scanFunTab);
         if (tmp == 0) return;
         if (symbolName == NULL) return;
@@ -1557,7 +1557,7 @@ void readOneAppropReferenceFile(char *symbolName,
         //&fprintf(dumpOut,"reading X%04d\n",i);fflush(dumpOut);
         sprintf(fns, "%04d", i);
         assert(strlen(fns) < MAX_FILE_NAME_SIZE-1);
-        tmp = scanReferenceFile(s_opt.cxrefFileName,PRF_REF_PREFIX,fns,
+        tmp = scanReferenceFile(s_opt.cxrefFileName,REFERENCE_FILENAME_PREFIX,fns,
                                 scanFunTab);
         if (tmp == 0) return;
     }
