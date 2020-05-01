@@ -29,7 +29,7 @@ execute: EMACS_RUN=-l emacs_c_exercise.el
 exec: EMACS_RUN=-l emacs_c_exercise.el
 execute exec emacs: setup
 	@# Run emacs with commands to execute the example sequence
-	@HOME=$(CURDIR) emacs --no-splash $(EMACS_STARTUP) -l .emacs.d/init.el -l .emacs.d/override-el-get-update.el $(EMACS_RUN) > /dev/null 2>&1
+	@yes | HOME=$(CURDIR) emacs --no-splash $(EMACS_STARTUP) -l .emacs.d/init.el -l .emacs.d/override-el-get-update.el $(EMACS_RUN) > /dev/null 2>&1
 	@# Remove tilde-files after editing
 	@find cexercise -name \*~ -exec rm {} \;
 
