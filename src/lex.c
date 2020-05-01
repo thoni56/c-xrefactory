@@ -177,21 +177,21 @@ void gotOnLineCxRefs( Position *ps ) {
             GetChar(ch,ccc,cfin,cb, clb, clo);                          \
         }                                                               \
         tt[i]=0;                                                        \
-        if (! strcmp(tt,"ifdef")) {                                     \
+        if (strcmp(tt,"ifdef") == 0) {                                     \
             PutLexToken(CPP_IFDEF,dd); PutLexPosition(cfile,cline,lcoll,dd); \
-        } else if (! strcmp(tt,"ifndef")) {                             \
+        } else if (strcmp(tt,"ifndef") == 0) {                             \
             PutLexToken(CPP_IFNDEF,dd); PutLexPosition(cfile,cline,lcoll,dd); \
-        } else if (! strcmp(tt,"if")) {                                 \
+        } else if (strcmp(tt,"if") == 0) {                                 \
             PutLexToken(CPP_IF,dd); PutLexPosition(cfile,cline,lcoll,dd); \
-        } else if (! strcmp(tt,"elif")) {                               \
+        } else if (strcmp(tt,"elif") == 0) {                               \
             PutLexToken(CPP_ELIF,dd); PutLexPosition(cfile,cline,lcoll,dd); \
-        } else if (! strcmp(tt,"undef")) {                              \
+        } else if (strcmp(tt,"undef") == 0) {                              \
             PutLexToken(CPP_UNDEF,dd); PutLexPosition(cfile,cline,lcoll,dd); \
-        } else if (! strcmp(tt,"else")) {                               \
+        } else if (strcmp(tt,"else") == 0) {                               \
             PutLexToken(CPP_ELSE,dd); PutLexPosition(cfile,cline,lcoll,dd); \
-        } else if (! strcmp(tt,"endif")) {                              \
+        } else if (strcmp(tt,"endif") == 0) {                              \
             PutLexToken(CPP_ENDIF,dd); PutLexPosition(cfile,cline,lcoll,dd); \
-        } else if (! strcmp(tt,"include")) {                            \
+        } else if (strcmp(tt,"include") == 0) {                            \
             char endCh;                                                 \
             PutLexToken(CPP_INCLUDE,dd);                                \
             PutLexPosition(cfile,cline,lcoll,dd);                       \
@@ -207,7 +207,7 @@ void gotOnLineCxRefs( Position *ps ) {
                 PutLexPosition(cfile,cline,scol,dd);                    \
                 if (ch == endCh) GetChar(ch,ccc,cfin,cb, clb, clo);     \
             }                                                           \
-        } else if (! strcmp(tt,"define")) {                             \
+        } else if (strcmp(tt,"define") == 0) {                             \
             ddd = dd;                                                   \
             PutLexToken(CPP_DEFINE0,dd);                                \
             PutLexPosition(cfile,cline,lcoll,dd);                       \
@@ -217,7 +217,7 @@ void gotOnLineCxRefs( Position *ps ) {
             if (ch == '(') {                                            \
                 PutLexToken(CPP_DEFINE,ddd);                            \
             }                                                           \
-        } else if (! strcmp(tt,"pragma")) {                             \
+        } else if (strcmp(tt,"pragma") == 0) {                             \
             PutLexToken(CPP_PRAGMA,dd); PutLexPosition(cfile,cline,lcoll,dd); \
         } else {                                                        \
             PutLexToken(CPP_LINE,dd); PutLexPosition(cfile,cline,lcoll,dd); \
