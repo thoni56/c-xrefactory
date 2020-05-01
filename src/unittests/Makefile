@@ -1,6 +1,6 @@
 vpath %.c ..
 
-CFLAGS = -g -MMD -Wall -fPIC -I.. $(COVERAGE) -I/usr/local/include
+CFLAGS = -g -Og -MMD -Wall -Wno-char-subscripts -fPIC -I.. $(COVERAGE) -I/usr/local/include
 
 OBJDIR=.objs
 
