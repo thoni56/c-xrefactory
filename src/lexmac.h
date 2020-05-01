@@ -71,20 +71,9 @@
     pos.coll = NextLexNumPos(tmpcc+2*sizeof(short));\
 }
 
-
-
-
-#else               /*SBD*/
+#else
 
 /* not huge, but compacted */
-
-
-
-
-
-
-
-
 
 #define PutLexChar(xxx,dd) {*(dd)++ = xxx;}
 #define PutLexToken(xxx,dd) {PutLexShort(xxx,dd);}
@@ -177,9 +166,4 @@
     GetLexPosition(pos, tmptmpcc);\
 }
 
-
-
-
-
-
-#endif              /*SBD*/
+#endif

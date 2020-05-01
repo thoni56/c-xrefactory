@@ -2937,15 +2937,17 @@ static void mainEditServerProcessFile( int argc, char **argv,
                                        int *firstPassing
                                        ) {
     assert(s_fileTab.tab[s_olOriginalComFileNumber]->b.scheduledToProcess);
-    s_cppPassMax = 1;
+    s_cppPassMax = 1;           /* WTF? */
     s_currCppPass = 1;
     for(s_currCppPass=1; s_currCppPass<=s_cppPassMax; s_currCppPass++) {
         s_input_file_name = s_fileTab.tab[s_olOriginalComFileNumber]->name;
         assert(s_input_file_name!=NULL);
         mainEditSrvFileSingleCppPass( argc, argv, nargc, nargv, firstPassing);
         if (s_opt.server_operation==OLO_EXTRACT
-            || (s_olstringServed && ! creatingOlcxRefs())) goto fileParsed; /* TODO: break? */
-        if (LANGUAGE(LANG_JAVA)) goto fileParsed;
+            || (s_olstringServed && ! creatingOlcxRefs()))
+            goto fileParsed; /* TODO: break? */
+        if (LANGUAGE(LANG_JAVA))
+            goto fileParsed;
     }
  fileParsed:
     s_fileTab.tab[s_olOriginalComFileNumber]->b.scheduledToProcess = false;
