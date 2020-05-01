@@ -72,4 +72,3 @@
 (c-xref-non-interactive-renaming "-rfct-rename" (c-xref-get-identifier-on-point) "renameMeToo")
 (c-xref-pop-and-return)
 (save-some-buffers t)
-(kill-emacs)

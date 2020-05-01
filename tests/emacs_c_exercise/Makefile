@@ -20,16 +20,17 @@ setup: clean
 	@# Generate refs
 	@../../src/c-xref cexercise -xrefrc .c-xrefrc -refs $(CURDIR)/CXrefs -o $(TEST).log
 
+EMACS = emacs --geometry 80x40
 
 # emacs = startup emacs with correct settings
 # exec = also run the script for the exercise
 # execute = do that in batch (no window) mode
 execute: EMACS_STARTUP=-batch
-execute: EMACS_RUN=-l emacs_c_exercise.el
+execute: EMACS_RUN=-l emacs_c_exercise.el -l emacs_kill.el
 exec: EMACS_RUN=-l emacs_c_exercise.el
 execute exec emacs: setup
 	@# Run emacs with commands to execute the example sequence
-	@yes | HOME=$(CURDIR) emacs --no-splash $(EMACS_STARTUP) -l .emacs.d/init.el -l .emacs.d/override-el-get-update.el $(EMACS_RUN) > /dev/null 2>&1
+	@yes | HOME=$(CURDIR) $(EMACS) --no-splash $(EMACS_STARTUP) -l .emacs.d/init.el -l .emacs.d/override-el-get-update.el $(EMACS_RUN) > /dev/null 2>&1
 	@# Remove tilde-files after editing
 	@find cexercise -name \*~ -exec rm {} \;
 
