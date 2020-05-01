@@ -3077,7 +3077,7 @@ static void printPrescanningMessage(void) {
     }
 }
 
-static int inputFileItemLess(S_fileItem *f1, S_fileItem *f2) {
+static bool inputFileItemLess(S_fileItem *f1, S_fileItem *f2) {
     int cc;
     char dd1[MAX_FILE_NAME_SIZE];
     char dd2[MAX_FILE_NAME_SIZE];
@@ -3085,13 +3085,13 @@ static int inputFileItemLess(S_fileItem *f1, S_fileItem *f2) {
     strcpy(dd1, directoryName_st(f1->name));
     strcpy(dd2, directoryName_st(f2->name));
     cc = strcmp(dd1, dd2);
-    if (cc<0) return(1);
-    if (cc>0) return(0);
+    if (cc<0) return true;
+    if (cc>0) return false;
     // then full file name
     cc = strcmp(f1->name, f2->name);
-    if (cc<0) return(1);
-    if (cc>0) return(0);
-    return(0);
+    if (cc<0) return true;
+    if (cc>0) return false;
+    return false;
 }
 
 static S_fileItem *mainCreateListOfInputFiles(void) {
