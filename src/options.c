@@ -688,11 +688,11 @@ char *getJavaHome(void) {
 
     tt = getJdkClassPath();
     if (tt!=NULL && *tt!=0) {
-        copyDir(res, tt, &ii);
+        copyPath(res, tt, &ii);
         if (ii>0) res[ii-1] = 0;
-        copyDir(res, res, &ii);
+        copyPath(res, res, &ii);
         if (ii>0) res[ii-1] = 0;
-        copyDir(res, res, &ii);
+        copyPath(res, res, &ii);
         if (ii>0) res[ii-1] = 0;
         return(res);
     }

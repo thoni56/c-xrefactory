@@ -860,7 +860,7 @@ char *simpleFileNameWithoutSuffix_st(char *fullFileName) {
 char *directoryName_st(char *fullFileName) {
     static char res[MAX_FILE_NAME_SIZE];
     int ii;
-    copyDir(res, fullFileName, &ii);
+    copyPath(res, fullFileName, &ii);
     assert(ii < MAX_FILE_NAME_SIZE-1);
     if (ii>2 && res[ii-1]==FILE_PATH_SEPARATOR) res[ii-1] = 0;
     return(res);
@@ -871,18 +871,18 @@ int pathncmp(char *ss1, char *ss2, int n, int caseSensitive) {
     register int i;
     int         res;
     res = 0;
-#if (!defined (__WIN32__))       /*SBD*/
+#if (!defined (__WIN32__))
     if (caseSensitive) return(strncmp(ss1,ss2,n));
-#endif                  /*SBD*/
+#endif
     if (n<=0) return(0);
-#if defined (__WIN32__)              /*SBD*/
+#if defined (__WIN32__)
     // there is also problem of drive name on windows
     if (ss1[0]!=0 && tolower(ss1[0])==tolower(ss2[0]) && ss1[1]==':' && ss2[1]==':') {
         ss1+=2;
         ss2+=2;
         n -= 2;
     }
-#endif                  /*SBD*/
+#endif
     if (n<=0) return(0);
     for(s1=ss1,s2=ss2,i=1; *s1 && *s2 && i<n; s1++,s2++,i++) {
 #if defined (__WIN32__)            /*SBD*/

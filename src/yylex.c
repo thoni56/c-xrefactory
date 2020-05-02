@@ -420,7 +420,7 @@ static  void processLine(void) {
         i = 0;
         cc = cInput.currentLexem;
         ch = *cc;
-        if (ch != FILE_PATH_SEPARATOR) copyDir(ss,s_opt.originalDir,&i);
+        if (ch != FILE_PATH_SEPARATOR) copyPath(ss,s_opt.originalDir,&i);
         for(; ch; ch= *++cc) {
             ss[i++] = ch;
             assert(i+2<TMP_STRING_SIZE);
@@ -513,7 +513,7 @@ static FILE *openInclude(char pchar, char *name, char **fileName) {
 
     er = NULL; r = NULL;
     nmlen = strlen(name);
-    copyDir(rdir, cFile.fileName, &fdlen);
+    copyPath(rdir, cFile.fileName, &fdlen);
     if (pchar!='<') {
         log_trace("fdlen == %d", fdlen);
         strcpy(nn, normalizeFileName(name, rdir));

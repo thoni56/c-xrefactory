@@ -57,14 +57,14 @@ void initCwd(void) {
 void reInitCwd(char *dffname, char *dffsect) {
     int ii;
     if (dffname[0]!=0) {
-        copyDir(s_cwd, dffname, &ii);
+        copyPath(s_cwd, dffname, &ii);
     }
     if (dffsect[0]!=0
-#if defined (__WIN32__)    /*SBD*/
+#if defined (__WIN32__)
         && dffsect[1]==':' && dffsect[2]==FILE_PATH_SEPARATOR
-#else                   /*SBD*/
+#else
         && dffsect[0]==FILE_PATH_SEPARATOR
-#endif                  /*SBD*/
+#endif
         ) {
         strcpy(s_cwd, dffsect);
     }
@@ -207,15 +207,16 @@ void copyFileFromTo(char *source, char *destination) {
     LEAVE();
 }
 
-/*  'dest' and 's' can be the same pointer !!!!!!!!!!!!!!! */
-void copyDir(char *dest, char *s, int *i) {
-    int ii;
-    *i = 0;
-    for(ii=0; s[ii]!=0; ii++) {
-        dest[ii] = s[ii];
-        if (s[ii]=='/' || s[ii]=='\\') *i = ii+1;
+/*  'dest' and 'source' might be the same pointer !!!!!!!!!!!!!!! */
+void copyPath(char *dest, char *source, int *length) {
+    int i;
+
+    *length = 0;
+    for(i=0; source[i]!=0; i++) {
+        dest[i] = source[i];
+        if (source[i]=='/' || source[i]=='\\') *length = i+1;
     }
-    dest[*i] = 0;
+    dest[*length] = 0;
 }
 
 /*************************************************************************/

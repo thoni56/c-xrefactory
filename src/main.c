@@ -1952,15 +1952,16 @@ static void initOptions(void) {
 }
 
 static void initDefaultCxrefFileName(char *inputfile) {
-    int         ii;
-    static char dcx[MAX_FILE_NAME_SIZE];
-    copyDir(dcx, normalizeFileName(inputfile, s_cwd), &ii);
-    assert(ii < MAX_FILE_NAME_SIZE);
-    strcpy(&dcx[ii], DEFAULT_CXREF_FILE);
-    assert(strlen(dcx) < MAX_FILE_NAME_SIZE);
-    strcpy(dcx, getRealFileNameStatic(normalizeFileName(dcx, s_cwd)));
-    assert(strlen(dcx) < MAX_FILE_NAME_SIZE);
-    s_opt.cxrefFileName = dcx;
+    int pathLength;
+    static char defaultCxrefFileName[MAX_FILE_NAME_SIZE];
+
+    copyPath(defaultCxrefFileName, normalizeFileName(inputfile, s_cwd), &pathLength);
+    assert(pathLength < MAX_FILE_NAME_SIZE);
+    strcpy(&defaultCxrefFileName[pathLength], DEFAULT_CXREF_FILE);
+    assert(strlen(defaultCxrefFileName) < MAX_FILE_NAME_SIZE);
+    strcpy(defaultCxrefFileName, getRealFileNameStatic(normalizeFileName(defaultCxrefFileName, s_cwd)));
+    assert(strlen(defaultCxrefFileName) < MAX_FILE_NAME_SIZE);
+    s_opt.cxrefFileName = defaultCxrefFileName;
 }
 
 static void initializationsPerInvocation(void) {
