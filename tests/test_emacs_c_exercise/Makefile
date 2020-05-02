@@ -3,7 +3,6 @@
 include ../Makefile.boilerplate
 
 $(TEST): .c-xrefrc
-	@$(MAKE) --no-print-directory setup
 	@$(MAKE) --no-print-directory execute
 	@$(MAKE) --no-print-directory check
 
