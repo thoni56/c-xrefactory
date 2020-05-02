@@ -19,13 +19,6 @@ clean:
 cleaner: clean
 	-rm -rf $(OBJDIR)
 
-coverage: COVERAGE=--coverage
-coverage: clean all
-	lcov -d . -c -o coverage.info
-	genhtml -o coverage coverage.info
-
-.PRECIOUS: $(OBJDIR)/*.o
-
 # These link the modules .o and only tests the external behaviour
 symboltable_tests.so: $(OBJDIR)/symboltable_tests.o $(OBJDIR)/symboltable.o $(OBJDIR)/hash.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
