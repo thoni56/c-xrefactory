@@ -2,12 +2,15 @@
 
 include ../Makefile.boilerplate
 
-$(TEST):
+$(TEST): .c-xrefrc
 	@$(MAKE) --no-print-directory setup
 	@$(MAKE) --no-print-directory execute
 	@$(MAKE) --no-print-directory check
 
-setup: clean
+setup:
+	@# Copy clean set of c-example files here...
+	@rm -rf cexercise
+	@cp -r ../../doc/cexercise .
 	@if [ ! -e .emacs.d/el-get/c-xrefactory ] ; then \
 		ln -s $(CURDIR)/../.. .emacs.d/el-get/c-xrefactory ; \
 	fi
@@ -46,7 +49,4 @@ check:
 	@exit 0
 
 clean:
-	@rm -rf $@.log CXrefs .emacs.d/el-get/c-xrefactory
-	@# Copy c-example files here...
-	@rm -rf cexercise
-	@cp -r ../../doc/cexercise .
+	@rm -rf $@.log CXrefs .emacs.d/el-get/c-xrefactory .c-xrefrc
