@@ -10,7 +10,7 @@ endif
 # directing all coverage to a separate directory under src/.objects
 # for each autodiscovered test. If GCOV="" then coverage is written
 # to the original object directory (required by Travis build. e.g)
-GCOV = GCOV_PREFIX=.coverage GCOV_PREFIX_STRIP=`pwd | awk -F"/" '{print NF}'`
+GCOV = GCOV_PREFIX=$(CURDIR)/$(1)/.coverage GCOV_PREFIX_STRIP=`pwd | awk -F"/" '{print NF}'`
 
 void:
 	@echo "'make quick' for only fast tests"
@@ -55,7 +55,7 @@ $(foreach _t,$(TESTS),$(eval $(call RULE,$(_t))))
 
 quick: autodiscovered_tests
 
-slow: autodiscovered_tests
+slow:
 	@$(MAKE) -C emacs_c_exercise
 	@$(MAKE) -C c-xref
 	@$(MAKE) -C ffmpeg
