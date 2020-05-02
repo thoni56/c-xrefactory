@@ -602,16 +602,17 @@ static void genCxFileHead(void) {
 }
 
 static void openInOutReferenceFiles(int updateFlag, char *filename) {
-    char tmpFileName[MAX_FILE_NAME_SIZE];
-
     if (updateFlag) {
         char *tempname = create_temporary_filename();
         strcpy(tmpFileName, tempname);
         copyFile(filename, tmpFileName);
     }
+
     assert(filename);
     cxOut = fopen(filename,"w");
-    if (cxOut == NULL) fatalError(ERR_CANT_OPEN, filename, XREF_EXIT_ERR);
+    if (cxOut == NULL)
+        fatalError(ERR_CANT_OPEN, filename, XREF_EXIT_ERR);
+
     if (updateFlag) {
         inputFile = fopen(tmpFileName, "r");
         if (inputFile==NULL)
@@ -621,7 +622,7 @@ static void openInOutReferenceFiles(int updateFlag, char *filename) {
     }
 }
 
-static void referenceFileEnd(int updateFlag, char *fname) {
+static void closeReferenceFile(char *fname) {
     if (inputFile != NULL) {
         fclose(inputFile);
         inputFile = NULL;
@@ -645,20 +646,20 @@ static void createDirIfNotExists(char *dirname) {
 
 static void genPartialFileTabRefFile(int updateFlag,
                                      char *dirname,
-                                     char *fnamesuff,
+                                     char *suffix,
                                      void mapfun(S_fileItem *, int),
                                      void mapfun2(S_fileItem *, int)) {
-    char fn[MAX_FILE_NAME_SIZE];
+    char filename[MAX_FILE_NAME_SIZE];
 
-    sprintf(fn, "%s%s", dirname, fnamesuff);
-    assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
-    openInOutReferenceFiles(updateFlag, fn);
+    sprintf(filename, "%s%s", dirname, suffix);
+    assert(strlen(filename) < MAX_FILE_NAME_SIZE-1);
+    openInOutReferenceFiles(updateFlag, filename);
     genCxFileHead();
     fileTabMapWithIndex(&s_fileTab, mapfun);
     if (mapfun2!=NULL)
         fileTabMapWithIndex(&s_fileTab, mapfun2);
     scanCxFile(fullScanFunctionSequence);
-    referenceFileEnd(updateFlag, fn);
+    closeReferenceFile(filename);
 }
 
 static void generateRefsFromMemory(int fileOrder) {
@@ -697,7 +698,7 @@ void genReferenceFile(int updateFlag, char *fname) {
         fileTabMapWithIndex(&s_fileTab, genClassHierarchyItems);
         scanCxFile(fullScanFunctionSequence);
         refTabMap(&s_cxrefTab, genRefItem);
-        referenceFileEnd(updateFlag, fname);
+        closeReferenceFile(fname);
     } else {
         /* several reference files */
         dirname = fname;
@@ -714,7 +715,7 @@ void genReferenceFile(int updateFlag, char *fname) {
             scanCxFile(fullScanFunctionSequence);
             //&refTabMap4(&s_cxrefTab, genPartialRefItem, i);
             generateRefsFromMemory(i);
-            referenceFileEnd(updateFlag, fileName);
+            closeReferenceFile(fileName);
         }
     }
 }
