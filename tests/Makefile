@@ -56,7 +56,6 @@ $(foreach _t,$(TESTS),$(eval $(call RULE,$(_t))))
 quick: autodiscovered_tests
 
 slow:
-	@$(MAKE) -C emacs_c_exercise
 	@$(MAKE) -C c-xref
 	@$(MAKE) -C ffmpeg
 	@$(MAKE) -C systemd
