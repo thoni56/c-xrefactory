@@ -35,7 +35,10 @@ filetab_tests.so: $(OBJDIR)/filetab_tests.o $(OBJDIR)/filetab.o $(OBJDIR)/hash.o
 symbol_tests.so: $(OBJDIR)/symbol_tests.o $(OBJDIR)/symbol.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-misc_tests.so: $(OBJDIR)/misc.o $(OBJDIR)/protocol.o $(OBJDIR)/enumTxt.o $(OBJDIR)/misc_tests.o
+misc_tests.so:  $(OBJDIR)/misc_tests.o $(OBJDIR)/misc.o $(OBJDIR)/protocol.o $(OBJDIR)/enumTxt.o
+	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
+
+commons_tests.so: $(OBJDIR)/commons_tests.o $(OBJDIR)/commons.o $(OBJDIR)/protocol.o $(OBJDIR)/enumTxt.o $(OBJDIR)/log.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 editor_tests.so: $(OBJDIR)/editor_tests.o $(OBJDIR)/editor.o $(OBJDIR)/position.o

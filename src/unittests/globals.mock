@@ -5,6 +5,8 @@
 
 char *s_editCommunicationString = "C@$./@mVeDitznAC";
 
+int s_fileAbortionEnabled;
+
 #define LAST_TOKEN 456          /* To not have to include parsers.h */
 char *s_tokenName[LAST_TOKEN];
 
@@ -32,6 +34,8 @@ FILE *inputFile;
 FILE *cxOut;
 FILE *ccOut;
 FILE *dumpOut = NULL;
+FILE *errOut=NULL;
+
 z_stream s_defaultZStream = {NULL,};
 
 char *yytext;
@@ -103,3 +107,5 @@ char *s_javaSourcePaths;
 S_stringList *s_javaClassPaths;
 Symbol *s_javaObjectSymbol;
 int s_javaCharCodeBaseTypes[MAX_CHARS];
+
+char ppcTmpBuff[MAX_PPC_RECORD_SIZE];

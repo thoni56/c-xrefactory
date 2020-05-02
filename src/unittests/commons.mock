@@ -47,14 +47,6 @@ void copyFileFromTo(char *src, char *dest) {
     mock(src, dest);
 }
 
-void createDir(char *dirname) {
-    mock(dirname);
-}
-
 int copyPath(char *dest, char *source, int *length) {
     return (int)mock(dest, source, length);
-}
-
-void removeFile(char *dirname) {
-    mock(dirname);
 }
