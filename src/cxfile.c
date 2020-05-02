@@ -14,6 +14,7 @@
 #include "reftab.h"
 #include "characterbuffer.h"
 #include "classhierarchy.h"
+#include "fileio.h"
 
 #include "hash.h"
 #include "log.h"
@@ -609,12 +610,12 @@ static void openInOutReferenceFiles(int updateFlag, char *filename) {
     }
 
     assert(filename);
-    cxOut = fopen(filename,"w");
+    cxOut = openFile(filename,"w");
     if (cxOut == NULL)
         fatalError(ERR_CANT_OPEN, filename, XREF_EXIT_ERR);
 
     if (updateFlag) {
-        inputFile = fopen(tmpFileName, "r");
+        inputFile = openFile(tmpFileName, "r");
         if (inputFile==NULL)
             warningMessage(ERR_CANT_OPEN_FOR_READ, tmpFileName);
     } else {
@@ -624,11 +625,11 @@ static void openInOutReferenceFiles(int updateFlag, char *filename) {
 
 static void closeReferenceFile(char *fname) {
     if (inputFile != NULL) {
-        fclose(inputFile);
+        closeFile(inputFile);
         inputFile = NULL;
         removeFile(tmpFileName);
     }
-    fclose(cxOut);
+    closeFile(cxOut);
     cxOut = stdout;
 }
 
@@ -1485,7 +1486,7 @@ int scanReferenceFile(char *fname, char *fns1, char *fns2,
     sprintf(fn, "%s%s%s", fname, fns1, fns2);
     assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
     //&fprintf(dumpOut,":scanning file %s\n",fn);
-    inputFile = fopen(fn,"r");
+    inputFile = openFile(fn,"r");
     if (inputFile==NULL) {
         //&       sprintf(tmpBuff,
         //&           "can't open TAG file %s\n\tcreate the TAG file first",fn);
@@ -1493,7 +1494,7 @@ int scanReferenceFile(char *fname, char *fns1, char *fns2,
         return(0);
     } else {
         scanCxFile(scanFunTab);
-        fclose(inputFile);
+        closeFile(inputFile);
         inputFile = NULL;
         return(1);
     }

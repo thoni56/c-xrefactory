@@ -30,6 +30,7 @@ void processDefine(bool argFlag);
 #include "extract.mock"
 #include "c_parser.mock"
 #include "yacc_parser.mock"
+#include "fileio.mock"
 
 
 Describe(Yylex);

@@ -17,6 +17,7 @@
 #include "javafqttab.h"
 #include "list.h"
 #include "jsemact.h"
+#include "fileio.h"
 
 #include "c_parser.x"
 #include "yacc_parser.x"
@@ -1798,13 +1799,13 @@ void searchDefaultOptionsFile(char *filename, char *options_filename, char *sect
 
     /* Try to find section in HOME config. */
     getXrefrcFileName(options_filename);
-    options_file = fopen(options_filename, "r");
+    options_file = openFile(options_filename, "r");
     if (options_file != NULL) {
         found = readOptionFromFile(options_file,&nargc,&nargv,MEM_NO_ALLOC,filename,s_opt.project,section);
         if (found) {
             log_debug("options file '%s' section '%s'", options_filename, section);
         }
-        fclose(options_file);
+        closeFile(options_file);
     }
     if (found)
         return;
@@ -1927,9 +1928,9 @@ static int computeAndOpenInputFile(void) {
         inputBuff = editorFindFile(s_input_file_name);
         if (inputBuff == NULL) {
 #if defined (__WIN32__)    /*SBD*/
-            inputIn = fopen(s_input_file_name,"rb");
+            inputIn = openFile(s_input_file_name,"rb");
 #else                   /*SBD*/
-            inputIn = fopen(s_input_file_name,"r");
+            inputIn = openFile(s_input_file_name,"r");
 #endif                  /*SBD*/
             if (inputIn == NULL) {
                 errorMessage(ERR_CANT_OPEN, s_input_file_name);
@@ -2126,7 +2127,7 @@ static void getAndProcessBuiltinIncludePaths(void) {
     result = system(command);
     if (result != 0) ;          /* Ignore return value */
 
-    tempfile = fopen(tempfile_name, "r");
+    tempfile = openFile(tempfile_name, "r");
     if (tempfile==NULL) return;
     while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF) {
         if (strncmp(line,"#include <...> search starts here:",34)==0) {
@@ -2142,7 +2143,7 @@ static void getAndProcessBuiltinIncludePaths(void) {
                 mainAddStringListOption(&s_opt.includeDirs, line);
         } while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF);
 
-    fclose(tempfile);
+    closeFile(tempfile);
     removeFile(tempfile_name);
 }
 
@@ -2176,9 +2177,9 @@ static void getAndProcessStandardDefines(void) {
     /* Need to pipe an empty file into gcc, an alternative would be to
        create an empty file, but that seems as much work */
     FILE *p = popen(command, "w");
-    fclose(p);
+    closeFile(p);
 
-    tempfile = fopen(tempfile_name, "r");
+    tempfile = openFile(tempfile_name, "r");
     if (tempfile==NULL) return;
     while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF) {
         if (strncmp(line, "#define", strlen("#define")))
@@ -2380,12 +2381,12 @@ static void createXrefrcDefaultLicense(void) {
     getXrefrcFileName(fn);
     if (stat(fn, &st)!=0) {
         // does not exists
-        ff = fopen(fn,"w");
+        ff = openFile(fn,"w");
         if (ff == NULL) {
             sprintf(tmpBuff, "home directory %s does not exists", fn);
             fatalError(ERR_ST,tmpBuff, XREF_EXIT_ERR);
         } else {
-            fclose(ff);
+            closeFile(ff);
         }
     }
 }
@@ -2754,9 +2755,9 @@ void mainOpenOutputFile(char *ofile) {
         //&fprintf(dumpOut,"OPENING OUTPUT FILE %s\n", s_opt.outputFileName);
 #if defined (__WIN32__)
         // open it as binary file, so that record lengths will be correct
-        ccOut = fopen(ofile,"wb");
+        ccOut = openFile(ofile,"wb");
 #else
-        ccOut = fopen(ofile,"w");
+        ccOut = openFile(ofile,"w");
 #endif
     } else {
         ccOut = stdout;
@@ -3345,7 +3346,7 @@ static void initLogging(int argc, char *argv[]) {
 #endif
     }
     if (fileName[0] != '\0') {
-        FILE *tempFile = fopen(fileName, "w");
+        FILE *tempFile = openFile(fileName, "w");
         if (tempFile != NULL)
             log_set_fp(tempFile);
     }

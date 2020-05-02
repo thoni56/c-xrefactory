@@ -30,6 +30,7 @@
 #include "utils.h"
 #include "macroargumenttable.h"
 #include "filedescriptor.h"
+#include "fileio.h"
 
 
 #define SET_IDENTIFIER_YYLVAL(name, symb, pos) {\
@@ -518,7 +519,7 @@ static FILE *openInclude(char pchar, char *name, char **fileName) {
         strcpy(nn, normalizeFileName(name, rdir));
         log_trace("try to open %s", nn);
         er = editorFindFile(nn);
-        if (er==NULL) r = fopen(nn,"r");
+        if (er==NULL) r = openFile(nn,"r");
     }
     for (ll=s_opt.includeDirs; ll!=NULL && er==NULL && r==NULL; ll=ll->next) {
         strcpy(nn, normalizeFileName(ll->d, rdir));
@@ -535,7 +536,7 @@ static FILE *openInclude(char pchar, char *name, char **fileName) {
             nn[nnlen]=0;
             log_trace("try to open <%s>", nn);
             er = editorFindFile(nn);
-            if (er==NULL) r = fopen(nn,"r");
+            if (er==NULL) r = openFile(nn,"r");
             if (er!=NULL || r!=NULL) goto found;
         });
     }

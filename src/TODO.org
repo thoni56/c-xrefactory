@@ -5,7 +5,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
-* TODO Introduce fileio layer for fopen, fread etc. and possibly copyFile...
+* DOING Introduce fileio layer for fopen, fread etc. and possibly copyFile...
 * TODO enum-generation does not do automatical compiler defines discovery?
 * TODO Handle for-loops with declarations ("for (int i = 0;...")
 This requires grammar changes for C and Yacc

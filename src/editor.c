@@ -7,7 +7,7 @@
 #include "cxref.h"
 #include "list.h"
 #include "log.h"
-
+#include "fileio.h"
 
 #include "protocol.h"
 
@@ -477,11 +477,11 @@ static void editorLoadFileIntoBufferText(S_editorBuffer *buff, struct stat *st) 
     fname = buff->fileName;
     space = buff->a.text;
     size = buff->a.bufferSize;
-#if defined (__WIN32__)                             /*SBD*/
-    ff = fopen(fname, "r");         // was rb, but did not work
-#else                                               /*SBD*/
-    ff = fopen(fname, "r");
-#endif                                              /*SBD*/
+#if defined (__WIN32__)
+    ff = openFile(fname, "r");         // was rb, but did not work
+#else
+    ff = openFile(fname, "r");
+#endif
     //&fprintf(dumpOut,":loading file %s==%s size %d\n", fname, buff->name, size);
     if (ff == NULL) {
         fatalError(ERR_CANT_OPEN, fname, XREF_EXIT_ERR);
@@ -489,11 +489,11 @@ static void editorLoadFileIntoBufferText(S_editorBuffer *buff, struct stat *st) 
     bb = space; ss = size;
     assert(bb != NULL);
     do {
-        n = fread(bb, 1, ss, ff);
+        n = readFile(bb, 1, ss, ff);
         bb = bb + n;
         ss = ss - n;
     } while (n>0);
-    fclose(ff);
+    closeFile(ff);
     if (ss!=0) {
         // this is possible, due to <CR><LF> conversion under MS-DOS
         buff->a.bufferSize -= ss;

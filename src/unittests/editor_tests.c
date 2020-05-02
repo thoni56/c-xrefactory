@@ -9,6 +9,7 @@
 #include "filetab.mock"
 #include "cxref.mock"
 #include "commons.mock"
+#include "fileio.mock"
 
 
 Describe(Editor);

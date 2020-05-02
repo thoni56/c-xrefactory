@@ -1,0 +1,11 @@
+#ifndef _FILEIO_H_
+#define _FILEIO_H_
+
+#include <stdio.h>
+
+extern FILE *openFile(char *fileName, char *modes);
+extern int closeFile(FILE *file);
+extern size_t readFile(void *buffer, size_t size, size_t count, FILE *file);
+extern size_t writeFile(void *buffer, size_t size, size_t count, FILE *file);
+
+#endif

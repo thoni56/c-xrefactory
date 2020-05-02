@@ -18,6 +18,7 @@
 #include "memory.mock"
 #include "characterbuffer.mock"
 #include "classhierarchy.mock"
+#include "fileio.mock"
 
 #include "enumTxt.c"
 

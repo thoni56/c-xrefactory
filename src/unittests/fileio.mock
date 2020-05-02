@@ -1,0 +1,15 @@
+/* -*- c -*-*/
+#include <cgreen/mocks.h>
+#include "fileio.h"
+
+FILE *openFile(char *fileName, char *modes) {
+    return (FILE *)mock(fileName, modes);
+}
+
+int closeFile(FILE *file) {
+    return fclose(file);
+}
+
+size_t readFile(void *buffer, size_t size, size_t count, FILE *file) {
+    return (size_t)mock(buffer, size, count, file);
+}

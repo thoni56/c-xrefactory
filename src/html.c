@@ -13,6 +13,7 @@
 #include "reftab.h"
 #include "list.h"
 #include "filedescriptor.h"
+#include "fileio.h"
 
 #include "log.h"
 #include "utils.h"
@@ -1325,12 +1326,12 @@ static void htmlScanCxFileAndGenRefLists(char *fn1, char *fn2,
     sprintf(fn, "%s%s", getRealFileNameStatic(normalizeFileName(fn1,s_cwd)), fn2);
     assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
     if (! s_opt.noCxFile) {
-        inputFile = fopen(fn, "r");
+        inputFile = openFile(fn, "r");
         if (inputFile == NULL) {
             errorMessage(ERR_CANT_OPEN, fn);
         } else {
             scanCxFile(htmlGlobalReferencesFunctionSequence);
-            fclose(inputFile);
+            closeFile(inputFile);
         }
     }
     ffn = cutHtmlPath(fn);
@@ -1343,7 +1344,7 @@ static void htmlScanCxFileAndGenRefLists(char *fn1, char *fn2,
         }
         concatPaths(ln,MAX_FILE_NAME_SIZE, s_opt.htmlRoot, ffn,".html");
         recursivelyCreateFileDirIfNotExists(ln);
-        ff = fopen(ln, "w");
+        ff = openFile(ln, "w");
         if (ff==NULL) errorMessage(ERR_CANT_OPEN, ln);
         else {
             htmlGenRefListFileHead(ff,fi);
@@ -1354,7 +1355,7 @@ static void htmlScanCxFileAndGenRefLists(char *fn1, char *fn2,
             htmlMarkVisibleAllClassesHavingReferences(s_htmlCurrentCxlist);
             htmlGenGlobRefLists(s_htmlCurrentCxlist, ff, ffn);
             htmlGenRefListTail(ff);
-            fclose(ff);
+            closeFile(ff);
             htmlCompressFile(ln);
         }
     }
@@ -1367,7 +1368,7 @@ static void htmlScanCxFileAndGenRefLists(char *fn1, char *fn2,
         else (cp)->col++;                          \
         ch=fgetc(ff);                               \
         if (ch==EOF) {                              \
-            fclose(ff);                             \
+            closeFile(ff);                             \
             ff = NULL;                              \
         }                                           \
     }
@@ -1544,7 +1545,7 @@ static void htmlPassRefsThroughSourceFile(S_htmlRefList **rrr, int ifile,
     rr = *rrr;
     assert(s_fileTab.tab[ifile]);
     cofileName = s_fileTab.tab[ifile]->name;
-    cofile = fopen(cofileName, "r");
+    cofile = openFile(cofileName, "r");
     /*&fprintf(dumpOut,"[passRefsThrowSourceFile] openning file %s (%d)\n",cofileName,cofile!=NULL);fflush(dumpOut);&*/
     if (cofile==NULL) errorMessage(ERR_CANT_OPEN, cofileName);
     fillPosition(&cp, ifile, 0, 0);
@@ -1570,7 +1571,7 @@ static void htmlPassRefsThroughSourceFile(S_htmlRefList **rrr, int ifile,
         else fputc(ch,ccOut);
         GetFileChar(ch, cofile, &cp);
     }
-    if (cofile != NULL) fclose(cofile);
+    if (cofile != NULL) closeFile(cofile);
     *rrr = rr;
 }
 
@@ -1600,18 +1601,18 @@ static void htmlGenerateFile(int fnum) {
                  NULL);
     if (GENERATE_FRAMES()) {
         recursivelyCreateFileDirIfNotExists(ffn);
-        ff = fopen(ffn,"w");
+        ff = openFile(ffn,"w");
         if (ff==NULL) errorMessage(ERR_CANT_OPEN,ffn);
         else {
             htmlGenFrameFile(ff,fnum, ffn);
-            fclose(ff);
+            closeFile(ff);
             htmlCompressFile(ffn);
         }
     }
     concatPaths(ffn,MAX_FILE_NAME_SIZE,
                  s_opt.htmlRoot,htmlCutLastSuffixStatic(cutHtmlPath(getRealFileNameStatic(s_fileTab.tab[fnum]->name))),".html");
     recursivelyCreateFileDirIfNotExists(ffn);
-    ccOut = fopen(ffn,"w");
+    ccOut = openFile(ffn,"w");
     if (ccOut==NULL) {
         warningMessage(ERR_CANT_OPEN,ffn);
         ccOut=stdout;
@@ -1620,7 +1621,7 @@ static void htmlGenerateFile(int fnum) {
             fprintf(dumpOut," -> '%s'\n", ffn); fflush(dumpOut);
         }
         htmlGenerateFileToCcOut(fnum);
-        fclose(ccOut);
+        closeFile(ccOut);
         htmlCompressFile(ffn);
         ccOut=stdout;
         /* now create local reference lists */
@@ -1628,14 +1629,14 @@ static void htmlGenerateFile(int fnum) {
             strcpy(ffn,htmlAuxFileNameStatic(fnum,"XLL","",""));
             concatPaths(ffn2,MAX_FILE_NAME_SIZE,s_opt.htmlRoot,ffn,".html");
             recursivelyCreateFileDirIfNotExists(ffn2);
-            ff = fopen(ffn2,"w");
+            ff = openFile(ffn2,"w");
             if (ff==NULL) errorMessage(ERR_CANT_OPEN,ffn2);
             else {
                 htmlGenRefListFileHead(ff, -1);
                 fillHtmlLocalListms(&sss, ff, fnum, ffn);
                 refTabMap2(&s_cxrefTab, htmlGenLocalRefLists, &sss);
                 htmlGenRefListTail(ff);
-                fclose(ff);
+                closeFile(ff);
                 htmlCompressFile(ffn2);
             }
         }
@@ -1664,14 +1665,14 @@ static void htmlGenerateJavaDocFile(int fnum) {
         warningMessage(ERR_ST, tmpBuff);
         return;
     }
-    ccOut = fopen(ffn,"w");
+    ccOut = openFile(ffn,"w");
     if (ccOut==NULL) {
         warningMessage(ERR_CANT_OPEN,ffn);
         ccOut=stdout;
     } else {
         htmlGetThisFileReferences(fnum, &rr, ALL_REFS);
         htmlPassRefsThroughSourceFile(&rr,fnum,GEN_JAVA_DOC);
-        fclose(ccOut);
+        closeFile(ccOut);
     }
 }
 

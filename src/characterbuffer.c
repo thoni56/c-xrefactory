@@ -3,6 +3,7 @@
 #include "globals.h"
 
 #include "commons.h"            /* error() */
+#include "fileio.h"
 
 
 void fillCharacterBuffer(CharacterBuffer *characterBuffer,
@@ -35,12 +36,13 @@ static int readFromFileToBuffer(struct characterBuffer  *buffer, char *outBuffer
     int n;
 
     if (buffer->file == NULL) n = 0;
-    else n = fread(outBuffer, 1, max_size, buffer->file);
+    else n = readFile(outBuffer, 1, max_size, buffer->file);
     return(n);
 }
 
 void closeCharacterBuffer(struct characterBuffer *buffer) {
-    if (buffer->file!=NULL) fclose(buffer->file);
+    if (buffer->file!=NULL)
+        closeFile(buffer->file);
     if (buffer->inputMethod == INPUT_VIA_UNZIP) {
         inflateEnd(&buffer->zipStream);
     }
@@ -176,7 +178,7 @@ int skipNCharsInCharBuf(struct characterBuffer *buffer, unsigned count) {
         dd=buffer->chars+MAX_UNGET_CHARS;
         max_size = CHAR_BUFF_SIZE-(dd - buffer->chars);
         if (buffer->file == NULL) n = 0;
-        else n = fread(dd, 1, max_size, buffer->file);
+        else n = readFile(dd, 1, max_size, buffer->file);
         buffer->filePos += n;
         buffer->end = dd+n;
         buffer->next = buffer->chars+MAX_UNGET_CHARS;

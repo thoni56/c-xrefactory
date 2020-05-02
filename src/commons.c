@@ -8,6 +8,7 @@
 #include "yylex.h"              /* placeIdent() */
 #include "protocol.h"
 #include "semact.h"             /* displayingErrorMessages() */
+#include "fileio.h"
 
 #include "log.h"
 
@@ -15,7 +16,7 @@
 void closeMainOutputFile(void) {
     if (ccOut!=stdout) {
         //&fprintf(dumpOut,"CLOSING OUTPUT FILE\n");
-        fclose(ccOut);
+        closeFile(ccOut);
         ccOut = stdout;
     }
     errOut = ccOut;
@@ -82,7 +83,7 @@ char *normalizeFileName(char *name, char *relativeto) {
         // special case a class name
         l1 = -1;
         inzip = 1;
-#if defined (__WIN32__)    /*SBD*/
+#if defined (__WIN32__)
     } else if (name[0]=='\\' || name[0]=='/') {
         normalizedFileName[0] = relativeto[0]; normalizedFileName[1] = ':';
         l1 = 1;
@@ -91,10 +92,10 @@ char *normalizeFileName(char *name, char *relativeto) {
         normalizedFileName[1] = ':';
         l1 = 1;
         s1 = 2;
-#else           /*SBD*/
+#else
     } else if (name[0] == FILE_PATH_SEPARATOR) {
         l1 = -1;
-#endif          /*SBD*/
+#endif
     } else {
         if (l1+l2+2 >= MAX_FILE_NAME_SIZE) {
             l1 = -1;
@@ -182,27 +183,27 @@ void copyFileFromTo(char *source, char *destination) {
 
     ENTER();
     log_trace("attempting to copy '%s' to '%s'", source, destination);
-    sourceFile = fopen(source,"r");
+    sourceFile = openFile(source,"r");
     if (sourceFile == NULL) {
         errorMessage(ERR_CANT_OPEN_FOR_READ, source);
         LEAVE();
         return;
     }
-    destinationFile = fopen(destination,"w");
+    destinationFile = openFile(destination,"w");
     if (destinationFile == NULL) {
         errorMessage(ERR_CANT_OPEN_FOR_WRITE, destination);
-        fclose(sourceFile);
+        closeFile(sourceFile);
         LEAVE();
         return;
     }
     do {
-        readBytes = fread(tmpBuff , 1, TMP_BUFF_SIZE, sourceFile);
-        writtenBytes = fwrite(tmpBuff, 1, readBytes, destinationFile);
+        readBytes = readFile(tmpBuff , 1, TMP_BUFF_SIZE, sourceFile);
+        writtenBytes = writeFile(tmpBuff, 1, readBytes, destinationFile);
         if (readBytes != writtenBytes)
             errorMessage(ERR_ST,"problem with writing to a file.");
     } while (readBytes > 0);
-    fclose(destinationFile);
-    fclose(sourceFile);
+    closeFile(destinationFile);
+    closeFile(sourceFile);
     LEAVE();
 }
 

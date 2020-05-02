@@ -13,6 +13,7 @@
 #include "symbol.h"
 #include "list.h"
 #include "filedescriptor.h"
+#include "fileio.h"
 
 #include "log.h"
 #include "utils.h"
@@ -440,11 +441,11 @@ int zipIndexArchive(char *name) {
             }
             return(-1);
         }
-#if defined (__WIN32__)                                     /*SBD*/
-        zipFile = fopen(name,"rb");
-#else                                                       /*SBD*/
-        zipFile = fopen(name,"r");
-#endif                                                      /*SBD*/
+#if defined (__WIN32__)
+        zipFile = openFile(name,"rb");
+#else
+        zipFile = openFile(name,"r");
+#endif
         if (zipFile == NULL) {
             assert(s_opt.taskRegime);
             if (s_opt.taskRegime!=RegimeEditServer) {
@@ -459,7 +460,7 @@ int zipIndexArchive(char *name) {
         s_zipArchiveTable[archiveIndex].fn[namelen+1] = 0;
         fillZipFileTableItem(&s_zipArchiveTable[archiveIndex], fst, NULL);
         zipArchiveScan(&buffer->next,&buffer->end,buffer,&s_zipArchiveTable[archiveIndex], fst.st_size);
-        fclose(zipFile);
+        closeFile(zipFile);
     }
     return(archiveIndex);
 }
@@ -1047,7 +1048,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
       &*/
     zipsep = strchr(name, ZIP_SEPARATOR_CHAR);
     if (zipsep != NULL) *zipsep = 0;
-    ff = fopen(name, "rb");
+    ff = openFile(name, "rb");
     if (zipsep != NULL) *zipsep = ZIP_SEPARATOR_CHAR;
 
     if (ff == NULL) {

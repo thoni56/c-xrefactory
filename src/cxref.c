@@ -22,6 +22,7 @@
 #include "symbol.h"
 #include "list.h"
 #include "filedescriptor.h"
+#include "fileio.h"
 
 #include "log.h"
 #include "utils.h"
@@ -1473,7 +1474,7 @@ int htmlJdkDocAvailableForUrl(char *ss){
 
 static int olcxGenHtmlFileWithIndirectLink(char *ofname, char *url) {
     FILE *of;
-    of = fopen(ofname, "w");
+    of = openFile(ofname, "w");
     if (of == NULL) {
         fprintf(ccOut,"* ** Can't open temporary file %s\n", ofname);
         return(0);
@@ -1491,7 +1492,7 @@ static int olcxGenHtmlFileWithIndirectLink(char *ofname, char *url) {
     fprintf(of, "%s", url);
     fprintf(of, "</A>\n");
     fprintf(of, "</body></html>");
-    fclose(of);
+    closeFile(of);
     return(1);
 }
 
@@ -1842,7 +1843,7 @@ static void passRefsThroughSourceFile(Reference **rrr, Position *callerp,
         linePosProcess(off, ofname, usages, usageFilter, cofileName,
                        &rr, callerp, &cp, &ch, &cxfBuf);
     }
-    //&if (cofile != NULL) fclose(cofile);
+    //&if (cofile != NULL) closeFile(cofile);
  fin:
     *rrr = rr;
 }

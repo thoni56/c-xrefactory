@@ -7,6 +7,7 @@
 #include "html.h"
 #include "classfilereader.h"
 #include "editor.h"
+#include "fileio.h"
 
 /* The following are currently needed from main:
    xrefSetenv -> common?
@@ -438,10 +439,10 @@ bool readOptionFromFile(FILE *file, int *nargc, char ***nargv, int memFl,
 void readOptionFile(char *name, int *nargc, char ***nargv, char *sectionFile, char *project) {
     FILE *ff;
     char realSection[MAX_FILE_NAME_SIZE];
-    ff = fopen(name,"r");
+    ff = openFile(name,"r");
     if (ff==NULL) fatalError(ERR_CANT_OPEN,name, XREF_EXIT_ERR);
     readOptionFromFile(ff,nargc,nargv,MEM_ALLOC_ON_PP,sectionFile, project, realSection);
-    fclose(ff);
+    closeFile(ff);
 }
 
 void readOptionPipe(char *comm, int *nargc, char ***nargv, char *sectionFile) {
@@ -450,7 +451,7 @@ void readOptionPipe(char *comm, int *nargc, char ***nargv, char *sectionFile) {
     ff = popen(comm, "r");
     if (ff==NULL) fatalError(ERR_CANT_OPEN, comm, XREF_EXIT_ERR);
     readOptionFromFile(ff,nargc,nargv,MEM_ALLOC_ON_PP,sectionFile,NULL,realSection);
-    fclose(ff);
+    closeFile(ff);
 }
 
 static char *getClassPath(bool defaultCpAllowed) {

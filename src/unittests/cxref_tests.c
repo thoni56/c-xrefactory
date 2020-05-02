@@ -24,6 +24,7 @@
 #include "memory.mock"
 #include "utils.mock"
 #include "reftab.mock"
+#include "fileio.mock"
 
 
 /* Needed: */

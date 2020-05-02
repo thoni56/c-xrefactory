@@ -16,6 +16,7 @@
 #include "symbol.h"
 #include "javafqttab.h"
 #include "list.h"
+#include "fileio.h"
 
 #include "java_parser.x"
 
@@ -706,7 +707,7 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
     //&bb = editorGetOpenedAndLoadedBuffer(fname);
     bb = editorFindFile(fname);
     if (bb==NULL) {
-        ff = fopen(fname, "r");
+        ff = openFile(fname, "r");
         if (ff==NULL) {
             errorMessage(ERR_CANT_OPEN, fname);
             goto fini;
@@ -726,7 +727,7 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
     //&bb = editorGetOpenedAndLoadedBuffer(fname);
     bb = editorFindFile(fname);
     if (bb==NULL) {
-        ff = fopen(fname, "r");
+        ff = openFile(fname, "r");
         if (ff==NULL) {
             errorMessage(ERR_CANT_OPEN, fname);
             goto fini;

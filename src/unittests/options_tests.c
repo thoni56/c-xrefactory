@@ -7,6 +7,7 @@
 #include "cxref.mock"
 #include "main.mock"
 #include "editor.mock"
+#include "fileio.mock"
 
 
 Describe(Options);
