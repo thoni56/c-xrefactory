@@ -51,8 +51,8 @@ void createDir(char *dirname) {
   mock(dirname);
 }
 
-void copyDir(char *dest, char *s, int *i) {
-  mock(dest, s, i);
+int copyPath(char *dest, char *source, int *length) {
+    return (int)mock(dest, source, length);
 }
 
 void removeFile(char *dirname) {

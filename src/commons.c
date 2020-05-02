@@ -200,24 +200,11 @@ void copyFileFromTo(char *source, char *destination) {
         readBytes = readFile(tmpBuff , 1, TMP_BUFF_SIZE, sourceFile);
         writtenBytes = writeFile(tmpBuff, 1, readBytes, destinationFile);
         if (readBytes != writtenBytes)
-            errorMessage(ERR_ST,"problem with writing to a file.");
+            errorMessage(ERR_ST, "problem copying file.");
     } while (readBytes > 0);
     closeFile(destinationFile);
     closeFile(sourceFile);
     LEAVE();
-}
-
-void createDir(char *dirname) {
-#ifdef __WIN32__                        /*SBD*/
-    mkdir(dirname);
-#else                                   /*SBD*/
-    mkdir(dirname,0777);
-#endif                                  /*SBD*/
-}
-
-void removeFile(char *dirname) {
-    log_trace("removing file '%s'", dirname);
-    unlink(dirname);
 }
 
 /*  'dest' and 's' can be the same pointer !!!!!!!!!!!!!!! */
@@ -231,8 +218,7 @@ void copyDir(char *dest, char *s, int *i) {
     dest[*i] = 0;
 }
 
-/* ***********************************************************************
- */
+/*************************************************************************/
 
 static void formatMessage(char *out, int errCode, char *mess) {
     if (s_opt.taskRegime != RegimeEditServer) {

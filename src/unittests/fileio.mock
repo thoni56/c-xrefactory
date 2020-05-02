@@ -13,3 +13,15 @@ int closeFile(FILE *file) {
 size_t readFile(void *buffer, size_t size, size_t count, FILE *file) {
     return (size_t)mock(buffer, size, count, file);
 }
+
+size_t writeFile(void *buffer, size_t size, size_t count, FILE *file) {
+    return (size_t)mock(buffer, size, count, file);
+}
+
+void createDir(char *dirName) {
+    mock(dirName);
+}
+
+void removeFile(char *fileName) {
+    mock(fileName);
+}

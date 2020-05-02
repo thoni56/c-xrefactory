@@ -17,12 +17,10 @@ extern void fatalError(int code, char *message, int exitCode);
 extern void internalCheckFail(char *expr, char *file, int line);
 
 extern char *create_temporary_filename(void);
+extern void copyFileFromTo(char *src, char *dest);
+extern void copyDir(char *dest, char *s, int *i);
 extern char *normalizeFileName(char *name, char *relativeto);
 
-extern void copyFileFromTo(char *src, char *dest);
-extern void createDir(char *dirname);
-extern void copyDir(char *dest, char *s, int *i);
-extern void removeFile(char *dirname);
 extern void closeMainOutputFile(void);
 
 #endif
