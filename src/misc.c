@@ -847,6 +847,7 @@ char *simpleFileNameWithoutSuffix_st(char *fullFileName) {
     static char res[MAX_FILE_NAME_SIZE];
     char *pp,*fn;
     int i;
+
     for(fn=pp=fullFileName; *pp!=0; pp++) {
         if (*pp == '/' || *pp == FILE_PATH_SEPARATOR) fn = pp+1;
     }
@@ -854,22 +855,25 @@ char *simpleFileNameWithoutSuffix_st(char *fullFileName) {
         res[i] = *fn;
     }
     res[i] = 0;
-    return(res);
+    return res;
 }
 
 char *directoryName_st(char *fullFileName) {
     static char res[MAX_FILE_NAME_SIZE];
     int ii;
+
     copyPath(res, fullFileName, &ii);
     assert(ii < MAX_FILE_NAME_SIZE-1);
     if (ii>2 && res[ii-1]==FILE_PATH_SEPARATOR) res[ii-1] = 0;
-    return(res);
+
+    return res;
 }
 
 int pathncmp(char *ss1, char *ss2, int n, int caseSensitive) {
-    register char *s1,*s2;
-    register int i;
-    int         res;
+    char *s1,*s2;
+    int i;
+    int res;
+
     res = 0;
 #if (!defined (__WIN32__))
     if (caseSensitive) return(strncmp(ss1,ss2,n));
@@ -906,7 +910,7 @@ int pathncmp(char *ss1, char *ss2, int n, int caseSensitive) {
         } else {
             res = tolower(*s1) - tolower(*s2);
         }
-    return(res);
+    return res;
 }
 
 int fnnCmp(char *ss1, char *ss2, int n) {
