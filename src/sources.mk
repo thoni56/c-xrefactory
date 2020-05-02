@@ -1,14 +1,20 @@
-SRCS =  main.c globals.c misc.c semact.c commons.c generate.c \
-		enumTxt.c complete.c cxref.c cxfile.c lex.c yylex.c options.c \
-		caching.c jsemact.c classfilereader.c classcaster.c init.c \
-		editor.c refactory.c protocol.c log.c \
-		html.c extract.c classhierarchy.c jslsemact.c \
-		filetab.c macroargumenttable.c olcxtab.c editorbuffertab.c symboltable.c \
-		javafqttab.c jsltypetab.c reftab.c memory.c utils.c characterbuffer.c hash.c \
-		symbol.c c_parser.tab.c cexp_parser.tab.c java_parser.tab.c yacc_parser.tab.c \
-		fileitem.c filedescriptor.c typemodifier.c position.c id.c parsers.c fileio.c
+MODULES =  main globals misc semact commons generate \
+		enumTxt complete cxref cxfile lex yylex options \
+		caching jsemact classfilereader classcaster init \
+		editor refactory protocol log \
+		html extract classhierarchy jslsemact \
+		filetab macroargumenttable olcxtab editorbuffertab symboltable \
+		javafqttab jsltypetab reftab memory utils characterbuffer hash \
+		symbol c_parser.tab cexp_parser.tab java_parser.tab yacc_parser.tab \
+		fileitem filedescriptor typemodifier position id parsers fileio
+
+modules:
+	@echo $(MODULES)
+	@echo $(SRCS)
+	@echo $(OBJS)
 
 OBJDIR = .objects
+SRCS = ${MODULES:=.c}
 OBJS = $(addprefix $(OBJDIR)/,${SRCS:.c=.o})
 DEPS = $(addprefix $(OBJDIR)/,${SRCS:.c=.d})
 
