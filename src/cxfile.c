@@ -602,7 +602,8 @@ static void genCxFileHead(void) {
 }
 
 static void openInOutReferenceFiles(int updateFlag, char *filename) {
-    tmpFileName[0] = 0;
+    char tmpFileName[MAX_FILE_NAME_SIZE];
+
     if (updateFlag) {
         char *tempname = create_temporary_filename();
         strcpy(tmpFileName, tempname);
