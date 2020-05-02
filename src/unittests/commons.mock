@@ -43,7 +43,7 @@ char *normalizeFileName(char *name, char *relativeto) {
   return (char *) mock(name, relativeto);
 }
 
-void copyFile(char *src, char *dest) {
+void copyFileFromTo(char *src, char *dest) {
   mock(src, dest);
 }
 

@@ -605,7 +605,7 @@ static void openInOutReferenceFiles(int updateFlag, char *filename) {
     if (updateFlag) {
         char *tempname = create_temporary_filename();
         strcpy(tmpFileName, tempname);
-        copyFile(filename, tmpFileName);
+        copyFileFromTo(filename, tmpFileName);
     }
 
     assert(filename);

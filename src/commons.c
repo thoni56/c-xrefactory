@@ -176,7 +176,7 @@ char *create_temporary_filename(void) {
     return temporary_name;
 }
 
-void copyFile(char *source, char *destination) {
+void copyFileFromTo(char *source, char *destination) {
     FILE *sourceFile, *destinationFile;
     int readBytes, writtenBytes;
 
