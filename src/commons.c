@@ -208,7 +208,7 @@ void copyFileFromTo(char *source, char *destination) {
 }
 
 /*  'dest' and 'source' might be the same pointer !!!!!!!!!!!!!!! */
-void copyPath(char *dest, char *source, int *length) {
+int copyPath(char *dest, char *source, int *length) {
     int i;
 
     *length = 0;
@@ -217,6 +217,8 @@ void copyPath(char *dest, char *source, int *length) {
         if (source[i]=='/' || source[i]=='\\') *length = i+1;
     }
     dest[*length] = 0;
+
+    return *length;
 }
 
 /*************************************************************************/

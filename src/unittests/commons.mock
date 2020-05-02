@@ -4,31 +4,31 @@
 #include <cgreen/mocks.h>
 
 void closeMainOutputFile(void) {
-  mock();
+    mock();
 }
 
 void initCwd(void) {
-  mock();
+    mock();
 }
 
 void reInitCwd(char *dffname, char *dffsect) {
-  mock(dffname, dffsect);
+    mock(dffname, dffsect);
 }
 
 void emergencyExit(int exitStatus) {
-  mock(exitStatus);
+    mock(exitStatus);
 }
 
 void warningMessage(int code, char *message) {
-  mock(code, message);
+    mock(code, message);
 }
 
 void errorMessage(int code, char *message) {
-  mock(code, message);
+    mock(code, message);
 }
 
 void fatalError(int code, char *message, int exitCode) {
-  mock(code, message, exitCode);
+    mock(code, message, exitCode);
 }
 
 void internalCheckFail(char *expr, char *file, int line) {
@@ -36,19 +36,19 @@ void internalCheckFail(char *expr, char *file, int line) {
 }
 
 char *create_temporary_filename() {
-  return (char *) mock();
+    return (char *) mock();
 }
 
 char *normalizeFileName(char *name, char *relativeto) {
-  return (char *) mock(name, relativeto);
+    return (char *) mock(name, relativeto);
 }
 
 void copyFileFromTo(char *src, char *dest) {
-  mock(src, dest);
+    mock(src, dest);
 }
 
 void createDir(char *dirname) {
-  mock(dirname);
+    mock(dirname);
 }
 
 int copyPath(char *dest, char *source, int *length) {
@@ -56,5 +56,5 @@ int copyPath(char *dest, char *source, int *length) {
 }
 
 void removeFile(char *dirname) {
-  mock(dirname);
+    mock(dirname);
 }
