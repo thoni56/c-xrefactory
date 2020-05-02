@@ -682,21 +682,21 @@ static char *getJdkClassPath(void) {
 }
 
 char *getJavaHome(void) {
-    static char     res[MAX_FILE_NAME_SIZE];
-    char            *tt;
-    int             ii;
+    static char res[MAX_FILE_NAME_SIZE];
+    char *pathString;
+    int pathLength;
 
-    tt = getJdkClassPath();
-    if (tt!=NULL && *tt!=0) {
-        copyPath(res, tt, &ii);
-        if (ii>0) res[ii-1] = 0;
-        copyPath(res, res, &ii);
-        if (ii>0) res[ii-1] = 0;
-        copyPath(res, res, &ii);
-        if (ii>0) res[ii-1] = 0;
-        return(res);
+    pathString = getJdkClassPath();
+    if (pathString!=NULL && *pathString!=0) {
+        pathLength = extractPathInto(pathString, res);
+        if (pathLength>0) res[pathLength-1] = 0;
+        pathLength = extractPathInto(res, res);
+        if (pathLength>0) res[pathLength-1] = 0;
+        pathLength = extractPathInto(res, res);
+        if (pathLength>0) res[pathLength-1] = 0;
+        return res;
     }
-    return(NULL);
+    return NULL;
 }
 
 void getJavaClassAndSourcePath(void) {

@@ -1955,7 +1955,7 @@ static void initDefaultCxrefFileName(char *inputfile) {
     int pathLength;
     static char defaultCxrefFileName[MAX_FILE_NAME_SIZE];
 
-    copyPath(defaultCxrefFileName, normalizeFileName(inputfile, s_cwd), &pathLength);
+    pathLength = extractPathInto(normalizeFileName(inputfile, s_cwd), defaultCxrefFileName);
     assert(pathLength < MAX_FILE_NAME_SIZE);
     strcpy(&defaultCxrefFileName[pathLength], DEFAULT_CXREF_FILE);
     assert(strlen(defaultCxrefFileName) < MAX_FILE_NAME_SIZE);

@@ -417,10 +417,10 @@ static  void processLine(void) {
 /*	this should be moved to the  getLexBuf routine,!!!!!!!!!!!!!!!!!!! TODO */
 /*&
     if (lex == STRING_LITERAL) {
-        i = 0;
+        int i = 0;
         cc = cInput.currentLexem;
         ch = *cc;
-        if (ch != FILE_PATH_SEPARATOR) copyPath(ss,s_opt.originalDir,&i);
+        if (ch != FILE_PATH_SEPARATOR) i = extractPathInto(s_opt.originalDir, ss);
         for(; ch; ch= *++cc) {
             ss[i++] = ch;
             assert(i+2<TMP_STRING_SIZE);
@@ -501,7 +501,7 @@ void popInclude(void) {
     }
 }
 
-static FILE *openInclude(char pchar, char *name, char **fileName) {
+static FILE *openInclude(char includeType, char *name, char **fileName) {
     S_editorBuffer  *er;
     FILE			*r;
     S_stringList    *ll;
@@ -509,13 +509,12 @@ static FILE *openInclude(char pchar, char *name, char **fileName) {
     char            nn[MAX_FILE_NAME_SIZE];
     char            rdir[MAX_FILE_NAME_SIZE];
     char            *nnn;
-    int             nnlen,dlen,fdlen,nmlen;
+    int             nnlen,dlen,nmlen;
 
     er = NULL; r = NULL;
     nmlen = strlen(name);
-    copyPath(rdir, cFile.fileName, &fdlen);
-    if (pchar!='<') {
-        log_trace("fdlen == %d", fdlen);
+    extractPathInto(cFile.fileName, rdir);
+    if (includeType!='<') {
         strcpy(nn, normalizeFileName(name, rdir));
         log_trace("try to open %s", nn);
         er = editorFindFile(nn);

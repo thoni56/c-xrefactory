@@ -47,6 +47,6 @@ void copyFileFromTo(char *src, char *dest) {
     mock(src, dest);
 }
 
-int copyPath(char *dest, char *source, int *length) {
-    return (int)mock(dest, source, length);
+int extractPathInto(char *source, char *dest) {
+    return (int)mock(dest, source);
 }

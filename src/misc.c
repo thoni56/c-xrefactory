@@ -860,11 +860,11 @@ char *simpleFileNameWithoutSuffix_st(char *fullFileName) {
 
 char *directoryName_st(char *fullFileName) {
     static char res[MAX_FILE_NAME_SIZE];
-    int ii;
+    int pathLength;
 
-    copyPath(res, fullFileName, &ii);
-    assert(ii < MAX_FILE_NAME_SIZE-1);
-    if (ii>2 && res[ii-1]==FILE_PATH_SEPARATOR) res[ii-1] = 0;
+    pathLength = extractPathInto(fullFileName, res);
+    assert(pathLength < MAX_FILE_NAME_SIZE-1);
+    if (pathLength>2 && res[pathLength-1]==FILE_PATH_SEPARATOR) res[pathLength-1] = 0;
 
     return res;
 }

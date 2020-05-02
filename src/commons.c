@@ -55,9 +55,8 @@ void initCwd(void) {
 }
 
 void reInitCwd(char *dffname, char *dffsect) {
-    int ii;
     if (dffname[0]!=0) {
-        copyPath(s_cwd, dffname, &ii);
+        extractPathInto(dffname, s_cwd);
     }
     if (dffsect[0]!=0
 #if defined (__WIN32__)
@@ -208,17 +207,17 @@ void copyFileFromTo(char *source, char *destination) {
 }
 
 /*  'dest' and 'source' might be the same pointer !!!!!!!!!!!!!!! */
-int copyPath(char *dest, char *source, int *length) {
+int extractPathInto(char *source, char *dest) {
     int i;
+    int l = 0;
 
-    *length = 0;
     for(i=0; source[i]!=0; i++) {
         dest[i] = source[i];
-        if (source[i]=='/' || source[i]=='\\') *length = i+1;
+        if (source[i]=='/' || source[i]=='\\') l = i+1;
     }
-    dest[*length] = 0;
+    dest[l] = 0;
 
-    return *length;
+    return l;
 }
 
 /*************************************************************************/
