@@ -1,17 +1,13 @@
 # Automated test for running c-xref on itself and see if generated
 # cross references are the same
 
-TEST = $(shell basename '$(CURDIR)')
-OK = echo "Tests in '$(TEST)': $(shell tput setaf 2)Ok$(shell tput sgr0)"
-FAIL = echo "Tests in '$(TEST)': $(shell tput setaf 1)Failed$(shell tput sgr0)"
+include ../Makefile.boilerplate
 
-
-all: c-xref
-
-c-xref: .c-xrefrc
-	@rm -rf C-Xrefs $@.log
-	@../run-c-xref -p c-xref -o c-xref.log -refs $(CURDIR)/C-Xrefs/c-xref
-	@diff CXrefs/c-xref c-xref.expected > /dev/null ; \
+$(TEST): .c-xrefrc
+	@sed 's%  $(CURDIR)%  ../../src%' .c-xrefrc > .c-xrefrc.tmp
+	@sed 's/=10/=1/' .c-xrefrc.tmp > .c-xrefrc
+	@../run-c-xref -p $(CURDIR) -o c-xref.log
+	@diff CXrefs expected > /dev/null ; \
 	if [ $$? -ne 1 ] ; then \
 		$(FAIL) ; \
 		exit 1 ; \
@@ -19,9 +15,6 @@ c-xref: .c-xrefrc
 		$(OK) ; \
 		exit 0 ; \
 	fi
-
-.c-xrefrc: c-xrefrc.tpl
-	@sed -e "s+PWD+$$PWD+g" c-xrefrc.tpl > .c-xrefrc
 
 clean:
 	rm -rf CXrefs c-xref.log out .c-xrefrc
