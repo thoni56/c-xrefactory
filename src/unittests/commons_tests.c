@@ -22,7 +22,7 @@ Ensure(Commons, will_extract_nothing_if_no_path) {
 
     strcpy(source, "nopath");
     length = extractPathInto(source, dest);
-    assert_that(dest[0] == '\0'); /* No path to copy */
+    assert_that(strlen(dest) == 0); /* No path to copy */
     assert_that(length, is_equal_to(0));
 }
 
