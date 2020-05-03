@@ -1480,7 +1480,7 @@ static void completeFqtFromFileName(char *file, void *cfmpi) {
     fmi = (S_completionFqtMapInfo *) cfmpi;
     c = fmi->res;
     suff = getFileSuffix(file);
-    if (fnCmp(suff, ".class")==0 || fnCmp(suff, ".java")==0) {
+    if (compareFileNames(suff, ".class")==0 || compareFileNames(suff, ".java")==0) {
         sprintf(ttt, "%s", file);
         assert(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
         suff = lastOccurenceInString(ttt, '.');

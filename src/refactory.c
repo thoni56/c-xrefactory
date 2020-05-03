@@ -865,7 +865,7 @@ void tpCheckFillMoveClassData(S_tpCheckMoveClassData *dd, char *spack, char *tpa
     javaGetPackageNameFromSourceFileName(targetfile, tpack);
 
     // O.K. moving from package spack to package tpack
-    if (fnCmp(spack, tpack)==0) transPackageMove = 0;
+    if (compareFileNames(spack, tpack)==0) transPackageMove = 0;
     else transPackageMove = 1;
 
     fillTpCheckMoveClassData(dd, s_cps.cxMemiAtClassBeginning, s_cps.cxMemiAtClassEnd,

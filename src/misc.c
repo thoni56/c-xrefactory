@@ -917,16 +917,17 @@ int pathncmp(char *ss1, char *ss2, int n, int caseSensitive) {
 }
 
 int fnnCmp(char *ss1, char *ss2, int n) {
-    return(pathncmp(ss1, ss2, n, s_opt.fileNamesCaseSensitive));
+    return pathncmp(ss1, ss2, n, s_opt.fileNamesCaseSensitive);
 }
 
-int fnCmp(char *ss1, char *ss2) {
+/* Handle mixed case file names */
+int compareFileNames(char *ss1, char *ss2) {
     int n;
 #if (!defined (__WIN32__))
     if (s_opt.fileNamesCaseSensitive) return(strcmp(ss1,ss2));
 #endif
     n = strlen(ss1);
-    return(fnnCmp(ss1,ss2,n+1));
+    return fnnCmp(ss1,ss2,n+1);
 }
 
 // ------------------------------------------- SHELL (SUB)EXPRESSIONS ---
@@ -1303,7 +1304,7 @@ static char *concatFNameInTmpMemory( char *dirname , char *packfile) {
 static int pathsStringContainsPath(char *paths, char *path) {
     JavaMapOnPaths(paths, {
             //&fprintf(dumpOut,"[sp]checking %s<->%s\n", currentPath, path);
-            if (fnCmp(currentPath, path)==0) {
+            if (compareFileNames(currentPath, path)==0) {
                 //&fprintf(dumpOut,"[sp] saving of mapping %s\n", path);
                 return(1);
             }
@@ -1315,7 +1316,7 @@ static int classPathContainsPath(char *path) {
     S_stringList    *cp;
     for (cp=s_javaClassPaths; cp!=NULL; cp=cp->next) {
         //&fprintf(dumpOut,"[cp]checking %s<->%s\n", cp->d, path);
-        if (fnCmp(cp->d, path)==0) {
+        if (compareFileNames(cp->d, path)==0) {
             //&fprintf(dumpOut,"[cp] saving of mapping %s\n", path);
             return(1);
         }
@@ -1457,7 +1458,7 @@ static void scanClassFile(char *zip, char *file, void *arg) {
     int         cpi, fileInd;
     //&fprintf(dumpOut,"scanning %s ; %s\n", zip, file);
     suff = getFileSuffix(file);
-    if (fnCmp(suff, ".class")==0) {
+    if (compareFileNames(suff, ".class")==0) {
         cpi = s_cache.cpi;
         s_cache.activeCache = 1;
         //&fprintf(dumpOut,"%d ", s_topBlock->firstFreeIndex);

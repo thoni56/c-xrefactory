@@ -306,7 +306,7 @@ int pathncmp(char *ss1, char *ss2, int n, int caseSensitive) {
   return (int) mock(ss1, ss2, n, caseSensitive);
 }
 
-int fnCmp(char *ss1, char *ss2) {
+int compareFileNames(char *ss1, char *ss2) {
   return (int) mock(ss1, ss2);
 }
 

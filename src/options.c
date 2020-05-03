@@ -564,12 +564,13 @@ void addSourcePathsCut(void) {
 }
 
 
-static char *canItBeJavaBinPath(char *ttt) {
-    static char     res[MAX_FILE_NAME_SIZE];
-    char            *np;
-    struct stat     st;
-    int             stt, len;
-    np = normalizeFileName(ttt, s_cwd);
+static char *canItBeJavaBinPath(char *path) {
+    static char res[MAX_FILE_NAME_SIZE];
+    char *np;
+    struct stat st;
+    int stt, len;
+
+    np = normalizeFileName(path, s_cwd);
     len = strlen(np);
 #if defined (__WIN32__)
     sprintf(res,"%s%cjava.exe", np, FILE_PATH_SEPARATOR);
@@ -580,7 +581,7 @@ static char *canItBeJavaBinPath(char *ttt) {
     stt = stat(res, &st);
     if (stt==0  && (st.st_mode & S_IFMT)!=S_IFDIR) {
         res[len]=0;
-        if (len>4 && fnCmp(res+len-3,"bin")==0 && res[len-4]==FILE_PATH_SEPARATOR) {
+        if (len>4 && compareFileNames(res+len-3,"bin")==0 && res[len-4]==FILE_PATH_SEPARATOR) {
             sprintf(res+len-3,"jre%clib%crt.jar",FILE_PATH_SEPARATOR,FILE_PATH_SEPARATOR);
             assert(strlen(res)<MAX_FILE_NAME_SIZE-1);
             stt = stat(res,&st);

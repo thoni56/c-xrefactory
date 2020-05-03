@@ -139,7 +139,7 @@ extern char *getFileSuffix(char *fn);
 extern char *javaCutClassPathFromFileName(char *fname);
 extern char *javaCutSourcePathFromFileName(char *fname);
 extern int pathncmp(char *ss1, char *ss2, int n, int caseSensitive);
-extern int fnCmp(char *ss1, char *ss2);
+extern int compareFileNames(char *ss1, char *ss2);
 extern int fnnCmp(char *ss1, char *ss2, int n);
 extern void linkNamePrettyPrint(char *ff, char *javaLinkName, int maxlen,int argsStyle);
 extern char *simpleFileNameFromFileNum(int fnum);

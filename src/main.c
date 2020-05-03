@@ -174,7 +174,7 @@ static int fileNameShouldBePruned(char *fn) {
     S_stringList    *pp;
     for(pp=s_opt.pruneNames; pp!=NULL; pp=pp->next) {
         JavaMapOnPaths(pp->d, {
-                if (fnCmp(currentPath, fn)==0) return(1);
+                if (compareFileNames(currentPath, fn)==0) return(1);
             });
     }
     return(0);
@@ -246,7 +246,7 @@ void dirInputFile(MAP_FUN_PROFILE) {
 #ifdef CCC_ALLOWED
                 &&  (! fileNameHasOneOfSuffixes(fname, s_opt.cppFilesSuffixes))
 #endif
-                &&  fnCmp(suff,".y")!=0
+                &&  compareFileNames(suff,".y")!=0
                 ) {
             return;
         }
@@ -2084,11 +2084,11 @@ void mainSetLanguage(char *inFileName, Language *outLanguage) {
         typeEnumName[TypeStruct] = "class";
     } else {
         suff = getFileSuffix(inFileName);
-        if (fnCmp(suff,".zip")==0 || fnCmp(suff,".jar")==0) {
+        if (compareFileNames(suff,".zip")==0 || compareFileNames(suff,".jar")==0) {
             *outLanguage = LANG_JAR;
-        } else if (fnCmp(suff,".class")==0) {
+        } else if (compareFileNames(suff,".class")==0) {
             *outLanguage = LANG_CLASS;
-        } else if (fnCmp(suff,".y")==0) {
+        } else if (compareFileNames(suff,".y")==0) {
             *outLanguage = LANG_YACC;
             typeEnumName[TypeStruct] = "struct";
 #   ifdef CCC_ALLOWED

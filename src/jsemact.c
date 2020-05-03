@@ -2663,10 +2663,10 @@ void javaCheckIfPackageDirectoryIsInClassOrSourcePath(char *dir) {
 
     if (s_opt.taskRegime == RegimeEditServer) return;
     for(pp=s_javaClassPaths; pp!=NULL; pp=pp->next) {
-        if (fnCmp(dir, pp->d)==0) return;
+        if (compareFileNames(dir, pp->d)==0) return;
     }
     JavaMapOnPaths(s_javaSourcePaths, {
-        if (fnCmp(dir, currentPath)==0) return;
+        if (compareFileNames(dir, currentPath)==0) return;
     });
     sprintf(tmpBuff, "Directory %s is not listed in paths", dir);
     warningMessage(ERR_ST, tmpBuff);
