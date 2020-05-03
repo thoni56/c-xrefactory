@@ -47,16 +47,16 @@ static char s_htmlEmptyRefs[MAX_FILE_NAME_SIZE];
 static S_olSymbolsMenu *s_htmlCurrentCxlist;
 static char *s_cxGlobalReferencesBase;
 
-#if defined(__WIN32__)                          /*SBD*/
+#if defined(__WIN32__)
 char *htmlNormalizedPath(char *p) {
     if (p[0]!=0 && p[1]==':') return(p+2);
     return(p);
 }
-#else                                           /*SBD*/
+#else
 char *htmlNormalizedPath(char *p) {
     return(p);
 }
-#endif                                          /*SBD*/
+#endif
 
 static void fillHtmlLocalListms(S_htmlLocalListms *s, FILE *file, int fnum, char *fname) {
     s->ff = file;

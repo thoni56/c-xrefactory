@@ -39,9 +39,9 @@ void initCwd(void) {
             strcpy(s_cwd, rr);
         }
     }
-#if defined (__WIN32__)                         /*SBD*/
+#if defined (__WIN32__)
     if (strlen(s_cwd)<=2 || s_cwd[1]!=':') {
-        // starting by drive specification
+        // starts with drive specification
         sprintf(nid,"%c:",tolower('c'));
         if (strlen(nid)+strlen(s_cwd) < MAX_FILE_NAME_SIZE-1) {
             strcpy(nid+strlen(nid),s_cwd);
@@ -49,9 +49,9 @@ void initCwd(void) {
         }
     }
     strcpy(s_cwd, normalizeFileName(s_cwd, "c:\\"));
-#else                   /*SBD*/
+#else
     strcpy(s_cwd, normalizeFileName(s_cwd, "/"));
-#endif                  /*SBD*/
+#endif
 }
 
 void reInitCwd(char *dffname, char *dffsect) {
@@ -170,7 +170,7 @@ char *create_temporary_filename(void) {
         strcpy(temporary_name, "/tmp/c-xref-temp");
     else
         close(fd);
-#endif                  /*SBD*/
+#endif
     //&fprintf(dumpOut,"temp file: %s\n", temporary_name);
     if (strlen(temporary_name) == 0)
         fatalError(ERR_ST, "couldn't create temporary file name", XREF_EXIT_ERR);

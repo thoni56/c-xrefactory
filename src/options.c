@@ -140,9 +140,9 @@ static void expandEnvironmentVariables(char *tt, int ttsize, int *len,
         expanded = 0;
         termc = 0;
         tilda = 0;
-#if (!defined (__WIN32__))          /*SBD*/
+#if (!defined (__WIN32__))
         if (i==0 && tt[i]=='~' && tt[i+1]=='/') {starti = i; termc='~'; tilda=1;}
-#endif                                                      /*SBD*/
+#endif
         if (tt[i]=='$' && tt[i+1]=='{') {starti = i+2; termc='}';}
         if (tt[i]=='%') {starti = i+1; termc='%';}
         if (starti >= 0) {
@@ -157,9 +157,9 @@ static void expandEnvironmentVariables(char *tt, int ttsize, int *len,
                     vval = getXrefEnvironmentValue(vname);
                 }
                 if (vval==NULL) vval = getenv(vname);
-#if (!defined (__WIN32__))          /*SBD*/
+#if (!defined (__WIN32__))
                 if (tilda) vval = getenv("HOME");
-#endif                                                      /*SBD*/
+#endif
                 if (vval != NULL) {
                     strcpy(&ttt[d], vval);
                     d += strlen(vval);
@@ -279,9 +279,9 @@ static void processSingleSectionMarker(char *tt,char *section,
                                        int *writeFlag, char *resSection) {
     int sl,casesensitivity=1;
     sl = strlen(tt);
-#if defined (__WIN32__)    /*SBD*/
+#if defined (__WIN32__)
     casesensitivity = 0;
-#endif                                          /*SBD*/
+#endif
     if (pathncmp(tt, section, sl, casesensitivity)==0
         && (section[sl]=='/' || section[sl]=='\\' || section[sl]==0)) {
         if (sl > strlen(resSection)) {
@@ -571,11 +571,11 @@ static char *canItBeJavaBinPath(char *ttt) {
     int             stt, len;
     np = normalizeFileName(ttt, s_cwd);
     len = strlen(np);
-#if defined (__WIN32__)            /*SBD*/
+#if defined (__WIN32__)
     sprintf(res,"%s%cjava.exe", np, FILE_PATH_SEPARATOR);
-#else                                                   /*SBD*/
+#else
     sprintf(res,"%s%cjava", np, FILE_PATH_SEPARATOR);
-#endif                                                  /*SBD*/
+#endif
     assert(len+6<MAX_FILE_NAME_SIZE);
     stt = stat(res, &st);
     if (stt==0  && (st.st_mode & S_IFMT)!=S_IFDIR) {

@@ -276,17 +276,17 @@ void dirInputFile(MAP_FUN_PROFILE) {
     }
 }
 
-#if defined(__WIN32__)                          /*SBD*/
+#if defined(__WIN32__)
 static int isAbsolutePath(char *p) {
     if (p[0]!=0 && p[1]==':' && p[2]==FILE_PATH_SEPARATOR) return(1);
     if (p[0]==FILE_PATH_SEPARATOR) return(1);
     return(0);
 }
-#else                           /*SBD*/
+#else
 static int isAbsolutePath(char *p) {
     return(p[0]==FILE_PATH_SEPARATOR);
 }
-#endif                          /*SBD*/
+#endif
 
 
 typedef struct stringPointerList {
@@ -1948,11 +1948,11 @@ static int computeAndOpenInputFile(void) {
         //& inputBuff = editorGetOpenedAndLoadedBuffer(s_input_file_name);
         inputBuff = editorFindFile(s_input_file_name);
         if (inputBuff == NULL) {
-#if defined (__WIN32__)    /*SBD*/
+#if defined (__WIN32__)
             inputIn = openFile(s_input_file_name,"rb");
-#else                   /*SBD*/
+#else
             inputIn = openFile(s_input_file_name,"r");
-#endif                  /*SBD*/
+#endif
             if (inputIn == NULL) {
                 errorMessage(ERR_CANT_OPEN, s_input_file_name);
             }

@@ -1541,11 +1541,11 @@ char *getLocalJavaDocFile_st(char *fileUrl) {
 }
 
 static void unBackslashifyUrl(char *url) {
-#if defined (__WIN32__)                             /*SBD*/
+#if defined (__WIN32__)
     for(ss=url; *ss; ss++) {
         if (*ss=='\\') *ss='/';
     }
-#endif                                              /*SBD*/
+#endif
 }
 
 char *getFullUrlOfJavaDoc_st(char *fileUrl) {
@@ -1578,16 +1578,16 @@ static int olcxBrowseSymbolInJavaDoc(SymbolReferenceItem *rr) {
             fprintf(ccOut,"~%s\n", getFullUrlOfJavaDoc_st(url));
         }
     } else {
-#ifdef __WIN32__        /*SBD*/
+#ifdef __WIN32__
         tmd = getenv("TEMP");
         assert(tmd);
         sprintf(tmpfname, "%s/xrefjdoc.html", tmd);
         unBackslashifyUrl(tmpfname);
-#else                   /*SBD*/
+#else
         tmd = getenv("LOGNAME");
         assert(tmd);
         sprintf(tmpfname, "/tmp/%sxref.html", tmd);
-#endif                  /*SBD*/
+#endif
         rrr = olcxGenHtmlFileWithIndirectLink(tmpfname, getFullUrlOfJavaDoc_st(url));
         if (rrr) {
             sprintf(theUrl, "file:///%s", tmpfname);

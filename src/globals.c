@@ -274,15 +274,15 @@ S_options s_initOpt = {
     RegimeUndefined,    // refactoringRegime
     0,                  // xrefactory-II
     NULL,               // moveTargetFile
-#if defined (__WIN32__)                                 /*SBD*/
+#if defined (__WIN32__)
     "c;C",              // cFilesSuffixes
     "java;JAV",         // javaFilesSuffixes
     "C;cpp;CC;cc",      // c++FilesSuffixes
-#else                                                   /*SBD*/
+#else
     "c:C",              // cFilesSuffixes
     "java",             // javaFilesSuffixes
     "C:cpp:CC:cc",      // c++FilesSuffixes
-#endif                                                  /*SBD*/
+#endif
     1,                  // fileNamesCaseSensitive
     ":",                // htmlLineNumLabel
     0,                  // html cut suffix

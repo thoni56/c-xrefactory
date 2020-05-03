@@ -892,22 +892,22 @@ int pathncmp(char *ss1, char *ss2, int n, int caseSensitive) {
 #endif
     if (n<=0) return(0);
     for(s1=ss1,s2=ss2,i=1; *s1 && *s2 && i<n; s1++,s2++,i++) {
-#if defined (__WIN32__)            /*SBD*/
+#if defined (__WIN32__)
         if (    (*s1 == '/' || *s1 == '\\')
                 &&  (*s2 == '/' || *s2 == '\\')) continue;
-#endif                  /*SBD*/
+#endif
         if (caseSensitive) {
             if (*s1 != *s2) break;
         } else {
             if (tolower(*s1) != tolower(*s2)) break;
         }
     }
-#if defined (__WIN32__)            /*SBD*/
+#if defined (__WIN32__)
     if (    (*s1 == '/' || *s1 == '\\')
             &&  (*s2 == '/' || *s2 == '\\')) {
         res = 0;
     } else
-#endif                  /*SBD*/
+#endif
         if (caseSensitive) {
             res = *s1 - *s2;
         } else {
@@ -922,9 +922,9 @@ int fnnCmp(char *ss1, char *ss2, int n) {
 
 int fnCmp(char *ss1, char *ss2) {
     int n;
-#if (!defined (__WIN32__))         /*SBD*/
+#if (!defined (__WIN32__))
     if (s_opt.fileNamesCaseSensitive) return(strcmp(ss1,ss2));
-#endif                  /*SBD*/
+#endif
     n = strlen(ss1);
     return(fnnCmp(ss1,ss2,n+1));
 }
@@ -1150,7 +1150,7 @@ void expandWildcardsInPaths(char *paths, char *outpaths, int freeolen) {
 
 char * getRealFileNameStatic(char *fn) {
     static char         ttt[MAX_FILE_NAME_SIZE];
-#if defined (__WIN32__)         /*SBD*/
+#if defined (__WIN32__)
     WIN32_FIND_DATA     fdata;
     HANDLE              han;
     int                 si,di,bdi;
@@ -1178,11 +1178,11 @@ char * getRealFileNameStatic(char *fn) {
  bbreak:
     strcpy(ttt+di, fn+si);
     return(ttt);
-#else                       /*SBD*/
+#else
     assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
     strcpy(ttt,fn);
     return(fn);
-#endif                  /*SBD*/
+#endif
 }
 
 /* ***************************************************************** */
@@ -1293,9 +1293,9 @@ static char *concatFNameInTmpMemory( char *dirname , char *packfile) {
     if (*packfile) {
         *tt = FILE_PATH_SEPARATOR;
         strcpy(tt+1,packfile);
-#if defined (__WIN32__)        /*SBD*/
+#if defined (__WIN32__)
         for(s=tt+1; *s; s++) if (*s=='/') *s=FILE_PATH_SEPARATOR;
-#endif                                              /*SBD*/
+#endif
     }
     return(fname);
 }

@@ -1,4 +1,4 @@
-#ifdef XREF_HUGE                /*SBD*/
+#ifdef XREF_HUGE
 
 
 /* HUGE only !!!!!, see normal compacted encoding after this */
