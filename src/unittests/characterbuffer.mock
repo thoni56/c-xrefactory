@@ -2,6 +2,10 @@
 #include "characterbuffer.h"
 #include <cgreen/mocks.h>
 
+void initCharacterBuffer(CharacterBuffer *characterBuffer, FILE *file, int fileNumber) {
+    mock(characterBuffer, file, fileNumber);
+}
+
 void fillCharacterBuffer(CharacterBuffer *characterBuffer,
                          char *next,
                          char *end,
@@ -9,7 +13,6 @@ void fillCharacterBuffer(CharacterBuffer *characterBuffer,
                          unsigned filePos,
                          int fileNumber,
                          char *lineBegin) {
-    /* NOTE can't mock z_stream compound type */
     mock(next, end, file, filePos, fileNumber, lineBegin);
 }
 

@@ -5,6 +5,8 @@
 #include "proto.h"
 
 
+extern void initCharacterBuffer(CharacterBuffer *characterBuffer, FILE *file,
+                                int fileNumber);
 extern void fillCharacterBuffer(CharacterBuffer *characterBuffer,
                                 char *next,
                                 char *end,
