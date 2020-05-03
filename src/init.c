@@ -66,6 +66,7 @@ void initTokenNameTab(void) {
         && s_opt.taskRegime!=RegimeGenerate
         && messageWritten==0) {
         if (s_opt.xref2) {
+            char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff,"java version == %s", jv);
             ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
         } else {

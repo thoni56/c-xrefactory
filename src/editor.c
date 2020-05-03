@@ -498,6 +498,7 @@ static void editorLoadFileIntoBufferText(S_editorBuffer *buff, struct stat *st) 
         // this is possible, due to <CR><LF> conversion under MS-DOS
         buff->a.bufferSize -= ss;
         if (ss < 0) {
+            char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff,"File %s: readed %d chars of %d", fname, size-ss, size);
             editorError(ERR_INTERNAL, tmpBuff);
         }
@@ -657,6 +658,7 @@ void editorRenameBuffer(S_editorBuffer *buff, char *nName, S_editorUndo **undo) 
     ddl = (S_editorBufferList){.f = &dd, .next = NULL};
     mem = editorBufferTabIsMember(&s_editorBufferTab, &ddl, &ii, &memb);
     if (! mem) {
+        char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "Trying to rename non existing buffer %s", buff->name);
         errorMessage(ERR_INTERNAL, tmpBuff);
         return;
@@ -1200,11 +1202,15 @@ void editorFreeMarkersAndMarkerList(S_editorMarkerList *occs) {
 }
 
 void editorDumpMarker(S_editorMarker *mm) {
+    char tmpBuff[TMP_BUFF_SIZE];
+
     sprintf(tmpBuff, "[%s:%d] --> %c", simpleFileName(mm->buffer->name), mm->offset, CHAR_ON_MARKER(mm)); ppcGenTmpBuff();
 }
 
 void editorDumpMarkerList(S_editorMarkerList *mml) {
     S_editorMarkerList *mm;
+    char tmpBuff[TMP_BUFF_SIZE];
+
     sprintf(tmpBuff, "------------------[[dumping editor markers]]");ppcGenTmpBuff();
     for(mm=mml; mm!=NULL; mm=mm->next) {
         if (mm->d == NULL) {
@@ -1218,6 +1224,8 @@ void editorDumpMarkerList(S_editorMarkerList *mml) {
 
 void editorDumpRegionList(S_editorRegionList *mml) {
     S_editorRegionList *mm;
+    char tmpBuff[TMP_BUFF_SIZE];
+
     sprintf(tmpBuff,"-------------------[[dumping editor regions]]\n");
     fprintf(dumpOut,"%s\n",tmpBuff);
     //ppcGenTmpBuff();
@@ -1240,6 +1248,8 @@ void editorDumpRegionList(S_editorRegionList *mml) {
 }
 
 void editorDumpUndoList(S_editorUndo *uu) {
+    char tmpBuff[TMP_BUFF_SIZE];
+
     fprintf(dumpOut,"\n\n[undodump] begin\n");
     while (uu!=NULL) {
         switch (uu->operation) {

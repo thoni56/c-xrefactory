@@ -138,7 +138,7 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iB
     int lastModTime,lastModDate,fnameLen,extraLen;
     unsigned crc32,compressedSize,unCompressedSize;
     static int compressionErrorWritten=0;
-    char    *zzz, ttt[MAX_FILE_NAME_SIZE];
+    char *zzz, ttt[MAX_FILE_NAME_SIZE];
 
     res = 1;
     ccc = *accc; ffin = *affin;
@@ -148,6 +148,7 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iB
     if (headSig != 0x04034b50) {
         static int messagePrinted = 0;
         if (messagePrinted==0) {
+            char tmpBuff[TMP_BUFF_SIZE];
             messagePrinted = 1;
             sprintf(tmpBuff,
                     "archive %s is corrupted or modified while xref task running",
@@ -191,6 +192,7 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iB
     else {
         res = 0;
         if (compressionErrorWritten==0) {
+            char tmpBuff[TMP_BUFF_SIZE];
             assert(s_opt.taskRegime);
             // why the message was only for editserver?
             //&if (s_opt.taskRegime==RegimeEditServer) {
@@ -566,16 +568,16 @@ void javaMapZipDirFile(
 
 /* **************************************************************** */
 
-static union constantPoolUnion * cfReadConstantPool(
-                                                    char **accc, char **affin, CharacterBuffer *iBuf,
-                                                    int *cpSize
-                                                    ) {
+static union constantPoolUnion *cfReadConstantPool(char **accc, char **affin,
+                                                   CharacterBuffer *iBuf,
+                                                   int *cpSize) {
     char *ccc, *ffin;
     int cval;
     int count,tag,ind,classind,nameind,typeind,strind;
     int size,i;
     union constantPoolUnion *cp=NULL;
     char *str;
+    char tmpBuff[TMP_BUFF_SIZE];
 
     ccc = *accc; ffin = *affin;
     GetU2(count, ccc, ffin, iBuf);
@@ -979,6 +981,7 @@ Symbol *cfAddCastsToModule(Symbol *memb, Symbol *sup) {
 
 void addSuperClassOrInterface(Symbol *member, Symbol *super, int origin) {
     SymbolList *symbolList, *s;
+    char tmpBuff[TMP_BUFF_SIZE];
 
     super = javaFQTypeSymbolDefinition(super->name, super->linkName);
     for(s = member->u.s->super; s != NULL && s->d != super; s = s->next)
@@ -1038,6 +1041,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     char *inner, *upper, *thisClassName;
     union constantPoolUnion *constantPool;
     Position pos;
+    char tmpBuff[TMP_BUFF_SIZE];
 
     ENTER();
     memb->bits.javaFileIsLoaded = 1;
@@ -1076,8 +1080,8 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     GetU4(cval, ccc, ffin, &cFile.lexBuffer.buffer);
     log_trace("magic is %x", cval);
     if (cval != 0xcafebabe) {
-        sprintf(tmpBuff,"%s is not a valid class file\n",name);
-        errorMessage(ERR_ST,tmpBuff);
+        sprintf(tmpBuff,"%s is not a valid class file", name);
+        errorMessage(ERR_ST, tmpBuff);
         goto finish;
     }
     assert(cval == 0xcafebabe);

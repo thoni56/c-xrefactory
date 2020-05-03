@@ -149,24 +149,26 @@ static void aboutMessage(void) {
 }
 
 #define NEXT_FILE_ARG() {                                               \
-        i++;                                                            \
-        if (i >= argc) {                                                \
-            sprintf(tmpBuff,"file name expected after %s\n",argv[i-1]); \
-            errorMessage(ERR_ST,tmpBuff);                                      \
-            usage(argv[0]);                                             \
-            exit(1);                                                    \
-        }                                                               \
-    }
+    char tmpBuff[TMP_BUFF_SIZE];                                        \
+    i++;                                                                \
+    if (i >= argc) {                                                    \
+        sprintf(tmpBuff,"file name expected after %s\n",argv[i-1]);     \
+        errorMessage(ERR_ST,tmpBuff);                                   \
+        usage(argv[0]);                                                 \
+        exit(1);                                                        \
+    }                                                                   \
+}
 
 #define NEXT_ARG() {                                                    \
-        i++;                                                            \
-        if (i >= argc) {                                                \
-            sprintf(tmpBuff,"further argument(s) expected after %s\n",argv[i-1]); \
-            errorMessage(ERR_ST,tmpBuff);                                      \
-            usage(argv[0]);                                             \
-            exit(1);                                                    \
-        }                                                               \
-    }
+    char tmpBuff[TMP_BUFF_SIZE];                                        \
+    i++;                                                                \
+    if (i >= argc) {                                                    \
+        sprintf(tmpBuff,"further argument(s) expected after %s\n",argv[i-1]); \
+        errorMessage(ERR_ST,tmpBuff);                                   \
+        usage(argv[0]);                                                 \
+        exit(1);                                                        \
+    }                                                                   \
+}
 
 static int fileNameShouldBePruned(char *fn) {
     S_stringList    *pp;
@@ -202,6 +204,7 @@ void dirInputFile(MAP_FUN_PROFILE) {
     char            fn[MAX_FILE_NAME_SIZE];
     char            wcPaths[MAX_OPTION_LEN];
     int             topCallFlag, stt;
+
     dir = a1; fname = file; recurseFlag = a4; topCallFlag = *a5;
     if (topCallFlag == 0) {
         if (strcmp(fname,".")==0) return;
@@ -214,6 +217,7 @@ void dirInputFile(MAP_FUN_PROFILE) {
         strcpy(fn, normalizeFileName(fname, s_cwd));
     }
     if (strlen(fn) >= MAX_FILE_NAME_SIZE) {
+        char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "file name %s is too long", fn);
         fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
     }
@@ -352,9 +356,11 @@ void copyOptions(S_options *dest, S_options *src) {
 void xrefSetenv(char *name, char *val) {
     S_setGetEnv *sge;
     int j, n;
+
     sge = &s_opt.setGetEnv;
     n = sge->num;
     if (n+1>=MAX_SET_GET_OPTIONS) {
+        char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "maximum of %d -set options reached", MAX_SET_GET_OPTIONS);
         errorMessage(ERR_ST, tmpBuff);
         sge->num--; n--;
@@ -397,6 +403,7 @@ static int mainHandleIncludeOption(int argc, char **argv, int i) {
 
 int addHtmlCutPath(char *ss) {
     int i,ln,len, res;
+
     res = 0;
     ss = htmlNormalizedPath(ss);
     ln = strlen(ss);
@@ -416,6 +423,7 @@ int addHtmlCutPath(char *ss) {
         // a more specialized path after a more general, exchange them
         len = s_opt.htmlCut.plen[i];
         if (fnnCmp(s_opt.htmlCut.path[i], ss, len)==0) {
+            char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff,
                     "htmlcutpath: '%s' supersede \n\t\t'%s', exchanging them",
                     s_opt.htmlCut.path[i], ss);
@@ -589,6 +597,7 @@ static int processEOption(int *ii, int argc, char **argv) {
             } else if (strcmp(argv[i],"-encoding=utf-16be")==0) {
                 s_opt.fileEncoding = MULE_UTF_16BE;
             } else {
+                char tmpBuff[TMP_BUFF_SIZE];
                 sprintf(tmpBuff,"unsupported encoding, available values are 'default', 'european', 'euc', 'sjis', 'utf', 'utf-8', 'utf-16', 'utf-16le' and 'utf-16be'.");
                 formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
                 errorMessage(ERR_ST, tmpBuff);
@@ -737,11 +746,13 @@ static void mainAddStringListOption(S_stringList **optlist, char *argvi) {
 
 static int processIOption(int *ii, int argc, char **argv) {
     int i = * ii;
+
     if (0) {}
     else if (strcmp(argv[i],"-I")==0) {
         /* include dir */
         i++;
         if (i >= argc) {
+            char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff,"directory name expected after -I\n");
             errorMessage(ERR_ST,tmpBuff);
             usage(argv[0]);
@@ -1223,7 +1234,9 @@ static int processQOption(int *ii, int argc, char **argv) {
 
 static void setXrefsFile(char *argvi) {
     static int message=0;
+
     if (s_opt.taskRegime==RegimeXref && message==0 && ! isAbsolutePath(argvi)) {
+        char tmpBuff[TMP_BUFF_SIZE];
         message = 1;
         sprintf(tmpBuff,"'%s' is not an absolute path, correct -refs option",argvi);
         warningMessage(ERR_ST, tmpBuff);
@@ -1375,10 +1388,12 @@ static int processROption(int *ii, int argc, char **argv, int infilesFlag) {
 static int processSOption(int *ii, int argc, char **argv) {
     int i = * ii;
     char *name, *val;
+
     if (0) {}
     else if (strcmp(argv[i],"-strict")==0)      s_opt.strictAnsi = true;
     else if (strcmp(argv[i],"-stderr")==0)          errOut = stdout;
     else if (strcmp(argv[i],"-source")==0)  {
+        char tmpBuff[TMP_BUFF_SIZE];
         NEXT_ARG();
         if (strcmp(argv[i], JAVA_VERSION_1_3)!=0 && strcmp(argv[i], JAVA_VERSION_1_4)!=0) {
             sprintf(tmpBuff,"wrong -javaversion=<value>, available values are %s, %s",
@@ -1679,6 +1694,7 @@ void processOptions(int argc, char **argv, int infilesFlag) {
             }
         }
         if (! processed) {
+            char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff,"unknown option %s, (try xref -help)\n",argv[i]);
             errorMessage(ERR_ST,tmpBuff);
             if (    s_opt.taskRegime==RegimeXref
@@ -1751,6 +1767,7 @@ static void schedulingToUpdate(S_fileItem *p, void *rs) {
         if (p->b.commandLineEntered) {
             // no messages during refactorings
             if (s_ropt.refactoringRegime != RegimeRefactory) {
+                char tmpBuff[TMP_BUFF_SIZE];
                 sprintf(tmpBuff,"file %s not accessible",   p->name);
                 warningMessage(ERR_ST, tmpBuff);
             }
@@ -1832,6 +1849,8 @@ void searchDefaultOptionsFile(char *filename, char *options_filename, char *sect
 
 static void writeOptionsFileMessage( char *file,
                                      char *outFName, char *outSect ) {
+    char tmpBuff[TMP_BUFF_SIZE];
+
     if (s_opt.refactoringRegime==RegimeRefactory) return;
     if (outFName[0]==0) {
         if (s_opt.project!=NULL) {
@@ -1865,7 +1884,8 @@ static void writeOptionsFileMessage( char *file,
 }
 
 static void handlePathologicProjectCases(char *file,char *outFName,char *outSect,int errMessage){
-    // all this stuff should be reworked, but be very carefull when refactoring it
+    // all this stuff should be reworked, but be very careful when refactoring it
+    // WTF? Why??!?!
     assert(s_opt.taskRegime);
     if (s_opt.taskRegime == RegimeEditServer) {
         if (errMessage!=NO_ERROR_MESSAGE) {
@@ -1873,7 +1893,7 @@ static void handlePathologicProjectCases(char *file,char *outFName,char *outSect
         }
     } else {
         if (*oldStdopFile == 0) {
-            static int messageYetWritten=0;
+            static int messageYetWritten=0; /* TODO: bool! "yet" = "already"? */
             if (errMessage!=NO_ERROR_MESSAGE && messageYetWritten == 0) {
                 messageYetWritten = 1;
                 writeOptionsFileMessage(file, outFName, outSect);
@@ -1890,6 +1910,7 @@ static void handlePathologicProjectCases(char *file,char *outFName,char *outSect
             }
             if(strcmp(oldStdopFile,outFName)||strcmp(oldStdopSection,outSect)){
                 if (s_opt.xref2) {
+                    char tmpBuff[TMP_BUFF_SIZE];                        \
                     sprintf(tmpBuff, "[Xref] new project: '%s'", outSect);
                     ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
                 } else {
@@ -2384,6 +2405,7 @@ static void createXrefrcDefaultLicense(void) {
         // does not exists
         ff = openFile(fn,"w");
         if (ff == NULL) {
+            char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff, "home directory %s does not exists", fn);
             fatalError(ERR_ST,tmpBuff, XREF_EXIT_ERR);
         } else {
@@ -2597,6 +2619,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 
 static void mainReferencesOverflowed(char *cxMemFreeBase, int mess) {
     int i,fi,savingFlag;
+
     if (mess!=MESS_NONE && s_opt.taskRegime!=RegimeHtmlGenerate) {
         if (s_opt.xref2) {
             ppcGenRecord(PPC_INFORMATION,"swapping references on disk", "\n");
@@ -2627,6 +2650,7 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, int mess) {
     }
     if (s_opt.taskRegime==RegimeHtmlGenerate) {
         if (s_opt.noCxFile) {
+            char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff,"cross-references overflowed, use -mf<n> option");
             fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
         }
@@ -3074,6 +3098,7 @@ static void mainXrefOneWholeFileProcessing(int argc, char **argv,
 
 static void printPrescanningMessage(void) {
     if (s_opt.xref2) {
+        char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "Prescanning classes, please wait.");
         ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
     } else {
@@ -3183,6 +3208,7 @@ void mainCallXref(int argc, char **argv) {
                 fileTabMap(&s_fileTab, setFullUpdateMtimesInFileTab);
             }
             if (s_opt.xref2) {
+                char tmpBuff[TMP_BUFF_SIZE];
                 sprintf(tmpBuff, "Generating '%s'",s_opt.cxrefFileName);
                 ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
             } else {
@@ -3193,6 +3219,7 @@ void mainCallXref(int argc, char **argv) {
     } else if (s_opt.server_operation == OLO_ABOUT) {
         aboutMessage();
     } else if (! s_opt.update)  {
+        char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff,"no input file");
         errorMessage(ERR_ST, tmpBuff);
     }

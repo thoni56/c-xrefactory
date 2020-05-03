@@ -553,6 +553,8 @@ static void processInclude2(Position *ipos, char pchar, char *iname) {
     FILE *nyyin;
     Symbol ss,*memb;
     int ii;
+    char tmpBuff[TMP_BUFF_SIZE];
+
     sprintf(tmpBuff, "PragmaOnce-%s", iname);
 
     fillSymbol(&ss, tmpBuff, tmpBuff, s_noPos);
@@ -734,6 +736,7 @@ void processDefine(bool argFlag) {
         GetNonBlankMaybeLexem(lex);
         if (lex != ')') {
             for(;;) {
+                char tmpBuff[TMP_BUFF_SIZE];
                 cc = aname = cInput.currentLexem;
                 PassLex(cInput.currentLexem, lex, l, v, h, pos, len, 1);
                 ellipsis = 0;
@@ -1116,6 +1119,7 @@ static void processPragma(void) {
 
     GetLex(lex);
     if (lex == IDENTIFIER && !strcmp(cInput.currentLexem, "once")) {
+        char tmpBuff[TMP_BUFF_SIZE];
         PassLex(cInput.currentLexem,lex,l,v,h,pos, len,1);
         fname = simpleFileName(s_fileTab.tab[pos.file]->name);
         sprintf(tmpBuff, "PragmaOnce-%s", fname);

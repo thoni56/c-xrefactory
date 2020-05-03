@@ -61,6 +61,7 @@ void zlibFree(voidpf opaque, voidpf address) {
 
 static int readFromUnzipFilterToBuffer(struct characterBuffer *buffer, char *outBuffer, int max_size) {
     int n, fn, res;
+
     buffer->zipStream.next_out = (unsigned char *)outBuffer;
     buffer->zipStream.avail_out = max_size;
     do {
@@ -80,6 +81,7 @@ static int readFromUnzipFilterToBuffer(struct characterBuffer *buffer, char *out
         } else if (res==Z_STREAM_END) {
             //&fprintf(dumpOut,"end of zip read\n");
         } else {
+            char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff, "something is going wrong while reading zipped .jar archive, res == %d", res);
             errorMessage(ERR_ST, tmpBuff);
             buffer->zipStream.next_out = (unsigned char *)outBuffer;

@@ -1818,6 +1818,7 @@ static void passRefsThroughSourceFile(Reference **rrr, Position *callerp,
         ebuf = editorFindFile(cofileName);
         if (ebuf==NULL) {
             if (s_opt.xref2) {
+                char tmpBuff[TMP_BUFF_SIZE];
                 sprintf(tmpBuff, "file %s not accessible", cofileName);
                 errorMessage(ERR_ST, tmpBuff);
             } else {
@@ -2517,6 +2518,7 @@ static void olcxMenuToggleSelect(void) {
     int                 line;
     char                ln[MAX_HTML_REF_LEN];
     char                *cname;
+
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
     for(ss=refs->menuSym; ss!=NULL; ss=ss->next) {
         line = SYMBOL_MENU_FIRST_LINE + ss->outOnLine;
@@ -2534,6 +2536,7 @@ static void olcxMenuToggleSelect(void) {
         if (ss==NULL) {
             olcxGenNoReferenceSignal();
         } else {
+            char tmpBuff[TMP_BUFF_SIZE];
             linkNamePrettyPrint(ln,ss->s.name,MAX_HTML_REF_LEN,SHORT_NAME);
             cname = javaGetNudePreTypeName_st(getRealFileNameStatic(
                                                                     s_fileTab.tab[ss->s.vApplClass]->name),
@@ -2552,6 +2555,7 @@ static void olcxMenuSelectOnly(void) {
     Reference         *dref;
     int                 line, jd;
     char                ttt[MAX_CX_SYMBOL_SIZE];
+
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
     sel = NULL;
     for(ss=refs->menuSym; ss!=NULL; ss=ss->next) {
@@ -2577,6 +2581,7 @@ static void olcxMenuSelectOnly(void) {
         olcxPrintRefList(";", refs);
         if (dref == NULL) {
             if (sel!=NULL && sel->s.vApplClass!=sel->s.vFunClass) {
+                char tmpBuff[TMP_BUFF_SIZE];
                 sprintfSymbolLinkName(ttt, sel);
                 sprintf(tmpBuff,"Class %s does not define %s", javaGetShortClassNameFromFileNum_st(sel->s.vApplClass), ttt);
                 ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 1, tmpBuff, "\n");
@@ -4053,6 +4058,7 @@ static void olcxProcessGetRequest(void) {
             fprintf(ccOut,"*%s", expandSpecialFilePredefinedVariables_st(val));
         }
     } else {
+        char tmpBuff[TMP_BUFF_SIZE];
         if (s_opt.xref2) {
             sprintf(tmpBuff,"No \"-set %s <command>\" option specified for active project", name);
         } else {
@@ -4271,13 +4277,15 @@ void olPushAllReferencesInBetween(int minMemi, int maxMemi) {
     //&olcxPrintSelectionMenu(s_olcxCurrentUser->browserStack.top->menuSym);
 }
 
-static int tpCheckUniquityOfSymbol(char *fieldOrMethod) {
+static int tpCheckUniquityOfSymbol(char *fieldOrMethod) { /* TODO: bool ? */
     S_olcxReferences    *rstack;
     S_olSymbolsMenu     *ss;
+
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
     ss = rstack->hkSelectedSym;
     if (ss == NULL) {
+        char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff,"No symbol selected, please position the cursor on a definition of a %s (on its name) before invoking this refactoring.", fieldOrMethod);
         errorMessage(ERR_ST, tmpBuff);
         return(0);
@@ -4289,13 +4297,14 @@ static int tpCheckUniquityOfSymbol(char *fieldOrMethod) {
     return(1);
 }
 
-static int tpCheckThatCurrentReferenceIsDefinition(char *fieldOrMethod) {
+static int tpCheckThatCurrentReferenceIsDefinition(char *fieldOrMethod) { /* TODO: bool? */
     S_olcxReferences    *rstack;
 
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
     if (rstack->act==NULL
         || ! IS_DEFINITION_OR_DECL_USAGE(rstack->act->usage.base)) {
+        char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff,"This refactoring requires cursor (point) to be positioned at the definition of a %s (on its name). Please move to the definition first.", fieldOrMethod);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         errorMessage(ERR_ST, tmpBuff);
@@ -4304,15 +4313,17 @@ static int tpCheckThatCurrentReferenceIsDefinition(char *fieldOrMethod) {
     return(1);
 }
 
-static int tpCheckItIsAFieldOrMethod(int require, char *fieldOrMethod) {
+static int tpCheckItIsAFieldOrMethod(int require, char *fieldOrMethod) { /* TODO: bool? */
     S_olcxReferences    *rstack;
     S_olSymbolsMenu     *ss;
+
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
     ss = rstack->hkSelectedSym;
     if (ss->s.b.symType!=TypeDefault
         || (ss->s.b.storage!=StorageField && require==REQ_FIELD)
         || (ss->s.b.storage!=StorageMethod && require==REQ_METHOD)) {
+        char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "This does not look like a %s, please position the cursor on a definition of a %s (on its name) before invoking this refactoring.",
                 fieldOrMethod, fieldOrMethod);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
@@ -4322,10 +4333,11 @@ static int tpCheckItIsAFieldOrMethod(int require, char *fieldOrMethod) {
     return(1);
 }
 
-static int tpCheckStaticity(int require,char *fieldOrMethod) {
-    S_olcxReferences    *rstack;
-    S_olSymbolsMenu     *ss;
-    char                ttt[MAX_CX_SYMBOL_SIZE];
+static int tpCheckStaticity(int require,char *fieldOrMethod) { /* TODO: bool? */
+    S_olcxReferences *rstack;
+    S_olSymbolsMenu *ss;
+    char ttt[MAX_CX_SYMBOL_SIZE];
+    char tmpBuff[TMP_BUFF_SIZE];
 
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
@@ -4369,14 +4381,16 @@ Symbol *getMoveTargetClass(void) {
     return(javaGetClassSymbolFromClassDotName(s_opt.moveTargetClass));
 }
 
-static int tpCheckItIsAPackage(int req, char *classOrPack) {
+static int tpCheckItIsAPackage(int req, char *classOrPack) { /* TODO: bool? */
     S_olcxReferences    *rstack;
     S_olSymbolsMenu     *ss;
+
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
     ss = rstack->hkSelectedSym;
     if ((req==REQ_PACKAGE && ss->s.b.symType!=TypePackage) ||
         (req==REQ_CLASS && ss->s.b.symType!=TypeStruct)) {
+        char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "This does not look like a %s name, please position the cursor on a %s name before invoking this refactoring.", classOrPack, classOrPack);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         errorMessage(ERR_ST, tmpBuff);
@@ -4480,6 +4494,7 @@ static int tpCheckPrintPushingDownMethodType(void) {
 
 static void olTrivialRefactoringPreCheck(int refcode) {
     S_olcxReferences *tpchsymbol;
+
     olCreateSelectionMenu(s_olcxCurrentUser->browserStack.top->command);
     tpchsymbol = s_olcxCurrentUser->browserStack.top;
     switch (refcode) {
@@ -4578,6 +4593,7 @@ static void olTrivialRefactoringPreCheck(int refcode) {
         break;
     case TPC_GET_LAST_IMPORT_LINE:
         if (s_opt.xref2) {
+            char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff, "%d", s_cps.lastImportLine);
             ppcGenRecord(PPC_SET_INFO, tmpBuff, "\n");
         } else {
@@ -4711,11 +4727,11 @@ static void pushSymbolByName(char *name) {
 }
 
 void mainAnswerEditAction(void) {
-    S_olcxReferences    *rstack, *nextrr;
-    Position          opos;
-    char                *ifname, *jdkcp;
-    char                dffname[MAX_FILE_NAME_SIZE];
-    char                dffsect[MAX_FILE_NAME_SIZE];
+    S_olcxReferences *rstack, *nextrr;
+    Position opos;
+    char *ifname, *jdkcp;
+    char dffname[MAX_FILE_NAME_SIZE];
+    char dffsect[MAX_FILE_NAME_SIZE];
 
     assert(ccOut);
 
@@ -4979,6 +4995,7 @@ void mainAnswerEditAction(void) {
                                 UsageDefined, s_olcxCurrentUser->browserStack.top->refsuffix, "");
             olStackDeleteSymbol(s_olcxCurrentUser->browserStack.top);
         } else {
+            char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff, "Parameter %d not found.", s_opt.olcxGotoVal);
             errorMessage(ERR_ST, tmpBuff);
         }
@@ -5027,6 +5044,7 @@ void mainAnswerEditAction(void) {
             (LANGUAGE(LANG_JAVA) &&
              rstack->hkSelectedSym->s.b.storage!=StorageMethod &&
              rstack->hkSelectedSym->s.b.storage!=StorageConstructor)) {
+            char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff,"Cursor (point) has to be positioned on a method or contructor name before invocation of this refactoring, not on the parameter itself. Please move the cursor onto the method (contructor) name and reinvoke the refactoring.");
             errorMessage(ERR_ST, tmpBuff);
         } else {

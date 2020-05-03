@@ -93,7 +93,6 @@ char s_cwd[MAX_FILE_NAME_SIZE];
 S_currentlyParsedStatics s_cps;
 TypeModifier *s_upLevelFunctionCompletionType;
 Position s_primaryStartPosition;
-char tmpBuff[TMP_BUFF_SIZE];
 unsigned s_menuFilterOoBits[MAX_MENU_FILTER_LEVEL];
 
 bool s_wildcardSearch;

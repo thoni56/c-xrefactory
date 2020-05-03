@@ -843,6 +843,7 @@ static void cxrfCheckNumber(int size,
                             ) {
     int magicn, filen, hashMethod, exactPositionLinkFlag;
     char *cc, *fin;
+    char tmpBuff[TMP_BUFF_SIZE];
 
     cc = *ccc; fin = *ffin;
 
@@ -1478,7 +1479,7 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
 
 /* fnamesuff contains '/' at the beginning !!! */
 
-int scanReferenceFile(char *fname, char *fns1, char *fns2,
+int scanReferenceFile(char *fname, char *fns1, char *fns2, /* TODO: bool? */
                       ScanFileFunctionStep *scanFunTab
                       ) {
     char fn[MAX_FILE_NAME_SIZE];
@@ -1488,9 +1489,6 @@ int scanReferenceFile(char *fname, char *fns1, char *fns2,
     //&fprintf(dumpOut,":scanning file %s\n",fn);
     inputFile = openFile(fn,"r");
     if (inputFile==NULL) {
-        //&       sprintf(tmpBuff,
-        //&           "can't open TAG file %s\n\tcreate the TAG file first",fn);
-        //& errorMessage(ERR_ST,tmpBuff);
         return(0);
     } else {
         scanCxFile(scanFunTab);

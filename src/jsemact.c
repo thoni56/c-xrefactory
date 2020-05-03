@@ -826,6 +826,7 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
             javaReadClassFile(cname,memb, LOAD_SUPER);
         } else if (ffound == RESULT_NO_FILE_FOUND) {
             if (displayingErrorMessages()) {
+                char tmpBuff[TMP_BUFF_SIZE];
                 sprintf(tmpBuff, "class %s not found", memb->name);
                 errorMessage(ERR_ST, tmpBuff);
             }
@@ -2658,6 +2659,8 @@ void javaSetClassSourceInformation(char *package, Id *classId) {
 
 void javaCheckIfPackageDirectoryIsInClassOrSourcePath(char *dir) {
     S_stringList	*pp;
+    char tmpBuff[TMP_BUFF_SIZE];
+
     if (s_opt.taskRegime == RegimeEditServer) return;
     for(pp=s_javaClassPaths; pp!=NULL; pp=pp->next) {
         if (fnCmp(dir, pp->d)==0) return;

@@ -74,7 +74,8 @@ char *normalizeFileName(char *name, char *relativeto) {
     static char normalizedFileName[MAX_FILE_NAME_SIZE];
     int l1,l2,i,j,s1,inzip=0;
     char *ss;
-    /*fprintf(dumpOut,"normalizing %s  (%s)\n",name,s_cwd); fflush(dumpOut);*/
+
+    log_trace("normalizing %s (%s)", name, s_cwd);
     l1 = strlen(relativeto);
     l2 = strlen(name);
     s1 = 0;
@@ -130,6 +131,7 @@ char *normalizeFileName(char *name, char *relativeto) {
     log_trace("returning %s",normalizedFileName);
     if (j>=2 && normalizedFileName[j-2]==FILE_PATH_SEPARATOR && !inzip) normalizedFileName[j-2]=0;
     if (strlen(normalizedFileName) >= MAX_FILE_NAME_SIZE) {
+        char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "file name %s is too long", normalizedFileName);
         fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
     }
@@ -179,6 +181,7 @@ char *create_temporary_filename(void) {
 void copyFileFromTo(char *source, char *destination) {
     FILE *sourceFile, *destinationFile;
     int readBytes, writtenBytes;
+    char tmpBuff[TMP_BUFF_SIZE];
 
     ENTER();
     log_trace("attempting to copy '%s' to '%s'", source, destination);

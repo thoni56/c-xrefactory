@@ -154,6 +154,8 @@ void ppcGenRecord(char *kind, char *message, char *suffix) {
 
 // use this for debugging purposes only!!!
 void ppcGenTmpBuff(void) {
+    char tmpBuff[TMP_BUFF_SIZE];
+
     ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
     //&ppcGenRecord(PPC_INFORMATION,tmpBuff,"\n");
     fflush(ccOut);
@@ -239,7 +241,8 @@ void methodNameNotRecognized(char *rec) {
 
 void dumpOptions(int nargc, char **nargv) {
     int i;
-    tmpBuff[0]=0;
+    char tmpBuff[TMP_BUFF_SIZE] = "";
+
     for(i=0; i<nargc; i++) {
         sprintf(tmpBuff+strlen(tmpBuff), "%s", nargv[i]);
     }
@@ -1113,6 +1116,7 @@ void expandWildcardsInOnePathRecursiveMaybe(char *fn, char **outpaths, int *free
         *(*outpaths) = 0;
         *freeolen -= 1;
         if (*freeolen <= 0) {
+            char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff, "expanded option %s overflows over MAX_OPTION_LEN",
                     *outpaths-(MAX_OPTION_LEN-*freeolen));
             fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);

@@ -5,11 +5,10 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
-* DOING Introduce fileio layer for fopen, fread etc. and possibly copyFile...
 * TODO enum-generation does not do automatical compiler defines discovery?
 * TODO Handle for-loops with declarations ("for (int i = 0;...")
 This requires grammar changes for C and Yacc
-* TODO Remove the global tmpBuff
+* TODO Introduce -compiler option for C so that we can ensure discovery works
 * TODO Some code in yacc semantic actions is not detected (try F6 on .reference)
 It seems that it is primarily java_parser.y that has this problem. See
 issue on github. One theory might be that "/*&" is not handled in
@@ -25,10 +24,20 @@ This probably requires a lot more understanding of refactory.c and why
 it is structured the way it is, it seems to be calling on itself and
 main processing. Also refactory task is always performed in a separate
 process, what happens if we specify -refactory as a PPC command?
+* TODO Ensure each header file is not dependent on the fact that some other
+header file is included before it. (Could this be done by taking each
+header file and try to compile it in isolation? It should include
+whatever other things it needs...)
+* TODO Ensure every file only includes what it needs so that dependencies
+are a small as possible. This is why IWYU exists!! It means "Include
+What You Use" and is a Clang related project at
+https://github.com/include-what-you-use/include-what-you-use)
+* TODO Figure out a way to remove "commons.c 295" from all parser error messages
 * TODO Refactor int2StringTabs, should not have Init in them
 * TODO Initialize memory's injected error functions in main.c, but it still works?
 * TODO Cleanup and separate commons, misc and make them independent utility modules
 * TODO Check if the C-part of Yacc grammar is identical, and if so extract it
+* TODO Move XX_ALLOCC and friends to "memory" module
 * TODO Change -generate -enum-xxx so that you have to specify which enums you need
 Currently all enums included are generated, but that includes ones
 that are in the systems headers which in turns creates different
@@ -52,17 +61,6 @@ We need to change pos to *pos if that's gonna work
 * TODO Rename reftab.[ch] to cxreftab.[ch]? Or s_cxreftab to s_reftab?
 * TODO Clean up documentation, primarily remove 'create_distribution'
 * TODO Document that the "distribution" method is unsupported
-* TODO Move XX_ALLOCC and friends to "memory" module
-* TODO Figure out a way to remove "commons.c 295" from all parser error messages
-* TODO Ensure each header file is not dependent on the fact that some other
-header file is included before it. (Could this be done by taking each
-header file and try to compile it in isolation? It should include
-whatever other things it needs...)
-
-* TODO Ensure every file only includes what it needs so that dependencies
-are a small as possible. This is why IWYU exists!! It means "Include
-What You Use" and is a Clang related project at
-https://github.com/include-what-you-use/include-what-you-use)
 * TODO Ensure all ANSI-C, C99 and C11 keywords (and macros for them?) are
   recognized (list e.g. at
   http://www.c-programming-simple-steps.com/c-keywords.html)
@@ -112,6 +110,8 @@ Adjust options so that we can better control logging for various
 modules(?)
 ** DONE Include and start using log()
 ** DONE Move output from log() from dumpOut to some logFile
+* DONE Remove the global tmpBuff
+* DONE Introduce fileio layer for fopen, fread etc. and possibly copyFile...
 * DONE Handle struct literals ("(type){.field = data, ...}")
 ** DONE Create test case
 ** DONE Create AST using parsing

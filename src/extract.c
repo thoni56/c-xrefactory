@@ -178,6 +178,7 @@ static Reference *getDefinitionReference(SymbolReferenceItem *lab) {
     Reference *res;
     for(res=lab->refs; res!=NULL && res->usage.base!=UsageDefined; res=res->next) ;
     if (res == NULL) {
+        char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff,"jump to unknown label '%s'\n",lab->name);
         errorMessage(ERR_ST,tmpBuff);
     }

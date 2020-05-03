@@ -80,9 +80,6 @@ char tmpMemory[SIZE_TMP_MEM];
 char ppmMemory[SIZE_ppmMemory];
 char mbMemory[SIZE_mbMemory];
 
-char tmpBuff[TMP_BUFF_SIZE];
-
-
 int olcxMemoryAllocatedBytes;
 
 bool s_ifEvaluation = false;     /* flag for yylex, to not filter '\n' TODO: move, duh!*/

@@ -36,6 +36,8 @@ bool displayingErrorMessages(void) {
 }
 
 int styyerror(char *s) {
+    char tmpBuff[TMP_BUFF_SIZE];
+
     if (strcmp(s, "syntax error") != 0) {
         sprintf(tmpBuff,"YACC error: %s", s);
         errorMessage(ERR_INTERNAL, tmpBuff);

@@ -913,6 +913,7 @@ static int genRefListFileBody(FILE *ff, char *fname,
         }
         if (genflag) {
             if (option != COUNT_ONLY) {
+                char tmpBuff[TMP_BUFF_SIZE];
                 ln = s_fileTab.tab[filen]->name;
                 if (lastFilen != filen) {
                     htmlPutChar(ff,'\n');
@@ -1661,6 +1662,7 @@ static void htmlGenerateJavaDocFile(int fnum) {
     recursivelyCreateFileDirIfNotExists(ffn);
     stt = stat(ffn,&st);
     if (stt==0) {
+        char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "file %s exists, not overwriting it", ffn);
         warningMessage(ERR_ST, tmpBuff);
         return;

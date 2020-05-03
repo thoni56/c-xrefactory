@@ -177,6 +177,7 @@ static void sprintFullCompletionInfo(Completions* c, int ii, int indent) {
     char tt[COMPLETION_STRING_SIZE];
     char *pname,*cname;
     char *ppc;
+
     ppc = ppcTmpBuff;
     if (c->alternatives[ii].symbolType == TypeUndefMacro) return;
     // remove parenthesis (if any)
@@ -199,6 +200,7 @@ static void sprintFullCompletionInfo(Completions* c, int ii, int indent) {
     if (c->alternatives[ii].symbolType==TypeDefault) {
         assert(c->alternatives[ii].symbol && c->alternatives[ii].symbol->u.type);
         if (LANGUAGE(LANG_JAVA)) {
+            char tmpBuff[TMP_BUFF_SIZE];
             cname = getCompletionClassFieldString(&c->alternatives[ii]);
             if (c->alternatives[ii].virtLevel>NEST_VIRT_COMPL_OFFSET) {
                 sprintf(tmpBuff,"(%d.%d)%s: ",

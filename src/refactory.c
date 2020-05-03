@@ -284,6 +284,7 @@ static void refactoryBeInteractive(void) {
 
 
 void refactoryDisplayResolutionDialog(char *message,int messageType,int continuation) {
+    char tmpBuff[TMP_BUFF_SIZE];
     strcpy(tmpBuff, message);
     formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
     ppcGenDisplaySelectionRecord(tmpBuff, messageType, continuation);
@@ -322,6 +323,7 @@ static void refactorySafetyCheck(char *project, S_editorBuffer *buf, S_editorMar
     }
     olCreateSelectionMenu(s_olcxCurrentUser->browserStack.top->command);
     if (safetyCheck2ShouldWarn()) {
+        char tmpBuff[TMP_BUFF_SIZE];
         if (LANGUAGE(LANG_JAVA)) {
             sprintf(tmpBuff, "This is class hierarchy of given symbol as it will appear after the refactoring. It does not correspond to the hierarchy before the refactoring. It is probable that the refactoring will not be behaviour preserving. If you are not sure about your action, you should abandon this refactoring!");
         } else {
@@ -367,6 +369,7 @@ static void refactoryCheckedReplaceString(S_editorMarker *pos, int len,
     if (check) {
         refactoryReplaceString(pos, len, newVal);
     } else {
+        char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "checked replacement of %s to %s failed on ", oldVal, newVal);
         d = strlen(tmpBuff);
         for(i=0; i<len; i++) tmpBuff[d++] = bVal[i];
@@ -933,6 +936,7 @@ int tpCheckSourceIsNotInnerClass(void) {
     assert(s_fileTab.tab[thisclassi]);
     deii = s_fileTab.tab[thisclassi]->directEnclosingInstance;
     if (deii != -1 && deii != s_noneFileIndex && (ss->s.b.accessFlags&ACCESS_INTERFACE)==0) {
+        char tmpBuff[TMP_BUFF_SIZE];
         // If there exists a direct enclosing instance, it is an inner class
         sprintf(tmpBuff, "This is an inner class. Current version of C-xrefactory can only move top level classes and nested classes that are declared 'static'. If the class does not depend on its enclosing instances, you should declare it 'static' and then move it.");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
@@ -1026,6 +1030,7 @@ int tpCheckSuperMethodReferencesForPullUp(void) {
     if (! tmp) return(0);
     // synthetize an answer
     if (rr.foundRefToTestedClass!=NULL) {
+        char tmpBuff[TMP_BUFF_SIZE];
         linkNamePrettyPrint(ttt, ss->s.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
         javaGetClassNameFromFileNum(rr.foundRefToTestedClass->vFunClass, tt, DOTIFY_NAME);
         sprintf(tmpBuff,"'%s' invokes another method using the keyword \"super\" and this invocation is refering to class '%s', i.e. to the class where '%s' will be moved. In consequence, it is not possible to ensure behaviour preseving pulling-up of this method.", ttt, tt, ttt);
@@ -1051,6 +1056,7 @@ int tpCheckSuperMethodReferencesAfterPushDown(void) {
     if (! tmp) return(0);
     // synthetize an answer
     if (rr.foundRefToTestedClass!=NULL) {
+        char tmpBuff[TMP_BUFF_SIZE];
         linkNamePrettyPrint(ttt, ss->s.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
         sprintf(tmpBuff,"'%s' invokes another method using the keyword \"super\" and the invoked method is also defined in current class. After pushing down, the reference will be misrelated. In consequence, it is not possible to ensure behaviour preseving pushing-down of this method.", ttt);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
@@ -1068,6 +1074,7 @@ int tpCheckSuperMethodReferencesForDynToSt(void) {
     if (! tmp) return(0);
     // synthetize an answer
     if (rr.foundSpecialRefItem!=NULL) {
+        char tmpBuff[TMP_BUFF_SIZE];
         if (s_opt.xref2) ppcGenGotoPositionRecord(&rr.foundSpecialR->p);
         sprintf(tmpBuff,"This method invokes another method using the keyword \"super\". Current version of C-xrefactory does not know how to make it static.");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
@@ -1090,6 +1097,7 @@ int tpCheckOuterScopeUsagesForDynToSt(void) {
                                      LINK_NAME_MAYBE_THIS_ITEM, ss->s.vApplClass);
     refTabMap2(&s_cxrefTab, tpCheckSpecialReferencesMapFun, &rr);
     if (rr.foundOuterScopeRef!=NULL) {
+        char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff,"Inner class method is using symbols from outer scope. Current version of C-xrefactory does not know how to make it static.");
         // be soft, so that user can try it and see.
         if (s_opt.xref2) {
@@ -1136,6 +1144,7 @@ int tpCheckMethodReferencesWithApplOnSuperClassForPullUp(void) {
                     if ((! IS_DEFINITION_OR_DECL_USAGE(rr->usage.base))
                         && rr->usage.base != UsageMethodInvokedViaSuper) {
                         // well there is, issue warning message and finish
+                        char tmpBuff[TMP_BUFF_SIZE];
                         linkNamePrettyPrint(ttt, ss->s.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
                         sprintf(tmpBuff,"%s is defined also in superclass and there are invocations syntactically refering to one of superclasses. Under some circumstances this may cause that pulling up of this method will not be behaviour preserving.", ttt);
                         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
@@ -1182,6 +1191,7 @@ int tpCheckTargetToBeDirectSubOrSupClass(int flag, char *subOrSuper) {
     if (res) return(res);
     javaGetClassNameFromFileNum(target->u.s->classFile, tt, DOTIFY_NAME);
     javaGetClassNameFromFileNum(ss->s.vApplClass, ttt, DOTIFY_NAME);
+    char tmpBuff[TMP_BUFF_SIZE];
     sprintf(tmpBuff,"Class %s is not direct %s of %s. This refactoring provides moving to direct %ses only.", tt, subOrSuper, ttt, subOrSuper);
     formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
     errorMessage(ERR_ST,tmpBuff);
@@ -1194,6 +1204,7 @@ int tpPullUpFieldLastPreconditions(void) {
     char ttt[TMP_STRING_SIZE];
     Symbol *target;
     int pcharFlag;
+    char tmpBuff[TMP_BUFF_SIZE];
 
     pcharFlag = 0;
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
@@ -1215,7 +1226,7 @@ int tpPullUpFieldLastPreconditions(void) {
     javaGetClassNameFromFileNum(target->u.s->classFile, ttt, DOTIFY_NAME);
     if (IS_DEFINITION_OR_DECL_USAGE(mm->s.refs->usage.base) && mm->s.refs->next==NULL) {
         if (pcharFlag==0) {pcharFlag=1; fprintf(ccOut,":[warning] ");}
-        sprintf(tmpBuff, "%s is yet defined in the superclass %s.  Pulling up will do nothing, but removing the definition from the subclass. You should be sure that both fields are initialized to the same value.", mm->s.name, ttt);
+        sprintf(tmpBuff, "%s is already defined in the superclass %s.  Pulling up will do nothing, but removing the definition from the subclass. You should make sure that both fields are initialized to the same value.", mm->s.name, ttt);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         warningMessage(ERR_ST, tmpBuff);
         return(0);
@@ -1233,6 +1244,7 @@ int tpPushDownFieldLastPreconditions(void) {
     Reference *rr;
     Symbol *target;
     int thisclassi, res;
+    char tmpBuff[TMP_BUFF_SIZE];
 
     res = 1;
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
@@ -1375,6 +1387,7 @@ static void refactoryPreCheckThatSymbolRefsCorresponds(char *oldName, S_editorMa
         // first check that I have updated reference
         cid = refactoryGetIdentifierOnMarker_st(pos);
         if (strcmp(cid, oldName)!=0) {
+            char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff,
                     "something goes wrong: expecting %s\ninstead of %s at %s, offset:%d",
                     oldName, cid, simpleFileName(getRealFileNameStatic(pos->buffer->name)),
@@ -1437,6 +1450,7 @@ static void refactoryCheckedRenameBuffer(
                                          ) {
     struct stat st;
     if (statb(newName, &st)==0) {
+        char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "Renaming buffer %s to an existing file.\nCan I do this?", buff->name);
         ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff, "\n");
     }
@@ -1717,6 +1731,7 @@ static void refactoryCheckForMultipleReferencesOnSinglePlace2( SymbolReferenceIt
                                                                Reference *r
                                                                ) {
     if (refOccursInRefs(r, rstack->r)) {
+        char tmpBuff[TMP_BUFF_SIZE];
         ppcGenGotoPositionRecord(&r->p);
         sprintf(tmpBuff, "The reference at this place refers to multiple symbols. The refactoring will probably damage your program. Do you really want to continue?");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
@@ -1838,6 +1853,8 @@ static int refactoryGetParamPosition(S_editorMarker *pos, char *fname, int argn)
     char            pushOpt[TMP_STRING_SIZE];
     char            *actName;
     int             res;
+    char tmpBuff[TMP_BUFF_SIZE];
+
     actName = refactoryGetIdentifierOnMarker_st(pos);
     if (! (strcmp(actName, fname)==0
            || strcmp(actName,"this")==0
@@ -1920,6 +1937,7 @@ static int refactoryAddStringAsParameter(S_editorMarker *pos, S_editorMarker *en
             // beyond limite
             sep1=", "; sep2="";
         } else {
+            char tmpBuff[TMP_BUFF_SIZE];
             ppcGenGotoMarkerRecord(pos);
             sprintf(tmpBuff, "Something goes wrong, probably different parameter coordinates at different cpp passes.");
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
@@ -1979,6 +1997,7 @@ static void refactoryCheckThatParameterIsUnused(S_editorMarker *pos, char *fname
     strncpy(pname, refactoryGetIdentifierOnMarker_st(mm), TMP_STRING_SIZE);
     pname[TMP_STRING_SIZE-1] = 0;
     if (refactoryIsParameterUsedExceptRecursiveCalls(mm, pos, fname)) {
+        char tmpBuff[TMP_BUFF_SIZE];
         if (checkfor==CHECK_FOR_ADD_PARAM) {
             sprintf(tmpBuff, "parameter '%s' clashes with an existing symbol, continue anyway?", pname);
             ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff, "\n");
@@ -2218,7 +2237,8 @@ static void refactoryApplyExpandShortNames(S_editorBuffer *buf, S_editorMarker *
                 goto cont;  // anonymous nested class, no expansion
             }
             for(ppp=mm->markers; ppp!=NULL; ppp=ppp->next) {
-                //&fprintf(dumpOut,"expanding at %s:%d\n", ppp->d->buffer->name, ppp->d->offset);
+                char tmpBuff[TMP_BUFF_SIZE];
+                log_trace("expanding at %s:%d", ppp->d->buffer->name, ppp->d->offset);
                 if (ppp->usage.base == UsageNonExpandableNotFQTNameInClassOrMethod) {
                     ppcGenGotoMarkerRecord(ppp->d);
                     sprintf(tmpBuff, "This occurence of %s would be misinterpreted after expansion to %s.\nNo action made at this place.", shortName, fqtName);
@@ -3691,9 +3711,10 @@ static Reference *refactoryCheckEncapsulateGetterSetterForExistingMethods(char *
         }
     }
     // O.K. now I have list of classes in clist
+    char tmpBuff[TMP_BUFF_SIZE];
     if (clist[0] != 0) {
         sprintf(tmpBuff,
-                "The method %s is also defined in following related classes: %s. Its definition in  current class may  (under some  circumstance) change  your program behaviour. Do you really  want to continue in this refactoring?", mname, clist);
+                "The method %s is also defined in the following related classes: %s. Its definition in current class may (under some circumstance) change your program behaviour. Do you really want to continue with this refactoring?", mname, clist);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff, "\n");
     }
@@ -3748,6 +3769,7 @@ static void refactoryPerformEncapsulateField(S_editorMarker *point,
                                                  PPCV_BROWSER_TYPE_WARNING);
     for(ll=occs; ll!=NULL; ll=ll->next) {
         if (ll->usage.base == UsageAddrUsed) {
+            char tmpBuff[TMP_BUFF_SIZE];
             ppcGenGotoMarkerRecord(ll->d);
             sprintf(tmpBuff, "There is a combined l-value reference of the field. Current version of C-xrefactory doesn't  know how  to encapsulate such  assignment. Please, turn it into simple assignment (i.e. field = field 'op' ...;) first.");
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
@@ -4564,6 +4586,7 @@ void mainRefactory(int argc, char **argv) {
     writeRelativeProgress(100);
 
     if (s_progressOffset != s_progressFactor) {
+        char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "s_progressOffset (%d) != s_progressFactor (%d)", s_progressOffset, s_progressFactor);
         ppcGenRecord(PPC_DEBUG_INFORMATION, tmpBuff, "\n");
     }

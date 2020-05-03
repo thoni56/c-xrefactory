@@ -249,6 +249,7 @@ static int getOptionFromFile(FILE *file, char *text, int text_size, int *chars_r
         if (quotamess && s_opt.taskRegime!=RegimeEditServer) {
             static int messageWritten=0;
             if (! messageWritten) {
+                char tmpBuff[TMP_BUFF_SIZE];
                 messageWritten = 1;
                 sprintf(tmpBuff,"option '%s' contains quotes.", text);
                 warningMessage(ERR_ST, tmpBuff);
@@ -741,6 +742,7 @@ void getJavaClassAndSourcePath(void) {
             static bool messageFlag=false;
             if (messageFlag && ! s_opt.briefoutput) {
                 if (s_opt.xref2) {
+                    char tmpBuff[TMP_BUFF_SIZE];
                     if (jdkcp!=NULL && *jdkcp!=0) {
                         sprintf(tmpBuff,"java runtime == %s", jdkcp);
                         ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
