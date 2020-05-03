@@ -347,8 +347,6 @@ static void descendTheClassHierarchy(   FILE *ff,
         itt->next = rrr->next;
         rrr->next = itt;
         tmpVApplClassBackPointersToMenu[vApplCl] = itt;
-        //&sprintf(tmpBuff, "adding %s (%s)", itt->s.name, s_fileTab.tab[itt->s.vApplClass]);
-        //&ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
     } else {
         vFunCl = itt->s.vFunClass;
     }
