@@ -3,11 +3,13 @@
 
 #include "proto.h"              /* for SymbolReferenceItem */
 #include "symbol.h"
+#include "characterbuffer.h"
 
 
 typedef struct scanFileFunctionStep {
     int		recordCode;
-    void    (*handleFun)(int size,int ri,char**ccc,char**ffin,CharacterBuffer*bbb, int additionalArg);
+    void    (*handleFun)(int size, int ri, char **ccc, char **ffin, CharacterBuffer *bbb,
+                         int additionalArg);
     int		additionalArg;
 } ScanFileFunctionStep;
 

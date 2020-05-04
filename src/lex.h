@@ -2,6 +2,7 @@
 #define LEX_H
 
 #include "proto.h"
+#include "characterbuffer.h"
 
 
 typedef struct lexBuf {
