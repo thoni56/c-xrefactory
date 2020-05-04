@@ -1859,7 +1859,7 @@ void olcxDumpSelectionMenu(S_olSymbolsMenu *menu) {
     fprintf(dumpOut,"\n\n");
 }
 
-int ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2) {
+int ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2) { /* TODO: bool! */
     if ((oo1&OOC_PROFILE_MASK) < (oo2&OOC_PROFILE_MASK)) {
         return(0);
     }

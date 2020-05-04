@@ -15,7 +15,7 @@
 #include "utils.h"              /* creatingOlcxRefs() */
 
 
-void gotOnLineCxRefs( Position *ps ) {
+void gotOnLineCxRefs(Position *ps ) {
     if (creatingOlcxRefs()) {
         s_cache.activeCache = 0;
         s_cxRefPos = *ps;
