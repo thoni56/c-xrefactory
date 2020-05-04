@@ -1,0 +1,1 @@
+grep "\#include\ \"$1.h\"" *.[hcyx] | grep -v \.tab\.c | grep -v $1.c | sed -e s/\\.[hcyx].*//

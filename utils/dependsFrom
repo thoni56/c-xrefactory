@@ -1,1 +1,0 @@
-grep ^\#include $1.[cy] | grep -v enumTxt | grep -v "include <" | grep -v $1.[hx] | sed -e 's/^#include "//g' -e 's/.[hx]".*//' -e 's/.tc".*//g' | sort
