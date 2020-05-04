@@ -11,6 +11,7 @@ CGREEN = -L/usr/local/lib -lcgreen
 
 debug: COVERAGE=--coverage
 all debug: $(UNITTESTS)
+	lcov -q -z -d .
 	cgreen-runner $(CGREEN_OUTPUT) --suite unittests $^
 
 clean:
