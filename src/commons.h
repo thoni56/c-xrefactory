@@ -10,7 +10,7 @@
 
 extern void initCwd(void);
 extern void reInitCwd(char *dffname, char *dffsect);
-extern void emergencyExit(int exitStatus);
+
 extern void warningMessage(int code, char *message);
 extern void errorMessage(int code, char *message);
 extern void fatalError(int code, char *message, int exitCode);

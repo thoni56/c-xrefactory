@@ -298,7 +298,7 @@ void errorMessage(int errCode, char *mess) {
     }
 }
 
-void emergencyExit(int exitStatus) {
+static void emergencyExit(int exitStatus) {
     closeMainOutputFile();
     if (s_opt.xref2) {
         ppcGenSynchroRecord();
@@ -308,15 +308,11 @@ void emergencyExit(int exitStatus) {
 
 
 void fatalError(int errCode, char *mess, int exitStatus) {
-    if (! s_opt.xref2) fprintf(errOut,"![error] ");
     formatMessage(ppcTmpBuff, errCode, mess);
-    log_error(ppcTmpBuff);
     if (s_opt.xref2) {
         ppcGenRecord(PPC_FATAL_ERROR, ppcTmpBuff,"\n");
     } else {
-        fprintf(errOut, "%s", ppcTmpBuff);
-        fprintf(errOut,"\t exiting\n");
-        fflush(errOut);
+        log_error(ppcTmpBuff);
     }
     emergencyExit(exitStatus);
 }

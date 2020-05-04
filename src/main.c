@@ -1696,10 +1696,9 @@ void processOptions(int argc, char **argv, int infilesFlag) {
         if (! processed) {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff,"unknown option %s, (try xref -help)\n",argv[i]);
-            errorMessage(ERR_ST,tmpBuff);
-            if (    s_opt.taskRegime==RegimeXref
-                    ||  s_opt.taskRegime==RegimeHtmlGenerate) {
-                emergencyExit(XREF_EXIT_ERR);
+            if (s_opt.taskRegime==RegimeXref
+                ||  s_opt.taskRegime==RegimeHtmlGenerate) {
+                fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
             }
         }
     }

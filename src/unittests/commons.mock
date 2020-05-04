@@ -15,10 +15,6 @@ void reInitCwd(char *dffname, char *dffsect) {
     mock(dffname, dffsect);
 }
 
-void emergencyExit(int exitStatus) {
-    mock(exitStatus);
-}
-
 void warningMessage(int code, char *message) {
     mock(code, message);
 }
