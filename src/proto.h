@@ -801,14 +801,6 @@ typedef struct cppIfStack {
 } S_cppIfStack;
 
 
-/* **************** processing cxref file ************************* */
-
-typedef struct cxScanFileFunctionLink {
-    int		recordCode;
-    void    (*handleFun)(int size,int ri,char**ccc,char**ffin,CharacterBuffer*bbb, int additionalArg);
-    int		additionalArg;
-} ScanFileFunctionStep;
-
 /* *********************************************************** */
 
 typedef struct expressionTokenType {

@@ -4,6 +4,14 @@
 #include "proto.h"
 #include "symbol.h"
 
+
+typedef struct scanFileFunctionStep {
+    int		recordCode;
+    void    (*handleFun)(int size,int ri,char**ccc,char**ffin,CharacterBuffer*bbb, int additionalArg);
+    int		additionalArg;
+} ScanFileFunctionStep;
+
+
 extern int searchStringFitness(char *cxtag, int slen);
 extern char *crTagSearchLineStatic(char *name, Position *p,
                                    int *len1, int *len2, int *len3);
