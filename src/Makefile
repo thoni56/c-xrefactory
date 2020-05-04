@@ -18,7 +18,7 @@ YACC=$(ROOTDIR)/byacc-1.9/yacc
 #
 # The heavy lifting is here
 
-debug: CFLAGS+=-DDEBUG -Og
+debug: CFLAGS+=-DDEBUG -O0
 debug yydebug: COVERAGE=--coverage
 yydebug: CFLAGS+= -DDEBUG -DYYDEBUG -Og
 
