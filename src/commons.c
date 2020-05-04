@@ -269,10 +269,6 @@ void warningMessage(int errCode, char *message) {
         } else {
             if (displayingErrorMessages())
                 log_warning("%s", ppcTmpBuff);
-            else {
-                fprintf(errOut,"![warning] %s\n", ppcTmpBuff);
-                fflush(errOut);
-            }
         }
     }
 }
@@ -285,10 +281,6 @@ static void writeErrorMessage(int errCode, char *mess) {
     } else {
         if (displayingErrorMessages())
             log_error("%s", ppcTmpBuff);
-        else {
-            fprintf(errOut,"![error] %s\n", ppcTmpBuff);
-            fflush(errOut);
-        }
     }
 }
 
