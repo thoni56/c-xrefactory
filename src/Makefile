@@ -100,7 +100,7 @@ enumTxt:
 	fi
 
 c-xref: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB)
-	lcov -q -z -d .
+	lcov -q -z -d $(OBJDIR)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
 	@make enumTxt
 	@make check-tokens
