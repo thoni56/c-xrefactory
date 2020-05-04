@@ -1,7 +1,7 @@
 #ifndef CXFILE_H
 #define CXFILE_H
 
-#include "proto.h"
+#include "proto.h"              /* for SymbolReferenceItem */
 #include "symbol.h"
 
 
@@ -10,6 +10,19 @@ typedef struct scanFileFunctionStep {
     void    (*handleFun)(int size,int ri,char**ccc,char**ffin,CharacterBuffer*bbb, int additionalArg);
     int		additionalArg;
 } ScanFileFunctionStep;
+
+
+extern ScanFileFunctionStep normalScanFunctionSequence[];
+extern ScanFileFunctionStep fullScanFunctionSequence[];
+extern ScanFileFunctionStep byPassFunctionSequence[];
+extern ScanFileFunctionStep symbolMenuCreationFunctionSequence[];
+extern ScanFileFunctionStep symbolLoadMenuRefsFunctionSequence[];
+extern ScanFileFunctionStep secondPassMacroUsageFunctionSequence[];
+extern ScanFileFunctionStep classHierarchyFunctionSequence[];
+extern ScanFileFunctionStep fullUpdateFunctionSequence[];
+extern ScanFileFunctionStep htmlGlobalReferencesFunctionSequence[];
+extern ScanFileFunctionStep symbolSearchFunctionSequence[];
+extern ScanFileFunctionStep deadCodeDetectionFunctionSequence[];
 
 
 extern int searchStringFitness(char *cxtag, int slen);
@@ -28,17 +41,5 @@ extern void readOneAppropReferenceFile(char *symname,
                                        ScanFileFunctionStep *scanFunTab);
 extern void scanReferenceFiles(char *fname, ScanFileFunctionStep *scanFunTab);
 extern int smartReadFileTabFile(void);
-
-extern ScanFileFunctionStep normalScanFunctionSequence[];
-extern ScanFileFunctionStep fullScanFunctionSequence[];
-extern ScanFileFunctionStep byPassFunctionSequence[];
-extern ScanFileFunctionStep symbolMenuCreationFunctionSequence[];
-extern ScanFileFunctionStep symbolLoadMenuRefsFunctionSequence[];
-extern ScanFileFunctionStep secondPassMacroUsageFunctionSequence[];
-extern ScanFileFunctionStep classHierarchyFunctionSequence[];
-extern ScanFileFunctionStep fullUpdateFunctionSequence[];
-extern ScanFileFunctionStep htmlGlobalReferencesFunctionSequence[];
-extern ScanFileFunctionStep symbolSearchFunctionSequence[];
-extern ScanFileFunctionStep deadCodeDetectionFunctionSequence[];
 
 #endif
