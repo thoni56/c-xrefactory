@@ -2,6 +2,8 @@
 #define _FILEDESCRIPTOR_H_
 
 #include "proto.h"
+#include "lex.h"
+
 
 typedef struct fileDesc {
     char                *fileName ;
@@ -10,6 +12,7 @@ typedef struct fileDesc {
     struct cppIfStack   *ifStack;					/* #if stack (C only) */
     struct lexBuf       lexBuffer;
 } S_fileDesc;
+
 
 extern S_fileDesc cFile;
 
