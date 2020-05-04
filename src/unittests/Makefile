@@ -59,7 +59,7 @@ yylex_tests.so: $(OBJDIR)/yylex_tests.o $(OBJDIR)/yylex.o $(YYLEX_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 # These includes the modules .c to be able to test internal functions or macros
-LEX_DEPENDENCIES = log position
+LEX_DEPENDENCIES = log position characterbuffer
 LEX_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(LEX_DEPENDENCIES))
 lex_tests.so: $(OBJDIR)/lex_tests.o $(LEX_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
