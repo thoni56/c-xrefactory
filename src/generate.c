@@ -2,8 +2,7 @@
 
 #include <stdbool.h>
 
-#include "commons.h"
-#include "globals.h"
+#include "globals.h"            /* s_opt & cxOut */
 
 
 /* ******************************************************************* */

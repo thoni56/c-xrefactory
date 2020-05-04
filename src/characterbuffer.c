@@ -1,6 +1,6 @@
 #include "characterbuffer.h"
 
-#include "globals.h"
+#include "globals.h"            /* for s_defaultZStream */
 
 #include "commons.h"            /* error() */
 #include "fileio.h"

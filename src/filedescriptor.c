@@ -1,6 +1,6 @@
 #include "filedescriptor.h"
 
-#include "globals.h"            /* For s_noneFileIndex */
+#include "globals.h"            /*& s_noneFileIndex */
 
 S_fileDesc cFile = {0};
 
