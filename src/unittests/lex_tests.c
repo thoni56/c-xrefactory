@@ -21,7 +21,7 @@ BeforeEach(Lex) {}
 AfterEach(Lex) {}
 
 
-xEnsure(Lex, can_run_initial_test) {
+Ensure(Lex, can_run_initial_test) {
     S_lexBuf lexBuffer;
 
     s_cache.activeCache = false;

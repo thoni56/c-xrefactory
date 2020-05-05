@@ -10,12 +10,11 @@ void fill_reference(Reference *reference, UsageBits usage, Position position,
     mock(reference, next);
 }
 
-void fill_symbolRefItem(SymbolReferenceItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass, int vFunClass, struct symbolReferenceItemBits bits) {
-    /* NOTE: can't mock 'bits' */
+void fillSymbolRefItemExceptBits(SymbolReferenceItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass, int vFunClass) {
     mock(symbolRefItem, name, fileHash, vApplClass, vFunClass);
 }
 
-void fill_symbolRefItemBits(SymbolReferenceItemBits *symbolRefItemBits, unsigned symType,
+void fillSymbolRefItemBits(SymbolReferenceItemBits *symbolRefItemBits, unsigned symType,
                             unsigned storage, unsigned scope, unsigned accessFlags,
                             unsigned category, unsigned htmlWasLn) {
     mock(symbolRefItemBits, symType, storage, scope, accessFlags, category, htmlWasLn);

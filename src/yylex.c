@@ -1663,12 +1663,11 @@ static void addMacroBaseUsageRef(Symbol *mdef) {
     Reference			*r;
     Position          basePos;
     fillPosition(&basePos, s_input_file_number, 0, 0);
-    fill_symbolRefItemBits(&ppp.b,TypeMacro,StorageDefault,ScopeGlobal,
+    fillSymbolRefItemExceptBits(&ppp, mdef->linkName,
+                                cxFileHashNumber(mdef->linkName), // useless, put 0
+                                s_noneFileIndex, s_noneFileIndex);
+    fillSymbolRefItemBits(&ppp.b,TypeMacro, StorageDefault, ScopeGlobal,
                            mdef->bits.access, CategoryGlobal, 0);
-    fill_symbolRefItem(&ppp,mdef->linkName,
-                       cxFileHashNumber(mdef->linkName), // useless, put 0
-                       s_noneFileIndex,s_noneFileIndex,
-                       ppp.b);
     rr = refTabIsMember(&s_cxrefTab, &ppp, &ii, &memb);
     r = NULL;
     if (rr) {

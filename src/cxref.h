@@ -6,8 +6,8 @@
 #include "olcxtab.h"
 
 extern void fill_reference(Reference *reference, UsageBits usage, Position position, Reference *next);
-extern void fill_symbolRefItem(SymbolReferenceItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass, int vFunClass, struct symbolReferenceItemBits bits);
-extern void fill_symbolRefItemBits(SymbolReferenceItemBits *symbolRefItemBits, unsigned symType,
+extern void fillSymbolRefItemExceptBits(SymbolReferenceItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass, int vFunClass);
+extern void fillSymbolRefItemBits(SymbolReferenceItemBits *symbolRefItemBits, unsigned symType,
                                    unsigned storage, unsigned scope, unsigned accessFlags,
                                    unsigned category, unsigned htmlWasLn);
 extern void fill_olSymbolsMenu(S_olSymbolsMenu *olSymbolsMenu, struct symbolReferenceItem	s,

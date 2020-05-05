@@ -2701,11 +2701,11 @@ void getPipedOptions(int *outNargc,char ***outNargv){
 }
 
 static void fillIncludeRefItem( SymbolReferenceItem *ddd , int fnum) {
-    fill_symbolRefItemBits(&ddd->b,TypeCppInclude,StorageExtern,
-                           ScopeGlobal,ACCESS_DEFAULT,CategoryGlobal,0);
-    fill_symbolRefItem(ddd,LINK_NAME_INCLUDE_REFS,
-                       cxFileHashNumber(LINK_NAME_INCLUDE_REFS),
-                       fnum, fnum, ddd->b);
+    fillSymbolRefItemExceptBits(ddd, LINK_NAME_INCLUDE_REFS,
+                                cxFileHashNumber(LINK_NAME_INCLUDE_REFS),
+                                fnum, fnum);
+    fillSymbolRefItemBits(&ddd->b, TypeCppInclude, StorageExtern,
+                           ScopeGlobal, ACCESS_DEFAULT, CategoryGlobal,0);
 }
 
 static void makeIncludeClosureOfFilesToUpdate(void) {
@@ -2800,11 +2800,11 @@ static int scheduleFileUsingTheMacro(void) {
     S_olcxReferences    *tmpc;
     assert(s_olstringInMbody);
     tmpc = NULL;
-    fill_symbolRefItemBits(&ddd.b, TypeMacro, StorageExtern,
-                           ScopeGlobal,ACCESS_DEFAULT,CategoryGlobal,0);
-    fill_symbolRefItem(&ddd,s_olstringInMbody,
-                       cxFileHashNumber(s_olstringInMbody),
-                       s_noneFileIndex, s_noneFileIndex,ddd.b);
+    fillSymbolRefItemExceptBits(&ddd, s_olstringInMbody,
+                                cxFileHashNumber(s_olstringInMbody),
+                                s_noneFileIndex, s_noneFileIndex);
+    fillSymbolRefItemBits(&ddd.b, TypeMacro, StorageExtern,
+                           ScopeGlobal, ACCESS_DEFAULT, CategoryGlobal, 0);
 
     //& rr = refTabIsMember(&s_cxrefTab, &ddd, &ii, &memb);
     //& assert(rr);
