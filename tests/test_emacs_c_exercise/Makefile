@@ -46,9 +46,9 @@ exec: EMACS_RUN=-l emacs_c_exercise.el
 execute exec emacs: setup
 	@# Run emacs with commands to execute the example sequence
 	@yes | GCOV_ERROR_FILE=gcov.err HOME=$(CURDIR) $(EMACS) --no-splash $(EMACS_STARTUP) -l .emacs.d/init.el -l .emacs.d/override-el-get-update.el $(EMACS_RUN) > /dev/null 2>&1
-	@if -f gcov.err ; then \
-		cat gcov.err ; \
-		rm gcov.err ; \
+	@if [ -f cexercise/refactorings/gcov.err ] ; then \
+		cat cexercise/refactorings/gcov.err ; \
+		rm cexercise/refactorings/gcov.err ; \
 	fi
 	@# Remove tilde-files after editing
 	@find cexercise -name \*~ -exec rm {} \;
