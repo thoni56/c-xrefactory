@@ -2,8 +2,8 @@
 #include "lex.h"
 #include <cgreen/mocks.h>
 
-int getLexBuf(struct lexBuf *buffer) {
-  return (int) mock(buffer);
+bool getLexBuf(struct lexBuf *buffer) {
+  return (bool) mock(buffer);
 }
 
 void gotOnLineCxRefs(Position *position) {

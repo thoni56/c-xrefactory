@@ -1,6 +1,8 @@
 #ifndef LEX_H
 #define LEX_H
 
+#include <stdbool.h>
+
 #include "proto.h"
 #include "characterbuffer.h"
 
@@ -16,7 +18,7 @@ typedef struct lexBuf {
 } S_lexBuf;
 
 
-extern int getLexBuf(struct lexBuf *lb);
+extern bool getLexBuf(struct lexBuf *lb);
 extern void gotOnLineCxRefs(Position *position);
 
 #endif

@@ -346,8 +346,7 @@ void initInput(FILE *file, S_editorBuffer *buffer, char *prefix, char *fileName)
                 cInput = macStack[--macroStackIndex];                     \
             } else if (margFlag == INPUT_NORMAL) {                     \
                 SetCFileConsistency();                              \
-                getLexBuf(&cFile.lexBuffer);                               \
-                if (cFile.lexBuffer.next >= cFile.lexBuffer.end) goto endOfFile;    \
+                if (!getLexBuf(&cFile.lexBuffer)) goto endOfFile;   \
                 SetCInputConsistency();                             \
             } else {                                                \
                 /*			s_cache.recoveringFromCache = 0;*/      \

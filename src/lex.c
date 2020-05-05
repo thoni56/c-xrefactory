@@ -270,7 +270,7 @@ void gotOnLineCxRefs(Position *ps ) {
                        COLUMN_POS(ccc,clb,clo) - (llen), dd);           \
     }
 
-int getLexBuf(struct lexBuf *lb) {
+bool getLexBuf(struct lexBuf *lb) {
     int ch;
     CharacterBuffer *cb;
     char *cb_next, *cb_end;
@@ -909,7 +909,7 @@ int getLexBuf(struct lexBuf *lb) {
     lb->end = dd;
 
     if (lb->end == lb->chars)
-        return 0;
+        return false;
     else
-        return 1;
+        return true;
 }
