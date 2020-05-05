@@ -2,7 +2,9 @@
 #define _CHARACTERBUFFER_H_
 
 #include <zlib.h>
-#include "proto.h"
+#include <stdio.h>
+#include <stdbool.h>
+#include "constants.h"
 
 
 typedef enum {
