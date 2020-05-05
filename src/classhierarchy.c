@@ -494,10 +494,9 @@ static void genVirtualsGlobRefLists(    S_olSymbolsMenu *rrr,
     }
 }
 
-static void genNonVirtualsGlobRefLists( S_olSymbolsMenu *rrr,
-                                        FILE *ff,
-                                        char *fn
-                                        ) {
+static void genNonVirtualsGlobRefLists(S_olSymbolsMenu *rrr,
+                                       FILE *ff,
+                                       char *fn) {
     S_olSymbolsMenu *ss;
     SymbolReferenceItem *p;
 
