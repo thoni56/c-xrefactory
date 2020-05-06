@@ -152,7 +152,7 @@ static void aboutMessage(void) {
     char tmpBuff[TMP_BUFF_SIZE];                                        \
     i++;                                                                \
     if (i >= argc) {                                                    \
-        sprintf(tmpBuff,"file name expected after %s\n",argv[i-1]);     \
+        sprintf(tmpBuff,"file name expected after %s",argv[i-1]);     \
         errorMessage(ERR_ST,tmpBuff);                                   \
         usage(argv[0]);                                                 \
         exit(1);                                                        \
@@ -163,7 +163,7 @@ static void aboutMessage(void) {
     char tmpBuff[TMP_BUFF_SIZE];                                        \
     i++;                                                                \
     if (i >= argc) {                                                    \
-        sprintf(tmpBuff,"further argument(s) expected after %s\n",argv[i-1]); \
+        sprintf(tmpBuff,"further argument(s) expected after %s",argv[i-1]); \
         errorMessage(ERR_ST,tmpBuff);                                   \
         usage(argv[0]);                                                 \
         exit(1);                                                        \
@@ -753,7 +753,7 @@ static int processIOption(int *ii, int argc, char **argv) {
         i++;
         if (i >= argc) {
             char tmpBuff[TMP_BUFF_SIZE];
-            sprintf(tmpBuff,"directory name expected after -I\n");
+            sprintf(tmpBuff,"directory name expected after -I");
             errorMessage(ERR_ST,tmpBuff);
             usage(argv[0]);
         }

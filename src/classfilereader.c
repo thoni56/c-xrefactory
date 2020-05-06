@@ -201,7 +201,7 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iB
             if (zzz!=NULL) *zzz = 0;
             sprintf(tmpBuff,"\n\tfiles in %s are compressed by unknown method #%d\n", ttt, compressionMethod);
             sprintf(tmpBuff+strlen(tmpBuff),
-                    "\tRun 'jar2jar0 %s' command to uncompress them.\n", ttt);
+                    "\tRun 'jar2jar0 %s' command to uncompress them.", ttt);
             assert(strlen(tmpBuff)+1 < TMP_BUFF_SIZE);
             errorMessage(ERR_ST,tmpBuff);
             //&}
@@ -490,7 +490,7 @@ static int zipSeekToFile(char **accc, char **affin, CharacterBuffer *iBuf,
     }
     *sep = ZIP_SEPARATOR_CHAR;
     if (i>=MAX_JAVA_ZIP_ARCHIVES || s_zipArchiveTable[i].fn[0]==0) {
-        errorMessage(ERR_INTERNAL, "archive not indexed\n");
+        errorMessage(ERR_INTERNAL, "archive not indexed");
         goto fini;
     }
     if (fsIsMember(&s_zipArchiveTable[i].dir,sep+1,0,ADD_NO,&place)==0) goto fini;
@@ -634,7 +634,7 @@ static union constantPoolUnion *cfReadConstantPool(char **accc, char **affin,
             GetU4(cval, ccc, ffin, iBuf);
             break;
         default:
-            sprintf(tmpBuff,"unknown tag %d in constant pool of %s\n",tag,cFile.fileName);
+            sprintf(tmpBuff,"unknown tag %d in constant pool of %s",tag,currentFile.fileName);
             errorMessage(ERR_ST,tmpBuff);
         }
     }
