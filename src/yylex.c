@@ -242,19 +242,19 @@ void ppMemInit(void) {
 }
 
 // it is supposed that one of file or buffer is NULL
-void initInput(FILE *file, S_editorBuffer *buffer, char *prefix, char *fileName) {
+void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fileName) {
     int     prefixLength, bufferSize, offset;
     char	*bufferStart;
 
     prefixLength = strlen(prefix);
-    if (buffer != NULL) {
+    if (editorBuffer != NULL) {
         // read buffer
-        assert(prefixLength < buffer->a.allocatedFreePrefixSize);
-        strncpy(buffer->a.text-prefixLength, prefix, prefixLength);
-        bufferStart = buffer->a.text-prefixLength;
-        bufferSize = buffer->a.bufferSize+prefixLength;
-        offset = buffer->a.bufferSize;
-        assert(bufferStart > buffer->a.allocatedBlock);
+        assert(prefixLength < editorBuffer->a.allocatedFreePrefixSize);
+        strncpy(editorBuffer->a.text-prefixLength, prefix, prefixLength);
+        bufferStart = editorBuffer->a.text-prefixLength;
+        bufferSize = editorBuffer->a.bufferSize+prefixLength;
+        offset = editorBuffer->a.bufferSize;
+        assert(bufferStart > editorBuffer->a.allocatedBlock);
     } else {
         // read file
         assert(prefixLength < CHAR_BUFF_SIZE);
