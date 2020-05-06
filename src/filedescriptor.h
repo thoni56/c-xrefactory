@@ -5,21 +5,21 @@
 #include "lex.h"
 
 
-typedef struct fileDesc {
+typedef struct fileDescriptor {
     char                *fileName ;
     int                 lineNumber ;
     int					ifDepth;					/* depth of #ifs (C only)*/
     struct cppIfStack   *ifStack;					/* #if stack (C only) */
     struct lexBuf       lexBuffer;
-} S_fileDesc;
+} FileDescriptor;
 
 
-extern S_fileDesc cFile;
+extern FileDescriptor currentFile;
 
-extern struct fileDesc inStack[INCLUDE_STACK_SIZE];
+extern FileDescriptor inStack[INCLUDE_STACK_SIZE];
 extern int inStacki;
 
 
-extern void fillFileDescriptor(S_fileDesc *fileDescriptor, char *name, char *bbase, int bsize, FILE *ff, unsigned filepos);
+extern void fillFileDescriptor(FileDescriptor *fileDescriptor, char *name, char *bbase, int bsize, FILE *ff, unsigned filepos);
 
 #endif

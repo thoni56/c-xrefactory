@@ -2,13 +2,13 @@
 
 #include "globals.h"            /*& s_noneFileIndex */
 
-S_fileDesc cFile = {0};
+FileDescriptor currentFile = {0};
 
-S_fileDesc inStack[INCLUDE_STACK_SIZE];
+FileDescriptor inStack[INCLUDE_STACK_SIZE];
 int inStacki=0;
 
 
-void fillFileDescriptor(S_fileDesc *fileDescriptor, char *fileName, char *bufferStart, int bufferSize, FILE *file, unsigned offset) {
+void fillFileDescriptor(FileDescriptor *fileDescriptor, char *fileName, char *bufferStart, int bufferSize, FILE *file, unsigned offset) {
     fileDescriptor->fileName = fileName;
     fileDescriptor->lineNumber = 0;
     fileDescriptor->ifDepth = 0;
