@@ -25,7 +25,8 @@ Ensure(Lex, can_run_initial_test) {
     S_lexBuf lexBuffer;
 
     s_cache.activeCache = false;
+
     initCharacterBuffer(&lexBuffer.buffer, NULL, 0);
 
-    getLexBuf(&lexBuffer);
+    assert_that(getLexBuf(&lexBuffer), is_false);
 }

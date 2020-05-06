@@ -45,13 +45,13 @@ AfterEach(Yylex) {}
 
 static void setup_lexBuffer_for_reading(void *data) {
     /* Need to insert lexem-codes first ? */
-    cFile.lexBuffer.chars[0] = '\275';
-    cFile.lexBuffer.chars[1] = '\001';
-    strcpy(&cFile.lexBuffer.chars[2], cFile.lexBuffer.buffer.chars);
-    *strchr(&cFile.lexBuffer.chars[2], ' ') = '\0';
-    cFile.lexBuffer.next = cFile.lexBuffer.chars;
-    cFile.lexBuffer.end = strchr(cFile.lexBuffer.chars, '\0');
-    cFile.lexBuffer.index = 2;
+    currentFile.lexBuffer.chars[0] = '\275';
+    currentFile.lexBuffer.chars[1] = '\001';
+    strcpy(&currentFile.lexBuffer.chars[2], currentFile.lexBuffer.buffer.chars);
+    *strchr(&currentFile.lexBuffer.chars[2], ' ') = '\0';
+    currentFile.lexBuffer.next = currentFile.lexBuffer.chars;
+    currentFile.lexBuffer.end = strchr(currentFile.lexBuffer.chars, '\0');
+    currentFile.lexBuffer.index = 2;
 }
 
 Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {
@@ -59,11 +59,11 @@ Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {
     char *definition = (char *)malloc(strlen(DEFINE)+1);
     strcpy(definition, DEFINE);
 
-    expect(getLexBuf, when(buffer, is_equal_to(&cFile.lexBuffer)),
+    expect(getLexBuf, when(buffer, is_equal_to(&currentFile.lexBuffer)),
            will_return(1), with_side_effect(setup_lexBuffer_for_reading, NULL));
     expect(setGlobalFileDepNames, when(iname, is_equal_to_string(definition)),
            will_set_contents_of_parameter(pp_name, &definition, sizeof(char *)));
-    expect(getLexBuf, when(buffer, is_equal_to(&cFile.lexBuffer)),
+    expect(getLexBuf, when(buffer, is_equal_to(&currentFile.lexBuffer)),
            will_return(0));
 
     /* This is the confirmation that there is a symbol p with a
@@ -74,7 +74,7 @@ Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {
     s_opt.taskRegime = RegimeXref;
     /* If the define does not have a body, add the value of "1" */
     initInput(NULL, NULL, "__x86_64__ 1", NULL);
-    cFile.lineNumber = 1;
+    currentFile.lineNumber = 1;
     processDefine(false);
 
     /* Inspect symboltable for the define */

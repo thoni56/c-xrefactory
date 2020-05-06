@@ -717,7 +717,7 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
     // memset(s_yygstate, sizeof(struct yyGlobalState), 0);
     uniyylval = & s_yygstate->gyylval;
     pushNewInclude(ff, bb, asfname, "\n");
-    cfilenum = cFile.lexBuffer.buffer.fileNumber;
+    cfilenum = currentFile.lexBuffer.buffer.fileNumber;
     s_jsl->pass = 1;
     java_yyparse();
     popInclude();      // this will close the file
@@ -734,7 +734,7 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
         }
     }
     pushNewInclude(ff, bb, asfname, "\n");
-    cfilenum = cFile.lexBuffer.buffer.fileNumber;
+    cfilenum = currentFile.lexBuffer.buffer.fileNumber;
     s_jsl->pass = 2;
     java_yyparse();
     popInclude();      // this will close the file
@@ -1820,7 +1820,7 @@ void javaMethodBodyEnding(Position *endpos) {
         htmlAddFunctionSeparatorReference();
     } else if (s_opt.taskRegime == RegimeEditServer) {
         if (s_cp.parserPassedMarker && !s_cp.thisMethodMemoriesStored){
-            s_cps.methodCoordEndLine = cFile.lineNumber+1;
+            s_cps.methodCoordEndLine = currentFile.lineNumber+1;
         }
     }
     // I rely that it is nil, for example in setmove target
@@ -2636,7 +2636,7 @@ void javaParsedSuperClass(Symbol *symbol) {
         //&assert(0); // this should never comed now
         javaLoadClassSymbolsFromFile(symbol);
         addSuperClassOrInterface(s_javaStat->thisClass, symbol,
-                                 cFile.lexBuffer.buffer.fileNumber);
+                                 currentFile.lexBuffer.buffer.fileNumber);
     }
 }
 

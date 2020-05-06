@@ -831,25 +831,25 @@ CompilationUnit: {
                     // this may be problem for CACHING !!!!
                     if ($2.d == NULL) {	/* anonymous package */
                         s_javaStat->className = NULL;
-                        for(i=0,j=0; cFile.fileName[i]; i++) {
-                            if (cFile.fileName[i] == FILE_PATH_SEPARATOR) j=i;
+                        for(i=0,j=0; currentFile.fileName[i]; i++) {
+                            if (currentFile.fileName[i] == FILE_PATH_SEPARATOR) j=i;
                         }
                         XX_ALLOCC(cdir, j+1, char);  // I prefer this
                         //&SM_ALLOCC(ftMemory, cdir, j+1, char);  // will exhauste ftmemory
-                        strncpy(cdir,cFile.fileName,j); cdir[j]=0;
+                        strncpy(cdir,currentFile.fileName,j); cdir[j]=0;
                         s_javaStat->unnamedPackagePath = cdir;
                         javaCheckIfPackageDirectoryIsInClassOrSourcePath(cdir);
                     } else {
                         javaAddPackageDefinition($2.d);
                         s_javaStat->className = $2.d;
-                        for(i=0,j=0; cFile.fileName[i]; i++) {
-                            if (cFile.fileName[i] == FILE_PATH_SEPARATOR) j=i;
+                        for(i=0,j=0; currentFile.fileName[i]; i++) {
+                            if (currentFile.fileName[i] == FILE_PATH_SEPARATOR) j=i;
                         }
                         packlen = strlen(s_javaThisPackageName);
-                        if (j>packlen && fnnCmp(s_javaThisPackageName,&cFile.fileName[j-packlen],packlen)==0){
+                        if (j>packlen && fnnCmp(s_javaThisPackageName,&currentFile.fileName[j-packlen],packlen)==0){
                             XX_ALLOCC(cdir, j-packlen, char); // I prefer this
                             //&SM_ALLOCC(ftMemory, cdir, j-packlen, char);  // will exhauste ftmemory
-                            strncpy(cdir, cFile.fileName, j-packlen-1); cdir[j-packlen-1]=0;
+                            strncpy(cdir, currentFile.fileName, j-packlen-1); cdir[j-packlen-1]=0;
                             s_javaStat->namedPackagePath = cdir;
                             s_javaStat->currentPackage = "";
                             javaCheckIfPackageDirectoryIsInClassOrSourcePath(cdir);
@@ -908,10 +908,10 @@ CompilationUnit: {
                     int			j;
                     /* add this package types */
                     if ($2.d == NULL) {	/* anonymous package */
-                        for(i=0,j=0; cFile.fileName[i]; i++) {
-                            if (cFile.fileName[i] == FILE_PATH_SEPARATOR) j=i;
+                        for(i=0,j=0; currentFile.fileName[i]; i++) {
+                            if (currentFile.fileName[i] == FILE_PATH_SEPARATOR) j=i;
                         }
-                        strncpy(cdir,cFile.fileName,j);
+                        strncpy(cdir,currentFile.fileName,j);
                         cdir[j]=0;
                         mapDirectoryFiles(cdir,
                                     jslAddMapedImportTypeName,ALLOW_EDITOR_FILES, "",
@@ -1376,28 +1376,28 @@ _bef_:	{
                             s_cp.thisMethodMemoriesStored = 1;
                             if (s_opt.server_operation == OLO_MAYBE_THIS) {
                                 changeMethodReferencesUsages(LINK_NAME_MAYBE_THIS_ITEM,
-                                                             CategoryLocal, cFile.lexBuffer.buffer.fileNumber,
+                                                             CategoryLocal, currentFile.lexBuffer.buffer.fileNumber,
                                                              s_javaStat->thisClass);
                             } else if (s_opt.server_operation == OLO_NOT_FQT_REFS) {
                                 changeMethodReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
-                                                             CategoryLocal,cFile.lexBuffer.buffer.fileNumber,
+                                                             CategoryLocal,currentFile.lexBuffer.buffer.fileNumber,
                                                              s_javaStat->thisClass);
                             } else if (s_opt.server_operation == OLO_USELESS_LONG_NAME) {
                                 changeMethodReferencesUsages(LINK_NAME_IMPORTED_QUALIFIED_ITEM,
-                                                             CategoryGlobal,cFile.lexBuffer.buffer.fileNumber,
+                                                             CategoryGlobal,currentFile.lexBuffer.buffer.fileNumber,
                                                              s_javaStat->thisClass);
                             }
                             s_cps.cxMemiAtClassBeginning = s_cp.cxMemiAtClassBegin;
                             s_cps.cxMemiAtClassEnd = cxMemory->i;
-                            s_cps.classCoordEndLine = cFile.lineNumber+1;
+                            s_cps.classCoordEndLine = currentFile.lineNumber+1;
 //&fprintf(dumpOut,"!setting class end line to %d, cb==%d, ce==%d\n", s_cps.classCoordEndLine, s_cps.cxMemiAtClassBeginning, s_cps.cxMemiAtClassEnd);
                             if (s_opt.server_operation == OLO_NOT_FQT_REFS_IN_CLASS) {
                                 changeClassReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
-                                                            CategoryLocal,cFile.lexBuffer.buffer.fileNumber,
+                                                            CategoryLocal,currentFile.lexBuffer.buffer.fileNumber,
                                                             s_javaStat->thisClass);
                             } else if (s_opt.server_operation == OLO_USELESS_LONG_NAME_IN_CLASS) {
                                 changeClassReferencesUsages(LINK_NAME_IMPORTED_QUALIFIED_ITEM,
-                                                            CategoryGlobal,cFile.lexBuffer.buffer.fileNumber,
+                                                            CategoryGlobal,currentFile.lexBuffer.buffer.fileNumber,
                                                             s_javaStat->thisClass);
                             }
                         }
@@ -1495,7 +1495,7 @@ FieldDeclaration
                     if (s_opt.taskRegime == RegimeEditServer
                         && s_cp.parserPassedMarker
                         && !s_cp.thisMethodMemoriesStored){
-                        s_cps.methodCoordEndLine = cFile.lineNumber+1;
+                        s_cps.methodCoordEndLine = currentFile.lineNumber+1;
                     }
                 } else {
                     PropagateBoundaries($$, $1, $4);

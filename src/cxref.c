@@ -778,7 +778,7 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
     assert(s_opt.taskRegime);
     if (s_opt.taskRegime == RegimeEditServer) {
         if (s_opt.server_operation == OLO_EXTRACT) {
-            if (s_input_file_number != cFile.lexBuffer.buffer.fileNumber) return NULL;
+            if (s_input_file_number != currentFile.lexBuffer.buffer.fileNumber) return NULL;
         } else {
             if (category==CategoryGlobal && p->bits.symType!=TypeCppInclude && s_opt.server_operation!=OLO_TAG_SEARCH) {
                 // do not load references if not the currently edited file

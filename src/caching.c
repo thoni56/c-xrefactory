@@ -295,9 +295,9 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
     // do not forget that includes are listed in PP_MEMORY too.
     includeListDeleteOutOfMemory();
 
-    cFile.lineNumber = cp->lineNumber;
-    cFile.ifDepth = cp->ifDeep;
-    cFile.ifStack = cp->ifstack;
+    currentFile.lineNumber = cp->lineNumber;
+    currentFile.ifDepth = cp->ifDeep;
+    currentFile.ifStack = cp->ifstack;
     fillLexInput(&cInput, cp->lbcc, readUntil, s_cache.lb, NULL, INPUT_CACHE);
     fillCaching(&s_cache,
                  activeCaching,
@@ -340,7 +340,7 @@ void setupCaching(void) {
 }
 
 void initCaching(void) {
-    fillCaching(&s_cache, 1, 0, 0, s_cache.lb, cFile.lexBuffer.next, NULL,NULL);
+    fillCaching(&s_cache, 1, 0, 0, s_cache.lb, currentFile.lexBuffer.next, NULL,NULL);
     placeCachePoint(0);
     s_cache.activeCache = 0;
 }
@@ -411,7 +411,7 @@ void placeCachePoint(int inputCaching) {
     fillCachePoint(pp, s_topBlock, *s_topBlock,
                     ppmMemoryi, cxMemory->i, mbMemoryi,
                     s_cache.lbcc, s_cache.ibi,
-                    cFile.lineNumber, cFile.ifDepth, cFile.ifStack,
+                    currentFile.lineNumber, currentFile.ifDepth, currentFile.ifStack,
                     s_javaStat, s_count
                     );
     s_cache.cpi ++;

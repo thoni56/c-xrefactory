@@ -1681,7 +1681,7 @@ static void htmlGenerateJavaDocFile(int fnum) {
 void htmlAddFunctionSeparatorReference(void) {
     Position pos;
     if (s_opt.taskRegime == RegimeHtmlGenerate) {
-        fillPosition(&pos, cFile.lexBuffer.buffer.fileNumber, cFile.lineNumber+1, -1);
+        fillPosition(&pos, currentFile.lexBuffer.buffer.fileNumber, currentFile.lineNumber+1, -1);
         addTrivialCxReference(LINK_NAME_FUNCTION_SEPARATOR, TypeFunSep,StorageDefault,
                               &pos, UsageUsed);
         return;

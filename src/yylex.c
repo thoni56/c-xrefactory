@@ -68,10 +68,10 @@ S_lexInput cInput;
 
 #define SetCacheConsistency() {s_cache.cc = cInput.currentLexem;}
 #define SetCFileConsistency() {\
-    cFile.lexBuffer.next = cInput.currentLexem;\
+    currentFile.lexBuffer.next = cInput.currentLexem;\
 }
 #define SetCInputConsistency() {\
-    fillLexInput(&cInput,cFile.lexBuffer.next,cFile.lexBuffer.end,cFile.lexBuffer.chars,NULL,INPUT_NORMAL);\
+    fillLexInput(&cInput,currentFile.lexBuffer.next,currentFile.lexBuffer.end,currentFile.lexBuffer.chars,NULL,INPUT_NORMAL);\
 }
 
 #define IS_IDENTIFIER_LEXEM(lex) (lex==IDENTIFIER || lex==IDENT_NO_CPP_EXPAND  || lex==IDENT_TO_COMPLETE)
@@ -121,15 +121,15 @@ char *placeIdent(void) {
     char fn[MAX_FILE_NAME_SIZE];
     char mm[MAX_HTML_REF_LEN];
     int s;
-    if (cFile.fileName!=NULL) {
+    if (currentFile.fileName!=NULL) {
         if (s_opt.xref2 && s_opt.taskRegime!=RegimeEditServer) {
-            strcpy(fn, getRealFileNameStatic(normalizeFileName(cFile.fileName, s_cwd)));
+            strcpy(fn, getRealFileNameStatic(normalizeFileName(currentFile.fileName, s_cwd)));
             assert(strlen(fn) < MAX_FILE_NAME_SIZE);
-            sprintf(mm, "%s:%d", simpleFileName(fn),cFile.lineNumber);
+            sprintf(mm, "%s:%d", simpleFileName(fn),currentFile.lineNumber);
             assert(strlen(mm) < MAX_HTML_REF_LEN);
-            sprintf(tt, "<A HREF=\"file://%s#%d\" %s=%ld>%s</A>", fn, cFile.lineNumber, PPCA_LEN, (unsigned long)strlen(mm), mm);
+            sprintf(tt, "<A HREF=\"file://%s#%d\" %s=%ld>%s</A>", fn, currentFile.lineNumber, PPCA_LEN, (unsigned long)strlen(mm), mm);
         } else {
-            sprintf(tt,"%s:%d ",simpleFileName(getRealFileNameStatic(cFile.fileName)),cFile.lineNumber);
+            sprintf(tt,"%s:%d ",simpleFileName(getRealFileNameStatic(currentFile.fileName)),currentFile.lineNumber);
         }
         s = strlen(tt);
         assert(s<MAX_HTML_REF_LEN);
@@ -143,7 +143,7 @@ static void dpnewline(int n) {
     int i;
     if (s_opt.debug) {
         for(i=1; i<=n; i++) {
-            log_trace("%s:%d", cFile.fileName, cFile.lineNumber+i);
+            log_trace("%s:%d", currentFile.fileName, currentFile.lineNumber+i);
         }
     }
 }
@@ -227,8 +227,8 @@ static void setOpenFileInfo(char *ss) {
     int ii;
     char *ff;
     getOrCreateFileInfo(ss, &ii, &ff);
-    cFile.lexBuffer.buffer.fileNumber = ii;
-    cFile.fileName = ff;
+    currentFile.lexBuffer.buffer.fileNumber = ii;
+    currentFile.fileName = ff;
 }
 
 /* ***************************************************************** */
@@ -258,12 +258,12 @@ void initInput(FILE *file, S_editorBuffer *buffer, char *prefix, char *fileName)
     } else {
         // read file
         assert(prefixLength < CHAR_BUFF_SIZE);
-        strcpy(cFile.lexBuffer.buffer.chars, prefix);
-        bufferStart = cFile.lexBuffer.buffer.chars;
+        strcpy(currentFile.lexBuffer.buffer.chars, prefix);
+        bufferStart = currentFile.lexBuffer.buffer.chars;
         bufferSize = prefixLength;
         offset = 0;
     }
-    fillFileDescriptor(&cFile, fileName, bufferStart, bufferSize, file, offset);
+    fillFileDescriptor(&currentFile, fileName, bufferStart, bufferSize, file, offset);
     setOpenFileInfo(fileName);
     SetCInputConsistency();
     s_ifEvaluation = false;				/* ??? */
@@ -300,7 +300,7 @@ void initInput(FILE *file, S_editorBuffer *buffer, char *prefix, char *fileName)
                 GetLexToken(lineval,Input);                             \
                 if (linecount) {                                        \
                     if(s_opt.debug) dpnewline(lineval);                 \
-                    cFile.lineNumber += lineval;                        \
+                    currentFile.lineNumber += lineval;                        \
                 }                                                       \
             } else if (lex == CONSTANT || lex == LONG_CONSTANT) {       \
                 GetLexInt(val,Input);                                   \
@@ -322,7 +322,7 @@ void initInput(FILE *file, S_editorBuffer *buffer, char *prefix, char *fileName)
         } else if (lex == '\n' && (linecount)) {                        \
             GetLexPosition((pos),Input);                                \
             if (s_opt.debug) dpnewline(1);                              \
-            cFile.lineNumber ++;                                        \
+            currentFile.lineNumber ++;                                        \
         } else {                                                        \
             GetLexPosition((pos),Input);                                \
         }                                                               \
@@ -346,13 +346,13 @@ void initInput(FILE *file, S_editorBuffer *buffer, char *prefix, char *fileName)
                 cInput = macStack[--macroStackIndex];                     \
             } else if (margFlag == INPUT_NORMAL) {                     \
                 SetCFileConsistency();                              \
-                if (!getLexBuf(&cFile.lexBuffer)) goto endOfFile;   \
+                if (!getLexBuf(&currentFile.lexBuffer)) goto endOfFile;   \
                 SetCInputConsistency();                             \
             } else {                                                \
                 /*			s_cache.recoveringFromCache = 0;*/      \
                 s_cache.cc = s_cache.cfin = NULL;                   \
                 cacheInput();                                       \
-                s_cache.lexcc = cFile.lexBuffer.next;                        \
+                s_cache.lexcc = currentFile.lexBuffer.next;                        \
                 SetCInputConsistency();                             \
             }                                                       \
             lastlexadd = cInput.currentLexem;                                 \
@@ -411,7 +411,7 @@ static  void processLine(void) {
     GetLex(lex);
     PassLex(cInput.currentLexem,lex,l,v,h,pos, len,1);
     if (lex != CONSTANT) return;
-    //& cFile.lineNumber = v-1;      // ignore this directive
+    //& currentFile.lineNumber = v-1;      // ignore this directive
     GetLex(lex);
 /*	this should be moved to the  getLexBuf routine,!!!!!!!!!!!!!!!!!!! TODO */
 /*&
@@ -475,23 +475,23 @@ void pushNewInclude(FILE *f, S_editorBuffer *buffer, char *name, char *prepend) 
     } else {
         SetCFileConsistency();
     }
-    inStack[inStacki] = cFile;		/* buffers are copied !!!!!!, burk */
+    inStack[inStacki] = currentFile;		/* buffers are copied !!!!!!, burk */
     if (inStacki+1 >= INCLUDE_STACK_SIZE) {
         fatalError(ERR_ST,"too deep nesting in includes", XREF_EXIT_ERR);
     }
     inStacki ++;
     initInput(f, buffer, prepend, name);
-    cacheInclude(cFile.lexBuffer.buffer.fileNumber);
+    cacheInclude(currentFile.lexBuffer.buffer.fileNumber);
 }
 
 void popInclude(void) {
-    assert(s_fileTab.tab[cFile.lexBuffer.buffer.fileNumber]);
-    if (s_fileTab.tab[cFile.lexBuffer.buffer.fileNumber]->b.cxLoading) {
-        s_fileTab.tab[cFile.lexBuffer.buffer.fileNumber]->b.cxLoaded = true;
+    assert(s_fileTab.tab[currentFile.lexBuffer.buffer.fileNumber]);
+    if (s_fileTab.tab[currentFile.lexBuffer.buffer.fileNumber]->b.cxLoading) {
+        s_fileTab.tab[currentFile.lexBuffer.buffer.fileNumber]->b.cxLoaded = true;
     }
-    closeCharacterBuffer(&cFile.lexBuffer.buffer);
+    closeCharacterBuffer(&currentFile.lexBuffer.buffer);
     if (inStacki != 0) {
-        cFile = inStack[--inStacki];	/* buffers are copied !!!!!!, burk */
+        currentFile = inStack[--inStacki];	/* buffers are copied !!!!!!, burk */
         if (inStacki == 0 && s_cache.cc!=NULL) {
             fillLexInput(&cInput, s_cache.cc, s_cache.cfin, s_cache.lb, NULL, INPUT_CACHE);
         } else {
@@ -512,7 +512,7 @@ static FILE *openInclude(char includeType, char *name, char **fileName) {
 
     er = NULL; r = NULL;
     nmlen = strlen(name);
-    extractPathInto(cFile.fileName, rdir);
+    extractPathInto(currentFile.fileName, rdir);
     if (includeType!='<') {
         strcpy(nn, normalizeFileName(name, rdir));
         log_trace("try to open %s", nn);
@@ -565,7 +565,7 @@ static void processInclude2(Position *ipos, char pchar, char *iname) {
         assert(s_opt.taskRegime);
         if (s_opt.taskRegime!=RegimeEditServer) warningMessage(ERR_CANT_OPEN, iname);
     } else if (CX_REGIME()) {
-        addIncludeReferences(cFile.lexBuffer.buffer.fileNumber, ipos);
+        addIncludeReferences(currentFile.lexBuffer.buffer.fileNumber, ipos);
     }
 }
 
@@ -874,7 +874,7 @@ void addMacroDefinedByOption(char *opt) {
         args = true;
     }
     initInput(NULL, NULL, nopt, NULL);
-    cFile.lineNumber = 1;
+    currentFile.lineNumber = 1;
     processDefine(args);
 }
 
@@ -935,14 +935,14 @@ static void genCppIfElseReference(int level, Position *pos, int usage) {
     if (level > 0) {
       PP_ALLOC(ss, S_cppIfStack);
       ss->pos = *pos;
-      ss->next = cFile.ifStack;
-      cFile.ifStack = ss;
+      ss->next = currentFile.ifStack;
+      currentFile.ifStack = ss;
     }
-    if (cFile.ifStack!=NULL) {
-      dp = cFile.ifStack->pos;
+    if (currentFile.ifStack!=NULL) {
+      dp = currentFile.ifStack->pos;
       sprintf(ttt,"CppIf%x-%x-%d", dp.file, dp.col, dp.line);
       addTrivialCxReference(ttt, TypeCppIfElse,StorageDefault, pos, usage);
-      if (level < 0) cFile.ifStack = cFile.ifStack->next;
+      if (level < 0) currentFile.ifStack = currentFile.ifStack->next;
     }
 }
 
@@ -986,12 +986,12 @@ endOfFile:;
 
 static void execCppIf(int deleteSource) {
     int onElse;
-    if (deleteSource==0) cFile.ifDepth ++;
+    if (deleteSource==0) currentFile.ifDepth ++;
     else {
         onElse = cppDeleteUntilEndElse(false);
         if (onElse==UNTIL_ELSE) {
             /* #if #else */
-            cFile.ifDepth ++;
+            currentFile.ifDepth ++;
         } else if (onElse==UNTIL_ELIF) processIf();
     }
 }
@@ -1185,9 +1185,9 @@ static int processCppConstruct(int lex) {
         break;
     case CPP_ELIF:
         log_debug("#elif");
-        if (cFile.ifDepth) {
+        if (currentFile.ifDepth) {
             genCppIfElseReference(0, &pos, UsageUsed);
-            cFile.ifDepth --;
+            currentFile.ifDepth --;
             cppDeleteUntilEndElse(true);
         } else if (s_opt.taskRegime!=RegimeEditServer) {
             warningMessage(ERR_ST,"unmatched #elif");
@@ -1195,9 +1195,9 @@ static int processCppConstruct(int lex) {
         break;
     case CPP_ELSE:
         log_debug("#else");
-        if (cFile.ifDepth) {
+        if (currentFile.ifDepth) {
             genCppIfElseReference(0, &pos, UsageUsed);
-            cFile.ifDepth --;
+            currentFile.ifDepth --;
             cppDeleteUntilEndElse(true);
         } else if (s_opt.taskRegime!=RegimeEditServer) {
             warningMessage(ERR_ST,"unmatched #else");
@@ -1205,8 +1205,8 @@ static int processCppConstruct(int lex) {
         break;
     case CPP_ENDIF:
         log_debug("#endif");
-        if (cFile.ifDepth) {
-            cFile.ifDepth --;
+        if (currentFile.ifDepth) {
+            currentFile.ifDepth --;
             genCppIfElseReference(-1, &pos, UsageUsed);
         } else if (s_opt.taskRegime!=RegimeEditServer) {
             warningMessage(ERR_ST,"unmatched #endif");

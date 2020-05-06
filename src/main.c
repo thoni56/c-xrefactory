@@ -2016,7 +2016,7 @@ static void mainParseInputFile(void) {
         c_yyparse();
     }
     s_cache.activeCache = 0;
-    cFile.fileName = NULL;
+    currentFile.fileName = NULL;
 
     /*//////////////////////// after parsing actions ////////////////////// */
 #if ZERO
@@ -2371,7 +2371,7 @@ static void mainFileProcessingInitialisations(
     }
     // reset language once knowing all language suffixes
     mainSetLanguage(fileName,  outLanguage);
-    s_input_file_number = cFile.lexBuffer.buffer.fileNumber;
+    s_input_file_number = currentFile.lexBuffer.buffer.fileNumber;
     assert(s_opt.taskRegime);
     if (    (s_opt.taskRegime==RegimeXref
              || s_opt.taskRegime==RegimeHtmlGenerate)
@@ -2640,12 +2640,12 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, int mess) {
                 closeCharacterBuffer(&inStack[i].lexBuffer.buffer);
         }
     }
-    if (cFile.lexBuffer.buffer.file != stdin) {
-        fi = cFile.lexBuffer.buffer.fileNumber;
+    if (currentFile.lexBuffer.buffer.file != stdin) {
+        fi = currentFile.lexBuffer.buffer.fileNumber;
         assert(s_fileTab.tab[fi]);
         s_fileTab.tab[fi]->b.cxLoading = false;
-        if (cFile.lexBuffer.buffer.file!=NULL)
-            closeCharacterBuffer(&cFile.lexBuffer.buffer);
+        if (currentFile.lexBuffer.buffer.file!=NULL)
+            closeCharacterBuffer(&currentFile.lexBuffer.buffer);
     }
     if (s_opt.taskRegime==RegimeHtmlGenerate) {
         if (s_opt.noCxFile) {
@@ -2841,13 +2841,13 @@ static void setFullUpdateMtimesInFileTab(S_fileItem *fi) {
 
 static void mainCloseInputFile(int inputIn ) {
     if (inputIn) {
-        if (cFile.lexBuffer.buffer.file!=stdin) {
-            closeCharacterBuffer(&cFile.lexBuffer.buffer);
+        if (currentFile.lexBuffer.buffer.file!=stdin) {
+            closeCharacterBuffer(&currentFile.lexBuffer.buffer);
         }
     }
 }
 
-static void mainEditSrvParseInputFile( int *firstPassing, int inputIn ) {
+static void mainEditSrvParseInputFile(int *firstPassing, int inputIn ) {
     //&fprintf(dumpOut,":here I am %s\n",s_fileTab.tab[s_input_file_number]->name);
     if (inputIn) {
         //&fprintf(dumpOut,"parse start\n");fflush(dumpOut);
@@ -2857,7 +2857,7 @@ static void mainEditSrvParseInputFile( int *firstPassing, int inputIn ) {
             //&fprintf(dumpOut,"parse stop\n");fflush(dumpOut);
             *firstPassing = 0;
         }
-        cFile.lexBuffer.buffer.isAtEOF = false;
+        currentFile.lexBuffer.buffer.isAtEOF = false;
         mainCloseInputFile(inputIn);
     }
 }
@@ -3047,9 +3047,9 @@ static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *
             recoverFromCache();
             s_cache.activeCache = 0;    /* no caching in cxref */
             mainParseInputFile();
-            closeCharacterBuffer(&cFile.lexBuffer.buffer);
+            closeCharacterBuffer(&currentFile.lexBuffer.buffer);
             inputIn = 0;
-            cFile.lexBuffer.buffer.file = stdin;
+            currentFile.lexBuffer.buffer.file = stdin;
             atLeastOneProcessed=1;
         } else if (LANGUAGE(LANG_JAR)) {
             jarFileParse(s_input_file_name);
@@ -3063,7 +3063,7 @@ static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *
         }
         // no multiple passes for java programs
         firstPassing = 0;
-        cFile.lexBuffer.buffer.isAtEOF = false;
+        currentFile.lexBuffer.buffer.isAtEOF = false;
         if (LANGUAGE(LANG_JAVA)) goto fileParsed;
     }
 
@@ -3349,7 +3349,7 @@ static void mainGenerate(int argc, char **argv) {
     if (inputIn) {
         recoverFromCache();
         mainParseInputFile();
-        cFile.lexBuffer.buffer.isAtEOF = false;
+        currentFile.lexBuffer.buffer.isAtEOF = false;
     }
     symbolTableMap(s_symbolTable, generate);
 }

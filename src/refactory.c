@@ -1231,7 +1231,7 @@ int tpPullUpFieldLastPreconditions(void) {
         warningMessage(ERR_ST, tmpBuff);
         return(0);
     }
-    sprintf(tmpBuff,"There are yet references of the field %s syntactically applied on the superclass %s, pulling up this field would cause confusion!", mm->s.name, ttt);
+    sprintf(tmpBuff,"There are already references of the field %s syntactically applied on the superclass %s, pulling up this field would cause confusion!", mm->s.name, ttt);
     formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
     errorMessage(ERR_ST, tmpBuff);
     return(0);
@@ -1266,7 +1266,7 @@ int tpPushDownFieldLastPreconditions(void) {
         rr = getDefinitionRef(targetsm->s.refs);
         if (rr!=NULL && IS_DEFINITION_OR_DECL_USAGE(rr->usage.base)) {
             javaGetClassNameFromFileNum(target->u.s->classFile, ttt, DOTIFY_NAME);
-            sprintf(tmpBuff,"The field %s is yet defined in %s!",
+            sprintf(tmpBuff,"The field %s is already defined in %s!",
                     targetsm->s.name, ttt);
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
             errorMessage(ERR_ST, tmpBuff);
@@ -1389,7 +1389,7 @@ static void refactoryPreCheckThatSymbolRefsCorresponds(char *oldName, S_editorMa
         if (strcmp(cid, oldName)!=0) {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff,
-                    "something goes wrong: expecting %s\ninstead of %s at %s, offset:%d",
+                    "something goes wrong: expecting %s instead of %s at %s, offset:%d",
                     oldName, cid, simpleFileName(getRealFileNameStatic(pos->buffer->name)),
                     pos->offset);
             errorMessage(ERR_INTERNAL, tmpBuff);
