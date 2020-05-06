@@ -266,10 +266,7 @@ void initInput(FILE *file, S_editorBuffer *buffer, char *prefix, char *fileName)
     fillFileDescriptor(&currentFile, fileName, bufferStart, bufferSize, file, offset);
     setOpenFileInfo(fileName);
     SetCInputConsistency();
-    s_ifEvaluation = false;				/* ??? */
-
-    /*	while (yylex());	exit(0); */
-
+    s_ifEvaluation = false;				/* TODO: WTF??? */
 }
 
 /* ***************************************************************** */
