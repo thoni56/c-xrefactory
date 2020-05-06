@@ -8,14 +8,17 @@ FileDescriptor inStack[INCLUDE_STACK_SIZE];
 int inStacki=0;
 
 
-void fillFileDescriptor(FileDescriptor *fileDescriptor, char *fileName, char *bufferStart, int bufferSize, FILE *file, unsigned offset) {
+void fillFileDescriptor(FileDescriptor *fileDescriptor, char *fileName, char *bufferStart,
+                        int bufferSize, FILE *file, unsigned offset) {
     fileDescriptor->fileName = fileName;
     fileDescriptor->lineNumber = 0;
     fileDescriptor->ifDepth = 0;
-    fileDescriptor->ifStack = NULL; /* lex buf */
+    fileDescriptor->ifStack = NULL;
+    /* lex buf: */
     fileDescriptor->lexBuffer.next = NULL;
     fileDescriptor->lexBuffer.end = NULL;
-    fileDescriptor->lexBuffer.index = 0; /* char buf */
+    fileDescriptor->lexBuffer.index = 0;
+    /* lexbuf: charbuf: */
     fileDescriptor->lexBuffer.buffer.next = bufferStart;
     fileDescriptor->lexBuffer.buffer.end = bufferStart+bufferSize;
     fileDescriptor->lexBuffer.buffer.file = file;
@@ -25,7 +28,8 @@ void fillFileDescriptor(FileDescriptor *fileDescriptor, char *fileName, char *bu
     fileDescriptor->lexBuffer.buffer.lineBegin = bufferStart;
     fileDescriptor->lexBuffer.buffer.columnOffset = 0;
     fileDescriptor->lexBuffer.buffer.isAtEOF = 0;
-    fileDescriptor->lexBuffer.buffer.inputMethod = INPUT_DIRECT; /* z_stream */
+    fileDescriptor->lexBuffer.buffer.inputMethod = INPUT_DIRECT;
+    /* lexbuf: charbuf: z_stream: */
     fileDescriptor->lexBuffer.buffer.zipStream.next_in = NULL;
     fileDescriptor->lexBuffer.buffer.zipStream.avail_in = 0;
     fileDescriptor->lexBuffer.buffer.zipStream.total_in = 0,		// i;
