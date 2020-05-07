@@ -179,35 +179,32 @@ int addFileTabItem(char *name) {
     return fileIndex;
 }
 
-static void getOrCreateFileInfo(char *ss, int *fileNumber, char **fileName) {
-    int fileIndex, cxloading;
+static int getOrCreateFileNumberFor(char *fileName) {
+    int fileNumber, cxloading;
     bool existed = false;
 
-    if (ss==NULL) {
-        *fileNumber = fileIndex = s_noneFileIndex;
-        *fileName = s_fileTab.tab[fileIndex]->name;
+    if (fileName==NULL) {
+        fileNumber = s_noneFileIndex;
     } else {
-        existed = fileTabExists(&s_fileTab, ss);
-        fileIndex = addFileTabItem(ss);
-        *fileNumber = fileIndex;
-        *fileName = s_fileTab.tab[fileIndex]->name;
-        checkFileModifiedTime(fileIndex);
-        cxloading = s_fileTab.tab[fileIndex]->b.cxLoading;
+        existed = fileTabExists(&s_fileTab, fileName);
+        fileNumber = addFileTabItem(fileName);
+        checkFileModifiedTime(fileNumber);
+        cxloading = s_fileTab.tab[fileNumber]->b.cxLoading;
         if (!existed) {
             cxloading = 1;
         } else if (s_opt.update==UP_FAST_UPDATE) {
-            if (s_fileTab.tab[fileIndex]->b.scheduledToProcess) {
+            if (s_fileTab.tab[fileNumber]->b.scheduledToProcess) {
                 // references from headers are not loaded on fast update !
                 cxloading = 1;
             }
         } else if (s_opt.update==UP_FULL_UPDATE) {
-            if (s_fileTab.tab[fileIndex]->b.scheduledToUpdate) {
+            if (s_fileTab.tab[fileNumber]->b.scheduledToUpdate) {
                 cxloading = 1;
             }
         } else {
             cxloading = 1;
         }
-        if (s_fileTab.tab[fileIndex]->b.cxSaved==1 && ! s_opt.multiHeadRefsCare) {
+        if (s_fileTab.tab[fileNumber]->b.cxSaved==1 && ! s_opt.multiHeadRefsCare) {
             /* if multihead references care, load include refs each time */
             cxloading = 0;
         }
@@ -215,20 +212,12 @@ static void getOrCreateFileInfo(char *ss, int *fileNumber, char **fileName) {
             if (s_jsl!=NULL || s_javaPreScanOnly) {
                 // do not load (and save) references from jsl loaded files
                 // nor during prescanning
-                cxloading = s_fileTab.tab[fileIndex]->b.cxLoading;
+                cxloading = s_fileTab.tab[fileNumber]->b.cxLoading;
             }
         }
-        s_fileTab.tab[fileIndex]->b.cxLoading = cxloading;
+        s_fileTab.tab[fileNumber]->b.cxLoading = cxloading;
     }
-}
-
-/* this function is redundant, remove it in future */
-static void setOpenFileInfo(char *ss) {
-    int ii;
-    char *ff;
-    getOrCreateFileInfo(ss, &ii, &ff);
-    currentFile.lexBuffer.buffer.fileNumber = ii;
-    currentFile.fileName = ff;
+    return fileNumber;
 }
 
 /* ***************************************************************** */
@@ -246,6 +235,7 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
     int     prefixLength, bufferSize, offset;
     char	*bufferStart;
 
+    /* TODO: perhaps this polymorphism should be handles some other way... */
     prefixLength = strlen(prefix);
     if (editorBuffer != NULL) {
         // read buffer
@@ -264,7 +254,7 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
         offset = 0;
     }
     fillFileDescriptor(&currentFile, fileName, bufferStart, bufferSize, file, offset);
-    setOpenFileInfo(fileName);
+    currentFile.lexBuffer.buffer.fileNumber = getOrCreateFileNumberFor(fileName);
     SetCInputConsistency();
     s_ifEvaluation = false;				/* TODO: WTF??? */
 }
