@@ -31,8 +31,7 @@ typedef struct characterBuffer {
 
 
 
-extern void initCharacterBuffer(CharacterBuffer *characterBuffer, FILE *file,
-                                int fileNumber);
+extern void initCharacterBuffer(CharacterBuffer *characterBuffer, FILE *file);
 extern void fillCharacterBuffer(CharacterBuffer *characterBuffer,
                                 char *next,
                                 char *end,

@@ -26,9 +26,9 @@ void fillCharacterBuffer(CharacterBuffer *characterBuffer,
     characterBuffer->zipStream = s_defaultZStream;
 }
 
-void initCharacterBuffer(CharacterBuffer *characterbuffer, FILE *file, int fileNumber) {
+void initCharacterBuffer(CharacterBuffer *characterbuffer, FILE *file) {
     fillCharacterBuffer(characterbuffer, characterbuffer->chars, characterbuffer->chars,
-                        file, 0, fileNumber, characterbuffer->chars);
+                        file, 0, -1, characterbuffer->chars);
 }
 
 

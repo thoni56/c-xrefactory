@@ -21,12 +21,12 @@ BeforeEach(Lex) {}
 AfterEach(Lex) {}
 
 
-Ensure(Lex, can_run_initial_test) {
+xEnsure(Lex, can_run_initial_test) {
     S_lexBuf lexBuffer;
 
     s_cache.activeCache = false;
 
-    initCharacterBuffer(&lexBuffer.buffer, NULL, 0);
+    initCharacterBuffer(&lexBuffer.buffer, NULL);
 
     assert_that(getLexBuf(&lexBuffer), is_false);
 }

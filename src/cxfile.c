@@ -1445,7 +1445,7 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
         s_inLastInfos.fun[ch] = scanFuns[i].handleFun;
         s_inLastInfos.additional[ch] = scanFuns[i].additionalArg;
     }
-    initCharacterBuffer(&cxfBuf, inputFile, -1);
+    initCharacterBuffer(&cxfBuf, inputFile);
     ch = ' '; cc = cxfBuf.chars; cfin = cxfBuf.end;
     while(! cxfBuf.isAtEOF) {
         ScanInt(ch, cc, cfin, &cxfBuf, scannedInt);
