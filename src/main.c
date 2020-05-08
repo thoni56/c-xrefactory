@@ -2127,7 +2127,7 @@ static int getLineFromFile(FILE *ff, char *tt, int ttsize, int *outI) {
     return(res);
 }
 
-static void getAndProcessBuiltinIncludePaths(void) {
+static void discoverBuiltinIncludePaths(void) {
     char line[MAX_OPTION_LEN];
     int len;
     char *tempfile_name, *lang;
@@ -2189,8 +2189,8 @@ static char *gnuisms[] = {
                           "__extension__="
 };
 
-static void getAndProcessStandardDefines(void) {
-   char line[MAX_OPTION_LEN];
+static void discoverStandardDefines(void) {
+    char line[MAX_OPTION_LEN];
     int len;
     char *tempfile_name;
     FILE *tempfile;
@@ -2351,8 +2351,8 @@ static void mainFileProcessingInitialisations(
         s_opt.includeDirs = NULL;
 
         getAndProcessXrefrcOptions(dffname, dffsect, dffsect);
-        getAndProcessStandardDefines();
-        getAndProcessBuiltinIncludePaths();
+        discoverStandardDefines();
+        discoverBuiltinIncludePaths();
 
         LIST_APPEND(S_stringList, s_opt.includeDirs, tmpIncludeDirs);
         if (s_opt.taskRegime != RegimeEditServer && s_input_file_name == NULL) {
