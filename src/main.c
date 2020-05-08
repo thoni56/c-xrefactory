@@ -70,7 +70,7 @@ static void usage(char *s) {
     fprintf(stdout,"\t-htmllinkcolor=<color>    - color of HTML links\n");
     fprintf(stdout,"\t-htmllinenumcolor=<color> - color of line numbers in HTML links\n");
     fprintf(stdout,"\t-htmlgenjavadoclinks      - gen links to javadoc if no definition\n");
-    fprintf(stdout,"\t                          - only for packages from -htmljavadocavailable\n");
+    fprintf(stdout,"\t                            only for packages from -htmljavadocavailable\n");
     fprintf(stdout,"\t-javadocurl=<http>        - url to existing java docs\n");
     fprintf(stdout,"\t-javadocpath=<path>       - paths to existing java docs\n");
     fprintf(stdout,"\t-javadocavailable=<packs> - packages for which javadoc is available\n");
@@ -123,6 +123,7 @@ static void usage(char *s) {
     fprintf(stdout,"\t-no_local                 - don't cross reference local vars\n");
     fprintf(stdout,"\t-nobrief                  - generate cxrefs in long format\n");
     fprintf(stdout,"\t-update                   - update old 'refs' reference file\n");
+    fprintf(stdout,"\t-compiler                 - path to compiler to use for autodiscovered includes and defines\n");
     fprintf(stdout,"\t-fastupdate               - fast update (modified files only)\n");
     //& fprintf(stdout,"\t-keep_old             - keep also all old references from 'refs' file\n");
     fprintf(stdout,"\t-no_stdop                 - don't read the '~/.c-xrefrc' option file \n");
@@ -497,7 +498,8 @@ static int processCOption(int *ii, int argc, char **argv) {
     else if (strncmp(argv[i],"-completionoverloadwizdeep=",27)==0)  {
         sscanf(argv[i]+27, "%d", &s_opt.completionOverloadWizardDeep);
     }
-    else if (strcmp(argv[i],"-continuerefactoring")==0) s_opt.continueRefactoring=RC_CONTINUE;
+    else if (strcmp(argv[i],"-continuerefactoring")==0)
+        s_opt.continueRefactoring=RC_CONTINUE;
     else if (strncmp(argv[i],"-commentmovinglevel=",20)==0) {
         sscanf(argv[i]+20, "%d", &s_opt.commentMovingLevel);
     }
@@ -514,8 +516,10 @@ static int processCOption(int *ii, int argc, char **argv) {
     else if (strncmp(argv[i],"-csuffixes=",11)==0) {
         createOptionString(&s_opt.cFilesSuffixes, argv[i]+11);
     }
-    else if (strcmp(argv[i],"-create")==0)      s_opt.create = 1;
-    else return(0);
+    else if (strcmp(argv[i],"-create")==0) s_opt.create = 1;
+    else if (strncmp(argv[i],"-compiler=", 10)==0) {
+        s_opt.compiler = &argv[i][10];
+    } else return(0);
     *ii = i;
     return(1);
 }
@@ -524,10 +528,10 @@ static int processDOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
 #   ifdef DEBUG
-    else if (strcmp(argv[i],"-debug")==0)
+    else if (strcmp(argv[i], "-debug")==0)
         s_opt.debug = true;
 #   endif
-    else if (strcmp(argv[i],"-d")==0)   {
+    else if (strcmp(argv[i], "-d")==0)   {
         int ln;
         NEXT_FILE_ARG();
         ln=strlen(argv[i]);
@@ -535,7 +539,7 @@ static int processDOption(int *ii, int argc, char **argv) {
             warningMessage(ERR_ST,"slash at the end of -d path");
         }
         if (! isAbsolutePath(argv[i])) {
-            warningMessage(ERR_ST,"'-d' option should be followed by an ABSOLUTE path!");
+            warningMessage(ERR_ST,"'-d' option should be followed by an ABSOLUTE path");
         }
         createOptionString(&s_opt.htmlRoot, argv[i]);
     }
@@ -2133,17 +2137,19 @@ static void getAndProcessBuiltinIncludePaths(void) {
     bool found = false;
     int result;
 
+    ENTER();
     if (LANGUAGE(LANG_C) || LANGUAGE(LANG_YACC)) {
         lang = "c";
     }
     else {
+        LEAVE();
         return;
     }
     tempfile_name = create_temporary_filename();
     assert(strlen(tempfile_name)+1 < MAX_FILE_NAME_SIZE);
 
     /* Ensure output is in C locale */
-    sprintf(command, "LANG=C gcc -v -x %s -o /dev/null /dev/null >%s 2>&1", lang, tempfile_name);
+    sprintf(command, "LANG=C %s -v -x %s -o /dev/null /dev/null >%s 2>&1", s_opt.compiler, lang, tempfile_name);
 
     result = system(command);
     if (result != 0) ;          /* Ignore return value */
@@ -2160,12 +2166,15 @@ static void getAndProcessBuiltinIncludePaths(void) {
         do {
             if (strncmp(line, "End of search list.", 19) == 0)
                 break;
-            if (statb(line,&stt) == 0 && (stt.st_mode & S_IFMT) == S_IFDIR)
+            if (statb(line,&stt) == 0 && (stt.st_mode & S_IFMT) == S_IFDIR) {
+                log_trace("Add include '%s'", line);
                 mainAddStringListOption(&s_opt.includeDirs, line);
+            }
         } while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF);
 
     closeFile(tempfile);
     removeFile(tempfile_name);
+    LEAVE();
 }
 
 
@@ -2193,7 +2202,7 @@ static void getAndProcessStandardDefines(void) {
     tempfile_name = create_temporary_filename();
     assert(strlen(tempfile_name)+1 < MAX_FILE_NAME_SIZE);
 
-    sprintf(command, "gcc -E -dM - >%s 2>&1", tempfile_name);
+    sprintf(command, "%s -E -dM - >%s 2>&1", s_opt.compiler, tempfile_name);
 
     /* Need to pipe an empty file into gcc, an alternative would be to
        create an empty file, but that seems as much work */
@@ -2205,12 +2214,15 @@ static void getAndProcessStandardDefines(void) {
     while (getLineFromFile(tempfile, line, MAX_OPTION_LEN, &len) != EOF) {
         if (strncmp(line, "#define", strlen("#define")))
             log_error("Expected #define from compiler standard definitions");
+        log_trace("Add definition '%s'", line);
         addMacroDefinedByOption(&line[strlen("#define")+1]);
     }
 
     /* Also define some GNU-isms */
-    for (int i=0; i<sizeof(gnuisms)/sizeof(gnuisms[0]); i++)
+    for (int i=0; i<sizeof(gnuisms)/sizeof(gnuisms[0]); i++) {
+        log_trace("Add definition '%s'", gnuisms[i]);
         addMacroDefinedByOption(gnuisms[i]);
+    }
  }
 
 static void getAndProcessXrefrcOptions(char *dffname, char *dffsect,char *project) {
@@ -2880,7 +2892,7 @@ static bool mainSymbolCanBeIdentifiedByPosition(int fnum) {
 
     // here I will need also the symbol name
     // do not bypass commanline entered files, because of local symbols
-    // and because references from currently processed file would
+    // and because references from currently procesed file would
     // be not loaded from the TAG file (it expects they are loaded
     // by parsing).
     log_trace("checking if cmd %s, == %d\n", s_fileTab.tab[fnum]->name,s_fileTab.tab[fnum]->b.commandLineEntered);

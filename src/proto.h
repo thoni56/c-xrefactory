@@ -930,6 +930,7 @@ typedef struct setGetEnv {
 
 // TODO all strings inside to static string array
 typedef struct options {
+    char *compiler;
     int fileEncoding;
     char completeParenthesis;
     int defaultAddImportStrategy;

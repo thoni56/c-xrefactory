@@ -246,6 +246,7 @@ int s_javaRequiredeAccessibilitiesTable[MAX_REQUIRED_ACCESS+1] = {
 };
 
 S_options s_initOpt = {
+    "gcc",              // path to compiler to use for auto-discovering compiler and defines
     MULE_DEFAULT,       // encoding
     0,                  // completeParenthesis
     NID_IMPORT_ON_DEMAND,   // defaultAddImportStrategy
