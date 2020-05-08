@@ -27,7 +27,7 @@ static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {
             pp = newSymbolAsKeyword(name, name, s_noPos, token);
             fillSymbolBits(&pp->bits, ACCESS_DEFAULT, TypeKeyword, StorageNone);
 
-            log_trace("adding keyword %s to symbol table", name);
+            log_trace("adding keyword '%s' to symbol table", name);
             symbolTableAdd(s_symbolTable, pp, &not_used);
         }
     }
@@ -48,7 +48,7 @@ static char *autoDetectJavaVersion(void) {
     }
     res = JAVA_VERSION_1_3;
  fini:
-    return(res);
+    return res;
 }
 
 void initTokenNameTab(void) {
