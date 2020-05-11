@@ -553,7 +553,7 @@ static void genRefItem0(SymbolReferenceItem *d, int forceGen) {
         log_trace("checking ref: loading=%d --< %s:%d", s_fileTab.tab[reference->p.file]->b.cxLoading,
                   s_fileTab.tab[reference->p.file]->name, reference->p.line);
         if (s_opt.update==UP_CREATE || s_fileTab.tab[reference->p.file]->b.cxLoading) {
-            /* ?? s_opt.update==UP_CREATE, why it is there */
+            /*& s_opt.update==UP_CREATE; why it is there */
             writeCxReference(reference, symIndex);
         } else {
             log_trace("Some kind of update (%d) or not loading (%d), so don't writeCxReference()",
@@ -865,7 +865,7 @@ static void cxrfCheckNumber(int size,
         sprintf(tmpBuff,"The Tag file was generated with different hash method, recreate it");
         writeCxFileCompatibilityError(tmpBuff);
     }
-    //&fprintf(dumpOut,"checking %d <-> %d\n", exactPositionLinkFlag, s_opt.exactPositionResolve);
+    log_trace("checking %d <-> %d", exactPositionLinkFlag, s_opt.exactPositionResolve);
     if (exactPositionLinkFlag != s_opt.exactPositionResolve) {
         if (exactPositionLinkFlag) {
             sprintf(tmpBuff,"The Tag file was generated with '-exactpositionresolve' flag, recreate it");

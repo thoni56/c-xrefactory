@@ -2595,7 +2595,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
             inmode = INFILES_DISABLED;
         } else if (s_opt.taskRegime==RegimeEditServer) {
             inmode = INFILES_DISABLED;
-        } else if (s_opt.create || s_opt.project!=NULL || s_opt.update) {
+        } else if (s_opt.create || s_opt.project!=NULL || s_opt.update != UP_CREATE) {
             inmode = INFILES_ENABLED;
         } else {
             inmode = INFILES_DISABLED;
