@@ -19,6 +19,7 @@ void fillFileDescriptor(FileDescriptor *fileDescriptor, char *fileName, char *bu
     fileDescriptor->lexBuffer.end = NULL;
     fileDescriptor->lexBuffer.index = 0;
     /* lexbuf: charbuf: */
+    //TODO: might replace with: initCharacterBuffer(&fileDescriptor->lexBuffer.buffer, file);
     fileDescriptor->lexBuffer.buffer.next = bufferStart;
     fileDescriptor->lexBuffer.buffer.end = bufferStart+bufferSize;
     fileDescriptor->lexBuffer.buffer.file = file;
