@@ -77,5 +77,5 @@ Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {
     currentFile.lineNumber = 1;
     processDefine(false);
 
-    /* Inspect symboltable for the define */
+    /* TODO: Inspect symboltable for the define */
 }
