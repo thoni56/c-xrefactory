@@ -607,7 +607,7 @@ typedef struct symbolReferenceItem {
     int							vFunClass;	/* fun class for java virtuals */
     struct symbolReferenceItemBits b;
     struct reference			*refs;
-    struct symbolReferenceItem        *next;
+    struct symbolReferenceItem  *next;
 } SymbolReferenceItem;
 
 typedef struct symbolReferenceItemList {
