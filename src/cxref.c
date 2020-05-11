@@ -139,8 +139,6 @@ int olcxReferenceInternalLessFunction(Reference *r1, Reference *r2) {
 
 bool olSymbolRefItemLess(SymbolReferenceItem *s1, SymbolReferenceItem *s2) {
     int cmp;
-    //& if (s1->vlevel < s2->vlevel) return(1);
-    //& else if (s2->vlevel < s1->vlevel) return(0);
     cmp = strcmp(s1->name, s2->name);
     if (cmp < 0) return true;
     else if (cmp > 0) return false;
@@ -158,8 +156,6 @@ bool olSymbolRefItemLess(SymbolReferenceItem *s1, SymbolReferenceItem *s2) {
 }
 
 static bool olSymbolMenuLess(S_olSymbolsMenu *s1, S_olSymbolsMenu *s2) {
-    //& if (s1->vlevel < s2->vlevel) return(1);
-    //& else if (s2->vlevel < s1->vlevel) return(0);
     return(olSymbolRefItemLess(&s1->s, &s2->s));
 }
 
@@ -5382,6 +5378,7 @@ void printTagSearchResults(void) {
                                    &len1, &len2, &len3);
     }
     if (s_opt.olineLen >= 50000) {
+        /* TODO: WTF? 50k??!?! */
         if (len1 > MAX_TAG_SEARCH_INDENT) len1 = MAX_TAG_SEARCH_INDENT;
     } else {
         if (len1 > (s_opt.olineLen*MAX_TAG_SEARCH_INDENT_RATIO)/100) {
