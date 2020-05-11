@@ -11,8 +11,8 @@ typedef struct lexBuf {
     char            *next;				/* next to read */
     char            *end;				/* pointing *after* last valid char */
     char            chars[LEX_BUFF_SIZE];
-    struct position positionRing[LEX_POSITIONS_RING_SIZE];		// file/line/col position
-    unsigned        fileOffsetRing[LEX_POSITIONS_RING_SIZE];	// file offset position
+    struct position positionRing[LEX_POSITIONS_RING_SIZE];
+    unsigned        fileOffsetRing[LEX_POSITIONS_RING_SIZE];
     int             index;				/* pRing[posi%LEX_POSITIONS_RING_SIZE] */
     struct characterBuffer buffer;
 } S_lexBuf;
