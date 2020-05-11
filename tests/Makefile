@@ -23,7 +23,7 @@ list:
 	echo $(TESTS)
 
 clean:
-	rm -rf *.coverage */.coverage
+	rm -rf *.info */.coverage
 
 #-------------------------------------------------------------------
 # Here follows some GNU magic to automatically discover tests
@@ -43,7 +43,7 @@ $(1):
 	@if [ ! -z "$(GCOV)" ] ; then \
 		if [ -d $(1)/.coverage ] ; then \
 			cp ../src/.objects/*.gcno $(1)/.coverage ; \
-			lcov -q -t $(1) -d $(1)/.coverage -c -o $(1).coverage ; \
+			lcov -q -t $(1) -d $(1)/.coverage -c -o $(1).info ; \
 		fi \
 	fi
 endef

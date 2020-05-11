@@ -127,8 +127,8 @@ unit:
 
 coverage: COVERAGE=--coverage
 coverage: clean test
-	lcov -q --exclude \*.mock -exclude /usr -exclude /Library -d . -c -o total.coverage
-	genhtml -q -o ../coverage total.coverage
+	lcov -q --exclude \*.mock -exclude /usr -exclude /Library -d . -c -o total.info
+	genhtml -q -o ../coverage total.info
 
 coverage-report: unit test
 	@echo Doing the coverage reporting in the background
@@ -136,11 +136,11 @@ coverage-report: unit test
 
 LCOV=lcov -q --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' --exclude '/Library/*'
 the-actual-coverage-report:
-	@$(LCOV) -d . -c -t unittests -o ../coverage/unittests.coverage
-	@ls -1q ../tests/*.coverage | sed "s/^/-a /g" | xargs $(LCOV) -o ../coverage/total.coverage -a ../coverage/unittests.coverage
+	@$(LCOV) -d . -c -t unittests -o ../coverage/unittests.info
+	@ls -1q ../tests/*.info | sed "s/^/-a /g" | xargs $(LCOV) -o ../coverage/total.info -a ../coverage/unittests.info
 	@printf "\\r"
-	@lcov -q --remove ../coverage/total.coverage '*.tab.c' '/usr/*' '/Library/*' -o ../coverage/total.coverage
-	genhtml -q -o ../coverage ../coverage/total.coverage
+	@lcov -q --remove ../coverage/total.info '*.tab.c' '/usr/*' '/Library/*' -o ../coverage/total.info
+	genhtml -q -o ../coverage ../coverage/total.info
 
 #########################################################################
 #

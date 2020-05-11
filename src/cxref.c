@@ -1797,23 +1797,23 @@ Reference *rr;
  return(rr);
 }
 
-static void passRefsThroughSourceFile(Reference **rrr, Position *callerp,
+static void passRefsThroughSourceFile(Reference **in_out_references, Position *callerp,
                                       FILE *off,
                                       char *ofname, int usages, int usageFilter) {
-    Reference         *rr,*oldrr;
-    int                 ch,fnum;
-    S_editorBuffer      *ebuf;
-    char                *cofileName;
-    Position          cp;
-    CharacterBuffer     cxfBuf;
+    Reference *references,*oldrr;
+    int ch,fnum;
+    S_editorBuffer *ebuf;
+    char *cofileName;
+    Position cp;
+    CharacterBuffer cxfBuf;
 
-    rr = *rrr;
-    if (rr==NULL) goto fin;
-    fnum = rr->p.file;
+    references = *in_out_references;
+    if (references==NULL) goto fin;
+    fnum = references->p.file;
     assert(s_fileTab.tab[fnum]);
     cofileName = s_fileTab.tab[fnum]->name;
-    rr = passNonPrintableRefsForFile(rr, fnum, usages, usageFilter);
-    if (rr==NULL || rr->p.file != fnum) goto fin;
+    references = passNonPrintableRefsForFile(references, fnum, usages, usageFilter);
+    if (references==NULL || references->p.file != fnum) goto fin;
     if (s_opt.referenceListWithoutSource) {
         ebuf = NULL;
     } else {
@@ -1835,20 +1835,20 @@ static void passRefsThroughSourceFile(Reference **rrr, Position *callerp,
         fillCharacterBuffer(&cxfBuf, ebuf->a.text, ebuf->a.text+ebuf->a.bufferSize, NULL, ebuf->a.bufferSize, s_noneFileIndex, ebuf->a.text);
         GetFileChar(ch, &cp, &cxfBuf);
     }
-    fillPosition(&cp, rr->p.file, 1, 0);
+    fillPosition(&cp, references->p.file, 1, 0);
     oldrr=NULL;
-    while (rr!=NULL && rr->p.file==cp.file && rr->p.line>=cp.line) {
-        assert(oldrr!=rr); oldrr=rr;    // because it is a dangerous loop
-        while ((! cxfBuf.isAtEOF) && cp.line<rr->p.line) {
+    while (references!=NULL && references->p.file==cp.file && references->p.line>=cp.line) {
+        assert(oldrr!=references); oldrr=references;    // because it is a dangerous loop
+        while ((! cxfBuf.isAtEOF) && cp.line<references->p.line) {
             while (ch!='\n' && ch!=EOF) GetBufChar(ch, &cxfBuf);
             GetFileChar(ch, &cp, &cxfBuf);
         }
         linePosProcess(off, ofname, usages, usageFilter, cofileName,
-                       &rr, callerp, &cp, &ch, &cxfBuf);
+                       &references, callerp, &cp, &ch, &cxfBuf);
     }
     //&if (cofile != NULL) closeFile(cofile);
  fin:
-    *rrr = rr;
+    *in_out_references = references;
 }
 
 /* ******************************************************************** */
