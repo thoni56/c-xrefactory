@@ -477,7 +477,7 @@ static int processBOption(int *ii, int argc, char **argv) {
     if (0) {}
     else if (strcmp(argv[i],"-brief")==0)           s_opt.brief_cxref = true;
     else if (strcmp(argv[i],"-briefoutput")==0)     s_opt.briefoutput = true;
-    else if (strcmp(argv[i],"-body")==0)            s_opt.body = 1;
+    else if (strcmp(argv[i],"-body")==0)            s_opt.generate_body = 1;
     else if (strncmp(argv[i],"-browsedsym=",12)==0)     {
         createOptionString(&s_opt.browsedSymName, argv[i]+12);
     }
@@ -566,7 +566,7 @@ static int processEOption(int *ii, int argc, char **argv) {
         log_debug("Exiting");
         exit(XREF_EXIT_BASE);
     }
-    else if (strcmp(argv[i],"-enum_name")==0) s_opt.enum_name = 1;
+    else if (strcmp(argv[i],"-enum_name")==0) s_opt.generate_enum_name = 1;
     else if (strcmp(argv[i],"-editor=emacs")==0) {
         s_opt.editor = EDITOR_EMACS;
     }
@@ -727,7 +727,7 @@ static int processHOption(int *ii, int argc, char **argv) {
     else if (strncmp(argv[i],"-htmllinksuffix=",16)==0) {
         createOptionString(&s_opt.htmlLinkSuffix, argv[i]+16);
     }
-    else if (strcmp(argv[i],"-header")==0)      s_opt.header = 1;
+    else if (strcmp(argv[i],"-header")==0)      s_opt.generate_header = 1;
     else if (strcmp(argv[i],"-help")==0) {
         usage(argv[0]);
         exit(0);

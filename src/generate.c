@@ -14,10 +14,10 @@ static void generateEnumString(Symbol *symbol) {
     name = symbol->name;
     e = symbol->u.enums;
     assert(name);
-    if (s_opt.header) {
+    if (s_opt.generate_header) {
         fprintf(cxOut,"extern char * %sEnumName[];\n",name);
     }
-    if (s_opt.body) {
+    if (s_opt.generate_body) {
         fprintf(cxOut,"char * %sEnumName[] = {\n",name);
         for(;e!=NULL;e=e->next) {
             assert(e->d);
@@ -39,7 +39,7 @@ void generate(Symbol *symbol) {
     if (symbol->name==NULL || symbol->name[0]==0)
         return;
     if (symbol->bits.symType == TypeEnum) {
-        if (s_opt.enum_name)
+        if (s_opt.generate_enum_name)
             generateEnumString(symbol);
     }
 }

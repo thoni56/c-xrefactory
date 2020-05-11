@@ -1067,9 +1067,9 @@ typedef struct options {
 
     /* GENERATE options */
 
-    int enum_name;
-    int body;
-    int header;
+    bool generate_enum_name;
+    bool generate_body;
+    bool generate_header;
 
     /* CXREF options  */
 
