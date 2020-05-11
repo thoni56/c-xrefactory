@@ -26,6 +26,10 @@ TypeModifier *newStructTypeModifier(Symbol *symbol) {
   return (TypeModifier *) mock(symbol);
 }
 
+extern TypeModifier *newEnumTypeModifier(Symbol *symbol) {
+    return (TypeModifier *)mock(symbol);
+}
+
 S_typeModifierList *newTypeModifierList(TypeModifier *d) {
   return (S_typeModifierList *) mock(d);
 }

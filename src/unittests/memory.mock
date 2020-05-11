@@ -4,6 +4,10 @@
 
 S_memory *cxMemory = NULL;
 
+char memory[SIZE_workMemory];
+char tmpWorkMemory[SIZE_tmpWorkMemory];
+int tmpWorkMemoryi = 0;
+
 char ftMemory[SIZE_ftMemory];
 int ftMemoryi = 0;
 

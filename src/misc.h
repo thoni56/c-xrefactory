@@ -68,9 +68,6 @@ extern void scanJarFilesForTagSearch(void);
 extern void classFileParse(void);
 extern void fillTrivialSpecialRefItem( SymbolReferenceItem *ddd , char *name);
 
-extern void noSuchFieldError(char *rec);
-extern void methodAppliedOnNonClass(char *rec);
-extern void methodNameNotRecognized(char *rec);
 extern void dumpOptions(int nargc, char **nargv);
 
 extern void symDump(Symbol *symbol);

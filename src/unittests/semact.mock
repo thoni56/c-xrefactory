@@ -10,6 +10,10 @@ bool displayingErrorMessages(void) {
   return (int) mock();
 }
 
+void noSuchFieldError(char *rec) {
+  mock(rec);
+}
+
 void deleteSymDef(void *p) {
   mock(p);
 }

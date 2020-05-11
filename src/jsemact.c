@@ -2198,6 +2198,22 @@ static TypeModifier *javaMethodInvocation(
 }
 
 
+static void methodAppliedOnNonClass(char *rec) {
+    char message[TMP_BUFF_SIZE];
+    if (s_opt.debug || s_opt.show_errors) {
+        sprintf(message, "'%s' not applied on a class", rec);
+        errorMessage(ERR_ST, message);
+    }
+}
+
+static void methodNameNotRecognized(char *rec) {
+    char message[TMP_BUFF_SIZE];
+    if (s_opt.debug || s_opt.show_errors) {
+        sprintf(message, "'%s' not recognized as method name", rec);
+        errorMessage(ERR_ST, message);
+    }
+}
+
 S_extRecFindStr *javaCrErfsForMethodInvocationN(IdList *name) {
     S_extRecFindStr		*erfs;
     TypeModifier		*expr;

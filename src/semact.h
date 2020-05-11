@@ -11,6 +11,7 @@ extern void initSymStructSpec(S_symStructSpec *symStruct, Symbol *records);
 extern void fillRecFindStr(S_recFindStr *recFindStr, Symbol *baseClass, Symbol *currentClass, Symbol *nextRecord, unsigned recsClassCounter);
 extern void unpackPointers(Symbol *pp);
 extern bool displayingErrorMessages(void);
+extern void noSuchFieldError(char *rec);
 extern void deleteSymDef(void *p);
 extern void addSymbol(Symbol *pp, S_symbolTable *tab);
 extern void recFindPush(Symbol *sym, S_recFindStr *rfs);

@@ -126,18 +126,6 @@ void fillTrivialSpecialRefItem(SymbolReferenceItem *ddd, char *name) {
   mock(ddd, name);
 }
 
-void noSuchFieldError(char *rec) {
-  mock(rec);
-}
-
-void methodAppliedOnNonClass(char *rec) {
-  mock(rec);
-}
-
-void methodNameNotRecognized(char *rec) {
-  mock(rec);
-}
-
 void dumpOptions(int nargc, char **nargv) {
   mock(nargc, nargv);
 }

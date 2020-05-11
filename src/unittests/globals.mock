@@ -38,6 +38,15 @@ FILE *errOut=NULL;
 
 z_stream s_defaultZStream = {NULL,};
 
+TypeModifier * s_preCreatedTypesTable[MAX_TYPE];
+TypeModifier * s_preCrPtr1TypesTab[MAX_TYPE];
+TypeModifier * s_preCrPtr2TypesTab[MAX_TYPE];
+
+uchar typeShortChange[MAX_TYPE];
+uchar typeLongChange[MAX_TYPE];
+uchar typeSignedChange[MAX_TYPE];
+uchar typeUnsignedChange[MAX_TYPE];
+
 char *yytext;
 Id s_yyIdentBuf[YYBUFFERED_ID_INDEX];
 int s_yyIdentBufi = 0;
@@ -76,6 +85,11 @@ S_options s_ropt;
 TypeModifier *s_structRecordCompletionType;
 Completions s_completions;
 
+char *s_extractStorageName[MAX_STORAGE];
+
+S_counters s_count;
+unsigned s_recFindCl = 1;
+
 Position s_paramPosition;
 Position s_paramBeginPosition;
 Position s_paramEndPosition;
@@ -106,5 +120,12 @@ char *s_javaSourcePaths;
 S_stringList *s_javaClassPaths;
 Symbol *s_javaObjectSymbol;
 int s_javaCharCodeBaseTypes[MAX_CHARS];
+
+int s_javaRequiredeAccessibilitiesTable[MAX_REQUIRED_ACCESS+1] = {
+    ACCESS_PUBLIC,
+    ACCESS_PROTECTED,
+    ACCESS_DEFAULT,
+    ACCESS_PRIVATE,
+};
 
 char ppcTmpBuff[MAX_PPC_RECORD_SIZE];

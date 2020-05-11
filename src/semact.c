@@ -8,7 +8,7 @@
 #include "yylex.h"
 #include "cxref.h"
 #include "jsemact.h"
-#include "jslsemact.h"
+#include "jslsemact.h"          /*& s_jsl */
 #include "enumTxt.h"
 #include "symbol.h"
 #include "list.h"
@@ -46,6 +46,14 @@ int styyerror(char *s) {
         errorMessage(ERR_ST, tmpBuff);
     }
     return(0);
+}
+
+void noSuchFieldError(char *rec) {
+    char message[TMP_BUFF_SIZE];
+    if (s_opt.debug || s_opt.show_errors) {
+        sprintf(message, "Field/member '%s' not found", rec);
+        errorMessage(ERR_ST, message);
+    }
 }
 
 int styyErrorRecovery(void) {

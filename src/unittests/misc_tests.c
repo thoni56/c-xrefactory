@@ -21,9 +21,5 @@ BeforeEach(Misc) {}
 AfterEach(Misc) {}
 
 
-Ensure(Misc, can_generate_message_for_no_such_field) {
-    s_opt.debug = true;
-    expect(errorMessage,
-           when(message, is_equal_to_string("Field/member 'field' not found")));
-    noSuchFieldError("field");
+Ensure(Misc, can_run_an_empty_test) {
 }
