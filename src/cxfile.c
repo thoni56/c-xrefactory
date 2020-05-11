@@ -531,7 +531,7 @@ void addSubClassesItemsToFileTab(Symbol *ss, int origin) {
 /* *************************************************************** */
 
 static void genRefItem0(SymbolReferenceItem *d, int forceGen) {
-    Reference *rr;
+    Reference *reference;
     int symIndex;
 
     log_trace("function '%s'", d->name);
@@ -544,20 +544,21 @@ static void genRefItem0(SymbolReferenceItem *d, int forceGen) {
                                 d->vApplClass, d->vFunClass);
     fillSymbolRefItemBits(&s_outLastInfos._symbolTab[symIndex].b,
                            d->b.symType, d->b.storage,
-                           d->b.scope,d->b.accessFlags, d->b.category,0);
+                           d->b.scope, d->b.accessFlags, d->b.category, 0);
     s_outLastInfos.symbolTab[symIndex] = &s_outLastInfos._symbolTab[symIndex];
     s_outLastInfos.symbolIsWritten[symIndex] = 0;
-    if ( d->b.category == CategoryLocal) return;
-    if ( d->refs == NULL && ! forceGen) return;
-    for(rr = d->refs; rr!=NULL; rr=rr->next) {
-        //&fprintf(ccOut,"checking ref %d --< %s:%d\n", s_fileTab.tab[rr->p.file]->b.cxLoading, s_fileTab.tab[rr->p.file]->name, rr->p.line);
-        if (s_opt.update==UP_NO_UPDATE || s_fileTab.tab[rr->p.file]->b.cxLoading) {
-            /* ?? s_opt.update==UP_NO_UPDATE, why it is there */
-            writeCxReference(rr, symIndex);
+    if (d->b.category == CategoryLocal) return;
+    if (d->refs == NULL && !forceGen) return;
+    for(reference = d->refs; reference!=NULL; reference=reference->next) {
+        log_trace("checking ref: loading=%d --< %s:%d", s_fileTab.tab[reference->p.file]->b.cxLoading,
+                  s_fileTab.tab[reference->p.file]->name, reference->p.line);
         if (s_opt.update==UP_CREATE || s_fileTab.tab[reference->p.file]->b.cxLoading) {
             /* ?? s_opt.update==UP_CREATE, why it is there */
+            writeCxReference(reference, symIndex);
         } else {
-            log_trace("Some kind of update and loading, so don't writeCxReference()");
+            log_trace("Some kind of update (%d) or not loading (%d), so don't writeCxReference()",
+                      s_opt.update, s_fileTab.tab[reference->p.file]->b.cxLoading);
+            assert(0);
         }
     }
     //&fflush(cxOut);
