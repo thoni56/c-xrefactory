@@ -1750,7 +1750,7 @@ static void mainGenerateReferenceFile(void) {
 
     if (s_opt.cxrefFileName == NULL)
         return;
-    if (!updateFlag && s_opt.update == 0) {
+    if (!updateFlag && s_opt.update == UP_CREATE) {
         genReferenceFile(false, s_opt.cxrefFileName);
         updateFlag = true;
     } else {

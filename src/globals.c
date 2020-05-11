@@ -396,16 +396,16 @@ S_options s_initOpt = {
 
     /* CXREF options  */
 
-    0,                          /* err */
+    0,                          /* show err */
     true,                       /* brief_cxref */
-    UP_NO_UPDATE,               /* update */
+    UP_CREATE,                  /* create, update */
     0,                          /* keep_old */
     NULL,                       /* last_message */
     0,                          /* refnum */
 
     // all the rest is initialized to zeros
-    {0, },      // get/set end
-    {0, },      // -cutpaths
+    {0, },                      // get/set end
+    {0, },                      // -cutpaths
 
     // pending memory for string values
     NULL,                       /* allAllocatedStrings */

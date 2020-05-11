@@ -477,7 +477,7 @@ typedef enum inputType {
 } InputType;
 
 typedef enum updateType {
-    UP_NO_UPDATE = 0,			// must be zero !
+    UP_CREATE = 0,              // must be zero !
     UP_FAST_UPDATE,
     UP_FULL_UPDATE,
 } UpdateType;

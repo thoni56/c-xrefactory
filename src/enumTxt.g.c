@@ -175,7 +175,7 @@ char * olcxOptionsEnumName[] = {
 };
 
 char * updateTypeEnumName[] = {
-	"UP_NO_UPDATE",
+	"UP_CREATE",
 	"UP_FAST_UPDATE",
 	"UP_FULL_UPDATE"
 };
