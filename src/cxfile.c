@@ -554,6 +554,8 @@ static void genRefItem0(SymbolReferenceItem *d, int forceGen) {
         if (s_opt.update==UP_NO_UPDATE || s_fileTab.tab[rr->p.file]->b.cxLoading) {
             /* ?? s_opt.update==UP_NO_UPDATE, why it is there */
             writeCxReference(rr, symIndex);
+        } else {
+            log_trace("Some kind of update and loading, so don't writeCxReference()");
         }
     }
     //&fflush(cxOut);
