@@ -44,8 +44,6 @@ extern int s_progressOffset;
 
 extern z_stream s_defaultZStream;
 
-extern time_t s_expTime;
-
 extern int s_cxResizingBlocked;
 extern S_counters s_count;
 extern unsigned s_recFindCl;

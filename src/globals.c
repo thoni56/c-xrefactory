@@ -49,8 +49,6 @@ int mbMemoryi=0;
 
 /* *********** symbols excluded from cache ************** */
 
-time_t s_expTime;
-
 char s_olSymbolType[COMPLETION_STRING_SIZE];
 char s_olSymbolClassType[COMPLETION_STRING_SIZE];
 
