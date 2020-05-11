@@ -896,7 +896,7 @@ static int cxrfFileItemShouldBeUpdatedFromCxFile(S_fileItem *ffi) {
             updateFromCxFile = false;
         }
     }
-    log_trace("%sre-read info from '%s' for '%s'", updateFromCxFile?"yes, ":"no, not necessary to ",
+    log_trace("%s re-read info from '%s' for '%s'", updateFromCxFile?"yes,":"no, not necessary to",
               s_opt.cxrefFileName, ffi->name);
 
     return updateFromCxFile;

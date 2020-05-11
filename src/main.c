@@ -2035,6 +2035,7 @@ static void mainParseInputFile(void) {
         S_symbol *pp;
         S_symbolRefItem *rfi;
         S_reference *rr;
+
         fprintf(dumpOut,"olcxMemoryAllocatedBytes == %d\n", olcxMemoryAllocatedBytes);
         //&{static int mp=0; int p; p=s_topBlock->firstFreeIndex*100/SIZE_workMemory;if (p>mp)mp=p;fprintf(dumpOut,": workmax == (%d%%)\n", mp);}
         //&{static int mp=0; int p; p=ppmMemoryi*100/SIZE_ppmMemory;if (p>mp)mp=p;fprintf(dumpOut,": ppmmax == (%d%%) == %d\n", mp, SIZE_ppmMemory/100*mp);}
