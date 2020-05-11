@@ -398,7 +398,7 @@ S_options s_initOpt = {
 
     0,                          /* err */
     true,                       /* brief_cxref */
-    0,                          /* update */
+    UP_NO_UPDATE,               /* update */
     0,                          /* keep_old */
     NULL,                       /* last_message */
     0,                          /* refnum */

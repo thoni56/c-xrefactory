@@ -476,11 +476,11 @@ typedef enum inputType {
     INPUT_CACHE,
 } InputType;
 
-enum updateModifiers {
+typedef enum updateType {
     UP_NO_UPDATE = 0,			// must be zero !
     UP_FAST_UPDATE,
     UP_FULL_UPDATE,
-};
+} UpdateType;
 
 enum syntaxPassParsedImportantPosition {
     SPP_LAST_TOP_LEVEL_CLASS_POSITION,
@@ -1075,7 +1075,7 @@ typedef struct options {
 
     bool show_errors;
     bool brief_cxref;
-    int update;
+    UpdateType update;
     int keep_old;
     char *last_message;
     int referenceFileCount;

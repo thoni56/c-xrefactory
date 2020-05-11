@@ -5,7 +5,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
-* TODO Remove FULL/FAST update, we always want correct info
+* DOING Remove FULL/FAST update, we always want correct info
 * TODO Some code in yacc semantic actions is not detected (try F6 on .reference)
 It seems that it is primarily java_parser.y that has this problem. See
 issue on github. One theory might be that "/*&" is not handled in

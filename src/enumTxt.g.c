@@ -174,6 +174,12 @@ char * olcxOptionsEnumName[] = {
 	"OLO_ABOUT"
 };
 
+char * updateTypeEnumName[] = {
+	"UP_NO_UPDATE",
+	"UP_FAST_UPDATE",
+	"UP_FULL_UPDATE"
+};
+
 char * usageEnumName[] = {
 	"ureserve0",
 	"UsageOLBestFitDefined",
@@ -312,12 +318,6 @@ char * typeEnumName[] = {
 	"TypeSpecialConstructorCompletion",
 	"TypeUnknown",
 	"MAX_TYPE"
-};
-
-char * updateModifiersEnumName[] = {
-	"UP_NO_UPDATE",
-	"UP_FAST_UPDATE",
-	"UP_FULL_UPDATE"
 };
 
 char * languageEnumName[] = {
