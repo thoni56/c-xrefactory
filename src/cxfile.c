@@ -681,18 +681,18 @@ static void generateRefsFromMemory(int fileOrder) {
     }
 }
 
-void genReferenceFile(int updateFlag, char *fname) {
+void genReferenceFile(bool updating, char *filename) {
     char    fileName[MAX_FILE_NAME_SIZE];
     char    *dirname;
     int     i;
 
-    if (updateFlag==0)
+    if (!updating)
         removeFile(fileName);
 
     recursivelyCreateFileDirIfNotExists(fileName);
     if (s_opt.referenceFileCount <= 1) {
         /* single reference file */
-        openInOutReferenceFiles(updateFlag, fname);
+        openInOutReferenceFiles(updating, filename);
         /*&     fileTabMap(&s_fileTab, javaInitSubClassInfo);&*/
         genCxFileHead();
         fileTabMapWithIndex(&s_fileTab, writeFileIndexItem);
@@ -700,19 +700,19 @@ void genReferenceFile(int updateFlag, char *fname) {
         fileTabMapWithIndex(&s_fileTab, genClassHierarchyItems);
         scanCxFile(fullScanFunctionSequence);
         refTabMap(&s_cxrefTab, genRefItem);
-        closeReferenceFile(fname);
+        closeReferenceFile(filename);
     } else {
         /* several reference files */
-        dirname = fname;
+        dirname = filename;
         createDirIfNotExists(dirname);
-        genPartialFileTabRefFile(updateFlag,dirname,REFERENCE_FILENAME_FILES,
+        genPartialFileTabRefFile(updating,dirname,REFERENCE_FILENAME_FILES,
                                  writeFileIndexItem, writeFileSourceIndexItem);
-        genPartialFileTabRefFile(updateFlag,dirname,REFERENCE_FILENAME_CLASSES,
+        genPartialFileTabRefFile(updating,dirname,REFERENCE_FILENAME_CLASSES,
                                  genClassHierarchyItems, NULL);
         for (i=0; i<s_opt.referenceFileCount; i++) {
             sprintf(fileName, "%s%s%04d", dirname, REFERENCE_FILENAME_PREFIX, i);
             assert(strlen(fileName) < MAX_FILE_NAME_SIZE-1);
-            openInOutReferenceFiles(updateFlag, fileName);
+            openInOutReferenceFiles(updating, fileName);
             genCxFileHead();
             scanCxFile(fullScanFunctionSequence);
             //&refTabMap4(&s_cxrefTab, genPartialRefItem, i);

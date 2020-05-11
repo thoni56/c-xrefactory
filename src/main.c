@@ -1742,13 +1742,19 @@ static char * getCommandLineFile(int *fArgCount) {
 }
 
 static void mainGenerateReferenceFile(void) {
-    static int updateFlag = 0;
-    if (s_opt.cxrefFileName == NULL) return;
-    if (updateFlag == 0 && s_opt.update == 0) {
-        genReferenceFile(0, s_opt.cxrefFileName);
-        updateFlag = 1;
+    static bool updateFlag = false;  /* TODO: WTF - why do we need a
+                                        static updateFlag? Maybe we
+                                        need to know that we have
+                                        generated from scratch so now
+                                        we can just update? */
+
+    if (s_opt.cxrefFileName == NULL)
+        return;
+    if (!updateFlag && s_opt.update == 0) {
+        genReferenceFile(false, s_opt.cxrefFileName);
+        updateFlag = true;
     } else {
-        genReferenceFile(1,s_opt.cxrefFileName);
+        genReferenceFile(true, s_opt.cxrefFileName);
     }
 }
 

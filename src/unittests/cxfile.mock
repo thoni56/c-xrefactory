@@ -34,8 +34,8 @@ int cxFileHashNumber(char *sym) {
   return (int) mock(sym);
 }
 
-void genReferenceFile(int updateFlag, char *fname) {
-  mock(updateFlag, fname);
+void genReferenceFile(bool updating, char *filename) {
+  mock(updating, filename);
 }
 
 void addSubClassItemToFileTab(int sup, int inf, int origin) {

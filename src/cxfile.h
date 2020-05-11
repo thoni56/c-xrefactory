@@ -33,7 +33,7 @@ extern char *crTagSearchLineStatic(char *name, Position *p,
 extern bool symbolNameShouldBeHiddenFromReports(char *name);
 extern void searchSymbolCheckReference(SymbolReferenceItem  *ss, Reference *rr);
 extern int cxFileHashNumber(char *sym);
-extern void genReferenceFile(int updateFlag, char *fname);
+extern void genReferenceFile(bool updating, char *filename);
 extern void addSubClassItemToFileTab( int sup, int inf, int origin);
 extern void addSubClassesItemsToFileTab(Symbol *ss, int origin);
 extern void scanCxFile(ScanFileFunctionStep *scanFuns);
