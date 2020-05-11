@@ -102,12 +102,13 @@ static void formatFullCompletions(char *tt, int indent, int inipos) {
     //&sprintf(tmpBuff,"result '\%s'",tt);ppcGenTmpBuff();
 }
 
-void formatOutputLine(char *tt, int startingColumn) {
+void formatOutputLine(char *line, int startingColumn) {
     int     pos, n;
     char    *nlp,*p;
+
     pos = startingColumn; nlp=NULL;
     assert(s_opt.tabulator>1);
-    p = tt;
+    p = line;
     for(;;) {
         while (pos<s_opt.olineLen || nlp==NULL) {
             if (*p == 0) return;
