@@ -1786,19 +1786,20 @@ static void linePosProcess(FILE *off,
     *cch = ch;
 }
 
-static Reference *passNonPrintableRefsForFile(Reference *r,
-                                                    int fnum,
-                                                    int usages, int usageFilter
-                                                    ) {
-Reference *rr;
- for(rr=r; rr!=NULL && rr->p.file == fnum; rr=rr->next) {
-     if (LISTABLE_USAGE(rr, usages, usageFilter)) return(rr);
- }
- return(rr);
+static Reference *passNonPrintableRefsForFile(Reference *references,
+                                              int wantedFileNumber,
+                                              int usages, int usageFilter) {
+    Reference *r;
+
+    for(r=references; r!=NULL && r->p.file == wantedFileNumber; r=r->next) {
+        if (LISTABLE_USAGE(r, usages, usageFilter))
+            return r;
+    }
+    return r;
 }
 
 static void passRefsThroughSourceFile(Reference **in_out_references, Position *callerp,
-                                      FILE *off,
+                                      FILE *outputFile,
                                       char *ofname, int usages, int usageFilter) {
     Reference *references,*oldrr;
     int ch,fnum;
@@ -1808,7 +1809,8 @@ static void passRefsThroughSourceFile(Reference **in_out_references, Position *c
     CharacterBuffer cxfBuf;
 
     references = *in_out_references;
-    if (references==NULL) goto fin;
+    if (references==NULL)
+        goto fin;
     fnum = references->p.file;
     assert(s_fileTab.tab[fnum]);
     cofileName = s_fileTab.tab[fnum]->name;
@@ -1821,10 +1823,10 @@ static void passRefsThroughSourceFile(Reference **in_out_references, Position *c
         if (ebuf==NULL) {
             if (s_opt.xref2) {
                 char tmpBuff[TMP_BUFF_SIZE];
-                sprintf(tmpBuff, "file %s not accessible", cofileName);
+                sprintf(tmpBuff, "file '%s' not accessible", cofileName);
                 errorMessage(ERR_ST, tmpBuff);
             } else {
-                fprintf(off,"  !!! file %s is not accessible: ", cofileName);
+                fprintf(outputFile,"!!! file '%s' is not accessible", cofileName);
             }
         }
     }
@@ -1843,7 +1845,7 @@ static void passRefsThroughSourceFile(Reference **in_out_references, Position *c
             while (ch!='\n' && ch!=EOF) GetBufChar(ch, &cxfBuf);
             GetFileChar(ch, &cp, &cxfBuf);
         }
-        linePosProcess(off, ofname, usages, usageFilter, cofileName,
+        linePosProcess(outputFile, ofname, usages, usageFilter, cofileName,
                        &references, callerp, &cp, &ch, &cxfBuf);
     }
     //&if (cofile != NULL) closeFile(cofile);
