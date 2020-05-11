@@ -140,6 +140,7 @@ the-actual-coverage-report:
 	@ls -1q ../tests/*.info | sed "s/^/-a /g" | xargs $(LCOV) -o ../coverage/total.info -a ../coverage/unittests.info
 	@printf "\\r"
 	@lcov -q --remove ../coverage/total.info '*.tab.c' '/usr/*' '/Library/*' -o ../coverage/total.info
+	@[ -x "$$(command -v info2gcov)" ] && info2gcov -q ../coverage/total.info
 	genhtml -q -o ../coverage ../coverage/total.info
 
 #########################################################################
