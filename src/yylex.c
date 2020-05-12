@@ -1936,17 +1936,17 @@ static void actionOnBlockMarker(void) {
 int yylex(void) {
     int lexem, line, val, len;
     Position pos, idpos;
-    char *ch;
+    char *lastLexemAddress;
     unsigned h;
 
     len = 0;
  nextYylex:
-    GetLexA(lexem, ch);
+    GetLexA(lexem, lastLexemAddress);
  contYylex:
     if (lexem < 256) {
         if (lexem == '\n') {
             if (s_ifEvaluation) {
-                cInput.currentLexem = ch;
+                cInput.currentLexem = lastLexemAddress;
             } else {
                 PassLex(cInput.currentLexem,lexem,line,val,h,pos, len,macroStackIndex == 0);
                 for(;;) {
