@@ -56,9 +56,6 @@
 static char ppMemory[SIZE_ppMemory];
 static int ppMemoryi=0;
 
-Position s_yyPositionBuf[YYBUFFERED_ID_INDEX];
-int s_yyPositionBufi = 0;
-
 int macroStackIndex=0;
 static S_lexInput macroStack[MACRO_STACK_SIZE];
 
