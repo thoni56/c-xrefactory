@@ -963,8 +963,6 @@ typedef struct options {
     char *javaFilesSuffixes;
     char *cppFilesSuffixes;
     int fileNamesCaseSensitive;
-    char *htmlLineNumLabel;
-    int htmlCutSuffix;
     int tagSearchSpecif;
     char *javaVersion;
     char *olcxWinDelFile;
@@ -996,15 +994,34 @@ typedef struct options {
     bool java2html;
     int javaSlAllowed;
     int xfileHashingMethod;
+
+    /* HTML: */
+    char *htmlRoot;
     char *htmlLineNumColor;
     int htmlCxLineLen;
     char *htmlJdkDocAvailable;
+    char *htmlLineNumLabel;
+    int htmlCutSuffix;
     int htmlGenJdkDocLinks;
     char *htmlJdkDocUrl;
+    bool htmlDirectX;
+    char *htmlLinkSuffix;
+    bool htmlNoUnderline;
+    char *htmlLinkColor;
+    char *htmlCutPath;
+    int htmlCutPathLen;
+    int htmlLineNums;
+    int htmlNoColors;
+    char *htmlZipCommand;
+    bool htmlFunSeparate;
+    bool htmlglobalx;
+    bool htmllocalx;
+    struct htmlCutPathsOpts htmlCut;
+
+    /* JAVA: */
     char *javaDocPath;
     int allowPackagesOnCl;
     char *sourcePath;
-    bool htmlDirectX;
     char *jdocTmpDir;
     int noCxFile;
     bool javaDoc;
@@ -1016,25 +1033,16 @@ typedef struct options {
     char *browsedSymName;
     bool modifiedFlag;
     int olcxMenuSelectLineNum;
-    bool htmlNoUnderline;
-    char *htmlLinkColor;
-    char *htmlCutPath;
-    int htmlCutPathLen;
     int ooChecksBits;
-    int htmlLineNums;
-    int htmlNoColors;
     int cxMemoryFactor;
     int multiHeadRefsCare;
     bool strictAnsi;
     char *project;
     char *olcxlccursor;
-    char *htmlZipCommand;
     char *olcxSearchString;
     int olineLen;
-    char *htmlLinkSuffix;
     char *olExtractAddrParPrefix;
     int extractMode;
-    bool htmlFunSeparate;
     int maxCompletions;
     int editor;
     int create;
@@ -1042,9 +1050,6 @@ typedef struct options {
     bool recursivelyDirs;
     char *classpath;
     int tabulator;
-    char *htmlRoot;
-    bool htmlglobalx;
-    bool htmllocalx;
     int olCursorPos;
     int olMarkPos;
     enum taskRegimes taskRegime;
@@ -1082,7 +1087,6 @@ typedef struct options {
 
     // all the rest initialized to zeros by default
     struct setGetEnv setGetEnv;
-    struct htmlCutPathsOpts htmlCut;
 
     // memory for strings
     struct stringPointerList	*allAllocatedStrings;

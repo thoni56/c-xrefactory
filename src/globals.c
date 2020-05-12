@@ -283,8 +283,6 @@ S_options s_initOpt = {
     "C:cpp:CC:cc",      // c++FilesSuffixes
 #endif
     1,                  // fileNamesCaseSensitive
-    ":",                // htmlLineNumLabel
-    0,                  // html cut suffix
     TSS_FULL_SEARCH,    // search Tag file specifics
     JAVA_VERSION_1_3,   // java version
     "",                 // windel file
@@ -316,16 +314,37 @@ S_options s_initOpt = {
     false,  // java2html
     1,      // javaSlAllowed (autoUpdateFromSrc)
     XFILE_HASH_DEFAULT,
-    NULL,
-    80,     // -htmlcxlinelen
+
+    /* HTML */
+    "",                         // htmlroot
+    NULL,                       // htmlLineNumColor
+    80,                         // htmlcxlinelen
     "java.applet:java.awt:java.beans:java.io:java.lang:java.math:java.net:java.rmi:java.security:java.sql:java.text:java.util:javax.accessibility:javax.swing:org.omg.CORBA:org.omg.CosNaming",     // -htmljavadocavailable
-    0,
-    NULL,       // "http://java.sun.com/j2se/1.3/docs/api",
-    "",         // javaDocPath
+    ":",                        // htmlLineNumLabel
+    0,                          // html cut suffix
+    0,                          // htmlGenJdkDocLinks
+    NULL,                       // htmlJdkDocUrl - "http://java.sun.com/j2se/1.3/docs/api",
+    false,                      // htmlDirectX
+    "",                         // htmlLinkSuffix
+    false,                      // htmlNoUnderline
+    "navy",                     // htmlLinkColor
+    "",                         // htmlCutPath
+    0,                          // htmlCutPathLen
+    0,                          /* htmlLineNums */
+    0,                          /* htmlNoColors */
+    NULL,                       /* htmlZipCommand */
+    false,                      /* htmlFunSeparate */
+    false,                      /* htmlglobalx */
+    false,                      /* htmllocalx */
+    {0, },                      // -cutpaths
+
+    /* JAVA: */
+    "",                         // javaDocPath
     0,          // allowPackagesOnCl
     NULL,       // sourcepath
-    false,      // htmlDirectX
     "/tmp",     // jdocTmpDir
+
+    /* MIXED THINGS... */
     0,          // noCxFile
     false,      // javaDoc
     false,      // noIncludeRefs
@@ -336,25 +355,16 @@ S_options s_initOpt = {
     NULL,       // browsed symbol name
     true,       // modifiedFlag
     0,
-    false,                      // htmlNoUnderline
-    "navy",     // htmlLinkColor
-    "",         // htmlCutPath
-    0,          // htmlCutPathLen
     (OOC_VIRT_SUBCLASS_OF_RELATED | OOC_PROFILE_APPLICABLE), // ooChecksBits
-    0,
-    0,
     1,          // cxMemoryFactor
     1,
     0,
     NULL,
     "0:3",      // olcxlccursor
-    NULL,       /* htmlZipCommand */
     "",         /* olcxSearchString */
     79,         /* olineLen */
-    "",         /* htmlLinkSuffix */
     "*_",       /* olExtractAddrParPrefix */
     0,          // extractMode, must be zero
-    false,      /* htmlFunSeparate */
     //& "__newFunction__",  // extractName
     MAX_COMPLETIONS,
     0,
@@ -363,9 +373,6 @@ S_options s_initOpt = {
     true,                       // recursively dirs
     "",                         // default classpath
     8,                          /* tabulator */
-    "",                     // -htmlroot
-    false,                  /* htmlglobalx */
-    false,                  /* htmllocalx */
     -1,
     -1,
     RegimeXref,
@@ -403,7 +410,6 @@ S_options s_initOpt = {
 
     // all the rest is initialized to zeros
     {0, },                      // get/set end
-    {0, },                      // -cutpaths
 
     // pending memory for string values
     NULL,                       /* allAllocatedStrings */
