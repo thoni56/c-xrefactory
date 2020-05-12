@@ -270,7 +270,7 @@ void gotOnLineCxRefs(Position *ps ) {
                        COLUMN_POS(ccc,clb,clo) - (llen), dd);           \
     }
 
-bool getLexBuf(struct lexBuf *lb) {
+bool getLexBuf(S_lexBuf *lb) {
     int ch;
     CharacterBuffer *cb;
     char *cb_next, *cb_end;

@@ -2,7 +2,7 @@
 #include "lex.h"
 #include <cgreen/mocks.h>
 
-bool getLexBuf(struct lexBuf *buffer) {
+bool getLexBuf(S_lexBuf *buffer) {
   return (bool) mock(buffer);
 }
 

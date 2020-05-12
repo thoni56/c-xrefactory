@@ -18,7 +18,7 @@ typedef struct lexBuf {
 } S_lexBuf;
 
 
-extern bool getLexBuf(struct lexBuf *lb);
+extern bool getLexBuf(S_lexBuf *lb);
 extern void gotOnLineCxRefs(Position *position);
 
 #endif

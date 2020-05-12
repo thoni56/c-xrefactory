@@ -1724,7 +1724,7 @@ endOfFile:
 }
 
 #ifdef DEBUG
-int lexBufDump(struct lexBuf *lb) {
+int lexBufDump(S_lexBuf *lb) {
     char *cc;
     int v,h,c,lv,lex,len;
     Position pos;
