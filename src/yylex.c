@@ -65,15 +65,6 @@ int macroStackIndex=0;
 S_lexInput cInput;
 
 
-
-#define SetCacheConsistency() {s_cache.cc = cInput.currentLexem;}
-#define SetCFileConsistency() {\
-    currentFile.lexBuffer.next = cInput.currentLexem;\
-}
-#define SetCInputConsistency() {\
-    fillLexInput(&cInput,currentFile.lexBuffer.next,currentFile.lexBuffer.end,currentFile.lexBuffer.chars,NULL,INPUT_NORMAL);\
-}
-
 #define IS_IDENTIFIER_LEXEM(lex) (lex==IDENTIFIER || lex==IDENT_NO_CPP_EXPAND  || lex==IDENT_TO_COMPLETE)
 
 
@@ -115,6 +106,16 @@ void fillLexInput(S_lexInput *lexInput, char *currentLexem, char *endOfBuffer,
     lexInput->margExpFlag = margExpFlag;
 }
 
+static void setCacheConsistency(void) {
+    s_cache.cc = cInput.currentLexem;
+}
+static void setCFileConsistency(void) {
+    currentFile.lexBuffer.next = cInput.currentLexem;
+}
+static void setCInputConsistency(void) {
+    fillLexInput(&cInput, currentFile.lexBuffer.next, currentFile.lexBuffer.end,
+                 currentFile.lexBuffer.chars, NULL, INPUT_NORMAL);
+}
 
 char *placeIdent(void) {
     static char tt[2*MAX_HTML_REF_LEN];
@@ -255,7 +256,7 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
     }
     fillFileDescriptor(&currentFile, fileName, bufferStart, bufferSize, file, offset);
     currentFile.lexBuffer.buffer.fileNumber = getOrCreateFileNumberFor(fileName);
-    SetCInputConsistency();
+    setCInputConsistency();
     s_ifEvaluation = false;				/* TODO: WTF??? */
 }
 
@@ -458,9 +459,9 @@ static void addIncludeReferences(int filenum, Position *pos) {
 
 void pushNewInclude(FILE *f, S_editorBuffer *buffer, char *name, char *prepend) {
     if (cInput.margExpFlag == INPUT_CACHE) {
-        SetCacheConsistency();
+        setCacheConsistency();
     } else {
-        SetCFileConsistency();
+        setCFileConsistency();
     }
     inStack[inStacki] = currentFile;		/* buffers are copied !!!!!!, burk */
     if (inStacki+1 >= INCLUDE_STACK_SIZE) {
@@ -482,7 +483,7 @@ void popInclude(void) {
         if (inStacki == 0 && s_cache.cc!=NULL) {
             fillLexInput(&cInput, s_cache.cc, s_cache.cfin, s_cache.lb, NULL, INPUT_CACHE);
         } else {
-            SetCInputConsistency();
+            setCInputConsistency();
         }
     }
 }
@@ -1784,7 +1785,7 @@ int cachedInputPass(int cpoint, char **cfrom) {
         ccc += lsize;
     }
 endOfFile:
-    SetCFileConsistency();
+    setCFileConsistency();
     *cfrom = ccc;
     return(res);
 endOfMacArg:
