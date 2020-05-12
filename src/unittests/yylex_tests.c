@@ -47,6 +47,7 @@ static void setup_lexBuffer_for_reading(void *data) {
     /* Need to insert lexem-codes first ? */
     currentFile.lexBuffer.chars[0] = '\275';
     currentFile.lexBuffer.chars[1] = '\001';
+    /* TODO: WTF This is mostly guesswork, no idea if this is how they are connected... */
     strcpy(&currentFile.lexBuffer.chars[2], currentFile.lexBuffer.buffer.chars);
     *strchr(&currentFile.lexBuffer.chars[2], ' ') = '\0';
     currentFile.lexBuffer.next = currentFile.lexBuffer.chars;
@@ -67,7 +68,7 @@ Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {
            will_return(0));
 
     /* This is the confirmation that there is a symbol p with a
-     * field named name equal to DEFINE
+     * field with name equal to DEFINE
      */
     expect(addCxReference, when(p_name, is_equal_to_string(DEFINE)));
 
