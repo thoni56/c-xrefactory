@@ -8,7 +8,7 @@
 #include "yylex.h"
 #include "cxref.h"
 #include "jsemact.h"
-#include "jslsemact.h"          /*& s_jsl */
+#include "jslsemact.h"          /*& s_jsl &*/
 #include "enumTxt.h"
 #include "symbol.h"
 #include "list.h"

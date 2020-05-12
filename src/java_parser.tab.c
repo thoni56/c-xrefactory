@@ -2643,7 +2643,7 @@ void makeJavaCompletions(char *s, int len, Position *pos) {
                     fillCompletionLine(&compLine, s_tokenName[token], NULL, TypeKeyword,0, 0, NULL,NULL);
                     processName(s_tokenName[token], &compLine, 0, &s_completions);
                 } else {
-                    /*& fillCompletionLine(&compLine, s_tokenName[token], NULL, TypeToken,0, 0, NULL,NULL); */
+                    /*& fillCompletionLine(&compLine, s_tokenName[token], NULL, TypeToken,0, 0, NULL,NULL); &*/
                 }
             }
         }

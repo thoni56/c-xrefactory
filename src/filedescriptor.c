@@ -1,6 +1,6 @@
 #include "filedescriptor.h"
 
-#include "globals.h"            /*& s_noneFileIndex */
+#include "globals.h"            /*& s_noneFileIndex &*/
 
 FileDescriptor currentFile = {0};
 

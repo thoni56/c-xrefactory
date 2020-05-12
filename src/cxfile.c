@@ -553,7 +553,7 @@ static void genRefItem0(SymbolReferenceItem *d, int forceGen) {
         log_trace("checking ref: loading=%d --< %s:%d", s_fileTab.tab[reference->p.file]->b.cxLoading,
                   s_fileTab.tab[reference->p.file]->name, reference->p.line);
         if (s_opt.update==UP_CREATE || s_fileTab.tab[reference->p.file]->b.cxLoading) {
-            /*& s_opt.update==UP_CREATE; why it is there */
+            /*& s_opt.update==UP_CREATE; why it is there &*/
             writeCxReference(reference, symIndex);
         } else {
             log_trace("Some kind of update (%d) or not loading (%d), so don't writeCxReference()",
@@ -696,7 +696,7 @@ void genReferenceFile(bool updating, char *filename) {
     if (s_opt.referenceFileCount <= 1) {
         /* single reference file */
         openInOutReferenceFiles(updating, filename);
-        /*&     fileTabMap(&s_fileTab, javaInitSubClassInfo);&*/
+        /*&     fileTabMap(&s_fileTab, javaInitSubClassInfo); &*/
         genCxFileHead();
         fileTabMapWithIndex(&s_fileTab, writeFileIndexItem);
         fileTabMapWithIndex(&s_fileTab, writeFileSourceIndexItem);

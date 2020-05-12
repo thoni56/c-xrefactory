@@ -5,7 +5,10 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
-* DOING Remove FULL/FAST update, we always want correct info
+* TODO Remove FULL/FAST update, we always want correct info?
+There are a number of update modes available from the command line, 'fupdate',
+'updatem', 'update', 'fastupdate' and then there is opt.updateOnlyModifiedFiles
+* TODO Remove all -olcx commands that are not used by the editor interfaces?
 * TODO Some code in yacc semantic actions is not detected (try F6 on .reference)
 It seems that it is primarily java_parser.y that has this problem. See
 issue on github. One theory might be that "/*&" is not handled in
@@ -38,6 +41,9 @@ What You Use" and is a Clang related project at
 https://github.com/include-what-you-use/include-what-you-use)
 * TODO Figure out a way to remove "commons.c 295" from all parser error messages
 * TODO Refactor int2StringTabs, should not have Init in them
+* TODO Remove opt.xref2 since edit server mode is always called with this, isn't it?
+If so, make xref2 the way c-xref talks if in server mode. But this should also
+apply for refactory mode, right?
 * TODO Initialize memory's injected error functions in main.c, but it still works?
 * TODO Cleanup and separate commons, misc and make them independent utility modules
 * TODO Check if the C-part of Yacc grammar is identical, and if so extract it
@@ -56,7 +62,8 @@ Currently only the following are actually used:
 
 Re-test this with "ls *.c | grep -v enumTxt | xargs grep -h -o '[^ ("*,]*EnumName\[[^ ]*' | sed -e 's/\[.*//g' | sort | uniq"
 * TODO Fix the move_class test
-* TODO Use enum types wherever possible Storage, SymbolType, ...
+* TODO Use enum types wherever possible Storage, SymbolType
+Which are left to do?
 * TODO Rename some of the options, like -no_str -> -no-structs
 * TODO Why does -refactory read the users default .c-xrefrc?
 * TODO Change all "-no_" options to modern "-no-"

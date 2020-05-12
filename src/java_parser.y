@@ -546,7 +546,7 @@ FloatingPointType
     ;
 
 ReferenceType
-    :   ClassOrInterfaceType		/*& { $$.d = $1.d; } */
+    :   ClassOrInterfaceType		/*& { $$.d = $1.d; } &*/
     |	ArrayType					{
             $$.d = $1.d.symbol;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
@@ -595,11 +595,11 @@ ExtendClassOrInterfaceType
     ;
 
 ClassType
-    :   ClassOrInterfaceType		/*& { $$.d = $1.d; } */
+    :   ClassOrInterfaceType		/*& { $$.d = $1.d; } &*/
     ;
 
 InterfaceType
-    :   ClassOrInterfaceType		/*& { $$.d = $1.d; } */
+    :   ClassOrInterfaceType		/*& { $$.d = $1.d; } &*/
     ;
 
 ArrayType
@@ -1113,7 +1113,7 @@ Modifiers_opt:					{
     ;
 
 Modifiers
-    :   Modifier				/*& { $$ = $1; } */
+    :   Modifier				/*& { $$ = $1; } &*/
     |	Modifiers Modifier		{
             $$.d = $1.d | $2.d;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
@@ -1765,7 +1765,7 @@ FormalParameterList_opt:					{
             $$.d.p = NULL;
             SetNullBoundaries($$);
         }
-    |	FormalParameterList					/*& {$$ = $1;} */
+    |	FormalParameterList					/*& {$$ = $1;} &*/
     ;
 
 FormalParameterList
@@ -1873,7 +1873,7 @@ ClassTypeList
     ;
 
 MethodBody
-    :   Block				/*& { $$ = $1; } */
+    :   Block				/*& { $$ = $1; } &*/
     |	';'					{
             $$.d = $1.d;
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
@@ -2206,7 +2206,7 @@ InterfaceMemberDeclaration
     ;
 
 ConstantDeclaration
-    :   FieldDeclaration				/*& {$$=$1;} */
+    :   FieldDeclaration				/*& {$$=$1;} &*/
     ;
 
 AbstractMethodDeclaration
@@ -2262,16 +2262,16 @@ Block
     ;
 
 BlockStatements
-    :   BlockStatement						/*& {$$ = $1;} */
+    :   BlockStatement						/*& {$$ = $1;} &*/
     |	BlockStatements BlockStatement		{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     ;
 
 BlockStatement
-    :   LocalVariableDeclarationStatement		/*& {$$ = $1;} */
-    |	FunctionInnerClassDeclaration			/*& {$$ = $1;} */
-    |	Statement								/*& {$$ = $1;} */
+    :   LocalVariableDeclarationStatement		/*& {$$ = $1;} &*/
+    |	FunctionInnerClassDeclaration			/*& {$$ = $1;} &*/
+    |	Statement								/*& {$$ = $1;} &*/
     |	error									{SetNullBoundaries($$);}
     ;
 
@@ -2526,7 +2526,7 @@ SwitchBlock
     ;
 
 SwitchBlockStatementGroups
-    :   SwitchBlockStatementGroup								/*& {$$=$1;} */
+    :   SwitchBlockStatementGroup								/*& {$$=$1;} &*/
     |	SwitchBlockStatementGroups SwitchBlockStatementGroup	{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
@@ -2545,7 +2545,7 @@ SwitchBlockStatementGroup
     ;
 
 SwitchLabels
-    :   SwitchLabel								/*& {$$=$1;} */
+    :   SwitchLabel								/*& {$$=$1;} &*/
     |	SwitchLabels SwitchLabel				{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
@@ -3073,12 +3073,12 @@ PrimaryNoNewArray
                 }
             }
         }
-    |	ClassInstanceCreationExpression		/*& { $$.d = $1.d } */
+    |	ClassInstanceCreationExpression		/*& { $$.d = $1.d } &*/
         /* TODO: Here c-xref parsing/analysis stops, anything beyond
            this point does not register */
-    |	FieldAccess							/*& { $$.d = $1.d } */
-    |	MethodInvocation					/*& { $$.d = $1.d } */
-    |	ArrayAccess							/*& { $$.d = $1.d } */
+    |	FieldAccess							/*& { $$.d = $1.d } &*/
+    |	MethodInvocation					/*& { $$.d = $1.d } &*/
+    |	ArrayAccess							/*& { $$.d = $1.d } &*/
     |	CompletionTypeName '.'		{ assert(0); /* rule never used */ }
     ;
 
@@ -3323,7 +3323,7 @@ ArgumentList_opt:				{
             $$.d.p = NULL;
             SetNullBoundaries($$);
         }
-    | ArgumentList				/*& { $$.d = $1.d; } */
+    | ArgumentList				/*& { $$.d = $1.d; } &*/
     ;
 
 ArgumentList
@@ -3446,7 +3446,7 @@ Dims_opt
         if (regularPass()) $$.d = 0;
             SetNullBoundaries($$);
         }
-    |	Dims						/*& { $$ = $1; } */
+    |	Dims						/*& { $$ = $1; } &*/
     ;
 
 Dims
@@ -4441,7 +4441,7 @@ void makeJavaCompletions(char *s, int len, Position *pos) {
                     fillCompletionLine(&compLine, s_tokenName[token], NULL, TypeKeyword,0, 0, NULL,NULL);
                     processName(s_tokenName[token], &compLine, 0, &s_completions);
                 } else {
-                    /*& fillCompletionLine(&compLine, s_tokenName[token], NULL, TypeToken,0, 0, NULL,NULL); */
+                    /*& fillCompletionLine(&compLine, s_tokenName[token], NULL, TypeToken,0, 0, NULL,NULL); &*/
                 }
             }
         }
