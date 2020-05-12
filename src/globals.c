@@ -347,7 +347,6 @@ S_options s_initOpt = {
     1,
     0,
     NULL,
-    false,                      // updateOnlyModifiedFiles
     "0:3",      // olcxlccursor
     NULL,       /* htmlZipCommand */
     "",         /* olcxSearchString */
@@ -397,6 +396,7 @@ S_options s_initOpt = {
     0,                          /* show err */
     true,                       /* brief_cxref */
     UP_CREATE,                  /* create, update */
+    false,                      // updateOnlyModifiedFiles
     0,                          /* keep_old */
     NULL,                       /* last_message */
     0,                          /* refnum */

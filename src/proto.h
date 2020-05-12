@@ -1027,7 +1027,6 @@ typedef struct options {
     int multiHeadRefsCare;
     bool strictAnsi;
     char *project;
-    bool updateOnlyModifiedFiles;
     char *olcxlccursor;
     char *htmlZipCommand;
     char *olcxSearchString;
@@ -1076,6 +1075,7 @@ typedef struct options {
     bool show_errors;
     bool brief_cxref;
     UpdateType update;
+    bool updateOnlyModifiedFiles;
     int keep_old;
     char *last_message;
     int referenceFileCount;
