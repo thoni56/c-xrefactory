@@ -21,10 +21,14 @@ BeforeEach(Lex) {}
 AfterEach(Lex) {}
 
 
-xEnsure(Lex, can_run_initial_test) {
+Ensure(Lex, will_signal_false_for_empty_lexbuffer) {
     S_lexBuf lexBuffer;
 
-    s_cache.activeCache = false;
+    s_cache.activeCache = false; /* ?? */
+
+    lexBuffer.next = NULL;
+    lexBuffer.end = NULL;
+    lexBuffer.index = 0;
 
     initCharacterBuffer(&lexBuffer.buffer, NULL);
 
