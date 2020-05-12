@@ -59,8 +59,8 @@ static int ppMemoryi=0;
 Position s_yyPositionBuf[YYBUFFERED_ID_INDEX];
 int s_yyPositionBufi = 0;
 
-S_lexInput macStack[MACRO_STACK_SIZE];
 int macroStackIndex=0;
+static S_lexInput macroStack[MACRO_STACK_SIZE];
 
 S_lexInput cInput;
 
@@ -318,7 +318,7 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
 
 #define PrependMacroInput(macInput) {             \
         assert(macroStackIndex < MACRO_STACK_SIZE-1);    \
-        macStack[macroStackIndex++] = cInput;         \
+        macroStack[macroStackIndex++] = cInput;         \
         cInput = macInput;                      \
         cInput.currentLexem = cInput.beginningOfBuffer;                   \
         cInput.margExpFlag = INPUT_MACRO;          \
@@ -331,7 +331,7 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
         if (macroStackIndex > 0) {                                      \
             if (margFlag == INPUT_MACRO_ARGUMENT) goto endOfMacArg;     \
             MB_FREE_UNTIL(cInput.beginningOfBuffer);                    \
-            cInput = macStack[--macroStackIndex];                       \
+            cInput = macroStack[--macroStackIndex];                       \
         } else if (margFlag == INPUT_NORMAL) {                          \
             setCFileConsistency();                                      \
             if (!getLexBuf(&currentFile.lexBuffer)) goto endOfFile;     \
@@ -569,7 +569,7 @@ static void processInclude(Position *ipos) {
         if (macroStackIndex != 0) {
             errorMessage(ERR_INTERNAL,"include directive in macro body?");
 assert(0);
-            cInput = macStack[0];
+            cInput = macroStack[0];
             macroStackIndex = 0;
         }
         processInclude2(ipos, *ccc, ccc+1);
@@ -577,7 +577,7 @@ assert(0);
         cInput.currentLexem = cc2;		/* unget lexem */
         lex = yylex();
         if (lex == STRING_LITERAL) {
-            cInput = macStack[0];		// hack, cut everything pending
+            cInput = macroStack[0];		// hack, cut everything pending
             macroStackIndex = 0;
             processInclude2(ipos, '\"', yytext);
         } else if (lex == '<') {
@@ -1249,7 +1249,7 @@ static int cyclicCall(S_macroBody *mb) {
 /*fprintf(dumpOut,"testing '%s' against curr '%s'\n",name,cInput.macname);*/
     if (cInput.macroName != NULL && !strcmp(name,cInput.macroName)) return(1);
     for(i=0; i<macroStackIndex; i++) {
-        ll = &macStack[i];
+        ll = &macroStack[i];
 /*fprintf(dumpOut,"testing '%s' against '%s'\n",name,ll->macname);*/
         if (ll->macroName != NULL && !strcmp(name,ll->macroName)) return(1);
     }
@@ -1298,7 +1298,7 @@ static void expandMacroArgument(S_lexInput *argb) {
         TestPPBufOverflow(bcc,buf,bsize);
     }
 endOfMacArg:
-    cInput = macStack[--macroStackIndex];
+    cInput = macroStack[--macroStackIndex];
     PP_REALLOCC(buf,bcc-buf,char,bsize+MAX_LEXEM_SIZE);
     fillLexInput(argb,buf,bcc,buf,NULL,INPUT_NORMAL);
     return;
