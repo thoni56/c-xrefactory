@@ -324,30 +324,30 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
         cInput.margExpFlag = INPUT_MACRO;          \
     }
 
-#define GetLexA(lex,lastlexadd) {                                   \
-        while (cInput.currentLexem >= cInput.endOfBuffer) {                           \
-            InputType margFlag;                                          \
-            margFlag = cInput.margExpFlag;                          \
-            if (macroStackIndex > 0) {                                    \
-                if (margFlag == INPUT_MACRO_ARGUMENT) goto endOfMacArg;     \
-                MB_FREE_UNTIL(cInput.beginningOfBuffer);                            \
-                cInput = macStack[--macroStackIndex];                     \
-            } else if (margFlag == INPUT_NORMAL) {                     \
-                SetCFileConsistency();                              \
-                if (!getLexBuf(&currentFile.lexBuffer)) goto endOfFile;   \
-                SetCInputConsistency();                             \
-            } else {                                                \
-                /*			s_cache.recoveringFromCache = 0;*/      \
-                s_cache.cc = s_cache.cfin = NULL;                   \
-                cacheInput();                                       \
-                s_cache.lexcc = currentFile.lexBuffer.next;                        \
-                SetCInputConsistency();                             \
-            }                                                       \
-            lastlexadd = cInput.currentLexem;                                 \
-        }                                                           \
-        lastlexadd = cInput.currentLexem;                                     \
-        GetLexToken(lex, cInput.currentLexem);                                \
-    }
+#define GetLexA(lexem, lastLexemAddress) {                              \
+    while (cInput.currentLexem >= cInput.endOfBuffer) {                 \
+        InputType margFlag;                                             \
+        margFlag = cInput.margExpFlag;                                  \
+        if (macroStackIndex > 0) {                                      \
+            if (margFlag == INPUT_MACRO_ARGUMENT) goto endOfMacArg;     \
+            MB_FREE_UNTIL(cInput.beginningOfBuffer);                    \
+            cInput = macStack[--macroStackIndex];                       \
+        } else if (margFlag == INPUT_NORMAL) {                          \
+            setCFileConsistency();                                      \
+            if (!getLexBuf(&currentFile.lexBuffer)) goto endOfFile;     \
+            setCInputConsistency();                                     \
+        } else {                                                        \
+            /*			s_cache.recoveringFromCache = 0;*/              \
+            s_cache.cc = s_cache.cfin = NULL;                           \
+            cacheInput();                                               \
+            s_cache.lexcc = currentFile.lexBuffer.next;                 \
+            setCInputConsistency();                                     \
+        }                                                               \
+        lastLexemAddress = cInput.currentLexem;                         \
+    }                                                                   \
+    lastLexemAddress = cInput.currentLexem;                             \
+    GetLexToken(lexem, cInput.currentLexem);                            \
+}
 
 #define GetLex(lex) {                                                \
         char *lastlexcc; UNUSED lastlexcc; GetLexA(lex, lastlexcc);  \
