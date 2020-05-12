@@ -390,17 +390,17 @@ static void testCxrefCompletionId(int *llex, char *idd, Position *pos) {
 /* ********************************** #LINE *********************** */
 
 static  void processLine(void) {
-    int lex,l,h,v=0,len;
+    int lexem,l,h,v=0,len;
     Position pos;
 
-    GetLex(lex);
-    PassLex(cInput.currentLexem,lex,l,v,h,pos, len,1);
-    if (lex != CONSTANT) return;
+    GetLex(lexem);
+    PassLex(cInput.currentLexem,lexem,l,v,h,pos, len,1);
+    if (lexem != CONSTANT) return;
     //& currentFile.lineNumber = v-1;      // ignore this directive
-    GetLex(lex);
+    GetLex(lexem);
 /*	this should be moved to the  getLexBuf routine,!!!!!!!!!!!!!!!!!!! TODO */
 /*&
-    if (lex == STRING_LITERAL) {
+    if (lexem == STRING_LITERAL) {
         int i = 0;
         cc = cInput.currentLexem;
         ch = *cc;
@@ -413,7 +413,7 @@ static  void processLine(void) {
         setOpenFileInfo(ss);
     }
 &*/
-    PassLex(cInput.currentLexem,lex,l,v,h,pos, len,1);
+    PassLex(cInput.currentLexem,lexem,l,v,h,pos, len,1);
     return;
 endOfMacArg:	assert(0);
 endOfFile:;
