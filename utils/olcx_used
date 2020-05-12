@@ -1,0 +1,2 @@
+#!/bin/bash
+grep -R olcx | sed -e 's/.*-olcx/-olcx/g' -e 's/".*//g' | sort | uniq
