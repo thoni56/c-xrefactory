@@ -391,17 +391,11 @@ static int getLexA(char **previousLexem) {
 }
 
 /* Attempt to re-create a function that does what GetLex() macro does: */
-/* static int getLex(void) { */
-/*     int lexem; */
-/*     char *lastLexemAddress; */
-/*     UNUSED lastLexemAddress; */
-/*     GetLexA(lexem, lastLexemAddress); */
-/*     return lexem; */
-/*  endOfMacArg: */
-/*     return -1; */
-/*  endOfFile: */
-/*     return -2; */
-/* } */
+static int getLex(void) {
+    char *previousLexem;
+    int lexem = getLexA(&previousLexem);
+    return lexem; // -1 if endOfMacroArgument, -2 if endOfFile
+}
 
 
 /* ***************************************************************** */
