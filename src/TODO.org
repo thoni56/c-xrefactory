@@ -9,6 +9,9 @@ There are a *lot* of things to do to make c-xref into modern C.
 There are a number of update modes available from the command line, 'fupdate',
 'updatem', 'update', 'fastupdate' and then there is opt.updateOnlyModifiedFiles
 * TODO Remove all -olcx commands that are not used by the editor interfaces?
+* TODO Separate the options into sections and move HTML (at least) to separate structure
+The S_options structure is used to save or possibly create new sets, when
+refactoring. Then it should only contain what's needed for that.
 * TODO Some code in yacc semantic actions is not detected (try F6 on .reference)
 It seems that it is primarily java_parser.y that has this problem. See
 issue on github. One theory might be that "/*&" is not handled in
