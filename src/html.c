@@ -651,7 +651,8 @@ void concatPaths(char *res, int rsize, char *p1, char *p2, char *p3) {
 
 static Reference * htmlGetDefinitionRef(S_htmlRefList *rrr, int usage) {
     SymbolReferenceItem *rr,*cr;
-    register Reference *r,*res;
+    Reference *r,*res;
+
     assert(rrr && rrr->symbolRefItem && rrr->symbolRefItem->refs);
     rr = rrr->symbolRefItem;
     res = NULL;
@@ -1749,7 +1750,7 @@ void htmlGenGlobalReferenceLists(char *cxMemFreeBase) {
 
 
 void generateHtml(void) {
-    register int    i;
+    int    i;
     S_fileItem      *fi;
 
     if (s_opt.htmlRoot==NULL ||  s_opt.htmlRoot[0]==0) {

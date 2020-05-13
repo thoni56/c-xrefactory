@@ -119,9 +119,10 @@ static char tmpFileName[MAX_FILE_NAME_SIZE];
 /* *********************** INPUT/OUTPUT ************************** */
 
 int cxFileHashNumber(char *sym) {
-    register unsigned   res,r;
-    register char       *ss,*bb;
-    register int        c;
+    unsigned   res,r;
+    char       *ss,*bb;
+    int        c;
+
     if (s_opt.referenceFileCount <= 1) return(0);
     if (s_opt.xfileHashingMethod == XFILE_HASH_DEFAULT) {
         res = 0;
@@ -770,7 +771,7 @@ static void trace_buffer(CharacterBuffer *buffer) {
 }
 
 #define SkipNChars(count, ccc, ffin, iBuf) {                \
-    register int ccount, ch; UNUSED ch;                     \
+    int ccount, ch; UNUSED ch;                              \
     ccount = count;                                         \
     while (ccc + ccount > ffin) {                           \
         ccount -= ffin - ccc;                               \

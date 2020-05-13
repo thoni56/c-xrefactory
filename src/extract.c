@@ -399,7 +399,7 @@ static void extClassifyLocalVariables(S_programGraphNode *program) {
     ( if cpName == 0, then do not copy the original var name )
 */
 #define GetLocalVarStringFromLinkName(linkName,oDecla,oName,oDecl,declStar,cpName) { \
-        register char *s,*d,*dn,*dd;                                    \
+        char *s,*d,*dn,*dd;                                             \
                                                                         \
         log_trace("analyzing '%s'",linkName);                           \
         for(    s=linkName+1,d=oDecl,dd=oDecla;                         \

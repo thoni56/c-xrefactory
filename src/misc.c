@@ -782,14 +782,14 @@ void fPutDecimal(FILE *ff, int num) {
 }
 
 char *strmcpy(char *dest, char *src) {
-    register char *p1,*p2;
+    char *p1,*p2;
     for(p1=dest,p2=src; *p2; p1++, p2++) *p1 = *p2;
     *p1 = 0;
     return(p1);
 }
 
 char *lastOccurenceInString(char *ss, int ch) {
-    register char *s,*res;
+    char *s,*res;
     res = NULL;
     for(s=ss; *s; s++) {
         if (*s == ch) res=s;
@@ -798,7 +798,7 @@ char *lastOccurenceInString(char *ss, int ch) {
 }
 
 char *lastOccurenceOfSlashOrAntiSlash(char *ss) {
-    register char *s,*res;
+    char *s,*res;
     res = NULL;
     for(s=ss; *s; s++) {
         if (*s == '/' || *s == '\\') res=s;
@@ -924,7 +924,7 @@ static void shellMatchDeleteState(S_intlist **s) {
 }
 
 static int shellMatchParseBracketPattern(char *pattern, int pi, int caseSensitive, char *asciiMap) {
-    register int        i,j,m;
+    int        i,j,m;
     int     setval = 1;
     i = pi;
     assert(pattern[i] == '[');
@@ -1024,7 +1024,7 @@ int shellMatch(char *string, int stringLen, char *pattern, int caseSensitive) {
 }
 
 int containsWildcard(char *ss) {
-    register int c;
+    int c;
     for(; *ss; ss++) {
         c = *ss;
         if (c=='*' || c=='?' || c=='[') return(1);
@@ -1264,7 +1264,7 @@ int mapDirectoryFiles(
 }
 
 static char *concatFNameInTmpMemory( char *dirname , char *packfile) {
-    register char *tt, *fname;
+    char *tt, *fname;
     fname = tmpMemory;
     tt = strmcpy(fname, dirname);
     if (*packfile) {
@@ -1317,7 +1317,7 @@ int stringEndsBySuffix(char *s, char *suffix) {
 }
 
 int stringContainsSubstring(char *s, char *subs) {
-    register int i, im;
+    int i, im;
     int sl, sbl;
     sl = strlen(s);
     sbl = strlen(subs);
@@ -1329,7 +1329,7 @@ int stringContainsSubstring(char *s, char *subs) {
 }
 
 int substringIndexWithLimit(char *s, int limit, char *subs) {
-    register int i, im;
+    int i, im;
     int sl, sbl;
     sl = limit;
     sbl = strlen(subs);
@@ -1341,7 +1341,7 @@ int substringIndexWithLimit(char *s, int limit, char *subs) {
 }
 
 int substringIndex(char *s, char *subs) {
-    register int i, im;
+    int i, im;
     int sl, sbl;
     sl = strlen(s);
     sbl = strlen(subs);

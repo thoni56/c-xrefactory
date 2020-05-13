@@ -321,12 +321,13 @@ void jslAddMapedImportTypeName(
 }
 
 void jslAddAllPackageClassesFromFileTab(IdList *packid) {
-    register                int i;
-    register S_fileItem     *ff;
-    register int            pnlen, c;
-    char                    fqtName[MAX_FILE_NAME_SIZE];
-    char                    ttt[MAX_FILE_NAME_SIZE];
-    char                    *ee, *bb, *dd;
+    int i;
+    S_fileItem *ff;
+    int pnlen, c;
+    char fqtName[MAX_FILE_NAME_SIZE];
+    char ttt[MAX_FILE_NAME_SIZE];
+    char *ee, *bb, *dd;
+
     javaCreateComposedName(NULL,packid,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
     pnlen = strlen(fqtName);
     for(i=0; i<s_fileTab.size; i++) {

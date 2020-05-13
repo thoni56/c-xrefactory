@@ -128,7 +128,7 @@ void stackMemoryInit(void) {
 }
 
 void *stackMemoryAlloc(int size) {
-    register int i;
+    int i;
     i = s_topBlock->firstFreeIndex;
     i = ((char *)ALIGNMENT(memory+i,STANDARD_ALIGNMENT))-memory;
     if (i+size < SIZE_workMemory) {

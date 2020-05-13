@@ -436,7 +436,8 @@ static int javaFindFile(Symbol *clas,
 }
 
 static int javaFqtNameIsFromThePackage(char *cpack, char *classFqName) {
-    register char   *p1,*p2;
+    char   *p1,*p2;
+
     for(p1=cpack, p2=classFqName; *p1 == *p2; p1++,p2++) ;
     if (*p1 != 0) return(0);
     if (*p2 == 0) return(0);
@@ -446,7 +447,8 @@ static int javaFqtNameIsFromThePackage(char *cpack, char *classFqName) {
 }
 
 int javaFqtNamesAreFromTheSamePackage(char *nn1, char *nn2) {
-    register char   *p1,*p2;
+    char   *p1,*p2;
+
     if (nn1==NULL || nn2==NULL) return(0);
 //&fprintf(dumpOut,"checking equal package %s %s\n", nn1, nn2);
     for(p1=nn1, p2=nn2; *p1 == *p2 && *p1 && *p2; p1++,p2++) ;
@@ -915,9 +917,10 @@ int findTopLevelName(
 }
 
 static int javaIsNestedClass(Symbol *tclas, char *name, Symbol **innmemb) {
-    register int    i,n;
+    int    i,n;
     S_nestedSpec	*inners;
     Symbol        *clas;
+
     // take just one super class, no interfaces, for speed reasons
     for(clas=tclas;
         clas!=NULL && clas->u.s->super!=NULL;
@@ -926,7 +929,7 @@ static int javaIsNestedClass(Symbol *tclas, char *name, Symbol **innmemb) {
         n = clas->u.s->nestedCount;
         inners = clas->u.s->nest;
         for(i=0; i<n; i++) {
-//&fprintf(dumpOut,"checking %s<->%s\n",inners[i].cl->name, name);fflush(dumpOut);
+//& fprintf(dumpOut,"checking %s<->%s\n",inners[i].cl->name, name);fflush(dumpOut);
             if (inners[i].membFlag && strcmp(inners[i].cl->name, name)==0) {
                 // the following if makes problem, because when resolving
                 // a name Outer.Inner I do not care whether it is static
@@ -942,9 +945,10 @@ static int javaIsNestedClass(Symbol *tclas, char *name, Symbol **innmemb) {
 }
 
 static int javaClassIsInnerNonStaticMemberClass(Symbol *tclas, Symbol *name) {
-    register int    i,n;
+    int    i,n;
     S_nestedSpec	*inners;
     Symbol        *clas;
+
     // take just one super class, no interfaces, for speed reasons
     for(clas=tclas;
         clas!=NULL && clas->u.s->super!=NULL;

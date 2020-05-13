@@ -14,9 +14,10 @@ static unsigned hashFunFinal(unsigned oldHash) {
 }
 
 unsigned hashFun(char *string) {
-    register unsigned h = 0;
-    register char *s = string;
-    register char ch;
+    unsigned h = 0;
+    char *s = string;
+    char ch;
+
     for(ch = *s; ch ; ch = *++s) h = hashFunIncrement(h, ch);
     h = hashFunFinal(h);
     return h;

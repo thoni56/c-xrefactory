@@ -678,7 +678,7 @@ static int completionTestPrefix(Completions *ci, char *s) {
 }
 
 static int stringContainsCaseInsensitive(char *s1, char *s2) {
-    register char *p,*a,*b;
+    char *p,*a,*b;
     for (p=s1; *p; p++) {
         for(a=p,b=s2; tolower(*a)==tolower(*b); a++,b++) ;
         if (*b==0) return(1);

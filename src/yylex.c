@@ -266,7 +266,7 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
 #define PassLex(Input,lex,lineval,val,hash,pos, length,linecount) {     \
         if (lex > MULTI_TOKENS_START) {                                 \
             if (IS_IDENTIFIER_LEXEM(lex)){                              \
-                register char *tmpcc,tmpch;                             \
+                char *tmpcc,tmpch;                                      \
                 hash = 0;                                               \
                 for(tmpcc=Input,tmpch= *tmpcc; tmpch; tmpch = *++tmpcc) { \
                     SYMTAB_HASH_FUN_INC(hash, tmpch);                  \
@@ -276,7 +276,7 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
                 GetLexPosition((pos),tmpcc);                            \
                 Input = tmpcc;                                          \
             } else if (lex == STRING_LITERAL) {                         \
-                register char *tmpcc,tmpch;                             \
+                char *tmpcc,tmpch;                                      \
                 for(tmpcc=Input,tmpch= *tmpcc; tmpch; tmpch = *++tmpcc); \
                 tmpcc ++;                                               \
                 GetLexPosition((pos),tmpcc);                            \
@@ -2020,8 +2020,8 @@ int yylex(void) {
         goto finish;
     }
     if (lexem==IDENTIFIER || lexem==IDENT_NO_CPP_EXPAND) {
-        register char *id;
-        register unsigned h;
+        char *id;
+        unsigned h;
         int ii;
         Symbol symbol, *memberP;
 

@@ -32,14 +32,14 @@ S_editorMemoryBlock *s_editorMemory[MAX_EDITOR_MEMORY_BLOCK];
 //                      encoding stuff
 
 #define EDITOR_ENCODING_WALK_THROUGH_BUFFER(buff, command) {  \
-        register unsigned char *s, *d, *maxs;               \
-        unsigned char *space;                               \
-        space = (unsigned char *)buff->a.text;              \
-        maxs = space + buff->a.bufferSize;                  \
-        for(s=d=space; s<maxs; s++) {                       \
-            command                                         \
-                }                                           \
-        buff->a.bufferSize = d - space;                     \
+        unsigned char *s, *d, *maxs;                          \
+        unsigned char *space;                                 \
+        space = (unsigned char *)buff->a.text;                \
+        maxs = space + buff->a.bufferSize;                    \
+        for(s=d=space; s<maxs; s++) {                         \
+            command                                           \
+        }                                                     \
+        buff->a.bufferSize = d - space;                       \
     }
 #define EDITOR_ENCODING_CR_LF_CR_CONVERSION(s,d)    \
     if (*s == '\r') {                               \
@@ -189,10 +189,11 @@ static void editorApplySjisConversion(S_editorBuffer *buff) {
                      });
 }
 static void editorApplyUtf16Conversion(S_editorBuffer *buff) {
-    register unsigned char  *s, *d, *maxs;
-    register unsigned       cb, cb2;
-    int                     little_endian;
-    unsigned char           *space;
+    unsigned char  *s, *d, *maxs;
+    unsigned int cb, cb2;
+    int little_endian;
+    unsigned char *space;
+
     space = (unsigned char *)buff->a.text;
     maxs = space + buff->a.bufferSize;
     s = space;
@@ -231,9 +232,11 @@ static void editorApplyUtf16Conversion(S_editorBuffer *buff) {
     }
     buff->a.bufferSize = d - space;
 }
+
 static int editorBufferStartsWithUtf16Bom(S_editorBuffer *buff) {
-    register unsigned char      *s;
-    register unsigned           cb;
+    unsigned char      *s;
+    unsigned           cb;
+
     s = (unsigned char *)buff->a.text;
     if (buff->a.bufferSize >= 2) {
         cb = (*s << 8) + *(s+1);
@@ -1037,10 +1040,11 @@ void editorRemoveBlanks(S_editorMarker *mm, int direction, S_editorUndo **undo) 
 }
 
 void editorMoveMarkerToLineCol(S_editorMarker *m, int line, int col) {
-    register char   *s, *smax;
-    register int    ln;
+    char   *s, *smax;
+    int    ln;
     S_editorBuffer  *buff;
     int             c;
+
     assert(m);
     buff = m->buffer;
     s = buff->a.text;
@@ -1070,9 +1074,10 @@ S_editorMarkerList *editorReferencesToMarkers(Reference *refs,
     S_editorMarker      *m;
     S_editorMarkerList  *res, *rrr;
     int                 line, col, file, maxoffset;
-    register char       *s, *smax;
-    register int        ln, c;
+    char       *s, *smax;
+    int        ln, c;
     S_editorBuffer      *buff;
+
     res = NULL;
     r = refs;
     while (r!=NULL) {

@@ -65,14 +65,14 @@ S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 #define GetU1(val, ccc, ffin, bbb) GetChar(val, ccc, ffin, bbb)
 
 #define GetU2(val, ccc, ffin, bbb) {            \
-        register int chh;                       \
+        int chh;                                \
         GetChar(val, ccc, ffin, bbb);           \
         GetChar(chh, ccc, ffin, bbb);           \
         val = val*256+chh;                      \
     }
 
 #define GetU4(val, ccc, ffin, bbb) {            \
-        register int chh;                       \
+        int chh;                                \
         GetChar(val, ccc, ffin, bbb);           \
         GetChar(chh, ccc, ffin, bbb);           \
         val = val*256+chh;                      \
@@ -83,14 +83,14 @@ S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
     }
 
 #define GetZU2(val, ccc, ffin, bbb) {           \
-        register unsigned chh;                  \
+        unsigned chh;                           \
         GetChar(val, ccc, ffin, bbb);           \
         GetChar(chh, ccc, ffin, bbb);           \
         val = val+(chh<<8);                     \
     }
 
 #define GetZU4(val, ccc, ffin, bbb) {           \
-        register unsigned chh;                  \
+        unsigned chh;                           \
         GetChar(val, ccc, ffin, bbb);           \
         GetChar(chh, ccc, ffin, bbb);           \
         val = val+(chh<<8);                     \
@@ -101,7 +101,7 @@ S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
     }
 
 #define SkipNChars(count, ccc, ffin, bbb) {     \
-        register int ccount;                \
+        int ccount;                             \
         ccount = (count);                       \
         if (ccc + ccount < ffin) ccc += ccount; \
         else {                                  \
@@ -117,7 +117,7 @@ S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
     }
 
 #define SkipAttributes(ccc, ffin, iBuf) {       \
-        register int ind,count,aname,alen;      \
+        int ind,count,aname,alen;               \
         GetU2(count, ccc, ffin, iBuf);          \
         for(ind=0; ind<count; ind++) {          \
             GetU2(aname, ccc, ffin, iBuf);      \

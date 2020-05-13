@@ -321,7 +321,7 @@ bool getLexBuf(S_lexBuf *lb) {
             goto nextLexem;
         } else if (isdigit(ch)) {
             /* ***************   number *******************************  */
-            register long unsigned val=0;
+            long unsigned val=0;
             lexStartFilePos = ABS_FILE_POS(cb,cb_end,cb_next);
             if (ch=='0') {
                 LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
