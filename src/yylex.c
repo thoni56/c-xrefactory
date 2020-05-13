@@ -1775,6 +1775,7 @@ int cachedInputPass(int cpoint, char **cfrom) {
         if (IS_IDENTIFIER_LEXEM(lex) || (lex>CPP_TOKENS_START&&lex<CPP_TOKENS_END)) {
             if (pos.file==s_cxRefPos.file && pos.line >= s_cxRefPos.line) {
                 cInput.currentLexem = cc;			/* unget last lexem */
+            if (onSameLine(pos, s_cxRefPos)) {
                 res = 0;
                 break;
             }

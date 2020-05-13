@@ -1,6 +1,9 @@
 #ifndef _POSITION_H_
 #define _POSITION_H_
 
+#include <stdbool.h>
+
+
 typedef struct position {
     int file;
     int line;
@@ -12,6 +15,9 @@ typedef struct positionList {
     struct positionList *next;
 } PositionList;
 
+
 extern void fillPosition(Position *position, int file, int line, int col);
 extern void fillPositionList(PositionList *positionList, Position p, PositionList *next);
+extern bool onSameLine(Position pos1, Position pos2);
+
 #endif
