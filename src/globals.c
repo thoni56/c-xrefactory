@@ -244,6 +244,8 @@ int s_javaRequiredeAccessibilitiesTable[MAX_REQUIRED_ACCESS+1] = {
 };
 
 S_options s_initOpt = {
+                       /* GENERAL */
+    0,                  // exit
     "gcc",              // path to compiler to use for auto-discovering compiler and defines
     MULE_DEFAULT,       // encoding
     0,                  // completeParenthesis
@@ -251,7 +253,6 @@ S_options s_initOpt = {
     0,                  // referenceListWithoutSource
     0,                  // jeditOldCompletions;     // to be removed
     1,                  // completionOverloadWizardDeep
-    0,                  // exit
     0,                  // comment moving level
     NULL,               // prune name
     NULL,               // input files

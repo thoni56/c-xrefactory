@@ -930,6 +930,8 @@ typedef struct setGetEnv {
 
 // TODO all strings inside to static string array
 typedef struct options {
+    /* GENERAL */
+    int exit;
     char *compiler;
     int fileEncoding;
     char completeParenthesis;
@@ -937,7 +939,6 @@ typedef struct options {
     char referenceListWithoutSource;
     char jeditOldCompletions;		// to be removed
     int completionOverloadWizardDeep;
-    int exit;
     int commentMovingLevel;
     struct stringList *pruneNames;
     struct stringList *inputFiles;
