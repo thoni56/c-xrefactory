@@ -1193,14 +1193,14 @@ endOfFile:;
     }\
 }
 
-static int processCppConstruct(int lex) {
+static bool processPreprocessorConstruct(int lexem) {
     int l,v,len;
     unsigned h;
     Position pos;
 
-    PassLex(cInput.currentLexem,lex,l,v,h,pos, len,1);
-    log_debug("processing cpp-construct '%s' ", s_tokenName[lex]);
-    switch (lex) {
+    PassLex(cInput.currentLexem,lexem,l,v,h,pos, len,1);
+    log_debug("processing cpp-construct '%s' ", s_tokenName[lexem]);
+    switch (lexem) {
     case CPP_INCLUDE:
         processInclude(&pos);
         break;
@@ -1265,16 +1265,16 @@ static int processCppConstruct(int lex) {
     case CPP_LINE:
         AddHtmlCppReference(pos);
         processLine();
-        GetLex(lex);
-        while (lex != '\n') {PassLex(cInput.currentLexem,lex,l,v,h,pos, len,1); GetLex(lex);}
-        PassLex(cInput.currentLexem,lex,l,v,h,pos, len,1);
+        GetLex(lexem);
+        while (lexem != '\n') {PassLex(cInput.currentLexem,lexem,l,v,h,pos, len,1); GetLex(lexem);}
+        PassLex(cInput.currentLexem,lexem,l,v,h,pos, len,1);
         break;
     default: assert(0);
     }
-    return(1);
+    return true;
 endOfMacArg:	assert(0);
 endOfFile:
-    return(0);
+    return false;
 }
 
 /* ******************************************************************** */
@@ -2039,8 +2039,10 @@ int yylex(void) {
                 PassLex(cInput.currentLexem,lexem,line,val,h,pos, len,macroStackIndex == 0);
                 for(;;) {
                     GetLex(lexem);
-                    if (!isPreprocessorToken(lexem)) goto contYylex;
-                    if (processCppConstruct(lexem) == 0) goto endOfFile;
+                    if (!isPreprocessorToken(lexem))
+                        goto contYylex;
+                    if (!processPreprocessorConstruct(lexem))
+                        goto endOfFile;
                 }
             }
         } else {
