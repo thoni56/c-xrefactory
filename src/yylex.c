@@ -611,7 +611,15 @@ static void processInclude(Position *ipos) {
     int lexem, l, h, v, len;
     Position pos;
 
-    GetLexA(lexem, previousLexem);
+    //& GetLexA(lexem, previousLexem);
+    {
+        lexem = getLexA(&previousLexem);
+        if (lexem == -1)
+            goto endOfMacArg;
+        if (lexem == -2)
+            goto endOfFile;
+    }
+
     currentLexem = cInput.currentLexem;
     if (lexem == STRING_LITERAL) {
         PassLex(cInput.currentLexem, lexem, l, v, h, pos, len, 1);
