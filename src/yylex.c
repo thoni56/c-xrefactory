@@ -556,28 +556,29 @@ static void processInclude2(Position *ipos, char pchar, char *iname) {
 
 
 static void processInclude(Position *ipos) {
-    char *ccc, *cc2;
-    int lex,l,h,v,len;
+    char *currentLexem, *previousLexem;
+    int lexem, l, h, v, len;
     Position pos;
-    GetLexA(lex, cc2);
-    ccc = cInput.currentLexem;
-    if (lex == STRING_LITERAL) {
-        PassLex(cInput.currentLexem,lex,l,v,h,pos, len,1);
+
+    GetLexA(lexem, previousLexem);
+    currentLexem = cInput.currentLexem;
+    if (lexem == STRING_LITERAL) {
+        PassLex(cInput.currentLexem, lexem, l, v, h, pos, len, 1);
         if (macroStackIndex != 0) {
             errorMessage(ERR_INTERNAL,"include directive in macro body?");
 assert(0);
             cInput = macroStack[0];
             macroStackIndex = 0;
         }
-        processInclude2(ipos, *ccc, ccc+1);
+        processInclude2(ipos, *currentLexem, currentLexem+1);
     } else {
-        cInput.currentLexem = cc2;		/* unget lexem */
-        lex = yylex();
-        if (lex == STRING_LITERAL) {
+        cInput.currentLexem = previousLexem;		/* unget lexem */
+        lexem = yylex();
+        if (lexem == STRING_LITERAL) {
             cInput = macroStack[0];		// hack, cut everything pending
             macroStackIndex = 0;
             processInclude2(ipos, '\"', yytext);
-        } else if (lex == '<') {
+        } else if (lexem == '<') {
             // TODO!!!!
             warningMessage(ERR_ST,"Include <> after macro expansion not yet implemented, sorry\n\tuse \"\" instead");
         }
@@ -694,7 +695,7 @@ void processDefine(bool argFlag) {
     cc = cInput.currentLexem;
 
     /* TODO: WTF there are some "symbols" in the lexBuffer, like "\275\001".
-     * Those are compacted converted lex codes. See lexmac.h for explanation.
+     * Those are compacted converted lexem codes. See lexmac.h for explanation.
      */
     PassLex(cInput.currentLexem,lex,l,v,h,macpos, len,1);
 
@@ -1756,25 +1757,25 @@ int cachedInputPass(int cpoint, char **cfrom) {
     int lexem, line, val, res, len;
     Position pos;
     unsigned h, lexemLength;
-    char *previousLexemStart, *cto, *ccc;
+    char *previousLexem, *cto, *ccc;
 
     assert(cpoint > 0);
     cto = s_cache.cp[cpoint].lbcc;
     ccc = *cfrom;
     res = 1;
     while (ccc < cto) {
-        GetLexA(lexem, previousLexemStart);
+        GetLexA(lexem, previousLexem);
         PassLex(cInput.currentLexem,lexem,line,val,h,pos, len,1);
-        lexemLength = cInput.currentLexem-previousLexemStart;
+        lexemLength = cInput.currentLexem-previousLexem;
         assert(lexemLength >= 0);
-        if (memcmp(previousLexemStart, ccc, lexemLength)) {
-            cInput.currentLexem = previousLexemStart;			/* unget last lexem */
+        if (memcmp(previousLexem, ccc, lexemLength)) {
+            cInput.currentLexem = previousLexem;			/* unget last lexem */
             res = 0;
             break;
         }
         if (IS_IDENTIFIER_LEXEM(lexem) || (lexem>CPP_TOKENS_START&&lexem<CPP_TOKENS_END)) {
             if (onSameLine(pos, s_cxRefPos)) {
-                cInput.currentLexem = previousLexemStart;			/* unget last lexem */
+                cInput.currentLexem = previousLexem;			/* unget last lexem */
                 res = 0;
                 break;
             }
@@ -1933,7 +1934,7 @@ static void actionOnBlockMarker(void) {
 int yylex(void) {
     int lexem, line, val, len;
     Position pos, idpos;
-    char *lastLexemAddress;
+    char *previousLexem;
     unsigned h;
 
     len = 0;
@@ -1943,7 +1944,7 @@ int yylex(void) {
     if (lexem < 256) {
         if (lexem == '\n') {
             if (s_ifEvaluation) {
-                cInput.currentLexem = lastLexemAddress;
+                cInput.currentLexem = previousLexem;
             } else {
                 PassLex(cInput.currentLexem,lexem,line,val,h,pos, len,macroStackIndex == 0);
                 for(;;) {
