@@ -158,7 +158,7 @@
 %token CPP_DEFINED_OP    /* defined(xxx) in #if */
 
 /* ******************************************************************** */
-/* special token signalizing end of program */
+/* special token signaling end of input */
 %token EOI_TOKEN
 
 /* ******************************************************************** */

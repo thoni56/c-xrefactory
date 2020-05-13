@@ -222,7 +222,7 @@ static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbo
 %token CPP_DEFINED_OP    /* defined(xxx) in #if */
 
 /* ******************************************************************** */
-/* special token signalizing end of program */
+/* special token signaling end of input */
 %token EOI_TOKEN
 
 /* ******************************************************************** */

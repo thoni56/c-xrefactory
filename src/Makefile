@@ -74,15 +74,15 @@ java_parser.tokens: java_parser.y
 .PHONY: check-tokens
 check-tokens: c_parser.tokens yacc_parser.tokens java_parser.tokens
 	@if ! diff -q c_parser.tokens yacc_parser.tokens ; then \
-		echo "ERROR: Parser token definition section mismatch:" ; \
+		echo "ERROR: Parser token section must be identical:" ; \
 		diff -c c_parser.tokens yacc_parser.tokens ; \
 	fi
 	@if ! diff -q yacc_parser.tokens java_parser.tokens ; then \
-		echo "ERROR: Parser token definition section mismatch:" ; \
+		echo "ERROR: Parser token section must be identical:" ; \
 		diff -c yacc_parser.tokens java_parser.tokens ; \
 	fi
 	@if ! diff -q java_parser.tokens c_parser.tokens ; then \
-		echo "ERROR: Parser token definition section mismatch:" ; \
+		echo "ERROR: Parser token section must be identical:" ; \
 		diff -c java_parser.tokens c_parser.tokens ; \
 	fi
 
