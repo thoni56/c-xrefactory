@@ -835,7 +835,7 @@ CompilationUnit: {
                             if (currentFile.fileName[i] == FILE_PATH_SEPARATOR) j=i;
                         }
                         XX_ALLOCC(cdir, j+1, char);  // I prefer this
-                        //&SM_ALLOCC(ftMemory, cdir, j+1, char);  // will exhauste ftmemory
+                        /*& SM_ALLOCC(ftMemory, cdir, j+1, char); &*/ // will exhaust ftmemory
                         strncpy(cdir,currentFile.fileName,j); cdir[j]=0;
                         s_javaStat->unnamedPackagePath = cdir;
                         javaCheckIfPackageDirectoryIsInClassOrSourcePath(cdir);
@@ -848,7 +848,7 @@ CompilationUnit: {
                         packlen = strlen(s_javaThisPackageName);
                         if (j>packlen && fnnCmp(s_javaThisPackageName,&currentFile.fileName[j-packlen],packlen)==0){
                             XX_ALLOCC(cdir, j-packlen, char); // I prefer this
-                            //&SM_ALLOCC(ftMemory, cdir, j-packlen, char);  // will exhauste ftmemory
+                            /*& SM_ALLOCC(ftMemory, cdir, j-packlen, char); &*/  // will exhauste ftmemory
                             strncpy(cdir, currentFile.fileName, j-packlen-1); cdir[j-packlen-1]=0;
                             s_javaStat->namedPackagePath = cdir;
                             s_javaStat->currentPackage = "";
@@ -1372,7 +1372,11 @@ _bef_:	{
                         if (s_cp.parserPassedMarker && !s_cp.thisMethodMemoriesStored){
                             s_cps.cxMemiAtMethodBeginning = s_cp.cxMemiAtFunBegin;
                             s_cps.cxMemiAtMethodEnd = cxMemory->i;
-//&sprintf(tmpBuff,"setting %s, %d,%d   %d,%d", olcxOptionsName[s_opt.server_operation], s_cp.parserPassedMarker, s_cp.thisMethodMemoriesStored, s_cps.cxMemiAtMethodBeginning,s_cps.cxMemiAtMethodEnd),ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+                            /*& sprintf(tmpBuff,"setting %s, %d,%d   %d,%d",
+                                    olcxOptionsName[s_opt.server_operation],
+                                    s_cp.parserPassedMarker, s_cp.thisMethodMemoriesStored,
+                                    s_cps.cxMemiAtMethodBeginning, s_cps.cxMemiAtMethodEnd),
+                                ppcGenRecord(PPC_BOTTOM_INFORMATION, tmpBuff,"\n"); &*/
                             s_cp.thisMethodMemoriesStored = 1;
                             if (s_opt.server_operation == OLO_MAYBE_THIS) {
                                 changeMethodReferencesUsages(LINK_NAME_MAYBE_THIS_ITEM,
@@ -1390,7 +1394,9 @@ _bef_:	{
                             s_cps.cxMemiAtClassBeginning = s_cp.cxMemiAtClassBegin;
                             s_cps.cxMemiAtClassEnd = cxMemory->i;
                             s_cps.classCoordEndLine = currentFile.lineNumber+1;
-//&fprintf(dumpOut,"!setting class end line to %d, cb==%d, ce==%d\n", s_cps.classCoordEndLine, s_cps.cxMemiAtClassBeginning, s_cps.cxMemiAtClassEnd);
+                            /*& fprintf(dumpOut,"!setting class end line to %d, cb==%d, ce==%d\n",
+                              s_cps.classCoordEndLine, s_cps.cxMemiAtClassBeginning,
+                              s_cps.cxMemiAtClassEnd); &*/
                             if (s_opt.server_operation == OLO_NOT_FQT_REFS_IN_CLASS) {
                                 changeClassReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
                                                             CategoryLocal,currentFile.lexBuffer.buffer.fileNumber,
@@ -1403,7 +1409,8 @@ _bef_:	{
                         }
                     }
                     s_cp.cxMemiAtClassBegin = cxMemory->i;
-//&fprintf(dumpOut,"!setting class begin memory %d\n", s_cp.cxMemiAtClassBegin);
+                    /*& fprintf(dumpOut,"!setting class begin memory %d\n",
+                      s_cp.cxMemiAtClassBegin); &*/
                     actionsBeforeAfterExternalDefinition();
                 }
             }
@@ -1481,7 +1488,7 @@ FieldDeclaration
                             // set interface default access flags
                             p->bits.access |= (ACCESS_PUBLIC | ACCESS_STATIC | ACCESS_FINAL);
                         }
-                        //&javaSetFieldLinkName(p);
+                        /*& javaSetFieldLinkName(p); &*/
                         iniFind(clas, &rfs);
                         if (findStrRecordSym(&rfs, p->name, &memb, CLASS_TO_ANY,
                                              ACC_CHECK_NO,VISIB_CHECK_NO) == RETURN_NOT_FOUND) {
@@ -3191,9 +3198,9 @@ ClassInstanceCreationExpression
                             addThisCxReferences(ei->u.s->classFile, &$1.d->p);
                             // I have removed following because it makes problems when
                             // expanding to FQT names, WHY IT WAS HERE ???
-                            //&addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM,StorageField,
-                            //&              s_javaStat->classFileInd, &$1.d->p,
-                            //&              UsageNotFQField);
+                            /*& addSpecialFieldReference(LINK_NAME_NOT_FQT_ITEM,StorageField,
+                                         s_javaStat->classFileInd, &$1.d->p,
+                                         UsageNotFQField); &*/
                         } else {
                             // here I should annulate class reference, as it is an error
                             // because can't get enclosing instance, this is sufficient to
@@ -3202,9 +3209,9 @@ ClassInstanceCreationExpression
                             // and annulating of reference makes class renaming wrong!
                             // Well, it is legal only for static nested classes.
                             // But for security reasons, I will keep it in comment,
-                            //&if (! (ss->bits.access&ACCESS_STATIC)) {
-                            //&	if (rr!=NULL) rr->usg.base = s_noUsage;
-                            //&}
+                            /*& if (! (ss->bits.access&ACCESS_STATIC)) {
+                                    if (rr!=NULL) rr->usg.base = s_noUsage;
+                                } &*/
                         }
                     }
                     javaConstructorInvocation(ss, &($3.d->id.p), $5.d.t);
@@ -4320,8 +4327,8 @@ Stop_block:		{
 
 void javaParsingInitializations(void) {
     Symbol *symbol;
-    //&javaMapDirectoryFiles2(s_javaLangName,
-    //&			javaAddMapedTypeName, NULL, s_javaLangName, NULL);
+    /* &javaMapDirectoryFiles2(s_javaLangName,
+       javaAddMapedTypeName, NULL, s_javaLangName, NULL); &*/
     symbol = javaTypeSymbolDefinition(s_javaLangObjectName, ACCESS_DEFAULT, TYPE_ADD_NO);
     s_javaObjectSymbol = symbol;
     initTypeModifierAsStructUnionOrEnum(&s_javaObjectModifier, TypeStruct, symbol,
@@ -4383,7 +4390,7 @@ static S_completionFunTab completionsTab[]  = {
 static S_completionFunTab hintCompletionsTab[]  = {
     { COMPL_TYPE_NAME0,				javaHintCompleteNonImportedTypes },
 // Finally I do not know if this is practical
-//&	{ COMPL_IMPORT_SPECIAL,			javaHintImportFqt },
+/*&	{ COMPL_IMPORT_SPECIAL,			javaHintImportFqt }, &*/
     {0,NULL}
 };
 
@@ -4449,8 +4456,8 @@ void makeJavaCompletions(char *s, int len, Position *pos) {
 
     /* If the completion window is shown, or there is no completion,
        add also hints (should be optionally) */
-    //&if (s_completions.comPrefix[0]!=0  && (s_completions.alternativeIndex != 0)
-    //&	&& s_opt.cxrefs != OLO_SEARCH) return;
+    /*& if (s_completions.comPrefix[0]!=0  && (s_completions.alternativeIndex != 0) &*/
+    /*&	&& s_opt.cxrefs != OLO_SEARCH) return; &*/
 
     for (i=0;(token=hintCompletionsTab[i].token)!=0; i++) {
         if (exists_valid_parser_action_on(token)) {

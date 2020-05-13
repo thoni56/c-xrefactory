@@ -1323,7 +1323,7 @@ abstract_declarator2
         p = appendComposedType(&($$.d), TypeFunction);
         // I think there should be the following, but in abstract
         // declarator it does not matter
-        //& initFunctionTypeModifier(&p->u.f , $3.d.s);
+        /*& initFunctionTypeModifier(&p->u.f , $3.d.s); &*/
         initFunctionTypeModifier(&p->u.f , NULL);
     }
     ;
@@ -1673,7 +1673,7 @@ external_definition
         assert($2.d);
         // I think that due to the following line sometimes
         // storage was not extern, see 'addNewSymbolDef'
-        //& if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern;
+        /*& if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern; &*/
         // TODO!!!, here you should check if there is previous declaration of
         // the function, if yes and is declared static, make it static!
         addNewSymbolDef($2.d, StorageExtern, s_symbolTable, UsageDefined);

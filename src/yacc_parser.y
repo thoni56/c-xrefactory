@@ -1576,7 +1576,7 @@ external_definition
         Symbol *p,*pa;
         int i;
         assert($2.d);
-        //&if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern;
+        /*& if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern; &*/
         addNewSymbolDef($2.d, StorageExtern, s_symbolTable, UsageDefined);
         tmpWorkMemoryi = $1.d;
         stackMemoryBlockStart();

@@ -4195,7 +4195,7 @@ case 482:
         Symbol *p,*pa;
         int i;
         assert(yyvsp[0].ast_symbol.d);
-        /*&if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern;*/
+        /*& if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern; &*/
         addNewSymbolDef(yyvsp[0].ast_symbol.d, StorageExtern, s_symbolTable, UsageDefined);
         tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
         stackMemoryBlockStart();

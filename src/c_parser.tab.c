@@ -3582,7 +3582,7 @@ case 245:
         p = appendComposedType(&(yyval.ast_typeModifiers.d), TypeFunction);
         /* I think there should be the following, but in abstract*/
         /* declarator it does not matter*/
-        /*& initFunctionTypeModifier(&p->u.f , $3.d.s);*/
+        /*& initFunctionTypeModifier(&p->u.f , $3.d.s); &*/
         initFunctionTypeModifier(&p->u.f , NULL);
     }
 break;
@@ -3972,7 +3972,7 @@ case 337:
         assert(yyvsp[0].ast_symbol.d);
         /* I think that due to the following line sometimes*/
         /* storage was not extern, see 'addNewSymbolDef'*/
-        /*& if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern;*/
+        /*& if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern; &*/
         /* TODO!!!, here you should check if there is previous declaration of*/
         /* the function, if yes and is declared static, make it static!*/
         addNewSymbolDef(yyvsp[0].ast_symbol.d, StorageExtern, s_symbolTable, UsageDefined);
