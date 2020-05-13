@@ -321,14 +321,16 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
         cInput.margExpFlag = INPUT_MACRO;          \
     }
 
-#define GetLexA(lexem, lastLexemAddress) {                              \
+// NOTE: getLexA() function tries to do the same as this macro. Replace
+// all uses with that function.
+#define GetLexA(lexem, previousLexem) {                                 \
     while (cInput.currentLexem >= cInput.endOfBuffer) {                 \
         InputType margFlag;                                             \
         margFlag = cInput.margExpFlag;                                  \
         if (macroStackIndex > 0) {                                      \
             if (margFlag == INPUT_MACRO_ARGUMENT) goto endOfMacArg;     \
             MB_FREE_UNTIL(cInput.beginningOfBuffer);                    \
-            cInput = macroStack[--macroStackIndex];                       \
+            cInput = macroStack[--macroStackIndex];                     \
         } else if (margFlag == INPUT_NORMAL) {                          \
             setCFileConsistency();                                      \
             if (!getLexBuf(&currentFile.lexBuffer)) goto endOfFile;     \
@@ -340,15 +342,64 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
             s_cache.lexcc = currentFile.lexBuffer.next;                 \
             setCInputConsistency();                                     \
         }                                                               \
-        lastLexemAddress = cInput.currentLexem;                         \
+        previousLexem = cInput.currentLexem;                            \
     }                                                                   \
-    lastLexemAddress = cInput.currentLexem;                             \
+    previousLexem = cInput.currentLexem;                                \
     GetLexToken(lexem, cInput.currentLexem);                            \
 }
 
-#define GetLex(lex) {                                                \
-        char *lastlexcc; UNUSED lastlexcc; GetLexA(lex, lastlexcc);  \
+/* getLexA() - a functional facsimile to the macro GetLexA()
+ * Returns either of:
+ * the found lexem
+ * -1 for end of macro argument
+ * -2 for end of file
+*/
+static int getLexA(char **previousLexem) {
+    int lexem;
+
+    while (cInput.currentLexem >= cInput.endOfBuffer) {
+        InputType margFlag;
+        margFlag = cInput.margExpFlag;
+        if (macroStackIndex > 0) {
+            if (margFlag == INPUT_MACRO_ARGUMENT) return -1; //goto endOfMacArg;
+            MB_FREE_UNTIL(cInput.beginningOfBuffer);
+            cInput = macroStack[--macroStackIndex];
+        } else if (margFlag == INPUT_NORMAL) {
+            setCFileConsistency();
+            if (!getLexBuf(&currentFile.lexBuffer)) return -2; //goto endOfFile;
+            setCInputConsistency();
+        } else {
+            s_cache.cc = s_cache.cfin = NULL;
+            cacheInput();
+            s_cache.lexcc = currentFile.lexBuffer.next;
+            setCInputConsistency();
+        }
+        *previousLexem = cInput.currentLexem;
     }
+    *previousLexem = cInput.currentLexem;
+    GetLexToken(lexem, cInput.currentLexem);
+    return lexem;
+}
+
+
+#define GetLex(lexem) {                                                \
+    char *lastLexemAddress;                                            \
+    UNUSED lastLexemAddress;                                           \
+    GetLexA(lexem, lastLexemAddress);       \
+}
+
+/* Attempt to re-create a function that does what GetLex() macro does: */
+/* static int getLex(void) { */
+/*     int lexem; */
+/*     char *lastLexemAddress; */
+/*     UNUSED lastLexemAddress; */
+/*     GetLexA(lexem, lastLexemAddress); */
+/*     return lexem; */
+/*  endOfMacArg: */
+/*     return -1; */
+/*  endOfFile: */
+/*     return -2; */
+/* } */
 
 
 /* ***************************************************************** */
@@ -1939,7 +1990,15 @@ int yylex(void) {
 
     len = 0;
  nextYylex:
-    GetLexA(lexem, lastLexemAddress);
+    //& GetLexA(lexem, previousLexem); /* Expand and extract into: */
+    {
+        int result = 0;
+        lexem = getLexA(&previousLexem);
+        if (result == -1)
+            goto endOfMacArg;
+        if (result == -2)
+            goto endOfFile;
+    }
  contYylex:
     if (lexem < 256) {
         if (lexem == '\n') {
