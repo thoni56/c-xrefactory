@@ -382,10 +382,12 @@ static int getLexA(char **previousLexem) {
 }
 
 
-#define GetLex(lexem) {                                                \
-    char *lastLexemAddress;                                            \
-    UNUSED lastLexemAddress;                                           \
-    GetLexA(lexem, lastLexemAddress);       \
+#define GetLex(lexem) {                                             \
+    char *previousLexem;                                            \
+    UNUSED previousLexem;                                           \
+    lexem = getLexA(&previousLexem);                                \
+    if (lexem == -1) goto endOfMacArg;                              \
+    if (lexem == -2) goto endOfFile;                                \
 }
 
 /* Attempt to re-create a function that does what GetLex() macro does: */
