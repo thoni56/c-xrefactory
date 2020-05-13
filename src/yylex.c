@@ -1992,11 +1992,10 @@ int yylex(void) {
  nextYylex:
     //& GetLexA(lexem, previousLexem); /* Expand and extract into: */
     {
-        int result = 0;
         lexem = getLexA(&previousLexem);
-        if (result == -1)
+        if (lexem == -1)
             goto endOfMacArg;
-        if (result == -2)
+        if (lexem == -2)
             goto endOfFile;
     }
  contYylex:

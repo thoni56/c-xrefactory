@@ -43,6 +43,7 @@ are a small as possible. This is why IWYU exists!! It means "Include
 What You Use" and is a Clang related project at
 https://github.com/include-what-you-use/include-what-you-use)
 * TODO Figure out a way to remove "commons.c 295" from all parser error messages
+* TODO Create test to exercise the -1/-2 return cases for getLexA()
 * TODO Refactor int2StringTabs, should not have Init in them
 * TODO Remove opt.xref2 since edit server mode is always called with this, isn't it?
 If so, make xref2 the way c-xref talks if in server mode. But this should also
