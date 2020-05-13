@@ -1315,10 +1315,11 @@ static int cyclicCall(S_macroBody *mb) {
 
 static void expandMacroArgument(S_lexInput *argb) {
     Symbol sd,*memb;
-    char *buf,*cc,*cc2,*bcc, *tbcc;
-    int nn,ii,lex,line,val,bsize,failedMacroExpansion,len;
+    char *buf,*previousLexem,*currentLexem,*bcc, *tbcc;
+    int length,ii,lexem,line,val,bsize,failedMacroExpansion,len;
     Position pos;
     unsigned hash;
+
     PrependMacroInput(*argb);
     cInput.inputType = INPUT_MACRO_ARGUMENT;
     bsize = MACRO_UNIT_SIZE;
@@ -1326,20 +1327,20 @@ static void expandMacroArgument(S_lexInput *argb) {
     bcc = buf;
     for(;;) {
     nextLexem:
-        GetLexA(lex,cc);
-        cc2 = cInput.currentLexem;
-        PassLex(cInput.currentLexem,lex, line, val, hash, pos, len, macroStackIndex == 0);
-        nn = ((char*)cInput.currentLexem) - cc;
-        assert(nn >= 0);
-        memcpy(bcc, cc, nn);
+        GetLexA(lexem, previousLexem);
+        currentLexem = cInput.currentLexem;
+        PassLex(cInput.currentLexem, lexem, line, val, hash, pos, len, macroStackIndex == 0);
+        length = ((char*)cInput.currentLexem) - previousLexem;
+        assert(length >= 0);
+        memcpy(bcc, previousLexem, length);
         // a hack, it is copied, but bcc will be increased only if not
         // an expanding macro, this is because 'macroCallExpand' can
         // read new lexbuffer and destroy cInput, so copy it now.
         failedMacroExpansion = 0;
-        if (lex == IDENTIFIER) {
-            fillSymbol(&sd, cc2, cc2, s_noPos);
+        if (lexem == IDENTIFIER) {
+            fillSymbol(&sd, currentLexem, currentLexem, s_noPos);
             fillSymbolBits(&sd.bits, ACCESS_DEFAULT, TypeMacro, StorageNone);
-            if (symbolTableIsMember(s_symbolTable,&sd,&ii,&memb)) {
+            if (symbolTableIsMember(s_symbolTable, &sd, &ii, &memb)) {
                 /* it is a macro, provide macro expansion */
                 if (macroCallExpand(memb,&pos)) goto nextLexem;
                 else failedMacroExpansion = 1;
@@ -1351,13 +1352,13 @@ static void expandMacroArgument(S_lexInput *argb) {
             if (memb->u.mbody!=NULL && cyclicCall(memb->u.mbody)) PutLexToken(IDENT_NO_CPP_EXPAND, tbcc);
             //& else PutLexToken(IDENT_NO_CPP_EXPAND, tbcc);
         }
-        bcc += nn;
-        TestPPBufOverflow(bcc,buf,bsize);
+        bcc += length;
+        TestPPBufOverflow(bcc, buf, bsize);
     }
 endOfMacArg:
     cInput = macroStack[--macroStackIndex];
-    PP_REALLOCC(buf,bcc-buf,char,bsize+MAX_LEXEM_SIZE);
-    fillLexInput(argb,buf,bcc,buf,NULL,INPUT_NORMAL);
+    PP_REALLOCC(buf, bcc-buf, char, bsize+MAX_LEXEM_SIZE);
+    fillLexInput(argb, buf, bcc, buf, NULL, INPUT_NORMAL);
     return;
 endOfFile:
     assert(0);
