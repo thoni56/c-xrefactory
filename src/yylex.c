@@ -1591,16 +1591,24 @@ static void crMacroBody(S_lexInput *macBody,
 /* ******************* MACRO CALL PROCESS ************************ */
 /* *************************************************************** */
 
-#define GetNotLineLexA(lexem, previousLexem) {\
-    GetLexA(lexem,previousLexem);\
-    while (lexem == LINE_TOK || lexem == '\n') {\
-        PassLex(cInput.currentLexem,lexem,line,val,h,pos, len, macroStackIndex == 0);\
-        GetLexA(lexem,previousLexem);\
-    }\
-}
-#define GetNotLineLex(lex) {\
-    char *lastlexaddr; GetNotLineLexA(lex,lastlexaddr);\
-}
+#define GetNotLineLexA(lexem, previousLexem)                            \
+    {                                                                   \
+        lexem = getLexA(&previousLexem);                                \
+        if (lexem == -1) goto endOfMacArg;                              \
+        if (lexem == -2) goto endOfFile;                                \
+        while (lexem == LINE_TOK || lexem == '\n') {                    \
+            PassLex(cInput.currentLexem,lexem,line,val,h,pos, len, macroStackIndex == 0); \
+            lexem = getLexA(&previousLexem);                            \
+            if (lexem == -1) goto endOfMacArg;                          \
+            if (lexem == -2) goto endOfFile;                            \
+        }                                                               \
+    }
+
+#define GetNotLineLex(lexem)                               \
+    {                                                      \
+        char *lastlexaddr;                                 \
+        GetNotLineLexA(lexem, lastlexaddr);                \
+    }
 
 static void getActMacroArgument(char *cc,
                                 int *llex,
