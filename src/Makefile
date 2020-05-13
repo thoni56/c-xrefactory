@@ -12,7 +12,7 @@ ROOTDIR=..
 # We need our own patched yacc
 YACC=$(ROOTDIR)/byacc-1.9/yacc
 
-# If there is no ZLIB on the system you can activate that in sources.mk
+# If there is no ZLIB on the system you can activate building it in sources.mk
 
 #########################################################################
 #
@@ -20,18 +20,30 @@ YACC=$(ROOTDIR)/byacc-1.9/yacc
 
 debug: CFLAGS+=-DDEBUG -O0
 debug yydebug: COVERAGE=--coverage
+debug yydebug: CLEAN_COVERAGE=yes
 yydebug: CFLAGS+= -DDEBUG -DYYDEBUG -Og
 
 prod debug yydebug: $(ZLIB) c-xref
 
 include sources.mk
 
+c-xref: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB) $(CLEAN_COVERAGE)
+	@if [ "$(CLEAN_COVERAGE)" = "yes" ] ; then \
+		lcov -q -z -d $(OBJDIR) ; \
+	fi
+	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
+	@make enumTxt
+	@make check-tokens
+
 #########################################################################
+# Is this necessary?
 
 ..always..:;
 
 $(ROOTDIR)/lib/zlib/libz.a: ..always..
 	make -C $(ROOTDIR)/lib/zlib libz.a
+
+#########################################################################
 
 # We generate parsers for C, Yacc, Java and C expressions
 # Note the file prefix (-b) and symbol prefix (-p)
@@ -49,7 +61,6 @@ cexp_parser.tab.c: cexp_parser.y $(YACC)
 	$(YACC) -v -b cexp_parser -p cexp_yy cexp_parser.y
 
 EXTRACT_TOKEN_DEFINITIONS = sed -E '/END OF COMMON TOKEN DEFINITIONS/,$$d' | sed -E '/START OF COMMON TOKEN DEFINITIONS/,$$!d'
-# Check that the token definitions in the three main grammars are exactly the same
 c_parser.tokens: c_parser.y
 	@cat c_parser.y | $(EXTRACT_TOKEN_DEFINITIONS) > c_parser.tokens
 
@@ -59,6 +70,8 @@ yacc_parser.tokens: yacc_parser.y
 java_parser.tokens: java_parser.y
 	@cat java_parser.y | $(EXTRACT_TOKEN_DEFINITIONS) > java_parser.tokens
 
+# Check that the token definitions in the three main grammars are exactly the same
+.PHONY: check-tokens
 check-tokens: c_parser.tokens yacc_parser.tokens java_parser.tokens
 	@if ! diff -q c_parser.tokens yacc_parser.tokens ; then \
 		echo "ERROR: Parser token definition section mismatch:" ; \
@@ -98,12 +111,6 @@ enumTxt:
 		echo "$@.g.c: no change" ; \
 		rm tmp-$@.g.c ; \
 	fi
-
-c-xref: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB)
-	lcov -q -z -d $(OBJDIR)
-	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
-	@make enumTxt
-	@make check-tokens
 
 .c-xrefrc: c-xrefrc.tpl
 	@sed -e "s+CURDIR+$(CURDIR)+g" c-xrefrc.tpl > .c-xrefrc
