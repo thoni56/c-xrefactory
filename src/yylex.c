@@ -100,7 +100,7 @@ void fillLexInput(S_lexInput *lexInput, char *currentLexem, char *endOfBuffer,
     lexInput->endOfBuffer = endOfBuffer;
     lexInput->beginningOfBuffer = beginningOfBuffer;
     lexInput->macroName = macroName;
-    lexInput->margExpFlag = margExpFlag;
+    lexInput->inputType = margExpFlag;
 }
 
 static void setCacheConsistency(void) {
@@ -318,20 +318,20 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
         macroStack[macroStackIndex++] = cInput;         \
         cInput = macInput;                      \
         cInput.currentLexem = cInput.beginningOfBuffer;                   \
-        cInput.margExpFlag = INPUT_MACRO;          \
+        cInput.inputType = INPUT_MACRO;          \
     }
 
 // NOTE: getLexA() function tries to do the same as this macro. Replace
 // all uses with that function.
 #define GetLexA(lexem, previousLexem) {                                 \
     while (cInput.currentLexem >= cInput.endOfBuffer) {                 \
-        InputType margFlag;                                             \
-        margFlag = cInput.margExpFlag;                                  \
+        InputType inputType;                                            \
+        inputType = cInput.inputType;                                 \
         if (macroStackIndex > 0) {                                      \
-            if (margFlag == INPUT_MACRO_ARGUMENT) goto endOfMacArg;     \
+            if (inputType == INPUT_MACRO_ARGUMENT) goto endOfMacArg;    \
             MB_FREE_UNTIL(cInput.beginningOfBuffer);                    \
             cInput = macroStack[--macroStackIndex];                     \
-        } else if (margFlag == INPUT_NORMAL) {                          \
+        } else if (inputType == INPUT_NORMAL) {                         \
             setCFileConsistency();                                      \
             if (!getLexBuf(&currentFile.lexBuffer)) goto endOfFile;     \
             setCInputConsistency();                                     \
@@ -358,13 +358,13 @@ static int getLexA(char **previousLexem) {
     int lexem;
 
     while (cInput.currentLexem >= cInput.endOfBuffer) {
-        InputType margFlag;
-        margFlag = cInput.margExpFlag;
+        InputType inputType;
+        inputType = cInput.inputType;
         if (macroStackIndex > 0) {
-            if (margFlag == INPUT_MACRO_ARGUMENT) return -1; //goto endOfMacArg;
+            if (inputType == INPUT_MACRO_ARGUMENT) return -1; //goto endOfMacArg;
             MB_FREE_UNTIL(cInput.beginningOfBuffer);
             cInput = macroStack[--macroStackIndex];
-        } else if (margFlag == INPUT_NORMAL) {
+        } else if (inputType == INPUT_NORMAL) {
             setCFileConsistency();
             if (!getLexBuf(&currentFile.lexBuffer)) return -2; //goto endOfFile;
             setCInputConsistency();
@@ -506,7 +506,7 @@ static void addIncludeReferences(int filenum, Position *pos) {
 }
 
 void pushNewInclude(FILE *f, S_editorBuffer *buffer, char *name, char *prepend) {
-    if (cInput.margExpFlag == INPUT_CACHE) {
+    if (cInput.inputType == INPUT_CACHE) {
         setCacheConsistency();
     } else {
         setCFileConsistency();
@@ -1312,7 +1312,7 @@ static void expandMacroArgument(S_lexInput *argb) {
     Position pos;
     unsigned hash;
     PrependMacroInput(*argb);
-    cInput.margExpFlag = INPUT_MACRO_ARGUMENT;
+    cInput.inputType = INPUT_MACRO_ARGUMENT;
     bsize = MACRO_UNIT_SIZE;
     PP_ALLOCC(buf,bsize+MAX_LEXEM_SIZE,char);
     bcc = buf;
