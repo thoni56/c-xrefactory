@@ -1753,34 +1753,33 @@ int lexBufDump(S_lexBuf *lb) {
 /*                   caching of input                             */
 /* ************************************************************** */
 int cachedInputPass(int cpoint, char **cfrom) {
-    int lex,line,val,res,len;				// ??redeclaration of len ??
+    int lexem, line, val, res, len;
     Position pos;
-    unsigned h,lsize,compsize;
-    char *cc,*cto,*ccc;
+    unsigned h, lexemLength;
+    char *previousLexemStart, *cto, *ccc;
+
     assert(cpoint > 0);
     cto = s_cache.cp[cpoint].lbcc;
     ccc = *cfrom;
     res = 1;
     while (ccc < cto) {
-        GetLexA(lex,cc);
-        PassLex(cInput.currentLexem,lex,line,val,h,pos, len,1);
-        compsize = lsize = cInput.currentLexem-cc;
-        assert(compsize >= 0);
-/*		if (lex == IDENTIFIER) compsize = TOKEN_SIZE+strlen(cc+TOKEN_SIZE)+1;*/
-        if (memcmp(cc, ccc, compsize)) {
-            cInput.currentLexem = cc;			/* unget last lexem */
+        GetLexA(lexem, previousLexemStart);
+        PassLex(cInput.currentLexem,lexem,line,val,h,pos, len,1);
+        lexemLength = cInput.currentLexem-previousLexemStart;
+        assert(lexemLength >= 0);
+        if (memcmp(previousLexemStart, ccc, lexemLength)) {
+            cInput.currentLexem = previousLexemStart;			/* unget last lexem */
             res = 0;
             break;
         }
-        if (IS_IDENTIFIER_LEXEM(lex) || (lex>CPP_TOKENS_START&&lex<CPP_TOKENS_END)) {
-            if (pos.file==s_cxRefPos.file && pos.line >= s_cxRefPos.line) {
-                cInput.currentLexem = cc;			/* unget last lexem */
+        if (IS_IDENTIFIER_LEXEM(lexem) || (lexem>CPP_TOKENS_START&&lexem<CPP_TOKENS_END)) {
             if (onSameLine(pos, s_cxRefPos)) {
+                cInput.currentLexem = previousLexemStart;			/* unget last lexem */
                 res = 0;
                 break;
             }
         }
-        ccc += lsize;
+        ccc += lexemLength;
     }
 endOfFile:
     setCFileConsistency();
