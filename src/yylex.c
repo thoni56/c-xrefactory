@@ -136,6 +136,10 @@ char *placeIdent(void) {
     return("");
 }
 
+static bool isPreprocessorToken(int lexem) {
+    return lexem>CPP_TOKENS_START && lexem<CPP_TOKENS_END;
+}
+
 #ifdef DEBUG
 static void dpnewline(int n) {
     int i;
@@ -302,7 +306,7 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
                 GetLexPosition((pos),Input);                            \
                 GetLexInt(length,Input);                                \
             }                                                           \
-        } else if (lex>CPP_TOKENS_START && lex<CPP_TOKENS_END) {        \
+        } else if (isPreprocessorToken(lex)) {                          \
             GetLexPosition((pos),Input);                                \
         } else if (lex == '\n' && (linecount)) {                        \
             GetLexPosition((pos),Input);                                \
@@ -1851,7 +1855,7 @@ int cachedInputPass(int cpoint, char **cfrom) {
             res = 0;
             break;
         }
-        if (IS_IDENTIFIER_LEXEM(lexem) || (lexem>CPP_TOKENS_START&&lexem<CPP_TOKENS_END)) {
+        if (IS_IDENTIFIER_LEXEM(lexem) || isPreprocessorToken(lexem)) {
             if (onSameLine(pos, s_cxRefPos)) {
                 cInput.currentLexem = previousLexem;			/* unget last lexem */
                 res = 0;
@@ -1995,6 +1999,7 @@ static void actionOnBlockMarker(void) {
     }
 }
 
+
 #define SET_POSITION_YYLVAL(pos, len) {\
     uniyylval->ast_position.d = pos;\
     uniyylval->ast_position.b = pos;\
@@ -2034,7 +2039,7 @@ int yylex(void) {
                 PassLex(cInput.currentLexem,lexem,line,val,h,pos, len,macroStackIndex == 0);
                 for(;;) {
                     GetLex(lexem);
-                    if (lexem<=CPP_TOKENS_START || lexem>=CPP_TOKENS_END) goto contYylex;
+                    if (!isPreprocessorToken(lexem)) goto contYylex;
                     if (processCppConstruct(lexem) == 0) goto endOfFile;
                 }
             }
