@@ -590,11 +590,11 @@ assert(0);
 
 /* ********************************* #DEFINE ********************** */
 
-#define GetNonBlankMaybeLexem(lex) {\
-    GetLex(lex);\
-    while (lex == LINE_TOK) {\
-        PassLex(cInput.currentLexem,lex,l,v,h,pos, len,1);\
-        GetLex(lex);\
+#define GetNonBlankMaybeLexem(lexem) {\
+    GetLex(lexem);\
+    while (lexem == LINE_TOK) {\
+        PassLex(cInput.currentLexem,lexem,l,v,h,pos, len,1);\
+        GetLex(lexem);\
     }\
 }
 
