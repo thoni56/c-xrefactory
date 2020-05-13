@@ -1327,7 +1327,14 @@ static void expandMacroArgument(S_lexInput *argb) {
     bcc = buf;
     for(;;) {
     nextLexem:
-        GetLexA(lexem, previousLexem);
+        //& GetLexA(lexem, previousLexem);
+        {
+            lexem = getLexA(&previousLexem);
+            if (lexem == -1)
+                goto endOfMacArg;
+            if (lexem == -2)
+                goto endOfFile;
+        }
         currentLexem = cInput.currentLexem;
         PassLex(cInput.currentLexem, lexem, line, val, hash, pos, len, macroStackIndex == 0);
         length = ((char*)cInput.currentLexem) - previousLexem;
@@ -1824,7 +1831,14 @@ int cachedInputPass(int cpoint, char **cfrom) {
     ccc = *cfrom;
     res = 1;
     while (ccc < cto) {
-        GetLexA(lexem, previousLexem);
+        //& GetLexA(lexem, previousLexem);
+        {
+            lexem = getLexA(&previousLexem);
+            if (lexem == -1)
+                goto endOfMacArg;
+            if (lexem == -2)
+                goto endOfFile;
+        }
         PassLex(cInput.currentLexem,lexem,line,val,h,pos, len,1);
         lexemLength = cInput.currentLexem-previousLexem;
         assert(lexemLength >= 0);
