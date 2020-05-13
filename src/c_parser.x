@@ -6,8 +6,8 @@
 
 */
 
-#ifndef CGRAM_X
-#define CGRAM_X
+#ifndef _C_PARSER_X_
+#define _C_PARSER_X_
 
 #include "proto.h"
 

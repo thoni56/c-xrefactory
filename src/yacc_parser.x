@@ -1,5 +1,5 @@
-#ifndef YACCGRAM_X
-#define YACCGRAM_X
+#ifndef _YACC_PARSER_X_
+#define _YACC_PARSER_X_
 
 #include "proto.h"
 

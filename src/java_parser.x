@@ -1,5 +1,5 @@
-#ifndef JAVAGRAM_X
-#define JAVAGRAM_X
+#ifndef _JAVA_PARSER_X_
+#define _JAVA_PARSER_X_
 
 #include "proto.h"
 
