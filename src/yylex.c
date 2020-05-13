@@ -1579,11 +1579,11 @@ static void crMacroBody(S_lexInput *macBody,
 /* ******************* MACRO CALL PROCESS ************************ */
 /* *************************************************************** */
 
-#define GetNotLineLexA(lex,lastlexaddr) {\
-    GetLexA(lex,lastlexaddr);\
-    while (lex == LINE_TOK || lex == '\n') {\
-        PassLex(cInput.currentLexem,lex,line,val,h,pos, len, macroStackIndex == 0);\
-        GetLexA(lex,lastlexaddr);\
+#define GetNotLineLexA(lexem, previousLexem) {\
+    GetLexA(lexem,previousLexem);\
+    while (lexem == LINE_TOK || lexem == '\n') {\
+        PassLex(cInput.currentLexem,lexem,line,val,h,pos, len, macroStackIndex == 0);\
+        GetLexA(lexem,previousLexem);\
     }\
 }
 #define GetNotLineLex(lex) {\
