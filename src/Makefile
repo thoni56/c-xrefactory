@@ -35,13 +35,6 @@ c-xref: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB) $(CLEAN_COVERAGE)
 	@make enumTxt
 	@make check-tokens
 
-#########################################################################
-# Is this necessary?
-
-..always..:;
-
-$(ROOTDIR)/lib/zlib/libz.a: ..always..
-	make -C $(ROOTDIR)/lib/zlib libz.a
 
 #########################################################################
 
