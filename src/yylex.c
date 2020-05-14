@@ -1815,10 +1815,10 @@ static int macroCallExpand(Symbol *mdef, Position *mpos) {
         addCxReference(mdef,mpos,UsageUsed,s_noneFileIndex, s_noneFileIndex);
         if (s_opt.taskRegime == RegimeXref) addMacroBaseUsageRef(mdef);
     }
-//&fprintf(dumpOut,"cr mbody '%s'\n", mb->name);fflush(dumpOut);
+    log_trace("create macro body '%s'", mb->name);
     createMacroBody(&macroBody,mb,actArgs,mb->argn);
     prependMacroInput(&macroBody);
-/*fprintf(dumpOut,"expanding macro '%s'\n", mb->name);fflush(dumpOut);*/
+    log_trace("expanding macro '%s'", mb->name);
     PP_FREE_UNTIL(freeBase);
     return(1);
 endOfMacArg:
