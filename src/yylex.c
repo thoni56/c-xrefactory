@@ -267,9 +267,9 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
 
 /* maybe too time-consuming, when lex is known */
 /* should be broken into parts */
-#define PassLex(Input,lex,lineval,val,hash,pos, length,linecount) {     \
-        if (lex > MULTI_TOKENS_START) {                                 \
-            if (IS_IDENTIFIER_LEXEM(lex)){                              \
+#define PassLex(Input, lexem, lineval, val, hash, pos, length, linecount) { \
+        if (lexem > MULTI_TOKENS_START) {                                 \
+            if (IS_IDENTIFIER_LEXEM(lexem)){                              \
                 char *tmpcc,tmpch;                                      \
                 hash = 0;                                               \
                 for(tmpcc=Input,tmpch= *tmpcc; tmpch; tmpch = *++tmpcc) { \
@@ -279,36 +279,36 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
                 tmpcc ++;                                               \
                 GetLexPosition((pos),tmpcc);                            \
                 Input = tmpcc;                                          \
-            } else if (lex == STRING_LITERAL) {                         \
+            } else if (lexem == STRING_LITERAL) {                         \
                 char *tmpcc,tmpch;                                      \
                 for(tmpcc=Input,tmpch= *tmpcc; tmpch; tmpch = *++tmpcc); \
                 tmpcc ++;                                               \
                 GetLexPosition((pos),tmpcc);                            \
                 Input = tmpcc;                                          \
-            } else if (lex == LINE_TOK) {                               \
+            } else if (lexem == LINE_TOK) {                               \
                 GetLexToken(lineval,Input);                             \
                 if (linecount) {                                        \
                     if(s_opt.debug) dpnewline(lineval);                 \
                     currentFile.lineNumber += lineval;                        \
                 }                                                       \
-            } else if (lex == CONSTANT || lex == LONG_CONSTANT) {       \
+            } else if (lexem == CONSTANT || lexem == LONG_CONSTANT) {       \
                 GetLexInt(val,Input);                                   \
                 GetLexPosition((pos),Input);                            \
                 GetLexInt(length,Input);                                \
-            } else if (lex == DOUBLE_CONSTANT || lex == FLOAT_CONSTANT) { \
+            } else if (lexem == DOUBLE_CONSTANT || lexem == FLOAT_CONSTANT) { \
                 GetLexPosition((pos),Input);                            \
                 GetLexInt(length,Input);                                \
-            } else if (lex == CPP_MAC_ARG) {                            \
+            } else if (lexem == CPP_MAC_ARG) {                            \
                 GetLexInt(val,Input);                                   \
                 GetLexPosition((pos),Input);                            \
-            } else if (lex == CHAR_LITERAL) {                           \
+            } else if (lexem == CHAR_LITERAL) {                           \
                 GetLexInt(val,Input);                                   \
                 GetLexPosition((pos),Input);                            \
                 GetLexInt(length,Input);                                \
             }                                                           \
-        } else if (isPreprocessorToken(lex)) {                          \
+        } else if (isPreprocessorToken(lexem)) {                          \
             GetLexPosition((pos),Input);                                \
-        } else if (lex == '\n' && (linecount)) {                        \
+        } else if (lexem == '\n' && (linecount)) {                        \
             GetLexPosition((pos),Input);                                \
             if (s_opt.debug) dpnewline(1);                              \
             currentFile.lineNumber ++;                                        \
@@ -630,7 +630,7 @@ assert(0);
 #define GetNonBlankMaybeLexem(lexem) {\
     GetLex(lexem);\
     while (lexem == LINE_TOK) {\
-        PassLex(cInput.currentLexem,lexem,l,v,h,pos, len,1);\
+        PassLex(cInput.currentLexem,lexem, l, v, h, pos, len, 1);\
         GetLex(lexem);\
     }\
 }
