@@ -1,5 +1,6 @@
 #include "yylex.h"
 
+#include "lexem.h"
 #include "commons.h"
 #include "lex.h"
 #include "globals.h"
@@ -136,7 +137,7 @@ char *placeIdent(void) {
     return("");
 }
 
-static bool isPreprocessorToken(int lexem) {
+static bool isPreprocessorToken(Lexem lexem) {
     return lexem>CPP_TOKENS_START && lexem<CPP_TOKENS_END;
 }
 
@@ -332,7 +333,7 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
  * -2 for end of file
 */
 static int getLexA(char **previousLexem) {
-    int lexem;
+    Lexem lexem;
 
     while (cInput.currentLexem >= cInput.endOfBuffer) {
         InputType inputType;
@@ -370,7 +371,7 @@ static int getLexA(char **previousLexem) {
 /* Attempt to re-create a function that does what GetLex() macro does: */
 static int getLex(void) {
     char *previousLexem;
-    int lexem = getLexA(&previousLexem);
+    Lexem lexem = getLexA(&previousLexem);
     return lexem; // -1 if endOfMacroArgument, -2 if endOfFile
 }
 
@@ -379,13 +380,13 @@ static int getLex(void) {
 /*                                                                   */
 /* ***************************************************************** */
 
-static void testCxrefCompletionId(int *llex, char *idd, Position *pos) {
-    int lex;
+static void testCxrefCompletionId(Lexem *out_lexem, char *idd, Position *pos) {
+    Lexem lexem;
 
-    lex = *llex;
+    lexem = *out_lexem;
     assert(s_opt.taskRegime);
     if (s_opt.taskRegime == RegimeEditServer) {
-        if (lex==IDENT_TO_COMPLETE) {
+        if (lexem==IDENT_TO_COMPLETE) {
             s_cache.activeCache = 0;
             s_olstringServed = 1;
             if (s_language == LANG_JAVA) {
@@ -403,10 +404,10 @@ static void testCxrefCompletionId(int *llex, char *idd, Position *pos) {
                 makeCCompletions(idd, strlen(idd), pos);
             }
             /* here should be a longjmp to stop file processing !!!! */
-            lex = IDENTIFIER;
+            lexem = IDENTIFIER;
         }
     }
-    *llex = lex;
+    *out_lexem = lexem;
 }
 
 
@@ -414,7 +415,8 @@ static void testCxrefCompletionId(int *llex, char *idd, Position *pos) {
 /* ********************************** #LINE *********************** */
 
 static  void processLine(void) {
-    int lexem,l,h,v=0,len;
+    Lexem lexem;
+    int l,h,v=0,len;
     Position pos;
 
     //& GetLex(lexem);
@@ -589,7 +591,8 @@ static void processInclude2(Position *ipos, char pchar, char *iname) {
 
 static void processInclude(Position *ipos) {
     char *currentLexem, *previousLexem;
-    int lexem, l, h, v, len;
+    Lexem lexem;
+    int l, h, v, len;
     Position pos;
 
     //& GetLexA(lexem, previousLexem);
@@ -710,7 +713,8 @@ static S_macroBody *newMacroBody(int msize, int argi, char *name, char *body, ch
 
 /* Make public only for unittesting */
 void processDefine(bool argFlag) {
-    int lexem, l, h, v;
+    Lexem lexem;
+    int l, h, v;
     bool bodyReadingFlag = false;
     int sizei, foundIndex, msize, argCount, ellipsis, len;
     Symbol *pp;
@@ -739,7 +743,7 @@ void processDefine(bool argFlag) {
      */
     PassLex(cInput.currentLexem,lexem,l,v,h,macpos, len,1);
 
-    testCxrefCompletionId(&lexem,cc,&macpos);    /* for cross-referencing */
+    testCxrefCompletionId(&lexem, cc, &macpos);    /* for cross-referencing */
     if (lexem != IDENTIFIER)
         return;
 
@@ -907,7 +911,8 @@ void addMacroDefinedByOption(char *opt) {
 /* ****************************** #UNDEF ************************* */
 
 static void processUnDefine(void) {
-    int lexem,l,h,v,ii,len;
+    Lexem lexem;
+    int l,h,v,ii,len;
     char *cc;
     Position pos;
     Symbol dd,*pp,*memb;
@@ -984,7 +989,8 @@ static void genCppIfElseReference(int level, Position *pos, int usage) {
 }
 
 static int cppDeleteUntilEndElse(bool untilEnd) {
-    int lexem,l,h,v,len;
+    Lexem lexem;
+    int l,h,v,len;
     int depth;
     Position pos;
 
@@ -1039,7 +1045,8 @@ static void execCppIf(int deleteSource) {
 }
 
 static void processIfdef(bool isIfdef) {
-    int lexem,l,h,v;
+    Lexem lexem;
+    int l,h,v;
     int ii,mm,len;
     Symbol pp,*memb;
     char *cc;
@@ -1157,7 +1164,8 @@ static void processIf(void) {
 }
 
 static void processPragma(void) {
-    int lexem,l,v,len,ii;
+    Lexem lexem;
+    int l,v,len,ii;
     unsigned h;
     char *mname, *fname;
     Position pos;
@@ -1205,7 +1213,7 @@ endOfFile:;
     }\
 }
 
-static bool processPreprocessorConstruct(int lexem) {
+static bool processPreprocessorConstruct(Lexem lexem) {
     int l,v,len;
     unsigned h;
     Position pos;
@@ -1638,7 +1646,7 @@ static void crMacroBody(S_lexInput *macBody,
     }
 
 static void getActMacroArgument(char *cc,
-                                int *llex,
+                                Lexem *out_lexem,
                                 Position *mpos,
                                 Position **parpos1,
                                 Position **parpos2,
@@ -1650,30 +1658,32 @@ static void getActMacroArgument(char *cc,
     int line,val,len, poffset;
     Position pos;
     unsigned h;
-    int bufsize,lex,depth;
-    lex = *llex;
+    int bufsize,depth;
+    Lexem lexem;
+
+    lexem = *out_lexem;
     bufsize = MACRO_ARG_UNIT_SIZE;
     depth = 0;
     PP_ALLOCC(buf, bufsize+MAX_LEXEM_SIZE, char);
     bcc = buf;
     /* if lastArgument, collect everything there */
     poffset = 0;
-    while (((lex != ',' || actArgi+1==mb->argn) && lex != ')') || depth > 0) {
+    while (((lexem != ',' || actArgi+1==mb->argn) && lexem != ')') || depth > 0) {
 /* The following should be equivalent to the loop condition
         if (lex == ')' && depth <= 0) break;
         if (lex == ',' && depth <= 0 && ! lastArgument) break;
 */
-        if (lex == '(') depth ++;
-        if (lex == ')') depth --;
+        if (lexem == '(') depth ++;
+        if (lexem == ')') depth --;
         for(;cc < cInput.currentLexem; cc++,bcc++) *bcc = *cc;
         if (bcc-buf >= bufsize) {
             bufsize += MACRO_ARG_UNIT_SIZE;
             PP_REALLOCC(buf, bufsize+MAX_LEXEM_SIZE, char,
                     bufsize+MAX_LEXEM_SIZE-MACRO_ARG_UNIT_SIZE);
         }
-        GetNotLineLexA(lex,cc);
-        PassLex(cInput.currentLexem,lex,line,val,h, (**parpos2), len, macroStackIndex == 0);
-        if ((lex == ',' || lex == ')') && depth == 0) {
+        GetNotLineLexA(lexem,cc);
+        PassLex(cInput.currentLexem,lexem,line,val,h, (**parpos2), len, macroStackIndex == 0);
+        if ((lexem == ',' || lexem == ')') && depth == 0) {
             poffset ++;
             handleMacroUsageParameterPositions(actArgi+poffset, mpos, *parpos1, *parpos2, 0);
             **parpos1= **parpos2;
@@ -1689,14 +1699,15 @@ endOfMacArg:;
     }
     PP_REALLOCC(buf, bcc-buf, char, bufsize+MAX_LEXEM_SIZE);
     fillLexInput(actArg,buf,bcc,buf,cInput.macroName,INPUT_NORMAL);
-    *llex = lex;
+    *out_lexem = lexem;
     return;
 }
 
 static struct lexInput *getActualMacroArguments(S_macroBody *mb, Position *mpos,
                                                 Position *lparpos) {
     char *cc;
-    int lex,line,val,len;
+    Lexem lexem;
+    int line,val,len;
     Position pos, ppb1, ppb2, *parpos1, *parpos2;
     unsigned h;
     int actArgi = 0;
@@ -1706,19 +1717,19 @@ static struct lexInput *getActualMacroArguments(S_macroBody *mb, Position *mpos,
     parpos1 = &ppb1;
     parpos2 = &ppb2;
     PP_ALLOCC(actArgs,mb->argn,struct lexInput);
-    GetNotLineLexA(lex,cc);
-    PassLex(cInput.currentLexem,lex,line,val,h, pos, len, macroStackIndex == 0);
-    if (lex == ')') {
+    GetNotLineLexA(lexem,cc);
+    PassLex(cInput.currentLexem,lexem,line,val,h, pos, len, macroStackIndex == 0);
+    if (lexem == ')') {
         *parpos2 = pos;
         handleMacroUsageParameterPositions(0, mpos, parpos1, parpos2, 1);
     } else {
         for(;;) {
-            getActMacroArgument(cc,&lex, mpos, &parpos1, &parpos2,
+            getActMacroArgument(cc,&lexem, mpos, &parpos1, &parpos2,
                                 &actArgs[actArgi], mb, actArgi);
             actArgi ++ ;
-            if (lex != ',' || actArgi >= mb->argn) break;
-            GetNotLineLexA(lex,cc);
-            PassLex(cInput.currentLexem,lex,line,val,h, pos, len, macroStackIndex == 0);
+            if (lexem != ',' || actArgi >= mb->argn) break;
+            GetNotLineLexA(lexem,cc);
+            PassLex(cInput.currentLexem,lexem,line,val,h, pos, len, macroStackIndex == 0);
         }
     }
     if (actArgi!=0) {
@@ -1767,7 +1778,8 @@ static void addMacroBaseUsageRef(Symbol *mdef) {
 
 
 static int macroCallExpand(Symbol *mdef, Position *mpos) {
-    int lex,line,val,len;
+    Lexem lexem;
+    int line,val,len;
     char *cc2,*freeBase;
     Position pos, lparpos;
     unsigned h;
@@ -1783,12 +1795,12 @@ static int macroCallExpand(Symbol *mdef, Position *mpos) {
     if (cyclicCall(mb)) return(0);
     PP_ALLOCC(freeBase,0,char);
     if (mb->argn >= 0) {
-        GetNotLineLexA(lex,cc2);
-        if (lex != '(') {
+        GetNotLineLexA(lexem,cc2);
+        if (lexem != '(') {
             cInput.currentLexem = cc2;		/* unget lexem */
             return(0);
         }
-        PassLex(cInput.currentLexem,lex,line,val,h, lparpos, len, macroStackIndex == 0);
+        PassLex(cInput.currentLexem,lexem,line,val,h, lparpos, len, macroStackIndex == 0);
         actArgs = getActualMacroArguments(mb, mpos, &lparpos);
     } else {
         actArgs = NULL;
@@ -1852,7 +1864,8 @@ int lexBufDump(S_lexBuf *lb) {
 /*                   caching of input                             */
 /* ************************************************************** */
 int cachedInputPass(int cpoint, char **cfrom) {
-    int lexem, line, val, res, len;
+    Lexem lexem;
+    int line, val, res, len;
     Position pos;
     unsigned h, lexemLength;
     char *previousLexem, *cto, *ccc;
@@ -2035,7 +2048,8 @@ static void actionOnBlockMarker(void) {
 }
 
 int yylex(void) {
-    int lexem, line, val, len;
+    Lexem lexem;
+    int line, val, len;
     Position pos, idpos;
     char *previousLexem;
     unsigned h;
