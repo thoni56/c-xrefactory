@@ -327,7 +327,7 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
  * -1 for end of macro argument
  * -2 for end of file
 */
-static int getLexA(char **previousLexem) {
+static Lexem getLexA(char **previousLexem) {
     Lexem lexem;
 
     while (cInput.currentLexem >= cInput.endOfBuffer) {
