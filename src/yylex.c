@@ -339,12 +339,14 @@ static int getLexA(char **previousLexem) {
         InputType inputType;
         inputType = cInput.inputType;
         if (macroStackIndex > 0) {
-            if (inputType == INPUT_MACRO_ARGUMENT) return -1; //goto endOfMacArg;
+            if (inputType == INPUT_MACRO_ARGUMENT)
+                return -1; //goto endOfMacArg;
             MB_FREE_UNTIL(cInput.beginningOfBuffer);
             cInput = macroStack[--macroStackIndex];
         } else if (inputType == INPUT_NORMAL) {
             setCFileConsistency();
-            if (!getLexBuf(&currentFile.lexBuffer)) return -2; //goto endOfFile;
+            if (!getLexBuf(&currentFile.lexBuffer))
+                return -2; //goto endOfFile;
             setCInputConsistency();
         } else {
             s_cache.cc = s_cache.cfin = NULL;
