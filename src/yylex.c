@@ -417,11 +417,18 @@ static  void processLine(void) {
     int lexem,l,h,v=0,len;
     Position pos;
 
-    GetLex(lexem);
+    //& GetLex(lexem);
+    lexem = getLex();
+    if (lexem == -1) goto endOfMacArg;
+    if (lexem == -2) goto endOfFile;
+
     PassLex(cInput.currentLexem,lexem,l,v,h,pos, len,1);
     if (lexem != CONSTANT) return;
-    //& currentFile.lineNumber = v-1;      // ignore this directive
-    GetLex(lexem);
+    //& GetLex(lexem);
+    lexem = getLex();
+    if (lexem == -1) goto endOfMacArg;
+    if (lexem == -2) goto endOfFile;
+
 /*	this should be moved to the  getLexBuf routine,!!!!!!!!!!!!!!!!!!! TODO */
 /*&
     if (lexem == STRING_LITERAL) {
