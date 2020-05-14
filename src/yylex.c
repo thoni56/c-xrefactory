@@ -1647,12 +1647,6 @@ static void createMacroBody(S_lexInput *macBody,
         }                                                               \
     }
 
-#define GetNotLineLex(lexem)                               \
-    {                                                      \
-        char *lastlexaddr;                                 \
-        GetNotLineLexA(lexem, lastlexaddr);                \
-    }
-
 static void getActMacroArgument(char *cc,
                                 Lexem *out_lexem,
                                 Position *mpos,
