@@ -1544,7 +1544,7 @@ static void macArgsToString(char *res, struct lexInput *lb) {
 /* ********************* macro body replacement ***************** */
 /* ************************************************************** */
 
-static void crMacroBody(S_lexInput *macBody,
+static void createMacroBody(S_lexInput *macBody,
                         S_macroBody *mb,
                         struct lexInput *actArgs,
                         int actArgn
@@ -1788,7 +1788,7 @@ static int macroCallExpand(Symbol *mdef, Position *mpos) {
     char *cc2,*freeBase;
     Position pos, lparpos;
     unsigned h;
-    S_lexInput *actArgs, macBody;
+    S_lexInput *actArgs, macroBody;
     S_macroBody *mb;
     cc2 = cInput.currentLexem;
     mb = mdef->u.mbody;
@@ -1816,8 +1816,8 @@ static int macroCallExpand(Symbol *mdef, Position *mpos) {
         if (s_opt.taskRegime == RegimeXref) addMacroBaseUsageRef(mdef);
     }
 //&fprintf(dumpOut,"cr mbody '%s'\n", mb->name);fflush(dumpOut);
-    crMacroBody(&macBody,mb,actArgs,mb->argn);
-    prependMacroInput(&macBody);
+    createMacroBody(&macroBody,mb,actArgs,mb->argn);
+    prependMacroInput(&macroBody);
 /*fprintf(dumpOut,"expanding macro '%s'\n", mb->name);fflush(dumpOut);*/
     PP_FREE_UNTIL(freeBase);
     return(1);
