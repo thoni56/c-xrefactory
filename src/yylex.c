@@ -68,7 +68,7 @@ static bool isIdentifierLexem(Lexem lex) {
 }
 
 
-static int macroCallExpand(Symbol *mdef, Position *mpos);
+static int expandMacroCall(Symbol *mdef, Position *mpos);
 
 
 /* ************************************************************ */
@@ -1387,7 +1387,7 @@ static void expandMacroArgument(S_lexInput *argb) {
             fillSymbolBits(&sd.bits, ACCESS_DEFAULT, TypeMacro, StorageNone);
             if (symbolTableIsMember(s_symbolTable, &sd, &ii, &memb)) {
                 /* it is a macro, provide macro expansion */
-                if (macroCallExpand(memb,&pos)) goto nextLexem;
+                if (expandMacroCall(memb,&pos)) goto nextLexem;
                 else failedMacroExpansion = 1;
             }
         }
@@ -1784,7 +1784,7 @@ static void addMacroBaseUsageRef(Symbol *mdef) {
 }
 
 
-static int macroCallExpand(Symbol *mdef, Position *mpos) {
+static int expandMacroCall(Symbol *mdef, Position *mpos) {
     Lexem lexem;
     int line,val,len;
     char *cc2,*freeBase;
@@ -1792,6 +1792,7 @@ static int macroCallExpand(Symbol *mdef, Position *mpos) {
     unsigned h;
     S_lexInput *actArgs, macroBody;
     S_macroBody *mb;
+
     cc2 = cInput.currentLexem;
     mb = mdef->u.mbody;
     if (mb == NULL) return(0);	/* !!!!!         tricky,  undefined macro */
@@ -2120,7 +2121,7 @@ int yylex(void) {
             // so id would be destroyed
             //&assert(strcmp(id,memberP->name)==0);
             id = memberP->name;
-            if (macroCallExpand(memberP,&idpos)) goto nextYylex;
+            if (expandMacroCall(memberP,&idpos)) goto nextYylex;
         }
         h = h % s_symbolTable->size;
         if(LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)) lexem=processCIdent(h,id,&idpos);
