@@ -63,7 +63,9 @@ static S_lexInput macroStack[MACRO_STACK_SIZE];
 S_lexInput cInput;
 
 
-#define IS_IDENTIFIER_LEXEM(lex) (lex==IDENTIFIER || lex==IDENT_NO_CPP_EXPAND  || lex==IDENT_TO_COMPLETE)
+static bool isIdentifierLexem(Lexem lex) {
+    return lex==IDENTIFIER || lex==IDENT_NO_CPP_EXPAND  || lex==IDENT_TO_COMPLETE;
+}
 
 
 static int macroCallExpand(Symbol *mdef, Position *mpos);
@@ -270,7 +272,7 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
 /* should be broken into parts */
 #define PassLex(Input, lexem, lineval, val, hash, pos, length, linecount) { \
         if (lexem > MULTI_TOKENS_START) {                                 \
-            if (IS_IDENTIFIER_LEXEM(lexem)){                              \
+            if (isIdentifierLexem(lexem)){                              \
                 char *tmpcc,tmpch;                                      \
                 hash = 0;                                               \
                 for(tmpcc=Input,tmpch= *tmpcc; tmpch; tmpch = *++tmpcc) { \
@@ -920,7 +922,7 @@ static void processUnDefine(void) {
     cc = cInput.currentLexem;
     PassLex(cInput.currentLexem,lexem,l,v,h,pos, len,1);
     testCxrefCompletionId(&lexem,cc,&pos);
-    if (IS_IDENTIFIER_LEXEM(lexem)) {
+    if (isIdentifierLexem(lexem)) {
         log_debug(": undef macro %s",cc);
 
         fillSymbol(&dd, cc, cc, pos);
@@ -1057,7 +1059,7 @@ static void processIfdef(bool isIfdef) {
     PassLex(cInput.currentLexem,lexem,l,v,h,pos, len,1);
     testCxrefCompletionId(&lexem,cc,&pos);
 
-    if (! IS_IDENTIFIER_LEXEM(lexem)) return;
+    if (! isIdentifierLexem(lexem)) return;
 
     fillSymbol(&pp, cc, cc, s_noPos);
     fillSymbolBits(&pp.bits, ACCESS_DEFAULT, TypeMacro, StorageNone);
@@ -1100,7 +1102,7 @@ int cexp_yylex(void) {
     Symbol dd,*memb;
     Position pos;
     lex = yylex();
-    if (IS_IDENTIFIER_LEXEM(lex)) {
+    if (isIdentifierLexem(lex)) {
         // this is useless, as it would be set to 0 anyway
         lex = cexpTranslateToken(CONSTANT, 0);
     } else if (lex == CPP_DEFINED_OP) {
@@ -1116,7 +1118,7 @@ int cexp_yylex(void) {
             par = 0;
         }
 
-        if (! IS_IDENTIFIER_LEXEM(lex)) return(0);
+        if (! isIdentifierLexem(lex)) return(0);
 
         fillSymbol(&dd, cc, cc, s_noPos);
         fillSymbolBits(&dd.bits, ACCESS_DEFAULT, TypeMacro, StorageNone);
@@ -1463,9 +1465,9 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
     /* now collate *lbcc and *cc */
     // berk, do not pre-compute, lbcc can be NULL!!!!
     //& nlt = NextLexToken(lbcc);
-    if (lbcc!=NULL && cc < ccfin && IS_IDENTIFIER_LEXEM(NextLexToken(lbcc))) {
+    if (lbcc!=NULL && cc < ccfin && isIdentifierLexem(NextLexToken(lbcc))) {
         nlex = NextLexToken(cc);
-        if (IS_IDENTIFIER_LEXEM(nlex) || nlex == CONSTANT
+        if (isIdentifierLexem(nlex) || nlex == CONSTANT
                     || nlex == LONG_CONSTANT || nlex == FLOAT_CONSTANT
                     || nlex == DOUBLE_CONSTANT ) {
             /* TODO collation of all lexem pairs */
@@ -1475,7 +1477,7 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
             PassLex(cc, lex, line, val, hash, respos, len, 0);
             bcc = lbcc + IDENT_TOKEN_SIZE + len1;
             assert(*bcc==0);
-            if (IS_IDENTIFIER_LEXEM(lex)) {
+            if (isIdentifierLexem(lex)) {
 /*				NextLexPosition(respos,bcc+1);	*/ /* new identifier position*/
                 strcpy(bcc,occ);
                 // the following is a hack as # is part of ## symbols
@@ -1523,7 +1525,7 @@ static void macArgsToString(char *res, struct lexInput *lb) {
         GetLexToken(lex,cc);
         lcc = cc;
         PassLex(cc, lex, lv,v,h,pos, len,c);
-        if (IS_IDENTIFIER_LEXEM(lex)) {
+        if (isIdentifierLexem(lex)) {
             sprintf(bcc, "%s", lcc);
             bcc+=strlen(bcc);
         } else if (lex==STRING_LITERAL) {
@@ -1893,7 +1895,7 @@ int cachedInputPass(int cpoint, char **cfrom) {
             res = 0;
             break;
         }
-        if (IS_IDENTIFIER_LEXEM(lexem) || isPreprocessorToken(lexem)) {
+        if (isIdentifierLexem(lexem) || isPreprocessorToken(lexem)) {
             if (onSameLine(pos, s_cxRefPos)) {
                 cInput.currentLexem = previousLexem;			/* unget last lexem */
                 res = 0;
