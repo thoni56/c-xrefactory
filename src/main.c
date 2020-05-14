@@ -128,7 +128,7 @@ static void usage(char *s) {
     //& fprintf(stdout,"\t-keep_old             - keep also all old references from 'refs' file\n");
     fprintf(stdout,"\t-no_stdop                 - don't read the '~/.c-xrefrc' option file \n");
     fprintf(stdout,"\t-errors                   - report all error messages\n");
-    fprintf(stdout,"\t-version                  - give this release version number\n");
+    fprintf(stdout,"\t-version                  - print version information\n");
 }
 
 static void aboutMessage(void) {
