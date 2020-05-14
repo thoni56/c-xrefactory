@@ -1669,10 +1669,9 @@ static void getActMacroArgument(char *cc,
     /* if lastArgument, collect everything there */
     poffset = 0;
     while (((lexem != ',' || actArgi+1==mb->argn) && lexem != ')') || depth > 0) {
-/* The following should be equivalent to the loop condition
-        if (lex == ')' && depth <= 0) break;
-        if (lex == ',' && depth <= 0 && ! lastArgument) break;
-*/
+        // The following should be equivalent to the loop condition:
+        //& if (lexem == ')' && depth <= 0) break;
+        //& if (lexem == ',' && depth <= 0 && ! lastArgument) break;
         if (lexem == '(') depth ++;
         if (lexem == ')') depth --;
         for(;cc < cInput.currentLexem; cc++,bcc++) *bcc = *cc;
