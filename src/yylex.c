@@ -1633,7 +1633,7 @@ static void createMacroBody(S_lexInput *macBody,
 /* ******************* MACRO CALL PROCESS ************************ */
 /* *************************************************************** */
 
-#define GetNotLineLexA(lexem, previousLexem)                            \
+#define GetLexASkippingLines(lexem, previousLexem)                            \
     {                                                                   \
         lexem = getLexA(&previousLexem);                                \
         if (lexem == -1) goto endOfMacArg;                              \
@@ -1682,13 +1682,14 @@ static void getActMacroArgument(char *cc,
         //& if (lexem == ',' && depth <= 0 && ! lastArgument) break;
         if (lexem == '(') depth ++;
         if (lexem == ')') depth --;
-        for(;cc < cInput.currentLexem; cc++,bcc++) *bcc = *cc;
+        for(;cc < cInput.currentLexem; cc++,bcc++)
+            *bcc = *cc;
         if (bcc-buf >= bufsize) {
             bufsize += MACRO_ARG_UNIT_SIZE;
             PP_REALLOCC(buf, bufsize+MAX_LEXEM_SIZE, char,
                     bufsize+MAX_LEXEM_SIZE-MACRO_ARG_UNIT_SIZE);
         }
-        GetNotLineLexA(lexem,cc);
+        GetLexASkippingLines(lexem,cc);
         PassLex(cInput.currentLexem,lexem,line,val,h, (**parpos2), len, macroStackIndex == 0);
         if ((lexem == ',' || lexem == ')') && depth == 0) {
             poffset ++;
@@ -1724,7 +1725,7 @@ static struct lexInput *getActualMacroArguments(S_macroBody *mb, Position *mpos,
     parpos1 = &ppb1;
     parpos2 = &ppb2;
     PP_ALLOCC(actArgs,mb->argn,struct lexInput);
-    GetNotLineLexA(lexem,cc);
+    GetLexASkippingLines(lexem,cc);
     PassLex(cInput.currentLexem,lexem,line,val,h, pos, len, macroStackIndex == 0);
     if (lexem == ')') {
         *parpos2 = pos;
@@ -1735,7 +1736,7 @@ static struct lexInput *getActualMacroArguments(S_macroBody *mb, Position *mpos,
                                 &actArgs[actArgi], mb, actArgi);
             actArgi ++ ;
             if (lexem != ',' || actArgi >= mb->argn) break;
-            GetNotLineLexA(lexem,cc);
+            GetLexASkippingLines(lexem,cc);
             PassLex(cInput.currentLexem,lexem,line,val,h, pos, len, macroStackIndex == 0);
         }
     }
@@ -1799,11 +1800,12 @@ static int expandMacroCall(Symbol *mdef, Position *mpos) {
     if (macroStackIndex == 0) { /* call from source, init mem */
         MB_INIT();
     }
-//&fprintf(dumpOut,"try to expand macro '%s'\n", mb->name);fflush(dumpOut);
-    if (cyclicCall(mb)) return(0);
+    log_trace("try to expand macro '%s'", mb->name);
+    if (cyclicCall(mb))
+        return(0);
     PP_ALLOCC(freeBase,0,char);
     if (mb->argn >= 0) {
-        GetNotLineLexA(lexem,cc2);
+        GetLexASkippingLines(lexem,cc2);
         if (lexem != '(') {
             cInput.currentLexem = cc2;		/* unget lexem */
             return(0);
