@@ -424,6 +424,7 @@ static  void processLine(void) {
 
     PassLex(cInput.currentLexem,lexem,l,v,h,pos, len,1);
     if (lexem != CONSTANT) return;
+
     //& GetLex(lexem);
     lexem = getLex();
     if (lexem == -1) goto endOfMacArg;
@@ -592,13 +593,9 @@ static void processInclude(Position *ipos) {
     Position pos;
 
     //& GetLexA(lexem, previousLexem);
-    {
-        lexem = getLexA(&previousLexem);
-        if (lexem == -1)
-            goto endOfMacArg;
-        if (lexem == -2)
-            goto endOfFile;
-    }
+    lexem = getLexA(&previousLexem);
+    if (lexem == -1) goto endOfMacArg;
+    if (lexem == -2) goto endOfFile;
 
     currentLexem = cInput.currentLexem;
     if (lexem == STRING_LITERAL) {
@@ -730,7 +727,11 @@ void processDefine(bool argFlag) {
     ppb2 = s_noPos;
     parpos1 = &ppb1;
     parpos2 = &ppb2;
-    GetLex(lexem);
+
+    lexem = getLex();
+    if (lexem == -1) goto endOfMacArg;
+    if (lexem == -2) goto endOfFile;
+
     cc = cInput.currentLexem;
 
     /* TODO: WTF there are some "symbols" in the lexBuffer, like "\275\001".
@@ -906,15 +907,20 @@ void addMacroDefinedByOption(char *opt) {
 /* ****************************** #UNDEF ************************* */
 
 static void processUnDefine(void) {
-    int lex,l,h,v,ii,len;
+    int lexem,l,h,v,ii,len;
     char *cc;
     Position pos;
     Symbol dd,*pp,*memb;
-    GetLex(lex);
+
+    //& GetLex(lexem);
+    lexem = getLex();
+    if (lexem == -1) goto endOfMacArg;
+    if (lexem == -2) goto endOfFile;
+
     cc = cInput.currentLexem;
-    PassLex(cInput.currentLexem,lex,l,v,h,pos, len,1);
-    testCxrefCompletionId(&lex,cc,&pos);
-    if (IS_IDENTIFIER_LEXEM(lex)) {
+    PassLex(cInput.currentLexem,lexem,l,v,h,pos, len,1);
+    testCxrefCompletionId(&lexem,cc,&pos);
+    if (IS_IDENTIFIER_LEXEM(lexem)) {
         log_debug(": undef macro %s",cc);
 
         fillSymbol(&dd, cc, cc, pos);
@@ -935,7 +941,13 @@ static void processUnDefine(void) {
             addMacroToTabs(pp,memb->name);
         }
     }
-    while (lex != '\n') {GetLex(lex); PassLex(cInput.currentLexem,lex,l,v,h,pos, len,1);}
+    while (lexem != '\n') {
+        //& GetLex(lexem);
+        lexem = getLex();
+        if (lexem == -1) goto endOfMacArg;
+        if (lexem == -2) goto endOfFile;
+        PassLex(cInput.currentLexem,lexem, l, v, h, pos, len, 1);
+    }
     return;
 endOfMacArg:	assert(0);
 endOfFile:;
@@ -972,26 +984,31 @@ static void genCppIfElseReference(int level, Position *pos, int usage) {
 }
 
 static int cppDeleteUntilEndElse(bool untilEnd) {
-    int lex,l,h,v,len;
+    int lexem,l,h,v,len;
     int depth;
     Position pos;
+
     depth = 1;
     while (depth > 0) {
-        GetLex(lex);
-        PassLex(cInput.currentLexem,lex,l,v,h,pos, len,1);
-        if (lex==CPP_IF || lex==CPP_IFDEF || lex==CPP_IFNDEF) {
+        //& GetLex(lexem);
+        lexem = getLex();
+        if (lexem == -1) goto endOfMacArg;
+        if (lexem == -2) goto endOfFile;
+
+        PassLex(cInput.currentLexem,lexem,l,v,h,pos, len,1);
+        if (lexem==CPP_IF || lexem==CPP_IFDEF || lexem==CPP_IFNDEF) {
             genCppIfElseReference(1, &pos, UsageDefined);
             depth++;
-        } else if (lex == CPP_ENDIF) {
+        } else if (lexem == CPP_ENDIF) {
             depth--;
             genCppIfElseReference(-1, &pos, UsageUsed);
-        } else if (lex == CPP_ELIF) {
+        } else if (lexem == CPP_ELIF) {
             genCppIfElseReference(0, &pos, UsageUsed);
             if (depth == 1 && !untilEnd) {
                 log_debug("#elif ");
                 return(UNTIL_ELIF);
             }
-        } else if (lex == CPP_ELSE) {
+        } else if (lexem == CPP_ELSE) {
             genCppIfElseReference(0, &pos, UsageUsed);
             if (depth == 1 && !untilEnd) {
                 log_debug("#else");
@@ -1022,18 +1039,23 @@ static void execCppIf(int deleteSource) {
 }
 
 static void processIfdef(bool isIfdef) {
-    int lex,l,h,v;
+    int lexem,l,h,v;
     int ii,mm,len;
     Symbol pp,*memb;
     char *cc;
     Position pos;
     int deleteSrc;
-    GetLex(lex);
-    cc = cInput.currentLexem;
-    PassLex(cInput.currentLexem,lex,l,v,h,pos, len,1);
-    testCxrefCompletionId(&lex,cc,&pos);
 
-    if (! IS_IDENTIFIER_LEXEM(lex)) return;
+    //& GetLex(lexem);
+    lexem = getLex();
+    if (lexem == -1) goto endOfMacArg;
+    if (lexem == -2) goto endOfFile;
+
+    cc = cInput.currentLexem;
+    PassLex(cInput.currentLexem,lexem,l,v,h,pos, len,1);
+    testCxrefCompletionId(&lexem,cc,&pos);
+
+    if (! IS_IDENTIFIER_LEXEM(lexem)) return;
 
     fillSymbol(&pp, cc, cc, s_noPos);
     fillSymbolBits(&pp.bits, ACCESS_DEFAULT, TypeMacro, StorageNone);
@@ -1135,16 +1157,20 @@ static void processIf(void) {
 }
 
 static void processPragma(void) {
-    int lex,l,v,len,ii;
+    int lexem,l,v,len,ii;
     unsigned h;
     char *mname, *fname;
     Position pos;
     Symbol *pp;
 
-    GetLex(lex);
-    if (lex == IDENTIFIER && !strcmp(cInput.currentLexem, "once")) {
+    //& GetLex(lexem);
+    lexem = getLex();
+    if (lexem == -1) goto endOfMacArg;
+    if (lexem == -2) goto endOfFile;
+
+    if (lexem == IDENTIFIER && !strcmp(cInput.currentLexem, "once")) {
         char tmpBuff[TMP_BUFF_SIZE];
-        PassLex(cInput.currentLexem,lex,l,v,h,pos, len,1);
+        PassLex(cInput.currentLexem,lexem,l,v,h,pos, len,1);
         fname = simpleFileName(s_fileTab.tab[pos.file]->name);
         sprintf(tmpBuff, "PragmaOnce-%s", fname);
         PP_ALLOCC(mname, strlen(tmpBuff)+1, char);
@@ -1156,8 +1182,14 @@ static void processPragma(void) {
 
         symbolTableAdd(s_symbolTable,pp,&ii);
     }
-    while (lex != '\n') {PassLex(cInput.currentLexem,lex,l,v,h,pos, len,1); GetLex(lex);}
-    PassLex(cInput.currentLexem,lex,l,v,h,pos, len,1);
+    while (lexem != '\n') {
+        PassLex(cInput.currentLexem,lexem,l,v,h,pos, len,1);
+        //& GetLex(lexem);
+        lexem = getLex();
+        if (lexem == -1) goto endOfMacArg;
+        if (lexem == -2) goto endOfFile;
+    }
+    PassLex(cInput.currentLexem,lexem,l,v,h,pos, len,1);
     return;
 endOfMacArg:	assert(0);
 endOfFile:;
@@ -1245,14 +1277,27 @@ static bool processPreprocessorConstruct(int lexem) {
     case CPP_LINE:
         AddHtmlCppReference(pos);
         processLine();
-        GetLex(lexem);
-        while (lexem != '\n') {PassLex(cInput.currentLexem,lexem,l,v,h,pos, len,1); GetLex(lexem);}
+
+        //& GetLex(lexem);
+        lexem = getLex();
+        if (lexem == -1) goto endOfMacArg;
+        if (lexem == -2) goto endOfFile;
+
+        while (lexem != '\n') {
+            PassLex(cInput.currentLexem,lexem,l,v,h,pos, len,1);
+
+            //& GetLex(lexem);
+            lexem = getLex();
+            if (lexem == -1) goto endOfMacArg;
+            if (lexem == -2) goto endOfFile;
+        }
         PassLex(cInput.currentLexem,lexem,l,v,h,pos, len,1);
         break;
     default: assert(0);
     }
     return true;
-endOfMacArg:	assert(0);
+
+endOfMacArg: assert(0);
 endOfFile:
     return false;
 }
@@ -1308,13 +1353,10 @@ static void expandMacroArgument(S_lexInput *argb) {
     for(;;) {
     nextLexem:
         //& GetLexA(lexem, previousLexem);
-        {
-            lexem = getLexA(&previousLexem);
-            if (lexem == -1)
-                goto endOfMacArg;
-            if (lexem == -2)
-                goto endOfFile;
-        }
+        lexem = getLexA(&previousLexem);
+        if (lexem == -1) goto endOfMacArg;
+        if (lexem == -2) goto endOfFile;
+
         currentLexem = cInput.currentLexem;
         PassLex(cInput.currentLexem, lexem, line, val, hash, pos, len, macroStackIndex == 0);
         length = ((char*)cInput.currentLexem) - previousLexem;
@@ -1580,6 +1622,7 @@ static void crMacroBody(S_lexInput *macBody,
         lexem = getLexA(&previousLexem);                                \
         if (lexem == -1) goto endOfMacArg;                              \
         if (lexem == -2) goto endOfFile;                                \
+                                                                        \
         while (lexem == LINE_TOK || lexem == '\n') {                    \
             PassLex(cInput.currentLexem,lexem,line,val,h,pos, len, macroStackIndex == 0); \
             lexem = getLexA(&previousLexem);                            \
@@ -1820,13 +1863,10 @@ int cachedInputPass(int cpoint, char **cfrom) {
     res = 1;
     while (ccc < cto) {
         //& GetLexA(lexem, previousLexem);
-        {
-            lexem = getLexA(&previousLexem);
-            if (lexem == -1)
-                goto endOfMacArg;
-            if (lexem == -2)
-                goto endOfFile;
-        }
+        lexem = getLexA(&previousLexem);
+        if (lexem == -1) goto endOfMacArg;
+        if (lexem == -2) goto endOfFile;
+
         PassLex(cInput.currentLexem,lexem,line,val,h,pos, len,1);
         lexemLength = cInput.currentLexem-previousLexem;
         assert(lexemLength >= 0);
@@ -2003,13 +2043,10 @@ int yylex(void) {
     len = 0;
  nextYylex:
     //& GetLexA(lexem, previousLexem); /* Expand and extract into: */
-    {
-        lexem = getLexA(&previousLexem);
-        if (lexem == -1)
-            goto endOfMacArg;
-        if (lexem == -2)
-            goto endOfFile;
-    }
+    lexem = getLexA(&previousLexem);
+    if (lexem == -1) goto endOfMacArg;
+    if (lexem == -2) goto endOfFile;
+
  contYylex:
     if (lexem < 256) {
         if (lexem == '\n') {
@@ -2018,7 +2055,11 @@ int yylex(void) {
             } else {
                 PassLex(cInput.currentLexem,lexem,line,val,h,pos, len,macroStackIndex == 0);
                 for(;;) {
-                    GetLex(lexem);
+                    //& GetLex(lexem);
+                    lexem = getLex();
+                    if (lexem == -1) goto endOfMacArg;
+                    if (lexem == -2) goto endOfFile;
+
                     if (!isPreprocessorToken(lexem))
                         goto contYylex;
                     if (!processPreprocessorConstruct(lexem))
