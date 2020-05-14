@@ -1096,11 +1096,13 @@ endOfFile:;
 /* ********************************* #IF ************************** */
 
 int cexp_yylex(void) {
-    int l,v,lexem,par,ii,res,mm,len;
+    int l,v,par,ii,res,mm,len;
+    Lexem lexem;
     char *cc;
     unsigned h;
     Symbol dd,*memb;
     Position pos;
+
     lexem = yylex();
     if (isIdentifierLexem(lexem)) {
         // this is useless, as it would be set to 0 anyway
@@ -1356,7 +1358,8 @@ static void prependMacroInput(S_lexInput *argb) {
 static void expandMacroArgument(S_lexInput *argb) {
     Symbol sd,*memb;
     char *buf,*previousLexem,*currentLexem,*bcc, *tbcc;
-    int length,ii,lexem,line,val,bsize,failedMacroExpansion,len;
+    int length,ii,line,val,bsize,failedMacroExpansion,len;
+    Lexem lexem;
     Position pos;
     unsigned hash;
 
@@ -1426,9 +1429,11 @@ static void cxAddCollateReference( char *sym, char *cs, Position *pos ) {
 static void collate(char **albcc, char **abcc, char *buf, int *absize,
                     char **ancc, S_lexInput *actArgs) {
     char *lbcc,*bcc,*cc,*ccfin,*cc0,*ncc,*occ;
-    int line, val, lexem, nlex, len1, bsize, len;
+    int line, val, nlex, len1, bsize, len;
+    Lexem lexem;
     Position pos,respos;
     unsigned hash;
+
     ncc = *ancc;
     lbcc = *albcc;
     bcc = *abcc;
@@ -1515,8 +1520,10 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
 
 static void macArgsToString(char *res, struct lexInput *lb) {
     char *cc, *lcc, *bcc;
-    int v,h,c,lv,lexem,len;
+    int v,h,c,lv,len;
+    Lexem lexem;
     Position pos;
+
     bcc = res;
     *bcc = 0;
     c=0; v=0;
@@ -1552,7 +1559,8 @@ static void createMacroBody(S_lexInput *macBody,
                         int actArgn
                         ) {
     char *cc,*cc0,*cfin,*bcc,*lbcc;
-    int i,lexem,line,val,len,bsize,lexlen;
+    int i,line,val,len,bsize,lexlen;
+    Lexem lexem;
     Position pos, hpos;
     unsigned hash;
     char *buf,*buf2;
@@ -1861,8 +1869,10 @@ endOfFile:
 #ifdef DEBUG
 int lexBufDump(S_lexBuf *lb) {
     char *cc;
-    int v,h,c,lv,lexem,len;
+    int v,h,c,lv,len;
+    Lexem lexem;
     Position pos;
+
     c=0;
     fprintf(dumpOut,"\nlexbufdump [start] \n"); fflush(dumpOut);
     cc = lb->next;
