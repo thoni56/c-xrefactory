@@ -318,13 +318,6 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
         }                                                               \
     }
 
-#define PrependMacroInput(macInput) {             \
-        assert(macroStackIndex < MACRO_STACK_SIZE-1);    \
-        macroStack[macroStackIndex++] = cInput;         \
-        cInput = macInput;                      \
-        cInput.currentLexem = cInput.beginningOfBuffer;                   \
-        cInput.inputType = INPUT_MACRO;          \
-    }
 
 /* getLexA() - a functional facsimile to the old, now removed, macro GetLexA()
  * Returns either of:
@@ -1348,6 +1341,16 @@ static int cyclicCall(S_macroBody *mb) {
     return(0);
 }
 
+
+static void prependMacroInput(S_lexInput *argb) {
+    assert(macroStackIndex < MACRO_STACK_SIZE-1);
+    macroStack[macroStackIndex++] = cInput;
+    cInput = *argb;
+    cInput.currentLexem = cInput.beginningOfBuffer;
+    cInput.inputType = INPUT_MACRO;
+}
+
+
 static void expandMacroArgument(S_lexInput *argb) {
     Symbol sd,*memb;
     char *buf,*previousLexem,*currentLexem,*bcc, *tbcc;
@@ -1355,7 +1358,8 @@ static void expandMacroArgument(S_lexInput *argb) {
     Position pos;
     unsigned hash;
 
-    PrependMacroInput(*argb);
+    prependMacroInput(argb);
+
     cInput.inputType = INPUT_MACRO_ARGUMENT;
     bsize = MACRO_UNIT_SIZE;
     PP_ALLOCC(buf,bsize+MAX_LEXEM_SIZE,char);
@@ -1784,7 +1788,7 @@ static int macroCallExpand(Symbol *mdef, Position *mpos) {
     char *cc2,*freeBase;
     Position pos, lparpos;
     unsigned h;
-    struct lexInput *actArgs,macBody;
+    S_lexInput *actArgs, macBody;
     S_macroBody *mb;
     cc2 = cInput.currentLexem;
     mb = mdef->u.mbody;
@@ -1813,7 +1817,7 @@ static int macroCallExpand(Symbol *mdef, Position *mpos) {
     }
 //&fprintf(dumpOut,"cr mbody '%s'\n", mb->name);fflush(dumpOut);
     crMacroBody(&macBody,mb,actArgs,mb->argn);
-    PrependMacroInput(macBody);
+    prependMacroInput(&macBody);
 /*fprintf(dumpOut,"expanding macro '%s'\n", mb->name);fflush(dumpOut);*/
     PP_FREE_UNTIL(freeBase);
     return(1);
