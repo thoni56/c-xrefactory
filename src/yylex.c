@@ -325,34 +325,7 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
         cInput.inputType = INPUT_MACRO;          \
     }
 
-// NOTE: getLexA() function tries to do the same as this macro. Replace
-// all uses with that function.
-#define GetLexA(lexem, previousLexem) {                                 \
-    while (cInput.currentLexem >= cInput.endOfBuffer) {                 \
-        InputType inputType;                                            \
-        inputType = cInput.inputType;                                 \
-        if (macroStackIndex > 0) {                                      \
-            if (inputType == INPUT_MACRO_ARGUMENT) goto endOfMacArg;    \
-            MB_FREE_UNTIL(cInput.beginningOfBuffer);                    \
-            cInput = macroStack[--macroStackIndex];                     \
-        } else if (inputType == INPUT_NORMAL) {                         \
-            setCFileConsistency();                                      \
-            if (!getLexBuf(&currentFile.lexBuffer)) goto endOfFile;     \
-            setCInputConsistency();                                     \
-        } else {                                                        \
-            /*			s_cache.recoveringFromCache = 0;*/              \
-            s_cache.cc = s_cache.cfin = NULL;                           \
-            cacheInput();                                               \
-            s_cache.lexcc = currentFile.lexBuffer.next;                 \
-            setCInputConsistency();                                     \
-        }                                                               \
-        previousLexem = cInput.currentLexem;                            \
-    }                                                                   \
-    previousLexem = cInput.currentLexem;                                \
-    GetLexToken(lexem, cInput.currentLexem);                            \
-}
-
-/* getLexA() - a functional facsimile to the macro GetLexA()
+/* getLexA() - a functional facsimile to the old, now removed, macro GetLexA()
  * Returns either of:
  * the found lexem
  * -1 for end of macro argument
