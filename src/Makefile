@@ -32,9 +32,8 @@ c-xref: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB) $(CLEAN_COVERAGE)
 		lcov -q -z -d $(OBJDIR) ; \
 	fi
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
-	@make enumTxt
-	@make check-tokens
-
+	@make enumTxt				# re-generate enum strings to see if they've changed
+	@make check-tokens			# check that token sections in parsers are identical
 
 #########################################################################
 
