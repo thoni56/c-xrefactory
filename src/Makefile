@@ -86,28 +86,37 @@ lexem.h: c_parser.tab.h
 
 #########################################################################
 # Once we have a compiled c-xref we can regenerate the enum string
-# representations .c and .h files too see if they differ
+# representations .c and .h files too see if they differ. If they do
+# ask user to 'make enum' to make the new files the ones to build with.
 .PHONY: enumTxt
 enumTxt:
 	@./c-xref -task_regime_generate -enum_name -header -xrefrc .c-xrefrc proto.h \
-		> tmp-$@.g.h ; \
-	if ! diff $@.g.h tmp-$@.g.h ; then \
-		mv -f $@.g.h $@.g.h.backup ; \
-		mv -f tmp-$@.g.h $@.g.h ; \
-		echo "$@.g.h: REGENERATED. Please rebuild to ensure compilation with new version." ; \
+		> new-$@.g.h ; \
+	if ! diff $@.g.h new-$@.g.h ; then \
+		echo "$(shell tput setaf 1)$@.g.h: REGENERATED.$(shell tput sgr0) Please 'make enum' to keep the new version." ; \
 	else \
 		echo "$@.g.h: no change" ; \
-		rm tmp-$@.g.h ; \
+		rm new-$@.g.h ; \
 	fi
 	@./c-xref -task_regime_generate -enum_name -body -xrefrc .c-xrefrc proto.h \
-		> tmp-$@.g.c ; \
-	if ! diff $@.g.c tmp-$@.g.c ; then \
-		mv -f $@.g.c $@.g.c.backup ; \
-		mv -f tmp-$@.g.c $@.g.c ; \
-		echo "$@.g.c: REGENERATED" ; \
+		> new-$@.g.c ; \
+	if ! diff $@.g.c new-$@.g.c ; then \
+		echo "$(shell tput setaf 1)$@.g.c: REGENERATED.$(shell tput sgr0) Please 'make enum' to keep the new version." ; \
 	else \
 		echo "$@.g.c: no change" ; \
-		rm tmp-$@.g.c ; \
+		rm new-$@.g.c ; \
+	fi
+
+enum:
+	@if [ -f new-$@Txt.g.c ] ; then \
+		mv -f $@Txt.g.c $@Txt.g.c.backup ; \
+		mv -f new-$@Txt.g.c $@Txt.g.c ; \
+		echo "$@Txt.g.c: saved." ; \
+	fi
+	@if [ -f new-$@Txt.g.h ] ; then \
+		mv -f $@Txt.g.h $@Txt.g.h.backup ; \
+		mv -f new-$@Txt.g.h $@Txt.g.h ; \
+		echo "$@Txt.g.h: saved." ; \
 	fi
 
 .c-xrefrc: c-xrefrc.tpl
