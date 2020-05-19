@@ -412,7 +412,7 @@ static void testCxrefCompletionId(Lexem *out_lexem, char *idd, Position *pos) {
 
 /* ********************************** #LINE *********************** */
 
-static  void processLine(void) {
+static void processLine(void) {
     Lexem lexem;
     int l,h,v=0,len;
     Position pos;
@@ -430,21 +430,6 @@ static  void processLine(void) {
     if (lexem == -1) goto endOfMacArg;
     if (lexem == -2) goto endOfFile;
 
-/*	this should be moved to the  getLexBuf routine,!!!!!!!!!!!!!!!!!!! TODO */
-/*&
-    if (lexem == STRING_LITERAL) {
-        int i = 0;
-        cc = cInput.currentLexem;
-        ch = *cc;
-        if (ch != FILE_PATH_SEPARATOR) i = extractPathInto(s_opt.originalDir, ss);
-        for(; ch; ch= *++cc) {
-            ss[i++] = ch;
-            assert(i+2<TMP_STRING_SIZE);
-        }
-        ss[i] = 0;
-        setOpenFileInfo(ss);
-    }
-&*/
     PassLex(cInput.currentLexem, lexem, l, v, h, pos, len, 1);
     return;
 endOfMacArg:	assert(0);
