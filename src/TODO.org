@@ -9,6 +9,10 @@ There are a *lot* of things to do to make c-xref into modern C.
 There are a number of update modes available from the command line, 'fupdate',
 'updatem', 'update', 'fastupdate' and then there is opt.updateOnlyModifiedFiles
 * TODO Remove all -olcx commands that are not used by the editor interfaces?
+* TODO Don't overwrite enumTxt.g.[ch] if they are different, separate target?
+If the change creates broken (like empty) enum-files we should not just overwrite
+the working ones. Create a separate target to run to explicitly do that and say
+so in the output. E.g. "REGENERATED: inspect and do 'make enums' if correct"
 * TODO Replace "int lexem" with an enum for all lexems, "Lexem lexem"?
 * TODO Separate the options into sections and move HTML (at least) to separate structure
 The S_options structure is used to save or possibly create new sets, when
