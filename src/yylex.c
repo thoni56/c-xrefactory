@@ -273,22 +273,12 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
 #define PassLex(input, lexem, lineval, val, hash, pos, length, linecount) { \
         if (lexem > MULTI_TOKENS_START) {                               \
             if (isIdentifierLexem(lexem)){                              \
-                char *tmpcc,tmpch;                                      \
-                hash = 0;                                               \
-                for(tmpcc=input,tmpch= *tmpcc; tmpch; tmpch = *++tmpcc) { \
-                    SYMTAB_HASH_FUN_INC(hash, tmpch);                   \
-                }                                                       \
-                SYMTAB_HASH_FUN_FINAL(hash);                            \
                 hash = hashFun(input);                                  \
-                tmpcc ++;                                               \
-                GetLexPosition((pos),tmpcc);                            \
-                input = tmpcc;                                          \
+                input = strchr(input, '\0')+1;                          \
+                GetLexPosition((pos),input);                            \
             } else if (lexem == STRING_LITERAL) {                       \
-                char *tmpcc,tmpch;                                      \
-                for(tmpcc=input,tmpch= *tmpcc; tmpch; tmpch = *++tmpcc); \
-                tmpcc ++;                                               \
-                GetLexPosition((pos),tmpcc);                            \
-                input = tmpcc;                                          \
+                input = strchr(input, '\0')+1;                          \
+                GetLexPosition((pos),input);                            \
             } else if (lexem == LINE_TOK) {                             \
                 GetLexToken(lineval,input);                             \
                 if (linecount) {                                        \
