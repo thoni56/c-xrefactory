@@ -291,9 +291,9 @@ void refactoryDisplayResolutionDialog(char *message,int messageType,int continua
     refactoryBeInteractive();
 }
 
-#define STANDARD_SELECT_SYMBOLS_MESSAGE "Select classes in left window. These classes will be processed during refactoring. It is highly recommended to process whole hierarchy of related classes at once. Unselection of any class and its exclusion from refactoring may cause changes in your program behaviour. "
-#define STANDARD_C_SELECT_SYMBOLS_MESSAGE "There are several symbols referred from this place. Continuing this refactoring will process selected symbols in once."
-#define ERROR_SELECT_SYMBOLS_MESSAGE "If you see this screen, then probably something is going wrong. You are refactoring a virtual method when only statically linked symbol is required. It is strongly recommended to cancel the refactoring. "
+#define STANDARD_SELECT_SYMBOLS_MESSAGE "Select classes in left window. These classes will be processed during refactoring. It is highly recommended to process whole hierarchy of related classes all at once. Unselection of any class and its exclusion from refactoring may cause changes in your program behaviour."
+#define STANDARD_C_SELECT_SYMBOLS_MESSAGE "There are several symbols referred from this place. Continuing this refactoring will process the selected symbols all at once."
+#define ERROR_SELECT_SYMBOLS_MESSAGE "If you see this message, then probably something is going wrong. You are refactoring a virtual method when only statically linked symbol is required. It is strongly recommended to cancel the refactoring."
 
 static void refactoryPushReferences(S_editorBuffer *buf, S_editorMarker *point,
                                     char *pushOption, char *resolveMessage,
