@@ -627,7 +627,7 @@ assert(0);
 
 /* ********************************* #DEFINE ********************** */
 
-#define GetNonBlankMaybeLexem(lexem) {\
+#define GetNonBlankMaybeLexem(lexem, l, v, h, pos, len) {   \
     GetLex(lexem);\
     while (lexem == LINE_TOK) {\
         PassLex(cInput.currentLexem, lexem, l, v, h, pos, len, 1);\
@@ -754,12 +754,12 @@ void processDefine(bool argFlag) {
     macroArgumentTableNoAllocInit(&s_macroArgumentTable, s_macroArgumentTable.size);
     argCount = -1;
     if (argFlag) {
-        GetNonBlankMaybeLexem(lexem);
+        GetNonBlankMaybeLexem(lexem, l, v, h, pos, len);
         PassLex(cInput.currentLexem, lexem, l, v, h, *parpos2, len, 1);
         *parpos1 = *parpos2;
         if (lexem != '(') goto errorlab;
         argCount ++;
-        GetNonBlankMaybeLexem(lexem);
+        GetNonBlankMaybeLexem(lexem, l, v, h, pos, len);
         if (lexem != ')') {
             for(;;) {
                 char tmpBuff[TMP_BUFF_SIZE];
@@ -783,7 +783,7 @@ void processDefine(bool argFlag) {
                 fillMacroArgTabElem(maca, mm, argLinkName, argCount);
                 foundIndex = macroArgumentTableAdd(&s_macroArgumentTable, maca);
                 argCount ++;
-                GetNonBlankMaybeLexem(lexem);
+                GetNonBlankMaybeLexem(lexem, l, v, h, pos, len);
                 tmppp=parpos1; parpos1=parpos2; parpos2=tmppp;
                 PassLex(cInput.currentLexem, lexem, l, v, h, *parpos2, len, 1);
                 if (! ellipsis) {
@@ -793,12 +793,12 @@ void processDefine(bool argFlag) {
                 }
                 if (lexem == ELIPSIS) {
                     // GNU ELLIPSIS ?????
-                    GetNonBlankMaybeLexem(lexem);
+                    GetNonBlankMaybeLexem(lexem, l, v, h, pos, len);
                     PassLex(cInput.currentLexem, lexem, l, v, h, *parpos2, len, 1);
                 }
                 if (lexem == ')') break;
                 if (lexem != ',') break;
-                GetNonBlankMaybeLexem(lexem);
+                GetNonBlankMaybeLexem(lexem, l, v, h, pos, len);
             }
             handleMacroDefinitionParameterPositions(argCount, &macpos, parpos1, &s_noPos, parpos2, 1);
         } else {
@@ -811,7 +811,7 @@ void processDefine(bool argFlag) {
     sizei = 0;
     PP_ALLOCC(body, msize+MAX_LEXEM_SIZE, char);
     bodyReadingFlag = true;
-    GetNonBlankMaybeLexem(lexem);
+    GetNonBlankMaybeLexem(lexem, l, v, h, pos, len);
     cc = cInput.currentLexem;
     PassLex(cInput.currentLexem, lexem, l, v, h, pos, len, 1);
     while (lexem != '\n') {
@@ -838,7 +838,7 @@ void processDefine(bool argFlag) {
                 for(; cc<cInput.currentLexem; ddd++,cc++)*ddd= *cc;
                 sizei = ddd - body;
             }
-            GetNonBlankMaybeLexem(lexem);
+            GetNonBlankMaybeLexem(lexem, l, v, h, pos, len);
             cc = cInput.currentLexem;
             PassLex(cInput.currentLexem, lexem, l, v, h, pos, len, 1);
         }
@@ -1108,12 +1108,12 @@ int cexp_yylex(void) {
         // this is useless, as it would be set to 0 anyway
         lexem = cexpTranslateToken(CONSTANT, 0);
     } else if (lexem == CPP_DEFINED_OP) {
-        GetNonBlankMaybeLexem(lexem);
+        GetNonBlankMaybeLexem(lexem, l, v, h, pos, len);
         cc = cInput.currentLexem;
         PassLex(cInput.currentLexem, lexem, l, v, h, pos, len, 1);
         if (lexem == '(') {
             par = 1;
-            GetNonBlankMaybeLexem(lexem);
+            GetNonBlankMaybeLexem(lexem, l, v, h, pos, len);
             cc = cInput.currentLexem;
             PassLex(cInput.currentLexem, lexem, l, v, h, pos, len, 1);
         } else {
@@ -1136,7 +1136,7 @@ int cexp_yylex(void) {
         /* following call sets uniyylval */
         res = cexpTranslateToken(CONSTANT, mm);
         if (par) {
-            GetNonBlankMaybeLexem(lexem);
+            GetNonBlankMaybeLexem(lexem, l, v, h, pos, len);
             PassLex(cInput.currentLexem, lexem, l, v, h, pos, len, 1);
             if (lexem != ')' && s_opt.taskRegime!=RegimeEditServer) {
                 warningMessage(ERR_ST,"missing ')' after defined( ");
