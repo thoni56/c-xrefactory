@@ -144,16 +144,16 @@ static bool isPreprocessorToken(Lexem lexem) {
 }
 
 #ifdef DEBUG
-static void dpnewline(int n) {
+static void traceNewline(int lines) {
     int i;
     if (s_opt.debug) {
-        for(i=1; i<=n; i++) {
+        for(i=1; i<=lines; i++) {
             log_trace("%s:%d", currentFile.fileName, currentFile.lineNumber+i);
         }
     }
 }
 #else
-#define dpnewline(line) {}
+#define traceNewline(line) {}
 #endif
 
 /* *********************************************************** */
@@ -279,6 +279,7 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
                     SYMTAB_HASH_FUN_INC(hash, tmpch);                   \
                 }                                                       \
                 SYMTAB_HASH_FUN_FINAL(hash);                            \
+                hash = hashFun(input);                                  \
                 tmpcc ++;                                               \
                 GetLexPosition((pos),tmpcc);                            \
                 input = tmpcc;                                          \
@@ -291,7 +292,7 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
             } else if (lexem == LINE_TOK) {                             \
                 GetLexToken(lineval,input);                             \
                 if (linecount) {                                        \
-                    if(s_opt.debug) dpnewline(lineval);                 \
+                    traceNewline(lineval);                              \
                     currentFile.lineNumber += lineval;                  \
                 }                                                       \
             } else if (lexem == CONSTANT || lexem == LONG_CONSTANT) {   \
@@ -313,7 +314,7 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
             GetLexPosition((pos),input);                                \
         } else if (lexem == '\n' && (linecount)) {                      \
             GetLexPosition((pos),input);                                \
-            if (s_opt.debug) dpnewline(1);                              \
+            traceNewline(1);                                            \
             currentFile.lineNumber ++;                                  \
         } else {                                                        \
             GetLexPosition((pos),input);                                \
