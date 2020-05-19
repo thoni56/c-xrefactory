@@ -438,9 +438,7 @@ endOfFile:;
 
 /* ********************************* #INCLUDE ********************** */
 
-static void fillIncludeSymbolItem( Symbol *ss,
-                                   int filenum, Position *pos
-    ){
+static void fillIncludeSymbolItem(Symbol *ss, int filenum, Position *pos){
     // should be different for HTML to be beatiful, however,
     // all includes needs to be in the same cxfile, because of
     // -update. On the other hand in HTML I wish them to split
