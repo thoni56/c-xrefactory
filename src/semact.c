@@ -853,7 +853,7 @@ int mergeArguments(Symbol *id, Symbol *ty) {
     for(;ty!=NULL; ty=ty->next) {
         if (ty->name != NULL) {
             for(p=id; p!=NULL; p=p->next) {
-                if (p->name!=NULL && !strcmp(p->name,ty->name)) break;
+                if (p->name!=NULL && strcmp(p->name,ty->name)==0) break;
             }
             if (p==NULL) res = RESULT_ERR;
             else {

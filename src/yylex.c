@@ -1159,7 +1159,7 @@ static void processPragma(void) {
     if (lexem == -1) goto endOfMacArg;
     if (lexem == -2) goto endOfFile;
 
-    if (lexem == IDENTIFIER && !strcmp(cInput.currentLexem, "once")) {
+    if (lexem == IDENTIFIER && strcmp(cInput.currentLexem, "once")==0) {
         char tmpBuff[TMP_BUFF_SIZE];
         PassLex(cInput.currentLexem, lexem, l, v, h, pos, len, 1);
         fname = simpleFileName(s_fileTab.tab[pos.file]->name);
@@ -1320,11 +1320,11 @@ static int cyclicCall(S_macroBody *mb) {
     int i;
     name = mb->name;
 /*fprintf(dumpOut,"testing '%s' against curr '%s'\n",name,cInput.macname);*/
-    if (cInput.macroName != NULL && !strcmp(name,cInput.macroName)) return(1);
+    if (cInput.macroName != NULL && strcmp(name,cInput.macroName)==0) return(1);
     for(i=0; i<macroStackIndex; i++) {
         ll = &macroStack[i];
 /*fprintf(dumpOut,"testing '%s' against '%s'\n",name,ll->macname);*/
-        if (ll->macroName != NULL && !strcmp(name,ll->macroName)) return(1);
+        if (ll->macroName != NULL && strcmp(name,ll->macroName)==0) return(1);
     }
     return(0);
 }
