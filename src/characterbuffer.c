@@ -37,7 +37,7 @@ void initCharacterBuffer(CharacterBuffer *characterbuffer, FILE *file) {
 /* ***************************************************************** */
 
 
-static int readFromFileToBuffer(struct characterBuffer  *buffer, char *outBuffer, int max_size) {
+static int readFromFileToBuffer(CharacterBuffer  *buffer, char *outBuffer, int max_size) {
     int n;
 
     if (buffer->file == NULL) n = 0;
@@ -45,7 +45,7 @@ static int readFromFileToBuffer(struct characterBuffer  *buffer, char *outBuffer
     return(n);
 }
 
-void closeCharacterBuffer(struct characterBuffer *buffer) {
+void closeCharacterBuffer(CharacterBuffer *buffer) {
     if (buffer->file!=NULL)
         closeFile(buffer->file);
     if (buffer->inputMethod == INPUT_VIA_UNZIP) {
@@ -64,7 +64,7 @@ void zlibFree(voidpf opaque, voidpf address) {
     free(address);
 }
 
-static int readFromUnzipFilterToBuffer(struct characterBuffer *buffer, char *outBuffer, int max_size) {
+static int readFromUnzipFilterToBuffer(CharacterBuffer *buffer, char *outBuffer, int max_size) {
     int n, fn, res;
 
     buffer->zipStream.next_out = (unsigned char *)outBuffer;
@@ -96,7 +96,7 @@ static int readFromUnzipFilterToBuffer(struct characterBuffer *buffer, char *out
     return(n);
 }
 
-bool fillBuffer(struct characterBuffer *buffer) {
+bool fillBuffer(CharacterBuffer *buffer) {
     char *cp;
     char *next;
     char *end;
@@ -123,7 +123,7 @@ bool fillBuffer(struct characterBuffer *buffer) {
 }
 
 
-static void fillZipStreamFromBuffer(struct characterBuffer  *buffer, char *dd) {
+static void fillZipStreamFromBuffer(CharacterBuffer  *buffer, char *dd) {
     memset(&buffer->zipStream, 0, sizeof(buffer->zipStream));
     buffer->zipStream.next_in = (Bytef*)buffer->z;
     buffer->zipStream.avail_in = dd-buffer->z;
@@ -134,7 +134,7 @@ static void fillZipStreamFromBuffer(struct characterBuffer  *buffer, char *dd) {
 }
 
 
-void switchToZippedCharBuff(struct characterBuffer *buffer) {
+void switchToZippedCharBuff(CharacterBuffer *buffer) {
     char *dd;
     char *cc;
     char *fin;
@@ -155,7 +155,7 @@ void switchToZippedCharBuff(struct characterBuffer *buffer) {
     }
 }
 
-int skipNCharsInCharBuf(struct characterBuffer *buffer, unsigned count) {
+int skipNCharsInCharBuf(CharacterBuffer *buffer, unsigned count) {
     char *dd;
     char *cc;
     char *fin;
