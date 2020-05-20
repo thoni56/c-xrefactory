@@ -27,10 +27,10 @@ void gotOnLineCxRefs(Position *ps ) {
 /*                         Lexical Analysis                          */
 /* ***************************************************************** */
 
-#define PutLexLine(line,dd) {                               \
-        if (line!=0) {                                      \
-            PutLexToken(LINE_TOK,dd); PutLexToken(line,dd); \
-        }                                                   \
+#define PutLexLine(lines,dd) {                               \
+        if (lines!=0) {                                      \
+            PutLexToken(LINE_TOK,dd); PutLexToken(lines,dd); \
+        }                                                    \
     }
 
 #define PutCurrentLexPosition(ccc,dd,cline,clo,clb,cfile) { \
