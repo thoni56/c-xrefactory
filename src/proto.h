@@ -13,7 +13,6 @@
 
 #include "head.h"
 #include "zlib.h"
-#include "lexmac.h"
 
 
 /* ******************************  TYPEDEFS  ***************************** */

@@ -1,4 +1,5 @@
 #include "lex.h"
+#include "lexmac.h"
 
 #include "globals.h"
 #include "commons.h"
