@@ -407,7 +407,8 @@ bool getLexBuf(S_lexBuf *lb) {
                     LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                     goto nextLexem;
                 } else if (ch=='-') {PutLexToken(DEC_OP,dd);
-                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
+                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
+                    LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                     goto nextLexem;}
                 else if (ch=='>' && LANGUAGE(LANG_C|LANG_YACC)) {
                     LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
@@ -419,10 +420,12 @@ bool getLexBuf(S_lexBuf *lb) {
             case '+':
                 LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                 if (ch == '=') { PutLexToken(ADD_ASSIGN,dd);
-                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
+                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
+                    LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                     goto nextLexem;}
                 else if (ch == '+') { PutLexToken(INC_OP,dd);
-                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset); goto nextLexem; }
+                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
+                    LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset); goto nextLexem; }
                 else {PutLexToken('+',dd);
                     PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);goto nextLexem;}
 
@@ -433,17 +436,20 @@ bool getLexBuf(S_lexBuf *lb) {
                     if(ch=='>' && LANGUAGE(LANG_JAVA)){
                         LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                         if(ch=='='){PutLexToken(URIGHT_ASSIGN,dd);
-                            PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
+                            PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
+                            LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                             goto nextLexem;}
                         else {PutLexToken(URIGHT_OP,dd);
                             PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);goto nextLexem;}
                     } else if(ch=='='){PutLexToken(RIGHT_ASSIGN,dd);
-                        PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
+                        PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
+                        LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                         goto nextLexem;}
                     else {PutLexToken(RIGHT_OP,dd);
                         PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);goto nextLexem;}
                 } else if (ch == '='){PutLexToken(GE_OP,dd);
-                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
+                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
+                    LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                     goto nextLexem;}
                 else {PutLexToken('>',dd);
                     PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);goto nextLexem;}
@@ -453,12 +459,14 @@ bool getLexBuf(S_lexBuf *lb) {
                 if (ch == '<') {
                     LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                     if(ch=='='){PutLexToken(LEFT_ASSIGN,dd);
-                        PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
+                        PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
+                        LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                         goto nextLexem;}
                     else {PutLexToken(LEFT_OP,dd);
                         PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);goto nextLexem;}
                 } else if (ch == '='){PutLexToken(LE_OP,dd);
-                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
+                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
+                    LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                     goto nextLexem;}
                 else {PutLexToken('<',dd);
                     PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);goto nextLexem;}
@@ -467,7 +475,8 @@ bool getLexBuf(S_lexBuf *lb) {
                 LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                 if (ch == '=') {
                     PutLexToken(MUL_ASSIGN,dd);
-                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
+                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
+                    LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                     goto nextLexem;
                 }
                 else {PutLexToken('*',dd);
@@ -477,18 +486,21 @@ bool getLexBuf(S_lexBuf *lb) {
                 LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                 if (ch == '=') {
                     PutLexToken(MOD_ASSIGN,dd);
-                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
+                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
+                    LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                     goto nextLexem;
                 }
                 /*&
                   else if (LANGUAGE(LANG_YACC) && ch == '{') {
                       PutLexToken(YACC_PERC_LPAR,dd);
-                      PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
+                      PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
+                      LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                       goto nextLexem;
                   }
                   else if (LANGUAGE(LANG_YACC) && ch == '}') {
                       PutLexToken(YACC_PERC_RPAR,dd);
-                      PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
+                      PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
+                      LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                       goto nextLexem;
                   }
                   &*/
@@ -499,12 +511,14 @@ bool getLexBuf(S_lexBuf *lb) {
                 LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                 if (ch == '=') {
                     PutLexToken(AND_ASSIGN,dd);
-                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
+                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
+                    LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                     goto nextLexem;
                 }
                 else if (ch == '&') {
                     PutLexToken(AND_OP,dd);
-                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
+                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
+                    LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                     goto nextLexem;
                 }
                 else if (ch == '*') {
@@ -527,7 +541,8 @@ bool getLexBuf(S_lexBuf *lb) {
                 LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                 if (ch == '=') {
                     PutLexToken(XOR_ASSIGN,dd);
-                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
+                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
+                    LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                     goto nextLexem;
                 }
                 else {PutLexToken('^',dd);
@@ -537,12 +552,14 @@ bool getLexBuf(S_lexBuf *lb) {
                 LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                 if (ch == '=') {
                     PutLexToken(OR_ASSIGN,dd);
-                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
+                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
+                    LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                     goto nextLexem;
                 }
                 else if (ch == '|') {
                     PutLexToken(OR_OP,dd);
-                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
+                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
+                    LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                     goto nextLexem;
                 }
                 else {PutLexToken('|',dd);
@@ -552,7 +569,8 @@ bool getLexBuf(S_lexBuf *lb) {
                 LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                 if (ch == '=') {
                     PutLexToken(EQ_OP,dd);
-                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
+                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
+                    LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                     goto nextLexem;
                 }
                 else {PutLexToken('=',dd);
@@ -563,7 +581,8 @@ bool getLexBuf(S_lexBuf *lb) {
                 LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                 if (ch == '=') {
                     PutLexToken(NE_OP,dd);
-                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
+                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
+                    LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                     goto nextLexem;
                 }
                 else {PutLexToken('!',dd);
@@ -639,7 +658,8 @@ bool getLexBuf(S_lexBuf *lb) {
                 LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                 if (ch == '=') {
                     PutLexToken(DIV_ASSIGN,dd);
-                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
+                    PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
+                    LexGetChar(ch,cb_next,cb_end,cb,cb_lineBegin,cb_columnOffset);
                     goto nextLexem;
                 }
                 else if (ch=='*') {
