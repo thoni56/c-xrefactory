@@ -96,7 +96,7 @@ static int readFromUnzipFilterToBuffer(CharacterBuffer *buffer, char *outBuffer,
     return(n);
 }
 
-bool fillBuffer(CharacterBuffer *buffer) {
+bool refillBuffer(CharacterBuffer *buffer) {
     char *cp;
     char *next;
     char *end;
@@ -139,7 +139,7 @@ void switchToZippedCharBuff(CharacterBuffer *buffer) {
     char *cc;
     char *fin;
 
-    fillBuffer(buffer);     // just for now
+    refillBuffer(buffer);     // just for now
     fin = buffer->end;
     cc = buffer->next;
     for(dd=buffer->z; cc<fin; cc++,dd++) *dd = *cc;
@@ -172,7 +172,7 @@ int skipNCharsInCharBuf(CharacterBuffer *buffer, unsigned count) {
         // TODO FINISH THIS
         count -= fin-cc;
         buffer->next = buffer->end;
-        fillBuffer(buffer);
+        refillBuffer(buffer);
         if (buffer->end != buffer->next) {
             // TODO remove last recursion
             skipNCharsInCharBuf(buffer, count);

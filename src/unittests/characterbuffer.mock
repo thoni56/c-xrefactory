@@ -44,7 +44,7 @@ void zlibFree(voidpf opaque, voidpf address) {
     mock(opaque, address);
 }
 
-bool fillBuffer(struct characterBuffer *buffer) {
+bool refillBuffer(struct characterBuffer *buffer) {
     return (int) mock(buffer);
 }
 

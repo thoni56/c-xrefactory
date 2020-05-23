@@ -42,7 +42,7 @@ extern void fillCharacterBuffer(CharacterBuffer *characterBuffer,
 extern void closeCharacterBuffer(CharacterBuffer *buffer);
 extern voidpf zlibAlloc(voidpf opaque, uInt items, uInt size);
 extern void zlibFree(voidpf opaque, voidpf address);
-extern bool fillBuffer(CharacterBuffer *buffer);
+extern bool refillBuffer(CharacterBuffer *buffer);
 extern void switchToZippedCharBuff(CharacterBuffer *buffer);
 extern int skipNCharsInCharBuf(CharacterBuffer *buffer, unsigned count);
 

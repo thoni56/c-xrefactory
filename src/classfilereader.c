@@ -47,7 +47,7 @@ S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 #define GetChar(cch, ccc, ffin, bbb) {                                  \
         if (ccc >= ffin) {                                              \
             (bbb)->next = ccc;                                          \
-            if ((bbb)->isAtEOF || fillBuffer(bbb) == 0) {               \
+            if ((bbb)->isAtEOF || refillBuffer(bbb) == 0) {               \
                 cch = -1;                                               \
                 (bbb)->isAtEOF = true;                                  \
                 goto endOfFile;                                         \
@@ -358,7 +358,7 @@ static int findEndOfCentralDirectory(char **accc, char **affin,
     else offset = fsize-(CHAR_BUFF_SIZE-MAX_UNGET_CHARS);
     fseek(iBuf->file, offset, SEEK_SET);
     iBuf->next = iBuf->end;
-    fillBuffer(iBuf);
+    refillBuffer(iBuf);
     ccc = ffin = iBuf->end;
     for (ccc-=4; ccc>iBuf->chars && strncmp(ccc,"\120\113\005\006",4)!=0; ccc--) {
     }

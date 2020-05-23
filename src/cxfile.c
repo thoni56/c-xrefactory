@@ -731,7 +731,7 @@ void genReferenceFile(bool updating, char *filename) {
 #define GetChar(cch, ccc, ffin, bbb) {                                  \
         if (ccc >= ffin) {                                              \
             (bbb)->next = ccc;                                          \
-            if ((bbb)->isAtEOF || fillBuffer(bbb) == 0) {               \
+            if ((bbb)->isAtEOF || refillBuffer(bbb) == 0) {               \
                 cch = -1;                                               \
                 (bbb)->isAtEOF = true;                                  \
             } else {                                                    \

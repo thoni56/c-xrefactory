@@ -44,7 +44,7 @@ void gotOnLineCxRefs(Position *ps ) {
         if (cb_next >= cb_end) {                                        \
             cb->next = cb_next;                                         \
             cb->columnOffset = cb_next - cb->lineBegin;                 \
-            if (cb->isAtEOF || fillBuffer(cb) == 0) {                   \
+            if (cb->isAtEOF || refillBuffer(cb) == 0) {                   \
                 ch = -1;                                                \
                 cb->isAtEOF = true;                                     \
             } else {                                                    \
