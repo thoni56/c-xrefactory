@@ -59,8 +59,8 @@ void gotOnLineCxRefs(Position *ps ) {
         }                                                               \
     }
 
-#define UngetChar(ch, cb_next) {                             \
-        log_trace("Ungetting %s(%c) at %s", #ch, ch, #cb_next);   \
+#define UngetChar(ch, cb_next) {                                   \
+        log_trace("Ungetting %s(%c) at %s", #ch, ch, #cb_next);    \
         *--cb_next = ch;                                           \
     }
 
