@@ -43,7 +43,7 @@ void gotOnLineCxRefs(Position *ps ) {
 #define LexGetChar(ch, cb, cb_next, cb_end, cb_lineBegin, cb_columnOffset) { \
         if (cb_next >= cb_end) {                                        \
             cb->next = cb_next;                                         \
-            cb_columnOffset = cb_next - cb_lineBegin;                   \
+            cb->columnOffset = cb_next - cb_lineBegin;                   \
             if (cb->isAtEOF || fillBuffer(cb) == 0) {                   \
                 ch = -1;                                                \
                 cb->isAtEOF = true;                                     \
