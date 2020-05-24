@@ -76,7 +76,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         }                                                               \
     }
 
-#define PassComment(ch, cb, cb_next, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset) { \
+#define PassComment(ch, cb, cb_next, dd, cb_lineNumber, cb_lineBegin) { \
         assert(cb->next == cb_next);                                    \
         char oldCh;                                                     \
         int line = cb_lineNumber;                                       \
@@ -85,7 +85,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         if (ch=='\n') {                                                 \
             cb_lineNumber ++;                                           \
             cb_lineBegin = cb_next;                                     \
-            cb_columnOffset = 0;                                        \
+            cb->columnOffset = 0;                                       \
         }                                                               \
         /* TODO test on cpp directive */                                \
         do {                                                            \
@@ -94,7 +94,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
             if (ch=='\n') {                                             \
                 cb_lineNumber ++;                                       \
                 cb_lineBegin = cb_next;                                 \
-                cb_columnOffset = 0;                                    \
+                cb->columnOffset = 0;                                   \
             }                                                           \
             /* TODO test on cpp directive */                            \
         } while ((oldCh != '*' || ch != '/') && ch != -1);              \
@@ -741,7 +741,7 @@ bool getLexBuf(S_lexBuf *lb) {
                         UngetChar(ch, cb); cb_next = cb->next; /* TODO cb_next */
                         ch = '*';
                     }   /* !!! COPY BLOCK TO '/n' */
-                    PassComment(ch, cb, cb_next, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset);
+                    PassComment(ch, cb, cb_next, dd, cb_lineNumber, cb_lineBegin);
                     CommentaryEndRef(cb, cb_next, cb_lineNumber, cb_lineBegin, javadoc);
                     goto nextLexem;
                 } else if (ch=='/' && s_opt.cpp_comment) {
@@ -814,7 +814,7 @@ bool getLexBuf(S_lexBuf *lb) {
                             if (ch == '*' && LANGUAGE(LANG_JAVA)) javadoc = 1;
                             UngetChar(ch, cb); cb_next = cb->next;
                             ch = '*';
-                            PassComment(ch, cb, cb_next, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset);
+                            PassComment(ch, cb, cb_next, dd, cb_lineNumber, cb_lineBegin);
                             CommentaryEndRef(cb, cb_next, cb_lineNumber, cb_lineBegin, javadoc);
                             DeleteBlank(ch, cb, cb_next);
                         }
