@@ -71,7 +71,8 @@ void gotOnLineCxRefs(Position *ps ) {
         }                                                               \
     }
 
-#define PassComment(ch, oldCh, cb, cb_next, cb_end, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset) { \
+#define PassComment(ch, cb, cb_next, cb_end, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset) { \
+        char oldCh;                                                     \
         /*  ******* a block comment ******* */                          \
         line = cb_lineNumber;                                           \
         LexGetChar(ch, cb, cb_next, cb_end);                            \
@@ -300,7 +301,6 @@ bool getLexBuf(S_lexBuf *lb) {
     char *cc, *dd, *lmax, *lexStartDd;
     unsigned chval=0;
     int rlex;
-    char oldCh;
     int line,size,cb_fileNumber,lexStartCol, lexStartFilePos, column;
 
     /* first test whether the input is cached */
@@ -730,7 +730,7 @@ bool getLexBuf(S_lexBuf *lb) {
                         UngetChar(ch, cb_next);
                         ch = '*';
                     }   /* !!! COPY BLOCK TO '/n' */
-                    PassComment(ch, oldCh, cb, cb_next, cb_end, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset);
+                    PassComment(ch, cb, cb_next, cb_end, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset);
                     CommentaryEndRef(cb_next,cb_fileNumber,cb_lineNumber,cb_lineBegin,cb_columnOffset,javadoc);
                     goto nextLexem;
                 } else if (ch=='/' && s_opt.cpp_comment) {
@@ -803,7 +803,7 @@ bool getLexBuf(S_lexBuf *lb) {
                             if (ch == '*' && LANGUAGE(LANG_JAVA)) javadoc = 1;
                             UngetChar(ch, cb_next);
                             ch = '*';
-                            PassComment(ch, oldCh, cb, cb_next, cb_end, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset);
+                            PassComment(ch, cb, cb_next, cb_end, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset);
                             CommentaryEndRef(cb_next,cb_fileNumber,cb_lineNumber,cb_lineBegin,cb_columnOffset,javadoc);
                             DeleteBlank(ch, cb, cb_next, cb_end);
                         }
