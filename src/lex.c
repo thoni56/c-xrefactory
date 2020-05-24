@@ -254,24 +254,24 @@ static int columnPosition(CharacterBuffer *cb, char *cb_next, char *cb_lineBegin
 
 #define CommentaryBegRef(cb, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset) { \
         if (s_opt.taskRegime==RegimeHtmlGenerate && s_opt.htmlNoColors==0) { \
-            int         lcoll;                                          \
-            Position  pos;                                              \
-            char        ttt[TMP_STRING_SIZE];                           \
-            lcoll = COLUMN_POS(cb_next, cb_lineBegin, cb_columnOffset) - 1; \
+            int lcoll;                                                  \
+            Position pos;                                               \
+            char ttt[TMP_STRING_SIZE];                                  \
+            lcoll = columnPosition(cb, cb_next, cb_lineBegin, cb_columnOffset) - 1; \
             fillPosition(&pos, cb_fileNumber, cb_lineNumber, lcoll);    \
             sprintf(ttt,"%x/*",cb_fileNumber);                          \
             addTrivialCxReference(ttt,TypeComment,StorageDefault, &pos, UsageDefined); \
         }                                                               \
     }
 
-#define CommentaryEndRef(ccc, cfile, cline, clb, clo, jdoc) {           \
+#define CommentaryEndRef(cb, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset, jdoc) {           \
         if (s_opt.taskRegime==RegimeHtmlGenerate) {                     \
-            int         lcoll;                                          \
-            Position  pos;                                              \
-            char        ttt[TMP_STRING_SIZE];                           \
-            lcoll = COLUMN_POS(ccc,clb,clo);                            \
-            fillPosition(&pos, cfile, cline, lcoll);                    \
-            sprintf(ttt,"%x/*",cfile);                                  \
+            int lcoll;                                                  \
+            Position pos;                                               \
+            char ttt[TMP_STRING_SIZE];                                  \
+            lcoll = columnPosition(cb, cb_next, cb_lineBegin, cb_columnOffset); \
+            fillPosition(&pos, cb_fileNumber, cb_lineNumber, lcoll);    \
+            sprintf(ttt,"%x/*",cb_fileNumber);                          \
             if (s_opt.htmlNoColors==0) {                                \
                 addTrivialCxReference(ttt,TypeComment,StorageDefault, &pos, UsageUsed); \
             }                                                           \
@@ -583,7 +583,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     if (ch == '/') {
                         /* a code comment, ignore */
                         LexGetChar(ch, cb, cb_next, cb_end);
-                        CommentaryEndRef(cb_next,cb_fileNumber,cb_lineNumber,cb_lineBegin,cb_columnOffset,0);
+                        CommentaryEndRef(cb, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset, 0);
                         goto nextLexem;
                     } else {
                         UngetChar(ch, cb, cb_next);
@@ -739,7 +739,7 @@ bool getLexBuf(S_lexBuf *lb) {
                         ch = '*';
                     }   /* !!! COPY BLOCK TO '/n' */
                     PassComment(ch, cb, cb_next, cb_end, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset);
-                    CommentaryEndRef(cb_next,cb_fileNumber,cb_lineNumber,cb_lineBegin,cb_columnOffset,javadoc);
+                    CommentaryEndRef(cb, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset, javadoc);
                     goto nextLexem;
                 } else if (ch=='/' && s_opt.cpp_comment) {
                     /*  ******* a // comment ******* */
@@ -748,7 +748,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     if (ch == '&') {
                         /* ****** a program comment, ignore */
                         LexGetChar(ch, cb, cb_next, cb_end);
-                        CommentaryEndRef(cb_next,cb_fileNumber,cb_lineNumber,cb_lineBegin,cb_columnOffset,0);
+                        CommentaryEndRef(cb, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset, 0);
                         goto nextLexem;
                     }
                     line = cb_lineNumber;
@@ -763,7 +763,7 @@ bool getLexBuf(S_lexBuf *lb) {
                             LexGetChar(ch, cb, cb_next, cb_end);
                         }
                     }
-                    CommentaryEndRef(cb_next,cb_fileNumber,cb_lineNumber,cb_lineBegin,cb_columnOffset,0);
+                    CommentaryEndRef(cb, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset, 0);
                     PutLexLine(cb_lineNumber-line,dd);
                 } else {
                     PutLexToken('/',dd);
@@ -812,7 +812,7 @@ bool getLexBuf(S_lexBuf *lb) {
                             UngetChar(ch, cb, cb_next);
                             ch = '*';
                             PassComment(ch, cb, cb_next, cb_end, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset);
-                            CommentaryEndRef(cb_next,cb_fileNumber,cb_lineNumber,cb_lineBegin,cb_columnOffset,javadoc);
+                            CommentaryEndRef(cb, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset, javadoc);
                             DeleteBlank(ch, cb, cb_next, cb_end);
                         }
                     } else {
