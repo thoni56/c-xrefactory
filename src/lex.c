@@ -721,7 +721,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     CommentaryBegRef(cb_next,cb_fileNumber,cb_lineNumber,cb_lineBegin,cb_columnOffset);
                     LexGetChar(ch, cb, cb_next, cb_end);
                     if (ch == '&') {
-                        /* ****** a program comment, ignore */
+                        /* a program comment, ignore and continue with next lexem */
                         LexGetChar(ch, cb, cb_next, cb_end);
                         goto nextLexem;
                     } else {
