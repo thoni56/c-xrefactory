@@ -44,7 +44,7 @@ void gotOnLineCxRefs(Position *ps ) {
         if (cb_next >= cb_end) {                                        \
             cb->next = cb_next;                                         \
             cb->columnOffset = cb_next - cb->lineBegin;                 \
-            if (cb->isAtEOF || refillBuffer(cb) == 0) {                   \
+            if (cb->isAtEOF || refillBuffer(cb) == 0) {                 \
                 ch = -1;                                                \
                 cb->isAtEOF = true;                                     \
             } else {                                                    \
@@ -57,6 +57,7 @@ void gotOnLineCxRefs(Position *ps ) {
             ch = * ((unsigned char *)cb_next);                          \
             cb_next = ((char *)cb_next) + 1;                            \
         }                                                               \
+        cb->next = cb_next;                                             \
     }
 
 #define UngetChar(ch, cb_next) {                                   \
