@@ -109,7 +109,7 @@ void gotOnLineCxRefs(Position *ps ) {
         }                                                               \
     }
 
-#define FloatingPointConstant(ch, cb, cb_next, cb_end, cb_lineBegin, cb_columnOffset, rlex) { \
+#define FloatingPointConstant(ch, cb, cb_next, cb_end, rlex) {          \
         rlex = DOUBLE_CONSTANT;                                         \
         if (ch == '.') {                                                \
             do {                                                        \
@@ -366,7 +366,7 @@ bool getLexBuf(S_lexBuf *lb) {
             if (ch == '.' || ch=='e' || ch=='E'
                 || ((ch=='d' || ch=='D'|| ch=='f' || ch=='F') && LANGUAGE(LANG_JAVA))) {
                 /* floating point */
-                FloatingPointConstant(ch, cb, cb_next, cb_end, cb_lineBegin, cb_columnOffset, rlex);
+                FloatingPointConstant(ch, cb, cb_next, cb_end, rlex);
                 PutLexToken(rlex,dd);
                 PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
                 PutLexInt(ABS_FILE_POS(cb,cb_end,cb_next)-lexStartFilePos, dd);
@@ -402,7 +402,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     /* floating point constant */
                     UngetChar(ch, cb_next);
                     ch = '.';
-                    FloatingPointConstant(ch, cb, cb_next, cb_end, cb_lineBegin, cb_columnOffset, rlex);
+                    FloatingPointConstant(ch, cb, cb_next, cb_end, rlex);
                     PutLexToken(rlex,dd);
                     PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
                     PutLexInt(ABS_FILE_POS(cb,cb_end,cb_next)-lexStartFilePos, dd);
