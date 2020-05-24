@@ -74,6 +74,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
             assert(cb->next == cb_next);                                \
             LexGetChar(ch, cb, cb_next);                                \
         }                                                               \
+        cb->next = cb_next;                                             \
     }
 
 #define PassComment(ch, cb, cb_next, dd, cb_lineNumber, cb_lineBegin) { \
