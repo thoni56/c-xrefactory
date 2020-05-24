@@ -76,7 +76,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         }                                                               \
     }
 
-#define PassComment(ch, cb, cb_next, cb_end, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset) { \
+#define PassComment(ch, cb, cb_next, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset) { \
         assert(cb->next == cb_next);                                    \
         char oldCh;                                                     \
         int line = cb_lineNumber;                                       \
@@ -157,23 +157,25 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         do {                                                            \
             PutLexChar(ch,dd);                                          \
         identCont##labelSuffix:                                         \
-            LexGetChar(ch, cb, cb_next);                                \
+            LexGetChar(ch, cb, cb->next); cb_next = cb->next; /* TODO cb_next */ \
         } while (isalpha(ch) || isdigit(ch) || ch=='_' || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))); \
         if (ch == '@' && *(dd-1)=='C') {                                \
             int i,len;                                                  \
+            /* NO TEST COVERAGE FOR THIS... Don't know what it is...*/  \
+            assert(0);                                                  \
             len = strlen(s_editCommunicationString);                    \
             for (i=2;i<len;i++) {                                       \
-                LexGetChar(ch, cb, cb_next);                            \
+                LexGetChar(ch, cb, cb->next);                           \
                 if (ch != s_editCommunicationString[i])                 \
                     break;                                              \
             }                                                           \
             if (i>=len) {                                               \
                 /* it is the place marker */                            \
                 dd--; /* delete the C */                                \
-                LexGetChar(ch, cb, cb_next);                            \
+                LexGetChar(ch, cb, cb->next);                           \
                 if (ch == CC_COMPLETION) {                              \
                     PutLexToken(IDENT_TO_COMPLETE, ddd);                \
-                    LexGetChar(ch, cb, cb_next);                        \
+                    LexGetChar(ch, cb, cb->next);                       \
                 } else if (ch == CC_CXREF) {                            \
                     s_cache.activeCache = 0;                            \
                     fillPosition(&s_cxRefPos, cb->fileNumber, cb_lineNumber, idcoll); \
@@ -294,9 +296,10 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
 #define PUT_EMPTY_COMPLETION_ID(cb, dd, cb_lineNumber, cb_lineBegin, len) { \
         PutLexToken(IDENT_TO_COMPLETE, dd);                             \
         PutLexChar(0, dd);                                              \
-        PutLexPosition(cb->fileNumber, cb_lineNumber,                    \
+        PutLexPosition(cb->fileNumber, cb_lineNumber,                   \
                        columnPosition(cb, cb_lineBegin, cb->columnOffset) - (len), dd); \
     }
+
 
 bool getLexBuf(S_lexBuf *lb) {
     int ch;
@@ -738,7 +741,7 @@ bool getLexBuf(S_lexBuf *lb) {
                         UngetChar(ch, cb); cb_next = cb->next; /* TODO cb_next */
                         ch = '*';
                     }   /* !!! COPY BLOCK TO '/n' */
-                    PassComment(ch, cb, cb_next, cb_end, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset);
+                    PassComment(ch, cb, cb_next, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset);
                     CommentaryEndRef(cb, cb_next, cb_lineNumber, cb_lineBegin, javadoc);
                     goto nextLexem;
                 } else if (ch=='/' && s_opt.cpp_comment) {
@@ -811,7 +814,7 @@ bool getLexBuf(S_lexBuf *lb) {
                             if (ch == '*' && LANGUAGE(LANG_JAVA)) javadoc = 1;
                             UngetChar(ch, cb); cb_next = cb->next;
                             ch = '*';
-                            PassComment(ch, cb, cb_next, cb_end, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset);
+                            PassComment(ch, cb, cb_next, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset);
                             CommentaryEndRef(cb, cb_next, cb_lineNumber, cb_lineBegin, javadoc);
                             DeleteBlank(ch, cb, cb_next);
                         }
