@@ -291,11 +291,11 @@ static int columnPosition(CharacterBuffer *cb, char *cb_next, char *cb_lineBegin
         lb->index ++;                                                   \
     }
 
-#define PUT_EMPTY_COMPLETION_ID(ccc, dd, cline, clo, clb, cfile, llen) { \
-        PutLexToken(IDENT_TO_COMPLETE,dd);                              \
-        PutLexChar(0,dd);                                               \
-        PutLexPosition(cfile,cline,                                     \
-                       COLUMN_POS(ccc,clb,clo) - (llen), dd);           \
+#define PUT_EMPTY_COMPLETION_ID(cb, cb_next, dd, cb_lineNumber, cb_columnOffset, cb_lineBegin, cb_fileNumber, len) { \
+        PutLexToken(IDENT_TO_COMPLETE, dd);                             \
+        PutLexChar(0, dd);                                              \
+        PutLexPosition(cb_fileNumber, cb_lineNumber,                    \
+                       columnPosition(cb, cb_next, cb_lineBegin, cb_columnOffset) - (len), dd); \
     }
 
 bool getLexBuf(S_lexBuf *lb) {
@@ -943,7 +943,8 @@ bool getLexBuf(S_lexBuf *lb) {
                                 //&fprintf(dumpOut,":ress %s\n", lexStartDd+TOKEN_SIZE);fflush(dumpOut);
                             } else {
                                 // completion after an identifier
-                                PUT_EMPTY_COMPLETION_ID(cb_next,dd,cb_lineNumber,cb_columnOffset,cb_lineBegin,
+                                PUT_EMPTY_COMPLETION_ID(cb, cb_next, dd, cb_lineNumber,
+                                                        cb_columnOffset, cb_lineBegin,
                                                         cb_fileNumber,
                                                         apos-s_opt.olCursorPos);
                             }
@@ -953,7 +954,8 @@ bool getLexBuf(S_lexBuf *lb) {
                             // NO COMPLETION
                         } else {
                             // completion after another lexem
-                            PUT_EMPTY_COMPLETION_ID(cb_next,dd,cb_lineNumber,cb_columnOffset,cb_lineBegin,
+                            PUT_EMPTY_COMPLETION_ID(cb, cb_next, dd, cb_lineNumber,
+                                                    cb_columnOffset,cb_lineBegin,
                                                     cb_fileNumber,
                                                     apos-s_opt.olCursorPos);
                         }
