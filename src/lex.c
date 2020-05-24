@@ -43,7 +43,6 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
     }
 
 #define LexGetChar(ch, cb, cb_next) {                                   \
-        assert(strcmp(#cb_next, "cb_next")==0);                         \
         assert(cb->next == cb_next);                                    \
         if (cb->next >= cb->end) {                                      \
             cb->columnOffset = cb->next - cb->lineBegin;                \
@@ -53,17 +52,13 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
             } else {                                                    \
                 cb->lineBegin = cb->next;                               \
                 ch = *((unsigned char *)cb->next);                      \
-                cb_next = ((char *)cb->next) + 1;                       \
                 cb->next = ((char *)cb->next) + 1;                      \
-                assert(cb->next == cb_next);                            \
             }                                                           \
         } else {                                                        \
             ch = * ((unsigned char *)cb->next);                         \
-            cb_next = ((char *)cb->next) + 1;                           \
             cb->next = ((char *)cb->next) + 1;                          \
-            assert(cb->next == cb_next);                                \
+            cb_next = cb->next;                                         \
         }                                                               \
-        cb->next = cb_next;                                             \
     }
 
 #define UngetChar(ch, cb) {                                             \
