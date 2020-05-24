@@ -56,6 +56,7 @@ void gotOnLineCxRefs(Position *ps ) {
     }
 
 #define UngetChar(ch, cb, cb_next) {                                    \
+        assert(cb_next == cb->next);                                    \
         if (ch == '\n')                                                 \
             log_trace("Ungetting %s('\\n') at %s", #ch, #cb_next);      \
         else                                                            \
@@ -173,7 +174,7 @@ void gotOnLineCxRefs(Position *ps ) {
             } else {                                                    \
                 /* not a place marker, undo reading */                  \
                 for(i--;i>=1;i--) {                                     \
-                    UngetChar(ch, cb, cb_next);                             \
+                    UngetChar(ch, cb, cb_next);                         \
                     ch = s_editCommunicationString[i];                  \
                 }                                                       \
             }                                                           \
