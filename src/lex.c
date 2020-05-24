@@ -194,7 +194,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
 #define HandleCppToken(ch, cb, dd, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin) { \
         char *ddd, tt[10];                                              \
         int i, lcoll, scol;                                             \
-        lcoll = columnPosition(cb, cb_lineBegin, cb->columnOffset);      \
+        lcoll = columnPosition(cb, cb_lineBegin, cb->columnOffset);     \
         LexGetChar(ch, cb, cb_next);                                    \
         DeleteBlank(ch, cb, cb_next);                                   \
         for(i=0; i<9 && (isalpha(ch) || isdigit(ch) || ch=='_') ; i++) { \
@@ -252,15 +252,15 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         }                                                               \
     }
 
-#define CommentaryBegRef(cb, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset) { \
+#define CommentaryBegRef(cb, cb_next, cb_lineNumber, cb_lineBegin, cb_columnOffset) { \
         if (s_opt.taskRegime==RegimeHtmlGenerate && s_opt.htmlNoColors==0) { \
             int lcoll;                                                  \
             Position pos;                                               \
             char ttt[TMP_STRING_SIZE];                                  \
             lcoll = columnPosition(cb, cb_lineBegin, cb_columnOffset) - 1; \
-            fillPosition(&pos, cb_fileNumber, cb_lineNumber, lcoll);    \
-            sprintf(ttt,"%x/*",cb_fileNumber);                          \
-            addTrivialCxReference(ttt,TypeComment,StorageDefault, &pos, UsageDefined); \
+            fillPosition(&pos, cb->fileNumber, cb_lineNumber, lcoll);   \
+            sprintf(ttt,"%x/*", cb->fileNumber);                        \
+            addTrivialCxReference(ttt, TypeComment, StorageDefault, &pos, UsageDefined); \
         }                                                               \
     }
 
@@ -726,7 +726,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     goto nextLexem;
                 } else if (ch=='*') {
                     int javadoc=0;
-                    CommentaryBegRef(cb, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset);
+                    CommentaryBegRef(cb, cb_next, cb_lineNumber, cb_lineBegin, cb_columnOffset);
                     LexGetChar(ch, cb, cb_next);
                     if (ch == '&') {
                         /* a program comment, ignore and continue with next lexem */
@@ -743,7 +743,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     goto nextLexem;
                 } else if (ch=='/' && s_opt.cpp_comment) {
                     /*  ******* a // comment ******* */
-                    CommentaryBegRef(cb, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset);
+                    CommentaryBegRef(cb, cb_next, cb_lineNumber, cb_lineBegin, cb_columnOffset);
                     LexGetChar(ch, cb, cb_next);
                     if (ch == '&') {
                         /* ****** a program comment, ignore */
@@ -801,7 +801,7 @@ bool getLexBuf(S_lexBuf *lb) {
                 if (ch == '/') {
                     LexGetChar(ch, cb, cb_next);
                     if (ch == '*') {
-                        CommentaryBegRef(cb, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset);
+                        CommentaryBegRef(cb, cb_next, cb_lineNumber, cb_lineBegin, cb_columnOffset);
                         LexGetChar(ch, cb, cb_next);
                         if (ch == '&') {
                             /* ****** a code comment, ignore */
