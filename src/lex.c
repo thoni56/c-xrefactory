@@ -75,7 +75,11 @@ void gotOnLineCxRefs(Position *ps ) {
         /*  ******* a block comment ******* */                          \
         line = cb_lineNumber;                                           \
         LexGetChar(ch, cb, cb_next, cb_end);                            \
-        if (ch=='\n') {cb_lineNumber ++; cb_lineBegin = cb_next; cb_columnOffset = 0;} \
+        if (ch=='\n') {                                                 \
+            cb_lineNumber ++;                                           \
+            cb_lineBegin = cb_next;                                     \
+            cb_columnOffset = 0;                                        \
+        }                                                               \
         /* TODO test on cpp directive */                                \
         do {                                                            \
             oldCh = ch;                                                 \
@@ -799,7 +803,7 @@ bool getLexBuf(S_lexBuf *lb) {
                             if (ch == '*' && LANGUAGE(LANG_JAVA)) javadoc = 1;
                             UngetChar(ch, cb_next);
                             ch = '*';
-                            PassComment(ch,oldCh, cb,cb_next,cb_end,dd,cb_lineNumber,cb_lineBegin,cb_columnOffset);
+                            PassComment(ch, oldCh, cb, cb_next, cb_end, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset);
                             CommentaryEndRef(cb_next,cb_fileNumber,cb_lineNumber,cb_lineBegin,cb_columnOffset,javadoc);
                             DeleteBlank(ch, cb, cb_next, cb_end);
                         }
