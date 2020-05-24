@@ -64,13 +64,11 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
     }
 
 #define UngetChar(ch, cb) {                                             \
-        char *cb_next = cb->next;                                       \
         if (ch == '\n')                                                 \
-            log_trace("Ungetting %s('\\n') at %s", #ch, "#cb_next");    \
+            log_trace("Ungetting %s('\\n') at cb->next", #ch);          \
         else                                                            \
-            log_trace("Ungetting %s('%c') at %s", #ch, ch, "#cb_next"); \
-        *--cb_next = ch;                                                \
-        cb->next = cb_next;                                             \
+            log_trace("Ungetting %s('%c') at cb->next", #ch, ch);       \
+        *--(cb->next) = ch;                                             \
     }
 
 #define DeleteBlank(ch, cb, cb_next, cb_end) {                          \
