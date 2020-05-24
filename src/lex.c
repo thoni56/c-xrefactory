@@ -43,21 +43,23 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
     }
 
 #define LexGetChar(ch, cb, cb_next, cb_end) {                           \
-        if (cb_next >= cb_end) {                                        \
-            cb->next = cb_next;                                         \
-            cb->columnOffset = cb_next - cb->lineBegin;                 \
+        assert(cb->next == cb_next);                                    \
+        if (cb->next >= cb_end) {                                       \
+            cb->columnOffset = cb->next - cb->lineBegin;                \
             if (cb->isAtEOF || refillBuffer(cb) == 0) {                 \
                 ch = -1;                                                \
                 cb->isAtEOF = true;                                     \
             } else {                                                    \
                 cb_next = cb->next; cb_end = cb->end;                   \
-                cb->lineBegin = cb_next;                                \
-                ch = * ((unsigned char *)cb_next);                      \
-                cb_next = ((char *)cb_next) + 1;                        \
+                cb->lineBegin = cb->next;                               \
+                ch = *((unsigned char *)cb->next);                      \
+                cb_next = ((char *)cb->next) + 1;                       \
+                cb->next++;                                             \
             }                                                           \
         } else {                                                        \
-            ch = * ((unsigned char *)cb_next);                          \
-            cb_next = ((char *)cb_next) + 1;                            \
+            ch = * ((unsigned char *)cb->next);                         \
+            cb_next = ((char *)cb->next) + 1;                           \
+            cb->next++;                                                 \
         }                                                               \
         cb->next = cb_next;                                             \
         cb->end = cb_end;                                               \
@@ -78,6 +80,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
     }
 
 #define PassComment(ch, cb, cb_next, cb_end, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset) { \
+        assert(cb->next == cb_next);                                    \
         char oldCh;                                                     \
         int line = cb_lineNumber;                                       \
         /*  ******* a block comment ******* */                          \
@@ -149,6 +152,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
 #define ProcessIdentifier(ch, cb, dd, cb_next, cb_end, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset, labelSuffix){ \
         int idcoll;                                                     \
         char *ddd;                                                      \
+        assert(cb->next == cb_next);                                    \
         /* ***************  identifier ****************************  */ \
         ddd = dd;                                                       \
         idcoll = columnPosition(cb, cb_lineBegin, cb_columnOffset);     \
@@ -180,7 +184,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
             } else {                                                    \
                 /* not a place marker, undo reading */                  \
                 for(i--;i>=1;i--) {                                     \
-                    UngetChar(ch, cb); cb_next = cb->next;              \
+                    UngetChar(ch, cb);                                  \
                     ch = s_editCommunicationString[i];                  \
                 }                                                       \
             }                                                           \
@@ -334,7 +338,7 @@ bool getLexBuf(S_lexBuf *lb) {
     do {
         DeleteBlank(ch, cb, cb_next, cb_end);
         if (dd >= lmax) {
-            UngetChar(ch, cb); cb_next = cb->next;
+            UngetChar(ch, cb); cb_next = cb->next; /* TODO cb_next */
             break;
         }
         NOTE_NEW_LEXEM_POSITION(cb, cb_end, lb, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset);
@@ -402,7 +406,7 @@ bool getLexBuf(S_lexBuf *lb) {
                         PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
                         goto nextLexem;
                     } else {
-                        UngetChar(ch, cb); cb_next = cb->next;
+                        UngetChar(ch, cb);
                         ch = '.';
                     }
                     PutLexToken('.',dd);
@@ -410,7 +414,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     goto nextLexem;
                 } else if (isdigit(ch)) {
                     /* floating point constant */
-                    UngetChar(ch, cb); cb_next = cb->next;
+                    UngetChar(ch, cb); cb_next = cb->next; /* TODO cb_next */
                     ch = '.';
                     FloatingPointConstant(ch, cb, cb_next, cb_end, rlex);
                     PutLexToken(rlex,dd);
@@ -584,7 +588,7 @@ bool getLexBuf(S_lexBuf *lb) {
                         CommentaryEndRef(cb, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset, 0);
                         goto nextLexem;
                     } else {
-                        UngetChar(ch, cb); cb_next = cb->next;
+                        UngetChar(ch, cb);
                         ch = '*';
                         PutLexToken('&',dd);
                         PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
@@ -733,7 +737,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     } else {
                         if (ch=='*' && LANGUAGE(LANG_JAVA))
                             javadoc = 1;
-                        UngetChar(ch, cb); cb_next = cb->next;
+                        UngetChar(ch, cb); cb_next = cb->next; /* TODO cb_next */
                         ch = '*';
                     }   /* !!! COPY BLOCK TO '/n' */
                     PassComment(ch, cb, cb_next, cb_end, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset);
@@ -814,7 +818,7 @@ bool getLexBuf(S_lexBuf *lb) {
                             DeleteBlank(ch, cb, cb_next, cb_end);
                         }
                     } else {
-                        UngetChar(ch, cb); cb_next = cb->next;
+                        UngetChar(ch, cb); cb_next = cb->next; /* TODO cb_next */
                         ch = '/';
                     }
                 }
