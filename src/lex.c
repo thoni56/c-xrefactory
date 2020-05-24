@@ -34,12 +34,6 @@ void gotOnLineCxRefs(Position *ps ) {
         }                                                    \
     }
 
-#define PutCurrentLexPosition(ccc,dd,cline,clo,clb,cfile) { \
-        int ccol;                                           \
-        ccol = COLUMN_POS(ccc,clb,clo);                     \
-        PutLexPosition(cfile,cline,ccol,dd);                \
-    }                                                       \
-
 #define LexGetChar(ch, cb, cb_next, cb_end) {                           \
         if (cb_next >= cb_end) {                                        \
             cb->next = cb_next;                                         \
