@@ -73,8 +73,8 @@ void gotOnLineCxRefs(Position *ps ) {
 
 #define PassComment(ch, cb, cb_next, cb_end, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset) { \
         char oldCh;                                                     \
+        int line = cb_lineNumber;                                       \
         /*  ******* a block comment ******* */                          \
-        line = cb_lineNumber;                                           \
         LexGetChar(ch, cb, cb_next, cb_end);                            \
         if (ch=='\n') {                                                 \
             cb_lineNumber ++;                                           \
