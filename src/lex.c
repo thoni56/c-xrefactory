@@ -121,6 +121,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
     }
 
 #define FloatingPointConstant(ch, cb, cb_next, lexem) {                 \
+        assert(cb->next == cb_next);                                    \
         lexem = DOUBLE_CONSTANT;                                        \
         if (ch == '.') {                                                \
             do {                                                        \
@@ -336,7 +337,6 @@ bool getLexBuf(S_lexBuf *lb) {
     cb_fileNumber = cb->fileNumber;
 
     LexGetChar(ch, cb, cb_next);
-
     do {
         DeleteBlank(ch, cb, cb_next);
         if (dd >= lmax) {
@@ -348,6 +348,7 @@ bool getLexBuf(S_lexBuf *lb) {
         lexStartDd = dd;
         lexStartCol = columnPosition(cb, cb_lineBegin, cb_columnOffset);
         if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
+            assert(cb_next == cb->next);
             ProcessIdentifier(ch, cb, dd, cb_next, cb_lineNumber, cb_lineBegin, cb_columnOffset, lab2);
             goto nextLexem;
         } else if (isdigit(ch)) {
