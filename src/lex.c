@@ -27,6 +27,10 @@ void gotOnLineCxRefs(Position *ps ) {
 /*                         Lexical Analysis                          */
 /* ***************************************************************** */
 
+#define COLUMN_POS(cb_next, cb_lineBegin, cb_columnOffset) (cb_next - cb_lineBegin + cb_columnOffset - 1)
+
+#define ABS_FILE_POS(cb, cb_end, cb_next) (cb->filePos - (cb_end-cb_next) - 1)
+
 #define PutLexLine(lines, dd) {                              \
         if (lines!=0) {                                      \
             PutLexToken(LINE_TOK,dd);                        \

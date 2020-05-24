@@ -403,9 +403,6 @@ typedef enum language {
   && rr->p.file == s_input_file_number /* fixing bug with references comming from jsl */\
 )
 
-#define ABS_FILE_POS(cb,cfin,ccc) (cb->filePos - (cfin-ccc) - 1)
-#define COLUMN_POS(ccc,clb,clo) (ccc-clb+clo-1)
-
 #define JAVA2HTML() (s_opt.java2html)
 
 #define SPRINT_FILE_TAB_CLASS_NAME(ftname, linkName) {\
