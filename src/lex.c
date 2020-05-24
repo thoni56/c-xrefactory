@@ -239,7 +239,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
             PutLexToken(CPP_DEFINE0,dd);                                \
             PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd);       \
             DeleteBlank(ch, cb, cb_next, cb_end);                       \
-            NOTE_NEW_LEXEM_POSITION(cb, cb_end, lb, cb_lineNumber, cb_lineBegin, cb_columnOffset); \
+            NOTE_NEW_LEXEM_POSITION(cb, cb_end, lb, cb_lineNumber, cb_lineBegin); \
             ProcessIdentifier(ch, cb, dd, cb_next, cb_lineNumber, cb_lineBegin, cb_columnOffset,lab1); \
             if (ch == '(') {                                            \
                 PutLexToken(CPP_DEFINE,ddd);                            \
@@ -281,12 +281,12 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         }                                                               \
     }
 
-#define NOTE_NEW_LEXEM_POSITION(cb, cb_end, lb, cb_lineNumber, cb_lineBegin, cb_columnOffset){ \
+#define NOTE_NEW_LEXEM_POSITION(cb, cb_end, lb, cb_lineNumber, cb_lineBegin) { \
         int index = lb->index % LEX_POSITIONS_RING_SIZE;                \
         lb->fileOffsetRing[index] = absoluteFilePosition(cb, cb_end, cb->next);  \
         lb->positionRing[index].file = cb->fileNumber;                  \
         lb->positionRing[index].line = cb_lineNumber;                   \
-        lb->positionRing[index].col = columnPosition(cb, cb_lineBegin, cb_columnOffset); \
+        lb->positionRing[index].col = columnPosition(cb, cb_lineBegin, cb->columnOffset); \
         lb->index ++;                                                   \
     }
 
@@ -338,7 +338,7 @@ bool getLexBuf(S_lexBuf *lb) {
             UngetChar(ch, cb); cb_next = cb->next; /* TODO cb_next */
             break;
         }
-        NOTE_NEW_LEXEM_POSITION(cb, cb_end, lb, cb_lineNumber, cb_lineBegin, cb_columnOffset);
+        NOTE_NEW_LEXEM_POSITION(cb, cb_end, lb, cb_lineNumber, cb_lineBegin);
         /*  yytext = ccc; */
         lexStartDd = dd;
         lexStartCol = columnPosition(cb, cb_lineBegin, cb_columnOffset);
@@ -822,7 +822,7 @@ bool getLexBuf(S_lexBuf *lb) {
                 PutLexToken('\n',dd);
                 PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
                 if (ch == '#' && LANGUAGE(LANG_C|LANG_YACC)) {
-                    NOTE_NEW_LEXEM_POSITION(cb, cb_end, lb, cb_lineNumber, cb_lineBegin, cb_columnOffset);
+                    NOTE_NEW_LEXEM_POSITION(cb, cb_end, lb, cb_lineNumber, cb_lineBegin);
                     HandleCppToken(ch, cb, dd, cb_next, cb_end, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset);
                 }
                 goto nextLexem;
