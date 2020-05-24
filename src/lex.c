@@ -93,7 +93,7 @@ void gotOnLineCxRefs(Position *ps ) {
         LexGetChar(ch, cb, cb_next, cb_end);                            \
     }
 
-#define ConType(val, ch, cb, cb_next, cb_end, cb_lineBegin, cb_columnOffset, rlex) { \
+#define ConType(ch, cb, cb_next, cb_end, rlex) {                        \
         rlex = CONSTANT;                                                \
         if (LANGUAGE(LANG_JAVA)) {                                      \
             if (ch=='l' || ch=='L') {                                   \
@@ -373,7 +373,7 @@ bool getLexBuf(S_lexBuf *lb) {
                 goto nextLexem;
             }
             /* integer */
-            ConType(val, ch, cb, cb_next, cb_end, cb_lineBegin, cb_columnOffset, rlex);
+            ConType(ch, cb, cb_next, cb_end, rlex);
             PutLexToken(rlex,dd);
             PutLexInt(val,dd);
             PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
