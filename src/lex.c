@@ -149,7 +149,7 @@ void gotOnLineCxRefs(Position *ps ) {
         char *ddd;                                                      \
         /* ***************  identifier ****************************  */ \
         ddd = dd;                                                       \
-        idcoll = COLUMN_POS(cb_next,cb_lineBegin,cb_columnOffset);      \
+        idcoll = COLUMN_POS(cb_next, cb_lineBegin, cb_columnOffset);    \
         PutLexToken(IDENTIFIER,dd);                                     \
         do {                                                            \
             PutLexChar(ch,dd);                                          \
@@ -190,7 +190,7 @@ void gotOnLineCxRefs(Position *ps ) {
 #define HandleCppToken(ch, cb, dd, cb_next, cb_end, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset) { \
         char *ddd,tt[10];                                               \
         int i,lcoll,scol;                                               \
-        lcoll = COLUMN_POS(cb_next,cb_lineBegin,cb_columnOffset);       \
+        lcoll = COLUMN_POS(cb_next, cb_lineBegin, cb_columnOffset);     \
         LexGetChar(ch, cb, cb_next, cb_end);                            \
         DeleteBlank(ch, cb, cb_next, cb_end);                           \
         for(i=0; i<9 && (isalpha(ch) || isdigit(ch) || ch=='_') ; i++) { \
@@ -220,7 +220,7 @@ void gotOnLineCxRefs(Position *ps ) {
             if (ch == '\"' || ch == '<') {                              \
                 if (ch == '\"') endCh = '\"';                           \
                 else endCh = '>';                                       \
-                scol = COLUMN_POS(cb_next,cb_lineBegin,cb_columnOffset); \
+                scol = COLUMN_POS(cb_next, cb_lineBegin, cb_columnOffset); \
                 PutLexToken(STRING_LITERAL,dd);                         \
                 do {                                                    \
                     PutLexChar(ch,dd);                                  \
@@ -253,7 +253,7 @@ void gotOnLineCxRefs(Position *ps ) {
             int         lcoll;                                          \
             Position  pos;                                              \
             char        ttt[TMP_STRING_SIZE];                           \
-            lcoll = COLUMN_POS(ccc,clb,clo) -1;                         \
+            lcoll = COLUMN_POS(ccc, clb, clo) - 1;                      \
             fillPosition(&pos, cfile, cline, lcoll);                    \
             sprintf(ttt,"%x/*",cfile);                                  \
             addTrivialCxReference(ttt,TypeComment,StorageDefault, &pos, UsageDefined); \
@@ -338,7 +338,7 @@ bool getLexBuf(S_lexBuf *lb) {
         NOTE_NEW_LEXEM_POSITION(cb_next,cb_end,cb,lb,cb_fileNumber,cb_lineNumber,cb_lineBegin,cb_columnOffset);
         /*  yytext = ccc; */
         lexStartDd = dd;
-        lexStartCol = COLUMN_POS(cb_next,cb_lineBegin,cb_columnOffset);
+        lexStartCol = COLUMN_POS(cb_next, cb_lineBegin, cb_columnOffset);
         if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
             ProcessIdentifier(ch, cb, dd, cb_next, cb_end, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset, lab2);
             goto nextLexem;
@@ -782,7 +782,7 @@ bool getLexBuf(S_lexBuf *lb) {
                 goto nextLexem;
 
             case '\n':
-                column = COLUMN_POS(cb_next,cb_lineBegin,cb_columnOffset);
+                column = COLUMN_POS(cb_next, cb_lineBegin, cb_columnOffset);
                 if (column >= MAX_REFERENCABLE_COLUMN) {
                     fatalError(ERR_ST, "position over MAX_REFERENCABLE_COLUMN, read TROUBLES in README file", XREF_EXIT_ERR);
                 }
