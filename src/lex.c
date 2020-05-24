@@ -80,10 +80,15 @@ void gotOnLineCxRefs(Position *ps ) {
         do {                                                            \
             oldCh = ch;                                                 \
             LexGetChar(ch, cb, cb_next, cb_end);                        \
-            if (ch=='\n') {cb_lineNumber ++; cb_lineBegin = cb_next; cb_columnOffset = 0;} \
+            if (ch=='\n') {                                             \
+                cb_lineNumber ++;                                       \
+                cb_lineBegin = cb_next;                                 \
+                cb_columnOffset = 0;                                    \
+            }                                                           \
             /* TODO test on cpp directive */                            \
         } while ((oldCh != '*' || ch != '/') && ch != -1);              \
-        if (ch == -1) warningMessage(ERR_ST,"comment through eof");     \
+        if (ch == -1)                                                   \
+            warningMessage(ERR_ST,"comment through eof");               \
         PutLexLine(cb_lineNumber-line,dd);                              \
         LexGetChar(ch, cb, cb_next, cb_end);                            \
     }
@@ -97,7 +102,8 @@ void gotOnLineCxRefs(Position *ps ) {
             }                                                           \
         } else {                                                        \
             for(; ch=='l'||ch=='L'||ch=='u'||ch=='U'; ){                \
-                if (ch=='l' || ch=='L') rlex = LONG_CONSTANT;           \
+                if (ch=='l' || ch=='L')                                 \
+                    rlex = LONG_CONSTANT;                               \
                 LexGetChar(ch, cb, cb_next, cb_end);                    \
             }                                                           \
         }                                                               \
