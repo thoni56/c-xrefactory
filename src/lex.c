@@ -120,8 +120,8 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         }                                                               \
     }
 
-#define FloatingPointConstant(ch, cb, cb_next, rlex) {                  \
-        rlex = DOUBLE_CONSTANT;                                         \
+#define FloatingPointConstant(ch, cb, cb_next, lexem) {                 \
+        lexem = DOUBLE_CONSTANT;                                        \
         if (ch == '.') {                                                \
             do {                                                        \
                 LexGetChar(ch, cb, cb_next);                            \
@@ -136,7 +136,8 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         }                                                               \
         if (LANGUAGE(LANG_JAVA)) {                                      \
             if (ch == 'f' || ch == 'F' || ch == 'd' || ch == 'D') {     \
-                if (ch == 'f' || ch == 'F') rlex = FLOAT_CONSTANT;      \
+                if (ch == 'f' || ch == 'F')                             \
+                    lexem = FLOAT_CONSTANT;                             \
                 LexGetChar(ch, cb, cb_next);                            \
             }                                                           \
         } else {                                                        \
