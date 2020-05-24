@@ -278,12 +278,12 @@ void gotOnLineCxRefs(Position *ps ) {
         }                                                               \
     }
 
-#define NOTE_NEW_LEXEM_POSITION(ccc, cfin, cb, lb, cfile, cline, clb, clo){ \
+#define NOTE_NEW_LEXEM_POSITION(cb_next, cb_end, cb, lb, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset){ \
         int index = lb->index % LEX_POSITIONS_RING_SIZE;                \
-        lb->fileOffsetRing[index] = ABS_FILE_POS(cb,cfin,ccc);          \
-        lb->positionRing[index].file = cfile;                           \
-        lb->positionRing[index].line = cline;                           \
-        lb->positionRing[index].col = COLUMN_POS(ccc,clb,clo);          \
+        lb->fileOffsetRing[index] = ABS_FILE_POS(cb, cb_end, cb_next);  \
+        lb->positionRing[index].file = cb->fileNumber;                  \
+        lb->positionRing[index].line = cb_lineNumber;                   \
+        lb->positionRing[index].col = COLUMN_POS(cb_next, cb_lineBegin, cb_columnOffset); \
         lb->index ++;                                                   \
     }
 
