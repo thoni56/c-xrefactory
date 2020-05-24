@@ -264,12 +264,12 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         }                                                               \
     }
 
-#define CommentaryEndRef(cb, cb_next, cb_lineNumber, cb_lineBegin, cb_columnOffset, jdoc) {           \
+#define CommentaryEndRef(cb, cb_next, cb_lineNumber, cb_lineBegin, jdoc) { \
         if (s_opt.taskRegime==RegimeHtmlGenerate) {                     \
             int lcoll;                                                  \
             Position pos;                                               \
             char ttt[TMP_STRING_SIZE];                                  \
-            lcoll = columnPosition(cb, cb_lineBegin, cb_columnOffset);  \
+            lcoll = columnPosition(cb, cb_lineBegin, cb->columnOffset); \
             fillPosition(&pos, cb->fileNumber, cb_lineNumber, lcoll);   \
             sprintf(ttt,"%x/*", cb->fileNumber);                        \
             if (s_opt.htmlNoColors==0) {                                \
@@ -583,7 +583,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     if (ch == '/') {
                         /* a code comment, ignore */
                         LexGetChar(ch, cb, cb_next);
-                        CommentaryEndRef(cb, cb_next, cb_lineNumber, cb_lineBegin, cb_columnOffset, 0);
+                        CommentaryEndRef(cb, cb_next, cb_lineNumber, cb_lineBegin, 0);
                         goto nextLexem;
                     } else {
                         UngetChar(ch, cb);
@@ -739,7 +739,7 @@ bool getLexBuf(S_lexBuf *lb) {
                         ch = '*';
                     }   /* !!! COPY BLOCK TO '/n' */
                     PassComment(ch, cb, cb_next, cb_end, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset);
-                    CommentaryEndRef(cb, cb_next, cb_lineNumber, cb_lineBegin, cb_columnOffset, javadoc);
+                    CommentaryEndRef(cb, cb_next, cb_lineNumber, cb_lineBegin, javadoc);
                     goto nextLexem;
                 } else if (ch=='/' && s_opt.cpp_comment) {
                     /*  ******* a // comment ******* */
@@ -748,7 +748,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     if (ch == '&') {
                         /* ****** a program comment, ignore */
                         LexGetChar(ch, cb, cb_next);
-                        CommentaryEndRef(cb, cb_next, cb_lineNumber, cb_lineBegin, cb_columnOffset, 0);
+                        CommentaryEndRef(cb, cb_next, cb_lineNumber, cb_lineBegin, 0);
                         goto nextLexem;
                     }
                     line = cb_lineNumber;
@@ -763,7 +763,7 @@ bool getLexBuf(S_lexBuf *lb) {
                             LexGetChar(ch, cb, cb_next);
                         }
                     }
-                    CommentaryEndRef(cb, cb_next, cb_lineNumber, cb_lineBegin, cb_columnOffset, 0);
+                    CommentaryEndRef(cb, cb_next, cb_lineNumber, cb_lineBegin, 0);
                     PutLexLine(cb_lineNumber-line,dd);
                 } else {
                     PutLexToken('/',dd);
@@ -812,7 +812,7 @@ bool getLexBuf(S_lexBuf *lb) {
                             UngetChar(ch, cb); cb_next = cb->next;
                             ch = '*';
                             PassComment(ch, cb, cb_next, cb_end, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset);
-                            CommentaryEndRef(cb, cb_next, cb_lineNumber, cb_lineBegin, cb_columnOffset, javadoc);
+                            CommentaryEndRef(cb, cb_next, cb_lineNumber, cb_lineBegin, javadoc);
                             DeleteBlank(ch, cb, cb_next);
                         }
                     } else {
