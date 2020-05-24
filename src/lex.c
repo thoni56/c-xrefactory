@@ -52,6 +52,7 @@ void gotOnLineCxRefs(Position *ps ) {
             cb_next = ((char *)cb_next) + 1;                            \
         }                                                               \
         cb->next = cb_next;                                             \
+        cb->end = cb_end;                                               \
     }
 
 #define UngetChar(ch, cb_next) {                                   \
