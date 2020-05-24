@@ -27,8 +27,6 @@ void gotOnLineCxRefs(Position *ps ) {
 /*                         Lexical Analysis                          */
 /* ***************************************************************** */
 
-#define COLUMN_POS(cb_next, cb_lineBegin, cb_columnOffset) (cb_next - cb_lineBegin + cb_columnOffset - 1)
-
 static int columnPosition(CharacterBuffer *cb, char *cb_next, char *cb_lineBegin, int cb_columnOffset) {
     return cb_next - cb_lineBegin + cb_columnOffset - 1;
 }
@@ -153,7 +151,7 @@ static int columnPosition(CharacterBuffer *cb, char *cb_next, char *cb_lineBegin
         char *ddd;                                                      \
         /* ***************  identifier ****************************  */ \
         ddd = dd;                                                       \
-        idcoll = COLUMN_POS(cb_next, cb_lineBegin, cb_columnOffset);    \
+        idcoll = columnPosition(cb, cb_next, cb_lineBegin, cb_columnOffset); \
         PutLexToken(IDENTIFIER,dd);                                     \
         do {                                                            \
             PutLexChar(ch,dd);                                          \
@@ -869,7 +867,7 @@ bool getLexBuf(S_lexBuf *lb) {
                 if (s_opt.server_operation == OLO_EXTRACT && lb->index>=2) {
                     DeleteBlank(ch, cb, cb_next, cb_end);
                     pos1 = ABS_FILE_POS(cb, cb_end, cb_next);
-                    //&idcoll = COLUMN_POS(cb_next,cb_lineBegin,cb_columnOffset);
+                    //&idcoll = columnPosition(cb, cb_next,cb_lineBegin,cb_columnOffset);
                     //&fprintf(dumpOut,":pos1==%d, olCursorPos==%d, olMarkPos==%d\n",pos1,s_opt.olCursorPos,s_opt.olMarkPos);
                     // all this is very, very HACK!!!
                     if (pos1 >= s_opt.olCursorPos && ! s_cps.marker1Flag) {
