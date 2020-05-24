@@ -163,20 +163,21 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
             len = strlen(s_editCommunicationString);                    \
             for (i=2;i<len;i++) {                                       \
                 LexGetChar(ch, cb, cb_next);                            \
-                if (ch != s_editCommunicationString[i]) break;          \
+                if (ch != s_editCommunicationString[i])                 \
+                    break;                                              \
             }                                                           \
             if (i>=len) {                                               \
                 /* it is the place marker */                            \
                 dd--; /* delete the C */                                \
-                LexGetChar(ch, cb,cb_next);                             \
+                LexGetChar(ch, cb, cb_next);                            \
                 if (ch == CC_COMPLETION) {                              \
-                    PutLexToken(IDENT_TO_COMPLETE,ddd);                 \
+                    PutLexToken(IDENT_TO_COMPLETE, ddd);                \
                     LexGetChar(ch, cb, cb_next);                        \
                 } else if (ch == CC_CXREF) {                            \
                     s_cache.activeCache = 0;                            \
-                    fillPosition(&s_cxRefPos,cb->fileNumber,cb_lineNumber,idcoll); \
+                    fillPosition(&s_cxRefPos, cb->fileNumber, cb_lineNumber, idcoll); \
                     goto identCont##labelSuffix;                        \
-                } else errorMessage(ERR_INTERNAL,"unknown communication char"); \
+                } else errorMessage(ERR_INTERNAL, "unknown communication char"); \
             } else {                                                    \
                 /* not a place marker, undo reading */                  \
                 for(i--;i>=1;i--) {                                     \
@@ -186,7 +187,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
             }                                                           \
         }                                                               \
         PutLexChar(0,dd);                                               \
-        PutLexPosition(cb->fileNumber,cb_lineNumber,idcoll,dd);          \
+        PutLexPosition(cb->fileNumber, cb_lineNumber, idcoll, dd);      \
     }
 
 #define HandleCppToken(ch, cb, dd, cb_next, cb_end, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset) { \
