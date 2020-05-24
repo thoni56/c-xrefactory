@@ -63,12 +63,12 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         cb->end = cb_end;                                               \
     }
 
-#define UngetChar(ch, cb, cb_next) {                                    \
-        assert(cb_next == cb->next);                                    \
+#define UngetChar(ch, cb) {                                             \
+        char *cb_next = cb->next;                                       \
         if (ch == '\n')                                                 \
-            log_trace("Ungetting %s('\\n') at %s", #ch, #cb_next);      \
+            log_trace("Ungetting %s('\\n') at %s", #ch, "#cb_next");    \
         else                                                            \
-            log_trace("Ungetting %s('%c') at %s", #ch, ch, #cb_next);   \
+            log_trace("Ungetting %s('%c') at %s", #ch, ch, "#cb_next"); \
         *--cb_next = ch;                                                \
         cb->next = cb_next;                                             \
     }
@@ -182,7 +182,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
             } else {                                                    \
                 /* not a place marker, undo reading */                  \
                 for(i--;i>=1;i--) {                                     \
-                    UngetChar(ch, cb, cb_next);                         \
+                    UngetChar(ch, cb); cb_next = cb->next;              \
                     ch = s_editCommunicationString[i];                  \
                 }                                                       \
             }                                                           \
@@ -336,7 +336,7 @@ bool getLexBuf(S_lexBuf *lb) {
     do {
         DeleteBlank(ch, cb, cb_next, cb_end);
         if (dd >= lmax) {
-            UngetChar(ch, cb, cb_next);
+            UngetChar(ch, cb); cb_next = cb->next;
             break;
         }
         NOTE_NEW_LEXEM_POSITION(cb, cb_next, cb_end, lb, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset);
@@ -404,7 +404,7 @@ bool getLexBuf(S_lexBuf *lb) {
                         PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
                         goto nextLexem;
                     } else {
-                        UngetChar(ch, cb, cb_next);
+                        UngetChar(ch, cb); cb_next = cb->next;
                         ch = '.';
                     }
                     PutLexToken('.',dd);
@@ -412,7 +412,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     goto nextLexem;
                 } else if (isdigit(ch)) {
                     /* floating point constant */
-                    UngetChar(ch, cb, cb_next);
+                    UngetChar(ch, cb); cb_next = cb->next;
                     ch = '.';
                     FloatingPointConstant(ch, cb, cb_next, cb_end, rlex);
                     PutLexToken(rlex,dd);
@@ -586,7 +586,7 @@ bool getLexBuf(S_lexBuf *lb) {
                         CommentaryEndRef(cb, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset, 0);
                         goto nextLexem;
                     } else {
-                        UngetChar(ch, cb, cb_next);
+                        UngetChar(ch, cb); cb_next = cb->next;
                         ch = '*';
                         PutLexToken('&',dd);
                         PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
@@ -735,7 +735,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     } else {
                         if (ch=='*' && LANGUAGE(LANG_JAVA))
                             javadoc = 1;
-                        UngetChar(ch, cb, cb_next);
+                        UngetChar(ch, cb); cb_next = cb->next;
                         ch = '*';
                     }   /* !!! COPY BLOCK TO '/n' */
                     PassComment(ch, cb, cb_next, cb_end, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset);
@@ -809,14 +809,14 @@ bool getLexBuf(S_lexBuf *lb) {
                         } else {
                             int javadoc=0;
                             if (ch == '*' && LANGUAGE(LANG_JAVA)) javadoc = 1;
-                            UngetChar(ch, cb, cb_next);
+                            UngetChar(ch, cb); cb_next = cb->next;
                             ch = '*';
                             PassComment(ch, cb, cb_next, cb_end, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset);
                             CommentaryEndRef(cb, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset, javadoc);
                             DeleteBlank(ch, cb, cb_next, cb_end);
                         }
                     } else {
-                        UngetChar(ch, cb, cb_next);
+                        UngetChar(ch, cb); cb_next = cb->next;
                         ch = '/';
                     }
                 }
