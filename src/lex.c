@@ -145,7 +145,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         }                                                               \
     }
 
-#define ProcessIdentifier(ch, cb, dd, cb_next, cb_end, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset, labelSuffix){ \
+#define ProcessIdentifier(ch, cb, dd, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset, labelSuffix){ \
         int idcoll;                                                     \
         char *ddd;                                                      \
         assert(cb->next == cb_next);                                    \
@@ -239,7 +239,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
             PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd);       \
             DeleteBlank(ch, cb, cb_next, cb_end);                       \
             NOTE_NEW_LEXEM_POSITION(cb, cb_end, lb, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset); \
-            ProcessIdentifier(ch, cb, dd, cb_next, cb_end, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset,lab1); \
+            ProcessIdentifier(ch, cb, dd, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset,lab1); \
             if (ch == '(') {                                            \
                 PutLexToken(CPP_DEFINE,ddd);                            \
             }                                                           \
@@ -342,7 +342,7 @@ bool getLexBuf(S_lexBuf *lb) {
         lexStartDd = dd;
         lexStartCol = columnPosition(cb, cb_lineBegin, cb_columnOffset);
         if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
-            ProcessIdentifier(ch, cb, dd, cb_next, cb_end, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset, lab2);
+            ProcessIdentifier(ch, cb, dd, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset, lab2);
             goto nextLexem;
         } else if (isdigit(ch)) {
             /* ***************   number *******************************  */
