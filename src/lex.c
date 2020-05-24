@@ -55,9 +55,10 @@ void gotOnLineCxRefs(Position *ps ) {
         cb->end = cb_end;                                               \
     }
 
-#define UngetChar(ch, cb_next) {                                   \
+#define UngetChar(ch, cb, cb_next) {                               \
         log_trace("Ungetting %s(%c) at %s", #ch, ch, #cb_next);    \
         *--cb_next = ch;                                           \
+        cb->next = cb_next;                                        \
     }
 
 #define DeleteBlank(ch, cb, cb_next, cb_end) {                          \
@@ -169,7 +170,7 @@ void gotOnLineCxRefs(Position *ps ) {
             } else {                                                    \
                 /* not a place marker, undo reading */                  \
                 for(i--;i>=1;i--) {                                     \
-                    UngetChar(ch, cb_next);                             \
+                    UngetChar(ch, cb, cb_next);                             \
                     ch = s_editCommunicationString[i];                  \
                 }                                                       \
             }                                                           \
@@ -323,7 +324,7 @@ bool getLexBuf(S_lexBuf *lb) {
     do {
         DeleteBlank(ch, cb, cb_next, cb_end);
         if (dd >= lmax) {
-            UngetChar(ch, cb_next);
+            UngetChar(ch, cb, cb_next);
             break;
         }
         NOTE_NEW_LEXEM_POSITION(cb_next,cb_end,cb,lb,cb_fileNumber,cb_lineNumber,cb_lineBegin,cb_columnOffset);
@@ -391,7 +392,7 @@ bool getLexBuf(S_lexBuf *lb) {
                         PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
                         goto nextLexem;
                     } else {
-                        UngetChar(ch, cb_next);
+                        UngetChar(ch, cb, cb_next);
                         ch = '.';
                     }
                     PutLexToken('.',dd);
@@ -399,7 +400,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     goto nextLexem;
                 } else if (isdigit(ch)) {
                     /* floating point constant */
-                    UngetChar(ch, cb_next);
+                    UngetChar(ch, cb, cb_next);
                     ch = '.';
                     FloatingPointConstant(ch, cb, cb_next, cb_end, rlex);
                     PutLexToken(rlex,dd);
@@ -573,7 +574,7 @@ bool getLexBuf(S_lexBuf *lb) {
                         CommentaryEndRef(cb_next,cb_fileNumber,cb_lineNumber,cb_lineBegin,cb_columnOffset,0);
                         goto nextLexem;
                     } else {
-                        UngetChar(ch, cb_next);
+                        UngetChar(ch, cb, cb_next);
                         ch = '*';
                         PutLexToken('&',dd);
                         PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
@@ -722,7 +723,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     } else {
                         if (ch=='*' && LANGUAGE(LANG_JAVA))
                             javadoc = 1;
-                        UngetChar(ch, cb_next);
+                        UngetChar(ch, cb, cb_next);
                         ch = '*';
                     }   /* !!! COPY BLOCK TO '/n' */
                     PassComment(ch, cb, cb_next, cb_end, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset);
@@ -796,14 +797,14 @@ bool getLexBuf(S_lexBuf *lb) {
                         } else {
                             int javadoc=0;
                             if (ch == '*' && LANGUAGE(LANG_JAVA)) javadoc = 1;
-                            UngetChar(ch, cb_next);
+                            UngetChar(ch, cb, cb_next);
                             ch = '*';
                             PassComment(ch, cb, cb_next, cb_end, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset);
                             CommentaryEndRef(cb_next,cb_fileNumber,cb_lineNumber,cb_lineBegin,cb_columnOffset,javadoc);
                             DeleteBlank(ch, cb, cb_next, cb_end);
                         }
                     } else {
-                        UngetChar(ch, cb_next);
+                        UngetChar(ch, cb, cb_next);
                         ch = '/';
                     }
                 }
