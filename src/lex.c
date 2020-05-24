@@ -191,10 +191,10 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         PutLexPosition(cb->fileNumber, cb_lineNumber, idcoll, dd);      \
     }
 
-#define HandleCppToken(ch, cb, dd, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset) { \
+#define HandleCppToken(ch, cb, dd, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin) { \
         char *ddd, tt[10];                                              \
         int i, lcoll, scol;                                             \
-        lcoll = columnPosition(cb, cb_lineBegin, cb_columnOffset);      \
+        lcoll = columnPosition(cb, cb_lineBegin, cb->columnOffset);      \
         LexGetChar(ch, cb, cb_next);                                    \
         DeleteBlank(ch, cb, cb_next);                                   \
         for(i=0; i<9 && (isalpha(ch) || isdigit(ch) || ch=='_') ; i++) { \
@@ -224,7 +224,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
             if (ch == '\"' || ch == '<') {                              \
                 if (ch == '\"') endCh = '\"';                           \
                 else endCh = '>';                                       \
-                scol = columnPosition(cb, cb_lineBegin, cb_columnOffset); \
+                scol = columnPosition(cb, cb_lineBegin, cb->columnOffset); \
                 PutLexToken(STRING_LITERAL,dd);                         \
                 do {                                                    \
                     PutLexChar(ch,dd);                                  \
@@ -241,7 +241,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
             PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd);       \
             DeleteBlank(ch, cb, cb_next);                               \
             NOTE_NEW_LEXEM_POSITION(cb, lb, cb_lineNumber, cb_lineBegin); \
-            ProcessIdentifier(ch, cb, dd, cb_next, cb_lineNumber, cb_lineBegin, cb_columnOffset,lab1); \
+            ProcessIdentifier(ch, cb, dd, cb_next, cb_lineNumber, cb_lineBegin, cb->columnOffset,lab1); \
             if (ch == '(') {                                            \
                 PutLexToken(CPP_DEFINE,ddd);                            \
             }                                                           \
@@ -824,7 +824,7 @@ bool getLexBuf(S_lexBuf *lb) {
                 PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
                 if (ch == '#' && LANGUAGE(LANG_C|LANG_YACC)) {
                     NOTE_NEW_LEXEM_POSITION(cb, lb, cb_lineNumber, cb_lineBegin);
-                    HandleCppToken(ch, cb, dd, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin, cb_columnOffset);
+                    HandleCppToken(ch, cb, dd, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin);
                 }
                 goto nextLexem;
 
