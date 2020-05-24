@@ -291,7 +291,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         lb->index ++;                                                   \
     }
 
-#define PUT_EMPTY_COMPLETION_ID(cb, cb_next, dd, cb_lineNumber, cb_columnOffset, cb_lineBegin, cb_fileNumber, len) { \
+#define PUT_EMPTY_COMPLETION_ID(cb, dd, cb_lineNumber, cb_columnOffset, cb_lineBegin, cb_fileNumber, len) { \
         PutLexToken(IDENT_TO_COMPLETE, dd);                             \
         PutLexChar(0, dd);                                              \
         PutLexPosition(cb_fileNumber, cb_lineNumber,                    \
@@ -943,7 +943,7 @@ bool getLexBuf(S_lexBuf *lb) {
                                 //&fprintf(dumpOut,":ress %s\n", lexStartDd+TOKEN_SIZE);fflush(dumpOut);
                             } else {
                                 // completion after an identifier
-                                PUT_EMPTY_COMPLETION_ID(cb, cb_next, dd, cb_lineNumber,
+                                PUT_EMPTY_COMPLETION_ID(cb, dd, cb_lineNumber,
                                                         cb_columnOffset, cb_lineBegin,
                                                         cb_fileNumber,
                                                         apos-s_opt.olCursorPos);
@@ -954,7 +954,7 @@ bool getLexBuf(S_lexBuf *lb) {
                             // NO COMPLETION
                         } else {
                             // completion after another lexem
-                            PUT_EMPTY_COMPLETION_ID(cb, cb_next, dd, cb_lineNumber,
+                            PUT_EMPTY_COMPLETION_ID(cb, dd, cb_lineNumber,
                                                     cb_columnOffset,cb_lineBegin,
                                                     cb_fileNumber,
                                                     apos-s_opt.olCursorPos);
