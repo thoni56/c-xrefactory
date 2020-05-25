@@ -45,11 +45,15 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
 #define LexGetChar(ch, cb, cb_next) {                                   \
         assert(cb->next == cb_next);                                    \
         if (cb->next >= cb->end) {                                      \
+            /* No more characters in buffer? */                         \
             cb->columnOffset = cb->next - cb->lineBegin;                \
             if (cb->isAtEOF || !refillBuffer(cb)) {                     \
                 ch = -1;                                                \
                 cb->isAtEOF = true;                                     \
+                /* TODO So what is ch in this case? */                  \
             } else {                                                    \
+                /* TODO This never happens? */                          \
+                assert(0);                                              \
                 cb->lineBegin = cb->next;                               \
                 ch = *((unsigned char *)cb->next);                      \
                 cb->next = ((char *)cb->next) + 1;                      \
