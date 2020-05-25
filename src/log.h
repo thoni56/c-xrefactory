@@ -28,6 +28,7 @@ typedef enum { LOG_TRACE, LOG_DEBUG, LOG_INFO, LOG_WARN, LOG_ERROR, LOG_FATAL, L
 #define log_warning(...)  log_log(LOG_WARN,  __FILE__, __LINE__, __VA_ARGS__)
 #define log_error(...) log_log(LOG_ERROR, __FILE__, __LINE__, __VA_ARGS__)
 #define log_fatal(...) log_log(LOG_FATAL, __FILE__, __LINE__, __VA_ARGS__)
+#define log_fatal_with_line(file, line, ...) log_log(LOG_FATAL, file, line, __VA_ARGS__)
 
 extern void log_set_udata(void *udata);
 extern void log_set_lock(log_LockFn fn);

@@ -43,7 +43,6 @@ whatever other things it needs...)
 are a small as possible. This is why IWYU exists!! It means "Include
 What You Use" and is a Clang related project at
 https://github.com/include-what-you-use/include-what-you-use)
-* TODO Figure out a way to remove "commons.c 295" from all parser error messages
 * TODO Create test to exercise the -1/-2 return cases for getLexA()
 * TODO Refactor int2StringTabs, should not have Init in them
 * TODO Remove opt.xref2 since edit server mode is always called with this, isn't it?
@@ -114,18 +113,12 @@ easier to mock and unit test other modules.
 
 * TODO Make Makefile.common look for our patched yacc and if it's not
   available ignore yacc-rules otherwise always run yacc.
-
-* TODO enumTxt.c is a generated set of strings for the enum values in
-  proto.h, but the extern declarations of them are in strTdef.g. A
-  cleaner way would be to generate them into an "enumTxt.h" (or a
-  better name, such as 'generated_enum_strings.h').
-  ACTUALLY: split generation of enumTxt header to its own header file
-  with the naming strategy as for the others.
-* DOING Start using log.c functions to log to a separate log file
+* DONE Start using log.c functions to log to a separate log file
 Adjust options so that we can better control logging for various
 modules(?)
 ** DONE Include and start using log()
 ** DONE Move output from log() from dumpOut to some logFile
+* DONE Figure out a way to remove "commons.c 295" from all parser error messages
 * DONE Don't overwrite enumTxt.g.[ch] if they are different, separate target?
 If the change creates broken (like empty) enum-files we should not just overwrite
 the working ones. Create a separate target to run to explicitly do that and say
@@ -204,6 +197,12 @@ such as internalCheckFail(), removeFromTrailUntil() and fatalError()
 * DONE Create test case for converting virtual function to static
 * DONE Fix tests/olcx_refactor_rename gets "buf is not valid"
 * DONE Rename all bb -> ast
+* DONE enumTxt.c is a generated set of strings for the enum values in
+  proto.h, but the extern declarations of them are in strTdef.g. A
+  cleaner way would be to generate them into an "enumTxt.h" (or a
+  better name, such as 'generated_enum_strings.h').
+  ACTUALLY: split generation of enumTxt header to its own header file
+  with the naming strategy as for the others.
 * DONE Rename maTab to macroArgTab
 * DONE Make fillSymbol() and newSymbol() set default symbolBits
 then we only need to set non-default values (which could be done

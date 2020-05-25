@@ -314,7 +314,7 @@ void internalCheckFail(char *expr, char *file, int line) {
 
     if (errOut == NULL) errOut = stderr;
     sprintf(msg,"'%s' is not true in '%s:%d'",expr,file,line);
-    log_fatal(msg);
+    log_fatal_with_line(file, line, "'%s' is not true",  expr);
     writeErrorMessage(ERR_INTERNAL_CHECK,msg);
     if (s_opt.taskRegime == RegimeEditServer || s_opt.refactoringRegime == RegimeRefactory) {
         if (s_opt.xref2) {
