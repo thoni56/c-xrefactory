@@ -46,7 +46,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         assert(cb->next == cb_next);                                    \
         if (cb->next >= cb->end) {                                      \
             cb->columnOffset = cb->next - cb->lineBegin;                \
-            if (cb->isAtEOF || refillBuffer(cb) == 0) {                 \
+            if (cb->isAtEOF || !refillBuffer(cb)) {                     \
                 ch = -1;                                                \
                 cb->isAtEOF = true;                                     \
             } else {                                                    \
