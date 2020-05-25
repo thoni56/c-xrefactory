@@ -5,6 +5,8 @@
 #include "commons.h"            /* error() */
 #include "fileio.h"
 
+#include "log.h"
+
 
 void fillCharacterBuffer(CharacterBuffer *characterBuffer,
                          char *next,
@@ -119,6 +121,7 @@ bool refillBuffer(CharacterBuffer *buffer) {
     buffer->end = cp+charactersRead;
     buffer->next = buffer->chars+MAX_UNGET_CHARS;
 
+    log_trace("refillBuffer buffer->next=%p, buffer->end=%p", buffer->next, buffer->end);
     return buffer->next != buffer->end;
 }
 
