@@ -291,7 +291,6 @@ bool getLexBuf(S_lexBuf *lb) {
         lexStartDd = dd;
         lexStartCol = columnPosition(cb, cb_lineBegin, cb_columnOffset);
         if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
-            assert(cb_next == cb->next);
             ProcessIdentifier(ch, cb, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset, lab2);
             cb_next = cb->next;
             goto nextLexem;
@@ -301,24 +300,20 @@ bool getLexBuf(S_lexBuf *lb) {
             lexStartFilePos = absoluteFilePosition(cb, cb_end, cb_next);
             if (ch=='0') {
                 LexGetChar(ch, cb);
-                cb_next = cb->next;
                 if (ch=='x' || ch=='X') {
                     /* hexa */
                     LexGetChar(ch, cb);
-                    cb_next = cb->next;
                     while (isdigit(ch)||(ch>='a'&&ch<='f')||(ch>='A'&&ch<='F')) {
                         if (ch>='a') val = val*16+ch-'a'+10;
                         else if (ch>='A') val = val*16+ch-'A'+10;
                         else val = val*16+ch-'0';
                         LexGetChar(ch, cb);
-                        cb_next = cb->next;
                     }
                 } else {
                     /* octal */
                     while (isdigit(ch) && ch<='8') {
                         val = val*8+ch-'0';
                         LexGetChar(ch, cb);
-                        cb_next = cb->next;
                     }
                 }
             } else {
@@ -326,7 +321,6 @@ bool getLexBuf(S_lexBuf *lb) {
                 while (isdigit(ch)) {
                     val = val*10+ch-'0';
                     LexGetChar(ch, cb);
-                    cb_next = cb->next;
                 }
             }
             if (ch == '.' || ch=='e' || ch=='E'
