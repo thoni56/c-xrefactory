@@ -214,11 +214,13 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         }                                                               \
         PutLexChar(0,dd);                                               \
         PutLexPosition(cb->fileNumber, cb_lineNumber, idcoll, dd);      \
+        assert(cb_next == cb->next);                                    \
     }
 
 #define HandleCppToken(ch, cb, dd, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin) { \
         char *ddd, tt[10];                                              \
         int i, lcoll, scol;                                             \
+        assert(cb_next == cb->next);                                    \
         lcoll = columnPosition(cb, cb_lineBegin, cb->columnOffset);     \
         LexGetChar(ch, cb);                                             \
         DeleteBlank(ch, cb);                                            \
@@ -281,6 +283,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         } else {                                                        \
             PutLexToken(CPP_LINE,dd); PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd); \
         }                                                               \
+        assert(cb_next == cb->next);                                    \
     }
 
 #define CommentaryBegRef(cb, cb_next, cb_lineNumber, cb_lineBegin) {    \
