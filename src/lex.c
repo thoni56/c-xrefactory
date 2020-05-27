@@ -865,19 +865,26 @@ bool getLexBuf(S_lexBuf *lb) {
                         tt[i]=0;
                         cb_next = cb->next;
                         if (strcmp(tt,"ifdef") == 0) {
-                            PutLexToken(CPP_IFDEF,dd); PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd);
+                            PutLexToken(CPP_IFDEF,dd);
+                            PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd);
                         } else if (strcmp(tt,"ifndef") == 0) {
-                            PutLexToken(CPP_IFNDEF,dd); PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd);
+                            PutLexToken(CPP_IFNDEF,dd);
+                            PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd);
                         } else if (strcmp(tt,"if") == 0) {
-                            PutLexToken(CPP_IF,dd); PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd);
+                            PutLexToken(CPP_IF,dd);
+                            PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd);
                         } else if (strcmp(tt,"elif") == 0) {
-                            PutLexToken(CPP_ELIF,dd); PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd);
+                            PutLexToken(CPP_ELIF,dd);
+                            PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd);
                         } else if (strcmp(tt,"undef") == 0) {
-                            PutLexToken(CPP_UNDEF,dd); PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd); \
+                            PutLexToken(CPP_UNDEF,dd);
+                            PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd); \
                         } else if (strcmp(tt,"else") == 0) {
-                            PutLexToken(CPP_ELSE,dd); PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd); \
+                            PutLexToken(CPP_ELSE,dd);
+                            PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd); \
                         } else if (strcmp(tt,"endif") == 0) {
-                            PutLexToken(CPP_ENDIF,dd); PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd); \
+                            PutLexToken(CPP_ENDIF,dd);
+                            PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd); \
                         } else if (strcmp(tt,"include") == 0) {
                             char endCh;
                             PutLexToken(CPP_INCLUDE,dd);
