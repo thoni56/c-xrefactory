@@ -89,18 +89,24 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         int line = cb_lineNumber;                                       \
         /*  ******* a block comment ******* */                          \
         LexGetChar(ch, cb, cb_next);                                    \
+        cb->next = cb_next;                                             \
         if (ch=='\n') {                                                 \
             cb_lineNumber ++;                                           \
-            cb_lineBegin = cb_next;                                     \
+            cb->lineNumber ++;                                          \
+            cb_lineBegin = cb->next;                                    \
+            cb->lineBegin = cb->next;                                   \
             cb->columnOffset = 0;                                       \
         }                                                               \
         /* TODO test on cpp directive */                                \
         do {                                                            \
             oldCh = ch;                                                 \
             LexGetChar(ch, cb, cb_next);                                \
+            cb->next = cb_next;                                         \
             if (ch=='\n') {                                             \
                 cb_lineNumber ++;                                       \
+                cb->lineNumber ++;                                      \
                 cb_lineBegin = cb_next;                                 \
+                cb->lineBegin = cb->next;                               \
                 cb->columnOffset = 0;                                   \
             }                                                           \
             /* TODO test on cpp directive */                            \
