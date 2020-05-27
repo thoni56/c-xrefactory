@@ -2181,7 +2181,7 @@ int yylex(void) {
     goto endOfFile;
 
  finish:
-    log_trace("!%s(%d)", yytext, cxMemory->i);
+    log_trace("!'%s'(%d)", yytext, cxMemory->i);
     s_lastReturnedLexem = lexem;
     return(lexem);
 
