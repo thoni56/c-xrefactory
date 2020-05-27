@@ -117,9 +117,11 @@ bool refillBuffer(CharacterBuffer *buffer) {
         charactersRead = readFromUnzipFilterToBuffer(buffer, cp, max_size);
     }
 
-    buffer->filePos += charactersRead;
-    buffer->end = cp+charactersRead;
-    buffer->next = buffer->chars+MAX_UNGET_CHARS;
+    if (charactersRead > 0) {
+        buffer->filePos += charactersRead;
+        buffer->end = cp+charactersRead;
+        buffer->next = buffer->chars+MAX_UNGET_CHARS;
+    }
 
     log_trace("refillBuffer: (%s) buffer->next=%p, buffer->end=%p", buffer->next == buffer->end?"equal":"not equal", buffer->next, buffer->end);
     return buffer->next != buffer->end;
