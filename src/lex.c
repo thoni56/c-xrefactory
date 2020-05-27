@@ -297,7 +297,7 @@ bool getLexBuf(S_lexBuf *lb) {
         } else if (isdigit(ch)) {
             /* ***************   number *******************************  */
             long unsigned val=0;
-            lexStartFilePos = absoluteFilePosition(cb, cb_end, cb_next);
+            lexStartFilePos = absoluteFilePosition(cb, cb_end, cb->next);
             if (ch=='0') {
                 LexGetChar(ch, cb);
                 if (ch=='x' || ch=='X') {
@@ -329,7 +329,7 @@ bool getLexBuf(S_lexBuf *lb) {
                 FloatingPointConstant(ch, cb, rlex);
                 PutLexToken(rlex,dd);
                 PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
-                PutLexInt(absoluteFilePosition(cb, cb_end, cb_next)-lexStartFilePos, dd);
+                PutLexInt(absoluteFilePosition(cb, cb_end, cb->next)-lexStartFilePos, dd);
                 goto nextLexem;
             }
             /* integer */
@@ -337,12 +337,12 @@ bool getLexBuf(S_lexBuf *lb) {
             PutLexToken(rlex,dd);
             PutLexInt(val,dd);
             PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
-            PutLexInt(absoluteFilePosition(cb, cb_end, cb_next)-lexStartFilePos, dd);
+            PutLexInt(absoluteFilePosition(cb, cb_end, cb->next)-lexStartFilePos, dd);
             goto nextLexem;
         } else switch (ch) {
                 /* ************   special character *********************  */
             case '.':
-                lexStartFilePos = absoluteFilePosition(cb, cb_end, cb_next);
+                lexStartFilePos = absoluteFilePosition(cb, cb_end, cb->next);
                 LexGetChar(ch, cb);
                 if (ch == '.' && LANGUAGE(LANG_C|LANG_YACC)) {
                     LexGetChar(ch, cb);
@@ -747,7 +747,6 @@ bool getLexBuf(S_lexBuf *lb) {
                 cb_columnOffset = 0;
                 LexGetChar(ch, cb);
                 DeleteBlank(ch, cb);
-                cb_next = cb->next;
                 if (ch == '/') {
                     LexGetChar(ch, cb);
                     if (ch == '*') {
@@ -756,7 +755,6 @@ bool getLexBuf(S_lexBuf *lb) {
                         if (ch == '&') {
                             /* ****** a code comment, ignore */
                             LexGetChar(ch, cb);
-                            cb_next = cb->next;
                         } else {
                             int javadoc=0;
                             if (ch == '*' && LANGUAGE(LANG_JAVA)) javadoc = 1;
@@ -780,7 +778,6 @@ bool getLexBuf(S_lexBuf *lb) {
                     {
                         char *ddd, tt[10];
                         int i, lcoll, scol;
-                        assert(cb_next == cb->next);
                         lcoll = columnPosition(cb, cb_lineBegin, cb->columnOffset);
                         LexGetChar(ch, cb);
                         DeleteBlank(ch, cb);
@@ -789,7 +786,6 @@ bool getLexBuf(S_lexBuf *lb) {
                             LexGetChar(ch, cb);
                         }
                         tt[i]=0;
-                        cb_next = cb->next;
                         if (strcmp(tt,"ifdef") == 0) {
                             PutLexToken(CPP_IFDEF,dd);
                             PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd);
@@ -829,17 +825,14 @@ bool getLexBuf(S_lexBuf *lb) {
                                 PutLexPosition(cb_fileNumber,cb_lineNumber,scol,dd);
                                 if (ch == endCh)
                                     LexGetChar(ch, cb);
-                                cb_next = cb->next;
                             }
                         } else if (strcmp(tt,"define") == 0) {
                             ddd = dd;
                             PutLexToken(CPP_DEFINE0,dd);
                             PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd);
                             DeleteBlank(ch, cb);
-                            cb_next = cb->next;
                             NOTE_NEW_LEXEM_POSITION(cb, lb, cb_lineNumber, cb_lineBegin);
                             ProcessIdentifier(ch, cb, dd, cb_lineNumber, cb_lineBegin, cb->columnOffset,lab1);
-                            cb_next = cb->next;
                             if (ch == '(') {
                                 PutLexToken(CPP_DEFINE,ddd);
                             }
@@ -848,17 +841,14 @@ bool getLexBuf(S_lexBuf *lb) {
                         } else {
                             PutLexToken(CPP_LINE,dd); PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd);
                         }
-                        assert(cb_next == cb->next);
                     }
                 }
                 goto nextLexem;
 
             case '#':
                 LexGetChar(ch, cb);
-                cb_next = cb->next;
                 if (ch == '#') {
                     LexGetChar(ch, cb);
-                    cb_next = cb->next;
                     PutLexToken(CPP_COLLATION,dd);
                     PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
                 } else {
@@ -877,7 +867,6 @@ bool getLexBuf(S_lexBuf *lb) {
                     PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
                 }
                 LexGetChar(ch, cb);
-                cb_next = cb->next;
                 goto nextLexem;
             }
         assert(0);
@@ -896,8 +885,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     ) {
                 if (s_opt.server_operation == OLO_EXTRACT && lb->index>=2) {
                     DeleteBlank(ch, cb);
-                    cb_next = cb->next;
-                    pos1 = absoluteFilePosition(cb, cb_end, cb_next);
+                    pos1 = absoluteFilePosition(cb, cb_end, cb->next);
                     //&idcoll = columnPosition(cb, cb_lineBegin, cb_columnOffset);
                     //&fprintf(dumpOut,":pos1==%d, olCursorPos==%d, olMarkPos==%d\n",pos1,s_opt.olCursorPos,s_opt.olMarkPos);
                     // all this is very, very HACK!!!
@@ -947,8 +935,7 @@ bool getLexBuf(S_lexBuf *lb) {
                 } else if (s_opt.server_operation == OLO_COMPLETION
                            ||  s_opt.server_operation == OLO_SEARCH) {
                     DeleteBlank(ch, cb);
-                    cb_next = cb->next;
-                    apos = absoluteFilePosition(cb, cb_end, cb_next);
+                    apos = absoluteFilePosition(cb, cb_end, cb->next);
                     if (currentLexemPosition < s_opt.olCursorPos
                         && (apos >= s_opt.olCursorPos
                             || (ch == -1 && apos+1 == s_opt.olCursorPos))) {
@@ -990,8 +977,8 @@ bool getLexBuf(S_lexBuf *lb) {
                 } else {
                     //&fprintf(dumpOut,":testing %d <= %d <= %d\n", currentLexemPosition, s_opt.olCursorPos, absoluteFilePosition(cb, cb_end, cb_next));
                     if (currentLexemPosition <= s_opt.olCursorPos
-                        && absoluteFilePosition(cb, cb_end, cb_next) >= s_opt.olCursorPos) {
-                        gotOnLineCxRefs( ps);
+                        && absoluteFilePosition(cb, cb_end, cb->next) >= s_opt.olCursorPos) {
+                        gotOnLineCxRefs(ps);
                         lastlex = NextLexToken(lexStartDd);
                         if (lastlex == IDENTIFIER) {
                             strcpy(s_olstring, lexStartDd+TOKEN_SIZE);
@@ -1002,8 +989,7 @@ bool getLexBuf(S_lexBuf *lb) {
                         // that is why I restrict it to Java language! It is usefull
                         // only for Java refactorings
                         DeleteBlank(ch, cb);
-                        cb_next = cb->next;
-                        apos = absoluteFilePosition(cb, cb_end, cb_next);
+                        apos = absoluteFilePosition(cb, cb_end, cb->next);
                         if (apos >= s_opt.olCursorPos && ! s_cps.marker1Flag) {
                             PutLexToken(OL_MARKER_TOKEN,dd);
                             PutLexPosition(ps->file,ps->line,ps->col,dd);
