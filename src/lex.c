@@ -75,6 +75,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
 
 #define DeleteBlank(ch, cb) {                                           \
         char *cb_next = cb->next;                                       \
+        /* TODO: remove cb_next when LexGetChar() doesn't use it */     \
         while (ch==' '|| ch=='\t' || ch=='\004') {                      \
             assert(cb->next == cb_next);                                \
             LexGetChar(ch, cb, cb_next);                                \
@@ -168,6 +169,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
 #define ProcessIdentifier(ch, cb, dd, cb_next, cb_lineNumber, cb_lineBegin, cb_columnOffset, labelSuffix){ \
         int idcoll;                                                     \
         char *ddd;                                                      \
+        /* Can't have local cb_next yet */                              \
         assert(cb->next == cb_next);                                    \
         /* ***************  identifier ****************************  */ \
         ddd = dd;                                                       \
