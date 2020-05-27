@@ -43,8 +43,6 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
     }
 
 #define LexGetChar(ch, cb) {                                            \
-        char *cb_next = cb->next;                                       \
-        assert(cb->next == cb_next);                                    \
         if (cb->next >= cb->end) {                                      \
             /* No more characters in buffer? */                         \
             cb->columnOffset = cb->next - cb->lineBegin;                \
@@ -62,9 +60,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         } else {                                                        \
             ch = * ((unsigned char *)cb->next);                         \
             cb->next = ((char *)cb->next) + 1;                          \
-            cb_next = cb->next;                                         \
         }                                                               \
-        assert(cb->next == cb_next);                                    \
     }
 
 #define UngetChar(ch, cb) {                                             \
@@ -76,23 +72,16 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
     }
 
 #define DeleteBlank(ch, cb) {                                           \
-        char *cb_next = cb->next;                                       \
-        /* TODO: remove cb_next when LexGetChar() doesn't use it */     \
         while (ch==' '|| ch=='\t' || ch=='\004') {                      \
-            assert(cb->next == cb_next);                                \
             LexGetChar(ch, cb);                                         \
-            cb_next = cb->next;                                         \
         }                                                               \
-        cb->next = cb_next;                                             \
     }
 
-#define PassComment(ch, cb, cb_next, dd, cb_lineNumber, cb_lineBegin) { \
-        assert(cb->next == cb_next);                                    \
+#define PassComment(ch, cb, dd, cb_lineNumber, cb_lineBegin) {          \
         char oldCh;                                                     \
         int line = cb_lineNumber;                                       \
         /*  ******* a block comment ******* */                          \
         LexGetChar(ch, cb);                                             \
-        cb_next = cb->next;                                             \
         if (ch=='\n') {                                                 \
             cb_lineNumber ++;                                           \
             cb->lineNumber ++;                                          \
@@ -104,11 +93,10 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         do {                                                            \
             oldCh = ch;                                                 \
             LexGetChar(ch, cb);                                         \
-            cb_next = cb->next;                                         \
             if (ch=='\n') {                                             \
                 cb_lineNumber ++;                                       \
                 cb->lineNumber ++;                                      \
-                cb_lineBegin = cb_next;                                 \
+                cb_lineBegin = cb->next;                                \
                 cb->lineBegin = cb->next;                               \
                 cb->columnOffset = 0;                                   \
             }                                                           \
@@ -118,7 +106,6 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
             warningMessage(ERR_ST,"comment through eof");               \
         PutLexLine(cb_lineNumber-line,dd);                              \
         LexGetChar(ch, cb);                                             \
-        cb_next = cb->next;                                             \
     }
 
 #define ConType(ch, cb, rlex) {                                         \
@@ -779,7 +766,7 @@ bool getLexBuf(S_lexBuf *lb) {
                         UngetChar(ch, cb); cb_next = cb->next; /* TODO cb_next */
                         ch = '*';
                     }   /* !!! COPY BLOCK TO '/n' */
-                    PassComment(ch, cb, cb_next, dd, cb_lineNumber, cb_lineBegin);
+                    PassComment(ch, cb, dd, cb_lineNumber, cb_lineBegin);
                     CommentaryEndRef(cb, cb_lineNumber, cb_lineBegin, javadoc);
                     goto nextLexem;
                 } else if (ch=='/' && s_opt.cpp_comment) {
@@ -857,7 +844,7 @@ bool getLexBuf(S_lexBuf *lb) {
                             if (ch == '*' && LANGUAGE(LANG_JAVA)) javadoc = 1;
                             UngetChar(ch, cb); cb_next = cb->next;
                             ch = '*';
-                            PassComment(ch, cb, cb_next, dd, cb_lineNumber, cb_lineBegin);
+                            PassComment(ch, cb, dd, cb_lineNumber, cb_lineBegin);
                             CommentaryEndRef(cb, cb_lineNumber, cb_lineBegin, javadoc);
                             DeleteBlank(ch, cb);
                             cb_next = cb->next;
