@@ -360,12 +360,12 @@ bool getLexBuf(S_lexBuf *lb) {
                     goto nextLexem;
                 } else if (isdigit(ch)) {
                     /* floating point constant */
-                    UngetChar(ch, cb); cb_next = cb->next; /* TODO cb_next */
+                    UngetChar(ch, cb);
                     ch = '.';
                     FloatingPointConstant(ch, cb, rlex);
                     PutLexToken(rlex,dd);
                     PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
-                    PutLexInt(absoluteFilePosition(cb, cb_end, cb_next)-lexStartFilePos, dd);
+                    PutLexInt(absoluteFilePosition(cb, cb_end, cb->next)-lexStartFilePos, dd);
                     goto nextLexem;
                 } else {
                     PutLexToken('.',dd);
@@ -606,7 +606,7 @@ bool getLexBuf(S_lexBuf *lb) {
 
             case '\'':
                 chval = 0;
-                lexStartFilePos = absoluteFilePosition(cb,cb_end,cb_next);
+                lexStartFilePos = absoluteFilePosition(cb,cb_end,cb->next);
                 do {
                     LexGetChar(ch, cb);
                     while (ch=='\\') {
@@ -620,7 +620,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     PutLexToken(CHAR_LITERAL,dd);
                     PutLexInt(chval,dd);
                     PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
-                    PutLexInt(absoluteFilePosition(cb, cb_end, cb_next)-lexStartFilePos, dd);
+                    PutLexInt(absoluteFilePosition(cb, cb_end, cb->next)-lexStartFilePos, dd);
                     LexGetChar(ch, cb);
                 }
                 goto nextLexem;
@@ -640,13 +640,13 @@ bool getLexBuf(S_lexBuf *lb) {
                         if (size < MAX_LEXEM_SIZE-10) PutLexChar(ch,dd);
                         /* TODO escape sequences */
                         if (ch == '\n') {cb_lineNumber ++;
-                            cb_lineBegin = cb_next;
+                            cb_lineBegin = cb->next;
                             cb_columnOffset = 0;}
                         ch = 0;
                     }
                     if (ch == '\n') {
                         cb_lineNumber ++;
-                        cb_lineBegin = cb_next;
+                        cb_lineBegin = cb->next;
                         cb_columnOffset = 0;
                         if (s_opt.strictAnsi && (s_opt.debug || s_opt.show_errors)) {
                             warningMessage(ERR_ST,"string constant through end of line");
@@ -683,7 +683,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     } else {
                         if (ch=='*' && LANGUAGE(LANG_JAVA))
                             javadoc = 1;
-                        UngetChar(ch, cb); cb_next = cb->next; /* TODO cb_next */
+                        UngetChar(ch, cb);
                         ch = '*';
                     }   /* !!! COPY BLOCK TO '/n' */
                     PassComment(ch, cb, dd, cb_lineNumber, cb_lineBegin);
@@ -706,7 +706,7 @@ bool getLexBuf(S_lexBuf *lb) {
                             LexGetChar(ch, cb);
                             if (ch=='\n') {
                                 cb_lineNumber ++;
-                                cb_lineBegin = cb_next;
+                                cb_lineBegin = cb->next;
                                 cb_columnOffset = 0;}
                             LexGetChar(ch, cb);
                         }
@@ -723,7 +723,7 @@ bool getLexBuf(S_lexBuf *lb) {
                 LexGetChar(ch, cb);
                 if (ch == '\n') {
                     cb_lineNumber ++;
-                    cb_lineBegin = cb_next;
+                    cb_lineBegin = cb->next;
                     cb_columnOffset = 0;
                     PutLexLine(1, dd);
                     LexGetChar(ch, cb);
@@ -743,7 +743,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     fatalError(ERR_ST, "position over MAX_REFERENCABLE_LINE, read TROUBLES in README file", XREF_EXIT_ERR);
                 }
                 cb_lineNumber ++;
-                cb_lineBegin = cb_next;
+                cb_lineBegin = cb->next;
                 cb_columnOffset = 0;
                 LexGetChar(ch, cb);
                 DeleteBlank(ch, cb);
