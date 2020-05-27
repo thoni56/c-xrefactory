@@ -197,74 +197,6 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         PutLexPosition(cb->fileNumber, cb_lineNumber, idcoll, dd);      \
     }
 
-#define HandleCppToken(ch, cb, dd, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin) { \
-        char *ddd, tt[10];                                              \
-        int i, lcoll, scol;                                             \
-        assert(cb_next == cb->next);                                    \
-        lcoll = columnPosition(cb, cb_lineBegin, cb->columnOffset);     \
-        LexGetChar(ch, cb);                                             \
-        DeleteBlank(ch, cb);                                            \
-        for(i=0; i<9 && (isalpha(ch) || isdigit(ch) || ch=='_') ; i++) { \
-            tt[i] = ch;                                                 \
-            LexGetChar(ch, cb);                                         \
-        }                                                               \
-        tt[i]=0;                                                        \
-        cb_next = cb->next;                                             \
-        if (strcmp(tt,"ifdef") == 0) {                                  \
-            PutLexToken(CPP_IFDEF,dd); PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd); \
-        } else if (strcmp(tt,"ifndef") == 0) {                          \
-            PutLexToken(CPP_IFNDEF,dd); PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd); \
-        } else if (strcmp(tt,"if") == 0) {                              \
-            PutLexToken(CPP_IF,dd); PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd); \
-        } else if (strcmp(tt,"elif") == 0) {                            \
-            PutLexToken(CPP_ELIF,dd); PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd); \
-        } else if (strcmp(tt,"undef") == 0) {                           \
-            PutLexToken(CPP_UNDEF,dd); PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd); \
-        } else if (strcmp(tt,"else") == 0) {                            \
-            PutLexToken(CPP_ELSE,dd); PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd); \
-        } else if (strcmp(tt,"endif") == 0) {                           \
-            PutLexToken(CPP_ENDIF,dd); PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd); \
-        } else if (strcmp(tt,"include") == 0) {                         \
-            char endCh;                                                 \
-            PutLexToken(CPP_INCLUDE,dd);                                \
-            PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd);       \
-            DeleteBlank(ch, cb);                                        \
-            if (ch == '\"' || ch == '<') {                              \
-                if (ch == '\"') endCh = '\"';                           \
-                else endCh = '>';                                       \
-                scol = columnPosition(cb, cb_lineBegin, cb->columnOffset); \
-                PutLexToken(STRING_LITERAL,dd);                         \
-                do {                                                    \
-                    PutLexChar(ch,dd);                                  \
-                    LexGetChar(ch, cb);                                 \
-                    cb_next = cb->next;                                 \
-                } while (ch!=endCh && ch!='\n');                        \
-                PutLexChar(0,dd);                                       \
-                PutLexPosition(cb_fileNumber,cb_lineNumber,scol,dd);    \
-                if (ch == endCh)                                        \
-                    LexGetChar(ch, cb);                        \
-                cb_next = cb->next;                                     \
-            }                                                           \
-        } else if (strcmp(tt,"define") == 0) {                          \
-            ddd = dd;                                                   \
-            PutLexToken(CPP_DEFINE0,dd);                                \
-            PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd);       \
-            DeleteBlank(ch, cb);                                        \
-            NOTE_NEW_LEXEM_POSITION(cb, lb, cb_lineNumber, cb_lineBegin); \
-            assert(cb_next == cb->next);                                \
-            ProcessIdentifier(ch, cb, dd, cb_lineNumber, cb_lineBegin, cb->columnOffset,lab1); \
-            assert(cb_next == cb->next);                                \
-            if (ch == '(') {                                            \
-                PutLexToken(CPP_DEFINE,ddd);                            \
-            }                                                           \
-        } else if (strcmp(tt,"pragma") == 0) {                          \
-            PutLexToken(CPP_PRAGMA,dd); PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd); \
-        } else {                                                        \
-            PutLexToken(CPP_LINE,dd); PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd); \
-        }                                                               \
-        assert(cb_next == cb->next);                                    \
-    }
-
 #define CommentaryBegRef(cb, cb_lineNumber, cb_lineBegin) {             \
         if (s_opt.taskRegime==RegimeHtmlGenerate && s_opt.htmlNoColors==0) { \
             int lcoll;                                                  \
@@ -898,7 +830,6 @@ bool getLexBuf(S_lexBuf *lb) {
                                 do {
                                     PutLexChar(ch,dd);
                                     LexGetChar(ch, cb);
-                                    cb_next = cb->next;
                                 } while (ch!=endCh && ch!='\n');
                                 PutLexChar(0,dd);
                                 PutLexPosition(cb_fileNumber,cb_lineNumber,scol,dd);
