@@ -286,7 +286,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         assert(cb_next == cb->next);                                    \
     }
 
-#define CommentaryBegRef(cb, cb_next, cb_lineNumber, cb_lineBegin) {    \
+#define CommentaryBegRef(cb, cb_lineNumber, cb_lineBegin) {             \
         if (s_opt.taskRegime==RegimeHtmlGenerate && s_opt.htmlNoColors==0) { \
             int lcoll;                                                  \
             Position pos;                                               \
@@ -298,7 +298,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         }                                                               \
     }
 
-#define CommentaryEndRef(cb, cb_next, cb_lineNumber, cb_lineBegin, jdoc) { \
+#define CommentaryEndRef(cb, cb_lineNumber, cb_lineBegin, jdoc) {       \
         if (s_opt.taskRegime==RegimeHtmlGenerate) {                     \
             int lcoll;                                                  \
             Position pos;                                               \
@@ -624,7 +624,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     if (ch == '/') {
                         /* a code comment, ignore */
                         LexGetChar(ch, cb);
-                        CommentaryEndRef(cb, cb_next, cb_lineNumber, cb_lineBegin, 0);
+                        CommentaryEndRef(cb, cb_lineNumber, cb_lineBegin, 0);
                         goto nextLexem;
                     } else {
                         UngetChar(ch, cb);
@@ -767,7 +767,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     goto nextLexem;
                 } else if (ch=='*') {
                     int javadoc=0;
-                    CommentaryBegRef(cb, cb_next, cb_lineNumber, cb_lineBegin);
+                    CommentaryBegRef(cb, cb_lineNumber, cb_lineBegin);
                     LexGetChar(ch, cb);
                     if (ch == '&') {
                         /* a program comment, ignore and continue with next lexem */
@@ -780,16 +780,16 @@ bool getLexBuf(S_lexBuf *lb) {
                         ch = '*';
                     }   /* !!! COPY BLOCK TO '/n' */
                     PassComment(ch, cb, cb_next, dd, cb_lineNumber, cb_lineBegin);
-                    CommentaryEndRef(cb, cb_next, cb_lineNumber, cb_lineBegin, javadoc);
+                    CommentaryEndRef(cb, cb_lineNumber, cb_lineBegin, javadoc);
                     goto nextLexem;
                 } else if (ch=='/' && s_opt.cpp_comment) {
                     /*  ******* a // comment ******* */
-                    CommentaryBegRef(cb, cb_next, cb_lineNumber, cb_lineBegin);
+                    CommentaryBegRef(cb, cb_lineNumber, cb_lineBegin);
                     LexGetChar(ch, cb);
                     if (ch == '&') {
                         /* ****** a program comment, ignore */
                         LexGetChar(ch, cb);
-                        CommentaryEndRef(cb, cb_next, cb_lineNumber, cb_lineBegin, 0);
+                        CommentaryEndRef(cb, cb_lineNumber, cb_lineBegin, 0);
                         goto nextLexem;
                     }
                     line = cb_lineNumber;
@@ -804,7 +804,7 @@ bool getLexBuf(S_lexBuf *lb) {
                             LexGetChar(ch, cb);
                         }
                     }
-                    CommentaryEndRef(cb, cb_next, cb_lineNumber, cb_lineBegin, 0);
+                    CommentaryEndRef(cb, cb_lineNumber, cb_lineBegin, 0);
                     PutLexLine(cb_lineNumber-line,dd);
                 } else {
                     PutLexToken('/',dd);
@@ -845,7 +845,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     LexGetChar(ch, cb);
                     cb_next = cb->next;
                     if (ch == '*') {
-                        CommentaryBegRef(cb, cb_next, cb_lineNumber, cb_lineBegin);
+                        CommentaryBegRef(cb, cb_lineNumber, cb_lineBegin);
                         LexGetChar(ch, cb);
                         cb_next = cb->next;
                         if (ch == '&') {
@@ -858,7 +858,7 @@ bool getLexBuf(S_lexBuf *lb) {
                             UngetChar(ch, cb); cb_next = cb->next;
                             ch = '*';
                             PassComment(ch, cb, cb_next, dd, cb_lineNumber, cb_lineBegin);
-                            CommentaryEndRef(cb, cb_next, cb_lineNumber, cb_lineBegin, javadoc);
+                            CommentaryEndRef(cb, cb_lineNumber, cb_lineBegin, javadoc);
                             DeleteBlank(ch, cb);
                             cb_next = cb->next;
                         }
