@@ -154,9 +154,8 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
 #define ProcessIdentifier(ch, cb, dd, cb_next, cb_lineNumber, cb_lineBegin, cb_columnOffset, labelSuffix){ \
         int idcoll;                                                     \
         char *ddd;                                                      \
-        /* Can't have local cb_next yet */                              \
-        assert(cb->next == cb_next);                                    \
         /* ***************  identifier ****************************  */ \
+        assert(cb_next == cb->next);                                    \
         ddd = dd;                                                       \
         idcoll = columnPosition(cb, cb_lineBegin, cb_columnOffset);     \
         PutLexToken(IDENTIFIER,dd);                                     \
@@ -199,6 +198,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
                 }                                                       \
             }                                                           \
         }                                                               \
+        assert(cb_next == cb->next);                                    \
         PutLexChar(0,dd);                                               \
         PutLexPosition(cb->fileNumber, cb_lineNumber, idcoll, dd);      \
         assert(cb_next == cb->next);                                    \
@@ -211,13 +211,12 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         lcoll = columnPosition(cb, cb_lineBegin, cb->columnOffset);     \
         LexGetChar(ch, cb);                                             \
         DeleteBlank(ch, cb);                                            \
-        cb_next = cb->next;                                             \
         for(i=0; i<9 && (isalpha(ch) || isdigit(ch) || ch=='_') ; i++) { \
             tt[i] = ch;                                                 \
             LexGetChar(ch, cb);                                         \
-            cb_next = cb->next;                                         \
         }                                                               \
         tt[i]=0;                                                        \
+        cb_next = cb->next;                                             \
         if (strcmp(tt,"ifdef") == 0) {                                  \
             PutLexToken(CPP_IFDEF,dd); PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd); \
         } else if (strcmp(tt,"ifndef") == 0) {                          \
@@ -237,7 +236,6 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
             PutLexToken(CPP_INCLUDE,dd);                                \
             PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd);       \
             DeleteBlank(ch, cb);                                        \
-            cb_next = cb->next;                                         \
             if (ch == '\"' || ch == '<') {                              \
                 if (ch == '\"') endCh = '\"';                           \
                 else endCh = '>';                                       \
@@ -356,11 +354,12 @@ bool getLexBuf(S_lexBuf *lb) {
     LexGetChar(ch, cb);
     do {
         DeleteBlank(ch, cb);
-        cb_next = cb->next;
         if (dd >= lmax) {
-            UngetChar(ch, cb); cb_next = cb->next; /* TODO cb_next */
+            UngetChar(ch, cb);
+            cb_next = cb->next; /* TODO cb_next */
             break;
         }
+        cb_next = cb->next;
         NOTE_NEW_LEXEM_POSITION(cb, lb, cb_lineNumber, cb_lineBegin);
         /*  yytext = ccc; */
         lexStartDd = dd;
