@@ -121,7 +121,7 @@ bool refillBuffer(CharacterBuffer *buffer) {
     buffer->end = cp+charactersRead;
     buffer->next = buffer->chars+MAX_UNGET_CHARS;
 
-    log_trace("refillBuffer buffer->next=%p, buffer->end=%p", buffer->next, buffer->end);
+    log_trace("refillBuffer: (%s) buffer->next=%p, buffer->end=%p", buffer->next == buffer->end?"equal":"not equal", buffer->next, buffer->end);
     return buffer->next != buffer->end;
 }
 
