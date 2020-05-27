@@ -117,18 +117,22 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         LexGetChar(ch, cb, cb_next);                                    \
     }
 
-#define ConType(ch, cb, cb_next, rlex) {                                \
+#define ConType(ch, cb, rlex) {                                         \
+        char *cb_next = cb->next;                                       \
+        /* TODO: remove cb_next when LexGetChar() doesn't use ut */     \
         rlex = CONSTANT;                                                \
         if (LANGUAGE(LANG_JAVA)) {                                      \
             if (ch=='l' || ch=='L') {                                   \
                 rlex = LONG_CONSTANT;                                   \
                 LexGetChar(ch, cb, cb_next);                            \
+                cb_next = cb->next;                                     \
             }                                                           \
         } else {                                                        \
             for(; ch=='l'||ch=='L'||ch=='u'||ch=='U'; ){                \
                 if (ch=='l' || ch=='L')                                 \
                     rlex = LONG_CONSTANT;                               \
                 LexGetChar(ch, cb, cb_next);                            \
+                cb_next = cb->next;                                     \
             }                                                           \
         }                                                               \
     }
@@ -407,7 +411,7 @@ bool getLexBuf(S_lexBuf *lb) {
                 goto nextLexem;
             }
             /* integer */
-            ConType(ch, cb, cb_next, rlex);
+            ConType(ch, cb, rlex);
             PutLexToken(rlex,dd);
             PutLexInt(val,dd);
             PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
