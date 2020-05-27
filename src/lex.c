@@ -151,11 +151,10 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
         }                                                               \
     }
 
-#define ProcessIdentifier(ch, cb, dd, cb_next, cb_lineNumber, cb_lineBegin, cb_columnOffset, labelSuffix){ \
+#define ProcessIdentifier(ch, cb, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset, labelSuffix){ \
         int idcoll;                                                     \
         char *ddd;                                                      \
         /* ***************  identifier ****************************  */ \
-        assert(cb_next == cb->next);                                    \
         ddd = dd;                                                       \
         idcoll = columnPosition(cb, cb_lineBegin, cb_columnOffset);     \
         PutLexToken(IDENTIFIER,dd);                                     \
@@ -163,7 +162,6 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
             PutLexChar(ch,dd);                                          \
         identCont##labelSuffix:                                         \
             LexGetChar(ch, cb);                                         \
-            cb_next = cb->next; /* TODO cb_next */                      \
         } while (isalpha(ch) || isdigit(ch) || ch=='_' || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))); \
         if (ch == '@' && *(dd-1)=='C') {                                \
             int i,len;                                                  \
@@ -172,7 +170,6 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
             len = strlen(s_editCommunicationString);                    \
             for (i=2;i<len;i++) {                                       \
                 LexGetChar(ch, cb);                                     \
-                cb_next = cb->next;                                     \
                 if (ch != s_editCommunicationString[i])                 \
                     break;                                              \
             }                                                           \
@@ -180,11 +177,9 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
                 /* it is the place marker */                            \
                 dd--; /* delete the C */                                \
                 LexGetChar(ch, cb);                                     \
-                cb_next = cb->next;                                     \
                 if (ch == CC_COMPLETION) {                              \
                     PutLexToken(IDENT_TO_COMPLETE, ddd);                \
                     LexGetChar(ch, cb);                                 \
-                    cb_next = cb->next;                                 \
                 } else if (ch == CC_CXREF) {                            \
                     s_cache.activeCache = 0;                            \
                     fillPosition(&s_cxRefPos, cb->fileNumber, cb_lineNumber, idcoll); \
@@ -198,10 +193,8 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
                 }                                                       \
             }                                                           \
         }                                                               \
-        assert(cb_next == cb->next);                                    \
         PutLexChar(0,dd);                                               \
         PutLexPosition(cb->fileNumber, cb_lineNumber, idcoll, dd);      \
-        assert(cb_next == cb->next);                                    \
     }
 
 #define HandleCppToken(ch, cb, dd, cb_next, cb_fileNumber, cb_lineNumber, cb_lineBegin) { \
@@ -257,9 +250,10 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end, char *cb_next
             PutLexToken(CPP_DEFINE0,dd);                                \
             PutLexPosition(cb_fileNumber,cb_lineNumber,lcoll,dd);       \
             DeleteBlank(ch, cb);                                        \
-            cb_next = cb->next;                                         \
             NOTE_NEW_LEXEM_POSITION(cb, lb, cb_lineNumber, cb_lineBegin); \
-            ProcessIdentifier(ch, cb, dd, cb_next, cb_lineNumber, cb_lineBegin, cb->columnOffset,lab1); \
+            assert(cb_next == cb->next);                                \
+            ProcessIdentifier(ch, cb, dd, cb_lineNumber, cb_lineBegin, cb->columnOffset,lab1); \
+            assert(cb_next == cb->next);                                \
             if (ch == '(') {                                            \
                 PutLexToken(CPP_DEFINE,ddd);                            \
             }                                                           \
@@ -366,7 +360,8 @@ bool getLexBuf(S_lexBuf *lb) {
         lexStartCol = columnPosition(cb, cb_lineBegin, cb_columnOffset);
         if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
             assert(cb_next == cb->next);
-            ProcessIdentifier(ch, cb, dd, cb_next, cb_lineNumber, cb_lineBegin, cb_columnOffset, lab2);
+            ProcessIdentifier(ch, cb, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset, lab2);
+            cb_next = cb->next;
             goto nextLexem;
         } else if (isdigit(ch)) {
             /* ***************   number *******************************  */
@@ -829,11 +824,9 @@ bool getLexBuf(S_lexBuf *lb) {
                 cb_next = cb->next;
                 if (ch == '/') {
                     LexGetChar(ch, cb);
-                    cb_next = cb->next;
                     if (ch == '*') {
                         CommentaryBegRef(cb, cb_lineNumber, cb_lineBegin);
                         LexGetChar(ch, cb);
-                        cb_next = cb->next;
                         if (ch == '&') {
                             /* ****** a code comment, ignore */
                             LexGetChar(ch, cb);
@@ -841,15 +834,14 @@ bool getLexBuf(S_lexBuf *lb) {
                         } else {
                             int javadoc=0;
                             if (ch == '*' && LANGUAGE(LANG_JAVA)) javadoc = 1;
-                            UngetChar(ch, cb); cb_next = cb->next;
+                            UngetChar(ch, cb);
                             ch = '*';
                             PassComment(ch, cb, dd, cb_lineNumber, cb_lineBegin);
                             CommentaryEndRef(cb, cb_lineNumber, cb_lineBegin, javadoc);
                             DeleteBlank(ch, cb);
-                            cb_next = cb->next;
                         }
                     } else {
-                        UngetChar(ch, cb); cb_next = cb->next; /* TODO cb_next */
+                        UngetChar(ch, cb);
                         ch = '/';
                     }
                 }
@@ -914,7 +906,8 @@ bool getLexBuf(S_lexBuf *lb) {
                             DeleteBlank(ch, cb);
                             cb_next = cb->next;
                             NOTE_NEW_LEXEM_POSITION(cb, lb, cb_lineNumber, cb_lineBegin);
-                            ProcessIdentifier(ch, cb, dd, cb_next, cb_lineNumber, cb_lineBegin, cb->columnOffset,lab1);
+                            ProcessIdentifier(ch, cb, dd, cb_lineNumber, cb_lineBegin, cb->columnOffset,lab1);
+                            cb_next = cb->next;
                             if (ch == '(') {
                                 PutLexToken(CPP_DEFINE,ddd);
                             }
