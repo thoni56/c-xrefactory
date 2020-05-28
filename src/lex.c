@@ -61,19 +61,20 @@ static int lexGetChar(CharacterBuffer *cb) {
 }
 
 
+static void ungetChar(int ch, CharacterBuffer *cb) {
+    if (ch == '\n')
+        log_trace("Ungetting ('\\n') at cb->next");
+    else
+        log_trace("Ungetting ('%c') at cb->next", ch);
+    *--(cb->next) = ch;
+}
+
+
 #define PutLexLine(lines, dd) {                              \
         if (lines!=0) {                                      \
             PutLexToken(LINE_TOK,dd);                        \
             PutLexToken(lines,dd);                           \
         }                                                    \
-    }
-
-#define UngetChar(ch, cb) {                                             \
-        if (ch == '\n')                                                 \
-            log_trace("Ungetting %s('\\n') at cb->next", #ch);          \
-        else                                                            \
-            log_trace("Ungetting %s('%c') at cb->next", #ch, ch);       \
-        *--(cb->next) = ch;                                             \
     }
 
 #define DeleteBlank(ch, cb) {                                           \
@@ -189,7 +190,7 @@ static int lexGetChar(CharacterBuffer *cb) {
             } else {                                                    \
                 /* not a place marker, undo reading */                  \
                 for(i--;i>=1;i--) {                                     \
-                    UngetChar(ch, cb);                                  \
+                    ungetChar(ch, cb);                                  \
                     ch = s_editCommunicationString[i];                  \
                 }                                                       \
             }                                                           \
@@ -273,7 +274,7 @@ bool getLexBuf(S_lexBuf *lb) {
     do {
         DeleteBlank(ch, cb);
         if (dd >= lmax) {
-            UngetChar(ch, cb);
+            ungetChar(ch, cb);
             break;
         }
         NOTE_NEW_LEXEM_POSITION(cb, lb);
@@ -342,7 +343,7 @@ bool getLexBuf(S_lexBuf *lb) {
                         PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
                         goto nextLexem;
                     } else {
-                        UngetChar(ch, cb);
+                        ungetChar(ch, cb);
                         ch = '.';
                     }
                     PutLexToken('.',dd);
@@ -350,7 +351,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     goto nextLexem;
                 } else if (isdigit(ch)) {
                     /* floating point constant */
-                    UngetChar(ch, cb);
+                    ungetChar(ch, cb);
                     ch = '.';
                     FloatingPointConstant(ch, cb, rlex);
                     PutLexToken(rlex,dd);
@@ -527,7 +528,7 @@ bool getLexBuf(S_lexBuf *lb) {
                         CommentaryEndRef(cb, 0);
                         goto nextLexem;
                     } else {
-                        UngetChar(ch, cb);
+                        ungetChar(ch, cb);
                         ch = '*';
                         PutLexToken('&',dd);
                         PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
@@ -677,7 +678,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     } else {
                         if (ch=='*' && LANGUAGE(LANG_JAVA))
                             javadoc = 1;
-                        UngetChar(ch, cb);
+                        ungetChar(ch, cb);
                         ch = '*';
                     }   /* !!! COPY BLOCK TO '/n' */
                     PassComment(ch, cb, dd);
@@ -751,15 +752,16 @@ bool getLexBuf(S_lexBuf *lb) {
                             ch = lexGetChar(cb);
                         } else {
                             int javadoc=0;
-                            if (ch == '*' && LANGUAGE(LANG_JAVA)) javadoc = 1;
-                            UngetChar(ch, cb);
+                            if (ch == '*' && LANGUAGE(LANG_JAVA))
+                                javadoc = 1;
+                            ungetChar(ch, cb);
                             ch = '*';
                             PassComment(ch, cb, dd);
                             CommentaryEndRef(cb, javadoc);
                             DeleteBlank(ch, cb);
                         }
                     } else {
-                        UngetChar(ch, cb);
+                        ungetChar(ch, cb);
                         ch = '/';
                     }
                 }
