@@ -373,9 +373,12 @@ bool getLexBuf(S_lexBuf *lb) {
                 } else if (ch=='>' && LANGUAGE(LANG_C|LANG_YACC)) {
                     LexGetChar(ch, cb);
                     PutLexToken(PTR_OP,dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);goto nextLexem;
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    goto nextLexem;
                 } else {PutLexToken('-',dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);goto nextLexem;}
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    goto nextLexem;
+                }
 
             case '+':
                 LexGetChar(ch, cb);
