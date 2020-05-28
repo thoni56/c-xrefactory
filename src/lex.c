@@ -27,8 +27,8 @@ void gotOnLineCxRefs(Position *ps ) {
 /*                         Lexical Analysis                          */
 /* ***************************************************************** */
 
-static int columnPosition(CharacterBuffer *cb, char *cb_lineBegin) {
-    return cb->next - cb_lineBegin + cb->columnOffset - 1;
+static int columnPosition(CharacterBuffer *cb) {
+    return cb->next - cb->lineBegin + cb->columnOffset - 1;
 }
 
 static int absoluteFilePosition(CharacterBuffer *cb) {
@@ -77,14 +77,13 @@ static int absoluteFilePosition(CharacterBuffer *cb) {
         }                                                               \
     }
 
-#define PassComment(ch, cb, dd, cb_lineBegin) {                         \
+#define PassComment(ch, cb, dd) {                                       \
         char oldCh;                                                     \
-        int line = cb->lineNumber;                                       \
+        int line = cb->lineNumber;                                      \
         /*  ******* a block comment ******* */                          \
         LexGetChar(ch, cb);                                             \
         if (ch=='\n') {                                                 \
             cb->lineNumber ++;                                          \
-            cb_lineBegin = cb->next;                                    \
             cb->lineBegin = cb->next;                                   \
             cb->columnOffset = 0;                                       \
         }                                                               \
@@ -94,7 +93,6 @@ static int absoluteFilePosition(CharacterBuffer *cb) {
             LexGetChar(ch, cb);                                         \
             if (ch=='\n') {                                             \
                 cb->lineNumber ++;                                      \
-                cb_lineBegin = cb->next;                                \
                 cb->lineBegin = cb->next;                               \
                 cb->columnOffset = 0;                                   \
             }                                                           \
@@ -149,12 +147,12 @@ static int absoluteFilePosition(CharacterBuffer *cb) {
         }                                                               \
     }
 
-#define ProcessIdentifier(ch, cb, dd, cb_lineBegin, labelSuffix){       \
+#define ProcessIdentifier(ch, cb, dd, labelSuffix) {                    \
         int idcoll;                                                     \
         char *ddd;                                                      \
         /* ***************  identifier ****************************  */ \
         ddd = dd;                                                       \
-        idcoll = columnPosition(cb, cb_lineBegin);     \
+        idcoll = columnPosition(cb);                     \
         PutLexToken(IDENTIFIER,dd);                                     \
         do {                                                            \
             PutLexChar(ch,dd);                                          \
@@ -192,27 +190,27 @@ static int absoluteFilePosition(CharacterBuffer *cb) {
             }                                                           \
         }                                                               \
         PutLexChar(0,dd);                                               \
-        PutLexPosition(cb->fileNumber, cb->lineNumber, idcoll, dd);      \
+        PutLexPosition(cb->fileNumber, cb->lineNumber, idcoll, dd);     \
     }
 
-#define CommentaryBegRef(cb, cb_lineBegin) {                            \
+#define CommentaryBegRef(cb) {                                          \
         if (s_opt.taskRegime==RegimeHtmlGenerate && s_opt.htmlNoColors==0) { \
             int lcoll;                                                  \
             Position pos;                                               \
             char ttt[TMP_STRING_SIZE];                                  \
-            lcoll = columnPosition(cb, cb_lineBegin) - 1; \
+            lcoll = columnPosition(cb) - 1; \
             fillPosition(&pos, cb->fileNumber, cb->lineNumber, lcoll);   \
             sprintf(ttt,"%x/*", cb->fileNumber);                        \
             addTrivialCxReference(ttt, TypeComment, StorageDefault, &pos, UsageDefined); \
         }                                                               \
     }
 
-#define CommentaryEndRef(cb, cb_lineBegin, jdoc) {                      \
+#define CommentaryEndRef(cb, jdoc) {                                    \
         if (s_opt.taskRegime==RegimeHtmlGenerate) {                     \
             int lcoll;                                                  \
             Position pos;                                               \
             char ttt[TMP_STRING_SIZE];                                  \
-            lcoll = columnPosition(cb, cb_lineBegin); \
+            lcoll = columnPosition(cb); \
             fillPosition(&pos, cb->fileNumber, cb->lineNumber, lcoll);  \
             sprintf(ttt,"%x/*", cb->fileNumber);                        \
             if (s_opt.htmlNoColors==0) {                                \
@@ -225,28 +223,26 @@ static int absoluteFilePosition(CharacterBuffer *cb) {
         }                                                               \
     }
 
-#define NOTE_NEW_LEXEM_POSITION(cb, lb, cb_lineBegin) {                 \
+#define NOTE_NEW_LEXEM_POSITION(cb, lb) {                               \
         int index = lb->index % LEX_POSITIONS_RING_SIZE;                \
-        lb->fileOffsetRing[index] = absoluteFilePosition(cb);  \
+        lb->fileOffsetRing[index] = absoluteFilePosition(cb);           \
         lb->positionRing[index].file = cb->fileNumber;                  \
         lb->positionRing[index].line = cb->lineNumber;                  \
-        lb->positionRing[index].col = columnPosition(cb, cb_lineBegin); \
+        lb->positionRing[index].col = columnPosition(cb);               \
         lb->index ++;                                                   \
     }
 
-#define PUT_EMPTY_COMPLETION_ID(cb, dd, cb_lineBegin, len) {            \
+#define PUT_EMPTY_COMPLETION_ID(cb, dd, len) {                          \
         PutLexToken(IDENT_TO_COMPLETE, dd);                             \
         PutLexChar(0, dd);                                              \
         PutLexPosition(cb->fileNumber, cb->lineNumber,                  \
-                       columnPosition(cb, cb_lineBegin) - (len), dd); \
+                       columnPosition(cb) - (len), dd);                 \
     }
 
 
 bool getLexBuf(S_lexBuf *lb) {
     int ch;
     CharacterBuffer *cb;
-    char *cb_lineBegin;
-
     char *cc, *dd, *lmax, *lexStartDd;
     unsigned chval=0;
     int rlex;
@@ -265,7 +261,6 @@ bool getLexBuf(S_lexBuf *lb) {
 
     cb = &lb->buffer;
     cb->lineNumber = cb->lineNumber;
-    cb_lineBegin = cb->lineBegin;
 
     cb_fileNumber = cb->fileNumber;
 
@@ -276,13 +271,13 @@ bool getLexBuf(S_lexBuf *lb) {
             UngetChar(ch, cb);
             break;
         }
-        NOTE_NEW_LEXEM_POSITION(cb, lb, cb_lineBegin);
+        NOTE_NEW_LEXEM_POSITION(cb, lb);
         /*  yytext = ccc; */
         lexStartDd = dd;
-        lexStartCol = columnPosition(cb, cb_lineBegin);
+        lexStartCol = columnPosition(cb);
         log_trace("lexStartCol = %d", lexStartCol);
         if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
-            ProcessIdentifier(ch, cb, dd, cb_lineBegin, lab2);
+            ProcessIdentifier(ch, cb, dd, lab2);
             goto nextLexem;
         } else if (isdigit(ch)) {
             /* ***************   number *******************************  */
@@ -521,7 +516,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     if (ch == '/') {
                         /* a code comment, ignore */
                         LexGetChar(ch, cb);
-                        CommentaryEndRef(cb, cb_lineBegin, 0);
+                        CommentaryEndRef(cb, 0);
                         goto nextLexem;
                     } else {
                         UngetChar(ch, cb);
@@ -630,14 +625,14 @@ bool getLexBuf(S_lexBuf *lb) {
                         if (size < MAX_LEXEM_SIZE-10) PutLexChar(ch,dd);
                         /* TODO escape sequences */
                         if (ch == '\n') {cb->lineNumber ++;
-                            cb_lineBegin = cb->next;
+                            cb->lineBegin = cb->next;
                             cb->columnOffset = 0;
                         }
                         ch = 0;
                     }
                     if (ch == '\n') {
                         cb->lineNumber ++;
-                        cb_lineBegin = cb->next;
+                        cb->lineBegin = cb->next;
                         cb->columnOffset = 0;
                         if (s_opt.strictAnsi && (s_opt.debug || s_opt.show_errors)) {
                             warningMessage(ERR_ST,"string constant through end of line");
@@ -665,7 +660,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     goto nextLexem;
                 } else if (ch=='*') {
                     int javadoc=0;
-                    CommentaryBegRef(cb, cb_lineBegin);
+                    CommentaryBegRef(cb);
                     LexGetChar(ch, cb);
                     if (ch == '&') {
                         /* a program comment, ignore and continue with next lexem */
@@ -677,17 +672,17 @@ bool getLexBuf(S_lexBuf *lb) {
                         UngetChar(ch, cb);
                         ch = '*';
                     }   /* !!! COPY BLOCK TO '/n' */
-                    PassComment(ch, cb, dd, cb_lineBegin);
-                    CommentaryEndRef(cb, cb_lineBegin, javadoc);
+                    PassComment(ch, cb, dd);
+                    CommentaryEndRef(cb, javadoc);
                     goto nextLexem;
                 } else if (ch=='/' && s_opt.cpp_comment) {
                     /*  ******* a // comment ******* */
-                    CommentaryBegRef(cb, cb_lineBegin);
+                    CommentaryBegRef(cb);
                     LexGetChar(ch, cb);
                     if (ch == '&') {
                         /* ****** a program comment, ignore */
                         LexGetChar(ch, cb);
-                        CommentaryEndRef(cb, cb_lineBegin, 0);
+                        CommentaryEndRef(cb, 0);
                         goto nextLexem;
                     }
                     line = cb->lineNumber;
@@ -697,13 +692,13 @@ bool getLexBuf(S_lexBuf *lb) {
                             LexGetChar(ch, cb);
                             if (ch=='\n') {
                                 cb->lineNumber ++;
-                                cb_lineBegin = cb->next;
+                                cb->lineBegin = cb->next;
                                 cb->columnOffset = 0;
                             }
                             LexGetChar(ch, cb);
                         }
                     }
-                    CommentaryEndRef(cb, cb_lineBegin, 0);
+                    CommentaryEndRef(cb, 0);
                     PutLexLine(cb->lineNumber-line,dd);
                 } else {
                     PutLexToken('/',dd);
@@ -715,7 +710,7 @@ bool getLexBuf(S_lexBuf *lb) {
                 LexGetChar(ch, cb);
                 if (ch == '\n') {
                     cb->lineNumber ++;
-                    cb_lineBegin = cb->next;
+                    cb->lineBegin = cb->next;
                     cb->columnOffset = 0;
                     PutLexLine(1, dd);
                     LexGetChar(ch, cb);
@@ -726,7 +721,7 @@ bool getLexBuf(S_lexBuf *lb) {
                 goto nextLexem;
 
             case '\n':
-                column = columnPosition(cb, cb_lineBegin);
+                column = columnPosition(cb);
                 if (column >= MAX_REFERENCABLE_COLUMN) {
                     fatalError(ERR_ST, "position over MAX_REFERENCABLE_COLUMN, read TROUBLES in README file", XREF_EXIT_ERR);
                 }
@@ -734,14 +729,14 @@ bool getLexBuf(S_lexBuf *lb) {
                     fatalError(ERR_ST, "position over MAX_REFERENCABLE_LINE, read TROUBLES in README file", XREF_EXIT_ERR);
                 }
                 cb->lineNumber ++;
-                cb_lineBegin = cb->next;
+                cb->lineBegin = cb->next;
                 cb->columnOffset = 0;
                 LexGetChar(ch, cb);
                 DeleteBlank(ch, cb);
                 if (ch == '/') {
                     LexGetChar(ch, cb);
                     if (ch == '*') {
-                        CommentaryBegRef(cb, cb_lineBegin);
+                        CommentaryBegRef(cb);
                         LexGetChar(ch, cb);
                         if (ch == '&') {
                             /* ****** a code comment, ignore */
@@ -751,8 +746,8 @@ bool getLexBuf(S_lexBuf *lb) {
                             if (ch == '*' && LANGUAGE(LANG_JAVA)) javadoc = 1;
                             UngetChar(ch, cb);
                             ch = '*';
-                            PassComment(ch, cb, dd, cb_lineBegin);
-                            CommentaryEndRef(cb, cb_lineBegin, javadoc);
+                            PassComment(ch, cb, dd);
+                            CommentaryEndRef(cb, javadoc);
                             DeleteBlank(ch, cb);
                         }
                     } else {
@@ -763,13 +758,13 @@ bool getLexBuf(S_lexBuf *lb) {
                 PutLexToken('\n',dd);
                 PutLexPosition(cb_fileNumber, cb->lineNumber, lexStartCol, dd);
                 if (ch == '#' && LANGUAGE(LANG_C|LANG_YACC)) {
-                    NOTE_NEW_LEXEM_POSITION(cb, lb, cb_lineBegin);
-                    //&        HandleCppToken(ch, cb, dd, cb_next, cb_fileNumber, cb->lineNumber, cb_lineBegin);
-                    // #define HandleCppToken(ch, cb, dd, cb_next, cb_fileNumber, cb->lineNumber, cb_lineBegin) {
+                    NOTE_NEW_LEXEM_POSITION(cb, lb);
+                    //&        HandleCppToken(ch, cb, dd, cb_next, cb_fileNumber, cb->lineNumber, cb->lineBegin);
+                    // #define HandleCppToken(ch, cb, dd, cb_next, cb_fileNumber, cb->lineNumber, cb->lineBegin) {
                     {
                         char *ddd, tt[10];
                         int i, lcoll, scol;
-                        lcoll = columnPosition(cb, cb_lineBegin);
+                        lcoll = columnPosition(cb);
                         LexGetChar(ch, cb);
                         DeleteBlank(ch, cb);
                         for(i=0; i<9 && (isalpha(ch) || isdigit(ch) || ch=='_') ; i++) {
@@ -806,7 +801,7 @@ bool getLexBuf(S_lexBuf *lb) {
                             if (ch == '\"' || ch == '<') {
                                 if (ch == '\"') endCh = '\"';
                                 else endCh = '>';
-                                scol = columnPosition(cb, cb_lineBegin);
+                                scol = columnPosition(cb);
                                 PutLexToken(STRING_LITERAL,dd);
                                 do {
                                     PutLexChar(ch,dd);
@@ -822,8 +817,8 @@ bool getLexBuf(S_lexBuf *lb) {
                             PutLexToken(CPP_DEFINE0,dd);
                             PutLexPosition(cb_fileNumber,cb->lineNumber,lcoll,dd);
                             DeleteBlank(ch, cb);
-                            NOTE_NEW_LEXEM_POSITION(cb, lb, cb_lineBegin);
-                            ProcessIdentifier(ch, cb, dd, cb_lineBegin,lab1);
+                            NOTE_NEW_LEXEM_POSITION(cb, lb);
+                            ProcessIdentifier(ch, cb, dd,lab1);
                             if (ch == '(') {
                                 PutLexToken(CPP_DEFINE,ddd);
                             }
@@ -877,7 +872,7 @@ bool getLexBuf(S_lexBuf *lb) {
                 if (s_opt.server_operation == OLO_EXTRACT && lb->index>=2) {
                     DeleteBlank(ch, cb);
                     pos1 = absoluteFilePosition(cb);
-                    //&idcoll = columnPosition(cb, cb_lineBegin);
+                    //&idcoll = columnPosition(cb);
                     //&fprintf(dumpOut,":pos1==%d, olCursorPos==%d, olMarkPos==%d\n",pos1,s_opt.olCursorPos,s_opt.olMarkPos);
                     // all this is very, very HACK!!!
                     if (pos1 >= s_opt.olCursorPos && ! s_cps.marker1Flag) {
@@ -951,7 +946,7 @@ bool getLexBuf(S_lexBuf *lb) {
                                 //&fprintf(dumpOut,":ress %s\n", lexStartDd+TOKEN_SIZE);fflush(dumpOut);
                             } else {
                                 // completion after an identifier
-                                PUT_EMPTY_COMPLETION_ID(cb, dd, cb_lineBegin,
+                                PUT_EMPTY_COMPLETION_ID(cb, dd,
                                                         apos-s_opt.olCursorPos);
                             }
                         } else if ((lastlex == LINE_TOK || lastlex == STRING_LITERAL)
@@ -960,7 +955,7 @@ bool getLexBuf(S_lexBuf *lb) {
                             // NO COMPLETION
                         } else {
                             // completion after another lexem
-                            PUT_EMPTY_COMPLETION_ID(cb, dd,cb_lineBegin,
+                            PUT_EMPTY_COMPLETION_ID(cb, dd,
                                                     apos-s_opt.olCursorPos);
                         }
                     }
@@ -993,7 +988,6 @@ bool getLexBuf(S_lexBuf *lb) {
     } while (ch != -1);
 
     cb->lineNumber = cb->lineNumber;
-    cb->lineBegin = cb_lineBegin;
     lb->end = dd;
 
     if (lb->end == lb->chars)
