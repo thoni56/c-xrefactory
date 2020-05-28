@@ -63,10 +63,18 @@ static int lexGetChar(CharacterBuffer *cb) {
 
 static void ungetChar(int ch, CharacterBuffer *cb) {
     if (ch == '\n')
-        log_trace("Ungetting ('\\n') at cb->next");
+        log_trace("Ungetting ('\\n')");
     else
-        log_trace("Ungetting ('%c') at cb->next", ch);
+        log_trace("Ungetting ('%c')", ch);
     *--(cb->next) = ch;
+}
+
+
+static int skipBlanks(CharacterBuffer *cb, int ch) {
+    while (ch==' '|| ch=='\t' || ch=='\004') {
+        ch = lexGetChar(cb);
+    }
+    return ch;
 }
 
 
@@ -75,12 +83,6 @@ static void ungetChar(int ch, CharacterBuffer *cb) {
             PutLexToken(LINE_TOK,dd);                        \
             PutLexToken(lines,dd);                           \
         }                                                    \
-    }
-
-#define DeleteBlank(ch, cb) {                                           \
-        while (ch==' '|| ch=='\t' || ch=='\004') {                      \
-            ch = lexGetChar(cb);                                        \
-        }                                                               \
     }
 
 #define PassComment(ch, cb, dd) {                                       \
@@ -272,7 +274,7 @@ bool getLexBuf(S_lexBuf *lb) {
 
     ch = lexGetChar(cb);
     do {
-        DeleteBlank(ch, cb);
+        ch = skipBlanks(cb, ch);
         if (dd >= lmax) {
             ungetChar(ch, cb);
             break;
@@ -741,7 +743,7 @@ bool getLexBuf(S_lexBuf *lb) {
                 cb->lineBegin = cb->next;
                 cb->columnOffset = 0;
                 ch = lexGetChar(cb);
-                DeleteBlank(ch, cb);
+                ch = skipBlanks(cb, ch);
                 if (ch == '/') {
                     ch = lexGetChar(cb);
                     if (ch == '*') {
@@ -758,7 +760,7 @@ bool getLexBuf(S_lexBuf *lb) {
                             ch = '*';
                             PassComment(ch, cb, dd);
                             CommentaryEndRef(cb, javadoc);
-                            DeleteBlank(ch, cb);
+                            ch = skipBlanks(cb, ch);
                         }
                     } else {
                         ungetChar(ch, cb);
@@ -776,7 +778,7 @@ bool getLexBuf(S_lexBuf *lb) {
                         int i, lcoll, scol;
                         lcoll = columnPosition(cb);
                         ch = lexGetChar(cb);
-                        DeleteBlank(ch, cb);
+                        ch = skipBlanks(cb, ch);
                         for(i=0; i<9 && (isalpha(ch) || isdigit(ch) || ch=='_') ; i++) {
                             tt[i] = ch;
                             ch = lexGetChar(cb);
@@ -807,7 +809,7 @@ bool getLexBuf(S_lexBuf *lb) {
                             char endCh;
                             PutLexToken(CPP_INCLUDE,dd);
                             PutLexPosition(cb->fileNumber,cb->lineNumber,lcoll,dd);
-                            DeleteBlank(ch, cb);
+                            ch = skipBlanks(cb, ch);
                             if (ch == '\"' || ch == '<') {
                                 if (ch == '\"') endCh = '\"';
                                 else endCh = '>';
@@ -826,7 +828,7 @@ bool getLexBuf(S_lexBuf *lb) {
                             ddd = dd;
                             PutLexToken(CPP_DEFINE0,dd);
                             PutLexPosition(cb->fileNumber,cb->lineNumber,lcoll,dd);
-                            DeleteBlank(ch, cb);
+                            ch = skipBlanks(cb, ch);
                             NOTE_NEW_LEXEM_POSITION(cb, lb);
                             ProcessIdentifier(ch, cb, dd,lab1);
                             if (ch == '(') {
@@ -880,7 +882,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     && s_jsl==NULL
                     ) {
                 if (s_opt.server_operation == OLO_EXTRACT && lb->index>=2) {
-                    DeleteBlank(ch, cb);
+                    ch = skipBlanks(cb, ch);
                     pos1 = absoluteFilePosition(cb);
                     //&idcoll = columnPosition(cb);
                     //&fprintf(dumpOut,":pos1==%d, olCursorPos==%d, olMarkPos==%d\n",pos1,s_opt.olCursorPos,s_opt.olMarkPos);
@@ -930,7 +932,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     }
                 } else if (s_opt.server_operation == OLO_COMPLETION
                            ||  s_opt.server_operation == OLO_SEARCH) {
-                    DeleteBlank(ch, cb);
+                    ch = skipBlanks(cb, ch);
                     apos = absoluteFilePosition(cb);
                     if (currentLexemPosition < s_opt.olCursorPos
                         && (apos >= s_opt.olCursorPos
@@ -984,10 +986,10 @@ bool getLexBuf(S_lexBuf *lb) {
                         // there is a problem with this, when browsing at CPP construction
                         // that is why I restrict it to Java language! It is usefull
                         // only for Java refactorings
-                        DeleteBlank(ch, cb);
+                        ch = skipBlanks(cb, ch);
                         apos = absoluteFilePosition(cb);
                         if (apos >= s_opt.olCursorPos && ! s_cps.marker1Flag) {
-                            PutLexToken(OL_MARKER_TOKEN,dd);
+                            PutLexToken(OL_MARKER_TOKEN, dd);
                             PutLexPosition(ps->file,ps->line,ps->col,dd);
                             s_cps.marker1Flag=1;
                         }
