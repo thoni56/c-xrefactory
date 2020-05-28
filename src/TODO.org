@@ -9,7 +9,6 @@ There are a *lot* of things to do to make c-xref into modern C.
 There are a number of update modes available from the command line, 'fupdate',
 'updatem', 'update', 'fastupdate' and then there is opt.updateOnlyModifiedFiles
 * TODO Remove all -olcx commands that are not used by the editor interfaces?
-* TODO Replace "int lexem" with an enum for all lexems, "Lexem lexem"?
 * TODO Separate the options into sections and move HTML (at least) to separate structure
 The S_options structure is used to save or possibly create new sets, when
 refactoring. Then it should only contain what's needed for that.
@@ -113,6 +112,7 @@ easier to mock and unit test other modules.
 
 * TODO Make Makefile.common look for our patched yacc and if it's not
   available ignore yacc-rules otherwise always run yacc.
+* DONE Replace "int lexem" with an enum for all lexems, "Lexem lexem"?
 * DONE Start using log.c functions to log to a separate log file
 Adjust options so that we can better control logging for various
 modules(?)
