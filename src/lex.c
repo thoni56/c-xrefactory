@@ -247,7 +247,7 @@ static int absoluteFilePosition(CharacterBuffer *cb, char *cb_end) {
 bool getLexBuf(S_lexBuf *lb) {
     int ch;
     CharacterBuffer *cb;
-    char *cb_next, *cb_end;
+    char *cb_end;
     int cb_lineNumber;
     int cb_columnOffset;
     char *cb_lineBegin;
@@ -273,7 +273,6 @@ bool getLexBuf(S_lexBuf *lb) {
     cb_lineBegin = cb->lineBegin;
     cb_columnOffset = cb->columnOffset;
 
-    cb_next = cb->next;
     cb_end = cb->end;
     cb_fileNumber = cb->fileNumber;
 
@@ -282,10 +281,8 @@ bool getLexBuf(S_lexBuf *lb) {
         DeleteBlank(ch, cb);
         if (dd >= lmax) {
             UngetChar(ch, cb);
-            cb_next = cb->next; /* TODO cb_next */
             break;
         }
-        cb_next = cb->next;
         NOTE_NEW_LEXEM_POSITION(cb, lb, cb_lineNumber, cb_lineBegin);
         /*  yytext = ccc; */
         lexStartDd = dd;
@@ -293,7 +290,6 @@ bool getLexBuf(S_lexBuf *lb) {
         log_trace("lexStartCol = %d", lexStartCol);
         if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
             ProcessIdentifier(ch, cb, dd, cb_lineNumber, cb_lineBegin, cb_columnOffset, lab2);
-            cb_next = cb->next;
             goto nextLexem;
         } else if (isdigit(ch)) {
             /* ***************   number *******************************  */
@@ -728,7 +724,6 @@ bool getLexBuf(S_lexBuf *lb) {
                     cb_columnOffset = 0;
                     PutLexLine(1, dd);
                     LexGetChar(ch, cb);
-                    cb_next = cb->next;
                 } else {
                     PutLexToken('\\',dd);
                     PutLexPosition(cb_fileNumber, cb_lineNumber, lexStartCol, dd);
@@ -1002,7 +997,6 @@ bool getLexBuf(S_lexBuf *lb) {
         }
     } while (ch != -1);
 
-    cb->next = cb_next;
     cb->end = cb_end;
     cb->lineNumber = cb_lineNumber;
     cb->lineBegin = cb_lineBegin;
