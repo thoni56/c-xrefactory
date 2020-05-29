@@ -78,32 +78,32 @@ static int skipBlanks(CharacterBuffer *cb, int ch) {
 }
 
 
-#define PassComment(ch, cb, dd) {                                       \
-        char oldCh;                                                     \
-        int line = cb->lineNumber;                                      \
-        /*  ******* a block comment ******* */                          \
-        ch = getChar(cb);                                               \
-        if (ch=='\n') {                                                 \
-            cb->lineNumber ++;                                          \
-            cb->lineBegin = cb->next;                                   \
-            cb->columnOffset = 0;                                       \
-        }                                                               \
-        /* TODO test on cpp directive */                                \
-        do {                                                            \
-            oldCh = ch;                                                 \
-            ch = getChar(cb);                                           \
-            if (ch=='\n') {                                             \
-                cb->lineNumber ++;                                      \
-                cb->lineBegin = cb->next;                               \
-                cb->columnOffset = 0;                                   \
-            }                                                           \
-            /* TODO test on cpp directive */                            \
-        } while ((oldCh != '*' || ch != '/') && ch != -1);              \
-        if (ch == -1)                                                   \
-            warningMessage(ERR_ST,"comment through eof");               \
-        PutLexLine(cb->lineNumber-line,dd);                             \
-        ch = getChar(cb);                                               \
+static void passComment(CharacterBuffer *cb) {
+    int ch;
+    char oldCh;
+
+    /*  ******* a block comment ******* */
+    ch = getChar(cb);
+    if (ch=='\n') {
+        cb->lineNumber ++;
+        cb->lineBegin = cb->next;
+        cb->columnOffset = 0;
     }
+    /* TODO test on cpp directive */
+    do {
+        oldCh = ch;
+        ch = getChar(cb);
+        if (ch=='\n') {
+            cb->lineNumber ++;
+            cb->lineBegin = cb->next;
+            cb->columnOffset = 0;
+        }
+        /* TODO test on cpp directive */
+    } while ((oldCh != '*' || ch != '/') && ch != -1);
+    if (ch == -1)
+        warningMessage(ERR_ST,"comment through eof");
+}
+
 
 #define ConType(ch, cb, rlex) {                                         \
         rlex = CONSTANT;                                                \
@@ -676,7 +676,11 @@ bool getLexBuf(S_lexBuf *lb) {
                         ungetChar(cb, ch);
                         ch = '*';
                     }   /* !!! COPY BLOCK TO '/n' */
-                    PassComment(ch, cb, dd);
+
+                    passComment(cb);
+                    PutLexLine(cb->lineNumber-line,dd);
+                    ch = getChar(cb);
+
                     CommentaryEndRef(cb, javadoc);
                     goto nextLexem;
                 } else if (ch=='/' && s_opt.cpp_comment) {
@@ -751,7 +755,11 @@ bool getLexBuf(S_lexBuf *lb) {
                                 javadoc = 1;
                             ungetChar(cb, ch);
                             ch = '*';
-                            PassComment(ch, cb, dd);
+
+                            passComment(cb);
+                            PutLexLine(cb->lineNumber-line,dd);
+                            ch = getChar(cb);
+
                             CommentaryEndRef(cb, javadoc);
                             ch = skipBlanks(cb, ch);
                         }
