@@ -1857,7 +1857,6 @@ void javaAddMapedTypeName(
     fillfIdList(&dd2, ttt2, NULL, s_noPos, ttt2, TypeStruct, packid);
     memb = javaTypeSymbolDefinition(&dd2, ACCESS_DEFAULT, TYPE_ADD_YES);
     log_debug(":import type %s == %s", memb->name, memb->linkName);
-    memb = memb;                /* If not DEBUG memb is "set but not used..." */
 }
 
 TypeModifier *javaClassNameType(IdList *typeName) {
