@@ -1832,7 +1832,7 @@ endOfFile:
 }
 
 #ifdef DEBUG
-int lexBufDump(S_lexBuf *lb) {
+int lexBufDump(LexemBuffer *lb) {
     char *cc;
     int v,c,lv,len;
     Lexem lexem;

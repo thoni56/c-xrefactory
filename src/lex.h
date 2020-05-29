@@ -15,10 +15,10 @@ typedef struct lexBuf {
     unsigned        fileOffsetRing[LEX_POSITIONS_RING_SIZE];
     int             index;				/* pRing[posi%LEX_POSITIONS_RING_SIZE] */
     struct characterBuffer buffer;
-} S_lexBuf;
+} LexemBuffer;
 
 
-extern bool getLexBuf(S_lexBuf *lb);
+extern bool getLexBuf(LexemBuffer *lb);
 extern void gotOnLineCxRefs(Position *position);
 
 #endif

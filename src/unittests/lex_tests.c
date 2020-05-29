@@ -22,7 +22,7 @@ AfterEach(Lex) {}
 
 
 Ensure(Lex, will_signal_false_for_empty_lexbuffer) {
-    S_lexBuf lexBuffer;
+    LexemBuffer lexBuffer;
 
     s_cache.activeCache = false; /* ?? */
 

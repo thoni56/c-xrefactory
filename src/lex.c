@@ -241,7 +241,7 @@ static void passComment(CharacterBuffer *cb) {
     }
 
 
-bool getLexBuf(S_lexBuf *lb) {
+bool getLexBuf(LexemBuffer *lb) {
     int ch;
     CharacterBuffer *cb;
     char *cc, *dd, *lmax, *lexStartDd;
