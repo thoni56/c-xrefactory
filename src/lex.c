@@ -261,9 +261,6 @@ bool getLexBuf(S_lexBuf *lb) {
     lb->next = lb->chars;
 
     cb = &lb->buffer;
-    cb->lineNumber = cb->lineNumber;
-    cb->fileNumber = cb->fileNumber;
-
     ch = getChar(cb);
     do {
         ch = skipBlanks(cb, ch);
@@ -996,7 +993,6 @@ bool getLexBuf(S_lexBuf *lb) {
         }
     } while (ch != -1);
 
-    cb->lineNumber = cb->lineNumber;
     lb->end = dd;
 
     if (lb->end == lb->chars)
