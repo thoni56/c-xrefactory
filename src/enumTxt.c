@@ -3,4 +3,4 @@
   an explanation
 */
 
-#include "enumTxt.g.c"
+#include "enumTxt.g"

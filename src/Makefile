@@ -99,19 +99,19 @@ enumTxt:
 		rm new-$@.g.h ; \
 	fi
 	@./c-xref -task_regime_generate -enum_name -body -xrefrc .c-xrefrc proto.h \
-		> new-$@.g.c ; \
-	if ! diff $@.g.c new-$@.g.c ; then \
-		echo "$(shell tput setaf 1)$@.g.c: REGENERATED.$(shell tput sgr0) Please 'make enum' to keep the new version." ; \
+		> new-$@.g ; \
+	if ! diff $@.g new-$@.g ; then \
+		echo "$(shell tput setaf 1)$@.g: REGENERATED.$(shell tput sgr0) Please 'make enum' to keep the new version." ; \
 	else \
-		echo "$@.g.c: no change" ; \
-		rm new-$@.g.c ; \
+		echo "$@.g: no change" ; \
+		rm new-$@.g ; \
 	fi
 
 enum:
-	@if [ -f new-$@Txt.g.c ] ; then \
-		mv -f $@Txt.g.c $@Txt.g.c.backup ; \
-		mv -f new-$@Txt.g.c $@Txt.g.c ; \
-		echo "$@Txt.g.c: saved." ; \
+	@if [ -f new-$@Txt.g ] ; then \
+		mv -f $@Txt.g $@Txt.g.backup ; \
+		mv -f new-$@Txt.g $@Txt.g ; \
+		echo "$@Txt.g: saved." ; \
 	fi
 	@if [ -f new-$@Txt.g.h ] ; then \
 		mv -f $@Txt.g.h $@Txt.g.h.backup ; \
