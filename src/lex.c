@@ -78,13 +78,6 @@ static int skipBlanks(CharacterBuffer *cb, int ch) {
 }
 
 
-#define PutLexLine(lines, dd) {                              \
-        if (lines!=0) {                                      \
-            PutLexToken(LINE_TOK,dd);                        \
-            PutLexToken(lines,dd);                           \
-        }                                                    \
-    }
-
 #define PassComment(ch, cb, dd) {                                       \
         char oldCh;                                                     \
         int line = cb->lineNumber;                                      \

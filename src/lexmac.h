@@ -1,79 +1,19 @@
-#ifdef XREF_HUGE
+/* Lexer macros for..? Passing compressed tokens to the parser */
 
+/* Common: */
+#define PutLexLine(lines, dd) {                              \
+        if (lines!=0) {                                      \
+            PutLexToken(LINE_TOK,dd);                        \
+            PutLexToken(lines,dd);                           \
+        }                                                    \
+    }
 
-/* HUGE only !!!!!, see normal compacted encoding after this */
+#ifndef XREF_HUGE
 
+/* NORMAL compacted tokens, HUGE compression is below */
 
-#define PutLexChar(xxx,dd) {*(dd)++ = xxx;}
-#define PutLexToken(xxx,dd) {\
-    *(dd)++ = ((unsigned)(xxx))%256;\
-    *(dd)++ = ((unsigned)(xxx))/256;\
-}
-#define PutLexShort(xxx,dd) PutLexToken(xxx,dd)
-#define PutLexInt(xxx,dd) {\
-    unsigned tmp;\
-    tmp = xxx;\
-    *(dd)++ = tmp%256; tmp /= 256;\
-    *(dd)++ = tmp%256; tmp /= 256;\
-    *(dd)++ = tmp%256; tmp /= 256;\
-    *(dd)++ = tmp%256; tmp /= 256;\
-}
-#define PutLexFilePos(xxx,dd) PutLexInt(xxx,dd)
-#define PutLexNumPos(xxx,dd) PutLexInt(xxx,dd)
-#define PutLexPosition(cfile,cline,idcoll,dd) {\
-    PutLexFilePos(cfile,dd);\
-    PutLexNumPos(cline,dd);\
-    PutLexNumPos(idcoll,dd);\
-/*fprintf(dumpOut,"push idp %d %d %d\n",cfile,cline,idcoll);*/\
-}
-/*#define PutLexPosition(cfile,cline,idcoll,dd) {}*/
-
-
-#define GetLexChar(xxx,dd) {xxx = *((unsigned char*)dd++);}
-#define GetLexToken(xxx,dd) {\
-    xxx = *((unsigned char*)dd++);\
-    xxx += 256 * *((unsigned char*)dd++);\
-}
-#define GetLexShort(xxx,dd) GetLexToken(xxx,dd)
-#define GetLexInt(xxx,dd) {\
-    xxx = *((unsigned char*)dd++);\
-    xxx += 256 * *((unsigned char*)dd++);\
-    xxx += 256 * 256 * *((unsigned char*)dd++);\
-    xxx += 256 * 256 * 256 * *((unsigned char*)dd++);\
-}
-#define GetLexFilePos(xxx,dd) GetLexInt(xxx,dd)
-#define GetLexNumPos(xxx,dd) GetLexInt(xxx,dd)
-#define GetLexPosition(pos,tmpcc) {\
-    GetLexFilePos(pos.file,tmpcc);\
-    GetLexNumPos(pos.line,tmpcc);\
-    GetLexNumPos(pos.coll,tmpcc);\
-}
-/*#define GetLexPosition(pos,tmpcc) {}*/
-
-
-#define NextLexChar(dd) (*((unsigned char*)dd))
-#define NextLexToken(dd) (\
-    *((unsigned char*)dd) \
-    + 256 * *(((unsigned char*)dd)+1)\
-)
-#define NextLexShort(dd) NextLexToken(dd)
-#define NextLexInt(dd) (\
-    *((unsigned char*)dd) \
-    + 256 * *(((unsigned char*)dd)+1)\
-    + 256 * 256 * *(((unsigned char*)dd)+2) \
-    + 256 * 256 * 256 * *(((unsigned char*)dd)+3)\
-)
-#define NextLexFilePos(dd) NextLexInt(dd)
-#define NextLexNumPos(dd) NextLexInt(dd)
-#define NextLexPosition(pos,tmpcc) {\
-    pos.file = NextLexFilePos(tmpcc);\
-    pos.line = NextLexNumPos(tmpcc+sizeof(short));\
-    pos.coll = NextLexNumPos(tmpcc+2*sizeof(short));\
-}
-
-#else
-
-/* not huge, but compacted */
+/* TODO Tests that exercise these and show the difference in
+   performance and compression. */
 
 #define PutLexChar(xxx,dd) {*(dd)++ = xxx;}
 #define PutLexToken(xxx,dd) {PutLexShort(xxx,dd);}
@@ -109,7 +49,7 @@
     PutLexCompacted(cfile,dd);\
     PutLexCompacted(cline,dd);\
     PutLexCompacted(idcoll,dd);\
-/*fprintf(dumpOut,"push idp %d %d %d\n",cfile,cline,idcoll);*/\
+    log_trace("push idp %d %d %d",cfile,cline,idcoll); \
 }
 /*#define PutLexPosition(cfile,cline,idcoll,dd) {}*/
 
@@ -164,6 +104,76 @@
 #define NextLexPosition(pos,tmpcc) {\
     char *tmptmpcc = tmpcc;\
     GetLexPosition(pos, tmptmpcc);\
+}
+
+#else
+
+/* HUGE only !!!!!, normal compacted encoding is above */
+
+#define PutLexChar(xxx,dd) {*(dd)++ = xxx;}
+#define PutLexToken(xxx,dd) {\
+    *(dd)++ = ((unsigned)(xxx))%256;\
+    *(dd)++ = ((unsigned)(xxx))/256;\
+}
+#define PutLexShort(xxx,dd) PutLexToken(xxx,dd)
+#define PutLexInt(xxx,dd) {\
+    unsigned tmp;\
+    tmp = xxx;\
+    *(dd)++ = tmp%256; tmp /= 256;\
+    *(dd)++ = tmp%256; tmp /= 256;\
+    *(dd)++ = tmp%256; tmp /= 256;\
+    *(dd)++ = tmp%256; tmp /= 256;\
+}
+#define PutLexFilePos(xxx,dd) PutLexInt(xxx,dd)
+#define PutLexNumPos(xxx,dd) PutLexInt(xxx,dd)
+#define PutLexPosition(cfile,cline,idcoll,dd) {\
+    PutLexFilePos(cfile,dd);\
+    PutLexNumPos(cline,dd);\
+    PutLexNumPos(idcoll,dd);\
+    log_trace("push idp %d %d %d",cfile,cline,idcoll); \
+}
+/*#define PutLexPosition(cfile,cline,idcoll,dd) {}*/
+
+#define GetLexChar(xxx,dd) {xxx = *((unsigned char*)dd++);}
+#define GetLexToken(xxx,dd) {\
+    xxx = *((unsigned char*)dd++);\
+    xxx += 256 * *((unsigned char*)dd++);\
+}
+#define GetLexShort(xxx,dd) GetLexToken(xxx,dd)
+#define GetLexInt(xxx,dd) {\
+    xxx = *((unsigned char*)dd++);\
+    xxx += 256 * *((unsigned char*)dd++);\
+    xxx += 256 * 256 * *((unsigned char*)dd++);\
+    xxx += 256 * 256 * 256 * *((unsigned char*)dd++);\
+}
+#define GetLexFilePos(xxx,dd) GetLexInt(xxx,dd)
+#define GetLexNumPos(xxx,dd) GetLexInt(xxx,dd)
+#define GetLexPosition(pos,tmpcc) {\
+    GetLexFilePos(pos.file,tmpcc);\
+    GetLexNumPos(pos.line,tmpcc);\
+    GetLexNumPos(pos.coll,tmpcc);\
+}
+/*#define GetLexPosition(pos,tmpcc) {}*/
+
+
+#define NextLexChar(dd) (*((unsigned char*)dd))
+#define NextLexToken(dd) (\
+    *((unsigned char*)dd) \
+    + 256 * *(((unsigned char*)dd)+1)\
+)
+#define NextLexShort(dd) NextLexToken(dd)
+#define NextLexInt(dd) (\
+    *((unsigned char*)dd) \
+    + 256 * *(((unsigned char*)dd)+1)\
+    + 256 * 256 * *(((unsigned char*)dd)+2) \
+    + 256 * 256 * 256 * *(((unsigned char*)dd)+3)\
+)
+#define NextLexFilePos(dd) NextLexInt(dd)
+#define NextLexNumPos(dd) NextLexInt(dd)
+#define NextLexPosition(pos,tmpcc) {\
+    pos.file = NextLexFilePos(tmpcc);\
+    pos.line = NextLexNumPos(tmpcc+sizeof(short));\
+    pos.coll = NextLexNumPos(tmpcc+2*sizeof(short));\
 }
 
 #endif
