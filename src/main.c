@@ -2142,7 +2142,6 @@ static void discoverBuiltinIncludePaths(void) {
     struct stat stt;
     char command[TMP_BUFF_SIZE];
     bool found = false;
-    int result;
 
     ENTER();
     if (LANGUAGE(LANG_C) || LANGUAGE(LANG_YACC)) {
@@ -2158,8 +2157,7 @@ static void discoverBuiltinIncludePaths(void) {
     /* Ensure output is in C locale */
     sprintf(command, "LANG=C %s -v -x %s -o /dev/null /dev/null >%s 2>&1", s_opt.compiler, lang, tempfile_name);
 
-    result = system(command);
-    if (result != 0) ;          /* Ignore return value */
+    (void)system(command);
 
     tempfile = openFile(tempfile_name, "r");
     if (tempfile==NULL) return;
