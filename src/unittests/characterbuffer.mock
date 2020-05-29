@@ -32,18 +32,6 @@ void initCharacterBuffer(CharacterBuffer *characterBuffer, FILE *file) {
 
 /* Here be mocks... */
 
-void closeCharacterBuffer(struct characterBuffer *buffer) {
-    mock(buffer);
-}
-
-voidpf zlibAlloc(voidpf opaque, uInt items, uInt size) {
-    return (voidpf)mock(opaque, items, size);
-}
-
-void zlibFree(voidpf opaque, voidpf address) {
-    mock(opaque, address);
-}
-
 bool refillBuffer(struct characterBuffer *buffer) {
     return (int) mock(buffer);
 }
@@ -52,6 +40,30 @@ void switchToZippedCharBuff(struct characterBuffer *buffer) {
     mock(buffer);
 }
 
+int columnPosition(CharacterBuffer *cb) {
+    return (int)mock(cb);
+}
+
+int absoluteFilePosition(CharacterBuffer *cb) {
+    return (int)mock(cb);
+}
+
+int skipBlanks(CharacterBuffer *cb, int ch) {
+    return (int)mock(cb, ch);
+}
+
 int skipNCharsInCharBuf(struct characterBuffer *buffer, unsigned count) {
     return (int) mock(buffer, count);
+}
+
+int getChar(CharacterBuffer *cb) {
+    return (int)mock(cb);
+}
+
+void ungetChar(CharacterBuffer *cb, int ch) {
+    (void)mock(cb, ch);
+}
+
+void closeCharacterBuffer(struct characterBuffer *buffer) {
+    mock(buffer);
 }

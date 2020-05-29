@@ -27,57 +27,6 @@ void gotOnLineCxRefs(Position *ps ) {
 /*                         Lexical Analysis                          */
 /* ***************************************************************** */
 
-static int columnPosition(CharacterBuffer *cb) {
-    return cb->next - cb->lineBegin + cb->columnOffset - 1;
-}
-
-
-static int absoluteFilePosition(CharacterBuffer *cb) {
-    return cb->filePos - (cb->end - cb->next) - 1;
-}
-
-
-static int getChar(CharacterBuffer *cb) {
-    int ch;
-    if (cb->next >= cb->end) {
-        /* No more characters in buffer? */
-        if (cb->isAtEOF) {
-            ch = -1;
-        } else if (!refillBuffer(cb)) {
-            ch = -1;
-            cb->isAtEOF = true;
-        } else {
-            /* TODO This never happens! Why? */
-            cb->lineBegin = cb->next;
-            ch = *((unsigned char *)cb->next);
-            cb->next++;
-        }
-    } else {
-        ch = * ((unsigned char *)cb->next);
-        cb->next++;
-    }
-
-    return ch;
-}
-
-
-static void ungetChar(CharacterBuffer *cb, int ch) {
-    if (ch == '\n')
-        log_trace("Ungetting ('\\n')");
-    else
-        log_trace("Ungetting ('%c')", ch);
-    *--(cb->next) = ch;
-}
-
-
-static int skipBlanks(CharacterBuffer *cb, int ch) {
-    while (ch==' '|| ch=='\t' || ch=='\004') {
-        ch = getChar(cb);
-    }
-    return ch;
-}
-
-
 static void passComment(CharacterBuffer *cb) {
     int ch;
     char oldCh;

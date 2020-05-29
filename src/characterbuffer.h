@@ -39,11 +39,19 @@ extern void fillCharacterBuffer(CharacterBuffer *characterBuffer,
                                 unsigned filePos,
                                 int fileNumber,
                                 char *lineBegin);
-extern void closeCharacterBuffer(CharacterBuffer *buffer);
-extern voidpf zlibAlloc(voidpf opaque, uInt items, uInt size);
-extern void zlibFree(voidpf opaque, voidpf address);
+
 extern bool refillBuffer(CharacterBuffer *buffer);
 extern void switchToZippedCharBuff(CharacterBuffer *buffer);
+
+extern int columnPosition(CharacterBuffer *cb);
+extern int absoluteFilePosition(CharacterBuffer *cb);
+
+extern int skipBlanks(CharacterBuffer *cb, int ch);
 extern int skipNCharsInCharBuf(CharacterBuffer *buffer, unsigned count);
+
+extern int getChar(CharacterBuffer *cb);
+extern void ungetChar(CharacterBuffer *cb, int ch);
+
+extern void closeCharacterBuffer(CharacterBuffer *buffer);
 
 #endif
