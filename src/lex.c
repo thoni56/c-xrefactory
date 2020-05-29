@@ -262,7 +262,6 @@ bool getLexBuf(S_lexBuf *lb) {
 
     cb = &lb->buffer;
     cb->lineNumber = cb->lineNumber;
-
     cb->fileNumber = cb->fileNumber;
 
     ch = getChar(cb);
@@ -663,7 +662,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     ch = getChar(cb);
                     goto nextLexem;
                 } else if (ch=='*') {
-                    int javadoc=0;
+                    bool isJavadoc=false;
                     CommentaryBegRef(cb);
                     ch = getChar(cb);
                     if (ch == '&') {
@@ -672,7 +671,7 @@ bool getLexBuf(S_lexBuf *lb) {
                         goto nextLexem;
                     } else {
                         if (ch=='*' && LANGUAGE(LANG_JAVA))
-                            javadoc = 1;
+                            isJavadoc = true;
                         ungetChar(cb, ch);
                         ch = '*';
                     }   /* !!! COPY BLOCK TO '/n' */
@@ -681,7 +680,7 @@ bool getLexBuf(S_lexBuf *lb) {
                     PutLexLine(cb->lineNumber-line,dd);
                     ch = getChar(cb);
 
-                    CommentaryEndRef(cb, javadoc);
+                    CommentaryEndRef(cb, isJavadoc);
                     goto nextLexem;
                 } else if (ch=='/' && s_opt.cpp_comment) {
                     /*  ******* a // comment ******* */
