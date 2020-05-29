@@ -1178,7 +1178,7 @@ endOfFile:;
 /* ***************************************************************** */
 
 #define AddHtmlCppReference(pos) {\
-    if (s_opt.taskRegime==RegimeHtmlGenerate && s_opt.htmlNoColors==0) {\
+    if (s_opt.taskRegime==RegimeHtmlGenerate && !s_opt.htmlNoColors) {\
         addTrivialCxReference("_",TypeCppAny,StorageDefault,&pos,UsageUsed);\
     }\
 }
@@ -1917,7 +1917,7 @@ static char constant[50];
 #define CHECK_ID_FOR_KEYWORD(sd,idposa) {\
     if (sd->bits.symType == TypeKeyword) {\
         SET_IDENTIFIER_YYLVAL(sd->name, sd, *idposa);\
-        if (s_opt.taskRegime==RegimeHtmlGenerate && s_opt.htmlNoColors==0) {\
+        if (s_opt.taskRegime==RegimeHtmlGenerate && !s_opt.htmlNoColors) {\
             char ttt[TMP_STRING_SIZE];\
             sprintf(ttt,"%s-%x", sd->name, idposa->file);\
             addTrivialCxReference(ttt, TypeKeyword,StorageDefault, idposa, UsageUsed);\

@@ -195,7 +195,7 @@ static void passComment(CharacterBuffer *cb) {
     }
 
 #define CommentaryBegRef(cb) {                                          \
-        if (s_opt.taskRegime==RegimeHtmlGenerate && s_opt.htmlNoColors==0) { \
+        if (s_opt.taskRegime==RegimeHtmlGenerate && !s_opt.htmlNoColors) { \
             int lcoll;                                                  \
             Position pos;                                               \
             char ttt[TMP_STRING_SIZE];                                  \
@@ -214,7 +214,7 @@ static void passComment(CharacterBuffer *cb) {
             lcoll = columnPosition(cb); \
             fillPosition(&pos, cb->fileNumber, cb->lineNumber, lcoll);  \
             sprintf(ttt,"%x/*", cb->fileNumber);                        \
-            if (s_opt.htmlNoColors==0) {                                \
+            if (!s_opt.htmlNoColors) {                                  \
                 addTrivialCxReference(ttt,TypeComment,StorageDefault, &pos, UsageUsed); \
             }                                                           \
             if (jdoc) {                                                 \

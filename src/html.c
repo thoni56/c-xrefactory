@@ -1463,7 +1463,7 @@ static void htmlPosProcess( FILE **fff,
         suf0 = "</font>";//"</B>";
     } else {
         if (cri->b.symType == TypeCppIfElse) {
-            if (s_opt.htmlNoColors==0) {
+            if (!s_opt.htmlNoColors) {
                 prf0 = "<font color=\"brun\">";
                 suf0 = "</font>";
             }

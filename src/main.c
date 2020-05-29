@@ -657,7 +657,7 @@ static int processHOption(int *ii, int argc, char **argv) {
         sscanf(argv[i]+9,"%d",&s_opt.tabulator);
     }
     else if (strcmp(argv[i],"-htmllinenums")==0)    s_opt.htmlLineNums = 1;
-    else if (strcmp(argv[i],"-htmlnocolors")==0)    s_opt.htmlNoColors = 1;
+    else if (strcmp(argv[i],"-htmlnocolors")==0)    s_opt.htmlNoColors = true;
     else if (strcmp(argv[i],"-htmlgxlist")==0)  s_opt.htmlglobalx = true;
     else if (strcmp(argv[i],"-htmllxlist")==0)  s_opt.htmllocalx = true;
     else if (strcmp(argv[i],"-htmlrichlist")==0)    {

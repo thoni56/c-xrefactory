@@ -332,7 +332,7 @@ S_options s_initOpt = {
     "",                         // htmlCutPath
     0,                          // htmlCutPathLen
     0,                          /* htmlLineNums */
-    0,                          /* htmlNoColors */
+    false,                      /* htmlNoColors */
     NULL,                       /* htmlZipCommand */
     false,                      /* htmlFunSeparate */
     false,                      /* htmlglobalx */

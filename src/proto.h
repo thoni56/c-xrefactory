@@ -1011,7 +1011,7 @@ typedef struct options {
     char *htmlCutPath;
     int htmlCutPathLen;
     int htmlLineNums;
-    int htmlNoColors;
+    bool htmlNoColors;
     char *htmlZipCommand;
     bool htmlFunSeparate;
     bool htmlglobalx;
