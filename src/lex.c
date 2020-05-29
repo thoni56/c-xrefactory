@@ -877,8 +877,7 @@ bool getLexBuf(S_lexBuf *lb) {
                 if (s_opt.server_operation == OLO_EXTRACT && lb->index>=2) {
                     ch = skipBlanks(cb, ch);
                     pos1 = absoluteFilePosition(cb);
-                    //&idcoll = columnPosition(cb);
-                    //&fprintf(dumpOut,":pos1==%d, olCursorPos==%d, olMarkPos==%d\n",pos1,s_opt.olCursorPos,s_opt.olMarkPos);
+                    log_trace(":pos1==%d, olCursorPos==%d, olMarkPos==%d",pos1,s_opt.olCursorPos,s_opt.olMarkPos);
                     // all this is very, very HACK!!!
                     if (pos1 >= s_opt.olCursorPos && ! s_cps.marker1Flag) {
                         if (LANGUAGE(LANG_JAVA)) parChar = ';';
@@ -930,12 +929,11 @@ bool getLexBuf(S_lexBuf *lb) {
                     if (currentLexemPosition < s_opt.olCursorPos
                         && (apos >= s_opt.olCursorPos
                             || (ch == -1 && apos+1 == s_opt.olCursorPos))) {
-                        //&sprintf(tmpBuff,"currentLexemPosition, s_opt.olCursorPos, ABS_FILE_POS, ch == %d, %d, %d, %d\n",currentLexemPosition, s_opt.olCursorPos, apos, ch);ppcGenTmpBuff();
-                        //&fprintf(dumpOut,":check\n");fflush(dumpOut);
+                        log_trace("currentLexemPosition, s_opt.olCursorPos, ABS_FILE_POS, ch == %d, %d, %d, %d",currentLexemPosition, s_opt.olCursorPos, apos, ch);
                         lastlex = NextLexToken(lexStartDd);
                         if (lastlex == IDENTIFIER) {
                             len = s_opt.olCursorPos-currentLexemPosition;
-                            //&fprintf(dumpOut,":check %s[%d] <-> %d\n", lexStartDd+TOKEN_SIZE, len,strlen(lexStartDd+TOKEN_SIZE));fflush(dumpOut);
+                            log_trace(":check %s[%d] <-> %d", lexStartDd+TOKEN_SIZE, len,strlen(lexStartDd+TOKEN_SIZE));
                             if (len <= strlen(lexStartDd+TOKEN_SIZE)) {
                                 if (s_opt.server_operation == OLO_SEARCH) {
                                     char *ddd;
@@ -948,7 +946,7 @@ bool getLexBuf(S_lexBuf *lb) {
                                     PutLexChar(0,dd);
                                     PutLexPosition(ps->file,ps->line,ps->col,dd);
                                 }
-                                //&fprintf(dumpOut,":ress %s\n", lexStartDd+TOKEN_SIZE);fflush(dumpOut);
+                                log_trace(":ress %s", lexStartDd+TOKEN_SIZE);
                             } else {
                                 // completion after an identifier
                                 PUT_EMPTY_COMPLETION_ID(cb, dd,
@@ -966,7 +964,6 @@ bool getLexBuf(S_lexBuf *lb) {
                     }
                     // TODO, make this in a more standard way, !!!
                 } else {
-                    //&fprintf(dumpOut,":testing %d <= %d <= %d\n", currentLexemPosition, s_opt.olCursorPos, absoluteFilePosition(cb));
                     if (currentLexemPosition <= s_opt.olCursorPos
                         && absoluteFilePosition(cb) >= s_opt.olCursorPos) {
                         gotOnLineCxRefs(ps);
