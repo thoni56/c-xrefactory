@@ -1,5 +1,5 @@
-#ifndef LEX_H
-#define LEX_H
+#ifndef _LEX_H_
+#define _LEX_H_
 
 #include <stdbool.h>
 

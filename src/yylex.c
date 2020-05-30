@@ -1,7 +1,7 @@
 #include "yylex.h"
 
-#include "lexem.h"
 #include "commons.h"
+#include "lexem.h"
 #include "lex.h"
 #include "lexmac.h"
 #include "globals.h"
@@ -241,7 +241,7 @@ void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fil
     int     prefixLength, bufferSize, offset;
     char	*bufferStart;
 
-    /* TODO: perhaps this polymorphism should be handles some other way... */
+    /* TODO: perhaps this polymorphism should be handled some other way... */
     prefixLength = strlen(prefix);
     if (editorBuffer != NULL) {
         // read buffer

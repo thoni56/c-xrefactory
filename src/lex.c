@@ -1,6 +1,8 @@
 #include "lex.h"
 #include "lexmac.h"
 
+#include "lexem.h"
+
 #include "globals.h"
 #include "commons.h"
 #include "parsers.h"
@@ -54,21 +56,26 @@ static void passComment(CharacterBuffer *cb) {
 }
 
 
-#define ConType(ch, cb, rlex) {                                         \
-        rlex = CONSTANT;                                                \
-        if (LANGUAGE(LANG_JAVA)) {                                      \
-            if (ch=='l' || ch=='L') {                                   \
-                rlex = LONG_CONSTANT;                                   \
-                ch = getChar(cb);                                       \
-            }                                                           \
-        } else {                                                        \
-            for(; ch=='l'||ch=='L'||ch=='u'||ch=='U'; ){                \
-                if (ch=='l' || ch=='L')                                 \
-                    rlex = LONG_CONSTANT;                               \
-                ch = getChar(cb);                                       \
-            }                                                           \
-        }                                                               \
+static Lexem constantType(CharacterBuffer *cb, int *ch) {
+    Lexem rlex;
+
+    rlex = CONSTANT;
+    if (LANGUAGE(LANG_JAVA)) {
+        if (*ch=='l' || *ch=='L') {
+            rlex = LONG_CONSTANT;
+            *ch = getChar(cb);
+        }
+    } else {
+        for(; *ch=='l'||*ch=='L'||*ch=='u'||*ch=='U'; ){
+            if (*ch=='l' || *ch=='L')
+                rlex = LONG_CONSTANT;
+            *ch = getChar(cb);
+        }
     }
+
+    return rlex;
+}
+
 
 #define FloatingPointConstant(ch, cb, lexem) {                          \
         lexem = DOUBLE_CONSTANT;                                        \
@@ -195,7 +202,7 @@ bool getLexBuf(LexemBuffer *lb) {
     CharacterBuffer *cb;
     char *cc, *dd, *lmax, *lexStartDd;
     unsigned chval=0;
-    int rlex;
+    Lexem rlex;
     int line, size, lexStartCol, lexStartFilePos, column;
 
     /* first test whether the input is cached */
@@ -264,7 +271,7 @@ bool getLexBuf(LexemBuffer *lb) {
                 goto nextLexem;
             }
             /* integer */
-            ConType(ch, cb, rlex);
+            rlex = constantType(cb, &ch);
             PutLexToken(rlex,dd);
             PutLexInt(val,dd);
             PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
