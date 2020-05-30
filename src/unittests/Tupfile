@@ -1,0 +1,4 @@
+CFLAGS += -g -Wall -Wno-char-subscripts -fPIC -I.. -I/usr/local/include
+: foreach *_tests.c |> gcc $(CFLAGS) -c %f -o %o |> %B.o
+: foreach ../*.c |> gcc $(CFLAGS) -c %f -o %o |> %B.o
+: symboltable_tests.c | symboltable.o hash.o |> gcc -shared %f -o %o -L/usr/local/lib -lcgreen |> %B.so
