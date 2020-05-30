@@ -330,7 +330,7 @@ static Lexem getLexA(char **previousLexem) {
             cInput = macroStack[--macroStackIndex];
         } else if (inputType == INPUT_NORMAL) {
             setCFileConsistency();
-            if (!getLexBuf(&currentFile.lexBuffer))
+            if (!getLexem(&currentFile.lexBuffer))
                 return -2; //goto endOfFile;
             setCInputConsistency();
         } else {

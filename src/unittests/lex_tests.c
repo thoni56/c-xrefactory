@@ -32,5 +32,5 @@ Ensure(Lex, will_signal_false_for_empty_lexbuffer) {
 
     initCharacterBuffer(&lexBuffer.buffer, NULL);
 
-    assert_that(getLexBuf(&lexBuffer), is_false);
+    assert_that(getLexem(&lexBuffer), is_false);
 }

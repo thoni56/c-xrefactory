@@ -60,11 +60,11 @@ Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {
     char *definition = (char *)malloc(strlen(DEFINE)+1);
     strcpy(definition, DEFINE);
 
-    expect(getLexBuf, when(buffer, is_equal_to(&currentFile.lexBuffer)),
+    expect(getLexem, when(buffer, is_equal_to(&currentFile.lexBuffer)),
            will_return(1), with_side_effect(setup_lexBuffer_for_reading, NULL));
     expect(setGlobalFileDepNames, when(iname, is_equal_to_string(definition)),
            will_set_contents_of_parameter(pp_name, &definition, sizeof(char *)));
-    expect(getLexBuf, when(buffer, is_equal_to(&currentFile.lexBuffer)),
+    expect(getLexem, when(buffer, is_equal_to(&currentFile.lexBuffer)),
            will_return(0));
 
     /* This is the confirmation that there is a symbol p with a

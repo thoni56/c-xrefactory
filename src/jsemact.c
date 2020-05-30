@@ -1873,7 +1873,7 @@ TypeModifier *javaClassNameType(IdList *typeName) {
 }
 
 TypeModifier *javaNestedNewType(Symbol *sym, Id *thenew,
-                                  IdList *idl) {
+                                IdList *idl) {
     IdList       d1,d2;
     TypeModifier     *res;
     char                *id2;

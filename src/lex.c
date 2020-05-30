@@ -197,7 +197,7 @@ static Lexem constantType(CharacterBuffer *cb, int *ch) {
     }
 
 
-bool getLexBuf(LexemBuffer *lb) {
+bool getLexem(LexemBuffer *lb) {
     int ch;
     CharacterBuffer *cb;
     char *cc, *dd, *lmax, *lexStartDd;
