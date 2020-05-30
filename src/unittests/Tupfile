@@ -1,4 +1,20 @@
 CFLAGS += -g -Wall -Wno-char-subscripts -fPIC -I.. -I/usr/local/include
+LIBS = -L/usr/local/lib -lcgreen
 : foreach *_tests.c |> gcc $(CFLAGS) -c %f -o %o |> %B.o
 : foreach ../*.c |> gcc $(CFLAGS) -c %f -o %o |> %B.o
-: symboltable_tests.c | symboltable.o hash.o |> gcc -shared %f -o %o -L/usr/local/lib -lcgreen |> %B.so
+: symboltable_tests.o symboltable.o hash.o |> gcc -shared %f -o %o $(LIBS) |> symboltable_tests.so
+: jslsemact_tests.o jslsemact.o symbol.o log.o id.o |> gcc -shared %f -o %o $(LIBS) |> jslsemact_tests.so
+: olcxtab_tests.o olcxtab.o hash.o |> gcc -shared %f -o %o $(LIBS) |> olcxtab_tests.so
+: filetab_tests.o filetab.o hash.o fileitem.o |> gcc -shared %f -o %o $(LIBS) |> filetab_tests.so
+: symbol_tests.o symbol.o |> gcc -shared %f -o %o $(LIBS) |> symbol_tests.so
+: semact_tests.o semact.o protocol.o enumTxt.o hash.o position.o |> gcc -shared %f -o %o $(LIBS) |> semact_tests.so
+: misc_tests.o misc.o protocol.o enumTxt.o |> gcc -shared %f -o %o $(LIBS) |> misc_tests.so
+: commons_tests.o commons.o protocol.o enumTxt.o log.o |> gcc -shared %f -o %o $(LIBS) |> commons_tests.so
+: editor_tests.o editor.o position.o |> gcc -shared %f -o %o $(LIBS) |> editor_tests.so
+: cxref_tests.o cxref.o protocol.o enumTxt.o hash.o position.o |> gcc -shared %f -o %o $(LIBS) |> cxref_tests.so
+: options_tests.o options.o  protocol.o log.o position.o memory.o |> gcc -shared %f -o %o $(LIBS) |> options_tests.so
+: yylex_tests.o yylex.o protocol.o log.o position.o memory.o filedescriptor.o id.o filetab.o hash.o fileitem.o symboltable.o macroargumenttable.o symbol.o |> gcc -shared %f -o %o $(LIBS) |> yylex_tests.so
+: lex_tests.o log.o position.o characterbuffer.o |> gcc -shared %f $(LIBS) -o %o |> lex_tests.so
+: cxfile_tests.o protocol.o log.o position.o |> gcc -shared %f $(LIBS) -o %o |> cxfile_tests.so
+: extract_tests.o protocol.o log.o position.o memory.o id.o |> gcc -shared %f $(LIBS) -o %o |> extract_tests.so
+: foreach *.so |> cgreen-runner %f |>
