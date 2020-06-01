@@ -5,3 +5,4 @@ src/tmp-*.g
 .vscode
 #*#
 coverage
+.tup

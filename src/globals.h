@@ -42,8 +42,6 @@ extern UsageBits s_noUsage;
 extern int s_progressFactor;
 extern int s_progressOffset;
 
-extern z_stream s_defaultZStream;
-
 extern int s_cxResizingBlocked;
 extern S_counters s_count;
 extern unsigned s_recFindCl;

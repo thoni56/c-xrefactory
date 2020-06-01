@@ -2,6 +2,8 @@
 #include "characterbuffer.h"
 #include <cgreen/mocks.h>
 
+z_stream s_defaultZStream = {NULL,};
+
 /* We never want to mock init-functions... */
 /* NB: copies of the actual functions... */
 void fillCharacterBuffer(CharacterBuffer *characterBuffer,

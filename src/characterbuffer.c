@@ -1,11 +1,14 @@
 #include "characterbuffer.h"
 
-#include "globals.h"            /* for s_defaultZStream */
+#include "globals.h"
 
 #include "commons.h"            /* error() */
 #include "fileio.h"
 
 #include "log.h"
+
+
+z_stream s_defaultZStream = {NULL,};
 
 
 void fillCharacterBuffer(CharacterBuffer *characterBuffer,

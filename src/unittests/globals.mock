@@ -36,8 +36,6 @@ FILE *ccOut;
 FILE *dumpOut = NULL;
 FILE *errOut=NULL;
 
-z_stream s_defaultZStream = {NULL,};
-
 TypeModifier * s_preCreatedTypesTable[MAX_TYPE];
 TypeModifier * s_preCrPtr1TypesTab[MAX_TYPE];
 TypeModifier * s_preCrPtr2TypesTab[MAX_TYPE];

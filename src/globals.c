@@ -29,8 +29,6 @@ Reference s_noRef = {{UsageNone, 0, }, {-1, 0, 0}, NULL};
 int s_progressOffset=0;
 int s_progressFactor=1;
 
-z_stream s_defaultZStream = {NULL,};
-
 S_counters s_count;
 unsigned s_recFindCl = 1;
 
