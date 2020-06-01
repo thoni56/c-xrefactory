@@ -203,7 +203,7 @@ bool getLexem(LexemBuffer *lb) {
     char *cc, *dd, *lmax, *lexStartDd;
     unsigned chval=0;
     Lexem rlex;
-    int line, size, lexStartCol, lexStartFilePos, column;
+    int line, size, lexemStartingColumn, lexStartFilePos, column;
 
     /* first test whether the input is cached */
     if (s_cache.activeCache && inStacki==0 && macroStackIndex==0) {
@@ -227,8 +227,8 @@ bool getLexem(LexemBuffer *lb) {
         NOTE_NEW_LEXEM_POSITION(cb, lb);
         /*  yytext = ccc; */
         lexStartDd = dd;
-        lexStartCol = columnPosition(cb);
-        log_trace("lexStartCol = %d", lexStartCol);
+        lexemStartingColumn = columnPosition(cb);
+        log_trace("lexStartCol = %d", lexemStartingColumn);
         if (ch == '_' || isalpha(ch) || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))) {
             ProcessIdentifier(ch, cb, dd, lab2);
             goto nextLexem;
@@ -266,7 +266,7 @@ bool getLexem(LexemBuffer *lb) {
                 /* floating point */
                 FloatingPointConstant(ch, cb, rlex);
                 PutLexToken(rlex,dd);
-                PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                 PutLexInt(absoluteFilePosition(cb)-lexStartFilePos, dd);
                 goto nextLexem;
             }
@@ -274,7 +274,7 @@ bool getLexem(LexemBuffer *lb) {
             rlex = constantType(cb, &ch);
             PutLexToken(rlex,dd);
             PutLexInt(val,dd);
-            PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+            PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
             PutLexInt(absoluteFilePosition(cb)-lexStartFilePos, dd);
             goto nextLexem;
         } else switch (ch) {
@@ -287,14 +287,14 @@ bool getLexem(LexemBuffer *lb) {
                     if (ch == '.') {
                         ch = getChar(cb);
                         PutLexToken(ELIPSIS,dd);
-                        PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                        PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                         goto nextLexem;
                     } else {
                         ungetChar(cb, ch);
                         ch = '.';
                     }
                     PutLexToken('.',dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     goto nextLexem;
                 } else if (isdigit(ch)) {
                     /* floating point constant */
@@ -302,12 +302,12 @@ bool getLexem(LexemBuffer *lb) {
                     ch = '.';
                     FloatingPointConstant(ch, cb, rlex);
                     PutLexToken(rlex,dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     PutLexInt(absoluteFilePosition(cb)-lexStartFilePos, dd);
                     goto nextLexem;
                 } else {
                     PutLexToken('.',dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     goto nextLexem;
                 }
 
@@ -315,21 +315,21 @@ bool getLexem(LexemBuffer *lb) {
                 ch = getChar(cb);
                 if (ch=='=') {
                     PutLexToken(SUB_ASSIGN,dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     ch = getChar(cb);
                     goto nextLexem;
                 } else if (ch=='-') {
                     PutLexToken(DEC_OP,dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     ch = getChar(cb);
                     goto nextLexem;
                 } else if (ch=='>' && LANGUAGE(LANG_C|LANG_YACC)) {
                     ch = getChar(cb);
                     PutLexToken(PTR_OP,dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     goto nextLexem;
                 } else {PutLexToken('-',dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     goto nextLexem;
                 }
 
@@ -337,17 +337,17 @@ bool getLexem(LexemBuffer *lb) {
                 ch = getChar(cb);
                 if (ch == '=') {
                     PutLexToken(ADD_ASSIGN,dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     ch = getChar(cb);
                     goto nextLexem;
                 } else if (ch == '+') {
                     PutLexToken(INC_OP,dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     ch = getChar(cb);
                     goto nextLexem;
                 } else {
                     PutLexToken('+',dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     goto nextLexem;
                 }
 
@@ -359,32 +359,32 @@ bool getLexem(LexemBuffer *lb) {
                         ch = getChar(cb);
                         if(ch=='=') {
                             PutLexToken(URIGHT_ASSIGN,dd);
-                            PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                            PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                             ch = getChar(cb);
                             goto nextLexem;
                         } else {
                             PutLexToken(URIGHT_OP,dd);
-                            PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                            PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                             goto nextLexem;
                         }
                     } else if(ch=='=') {
                         PutLexToken(RIGHT_ASSIGN,dd);
-                        PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                        PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                         ch = getChar(cb);
                         goto nextLexem;
                     } else {
                         PutLexToken(RIGHT_OP,dd);
-                        PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                        PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                         goto nextLexem;
                     }
                 } else if (ch == '=') {
                     PutLexToken(GE_OP,dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     ch = getChar(cb);
                     goto nextLexem;
                 } else {
                     PutLexToken('>',dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     goto nextLexem;
                 }
 
@@ -394,22 +394,22 @@ bool getLexem(LexemBuffer *lb) {
                     ch = getChar(cb);
                     if(ch=='=') {
                         PutLexToken(LEFT_ASSIGN,dd);
-                        PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                        PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                         ch = getChar(cb);
                         goto nextLexem;
                     } else {
                         PutLexToken(LEFT_OP,dd);
-                        PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                        PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                         goto nextLexem;
                     }
                 } else if (ch == '=') {
                     PutLexToken(LE_OP,dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     ch = getChar(cb);
                     goto nextLexem;
                 } else {
                     PutLexToken('<',dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     goto nextLexem;
                 }
 
@@ -417,12 +417,12 @@ bool getLexem(LexemBuffer *lb) {
                 ch = getChar(cb);
                 if (ch == '=') {
                     PutLexToken(MUL_ASSIGN,dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     ch = getChar(cb);
                     goto nextLexem;
                 } else {
                     PutLexToken('*',dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     goto nextLexem;
                 }
 
@@ -430,27 +430,27 @@ bool getLexem(LexemBuffer *lb) {
                 ch = getChar(cb);
                 if (ch == '=') {
                     PutLexToken(MOD_ASSIGN,dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     ch = getChar(cb);
                     goto nextLexem;
                 }
                 /*&
                   else if (LANGUAGE(LANG_YACC) && ch == '{') {
                       PutLexToken(YACC_PERC_LPAR,dd);
-                      PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                      PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                       ch = getChar(cb);
                       goto nextLexem;
                   }
                   else if (LANGUAGE(LANG_YACC) && ch == '}') {
                       PutLexToken(YACC_PERC_RPAR,dd);
-                      PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                      PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                       ch = getChar(cb);
                       goto nextLexem;
                   }
                   &*/
                 else {
                     PutLexToken('%',dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     goto nextLexem;
                 }
 
@@ -458,12 +458,12 @@ bool getLexem(LexemBuffer *lb) {
                 ch = getChar(cb);
                 if (ch == '=') {
                     PutLexToken(AND_ASSIGN,dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     ch = getChar(cb);
                     goto nextLexem;
                 } else if (ch == '&') {
                     PutLexToken(AND_OP,dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     ch = getChar(cb);
                     goto nextLexem;
                 }
@@ -478,12 +478,12 @@ bool getLexem(LexemBuffer *lb) {
                         ungetChar(cb, ch);
                         ch = '*';
                         PutLexToken('&',dd);
-                        PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                        PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                         goto nextLexem;
                     }
                 } else {
                     PutLexToken('&',dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     goto nextLexem;
                 }
 
@@ -491,12 +491,12 @@ bool getLexem(LexemBuffer *lb) {
                 ch = getChar(cb);
                 if (ch == '=') {
                     PutLexToken(XOR_ASSIGN,dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     ch = getChar(cb);
                     goto nextLexem;
                 } else {
                     PutLexToken('^',dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     goto nextLexem;
                 }
 
@@ -504,15 +504,15 @@ bool getLexem(LexemBuffer *lb) {
                 ch = getChar(cb);
                 if (ch == '=') {
                     PutLexToken(OR_ASSIGN,dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     ch = getChar(cb);
                 } else if (ch == '|') {
                     PutLexToken(OR_OP,dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     ch = getChar(cb);
                 } else {
                     PutLexToken('|',dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                 }
                 goto nextLexem;
 
@@ -520,11 +520,11 @@ bool getLexem(LexemBuffer *lb) {
                 ch = getChar(cb);
                 if (ch == '=') {
                     PutLexToken(EQ_OP,dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     ch = getChar(cb);
                 } else {
                     PutLexToken('=',dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                 }
                 goto nextLexem;
 
@@ -532,17 +532,17 @@ bool getLexem(LexemBuffer *lb) {
                 ch = getChar(cb);
                 if (ch == '=') {
                     PutLexToken(NE_OP,dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     ch = getChar(cb);
                 } else {PutLexToken('!',dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                 }
                 goto nextLexem;
 
             case ':':
                 ch = getChar(cb);
                 PutLexToken(':',dd);
-                PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                 goto nextLexem;
 
             case '\'':
@@ -560,7 +560,7 @@ bool getLexem(LexemBuffer *lb) {
                 if (ch=='\'') {
                     PutLexToken(CHAR_LITERAL,dd);
                     PutLexInt(chval,dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     PutLexInt(absoluteFilePosition(cb)-lexStartFilePos, dd);
                     ch = getChar(cb);
                 }
@@ -602,7 +602,7 @@ bool getLexem(LexemBuffer *lb) {
                     warningMessage(ERR_ST,"string constant through EOF");
                 }
                 PutLexChar(0,dd);
-                PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                 PutLexLine(cb->lineNumber-line,dd);
                 ch = getChar(cb);
                 goto nextLexem;
@@ -611,7 +611,7 @@ bool getLexem(LexemBuffer *lb) {
                 ch = getChar(cb);
                 if (ch == '=') {
                     PutLexToken(DIV_ASSIGN,dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     ch = getChar(cb);
                     goto nextLexem;
                 } else if (ch=='*') {
@@ -662,7 +662,7 @@ bool getLexem(LexemBuffer *lb) {
                     PutLexLine(cb->lineNumber-line,dd);
                 } else {
                     PutLexToken('/',dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                 }
                 goto nextLexem;
 
@@ -676,7 +676,7 @@ bool getLexem(LexemBuffer *lb) {
                     ch = getChar(cb);
                 } else {
                     PutLexToken('\\',dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                 }
                 goto nextLexem;
 
@@ -721,7 +721,7 @@ bool getLexem(LexemBuffer *lb) {
                     }
                 }
                 PutLexToken('\n',dd);
-                PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                 if (ch == '#' && LANGUAGE(LANG_C|LANG_YACC)) {
                     NOTE_NEW_LEXEM_POSITION(cb, lb);
                     //&        HandleCppToken(ch, cb, dd, cb->next, cb->fileNumber, cb->lineNumber, cb->lineBegin);
@@ -801,10 +801,10 @@ bool getLexem(LexemBuffer *lb) {
                 if (ch == '#') {
                     ch = getChar(cb);
                     PutLexToken(CPP_COLLATION,dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                 } else {
                     PutLexToken('#',dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                 }
                 goto nextLexem;
 
@@ -815,7 +815,7 @@ bool getLexem(LexemBuffer *lb) {
             default:
                 if (ch >= 32) {         /* small chars ignored */
                     PutLexToken(ch,dd);
-                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexStartCol, dd);
+                    PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                 }
                 ch = getChar(cb);
                 goto nextLexem;
