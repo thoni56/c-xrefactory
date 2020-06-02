@@ -5,6 +5,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
+* TODO Unittests for memory module
 * TODO Remove FULL/FAST update, we always want correct info?
 There are a number of update modes available from the command line, 'fupdate',
 'updatem', 'update', 'fastupdate' and then there is opt.updateOnlyModifiedFiles
