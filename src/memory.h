@@ -189,6 +189,7 @@ extern char tmpWorkMemory[];
 extern int tmpWorkMemoryi;
 extern char ftMemory[];
 extern int ftMemoryi;
+extern char tmpMemory[];
 
 
 /* Inject some error functions to remove linkage dependency */

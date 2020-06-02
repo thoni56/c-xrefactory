@@ -17,6 +17,8 @@ int tmpWorkMemoryi = 0;
 char ftMemory[SIZE_ftMemory];
 int ftMemoryi = 0;
 
+char tmpMemory[SIZE_TMP_MEM];
+
 
 /* Inject the function to call when fatalErrors occur */
 static void (*fatalError)(int errCode, char *mess, int exitStatus);

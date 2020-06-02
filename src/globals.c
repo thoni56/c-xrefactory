@@ -72,7 +72,6 @@ Completions s_completions;
 
 S_fileTab s_fileTab;
 
-char tmpMemory[SIZE_TMP_MEM];
 char ppmMemory[SIZE_ppmMemory];
 char mbMemory[SIZE_mbMemory];
 

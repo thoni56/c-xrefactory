@@ -153,7 +153,6 @@ extern char *s_editCommunicationString;
 
 extern time_t s_expiration;
 
-extern char tmpMemory[SIZE_TMP_MEM];
 extern char ppmMemory[SIZE_ppmMemory];
 extern int ppmMemoryi;
 

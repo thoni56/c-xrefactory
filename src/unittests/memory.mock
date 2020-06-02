@@ -11,6 +11,8 @@ int tmpWorkMemoryi = 0;
 char ftMemory[SIZE_ftMemory];
 int ftMemoryi = 0;
 
+char tmpMemory[SIZE_TMP_MEM];
+
 
 void memoryResize(void) {
   mock();
