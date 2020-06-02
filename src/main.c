@@ -3336,7 +3336,8 @@ static void mainEditServer(int argc, char **argv) {
         //editorCloseBufferIfNotUsedElsewhere(s_input_file_name);
         editorCloseAllBuffers();
         closeMainOutputFile();
-        if (s_opt.server_operation == OLO_EXTRACT) s_cache.cpi = 2; // !!!! no cache
+        if (s_opt.server_operation == OLO_EXTRACT)
+            s_cache.cpi = 2; // !!!! no cache
         if (s_opt.last_message != NULL) {
             fprintf(ccOut,"%s",s_opt.last_message);
             fflush(ccOut);
