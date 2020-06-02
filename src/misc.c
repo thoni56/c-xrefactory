@@ -1263,15 +1263,17 @@ int mapDirectoryFiles(
     return(res);
 }
 
-static char *concatFNameInTmpMemory( char *dirname , char *packfile) {
+static char *concatFNameInTmpMemory(char *directoryName, char *packageFilename) {
     char *tt, *fname;
     fname = tmpMemory;
-    tt = strmcpy(fname, dirname);
-    if (*packfile) {
+    tt = strmcpy(fname, directoryName);
+    if (*packageFilename) {
         *tt = FILE_PATH_SEPARATOR;
-        strcpy(tt+1,packfile);
+        strcpy(tt+1, packageFilename);
 #if defined (__WIN32__)
-        for(s=tt+1; *s; s++) if (*s=='/') *s=FILE_PATH_SEPARATOR;
+        for(s=tt+1; *s; s++)
+            if (*s=='/')
+                *s = FILE_PATH_SEPARATOR;
 #endif
     }
     return(fname);
@@ -1365,7 +1367,7 @@ void javaGetPackageNameFromSourceFileName(char *src, char *opack) {
 }
 
 void javaMapDirectoryFiles1(
-                            char *packfile,
+                            char *packageFilename,
                             void (*fun)(MAP_FUN_PROFILE),
                             Completions *a1,
                             void *a2,
@@ -1379,34 +1381,35 @@ void javaMapDirectoryFiles1(
 
     // Following can make that classes are added several times
     // makes things slow and memory consuming
-    // TODO! optimize this
-    if (packfile == NULL) packfile = "";
+    // TODO! optimize this - do we know that it matters?
+    if (packageFilename == NULL)
+        packageFilename = "";
 
     // source paths
     JavaMapOnPaths(s_javaSourcePaths, {
-            fname = concatFNameInTmpMemory( currentPath, packfile);
-            mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,currentPath,packfile,a1,a2,a3);
+            fname = concatFNameInTmpMemory(currentPath, packageFilename);
+            mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,currentPath,packageFilename,a1,a2,a3);
         });
     // class paths
     for (cp=s_javaClassPaths; cp!=NULL; cp=cp->next) {
         // avoid double mappings
         if ((! pathsStringContainsPath(s_javaSourcePaths, cp->d))) {
-            assert(strlen(cp->d)+strlen(packfile)+2 < SIZE_TMP_MEM);
-            fname = concatFNameInTmpMemory( cp->d, packfile);
-            mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,cp->d,packfile,a1,a2,a3);
+            assert(strlen(cp->d)+strlen(packageFilename)+2 < SIZE_TMP_MEM);
+            fname = concatFNameInTmpMemory(cp->d, packageFilename);
+            mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,cp->d,packageFilename,a1,a2,a3);
         }
     }
     // databazes
     for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && s_zipArchiveTable[i].fn[0]!=0; i++) {
-        javaMapZipDirFile(&s_zipArchiveTable[i],packfile,a1,a2,a3,fun,
-                          s_zipArchiveTable[i].fn,packfile);
+        javaMapZipDirFile(&s_zipArchiveTable[i],packageFilename,a1,a2,a3,fun,
+                          s_zipArchiveTable[i].fn,packageFilename);
     }
     // auto-inferred source path
     if (s_javaStat->namedPackagePath != NULL) {
         if ((! pathsStringContainsPath(s_javaSourcePaths, s_javaStat->namedPackagePath))
             && (! classPathContainsPath(s_javaStat->namedPackagePath))) {
-            fname = concatFNameInTmpMemory(s_javaStat->namedPackagePath, packfile);
-            mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,s_javaStat->namedPackagePath,packfile,a1,a2,a3);
+            fname = concatFNameInTmpMemory(s_javaStat->namedPackagePath, packageFilename);
+            mapDirectoryFiles(fname,fun,ALLOW_EDITOR_FILES,s_javaStat->namedPackagePath,packageFilename,a1,a2,a3);
         }
     }
 }

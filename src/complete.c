@@ -1315,18 +1315,18 @@ static void javaCompleteNestedClSingleName(Completions *cc) {
 }
 
 
-static void javaCompleteComposedName(
-                                     Completions*c,
+static void javaCompleteComposedName(Completions *c,
                                      int classif,
                                      int storage,
                                      int innerConstruct
                                      ) {
-    Symbol        *str;
+    Symbol *str;
     TypeModifier *expr;
-    int             nameType;
-    char            packName[MAX_FILE_NAME_SIZE];
-    unsigned        accs;
-    Reference     *orr;
+    int nameType;
+    char packageName[MAX_FILE_NAME_SIZE];
+    unsigned accs;
+    Reference *orr;
+
     nameType = javaClassifyAmbiguousName(s_javaStat->lastParsedName,NULL,&str,
                                          &expr,&orr,NULL, USELESS_FQT_REFS_ALLOWED,classif,UsageUsed);
     /*&
@@ -1344,8 +1344,8 @@ static void javaCompleteComposedName(
     }
     /* complete packages and classes from file system */
     if (nameType==TypePackage){
-        javaCreateComposedName(NULL,s_javaStat->lastParsedName,'/',NULL,packName,MAX_FILE_NAME_SIZE);
-        javaMapDirectoryFiles1(packName, javaTypeNameCompletion,
+        javaCreateComposedName(NULL,s_javaStat->lastParsedName,'/',NULL,packageName,MAX_FILE_NAME_SIZE);
+        javaMapDirectoryFiles1(packageName, javaTypeNameCompletion,
                                c,s_javaStat->lastParsedName, &storage);
     }
     /* complete inner classes */
