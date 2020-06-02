@@ -31,11 +31,11 @@ void processDefine(bool argFlag);
 #include "c_parser.mock"
 #include "yacc_parser.mock"
 #include "fileio.mock"
+#include "memory.mock"
 
 
 Describe(Yylex);
 BeforeEach(Yylex) {
-    stackMemoryInit();
     ppMemInit();
     initFileTab(&s_fileTab);
     XX_ALLOC(s_symbolTable, S_symbolTable);

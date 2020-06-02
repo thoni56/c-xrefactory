@@ -51,12 +51,12 @@ editor_tests.so: $(OBJDIR)/editor_tests.o $(OBJDIR)/editor.o $(OBJDIR)/position.
 cxref_tests.so: $(OBJDIR)/cxref_tests.o $(OBJDIR)/cxref.o $(OBJDIR)/protocol.o $(OBJDIR)/enumTxt.o $(OBJDIR)/hash.o $(OBJDIR)/position.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-OPTIONS_DEPENDENCIES = protocol log position memory
+OPTIONS_DEPENDENCIES = protocol log position
 OPTIONS_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(OPTIONS_DEPENDENCIES))
 options_tests.so: $(OBJDIR)/options_tests.o $(OBJDIR)/options.o $(OPTIONS_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-YYLEX_DEPENDENCIES = protocol log position memory filedescriptor id filetab hash fileitem symboltable macroargumenttable symbol
+YYLEX_DEPENDENCIES = protocol log position filedescriptor id filetab hash fileitem symboltable macroargumenttable symbol
 YYLEX_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(YYLEX_DEPENDENCIES))
 yylex_tests.so: $(OBJDIR)/yylex_tests.o $(OBJDIR)/yylex.o $(YYLEX_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)

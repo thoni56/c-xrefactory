@@ -20,10 +20,6 @@ bool optionsOverflowHandler(int n) {
   return (int) mock(n);
 }
 
-bool cxMemoryOverflowHandler(int n) {
-  return (int) mock(n);
-}
-
 void stackMemoryInit(void) {
   mock();
 }
@@ -34,11 +30,6 @@ void addToTrail(void (*action)(void *), void *p) {
 
 void removeFromTrailUntil(S_freeTrail *untilP) {
   mock(untilP);
-}
-
-/* No mock, just allocate memory as requested */
-void *stackMemoryAlloc(int size) {
-  return (void *)malloc(size);
 }
 
 void *stackMemoryPush(void *p, int size) {
@@ -67,4 +58,43 @@ void stackMemoryBlockFree(void) {
 
 void stackMemoryDump(void) {
   mock();
+}
+
+/* Actual function (copies) down here */
+void initMemory(S_memory *memory, bool (*overflowHandler)(int n), int size) {
+    memory->overflowHandler = overflowHandler;
+    memory->i = 0;
+    memory->size = size;
+    memory->b = 0;
+}
+
+bool cxMemoryOverflowHandler(int n) {
+    int ofactor,factor,oldsize, newsize;
+    S_memory *oldcxMemory;
+
+    if (cxMemory!=NULL) {
+        oldsize = cxMemory->size;
+    } else {
+        oldsize = 0;
+    }
+
+    ofactor = oldsize / CX_MEMORY_CHUNK_SIZE;
+    factor = ((n>1)?(n-1):0)/CX_MEMORY_CHUNK_SIZE + 1; // 1 no patience to wait ;
+    //& if (s_opt.cxMemoryFactor>=1) factor *= s_opt.cxMemoryFactor;
+    factor += ofactor;
+    if (ofactor*2 > factor) factor = ofactor*2;
+    newsize = factor * CX_MEMORY_CHUNK_SIZE;
+    oldcxMemory = cxMemory;
+    if (oldcxMemory!=NULL) free(oldcxMemory);
+    cxMemory = malloc(newsize + sizeof(S_memory));
+    if (cxMemory!=NULL) {
+        initMemory(cxMemory, cxMemoryOverflowHandler, newsize);
+    }
+
+    return(cxMemory!=NULL);
+}
+
+/* No mock, just allocate memory as requested */
+void *stackMemoryAlloc(int size) {
+  return (void *)malloc(size);
 }
