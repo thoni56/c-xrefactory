@@ -264,7 +264,7 @@ void recoverMemoriesAfterOverflow(char *cxMemFreeBase) {
 }
 
 void recoverCachePoint(int i, char *readUntil, int activeCaching) {
-    S_cachePoint *cp;
+    CachePoint *cp;
 
     log_trace("recovering cache point %d", i);
     cp = &s_cache.cp[i];
@@ -379,7 +379,7 @@ void cacheInclude(int fileNum) {
     if (s_cache.ibi >= INCLUDE_CACHE_SIZE) s_cache.activeCache = 0;
 }
 
-static void fillCachePoint(S_cachePoint *cachePoint, S_topBlock *topBlock,
+static void fillCachePoint(CachePoint *cachePoint, S_topBlock *topBlock,
                            S_topBlock starTopBlock, int ppmMemoryi,
                            int cxMemoryi, int mbMemoryi, char *lbcc, short int ibi,
                            short int lineNumber, short int ifDeep, S_cppIfStack *ifstack,
@@ -399,7 +399,7 @@ static void fillCachePoint(S_cachePoint *cachePoint, S_topBlock *topBlock,
 }
 
 void placeCachePoint(int inputCaching) {
-    S_cachePoint *pp;
+    CachePoint *pp;
     if (s_cache.activeCache == 0) return;
     if (inStacki != 0 || macroStackIndex != 0) return;
     if (s_cache.cpi >= MAX_CACHE_POINTS) {

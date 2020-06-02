@@ -16,7 +16,7 @@ typedef struct cachePoint {
     struct cppIfStack       *ifstack;
     struct javaStat			*javaCached;
     struct counters			counts;
-} S_cachePoint;
+} CachePoint;
 
 typedef struct caching {
     char				activeCache;		/* whether putting input to cache */
