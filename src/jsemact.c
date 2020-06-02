@@ -223,21 +223,22 @@ void javaAddNestedClassesAsTypeDefs(Symbol *cc, IdList *oclassname,
 }
 
 // resName can be NULL!!!
-static int javaFindFile0( char *classPath,char *slash,char *name,
-                          char *suffix, char **resName, struct stat *stt) {
-    char            fname[MAX_FILE_NAME_SIZE];
-    char			*ffn,*ss;
-    int				res;
-    res = 0;
-    ss = strmcpy(fname,classPath);
-    ss = strmcpy(ss,slash);
-    ss = strmcpy(ss,name);
-    ss = strmcpy(ss, suffix);
-    assert(ss-fname+1 < MAX_FILE_NAME_SIZE);
+static int javaFindFile0(char *classPath, char *slash, char *name,
+                         char *suffix, char **resName, struct stat *stt) {
+    char fname[MAX_FILE_NAME_SIZE];
+    char *ffn;
+    int res = 0;
+
+    strcpy(fname, classPath);
+    strcat(fname, slash);
+    strcat(fname, name);
+    strcat(fname, suffix);
+    assert(strlen(fname)+1 < MAX_FILE_NAME_SIZE);
+
     ffn = normalizeFileName(fname,s_cwd);
-//&	fprintf(dumpOut, "looking for file %s\n", ffn);
-    if (statb(ffn,stt) == 0) {
-//&	fprintf(dumpOut, "found in  buffer file %s\n", ffn);
+    log_trace("looking for file %s", ffn);
+    if (statb(ffn, stt) == 0) {
+        log_trace("found in buffer file %s", ffn);
         res = 1;
     }
     if (res && resName!=NULL) {
