@@ -182,7 +182,7 @@ typedef struct topBlock {
 extern S_memory *cxMemory;
 extern S_topBlock *s_topBlock;
 
-extern jmp_buf s_memoryResize;
+extern jmp_buf memoryResizeJumpTarget;
 
 extern char memory[SIZE_workMemory];
 extern char tmpWorkMemory[SIZE_tmpWorkMemory];

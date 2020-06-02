@@ -7,7 +7,7 @@
 S_memory *cxMemory=NULL;
 S_topBlock *s_topBlock;
 
-jmp_buf s_memoryResize;
+jmp_buf memoryResizeJumpTarget;
 
 /* Memory types: */
 char memory[SIZE_workMemory];
@@ -39,7 +39,7 @@ void memoryUseFunctionForError(void (*function)(int code, char *message)) {
 
 /* With this as a separate function it is possible to catch memory resize longjmps */
 void memoryResize(void) {
-    longjmp(s_memoryResize,1);
+    longjmp(memoryResizeJumpTarget,1);
 }
 
 void initMemory(S_memory *memory, bool (*overflowHandler)(int n), int size) {
