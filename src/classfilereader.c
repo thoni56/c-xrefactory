@@ -1,3 +1,5 @@
+/* *********************** Read JAVA class file ************************* */
+
 #include "classfilereader.h"
 
 #include "commons.h"
@@ -18,8 +20,6 @@
 #include "log.h"
 #include "utils.h"
 
-
-/* *********************** Read JAVA class file ************************* */
 
 struct javaCpClassInfo {
     short unsigned  nameIndex;
