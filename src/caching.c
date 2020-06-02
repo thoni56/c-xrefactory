@@ -130,34 +130,34 @@ static void symbolTableDeleteOutOfMemory(int i) {
     Symbol **pp;
     pp = &s_symbolTable->tab[i];
     while (*pp!=NULL) {
-        /*
-          fprintf(dumpOut,"free *%x == %s %s, %x\n",*pp,typeName[(*pp)->symType],
-          (*pp)->linkName,(*pp)->next);
-          fflush(dumpOut);
-        */
         switch ((*pp)->bits.symType) {
         case TypeMacro:
             if (SM_FREED_POINTER(ppmMemory,*pp)) {
-                *pp = (*pp)->next;  continue;
+                *pp = (*pp)->next;
+                continue;
             }
             break;
-        case TypeStruct: case TypeUnion:
+        case TypeStruct:
+        case TypeUnion:
             if (MEM_FREED_POINTER(*pp) || SM_FREED_POINTER(ppmMemory,*pp)) {
-                *pp = (*pp)->next;  continue;
+                *pp = (*pp)->next;
+                continue;
             } else {
                 structCachingFree(*pp);
             }
             break;
         case TypeEnum:
             if (MEM_FREED_POINTER(*pp)) {
-                *pp = (*pp)->next;  continue;
+                *pp = (*pp)->next;
+                continue;
             } else if (MEM_FREED_POINTER((*pp)->u.enums)) {
                 (*pp)->u.enums = NULL;
             }
             break;
         default:
             if (MEM_FREED_POINTER(*pp)) {
-                *pp = (*pp)->next;  continue;
+                *pp = (*pp)->next;
+                continue;
             }
             break;
         }
@@ -170,10 +170,12 @@ static void javaFqtTabDeleteOutOfMemory(int i) {
     pp = &s_javaFqtTab.tab[i];
     while (*pp!=NULL) {
         if (SM_FREED_POINTER(ppmMemory,*pp)) {
-            *pp = (*pp)->next;  continue;
+            *pp = (*pp)->next;
+            continue;
         } else if (MEM_FREED_POINTER((*pp)->d)
                    || SM_FREED_POINTER(ppmMemory,(*pp)->d)) {
-            *pp = (*pp)->next;  continue;
+            *pp = (*pp)->next;
+            continue;
         } else {
             structCachingFree((*pp)->d);
         }
@@ -194,7 +196,8 @@ static void includeListDeleteOutOfMemory(void) {
     pp = & s_opt.includeDirs;
     while (*pp!=NULL) {
         if (SM_FREED_POINTER(ppmMemory,*pp)) {
-            *pp = (*pp)->next;  continue;
+            *pp = (*pp)->next;
+            continue;
         }
         pp= &(*pp)->next;
     }
