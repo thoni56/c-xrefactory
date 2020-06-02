@@ -95,33 +95,33 @@ static void fileTabDeleteOutOfMemory(S_fileItem *p, int i) {
     }
 }
 
-#define MEM_FREED_POINTER(ppp) (((char*)ppp) >= memory+s_topBlock->firstFreeIndex && \
-                                ((char*)ppp) < memory+SIZE_workMemory)
+#define MEM_FREED_POINTER(ptr) (((char*)ptr) >= memory+s_topBlock->firstFreeIndex && \
+                                ((char*)ptr) < memory+SIZE_workMemory)
 
-static void structCachingFree(Symbol *pp) {
-    SymbolList **tp;
-    assert(pp->u.s);
-    if (MEM_FREED_POINTER(pp->u.s->records) ||
-        SM_FREED_POINTER(ppmMemory,pp->u.s->records)) {
-        pp->u.s->records = NULL;
+static void structCachingFree(Symbol *symbol) {
+    SymbolList **superList;
+    assert(symbol->u.s);
+    if (MEM_FREED_POINTER(symbol->u.s->records) ||
+        SM_FREED_POINTER(ppmMemory,symbol->u.s->records)) {
+        symbol->u.s->records = NULL;
     }
-    if (MEM_FREED_POINTER(pp->u.s->casts.node) ||
-        SM_FREED_POINTER(ppmMemory,pp->u.s->casts.node)) {
-        pp->u.s->casts.node = NULL;
+    if (MEM_FREED_POINTER(symbol->u.s->casts.node) ||
+        SM_FREED_POINTER(ppmMemory,symbol->u.s->casts.node)) {
+        symbol->u.s->casts.node = NULL;
     }
-    if (MEM_FREED_POINTER(pp->u.s->casts.sub) ||
-        SM_FREED_POINTER(ppmMemory,pp->u.s->casts.sub)) {
-        pp->u.s->casts.sub = NULL;
+    if (MEM_FREED_POINTER(symbol->u.s->casts.sub) ||
+        SM_FREED_POINTER(ppmMemory,symbol->u.s->casts.sub)) {
+        symbol->u.s->casts.sub = NULL;
     }
 
-    tp = &pp->u.s->super;
-    while (*tp!=NULL) {
-        if (MEM_FREED_POINTER(*tp) ||
-            SM_FREED_POINTER(ppmMemory,*tp)) {
-            *tp = (*tp)->next;
+    superList = &symbol->u.s->super;
+    while (*superList!=NULL) {
+        if (MEM_FREED_POINTER(*superList) ||
+            SM_FREED_POINTER(ppmMemory,*superList)) {
+            *superList = (*superList)->next;
             goto contlabel;
         }
-        tp = &(*tp)->next;
+        superList = &(*superList)->next;
     contlabel:;
     }
 }
