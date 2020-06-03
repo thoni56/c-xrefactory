@@ -1391,7 +1391,7 @@ static void cxrfSubClass(int size,
 void scanCxFile(ScanFileFunctionStep *scanFuns) {
     int scannedInt = 0;
     int ch,i;
-    char *cc, *cfin;
+    char *chars, *end;
 
     ENTER();
     if (inputFile == NULL) {
@@ -1415,17 +1415,17 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
     }
     initCharacterBuffer(&cxfCharacterBuffer, inputFile);
     ch = ' ';
-    cc = cxfCharacterBuffer.chars;
-    cfin = cxfCharacterBuffer.end;
+    chars = cxfCharacterBuffer.chars;
+    end = cxfCharacterBuffer.end;
     while(! cxfCharacterBuffer.isAtEOF) {
-         //& ScanInt(ch, buffer, cc, cfin, scannedInt);
+         //& ScanInt(ch, buffer, chars, end, scannedInt);
         {
             while (ch==' ' || ch=='\n' || ch=='\t')
-                CxGetChar(ch, &cxfCharacterBuffer, cc, cfin);
+                CxGetChar(ch, &cxfCharacterBuffer, chars, end);
             scannedInt = 0;
             while (isdigit(ch)) {
                 scannedInt = scannedInt*10 + ch-'0';
-                CxGetChar(ch, &cxfCharacterBuffer, cc, cfin);
+                CxGetChar(ch, &cxfCharacterBuffer, chars, end);
             }
         }
         if (cxfCharacterBuffer.isAtEOF)
@@ -1435,23 +1435,23 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
             s_inLastInfos.counter[ch] = scannedInt;
         }
         if (s_inLastInfos.fun[ch] != NULL) {
-            (*s_inLastInfos.fun[ch])(scannedInt, ch, &cc, &cfin, &cxfCharacterBuffer,
+            (*s_inLastInfos.fun[ch])(scannedInt, ch, &chars, &end, &cxfCharacterBuffer,
                                      s_inLastInfos.additional[ch]);
         } else if (! s_inLastInfos.singleRecord[ch]) {
             assert(scannedInt>0);
-            //& CxSkipNChars(scannedInt-1, cc, cfin, cb);
+            //& CxSkipNChars(scannedInt-1, chars, end, cb);
             {
                 int ccount = scannedInt-1;
-                while (cc + ccount > cfin) {
-                    ccount -= cfin - cc;
-                    cc = cfin;
-                    CxGetChar(ch, &cxfCharacterBuffer, cc, cfin);
+                while (chars + ccount > end) {
+                    ccount -= end - chars;
+                    chars = end;
+                    CxGetChar(ch, &cxfCharacterBuffer, chars, end);
                     ccount --;
                 }
-                cc += ccount;
+                chars += ccount;
             }
         }
-        CxGetChar(ch, &cxfCharacterBuffer, cc, cfin);
+        CxGetChar(ch, &cxfCharacterBuffer, chars, end);
     }
     if (s_opt.taskRegime==RegimeEditServer
         && (s_opt.server_operation==OLO_LOCAL_UNUSED
