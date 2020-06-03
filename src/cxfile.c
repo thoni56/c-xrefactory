@@ -735,8 +735,10 @@ void genReferenceFile(bool updating, char *filename) {
                 ch = -1;                                            \
                 (cb)->isAtEOF = true;                               \
             } else {                                                \
-                cc = (cb)->next; ffin = (cb)->end;                  \
-                ch = * ((unsigned char*)cc); cc ++;                 \
+                cc = (cb)->next;                                    \
+                ffin = (cb)->end;                                   \
+                ch = *((unsigned char*)cc);                         \
+                cc++;                                               \
             }                                                       \
         } else {                                                    \
             ch = * ((unsigned char*)cc); cc++;                      \
@@ -881,7 +883,7 @@ static void cxReadFileName(int size,
     struct fileItem *fileItem;
     int i, ii, fileIndex, len, commandLineFlag, isInterface;
     time_t fumtime, umtime;
-    char *cc, *fin, cch;
+    char *cc, *fin, ch;
 
     assert(ri == CXFI_FILE_NAME);
     cc = *ccc; fin = *ffin;
@@ -891,8 +893,8 @@ static void cxReadFileName(int size,
     isInterface=((s_inLastInfos.counter[CXFI_ACCESS_BITS] & ACCESS_INTERFACE)!=0);
     ii = s_inLastInfos.counter[CXFI_FILE_INDEX];
     for (i=0; i<size-1; i++) {
-        CxGetChar(cch, cb, cc, fin);
-        id[i] = cch;
+        CxGetChar(ch, cb, cc, fin);
+        id[i] = ch;
     }
     id[i] = 0;
     len = i;
@@ -962,19 +964,23 @@ static void cxrfSourceIndex(int size,
 }
 
 static int scanSymNameString(int size,char **ccc,char **ffin,
-                             CharacterBuffer *bbb,char *id) {
+                             CharacterBuffer *cb,char *id) {
     int i, len;
     char *cc, *fin, cch;
-    cc = *ccc; fin = *ffin;
+
+    cc = *ccc;
+    fin = *ffin;
     for (i=0; i<size-1; i++) {
-        CxGetChar(cch, bbb, cc, fin);
+        CxGetChar(cch, cb, cc, fin);
         id[i] = cch;
     }
     id[i] = 0;
     len = i;
     assert(len+1 < MAX_CX_SYMBOL_SIZE);
-    *ccc = cc; *ffin = fin;
-    return(len);
+    *ccc = cc;
+    *ffin = fin;
+
+    return len;
 }
 
 
@@ -1015,7 +1021,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
     si = s_inLastInfos.counter[CXFI_SYM_INDEX];
     assert(si>=0 && si<MAX_CX_SYMBOL_TAB);
     id = s_inLastInfos._symbolTabNames[si];
-    len = scanSymNameString( size, ccc, ffin, cb, id);
+    len = scanSymNameString(size, ccc, ffin, cb, id);
     cc = *ccc; fin = *ffin;
     getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
     //&fprintf(dumpOut,":scanning ref of %s %d %d: \n",id,symType,vFunClass);fflush(dumpOut);
