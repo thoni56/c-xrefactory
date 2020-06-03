@@ -108,7 +108,7 @@ static struct lastCxFileInfos s_inLastInfos;
 static struct lastCxFileInfos s_outLastInfos;
 
 
-static CharacterBuffer cxfBuf;
+static CharacterBuffer cxfCharacterBuffer;
 
 static unsigned s_decodeFilesNum[MAX_FILES];
 
@@ -728,20 +728,20 @@ void genReferenceFile(bool updating, char *filename) {
 
 /* ************************* READ **************************** */
 
-#define GetChar(cch, ccc, ffin, bbb) {                                  \
-        if (ccc >= ffin) {                                              \
-            (bbb)->next = ccc;                                          \
-            if ((bbb)->isAtEOF || refillBuffer(bbb) == 0) {               \
-                cch = -1;                                               \
-                (bbb)->isAtEOF = true;                                  \
-            } else {                                                    \
-                ccc = (bbb)->next; ffin = (bbb)->end;                   \
-                cch = * ((unsigned char*)ccc); ccc ++;                  \
-            }                                                           \
-        } else {                                                        \
-            cch = * ((unsigned char*)ccc); ccc++;                       \
-        }                                                               \
-        log_trace("getting char *%x < %x == '0x%x'",ccc,ffin,cch);      \
+#define CxGetChar(ch, bbb, ccc, ffin) {                             \
+        if (ccc >= ffin) {                                          \
+            (bbb)->next = ccc;                                      \
+            if ((bbb)->isAtEOF || refillBuffer(bbb) == 0) {         \
+                ch = -1;                                            \
+                (bbb)->isAtEOF = true;                              \
+            } else {                                                \
+                ccc = (bbb)->next; ffin = (bbb)->end;               \
+                ch = * ((unsigned char*)ccc); ccc ++;               \
+            }                                                       \
+        } else {                                                    \
+            ch = * ((unsigned char*)ccc); ccc++;                    \
+        }                                                           \
+        log_trace("getting char *%x < %x == '0x%x'",ccc,ffin,ch);   \
     }
 
 static void trace_buffer(CharacterBuffer *buffer) {
@@ -751,36 +751,38 @@ static void trace_buffer(CharacterBuffer *buffer) {
     log_trace("buffer.end=0x%x", buffer->end);
 }
 
-#define ScanInt(cch, ccc, ffin, buffer, result) {                                   \
-    log_trace("Enter macro: ScanInt");                                        \
-    log_trace("cch='%c' (0x%x) @ 0x%x", cch, cch, &cch);                \
-    log_trace("ffin='%x' @ 0x%x", ffin, &ffin);                         \
-    trace_buffer(buffer);                                               \
-    log_trace("result='%d'", result);                                   \
-    while (cch==' ' || cch=='\n' || cch=='\t') GetChar(cch,ccc,ffin,buffer); \
-    result = 0;                                                         \
-    while (isdigit(cch)) {                                              \
-        result = result*10 + cch-'0';                                   \
-        GetChar(cch,ccc,ffin,buffer);                                   \
-    }                                                                   \
-    log_trace("cch='%c' (0x%x) @ 0x%x", cch, cch, &cch);                \
-    log_trace("ffin='%x' @ 0x%x", ffin, &ffin);                         \
-    trace_buffer(buffer);                                               \
-    log_trace("result='%d'", result);                                   \
-    log_trace("Leaving macro: ScanInt");                                            \
-}
+#define ScanInt(ch, buffer, ccc, ffin, result) {            \
+        log_trace("Enter macro: ScanInt");                  \
+        log_trace("cch='%c' (0x%x) @ 0x%x", ch, ch, &ch);   \
+        log_trace("ffin='%x' @ 0x%x", ffin, &ffin);         \
+        trace_buffer(buffer);                               \
+        log_trace("result='%d'", result);                   \
+        while (ch==' ' || ch=='\n' || ch=='\t')             \
+            CxGetChar(ch, buffer,ccc,ffin);                 \
+        result = 0;                                         \
+        while (isdigit(ch)) {                               \
+            result = result*10 + ch-'0';                    \
+            CxGetChar(ch, buffer,ccc,ffin);                 \
+        }                                                   \
+        log_trace("cch='%c' (0x%x) @ 0x%x", ch, ch, &ch);   \
+        log_trace("ffin='%x' @ 0x%x", ffin, &ffin);         \
+        trace_buffer(buffer);                               \
+        log_trace("result='%d'", result);                   \
+        log_trace("Leaving macro: ScanInt");                \
+    }
 
-#define SkipNChars(count, ccc, ffin, iBuf) {                \
-    int ccount, ch; UNUSED ch;                              \
-    ccount = count;                                         \
-    while (ccc + ccount > ffin) {                           \
-        ccount -= ffin - ccc;                               \
-        ccc = ffin;                                         \
-        GetChar(ch, ccc, ffin, iBuf);                       \
-        ccount --;                                          \
-    }                                                       \
-    ccc += ccount;                                          \
-}
+//      CxSkipNChars(scannedInt-1, cc, cfin, &cxfCharacterBuffer);
+#define CxSkipNChars(count, cc, cfin, iBuf) {               \
+        int ccount, ch; UNUSED ch;                          \
+        ccount = count;                                     \
+        while (cc + ccount > cfin) {                        \
+            ccount -= cfin - cc;                            \
+            cc = cfin;                                      \
+            CxGetChar(ch, iBuf, cc, cfin);                  \
+            ccount --;                                      \
+        }                                                   \
+        cc += ccount;                                       \
+    }
 
 static void cxrfSetSingleRecords(int size,
                                  int ri,
@@ -794,7 +796,7 @@ static void cxrfSetSingleRecords(int size,
     cc = *ccc; fin = *ffin;
     assert(ri == CXFI_SINGLE_RECORDS);
     for(i=0; i<size-1; i++) {
-        GetChar(cch, cc, fin, cb);
+        CxGetChar(cch, cb, cc, fin);
         s_inLastInfos.singleRecord[cch] = 1;
     }
     *ccc = cc; *ffin = fin;
@@ -828,7 +830,7 @@ static void cxrfVersionCheck(int size,
     cc = *ccc; fin = *ffin;
     assert(ri == CXFI_VERSION);
     for(i=0; i<size-1; i++) {
-        GetChar(cch, cc, fin, cb);
+        CxGetChar(cch, cb, cc, fin);
         versionString[i]=cch;
     }
     versionString[i]=0;
@@ -924,7 +926,7 @@ static void cxReadFileName(int size,
     isInterface=((s_inLastInfos.counter[CXFI_ACCESS_BITS] & ACCESS_INTERFACE)!=0);
     ii = s_inLastInfos.counter[CXFI_FILE_INDEX];
     for (i=0; i<size-1; i++) {
-        GetChar(cch, cc, fin, cb);
+        CxGetChar(cch, cb, cc, fin);
         id[i] = cch;
     }
     id[i] = 0;
@@ -1000,7 +1002,7 @@ static int scanSymNameString(int size,char **ccc,char **ffin,
     char *cc, *fin, cch;
     cc = *ccc; fin = *ffin;
     for (i=0; i<size-1; i++) {
-        GetChar(cch, cc, fin, bbb);
+        CxGetChar(cch, bbb, cc, fin);
         id[i] = cch;
     }
     id[i] = 0;
@@ -1451,26 +1453,27 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
         s_inLastInfos.fun[ch] = scanFuns[i].handleFun;
         s_inLastInfos.additional[ch] = scanFuns[i].additionalArg;
     }
-    initCharacterBuffer(&cxfBuf, inputFile);
-    ch = ' '; cc = cxfBuf.chars; cfin = cxfBuf.end;
-    while(! cxfBuf.isAtEOF) {
-        ScanInt(ch, cc, cfin, &cxfBuf, scannedInt);
-        /*fprintf(stdout,"number %d scanned\n",recInfo);*/
-        /*fprintf(stdout,"record %d == %c scanned\n",ch,ch);*/
-        /*fflush(stdout);*/
-        if (cxfBuf.isAtEOF) break;
+    initCharacterBuffer(&cxfCharacterBuffer, inputFile);
+    ch = ' ';
+    cc = cxfCharacterBuffer.chars;
+    cfin = cxfCharacterBuffer.end;
+    while(! cxfCharacterBuffer.isAtEOF) {
+        ScanInt(ch, &cxfCharacterBuffer, cc, cfin, scannedInt);
+        if (cxfCharacterBuffer.isAtEOF)
+            break;
         assert(ch >= 0 && ch<MAX_CHARS);
         if (s_inLastInfos.singleRecord[ch]) {
             s_inLastInfos.counter[ch] = scannedInt;
         }
         if (s_inLastInfos.fun[ch] != NULL) {
-            (*s_inLastInfos.fun[ch])(scannedInt, ch, &cc, &cfin, &cxfBuf,
+            (*s_inLastInfos.fun[ch])(scannedInt, ch, &cc, &cfin, &cxfCharacterBuffer,
                                      s_inLastInfos.additional[ch]);
         } else if (! s_inLastInfos.singleRecord[ch]) {
             assert(scannedInt>0);
-            SkipNChars(scannedInt-1, cc, cfin, &cxfBuf);
+            CxSkipNChars(scannedInt-1, cc, cfin, &cxfCharacterBuffer);
+            // #define CxSkipNChars(count, ccc, ffin, iBuf) {
         }
-        GetChar(ch,cc,cfin,&cxfBuf);
+        CxGetChar(ch, &cxfCharacterBuffer,cc,cfin);
     }
     if (s_opt.taskRegime==RegimeEditServer
         && (s_opt.server_operation==OLO_LOCAL_UNUSED

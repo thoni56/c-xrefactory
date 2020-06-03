@@ -45,7 +45,7 @@ Ensure(CxFile, can_scan_int) {
     expect(refillBuffer,
            when(buffer, is_equal_to_hex(&characterBuffer)));
 
-    ScanInt(next, characters, end, &characterBuffer, result);
+    ScanInt(next, &characterBuffer, characters, end, result);
 
     assert_that(result, is_equal_to(123));
 }
@@ -62,12 +62,12 @@ Ensure(CxFile, can_get_char) {
     cb->end = &cb->chars[strlen("123")];
     end = cb->end;
 
-    GetChar(next, characters, end, &characterBuffer);
+    CxGetChar(next, &characterBuffer, characters, end);
     assert_that(next, is_equal_to('1'));
 
-    GetChar(next, characters, end, &characterBuffer);
+    CxGetChar(next, &characterBuffer, characters, end);
     assert_that(next, is_equal_to('2'));
 
-    GetChar(next, characters, end, &characterBuffer);
+    CxGetChar(next, &characterBuffer, characters, end);
     assert_that(next, is_equal_to('3'));
 }
