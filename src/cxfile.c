@@ -744,34 +744,6 @@ void genReferenceFile(bool updating, char *filename) {
         log_trace("getting char *%x < %x == '0x%x'",ccc,ffin,ch);   \
     }
 
-static void trace_buffer(CharacterBuffer *buffer) {
-    log_trace("buffer=0x%x", buffer);
-    log_trace("buffer.buffer=0x%x", &buffer->chars);
-    log_trace("buffer.next=0x%x", buffer->next);
-    log_trace("buffer.end=0x%x", buffer->end);
-}
-
-#define ScanInt(ch, buffer, ccc, ffin, result) {            \
-        log_trace("Enter macro: ScanInt");                  \
-        log_trace("cch='%c' (0x%x) @ 0x%x", ch, ch, &ch);   \
-        log_trace("ffin='%x' @ 0x%x", ffin, &ffin);         \
-        trace_buffer(buffer);                               \
-        log_trace("result='%d'", result);                   \
-        while (ch==' ' || ch=='\n' || ch=='\t')             \
-            CxGetChar(ch, buffer,ccc,ffin);                 \
-        result = 0;                                         \
-        while (isdigit(ch)) {                               \
-            result = result*10 + ch-'0';                    \
-            CxGetChar(ch, buffer,ccc,ffin);                 \
-        }                                                   \
-        log_trace("cch='%c' (0x%x) @ 0x%x", ch, ch, &ch);   \
-        log_trace("ffin='%x' @ 0x%x", ffin, &ffin);         \
-        trace_buffer(buffer);                               \
-        log_trace("result='%d'", result);                   \
-        log_trace("Leaving macro: ScanInt");                \
-    }
-
-
 static void cxrfSetSingleRecords(int size,
                                  int ri,
                                  char **ccc,
@@ -1446,7 +1418,16 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
     cc = cxfCharacterBuffer.chars;
     cfin = cxfCharacterBuffer.end;
     while(! cxfCharacterBuffer.isAtEOF) {
-        ScanInt(ch, &cxfCharacterBuffer, cc, cfin, scannedInt);
+         //& ScanInt(ch, buffer, cc, cfin, scannedInt);
+        {
+            while (ch==' ' || ch=='\n' || ch=='\t')
+                CxGetChar(ch, &cxfCharacterBuffer, cc, cfin);
+            scannedInt = 0;
+            while (isdigit(ch)) {
+                scannedInt = scannedInt*10 + ch-'0';
+                CxGetChar(ch, &cxfCharacterBuffer, cc, cfin);
+            }
+        }
         if (cxfCharacterBuffer.isAtEOF)
             break;
         assert(ch >= 0 && ch<MAX_CHARS);
