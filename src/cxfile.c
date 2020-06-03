@@ -728,21 +728,22 @@ void genReferenceFile(bool updating, char *filename) {
 
 /* ************************* READ **************************** */
 
-#define CxGetChar(ch, bbb, ccc, ffin) {                             \
-        if (ccc >= ffin) {                                          \
-            (bbb)->next = ccc;                                      \
-            if ((bbb)->isAtEOF || refillBuffer(bbb) == 0) {         \
+#define CxGetChar(ch, cb, cc, ffin) {                               \
+        if (cc >= ffin) {                                           \
+            (cb)->next = cc;                                        \
+            if ((cb)->isAtEOF || refillBuffer(cb) == 0) {           \
                 ch = -1;                                            \
-                (bbb)->isAtEOF = true;                              \
+                (cb)->isAtEOF = true;                               \
             } else {                                                \
-                ccc = (bbb)->next; ffin = (bbb)->end;               \
-                ch = * ((unsigned char*)ccc); ccc ++;               \
+                cc = (cb)->next; ffin = (cb)->end;                  \
+                ch = * ((unsigned char*)cc); cc ++;                 \
             }                                                       \
         } else {                                                    \
-            ch = * ((unsigned char*)ccc); ccc++;                    \
+            ch = * ((unsigned char*)cc); cc++;                      \
         }                                                           \
-        log_trace("getting char *%x < %x == '0x%x'",ccc,ffin,ch);   \
+        log_trace("getting char *%x < %x == '0x%x'", cc, ffin, ch); \
     }
+
 
 static void cxrfSetSingleRecords(int size,
                                  int ri,
@@ -764,6 +765,7 @@ static void cxrfSetSingleRecords(int size,
     *ccc = cc;
     *ffin = end;
 }
+
 
 static void writeCxFileCompatibilityError(char *message) {
     static time_t lastMessageTime;
