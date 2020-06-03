@@ -771,18 +771,6 @@ static void trace_buffer(CharacterBuffer *buffer) {
         log_trace("Leaving macro: ScanInt");                \
     }
 
-//      CxSkipNChars(scannedInt-1, cc, cfin, &cxfCharacterBuffer);
-#define CxSkipNChars(count, cc, cfin, iBuf) {               \
-        int ccount, ch; UNUSED ch;                          \
-        ccount = count;                                     \
-        while (cc + ccount > cfin) {                        \
-            ccount -= cfin - cc;                            \
-            cc = cfin;                                      \
-            CxGetChar(ch, iBuf, cc, cfin);                  \
-            ccount --;                                      \
-        }                                                   \
-        cc += ccount;                                       \
-    }
 
 static void cxrfSetSingleRecords(int size,
                                  int ri,
@@ -1470,10 +1458,19 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
                                      s_inLastInfos.additional[ch]);
         } else if (! s_inLastInfos.singleRecord[ch]) {
             assert(scannedInt>0);
-            CxSkipNChars(scannedInt-1, cc, cfin, &cxfCharacterBuffer);
-            // #define CxSkipNChars(count, ccc, ffin, iBuf) {
+            //& CxSkipNChars(scannedInt-1, cc, cfin, cb);
+            {
+                int ccount = scannedInt-1;
+                while (cc + ccount > cfin) {
+                    ccount -= cfin - cc;
+                    cc = cfin;
+                    CxGetChar(ch, &cxfCharacterBuffer, cc, cfin);
+                    ccount --;
+                }
+                cc += ccount;
+            }
         }
-        CxGetChar(ch, &cxfCharacterBuffer,cc,cfin);
+        CxGetChar(ch, &cxfCharacterBuffer, cc, cfin);
     }
     if (s_opt.taskRegime==RegimeEditServer
         && (s_opt.server_operation==OLO_LOCAL_UNUSED
