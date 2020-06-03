@@ -791,14 +791,14 @@ static void cxrfVersionCheck(int size,
                              ) {
     char versionString[TMP_STRING_SIZE];
     char thisVersionString[TMP_STRING_SIZE];
-    int i, cch;
+    int i, ch;
     char *cc, *fin;
 
     cc = *ccc; fin = *ffin;
     assert(ri == CXFI_VERSION);
     for(i=0; i<size-1; i++) {
-        CxGetChar(cch, cb, cc, fin);
-        versionString[i]=cch;
+        CxGetChar(ch, cb, cc, fin);
+        versionString[i]=ch;
     }
     versionString[i]=0;
     get_version_string(thisVersionString);
@@ -1474,16 +1474,14 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
 
 
 /* fnamesuff contains '/' at the beginning !!! */
-
 int scanReferenceFile(char *fname, char *fns1, char *fns2, /* TODO: bool? */
-                      ScanFileFunctionStep *scanFunTab
-                      ) {
+                      ScanFileFunctionStep *scanFunTab) {
     char fn[MAX_FILE_NAME_SIZE];
 
     sprintf(fn, "%s%s%s", fname, fns1, fns2);
     assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
-    //&fprintf(dumpOut,":scanning file %s\n",fn);
-    inputFile = openFile(fn,"r");
+    log_trace(":scanning file %s", fn);
+    inputFile = openFile(fn, "r");
     if (inputFile==NULL) {
         return(0);
     } else {
