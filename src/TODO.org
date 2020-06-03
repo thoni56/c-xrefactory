@@ -7,6 +7,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 * TODO Unittests for memory module
 * TODO Make S_caching an abstract data type to hide CachePoint and Caching
+* TODO New refactoring: Extract variable
 * TODO Remove FULL/FAST update, we always want correct info?
 There are a number of update modes available from the command line, 'fupdate',
 'updatem', 'update', 'fastupdate' and then there is opt.updateOnlyModifiedFiles
