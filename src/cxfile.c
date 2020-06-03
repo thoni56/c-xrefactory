@@ -1153,18 +1153,16 @@ static void cxrfSymbolName(int size,
                     if (IS_BEST_FIT_MATCH(cms)) ols = 2;
                     else ols = 1;
                 }
-                //& ols=itIsSymbolToPushOlRefences(ddd,s_olcxCurrentUser->browserStack.top,&cms,DO_NOT_CHECK_IF_SELECTED);
             } else if (additionalArg!=CX_BY_PASS) {
                 ols=itIsSymbolToPushOlRefences(ddd,s_olcxCurrentUser->browserStack.top,&cms,DEFAULT_VALUE);
             }
             s_inLastInfos.onLineRefMenuItem = cms;
-            //&fprintf(dumpOut,"check (%s) %s ols==%d\n", miscellaneousName[additionalArg], ddd->name, ols);
+            log_trace("check (%s) %s ols==%d", miscellaneousEnumName[additionalArg], ddd->name, ols);
             if (ols || (additionalArg==CX_BY_PASS&&byPassAcceptableSymbol(ddd))
                 ) {
                 s_inLastInfos.onLineReferencedSym = si;
                 s_inLastInfos.onLineRefIsBestMatchFlag = (ols == 2);
-                //&sprintf(tmpBuff,"symbol %s is O.K.\n", ddd->name);ppcGenRecord(PPC_INFORMATION,tmpBuff, "\n");
-                //&fprintf(dumpOut,"symbol %s is O.K. for %s (ols==%d)\n", ddd->name, s_opt.browsedSymName, ols);
+                log_trace("symbol %s is O.K. for %s (ols==%d)", ddd->name, s_opt.browsedSymName, ols);
             } else {
                 if (s_inLastInfos.onLineReferencedSym == si) {
                     s_inLastInfos.onLineReferencedSym = -1;
@@ -1256,7 +1254,8 @@ static void cxrfReference(int size,
             }
         } else if (rr.usage.base==UsageDefined || rr.usage.base==UsageDeclared
                    ||  !s_fileTab.tab[rr.p.file]->b.commandLineEntered ) {
-            /*&fprintf(dumpOut,"htmladdref %s on %s:%d\n",s_inLastInfos.symbolTab[sym]->name,s_fileTab.tab[rr.p.file]->name,rr.p.line);fflush(dumpOut);&*/
+            log_trace("htmladdref %s on %s:%d", s_inLastInfos.symbolTab[sym]->name,
+                      s_fileTab.tab[rr.p.file]->name, rr.p.line);
             addToRefList(&s_inLastInfos.symbolTab[sym]->refs,
                          &rr.usage,&rr.p,CategoryGlobal);
         }
