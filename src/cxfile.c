@@ -751,15 +751,18 @@ static void cxrfSetSingleRecords(int size,
                                  CharacterBuffer *cb,
                                  int additionalArg
                                  ) {
-    int i,cch;
-    char *cc, *fin;
-    cc = *ccc; fin = *ffin;
+    int i, ch;
+    char *cc, *end;
+
+    cc = *ccc;
+    end = *ffin;
     assert(ri == CXFI_SINGLE_RECORDS);
     for(i=0; i<size-1; i++) {
-        CxGetChar(cch, cb, cc, fin);
-        s_inLastInfos.singleRecord[cch] = 1;
+        CxGetChar(ch, cb, cc, end);
+        s_inLastInfos.singleRecord[ch] = 1;
     }
-    *ccc = cc; *ffin = fin;
+    *ccc = cc;
+    *ffin = end;
 }
 
 static void writeCxFileCompatibilityError(char *message) {
