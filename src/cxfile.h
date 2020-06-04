@@ -8,8 +8,7 @@
 
 typedef struct scanFileFunctionStep {
     int		recordCode;
-    void    (*handleFun)(int size, int ri, CharacterBuffer *cb, char **end,
-                         int additionalArg);
+    void    (*handleFun)(int size, int ri, CharacterBuffer *cb, int additionalArg);
     int		additionalArg;
 } ScanFileFunctionStep;
 

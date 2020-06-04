@@ -91,7 +91,7 @@ struct lastCxFileInfos {
     int                 macroBaseFileGeneratedForSym[MAX_CX_SYMBOL_TAB];
     char                singleRecord[MAX_CHARS];
     int                 counter[MAX_CHARS];
-    void                (*fun[MAX_CHARS])(int size, int ri, CharacterBuffer *cb, char **end, int additional);
+    void                (*fun[MAX_CHARS])(int size, int ri, CharacterBuffer *cb, int additional);
     int                 additional[MAX_CHARS];
 
     // dead code detection vars
@@ -753,7 +753,6 @@ void genReferenceFile(bool updating, char *filename) {
 static void cxrfSetSingleRecords(int size,
                                  int ri,
                                  CharacterBuffer *cb,
-                                 char **out_end,
                                  int additionalArg
                                  ) {
     int i, ch;
@@ -782,7 +781,6 @@ static void writeCxFileCompatibilityError(char *message) {
 static void cxrfVersionCheck(int size,
                              int ri,
                              CharacterBuffer *cb,
-                             char **out_end,
                              int additionalArg
                              ) {
     char versionString[TMP_STRING_SIZE];
@@ -804,7 +802,6 @@ static void cxrfVersionCheck(int size,
 static void cxrfCheckNumber(int size,
                             int ri,
                             CharacterBuffer *cb,
-                            char **unused_endP,
                             int additionalArg
                             ) {
     int magicn, filen, hashMethod, exactPositionLinkFlag;
@@ -863,7 +860,6 @@ static int cxrfFileItemShouldBeUpdatedFromCxFile(S_fileItem *ffi) {
 static void cxReadFileName(int size,
                            int ri,
                            CharacterBuffer *cb,
-                           char **out_end,
                            int genFl
                            ) {
     char id[MAX_FILE_NAME_SIZE];
@@ -923,7 +919,6 @@ static void cxReadFileName(int size,
 static void cxrfSourceIndex(int size,
                             int ri,
                             CharacterBuffer *cb,
-                            char **unused_endP,
                             int genFl
                             ) {
     int file, sfile;
@@ -983,7 +978,6 @@ static void getSymTypeAndClasses(int *_symType, int *_vApplClass,
 static void cxrfSymbolNameForFullUpdateSchedule(int size,
                                                 int ri,
                                                 CharacterBuffer *cb,
-                                                char **unused_endP,
                                                 int additionalArg
                                                 ) {
     SymbolReferenceItem *ddd, *memb;
@@ -1059,7 +1053,6 @@ static int symbolIsReportableAsDead(SymbolReferenceItem *ss) {
 static void cxrfSymbolName(int size,
                            int ri,
                            CharacterBuffer *cb,
-                           char **unused_endP,
                            int additionalArg
                            ) {
     SymbolReferenceItem *ddd, *memb;
@@ -1069,7 +1062,6 @@ static void cxrfSymbolName(int size,
     char *id;
     char *ss;
 
-    assert(cb->end == *unused_endP);
     assert(ri == CXFI_SYM_NAME);
     if (s_opt.taskRegime==RegimeEditServer && additionalArg==DEAD_CODE_DETECTION) {
         // check if previous symbol was dead
@@ -1152,7 +1144,6 @@ static void cxrfSymbolName(int size,
 static void cxrfReferenceForFullUpdateSchedule(int size,
                                                int ri,
                                                CharacterBuffer *cb,
-                                               char **unused_endP,
                                                int additionalArg
                                                ) {
     Position pos;
@@ -1183,7 +1174,6 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
 static void cxrfReference(int size,
                           int ri,
                           CharacterBuffer *cb,
-                          char **unused_endP,
                           int additionalArg
                           ) {
     Position pos;
@@ -1318,7 +1308,6 @@ static void cxrfReference(int size,
 static void cxrfRefNum(int fileRefNum,
                        int ri,
                        CharacterBuffer *cb,
-                       char **unused_endP,
                        int additionalArg
                        ) {
     int check;
@@ -1333,7 +1322,6 @@ static void cxrfRefNum(int fileRefNum,
 static void cxrfSubClass(int size,
                          int ri,
                          CharacterBuffer *cb,
-                         char **unused_endP,
                          int additionalArg
                          ) {
     int of, file, sup, inf;
@@ -1425,7 +1413,7 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
             s_inLastInfos.counter[ch] = scannedInt;
         }
         if (s_inLastInfos.fun[ch] != NULL) {
-            (*s_inLastInfos.fun[ch])(scannedInt, ch, &cxfCharacterBuffer, &end,
+            (*s_inLastInfos.fun[ch])(scannedInt, ch, &cxfCharacterBuffer,
                                      s_inLastInfos.additional[ch]);
             next = cxfCharacterBuffer.next;
             end = cxfCharacterBuffer.end;
