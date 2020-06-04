@@ -955,15 +955,11 @@ static void cxrfSourceIndex(int size,
 }
 
 static int scanSymNameString(int size,
-                             char **out_next,
-                             char **out_end,
                              CharacterBuffer *cb,
                              char *id) {
     int i, len;
     char ch;
 
-    assert(cb->next == *out_next);
-    assert(cb->end == *out_end);
     for (i=0; i<size-1; i++) {
         CxGetChar(ch, cb, cb->next, cb->end);
         id[i] = ch;
@@ -971,8 +967,6 @@ static int scanSymNameString(int size,
     id[i] = 0;
     len = i;
     assert(len+1 < MAX_CX_SYMBOL_SIZE);
-    *out_next = cb->next;
-    *out_end = cb->end;
 
     return len;
 }
@@ -1014,7 +1008,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
     si = s_inLastInfos.counter[CXFI_SYM_INDEX];
     assert(si>=0 && si<MAX_CX_SYMBOL_TAB);
     id = s_inLastInfos._symbolTabNames[si];
-    len = scanSymNameString(size, unused_nextP, unused_endP, cb, id);
+    len = scanSymNameString(size, cb, id);
     getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
     //&fprintf(dumpOut,":scanning ref of %s %d %d: \n",id,symType,vFunClass);fflush(dumpOut);
     if (symType!=TypeCppInclude || strcmp(id, LINK_NAME_INCLUDE_REFS)!=0) {
@@ -1098,9 +1092,9 @@ static void cxrfSymbolName(int size,
     si = s_inLastInfos.counter[CXFI_SYM_INDEX];
     assert(si>=0 && si<MAX_CX_SYMBOL_TAB);
     id = s_inLastInfos._symbolTabNames[si];
-    len = scanSymNameString( size, unused_nextP, unused_endP, cb, id);
+    len = scanSymNameString( size, cb, id);
     getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
-    /*fprintf(dumpOut,":scanning ref of %s %d %d: \n",id,symType,virtClass);fflush(dumpOut);*/
+
     ddd = &s_inLastInfos._symbolTab[si];
     s_inLastInfos.symbolTab[si] = ddd;
     fillSymbolRefItemExceptBits(ddd,id,
