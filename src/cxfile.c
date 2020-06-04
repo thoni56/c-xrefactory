@@ -745,6 +745,8 @@ void genReferenceFile(bool updating, char *filename) {
         }                                                               \
         (cb)->next = in_next;                                           \
         in_end = (cb)->end;                                             \
+        assert((cb)->next == in_next);                                  \
+        assert((cb)->end == in_end);                                    \
     }
 
 
