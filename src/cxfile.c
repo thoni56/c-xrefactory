@@ -91,7 +91,7 @@ struct lastCxFileInfos {
     int                 macroBaseFileGeneratedForSym[MAX_CX_SYMBOL_TAB];
     char                singleRecord[MAX_CHARS];
     int                 counter[MAX_CHARS];
-    void                (*fun[MAX_CHARS])(int size, int ri, CharacterBuffer *cb, char **next, char **end, int additional);
+    void                (*fun[MAX_CHARS])(int size, int ri, CharacterBuffer *cb, char **end, int additional);
     int                 additional[MAX_CHARS];
 
     // dead code detection vars
@@ -753,7 +753,6 @@ void genReferenceFile(bool updating, char *filename) {
 static void cxrfSetSingleRecords(int size,
                                  int ri,
                                  CharacterBuffer *cb,
-                                 char **out_next,
                                  char **out_end,
                                  int additionalArg
                                  ) {
@@ -783,7 +782,6 @@ static void writeCxFileCompatibilityError(char *message) {
 static void cxrfVersionCheck(int size,
                              int ri,
                              CharacterBuffer *cb,
-                             char **out_next,
                              char **out_end,
                              int additionalArg
                              ) {
@@ -806,7 +804,6 @@ static void cxrfVersionCheck(int size,
 static void cxrfCheckNumber(int size,
                             int ri,
                             CharacterBuffer *cb,
-                            char **unused_nextP,
                             char **unused_endP,
                             int additionalArg
                             ) {
@@ -866,7 +863,6 @@ static int cxrfFileItemShouldBeUpdatedFromCxFile(S_fileItem *ffi) {
 static void cxReadFileName(int size,
                            int ri,
                            CharacterBuffer *cb,
-                           char **out_next,
                            char **out_end,
                            int genFl
                            ) {
@@ -927,7 +923,6 @@ static void cxReadFileName(int size,
 static void cxrfSourceIndex(int size,
                             int ri,
                             CharacterBuffer *cb,
-                            char **unused_nextP,
                             char **unused_endP,
                             int genFl
                             ) {
@@ -988,7 +983,6 @@ static void getSymTypeAndClasses(int *_symType, int *_vApplClass,
 static void cxrfSymbolNameForFullUpdateSchedule(int size,
                                                 int ri,
                                                 CharacterBuffer *cb,
-                                                char **unused_nextP,
                                                 char **unused_endP,
                                                 int additionalArg
                                                 ) {
@@ -1065,7 +1059,6 @@ static int symbolIsReportableAsDead(SymbolReferenceItem *ss) {
 static void cxrfSymbolName(int size,
                            int ri,
                            CharacterBuffer *cb,
-                           char **unused_nextP,
                            char **unused_endP,
                            int additionalArg
                            ) {
@@ -1076,7 +1069,6 @@ static void cxrfSymbolName(int size,
     char *id;
     char *ss;
 
-    assert(cb->next == *unused_nextP);
     assert(cb->end == *unused_endP);
     assert(ri == CXFI_SYM_NAME);
     if (s_opt.taskRegime==RegimeEditServer && additionalArg==DEAD_CODE_DETECTION) {
@@ -1160,7 +1152,6 @@ static void cxrfSymbolName(int size,
 static void cxrfReferenceForFullUpdateSchedule(int size,
                                                int ri,
                                                CharacterBuffer *cb,
-                                               char **unused_nextP,
                                                char **unused_endP,
                                                int additionalArg
                                                ) {
@@ -1192,7 +1183,6 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
 static void cxrfReference(int size,
                           int ri,
                           CharacterBuffer *cb,
-                          char **unused_nextP,
                           char **unused_endP,
                           int additionalArg
                           ) {
@@ -1328,7 +1318,6 @@ static void cxrfReference(int size,
 static void cxrfRefNum(int fileRefNum,
                        int ri,
                        CharacterBuffer *cb,
-                       char **unused_nextP,
                        char **unused_endP,
                        int additionalArg
                        ) {
@@ -1344,7 +1333,6 @@ static void cxrfRefNum(int fileRefNum,
 static void cxrfSubClass(int size,
                          int ri,
                          CharacterBuffer *cb,
-                         char **unused_nextP,
                          char **unused_endP,
                          int additionalArg
                          ) {
@@ -1437,7 +1425,7 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
             s_inLastInfos.counter[ch] = scannedInt;
         }
         if (s_inLastInfos.fun[ch] != NULL) {
-            (*s_inLastInfos.fun[ch])(scannedInt, ch, &cxfCharacterBuffer, &next, &end,
+            (*s_inLastInfos.fun[ch])(scannedInt, ch, &cxfCharacterBuffer, &end,
                                      s_inLastInfos.additional[ch]);
             next = cxfCharacterBuffer.next;
             end = cxfCharacterBuffer.end;
