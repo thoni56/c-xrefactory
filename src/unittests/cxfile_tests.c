@@ -28,46 +28,5 @@ BeforeEach(CxFile) {
 }
 AfterEach(CxFile) {}
 
-static CharacterBuffer characterBuffer;
-
-/* Ensure(CxFile, can_scan_int) { */
-/*     CharacterBuffer *cb = &characterBuffer; */
-/*     char next = ' '; */
-/*     char *characters; */
-/*     char *end; */
-/*     int result; */
-
-/*     characters = cb->chars; */
-/*     strcpy(cb->chars, "123"); */
-/*     cb->end = &cb->chars[strlen("123")]; */
-/*     end = cb->end; */
-
-/*     expect(refillBuffer, */
-/*            when(buffer, is_equal_to_hex(&characterBuffer))); */
-
-/*     ScanInt(next, &characterBuffer, characters, end, result); */
-
-/*     assert_that(result, is_equal_to(123)); */
-/* } */
-
-
-xEnsure(CxFile, can_get_char) {
-    CharacterBuffer *cb = &characterBuffer;
-    char next = ' ';
-    char *characters;
-    char *end;
-
-    characters = cb->chars;
-    strcpy(cb->chars, "123");
-    cb->end = &cb->chars[strlen("123")];
-    end = cb->end;
-
-    CxGetChar(next, &characterBuffer);
-    assert_that(next, is_equal_to('1'));
-
-    CxGetChar(next, &characterBuffer);
-    assert_that(next, is_equal_to('2'));
-
-    CxGetChar(next, &characterBuffer);
-    assert_that(next, is_equal_to('3'));
+Ensure(CxFile, can_run_empty_test) {
 }
