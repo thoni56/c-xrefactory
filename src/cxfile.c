@@ -954,22 +954,25 @@ static void cxrfSourceIndex(int size,
     }
 }
 
-static int scanSymNameString(int size,char **ccc,char **ffin,
-                             CharacterBuffer *cb,char *id) {
+static int scanSymNameString(int size,
+                             char **out_next,
+                             char **out_end,
+                             CharacterBuffer *cb,
+                             char *id) {
     int i, len;
-    char *cc, *fin, cch;
+    char ch;
 
-    cc = *ccc;
-    fin = *ffin;
+    assert(cb->next == *out_next);
+    assert(cb->end == *out_end);
     for (i=0; i<size-1; i++) {
-        CxGetChar(cch, cb, cc, fin);
-        id[i] = cch;
+        CxGetChar(ch, cb, cb->next, cb->end);
+        id[i] = ch;
     }
     id[i] = 0;
     len = i;
     assert(len+1 < MAX_CX_SYMBOL_SIZE);
-    *ccc = cc;
-    *ffin = fin;
+    *out_next = cb->next;
+    *out_end = cb->end;
 
     return len;
 }
@@ -1072,8 +1075,8 @@ static int symbolIsReportableAsDead(SymbolReferenceItem *ss) {
 static void cxrfSymbolName(int size,
                            int ri,
                            CharacterBuffer *cb,
-                           char **nextP,
-                           char **endP,
+                           char **unused_nextP,
+                           char **unused_endP,
                            int additionalArg
                            ) {
     SymbolReferenceItem *ddd, *memb;
@@ -1082,8 +1085,9 @@ static void cxrfSymbolName(int size,
     int si, symType, len, rr, vApplClass, vFunClass, ols, accessFlags, storage;
     char *id;
     char *ss;
-    char *next, *end;
 
+    assert(cb->next == *unused_nextP);
+    assert(cb->end == *unused_endP);
     assert(ri == CXFI_SYM_NAME);
     if (s_opt.taskRegime==RegimeEditServer && additionalArg==DEAD_CODE_DETECTION) {
         // check if previous symbol was dead
@@ -1094,8 +1098,7 @@ static void cxrfSymbolName(int size,
     si = s_inLastInfos.counter[CXFI_SYM_INDEX];
     assert(si>=0 && si<MAX_CX_SYMBOL_TAB);
     id = s_inLastInfos._symbolTabNames[si];
-    len = scanSymNameString( size, nextP, endP, cb, id);
-    next = *nextP; end = *endP;
+    len = scanSymNameString( size, unused_nextP, unused_endP, cb, id);
     getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
     /*fprintf(dumpOut,":scanning ref of %s %d %d: \n",id,symType,virtClass);fflush(dumpOut);*/
     ddd = &s_inLastInfos._symbolTab[si];
@@ -1162,7 +1165,7 @@ static void cxrfSymbolName(int size,
             }
         }
     }
-    *nextP = next; *endP = end;
+    *unused_nextP = cb->next; *unused_endP = cb->end;
 }
 
 static void cxrfReferenceForFullUpdateSchedule(int size,
