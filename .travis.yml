@@ -10,8 +10,8 @@ addons:
 
 before_install:
     - gem install coveralls-lcov
-    - wget https://github.com/cgreen-devs/cgreen/releases/latest/download/cgreen_1.2.0_amd64.deb
-    - sudo apt-get install ./cgreen_1.2.0_amd64.deb
+    - wget https://github.com/cgreen-devs/cgreen/releases/latest/download/cgreen_1.3.0_amd64.deb
+    - sudo apt-get install ./cgreen_1.3.0_amd64.deb
     - lcov --version
     - gcov --version
 
