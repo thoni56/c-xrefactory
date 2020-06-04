@@ -91,7 +91,7 @@ struct lastCxFileInfos {
     int                 macroBaseFileGeneratedForSym[MAX_CX_SYMBOL_TAB];
     char                singleRecord[MAX_CHARS];
     int                 counter[MAX_CHARS];
-    void                (*fun[MAX_CHARS])(int size,int ri,char **ccc,char **ffin,CharacterBuffer *bbb, int additional);
+    void                (*fun[MAX_CHARS])(int size, int ri, char **ccc, char **ffin, CharacterBuffer *bbb, int additional);
     int                 additional[MAX_CHARS];
 
     // dead code detection vars
@@ -728,22 +728,23 @@ void genReferenceFile(bool updating, char *filename) {
 
 /* ************************* READ **************************** */
 
-#define CxGetChar(ch, cb, cc, ffin) {                               \
-        if (cc >= ffin) {                                           \
-            (cb)->next = cc;                                        \
-            if ((cb)->isAtEOF || refillBuffer(cb) == 0) {           \
-                ch = -1;                                            \
-                (cb)->isAtEOF = true;                               \
-            } else {                                                \
-                cc = (cb)->next;                                    \
-                ffin = (cb)->end;                                   \
-                ch = *((unsigned char*)cc);                         \
-                cc++;                                               \
-            }                                                       \
-        } else {                                                    \
-            ch = * ((unsigned char*)cc); cc++;                      \
-        }                                                           \
-        log_trace("getting char *%x < %x == '0x%x'", cc, ffin, ch); \
+#define CxGetChar(ch, cb, in_next, in_end) {                            \
+        if (in_next >= in_end) {                                        \
+            (cb)->next = in_next;                                       \
+            if ((cb)->isAtEOF || refillBuffer(cb) == 0) {               \
+                ch = -1;                                                \
+                (cb)->isAtEOF = true;                                   \
+            } else {                                                    \
+                in_next = (cb)->next;                                   \
+                in_end = (cb)->end;                                     \
+                ch = *((unsigned char*)in_next);                        \
+                in_next++;                                              \
+            }                                                           \
+        } else {                                                        \
+            ch = * ((unsigned char*)in_next); in_next++;                \
+        }                                                               \
+        (cb)->next = in_next;                                           \
+        in_end = (cb)->end;                                             \
     }
 
 
@@ -1064,13 +1065,17 @@ static void cxfileCheckLastSymbolDeadness(void) {
 
 
 static int symbolIsReportableAsDead(SymbolReferenceItem *ss) {
-    if (ss==NULL) return(0);
-    if (ss->name[0]==' ') return(0);
+    if (ss==NULL || ss->name[0]==' ')
+        return(0);
+
     // you need to be strong here, in fact struct record can be used
     // without using struct explicitly
-    if (ss->b.symType == TypeStruct) return(0);
-    // maybe I should collect also all toString() referebces?
-    if (ss->b.storage==StorageMethod && strcmp(ss->name,"toString()")==0) return(0);
+    if (ss->b.symType == TypeStruct)
+        return(0);
+
+    // maybe I should collect also all toString() references?
+    if (ss->b.storage==StorageMethod && strcmp(ss->name,"toString()")==0)
+        return(0);
 
     // in this first approach restrict this to variables and functions
     if (ss->b.symType == TypeMacro) return(0);
@@ -1401,7 +1406,7 @@ static void cxrfSubClass(int size,
 void scanCxFile(ScanFileFunctionStep *scanFuns) {
     int scannedInt = 0;
     int ch,i;
-    char *chars, *end;
+    char *next, *end;
 
     ENTER();
     if (inputFile == NULL) {
@@ -1425,19 +1430,27 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
     }
     initCharacterBuffer(&cxfCharacterBuffer, inputFile);
     ch = ' ';
-    chars = cxfCharacterBuffer.chars;
+    next = cxfCharacterBuffer.chars;
     end = cxfCharacterBuffer.end;
     while(! cxfCharacterBuffer.isAtEOF) {
-         //& ScanInt(ch, buffer, chars, end, scannedInt);
+        assert(cxfCharacterBuffer.next == next);
+        assert(cxfCharacterBuffer.end == end);
+         //& ScanInt(ch, buffer, next, end, scannedInt);
         {
-            while (ch==' ' || ch=='\n' || ch=='\t')
-                CxGetChar(ch, &cxfCharacterBuffer, chars, end);
+            /* ch = skipBlanks(&cxfCharacterBuffer, ch); */
+            while (ch==' ' || ch=='\n' || ch=='\t') {
+                CxGetChar(ch, &cxfCharacterBuffer, next, end);
+            }
+            assert(cxfCharacterBuffer.next == next);
+            assert(cxfCharacterBuffer.end == end);
             scannedInt = 0;
             while (isdigit(ch)) {
                 scannedInt = scannedInt*10 + ch-'0';
-                CxGetChar(ch, &cxfCharacterBuffer, chars, end);
+                CxGetChar(ch, &cxfCharacterBuffer, next, end);
             }
         }
+        assert(cxfCharacterBuffer.next == next);
+        assert(cxfCharacterBuffer.end == end);
         if (cxfCharacterBuffer.isAtEOF)
             break;
         assert(ch >= 0 && ch<MAX_CHARS);
@@ -1445,23 +1458,25 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
             s_inLastInfos.counter[ch] = scannedInt;
         }
         if (s_inLastInfos.fun[ch] != NULL) {
-            (*s_inLastInfos.fun[ch])(scannedInt, ch, &chars, &end, &cxfCharacterBuffer,
+            (*s_inLastInfos.fun[ch])(scannedInt, ch, &next, &end, &cxfCharacterBuffer,
                                      s_inLastInfos.additional[ch]);
         } else if (! s_inLastInfos.singleRecord[ch]) {
             assert(scannedInt>0);
-            //& CxSkipNChars(scannedInt-1, chars, end, cb);
+            //& CxSkipNChars(scannedInt-1, next, end, cb);
             {
                 int ccount = scannedInt-1;
-                while (chars + ccount > end) {
-                    ccount -= end - chars;
-                    chars = end;
-                    CxGetChar(ch, &cxfCharacterBuffer, chars, end);
+                while (next + ccount > end) {
+                    ccount -= end - next;
+                    next = end;
+                    CxGetChar(ch, &cxfCharacterBuffer, next, end);
                     ccount --;
                 }
-                chars += ccount;
+                next += ccount;
             }
         }
-        CxGetChar(ch, &cxfCharacterBuffer, chars, end);
+        CxGetChar(ch, &cxfCharacterBuffer, next, end);
+        assert(cxfCharacterBuffer.next == next);
+        assert(cxfCharacterBuffer.end == end);
     }
     if (s_opt.taskRegime==RegimeEditServer
         && (s_opt.server_operation==OLO_LOCAL_UNUSED
