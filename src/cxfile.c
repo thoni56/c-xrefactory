@@ -1165,8 +1165,8 @@ static void cxrfSymbolName(int size,
 static void cxrfReferenceForFullUpdateSchedule(int size,
                                                int ri,
                                                CharacterBuffer *cb,
-                                               char **ccc,
-                                               char **ffin,
+                                               char **unused_nextP,
+                                               char **unused_endP,
                                                int additionalArg
                                                ) {
     Position pos;
@@ -1333,8 +1333,8 @@ static void cxrfReference(int size,
 static void cxrfRefNum(int fileRefNum,
                        int ri,
                        CharacterBuffer *cb,
-                       char **nextP,
-                       char **endP,
+                       char **unused_nextP,
+                       char **unused_endP,
                        int additionalArg
                        ) {
     int check;
@@ -1349,8 +1349,8 @@ static void cxrfRefNum(int fileRefNum,
 static void cxrfSubClass(int size,
                          int ri,
                          CharacterBuffer *cb,
-                         char **nextP,
-                         char **endP,
+                         char **unused_nextP,
+                         char **unused_endP,
                          int additionalArg
                          ) {
     int of, file, sup, inf;
