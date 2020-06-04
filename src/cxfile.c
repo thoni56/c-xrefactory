@@ -728,27 +728,20 @@ void genReferenceFile(bool updating, char *filename) {
 
 /* ************************* READ **************************** */
 
-#define CxGetChar(ch, cb, in_next, in_end) {                            \
-        assert((cb)->next == in_next);                                  \
-        assert((cb)->end == in_end);                                    \
+#define CxGetChar(ch, cb) {                                             \
         if ((cb)->next >= (cb)->end) {                                  \
             if ((cb)->isAtEOF || refillBuffer(cb) == 0) {               \
                 ch = -1;                                                \
                 (cb)->isAtEOF = true;                                   \
             } else {                                                    \
-                in_next = (cb)->next;                                   \
-                in_end = (cb)->end;                                     \
-                ch = *((unsigned char*)in_next);                        \
-                in_next++;                                              \
+                (cb)->next = (cb)->next;                                \
+                ch = *((unsigned char*)(cb)->next);                     \
+                (cb)->next++;                                           \
             }                                                           \
         } else {                                                        \
-            ch = * ((unsigned char*)in_next);                           \
-            in_next++;                                                  \
+            ch = * ((unsigned char*)(cb)->next);                        \
+            (cb)->next++;                                               \
         }                                                               \
-        (cb)->next = in_next;                                           \
-        in_end = (cb)->end;                                             \
-        assert((cb)->next == in_next);                                  \
-        assert((cb)->end == in_end);                                    \
     }
 
 
@@ -761,7 +754,7 @@ static void cxrfSetSingleRecords(int size,
 
     assert(ri == CXFI_SINGLE_RECORDS);
     for(i=0; i<size-1; i++) {
-        CxGetChar(ch, cb, cb->next, cb->end);
+        CxGetChar(ch, cb);
         s_inLastInfos.singleRecord[ch] = 1;
     }
 }
@@ -791,7 +784,7 @@ static void cxrfVersionCheck(int size,
 
     assert(ri == CXFI_VERSION);
     for(i=0; i<size-1; i++) {
-        CxGetChar(ch, cb, cb->next, cb->end);
+        CxGetChar(ch, cb);
         versionString[i]=ch;
     }
     versionString[i]=0;
@@ -877,7 +870,7 @@ static void cxReadFileName(int size,
     isInterface=((s_inLastInfos.counter[CXFI_ACCESS_BITS] & ACCESS_INTERFACE)!=0);
     ii = s_inLastInfos.counter[CXFI_FILE_INDEX];
     for (i=0; i<size-1; i++) {
-        CxGetChar(ch, cb, cb->next, cb->end);
+        CxGetChar(ch, cb);
         id[i] = ch;
     }
     id[i] = 0;
@@ -949,7 +942,7 @@ static int scanSymNameString(int size,
     char ch;
 
     for (i=0; i<size-1; i++) {
-        CxGetChar(ch, cb, cb->next, cb->end);
+        CxGetChar(ch, cb);
         id[i] = ch;
     }
     id[i] = 0;
@@ -1387,33 +1380,19 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
     }
     initCharacterBuffer(&cxfCharacterBuffer, inputFile);
     ch = ' ';
-    next = cxfCharacterBuffer.chars;
-    end = cxfCharacterBuffer.end;
     while(! cxfCharacterBuffer.isAtEOF) {
-        assert(cxfCharacterBuffer.next == next);
-        assert(cxfCharacterBuffer.end == end);
          //& ScanInt(ch, buffer, next, end, scannedInt);
         {
             /* ch = skipBlanks(&cxfCharacterBuffer, ch); */
             while (ch==' ' || ch=='\n' || ch=='\t') {
-                assert(cxfCharacterBuffer.next == next);
-                assert(cxfCharacterBuffer.end == end);
-                CxGetChar(ch, &cxfCharacterBuffer, next, end);
+                CxGetChar(ch, &cxfCharacterBuffer);
             }
-            assert(cxfCharacterBuffer.next == next);
-            assert(cxfCharacterBuffer.end == end);
             scannedInt = 0;
             while (isdigit(ch)) {
                 scannedInt = scannedInt*10 + ch-'0';
-                assert(cxfCharacterBuffer.next == next);
-                assert(cxfCharacterBuffer.end == end);
-                CxGetChar(ch, &cxfCharacterBuffer, next, end);
-                assert(cxfCharacterBuffer.next == next);
-                assert(cxfCharacterBuffer.end == end);
+                CxGetChar(ch, &cxfCharacterBuffer);
             }
         }
-        assert(cxfCharacterBuffer.next == next);
-        assert(cxfCharacterBuffer.end == end);
         if (cxfCharacterBuffer.isAtEOF)
             break;
         assert(ch >= 0 && ch<MAX_CHARS);
@@ -1432,15 +1411,13 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
                 while (cb->next + ccount > cb->end) {
                     ccount -= cb->end - cb->next;
                     cb->next = cb->end;
-                    CxGetChar(ch, cb, cb->next, cb->end);
+                    CxGetChar(ch, cb);
                     ccount --;
                 }
                 cb->next += ccount;
             }
         }
-        CxGetChar(ch, &cxfCharacterBuffer, cxfCharacterBuffer.next, cxfCharacterBuffer.end);
-        next = cxfCharacterBuffer.next;
-        end = cxfCharacterBuffer.end;
+        CxGetChar(ch, &cxfCharacterBuffer);
     }
     if (s_opt.taskRegime==RegimeEditServer
         && (s_opt.server_operation==OLO_LOCAL_UNUSED

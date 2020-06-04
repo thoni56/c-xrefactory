@@ -51,7 +51,7 @@ static CharacterBuffer characterBuffer;
 /* } */
 
 
-Ensure(CxFile, can_get_char) {
+xEnsure(CxFile, can_get_char) {
     CharacterBuffer *cb = &characterBuffer;
     char next = ' ';
     char *characters;
@@ -62,12 +62,12 @@ Ensure(CxFile, can_get_char) {
     cb->end = &cb->chars[strlen("123")];
     end = cb->end;
 
-    CxGetChar(next, &characterBuffer, characters, end);
+    CxGetChar(next, &characterBuffer);
     assert_that(next, is_equal_to('1'));
 
-    CxGetChar(next, &characterBuffer, characters, end);
+    CxGetChar(next, &characterBuffer);
     assert_that(next, is_equal_to('2'));
 
-    CxGetChar(next, &characterBuffer, characters, end);
+    CxGetChar(next, &characterBuffer);
     assert_that(next, is_equal_to('3'));
 }
