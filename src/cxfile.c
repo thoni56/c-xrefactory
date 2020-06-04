@@ -1093,7 +1093,7 @@ static void cxrfSymbolName(int size,
     assert(si>=0 && si<MAX_CX_SYMBOL_TAB);
     id = s_inLastInfos._symbolTabNames[si];
     len = scanSymNameString( size, cb, id);
-    getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
+    getSymTypeAndClasses(&symType, &vApplClass, &vFunClass);
 
     ddd = &s_inLastInfos._symbolTab[si];
     s_inLastInfos.symbolTab[si] = ddd;
@@ -1197,8 +1197,8 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
 static void cxrfReference(int size,
                           int ri,
                           CharacterBuffer *cb,
-                          char **nextP,
-                          char **endP,
+                          char **unused_nextP,
+                          char **unused_endP,
                           int additionalArg
                           ) {
     Position pos;
