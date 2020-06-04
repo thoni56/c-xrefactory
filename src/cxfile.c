@@ -1394,6 +1394,8 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
         {
             /* ch = skipBlanks(&cxfCharacterBuffer, ch); */
             while (ch==' ' || ch=='\n' || ch=='\t') {
+                assert(cxfCharacterBuffer.next == next);
+                assert(cxfCharacterBuffer.end == end);
                 CxGetChar(ch, &cxfCharacterBuffer, next, end);
             }
             assert(cxfCharacterBuffer.next == next);
@@ -1401,7 +1403,11 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
             scannedInt = 0;
             while (isdigit(ch)) {
                 scannedInt = scannedInt*10 + ch-'0';
+                assert(cxfCharacterBuffer.next == next);
+                assert(cxfCharacterBuffer.end == end);
                 CxGetChar(ch, &cxfCharacterBuffer, next, end);
+                assert(cxfCharacterBuffer.next == next);
+                assert(cxfCharacterBuffer.end == end);
             }
         }
         assert(cxfCharacterBuffer.next == next);
@@ -1422,15 +1428,20 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
             //& CxSkipNChars(scannedInt-1, next, end, cb);
             {
                 int ccount = scannedInt-1;
-                while (next + ccount > end) {
-                    ccount -= end - next;
-                    next = end;
-                    CxGetChar(ch, &cxfCharacterBuffer, next, end);
+                CharacterBuffer *cb = &cxfCharacterBuffer;
+                while (cb->next + ccount > cb->end) {
+                    ccount -= cb->end - cb->next;
+                    cb->next = cb->end;
+                    CxGetChar(ch, cb, cb->next, cb->end);
                     ccount --;
                 }
-                next += ccount;
+                cb->next += ccount;
+                next = cb->next;
+                end = cb->end;
             }
         }
+        assert(cxfCharacterBuffer.next == next);
+        assert(cxfCharacterBuffer.end == end);
         CxGetChar(ch, &cxfCharacterBuffer, next, end);
         assert(cxfCharacterBuffer.next == next);
         assert(cxfCharacterBuffer.end == end);
