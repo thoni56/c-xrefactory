@@ -1356,7 +1356,6 @@ static void cxrfSubClass(int size,
 void scanCxFile(ScanFileFunctionStep *scanFuns) {
     int scannedInt = 0;
     int ch,i;
-    char *next, *end;
 
     ENTER();
     if (inputFile == NULL) {
