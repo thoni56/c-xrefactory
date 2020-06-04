@@ -814,10 +814,7 @@ static void cxrfCheckNumber(int size,
                             int additionalArg
                             ) {
     int magicn, filen, hashMethod, exactPositionLinkFlag;
-    char *next, *end;
     char tmpBuff[TMP_BUFF_SIZE];
-
-    next = *nextP; end = *endP;
 
     assert(ri == CXFI_CHECK_NUMBER);
     if (s_opt.create)
@@ -842,7 +839,6 @@ static void cxrfCheckNumber(int size,
         }
         writeCxFileCompatibilityError(tmpBuff);
     }
-    *nextP = next; *endP = end;
 }
 
 static int cxrfFileItemShouldBeUpdatedFromCxFile(S_fileItem *ffi) {
