@@ -1421,8 +1421,6 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
         if (s_inLastInfos.fun[ch] != NULL) {
             (*s_inLastInfos.fun[ch])(scannedInt, ch, &cxfCharacterBuffer,
                                      s_inLastInfos.additional[ch]);
-            next = cxfCharacterBuffer.next;
-            end = cxfCharacterBuffer.end;
         } else if (! s_inLastInfos.singleRecord[ch]) {
             assert(scannedInt>0);
             //& CxSkipNChars(scannedInt-1, next, end, cb);
@@ -1436,12 +1434,8 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
                     ccount --;
                 }
                 cb->next += ccount;
-                next = cb->next;
-                end = cb->end;
             }
         }
-        assert(cxfCharacterBuffer.next == next);
-        assert(cxfCharacterBuffer.end == end);
         CxGetChar(ch, &cxfCharacterBuffer, cxfCharacterBuffer.next, cxfCharacterBuffer.end);
         next = cxfCharacterBuffer.next;
         end = cxfCharacterBuffer.end;
