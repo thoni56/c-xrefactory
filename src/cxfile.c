@@ -758,19 +758,14 @@ static void cxrfSetSingleRecords(int size,
                                  int additionalArg
                                  ) {
     int i, ch;
-    char *next, *end;
 
-    next = *nextP;
-    end = *endP;
-    assert(next == cb->next);
-    assert(end == cb->end);
     assert(ri == CXFI_SINGLE_RECORDS);
     for(i=0; i<size-1; i++) {
-        CxGetChar(ch, cb, next, end);
+        CxGetChar(ch, cb, cb->next, cb->end);
         s_inLastInfos.singleRecord[ch] = 1;
     }
-    *nextP = next;
-    *endP = end;
+    *nextP = cb->next;
+    *endP = cb->end;
 }
 
 
