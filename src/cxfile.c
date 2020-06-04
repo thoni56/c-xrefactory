@@ -729,8 +729,9 @@ void genReferenceFile(bool updating, char *filename) {
 /* ************************* READ **************************** */
 
 #define CxGetChar(ch, cb, in_next, in_end) {                            \
+        assert((cb)->next == in_next);                                  \
+        assert((cb)->end == in_end);                                    \
         if (in_next >= in_end) {                                        \
-            (cb)->next = in_next;                                       \
             if ((cb)->isAtEOF || refillBuffer(cb) == 0) {               \
                 ch = -1;                                                \
                 (cb)->isAtEOF = true;                                   \
