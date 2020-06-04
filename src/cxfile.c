@@ -1442,9 +1442,9 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
         }
         assert(cxfCharacterBuffer.next == next);
         assert(cxfCharacterBuffer.end == end);
-        CxGetChar(ch, &cxfCharacterBuffer, next, end);
-        assert(cxfCharacterBuffer.next == next);
-        assert(cxfCharacterBuffer.end == end);
+        CxGetChar(ch, &cxfCharacterBuffer, cxfCharacterBuffer.next, cxfCharacterBuffer.end);
+        next = cxfCharacterBuffer.next;
+        end = cxfCharacterBuffer.end;
     }
     if (s_opt.taskRegime==RegimeEditServer
         && (s_opt.server_operation==OLO_LOCAL_UNUSED
