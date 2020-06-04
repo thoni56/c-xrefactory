@@ -1523,7 +1523,7 @@ int smartReadFileTabFile(void) {
         if (    readedFileModTime != st.st_mtime
                 ||  readedFileSize != st.st_size
                 ||  strcmp(readedFileFile, tt) != 0) {
-            //&fprintf(dumpOut,":(re)reading file tab\n");
+            log_trace(":(re)reading file tab");
             tmp = scanReferenceFile(tt,"","",normalScanFunctionSequence);
             if (tmp != 0) {
                 readedFileModTime = st.st_mtime;
@@ -1531,7 +1531,7 @@ int smartReadFileTabFile(void) {
                 strcpy(readedFileFile, tt);
             }
         } else {
-            //&fprintf(dumpOut,":saving the (re)reading of file tab\n");
+            log_trace(":saving the (re)reading of file tab");
         }
         return(1);
     }
