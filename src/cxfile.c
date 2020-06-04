@@ -742,7 +742,8 @@ void genReferenceFile(bool updating, char *filename) {
                 in_next++;                                              \
             }                                                           \
         } else {                                                        \
-            ch = * ((unsigned char*)in_next); in_next++;                \
+            ch = * ((unsigned char*)in_next);                           \
+            in_next++;                                                  \
         }                                                               \
         (cb)->next = in_next;                                           \
         in_end = (cb)->end;                                             \
