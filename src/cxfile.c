@@ -484,29 +484,29 @@ static void genClassHierarchyItems(struct fileItem *fi, int ii) {
     }
 }
 
-static void crSubClassInfo(int sup, int inf, int origin, int genfl) {
-    S_fileItem      *ii, *jj;
+static void createSubClassInfo(int superior, int inferior, int origin, int genfl) {
+    S_fileItem      *iFile, *sFile;
     S_chReference   *p, *pp;
 
-    ii = s_fileTab.tab[inf];
-    jj = s_fileTab.tab[sup];
-    assert(ii && jj);
-    for(p=ii->superClasses; p!=NULL && p->superClass!=sup; p=p->next) ;
+    iFile = s_fileTab.tab[inferior];
+    sFile = s_fileTab.tab[superior];
+    assert(iFile && sFile);
+    for(p=iFile->superClasses; p!=NULL && p->superClass!=superior; p=p->next) ;
     if (p==NULL) {
-        p = newClassHierarchyReference(origin, sup, ii->superClasses);
-        ii->superClasses = p;
+        p = newClassHierarchyReference(origin, superior, iFile->superClasses);
+        iFile->superClasses = p;
         assert(s_opt.taskRegime);
         if (s_opt.taskRegime == RegimeXref) {
-            if (genfl == CX_FILE_ITEM_GEN) writeSubClassInfo(sup, inf, origin);
+            if (genfl == CX_FILE_ITEM_GEN) writeSubClassInfo(superior, inferior, origin);
         }
-        pp = newClassHierarchyReference(origin, inf, jj->superClasses);
-        jj->inferiorClasses = pp;
+        pp = newClassHierarchyReference(origin, inferior, sFile->superClasses);
+        sFile->inferiorClasses = pp;
     }
 }
 
 void addSubClassItemToFileTab( int sup, int inf, int origin) {
     if (sup >= 0 && inf >= 0) {
-        crSubClassInfo(sup, inf, origin, NO_CX_FILE_ITEM_GEN);
+        createSubClassInfo(sup, inf, origin, NO_CX_FILE_ITEM_GEN);
     }
 }
 
@@ -1319,19 +1319,19 @@ static void cxrfSubClass(int size,
     assert(s_fileTab.tab[inf]!=NULL);
     assert(s_opt.taskRegime);
     if (s_opt.taskRegime == RegimeHtmlGenerate) {
-        crSubClassInfo(sup, inf, file, NO_CX_FILE_ITEM_GEN);
+        createSubClassInfo(sup, inf, file, NO_CX_FILE_ITEM_GEN);
     }
     if (s_opt.taskRegime == RegimeXref) {
         if (!s_fileTab.tab[file]->b.cxLoading &&
             additionalArg==CX_GENERATE_OUTPUT) {
             writeSubClassInfo(sup, inf, file);  // updating refs
-            //&         crSubClassInfo(sup, inf, file, CX_FILE_ITEM_GEN);
+            //&         createSubClassInfo(sup, inf, file, CX_FILE_ITEM_GEN);
         }
     }
     if (s_opt.taskRegime == RegimeEditServer) {
         if (file!=s_input_file_number) {
             log_trace("reading %s < %s", simpleFileName(s_fileTab.tab[inf]->name),simpleFileName(s_fileTab.tab[sup]->name));
-            crSubClassInfo(sup, inf, file, NO_CX_FILE_ITEM_GEN);
+            createSubClassInfo(sup, inf, file, NO_CX_FILE_ITEM_GEN);
         }
     }
 }
