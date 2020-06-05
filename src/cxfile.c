@@ -484,6 +484,16 @@ static void genClassHierarchyItems(struct fileItem *fi, int ii) {
     }
 }
 
+
+static S_chReference *findSuperiorInSuperClasses(int superior, S_fileItem *iFile) {
+    S_chReference *p;
+    for(p=iFile->superClasses; p!=NULL && p->superClass!=superior; p=p->next)
+        ;
+
+    return p;
+}
+
+
 static void createSubClassInfo(int superior, int inferior, int origin, int genfl) {
     S_fileItem      *iFile, *sFile;
     S_chReference   *p, *pp;
@@ -491,13 +501,14 @@ static void createSubClassInfo(int superior, int inferior, int origin, int genfl
     iFile = s_fileTab.tab[inferior];
     sFile = s_fileTab.tab[superior];
     assert(iFile && sFile);
-    for(p=iFile->superClasses; p!=NULL && p->superClass!=superior; p=p->next) ;
+    p = findSuperiorInSuperClasses(superior, iFile);
     if (p==NULL) {
         p = newClassHierarchyReference(origin, superior, iFile->superClasses);
         iFile->superClasses = p;
         assert(s_opt.taskRegime);
         if (s_opt.taskRegime == RegimeXref) {
-            if (genfl == CX_FILE_ITEM_GEN) writeSubClassInfo(superior, inferior, origin);
+            if (genfl == CX_FILE_ITEM_GEN)
+                writeSubClassInfo(superior, inferior, origin);
         }
         pp = newClassHierarchyReference(origin, inferior, sFile->superClasses);
         sFile->inferiorClasses = pp;
