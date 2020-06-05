@@ -1374,6 +1374,16 @@ static int cxGetChar(CharacterBuffer *cb) {
 }
 
 
+/* TODO Merge with characterreader:skipBlanks() */
+static int cxSkipBlanks(CharacterBuffer *cb, int ch) {
+    while (ch==' ' || ch=='\n' || ch=='\t') {
+        ch = cxGetChar(cb);
+    }
+
+    return ch;
+}
+
+
 void scanCxFile(ScanFileFunctionStep *scanFuns) {
     int scannedInt = 0;
     int ch,i;
@@ -1405,10 +1415,7 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
         {
             CharacterBuffer *cb = &cxfCharacterBuffer;
             /* ch = skipBlanks(&cxfCharacterBuffer, ch); */
-            while (ch==' ' || ch=='\n' || ch=='\t') {
-                // CxGetChar(ch, &cxfCharacterBuffer);
-                ch = cxGetChar(cb);
-            }
+            ch = cxSkipBlanks(cb, ch);
             scannedInt = 0;
             while (isdigit(ch)) {
                 scannedInt = scannedInt*10 + ch-'0';
