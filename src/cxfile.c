@@ -1412,7 +1412,7 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
             scannedInt = 0;
             while (isdigit(ch)) {
                 scannedInt = scannedInt*10 + ch-'0';
-                CxGetChar(ch, &cxfCharacterBuffer);
+                ch = cxGetChar(&cxfCharacterBuffer);
             }
         }
         if (cxfCharacterBuffer.isAtEOF)
@@ -1433,13 +1433,13 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
                 while (cb->next + ccount > cb->end) {
                     ccount -= cb->end - cb->next;
                     cb->next = cb->end;
-                    CxGetChar(ch, cb);
+                    ch = cxGetChar(cb);
                     ccount --;
                 }
                 cb->next += ccount;
             }
         }
-        CxGetChar(ch, &cxfCharacterBuffer);
+        ch = cxGetChar(&cxfCharacterBuffer);
     }
     if (s_opt.taskRegime==RegimeEditServer
         && (s_opt.server_operation==OLO_LOCAL_UNUSED
