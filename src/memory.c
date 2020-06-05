@@ -150,16 +150,6 @@ void *stackMemoryPush(void *p, int size) {
     return(m);
 }
 
-void stackMemoryPop(void *p, int size) {
-    int i;
-    i = s_topBlock->firstFreeIndex;
-    if (i-size < 0) {
-        fprintf(stderr,"i-size < 0\n"); assert(0);
-    }
-    memcpy(p, & memory[i-size], size);
-    s_topBlock->firstFreeIndex = i-size;
-}
-
 int *stackMemoryPushInt(int x) {
     /*fprintf(dumpOut,"pushing int %d\n", x);*/
     return((int*)stackMemoryPush(&x, sizeof(int)));

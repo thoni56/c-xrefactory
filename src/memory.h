@@ -209,7 +209,6 @@ extern void *stackMemoryAlloc(int size);
 extern void *stackMemoryPush(void *p, int size);
 extern int  *stackMemoryPushInt(int x);
 extern char *stackMemoryPushString(char *s);
-extern void stackMemoryPop(void *p, int size);
 extern void stackMemoryBlockStart(void);
 extern void stackMemoryBlockFree(void);
 

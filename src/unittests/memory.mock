@@ -46,10 +46,6 @@ char *stackMemoryPushString(char *s) {
   return (char *) mock(s);
 }
 
-void stackMemoryPop(void *p, int size) {
-  mock(p, size);
-}
-
 void stackMemoryBlockStart(void) {
   mock();
 }
