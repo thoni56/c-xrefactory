@@ -553,7 +553,8 @@ void splitMenuPerSymbolsAndMap(S_olSymbolsMenu *rrr,
     // as parameter
     if (all!=rrr) {
         ss = &all;
-        while (*ss!=rrr && *ss!=NULL) ss = &(*ss)->next;
+        while (*ss!=rrr && *ss!=NULL)
+            ss = &(*ss)->next;
         assert(*ss!=NULL);
         assert (*ss != all);
         *ss = rrr->next;
@@ -567,10 +568,8 @@ void htmlGenerateGlobalReferenceLists(S_olSymbolsMenu *rrr, FILE *ff, char *fn) 
 
     for(rr=rrr; rr!=NULL; rr=rr->next) rr->outOnLine = 0;
     s_symbolListOutputCurrentLine = 1;
-    splitMenuPerSymbolsAndMap(
-                              rrr, (void (*)(S_olSymbolsMenu *, void *, void *))genNonVirtualsGlobRefLists, ff, fn
-                              );
-    splitMenuPerSymbolsAndMap(
-                              rrr, (void (*)(S_olSymbolsMenu *, void *, void *))genVirtualsGlobRefLists, ff, fn
-                              );
+    splitMenuPerSymbolsAndMap(rrr, (void (*)(S_olSymbolsMenu *, void *, void *))genNonVirtualsGlobRefLists,
+                              ff, fn);
+    splitMenuPerSymbolsAndMap(rrr, (void (*)(S_olSymbolsMenu *, void *, void *))genVirtualsGlobRefLists,
+                              ff, fn);
 }
