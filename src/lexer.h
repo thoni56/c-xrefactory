@@ -7,7 +7,7 @@
 #include "characterbuffer.h"
 
 
-typedef struct lexBuf {
+typedef struct lexemBuffer {
     char            *next;				/* next to read */
     char            *end;				/* pointing *after* last valid char */
     char            chars[LEX_BUFF_SIZE];
