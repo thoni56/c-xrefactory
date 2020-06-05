@@ -67,7 +67,7 @@ memory_tests.so: $(OBJDIR)/memory_tests.o $(OBJDIR)/memory.o
 # These includes the modules .c to be able to test internal functions or macros
 LEX_DEPENDENCIES = log position characterbuffer
 LEX_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(LEX_DEPENDENCIES))
-lex_tests.so: $(OBJDIR)/lex_tests.o $(LEX_DEPS)
+lexer_tests.so: $(OBJDIR)/lexer_tests.o $(LEX_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 CXFILE_DEPENDENCIES = protocol log position

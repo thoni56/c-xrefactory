@@ -2,7 +2,7 @@
 
 #include "commons.h"
 #include "lexem.h"
-#include "lex.h"
+#include "lexer.h"
 #include "lexmac.h"
 #include "globals.h"
 #include "caching.h"

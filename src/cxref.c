@@ -1,7 +1,7 @@
 #include "cxref.h"
 
 #include "commons.h"
-#include "lex.h"
+#include "lexer.h"
 #include "yylex.h"
 #include "classhierarchy.h"
 #include "globals.h"

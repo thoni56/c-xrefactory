@@ -1,5 +1,5 @@
 MODULES =  main globals misc semact commons generate \
-		enumTxt complete cxref cxfile lex yylex options \
+		enumTxt complete cxref cxfile lexer yylex options \
 		caching jsemact classfilereader classcaster init \
 		editor refactory protocol log \
 		html extract classhierarchy jslsemact \

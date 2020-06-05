@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "lex.h"
+#include "lexer.h"
 #include <cgreen/mocks.h>
 
 bool getLexem(LexemBuffer *buffer) {

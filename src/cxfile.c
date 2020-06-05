@@ -1,6 +1,6 @@
 #include "cxfile.h"
 
-#include "lex.h"
+#include "lexer.h"
 #include "yylex.h"
 #include "cxref.h"
 #include "html.h"

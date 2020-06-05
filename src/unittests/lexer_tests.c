@@ -1,7 +1,7 @@
 #include <cgreen/cgreen.h>
 
 /* Including the source since we are testing macros */
-#include "lex.c"
+#include "lexer.c"
 
 #include "globals.mock"
 #include "commons.mock"

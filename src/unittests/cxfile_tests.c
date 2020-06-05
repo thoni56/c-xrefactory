@@ -13,7 +13,7 @@
 #include "filetab.mock"
 #include "options.mock"
 #include "yylex.mock"
-#include "lex.mock"
+#include "lexer.mock"
 #include "editor.mock"
 #include "memory.mock"
 #include "characterbuffer.mock"

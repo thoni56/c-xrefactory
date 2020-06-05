@@ -30,7 +30,7 @@
 #include "caching.h"
 #include "recyacc.h"
 #include "yylex.h"
-#include "lex.h"
+#include "lexer.h"
 #include "log.h"
 #include "utils.h"
 #include "filedescriptor.h"
