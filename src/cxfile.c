@@ -753,7 +753,6 @@ static int cxGetChar(CharacterBuffer *cb) {
             ch = -1;
             cb->isAtEOF = true;
         } else {
-            cb->next = cb->next;
             ch = *((unsigned char*)cb->next);
             cb->next++;
         }
@@ -769,7 +768,7 @@ static int cxGetChar(CharacterBuffer *cb) {
 /* TODO Merge with characterreader:skipBlanks() */
 static int cxSkipBlanks(CharacterBuffer *cb, int ch) {
     while (ch==' ' || ch=='\n' || ch=='\t') {
-        ch = cxGetChar(cb);
+        ch = getChar(cb);
     }
 
     return ch;
