@@ -4,7 +4,7 @@ MODULES =  main globals misc semact commons generate \
 		editor refactory protocol log \
 		html extract classhierarchy jslsemact \
 		filetab macroargumenttable olcxtab editorbuffertab symboltable \
-		javafqttab jsltypetab reftab memory utils characterbuffer hash \
+		javafqttab jsltypetab reftab memory utils characterreader hash \
 		symbol c_parser.tab cexp_parser.tab java_parser.tab yacc_parser.tab \
 		fileitem filedescriptor typemodifier position id parsers fileio
 

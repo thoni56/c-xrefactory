@@ -20,7 +20,7 @@
 #include "symbol.mock"
 #include "main.mock"
 #include "commons.mock"
-#include "characterbuffer.mock"
+#include "characterreader.mock"
 #include "jsemact.mock"
 #include "utils.mock"
 #include "reftab.mock"

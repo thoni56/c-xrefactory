@@ -24,7 +24,7 @@
 #include "java_parser.x"
 #include "parsers.h"
 
-#include "characterbuffer.h"
+#include "characterreader.h"
 #include "cxref.h"
 #include "cxfile.h"
 #include "caching.h"

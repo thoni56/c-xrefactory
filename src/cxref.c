@@ -18,7 +18,7 @@
 #include "main.h"               /* For searchDefaultOptionsFile() */
 #include "enumTxt.h"
 #include "reftab.h"
-#include "characterbuffer.h"
+#include "characterreader.h"
 #include "symbol.h"
 #include "list.h"
 #include "filedescriptor.h"

@@ -3,7 +3,7 @@
 
 #include "proto.h"              /* for SymbolReferenceItem */
 #include "symbol.h"
-#include "characterbuffer.h"
+#include "characterreader.h"
 
 
 typedef struct scanFileFunctionStep {

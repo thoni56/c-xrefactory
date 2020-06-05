@@ -14,7 +14,7 @@
 #include "jslsemact.h"
 #include "editor.h"
 #include "reftab.h"
-#include "characterbuffer.h"
+#include "characterreader.h"
 #include "symbol.h"
 #include "jsemact.h"
 

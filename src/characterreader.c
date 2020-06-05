@@ -1,4 +1,4 @@
-#include "characterbuffer.h"
+#include "characterreader.h"
 
 #include <stdlib.h>
 #include <string.h>

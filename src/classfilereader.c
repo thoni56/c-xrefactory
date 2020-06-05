@@ -11,7 +11,7 @@
 #include "cxref.h"
 #include "cxfile.h"
 #include "jsemact.h"
-#include "characterbuffer.h"
+#include "characterreader.h"
 #include "symbol.h"
 #include "list.h"
 #include "filedescriptor.h"

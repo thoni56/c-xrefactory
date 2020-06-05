@@ -4,7 +4,7 @@
 #include <stdbool.h>
 
 #include "proto.h"
-#include "characterbuffer.h"
+#include "characterreader.h"
 
 
 typedef struct lexemBuffer {

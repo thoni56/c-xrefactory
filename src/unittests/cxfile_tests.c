@@ -16,7 +16,7 @@
 #include "lexer.mock"
 #include "editor.mock"
 #include "memory.mock"
-#include "characterbuffer.mock"
+#include "characterreader.mock"
 #include "classhierarchy.mock"
 #include "fileio.mock"
 

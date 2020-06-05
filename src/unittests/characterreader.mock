@@ -1,5 +1,5 @@
 /* -*- c -*-*/
-#include "characterbuffer.h"
+#include "characterreader.h"
 #include <cgreen/mocks.h>
 
 z_stream s_defaultZStream = {NULL,};

@@ -7,7 +7,7 @@
 #include "commons.h"
 #include "parsers.h"
 #include "cxref.h"
-#include "characterbuffer.h"
+#include "characterreader.h"
 #include "yylex.h"
 #include "filedescriptor.h"
 

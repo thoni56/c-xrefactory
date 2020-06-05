@@ -22,7 +22,7 @@ void processDefine(bool argFlag);
 #include "commons.mock"
 #include "misc.mock"
 #include "cxfile.mock"
-#include "characterbuffer.mock"
+#include "characterreader.mock"
 #include "lexer.mock"
 #include "semact.mock"
 #include "java_parser.mock"
