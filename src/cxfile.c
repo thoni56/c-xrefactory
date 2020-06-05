@@ -1353,6 +1353,27 @@ static void cxrfSubClass(int size,
     }
 }
 
+
+static int cxGetChar(CharacterBuffer *cb) {
+    int ch;
+    if (cb->next >= cb->end) {
+        if (cb->isAtEOF || refillBuffer(cb) == 0) {
+            ch = -1;
+            cb->isAtEOF = true;
+        } else {
+            cb->next = cb->next;
+            ch = *((unsigned char*)cb->next);
+            cb->next++;
+        }
+    } else {
+        ch = * ((unsigned char*)cb->next);
+        cb->next++;
+    }
+
+    return ch;
+}
+
+
 void scanCxFile(ScanFileFunctionStep *scanFuns) {
     int scannedInt = 0;
     int ch,i;
@@ -1382,9 +1403,11 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
     while(! cxfCharacterBuffer.isAtEOF) {
          //& ScanInt(ch, buffer, next, end, scannedInt);
         {
+            CharacterBuffer *cb = &cxfCharacterBuffer;
             /* ch = skipBlanks(&cxfCharacterBuffer, ch); */
             while (ch==' ' || ch=='\n' || ch=='\t') {
-                CxGetChar(ch, &cxfCharacterBuffer);
+                // CxGetChar(ch, &cxfCharacterBuffer);
+                ch = cxGetChar(cb);
             }
             scannedInt = 0;
             while (isdigit(ch)) {
