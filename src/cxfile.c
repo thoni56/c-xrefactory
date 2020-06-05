@@ -728,53 +728,6 @@ void genReferenceFile(bool updating, char *filename) {
 
 /* ************************* READ **************************** */
 
-#define CxGetChar(ch, cb) {                                             \
-        if ((cb)->next >= (cb)->end) {                                  \
-            if ((cb)->isAtEOF || refillBuffer(cb) == 0) {               \
-                ch = -1;                                                \
-                (cb)->isAtEOF = true;                                   \
-            } else {                                                    \
-                (cb)->next = (cb)->next;                                \
-                ch = *((unsigned char*)(cb)->next);                     \
-                (cb)->next++;                                           \
-            }                                                           \
-        } else {                                                        \
-            ch = * ((unsigned char*)(cb)->next);                        \
-            (cb)->next++;                                               \
-        }                                                               \
-    }
-
-
-/* TODO Merge with characterreader:getChar() */
-static int cxGetChar(CharacterBuffer *cb) {
-    int ch;
-    if (cb->next >= cb->end) {
-        if (cb->isAtEOF || refillBuffer(cb) == 0) {
-            ch = -1;
-            cb->isAtEOF = true;
-        } else {
-            ch = *((unsigned char*)cb->next);
-            cb->next++;
-        }
-    } else {
-        ch = * ((unsigned char*)cb->next);
-        cb->next++;
-    }
-
-    return ch;
-}
-
-
-/* TODO Merge with characterreader:skipBlanks() */
-static int cxSkipBlanks(CharacterBuffer *cb, int ch) {
-    while (ch==' ' || ch=='\n' || ch=='\t') {
-        ch = getChar(cb);
-    }
-
-    return ch;
-}
-
-
 static void cxrfSetSingleRecords(int size,
                                  int ri,
                                  CharacterBuffer *cb,
@@ -784,7 +737,7 @@ static void cxrfSetSingleRecords(int size,
 
     assert(ri == CXFI_SINGLE_RECORDS);
     for(i=0; i<size-1; i++) {
-        ch = cxGetChar(cb);
+        ch = getChar(cb);
         s_inLastInfos.singleRecord[ch] = 1;
     }
 }
@@ -814,7 +767,7 @@ static void cxrfVersionCheck(int size,
 
     assert(ri == CXFI_VERSION);
     for(i=0; i<size-1; i++) {
-        ch = cxGetChar(cb);
+        ch = getChar(cb);
         versionString[i]=ch;
     }
     versionString[i]=0;
@@ -900,7 +853,7 @@ static void cxReadFileName(int size,
     isInterface=((s_inLastInfos.counter[CXFI_ACCESS_BITS] & ACCESS_INTERFACE)!=0);
     ii = s_inLastInfos.counter[CXFI_FILE_INDEX];
     for (i=0; i<size-1; i++) {
-        ch = cxGetChar(cb);
+        ch = getChar(cb);
         id[i] = ch;
     }
     id[i] = 0;
@@ -972,7 +925,7 @@ static int scanSymNameString(int size,
     char ch;
 
     for (i=0; i<size-1; i++) {
-        ch = cxGetChar(cb);
+        ch = getChar(cb);
         id[i] = ch;
     }
     id[i] = 0;
@@ -1384,6 +1337,21 @@ static void cxrfSubClass(int size,
 }
 
 
+static int scanInteger(CharacterBuffer *cb, int *_ch) {
+    int scannedInt, ch = *_ch;
+    ch = skipWhiteSpace(cb, ch);
+    scannedInt = 0;
+    while (isdigit(ch)) {
+        scannedInt = scannedInt*10 + ch-'0';
+        ch = getChar(&cxfCharacterBuffer);
+    }
+    *_ch = ch;
+
+    return scannedInt;
+}
+
+
+
 void scanCxFile(ScanFileFunctionStep *scanFuns) {
     int scannedInt = 0;
     int ch,i;
@@ -1411,17 +1379,8 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
     initCharacterBuffer(&cxfCharacterBuffer, inputFile);
     ch = ' ';
     while(! cxfCharacterBuffer.isAtEOF) {
-         //& ScanInt(ch, buffer, next, end, scannedInt);
-        {
-            CharacterBuffer *cb = &cxfCharacterBuffer;
-            /* ch = skipBlanks(&cxfCharacterBuffer, ch); */
-            ch = cxSkipBlanks(cb, ch);
-            scannedInt = 0;
-            while (isdigit(ch)) {
-                scannedInt = scannedInt*10 + ch-'0';
-                ch = cxGetChar(&cxfCharacterBuffer);
-            }
-        }
+        CharacterBuffer *cb = &cxfCharacterBuffer;
+        scannedInt = scanInteger(cb, &ch);
         if (cxfCharacterBuffer.isAtEOF)
             break;
         assert(ch >= 0 && ch<MAX_CHARS);
@@ -1436,17 +1395,16 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
             //& CxSkipNChars(scannedInt-1, next, end, cb);
             {
                 int ccount = scannedInt-1;
-                CharacterBuffer *cb = &cxfCharacterBuffer;
                 while (cb->next + ccount > cb->end) {
                     ccount -= cb->end - cb->next;
                     cb->next = cb->end;
-                    ch = cxGetChar(cb);
+                    ch = getChar(cb);
                     ccount --;
                 }
                 cb->next += ccount;
             }
         }
-        ch = cxGetChar(&cxfCharacterBuffer);
+        ch = getChar(&cxfCharacterBuffer);
     }
     if (s_opt.taskRegime==RegimeEditServer
         && (s_opt.server_operation==OLO_LOCAL_UNUSED

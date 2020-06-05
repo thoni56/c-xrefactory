@@ -47,6 +47,7 @@ extern int columnPosition(CharacterBuffer *cb);
 extern int absoluteFilePosition(CharacterBuffer *cb);
 
 extern int skipBlanks(CharacterBuffer *cb, int ch);
+extern int skipWhiteSpace(CharacterBuffer *cb, int ch);
 extern int skipNCharsInCharBuf(CharacterBuffer *buffer, unsigned count);
 
 extern int getChar(CharacterBuffer *cb);

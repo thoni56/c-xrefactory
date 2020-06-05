@@ -34,11 +34,11 @@ void initCharacterBuffer(CharacterBuffer *characterBuffer, FILE *file) {
 
 /* Here be mocks... */
 
-bool refillBuffer(struct characterBuffer *buffer) {
+bool refillBuffer(CharacterBuffer *buffer) {
     return (int) mock(buffer);
 }
 
-void switchToZippedCharBuff(struct characterBuffer *buffer) {
+void switchToZippedCharBuff(CharacterBuffer *buffer) {
     mock(buffer);
 }
 
@@ -54,7 +54,11 @@ int skipBlanks(CharacterBuffer *cb, int ch) {
     return (int)mock(cb, ch);
 }
 
-int skipNCharsInCharBuf(struct characterBuffer *buffer, unsigned count) {
+int skipWhiteSpace(CharacterBuffer *cb, int ch) {
+    return (int)mock(cb, ch);
+}
+
+int skipNCharsInCharBuf(CharacterBuffer *buffer, unsigned count) {
     return (int) mock(buffer, count);
 }
 
@@ -66,6 +70,6 @@ void ungetChar(CharacterBuffer *cb, int ch) {
     (void)mock(cb, ch);
 }
 
-void closeCharacterBuffer(struct characterBuffer *buffer) {
+void closeCharacterBuffer(CharacterBuffer *buffer) {
     mock(buffer);
 }

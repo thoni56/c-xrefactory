@@ -215,9 +215,18 @@ int absoluteFilePosition(CharacterBuffer *cb) {
 
 
 int skipBlanks(CharacterBuffer *cb, int ch) {
-    while (ch==' '|| ch=='\t' || ch=='\004') {
+    while (ch==' '|| ch=='\t' || ch=='\004') { /* EOT? */
         ch = getChar(cb);
     }
+    return ch;
+}
+
+
+int skipWhiteSpace(CharacterBuffer *cb, int ch) {
+    while (ch==' ' || ch=='\n' || ch=='\t') {
+        ch = getChar(cb);
+    }
+
     return ch;
 }
 
