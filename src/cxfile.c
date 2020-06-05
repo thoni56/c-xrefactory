@@ -785,7 +785,7 @@ static void cxrfSetSingleRecords(int size,
 
     assert(ri == CXFI_SINGLE_RECORDS);
     for(i=0; i<size-1; i++) {
-        CxGetChar(ch, cb);
+        ch = cxGetChar(cb);
         s_inLastInfos.singleRecord[ch] = 1;
     }
 }
@@ -815,7 +815,7 @@ static void cxrfVersionCheck(int size,
 
     assert(ri == CXFI_VERSION);
     for(i=0; i<size-1; i++) {
-        CxGetChar(ch, cb);
+        ch = cxGetChar(cb);
         versionString[i]=ch;
     }
     versionString[i]=0;
@@ -901,7 +901,7 @@ static void cxReadFileName(int size,
     isInterface=((s_inLastInfos.counter[CXFI_ACCESS_BITS] & ACCESS_INTERFACE)!=0);
     ii = s_inLastInfos.counter[CXFI_FILE_INDEX];
     for (i=0; i<size-1; i++) {
-        CxGetChar(ch, cb);
+        ch = cxGetChar(cb);
         id[i] = ch;
     }
     id[i] = 0;
@@ -973,7 +973,7 @@ static int scanSymNameString(int size,
     char ch;
 
     for (i=0; i<size-1; i++) {
-        CxGetChar(ch, cb);
+        ch = cxGetChar(cb);
         id[i] = ch;
     }
     id[i] = 0;
