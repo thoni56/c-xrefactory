@@ -9,5 +9,5 @@ void fillFileItem(FileItem *item, char *name, bool fromCommandLine) {
     item->name = name;
     item->b.commandLineEntered = fromCommandLine;
     item->directEnclosingInstance = s_noneFileIndex;
-    item->b.sourceFile = s_noneFileIndex;
+    item->b.sourceFileNumber = s_noneFileIndex;
 }

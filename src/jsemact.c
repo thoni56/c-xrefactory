@@ -296,7 +296,7 @@ bool javaTypeFileExist(IdList *name) {
 
     if  (fileTabExists(&s_fileTab, fname+1)) {
         int fileIndex = fileTabLookup(&s_fileTab, fname+1);
-        if (s_fileTab.tab[fileIndex]->b.sourceFile != s_noneFileIndex) {
+        if (s_fileTab.tab[fileIndex]->b.sourceFileNumber != s_noneFileIndex) {
             return true;
         }
     }
@@ -405,7 +405,7 @@ static int javaFindFile(Symbol *clas,
 //&fprintf(dumpOut,"!looking for %s.classf(in %s)== %d\n", lname, slname, clas->u.s->classFile); fflush(dumpOut);fprintf(dumpOut,"!looking for %s %s\n", lname, s_fileTab.tab[clas->u.s->classFile]->name); fflush(dumpOut);
     rs = javaFindSourceFile(slname, resSourceFile, &sourceStat);
     assert(clas->u.s && s_fileTab.tab[clas->u.s->classFile]);
-    si = s_fileTab.tab[clas->u.s->classFile]->b.sourceFile;
+    si = s_fileTab.tab[clas->u.s->classFile]->b.sourceFileNumber;
 //&fprintf(dumpOut,"source search %d %d\n", rs, si);
     if (rs==0 && si!= -1 && si!=s_noneFileIndex) {
         // try the source indicated by source field of filetab
@@ -813,9 +813,9 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
             cfi = memb->u.s->classFile;
             assert(s_fileTab.tab[cfi]);
             // set it to none, if class is inside jslparsing  will re-set it
-            s_fileTab.tab[cfi]->b.sourceFile=s_noneFileIndex;
+            s_fileTab.tab[cfi]->b.sourceFileNumber=s_noneFileIndex;
             javaReadSymbolsFromSourceFile(sname);
-            if (s_fileTab.tab[cfi]->b.sourceFile == s_noneFileIndex) {
+            if (s_fileTab.tab[cfi]->b.sourceFileNumber == s_noneFileIndex) {
                 // class definition not found in the source file,
                 // (moved inner class) retry searching for class file
                 ffound = javaFindFile(memb, &sname, &cname);
@@ -2676,7 +2676,7 @@ void javaSetClassSourceInformation(char *package, Id *classId) {
     }
     SPRINT_FILE_TAB_CLASS_NAME(className, fqt);
     fileIndex = addFileTabItem(className);
-    s_fileTab.tab[fileIndex]->b.sourceFile = classId->p.file;
+    s_fileTab.tab[fileIndex]->b.sourceFileNumber = classId->p.file;
 }
 
 

@@ -471,9 +471,9 @@ static void writeFileIndexItem(struct fileItem *fi, int ii) {
 }
 
 static void writeFileSourceIndexItem(struct fileItem *fileItem, int ii) {
-    if (fileItem->b.sourceFile != s_noneFileIndex) {
+    if (fileItem->b.sourceFileNumber != s_noneFileIndex) {
         writeOptionalCompactRecord(CXFI_FILE_INDEX, ii, "\n");
-        writeCompactRecord(CXFI_SOURCE_INDEX, fileItem->b.sourceFile, " ");
+        writeCompactRecord(CXFI_SOURCE_INDEX, fileItem->b.sourceFileNumber, " ");
     }
 }
 
@@ -890,7 +890,7 @@ static void cxReadFileName(int size,
         if (cxrfFileItemShouldBeUpdatedFromCxFile(fileItem)) {
             fileItem->b.isInterface = isInterface;
             // Set it to none, it will be updated by source item
-            fileItem->b.sourceFile = s_noneFileIndex;
+            fileItem->b.sourceFileNumber = s_noneFileIndex;
         }
         if (s_opt.taskRegime == RegimeEditServer) {
             fileItem->b.commandLineEntered = commandLineFlag;
@@ -919,12 +919,12 @@ static void cxrfSourceIndex(int size,
     sfile = s_decodeFilesNum[sfile];
     assert(file>=0 && file<MAX_FILES && s_fileTab.tab[file]);
     // hmmm. here be more generous in getting corrct source info
-    if (s_fileTab.tab[file]->b.sourceFile == s_noneFileIndex) {
+    if (s_fileTab.tab[file]->b.sourceFileNumber == s_noneFileIndex) {
         //&fprintf(dumpOut,"setting %d source to %d\n", file, sfile);fflush(dumpOut);
         //&fprintf(dumpOut,"setting %s source to %s\n", s_fileTab.tab[file]->name, s_fileTab.tab[sfile]->name);fflush(dumpOut);
         // first check that it is not set directly from source
         if (! s_fileTab.tab[file]->b.cxLoading) {
-            s_fileTab.tab[file]->b.sourceFile = sfile;
+            s_fileTab.tab[file]->b.sourceFileNumber = sfile;
         }
     }
 }

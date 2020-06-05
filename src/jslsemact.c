@@ -573,7 +573,7 @@ void jslNewClassDefinitionBegin(Id *name,
     fileInd = cc->u.s->classFile;
     log_trace("setting source file of %s to %s", s_fileTab.tab[cc->u.s->classFile]->name,
               s_fileTab.tab[s_jsl->sourceFileNumber]->name);
-    s_fileTab.tab[fileInd]->b.sourceFile = s_jsl->sourceFileNumber;
+    s_fileTab.tab[fileInd]->b.sourceFileNumber = s_jsl->sourceFileNumber;
 
     if (accFlags & ACCESS_INTERFACE) s_fileTab.tab[fileInd]->b.isInterface = true;
     addClassTreeHierarchyReference(fileInd,&inname->p,UsageClassTreeDefinition);
