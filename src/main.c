@@ -1720,7 +1720,7 @@ static void mainScheduleInputFilesFromOptionsToFileTable(void) {
 
 static char * getInputFileFromFtab(int *fArgCount, int flag) {
     int         i;
-    S_fileItem  *fi;
+    FileItem  *fi;
     for(i= *fArgCount; i<s_fileTab.size; i++) {
         fi = s_fileTab.tab[i];
         if (fi!=NULL) {
@@ -1758,13 +1758,13 @@ static void mainGenerateReferenceFile(void) {
     }
 }
 
-static void schedulingUpdateToProcess(S_fileItem *p) {
+static void schedulingUpdateToProcess(FileItem *p) {
     if (p->b.scheduledToUpdate && p->b.commandLineEntered) {
         p->b.scheduledToProcess = true;
     }
 }
 
-static void schedulingToUpdate(S_fileItem *p, void *rs) {
+static void schedulingToUpdate(FileItem *p, void *rs) {
     struct stat fstat, hstat;
     char sss[MAX_FILE_NAME_SIZE];
 
@@ -2486,7 +2486,7 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
     editorInit();
 }
 
-static void mainReinitFileTabEntry(S_fileItem *ft) {
+static void mainReinitFileTabEntry(FileItem *ft) {
     ft->inferiorClasses = ft->superClasses = NULL;
     ft->directEnclosingInstance = s_noneFileIndex;
     ft->b.scheduledToProcess = false;
@@ -2728,7 +2728,7 @@ static void fillIncludeRefItem( SymbolReferenceItem *ddd , int fnum) {
 static void makeIncludeClosureOfFilesToUpdate(void) {
     char                *cxFreeBase;
     int                 i,ii,fileAddedFlag, isJavaFileFlag;
-    S_fileItem          *fi,*includer;
+    FileItem          *fi,*includer;
     SymbolReferenceItem     ddd,*memb;
     Reference         *rr;
     CX_ALLOCC(cxFreeBase,0,char);
@@ -2850,7 +2850,7 @@ static int scheduleFileUsingTheMacro(void) {
 }
 
 // this is necessary to put new mtimies for header files
-static void setFullUpdateMtimesInFileTab(S_fileItem *fi) {
+static void setFullUpdateMtimesInFileTab(FileItem *fi) {
     if (fi->b.scheduledToUpdate || s_opt.create) {
         fi->lastFullUpdateMtime = fi->lastModified;
     }
@@ -3091,7 +3091,7 @@ static void mainXrefProcessInputFile(int argc, char **argv, int *_inputIn, int *
 }
 
 static void mainXrefOneWholeFileProcessing(int argc, char **argv,
-                                           S_fileItem *ff,
+                                           FileItem *ff,
                                            int *firstPassing, int *atLeastOneProcessed) {
     int         inputIn;
     s_input_file_name = ff->name;
@@ -3122,7 +3122,7 @@ static void printPrescanningMessage(void) {
     }
 }
 
-static bool inputFileItemLess(S_fileItem *f1, S_fileItem *f2) {
+static bool inputFileItemLess(FileItem *f1, FileItem *f2) {
     int cc;
     char dd1[MAX_FILE_NAME_SIZE];
     char dd2[MAX_FILE_NAME_SIZE];
@@ -3139,8 +3139,8 @@ static bool inputFileItemLess(S_fileItem *f1, S_fileItem *f2) {
     return false;
 }
 
-static S_fileItem *mainCreateListOfInputFiles(void) {
-    S_fileItem *res;
+static FileItem *mainCreateListOfInputFiles(void) {
+    FileItem *res;
     char *nn;
     int n;
     res = NULL;
@@ -3149,14 +3149,14 @@ static S_fileItem *mainCreateListOfInputFiles(void) {
         s_fileTab.tab[n]->next = res;
         res = s_fileTab.tab[n];
     }
-    LIST_MERGE_SORT(S_fileItem, res, inputFileItemLess);
+    LIST_MERGE_SORT(FileItem, res, inputFileItemLess);
     return(res);
 }
 
 void mainCallXref(int argc, char **argv) {
     static char *cxFreeBase0, *cxFreeBase;
     static int firstPassing, mess, atLeastOneProcessed;
-    static S_fileItem *ffc, *pffc;
+    static FileItem *ffc, *pffc;
     static int messagePrinted = 0;
     static int numberOfInputs, inputCounter, pinputCounter;
 
@@ -3171,7 +3171,7 @@ void mainCallXref(int argc, char **argv) {
     atLeastOneProcessed = 0;
     ffc = pffc = mainCreateListOfInputFiles();
     inputCounter = pinputCounter = 0;
-    LIST_LEN(numberOfInputs, S_fileItem, ffc);
+    LIST_LEN(numberOfInputs, FileItem, ffc);
     for(;;) {
         s_currCppPass = ANY_CPP_PASS;
         firstPassing = 1;

@@ -1528,7 +1528,7 @@ static int isItCurrentPackageName(char *fn) {
     return(0);
 }
 
-static void completeFqtClassFileFromFileTab(S_fileItem *fi, void *cfmpi) {
+static void completeFqtClassFileFromFileTab(FileItem *fi, void *cfmpi) {
     char    *fn;
     assert(fi!=NULL);
     if (fi->name[0] == ZIP_SEPARATOR_CHAR) {

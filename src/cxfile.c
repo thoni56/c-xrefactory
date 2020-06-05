@@ -485,7 +485,7 @@ static void genClassHierarchyItems(struct fileItem *fi, int ii) {
 }
 
 
-static ClassHierarchyReference *findSuperiorInSuperClasses(int superior, S_fileItem *iFile) {
+static ClassHierarchyReference *findSuperiorInSuperClasses(int superior, FileItem *iFile) {
     ClassHierarchyReference *p;
     for(p=iFile->superClasses; p!=NULL && p->superClass!=superior; p=p->next)
         ;
@@ -495,7 +495,7 @@ static ClassHierarchyReference *findSuperiorInSuperClasses(int superior, S_fileI
 
 
 static void createSubClassInfo(int superior, int inferior, int origin, int genfl) {
-    S_fileItem      *iFile, *sFile;
+    FileItem      *iFile, *sFile;
     ClassHierarchyReference   *p, *pp;
 
     iFile = s_fileTab.tab[inferior];
@@ -664,8 +664,8 @@ static void createDirIfNotExists(char *dirname) {
 static void genPartialFileTabRefFile(int updateFlag,
                                      char *dirname,
                                      char *suffix,
-                                     void mapfun(S_fileItem *, int),
-                                     void mapfun2(S_fileItem *, int)) {
+                                     void mapfun(FileItem *, int),
+                                     void mapfun2(FileItem *, int)) {
     char filename[MAX_FILE_NAME_SIZE];
 
     sprintf(filename, "%s%s", dirname, suffix);
@@ -821,7 +821,7 @@ static void cxrfCheckNumber(int size,
     }
 }
 
-static int cxrfFileItemShouldBeUpdatedFromCxFile(S_fileItem *ffi) {
+static int cxrfFileItemShouldBeUpdatedFromCxFile(FileItem *ffi) {
     bool updateFromCxFile = true;
 
     log_trace("re-read info from '%s' for '%s'?", s_opt.cxrefFileName, ffi->name);

@@ -18,21 +18,21 @@ void fileTabNAInit(struct fileTab *table,
 
 
 bool fileTabIsMember(struct fileTab *table,
-                     S_fileItem *element,
+                     FileItem *element,
                      int *position
                      ) {
     return (bool)mock(table, element, position);
 }
 
 void fileTabSet(struct fileTab *table,
-                S_fileItem *element,
+                FileItem *element,
                 int position
                 ) {
     mock(table, element, position);
 }
 
 int fileTabAdd(struct fileTab *table,
-               S_fileItem *element
+               FileItem *element
                ) {
     return mock(table, element);
 }
@@ -42,13 +42,13 @@ void fileTabFree(struct fileTab *table) {
 }
 
 void fileTabMap(struct fileTab *table,
-                void (*fun)(S_fileItem *)
+                void (*fun)(FileItem *)
                 ) {
     mock(table, fun);
 }
 
 void fileTabMap2(struct fileTab *table,
-                 void (*fun)(S_fileItem *, void *),
+                 void (*fun)(FileItem *, void *),
                  void *a
                  ) {
     mock(table, fun, a);
@@ -62,7 +62,7 @@ void fileTabMap4(struct fileTab *table,
 }
 
 void fileTabMapWithIndex(struct fileTab *table,
-                         void (*fun)(S_fileItem *fileItem, int index)
+                         void (*fun)(FileItem *fileItem, int index)
                          ) {
     mock(table, fun);
 }

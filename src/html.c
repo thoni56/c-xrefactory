@@ -1701,7 +1701,7 @@ void htmlAddJavaDocReference(Symbol  *p, Position  *pos,
 
 /* ******************************************************************** */
 
-static int isJavaClassFile(S_fileItem *ffi) {
+static int isJavaClassFile(FileItem *ffi) {
     char *ss;
     ss = getFileSuffix(ffi->name);
     if (strcmp(ss,".class")==0) return(1);
@@ -1710,7 +1710,7 @@ static int isJavaClassFile(S_fileItem *ffi) {
 
 /* ******************************************************************** */
 
-static void sortSubClassesList(S_fileItem *fi) {
+static void sortSubClassesList(FileItem *fi) {
     LIST_MERGE_SORT(ClassHierarchyReference, fi->inferiorClasses, classHierarchySupClassNameLess);
 }
 
@@ -1751,7 +1751,7 @@ void htmlGenGlobalReferenceLists(char *cxMemFreeBase) {
 
 void generateHtml(void) {
     int    i;
-    S_fileItem      *fi;
+    FileItem      *fi;
 
     if (s_opt.htmlRoot==NULL ||  s_opt.htmlRoot[0]==0) {
         fatalError(ERR_ST, "No HTML output directory specified, use -htmlroot=<dir>", XREF_EXIT_ERR);

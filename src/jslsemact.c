@@ -322,7 +322,7 @@ void jslAddMapedImportTypeName(
 
 void jslAddAllPackageClassesFromFileTab(IdList *packid) {
     int i;
-    S_fileItem *ff;
+    FileItem *ff;
     int pnlen, c;
     char fqtName[MAX_FILE_NAME_SIZE];
     char ttt[MAX_FILE_NAME_SIZE];

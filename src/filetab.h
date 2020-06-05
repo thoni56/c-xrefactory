@@ -5,7 +5,7 @@
 #include "fileitem.h"
 
 #define HASH_TAB_NAME fileTab
-#define HASH_ELEM_TYPE S_fileItem
+#define HASH_ELEM_TYPE FileItem
 
 #include "hashtab.th"
 

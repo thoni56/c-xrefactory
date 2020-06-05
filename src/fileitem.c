@@ -4,8 +4,8 @@
 #include "filetab.h"
 
 
-void fillFileItem(S_fileItem *item, char *name, bool fromCommandLine) {
-    memset(item, 0, sizeof(S_fileItem));
+void fillFileItem(FileItem *item, char *name, bool fromCommandLine) {
+    memset(item, 0, sizeof(FileItem));
     item->name = name;
     item->b.commandLineEntered = fromCommandLine;
     item->directEnclosingInstance = s_noneFileIndex;

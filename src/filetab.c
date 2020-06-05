@@ -38,7 +38,7 @@ void initFileTab(S_fileTab *fileTable) {
     len = strlen(NON_FILE_NAME);
     FT_ALLOCC(fileName, len+1, char);
     strcpy(fileName, NON_FILE_NAME);
-    FT_ALLOC(fileItem, S_fileItem);
+    FT_ALLOC(fileItem, FileItem);
     fillFileItem(fileItem, fileName, false);
 
     /* Add it to the fileTab and remember its index for future use */

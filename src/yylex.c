@@ -176,7 +176,7 @@ int addFileTabItem(char *name) {
     FT_ALLOCC(fname, len+1, char);
     strcpy(fname, normalizedFileName);
 
-    FT_ALLOC(createdFileItem, S_fileItem);
+    FT_ALLOC(createdFileItem, FileItem);
     fillFileItem(createdFileItem, fname, false);
 
     fileIndex = fileTabAdd(&s_fileTab, createdFileItem);

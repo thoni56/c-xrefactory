@@ -14,7 +14,7 @@ AfterEach(FileTab) {}
 static struct fileTab fileTab;
 
 Ensure(FileTab, can_fetch_a_stored_filename) {
-    S_fileItem fileItem = {"file.c"};
+    FileItem fileItem = {"file.c"};
     int position_1 = 1;
     int fetched_position;
 
@@ -27,8 +27,8 @@ Ensure(FileTab, can_fetch_a_stored_filename) {
 }
 
 Ensure(FileTab, cannot_find_filename_not_in_tab) {
-    S_fileItem exists = {"exists.c"};
-    S_fileItem donotexist = {"donot_exist.c"};
+    FileItem exists = {"exists.c"};
+    FileItem donotexist = {"donot_exist.c"};
     int out_position = -1;
 
     fileTabInit(&fileTab, 5);
@@ -39,10 +39,10 @@ Ensure(FileTab, cannot_find_filename_not_in_tab) {
 }
 
 Ensure(FileTab, can_add_and_find_multiple_files) {
-    S_fileItem exists1 = {"exists1.c"};
-    S_fileItem exists2 = {"exists2.c"};
-    S_fileItem exists3 = {"exists3.c"};
-    S_fileItem donotexist = {"donot_exist.c"};
+    FileItem exists1 = {"exists1.c"};
+    FileItem exists2 = {"exists2.c"};
+    FileItem exists3 = {"exists3.c"};
+    FileItem donotexist = {"donot_exist.c"};
     int out_position = -1;
 
     fileTabInit(&fileTab, 5);
@@ -64,9 +64,9 @@ Ensure(FileTab, can_add_and_find_multiple_files) {
 }
 
 Ensure(FileTab, can_check_filename_exists) {
-    S_fileItem exists1 = {"exists1.c"};
-    S_fileItem exists2 = {"exists2.c"};
-    S_fileItem exists3 = {"exists3.c"};
+    FileItem exists1 = {"exists1.c"};
+    FileItem exists2 = {"exists2.c"};
+    FileItem exists3 = {"exists3.c"};
 
     fileTabInit(&fileTab, 6);
     fileTabAdd(&fileTab, &exists1);
@@ -81,9 +81,9 @@ Ensure(FileTab, can_check_filename_exists) {
 }
 
 Ensure(FileTab, can_lookup_filename) {
-    S_fileItem exists1 = {"exists1.c"};
-    S_fileItem exists2 = {"exists2.c"};
-    S_fileItem exists3 = {"exists3.c"};
+    FileItem exists1 = {"exists1.c"};
+    FileItem exists2 = {"exists2.c"};
+    FileItem exists3 = {"exists3.c"};
     int position = -1;
 
     fileTabInit(&fileTab, 6);

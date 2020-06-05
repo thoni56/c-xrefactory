@@ -27,9 +27,9 @@ typedef struct fileItem {	/* to be renamed to constant pool item */
     struct classHierarchyReference	*inferiorClasses; /* sub-classes references   */
     int					directEnclosingInstance;  /* for Java Only  */
     struct fileItem		*next;
-} S_fileItem;
+} FileItem;
 
 
-extern void fillFileItem(S_fileItem *item, char *name, bool fromCommandLine);
+extern void fillFileItem(FileItem *item, char *name, bool fromCommandLine);
 
 #endif

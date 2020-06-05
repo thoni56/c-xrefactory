@@ -49,7 +49,7 @@ ClassHierarchyReference *newClassHierarchyReference(int origin, int superClass, 
 
 int classHierarchyClassNameLess(int c1, int c2) {
     char *nn;
-    S_fileItem *fi1, *fi2;
+    FileItem *fi1, *fi2;
     int ccc;
     char ttt[MAX_FILE_NAME_SIZE];
 
@@ -75,7 +75,7 @@ int classHierarchySupClassNameLess(ClassHierarchyReference *c1, ClassHierarchyRe
 }
 
 static int markTransitiveRelevantSubsRec(int cind, int pass) {
-    S_fileItem      *fi, *tt;
+    FileItem      *fi, *tt;
     ClassHierarchyReference   *s;
 
     fi = s_fileTab.tab[cind];
@@ -164,7 +164,7 @@ static void htmlPrintClassHierarchyLine( FILE *ff, int fInd,
                                          int virtFlag,
                                          S_olSymbolsMenu *itt ) {
     char *cname, *pref1, *pref2, *suf1, *suf2;
-    S_fileItem *fi;
+    FileItem *fi;
     int cnt;
 
     fi = s_fileTab.tab[fInd];
@@ -276,7 +276,7 @@ static void olcxMenuPrintClassHierarchyLine( FILE *ff, int fInd,
                                              int virtFlag,
                                              S_olSymbolsMenu *itt ) {
     char        *cname;
-    S_fileItem  *fi;
+    FileItem  *fi;
     int         yetProcesed, indent;
 
     yetProcesed = THEBIT(tmpChProcessed,fInd);
@@ -327,7 +327,7 @@ static void descendTheClassHierarchy(   FILE *ff,
                                         int pass
                                         ) {
     S_intlist snextbar;
-    S_fileItem *fi;
+    FileItem *fi;
     ClassHierarchyReference *s, *snext;
     S_olSymbolsMenu *itt;
     int vFunCl;
@@ -386,7 +386,7 @@ static int genThisClassHierarchy(int vApplCl, int oldvFunCl,
                                  S_olSymbolsMenu   *rrr,
                                  int virtFlag,
                                  int pass) {
-    S_fileItem *tt,*fi;
+    FileItem *tt,*fi;
     ClassHierarchyReference *s;
 
     fi = s_fileTab.tab[vApplCl];
