@@ -478,15 +478,15 @@ static void writeFileSourceIndexItem(struct fileItem *fileItem, int ii) {
 }
 
 static void genClassHierarchyItems(struct fileItem *fi, int ii) {
-    S_chReference *p;
+    ClassHierarchyReference *p;
     for(p=fi->superClasses; p!=NULL; p=p->next) {
         writeSubClassInfo(p->superClass, ii, p->ofile);
     }
 }
 
 
-static S_chReference *findSuperiorInSuperClasses(int superior, S_fileItem *iFile) {
-    S_chReference *p;
+static ClassHierarchyReference *findSuperiorInSuperClasses(int superior, S_fileItem *iFile) {
+    ClassHierarchyReference *p;
     for(p=iFile->superClasses; p!=NULL && p->superClass!=superior; p=p->next)
         ;
 
@@ -496,7 +496,7 @@ static S_chReference *findSuperiorInSuperClasses(int superior, S_fileItem *iFile
 
 static void createSubClassInfo(int superior, int inferior, int origin, int genfl) {
     S_fileItem      *iFile, *sFile;
-    S_chReference   *p, *pp;
+    ClassHierarchyReference   *p, *pp;
 
     iFile = s_fileTab.tab[inferior];
     sFile = s_fileTab.tab[superior];

@@ -1355,7 +1355,7 @@ static void htmlScanCxFileAndGenRefLists(char *fn1, char *fn2,
             LIST_MERGE_SORT(S_olSymbolsMenu,
                             s_htmlCurrentCxlist,htmlRefItemsOrderLess);
             htmlMarkVisibleAllClassesHavingReferences(s_htmlCurrentCxlist);
-            htmlGenGlobRefLists(s_htmlCurrentCxlist, ff, ffn);
+            htmlGenerateGlobalReferenceLists(s_htmlCurrentCxlist, ff, ffn);
             htmlGenRefListTail(ff);
             closeFile(ff);
             htmlCompressFile(ln);
@@ -1711,7 +1711,7 @@ static int isJavaClassFile(S_fileItem *ffi) {
 /* ******************************************************************** */
 
 static void sortSubClassesList(S_fileItem *fi) {
-    LIST_MERGE_SORT(S_chReference, fi->inferiorClasses, classHierarchySupClassNameLess);
+    LIST_MERGE_SORT(ClassHierarchyReference, fi->inferiorClasses, classHierarchySupClassNameLess);
 }
 
 void htmlGenGlobalReferenceLists(char *cxMemFreeBase) {

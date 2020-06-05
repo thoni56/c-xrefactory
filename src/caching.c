@@ -74,7 +74,7 @@ static void cxrefTabDeleteOutOfMemory(int i) {
 }
 
 static void fileTabDeleteOutOfMemory(S_fileItem *p, int i) {
-    S_chReference   **hh;
+    ClassHierarchyReference **hh;
     hh = &p->superClasses;
     while (*hh!=NULL) {
         if (DM_FREED_POINTER(cxMemory,*hh)) {

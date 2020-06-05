@@ -2,8 +2,8 @@
 #include "classhierarchy.h"
 #include <cgreen/mocks.h>
 
-S_chReference *newClassHierarchyReference(int origin, int class, S_chReference *next) {
-    return (S_chReference *)mock(origin, class, next);
+ClassHierarchyReference *newClassHierarchyReference(int origin, int class, ClassHierarchyReference *next) {
+    return (ClassHierarchyReference *)mock(origin, class, next);
 }
 
 void classHierarchyGenInit(void) {
@@ -18,7 +18,7 @@ void splitMenuPerSymbolsAndMap(S_olSymbolsMenu *rrr, void (*fun)(S_olSymbolsMenu
   mock(rrr, fun, p1, p2);
 }
 
-void htmlGenGlobRefLists(S_olSymbolsMenu *rrr, FILE *ff, char *fn) {
+void htmlGenerateGlobalReferenceLists(S_olSymbolsMenu *rrr, FILE *ff, char *fn) {
   mock(rrr, ff, fn);
 }
 
@@ -30,6 +30,6 @@ int classHierarchyClassNameLess(int c1, int c2) {
   return (int) mock(c1, c2);
 }
 
-int classHierarchySupClassNameLess(S_chReference *c1, S_chReference *c2) {
+int classHierarchySupClassNameLess(ClassHierarchyReference *c1, ClassHierarchyReference *c2) {
   return (int) mock(c1, c2);
 }

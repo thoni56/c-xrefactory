@@ -1163,7 +1163,7 @@ int tpCheckTargetToBeDirectSubOrSupClass(int flag, char *subOrSuper) {
     S_olSymbolsMenu *ss;
     char ttt[TMP_STRING_SIZE];
     char tt[TMP_STRING_SIZE];
-    S_chReference *cl;
+    ClassHierarchyReference *cl;
     Symbol *target;
     int res;
 

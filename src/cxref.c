@@ -915,7 +915,7 @@ void addCfClassTreeHierarchyRef(int fnum, int usage) {
 /* ***************************************************************** */
 
 int isSmallerOrEqClassR(int inf, int sup, int level) {
-    S_chReference *p;
+    ClassHierarchyReference *p;
     int         smallerLevel;
     assert(level>0);
     //&fprintf(dumpOut,"testing hierarchy of %s\n<\t%s\n",s_fileTab.tab[inf]->name,s_fileTab.tab[sup]->name);
@@ -1876,7 +1876,7 @@ void olcxPrintClassTree(S_olSymbolsMenu *sss) {
         fprintf(ccOut, "<");
     }
     readOneAppropReferenceFile(NULL, classHierarchyFunctionSequence);
-    htmlGenGlobRefLists(sss, ccOut, "__NO_HTML_FILE_NAME!__");
+    htmlGenerateGlobalReferenceLists(sss, ccOut, "__NO_HTML_FILE_NAME!__");
     if (s_opt.xref2) ppcGenRecordEnd(PPC_DISPLAY_CLASS_TREE);
 }
 
@@ -1888,7 +1888,7 @@ void olcxPrintSelectionMenu(S_olSymbolsMenu *sss) {
     }
     if (sss!=NULL) {
         readOneAppropReferenceFile(NULL, classHierarchyFunctionSequence);
-        htmlGenGlobRefLists(sss, ccOut, "__NO_HTML_FILE_NAME!__");
+        htmlGenerateGlobalReferenceLists(sss, ccOut, "__NO_HTML_FILE_NAME!__");
     }
     if (s_opt.xref2) {
         ppcGenRecordEnd(PPC_SYMBOL_RESOLUTION);
@@ -4435,7 +4435,7 @@ static int tpCheckPrintSelectedSymbol(void) {
 
 int javaGetSuperClassNumFromClassNum(int cn) {
     int             res;
-    S_chReference   *cl;
+    ClassHierarchyReference   *cl;
     for(cl = s_fileTab.tab[cn]->superClasses; cl!=NULL; cl=cl->next) {
         res = cl->superClass;
         if (! s_fileTab.tab[res]->b.isInterface) return(res);

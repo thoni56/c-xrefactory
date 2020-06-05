@@ -35,10 +35,10 @@ static void clearTmpClassBackPointersToMenu(void) {
 }
 
 
-S_chReference *newClassHierarchyReference(int origin, int superClass, S_chReference *next) {
-    S_chReference *p;
+ClassHierarchyReference *newClassHierarchyReference(int origin, int superClass, ClassHierarchyReference *next) {
+    ClassHierarchyReference *p;
 
-    CX_ALLOC(p, S_chReference);
+    CX_ALLOC(p, ClassHierarchyReference);
     p->ofile = origin;
     p->superClass = superClass;
     p->next = next;
@@ -70,13 +70,13 @@ int classHierarchyClassNameLess(int c1, int c2) {
     return(ccc<0);
 }
 
-int classHierarchySupClassNameLess(S_chReference *c1, S_chReference *c2) {
+int classHierarchySupClassNameLess(ClassHierarchyReference *c1, ClassHierarchyReference *c2) {
     return(classHierarchyClassNameLess(c1->superClass, c2->superClass));
 }
 
 static int markTransitiveRelevantSubsRec(int cind, int pass) {
     S_fileItem      *fi, *tt;
-    S_chReference   *s;
+    ClassHierarchyReference   *s;
 
     fi = s_fileTab.tab[cind];
     if (THEBIT(tmpChMarkProcessed,cind)) return(THEBIT(tmpChRelevant,cind));
@@ -328,7 +328,7 @@ static void descendTheClassHierarchy(   FILE *ff,
                                         ) {
     S_intlist snextbar;
     S_fileItem *fi;
-    S_chReference *s, *snext;
+    ClassHierarchyReference *s, *snext;
     S_olSymbolsMenu *itt;
     int vFunCl;
 
@@ -366,7 +366,7 @@ static void descendTheClassHierarchy(   FILE *ff,
     // putting the following in commentary makes that for -refnum==1
     // subclasses will not be sorted !
     // also subclasses for on-line resolution would not be sorted!
-    LIST_MERGE_SORT(S_chReference, fi->inferiorClasses, classHierarchySupClassNameLess);
+    LIST_MERGE_SORT(ClassHierarchyReference, fi->inferiorClasses, classHierarchySupClassNameLess);
     s=fi->inferiorClasses;
     while (s!=NULL) {
         assert(s_fileTab.tab[s->superClass]);
@@ -387,7 +387,7 @@ static int genThisClassHierarchy(int vApplCl, int oldvFunCl,
                                  int virtFlag,
                                  int pass) {
     S_fileItem *tt,*fi;
-    S_chReference *s;
+    ClassHierarchyReference *s;
 
     fi = s_fileTab.tab[vApplCl];
     if (fi==NULL) return(0);
@@ -562,7 +562,7 @@ void splitMenuPerSymbolsAndMap(S_olSymbolsMenu *rrr,
 }
 
 
-void htmlGenGlobRefLists(S_olSymbolsMenu *rrr, FILE *ff, char *fn) {
+void htmlGenerateGlobalReferenceLists(S_olSymbolsMenu *rrr, FILE *ff, char *fn) {
     S_olSymbolsMenu *rr;
 
     for(rr=rrr; rr!=NULL; rr=rr->next) rr->outOnLine = 0;
