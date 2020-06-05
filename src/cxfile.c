@@ -745,6 +745,35 @@ void genReferenceFile(bool updating, char *filename) {
     }
 
 
+static int cxGetChar(CharacterBuffer *cb) {
+    int ch;
+    if (cb->next >= cb->end) {
+        if (cb->isAtEOF || refillBuffer(cb) == 0) {
+            ch = -1;
+            cb->isAtEOF = true;
+        } else {
+            cb->next = cb->next;
+            ch = *((unsigned char*)cb->next);
+            cb->next++;
+        }
+    } else {
+        ch = * ((unsigned char*)cb->next);
+        cb->next++;
+    }
+
+    return ch;
+}
+
+
+static int cxSkipBlanks(CharacterBuffer *cb, int ch) {
+    while (ch==' ' || ch=='\n' || ch=='\t') {
+            ch = cxGetChar(cb);
+    }
+
+    return ch;
+}
+
+
 static void cxrfSetSingleRecords(int size,
                                  int ri,
                                  CharacterBuffer *cb,
@@ -1353,6 +1382,7 @@ static void cxrfSubClass(int size,
     }
 }
 
+
 void scanCxFile(ScanFileFunctionStep *scanFuns) {
     int scannedInt = 0;
     int ch,i;
@@ -1382,14 +1412,13 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
     while(! cxfCharacterBuffer.isAtEOF) {
          //& ScanInt(ch, buffer, next, end, scannedInt);
         {
+            CharacterBuffer *cb = &cxfCharacterBuffer;
             /* ch = skipBlanks(&cxfCharacterBuffer, ch); */
-            while (ch==' ' || ch=='\n' || ch=='\t') {
-                CxGetChar(ch, &cxfCharacterBuffer);
-            }
+            ch = cxSkipBlanks(cb, ch);
             scannedInt = 0;
             while (isdigit(ch)) {
                 scannedInt = scannedInt*10 + ch-'0';
-                CxGetChar(ch, &cxfCharacterBuffer);
+                cxGetChar(cb);
             }
         }
         if (cxfCharacterBuffer.isAtEOF)
@@ -1410,13 +1439,13 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
                 while (cb->next + ccount > cb->end) {
                     ccount -= cb->end - cb->next;
                     cb->next = cb->end;
-                    CxGetChar(ch, cb);
+                    cxGetChar(cb);
                     ccount --;
                 }
                 cb->next += ccount;
             }
         }
-        CxGetChar(ch, &cxfCharacterBuffer);
+        cxGetChar(&cxfCharacterBuffer);
     }
     if (s_opt.taskRegime==RegimeEditServer
         && (s_opt.server_operation==OLO_LOCAL_UNUSED
