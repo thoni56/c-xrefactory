@@ -14,7 +14,7 @@ typedef struct lexemBuffer {
     struct position positionRing[LEX_POSITIONS_RING_SIZE];
     unsigned        fileOffsetRing[LEX_POSITIONS_RING_SIZE];
     int             index;				/* pRing[posi%LEX_POSITIONS_RING_SIZE] */
-    struct characterBuffer buffer;
+    CharacterBuffer buffer;
 } LexemBuffer;
 
 
