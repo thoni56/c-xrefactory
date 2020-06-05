@@ -745,6 +745,37 @@ void genReferenceFile(bool updating, char *filename) {
     }
 
 
+/* TODO Merge with characterreader:getChar() */
+static int cxGetChar(CharacterBuffer *cb) {
+    int ch;
+    if (cb->next >= cb->end) {
+        if (cb->isAtEOF || refillBuffer(cb) == 0) {
+            ch = -1;
+            cb->isAtEOF = true;
+        } else {
+            cb->next = cb->next;
+            ch = *((unsigned char*)cb->next);
+            cb->next++;
+        }
+    } else {
+        ch = * ((unsigned char*)cb->next);
+        cb->next++;
+    }
+
+    return ch;
+}
+
+
+/* TODO Merge with characterreader:skipBlanks() */
+static int cxSkipBlanks(CharacterBuffer *cb, int ch) {
+    while (ch==' ' || ch=='\n' || ch=='\t') {
+        ch = cxGetChar(cb);
+    }
+
+    return ch;
+}
+
+
 static void cxrfSetSingleRecords(int size,
                                  int ri,
                                  CharacterBuffer *cb,
@@ -1351,36 +1382,6 @@ static void cxrfSubClass(int size,
             crSubClassInfo(sup, inf, file, NO_CX_FILE_ITEM_GEN);
         }
     }
-}
-
-
-static int cxGetChar(CharacterBuffer *cb) {
-    int ch;
-    if (cb->next >= cb->end) {
-        if (cb->isAtEOF || refillBuffer(cb) == 0) {
-            ch = -1;
-            cb->isAtEOF = true;
-        } else {
-            cb->next = cb->next;
-            ch = *((unsigned char*)cb->next);
-            cb->next++;
-        }
-    } else {
-        ch = * ((unsigned char*)cb->next);
-        cb->next++;
-    }
-
-    return ch;
-}
-
-
-/* TODO Merge with characterreader:skipBlanks() */
-static int cxSkipBlanks(CharacterBuffer *cb, int ch) {
-    while (ch==' ' || ch=='\n' || ch=='\t') {
-        ch = cxGetChar(cb);
-    }
-
-    return ch;
 }
 
 
