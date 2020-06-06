@@ -70,7 +70,7 @@ LEX_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(LEX_DEPENDENCIES))
 lexer_tests.so: $(OBJDIR)/lexer_tests.o $(LEX_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-CXFILE_DEPENDENCIES = protocol log position type
+CXFILE_DEPENDENCIES = protocol log position type usage
 CXFILE_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(CXFILE_DEPENDENCIES))
 cxfile_tests.so:$(OBJDIR)/cxfile_tests.o $(CXFILE_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)

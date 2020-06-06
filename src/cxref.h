@@ -2,8 +2,10 @@
 #define CXREF_H
 
 #include "proto.h"
+#include "usage.h"
 #include "symbol.h"
 #include "olcxtab.h"
+
 
 extern void fill_reference(Reference *reference, UsageBits usage, Position position, Reference *next);
 extern void fillSymbolRefItemExceptBits(SymbolReferenceItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass, int vFunClass);

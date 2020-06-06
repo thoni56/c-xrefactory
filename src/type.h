@@ -120,7 +120,7 @@
         ENUM(TypeInheritedFullMethod)                                   \
         ENUM(TypeSpecialConstructorCompletion)                          \
         ENUM(TypeUnknown)                                               \
-        ENUM(MAX_TYPE)
+        ENUM(MAX_TYPE)                                                  \
 /* If these becomes more than 256, increase SYMTYPES_LN */
 
 #define SYMTYPES_LN 7

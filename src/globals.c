@@ -4,6 +4,7 @@
 #include "head.h"
 #include "proto.h"
 #include "parsers.h"
+#include "usage.h"
 
 #include "protocol.h"
 

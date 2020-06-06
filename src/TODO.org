@@ -6,6 +6,14 @@ There are a *lot* of things to do to make c-xref into modern C.
 (This file is structured for Emacs org-mode...)
 
 * DOING Remove enum generation by using CPP magic
+In order to
+- simplify the code by removing the whole generate regime
+- avoid regeneration different enum string sets on various platforms
+- be explicit about which enums that actually need string representations
+we will
+- replace re-generation of all enums with some macro magic to produce both
+enum values and strings in the modules themselves as part of the declaration
+
 We don't need the complex logic of the whole generate_regime if we
 only want to be able to print the strings for the values (see
 https://stackoverflow.com/a/10966395/204658)
@@ -18,8 +26,8 @@ Currently only the following are actually used:
 - miscellaneous
 - referenceCategory
 - storage
-- type
-- usage
+- type (done)
+- usage (done)
 
 Re-test this with "ls *.c | grep -v enumTxt | xargs grep -h -o '[^ ("*,]*EnumName\[[^ ]*' | sed -e 's/\[.*//g' | sort | uniq"
 * TODO Unittests for memory module

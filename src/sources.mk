@@ -1,7 +1,7 @@
 MODULES =  main globals misc semact commons generate \
 		enumTxt complete cxref cxfile lexer yylex options \
 		caching jsemact classfilereader classcaster init \
-		editor refactory protocol log type \
+		editor refactory protocol log type usage \
 		html extract classhierarchy jslsemact \
 		filetab macroargumenttable olcxtab editorbuffertab symboltable \
 		javafqttab jsltypetab reftab memory utils characterreader hash \
