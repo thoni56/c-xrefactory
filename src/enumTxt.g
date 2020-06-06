@@ -19,25 +19,6 @@ char * fileEncodingsEnumName[] = {
     "MULE_UTF_16BE"
 };
 
-char * storageEnumName[] = {
-    "StorageError",
-    "StorageAuto",
-    "StorageGlobal",
-    "StorageDefault",
-    "StorageExtern",
-    "StorageConstant",
-    "StorageStatic",
-    "StorageThreadLocal",
-    "StorageTypedef",
-    "StorageMutable",
-    "StorageRegister",
-    "StorageConstructor",
-    "StorageField",
-    "StorageMethod",
-    "StorageNone",
-    "MAX_STORAGE"
-};
-
 char * referenceCategoryEnumName[] = {
     "CategoryGlobal",
     "CategoryLocal",

@@ -1,29 +1,50 @@
 #ifndef _STORAGE_H_
 #define _STORAGE_H_
 
-typedef enum storage {
-    // standard C storage modes
-    StorageError,
-    StorageAuto,
-    StorageGlobal,			/* not used anymore, backward compatibility */
-    StorageDefault,
-    StorageExtern,
-    StorageConstant,		/* enumerator definition */
-    StorageStatic,
-    StorageThreadLocal,
-    StorageTypedef,
-    StorageMutable,
-    StorageRegister,
-    // some "artificial" Java storages
-    StorageConstructor,		/* storage for class constructors */
-    StorageField,			/* storage for class fields */
-    StorageMethod,			/* storage for class methods */
-    //
-    StorageNone,
-    MAX_STORAGE,
+/* Because of the macro magic we can't comment near the actual values
+   so here are some descriptions of some of the Usage values
+   (duplication so remember to change in here too):
+
+   StorageGlobal         - not used anymore, backward compatibility
+   StorageConstant       - enumerator definition
+   // some "artificial" Java storages
+   StorageConstructor    - storage for class constructors
+   StorageField          - storage for class fields
+   StorageMethod         - storage for class methods
+
+*/
+
+/* Some CPP magic to be able to print enums as strings: */
+#define GENERATE_ENUM_VALUE(ENUM) ENUM,
+#define GENERATE_ENUM_STRING(STRING) #STRING,
+
+#define ALL_STORAGE_ENUMS(ENUM)             \
+    ENUM(StorageError)                      \
+    ENUM(StorageAuto)                       \
+    ENUM(StorageGlobal)                     \
+    ENUM(StorageDefault)                    \
+    ENUM(StorageExtern)                     \
+    ENUM(StorageConstant)                   \
+    ENUM(StorageStatic)                     \
+    ENUM(StorageThreadLocal)                \
+    ENUM(StorageTypedef)                    \
+    ENUM(StorageMutable)                    \
+    ENUM(StorageRegister)                   \
+    ENUM(StorageConstructor)                \
+    ENUM(StorageField)                      \
+    ENUM(StorageMethod)                     \
+    ENUM(StorageNone)                       \
+    ENUM(MAX_STORAGE)                       \
     /* If this becomes greater than 32 increase STORAGES_LN !!!!!!!! */
-} Storage;
 
 #define STORAGES_LN 5		/* logarithm of MAX_STORAGE */
+
+
+typedef enum storage {
+    ALL_STORAGE_ENUMS(GENERATE_ENUM_VALUE)
+} Storage;
+
+
+extern const char *storageEnumName[];
 
 #endif

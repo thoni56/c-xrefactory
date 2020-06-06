@@ -1,6 +1,5 @@
 extern char * taskRegimesEnumName[];
 extern char * fileEncodingsEnumName[];
-extern char * storageEnumName[];
 extern char * referenceCategoryEnumName[];
 extern char * syntaxPassParsedImportantPositionEnumName[];
 extern char * memoryClassEnumName[];
