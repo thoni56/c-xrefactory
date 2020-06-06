@@ -19,13 +19,7 @@ char * fileEncodingsEnumName[] = {
     "MULE_UTF_16BE"
 };
 
-char * referenceCategoryEnumName[] = {
-    "CategoryGlobal",
-    "CategoryLocal",
-    "MAX_CATEGORIES"
-};
-
-char * syntaxPassParsedImportantPositionEnumName[] = {
+ char * syntaxPassParsedImportantPositionEnumName[] = {
     "SPP_LAST_TOP_LEVEL_CLASS_POSITION",
     "SPP_ASSIGNMENT_OPERATOR_POSITION",
     "SPP_ASSIGNMENT_END_POSITION",

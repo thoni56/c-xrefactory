@@ -24,7 +24,7 @@ output. It is better to be precise about which you want to be generated.
 
 Currently only the following are actually used:
 - miscellaneous
-- referenceCategory
+- referenceCategory (removed use of enumTxt for it)
 - storage (done)
 - type (done)
 - usage (done)

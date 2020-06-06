@@ -769,7 +769,7 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
     if (scope == ScopeAuto && s_opt.no_ref_locals) return NULL;
 
     log_trace("adding reference on %s(%d,%d) at %d,%d,%d (%s) (%s) (%s)", p->linkName,
-              vFunCl,vApplCl, pos->file, pos->line,pos->col, referenceCategoryEnumName[category],
+              vFunCl,vApplCl, pos->file, pos->line,pos->col, category==CategoryGlobal?"Global":"Local",
               usageEnumName[usage], storageEnumName[p->bits.storage]);
     assert(s_opt.taskRegime);
     if (s_opt.taskRegime == RegimeEditServer) {
