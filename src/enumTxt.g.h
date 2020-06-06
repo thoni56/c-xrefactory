@@ -7,7 +7,6 @@ extern char * memoryClassEnumName[];
 extern char * olcxOptionsEnumName[];
 extern char * updateTypeEnumName[];
 extern char * usageEnumName[];
-extern char * typeEnumName[];
 extern char * languageEnumName[];
 extern char * addImportsDefaultEnumName[];
 extern char * javaPCTIndexEnumName[];

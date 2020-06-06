@@ -5,6 +5,23 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
+* DOING Remove enum generation by using CPP magic
+We don't need the complex logic of the whole generate_regime if we
+only want to be able to print the strings for the values (see
+https://stackoverflow.com/a/10966395/204658)
+
+Currently all enums included are generated, but that includes ones
+that are in the systems headers which in turns creates different
+output. It is better to be precise about which you want to be generated.
+
+Currently only the following are actually used:
+- miscellaneous
+- referenceCategory
+- storage
+- type
+- usage
+
+Re-test this with "ls *.c | grep -v enumTxt | xargs grep -h -o '[^ ("*,]*EnumName\[[^ ]*' | sed -e 's/\[.*//g' | sort | uniq"
 * TODO Unittests for memory module
 * TODO Make S_caching an abstract data type to hide CachePoint and Caching
 * TODO New refactoring: Extract variable
@@ -49,23 +66,6 @@ apply for refactory mode, right?
 * TODO Cleanup and separate commons, misc and make them independent utility modules
 * TODO Check if the C-part of Yacc grammar is identical, and if so extract it
 * TODO Move XX_ALLOCC and friends to "memory" module
-* TODO Remove enum generation to use CPP magic
-We don't need the complex logic of the whole generate_regime if we
-only want to be able to print the strings for the values (see
-https://stackoverflow.com/a/10966395/204658)
-
-Currently all enums included are generated, but that includes ones
-that are in the systems headers which in turns creates different
-output. It is better to be precise about which you want to be generated.
-
-Currently only the following are actually used:
-- miscellaneous
-- referenceCategory
-- storage
-- type
-- usage
-
-Re-test this with "ls *.c | grep -v enumTxt | xargs grep -h -o '[^ ("*,]*EnumName\[[^ ]*' | sed -e 's/\[.*//g' | sort | uniq"
 * TODO Fix the move_class test
 * TODO Use enum types wherever possible Storage, SymbolType
 Which are left to do?

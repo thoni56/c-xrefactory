@@ -39,7 +39,7 @@ symbol_tests.so: $(OBJDIR)/symbol_tests.o $(OBJDIR)/symbol.o
 semact_tests.so:  $(OBJDIR)/semact_tests.o $(OBJDIR)/semact.o $(OBJDIR)/protocol.o $(OBJDIR)/enumTxt.o $(OBJDIR)/hash.o $(OBJDIR)/position.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-misc_tests.so:  $(OBJDIR)/misc_tests.o $(OBJDIR)/misc.o $(OBJDIR)/protocol.o $(OBJDIR)/enumTxt.o
+misc_tests.so:  $(OBJDIR)/misc_tests.o $(OBJDIR)/misc.o $(OBJDIR)/protocol.o $(OBJDIR)/type.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 commons_tests.so: $(OBJDIR)/commons_tests.o $(OBJDIR)/commons.o $(OBJDIR)/protocol.o $(OBJDIR)/enumTxt.o $(OBJDIR)/log.o
@@ -48,7 +48,7 @@ commons_tests.so: $(OBJDIR)/commons_tests.o $(OBJDIR)/commons.o $(OBJDIR)/protoc
 editor_tests.so: $(OBJDIR)/editor_tests.o $(OBJDIR)/editor.o $(OBJDIR)/position.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-cxref_tests.so: $(OBJDIR)/cxref_tests.o $(OBJDIR)/cxref.o $(OBJDIR)/protocol.o $(OBJDIR)/enumTxt.o $(OBJDIR)/hash.o $(OBJDIR)/position.o
+cxref_tests.so: $(OBJDIR)/cxref_tests.o $(OBJDIR)/cxref.o $(OBJDIR)/protocol.o $(OBJDIR)/enumTxt.o $(OBJDIR)/hash.o $(OBJDIR)/position.o $(OBJDIR)/type.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 OPTIONS_DEPENDENCIES = protocol log position
@@ -70,7 +70,7 @@ LEX_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(LEX_DEPENDENCIES))
 lexer_tests.so: $(OBJDIR)/lexer_tests.o $(LEX_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-CXFILE_DEPENDENCIES = protocol log position
+CXFILE_DEPENDENCIES = protocol log position type
 CXFILE_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(CXFILE_DEPENDENCIES))
 cxfile_tests.so:$(OBJDIR)/cxfile_tests.o $(CXFILE_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
