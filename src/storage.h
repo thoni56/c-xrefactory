@@ -35,7 +35,7 @@
     ENUM(StorageMethod)                     \
     ENUM(StorageNone)                       \
     ENUM(MAX_STORAGE)                       \
-    /* If this becomes greater than 32 increase STORAGES_LN !!!!!!!! */
+    /* If this becomes more than 32 increase STORAGES_LN !!!!!!!! */
 
 #define STORAGES_LN 5		/* logarithm of MAX_STORAGE */
 
