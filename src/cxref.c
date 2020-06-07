@@ -16,7 +16,6 @@
 #include "jsemact.h"
 #include "editor.h"
 #include "main.h"               /* For searchDefaultOptionsFile() */
-#include "enumTxt.h"
 #include "reftab.h"
 #include "characterreader.h"
 #include "symbol.h"

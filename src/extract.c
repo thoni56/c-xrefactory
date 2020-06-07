@@ -7,7 +7,6 @@
 #include "protocol.h"
 #include "semact.h"
 #include "cxref.h"
-#include "enumTxt.h"
 #include "reftab.h"
 #include "symbol.h"
 #include "list.h"

@@ -10,8 +10,6 @@
 #include "classhierarchy.h"
 #include "fileio.h"
 
-#include "enumTxt.h"
-
 #include "protocol.h"
 #include "globals.h"
 #include "commons.h"

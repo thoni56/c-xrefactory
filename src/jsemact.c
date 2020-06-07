@@ -12,7 +12,6 @@
 #include "filedescriptor.h"
 #include "html.h"
 #include "editor.h"
-#include "enumTxt.h"
 #include "symbol.h"
 #include "javafqttab.h"
 #include "list.h"

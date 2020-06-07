@@ -36,19 +36,19 @@ filetab_tests.so: $(OBJDIR)/filetab_tests.o $(OBJDIR)/filetab.o $(OBJDIR)/hash.o
 symbol_tests.so: $(OBJDIR)/symbol_tests.o $(OBJDIR)/symbol.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-semact_tests.so:  $(OBJDIR)/semact_tests.o $(OBJDIR)/semact.o $(OBJDIR)/protocol.o $(OBJDIR)/enumTxt.o $(OBJDIR)/hash.o $(OBJDIR)/position.o
+semact_tests.so:  $(OBJDIR)/semact_tests.o $(OBJDIR)/semact.o $(OBJDIR)/protocol.o $(OBJDIR)/hash.o $(OBJDIR)/position.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 misc_tests.so:  $(OBJDIR)/misc_tests.o $(OBJDIR)/misc.o $(OBJDIR)/protocol.o $(OBJDIR)/type.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-commons_tests.so: $(OBJDIR)/commons_tests.o $(OBJDIR)/commons.o $(OBJDIR)/protocol.o $(OBJDIR)/enumTxt.o $(OBJDIR)/log.o
+commons_tests.so: $(OBJDIR)/commons_tests.o $(OBJDIR)/commons.o $(OBJDIR)/protocol.o $(OBJDIR)/log.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 editor_tests.so: $(OBJDIR)/editor_tests.o $(OBJDIR)/editor.o $(OBJDIR)/position.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-cxref_tests.so: $(OBJDIR)/cxref_tests.o $(OBJDIR)/cxref.o $(OBJDIR)/protocol.o $(OBJDIR)/enumTxt.o $(OBJDIR)/hash.o $(OBJDIR)/position.o $(OBJDIR)/type.o
+cxref_tests.so: $(OBJDIR)/cxref_tests.o $(OBJDIR)/cxref.o $(OBJDIR)/protocol.o $(OBJDIR)/hash.o $(OBJDIR)/position.o $(OBJDIR)/type.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 OPTIONS_DEPENDENCIES = protocol log position

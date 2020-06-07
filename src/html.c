@@ -9,7 +9,6 @@
 #include "yylex.h"
 #include "cxref.h"
 #include "cxfile.h"
-#include "enumTxt.h"
 #include "reftab.h"
 #include "list.h"
 #include "filedescriptor.h"

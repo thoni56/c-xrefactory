@@ -32,7 +32,6 @@ c-xref: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB) $(CLEAN_COVERAGE)
 		lcov -q -z -d $(OBJDIR) ; \
 	fi
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
-	@make enumTxt				# re-generate enum strings to see if they've changed
 	@make check-tokens			# check that token sections in parsers are identical
 
 #########################################################################
@@ -83,41 +82,6 @@ lexem.h: c_parser.tab.h
 	@echo "typedef enum lexem {" > lexem.h
 	@grep define c_parser.tab.h | sed -e "s/#define \(.*\) \([0-9]*\)/\t\1 = \2,/" >> lexem.h
 	@echo "} Lexem;" >> lexem.h
-
-#########################################################################
-# Once we have a compiled c-xref we can regenerate the enum string
-# representations .c and .h files too see if they differ. If they do
-# ask user to 'make enum' to make the new files the ones to build with.
-.PHONY: enumTxt
-enumTxt:
-	@./c-xref -task_regime_generate -enum_name -header -xrefrc .c-xrefrc proto.h \
-		> new-$@.g.h ; \
-	if ! diff $@.g.h new-$@.g.h ; then \
-		echo "$(shell tput setaf 1)$@.g.h: REGENERATED.$(shell tput sgr0) Please 'make enum' to keep the new version." ; \
-	else \
-		echo "$@.g.h: no change" ; \
-		rm new-$@.g.h ; \
-	fi
-	@./c-xref -task_regime_generate -enum_name -body -xrefrc .c-xrefrc proto.h \
-		> new-$@.g ; \
-	if ! diff $@.g new-$@.g ; then \
-		echo "$(shell tput setaf 1)$@.g: REGENERATED.$(shell tput sgr0) Please 'make enum' to keep the new version." ; \
-	else \
-		echo "$@.g: no change" ; \
-		rm new-$@.g ; \
-	fi
-
-enum:
-	@if [ -f new-$@Txt.g ] ; then \
-		mv -f $@Txt.g $@Txt.g.backup ; \
-		mv -f new-$@Txt.g $@Txt.g ; \
-		echo "$@Txt.g: saved." ; \
-	fi
-	@if [ -f new-$@Txt.g.h ] ; then \
-		mv -f $@Txt.g.h $@Txt.g.h.backup ; \
-		mv -f new-$@Txt.g.h $@Txt.g.h ; \
-		echo "$@Txt.g.h: saved." ; \
-	fi
 
 .c-xrefrc: c-xrefrc.tpl
 	@sed -e "s+CURDIR+$(CURDIR)+g" c-xrefrc.tpl > .c-xrefrc

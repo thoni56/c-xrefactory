@@ -5,7 +5,6 @@
 #include "globals.h"
 #include "html.h"
 #include "cxref.h"
-#include "enumTxt.h"
 #include "list.h"
 
 #include "protocol.h"

@@ -20,7 +20,6 @@
 #include "classhierarchy.mock"
 #include "fileio.mock"
 
-#include "enumTxt.c"
 
 Describe(CxFile);
 BeforeEach(CxFile) {

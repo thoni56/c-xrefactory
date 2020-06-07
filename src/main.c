@@ -12,7 +12,6 @@
 #include "init.h"
 #include "jslsemact.h"
 #include "editor.h"
-#include "enumTxt.h"
 #include "reftab.h"
 #include "javafqttab.h"
 #include "list.h"

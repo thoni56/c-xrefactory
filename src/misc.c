@@ -16,7 +16,6 @@
 #include "cxref.h"
 #include "classfilereader.h"
 #include "editor.h"
-#include "enumTxt.h"
 #include "html.h"
 
 #include "log.h"

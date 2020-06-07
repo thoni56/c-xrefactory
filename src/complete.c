@@ -12,7 +12,6 @@
 #include "cxfile.h"
 #include "classfilereader.h"
 #include "editor.h"
-#include "enumTxt.h"
 #include "reftab.h"
 #include "symbol.h"
 #include "list.h"

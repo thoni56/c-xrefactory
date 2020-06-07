@@ -5,7 +5,6 @@
 #include "parsers.h"
 #include "protocol.h"
 #include "misc.h"
-#include "enumTxt.h"
 #include "symbol.h"
 #include "classfilereader.h"
 #include "log.h"
