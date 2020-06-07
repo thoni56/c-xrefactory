@@ -280,8 +280,8 @@ int findStrRecordSym(S_recFindStr *ss,
                      char *recname,    /* can be NULL */
                      Symbol **res,
                      int javaClassif, /* classify to method/field*/
-                     int accessibilityCheck,    /* java check accessibility */
-                     int visibilityCheck /* redundant, always equal to accCheck? */
+                     AccessibilityCheckYesNo accessibilityCheck,    /* java check accessibility */
+                     VisibilityCheckYesNo visibilityCheck /* redundant, always equal to accCheck? */
 ) {
     Symbol            *s,*r,*cclass;
     SymbolList        *sss;

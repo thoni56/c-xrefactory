@@ -46,8 +46,9 @@ int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r) {
   return (int) mock(rfs, r);
 }
 
-int findStrRecordSym(S_recFindStr *ss, char *recname, Symbol **res, int javaClassif, int accessCheck, int visibilityCheck) {
-  return (int) mock(ss, recname, res, javaClassif, accessCheck, visibilityCheck);
+int findStrRecordSym(S_recFindStr *ss, char *recname, Symbol **res, int javaClassif,
+                     AccessibilityCheckYesNo accessibilityCheck, VisibilityCheckYesNo visibilityCheck) {
+  return (int) mock(ss, recname, res, javaClassif, accessibilityCheck, visibilityCheck);
 }
 
 Symbol *addNewSymbolDef(Symbol *p, unsigned storage, S_symbolTable *tab, int usage) {

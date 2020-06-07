@@ -38,14 +38,18 @@ typedef enum accessibilityCheckYesNo {
     ACCESSIBILITY_CHECK_NO
 } AccessibilityCheckYesNo;
 
+typedef enum visibilityCheckYesNo {
+    VISIBILITY_CHECK_DEFAULT = 6,
+    VISIBILITY_CHECK_YES,
+    VISIBILITY_CHECK_NO
+} VisibilityCheckYesNo;
+
 enum miscellaneous {						/* misc. constants */
     DEFAULT_VALUE,
     CLASS_TO_TYPE,
     CLASS_TO_EXPR,
     CLASS_TO_METHOD,
     CLASS_TO_ANY,
-    VISIBILITY_CHECK_YES,
-    VISIBILITY_CHECK_NO,
     CUT_OVERRIDEN_YES,
     CUT_OVERRIDEN_NO,
     CX_FILE_ITEM_GEN,
