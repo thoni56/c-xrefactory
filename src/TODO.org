@@ -5,31 +5,6 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
-* DOING Remove enum generation by using CPP magic
-In order to
-- simplify the code by removing the whole generate regime
-- avoid regeneration different enum string sets on various platforms
-- be explicit about which enums that actually need string representations
-we will
-- replace re-generation of all enums with some macro magic to produce both
-enum values and strings in the modules themselves as part of the declaration
-
-We don't need the complex logic of the whole generate_regime if we
-only want to be able to print the strings for the values (see
-https://stackoverflow.com/a/10966395/204658)
-
-Currently all enums included are generated, but that includes ones
-that are in the systems headers which in turns creates different
-output. It is better to be precise about which you want to be generated.
-
-Currently only the following are actually used:
-- miscellaneous
-- referenceCategory (removed use of enumTxt for it)
-- storage (done)
-- type (done)
-- usage (done)
-
-Re-test this with "ls *.c | grep -v enumTxt | xargs grep -h -o '[^ ("*,]*EnumName\[[^ ]*' | sed -e 's/\[.*//g' | sort | uniq"
 * TODO Unittests for memory module
 * TODO Test for Java using JRegr sources
 * TODO Make S_caching an abstract data type to hide CachePoint and Caching
@@ -123,6 +98,31 @@ easier to mock and unit test other modules.
 
 * TODO Make Makefile.common look for our patched yacc and if it's not
   available ignore yacc-rules otherwise always run yacc.
+* DONE Remove enum generation by using CPP magic
+In order to
+- simplify the code by removing the whole generate regime
+- avoid regeneration different enum string sets on various platforms
+- be explicit about which enums that actually need string representations
+we will
+- replace re-generation of all enums with some macro magic to produce both
+enum values and strings in the modules themselves as part of the declaration
+
+We don't need the complex logic of the whole generate_regime if we
+only want to be able to print the strings for the values (see
+https://stackoverflow.com/a/10966395/204658)
+
+Currently all enums included are generated, but that includes ones
+that are in the systems headers which in turns creates different
+output. It is better to be precise about which you want to be generated.
+
+Currently only the following are actually used:
+- miscellaneous
+- referenceCategory (removed use of enumTxt for it)
+- storage (done)
+- type (done)
+- usage (done)
+
+Re-test this with "ls *.c | grep -v enumTxt | xargs grep -h -o '[^ ("*,]*EnumName\[[^ ]*' | sed -e 's/\[.*//g' | sort | uniq"
 * DONE Replace "int lexem" with an enum for all lexems, "Lexem lexem"?
 * DONE Start using log.c functions to log to a separate log file
 Adjust options so that we can better control logging for various
