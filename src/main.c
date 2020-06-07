@@ -2620,10 +2620,10 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     log_debug("Leaving all task initialisations.");
 }
 
-static void mainReferencesOverflowed(char *cxMemFreeBase, int mess) {
+static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
     int i,fi,savingFlag;
 
-    if (mess!=MESS_NONE && s_opt.taskRegime!=RegimeHtmlGenerate) {
+    if (mess!=LONGJMP_REASON_NONE && s_opt.taskRegime!=RegimeHtmlGenerate) {
         if (s_opt.xref2) {
             ppcGenRecord(PPC_INFORMATION,"swapping references on disk", "\n");
             ppcGenRecord(PPC_INFORMATION,"", "\n");
@@ -2677,7 +2677,7 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, int mess) {
             }
         }
     }
-    if (savingFlag==0 && mess!=MESS_FILE_ABORT) {
+    if (savingFlag==0 && mess!=LONGJMP_REASON_FILE_ABORT) {
         /* references overflowed, but no whole file readed */
         fatalError(ERR_NO_MEMORY,"cxMemory", XREF_EXIT_ERR);
     }
@@ -3142,10 +3142,11 @@ static FileItem *mainCreateListOfInputFiles(void) {
 
 void mainCallXref(int argc, char **argv) {
     static char *cxFreeBase0, *cxFreeBase;
-    static int firstPassing, mess, atLeastOneProcessed;
+    static int firstPassing, atLeastOneProcessed;
     static FileItem *ffc, *pffc;
     static int messagePrinted = 0;
     static int numberOfInputs, inputCounter, pinputCounter;
+    LongjmpReason reason = LONGJMP_REASON_NONE;
 
     s_currCppPass = ANY_CPP_PASS;
     CX_ALLOCC(cxFreeBase0,0,char);
@@ -3162,9 +3163,9 @@ void mainCallXref(int argc, char **argv) {
     for(;;) {
         s_currCppPass = ANY_CPP_PASS;
         firstPassing = 1;
-        if ((mess=setjmp(cxmemOverflow))!=0) {
-            mainReferencesOverflowed(cxFreeBase,mess);
-            if (mess==MESS_FILE_ABORT) {
+        if ((reason=setjmp(cxmemOverflow))!=0) {
+            mainReferencesOverflowed(cxFreeBase,reason);
+            if (reason==LONGJMP_REASON_FILE_ABORT) {
                 if (pffc!=NULL) pffc=pffc->next;
                 else if (ffc!=NULL) ffc=ffc->next;
             }

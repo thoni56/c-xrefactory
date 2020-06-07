@@ -334,5 +334,5 @@ void internalCheckFail(char *expr, char *file, int line) {
     fprintf(errOut, "\t file aborted!\n"); fflush(errOut);
     // longjump is causing problems with refactory, the longjmp
     // is missplaced
-    longjmp(cxmemOverflow,MESS_FILE_ABORT);
+    longjmp(cxmemOverflow,LONGJMP_REASON_FILE_ABORT);
 }

@@ -55,7 +55,7 @@ typedef struct referencesChangeData {
         assert(s_opt.taskRegime);                                       \
         if (s_opt.taskRegime==RegimeXref||s_opt.taskRegime==RegimeHtmlGenerate) { \
             if (!(DM_FREE_SPACE(cxMemory,CX_SPACE_RESERVE))) {          \
-                longjmp(cxmemOverflow,MESS_REFERENCE_OVERFLOW);         \
+                longjmp(cxmemOverflow,LONGJUMP_REASON_REFERENCE_OVERFLOW);         \
             }                                                           \
         }                                                               \
     }

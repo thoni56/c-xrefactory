@@ -44,6 +44,12 @@ typedef enum visibilityCheckYesNo {
     VISIBILITY_CHECK_NO
 } VisibilityCheckYesNo;
 
+typedef enum longjmpReason {
+    LONGJMP_REASON_NONE = 9,
+    LONGJUMP_REASON_REFERENCE_OVERFLOW,
+    LONGJMP_REASON_FILE_ABORT
+} LongjmpReason;
+
 enum miscellaneous {						/* misc. constants */
     DEFAULT_VALUE,
     CLASS_TO_TYPE,
@@ -65,9 +71,6 @@ enum miscellaneous {						/* misc. constants */
     MEM_ALLOC_ON_SM,
     MEM_ALLOC_ON_PP,
     MEM_NO_ALLOC,
-    MESS_REFERENCE_OVERFLOW,
-    MESS_FILE_ABORT,
-    MESS_NONE,
     INFILES_ENABLED,
     INFILES_DISABLED,
     EXTRACT_LOCAL_VAR,
