@@ -276,16 +276,19 @@ int javaGetMinimalAccessibility(S_recFindStr *rfs, Symbol *r) {
         return(RETURN_NOT_FOUND);               \
     }
 
-int findStrRecordSym(   S_recFindStr    *ss,
-                        char            *recname,    /* can be NULL */
-                        Symbol        **res,
-                        int             javaClassif, /* classify to method/field*/
-                        int             accCheck,    /* java check accessibility */
-                        int             visibilityCheck /* redundant, always equal to accCheck? */
-                        ) {
+int findStrRecordSym(S_recFindStr *ss,
+                     char *recname,    /* can be NULL */
+                     Symbol **res,
+                     int javaClassif, /* classify to method/field*/
+                     int accessibilityCheck,    /* java check accessibility */
+                     int visibilityCheck /* redundant, always equal to accCheck? */
+) {
     Symbol            *s,*r,*cclass;
     SymbolList        *sss;
     int                 m;
+
+    assert(accessibilityCheck == ACCESSIBILITY_CHECK_YES || accessibilityCheck == ACCESSIBILITY_CHECK_NO);
+    assert(visibilityCheck == VISIBILITY_CHECK_YES || visibilityCheck == VISIBILITY_CHECK_NO);
 
     //&fprintf(dumpOut,":\nNEW SEARCH\n"); fflush(dumpOut);
     for(;;) {
@@ -324,7 +327,7 @@ int findStrRecordSym(   S_recFindStr    *ss,
                 //&if(cclass!=NULL)fprintf(dumpOut,"name O.K., checking accesibility %xd %xd\n",cclass->bits.access,r->bits.access); fflush(dumpOut);
                 // I have it, check visibility and accessibility
                 assert(r);
-                if (visibilityCheck == VISIB_CHECK_YES) {
+                if (visibilityCheck == VISIBILITY_CHECK_YES) {
                     if (! javaRecordVisible(ss->baseClass, cclass, r->bits.access)) {
                         // WRONG? return, Doesn't it iverrides any other of this name
                         // Yes, definitely correct, in the first step determining
@@ -332,9 +335,9 @@ int findStrRecordSym(   S_recFindStr    *ss,
                         FSRS_RETURN_WITH_FAIL(ss, res);
                     }
                 }
-                if (accCheck == ACC_CHECK_YES) {
+                if (accessibilityCheck == ACCESSIBILITY_CHECK_YES) {
                     if (! javaRecordAccessible(ss, ss->baseClass,cclass,r,r->bits.access)){
-                        if (visibilityCheck == VISIB_CHECK_YES) {
+                        if (visibilityCheck == VISIBILITY_CHECK_YES) {
                             FSRS_RETURN_WITH_FAIL(ss, res);
                         } else {
                             goto nextRecord;
@@ -369,25 +372,25 @@ int findStrRecordSym(   S_recFindStr    *ss,
     }
 }
 
-int findStrRecord(  Symbol        *s,
-                    char            *recname,   /* can be NULL */
-                    Symbol        **res,
-                    int             javaClassif
-                    ) {
+int findStrRecord(Symbol *s,
+                  char *recname,   /* can be NULL */
+                  Symbol **res,
+                  int javaClassif
+) {
     S_recFindStr rfs;
-    return(findStrRecordSym(iniFind(s,&rfs),recname,res,javaClassif,
-                            ACC_CHECK_YES,VISIB_CHECK_YES));
+    return(findStrRecordSym(iniFind(s,&rfs), recname, res, javaClassif,
+                            ACCESSIBILITY_CHECK_YES, VISIBILITY_CHECK_YES));
 }
 
 /* and push reference */
 // this should be split into two copies, different for C and Java.
-Reference *findStrRecordFromSymbol( Symbol *sym,
-                                      Id *record,
-                                      Symbol **res,
-                                      int javaClassif,
-                                      Id *super /* covering special case when invoked
-                                                          as SUPER.sym, berk */
-                                      ) {
+Reference *findStrRecordFromSymbol(Symbol *sym,
+                                   Id *record,
+                                   Symbol **res,
+                                   int javaClassif,
+                                   Id *super /* covering special case when invoked
+                                                as SUPER.sym, berk */
+) {
     S_recFindStr    rfs;
     Reference     *ref;
     UsageBits     ub;
@@ -396,7 +399,7 @@ Reference *findStrRecordFromSymbol( Symbol *sym,
     // when in java, then always in qualified name, so access and visibility checks
     // are useless.
     rr = findStrRecordSym(iniFind(sym,&rfs),record->name,res,
-                          javaClassif, ACC_CHECK_NO, VISIB_CHECK_NO);
+                          javaClassif, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO);
     if (rr == RESULT_OK && rfs.currClass!=NULL &&
         ((*res)->bits.storage==StorageField
          || (*res)->bits.storage==StorageMethod

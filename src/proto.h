@@ -15,16 +15,28 @@
 #include "zlib.h"
 
 
-/* ******************************  TYPEDEFS  ***************************** */
-
 typedef unsigned char uchar;
 
-/* *********************************************************************** */
+/* ***********************************************************************
+
+   Here follows some enums which were split off a gigantic enum
+   Miscellaneus (Duh!). In order to ensure they all have different
+   values they are started with a value higher than the last value in
+   the previous.
+
+*/
 
 typedef enum addYesNo {
+    ADD_DEFAULT = 0,
     ADD_YES,
     ADD_NO
 } AddYesNo;
+
+typedef enum accessibilityCheckYesNo {
+    ACCESSIBILITY_CHECK_DEFAULT = 3,
+    ACCESSIBILITY_CHECK_YES,
+    ACCESSIBILITY_CHECK_NO
+} AccessibilityCheckYesNo;
 
 enum miscellaneous {						/* misc. constants */
     DEFAULT_VALUE,
@@ -32,10 +44,8 @@ enum miscellaneous {						/* misc. constants */
     CLASS_TO_EXPR,
     CLASS_TO_METHOD,
     CLASS_TO_ANY,
-    ACC_CHECK_YES,
-    ACC_CHECK_NO,
-    VISIB_CHECK_YES,
-    VISIB_CHECK_NO,
+    VISIBILITY_CHECK_YES,
+    VISIBILITY_CHECK_NO,
     CUT_OVERRIDEN_YES,
     CUT_OVERRIDEN_NO,
     CX_FILE_ITEM_GEN,

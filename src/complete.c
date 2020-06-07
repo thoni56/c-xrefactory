@@ -881,14 +881,13 @@ static void processSpecialInheritedFullCompletion( Completions *c, int orderFlag
     fillCompletionLine(&compLine, fcc, r, TypeInheritedFullMethod, vlevel,0,NULL,vFunCl);
     processName(fcc, &compLine, orderFlag, (void*) c);
 }
-static int getAccCheckOption(void) {
-    int accCheck;
+
+static AccessibilityCheckYesNo calculateAccessCheckOption(void) {
     if (s_opt.ooChecksBits & OOC_ACCESS_CHECK) {
-        accCheck = ACC_CHECK_YES;
+        return ACCESSIBILITY_CHECK_YES;
     } else {
-        accCheck = ACC_CHECK_NO;
+        return ACCESSIBILITY_CHECK_NO;
     }
-    return(accCheck);
 }
 
 #define STR_REC_INFO(cc) (* cc->idToProcess == 0 && s_language!=LANG_JAVA)
@@ -903,7 +902,7 @@ static void completeRecordsNames(
                                  int vlevelOffset
                                  ) {
     CompletionLine         completionLine;
-    int             orderFlag,rr,vlevel, accCheck,  visibCheck;
+    int             orderFlag,rr,vlevel, accessCheck,  visibilityCheck;
     Symbol        *r, *vFunCl;
     S_recFindStr    rfs;
     char            *cname;
@@ -919,14 +918,14 @@ static void completeRecordsNames(
     for(;;) {
         // this is in fact about not cutting all records of the class,
         // not about visibility checks
-        visibCheck = VISIB_CHECK_NO;
-        accCheck = getAccCheckOption();
+        visibilityCheck = VISIBILITY_CHECK_NO;
+        accessCheck = calculateAccessCheckOption();
         //&if (s_opt.ooChecksBits & OOC_VISIBILITY_CHECK) {
-        //& visibCheck = VISIB_CHECK_YES;
+        //& visibilityCheck = VISIBILITY_CHECK_YES;
         //&} else {
-        //& visibCheck = VISIB_CHECK_NO;
+        //& visibilityCheck = VISIBILITY_CHECK_NO;
         //&}
-        rr = findStrRecordSym(&rfs, NULL, &r, classification, accCheck, visibCheck);
+        rr = findStrRecordSym(&rfs, NULL, &r, classification, accessCheck, visibilityCheck);
         if (rr != RETURN_OK) break;
         if (constructorOpt==StorageConstructor && rfs.currClass!=s) break;
         /* because constructors are not inherited */
@@ -1103,7 +1102,7 @@ static char *spComplFindNextRecord(S_exprTokenType *tok) {
     assert(s->u.s);
     iniFind(s, &rfs);
     for(;;) {
-        rr = findStrRecordSym(&rfs, NULL, &r, CLASS_TO_ANY, ACC_CHECK_YES, VISIB_CHECK_YES);
+        rr = findStrRecordSym(&rfs, NULL, &r, CLASS_TO_ANY, ACCESSIBILITY_CHECK_YES, VISIBILITY_CHECK_YES);
         if (rr != RETURN_OK) break;
         assert(r);
         cname = r->name;
@@ -1366,7 +1365,7 @@ void javaHintCompleteMethodParameters(Completions *c) {
     Symbol                *r, *vFunCl;
     S_recFindStr            *rfs;
     S_typeModifierList     *aaa;
-    int                     visibCheck, accCheck, vlevel, rr, actArgi;
+    int                     visibilityCheck, accessCheck, vlevel, rr, actArgi;
     char                    *mname;
     char                    actArg[MAX_PROFILE_SIZE];
     if (c->idToProcessLen != 0) return;
@@ -1374,9 +1373,9 @@ void javaHintCompleteMethodParameters(Completions *c) {
     r = s_cp.erfsForParamsComplet->memb;
     rfs = &s_cp.erfsForParamsComplet->s;
     mname = r->name;
-    visibCheck = VISIB_CHECK_NO;
-    accCheck = getAccCheckOption();
-    // partiall actual parameters
+    visibilityCheck = VISIBILITY_CHECK_NO;
+    accessCheck = calculateAccessCheckOption();
+    // partial actual parameters
 
     *actArg = 0; actArgi = 0;
     for(aaa=s_cp.erfsForParamsComplet->params; aaa!=NULL; aaa=aaa->next) {
@@ -1393,7 +1392,7 @@ void javaHintCompleteMethodParameters(Completions *c) {
             fillCompletionLine(&compLine, r->name, r, TypeDefault, vlevel,0,NULL,vFunCl);
             processName(r->name, &compLine, 0, (void*) c);
         }
-        rr = findStrRecordSym(rfs, mname, &r, CLASS_TO_METHOD, accCheck, visibCheck);
+        rr = findStrRecordSym(rfs, mname, &r, CLASS_TO_METHOD, accessCheck, visibilityCheck);
     } while (rr == RETURN_OK);
     if (c->alternativeIndex != 0) {
         c->comPrefix[0]=0;

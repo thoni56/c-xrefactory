@@ -4054,7 +4054,7 @@ case 141:
                         /*& javaSetFieldLinkName(p); &*/
                         iniFind(clas, &rfs);
                         if (findStrRecordSym(&rfs, p->name, &memb, CLASS_TO_ANY,
-                                             ACC_CHECK_NO,VISIB_CHECK_NO) == RETURN_NOT_FOUND) {
+                                             ACCESSIBILITY_CHECK_NO,VISIBILITY_CHECK_NO) == RETURN_NOT_FOUND) {
                             assert(clas->u.s);
                             LIST_APPEND(Symbol, clas->u.s->records, p);
                         }
