@@ -1,4 +1,4 @@
-MODULES =  main globals misc semact commons generate \
+MODULES =  main globals misc semact commons \
 		complete cxref cxfile lexer yylex options \
 		caching jsemact classfilereader classcaster init \
 		editor refactory protocol log type usage storage \
