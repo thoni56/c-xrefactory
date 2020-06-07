@@ -129,7 +129,7 @@ static void jslRemoveNestedClass(void  *ddv) {
 }
 
 Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
-                                int add, int order, bool isExplicitlyImported) {
+                                AddYesNo add, int order, bool isExplicitlyImported) {
     char fqtName[MAX_FILE_NAME_SIZE];
     IdList dd2;
     int ii;
@@ -137,7 +137,6 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
     JslSymbolList ss, *xss, *memb;
     Position *importPos;
     int mm;
-    UNUSED mm;
 
     jslCreateTypeSymbolInList(&ss, ttt2);
     fillfIdList(&dd2, ttt2, NULL, s_noPos, ttt2, TypeStruct, packid);
@@ -149,7 +148,9 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
         else importPos = &s_noPos;
         XX_ALLOC(xss, JslSymbolList); // CF_ALLOC ???
         fillJslSymbolList(xss, smemb, *importPos, isExplicitlyImported);
+        /* TODO: Why are we using isMember() and not looking at the result? Side-effect? */
         mm = jslTypeTabIsMember(s_jsl->typeTab, xss, &ii, &memb);
+        log_trace("[jsl] jslTypeTabIsMember() returned %s", mm?"true":"false");
         if (order == ORDER_PREPEND) {
             log_debug("[jsl] prepending class %s to jsltab", smemb->name);
             jslTypeTabSet(s_jsl->typeTab, xss, ii);

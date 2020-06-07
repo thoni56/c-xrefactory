@@ -600,10 +600,10 @@ static Symbol *javaAddTypeToSymbolTable(Symbol *memb, int accessFlags, Position 
 }
 
 Symbol *javaTypeSymbolDefinition(IdList *tname,
-                                   int accessFlags,
-                                   int addTyp){
-    Symbol                pp,*memb;
-    char                    fqtName[MAX_FILE_NAME_SIZE];
+                                 int accessFlags,
+                                 int addType){
+    Symbol pp,*memb;
+    char fqtName[MAX_FILE_NAME_SIZE];
 
     assert(tname);
     assert(tname->nameType == TypeStruct);
@@ -613,7 +613,7 @@ Symbol *javaTypeSymbolDefinition(IdList *tname,
 
     javaCreateComposedName(NULL,tname,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
     memb = javaFQTypeSymbolDefinition(tname->id.name, fqtName);
-    if (addTyp == ADD_YES) {
+    if (addType == ADD_YES) {
         memb = javaAddTypeToSymbolTable(memb, accessFlags, &s_noPos, false);
     }
     return(memb);

@@ -264,7 +264,7 @@ static void fillZipFileTableItem(S_zipFileTableItem *fileItem, struct stat st, S
 }
 
 bool fsIsMember(S_zipArchiveDir **dirPointer, char *fn, unsigned offset,
-               int addFlag, S_zipArchiveDir **outDirPointer) {
+                AddYesNo addFlag, S_zipArchiveDir **outDirPointer) {
     S_zipArchiveDir     *aa, **aaa, *p;
     int                 itemlen, res;
     char                *ss;
@@ -493,10 +493,12 @@ static int zipSeekToFile(char **accc, char **affin, CharacterBuffer *iBuf,
         errorMessage(ERR_INTERNAL, "archive not indexed");
         goto fini;
     }
-    if (fsIsMember(&s_zipArchiveTable[i].dir,sep+1,0,ADD_NO,&place)==0) goto fini;
+    if (fsIsMember(&s_zipArchiveTable[i].dir,sep+1,0,ADD_NO,&place)==0)
+        goto fini;
     SeekToPosition(ccc,ffin,iBuf,place->u.offset);
     if (zipReadLocalFileHeader(&ccc, &ffin, iBuf, fn, &fsize,
-                               &lastSig, s_zipArchiveTable[i].fn) == 0) goto fini;
+                               &lastSig, s_zipArchiveTable[i].fn) == 0)
+        goto fini;
     assert(lastSig == 0x04034b50);
     assert(strcmp(fn,sep+1)==0);
     res = 1;

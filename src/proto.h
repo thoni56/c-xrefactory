@@ -21,7 +21,7 @@ typedef unsigned char uchar;
 
 /* *********************************************************************** */
 
-enum addYesNo {
+typedef enum addYesNo {
     ADD_YES,
     ADD_NO
 } AddYesNo;

@@ -29,7 +29,7 @@ extern int javaCreateClassFileItem( Symbol *memb);
 extern void addSuperClassOrInterfaceByName(Symbol *memb, char *super, int origin, int loadSuper);
 extern void fsRecMapOnFiles(S_zipArchiveDir *dir, char *zip, char *path, void (*fun)(char *zip, char *file, void *arg), void *arg);
 extern bool fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset,
-                      int addFlag, S_zipArchiveDir **place);
+                       AddYesNo addFlag, S_zipArchiveDir **place);
 extern int zipIndexArchive(char *name);
 extern bool zipFindFile(char *name, char **resName, S_zipFileTableItem *zipfile);
 extern void javaMapZipDirFile(

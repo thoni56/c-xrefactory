@@ -53,7 +53,7 @@ extern Symbol *jslPrependDirectEnclosingInstanceArgument(Symbol *args);
 extern Symbol *jslMethodHeader(unsigned modif, Symbol *type, Symbol *decl, int storage, SymbolList *throws);
 extern Symbol *jslTypeNameDefinition(IdList *tname);
 extern Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
-                                       int add, int order, bool isExplicitlyImported);
+                                       AddYesNo add, int order, bool isExplicitlyImported);
 extern int jslClassifyAmbiguousTypeName(IdList *name, Symbol **str);
 extern void jslAddNestedClassesToJslTypeTab( Symbol *cc, int order);
 extern void jslAddSuperNestedClassesToJslTypeTab( Symbol *cc);
