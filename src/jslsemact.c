@@ -136,7 +136,7 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
     Symbol *smemb;
     JslSymbolList ss, *xss, *memb;
     Position *importPos;
-    int mm;
+    int mm; UNUSED mm;
 
     jslCreateTypeSymbolInList(&ss, ttt2);
     fillfIdList(&dd2, ttt2, NULL, s_noPos, ttt2, TypeStruct, packid);
