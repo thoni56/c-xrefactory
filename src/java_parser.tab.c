@@ -72,7 +72,7 @@
 #define JslImportSingleDeclaration(iname) {\
     Symbol *sym;\
     jslClassifyAmbiguousTypeName(iname, &sym);\
-    jslTypeSymbolDefinition(iname->id.name, iname->next, TYPE_ADD_YES,ORDER_PREPEND, true);\
+    jslTypeSymbolDefinition(iname->id.name, iname->next, ADD_YES, ORDER_PREPEND, true);\
 }
 
 /* Import on demand has to solve following situation (not handled by JSL) */
@@ -2524,26 +2524,26 @@ void javaParsingInitializations(void) {
     Symbol *symbol;
     /* &javaMapDirectoryFiles2(s_javaLangName,
        javaAddMapedTypeName, NULL, s_javaLangName, NULL); &*/
-    symbol = javaTypeSymbolDefinition(s_javaLangObjectName, ACCESS_DEFAULT, TYPE_ADD_NO);
+    symbol = javaTypeSymbolDefinition(s_javaLangObjectName, ACCESS_DEFAULT, ADD_NO);
     s_javaObjectSymbol = symbol;
     initTypeModifierAsStructUnionOrEnum(&s_javaObjectModifier, TypeStruct, symbol,
                                         NULL, NULL);
     s_javaObjectModifier.u.t = symbol;
 
-    symbol = javaTypeSymbolDefinition(s_javaLangStringName, ACCESS_DEFAULT, TYPE_ADD_NO);
+    symbol = javaTypeSymbolDefinition(s_javaLangStringName, ACCESS_DEFAULT, ADD_NO);
     s_javaStringSymbol = symbol;
     initTypeModifierAsStructUnionOrEnum(&s_javaStringModifier, TypeStruct, symbol,
                                         NULL, NULL);
     s_javaStringModifier.u.t = symbol;
 
-    symbol = javaTypeSymbolDefinition(s_javaLangClassName, ACCESS_DEFAULT, TYPE_ADD_NO);
+    symbol = javaTypeSymbolDefinition(s_javaLangClassName, ACCESS_DEFAULT, ADD_NO);
     initTypeModifierAsStructUnionOrEnum(&s_javaClassModifier, TypeStruct, symbol,
                                         NULL, NULL);
     s_javaClassModifier.u.t = symbol;
     s_javaCloneableSymbol = javaTypeSymbolDefinition(s_javaLangCloneableName,
-                                                     ACCESS_DEFAULT, TYPE_ADD_NO);
+                                                     ACCESS_DEFAULT, ADD_NO);
     s_javaIoSerializableSymbol = javaTypeSymbolDefinition(s_javaIoSerializableName,
-                                                          ACCESS_DEFAULT, TYPE_ADD_NO);
+                                                          ACCESS_DEFAULT, ADD_NO);
 
     javaInitArrayObject();
 }

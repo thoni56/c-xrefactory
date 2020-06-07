@@ -193,7 +193,7 @@ static void javaAddNameCxReference(IdList *id, unsigned usage) {
 
 Symbol *javaAddType(IdList *class, Access access, Position *p) {
     Symbol *dd;
-    dd = javaTypeSymbolDefinition(class, access, TYPE_ADD_YES);
+    dd = javaTypeSymbolDefinition(class, access, ADD_YES);
     dd->bits.access = access;
     addCxReference(dd, p, UsageDefined,s_noneFileIndex, s_noneFileIndex);
     htmlAddJavaDocReference(dd, p, s_noneFileIndex, s_noneFileIndex);
@@ -217,7 +217,7 @@ void javaAddNestedClassesAsTypeDefs(Symbol *cc, IdList *oclassname,
             //& XX_ALLOC(ll, IdList);
             fillId(&ll.id, nn->name, cc, s_noPos);
             fillIdList(&ll, ll.id, nn->name,TypeStruct,oclassname);
-            javaTypeSymbolDefinition(&ll, accessFlags, TYPE_ADD_YES);
+            javaTypeSymbolDefinition(&ll, accessFlags, ADD_YES);
         }
     }
 }
@@ -613,7 +613,7 @@ Symbol *javaTypeSymbolDefinition(IdList *tname,
 
     javaCreateComposedName(NULL,tname,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
     memb = javaFQTypeSymbolDefinition(tname->id.name, fqtName);
-    if (addTyp == TYPE_ADD_YES) {
+    if (addTyp == ADD_YES) {
         memb = javaAddTypeToSymbolTable(memb, accessFlags, &s_noPos, false);
     }
     return(memb);
@@ -844,16 +844,15 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
 }
 
 
-static int findTopLevelNameInternal(
-                                char *name,
-                                S_recFindStr *resRfs,
-                                Symbol **resMemb,
-                                int classif,
-                                S_javaStat *startingScope,
-                                int accCheck,
-                                int visibCheck,
-                                S_javaStat **rscope
-                                ) {
+static int findTopLevelNameInternal(char *name,
+                                    S_recFindStr *resRfs,
+                                    Symbol **resMemb,
+                                    int classif,
+                                    S_javaStat *startingScope,
+                                    int accCheck,
+                                    int visibCheck,
+                                    S_javaStat **rscope
+                                    ) {
     int				ii,res;
     Symbol        sd;
     S_javaStat		*cscope;
@@ -892,14 +891,11 @@ static int findTopLevelNameInternal(
     return(res);
 }
 
-int findTopLevelName(
-                                char                *name,
-                                S_recFindStr        *resRfs,
-                                Symbol			**resMemb,
-                                int                 classif
-                                ) {
-    int				res;
-    S_javaStat		*scopeToSearch, *resultScope;
+int findTopLevelName(char *name, S_recFindStr *resRfs,
+                     Symbol **resMemb, int classif) {
+    int res;
+    S_javaStat *scopeToSearch, *resultScope;
+
     res = findTopLevelNameInternal(name, resRfs, resMemb, classif,
                                    s_javaStat, ACC_CHECK_YES, VISIB_CHECK_YES,
                                    &scopeToSearch);
@@ -909,7 +905,7 @@ int findTopLevelName(
         scopeToSearch = s_javaStat;
     }
     if (scopeToSearch!=NULL) {
-//&fprintf(dumpOut,"relooking for %s in %s\n", name, scopeToSearch->thisClass->name);
+        log_trace("relooking for %s in %s", name, scopeToSearch->thisClass->name);
         res = findTopLevelNameInternal(name, resRfs, resMemb, classif,
                                        scopeToSearch, ACC_CHECK_NO, VISIB_CHECK_NO,
                                        &resultScope);
@@ -1856,7 +1852,7 @@ void javaAddMapedTypeName(
     assert(len2+1 < MAX_FILE_NAME_SIZE);
     ttt2[len2] = 0;
     fillfIdList(&dd2, ttt2, NULL, s_noPos, ttt2, TypeStruct, packid);
-    memb = javaTypeSymbolDefinition(&dd2, ACCESS_DEFAULT, TYPE_ADD_YES);
+    memb = javaTypeSymbolDefinition(&dd2, ACCESS_DEFAULT, ADD_YES);
     log_debug(":import type %s == %s", memb->name, memb->linkName);
 #ifndef DEBUG
     memb = memb;

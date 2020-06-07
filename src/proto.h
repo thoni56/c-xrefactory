@@ -21,12 +21,13 @@ typedef unsigned char uchar;
 
 /* *********************************************************************** */
 
+enum addYesNo {
+    ADD_YES,
+    ADD_NO
+} AddYesNo;
+
 enum miscellaneous {						/* misc. constants */
     DEFAULT_VALUE,
-    TYPE_ADD_YES,
-    TYPE_ADD_NO,
-    ADD_YES,
-    ADD_NO,
     CLASS_TO_TYPE,
     CLASS_TO_EXPR,
     CLASS_TO_METHOD,
