@@ -110,11 +110,6 @@ static void usage(char *s) {
     fprintf(stdout,"\t-debug                    - produce debug output of the execution\n");
     fprintf(stdout,"\t-trace                    - produce trace output of the execution\n");
 #   endif
-#if 0
-    fprintf(stdout,"\t-enum_name                - generate enum text names\n");
-    fprintf(stdout,"\t-header                   - output is headers file\n");
-    fprintf(stdout,"\t-body                     - output is code file\n");
-#endif
     fprintf(stdout,"\t-no_enum                  - don't cross reference enumeration constants\n");
     fprintf(stdout,"\t-no_mac                   - don't cross reference macros\n");
     fprintf(stdout,"\t-no_type                  - don't cross reference type names\n");
@@ -476,7 +471,6 @@ static int processBOption(int *ii, int argc, char **argv) {
     if (0) {}
     else if (strcmp(argv[i],"-brief")==0)           s_opt.brief_cxref = true;
     else if (strcmp(argv[i],"-briefoutput")==0)     s_opt.briefoutput = true;
-    else if (strcmp(argv[i],"-body")==0)            s_opt.generate_body = 1;
     else if (strncmp(argv[i],"-browsedsym=",12)==0)     {
         createOptionString(&s_opt.browsedSymName, argv[i]+12);
     }
@@ -565,7 +559,6 @@ static int processEOption(int *ii, int argc, char **argv) {
         log_debug("Exiting");
         exit(XREF_EXIT_BASE);
     }
-    else if (strcmp(argv[i],"-enum_name")==0) s_opt.generate_enum_name = 1;
     else if (strcmp(argv[i],"-editor=emacs")==0) {
         s_opt.editor = EDITOR_EMACS;
     }
@@ -726,7 +719,6 @@ static int processHOption(int *ii, int argc, char **argv) {
     else if (strncmp(argv[i],"-htmllinksuffix=",16)==0) {
         createOptionString(&s_opt.htmlLinkSuffix, argv[i]+16);
     }
-    else if (strcmp(argv[i],"-header")==0)      s_opt.generate_header = 1;
     else if (strcmp(argv[i],"-help")==0) {
         usage(argv[0]);
         exit(0);
@@ -1447,9 +1439,6 @@ static int processTOption(int *ii, int argc, char **argv) {
 #endif
     else if (strcmp(argv[i],"-task_regime_server")==0) {
         s_opt.taskRegime = RegimeEditServer;
-    }
-    else if (strcmp(argv[i],"-task_regime_generate")==0) {
-        s_opt.taskRegime = RegimeGenerate;
     }
     else if (strcmp(argv[i],"-thread")==0) {
         NEXT_FILE_ARG();
@@ -3347,29 +3336,6 @@ static void mainEditServer(int argc, char **argv) {
     LEAVE();
 }
 
-/* *************************************************************** */
-/*                       Generate regime                           */
-/* *************************************************************** */
-
-static void mainGenerate(int argc, char **argv) {
-    int     inputIn;
-    int     fArgCount, firstPassing;
-    s_currCppPass = ANY_CPP_PASS;
-    s_fileProcessStartTime = time(NULL);
-    fArgCount = 0; s_input_file_name = getInputFile(&fArgCount);
-    s_cppPassMax = 0;
-    firstPassing = 1;
-    mainFileProcessingInitialisations(&firstPassing, argc, argv, 0, NULL,
-                                      &inputIn, &s_language);
-    s_olOriginalFileNumber = s_input_file_number;
-    s_olOriginalComFileNumber = s_olOriginalFileNumber;
-    if (inputIn) {
-        recoverFromCache();
-        mainParseInputFile();
-        currentFile.lexBuffer.buffer.isAtEOF = false;
-    }
-    symbolTableMap(s_symbolTable, generate);
-}
 
 /* initLogging() is called as the first thing in main() so we look for log filename */
 static void initLogging(int argc, char *argv[]) {
@@ -3453,7 +3419,6 @@ int main(int argc, char **argv) {
     if (s_opt.taskRegime == RegimeXref) mainXref(argc, argv);
     if (s_opt.taskRegime == RegimeHtmlGenerate) mainXref(argc, argv);
     if (s_opt.taskRegime == RegimeEditServer) mainEditServer(argc, argv);
-    if (s_opt.taskRegime == RegimeGenerate) mainGenerate(argc, argv);
 
     LEAVE();
     return(0);

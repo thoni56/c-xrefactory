@@ -738,7 +738,6 @@ void getJavaClassAndSourcePath(void) {
 
         if (LANGUAGE(LANG_JAVA)
             && s_opt.taskRegime != RegimeEditServer
-            && s_opt.taskRegime != RegimeGenerate
             ) {
             static bool messageFlag=false;
             if (messageFlag && ! s_opt.briefoutput) {

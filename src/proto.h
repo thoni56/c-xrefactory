@@ -249,8 +249,7 @@ enum taskRegimes {
     RegimeXref,           /* cross referencer called by user from command line */
     RegimeHtmlGenerate,   /* generate html form of input files, ... */
     RegimeEditServer,     /* editor server, called by on-line editing action */
-    RegimeRefactory,      /* refactoring server, called by on-line editing */
-    RegimeGenerate,       /* generate str-fill macros, ... */
+    RegimeRefactory      /* refactoring server, called by on-line editing */
 };
 
 /* ************** on-line (browsing) operations for c-xref server  ********** */

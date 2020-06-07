@@ -255,11 +255,7 @@ primary_expr
             assert(dd->bits.storage != StorageTypedef);
             $$.d.typeModifier = dd->u.type;
             assert(s_opt.taskRegime);
-            if (CX_REGIME()) {
-                $$.d.reference = addCxReference(p, &$1.d->p, UsageUsed, s_noneFileIndex, s_noneFileIndex);
-            } else {
-                $$.d.reference = NULL;
-            }
+            $$.d.reference = addCxReference(p, &$1.d->p, UsageUsed, s_noneFileIndex, s_noneFileIndex);
         } else {
             /* implicit function declaration */
             TypeModifier *p;
@@ -273,11 +269,7 @@ primary_expr
             fillSymbolBits(&d->bits, ACCESS_DEFAULT, TypeDefault, StorageExtern);
 
             dd = addNewSymbolDef(d, StorageExtern, s_symbolTable, UsageUsed);
-            if (CX_REGIME()) {
-                $$.d.reference = addCxReference(dd, &$1.d->p, UsageUsed, s_noneFileIndex, s_noneFileIndex);
-            } else {
-                $$.d.reference = NULL;
-            }
+            $$.d.reference = addCxReference(dd, &$1.d->p, UsageUsed, s_noneFileIndex, s_noneFileIndex);
         }
     }
     | CHAR_LITERAL			{ $$.d.typeModifier = newSimpleTypeModifier(TypeInt); $$.d.reference = NULL;}
@@ -696,13 +688,11 @@ user_defined_type
         int usage;
         $$.d = $1.d;
         assert(s_opt.taskRegime);
-        if (CX_REGIME()) {
-            assert($1.d);
-            assert($1.d->symbol);
-            if (WORK_NEST_LEVEL0()) usage = USAGE_TOP_LEVEL_USED;
-            else usage = UsageUsed;
-            addCxReference($1.d->symbol,&$1.d->p,usage,s_noneFileIndex,s_noneFileIndex);
-        }
+        assert($1.d);
+        assert($1.d->symbol);
+        if (WORK_NEST_LEVEL0()) usage = USAGE_TOP_LEVEL_USED;
+        else usage = UsageUsed;
+        addCxReference($1.d->symbol,&$1.d->p,usage,s_noneFileIndex,s_noneFileIndex);
     }
     ;
 

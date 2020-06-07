@@ -463,9 +463,7 @@ primary_expr
             assert(dd->bits.storage != StorageTypedef);
             $$.d.typeModifier = dd->u.type;
             assert(s_opt.taskRegime);
-            if (CX_REGIME()) {
-                $$.d.reference = addCxReference(p, &$1.d->p, UsageUsed,s_noneFileIndex, s_noneFileIndex);
-            }
+            $$.d.reference = addCxReference(p, &$1.d->p, UsageUsed,s_noneFileIndex, s_noneFileIndex);
         } else {
             /* implicit function declaration */
             TypeModifier *p;
@@ -827,11 +825,9 @@ user_defined_type
     : TYPE_NAME                                             {
         $$.d = $1.d;
         assert(s_opt.taskRegime);
-        if (CX_REGIME()) {
-            assert($1.d);
-            assert($1.d->symbol);
-            addCxReference($1.d->symbol, &$1.d->p, UsageUsed,s_noneFileIndex, s_noneFileIndex);
-        }
+        assert($1.d);
+        assert($1.d->symbol);
+        addCxReference($1.d->symbol, &$1.d->p, UsageUsed,s_noneFileIndex, s_noneFileIndex);
     }
     ;
 

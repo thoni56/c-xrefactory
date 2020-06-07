@@ -90,10 +90,9 @@ typedef enum language {
 
 #define LANGUAGE(lan) ((s_language & (lan)) != 0)
 #define ABS(xxx) ((xxx>0)?(xxx):(-(xxx)))
-#define CX_REGIME() (s_opt.taskRegime!=RegimeGenerate)
-#define WORK_NEST_LEVEL0()     (s_topBlock->previousTopBlock == NULL)
-#define WORK_NEST_LEVEL1()     (s_topBlock->previousTopBlock != NULL && \
-                             s_topBlock->previousTopBlock->previousTopBlock == NULL)
+#define WORK_NEST_LEVEL0() (s_topBlock->previousTopBlock == NULL)
+#define WORK_NEST_LEVEL1() (s_topBlock->previousTopBlock != NULL && \
+                            s_topBlock->previousTopBlock->previousTopBlock == NULL)
 
 /* *************************************************************** */
 

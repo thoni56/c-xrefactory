@@ -785,7 +785,6 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
             }
         }
     }
-    if (s_opt.taskRegime == RegimeGenerate) return NULL;
     if (s_opt.taskRegime == RegimeXref) {
         if (category == CategoryLocal) return NULL; /* dont cxref local symbols */
         if (!s_fileTab.tab[pos->file]->b.cxLoading) return NULL;

@@ -62,7 +62,6 @@ void initTokenNameTab(void) {
     jv = s_opt.javaVersion;
     if (strcmp(jv, JAVA_VERSION_AUTO)==0) jv = autoDetectJavaVersion();
     if (s_opt.taskRegime!=RegimeEditServer
-        && s_opt.taskRegime!=RegimeGenerate
         && messageWritten==0) {
         if (s_opt.xref2) {
             char tmpBuff[TMP_BUFF_SIZE];

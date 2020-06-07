@@ -553,7 +553,7 @@ static void processInclude2(Position *ipos, char pchar, char *iname) {
     if (nyyin == NULL) {
         assert(s_opt.taskRegime);
         if (s_opt.taskRegime!=RegimeEditServer) warningMessage(ERR_CANT_OPEN, iname);
-    } else if (CX_REGIME()) {
+    } else {
         addIncludeReferences(currentFile.lexBuffer.buffer.fileNumber, ipos);
     }
 }
@@ -837,9 +837,7 @@ endOfBody:
 
     addMacroToTabs(pp,mname);
     assert(s_opt.taskRegime);
-    if (CX_REGIME()) {
-        addCxReference(pp, &macpos, UsageDefined,s_noneFileIndex, s_noneFileIndex);
-    }
+    addCxReference(pp, &macpos, UsageDefined,s_noneFileIndex, s_noneFileIndex);
     return;
 
 endOfMacArg:
@@ -905,9 +903,7 @@ static void processUnDefine(void) {
         /* !!!!!!!!!!!!!! tricky, add macro with mbody == NULL !!!!!!!!!! */
         /* this is because of monotonicity for caching, just adding symbol */
         if (symbolTableIsMember(s_symbolTable, &dd, &ii, &memb)) {
-            if (CX_REGIME()) {
-                addCxReference(memb, &pos, UsageUndefinedMacro,s_noneFileIndex, s_noneFileIndex);
-            }
+            addCxReference(memb, &pos, UsageUndefinedMacro,s_noneFileIndex, s_noneFileIndex);
 
             PP_ALLOC(pp, Symbol);
             fillSymbol(pp, memb->name, memb->linkName, pos);
@@ -1041,9 +1037,7 @@ static void processIfdef(bool isIfdef) {
     mm = symbolTableIsMember(s_symbolTable,&pp,&ii,&memb);
     if (mm && memb->u.mbody==NULL) mm = 0;	// undefined macro
     if (mm) {
-        if (CX_REGIME()) {
-            addCxReference(memb,&pos,UsageUsed,s_noneFileIndex,s_noneFileIndex);
-        }
+        addCxReference(memb,&pos,UsageUsed,s_noneFileIndex,s_noneFileIndex);
         if (isIfdef) {
             log_debug("#ifdef (true)");
             deleteSrc = 0;
@@ -1102,9 +1096,8 @@ int cexp_yylex(void) {
         mm = symbolTableIsMember(s_symbolTable,&dd,&ii,&memb);
         if (mm && memb->u.mbody == NULL) mm = 0;   // undefined macro
         assert(s_opt.taskRegime);
-        if (CX_REGIME()) {
-            if (mm) addCxReference(&dd, &pos, UsageUsed,s_noneFileIndex, s_noneFileIndex);
-        }
+        if (mm) addCxReference(&dd, &pos, UsageUsed,s_noneFileIndex, s_noneFileIndex);
+
         /* following call sets uniyylval */
         res = cexpTranslateToken(CONSTANT, mm);
         if (par) {
@@ -1805,10 +1798,9 @@ static int expandMacroCall(Symbol *mdef, Position *mpos) {
         actArgs = NULL;
     }
     assert(s_opt.taskRegime);
-    if (CX_REGIME()) {
-        addCxReference(mdef,mpos,UsageUsed,s_noneFileIndex, s_noneFileIndex);
-        if (s_opt.taskRegime == RegimeXref) addMacroBaseUsageRef(mdef);
-    }
+    addCxReference(mdef,mpos,UsageUsed,s_noneFileIndex, s_noneFileIndex);
+    if (s_opt.taskRegime == RegimeXref)
+        addMacroBaseUsageRef(mdef);
     log_trace("create macro body '%s'", mb->name);
     createMacroBody(&macroBody,mb,actArgs,mb->argn);
     prependMacroInput(&macroBody);
