@@ -1115,7 +1115,6 @@ static void cxrfSymbolName(int size,
                 ols=itIsSymbolToPushOlRefences(ddd,s_olcxCurrentUser->browserStack.top,&cms,DEFAULT_VALUE);
             }
             s_inLastInfos.onLineRefMenuItem = cms;
-            log_trace("check (%s) %s ols==%d", miscellaneousEnumName[additionalArg], ddd->name, ols);
             if (ols || (additionalArg==CX_BY_PASS&&byPassAcceptableSymbol(ddd))
                 ) {
                 s_inLastInfos.onLineReferencedSym = si;

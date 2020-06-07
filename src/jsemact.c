@@ -885,7 +885,6 @@ static int findTopLevelNameInternal(char *name,
             recFindPush(cscope->thisClass, resRfs);
             *rscope = cscope;
         }
-        log_trace("%s %s", miscellaneousEnumName[classif], miscellaneousEnumName[accessibilityCheck]);
         res = findStrRecordSym(resRfs, name, resMemb, classif, accessibilityCheck, visibilityCheck);
     }
     return(res);
