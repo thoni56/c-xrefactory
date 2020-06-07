@@ -1737,13 +1737,14 @@ void javaCompleteStrRecordSuper(Completions*c) {
 }
 
 void javaCompleteStrRecordQualifiedSuper(Completions*c) {
-    Symbol            *str;
-    TypeModifier     *expr;
-    Reference         *rr, *lastUselessRef;
-    int                 ttype;
+    Symbol *str;
+    TypeModifier *expr;
+    Reference *rr, *lastUselessRef;
+    int ttype;
+
     lastUselessRef = NULL;
-    ttype = javaClassifyAmbiguousName(s_javaStat->lastParsedName, NULL,&str,&expr,&rr,
-                                      &lastUselessRef, USELESS_FQT_REFS_ALLOWED,CLASS_TO_TYPE,UsageUsed);
+    ttype = javaClassifyAmbiguousName(s_javaStat->lastParsedName, NULL, &str, &expr, &rr,
+                                      &lastUselessRef, USELESS_FQT_REFS_ALLOWED, CLASS_TO_TYPE, UsageUsed);
     if (ttype != TypeStruct) return;
     javaLoadClassSymbolsFromFile(str);
     str = javaGetSuperClass(str);
