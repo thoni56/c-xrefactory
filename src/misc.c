@@ -53,7 +53,7 @@ void ppcGenGotoPositionRecord(Position *p) {
     ppcGenRecordEnd(PPC_GOTO);
 }
 
-void ppcGenGotoMarkerRecord(S_editorMarker *pos) {
+void ppcGenGotoMarkerRecord(EditorMarker *pos) {
     ppcGenRecordBegin(PPC_GOTO);
     ppcGenMarker(pos);
     ppcGenRecordEnd(PPC_GOTO);
@@ -70,7 +70,7 @@ void ppcGenOffsetPosition(char *fn, int offset) {
     //&ppcGenNumericRecord(PPC_OFFSET, m->offset,"","");
 }
 
-void ppcGenMarker(S_editorMarker *m) {
+void ppcGenMarker(EditorMarker *m) {
     ppcGenOffsetPosition(m->buffer->name, m->offset);
 }
 
@@ -181,7 +181,7 @@ void ppcGenReplaceRecord(char *file, int offset, char *oldName, int oldLen, char
     ppcGenRecordEnd(PPC_REFACTORING_REPLACEMENT);
 }
 
-void ppcGenPreCheckRecord(S_editorMarker *pos, int oldLen) {
+void ppcGenPreCheckRecord(EditorMarker *pos, int oldLen) {
     int     i;
     char    *bufferedText;
     bufferedText = pos->buffer->a.text + pos->offset;

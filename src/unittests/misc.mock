@@ -70,7 +70,7 @@ void ppcGenDisplaySelectionRecord(char *message, int messageType, int continuati
   mock(message, messageType, continuation);
 }
 
-void ppcGenGotoMarkerRecord(S_editorMarker *pos) {
+void ppcGenGotoMarkerRecord(EditorMarker *pos) {
   mock(pos);
 }
 
@@ -90,7 +90,7 @@ void ppcGenReplaceRecord(char *file, int offset, char *oldName, int oldNameLen, 
   mock(file, offset, oldName, oldNameLen, newName);
 }
 
-void ppcGenPreCheckRecord(S_editorMarker *pos, int oldLen) {
+void ppcGenPreCheckRecord(EditorMarker *pos, int oldLen) {
   mock(pos, oldLen);
 }
 
@@ -106,7 +106,7 @@ void ppcGenOffsetPosition(char *fn, int offset) {
   mock(fn, offset);
 }
 
-void ppcGenMarker(S_editorMarker *m) {
+void ppcGenMarker(EditorMarker *m) {
   mock(m);
 }
 

@@ -10,19 +10,19 @@ int statb(char *path, struct stat *statbuf) {
   return (int) mock(path, statbuf);
 }
 
-int editorMarkerLess(S_editorMarker *m1, S_editorMarker *m2) {
+int editorMarkerLess(EditorMarker *m1, EditorMarker *m2) {
   return (int) mock(m1, m2);
 }
 
-int editorMarkerLessOrEq(S_editorMarker *m1, S_editorMarker *m2) {
+int editorMarkerLessOrEq(EditorMarker *m1, EditorMarker *m2) {
   return (int) mock(m1, m2);
 }
 
-int editorMarkerGreater(S_editorMarker *m1, S_editorMarker *m2) {
+int editorMarkerGreater(EditorMarker *m1, EditorMarker *m2) {
   return (int) mock(m1, m2);
 }
 
-int editorMarkerGreaterOrEq(S_editorMarker *m1, S_editorMarker *m2) {
+int editorMarkerGreaterOrEq(EditorMarker *m1, EditorMarker *m2) {
   return (int) mock(m1, m2);
 }
 
@@ -54,8 +54,8 @@ S_editorBuffer *editorFindFileCreate(char *name) {
   return (S_editorBuffer *) mock(name);
 }
 
-S_editorMarker *editorCrNewMarkerForPosition(Position *pos) {
-  return (S_editorMarker *) mock(pos);
+EditorMarker *editorCrNewMarkerForPosition(Position *pos) {
+  return (EditorMarker *) mock(pos);
 }
 
 S_editorMarkerList *editorReferencesToMarkers(Reference *refs, int (*filter)(Reference *, void *), void *filterParam) {
@@ -74,7 +74,7 @@ void editorReplaceString(S_editorBuffer *buff, int position, int delsize, char *
   mock(buff, position, delsize, str, strlength, undo);
 }
 
-void editorMoveBlock(S_editorMarker *dest, S_editorMarker *src, int size, S_editorUndo **undo) {
+void editorMoveBlock(EditorMarker *dest, EditorMarker *src, int size, S_editorUndo **undo) {
   mock(dest, src, size, undo);
 }
 
@@ -86,7 +86,7 @@ void editorDumpBuffers(void) {
   mock();
 }
 
-void editorDumpMarker(S_editorMarker *mm) {
+void editorDumpMarker(EditorMarker *mm) {
   mock(mm);
 }
 
@@ -106,39 +106,39 @@ void editorLoadAllOpenedBufferFiles(void) {
   mock();
 }
 
-S_editorMarker *editorCrNewMarker(S_editorBuffer *buff, int offset) {
-  return (S_editorMarker *) mock(buff, offset);
+EditorMarker *editorCrNewMarker(S_editorBuffer *buff, int offset) {
+  return (EditorMarker *) mock(buff, offset);
 }
 
-S_editorMarker *editorDuplicateMarker(S_editorMarker *mm) {
-  return (S_editorMarker *) mock(mm);
+EditorMarker *editorDuplicateMarker(EditorMarker *mm) {
+  return (EditorMarker *) mock(mm);
 }
 
-int editorCountLinesBetweenMarkers(S_editorMarker *m1, S_editorMarker *m2) {
+int editorCountLinesBetweenMarkers(EditorMarker *m1, EditorMarker *m2) {
   return (int) mock(m1, m2);
 }
 
-int editorRunWithMarkerUntil(S_editorMarker *m, int (*until)(int), int step) {
+int editorRunWithMarkerUntil(EditorMarker *m, int (*until)(int), int step) {
   return (int) mock(m, until, step);
 }
 
-int editorMoveMarkerToNewline(S_editorMarker *m, int direction) {
+int editorMoveMarkerToNewline(EditorMarker *m, int direction) {
   return (int) mock(m, direction);
 }
 
-int editorMoveMarkerToNonBlank(S_editorMarker *m, int direction) {
+int editorMoveMarkerToNonBlank(EditorMarker *m, int direction) {
   return (int) mock(m, direction);
 }
 
-int editorMoveMarkerBeyondIdentifier(S_editorMarker *m, int direction) {
+int editorMoveMarkerBeyondIdentifier(EditorMarker *m, int direction) {
   return (int) mock(m, direction);
 }
 
-int editorMoveMarkerToNonBlankOrNewline(S_editorMarker *m, int direction) {
+int editorMoveMarkerToNonBlankOrNewline(EditorMarker *m, int direction) {
   return (int) mock(m, direction);
 }
 
-void editorRemoveBlanks(S_editorMarker *mm, int direction, S_editorUndo **undo) {
+void editorRemoveBlanks(EditorMarker *mm, int direction, S_editorUndo **undo) {
   mock(mm, direction, undo);
 }
 
@@ -146,7 +146,7 @@ void editorDumpUndoList(S_editorUndo *uu) {
   mock(uu);
 }
 
-void editorMoveMarkerToLineCol(S_editorMarker *m, int line, int col) {
+void editorMoveMarkerToLineCol(EditorMarker *m, int line, int col) {
   mock(m, line, col);
 }
 
@@ -154,7 +154,7 @@ void editorMarkersDifferences(S_editorMarkerList **list1, S_editorMarkerList **l
   mock(list1, list2, diff1, diff2);
 }
 
-void editorFreeMarker(S_editorMarker *marker) {
+void editorFreeMarker(EditorMarker *marker) {
   mock(marker);
 }
 
@@ -182,12 +182,12 @@ void editorRestrictMarkersToRegions(S_editorMarkerList **mm, S_editorRegionList 
   mock(mm, regions);
 }
 
-S_editorMarker *editorCrMarkerForBufferBegin(S_editorBuffer *buffer) {
-  return (S_editorMarker *) mock(buffer);
+EditorMarker *editorCrMarkerForBufferBegin(S_editorBuffer *buffer) {
+  return (EditorMarker *) mock(buffer);
 }
 
-S_editorMarker *editorCrMarkerForBufferEnd(S_editorBuffer *buffer) {
-  return (S_editorMarker *) mock(buffer);
+EditorMarker *editorCrMarkerForBufferEnd(S_editorBuffer *buffer) {
+  return (EditorMarker *) mock(buffer);
 }
 
 S_editorRegionList *editorWholeBufferRegion(S_editorBuffer *buffer) {
