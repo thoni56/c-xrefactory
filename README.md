@@ -6,7 +6,7 @@
 `c-xrefactory` is a free Emacs refactoring tool and code browser for
 C (and Java).
 
-Easiest way to install is using `el-get` (see note):
+Easiest way to install is using `el-get` (see NOTE below):
 
     M-x el-get-install<ENTER>c-xrefactory<ENTER>
 
@@ -33,8 +33,8 @@ tests at all for that matter.
 I'm on a long-time quest to resurrect this code to understandable,
 maintainable and developable standard. This is hard, difficult and
 time consuming, as it is almost impossible to understand what anything
-does. At this point I've added a couple of smoke/functional tests,
-that at least should crash if something basic becomes broken.
+does. At this point we have reached almost 60% test coverage which
+makes me confident in refactoring many things.
 
 If you think you can help, I'll be happy to take it, even if it is
 only adding one line of understanding in the wiki...
@@ -45,18 +45,16 @@ only adding one line of understanding in the wiki...
 Once apon a time there was [http://www.xref.sk](http://www.xref.sk), a
 site promoting possibly the worlds first refactoring browser to cross
 the ["Refactoring's
-Rubicon"](http://martinfowler.com/articles/refactoringRubicon.html).
+Rubicon"](http://martinfowler.com/articles/refactoringRubicon.html). That
+site seems to be going up and (mostly) down and there has been no
+support for many years, but it seems that
+[http://www.xrefactory.com/](http://www.xrefactory.com/) is now a
+better and more stable URL to the original Xrefactory, where it is
+still available.
 
 At that time it had a free Java and C version, and a paid C++
 version. Development seems to have been headed by a [Marián
 Vittek](http://dai.fmph.uniba.sk/w/Marian_Vittek/en).
-
-Marián have been hard to track down and
-[http://www.xref.sk](http://www.xref.sk) seems to be going up and
-(mostly) down and there has been no support for many years. But it
-seems that [http://www.xrefactory.com/](http://www.xrefactory.com/) is
-now a better and more stable URL to the original Xrefactory, where it
-is still available.
 
 Marián made a C-version, c-xref, available under GPL already 2009 on
 [SourceForge](http://sourceforge.net/projects/c-xref/). The reason
