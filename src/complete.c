@@ -1538,7 +1538,7 @@ static void completeFqtClassFileFromFileTab(FileItem *fi, void *cfmpi) {
     }
 }
 
-static void completeRecursivelyFqtNamesFromDirectory(MAP_FUN_PROFILE) {
+static void completeRecursivelyFqtNamesFromDirectory(MAP_FUN_SIGNATURE) {
     char            *fname, *dir, *path;
     char            fn[MAX_FILE_NAME_SIZE];
     struct stat     st;

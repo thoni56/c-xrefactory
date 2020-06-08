@@ -3,7 +3,7 @@
 
 #include "proto.h"
 
-extern void dirInputFile(MAP_FUN_PROFILE);
+extern void dirInputFile(MAP_FUN_SIGNATURE);
 extern void xrefSetenv(char *name, char *val);
 
 extern int addHtmlCutPath(char *ss);

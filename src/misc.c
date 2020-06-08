@@ -1032,7 +1032,7 @@ int containsWildcard(char *ss) {
 }
 
 
-static void expandWildcardsMapFun(MAP_FUN_PROFILE) {
+static void expandWildcardsMapFun(MAP_FUN_SIGNATURE) {
     char            ttt[MAX_FILE_NAME_SIZE];
     char            *dir1, *pattern, *dir2, **outpath;
     int             *freeolen;
@@ -1166,7 +1166,7 @@ char * getRealFileNameStatic(char *fn) {
 #if defined (__WIN32__)
 
 static int mapPatternFiles(char *pattern ,
-                           void (*fun)(MAP_FUN_PROFILE),
+                           void (*fun)(MAP_FUN_SIGNATURE),
                            char *a1, char *a2,
                            S_completions *a3,
                            void *a4, int *a5) {
@@ -1212,7 +1212,7 @@ static int mapPatternFiles(char *pattern ,
 
 int mapDirectoryFiles(
                       char *dirname,
-                      void (*fun)(MAP_FUN_PROFILE),
+                      void (*fun)(MAP_FUN_SIGNATURE),
                       int allowEditorFilesFlag,
                       char *a1,
                       char *a2,
@@ -1367,7 +1367,7 @@ void javaGetPackageNameFromSourceFileName(char *src, char *opack) {
 
 void javaMapDirectoryFiles1(
                             char *packageFilename,
-                            void (*fun)(MAP_FUN_PROFILE),
+                            void (*fun)(MAP_FUN_SIGNATURE),
                             Completions *a1,
                             void *a2,
                             int *a3
@@ -1415,7 +1415,7 @@ void javaMapDirectoryFiles1(
 
 void javaMapDirectoryFiles2(
                             IdList *packid,
-                            void (*fun)(MAP_FUN_PROFILE),
+                            void (*fun)(MAP_FUN_SIGNATURE),
                             Completions *a1,
                             void *a2,
                             int *a3

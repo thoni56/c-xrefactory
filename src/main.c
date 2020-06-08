@@ -190,7 +190,7 @@ static void scheduleCommandLineEnteredFileToProcess(char *fn) {
     LEAVE();
 }
 
-void dirInputFile(MAP_FUN_PROFILE) {
+void dirInputFile(MAP_FUN_SIGNATURE) {
     char            *dir,*fname, *suff;
     void            *recurseFlag;
     void            *nrecurseFlag;
@@ -359,16 +359,19 @@ void xrefSetenv(char *name, char *val) {
         errorMessage(ERR_ST, tmpBuff);
         sge->num--; n--;
     }
+
     for(j=0; j<n; j++) {
         assert(sge->name[j]);
-        if (strcmp(sge->name[j], name)==0) break;
+        if (strcmp(sge->name[j], name)==0)
+            break;
     }
     if (j==n) createOptionString(&(sge->name[j]), name);
     if (j==n || strcmp(sge->value[j], val)!=0) {
         createOptionString(&(sge->value[j]), val);
     }
     //&fprintf(dumpOut,"setting '%s' to '%s'\n", name, val);
-    if (j==n) sge->num ++;
+    if (j==n)
+        sge->num ++;
 }
 
 
@@ -2133,8 +2136,7 @@ static void discoverBuiltinIncludePaths(void) {
     ENTER();
     if (LANGUAGE(LANG_C) || LANGUAGE(LANG_YACC)) {
         lang = "c";
-    }
-    else {
+    } else {
         LEAVE();
         return;
     }

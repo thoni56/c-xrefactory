@@ -156,7 +156,7 @@ extern S_editorMarker *editorCrMarkerForBufferEnd(S_editorBuffer *buffer);
 extern S_editorRegionList *editorWholeBufferRegion(S_editorBuffer *buffer);
 extern void editorFreeMarkersAndMarkerList(S_editorMarkerList *occs);
 extern int editorMapOnNonexistantFiles(char *dirname,
-                                       void (*fun)(MAP_FUN_PROFILE),
+                                       void (*fun)(MAP_FUN_SIGNATURE),
                                        int depth,
                                        char *a1,
                                        char *a2,

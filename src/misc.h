@@ -108,7 +108,7 @@ extern int stringEndsBySuffix(char *s, char *suffix);
 extern int fileNameHasOneOfSuffixes(char *fname, char *suffs);
 extern int mapDirectoryFiles(
         char *dirname,
-        void (*fun) (MAP_FUN_PROFILE),
+        void (*fun) (MAP_FUN_SIGNATURE),
         int allowEditorFilesFlag,
         char *a1,
         char *a2,
@@ -118,14 +118,14 @@ extern int mapDirectoryFiles(
     );
 extern void javaMapDirectoryFiles1(
         char *packfile,
-        void (*fun)(MAP_FUN_PROFILE),
+        void (*fun)(MAP_FUN_SIGNATURE),
         Completions *a1,
         void *a2,
         int *a3
     );
 extern void javaMapDirectoryFiles2(
         IdList *packid,
-        void (*fun)(MAP_FUN_PROFILE),
+        void (*fun)(MAP_FUN_SIGNATURE),
         Completions *a1,
         void *a2,
         int *a3

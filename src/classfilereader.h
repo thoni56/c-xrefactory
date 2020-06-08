@@ -38,7 +38,7 @@ extern void javaMapZipDirFile(
                               Completions *a1,
                               void *a2,
                               int *a3,
-                              void (*fun)(MAP_FUN_PROFILE),
+                              void (*fun)(MAP_FUN_SIGNATURE),
                               char *classPath,
                               char *dirname
                               );

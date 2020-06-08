@@ -1466,7 +1466,7 @@ static int editorBufferNameLess(S_editorBufferList*l1,S_editorBufferList*l2) {
 // for recursive search
 int editorMapOnNonexistantFiles(
                                 char *dirname,
-                                void (*fun)(MAP_FUN_PROFILE),
+                                void (*fun)(MAP_FUN_SIGNATURE),
                                 int depth,
                                 char *a1,
                                 char *a2,
