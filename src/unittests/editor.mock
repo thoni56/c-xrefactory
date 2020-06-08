@@ -34,24 +34,24 @@ int editorRegionListLess(S_editorRegionList *l1, S_editorRegionList *l2) {
   return (int) mock(l1, l2);
 }
 
-S_editorBuffer *editorOpenBufferNoFileLoad(char *name, char *fileName) {
-  return (S_editorBuffer *) mock(name, fileName);
+EditorBuffer *editorOpenBufferNoFileLoad(char *name, char *fileName) {
+  return (EditorBuffer *) mock(name, fileName);
 }
 
-S_editorBuffer *editorGetOpenedBuffer(char *name) {
-  return (S_editorBuffer *) mock(name);
+EditorBuffer *editorGetOpenedBuffer(char *name) {
+  return (EditorBuffer *) mock(name);
 }
 
-S_editorBuffer *editorGetOpenedAndLoadedBuffer(char *name) {
-  return (S_editorBuffer *) mock(name);
+EditorBuffer *editorGetOpenedAndLoadedBuffer(char *name) {
+  return (EditorBuffer *) mock(name);
 }
 
-S_editorBuffer *editorFindFile(char *name) {
-  return (S_editorBuffer *) mock(name);
+EditorBuffer *editorFindFile(char *name) {
+  return (EditorBuffer *) mock(name);
 }
 
-S_editorBuffer *editorFindFileCreate(char *name) {
-  return (S_editorBuffer *) mock(name);
+EditorBuffer *editorFindFileCreate(char *name) {
+  return (EditorBuffer *) mock(name);
 }
 
 EditorMarker *editorCrNewMarkerForPosition(Position *pos) {
@@ -66,11 +66,11 @@ Reference *editorMarkersToReferences(S_editorMarkerList **mms) {
   return (Reference *) mock(mms);
 }
 
-void editorRenameBuffer(S_editorBuffer *buff, char *newName, S_editorUndo **undo) {
+void editorRenameBuffer(EditorBuffer *buff, char *newName, S_editorUndo **undo) {
   mock(buff, newName, undo);
 }
 
-void editorReplaceString(S_editorBuffer *buff, int position, int delsize, char *str, int strlength, S_editorUndo **undo) {
+void editorReplaceString(EditorBuffer *buff, int position, int delsize, char *str, int strlength, S_editorUndo **undo) {
   mock(buff, position, delsize, str, strlength, undo);
 }
 
@@ -78,7 +78,7 @@ void editorMoveBlock(EditorMarker *dest, EditorMarker *src, int size, S_editorUn
   mock(dest, src, size, undo);
 }
 
-void editorDumpBuffer(S_editorBuffer *buff) {
+void editorDumpBuffer(EditorBuffer *buff) {
   mock(buff);
 }
 
@@ -106,7 +106,7 @@ void editorLoadAllOpenedBufferFiles(void) {
   mock();
 }
 
-EditorMarker *editorCrNewMarker(S_editorBuffer *buff, int offset) {
+EditorMarker *editorCrNewMarker(EditorBuffer *buff, int offset) {
   return (EditorMarker *) mock(buff, offset);
 }
 
@@ -182,15 +182,15 @@ void editorRestrictMarkersToRegions(S_editorMarkerList **mm, S_editorRegionList 
   mock(mm, regions);
 }
 
-EditorMarker *editorCrMarkerForBufferBegin(S_editorBuffer *buffer) {
+EditorMarker *editorCrMarkerForBufferBegin(EditorBuffer *buffer) {
   return (EditorMarker *) mock(buffer);
 }
 
-EditorMarker *editorCrMarkerForBufferEnd(S_editorBuffer *buffer) {
+EditorMarker *editorCrMarkerForBufferEnd(EditorBuffer *buffer) {
   return (EditorMarker *) mock(buffer);
 }
 
-S_editorRegionList *editorWholeBufferRegion(S_editorBuffer *buffer) {
+S_editorRegionList *editorWholeBufferRegion(EditorBuffer *buffer) {
   return (S_editorRegionList *) mock(buffer);
 }
 

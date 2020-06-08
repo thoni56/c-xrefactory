@@ -237,7 +237,7 @@ void ppMemInit(void) {
 }
 
 // it is supposed that one of file or buffer is NULL
-void initInput(FILE *file, S_editorBuffer *editorBuffer, char *prefix, char *fileName) {
+void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileName) {
     int     prefixLength, bufferSize, offset;
     char	*bufferStart;
 
@@ -458,7 +458,7 @@ static void addIncludeReferences(int filenum, Position *pos) {
     addThisFileDefineIncludeReference(filenum);
 }
 
-void pushNewInclude(FILE *f, S_editorBuffer *buffer, char *name, char *prepend) {
+void pushNewInclude(FILE *f, EditorBuffer *buffer, char *name, char *prepend) {
     if (cInput.inputType == INPUT_CACHE) {
         setCacheConsistency();
     } else {
@@ -490,7 +490,7 @@ void popInclude(void) {
 }
 
 static FILE *openInclude(char includeType, char *name, char **fileName) {
-    S_editorBuffer  *er;
+    EditorBuffer  *er;
     FILE			*r;
     S_stringList    *ll;
     char            wcp[MAX_OPTION_LEN];

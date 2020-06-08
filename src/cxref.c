@@ -1797,7 +1797,7 @@ static void passRefsThroughSourceFile(Reference **in_out_references, Position *c
                                       char *ofname, int usages, int usageFilter) {
     Reference *references,*oldrr;
     int ch,fnum;
-    S_editorBuffer *ebuf;
+    EditorBuffer *ebuf;
     char *cofileName;
     Position cp;
     CharacterBuffer cxfBuf;

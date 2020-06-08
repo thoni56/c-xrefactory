@@ -36,10 +36,10 @@ extern void fillLexInput(S_lexInput *lexInput, char *currentLexem, char *endOfBu
                          char *beginningOfBuffer, char *macroName, InputType margExpFlag);
 extern void ppMemInit(void);
 extern void initAllInputs(void);
-extern void initInput(FILE *file, S_editorBuffer *buffer, char *prepend, char *name);
+extern void initInput(FILE *file, EditorBuffer *buffer, char *prepend, char *name);
 extern void addIncludeReference(int filenum, Position *pos);
 extern void addThisFileDefineIncludeReference(int filenum);
-extern void pushNewInclude(FILE *f, S_editorBuffer *buff, char *name, char *prepend);
+extern void pushNewInclude(FILE *f, EditorBuffer *buff, char *name, char *prepend);
 extern void popInclude(void);
 extern int addFileTabItem(char *name);
 extern void addMacroDefinedByOption(char *opt);

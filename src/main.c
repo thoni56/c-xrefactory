@@ -1925,7 +1925,7 @@ static void getOptionsFile(char *file, char *outFName, char *outSect,int errMess
 
 static int computeAndOpenInputFile(void) {
     FILE            *inputIn;
-    S_editorBuffer  *inputBuff;
+    EditorBuffer  *inputBuff;
     assert(s_language);
     inputBuff = NULL;
     //!!!! hack for .jar files !!!

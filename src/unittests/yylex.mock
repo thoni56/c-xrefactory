@@ -13,7 +13,7 @@ void initAllInputs(void) {
   mock();
 }
 
-void initInput(FILE *ff, S_editorBuffer *buffer, char *prepend, char *name) {
+void initInput(FILE *ff, EditorBuffer *buffer, char *prepend, char *name) {
   mock(ff, buffer, prepend, name);
 }
 
@@ -25,7 +25,7 @@ void addThisFileDefineIncludeReference(int filenum) {
   mock(filenum);
 }
 
-void pushNewInclude(FILE *f, S_editorBuffer *buff, char *name, char *prepend) {
+void pushNewInclude(FILE *f, EditorBuffer *buff, char *name, char *prepend) {
   mock(f, buff, name, prepend);
 }
 

@@ -109,7 +109,7 @@ static int filterBuffer(S_reference *rr, void *buffer) {
 #endif
 
 static void refactorySetNargv(char *nargv[MAX_NARGV_OPTIONS_NUM],
-                              S_editorBuffer *buf,
+                              EditorBuffer *buf,
                               char *project,
                               EditorMarker *point,
                               EditorMarker *mark
@@ -228,7 +228,7 @@ static void refactoryUpdateReferences(char *project) {
 }
 
 static void refactoryEditServerParseBuffer(char *project,
-                                           S_editorBuffer *buf,
+                                           EditorBuffer *buf,
                                            EditorMarker *point, EditorMarker *mark,
                                            char *pushOption, char *pushOption2
                                            ) {
@@ -295,7 +295,7 @@ void refactoryDisplayResolutionDialog(char *message,int messageType,int continua
 #define STANDARD_C_SELECT_SYMBOLS_MESSAGE "There are several symbols referred from this place. Continuing this refactoring will process the selected symbols all at once."
 #define ERROR_SELECT_SYMBOLS_MESSAGE "If you see this message, then probably something is going wrong. You are refactoring a virtual method when only statically linked symbol is required. It is strongly recommended to cancel the refactoring."
 
-static void refactoryPushReferences(S_editorBuffer *buf, EditorMarker *point,
+static void refactoryPushReferences(EditorBuffer *buf, EditorMarker *point,
                                     char *pushOption, char *resolveMessage,
                                     int messageType
                                     ) {
@@ -312,7 +312,7 @@ static void refactoryPushReferences(S_editorBuffer *buf, EditorMarker *point,
     }
 }
 
-static void refactorySafetyCheck(char *project, S_editorBuffer *buf, EditorMarker *point) {
+static void refactorySafetyCheck(char *project, EditorBuffer *buf, EditorMarker *point) {
     // !!!!update references MUST be followed by a pushing action, to refresh options
     refactoryUpdateReferences(s_ropt.project);
     refactoryEditServerParseBuffer( project, buf, point,NULL, "-olcxsafetycheck2",NULL);
@@ -334,7 +334,7 @@ static void refactorySafetyCheck(char *project, S_editorBuffer *buf, EditorMarke
 }
 
 static char *refactoryGetIdentifierOnMarker_st(EditorMarker *pos) {
-    S_editorBuffer  *buff;
+    EditorBuffer  *buff;
     char            *s, *e, *smax, *smin;
     static char     res[TMP_STRING_SIZE];
     int             reslen;
@@ -651,7 +651,7 @@ static void refactoryRenameTo(EditorMarker *pos, char *oldName, char *newName) {
     refactoryCheckedReplaceString(pos, nlen, oldName, newName);
 }
 
-static EditorMarker *refactoryPointMark(S_editorBuffer *buf, int offset) {
+static EditorMarker *refactoryPointMark(EditorBuffer *buf, int offset) {
     EditorMarker *point;
     point = NULL;
     if (offset >= 0) {
@@ -660,12 +660,12 @@ static EditorMarker *refactoryPointMark(S_editorBuffer *buf, int offset) {
     return(point);
 }
 
-static EditorMarker *refactoryGetPointFromRefactoryOptions(S_editorBuffer *buf) {
+static EditorMarker *refactoryGetPointFromRefactoryOptions(EditorBuffer *buf) {
     assert(buf);
     return(refactoryPointMark(buf, s_ropt.olCursorPos));
 }
 
-static EditorMarker *refactoryGetMarkFromRefactoryOptions(S_editorBuffer *buf) {
+static EditorMarker *refactoryGetMarkFromRefactoryOptions(EditorBuffer *buf) {
     assert(buf);
     return(refactoryPointMark(buf, s_ropt.olMarkPos));
 }
@@ -1330,7 +1330,7 @@ static int refactoryHandleSafetyCheckDifferenceLists(
 
 
 static int refactoryMakeSafetyCheckAndUndo(
-                                           S_editorBuffer *buf, EditorMarker *point,
+                                           EditorBuffer *buf, EditorMarker *point,
                                            S_editorMarkerList **occs, S_editorUndo *startPoint,
                                            S_editorUndo **redoTrack
                                            ) {
@@ -1414,7 +1414,7 @@ static void refactoryMakeSyntaxPassOnSource(EditorMarker *point) {
 
 static EditorMarker *refactoryCrNewMarkerForExpressionBegin(EditorMarker *d, int kind) {
     EditorMarker  *pp;
-    S_editorBuffer  *bb;
+    EditorBuffer  *bb;
     Position      *pos;
     refactoryEditServerParseBuffer( s_ropt.project, d->buffer,
                                     d,NULL, "-olcxprimarystart",NULL);
@@ -1446,7 +1446,7 @@ static EditorMarker *refactoryCrNewMarkerForExpressionBegin(EditorMarker *d, int
 
 
 static void refactoryCheckedRenameBuffer(
-                                         S_editorBuffer *buff, char *newName, S_editorUndo **undo
+                                         EditorBuffer *buff, char *newName, S_editorUndo **undo
                                          ) {
     struct stat st;
     if (statb(newName, &st)==0) {
@@ -1587,7 +1587,7 @@ static void refactorySimpleRenaming(S_editorMarkerList *occs, EditorMarker *poin
 }
 
 static S_editorMarkerList *refactoryGetReferences(
-                                                  S_editorBuffer *buf, EditorMarker *point,
+                                                  EditorBuffer *buf, EditorMarker *point,
                                                   char *resolveMessage, int messageType
                                                   ) {
     S_editorMarkerList *occs;
@@ -1600,7 +1600,7 @@ static S_editorMarkerList *refactoryGetReferences(
 
 
 static S_editorMarkerList *refactoryPushGetAndPreCheckReferences(
-                                                                 S_editorBuffer *buf, EditorMarker *point, char *nameOnPoint,
+                                                                 EditorBuffer *buf, EditorMarker *point, char *nameOnPoint,
                                                                  char *resolveMessage, int messageType
                                                                  ) {
     S_editorMarkerList *occs;
@@ -1769,7 +1769,7 @@ static void refactoryMultipleOccurencesSafetyCheck(void) {
 
 // -------------------------------------------- Rename
 
-static void refactoryRename(S_editorBuffer *buf, EditorMarker *point) {
+static void refactoryRename(EditorBuffer *buf, EditorMarker *point) {
     char                nameOnPoint[TMP_STRING_SIZE];
     char                *symLinkName, *message;
     int                 check, symtype;
@@ -2144,7 +2144,7 @@ static void refactoryApplyParamManip(char *functionName, S_editorMarkerList *occ
 
 // -------------------------------------- ParameterManipulations
 
-static void refactoryApplyParameterManipulation(S_editorBuffer *buf, EditorMarker *point,
+static void refactoryApplyParameterManipulation(EditorBuffer *buf, EditorMarker *point,
                                                 int manip, int argn1, int argn2) {
     char nameOnPoint[TMP_STRING_SIZE];
     int check;
@@ -2176,7 +2176,7 @@ static void refactoryApplyParameterManipulation(S_editorBuffer *buf, EditorMarke
     editorFreeMarkersAndMarkerList(occs);  // O(n^2)!
 }
 
-static void refactoryParameterManipulation(S_editorBuffer *buf, EditorMarker *point,
+static void refactoryParameterManipulation(EditorBuffer *buf, EditorMarker *point,
                                            int manip, int argn1, int argn2) {
     refactoryApplyParameterManipulation(buf, point, manip, argn1, argn2);
     // and generate output
@@ -2210,7 +2210,7 @@ static int createMarkersForAllReferencesInRegions(
 
 // --------------------------------------- ExpandShortNames
 
-static void refactoryApplyExpandShortNames(S_editorBuffer *buf, EditorMarker *point) {
+static void refactoryApplyExpandShortNames(EditorBuffer *buf, EditorMarker *point) {
     S_olSymbolsMenu *mm;
     S_editorMarkerList *ppp;
     char fqtName[MAX_FILE_NAME_SIZE];
@@ -2257,7 +2257,7 @@ static void refactoryApplyExpandShortNames(S_editorBuffer *buf, EditorMarker *po
     //&editorDumpBuffer(buf);
 }
 
-static void refactoryExpandShortNames(S_editorBuffer *buf, EditorMarker *point) {
+static void refactoryExpandShortNames(EditorBuffer *buf, EditorMarker *point) {
     refactoryApplyExpandShortNames(buf, point);
     refactoryApplyWholeRefactoringFromUndo();
     ppcGenGotoMarkerRecord(point);
@@ -2485,7 +2485,7 @@ static void refactoryPerformReduceNamesAndAddImportsInSingleFile(
     S_olSymbolsMenu *mm;
     S_editorMarkerList *ppp;
     S_editorRegionList *rl;
-    S_editorBuffer *b;
+    EditorBuffer *b;
     int action, keepAdding, lastImportLine;
     int defaultAction, cfile;
     char fqtName[MAX_FILE_NAME_SIZE];
@@ -2561,7 +2561,7 @@ static void refactoryPerformReduceNamesAndAddImportsInSingleFile(
 }
 
 static void refactoryPerformReduceNamesAndAddImports(S_editorRegionList **regions, int interactive) {
-    S_editorBuffer *cb;
+    EditorBuffer *cb;
     S_editorRegionList **cr, **cl, *ncr;
 
     LIST_MERGE_SORT(S_editorRegionList, *regions, editorRegionListLess);
@@ -2586,7 +2586,7 @@ static void refactoryPerformReduceNamesAndAddImports(S_editorRegionList **region
 // ------------------------------------------- ReduceLongReferencesAddImports
 
 // this is reduction of all names within file
-static void refactoryReduceLongNamesInTheFile(S_editorBuffer *buf, EditorMarker *point) {
+static void refactoryReduceLongNamesInTheFile(EditorBuffer *buf, EditorMarker *point) {
     S_editorRegionList *wholeBuffer;
     wholeBuffer = editorWholeBufferRegion(buf);
     // don't be interactive, I am too lazy to write jEdit interface
@@ -2598,7 +2598,7 @@ static void refactoryReduceLongNamesInTheFile(S_editorBuffer *buf, EditorMarker 
 }
 
 // this is reduction of a single fqt, problem is with detection of applicable context
-static void refactoryAddToImports(S_editorBuffer *buf, EditorMarker *point) {
+static void refactoryAddToImports(EditorBuffer *buf, EditorMarker *point) {
     EditorMarker          *begin, *end;
     S_editorRegionList      *regionList;
 
@@ -2819,7 +2819,7 @@ static void refactoryPerformMovingOfStaticObjectAndMakeItPublic(
 
 static EditorMarker *getTargetFromOptions(void) {
     EditorMarker  *target;
-    S_editorBuffer  *tb;
+    EditorBuffer  *tb;
     int             tline;
     tb = editorFindFileCreate(normalizeFileName(s_ropt.moveTargetFile, s_cwd));
     target = editorCrNewMarker(tb, 0);
@@ -3145,7 +3145,7 @@ static void refactoryInsertPackageStatToNewFile(EditorMarker *src, EditorMarker 
 
 static void refactoryMoveClassToNewFile(EditorMarker *point) {
     EditorMarker *target, *mstart, *mend, *npoint;
-    S_editorBuffer *buff;
+    EditorBuffer *buff;
     int linenum;
 
     buff = point->buffer;
@@ -3976,7 +3976,7 @@ static int refactoryIsMethodPartRedundantWrtPullUpPushDown(
     S_editorMarkerList *rr1;
     int res;
     S_editorRegionList *regions;
-    S_editorBuffer *buf;
+    EditorBuffer *buf;
 
     assert(m1->buffer == m2->buffer);
 
@@ -4451,7 +4451,7 @@ void mainRefactory(int argc, char **argv) {
     int                 fArgCount;
     char                *file, *argumentFile;
     char                inputFileName[MAX_FILE_NAME_SIZE];
-    S_editorBuffer      *buf;
+    EditorBuffer      *buf;
     EditorMarker      *point, *mark;
 
     ENTER();

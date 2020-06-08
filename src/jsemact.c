@@ -253,7 +253,7 @@ static int specialFileNameCasesCheck(char *fname) {
     HANDLE				han;
     int					dif;
     char				*ss;
-    S_editorBuffer		*buff;
+    EditorBuffer		*buff;
     // first check if the file is from editor
     buff = editorGetOpenedBuffer(fname);
     if (buff != NULL) return(1);
@@ -698,7 +698,7 @@ void javaReadSymbolFromSourceFileEnd(void) {
 
 void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
     FILE                    *ff;
-    S_editorBuffer			*bb;
+    EditorBuffer			*bb;
     SymbolList            *ll;
     int						cfilenum;
     static int              nestDeep = 0;

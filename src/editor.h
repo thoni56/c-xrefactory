@@ -40,7 +40,7 @@ typedef struct editorBuffer {
     struct editorMarker	*markers;
     struct editorBufferAllocationData a;
     struct editorBufferBits b;
-} S_editorBuffer;
+} EditorBuffer;
 
 typedef struct editorBufferList {
     struct editorBuffer     *f;
@@ -98,7 +98,7 @@ extern S_editorUndo *s_editorUndo;
 
 
 extern void editorInit(void);
-extern EditorMarker *newEditorMarker(S_editorBuffer *buffer, unsigned offset, EditorMarker *previous, EditorMarker *next);
+extern EditorMarker *newEditorMarker(EditorBuffer *buffer, unsigned offset, EditorMarker *previous, EditorMarker *next);
 extern S_editorRegionList *newEditorRegionList(EditorMarker *begin, EditorMarker *end, S_editorRegionList *next);
 extern int statb(char *path, struct stat  *statbuf);
 extern int editorMarkerLess(EditorMarker *m1, EditorMarker *m2);
@@ -107,25 +107,25 @@ extern int editorMarkerGreater(EditorMarker *m1, EditorMarker *m2);
 extern int editorMarkerGreaterOrEq(EditorMarker *m1, EditorMarker *m2);
 extern int editorMarkerListLess(S_editorMarkerList *l1, S_editorMarkerList *l2);
 extern int editorRegionListLess(S_editorRegionList *l1, S_editorRegionList *l2);
-extern S_editorBuffer *editorOpenBufferNoFileLoad(char *name, char *fileName);
-extern S_editorBuffer *editorGetOpenedBuffer(char *name);
-extern S_editorBuffer *editorGetOpenedAndLoadedBuffer(char *name);
-extern S_editorBuffer *editorFindFile(char *name);
-extern S_editorBuffer *editorFindFileCreate(char *name);
+extern EditorBuffer *editorOpenBufferNoFileLoad(char *name, char *fileName);
+extern EditorBuffer *editorGetOpenedBuffer(char *name);
+extern EditorBuffer *editorGetOpenedAndLoadedBuffer(char *name);
+extern EditorBuffer *editorFindFile(char *name);
+extern EditorBuffer *editorFindFileCreate(char *name);
 extern EditorMarker *editorCrNewMarkerForPosition(Position *pos);
 extern S_editorMarkerList *editorReferencesToMarkers(Reference *refs, int (*filter)(Reference *, void *), void *filterParam);
 extern Reference *editorMarkersToReferences(S_editorMarkerList **mms);
-extern void editorRenameBuffer(S_editorBuffer *buff, char *newName, S_editorUndo **undo);
-extern void editorReplaceString(S_editorBuffer *buff, int position, int delsize, char *str, int strlength, S_editorUndo **undo);
+extern void editorRenameBuffer(EditorBuffer *buff, char *newName, S_editorUndo **undo);
+extern void editorReplaceString(EditorBuffer *buff, int position, int delsize, char *str, int strlength, S_editorUndo **undo);
 extern void editorMoveBlock(EditorMarker *dest, EditorMarker *src, int size, S_editorUndo **undo);
-extern void editorDumpBuffer(S_editorBuffer *buff);
+extern void editorDumpBuffer(EditorBuffer *buff);
 extern void editorDumpBuffers(void);
 extern void editorDumpMarker(EditorMarker *mm);
 extern void editorDumpMarkerList(S_editorMarkerList *mml);
 extern void editorDumpRegionList(S_editorRegionList *mml);
 extern void editorQuasiSaveModifiedBuffers(void);
 extern void editorLoadAllOpenedBufferFiles(void);
-extern EditorMarker *editorCrNewMarker(S_editorBuffer *buff, int offset);
+extern EditorMarker *editorCrNewMarker(EditorBuffer *buff, int offset);
 extern EditorMarker *editorDuplicateMarker(EditorMarker *mm);
 extern int editorCountLinesBetweenMarkers(EditorMarker *m1, EditorMarker *m2);
 extern int editorRunWithMarkerUntil(EditorMarker *m, int (*until)(int), int step);
@@ -151,9 +151,9 @@ extern void editorSplitMarkersWithRespectToRegions(
                                                    S_editorMarkerList  **outOutsiders
                                                    );
 extern void editorRestrictMarkersToRegions(S_editorMarkerList **mm, S_editorRegionList **regions);
-extern EditorMarker *editorCrMarkerForBufferBegin(S_editorBuffer *buffer);
-extern EditorMarker *editorCrMarkerForBufferEnd(S_editorBuffer *buffer);
-extern S_editorRegionList *editorWholeBufferRegion(S_editorBuffer *buffer);
+extern EditorMarker *editorCrMarkerForBufferBegin(EditorBuffer *buffer);
+extern EditorMarker *editorCrMarkerForBufferEnd(EditorBuffer *buffer);
+extern S_editorRegionList *editorWholeBufferRegion(EditorBuffer *buffer);
 extern void editorFreeMarkersAndMarkerList(S_editorMarkerList *occs);
 extern int editorMapOnNonexistantFiles(char *dirname,
                                        void (*fun)(MAP_FUN_SIGNATURE),
