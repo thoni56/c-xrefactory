@@ -375,7 +375,7 @@ static void printCompletionsBeginning(S_olCompletion *olc, int noFocus) {
     int                 tlen;
     LIST_LEN(max, S_olCompletion, olc);
     if (s_opt.xref2) {
-        if (s_opt.editor == EDITOR_JEDIT && ! s_opt.jeditOldCompletions) {
+        if (s_opt.editor == EDITOR_JEDIT) {
             ppcGenTwoNumericAndRecordBegin(PPC_FULL_MULTIPLE_COMPLETIONS,
                                            PPCA_NUMBER, max,
                                            PPCA_NO_FOCUS, noFocus);
@@ -394,7 +394,7 @@ static void printCompletionsBeginning(S_olCompletion *olc, int noFocus) {
 }
 
 static void printOneCompletion(S_olCompletion *olc) {
-    if (s_opt.editor == EDITOR_JEDIT && ! s_opt.jeditOldCompletions) {
+    if (s_opt.editor == EDITOR_JEDIT) {
         fprintf(ccOut,"<%s %s=\"%s\" %s=%d %s=%ld>", PPC_MULTIPLE_COMPLETION_LINE,
                 PPCA_VCLASS, olc->vclass,
                 PPCA_VALUE, olc->jindent,
@@ -408,13 +408,13 @@ static void printOneCompletion(S_olCompletion *olc) {
 
 static void printCompletionsEnding(S_olCompletion *olc) {
     if (completionsWillPrintEllipsis(olc)) {
-        if (s_opt.editor == EDITOR_JEDIT && ! s_opt.jeditOldCompletions) {
+        if (s_opt.editor == EDITOR_JEDIT) {
         } else {
             fprintf(ccOut,"\n...");
         }
     }
     if (s_opt.xref2) {
-        if (s_opt.editor == EDITOR_JEDIT && ! s_opt.jeditOldCompletions) {
+        if (s_opt.editor == EDITOR_JEDIT) {
             ppcGenRecordEnd(PPC_FULL_MULTIPLE_COMPLETIONS);
         } else {
             ppcGenRecordEnd(PPC_ALL_COMPLETIONS);
@@ -478,7 +478,7 @@ void printCompletions(Completions* c) {
     if (c->alternativeIndex > s_opt.maxCompletions) max = s_opt.maxCompletions;
     else max = c->alternativeIndex;
     for(ii=0; ii<max; ii++) {
-        if (s_opt.editor == EDITOR_JEDIT && ! s_opt.jeditOldCompletions) {
+        if (s_opt.editor == EDITOR_JEDIT) {
             sprintFullJeditCompletionInfo(c, ii, &jindent, &vclass);
         } else {
             sprintFullCompletionInfo(c, ii, indent);

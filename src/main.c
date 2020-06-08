@@ -806,9 +806,6 @@ static int processJOption(int *ii, int argc, char **argv) {
         NEXT_FILE_ARG();
         createOptionString(&s_opt.jdkClassPath, argv[i]);
     }
-    else if (strcmp(argv[i],"-jeditc1")==0) {
-        s_opt.jeditOldCompletions = 1;
-    }
     else return(0);
     *ii = i;
     return(1);

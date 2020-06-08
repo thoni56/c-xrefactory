@@ -875,7 +875,6 @@ typedef struct options {
     char completeParenthesis;
     int defaultAddImportStrategy;
     char referenceListWithoutSource;
-    char jeditOldCompletions;		// to be removed
     int completionOverloadWizardDeep;
     int commentMovingLevel;
     struct stringList *pruneNames;

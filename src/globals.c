@@ -249,7 +249,6 @@ S_options s_initOpt = {
     0,                  // completeParenthesis
     NID_IMPORT_ON_DEMAND,   // defaultAddImportStrategy
     0,                  // referenceListWithoutSource
-    0,                  // jeditOldCompletions;     // to be removed
     1,                  // completionOverloadWizardDeep
     0,                  // comment moving level
     NULL,               // prune name
