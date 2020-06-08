@@ -391,12 +391,6 @@ S_options s_initOpt = {
     false,                      /* no_ref_macro */
     false,                      /* no_stdop */
 
-    /* GENERATE options */
-
-    false,                      /* enum_name */
-    false,                      /* body */
-    false,                      /* header */
-
     /* CXREF options  */
 
     0,                          /* show err */

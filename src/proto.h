@@ -1008,12 +1008,6 @@ typedef struct options {
     bool no_ref_macro;
     bool no_stdop;
 
-    /* GENERATE options */
-
-    bool generate_enum_name;
-    bool generate_body;
-    bool generate_header;
-
     /* CXREF options  */
 
     bool show_errors;
