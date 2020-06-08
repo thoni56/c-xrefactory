@@ -239,13 +239,13 @@ enum {
 
 /* ************ working regime in which the task is invoked ******** */
 
-enum taskRegimes {
-    RegimeUndefined,
-    RegimeXref,           /* cross referencer called by user from command line */
+typedef enum taskRegimes {
+    RegimeUndefined = 0,        /* Explicitly zero so we can assert(regime) */
+    RegimeXref, /* Cross referencer called by user from command line */
     RegimeHtmlGenerate,   /* generate html form of input files, ... */
-    RegimeEditServer,     /* editor server, called by on-line editing action */
-    RegimeRefactory      /* refactoring server, called by on-line editing */
-};
+    RegimeEditServer, /* editor server, called by on-line editing action */
+    RegimeRefactory /* refactoring server, called by on-line editing */
+} TaskRegimes;
 
 /* ************** on-line (browsing) operations for c-xref server  ********** */
 
