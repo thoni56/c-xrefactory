@@ -2127,24 +2127,23 @@ static int getLineFromFile(FILE *ff, char *tt, int ttsize, int *outI) {
 static void discoverBuiltinIncludePaths(void) {
     char line[MAX_OPTION_LEN];
     int len;
-    char *tempfile_name, *lang;
+    char *tempfile_name;
     FILE *tempfile;
     struct stat stt;
     char command[TMP_BUFF_SIZE];
     bool found = false;
 
     ENTER();
-    if (LANGUAGE(LANG_C) || LANGUAGE(LANG_YACC)) {
-        lang = "c";
-    } else {
+    if (!LANGUAGE(LANG_C) && !LANGUAGE(LANG_YACC)) {
         LEAVE();
         return;
     }
+
     tempfile_name = create_temporary_filename();
     assert(strlen(tempfile_name)+1 < MAX_FILE_NAME_SIZE);
 
     /* Ensure output is in C locale */
-    sprintf(command, "LANG=C %s -v -x %s -o /dev/null /dev/null >%s 2>&1", s_opt.compiler, lang, tempfile_name);
+    sprintf(command, "LANG=C %s -v -x %s -o /dev/null /dev/null >%s 2>&1", s_opt.compiler, "c", tempfile_name);
 
     (void)system(command);
 
