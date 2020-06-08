@@ -5077,7 +5077,7 @@ part belonging to this project.
     (setq planguage (read-from-minibuffer
                  "Will this be a C or Java project (or Both) [cjb]? " ptdef))
 ;;      (setq pcomments (read-from-minibuffer
-;;               "Do you wish the project description to contain commentaries [yn]? " "y"))
+;;               "Do you wish the project description to contain explaining comments [yn]? " "y"))
     (setq pfiles (c-xref-read-jpath-from-minibuffer
                  "Directory containing project sources: " sfiles))
     (setq mifloop t)
