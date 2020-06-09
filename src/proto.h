@@ -1008,12 +1008,10 @@ typedef struct options {
     bool no_stdop;
 
     /* CXREF options  */
-
     bool show_errors;
     bool brief_cxref;
     UpdateType update;
     bool updateOnlyModifiedFiles;
-    int keep_old;
     char *last_message;
     int referenceFileCount;
 

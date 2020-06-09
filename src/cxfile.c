@@ -1180,10 +1180,8 @@ static void cxrfReference(int size,
     /*&fprintf(dumpOut,"%d %d %d  ", usage,file,line);fflush(dumpOut);&*/
     assert(options.taskRegime);
     if (options.taskRegime == RegimeXref) {
-        if (options.keep_old ||
-            (s_fileTab.tab[file]->b.cxLoading&&s_fileTab.tab[file]->b.cxSaved)
-            ) {
-            /* if keep_old or if we repass refs after overflow */
+        if (s_fileTab.tab[file]->b.cxLoading&&s_fileTab.tab[file]->b.cxSaved) {
+            /* if we repass refs after overflow */
             fillPosition(&pos,file,line,coll);
             fillUsageBits(&usageBits, usage, reqAcc);
             copyrefFl = ! isInRefList(s_inLastInfos.symbolTab[sym]->refs,
@@ -1251,8 +1249,7 @@ static void cxrfReference(int size,
                         s_inLastInfos.counter[CXFI_SYM_INDEX]) {
                     if (additionalArg == CX_MENU_CREATION) {
                         assert(s_inLastInfos.onLineRefMenuItem);
-                        if (options.keep_old
-                            || file!=s_olOriginalFileNumber
+                        if (file!=s_olOriginalFileNumber
                             || !s_fileTab.tab[file]->b.commandLineEntered
                             || options.server_operation==OLO_GOTO
                             || options.server_operation==OLO_CGOTO
@@ -1270,17 +1267,7 @@ static void cxrfReference(int size,
                                                &s_olcxCurrentUser->browserStack.top->hkSelectedSym,
                                                1, 1, 0, usage,0,&s_noPos, UsageNone);
                         }
-                    } else if (1
-                               /*&
-                                 options.keep_old
-                                 || file!=s_olOriginalFileNumber
-                                 || !s_fileTab.tab[file]->b.commandLineEntered
-                                 || options.server_operation==OLO_GOTO || options.server_operation==OLO_CGOTO
-                                 &*/
-                               ) {
-                        // this is only goto definition from completion menu?
-                        //&sprintf(tmpBuff,"%s %s:%d\n", usageEnumName[usage],s_fileTab.tab[file]->name,line);ppcGenRecord(PPC_INFORMATION,tmpBuff,"\n");
-                        //&fprintf(dumpOut,"%s %s:%d\n", usageEnumName[usage],s_fileTab.tab[file]->name,line);fflush(dumpOut);
+                    } else {
                         olcxAddReference(&s_olcxCurrentUser->browserStack.top->r, &rr,
                                          s_inLastInfos.onLineRefIsBestMatchFlag);
                     }
