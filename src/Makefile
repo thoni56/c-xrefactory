@@ -24,6 +24,11 @@ debug yydebug: CLEAN_COVERAGE=yes
 yydebug: CFLAGS+= -DDEBUG -DYYDEBUG -Og
 
 prod debug yydebug: $(ZLIB) c-xref
+devel:
+	make -j debug
+	make -j unit
+	make -j test
+	make coverage-report
 
 include sources.mk
 
