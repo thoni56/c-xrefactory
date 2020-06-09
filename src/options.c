@@ -519,7 +519,7 @@ int packageOnCommandLine(char *fn) {
     char    ppp[MAX_FILE_NAME_SIZE];
     struct stat     st;
     int             i, ind, stt, topCallFlag, res;
-    void            *recursFlag;
+    void            *recurseFlag;
     res = 0;
     for(dd=ppp,ss=fn; *ss; dd++,ss++) {
         if (*ss == '.') *dd = FILE_PATH_SEPARATOR;
@@ -546,9 +546,9 @@ int packageOnCommandLine(char *fn) {
             //&fprintf(dumpOut,"it is a package\n");
             res = 1;
             topCallFlag = 1;
-            if (options.recursivelyDirs) recursFlag = &topCallFlag;
-            else recursFlag = NULL;
-            dirInputFile(ttt,"",NULL,NULL,recursFlag,&topCallFlag);
+            if (options.recurseDirectories) recurseFlag = &topCallFlag;
+            else recurseFlag = NULL;
+            dirInputFile(ttt,"",NULL,NULL,recurseFlag,&topCallFlag);
         }
         cp += ind;
         if (*cp == CLASS_PATH_SEPARATOR) cp++;

@@ -985,7 +985,7 @@ typedef struct options {
     int editor;
     int create;
     char *olcxRefSuffix;
-    bool recursivelyDirs;
+    bool recurseDirectories;
     char *classpath;
     int tabulator;
     int olCursorPos;

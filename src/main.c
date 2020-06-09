@@ -219,7 +219,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
     if (stt==0  && (st.st_mode & S_IFMT)==S_IFDIR) {
         if (recurseFlag!=NULL) {
             topCallFlag = 0;
-            if (options.recursivelyDirs) nrecurseFlag = &topCallFlag;
+            if (options.recurseDirectories) nrecurseFlag = &topCallFlag;
             else nrecurseFlag = NULL;
             mapDirectoryFiles(fn, dirInputFile,DO_NOT_ALLOW_EDITOR_FILES,
                               fn, NULL, NULL, nrecurseFlag, &topCallFlag);
@@ -446,7 +446,7 @@ static bool processNegativeOption(int *ii, int argc, char **argv, int infilesFla
     int i = * ii;
     if (0) {}
     else if (strcmp(argv[i],"--r")==0) {
-        if (infilesFlag == INFILES_ENABLED) options.recursivelyDirs = false;
+        if (infilesFlag == INFILES_ENABLED) options.recurseDirectories = false;
     }
     else return false;
     *ii = i;
@@ -1262,7 +1262,7 @@ static bool processROption(int *ii, int argc, char **argv, int infilesFlag) {
         }
     }
     else if (strcmp(argv[i],"-r")==0) {
-        if (infilesFlag == INFILES_ENABLED) options.recursivelyDirs = true;
+        if (infilesFlag == INFILES_ENABLED) options.recurseDirectories = true;
     }
     else if (strncmp(argv[i],"-renameto=", 10)==0) {
         createOptionString(&options.renameTo, argv[i]+10);
