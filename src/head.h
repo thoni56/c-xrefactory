@@ -168,8 +168,8 @@ typedef enum language {
 /* #define FT_FREE_UNTIL(p)        {SM_FREE_UNTIL(ftMemory,p);} */
 
 /* options allocations */
-#define OPT_ALLOC(p,t)          {DM_ALLOC(((S_memory*)&s_opt.pendingMemory),p,t);}
-#define OPT_ALLOCC(p,n,t)       {DM_ALLOCC(((S_memory*)&s_opt.pendingMemory),p,n,t);}
+#define OPT_ALLOC(p,t)          {DM_ALLOC(((S_memory*)&options.pendingMemory),p,t);}
+#define OPT_ALLOCC(p,n,t)       {DM_ALLOCC(((S_memory*)&options.pendingMemory),p,n,t);}
 
 /* on-line dialogs allocation */
 #define OLCX_ALLOCC(p,n,t) {\
@@ -224,7 +224,7 @@ typedef enum language {
 /* TODO: push the conditions into the functions for these macros */
 
 #define ExtrDeleteContBreakSym(sym) {\
-    if (s_opt.server_operation == OLO_EXTRACT) deleteSymDef(sym);\
+    if (options.server_operation == OLO_EXTRACT) deleteSymDef(sym);\
 }
 
 
@@ -402,7 +402,7 @@ typedef enum language {
   && rr->p.file == s_input_file_number /* fixing bug with references comming from jsl */\
 )
 
-#define JAVA2HTML() (s_opt.java2html)
+#define JAVA2HTML() (options.java2html)
 
 #define SPRINT_FILE_TAB_CLASS_NAME(ftname, linkName) {\
     sprintf(ftname, "%c%s.class", ZIP_SEPARATOR_CHAR, linkName);\

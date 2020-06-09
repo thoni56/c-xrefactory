@@ -121,8 +121,8 @@ int cxFileHashNumber(char *sym) {
     char       *ss,*bb;
     int        c;
 
-    if (s_opt.referenceFileCount <= 1) return(0);
-    if (s_opt.xfileHashingMethod == XFILE_HASH_DEFAULT) {
+    if (options.referenceFileCount <= 1) return(0);
+    if (options.xfileHashingMethod == XFILE_HASH_DEFAULT) {
         res = 0;
         ss = sym;
         while ((c = *ss)) {
@@ -132,10 +132,10 @@ int cxFileHashNumber(char *sym) {
             ss++;
         }
         SYMTAB_HASH_FUN_FINAL(res);
-        res %= s_opt.referenceFileCount;
+        res %= options.referenceFileCount;
         return(res);
-    } else if (s_opt.xfileHashingMethod == XFILE_HASH_ALPHA1) {
-        assert(s_opt.referenceFileCount == XFILE_HASH_ALPHA1_REFNUM);
+    } else if (options.xfileHashingMethod == XFILE_HASH_ALPHA1) {
+        assert(options.referenceFileCount == XFILE_HASH_ALPHA1_REFNUM);
         for(ss = bb = sym; *ss && *ss!='('; ss++) {
             c = *ss;
             if (LINK_NAME_MAYBE_START(c)) bb = ss+1;
@@ -144,9 +144,9 @@ int cxFileHashNumber(char *sym) {
         c = tolower(c);
         if (c>='a' && c<='z') res = c-'a';
         else res = ('z'-'a')+1;
-        assert(res>=0 && res<s_opt.referenceFileCount);
+        assert(res>=0 && res<options.referenceFileCount);
         return(res);
-    } else if (s_opt.xfileHashingMethod == XFILE_HASH_ALPHA2) {
+    } else if (options.xfileHashingMethod == XFILE_HASH_ALPHA2) {
         for(ss = bb = sym; *ss && *ss!='('; ss++) {
             c = *ss;
             if (LINK_NAME_MAYBE_START(c)) bb = ss+1;
@@ -163,7 +163,7 @@ int cxFileHashNumber(char *sym) {
             else res = ('z'-'a')+1;
         }
         res = r*XFILE_HASH_ALPHA1_REFNUM + res;
-        assert(res>=0 && res<s_opt.referenceFileCount);
+        assert(res>=0 && res<options.referenceFileCount);
         return(res);
     } else {
         assert(0);
@@ -200,7 +200,7 @@ static int searchSingleStringFitness(char *cxtag, char *searchedStr, int len) {
 int searchStringNonWildcardFitness(char *cxtag, int len) {
     char    *ss;
     int     r;
-    ss = s_opt.olcxSearchString;
+    ss = options.olcxSearchString;
     while (*ss) {
         while (*ss==' ' || *ss=='\t') ss++;
         if (*ss == 0) goto fini1;
@@ -213,7 +213,7 @@ int searchStringNonWildcardFitness(char *cxtag, int len) {
 }
 
 int searchStringFitness(char *cxtag, int len) {
-    if (s_wildcardSearch) return(shellMatch(cxtag, len, s_opt.olcxSearchString, 0));
+    if (s_wildcardSearch) return(shellMatch(cxtag, len, options.olcxSearchString, 0));
     else return(searchStringNonWildcardFitness(cxtag, len));
 }
 
@@ -255,8 +255,8 @@ char *crTagSearchLineStatic(char *name, Position *p,
     SET_MAX(*len2, l2);
     SET_MAX(*len3, l3);
 
-    if (s_opt.tagSearchSpecif == TSS_SEARCH_DEFS_ONLY_SHORT
-        || s_opt.tagSearchSpecif==TSS_FULL_SEARCH_SHORT) {
+    if (options.tagSearchSpecif == TSS_SEARCH_DEFS_ONLY_SHORT
+        || options.tagSearchSpecif==TSS_FULL_SEARCH_SHORT) {
         sprintf(res, "%s", name);
     } else {
         sprintf(res, "%-*s :%-*s :%s", *len1, name, *len3, file, dir);
@@ -311,8 +311,8 @@ void searchSymbolCheckReference(SymbolReferenceItem  *ss, Reference *rr) {
     sname = ssname;
     slen = strlen(sname);
     // if completing without profile, cut profile
-    if (s_opt.tagSearchSpecif==TSS_SEARCH_DEFS_ONLY_SHORT
-        || s_opt.tagSearchSpecif==TSS_FULL_SEARCH_SHORT) {
+    if (options.tagSearchSpecif==TSS_SEARCH_DEFS_ONLY_SHORT
+        || options.tagSearchSpecif==TSS_FULL_SEARCH_SHORT) {
         s = strchr(sname, '(');
         if (s!=NULL) *s = 0;
     }
@@ -325,7 +325,7 @@ void searchSymbolCheckReference(SymbolReferenceItem  *ss, Reference *rr) {
     if (searchStringFitness(sname, slen)) {
         static int count = 0;
         //& olCompletionListPrepend(sname, NULL, NULL, 0, NULL, NULL, rr, ss->vFunClass, s_olcxCurrentUser->retrieverStack.top);
-        //&sprintf(tmpBuff,"adding %s of %s(%d) matched %s %d", sname, s_fileTab.tab[rr->p.file]->name, rr->p.file, s_opt.olcxSearchString, s_wildcardSearch);ppcGenTmpBuff();
+        //&sprintf(tmpBuff,"adding %s of %s(%d) matched %s %d", sname, s_fileTab.tab[rr->p.file]->name, rr->p.file, options.olcxSearchString, s_wildcardSearch);ppcGenTmpBuff();
         olCompletionListPrepend(sname, NULL, NULL, 0, NULL, ss, rr, ss->b.symType, ss->vFunClass, s_olcxCurrentUser->retrieverStack.top);
         // this is a hack for memory reduction
         // compact completions from time to time
@@ -385,18 +385,18 @@ static void writeSymbolItem(int symIndex) {
     writeOptionalCompactRecord(CXFI_STORAGE, d->b.storage, "");
     s_outLastInfos.macroBaseFileGeneratedForSym[symIndex] = 0;
     s_outLastInfos.symbolIsWritten[symIndex] = 1;
-    if (!s_opt.brief_cxref) {
+    if (!options.brief_cxref) {
         sprintf(ttt,"\t%s",typeEnumName[d->b.symType]);
         writeStringRecord(CXFI_REMARK,ttt,"");
     }
     writeStringRecord(CXFI_SYM_NAME, d->name, "\t");
-    if (!s_opt.brief_cxref) {
+    if (!options.brief_cxref) {
         if (d->vApplClass != s_noneFileIndex) {
             sprintf(ttt,"\ton %s",s_fileTab.tab[d->vApplClass]->name);
             writeStringRecord(CXFI_REMARK,ttt,"\n");
         }
     }
-    if (!s_opt.brief_cxref) {
+    if (!options.brief_cxref) {
         if (d->vApplClass != s_noneFileIndex) {
             sprintf(ttt,"\tfun %s",s_fileTab.tab[d->vFunClass]->name);
             writeStringRecord(CXFI_REMARK,ttt,"\n");
@@ -429,7 +429,7 @@ static void writeSymbolItem(int symIndex) {
         writeOptionalCompactRecord(CXFI_LINE_INDEX, line, "");                 \
         writeOptionalCompactRecord(CXFI_COLL_INDEX, coll, "");                 \
         writeCompactRecord(CXFI_REFERENCE, 0, "");                        \
-        if (!s_opt.brief_cxref) {                                         \
+        if (!options.brief_cxref) {                                         \
             sprintf(ttt,"\t%-7s in %30s:%u:%d\n",usageEnumName[usage]+5,   \
                     s_fileTab.tab[file]->name,line,coll);               \
             writeStringRecord(CXFI_REMARK,ttt,"");                        \
@@ -447,7 +447,7 @@ static void writeSubClassInfo(int sup, int inf, int origin) {
     writeOptionalCompactRecord(CXFI_SUPER_CLASS, sup, "");
     writeOptionalCompactRecord(CXFI_INFER_CLASS, inf, "");
     writeCompactRecord(CXFI_CLASS_EXT, 0, "");
-    if (!s_opt.brief_cxref) {
+    if (!options.brief_cxref) {
         sprintf(ttt,"\t\t%s",s_fileTab.tab[inf]->name);
         writeStringRecord(CXFI_REMARK,ttt,"\n");
         sprintf(ttt,"  extends\t%s",s_fileTab.tab[sup]->name);
@@ -503,8 +503,8 @@ static void createSubClassInfo(int superior, int inferior, int origin, int genfl
     if (p==NULL) {
         p = newClassHierarchyReference(origin, superior, iFile->superClasses);
         iFile->superClasses = p;
-        assert(s_opt.taskRegime);
-        if (s_opt.taskRegime == RegimeXref) {
+        assert(options.taskRegime);
+        if (options.taskRegime == RegimeXref) {
             if (genfl == CX_FILE_ITEM_GEN)
                 writeSubClassInfo(superior, inferior, origin);
         }
@@ -562,12 +562,12 @@ static void genRefItem0(SymbolReferenceItem *d, int forceGen) {
     for(reference = d->refs; reference!=NULL; reference=reference->next) {
         log_trace("checking ref: loading=%d --< %s:%d", s_fileTab.tab[reference->p.file]->b.cxLoading,
                   s_fileTab.tab[reference->p.file]->name, reference->p.line);
-        if (s_opt.update==UP_CREATE || s_fileTab.tab[reference->p.file]->b.cxLoading) {
-            /*& s_opt.update==UP_CREATE; why it is there &*/
+        if (options.update==UP_CREATE || s_fileTab.tab[reference->p.file]->b.cxLoading) {
+            /*& options.update==UP_CREATE; why it is there &*/
             writeCxReference(reference, symIndex);
         } else {
             log_trace("Some kind of update (%d) or not loading (%d), so don't writeCxReference()",
-                      s_opt.update, s_fileTab.tab[reference->p.file]->b.cxLoading);
+                      options.update, s_fileTab.tab[reference->p.file]->b.cxLoading);
             assert(0);
         }
     }
@@ -608,11 +608,11 @@ static void genCxFileHead(void) {
     assert(i < MAX_CHARS);
     sr[i]=0;
     writeStringRecord(CXFI_SINGLE_RECORDS, sr, "");
-    writeCompactRecord(CXFI_REFNUM, s_opt.referenceFileCount, " ");
+    writeCompactRecord(CXFI_REFNUM, options.referenceFileCount, " ");
     writeCompactRecord(CXFI_CHECK_NUMBER, COMPOSE_CXFI_CHECK_NUM(
                                                                MAX_FILES,
-                                                               s_opt.xfileHashingMethod,
-                                                               s_opt.exactPositionResolve
+                                                               options.xfileHashingMethod,
+                                                               options.exactPositionResolve
                                                                ), " ");
 }
 
@@ -703,7 +703,7 @@ void genReferenceFile(bool updating, char *filename) {
         removeFile(fileName);
 
     recursivelyCreateFileDirIfNotExists(fileName);
-    if (s_opt.referenceFileCount <= 1) {
+    if (options.referenceFileCount <= 1) {
         /* single reference file */
         openInOutReferenceFiles(updating, filename);
         /*&     fileTabMap(&s_fileTab, javaInitSubClassInfo); &*/
@@ -722,7 +722,7 @@ void genReferenceFile(bool updating, char *filename) {
                                  writeFileIndexItem, writeFileSourceIndexItem);
         genPartialFileTabRefFile(updating,dirname,REFERENCE_FILENAME_CLASSES,
                                  genClassHierarchyItems, NULL);
-        for (i=0; i<s_opt.referenceFileCount; i++) {
+        for (i=0; i<options.referenceFileCount; i++) {
             sprintf(fileName, "%s%s%04d", dirname, REFERENCE_FILENAME_PREFIX, i);
             assert(strlen(fileName) < MAX_FILE_NAME_SIZE-1);
             openInOutReferenceFiles(updating, fileName);
@@ -754,7 +754,7 @@ static void cxrfSetSingleRecords(int size,
 
 static void writeCxFileCompatibilityError(char *message) {
     static time_t lastMessageTime;
-    if (s_opt.taskRegime == RegimeEditServer) {
+    if (options.taskRegime == RegimeEditServer) {
         if (lastMessageTime < s_fileProcessStartTime) {
             errorMessage(ERR_ST, message);
             lastMessageTime = time(NULL);
@@ -795,7 +795,7 @@ static void cxrfCheckNumber(int size,
     char tmpBuff[TMP_BUFF_SIZE];
 
     assert(ri == CXFI_CHECK_NUMBER);
-    if (s_opt.create)
+    if (options.create)
         return; // no check when creating new file
 
     magicn = s_inLastInfos.counter[CXFI_CHECK_NUMBER];
@@ -804,12 +804,12 @@ static void cxrfCheckNumber(int size,
         sprintf(tmpBuff,"The Tag file was generated with different MAX_FILES, recreate it");
         writeCxFileCompatibilityError(tmpBuff);
     }
-    if (hashMethod != s_opt.xfileHashingMethod) {
+    if (hashMethod != options.xfileHashingMethod) {
         sprintf(tmpBuff,"The Tag file was generated with different hash method, recreate it");
         writeCxFileCompatibilityError(tmpBuff);
     }
-    log_trace("checking %d <-> %d", exactPositionLinkFlag, s_opt.exactPositionResolve);
-    if (exactPositionLinkFlag != s_opt.exactPositionResolve) {
+    log_trace("checking %d <-> %d", exactPositionLinkFlag, options.exactPositionResolve);
+    if (exactPositionLinkFlag != options.exactPositionResolve) {
         if (exactPositionLinkFlag) {
             sprintf(tmpBuff,"The Tag file was generated with '-exactpositionresolve' flag, recreate it");
         } else {
@@ -822,15 +822,15 @@ static void cxrfCheckNumber(int size,
 static int cxrfFileItemShouldBeUpdatedFromCxFile(FileItem *ffi) {
     bool updateFromCxFile = true;
 
-    log_trace("re-read info from '%s' for '%s'?", s_opt.cxrefFileName, ffi->name);
-    if (s_opt.taskRegime == RegimeXref) {
+    log_trace("re-read info from '%s' for '%s'?", options.cxrefFileName, ffi->name);
+    if (options.taskRegime == RegimeXref) {
         if (ffi->b.cxLoading && ! ffi->b.cxSaved) {
             updateFromCxFile = false;
         } else {
             updateFromCxFile = true;
         }
     }
-    if (s_opt.taskRegime == RegimeEditServer) {
+    if (options.taskRegime == RegimeEditServer) {
         log_trace("last inspected == %d, start at %d\n", ffi->lastInspected, s_fileProcessStartTime);
         if (ffi->lastInspected < s_fileProcessStartTime) {
             updateFromCxFile = true;
@@ -839,7 +839,7 @@ static int cxrfFileItemShouldBeUpdatedFromCxFile(FileItem *ffi) {
         }
     }
     log_trace("%s re-read info from '%s' for '%s'", updateFromCxFile?"yes,":"no, not necessary to",
-              s_opt.cxrefFileName, ffi->name);
+              options.cxrefFileName, ffi->name);
 
     return updateFromCxFile;
 }
@@ -876,8 +876,8 @@ static void cxReadFileName(int size,
         fileItem->b.isInterface = isInterface;
         if (fileItem->lastFullUpdateMtime == 0) fileItem->lastFullUpdateMtime=fumtime;
         if (fileItem->lastUpdateMtime == 0) fileItem->lastUpdateMtime=umtime;
-        assert(s_opt.taskRegime);
-        if (s_opt.taskRegime == RegimeXref) {
+        assert(options.taskRegime);
+        if (options.taskRegime == RegimeXref) {
             if (genFl == CX_GENERATE_OUTPUT) {
                 writeFileIndexItem(fileItem, fileIndex);
             }
@@ -890,7 +890,7 @@ static void cxReadFileName(int size,
             // Set it to none, it will be updated by source item
             fileItem->b.sourceFileNumber = s_noneFileIndex;
         }
-        if (s_opt.taskRegime == RegimeEditServer) {
+        if (options.taskRegime == RegimeEditServer) {
             fileItem->b.commandLineEntered = commandLineFlag;
         }
         if (fileItem->lastFullUpdateMtime == 0) fileItem->lastFullUpdateMtime=fumtime;
@@ -1050,7 +1050,7 @@ static void cxrfSymbolName(int size,
     char *ss;
 
     assert(ri == CXFI_SYM_NAME);
-    if (s_opt.taskRegime==RegimeEditServer && additionalArg==DEAD_CODE_DETECTION) {
+    if (options.taskRegime==RegimeEditServer && additionalArg==DEAD_CODE_DETECTION) {
         // check if previous symbol was dead
         cxfileCheckLastSymbolDeadness();
     }
@@ -1071,8 +1071,8 @@ static void cxrfSymbolName(int size,
                            CategoryGlobal, 0);
     rr = refTabIsMember(&s_cxrefTab, ddd, &not_used1,&memb);
     while (rr && memb->b.category!=CategoryGlobal) rr=refTabNextMember(ddd, &memb);
-    assert(s_opt.taskRegime);
-    if (s_opt.taskRegime == RegimeHtmlGenerate) {
+    assert(options.taskRegime);
+    if (options.taskRegime == RegimeHtmlGenerate) {
         if (memb==NULL) {
             CX_ALLOCC(ss, len+1, char);
             strcpy(ss,id);
@@ -1085,13 +1085,13 @@ static void cxrfSymbolName(int size,
         }
         s_inLastInfos.symbolTab[si] = memb;
     }
-    if (s_opt.taskRegime == RegimeXref) {
+    if (options.taskRegime == RegimeXref) {
         if (memb==NULL) memb=ddd;
         genRefItem0(memb,1);
         ddd->refs = memb->refs; // note references to not generate multiple
         memb->refs = NULL;      // HACK, remove them, to not be regenerated
     }
-    if (s_opt.taskRegime == RegimeEditServer) {
+    if (options.taskRegime == RegimeEditServer) {
         if (additionalArg == DEAD_CODE_DETECTION) {
             if (symbolIsReportableAsDead(s_inLastInfos.symbolTab[si])) {
                 s_inLastInfos.symbolToCheckForDeadness = si;
@@ -1099,7 +1099,7 @@ static void cxrfSymbolName(int size,
             } else {
                 s_inLastInfos.symbolToCheckForDeadness = -1;
             }
-        } else if (s_opt.server_operation!=OLO_TAG_SEARCH) {
+        } else if (options.server_operation!=OLO_TAG_SEARCH) {
             cms = NULL; ols = 0;
             if (additionalArg == CX_MENU_CREATION) {
                 cms = createSelectionMenu(ddd);
@@ -1117,7 +1117,7 @@ static void cxrfSymbolName(int size,
                 ) {
                 s_inLastInfos.onLineReferencedSym = si;
                 s_inLastInfos.onLineRefIsBestMatchFlag = (ols == 2);
-                log_trace("symbol %s is O.K. for %s (ols==%d)", ddd->name, s_opt.browsedSymName, ols);
+                log_trace("symbol %s is O.K. for %s (ols==%d)", ddd->name, options.browsedSymName, ols);
             } else {
                 if (s_inLastInfos.onLineReferencedSym == si) {
                     s_inLastInfos.onLineReferencedSym = -1;
@@ -1178,9 +1178,9 @@ static void cxrfReference(int size,
     line = s_inLastInfos.counter[CXFI_LINE_INDEX];
     coll = s_inLastInfos.counter[CXFI_COLL_INDEX];
     /*&fprintf(dumpOut,"%d %d %d  ", usage,file,line);fflush(dumpOut);&*/
-    assert(s_opt.taskRegime);
-    if (s_opt.taskRegime == RegimeXref) {
-        if (s_opt.keep_old ||
+    assert(options.taskRegime);
+    if (options.taskRegime == RegimeXref) {
+        if (options.keep_old ||
             (s_fileTab.tab[file]->b.cxLoading&&s_fileTab.tab[file]->b.cxSaved)
             ) {
             /* if keep_old or if we repass refs after overflow */
@@ -1192,7 +1192,7 @@ static void cxrfReference(int size,
             copyrefFl = ! s_fileTab.tab[file]->b.cxLoading;
         }
         if (copyrefFl) writeCxReferenceBase(sym, usage, reqAcc, file, line, coll);
-    } else  if (s_opt.taskRegime == RegimeHtmlGenerate) {
+    } else  if (options.taskRegime == RegimeHtmlGenerate) {
         fillPosition(&pos,file,line,coll);
         fillUsageBits(&usageBits, usage, reqAcc);
         fill_reference(&rr, usageBits, pos, NULL);
@@ -1209,7 +1209,7 @@ static void cxrfReference(int size,
             addToRefList(&s_inLastInfos.symbolTab[sym]->refs,
                          &rr.usage,&rr.p,CategoryGlobal);
         }
-    } else if (s_opt.taskRegime == RegimeEditServer) {
+    } else if (options.taskRegime == RegimeEditServer) {
         fillPosition(&pos,file,line,coll);
         fillUsageBits(&usageBits, usage, reqAcc);
         fill_reference(&rr, usageBits, pos, NULL);
@@ -1232,15 +1232,15 @@ static void cxrfReference(int size,
                 s_olMacro2PassFile = rr.p.file;
             }
         } else {
-            if (s_opt.server_operation == OLO_TAG_SEARCH) {
+            if (options.server_operation == OLO_TAG_SEARCH) {
                 if (rr.usage.base==UsageDefined
-                    || ((s_opt.tagSearchSpecif==TSS_FULL_SEARCH
-                         || s_opt.tagSearchSpecif==TSS_FULL_SEARCH_SHORT)
+                    || ((options.tagSearchSpecif==TSS_FULL_SEARCH
+                         || options.tagSearchSpecif==TSS_FULL_SEARCH_SHORT)
                         &&  (rr.usage.base==UsageDeclared
                              || rr.usage.base==UsageClassFileDefinition))) {
                     searchSymbolCheckReference(s_inLastInfos.symbolTab[sym],&rr);
                 }
-            } else if (s_opt.server_operation == OLO_SAFETY_CHECK1) {
+            } else if (options.server_operation == OLO_SAFETY_CHECK1) {
                 if (    s_inLastInfos.onLineReferencedSym !=
                         s_inLastInfos.counter[CXFI_SYM_INDEX]) {
                     olcxCheck1CxFileReference(s_inLastInfos.symbolTab[sym],
@@ -1251,13 +1251,13 @@ static void cxrfReference(int size,
                         s_inLastInfos.counter[CXFI_SYM_INDEX]) {
                     if (additionalArg == CX_MENU_CREATION) {
                         assert(s_inLastInfos.onLineRefMenuItem);
-                        if (s_opt.keep_old
+                        if (options.keep_old
                             || file!=s_olOriginalFileNumber
                             || !s_fileTab.tab[file]->b.commandLineEntered
-                            || s_opt.server_operation==OLO_GOTO
-                            || s_opt.server_operation==OLO_CGOTO
-                            || s_opt.server_operation==OLO_PUSH_NAME
-                            || s_opt.server_operation==OLO_PUSH_SPECIAL_NAME
+                            || options.server_operation==OLO_GOTO
+                            || options.server_operation==OLO_CGOTO
+                            || options.server_operation==OLO_PUSH_NAME
+                            || options.server_operation==OLO_PUSH_SPECIAL_NAME
                             ) {
                             //&fprintf(dumpOut,":adding reference %s:%d\n", s_fileTab.tab[rr.p.file]->name, rr.p.line);
                             olcxAddReferenceToOlSymbolsMenu(s_inLastInfos.onLineRefMenuItem, &rr, s_inLastInfos.onLineRefIsBestMatchFlag);
@@ -1272,10 +1272,10 @@ static void cxrfReference(int size,
                         }
                     } else if (1
                                /*&
-                                 s_opt.keep_old
+                                 options.keep_old
                                  || file!=s_olOriginalFileNumber
                                  || !s_fileTab.tab[file]->b.commandLineEntered
-                                 || s_opt.server_operation==OLO_GOTO || s_opt.server_operation==OLO_CGOTO
+                                 || options.server_operation==OLO_GOTO || options.server_operation==OLO_CGOTO
                                  &*/
                                ) {
                         // this is only goto definition from completion menu?
@@ -1300,7 +1300,7 @@ static void cxrfRefNum(int fileRefNum,
 
     check = changeRefNumOption(fileRefNum);
     if (check == 0) {
-        assert(s_opt.taskRegime);
+        assert(options.taskRegime);
         fatalError(ERR_ST,"Tag file was generated with different '-refnum' options, recreate it!", XREF_EXIT_ERR);
     }
 }
@@ -1325,18 +1325,18 @@ static void cxrfSubClass(int size,
     assert(s_fileTab.tab[sup]!=NULL);
     inf = s_decodeFilesNum[inf];
     assert(s_fileTab.tab[inf]!=NULL);
-    assert(s_opt.taskRegime);
-    if (s_opt.taskRegime == RegimeHtmlGenerate) {
+    assert(options.taskRegime);
+    if (options.taskRegime == RegimeHtmlGenerate) {
         createSubClassInfo(sup, inf, file, NO_CX_FILE_ITEM_GEN);
     }
-    if (s_opt.taskRegime == RegimeXref) {
+    if (options.taskRegime == RegimeXref) {
         if (!s_fileTab.tab[file]->b.cxLoading &&
             additionalArg==CX_GENERATE_OUTPUT) {
             writeSubClassInfo(sup, inf, file);  // updating refs
             //&         createSubClassInfo(sup, inf, file, CX_FILE_ITEM_GEN);
         }
     }
-    if (s_opt.taskRegime == RegimeEditServer) {
+    if (options.taskRegime == RegimeEditServer) {
         if (file!=s_input_file_number) {
             log_trace("reading %s < %s", simpleFileName(s_fileTab.tab[inf]->name),simpleFileName(s_fileTab.tab[sup]->name));
             createSubClassInfo(sup, inf, file, NO_CX_FILE_ITEM_GEN);
@@ -1414,9 +1414,9 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
         }
         ch = getChar(&cxfCharacterBuffer);
     }
-    if (s_opt.taskRegime==RegimeEditServer
-        && (s_opt.server_operation==OLO_LOCAL_UNUSED
-            || s_opt.server_operation==OLO_GLOBAL_UNUSED)) {
+    if (options.taskRegime==RegimeEditServer
+        && (options.server_operation==OLO_LOCAL_UNUSED
+            || options.server_operation==OLO_GLOBAL_UNUSED)) {
         // check if last symbol was dead
         cxfileCheckLastSymbolDeadness();
     }
@@ -1447,12 +1447,12 @@ void scanReferenceFiles(char *fname, ScanFileFunctionStep *scanFunTab) {
     char nn[MAX_FILE_NAME_SIZE];
     int i;
 
-    if (s_opt.referenceFileCount <= 1) {
+    if (options.referenceFileCount <= 1) {
         scanReferenceFile(fname,"","",scanFunTab);
     } else {
         scanReferenceFile(fname,REFERENCE_FILENAME_FILES,"",scanFunTab);
         scanReferenceFile(fname,REFERENCE_FILENAME_CLASSES,"",scanFunTab);
-        for (i=0; i<s_opt.referenceFileCount; i++) {
+        for (i=0; i<options.referenceFileCount; i++) {
             sprintf(nn,"%04d",i);
             scanReferenceFile(fname,REFERENCE_FILENAME_PREFIX,nn,scanFunTab);
         }
@@ -1466,10 +1466,10 @@ int smartReadFileTabFile(void) {
     char            tt[MAX_FILE_NAME_SIZE];
     struct stat     st;
     int             tmp;
-    if (s_opt.referenceFileCount > 1) {
-        sprintf(tt, "%s%s", s_opt.cxrefFileName, REFERENCE_FILENAME_FILES);
+    if (options.referenceFileCount > 1) {
+        sprintf(tt, "%s%s", options.cxrefFileName, REFERENCE_FILENAME_FILES);
     } else {
-        sprintf(tt, "%s", s_opt.cxrefFileName);
+        sprintf(tt, "%s", options.cxrefFileName);
     }
     if (statb(tt,&st)==0) {
         if (    readedFileModTime != st.st_mtime
@@ -1496,16 +1496,16 @@ void readOneAppropReferenceFile(char *symbolName,
                                 ) {
     static char fns[MAX_FILE_NAME_SIZE];
     int i,tmp;
-    //& if (s_opt.server_operation!=OLO_CGOTO && ! creatingOlcxRefs()) return;
-    if (s_opt.cxrefFileName == NULL) return;
+    //& if (options.server_operation!=OLO_CGOTO && ! creatingOlcxRefs()) return;
+    if (options.cxrefFileName == NULL) return;
     cxOut = stdout;
-    if (s_opt.referenceFileCount <= 1) {
-        tmp = scanReferenceFile(s_opt.cxrefFileName,"","",scanFileFunctionTable);
+    if (options.referenceFileCount <= 1) {
+        tmp = scanReferenceFile(options.cxrefFileName,"","",scanFileFunctionTable);
         if (tmp == 0) return;
     } else {
         tmp = smartReadFileTabFile();
         if (tmp == 0) return;
-        tmp = scanReferenceFile(s_opt.cxrefFileName, REFERENCE_FILENAME_CLASSES, "",
+        tmp = scanReferenceFile(options.cxrefFileName, REFERENCE_FILENAME_CLASSES, "",
                                 scanFileFunctionTable);
         if (tmp == 0) return;
         if (symbolName == NULL) return;
@@ -1514,7 +1514,7 @@ void readOneAppropReferenceFile(char *symbolName,
         //&fprintf(dumpOut,"reading X%04d\n",i);fflush(dumpOut);
         sprintf(fns, "%04d", i);
         assert(strlen(fns) < MAX_FILE_NAME_SIZE-1);
-        tmp = scanReferenceFile(s_opt.cxrefFileName,REFERENCE_FILENAME_PREFIX,fns,
+        tmp = scanReferenceFile(options.cxrefFileName,REFERENCE_FILENAME_PREFIX,fns,
                                 scanFileFunctionTable);
         if (tmp == 0) return;
     }

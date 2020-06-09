@@ -78,7 +78,7 @@ bool cxMemoryOverflowHandler(int n) {
 
     ofactor = oldsize / CX_MEMORY_CHUNK_SIZE;
     factor = ((n>1)?(n-1):0)/CX_MEMORY_CHUNK_SIZE + 1; // 1 no patience to wait ;
-    //& if (s_opt.cxMemoryFactor>=1) factor *= s_opt.cxMemoryFactor;
+    //& if (options.cxMemoryFactor>=1) factor *= options.cxMemoryFactor;
     factor += ofactor;
     if (ofactor*2 > factor) factor = ofactor*2;
     newsize = factor * CX_MEMORY_CHUNK_SIZE;

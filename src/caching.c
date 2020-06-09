@@ -193,7 +193,7 @@ static void trailDeleteOutOfMemory(void) {
 
 static void includeListDeleteOutOfMemory(void) {
     S_stringList **pp;
-    pp = & s_opt.includeDirs;
+    pp = & options.includeDirs;
     while (*pp!=NULL) {
         if (SM_FREED_POINTER(ppmMemory,*pp)) {
             *pp = (*pp)->next;
@@ -245,7 +245,7 @@ static void fillCaching(S_caching *caching,
 #define CAN_CONTINUE_CACHING_CLASSES(cp) (                              \
                                           CACHING_CLASSES               \
                                           && LANGUAGE(LANG_JAVA)         \
-                                          && (s_opt.taskRegime == RegimeXref || s_opt.taskRegime == RegimeHtmlGenerate) \
+                                          && (options.taskRegime == RegimeXref || options.taskRegime == RegimeHtmlGenerate) \
                                           && ppmMemoryi < (SIZE_ppmMemory/3)*2 \
                                                                         )
 
@@ -279,8 +279,8 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
     s_javaStat = cp->javaCached;
     s_count = cp->counts;
     trailDeleteOutOfMemory();
-    assert(s_opt.taskRegime);
-    if (s_opt.taskRegime==RegimeEditServer && s_currCppPass==1) {
+    assert(options.taskRegime);
+    if (options.taskRegime==RegimeEditServer && s_currCppPass==1) {
         /* remove old references, only on first pass of edit server */
         log_trace("removing references");
         cxMemory->i = cp->cxMemoryi;

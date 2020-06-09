@@ -26,15 +26,15 @@
 
 
 #define SetDirectStructureCompletionType(xxx) {\
-    assert(s_opt.taskRegime);\
-    if (s_opt.taskRegime == RegimeEditServer) {\
+    assert(options.taskRegime);\
+    if (options.taskRegime == RegimeEditServer) {\
         s_structRecordCompletionType = xxx;\
     }\
 }
 
 #define SetIndirectStructureCompletionType2(xxx) {                     \
-    assert(s_opt.taskRegime);\
-    if (s_opt.taskRegime == RegimeEditServer) {\
+    assert(options.taskRegime);\
+    if (options.taskRegime == RegimeEditServer) {\
         if (xxx->kind==TypePointer || xxx->kind==TypeArray) {\
             s_structRecordCompletionType = xxx->next;\
         } else s_structRecordCompletionType = &s_errorModifier;\
@@ -44,7 +44,7 @@
 #define AddComposedType(ddd, ttt) appendComposedType(&ddd->u.type, ttt)
 
 #define AddHtmlTrivialReference(pos) {\
-    if (s_opt.taskRegime == RegimeHtmlGenerate) {\
+    if (options.taskRegime == RegimeHtmlGenerate) {\
         addTrivialCxReference("%",TypeKeyword,StorageDefault,&pos,UsageUsed);\
     }\
 }
@@ -462,7 +462,7 @@ primary_expr
             dd = p;
             assert(dd->bits.storage != StorageTypedef);
             $$.d.typeModifier = dd->u.type;
-            assert(s_opt.taskRegime);
+            assert(options.taskRegime);
             $$.d.reference = addCxReference(p, &$1.d->p, UsageUsed,s_noneFileIndex, s_noneFileIndex);
         } else {
             /* implicit function declaration */
@@ -824,7 +824,7 @@ declaration_specifiers
 user_defined_type
     : TYPE_NAME                                             {
         $$.d = $1.d;
-        assert(s_opt.taskRegime);
+        assert(options.taskRegime);
         assert($1.d);
         assert($1.d->symbol);
         addCxReference($1.d->symbol, &$1.d->p, UsageUsed,s_noneFileIndex, s_noneFileIndex);
@@ -1586,8 +1586,8 @@ external_definition
                 *pa = *p;
                 addNewSymbolDef(pa, StorageAuto, s_symbolTable, UsageDefined);
             }
-            if (s_opt.server_operation == OLO_GOTO_PARAM_NAME
-                && i == s_opt.olcxGotoVal
+            if (options.server_operation == OLO_GOTO_PARAM_NAME
+                && i == options.olcxGotoVal
                 && POSITION_EQ($2.d->pos, s_cxRefPos)) {
                 s_paramPosition = p->pos;
             }

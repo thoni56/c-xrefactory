@@ -59,15 +59,15 @@
 #define yyErrorRecovery styyErrorRecovery
 
 #define SetDirectStructureCompletionType(xxx) {\
-    assert(s_opt.taskRegime);\
-    if (s_opt.taskRegime == RegimeEditServer) {\
+    assert(options.taskRegime);\
+    if (options.taskRegime == RegimeEditServer) {\
         s_structRecordCompletionType = xxx;\
         assert(s_structRecordCompletionType);\
     }\
 }
 #define SetIndirectStructureCompletionType(xxx) {\
-    assert(s_opt.taskRegime);\
-    if (s_opt.taskRegime == RegimeEditServer) {\
+    assert(options.taskRegime);\
+    if (options.taskRegime == RegimeEditServer) {\
         if (xxx->kind==TypePointer || xxx->kind==TypeArray) {\
             s_structRecordCompletionType = xxx->next;\
             assert(s_structRecordCompletionType);\
@@ -2070,7 +2070,7 @@ void makeCCompletions(char *s, int len, Position *pos) {
     }
 
     /* If there is a wizard completion, RETURN now */
-    if (s_completions.alternativeIndex != 0 && s_opt.server_operation != OLO_SEARCH)
+    if (s_completions.alternativeIndex != 0 && options.server_operation != OLO_SEARCH)
         return;
 
     /* basic language tokens */
@@ -2251,7 +2251,7 @@ case 1:
             dd = p;
             assert(dd->bits.storage != StorageTypedef);
             yyval.ast_expressionType.d.typeModifier = dd->u.type;
-            assert(s_opt.taskRegime);
+            assert(options.taskRegime);
             yyval.ast_expressionType.d.reference = addCxReference(p, &yyvsp[0].ast_id.d->p, UsageUsed, s_noneFileIndex, s_noneFileIndex);
         } else {
             /* implicit function declaration */
@@ -2652,7 +2652,7 @@ break;
 case 82:
 #line 595 "c_parser.y"
 {
-        if (yyvsp[-2].ast_expressionType.d.reference != NULL && s_opt.server_operation == OLO_EXTRACT) {
+        if (yyvsp[-2].ast_expressionType.d.reference != NULL && options.server_operation == OLO_EXTRACT) {
             Reference *rr;
             rr = duplicateReference(yyvsp[-2].ast_expressionType.d.reference);
             yyvsp[-2].ast_expressionType.d.reference->usage = s_noUsage;
@@ -2777,7 +2777,7 @@ case 106:
 {
         int usage;
         yyval.ast_id.d = yyvsp[0].ast_id.d;
-        assert(s_opt.taskRegime);
+        assert(options.taskRegime);
         assert(yyvsp[0].ast_id.d);
         assert(yyvsp[0].ast_id.d->symbol);
         if (WORK_NEST_LEVEL0()) usage = USAGE_TOP_LEVEL_USED;
@@ -3984,7 +3984,7 @@ case 338:
 {
         stackMemoryBlockFree();
         s_cp.function = NULL;
-        if (s_opt.taskRegime == RegimeHtmlGenerate) {
+        if (options.taskRegime == RegimeHtmlGenerate) {
             htmlAddFunctionSeparatorReference();
         }
     }

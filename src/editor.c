@@ -205,9 +205,9 @@ static void editorApplyUtf16Conversion(S_editorBuffer *buff) {
     } else if (cb == 0xfffe) {
         little_endian = 1;
         s += 2;
-    } else if (s_opt.fileEncoding == MULE_UTF_16LE) {
+    } else if (options.fileEncoding == MULE_UTF_16LE) {
         little_endian = 1;
-    } else if (s_opt.fileEncoding == MULE_UTF_16BE) {
+    } else if (options.fileEncoding == MULE_UTF_16BE) {
         little_endian = 0;
     } else {
         little_endian = 1;
@@ -246,59 +246,59 @@ static int editorBufferStartsWithUtf16Bom(S_editorBuffer *buff) {
 }
 
 static void editorPerformSimpleLineFeedConversion(S_editorBuffer *buff) {
-    if ((s_opt.eolConversion&CR_LF_EOL_CONVERSION)
-        && (s_opt.eolConversion & CR_EOL_CONVERSION)) {
+    if ((options.eolConversion&CR_LF_EOL_CONVERSION)
+        && (options.eolConversion & CR_EOL_CONVERSION)) {
         editorApplyCrLfCrConversion(buff);
-    } else if (s_opt.eolConversion & CR_LF_EOL_CONVERSION) {
+    } else if (options.eolConversion & CR_LF_EOL_CONVERSION) {
         editorApplyCrLfConversion(buff);
-    } else if (s_opt.eolConversion & CR_EOL_CONVERSION) {
+    } else if (options.eolConversion & CR_EOL_CONVERSION) {
         editorApplyCrConversion(buff);
     }
 }
 
 static void editorPerformEncodingAdjustemets(S_editorBuffer *buff) {
     // do different loops for efficiency reasons
-    if (s_opt.fileEncoding == MULE_EUROPEAN) {
+    if (options.fileEncoding == MULE_EUROPEAN) {
         editorPerformSimpleLineFeedConversion(buff);
-    } else if (s_opt.fileEncoding == MULE_EUC) {
-        if ((s_opt.eolConversion&CR_LF_EOL_CONVERSION)
-            && (s_opt.eolConversion & CR_EOL_CONVERSION)) {
+    } else if (options.fileEncoding == MULE_EUC) {
+        if ((options.eolConversion&CR_LF_EOL_CONVERSION)
+            && (options.eolConversion & CR_EOL_CONVERSION)) {
             editorApplyEucCrLfCrConversion(buff);
-        } else if (s_opt.eolConversion & CR_LF_EOL_CONVERSION) {
+        } else if (options.eolConversion & CR_LF_EOL_CONVERSION) {
             editorApplyEucCrLfConversion(buff);
-        } else if (s_opt.eolConversion & CR_EOL_CONVERSION) {
+        } else if (options.eolConversion & CR_EOL_CONVERSION) {
             editorApplyEucCrConversion(buff);
         } else {
             editorApplyEucConversion(buff);
         }
-    } else if (s_opt.fileEncoding == MULE_SJIS) {
-        if ((s_opt.eolConversion&CR_LF_EOL_CONVERSION)
-            && (s_opt.eolConversion & CR_EOL_CONVERSION)) {
+    } else if (options.fileEncoding == MULE_SJIS) {
+        if ((options.eolConversion&CR_LF_EOL_CONVERSION)
+            && (options.eolConversion & CR_EOL_CONVERSION)) {
             editorApplySjisCrLfCrConversion(buff);
-        } else if (s_opt.eolConversion & CR_LF_EOL_CONVERSION) {
+        } else if (options.eolConversion & CR_LF_EOL_CONVERSION) {
             editorApplySjisCrLfConversion(buff);
-        } else if (s_opt.eolConversion & CR_EOL_CONVERSION) {
+        } else if (options.eolConversion & CR_EOL_CONVERSION) {
             editorApplySjisCrConversion(buff);
         } else {
             editorApplySjisConversion(buff);
         }
     } else {
         // default == utf
-        if ((s_opt.fileEncoding != MULE_UTF_8 && editorBufferStartsWithUtf16Bom(buff))
-            || s_opt.fileEncoding == MULE_UTF_16
-            || s_opt.fileEncoding == MULE_UTF_16LE
-            || s_opt.fileEncoding == MULE_UTF_16BE
+        if ((options.fileEncoding != MULE_UTF_8 && editorBufferStartsWithUtf16Bom(buff))
+            || options.fileEncoding == MULE_UTF_16
+            || options.fileEncoding == MULE_UTF_16LE
+            || options.fileEncoding == MULE_UTF_16BE
             ) {
             editorApplyUtf16Conversion(buff);
             editorPerformSimpleLineFeedConversion(buff);
         } else {
             // utf-8
-            if ((s_opt.eolConversion&CR_LF_EOL_CONVERSION)
-                && (s_opt.eolConversion & CR_EOL_CONVERSION)) {
+            if ((options.eolConversion&CR_LF_EOL_CONVERSION)
+                && (options.eolConversion & CR_EOL_CONVERSION)) {
                 editorApplyUtf8CrLfCrConversion(buff);
-            } else if (s_opt.eolConversion & CR_LF_EOL_CONVERSION) {
+            } else if (options.eolConversion & CR_LF_EOL_CONVERSION) {
                 editorApplyUtf8CrLfConversion(buff);
-            } else if (s_opt.eolConversion & CR_EOL_CONVERSION) {
+            } else if (options.eolConversion & CR_EOL_CONVERSION) {
                 editorApplyUtf8CrConversion(buff);
             } else {
                 editorApplyUtf8Conversion(buff);
@@ -769,7 +769,7 @@ void editorReplaceString(S_editorBuffer *buff, int position, int delsize,
         // deleting over end of buffer,
         // delete only until end of buffer
         delsize = oldsize - position;
-        if (s_opt.debug) assert(0);
+        if (options.debug) assert(0);
     }
     //&fprintf(dumpOut,"replacing string in buffer %d (%s)\n", buff, buff->name);
     nsize = oldsize + strlength - delsize;

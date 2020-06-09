@@ -56,14 +56,14 @@ void initTokenNameTab(void) {
     Symbol *pp;
     static int messageWritten=0;
 
-    if (! s_opt.strictAnsi) {
+    if (! options.strictAnsi) {
         initTokensFromTab(s_tokenNameIniTab2);
     }
-    jv = s_opt.javaVersion;
+    jv = options.javaVersion;
     if (strcmp(jv, JAVA_VERSION_AUTO)==0) jv = autoDetectJavaVersion();
-    if (s_opt.taskRegime!=RegimeEditServer
+    if (options.taskRegime!=RegimeEditServer
         && messageWritten==0) {
-        if (s_opt.xref2) {
+        if (options.xref2) {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff,"java version == %s", jv);
             ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");

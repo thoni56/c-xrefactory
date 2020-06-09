@@ -154,7 +154,7 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iB
                     "archive %s is corrupted or modified while xref task running",
                     archivename);
             errorMessage(ERR_ST, tmpBuff);
-            if (s_opt.taskRegime == RegimeEditServer) {
+            if (options.taskRegime == RegimeEditServer) {
                 fprintf(errOut,"\t\tplease, kill xref process and retry.\n");
             }
         }
@@ -193,9 +193,9 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iB
         res = 0;
         if (compressionErrorWritten==0) {
             char tmpBuff[TMP_BUFF_SIZE];
-            assert(s_opt.taskRegime);
+            assert(options.taskRegime);
             // why the message was only for editserver?
-            //&if (s_opt.taskRegime==RegimeEditServer) {
+            //&if (options.taskRegime==RegimeEditServer) {
             strcpy(ttt, archivename);
             zzz = strchr(ttt, ZIP_SEPARATOR_CHAR);
             if (zzz!=NULL) *zzz = 0;
@@ -364,8 +364,8 @@ static int findEndOfCentralDirectory(char **accc, char **affin,
     }
     if (ccc <= iBuf->chars) {
         res = 0;
-        assert(s_opt.taskRegime);
-        if (s_opt.taskRegime!=RegimeEditServer) {
+        assert(options.taskRegime);
+        if (options.taskRegime!=RegimeEditServer) {
             warningMessage(ERR_INTERNAL,"can't find end of central dir in archive");
         }
         goto fini;
@@ -435,8 +435,8 @@ int zipIndexArchive(char *name) {
         // new file into the table
         log_debug("adding %s into index ",name);
         if (stat(name ,&fst)!=0) {
-            assert(s_opt.taskRegime);
-            if (s_opt.taskRegime!=RegimeEditServer) {
+            assert(options.taskRegime);
+            if (options.taskRegime!=RegimeEditServer) {
                 static int singleOut=0;
                 if (singleOut==0) warningMessage(ERR_CANT_OPEN, name);
                 singleOut=1;
@@ -449,8 +449,8 @@ int zipIndexArchive(char *name) {
         zipFile = openFile(name,"r");
 #endif
         if (zipFile == NULL) {
-            assert(s_opt.taskRegime);
-            if (s_opt.taskRegime!=RegimeEditServer) {
+            assert(options.taskRegime);
+            if (options.taskRegime!=RegimeEditServer) {
                 warningMessage(ERR_CANT_OPEN, name);
             }
             return(-1);
@@ -806,7 +806,7 @@ static void cfAddRecordToClass(char *name,
 
     assert(clas->u.s);
     LIST_APPEND(Symbol, clas->u.s->records, symbol);
-    if (s_opt.allowClassFileRefs) {
+    if (options.allowClassFileRefs) {
         fillPosition(&dpos, clas->u.s->classFile, 1, 0);
         addCxReference(symbol, &dpos, UsageClassFileDefinition, vFunCl, vFunCl);
     }

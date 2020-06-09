@@ -196,7 +196,7 @@ static void refactoryUpdateReferences(char *project) {
 
     editorQuasiSaveModifiedBuffers();
 
-    copyOptions(&savedOptions, &s_opt);
+    copyOptions(&savedOptions, &options);
     //copyOptions(&savedCachedOptions, &s_cachedOptions);
 
     refactorySetNargv(nargv, NULL, project, NULL, NULL);
@@ -213,11 +213,11 @@ static void refactoryUpdateReferences(char *project) {
 
     mainCallXref(nargc, nargv);
 
-    copyOptions(&s_opt, &savedOptions);
+    copyOptions(&options, &savedOptions);
     //&copyOptions(&s_cachedOptions, &savedCachedOptions);
 
     //&resetImportantOptionsFromRefactoringCommandLine();
-    //&fprintf(dumpOut,"here I am, %s, %s %s %s %s\n", s_ropt.user, s_opt.user, savedOptions.user, s_cachedOptions.user, savedCachedOptions.user);
+    //&fprintf(dumpOut,"here I am, %s, %s %s %s %s\n", s_ropt.user, options.user, savedOptions.user, s_cachedOptions.user, savedCachedOptions.user);
     ppcGenRecordEnd(PPC_UPDATE_REPORT);
 
     // return into editSubTaskState
@@ -237,9 +237,9 @@ static void refactoryEditServerParseBuffer(char *project,
     s_currCppPass = ANY_CPP_PASS;
     // this probably creates a memory leak in options
     // is it necessary? Try to put it in comment [2/8/2003]
-    //& copyOptions(&s_cachedOptions, &s_opt);
+    //& copyOptions(&s_cachedOptions, &options);
 
-    assert(s_opt.taskRegime == RegimeEditServer);
+    assert(options.taskRegime == RegimeEditServer);
 
     refactorySetNargv(nargv, buf, project, point, mark);
     nargc = argument_count(nargv);
@@ -258,11 +258,11 @@ static void refactoryEditServerParseBuffer(char *project,
 static void refactoryBeInteractive(void) {
     int                 pargc;
     char                **pargv;
-    copyOptions(&s_cachedOptions, &s_opt);
+    copyOptions(&s_cachedOptions, &options);
     for(;;) {
         closeMainOutputFile();
         ppcGenSynchroRecord();
-        copyOptions(&s_opt, &s_cachedOptions);
+        copyOptions(&options, &s_cachedOptions);
         processOptions(argument_count(s_refactoryEditSrvInitOptions),
                        s_refactoryEditSrvInitOptions, INFILES_DISABLED);
         getPipedOptions(&pargc, &pargv);
@@ -271,7 +271,7 @@ static void refactoryBeInteractive(void) {
         // old way how to finish dialog
         if (pargc <= 1) break;
         mainCallEditServerInit(pargc, pargv);
-        if (s_opt.continueRefactoring) break;
+        if (options.continueRefactoring) break;
         mainCallEditServer(argument_count(s_refactoryEditSrvInitOptions),
                            s_refactoryEditSrvInitOptions,
                            pargc, pargv, &s_refactoryXrefEditSrvSubTaskFirstPassing);
@@ -856,7 +856,7 @@ void tpCheckFillMoveClassData(S_tpCheckMoveClassData *dd, char *spack, char *tpa
     rstack = s_olcxCurrentUser->browserStack.top;
     sclass = rstack->hkSelectedSym;
     assert(sclass);
-    targetfile = s_opt.moveTargetFile;
+    targetfile = options.moveTargetFile;
     assert(targetfile);
     srcfile = s_input_file_name;
     assert(srcfile);
@@ -881,7 +881,7 @@ int tpCheckMoveClassAccessibilities(void) {
     char tpack[MAX_FILE_NAME_SIZE];
 
     tpCheckFillMoveClassData(&dd, spack, tpack);
-    olcxPushSpecialCheckMenuSym(s_opt.server_operation,LINK_NAME_MOVE_CLASS_MISSED);
+    olcxPushSpecialCheckMenuSym(options.server_operation,LINK_NAME_MOVE_CLASS_MISSED);
     refTabMap2(&s_cxrefTab, tpCheckDefaultAccessibilitiesMoveClass, &dd);
 
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
@@ -931,7 +931,7 @@ int tpCheckSourceIsNotInnerClass(void) {
     assert(ss);
     // I can rely that it is a class
     thisclassi = getClassNumFromClassLinkName(ss->s.name, s_noneFileIndex);
-    //& target = s_opt.moveTargetClass;
+    //& target = options.moveTargetClass;
     //& assert(target!=NULL);
     assert(s_fileTab.tab[thisclassi]);
     deii = s_fileTab.tab[thisclassi]->directEnclosingInstance;
@@ -1075,7 +1075,7 @@ int tpCheckSuperMethodReferencesForDynToSt(void) {
     // synthetize an answer
     if (rr.foundSpecialRefItem!=NULL) {
         char tmpBuff[TMP_BUFF_SIZE];
-        if (s_opt.xref2) ppcGenGotoPositionRecord(&rr.foundSpecialR->p);
+        if (options.xref2) ppcGenGotoPositionRecord(&rr.foundSpecialR->p);
         sprintf(tmpBuff,"This method invokes another method using the keyword \"super\". Current version of C-xrefactory does not know how to make it static.");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         errorMessage(ERR_ST, tmpBuff);
@@ -1100,7 +1100,7 @@ int tpCheckOuterScopeUsagesForDynToSt(void) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff,"Inner class method is using symbols from outer scope. Current version of C-xrefactory does not know how to make it static.");
         // be soft, so that user can try it and see.
-        if (s_opt.xref2) {
+        if (options.xref2) {
             ppcGenGotoPositionRecord(&rr.foundOuterScopeRef->p);
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
             ppcGenRecord(PPC_ERROR, tmpBuff, "\n");
@@ -2465,7 +2465,7 @@ static int refactoryInteractiveAskForAddImportAction(S_editorMarkerList *ppp, in
     ppcGenGotoMarkerRecord(ppp->d);
     ppcGenNumericRecord(PPC_ADD_TO_IMPORTS_DIALOG,defaultAction,fqtName,"\n");
     refactoryBeInteractive();
-    action = s_opt.continueRefactoring;
+    action = options.continueRefactoring;
     return(action);
 }
 
@@ -3005,8 +3005,8 @@ static void refactorySetMovingPrecheckStandardEnvironment(S_editorMarker *point,
                                     point, NULL, "-olcxtrivialprecheck",NULL);
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     olCreateSelectionMenu(s_olcxCurrentUser->browserStack.top->command);
-    s_opt.moveTargetFile = s_ropt.moveTargetFile;
-    s_opt.moveTargetClass = targetFqtName;
+    options.moveTargetFile = s_ropt.moveTargetFile;
+    options.moveTargetClass = targetFqtName;
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     ss = s_olcxCurrentUser->browserStack.top->hkSelectedSym;
     assert(ss);
@@ -3564,7 +3564,7 @@ static void refactoryTurnStaticToDynamic(S_editorMarker *point) {
     refactoryEditServerParseBuffer( s_ropt.project, pp->buffer,
                                     pp,NULL, "-olcxgetsymboltype","-noerrors");
     // -noerrors is basically very dangerous in this context, recover it in s_opt
-    s_opt.noErrors = 0;
+    options.noErrors = 0;
     if (! s_olstringServed) {
         errorMessage(ERR_ST, "Can't infer type for parameter/field");
         return;
@@ -4456,11 +4456,11 @@ void mainRefactory(int argc, char **argv) {
 
     ENTER();
 
-    copyOptions(&s_ropt, &s_opt);       // save command line options !!!!
+    copyOptions(&s_ropt, &options);       // save command line options !!!!
     // in general in this file:
     //   s_ropt are options passed to c-xrefactory
     //   s_opt are options valid for interactive edit-server 'sub-task'
-    copyOptions(&s_cachedOptions, &s_opt);
+    copyOptions(&s_cachedOptions, &options);
 
     // MAGIC, fill something to restrict to browsing
     s_ropt.server_operation = OLO_LIST;
@@ -4598,7 +4598,7 @@ void mainRefactory(int argc, char **argv) {
     ppcGenSynchroRecord();
 
     // exiting, put undefined, so that main will finish
-    s_opt.taskRegime = RegimeUndefined;
+    options.taskRegime = RegimeUndefined;
 
     LEAVE();
 }

@@ -94,9 +94,9 @@ static bool inSecondJslPass() {
     return !regularPass() && s_jsl->pass==2;
 }
 
-#define SyntaxPassOnly() (s_opt.server_operation==OLO_GET_PRIMARY_START || s_opt.server_operation==OLO_GET_PARAM_COORDINATES || s_opt.server_operation==OLO_SYNTAX_PASS_ONLY || s_javaPreScanOnly)
+#define SyntaxPassOnly() (options.server_operation==OLO_GET_PRIMARY_START || options.server_operation==OLO_GET_PARAM_COORDINATES || options.server_operation==OLO_SYNTAX_PASS_ONLY || s_javaPreScanOnly)
 
-#define ComputingPossibleParameterCompletion() (regularPass() && (! SyntaxPassOnly()) && s_opt.taskRegime==RegimeEditServer && s_opt.server_operation==OLO_COMPLETION)
+#define ComputingPossibleParameterCompletion() (regularPass() && (! SyntaxPassOnly()) && options.taskRegime==RegimeEditServer && options.server_operation==OLO_COMPLETION)
 
 typedef struct whileExtractData {
     int				i1;
@@ -854,7 +854,7 @@ CompilationUnit: {
                             s_javaStat->currentPackage = "";
                             javaCheckIfPackageDirectoryIsInClassOrSourcePath(cdir);
                         } else {
-                            if (s_opt.taskRegime != RegimeEditServer) {
+                            if (options.taskRegime != RegimeEditServer) {
                                 warningMessage(ERR_ST, "package name does not match directory name");
                             }
                         }
@@ -869,7 +869,7 @@ CompilationUnit: {
 
                     fname = s_fileTab.tab[s_olOriginalFileNumber]->name;
 #if 1 //I_DO_NOT_KNOW, to take also symbols from lastly saved file???
-                    if (s_opt.taskRegime == RegimeEditServer
+                    if (options.taskRegime == RegimeEditServer
                         && s_ropt.refactoringRegime!=RegimeRefactory) {
                         // this must be before reading 's_olOriginalComFile' !!!
                         if (statb(fname, &st)==0) {
@@ -1368,25 +1368,25 @@ _bef_:	{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     // TODO, REDO all this stuff around class/method boundaries !!!!!!
-                    if (s_opt.taskRegime == RegimeEditServer) {
+                    if (options.taskRegime == RegimeEditServer) {
                         if (s_cp.parserPassedMarker && !s_cp.thisMethodMemoriesStored){
                             s_cps.cxMemiAtMethodBeginning = s_cp.cxMemiAtFunBegin;
                             s_cps.cxMemiAtMethodEnd = cxMemory->i;
                             /*& sprintf(tmpBuff,"setting %s, %d,%d   %d,%d",
-                                    olcxOptionsName[s_opt.server_operation],
+                                    olcxOptionsName[options.server_operation],
                                     s_cp.parserPassedMarker, s_cp.thisMethodMemoriesStored,
                                     s_cps.cxMemiAtMethodBeginning, s_cps.cxMemiAtMethodEnd),
                                 ppcGenRecord(PPC_BOTTOM_INFORMATION, tmpBuff,"\n"); &*/
                             s_cp.thisMethodMemoriesStored = 1;
-                            if (s_opt.server_operation == OLO_MAYBE_THIS) {
+                            if (options.server_operation == OLO_MAYBE_THIS) {
                                 changeMethodReferencesUsages(LINK_NAME_MAYBE_THIS_ITEM,
                                                              CategoryLocal, currentFile.lexBuffer.buffer.fileNumber,
                                                              s_javaStat->thisClass);
-                            } else if (s_opt.server_operation == OLO_NOT_FQT_REFS) {
+                            } else if (options.server_operation == OLO_NOT_FQT_REFS) {
                                 changeMethodReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
                                                              CategoryLocal,currentFile.lexBuffer.buffer.fileNumber,
                                                              s_javaStat->thisClass);
-                            } else if (s_opt.server_operation == OLO_USELESS_LONG_NAME) {
+                            } else if (options.server_operation == OLO_USELESS_LONG_NAME) {
                                 changeMethodReferencesUsages(LINK_NAME_IMPORTED_QUALIFIED_ITEM,
                                                              CategoryGlobal,currentFile.lexBuffer.buffer.fileNumber,
                                                              s_javaStat->thisClass);
@@ -1397,11 +1397,11 @@ _bef_:	{
                             /*& fprintf(dumpOut,"!setting class end line to %d, cb==%d, ce==%d\n",
                               s_cps.classCoordEndLine, s_cps.cxMemiAtClassBeginning,
                               s_cps.cxMemiAtClassEnd); &*/
-                            if (s_opt.server_operation == OLO_NOT_FQT_REFS_IN_CLASS) {
+                            if (options.server_operation == OLO_NOT_FQT_REFS_IN_CLASS) {
                                 changeClassReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
                                                             CategoryLocal,currentFile.lexBuffer.buffer.fileNumber,
                                                             s_javaStat->thisClass);
-                            } else if (s_opt.server_operation == OLO_USELESS_LONG_NAME_IN_CLASS) {
+                            } else if (options.server_operation == OLO_USELESS_LONG_NAME_IN_CLASS) {
                                 changeClassReferencesUsages(LINK_NAME_IMPORTED_QUALIFIED_ITEM,
                                                             CategoryGlobal,currentFile.lexBuffer.buffer.fileNumber,
                                                             s_javaStat->thisClass);
@@ -1499,7 +1499,7 @@ FieldDeclaration
                         htmlAddJavaDocReference(p, &p->pos, vClass, vClass);
                     }
                     $$.d = $3.d;
-                    if (s_opt.taskRegime == RegimeEditServer
+                    if (options.taskRegime == RegimeEditServer
                         && s_cp.parserPassedMarker
                         && !s_cp.thisMethodMemoriesStored){
                         s_cps.methodCoordEndLine = currentFile.lineNumber+1;
@@ -1541,7 +1541,7 @@ FieldDeclaration
                               p->name,clas->linkName);
                     LIST_APPEND(Symbol, clas->u.s->records, p);
                     assert(vClass!=s_noneFileIndex);
-                    if (p->pos.file!=s_olOriginalFileNumber && s_opt.server_operation==OLO_PUSH) {
+                    if (p->pos.file!=s_olOriginalFileNumber && options.server_operation==OLO_PUSH) {
                         // pre load of saved file akes problem on move field/method, ...
                         addCxReference(p, &p->pos, UsageDefined, vClass, vClass);
                     }
@@ -1936,7 +1936,7 @@ ConstructorDeclaration
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockFree();
-                    if (s_opt.taskRegime == RegimeHtmlGenerate) {
+                    if (options.taskRegime == RegimeHtmlGenerate) {
                         htmlAddFunctionSeparatorReference();
                     } else {
                         PropagateBoundaries($$, $1, $6);
@@ -2574,7 +2574,7 @@ WhileStatementPrefix
     :   WHILE _nlabel_ '(' Expression ')' /*6*/ _nfork_ {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if (s_opt.server_operation == OLO_EXTRACT) {
+                    if (options.server_operation == OLO_EXTRACT) {
                         Symbol *cl, *bl;
                         cl = bl = NULL;        // just to avoid warning message
                         cl = addContinueBreakLabelSymbol($2.d, CONTINUE_LABEL_NAME);
@@ -2853,7 +2853,7 @@ ThrowStatement
     :   Throw Expression ';'		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if (s_opt.server_operation==OLO_EXTRACT) {
+                    if (options.server_operation==OLO_EXTRACT) {
                         addCxReference($2.d.typeModifier->u.t, &$1.d->p, UsageThrown, s_noneFileIndex, s_noneFileIndex);
                     }
                 } else {
@@ -2880,7 +2880,7 @@ TryCatches
 TryStatement
     :   Try  _nfork_
             {
-                if (s_opt.server_operation == OLO_EXTRACT) {
+                if (options.server_operation == OLO_EXTRACT) {
                     addTrivialCxReference("TryCatch", TypeTryCatchMarker,StorageDefault,
                                             &$1.d->p, UsageTryCatchBegin);
                 }
@@ -2895,7 +2895,7 @@ TryStatement
             }
         TryCatches		{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $6);
-            if (s_opt.server_operation == OLO_EXTRACT) {
+            if (options.server_operation == OLO_EXTRACT) {
                 addTrivialCxReference("TryCatch", TypeTryCatchMarker,StorageDefault,
                                         &$1.d->p, UsageTryCatchEnd);
             }
@@ -2918,7 +2918,7 @@ CatchClause
                         if ($3.d->bits.symType != TypeError) {
                             addNewSymbolDef($3.d, StorageAuto, s_javaStat->locals,
                                             UsageDefined);
-                            if (s_opt.server_operation == OLO_EXTRACT) {
+                            if (options.server_operation == OLO_EXTRACT) {
                                 assert($3.d->bits.symType==TypeDefault);
                                 addCxReference($3.d->u.type->u.t, &$1.d->p, UsageCatched, s_noneFileIndex, s_noneFileIndex);
                             }
@@ -2939,7 +2939,7 @@ CatchClause
     |	Catch '(' FormalParameter ')' ';'		{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    if (s_opt.server_operation == OLO_EXTRACT) {
+                    if (options.server_operation == OLO_EXTRACT) {
                         assert($3.d->bits.symType==TypeDefault);
                         addCxReference($3.d->u.type->u.t, &$1.d->p, UsageCatched, s_noneFileIndex, s_noneFileIndex);
                     }
@@ -4172,7 +4172,7 @@ Assignment
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     s_cps.lastAssignementStruct = NULL;
-                    if ($1.d.reference != NULL && s_opt.server_operation == OLO_EXTRACT) {
+                    if ($1.d.reference != NULL && options.server_operation == OLO_EXTRACT) {
                         Reference *rr;
                         rr = duplicateReference($1.d.reference);
                         $1.d.reference->usage = s_noUsage;
@@ -4199,7 +4199,7 @@ Assignment
                     }
                 } else {
                     PropagateBoundaries($$, $1, $4);
-                    if (s_opt.taskRegime == RegimeEditServer) {
+                    if (options.taskRegime == RegimeEditServer) {
                         if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE($1.b, s_cxRefPos, $1.e)) {
                             s_spp[SPP_ASSIGNMENT_OPERATOR_POSITION] = $3.b;
                             s_spp[SPP_ASSIGNMENT_END_POSITION] = $4.e;
@@ -4429,7 +4429,7 @@ void makeJavaCompletions(char *s, int len, Position *pos) {
     }
 
     /* If there is a wizard completion, RETURN now */
-    if (s_completions.alternativeIndex != 0 && s_opt.server_operation != OLO_SEARCH) return;
+    if (s_completions.alternativeIndex != 0 && options.server_operation != OLO_SEARCH) return;
     for (i=0;(token=completionsTab[i].token)!=0; i++) {
         if (exists_valid_parser_action_on(token)) {
             log_trace("completing %d==%s in state %d", i, s_tokenName[token], lastyystate);
@@ -4457,7 +4457,7 @@ void makeJavaCompletions(char *s, int len, Position *pos) {
     /* If the completion window is shown, or there is no completion,
        add also hints (should be optionally) */
     /*& if (s_completions.comPrefix[0]!=0  && (s_completions.alternativeIndex != 0) &*/
-    /*&	&& s_opt.cxrefs != OLO_SEARCH) return; &*/
+    /*&	&& options.cxrefs != OLO_SEARCH) return; &*/
 
     for (i=0;(token=hintCompletionsTab[i].token)!=0; i++) {
         if (exists_valid_parser_action_on(token)) {

@@ -47,7 +47,7 @@ BeforeEach(Extract) {
     memoryUseFunctionForError(myError);
     memoryUseFunctionForInternalCheckFail(myInternalCheckFail);
     memoryUseFunctionForFatalError(myFatalError);
-    s_opt.cxMemoryFactor = 2;
+    options.cxMemoryFactor = 2;
     if (!cxMemoryOverflowHandler(1))
         fail_test("cxMemoryOverflowHandler() returned 0");
     DM_INIT(cxMemory);

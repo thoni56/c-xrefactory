@@ -85,11 +85,11 @@ static void fillCompletionFqtMapInfo(S_completionFqtMapInfo *completionFqtMapInf
 static void formatFullCompletions(char *tt, int indent, int inipos) {
     int     pos;
     char    *nlpos,*p;
-    //&sprintf(tmpBuff,"formatting '\%s' indent==%d, inipos==%d, linelen==%d",tt,indent,inipos,s_opt.olineLen);ppcGenTmpBuff();
+    //&sprintf(tmpBuff,"formatting '\%s' indent==%d, inipos==%d, linelen==%d",tt,indent,inipos,options.olineLen);ppcGenTmpBuff();
     pos = inipos; nlpos=NULL;
     p = tt;
     for(;;) {
-        while (pos<s_opt.olineLen || nlpos==NULL) {
+        while (pos<options.olineLen || nlpos==NULL) {
             p++; pos++;
             if (*p == 0) goto formatFullCompletionsEnd;
             if (*p ==' ' && pos>indent) nlpos = p;
@@ -106,15 +106,15 @@ void formatOutputLine(char *line, int startingColumn) {
     char    *nlp,*p;
 
     pos = startingColumn; nlp=NULL;
-    assert(s_opt.tabulator>1);
+    assert(options.tabulator>1);
     p = line;
     for(;;) {
-        while (pos<s_opt.olineLen || nlp==NULL) {
+        while (pos<options.olineLen || nlp==NULL) {
             if (*p == 0) return;
             if (*p == ' ') nlp = p;
             if (*p == '\t') {
                 nlp = p;
-                n = s_opt.tabulator-(pos-1)%s_opt.tabulator-1;
+                n = options.tabulator-(pos-1)%options.tabulator-1;
                 pos += n;
             } else {
                 pos++;
@@ -128,7 +128,7 @@ void formatOutputLine(char *line, int startingColumn) {
 static int printJavaModifiers(char *buf, int *size, unsigned acc) {
     int i;
     i = 0;
-    if (1 || (s_opt.ooChecksBits & OOC_ACCESS_CHECK)==0) {
+    if (1 || (options.ooChecksBits & OOC_ACCESS_CHECK)==0) {
         if (acc & ACCESS_PUBLIC) {
             sprintf(buf+i,"public "); i+=strlen(buf+i);
             assert(i< *size);
@@ -353,7 +353,7 @@ static void sprintFullJeditCompletionInfo(Completions *c, int ii, int *nindent, 
 }
 
 void olCompletionListInit(Position *originalPos) {
-    olcxSetCurrentUser(s_opt.user);
+    olcxSetCurrentUser(options.user);
     olcxFreeOldCompletionItems(&s_olcxCurrentUser->completionsStack);
     olcxPushEmptyStackItem(&s_olcxCurrentUser->completionsStack);
     s_olcxCurrentUser->completionsStack.top->cpos = *originalPos;
@@ -363,7 +363,7 @@ static int completionsWillPrintEllipsis(S_olCompletion *olc) {
     int max, ellipsis;
     LIST_LEN(max, S_olCompletion, olc);
     ellipsis = 0;
-    if (max >= MAX_COMPLETIONS - 2 || max == s_opt.maxCompletions) {
+    if (max >= MAX_COMPLETIONS - 2 || max == options.maxCompletions) {
         ellipsis = 1;
     }
     return(ellipsis);
@@ -374,8 +374,8 @@ static void printCompletionsBeginning(S_olCompletion *olc, int noFocus) {
     S_olCompletion      *cc;
     int                 tlen;
     LIST_LEN(max, S_olCompletion, olc);
-    if (s_opt.xref2) {
-        if (s_opt.editor == EDITOR_JEDIT) {
+    if (options.xref2) {
+        if (options.editor == EDITOR_JEDIT) {
             ppcGenTwoNumericAndRecordBegin(PPC_FULL_MULTIPLE_COMPLETIONS,
                                            PPCA_NUMBER, max,
                                            PPCA_NO_FOCUS, noFocus);
@@ -394,7 +394,7 @@ static void printCompletionsBeginning(S_olCompletion *olc, int noFocus) {
 }
 
 static void printOneCompletion(S_olCompletion *olc) {
-    if (s_opt.editor == EDITOR_JEDIT) {
+    if (options.editor == EDITOR_JEDIT) {
         fprintf(ccOut,"<%s %s=\"%s\" %s=%d %s=%ld>", PPC_MULTIPLE_COMPLETION_LINE,
                 PPCA_VCLASS, olc->vclass,
                 PPCA_VALUE, olc->jindent,
@@ -408,13 +408,13 @@ static void printOneCompletion(S_olCompletion *olc) {
 
 static void printCompletionsEnding(S_olCompletion *olc) {
     if (completionsWillPrintEllipsis(olc)) {
-        if (s_opt.editor == EDITOR_JEDIT) {
+        if (options.editor == EDITOR_JEDIT) {
         } else {
             fprintf(ccOut,"\n...");
         }
     }
-    if (s_opt.xref2) {
-        if (s_opt.editor == EDITOR_JEDIT) {
+    if (options.xref2) {
+        if (options.editor == EDITOR_JEDIT) {
             ppcGenRecordEnd(PPC_FULL_MULTIPLE_COMPLETIONS);
         } else {
             ppcGenRecordEnd(PPC_ALL_COMPLETIONS);
@@ -441,7 +441,7 @@ void printCompletions(Completions* c) {
     // O.K. there will be a menu diplayed, clear the old one
     olCompletionListInit(&c->idToProcessPos);
     if (c->alternativeIndex == 0) {
-        if (s_opt.xref2) {
+        if (options.xref2) {
             ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No completion possible **","\n");
         } else {
             fprintf(ccOut,"-");
@@ -449,7 +449,7 @@ void printCompletions(Completions* c) {
         goto finiWithoutMenu;
     }
     if ((! c->fullMatchFlag) && c->alternativeIndex==1) {
-        if (s_opt.xref2) {
+        if (options.xref2) {
             ppcGenGotoPositionRecord(&s_olcxCurrentUser->completionsStack.top->cpos);
             ppcGenRecord(PPC_SINGLE_COMPLETION, c->alternatives[0].string,"\n");
         } else {
@@ -458,7 +458,7 @@ void printCompletions(Completions* c) {
         goto finiWithoutMenu;
     }
     if ((! c->fullMatchFlag) && strlen(c->comPrefix) > c->idToProcessLen) {
-        if (s_opt.xref2) {
+        if (options.xref2) {
             ppcGenGotoPositionRecord(&s_olcxCurrentUser->completionsStack.top->cpos);
             ppcGenRecord(PPC_SINGLE_COMPLETION, c->comPrefix,"\n");
             ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 1, "Multiple completions","\n");
@@ -470,15 +470,15 @@ void printCompletions(Completions* c) {
     // this can't be ordered directly, because of overloading
     //&     if (LANGUAGE(LANG_JAVA)) reorderCompletionArray(c);
     indent = c->maxLen;
-    if (s_opt.olineLen - indent < MIN_COMPLETION_INDENT_REST) {
-        indent = s_opt.olineLen - MIN_COMPLETION_INDENT_REST;
+    if (options.olineLen - indent < MIN_COMPLETION_INDENT_REST) {
+        indent = options.olineLen - MIN_COMPLETION_INDENT_REST;
         if (indent < MIN_COMPLETION_INDENT) indent = MIN_COMPLETION_INDENT;
     }
     if (indent > MAX_COMPLETION_INDENT) indent = MAX_COMPLETION_INDENT;
-    if (c->alternativeIndex > s_opt.maxCompletions) max = s_opt.maxCompletions;
+    if (c->alternativeIndex > options.maxCompletions) max = options.maxCompletions;
     else max = c->alternativeIndex;
     for(ii=0; ii<max; ii++) {
-        if (s_opt.editor == EDITOR_JEDIT) {
+        if (options.editor == EDITOR_JEDIT) {
             sprintFullJeditCompletionInfo(c, ii, &jindent, &vclass);
         } else {
             sprintFullCompletionInfo(c, ii, indent);
@@ -655,7 +655,7 @@ static int reallyInsert(CompletionLine *a,
 }
 
 static void computeComPrefix(char *d, char *s) {
-    while (*d == *s /*& && *s!='(' || (s_opt.completionCaseSensitive==0 && tolower(*d)==tolower(*s)) &*/) {
+    while (*d == *s /*& && *s!='(' || (options.completionCaseSensitive==0 && tolower(*d)==tolower(*s)) &*/) {
         if (*d == 0) return;
         d++; s++;
     }
@@ -665,7 +665,7 @@ static void computeComPrefix(char *d, char *s) {
 static int completionTestPrefix(Completions *ci, char *s) {
     char *d;
     d = ci->idToProcess;
-    while (*d == *s || (s_opt.completionCaseSensitive==0 && tolower(*d)==tolower(*s))) {
+    while (*d == *s || (options.completionCaseSensitive==0 && tolower(*d)==tolower(*s))) {
         if (*d == 0) {
             ci->isCompleteFlag = true;    /* complete, but maybe not unique*/
             return(0);
@@ -723,7 +723,7 @@ static void searchName(char *name, CompletionLine *compLine, int orderFlag,
     int l;
     if (name == NULL) return;
 
-    if (s_opt.olcxSearchString==NULL || *s_opt.olcxSearchString==0) {
+    if (options.olcxSearchString==NULL || *options.olcxSearchString==0) {
         // old fashioned search
         if (stringContainsCaseInsensitive(name, ci->idToProcess) == 0) return;
     } else {
@@ -754,7 +754,7 @@ static void searchName(char *name, CompletionLine *compLine, int orderFlag,
 void processName(char *name, CompletionLine *compLine, int orderFlag, void *c) {
     Completions *ci;
     ci = (Completions *) c;
-    if (s_opt.server_operation == OLO_SEARCH) {
+    if (options.server_operation == OLO_SEARCH) {
         searchName(name, compLine, orderFlag, ci);
     } else {
         completeName(name, compLine, orderFlag, ci);
@@ -795,7 +795,7 @@ static void completeFunctionOrMethodName(Completions *c, int orderFlag, int vlev
     char            *cn, *cname, *psuff, *msig;
     cname = r->name;
     cnamelen = strlen(cname);
-    if (s_opt.completeParenthesis == 0) {
+    if (options.completeParenthesis == 0) {
         cn = cname;
     } else {
         assert(r->u.type!=NULL);
@@ -857,7 +857,7 @@ static bool javaLinkable(unsigned storage, unsigned accessFlags) {
     /*fprintf(dumpOut,"testing linkability %x %x\n",storage,accessFlags);fflush(dumpOut);*/
     if (s_language != LANG_JAVA) return true;
     if (storage == ACCESS_ALL) return true;
-    if ((s_opt.ooChecksBits & OOC_LINKAGE_CHECK) == 0) return true;
+    if ((options.ooChecksBits & OOC_LINKAGE_CHECK) == 0) return true;
     if (storage & ACCESS_STATIC) return((accessFlags & ACCESS_STATIC) != 0);
 
     return true;
@@ -882,7 +882,7 @@ static void processSpecialInheritedFullCompletion( Completions *c, int orderFlag
 }
 
 static AccessibilityCheckYesNo calculateAccessCheckOption(void) {
-    if (s_opt.ooChecksBits & OOC_ACCESS_CHECK) {
+    if (options.ooChecksBits & OOC_ACCESS_CHECK) {
         return ACCESSIBILITY_CHECK_YES;
     } else {
         return ACCESSIBILITY_CHECK_NO;
@@ -919,7 +919,7 @@ static void completeRecordsNames(
         // not about visibility checks
         visibilityCheck = VISIBILITY_CHECK_NO;
         accessCheck = calculateAccessCheckOption();
-        //&if (s_opt.ooChecksBits & OOC_VISIBILITY_CHECK) {
+        //&if (options.ooChecksBits & OOC_VISIBILITY_CHECK) {
         //& visibilityCheck = VISIBILITY_CHECK_YES;
         //&} else {
         //& visibilityCheck = VISIBILITY_CHECK_NO;
@@ -951,7 +951,7 @@ static void completeRecordsNames(
             if (completionType == TypeInheritedFullMethod) {
                 // TODO customizable completion level
                 if (vlevel > 1
-                    && vlevel <= s_opt.completionOverloadWizardDeep+1
+                    && vlevel <= options.completionOverloadWizardDeep+1
                     &&  (r->bits.access & ACCESS_PRIVATE)==0
                     &&  (r->bits.access & ACCESS_STATIC)==0) {
                     processSpecialInheritedFullCompletion(c,orderFlag,vlevel,
@@ -961,7 +961,7 @@ static void completeRecordsNames(
             } else if (completionType == TypeSpecialConstructorCompletion) {
                 fillCompletionLine(&completionLine, c->idToProcess, r, TypeDefault, vlevel,0,NULL,vFunCl);
                 completionInsertName(c->idToProcess, &completionLine, orderFlag, (void*) c);
-            } else if (s_opt.completeParenthesis
+            } else if (options.completeParenthesis
                        && (r->bits.storage==StorageMethod || r->bits.storage==StorageConstructor)) {
                 completeFunctionOrMethodName(c, orderFlag, vlevel, r, vFunCl);
             } else {
@@ -1128,7 +1128,7 @@ static int isForCompletionSymbol(Completions *c,
                                  ) {
     Symbol    *sy;
 
-    if (s_opt.server_operation != OLO_COMPLETION)  return(0);
+    if (options.server_operation != OLO_COMPLETION)  return(0);
     if (token->typeModifier==NULL) return(0);
     if (c->idToProcessLen != 0) return(0);
     if (token->typeModifier->kind == TypePointer) {
@@ -1398,7 +1398,7 @@ void javaHintCompleteMethodParameters(Completions *c) {
         c->fullMatchFlag = true;
         c->noFocusOnCompletions = true;
     }
-    if (s_opt.server_operation != OLO_SEARCH) s_completions.abortFurtherCompletions = true;
+    if (options.server_operation != OLO_SEARCH) s_completions.abortFurtherCompletions = true;
 }
 
 
@@ -1488,9 +1488,9 @@ static void completeFqtFromFileName(char *file, void *cfmpi) {
         sname = lastOccurenceOfSlashOrAntiSlash(ttt);
         if (sname == NULL) sname = ttt;
         else sname ++;
-        if (pathncmp(c->idToProcess, sname, c->idToProcessLen, s_opt.completionCaseSensitive)==0
+        if (pathncmp(c->idToProcess, sname, c->idToProcessLen, options.completionCaseSensitive)==0
             || (fmi->completionType == FQT_COMPLETE_ALSO_ON_PACKAGE
-                && pathncmp(c->idToProcess, ttt, c->idToProcessLen, s_opt.completionCaseSensitive)==0)) {
+                && pathncmp(c->idToProcess, ttt, c->idToProcessLen, options.completionCaseSensitive)==0)) {
             memb = javaGetFieldClass(ttt, &sname);
             linkNamePrettyPrint(sss, ttt, TMP_STRING_SIZE, LONG_NAME);
             XX_ALLOCC(ss, strlen(sss)+1, char);
@@ -1572,24 +1572,24 @@ static void javaFqtCompletions(Completions *c, enum fqtCompletion completionType
     S_stringList            *pp;
 
     fillCompletionFqtMapInfo(&cfmi, c, completionType);
-    if (s_opt.fqtNameToCompletions == 0) return;
+    if (options.fqtNameToCompletions == 0) return;
     // fqt from .jars
     for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && s_zipArchiveTable[i].fn[0]!=0; i++) {
         fsRecMapOnFiles(s_zipArchiveTable[i].dir, s_zipArchiveTable[i].fn,
                         "", completeFqtClassFileFromZipArchiv, &cfmi);
     }
-    if (s_opt.fqtNameToCompletions <= 1) return;
+    if (options.fqtNameToCompletions <= 1) return;
     // fqt from filetab
     for(i=0; i<s_fileTab.size; i++) {
         if (s_fileTab.tab[i]!=NULL) completeFqtClassFileFromFileTab(s_fileTab.tab[i], &cfmi);
     }
-    if (s_opt.fqtNameToCompletions <= 2) return;
+    if (options.fqtNameToCompletions <= 2) return;
     // fqt from classpath
     for(pp=s_javaClassPaths; pp!=NULL; pp=pp->next) {
         mapDirectoryFiles(pp->d, completeRecursivelyFqtNamesFromDirectory,DO_NOT_ALLOW_EDITOR_FILES,
                           pp->d,pp->d,NULL,&cfmi,NULL);
     }
-    if (s_opt.fqtNameToCompletions <= 3) return;
+    if (options.fqtNameToCompletions <= 3) return;
     // fqt from sourcepath
     JavaMapOnPaths(s_javaSourcePaths, {
             mapDirectoryFiles(currentPath, completeRecursivelyFqtNamesFromDirectory,DO_NOT_ALLOW_EDITOR_FILES,
@@ -1647,7 +1647,7 @@ void javaCompleteConstructSingleName(Completions *c) {
 void javaCompleteHintForConstructSingleName(Completions *c) {
     CompletionLine     compLine;
     char        *name;
-    if (c->idToProcessLen == 0 && s_opt.server_operation == OLO_COMPLETION) {
+    if (c->idToProcessLen == 0 && options.server_operation == OLO_COMPLETION) {
         // O.K. wizard completion
         if (s_cps.lastAssignementStruct!=NULL) {
             name = s_cps.lastAssignementStruct->name;
@@ -1685,7 +1685,7 @@ void javaCompleteExprSingleName(Completions*c) {
 void javaCompleteThisConstructor (Completions *c) {
     Symbol *memb;
     if (strcmp(c->idToProcess,"this")!=0) return;
-    if (s_opt.server_operation == OLO_SEARCH) return;
+    if (options.server_operation == OLO_SEARCH) return;
     memb = s_javaStat->thisClass;
     javaLoadClassSymbolsFromFile(memb);
     completeRecordsNames(c, memb, ACCESS_ALL,CLASS_TO_ANY, StorageConstructor,
@@ -1695,7 +1695,7 @@ void javaCompleteThisConstructor (Completions *c) {
 void javaCompleteSuperConstructor (Completions *c) {
     Symbol *memb;
     if (strcmp(c->idToProcess,"super")!=0) return;
-    if (s_opt.server_operation == OLO_SEARCH) return;
+    if (options.server_operation == OLO_SEARCH) return;
     memb = javaCurrentSuperClass();
     javaLoadClassSymbolsFromFile(memb);
     completeRecordsNames(c, memb, ACCESS_ALL,CLASS_TO_ANY, StorageConstructor,

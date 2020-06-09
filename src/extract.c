@@ -56,7 +56,7 @@ void genInternalLabelReference(int counter, int usage) {
     Id labelId;
     Position position;
 
-    if (s_opt.server_operation != OLO_EXTRACT)
+    if (options.server_operation != OLO_EXTRACT)
         return;
 
     snprintf(labelName, TMP_STRING_SIZE, "%%L%d", counter);
@@ -74,7 +74,7 @@ void genInternalLabelReference(int counter, int usage) {
 Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
     Symbol *s;
 
-    if (s_opt.server_operation != OLO_EXTRACT) return NULL;
+    if (options.server_operation != OLO_EXTRACT) return NULL;
 
     s = newSymbolAsLabel(name, name, s_noPos, labn);
     fillSymbolBits(&s->bits, ACCESS_DEFAULT, TypeLabel, StorageAuto);
@@ -88,7 +88,7 @@ void deleteContinueBreakLabelSymbol(char *name) {
     Symbol    ss,*memb;
     int         ii;
 
-    if (s_opt.server_operation != OLO_EXTRACT) return;
+    if (options.server_operation != OLO_EXTRACT) return;
 
     fillSymbolWithLabel(&ss, name, name, s_noPos, 0);
     fillSymbolBits(&ss.bits, ACCESS_DEFAULT, TypeLabel, StorageAuto);
@@ -103,7 +103,7 @@ void genContinueBreakReference(char *name) {
     Symbol    ss,*memb;
     int         ii;
 
-    if (s_opt.server_operation != OLO_EXTRACT) return;
+    if (options.server_operation != OLO_EXTRACT) return;
 
     fillSymbolWithLabel(&ss, name, name, s_noPos, 0);
     fillSymbolBits(&ss.bits, ACCESS_DEFAULT, TypeLabel, StorageAuto);
@@ -117,7 +117,7 @@ void genSwitchCaseFork(int lastFlag) {
     Symbol    ss,*memb;
     int         ii;
 
-    if (s_opt.server_operation != OLO_EXTRACT) return;
+    if (options.server_operation != OLO_EXTRACT) return;
 
     fillSymbolWithLabel(&ss, SWITCH_LABEL_NAME, SWITCH_LABEL_NAME, s_noPos, 0);
     fillSymbolBits(&ss.bits, ACCESS_DEFAULT, TypeLabel, StorageAuto);
@@ -432,14 +432,14 @@ static void extReClassifyIOVars(S_programGraphNode *program) {
 
     op = NULL; uniqueOutFlag = 1;
     for(p=program; p!=NULL; p=p->next) {
-        if (s_opt.extractMode == EXTR_FUNCTION_ADDRESS_ARGS) {
+        if (options.extractMode == EXTR_FUNCTION_ADDRESS_ARGS) {
             if (p->classifBits == EXTRACT_OUT_ARGUMENT
                 ||  p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
                 ||  p->classifBits == EXTRACT_IN_OUT_ARGUMENT
                 ) {
                 p->classifBits = EXTRACT_ADDRESS_ARGUMENT;
             }
-        } else if (s_opt.extractMode == EXTR_FUNCTION) {
+        } else if (options.extractMode == EXTR_FUNCTION) {
             if (p->classifBits == EXTRACT_OUT_ARGUMENT
                 || p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
                 ) {
@@ -461,7 +461,7 @@ static void extReClassifyIOVars(S_programGraphNode *program) {
 
     op = NULL; uniqueOutFlag = 1;
     for(p=program; p!=NULL; p=p->next) {
-        if (s_opt.extractMode == EXTR_FUNCTION) {
+        if (options.extractMode == EXTR_FUNCTION) {
             if (p->classifBits == EXTRACT_IN_OUT_ARGUMENT) {
                 if (op == NULL) op = p;
                 else uniqueOutFlag = 0;
@@ -507,7 +507,7 @@ static void extGenNewMacroCall(S_programGraphNode *program) {
     sprintf(rb+strlen(rb), "%s);\n", fFlag?"(":"");
 
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (s_opt.xref2) {
+    if (options.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
         fprintf(ccOut, "%s", rb);
@@ -540,7 +540,7 @@ static void extGenNewMacroHead(S_programGraphNode *program) {
     }
     sprintf(rb+strlen(rb), "%s) {\\\n", fFlag?"(":"");
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (s_opt.xref2) {
+    if (options.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
         fprintf(ccOut, "%s", rb);
@@ -553,7 +553,7 @@ static void extGenNewMacroTail(S_programGraphNode *program) {
     sprintf(rb+strlen(rb),"}\n\n");
 
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (s_opt.xref2) {
+    if (options.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
         fprintf(ccOut, "%s", rb);
@@ -607,14 +607,14 @@ static void extGenNewFunCall(S_programGraphNode *program) {
                 ||  p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
                 ) {
             GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,
-                                          s_opt.olExtractAddrParPrefix,1);
+                                          options.olExtractAddrParPrefix,1);
             sprintf(rb+strlen(rb), "%s&%s", fFlag?"(":", " , name);
             fFlag = 0;
         }
     }
     sprintf(rb+strlen(rb), "%s);\n", fFlag?"(":"");
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (s_opt.xref2) {
+    if (options.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
         fprintf(ccOut, "%s", rb);
@@ -765,7 +765,7 @@ static void extGenNewFunHead(S_programGraphNode *program) {
                 ||  p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
                 ) {
             GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,
-                                          s_opt.olExtractAddrParPrefix,1);
+                                          options.olExtractAddrParPrefix,1);
             sprintf(nhead+nhi, "%s%s", fFlag?"(":", " , decl);
             nhi += strlen(nhead+nhi);
             fFlag = 0;
@@ -830,14 +830,14 @@ static void extGenNewFunHead(S_programGraphNode *program) {
                 else sprintf(rb+strlen(rb), ";\n\t%s",decl);
             }
             if (p->classifBits == EXTRACT_IN_OUT_ARGUMENT) {
-                sprintf(rb+strlen(rb), " = %s%s", s_opt.olExtractAddrParPrefix, name);
+                sprintf(rb+strlen(rb), " = %s%s", options.olExtractAddrParPrefix, name);
             }
             fFlag = 0;
         }
     }
     if (fFlag == 0) sprintf(rb+strlen(rb), ";\n");
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (s_opt.xref2) {
+    if (options.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
         fprintf(ccOut, "%s", rb);
@@ -858,7 +858,7 @@ static void extGenNewFunTail(S_programGraphNode *program) {
                 ||  p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
                 ) {
             GetLocalVarStringFromLinkName(p->symRef->name,dcla,name,decl,"",1);
-            sprintf(rb+strlen(rb), "\t%s%s = %s;\n", s_opt.olExtractAddrParPrefix,
+            sprintf(rb+strlen(rb), "\t%s%s = %s;\n", options.olExtractAddrParPrefix,
                     name, name);
         }
     }
@@ -873,7 +873,7 @@ static void extGenNewFunTail(S_programGraphNode *program) {
     }
     sprintf(rb+strlen(rb),"}\n\n");
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (s_opt.xref2) {
+    if (options.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
         fprintf(ccOut, "%s", rb);
@@ -971,7 +971,7 @@ static void extJavaGenNewClassCall(S_programGraphNode *program) {
     sprintf(rb+strlen(rb),"\t\t%s = null;\n", s_extractionName);
 
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (s_opt.xref2) {
+    if (options.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
         fprintf(ccOut, "%s", rb);
@@ -1093,7 +1093,7 @@ static void extJavaGenNewClassHead(S_programGraphNode *program) {
     }
     if (fFlag == 0) sprintf(rb+strlen(rb), ";\n");
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (s_opt.xref2) {
+    if (options.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
         fprintf(ccOut, "%s", rb);
@@ -1136,7 +1136,7 @@ static void extJavaGenNewClassTail(S_programGraphNode *program) {
     sprintf(rb+strlen(rb),"\t\t}\n\t}\n\n");
 
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
-    if (s_opt.xref2) {
+    if (options.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
     } else {
         fprintf(ccOut, "%s", rb);
@@ -1178,7 +1178,7 @@ static void extMakeExtraction(void) {
     extSetInOutBlockFields(program);
     //&dumpProgram(program);
 
-    if (s_opt.extractMode!=EXTR_MACRO && extIsJumpInOutBlock(program)) {
+    if (options.extractMode!=EXTR_MACRO && extIsJumpInOutBlock(program)) {
         errorMessage(ERR_ST, "There are jumps in or out of region");
         return;
     }
@@ -1192,43 +1192,43 @@ static void extMakeExtraction(void) {
         if (newClassExt) s_extractionName = "newClass_";
         else s_extractionName = "newMethod_";
     } else {
-        if (s_opt.extractMode==EXTR_MACRO) s_extractionName = "NEW_MACRO_";
+        if (options.extractMode==EXTR_MACRO) s_extractionName = "NEW_MACRO_";
         else s_extractionName = "newFunction_";
     }
 
-    if (s_opt.xref2) ppcGenRecordWithAttributeBegin(PPC_EXTRACTION_DIALOG, PPCA_TYPE, s_extractionName);
+    if (options.xref2) ppcGenRecordWithAttributeBegin(PPC_EXTRACTION_DIALOG, PPCA_TYPE, s_extractionName);
     CX_ALLOCC(rb, EXTRACT_GEN_BUFFER_SIZE, char);
 
-    if (! s_opt.xref2) {
+    if (! options.xref2) {
         fprintf(ccOut,
                 "%%!\n------------------------ The Invocation ------------------------\n!\n");
     }
-    if (s_opt.extractMode==EXTR_MACRO) extGenNewMacroCall(program);
+    if (options.extractMode==EXTR_MACRO) extGenNewMacroCall(program);
     else if (newClassExt) extJavaGenNewClassCall(program);
     else extGenNewFunCall(program);
-    if (! s_opt.xref2) {
+    if (! options.xref2) {
         fprintf(ccOut,
                 "!\n--------------------------- The Head ---------------------------\n!\n");
     }
-    if (s_opt.extractMode==EXTR_MACRO) extGenNewMacroHead(program);
+    if (options.extractMode==EXTR_MACRO) extGenNewMacroHead(program);
     else if (newClassExt) extJavaGenNewClassHead(program);
     else extGenNewFunHead(program);
-    if (! s_opt.xref2) {
+    if (! options.xref2) {
         fprintf(ccOut,
                 "!\n--------------------------- The Tail ---------------------------\n!\n");
     }
-    if (s_opt.extractMode==EXTR_MACRO) extGenNewMacroTail(program);
+    if (options.extractMode==EXTR_MACRO) extGenNewMacroTail(program);
     else if (newClassExt) extJavaGenNewClassTail(program);
     else extGenNewFunTail(program);
 
-    if (s_opt.xref2) {
+    if (options.xref2) {
         ppcGenNumericRecord(PPC_INT_VALUE, s_cp.funBegPosition, "", "\n");
     } else {
         fprintf(ccOut,"!%d!\n", s_cp.funBegPosition);
         fflush(ccOut);
     }
 
-    if (s_opt.xref2) ppcGenRecordEnd(PPC_EXTRACTION_DIALOG);
+    if (options.xref2) ppcGenRecordEnd(PPC_EXTRACTION_DIALOG);
 }
 
 
@@ -1239,7 +1239,7 @@ void actionsBeforeAfterExternalDefinition(void) {
         && s_cp.cxMemiAtFunBegin != 0
         && s_cp.cxMemiAtFunBegin <= s_cps.cxMemiAtBlockBegin
         // is it an extraction action ?
-        && s_opt.server_operation == OLO_EXTRACT
+        && options.server_operation == OLO_EXTRACT
         && (! s_cps.extractProcessedFlag)) {
         // O.K. make extraction
         s_cp.cxMemiAtFunEnd = cxMemory->i;

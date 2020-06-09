@@ -210,7 +210,7 @@ static int getOptionFromFile(FILE *file, char *text, int text_size, int *chars_r
                     text[i++]=c;
                 previous_char=c; c=getc(file);
             }
-            if (c!='\"' && s_opt.taskRegime!=RegimeEditServer) {
+            if (c!='\"' && options.taskRegime!=RegimeEditServer) {
                 fatalError(ERR_ST, "option string through end of file", XREF_EXIT_ERR);
             }
         } else if (c=='`') {
@@ -223,7 +223,7 @@ static int getOptionFromFile(FILE *file, char *text, int text_size, int *chars_r
             }
             if (i < text_size-1)
                 text[i++]=c;
-            if (c!='`'  && s_opt.taskRegime!=RegimeEditServer) {
+            if (c!='`'  && options.taskRegime!=RegimeEditServer) {
                 errorMessage(ERR_ST, "option string through end of line");
             }
         } else if (c=='[') {
@@ -246,7 +246,7 @@ static int getOptionFromFile(FILE *file, char *text, int text_size, int *chars_r
             }
         }
         text[i]=0;
-        if (quotamess && s_opt.taskRegime!=RegimeEditServer) {
+        if (quotamess && options.taskRegime!=RegimeEditServer) {
             static int messageWritten=0;
             if (! messageWritten) {
                 char tmpBuff[TMP_BUFF_SIZE];
@@ -457,7 +457,7 @@ void readOptionPipe(char *comm, int *nargc, char ***nargv, char *sectionFile) {
 
 static char *getClassPath(bool defaultCpAllowed) {
     char *cp;
-    cp = s_opt.classpath;
+    cp = options.classpath;
     if (cp == NULL || *cp==0) cp = getenv("CLASSPATH");
     if (cp == NULL || *cp==0) {
         if (defaultCpAllowed) cp = s_defaultClassPath;
@@ -468,7 +468,7 @@ static char *getClassPath(bool defaultCpAllowed) {
 
 void javaSetSourcePath(int defaultCpAllowed) {
     char *cp;
-    cp = s_opt.sourcePath;
+    cp = options.sourcePath;
     if (cp == NULL || *cp==0) cp = getenv("SOURCEPATH");
     if (cp == NULL || *cp==0) cp = getClassPath(defaultCpAllowed);
     if (cp == NULL) {
@@ -546,7 +546,7 @@ int packageOnCommandLine(char *fn) {
             //&fprintf(dumpOut,"it is a package\n");
             res = 1;
             topCallFlag = 1;
-            if (s_opt.recursivelyDirs) recursFlag = &topCallFlag;
+            if (options.recursivelyDirs) recursFlag = &topCallFlag;
             else recursFlag = NULL;
             dirInputFile(ttt,"",NULL,NULL,recursFlag,&topCallFlag);
         }
@@ -620,7 +620,7 @@ static char *getJdk12AutoClassPathQuickly(void) {
 
 static char *getJdkClassPathQuickly(void) {
     char *jdkcp;
-    jdkcp = s_opt.jdkClassPath;
+    jdkcp = options.jdkClassPath;
     if (jdkcp == NULL || *jdkcp==0) jdkcp = getenv("JDKCLASSPATH");
     if (jdkcp == NULL || *jdkcp==0) jdkcp = getJdk12AutoClassPathQuickly();
     return(jdkcp);
@@ -728,20 +728,20 @@ void getJavaClassAndSourcePath(void) {
         expandWildcardsInPaths(cp, s_javaClassPathStatic, MAX_OPTION_LEN);
         cp = s_javaClassPathStatic;
 
-        createOptionString(&s_opt.classpath, cp);  //??? why is this, only optimisation of getenv?
+        createOptionString(&options.classpath, cp);  //??? why is this, only optimisation of getenv?
         processClassPathString(cp);
         jdkcp = getJdkClassPathQuickly();
         if (jdkcp != NULL && *jdkcp!=0) {
-            createOptionString(&s_opt.jdkClassPath, jdkcp);  //only optimisation of getenv?
+            createOptionString(&options.jdkClassPath, jdkcp);  //only optimisation of getenv?
             processClassPathString( jdkcp);
         }
 
         if (LANGUAGE(LANG_JAVA)
-            && s_opt.taskRegime != RegimeEditServer
+            && options.taskRegime != RegimeEditServer
             ) {
             static bool messageFlag=false;
-            if (messageFlag && ! s_opt.briefoutput) {
-                if (s_opt.xref2) {
+            if (messageFlag && ! options.briefoutput) {
+                if (options.xref2) {
                     char tmpBuff[TMP_BUFF_SIZE];
                     if (jdkcp!=NULL && *jdkcp!=0) {
                         sprintf(tmpBuff,"java runtime == %s", jdkcp);
@@ -767,10 +767,10 @@ void getJavaClassAndSourcePath(void) {
 
 int changeRefNumOption(int newRefNum) {
     int check;
-    if (s_opt.referenceFileCount == 0) check=1;
-    else if (s_opt.referenceFileCount == 1) check = (newRefNum <= 1);
-    else check = (newRefNum == s_opt.referenceFileCount);
-    s_opt.referenceFileCount = newRefNum;
+    if (options.referenceFileCount == 0) check=1;
+    else if (options.referenceFileCount == 1) check = (newRefNum <= 1);
+    else check = (newRefNum == options.referenceFileCount);
+    options.referenceFileCount = newRefNum;
     return(check);
 }
 
@@ -778,8 +778,8 @@ void getXrefrcFileName(char *filename) {
     int hlen;
     char *hh;
 
-    if (s_opt.xrefrc!=NULL) {
-        sprintf(filename, "%s", normalizeFileName(s_opt.xrefrc, s_cwd));
+    if (options.xrefrc!=NULL) {
+        sprintf(filename, "%s", normalizeFileName(options.xrefrc, s_cwd));
         return;
     }
     hh = getenv("HOME");

@@ -72,7 +72,7 @@ Ensure(Yylex, add_a_cpp_definition_to_the_symbol_table) {
      */
     expect(addCxReference, when(p_name, is_equal_to_string(DEFINE)));
 
-    s_opt.taskRegime = RegimeXref;
+    options.taskRegime = RegimeXref;
     /* If the define does not have a body, add the value of "1" */
     initInput(NULL, NULL, "__x86_64__ 1", NULL);
     currentFile.lineNumber = 1;

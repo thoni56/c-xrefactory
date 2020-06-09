@@ -132,7 +132,7 @@ char *javaCreateComposedName(char *prefix,
 }
 
 void javaCheckForPrimaryStart(Position *cpos, Position *bpos) {
-    if (s_opt.taskRegime != RegimeEditServer) return;
+    if (options.taskRegime != RegimeEditServer) return;
     if (POSITION_EQ(s_cxRefPos, *cpos)) {
         s_primaryStartPosition = *bpos;
     }
@@ -140,14 +140,14 @@ void javaCheckForPrimaryStart(Position *cpos, Position *bpos) {
 
 void javaCheckForPrimaryStartInNameList(IdList *name, Position *pp) {
     IdList *ll;
-    if (s_opt.taskRegime != RegimeEditServer) return;
+    if (options.taskRegime != RegimeEditServer) return;
     for(ll=name; ll!=NULL; ll=ll->next) {
         javaCheckForPrimaryStart(&ll->id.p, pp);
     }
 }
 
 void javaCheckForStaticPrefixStart(Position *cpos, Position *bpos) {
-    if (s_opt.taskRegime != RegimeEditServer) return;
+    if (options.taskRegime != RegimeEditServer) return;
     if (POSITION_EQ(s_cxRefPos, *cpos)) {
         s_staticPrefixStartPosition = *bpos;
     }
@@ -155,7 +155,7 @@ void javaCheckForStaticPrefixStart(Position *cpos, Position *bpos) {
 
 void javaCheckForStaticPrefixInNameList(IdList *name, Position *pp) {
     IdList *ll;
-    if (s_opt.taskRegime != RegimeEditServer) return;
+    if (options.taskRegime != RegimeEditServer) return;
     for(ll=name; ll!=NULL; ll=ll->next) {
         javaCheckForStaticPrefixStart(&ll->id.p, pp);
     }
@@ -419,7 +419,7 @@ static int javaFindFile(Symbol *clas,
 //&fprintf(dumpOut,": checking to input name '%s' '%s'\n",*resSourceFile, s_fileTab.tab[s_olOriginalFileNumber]->name);
     if (rs==0) *resSourceFile = NULL;
 //&fprintf(dumpOut,"O.K. here we are rc, rs == %d, %d\n", rc,rs);
-    if (s_opt.javaSlAllowed == 0) {
+    if (options.javaSlAllowed == 0) {
         if (rc) return(RESULT_IS_CLASS_FILE);
         else return(RESULT_NO_FILE_FOUND);
     }
@@ -770,7 +770,7 @@ static void addJavaFileDependency(int file, char *onfile) {
     Position	pos;
 
     // do dependencies only when doing cross reference file
-    if (s_opt.taskRegime != RegimeXref) return;
+    if (options.taskRegime != RegimeXref) return;
     // also do it only for source files
     if (! s_fileTab.tab[file]->b.commandLineEntered) return;
     fileIndex = addFileTabItem(onfile);
@@ -1031,7 +1031,7 @@ int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
             // take canonical copy (as there can be more than one class
             // item in symtab
             mm = javaFQTypeSymbolDefinition(memb->name, memb->linkName);
-            if ((s_opt.ooChecksBits & OOC_ALL_CHECKS)) {
+            if ((options.ooChecksBits & OOC_ALL_CHECKS)) {
                 // do carefully all checks
                 if (! haveit) {
                     javaLoadClassSymbolsFromFile(mm);
@@ -1091,7 +1091,7 @@ int javaClassifySingleAmbigNameToTypeOrPack(IdList *name,
                 rfs->currClass->bits.symType==TypeStruct && rfs->currClass->u.s);\
             assert(rfs && rfs->baseClass && \
                 rfs->baseClass->bits.symType==TypeStruct && rfs->baseClass->u.s);\
-            if (s_opt.server_operation!=OLO_ENCAPSULATE \
+            if (options.server_operation!=OLO_ENCAPSULATE \
                 || ! javaRecordAccessible(rfs, rfs->baseClass, rfs->currClass, sym, ACCESS_PRIVATE)) {\
                 fillUsageBits(&ub, usage, minacc);\
                 oref=addCxReferenceNew(sym,pos, &ub,\
@@ -1187,7 +1187,7 @@ static int javaNotFqtUsageCorrection(Symbol *sym, int usage) {
     IdList   sname;
     char            *pp, packname[TMP_STRING_SIZE];
 
-    if (s_opt.taskRegime == RegimeHtmlGenerate) return(usage);
+    if (options.taskRegime == RegimeHtmlGenerate) return(usage);
 
     pp = strchr(sym->linkName, '/');
     if (pp==NULL) pp = sym->linkName;
@@ -1228,7 +1228,7 @@ static void javaCheckForUselessFqt(IdList *name, int classif, Symbol *rstr,
 
     // no useless name reference for HTML as they overwrites normal
     // usage reference and makes problems
-    if (s_opt.taskRegime == RegimeHtmlGenerate) return;
+    if (options.taskRegime == RegimeHtmlGenerate) return;
 
     //& for(nn=name; nn!=NULL && nn->nameType!=TypePackage; nn=nn->next) ;
     //& if (nn==NULL) return;
@@ -1280,7 +1280,7 @@ static Reference *javaCheckForUselessTypeName(IdList   *name,
 
     // no useless name reference for HTML as they overwrites normal
     // usage reference and makes problems
-    if (s_opt.taskRegime == RegimeHtmlGenerate) return(res);
+    if (options.taskRegime == RegimeHtmlGenerate) return(res);
 
     //& for(nn=name; nn!=NULL && nn->nameType!=TypePackage; nn=nn->next) ;
     //& if (nn==NULL) return;
@@ -1314,7 +1314,7 @@ static void javaClassifyNameToNestedType(IdList *name, Symbol *outerc, int uusag
     javaLoadClassSymbolsFromFile(*str);
     // you have to search the class, it may come from superclass
 
-    if ((s_opt.ooChecksBits & OOC_ALL_CHECKS)==0
+    if ((options.ooChecksBits & OOC_ALL_CHECKS)==0
         || javaRecordAccessible(NULL,outerc, outerc, *str, (*str)->bits.access)) {
         *oref = javaAddClassCxReference(*str, &name->id.p, uusage);
     }
@@ -1324,7 +1324,7 @@ static void classifiedToNestedClass(IdList *name, Symbol **str, Reference **oref
     name->nameType = TypeStruct;
     //&*str=javaTypeSymbolUsage(name,ACCESS_DEFAULT);
     javaLoadClassSymbolsFromFile(*str);
-    if ((s_opt.ooChecksBits & OOC_ALL_CHECKS)==0
+    if ((options.ooChecksBits & OOC_ALL_CHECKS)==0
         || javaRecordAccessible(NULL,pstr, pstr, *str, (*str)->bits.access)) {
         *oref = javaAddClassCxReference(*str, &name->id.p, uusage);
         if (allowUselesFqtRefs == USELESS_FQT_REFS_ALLOWED) {
@@ -1382,7 +1382,7 @@ int javaClassifyAmbiguousName(
                     javaCheckForUselessFqt(name, classif, *str, rdtoref, prdtoref);
                 }
                 javaLoadClassSymbolsFromFile(*str);
-                if ((s_opt.ooChecksBits & OOC_ALL_CHECKS)==0
+                if ((options.ooChecksBits & OOC_ALL_CHECKS)==0
                     || javaOuterClassAccessible(*str)) {
                     *oref = javaAddClassCxReference(*str, &name->id.p, uusage);
                 }
@@ -1410,7 +1410,7 @@ int javaClassifyAmbiguousName(
                 *expr = (*str)->u.type;
                 if (rf == RETURN_OK) {
                     name->nameType = TypeExpression;
-                    if ((s_opt.ooChecksBits & OOC_ALL_CHECKS)==0
+                    if ((options.ooChecksBits & OOC_ALL_CHECKS)==0
                         || javaRecordVisibleAndAccessible(rfs, rfs->baseClass, rfs->currClass, *str)) {
                         minacc = javaGetMinimalAccessibility(rfs, *str);
                         AddAmbCxRef(classif,*str,&name->id.p, uusage, minacc, *oref, rfs);
@@ -1442,7 +1442,7 @@ int javaClassifyAmbiguousName(
                 rr = findStrRecordSym(iniFind(pexpr->u.t,rfs), name->id.name,
                                       str, classif, ACCESSIBILITY_CHECK_NO, VISIBILITY_CHECK_NO);
                 if (rr == RESULT_OK) {
-                    if ((s_opt.ooChecksBits & OOC_ALL_CHECKS)==0
+                    if ((options.ooChecksBits & OOC_ALL_CHECKS)==0
                         || javaRecordVisibleAndAccessible(rfs, rfs->baseClass, rfs->currClass, *str)) {
                         minacc = javaGetMinimalAccessibility(rfs, *str);
                         AddAmbCxRef(classif,*str,&name->id.p,uusage, minacc, *oref, rfs);
@@ -1815,9 +1815,9 @@ void javaMethodBodyBeginning(Symbol *method) {
 
 // this should be merged with _bef_ token!
 void javaMethodBodyEnding(Position *endpos) {
-    if (s_opt.taskRegime == RegimeHtmlGenerate) {
+    if (options.taskRegime == RegimeHtmlGenerate) {
         htmlAddFunctionSeparatorReference();
-    } else if (s_opt.taskRegime == RegimeEditServer) {
+    } else if (options.taskRegime == RegimeEditServer) {
         if (s_cp.parserPassedMarker && !s_cp.thisMethodMemoriesStored){
             s_cps.methodCoordEndLine = currentFile.lineNumber+1;
         }
@@ -2190,7 +2190,7 @@ static TypeModifier *javaMethodInvocation(
     }
     fillUsageBits(&ub, usedusage, minacc[smallesti]);
     addCxReferenceNew(appl[smallesti], &name->p, &ub, vFunCl, vApplCl);
-    if (s_opt.server_operation == OLO_EXTRACT) {
+    if (options.server_operation == OLO_EXTRACT) {
         for(ee=appl[smallesti]->u.type->u.m.exceptions; ee!=NULL; ee=ee->next) {
             addCxReference(ee->d, &name->p, UsageThrown, s_noneFileIndex, s_noneFileIndex);
         }
@@ -2201,7 +2201,7 @@ static TypeModifier *javaMethodInvocation(
 
 static void methodAppliedOnNonClass(char *rec) {
     char message[TMP_BUFF_SIZE];
-    if (s_opt.debug || s_opt.show_errors) {
+    if (options.debug || options.show_errors) {
         sprintf(message, "'%s' not applied on a class", rec);
         errorMessage(ERR_ST, message);
     }
@@ -2209,7 +2209,7 @@ static void methodAppliedOnNonClass(char *rec) {
 
 static void methodNameNotRecognized(char *rec) {
     char message[TMP_BUFF_SIZE];
-    if (s_opt.debug || s_opt.show_errors) {
+    if (options.debug || options.show_errors) {
         sprintf(message, "'%s' not recognized as method name", rec);
         errorMessage(ERR_ST, message);
     }
@@ -2678,7 +2678,7 @@ void javaCheckIfPackageDirectoryIsInClassOrSourcePath(char *dir) {
     S_stringList	*pp;
     char tmpBuff[TMP_BUFF_SIZE];
 
-    if (s_opt.taskRegime == RegimeEditServer) return;
+    if (options.taskRegime == RegimeEditServer) return;
     for(pp=s_javaClassPaths; pp!=NULL; pp=pp->next) {
         if (compareFileNames(dir, pp->d)==0) return;
     }

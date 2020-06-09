@@ -57,15 +57,15 @@
 
 
 #define SetDirectStructureCompletionType(xxx) {\
-    assert(s_opt.taskRegime);\
-    if (s_opt.taskRegime == RegimeEditServer) {\
+    assert(options.taskRegime);\
+    if (options.taskRegime == RegimeEditServer) {\
         s_structRecordCompletionType = xxx;\
     }\
 }
 
 #define SetIndirectStructureCompletionType2(xxx) {                     \
-    assert(s_opt.taskRegime);\
-    if (s_opt.taskRegime == RegimeEditServer) {\
+    assert(options.taskRegime);\
+    if (options.taskRegime == RegimeEditServer) {\
         if (xxx->kind==TypePointer || xxx->kind==TypeArray) {\
             s_structRecordCompletionType = xxx->next;\
         } else s_structRecordCompletionType = &s_errorModifier;\
@@ -75,7 +75,7 @@
 #define AddComposedType(ddd, ttt) appendComposedType(&ddd->u.type, ttt)
 
 #define AddHtmlTrivialReference(pos) {\
-    if (s_opt.taskRegime == RegimeHtmlGenerate) {\
+    if (options.taskRegime == RegimeHtmlGenerate) {\
         addTrivialCxReference("%",TypeKeyword,StorageDefault,&pos,UsageUsed);\
     }\
 }
@@ -2840,7 +2840,7 @@ case 192:
             dd = p;
             assert(dd->bits.storage != StorageTypedef);
             yyval.ast_expressionType.d.typeModifier = dd->u.type;
-            assert(s_opt.taskRegime);
+            assert(options.taskRegime);
             yyval.ast_expressionType.d.reference = addCxReference(p, &yyvsp[0].ast_id.d->p, UsageUsed,s_noneFileIndex, s_noneFileIndex);
         } else {
             /* implicit function declaration */
@@ -3261,7 +3261,7 @@ case 291:
 #line 825 "yacc_parser.y"
 {
         yyval.ast_id.d = yyvsp[0].ast_id.d;
-        assert(s_opt.taskRegime);
+        assert(options.taskRegime);
         assert(yyvsp[0].ast_id.d);
         assert(yyvsp[0].ast_id.d->symbol);
         addCxReference(yyvsp[0].ast_id.d->symbol, &yyvsp[0].ast_id.d->p, UsageUsed,s_noneFileIndex, s_noneFileIndex);
@@ -4205,8 +4205,8 @@ case 482:
                 *pa = *p;
                 addNewSymbolDef(pa, StorageAuto, s_symbolTable, UsageDefined);
             }
-            if (s_opt.server_operation == OLO_GOTO_PARAM_NAME
-                && i == s_opt.olcxGotoVal
+            if (options.server_operation == OLO_GOTO_PARAM_NAME
+                && i == options.olcxGotoVal
                 && POSITION_EQ(yyvsp[0].ast_symbol.d->pos, s_cxRefPos)) {
                 s_paramPosition = p->pos;
             }

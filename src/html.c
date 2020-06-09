@@ -21,12 +21,12 @@
 
 #define EXTERN_JDOC_AVAILABLE(refItem) (                                \
                                         LANGUAGE(LANG_JAVA)              \
-                                        && s_opt.htmlGenJdkDocLinks     \
-                                        && (s_opt.htmlJdkDocUrl!=NULL || s_opt.javaDocPath!=NULL) \
+                                        && options.htmlGenJdkDocLinks     \
+                                        && (options.htmlJdkDocUrl!=NULL || options.javaDocPath!=NULL) \
                                         && htmlJdkDocAvailable(refItem) \
                                         )
 
-#define GENERATE_FRAMES() ((s_opt.htmlglobalx || s_opt.htmllocalx))
+#define GENERATE_FRAMES() ((options.htmlglobalx || options.htmllocalx))
 
 #define HTML_COLOR_LARGE_TAB_HEAD "#c0d0ff"
 #define HTML_COLOR_SMALL_TAB_HEAD "#c0d0ff"
@@ -67,10 +67,10 @@ static char *cutHtmlPath(char *path) {
     char *pp,*cutp;
     int i,m,cutpl;
     pp = htmlNormalizedPath(path);
-    m = s_opt.htmlCut.pathsNum;
+    m = options.htmlCut.pathsNum;
     for(i=0; i<m; i++) {
-        cutp = s_opt.htmlCut.path[i];
-        cutpl = s_opt.htmlCut.plen[i];
+        cutp = options.htmlCut.path[i];
+        cutpl = options.htmlCut.plen[i];
         if (fnnCmp(pp, cutp, cutpl)==0) return(pp+cutpl);
     }
     return(pp);
@@ -80,16 +80,16 @@ static void htmlCompressFile(char *fname) {
     char sss[MAX_HTML_REF_LEN];
     char *s;
     int len1;
-    if (s_opt.htmlZipCommand == NULL) return;
-    s = strchr(s_opt.htmlZipCommand, '!');
+    if (options.htmlZipCommand == NULL) return;
+    s = strchr(options.htmlZipCommand, '!');
     if (s==NULL) {
         static int message=1;
         if (message) errorMessage(ERR_ST,"missing the ! meta-char in the zip command");
         message = 0;
         return;
     }
-    len1 = s-s_opt.htmlZipCommand;
-    strncpy(sss, s_opt.htmlZipCommand, len1);
+    len1 = s-options.htmlZipCommand;
+    strncpy(sss, options.htmlZipCommand, len1);
     strcpy(sss+len1, fname);
     strcat(sss, s+1);
     assert(strlen(sss) < MAX_HTML_REF_LEN-2);
@@ -127,7 +127,7 @@ static char *htmlGetLinkFileNameStatic(char *link, char *file) {
 static char *htmlCutLastSuffixStatic(char *fname) {
     static char res[MAX_FILE_NAME_SIZE];
     char *dd,*ld;
-    if (! s_opt.htmlCutSuffix) return(fname);
+    if (! options.htmlCutSuffix) return(fname);
     strcpy(res, fname);
     dd = ld = res;
     dd = strchr(dd, '.');
@@ -181,7 +181,7 @@ static void htmlGenHead(int fn) {
     cutfn = cutHtmlPath(fname);
     if (cutfn != fname) cutFlag = 1;
     fprintf(ccOut,"<HTML><HEAD><TITLE>%s</TITLE>\n",fname);
-    if (s_opt.htmlNoUnderline) {
+    if (options.htmlNoUnderline) {
         fprintf(ccOut,"<STYLE TYPE=\"text/css\">\n");
         fprintf(ccOut,"<!-- A:link{text-decoration: none}\n");
         fprintf(ccOut,"A:visited{text-decoration: none}\n");
@@ -192,19 +192,19 @@ static void htmlGenHead(int fn) {
     fprintf(ccOut,"<body topmargin=\"0\" leftmargin=\"0\"");
     fprintf(ccOut,"bgcolor=\"#FFFFFF\"\n");
     fprintf(ccOut,"link=\"%s\" vlink=\"%s\" alink=\"red\">\n",
-            s_opt.htmlLinkColor, s_opt.htmlLinkColor);
+            options.htmlLinkColor, options.htmlLinkColor);
     fprintf(ccOut,"<center>");
     if (GENERATE_FRAMES()) {
         fprintf(ccOut,"<font size=-1>");
         fprintf(ccOut,"<A HREF=\"XFRM%c%s.frm.html%s\" ",
-                HTML_DIRECTORY_SEPARATOR, simpleFileName(fname),s_opt.htmlLinkSuffix);
+                HTML_DIRECTORY_SEPARATOR, simpleFileName(fname),options.htmlLinkSuffix);
         //      fprintf(ccOut,"target=\"_top\"");
         fprintf(ccOut,">");
         fprintf(ccOut,"Create Xref-Html Frames</A>");
         for(i=0; i<10; i++) fprintf(ccOut,"&nbsp; ");
         fprintf(ccOut,"<A HREF=\"%s.html%s\" target=\"_top\">",
                 htmlCutLastSuffixStatic(simpleFileName(fname)),
-                s_opt.htmlLinkSuffix);
+                options.htmlLinkSuffix);
         fprintf(ccOut,"Remove All Frames</A>");
         fprintf(ccOut,"</font>");
         fprintf(ccOut,"<hr>");
@@ -252,7 +252,7 @@ static void htmlGenAlphaHashLink( FILE *ff, int fi, int i, char *cc) {
         fprintf(ff, "%s ",cc);
     } else {
         fprintf(ff,"<A HREF=\"X%04d.html%s\" target=\"packageFrame\">%s</A> ",
-                i, s_opt.htmlLinkSuffix,cc);
+                i, options.htmlLinkSuffix,cc);
     }
 }
 
@@ -260,7 +260,7 @@ static void htmlGenAlphaHashLink( FILE *ff, int fi, int i, char *cc) {
 static void htmlGenRefListFileHeadAlphaRefs(FILE *ff, int fi) {
     int i, thisletter, thisindex, ll;
     char tt[10];
-    if (s_opt.xfileHashingMethod==XFILE_HASH_ALPHA1) {
+    if (options.xfileHashingMethod==XFILE_HASH_ALPHA1) {
         ll = fi + 'A';
         if (ll>'Z') ll='+';
         fprintf(ff,"<center><h3>%c</h3>", ll);
@@ -273,7 +273,7 @@ static void htmlGenRefListFileHeadAlphaRefs(FILE *ff, int fi) {
         htmlGenAlphaHashLink( ff, fi, i, "+");
         fprintf(ff,"\n");
         fprintf(ff,"</pre></center>\n");
-    } else if (s_opt.xfileHashingMethod==XFILE_HASH_ALPHA2) {
+    } else if (options.xfileHashingMethod==XFILE_HASH_ALPHA2) {
         thisindex = fi / XFILE_HASH_ALPHA1_REFNUM;
         thisletter = thisindex+'A';
         if (thisletter > 'Z') thisletter = '+';
@@ -310,16 +310,16 @@ static void htmlGenRefListFileHead(FILE *ff, int fi) {
         fprintf(ff,"<center><H3>Local&nbsp;Cross&nbsp;References</H3></center>\n");
     } else {
         fprintf(ff,"<center><H3>Cross&nbsp;References</H3></center>\n");
-        if (s_opt.xfileHashingMethod==XFILE_HASH_DEFAULT) {
+        if (options.xfileHashingMethod==XFILE_HASH_DEFAULT) {
             fprintf(ff,"<pre>\n");
             if (fi>0) {
-                fprintf(ff,"<A HREF=\"X%04d.html%s\" target=\"packageFrame\">prev</A>",fi-1, s_opt.htmlLinkSuffix);
+                fprintf(ff,"<A HREF=\"X%04d.html%s\" target=\"packageFrame\">prev</A>",fi-1, options.htmlLinkSuffix);
             } else {
                 fprintf(ff,"    "); // UNKOWN: had extra argument ",fi-1);"
             }
             fprintf(ff," X%04d ",fi);
-            if (fi<s_opt.referenceFileCount-1) {
-                fprintf(ff,"<A HREF=\"X%04d.html%s\" target=\"packageFrame\">next</A>",fi+1, s_opt.htmlLinkSuffix);
+            if (fi<options.referenceFileCount-1) {
+                fprintf(ff,"<A HREF=\"X%04d.html%s\" target=\"packageFrame\">next</A>",fi+1, options.htmlLinkSuffix);
                 fprintf(ff,"</pre>\n");
             }
         } else {
@@ -385,7 +385,7 @@ static void htmlGenRefListItemHead(FILE *ff, char *ln, char *symName,
         assert(genFlag==SINGLE_VIRT_ITEM || genFlag==VIRT_ITEM);
         //javaGetClassNameFromFileNum(p->vFunClass,ttt);
         apc =  javaGetNudePreTypeName_st(getRealFileNameStatic(
-                                                               s_fileTab.tab[p->vFunClass]->name), s_opt.nestedClassDisplaying);
+                                                               s_fileTab.tab[p->vFunClass]->name), options.nestedClassDisplaying);
         if (genFlag == SINGLE_VIRT_ITEM) {
             fprintf(ff,"<A NAME=\"%s\"></A>",ln);
         } else {
@@ -395,7 +395,7 @@ static void htmlGenRefListItemHead(FILE *ff, char *ln, char *symName,
             if (p->b.storage!=StorageField
                 && (p->b.accessFlags&ACCESS_STATIC)==0) {
                 apc =  javaGetNudePreTypeName_st(getRealFileNameStatic(
-                                                                       s_fileTab.tab[p->vApplClass]->name), s_opt.nestedClassDisplaying);
+                                                                       s_fileTab.tab[p->vApplClass]->name), options.nestedClassDisplaying);
                 fprintf(ff,"<br>at <B>%s</B>", apc);
             }
             htmlGenSmallTabTail( ff, genFlag);
@@ -450,16 +450,16 @@ static char * getDefaultCxFileStatic(void) {
     char *ss;
     UNUSED ss;
 
-    if (s_opt.referenceFileCount <= 1) {
-        sprintf(tt,"%s.html", s_opt.cxrefFileName);
+    if (options.referenceFileCount <= 1) {
+        sprintf(tt,"%s.html", options.cxrefFileName);
     } else {
         sprintf(tt,"%s%s%04d.html",
-                normalizeFileName(s_opt.cxrefFileName,s_cwd),
+                normalizeFileName(options.cxrefFileName,s_cwd),
                 REFERENCE_FILENAME_PREFIX, 0);
     }
     ss = cutHtmlPath(tt);
     concatPaths(ttt,MAX_FILE_NAME_SIZE,
-                 s_opt.htmlRoot,
+                 options.htmlRoot,
                  cutHtmlPath(tt),
                  "");
     return(ttt);
@@ -474,15 +474,15 @@ static void htmlGenFrameFile(FILE *ff, int fnum, char *thisfn) {
 
     fprintf(ff,"<frame src=\"%s%s\" name=\"packageFrame\">\n",
             htmlGetLinkFileNameStatic(getDefaultCxFileStatic(),thisfn),
-            s_opt.htmlLinkSuffix);
+            options.htmlLinkSuffix);
 
     concatPaths(ffn,MAX_FILE_NAME_SIZE,
-                 s_opt.htmlRoot,
+                 options.htmlRoot,
                  cutHtmlPath(getRealFileNameStatic(s_fileTab.tab[fnum]->name)),
                  "");
     fprintf(ff,"<frame src=\"%s.html%s\" name=\"classFrame\">\n",
             htmlCutLastSuffixStatic(htmlGetLinkFileNameStatic(ffn,thisfn)),
-            s_opt.htmlLinkSuffix);
+            options.htmlLinkSuffix);
     fprintf(ff,"</frameset>\n");
     fprintf(ff,"</html>");
 }
@@ -495,7 +495,7 @@ void htmlGetDefinitionReferences(void) {
     UNUSED tt;
 
     //&fprintf(dumpOut,"start scanning ref files\n");fflush(dumpOut);
-    scanReferenceFiles(s_opt.cxrefFileName,fullScanFunctionSequence);
+    scanReferenceFiles(options.cxrefFileName,fullScanFunctionSequence);
     /* following lines, just ensures, there will be enough space for refs */
     CX_ALLOCC(s_cxGlobalReferencesBase, CX_MEMORY_CHUNK_SIZE, char);
     CX_ALLOCC(tt, CX_MEMORY_CHUNK_SIZE, char);
@@ -543,7 +543,7 @@ void htmlPutChar(FILE *ff, int c) {
         // a reference list tabulator
         n = HTML_PUTCH_REF_TABN-(collumn-1)%HTML_PUTCH_REF_TABN-1;
         collumn += n;
-        if (collumn >= s_opt.htmlCxLineLen) {
+        if (collumn >= options.htmlCxLineLen) {
             fprintf(ff,"\n%*s",HTML_PUTCH_REF_TABN,"");
             collumn= HTML_PUTCH_REF_TABN;
         } else {
@@ -567,7 +567,7 @@ void htmlPutChar(FILE *ff, int c) {
         collumn=0;
         break;
     case '\t':
-        n = s_opt.tabulator-(collumn-1)%s_opt.tabulator-1;
+        n = options.tabulator-(collumn-1)%options.tabulator-1;
         collumn += n;
         fprintf(ff,"%*s",n+1,"");
         break;
@@ -584,13 +584,13 @@ static void htmlPrint(FILE *file, char *string) {
 static void htmlPutCharLF(FILE *ff, int c, Position *cp) {
     htmlPutChar(ff,c);
     if (c=='\n') {
-        fprintf(ff,"<A NAME=\"%s%d\"></A>",s_opt.htmlLineNumLabel, cp->line+1);
-        if (s_opt.htmlLineNums) {
-            if (s_opt.htmlLineNumColor!=NULL) {
-                fprintf(ff,"<font color=\"%s\">", s_opt.htmlLineNumColor);
+        fprintf(ff,"<A NAME=\"%s%d\"></A>",options.htmlLineNumLabel, cp->line+1);
+        if (options.htmlLineNums) {
+            if (options.htmlLineNumColor!=NULL) {
+                fprintf(ff,"<font color=\"%s\">", options.htmlLineNumColor);
             }
             fprintf(ff,"%4d: ",cp->line+1);
-            if (s_opt.htmlLineNumColor!=NULL) {
+            if (options.htmlLineNumColor!=NULL) {
                 fprintf(ff,"</font>");
             }
         }
@@ -726,11 +726,11 @@ static char *htmlStSymbolCode(SymbolReferenceItem *r, int usage) {
 static void htmlCrGlobalXrefsFileName(SymbolReferenceItem *cri, int usage,
                                       char *fout, char *lout) {
     char *s;
-    if (s_opt.referenceFileCount > 1) {
-        sprintf(fout,"%s%s%04d", normalizeFileName(s_opt.cxrefFileName,s_cwd),
+    if (options.referenceFileCount > 1) {
+        sprintf(fout,"%s%s%04d", normalizeFileName(options.cxrefFileName,s_cwd),
                 REFERENCE_FILENAME_PREFIX, cxFileHashNumber(cri->name));
     } else {
-        sprintf(fout,"%s", normalizeFileName(s_opt.cxrefFileName,s_cwd));
+        sprintf(fout,"%s", normalizeFileName(options.cxrefFileName,s_cwd));
     }
     assert(strlen(fout) + 10 < MAX_HTML_REF_LEN);
     strcpy(lout, htmlStSymbolCode(cri,usage));
@@ -820,8 +820,8 @@ static void htmlGetStaticHREFItems(
             df = s_fileTab.tab[dr->p.file]->name;
             df = htmlGetLinkFileNameStatic(df,thisfn);
             df = htmlCutLastSuffixStatic(df);
-            sprintf(prf,"<A HREF=\"%s.html%s#%s%d\">",df,s_opt.htmlLinkSuffix,
-                    s_opt.htmlLineNumLabel, dr->p.line);
+            sprintf(prf,"<A HREF=\"%s.html%s#%s%d\">",df,options.htmlLinkSuffix,
+                    options.htmlLineNumLabel, dr->p.line);
         } else {
             sprintf(prf,"<EM>");
             *suffix = "</EM>";
@@ -838,8 +838,8 @@ static void htmlGetStaticHREFItems(
             df = s_fileTab.tab[dr->p.file]->name;
             df = htmlGetLinkFileNameStatic(df,thisfn);
             df = htmlCutLastSuffixStatic(df);
-            sprintf(prf,"<A HREF=\"%s.html%s#%s%d\">",df,s_opt.htmlLinkSuffix,
-                    s_opt.htmlLineNumLabel, dr->p.line);
+            sprintf(prf,"<A HREF=\"%s.html%s#%s%d\">",df,options.htmlLinkSuffix,
+                    options.htmlLineNumLabel, dr->p.line);
         } else if (EXTERN_JDOC_AVAILABLE(ref->symbolRefItem)) {
             htmlPrintExternHtmlJavaDocReference(prf, ref->symbolRefItem);
         } else {
@@ -855,11 +855,11 @@ static void htmlGetStaticHREFItems(
     df = htmlGetLinkFileNameStatic(tmp,thisfn);
     if (emph) {
         sprintf(prf1, "<EM><A HREF=\"%s.html%s#%s\" target=\"packageFrame\">",
-                df, s_opt.htmlLinkSuffix, tmp2);
+                df, options.htmlLinkSuffix, tmp2);
         *suffix1 = "</A></EM>";
     } else {
         sprintf(prf1,"<A HREF=\"%s.html%s#%s\" target=\"packageFrame\">",
-                df, s_opt.htmlLinkSuffix, tmp2);
+                df, options.htmlLinkSuffix, tmp2);
     }
 }
 
@@ -882,7 +882,7 @@ static void htmlGenListLink(FILE *off,char *lname,char *lfile,int line,
     htmlPutChar(off, HTML_PUTCH_REF_TABULATOR);
     htmlPutChar(off, refCharCode(usage));
     fprintf(off,"<A HREF=\"%s.html%s#%s%d\">", ln,
-            s_opt.htmlLinkSuffix, s_opt.htmlLineNumLabel, line);
+            options.htmlLinkSuffix, options.htmlLineNumLabel, line);
     sprintf(ttt,"%d", line);
     htmlPrint(off,ttt);
     fprintf(off,"</A>");
@@ -1164,7 +1164,7 @@ void genClassHierarchyItemLinks( FILE *ff, S_olSymbolsMenu *itt,
         df = htmlGetLinkFileNameStatic(df, thisFileName);
         df = htmlCutLastSuffixStatic(df);
         fprintf(ff,"<A HREF=\"%s.html%s#%s%d\">s</A> ",df,
-                s_opt.htmlLinkSuffix, s_opt.htmlLineNumLabel, dr->line);
+                options.htmlLinkSuffix, options.htmlLineNumLabel, dr->line);
     } else {
         fprintf(ff, "  ");
     }
@@ -1326,7 +1326,7 @@ static void htmlScanCxFileAndGenRefLists(char *fn1, char *fn2,
 
     sprintf(fn, "%s%s", getRealFileNameStatic(normalizeFileName(fn1,s_cwd)), fn2);
     assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
-    if (! s_opt.noCxFile) {
+    if (! options.noCxFile) {
         inputFile = openFile(fn, "r");
         if (inputFile == NULL) {
             errorMessage(ERR_CANT_OPEN, fn);
@@ -1338,12 +1338,12 @@ static void htmlScanCxFileAndGenRefLists(char *fn1, char *fn2,
     ffn = cutHtmlPath(fn);
     if (genFlag == HTML_GEN) {
         //& fprintf(stdout,"\n %s ",ffn);fflush(stdout);
-        if (!s_opt.xref2) {
+        if (!options.xref2) {
             if (fi%10==0) fprintf(stdout,"\n");
             fprintf(stdout,"X%04d ",fi);
             fflush(stdout);
         }
-        concatPaths(ln,MAX_FILE_NAME_SIZE, s_opt.htmlRoot, ffn,".html");
+        concatPaths(ln,MAX_FILE_NAME_SIZE, options.htmlRoot, ffn,".html");
         recursivelyCreateFileDirIfNotExists(ln);
         ff = openFile(ln, "w");
         if (ff==NULL) errorMessage(ERR_CANT_OPEN, ln);
@@ -1440,7 +1440,7 @@ static void htmlPosProcess( FILE **fff,
     prf1 = suf1 = "";
     /*&fprintf(dumpOut,"processing '%s' at %d,%d,%d\n",cri->name,rr->reference->p.file,rr->reference->p.line,rr->reference->p.col);fflush(dumpOut);&*/
     if (cri->b.symType == TypeFunSep) {
-        if (s_opt.htmlFunSeparate) {
+        if (options.htmlFunSeparate) {
             fprintf(ccOut, "</pre><font size= -1 color=\"red\"><hr><center>");
             fprintf(ccOut,"%s:%d",
                     s_fileTab.tab[cp->file]->name, cp->line);
@@ -1462,7 +1462,7 @@ static void htmlPosProcess( FILE **fff,
         suf0 = "</font>";//"</B>";
     } else {
         if (cri->b.symType == TypeCppIfElse) {
-            if (!s_opt.htmlNoColors) {
+            if (!options.htmlNoColors) {
                 prf0 = "<font color=\"brun\">";
                 suf0 = "</font>";
             }
@@ -1500,8 +1500,8 @@ static void htmlPosProcess( FILE **fff,
             }
         }
         if (rr->reference->usage.base==UsageDefined) {
-            if ((rr->symbolRefItem->b.category==CategoryLocal && s_opt.htmllocalx)
-                || (rr->symbolRefItem->b.category==CategoryGlobal && s_opt.htmlglobalx)) {
+            if ((rr->symbolRefItem->b.category==CategoryLocal && options.htmllocalx)
+                || (rr->symbolRefItem->b.category==CategoryGlobal && options.htmlglobalx)) {
                 fprintf(ccOut,"%s%s",prf0,prf1);
                 HtmlPassSourceIdent(cp,ch,ff);
                 fprintf(ccOut,"%s%s",suf1,suf0);
@@ -1510,9 +1510,9 @@ static void htmlPosProcess( FILE **fff,
                 HtmlPassSourceIdent(cp,ch,ff);
                 fprintf(ccOut,"%s",suf0);
             }
-        } else if (s_opt.htmlDirectX &&
-                   ((cri->b.category == CategoryGlobal && s_opt.htmlglobalx)
-                    ||  (cri->b.category == CategoryLocal && s_opt.htmllocalx))) {
+        } else if (options.htmlDirectX &&
+                   ((cri->b.category == CategoryGlobal && options.htmlglobalx)
+                    ||  (cri->b.category == CategoryLocal && options.htmllocalx))) {
             fprintf(ccOut,"%s%s",prf0,prf1);
             if (ch!=EOF && (isalpha(ch)||isdigit(ch)||ch=='_'||ch=='$')) {
                 htmlPutCharLF(ccOut, ch, cp);
@@ -1597,7 +1597,7 @@ static void htmlGenerateFile(int fnum) {
     assert(s_fileTab.tab[fnum]);
     /*&fprintf(dumpOut,"opening %s\n",fn);&*/
     concatPaths(ffn,MAX_FILE_NAME_SIZE,
-                 s_opt.htmlRoot,
+                 options.htmlRoot,
                  htmlAuxFileNameStatic(fnum,"XFRM","",".frm.html"),
                  NULL);
     if (GENERATE_FRAMES()) {
@@ -1611,14 +1611,14 @@ static void htmlGenerateFile(int fnum) {
         }
     }
     concatPaths(ffn,MAX_FILE_NAME_SIZE,
-                 s_opt.htmlRoot,htmlCutLastSuffixStatic(cutHtmlPath(getRealFileNameStatic(s_fileTab.tab[fnum]->name))),".html");
+                 options.htmlRoot,htmlCutLastSuffixStatic(cutHtmlPath(getRealFileNameStatic(s_fileTab.tab[fnum]->name))),".html");
     recursivelyCreateFileDirIfNotExists(ffn);
     ccOut = openFile(ffn,"w");
     if (ccOut==NULL) {
         warningMessage(ERR_CANT_OPEN,ffn);
         ccOut=stdout;
     } else {
-        if (!s_opt.xref2) {
+        if (!options.xref2) {
             fprintf(dumpOut," -> '%s'\n", ffn); fflush(dumpOut);
         }
         htmlGenerateFileToCcOut(fnum);
@@ -1626,9 +1626,9 @@ static void htmlGenerateFile(int fnum) {
         htmlCompressFile(ffn);
         ccOut=stdout;
         /* now create local reference lists */
-        if (s_opt.htmllocalx) {
+        if (options.htmllocalx) {
             strcpy(ffn,htmlAuxFileNameStatic(fnum,"XLL","",""));
-            concatPaths(ffn2,MAX_FILE_NAME_SIZE,s_opt.htmlRoot,ffn,".html");
+            concatPaths(ffn2,MAX_FILE_NAME_SIZE,options.htmlRoot,ffn,".html");
             recursivelyCreateFileDirIfNotExists(ffn2);
             ff = openFile(ffn2,"w");
             if (ff==NULL) errorMessage(ERR_CANT_OPEN,ffn2);
@@ -1653,10 +1653,10 @@ static void htmlGenerateJavaDocFile(int fnum) {
     assert(s_fileTab.tab[fnum]);
     /*&fprintf(dumpOut,"opening %s\n",fn);&*/
     concatPaths(ffn,MAX_FILE_NAME_SIZE,
-                 s_opt.jdocTmpDir,
+                 options.jdocTmpDir,
                  cutHtmlPath(getRealFileNameStatic(s_fileTab.tab[fnum]->name)),
                  ""); // maybe some suffix .doc ?
-    if (!s_opt.xref2) {
+    if (!options.xref2) {
         fprintf(dumpOut," -> '%s'\n", ffn); fflush(dumpOut);
     }
     recursivelyCreateFileDirIfNotExists(ffn);
@@ -1680,7 +1680,7 @@ static void htmlGenerateJavaDocFile(int fnum) {
 
 void htmlAddFunctionSeparatorReference(void) {
     Position pos;
-    if (s_opt.taskRegime == RegimeHtmlGenerate) {
+    if (options.taskRegime == RegimeHtmlGenerate) {
         fillPosition(&pos, currentFile.lexBuffer.buffer.fileNumber, currentFile.lineNumber+1, -1);
         addTrivialCxReference(LINK_NAME_FUNCTION_SEPARATOR, TypeFunSep,StorageDefault,
                               &pos, UsageUsed);
@@ -1692,7 +1692,7 @@ void htmlAddFunctionSeparatorReference(void) {
 void htmlAddJavaDocReference(Symbol  *p, Position  *pos,
                              int  vFunClass, int  vApplClass) {
     Position npos;
-    if (s_opt.taskRegime == RegimeHtmlGenerate && s_opt.javaDoc) {
+    if (options.taskRegime == RegimeHtmlGenerate && options.javaDoc) {
         fillPosition(&npos, pos->file, pos->line, 0);
         addCxReference(p, &npos, UsageJavaDocFullEntry, vFunClass, vApplClass);
     }
@@ -1717,13 +1717,13 @@ void htmlGenGlobalReferenceLists(char *cxMemFreeBase) {
     char    fn[MAX_FILE_NAME_SIZE];
     char    *dirname,*fname,*newFreeBase;
     int     i;
-    if (!s_opt.htmlglobalx) return;
-    if (!s_opt.xref2) {
+    if (!options.htmlglobalx) return;
+    if (!options.xref2) {
         fprintf(dumpOut,"\nGenerating global symbol reference lists");
         fflush(dumpOut);
     }
-    fname = s_opt.cxrefFileName;
-    if (s_opt.referenceFileCount <= 1) {
+    fname = options.cxrefFileName;
+    if (options.referenceFileCount <= 1) {
         /* single reference file */
         recoverMemoriesAfterOverflow(cxMemFreeBase);
         htmlScanCxFileAndGenRefLists(fname, "",HTML_GXANY, HTML_GEN);
@@ -1736,13 +1736,13 @@ void htmlGenGlobalReferenceLists(char *cxMemFreeBase) {
                                      HTML_GXANY, HTML_NO_GEN);
         fileTabMap(&s_fileTab, sortSubClassesList);
         CX_ALLOCC(newFreeBase, 0, char);
-        for (i=0; i<s_opt.referenceFileCount; i++) {
+        for (i=0; i<options.referenceFileCount; i++) {
             recoverMemoriesAfterOverflow(newFreeBase);
             sprintf(fn, "%s%04d", REFERENCE_FILENAME_PREFIX, i);
             htmlScanCxFileAndGenRefLists(dirname,fn, i, HTML_GEN);
         }
     }
-    if (!s_opt.xref2) {
+    if (!options.xref2) {
         fprintf(dumpOut,"\nDone.\n"); fflush(dumpOut);
     }
 }
@@ -1752,17 +1752,17 @@ void generateHtml(void) {
     int    i;
     FileItem      *fi;
 
-    if (s_opt.htmlRoot==NULL ||  s_opt.htmlRoot[0]==0) {
+    if (options.htmlRoot==NULL ||  options.htmlRoot[0]==0) {
         fatalError(ERR_ST, "No HTML output directory specified, use -htmlroot=<dir>", XREF_EXIT_ERR);
     }
     concatPaths(s_htmlEmptyRefs,MAX_FILE_NAME_SIZE,
-                 s_opt.htmlRoot,HTML_EMPTY_REF_FILE,"");
+                 options.htmlRoot,HTML_EMPTY_REF_FILE,"");
     for(i=0; i<MAX_FILES; i++) {
         fi = s_fileTab.tab[i];
         if (fi == NULL) continue;
         if (!fi->b.cxLoading) continue;
         if (isJavaClassFile(fi)) continue;
         htmlGenerateFile(i);
-        if (s_opt.javaDoc) htmlGenerateJavaDocFile(i);
+        if (options.javaDoc) htmlGenerateJavaDocFile(i);
     }
 }

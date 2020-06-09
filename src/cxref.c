@@ -52,8 +52,8 @@ typedef struct referencesChangeData {
     }
 
 #define CX_TEST_SPACE() {                                               \
-        assert(s_opt.taskRegime);                                       \
-        if (s_opt.taskRegime==RegimeXref||s_opt.taskRegime==RegimeHtmlGenerate) { \
+        assert(options.taskRegime);                                       \
+        if (options.taskRegime==RegimeXref||options.taskRegime==RegimeHtmlGenerate) { \
             if (!(DM_FREE_SPACE(cxMemory,CX_SPACE_RESERVE))) {          \
                 longjmp(cxmemOverflow,LONGJUMP_REASON_REFERENCE_OVERFLOW);         \
             }                                                           \
@@ -255,7 +255,7 @@ Reference **addToRefList(Reference **list,
     fill_reference(&ppp, *pusage, *pos, NULL);
     SORTED_LIST_PLACE2(place,Reference,ppp,list);
     if (*place==NULL || SORTED_LIST_NEQ((*place),ppp)
-        || s_opt.server_operation==OLO_EXTRACT) {
+        || options.server_operation==OLO_EXTRACT) {
         CX_ALLOC(rr, Reference);
         fill_reference(rr, *pusage, *pos, NULL);
         LIST_CONS(rr,(*place));
@@ -347,7 +347,7 @@ static void getSymbolCxrefCategories(Symbol *symbol,
     if (symbol->bits.symType == TypeYaccSymbol) {
         category = CategoryLocal; scope = ScopeFile; storage=StorageStatic;
     }
-    if (s_opt.taskRegime == RegimeHtmlGenerate) {
+    if (options.taskRegime == RegimeHtmlGenerate) {
         if (symbol->bits.symType == TypeKeyword) {
             category = CategoryGlobal; scope = ScopeFile; storage=StorageStatic;
             /* global because I dont want them from processed include files */
@@ -669,7 +669,7 @@ static void olGetAvailableRefactorings(void) {
         count += (s_availableRefactorings[i].available);
     }
     if (count==0) s_availableRefactorings[PPC_AVR_SET_MOVE_TARGET].available = true;
-    if (s_opt.editor == EDITOR_EMACS) {
+    if (options.editor == EDITOR_EMACS) {
         s_availableRefactorings[PPC_AVR_UNDO].available = true;
 #if ZERO
         if (LANGUAGE(LAN_JAVA)) {
@@ -677,7 +677,7 @@ static void olGetAvailableRefactorings(void) {
         }
 #endif
     }
-    if (s_opt.olCursorPos != s_opt.olMarkPos) {
+    if (options.olCursorPos != options.olMarkPos) {
         // region selected, TODO!!! some more prechecks for extract method
         if (LANGUAGE(LANG_JAVA)) {
             s_availableRefactorings[PPC_AVR_EXTRACT_METHOD].available = true;
@@ -688,7 +688,7 @@ static void olGetAvailableRefactorings(void) {
             s_availableRefactorings[PPC_AVR_EXTRACT_MACRO].available = true;
         }
     }
-    if (! s_opt.xref2) {
+    if (! options.xref2) {
         fprintf(ccOut,"* refactoring list not available in C-xrefactory-I");
         return;
     }
@@ -746,50 +746,50 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
     assert(pos->file<MAX_FILES);
     assert(s_fileTab.tab[pos->file]);
     if (p->bits.symType==TypeDefault && p->bits.storage==StorageConstant) {
-        if (s_opt.no_ref_enumerator) return NULL;
+        if (options.no_ref_enumerator) return NULL;
     }
     /* typedefs */
     if (p->bits.symType==TypeDefault && p->bits.storage==StorageTypedef) {
-        if (s_opt.no_ref_typedef) return NULL;
+        if (options.no_ref_typedef) return NULL;
     }
     /* struct, union, enum */
     if ((p->bits.symType==TypeStruct||p->bits.symType==TypeUnion||p->bits.symType==TypeEnum)){
-        if (s_opt.no_ref_typedef) return NULL;
+        if (options.no_ref_typedef) return NULL;
     }
     /* macros */
     if (p->bits.symType == TypeMacro) {
-        if (s_opt.no_ref_macro) return NULL;
+        if (options.no_ref_macro) return NULL;
     }
     if (p->bits.symType==TypeDefault) {
-        if (p->bits.isRecord && s_opt.no_ref_records) return NULL;
+        if (p->bits.isRecord && options.no_ref_records) return NULL;
     }
 
     getSymbolCxrefCategories( p, &category, &scope, &storage);
-    if (scope == ScopeAuto && s_opt.no_ref_locals) return NULL;
+    if (scope == ScopeAuto && options.no_ref_locals) return NULL;
 
     log_trace("adding reference on %s(%d,%d) at %d,%d,%d (%s) (%s) (%s)", p->linkName,
               vFunCl,vApplCl, pos->file, pos->line,pos->col, category==CategoryGlobal?"Global":"Local",
               usageEnumName[usage], storageEnumName[p->bits.storage]);
-    assert(s_opt.taskRegime);
-    if (s_opt.taskRegime == RegimeEditServer) {
-        if (s_opt.server_operation == OLO_EXTRACT) {
+    assert(options.taskRegime);
+    if (options.taskRegime == RegimeEditServer) {
+        if (options.server_operation == OLO_EXTRACT) {
             if (s_input_file_number != currentFile.lexBuffer.buffer.fileNumber) return NULL;
         } else {
-            if (category==CategoryGlobal && p->bits.symType!=TypeCppInclude && s_opt.server_operation!=OLO_TAG_SEARCH) {
+            if (category==CategoryGlobal && p->bits.symType!=TypeCppInclude && options.server_operation!=OLO_TAG_SEARCH) {
                 // do not load references if not the currently edited file
                 if (s_olOriginalFileNumber!=pos->file
-                    && s_opt.noIncludeRefs) return NULL;
+                    && options.noIncludeRefs) return NULL;
                 // do not load references if current file is an
                 // included header, they will be reloaded from ref file
                 //&fprintf(dumpOut,"%s comm %d\n", s_fileTab.tab[pos->file]->name, s_fileTab.tab[pos->file]->b.commandLineEntered);
             }
         }
     }
-    if (s_opt.taskRegime == RegimeXref) {
+    if (options.taskRegime == RegimeXref) {
         if (category == CategoryLocal) return NULL; /* dont cxref local symbols */
         if (!s_fileTab.tab[pos->file]->b.cxLoading) return NULL;
     }
-    if (s_opt.taskRegime == RegimeHtmlGenerate) {
+    if (options.taskRegime == RegimeHtmlGenerate) {
         //&     scope = ScopeFile;  /* do not forget any reference */
         //&     if (! htmlReferencableSymbol(scope, category, p)) return NULL;
         //&     if (!s_fileTab.tab[pos->file]->b.cxLoading) return NULL;
@@ -802,7 +802,7 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
                                 vApplCl, vFunCl);
     fillSymbolRefItemBits(&ppp.b, p->bits.symType, storage, scope,
                            p->bits.access, category, 0);
-    if (s_opt.taskRegime==RegimeEditServer && s_opt.server_operation==OLO_TAG_SEARCH && s_opt.tagSearchSpecif==TSS_FULL_SEARCH) {
+    if (options.taskRegime==RegimeEditServer && options.server_operation==OLO_TAG_SEARCH && options.tagSearchSpecif==TSS_FULL_SEARCH) {
         fillUsageBits(&rr.usage, usage, 0);
         fill_reference(&rr, rr.usage, *pos, NULL);
         searchSymbolCheckReference(&ppp, &rr);
@@ -832,12 +832,12 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
     place = addToRefList(&memb->refs,usageb,pos,category);
     //&fprintf(dumpOut,"checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s\n", s_fileTab.tab[s_cxRefPos.file]->name, s_cxRefPos.file, s_cxRefPos.line, s_cxRefPos.col, s_fileTab.tab[pos->file]->name, pos->file, pos->line, pos->col, memcmp(&s_cxRefPos, pos, sizeof(Position)), POSITION_EQ(s_cxRefPos, *pos), usage, p->linkName);
 
-    if (s_opt.taskRegime == RegimeEditServer
+    if (options.taskRegime == RegimeEditServer
         && POSITION_EQ(s_cxRefPos, *pos)
         && usage<UsageMaxOLUsages) {
         if (p->linkName[0] == ' ') {  // special symbols for internal use!
             if (strcmp(p->linkName, LINK_NAME_UNIMPORTED_QUALIFIED_ITEM)==0) {
-                if (s_opt.server_operation == OLO_GET_AVAILABLE_REFACTORINGS) {
+                if (options.server_operation == OLO_GET_AVAILABLE_REFACTORINGS) {
                     setOlAvailableRefactorings(p, NULL, usage);
                 }
             }
@@ -850,13 +850,13 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
             olSetCallerPosition(pos);
             defpos = &s_noPos;
             defusage = s_noUsage.base;
-            if (p->bits.symType==TypeMacro && ! s_opt.exactPositionResolve) {
+            if (p->bits.symType==TypeMacro && ! options.exactPositionResolve) {
                 // a hack for macros
                 defpos = &p->pos;
                 defusage = UsageDefined;
             }
             //&if (defpos->file!=s_noneFileIndex) fprintf(dumpOut,":getting definition position of %s at line %d\n", p->name, defpos->line);
-            if (! olcxOnlyParseNoPushing(s_opt.server_operation)) {
+            if (! olcxOnlyParseNoPushing(options.server_operation)) {
                 mmi = olAddBrowsedSymbol(memb,&s_olcxCurrentUser->browserStack.top->hkSelectedSym,
                                          1,1,0,usage,0, defpos, defusage);
                 // hack added for EncapsulateField
@@ -865,14 +865,14 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
                     mmi->defpos = *pos;
                     mmi->defUsage = usage;
                 }
-                if (s_opt.server_operation == OLO_CLASS_TREE
+                if (options.server_operation == OLO_CLASS_TREE
                     && LANGUAGE(LANG_JAVA)) {
                     setClassTreeBaseType(&s_olcxCurrentUser->classTree, p);
                 }
-                if (s_opt.server_operation == OLO_GET_SYMBOL_TYPE) {
+                if (options.server_operation == OLO_GET_SYMBOL_TYPE) {
                     setOlSymbolTypeForPrint(p);
                 }
-                if (s_opt.server_operation == OLO_GET_AVAILABLE_REFACTORINGS) {
+                if (options.server_operation == OLO_GET_AVAILABLE_REFACTORINGS) {
                     setOlAvailableRefactorings(p, mmi, usage);
                 }
             }
@@ -1123,7 +1123,7 @@ S_userOlcx *olcxSetCurrentUser(char *user) {
 }
 
 static void setRefSuffix(S_olcxReferences *refs) {
-    strncpy(refs->refsuffix, s_opt.olcxRefSuffix, MAX_OLCX_SUFF_SIZE-1);
+    strncpy(refs->refsuffix, options.olcxRefSuffix, MAX_OLCX_SUFF_SIZE-1);
     refs->refsuffix[MAX_OLCX_SUFF_SIZE-1]=0;
     refs->act = refs->r;
 }
@@ -1141,7 +1141,7 @@ static S_olcxReferences *pushOlcxReference(S_olcxReferencesStack *stack) {
     S_olcxReferences *res;
 
     OLCX_ALLOC(res, S_olcxReferences);
-    *res = (S_olcxReferences){.r = NULL, .act = NULL, .command = s_opt.server_operation, .language = s_language,
+    *res = (S_olcxReferences){.r = NULL, .act = NULL, .command = options.server_operation, .language = s_language,
                               .atime = s_fileProcessStartTime, .cpos = s_noPos, .cpls = NULL, .hkSelectedSym = NULL,
                               .menuFilterLevel = DEFAULT_MENU_FILTER_LEVEL, . refsFilterLevel = DEFAULT_REFS_FILTER_LEVEL,
                               .previous = stack->top};
@@ -1278,7 +1278,7 @@ void generateOnlineCxref(Position *p,
                          char *suffix,
                          char *suffix2
                          ) {
-    if (s_opt.xref2) {
+    if (options.xref2) {
         ppcGenGotoPositionRecord(p);
     } else {
         fprintf(ccOut,"%s%s#*+*#%d %d :%c%s%s ;;\n", commandString,
@@ -1298,10 +1298,10 @@ void generateOnlineCxref(Position *p,
 
 #define OLCX_MOVE_INIT(olcxuser,refs,checkFlag) {                       \
         assert(olcxuser);                                               \
-        if (    s_opt.server_operation==OLO_COMPLETION || s_opt.server_operation==OLO_CSELECT \
-                ||  s_opt.server_operation==OLO_CGOTO || s_opt.server_operation==OLO_CBROWSE \
-                /*& || s_opt.server_operation==OLO_SEARCH &*/                     \
-                ||  s_opt.server_operation==OLO_TAG_SEARCH) {                     \
+        if (    options.server_operation==OLO_COMPLETION || options.server_operation==OLO_CSELECT \
+                ||  options.server_operation==OLO_CGOTO || options.server_operation==OLO_CBROWSE \
+                /*& || options.server_operation==OLO_SEARCH &*/                     \
+                ||  options.server_operation==OLO_TAG_SEARCH) {                     \
             /*&refs = olcxuser->browserStack.top;&*/                    \
             /*&while (refs!=NULL && !IS_COMPLETION_COMMAND(refs->command)) refs=refs->previous;&*/ \
             refs = olcxuser->completionsStack.top;                      \
@@ -1310,7 +1310,7 @@ void generateOnlineCxref(Position *p,
             /*&while (refs!=NULL && IS_COMPLETION_COMMAND(refs->command)) refs=refs->previous;&*/ \
         }                                                               \
         if (checkFlag==CHECK_NULL && refs == NULL) {                    \
-            if (s_opt.xref2) {                                          \
+            if (options.xref2) {                                          \
                 ppcGenRecordWithNumeric(PPC_BOTTOM_WARNING, PPCA_BEEP, 1, "Empty stack","\n"); \
             } else {                                                    \
                 fprintf(ccOut, "=");                                    \
@@ -1369,7 +1369,7 @@ static void olcxNaturalReorder(S_olcxReferences *refs) {
 }
 
 static void olcxGenNoReferenceSignal(void) {
-    if (s_opt.xref2) {
+    if (options.xref2) {
         ppcGenRecord(PPC_BOTTOM_INFORMATION, "No reference", "\n");
     } else {
         fprintf(ccOut, "_");
@@ -1451,7 +1451,7 @@ int htmlJdkDocAvailableForUrl(char *ss){
     char        ttt[MAX_FILE_NAME_SIZE];
     char        *cp;
     int         ind;
-    cp = s_opt.htmlJdkDocAvailable;
+    cp = options.htmlJdkDocAvailable;
     while (*cp!=0) {
         for(ind=0;
             cp[ind]!=0 && cp[ind]!=CLASS_PATH_SEPARATOR && cp[ind]!=':' ;
@@ -1476,12 +1476,12 @@ static int olcxGenHtmlFileWithIndirectLink(char *ofname, char *url) {
         return(0);
     }
     fprintf(of, "<html><head>");
-    if (s_opt.urlAutoRedirect || strchr(url,' ')==NULL) {
+    if (options.urlAutoRedirect || strchr(url,' ')==NULL) {
         fprintf(of, "<META http-equiv=\"refresh\" ");
         fprintf(of, "content=\"0;URL=%s\">\n", url);
     }
     fprintf(of, "</head><body>\n");
-    if (! (s_opt.urlAutoRedirect || strchr(url,' ')==NULL)) {
+    if (! (options.urlAutoRedirect || strchr(url,' ')==NULL)) {
         fprintf(of, "Please follow the link: ");
     }
     fprintf(of, "<A HREF=\"%s\">", url);
@@ -1524,10 +1524,10 @@ char *getLocalJavaDocFile_st(char *fileUrl) {
     char tmpfname[MAX_FILE_NAME_SIZE];
     static char wcJavaDocPath[MAX_OPTION_LEN];
     char *ss, *res;
-    if (s_opt.javaDocPath==NULL) return NULL;
+    if (options.javaDocPath==NULL) return NULL;
     strcpy(tmpfname, fileUrl);
     for(ss=tmpfname; *ss; ss++) if (*ss == '/') *ss = FILE_PATH_SEPARATOR;
-    expandWildcardsInPaths(s_opt.javaDocPath, wcJavaDocPath, MAX_OPTION_LEN);
+    expandWildcardsInPaths(options.javaDocPath, wcJavaDocPath, MAX_OPTION_LEN);
     res = getExpandedLocalJavaDocFile_st(wcJavaDocPath, NULL, tmpfname);
     // O.K. try once more time with 'api' prefixed
     if (res == NULL) {
@@ -1551,7 +1551,7 @@ char *getFullUrlOfJavaDoc_st(char *fileUrl) {
     if (ss!=NULL) {
         sprintf(fullUrl,"file:///%s", ss);
     } else {
-        sprintf(fullUrl, "%s/%s", s_opt.htmlJdkDocUrl, fileUrl);
+        sprintf(fullUrl, "%s/%s", options.htmlJdkDocUrl, fileUrl);
     }
     // replace backslashes under windows by slashes
     // maybe this should be on option?
@@ -1566,9 +1566,9 @@ static int olcxBrowseSymbolInJavaDoc(SymbolReferenceItem *rr) {
     int rrr;
     url = getJavaDocUrl_st(rr);
     lfn = getLocalJavaDocFile_st(url);
-    if (lfn==NULL && (s_opt.htmlJdkDocUrl==NULL || ! htmlJdkDocAvailableForUrl(url))) return(0);
-    if (! s_opt.urlGenTemporaryFile) {
-        if (s_opt.xref2) {
+    if (lfn==NULL && (options.htmlJdkDocUrl==NULL || ! htmlJdkDocAvailableForUrl(url))) return(0);
+    if (! options.urlGenTemporaryFile) {
+        if (options.xref2) {
             ppcGenRecord(PPC_BROWSE_URL, getFullUrlOfJavaDoc_st(url), "\n");
         } else {
             fprintf(ccOut,"~%s\n", getFullUrlOfJavaDoc_st(url));
@@ -1588,7 +1588,7 @@ static int olcxBrowseSymbolInJavaDoc(SymbolReferenceItem *rr) {
         if (rrr) {
             sprintf(theUrl, "file:///%s", tmpfname);
             assert(strlen(theUrl)<MAX_FILE_NAME_SIZE-1);
-            if (s_opt.xref2) {
+            if (options.xref2) {
                 ppcGenRecord(PPC_BROWSE_URL, theUrl, "\n");
             } else {
                 fprintf(ccOut,"~%s\n", theUrl);
@@ -1636,7 +1636,7 @@ static void orderRefsAndGotoDefinition(S_olcxReferences *refs, int afterMenuFlag
         if (afterMenuFlag==PUSH_AFTER_MENU) res=0;
         else res = checkTheJavaDocBrowsing(refs);
         if (res==0) {
-            if (s_opt.xref2) {
+            if (options.xref2) {
                 ppcGenDefinitionNotFoundWarning();
             } else {
                 fprintf(ccOut,"*** Definition reference not found **");
@@ -1694,7 +1694,7 @@ static char s_crefListLine[MAX_REF_LIST_LINE_LEN+5];
 static int s_crefListLinei = 0;
 
 static void passSourcePutChar(int c, FILE *ff) {
-    if (s_opt.xref2) {
+    if (options.xref2) {
         if (s_crefListLinei < MAX_REF_LIST_LINE_LEN) {
             s_crefListLine[s_crefListLinei++] = c;
             s_crefListLine[s_crefListLinei] = 0;
@@ -1702,7 +1702,7 @@ static void passSourcePutChar(int c, FILE *ff) {
             strcpy(s_crefListLine + s_crefListLinei, "...");
         }
     } else {
-        if (s_opt.taskRegime == RegimeHtmlGenerate) htmlPutChar(ff,c);
+        if (options.taskRegime == RegimeHtmlGenerate) htmlPutChar(ff,c);
         else fputc(c,ff);
     }
 }
@@ -1738,11 +1738,11 @@ static void linePosProcess(FILE *off,
     do {
         if (LISTABLE_USAGE(rr, usages, usageFilter)) {
             if (r==NULL || r->usage.base > rr->usage.base)  r = rr;
-            if (s_opt.taskRegime!=RegimeHtmlGenerate) {
+            if (options.taskRegime!=RegimeHtmlGenerate) {
                 if (pendingRefFlag) {
-                    if (! s_opt.xref2) fprintf(off,"\n");
+                    if (! options.xref2) fprintf(off,"\n");
                 }
-                if (s_opt.xref2) {
+                if (options.xref2) {
                     if (! pendingRefFlag) {
                         sprintf(s_crefListLine+s_crefListLinei, "%s:%d:", fn, rr->p.line);
                         s_crefListLinei += strlen(s_crefListLine+s_crefListLinei);
@@ -1767,9 +1767,9 @@ static void linePosProcess(FILE *off,
                 GetFileChar(ch, cp, cxfBuf);
             }
         }
-        if (! s_opt.xref2) passSourcePutChar('\n',off);
+        if (! options.xref2) passSourcePutChar('\n',off);
     }
-    if (s_opt.xref2 && s_crefListLinei!=0) {
+    if (options.xref2 && s_crefListLinei!=0) {
         ppcIndentOffset();
         fprintf(off, "<%s %s=%d %s=%ld>%s</%s>\n",
                 PPC_SRC_LINE, PPCA_REFN, linerefn,
@@ -1810,12 +1810,12 @@ static void passRefsThroughSourceFile(Reference **in_out_references, Position *c
     cofileName = s_fileTab.tab[fnum]->name;
     references = passNonPrintableRefsForFile(references, fnum, usages, usageFilter);
     if (references==NULL || references->p.file != fnum) goto fin;
-    if (s_opt.referenceListWithoutSource) {
+    if (options.referenceListWithoutSource) {
         ebuf = NULL;
     } else {
         ebuf = editorFindFile(cofileName);
         if (ebuf==NULL) {
-            if (s_opt.xref2) {
+            if (options.xref2) {
                 char tmpBuff[TMP_BUFF_SIZE];
                 sprintf(tmpBuff, "file '%s' not accessible", cofileName);
                 errorMessage(ERR_ST, tmpBuff);
@@ -1868,18 +1868,18 @@ int ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2) { /* TODO: bool! */
 }
 
 void olcxPrintClassTree(S_olSymbolsMenu *sss) {
-    if (s_opt.xref2) {
+    if (options.xref2) {
         ppcGenRecordBegin(PPC_DISPLAY_CLASS_TREE);
     } else {
         fprintf(ccOut, "<");
     }
     readOneAppropReferenceFile(NULL, classHierarchyFunctionSequence);
     htmlGenerateGlobalReferenceLists(sss, ccOut, "__NO_HTML_FILE_NAME!__");
-    if (s_opt.xref2) ppcGenRecordEnd(PPC_DISPLAY_CLASS_TREE);
+    if (options.xref2) ppcGenRecordEnd(PPC_DISPLAY_CLASS_TREE);
 }
 
 void olcxPrintSelectionMenu(S_olSymbolsMenu *sss) {
-    if (s_opt.xref2) {
+    if (options.xref2) {
         ppcGenRecordBegin(PPC_SYMBOL_RESOLUTION);
     } else {
         fprintf(ccOut, ">");
@@ -1888,27 +1888,27 @@ void olcxPrintSelectionMenu(S_olSymbolsMenu *sss) {
         readOneAppropReferenceFile(NULL, classHierarchyFunctionSequence);
         htmlGenerateGlobalReferenceLists(sss, ccOut, "__NO_HTML_FILE_NAME!__");
     }
-    if (s_opt.xref2) {
+    if (options.xref2) {
         ppcGenRecordEnd(PPC_SYMBOL_RESOLUTION);
     } else {
-        if (s_opt.server_operation==OLO_RENAME || s_opt.server_operation==OLO_ARG_MANIP || s_opt.server_operation==OLO_ENCAPSULATE) {
+        if (options.server_operation==OLO_RENAME || options.server_operation==OLO_ARG_MANIP || options.server_operation==OLO_ENCAPSULATE) {
             if (LANGUAGE(LANG_JAVA)) {
                 fprintf(ccOut, "-![Warning] It is highly recommended to process the whole hierarchy of related classes at once. Unselection of any class of applications above (and its exclusion from refactoring process) may cause changes in your program behavior. Press <return> to continue.\n");
             } else {
                 fprintf(ccOut, "-![Warning] It is highly recommended to process all symbols at once. Unselection of any symbols and its exclusion from refactoring process may cause changes in your program behavior. Press <return> to continue.\n");
             }
         }
-        if (s_opt.server_operation==OLO_VIRTUAL2STATIC_PUSH) {
+        if (options.server_operation==OLO_VIRTUAL2STATIC_PUSH) {
             fprintf(ccOut, "-![Warning] If you see this message it is highly probable that turning this virtual method into static will not be behaviour preserving! This refactoring is behaviour preserving only if the method does not use mechanism of virtual invocations. On this screen you should select the application classes which are refering to the method which will become static. If you can't unambiguously determine those references do not continue in this refactoring!\n");
         }
-        if (s_opt.server_operation==OLO_SAFETY_CHECK2) {
+        if (options.server_operation==OLO_SAFETY_CHECK2) {
             if (LANGUAGE(LANG_JAVA)) {
                 fprintf(ccOut, "-![Warning] There are differences between original class hierarchy and the new one, those name clashes may cause that the refactoring will not be behavior preserving!\n");
             } else {
                 fprintf(ccOut, "-![Error] There is differences between original and new symbols referenced at this position. The difference is due to name clashes and may cause changes in the behaviour of the program. Please, undo last refactoring!");
             }
         }
-        if (s_opt.server_operation==OLO_PUSH_ENCAPSULATE_SAFETY_CHECK) {
+        if (options.server_operation==OLO_PUSH_ENCAPSULATE_SAFETY_CHECK) {
             fprintf(ccOut, "-![Warning] A method (getter or setter) created during the encapsulation has the same name as an existing method, so it will be inserted into this (existing) inheritance hierarchy. This may cause that the refactoring will not be behaviour preserving. Please, select applications unambiguously reporting to the newly created method. If you can't do this, you should undo the refactoring and rename the field first!\n");
         }
     }
@@ -1952,7 +1952,7 @@ static void olcxPrintRefList(char *commandString, S_olcxReferences *refs) {
     int         actn, len;
     char        ttt[MAX_CX_SYMBOL_SIZE];
 
-    if (s_opt.xref2) {
+    if (options.xref2) {
         actn = getCurrentRefPosition(refs);
         if (refs!=NULL && refs->menuSym != NULL) {
             ttt[0]='\"';
@@ -1976,7 +1976,7 @@ static void olcxPrintRefList(char *commandString, S_olcxReferences *refs) {
                                       s_refListFilters[refs->refsFilterLevel]);
         }
     }
-    if (s_opt.xref2) {
+    if (options.xref2) {
         ppcGenRecordEnd(PPC_REFERENCE_LIST);
         //& if (refs!=NULL && refs->act!=NULL) ppcGenGotoPositionRecord(&refs->act->p);
     }
@@ -2020,7 +2020,7 @@ static void olcxPushAndCallMacro(void) {
     OLCX_MOVE_INIT(s_olcxCurrentUser, refs, CHECK_NULL);
     LIST_MERGE_SORT(Reference, refs->r, olcxListLessFunction);
     LIST_REVERSE(Reference, refs->r);
-    assert(s_opt.xref2);
+    assert(options.xref2);
     symbolHighlighNameSprint(symbol, refs->hkSelectedSym);
     // precheck first
     for(rr=refs->r; rr!=NULL; rr=rr->next) {
@@ -2179,7 +2179,7 @@ static void olcxSetActReferenceToFirstVisible(S_olcxReferences *refs, Reference 
     if (r != NULL) {
         refs->act = r;
     } else {
-        if (s_opt.xref2) {
+        if (options.xref2) {
             ppcGenRecord(PPC_BOTTOM_INFORMATION, "Moving to the first reference", "\n");
         }
         r = refs->r;
@@ -2214,7 +2214,7 @@ static void olcxReferenceMinus(void) {
             if (r->usage.base < rlevel) l = r;
         }
         if (l==NULL) {
-            if (s_opt.xref2) {
+            if (options.xref2) {
                 ppcGenRecord(PPC_BOTTOM_INFORMATION, "Moving to the last reference", "\n");
             }
             for(; r!=NULL; r=r->next) {
@@ -2249,7 +2249,7 @@ static void olcxReferenceGetCurrentRefn(void) {
     int                 n;
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
     n = getCurrentRefPosition(refs);
-    assert(s_opt.xref2);
+    assert(options.xref2);
     ppcGenNumericRecord(PPC_UPDATE_CURRENT_REFERENCE, n, "", "\n");
 }
 
@@ -2271,21 +2271,21 @@ static void olcxPrintSymbolName(S_olcxReferences *refs) {
     char ttt[MAX_CX_SYMBOL_SIZE+MAX_SYMBOL_MESSAGE_LEN];
     S_olSymbolsMenu *ss;
     if (refs==NULL) {
-        if (s_opt.xref2) {
+        if (options.xref2) {
             ppcGenRecord(PPC_BOTTOM_INFORMATION, "stack is now empty", "\n");
         } else {
             fprintf(ccOut, "*stack is now empty");
         }
         //&     fprintf(ccOut, "*");
     } else if (refs->hkSelectedSym==NULL) {
-        if (s_opt.xref2) {
+        if (options.xref2) {
             ppcGenRecord(PPC_BOTTOM_INFORMATION, "Current top symbol: <empty>", "\n");
         } else {
             fprintf(ccOut, "*Current top symbol: <empty>");
         }
     } else {
         ss = refs->hkSelectedSym;
-        if (s_opt.xref2) {
+        if (options.xref2) {
             sprintf(ttt, "Current top symbol: ");
             assert(strlen(ttt) < MAX_SYMBOL_MESSAGE_LEN);
             sprintfSymbolLinkName(ttt+strlen(ttt), ss);
@@ -2447,7 +2447,7 @@ static void olcxMenuInspectDef(S_olSymbolsMenu *menu, char *refsuffix,
     for(ss=menu; ss!=NULL; ss=ss->next) {
         //&sprintf(tmpBuff,"checking line %d", ss->outOnLine);  ppcGenRecord(PPC_BOTTOM_INFORMATION, tmpBuff, "\n");
         line = SYMBOL_MENU_FIRST_LINE + ss->outOnLine;
-        if (line == s_opt.olcxMenuSelectLineNum) goto breakl;
+        if (line == options.olcxMenuSelectLineNum) goto breakl;
     }
  breakl:
     if (ss == NULL) {
@@ -2520,13 +2520,13 @@ static void olcxMenuToggleSelect(void) {
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
     for(ss=refs->menuSym; ss!=NULL; ss=ss->next) {
         line = SYMBOL_MENU_FIRST_LINE + ss->outOnLine;
-        if (line == s_opt.olcxMenuSelectLineNum) {
+        if (line == options.olcxMenuSelectLineNum) {
             ss->selected = ss->selected ^ 1;
             olcxRecomputeSelRefs(refs);
             break;
         }
     }
-    if (s_opt.xref2) {
+    if (options.xref2) {
         if (ss!=NULL) {
             olcxPrintRefList(";", refs);
         }
@@ -2538,7 +2538,7 @@ static void olcxMenuToggleSelect(void) {
             linkNamePrettyPrint(ln,ss->s.name,MAX_HTML_REF_LEN,SHORT_NAME);
             cname = javaGetNudePreTypeName_st(getRealFileNameStatic(
                                                                     s_fileTab.tab[ss->s.vApplClass]->name),
-                                              s_opt.nestedClassDisplaying);
+                                              options.nestedClassDisplaying);
             sprintf(tmpBuff, "%s %s refs of \"%s\"",
                     (ss->selected?"inserting":"removing"), cname, ln);
             fprintf(ccOut,"*%s", tmpBuff);
@@ -2559,13 +2559,13 @@ static void olcxMenuSelectOnly(void) {
     for(ss=refs->menuSym; ss!=NULL; ss=ss->next) {
         ss->selected = 0;
         line = SYMBOL_MENU_FIRST_LINE + ss->outOnLine;
-        if (line == s_opt.olcxMenuSelectLineNum) {
+        if (line == options.olcxMenuSelectLineNum) {
             ss->selected = 1;
             sel = ss;
         }
     }
     if (sel==NULL) {
-        if (s_opt.xref2) {
+        if (options.xref2) {
             ppcGenRecord(PPC_BOTTOM_WARNING, "No Symbol", "\n");
         } else {
             fprintf(ccOut,"*No symbol");
@@ -2573,7 +2573,7 @@ static void olcxMenuSelectOnly(void) {
         return;
     }
     olcxRecomputeSelRefs(refs);
-    if (s_opt.xref2) {
+    if (options.xref2) {
         dref = getDefinitionRef(refs->r);
         if (dref != NULL) refs->act = dref;
         olcxPrintRefList(";", refs);
@@ -2675,7 +2675,7 @@ static void olcxMenuSelectAll(int val) {
     S_olSymbolsMenu *ss;
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
     if (refs->command == OLO_GLOBAL_UNUSED) {
-        if (s_opt.xref2) {
+        if (options.xref2) {
             ppcGenRecord(PPC_WARNING, "The browser does not display project unused symbols anymore","\n");
         }
     }
@@ -2683,7 +2683,7 @@ static void olcxMenuSelectAll(int val) {
         if (ss->visible) ss->selected = val;
     }
     olcxRecomputeSelRefs(refs);
-    if (s_opt.xref2) {
+    if (options.xref2) {
         olcxPrintRefList(";", refs);
     } else {
         fprintf(ccOut, "*Done");
@@ -2778,7 +2778,7 @@ static void handleConstructorSpecialsInSelectingSymbolInMenu(
                                         || command == OLO_PUSH_FOR_LOCALM \
                                         || command == OLO_SAFETY_CHECK1 \
                                         || command == OLO_SAFETY_CHECK2 \
-                                        || s_opt.manualResolve == RESOLVE_DIALOG_NEVER \
+                                        || options.manualResolve == RESOLVE_DIALOG_NEVER \
                                         )
 
 void dummyloop1(){}
@@ -2862,15 +2862,15 @@ static void setSelectedVisibleItems(S_olSymbolsMenu *menu, int command, int filt
         oovisible = 0;
         ooselected = 0;
     } else if (RENAME_MENU_SELECTION(command)) {
-        oovisible = s_opt.ooChecksBits;
+        oovisible = options.ooChecksBits;
         ooselected = RENAME_SELECTION_OO_BITS;
     } else {
         if (s_olstringServed && s_olstringUsage == UsageMethodInvokedViaSuper) {
-            //&oovisible = s_opt.ooChecksBits;
+            //&oovisible = options.ooChecksBits;
             oovisible = s_menuFilterOoBits[filterLevel];
             ooselected = METHOD_VIA_SUPER_SELECTION_OO_BITS;
         } else {
-            //&oovisible = s_opt.ooChecksBits;
+            //&oovisible = options.ooChecksBits;
             oovisible = s_menuFilterOoBits[filterLevel];
             ooselected = DEFAULT_SELECTION_OO_BITS;
         }
@@ -2896,7 +2896,7 @@ static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
     }
     if (refs!=NULL) {
         olcxPrintSelectionMenu(refs->menuSym);
-        if (s_opt.xref2) {
+        if (options.xref2) {
             // auto update of references
             // useless, should be done by user interface (because of setting
             // of reffilter level)
@@ -2904,7 +2904,7 @@ static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
         }
     }
     if (refs==NULL) {
-        if (s_opt.xref2) {
+        if (options.xref2) {
             olcxPrintSelectionMenu(NULL);
             olcxPrintRefList(";", NULL);
         } else {
@@ -2923,7 +2923,7 @@ static void olcxReferenceFilterSet(int flevel) {
         //& } else {
         //&     olcxGenNoReferenceSignal();
     }
-    if (s_opt.xref2) {
+    if (options.xref2) {
         // move to the visible reference
         if (refs!=NULL) olcxSetActReferenceToFirstVisible(refs, refs->act);
         olcxPrintRefList(";", refs);
@@ -2956,7 +2956,7 @@ static void olcxReferenceRePush(void) {
         //& ppcGenGotoPositionRecord(&s_olcxCurrentUser->browserStack.top->cpos);
         olcxPrintSymbolName(s_olcxCurrentUser->browserStack.top);
     } else {
-        if (s_opt.xref2) {
+        if (options.xref2) {
             ppcGenRecordWithNumeric(PPC_BOTTOM_WARNING, PPCA_BEEP, 1, "You are on the top of browser stack.", "\n");
         } else {
             fprintf(ccOut, "*** Complete stack, no pop-ed references");
@@ -2982,7 +2982,7 @@ void olcxPopOnly(void) {
     S_olcxReferences *refs;
 
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
-    if (!s_opt.xref2) fprintf(ccOut, "*");
+    if (!options.xref2) fprintf(ccOut, "*");
     //& olStackDeleteSymbol(refs);
     s_olcxCurrentUser->browserStack.top = refs->previous;
 }
@@ -3117,24 +3117,24 @@ static Reference *olcxCreateFileShiftedRefListForCheck(Reference *rr) {
     Reference *res, *r, *tt, **resa;
     int ofn, nfn, fmline, lmline;
     //&fprintf(dumpOut,"!shifting enter\n");
-    if (s_opt.checkFileMovedFrom==NULL) return NULL;
-    if (s_opt.checkFileMovedTo==NULL) return NULL;
-    //&fprintf(dumpOut,"!shifting %s --> %s\n", s_opt.checkFileMovedFrom, s_opt.checkFileMovedTo);
-    ofn = getFileNumberFromName(s_opt.checkFileMovedFrom);
-    nfn = getFileNumberFromName(s_opt.checkFileMovedTo);
+    if (options.checkFileMovedFrom==NULL) return NULL;
+    if (options.checkFileMovedTo==NULL) return NULL;
+    //&fprintf(dumpOut,"!shifting %s --> %s\n", options.checkFileMovedFrom, options.checkFileMovedTo);
+    ofn = getFileNumberFromName(options.checkFileMovedFrom);
+    nfn = getFileNumberFromName(options.checkFileMovedTo);
     //&fprintf(dumpOut,"!shifting %d --> %d\n", ofn, nfn);
     if (ofn==s_noneFileIndex) return NULL;
     if (nfn==s_noneFileIndex) return NULL;
-    fmline = s_opt.checkFirstMovedLine;
-    lmline = s_opt.checkFirstMovedLine + s_opt.checkLinesMoved;
+    fmline = options.checkFirstMovedLine;
+    lmline = options.checkFirstMovedLine + options.checkLinesMoved;
     res = NULL; resa = &res;
     for(r=rr; r!=NULL; r=r->next) {
         OLCX_ALLOC(tt, Reference);
         *tt = *r;
         if (tt->p.file==ofn && tt->p.line>=fmline && tt->p.line<lmline) {
             tt->p.file = nfn;
-            //&fprintf(dumpOut,"!shifting %d:%d to %d (%d %d %d)\n", tt->p.file, tt->p.line, s_opt.checkNewLineNumber + (tt->p.line - fmline), s_opt.checkFirstMovedLine, s_opt.checkLinesMoved, s_opt.checkNewLineNumber);
-            tt->p.line = s_opt.checkNewLineNumber + (tt->p.line - fmline);
+            //&fprintf(dumpOut,"!shifting %d:%d to %d (%d %d %d)\n", tt->p.file, tt->p.line, options.checkNewLineNumber + (tt->p.line - fmline), options.checkFirstMovedLine, options.checkLinesMoved, options.checkNewLineNumber);
+            tt->p.line = options.checkNewLineNumber + (tt->p.line - fmline);
         }
         *resa=tt; tt->next=NULL; resa= &(tt->next);
     }
@@ -3211,7 +3211,7 @@ static void olEncapsulationSafetyCheck(void) {
 static void olcxResetSuffix(void) {
     S_olcxReferences *refs;
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
-    strncpy(refs->refsuffix, s_opt.olcxRefSuffix, MAX_OLCX_SUFF_SIZE-1);
+    strncpy(refs->refsuffix, options.olcxRefSuffix, MAX_OLCX_SUFF_SIZE-1);
     refs->refsuffix[MAX_OLCX_SUFF_SIZE-1] = 0;
     fprintf(ccOut,"* refs %s", refs->refsuffix);
 }
@@ -3220,12 +3220,12 @@ static void olCompletionSelect(void) {
     S_olcxReferences    *refs;
     S_olCompletion      *rr;
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs, CHECK_NULL);
-    rr = olCompletionNthLineRef(refs->cpls, s_opt.olcxGotoVal);
+    rr = olCompletionNthLineRef(refs->cpls, options.olcxGotoVal);
     if (rr==NULL) {
         errorMessage(ERR_ST, "selection out of range.");
         return;
     }
-    if (s_opt.xref2) {
+    if (options.xref2) {
         assert(s_olcxCurrentUser->completionsStack.root!=NULL);
         ppcGenGotoPositionRecord(&s_olcxCurrentUser->completionsStack.root->cpos);
         if (rr->csymType==TypeNonImportedClass) {
@@ -3282,14 +3282,14 @@ static void olCompletionForward(void) {
 }
 
 static void olcxNoSymbolFoundErrorMessage(void) {
-    if (s_opt.server_operation == OLO_PUSH_NAME || s_opt.server_operation == OLO_PUSH_SPECIAL_NAME) {
-        if (s_opt.xref2) {
+    if (options.server_operation == OLO_PUSH_NAME || options.server_operation == OLO_PUSH_SPECIAL_NAME) {
+        if (options.xref2) {
             ppcGenRecord(PPC_ERROR,"No symbol found.", "\n");
         } else {
             fprintf(ccOut,"*** No symbol found.");
         }
     } else {
-        if (s_opt.xref2) {
+        if (options.xref2) {
             ppcGenRecord(PPC_ERROR,"No symbol found, please position the cursor on a program symbol.", "\n");
         } else {
             fprintf(ccOut,"*** No symbol found, please position the cursor on a program symbol.");
@@ -3335,11 +3335,11 @@ int olcxShowSelectionMenu(void) {
 
     // decide whether to show manual resolution menu
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
-    if (s_opt.server_operation == OLO_PUSH_FOR_LOCALM) {
+    if (options.server_operation == OLO_PUSH_FOR_LOCALM) {
         // never ask for resolution for local motion symbols
         return(0);
     }
-    if (s_opt.server_operation == OLO_SAFETY_CHECK2) {
+    if (options.server_operation == OLO_SAFETY_CHECK2) {
         // safety check showing of menu is resolved by safetyCheck2ShouldWarn
         return(0);
     }
@@ -3355,12 +3355,12 @@ int olcxShowSelectionMenu(void) {
         return(0); // no visible
     }
     first = NULL;
-    if (s_opt.server_operation==OLO_PUSH
-        || s_opt.server_operation==OLO_PUSH_ONLY
-        || s_opt.server_operation==OLO_PUSH_AND_CALL_MACRO
-        || s_opt.server_operation==OLO_RENAME
-        || s_opt.server_operation==OLO_ARG_MANIP
-        || s_opt.server_operation==OLO_PUSH_ENCAPSULATE_SAFETY_CHECK
+    if (options.server_operation==OLO_PUSH
+        || options.server_operation==OLO_PUSH_ONLY
+        || options.server_operation==OLO_PUSH_AND_CALL_MACRO
+        || options.server_operation==OLO_RENAME
+        || options.server_operation==OLO_ARG_MANIP
+        || options.server_operation==OLO_PUSH_ENCAPSULATE_SAFETY_CHECK
         || JAVA_STATICALLY_LINKED(fvisible->s.b.storage,
                                   fvisible->s.b.accessFlags)) {
         // manually only if different
@@ -3456,7 +3456,7 @@ int safetyCheck2ShouldWarn(void) {
     int res,problem;
     S_olcxReferences *refs, *origrefs, *newrefs, *diffrefs;
     problem = 0;
-    if (s_opt.server_operation != OLO_SAFETY_CHECK2) return(0);
+    if (options.server_operation != OLO_SAFETY_CHECK2) return(0);
     if (! LANGUAGE(LANG_JAVA)) return(0);
     // compare hierarchies and deselect diff
     origrefs = newrefs = diffrefs = NULL;
@@ -3486,8 +3486,8 @@ static int olMenuHashFileNumLess(S_olSymbolsMenu *s1, S_olSymbolsMenu *s2) {
 }
 
 void getLineColCursorPositionFromCommandLineOption(int *l, int *c) {
-    assert(s_opt.olcxlccursor!=NULL);
-    sscanf(s_opt.olcxlccursor,"%d:%d", l, c);
+    assert(options.olcxlccursor!=NULL);
+    sscanf(options.olcxlccursor,"%d:%d", l, c);
 }
 
 int getClassNumFromClassLinkName(char *name, int defaultResult) {
@@ -3528,7 +3528,7 @@ static int olSpecialFieldCreateSelection(char *fieldName, int storage) {
         if (ss->s.b.symType == TypeStruct) {
             clii = getClassNumFromClassLinkName(ss->s.name, clii);
         } else {
-            if (s_opt.server_operation == OLO_CLASS_TREE) {
+            if (options.server_operation == OLO_CLASS_TREE) {
                 assert(s_olcxCurrentUser->classTree.baseClassIndex!=s_noneFileIndex);
                 clii = s_olcxCurrentUser->classTree.baseClassIndex;
             } else {
@@ -3649,7 +3649,7 @@ static void olcxProceedSafetyCheck1OnInloadedRefs(S_olcxReferences *rstack, S_ol
 
 void olcxPushSpecialCheckMenuSym(int pushCommand,char *symname) {
     S_olcxReferences    *rstack;
-    olcxSetCurrentUser(s_opt.user);
+    olcxSetCurrentUser(options.user);
     olcxPushEmptyStackItem(&s_olcxCurrentUser->browserStack);
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
@@ -3660,8 +3660,8 @@ void olcxPushSpecialCheckMenuSym(int pushCommand,char *symname) {
 }
 
 static void olcxSafetyCheckInit(void) {
-    assert(s_opt.server_operation == OLO_SAFETY_CHECK_INIT);
-    olcxPushSpecialCheckMenuSym(s_opt.server_operation,LINK_NAME_SAFETY_CHECK_MISSED);
+    assert(options.server_operation == OLO_SAFETY_CHECK_INIT);
+    olcxPushSpecialCheckMenuSym(options.server_operation,LINK_NAME_SAFETY_CHECK_MISSED);
     fprintf(ccOut,"* safety checks initialized");
     fflush(ccOut);
 }
@@ -3783,7 +3783,7 @@ static int mmPreCheckMakeDifference(S_olcxReferences *origrefs,
         diffsym = NULL;
         for(rr=osym->s.refs; rr!=NULL; rr=rr->next) {
             nsym = mmFindSymWithCorrespondingRef(rr,osym,newrefs,&moveOffset);
-            if (nsym==NULL || ! symbolsCorrespondWrtMoving(osym, nsym, s_opt.server_operation)) {
+            if (nsym==NULL || ! symbolsCorrespondWrtMoving(osym, nsym, options.server_operation)) {
                 if (diffsym == NULL) {
                     diffsym = olAddBrowsedSymbol(
                                                  &osym->s, &diffrefs->menuSym, 1, 1,
@@ -3802,10 +3802,10 @@ static void olcxMMPreCheck(void) {
     S_olcxReferences    *diffrefs, *origrefs, *newrefs;
     SymbolReferenceItem     dri;
     int     precheck;
-    olcxSetCurrentUser(s_opt.user);
+    olcxSetCurrentUser(options.user);
     olcxPushEmptyStackItem(&s_olcxCurrentUser->browserStack);
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
-    assert(s_opt.server_operation == OLO_MM_PRE_CHECK || s_opt.server_operation == OLO_PP_PRE_CHECK);
+    assert(options.server_operation == OLO_MM_PRE_CHECK || options.server_operation == OLO_PP_PRE_CHECK);
     diffrefs = s_olcxCurrentUser->browserStack.top;
     assert(diffrefs && diffrefs->previous && diffrefs->previous->previous);
     newrefs = diffrefs->previous;
@@ -3932,7 +3932,7 @@ static void olcxSafetyCheck1(void) {
     // last file processing
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     assert(s_olcxCurrentUser->browserStack.top->previous);
-    assert(s_opt.server_operation == OLO_SAFETY_CHECK1);
+    assert(options.server_operation == OLO_SAFETY_CHECK1);
     //&fprintf(dumpOut,":here I am in safety check\n");fflush(dumpOut);
     rstack = s_olcxCurrentUser->browserStack.top->previous;
     //& setRefSuffix();
@@ -3963,7 +3963,7 @@ static void olcxTopReferencesIntersection(void) {
     // last file processing
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     assert(s_olcxCurrentUser->browserStack.top->previous);
-    assert(s_opt.server_operation == OLO_INTERSECTION);
+    assert(options.server_operation == OLO_INTERSECTION);
     top1 = s_olcxCurrentUser->browserStack.top;
     top2 = s_olcxCurrentUser->browserStack.top->previous;
     //TODO in linear time, not O(n^2) like now.
@@ -4013,10 +4013,10 @@ static void olcxTopReferencesRemoveWindow(void) {
     // last file processing
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     assert(s_olcxCurrentUser->browserStack.top->previous);
-    assert(s_opt.server_operation == OLO_REMOVE_WIN);
-    wdfile = getFileNumberFromName(s_opt.olcxWinDelFile);
-    fillPosition(&fp,wdfile,s_opt.olcxWinDelFromLine,s_opt.olcxWinDelFromCol);
-    fillPosition(&tp,wdfile,s_opt.olcxWinDelToLine,s_opt.olcxWinDelToCol);
+    assert(options.server_operation == OLO_REMOVE_WIN);
+    wdfile = getFileNumberFromName(options.olcxWinDelFile);
+    fillPosition(&fp,wdfile,options.olcxWinDelFromLine,options.olcxWinDelFromCol);
+    fillPosition(&tp,wdfile,options.olcxWinDelToLine,options.olcxWinDelToCol);
     top1 = s_olcxCurrentUser->browserStack.top;
     olcxRemoveRefWinFromRefList(&top1->r, wdfile, &fp, &tp);
     for(mm=top1->menuSym; mm!=NULL; mm=mm->next) {
@@ -4030,11 +4030,11 @@ char *getXrefEnvironmentValue(char *name ) {
     char *val;
     int i, n;
     val = NULL;
-    n = s_opt.setGetEnv.num;
+    n = options.setGetEnv.num;
     for(i=0; i<n; i++) {
-        //&fprintf(dumpOut,"checking (%s) %s\n",s_opt.setGetEnv.name[i], s_opt.setGetEnv.value[i]);
-        if (strcmp(s_opt.setGetEnv.name[i], name)==0) {
-            val = s_opt.setGetEnv.value[i];
+        //&fprintf(dumpOut,"checking (%s) %s\n",options.setGetEnv.name[i], options.setGetEnv.value[i]);
+        if (strcmp(options.setGetEnv.name[i], name)==0) {
+            val = options.setGetEnv.value[i];
             break;
         }
     }
@@ -4044,20 +4044,20 @@ char *getXrefEnvironmentValue(char *name ) {
 static void olcxProcessGetRequest(void) {
     char *name, *val;
 
-    name = s_opt.getValue;
+    name = options.getValue;
     //&fprintf(dumpOut,"![get] looking for %s\n", name);
     val = getXrefEnvironmentValue(name);
     if (val != NULL) {
         // O.K. this is a special case, if input file is given
         // then make additional 'predefined' replacements
-        if (s_opt.xref2) {
+        if (options.xref2) {
             ppcGenRecord(PPC_SET_INFO, expandSpecialFilePredefinedVariables_st(val), "\n");
         } else {
             fprintf(ccOut,"*%s", expandSpecialFilePredefinedVariables_st(val));
         }
     } else {
         char tmpBuff[TMP_BUFF_SIZE];
-        if (s_opt.xref2) {
+        if (options.xref2) {
             sprintf(tmpBuff,"No \"-set %s <command>\" option specified for active project", name);
         } else {
             sprintf(tmpBuff,"No \"-set %s <command>\" option specified for active project", name);
@@ -4073,7 +4073,7 @@ void olcxPrintPushingAction(int opt, int afterMenu) {
             olcxOrderRefsAndGotoDefinition(afterMenu);
         } else {
             // to auto repush symbol by name, but I do not like it.
-            //& if (s_opt.xref2) ppcGenRecord(PPC_NO_SYMBOL, "", "\n");
+            //& if (options.xref2) ppcGenRecord(PPC_NO_SYMBOL, "", "\n");
             //& else
             olcxNoSymbolFoundErrorMessage();
             olStackDeleteSymbol(s_olcxCurrentUser->browserStack.top);
@@ -4161,8 +4161,8 @@ static void olcxCreateClassTree(void) {
     olcxFreeResolutionMenu(s_olcxCurrentUser->classTree.tree);
     s_olcxCurrentUser->classTree.tree = NULL;
     olSpecialFieldCreateSelection(LINK_NAME_CLASS_TREE_ITEM, StorageMethod);
-    s_opt.ooChecksBits = (s_opt.ooChecksBits & ~OOC_VIRTUAL_MASK);
-    s_opt.ooChecksBits |= OOC_VIRT_RELATED;
+    options.ooChecksBits = (options.ooChecksBits & ~OOC_VIRTUAL_MASK);
+    options.ooChecksBits |= OOC_VIRT_RELATED;
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
     olCreateSelectionMenu(rstack->command);
@@ -4205,10 +4205,10 @@ void olcxPushSpecial(char *fieldName, int command) {
 }
 
 static void olcxListSpecial(char *fieldName) {
-    olcxPushSpecial(fieldName, s_opt.server_operation);
+    olcxPushSpecial(fieldName, options.server_operation);
     //&olcxPrintSelectionMenu(s_olcxCurrentUser->browserStack.top->menuSym);
     // previous do not work, because of automatic reduction in moving
-    olcxPrintPushingAction(s_opt.server_operation, DEFAULT_VALUE);
+    olcxPrintPushingAction(options.server_operation, DEFAULT_VALUE);
 }
 
 int isPushAllMethodsValidRefItem(SymbolReferenceItem *ri) {
@@ -4372,11 +4372,11 @@ static Symbol *javaGetClassSymbolFromClassDotName(char *fqName) {
 }
 
 Symbol *getMoveTargetClass(void) {
-    if (s_opt.moveTargetClass == NULL) {
+    if (options.moveTargetClass == NULL) {
         errorMessage(ERR_INTERNAL,"pull up/push down pre-check without setting target class");
         return NULL;
     }
-    return(javaGetClassSymbolFromClassDotName(s_opt.moveTargetClass));
+    return(javaGetClassSymbolFromClassDotName(options.moveTargetClass));
 }
 
 static int tpCheckItIsAPackage(int req, char *classOrPack) { /* TODO: bool? */
@@ -4590,7 +4590,7 @@ static void olTrivialRefactoringPreCheck(int refcode) {
                 tpCheckPrintClassMovingType());
         break;
     case TPC_GET_LAST_IMPORT_LINE:
-        if (s_opt.xref2) {
+        if (options.xref2) {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff, "%d", s_cps.lastImportLine);
             ppcGenRecord(PPC_SET_INFO, tmpBuff, "\n");
@@ -4612,11 +4612,11 @@ static void mainAnswerReferencePushingAction(int command) {
     olCreateSelectionMenu(command);
     //&olcxPrintSelectionMenu(s_olcxCurrentUser->browserStack.top->hkSelectedSym);
     //&olcxDumpSelectionMenu(s_olcxCurrentUser->browserStack.top->menuSym);
-    if (s_opt.manualResolve == RESOLVE_DIALOG_ALLWAYS
+    if (options.manualResolve == RESOLVE_DIALOG_ALLWAYS
         || safetyCheck2ShouldWarn()
         || (olcxShowSelectionMenu()
-            && s_opt.manualResolve != RESOLVE_DIALOG_NEVER)) {
-        if (s_opt.xref2) {
+            && options.manualResolve != RESOLVE_DIALOG_NEVER)) {
+        if (options.xref2) {
             ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "", "\n");
         } else {
             olcxPrintSelectionMenu(s_olcxCurrentUser->browserStack.top->menuSym);
@@ -4624,7 +4624,7 @@ static void mainAnswerReferencePushingAction(int command) {
     } else {
         assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
         //&olProcessSelectedReferences(s_olcxCurrentUser->browserStack.top, genOnLineReferences);
-        olcxPrintPushingAction(s_opt.server_operation, DEFAULT_VALUE);
+        olcxPrintPushingAction(options.server_operation, DEFAULT_VALUE);
     }
 }
 
@@ -4664,12 +4664,12 @@ void pushLocalUnusedSymbolsAction(void) {
     ss = rstack->hkSelectedSym;
     assert(ss == NULL);
     refTabMap(&s_cxrefTab, mapAddLocalUnusedSymbolsToHkSelection);
-    olCreateSelectionMenu(s_opt.server_operation);
+    olCreateSelectionMenu(options.server_operation);
 }
 
 static void answerPushLocalUnusedSymbolsAction(void) {
     pushLocalUnusedSymbolsAction();
-    assert(s_opt.xref2);
+    assert(options.xref2);
     ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "", "\n");
 }
 
@@ -4681,9 +4681,9 @@ static void answerPushGlobalUnusedSymbolsAction(void) {
     rstack = s_olcxCurrentUser->browserStack.top;
     ss = rstack->hkSelectedSym;
     assert(ss == NULL);
-    scanReferenceFiles(s_opt.cxrefFileName, deadCodeDetectionFunctionSequence);
-    olCreateSelectionMenu(s_opt.server_operation);
-    assert(s_opt.xref2);
+    scanReferenceFiles(options.cxrefFileName, deadCodeDetectionFunctionSequence);
+    olCreateSelectionMenu(options.server_operation);
+    assert(options.xref2);
     ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "", "\n");
 }
 
@@ -4700,7 +4700,7 @@ static void answerClassName(char *name) {
     char ttt[MAX_CX_SYMBOL_SIZE];
     if (*name!=0) {
         linkNamePrettyPrint(ttt, name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
-        if (s_opt.xref2) {
+        if (options.xref2) {
             ppcGenRecord(PPC_SET_INFO, ttt, "\n");
         } else {
             fprintf(ccOut,"*%s", ttt);
@@ -4733,10 +4733,10 @@ void mainAnswerEditAction(void) {
 
     assert(ccOut);
 
-    switch (s_opt.server_operation) {
+    switch (options.server_operation) {
     case OLO_CHECK_VERSION:
-        assert(s_opt.checkVersion!=NULL);
-        if (strcmp(s_opt.checkVersion, C_XREF_VERSION_NUMBER)!=0) {
+        assert(options.checkVersion!=NULL);
+        if (strcmp(options.checkVersion, C_XREF_VERSION_NUMBER)!=0) {
             ppcGenRecord(PPC_VERSION_MISMATCH, C_XREF_VERSION_NUMBER, "\n");
         }
         break;
@@ -4752,19 +4752,19 @@ void mainAnswerEditAction(void) {
     case OLO_TAG_SEARCH:
         getCallerPositionFromCommandLineOption(&opos);
         //&olCompletionListInit(&opos);
-        if (! s_opt.xref2) fprintf(ccOut,";");
+        if (! options.xref2) fprintf(ccOut,";");
         assert(s_olcxCurrentUser);
         olcxPushEmptyStackItem(&s_olcxCurrentUser->retrieverStack);
         s_olcxCurrentUser->retrieverStack.top->cpos = opos;
 
-        s_wildcardSearch = containsWildcard(s_opt.olcxSearchString);
+        s_wildcardSearch = containsWildcard(options.olcxSearchString);
 
-        if (s_opt.tagSearchSpecif==TSS_FULL_SEARCH) scanJarFilesForTagSearch();
-        scanReferenceFiles(s_opt.cxrefFileName, symbolSearchFunctionSequence);
+        if (options.tagSearchSpecif==TSS_FULL_SEARCH) scanJarFilesForTagSearch();
+        scanReferenceFiles(options.cxrefFileName, symbolSearchFunctionSequence);
         printTagSearchResults();
         break;
     case OLO_TAG_SEARCH_BACK:
-        olcxSetCurrentUser(s_opt.user);
+        olcxSetCurrentUser(options.user);
         if (s_olcxCurrentUser->retrieverStack.top!=NULL &&
             s_olcxCurrentUser->retrieverStack.top->previous!=NULL) {
             s_olcxCurrentUser->retrieverStack.top = s_olcxCurrentUser->retrieverStack.top->previous;
@@ -4773,7 +4773,7 @@ void mainAnswerEditAction(void) {
         }
         break;
     case OLO_TAG_SEARCH_FORWARD:
-        olcxSetCurrentUser(s_opt.user);
+        olcxSetCurrentUser(options.user);
         nextrr = getNextTopStackItem(&s_olcxCurrentUser->retrieverStack);
         if (nextrr != NULL) {
             s_olcxCurrentUser->retrieverStack.top = nextrr;
@@ -4782,15 +4782,15 @@ void mainAnswerEditAction(void) {
         }
         break;
     case OLO_ACTIVE_PROJECT:
-        if (s_opt.project != NULL) {
-            if (s_opt.xref2) {
-                ppcGenRecord(PPC_SET_INFO, s_opt.project, "\n");
+        if (options.project != NULL) {
+            if (options.xref2) {
+                ppcGenRecord(PPC_SET_INFO, options.project, "\n");
             } else {
-                fprintf(ccOut,"*%s", s_opt.project);
+                fprintf(ccOut,"*%s", options.project);
             }
         } else {
             if (s_olOriginalComFileNumber == s_noneFileIndex) {
-                if (s_opt.xref2) {
+                if (options.xref2) {
                     ppcGenRecord(PPC_ERROR, "No source file to identify project", "\n");
                 } else {
                     fprintf(ccOut,"!** No source file to identify project");
@@ -4800,17 +4800,17 @@ void mainAnswerEditAction(void) {
                 log_trace("ifname = %s", ifname);
                 searchDefaultOptionsFile(ifname, dffname, dffsect);
                 if (dffname[0]==0 || dffsect[0]==0) {
-                    if (s_opt.noErrors) {
-                        if (! s_opt.xref2) fprintf(ccOut,"^"); // TODO: was "fprintf(ccOut,"^", ifname);"
+                    if (options.noErrors) {
+                        if (! options.xref2) fprintf(ccOut,"^"); // TODO: was "fprintf(ccOut,"^", ifname);"
                     } else {
-                        if (s_opt.xref2) {
+                        if (options.xref2) {
                             ppcGenRecord(PPC_NO_PROJECT, ifname, "\n");
                         } else {
                             fprintf(ccOut,"!** No project name matches %s", ifname);
                         }
                     }
                 } else {
-                    if (s_opt.xref2) {
+                    if (options.xref2) {
                         ppcGenRecord(PPC_SET_INFO, dffsect, "\n");
                     } else {
                         fprintf(ccOut,"*%s", dffsect);
@@ -4821,9 +4821,9 @@ void mainAnswerEditAction(void) {
         break;
     case OLO_JAVA_HOME:
         jdkcp = getJavaHome();
-        if (s_opt.xref2) {
+        if (options.xref2) {
             if (jdkcp==NULL) {
-                if (! s_opt.noErrors) {
+                if (! options.noErrors) {
                     ppcGenRecord(PPC_ERROR, "Can't infer Java home", "\n");
                 }
             } else {
@@ -4831,7 +4831,7 @@ void mainAnswerEditAction(void) {
             }
         } else {
             if (jdkcp==NULL) {
-                if (s_opt.noErrors) {
+                if (options.noErrors) {
                     fprintf(ccOut,"^");
                 } else {
                     fprintf(ccOut,"!* Can't find Java runtime library rt.jar"); // TODO: was "..., ifname);"
@@ -4874,17 +4874,17 @@ void mainAnswerEditAction(void) {
         break;
     case OLO_COMPLETION_FORWARD:    olCompletionForward();
         break;
-    case OLO_GOTO:  olcxReferenceGotoRef(s_opt.olcxGotoVal);
+    case OLO_GOTO:  olcxReferenceGotoRef(options.olcxGotoVal);
         break;
-    case OLO_CGOTO: olcxReferenceGotoCompletion(s_opt.olcxGotoVal);
+    case OLO_CGOTO: olcxReferenceGotoCompletion(options.olcxGotoVal);
         break;
-    case OLO_TAGGOTO:   olcxReferenceGotoTagSearchItem(s_opt.olcxGotoVal);
+    case OLO_TAGGOTO:   olcxReferenceGotoTagSearchItem(options.olcxGotoVal);
         break;
-    case OLO_TAGSELECT: olcxReferenceSelectTagSearchItem(s_opt.olcxGotoVal);
+    case OLO_TAGSELECT: olcxReferenceSelectTagSearchItem(options.olcxGotoVal);
         break;
-    case OLO_CBROWSE:   olcxReferenceBrowseCompletion(s_opt.olcxGotoVal);
+    case OLO_CBROWSE:   olcxReferenceBrowseCompletion(options.olcxGotoVal);
         break;
-    case OLO_REF_FILTER_SET:    olcxReferenceFilterSet(s_opt.filterValue);
+    case OLO_REF_FILTER_SET:    olcxReferenceFilterSet(options.filterValue);
         break;
     case OLO_REPUSH:    olcxReferenceRePush();
         break;
@@ -4905,7 +4905,7 @@ void mainAnswerEditAction(void) {
     case OLO_MENU_SELECT_NONE: olcxMenuSelectAll(0);
         break;
     case OLO_MENU_FILTER_SET:
-        olcxMenuSelectPlusolcxMenuSelectFilterSet(s_opt.filterValue);
+        olcxMenuSelectPlusolcxMenuSelectFilterSet(options.filterValue);
         break;
     case OLO_RESET_REF_SUFFIX: olcxResetSuffix();
         break;
@@ -4940,7 +4940,7 @@ void mainAnswerEditAction(void) {
         olcxListSpecial(LINK_NAME_NOT_FQT_ITEM);
         break;
     case OLO_SET_MOVE_TARGET:                       // xref1 target setting
-        assert(!s_opt.xref2);
+        assert(!options.xref2);
         if (*s_cps.setTargetAnswerClass!=0) {
             fprintf(ccOut,"*");
             //&printSymbolLinkNameString(ccOut, s_cps.setTargetAnswerClass);
@@ -4951,7 +4951,7 @@ void mainAnswerEditAction(void) {
         }
         break;
     case OLO_SET_MOVE_CLASS_TARGET: case OLO_SET_MOVE_METHOD_TARGET:    // xref2 target
-        assert(s_opt.xref2);
+        assert(options.xref2);
         if (!s_cps.moveTargetApproved) {
             ppcGenRecord(PPC_ERROR, "Invalid target place","\n");
         }
@@ -4979,7 +4979,7 @@ void mainAnswerEditAction(void) {
     case OLO_GET_SYMBOL_TYPE:
         if (s_olstringServed) {
             fprintf(ccOut,"*%s", s_olSymbolType);
-        } else if (s_opt.noErrors) {
+        } else if (options.noErrors) {
             fprintf(ccOut,"*");
         } else {
             errorMessage(ERR_ST, "No symbol found.");
@@ -4994,7 +4994,7 @@ void mainAnswerEditAction(void) {
             olStackDeleteSymbol(s_olcxCurrentUser->browserStack.top);
         } else {
             char tmpBuff[TMP_BUFF_SIZE];
-            sprintf(tmpBuff, "Parameter %d not found.", s_opt.olcxGotoVal);
+            sprintf(tmpBuff, "Parameter %d not found.", options.olcxGotoVal);
             errorMessage(ERR_ST, tmpBuff);
         }
         break;
@@ -5010,10 +5010,10 @@ void mainAnswerEditAction(void) {
     case OLO_PUSH_ALL_IN_METHOD:
         //&fprintf(ccOut,":\n\n getting all references from %d to %d\n", s_cps.cxMemiAtMethodBeginning, s_cps.cxMemiAtMethodEnd);
         olPushAllReferencesInBetween(s_cps.cxMemiAtMethodBeginning, s_cps.cxMemiAtMethodEnd);
-        olcxPrintPushingAction(s_opt.server_operation, 0);
+        olcxPrintPushingAction(options.server_operation, 0);
         break;
     case OLO_TRIVIAL_PRECHECK:
-        olTrivialRefactoringPreCheck(s_opt.trivialPreCheckCode);
+        olTrivialRefactoringPreCheck(options.trivialPreCheckCode);
         break;
     case OLO_ENCAPSULATE_SAFETY_CHECK:
         olEncapsulationSafetyCheck();
@@ -5023,8 +5023,8 @@ void mainAnswerEditAction(void) {
         olStackDeleteSymbol(s_olcxCurrentUser->browserStack.top);
         break;
     case OLO_PUSH_NAME:
-        pushSymbolByName(s_opt.pushName);
-        mainAnswerReferencePushingAction(s_opt.server_operation);
+        pushSymbolByName(options.pushName);
+        mainAnswerReferencePushingAction(options.server_operation);
         break;
     case OLO_GLOBAL_UNUSED:
         answerPushGlobalUnusedSymbolsAction();
@@ -5046,11 +5046,11 @@ void mainAnswerEditAction(void) {
             sprintf(tmpBuff,"Cursor (point) has to be positioned on a method or contructor name before invocation of this refactoring, not on the parameter itself. Please move the cursor onto the method (contructor) name and reinvoke the refactoring.");
             errorMessage(ERR_ST, tmpBuff);
         } else {
-            mainAnswerReferencePushingAction(s_opt.server_operation);
+            mainAnswerReferencePushingAction(options.server_operation);
         }
         break;
     default:
-        mainAnswerReferencePushingAction(s_opt.server_operation);
+        mainAnswerReferencePushingAction(options.server_operation);
     } // switch
 
     fflush(ccOut);
@@ -5062,7 +5062,7 @@ int byPassAcceptableSymbol(SymbolReferenceItem *p) {
     int nlen,len;
     char *nn, *nnn;
     GET_BARE_NAME(p->name, nn, len);
-    GET_BARE_NAME(s_opt.browsedSymName, nnn, nlen);
+    GET_BARE_NAME(options.browsedSymName, nnn, nlen);
     if (len != nlen) return(0);
     if (strncmp(nn, nnn, len)) return(0);
     return(1);
@@ -5213,7 +5213,7 @@ S_olSymbolsMenu *createSelectionMenu(SymbolReferenceItem *p) {
             //&fprintf(dumpOut,"ooBits for %s <-> %s %o %o\n", s_fileTab.tab[ss->s.vApplClass]->name, p->name, oo, ooBits);
             // following line is a big hack to speed up class tree   !!!!!
             // and unused symbols displaying, hope it will work fine !!!!!
-            //&if (s_opt.server_operation == OLO_GLOBAL_UNUSED || s_opt.server_operation==OLO_CLASS_TREE) break;
+            //&if (options.server_operation == OLO_GLOBAL_UNUSED || options.server_operation==OLO_CLASS_TREE) break;
         }
     }
     if (flag) {
@@ -5357,8 +5357,8 @@ static void tagSearchShortRemoveMultipleLines(S_olCompletion *list) {
 void tagSearchCompactShortResults(void) {
     assert(s_olcxCurrentUser);
     LIST_MERGE_SORT(S_olCompletion, s_olcxCurrentUser->retrieverStack.top->cpls, olTagSearchSortFunction);
-    if (s_opt.tagSearchSpecif==TSS_SEARCH_DEFS_ONLY_SHORT
-        || s_opt.tagSearchSpecif==TSS_FULL_SEARCH_SHORT) {
+    if (options.tagSearchSpecif==TSS_SEARCH_DEFS_ONLY_SHORT
+        || options.tagSearchSpecif==TSS_FULL_SEARCH_SHORT) {
         tagSearchShortRemoveMultipleLines(s_olcxCurrentUser->retrieverStack.top->cpls);
     }
 }
@@ -5375,27 +5375,27 @@ void printTagSearchResults(void) {
         ls = crTagSearchLineStatic(cc->name, &cc->ref.p,
                                    &len1, &len2, &len3);
     }
-    if (s_opt.olineLen >= 50000) {
+    if (options.olineLen >= 50000) {
         /* TODO: WTF? 50k??!?! */
         if (len1 > MAX_TAG_SEARCH_INDENT) len1 = MAX_TAG_SEARCH_INDENT;
     } else {
-        if (len1 > (s_opt.olineLen*MAX_TAG_SEARCH_INDENT_RATIO)/100) {
-            len1 = (s_opt.olineLen*MAX_TAG_SEARCH_INDENT_RATIO)/100;
+        if (len1 > (options.olineLen*MAX_TAG_SEARCH_INDENT_RATIO)/100) {
+            len1 = (options.olineLen*MAX_TAG_SEARCH_INDENT_RATIO)/100;
         }
     }
     len = len1;
     // the second is writing
-    if (s_opt.xref2) ppcGenRecordBegin(PPC_SYMBOL_LIST);
+    if (options.xref2) ppcGenRecordBegin(PPC_SYMBOL_LIST);
     assert(s_olcxCurrentUser->retrieverStack.top);
     for(cc=s_olcxCurrentUser->retrieverStack.top->cpls; cc!=NULL; cc=cc->next) {
         ls = crTagSearchLineStatic(cc->name, &cc->ref.p,
                                    &len1, &len2, &len3);
-        if (s_opt.xref2) {
+        if (options.xref2) {
             ppcGenRecord(PPC_STRING_VALUE, ls, "\n");
         } else {
             fprintf(ccOut,"%s\n", ls);
         }
         len1 = len;
     }
-    if (s_opt.xref2) ppcGenRecordEnd(PPC_SYMBOL_LIST);
+    if (options.xref2) ppcGenRecordEnd(PPC_SYMBOL_LIST);
 }

@@ -29,7 +29,7 @@ bool displayingErrorMessages(void) {
     // no error messages for file preloaded for symbols
     if (LANGUAGE(LANG_JAVA) && s_jsl!=NULL)
         return false;
-    if (s_opt.debug || s_opt.show_errors)
+    if (options.debug || options.show_errors)
         return true;
     return false;
 }
@@ -49,14 +49,14 @@ int styyerror(char *s) {
 
 void noSuchFieldError(char *rec) {
     char message[TMP_BUFF_SIZE];
-    if (s_opt.debug || s_opt.show_errors) {
+    if (options.debug || options.show_errors) {
         sprintf(message, "Field/member '%s' not found", rec);
         errorMessage(ERR_ST, message);
     }
 }
 
 int styyErrorRecovery(void) {
-    if (s_opt.debug && displayingErrorMessages()) {
+    if (options.debug && displayingErrorMessages()) {
         errorMessage(ERR_ST, "recovery");
     }
     return(0);
@@ -75,8 +75,8 @@ void deleteSymDef(void *p) {
     log_debug("deleting %s %s", pp->name, pp->linkName);
     if (symbolTableDelete(s_javaStat->locals,pp)) return;
     if (symbolTableDelete(s_symbolTable,pp)==0) {
-        assert(s_opt.taskRegime);
-        if (s_opt.taskRegime != RegimeEditServer) {
+        assert(options.taskRegime);
+        if (options.taskRegime != RegimeEditServer) {
             errorMessage(ERR_INTERNAL,"symbol on deletion not found");
         }
     }
@@ -404,7 +404,7 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
          || (*res)->bits.storage==StorageMethod
          || (*res)->bits.storage==StorageConstructor)){
         assert(rfs.currClass->u.s && rfs.baseClass && rfs.baseClass->u.s);
-        if ((s_opt.ooChecksBits & OOC_ALL_CHECKS)==0
+        if ((options.ooChecksBits & OOC_ALL_CHECKS)==0
             || javaRecordVisibleAndAccessible(&rfs, rfs.baseClass, rfs.currClass, *res)) {
             minacc = javaGetMinimalAccessibility(&rfs, *res);
             fillUsageBits(&ub, UsageUsed, minacc);
@@ -467,7 +467,7 @@ void setLocalVariableLinkName(struct symbol *p) {
     char ttt[TMP_STRING_SIZE];
     char nnn[TMP_STRING_SIZE];
     int len,tti;
-    if (s_opt.server_operation == OLO_EXTRACT) {
+    if (options.server_operation == OLO_EXTRACT) {
         // extract variable, must pass all needed informations in linkname
         sprintf(nnn, "%c%s%c", LINK_NAME_SEPARATOR, p->name, LINK_NAME_SEPARATOR);
         ttt[0] = LINK_NAME_EXTRACT_DEFAULT_FLAG;
@@ -483,11 +483,11 @@ void setLocalVariableLinkName(struct symbol *p) {
         sprintf(ttt+tti+len,"%c%x-%x-%x-%x", LINK_NAME_SEPARATOR,
                 p->pos.file,p->pos.line,p->pos.col, s_count.localVar++);
     } else {
-        if (p->bits.storage==StorageExtern && ! s_opt.exactPositionResolve) {
+        if (p->bits.storage==StorageExtern && ! options.exactPositionResolve) {
             sprintf(ttt,"%s", p->name);
         } else {
             // it is now better to have name allways accessible
-            //&         if (s_opt.taskRegime == RegimeHtmlGenerate) {
+            //&         if (options.taskRegime == RegimeHtmlGenerate) {
             // html symbol, must pass the name for cxreference list item
             sprintf(ttt,"%x-%x-%x%c%s",p->pos.file,p->pos.line,p->pos.col,
                     LINK_NAME_SEPARATOR, p->name);
@@ -515,7 +515,7 @@ static void setStaticFunctionLinkName( Symbol *p, int usage ) {
     // to do this on definition usage?
     // With exactPositionResolve interpret them as distinct symbols for
     // each compilation unit.
-    if (usage==UsageDefined && ! s_opt.exactPositionResolve) {
+    if (usage==UsageDefined && ! options.exactPositionResolve) {
         basefname=s_fileTab.tab[p->pos.file]->name;
     } else {
         basefname=s_input_file_name;
@@ -576,7 +576,7 @@ Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, S_symbolTable *ta
     } else {
         if (! symbolTableIsMember(s_symbolTable,p,&ii,&pp)) {
             pp = p;
-            if (s_opt.exactPositionResolve) {
+            if (options.exactPositionResolve) {
                 setGlobalFileDepNames(pp->name, pp, MEMORY_XX);
             }
             addSymbol(pp, tab);
@@ -653,13 +653,13 @@ void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, S_symbol
         } else {
             addNewSymbolDef(pa, StorageAuto, tab, UsageDefined);
         }
-        if (s_opt.server_operation == OLO_EXTRACT) {
+        if (options.server_operation == OLO_EXTRACT) {
             addCxReference(pa, &pa->pos, UsageLvalUsed,
                            s_noneFileIndex, s_noneFileIndex);
         }
     }
-    if (s_opt.server_operation == OLO_GOTO_PARAM_NAME
-        && i == s_opt.olcxGotoVal
+    if (options.server_operation == OLO_GOTO_PARAM_NAME
+        && i == options.olcxGotoVal
         && POSITION_EQ(function->pos, s_cxRefPos)) {
         s_paramPosition = p->pos;
     }
@@ -924,7 +924,7 @@ void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
     int             ii,rr,filen, order, len, len2;
     if (iname == NULL) iname="";
     assert(pp);
-    if (s_opt.exactPositionResolve) {
+    if (options.exactPositionResolve) {
         fname = simpleFileName(s_fileTab.tab[pp->pos.file]->name);
         sprintf(tmp, "%x-%s-%x-%x%c",
                 hashFun(s_fileTab.tab[pp->pos.file]->name),
@@ -1074,7 +1074,7 @@ static void handleParameterPositions(Position *lpar, PositionList *commas,
         setParamPositionForFunctionWithoutParams(lpar);
         return;
     }
-    argn = s_opt.olcxGotoVal;
+    argn = options.olcxGotoVal;
     if (argn == 0) {
         setParamPositionForParameter0(lpar);
     } else {
@@ -1108,8 +1108,8 @@ void handleDeclaratorParamPositions(Symbol *decl, Position *lpar,
                                     PositionList *commas, Position *rpar,
                                     int hasParam
                                     ) {
-    if (s_opt.taskRegime != RegimeEditServer) return;
-    if (s_opt.server_operation != OLO_GOTO_PARAM_NAME && s_opt.server_operation != OLO_GET_PARAM_COORDINATES) return;
+    if (options.taskRegime != RegimeEditServer) return;
+    if (options.server_operation != OLO_GOTO_PARAM_NAME && options.server_operation != OLO_GET_PARAM_COORDINATES) return;
     if (POSITION_NEQ(decl->pos, s_cxRefPos)) return;
     handleParameterPositions(lpar, commas, rpar, hasParam);
 }
@@ -1118,8 +1118,8 @@ void handleInvocationParamPositions(Reference *ref, Position *lpar,
                                     PositionList *commas, Position *rpar,
                                     int hasParam
                                     ) {
-    if (s_opt.taskRegime != RegimeEditServer) return;
-    if (s_opt.server_operation != OLO_GOTO_PARAM_NAME && s_opt.server_operation != OLO_GET_PARAM_COORDINATES) return;
+    if (options.taskRegime != RegimeEditServer) return;
+    if (options.server_operation != OLO_GOTO_PARAM_NAME && options.server_operation != OLO_GET_PARAM_COORDINATES) return;
     if (ref==NULL || POSITION_NEQ(ref->p, s_cxRefPos)) return;
     handleParameterPositions(lpar, commas, rpar, hasParam);
 }
@@ -1127,8 +1127,8 @@ void handleInvocationParamPositions(Reference *ref, Position *lpar,
 void javaHandleDeclaratorParamPositions(Position *sym, Position *lpar,
                                         PositionList *commas, Position *rpar
                                         ) {
-    if (s_opt.taskRegime != RegimeEditServer) return;
-    if (s_opt.server_operation != OLO_GOTO_PARAM_NAME && s_opt.server_operation != OLO_GET_PARAM_COORDINATES) return;
+    if (options.taskRegime != RegimeEditServer) return;
+    if (options.server_operation != OLO_GOTO_PARAM_NAME && options.server_operation != OLO_GET_PARAM_COORDINATES) return;
     if (POSITION_NEQ(*sym, s_cxRefPos)) return;
     if (commas==NULL) {
         handleParameterPositions(lpar, NULL, rpar, 0);

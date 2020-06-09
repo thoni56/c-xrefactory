@@ -724,7 +724,7 @@ char *simpleFileNameFromFileNum(int fnum) {
 }
 
 char *getShortClassNameFromClassNum_st(int fnum) {
-    return(javaGetNudePreTypeName_st(getRealFileNameStatic(s_fileTab.tab[fnum]->name),s_opt.nestedClassDisplaying));
+    return(javaGetNudePreTypeName_st(getRealFileNameStatic(s_fileTab.tab[fnum]->name),options.nestedClassDisplaying));
 }
 
 void printSymbolLinkNameString( FILE *ff, char *linkName) {
@@ -892,14 +892,14 @@ int pathncmp(char *ss1, char *ss2, int n, int caseSensitive) {
 }
 
 int fnnCmp(char *ss1, char *ss2, int n) {
-    return pathncmp(ss1, ss2, n, s_opt.fileNamesCaseSensitive);
+    return pathncmp(ss1, ss2, n, options.fileNamesCaseSensitive);
 }
 
 /* Handle mixed case file names */
 int compareFileNames(char *ss1, char *ss2) {
     int n;
 #if (!defined (__WIN32__))
-    if (s_opt.fileNamesCaseSensitive) return(strcmp(ss1,ss2));
+    if (options.fileNamesCaseSensitive) return(strcmp(ss1,ss2));
 #endif
     n = strlen(ss1);
     return fnnCmp(ss1,ss2,n+1);
@@ -1048,7 +1048,7 @@ static void expandWildcardsMapFun(MAP_FUN_SIGNATURE) {
         sprintf(ttt, "%s%s", dir1, file);
         if (statb(ttt, &st)!=0 || (st.st_mode & S_IFMT) != S_IFDIR) return;
     }
-    if (shellMatch(file, strlen(file), pattern, s_opt.fileNamesCaseSensitive)) {
+    if (shellMatch(file, strlen(file), pattern, options.fileNamesCaseSensitive)) {
         sprintf(ttt, "%s%s%s", dir1, file, dir2);
         expandWildcardsInOnePathRecursiveMaybe(ttt, outpath, freeolen);
     }

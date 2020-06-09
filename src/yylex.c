@@ -124,7 +124,7 @@ char *placeIdent(void) {
     char mm[MAX_HTML_REF_LEN];
     int s;
     if (currentFile.fileName!=NULL) {
-        if (s_opt.xref2 && s_opt.taskRegime!=RegimeEditServer) {
+        if (options.xref2 && options.taskRegime!=RegimeEditServer) {
             strcpy(fn, getRealFileNameStatic(normalizeFileName(currentFile.fileName, s_cwd)));
             assert(strlen(fn) < MAX_FILE_NAME_SIZE);
             sprintf(mm, "%s:%d", simpleFileName(fn),currentFile.lineNumber);
@@ -147,7 +147,7 @@ static bool isPreprocessorToken(Lexem lexem) {
 #ifdef DEBUG
 static void traceNewline(int lines) {
     int i;
-    if (s_opt.debug) {
+    if (options.debug) {
         for(i=1; i<=lines; i++) {
             log_trace("%s:%d", currentFile.fileName, currentFile.lineNumber+i);
         }
@@ -198,19 +198,19 @@ static int getOrCreateFileNumberFor(char *fileName) {
         cxloading = s_fileTab.tab[fileNumber]->b.cxLoading;
         if (!existed) {
             cxloading = 1;
-        } else if (s_opt.update==UP_FAST_UPDATE) {
+        } else if (options.update==UP_FAST_UPDATE) {
             if (s_fileTab.tab[fileNumber]->b.scheduledToProcess) {
                 // references from headers are not loaded on fast update !
                 cxloading = 1;
             }
-        } else if (s_opt.update==UP_FULL_UPDATE) {
+        } else if (options.update==UP_FULL_UPDATE) {
             if (s_fileTab.tab[fileNumber]->b.scheduledToUpdate) {
                 cxloading = 1;
             }
         } else {
             cxloading = 1;
         }
-        if (s_fileTab.tab[fileNumber]->b.cxSaved==1 && ! s_opt.multiHeadRefsCare) {
+        if (s_fileTab.tab[fileNumber]->b.cxSaved==1 && ! options.multiHeadRefsCare) {
             /* if multihead references care, load include refs each time */
             cxloading = 0;
         }
@@ -371,8 +371,8 @@ static void testCxrefCompletionId(Lexem *out_lexem, char *idd, Position *pos) {
     Lexem lexem;
 
     lexem = *out_lexem;
-    assert(s_opt.taskRegime);
-    if (s_opt.taskRegime == RegimeEditServer) {
+    assert(options.taskRegime);
+    if (options.taskRegime == RegimeEditServer) {
         if (lexem==IDENT_TO_COMPLETE) {
             s_cache.activeCache = 0;
             s_olstringServed = 1;
@@ -508,7 +508,7 @@ static FILE *openInclude(char includeType, char *name, char **fileName) {
         er = editorFindFile(nn);
         if (er==NULL) r = openFile(nn,"r");
     }
-    for (ll=s_opt.includeDirs; ll!=NULL && er==NULL && r==NULL; ll=ll->next) {
+    for (ll=options.includeDirs; ll!=NULL && er==NULL && r==NULL; ll=ll->next) {
         strcpy(nn, normalizeFileName(ll->d, rdir));
         expandWildcardsInOnePath(nn, wcp, MAX_OPTION_LEN);
         JavaMapOnPaths(wcp, {
@@ -551,8 +551,8 @@ static void processInclude2(Position *ipos, char pchar, char *iname) {
     if (symbolTableIsMember(s_symbolTable, &ss, &ii, &memb)) return;
     nyyin = openInclude(pchar, iname, &fname);
     if (nyyin == NULL) {
-        assert(s_opt.taskRegime);
-        if (s_opt.taskRegime!=RegimeEditServer) warningMessage(ERR_CANT_OPEN, iname);
+        assert(options.taskRegime);
+        if (options.taskRegime!=RegimeEditServer) warningMessage(ERR_CANT_OPEN, iname);
     } else {
         addIncludeReferences(currentFile.lexBuffer.buffer.fileNumber, ipos);
     }
@@ -631,15 +631,15 @@ static void handleMacroDefinitionParameterPositions(int argi, Position *macpos,
                                                     Position *parpos1,
                                                     Position *pos, Position *parpos2,
                                                     int final) {
-    if ((s_opt.server_operation == OLO_GOTO_PARAM_NAME || s_opt.server_operation == OLO_GET_PARAM_COORDINATES)
+    if ((options.server_operation == OLO_GOTO_PARAM_NAME || options.server_operation == OLO_GET_PARAM_COORDINATES)
         && POSITION_EQ(*macpos, s_cxRefPos)) {
         if (final) {
             if (argi==0) {
                 setParamPositionForFunctionWithoutParams(parpos1);
-            } else if (argi < s_opt.olcxGotoVal) {
+            } else if (argi < options.olcxGotoVal) {
                 setParamPositionForParameterBeyondRange(parpos2);
             }
-        } else if (argi == s_opt.olcxGotoVal) {
+        } else if (argi == options.olcxGotoVal) {
             s_paramPosition = *pos;
             s_paramBeginPosition = *parpos1;
             s_paramEndPosition = *parpos2;
@@ -651,16 +651,16 @@ static void handleMacroUsageParameterPositions(int argi, Position *macpos,
                                                Position *parpos1, Position *parpos2,
                                                int final
     ) {
-    if (s_opt.server_operation == OLO_GET_PARAM_COORDINATES
+    if (options.server_operation == OLO_GET_PARAM_COORDINATES
         && POSITION_EQ(*macpos, s_cxRefPos)) {
         log_trace("checking param %d at %d,%d, final==%d", argi, parpos1->col, parpos2->col, final);
         if (final) {
             if (argi==0) {
                 setParamPositionForFunctionWithoutParams(parpos1);
-            } else if (argi < s_opt.olcxGotoVal) {
+            } else if (argi < options.olcxGotoVal) {
                 setParamPositionForParameterBeyondRange(parpos2);
             }
-        } else if (argi == s_opt.olcxGotoVal) {
+        } else if (argi == options.olcxGotoVal) {
             s_paramBeginPosition = *parpos1;
             s_paramEndPosition = *parpos2;
 //&fprintf(dumpOut,"regular setting to %d - %d\n", parpos1->col, parpos2->col);
@@ -836,7 +836,7 @@ endOfBody:
     pp->u.mbody = macroBody;
 
     addMacroToTabs(pp,mname);
-    assert(s_opt.taskRegime);
+    assert(options.taskRegime);
     addCxReference(pp, &macpos, UsageDefined,s_noneFileIndex, s_noneFileIndex);
     return;
 
@@ -899,7 +899,7 @@ static void processUnDefine(void) {
         fillSymbol(&dd, cc, cc, pos);
         fillSymbolBits(&dd.bits, ACCESS_DEFAULT, TypeMacro, StorageNone);
 
-        assert(s_opt.taskRegime);
+        assert(options.taskRegime);
         /* !!!!!!!!!!!!!! tricky, add macro with mbody == NULL !!!!!!!!!! */
         /* this is because of monotonicity for caching, just adding symbol */
         if (symbolTableIsMember(s_symbolTable, &dd, &ii, &memb)) {
@@ -992,7 +992,7 @@ static int cppDeleteUntilEndElse(bool untilEnd) {
     return(UNTIL_ENDIF);
 endOfMacArg:	assert(0);
 endOfFile:;
-    if (s_opt.taskRegime!=RegimeEditServer) {
+    if (options.taskRegime!=RegimeEditServer) {
         warningMessage(ERR_ST,"end of file in cpp conditional");
     }
     return(UNTIL_ENDIF);
@@ -1033,7 +1033,7 @@ static void processIfdef(bool isIfdef) {
     fillSymbol(&pp, cc, cc, s_noPos);
     fillSymbolBits(&pp.bits, ACCESS_DEFAULT, TypeMacro, StorageNone);
 
-    assert(s_opt.taskRegime);
+    assert(options.taskRegime);
     mm = symbolTableIsMember(s_symbolTable,&pp,&ii,&memb);
     if (mm && memb->u.mbody==NULL) mm = 0;	// undefined macro
     if (mm) {
@@ -1095,7 +1095,7 @@ int cexp_yylex(void) {
 
         mm = symbolTableIsMember(s_symbolTable,&dd,&ii,&memb);
         if (mm && memb->u.mbody == NULL) mm = 0;   // undefined macro
-        assert(s_opt.taskRegime);
+        assert(options.taskRegime);
         if (mm) addCxReference(&dd, &pos, UsageUsed,s_noneFileIndex, s_noneFileIndex);
 
         /* following call sets uniyylval */
@@ -1103,7 +1103,7 @@ int cexp_yylex(void) {
         if (par) {
             GetNonBlankMaybeLexem(lexem, l, v, pos, len);
             PassLex(cInput.currentLexem, lexem, l, v, pos, len, 1);
-            if (lexem != ')' && s_opt.taskRegime!=RegimeEditServer) {
+            if (lexem != ')' && options.taskRegime!=RegimeEditServer) {
                 warningMessage(ERR_ST,"missing ')' after defined( ");
             }
         }
@@ -1171,7 +1171,7 @@ endOfFile:;
 /* ***************************************************************** */
 
 #define AddHtmlCppReference(pos) {\
-    if (s_opt.taskRegime==RegimeHtmlGenerate && !s_opt.htmlNoColors) {\
+    if (options.taskRegime==RegimeHtmlGenerate && !options.htmlNoColors) {\
         addTrivialCxReference("_",TypeCppAny,StorageDefault,&pos,UsageUsed);\
     }\
 }
@@ -1216,7 +1216,7 @@ static bool processPreprocessorConstruct(Lexem lexem) {
             genCppIfElseReference(0, &pos, UsageUsed);
             currentFile.ifDepth --;
             cppDeleteUntilEndElse(true);
-        } else if (s_opt.taskRegime!=RegimeEditServer) {
+        } else if (options.taskRegime!=RegimeEditServer) {
             warningMessage(ERR_ST,"unmatched #elif");
         }
         break;
@@ -1226,7 +1226,7 @@ static bool processPreprocessorConstruct(Lexem lexem) {
             genCppIfElseReference(0, &pos, UsageUsed);
             currentFile.ifDepth --;
             cppDeleteUntilEndElse(true);
-        } else if (s_opt.taskRegime!=RegimeEditServer) {
+        } else if (options.taskRegime!=RegimeEditServer) {
             warningMessage(ERR_ST,"unmatched #else");
         }
         break;
@@ -1235,7 +1235,7 @@ static bool processPreprocessorConstruct(Lexem lexem) {
         if (currentFile.ifDepth) {
             currentFile.ifDepth --;
             genCppIfElseReference(-1, &pos, UsageUsed);
-        } else if (s_opt.taskRegime!=RegimeEditServer) {
+        } else if (options.taskRegime!=RegimeEditServer) {
             warningMessage(ERR_ST,"unmatched #endif");
         }
         break;
@@ -1681,8 +1681,8 @@ static void getActMacroArgument(char *previousLexem,
     if (0) {  /* skip the error message when finished normally */
 endOfFile:;
 endOfMacArg:;
-        assert(s_opt.taskRegime);
-        if (s_opt.taskRegime!=RegimeEditServer) {
+        assert(options.taskRegime);
+        if (options.taskRegime!=RegimeEditServer) {
             warningMessage(ERR_ST,"[getActMacroArgument] unterminated macro call");
         }
     }
@@ -1732,8 +1732,8 @@ static struct lexInput *getActualMacroArguments(S_macroBody *mb, Position *mpos,
     return(actArgs);
 endOfMacArg:	assert(0);
 endOfFile:
-    assert(s_opt.taskRegime);
-    if (s_opt.taskRegime!=RegimeEditServer) {
+    assert(options.taskRegime);
+    if (options.taskRegime!=RegimeEditServer) {
         warningMessage(ERR_ST,"[getActualMacroArguments] unterminated macro call");
     }
     return(NULL);
@@ -1797,9 +1797,9 @@ static int expandMacroCall(Symbol *mdef, Position *mpos) {
     } else {
         actArgs = NULL;
     }
-    assert(s_opt.taskRegime);
+    assert(options.taskRegime);
     addCxReference(mdef,mpos,UsageUsed,s_noneFileIndex, s_noneFileIndex);
-    if (s_opt.taskRegime == RegimeXref)
+    if (options.taskRegime == RegimeXref)
         addMacroBaseUsageRef(mdef);
     log_trace("create macro body '%s'", mb->name);
     createMacroBody(&macroBody,mb,actArgs,mb->argn);
@@ -1814,8 +1814,8 @@ endOfMacArg:
     PP_FREE_UNTIL(freeBase);
     return(0);
 endOfFile:
-    assert(s_opt.taskRegime);
-    if (s_opt.taskRegime!=RegimeEditServer) {
+    assert(options.taskRegime);
+    if (options.taskRegime!=RegimeEditServer) {
         warningMessage(ERR_ST,"[macroCallExpand] unterminated macro call");
     }
     cInput.currentLexem = previousLexem;
@@ -1909,7 +1909,7 @@ static char constant[50];
 #define CHECK_ID_FOR_KEYWORD(sd,idposa) {\
     if (sd->bits.symType == TypeKeyword) {\
         SET_IDENTIFIER_YYLVAL(sd->name, sd, *idposa);\
-        if (s_opt.taskRegime==RegimeHtmlGenerate && !s_opt.htmlNoColors) {\
+        if (options.taskRegime==RegimeHtmlGenerate && !options.htmlNoColors) {\
             char ttt[TMP_STRING_SIZE];\
             sprintf(ttt,"%s-%x", sd->name, idposa->file);\
             addTrivialCxReference(ttt, TypeKeyword,StorageDefault, idposa, UsageUsed);\
@@ -1969,7 +1969,7 @@ static int processJavaIdent(unsigned hashval, char *id, Position *idposa) {
 
 
 static void actionOnBlockMarker(void) {
-    if (s_opt.server_operation == OLO_SET_MOVE_TARGET) {
+    if (options.server_operation == OLO_SET_MOVE_TARGET) {
         s_cps.setTargetAnswerClass[0] = 0;
         if (LANGUAGE(LANG_JAVA)) {
             if (s_cp.function == NULL) {
@@ -1982,7 +1982,7 @@ static void actionOnBlockMarker(void) {
                 }
             }
         }
-    } else if (s_opt.server_operation == OLO_SET_MOVE_CLASS_TARGET) {
+    } else if (options.server_operation == OLO_SET_MOVE_CLASS_TARGET) {
         s_cps.moveTargetApproved = 0;
         if (LANGUAGE(LANG_JAVA)) {
             if (s_cp.function == NULL) {
@@ -1991,7 +1991,7 @@ static void actionOnBlockMarker(void) {
                 }
             }
         }
-    } else if (s_opt.server_operation == OLO_SET_MOVE_METHOD_TARGET) {
+    } else if (options.server_operation == OLO_SET_MOVE_METHOD_TARGET) {
         s_cps.moveTargetApproved = 0;
         if (LANGUAGE(LANG_JAVA)) {
             if (s_cp.function == NULL) {
@@ -2002,7 +2002,7 @@ static void actionOnBlockMarker(void) {
                 }
             }
         }
-    } else if (s_opt.server_operation == OLO_EXTRACT) {
+    } else if (options.server_operation == OLO_EXTRACT) {
         extractActionOnBlockMarker();
     } else {
         s_cps.currentPackageAnswer[0] = 0;
@@ -2090,8 +2090,8 @@ int yylex(void) {
 
         id = yytext = cInput.currentLexem;
         PassLex(cInput.currentLexem, lexem, line, val, idpos, len, macroStackIndex == 0);
-        assert(s_opt.taskRegime);
-        if (s_opt.taskRegime == RegimeEditServer) {
+        assert(options.taskRegime);
+        if (options.taskRegime == RegimeEditServer) {
 //			???????????? isn't this useless
             testCxrefCompletionId(&lexem,yytext,&idpos);
         }
@@ -2158,8 +2158,8 @@ int yylex(void) {
         yytext = constant;
         goto finish;
     }
-    assert(s_opt.taskRegime);
-    if (s_opt.taskRegime == RegimeEditServer) {
+    assert(options.taskRegime);
+    if (options.taskRegime == RegimeEditServer) {
         yytext = cInput.currentLexem;
         PassLex(cInput.currentLexem, lexem, line, val, pos, len, macroStackIndex == 0);
         if (lexem == IDENT_TO_COMPLETE) {

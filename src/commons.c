@@ -101,7 +101,7 @@ char *normalizeFileName(char *name, char *relativeto) {
             l1 = -1;
         } else {
             strcpy(normalizedFileName,relativeto);
-            if (! s_opt.fileNamesCaseSensitive) {
+            if (! options.fileNamesCaseSensitive) {
                 for(ss=normalizedFileName; *ss; ss++) *ss = tolower(*ss);
             }
             if (l1>0 && normalizedFileName[l1-1] == FILE_PATH_SEPARATOR) l1--;
@@ -118,7 +118,7 @@ char *normalizeFileName(char *name, char *relativeto) {
             for(; name[i]!=0 && name[i]!=FILE_PATH_SEPARATOR && name[i]!='/'; i++,j++) {
                 normalizedFileName[j]=name[i];
                 if (normalizedFileName[j]==ZIP_SEPARATOR_CHAR) inzip=1;
-                if ((!inzip) && ! s_opt.fileNamesCaseSensitive) {
+                if ((!inzip) && ! options.fileNamesCaseSensitive) {
                     normalizedFileName[j]=tolower(normalizedFileName[j]);
                 }
             }
@@ -226,7 +226,7 @@ int extractPathInto(char *source, char *dest) {
 /*************************************************************************/
 
 static void formatMessage(char *out, int errCode, char *mess) {
-    if (s_opt.taskRegime != RegimeEditServer) {
+    if (options.taskRegime != RegimeEditServer) {
         sprintf(out, "%s ", placeIdent());
         out += strlen(out);
     }
@@ -261,9 +261,9 @@ static void formatMessage(char *out, int errCode, char *mess) {
 }
 
 void warningMessage(int errCode, char *message) {
-    if ((! s_opt.noErrors) && (! s_javaPreScanOnly)) {
+    if ((! options.noErrors) && (! s_javaPreScanOnly)) {
         formatMessage(ppcTmpBuff, errCode, message);
-        if (s_opt.xref2) {
+        if (options.xref2) {
             strcat(ppcTmpBuff, "\n");
             ppcGenRecord(PPC_WARNING, ppcTmpBuff,"\n");
         } else {
@@ -275,7 +275,7 @@ void warningMessage(int errCode, char *message) {
 
 static void writeErrorMessage(int errCode, char *mess) {
     formatMessage(ppcTmpBuff, errCode, mess);
-    if (s_opt.xref2) {
+    if (options.xref2) {
         strcat(ppcTmpBuff, "\n");
         ppcGenRecord(PPC_ERROR, ppcTmpBuff, "\n");
     } else {
@@ -285,14 +285,14 @@ static void writeErrorMessage(int errCode, char *mess) {
 }
 
 void errorMessage(int errCode, char *mess) {
-    if ((! s_opt.noErrors) && (! s_javaPreScanOnly)) {
+    if ((! options.noErrors) && (! s_javaPreScanOnly)) {
         writeErrorMessage(errCode, mess);
     }
 }
 
 static void emergencyExit(int exitStatus) {
     closeMainOutputFile();
-    if (s_opt.xref2) {
+    if (options.xref2) {
         ppcGenSynchroRecord();
     }
     exit(exitStatus);
@@ -301,7 +301,7 @@ static void emergencyExit(int exitStatus) {
 
 void fatalError(int errCode, char *mess, int exitStatus) {
     formatMessage(ppcTmpBuff, errCode, mess);
-    if (s_opt.xref2) {
+    if (options.xref2) {
         ppcGenRecord(PPC_FATAL_ERROR, ppcTmpBuff,"\n");
     } else {
         log_error(ppcTmpBuff);
@@ -316,8 +316,8 @@ void internalCheckFail(char *expr, char *file, int line) {
     sprintf(msg,"'%s' is not true in '%s:%d'",expr,file,line);
     log_fatal_with_line(file, line, "'%s' is not true",  expr);
     writeErrorMessage(ERR_INTERNAL_CHECK,msg);
-    if (s_opt.taskRegime == RegimeEditServer || s_opt.refactoringRegime == RegimeRefactory) {
-        if (s_opt.xref2) {
+    if (options.taskRegime == RegimeEditServer || options.refactoringRegime == RegimeRefactory) {
+        if (options.xref2) {
             ppcGenRecord(PPC_INFORMATION,"Exiting","\n");
             closeMainOutputFile();
             ppcGenSynchroRecord();
@@ -325,8 +325,8 @@ void internalCheckFail(char *expr, char *file, int line) {
             fprintf(errOut, "\t exiting!\n"); fflush(stderr);
         }
     }
-    if (s_opt.taskRegime == RegimeEditServer
-        || s_opt.refactoringRegime == RegimeRefactory
+    if (options.taskRegime == RegimeEditServer
+        || options.refactoringRegime == RegimeRefactory
         || s_fileAbortionEnabled == 0
         ) {
         emergencyExit(XREF_EXIT_ERR);
