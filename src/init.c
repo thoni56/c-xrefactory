@@ -10,7 +10,7 @@
 #include "log.h"
 
 
-static void initTokensFromTab(S_tokenNameIni *tokenTabIni) {
+static void initTokensFromTab(TokenNameInitTable *tokenTabIni) {
     char *name;
     int token, not_used, i, languages;
     Symbol *pp;
@@ -57,7 +57,7 @@ void initTokenNameTab(void) {
     static int messageWritten=0;
 
     if (! options.strictAnsi) {
-        initTokensFromTab(s_tokenNameIniTab2);
+        initTokensFromTab(tokenNameInitTable2);
     }
     jv = options.javaVersion;
     if (strcmp(jv, JAVA_VERSION_AUTO)==0) jv = autoDetectJavaVersion();
@@ -73,10 +73,10 @@ void initTokenNameTab(void) {
         messageWritten=1;
     }
     if (strcmp(jv, JAVA_VERSION_1_4)==0) {
-        initTokensFromTab(s_tokenNameIniTab3);
+        initTokensFromTab(tokenNameInitTable3);
     }
     /* regular tokentab at last, because we wish to have correct names */
-    initTokensFromTab(s_tokenNameIniTab);
+    initTokensFromTab(tokenNameInitTable0);
     /* and add the 'defined' keyword for #if */
     pp = newSymbol("defined", "defined", s_noPos);
     fillSymbolBits(&pp->bits, ACCESS_DEFAULT, TypeDefinedOp, StorageNone);
@@ -108,8 +108,8 @@ void initTypeCharCodeTab(void) {
 void initTypesNamesTab(void) {
     int                 i;
     Int2StringTable      *s;
-    for (i=0; s_typeNamesInitTab[i].i != -1; i++) {
-        s = &s_typeNamesInitTab[i];
+    for (i=0; typeNamesInitTable[i].i != -1; i++) {
+        s = &typeNamesInitTable[i];
         assert(s->i >= 0 && s->i < MAX_TYPE);
         typeEnumName[s->i] = s->string;
     }
@@ -151,7 +151,7 @@ void initPreCreatedTypes(void) {
         s_preCrPtr1TypesTab[i] = NULL;
     }
     for(i=0; ; i++) {
-        t = s_preCrTypesIniTab[i];
+        t = preCreatedTypesInitTable[i];
         if (t<0) break;
         /* pre-create X */
         assert(t>=0 && t<MAX_TYPE);

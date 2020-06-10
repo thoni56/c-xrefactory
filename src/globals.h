@@ -20,7 +20,7 @@ typedef struct tokenNameIni {
     char        *name;
     int         token;
     unsigned    languages;
-} S_tokenNameIni;
+} TokenNameInitTable;
 
 
 extern char s_cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
@@ -117,10 +117,10 @@ extern S_exprTokenType s_forCompletionType;
 extern TypeModifier *s_javaCompletionLastPrimary;
 extern char *s_tokenName[];
 extern int s_tokenLength[];
-extern S_tokenNameIni s_tokenNameIniTab[];
-extern S_tokenNameIni s_tokenNameIniTab2[];
-extern S_tokenNameIni s_tokenNameIniTab3[];
-extern int s_preCrTypesIniTab[];
+extern TokenNameInitTable tokenNameInitTable0[];
+extern TokenNameInitTable tokenNameInitTable2[];
+extern TokenNameInitTable tokenNameInitTable3[];
+extern int preCreatedTypesInitTable[];
 extern TypeModifier * s_preCreatedTypesTable[MAX_TYPE];
 extern TypeModifier * s_preCrPtr1TypesTab[MAX_TYPE];
 extern TypeModifier * s_preCrPtr2TypesTab[MAX_TYPE];
@@ -145,7 +145,7 @@ extern int s_olOriginalFileNumber;      /* original file name */
 extern int s_olOriginalComFileNumber;	/* original communication file */
 extern int s_noneFileIndex;
 
-extern Int2StringTable s_typeNamesInitTab[];
+extern Int2StringTable typeNamesInitTable[];
 extern char *s_extractStorageName[MAX_STORAGE];
 extern Int2StringTable s_extractStoragesNamesInitTab[];
 
