@@ -22,10 +22,6 @@ int packageOnCommandLine(char *fn) {
   return (int) mock(fn);
 }
 
-void getStandardOptions(int *nargc, char ***nargv) {
-  mock(nargc, nargv);
-}
-
 char *expandSpecialFilePredefinedVariables_st(char *tt) {
   return (char *) mock(tt);
 }
