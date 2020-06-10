@@ -31,7 +31,7 @@ devel:
 	make coverage-report
 
 chcheck:
-	@for m in $(MODULES); do \
+	@for m in `echo $(MODULES) | sed -e 's/[a-z]*_parser\.tab//g'` ; do \
 		chcheck $$m ; \
 	done
 
