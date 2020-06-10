@@ -30,6 +30,12 @@ devel:
 	make -j test
 	make coverage-report
 
+chcheck:
+	@for m in $(MODULES); do \
+		chcheck $$m ; \
+	done
+
+#########################################################################
 include sources.mk
 
 c-xref: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB) $(CLEAN_COVERAGE)
@@ -39,8 +45,8 @@ c-xref: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB) $(CLEAN_COVERAGE)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
 	@make check-tokens			# check that token sections in parsers are identical
 
-#########################################################################
 
+#########################################################################
 # We generate parsers for C, Yacc, Java and C expressions
 # Note the file prefix (-b) and symbol prefix (-p)
 
