@@ -109,7 +109,7 @@ clean:
 	-make -C ../tests clean
 
 ########################################################################
-test: debug
+test:
 	@echo "Only running quick tests for now - 'cd ../test; make all' to run all"
 	$(MAKE) -C ../tests -j quick
 
@@ -122,7 +122,7 @@ coverage: clean test
 	lcov -q --exclude \*.mock -exclude /usr -exclude /Library -d . -c -o total.info
 	genhtml -q -o ../coverage total.info
 
-coverage-report: unit test
+coverage-report:
 	@echo Doing the coverage reporting in the background
 	@$(MAKE) the-actual-coverage-report &
 
