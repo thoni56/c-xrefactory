@@ -1,4 +1,4 @@
-#include "globals.h"
+#include "globals.h"            /* for s_language in addToTrail() */
 
 #include "memory.h"
 #include "log.h"
