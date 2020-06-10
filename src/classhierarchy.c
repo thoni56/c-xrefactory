@@ -431,7 +431,7 @@ void genClassHierarchies( FILE *ff, S_olSymbolsMenu *rrr,
     }
 }
 
-void olcxMenuGenGlobRefsForVirtMethod(FILE *ff, S_olSymbolsMenu *rrr) {
+static void olcxMenuGenGlobRefsForVirtMethod(FILE *ff, S_olSymbolsMenu *rrr) {
     char ln[MAX_HTML_REF_LEN];
 
     linkNamePrettyPrint(ln,rrr->s.name,MAX_HTML_REF_LEN,SHORT_NAME);
