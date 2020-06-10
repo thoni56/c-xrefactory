@@ -6,10 +6,10 @@
 #include "filetab.h"
 
 
-typedef struct int2StringTab {
+typedef struct int2StringTable {
     int     i;
-    char    *s;
-} S_int2StringTab;
+    char    *string;
+} Int2StringTable;
 
 typedef struct stringList {
     char *d;
@@ -145,9 +145,9 @@ extern int s_olOriginalFileNumber;      /* original file name */
 extern int s_olOriginalComFileNumber;	/* original communication file */
 extern int s_noneFileIndex;
 
-extern S_int2StringTab s_typeNamesInitTab[];
+extern Int2StringTable s_typeNamesInitTab[];
 extern char *s_extractStorageName[MAX_STORAGE];
-extern S_int2StringTab s_extractStoragesNamesInitTab[];
+extern Int2StringTable s_extractStoragesNamesInitTab[];
 
 extern char *s_editCommunicationString;
 

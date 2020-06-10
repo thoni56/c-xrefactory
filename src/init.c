@@ -107,22 +107,22 @@ void initTypeCharCodeTab(void) {
 
 void initTypesNamesTab(void) {
     int                 i;
-    S_int2StringTab      *s;
+    Int2StringTable      *s;
     for (i=0; s_typeNamesInitTab[i].i != -1; i++) {
         s = &s_typeNamesInitTab[i];
         assert(s->i >= 0 && s->i < MAX_TYPE);
-        typeEnumName[s->i] = s->s;
+        typeEnumName[s->i] = s->string;
     }
 }
 
 void initExtractStoragesNameTab(void) {
     int                 i;
-    S_int2StringTab      *s;
+    Int2StringTable      *s;
     for(i=0; i<MAX_STORAGE; i++) s_extractStorageName[i]="";
     for (i=0; s_extractStoragesNamesInitTab[i].i != -1; i++) {
         s = &s_extractStoragesNamesInitTab[i];
         assert(s->i >= 0 && s->i < MAX_TYPE);
-        s_extractStorageName[s->i] = s->s;
+        s_extractStorageName[s->i] = s->string;
     }
 }
 
