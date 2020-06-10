@@ -28,7 +28,7 @@ script:
     - cd ffmpeg ; make init ; cd ..
     - cd systemd ; make init ; cd ..
     # Run all tests, creating coverage in standard place
-    - make GCOV= all
+    - make all
     - cd ..
 
 branches:
