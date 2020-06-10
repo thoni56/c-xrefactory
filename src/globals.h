@@ -16,12 +16,6 @@ typedef struct stringList {
     struct stringList *next;
 } S_stringList;
 
-typedef struct tokenNameIni {
-    char        *name;
-    int         token;
-    unsigned    languages;
-} TokenNameInitTable;
-
 
 extern char s_cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
 extern char s_base[MAX_FILE_NAME_SIZE];
@@ -117,9 +111,6 @@ extern S_exprTokenType s_forCompletionType;
 extern TypeModifier *s_javaCompletionLastPrimary;
 extern char *s_tokenName[];
 extern int s_tokenLength[];
-extern TokenNameInitTable tokenNameInitTable0[];
-extern TokenNameInitTable tokenNameInitTable2[];
-extern TokenNameInitTable tokenNameInitTable3[];
 extern int preCreatedTypesInitTable[];
 extern TypeModifier * s_preCreatedTypesTable[MAX_TYPE];
 extern TypeModifier * s_preCrPtr1TypesTab[MAX_TYPE];
