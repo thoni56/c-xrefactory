@@ -62,6 +62,9 @@ yacc_parser.tab.c: yacc_parser.y $(YACC)
 cexp_parser.tab.c: cexp_parser.y $(YACC)
 	$(YACC) -v -b cexp_parser -p cexp_yy cexp_parser.y
 
+# There is no include feature in grammars so we need duplicate
+# token definitons. Here we ensure they are in sync
+# Extract all three token sections
 EXTRACT_TOKEN_DEFINITIONS = sed -E '/END OF COMMON TOKEN DEFINITIONS/,$$d' | sed -E '/START OF COMMON TOKEN DEFINITIONS/,$$!d'
 c_parser.tokens: c_parser.y
 	@cat c_parser.y | $(EXTRACT_TOKEN_DEFINITIONS) > c_parser.tokens
@@ -72,7 +75,7 @@ yacc_parser.tokens: yacc_parser.y
 java_parser.tokens: java_parser.y
 	@cat java_parser.y | $(EXTRACT_TOKEN_DEFINITIONS) > java_parser.tokens
 
-# Check that the token definitions in the three main grammars are exactly the same
+# Compare the three token sectionto ensuret they are exactly the same
 .PHONY: check-tokens
 check-tokens: c_parser.tokens yacc_parser.tokens java_parser.tokens
 	@if ! diff -q c_parser.tokens yacc_parser.tokens ; then \
