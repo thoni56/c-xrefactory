@@ -4,6 +4,7 @@
 ((c-mode . (
             (indent-tabs-mode . nil)
             (c-basic-offset . 4)
+            (c-default-style . "k&r")
             (mode . cov)
             )
          )
