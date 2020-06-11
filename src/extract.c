@@ -272,9 +272,10 @@ static void extSetSetStates(    S_programGraphNode *p,
     }
 }
 
-static int extCategorizeLocalVar0(  S_programGraphNode *program,
-                                    S_programGraphNode *varRef
-                                    ) {
+static ExtractCategory categorizeLocalVariableExtraction0(
+    S_programGraphNode *program,
+    S_programGraphNode *varRef
+) {
     S_programGraphNode *p;
     SymbolReferenceItem     *symRef;
     unsigned    inUsages,outUsages,outUsageBothExists;
@@ -334,17 +335,19 @@ static int extCategorizeLocalVar0(  S_programGraphNode *program,
     }
 }
 
-static int extCategorizeLocalVar(   S_programGraphNode *program,
-                                    S_programGraphNode *varRef
-                                    ) {
-    int res;
-    res = extCategorizeLocalVar0(program, varRef);
-    //&fprintf(dumpOut,"classified to %s\n", miscellaneousName[res]);
+static ExtractCategory categorizeLocalVariableExtraction(
+    S_programGraphNode *program,
+    S_programGraphNode *varRef
+) {
+    ExtractCategory category;
+
+    category = categorizeLocalVariableExtraction0(program, varRef);
+    //&log_trace("extraction categorized to %s", miscellaneousName[category]);
     if (IS_STR_UNION_SYMBOL(varRef)
-        && res!=EXTRACT_NONE && res!=EXTRACT_LOCAL_VAR) {
+        && category!=EXTRACT_NONE && category!=EXTRACT_LOCAL_VAR) {
         return(EXTRACT_ADDRESS_ARGUMENT);
     }
-    return(res);
+    return(category);
 }
 
 static void extSetInOutBlockFields(S_programGraphNode *program) {
@@ -385,8 +388,7 @@ static void extClassifyLocalVariables(S_programGraphNode *program) {
     S_programGraphNode *p;
     for(p=program; p!=NULL; p=p->next) {
         if (EXT_LOCAL_VAR_REF(p)) {
-            p->classifBits = extCategorizeLocalVar(program,p);
-            //&fprintf(dumpOut,": checking var %s\n",p->symRef->name);dumpProgram(program);fprintf(dumpOut,": var %s will be %s\n\n\n",p->symRef->name,miscellaneousName[p->classifBits]);fflush(dumpOut);
+            p->classifBits = categorizeLocalVariableExtraction(program,p);
         }
     }
 }
@@ -400,15 +402,15 @@ static void extClassifyLocalVariables(S_programGraphNode *program) {
 #define GetLocalVarStringFromLinkName(linkName,oDecla,oName,oDecl,declStar,cpName) { \
         char *s,*d,*dn,*dd;                                             \
                                                                         \
-        log_trace("analyzing '%s'",linkName);                           \
+        log_trace("GetLocalVarStringFromLinkName '%s'",linkName);       \
         for(    s=linkName+1,d=oDecl,dd=oDecla;                         \
-                *s!=0 && *s!=LINK_NAME_SEPARATOR;                      \
+                *s!=0 && *s!=LINK_NAME_SEPARATOR;                       \
                 s++,d++,dd++) {                                         \
             *d = *dd = *s;                                              \
         }                                                               \
         *dd = 0;                                                        \
         assert(*s);                                                     \
-        for(s++; *s!=0 && *s!=LINK_NAME_SEPARATOR; s++,d++) {          \
+        for(s++; *s!=0 && *s!=LINK_NAME_SEPARATOR; s++,d++) {           \
             *d = *s;                                                    \
         }                                                               \
         assert(*s);                                                     \
@@ -420,7 +422,7 @@ static void extClassifyLocalVariables(S_programGraphNode *program) {
         assert(*s);                                                     \
         *dn = 0;                                                        \
         assert(*s);                                                     \
-        for(s++; *s!=0 && *s!=LINK_NAME_SEPARATOR; s++,d++) {          \
+        for(s++; *s!=0 && *s!=LINK_NAME_SEPARATOR; s++,d++) {           \
             *d = *s;                                                    \
         }                                                               \
         *d = 0;                                                         \
