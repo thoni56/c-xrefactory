@@ -2,7 +2,7 @@
 
 include ../Makefile.boilerplate
 
-COMMAND = ../../src/c-xref -xrefrc .c-xrefrc -create -trace -log=log
+COMMAND = ../../src/c-xref -xrefrc .c-xrefrc -create -trace -log=log -o out
 
 $(TEST):
 	@rm -rf output $@.log CXrefs Xrefs
