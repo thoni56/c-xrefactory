@@ -15,6 +15,7 @@
    getInputFile
  */
 #include "main.h"
+#include "options.h"
 #include "html.h"
 #include "misc.h"
 #include "complete.h"
@@ -40,19 +41,18 @@ typedef struct tpCheckSpecialReferencesData {
     struct pushAllInBetweenData	mm;
     char						*symbolToTest;
     int							classToTest;
-    struct symbolReferenceItem		*foundSpecialRefItem;
+    struct symbolReferenceItem	*foundSpecialRefItem;
     struct reference			*foundSpecialR;
-    struct symbolReferenceItem        *foundRefToTestedClass;
-    struct symbolReferenceItem        *foundRefNotToTestedClass;
+    struct symbolReferenceItem  *foundRefToTestedClass;
+    struct symbolReferenceItem  *foundRefNotToTestedClass;
     struct reference            *foundOuterScopeRef;
 } S_tpCheckSpecialReferencesData;
 
 typedef struct disabledList {
-    int             file;
-    int             clas;
+    int                  file;
+    int                  clas;
     struct disabledList  *next;
 } S_disabledList;
-
 
 static S_editorUndo *s_refactoringStartPoint;
 
