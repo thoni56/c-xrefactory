@@ -163,14 +163,14 @@ static void aboutMessage(void) {
     }                                                                   \
 }
 
-static int fileNameShouldBePruned(char *fn) {
+static bool fileNameShouldBePruned(char *fn) {
     S_stringList    *pp;
     for(pp=options.pruneNames; pp!=NULL; pp=pp->next) {
         JavaMapOnPaths(pp->d, {
-                if (compareFileNames(currentPath, fn)==0) return(1);
+                if (compareFileNames(currentPath, fn)==0) return true;
             });
     }
-    return(0);
+    return false;
 }
 
 static void scheduleCommandLineEnteredFileToProcess(char *fn) {
