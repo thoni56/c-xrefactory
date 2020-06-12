@@ -935,7 +935,7 @@ int tpCheckSourceIsNotInnerClass(void) {
     //& assert(target!=NULL);
     assert(s_fileTab.tab[thisclassi]);
     deii = s_fileTab.tab[thisclassi]->directEnclosingInstance;
-    if (deii != -1 && deii != s_noneFileIndex && (ss->s.b.accessFlags&ACCESS_INTERFACE)==0) {
+    if (deii != -1 && deii != s_noneFileIndex && (ss->s.b.accessFlags&AccessInterface)==0) {
         char tmpBuff[TMP_BUFF_SIZE];
         // If there exists a direct enclosing instance, it is an inner class
         sprintf(tmpBuff, "This is an inner class. Current version of C-xrefactory can only move top level classes and nested classes that are declared 'static'. If the class does not depend on its enclosing instances, you should declare it 'static' and then move it.");
@@ -1718,10 +1718,10 @@ static void refactoryRestrictAccessibility(EditorMarker *point, int limitIndex, 
 
     access = s_javaRequiredeAccessibilitiesTable[accIndex];
 
-    if (access == ACCESS_PUBLIC) refactoryChangeAccessModifier(point, limitIndex, "public");
-    else if (access == ACCESS_PROTECTED) refactoryChangeAccessModifier(point, limitIndex, "protected");
-    else if (access == ACCESS_DEFAULT) refactoryChangeAccessModifier(point, limitIndex, "");
-    else if (access == ACCESS_PRIVATE) refactoryChangeAccessModifier(point, limitIndex, "private");
+    if (access == AccessPublic) refactoryChangeAccessModifier(point, limitIndex, "public");
+    else if (access == AccessProtected) refactoryChangeAccessModifier(point, limitIndex, "protected");
+    else if (access == AccessDefault) refactoryChangeAccessModifier(point, limitIndex, "");
+    else if (access == AccessPrivate) refactoryChangeAccessModifier(point, limitIndex, "private");
     else errorMessage(ERR_INTERNAL, "No access modifier computed");
 }
 
@@ -3074,7 +3074,7 @@ static void refactoryPerformMoveClass(EditorMarker *point,
     (*outend)->offset++;
 
     // finally fiddle modifiers
-    if (ss->s.b.accessFlags & ACCESS_STATIC) {
+    if (ss->s.b.accessFlags & AccessStatic) {
         if (! targetIsNestedInClass) {
             // nested -> top level
             //&sprintf(tmpBuff,"removing modifier"); ppcGenTmpBuff();
@@ -3782,7 +3782,7 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
     accFlags = s_olcxCurrentUser->browserStack.top->hkSelectedSym->s.b.accessFlags;
 
     cclass[0] = 0; scclass = cclass;
-    if (accFlags&ACCESS_STATIC) {
+    if (accFlags&AccessStatic) {
         refactoryGetNameOfTheClassAndSuperClass(point, cclass, NULL);
         scclass = lastOccurenceInString(cclass, '.');
         if (scclass == NULL) scclass = cclass;
@@ -3808,12 +3808,12 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
     declarator[declLen] = 0;
 
     sprintf(getterBody, "public %s%s %s() {\nreturn(%s);\n}\n",
-            ((accFlags&ACCESS_STATIC)?"static ":""),
+            ((accFlags&AccessStatic)?"static ":""),
             declarator, getter, nameOnPoint);
     sprintf(setterBody, "public %s%s %s(%s %s) {\n%s.%s = %s;\nreturn(%s);\n}\n",
-            ((accFlags&ACCESS_STATIC)?"static ":""),
+            ((accFlags&AccessStatic)?"static ":""),
             declarator, setter, declarator, nameOnPoint,
-            ((accFlags&ACCESS_STATIC)?scclass:"this"),
+            ((accFlags&AccessStatic)?scclass:"this"),
             nameOnPoint, nameOnPoint, nameOnPoint);
 
     beforeInsertionUndo = s_editorUndo;
@@ -3826,7 +3826,7 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
     refactoryReplaceString(de, 0, getterBody);
     getterm->offset += substringIndex(getterBody, getter)+1;
 
-    if ((accFlags & ACCESS_FINAL) ==  0) {
+    if ((accFlags & AccessFinal) ==  0) {
         setterm = editorCrNewMarker(de->buffer, de->offset-1);
         refactoryReplaceString(de, 0, setterBody);
         setterm->offset += substringIndex(setterBody, setter)+1;
@@ -3839,7 +3839,7 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
     refactoryPushReferences(getterm->buffer, getterm, "-olcxrename", NULL, 0);
     anotherGetter = refactoryCheckEncapsulateGetterSetterForExistingMethods(getter);
     editorFreeMarker(getterm);
-    if ((accFlags & ACCESS_FINAL) ==  0) {
+    if ((accFlags & AccessFinal) ==  0) {
         refactoryPushReferences(setterm->buffer, setterm, "-olcxrename", NULL, 0);
         anotherSetter = refactoryCheckEncapsulateGetterSetterForExistingMethods(setter);
         editorFreeMarker(setterm);
@@ -3858,14 +3858,14 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
         if (! anotherGetter) {
             refactoryReplaceString(de, 0, getterBody);
         }
-        if ((accFlags & ACCESS_FINAL) ==  0 && ! anotherSetter) {
+        if ((accFlags & AccessFinal) ==  0 && ! anotherSetter) {
             refactoryReplaceString(de, 0, setterBody);
         }
         tend->offset = de->offset;
         tbeg->offset ++;
     }
     // do not move this before, as anotherdef reference would be freed!
-    if ((accFlags & ACCESS_FINAL) ==  0) olcxPopOnly();
+    if ((accFlags & AccessFinal) ==  0) olcxPopOnly();
     olcxPopOnly();
 
     // generate getter and setter invocations
@@ -3898,7 +3898,7 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
         }
     }
 
-    refactoryRestrictAccessibility(point, SPP_FIELD_DECLARATION_BEGIN_POSITION, ACCESS_PRIVATE);
+    refactoryRestrictAccessibility(point, SPP_FIELD_DECLARATION_BEGIN_POSITION, AccessPrivate);
 
     indoffset = tbeg->offset;
     indlines = editorCountLinesBetweenMarkers(tbeg, tend);
@@ -4402,7 +4402,7 @@ static char * refactoryComputeUpdateOptionForSymbol(EditorMarker *point) {
             res = "";
         } else if (symtype==TypeDefault
                    && (storage == StorageMethod || storage == StorageField)
-                   && ((accflags & ACCESS_PRIVATE) != 0)
+                   && ((accflags & AccessPrivate) != 0)
                    ) {
             // private field or method,
             // no update makes renaming after extract method much faster

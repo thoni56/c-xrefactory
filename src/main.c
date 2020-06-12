@@ -2510,7 +2510,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     XX_ALLOC(s_symbolTable, S_symbolTable);
     symbolTableInit(s_symbolTable, MAX_SYMBOLS);
     fillJavaStat(&s_initJavaStat,NULL,NULL,NULL,0, NULL, NULL, NULL,
-                  s_symbolTable,NULL,ACCESS_DEFAULT,s_cpInit,s_noneFileIndex,NULL);
+                  s_symbolTable,NULL,AccessDefault,s_cpInit,s_noneFileIndex,NULL);
     XX_ALLOC(s_javaStat, S_javaStat);
     *s_javaStat = s_initJavaStat;
     javaFqtTabInit( &s_javaFqtTab, FQT_CLASS_TAB_SIZE);
@@ -2702,7 +2702,7 @@ static void fillIncludeRefItem( SymbolReferenceItem *ddd , int fnum) {
                                 cxFileHashNumber(LINK_NAME_INCLUDE_REFS),
                                 fnum, fnum);
     fillSymbolRefItemBits(&ddd->b, TypeCppInclude, StorageExtern,
-                           ScopeGlobal, ACCESS_DEFAULT, CategoryGlobal,0);
+                           ScopeGlobal, AccessDefault, CategoryGlobal,0);
 }
 
 static void makeIncludeClosureOfFilesToUpdate(void) {
@@ -2801,7 +2801,7 @@ static int scheduleFileUsingTheMacro(void) {
                                 cxFileHashNumber(s_olstringInMbody),
                                 s_noneFileIndex, s_noneFileIndex);
     fillSymbolRefItemBits(&ddd.b, TypeMacro, StorageExtern,
-                           ScopeGlobal, ACCESS_DEFAULT, CategoryGlobal, 0);
+                           ScopeGlobal, AccessDefault, CategoryGlobal, 0);
 
     //& rr = refTabIsMember(&s_cxrefTab, &ddd, &ii, &memb);
     //& assert(rr);

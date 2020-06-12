@@ -406,7 +406,7 @@ Reference *addSpecialFieldReference(char *name,int storage, int fnum,
     Reference     *res;
 
     fillSymbol(&ss, name, name, *p);
-    fillSymbolBits(&ss.bits, ACCESS_DEFAULT, TypeDefault, storage);
+    fillSymbolBits(&ss.bits, AccessDefault, TypeDefault, storage);
     res = addCxReference(&ss, p, usage, fnum, fnum);
 
     return(res);
@@ -446,7 +446,7 @@ void changeFieldRefUsages(SymbolReferenceItem  *ri, void  *rrcd) {
                                 cxFileHashNumber(rcd->linkName),
                                 s_noneFileIndex, s_noneFileIndex);
     fillSymbolRefItemBits(&ddd.b, TypeDefault, StorageField,
-                           ScopeFile, ACCESS_DEFAULT, rcd->category, 0);
+                           ScopeFile, AccessDefault, rcd->category, 0);
     if (isSameCxSymbol(ri, &ddd)) {
         //&sprintf(tmpBuff, "checking %s <-> %s, %d,%d", ri->name, rcd->linkName, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
         for(rr = ri->refs; rr!=NULL; rr=rr->next) {
@@ -627,7 +627,7 @@ static void setOlAvailableRefactorings(Symbol *p, S_olSymbolsMenu *mmi, int usag
         }
         if (p->bits.storage == StorageField) {
             if (IS_DEFINITION_USAGE(usage)) {
-                if (p->bits.access & ACCESS_STATIC) {
+                if (p->bits.access & AccessStatic) {
                     s_availableRefactorings[PPC_AVR_MOVE_STATIC_FIELD].available = true;
                 } else {
                     //& TODO! restrict this better
@@ -643,7 +643,7 @@ static void setOlAvailableRefactorings(Symbol *p, S_olSymbolsMenu *mmi, int usag
             if (IS_DEFINITION_USAGE(usage)) {
                 //&s_availableRefactorings[PPC_AVR_EXPAND_NAMES].available = true;
                 //&s_availableRefactorings[PPC_AVR_REDUCE_NAMES].available = true;
-                if (p->bits.access & ACCESS_STATIC) {
+                if (p->bits.access & AccessStatic) {
                     s_availableRefactorings[PPC_AVR_MOVE_STATIC_METHOD].available = true;
                     if (p->bits.storage == StorageMethod) {
                         s_availableRefactorings[PPC_AVR_TURN_STATIC_METHOD_TO_DYNAMIC].available = true;
@@ -896,7 +896,7 @@ void addTrivialCxReference(char *name,int symType,int storage,Position *pos,int 
     Symbol ss;
 
     fillSymbol(&ss, name, name, *pos);
-    fillSymbolBits(&ss.bits, ACCESS_DEFAULT, symType, storage);
+    fillSymbolBits(&ss.bits, AccessDefault, symType, storage);
     addCxReference(&ss, pos, usage, s_noneFileIndex, s_noneFileIndex);
 }
 
@@ -2366,7 +2366,7 @@ S_olSymbolsMenu *olCreateSpecialMenuItem(char *fieldName, int cfi,int storage){
     fillSymbolRefItemExceptBits(&ss, fieldName, cxFileHashNumber(fieldName),
                                 cfi, cfi);
     fillSymbolRefItemBits(&ss.b, TypeDefault, storage, ScopeGlobal,
-                           ACCESS_DEFAULT, CategoryGlobal, 0);
+                           AccessDefault, CategoryGlobal, 0);
     res = olCreateNewMenuItem(&ss, ss.vApplClass, ss.vFunClass, &s_noPos, UsageNone,
                               1, 1, OOC_VIRT_SAME_APPL_FUN_CLASS,
                               UsageUsed, 0);
@@ -2436,7 +2436,7 @@ static void olcxGenInspectClassDefinitionRef(int classnum, char *refsuffix) {
     fillSymbolRefItemExceptBits(&mmm, ccc, cxFileHashNumber(ccc),
                                 s_noneFileIndex, s_noneFileIndex);
     fillSymbolRefItemBits(&mmm.b, TypeStruct, StorageExtern, ScopeGlobal,
-                           ACCESS_DEFAULT, CategoryGlobal, 0);
+                           AccessDefault, CategoryGlobal, 0);
     //&sprintf(tmpBuff, "looking for %s (%s)", mmm.name, s_fileTab.tab[mmm.vApplClass]->name);ppcGenTmpBuff();
     olcxFindDefinitionAndGenGoto(&mmm);
 }
@@ -4342,13 +4342,13 @@ static int tpCheckStaticity(int require,char *fieldOrMethod) { /* TODO: bool? */
     rstack = s_olcxCurrentUser->browserStack.top;
     ss = rstack->hkSelectedSym;
     assert(ss);
-    if (require==REQ_STATIC && (ss->s.b.accessFlags & ACCESS_STATIC) == 0) {
+    if (require==REQ_STATIC && (ss->s.b.accessFlags & AccessStatic) == 0) {
         linkNamePrettyPrint(ttt, ss->s.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
         sprintf(tmpBuff,"%c%s %s is not static, this refactoring requires a static %s.",
                 toupper(*fieldOrMethod), fieldOrMethod+1, ttt, fieldOrMethod);
         errorMessage(ERR_ST, tmpBuff);
         return(0);
-    } else if (require==REQ_NONSTATIC && (ss->s.b.accessFlags & ACCESS_STATIC)) {
+    } else if (require==REQ_NONSTATIC && (ss->s.b.accessFlags & AccessStatic)) {
         linkNamePrettyPrint(ttt, ss->s.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
         sprintf(tmpBuff,"%c%s %s is declared static, this refactoring requires a non static %s.",
                 toupper(*fieldOrMethod), fieldOrMethod+1, ttt, fieldOrMethod);
@@ -4409,7 +4409,7 @@ static int tpCheckPrintClassMovingType(void) {
     rstack = s_olcxCurrentUser->browserStack.top;
     ss = rstack->hkSelectedSym;
     assert(ss);
-    if (ss->s.b.accessFlags & ACCESS_STATIC) {
+    if (ss->s.b.accessFlags & AccessStatic) {
         fprintf(ccOut,"*nested");
     } else {
         fprintf(ccOut,"*outer");
@@ -5307,7 +5307,7 @@ S_olCompletion * olCompletionListPrepend(char *name,
         fillSymbolRefItemExceptBits(&sri, "", cxFileHashNumber(""),
                                     s_noneFileIndex, s_noneFileIndex);
         fillSymbolRefItemBits(&sri.b, TypeUnknown, StorageNone,
-                               ScopeAuto, ACCESS_DEFAULT, CategoryLocal, 0);
+                               ScopeAuto, AccessDefault, CategoryLocal, 0);
         cc = newOlCompletion(nn, fullnn, vclnn, jindent, 1, CategoryLocal, cType, reference, sri);
     } else {
         getSymbolCxrefCategories(s, &category, &scope, &storage);

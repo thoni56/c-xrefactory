@@ -759,7 +759,7 @@ void fillTrivialSpecialRefItem( SymbolReferenceItem *ddd , char *name) {
     fillSymbolRefItemExceptBits(ddd, name, cxFileHashNumber(name),
                                 s_noneFileIndex, s_noneFileIndex);
     fillSymbolRefItemBits(&ddd->b, TypeUnknown, StorageAuto,
-                           ScopeAuto, ACCESS_DEFAULT, CategoryLocal, 0);
+                           ScopeAuto, AccessDefault, CategoryLocal, 0);
 }
 
 /* ***************************************************************** */

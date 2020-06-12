@@ -249,7 +249,7 @@ static void initTokensFromTab(TokenNameInitTable *tokenTabIni) {
         if ((isalpha(*name) || *name=='_') && (languages & s_language)) {
             /* looks like a keyword */
             pp = newSymbolAsKeyword(name, name, s_noPos, token);
-            fillSymbolBits(&pp->bits, ACCESS_DEFAULT, TypeKeyword, StorageNone);
+            fillSymbolBits(&pp->bits, AccessDefault, TypeKeyword, StorageNone);
 
             log_trace("adding keyword '%s' to symbol table", name);
             symbolTableAdd(s_symbolTable, pp, &not_used);
@@ -304,7 +304,7 @@ void initTokenNameTab(void) {
     initTokensFromTab(tokenNameInitTable1);
     /* and add the 'defined' keyword for #if */
     pp = newSymbol("defined", "defined", s_noPos);
-    fillSymbolBits(&pp->bits, ACCESS_DEFAULT, TypeDefinedOp, StorageNone);
+    fillSymbolBits(&pp->bits, AccessDefault, TypeDefinedOp, StorageNone);
     symbolTableAdd(s_symbolTable, pp, &not_used);
 }
 
@@ -365,7 +365,7 @@ void initArchaicTypes(void) {
 
     initTypeModifier(&s_errorModifier, TypeError);
     fillSymbolWithType(&s_errorSymbol, "__ERROR__", "__ERROR__", s_noPos, &s_errorModifier);
-    fillSymbolBits(&s_errorSymbol.bits, ACCESS_DEFAULT, TypeError, StorageNone);
+    fillSymbolBits(&s_errorSymbol.bits, AccessDefault, TypeError, StorageNone);
 }
 
 void initPreCreatedTypes(void) {

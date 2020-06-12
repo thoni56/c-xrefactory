@@ -133,7 +133,7 @@ S_recFindStr * iniFind(Symbol *s, S_recFindStr *rfs) {
 
 bool javaOuterClassAccessible(Symbol *cl) {
     log_trace("testing class accessibility of %s",cl->linkName);
-    if (cl->bits.access & ACCESS_PUBLIC) {
+    if (cl->bits.access & AccessPublic) {
         log_trace("return true for public access");
         return true;
     }
@@ -150,7 +150,7 @@ bool javaOuterClassAccessible(Symbol *cl) {
 
 static int javaRecordVisible(Symbol *appcl, Symbol *funcl, unsigned accessFlags) {
     // there is special case to check! Private symbols are not inherited!
-    if (accessFlags & ACCESS_PRIVATE) {
+    if (accessFlags & AccessPrivate) {
         // check classes to string equality, just to be sure
         if (appcl!=funcl && strcmp(appcl->linkName, funcl->linkName)!=0) return(0);
     }
@@ -194,11 +194,11 @@ int javaRecordAccessible(S_recFindStr *rfs, Symbol *appcl, Symbol *funcl, Symbol
     if (funcl == NULL) return(1);  /* argument or local variable */
     log_trace("testing accessibility %s . %s of x%x",funcl->linkName,rec->linkName, recAccessFlags);
     assert(s_javaStat);
-    if (recAccessFlags & ACCESS_PUBLIC) {
+    if (recAccessFlags & AccessPublic) {
         log_trace("ret 1 access public");
         return 1;
     }
-    if (recAccessFlags & ACCESS_PROTECTED) {
+    if (recAccessFlags & AccessProtected) {
         // doesn't it refers to application class?
         if (accessibleByDefaultAccessibility(rfs, funcl)) {
             log_trace("ret 1 protected in current package");
@@ -217,7 +217,7 @@ int javaRecordAccessible(S_recFindStr *rfs, Symbol *appcl, Symbol *funcl, Symbol
         log_trace("ret 0 on protected");
         return 0;
     }
-    if (recAccessFlags & ACCESS_PRIVATE) {
+    if (recAccessFlags & AccessPrivate) {
         for(lcs=cs=s_javaStat; cs!=NULL && cs->thisClass!=NULL; cs=cs->next) {
             lcs = cs;
         }
@@ -830,7 +830,7 @@ Symbol *createSimpleDefinition(Storage storage, Type type, Id *id) {
     } else {
         r = newSymbolAsType(NULL, NULL, s_noPos, typeModifier);
     }
-    fillSymbolBits(&r->bits, ACCESS_DEFAULT, TypeDefault, storage);
+    fillSymbolBits(&r->bits, AccessDefault, TypeDefault, storage);
 
     return r;
 }
@@ -893,7 +893,7 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
     else type = TypeUnion;
 
     fillSymbol(&p, id->name, id->name, id->p);
-    fillSymbolBits(&p.bits, ACCESS_DEFAULT, type, StorageNone);
+    fillSymbolBits(&p.bits, AccessDefault, type, StorageNone);
 
     if (! symbolTableIsMember(s_symbolTable,&p,&ii,&pp)
         || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
@@ -978,7 +978,7 @@ TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
     else type = TypeUnion;
 
     pp = newSymbol("", NULL, typeName->p);
-    fillSymbolBits(&pp->bits, ACCESS_DEFAULT, type, StorageNone);
+    fillSymbolBits(&pp->bits, AccessDefault, type, StorageNone);
 
     setGlobalFileDepNames("", pp, MEMORY_XX);
 
@@ -1019,7 +1019,7 @@ TypeModifier *simpleEnumSpecifier(Id *id, int usage) {
     int ii;
 
     fillSymbol(&p, id->name, id->name, id->p);
-    fillSymbolBits(&p.bits, ACCESS_DEFAULT, TypeEnum, StorageNone);
+    fillSymbolBits(&p.bits, AccessDefault, TypeEnum, StorageNone);
 
     if (! symbolTableIsMember(s_symbolTable,&p,&ii,&pp)
         || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
@@ -1036,7 +1036,7 @@ TypeModifier *createNewAnonymousEnum(SymbolList *enums) {
     Symbol *pp;
 
     pp = newSymbolAsEnum("", "", s_noPos, enums);
-    fillSymbolBits(&pp->bits, ACCESS_DEFAULT, TypeEnum, StorageNone);
+    fillSymbolBits(&pp->bits, AccessDefault, TypeEnum, StorageNone);
 
     setGlobalFileDepNames("", pp, MEMORY_XX);
     pp->u.enums = enums;

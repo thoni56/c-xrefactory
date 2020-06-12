@@ -28,7 +28,7 @@ typedef struct programGraphNode {
 } S_programGraphNode;
 
 
-static unsigned s_javaExtractFromFunctionMods=ACCESS_DEFAULT;
+static unsigned s_javaExtractFromFunctionMods=AccessDefault;
 static char *rb;
 static char *s_extractionName;
 
@@ -77,7 +77,7 @@ Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
     if (options.server_operation != OLO_EXTRACT) return NULL;
 
     s = newSymbolAsLabel(name, name, s_noPos, labn);
-    fillSymbolBits(&s->bits, ACCESS_DEFAULT, TypeLabel, StorageAuto);
+    fillSymbolBits(&s->bits, AccessDefault, TypeLabel, StorageAuto);
 
     AddSymbolNoTrail(s, s_symbolTable);
     return(s);
@@ -91,7 +91,7 @@ void deleteContinueBreakLabelSymbol(char *name) {
     if (options.server_operation != OLO_EXTRACT) return;
 
     fillSymbolWithLabel(&ss, name, name, s_noPos, 0);
-    fillSymbolBits(&ss.bits, ACCESS_DEFAULT, TypeLabel, StorageAuto);
+    fillSymbolBits(&ss.bits, AccessDefault, TypeLabel, StorageAuto);
     if (symbolTableIsMember(s_symbolTable, &ss, &ii, &memb)) {
         ExtrDeleteContBreakSym(memb);
     } else {
@@ -106,7 +106,7 @@ void genContinueBreakReference(char *name) {
     if (options.server_operation != OLO_EXTRACT) return;
 
     fillSymbolWithLabel(&ss, name, name, s_noPos, 0);
-    fillSymbolBits(&ss.bits, ACCESS_DEFAULT, TypeLabel, StorageAuto);
+    fillSymbolBits(&ss.bits, AccessDefault, TypeLabel, StorageAuto);
 
     if (symbolTableIsMember(s_symbolTable, &ss, &ii, &memb)) {
         genInternalLabelReference(memb->u.labelIndex, UsageUsed);
@@ -120,7 +120,7 @@ void genSwitchCaseFork(int lastFlag) {
     if (options.server_operation != OLO_EXTRACT) return;
 
     fillSymbolWithLabel(&ss, SWITCH_LABEL_NAME, SWITCH_LABEL_NAME, s_noPos, 0);
-    fillSymbolBits(&ss.bits, ACCESS_DEFAULT, TypeLabel, StorageAuto);
+    fillSymbolBits(&ss.bits, AccessDefault, TypeLabel, StorageAuto);
     if (symbolTableIsMember(s_symbolTable, &ss, &ii, &memb)) {
         genInternalLabelReference(memb->u.labelIndex, UsageDefined);
         if (! lastFlag) {
@@ -794,7 +794,7 @@ static void extGenNewFunHead(S_programGraphNode *program) {
         sprintf(rb+strlen(rb), "private ");
     }
 
-    if (LANGUAGE(LANG_JAVA) && (s_javaExtractFromFunctionMods&ACCESS_STATIC)==0) {
+    if (LANGUAGE(LANG_JAVA) && (s_javaExtractFromFunctionMods&AccessStatic)==0) {
         ; // sprintf(rb+strlen(rb), "");
     } else {
         sprintf(rb+strlen(rb), "static ");
@@ -997,7 +997,7 @@ static void extJavaGenNewClassHead(S_programGraphNode *program) {
 
     // class header
     sprintf(rb+strlen(rb), "\t");
-    if (s_javaExtractFromFunctionMods & ACCESS_STATIC){
+    if (s_javaExtractFromFunctionMods & AccessStatic){
         sprintf(rb+strlen(rb), "static ");
     }
     sprintf(rb+strlen(rb), "class %s {\n", classname);

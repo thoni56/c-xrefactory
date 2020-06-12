@@ -61,7 +61,7 @@ static void jslCreateTypeSymbolInList(JslSymbolList *ss, char *name) {
     Symbol *s;
 
     s = newSymbol(name, name, s_noPos);
-    fillSymbolBits(&s->bits, ACCESS_DEFAULT, TypeStruct, StorageNone);
+    fillSymbolBits(&s->bits, AccessDefault, TypeStruct, StorageNone);
     fillJslSymbolList(ss, s, s_noPos, false);
 }
 
@@ -275,12 +275,12 @@ Symbol *jslMethodHeader(unsigned modif, Symbol *type,
     completeDeclarator(type,decl);
     decl->bits.access = modif;
     assert(s_jsl && s_jsl->classStat && s_jsl->classStat->thisClass);
-    if (s_jsl->classStat->thisClass->bits.access & ACCESS_INTERFACE) {
+    if (s_jsl->classStat->thisClass->bits.access & AccessInterface) {
         // set interface default access flags
-        decl->bits.access |= (ACCESS_PUBLIC | ACCESS_ABSTRACT);
+        decl->bits.access |= (AccessPublic | AccessAbstract);
     }
     decl->bits.storage = storage;
-    //& if (modif & ACCESS_STATIC) decl->bits.storage = StorageStaticMethod;
+    //& if (modif & AccessStatic) decl->bits.storage = StorageStaticMethod;
     newFun = javaSetFunctionLinkName(s_jsl->classStat->thisClass, decl, MEMORY_CF);
     if (decl->pos.file != s_olOriginalFileNumber && options.server_operation == OLO_PUSH) {
         // pre load of saved file akes problem on move field/method, ...
@@ -415,11 +415,11 @@ static int jslRecordAccessible(Symbol *cl, Symbol *rec, unsigned recAccessFlags)
 
     log_trace("testing accessibility %s . %s of 0%o",cl->linkName, rec->linkName, recAccessFlags);
     assert(s_jsl && s_jsl->classStat);
-    if (recAccessFlags & ACCESS_PUBLIC) {
+    if (recAccessFlags & AccessPublic) {
         log_trace("ret 1 access public");
         return 1;
     }
-    if (recAccessFlags & ACCESS_PROTECTED) {
+    if (recAccessFlags & AccessProtected) {
         if (javaClassIsInCurrentPackage(cl)) {
             log_trace("ret 1 protected in current package");
             return 1;
@@ -437,7 +437,7 @@ static int jslRecordAccessible(Symbol *cl, Symbol *rec, unsigned recAccessFlags)
         log_trace("ret 0 on protected");
         return 0;
     }
-    if (recAccessFlags & ACCESS_PRIVATE) {
+    if (recAccessFlags & AccessPrivate) {
         for(lcs=cs=s_jsl->classStat; cs!=NULL && cs->thisClass!=NULL; cs=cs->next) {
             lcs = cs;
         }
@@ -537,8 +537,8 @@ void jslNewClassDefinitionBegin(Id *name,
     log_trace("reading class %s [%x] at %x", cc->linkName, cc->bits.access, cc);
     if (s_jsl->classStat->next != NULL) {
         /* nested class, add it to its outer class list */
-        if (s_jsl->classStat->thisClass->bits.access & ACCESS_INTERFACE) {
-            accFlags |= (ACCESS_PUBLIC | ACCESS_STATIC);
+        if (s_jsl->classStat->thisClass->bits.access & AccessInterface) {
+            accFlags |= (AccessPublic | AccessStatic);
             cc->bits.access = accFlags;
         }
         membflag = (anonInterf==NULL && position!=CPOS_FUNCTION_INNER);
@@ -546,7 +546,7 @@ void jslNewClassDefinitionBegin(Id *name,
             jslAddNestedClass(cc, s_jsl->classStat->thisClass, membflag, accFlags);
             cn = cc->u.s->classFile;
             assert(s_fileTab.tab[cn]);
-            if (! (accFlags & ACCESS_STATIC)) {
+            if (! (accFlags & AccessStatic)) {
                 // note that non-static direct enclosing class exists
                 // I am putting in comment just by prudence, but you can
                 // freely uncoment it
@@ -576,7 +576,7 @@ void jslNewClassDefinitionBegin(Id *name,
               s_fileTab.tab[s_jsl->sourceFileNumber]->name);
     s_fileTab.tab[fileInd]->b.sourceFileNumber = s_jsl->sourceFileNumber;
 
-    if (accFlags & ACCESS_INTERFACE) s_fileTab.tab[fileInd]->b.isInterface = true;
+    if (accFlags & AccessInterface) s_fileTab.tab[fileInd]->b.isInterface = true;
     addClassTreeHierarchyReference(fileInd,&inname->p,UsageClassTreeDefinition);
     if (inname->p.file != s_olOriginalFileNumber && options.server_operation == OLO_PUSH) {
         // pre load of saved file akes problem on move field/method, ...
@@ -605,7 +605,7 @@ void jslNewClassDefinitionBegin(Id *name,
         /* anonymous implementing an interface, one more time */
         /* now put there object as superclass and its interface */
         // it was originally in reverse order, changed at 13/1/2001
-        if (anonInterf->bits.access&ACCESS_INTERFACE) {
+        if (anonInterf->bits.access&AccessInterface) {
             jslAddSuperClassOrInterfaceByName(cc, s_javaLangObjectLinkName);
         }
         jslAddSuperClassOrInterfaceByName(cc, anonInterf->linkName);
@@ -645,6 +645,6 @@ void jslNewAnonClassDefinitionBegin(Id *interfName) {
     fillIdList(&ll, *interfName, interfName->name, TypeDefault, NULL);
     jslClassifyAmbiguousTypeName(&ll, &str);
     interf = jslTypeNameDefinition(&ll);
-    jslNewClassDefinitionBegin(&s_javaAnonymousClassName, ACCESS_DEFAULT,
+    jslNewClassDefinitionBegin(&s_javaAnonymousClassName, AccessDefault,
                                interf, CPOS_ST);
 }

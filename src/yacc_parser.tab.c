@@ -2444,7 +2444,7 @@ static void addYaccSymbolReference(Id *name, int usage) {
     Symbol sss;
 
     fillSymbol(&sss, name->name, name->name, name->p);
-    fillSymbolBits(&sss.bits, ACCESS_DEFAULT, TypeYaccSymbol, StorageNone);
+    fillSymbolBits(&sss.bits, AccessDefault, TypeYaccSymbol, StorageNone);
     addCxReference(&sss, &name->p, usage,s_noneFileIndex, s_noneFileIndex);
 }
 
@@ -2461,7 +2461,7 @@ static void addRuleLocalVariable(Id *name, int order) {
             if (order == 0) nn[1] = '$';
 
             ss = newSymbol(nn, nn, name->p);
-            fillSymbolBits(&ss->bits, ACCESS_DEFAULT, TypeDefault, StorageAuto);
+            fillSymbolBits(&ss->bits, AccessDefault, TypeDefault, StorageAuto);
 
             ss->pos.col ++ ; // to avoid ambiguity of NonTerminal <-> $$.d
             addNewDeclaration(p, ss, NULL, StorageAuto, s_symbolTable);
@@ -2727,7 +2727,7 @@ case 15:
             Symbol *ss;
 
             ss = newSymbol(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->p);
-            fillSymbolBits(&ss->bits, ACCESS_DEFAULT, TypeDefault, StorageAuto);
+            fillSymbolBits(&ss->bits, AccessDefault, TypeDefault, StorageAuto);
 
             addYaccSymbolReference(yyvsp[0].ast_id.d,UsageDeclared);
             if (l_currentType!=NULL) {
@@ -2852,7 +2852,7 @@ case 192:
             yyval.ast_expressionType.d.typeModifier = newFunctionTypeModifier(NULL, NULL, NULL, p);
 
             d = newSymbolAsType(yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->name, yyvsp[0].ast_id.d->p,yyval.ast_expressionType.d.typeModifier);
-            fillSymbolBits(&d->bits, ACCESS_DEFAULT, TypeDefault, StorageExtern);
+            fillSymbolBits(&d->bits, AccessDefault, TypeDefault, StorageExtern);
 
             dd = addNewSymbolDef(d, StorageExtern, s_symbolTable, UsageUsed);
             yyval.ast_expressionType.d.reference = NULL;
@@ -3837,7 +3837,7 @@ case 399:
         fillPosition(&pp, -1, 0, 0);
 
         p = newSymbol("", "", pp);
-        fillSymbolBits(&p->bits, ACCESS_DEFAULT, TypeElipsis, StorageDefault);
+        fillSymbolBits(&p->bits, AccessDefault, TypeElipsis, StorageDefault);
 
         yyval.ast_symbolPositionListPair.d = yyvsp[-2].ast_symbolPositionListPair.d;
 
@@ -3881,7 +3881,7 @@ case 404:
         fillPosition(&pp, -1, 0, 0);
 
         p = newSymbol("", "", pp);
-        fillSymbolBits(&p->bits, ACCESS_DEFAULT, TypeElipsis, StorageDefault);
+        fillSymbolBits(&p->bits, AccessDefault, TypeElipsis, StorageDefault);
 
         yyval.ast_symbolPositionListPair.d = yyvsp[-2].ast_symbolPositionListPair.d;
         LIST_APPEND(Symbol, yyval.ast_symbolPositionListPair.d.s, p);

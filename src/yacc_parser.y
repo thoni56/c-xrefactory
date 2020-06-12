@@ -306,7 +306,7 @@ symbol_to_type_seq
             Symbol *ss;
 
             ss = newSymbol($2.d->name, $2.d->name, $2.d->p);
-            fillSymbolBits(&ss->bits, ACCESS_DEFAULT, TypeDefault, StorageAuto);
+            fillSymbolBits(&ss->bits, AccessDefault, TypeDefault, StorageAuto);
 
             addYaccSymbolReference($2.d,UsageDeclared);
             if (l_currentType!=NULL) {
@@ -474,7 +474,7 @@ primary_expr
             $$.d.typeModifier = newFunctionTypeModifier(NULL, NULL, NULL, p);
 
             d = newSymbolAsType($1.d->name, $1.d->name, $1.d->p,$$.d.typeModifier);
-            fillSymbolBits(&d->bits, ACCESS_DEFAULT, TypeDefault, StorageExtern);
+            fillSymbolBits(&d->bits, AccessDefault, TypeDefault, StorageExtern);
 
             dd = addNewSymbolDef(d, StorageExtern, s_symbolTable, UsageUsed);
             $$.d.reference = NULL;
@@ -1248,7 +1248,7 @@ parameter_identifier_list
         fillPosition(&pp, -1, 0, 0);
 
         p = newSymbol("", "", pp);
-        fillSymbolBits(&p->bits, ACCESS_DEFAULT, TypeElipsis, StorageDefault);
+        fillSymbolBits(&p->bits, AccessDefault, TypeElipsis, StorageDefault);
 
         $$.d = $1.d;
 
@@ -1287,7 +1287,7 @@ parameter_type_list
         fillPosition(&pp, -1, 0, 0);
 
         p = newSymbol("", "", pp);
-        fillSymbolBits(&p->bits, ACCESS_DEFAULT, TypeElipsis, StorageDefault);
+        fillSymbolBits(&p->bits, AccessDefault, TypeElipsis, StorageDefault);
 
         $$.d = $1.d;
         LIST_APPEND(Symbol, $$.d.s, p);
@@ -1696,7 +1696,7 @@ static void addYaccSymbolReference(Id *name, int usage) {
     Symbol sss;
 
     fillSymbol(&sss, name->name, name->name, name->p);
-    fillSymbolBits(&sss.bits, ACCESS_DEFAULT, TypeYaccSymbol, StorageNone);
+    fillSymbolBits(&sss.bits, AccessDefault, TypeYaccSymbol, StorageNone);
     addCxReference(&sss, &name->p, usage,s_noneFileIndex, s_noneFileIndex);
 }
 
@@ -1713,7 +1713,7 @@ static void addRuleLocalVariable(Id *name, int order) {
             if (order == 0) nn[1] = '$';
 
             ss = newSymbol(nn, nn, name->p);
-            fillSymbolBits(&ss->bits, ACCESS_DEFAULT, TypeDefault, StorageAuto);
+            fillSymbolBits(&ss->bits, AccessDefault, TypeDefault, StorageAuto);
 
             ss->pos.col ++ ; // to avoid ambiguity of NonTerminal <-> $$.d
             addNewDeclaration(p, ss, NULL, StorageAuto, s_symbolTable);

@@ -340,7 +340,7 @@ typedef enum language {
 #define JAVA_STATICALLY_LINKED(storage, accessFlags) (\
     (storage==StorageField\
     || ((storage==StorageMethod || storage==StorageConstructor)\
-        && (accessFlags & ACCESS_STATIC)))\
+        && (accessFlags & AccessStatic)))\
 )
 
 #define JavaMapOnPaths(thePaths, COMMAND ) {\
@@ -387,9 +387,9 @@ typedef enum language {
         && ri->b.storage!=StorageMethod\
         && ri->b.storage!=StorageConstructor) return;\
     /* check that it has default accessibility*/\
-    if (ri->b.accessFlags & ACCESS_PUBLIC) return;\
-    if (ri->b.accessFlags & ACCESS_PROTECTED) return;\
-    if (! (ri->b.accessFlags & ACCESS_PRIVATE)) {\
+    if (ri->b.accessFlags & AccessPublic) return;\
+    if (ri->b.accessFlags & AccessProtected) return;\
+    if (! (ri->b.accessFlags & AccessPrivate)) {\
         /* default accessibility, check only if transpackage move*/\
         if (! dd->transPackageMove) return;\
     }\

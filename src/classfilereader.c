@@ -763,7 +763,7 @@ static void cfAddRecordToClass(char *name,
         // hack, this will temporary cut the result,
         // however if this is the shared string with name ....? B of B for ex.
         bc = *restype; *restype = 0;
-        if ((accessFlags & ACCESS_STATIC)) {
+        if ((accessFlags & AccessStatic)) {
             /*&
               sprintf(pp,"%s.%s%s", clas->linkName, name, sig);
               vFunCl = s_noneFileIndex;
@@ -885,7 +885,7 @@ static void cfReadMethodInfos(  char **accc,
             || strcmp(name, JAVA_CONSTRUCTOR_NAME2)==0) {
             // isn't it yet done by javac?
             //&if (strcmp(name, JAVA_CONSTRUCTOR_NAME2)==0) {
-            //& access_flags |= ACCESS_STATIC;
+            //& access_flags |= AccessStatic;
             //&}
             // if constructor, put there type name as constructor name
             // instead of <init>
@@ -1093,7 +1093,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     GetU2(access, ccc, ffin, &currentFile.lexBuffer.buffer);
     memb->bits.access = access;
     log_trace("reading accessFlags %s == %x", name, access);
-    if (access & ACCESS_INTERFACE) s_fileTab.tab[fileInd]->b.isInterface = true;
+    if (access & AccessInterface) s_fileTab.tab[fileInd]->b.isInterface = true;
     GetU2(thisClass, ccc, ffin, &currentFile.lexBuffer.buffer);
     if (thisClass<0 || thisClass>=cpSize) goto corrupted;
     thisClassName = constantPool[constantPool[thisClass].clas.nameIndex].asciz;
@@ -1171,7 +1171,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
                 fill_nestedSpec(& memb->u.s->nest[rinners], inners, membFlag, modifs);
                 assert(inners && inners->bits.symType==TypeStruct && inners->u.s);
                 cn = inners->u.s->classFile;
-                if (membFlag && ! (modifs & ACCESS_STATIC)) {
+                if (membFlag && ! (modifs & AccessStatic)) {
                     // note that non-static direct enclosing class exists
                     assert(s_fileTab.tab[cn]);
                     s_fileTab.tab[cn]->directEnclosingInstance = memb->u.s->classFile;

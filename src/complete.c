@@ -129,24 +129,24 @@ static int printJavaModifiers(char *buf, int *size, unsigned acc) {
     int i;
     i = 0;
     if (1 || (options.ooChecksBits & OOC_ACCESS_CHECK)==0) {
-        if (acc & ACCESS_PUBLIC) {
+        if (acc & AccessPublic) {
             sprintf(buf+i,"public "); i+=strlen(buf+i);
             assert(i< *size);
         }
-        if (acc & ACCESS_PRIVATE) {
+        if (acc & AccessPrivate) {
             sprintf(buf+i,"private "); i+=strlen(buf+i);
             assert(i< *size);
         }
-        if (acc & ACCESS_PROTECTED) {
+        if (acc & AccessProtected) {
             sprintf(buf+i,"protected "); i+=strlen(buf+i);
             assert(i< *size);
         }
     }
-    if (acc & ACCESS_STATIC) {
+    if (acc & AccessStatic) {
         sprintf(buf+i,"static "); i+=strlen(buf+i);
         assert(i< *size);
     }
-    if (acc & ACCESS_FINAL) {
+    if (acc & AccessFinal) {
         sprintf(buf+i,"final "); i+=strlen(buf+i);
         assert(i< *size);
     }
@@ -156,7 +156,7 @@ static int printJavaModifiers(char *buf, int *size, unsigned acc) {
 
 static char *getCompletionClassFieldString( CompletionLine *cl) {
     char *cname;
-    //& if (cl->symbol->bits.access & ACCESS_STATIC) {
+    //& if (cl->symbol->bits.access & AccessStatic) {
     // statics, get class from link name
     //&     cname = javaGetNudePreTypeName_st(cl->symbol->linkName,CUT_OUTERS);
     //&             sprintf(tmpBuff,"%s", cname);
@@ -248,7 +248,7 @@ static void sprintFullCompletionInfo(Completions* c, int ii, int indent) {
     } else if (LANGUAGE(LANG_JAVA) && c->alternatives[ii].symbolType==TypeStruct ) {
         if (c->alternatives[ii].symbol!=NULL) {
             ll += printJavaModifiers(tt+ll, &size, c->alternatives[ii].symbol->bits.access);
-            if (c->alternatives[ii].symbol->bits.access & ACCESS_INTERFACE) {
+            if (c->alternatives[ii].symbol->bits.access & AccessInterface) {
                 sprintf(tt+ll,"interface ");
             } else {
                 sprintf(tt+ll,"class ");
@@ -326,7 +326,7 @@ static void sprintFullJeditCompletionInfo(Completions *c, int ii, int *nindent, 
     } else if (LANGUAGE(LANG_JAVA) && c->alternatives[ii].symbolType==TypeStruct ) {
         if (c->alternatives[ii].symbol!=NULL) {
             ll += printJavaModifiers(ppcTmpBuff+ll, &size, c->alternatives[ii].symbol->bits.access);
-            if (c->alternatives[ii].symbol->bits.access & ACCESS_INTERFACE) {
+            if (c->alternatives[ii].symbol->bits.access & AccessInterface) {
                 sprintf(ppcTmpBuff+ll,"interface ");
             } else {
                 sprintf(ppcTmpBuff+ll,"class ");
@@ -856,9 +856,9 @@ static bool javaLinkable(unsigned storage, unsigned accessFlags) {
 
     /*fprintf(dumpOut,"testing linkability %x %x\n",storage,accessFlags);fflush(dumpOut);*/
     if (s_language != LANG_JAVA) return true;
-    if (storage == ACCESS_ALL) return true;
+    if (storage == AccessAll) return true;
     if ((options.ooChecksBits & OOC_LINKAGE_CHECK) == 0) return true;
-    if (storage & ACCESS_STATIC) return((accessFlags & ACCESS_STATIC) != 0);
+    if (storage & AccessStatic) return((accessFlags & AccessStatic) != 0);
 
     return true;
 }
@@ -952,8 +952,8 @@ static void completeRecordsNames(
                 // TODO customizable completion level
                 if (vlevel > 1
                     && vlevel <= options.completionOverloadWizardDeep+1
-                    &&  (r->bits.access & ACCESS_PRIVATE)==0
-                    &&  (r->bits.access & ACCESS_STATIC)==0) {
+                    &&  (r->bits.access & AccessPrivate)==0
+                    &&  (r->bits.access & AccessStatic)==0) {
                     processSpecialInheritedFullCompletion(c,orderFlag,vlevel,
                                                           r, vFunCl, cname);
                 }
@@ -982,7 +982,7 @@ void completeRecNames(Completions *c) {
     if (str->kind == TypeStruct || str->kind == TypeUnion) {
         s = str->u.t;
         assert(s);
-        completeRecordsNames(c, s, ACCESS_DEFAULT,CLASS_TO_ANY,
+        completeRecordsNames(c, s, AccessDefault,CLASS_TO_ANY,
                              StorageDefault,TypeDefault,0);
     }
     s_structRecordCompletionType = &s_errorModifier;
@@ -1107,7 +1107,7 @@ static char *spComplFindNextRecord(S_exprTokenType *tok) {
         cname = r->name;
         CONST_CONSTRUCT_NAME(StorageDefault,r->bits.storage,cname);
         if (    cname!=NULL &&
-                javaLinkable(ACCESS_ALL,r->bits.access)) {
+                javaLinkable(AccessAll,r->bits.access)) {
             assert(rfs.currClass && rfs.currClass->u.s);
             assert(r->bits.symType == TypeDefault);
             if (isEqualType(r->u.type, tok->typeModifier)) {
@@ -1206,7 +1206,7 @@ static void completeConstructorsFromFile(Completions *c, char *fname) {
         /* only when exact match, otherwise it would be too memory costly*/
         //&fprintf(dumpOut,"O.K. %s\n", memb->linkName);
         javaLoadClassSymbolsFromFile(memb);
-        completeRecordsNames(c, memb, ACCESS_ALL,CLASS_TO_ANY, StorageConstructor,TypeDefault,0);
+        completeRecordsNames(c, memb, AccessAll,CLASS_TO_ANY, StorageConstructor,TypeDefault,0);
     }
 }
 
@@ -1297,7 +1297,7 @@ static void javaCompleteNestedClasses(  Completions *c,
                 processName(memb->name, &compLine, 1, (void*) c);
                 if (storage == StorageConstructor) {
                     javaLoadClassSymbolsFromFile(memb);
-                    completeRecordsNames(c, memb, ACCESS_ALL,CLASS_TO_ANY, StorageConstructor,TypeDefault,0);
+                    completeRecordsNames(c, memb, AccessAll,CLASS_TO_ANY, StorageConstructor,TypeDefault,0);
                 }
             }
         }
@@ -1336,9 +1336,9 @@ static void javaCompleteComposedName(Completions *c,
         if (expr->kind == TypeArray) expr = &s_javaArrayObjectSymbol.u.s->stype;
         if (expr->kind != TypeStruct) return;
         str = expr->u.t;
-        accs = ACCESS_DEFAULT;
+        accs = AccessDefault;
     } else {
-        accs = ACCESS_STATIC;
+        accs = AccessStatic;
     }
     /* complete packages and classes from file system */
     if (nameType==TypePackage){
@@ -1688,7 +1688,7 @@ void javaCompleteThisConstructor (Completions *c) {
     if (options.server_operation == OLO_SEARCH) return;
     memb = s_javaStat->thisClass;
     javaLoadClassSymbolsFromFile(memb);
-    completeRecordsNames(c, memb, ACCESS_ALL,CLASS_TO_ANY, StorageConstructor,
+    completeRecordsNames(c, memb, AccessAll,CLASS_TO_ANY, StorageConstructor,
                          TypeSpecialConstructorCompletion,0);
 }
 
@@ -1698,7 +1698,7 @@ void javaCompleteSuperConstructor (Completions *c) {
     if (options.server_operation == OLO_SEARCH) return;
     memb = javaCurrentSuperClass();
     javaLoadClassSymbolsFromFile(memb);
-    completeRecordsNames(c, memb, ACCESS_ALL,CLASS_TO_ANY, StorageConstructor,
+    completeRecordsNames(c, memb, AccessAll,CLASS_TO_ANY, StorageConstructor,
                          TypeSpecialConstructorCompletion,0);
 }
 
@@ -1722,7 +1722,7 @@ void javaCompleteStrRecordPrimary(Completions*c) {
     assert(memb);
     javaLoadClassSymbolsFromFile(memb);
     /*fprintf(dumpOut,": completing %s\n",memb->linkName);fflush(dumpOut);*/
-    completeRecordsNames(c, memb, ACCESS_DEFAULT,CLASS_TO_ANY, StorageDefault,TypeDefault,0);
+    completeRecordsNames(c, memb, AccessDefault,CLASS_TO_ANY, StorageDefault,TypeDefault,0);
 }
 
 void javaCompleteStrRecordSuper(Completions*c) {
@@ -1753,7 +1753,7 @@ void javaCompleteStrRecordQualifiedSuper(Completions*c) {
 
 void javaCompleteUpMethodSingleName(Completions*c) {
     if (s_javaStat!=NULL) {
-        completeRecordsNames(c, s_javaStat->thisClass, ACCESS_ALL,CLASS_TO_ANY,
+        completeRecordsNames(c, s_javaStat->thisClass, AccessAll,CLASS_TO_ANY,
                              StorageDefault,TypeDefault,0);
     }
 }
@@ -1761,7 +1761,7 @@ void javaCompleteUpMethodSingleName(Completions*c) {
 void javaCompleteFullInheritedMethodHeader(Completions*c) {
     if (c->idToProcessLen != 0) return;
     if (s_javaStat!=NULL) {
-        completeRecordsNames(c,s_javaStat->thisClass,ACCESS_ALL,CLASS_TO_METHOD,
+        completeRecordsNames(c,s_javaStat->thisClass,AccessAll,CLASS_TO_METHOD,
                              StorageDefault,TypeInheritedFullMethod,0);
     }
 #if ZERO
