@@ -96,7 +96,7 @@ extern int byPassAcceptableSymbol(SymbolReferenceItem *p);
 extern int itIsSymbolToPushOlRefences(SymbolReferenceItem *p, S_olcxReferences *rstack,
                                       S_olSymbolsMenu **rss, int checkSelFlag);
 extern void olcxAddReferenceToOlSymbolsMenu(S_olSymbolsMenu  *cms, Reference *rr,
-                                            int bestFitTlag);
+                                            int bestFitFlag);
 extern void putOnLineLoadedReferences(SymbolReferenceItem *p);
 extern void genOnLineReferences(S_olcxReferences *rstack, S_olSymbolsMenu *cms);
 extern S_olSymbolsMenu *createSelectionMenu(SymbolReferenceItem *dd);

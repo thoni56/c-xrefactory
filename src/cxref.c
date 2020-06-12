@@ -1243,9 +1243,9 @@ void olcxAddReferences(Reference *list, Reference **dlist,
 }
 
 void olcxAddReferenceToOlSymbolsMenu(S_olSymbolsMenu  *cms, Reference *rr,
-                                     int bestFitTlag) {
+                                     int bestFitFlag) {
     Reference *added;
-    added = olcxAddReference(&cms->s.refs, rr, bestFitTlag);
+    added = olcxAddReference(&cms->s.refs, rr, bestFitFlag);
     if (rr->usage.base == UsageClassTreeDefinition) cms->defpos = rr->p;
     if (added!=NULL) {
         if (IS_DEFINITION_OR_DECL_USAGE(rr->usage.base)) {
