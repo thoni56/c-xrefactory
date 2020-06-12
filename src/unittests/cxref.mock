@@ -10,7 +10,8 @@ void fill_reference(Reference *reference, UsageBits usage, Position position,
     mock(reference, next);
 }
 
-void fillSymbolRefItemExceptBits(SymbolReferenceItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass, int vFunClass) {
+void fillSymbolRefItemExceptBits(SymbolReferenceItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass,
+                                 int vFunClass) {
     mock(symbolRefItem, name, fileHash, vApplClass, vFunClass);
 }
 
@@ -65,7 +66,8 @@ void olcxRecomputeSelRefs(S_olcxReferences *refs) {
     mock(refs);
 }
 
-void olProcessSelectedReferences(S_olcxReferences *rstack, void (*referencesMapFun)(S_olcxReferences *rstack, S_olSymbolsMenu *ss)) {
+void olProcessSelectedReferences(S_olcxReferences *rstack, void (*referencesMapFun)(S_olcxReferences *rstack,
+                                                                                    S_olSymbolsMenu *ss)) {
     mock(rstack, referencesMapFun);
 }
 
@@ -166,15 +168,20 @@ void olSetCallerPosition(Position *pos) {
     mock(pos);
 }
 
-S_olCompletion *olCompletionListPrepend(char *name, char *fullText, char *vclass, int jindent, Symbol *s, SymbolReferenceItem *ri, Reference *dfpos, int symType, int vFunClass, S_olcxReferences *stack) {
+S_olCompletion *olCompletionListPrepend(char *name, char *fullText, char *vclass, int jindent, Symbol *s,
+                                        SymbolReferenceItem *ri, Reference *dfpos, int symType, int vFunClass,
+                                        S_olcxReferences *stack) {
     return (S_olCompletion *) mock(name, fullText, vclass, jindent, s, ri, dfpos, symType, vFunClass, stack);
 }
 
-S_olSymbolsMenu *olCreateNewMenuItem(SymbolReferenceItem *sym, int vApplClass, int vFunCl, Position *defpos, int defusage, int selected, int visible, unsigned ooBits, int olusage, int vlevel) {
+S_olSymbolsMenu *olCreateNewMenuItem(SymbolReferenceItem *sym, int vApplClass, int vFunCl, Position *defpos,
+                                     int defusage, int selected, int visible, unsigned ooBits, int olusage,
+                                     int vlevel) {
     return (S_olSymbolsMenu *) mock(sym, vApplClass, vFunCl, defpos, defusage, selected, visible, ooBits, olusage, vlevel);
 }
 
-S_olSymbolsMenu *olAddBrowsedSymbol(SymbolReferenceItem *sym, S_olSymbolsMenu **list, int selected, int visible, unsigned ooBits, int olusage, int vlevel, Position *defpos, int defusage) {
+S_olSymbolsMenu *olAddBrowsedSymbol(SymbolReferenceItem *sym, S_olSymbolsMenu **list, int selected, int visible,
+                                    unsigned ooBits, int olusage, int vlevel, Position *defpos, int defusage) {
     return (S_olSymbolsMenu *) mock(sym, list, selected, visible, ooBits, olusage, vlevel, defpos, defusage);
 }
 
@@ -202,7 +209,8 @@ int byPassAcceptableSymbol(SymbolReferenceItem *p) {
     return (int) mock(p);
 }
 
-int itIsSymbolToPushOlRefences(SymbolReferenceItem *p, S_olcxReferences *rstack, S_olSymbolsMenu **rss, int checkSelFlag) {
+int itIsSymbolToPushOlRefences(SymbolReferenceItem *p, S_olcxReferences *rstack, S_olSymbolsMenu **rss,
+                               int checkSelFlag) {
     return (int) mock(p, rstack, rss, checkSelFlag);
 }
 
