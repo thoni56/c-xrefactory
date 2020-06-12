@@ -6,7 +6,6 @@ There are a *lot* of things to do to make c-xref into modern C.
 (This file is structured for Emacs org-mode...)
 
 * TODO Unittests for memory module
-* TODO Test for Java using JRegr sources
 * TODO Make S_caching an abstract data type to hide CachePoint and Caching
 * TODO New refactoring: Extract variable
 * TODO Remove FULL/FAST update, we always want correct info?
@@ -98,6 +97,7 @@ easier to mock and unit test other modules.
 
 * TODO Make Makefile.common look for our patched yacc and if it's not
   available ignore yacc-rules otherwise always run yacc.
+* DONE Test for Java using JRegr sources
 * DONE Remove enum generation by using CPP magic
 In order to
 - simplify the code by removing the whole generate regime
