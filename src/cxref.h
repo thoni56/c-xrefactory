@@ -86,7 +86,7 @@ extern void olCompletionListReverse(void);
 extern Reference **addToRefList(Reference **list,
                                 UsageBits *pusage,
                                 Position *pos,
-                                int category);
+                                ReferenceCategory category);
 extern bool isInRefList(Reference *list,
                         UsageBits *pusage,
                         Position *pos,

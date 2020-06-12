@@ -51,7 +51,7 @@ typedef enum longjmpReason {
 } LongjmpReason;
 
 typedef enum extractCategory {
-    EXTRACT_LOCAL_VAR,
+    EXTRACT_LOCAL_VAR = 12,
     EXTRACT_VALUE_ARGUMENT,
     EXTRACT_LOCAL_OUT_ARGUMENT,
     EXTRACT_OUT_ARGUMENT,
@@ -253,7 +253,7 @@ typedef enum taskRegimes {
 /* ************** on-line (browsing) operations for c-xref server  ********** */
 
 enum olcxOptions {
-    OLO_COMPLETION = 0,             /* must be zero */
+    OLO_COMPLETION = 0,             /* must be zero, TODO: why? */
     OLO_SEARCH,
     OLO_TAG_SEARCH,
     OLO_RENAME,        /* same as push, just another ordering */
@@ -356,19 +356,19 @@ enum memoryClass {
     MEMORY_PP,
 };
 
-enum referenceCategory {
+typedef enum referenceCategory {
     CategoryGlobal,
     CategoryLocal,
     MAX_CATEGORIES
-};
+} ReferenceCategory;
 
-enum refScopes {
+typedef enum referenceScope {
     ScopeDefault,
     ScopeGlobal,
     ScopeFile,
     ScopeAuto,
     MAX_SCOPES
-};
+} ReferenceScope;
 
 #define SCOPES_LN 3
 
@@ -418,7 +418,7 @@ typedef enum inputType {
 } InputType;
 
 typedef enum updateType {
-    UP_CREATE = 0,              // must be zero !
+    UP_CREATE = 0,              // must be zero ! TODO: Why?
     UP_FAST_UPDATE,
     UP_FULL_UPDATE,
 } UpdateType;
@@ -449,7 +449,6 @@ enum syntaxPassParsedImportantPosition {
     SPP_PARENTHESED_EXPRESSION_RPAR_POSITION,
     SPP_PARENTHESED_EXPRESSION_BEGIN_POSITION,
     SPP_PARENTHESED_EXPRESSION_END_POSITION,
-
     SPP_MAX,
 };
 
@@ -534,9 +533,9 @@ typedef struct reference {
 typedef struct symbolReferenceItemBits {
     Type					symType		: SYMTYPES_LN;
     Storage					storage		: STORAGES_LN;
-    unsigned				scope		: SCOPES_LN;
+    ReferenceScope			scope		: SCOPES_LN;
     Access					accessFlags	: 12; /* java access bits */
-    unsigned				category	: 2;  /* local/global */
+    ReferenceCategory		category	: 2;  /* local/global */
     unsigned				htmlWasLn	: 1;  /* html ln generated */
 } SymbolReferenceItemBits;
 

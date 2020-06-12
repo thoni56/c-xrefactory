@@ -246,12 +246,13 @@ void renameCollationSymbols(S_olSymbolsMenu *sss) {
 
 
 Reference **addToRefList(Reference **list,
-                           UsageBits *pusage,
-                           Position *pos,
-                           int category
-                           ) {
+                         UsageBits *pusage,
+                         Position *pos,
+                         ReferenceCategory category
+) {
     Reference *rr, **place;
     Reference ppp;
+
     fill_reference(&ppp, *pusage, *pos, NULL);
     SORTED_LIST_PLACE2(place,Reference,ppp,list);
     if (*place==NULL || SORTED_LIST_NEQ((*place),ppp)

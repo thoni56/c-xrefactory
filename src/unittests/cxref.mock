@@ -186,7 +186,7 @@ void olCompletionListReverse(void) {
     mock();
 }
 
-Reference **addToRefList(Reference **list, UsageBits *pusage, Position *pos, int category) {
+Reference **addToRefList(Reference **list, UsageBits *pusage, Position *pos, ReferenceCategory category) {
     return (Reference **) mock(list, pusage, pos, category);
 }
 
