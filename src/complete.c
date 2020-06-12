@@ -16,6 +16,7 @@
 #include "symbol.h"
 #include "list.h"
 #include "yylex.h"
+#include "log.h"
 
 
 #define FULL_COMPLETION_INDENT_CHARS    2
@@ -125,28 +126,28 @@ void formatOutputLine(char *line, int startingColumn) {
     }
 }
 
-static int printJavaModifiers(char *buf, int *size, unsigned acc) {
+static int printJavaModifiers(char *buf, int *size, Access access) {
     int i;
     i = 0;
     if (1 || (options.ooChecksBits & OOC_ACCESS_CHECK)==0) {
-        if (acc & AccessPublic) {
+        if (access & AccessPublic) {
             sprintf(buf+i,"public "); i+=strlen(buf+i);
             assert(i< *size);
         }
-        if (acc & AccessPrivate) {
+        if (access & AccessPrivate) {
             sprintf(buf+i,"private "); i+=strlen(buf+i);
             assert(i< *size);
         }
-        if (acc & AccessProtected) {
+        if (access & AccessProtected) {
             sprintf(buf+i,"protected "); i+=strlen(buf+i);
             assert(i< *size);
         }
     }
-    if (acc & AccessStatic) {
+    if (access & AccessStatic) {
         sprintf(buf+i,"static "); i+=strlen(buf+i);
         assert(i< *size);
     }
-    if (acc & AccessFinal) {
+    if (access & AccessFinal) {
         sprintf(buf+i,"final "); i+=strlen(buf+i);
         assert(i< *size);
     }
@@ -852,13 +853,13 @@ void completeStructs(Completions *c) {
     symbolTableMap2(s_symbolTable, completeFun, (void*) &ii);
 }
 
-static bool javaLinkable(unsigned storage, unsigned accessFlags) {
+static bool javaLinkable(Storage storage, Access access) {
 
-    /*fprintf(dumpOut,"testing linkability %x %x\n",storage,accessFlags);fflush(dumpOut);*/
+    log_trace("testing linkability %x %x", storage, access);
     if (s_language != LANG_JAVA) return true;
-    if (storage == AccessAll) return true;
+    if (access == AccessAll) return true;
     if ((options.ooChecksBits & OOC_LINKAGE_CHECK) == 0) return true;
-    if (storage & AccessStatic) return((accessFlags & AccessStatic) != 0);
+    if (access & AccessStatic) return((access & AccessStatic) != 0);
 
     return true;
 }
@@ -892,19 +893,20 @@ static AccessibilityCheckYesNo calculateAccessCheckOption(void) {
 #define STR_REC_INFO(cc) (* cc->idToProcess == 0 && s_language!=LANG_JAVA)
 
 static void completeRecordsNames(
-                                 Completions *c,
-                                 Symbol *s,
-                                 unsigned accessMod,
-                                 int classification,
-                                 int constructorOpt,
-                                 int completionType,
-                                 int vlevelOffset
-                                 ) {
-    CompletionLine         completionLine;
-    int             orderFlag,rr,vlevel, accessCheck,  visibilityCheck;
-    Symbol        *r, *vFunCl;
-    S_recFindStr    rfs;
-    char            *cname;
+    Completions *c,
+    Symbol *s,
+    Access access,
+    int classification,
+    int constructorOpt,
+    int completionType,
+    int vlevelOffset
+) {
+    CompletionLine completionLine;
+    int orderFlag,rr,vlevel, accessCheck,  visibilityCheck;
+    Symbol *r, *vFunCl;
+    S_recFindStr rfs;
+    char *cname;
+
     if (s==NULL) return;
     if (STR_REC_INFO(c)) {
         orderFlag = 0;
@@ -939,7 +941,7 @@ static void completeRecordsNames(
                 && (! symbolNameShouldBeHiddenFromReports(r->linkName))
                 //  I do not know whether to check linkability or not
                 //  What is more natural ???
-                && javaLinkable(accessMod,r->bits.access)) {
+                && javaLinkable(access,r->bits.access)) {
             //&fprintf(dumpOut,"passed\n", cname);
             assert(rfs.currClass && rfs.currClass->u.s);
             assert(r->bits.symType == TypeDefault);
@@ -1008,25 +1010,25 @@ static void completeFromSymTab(Completions*c, unsigned storage){
     }
 }
 
-void completeEnums(Completions*c) {
+void completeEnums(Completions *c) {
     S_completionSymInfo ii;
     fillCompletionSymInfo(&ii, c, TypeEnum);
     symbolTableMap2(s_symbolTable, completeFun, (void*) &ii);
 }
 
-void completeLabels(Completions*c) {
+void completeLabels(Completions *c) {
     S_completionSymInfo ii;
     fillCompletionSymInfo(&ii, c, TypeLabel);
     symbolTableMap2(s_symbolTable, completeFun, (void*) &ii);
 }
 
-void completeMacros(Completions*c) {
+void completeMacros(Completions *c) {
     S_completionSymInfo ii;
     fillCompletionSymInfo(&ii, c, TypeMacro);
     symbolTableMap2(s_symbolTable, completeFun, (void*) &ii);
 }
 
-void completeTypes(Completions* c) {
+void completeTypes(Completions *c) {
     completeFromSymTab(c, StorageTypedef);
 }
 
@@ -1036,24 +1038,25 @@ void completeOthers(Completions *c) {
 }
 
 /* very costly function in time !!!! */
-static Symbol * getSymFromRef(Reference *rr) {
-    int                 i;
-    SymbolReferenceItem     *ss;
-    Reference         *r;
-    Symbol            *sym;
+static Symbol *getSymFromRef(Reference *reference) {
+    int i;
+    SymbolReferenceItem *ss;
+    Reference *r;
+    Symbol *sym;
+
     r = NULL; ss = NULL;
     // first visit all references, looking for symbol link name
     for(i=0; i<s_cxrefTab.size; i++) {
         ss = s_cxrefTab.tab[i];
         if (ss!=NULL) {
             for(r=ss->refs; r!=NULL; r=r->next) {
-                if (rr == r) goto cont;
+                if (reference == r) goto cont;
             }
         }
     }
  cont:
     if (i>=s_cxrefTab.size) return(NULL);
-    assert(r==rr);
+    assert(r==reference);
     // now look symbol table to find the symbol , berk!
     for(i=0; i<s_symbolTable->size; i++) {
         for(sym=s_symbolTable->tab[i]; sym!=NULL; sym=sym->next) {
@@ -1106,8 +1109,7 @@ static char *spComplFindNextRecord(S_exprTokenType *tok) {
         assert(r);
         cname = r->name;
         CONST_CONSTRUCT_NAME(StorageDefault,r->bits.storage,cname);
-        if (    cname!=NULL &&
-                javaLinkable(AccessAll,r->bits.access)) {
+        if (cname!=NULL && javaLinkable(AccessAll, r->bits.access)){
             assert(rfs.currClass && rfs.currClass->u.s);
             assert(r->bits.symType == TypeDefault);
             if (isEqualType(r->u.type, tok->typeModifier)) {
@@ -1322,7 +1324,7 @@ static void javaCompleteComposedName(Completions *c,
     TypeModifier *expr;
     int nameType;
     char packageName[MAX_FILE_NAME_SIZE];
-    unsigned accs;
+    Access access;
     Reference *orr;
 
     nameType = javaClassifyAmbiguousName(s_javaStat->lastParsedName,NULL,&str,
@@ -1336,9 +1338,9 @@ static void javaCompleteComposedName(Completions *c,
         if (expr->kind == TypeArray) expr = &s_javaArrayObjectSymbol.u.s->stype;
         if (expr->kind != TypeStruct) return;
         str = expr->u.t;
-        accs = AccessDefault;
+        access = AccessDefault;
     } else {
-        accs = AccessStatic;
+        access = AccessStatic;
     }
     /* complete packages and classes from file system */
     if (nameType==TypePackage){
@@ -1355,7 +1357,7 @@ static void javaCompleteComposedName(Completions *c,
     if (classif==CLASS_TO_EXPR && str!=NULL && storage!=StorageConstructor
         && (nameType==TypeStruct || nameType==TypeExpression)) {
         javaLoadClassSymbolsFromFile(str);
-        completeRecordsNames(c, str, accs,CLASS_TO_ANY, storage,TypeDefault,0);
+        completeRecordsNames(c, str, access,CLASS_TO_ANY, storage,TypeDefault,0);
     }
 }
 
