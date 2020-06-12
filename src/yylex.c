@@ -382,11 +382,6 @@ static void testCxrefCompletionId(Lexem *out_lexem, char *idd, Position *pos) {
             else if (s_language == LANG_YACC) {
                 makeYaccCompletions(idd, strlen(idd), pos);
             }
-#			ifdef CCC_ALLOWED
-            else if (s_language == LAN_CCC) {
-                makeCccCompletions(idd, strlen(idd), pos);
-            }
-#			endif
             else {
                 makeCCompletions(idd, strlen(idd), pos);
             }

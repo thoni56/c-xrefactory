@@ -233,20 +233,17 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
     } else if (stt==0) {
         // .class can be inside a jar archive, but this makes problem on
         // recursive read of a directory, it attempts to read .class
-        if (    topCallFlag==0
-                &&  (! fileNameHasOneOfSuffixes(fname, options.cFilesSuffixes))
-                &&  (! fileNameHasOneOfSuffixes(fname, options.javaFilesSuffixes))
-#ifdef CCC_ALLOWED
-                &&  (! fileNameHasOneOfSuffixes(fname, s_opt.cppFilesSuffixes))
-#endif
-                &&  compareFileNames(suff,".y")!=0
-                ) {
+        if (topCallFlag==0
+            &&  (! fileNameHasOneOfSuffixes(fname, options.cFilesSuffixes))
+            &&  (! fileNameHasOneOfSuffixes(fname, options.javaFilesSuffixes))
+            &&  compareFileNames(suff,".y")!=0
+        ) {
             return;
         }
         if (options.javaFilesOnly && options.taskRegime != RegimeEditServer
             && (! fileNameHasOneOfSuffixes(fname, options.javaFilesSuffixes))
             && (! fileNameHasOneOfSuffixes(fname, "jar:class"))
-            ) {
+        ) {
             return;
         }
         scheduleCommandLineEnteredFileToProcess(fn);
@@ -2032,11 +2029,6 @@ void mainSetLanguage(char *inFileName, Language *outLanguage) {
         } else if (compareFileNames(suff,".y")==0) {
             *outLanguage = LANG_YACC;
             typeEnumName[TypeStruct] = "struct";
-#   ifdef CCC_ALLOWED
-        } else if (fileNameHasOneOfSuffixes(inFileName, s_opt.cppFilesSuffixes)) {
-            *outLanguage = LAN_CCC;
-            typeName[TypeStruct] = "class";
-#   endif
         } else {
             *outLanguage = LANG_C;
             typeEnumName[TypeStruct] = "struct";
