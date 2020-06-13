@@ -94,7 +94,7 @@ Position s_paramEndPosition;
 Position s_cxRefPos;
 int s_cxRefFlag=0;
 
-S_fileTab s_fileTab;
+S_fileTab fileTable;
 int s_input_file_number;
 char *s_input_file_name;
 time_t s_fileProcessStartTime;

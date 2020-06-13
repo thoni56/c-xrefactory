@@ -87,8 +87,6 @@ extern S_currentlyParsedCl s_cpInit;
 extern S_currentlyParsedStatics s_cps;
 extern S_currentlyParsedStatics s_cpsInit;
 
-extern S_fileTab s_fileTab;
-
 extern TypeModifier s_defaultIntModifier;
 extern Symbol s_defaultIntDefinition;
 extern TypeModifier s_defaultPackedTypeModifier;

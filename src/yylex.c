@@ -168,8 +168,8 @@ int addFileTabItem(char *name) {
     normalizedFileName = normalizeFileName(name,s_cwd);
 
     /* Does it already exist? */
-    if (fileTabExists(&s_fileTab, normalizedFileName))
-        return fileTabLookup(&s_fileTab, normalizedFileName);
+    if (fileTabExists(&fileTable, normalizedFileName))
+        return fileTabLookup(&fileTable, normalizedFileName);
 
     /* If not, add it, but then we need a filename and a fileitem in FT-memory  */
     len = strlen(normalizedFileName);
@@ -179,7 +179,7 @@ int addFileTabItem(char *name) {
     FT_ALLOC(createdFileItem, FileItem);
     fillFileItem(createdFileItem, fname, false);
 
-    fileIndex = fileTabAdd(&s_fileTab, createdFileItem);
+    fileIndex = fileTabAdd(&fileTable, createdFileItem);
     checkFileModifiedTime(fileIndex); // it was too slow on load ?
 
     return fileIndex;
@@ -192,25 +192,25 @@ static int getOrCreateFileNumberFor(char *fileName) {
     if (fileName==NULL) {
         fileNumber = s_noneFileIndex;
     } else {
-        existed = fileTabExists(&s_fileTab, fileName);
+        existed = fileTabExists(&fileTable, fileName);
         fileNumber = addFileTabItem(fileName);
         checkFileModifiedTime(fileNumber);
-        cxloading = s_fileTab.tab[fileNumber]->b.cxLoading;
+        cxloading = fileTable.tab[fileNumber]->b.cxLoading;
         if (!existed) {
             cxloading = 1;
         } else if (options.update==UP_FAST_UPDATE) {
-            if (s_fileTab.tab[fileNumber]->b.scheduledToProcess) {
+            if (fileTable.tab[fileNumber]->b.scheduledToProcess) {
                 // references from headers are not loaded on fast update !
                 cxloading = 1;
             }
         } else if (options.update==UP_FULL_UPDATE) {
-            if (s_fileTab.tab[fileNumber]->b.scheduledToUpdate) {
+            if (fileTable.tab[fileNumber]->b.scheduledToUpdate) {
                 cxloading = 1;
             }
         } else {
             cxloading = 1;
         }
-        if (s_fileTab.tab[fileNumber]->b.cxSaved==1 && ! options.multiHeadRefsCare) {
+        if (fileTable.tab[fileNumber]->b.cxSaved==1 && ! options.multiHeadRefsCare) {
             /* if multihead references care, load include refs each time */
             cxloading = 0;
         }
@@ -218,10 +218,10 @@ static int getOrCreateFileNumberFor(char *fileName) {
             if (s_jsl!=NULL || s_javaPreScanOnly) {
                 // do not load (and save) references from jsl loaded files
                 // nor during prescanning
-                cxloading = s_fileTab.tab[fileNumber]->b.cxLoading;
+                cxloading = fileTable.tab[fileNumber]->b.cxLoading;
             }
         }
-        s_fileTab.tab[fileNumber]->b.cxLoading = cxloading;
+        fileTable.tab[fileNumber]->b.cxLoading = cxloading;
     }
     return fileNumber;
 }
@@ -442,13 +442,13 @@ void addThisFileDefineIncludeReference(int filenum) {
     Symbol        ss;
     fillPosition(&dpos, filenum, 1, 0);
     fillIncludeSymbolItem( &ss,filenum, &dpos);
-//&fprintf(dumpOut,"adding reference on file %d==%s\n",filenum, s_fileTab.tab[filenum]->name);
+//&fprintf(dumpOut,"adding reference on file %d==%s\n",filenum, fileTable.tab[filenum]->name);
     addCxReference(&ss, &dpos, UsageDefined, filenum, filenum);
 }
 
 void addIncludeReference(int filenum, Position *pos) {
     Symbol        ss;
-//&fprintf(dumpOut,"adding reference on file %d==%s\n",filenum, s_fileTab.tab[filenum]->name);
+//&fprintf(dumpOut,"adding reference on file %d==%s\n",filenum, fileTable.tab[filenum]->name);
     fillIncludeSymbolItem( &ss, filenum, pos);
     addCxReference(&ss, pos, UsageUsed, filenum, filenum);
 }
@@ -474,9 +474,9 @@ void pushNewInclude(FILE *f, EditorBuffer *buffer, char *name, char *prepend) {
 }
 
 void popInclude(void) {
-    assert(s_fileTab.tab[currentFile.lexBuffer.buffer.fileNumber]);
-    if (s_fileTab.tab[currentFile.lexBuffer.buffer.fileNumber]->b.cxLoading) {
-        s_fileTab.tab[currentFile.lexBuffer.buffer.fileNumber]->b.cxLoaded = true;
+    assert(fileTable.tab[currentFile.lexBuffer.buffer.fileNumber]);
+    if (fileTable.tab[currentFile.lexBuffer.buffer.fileNumber]->b.cxLoading) {
+        fileTable.tab[currentFile.lexBuffer.buffer.fileNumber]->b.cxLoaded = true;
     }
     closeCharacterBuffer(&currentFile.lexBuffer.buffer);
     if (inStacki != 0) {
@@ -531,7 +531,7 @@ static FILE *openInclude(char includeType, char *name, char **fileName) {
  found:
     nnn = normalizeFileName(nn, s_cwd);
     strcpy(nn,nnn);
-    log_trace("file '%s' opened, checking to %s", nn, s_fileTab.tab[s_olOriginalFileNumber]->name);
+    log_trace("file '%s' opened, checking to %s", nn, fileTable.tab[s_olOriginalFileNumber]->name);
     pushNewInclude(r, er, nn, "\n");
     return(stdin);  // NOT NULL
 }
@@ -1142,7 +1142,7 @@ static void processPragma(void) {
     if (lexem == IDENTIFIER && strcmp(cInput.currentLexem, "once")==0) {
         char tmpBuff[TMP_BUFF_SIZE];
         PassLex(cInput.currentLexem, lexem, l, v, pos, len, 1);
-        fname = simpleFileName(s_fileTab.tab[pos.file]->name);
+        fname = simpleFileName(fileTable.tab[pos.file]->name);
         sprintf(tmpBuff, "PragmaOnce-%s", fname);
         PP_ALLOCC(mname, strlen(tmpBuff)+1, char);
         strcpy(mname, tmpBuff);

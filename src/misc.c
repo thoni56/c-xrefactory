@@ -35,14 +35,14 @@ void ppcIndentOffset(void) {
 void ppcGenPosition(Position *p) {
     char *fn;
     assert(p!=NULL);
-    fn = s_fileTab.tab[p->file]->name;
+    fn = fileTable.tab[p->file]->name;
     ppcIndentOffset();
     fprintf(ccOut, "<%s %s=%d %s=%d %s=%ld>%s</%s>\n",
             PPC_LC_POSITION,
             PPCA_LINE, p->line, PPCA_COL, p->col,
             PPCA_LEN, (unsigned long)strlen(fn), fn,
             PPC_LC_POSITION);
-    //&ppcGenRecord(PPC_FILE, s_fileTab.tab[p->file]->name,"\n");
+    //&ppcGenRecord(PPC_FILE, fileTable.tab[p->file]->name,"\n");
     //&ppcGenNumericRecord(PPC_LINE, p->line,"","");
     //&ppcGenNumericRecord(PPC_COL, p->col,"","");
 }
@@ -243,8 +243,8 @@ void typeDump(TypeModifier *t) {
 void symbolRefItemDump(SymbolReferenceItem *ss) {
     fprintf(dumpOut,"%s\t%s %s %d %d %d %d %d\n",
             ss->name,
-            s_fileTab.tab[ss->vApplClass]->name,
-            s_fileTab.tab[ss->vFunClass]->name,
+            fileTable.tab[ss->vApplClass]->name,
+            fileTable.tab[ss->vFunClass]->name,
             ss->b.symType, ss->b.storage, ss->b.scope,
             ss->b.accessFlags, ss->b.category);
 }
@@ -576,7 +576,7 @@ void javaSlashifyDotName(char *ss) {
 // file num is not neccessary a class item !
 static void getClassFqtNameFromFileNum(int fnum, char *ttt) {
     char *dd, *ss;
-    ss = javaCutClassPathFromFileName(getRealFileNameStatic(s_fileTab.tab[fnum]->name));
+    ss = javaCutClassPathFromFileName(getRealFileNameStatic(fileTable.tab[fnum]->name));
     strcpy(ttt, ss);
     dd = lastOccurenceInString(ttt, '.');
     if (dd!=NULL) *dd=0;
@@ -719,12 +719,12 @@ void linkNamePrettyPrint(char *ff, char *javaLinkName, int maxlen,
 
 char *simpleFileNameFromFileNum(int fnum) {
     return(
-           simpleFileName(getRealFileNameStatic(s_fileTab.tab[fnum]->name))
+           simpleFileName(getRealFileNameStatic(fileTable.tab[fnum]->name))
            );
 }
 
 char *getShortClassNameFromClassNum_st(int fnum) {
-    return(javaGetNudePreTypeName_st(getRealFileNameStatic(s_fileTab.tab[fnum]->name),options.nestedClassDisplaying));
+    return(javaGetNudePreTypeName_st(getRealFileNameStatic(fileTable.tab[fnum]->name),options.nestedClassDisplaying));
 }
 
 void printSymbolLinkNameString( FILE *ff, char *linkName) {
@@ -742,7 +742,7 @@ void printClassFqtNameFromClassNum(FILE *ff, int fnum) {
 void sprintfSymbolLinkName(char *ttt, S_olSymbolsMenu *ss) {
     if (ss->s.b.symType == TypeCppInclude) {
         sprintf(ttt, "%s", simpleFileName(getRealFileNameStatic(
-                                                                s_fileTab.tab[ss->s.vApplClass]->name)));
+                                                                fileTable.tab[ss->s.vApplClass]->name)));
     } else {
         linkNamePrettyPrint(ttt, ss->s.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
     }
@@ -1444,13 +1444,13 @@ static void scanClassFile(char *zip, char *file, void *arg) {
         s_cache.activeCache = 0;
         memb = javaGetFieldClass(file, &tt);
         fileInd = javaCreateClassFileItem( memb);
-        if (! s_fileTab.tab[fileInd]->b.cxSaved) {
+        if (! fileTable.tab[fileInd]->b.cxSaved) {
             // read only if not saved (and returned through overflow)
             sprintf(ttt, "%s%s", zip, file);
             assert(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
             // recover memories, only cxrefs are interesting
             assert(memb->u.s);
-            //&fprintf(dumpOut,"adding %s %s\n", memb->name, s_fileTab.tab[fileInd]->name);
+            //&fprintf(dumpOut,"adding %s %s\n", memb->name, fileTable.tab[fileInd]->name);
             javaReadClassFile(ttt, memb, DO_NOT_LOAD_SUPER);
         }
         // following is to free CF_MEMORY taken by scan, only
@@ -1465,17 +1465,17 @@ void jarFileParse(char *file_name) {
     int archive, fileIndex;
 
     archive = zipIndexArchive(file_name);
-    assert(fileTabExists(&s_fileTab, file_name)); /* Filename has to exist in the table */
+    assert(fileTabExists(&fileTable, file_name)); /* Filename has to exist in the table */
     fileIndex = addFileTabItem(s_input_file_name);
     checkFileModifiedTime(fileIndex);
     // set loading to 1, no matter whether saved (by overflow) or not
     // following make create a loop, but it is very unprobable
-    s_fileTab.tab[fileIndex]->b.cxLoading = true;
+    fileTable.tab[fileIndex]->b.cxLoading = true;
     if (archive>=0 && archive<MAX_JAVA_ZIP_ARCHIVES) {
         fsRecMapOnFiles(s_zipArchiveTable[archive].dir, s_zipArchiveTable[archive].fn,
                         "", scanClassFile, NULL);
     }
-    s_fileTab.tab[fileIndex]->b.cxLoaded = true;
+    fileTable.tab[fileIndex]->b.cxLoaded = true;
 }
 
 void scanJarFilesForTagSearch(void) {

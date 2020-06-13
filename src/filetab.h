@@ -17,6 +17,8 @@
 #define NON_FILE_NAME "___None___"
 
 
+extern S_fileTab fileTable;
+
 /* Index into file table for the "NON FILE" */
 extern int s_noneFileIndex;
 

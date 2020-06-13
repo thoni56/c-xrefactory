@@ -331,8 +331,8 @@ void jslAddAllPackageClassesFromFileTab(IdList *packid) {
 
     javaCreateComposedName(NULL,packid,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
     pnlen = strlen(fqtName);
-    for(i=0; i<s_fileTab.size; i++) {
-        ff = s_fileTab.tab[i];
+    for(i=0; i<fileTable.size; i++) {
+        ff = fileTable.tab[i];
         if (ff!=NULL
             && ff->name[0]==ZIP_SEPARATOR_CHAR
             && strncmp(ff->name+1, fqtName, pnlen)==0
@@ -545,18 +545,18 @@ void jslNewClassDefinitionBegin(Id *name,
         if (s_jsl->pass==1) {
             jslAddNestedClass(cc, s_jsl->classStat->thisClass, membflag, accFlags);
             cn = cc->u.s->classFile;
-            assert(s_fileTab.tab[cn]);
+            assert(fileTable.tab[cn]);
             if (! (accFlags & AccessStatic)) {
                 // note that non-static direct enclosing class exists
                 // I am putting in comment just by prudence, but you can
                 // freely uncoment it
                 assert(s_jsl->classStat->thisClass && s_jsl->classStat->thisClass->u.s);
                 assert(s_jsl->classStat->thisClass->bits.symType==TypeStruct);
-                s_fileTab.tab[cn]->directEnclosingInstance = s_jsl->classStat->thisClass->u.s->classFile;
+                fileTable.tab[cn]->directEnclosingInstance = s_jsl->classStat->thisClass->u.s->classFile;
                 log_trace("setting dei %d->%d of %s, none==%d", cn,  s_jsl->classStat->thisClass->u.s->classFile,
-                          s_fileTab.tab[cn]->name, s_noneFileIndex);
+                          fileTable.tab[cn]->name, s_noneFileIndex);
             } else {
-                s_fileTab.tab[cn]->directEnclosingInstance = s_noneFileIndex;
+                fileTable.tab[cn]->directEnclosingInstance = s_noneFileIndex;
             }
         }
     }
@@ -568,15 +568,15 @@ void jslNewClassDefinitionBegin(Id *name,
                                 ADD_YES, ORDER_PREPEND, false);
     }
 
-    assert(cc && cc->u.s && s_fileTab.tab[cc->u.s->classFile]);
+    assert(cc && cc->u.s && fileTable.tab[cc->u.s->classFile]);
     assert(s_jsl->sourceFileNumber>=0 && s_jsl->sourceFileNumber!=s_noneFileIndex);
-    assert(s_fileTab.tab[s_jsl->sourceFileNumber]);
+    assert(fileTable.tab[s_jsl->sourceFileNumber]);
     fileInd = cc->u.s->classFile;
-    log_trace("setting source file of %s to %s", s_fileTab.tab[cc->u.s->classFile]->name,
-              s_fileTab.tab[s_jsl->sourceFileNumber]->name);
-    s_fileTab.tab[fileInd]->b.sourceFileNumber = s_jsl->sourceFileNumber;
+    log_trace("setting source file of %s to %s", fileTable.tab[cc->u.s->classFile]->name,
+              fileTable.tab[s_jsl->sourceFileNumber]->name);
+    fileTable.tab[fileInd]->b.sourceFileNumber = s_jsl->sourceFileNumber;
 
-    if (accFlags & AccessInterface) s_fileTab.tab[fileInd]->b.isInterface = true;
+    if (accFlags & AccessInterface) fileTable.tab[fileInd]->b.isInterface = true;
     addClassTreeHierarchyReference(fileInd,&inname->p,UsageClassTreeDefinition);
     if (inname->p.file != s_olOriginalFileNumber && options.server_operation == OLO_PUSH) {
         // pre load of saved file akes problem on move field/method, ...
@@ -585,7 +585,7 @@ void jslNewClassDefinitionBegin(Id *name,
     // this is to update references affected to class file before
     // if you remove this, then remove also at class end
     // berk, this removes all usages to be loaded !!
-    //& s_fileTab.tab[fileInd]->b.cxLoading = true;
+    //& fileTable.tab[fileInd]->b.cxLoading = true;
     // here reset the innerclasses number, so the next call will
     // surely allocate the table and will start from the first one
     // it is a little bit HACKED :)
@@ -623,8 +623,8 @@ void jslNewClassDefinitionEnd(void) {
 
     cc = s_jsl->classStat->thisClass;
     fileInd = cc->u.s->classFile;
-    if (s_fileTab.tab[fileInd]->b.cxLoading) {
-        s_fileTab.tab[fileInd]->b.cxLoaded = true;
+    if (fileTable.tab[fileInd]->b.cxLoading) {
+        fileTable.tab[fileInd]->b.cxLoaded = true;
     }
 
     s_jsl->classStat = s_jsl->classStat->next;

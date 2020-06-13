@@ -416,7 +416,7 @@ EditorMarker *editorCrNewMarkerForPosition(Position *pos) {
     if (pos->file==s_noneFileIndex || pos->file<0) {
         errorMessage(ERR_INTERNAL, "[editor] creating marker for nonexistant position");
     }
-    buf = editorFindFile(s_fileTab.tab[pos->file]->name);
+    buf = editorFindFile(fileTable.tab[pos->file]->name);
     mm = editorCrNewMarker(buf, 0);
     editorMoveMarkerToLineCol(mm, pos->line, pos->col);
     return(mm);
@@ -674,7 +674,7 @@ void editorRenameBuffer(EditorBuffer *buff, char *nName, S_editorUndo **undo) {
     strcpy(buff->name, newName);
     // update also ftnum
     fileIndex = addFileTabItem(newName);
-    s_fileTab.tab[fileIndex]->b.commandLineEntered = s_fileTab.tab[buff->ftnum]->b.commandLineEntered;
+    fileTable.tab[fileIndex]->b.commandLineEntered = fileTable.tab[buff->ftnum]->b.commandLineEntered;
     buff->ftnum = fileIndex;
 
     *memb = (S_editorBufferList){.f = buff, .next = NULL};
@@ -901,8 +901,8 @@ void editorDumpBuffers(void) {
 static void editorQuasiSaveBuffer(EditorBuffer *buffer) {
     buffer->b.modifiedSinceLastQuasiSave = false;
     buffer->stat.st_mtime = time(NULL);  //? why it does not work with 1;
-    assert(s_fileTab.tab[buffer->ftnum]);
-    s_fileTab.tab[buffer->ftnum]->lastModified = buffer->stat.st_mtime;
+    assert(fileTable.tab[buffer->ftnum]);
+    fileTable.tab[buffer->ftnum]->lastModified = buffer->stat.st_mtime;
 }
 
 void editorQuasiSaveModifiedBuffers(void) {
@@ -1086,9 +1086,9 @@ S_editorMarkerList *editorReferencesToMarkers(Reference *refs,
             file = r->p.file;
             line = r->p.line;
             col = r->p.col;
-            buff = editorFindFile(s_fileTab.tab[file]->name);
+            buff = editorFindFile(fileTable.tab[file]->name);
             if (buff==NULL) {
-                errorMessage(ERR_CANT_OPEN, s_fileTab.tab[file]->name);
+                errorMessage(ERR_CANT_OPEN, fileTable.tab[file]->name);
                 while (r!=NULL && file == r->p.file) r = r->next;
             } else {
                 s = buff->a.text;

@@ -3344,7 +3344,7 @@ case 64:
                     javaReadSymbolFromSourceFileInit(s_olOriginalFileNumber,
                                                      jsltypeTab);
 
-                    fname = s_fileTab.tab[s_olOriginalFileNumber]->name;
+                    fname = fileTable.tab[s_olOriginalFileNumber]->name;
 #if 1 /*I_DO_NOT_KNOW, to take also symbols from lastly saved file???*/
                     if (options.taskRegime == RegimeEditServer
                         && s_ropt.refactoringRegime!=RegimeRefactory) {
@@ -3355,9 +3355,9 @@ case 64:
                     }
 #endif
                     /* this must be last reading of this class before parsing*/
-                    if (statb(s_fileTab.tab[s_olOriginalComFileNumber]->name, &st)==0) {
+                    if (statb(fileTable.tab[s_olOriginalComFileNumber]->name, &st)==0) {
                         javaReadSymbolsFromSourceFileNoFreeing(
-                            s_fileTab.tab[s_olOriginalComFileNumber]->name, fname);
+                            fileTable.tab[s_olOriginalComFileNumber]->name, fname);
                     }
 
                     javaReadSymbolFromSourceFileEnd();

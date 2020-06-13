@@ -893,7 +893,7 @@ static void cfReadMethodInfos(  char **accc,
             assert(memb && memb->bits.symType==TypeStruct && memb->u.s);
             name = memb->name;
             storage = StorageConstructor;
-            if (s_fileTab.tab[memb->u.s->classFile]->directEnclosingInstance != s_noneFileIndex) {
+            if (fileTable.tab[memb->u.s->classFile]->directEnclosingInstance != s_noneFileIndex) {
                 // the first argument is direct enclosing instance, remove it
                 sign2 = cfSkipFirstArgumentInSigString(sign);
                 CF_ALLOCC(sign, strlen(sign2)+2, char);
@@ -1064,14 +1064,14 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     }
 
     fileInd = javaCreateClassFileItem( memb);
-    s_fileTab.tab[fileInd]->b.cxLoading = true;
+    fileTable.tab[fileInd]->b.cxLoading = true;
 
     fillPosition(&pos, fileInd,1,0);
     addCxReference(memb, &pos, UsageClassFileDefinition,
                    s_noneFileIndex, s_noneFileIndex);
     addCfClassTreeHierarchyRef(fileInd, UsageClassFileDefinition);
-    log_trace("fileitem==%s", s_fileTab.tab[fileInd]->name);
-    pushNewInclude( ff, NULL, s_fileTab.tab[fileInd]->name, "");
+    log_trace("fileitem==%s", fileTable.tab[fileInd]->name);
+    pushNewInclude( ff, NULL, fileTable.tab[fileInd]->name, "");
 
     log_debug("reading file %s",name);
 
@@ -1093,7 +1093,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     GetU2(access, ccc, ffin, &currentFile.lexBuffer.buffer);
     memb->bits.access = access;
     log_trace("reading accessFlags %s == %x", name, access);
-    if (access & AccessInterface) s_fileTab.tab[fileInd]->b.isInterface = true;
+    if (access & AccessInterface) fileTable.tab[fileInd]->b.isInterface = true;
     GetU2(thisClass, ccc, ffin, &currentFile.lexBuffer.buffer);
     if (thisClass<0 || thisClass>=cpSize) goto corrupted;
     thisClassName = constantPool[constantPool[thisClass].clas.nameIndex].asciz;
@@ -1173,17 +1173,17 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
                 cn = inners->u.s->classFile;
                 if (membFlag && ! (modifs & AccessStatic)) {
                     // note that non-static direct enclosing class exists
-                    assert(s_fileTab.tab[cn]);
-                    s_fileTab.tab[cn]->directEnclosingInstance = memb->u.s->classFile;
+                    assert(fileTable.tab[cn]);
+                    fileTable.tab[cn]->directEnclosingInstance = memb->u.s->classFile;
                 } else {
-                    s_fileTab.tab[cn]->directEnclosingInstance = s_noneFileIndex;
+                    fileTable.tab[cn]->directEnclosingInstance = s_noneFileIndex;
                 }
             }
         } else {
             SkipNChars(alen, ccc, ffin, &currentFile.lexBuffer.buffer);
         }
     }
-    s_fileTab.tab[fileInd]->b.cxLoaded = true;
+    fileTable.tab[fileInd]->b.cxLoaded = true;
     goto finish;
 
  endOfFile:

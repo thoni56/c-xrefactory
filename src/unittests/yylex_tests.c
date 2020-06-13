@@ -37,7 +37,7 @@ void processDefine(bool argFlag);
 Describe(Yylex);
 BeforeEach(Yylex) {
     ppMemInit();
-    initFileTab(&s_fileTab);
+    initFileTab(&fileTable);
     XX_ALLOC(s_symbolTable, S_symbolTable);
     symbolTableInit(s_symbolTable, 10);
 }

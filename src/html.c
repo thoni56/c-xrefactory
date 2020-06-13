@@ -159,8 +159,8 @@ static char *htmlAuxFileNameStatic(int fnum, char *subdir,
     static char res[MAX_FILE_NAME_SIZE];
     char *fn,*fd;
     int n;
-    assert(s_fileTab.tab[fnum]);
-    fn = s_fileTab.tab[fnum]->name;
+    assert(fileTable.tab[fnum]);
+    fn = fileTable.tab[fnum]->name;
     fn = getRealFileNameStatic(fn);
     fn = cutHtmlPath(fn);
     fd = lastOccurenceOfSlashOrAntiSlash(fn);
@@ -176,8 +176,8 @@ static void htmlGenHead(int fn) {
     int i, ch, sn, cutFlag;
 
     cutFlag = 0;
-    assert(s_fileTab.tab[fn]);
-    fname = getRealFileNameStatic(s_fileTab.tab[fn]->name);
+    assert(fileTable.tab[fn]);
+    fname = getRealFileNameStatic(fileTable.tab[fn]->name);
     cutfn = cutHtmlPath(fname);
     if (cutfn != fname) cutFlag = 1;
     fprintf(ccOut,"<HTML><HEAD><TITLE>%s</TITLE>\n",fname);
@@ -232,7 +232,7 @@ static void htmlGenHead(int fn) {
     fprintf(ccOut,"%s",ss0);
     fprintf(ccOut,"</B>");
     fprintf(ccOut," &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;(%s) ",
-            ctime(&s_fileTab.tab[fn]->lastModified));
+            ctime(&fileTable.tab[fn]->lastModified));
     fprintf(ccOut,"</center>");
     fprintf(ccOut,"<hr>\n");
     fprintf(ccOut,"<pre>\n");
@@ -369,7 +369,7 @@ static void htmlGenRefListItemHead(FILE *ff, char *ln, char *symName,
     if (p!=NULL && p->b.symType==TypeCppInclude) {
         htmlGenSmallTabHead( ff, HTML_COLOR_SMALL_TAB_HEAD, genFlag);
         fprintf(ff,"<A NAME=\"%s\"></A>",ln);
-        sn = s_fileTab.tab[p->vApplClass]->name;
+        sn = fileTable.tab[p->vApplClass]->name;
         sn = simpleFileName(getRealFileNameStatic(sn));
         fprintf(ff,"(#include)&nbsp;<B>%s</B>",sn);
         htmlGenSmallTabTail( ff, genFlag);
@@ -385,7 +385,7 @@ static void htmlGenRefListItemHead(FILE *ff, char *ln, char *symName,
         assert(genFlag==SINGLE_VIRT_ITEM || genFlag==VIRT_ITEM);
         //javaGetClassNameFromFileNum(p->vFunClass,ttt);
         apc =  javaGetNudePreTypeName_st(getRealFileNameStatic(
-                                                               s_fileTab.tab[p->vFunClass]->name), options.nestedClassDisplaying);
+                                                               fileTable.tab[p->vFunClass]->name), options.nestedClassDisplaying);
         if (genFlag == SINGLE_VIRT_ITEM) {
             fprintf(ff,"<A NAME=\"%s\"></A>",ln);
         } else {
@@ -395,7 +395,7 @@ static void htmlGenRefListItemHead(FILE *ff, char *ln, char *symName,
             if (p->b.storage!=StorageField
                 && (p->b.accessFlags&AccessStatic)==0) {
                 apc =  javaGetNudePreTypeName_st(getRealFileNameStatic(
-                                                                       s_fileTab.tab[p->vApplClass]->name), options.nestedClassDisplaying);
+                                                                       fileTable.tab[p->vApplClass]->name), options.nestedClassDisplaying);
                 fprintf(ff,"<br>at <B>%s</B>", apc);
             }
             htmlGenSmallTabTail( ff, genFlag);
@@ -468,7 +468,7 @@ static char * getDefaultCxFileStatic(void) {
 static void htmlGenFrameFile(FILE *ff, int fnum, char *thisfn) {
     char    ffn[MAX_FILE_NAME_SIZE];
 
-    assert(s_fileTab.tab[fnum]);
+    assert(fileTable.tab[fnum]);
     fprintf(ff,"<HTML><HEAD><TITLE>Xref-Html Frames</TITLE></HEAD>\n");
     fprintf(ff,"<frameset cols=\"20%%,80%%\">\n");
 
@@ -478,7 +478,7 @@ static void htmlGenFrameFile(FILE *ff, int fnum, char *thisfn) {
 
     concatPaths(ffn,MAX_FILE_NAME_SIZE,
                  options.htmlRoot,
-                 cutHtmlPath(getRealFileNameStatic(s_fileTab.tab[fnum]->name)),
+                 cutHtmlPath(getRealFileNameStatic(fileTable.tab[fnum]->name)),
                  "");
     fprintf(ff,"<frame src=\"%s.html%s\" name=\"classFrame\">\n",
             htmlCutLastSuffixStatic(htmlGetLinkFileNameStatic(ffn,thisfn)),
@@ -701,9 +701,9 @@ static char *htmlStSymbolCode(SymbolReferenceItem *r, int usage) {
             sprintf(ss,"%s.%s", typeEnumName[r->b.symType], r->name);
         } else {
             if (r->b.storage == StorageField) {
-                strcpy(ttt, s_fileTab.tab[r->vFunClass]->name);
+                strcpy(ttt, fileTable.tab[r->vFunClass]->name);
             } else {
-                strcpy(ttt, s_fileTab.tab[r->vApplClass]->name);
+                strcpy(ttt, fileTable.tab[r->vApplClass]->name);
             }
             tt = strchr(ttt, '.');
             if (tt!=NULL) *tt = 0;
@@ -813,11 +813,11 @@ static void htmlGetStaticHREFItems(
     *prefix1 = prf1;
     *suffix1 = "</A>";
     emph = 0;
-    thisfn = s_fileTab.tab[cp->file]->name;
+    thisfn = fileTable.tab[cp->file]->name;
     if (usage==UsageDeclared) {
         dr = htmlGetDefinitionRef(ref, UsageDefined);
         if (dr!=NULL) {
-            df = s_fileTab.tab[dr->p.file]->name;
+            df = fileTable.tab[dr->p.file]->name;
             df = htmlGetLinkFileNameStatic(df,thisfn);
             df = htmlCutLastSuffixStatic(df);
             sprintf(prf,"<A HREF=\"%s.html%s#%s%d\">",df,options.htmlLinkSuffix,
@@ -835,7 +835,7 @@ static void htmlGetStaticHREFItems(
         dr=htmlGetDefinitionRef(ref, UsageDefined);
         if (dr==NULL) dr=htmlGetDefinitionRef(ref, UsageDeclared);
         if (dr!=NULL) {
-            df = s_fileTab.tab[dr->p.file]->name;
+            df = fileTable.tab[dr->p.file]->name;
             df = htmlGetLinkFileNameStatic(df,thisfn);
             df = htmlCutLastSuffixStatic(df);
             sprintf(prf,"<A HREF=\"%s.html%s#%s%d\">",df,options.htmlLinkSuffix,
@@ -914,7 +914,7 @@ static int genRefListFileBody(FILE *ff, char *fname,
         if (genflag) {
             if (option != COUNT_ONLY) {
                 char tmpBuff[TMP_BUFF_SIZE];
-                ln = s_fileTab.tab[filen]->name;
+                ln = fileTable.tab[filen]->name;
                 if (lastFilen != filen) {
                     htmlPutChar(ff,'\n');
                     sprintf(tmpBuff,"%s",
@@ -1007,7 +1007,7 @@ static void htmlGetThisFileReferences(int fnum, S_htmlRefList **rrr, int kind){
             for(rr=d->refs; rr!=NULL; rr=rr->next) {
                 if (rr->p.file == fnum &&
                     (kind==ALL_REFS || rr->usage.base<UsageMaxOLUsages)) {
-                    log_trace("checking ref [%s,%d,%d](%s) on %s:%x", s_fileTab.tab[rr->p.file]->name, rr->p.line,
+                    log_trace("checking ref [%s,%d,%d](%s) on %s:%x", fileTable.tab[rr->p.file]->name, rr->p.line,
                               rr->p.col, usageEnumName[rr->usage.base], d->name, d);
                     //&                 if ((char*)rr<s_cxGlobalReferencesBase) continue;//!!tricky
                     fillHtmlRefList(&rref, d, rr, dd, NULL);
@@ -1020,7 +1020,7 @@ static void htmlGetThisFileReferences(int fnum, S_htmlRefList **rrr, int kind){
                         // once per file and it is cleared after.
                         *r = rref;
                         log_trace("adding ref [%s,%d,%d](%s) on %s:%x",
-                                  s_fileTab.tab[r->reference->p.file]->name,
+                                  fileTable.tab[r->reference->p.file]->name,
                                   r->reference->p.line, r->reference->p.col,
                                   usageEnumName[r->reference->usage.base],
                                   r->symbolRefItem->name,r->symbolRefItem);
@@ -1160,7 +1160,7 @@ void genClassHierarchyItemLinks( FILE *ff, S_olSymbolsMenu *itt,
         dr = & itt->defpos;
     }
     if (dr!=NULL && rr->vApplClass==rr->vFunClass) {
-        df = s_fileTab.tab[dr->file]->name;
+        df = fileTable.tab[dr->file]->name;
         df = htmlGetLinkFileNameStatic(df, thisFileName);
         df = htmlCutLastSuffixStatic(df);
         fprintf(ff,"<A HREF=\"%s.html%s#%s%d\">s</A> ",df,
@@ -1443,7 +1443,7 @@ static void htmlPosProcess( FILE **fff,
         if (options.htmlFunSeparate) {
             fprintf(ccOut, "</pre><font size= -1 color=\"red\"><hr><center>");
             fprintf(ccOut,"%s:%d",
-                    s_fileTab.tab[cp->file]->name, cp->line);
+                    fileTable.tab[cp->file]->name, cp->line);
             fprintf(ccOut, "</center><hr></font><pre>");
         }
         goto fini;
@@ -1489,7 +1489,7 @@ static void htmlPosProcess( FILE **fff,
                 ) {
 #ifdef DEBUG
             if (ch != '#') {
-                fprintf(dumpOut,"cpp ref on '%c' not at #: %s,%d,%d\n",ch,s_fileTab.tab[rr->reference->p.file]->name,rr->reference->p.line,rr->reference->p.col);fflush(dumpOut);
+                fprintf(dumpOut,"cpp ref on '%c' not at #: %s,%d,%d\n",ch,fileTable.tab[rr->reference->p.file]->name,rr->reference->p.line,rr->reference->p.col);fflush(dumpOut);
             }
 #endif
             htmlPutCharLF(ccOut, ch, cp);
@@ -1544,8 +1544,8 @@ static void htmlPassRefsThroughSourceFile(S_htmlRefList **rrr, int ifile,
     Position cp;
 
     rr = *rrr;
-    assert(s_fileTab.tab[ifile]);
-    cofileName = s_fileTab.tab[ifile]->name;
+    assert(fileTable.tab[ifile]);
+    cofileName = fileTable.tab[ifile]->name;
     cofile = openFile(cofileName, "r");
     /*&fprintf(dumpOut,"[passRefsThrowSourceFile] openning file %s (%d)\n",cofileName,cofile!=NULL);fflush(dumpOut);&*/
     if (cofile==NULL) errorMessage(ERR_CANT_OPEN, cofileName);
@@ -1594,7 +1594,7 @@ static void htmlGenerateFile(int fnum) {
     char ffn2[MAX_FILE_NAME_SIZE];
     FILE *ff;
 
-    assert(s_fileTab.tab[fnum]);
+    assert(fileTable.tab[fnum]);
     /*&fprintf(dumpOut,"opening %s\n",fn);&*/
     concatPaths(ffn,MAX_FILE_NAME_SIZE,
                  options.htmlRoot,
@@ -1611,7 +1611,7 @@ static void htmlGenerateFile(int fnum) {
         }
     }
     concatPaths(ffn,MAX_FILE_NAME_SIZE,
-                 options.htmlRoot,htmlCutLastSuffixStatic(cutHtmlPath(getRealFileNameStatic(s_fileTab.tab[fnum]->name))),".html");
+                 options.htmlRoot,htmlCutLastSuffixStatic(cutHtmlPath(getRealFileNameStatic(fileTable.tab[fnum]->name))),".html");
     recursivelyCreateFileDirIfNotExists(ffn);
     ccOut = openFile(ffn,"w");
     if (ccOut==NULL) {
@@ -1650,11 +1650,11 @@ static void htmlGenerateJavaDocFile(int fnum) {
     struct stat st;
     int stt;
 
-    assert(s_fileTab.tab[fnum]);
+    assert(fileTable.tab[fnum]);
     /*&fprintf(dumpOut,"opening %s\n",fn);&*/
     concatPaths(ffn,MAX_FILE_NAME_SIZE,
                  options.jdocTmpDir,
-                 cutHtmlPath(getRealFileNameStatic(s_fileTab.tab[fnum]->name)),
+                 cutHtmlPath(getRealFileNameStatic(fileTable.tab[fnum]->name)),
                  ""); // maybe some suffix .doc ?
     if (!options.xref2) {
         fprintf(dumpOut," -> '%s'\n", ffn); fflush(dumpOut);
@@ -1734,7 +1734,7 @@ void htmlGenGlobalReferenceLists(char *cxMemFreeBase) {
         htmlScanCxFileAndGenRefLists(dirname,REFERENCE_FILENAME_FILES,HTML_GXANY,HTML_NO_GEN);
         htmlScanCxFileAndGenRefLists(dirname,REFERENCE_FILENAME_CLASSES,
                                      HTML_GXANY, HTML_NO_GEN);
-        fileTabMap(&s_fileTab, sortSubClassesList);
+        fileTabMap(&fileTable, sortSubClassesList);
         CX_ALLOCC(newFreeBase, 0, char);
         for (i=0; i<options.referenceFileCount; i++) {
             recoverMemoriesAfterOverflow(newFreeBase);
@@ -1758,7 +1758,7 @@ void generateHtml(void) {
     concatPaths(s_htmlEmptyRefs,MAX_FILE_NAME_SIZE,
                  options.htmlRoot,HTML_EMPTY_REF_FILE,"");
     for(i=0; i<MAX_FILES; i++) {
-        fi = s_fileTab.tab[i];
+        fi = fileTable.tab[i];
         if (fi == NULL) continue;
         if (!fi->b.cxLoading) continue;
         if (isJavaClassFile(fi)) continue;

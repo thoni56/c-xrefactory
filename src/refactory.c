@@ -934,8 +934,8 @@ int tpCheckSourceIsNotInnerClass(void) {
     thisclassi = getClassNumFromClassLinkName(ss->s.name, s_noneFileIndex);
     //& target = options.moveTargetClass;
     //& assert(target!=NULL);
-    assert(s_fileTab.tab[thisclassi]);
-    deii = s_fileTab.tab[thisclassi]->directEnclosingInstance;
+    assert(fileTable.tab[thisclassi]);
+    deii = fileTable.tab[thisclassi]->directEnclosingInstance;
     if (deii != -1 && deii != s_noneFileIndex && (ss->s.b.accessFlags&AccessInterface)==0) {
         char tmpBuff[TMP_BUFF_SIZE];
         // If there exists a direct enclosing instance, it is an inner class
@@ -958,7 +958,7 @@ static void tpCheckSpecialReferencesMapFun(SymbolReferenceItem *ri,
     // todo make supermethod symbol special type
     //&fprintf(dumpOut,"! checking %s\n", ri->name);
     if (strcmp(ri->name, dd->symbolToTest)!=0) return;
-    //&fprintf(dumpOut,"comparing %d <-> %d; %s <-> %s\n", ri->vFunClass, scl,  s_fileTab.tab[ri->vFunClass]->name, s_fileTab.tab[scl]->name);
+    //&fprintf(dumpOut,"comparing %d <-> %d; %s <-> %s\n", ri->vFunClass, scl,  fileTable.tab[ri->vFunClass]->name, fileTable.tab[scl]->name);
     for(rr=ri->refs; rr!=NULL; rr=rr->next) {
         if (DM_IS_BETWEEN(cxMemory, rr, dd->mm.minMemi, dd->mm.maxMemi) ){
             // a super method reference
@@ -1180,10 +1180,10 @@ int tpCheckTargetToBeDirectSubOrSupClass(int flag, char *subOrSuper) {
     }
     readOneAppropReferenceFile(NULL, classHierarchyFunctionSequence);
     assert(target->u.s!=NULL&&target->u.s->classFile!=s_noneFileIndex);
-    if (flag == REQ_SUBCLASS) cl=s_fileTab.tab[ss->s.vApplClass]->inferiorClasses;
-    else cl=s_fileTab.tab[ss->s.vApplClass]->superClasses;
+    if (flag == REQ_SUBCLASS) cl=fileTable.tab[ss->s.vApplClass]->inferiorClasses;
+    else cl=fileTable.tab[ss->s.vApplClass]->superClasses;
     for(; cl!=NULL; cl=cl->next) {
-        //&sprintf(tmpBuff,"!checking %d(%s) <-> %d(%s) \n", cl->superClass, s_fileTab.tab[cl->superClass]->name, target->u.s->classFile, s_fileTab.tab[target->u.s->classFile]->name);ppcGenTmpBuff();
+        //&sprintf(tmpBuff,"!checking %d(%s) <-> %d(%s) \n", cl->superClass, fileTable.tab[cl->superClass]->name, target->u.s->classFile, fileTable.tab[target->u.s->classFile]->name);ppcGenTmpBuff();
         if (cl->superClass == target->u.s->classFile) {
             res = 1;
             break;
@@ -1436,7 +1436,7 @@ static EditorMarker *refactoryCrNewMarkerForExpressionBegin(EditorMarker *d, int
         }
         return(NULL);
     } else {
-        bb = editorGetOpenedAndLoadedBuffer(s_fileTab.tab[pos->file]->name);
+        bb = editorGetOpenedAndLoadedBuffer(fileTable.tab[pos->file]->name);
         pp = editorCrNewMarker(bb, 0);
         editorMoveMarkerToLineCol(pp, pos->line, pos->col);
         assert(pp->buffer == d->buffer);
@@ -2195,12 +2195,12 @@ static int createMarkersForAllReferencesInRegions(
     for(mm=menu; mm!=NULL; mm=mm->next) {
         assert(mm->markers==NULL);
         if (mm->selected && mm->visible) {
-            //&LIST_LEN(nn, Reference, mm->s.refs);sprintf(tmpBuff,"there are %d refs for %s", nn, s_fileTab.tab[mm->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+            //&LIST_LEN(nn, Reference, mm->s.refs);sprintf(tmpBuff,"there are %d refs for %s", nn, fileTable.tab[mm->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
             mm->markers = editorReferencesToMarkers(mm->s.refs,filter0, NULL);
             if (regions != NULL) {
                 editorRestrictMarkersToRegions(&mm->markers, regions);
             }
-            //&LIST_LEN(nn, S_editorMarkerList, mm->markers);sprintf(tmpBuff,"converted to %d refs for %s", nn, s_fileTab.tab[mm->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+            //&LIST_LEN(nn, S_editorMarkerList, mm->markers);sprintf(tmpBuff,"converted to %d refs for %s", nn, fileTable.tab[mm->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
             LIST_MERGE_SORT(S_editorMarkerList, mm->markers, editorMarkerListLess);
             LIST_LEN(n, S_editorMarkerList, mm->markers);
             res += n;
@@ -4388,11 +4388,11 @@ static char * refactoryComputeUpdateOptionForSymbol(EditorMarker *point) {
     }
     for(o=occs; o!=NULL; o=o->next) {
         assert(o->d!=NULL && o->d->buffer!=NULL);
-        assert(s_fileTab.tab[o->d->buffer->ftnum]!=NULL);
+        assert(fileTable.tab[o->d->buffer->ftnum]!=NULL);
         if (fn != o->d->buffer->ftnum) {
             multiFileRefsFlag = 1;
         }
-        if (! s_fileTab.tab[o->d->buffer->ftnum]->b.commandLineEntered) {
+        if (! fileTable.tab[o->d->buffer->ftnum]->b.commandLineEntered) {
             hasHeaderReferenceFlag = 1;
         }
     }

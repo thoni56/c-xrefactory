@@ -21,6 +21,8 @@
 #include "hashtab.tc"
 
 
+S_fileTab fileTable;
+
 int s_noneFileIndex = -1;
 
 

@@ -52,8 +52,8 @@ int classHierarchyClassNameLess(int c1, int c2) {
     int ccc;
     char ttt[MAX_FILE_NAME_SIZE];
 
-    fi1 = s_fileTab.tab[c1];
-    fi2 = s_fileTab.tab[c2];
+    fi1 = fileTable.tab[c1];
+    fi2 = fileTable.tab[c2];
     assert(fi1 && fi2);
     // SMART, put interface largest, so they will be at the end
     if (fi2->b.isInterface && ! fi1->b.isInterface) return(1);
@@ -77,11 +77,11 @@ static int markTransitiveRelevantSubsRec(int cind, int pass) {
     FileItem      *fi, *tt;
     ClassHierarchyReference   *s;
 
-    fi = s_fileTab.tab[cind];
+    fi = fileTable.tab[cind];
     if (THEBIT(tmpChMarkProcessed,cind)) return(THEBIT(tmpChRelevant,cind));
     SETBIT(tmpChMarkProcessed, cind);
     for(s=fi->inferiorClasses; s!=NULL; s=s->next) {
-        tt = s_fileTab.tab[s->superClass];
+        tt = fileTable.tab[s->superClass];
         assert(tt);
         // do not descend from class to an
         // interface, because of Object -> interface lapsus ?
@@ -97,7 +97,7 @@ static int markTransitiveRelevantSubsRec(int cind, int pass) {
 }
 
 static void markTransitiveRelevantSubs(int cind, int pass) {
-    //&fprintf(dumpOut,"\n PRE checking %s relevant\n",s_fileTab.tab[cind]->name);
+    //&fprintf(dumpOut,"\n PRE checking %s relevant\n",fileTable.tab[cind]->name);
     if (THEBIT(tmpChRelevant,cind)==0) return;
     markTransitiveRelevantSubsRec(cind, pass);
 }
@@ -166,7 +166,7 @@ static void htmlPrintClassHierarchyLine( FILE *ff, int fInd,
     FileItem *fi;
     int cnt;
 
-    fi = s_fileTab.tab[fInd];
+    fi = fileTable.tab[fInd];
     htmlCHEmptyIndent( ff);
     genClassHierarchyVerticalBars( ff, nextbars, 0);
     fprintf(ff,"\n");
@@ -290,7 +290,7 @@ static void olcxMenuPrintClassHierarchyLine( FILE *ff, int fInd,
         fprintf(ff, " %s=%d", PPCA_INDENT, indent);
     }
     genClassHierarchyVerticalBars( ff, nextbars, 1);
-    fi = s_fileTab.tab[fInd];
+    fi = fileTable.tab[fInd];
     if (itt!=NULL) {
         assert(itt);
         if (itt->s.vApplClass == itt->s.vFunClass && options.server_operation!=OLO_CLASS_TREE) {
@@ -331,7 +331,7 @@ static void descendTheClassHierarchy(   FILE *ff,
     S_olSymbolsMenu *itt;
     int vFunCl;
 
-    fi = s_fileTab.tab[vApplCl];
+    fi = fileTable.tab[vApplCl];
     assert(fi!=NULL);
     if (THEBIT(tmpChRelevant,vApplCl)==0) return;
     itt = htmlItemInOriginalList(rrr, vApplCl);
@@ -368,7 +368,7 @@ static void descendTheClassHierarchy(   FILE *ff,
     LIST_MERGE_SORT(ClassHierarchyReference, fi->inferiorClasses, classHierarchySupClassNameLess);
     s=fi->inferiorClasses;
     while (s!=NULL) {
-        assert(s_fileTab.tab[s->superClass]);
+        assert(fileTable.tab[s->superClass]);
         snext = s->next;
         while (snext!=NULL && THEBIT(tmpChRelevant,snext->superClass)==0) {
             snext = snext->next;
@@ -388,13 +388,13 @@ static int genThisClassHierarchy(int vApplCl, int oldvFunCl,
     FileItem *tt,*fi;
     ClassHierarchyReference *s;
 
-    fi = s_fileTab.tab[vApplCl];
+    fi = fileTable.tab[vApplCl];
     if (fi==NULL) return(0);
     if (THEBIT(tmpChProcessed,vApplCl)) return(0);
     if (THEBIT(tmpChRelevant,vApplCl)==0) return(0);
     // check if you are at the top of a sub-hierarchy
     for(s=fi->superClasses; s!=NULL; s=s->next) {
-        tt = s_fileTab.tab[s->superClass];
+        tt = fileTable.tab[s->superClass];
         assert(tt);
         if (THEBIT(tmpChRelevant,s->superClass) && THEBIT(tmpChProcessed,s->superClass)==0) return(0);
     }
@@ -412,7 +412,7 @@ void genClassHierarchies( FILE *ff, S_olSymbolsMenu *rrr,
     // mark the classes where the method is defined and used
     clearTmpChRelevant();
     for(ss=rrr; ss!=NULL; ss=ss->next) {
-        assert(s_fileTab.tab[ss->s.vApplClass]);
+        assert(fileTable.tab[ss->s.vApplClass]);
         if (ss->visible) {
             SETBIT(tmpChRelevant, ss->s.vApplClass);
             SETBIT(tmpChRelevant, ss->s.vFunClass);

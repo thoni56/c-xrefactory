@@ -180,11 +180,11 @@ static void scheduleCommandLineEnteredFileToProcess(char *fn) {
     fileIndex = addFileTabItem(fn);
     if (options.taskRegime!=RegimeEditServer) {
         // yes in edit server you process also headers, etc.
-        s_fileTab.tab[fileIndex]->b.commandLineEntered = true;
+        fileTable.tab[fileIndex]->b.commandLineEntered = true;
     }
-    log_trace("recursively process command line argument file #%d '%s'", fileIndex, s_fileTab.tab[fileIndex]->name);
+    log_trace("recursively process command line argument file #%d '%s'", fileIndex, fileTable.tab[fileIndex]->name);
     if (!options.updateOnlyModifiedFiles) {
-        s_fileTab.tab[fileIndex]->b.scheduledToProcess = true;
+        fileTable.tab[fileIndex]->b.scheduledToProcess = true;
     }
     LEAVE();
 }
@@ -1706,15 +1706,15 @@ static void mainScheduleInputFilesFromOptionsToFileTable(void) {
 static char * getInputFileFromFtab(int *fArgCount, int flag) {
     int         i;
     FileItem  *fi;
-    for(i= *fArgCount; i<s_fileTab.size; i++) {
-        fi = s_fileTab.tab[i];
+    for(i= *fArgCount; i<fileTable.size; i++) {
+        fi = fileTable.tab[i];
         if (fi!=NULL) {
             if (flag==FF_SCHEDULED_TO_PROCESS&&fi->b.scheduledToProcess) break;
             if (flag==FF_COMMAND_LINE_ENTERED&&fi->b.commandLineEntered) break;
         }
     }
     *fArgCount = i;
-    if (i<s_fileTab.size) return(s_fileTab.tab[i]->name);
+    if (i<fileTable.size) return(fileTable.tab[i]->name);
     else return(NULL);
 }
 
@@ -1753,7 +1753,7 @@ static void schedulingToUpdate(FileItem *p, void *rs) {
     struct stat fstat, hstat;
     char sss[MAX_FILE_NAME_SIZE];
 
-    if (p == s_fileTab.tab[s_noneFileIndex]) return;
+    if (p == fileTable.tab[s_noneFileIndex]) return;
     //& if (options.update==UP_FAST_UPDATE && !p->b.commandLineEntered) return;
     //&fprintf(dumpOut,"checking %s for update\n",p->name); fflush(dumpOut);
     if (statb(p->name, &fstat)) {
@@ -1831,7 +1831,7 @@ void searchDefaultOptionsFile(char *filename, char *options_filename, char *sect
         // it may happen that after deletion of the project, the request for active
         // project will return non-existent project. And then return "not found"?
         fileno = getFileNumberFromName(filename);
-        if (fileno != s_noneFileIndex && s_fileTab.tab[fileno]->b.isFromCxfile) {
+        if (fileno != s_noneFileIndex && fileTable.tab[fileno]->b.isFromCxfile) {
             strcpy(options_filename, oldStdopFile);
             strcpy(section, oldStdopSection);
             return;
@@ -2404,8 +2404,8 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
     memset(&s_count, 0, sizeof(S_counters));
     options.includeDirs = NULL;
     SM_INIT(ftMemory);
-    FT_ALLOCC(s_fileTab.tab, MAX_FILES, struct fileItem *);
-    initFileTab(&s_fileTab);
+    FT_ALLOCC(fileTable.tab, MAX_FILES, struct fileItem *);
+    initFileTab(&fileTable);
     fillPosition(&s_noPos, s_noneFileIndex, 0, 0);
     fillUsageBits(&s_noUsage, UsageNone, 0);
     fill_reference(&s_noRef, s_noUsage, s_noPos, NULL);
@@ -2439,7 +2439,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     s_fileAbortionEnabled = 0;
 
     // supposing that file table is still here, but reinit it
-    fileTabMap(&s_fileTab, mainReinitFileTabEntry);
+    fileTabMap(&fileTable, mainReinitFileTabEntry);
 
     DM_INIT(cxMemory);
     // the following causes long jump, berk.
@@ -2580,16 +2580,16 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
     for(i=0; i<inStacki; i++) {
         if (inStack[i].lexBuffer.buffer.file != stdin) {
             fi = inStack[i].lexBuffer.buffer.fileNumber;
-            assert(s_fileTab.tab[fi]);
-            s_fileTab.tab[fi]->b.cxLoading = false;
+            assert(fileTable.tab[fi]);
+            fileTable.tab[fi]->b.cxLoading = false;
             if (inStack[i].lexBuffer.buffer.file!=NULL)
                 closeCharacterBuffer(&inStack[i].lexBuffer.buffer);
         }
     }
     if (currentFile.lexBuffer.buffer.file != stdin) {
         fi = currentFile.lexBuffer.buffer.fileNumber;
-        assert(s_fileTab.tab[fi]);
-        s_fileTab.tab[fi]->b.cxLoading = false;
+        assert(fileTable.tab[fi]);
+        fileTable.tab[fi]->b.cxLoading = false;
         if (currentFile.lexBuffer.buffer.file!=NULL)
             closeCharacterBuffer(&currentFile.lexBuffer.buffer);
     }
@@ -2605,17 +2605,17 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
     recoverMemoriesAfterOverflow(cxMemFreeBase);
     /* ************ start with CXREFS and memories clean ************ */
     savingFlag = 0;
-    for(i=0; i<s_fileTab.size; i++) {
-        if (s_fileTab.tab[i]!=NULL) {
-            if (s_fileTab.tab[i]->b.cxLoading) {
-                s_fileTab.tab[i]->b.cxLoading = false;
-                s_fileTab.tab[i]->b.cxSaved = 1;
-                if (s_fileTab.tab[i]->b.commandLineEntered
+    for(i=0; i<fileTable.size; i++) {
+        if (fileTable.tab[i]!=NULL) {
+            if (fileTable.tab[i]->b.cxLoading) {
+                fileTable.tab[i]->b.cxLoading = false;
+                fileTable.tab[i]->b.cxSaved = 1;
+                if (fileTable.tab[i]->b.commandLineEntered
                     || !options.multiHeadRefsCare) savingFlag = 1;
                 // before, but do not work as scheduledToProcess is auto-cleared
-                //&             if (s_fileTab.tab[i]->b.scheduledToProcess
+                //&             if (fileTable.tab[i]->b.scheduledToProcess
                 //&                 || !options.multiHeadRefsCare) savingFlag = 1;
-                //&fprintf(dumpOut," -># '%s'\n",s_fileTab.tab[i]->name);fflush(dumpOut);
+                //&fprintf(dumpOut," -># '%s'\n",fileTable.tab[i]->name);fflush(dumpOut);
             }
         }
     }
@@ -2667,8 +2667,8 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
     fileAddedFlag = 1;
     while (fileAddedFlag) {
         fileAddedFlag = 0;
-        for(i=0; i<s_fileTab.size; i++) {
-            fi = s_fileTab.tab[i];
+        for(i=0; i<fileTable.size; i++) {
+            fi = fileTable.tab[i];
             if (fi!=NULL && fi->b.scheduledToUpdate
                 && !fi->b.fullUpdateIncludesProcessed) {
                 fi->b.fullUpdateIncludesProcessed = true;
@@ -2676,7 +2676,7 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
                 fillIncludeRefItem( &ddd, i);
                 if (refTabIsMember(&s_cxrefTab, &ddd, &ii,&memb)) {
                     for(rr=memb->refs; rr!=NULL; rr=rr->next) {
-                        includer = s_fileTab.tab[rr->p.file];
+                        includer = fileTable.tab[rr->p.file];
                         assert(includer);
                         if (!includer->b.scheduledToUpdate) {
                             includer->b.scheduledToUpdate = true;
@@ -2711,11 +2711,11 @@ static void scheduleModifiedFilesToUpdate(void) {
     }
     if (statb(filestab, &refStat)) refStat.st_mtime = 0;
     scanReferenceFile(options.cxrefFileName, suffix,"", normalScanFunctionSequence);
-    fileTabMap2(&s_fileTab, schedulingToUpdate, &refStat);
+    fileTabMap2(&fileTable, schedulingToUpdate, &refStat);
     if (options.update==UP_FULL_UPDATE /*& && !LANGUAGE(LANG_JAVA) &*/) {
         makeIncludeClosureOfFilesToUpdate();
     }
-    fileTabMap(&s_fileTab, schedulingUpdateToProcess);
+    fileTabMap(&fileTable, schedulingUpdateToProcess);
 }
 
 
@@ -2773,7 +2773,7 @@ static int scheduleFileUsingTheMacro(void) {
     if (tmpc!=NULL) {
         olStackDeleteSymbol(tmpc);
     }
-    //&fprintf(dumpOut,":scheduling file %s\n", s_fileTab.tab[s_olMacro2PassFile]->name); fflush(dumpOut);
+    //&fprintf(dumpOut,":scheduling file %s\n", fileTable.tab[s_olMacro2PassFile]->name); fflush(dumpOut);
     if (s_olMacro2PassFile == s_noneFileIndex) return(s_noneFileIndex);
     return(s_olMacro2PassFile);
 }
@@ -2794,7 +2794,7 @@ static void mainCloseInputFile(int inputIn ) {
 }
 
 static void mainEditSrvParseInputFile(int *firstPassing, int inputIn ) {
-    //&fprintf(dumpOut,":here I am %s\n",s_fileTab.tab[s_input_file_number]->name);
+    //&fprintf(dumpOut,":here I am %s\n",fileTable.tab[s_input_file_number]->name);
     if (inputIn) {
         //&fprintf(dumpOut,"parse start\n");fflush(dumpOut);
         if (options.server_operation!=OLO_TAG_SEARCH && options.server_operation!=OLO_PUSH_NAME) {
@@ -2829,14 +2829,14 @@ static bool mainSymbolCanBeIdentifiedByPosition(int fnum) {
     // and because references from currently procesed file would
     // be not loaded from the TAG file (it expects they are loaded
     // by parsing).
-    log_trace("checking if cmd %s, == %d\n", s_fileTab.tab[fnum]->name,s_fileTab.tab[fnum]->b.commandLineEntered);
-    if (s_fileTab.tab[fnum]->b.commandLineEntered)
+    log_trace("checking if cmd %s, == %d\n", fileTable.tab[fnum]->name,fileTable.tab[fnum]->b.commandLineEntered);
+    if (fileTable.tab[fnum]->b.commandLineEntered)
         return false;
 
     // if references are not updated do not search it here
     // there were fullUpdate time? why?
-    //&fprintf(dumpOut,"checking that lastmodif %d, == %d\n", s_fileTab.tab[fnum]->lastModified, s_fileTab.tab[fnum]->lastUpdateMtime);
-    if (s_fileTab.tab[fnum]->lastModified!=s_fileTab.tab[fnum]->lastUpdateMtime)
+    //&fprintf(dumpOut,"checking that lastmodif %d, == %d\n", fileTable.tab[fnum]->lastModified, fileTable.tab[fnum]->lastUpdateMtime);
+    if (fileTable.tab[fnum]->lastModified!=fileTable.tab[fnum]->lastUpdateMtime)
         return false;
 
     // here read one reference file looking for the refs
@@ -2892,7 +2892,7 @@ static void mainEditSrvFileSingleCppPass(int argc, char **argv,
         // on-line action with cursor in an un-used macro body ???
         ol2procfile = scheduleFileUsingTheMacro();
         if (ol2procfile!=s_noneFileIndex) {
-            s_input_file_name = s_fileTab.tab[ol2procfile]->name;
+            s_input_file_name = fileTable.tab[ol2procfile]->name;
             inputIn = 0;
             s_olStringSecondProcessing=1;
             mainFileProcessingInitialisations(firstPass, argc, argv,
@@ -2907,11 +2907,11 @@ static void mainEditServerProcessFile(int argc, char **argv,
                                       int nargc, char **nargv,
                                       int *firstPass
 ) {
-    assert(s_fileTab.tab[s_olOriginalComFileNumber]->b.scheduledToProcess);
+    assert(fileTable.tab[s_olOriginalComFileNumber]->b.scheduledToProcess);
     s_cppPassMax = 1;           /* WTF? */
     s_currCppPass = 1;
     for(s_currCppPass=1; s_currCppPass<=s_cppPassMax; s_currCppPass++) {
-        s_input_file_name = s_fileTab.tab[s_olOriginalComFileNumber]->name;
+        s_input_file_name = fileTable.tab[s_olOriginalComFileNumber]->name;
         assert(s_input_file_name!=NULL);
         mainEditSrvFileSingleCppPass(argc, argv, nargc, nargv, firstPass);
         if (options.server_operation==OLO_EXTRACT
@@ -2921,7 +2921,7 @@ static void mainEditServerProcessFile(int argc, char **argv,
             goto fileParsed;
     }
  fileParsed:
-    s_fileTab.tab[s_olOriginalComFileNumber]->b.scheduledToProcess = false;
+    fileTable.tab[s_olOriginalComFileNumber]->b.scheduledToProcess = false;
 }
 
 static char *presetEditServerFileDependingStatics(void) {
@@ -2936,15 +2936,15 @@ static char *presetEditServerFileDependingStatics(void) {
     // THIS is pretty stupid, there is always only one input file
     // in edit server, otherwise it is an eror
     fArgCount = 0; s_input_file_name = getInputFile(&fArgCount);
-    if (fArgCount>=s_fileTab.size) {
+    if (fArgCount>=fileTable.size) {
         // conservative message, probably macro invoked on nonsaved file
         s_olOriginalComFileNumber = s_noneFileIndex;
         return(NULL);
     }
-    assert(fArgCount>=0 && fArgCount<s_fileTab.size && s_fileTab.tab[fArgCount]->b.scheduledToProcess);
-    for(i=fArgCount+1; i<s_fileTab.size; i++) {
-        if (s_fileTab.tab[i] != NULL) {
-            s_fileTab.tab[i]->b.scheduledToProcess = false;
+    assert(fArgCount>=0 && fArgCount<fileTable.size && fileTable.tab[fArgCount]->b.scheduledToProcess);
+    for(i=fArgCount+1; i<fileTable.size; i++) {
+        if (fileTable.tab[i] != NULL) {
+            fileTable.tab[i]->b.scheduledToProcess = false;
         }
     }
     s_olOriginalComFileNumber = fArgCount;
@@ -3075,8 +3075,8 @@ static FileItem *mainCreateListOfInputFiles(void) {
     res = NULL;
     n = 0;
     for(nn=getInputFile(&n); nn!=NULL; n++,nn=getInputFile(&n)) {
-        s_fileTab.tab[n]->next = res;
-        res = s_fileTab.tab[n];
+        fileTable.tab[n]->next = res;
+        res = fileTable.tab[n];
     }
     LIST_MERGE_SORT(FileItem, res, inputFileItemLess);
     return(res);
@@ -3151,7 +3151,7 @@ void mainCallXref(int argc, char **argv) {
         }
         if (options.taskRegime==RegimeXref) {
             if (options.update==0 || options.update==UP_FULL_UPDATE) {
-                fileTabMap(&s_fileTab, setFullUpdateMtimesInFileTab);
+                fileTabMap(&fileTable, setFullUpdateMtimesInFileTab);
             }
             if (options.xref2) {
                 char tmpBuff[TMP_BUFF_SIZE];
@@ -3226,7 +3226,7 @@ void mainCallEditServer(int argc, char **argv,
         }
     } else {
         if (presetEditServerFileDependingStatics() != NULL) {
-            s_fileTab.tab[s_olOriginalComFileNumber]->b.scheduledToProcess = false;
+            fileTable.tab[s_olOriginalComFileNumber]->b.scheduledToProcess = false;
             // added [26.12.2002] because of loading options without input file
             s_input_file_name = NULL;
         }

@@ -21,23 +21,23 @@ int checkFileModifiedTime(int fileIndex) {
     int res;
     time_t t0;
 
-    assert(s_fileTab.tab[fileIndex] != NULL);
+    assert(fileTable.tab[fileIndex] != NULL);
     t0 = time(NULL);
-    if (s_fileTab.tab[fileIndex]->lastInspected >= s_fileProcessStartTime
-        && s_fileTab.tab[fileIndex]->lastInspected <= t0) {
+    if (fileTable.tab[fileIndex]->lastInspected >= s_fileProcessStartTime
+        && fileTable.tab[fileIndex]->lastInspected <= t0) {
         /* not supposing files can change during one execution */
         res = 1;
         goto end;
     }
-    if (statb(s_fileTab.tab[fileIndex]->name, &fst)) {
+    if (statb(fileTable.tab[fileIndex]->name, &fst)) {
         res = 0;
         goto end;
     }
-    s_fileTab.tab[fileIndex]->lastInspected = t0;
-    if (fst.st_mtime == s_fileTab.tab[fileIndex]->lastModified) {
+    fileTable.tab[fileIndex]->lastInspected = t0;
+    if (fst.st_mtime == fileTable.tab[fileIndex]->lastModified) {
         res = 1;
     } else {
-        s_fileTab.tab[fileIndex]->lastModified = fst.st_mtime;
+        fileTable.tab[fileIndex]->lastModified = fst.st_mtime;
         res = 0;
     }
  end:
@@ -209,7 +209,7 @@ static int cachedIncludedFilePass(int cpi) {
     mi = s_cache.cp[cpi].ibi;
     for(i=s_cache.cp[cpi-1].ibi; i<mi; i++) {
         mt = checkFileModifiedTime(s_cache.ib[i]);
-        log_debug("mtime of %s eval to %d", s_fileTab.tab[s_cache.ib[i]]->name,mt);
+        log_debug("mtime of %s eval to %d", fileTable.tab[s_cache.ib[i]]->name,mt);
         if (mt == 0) return(0);
     }
     return(1);
@@ -217,7 +217,7 @@ static int cachedIncludedFilePass(int cpi) {
 
 static void recoverCxMemory(char *cxMemFreeBase) {
     CX_FREE_UNTIL(cxMemFreeBase);
-    fileTabMapWithIndex(&s_fileTab, fileTabDeleteOutOfMemory);
+    fileTabMapWithIndex(&fileTable, fileTabDeleteOutOfMemory);
     refTabMap3(&s_cxrefTab, cxrefTabDeleteOutOfMemory);
 }
 
@@ -285,7 +285,7 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
         log_trace("removing references");
         cxMemory->i = cp->cxMemoryi;
         refTabMap3(&s_cxrefTab, cxrefTabDeleteOutOfMemory);
-        fileTabMapWithIndex(&s_fileTab, fileTabDeleteOutOfMemory);
+        fileTabMapWithIndex(&fileTable, fileTabDeleteOutOfMemory);
     }
     log_trace("recovering 0");
     symbolTableMap3(s_symbolTable, symbolTableDeleteOutOfMemory);
@@ -293,7 +293,7 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
     javaFqtTabMap3(&s_javaFqtTab, javaFqtTabDeleteOutOfMemory);
     log_trace("recovering 2");
 
-    /*& fileTabMapWithIndex(&s_fileTab, fileTabDeleteOutOfMemory); &*/
+    /*& fileTabMapWithIndex(&fileTable, fileTabDeleteOutOfMemory); &*/
 
     // do not forget that includes are listed in PP_MEMORY too.
     includeListDeleteOutOfMemory();
@@ -371,7 +371,7 @@ void cacheInput(void) {
 void cacheInclude(int fileNum) {
     if (s_cache.activeCache == 0) return;
     log_debug("caching include of file %d: %s\n",
-              s_cache.ibi, s_fileTab.tab[fileNum]->name);
+              s_cache.ibi, fileTable.tab[fileNum]->name);
     checkFileModifiedTime(fileNum);
     assert(s_cache.ibi < INCLUDE_CACHE_SIZE);
     s_cache.ib[s_cache.ibi] = fileNum;

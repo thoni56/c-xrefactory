@@ -417,15 +417,15 @@ static int isEnclosingClass(int enclosedClass, int enclosingClass) {
     int cc,slow;
     for(i = slow = enclosedClass, cc=0;
         i!=s_noneFileIndex && i!=-1;
-        i=s_fileTab.tab[i]->directEnclosingInstance) {
-        assert(s_fileTab.tab[i]);
+        i=fileTable.tab[i]->directEnclosingInstance) {
+        assert(fileTable.tab[i]);
         if (i == enclosingClass) return(1);
         // this loop looks very suspect, I prefer to put here a loop check
         if (cc==0) {
             cc = !cc;
         } else {
             assert(slow != i);
-            slow = s_fileTab.tab[slow]->directEnclosingInstance;
+            slow = fileTable.tab[slow]->directEnclosingInstance;
         }
     }
     return(0);
@@ -745,7 +745,7 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
     if (p == &s_errorSymbol || p->bits.symType==TypeError) return NULL;
     if (pos->file == s_noneFileIndex) return NULL;
     assert(pos->file<MAX_FILES);
-    assert(s_fileTab.tab[pos->file]);
+    assert(fileTable.tab[pos->file]);
     if (p->bits.symType==TypeDefault && p->bits.storage==StorageConstant) {
         if (options.no_ref_enumerator) return NULL;
     }
@@ -782,20 +782,20 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
                     && options.noIncludeRefs) return NULL;
                 // do not load references if current file is an
                 // included header, they will be reloaded from ref file
-                //&fprintf(dumpOut,"%s comm %d\n", s_fileTab.tab[pos->file]->name, s_fileTab.tab[pos->file]->b.commandLineEntered);
+                //&fprintf(dumpOut,"%s comm %d\n", fileTable.tab[pos->file]->name, fileTable.tab[pos->file]->b.commandLineEntered);
             }
         }
     }
     if (options.taskRegime == RegimeXref) {
         if (category == CategoryLocal) return NULL; /* dont cxref local symbols */
-        if (!s_fileTab.tab[pos->file]->b.cxLoading) return NULL;
+        if (!fileTable.tab[pos->file]->b.cxLoading) return NULL;
     }
     if (options.taskRegime == RegimeHtmlGenerate) {
         //&     scope = ScopeFile;  /* do not forget any reference */
         //&     if (! htmlReferencableSymbol(scope, category, p)) return NULL;
-        //&     if (!s_fileTab.tab[pos->file]->b.cxLoading) return NULL;
-        if (!s_fileTab.tab[pos->file]->b.cxLoading && category==CategoryGlobal) return NULL;
-        if (s_fileTab.tab[pos->file]->b.cxLoaded
+        //&     if (!fileTable.tab[pos->file]->b.cxLoading) return NULL;
+        if (!fileTable.tab[pos->file]->b.cxLoading && category==CategoryGlobal) return NULL;
+        if (fileTable.tab[pos->file]->b.cxLoaded
             &&p->bits.symType==TypeCppIfElse) return NULL;
     }
     reftab = &s_cxrefTab;
@@ -831,7 +831,7 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
     }
     /*  category = reftab->category; */
     place = addToRefList(&memb->refs,usageb,pos,category);
-    //&fprintf(dumpOut,"checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s\n", s_fileTab.tab[s_cxRefPos.file]->name, s_cxRefPos.file, s_cxRefPos.line, s_cxRefPos.col, s_fileTab.tab[pos->file]->name, pos->file, pos->line, pos->col, memcmp(&s_cxRefPos, pos, sizeof(Position)), POSITION_EQ(s_cxRefPos, *pos), usage, p->linkName);
+    //&fprintf(dumpOut,"checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s\n", fileTable.tab[s_cxRefPos.file]->name, s_cxRefPos.file, s_cxRefPos.line, s_cxRefPos.col, fileTable.tab[pos->file]->name, pos->file, pos->line, pos->col, memcmp(&s_cxRefPos, pos, sizeof(Position)), POSITION_EQ(s_cxRefPos, *pos), usage, p->linkName);
 
     if (options.taskRegime == RegimeEditServer
         && POSITION_EQ(s_cxRefPos, *pos)
@@ -882,7 +882,7 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
 
     CX_TEST_SPACE();
     assert(place);
-    /*&fprintf(dumpOut,":returning %x == %s %s:%d\n",*place,usageName[(*place)->usage.base],s_fileTab.tab[(*place)->p.file]->name,(*place)->p.line);&*/
+    /*&fprintf(dumpOut,":returning %x == %s %s:%d\n",*place,usageName[(*place)->usage.base],fileTable.tab[(*place)->p.file]->name,(*place)->p.line);&*/
     return(*place);
 }
 
@@ -917,16 +917,16 @@ int isSmallerOrEqClassR(int inf, int sup, int level) {
     ClassHierarchyReference *p;
     int         smallerLevel;
     assert(level>0);
-    //&fprintf(dumpOut,"testing hierarchy of %s\n<\t%s\n",s_fileTab.tab[inf]->name,s_fileTab.tab[sup]->name);
+    //&fprintf(dumpOut,"testing hierarchy of %s\n<\t%s\n",fileTable.tab[inf]->name,fileTable.tab[sup]->name);
     if (inf == sup) return(level);
-    assert(s_fileTab.tab[inf]);
-    for(p=s_fileTab.tab[inf]->superClasses; p!=NULL; p=p->next) {
+    assert(fileTable.tab[inf]);
+    for(p=fileTable.tab[inf]->superClasses; p!=NULL; p=p->next) {
         if (p->superClass == sup) {
             //&fprintf(dumpOut,"return 1\n");
             return(level+1);
         }
     }
-    for(p=s_fileTab.tab[inf]->superClasses; p!=NULL; p=p->next) {
+    for(p=fileTable.tab[inf]->superClasses; p!=NULL; p=p->next) {
         smallerLevel = isSmallerOrEqClassR(p->superClass, sup, level+1);
         if (smallerLevel) {
             //&fprintf(dumpOut,"return 1\n");
@@ -1162,7 +1162,7 @@ static int olcxVirtualyUsageAdequate(int vApplCl, int vFunCl,
                                      int olUsage, int olApplCl, int olFunCl) {
     int res;
     res = 0;
-    //&fprintf(dumpOut,"\n:checking %s\n%s\n%s\n<->\n%s\n%s\n",usageName[olUsage],s_fileTab.tab[olFunCl]->name,s_fileTab.tab[olApplCl]->name,s_fileTab.tab[vFunCl]->name,s_fileTab.tab[vApplCl]->name); fflush(dumpOut);
+    //&fprintf(dumpOut,"\n:checking %s\n%s\n%s\n<->\n%s\n%s\n",usageName[olUsage],fileTable.tab[olFunCl]->name,fileTable.tab[olApplCl]->name,fileTable.tab[vFunCl]->name,fileTable.tab[vApplCl]->name); fflush(dumpOut);
     if (IS_DEFINITION_OR_DECL_USAGE(olUsage)) {
         if (vFunCl == olFunCl) res = 1;
         if (isSmallerOrEqClass(olFunCl, vApplCl)) res = 1;
@@ -1190,7 +1190,7 @@ Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref, int b
             }
         }
         LIST_CONS(rr,(*place));
-        //&fprintf(dumpOut,"olcx adding %s %s:%d:%d\n",usageName[ref->usage.base], s_fileTab.tab[ref->p.file]->name,ref->p.line,ref->p.col); fflush(dumpOut);
+        //&fprintf(dumpOut,"olcx adding %s %s:%d:%d\n",usageName[ref->usage.base], fileTable.tab[ref->p.file]->name,ref->p.line,ref->p.col); fflush(dumpOut);
     }
     return(rr);
 }
@@ -1198,7 +1198,7 @@ Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref, int b
 
 Reference *olcxAddReference(Reference **rlist,Reference *ref,int bestMatchFlag) {
     Reference *rr;
-    //&sprintf(tmpBuff,"checking ref %s %s:%d:%d at %d\n",usageName[ref->usage.base], simpleFileName(s_fileTab.tab[ref->p.file]->name),ref->p.line,ref->p.col, ref); ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+    //&sprintf(tmpBuff,"checking ref %s %s:%d:%d at %d\n",usageName[ref->usage.base], simpleFileName(fileTable.tab[ref->p.file]->name),ref->p.line,ref->p.col, ref); ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
     if (! OL_VIEWABLE_REFS(ref)) return NULL; // no regular on-line refs
     rr = olcxAddReferenceNoUsageCheck(rlist, ref, bestMatchFlag);
     return(rr);
@@ -1216,7 +1216,7 @@ void olcxAppendReference(Reference *ref, S_olcxReferences *refs) {
     Reference *rr;
     rr = olcxCopyReference(ref);
     LIST_APPEND(Reference, refs->r, rr);
-    //&fprintf(dumpOut,"olcx appending %s %s:%d:%d\n",usageName[ref->usage.base], s_fileTab.tab[ref->p.file]->name,ref->p.line,ref->p.col); fflush(dumpOut);
+    //&fprintf(dumpOut,"olcx appending %s %s:%d:%d\n",usageName[ref->usage.base], fileTable.tab[ref->p.file]->name,ref->p.line,ref->p.col); fflush(dumpOut);
 }
 
 /* fnum is file number of which references are added, can be ANY_FILE
@@ -1283,7 +1283,7 @@ void generateOnlineCxref(Position *p,
         ppcGenGotoPositionRecord(p);
     } else {
         fprintf(ccOut,"%s%s#*+*#%d %d :%c%s%s ;;\n", commandString,
-                getRealFileNameStatic(s_fileTab.tab[p->file]->name),
+                getRealFileNameStatic(fileTable.tab[p->file]->name),
                 p->line, p->col, refCharCode(usage),
                 suffix, suffix2);
     }
@@ -1334,8 +1334,8 @@ static void olcxRenameInit(void) {
 int olcxListLessFunction(Reference *r1, Reference *r2) {
     int fc;
     char *s1,*s2;
-    s1 = simpleFileName(s_fileTab.tab[r1->p.file]->name);
-    s2 = simpleFileName(s_fileTab.tab[r2->p.file]->name);
+    s1 = simpleFileName(fileTable.tab[r1->p.file]->name);
+    s2 = simpleFileName(fileTable.tab[r2->p.file]->name);
     fc=strcmp(s1, s2);
     if (fc<0) return(1);
     if (fc>0) return(0);
@@ -1807,8 +1807,8 @@ static void passRefsThroughSourceFile(Reference **in_out_references, Position *c
     if (references==NULL)
         goto fin;
     fnum = references->p.file;
-    assert(s_fileTab.tab[fnum]);
-    cofileName = s_fileTab.tab[fnum]->name;
+    assert(fileTable.tab[fnum]);
+    cofileName = fileTable.tab[fnum]->name;
     references = passNonPrintableRefsForFile(references, fnum, usages, usageFilter);
     if (references==NULL || references->p.file != fnum) goto fin;
     if (options.referenceListWithoutSource) {
@@ -1853,7 +1853,7 @@ static void passRefsThroughSourceFile(Reference **in_out_references, Position *c
 void olcxDumpSelectionMenu(S_olSymbolsMenu *menu) {
     S_olSymbolsMenu *ss;
     for(ss=menu; ss!=NULL; ss=ss->next) {
-        fprintf(dumpOut,">> %d/%d %s %s %s %d\n", ss->defRefn, ss->refn, ss->s.name, simpleFileName(s_fileTab.tab[ss->s.vFunClass]->name), simpleFileName(s_fileTab.tab[ss->s.vApplClass]->name), ss->outOnLine);
+        fprintf(dumpOut,">> %d/%d %s %s %s %d\n", ss->defRefn, ss->refn, ss->s.name, simpleFileName(fileTable.tab[ss->s.vFunClass]->name), simpleFileName(fileTable.tab[ss->s.vApplClass]->name), ss->outOnLine);
     }
     fprintf(dumpOut,"\n\n");
 }
@@ -2437,7 +2437,7 @@ static void olcxGenInspectClassDefinitionRef(int classnum, char *refsuffix) {
                                 s_noneFileIndex, s_noneFileIndex);
     fillSymbolRefItemBits(&mmm.b, TypeStruct, StorageExtern, ScopeGlobal,
                            AccessDefault, CategoryGlobal, 0);
-    //&sprintf(tmpBuff, "looking for %s (%s)", mmm.name, s_fileTab.tab[mmm.vApplClass]->name);ppcGenTmpBuff();
+    //&sprintf(tmpBuff, "looking for %s (%s)", mmm.name, fileTable.tab[mmm.vApplClass]->name);ppcGenTmpBuff();
     olcxFindDefinitionAndGenGoto(&mmm);
 }
 
@@ -2496,7 +2496,7 @@ void olProcessSelectedReferences(
     //& renameCollationSymbols(ss);
     LIST_MERGE_SORT(Reference, rstack->r, olcxReferenceInternalLessFunction);
     for(ss=rstack->menuSym; ss!=NULL; ss=ss->next) {
-        //&LIST_LEN(nn, Reference, ss->s.refs);sprintf(tmpBuff,"xxx1 %d refs for %s", nn, s_fileTab.tab[ss->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+        //&LIST_LEN(nn, Reference, ss->s.refs);sprintf(tmpBuff,"xxx1 %d refs for %s", nn, fileTable.tab[ss->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
         referencesMapFun(rstack, ss);
     }
     olcxSetCurrentRefsOnCaller(rstack);
@@ -2538,12 +2538,12 @@ static void olcxMenuToggleSelect(void) {
             char tmpBuff[TMP_BUFF_SIZE];
             linkNamePrettyPrint(ln,ss->s.name,MAX_HTML_REF_LEN,SHORT_NAME);
             cname = javaGetNudePreTypeName_st(getRealFileNameStatic(
-                                                                    s_fileTab.tab[ss->s.vApplClass]->name),
+                                                                    fileTable.tab[ss->s.vApplClass]->name),
                                               options.nestedClassDisplaying);
             sprintf(tmpBuff, "%s %s refs of \"%s\"",
                     (ss->selected?"inserting":"removing"), cname, ln);
             fprintf(ccOut,"*%s", tmpBuff);
-            //&fprintf(ccOut,"\"%s\" refs of \"%s\"", s_fileTab.tab[ss->s.vApplClass]->name, ss->s.name);
+            //&fprintf(ccOut,"\"%s\" refs of \"%s\"", fileTable.tab[ss->s.vApplClass]->name, ss->s.name);
         }
     }
 }
@@ -3107,7 +3107,7 @@ int getFileNumberFromName(char *name) {
     int fileIndex;
 
     normalizedName = normalizeFileName(name, s_cwd);
-    if ((fileIndex = fileTabLookup(&s_fileTab, normalizedName)) != -1) {
+    if ((fileIndex = fileTabLookup(&fileTable, normalizedName)) != -1) {
         return fileIndex;
     } else {
         return s_noneFileIndex;
@@ -3498,8 +3498,8 @@ int getClassNumFromClassLinkName(char *name, int defaultResult) {
     fileIndex = defaultResult;
     SPRINT_FILE_TAB_CLASS_NAME(classFileName, name);
     log_trace("looking for class file '%s'", classFileName);
-    if (fileTabExists(&s_fileTab, classFileName))
-        fileIndex = fileTabLookup(&s_fileTab, classFileName);
+    if (fileTabExists(&fileTable, classFileName))
+        fileIndex = fileTabLookup(&fileTable, classFileName);
 
     return fileIndex;
 }
@@ -3517,7 +3517,7 @@ static int olSpecialFieldCreateSelection(char *fieldName, int storage) {
     }
     assert(s_javaObjectSymbol && s_javaObjectSymbol->u.s);
     clii = s_javaObjectSymbol->u.s->classFile;
-    //&fprintf(dumpOut,"class clii==%d==%s\n",clii,s_fileTab.tab[clii]->name);fflush(dumpOut);
+    //&fprintf(dumpOut,"class clii==%d==%s\n",clii,fileTable.tab[clii]->name);fflush(dumpOut);
     ss = rstack->hkSelectedSym;
     if (ss!=NULL && ss->next!=NULL) {
         // several cursor selected fields
@@ -3537,7 +3537,7 @@ static int olSpecialFieldCreateSelection(char *fieldName, int storage) {
             }
         }
     }
-    //&fprintf(dumpOut,"class clii==%d==%s\n",clii,s_fileTab.tab[clii]->name);fflush(dumpOut);
+    //&fprintf(dumpOut,"class clii==%d==%s\n",clii,fileTable.tab[clii]->name);fflush(dumpOut);
     olcxFreeResolutionMenu(ss);
     rstack->hkSelectedSym = olCreateSpecialMenuItem(fieldName, clii, storage);
     return(clii);
@@ -4435,9 +4435,9 @@ static int tpCheckPrintSelectedSymbol(void) {
 int javaGetSuperClassNumFromClassNum(int cn) {
     int             res;
     ClassHierarchyReference   *cl;
-    for(cl = s_fileTab.tab[cn]->superClasses; cl!=NULL; cl=cl->next) {
+    for(cl = fileTable.tab[cn]->superClasses; cl!=NULL; cl=cl->next) {
         res = cl->superClass;
-        if (! s_fileTab.tab[res]->b.isInterface) return(res);
+        if (! fileTable.tab[res]->b.isInterface) return(res);
     }
     return(s_noneFileIndex);
 }
@@ -4797,7 +4797,7 @@ void mainAnswerEditAction(void) {
                     fprintf(ccOut,"!** No source file to identify project");
                 }
             } else {
-                ifname = s_fileTab.tab[s_olOriginalComFileNumber]->name;
+                ifname = fileTable.tab[s_olOriginalComFileNumber]->name;
                 log_trace("ifname = %s", ifname);
                 searchDefaultOptionsFile(ifname, dffname, dffsect);
                 if (dffname[0]==0 || dffsect[0]==0) {
@@ -5101,11 +5101,11 @@ void putOnLineLoadedReferences(SymbolReferenceItem *p) {
                                      &cms, DO_NOT_CHECK_IF_SELECTED);
     if (ols) {
         assert(cms);
-        //&LIST_LEN(nn, Reference, p->refs);sprintf(tmpBuff,"!putting %d references of %s\n", nn, s_fileTab.tab[p->vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+        //&LIST_LEN(nn, Reference, p->refs);sprintf(tmpBuff,"!putting %d references of %s\n", nn, fileTable.tab[p->vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
         for(rr=p->refs; rr!=NULL; rr=rr->next) {
             olcxAddReferenceToOlSymbolsMenu(cms, rr, (ols == 2));
         }
-        //&LIST_LEN(nn, Reference, cms->s.refs);sprintf(tmpBuff,"added %d refs for %s", nn, s_fileTab.tab[cms->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+        //&LIST_LEN(nn, Reference, cms->s.refs);sprintf(tmpBuff,"added %d refs for %s", nn, fileTable.tab[cms->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
     }
 }
 
@@ -5119,7 +5119,7 @@ void genOnLineReferences(S_olcxReferences *rstack, S_olSymbolsMenu *cms) {
 
 static int classCmp(int cl1, int cl2) {
     int res;
-    //&fprintf(dumpOut,"classCMP %s <-> %s\n", s_fileTab.tab[cl1]->name, s_fileTab.tab[cl2]->name);
+    //&fprintf(dumpOut,"classCMP %s <-> %s\n", fileTable.tab[cl1]->name, fileTable.tab[cl2]->name);
     res = isSmallerOrEqClassR(cl2, cl1, 1);
     if (res == 0) {
         res = - isSmallerOrEqClassR(cl1, cl2, 1);
@@ -5194,7 +5194,7 @@ S_olSymbolsMenu *createSelectionMenu(SymbolReferenceItem *p) {
     rstack = s_olcxCurrentUser->browserStack.top;
     ooBits = 0; flag = 0; vlevel = 0;
     defpos = &s_noPos; defusage = UsageNone;
-    //&fprintf(dumpOut,"ooBits for %s\n", s_fileTab.tab[p->vApplClass]->name);
+    //&fprintf(dumpOut,"ooBits for %s\n", fileTable.tab[p->vApplClass]->name);
     for(ss=rstack->hkSelectedSym; ss!=NULL; ss=ss->next) {
         if (olcxIsSameCxSymbol(p, &ss->s)) {
             flag = 1;
@@ -5211,7 +5211,7 @@ S_olSymbolsMenu *createSelectionMenu(SymbolReferenceItem *p) {
                 vlev = 0;
             }
             if (vlevel==0 || ABS(vlevel)>ABS(vlev)) vlevel = vlev;
-            //&fprintf(dumpOut,"ooBits for %s <-> %s %o %o\n", s_fileTab.tab[ss->s.vApplClass]->name, p->name, oo, ooBits);
+            //&fprintf(dumpOut,"ooBits for %s <-> %s %o %o\n", fileTable.tab[ss->s.vApplClass]->name, p->name, oo, ooBits);
             // following line is a big hack to speed up class tree   !!!!!
             // and unused symbols displaying, hope it will work fine !!!!!
             //&if (options.server_operation == OLO_GLOBAL_UNUSED || options.server_operation==OLO_CLASS_TREE) break;

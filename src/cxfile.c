@@ -241,7 +241,7 @@ char *crTagSearchLineStatic(char *name, Position *p,
       }
       &*/
 
-    ffname = s_fileTab.tab[p->file]->name;
+    ffname = fileTable.tab[p->file]->name;
     assert(ffname);
     ffname = getRealFileNameStatic(ffname);
     fl = strlen(ffname);
@@ -325,7 +325,7 @@ void searchSymbolCheckReference(SymbolReferenceItem  *ss, Reference *rr) {
     if (searchStringFitness(sname, slen)) {
         static int count = 0;
         //& olCompletionListPrepend(sname, NULL, NULL, 0, NULL, NULL, rr, ss->vFunClass, s_olcxCurrentUser->retrieverStack.top);
-        //&sprintf(tmpBuff,"adding %s of %s(%d) matched %s %d", sname, s_fileTab.tab[rr->p.file]->name, rr->p.file, options.olcxSearchString, s_wildcardSearch);ppcGenTmpBuff();
+        //&sprintf(tmpBuff,"adding %s of %s(%d) matched %s %d", sname, fileTable.tab[rr->p.file]->name, rr->p.file, options.olcxSearchString, s_wildcardSearch);ppcGenTmpBuff();
         olCompletionListPrepend(sname, NULL, NULL, 0, NULL, ss, rr, ss->b.symType, ss->vFunClass, s_olcxCurrentUser->retrieverStack.top);
         // this is a hack for memory reduction
         // compact completions from time to time
@@ -392,13 +392,13 @@ static void writeSymbolItem(int symIndex) {
     writeStringRecord(CXFI_SYM_NAME, d->name, "\t");
     if (!options.brief_cxref) {
         if (d->vApplClass != s_noneFileIndex) {
-            sprintf(ttt,"\ton %s",s_fileTab.tab[d->vApplClass]->name);
+            sprintf(ttt,"\ton %s",fileTable.tab[d->vApplClass]->name);
             writeStringRecord(CXFI_REMARK,ttt,"\n");
         }
     }
     if (!options.brief_cxref) {
         if (d->vApplClass != s_noneFileIndex) {
-            sprintf(ttt,"\tfun %s",s_fileTab.tab[d->vFunClass]->name);
+            sprintf(ttt,"\tfun %s",fileTable.tab[d->vFunClass]->name);
             writeStringRecord(CXFI_REMARK,ttt,"\n");
         }
     }
@@ -431,7 +431,7 @@ static void writeSymbolItem(int symIndex) {
         writeCompactRecord(CXFI_REFERENCE, 0, "");                        \
         if (!options.brief_cxref) {                                         \
             sprintf(ttt,"\t%-7s in %30s:%u:%d\n",usageEnumName[usage]+5,   \
-                    s_fileTab.tab[file]->name,line,coll);               \
+                    fileTable.tab[file]->name,line,coll);               \
             writeStringRecord(CXFI_REMARK,ttt,"");                        \
         }                                                               \
     }
@@ -448,9 +448,9 @@ static void writeSubClassInfo(int sup, int inf, int origin) {
     writeOptionalCompactRecord(CXFI_INFER_CLASS, inf, "");
     writeCompactRecord(CXFI_CLASS_EXT, 0, "");
     if (!options.brief_cxref) {
-        sprintf(ttt,"\t\t%s",s_fileTab.tab[inf]->name);
+        sprintf(ttt,"\t\t%s",fileTable.tab[inf]->name);
         writeStringRecord(CXFI_REMARK,ttt,"\n");
-        sprintf(ttt,"  extends\t%s",s_fileTab.tab[sup]->name);
+        sprintf(ttt,"  extends\t%s",fileTable.tab[sup]->name);
         writeStringRecord(CXFI_REMARK,ttt,"\n");
     }
 }
@@ -496,8 +496,8 @@ static void createSubClassInfo(int superior, int inferior, int origin, int genfl
     FileItem      *iFile, *sFile;
     ClassHierarchyReference   *p, *pp;
 
-    iFile = s_fileTab.tab[inferior];
-    sFile = s_fileTab.tab[superior];
+    iFile = fileTable.tab[inferior];
+    sFile = fileTable.tab[superior];
     assert(iFile && sFile);
     p = findSuperiorInSuperClasses(superior, iFile);
     if (p==NULL) {
@@ -560,14 +560,14 @@ static void genRefItem0(SymbolReferenceItem *d, int forceGen) {
     if (d->b.category == CategoryLocal) return;
     if (d->refs == NULL && !forceGen) return;
     for(reference = d->refs; reference!=NULL; reference=reference->next) {
-        log_trace("checking ref: loading=%d --< %s:%d", s_fileTab.tab[reference->p.file]->b.cxLoading,
-                  s_fileTab.tab[reference->p.file]->name, reference->p.line);
-        if (options.update==UP_CREATE || s_fileTab.tab[reference->p.file]->b.cxLoading) {
+        log_trace("checking ref: loading=%d --< %s:%d", fileTable.tab[reference->p.file]->b.cxLoading,
+                  fileTable.tab[reference->p.file]->name, reference->p.line);
+        if (options.update==UP_CREATE || fileTable.tab[reference->p.file]->b.cxLoading) {
             /*& options.update==UP_CREATE; why it is there &*/
             writeCxReference(reference, symIndex);
         } else {
             log_trace("Some kind of update (%d) or not loading (%d), so don't writeCxReference()",
-                      options.update, s_fileTab.tab[reference->p.file]->b.cxLoading);
+                      options.update, fileTable.tab[reference->p.file]->b.cxLoading);
             assert(0);
         }
     }
@@ -670,9 +670,9 @@ static void genPartialFileTabRefFile(int updateFlag,
     assert(strlen(filename) < MAX_FILE_NAME_SIZE-1);
     openInOutReferenceFiles(updateFlag, filename);
     genCxFileHead();
-    fileTabMapWithIndex(&s_fileTab, mapfun);
+    fileTabMapWithIndex(&fileTable, mapfun);
     if (mapfun2!=NULL)
-        fileTabMapWithIndex(&s_fileTab, mapfun2);
+        fileTabMapWithIndex(&fileTable, mapfun2);
     scanCxFile(fullScanFunctionSequence);
     closeReferenceFile(filename);
 }
@@ -706,11 +706,11 @@ void genReferenceFile(bool updating, char *filename) {
     if (options.referenceFileCount <= 1) {
         /* single reference file */
         openInOutReferenceFiles(updating, filename);
-        /*&     fileTabMap(&s_fileTab, javaInitSubClassInfo); &*/
+        /*&     fileTabMap(&fileTable, javaInitSubClassInfo); &*/
         genCxFileHead();
-        fileTabMapWithIndex(&s_fileTab, writeFileIndexItem);
-        fileTabMapWithIndex(&s_fileTab, writeFileSourceIndexItem);
-        fileTabMapWithIndex(&s_fileTab, genClassHierarchyItems);
+        fileTabMapWithIndex(&fileTable, writeFileIndexItem);
+        fileTabMapWithIndex(&fileTable, writeFileSourceIndexItem);
+        fileTabMapWithIndex(&fileTable, genClassHierarchyItems);
         scanCxFile(fullScanFunctionSequence);
         refTabMap(&s_cxrefTab, genRefItem);
         closeReferenceFile(filename);
@@ -869,9 +869,9 @@ static void cxReadFileName(int size,
     len = i;
     assert(len+1 < MAX_FILE_NAME_SIZE);
     assert(ii>=0 && ii<MAX_FILES);
-    if (!fileTabExists(&s_fileTab, id)) {
+    if (!fileTabExists(&fileTable, id)) {
         fileIndex = addFileTabItem(id);
-        fileItem = s_fileTab.tab[fileIndex];
+        fileItem = fileTable.tab[fileIndex];
         fileItem->b.commandLineEntered = commandLineFlag;
         fileItem->b.isInterface = isInterface;
         if (fileItem->lastFullUpdateMtime == 0) fileItem->lastFullUpdateMtime=fumtime;
@@ -883,8 +883,8 @@ static void cxReadFileName(int size,
             }
         }
     } else {
-        fileIndex = fileTabLookup(&s_fileTab, id);
-        fileItem = s_fileTab.tab[fileIndex];
+        fileIndex = fileTabLookup(&fileTable, id);
+        fileItem = fileTable.tab[fileIndex];
         if (cxrfFileItemShouldBeUpdatedFromCxFile(fileItem)) {
             fileItem->b.isInterface = isInterface;
             // Set it to none, it will be updated by source item
@@ -915,14 +915,14 @@ static void cxrfSourceIndex(int size,
     file = s_decodeFilesNum[file];
     sfile = s_inLastInfos.counter[CXFI_SOURCE_INDEX];
     sfile = s_decodeFilesNum[sfile];
-    assert(file>=0 && file<MAX_FILES && s_fileTab.tab[file]);
+    assert(file>=0 && file<MAX_FILES && fileTable.tab[file]);
     // hmmm. here be more generous in getting corrct source info
-    if (s_fileTab.tab[file]->b.sourceFileNumber == s_noneFileIndex) {
+    if (fileTable.tab[file]->b.sourceFileNumber == s_noneFileIndex) {
         //&fprintf(dumpOut,"setting %d source to %d\n", file, sfile);fflush(dumpOut);
-        //&fprintf(dumpOut,"setting %s source to %s\n", s_fileTab.tab[file]->name, s_fileTab.tab[sfile]->name);fflush(dumpOut);
+        //&fprintf(dumpOut,"setting %s source to %s\n", fileTable.tab[file]->name, fileTable.tab[sfile]->name);fflush(dumpOut);
         // first check that it is not set directly from source
-        if (! s_fileTab.tab[file]->b.cxLoading) {
-            s_fileTab.tab[file]->b.sourceFileNumber = sfile;
+        if (! fileTable.tab[file]->b.cxLoading) {
+            fileTable.tab[file]->b.sourceFileNumber = sfile;
         }
     }
 }
@@ -951,10 +951,10 @@ static void getSymTypeAndClasses(int *_symType, int *_vApplClass,
     symType = s_inLastInfos.counter[CXFI_SYM_TYPE];
     vApplClass = s_inLastInfos.counter[CXFI_INFER_CLASS];
     vApplClass = s_decodeFilesNum[vApplClass];
-    assert(s_fileTab.tab[vApplClass] != NULL);
+    assert(fileTable.tab[vApplClass] != NULL);
     vFunClass = s_inLastInfos.counter[CXFI_SUPER_CLASS];
     vFunClass = s_decodeFilesNum[vFunClass];
-    assert(s_fileTab.tab[vFunClass] != NULL);
+    assert(fileTable.tab[vFunClass] != NULL);
     *_symType = symType;
     *_vApplClass = vApplClass;
     *_vFunClass = vFunClass;
@@ -1144,7 +1144,7 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
     sym = s_inLastInfos.counter[CXFI_SYM_INDEX];
     file = s_inLastInfos.counter[CXFI_FILE_INDEX];
     file = s_decodeFilesNum[file];
-    assert(s_fileTab.tab[file]!=NULL);
+    assert(fileTable.tab[file]!=NULL);
     line = s_inLastInfos.counter[CXFI_LINE_INDEX];
     coll = s_inLastInfos.counter[CXFI_COLL_INDEX];
     getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
@@ -1174,20 +1174,20 @@ static void cxrfReference(int size,
     sym = s_inLastInfos.counter[CXFI_SYM_INDEX];
     file = s_inLastInfos.counter[CXFI_FILE_INDEX];
     file = s_decodeFilesNum[file];
-    assert(s_fileTab.tab[file]!=NULL);
+    assert(fileTable.tab[file]!=NULL);
     line = s_inLastInfos.counter[CXFI_LINE_INDEX];
     coll = s_inLastInfos.counter[CXFI_COLL_INDEX];
     /*&fprintf(dumpOut,"%d %d %d  ", usage,file,line);fflush(dumpOut);&*/
     assert(options.taskRegime);
     if (options.taskRegime == RegimeXref) {
-        if (s_fileTab.tab[file]->b.cxLoading&&s_fileTab.tab[file]->b.cxSaved) {
+        if (fileTable.tab[file]->b.cxLoading&&fileTable.tab[file]->b.cxSaved) {
             /* if we repass refs after overflow */
             fillPosition(&pos,file,line,coll);
             fillUsageBits(&usageBits, usage, reqAcc);
             copyrefFl = ! isInRefList(s_inLastInfos.symbolTab[sym]->refs,
                                       &usageBits, &pos, CategoryGlobal);
         } else {
-            copyrefFl = ! s_fileTab.tab[file]->b.cxLoading;
+            copyrefFl = ! fileTable.tab[file]->b.cxLoading;
         }
         if (copyrefFl) writeCxReferenceBase(sym, usage, reqAcc, file, line, coll);
     } else  if (options.taskRegime == RegimeHtmlGenerate) {
@@ -1201,9 +1201,9 @@ static void cxrfReference(int size,
                              &rr.usage,&rr.p,CategoryGlobal);
             }
         } else if (rr.usage.base==UsageDefined || rr.usage.base==UsageDeclared
-                   ||  !s_fileTab.tab[rr.p.file]->b.commandLineEntered ) {
+                   ||  !fileTable.tab[rr.p.file]->b.commandLineEntered ) {
             log_trace("htmladdref %s on %s:%d", s_inLastInfos.symbolTab[sym]->name,
-                      s_fileTab.tab[rr.p.file]->name, rr.p.line);
+                      fileTable.tab[rr.p.file]->name, rr.p.line);
             addToRefList(&s_inLastInfos.symbolTab[sym]->refs,
                          &rr.usage,&rr.p,CategoryGlobal);
         }
@@ -1216,7 +1216,7 @@ static void cxrfReference(int size,
                 // restrict reported symbols to those defined in project
                 // input file
                 if (IS_DEFINITION_USAGE(rr.usage.base)
-                    && s_fileTab.tab[rr.p.file]->b.commandLineEntered
+                    && fileTable.tab[rr.p.file]->b.commandLineEntered
                     ) {
                     s_inLastInfos.deadSymbolIsDefined = 1;
                 } else if (! IS_DEFINITION_OR_DECL_USAGE(rr.usage.base)) {
@@ -1250,13 +1250,13 @@ static void cxrfReference(int size,
                     if (additionalArg == CX_MENU_CREATION) {
                         assert(s_inLastInfos.onLineRefMenuItem);
                         if (file!=s_olOriginalFileNumber
-                            || !s_fileTab.tab[file]->b.commandLineEntered
+                            || !fileTable.tab[file]->b.commandLineEntered
                             || options.server_operation==OLO_GOTO
                             || options.server_operation==OLO_CGOTO
                             || options.server_operation==OLO_PUSH_NAME
                             || options.server_operation==OLO_PUSH_SPECIAL_NAME
                             ) {
-                            //&fprintf(dumpOut,":adding reference %s:%d\n", s_fileTab.tab[rr.p.file]->name, rr.p.line);
+                            //&fprintf(dumpOut,":adding reference %s:%d\n", fileTable.tab[rr.p.file]->name, rr.p.line);
                             olcxAddReferenceToOlSymbolsMenu(s_inLastInfos.onLineRefMenuItem, &rr, s_inLastInfos.onLineRefIsBestMatchFlag);
                         }
                     } else if (additionalArg == CX_BY_PASS) {
@@ -1306,18 +1306,18 @@ static void cxrfSubClass(int size,
     /*fprintf(dumpOut,"%d %d->%d %d  ", usage,file,s_decodeFilesNum[file],line);*/
     /*fflush(dumpOut);*/
     file = s_decodeFilesNum[file];
-    //&if (s_fileTab.tab[file]==NULL) {fprintf(dumpOut,"!%d->%d %d %d ",of,file,sup,inf);}
-    assert(s_fileTab.tab[file]!=NULL);
+    //&if (fileTable.tab[file]==NULL) {fprintf(dumpOut,"!%d->%d %d %d ",of,file,sup,inf);}
+    assert(fileTable.tab[file]!=NULL);
     sup = s_decodeFilesNum[sup];
-    assert(s_fileTab.tab[sup]!=NULL);
+    assert(fileTable.tab[sup]!=NULL);
     inf = s_decodeFilesNum[inf];
-    assert(s_fileTab.tab[inf]!=NULL);
+    assert(fileTable.tab[inf]!=NULL);
     assert(options.taskRegime);
     if (options.taskRegime == RegimeHtmlGenerate) {
         createSubClassInfo(sup, inf, file, NO_CX_FILE_ITEM_GEN);
     }
     if (options.taskRegime == RegimeXref) {
-        if (!s_fileTab.tab[file]->b.cxLoading &&
+        if (!fileTable.tab[file]->b.cxLoading &&
             additionalArg==CX_GENERATE_OUTPUT) {
             writeSubClassInfo(sup, inf, file);  // updating refs
             //&         createSubClassInfo(sup, inf, file, CX_FILE_ITEM_GEN);
@@ -1325,7 +1325,7 @@ static void cxrfSubClass(int size,
     }
     if (options.taskRegime == RegimeEditServer) {
         if (file!=s_input_file_number) {
-            log_trace("reading %s < %s", simpleFileName(s_fileTab.tab[inf]->name),simpleFileName(s_fileTab.tab[sup]->name));
+            log_trace("reading %s < %s", simpleFileName(fileTable.tab[inf]->name),simpleFileName(fileTable.tab[sup]->name));
             createSubClassInfo(sup, inf, file, NO_CX_FILE_ITEM_GEN);
         }
     }

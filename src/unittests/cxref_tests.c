@@ -28,7 +28,7 @@
 
 
 /* Needed: */
-S_fileTab s_fileTab;
+S_fileTab fileTable;
 
 
 Describe(CxRef);

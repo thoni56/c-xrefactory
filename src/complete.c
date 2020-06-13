@@ -1414,7 +1414,7 @@ void javaCompleteThisPackageName(Completions *c) {
     static char cname[TMP_STRING_SIZE];
     char        *cc, *ss, *dd;
     if (c->idToProcessLen != 0) return;
-    ss = javaCutSourcePathFromFileName(getRealFileNameStatic(s_fileTab.tab[s_olOriginalFileNumber]->name));
+    ss = javaCutSourcePathFromFileName(getRealFileNameStatic(fileTable.tab[s_olOriginalFileNumber]->name));
     strcpy(cname, ss);
     dd = lastOccurenceInString(cname, '.');
     if (dd!=NULL) *dd=0;
@@ -1583,8 +1583,8 @@ static void javaFqtCompletions(Completions *c, enum fqtCompletion completionType
     }
     if (options.fqtNameToCompletions <= 1) return;
     // fqt from filetab
-    for(i=0; i<s_fileTab.size; i++) {
-        if (s_fileTab.tab[i]!=NULL) completeFqtClassFileFromFileTab(s_fileTab.tab[i], &cfmi);
+    for(i=0; i<fileTable.size; i++) {
+        if (fileTable.tab[i]!=NULL) completeFqtClassFileFromFileTab(fileTable.tab[i], &cfmi);
     }
     if (options.fqtNameToCompletions <= 2) return;
     // fqt from classpath

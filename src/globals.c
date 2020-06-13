@@ -71,8 +71,6 @@ struct yyGlobalState *s_initYygstate;
 char *s_input_file_name="";
 Completions s_completions;
 
-S_fileTab s_fileTab;
-
 char ppmMemory[SIZE_ppmMemory];
 char mbMemory[SIZE_mbMemory];
 
