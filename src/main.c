@@ -2012,60 +2012,6 @@ static void mainParseInputFile(void) {
     }
     s_cache.activeCache = 0;
     currentFile.fileName = NULL;
-
-    /*//////////////////////// after parsing actions ////////////////////// */
-#if ZERO
-    if (s_opt.taskRegime==RegimeXref || s_opt.taskRegime==RegimeHtmlGenerate) {
-        int ui,el,mdp,i,cr,ri;
-        S_symbol *pp;
-        S_symbolRefItem *rfi;
-        S_reference *rr;
-
-        fprintf(dumpOut,"olcxMemoryAllocatedBytes == %d\n", olcxMemoryAllocatedBytes);
-        //&{static int mp=0; int p; p=s_topBlock->firstFreeIndex*100/SIZE_workMemory;if (p>mp)mp=p;fprintf(dumpOut,": workmax == (%d%%)\n", mp);}
-        //&{static int mp=0; int p; p=ppmMemoryi*100/SIZE_ppmMemory;if (p>mp)mp=p;fprintf(dumpOut,": ppmmax == (%d%%) == %d\n", mp, SIZE_ppmMemory/100*mp);}
-#if 1 //ZERO
-        //& fprintf(dumpOut,"sizeof(S_symbol,S_fileItem,S_symbolRefItem,S_ref) == %d, %d, %d, %d\n",sizeof(S_symbol),sizeof(S_fileItem),sizeof(S_symbolRefItem),sizeof(S_reference));
-        //&fprintf(dumpOut,": mem == %d%% == %d/%d %x-%x\n", s_topBlock->firstFreeIndex*100/SIZE_workMemory, s_topBlock->firstFreeIndex,SIZE_workMemory,memory, memory+SIZE_workMemory);
-        //& fprintf(dumpOut,": cxmem == %d/%d %x-%x\n",cxMemory->i,cxMemory->size, ((char*)&cxMemory->b),((char*)&cxMemory->b)+cxMemory->size);
-        //& fprintf(dumpOut,": ftmem == %d/%d %x-%x\n",ftMemoryi,SIZE_ftMemory,ftMemory,ftMemory+SIZE_ftMemory);
-        //&fprintf(dumpOut,": ppmmem == (%d%%) == %d/%d %x-%x\n",ppmMemoryi*100/SIZE_ppmMemory,ppmMemoryi,SIZE_ppmMemory,ppmMemory,ppmMemory+SIZE_ppmMemory);
-        //& fprintf(dumpOut,": tmpMem == %d/%d %x-%x\n",tmpWorkMemoryi,SIZE_tmpWorkMemory,tmpWorkMemory,tmpWorkMemory+SIZE_tmpWorkMemory);
-        //& fprintf(dumpOut,": cachedLex == %d/%d in %d cps\n",s_cache.lbcc-s_cache.lb,
-        //&                     LEX_BUF_CACHE_SIZE,s_cache.cpi);
-        //& fprintf(dumpOut,": cache[cpi].lb == %x <-> %x\n",s_cache.lbcc,
-        //&         s_cache.cp[s_cache.cpi-1].lbcc);
-#endif
-#if 1 //ZERO
-        symbolTableStatistics(s_symTab, &ui, &el,&mdp);
-        fprintf(dumpOut,": symtab == %d elems, usage %d/%d,\tratio %1.2f, maxdepth==%d\n",
-                el,ui,s_symTab->size, ((float)el)/(ui+1e-30), mdp);
-        fflush(dumpOut);
-        refTabStatistics(&s_cxrefTab, &ui, &el,&mdp);
-        fprintf(dumpOut,": reftab == %d elems, usage %d/%d,\tratio %1.2f, maxdepth==%d\n",
-                el,ui,s_cxrefTab.size, ((float)el)/(ui+1e-30), mdp);
-        for(i=0; i< s_cxrefTab.size; i++) {
-            cr = 0;
-            for(rfi=s_cxrefTab.tab[i]; rfi!=NULL; rfi=rfi->next) {
-                cr++;
-                ri = 0;
-                for(rr=rfi->refs; rr!=NULL; rr=rr->next) ri++;
-                if (ri>1000) {
-                    fprintf(dumpOut,"\nsymbol %s has %d references", rfi->name, ri);
-                }
-            }
-            if (cr>1000) {
-                fprintf(dumpOut,"\n\n>>symbol exceeding 1000");
-                fprintf(dumpOut," at index %d: ", i);
-                for(rfi=s_cxrefTab.tab[i]; rfi!=NULL; rfi=rfi->next) {
-                    fprintf(dumpOut,"%s ", rfi->name);
-                }
-                fprintf(dumpOut,"\n");
-            }
-        }
-#endif
-    }
-#endif
 }
 
 
