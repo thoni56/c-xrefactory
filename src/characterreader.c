@@ -19,7 +19,8 @@ void fillCharacterBuffer(CharacterBuffer *characterBuffer,
                          FILE *file,
                          unsigned filePos,
                          int fileNumber,
-                         char *lineBegin) {
+                         char *lineBegin
+) {
     characterBuffer->next = next;
     characterBuffer->end = end;
     characterBuffer->file = file;

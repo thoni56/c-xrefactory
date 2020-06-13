@@ -7,7 +7,7 @@
 #include <stdbool.h>
 
 
-typedef struct fileItem {	/* to be renamed to constant pool item */
+typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
     char *name;
     time_t lastModified;
     time_t lastInspected;
