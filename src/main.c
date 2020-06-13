@@ -2045,24 +2045,27 @@ void mainSetLanguage(char *inFileName, Language *outLanguage) {
 }
 
 
-static int getLineFromFile(FILE *ff, char *tt, int ttsize, int *outI) {
-    int i,c,res;
-    i = 0;
-    c = getc(ff);
-    while ((c>=0 && c<=' ') || c=='\n' || c=='\t') c=getc(ff);
-    if (c==EOF) {
-        res = EOF;
+static int getLineFromFile(FILE *file, char *line, int max, int *outLength) {
+    int i = 0;
+    int ch;
+    int result = EOF;
+
+    ch = getc(file);
+    while ((ch>=0 && ch<=' ') || ch=='\n' || ch=='\t')
+        ch=getc(file);
+    if (ch==EOF) {
         goto fini;
     }
-    while (c!=EOF && c!='\n') {
-        if (i < ttsize-1)   tt[i++]=c;
-        c=getc(ff);
+    while (ch!=EOF && ch!='\n') {
+        if (i < max-1)
+            line[i++]=ch;
+        ch=getc(file);
     }
-    res = 'A';
+    result = 'A';
  fini:
-    tt[i] = 0;
-    *outI  = i;
-    return(res);
+    line[i] = 0;
+    *outLength  = i;
+    return result;
 }
 
 static void discoverBuiltinIncludePaths(void) {
