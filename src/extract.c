@@ -436,14 +436,14 @@ static void extReClassifyIOVars(ProgramGraphNode *program) {
 
     op = NULL; uniqueOutFlag = 1;
     for(p=program; p!=NULL; p=p->next) {
-        if (options.extractMode == EXTR_FUNCTION_ADDRESS_ARGS) {
+        if (options.extractMode == EXTRACT_FUNCTION_ADDRESS_ARGS) {
             if (p->classifBits == EXTRACT_OUT_ARGUMENT
                 ||  p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
                 ||  p->classifBits == EXTRACT_IN_OUT_ARGUMENT
                 ) {
                 p->classifBits = EXTRACT_ADDRESS_ARGUMENT;
             }
-        } else if (options.extractMode == EXTR_FUNCTION) {
+        } else if (options.extractMode == EXTRACT_FUNCTION) {
             if (p->classifBits == EXTRACT_OUT_ARGUMENT
                 || p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
                 ) {
@@ -465,7 +465,7 @@ static void extReClassifyIOVars(ProgramGraphNode *program) {
 
     op = NULL; uniqueOutFlag = 1;
     for(p=program; p!=NULL; p=p->next) {
-        if (options.extractMode == EXTR_FUNCTION) {
+        if (options.extractMode == EXTRACT_FUNCTION) {
             if (p->classifBits == EXTRACT_IN_OUT_ARGUMENT) {
                 if (op == NULL) op = p;
                 else uniqueOutFlag = 0;
@@ -1182,7 +1182,7 @@ static void extMakeExtraction(void) {
     extSetInOutBlockFields(program);
     //&dumpProgram(program);
 
-    if (options.extractMode!=EXTR_MACRO && extIsJumpInOutBlock(program)) {
+    if (options.extractMode!=EXTRACT_MACRO && extIsJumpInOutBlock(program)) {
         errorMessage(ERR_ST, "There are jumps in or out of region");
         return;
     }
@@ -1196,7 +1196,7 @@ static void extMakeExtraction(void) {
         if (newClassExt) s_extractionName = "newClass_";
         else s_extractionName = "newMethod_";
     } else {
-        if (options.extractMode==EXTR_MACRO) s_extractionName = "NEW_MACRO_";
+        if (options.extractMode==EXTRACT_MACRO) s_extractionName = "NEW_MACRO_";
         else s_extractionName = "newFunction_";
     }
 
@@ -1207,21 +1207,21 @@ static void extMakeExtraction(void) {
         fprintf(ccOut,
                 "%%!\n------------------------ The Invocation ------------------------\n!\n");
     }
-    if (options.extractMode==EXTR_MACRO) extGenNewMacroCall(program);
+    if (options.extractMode==EXTRACT_MACRO) extGenNewMacroCall(program);
     else if (newClassExt) extJavaGenNewClassCall(program);
     else extGenNewFunCall(program);
     if (! options.xref2) {
         fprintf(ccOut,
                 "!\n--------------------------- The Head ---------------------------\n!\n");
     }
-    if (options.extractMode==EXTR_MACRO) extGenNewMacroHead(program);
+    if (options.extractMode==EXTRACT_MACRO) extGenNewMacroHead(program);
     else if (newClassExt) extJavaGenNewClassHead(program);
     else extGenNewFunHead(program);
     if (! options.xref2) {
         fprintf(ccOut,
                 "!\n--------------------------- The Tail ---------------------------\n!\n");
     }
-    if (options.extractMode==EXTR_MACRO) extGenNewMacroTail(program);
+    if (options.extractMode==EXTRACT_MACRO) extGenNewMacroTail(program);
     else if (newClassExt) extJavaGenNewClassTail(program);
     else extGenNewFunTail(program);
 

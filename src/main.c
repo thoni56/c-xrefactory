@@ -921,7 +921,7 @@ static bool processOOption(int *ii, int argc, char **argv) {
         options.manualResolve = RESOLVE_DIALOG_NEVER;
     }
     else if (strcmp(argv[i],"-olexaddress")==0) {
-        options.extractMode = EXTR_FUNCTION_ADDRESS_ARGS;
+        options.extractMode = EXTRACT_FUNCTION_ADDRESS_ARGS;
     }
     else if (strcmp(argv[i],"-olchecklinkage")==0) {
         options.ooChecksBits |= OOC_LINKAGE_CHECK;
@@ -939,7 +939,7 @@ static bool processOOption(int *ii, int argc, char **argv) {
         options.fqtNameToCompletions = 1;
         sscanf(argv[i]+23, "%d",&options.fqtNameToCompletions);
     }
-    else if (strcmp(argv[i],"-olexmacro")==0) options.extractMode=EXTR_MACRO;
+    else if (strcmp(argv[i],"-olexmacro")==0) options.extractMode=EXTRACT_MACRO;
     else if (strcmp(argv[i],"-olcxunmodified")==0)  {
         options.modifiedFlag = false;
     }

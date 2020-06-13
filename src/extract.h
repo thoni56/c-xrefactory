@@ -5,12 +5,12 @@
 #include "symbol.h"
 
 enum extractModes {
-    EXTR_FUNCTION,
-    EXTR_FUNCTION_ADDRESS_ARGS,
-    EXTR_MACRO,
+    EXTRACT_FUNCTION,
+    EXTRACT_FUNCTION_ADDRESS_ARGS,
+    EXTRACT_MACRO,
 };
 
-extern Symbol * addContinueBreakLabelSymbol(int labn, char *name);
+extern Symbol *addContinueBreakLabelSymbol(int labn, char *name);
 extern void actionsBeforeAfterExternalDefinition(void);
 extern void extractActionOnBlockMarker(void);
 extern void genInternalLabelReference(int counter, int usage);
