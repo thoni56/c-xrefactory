@@ -1,7 +1,7 @@
 #define _IN_FILETAB_C_
 #include "filetable.h"
 
-#include "commons.h"
+#include "commons.h"            /* For fatalError() */
 #include "hash.h"
 #include "memory.h"
 
@@ -25,6 +25,14 @@ FileTable fileTable;
 
 int s_noneFileIndex = -1;
 
+
+void fillFileItem(FileItem *item, char *name, bool fromCommandLine) {
+    memset(item, 0, sizeof(FileItem));
+    item->name = name;
+    item->b.commandLineEntered = fromCommandLine;
+    item->directEnclosingInstance = s_noneFileIndex;
+    item->b.sourceFileNumber = s_noneFileIndex;
+}
 
 void initFileTable(FileTable *fileTable) {
     int len;

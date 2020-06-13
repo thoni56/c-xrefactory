@@ -6,7 +6,6 @@ void processDefine(bool argFlag);
 
 #include "filedescriptor.h"
 #include "filetable.h"
-#include "fileitem.h"
 #include "symboltable.h"
 #include "macroargumenttable.h"
 #include "symbol.h"
