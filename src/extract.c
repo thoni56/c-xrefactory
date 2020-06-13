@@ -51,7 +51,7 @@ static void dumpProgram(ProgramGraphNode *program) {
 #endif
 
 
-void genInternalLabelReference(int counter, int usage) {
+void generateInternalLabelReference(int counter, int usage) {
     char labelName[TMP_STRING_SIZE];
     Id labelId;
     Position position;
@@ -109,7 +109,7 @@ void genContinueBreakReference(char *name) {
     fillSymbolBits(&ss.bits, AccessDefault, TypeLabel, StorageAuto);
 
     if (symbolTableIsMember(s_symbolTable, &ss, &ii, &memb)) {
-        genInternalLabelReference(memb->u.labelIndex, UsageUsed);
+        generateInternalLabelReference(memb->u.labelIndex, UsageUsed);
     }
 }
 
@@ -122,10 +122,10 @@ void genSwitchCaseFork(int lastFlag) {
     fillSymbolWithLabel(&ss, SWITCH_LABEL_NAME, SWITCH_LABEL_NAME, s_noPos, 0);
     fillSymbolBits(&ss.bits, AccessDefault, TypeLabel, StorageAuto);
     if (symbolTableIsMember(s_symbolTable, &ss, &ii, &memb)) {
-        genInternalLabelReference(memb->u.labelIndex, UsageDefined);
+        generateInternalLabelReference(memb->u.labelIndex, UsageDefined);
         if (! lastFlag) {
             memb->u.labelIndex++;
-            genInternalLabelReference(memb->u.labelIndex, UsageFork);
+            generateInternalLabelReference(memb->u.labelIndex, UsageFork);
         }
     }
 }

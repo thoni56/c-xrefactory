@@ -1806,7 +1806,7 @@ void javaAddMethodParametersToSymTable(Symbol *method) {
 void javaMethodBodyBeginning(Symbol *method) {
     assert(method->u.type && method->u.type->kind == TypeFunction);
     s_cp.function = method;
-    genInternalLabelReference(-1, UsageDefined);
+    generateInternalLabelReference(-1, UsageDefined);
     s_count.localVar = 0;
     javaAddMethodParametersToSymTable(method);
     method->u.type->u.m.signature = strchr(method->linkName, '(');

@@ -4513,7 +4513,7 @@ case 176:
                         stackMemoryBlockStart();  /* in order to remove arguments*/
                         s_cp.function = mh; /* added for set-target-position checks */
                         /* also needed for pushing label reference */
-                        genInternalLabelReference(-1, UsageDefined);
+                        generateInternalLabelReference(-1, UsageDefined);
                         s_count.localVar = 0;
                         assert(yyvsp[-1].ast_symbol.d && yyvsp[-1].ast_symbol.d->u.type);
                         javaAddMethodParametersToSymTable(yyvsp[-1].ast_symbol.d);
@@ -5120,7 +5120,7 @@ case 280:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference(yyvsp[-1].ast_integer.d, UsageDefined);
+                    generateInternalLabelReference(yyvsp[-1].ast_integer.d, UsageDefined);
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-5].ast_position, yyvsp[0].ast_position);
                 }
@@ -5132,7 +5132,7 @@ case 281:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
+                    generateInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
                     yyval.ast_integer.d = yyvsp[0].ast_integer.d;
                 } else {
                     PropagateBoundaries(yyval.ast_integer, yyvsp[-7].ast_position, yyvsp[-1].ast_position);
@@ -5145,7 +5145,7 @@ case 282:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference(yyvsp[-1].ast_integer.d, UsageDefined);
+                    generateInternalLabelReference(yyvsp[-1].ast_integer.d, UsageDefined);
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_integer, yyvsp[0].ast_position);
                 }
@@ -5157,7 +5157,7 @@ case 283:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference(yyvsp[-1].ast_integer.d, UsageDefined);
+                    generateInternalLabelReference(yyvsp[-1].ast_integer.d, UsageDefined);
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_integer, yyvsp[0].ast_position);
                 }
@@ -5180,7 +5180,7 @@ case 285:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.d, BREAK_LABEL_NAME);
-                    genInternalLabelReference(yyvsp[-1].ast_integer.d, UsageFork);
+                    generateInternalLabelReference(yyvsp[-1].ast_integer.d, UsageFork);
                 }
             }
         }
@@ -5193,7 +5193,7 @@ case 286:
                     genSwitchCaseFork(1);
                     ExtrDeleteContBreakSym(yyvsp[-1].symbol);
                     ExtrDeleteContBreakSym(yyvsp[-2].symbol);
-                    genInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
+                    generateInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-7].ast_position, yyvsp[0].ast_position);
                 }
@@ -5298,8 +5298,8 @@ case 301:
                     if (yyvsp[-1].ast_whileData.d != NULL) {
                         ExtrDeleteContBreakSym(yyvsp[-1].ast_whileData.d->i4);
                         ExtrDeleteContBreakSym(yyvsp[-1].ast_whileData.d->i3);
-                        genInternalLabelReference(yyvsp[-1].ast_whileData.d->i1, UsageUsed);
-                        genInternalLabelReference(yyvsp[-1].ast_whileData.d->i2, UsageDefined);
+                        generateInternalLabelReference(yyvsp[-1].ast_whileData.d->i1, UsageUsed);
+                        generateInternalLabelReference(yyvsp[-1].ast_whileData.d->i2, UsageDefined);
                     }
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_whileData, yyvsp[0].ast_position);
@@ -5315,8 +5315,8 @@ case 302:
                     if (yyvsp[-1].ast_whileData.d != NULL) {
                         ExtrDeleteContBreakSym(yyvsp[-1].ast_whileData.d->i4);
                         ExtrDeleteContBreakSym(yyvsp[-1].ast_whileData.d->i3);
-                        genInternalLabelReference(yyvsp[-1].ast_whileData.d->i1, UsageUsed);
-                        genInternalLabelReference(yyvsp[-1].ast_whileData.d->i2, UsageDefined);
+                        generateInternalLabelReference(yyvsp[-1].ast_whileData.d->i1, UsageUsed);
+                        generateInternalLabelReference(yyvsp[-1].ast_whileData.d->i2, UsageDefined);
                     }
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_whileData, yyvsp[0].ast_position);
@@ -5351,7 +5351,7 @@ case 305:
                 if (! SyntaxPassOnly()) {
                     ExtrDeleteContBreakSym(yyvsp[-2].symbol);
                     ExtrDeleteContBreakSym(yyvsp[-3].symbol);
-                    genInternalLabelReference(yyvsp[-5].ast_integer.d, UsageDefined);
+                    generateInternalLabelReference(yyvsp[-5].ast_integer.d, UsageDefined);
                 }
             }
         }
@@ -5361,8 +5361,8 @@ case 306:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference(yyvsp[-11].ast_integer.d, UsageFork);
-                    genInternalLabelReference(yyvsp[-9].ast_integer.d, UsageDefined);
+                    generateInternalLabelReference(yyvsp[-11].ast_integer.d, UsageFork);
+                    generateInternalLabelReference(yyvsp[-9].ast_integer.d, UsageDefined);
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-12].ast_position, yyvsp[0].ast_position);
                 }
@@ -5399,8 +5399,8 @@ case 310:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     Symbol *ss __attribute__((unused));
-                    genInternalLabelReference(yyvsp[-7].ast_integer.d, UsageUsed);
-                    genInternalLabelReference(yyvsp[-4].ast_integer.d, UsageDefined);
+                    generateInternalLabelReference(yyvsp[-7].ast_integer.d, UsageUsed);
+                    generateInternalLabelReference(yyvsp[-4].ast_integer.d, UsageDefined);
                     ss = addContinueBreakLabelSymbol(yyvsp[-3].ast_integer.d, CONTINUE_LABEL_NAME);
                     ss = addContinueBreakLabelSymbol(yyvsp[0].ast_integer.d, BREAK_LABEL_NAME);
                     yyval.ast_intPair.d.i1 = yyvsp[-3].ast_integer.d;
@@ -5418,8 +5418,8 @@ case 311:
                 if (! SyntaxPassOnly()) {
                     deleteContinueBreakLabelSymbol(BREAK_LABEL_NAME);
                     deleteContinueBreakLabelSymbol(CONTINUE_LABEL_NAME);
-                    genInternalLabelReference(yyvsp[-1].ast_intPair.d.i1, UsageUsed);
-                    genInternalLabelReference(yyvsp[-1].ast_intPair.d.i2, UsageDefined);
+                    generateInternalLabelReference(yyvsp[-1].ast_intPair.d.i1, UsageUsed);
+                    generateInternalLabelReference(yyvsp[-1].ast_intPair.d.i2, UsageDefined);
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_intPair, yyvsp[0].ast_position);
                 }
@@ -5433,8 +5433,8 @@ case 312:
                 if (! SyntaxPassOnly()) {
                     deleteContinueBreakLabelSymbol(BREAK_LABEL_NAME);
                     deleteContinueBreakLabelSymbol(CONTINUE_LABEL_NAME);
-                    genInternalLabelReference(yyvsp[-1].ast_intPair.d.i1, UsageUsed);
-                    genInternalLabelReference(yyvsp[-1].ast_intPair.d.i2, UsageDefined);
+                    generateInternalLabelReference(yyvsp[-1].ast_intPair.d.i1, UsageUsed);
+                    generateInternalLabelReference(yyvsp[-1].ast_intPair.d.i2, UsageDefined);
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_intPair, yyvsp[0].ast_position);
                 }
@@ -5572,7 +5572,7 @@ case 328:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference(-1, UsageUsed);
+                    generateInternalLabelReference(-1, UsageUsed);
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
                 }
@@ -5584,7 +5584,7 @@ case 329:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference(-1, UsageUsed);
+                    generateInternalLabelReference(-1, UsageUsed);
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-1].ast_position, yyvsp[0].ast_position);
                 }
@@ -5631,7 +5631,7 @@ case 336:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        genInternalLabelReference(yyvsp[-2].ast_integer.d, UsageDefined);
+                        generateInternalLabelReference(yyvsp[-2].ast_integer.d, UsageDefined);
                     }
                 }
             }
@@ -5674,7 +5674,7 @@ case 341:
 {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        genInternalLabelReference(yyvsp[-4].ast_integer.d, UsageDefined);
+                        generateInternalLabelReference(yyvsp[-4].ast_integer.d, UsageDefined);
                     } else {
                         PropagateBoundaries(yyval.ast_position, yyvsp[-8].ast_id, yyvsp[-1].ast_position);
                     }
@@ -5701,7 +5701,7 @@ case 343:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference(yyvsp[-1].ast_integer.d, UsageDefined);
+                    generateInternalLabelReference(yyvsp[-1].ast_integer.d, UsageDefined);
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-2].ast_position, yyvsp[0].ast_position);
                 }

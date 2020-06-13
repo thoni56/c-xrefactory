@@ -14,7 +14,7 @@ void extractActionOnBlockMarker(void) {
   mock();
 }
 
-void genInternalLabelReference(int counter, int usage) {
+void generateInternalLabelReference(int counter, int usage) {
   mock(counter, usage);
 }
 

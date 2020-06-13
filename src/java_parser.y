@@ -1917,7 +1917,7 @@ ConstructorDeclaration
                         stackMemoryBlockStart();  // in order to remove arguments
                         s_cp.function = mh; /* added for set-target-position checks */
                         /* also needed for pushing label reference */
-                        genInternalLabelReference(-1, UsageDefined);
+                        generateInternalLabelReference(-1, UsageDefined);
                         s_count.localVar = 0;
                         assert($2.d && $2.d->u.type);
                         javaAddMethodParametersToSymTable($2.d);
@@ -2444,7 +2444,7 @@ IfThenStatement
     :   IF '(' Expression ')' _nfork_ Statement                     {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference($5.d, UsageDefined);
+                    generateInternalLabelReference($5.d, UsageDefined);
                 } else {
                     PropagateBoundaries($$, $1, $6);
                 }
@@ -2456,7 +2456,7 @@ IfThenElseStatementPrefix
     :   IF '(' Expression ')' _nfork_ StatementNoShortIf ELSE _ngoto_ {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference($5.d, UsageDefined);
+                    generateInternalLabelReference($5.d, UsageDefined);
                     $$.d = $8.d;
                 } else {
                     PropagateBoundaries($$, $1, $7);
@@ -2469,7 +2469,7 @@ IfThenElseStatement
     :   IfThenElseStatementPrefix Statement {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference($1.d, UsageDefined);
+                    generateInternalLabelReference($1.d, UsageDefined);
                 } else {
                     PropagateBoundaries($$, $1, $2);
                 }
@@ -2481,7 +2481,7 @@ IfThenElseStatementNoShortIf
     :   IfThenElseStatementPrefix StatementNoShortIf {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference($1.d, UsageDefined);
+                    generateInternalLabelReference($1.d, UsageDefined);
                 } else {
                     PropagateBoundaries($$, $1, $2);
                 }
@@ -2500,7 +2500,7 @@ SwitchStatement
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     $<symbol>$ = addContinueBreakLabelSymbol($5.d, BREAK_LABEL_NAME);
-                    genInternalLabelReference($5.d, UsageFork);
+                    generateInternalLabelReference($5.d, UsageFork);
                 }
             }
         }   SwitchBlock                     {
@@ -2509,7 +2509,7 @@ SwitchStatement
                     genSwitchCaseFork(1);
                     ExtrDeleteContBreakSym($<symbol>7);
                     ExtrDeleteContBreakSym($<symbol>6);
-                    genInternalLabelReference($5.d, UsageDefined);
+                    generateInternalLabelReference($5.d, UsageDefined);
                 } else {
                     PropagateBoundaries($$, $1, $8);
                 }
@@ -2597,8 +2597,8 @@ WhileStatement
                     if ($1.d != NULL) {
                         ExtrDeleteContBreakSym($1.d->i4);
                         ExtrDeleteContBreakSym($1.d->i3);
-                        genInternalLabelReference($1.d->i1, UsageUsed);
-                        genInternalLabelReference($1.d->i2, UsageDefined);
+                        generateInternalLabelReference($1.d->i1, UsageUsed);
+                        generateInternalLabelReference($1.d->i2, UsageDefined);
                     }
                 } else {
                     PropagateBoundaries($$, $1, $2);
@@ -2614,8 +2614,8 @@ WhileStatementNoShortIf
                     if ($1.d != NULL) {
                         ExtrDeleteContBreakSym($1.d->i4);
                         ExtrDeleteContBreakSym($1.d->i3);
-                        genInternalLabelReference($1.d->i1, UsageUsed);
-                        genInternalLabelReference($1.d->i2, UsageDefined);
+                        generateInternalLabelReference($1.d->i1, UsageUsed);
+                        generateInternalLabelReference($1.d->i2, UsageDefined);
                     }
                 } else {
                     PropagateBoundaries($$, $1, $2);
@@ -2642,14 +2642,14 @@ DoStatement
                 if (! SyntaxPassOnly()) {
                     ExtrDeleteContBreakSym($<symbol>6);
                     ExtrDeleteContBreakSym($<symbol>5);
-                    genInternalLabelReference($3.d, UsageDefined);
+                    generateInternalLabelReference($3.d, UsageDefined);
                 }
             }
         } '(' Expression ')' ';'			{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference($2.d, UsageFork);
-                    genInternalLabelReference($4.d, UsageDefined);
+                    generateInternalLabelReference($2.d, UsageFork);
+                    generateInternalLabelReference($4.d, UsageDefined);
                 } else {
                     PropagateBoundaries($$, $1, $13);
                 }
@@ -2684,8 +2684,8 @@ ForStatementPrefix
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     Symbol *ss __attribute__((unused));
-                    genInternalLabelReference($4.d, UsageUsed);
-                    genInternalLabelReference($7.d, UsageDefined);
+                    generateInternalLabelReference($4.d, UsageUsed);
+                    generateInternalLabelReference($7.d, UsageDefined);
                     ss = addContinueBreakLabelSymbol($8.d, CONTINUE_LABEL_NAME);
                     ss = addContinueBreakLabelSymbol($11.d, BREAK_LABEL_NAME);
                     $$.d.i1 = $8.d;
@@ -2703,8 +2703,8 @@ ForStatementBody
                 if (! SyntaxPassOnly()) {
                     deleteContinueBreakLabelSymbol(BREAK_LABEL_NAME);
                     deleteContinueBreakLabelSymbol(CONTINUE_LABEL_NAME);
-                    genInternalLabelReference($1.d.i1, UsageUsed);
-                    genInternalLabelReference($1.d.i2, UsageDefined);
+                    generateInternalLabelReference($1.d.i1, UsageUsed);
+                    generateInternalLabelReference($1.d.i2, UsageDefined);
                 } else {
                     PropagateBoundaries($$, $1, $2);
                 }
@@ -2718,8 +2718,8 @@ ForStatementNoShortIfBody
                 if (! SyntaxPassOnly()) {
                     deleteContinueBreakLabelSymbol(BREAK_LABEL_NAME);
                     deleteContinueBreakLabelSymbol(CONTINUE_LABEL_NAME);
-                    genInternalLabelReference($1.d.i1, UsageUsed);
-                    genInternalLabelReference($1.d.i2, UsageDefined);
+                    generateInternalLabelReference($1.d.i1, UsageUsed);
+                    generateInternalLabelReference($1.d.i2, UsageDefined);
                 } else {
                     PropagateBoundaries($$, $1, $2);
                 }
@@ -2832,7 +2832,7 @@ ReturnStatement
     :   RETURN Expression ';'			{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference(-1, UsageUsed);
+                    generateInternalLabelReference(-1, UsageUsed);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }
@@ -2841,7 +2841,7 @@ ReturnStatement
     |	RETURN ';'						{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference(-1, UsageUsed);
+                    generateInternalLabelReference(-1, UsageUsed);
                 } else {
                     PropagateBoundaries($$, $1, $2);
                 }
@@ -2889,7 +2889,7 @@ TryStatement
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        genInternalLabelReference($2.d, UsageDefined);
+                        generateInternalLabelReference($2.d, UsageDefined);
                     }
                 }
             }
@@ -2930,7 +2930,7 @@ CatchClause
             {
                 if (regularPass()) {
                     if (! SyntaxPassOnly()) {
-                        genInternalLabelReference($5.d, UsageDefined);
+                        generateInternalLabelReference($5.d, UsageDefined);
                     } else {
                         PropagateBoundaries($$, $1, $8);
                     }
@@ -2954,7 +2954,7 @@ Finally
     :   FINALLY _nfork_ Block {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genInternalLabelReference($2.d, UsageDefined);
+                    generateInternalLabelReference($2.d, UsageDefined);
                 } else {
                     PropagateBoundaries($$, $1, $3);
                 }

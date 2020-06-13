@@ -3783,19 +3783,19 @@ break;
 case 292:
 #line 1506 "c_parser.y"
 {
-        genInternalLabelReference(yyvsp[-1].ast_integer.d, UsageDefined);
+        generateInternalLabelReference(yyvsp[-1].ast_integer.d, UsageDefined);
     }
 break;
 case 293:
 #line 1509 "c_parser.y"
 {
-        genInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
+        generateInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
     }
 break;
 case 294:
 #line 1511 "c_parser.y"
 {
-        genInternalLabelReference(yyvsp[-2].ast_integer.d, UsageDefined);
+        generateInternalLabelReference(yyvsp[-2].ast_integer.d, UsageDefined);
     }
 break;
 case 295:
@@ -3808,7 +3808,7 @@ case 296:
 #line 1516 "c_parser.y"
 {/*7*/
         yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-1].ast_integer.d, BREAK_LABEL_NAME);
-        genInternalLabelReference(yyvsp[-1].ast_integer.d, UsageFork);
+        generateInternalLabelReference(yyvsp[-1].ast_integer.d, UsageFork);
     }
 break;
 case 297:
@@ -3817,7 +3817,7 @@ case 297:
         genSwitchCaseFork(1);
         ExtrDeleteContBreakSym(yyvsp[-1].symbol);
         ExtrDeleteContBreakSym(yyvsp[-2].symbol);
-        genInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
+        generateInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
     }
 break;
 case 298:
@@ -3841,8 +3841,8 @@ case 301:
 {
         ExtrDeleteContBreakSym(yyvsp[-1].symbol);
         ExtrDeleteContBreakSym(yyvsp[-2].symbol);
-        genInternalLabelReference(yyvsp[-7].ast_integer.d, UsageUsed);
-        genInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
+        generateInternalLabelReference(yyvsp[-7].ast_integer.d, UsageUsed);
+        generateInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
     }
 break;
 case 302:
@@ -3862,22 +3862,22 @@ case 304:
 {
         ExtrDeleteContBreakSym(yyvsp[-2].symbol);
         ExtrDeleteContBreakSym(yyvsp[-3].symbol);
-        genInternalLabelReference(yyvsp[-5].ast_integer.d, UsageDefined);
+        generateInternalLabelReference(yyvsp[-5].ast_integer.d, UsageDefined);
     }
 break;
 case 305:
 #line 1552 "c_parser.y"
 {
-        genInternalLabelReference(yyvsp[-11].ast_integer.d, UsageFork);
-        genInternalLabelReference(yyvsp[-9].ast_integer.d, UsageDefined);
+        generateInternalLabelReference(yyvsp[-11].ast_integer.d, UsageFork);
+        generateInternalLabelReference(yyvsp[-9].ast_integer.d, UsageDefined);
     }
 break;
 case 306:
 #line 1560 "c_parser.y"
 {
         /*13*/
-        genInternalLabelReference(yyvsp[-7].ast_integer.d, UsageUsed);
-        genInternalLabelReference(yyvsp[-4].ast_integer.d, UsageDefined);
+        generateInternalLabelReference(yyvsp[-7].ast_integer.d, UsageUsed);
+        generateInternalLabelReference(yyvsp[-4].ast_integer.d, UsageDefined);
         yyval.symbol = addContinueBreakLabelSymbol(yyvsp[-3].ast_integer.d, CONTINUE_LABEL_NAME);
         }
 break;
@@ -3892,8 +3892,8 @@ case 308:
 {
         ExtrDeleteContBreakSym(yyvsp[-1].symbol);
         ExtrDeleteContBreakSym(yyvsp[-2].symbol);
-        genInternalLabelReference(yyvsp[-6].ast_integer.d, UsageUsed);
-        genInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
+        generateInternalLabelReference(yyvsp[-6].ast_integer.d, UsageUsed);
+        generateInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
         }
 break;
 case 312:
@@ -3911,13 +3911,13 @@ break;
 case 314:
 #line 1588 "c_parser.y"
 {
-        genInternalLabelReference(-1, UsageUsed);
+        generateInternalLabelReference(-1, UsageUsed);
     }
 break;
 case 315:
 #line 1591 "c_parser.y"
 {
-        genInternalLabelReference(-1, UsageUsed);
+        generateInternalLabelReference(-1, UsageUsed);
     }
 break;
 case 316:
@@ -3971,7 +3971,7 @@ case 337:
         s_count.localVar = 0;
         assert(yyvsp[0].ast_symbol.d->u.type && yyvsp[0].ast_symbol.d->u.type->kind == TypeFunction);
         s_cp.function = yyvsp[0].ast_symbol.d;
-        genInternalLabelReference(-1, UsageDefined);
+        generateInternalLabelReference(-1, UsageDefined);
         for(p=yyvsp[0].ast_symbol.d->u.type->u.f.args,i=1; p!=NULL; p=p->next,i++) {
             if (p->bits.symType == TypeElipsis) continue;
             if (p->u.type == NULL) p->u.type = &s_defaultIntModifier;
