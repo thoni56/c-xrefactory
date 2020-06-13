@@ -2291,15 +2291,15 @@ static void mainFileProcessingInitialisations(
     else dffstat.st_mtime = oldStdopTime;               // !!! just for now
     //&fprintf(dumpOut,"checking oldcp==%s\n",oldOnLineClassPath);
     //&fprintf(dumpOut,"checking newcp==%s\n",options.classpath);
-    if (    *firstPass
-            || oldCppPass != s_currCppPass
-            || strcmp(oldStdopFile,dffname)
-            || strcmp(oldStdopSection,dffsect)
-            || oldStdopTime != dffstat.st_mtime
-            || oldLanguage!= *outLanguage
-            || strcmp(oldOnLineClassPath, options.classpath)
-            || s_cache.cpi == 1     /* some kind of reset was made */
-            ) {
+    if (*firstPass
+        || oldCppPass != s_currCppPass
+        || strcmp(oldStdopFile,dffname)
+        || strcmp(oldStdopSection,dffsect)
+        || oldStdopTime != dffstat.st_mtime
+        || oldLanguage!= *outLanguage
+        || strcmp(oldOnLineClassPath, options.classpath)
+        || s_cache.cpi == 1     /* some kind of reset was made */
+    ) {
         if (*firstPass) {
             initCaching();
             *firstPass = 0;
@@ -2912,16 +2912,16 @@ static bool mainSymbolCanBeIdentifiedByPosition(int fnum) {
     return true;
 }
 
-static void mainEditSrvFileSingleCppPass( int argc, char **argv,
-                                          int nargc, char **nargv,
-                                          int *firstPassing
-                                          ) {
+static void mainEditSrvFileSingleCppPass(int argc, char **argv,
+                                         int nargc, char **nargv,
+                                         int *firstPass
+) {
     int inputIn;
     int ol2procfile;
 
     inputIn = 0;
     s_olStringSecondProcessing = 0;
-    mainFileProcessingInitialisations(firstPassing, argc, argv,
+    mainFileProcessingInitialisations(firstPass, argc, argv,
                                       nargc, nargv, &inputIn, &s_language);
     smartReadFileTabFile();
     s_olOriginalFileNumber = s_input_file_number;
@@ -2929,7 +2929,7 @@ static void mainEditSrvFileSingleCppPass( int argc, char **argv,
         mainCloseInputFile(inputIn);
         return;
     }
-    mainEditSrvParseInputFile( firstPassing, inputIn);
+    mainEditSrvParseInputFile(firstPass, inputIn);
     if (options.olCursorPos==0 && !LANGUAGE(LANG_JAVA)) {
         // special case, push the file as include reference
         if (creatingOlcxRefs()) {
@@ -2946,25 +2946,25 @@ static void mainEditSrvFileSingleCppPass( int argc, char **argv,
             s_input_file_name = s_fileTab.tab[ol2procfile]->name;
             inputIn = 0;
             s_olStringSecondProcessing=1;
-            mainFileProcessingInitialisations(firstPassing, argc, argv,
+            mainFileProcessingInitialisations(firstPass, argc, argv,
                                               nargc, nargv, &inputIn, &s_language);
-            mainEditSrvParseInputFile( firstPassing, inputIn);
+            mainEditSrvParseInputFile( firstPass, inputIn);
         }
     }
 }
 
 
-static void mainEditServerProcessFile( int argc, char **argv,
-                                       int nargc, char **nargv,
-                                       int *firstPassing
-                                       ) {
+static void mainEditServerProcessFile(int argc, char **argv,
+                                      int nargc, char **nargv,
+                                      int *firstPass
+) {
     assert(s_fileTab.tab[s_olOriginalComFileNumber]->b.scheduledToProcess);
     s_cppPassMax = 1;           /* WTF? */
     s_currCppPass = 1;
     for(s_currCppPass=1; s_currCppPass<=s_cppPassMax; s_currCppPass++) {
         s_input_file_name = s_fileTab.tab[s_olOriginalComFileNumber]->name;
         assert(s_input_file_name!=NULL);
-        mainEditSrvFileSingleCppPass( argc, argv, nargc, nargv, firstPassing);
+        mainEditSrvFileSingleCppPass(argc, argv, nargc, nargv, firstPass);
         if (options.server_operation==OLO_EXTRACT
             || (s_olstringServed && ! creatingOlcxRefs()))
             goto fileParsed; /* TODO: break? */
@@ -3263,9 +3263,8 @@ void mainCallEditServerInit(int nargc, char **nargv) {
 
 void mainCallEditServer(int argc, char **argv,
                         int nargc, char **nargv,
-                        int *firstPassing
-                        ) {
-
+                        int *firstPass
+) {
     ENTER();
     editorLoadAllOpenedBufferFiles();
     olcxSetCurrentUser(options.user);
@@ -3274,7 +3273,7 @@ void mainCallEditServer(int argc, char **argv,
         if (presetEditServerFileDependingStatics() == NULL) {
             errorMessage(ERR_ST, "No input file");
         } else {
-            mainEditServerProcessFile(argc,argv,nargc,nargv,firstPassing);
+            mainEditServerProcessFile(argc, argv, nargc, nargv, firstPass);
         }
     } else {
         if (presetEditServerFileDependingStatics() != NULL) {

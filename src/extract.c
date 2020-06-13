@@ -130,11 +130,13 @@ void genSwitchCaseFork(int lastFlag) {
     }
 }
 
-static S_programGraphNode *newProgramGraphNode(Reference *ref, SymbolReferenceItem *symRef,
-                                               S_programGraphNode *jump, char posBits,
-                                               char stateBits,
-                                               char classifBits,
-                                               S_programGraphNode *next) {
+static S_programGraphNode *newProgramGraphNode(
+    Reference *ref, SymbolReferenceItem *symRef,
+    S_programGraphNode *jump, char posBits,
+    char stateBits,
+    char classifBits,
+    S_programGraphNode *next
+) {
     S_programGraphNode *programGraph;
 
     CX_ALLOC(programGraph, S_programGraphNode);

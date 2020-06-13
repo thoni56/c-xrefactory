@@ -56,7 +56,7 @@ typedef struct disabledList {
 
 static S_editorUndo *s_refactoringStartPoint;
 
-static int s_refactoryXrefEditSrvSubTaskFirstPassing = 1;
+static int refactoryXrefEditServerSubTaskFirstPass = 1;
 
 static char *s_refactoryEditSrvInitOptions[] = {
     "xref",
@@ -223,7 +223,7 @@ static void refactoryUpdateReferences(char *project) {
     // return into editSubTaskState
     mainTaskEntryInitialisations(argument_count(s_refactoryEditSrvInitOptions),
                                  s_refactoryEditSrvInitOptions);
-    s_refactoryXrefEditSrvSubTaskFirstPassing = 1;
+    refactoryXrefEditServerSubTaskFirstPass = 1;
     return;
 }
 
@@ -231,9 +231,10 @@ static void refactoryEditServerParseBuffer(char *project,
                                            EditorBuffer *buf,
                                            EditorMarker *point, EditorMarker *mark,
                                            char *pushOption, char *pushOption2
-                                           ) {
-    char                *nargv[MAX_NARGV_OPTIONS_NUM];
-    int                 nargc;
+) {
+    char *nargv[MAX_NARGV_OPTIONS_NUM];
+    int nargc;
+
     s_currCppPass = ANY_CPP_PASS;
     // this probably creates a memory leak in options
     // is it necessary? Try to put it in comment [2/8/2003]
@@ -252,7 +253,7 @@ static void refactoryEditServerParseBuffer(char *project,
     mainCallEditServerInit(nargc, nargv);
     mainCallEditServer(argument_count(s_refactoryEditSrvInitOptions),
                        s_refactoryEditSrvInitOptions,
-                       nargc, nargv, &s_refactoryXrefEditSrvSubTaskFirstPassing);
+                       nargc, nargv, &refactoryXrefEditServerSubTaskFirstPass);
 }
 
 static void refactoryBeInteractive(void) {
@@ -274,7 +275,7 @@ static void refactoryBeInteractive(void) {
         if (options.continueRefactoring) break;
         mainCallEditServer(argument_count(s_refactoryEditSrvInitOptions),
                            s_refactoryEditSrvInitOptions,
-                           pargc, pargv, &s_refactoryXrefEditSrvSubTaskFirstPassing);
+                           pargc, pargv, &refactoryXrefEditServerSubTaskFirstPass);
         mainAnswerEditAction();
     }
 }
@@ -4498,7 +4499,7 @@ void mainRefactory(int argc, char **argv) {
     // init subtask
     mainTaskEntryInitialisations(argument_count(s_refactoryEditSrvInitOptions),
                                  s_refactoryEditSrvInitOptions);
-    s_refactoryXrefEditSrvSubTaskFirstPassing = 1;
+    refactoryXrefEditServerSubTaskFirstPass = 1;
 
     s_progressFactor = 1;
     /* TODO: this should be a switch but the PPC_values are not constants... */

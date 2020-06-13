@@ -54,8 +54,8 @@ void mainCallEditServerInit(int nargc, char **nargv) {
   mock(nargc, nargv);
 }
 
-void mainCallEditServer(int argc, char **argv, int nargc, char **nargv, int *firstPassing) {
-  mock(argc, argv, nargc, nargv, firstPassing);
+void mainCallEditServer(int argc, char **argv, int nargc, char **nargv, int *firstPass) {
+  mock(argc, argv, nargc, nargv, firstPass);
 }
 
 void mainCallXref(int argc, char **argv) {

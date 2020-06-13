@@ -1123,11 +1123,12 @@ static char *spComplFindNextRecord(S_exprTokenType *tok) {
     return(res);
 }
 
-static int isForCompletionSymbol(Completions *c,
-                                 S_exprTokenType *token,
-                                 Symbol **sym,
-                                 char   **nextRecord
-                                 ) {
+static int isForCompletionSymbol(
+    Completions *c,
+    S_exprTokenType *token,
+    Symbol **sym,
+    char   **nextRecord
+) {
     Symbol    *sy;
 
     if (options.server_operation != OLO_COMPLETION)  return(0);
