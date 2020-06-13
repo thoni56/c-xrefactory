@@ -30,7 +30,7 @@ jslsemact_tests.so: $(OBJDIR)/jslsemact_tests.o $(OBJDIR)/jslsemact.o $(OBJDIR)/
 olcxtab_tests.so: $(OBJDIR)/olcxtab_tests.o $(OBJDIR)/olcxtab.o $(OBJDIR)/hash.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-filetab_tests.so: $(OBJDIR)/filetab_tests.o $(OBJDIR)/filetab.o $(OBJDIR)/hash.o $(OBJDIR)/fileitem.o
+filetable_tests.so: $(OBJDIR)/filetable_tests.o $(OBJDIR)/filetable.o $(OBJDIR)/hash.o $(OBJDIR)/fileitem.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 symbol_tests.so: $(OBJDIR)/symbol_tests.o $(OBJDIR)/symbol.o
@@ -56,7 +56,7 @@ OPTIONS_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(OPTIONS_DEPENDENCIES))
 options_tests.so: $(OBJDIR)/options_tests.o $(OBJDIR)/options.o $(OPTIONS_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-YYLEX_DEPENDENCIES = protocol log position filedescriptor id filetab hash fileitem symboltable macroargumenttable symbol
+YYLEX_DEPENDENCIES = protocol log position filedescriptor id filetable hash fileitem symboltable macroargumenttable symbol
 YYLEX_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(YYLEX_DEPENDENCIES))
 yylex_tests.so: $(OBJDIR)/yylex_tests.o $(OBJDIR)/yylex.o $(YYLEX_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)

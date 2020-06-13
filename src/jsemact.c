@@ -293,8 +293,8 @@ bool javaTypeFileExist(IdList *name) {
     fname = javaCreateComposedName(":", &tname, '/', "class", tmpMemory, SIZE_TMP_MEM);
     fname[1] = ZIP_SEPARATOR_CHAR;
 
-    if  (fileTabExists(&fileTable, fname+1)) {
-        int fileIndex = fileTabLookup(&fileTable, fname+1);
+    if (fileTableExists(&fileTable, fname+1)) {
+        int fileIndex = fileTableLookup(&fileTable, fname+1);
         if (fileTable.tab[fileIndex]->b.sourceFileNumber != s_noneFileIndex) {
             return true;
         }

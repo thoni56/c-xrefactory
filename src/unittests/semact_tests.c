@@ -5,7 +5,7 @@
 
 #include "globals.mock"
 #include "caching.mock"
-#include "filetab.mock"
+#include "filetable.mock"
 #include "jsemact.mock"
 #include "jslsemact.mock"
 #include "classfilereader.mock"

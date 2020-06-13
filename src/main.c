@@ -2405,7 +2405,7 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
     options.includeDirs = NULL;
     SM_INIT(ftMemory);
     FT_ALLOCC(fileTable.tab, MAX_FILES, struct fileItem *);
-    initFileTab(&fileTable);
+    initFileTable(&fileTable);
     fillPosition(&s_noPos, s_noneFileIndex, 0, 0);
     fillUsageBits(&s_noUsage, UsageNone, 0);
     fill_reference(&s_noRef, s_noUsage, s_noPos, NULL);
@@ -2439,7 +2439,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     s_fileAbortionEnabled = 0;
 
     // supposing that file table is still here, but reinit it
-    fileTabMap(&fileTable, mainReinitFileTabEntry);
+    fileTableMap(&fileTable, mainReinitFileTabEntry);
 
     DM_INIT(cxMemory);
     // the following causes long jump, berk.
@@ -2711,11 +2711,11 @@ static void scheduleModifiedFilesToUpdate(void) {
     }
     if (statb(filestab, &refStat)) refStat.st_mtime = 0;
     scanReferenceFile(options.cxrefFileName, suffix,"", normalScanFunctionSequence);
-    fileTabMap2(&fileTable, schedulingToUpdate, &refStat);
+    fileTableMap2(&fileTable, schedulingToUpdate, &refStat);
     if (options.update==UP_FULL_UPDATE /*& && !LANGUAGE(LANG_JAVA) &*/) {
         makeIncludeClosureOfFilesToUpdate();
     }
-    fileTabMap(&fileTable, schedulingUpdateToProcess);
+    fileTableMap(&fileTable, schedulingUpdateToProcess);
 }
 
 
@@ -3151,7 +3151,7 @@ void mainCallXref(int argc, char **argv) {
         }
         if (options.taskRegime==RegimeXref) {
             if (options.update==0 || options.update==UP_FULL_UPDATE) {
-                fileTabMap(&fileTable, setFullUpdateMtimesInFileTab);
+                fileTableMap(&fileTable, setFullUpdateMtimesInFileTab);
             }
             if (options.xref2) {
                 char tmpBuff[TMP_BUFF_SIZE];

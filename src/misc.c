@@ -1465,7 +1465,7 @@ void jarFileParse(char *file_name) {
     int archive, fileIndex;
 
     archive = zipIndexArchive(file_name);
-    assert(fileTabExists(&fileTable, file_name)); /* Filename has to exist in the table */
+    assert(fileTableExists(&fileTable, file_name)); /* Filename has to exist in the table */
     fileIndex = addFileTabItem(s_input_file_name);
     checkFileModifiedTime(fileIndex);
     // set loading to 1, no matter whether saved (by overflow) or not

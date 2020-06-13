@@ -4,13 +4,13 @@
 #include "proto.h"
 #include "fileitem.h"
 
-#define HASH_TAB_NAME fileTab
-#define HASH_TAB_TYPE FileTab
+#define HASH_TAB_NAME fileTable
+#define HASH_TAB_TYPE FileTable
 #define HASH_ELEM_TYPE FileItem
 
 #include "hashtab.th"
 
-#ifndef _FILETAB_
+#ifndef _IN_FILETAB_C_
 #undef HASH_TAB_NAME
 #undef HASH_ELEM_TYPE
 #endif
@@ -18,14 +18,14 @@
 #define NON_FILE_NAME "___None___"
 
 
-extern FileTab fileTable;
+extern FileTable fileTable;
 
 /* Index into file table for the "NON FILE" */
 extern int s_noneFileIndex;
 
 
-extern void initFileTab(FileTab *table);
-extern bool fileTabExists(FileTab *table, char *fileName);
-extern int fileTabLookup(FileTab *table, char *fileName);
+extern void initFileTable(FileTable *table);
+extern bool fileTableExists(FileTable *table, char *fileName);
+extern int fileTableLookup(FileTable *table, char *fileName);
 
 #endif

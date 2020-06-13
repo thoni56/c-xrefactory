@@ -1,7 +1,7 @@
 #include "fileitem.h"
 
 #include <string.h>
-#include "filetab.h"
+#include "filetable.h"
 
 
 void fillFileItem(FileItem *item, char *name, bool fromCommandLine) {

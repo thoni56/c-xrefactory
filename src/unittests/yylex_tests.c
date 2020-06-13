@@ -5,7 +5,7 @@
 void processDefine(bool argFlag);
 
 #include "filedescriptor.h"
-#include "filetab.h"
+#include "filetable.h"
 #include "fileitem.h"
 #include "symboltable.h"
 #include "macroargumenttable.h"
@@ -37,7 +37,7 @@ void processDefine(bool argFlag);
 Describe(Yylex);
 BeforeEach(Yylex) {
     ppMemInit();
-    initFileTab(&fileTable);
+    initFileTable(&fileTable);
     XX_ALLOC(s_symbolTable, S_symbolTable);
     symbolTableInit(s_symbolTable, 10);
 }

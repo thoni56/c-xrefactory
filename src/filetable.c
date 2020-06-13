@@ -1,5 +1,5 @@
-#define _FILETAB_
-#include "filetab.h"
+#define _IN_FILETAB_C_
+#include "filetable.h"
 
 #include "commons.h"
 #include "hash.h"
@@ -21,12 +21,12 @@
 #include "hashtab.tc"
 
 
-FileTab fileTable;
+FileTable fileTable;
 
 int s_noneFileIndex = -1;
 
 
-void initFileTab(FileTab *fileTable) {
+void initFileTable(FileTable *fileTable) {
     int len;
     char *fileName;
     struct fileItem *fileItem;
@@ -34,7 +34,7 @@ void initFileTab(FileTab *fileTable) {
     SM_INIT(ftMemory);
     FT_ALLOCC(fileTable->tab, MAX_FILES, struct fileItem *);
 
-    fileTabNoAllocInit(fileTable, MAX_FILES);
+    fileTableNoAllocInit(fileTable, MAX_FILES);
 
     /* Create a "NON_FILE" in FT memory */
     len = strlen(NON_FILE_NAME);
@@ -44,7 +44,7 @@ void initFileTab(FileTab *fileTable) {
     fillFileItem(fileItem, fileName, false);
 
     /* Add it to the fileTab and remember its index for future use */
-    s_noneFileIndex = fileTabAdd(fileTable, fileItem);
+    s_noneFileIndex = fileTableAdd(fileTable, fileItem);
 }
 
 
@@ -52,7 +52,7 @@ void initFileTab(FileTab *fileTable) {
    fileTabIsMember() does. It can't be made into a hashtab macro since
    it knows about how filenames are stored and compared. So there is
    some duplication here, since this is also looking up things. */
-int fileTabLookup(FileTab *table, char *fileName) {
+int fileTableLookup(FileTable *table, char *fileName) {
     unsigned posid;
 
     posid = hashFun(fileName);
@@ -67,6 +67,6 @@ int fileTabLookup(FileTab *table, char *fileName) {
     return -1;                  /* Not found */
 }
 
-bool fileTabExists(FileTab *table, char *fileName) {
-    return fileTabLookup(table, fileName) != -1;
+bool fileTableExists(FileTable *table, char *fileName) {
+    return fileTableLookup(table, fileName) != -1;
 }

@@ -6,7 +6,7 @@
 #include "misc.mock"
 #include "globals.mock"
 #include "editorbuffertab.mock"
-#include "filetab.mock"
+#include "filetable.mock"
 #include "cxref.mock"
 #include "commons.mock"
 #include "fileio.mock"

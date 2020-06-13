@@ -1,6 +1,6 @@
 #include <cgreen/cgreen.h>
 
-#include "filetab.mock"
+#include "filetable.mock"
 
 Id s_javaAnonymousClassName = {"{Anonymous}", NULL, {-1,0,0}};
 Id s_javaConstructorName = {"<init>", NULL, {-1,0,0}};

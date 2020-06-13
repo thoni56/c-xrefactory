@@ -10,7 +10,7 @@
 #include "utils.mock"
 #include "jslsemact.mock"
 #include "yylex.mock"
-#include "filetab.mock"
+#include "filetable.mock"
 #include "filedescriptor.mock"
 #include "zlib.mock"
 #include "fileio.mock"

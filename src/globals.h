@@ -3,7 +3,7 @@
 
 #include "constants.h"
 #include "symboltable.h"
-#include "filetab.h"
+#include "filetable.h"
 
 
 typedef struct int2StringTable {

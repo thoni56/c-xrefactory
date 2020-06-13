@@ -3107,7 +3107,7 @@ int getFileNumberFromName(char *name) {
     int fileIndex;
 
     normalizedName = normalizeFileName(name, s_cwd);
-    if ((fileIndex = fileTabLookup(&fileTable, normalizedName)) != -1) {
+    if ((fileIndex = fileTableLookup(&fileTable, normalizedName)) != -1) {
         return fileIndex;
     } else {
         return s_noneFileIndex;
@@ -3498,8 +3498,8 @@ int getClassNumFromClassLinkName(char *name, int defaultResult) {
     fileIndex = defaultResult;
     SPRINT_FILE_TAB_CLASS_NAME(classFileName, name);
     log_trace("looking for class file '%s'", classFileName);
-    if (fileTabExists(&fileTable, classFileName))
-        fileIndex = fileTabLookup(&fileTable, classFileName);
+    if (fileTableExists(&fileTable, classFileName))
+        fileIndex = fileTableLookup(&fileTable, classFileName);
 
     return fileIndex;
 }

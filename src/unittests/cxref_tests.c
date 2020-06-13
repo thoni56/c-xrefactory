@@ -4,7 +4,7 @@
 
 /* Dependencies: */
 #include "filedescriptor.mock"
-#include "filetab.mock"
+#include "filetable.mock"
 #include "olcxtab.mock"
 #include "globals.mock"
 #include "cxfile.mock"
@@ -35,7 +35,7 @@ AfterEach(CxRef) {}
 Ensure(CxRef, get_class_num_from_class_linkname_will_return_default_value_if_not_member) {
     int defaultValue = 14;
 
-    expect(fileTabExists,
+    expect(fileTableExists,
            when(fileName, is_equal_to_string(";name.class")),
            will_return(false));
 
@@ -46,10 +46,10 @@ Ensure(CxRef, get_class_num_from_class_linkname_will_return_filenumber_if_member
     int defaultValue = 14;
     int position = 42;
 
-    expect(fileTabExists,
+    expect(fileTableExists,
            when(fileName, is_equal_to_string(";name.class")),
            will_return(true));
-    expect(fileTabLookup, will_return(position));
+    expect(fileTableLookup, will_return(position));
 
     assert_that(getClassNumFromClassLinkName("name", defaultValue), is_equal_to(position));
 }

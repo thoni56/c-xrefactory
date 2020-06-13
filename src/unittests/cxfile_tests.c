@@ -10,7 +10,7 @@
 #include "cxref.mock"
 #include "html.mock"
 #include "reftab.mock"
-#include "filetab.mock"
+#include "filetable.mock"
 #include "options.mock"
 #include "yylex.mock"
 #include "lexer.mock"

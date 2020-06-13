@@ -168,8 +168,8 @@ int addFileTabItem(char *name) {
     normalizedFileName = normalizeFileName(name,s_cwd);
 
     /* Does it already exist? */
-    if (fileTabExists(&fileTable, normalizedFileName))
-        return fileTabLookup(&fileTable, normalizedFileName);
+    if (fileTableExists(&fileTable, normalizedFileName))
+        return fileTableLookup(&fileTable, normalizedFileName);
 
     /* If not, add it, but then we need a filename and a fileitem in FT-memory  */
     len = strlen(normalizedFileName);
@@ -179,7 +179,7 @@ int addFileTabItem(char *name) {
     FT_ALLOC(createdFileItem, FileItem);
     fillFileItem(createdFileItem, fname, false);
 
-    fileIndex = fileTabAdd(&fileTable, createdFileItem);
+    fileIndex = fileTableAdd(&fileTable, createdFileItem);
     checkFileModifiedTime(fileIndex); // it was too slow on load ?
 
     return fileIndex;
@@ -192,7 +192,7 @@ static int getOrCreateFileNumberFor(char *fileName) {
     if (fileName==NULL) {
         fileNumber = s_noneFileIndex;
     } else {
-        existed = fileTabExists(&fileTable, fileName);
+        existed = fileTableExists(&fileTable, fileName);
         fileNumber = addFileTabItem(fileName);
         checkFileModifiedTime(fileNumber);
         cxloading = fileTable.tab[fileNumber]->b.cxLoading;

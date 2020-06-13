@@ -1,0 +1,82 @@
+/* -*- c -*-*/
+#include "filetable.h"
+#include <cgreen/mocks.h>
+
+FileTable fileTable;
+
+int s_noneFileIndex = -1;
+
+void fileTableInit(FileTable *table,
+                   int size
+) {
+    mock(table, size);
+}
+
+void fileTableNAInit(FileTable *table,
+                     int size
+) {
+    mock(table, size);
+}
+
+
+bool fileTableIsMember(FileTable *table,
+                       FileItem *element,
+                       int *position
+) {
+    return (bool)mock(table, element, position);
+}
+
+void fileTableSet(FileTable *table,
+                  FileItem *element,
+                  int position
+) {
+    mock(table, element, position);
+}
+
+int fileTableAdd(FileTable *table,
+                 FileItem *element
+) {
+    return mock(table, element);
+}
+
+void fileTableFree(FileTable *table) {
+    mock(table);
+}
+
+void fileTableMap(FileTable *table,
+                  void (*fun)(FileItem *)
+) {
+    mock(table, fun);
+}
+
+void fileTableMap2(FileTable *table,
+                   void (*fun)(FileItem *, void *),
+                   void *a
+) {
+    mock(table, fun, a);
+}
+
+void fileTableMap4(FileTable *table,
+                   void (*fun)(int, void *, void *),
+                   void *a, void *b
+) {
+    mock(table, fun, a, b);
+}
+
+void fileTableMapWithIndex(FileTable *table,
+                           void (*fun)(FileItem *fileItem, int index)
+) {
+    mock(table, fun);
+}
+
+bool fileTableExists(FileTable *table, char *fileName) {
+    return mock(table, fileName);
+}
+
+int fileTableLookup(FileTable *table, char *fileName) {
+    return mock(table, fileName);
+}
+
+void initFileTable(FileTable *table) {
+    mock(table);
+}
