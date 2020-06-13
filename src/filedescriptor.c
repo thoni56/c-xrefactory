@@ -1,11 +1,12 @@
 #include "filedescriptor.h"
 
-#include "globals.h"            /*& s_noneFileIndex &*/
+#include "filetable.h"
+
 
 FileDescriptor currentFile = {0};
 
-FileDescriptor inStack[INCLUDE_STACK_SIZE];
-int inStacki=0;
+FileDescriptor includeStack[INCLUDE_STACK_SIZE];
+int includeStackPointer = 0;
 
 
 void fillFileDescriptor(FileDescriptor *fileDescriptor, char *fileName, char *bufferStart,
@@ -19,7 +20,6 @@ void fillFileDescriptor(FileDescriptor *fileDescriptor, char *fileName, char *bu
     fileDescriptor->lexBuffer.end = NULL;
     fileDescriptor->lexBuffer.index = 0;
     /* lexbuf: charbuf: */
-    //TODO: might replace with: initCharacterBuffer(&fileDescriptor->lexBuffer.buffer, file);
     fileDescriptor->lexBuffer.buffer.next = bufferStart;
     fileDescriptor->lexBuffer.buffer.end = bufferStart+bufferSize;
     fileDescriptor->lexBuffer.buffer.file = file;
@@ -33,14 +33,14 @@ void fillFileDescriptor(FileDescriptor *fileDescriptor, char *fileName, char *bu
     /* lexbuf: charbuf: z_stream: */
     fileDescriptor->lexBuffer.buffer.zipStream.next_in = NULL;
     fileDescriptor->lexBuffer.buffer.zipStream.avail_in = 0;
-    fileDescriptor->lexBuffer.buffer.zipStream.total_in = 0,		// i;
+    fileDescriptor->lexBuffer.buffer.zipStream.total_in = 0;
     fileDescriptor->lexBuffer.buffer.zipStream.next_out = NULL;
     fileDescriptor->lexBuffer.buffer.zipStream.avail_out = 0;
-    fileDescriptor->lexBuffer.buffer.zipStream.total_out = 0,		// ou;
+    fileDescriptor->lexBuffer.buffer.zipStream.total_out = 0;
     fileDescriptor->lexBuffer.buffer.zipStream.msg = NULL;
     fileDescriptor->lexBuffer.buffer.zipStream.state = NULL;
     fileDescriptor->lexBuffer.buffer.zipStream.zalloc = NULL;
-    fileDescriptor->lexBuffer.buffer.zipStream.zfree = NULL;		// zlibAlloc, zlibFree
+    fileDescriptor->lexBuffer.buffer.zipStream.zfree = NULL;
     fileDescriptor->lexBuffer.buffer.zipStream.opaque = NULL;
     fileDescriptor->lexBuffer.buffer.zipStream.data_type = 0;
     fileDescriptor->lexBuffer.buffer.zipStream.adler = 0;

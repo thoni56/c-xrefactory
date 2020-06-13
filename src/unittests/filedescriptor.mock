@@ -3,6 +3,6 @@
 
 FileDescriptor currentFile = {0};
 
-FileDescriptor inStack[INCLUDE_STACK_SIZE];
+FileDescriptor includeStack[INCLUDE_STACK_SIZE];
 
-int inStacki=0;
+int includeStackPointer=0;

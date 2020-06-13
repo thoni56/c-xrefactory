@@ -356,7 +356,7 @@ void cacheInput(void) {
     int size;
     /*fprintf(dumpOut,"enter cacheInput\n");*/
     if (s_cache.activeCache == 0) return;
-    if (inStacki != 0 || macroStackIndex != 0) return;
+    if (includeStackPointer != 0 || macroStackIndex != 0) return;
     size = cInput.currentLexem - s_cache.lexcc;
     if ( s_cache.lbcc - s_cache.lb + size >= LEX_BUF_CACHE_SIZE) {
         s_cache.activeCache = 0;
@@ -401,7 +401,7 @@ static void fillCachePoint(CachePoint *cachePoint, S_topBlock *topBlock,
 void placeCachePoint(int inputCaching) {
     CachePoint *pp;
     if (s_cache.activeCache == 0) return;
-    if (inStacki != 0 || macroStackIndex != 0) return;
+    if (includeStackPointer != 0 || macroStackIndex != 0) return;
     if (s_cache.cpi >= MAX_CACHE_POINTS) {
         s_cache.activeCache = 0;
         return;

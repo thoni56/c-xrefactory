@@ -76,7 +76,7 @@ static int expandMacroCall(Symbol *mdef, Position *mpos);
 
 void initAllInputs(void) {
     mbMemoryi=0;
-    inStacki=0;
+    includeStackPointer=0;
     macroStackIndex=0;
     s_ifEvaluation = 0;
     s_cxRefFlag = 0;
@@ -464,11 +464,11 @@ void pushNewInclude(FILE *f, EditorBuffer *buffer, char *name, char *prepend) {
     } else {
         setCFileConsistency();
     }
-    inStack[inStacki] = currentFile;		/* buffers are copied !!!!!!, burk */
-    if (inStacki+1 >= INCLUDE_STACK_SIZE) {
+    includeStack[includeStackPointer] = currentFile;		/* buffers are copied !!!!!!, burk */
+    if (includeStackPointer+1 >= INCLUDE_STACK_SIZE) {
         fatalError(ERR_ST,"too deep nesting in includes", XREF_EXIT_ERR);
     }
-    inStacki ++;
+    includeStackPointer ++;
     initInput(f, buffer, prepend, name);
     cacheInclude(currentFile.lexBuffer.buffer.fileNumber);
 }
@@ -479,9 +479,9 @@ void popInclude(void) {
         fileTable.tab[currentFile.lexBuffer.buffer.fileNumber]->b.cxLoaded = true;
     }
     closeCharacterBuffer(&currentFile.lexBuffer.buffer);
-    if (inStacki != 0) {
-        currentFile = inStack[--inStacki];	/* buffers are copied !!!!!!, burk */
-        if (inStacki == 0 && s_cache.cc!=NULL) {
+    if (includeStackPointer != 0) {
+        currentFile = includeStack[--includeStackPointer];	/* buffers are copied !!!!!!, burk */
+        if (includeStackPointer == 0 && s_cache.cc!=NULL) {
             fillLexInput(&cInput, s_cache.cc, s_cache.cfin, s_cache.lb, NULL, INPUT_CACHE);
         } else {
             setCInputConsistency();
@@ -2164,7 +2164,7 @@ int yylex(void) {
         PassLex(cInput.currentLexem, lexem, line, val, pos, len, macroStackIndex == 0);
         if (lexem == IDENT_TO_COMPLETE) {
             testCxrefCompletionId(&lexem,yytext,&pos);
-            while (inStacki != 0) popInclude();
+            while (includeStackPointer != 0) popInclude();
             /* while (getLexBuf(&cFile.lb)) cFile.lb.cc = cFile.lb.fin;*/
             goto endOfFile;
         }
@@ -2181,7 +2181,7 @@ int yylex(void) {
     assert(0);
 
  endOfFile:
-    if ((!LANGUAGE(LANG_JAVA)) && inStacki != 0) {
+    if ((!LANGUAGE(LANG_JAVA)) && includeStackPointer != 0) {
         popInclude();
         placeCachePoint(1);
         goto nextYylex;

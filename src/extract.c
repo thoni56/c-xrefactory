@@ -1253,8 +1253,8 @@ void actionsBeforeAfterExternalDefinition(void) {
         /* No, all this extraction should be after parsing ! */
     }
     s_cp.cxMemiAtFunBegin = cxMemory->i;
-    if (inStacki) {                     // ??????? burk ????
-        s_cp.funBegPosition = inStack[0].lineNumber+1;
+    if (includeStackPointer) {                     // ??????? burk ????
+        s_cp.funBegPosition = includeStack[0].lineNumber+1;
     } else {
         s_cp.funBegPosition = currentFile.lineNumber+1;
     }

@@ -206,7 +206,7 @@ bool getLexem(LexemBuffer *lb) {
     int line, size, lexemStartingColumn, lexStartFilePos, column;
 
     /* first test whether the input is cached */
-    if (s_cache.activeCache && inStacki==0 && macroStackIndex==0) {
+    if (s_cache.activeCache && includeStackPointer==0 && macroStackIndex==0) {
         cacheInput();
         s_cache.lexcc = lb->chars;
     }

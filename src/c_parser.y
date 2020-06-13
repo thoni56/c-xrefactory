@@ -1638,12 +1638,12 @@ file
 
 cached_external_definition_list
     : external_definition				{
-        if (inStacki == 0) {
+        if (includeStackPointer == 0) {
             placeCachePoint(1);
         }
     }
     | cached_external_definition_list _bef_ external_definition {
-        if (inStacki == 0) {
+        if (includeStackPointer == 0) {
             placeCachePoint(1);
         }
     }

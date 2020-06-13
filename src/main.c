@@ -2577,13 +2577,13 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
     if (options.cxrefFileName == NULL) {
         fatalError(ERR_ST,"sorry no file for cxrefs, use -refs option", XREF_EXIT_ERR);
     }
-    for(i=0; i<inStacki; i++) {
-        if (inStack[i].lexBuffer.buffer.file != stdin) {
-            fi = inStack[i].lexBuffer.buffer.fileNumber;
+    for(i=0; i<includeStackPointer; i++) {
+        if (includeStack[i].lexBuffer.buffer.file != stdin) {
+            fi = includeStack[i].lexBuffer.buffer.fileNumber;
             assert(fileTable.tab[fi]);
             fileTable.tab[fi]->b.cxLoading = false;
-            if (inStack[i].lexBuffer.buffer.file!=NULL)
-                closeCharacterBuffer(&inStack[i].lexBuffer.buffer);
+            if (includeStack[i].lexBuffer.buffer.file!=NULL)
+                closeCharacterBuffer(&includeStack[i].lexBuffer.buffer);
         }
     }
     if (currentFile.lexBuffer.buffer.file != stdin) {

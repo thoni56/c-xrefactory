@@ -16,8 +16,8 @@ typedef struct fileDescriptor {
 
 extern FileDescriptor currentFile;
 
-extern FileDescriptor inStack[INCLUDE_STACK_SIZE];
-extern int inStacki;
+extern FileDescriptor includeStack[INCLUDE_STACK_SIZE];
+extern int includeStackPointer;
 
 
 extern void fillFileDescriptor(FileDescriptor *fileDescriptor, char *name, char *bbase, int bsize, FILE *ff, unsigned filepos);
