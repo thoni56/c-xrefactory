@@ -5,6 +5,7 @@
 #include "fileitem.h"
 
 #define HASH_TAB_NAME fileTab
+#define HASH_TAB_TYPE FileTab
 #define HASH_ELEM_TYPE FileItem
 
 #include "hashtab.th"
@@ -17,14 +18,14 @@
 #define NON_FILE_NAME "___None___"
 
 
-extern S_fileTab fileTable;
+extern FileTab fileTable;
 
 /* Index into file table for the "NON FILE" */
 extern int s_noneFileIndex;
 
 
-extern void initFileTab(S_fileTab *table);
-extern bool fileTabExists(S_fileTab *table, char *fileName);
-extern int fileTabLookup(S_fileTab *table, char *fileName);
+extern void initFileTab(FileTab *table);
+extern bool fileTabExists(FileTab *table, char *fileName);
+extern int fileTabLookup(FileTab *table, char *fileName);
 
 #endif

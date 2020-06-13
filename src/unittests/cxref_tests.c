@@ -27,10 +27,6 @@
 #include "fileio.mock"
 
 
-/* Needed: */
-S_fileTab fileTable;
-
-
 Describe(CxRef);
 BeforeEach(CxRef) {}
 AfterEach(CxRef) {}

@@ -21,12 +21,12 @@
 #include "hashtab.tc"
 
 
-S_fileTab fileTable;
+FileTab fileTable;
 
 int s_noneFileIndex = -1;
 
 
-void initFileTab(S_fileTab *fileTable) {
+void initFileTab(FileTab *fileTable) {
     int len;
     char *fileName;
     struct fileItem *fileItem;
@@ -52,7 +52,7 @@ void initFileTab(S_fileTab *fileTable) {
    fileTabIsMember() does. It can't be made into a hashtab macro since
    it knows about how filenames are stored and compared. So there is
    some duplication here, since this is also looking up things. */
-int fileTabLookup(S_fileTab *table, char *fileName) {
+int fileTabLookup(FileTab *table, char *fileName) {
     unsigned posid;
 
     posid = hashFun(fileName);
@@ -67,6 +67,6 @@ int fileTabLookup(S_fileTab *table, char *fileName) {
     return -1;                  /* Not found */
 }
 
-bool fileTabExists(S_fileTab *table, char *fileName) {
+bool fileTabExists(FileTab *table, char *fileName) {
     return fileTabLookup(table, fileName) != -1;
 }

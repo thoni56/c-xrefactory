@@ -9,4 +9,4 @@
 
 #include "hashtab.tc"
 
-S_macroArgumentTable s_macroArgumentTable;
+MacroArgumentTable s_macroArgumentTable;

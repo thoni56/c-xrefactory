@@ -2,7 +2,6 @@
 
 #include "filetab.mock"
 
-S_fileTab fileTable;
 Id s_javaAnonymousClassName = {"{Anonymous}", NULL, {-1,0,0}};
 Id s_javaConstructorName = {"<init>", NULL, {-1,0,0}};
 TypeModifier * s_preCreatedTypesTable[MAX_TYPE];

@@ -2,79 +2,81 @@
 #include "filetab.h"
 #include <cgreen/mocks.h>
 
+FileTab fileTable;
+
 int s_noneFileIndex = -1;
 
-void fileTabInit(struct fileTab *table,
+void fileTabInit(FileTab *table,
                  int size
                  ) {
     mock(table, size);
 }
 
-void fileTabNAInit(struct fileTab *table,
+void fileTabNAInit(FileTab *table,
                    int size
                    ) {
     mock(table, size);
 }
 
 
-bool fileTabIsMember(struct fileTab *table,
+bool fileTabIsMember(FileTab *table,
                      FileItem *element,
                      int *position
                      ) {
     return (bool)mock(table, element, position);
 }
 
-void fileTabSet(struct fileTab *table,
+void fileTabSet(FileTab *table,
                 FileItem *element,
                 int position
                 ) {
     mock(table, element, position);
 }
 
-int fileTabAdd(struct fileTab *table,
+int fileTabAdd(FileTab *table,
                FileItem *element
                ) {
     return mock(table, element);
 }
 
-void fileTabFree(struct fileTab *table) {
+void fileTabFree(FileTab *table) {
     mock(table);
 }
 
-void fileTabMap(struct fileTab *table,
+void fileTabMap(FileTab *table,
                 void (*fun)(FileItem *)
                 ) {
     mock(table, fun);
 }
 
-void fileTabMap2(struct fileTab *table,
+void fileTabMap2(FileTab *table,
                  void (*fun)(FileItem *, void *),
                  void *a
                  ) {
     mock(table, fun, a);
 }
 
-void fileTabMap4(struct fileTab *table,
+void fileTabMap4(FileTab *table,
                  void (*fun)(int, void *, void *),
                  void *a, void *b
                  ) {
     mock(table, fun, a, b);
 }
 
-void fileTabMapWithIndex(struct fileTab *table,
+void fileTabMapWithIndex(FileTab *table,
                          void (*fun)(FileItem *fileItem, int index)
                          ) {
     mock(table, fun);
 }
 
-bool fileTabExists(struct fileTab *table, char *fileName) {
+bool fileTabExists(FileTab *table, char *fileName) {
     return mock(table, fileName);
 }
 
-int fileTabLookup(struct fileTab *table, char *fileName) {
+int fileTabLookup(FileTab *table, char *fileName) {
     return mock(table, fileName);
 }
 
-void initFileTab(S_fileTab *table) {
+void initFileTab(FileTab *table) {
     mock(table);
 }

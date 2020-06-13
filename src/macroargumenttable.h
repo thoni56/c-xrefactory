@@ -6,11 +6,12 @@
 #include "yylex.h"
 
 #define HASH_TAB_NAME macroArgumentTable
+#define HASH_TAB_TYPE MacroArgumentTable
 #define HASH_ELEM_TYPE S_macroArgumentTableElement
 
 #include "hashtab.th"
 
-extern S_macroArgumentTable s_macroArgumentTable;
+extern MacroArgumentTable s_macroArgumentTable;
 
 #ifndef _MACROARGUMENTTABLE_
 #undef HASH_TAB_NAME
