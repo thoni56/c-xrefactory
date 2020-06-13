@@ -19,13 +19,13 @@
 
 typedef struct programGraphNode {
     struct reference            *ref;		/* original reference of node */
-    struct symbolReferenceItem        *symRef;
+    struct symbolReferenceItem  *symRef;
     struct programGraphNode		*jump;
     char						posBits;		/* INSIDE/OUSIDE block */
     char						stateBits;		/* visited + where setted */
     char						classifBits;	/* resulting classification */
     struct programGraphNode		*next;
-} S_programGraphNode;
+} ProgramGraphNode;
 
 
 static unsigned s_javaExtractFromFunctionMods=AccessDefault;
@@ -33,8 +33,8 @@ static char *rb;
 static char *s_extractionName;
 
 #if DEBUG
-static void dumpProgram(S_programGraphNode *program) {
-    S_programGraphNode *p;
+static void dumpProgram(ProgramGraphNode *program) {
+    ProgramGraphNode *p;
 
     log_trace("[ProgramDump begin]");
     for(p=program; p!=NULL; p=p->next) {
@@ -130,16 +130,16 @@ void genSwitchCaseFork(int lastFlag) {
     }
 }
 
-static S_programGraphNode *newProgramGraphNode(
+static ProgramGraphNode *newProgramGraphNode(
     Reference *ref, SymbolReferenceItem *symRef,
-    S_programGraphNode *jump, char posBits,
+    ProgramGraphNode *jump, char posBits,
     char stateBits,
     char classifBits,
-    S_programGraphNode *next
+    ProgramGraphNode *next
 ) {
-    S_programGraphNode *programGraph;
+    ProgramGraphNode *programGraph;
 
-    CX_ALLOC(programGraph, S_programGraphNode);
+    CX_ALLOC(programGraph, ProgramGraphNode);
 
     programGraph->ref = ref;
     programGraph->symRef = symRef;
@@ -154,8 +154,8 @@ static S_programGraphNode *newProgramGraphNode(
 
 static void extractFunGraphRef(SymbolReferenceItem *rr, void *prog) {
     Reference *r;
-    S_programGraphNode *p,**ap;
-    ap = (S_programGraphNode **) prog;
+    ProgramGraphNode *p,**ap;
+    ap = (ProgramGraphNode **) prog;
     for(r=rr->refs; r!=NULL; r=r->next) {
         if (DM_IS_BETWEEN(cxMemory,r,s_cp.cxMemiAtFunBegin,s_cp.cxMemiAtFunEnd)){
             p = newProgramGraphNode(r, rr, NULL, 0, 0, EXTRACT_NONE, *ap);
@@ -164,10 +164,10 @@ static void extractFunGraphRef(SymbolReferenceItem *rr, void *prog) {
     }
 }
 
-static S_programGraphNode *getGraphAddress( S_programGraphNode  *program,
+static ProgramGraphNode *getGraphAddress( ProgramGraphNode  *program,
                                             Reference         *ref
                                             ) {
-    S_programGraphNode *p,*res;
+    ProgramGraphNode *p,*res;
     res = NULL;
     for(p=program; res==NULL && p!=NULL; p=p->next) {
         if (p->ref == ref) res = p;
@@ -186,10 +186,10 @@ static Reference *getDefinitionReference(SymbolReferenceItem *lab) {
     return(res);
 }
 
-static S_programGraphNode *getLabelGraphAddress(S_programGraphNode *program,
+static ProgramGraphNode *getLabelGraphAddress(ProgramGraphNode *program,
                                                 SymbolReferenceItem     *lab
                                                 ) {
-    S_programGraphNode  *res;
+    ProgramGraphNode  *res;
     Reference         *defref;
     assert(lab->b.symType == TypeLabel);
     defref = getDefinitionReference(lab);
@@ -197,15 +197,15 @@ static S_programGraphNode *getLabelGraphAddress(S_programGraphNode *program,
     return(res);
 }
 
-static int linearOrder(S_programGraphNode *n1, S_programGraphNode *n2) {
+static int linearOrder(ProgramGraphNode *n1, ProgramGraphNode *n2) {
     return(n1->ref < n2->ref);
 }
 
-static S_programGraphNode * extMakeProgramGraph(void) {
-    S_programGraphNode *program,*p;
+static ProgramGraphNode * extMakeProgramGraph(void) {
+    ProgramGraphNode *program,*p;
     program = NULL;
     refTabMap5(&s_cxrefTab, extractFunGraphRef, ((void *) &program));
-    LIST_SORT(S_programGraphNode, program, linearOrder);
+    LIST_SORT(ProgramGraphNode, program, linearOrder);
 #ifdef DEBUG
     dumpProgram(program);
 #endif
@@ -229,7 +229,7 @@ static S_programGraphNode * extMakeProgramGraph(void) {
 
 #define IS_STR_UNION_SYMBOL(ref) (ref->symRef->name[0]==LINK_NAME_EXTRACT_STR_UNION_TYPE_FLAG)
 
-static void extSetSetStates(    S_programGraphNode *p,
+static void extSetSetStates(    ProgramGraphNode *p,
                                 SymbolReferenceItem *symRef,
                                 unsigned cstate
                                 ) {
@@ -275,10 +275,10 @@ static void extSetSetStates(    S_programGraphNode *p,
 }
 
 static ExtractCategory categorizeLocalVariableExtraction0(
-    S_programGraphNode *program,
-    S_programGraphNode *varRef
+    ProgramGraphNode *program,
+    ProgramGraphNode *varRef
 ) {
-    S_programGraphNode *p;
+    ProgramGraphNode *p;
     SymbolReferenceItem     *symRef;
     unsigned    inUsages,outUsages,outUsageBothExists;
     symRef = varRef->symRef;
@@ -338,8 +338,8 @@ static ExtractCategory categorizeLocalVariableExtraction0(
 }
 
 static ExtractCategory categorizeLocalVariableExtraction(
-    S_programGraphNode *program,
-    S_programGraphNode *varRef
+    ProgramGraphNode *program,
+    ProgramGraphNode *varRef
 ) {
     ExtractCategory category;
 
@@ -352,8 +352,8 @@ static ExtractCategory categorizeLocalVariableExtraction(
     return(category);
 }
 
-static void extSetInOutBlockFields(S_programGraphNode *program) {
-    S_programGraphNode *p;
+static void extSetInOutBlockFields(ProgramGraphNode *program) {
+    ProgramGraphNode *p;
     unsigned    pos;
     pos = INSP_OUTSIDE_BLOCK;
     for(p=program; p!=NULL; p=p->next) {
@@ -362,8 +362,8 @@ static void extSetInOutBlockFields(S_programGraphNode *program) {
     }
 }
 
-static int extIsJumpInOutBlock(S_programGraphNode *program) {
-    S_programGraphNode *p;
+static int extIsJumpInOutBlock(ProgramGraphNode *program) {
+    ProgramGraphNode *p;
     for(p=program; p!=NULL; p=p->next) {
         assert(p->symRef!=NULL)
             if (p->symRef->b.symType==TypeLabel) {
@@ -386,8 +386,8 @@ static int extIsJumpInOutBlock(S_programGraphNode *program) {
                                 &&  ppp->symRef->b.scope==ScopeAuto     \
                                 )
 
-static void extClassifyLocalVariables(S_programGraphNode *program) {
-    S_programGraphNode *p;
+static void extClassifyLocalVariables(ProgramGraphNode *program) {
+    ProgramGraphNode *p;
     for(p=program; p!=NULL; p=p->next) {
         if (EXT_LOCAL_VAR_REF(p)) {
             p->classifBits = categorizeLocalVariableExtraction(program,p);
@@ -430,8 +430,8 @@ static void extClassifyLocalVariables(S_programGraphNode *program) {
         *d = 0;                                                         \
     }
 
-static void extReClassifyIOVars(S_programGraphNode *program) {
-    S_programGraphNode  *p,*op;
+static void extReClassifyIOVars(ProgramGraphNode *program) {
+    ProgramGraphNode  *p,*op;
     int uniqueOutFlag;
 
     op = NULL; uniqueOutFlag = 1;
@@ -483,11 +483,11 @@ static void extReClassifyIOVars(S_programGraphNode *program) {
 
 /* ************************** macro ******************************* */
 
-static void extGenNewMacroCall(S_programGraphNode *program) {
+static void extGenNewMacroCall(ProgramGraphNode *program) {
     char dcla[TMP_STRING_SIZE];
     char decl[TMP_STRING_SIZE];
     char name[TMP_STRING_SIZE];
-    S_programGraphNode *p;
+    ProgramGraphNode *p;
     int fFlag=1;
 
     rb[0]=0;
@@ -518,11 +518,11 @@ static void extGenNewMacroCall(S_programGraphNode *program) {
     }
 }
 
-static void extGenNewMacroHead(S_programGraphNode *program) {
+static void extGenNewMacroHead(ProgramGraphNode *program) {
     char dcla[TMP_STRING_SIZE];
     char decl[MAX_EXTRACT_FUN_HEAD_SIZE];
     char name[MAX_EXTRACT_FUN_HEAD_SIZE];
-    S_programGraphNode *p;
+    ProgramGraphNode *p;
     int fFlag=1;
 
     rb[0]=0;
@@ -551,7 +551,7 @@ static void extGenNewMacroHead(S_programGraphNode *program) {
     }
 }
 
-static void extGenNewMacroTail(S_programGraphNode *program) {
+static void extGenNewMacroTail(ProgramGraphNode *program) {
     rb[0]=0;
 
     sprintf(rb+strlen(rb),"}\n\n");
@@ -569,11 +569,11 @@ static void extGenNewMacroTail(S_programGraphNode *program) {
 /* ********************** C function **************************** */
 
 
-static void extGenNewFunCall(S_programGraphNode *program) {
+static void extGenNewFunCall(ProgramGraphNode *program) {
     char dcla[TMP_STRING_SIZE];
     char decl[TMP_STRING_SIZE];
     char name[TMP_STRING_SIZE];
-    S_programGraphNode *p;
+    ProgramGraphNode *p;
     int fFlag=1;
 
     rb[0]=0;
@@ -664,11 +664,11 @@ static void addSymbolToSymRefList(SymbolReferenceItemList **ll, SymbolReferenceI
     *ll = concatRefItemList(ll, s);
 }
 
-static SymbolReferenceItemList *computeExceptionsThrownBetween(S_programGraphNode *bb,
-                                                           S_programGraphNode *ee
+static SymbolReferenceItemList *computeExceptionsThrownBetween(ProgramGraphNode *bb,
+                                                           ProgramGraphNode *ee
                                                            ) {
     SymbolReferenceItemList *res, *excs, *catched, *noncatched, **cl;
-    S_programGraphNode *p, *e;
+    ProgramGraphNode *p, *e;
     int depth;
 
     catched = NULL; noncatched = NULL; cl = &catched;
@@ -705,15 +705,15 @@ static SymbolReferenceItemList *computeExceptionsThrownBetween(S_programGraphNod
     return(res);
 }
 
-static SymbolReferenceItemList *computeExceptionsThrownInBlock(S_programGraphNode *program) {
-    S_programGraphNode  *pp, *ee;
+static SymbolReferenceItemList *computeExceptionsThrownInBlock(ProgramGraphNode *program) {
+    ProgramGraphNode  *pp, *ee;
     for(pp=program; pp!=NULL && pp->symRef->b.symType!=TypeBlockMarker; pp=pp->next) ;
     if (pp==NULL) return(NULL);
     for(ee=pp->next; ee!=NULL && ee->symRef->b.symType!=TypeBlockMarker; ee=ee->next) ;
     return(computeExceptionsThrownBetween(pp, ee));
 }
 
-static void extractSprintThrownExceptions(char *nhead, S_programGraphNode *program) {
+static void extractSprintThrownExceptions(char *nhead, ProgramGraphNode *program) {
     SymbolReferenceItemList     *exceptions, *ee;
     int                     nhi;
     char                    *sname;
@@ -736,14 +736,14 @@ static void extractSprintThrownExceptions(char *nhead, S_programGraphNode *progr
     }
 }
 
-static void extGenNewFunHead(S_programGraphNode *program) {
+static void extGenNewFunHead(ProgramGraphNode *program) {
     char nhead[MAX_EXTRACT_FUN_HEAD_SIZE];
     int nhi, ldclaLen;
     char ldcla[TMP_STRING_SIZE];
     char dcla[TMP_STRING_SIZE];
     char decl[MAX_EXTRACT_FUN_HEAD_SIZE];
     char name[MAX_EXTRACT_FUN_HEAD_SIZE];
-    S_programGraphNode  *p;
+    ProgramGraphNode  *p;
     int fFlag=1;
 
     rb[0]=0;
@@ -848,11 +848,11 @@ static void extGenNewFunHead(S_programGraphNode *program) {
     }
 }
 
-static void extGenNewFunTail(S_programGraphNode *program) {
+static void extGenNewFunTail(ProgramGraphNode *program) {
     char                dcla[TMP_STRING_SIZE];
     char                decl[TMP_STRING_SIZE];
     char                name[TMP_STRING_SIZE];
-    S_programGraphNode  *p;
+    ProgramGraphNode  *p;
 
     rb[0]=0;
 
@@ -900,11 +900,11 @@ static char * extJavaNewClassName(void) {
 }
 
 
-static void extJavaGenNewClassCall(S_programGraphNode *program) {
+static void extJavaGenNewClassCall(ProgramGraphNode *program) {
     char dcla[TMP_STRING_SIZE];
     char decl[TMP_STRING_SIZE];
     char name[TMP_STRING_SIZE];
-    S_programGraphNode *p;
+    ProgramGraphNode *p;
     char *classname;
     int fFlag=1;
 
@@ -982,7 +982,7 @@ static void extJavaGenNewClassCall(S_programGraphNode *program) {
     }
 }
 
-static void extJavaGenNewClassHead(S_programGraphNode *program) {
+static void extJavaGenNewClassHead(ProgramGraphNode *program) {
     char nhead[MAX_EXTRACT_FUN_HEAD_SIZE];
     int nhi, ldclaLen;
     char ldcla[TMP_STRING_SIZE];
@@ -990,7 +990,7 @@ static void extJavaGenNewClassHead(S_programGraphNode *program) {
     char *classname;
     char decl[MAX_EXTRACT_FUN_HEAD_SIZE];
     char name[MAX_EXTRACT_FUN_HEAD_SIZE];
-    S_programGraphNode *p;
+    ProgramGraphNode *p;
     int fFlag=1;
 
     rb[0]=0;
@@ -1104,11 +1104,11 @@ static void extJavaGenNewClassHead(S_programGraphNode *program) {
     }
 }
 
-static void extJavaGenNewClassTail(S_programGraphNode *program) {
+static void extJavaGenNewClassTail(ProgramGraphNode *program) {
     char                dcla[TMP_STRING_SIZE];
     char                decl[TMP_STRING_SIZE];
     char                name[TMP_STRING_SIZE];
-    S_programGraphNode  *p;
+    ProgramGraphNode  *p;
     int                 fFlag;
 
     rb[0]=0;
@@ -1149,8 +1149,8 @@ static void extJavaGenNewClassTail(S_programGraphNode *program) {
 
 /* ******************************************************************* */
 
-static int extJavaIsNewClassNecesary(S_programGraphNode *program) {
-    S_programGraphNode  *p;
+static int extJavaIsNewClassNecesary(ProgramGraphNode *program) {
+    ProgramGraphNode  *p;
     for(p=program; p!=NULL; p=p->next) {
         if (p->classifBits == EXTRACT_OUT_ARGUMENT
             || p->classifBits == EXTRACT_LOCAL_OUT_ARGUMENT
@@ -1162,7 +1162,7 @@ static int extJavaIsNewClassNecesary(S_programGraphNode *program) {
 }
 
 static void extMakeExtraction(void) {
-    S_programGraphNode *program;
+    ProgramGraphNode *program;
     int newClassExt;
 
     if (s_cp.cxMemiAtFunBegin > s_cps.cxMemiAtBlockBegin
