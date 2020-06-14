@@ -9,7 +9,7 @@
 
 #include "hashlist-new.th"
 
-#ifndef _EDITORBUFFERTAB_
+#ifndef _IN_EDITORBUFFERTAB_C_
 #undef HASH_TAB_NAME
 #undef HASH_TAB_TYPE
 #undef HASH_ELEM_TYPE

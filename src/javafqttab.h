@@ -9,7 +9,7 @@
 
 #include "hashlist.th"
 
-#ifndef _JAVAFQTTAB_
+#ifndef _IN_JAVAFQTTAB_C_
 #undef HASH_TAB_NAME
 #undef HASH_ELEM_TYPE
 #endif
