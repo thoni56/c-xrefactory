@@ -5,9 +5,24 @@
 
 
 Describe(Memory);
-BeforeEach(Memory) {}
+BeforeEach(Memory) {
+    stackMemoryInit();
+}
 AfterEach(Memory) {}
 
+static bool myFatalErrorCalled = false;
+static void myFatalError(int errCode, char *mess, int exitStatus) {
+    myFatalErrorCalled = true;
+}
 
-Ensure(Memory, can_run_an_empty_test) {
+Ensure(Memory, calls_fatalError_on_out_of_memory) {
+    void *allocatedMemory = &allocatedMemory; /* Point to something initially */
+
+    memoryUseFunctionForFatalError(myFatalError);
+
+    while(!myFatalErrorCalled && allocatedMemory != NULL)
+        allocatedMemory = stackMemoryAlloc(5);
+
+    if (!myFatalErrorCalled)
+        fail_test("fatalError() not called");
 }
