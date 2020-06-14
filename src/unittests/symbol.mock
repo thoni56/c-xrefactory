@@ -3,41 +3,45 @@
 #include <cgreen/mocks.h>
 
 Symbol *newSymbol(char *name, char *linkName, struct position pos) {
-    return NULL; // (S_symbol *)mock(name, linkName, pos);
+    return (Symbol*)mock(name, linkName);
+}
+
 Symbol *newSymbolAsCopyOf(Symbol *original) {
     return (Symbol*)mock(original);
 }
 
 void fillSymbol(Symbol *symbol, char *name, char *linkName, struct position pos) {
-    // mock(symbol, name, linkName, pos);
+    mock(symbol, name, linkName);
 }
 
 Symbol *newSymbolAsKeyword(char *name, char *linkName, struct position pos, int keyWordVal) {
-    return NULL; // (S_symbol *)mock(name, linkName, pos, keyWordVal);
+    return (Symbol *)mock(name, linkName, keyWordVal);
 }
 
 Symbol *newSymbolAsType(char *name, char *linkName, struct position pos, struct typeModifier *type) {
-    return NULL; // (S_symbol *)mock(name, linkName, pos, type);
+    return (Symbol *)mock(name, linkName, type);
 }
 
 void fillSymbolWithType(Symbol *symbol, char *name, char *linkName, struct position pos, struct typeModifier *type) {
-    // mock(symbol, name, linkName, pos, type);
+    mock(symbol, name, linkName, type);
 }
 
 Symbol *newSymbolAsEnum(char *name, char *linkName, struct position pos, struct symbolList *enums) {
-    return NULL; // (S_symbol *)mock(name, linkName, pos, enums);
+    return (Symbol *)mock(name, linkName, enums);
 }
 
 Symbol *newSymbolAsLabel(char *name, char *linkName, struct position pos, int labelIndex) {
-    return NULL; // (S_symbol *)mock(name, linkName, pos, labelIndex);
+    return (Symbol *)mock(name, linkName, labelIndex);
 }
 
 void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName, struct position pos, int labelIndex) {
-    // mock(symbol, name, linkName, pos, labelIndex);
+    mock(symbol, name, linkName, labelIndex);
 }
 
-void fillSymbolWithStruct(Symbol *symbol, char *name, char *linkName, struct position pos, struct symStructSpec *structSpec) {
-    // mock(symbol, name, linkName, pos, structSpec);
+void fillSymbolWithStruct(Symbol *symbol, char *name, char *linkName, struct position pos,
+                          struct symStructSpec *structSpec
+) {
+    mock(symbol, name, linkName, structSpec);
 }
 
 void fillSymbolBits(S_symbolBits *bits, Access access, Type symType, Storage storage) {
