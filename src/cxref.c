@@ -1038,7 +1038,7 @@ static void deleteOlcxRefs(S_olcxReferences **rrefs, S_olcxReferencesStack *stac
 // TODO!!! should free completions in priority!
 void freeOldestOlcx(void) {
     int                     i;
-    S_userOlcx              *user;
+    UserOlcxData              *user;
     S_olcxReferences        **refs,**oldest;
     time_t                  oldestt;
     S_olcxReferencesStack   *oldestStack;
@@ -1078,16 +1078,16 @@ void olcxInit(void) {
     int i;
     void * uu[OLCX_USER_RESERVE];
     REAL_MEMORY_INIT(olcxMemory);
-    REAL_MEMORY_SOFT_ALLOCC(olcxMemory, s_olcxTab.tab, OLCX_TAB_SIZE, S_userOlcx *);
+    REAL_MEMORY_SOFT_ALLOCC(olcxMemory, s_olcxTab.tab, OLCX_TAB_SIZE, UserOlcxData *);
     //CHECK_FREE(s_olcxTab.tab);        // do not report non-freeing of olcxtable
     olcxTabNoAllocInit(&s_olcxTab, OLCX_TAB_SIZE);
     /* reserve place for some users */
-    for(i=0; i<OLCX_USER_RESERVE; i++) OLCX_ALLOC(uu[i], S_userOlcx);
-    for(i=0; i<OLCX_USER_RESERVE; i++) REAL_MEMORY_FREE(olcxMemory, uu[i], sizeof(S_userOlcx));
+    for(i=0; i<OLCX_USER_RESERVE; i++) OLCX_ALLOC(uu[i], UserOlcxData);
+    for(i=0; i<OLCX_USER_RESERVE; i++) REAL_MEMORY_FREE(olcxMemory, uu[i], sizeof(UserOlcxData));
 }
 
 
-static void initUserOlcx(S_userOlcx *dd, char *user) {
+static void initUserOlcx(UserOlcxData *dd, char *user) {
     dd->name = user;
     dd->browserStack.top = NULL;
     dd->browserStack.root = NULL;
@@ -1101,8 +1101,8 @@ static void initUserOlcx(S_userOlcx *dd, char *user) {
 }
 
 
-S_userOlcx *olcxSetCurrentUser(char *user) {
-    S_userOlcx dd, *memb;
+UserOlcxData *olcxSetCurrentUser(char *user) {
+    UserOlcxData dd, *memb;
     int not_used1, not_used2;
     int sz;
     char *nn;
@@ -1110,7 +1110,7 @@ S_userOlcx *olcxSetCurrentUser(char *user) {
     initUserOlcx(&dd, user);
     if (! olcxTabIsMember(&s_olcxTab, &dd, &not_used1, &memb)) {
         // I have changed it to FT, so it never invokes freeing of OLCX
-        FT_ALLOC(memb, S_userOlcx);
+        FT_ALLOC(memb, UserOlcxData);
         sz = strlen(user)+1;
         if (sz < sizeof(void*)) sz = sizeof(void*);
         FT_ALLOCC(nn, sz, char); // why this is in ftMem ?, some pb with free

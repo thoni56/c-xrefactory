@@ -10,5 +10,5 @@
 
 #include "hashlist-new.tc"
 
-S_userOlcx *s_olcxCurrentUser;
+UserOlcxData *s_olcxCurrentUser;
 OlcxTab s_olcxTab;

@@ -103,7 +103,7 @@ extern S_olSymbolsMenu *createSelectionMenu(SymbolReferenceItem *dd);
 extern void mapCreateSelectionMenu(SymbolReferenceItem *dd);
 extern int olcxFreeOldCompletionItems(S_olcxReferencesStack *stack);
 extern void olcxInit(void);
-extern S_userOlcx *olcxSetCurrentUser(char *user);
+extern UserOlcxData *olcxSetCurrentUser(char *user);
 extern Reference * getDefinitionRef(Reference *rr);
 extern int safetyCheck2ShouldWarn(void);
 extern void olCreateSelectionMenu(int command);

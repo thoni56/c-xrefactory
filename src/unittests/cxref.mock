@@ -242,8 +242,8 @@ void olcxInit(void) {
     mock();
 }
 
-S_userOlcx *olcxSetCurrentUser(char *user) {
-    return (S_userOlcx *) mock(user);
+UserOlcxData *olcxSetCurrentUser(char *user) {
+    return (UserOlcxData *) mock(user);
 }
 
 Reference *getDefinitionRef(Reference *rr) {

@@ -5,18 +5,18 @@
 
 #include "proto.h"
 
-typedef struct userOlcx {
+typedef struct userOlcxData {
     char                        *name;
     struct olcxReferencesStack	browserStack;
     struct olcxReferencesStack	completionsStack;
     struct olcxReferencesStack	retrieverStack;
     struct classTreeData		classTree;
-    struct userOlcx				*next;
-} S_userOlcx;
+    struct userOlcxData			*next;
+} UserOlcxData;
 
 #define HASH_TAB_NAME olcxTab
 #define HASH_TAB_TYPE OlcxTab
-#define HASH_ELEM_TYPE S_userOlcx
+#define HASH_ELEM_TYPE UserOlcxData
 
 #include "hashlist-new.th"
 
@@ -25,7 +25,7 @@ typedef struct userOlcx {
 #undef HASH_ELEM_TYPE
 #endif
 
-extern S_userOlcx *s_olcxCurrentUser;
+extern UserOlcxData *s_olcxCurrentUser;
 extern OlcxTab s_olcxTab;
 
 #endif
