@@ -576,32 +576,26 @@ Symbol *javaGetFieldClass(char *fieldLinkName, char **fieldAdr) {
     return(memb);
 }
 
-// I think that s_symTab should contain symbollist, not symbols!
-static Symbol *javaAddTypeToSymbolTable(Symbol *memb, int accessFlags, Position *importPos, bool isExplicitlyImported) {
-    Symbol *nmemb;
-    //&Symbol *memb2;
 
-    memb->bits.access = accessFlags;
-    memb->bits.isExplicitlyImported = isExplicitlyImported;
-    //&if (symbolTableIsMember(s_symbolTable, memb, &ii, &memb2)) {
-    //&	while (memb2!=NULL && strcmp(memb->linkName, memb2->linkName)!=0) {
-    //&		symbolTableNextMember(memb, &memb2);
-    //&	}
-    //&	if (memb2!=NULL) memb2->bits.access = accessFlags;
-    //&}
-    XX_ALLOC(nmemb, Symbol);
-    *nmemb = *memb;
-    nmemb->pos = *importPos;
-    addSymbol(nmemb, s_symbolTable);
-    //&memb = nmemb;
+static Symbol *javaAddTypeToSymbolTable(Symbol *original, int accessFlags, Position *importPos,
+                                        bool isExplicitlyImported
+) {
+    Symbol *added;
 
-    return(memb);
+    original->bits.access = accessFlags;
+    original->bits.isExplicitlyImported = isExplicitlyImported;
+
+    added = newSymbolAsCopyOf(*original);
+    added->pos = *importPos;
+    addSymbol(added, s_symbolTable);
+
+    return(original);
 }
 
 Symbol *javaTypeSymbolDefinition(IdList *tname,
                                  int accessFlags,
                                  int addType){
-    Symbol pp,*memb;
+    Symbol pp,*typeSymbol;
     char fqtName[MAX_FILE_NAME_SIZE];
 
     assert(tname);
@@ -610,12 +604,12 @@ Symbol *javaTypeSymbolDefinition(IdList *tname,
     fillSymbol(&pp, tname->id.name, tname->id.name, s_noPos);
     fillSymbolBits(&pp.bits, accessFlags, TypeStruct, StorageNone);
 
-    javaCreateComposedName(NULL,tname,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
-    memb = javaFQTypeSymbolDefinition(tname->id.name, fqtName);
+    javaCreateComposedName(NULL, tname, '/', NULL, fqtName, MAX_FILE_NAME_SIZE);
+    typeSymbol = javaFQTypeSymbolDefinition(tname->id.name, fqtName);
     if (addType == ADD_YES) {
-        memb = javaAddTypeToSymbolTable(memb, accessFlags, &s_noPos, false);
+        typeSymbol = javaAddTypeToSymbolTable(typeSymbol, accessFlags, &s_noPos, false);
     }
-    return(memb);
+    return(typeSymbol);
 }
 
 Symbol *javaTypeSymbolUsage(IdList *tname,
