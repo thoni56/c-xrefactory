@@ -206,7 +206,6 @@ extern void removeFromTrailUntil(S_freeTrail *untilP);
 extern void stackMemoryInit(void);
 extern void *stackMemoryAlloc(int size);
 extern void *stackMemoryPush(void *p, int size);
-extern int  *stackMemoryPushInt(int x);
 extern char *stackMemoryPushString(char *s);
 extern void stackMemoryBlockStart(void);
 extern void stackMemoryBlockFree(void);

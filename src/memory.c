@@ -150,11 +150,6 @@ void *stackMemoryPush(void *p, int size) {
     return(m);
 }
 
-int *stackMemoryPushInt(int x) {
-    /*fprintf(dumpOut,"pushing int %d\n", x);*/
-    return((int*)stackMemoryPush(&x, sizeof(int)));
-}
-
 char *stackMemoryPushString(char *s) {
     /*fprintf(dumpOut,"pushing string %s\n",s);*/
     return((char*)stackMemoryPush(s, strlen(s)+1));

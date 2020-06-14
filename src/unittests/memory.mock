@@ -38,10 +38,6 @@ void *stackMemoryPush(void *p, int size) {
   return (void *) mock(p, size);
 }
 
-int *stackMemoryPushInt(int x) {
-  return (int *) mock(x);
-}
-
 char *stackMemoryPushString(char *s) {
   return (char *) mock(s);
 }
