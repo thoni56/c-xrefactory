@@ -185,7 +185,7 @@ static void javaFqtTabDeleteOutOfMemory(int i) {
 
 static void trailDeleteOutOfMemory(void) {
     S_freeTrail **pp;
-    pp = & s_topBlock->trail;
+    pp = &s_topBlock->trail;
     while (MEM_FREED_POINTER(*pp)) {
         *pp = (*pp)->next;
     }

@@ -21,7 +21,6 @@ S_currentlyParsedCl s_cp;
 S_currentlyParsedCl s_cpInit;
 S_currentlyParsedStatics s_cps;
 S_currentlyParsedStatics s_cpsInit;
-S_topBlock *s_topBlock;
 int s_currCppPass;
 int s_cppPassMax;
 char s_defaultClassPath[] = ".";

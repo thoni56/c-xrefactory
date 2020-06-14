@@ -12,12 +12,6 @@
 
 #include "hashlist.th"
 
-/*
-  run the following command in shell to see the expanded declarations of hashlist
-
-  gcc -E symtab.h
-
-*/
 
 extern SymbolTable *s_symbolTable;
 

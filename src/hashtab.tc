@@ -47,7 +47,13 @@
       #undef HASH_FUN
       #undef HASH_ELEM_EQUAL
 
+  Hint: run the following command in shell to see the expanded
+  declarations:
+
+      gcc -E <module>.h
+
 */
+
 
 #include <string.h>             /* For memset() */
 

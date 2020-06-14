@@ -2558,19 +2558,18 @@ struct freeTrail *newClassDefinitionBegin(Id *name,
         fillId(&idi,dd->linkName, NULL, name->p);
         XX_ALLOC(p, IdList);
         fillIdList(p, idi, dd->linkName, TypeStruct, NULL);
-        ddd = javaAddType(p, access, & name->p);
+        ddd = javaAddType(p, access, &name->p);
         assert(dd==ddd);
-        res = s_topBlock->trail;
         //&javaCreateClassFileItem(dd);
     } else {
         /* probably base class */
         XX_ALLOC(p,IdList);
         fillIdList(p,*name,name->name,TypeStruct,s_javaStat->className);
-        dd = javaAddType(p, access, & name->p);
-        res = s_topBlock->trail;
+        dd = javaAddType(p, access, &name->p);
         assert(dd->bits.symType == TypeStruct);
         s_spp[SPP_LAST_TOP_LEVEL_CLASS_POSITION] = name->p;
     }
+    res = s_topBlock->trail;
     classf = dd->u.s->classFile;
     if (classf == -1) classf = s_noneFileIndex;
     fillJavaStat(s_javaStat,p,&dd->u.s->stype,dd,0, oldStat->currentPackage,
