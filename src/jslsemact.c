@@ -34,7 +34,7 @@ S_jslClassStat *newJslClassStat(IdList *className, Symbol *thisClass, char *this
     return jslClassStat;
 }
 
-void fillJslStat(S_jslStat *jslStat, int pass, int sourceFileNumber, int language, S_jslTypeTab *typeTab,
+void fillJslStat(S_jslStat *jslStat, int pass, int sourceFileNumber, int language, JslTypeTab *typeTab,
                  S_jslClassStat *classStat, SymbolList *waitList, void /*YYSTYPE*/ *savedyylval,
                  void /*S_yyGlobalState*/ *savedYYstate, int yyStateSize, S_jslStat *next) {
     jslStat->pass = pass;

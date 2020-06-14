@@ -3300,7 +3300,7 @@ case 64:
 
                     int             i,j,packlen;
                     char            *cdir, *fname;
-                    S_jslTypeTab	*jsltypeTab;
+                    JslTypeTab	*jsltypeTab;
                     struct stat     st;
                     /* it is important to know the package before everything*/
                     /* else, as it must be set on class adding in order to set*/
@@ -3339,7 +3339,7 @@ case 64:
                     javaParsingInitializations();
                     /* make first and second pass through file*/
                     assert(s_jsl == NULL); /* no nesting*/
-                    XX_ALLOC(jsltypeTab, S_jslTypeTab);
+                    XX_ALLOC(jsltypeTab, JslTypeTab);
                     jslTypeTabInit(jsltypeTab, MAX_JSL_SYMBOLS);
                     javaReadSymbolFromSourceFileInit(s_olOriginalFileNumber,
                                                      jsltypeTab);

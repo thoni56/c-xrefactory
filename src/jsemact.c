@@ -667,7 +667,7 @@ static void javaJslLoadSuperClasses(Symbol *cc, int currentParsedFile) {
 }
 
 void javaReadSymbolFromSourceFileInit(int sourceFileNum,
-                                      S_jslTypeTab *typeTab ) {
+                                      JslTypeTab *typeTab ) {
     S_jslStat           *njsl;
     char				*yyg;
     int					yygsize;
@@ -749,14 +749,14 @@ void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname) {
 }
 
 void javaReadSymbolsFromSourceFile(char *fname) {
-    S_jslTypeTab    *typeTab;
+    JslTypeTab    *typeTab;
     int				fileIndex;
     int				memBalance;
 
     fileIndex = addFileTabItem(fname);
     memBalance = s_topBlock->firstFreeIndex;
     stackMemoryBlockStart();
-    XX_ALLOC(typeTab, S_jslTypeTab);
+    XX_ALLOC(typeTab, JslTypeTab);
     javaReadSymbolFromSourceFileInit(fileIndex, typeTab);
     jslTypeTabInit(typeTab, MAX_JSL_SYMBOLS);
     javaReadSymbolsFromSourceFileNoFreeing(fname, fname);
@@ -2480,7 +2480,7 @@ void javaTypeDump(TypeModifier *tt) {
     }
 }
 
-void javaAddJslReadedTopLevelClasses(S_jslTypeTab  *jslTypeTab) {
+void javaAddJslReadedTopLevelClasses(JslTypeTab  *jslTypeTab) {
     int					i;
     JslSymbolList     *ss;
     for(i=0; i<jslTypeTab->size; i++) {

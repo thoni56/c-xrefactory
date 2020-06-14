@@ -95,7 +95,7 @@ extern Symbol *javaTypeSymbolDefinition(IdList *tname, int accessFlags,int addTy
 extern Symbol *javaTypeSymbolUsage(IdList *tname, int accessFlags);
 extern void javaReadSymbolFromSourceFileEnd(void);
 extern void javaReadSymbolFromSourceFileInit( int sourceFileNum,
-                                              S_jslTypeTab *typeTab );
+                                              JslTypeTab *typeTab );
 extern void javaReadSymbolsFromSourceFileNoFreeing(char *fname, char *asfname);
 extern void javaReadSymbolsFromSourceFile(char *fname);
 extern int javaLinkNameIsAnnonymousClass(char *linkname);
@@ -164,7 +164,7 @@ extern TypeModifier *javaConditionalPromotion(TypeModifier *t1,
                                                  );
 extern int javaIsStringType(TypeModifier *tt);
 extern void javaTypeDump(TypeModifier *tt);
-extern void javaAddJslReadedTopLevelClasses(S_jslTypeTab  *typeTab);
+extern void javaAddJslReadedTopLevelClasses(JslTypeTab  *typeTab);
 extern struct freeTrail * newAnonClassDefinitionBegin(Id *interfName);
 extern void javaAddSuperNestedClassToSymbolTab( Symbol *cc);
 extern struct freeTrail *newClassDefinitionBegin(Id *name, Access access, Symbol *anonInterf);

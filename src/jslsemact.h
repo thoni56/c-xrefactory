@@ -40,7 +40,7 @@ extern S_jslStat *s_jsl;
 
 extern S_jslClassStat *newJslClassStat(IdList *className, Symbol *thisClass, char *thisPackage,
                                        S_jslClassStat *next);
-extern void fillJslStat(S_jslStat *jslStat, int pass, int sourceFileNumber, int language, S_jslTypeTab *typeTab,
+extern void fillJslStat(S_jslStat *jslStat, int pass, int sourceFileNumber, int language, JslTypeTab *typeTab,
                         S_jslClassStat *classStat, SymbolList *waitList, void *savedyylval,
                         void /*S_yyGlobalState*/ *savedYYstate, int yyStateSize, S_jslStat *next);
 extern Symbol *jslTypeSpecifier1(Type t);
