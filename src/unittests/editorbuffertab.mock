@@ -3,7 +3,7 @@
 #include "editorbuffertab.h"
 
 S_editorBufferList *s_staticEditorBufferTabTab[EDITOR_BUFF_TAB_SIZE];
-S_editorBufferTab s_editorBufferTab;
+EditorBufferTab s_editorBufferTab;
 
 void editorBufferTabInit(struct editorBufferTab *table, int size) {
   mock(table, size);
