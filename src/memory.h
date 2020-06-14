@@ -12,7 +12,6 @@
 
 /* ********************************************************************* */
 
-#define SM_FREE_SPACE(mem,n) (mem##i+(n) < SIZE_##mem)
 #define SM_FREED_POINTER(mem,ppp) (\
     ((char*)ppp) >= mem + mem##i && ((char*)ppp) < mem + SIZE_##mem \
 )
