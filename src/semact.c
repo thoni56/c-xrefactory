@@ -637,8 +637,8 @@ void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, SymbolTa
     int         ii;
     if (p->name != NULL && p->bits.symType!=TypeError) {
         assert(s_javaStat->locals!=NULL);
-        XX_ALLOC(pa, Symbol);
-        *pa = *p;
+        pa = newSymbolAsCopyOf(p);
+
         // here checks a special case, double argument definition do not
         // redefine him, so refactorings will detect problem
         for(pp=function->u.type->u.f.args; pp!=NULL && pp!=p; pp=pp->next) {

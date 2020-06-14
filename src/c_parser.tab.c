@@ -3083,7 +3083,7 @@ break;
 case 170:
 #line 927 "c_parser.y"
 {
-        yyval.ast_symbol.d = newSymbolAsCopyOf(s_errorSymbol);
+        yyval.ast_symbol.d = newSymbolAsCopyOf(&s_errorSymbol);
 #if YYDEBUG
         char buffer[100];
         sprintf(buffer, "DEBUG: error parsing struct_declaration near '%s'", yytext);
@@ -3184,7 +3184,7 @@ break;
 case 189:
 #line 1015 "c_parser.y"
 {
-        yyval.ast_symbol.d = newSymbolAsCopyOf(s_errorSymbol);
+        yyval.ast_symbol.d = newSymbolAsCopyOf(&s_errorSymbol);
 #if YYDEBUG
         char buffer[100];
         sprintf(buffer, "DEBUG: error parsing enumerator near '%s'", yytext);
@@ -3468,7 +3468,7 @@ break;
 case 231:
 #line 1244 "c_parser.y"
 {
-        yyval.ast_symbol.d = newSymbolAsCopyOf(s_errorSymbol);
+        yyval.ast_symbol.d = newSymbolAsCopyOf(&s_errorSymbol);
 #if YYDEBUG
         char buffer[100];
         sprintf(buffer, "DEBUG: error parsing parameter_declaration near '%s'", yytext);

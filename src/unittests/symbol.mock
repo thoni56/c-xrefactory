@@ -4,6 +4,8 @@
 
 Symbol *newSymbol(char *name, char *linkName, struct position pos) {
     return NULL; // (S_symbol *)mock(name, linkName, pos);
+Symbol *newSymbolAsCopyOf(Symbol *original) {
+    return (Symbol*)mock(original);
 }
 
 void fillSymbol(Symbol *symbol, char *name, char *linkName, struct position pos) {

@@ -4167,7 +4167,7 @@ case 146:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.ast_symbol.d = newSymbolAsCopyOf(s_errorSymbol);
+                    yyval.ast_symbol.d = newSymbolAsCopyOf(&s_errorSymbol);
                 } else {
                     SetNullBoundaries(yyval.ast_symbol);
                 }
@@ -4424,7 +4424,7 @@ case 167:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    yyval.ast_symbol.d = newSymbolAsCopyOf(s_errorSymbol);
+                    yyval.ast_symbol.d = newSymbolAsCopyOf(&s_errorSymbol);
                 } else {
                     SetNullBoundaries(yyval.ast_symbol);
                 }

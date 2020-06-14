@@ -1599,7 +1599,7 @@ VariableDeclarator
     |	error											{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d = newSymbolAsCopyOf(s_errorSymbol);
+                    $$.d = newSymbolAsCopyOf(&s_errorSymbol);
                 } else {
                     SetNullBoundaries($$);
                 }
@@ -1834,7 +1834,7 @@ FormalParameter
     |	error								{
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    $$.d = newSymbolAsCopyOf(s_errorSymbol);
+                    $$.d = newSymbolAsCopyOf(&s_errorSymbol);
                 } else {
                     SetNullBoundaries($$);
                 }

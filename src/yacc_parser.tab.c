@@ -3254,7 +3254,7 @@ break;
 case 288:
 #line 814 "yacc_parser.y"
 {
-        yyval.ast_symbol.d = newSymbolAsCopyOf(s_errorSymbol);
+        yyval.ast_symbol.d = newSymbolAsCopyOf(&s_errorSymbol);
     }
 break;
 case 291:
@@ -3546,7 +3546,7 @@ break;
 case 349:
 #line 1011 "yacc_parser.y"
 {
-        yyval.ast_symbol.d = newSymbolAsCopyOf(s_errorSymbol);
+        yyval.ast_symbol.d = newSymbolAsCopyOf(&s_errorSymbol);
     }
 break;
 case 350:
@@ -3636,7 +3636,7 @@ break;
 case 367:
 #line 1091 "yacc_parser.y"
 {
-        yyval.ast_symbol.d = newSymbolAsCopyOf(s_errorSymbol);
+        yyval.ast_symbol.d = newSymbolAsCopyOf(&s_errorSymbol);
     }
 break;
 case 368:
@@ -3919,7 +3919,7 @@ break;
 case 409:
 #line 1318 "yacc_parser.y"
 {
-        yyval.ast_symbol.d = newSymbolAsCopyOf(s_errorSymbol);
+        yyval.ast_symbol.d = newSymbolAsCopyOf(&s_errorSymbol);
     }
 break;
 case 410:
@@ -4257,7 +4257,7 @@ break;
 case 491:
 #line 1623 "yacc_parser.y"
 {
-        yyval.ast_symbol.d = newSymbolAsCopyOf(s_errorSymbol);
+        yyval.ast_symbol.d = newSymbolAsCopyOf(&s_errorSymbol);
     }
 break;
 case 493:

@@ -812,7 +812,7 @@ init_declarations
         addNewDeclaration($1.d, $3.d, NULL, StorageAuto,s_symbolTable);
     }
     | error                                             {
-        $$.d = newSymbolAsCopyOf(s_errorSymbol);
+        $$.d = newSymbolAsCopyOf(&s_errorSymbol);
     }
     ;
 
@@ -1009,7 +1009,7 @@ struct_declaration
         tmpWorkMemoryi = $1.d;
     }
     | error                                             {
-        $$.d = newSymbolAsCopyOf(s_errorSymbol);
+        $$.d = newSymbolAsCopyOf(&s_errorSymbol);
     }
     ;
 
@@ -1089,7 +1089,7 @@ enumerator
         addNewSymbolDef($$.d,StorageConstant, s_symbolTable, UsageDefined);
     }
     | error                                 {
-        $$.d = newSymbolAsCopyOf(s_errorSymbol);
+        $$.d = newSymbolAsCopyOf(&s_errorSymbol);
     }
     | COMPL_OTHER_NAME      { assert(0); /* token never used */ }
     ;
@@ -1316,7 +1316,7 @@ parameter_declaration
         $$.d = newSymbolAsType(NULL, NULL, s_noPos, $1.d);
     }
     | error                                     {
-        $$.d = newSymbolAsCopyOf(s_errorSymbol);
+        $$.d = newSymbolAsCopyOf(&s_errorSymbol);
     }
     ;
 
@@ -1621,7 +1621,7 @@ top_init_declarations
         addNewDeclaration($1.d, $3.d, NULL, StorageExtern,s_symbolTable);
     }
     | error                                             {
-        $$.d = newSymbolAsCopyOf(s_errorSymbol);
+        $$.d = newSymbolAsCopyOf(&s_errorSymbol);
     }
     ;
 

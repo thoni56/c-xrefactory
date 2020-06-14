@@ -585,7 +585,7 @@ static Symbol *javaAddTypeToSymbolTable(Symbol *original, int accessFlags, Posit
     original->bits.access = accessFlags;
     original->bits.isExplicitlyImported = isExplicitlyImported;
 
-    added = newSymbolAsCopyOf(*original);
+    added = newSymbolAsCopyOf(original);
     added->pos = *importPos;
     addSymbol(added, s_symbolTable);
 
@@ -594,7 +594,8 @@ static Symbol *javaAddTypeToSymbolTable(Symbol *original, int accessFlags, Posit
 
 Symbol *javaTypeSymbolDefinition(IdList *tname,
                                  int accessFlags,
-                                 int addType){
+                                 int addType
+){
     Symbol pp,*typeSymbol;
     char fqtName[MAX_FILE_NAME_SIZE];
 

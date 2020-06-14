@@ -54,7 +54,7 @@ typedef struct symbolList {
 
 /* NOTE These will not fill bits-field, has to be done after allocation */
 extern Symbol *newSymbol(char *name, char *linkName, struct position pos);
-extern Symbol *newSymbolAsCopyOf(struct symbol original);
+extern Symbol *newSymbolAsCopyOf(Symbol *original);
 extern Symbol *newSymbolAsKeyword(char *name, char *linkName, struct position pos,
                                   int keyWordVal);
 extern Symbol *newSymbolAsType(char *name, char *linkName, struct position pos,

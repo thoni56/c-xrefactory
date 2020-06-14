@@ -36,19 +36,15 @@ void fillSymbolWithLabel(Symbol *symbol, char *name, char *linkName, struct posi
 
 Symbol *newSymbol(char *name, char *linkName, struct position pos) {
     Symbol *s;
-
     s = StackMemoryAlloc(Symbol);
     fillSymbol(s, name, linkName, pos);
-
     return s;
 }
 
-Symbol *newSymbolAsCopyOf(struct symbol original) {
+Symbol *newSymbolAsCopyOf(Symbol *original) {
     Symbol *s;
-
     s = StackMemoryAlloc(Symbol);
-    *s = original;
-
+    *s = *original;
     return s;
 }
 

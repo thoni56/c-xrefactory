@@ -925,7 +925,7 @@ struct_declaration
         tmpWorkMemoryi = $1.d;
     }
     | error												{
-        $$.d = newSymbolAsCopyOf(s_errorSymbol);
+        $$.d = newSymbolAsCopyOf(&s_errorSymbol);
 #if YYDEBUG
         char buffer[100];
         sprintf(buffer, "DEBUG: error parsing struct_declaration near '%s'", yytext);
@@ -1013,7 +1013,7 @@ enumerator
         addNewSymbolDef($$.d,StorageConstant, s_symbolTable, UsageDefined);
     }
     | error									{
-        $$.d = newSymbolAsCopyOf(s_errorSymbol);
+        $$.d = newSymbolAsCopyOf(&s_errorSymbol);
 #if YYDEBUG
         char buffer[100];
         sprintf(buffer, "DEBUG: error parsing enumerator near '%s'", yytext);
@@ -1242,7 +1242,7 @@ parameter_declaration
         $$.d = newSymbolAsType(NULL, NULL, s_noPos, $1.d);
     }
     | error										{
-        $$.d = newSymbolAsCopyOf(s_errorSymbol);
+        $$.d = newSymbolAsCopyOf(&s_errorSymbol);
 #if YYDEBUG
         char buffer[100];
         sprintf(buffer, "DEBUG: error parsing parameter_declaration near '%s'", yytext);
