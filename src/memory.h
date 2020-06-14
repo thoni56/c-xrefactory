@@ -43,11 +43,11 @@
 /* ********************************************************************* */
 
 /* stack memory synchronized with program block structure */
-#define XX_ALLOC(p,t)           {p = (t*) stackMemoryAlloc(sizeof(t)); }
 #define XX_ALLOCC(p,n,t)        {p = (t*) stackMemoryAlloc((n)*sizeof(t)); }
 #define XX_FREE(p)              { }
 
 #define StackMemoryAlloc(t) ((t*) stackMemoryAlloc(sizeof(t)))
+#define StackMemoryAllocC(n, t) ((t*) stackMemoryAlloc((n)*sizeof(t)))
 
 /* ********************************************************************* */
 

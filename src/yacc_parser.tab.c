@@ -4201,13 +4201,13 @@ case 482:
             if (p->bits.symType == TypeElipsis) continue;
             if (p->u.type == NULL) p->u.type = &s_defaultIntModifier;
             if (p->name != NULL) {
-                XX_ALLOC(pa,Symbol);
-                *pa = *p;
+                pa = newSymbolAsCopyOf(p);
                 addNewSymbolDef(pa, StorageAuto, s_symbolTable, UsageDefined);
             }
             if (options.server_operation == OLO_GOTO_PARAM_NAME
                 && i == options.olcxGotoVal
-                && POSITION_EQ(yyvsp[0].ast_symbol.d->pos, s_cxRefPos)) {
+                && POSITION_EQ(yyvsp[0].ast_symbol.d->pos, s_cxRefPos))
+            {
                 s_paramPosition = p->pos;
             }
 

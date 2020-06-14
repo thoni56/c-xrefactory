@@ -102,7 +102,7 @@ TypeModifier *newEnumTypeModifier(Symbol *symbol) {
 
 S_typeModifierList *newTypeModifierList(TypeModifier *d) {
     S_typeModifierList *list;
-    XX_ALLOC(list, S_typeModifierList);
+    list = StackMemoryAlloc(S_typeModifierList);
     list->d = d;
     list->next = NULL;
     return list;

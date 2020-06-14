@@ -553,7 +553,7 @@ Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, SymbolTable *tab,
     }
     if (p->bits.symType==TypeDefault && p->bits.storage==StorageTypedef) {
         // typedef HACK !!!
-        XX_ALLOC(tt, TypeModifier);
+        tt = StackMemoryAlloc(TypeModifier);
         *tt = *p->u.type;
         p->u.type = tt;
         tt->typedefSymbol = p;
@@ -746,7 +746,7 @@ Symbol *typeSpecifier2(TypeModifier *t) {
     if (LANGUAGE(LANG_C)) {
         SM_ALLOC(tmpWorkMemory, r, Symbol);
     } else {
-        XX_ALLOC(r, Symbol);
+        r = StackMemoryAlloc(Symbol);
     }
     fillSymbolWithType(r, NULL, NULL, s_noPos, t);
 
@@ -898,9 +898,9 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
     if (! symbolTableIsMember(s_symbolTable,&p,&ii,&pp)
         || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
         //{static int c=0;fprintf(dumpOut,"str#%d\n",c++);}
-        XX_ALLOC(pp, Symbol);
+        pp = StackMemoryAlloc(Symbol);
         *pp = p;
-        XX_ALLOC(pp->u.s, S_symStructSpec);
+        pp->u.s = StackMemoryAlloc(S_symStructSpec);
 
         initSymStructSpec(pp->u.s, /*.records=*/NULL);
         TypeModifier *stype = &pp->u.s->stype;
@@ -982,7 +982,7 @@ TypeModifier *createNewAnonymousStructOrUnion(Id *typeName) {
 
     setGlobalFileDepNames("", pp, MEMORY_XX);
 
-    XX_ALLOC(pp->u.s, S_symStructSpec);
+    pp->u.s = StackMemoryAlloc(S_symStructSpec);
 
     /* This is a recurring pattern, create a struct and the pointer type to it*/
     initSymStructSpec(pp->u.s, /*.records=*/NULL);
@@ -1045,7 +1045,7 @@ TypeModifier *createNewAnonymousEnum(SymbolList *enums) {
 
 void appendPositionToList( PositionList **list,Position *pos) {
     PositionList *ppl;
-    XX_ALLOC(ppl, PositionList);
+    ppl = StackMemoryAlloc(PositionList);
     fillPositionList(ppl, *pos, NULL);
     LIST_APPEND(PositionList, (*list), ppl);
 }

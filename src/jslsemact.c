@@ -23,7 +23,7 @@ S_jslStat *s_jsl;
 S_jslClassStat *newJslClassStat(IdList *className, Symbol *thisClass, char *thisPackage, S_jslClassStat *next) {
     S_jslClassStat *jslClassStat;
 
-    XX_ALLOC(jslClassStat, S_jslClassStat);
+    jslClassStat = StackMemoryAlloc(S_jslClassStat);
     jslClassStat->className = className;
     jslClassStat->thisClass = thisClass;
     jslClassStat->thisPackage = thisPackage;
@@ -146,7 +146,7 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
     if (add == ADD_YES) {
         if (packid!=NULL) importPos = &packid->id.p;
         else importPos = &s_noPos;
-        XX_ALLOC(xss, JslSymbolList); // CF_ALLOC ???
+        xss = StackMemoryAlloc(JslSymbolList); // CF_ALLOC ???
         fillJslSymbolList(xss, smemb, *importPos, isExplicitlyImported);
         /* TODO: Why are we using isMember() and not looking at the result? Side-effect? */
         mm = jslTypeTabIsMember(s_jsl->typeTab, xss, &ii, &memb);
@@ -593,7 +593,7 @@ void jslNewClassDefinitionBegin(Id *name,
         cc->u.s->nestedCount = 0;
 
     stackMemoryBlockStart();
-    XX_ALLOC(ill, IdList);
+    ill = StackMemoryAlloc(IdList);
     fillfIdList(ill, cc->name, inname->symbol, inname->p, cc->name, TypeStruct, s_jsl->classStat->className);
     nss = newJslClassStat(ill, cc, s_jsl->classStat->thisPackage,
                           s_jsl->classStat);
@@ -641,7 +641,7 @@ void jslAddDefaultConstructor(Symbol *cl) {
 void jslNewAnonClassDefinitionBegin(Id *interfName) {
     IdList   ll;
     Symbol        *interf,*str;
-    //& XX_ALLOC(ll, IdList);
+
     fillIdList(&ll, *interfName, interfName->name, TypeDefault, NULL);
     jslClassifyAmbiguousTypeName(&ll, &str);
     interf = jslTypeNameDefinition(&ll);

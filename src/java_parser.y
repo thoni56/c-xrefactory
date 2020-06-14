@@ -51,36 +51,33 @@
 /* In case that there is a class and package differing only in letter case in name */
 /* then even if classified to type it should be reclassified dep on the case */
 
-#define JslImportOnDemandDeclaration(iname) {\
-    Symbol *sym;\
-    int st;\
-    st = jslClassifyAmbiguousTypeName(iname, &sym);\
-    if (st == TypeStruct) {\
-        javaLoadClassSymbolsFromFile(sym);\
-        jslAddNestedClassesToJslTypeTab(sym, ORDER_APPEND);\
-    } else {\
-        javaMapDirectoryFiles2(iname,jslAddMapedImportTypeName,NULL,iname,NULL);\
-    }\
-}
+#define JslImportOnDemandDeclaration(iname) {                           \
+        Symbol *sym;                                                    \
+        int st;                                                         \
+        st = jslClassifyAmbiguousTypeName(iname, &sym);                 \
+        if (st == TypeStruct) {                                         \
+            javaLoadClassSymbolsFromFile(sym);                          \
+            jslAddNestedClassesToJslTypeTab(sym, ORDER_APPEND);         \
+        } else {                                                        \
+            javaMapDirectoryFiles2(iname,jslAddMapedImportTypeName,NULL,iname,NULL); \
+        }                                                               \
+    }
 
-#define SetPrimitiveTypePos(res, typ) {\
-        if (1 || SyntaxPassOnly()) {\
-            XX_ALLOC(res, Position);\
-            *res = typ->p;\
-        }\
-}
-#define SetAssignmentPos(res, tok) {\
-        if (1 || SyntaxPassOnly()) {\
-            XX_ALLOC(res.p, Position);\
-            *res.p = tok;\
-        }\
-}
+    /* TODO: This is just silly... Convert to something like newPositionAsCopyOf()  */
+#define SetPrimitiveTypePos(res, typ) {         \
+        if (1 || SyntaxPassOnly()) {            \
+            res = StackMemoryAlloc(Position);   \
+            *res = typ->p;                      \
+        }                                       \
+        else assert(0);                         \
+    }
+
 #define PropagateBoundaries(res, beg, end) {res.b=beg.b; res.e=end.e;}
-#define PropagateBoundariesIfRegularSyntaxPass(res, beg, end) {\
-    if (regularPass()) {\
-        if (SyntaxPassOnly()) {PropagateBoundaries(res, beg, end);}\
-    }\
-}
+#define PropagateBoundariesIfRegularSyntaxPass(res, beg, end) {         \
+        if (regularPass()) {                                            \
+            if (SyntaxPassOnly()) {PropagateBoundaries(res, beg, end);} \
+        }                                                               \
+    }
 #define SetNullBoundaries(res) {res.b=s_noPos; res.e=s_noPos;}
 
 #define NULL_POS NULL
@@ -108,7 +105,7 @@ typedef struct whileExtractData {
 static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbol *i4) {
     S_whileExtractData *whileExtractData;
 
-    XX_ALLOC(whileExtractData, S_whileExtractData);
+    whileExtractData = StackMemoryAlloc(S_whileExtractData);
     whileExtractData->i1 = i1;
     whileExtractData->i2 = i2;
     whileExtractData->i3 = i3;
@@ -446,7 +443,7 @@ Literal
                     $$.d.typeModifier = &s_javaStringModifier;
                     $$.d.reference = NULL;
                 } else {
-                    XX_ALLOC($$.d.position, Position);
+                    $$.d.position = StackMemoryAlloc(Position);
                     *$$.d.position = $1.d;
                     PropagateBoundaries($$, $1, $1);
                 }
@@ -458,7 +455,7 @@ Literal
                     $$.d.typeModifier = newSimpleTypeModifier(TypeNull);
                     $$.d.reference = NULL;
                 } else {
-                    XX_ALLOC($$.d.position, Position);
+                    $$.d.position = StackMemoryAlloc(Position);
                     *$$.d.position = $1.d->p;
                     PropagateBoundaries($$, $1, $1);
                 }
@@ -862,7 +859,7 @@ CompilationUnit: {
                     javaParsingInitializations();
                     // make first and second pass through file
                     assert(s_jsl == NULL); // no nesting
-                    XX_ALLOC(jsltypeTab, JslTypeTab);
+                    jsltypeTab = StackMemoryAlloc(JslTypeTab);
                     jslTypeTabInit(jsltypeTab, MAX_JSL_SYMBOLS);
                     javaReadSymbolFromSourceFileInit(s_olOriginalFileNumber,
                                                      jsltypeTab);
@@ -3067,7 +3064,7 @@ PrimaryNoNewArray
             if (regularPass()) {
                 $$.d = $2.d;
                 if (SyntaxPassOnly()) {
-                    XX_ALLOC($$.d.position, Position);
+                    $$.d.position = StackMemoryAlloc(Position);
                     *$$.d.position = $1.d;
                     PropagateBoundaries($$, $1, $3);
                     if (POSITION_IS_BETWEEN_IN_THE_SAME_FILE($$.b, s_cxRefPos, $$.e)

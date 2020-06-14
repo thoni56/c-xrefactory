@@ -2456,15 +2456,16 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     initOptions();
 
     /* TODO: should go into a newSymbolTable() function... */
-    XX_ALLOC(s_symbolTable, SymbolTable);
+    s_symbolTable = StackMemoryAlloc(SymbolTable);
     symbolTableInit(s_symbolTable, MAX_SYMBOLS);
+
     fillJavaStat(&s_initJavaStat,NULL,NULL,NULL,0, NULL, NULL, NULL,
                   s_symbolTable,NULL,AccessDefault,s_cpInit,s_noneFileIndex,NULL);
-    XX_ALLOC(s_javaStat, S_javaStat);
+    s_javaStat = StackMemoryAlloc(S_javaStat);
     *s_javaStat = s_initJavaStat;
     javaFqtTableInit(&javaFqtTable, FQT_CLASS_TAB_SIZE);
     // initialize recursive java parsing
-    XX_ALLOC(s_yygstate, struct yyGlobalState);
+    s_yygstate = StackMemoryAlloc(struct yyGlobalState);
     memset(s_yygstate, 0, sizeof(struct yyGlobalState));
     s_initYygstate = s_yygstate;
 

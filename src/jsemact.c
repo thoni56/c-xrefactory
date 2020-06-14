@@ -213,7 +213,6 @@ void javaAddNestedClassesAsTypeDefs(Symbol *cc, IdList *oclassname,
         if (ss->nest[i].membFlag) {
             nn = ss->nest[i].cl;
             assert(nn);
-            //& XX_ALLOC(ll, IdList);
             fillId(&ll.id, nn->name, cc, s_noPos);
             fillIdList(&ll, ll.id, nn->name,TypeStruct,oclassname);
             javaTypeSymbolDefinition(&ll, accessFlags, ADD_YES);
@@ -666,7 +665,7 @@ void javaReadSymbolFromSourceFileInit(int sourceFileNum,
     S_jslStat           *njsl;
     char				*yyg;
     int					yygsize;
-    XX_ALLOC(njsl, S_jslStat);
+    njsl = StackMemoryAlloc(S_jslStat);
     // very space consuming !!!, it takes about 400kb of working memory
     // TODO!!!! to allocate and save only used parts of 'gyyvs - gyyvsp'
     // and 'gyyss - gyyssp' ??? And copying twice? definitely yes!
@@ -751,7 +750,7 @@ void javaReadSymbolsFromSourceFile(char *fname) {
     fileIndex = addFileTabItem(fname);
     memBalance = s_topBlock->firstFreeIndex;
     stackMemoryBlockStart();
-    XX_ALLOC(typeTab, JslTypeTab);
+    typeTab = StackMemoryAlloc(JslTypeTab);
     javaReadSymbolFromSourceFileInit(fileIndex, typeTab);
     jslTypeTabInit(typeTab, MAX_JSL_SYMBOLS);
     javaReadSymbolsFromSourceFileNoFreeing(fname, fname);
@@ -2215,7 +2214,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationN(IdList *name) {
     TypeModifier		*expr;
     Reference			*rr;
     int					nt;
-    XX_ALLOC(erfs, S_extRecFindStr);
+    erfs = StackMemoryAlloc(S_extRecFindStr);
     erfs->params = NULL;
     nt = javaClassifyAmbiguousName(name, &erfs->s,&erfs->memb,&expr,&rr,NULL, USELESS_FQT_REFS_ALLOWED,CLASS_TO_METHOD,UsageUsed);
     if (nt != TypeExpression) {
@@ -2248,7 +2247,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationT(TypeModifier *tt,
         methodAppliedOnNonClass(name->name);
         return(NULL);
     }
-    XX_ALLOC(erfs, S_extRecFindStr);
+    erfs = StackMemoryAlloc(S_extRecFindStr);
     erfs->params = NULL;
     javaLoadClassSymbolsFromFile(tt->u.t);
     rr = findStrRecordSym(iniFind(tt->u.t,&erfs->s), name->name, &erfs->memb,
@@ -2280,7 +2279,7 @@ S_extRecFindStr *javaCrErfsForMethodInvocationS(Id *super, Id *name) {
     if (ss == &s_errorSymbol || ss->bits.symType==TypeError) return(NULL);
     assert(ss && ss->bits.symType == TypeStruct);
     assert(ss->bits.javaFileIsLoaded);
-    XX_ALLOC(erfs, S_extRecFindStr);
+    erfs = StackMemoryAlloc(S_extRecFindStr);
     erfs->params = NULL;
 /*	I do not know, once will come the day I will know
     if (s_javaStat->cpMethod != NULL) {
@@ -2314,7 +2313,7 @@ S_extRecFindStr *javaCrErfsForConstructorInvocation(Symbol *clas,
     if (clas == &s_errorSymbol || clas->bits.symType==TypeError) return(NULL);
     assert(clas && clas->bits.symType == TypeStruct);
     javaLoadClassSymbolsFromFile(clas);
-    XX_ALLOC(erfs, S_extRecFindStr);
+    erfs = StackMemoryAlloc(S_extRecFindStr);
     erfs->params = NULL;
     assert(clas->bits.javaFileIsLoaded);
     rr = findStrRecordSym(iniFind(clas, &erfs->s), clas->name, &erfs->memb,
@@ -2526,10 +2525,10 @@ struct freeTrail *newClassDefinitionBegin(Id *name,
 
     assert(s_javaStat);
     oldStat = s_javaStat;
-    XX_ALLOC(s_javaStat, S_javaStat);
+    s_javaStat = StackMemoryAlloc(S_javaStat);
     *s_javaStat = *oldStat;
     s_javaStat->next = oldStat;
-    XX_ALLOC(locals, SymbolTable);
+    locals = StackMemoryAlloc(SymbolTable);
     symbolTableInit(locals, MAX_CL_SYMBOLS);
 /*&fprintf(dumpOut,"adding new class %s\n",name->name);fflush(dumpOut);&*/
     if (oldStat->next!=NULL) {
@@ -2551,14 +2550,14 @@ struct freeTrail *newClassDefinitionBegin(Id *name,
 //&		assert(innerNamesCorrect);
         dd = nn->cl;
         fillId(&idi,dd->linkName, NULL, name->p);
-        XX_ALLOC(p, IdList);
+        p = StackMemoryAlloc(IdList);
         fillIdList(p, idi, dd->linkName, TypeStruct, NULL);
         ddd = javaAddType(p, access, &name->p);
         assert(dd==ddd);
         //&javaCreateClassFileItem(dd);
     } else {
         /* probably base class */
-        XX_ALLOC(p,IdList);
+        p = StackMemoryAlloc(IdList);
         fillIdList(p,*name,name->name,TypeStruct,s_javaStat->className);
         dd = javaAddType(p, access, &name->p);
         assert(dd->bits.symType == TypeStruct);
@@ -2580,7 +2579,7 @@ struct freeTrail *newAnonClassDefinitionBegin(Id *interfName) {
     struct freeTrail * res;
     IdList	*ll;
     Symbol		*interf, *str;
-    XX_ALLOC(ll, IdList);
+    ll = StackMemoryAlloc(IdList);
     fillIdList(ll, *interfName, interfName->name, TypeDefault, NULL);
     javaClassifyToTypeName(ll,UsageUsed,&str, USELESS_FQT_REFS_ALLOWED);
     interf = javaTypeNameDefinition(ll);

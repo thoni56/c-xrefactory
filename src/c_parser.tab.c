@@ -2420,7 +2420,7 @@ break;
 case 30:
 #line 397 "c_parser.y"
 {
-            XX_ALLOC(yyval.ast_positionList.d, PositionList);
+            yyval.ast_positionList.d = StackMemoryAlloc(PositionList);
             fillPositionList(yyval.ast_positionList.d, s_noPos, yyvsp[0].ast_positionList.d);
         }
 break;
