@@ -167,7 +167,7 @@ static void symbolTableDeleteOutOfMemory(int i) {
 
 static void javaFqtTabDeleteOutOfMemory(int i) {
     SymbolList **pp;
-    pp = &s_javaFqtTab.tab[i];
+    pp = &javaFqtTable.tab[i];
     while (*pp!=NULL) {
         if (SM_FREED_POINTER(ppmMemory,*pp)) {
             *pp = (*pp)->next;
@@ -290,7 +290,7 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
     log_trace("recovering 0");
     symbolTableMap3(s_symbolTable, symbolTableDeleteOutOfMemory);
     log_trace("recovering 1");
-    javaFqtTabMap3(&s_javaFqtTab, javaFqtTabDeleteOutOfMemory);
+    javaFqtTableMap3(&javaFqtTable, javaFqtTabDeleteOutOfMemory);
     log_trace("recovering 2");
 
     /*& fileTabMapWithIndex(&fileTable, fileTabDeleteOutOfMemory); &*/

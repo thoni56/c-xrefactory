@@ -11,6 +11,6 @@
         && strcmp(e1->d->linkName,e2->d->linkName)==0                   \
     )
 
-S_javaFqtTab s_javaFqtTab;
+JavaFqtTable javaFqtTable;
 
-#include "hashlist.tc"
+#include "hashlist-new.tc"

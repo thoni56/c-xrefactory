@@ -514,7 +514,7 @@ static Symbol *javaFQTypeSymbolDefinitionCreate(char *name,
     /* REPLACED: FILL_symbolList(pppl, memb, NULL); with compound literal */
     *pppl = (SymbolList){.d = memb, .next = NULL};
 
-    javaFqtTabAdd(&s_javaFqtTab,pppl,&ii);
+    javaFqtTableAdd(&javaFqtTable,pppl,&ii);
 
     // I think this can be there, as it is very used
     javaCreateClassFileItem(memb);
@@ -537,7 +537,7 @@ Symbol *javaFQTypeSymbolDefinition(char *name, char *fqName) {
     /* REPLACED: FILL_symbolList(&ppl, &symbol, NULL); with compound literal */
     ppl = (SymbolList){.d = &symbol, .next = NULL};
 
-    if (javaFqtTabIsMember(&s_javaFqtTab, &ppl, &position, &pppl)) {
+    if (javaFqtTableIsMember(&javaFqtTable, &ppl, &position, &pppl)) {
         member = pppl->d;
     } else {
         assert(position >= 0);

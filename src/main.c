@@ -2462,7 +2462,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
                   s_symbolTable,NULL,AccessDefault,s_cpInit,s_noneFileIndex,NULL);
     XX_ALLOC(s_javaStat, S_javaStat);
     *s_javaStat = s_initJavaStat;
-    javaFqtTabInit( &s_javaFqtTab, FQT_CLASS_TAB_SIZE);
+    javaFqtTableInit(&javaFqtTable, FQT_CLASS_TAB_SIZE);
     // initialize recursive java parsing
     XX_ALLOC(s_yygstate, struct yyGlobalState);
     memset(s_yygstate, 0, sizeof(struct yyGlobalState));
