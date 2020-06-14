@@ -17,7 +17,9 @@
 #define LIST_FREE(type, list) {                                         \
         type *tempnsl1, *tempnsl2; tempnsl1 = list;                     \
         while (tempnsl1!=NULL) {                                        \
-            tempnsl2=tempnsl1; tempnsl1 = tempnsl1->next; XX_FREE(tempnsl2); \
+            tempnsl2=tempnsl1;                                          \
+            tempnsl1 = tempnsl1->next;                                  \
+            StackMemoryFree(tempnsl2);                                  \
         }                                                               \
     }
 

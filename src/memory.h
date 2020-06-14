@@ -43,10 +43,9 @@
 /* ********************************************************************* */
 
 /* stack memory synchronized with program block structure */
-#define XX_FREE(p)              { }
-
 #define StackMemoryAlloc(t) ((t*) stackMemoryAlloc(sizeof(t)))
 #define StackMemoryAllocC(n, t) ((t*) stackMemoryAlloc((n)*sizeof(t)))
+#define StackMemoryFree(p)              { }
 
 /* ********************************************************************* */
 

@@ -170,7 +170,7 @@ void CONCAT(HASH_FUN_PREFIX,Add) (
 
 
 void CONCAT(HASH_FUN_PREFIX,Free)(HASH_TAB_TYPE *t) {
-    XX_FREE(t->tab);
+    StackMemoryFree(t->tab);
 }
 
 
