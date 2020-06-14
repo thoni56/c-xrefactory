@@ -495,7 +495,7 @@ char * string3ConcatInStackMem(char *str1, char *str2, char *str3) {
     l1 = strlen(str1);
     l2 = strlen(str2);
     l3 = strlen(str3);
-    XX_ALLOCC(s, l1+l2+l3+1, char);
+    s = StackMemoryAllocC(l1+l2+l3+1, char);
     strcpy(s,str1);
     strcpy(s+l1,str2);
     strcpy(s+l1+l2,str3);

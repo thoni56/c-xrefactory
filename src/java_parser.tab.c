@@ -3308,8 +3308,7 @@ case 64:
                         for(i=0,j=0; currentFile.fileName[i]; i++) {
                             if (currentFile.fileName[i] == FILE_PATH_SEPARATOR) j=i;
                         }
-                        XX_ALLOCC(cdir, j+1, char);  /* I prefer this*/
-                        /*& SM_ALLOCC(ftMemory, cdir, j+1, char); &*/ /* will exhaust ftmemory*/
+                        cdir = StackMemoryAllocC(j+1, char);
                         strncpy(cdir,currentFile.fileName,j); cdir[j]=0;
                         s_javaStat->unnamedPackagePath = cdir;
                         javaCheckIfPackageDirectoryIsInClassOrSourcePath(cdir);
@@ -3321,8 +3320,7 @@ case 64:
                         }
                         packlen = strlen(s_javaThisPackageName);
                         if (j>packlen && fnnCmp(s_javaThisPackageName,&currentFile.fileName[j-packlen],packlen)==0){
-                            XX_ALLOCC(cdir, j-packlen, char); /* I prefer this*/
-                            /*& SM_ALLOCC(ftMemory, cdir, j-packlen, char); &*/  /* will exhauste ftmemory*/
+                            cdir = StackMemoryAllocC(j-packlen, char);
                             strncpy(cdir, currentFile.fileName, j-packlen-1); cdir[j-packlen-1]=0;
                             s_javaStat->namedPackagePath = cdir;
                             s_javaStat->currentPackage = "";
@@ -3373,7 +3371,7 @@ case 64:
                     javaClassifyToPackageName(yyvsp[0].ast_idList.d);
                 }
                 javaCreateComposedName(NULL,yyvsp[0].ast_idList.d,'/',NULL,ppp,MAX_FILE_NAME_SIZE);
-                XX_ALLOCC(pname, strlen(ppp)+1, char);
+                pname = StackMemoryAllocC(strlen(ppp)+1, char);
                 strcpy(pname, ppp);
                 s_jsl->classStat = newJslClassStat(yyvsp[0].ast_idList.d, NULL, pname, NULL);
                 if (inSecondJslPass()) {

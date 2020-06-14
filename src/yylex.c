@@ -721,6 +721,7 @@ void processDefine(bool argFlag) {
     fillSymbol(pp, NULL, NULL, macpos);
     fillSymbolBits(&pp->bits, AccessDefault, TypeMacro, StorageNone);
 
+    /* TODO: only call to setGlobalFileDepNames() that doesn't do it in XX memory, why? */
     setGlobalFileDepNames(cc, pp, MEMORY_PP);
     mname = pp->name;
     /* process arguments */

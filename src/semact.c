@@ -500,7 +500,7 @@ void setLocalVariableLinkName(struct symbol *p) {
         }
     }
     len = strlen(ttt);
-    XX_ALLOCC(p->linkName, len+1, char);
+    p->linkName = StackMemoryAllocC(len+1, char);
     strcpy(p->linkName,ttt);
 }
 
@@ -523,7 +523,7 @@ static void setStaticFunctionLinkName( Symbol *p, int usage ) {
     sprintf(ttt,"%s!%s", simpleFileName(basefname), p->name);
     len = strlen(ttt);
     assert(len < TMP_STRING_SIZE-2);
-    XX_ALLOCC(ss, len+1, char);
+    ss = StackMemoryAllocC(len+1, char);
     strcpy(ss, ttt);
     p->linkName = ss;
     //& } else {
@@ -953,7 +953,7 @@ void setGlobalFileDepNames(char *iname, Symbol *pp, int memory) {
     len2 = len + strlen(iname);
     assert(len < MACRO_NAME_SIZE-2);
     if (memory == MEMORY_XX) {
-        XX_ALLOCC(mname, len2+1, char);
+        mname = StackMemoryAllocC(len2+1, char);
     } else {
         PP_ALLOCC(mname, len2+1, char);
     }

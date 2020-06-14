@@ -94,7 +94,7 @@ char *javaCreateComposedName(char *prefix,
     if (sss && ll!=0) len++;
     len += ll;
     if (resBuff == NULL) {
-        XX_ALLOCC(ln, len+1, char);
+        ln = StackMemoryAllocC(len+1, char);
     } else {
         assert(len < resBuffSize);
         ln = resBuff;
@@ -240,7 +240,7 @@ static int javaFindFile0(char *classPath, char *slash, char *name,
         res = 1;
     }
     if (res && resName!=NULL) {
-        XX_ALLOCC(*resName, strlen(ffn)+1, char);
+        *resName = StackMemoryAllocC(strlen(ffn)+1, char);
         strcpy(*resName, ffn);
     }
     return(res);
@@ -671,7 +671,7 @@ void javaReadSymbolFromSourceFileInit(int sourceFileNum,
     // and 'gyyss - gyyssp' ??? And copying twice? definitely yes!
     //yygsize = sizeof(struct yyGlobalState);
     yygsize = ((char*)(s_yygstate->gyyvsp+1)) - ((char *)s_yygstate);
-    XX_ALLOCC(yyg, yygsize, char);
+    yyg = StackMemoryAllocC(yygsize, char);
     fillJslStat(njsl, 0, sourceFileNum, s_language, typeTab, NULL, NULL,
                  uniyylval, (S_yyGlobalState*)yyg, yygsize, s_jsl);
     memcpy(njsl->savedYYstate, s_yygstate, yygsize);
@@ -1654,7 +1654,7 @@ int javaSetFunctionLinkName(Symbol *clas, Symbol *decl, enum memoryClass mem) {
             CF_ALLOCC(ln, ppi+1, char);
         } else {
             assert(mem==MEMORY_XX);
-            XX_ALLOCC(ln, ppi+1, char);
+            ln = StackMemoryAllocC(ppi+1, char);
         }
         strcpy(ln,pp);
         decl->linkName = ln;

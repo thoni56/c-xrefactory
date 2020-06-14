@@ -303,7 +303,7 @@ bool fsIsMember(S_zipArchiveDir **dirPointer, char *fn, unsigned offset,
     if (aa==NULL) {
         res = false;
         if (addFlag == ADD_YES) {
-            XX_ALLOCC(p, sizeof(S_zipArchiveDir)+itemlen+1, S_zipArchiveDir);
+            p = StackMemoryAllocC(sizeof(S_zipArchiveDir)+itemlen+1, S_zipArchiveDir);
             initZipArchiveDir(p);
             strncpy(p->name, fn, itemlen);
             p->name[itemlen]=0;
@@ -508,9 +508,9 @@ static int zipSeekToFile(char **accc, char **affin, CharacterBuffer *iBuf,
 }
 
 bool zipFindFile(char *name,
-                char **resName,             /* can be NULL !!! */
-                S_zipFileTableItem *zipfile
-                ) {
+                 char **resName,             /* can be NULL !!! */
+                 S_zipFileTableItem *zipfile
+) {
     char *pp;
     char fname[MAX_FILE_NAME_SIZE];
     S_zipArchiveDir *place;
@@ -521,7 +521,7 @@ bool zipFindFile(char *name,
     /*&fprintf(dumpOut,"looking for file %s in %s\n",fname,zipfile->fn);fflush(dumpOut);&*/
     if (fsIsMember(&zipfile->dir,fname,0,ADD_NO,&place)==0) return false;
     if (resName != NULL) {
-        XX_ALLOCC(*resName, strlen(zipfile->fn)+strlen(fname)+2, char);
+        *resName = StackMemoryAllocC(strlen(zipfile->fn)+strlen(fname)+2, char);
         pp = strmcpy(*resName, zipfile->fn);
         strcpy(pp, fname);
     }
@@ -529,15 +529,15 @@ bool zipFindFile(char *name,
 }
 
 void javaMapZipDirFile(
-                       S_zipFileTableItem *zipfile,
-                       char *packfile,
-                       Completions *a1,
-                       void *a2,
-                       int *a3,
-                       void (*fun)(MAP_FUN_SIGNATURE),
-                       char *classPath,
-                       char *dirname
-                       ) {
+    S_zipFileTableItem *zipfile,
+    char *packfile,
+    Completions *a1,
+    void *a2,
+    int *a3,
+    void (*fun)(MAP_FUN_SIGNATURE),
+    char *classPath,
+    char *dirname
+) {
     char fn[MAX_FILE_NAME_SIZE];
     char dirn[MAX_FILE_NAME_SIZE];
     S_zipArchiveDir *place, *aa;
