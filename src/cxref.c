@@ -733,7 +733,7 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
     Position *defpos;
     SymbolReferenceItem *pp,*memb, ppp;
     S_olSymbolsMenu *mmi;
-    S_refTab *reftab;
+    ReferenceTable *reftab;
     int usage;
 
     usage = usageb->base;

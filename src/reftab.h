@@ -4,12 +4,13 @@
 #include "proto.h"
 
 #define HASH_TAB_NAME refTab
+#define HASH_TAB_TYPE ReferenceTable
 #define HASH_ELEM_TYPE SymbolReferenceItem
 
-#include "hashlist.th"
+#include "hashlist-new.th"
 
 /* TODO: this is somewhat irregular naming, "cx" or not? */
-extern S_refTab s_cxrefTab;
+extern ReferenceTable s_cxrefTab;
 
 #ifndef _REFTAB_
 #undef HASH_TAB_NAME

@@ -9,6 +9,6 @@
 
 #include "misc.h"               /* For XX_ALLOCC */
 
-#include "hashlist.tc"
+#include "hashlist-new.tc"
 
-S_refTab s_cxrefTab;
+ReferenceTable s_cxrefTab;
