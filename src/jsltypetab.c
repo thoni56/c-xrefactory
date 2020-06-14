@@ -9,6 +9,6 @@
 
 #include "hash.h"
 
-#include "misc.h"               /* For XX_ALLOCC */
+#include "memory.h"               /* For XX_ALLOCC */
 
 #include "hashlist.tc"
