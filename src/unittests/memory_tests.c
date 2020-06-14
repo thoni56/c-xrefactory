@@ -25,4 +25,6 @@ Ensure(Memory, calls_fatalError_on_out_of_memory) {
 
     if (!myFatalErrorCalled)
         fail_test("fatalError() not called");
+    else
+        pass_test();
 }
