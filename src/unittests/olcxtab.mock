@@ -4,7 +4,7 @@
 
 
 S_userOlcx *s_olcxCurrentUser;
-S_olcxTab s_olcxTab;
+OlcxTab s_olcxTab;
 
 
 void olcxTabInit (struct olcxTab *table, int size)

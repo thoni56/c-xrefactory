@@ -8,7 +8,7 @@
 #define HASH_FUN(elemp) hashFun(elemp->name)
 #define HASH_ELEM_EQUAL(e1,e2) (strcmp(e1->name,e2->name)==0)
 
-#include "hashlist.tc"
+#include "hashlist-new.tc"
 
 S_userOlcx *s_olcxCurrentUser;
-S_olcxTab s_olcxTab;
+OlcxTab s_olcxTab;

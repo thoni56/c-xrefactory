@@ -15,9 +15,10 @@ typedef struct userOlcx {
 } S_userOlcx;
 
 #define HASH_TAB_NAME olcxTab
+#define HASH_TAB_TYPE OlcxTab
 #define HASH_ELEM_TYPE S_userOlcx
 
-#include "hashlist.th"
+#include "hashlist-new.th"
 
 #ifndef _OLCXTAB_
 #undef HASH_TAB_NAME
@@ -25,6 +26,6 @@ typedef struct userOlcx {
 #endif
 
 extern S_userOlcx *s_olcxCurrentUser;
-extern S_olcxTab s_olcxTab;
+extern OlcxTab s_olcxTab;
 
 #endif
