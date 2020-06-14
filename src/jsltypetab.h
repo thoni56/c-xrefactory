@@ -11,6 +11,7 @@
 
 #ifndef _IN_JSLTYPETAB_C_
 #undef HASH_TAB_NAME
+#undef HASH_TAB_TYPE
 #undef HASH_ELEM_TYPE
 #endif
 

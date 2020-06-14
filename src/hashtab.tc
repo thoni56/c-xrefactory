@@ -1,51 +1,51 @@
 /*
-   .c template for hashed table
+  .c template for hashed table
 
-   Should be included only in a .c file
+  Should be included only in a .c file
 
-   Requires the following macros to be set:
-   HASH_TAB_NAME - name of struct and function prefix
-   HASH_TAB_TYPE - name of resulting type
-   HASH_ELEM_TYPE - type of elements
-   HASH_FUN(elem) - function to generate hash value
-   HASH_ELEM_EQUAL(e1,e2) - function/expression to used when comparing for equality
+  Requires the following macros to be set:
+  HASH_TAB_NAME - name of struct and function prefix
+  HASH_TAB_TYPE - name of resulting type
+  HASH_ELEM_TYPE - type of elements
+  HASH_FUN(elem) - function to generate hash value
+  HASH_ELEM_EQUAL(e1,e2) - function/expression to used when comparing for equality
 
-   The first three should be set by the inclusion of an .h file which
-   in turn includes hashtab.th.
+  The first three should be set by the inclusion of an .h file which
+  in turn includes hashtab.th.
 
-   E.g. in xyztable.h:
+  E.g. in xyztable.h:
 
-       #define HASH_TAB_NAME xyzTable
-       #define HASH_TAB_TYPE XyzTable
-       #define HASH_ELEM_TYPE Xyz
+      #define HASH_TAB_NAME xyzTable
+      #define HASH_TAB_TYPE XyzTable
+      #define HASH_ELEM_TYPE Xyz
 
-       #include "hashtab.th"
-       ...
+      #include "hashtab.th"
+      ...
 
-   and then in the .c file:
+  and then in the .c file:
 
-       #include "xyztable.h"
+      #include "xyztable.h"
 
-       #define HASH_FUN(elem) hash(elem)
-       #define HASH_ELEM_EQUAL(e1,e2) eq(e1,e2)
+      #define HASH_FUN(elem) hash(elem)
+      #define HASH_ELEM_EQUAL(e1,e2) eq(e1,e2)
 
-       #include "hashtab.tc"
-       ...
+      #include "hashtab.tc"
+      ...
 
-   It is also good practice to undef in the .h file to avoid clashing
-   with other header files using hashtab/list:
+  It is also good practice to undef in the .h file to avoid clashing
+  with other header files using hashtab/list:
 
-       #ifndef _IN_XYZTABLE_C_
-       #undef HASH_TAB_NAME
-       #undef HASH_ELEM_TYPE
-       #endif
+      #ifndef _IN_XYZTABLE_C_
+      #undef HASH_TAB_NAME
+      #undef HASH_ELEM_TYPE
+      #endif
 
-   If your .c file needs to generate multiple hash tables/lists you
-   also need to undef the following after each inclusion of
-   'hashtab.tc':
+  If your .c file needs to generate multiple hash tables/lists you
+  also need to undef the following after each inclusion of
+  'hashtab.tc':
 
-       #undef HASH_FUN
-       #undef HASH_ELEM_EQUAL
+      #undef HASH_FUN
+      #undef HASH_ELEM_EQUAL
 
 */
 
@@ -57,8 +57,7 @@
 #define GLUE(a,b) a ## b
 #define CONCAT(a,b) GLUE(a,b)
 
-/* Here we create TAB_TYPE and FUN_PREFIX from TAB_NAME */
-#define HASH_TAB_TYPE struct HASH_TAB_NAME
+/* FUN_PREFIX is the same as TAB_NAME */
 #define HASH_FUN_PREFIX HASH_TAB_NAME
 
 #define HASH_SHIFT 211
@@ -78,10 +77,10 @@ void CONCAT(HASH_FUN_PREFIX,Init)(HASH_TAB_TYPE *table, int size) {
 
 /* Check for membership, will return position if found, next free if not */
 bool CONCAT(HASH_FUN_PREFIX,IsMember)(
-                                    HASH_TAB_TYPE *table,
-                                    HASH_ELEM_TYPE *element,
-                                    int *position /* OUT */
-                                    ) {
+    HASH_TAB_TYPE *table,
+    HASH_ELEM_TYPE *element,
+    int *position /* OUT */
+) {
     unsigned posid;
     posid = HASH_FUN(element);
     posid = posid % table->size;
@@ -99,35 +98,35 @@ bool CONCAT(HASH_FUN_PREFIX,IsMember)(
 }
 
 int CONCAT(HASH_FUN_PREFIX,Add) (
-                                 HASH_TAB_TYPE *table,
-                                 HASH_ELEM_TYPE *element
-                                 ) {
-        /* In order to simplify things we do not want IsMember to
-           return a position, that should be done when needed. So we
-           recalculate the position here... */
-        unsigned posid;
+    HASH_TAB_TYPE *table,
+    HASH_ELEM_TYPE *element
+) {
+    /* In order to simplify things we do not want IsMember to
+       return a position, that should be done when needed. So we
+       recalculate the position here... */
+    unsigned posid;
 
-        posid = HASH_FUN(element);
-        posid = posid % table->size;
-        assert(table->tab!=NULL);
-        while (table->tab[posid] != NULL) {
-            if (HASH_ELEM_EQUAL(table->tab[posid], element)) {
-                return posid;
-            }
-            posid=(posid+HASH_SHIFT) % table->size;
+    posid = HASH_FUN(element);
+    posid = posid % table->size;
+    assert(table->tab!=NULL);
+    while (table->tab[posid] != NULL) {
+        if (HASH_ELEM_EQUAL(table->tab[posid], element)) {
+            return posid;
         }
-        table->numberOfElements ++;
-        if ((table->numberOfElements * 9) / 8 >= table->size) {
-            fatalError(ERR_ST, "[hashAdd] file table overflowed", XREF_EXIT_ERR);
-        }
-        table->tab[posid] = element;
-        return posid;
+        posid=(posid+HASH_SHIFT) % table->size;
+    }
+    table->numberOfElements ++;
+    if ((table->numberOfElements * 9) / 8 >= table->size) {
+        fatalError(ERR_ST, "[hashAdd] file table overflowed", XREF_EXIT_ERR);
+    }
+    table->tab[posid] = element;
+    return posid;
 }
 
 void CONCAT(HASH_FUN_PREFIX,Map)(
-                                HASH_TAB_TYPE *table,
-                                void (*fun)(HASH_ELEM_TYPE *)
-                                ) {
+    HASH_TAB_TYPE *table,
+    void (*fun)(HASH_ELEM_TYPE *)
+) {
     int i;
     for(i=0; i<table->size; i++) {
         if (table->tab[i]!=NULL) (*fun)(table->tab[i]);
@@ -135,10 +134,10 @@ void CONCAT(HASH_FUN_PREFIX,Map)(
 }
 
 void CONCAT(HASH_FUN_PREFIX,Map2)(
-                                 HASH_TAB_TYPE *table,
-                                 void (*fun)(HASH_ELEM_TYPE *, void *),
-                                 void *a
-                                 ) {
+    HASH_TAB_TYPE *table,
+    void (*fun)(HASH_ELEM_TYPE *, void *),
+    void *a
+) {
     int i;
     for(i=0; i<table->size; i++) {
         if (table->tab[i]!=NULL) (*fun)(table->tab[i], a);
@@ -146,9 +145,9 @@ void CONCAT(HASH_FUN_PREFIX,Map2)(
 }
 
 void CONCAT(HASH_FUN_PREFIX,MapWithIndex)(
-                                 HASH_TAB_TYPE *table,
-                                 void (*fun)(HASH_ELEM_TYPE *elem, int index)
-                                 ) {
+    HASH_TAB_TYPE *table,
+    void (*fun)(HASH_ELEM_TYPE *elem, int index)
+) {
     int i;
     for(i=0; i<table->size; i++) {
         if (table->tab[i]!=NULL) (*fun)(table->tab[i], i);
@@ -156,11 +155,11 @@ void CONCAT(HASH_FUN_PREFIX,MapWithIndex)(
 }
 
 void CONCAT(HASH_FUN_PREFIX,Map4)(
-                                 HASH_TAB_TYPE *table,
-                                 void (*fun)(int, void *, void *),
-                                 void *a,
-                                 void *b
-                                 ) {
+    HASH_TAB_TYPE *table,
+    void (*fun)(int, void *, void *),
+    void *a,
+    void *b
+) {
     int i;
     for(i=0; i<table->size; i++) {
         if (table->tab[i]!=NULL) (*fun)(i, a, b);

@@ -40,6 +40,7 @@ typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
 
 #ifndef _IN_FILETAB_C_
 #undef HASH_TAB_NAME
+#undef HASH_TAB_TYPE
 #undef HASH_ELEM_TYPE
 #endif
 

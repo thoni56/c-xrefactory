@@ -23,6 +23,7 @@ extern SymbolTable *s_symbolTable;
 
 #ifndef _SYMTAB_
 #undef HASH_TAB_NAME
+#undef HASH_TAB_TYPE
 #undef HASH_ELEM_TYPE
 #endif
 

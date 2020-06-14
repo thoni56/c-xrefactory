@@ -15,6 +15,7 @@ extern MacroArgumentTable s_macroArgumentTable;
 
 #ifndef _MACROARGUMENTTABLE_
 #undef HASH_TAB_NAME
+#undef HASH_TAB_TYPE
 #undef HASH_ELEM_TYPE
 #endif
 

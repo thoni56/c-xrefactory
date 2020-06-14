@@ -1,4 +1,4 @@
-#define _REFTAB_
+#define _IN_REFTAB_C_
 #include "reftab.h"
 
 // following can't depend on vApplClass, because of finding def in html.c

@@ -116,7 +116,6 @@ extern void CONCAT(HASH_FUN_PREFIX, Statistics)(
 
 #undef GLUE
 #undef CONCAT
-#undef HASH_TAB_TYPE
 #undef HASH_FUN_PREFIX
 
 /* Local Variables: */

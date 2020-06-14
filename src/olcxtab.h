@@ -20,8 +20,9 @@ typedef struct userOlcxData {
 
 #include "hashlist.th"
 
-#ifndef _OLCXTAB_
+#ifndef _IN_OLCXTAB_C_
 #undef HASH_TAB_NAME
+#undef HASH_TAB_TYPE
 #undef HASH_ELEM_TYPE
 #endif
 
