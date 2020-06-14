@@ -138,7 +138,7 @@ void *stackMemoryAlloc(int size) {
         return( & memory[i] );
     } else {
         fatalError(ERR_ST,"i+size > SIZE_workMemory,\n\tworking memory overflowed,\n\tread TROUBLES section of README file\n", XREF_EXIT_ERR);
-        assert(0);
+        /* Should not return, but for testing and compilers sake return something */
         return(NULL);
     }
 }
