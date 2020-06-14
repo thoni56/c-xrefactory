@@ -15,7 +15,7 @@
 #define GLUE(a,b) a ## b
 #define CONCAT(a,b) GLUE(a,b)
 
-/* FUN_PREFIX is same as TAB_NAME */
+/* FUN_PREFIX is the same as TAB_NAME */
 #define HASH_FUN_PREFIX HASH_TAB_NAME
 
 typedef struct HASH_TAB_NAME {
@@ -25,11 +25,11 @@ typedef struct HASH_TAB_NAME {
 } HASH_TAB_TYPE;
 
 
-extern void CONCAT(HASH_FUN_PREFIX, Init)(		/* Init */
+extern void CONCAT(HASH_FUN_PREFIX, Init) (		/* Init */
     HASH_TAB_TYPE *table,
     int size
 );
-extern void CONCAT(HASH_FUN_PREFIX, NoAllocInit)(	/* No Allocation Init */
+extern void CONCAT(HASH_FUN_PREFIX, NoAllocInit) ( /* No Allocation Init */
     HASH_TAB_TYPE *table,
     int size
 );
@@ -42,22 +42,22 @@ extern int CONCAT(HASH_FUN_PREFIX, Add) (		/* Add, returns position */
     HASH_TAB_TYPE *table,
     HASH_ELEM_TYPE *element
 );
-extern void CONCAT(HASH_FUN_PREFIX, Map)(
+extern void CONCAT(HASH_FUN_PREFIX, Map) (
     HASH_TAB_TYPE *table,
-    void (*fun)(HASH_ELEM_TYPE *)
+    void (*fun) (HASH_ELEM_TYPE *)
 );
-extern void CONCAT(HASH_FUN_PREFIX, Map2)(
+extern void CONCAT(HASH_FUN_PREFIX, Map2) (
     HASH_TAB_TYPE *table,
-    void (*fun)(HASH_ELEM_TYPE *, void *),
+    void (*fun) (HASH_ELEM_TYPE *, void *),
     void *a
 );
-extern void CONCAT(HASH_FUN_PREFIX, MapWithIndex)(
+extern void CONCAT(HASH_FUN_PREFIX, MapWithIndex) (
     HASH_TAB_TYPE *table,
-    void (*fun)(HASH_ELEM_TYPE *, int)
+    void (*fun) (HASH_ELEM_TYPE *, int)
 );
-extern void CONCAT(HASH_FUN_PREFIX, Map4)(
+extern void CONCAT(HASH_FUN_PREFIX, Map4) (
     HASH_TAB_TYPE *table,
-    void (*fun)(int, void *, void *),
+    void (*fun) (int, void *, void *),
     void *a, void *b
 );
 
