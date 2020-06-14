@@ -7,7 +7,7 @@
 #define HASH_TAB_TYPE ReferenceTable
 #define HASH_ELEM_TYPE SymbolReferenceItem
 
-#include "hashlist-new.th"
+#include "hashlist.th"
 
 /* TODO: this is somewhat irregular naming, "cx" or not? */
 extern ReferenceTable s_cxrefTab;

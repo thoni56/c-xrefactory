@@ -7,7 +7,7 @@
 #define HASH_TAB_TYPE EditorBufferTab
 #define HASH_ELEM_TYPE EditorBufferList
 
-#include "hashlist-new.th"
+#include "hashlist.th"
 
 #ifndef _IN_EDITORBUFFERTAB_C_
 #undef HASH_TAB_NAME

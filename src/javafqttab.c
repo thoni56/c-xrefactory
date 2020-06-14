@@ -13,4 +13,4 @@
 
 JavaFqtTable javaFqtTable;
 
-#include "hashlist-new.tc"
+#include "hashlist.tc"

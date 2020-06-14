@@ -1,26 +1,11 @@
-/* .c template for hashed list */
+/*
 
-/* requires macros:
-    HASH_TAB_NAME (both name for struct and prefix for functions)
-    HASH_ELEM_TYPE (type of elements)
-    HASH_FUN(elem) (function for hash)
-    HASH_ELEM_EQUAL(e1,e2) (expression or function for equality)
-*/
+  .c template for hashed table of lists
 
-/* form of include:
+  See hashtab.tc for usage.
 
-   #define HASH_TAB_NAME <name>
-   #define HASH_ELEM_TYPE <element>
-   #define HASH_FUN(elem) <hashfun>
-   #define HASH_ELEM_EQUAL(e1,e2) <eqexpr>
-   #define MOCK --- OPTIONAL for mocking instead of real implementation - NIY!
+  TOOD: unsure about exact difference between hashtab and hashlist...
 
-   #include "hashlist.tc"
-
-   #undef HASH_TAB_NAME
-   #undef HASH_ELEM_TYPE
-   #undef HASH_FUN
-   #undef HASH_ELEM_EQUAL
 */
 
 #define GLUE(a,b) a ## b

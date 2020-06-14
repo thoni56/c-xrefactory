@@ -18,7 +18,7 @@ typedef struct userOlcxData {
 #define HASH_TAB_TYPE OlcxTab
 #define HASH_ELEM_TYPE UserOlcxData
 
-#include "hashlist-new.th"
+#include "hashlist.th"
 
 #ifndef _OLCXTAB_
 #undef HASH_TAB_NAME

@@ -12,14 +12,13 @@
 #define GLUE(a,b) a ## b
 #define CONCAT(a,b) GLUE(a,b)
 
-/* Here we construct TAB_TYPE and FUN_PREFIX from TAB_NAME */
-#define HASH_TAB_TYPE struct HASH_TAB_NAME
+/* FUN_PREFIX is the same as TAB_NAME */
 #define HASH_FUN_PREFIX HASH_TAB_NAME
 
-typedef HASH_TAB_TYPE {
+typedef struct HASH_TAB_NAME {
     int size;
     HASH_ELEM_TYPE **tab;				/* *tab[size];*/
-} CONCAT(S_, HASH_FUN_PREFIX);
+} HASH_TAB_TYPE;
 
 
 extern void CONCAT(HASH_FUN_PREFIX, Init) (		/* Init */

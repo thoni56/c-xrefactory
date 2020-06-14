@@ -9,6 +9,6 @@
 
 #include "memory.h"               /* For XX_ALLOCC */
 
-#include "hashlist-new.tc"
+#include "hashlist.tc"
 
 ReferenceTable s_cxrefTab;

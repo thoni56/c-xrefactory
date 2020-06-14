@@ -10,7 +10,7 @@
 #define HASH_ELEM_TYPE Symbol
 
 
-#include "hashlist-new.th"
+#include "hashlist.th"
 
 /*
   run the following command in shell to see the expanded declarations of hashlist

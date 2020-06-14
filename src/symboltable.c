@@ -10,4 +10,4 @@
 
 SymbolTable *s_symbolTable;
 
-#include "hashlist-new.tc"
+#include "hashlist.tc"

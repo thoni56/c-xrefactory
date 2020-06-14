@@ -4,14 +4,14 @@
    Should be included only in a .c file
 
    Requires the following macros to be set:
-   HASH_TAB_NAME
-   HASH_TAB_TYPE
-   HASH_ELEM_TYPE
-   HASH_FUN(elem)
-   HASH_ELEM_EQUAL(e1,e2)
+   HASH_TAB_NAME - name of struct and function prefix
+   HASH_TAB_TYPE - name of resulting type
+   HASH_ELEM_TYPE - type of elements
+   HASH_FUN(elem) - function to generate hash value
+   HASH_ELEM_EQUAL(e1,e2) - function/expression to used when comparing for equality
 
-   The first three are probably set by the inclusion of an .h file
-   which in turn includes hashtab.th.
+   The first three should be set by the inclusion of an .h file which
+   in turn includes hashtab.th.
 
    E.g. in xyztable.h:
 

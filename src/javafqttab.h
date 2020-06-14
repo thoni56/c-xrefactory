@@ -8,7 +8,7 @@
 #define HASH_TAB_TYPE JavaFqtTable
 #define HASH_ELEM_TYPE SymbolList
 
-#include "hashlist-new.th"
+#include "hashlist.th"
 
 #ifndef _IN_JAVAFQTTAB_C_
 #undef HASH_TAB_NAME
