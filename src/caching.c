@@ -58,7 +58,7 @@ static void deleteReferencesOutOfMemory(Reference **rr) {
 
 static void cxrefTabDeleteOutOfMemory(int i) {
     SymbolReferenceItem **pp;
-    pp = &s_cxrefTab.tab[i];
+    pp = &referenceTable.tab[i];
     while (*pp!=NULL) {
         if (DM_FREED_POINTER(cxMemory,*pp)) {
             /* out of memory, delete it */
@@ -218,7 +218,7 @@ static int cachedIncludedFilePass(int cpi) {
 static void recoverCxMemory(char *cxMemFreeBase) {
     CX_FREE_UNTIL(cxMemFreeBase);
     fileTableMapWithIndex(&fileTable, fileTabDeleteOutOfMemory);
-    refTabMap3(&s_cxrefTab, cxrefTabDeleteOutOfMemory);
+    refTabMap3(&referenceTable, cxrefTabDeleteOutOfMemory);
 }
 
 static void fillCaching(S_caching *caching,
@@ -284,7 +284,7 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
         /* remove old references, only on first pass of edit server */
         log_trace("removing references");
         cxMemory->i = cp->cxMemoryi;
-        refTabMap3(&s_cxrefTab, cxrefTabDeleteOutOfMemory);
+        refTabMap3(&referenceTable, cxrefTabDeleteOutOfMemory);
         fileTableMapWithIndex(&fileTable, fileTabDeleteOutOfMemory);
     }
     log_trace("recovering 0");

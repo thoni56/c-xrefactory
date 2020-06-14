@@ -681,9 +681,9 @@ static void generateRefsFromMemory(int fileOrder) {
     int                 tsize;
     SymbolReferenceItem *pp;
 
-    tsize = s_cxrefTab.size;
+    tsize = referenceTable.size;
     for (int i=0; i<tsize; i++) {
-        for (pp=s_cxrefTab.tab[i]; pp!=NULL; pp=pp->next) {
+        for (pp=referenceTable.tab[i]; pp!=NULL; pp=pp->next) {
             if (pp->b.category == CategoryLocal)
                 continue;
             if (pp->refs == NULL)
@@ -712,7 +712,7 @@ void genReferenceFile(bool updating, char *filename) {
         fileTableMapWithIndex(&fileTable, writeFileSourceIndexItem);
         fileTableMapWithIndex(&fileTable, genClassHierarchyItems);
         scanCxFile(fullScanFunctionSequence);
-        refTabMap(&s_cxrefTab, genRefItem);
+        refTabMap(&referenceTable, genRefItem);
         closeReferenceFile(filename);
     } else {
         /* several reference files */
@@ -728,7 +728,7 @@ void genReferenceFile(bool updating, char *filename) {
             openInOutReferenceFiles(updating, fileName);
             genCxFileHead();
             scanCxFile(fullScanFunctionSequence);
-            //&refTabMap4(&s_cxrefTab, genPartialRefItem, i);
+            //&refTabMap4(&referenceTable, genPartialRefItem, i);
             generateRefsFromMemory(i);
             closeReferenceFile(fileName);
         }
@@ -993,7 +993,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
                                 vApplClass, vFunClass);
     fillSymbolRefItemBits(&ddd->b, symType, storage, ScopeGlobal, accessFlags,
                            CategoryGlobal, 0);
-    rr = refTabIsMember(&s_cxrefTab, ddd, &out_index, &memb);
+    rr = refTabIsMember(&referenceTable, ddd, &out_index, &memb);
     if (rr == 0) {
         CX_ALLOCC(ss, len+1, char);
         strcpy(ss,id);
@@ -1002,7 +1002,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
                                     vApplClass, vFunClass);
         fillSymbolRefItemBits(&memb->b, symType, storage,
                                ScopeGlobal, accessFlags, CategoryGlobal,0);
-        refTabAdd(&s_cxrefTab, memb, &out_index);
+        refTabAdd(&referenceTable, memb, &out_index);
     }
     s_inLastInfos.symbolTab[si] = memb;
     s_inLastInfos.onLineReferencedSym = si;
@@ -1069,7 +1069,7 @@ static void cxrfSymbolName(int size,
                                 vApplClass, vFunClass);
     fillSymbolRefItemBits(&ddd->b,symType, storage, ScopeGlobal, accessFlags,
                            CategoryGlobal, 0);
-    rr = refTabIsMember(&s_cxrefTab, ddd, &not_used1,&memb);
+    rr = refTabIsMember(&referenceTable, ddd, &not_used1,&memb);
     while (rr && memb->b.category!=CategoryGlobal) rr=refTabNextMember(ddd, &memb);
     assert(options.taskRegime);
     if (options.taskRegime == RegimeHtmlGenerate) {
@@ -1081,7 +1081,7 @@ static void cxrfSymbolName(int size,
                                         vApplClass, vFunClass);
             fillSymbolRefItemBits(&memb->b,symType, storage,
                                    ScopeGlobal, accessFlags, CategoryGlobal, 0);
-            refTabAdd(&s_cxrefTab,memb, &not_used2);
+            refTabAdd(&referenceTable,memb, &not_used2);
         }
         s_inLastInfos.symbolTab[si] = memb;
     }

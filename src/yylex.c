@@ -1752,7 +1752,7 @@ static void addMacroBaseUsageRef(Symbol *mdef) {
                                 s_noneFileIndex, s_noneFileIndex);
     fillSymbolRefItemBits(&ppp.b,TypeMacro, StorageDefault, ScopeGlobal,
                            mdef->bits.access, CategoryGlobal, 0);
-    rr = refTabIsMember(&s_cxrefTab, &ppp, &ii, &memb);
+    rr = refTabIsMember(&referenceTable, &ppp, &ii, &memb);
     r = NULL;
     if (rr) {
         // this is optimization to avoid multiple base references

@@ -1000,8 +1000,8 @@ static void htmlGetThisFileReferences(int fnum, S_htmlRefList **rrr, int kind){
     int i;
 
     *rrr = NULL;
-    for(i=0; i<s_cxrefTab.size; i++) {
-        dd = s_cxrefTab.tab[i];
+    for(i=0; i<referenceTable.size; i++) {
+        dd = referenceTable.tab[i];
         for(d=dd; d!=NULL; d=d->next) {
             rrr0 = rrr;
             for(rr=d->refs; rr!=NULL; rr=rr->next) {
@@ -1296,7 +1296,7 @@ static void htmlCreateGlobSymList(int i, void *off, void *ffn, void *genfi) {
 
     assert(genfi);
     genFileIndex = *((int *)genfi);
-    pp = s_cxrefTab.tab[i];
+    pp = referenceTable.tab[i];
     for (p=pp; p!=NULL; p=p->next) {
         if (p->b.category == CategoryGlobal && p->b.symType<MAX_HTML_LIST_TYPE) {
             if (genFileIndex==HTML_GXANY
@@ -1350,7 +1350,7 @@ static void htmlScanCxFileAndGenRefLists(char *fn1, char *fn2,
         else {
             htmlGenRefListFileHead(ff,fi);
             s_htmlCurrentCxlist = NULL;
-            refTabMap32(&s_cxrefTab, htmlCreateGlobSymList, ff, ffn, &fi);
+            refTabMap32(&referenceTable, htmlCreateGlobSymList, ff, ffn, &fi);
             LIST_MERGE_SORT(S_olSymbolsMenu,
                             s_htmlCurrentCxlist,htmlRefItemsOrderLess);
             htmlMarkVisibleAllClassesHavingReferences(s_htmlCurrentCxlist);
@@ -1635,7 +1635,7 @@ static void htmlGenerateFile(int fnum) {
             else {
                 htmlGenRefListFileHead(ff, -1);
                 fillHtmlLocalListms(&sss, ff, fnum, ffn);
-                refTabMap2(&s_cxrefTab, htmlGenLocalRefLists, &sss);
+                refTabMap2(&referenceTable, htmlGenLocalRefLists, &sss);
                 htmlGenRefListTail(ff);
                 closeFile(ff);
                 htmlCompressFile(ffn2);

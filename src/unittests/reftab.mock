@@ -2,7 +2,7 @@
 #include <cgreen/mocks.h>
 #include "reftab.h"
 
-ReferenceTable s_cxrefTab;
+ReferenceTable referenceTable;
 
 
 void refTabInit(

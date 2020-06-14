@@ -2445,8 +2445,8 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     // the following causes long jump, berk.
     CX_ALLOCC(sss, CX_MEMORY_CHUNK_SIZE, char);
     CX_FREE_UNTIL(sss);
-    CX_ALLOCC(s_cxrefTab.tab,MAX_CXREF_SYMBOLS, struct symbolReferenceItem *);
-    refTabNoAllocInit( &s_cxrefTab,MAX_CXREF_SYMBOLS);
+    CX_ALLOCC(referenceTable.tab,MAX_CXREF_SYMBOLS, struct symbolReferenceItem *);
+    refTabNoAllocInit( &referenceTable,MAX_CXREF_SYMBOLS);
     if (firstmemory==0) {firstmemory=1;}
     SM_INIT(ppmMemory);
     ppMemInit();
@@ -2674,7 +2674,7 @@ static void makeIncludeClosureOfFilesToUpdate(void) {
                 fi->b.fullUpdateIncludesProcessed = true;
                 isJavaFileFlag = fileNameHasOneOfSuffixes(fi->name, options.javaFilesSuffixes);
                 fillIncludeRefItem( &ddd, i);
-                if (refTabIsMember(&s_cxrefTab, &ddd, &ii,&memb)) {
+                if (refTabIsMember(&referenceTable, &ddd, &ii,&memb)) {
                     for(rr=memb->refs; rr!=NULL; rr=rr->next) {
                         includer = fileTable.tab[rr->p.file];
                         assert(includer);
@@ -2752,7 +2752,7 @@ static int scheduleFileUsingTheMacro(void) {
     fillSymbolRefItemBits(&ddd.b, TypeMacro, StorageExtern,
                            ScopeGlobal, AccessDefault, CategoryGlobal, 0);
 
-    //& rr = refTabIsMember(&s_cxrefTab, &ddd, &ii, &memb);
+    //& rr = refTabIsMember(&referenceTable, &ddd, &ii, &memb);
     //& assert(rr);
     //& if (rr==0) return(s_noneFileIndex);
 
@@ -3191,7 +3191,7 @@ static void mainXref(int argc, char **argv) {
         fflush(dumpOut);
     }
     //& fprintf(dumpOut,"\n\nDUMP\n\n"); fflush(dumpOut);
-    //& refTabMap(&s_cxrefTab, symbolRefItemDump);
+    //& refTabMap(&referenceTable, symbolRefItemDump);
     LEAVE();
 }
 

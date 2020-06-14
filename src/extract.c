@@ -204,7 +204,7 @@ static int linearOrder(ProgramGraphNode *n1, ProgramGraphNode *n2) {
 static ProgramGraphNode * extMakeProgramGraph(void) {
     ProgramGraphNode *program,*p;
     program = NULL;
-    refTabMap5(&s_cxrefTab, extractFunGraphRef, ((void *) &program));
+    refTabMap5(&referenceTable, extractFunGraphRef, ((void *) &program));
     LIST_SORT(ProgramGraphNode, program, linearOrder);
 #ifdef DEBUG
     dumpProgram(program);

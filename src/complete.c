@@ -1046,8 +1046,8 @@ static Symbol *getSymFromRef(Reference *reference) {
 
     r = NULL; ss = NULL;
     // first visit all references, looking for symbol link name
-    for(i=0; i<s_cxrefTab.size; i++) {
-        ss = s_cxrefTab.tab[i];
+    for(i=0; i<referenceTable.size; i++) {
+        ss = referenceTable.tab[i];
         if (ss!=NULL) {
             for(r=ss->refs; r!=NULL; r=r->next) {
                 if (reference == r) goto cont;
@@ -1055,7 +1055,7 @@ static Symbol *getSymFromRef(Reference *reference) {
         }
     }
  cont:
-    if (i>=s_cxrefTab.size) return(NULL);
+    if (i>=referenceTable.size) return(NULL);
     assert(r==reference);
     // now look symbol table to find the symbol , berk!
     for(i=0; i<s_symbolTable->size; i++) {
@@ -1798,5 +1798,5 @@ static void completeFromXrefFun(SymbolReferenceItem *s, void *c) {
 void completeYaccLexem(Completions*c) {
     S_completionSymInfo ii;
     fillCompletionSymInfo(&ii, c, TypeYaccSymbol);
-    refTabMap2(&s_cxrefTab, completeFromXrefFun, (void*) &ii);
+    refTabMap2(&referenceTable, completeFromXrefFun, (void*) &ii);
 }

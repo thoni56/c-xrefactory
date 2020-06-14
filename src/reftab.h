@@ -9,8 +9,8 @@
 
 #include "hashlist.th"
 
-/* TODO: this is somewhat irregular naming, "cx" or not? */
-extern ReferenceTable s_cxrefTab;
+
+extern ReferenceTable referenceTable;
 
 #ifndef _IN_REFTAB_C_
 #undef HASH_TAB_NAME

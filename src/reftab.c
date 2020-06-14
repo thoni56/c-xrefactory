@@ -11,4 +11,4 @@
 
 #include "hashlist.tc"
 
-ReferenceTable s_cxrefTab;
+ReferenceTable referenceTable;

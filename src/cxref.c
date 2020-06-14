@@ -510,7 +510,7 @@ void changeMethodReferencesUsages(char *linkName, int category, int fnum,
     fillReferencesChangeData(&rr, linkName, fnum, cclass, category,
                               s_cps.cxMemiAtMethodBeginning,
                               s_cps.cxMemiAtMethodEnd);
-    refTabMap2(&s_cxrefTab, changeFieldRefUsages, &rr);
+    refTabMap2(&referenceTable, changeFieldRefUsages, &rr);
 }
 
 void changeClassReferencesUsages(char *linkName, int category, int fnum,
@@ -519,7 +519,7 @@ void changeClassReferencesUsages(char *linkName, int category, int fnum,
     fillReferencesChangeData(&rr, linkName, fnum, cclass, category,
                               s_cps.cxMemiAtClassBeginning,
                               s_cps.cxMemiAtClassEnd);
-    refTabMap2(&s_cxrefTab, changeFieldRefUsages, &rr);
+    refTabMap2(&referenceTable, changeFieldRefUsages, &rr);
 }
 
 Reference * getDefinitionRef(Reference *rr) {
@@ -798,7 +798,7 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
         if (fileTable.tab[pos->file]->b.cxLoaded
             &&p->bits.symType==TypeCppIfElse) return NULL;
     }
-    reftab = &s_cxrefTab;
+    reftab = &referenceTable;
     fillSymbolRefItemExceptBits(&ppp, p->linkName, 0, // cxFileHashNumber(p->linkName),
                                 vApplCl, vFunCl);
     fillSymbolRefItemBits(&ppp.b, p->bits.symType, storage, scope,
@@ -3566,8 +3566,8 @@ void olCreateSelectionMenu(int command) {
         //&fprintf(dumpOut,"file %d readed\n", fnum);
         while (ss!=NULL && fnum==cxFileHashNumber(ss->s.name)) ss = ss->next;
     }
-    refTabMap(&s_cxrefTab, mapCreateSelectionMenu);
-    refTabMap(&s_cxrefTab, putOnLineLoadedReferences);
+    refTabMap(&referenceTable, mapCreateSelectionMenu);
+    refTabMap(&referenceTable, putOnLineLoadedReferences);
     setSelectedVisibleItems(rstack->menuSym, command, rstack->menuFilterLevel);
     assert(rstack->r==NULL);
     olProcessSelectedReferences(rstack, genOnLineReferences);
@@ -4271,7 +4271,7 @@ void olPushAllReferencesInBetween(int minMemi, int maxMemi) {
     rstack = s_olcxCurrentUser->browserStack.top;
     rr.minMemi = minMemi;
     rr.maxMemi = maxMemi;
-    refTabMap2(&s_cxrefTab, olPushAllReferencesInBetweenMapFun, &rr);
+    refTabMap2(&referenceTable, olPushAllReferencesInBetweenMapFun, &rr);
     olProcessSelectedReferences(rstack, genOnLineReferences);
     //&olcxPrintSelectionMenu(s_olcxCurrentUser->browserStack.top->menuSym);
 }
@@ -4664,7 +4664,7 @@ void pushLocalUnusedSymbolsAction(void) {
     rstack = s_olcxCurrentUser->browserStack.top;
     ss = rstack->hkSelectedSym;
     assert(ss == NULL);
-    refTabMap(&s_cxrefTab, mapAddLocalUnusedSymbolsToHkSelection);
+    refTabMap(&referenceTable, mapAddLocalUnusedSymbolsToHkSelection);
     olCreateSelectionMenu(options.server_operation);
 }
 
