@@ -16,7 +16,6 @@ char ppmMemory[SIZE_ppmMemory];
 int ppmMemoryi=0;
 int olcxMemoryAllocatedBytes;
 jmp_buf cxmemOverflow;
-jmp_buf memoryResizeJumpTarget;
 
 S_currentlyParsedCl s_cp;
 S_currentlyParsedCl s_cpInit;
