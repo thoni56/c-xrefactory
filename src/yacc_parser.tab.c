@@ -4075,7 +4075,7 @@ break;
 case 432:
 #line 1428 "yacc_parser.y"
 {
-        yyval.ast_idList.d = StackMemAlloc(IdList);
+        yyval.ast_idList.d = StackMemoryAlloc(IdList);
         fillIdList(yyval.ast_idList.d, *yyvsp[-1].ast_id.d, yyvsp[-1].ast_id.d->name, TypeDefault, NULL);
     }
 break;
@@ -4094,14 +4094,14 @@ break;
 case 435:
 #line 1444 "yacc_parser.y"
 {
-        yyval.ast_id.d = StackMemAlloc(Id);
+        yyval.ast_id.d = StackMemoryAlloc(Id);
         fillId(yyval.ast_id.d, "", NULL, s_noPos);
     }
 break;
 case 436:
 #line 1448 "yacc_parser.y"
 {
-        yyval.ast_id.d = StackMemAlloc(Id);
+        yyval.ast_id.d = StackMemoryAlloc(Id);
         *(yyval.ast_id.d) = *(yyvsp[0].ast_id.d);
     }
 break;

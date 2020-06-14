@@ -60,7 +60,7 @@ void initFunctionTypeModifier(struct functionTypeModifier *modifier, Symbol *arg
 
 /* The most common is to allocate in XX_memory == StackMemAlloc() */
 TypeModifier *newTypeModifier(Type kind, Symbol *typedefSymbol, TypeModifier *next) {
-    TypeModifier *typeModifier = StackMemAlloc(TypeModifier);
+    TypeModifier *typeModifier = StackMemoryAlloc(TypeModifier);
 
     fillTypeModifier(typeModifier, kind, typedefSymbol, next);
 

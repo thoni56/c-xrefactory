@@ -1565,8 +1565,8 @@ Symbol *javaCreateNewMethod(char *nn, Position *p, int mem) {
         CF_ALLOC(symbol, Symbol);
     } else {
         name = nn;
-        m = StackMemAlloc(TypeModifier);
-        symbol = StackMemAlloc(Symbol);
+        m = StackMemoryAlloc(TypeModifier);
+        symbol = StackMemoryAlloc(Symbol);
     }
 
     initTypeModifierAsFunction(m, NULL, NULL, NULL, NULL);

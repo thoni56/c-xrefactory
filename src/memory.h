@@ -47,7 +47,7 @@
 #define XX_ALLOCC(p,n,t)        {p = (t*) stackMemoryAlloc((n)*sizeof(t)); }
 #define XX_FREE(p)              { }
 
-#define StackMemAlloc(t) ((t*) stackMemoryAlloc(sizeof(t)))
+#define StackMemoryAlloc(t) ((t*) stackMemoryAlloc(sizeof(t)))
 
 /* ********************************************************************* */
 

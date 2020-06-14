@@ -96,7 +96,7 @@ void addToTrail(void (*a)(void*), void *p) {
     S_freeTrail *t;
     /* no trail at level 0 in C*/
     if (WORK_NEST_LEVEL0() && (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC))) return;
-    t = StackMemAlloc(S_freeTrail);
+    t = StackMemoryAlloc(S_freeTrail);
     t->action = a;
     t->p = (void **) p;
     t->next = s_topBlock->trail;

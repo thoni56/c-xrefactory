@@ -86,7 +86,7 @@
 #define NULL_POS NULL
 
 #define AddComposedType(ddd, ttt) appendComposedType(&ddd->u.type, ttt)
-#define AllocIdCopy(copy, ident) {copy = StackMemAlloc(Id); *(copy) = *(ident);}
+#define AllocIdCopy(copy, ident) {copy = StackMemoryAlloc(Id); *(copy) = *(ident);}
 
 
 static bool regularPass(void) { return s_jsl == NULL; }
@@ -727,7 +727,7 @@ Name
 
 SimpleName
     :   IDENTIFIER				{
-            $$.d = StackMemAlloc(IdList);
+            $$.d = StackMemoryAlloc(IdList);
             fillIdList($$.d, *$1.d, $1.d->name, TypeDefault, NULL);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
         }
@@ -735,7 +735,7 @@ SimpleName
 
 QualifiedName
     :   Name '.' IDENTIFIER		{
-            $$.d = StackMemAlloc(IdList);
+            $$.d = StackMemoryAlloc(IdList);
             fillIdList($$.d, *$3.d, $3.d->name, TypeDefault, $1.d);
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $3);
         }

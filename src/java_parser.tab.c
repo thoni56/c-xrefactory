@@ -114,7 +114,7 @@
 #define NULL_POS NULL
 
 #define AddComposedType(ddd, ttt) appendComposedType(&ddd->u.type, ttt)
-#define AllocIdCopy(copy, ident) {copy = StackMemAlloc(Id); *(copy) = *(ident);}
+#define AllocIdCopy(copy, ident) {copy = StackMemoryAlloc(Id); *(copy) = *(ident);}
 
 
 static bool regularPass(void) { return s_jsl == NULL; }
@@ -3229,7 +3229,7 @@ break;
 case 47:
 #line 729 "java_parser.y"
 {
-            yyval.ast_idList.d = StackMemAlloc(IdList);
+            yyval.ast_idList.d = StackMemoryAlloc(IdList);
             fillIdList(yyval.ast_idList.d, *yyvsp[0].ast_id.d, yyvsp[0].ast_id.d->name, TypeDefault, NULL);
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_idList, yyvsp[0].ast_id, yyvsp[0].ast_id);
         }
@@ -3237,7 +3237,7 @@ break;
 case 48:
 #line 737 "java_parser.y"
 {
-            yyval.ast_idList.d = StackMemAlloc(IdList);
+            yyval.ast_idList.d = StackMemoryAlloc(IdList);
             fillIdList(yyval.ast_idList.d, *yyvsp[0].ast_id.d, yyvsp[0].ast_id.d->name, TypeDefault, yyvsp[-2].ast_idList.d);
             PropagateBoundariesIfRegularSyntaxPass(yyval.ast_idList, yyvsp[-2].ast_idList, yyvsp[0].ast_id);
         }

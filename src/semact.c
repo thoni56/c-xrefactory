@@ -839,7 +839,7 @@ SymbolList *createDefinitionList(Symbol *symbol) {
     SymbolList *p;
 
     assert(symbol);
-    p = StackMemAlloc(SymbolList);
+    p = StackMemoryAlloc(SymbolList);
     /* REPLACED: FILL_symbolList(p, symbol, NULL); with compound literal */
     *p = (SymbolList){.d = symbol, .next = NULL};
 
@@ -1023,7 +1023,7 @@ TypeModifier *simpleEnumSpecifier(Id *id, int usage) {
 
     if (! symbolTableIsMember(s_symbolTable,&p,&ii,&pp)
         || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
-        pp = StackMemAlloc(Symbol);
+        pp = StackMemoryAlloc(Symbol);
         *pp = p;
         setGlobalFileDepNames(id->name, pp, MEMORY_XX);
         addSymbol(pp, s_symbolTable);
