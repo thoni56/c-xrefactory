@@ -1,9 +1,9 @@
-/* *********************************************************************** */
-/* .h template for hashed table */
+/* ***********************************************************************
 
-/* This requires the definition of these variables prior to inclusion
-    HASH_TAB_NAME			name of type of table, will be a struct, will also be function prefix
-    HASH_ELEM_TYPE			type of the elements in the hashtable
+   .h template for hashed table of lists
+
+   For an explanation of how these hashed tables are generated, see
+   hashtab.tc
 
 */
 

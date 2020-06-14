@@ -5,26 +5,48 @@
 
    Requires the following macros to be set:
    HASH_TAB_NAME
+   HASH_TAB_TYPE
    HASH_ELEM_TYPE
    HASH_FUN(elem)
    HASH_ELEM_EQUAL(e1,e2)
 
-   E.g.
+   The first three are probably set by the inclusion of an .h file
+   which in turn includes hashtab.th.
 
-   #define HASH_TAB_NAME  X
-   #define HASH_ELEM_TYPE T
-   #define HASH_FUN(elem) hash(elem)
-   #define HASH_ELEM_EQUAL(e1,e2) eq(e1,e2)
+   E.g. in xyztable.h:
 
-   #include "hashtab.tc"
+       #define HASH_TAB_NAME xyzTable
+       #define HASH_TAB_TYPE XyzTable
+       #define HASH_ELEM_TYPE Xyz
 
-   If included in a C-file which will generate many hashtabs you also
-   need to:
+       #include "hashtab.th"
+       ...
 
-   #undef HASH_TAB_NAME
-   #undef HASH_ELEM_TYPE
-   #undef HASH_FUN
-   #undef HASH_ELEM_EQUAL
+   and then in the .c file:
+
+       #include "xyztable.h"
+
+       #define HASH_FUN(elem) hash(elem)
+       #define HASH_ELEM_EQUAL(e1,e2) eq(e1,e2)
+
+       #include "hashtab.tc"
+       ...
+
+   It is also good practice to undef in the .h file to avoid clashing
+   with other header files using hashtab/list:
+
+       #ifndef _IN_XYZTABLE_C_
+       #undef HASH_TAB_NAME
+       #undef HASH_ELEM_TYPE
+       #endif
+
+   If your .c file needs to generate multiple hash tables/lists you
+   also need to undef the following after each inclusion of
+   'hashtab.tc':
+
+       #undef HASH_FUN
+       #undef HASH_ELEM_EQUAL
+
 */
 
 #include <string.h>             /* For memset() */

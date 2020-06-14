@@ -5,6 +5,9 @@
    Can be included many times because its a generator, not an
    interface.
 
+   For an explanation of how these hashed tables and list are
+   generated, see hashtab.tc
+
 */
 
 #include <stdbool.h>
@@ -12,7 +15,7 @@
 #define GLUE(a,b) a ## b
 #define CONCAT(a,b) GLUE(a,b)
 
-/* Here we create TAB_TYPE and FUN_PREFIX from TAB_NAME */
+/* FUN_PREFIX is same as TAB_NAME */
 #define HASH_FUN_PREFIX HASH_TAB_NAME
 
 typedef struct HASH_TAB_NAME {
