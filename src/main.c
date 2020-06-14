@@ -2456,7 +2456,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     initOptions();
 
     /* TODO: should go into a newSymbolTable() function... */
-    XX_ALLOC(s_symbolTable, S_symbolTable);
+    XX_ALLOC(s_symbolTable, SymbolTable);
     symbolTableInit(s_symbolTable, MAX_SYMBOLS);
     fillJavaStat(&s_initJavaStat,NULL,NULL,NULL,0, NULL, NULL, NULL,
                   s_symbolTable,NULL,AccessDefault,s_cpInit,s_noneFileIndex,NULL);

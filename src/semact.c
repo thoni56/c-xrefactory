@@ -90,7 +90,7 @@ void unpackPointers(Symbol *pp) {
     pp->bits.npointers=0;
 }
 
-void addSymbol(Symbol *pp, S_symbolTable *tab) {
+void addSymbol(Symbol *pp, SymbolTable *tab) {
     /*  a bug can produce, if you add a symbol into old table, and the same
         symbol exists in a newer one. Then it will be deleted from the newer
         one. All this story is about storing information in trail. It should
@@ -537,7 +537,7 @@ static void setStaticFunctionLinkName( Symbol *p, int usage ) {
                                       ((char*)ppp) < memory+s_topBlock->previousTopBlock->firstFreeIndex \
                                       )
 
-Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, S_symbolTable *tab,
+Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, SymbolTable *tab,
                           int usage) {
     TypeModifier *tt;
     Symbol *pp;
@@ -615,7 +615,7 @@ Symbol *addNewDeclaration(
                             Symbol *decl,
                             IdList *idl,
                             unsigned storage,
-                            S_symbolTable *tab
+                            SymbolTable *tab
                             ) {
     int usage;
     if (decl == &s_errorSymbol || btype == &s_errorSymbol
@@ -632,7 +632,7 @@ Symbol *addNewDeclaration(
     return(decl);
 }
 
-void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, S_symbolTable *tab) {
+void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, SymbolTable *tab) {
     Symbol    *pp, *pa, *ppp;
     int         ii;
     if (p->name != NULL && p->bits.symType!=TypeError) {

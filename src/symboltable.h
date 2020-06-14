@@ -6,10 +6,11 @@
 #include "symbol.h"
 
 #define HASH_TAB_NAME symbolTable
+#define HASH_TAB_TYPE SymbolTable
 #define HASH_ELEM_TYPE Symbol
 
 
-#include "hashlist.th"
+#include "hashlist-new.th"
 
 /*
   run the following command in shell to see the expanded declarations of hashlist
@@ -18,7 +19,7 @@
 
 */
 
-extern S_symbolTable *s_symbolTable;
+extern SymbolTable *s_symbolTable;
 
 #ifndef _SYMTAB_
 #undef HASH_TAB_NAME

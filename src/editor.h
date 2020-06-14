@@ -45,7 +45,7 @@ typedef struct editorBuffer {
 typedef struct editorBufferList {
     struct editorBuffer     *f;
     struct editorBufferList	*next;
-} S_editorBufferList;
+} EditorBufferList;
 
 typedef struct editorMarker {
     struct editorBuffer		*buffer;

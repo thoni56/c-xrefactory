@@ -46,7 +46,7 @@ void fill_nestedSpec(S_nestedSpec *nestedSpec, struct symbol *cl,
 
 void fillJavaStat(S_javaStat *javaStat, IdList *className, TypeModifier *thisType, Symbol *thisClass,
                   int currentNestedIndex, char *currentPackage, char *unnamedPackagePath,
-                  char *namedPackagePath, S_symbolTable *locals, IdList *lastParsedName,
+                  char *namedPackagePath, SymbolTable *locals, IdList *lastParsedName,
                   unsigned methodModifiers, S_currentlyParsedCl parsingPositions, int classFileIndex,
                   S_javaStat *next) {
 
@@ -2526,7 +2526,7 @@ struct freeTrail *newClassDefinitionBegin(Id *name,
     S_javaStat      *oldStat;
     int             nnest,noff,classf;
     S_nestedSpec	*nst,*nn;
-    S_symbolTable	*locals;
+    SymbolTable	*locals;
     Id		idi;
 
     assert(s_javaStat);
@@ -2534,7 +2534,7 @@ struct freeTrail *newClassDefinitionBegin(Id *name,
     XX_ALLOC(s_javaStat, S_javaStat);
     *s_javaStat = *oldStat;
     s_javaStat->next = oldStat;
-    XX_ALLOC(locals, S_symbolTable);
+    XX_ALLOC(locals, SymbolTable);
     symbolTableInit(locals, MAX_CL_SYMBOLS);
 /*&fprintf(dumpOut,"adding new class %s\n",name->name);fflush(dumpOut);&*/
     if (oldStat->next!=NULL) {

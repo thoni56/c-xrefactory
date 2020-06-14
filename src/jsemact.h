@@ -31,7 +31,7 @@ extern void fill_nestedSpec(S_nestedSpec *nestedSpec, struct symbol *cl,
                             char membFlag, short unsigned  accFlags);
 extern void fillJavaStat(S_javaStat *javaStat, IdList *className, TypeModifier *thisType, Symbol *thisClass,
                          int currentNestedIndex, char *currentPackage, char *unnamedPackageDir,
-                         char *namedPackageDir, S_symbolTable *locals, IdList *lastParsedName,
+                         char *namedPackageDir, SymbolTable *locals, IdList *lastParsedName,
                          unsigned methodModifiers, S_currentlyParsedCl parsingPositions, int classFileIndex,
                          S_javaStat *next);
 extern void javaCheckForPrimaryStart(Position *cpos, Position *pp);

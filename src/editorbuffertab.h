@@ -5,7 +5,7 @@
 
 #define HASH_TAB_NAME editorBufferTab
 #define HASH_TAB_TYPE EditorBufferTab
-#define HASH_ELEM_TYPE S_editorBufferList
+#define HASH_ELEM_TYPE EditorBufferList
 
 #include "hashlist-new.th"
 
@@ -17,7 +17,7 @@
 
 #define EDITOR_BUFF_TAB_SIZE 100
 
-extern S_editorBufferList *s_staticEditorBufferTabTab[];
+extern EditorBufferList *s_staticEditorBufferTabTab[];
 extern EditorBufferTab s_editorBufferTab;
 
 #endif

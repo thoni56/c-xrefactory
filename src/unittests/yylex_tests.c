@@ -37,7 +37,7 @@ Describe(Yylex);
 BeforeEach(Yylex) {
     ppMemInit();
     initFileTable(&fileTable);
-    XX_ALLOC(s_symbolTable, S_symbolTable);
+    XX_ALLOC(s_symbolTable, SymbolTable);
     symbolTableInit(s_symbolTable, 10);
 }
 AfterEach(Yylex) {}

@@ -13,7 +13,7 @@ extern void unpackPointers(Symbol *pp);
 extern bool displayingErrorMessages(void);
 extern void noSuchFieldError(char *rec);
 extern void deleteSymDef(void *p);
-extern void addSymbol(Symbol *pp, S_symbolTable *tab);
+extern void addSymbol(Symbol *pp, SymbolTable *tab);
 extern void recFindPush(Symbol *sym, S_recFindStr *rfs);
 extern S_recFindStr * iniFind(Symbol *s, S_recFindStr *rfs);
 extern bool javaOuterClassAccessible(Symbol *cl);
@@ -27,9 +27,9 @@ extern int findStrRecordSym(	S_recFindStr *ss,
                                 AccessibilityCheckYesNo accessCheck,
                                 VisibilityCheckYesNo visibilityCheck
                                 );
-extern Symbol *addNewSymbolDef(Symbol *p, unsigned storage, S_symbolTable *tab, int usage);
+extern Symbol *addNewSymbolDef(Symbol *p, unsigned storage, SymbolTable *tab, int usage);
 extern Symbol *addNewDeclaration(Symbol *btype, Symbol *decl, IdList *idl,
-                                   unsigned storage, S_symbolTable *tab);
+                                   unsigned storage, SymbolTable *tab);
 extern int styyerror(char *s);
 extern int styyErrorRecovery(void);
 extern void setToNull(void *p);
@@ -41,7 +41,7 @@ extern void declTypeSpecifier21(TypeModifier *t, Symbol *d);
 extern TypeModifier *appendComposedType(TypeModifier **d, unsigned t);
 extern TypeModifier *prependComposedType(TypeModifier *d, unsigned t);
 extern void completeDeclarator(Symbol *t, Symbol *d);
-extern void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, S_symbolTable *tab);
+extern void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, SymbolTable *tab);
 extern SymbolList *createDefinitionList(Symbol *symbol);
 extern Symbol *createSimpleDefinition(unsigned storage, unsigned t, Id *id);
 extern int findStrRecord(Symbol	*s,
