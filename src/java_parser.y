@@ -1181,9 +1181,9 @@ ClassDeclaration
                         newClassDefinitionEnd($<trail>4);
                     } else {
                         PropagateBoundaries($$, $1, $8);
-                        if ($$.b.file == s_noneFileIndex) PropagateBoundaries($$, $2, $$);
+                        if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $$);
                         if (positionIsInTheSameFileAndBetween($$.b, s_cxRefPos, $$.e)
-                            && s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == s_noneFileIndex) {
+                            && s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == noFileIndex) {
                             s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = $$.b;
                             s_spp[SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION] = $2.b;
                             s_spp[SPP_CLASS_DECLARATION_TYPE_END_POSITION] = $2.e;
@@ -1212,7 +1212,7 @@ ClassDeclaration
                         newClassDefinitionEnd($<trail>4);
                     } else {
                         PropagateBoundaries($$, $1, $6);
-                        if ($$.b.file == s_noneFileIndex) PropagateBoundaries($$, $2, $6);
+                        if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $6);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -1245,7 +1245,7 @@ FunctionInnerClassDeclaration
                         newClassDefinitionEnd($<trail>4);
                     } else {
                         PropagateBoundaries($$, $1, $8);
-                        if ($$.b.file == s_noneFileIndex) PropagateBoundaries($$, $2, $8);
+                        if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $8);
                         if (positionsAreEqual(s_cxRefPos, $3.d->p)) {
                             s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = $$.b;
                             s_spp[SPP_CLASS_DECLARATION_END_POSITION] = $$.e;
@@ -1272,7 +1272,7 @@ FunctionInnerClassDeclaration
                         newClassDefinitionEnd($<trail>4);
                     } else {
                         PropagateBoundaries($$, $1, $6);
-                        if ($$.b.file == s_noneFileIndex) PropagateBoundaries($$, $2, $6);
+                        if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $6);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -1501,9 +1501,9 @@ FieldDeclaration
                     }
                 } else {
                     PropagateBoundaries($$, $1, $4);
-                    if ($$.b.file == s_noneFileIndex) PropagateBoundaries($$, $2, $4);
+                    if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $4);
                     if (positionIsInTheSameFileAndBetween($$.b, s_cxRefPos, $$.e)
-                        && s_spp[SPP_FIELD_DECLARATION_BEGIN_POSITION].file==s_noneFileIndex) {
+                        && s_spp[SPP_FIELD_DECLARATION_BEGIN_POSITION].file==noFileIndex) {
                         s_spp[SPP_FIELD_DECLARATION_BEGIN_POSITION] = $$.b;
                         s_spp[SPP_FIELD_DECLARATION_TYPE_BEGIN_POSITION] = $2.b;
                         s_spp[SPP_FIELD_DECLARATION_TYPE_END_POSITION] = $2.e;
@@ -1535,7 +1535,7 @@ FieldDeclaration
                     log_debug("[jsl] adding field %s to %s\n",
                               p->name,clas->linkName);
                     LIST_APPEND(Symbol, clas->u.s->records, p);
-                    assert(vClass!=s_noneFileIndex);
+                    assert(vClass!=noFileIndex);
                     if (p->pos.file!=s_olOriginalFileNumber && options.server_operation==OLO_PUSH) {
                         // pre load of saved file akes problem on move field/method, ...
                         addCxReference(p, &p->pos, UsageDefined, vClass, vClass);
@@ -1682,8 +1682,8 @@ MethodHeader
                     $$.d = javaMethodHeader($1.d,$2.d,$3.d, StorageMethod);
                 } else {
                     PropagateBoundaries($$, $1, $4);
-                    if ($$.b.file == s_noneFileIndex) PropagateBoundaries($$, $2, $$);
-                    if ($$.e.file == s_noneFileIndex) PropagateBoundaries($$, $$, $3);
+                    if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $$);
+                    if ($$.e.file == noFileIndex) PropagateBoundaries($$, $$, $3);
                     if (positionIsInTheSameFileAndBetween($$.b, s_cxRefPos, $3.e)) {
                         s_spp[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = $2.b;
                         s_spp[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = $2.e;
@@ -1700,8 +1700,8 @@ MethodHeader
                     $$.d = javaMethodHeader($1.d,&s_defaultVoidDefinition,$3.d,StorageMethod);
                 } else {
                     PropagateBoundaries($$, $1, $4);
-                    if ($$.b.file == s_noneFileIndex) PropagateBoundaries($$, $2, $$);
-                    if ($$.e.file == s_noneFileIndex) PropagateBoundaries($$, $$, $3);
+                    if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $$);
+                    if ($$.e.file == noFileIndex) PropagateBoundaries($$, $$, $3);
                     if (positionIsInTheSameFileAndBetween($$.b, s_cxRefPos, $3.e)) {
                         s_spp[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = $2.b;
                         s_spp[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = $2.e;
@@ -1935,7 +1935,7 @@ ConstructorDeclaration
                         htmlAddFunctionSeparatorReference();
                     } else {
                         PropagateBoundaries($$, $1, $6);
-                        if ($$.b.file == s_noneFileIndex) PropagateBoundaries($$, $2, $$);
+                        if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $$);
                     }
                 }
                 s_cp.function = NULL; /* added for set-target-position checks */
@@ -1950,7 +1950,7 @@ ConstructorDeclarator
                     if (! SyntaxPassOnly()) {
                         if (strcmp($1.d->name, s_javaStat->thisClass->name)==0) {
                             addCxReference(s_javaStat->thisClass, &$1.d->p,
-                                           UsageConstructorDefinition,s_noneFileIndex, s_noneFileIndex);
+                                           UsageConstructorDefinition,noFileIndex, noFileIndex);
                             $<symbol>$ = javaCreateNewMethod($1.d->name,//JAVA_CONSTRUCTOR_NAME1,
                                                              &($1.d->p), MEMORY_XX);
                         } else {
@@ -2095,9 +2095,9 @@ InterfaceDeclaration
                     newClassDefinitionEnd($<trail>4);
                 } else {
                     PropagateBoundaries($$, $1, $7);
-                    if ($$.b.file == s_noneFileIndex) PropagateBoundaries($$, $2, $$);
+                    if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $$);
                     if (positionIsInTheSameFileAndBetween($$.b, s_cxRefPos, $$.e)
-                        && s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == s_noneFileIndex) {
+                        && s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == noFileIndex) {
                         s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = $$.b;
                         s_spp[SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION] = $2.b;
                         s_spp[SPP_CLASS_DECLARATION_TYPE_END_POSITION] = $2.e;
@@ -2126,7 +2126,7 @@ InterfaceDeclaration
                         newClassDefinitionEnd($<trail>4);
                     } else {
                         PropagateBoundaries($$, $1, $6);
-                        if ($$.b.file == s_noneFileIndex) PropagateBoundaries($$, $2, $$);
+                        if ($$.b.file == noFileIndex) PropagateBoundaries($$, $2, $$);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -2849,7 +2849,7 @@ ThrowStatement
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (options.server_operation==OLO_EXTRACT) {
-                        addCxReference($2.d.typeModifier->u.t, &$1.d->p, UsageThrown, s_noneFileIndex, s_noneFileIndex);
+                        addCxReference($2.d.typeModifier->u.t, &$1.d->p, UsageThrown, noFileIndex, noFileIndex);
                     }
                 } else {
                     PropagateBoundaries($$, $1, $3);
@@ -2915,7 +2915,7 @@ CatchClause
                                             UsageDefined);
                             if (options.server_operation == OLO_EXTRACT) {
                                 assert($3.d->bits.symType==TypeDefault);
-                                addCxReference($3.d->u.type->u.t, &$1.d->p, UsageCatched, s_noneFileIndex, s_noneFileIndex);
+                                addCxReference($3.d->u.type->u.t, &$1.d->p, UsageCatched, noFileIndex, noFileIndex);
                             }
                         }
                     }
@@ -2936,7 +2936,7 @@ CatchClause
                 if (! SyntaxPassOnly()) {
                     if (options.server_operation == OLO_EXTRACT) {
                         assert($3.d->bits.symType==TypeDefault);
-                        addCxReference($3.d->u.type->u.t, &$1.d->p, UsageCatched, s_noneFileIndex, s_noneFileIndex);
+                        addCxReference($3.d->u.type->u.t, &$1.d->p, UsageCatched, noFileIndex, noFileIndex);
                     }
                 } else {
                     PropagateBoundaries($$, $1, $5);
@@ -3066,7 +3066,7 @@ PrimaryNoNewArray
                     *$$.d.position = $1.d;
                     PropagateBoundaries($$, $1, $3);
                     if (positionIsInTheSameFileAndBetween($$.b, s_cxRefPos, $$.e)
-                        && s_spp[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file == s_noneFileIndex) {
+                        && s_spp[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file == noFileIndex) {
                         s_spp[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION] = $1.b;
                         s_spp[SPP_PARENTHESED_EXPRESSION_RPAR_POSITION] = $3.b;
                         s_spp[SPP_PARENTHESED_EXPRESSION_BEGIN_POSITION] = $2.b;
@@ -3374,7 +3374,7 @@ ArrayCreationExpression
                 } else {
                     $$.d.position = &$1.d->p;
                     PropagateBoundaries($$, $1, $5);
-                    if ($$.e.file == s_noneFileIndex) PropagateBoundaries($$, $$, $4);
+                    if ($$.e.file == noFileIndex) PropagateBoundaries($$, $$, $4);
                 }
             }
         }
@@ -3404,7 +3404,7 @@ ArrayCreationExpression
                 } else {
                     $$.d.position = &$1.d->p;
                     PropagateBoundaries($$, $1, $5);
-                    if ($$.e.file == s_noneFileIndex) PropagateBoundaries($$, $$, $4);
+                    if ($$.e.file == noFileIndex) PropagateBoundaries($$, $$, $4);
                 }
             }
         }
@@ -3787,7 +3787,7 @@ CastExpression
                     $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $4);
                     if (positionIsInTheSameFileAndBetween($4.b, s_cxRefPos, $4.e)
-                        && s_spp[SPP_CAST_LPAR_POSITION].file == s_noneFileIndex) {
+                        && s_spp[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
                         s_spp[SPP_CAST_LPAR_POSITION] = $1.b;
                         s_spp[SPP_CAST_RPAR_POSITION] = $3.b;
                         s_spp[SPP_CAST_TYPE_BEGIN_POSITION] = $2.b;
@@ -3807,7 +3807,7 @@ CastExpression
                     $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $4);
                     if (positionIsInTheSameFileAndBetween($4.b, s_cxRefPos, $4.e)
-                        && s_spp[SPP_CAST_LPAR_POSITION].file == s_noneFileIndex) {
+                        && s_spp[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
                         s_spp[SPP_CAST_LPAR_POSITION] = $1.b;
                         s_spp[SPP_CAST_RPAR_POSITION] = $3.b;
                         s_spp[SPP_CAST_TYPE_BEGIN_POSITION] = $2.b;
@@ -3827,7 +3827,7 @@ CastExpression
                     $$.d.position = NULL_POS;
                     PropagateBoundaries($$, $1, $4);
                     if (positionIsInTheSameFileAndBetween($4.b, s_cxRefPos, $4.e)
-                        && s_spp[SPP_CAST_LPAR_POSITION].file == s_noneFileIndex) {
+                        && s_spp[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
                         s_spp[SPP_CAST_LPAR_POSITION] = $1.b;
                         s_spp[SPP_CAST_RPAR_POSITION] = $3.b;
                         s_spp[SPP_CAST_TYPE_BEGIN_POSITION] = $2.b;

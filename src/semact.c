@@ -416,7 +416,7 @@ Reference *findStrRecordFromSymbol(Symbol *sym,
             if (super!=NULL) addThisCxReferences(s_javaStat->classFileIndex,&super->p);
         }
     } else if (rr == RESULT_OK) {
-        ref = addCxReference(*res,&record->p,UsageUsed, s_noneFileIndex, s_noneFileIndex);
+        ref = addCxReference(*res,&record->p,UsageUsed, noFileIndex, noFileIndex);
     } else {
         noSuchFieldError(record->name);
     }
@@ -577,7 +577,7 @@ Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, SymbolTable *tab,
             addSymbol(pp, tab);
         }
     }
-    addCxReference(pp, &p->pos, usage,s_noneFileIndex, s_noneFileIndex);
+    addCxReference(pp, &p->pos, usage,noFileIndex, noFileIndex);
     return(pp);
 }
 
@@ -643,14 +643,14 @@ void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, SymbolTa
         }
         if (pp!=NULL && pp!=p) {
             if (symbolTableIsMember(tab, pa, &ii, &ppp)) {
-                addCxReference(ppp, &p->pos, UsageUsed, s_noneFileIndex, s_noneFileIndex);
+                addCxReference(ppp, &p->pos, UsageUsed, noFileIndex, noFileIndex);
             }
         } else {
             addNewSymbolDef(pa, StorageAuto, tab, UsageDefined);
         }
         if (options.server_operation == OLO_EXTRACT) {
             addCxReference(pa, &pa->pos, UsageLvalUsed,
-                           s_noneFileIndex, s_noneFileIndex);
+                           noFileIndex, noFileIndex);
         }
     }
     if (options.server_operation == OLO_GOTO_PARAM_NAME
@@ -908,7 +908,7 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
         setGlobalFileDepNames(id->name, pp, MEMORY_XX);
         addSymbol(pp, s_symbolTable);
     }
-    addCxReference(pp, &id->p, usage,s_noneFileIndex, s_noneFileIndex);
+    addCxReference(pp, &id->p, usage,noFileIndex, noFileIndex);
     return(&pp->u.s->stype);
 }
 
@@ -1004,7 +1004,7 @@ void specializeStrUnionDef(Symbol *sd, Symbol *rec) {
         if (dd->name!=NULL) {
             dd->linkName = string3ConcatInStackMem(sd->linkName,".",dd->name);
             dd->bits.isRecord = 1;
-            addCxReference(dd,&dd->pos,UsageDefined,s_noneFileIndex, s_noneFileIndex);
+            addCxReference(dd,&dd->pos,UsageDefined,noFileIndex, noFileIndex);
         }
     }
 }
@@ -1023,7 +1023,7 @@ TypeModifier *simpleEnumSpecifier(Id *id, int usage) {
         setGlobalFileDepNames(id->name, pp, MEMORY_XX);
         addSymbol(pp, s_symbolTable);
     }
-    addCxReference(pp, &id->p, usage,s_noneFileIndex, s_noneFileIndex);
+    addCxReference(pp, &id->p, usage,noFileIndex, noFileIndex);
     return(createSimpleEnumType(pp));
 }
 

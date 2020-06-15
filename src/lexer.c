@@ -830,7 +830,7 @@ bool getLexem(LexemBuffer *lb) {
             ps = & lb->positionRing[pi];
             currentLexemPosition = lb->fileOffsetRing[pi];
             if (    cb->fileNumber == s_olOriginalFileNumber
-                    && cb->fileNumber != s_noneFileIndex
+                    && cb->fileNumber != noFileIndex
                     && cb->fileNumber != -1
                     && s_jsl==NULL
                     ) {

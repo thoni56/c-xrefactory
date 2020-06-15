@@ -413,7 +413,7 @@ EditorMarker *editorCrNewMarker(EditorBuffer *buff, int offset) {
 EditorMarker *editorCrNewMarkerForPosition(Position *pos) {
     EditorBuffer  *buf;
     EditorMarker  *mm;
-    if (pos->file==s_noneFileIndex || pos->file<0) {
+    if (pos->file==noFileIndex || pos->file<0) {
         errorMessage(ERR_INTERNAL, "[editor] creating marker for nonexistant position");
     }
     buf = editorFindFile(fileTable.tab[pos->file]->name);

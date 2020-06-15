@@ -3705,9 +3705,9 @@ case 110:
                         newClassDefinitionEnd(yyvsp[-4].trail);
                     } else {
                         PropagateBoundaries(yyval.ast_id, yyvsp[-7].ast_unsigned, yyvsp[0].ast_position);
-                        if (yyval.ast_id.b.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_id, yyvsp[-6].ast_id, yyval.ast_id);
+                        if (yyval.ast_id.b.file == noFileIndex) PropagateBoundaries(yyval.ast_id, yyvsp[-6].ast_id, yyval.ast_id);
                         if (positionIsInTheSameFileAndBetween(yyval.ast_id.b, s_cxRefPos, yyval.ast_id.e)
-                            && s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == s_noneFileIndex) {
+                            && s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == noFileIndex) {
                             s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.ast_id.b;
                             s_spp[SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-6].ast_id.b;
                             s_spp[SPP_CLASS_DECLARATION_TYPE_END_POSITION] = yyvsp[-6].ast_id.e;
@@ -3740,7 +3740,7 @@ case 112:
                         newClassDefinitionEnd(yyvsp[-2].trail);
                     } else {
                         PropagateBoundaries(yyval.ast_id, yyvsp[-5].ast_unsigned, yyvsp[0].ast_position);
-                        if (yyval.ast_id.b.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_id, yyvsp[-4].ast_id, yyvsp[0].ast_position);
+                        if (yyval.ast_id.b.file == noFileIndex) PropagateBoundaries(yyval.ast_id, yyvsp[-4].ast_id, yyvsp[0].ast_position);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -3783,7 +3783,7 @@ case 116:
                         newClassDefinitionEnd(yyvsp[-4].trail);
                     } else {
                         PropagateBoundaries(yyval.ast_position, yyvsp[-7].ast_unsigned, yyvsp[0].ast_position);
-                        if (yyval.ast_position.b.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_position, yyvsp[-6].ast_id, yyvsp[0].ast_position);
+                        if (yyval.ast_position.b.file == noFileIndex) PropagateBoundaries(yyval.ast_position, yyvsp[-6].ast_id, yyvsp[0].ast_position);
                         if (positionsAreEqual(s_cxRefPos, yyvsp[-5].ast_id.d->p)) {
                             s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.ast_position.b;
                             s_spp[SPP_CLASS_DECLARATION_END_POSITION] = yyval.ast_position.e;
@@ -3814,7 +3814,7 @@ case 118:
                         newClassDefinitionEnd(yyvsp[-2].trail);
                     } else {
                         PropagateBoundaries(yyval.ast_position, yyvsp[-5].ast_unsigned, yyvsp[0].ast_position);
-                        if (yyval.ast_position.b.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_position, yyvsp[-4].ast_id, yyvsp[0].ast_position);
+                        if (yyval.ast_position.b.file == noFileIndex) PropagateBoundaries(yyval.ast_position, yyvsp[-4].ast_id, yyvsp[0].ast_position);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -4064,9 +4064,9 @@ case 141:
                     }
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_position);
-                    if (yyval.ast_symbol.b.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_position);
+                    if (yyval.ast_symbol.b.file == noFileIndex) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyvsp[0].ast_position);
                     if (positionIsInTheSameFileAndBetween(yyval.ast_symbol.b, s_cxRefPos, yyval.ast_symbol.e)
-                        && s_spp[SPP_FIELD_DECLARATION_BEGIN_POSITION].file==s_noneFileIndex) {
+                        && s_spp[SPP_FIELD_DECLARATION_BEGIN_POSITION].file==noFileIndex) {
                         s_spp[SPP_FIELD_DECLARATION_BEGIN_POSITION] = yyval.ast_symbol.b;
                         s_spp[SPP_FIELD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_symbol.b;
                         s_spp[SPP_FIELD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].ast_symbol.e;
@@ -4098,7 +4098,7 @@ case 141:
                     log_debug("[jsl] adding field %s to %s\n",
                               p->name,clas->linkName);
                     LIST_APPEND(Symbol, clas->u.s->records, p);
-                    assert(vClass!=s_noneFileIndex);
+                    assert(vClass!=noFileIndex);
                     if (p->pos.file!=s_olOriginalFileNumber && options.server_operation==OLO_PUSH) {
                         /* pre load of saved file akes problem on move field/method, ...*/
                         addCxReference(p, &p->pos, UsageDefined, vClass, vClass);
@@ -4250,8 +4250,8 @@ case 154:
                     yyval.ast_symbol.d = javaMethodHeader(yyvsp[-3].ast_unsigned.d,yyvsp[-2].ast_symbol.d,yyvsp[-1].ast_symbol.d, StorageMethod);
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_symbolList);
-                    if (yyval.ast_symbol.b.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyval.ast_symbol);
-                    if (yyval.ast_symbol.e.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_symbol, yyval.ast_symbol, yyvsp[-1].ast_symbol);
+                    if (yyval.ast_symbol.b.file == noFileIndex) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_symbol, yyval.ast_symbol);
+                    if (yyval.ast_symbol.e.file == noFileIndex) PropagateBoundaries(yyval.ast_symbol, yyval.ast_symbol, yyvsp[-1].ast_symbol);
                     if (positionIsInTheSameFileAndBetween(yyval.ast_symbol.b, s_cxRefPos, yyvsp[-1].ast_symbol.e)) {
                         s_spp[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_symbol.b;
                         s_spp[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].ast_symbol.e;
@@ -4271,8 +4271,8 @@ case 155:
                     yyval.ast_symbol.d = javaMethodHeader(yyvsp[-3].ast_unsigned.d,&s_defaultVoidDefinition,yyvsp[-1].ast_symbol.d,StorageMethod);
                 } else {
                     PropagateBoundaries(yyval.ast_symbol, yyvsp[-3].ast_unsigned, yyvsp[0].ast_symbolList);
-                    if (yyval.ast_symbol.b.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_id, yyval.ast_symbol);
-                    if (yyval.ast_symbol.e.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_symbol, yyval.ast_symbol, yyvsp[-1].ast_symbol);
+                    if (yyval.ast_symbol.b.file == noFileIndex) PropagateBoundaries(yyval.ast_symbol, yyvsp[-2].ast_id, yyval.ast_symbol);
+                    if (yyval.ast_symbol.e.file == noFileIndex) PropagateBoundaries(yyval.ast_symbol, yyval.ast_symbol, yyvsp[-1].ast_symbol);
                     if (positionIsInTheSameFileAndBetween(yyval.ast_symbol.b, s_cxRefPos, yyvsp[-1].ast_symbol.e)) {
                         s_spp[SPP_METHOD_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_id.b;
                         s_spp[SPP_METHOD_DECLARATION_TYPE_END_POSITION] = yyvsp[-2].ast_id.e;
@@ -4534,7 +4534,7 @@ case 177:
                         htmlAddFunctionSeparatorReference();
                     } else {
                         PropagateBoundaries(yyval.ast_position, yyvsp[-6].ast_unsigned, yyvsp[-1].ast_position);
-                        if (yyval.ast_position.b.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_position, yyvsp[-5].ast_symbol, yyval.ast_position);
+                        if (yyval.ast_position.b.file == noFileIndex) PropagateBoundaries(yyval.ast_position, yyvsp[-5].ast_symbol, yyval.ast_position);
                     }
                 }
                 s_cp.function = NULL; /* added for set-target-position checks */
@@ -4548,7 +4548,7 @@ case 178:
                     if (! SyntaxPassOnly()) {
                         if (strcmp(yyvsp[0].ast_id.d->name, s_javaStat->thisClass->name)==0) {
                             addCxReference(s_javaStat->thisClass, &yyvsp[0].ast_id.d->p,
-                                           UsageConstructorDefinition,s_noneFileIndex, s_noneFileIndex);
+                                           UsageConstructorDefinition,noFileIndex, noFileIndex);
                             yyval.symbol = javaCreateNewMethod(yyvsp[0].ast_id.d->name,/*JAVA_CONSTRUCTOR_NAME1,*/
                                                              &(yyvsp[0].ast_id.d->p), MEMORY_XX);
                         } else {
@@ -4741,9 +4741,9 @@ case 198:
                     newClassDefinitionEnd(yyvsp[-3].trail);
                 } else {
                     PropagateBoundaries(yyval.ast_id, yyvsp[-6].ast_unsigned, yyvsp[0].ast_position);
-                    if (yyval.ast_id.b.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_id, yyvsp[-5].ast_position, yyval.ast_id);
+                    if (yyval.ast_id.b.file == noFileIndex) PropagateBoundaries(yyval.ast_id, yyvsp[-5].ast_position, yyval.ast_id);
                     if (positionIsInTheSameFileAndBetween(yyval.ast_id.b, s_cxRefPos, yyval.ast_id.e)
-                        && s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == s_noneFileIndex) {
+                        && s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == noFileIndex) {
                         s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION] = yyval.ast_id.b;
                         s_spp[SPP_CLASS_DECLARATION_TYPE_BEGIN_POSITION] = yyvsp[-5].ast_position.b;
                         s_spp[SPP_CLASS_DECLARATION_TYPE_END_POSITION] = yyvsp[-5].ast_position.e;
@@ -4776,7 +4776,7 @@ case 200:
                         newClassDefinitionEnd(yyvsp[-2].trail);
                     } else {
                         PropagateBoundaries(yyval.ast_id, yyvsp[-5].ast_unsigned, yyvsp[0].ast_position);
-                        if (yyval.ast_id.b.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_id, yyvsp[-4].ast_position, yyval.ast_id);
+                        if (yyval.ast_id.b.file == noFileIndex) PropagateBoundaries(yyval.ast_id, yyvsp[-4].ast_position, yyval.ast_id);
                     }
                 } else {
                     jslNewClassDefinitionEnd();
@@ -5592,7 +5592,7 @@ case 330:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (options.server_operation==OLO_EXTRACT) {
-                        addCxReference(yyvsp[-1].ast_expressionType.d.typeModifier->u.t, &yyvsp[-2].ast_id.d->p, UsageThrown, s_noneFileIndex, s_noneFileIndex);
+                        addCxReference(yyvsp[-1].ast_expressionType.d.typeModifier->u.t, &yyvsp[-2].ast_id.d->p, UsageThrown, noFileIndex, noFileIndex);
                     }
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-2].ast_id, yyvsp[0].ast_position);
@@ -5657,7 +5657,7 @@ case 340:
                                             UsageDefined);
                             if (options.server_operation == OLO_EXTRACT) {
                                 assert(yyvsp[-3].ast_symbol.d->bits.symType==TypeDefault);
-                                addCxReference(yyvsp[-3].ast_symbol.d->u.type->u.t, &yyvsp[-5].ast_id.d->p, UsageCatched, s_noneFileIndex, s_noneFileIndex);
+                                addCxReference(yyvsp[-3].ast_symbol.d->u.type->u.t, &yyvsp[-5].ast_id.d->p, UsageCatched, noFileIndex, noFileIndex);
                             }
                         }
                     }
@@ -5683,7 +5683,7 @@ case 342:
                 if (! SyntaxPassOnly()) {
                     if (options.server_operation == OLO_EXTRACT) {
                         assert(yyvsp[-2].ast_symbol.d->bits.symType==TypeDefault);
-                        addCxReference(yyvsp[-2].ast_symbol.d->u.type->u.t, &yyvsp[-4].ast_id.d->p, UsageCatched, s_noneFileIndex, s_noneFileIndex);
+                        addCxReference(yyvsp[-2].ast_symbol.d->u.type->u.t, &yyvsp[-4].ast_id.d->p, UsageCatched, noFileIndex, noFileIndex);
                     }
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-4].ast_id, yyvsp[0].ast_position);
@@ -5831,7 +5831,7 @@ case 353:
                     *yyval.ast_expressionType.d.position = yyvsp[-2].ast_position.d;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-2].ast_position, yyvsp[0].ast_position);
                     if (positionIsInTheSameFileAndBetween(yyval.ast_expressionType.b, s_cxRefPos, yyval.ast_expressionType.e)
-                        && s_spp[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file == s_noneFileIndex) {
+                        && s_spp[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file == noFileIndex) {
                         s_spp[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION] = yyvsp[-2].ast_position.b;
                         s_spp[SPP_PARENTHESED_EXPRESSION_RPAR_POSITION] = yyvsp[0].ast_position.b;
                         s_spp[SPP_PARENTHESED_EXPRESSION_BEGIN_POSITION] = yyvsp[-1].ast_expressionType.b;
@@ -6169,7 +6169,7 @@ case 381:
                 } else {
                     yyval.ast_expressionType.d.position = &yyvsp[-4].ast_id.d->p;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-4].ast_id, yyvsp[0].ast_integer);
-                    if (yyval.ast_expressionType.e.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_expressionType, yyval.ast_expressionType, yyvsp[-1].ast_integer);
+                    if (yyval.ast_expressionType.e.file == noFileIndex) PropagateBoundaries(yyval.ast_expressionType, yyval.ast_expressionType, yyvsp[-1].ast_integer);
                 }
             }
         }
@@ -6205,7 +6205,7 @@ case 383:
                 } else {
                     yyval.ast_expressionType.d.position = &yyvsp[-4].ast_id.d->p;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-4].ast_id, yyvsp[0].ast_integer);
-                    if (yyval.ast_expressionType.e.file == s_noneFileIndex) PropagateBoundaries(yyval.ast_expressionType, yyval.ast_expressionType, yyvsp[-1].ast_integer);
+                    if (yyval.ast_expressionType.e.file == noFileIndex) PropagateBoundaries(yyval.ast_expressionType, yyval.ast_expressionType, yyvsp[-1].ast_integer);
                 }
             }
         }
@@ -6629,7 +6629,7 @@ case 425:
                     yyval.ast_expressionType.d.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
                     if (positionIsInTheSameFileAndBetween(yyvsp[0].ast_expressionType.b, s_cxRefPos, yyvsp[0].ast_expressionType.e)
-                        && s_spp[SPP_CAST_LPAR_POSITION].file == s_noneFileIndex) {
+                        && s_spp[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
                         s_spp[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.b;
                         s_spp[SPP_CAST_RPAR_POSITION] = yyvsp[-1].ast_position.b;
                         s_spp[SPP_CAST_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_symbolPositionPair.b;
@@ -6652,7 +6652,7 @@ case 426:
                     yyval.ast_expressionType.d.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
                     if (positionIsInTheSameFileAndBetween(yyvsp[0].ast_expressionType.b, s_cxRefPos, yyvsp[0].ast_expressionType.e)
-                        && s_spp[SPP_CAST_LPAR_POSITION].file == s_noneFileIndex) {
+                        && s_spp[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
                         s_spp[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.b;
                         s_spp[SPP_CAST_RPAR_POSITION] = yyvsp[-1].ast_position.b;
                         s_spp[SPP_CAST_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_unsignedPositionPair.b;
@@ -6675,7 +6675,7 @@ case 427:
                     yyval.ast_expressionType.d.position = NULL_POS;
                     PropagateBoundaries(yyval.ast_expressionType, yyvsp[-3].ast_position, yyvsp[0].ast_expressionType);
                     if (positionIsInTheSameFileAndBetween(yyvsp[0].ast_expressionType.b, s_cxRefPos, yyvsp[0].ast_expressionType.e)
-                        && s_spp[SPP_CAST_LPAR_POSITION].file == s_noneFileIndex) {
+                        && s_spp[SPP_CAST_LPAR_POSITION].file == noFileIndex) {
                         s_spp[SPP_CAST_LPAR_POSITION] = yyvsp[-3].ast_position.b;
                         s_spp[SPP_CAST_RPAR_POSITION] = yyvsp[-1].ast_position.b;
                         s_spp[SPP_CAST_TYPE_BEGIN_POSITION] = yyvsp[-2].ast_expressionType.b;

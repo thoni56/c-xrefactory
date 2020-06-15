@@ -2252,7 +2252,7 @@ case 1:
             assert(dd->bits.storage != StorageTypedef);
             yyval.ast_expressionType.d.typeModifier = dd->u.type;
             assert(options.taskRegime);
-            yyval.ast_expressionType.d.reference = addCxReference(p, &yyvsp[0].ast_id.d->p, UsageUsed, s_noneFileIndex, s_noneFileIndex);
+            yyval.ast_expressionType.d.reference = addCxReference(p, &yyvsp[0].ast_id.d->p, UsageUsed, noFileIndex, noFileIndex);
         } else {
             /* implicit function declaration */
             TypeModifier *p;
@@ -2266,7 +2266,7 @@ case 1:
             fillSymbolBits(&d->bits, AccessDefault, TypeDefault, StorageExtern);
 
             dd = addNewSymbolDef(d, StorageExtern, s_symbolTable, UsageUsed);
-            yyval.ast_expressionType.d.reference = addCxReference(dd, &yyvsp[0].ast_id.d->p, UsageUsed, s_noneFileIndex, s_noneFileIndex);
+            yyval.ast_expressionType.d.reference = addCxReference(dd, &yyvsp[0].ast_id.d->p, UsageUsed, noFileIndex, noFileIndex);
         }
     }
 break;
@@ -2784,7 +2784,7 @@ case 106:
             usage = USAGE_TOP_LEVEL_USED;
         else
             usage = UsageUsed;
-        addCxReference(yyvsp[0].ast_id.d->symbol,&yyvsp[0].ast_id.d->p,usage,s_noneFileIndex,s_noneFileIndex);
+        addCxReference(yyvsp[0].ast_id.d->symbol,&yyvsp[0].ast_id.d->p,usage,noFileIndex,noFileIndex);
     }
 break;
 case 107:

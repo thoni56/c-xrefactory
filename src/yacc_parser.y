@@ -463,7 +463,7 @@ primary_expr
             assert(dd->bits.storage != StorageTypedef);
             $$.d.typeModifier = dd->u.type;
             assert(options.taskRegime);
-            $$.d.reference = addCxReference(p, &$1.d->p, UsageUsed,s_noneFileIndex, s_noneFileIndex);
+            $$.d.reference = addCxReference(p, &$1.d->p, UsageUsed, noFileIndex, noFileIndex);
         } else {
             /* implicit function declaration */
             TypeModifier *p;
@@ -827,7 +827,7 @@ user_defined_type
         assert(options.taskRegime);
         assert($1.d);
         assert($1.d->symbol);
-        addCxReference($1.d->symbol, &$1.d->p, UsageUsed,s_noneFileIndex, s_noneFileIndex);
+        addCxReference($1.d->symbol, &$1.d->p, UsageUsed, noFileIndex, noFileIndex);
     }
     ;
 
@@ -1697,7 +1697,7 @@ static void addYaccSymbolReference(Id *name, int usage) {
 
     fillSymbol(&sss, name->name, name->name, name->p);
     fillSymbolBits(&sss.bits, AccessDefault, TypeYaccSymbol, StorageNone);
-    addCxReference(&sss, &name->p, usage,s_noneFileIndex, s_noneFileIndex);
+    addCxReference(&sss, &name->p, usage, noFileIndex, noFileIndex);
 }
 
 static void addRuleLocalVariable(Id *name, int order) {

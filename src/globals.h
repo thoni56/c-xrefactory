@@ -132,7 +132,6 @@ extern int s_input_file_number;
 extern int s_olStringSecondProcessing;  /* am I in macro body pass ? */
 extern int s_olOriginalFileNumber;      /* original file name */
 extern int s_olOriginalComFileNumber;	/* original communication file */
-extern int s_noneFileIndex;
 
 extern Int2StringTable typeNamesInitTable[];
 extern char *s_extractStorageName[MAX_STORAGE];

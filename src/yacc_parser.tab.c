@@ -2445,7 +2445,7 @@ static void addYaccSymbolReference(Id *name, int usage) {
 
     fillSymbol(&sss, name->name, name->name, name->p);
     fillSymbolBits(&sss.bits, AccessDefault, TypeYaccSymbol, StorageNone);
-    addCxReference(&sss, &name->p, usage,s_noneFileIndex, s_noneFileIndex);
+    addCxReference(&sss, &name->p, usage, noFileIndex, noFileIndex);
 }
 
 static void addRuleLocalVariable(Id *name, int order) {
@@ -2841,7 +2841,7 @@ case 192:
             assert(dd->bits.storage != StorageTypedef);
             yyval.ast_expressionType.d.typeModifier = dd->u.type;
             assert(options.taskRegime);
-            yyval.ast_expressionType.d.reference = addCxReference(p, &yyvsp[0].ast_id.d->p, UsageUsed,s_noneFileIndex, s_noneFileIndex);
+            yyval.ast_expressionType.d.reference = addCxReference(p, &yyvsp[0].ast_id.d->p, UsageUsed, noFileIndex, noFileIndex);
         } else {
             /* implicit function declaration */
             TypeModifier *p;
@@ -3264,7 +3264,7 @@ case 291:
         assert(options.taskRegime);
         assert(yyvsp[0].ast_id.d);
         assert(yyvsp[0].ast_id.d->symbol);
-        addCxReference(yyvsp[0].ast_id.d->symbol, &yyvsp[0].ast_id.d->p, UsageUsed,s_noneFileIndex, s_noneFileIndex);
+        addCxReference(yyvsp[0].ast_id.d->symbol, &yyvsp[0].ast_id.d->p, UsageUsed, noFileIndex, noFileIndex);
     }
 break;
 case 292:

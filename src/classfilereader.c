@@ -766,7 +766,7 @@ static void cfAddRecordToClass(char *name,
         if ((accessFlags & AccessStatic)) {
             /*&
               sprintf(pp,"%s.%s%s", clas->linkName, name, sig);
-              vFunCl = s_noneFileIndex;
+              vFunCl = noFileIndex;
               &*/
         }
         sprintf(pp,"%s%s", name, sig);
@@ -777,7 +777,7 @@ static void cfAddRecordToClass(char *name,
         vFunCl = clas->u.s->classFile;
         /*&
           sprintf(pp,"%s.%s", clas->linkName, name);
-          vFunCl = s_noneFileIndex;
+          vFunCl = noFileIndex;
           &*/
     }
     //& rr = javaExistEquallyProfiledFun(clas, name, sig, &memb);
@@ -893,7 +893,7 @@ static void cfReadMethodInfos(  char **accc,
             assert(memb && memb->bits.symType==TypeStruct && memb->u.s);
             name = memb->name;
             storage = StorageConstructor;
-            if (fileTable.tab[memb->u.s->classFile]->directEnclosingInstance != s_noneFileIndex) {
+            if (fileTable.tab[memb->u.s->classFile]->directEnclosingInstance != noFileIndex) {
                 // the first argument is direct enclosing instance, remove it
                 sign2 = cfSkipFirstArgumentInSigString(sign);
                 CF_ALLOCC(sign, strlen(sign2)+2, char);
@@ -1068,7 +1068,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
 
     fillPosition(&pos, fileInd,1,0);
     addCxReference(memb, &pos, UsageClassFileDefinition,
-                   s_noneFileIndex, s_noneFileIndex);
+                   noFileIndex, noFileIndex);
     addCfClassTreeHierarchyRef(fileInd, UsageClassFileDefinition);
     log_trace("fileitem==%s", fileTable.tab[fileInd]->name);
     pushNewInclude( ff, NULL, fileTable.tab[fileInd]->name, "");
@@ -1176,7 +1176,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
                     assert(fileTable.tab[cn]);
                     fileTable.tab[cn]->directEnclosingInstance = memb->u.s->classFile;
                 } else {
-                    fileTable.tab[cn]->directEnclosingInstance = s_noneFileIndex;
+                    fileTable.tab[cn]->directEnclosingInstance = noFileIndex;
                 }
             }
         } else {

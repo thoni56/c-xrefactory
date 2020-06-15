@@ -757,7 +757,7 @@ void printSymbolLinkName(FILE *ff, S_olSymbolsMenu *ss) {
 
 void fillTrivialSpecialRefItem( SymbolReferenceItem *ddd , char *name) {
     fillSymbolRefItemExceptBits(ddd, name, cxFileHashNumber(name),
-                                s_noneFileIndex, s_noneFileIndex);
+                                noFileIndex, noFileIndex);
     fillSymbolRefItemBits(&ddd->b, TypeUnknown, StorageAuto,
                            ScopeAuto, AccessDefault, CategoryLocal, 0);
 }

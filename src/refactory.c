@@ -773,7 +773,7 @@ static void tpCheckFutureAccessibilitiesOfSymbolsDefinedInsideMovedClass(
 
     rstack = s_olcxCurrentUser->browserStack.top;
     rstack->hkSelectedSym = olCreateSpecialMenuItem(
-                                                    LINK_NAME_MOVE_CLASS_MISSED, s_noneFileIndex, StorageDefault);
+                                                    LINK_NAME_MOVE_CLASS_MISSED, noFileIndex, StorageDefault);
     // push them into hkSelection,
     refTabMap2(&referenceTable, tpCheckMoveClassPutClassDefaultSymbols, &dd);
     // load all theirs references
@@ -931,12 +931,12 @@ int tpCheckSourceIsNotInnerClass(void) {
     ss = rstack->hkSelectedSym;
     assert(ss);
     // I can rely that it is a class
-    thisclassi = getClassNumFromClassLinkName(ss->s.name, s_noneFileIndex);
+    thisclassi = getClassNumFromClassLinkName(ss->s.name, noFileIndex);
     //& target = options.moveTargetClass;
     //& assert(target!=NULL);
     assert(fileTable.tab[thisclassi]);
     deii = fileTable.tab[thisclassi]->directEnclosingInstance;
-    if (deii != -1 && deii != s_noneFileIndex && (ss->s.b.accessFlags&AccessInterface)==0) {
+    if (deii != -1 && deii != noFileIndex && (ss->s.b.accessFlags&AccessInterface)==0) {
         char tmpBuff[TMP_BUFF_SIZE];
         // If there exists a direct enclosing instance, it is an inner class
         sprintf(tmpBuff, "This is an inner class. Current version of C-xrefactory can only move top level classes and nested classes that are declared 'static'. If the class does not depend on its enclosing instances, you should declare it 'static' and then move it.");
@@ -1005,7 +1005,7 @@ static bool tpCheckSuperMethodReferencesInit(S_tpCheckSpecialReferencesData *rr)
     ss = rstack->hkSelectedSym;
     assert(ss);
     scl = javaGetSuperClassNumFromClassNum(ss->s.vApplClass);
-    if (scl == s_noneFileIndex) {
+    if (scl == noFileIndex) {
         errorMessage(ERR_ST, "no super class, something is going wrong");
         return false;;
     }
@@ -1179,7 +1179,7 @@ int tpCheckTargetToBeDirectSubOrSupClass(int flag, char *subOrSuper) {
         return(0);
     }
     readOneAppropReferenceFile(NULL, classHierarchyFunctionSequence);
-    assert(target->u.s!=NULL&&target->u.s->classFile!=s_noneFileIndex);
+    assert(target->u.s!=NULL&&target->u.s->classFile!=noFileIndex);
     if (flag == REQ_SUBCLASS) cl=fileTable.tab[ss->s.vApplClass]->inferiorClasses;
     else cl=fileTable.tab[ss->s.vApplClass]->superClasses;
     for(; cl!=NULL; cl=cl->next) {
@@ -1214,7 +1214,7 @@ int tpPullUpFieldLastPreconditions(void) {
     assert(ss);
     target = getMoveTargetClass();
     assert(target!=NULL);
-    assert(target->u.s!=NULL&&target->u.s->classFile!=s_noneFileIndex);
+    assert(target->u.s!=NULL&&target->u.s->classFile!=noFileIndex);
     for(mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
         if (isSameCxSymbol(&ss->s,&mm->s)
             && mm->s.vApplClass == target->u.s->classFile) goto cont2;
@@ -1255,7 +1255,7 @@ int tpPushDownFieldLastPreconditions(void) {
     thisclassi = ss->s.vApplClass;
     target = getMoveTargetClass();
     assert(target!=NULL);
-    assert(target->u.s!=NULL&&target->u.s->classFile!=s_noneFileIndex);
+    assert(target->u.s!=NULL&&target->u.s->classFile!=noFileIndex);
     sourcesm = targetsm = NULL;
     for(mm=rstack->menuSym; mm!=NULL; mm=mm->next) {
         if (isSameCxSymbol(&ss->s,&mm->s)) {
@@ -1428,7 +1428,7 @@ static EditorMarker *refactoryCrNewMarkerForExpressionBegin(EditorMarker *d, int
         pos = NULL;
         assert(0);
     }
-    if (pos->file == s_noneFileIndex) {
+    if (pos->file == noFileIndex) {
         if (kind == GET_STATIC_PREFIX_START) {
             refactoryFatalErrorOnPosition(d, ERR_ST, "Can't determine static prefix. Maybe non-static reference to a static object? Make this invocation static before refactoring.");
         } else {
@@ -1622,7 +1622,7 @@ static EditorMarker *refactoryFindModifierAndCrMarker(
     blen = point->buffer->a.bufferSize;
     mlen = strlen(modifier);
     refactoryMakeSyntaxPassOnSource(point);
-    if (s_spp[limitIndex].file == s_noneFileIndex) {
+    if (s_spp[limitIndex].file == noFileIndex) {
         warningMessage(ERR_INTERNAL, "cant get field declaration");
         mini = point->offset;
         while (mini>0 && text[mini]!='\n') mini --;
@@ -1668,7 +1668,7 @@ static void refactoryAddModifier(EditorMarker *point, int limit, char *modifier)
     char            modifSpace[TMP_STRING_SIZE];
     EditorMarker  *mm;
     refactoryMakeSyntaxPassOnSource(point);
-    if (s_spp[limit].file == s_noneFileIndex) {
+    if (s_spp[limit].file == noFileIndex) {
         errorMessage(ERR_INTERNAL, "cant find beginning of field declaration");
     }
     mm = editorCrNewMarkerForPosition(&s_spp[limit]);
@@ -1842,7 +1842,7 @@ static int refactoryGetParamNamePosition(EditorMarker *pos, char *fname, int arg
     sprintf(pushOpt, "-olcxgotoparname%d", argn);
     refactoryEditServerParseBuffer( s_ropt.project, pos->buffer, pos,NULL, pushOpt,NULL);
     olcxPopOnly();
-    if (s_paramPosition.file != s_noneFileIndex) {
+    if (s_paramPosition.file != noFileIndex) {
         res = RETURN_OK;
     } else {
         res = RETURN_ERROR;
@@ -1872,8 +1872,8 @@ static int refactoryGetParamPosition(EditorMarker *pos, char *fname, int argn) {
     olcxPopOnly();
 
     res = RETURN_OK;
-    if (s_paramBeginPosition.file == s_noneFileIndex
-        || s_paramEndPosition.file == s_noneFileIndex
+    if (s_paramBeginPosition.file == noFileIndex
+        || s_paramEndPosition.file == noFileIndex
         || s_paramBeginPosition.file == -1
         || s_paramEndPosition.file == -1
         ) {
@@ -2837,7 +2837,7 @@ static void refactoryGetMethodLimitsForMoving(EditorMarker *point,
     EditorMarker *mstart, *mend;
     // get method limites
     refactoryMakeSyntaxPassOnSource(point);
-    if (s_spp[limitIndex].file==s_noneFileIndex || s_spp[limitIndex+1].file==s_noneFileIndex) {
+    if (s_spp[limitIndex].file==noFileIndex || s_spp[limitIndex+1].file==noFileIndex) {
         fatalError(ERR_INTERNAL, "Can't find declaration coordinates", XREF_EXIT_ERR);
     }
     mstart = editorCrNewMarkerForPosition(&s_spp[limitIndex]);
@@ -3046,8 +3046,8 @@ static void refactoryPerformMoveClass(EditorMarker *point,
 
     // get limits
     refactoryMakeSyntaxPassOnSource(point);
-    if (s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file==s_noneFileIndex
-        ||s_spp[SPP_CLASS_DECLARATION_END_POSITION].file==s_noneFileIndex) {
+    if (s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file==noFileIndex
+        ||s_spp[SPP_CLASS_DECLARATION_END_POSITION].file==noFileIndex) {
         fatalError(ERR_INTERNAL, "Can't find declaration coordinates", XREF_EXIT_ERR);
     }
     mstart = editorCrNewMarkerForPosition(&s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION]);
@@ -3174,7 +3174,7 @@ static void refactoryMoveClassToNewFile(EditorMarker *point) {
     npoint = editorCrNewMarker(buff, 0);
     // just to parse the file
     refactoryEditServerParseBuffer(s_ropt.project, npoint->buffer, npoint,NULL, "-olcxpushspecialname=", NULL);
-    if (s_spp[SPP_LAST_TOP_LEVEL_CLASS_POSITION].file == s_noneFileIndex) {
+    if (s_spp[SPP_LAST_TOP_LEVEL_CLASS_POSITION].file == noFileIndex) {
         ppcGenGotoMarkerRecord(npoint);
         ppcGenRecord(PPC_KILL_BUFFER_REMOVE_FILE, "This file does not contain classes anymore, can I remove it?", "\n");
     }
@@ -3544,8 +3544,8 @@ static void refactoryTurnStaticToDynamic(EditorMarker *point) {
         errorMessage(ERR_INTERNAL, "Can't get current class");
         return;
     }
-    classnum = getClassNumFromClassLinkName(s_cps.currentClassAnswer, s_noneFileIndex);
-    if (classnum==s_noneFileIndex) {
+    classnum = getClassNumFromClassLinkName(s_cps.currentClassAnswer, noFileIndex);
+    if (classnum==noFileIndex) {
         errorMessage(ERR_INTERNAL, "Problem when getting current class");
         return;
     }
@@ -3570,8 +3570,8 @@ static void refactoryTurnStaticToDynamic(EditorMarker *point) {
         errorMessage(ERR_ST, "Can't infer type for parameter/field");
         return;
     }
-    parclassnum = getClassNumFromClassLinkName(s_olSymbolClassType, s_noneFileIndex);
-    if (parclassnum==s_noneFileIndex) {
+    parclassnum = getClassNumFromClassLinkName(s_olSymbolClassType, noFileIndex);
+    if (parclassnum==noFileIndex) {
         errorMessage(ERR_INTERNAL, "Problem when getting parameter/field class");
         return;
     }
@@ -3874,7 +3874,7 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
     for(ll=outsiders; ll!=NULL; ll=ll->next) {
         if (ll->usage.base == UsageLvalUsed) {
             refactoryMakeSyntaxPassOnSource(ll->d);
-            if (s_spp[SPP_ASSIGNMENT_OPERATOR_POSITION].file == s_noneFileIndex) {
+            if (s_spp[SPP_ASSIGNMENT_OPERATOR_POSITION].file == noFileIndex) {
                 errorMessage(ERR_INTERNAL, "Can't get assignment coordinates");
             } else {
                 eqm = editorCrNewMarkerForPosition(&s_spp[SPP_ASSIGNMENT_OPERATOR_POSITION]);
@@ -3931,8 +3931,8 @@ static void refactoryEncapsulateField(EditorMarker *point) {
     //&editorDumpMarker(point);
     refactoryMakeSyntaxPassOnSource(point);
     //&editorDumpMarker(point);
-    if (s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == s_noneFileIndex
-        || s_spp[SPP_CLASS_DECLARATION_END_POSITION].file == s_noneFileIndex) {
+    if (s_spp[SPP_CLASS_DECLARATION_BEGIN_POSITION].file == noFileIndex
+        || s_spp[SPP_CLASS_DECLARATION_END_POSITION].file == noFileIndex) {
         fatalError(ERR_INTERNAL, "can't deetrmine class coordinates", XREF_EXIT_ERR);
     }
 
@@ -4066,10 +4066,10 @@ static void refactoryReduceParenthesesAroundExpression(EditorMarker *mm, char *e
     EditorMarker  *lp, *rp, *eb, *ee;
     int             elen;
     refactoryMakeSyntaxPassOnSource(mm);
-    if (s_spp[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file != s_noneFileIndex) {
-        assert(s_spp[SPP_PARENTHESED_EXPRESSION_RPAR_POSITION].file != s_noneFileIndex);
-        assert(s_spp[SPP_PARENTHESED_EXPRESSION_BEGIN_POSITION].file != s_noneFileIndex);
-        assert(s_spp[SPP_PARENTHESED_EXPRESSION_END_POSITION].file != s_noneFileIndex);
+    if (s_spp[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION].file != noFileIndex) {
+        assert(s_spp[SPP_PARENTHESED_EXPRESSION_RPAR_POSITION].file != noFileIndex);
+        assert(s_spp[SPP_PARENTHESED_EXPRESSION_BEGIN_POSITION].file != noFileIndex);
+        assert(s_spp[SPP_PARENTHESED_EXPRESSION_END_POSITION].file != noFileIndex);
         elen = strlen(expression);
         lp = editorCrNewMarkerForPosition(&s_spp[SPP_PARENTHESED_EXPRESSION_LPAR_POSITION]);
         rp = editorCrNewMarkerForPosition(&s_spp[SPP_PARENTHESED_EXPRESSION_RPAR_POSITION]);
@@ -4104,10 +4104,10 @@ static void refactoryReduceCastedThis(EditorMarker *mm, char *superFqtName) {
     ss = refactoryGetIdentifierOnMarker_st(mm);
     if (strcmp(ss,"this")==0) {
         refactoryMakeSyntaxPassOnSource(mm);
-        if (s_spp[SPP_CAST_LPAR_POSITION].file != s_noneFileIndex) {
-            assert(s_spp[SPP_CAST_RPAR_POSITION].file != s_noneFileIndex);
-            assert(s_spp[SPP_CAST_EXPRESSION_BEGIN_POSITION].file != s_noneFileIndex);
-            assert(s_spp[SPP_CAST_EXPRESSION_END_POSITION].file != s_noneFileIndex);
+        if (s_spp[SPP_CAST_LPAR_POSITION].file != noFileIndex) {
+            assert(s_spp[SPP_CAST_RPAR_POSITION].file != noFileIndex);
+            assert(s_spp[SPP_CAST_EXPRESSION_BEGIN_POSITION].file != noFileIndex);
+            assert(s_spp[SPP_CAST_EXPRESSION_END_POSITION].file != noFileIndex);
             lp = editorCrNewMarkerForPosition(&s_spp[SPP_CAST_LPAR_POSITION]);
             rp = editorCrNewMarkerForPosition(&s_spp[SPP_CAST_RPAR_POSITION]);
             tb = editorCrNewMarkerForPosition(&s_spp[SPP_CAST_TYPE_BEGIN_POSITION]);
@@ -4157,10 +4157,10 @@ static int refactoryIsThereACastOfThis(EditorMarker *mm) {
     ss = refactoryGetIdentifierOnMarker_st(mm);
     if (strcmp(ss,"this")==0) {
         refactoryMakeSyntaxPassOnSource(mm);
-        if (s_spp[SPP_CAST_LPAR_POSITION].file != s_noneFileIndex) {
-            assert(s_spp[SPP_CAST_RPAR_POSITION].file != s_noneFileIndex);
-            assert(s_spp[SPP_CAST_EXPRESSION_BEGIN_POSITION].file != s_noneFileIndex);
-            assert(s_spp[SPP_CAST_EXPRESSION_END_POSITION].file != s_noneFileIndex);
+        if (s_spp[SPP_CAST_LPAR_POSITION].file != noFileIndex) {
+            assert(s_spp[SPP_CAST_RPAR_POSITION].file != noFileIndex);
+            assert(s_spp[SPP_CAST_EXPRESSION_BEGIN_POSITION].file != noFileIndex);
+            assert(s_spp[SPP_CAST_EXPRESSION_END_POSITION].file != noFileIndex);
             eb = editorCrNewMarkerForPosition(&s_spp[SPP_CAST_EXPRESSION_BEGIN_POSITION]);
             ee = editorCrNewMarkerForPosition(&s_spp[SPP_CAST_EXPRESSION_END_POSITION]);
             if (ee->offset - eb->offset == 4 /*strlen("this")*/) {
@@ -4381,7 +4381,7 @@ static char * refactoryComputeUpdateOptionForSymbol(EditorMarker *point) {
     storage = csym->s.b.storage;
     accflags = csym->s.b.accessFlags;
     if (occs == NULL) {
-        fn = s_noneFileIndex;
+        fn = noFileIndex;
     } else {
         assert(occs->d!=NULL && occs->d->buffer!=NULL);
         fn = occs->d->buffer->ftnum;

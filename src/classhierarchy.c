@@ -426,8 +426,8 @@ void genClassHierarchies( FILE *ff, S_olSymbolsMenu *rrr,
     }
     // and gen the class subhierarchy
     for(ss=rrr; ss!=NULL; ss=ss->next) {
-        genThisClassHierarchy(ss->s.vFunClass, s_noneFileIndex,ff,rrr,virtFlag,pass);
-        genThisClassHierarchy(ss->s.vApplClass, s_noneFileIndex,ff,rrr,virtFlag,pass);
+        genThisClassHierarchy(ss->s.vFunClass, noFileIndex,ff,rrr,virtFlag,pass);
+        genThisClassHierarchy(ss->s.vApplClass, noFileIndex,ff,rrr,virtFlag,pass);
     }
 }
 

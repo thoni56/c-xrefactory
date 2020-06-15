@@ -554,9 +554,9 @@ void jslNewClassDefinitionBegin(Id *name,
                 assert(s_jsl->classStat->thisClass->bits.symType==TypeStruct);
                 fileTable.tab[cn]->directEnclosingInstance = s_jsl->classStat->thisClass->u.s->classFile;
                 log_trace("setting dei %d->%d of %s, none==%d", cn,  s_jsl->classStat->thisClass->u.s->classFile,
-                          fileTable.tab[cn]->name, s_noneFileIndex);
+                          fileTable.tab[cn]->name, noFileIndex);
             } else {
-                fileTable.tab[cn]->directEnclosingInstance = s_noneFileIndex;
+                fileTable.tab[cn]->directEnclosingInstance = noFileIndex;
             }
         }
     }
@@ -569,7 +569,7 @@ void jslNewClassDefinitionBegin(Id *name,
     }
 
     assert(cc && cc->u.s && fileTable.tab[cc->u.s->classFile]);
-    assert(s_jsl->sourceFileNumber>=0 && s_jsl->sourceFileNumber!=s_noneFileIndex);
+    assert(s_jsl->sourceFileNumber>=0 && s_jsl->sourceFileNumber!=noFileIndex);
     assert(fileTable.tab[s_jsl->sourceFileNumber]);
     fileInd = cc->u.s->classFile;
     log_trace("setting source file of %s to %s", fileTable.tab[cc->u.s->classFile]->name,
@@ -580,7 +580,7 @@ void jslNewClassDefinitionBegin(Id *name,
     addClassTreeHierarchyReference(fileInd,&inname->p,UsageClassTreeDefinition);
     if (inname->p.file != s_olOriginalFileNumber && options.server_operation == OLO_PUSH) {
         // pre load of saved file akes problem on move field/method, ...
-        addCxReference(cc, &inname->p, UsageDefined,s_noneFileIndex, s_noneFileIndex);
+        addCxReference(cc, &inname->p, UsageDefined,noFileIndex, noFileIndex);
     }
     // this is to update references affected to class file before
     // if you remove this, then remove also at class end

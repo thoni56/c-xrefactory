@@ -1750,7 +1750,7 @@ static void schedulingToUpdate(FileItem *p, void *rs) {
     struct stat fstat, hstat;
     char sss[MAX_FILE_NAME_SIZE];
 
-    if (p == fileTable.tab[s_noneFileIndex]) return;
+    if (p == fileTable.tab[noFileIndex]) return;
     //& if (options.update==UP_FAST_UPDATE && !p->b.commandLineEntered) return;
     //&fprintf(dumpOut,"checking %s for update\n",p->name); fflush(dumpOut);
     if (statb(p->name, &fstat)) {
@@ -1828,7 +1828,7 @@ void searchDefaultOptionsFile(char *filename, char *options_filename, char *sect
         // it may happen that after deletion of the project, the request for active
         // project will return non-existent project. And then return "not found"?
         fileno = getFileNumberFromName(filename);
-        if (fileno != s_noneFileIndex && fileTable.tab[fileno]->b.isFromCxfile) {
+        if (fileno != noFileIndex && fileTable.tab[fileno]->b.isFromCxfile) {
             strcpy(options_filename, oldStdopFile);
             strcpy(section, oldStdopSection);
             return;
@@ -1960,7 +1960,7 @@ static int computeAndOpenInputFile(void) {
 static void initOptions(void) {
     copyOptions(&options, &s_initOpt);
     options.stdopFlag = 0;
-    s_input_file_number = s_noneFileIndex;
+    s_input_file_number = noFileIndex;
 }
 
 static void initDefaultCxrefFileName(char *inputfile) {
@@ -2398,10 +2398,10 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
     SM_INIT(ftMemory);
     FT_ALLOCC(fileTable.tab, MAX_FILES, struct fileItem *);
     initFileTable(&fileTable);
-    fillPosition(&s_noPos, s_noneFileIndex, 0, 0);
+    fillPosition(&s_noPos, noFileIndex, 0, 0);
     fillUsageBits(&s_noUsage, UsageNone, 0);
     fill_reference(&s_noRef, s_noUsage, s_noPos, NULL);
-    s_input_file_number = s_noneFileIndex;
+    s_input_file_number = noFileIndex;
     s_javaAnonymousClassName.p = s_noPos;
     olcxInit();
     editorInit();
@@ -2409,7 +2409,7 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
 
 static void mainReinitFileTabEntry(FileItem *ft) {
     ft->inferiorClasses = ft->superClasses = NULL;
-    ft->directEnclosingInstance = s_noneFileIndex;
+    ft->directEnclosingInstance = noFileIndex;
     ft->b.scheduledToProcess = false;
     ft->b.scheduledToUpdate = false;
     ft->b.fullUpdateIncludesProcessed = false;
@@ -2452,7 +2452,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
     symbolTableInit(s_symbolTable, MAX_SYMBOLS);
 
     fillJavaStat(&s_initJavaStat,NULL,NULL,NULL,0, NULL, NULL, NULL,
-                  s_symbolTable,NULL,AccessDefault,s_cpInit,s_noneFileIndex,NULL);
+                  s_symbolTable,NULL,AccessDefault,s_cpInit,noFileIndex,NULL);
     s_javaStat = StackMemoryAlloc(S_javaStat);
     *s_javaStat = s_initJavaStat;
     javaFqtTableInit(&javaFqtTable, FQT_CLASS_TAB_SIZE);
@@ -2741,13 +2741,13 @@ static int scheduleFileUsingTheMacro(void) {
     tmpc = NULL;
     fillSymbolRefItemExceptBits(&ddd, s_olstringInMbody,
                                 cxFileHashNumber(s_olstringInMbody),
-                                s_noneFileIndex, s_noneFileIndex);
+                                noFileIndex, noFileIndex);
     fillSymbolRefItemBits(&ddd.b, TypeMacro, StorageExtern,
                            ScopeGlobal, AccessDefault, CategoryGlobal, 0);
 
     //& rr = refTabIsMember(&referenceTable, &ddd, &ii, &memb);
     //& assert(rr);
-    //& if (rr==0) return(s_noneFileIndex);
+    //& if (rr==0) return(noFileIndex);
 
     fill_olSymbolsMenu(&mm, ddd, 1,1,0,UsageUsed,0,0,0,UsageNone,s_noPos,0, NULL, NULL);
     if (s_olcxCurrentUser==NULL || s_olcxCurrentUser->browserStack.top==NULL) {
@@ -2759,7 +2759,7 @@ static int scheduleFileUsingTheMacro(void) {
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     oldMenu = s_olcxCurrentUser->browserStack.top->menuSym;
     s_olcxCurrentUser->browserStack.top->menuSym = &mm;
-    s_olMacro2PassFile = s_noneFileIndex;
+    s_olMacro2PassFile = noFileIndex;
     //&fprintf(dumpOut,":here I am, looking for usage of %s\n",memb->name);
     readOneAppropReferenceFile(s_olstringInMbody,secondPassMacroUsageFunctionSequence);
     s_olcxCurrentUser->browserStack.top->menuSym = oldMenu;
@@ -2767,7 +2767,7 @@ static int scheduleFileUsingTheMacro(void) {
         olStackDeleteSymbol(tmpc);
     }
     //&fprintf(dumpOut,":scheduling file %s\n", fileTable.tab[s_olMacro2PassFile]->name); fflush(dumpOut);
-    if (s_olMacro2PassFile == s_noneFileIndex) return(s_noneFileIndex);
+    if (s_olMacro2PassFile == noFileIndex) return(noFileIndex);
     return(s_olMacro2PassFile);
 }
 
@@ -2884,7 +2884,7 @@ static void mainEditSrvFileSingleCppPass(int argc, char **argv,
     if (s_olstringFound && s_olstringServed==0) {
         // on-line action with cursor in an un-used macro body ???
         ol2procfile = scheduleFileUsingTheMacro();
-        if (ol2procfile!=s_noneFileIndex) {
+        if (ol2procfile!=noFileIndex) {
             s_input_file_name = fileTable.tab[ol2procfile]->name;
             inputIn = 0;
             s_olStringSecondProcessing=1;
@@ -2931,7 +2931,7 @@ static char *presetEditServerFileDependingStatics(void) {
     fArgCount = 0; s_input_file_name = getInputFile(&fArgCount);
     if (fArgCount>=fileTable.size) {
         // conservative message, probably macro invoked on nonsaved file
-        s_olOriginalComFileNumber = s_noneFileIndex;
+        s_olOriginalComFileNumber = noFileIndex;
         return(NULL);
     }
     assert(fArgCount>=0 && fArgCount<fileTable.size && fileTable.tab[fArgCount]->b.scheduledToProcess);

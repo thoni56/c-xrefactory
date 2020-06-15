@@ -655,7 +655,7 @@ static Reference * htmlGetDefinitionRef(S_htmlRefList *rrr, int usage) {
     assert(rrr && rrr->symbolRefItem && rrr->symbolRefItem->refs);
     rr = rrr->symbolRefItem;
     res = NULL;
-    if (rr->vApplClass == s_noneFileIndex) {
+    if (rr->vApplClass == noFileIndex) {
         for(r=rr->refs; r!=NULL; r=r->next) {
             if (r->usage.base==usage) {
                 if (res==NULL || res<r /*!!tricky*/) res=r;
@@ -697,7 +697,7 @@ static char *htmlStSymbolCode(SymbolReferenceItem *r, int usage) {
     if (r->b.category==CategoryLocal) {
         sprintf(ss, "local.%lx", (unsigned long)r);
     } else {
-        if (r->vApplClass == s_noneFileIndex) {
+        if (r->vApplClass == noFileIndex) {
             sprintf(ss,"%s.%s", typeEnumName[r->b.symType], r->name);
         } else {
             if (r->b.storage == StorageField) {
@@ -895,7 +895,7 @@ static int genRefListFileBody(FILE *ff, char *fname,
     int genflag, filen, linen, usage, count, groupedCount, lastFilen;
 
     count = 0;
-    lastFilen = s_noneFileIndex;
+    lastFilen = noFileIndex;
     oldr = NULL;
     r = p->refs;
     while (r!=NULL) {
@@ -1156,7 +1156,7 @@ void genClassHierarchyItemLinks( FILE *ff, S_olSymbolsMenu *itt,
     } else {
         fprintf(ff,"  ");
     }
-    if (itt!=NULL && itt->defpos.file != s_noneFileIndex) {
+    if (itt!=NULL && itt->defpos.file != noFileIndex) {
         dr = & itt->defpos;
     }
     if (dr!=NULL && rr->vApplClass==rr->vFunClass) {
@@ -1218,7 +1218,7 @@ static void htmlJoinAllStaticLinkedRefs(S_olSymbolsMenu *rrr) {
     int cFunCl;
     for(rr=rrr; rr!=NULL; rr=rr->next) {
         cFunCl = rr->s.vFunClass;
-        if (cFunCl==rr->s.vApplClass && cFunCl!=s_noneFileIndex) {
+        if (cFunCl==rr->s.vApplClass && cFunCl!=noFileIndex) {
             for(ss=rrr; ss!=NULL; ss=ss->next) {
                 if (ss->s.vFunClass == cFunCl && ss!=rr) {
                     LIST_APPEND(Reference, rr->s.refs, ss->s.refs);
@@ -1472,7 +1472,7 @@ static void htmlPosProcess( FILE **fff,
         }
         htmlGetStaticHREFItems(rr,cp, &prf1, &suf1, &prf, &suf);
         /*&
-          if (LANGUAGE(LANG_JAVA) && rr->symbolRefItem->vFunClass != s_noneFileIndex) {
+          if (LANGUAGE(LANG_JAVA) && rr->symbolRefItem->vFunClass != noFileIndex) {
           // if virtual method, then point to cxrefs
           prf = prf1; suf=suf1;
           }

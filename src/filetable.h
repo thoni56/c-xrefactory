@@ -44,13 +44,13 @@ typedef struct fileItem {	/* to be renamed to constant pool item TODO: Why?*/
 #undef HASH_ELEM_TYPE
 #endif
 
-#define NON_FILE_NAME "___None___"
+#define NO_FILE_NAME "___None___"
 
 
 extern FileTable fileTable;
 
 /* Index into file table for the "NON FILE" */
-extern int s_noneFileIndex;
+extern int noFileIndex;
 
 
 extern void fillFileItem(FileItem *item, char *name, bool fromCommandLine);

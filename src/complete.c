@@ -195,7 +195,7 @@ static void sprintFullCompletionInfo(Completions* c, int ii, int indent) {
     sprintf(ppc, "%-*s:", indent+FULL_COMPLETION_INDENT_CHARS, tt);
     cindent = strlen(ppc);
     ppc += strlen(ppc);
-    vFunCl = s_noneFileIndex;
+    vFunCl = noFileIndex;
     size = COMPLETION_STRING_SIZE;
     ll = 0;
     if (c->alternatives[ii].symbolType==TypeDefault) {
@@ -234,7 +234,7 @@ static void sprintFullCompletionInfo(Completions* c, int ii, int indent) {
             ll += printJavaModifiers(tt+ll, &size, c->alternatives[ii].symbol->bits.access);
             if (c->alternatives[ii].vFunClass!=NULL) {
                 vFunCl = c->alternatives[ii].vFunClass->u.s->classFile;
-                if (vFunCl == -1) vFunCl = s_noneFileIndex;
+                if (vFunCl == -1) vFunCl = noFileIndex;
             }
         }
         typeSPrint(tt+ll, &size, c->alternatives[ii].symbol->u.type, pname,' ', 0, tdexpFlag,SHORT_NAME, NULL);
@@ -263,7 +263,7 @@ static void sprintFullCompletionInfo(Completions* c, int ii, int indent) {
         if (c->alternatives[ii].vFunClass!=NULL) {
             sprintf(tt,"%s \t:%s", c->alternatives[ii].vFunClass->name, typeEnumName[c->alternatives[ii].symbolType]);
             vFunCl = c->alternatives[ii].vFunClass->u.s->classFile;
-            if (vFunCl == -1) vFunCl = s_noneFileIndex;
+            if (vFunCl == -1) vFunCl = noFileIndex;
         } else {
             sprintf(tt,"%s", typeEnumName[c->alternatives[ii].symbolType]);
         }
@@ -484,10 +484,10 @@ void printCompletions(Completions* c) {
         } else {
             sprintFullCompletionInfo(c, ii, indent);
         }
-        vFunCl = s_noneFileIndex;
+        vFunCl = noFileIndex;
         if (LANGUAGE(LANG_JAVA)  && c->alternatives[ii].vFunClass!=NULL) {
             vFunCl = c->alternatives[ii].vFunClass->u.s->classFile;
-            if (vFunCl == -1) vFunCl = s_noneFileIndex;
+            if (vFunCl == -1) vFunCl = noFileIndex;
         }
         olCompletionListPrepend(c->alternatives[ii].string, ppcTmpBuff, vclass, jindent, c->alternatives[ii].symbol,NULL, &s_noRef, c->alternatives[ii].symbolType, vFunCl, s_olcxCurrentUser->completionsStack.top);
     }

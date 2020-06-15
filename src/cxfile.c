@@ -391,13 +391,13 @@ static void writeSymbolItem(int symIndex) {
     }
     writeStringRecord(CXFI_SYM_NAME, d->name, "\t");
     if (!options.brief_cxref) {
-        if (d->vApplClass != s_noneFileIndex) {
+        if (d->vApplClass != noFileIndex) {
             sprintf(ttt,"\ton %s",fileTable.tab[d->vApplClass]->name);
             writeStringRecord(CXFI_REMARK,ttt,"\n");
         }
     }
     if (!options.brief_cxref) {
-        if (d->vApplClass != s_noneFileIndex) {
+        if (d->vApplClass != noFileIndex) {
             sprintf(ttt,"\tfun %s",fileTable.tab[d->vFunClass]->name);
             writeStringRecord(CXFI_REMARK,ttt,"\n");
         }
@@ -469,7 +469,7 @@ static void writeFileIndexItem(struct fileItem *fi, int ii) {
 }
 
 static void writeFileSourceIndexItem(struct fileItem *fileItem, int ii) {
-    if (fileItem->b.sourceFileNumber != s_noneFileIndex) {
+    if (fileItem->b.sourceFileNumber != noFileIndex) {
         writeOptionalCompactRecord(CXFI_FILE_INDEX, ii, "\n");
         writeCompactRecord(CXFI_SOURCE_INDEX, fileItem->b.sourceFileNumber, " ");
     }
@@ -888,7 +888,7 @@ static void cxReadFileName(int size,
         if (cxrfFileItemShouldBeUpdatedFromCxFile(fileItem)) {
             fileItem->b.isInterface = isInterface;
             // Set it to none, it will be updated by source item
-            fileItem->b.sourceFileNumber = s_noneFileIndex;
+            fileItem->b.sourceFileNumber = noFileIndex;
         }
         if (options.taskRegime == RegimeEditServer) {
             fileItem->b.commandLineEntered = commandLineFlag;
@@ -917,7 +917,7 @@ static void cxrfSourceIndex(int size,
     sfile = s_decodeFilesNum[sfile];
     assert(file>=0 && file<MAX_FILES && fileTable.tab[file]);
     // hmmm. here be more generous in getting corrct source info
-    if (fileTable.tab[file]->b.sourceFileNumber == s_noneFileIndex) {
+    if (fileTable.tab[file]->b.sourceFileNumber == noFileIndex) {
         //&fprintf(dumpOut,"setting %d source to %d\n", file, sfile);fflush(dumpOut);
         //&fprintf(dumpOut,"setting %s source to %s\n", fileTable.tab[file]->name, fileTable.tab[sfile]->name);fflush(dumpOut);
         // first check that it is not set directly from source
@@ -1362,9 +1362,9 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
     s_inLastInfos.onLineReferencedSym = -1;
     s_inLastInfos.symbolToCheckForDeadness = -1;
     s_inLastInfos.onLineRefMenuItem = NULL;
-    s_inLastInfos.singleRecord[CXFI_INFER_CLASS] = s_noneFileIndex;
-    s_inLastInfos.singleRecord[CXFI_SUPER_CLASS] = s_noneFileIndex;
-    s_decodeFilesNum[s_noneFileIndex] = s_noneFileIndex;
+    s_inLastInfos.singleRecord[CXFI_INFER_CLASS] = noFileIndex;
+    s_inLastInfos.singleRecord[CXFI_SUPER_CLASS] = noFileIndex;
+    s_decodeFilesNum[noFileIndex] = noFileIndex;
     for(i=0; scanFuns[i].recordCode>0; i++) {
         assert(scanFuns[i].recordCode < MAX_CHARS);
         ch = scanFuns[i].recordCode;

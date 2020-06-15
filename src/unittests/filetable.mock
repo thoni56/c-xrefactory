@@ -4,7 +4,7 @@
 
 FileTable fileTable;
 
-int s_noneFileIndex = -1;
+int noFileIndex = -1;
 
 void fileTableInit(FileTable *table,
                    int size

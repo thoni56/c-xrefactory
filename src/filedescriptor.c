@@ -24,7 +24,7 @@ void fillFileDescriptor(FileDescriptor *fileDescriptor, char *fileName, char *bu
     fileDescriptor->lexBuffer.buffer.end = bufferStart+bufferSize;
     fileDescriptor->lexBuffer.buffer.file = file;
     fileDescriptor->lexBuffer.buffer.filePos = offset;
-    fileDescriptor->lexBuffer.buffer.fileNumber = s_noneFileIndex;
+    fileDescriptor->lexBuffer.buffer.fileNumber = noFileIndex;
     fileDescriptor->lexBuffer.buffer.lineNumber = 0;
     fileDescriptor->lexBuffer.buffer.lineBegin = bufferStart;
     fileDescriptor->lexBuffer.buffer.columnOffset = 0;

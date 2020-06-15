@@ -23,15 +23,15 @@
 
 FileTable fileTable;
 
-int s_noneFileIndex = -1;
+int noFileIndex = -1;
 
 
 void fillFileItem(FileItem *item, char *name, bool fromCommandLine) {
     memset(item, 0, sizeof(FileItem));
     item->name = name;
     item->b.commandLineEntered = fromCommandLine;
-    item->directEnclosingInstance = s_noneFileIndex;
-    item->b.sourceFileNumber = s_noneFileIndex;
+    item->directEnclosingInstance = noFileIndex;
+    item->b.sourceFileNumber = noFileIndex;
 }
 
 void initFileTable(FileTable *fileTable) {
@@ -45,14 +45,14 @@ void initFileTable(FileTable *fileTable) {
     fileTableNoAllocInit(fileTable, MAX_FILES);
 
     /* Create a "NON_FILE" in FT memory */
-    len = strlen(NON_FILE_NAME);
+    len = strlen(NO_FILE_NAME);
     FT_ALLOCC(fileName, len+1, char);
-    strcpy(fileName, NON_FILE_NAME);
+    strcpy(fileName, NO_FILE_NAME);
     FT_ALLOC(fileItem, FileItem);
     fillFileItem(fileItem, fileName, false);
 
     /* Add it to the fileTab and remember its index for future use */
-    s_noneFileIndex = fileTableAdd(fileTable, fileItem);
+    noFileIndex = fileTableAdd(fileTable, fileItem);
 }
 
 

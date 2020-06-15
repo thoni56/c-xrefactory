@@ -629,8 +629,8 @@ static void removeSymbolFromSymRefList(SymbolReferenceItemList **ll, SymbolRefer
     SymbolReferenceItemList **r;
     r=ll;
     while (*r!=NULL) {
-        if (isSmallerOrEqClass(getClassNumFromClassLinkName((*r)->d->name, s_noneFileIndex),
-                               getClassNumFromClassLinkName(s->name, s_noneFileIndex))) {
+        if (isSmallerOrEqClass(getClassNumFromClassLinkName((*r)->d->name, noFileIndex),
+                               getClassNumFromClassLinkName(s->name, noFileIndex))) {
             *r = (*r)->next;
         } else {
             r= &(*r)->next;
@@ -652,8 +652,8 @@ static void addSymbolToSymRefList(SymbolReferenceItemList **ll, SymbolReferenceI
 
     r = *ll;
     while (r!=NULL) {
-        if (isSmallerOrEqClass(getClassNumFromClassLinkName(s->name, s_noneFileIndex),
-                               getClassNumFromClassLinkName(r->d->name, s_noneFileIndex))) {
+        if (isSmallerOrEqClass(getClassNumFromClassLinkName(s->name, noFileIndex),
+                               getClassNumFromClassLinkName(r->d->name, noFileIndex))) {
             return;
         }
         r= r->next;
