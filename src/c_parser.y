@@ -690,8 +690,10 @@ user_defined_type
         assert(options.taskRegime);
         assert($1.d);
         assert($1.d->symbol);
-        if (WORK_NEST_LEVEL0()) usage = USAGE_TOP_LEVEL_USED;
-        else usage = UsageUsed;
+        if (nestingLevel() == 0)
+            usage = USAGE_TOP_LEVEL_USED;
+        else
+            usage = UsageUsed;
         addCxReference($1.d->symbol,&$1.d->p,usage,s_noneFileIndex,s_noneFileIndex);
     }
     ;
@@ -867,8 +869,10 @@ function_specifier
 struct_or_union_specifier
     : struct_or_union struct_identifier								{
         int usage;
-        if (WORK_NEST_LEVEL0()) usage = USAGE_TOP_LEVEL_USED;
-        else usage = UsageUsed;
+        if (nestingLevel() == 0)
+            usage = USAGE_TOP_LEVEL_USED;
+        else
+            usage = UsageUsed;
         $$.d = simpleStrUnionSpecifier($1.d, $2.d, usage);
     }
     | struct_or_union_define_specifier '{' struct_declaration_list '}'{
@@ -960,8 +964,10 @@ struct_declarator
 enum_specifier
     : ENUM enum_identifier									{
         int usage;
-        if (WORK_NEST_LEVEL0()) usage = USAGE_TOP_LEVEL_USED;
-        else usage = UsageUsed;
+        if (nestingLevel() == 0)
+            usage = USAGE_TOP_LEVEL_USED;
+        else
+            usage = UsageUsed;
         $$.d = simpleEnumSpecifier($2.d, usage);
     }
     | enum_define_specifier '{' enumerator_list_comma '}'		{

@@ -208,5 +208,6 @@ extern void *stackMemoryPush(void *p, int size);
 extern char *stackMemoryPushString(char *s);
 extern void stackMemoryBlockStart(void);
 extern void stackMemoryBlockFree(void);
+extern int nestingLevel(void);
 
 #endif

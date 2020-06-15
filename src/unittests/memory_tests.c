@@ -28,3 +28,9 @@ Ensure(Memory, calls_fatalError_on_out_of_memory) {
     else
         pass_test();
 }
+
+Ensure(Memory, can_calculate_nesting_level) {
+    assert_that(nestingLevel(), is_equal_to(0));
+    stackMemoryBlockStart();
+    assert_that(nestingLevel(), is_equal_to(1));
+}

@@ -558,8 +558,8 @@ Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, SymbolTable *tab,
         p->u.type = tt;
         tt->typedefSymbol = p;
     }
-    if ((! WORK_NEST_LEVEL0() && LANGUAGE(LANG_C))
-        || (! WORK_NEST_LEVEL1() && LANGUAGE(LANG_YACC))) {
+    if ((nestingLevel() != 0 && LANGUAGE(LANG_C))
+        || (nestingLevel() != 1 && LANGUAGE(LANG_YACC))) {
         // local scope symbol
         if (! symbolTableIsMember(s_symbolTable,p,&ii,&pp)
             || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {

@@ -95,7 +95,8 @@ static void trailDump(void) {
 void addToTrail(void (*a)(void*), void *p) {
     S_freeTrail *t;
     /* no trail at level 0 in C*/
-    if (WORK_NEST_LEVEL0() && (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC))) return;
+    if ((nestingLevel() == 0) && (LANGUAGE(LANG_C)||LANGUAGE(LANG_YACC)))
+        return;
     t = StackMemoryAlloc(S_freeTrail);
     t->action = a;
     t->p = (void **) p;
@@ -179,4 +180,14 @@ void stackMemoryBlockFree(void) {
     // burk, following disables any memory freeing for Java
     //  if (LANGUAGE(LAN_JAVA)) s_topBlock->firstFreeIndex = memi;
     assert(s_topBlock != NULL);
+}
+
+int nestingLevel(void) {
+    int level = 0;
+    S_topBlock *block = s_topBlock;
+    while (block->previousTopBlock != NULL) {
+        block = block->previousTopBlock;
+        level++;
+    }
+    return level;
 }

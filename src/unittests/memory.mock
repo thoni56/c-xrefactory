@@ -93,3 +93,7 @@ bool cxMemoryOverflowHandler(int n) {
 void *stackMemoryAlloc(int size) {
   return (void *)malloc(size);
 }
+
+int nestingLevel(void) {
+    return mock();
+}

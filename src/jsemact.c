@@ -1347,10 +1347,14 @@ int javaClassifyAmbiguousName(
     assert(classif==CLASS_TO_TYPE || classif==CLASS_TO_EXPR ||
            classif==CLASS_TO_METHOD);
     uusage = usage;
-    if (uusage==UsageUsed && WORK_NEST_LEVEL0()) uusage = USAGE_TOP_LEVEL_USED;
-    if (rfs == NULL) rfs = &localRfs;
-    if (rdtoref == NULL) rdtoref = &localrdref;
-    *oref = NULL; *rdtoref = NULL;
+    if (uusage==UsageUsed && nestingLevel() == 0)
+        uusage = USAGE_TOP_LEVEL_USED;
+    if (rfs == NULL)
+        rfs = &localRfs;
+    if (rdtoref == NULL)
+        rdtoref = &localrdref;
+    *oref = NULL;
+    *rdtoref = NULL;
     /* returns TypeStruct, TypeExpression */
     assert(name);
     if (name->next == NULL) {
