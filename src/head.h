@@ -155,15 +155,15 @@ typedef enum language {
 /* #define CF_FREE_UNTIL(p)        {SM_FREE_UNTIL(ppmMemory,p);} */
 /* #define CF_FREE(p)              { } */
 
-/* cross - references global symbols allocations */
-#define CX_ALLOC(p,t)           {DM_ALLOC(cxMemory,p,t);}
-#define CX_ALLOCC(p,n,t)        {DM_ALLOCC(cxMemory,p,n,t);}
-#define CX_FREE_UNTIL(p)        {DM_FREE_UNTIL(cxMemory,p);}
-
 /* file table allocations */
 #define FT_ALLOC(p,t)           {SM_ALLOC(ftMemory,p,t);}
 #define FT_ALLOCC(p,n,t)        {SM_ALLOCC(ftMemory,p,n,t);}
 /* #define FT_FREE_UNTIL(p)        {SM_FREE_UNTIL(ftMemory,p);} */
+
+/* cross - references global symbols allocations */
+#define CX_ALLOC(p,t)           {DM_ALLOC(cxMemory,p,t);}
+#define CX_ALLOCC(p,n,t)        {DM_ALLOCC(cxMemory,p,n,t);}
+#define CX_FREE_UNTIL(p)        {DM_FREE_UNTIL(cxMemory,p);}
 
 /* options allocations */
 #define OPT_ALLOC(p,t)          {DM_ALLOC(((S_memory*)&options.pendingMemory),p,t);}
