@@ -9,7 +9,7 @@ TARGET_FILE=../../src/c-xref
 # ... with the full path...
 TARGET_PATH=`python -c "import os,sys; print(os.path.realpath(os.path.expanduser('$(TARGET_FILE)')))" "${1}"`
 
-# Where to log interaction
+# Where to log interaction (pipe-spy adds its PID to the filename to avoid clashes)
 LOGFILE=logfile
 
 # Environment variables for the emacs process so that pipe-spy/c-xref-spy can pick them up
