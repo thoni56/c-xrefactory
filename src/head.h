@@ -195,26 +195,6 @@ typedef enum language {
 
 /* ******************************************************************** */
 
-#define FILL_TM(mtt,mden,mmesiac,mrok,mhod,mmin,msek) {\
-  (mtt)->tm_mday = mden;\
-  (mtt)->tm_mon = mmesiac-1;\
-  (mtt)->tm_year = mrok-1900;\
-  (mtt)->tm_hour = mhod;\
-  (mtt)->tm_min = mmin;\
-  (mtt)->tm_sec = msek;\
-  (mtt)->tm_isdst = -1;\
-}
-
-#define UNFILL_TM(mtt,mden,mmesiac,mrok,mhod,mmin,msek) {\
-  mden = (mtt)->tm_mday;\
-  mmesiac = (mtt)->tm_mon+1;\
-  mrok = (mtt)->tm_year+1900;\
-  mhod = (mtt)->tm_hour;\
-  mmin = (mtt)->tm_min;\
-  msek = (mtt)->tm_sec;\
-}
-
-
 #define DEFINITION_NOT_FOUND_MESSAGE "Definition not found"
 
 /* *********************************************************************** */
