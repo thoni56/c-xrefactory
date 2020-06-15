@@ -5,7 +5,6 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
-* TODO Unittests for memory module
 * TODO Make S_caching an abstract data type to hide CachePoint and Caching
 * TODO New refactoring: Extract variable
 * TODO Remove FULL/FAST update, we always want correct info?
@@ -48,10 +47,7 @@ apply for refactory mode, right?
 * TODO Initialize memory's injected error functions in main.c, but it still works?
 * TODO Cleanup and separate commons, misc and make them independent utility modules
 * TODO Check if the C-part of Yacc grammar is identical, and if so extract it
-* TODO Move XX_ALLOCC and friends to "memory" module
 * TODO Fix the move_class test
-* TODO Use enum types wherever possible Storage, SymbolType
-Which are left to do?
 * TODO Rename some of the options, like -no_str -> -no-structs
 * TODO Why does -refactory read the users default .c-xrefrc?
 * TODO Change all "-no_" options to modern "-no-"
@@ -97,6 +93,10 @@ easier to mock and unit test other modules.
 
 * TODO Make Makefile.common look for our patched yacc and if it's not
   available ignore yacc-rules otherwise always run yacc.
+* DONE Use enum types wherever possible Storage, SymbolType
+Which are left to do?
+* DONE Move XX_ALLOCC and friends to "memory" module
+* DONE Unittests for memory module
 * DONE Test for Java using JRegr sources
 * DONE Remove enum generation by using CPP magic
 In order to
