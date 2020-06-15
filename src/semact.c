@@ -531,11 +531,6 @@ static void setStaticFunctionLinkName( Symbol *p, int usage ) {
     //& }
 }
 
-#define MEM_FROM_PREVIOUS_BLOCK(ppp) (                                          \
-                                      s_topBlock->previousTopBlock != NULL &&   \
-                                      ((char*)ppp) > memory &&					\
-                                      ((char*)ppp) < memory+s_topBlock->previousTopBlock->firstFreeIndex \
-                                      )
 
 Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, SymbolTable *tab,
                           int usage) {
@@ -562,7 +557,7 @@ Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, SymbolTable *tab,
         || (nestingLevel() != 1 && LANGUAGE(LANG_YACC))) {
         // local scope symbol
         if (! symbolTableIsMember(s_symbolTable,p,&ii,&pp)
-            || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
+            || (memoryFromPreviousBlock(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
             pp = p;
             setLocalVariableLinkName(pp);
             addSymbol(pp, tab);
@@ -896,7 +891,7 @@ TypeModifier *simpleStrUnionSpecifier(Id *typeName,
     fillSymbolBits(&p.bits, AccessDefault, type, StorageNone);
 
     if (! symbolTableIsMember(s_symbolTable,&p,&ii,&pp)
-        || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
+        || (memoryFromPreviousBlock(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
         //{static int c=0;fprintf(dumpOut,"str#%d\n",c++);}
         pp = StackMemoryAlloc(Symbol);
         *pp = p;
@@ -1022,7 +1017,7 @@ TypeModifier *simpleEnumSpecifier(Id *id, int usage) {
     fillSymbolBits(&p.bits, AccessDefault, TypeEnum, StorageNone);
 
     if (! symbolTableIsMember(s_symbolTable,&p,&ii,&pp)
-        || (MEM_FROM_PREVIOUS_BLOCK(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
+        || (memoryFromPreviousBlock(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
         pp = StackMemoryAlloc(Symbol);
         *pp = p;
         setGlobalFileDepNames(id->name, pp, MEMORY_XX);

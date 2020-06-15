@@ -97,3 +97,7 @@ void *stackMemoryAlloc(int size) {
 int nestingLevel(void) {
     return mock();
 }
+
+bool memoryFromPreviousBlock(void *address) {
+    return (bool)mock(address);
+}

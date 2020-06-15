@@ -208,4 +208,6 @@ extern void stackMemoryBlockStart(void);
 extern void stackMemoryBlockFree(void);
 extern int nestingLevel(void);
 
+extern bool memoryFromPreviousBlock(void *ppp);
+
 #endif
