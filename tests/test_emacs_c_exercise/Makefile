@@ -9,7 +9,7 @@
 # c-xref.el to "(error...". The above environment variable ensures
 # that any gcov error messages are sent to a file instead. We
 # actually don't care about these errors, but perhaps it makes this
-# test stable... (This might be the cause for inconsistent coverage
+# test unstable... (This might be the cause for inconsistent coverage
 # reports, sometimes some executions are missed because of this
 # spurrious errors...)
 
