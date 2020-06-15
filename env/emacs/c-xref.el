@@ -84,7 +84,7 @@
 (defvar c-xref-tags-process nil)
 
 (defvar c-xref-server-tasks-ofile (c-xref-server-get-new-tmp-file-name))
-(defvar c-xref-tags-tasks-ofile (format "%s/c-xref%s.log" c-xref-tmp-dir c-xref-user-identification))
+(defvar c-xref-tags-tasks-ofile (format "%s/c-xref%s-%d.log" c-xref-tmp-dir c-xref-user-identification (emacs-pid)))
 
 (defvar c-xref-ppc-synchro-record (format "<%s>" PPC_SYNCHRO_RECORD))
 (defvar c-xref-ppc-synchro-record-len (length c-xref-ppc-synchro-record))
