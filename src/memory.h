@@ -10,11 +10,20 @@
 #define ALIGNMENT(xxx,align) (((char*)(xxx))+ALIGNMENT_OFF(xxx,align))
 
 
-/* ********************************************************************* */
+/**********************************************************************
 
-#define SM_FREED_POINTER(mem,ppp) (\
-    ((char*)ppp) >= mem + mem##i && ((char*)ppp) < mem + SIZE_##mem \
-)
+ stack memory synchronized with program block structure
+
+*/
+#define StackMemoryAlloc(t) ((t*) stackMemoryAlloc(sizeof(t)))
+#define StackMemoryAllocC(n, t) ((t*) stackMemoryAlloc((n)*sizeof(t)))
+#define StackMemoryFree(p)              { }
+
+
+/**********************************************************************
+  SM = Static Memory - once allocated cannot expand
+
+*/
 
 #define SM_INIT(mem) {mem##i = 0;}
 #define SM_ALLOCC(mem,p,n,t) {\
@@ -38,15 +47,15 @@
     assert((p)>=mem && (p)<= mem+mem##i);\
     mem##i = ((char*)(p))-mem;\
 }
+#define SM_FREED_POINTER(mem,ppp) (\
+    ((char*)ppp) >= mem + mem##i && ((char*)ppp) < mem + SIZE_##mem \
+)
 
-/* ********************************************************************* */
 
-/* stack memory synchronized with program block structure */
-#define StackMemoryAlloc(t) ((t*) stackMemoryAlloc(sizeof(t)))
-#define StackMemoryAllocC(n, t) ((t*) stackMemoryAlloc((n)*sizeof(t)))
-#define StackMemoryFree(p)              { }
+/**********************************************************************
+   DM = Dynamic Memory - can expand using overflow handler
 
-/* ********************************************************************* */
+*/
 
 #define DM_FREE_SPACE(mem,n) (mem->i+(n) < mem->size)
 
