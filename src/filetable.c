@@ -37,7 +37,7 @@ void fillFileItem(FileItem *item, char *name, bool fromCommandLine) {
 void initFileTable(FileTable *fileTable) {
     int len;
     char *fileName;
-    struct fileItem *fileItem;
+    FileItem *fileItem;
 
     SM_INIT(ftMemory);
     FT_ALLOCC(fileTable->tab, MAX_FILES, struct fileItem *);
