@@ -5,7 +5,6 @@
 S_memory *cxMemory = NULL;
 S_topBlock *s_topBlock;
 
-char memory[SIZE_workMemory];
 char tmpWorkMemory[SIZE_tmpWorkMemory];
 int tmpWorkMemoryi = 0;
 

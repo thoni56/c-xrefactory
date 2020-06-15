@@ -190,7 +190,6 @@ extern S_topBlock *s_topBlock;
 
 extern jmp_buf memoryResizeJumpTarget;
 
-extern char memory[];
 extern char tmpWorkMemory[];
 extern int tmpWorkMemoryi;
 extern char ftMemory[];

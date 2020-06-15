@@ -10,7 +10,7 @@ S_topBlock *s_topBlock;
 jmp_buf memoryResizeJumpTarget;
 
 /* Memory types */
-char memory[SIZE_workMemory];   /* Allocation using stackMemoryAlloc() et.al */
+static char memory[SIZE_workMemory];   /* Allocation using stackMemoryAlloc() et.al */
 
 char tmpWorkMemory[SIZE_tmpWorkMemory];
 int tmpWorkMemoryi = 0;
