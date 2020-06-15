@@ -183,6 +183,7 @@ void stackMemoryBlockFree(void) {
     assert(s_topBlock != NULL);
 }
 
+
 int nestingLevel(void) {
     int level = 0;
     S_topBlock *block = s_topBlock;
@@ -197,5 +198,11 @@ int nestingLevel(void) {
 bool memoryFromPreviousBlock(void *address) {
     return s_topBlock->previousTopBlock != NULL &&
         (char*)address > memory &&
-        (char*)address < memory+s_topBlock->previousTopBlock->firstFreeIndex ;
+        (char*)address < memory + s_topBlock->previousTopBlock->firstFreeIndex;
+}
+
+
+bool freedPointer(void *ptr) {
+    return ((char*)ptr >= memory + s_topBlock->firstFreeIndex &&
+            (char*)ptr < memory + SIZE_workMemory);
 }

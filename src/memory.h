@@ -12,7 +12,8 @@
 
 /**********************************************************************
 
- stack memory synchronized with program block structure
+    Stack memory synchronized with program block structure. New block
+    with stackMemoryBlockStart();
 
 */
 #define StackMemoryAlloc(t) ((t*) stackMemoryAlloc(sizeof(t)))
@@ -218,5 +219,6 @@ extern void stackMemoryBlockFree(void);
 extern int nestingLevel(void);
 
 extern bool memoryFromPreviousBlock(void *ppp);
+extern bool freedPointer(void *ptr);
 
 #endif

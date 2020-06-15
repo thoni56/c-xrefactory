@@ -95,28 +95,25 @@ static void fileTabDeleteOutOfMemory(FileItem *p, int i) {
     }
 }
 
-#define MEM_FREED_POINTER(ptr) (((char*)ptr) >= memory+s_topBlock->firstFreeIndex && \
-                                ((char*)ptr) < memory+SIZE_workMemory)
-
 static void structCachingFree(Symbol *symbol) {
     SymbolList **superList;
     assert(symbol->u.s);
-    if (MEM_FREED_POINTER(symbol->u.s->records) ||
+    if (freedPointer(symbol->u.s->records) ||
         SM_FREED_POINTER(ppmMemory,symbol->u.s->records)) {
         symbol->u.s->records = NULL;
     }
-    if (MEM_FREED_POINTER(symbol->u.s->casts.node) ||
+    if (freedPointer(symbol->u.s->casts.node) ||
         SM_FREED_POINTER(ppmMemory,symbol->u.s->casts.node)) {
         symbol->u.s->casts.node = NULL;
     }
-    if (MEM_FREED_POINTER(symbol->u.s->casts.sub) ||
+    if (freedPointer(symbol->u.s->casts.sub) ||
         SM_FREED_POINTER(ppmMemory,symbol->u.s->casts.sub)) {
         symbol->u.s->casts.sub = NULL;
     }
 
     superList = &symbol->u.s->super;
     while (*superList!=NULL) {
-        if (MEM_FREED_POINTER(*superList) ||
+        if (freedPointer(*superList) ||
             SM_FREED_POINTER(ppmMemory,*superList)) {
             *superList = (*superList)->next;
             goto contlabel;
@@ -139,7 +136,7 @@ static void symbolTableDeleteOutOfMemory(int i) {
             break;
         case TypeStruct:
         case TypeUnion:
-            if (MEM_FREED_POINTER(*pp) || SM_FREED_POINTER(ppmMemory,*pp)) {
+            if (freedPointer(*pp) || SM_FREED_POINTER(ppmMemory,*pp)) {
                 *pp = (*pp)->next;
                 continue;
             } else {
@@ -147,15 +144,15 @@ static void symbolTableDeleteOutOfMemory(int i) {
             }
             break;
         case TypeEnum:
-            if (MEM_FREED_POINTER(*pp)) {
+            if (freedPointer(*pp)) {
                 *pp = (*pp)->next;
                 continue;
-            } else if (MEM_FREED_POINTER((*pp)->u.enums)) {
+            } else if (freedPointer((*pp)->u.enums)) {
                 (*pp)->u.enums = NULL;
             }
             break;
         default:
-            if (MEM_FREED_POINTER(*pp)) {
+            if (freedPointer(*pp)) {
                 *pp = (*pp)->next;
                 continue;
             }
@@ -172,7 +169,7 @@ static void javaFqtTabDeleteOutOfMemory(int i) {
         if (SM_FREED_POINTER(ppmMemory,*pp)) {
             *pp = (*pp)->next;
             continue;
-        } else if (MEM_FREED_POINTER((*pp)->d)
+        } else if (freedPointer((*pp)->d)
                    || SM_FREED_POINTER(ppmMemory,(*pp)->d)) {
             *pp = (*pp)->next;
             continue;
@@ -186,7 +183,7 @@ static void javaFqtTabDeleteOutOfMemory(int i) {
 static void trailDeleteOutOfMemory(void) {
     S_freeTrail **pp;
     pp = &s_topBlock->trail;
-    while (MEM_FREED_POINTER(*pp)) {
+    while (freedPointer(*pp)) {
         *pp = (*pp)->next;
     }
 }
