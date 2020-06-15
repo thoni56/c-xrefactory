@@ -655,7 +655,7 @@ void addFunctionParameterToSymTable(Symbol *function, Symbol *p, int i, SymbolTa
     }
     if (options.server_operation == OLO_GOTO_PARAM_NAME
         && i == options.olcxGotoVal
-        && POSITION_EQ(function->pos, s_cxRefPos)) {
+        && positionsAreEqual(function->pos, s_cxRefPos)) {
         s_paramPosition = p->pos;
     }
 }
@@ -1105,7 +1105,7 @@ void handleDeclaratorParamPositions(Symbol *decl, Position *lpar,
                                     ) {
     if (options.taskRegime != RegimeEditServer) return;
     if (options.server_operation != OLO_GOTO_PARAM_NAME && options.server_operation != OLO_GET_PARAM_COORDINATES) return;
-    if (POSITION_NEQ(decl->pos, s_cxRefPos)) return;
+    if (positionsAreNotEqual(decl->pos, s_cxRefPos)) return;
     handleParameterPositions(lpar, commas, rpar, hasParam);
 }
 
@@ -1115,7 +1115,7 @@ void handleInvocationParamPositions(Reference *ref, Position *lpar,
                                     ) {
     if (options.taskRegime != RegimeEditServer) return;
     if (options.server_operation != OLO_GOTO_PARAM_NAME && options.server_operation != OLO_GET_PARAM_COORDINATES) return;
-    if (ref==NULL || POSITION_NEQ(ref->p, s_cxRefPos)) return;
+    if (ref==NULL || positionsAreNotEqual(ref->p, s_cxRefPos)) return;
     handleParameterPositions(lpar, commas, rpar, hasParam);
 }
 
@@ -1124,7 +1124,7 @@ void javaHandleDeclaratorParamPositions(Position *sym, Position *lpar,
                                         ) {
     if (options.taskRegime != RegimeEditServer) return;
     if (options.server_operation != OLO_GOTO_PARAM_NAME && options.server_operation != OLO_GET_PARAM_COORDINATES) return;
-    if (POSITION_NEQ(*sym, s_cxRefPos)) return;
+    if (positionsAreNotEqual(*sym, s_cxRefPos)) return;
     if (commas==NULL) {
         handleParameterPositions(lpar, NULL, rpar, 0);
     } else {

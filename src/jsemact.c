@@ -133,7 +133,7 @@ char *javaCreateComposedName(char *prefix,
 
 void javaCheckForPrimaryStart(Position *cpos, Position *bpos) {
     if (options.taskRegime != RegimeEditServer) return;
-    if (POSITION_EQ(s_cxRefPos, *cpos)) {
+    if (positionsAreEqual(s_cxRefPos, *cpos)) {
         s_primaryStartPosition = *bpos;
     }
 }
@@ -148,7 +148,7 @@ void javaCheckForPrimaryStartInNameList(IdList *name, Position *pp) {
 
 void javaCheckForStaticPrefixStart(Position *cpos, Position *bpos) {
     if (options.taskRegime != RegimeEditServer) return;
-    if (POSITION_EQ(s_cxRefPos, *cpos)) {
+    if (positionsAreEqual(s_cxRefPos, *cpos)) {
         s_staticPrefixStartPosition = *bpos;
     }
 }

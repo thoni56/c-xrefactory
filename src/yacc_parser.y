@@ -1587,7 +1587,7 @@ external_definition
             }
             if (options.server_operation == OLO_GOTO_PARAM_NAME
                 && i == options.olcxGotoVal
-                && POSITION_EQ($2.d->pos, s_cxRefPos))
+                && positionsAreEqual($2.d->pos, s_cxRefPos))
             {
                 s_paramPosition = p->pos;
             }

@@ -627,7 +627,7 @@ static void handleMacroDefinitionParameterPositions(int argi, Position *macpos,
                                                     Position *pos, Position *parpos2,
                                                     int final) {
     if ((options.server_operation == OLO_GOTO_PARAM_NAME || options.server_operation == OLO_GET_PARAM_COORDINATES)
-        && POSITION_EQ(*macpos, s_cxRefPos)) {
+        && positionsAreEqual(*macpos, s_cxRefPos)) {
         if (final) {
             if (argi==0) {
                 setParamPositionForFunctionWithoutParams(parpos1);
@@ -647,7 +647,7 @@ static void handleMacroUsageParameterPositions(int argi, Position *macpos,
                                                int final
     ) {
     if (options.server_operation == OLO_GET_PARAM_COORDINATES
-        && POSITION_EQ(*macpos, s_cxRefPos)) {
+        && positionsAreEqual(*macpos, s_cxRefPos)) {
         log_trace("checking param %d at %d,%d, final==%d", argi, parpos1->col, parpos2->col, final);
         if (final) {
             if (argi==0) {
@@ -798,7 +798,7 @@ void processDefine(bool argFlag) {
             } else {
                 if (lexem==IDENT_TO_COMPLETE
                     || (lexem == IDENTIFIER &&
-                        POSITION_EQ(pos, s_cxRefPos))) {
+                        positionsAreEqual(pos, s_cxRefPos))) {
                     s_cache.activeCache = 0;
                     s_olstringFound = 1; s_olstringInMbody = pp->linkName;
                 }

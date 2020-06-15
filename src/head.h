@@ -205,7 +205,6 @@ typedef enum language {
     if (options.server_operation == OLO_EXTRACT) deleteSymDef(sym);\
 }
 
-
 #define EXTRACT_COUNTER_SEMACT(rescount) {\
         rescount = s_count.localSym;\
         s_count.localSym++;\
@@ -234,31 +233,6 @@ typedef enum language {
         rrr->usage.base = uuu;\
     }\
 }
-
-#define POSITION_NEQ(p1,p2) (\
-    ((p1).file != (p2).file) || \
-    ((p1).line != (p2).line) || \
-    ((p1).col != (p2).col) \
-)
-
-#define POSITION_EQ(p1,p2) (! POSITION_NEQ(p1,p2))
-
-#define POSITION_LESS(p1,p2) (\
-     ((p1).file < (p2).file) ||\
-     ((p1).file==(p2).file && (p1).line < (p2).line)  || \
-     ((p1).file==(p2).file && (p1).line==(p2).line && (p1).col < (p2).col) \
-)
-#define POSITION_LESS_EQ(p1,p2) (\
-     ((p1).file < (p2).file) ||\
-     ((p1).file==(p2).file && (p1).line < (p2).line)  || \
-     ((p1).file==(p2).file && (p1).line==(p2).line && (p1).col <= (p2).col) \
-)
-#define POSITION_IS_BETWEEN_IN_THE_SAME_FILE(p1,p,p2) (\
-    (p1).file == (p).file\
-    && (p).file == (p2).file\
-    && POSITION_LESS_EQ(p1,p)\
-    && POSITION_LESS_EQ(p,p2)\
-)
 
 #define MARKER_EQ(mm1, mm2) (mm1->buffer==mm2->buffer && mm1->offset==mm2->offset)
 

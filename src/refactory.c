@@ -1929,7 +1929,7 @@ static int refactoryAddStringAsParameter(EditorMarker *pos, EditorMarker *endm,
     }
 
     sep1=""; sep2="";
-    if (POSITION_EQ(s_paramBeginPosition, s_paramEndPosition)) {
+    if (positionsAreEqual(s_paramBeginPosition, s_paramEndPosition)) {
         if (text[mm->offset] == '(') {
             // function with no parameter
             mm->offset ++;
@@ -2039,7 +2039,7 @@ static void refactoryDeleteParameter(EditorMarker *pos, char *fname,
 
     text = pos->buffer->a.text;
 
-    if (POSITION_EQ(s_paramBeginPosition, s_paramEndPosition)) {
+    if (positionsAreEqual(s_paramBeginPosition, s_paramEndPosition)) {
         if (text[m1->offset] == '(') {
             // function with no parameter
         } else if (text[m1->offset] == ')') {
@@ -2088,7 +2088,7 @@ static void refactoryMoveParameter(EditorMarker *pos, char *fname,
     plen = 0;
     par[plen]=0;
 
-    if (POSITION_EQ(s_paramBeginPosition, s_paramEndPosition)) {
+    if (positionsAreEqual(s_paramBeginPosition, s_paramEndPosition)) {
         if (text[m1->offset] == '(') {
             // function with no parameter
         } else if (text[m1->offset] == ')') {
@@ -3690,7 +3690,7 @@ static Reference *refactoryCheckEncapsulateGetterSetterForExistingMethods(char *
                 // find definition of another function
                 for(rr=mm->s.refs; rr!=NULL; rr=rr->next) {
                     if (IS_DEFINITION_USAGE(rr->usage.base)) {
-                        if (POSITION_NEQ(rr->p, hk->defpos)) {
+                        if (positionsAreNotEqual(rr->p, hk->defpos)) {
                             anotherDefinition = rr;
                             goto refbreak;
                         }

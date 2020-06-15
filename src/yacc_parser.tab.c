@@ -4206,7 +4206,7 @@ case 482:
             }
             if (options.server_operation == OLO_GOTO_PARAM_NAME
                 && i == options.olcxGotoVal
-                && POSITION_EQ(yyvsp[0].ast_symbol.d->pos, s_cxRefPos))
+                && positionsAreEqual(yyvsp[0].ast_symbol.d->pos, s_cxRefPos))
             {
                 s_paramPosition = p->pos;
             }

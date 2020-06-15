@@ -37,10 +37,10 @@ typedef struct referencesChangeData {
 } S_referencesChangeData;
 
 
-#define SORTED_LIST_LESS(tmp,key) (POSITION_LESS((tmp)->p, (key).p))
+#define SORTED_LIST_LESS(tmp,key) (positionIsLessThan((tmp)->p, (key).p))
 
 #define SORTED_LIST_NEQ(tmp,key) (                                  \
-                                  POSITION_NEQ((tmp)->p, (key).p)   \
+                                  positionsAreNotEqual((tmp)->p, (key).p)   \
                                   )
 
 #define POSITION_MINUS(res,p1,p2) {                                     \
@@ -831,10 +831,10 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
     }
     /*  category = reftab->category; */
     place = addToRefList(&memb->refs,usageb,pos,category);
-    //&fprintf(dumpOut,"checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s\n", fileTable.tab[s_cxRefPos.file]->name, s_cxRefPos.file, s_cxRefPos.line, s_cxRefPos.col, fileTable.tab[pos->file]->name, pos->file, pos->line, pos->col, memcmp(&s_cxRefPos, pos, sizeof(Position)), POSITION_EQ(s_cxRefPos, *pos), usage, p->linkName);
+    //&fprintf(dumpOut,"checking %s(%d),%d,%d <-> %s(%d),%d,%d == %d(%d), usage == %d, %s\n", fileTable.tab[s_cxRefPos.file]->name, s_cxRefPos.file, s_cxRefPos.line, s_cxRefPos.col, fileTable.tab[pos->file]->name, pos->file, pos->line, pos->col, memcmp(&s_cxRefPos, pos, sizeof(Position)), positionsAreEqual(s_cxRefPos, *pos), usage, p->linkName);
 
     if (options.taskRegime == RegimeEditServer
-        && POSITION_EQ(s_cxRefPos, *pos)
+        && positionsAreEqual(s_cxRefPos, *pos)
         && usage<UsageMaxOLUsages) {
         if (p->linkName[0] == ' ') {  // special symbols for internal use!
             if (strcmp(p->linkName, LINK_NAME_UNIMPORTED_QUALIFIED_ITEM)==0) {
@@ -1249,7 +1249,7 @@ void olcxAddReferenceToOlSymbolsMenu(S_olSymbolsMenu  *cms, Reference *rr,
     if (rr->usage.base == UsageClassTreeDefinition) cms->defpos = rr->p;
     if (added!=NULL) {
         if (IS_DEFINITION_OR_DECL_USAGE(rr->usage.base)) {
-            if (rr->usage.base==UsageDefined && POSITION_EQ(rr->p, cms->defpos)) {
+            if (rr->usage.base==UsageDefined && positionsAreEqual(rr->p, cms->defpos)) {
                 added->usage.base = UsageOLBestFitDefined;
             }
             if (rr->usage.base < cms->defUsage) {
@@ -1396,7 +1396,7 @@ static int olcxSetCurrentRefsOnCaller(S_olcxReferences *refs) {
     Reference *rr;
     for(rr=refs->r; rr!=NULL; rr=rr->next){
         //&fprintf(dumpOut,"checking %d %d %d to %d %d %d\n",rr->p.file, rr->p.line,rr->p.col, refs->cpos.file,  refs->cpos.line,  refs->cpos.col);
-        if (! POSITION_LESS(rr->p, refs->cpos)) break;
+        if (! positionIsLessThan(rr->p, refs->cpos)) break;
     }
     // it should never be NULL, but one never knows
     if (rr == NULL) {
@@ -1749,7 +1749,7 @@ static void linePosProcess(FILE *off,
                         s_crefListLinei += strlen(s_crefListLine+s_crefListLinei);
                     }
                 } else {
-                    if (POSITION_NEQ(*callerp, rr->p)) fprintf(off, " ");
+                    if (positionsAreNotEqual(*callerp, rr->p)) fprintf(off, " ");
                     else fprintf(off, ">");
                     fprintf(off,"%c%s:%d:",refCharCode(rr->usage.base),fn,
                             rr->p.line);
@@ -2111,7 +2111,7 @@ static void olcxReferenceGotoCompletion(int refn) {
         if (rr->cat == CategoryLocal /*& || refs->command == OLO_TAG_SEARCH &*/) {
             if (rr->ref.usage.base != UsageClassFileDefinition
                 && rr->ref.usage.base != UsageClassTreeDefinition
-                && POSITION_NEQ(rr->ref.p, s_noPos)) {
+                && positionsAreNotEqual(rr->ref.p, s_noPos)) {
                 generateOnlineCxref(&rr->ref.p, COLCX_GOTO_REFERENCE,
                                     UsageDefined, refs->refsuffix, "");
             } else {
@@ -2136,7 +2136,7 @@ static void olcxReferenceGotoTagSearchItem(int refn) {
     if (rr != NULL) {
         if (rr->ref.usage.base != UsageClassFileDefinition
             && rr->ref.usage.base != UsageClassTreeDefinition
-            && POSITION_NEQ(rr->ref.p, s_noPos)) {
+            && positionsAreNotEqual(rr->ref.p, s_noPos)) {
             generateOnlineCxref(&rr->ref.p, COLCX_GOTO_REFERENCE,
                                 UsageDefined, "0:#", "");
         } else {
@@ -2308,7 +2308,7 @@ static void olcxShowTopSymbol(void) {
 }
 
 static int referenceLess(Reference *r1, Reference *r2) {
-    return(POSITION_LESS(r1->p, r2->p));
+    return(positionIsLessThan(r1->p, r2->p));
 }
 
 static S_olSymbolsMenu *findSymbolCorrespondingToReference(
@@ -2319,7 +2319,7 @@ static S_olSymbolsMenu *findSymbolCorrespondingToReference(
     Reference *rr;
     for(ss=menu; ss!=NULL; ss=ss->next) {
         SORTED_LIST_FIND3(rr, Reference, ref, ss->s.refs, referenceLess);
-        if (rr!=NULL && POSITION_EQ(rr->p, ref->p)) {
+        if (rr!=NULL && positionsAreEqual(rr->p, ref->p)) {
             return(ss);
         }
     }
@@ -3032,7 +3032,7 @@ void olcxReferencesDiff(Reference **anr1,
     nr1 = *anr1; or2 = *aor2; dd = diff;
     *dd = NULL;
     while (nr1!=NULL && or2!=NULL) {
-        if (POSITION_EQ(nr1->p, or2->p)) {
+        if (positionsAreEqual(nr1->p, or2->p)) {
             nr1 = nr1->next; or2=or2->next;
         } else {
             if (SORTED_LIST_LESS(nr1, *or2)) {
@@ -3177,7 +3177,7 @@ static int olRemoveCallerReference(S_olcxReferences *refs) {
     LIST_MERGE_SORT(Reference, refs->r, olcxReferenceInternalLessFunction);
     for(rrr= &refs->r, rr=refs->r; rr!=NULL; rrr= &rr->next, rr=rr->next){
         //&fprintf(dumpOut,"checking %d %d %d to %d %d %d\n",rr->p.file, rr->p.line,rr->p.col, refs->cpos.file,  refs->cpos.line,  refs->cpos.col);
-        if (! POSITION_LESS(rr->p, refs->cpos)) break;
+        if (! positionIsLessThan(rr->p, refs->cpos)) break;
     }
     if (rr == NULL) return(0);
     if (! IS_DEFINITION_OR_DECL_USAGE(rr->usage.base)) return(0);
@@ -3673,7 +3673,7 @@ static S_olSymbolsMenu *mmPreCheckGetFirstDefinitionReferenceAndItsSymbol(
     res = NULL;
     for(mm=menuSym; mm!=NULL; mm=mm->next) {
         if (mm->s.refs!=NULL && IS_DEFINITION_OR_DECL_USAGE(mm->s.refs->usage.base) &&
-            (res==NULL || POSITION_LESS(mm->s.refs->p, res->s.refs->p))) {
+            (res==NULL || positionIsLessThan(mm->s.refs->p, res->s.refs->p))) {
             res = mm;
         }
     }
@@ -3993,7 +3993,7 @@ static void olcxRemoveRefWinFromRefList(Reference **r1,
         cr = *r;
         //&fprintf(dumpOut,"! checking %d:%d\n", cr->p.line, cr->p.col);
         if (cr->p.file == wdfile
-            && POSITION_LESS(*fp, cr->p) && POSITION_LESS(cr->p, *tp)) {
+            && positionIsLessThan(*fp, cr->p) && positionIsLessThan(cr->p, *tp)) {
             // remove the reference
             nr = *r1;
             OLCX_FREE_REFERENCE(*r);

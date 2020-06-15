@@ -1260,7 +1260,7 @@ static void cxrfReference(int size,
                             olcxAddReferenceToOlSymbolsMenu(s_inLastInfos.onLineRefMenuItem, &rr, s_inLastInfos.onLineRefIsBestMatchFlag);
                         }
                     } else if (additionalArg == CX_BY_PASS) {
-                        if (POSITION_EQ(s_olcxByPassPos,rr.p)) {
+                        if (positionsAreEqual(s_olcxByPassPos,rr.p)) {
                             // got the bypass reference
                             //&fprintf(dumpOut,":adding bypass selected symbol %s\n", s_inLastInfos.symbolTab[sym]->name);
                             olAddBrowsedSymbol(s_inLastInfos.symbolTab[sym],
