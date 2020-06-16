@@ -147,7 +147,7 @@ static bool isPreprocessorToken(Lexem lexem) {
 #ifdef DEBUG
 static void traceNewline(int lines) {
     int i;
-    if (options.debug) {
+    if (options.trace) {
         for(i=1; i<=lines; i++) {
             log_trace("%s:%d", currentFile.fileName, currentFile.lineNumber+i);
         }
