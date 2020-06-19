@@ -1,12 +1,52 @@
-/* Lexer macros for..? Passing compressed tokens to the parser */
+/* Lexer macros for passing compressed tokens to the parser */
 
-/* Common: */
+/* Common to normal and huge case: */
 #define PutLexLine(lines, dd) {                              \
         if (lines!=0) {                                      \
             PutLexToken(LINE_TOK,dd);                        \
             PutLexToken(lines,dd);                           \
         }                                                    \
     }
+#define PutLexChar(xxx,dd) {*(dd)++ = xxx;}
+#define PutLexToken(xxx,dd) {PutLexShort(xxx,dd);}
+#define PutLexShort(xxx,dd) {\
+        *(dd)++ = ((unsigned)(xxx))%256;        \
+        *(dd)++ = ((unsigned)(xxx))/256;        \
+}
+#define PutLexInt(xxx,dd) {\
+    unsigned tmp;\
+    tmp = xxx;\
+    *(dd)++ = tmp%256; tmp /= 256;\
+    *(dd)++ = tmp%256; tmp /= 256;\
+    *(dd)++ = tmp%256; tmp /= 256;\
+    *(dd)++ = tmp%256; tmp /= 256;\
+}
+
+#define GetLexChar(xxx,dd) {xxx = *((unsigned char*)dd++);}
+#define GetLexToken(xxx,dd) GetLexShort(xxx,dd)
+#define GetLexShort(xxx,dd) {\
+    xxx = *((unsigned char*)dd++);\
+    xxx += 256 * *((unsigned char*)dd++);\
+}
+#define GetLexInt(xxx,dd) {\
+    xxx = *((unsigned char*)dd++);\
+    xxx += 256 * *((unsigned char*)dd++);\
+    xxx += 256 * 256 * *((unsigned char*)dd++);\
+    xxx += 256 * 256 * 256 * *((unsigned char*)dd++);\
+}
+
+#define NextLexChar(dd) (*((unsigned char*)dd))
+#define NextLexShort(dd) (\
+    *((unsigned char*)dd) \
+    + 256 * *(((unsigned char*)dd)+1)\
+)
+#define NextLexToken(dd) (NextLexShort(dd))
+#define NextLexInt(dd) (\
+    *((unsigned char*)dd) \
+    + 256 * *(((unsigned char*)dd)+1)\
+    + 256 * 256 * *(((unsigned char*)dd)+2) \
+    + 256 * 256 * 256 * *(((unsigned char*)dd)+3)\
+)
 
 #ifndef XREF_HUGE
 
@@ -15,12 +55,6 @@
 /* TODO Tests that exercise these and show the difference in
    performance and compression. */
 
-#define PutLexChar(xxx,dd) {*(dd)++ = xxx;}
-#define PutLexToken(xxx,dd) {PutLexShort(xxx,dd);}
-#define PutLexShort(xxx,dd) {\
-    *(dd)++ = ((unsigned)xxx)%256;\
-    *(dd)++ = ((unsigned)xxx)/256;\
-}
 #define PutLexCompacted(xxx,dd) {\
     assert(((unsigned) xxx)<4194304);\
     if (((unsigned)xxx)>=128) {\
@@ -36,14 +70,6 @@
         *(dd)++ = ((unsigned char)xxx);\
     }\
 }
-#define PutLexInt(xxx,dd) {\
-    unsigned tmp;\
-    tmp = xxx;\
-    *(dd)++ = tmp%256; tmp /= 256;\
-    *(dd)++ = tmp%256; tmp /= 256;\
-    *(dd)++ = tmp%256; tmp /= 256;\
-    *(dd)++ = tmp%256; tmp /= 256;\
-}
 #define PutLexPosition(cfile,cline,idcoll,dd) {\
     assert(cfile>=0 && cfile<MAX_FILES);\
     PutLexCompacted(cfile,dd);\
@@ -51,18 +77,11 @@
     PutLexCompacted(idcoll,dd);\
     log_trace("push idp %d %d %d",cfile,cline,idcoll); \
 }
-/*#define PutLexPosition(cfile,cline,idcoll,dd) {}*/
 
-/* WTF Lexems are coded in compacted form in the lexBuffer, that's why
+/* Lexems are coded in compacted form in the lexBuffer, that's why
  * the first char is taken and then the second is add 256**(next char)
- * so \275\001 means \275 + 256 * 1 = \275
+ * so [275][001] means 275 + 256 * 1 = 513
  */
-#define GetLexChar(xxx,dd) {xxx = *((unsigned char*)dd++);}
-#define GetLexToken(xxx,dd) {GetLexShort(xxx,dd);}
-#define GetLexShort(xxx,dd) {\
-    xxx = *((unsigned char*)dd++);\
-    xxx += 256 * *((unsigned char*)dd++);\
-}
 #define GetLexCompacted(xxx,dd) {\
     xxx = *((unsigned char*)dd++);\
     if (((unsigned)xxx)>=128) {\
@@ -74,32 +93,11 @@
         }\
     }\
 }
-#define GetLexInt(xxx,dd) {\
-    xxx = *((unsigned char*)dd++);\
-    xxx += 256 * *((unsigned char*)dd++);\
-    xxx += 256 * 256 * *((unsigned char*)dd++);\
-    xxx += 256 * 256 * 256 * *((unsigned char*)dd++);\
-}
 #define GetLexPosition(pos,tmpcc) {\
     GetLexCompacted(pos.file,tmpcc);\
     GetLexCompacted(pos.line,tmpcc);\
     GetLexCompacted(pos.col,tmpcc);\
 }
-/*#define GetLexPosition(pos,tmpcc) {}*/
-
-
-#define NextLexChar(dd) (*((unsigned char*)dd))
-#define NextLexToken(dd) (NextLexShort(dd))
-#define NextLexShort(dd) (\
-    *((unsigned char*)dd) \
-    + 256 * *(((unsigned char*)dd)+1)\
-)
-#define NextLexInt(dd) (\
-    *((unsigned char*)dd) \
-    + 256 * *(((unsigned char*)dd)+1)\
-    + 256 * 256 * *(((unsigned char*)dd)+2) \
-    + 256 * 256 * 256 * *(((unsigned char*)dd)+3)\
-)
 
 #define NextLexPosition(pos,tmpcc) {\
     char *tmptmpcc = tmpcc;\
@@ -110,20 +108,6 @@
 
 /* HUGE only !!!!!, normal compacted encoding is above */
 
-#define PutLexChar(xxx,dd) {*(dd)++ = xxx;}
-#define PutLexToken(xxx,dd) {\
-    *(dd)++ = ((unsigned)(xxx))%256;\
-    *(dd)++ = ((unsigned)(xxx))/256;\
-}
-#define PutLexShort(xxx,dd) PutLexToken(xxx,dd)
-#define PutLexInt(xxx,dd) {\
-    unsigned tmp;\
-    tmp = xxx;\
-    *(dd)++ = tmp%256; tmp /= 256;\
-    *(dd)++ = tmp%256; tmp /= 256;\
-    *(dd)++ = tmp%256; tmp /= 256;\
-    *(dd)++ = tmp%256; tmp /= 256;\
-}
 #define PutLexFilePos(xxx,dd) PutLexInt(xxx,dd)
 #define PutLexNumPos(xxx,dd) PutLexInt(xxx,dd)
 #define PutLexPosition(cfile,cline,idcoll,dd) {\
@@ -132,20 +116,7 @@
     PutLexNumPos(idcoll,dd);\
     log_trace("push idp %d %d %d",cfile,cline,idcoll); \
 }
-/*#define PutLexPosition(cfile,cline,idcoll,dd) {}*/
 
-#define GetLexChar(xxx,dd) {xxx = *((unsigned char*)dd++);}
-#define GetLexToken(xxx,dd) {\
-    xxx = *((unsigned char*)dd++);\
-    xxx += 256 * *((unsigned char*)dd++);\
-}
-#define GetLexShort(xxx,dd) GetLexToken(xxx,dd)
-#define GetLexInt(xxx,dd) {\
-    xxx = *((unsigned char*)dd++);\
-    xxx += 256 * *((unsigned char*)dd++);\
-    xxx += 256 * 256 * *((unsigned char*)dd++);\
-    xxx += 256 * 256 * 256 * *((unsigned char*)dd++);\
-}
 #define GetLexFilePos(xxx,dd) GetLexInt(xxx,dd)
 #define GetLexNumPos(xxx,dd) GetLexInt(xxx,dd)
 #define GetLexPosition(pos,tmpcc) {\
@@ -153,21 +124,7 @@
     GetLexNumPos(pos.line,tmpcc);\
     GetLexNumPos(pos.coll,tmpcc);\
 }
-/*#define GetLexPosition(pos,tmpcc) {}*/
 
-
-#define NextLexChar(dd) (*((unsigned char*)dd))
-#define NextLexToken(dd) (\
-    *((unsigned char*)dd) \
-    + 256 * *(((unsigned char*)dd)+1)\
-)
-#define NextLexShort(dd) NextLexToken(dd)
-#define NextLexInt(dd) (\
-    *((unsigned char*)dd) \
-    + 256 * *(((unsigned char*)dd)+1)\
-    + 256 * 256 * *(((unsigned char*)dd)+2) \
-    + 256 * 256 * 256 * *(((unsigned char*)dd)+3)\
-)
 #define NextLexFilePos(dd) NextLexInt(dd)
 #define NextLexNumPos(dd) NextLexInt(dd)
 #define NextLexPosition(pos,tmpcc) {\
