@@ -2,7 +2,7 @@ vpath %.c ..
 
 CFLAGS = -g -O0 -MMD -Wall -Wno-char-subscripts -fPIC -I.. $(COVERAGE) -I/usr/local/include
 
-OBJDIR=.objs
+OBJDIR=.objects
 
 # Find all *_tests.c automatically
 UNITTESTS = $(patsubst %.c,%.so,$(wildcard *_tests.c))
