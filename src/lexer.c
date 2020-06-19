@@ -18,6 +18,14 @@
 #include "utils.h"              /* creatingOlcxRefs() */
 
 
+
+void initLexemBuffer(LexemBuffer *buffer, FILE *file) {
+    buffer->next = buffer->chars;
+    buffer->end = buffer->chars;
+    buffer->index = 0;
+    initCharacterBuffer(&buffer->buffer, file);
+}
+
 void gotOnLineCxRefs(Position *ps ) {
     if (creatingOlcxRefs()) {
         s_cache.activeCache = 0;
@@ -76,8 +84,8 @@ static Lexem constantType(CharacterBuffer *cb, int *ch) {
 }
 
 
-#define FloatingPointConstant(ch, cb, lexem) {                          \
-        lexem = DOUBLE_CONSTANT;                                        \
+#define FloatingPointConstant(ch, cb, rlex) {                          \
+        rlex = DOUBLE_CONSTANT;                                        \
         if (ch == '.') {                                                \
             do {                                                        \
                 ch = getChar(cb);                                       \
@@ -93,7 +101,7 @@ static Lexem constantType(CharacterBuffer *cb, int *ch) {
         if (LANGUAGE(LANG_JAVA)) {                                      \
             if (ch == 'f' || ch == 'F' || ch == 'd' || ch == 'D') {     \
                 if (ch == 'f' || ch == 'F')                             \
-                    lexem = FLOAT_CONSTANT;                             \
+                    rlex = FLOAT_CONSTANT;                             \
                 ch = getChar(cb);                                       \
             }                                                           \
         } else {                                                        \
@@ -199,7 +207,8 @@ static Lexem constantType(CharacterBuffer *cb, int *ch) {
 bool getLexem(LexemBuffer *lb) {
     int ch;
     CharacterBuffer *cb;
-    char *cc, *dd, *lmax, *lexStartDd;
+    char *cc, *lmax, *lexStartDd;
+    char *dd;                   /* TODO: Destination, a.k.a where to put lexems? Maybe? */
     unsigned chval=0;
     Lexem rlex;
     int line, size, lexemStartingColumn, lexStartFilePos, column;
@@ -263,7 +272,31 @@ bool getLexem(LexemBuffer *lb) {
             if (ch == '.' || ch=='e' || ch=='E'
                 || ((ch=='d' || ch=='D'|| ch=='f' || ch=='F') && LANGUAGE(LANG_JAVA))) {
                 /* floating point */
-                FloatingPointConstant(ch, cb, rlex);
+                //FloatingPointConstant(ch, cb, rlex);
+        rlex = DOUBLE_CONSTANT;                                        \
+        if (ch == '.') {                                                \
+            do {                                                        \
+                ch = getChar(cb);                                       \
+            } while (isdigit(ch));                                      \
+        }                                                               \
+        if (ch == 'e' || ch == 'E') {                                   \
+            ch = getChar(cb);                                           \
+            if (ch == '+' || ch=='-')                                   \
+                ch = getChar(cb);                                       \
+            while (isdigit(ch))                                         \
+                ch = getChar(cb);                                       \
+        }                                                               \
+        if (LANGUAGE(LANG_JAVA)) {                                      \
+            if (ch == 'f' || ch == 'F' || ch == 'd' || ch == 'D') {     \
+                if (ch == 'f' || ch == 'F')                             \
+                    rlex = FLOAT_CONSTANT;                             \
+                ch = getChar(cb);                                       \
+            }                                                           \
+        } else {                                                        \
+            if (ch == 'f' || ch == 'F' || ch == 'l' || ch == 'L') {     \
+                ch = getChar(cb);                                       \
+            }                                                           \
+        }                                                               \
                 PutLexToken(rlex,dd);
                 PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                 PutLexInt(absoluteFilePosition(cb)-lexStartFilePos, dd);

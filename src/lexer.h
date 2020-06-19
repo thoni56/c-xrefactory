@@ -18,6 +18,7 @@ typedef struct lexemBuffer {
 } LexemBuffer;
 
 
+extern void initLexemBuffer(LexemBuffer *buffer, FILE *file);
 extern bool getLexem(LexemBuffer *lb);
 extern void gotOnLineCxRefs(Position *position);
 
