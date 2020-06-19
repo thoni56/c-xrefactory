@@ -3,7 +3,7 @@
 #include "commons.h"
 #include "lexem.h"
 #include "lexer.h"
-#include "lexmac.h"
+#include "lexembuffer.h"
 #include "globals.h"
 #include "caching.h"
 #include "extract.h"

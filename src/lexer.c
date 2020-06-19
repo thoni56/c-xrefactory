@@ -1,7 +1,7 @@
 #include "lexer.h"
-#include "lexmac.h"
 
 #include "lexem.h"
+#include "lexembuffer.h"
 
 #include "globals.h"
 #include "commons.h"
