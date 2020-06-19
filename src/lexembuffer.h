@@ -153,4 +153,6 @@ typedef struct lexemBuffer {
 
 #endif
 
+extern void initLexemBuffer(LexemBuffer *buffer, FILE *file);
+
 #endif
