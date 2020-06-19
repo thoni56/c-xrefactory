@@ -29,39 +29,9 @@ void gotOnLineCxRefs(Position *ps ) {
 /*                         Lexical Analysis                          */
 /* ***************************************************************** */
 
-/* TODO: this macro did not exactly translate to passComment() below,
- * caused extract to misunderstand where to put function */
-#define PassComment(ch, cb, dd) {                                       \
-        char oldCh;                                                     \
-        int line = cb->lineNumber;                                      \
-        /*  ******* a block comment ******* */                          \
-        ch = getChar(cb);                                               \
-        if (ch=='\n') {                                                 \
-            cb->lineNumber ++;                                          \
-            cb->lineBegin = cb->next;                                   \
-            cb->columnOffset = 0;                                       \
-        }                                                               \
-        /* TODO test on cpp directive */                                \
-        do {                                                            \
-            oldCh = ch;                                                 \
-            ch = getChar(cb);                                           \
-            if (ch=='\n') {                                             \
-                cb->lineNumber ++;                                      \
-                cb->lineBegin = cb->next;                               \
-                cb->columnOffset = 0;                                   \
-            }                                                           \
-            /* TODO test on cpp directive */                            \
-        } while ((oldCh != '*' || ch != '/') && ch != -1);              \
-        if (ch == -1)                                                   \
-            warningMessage(ERR_ST,"comment through eof");               \
-        PutLexLine(cb->lineNumber-line,dd);                             \
-        ch = getChar(cb);                                               \
-}
-
- static void passComment(CharacterBuffer *cb) {
+static void passComment(CharacterBuffer *cb) {
     int ch;
     char oldCh;
-
     /*  ******* a block comment ******* */
     ch = getChar(cb);
     if (ch=='\n') {
@@ -658,13 +628,13 @@ bool getLexem(LexemBuffer *lb) {
                         ch = '*';
                     }   /* !!! COPY BLOCK TO '/n' */
 
-                    /*& passComment(cb); */
-                    /*& PutLexLine(cb->lineNumber-line,dd); */
-                    /*& ch = getChar(cb); */
-                    PassComment(ch, cb, dd);
-
+                    int line = cb->lineNumber;
+                    passComment(cb);
+                    PutLexLine(cb->lineNumber-line,dd);
+                    ch = getChar(cb);
                     CommentaryEndRef(cb, isJavadoc);
                     goto nextLexem;
+
                 } else if (ch=='/' && options.cpp_comment) {
                     /*  ******* a // comment ******* */
                     CommentaryBegRef(cb);
@@ -737,12 +707,10 @@ bool getLexem(LexemBuffer *lb) {
                                 javadoc = 1;
                             ungetChar(cb, ch);
                             ch = '*';
-
-                            /*& passComment(cb); */
-                            /*& PutLexLine(cb->lineNumber-line,dd); */
-                            /*& ch = getChar(cb); */
-                            PassComment(ch, cb, dd);
-
+                            int line = cb->lineNumber;
+                            passComment(cb);
+                            PutLexLine(cb->lineNumber-line,dd);
+                            ch = getChar(cb);
                             CommentaryEndRef(cb, javadoc);
                             ch = skipBlanks(cb, ch);
                         }
