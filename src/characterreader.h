@@ -32,6 +32,7 @@ typedef struct characterBuffer {
 
 
 extern void initCharacterBuffer(CharacterBuffer *characterBuffer, FILE *file);
+extern void initCharacterBufferFromString(CharacterBuffer *characterbuffer, char *string);
 extern void fillCharacterBuffer(CharacterBuffer *characterBuffer,
                                 char *next,
                                 char *end,

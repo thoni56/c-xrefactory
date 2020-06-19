@@ -39,6 +39,13 @@ void initCharacterBuffer(CharacterBuffer *characterbuffer, FILE *file) {
                         file, 0, -1, characterbuffer->chars);
 }
 
+void initCharacterBufferFromString(CharacterBuffer *characterbuffer, char *string) {
+    strcpy(characterbuffer->chars, string);
+    fillCharacterBuffer(characterbuffer, characterbuffer->chars, characterbuffer->chars,
+                        NULL, 0, 0, characterbuffer->chars);
+    characterbuffer->end = &characterbuffer->chars[strlen(string)];
+}
+
 
 /* ***************************************************************** */
 /*                        Character reading                          */
