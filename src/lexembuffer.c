@@ -6,3 +6,8 @@ void initLexemBuffer(LexemBuffer *buffer, FILE *file) {
     buffer->index = 0;
     initCharacterBuffer(&buffer->buffer, file);
 }
+
+void putLexChar(char ch, char **destination) {
+    **destination = ch;
+    (*destination)++;
+}

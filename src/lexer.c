@@ -112,7 +112,7 @@ static Lexem constantType(CharacterBuffer *cb, int *ch) {
         idcoll = columnPosition(cb);                     \
         PutLexToken(IDENTIFIER,dd);                                     \
         do {                                                            \
-            PutLexChar(ch,dd);                                          \
+            putLexChar(ch, &dd);                                        \
         identCont##labelSuffix:                                         \
             ch = getChar(cb);                                           \
         } while (isalpha(ch) || isdigit(ch) || ch=='_' || (ch=='$' && (LANGUAGE(LANG_YACC)||LANGUAGE(LANG_JAVA)))); \
@@ -146,7 +146,7 @@ static Lexem constantType(CharacterBuffer *cb, int *ch) {
                 }                                                       \
             }                                                           \
         }                                                               \
-        PutLexChar(0,dd);                                               \
+        putLexChar(0, &dd);                                             \
         PutLexPosition(cb->fileNumber, cb->lineNumber, idcoll, dd);     \
     }
 
@@ -191,7 +191,7 @@ static Lexem constantType(CharacterBuffer *cb, int *ch) {
 
 #define PUT_EMPTY_COMPLETION_ID(cb, dd, len) {                          \
         PutLexToken(IDENT_TO_COMPLETE, dd);                             \
-        PutLexChar(0, dd);                                              \
+        putLexChar(0, &dd);                                             \
         PutLexPosition(cb->fileNumber, cb->lineNumber,                  \
                        columnPosition(cb) - (len), dd);                 \
     }
@@ -599,11 +599,12 @@ bool getLexem(LexemBuffer *lb) {
                     ch = getChar(cb);
                     size ++;
                     if (ch!='\"' && size<MAX_LEXEM_SIZE-10)
-                        PutLexChar(ch,dd);
+                        putLexChar(ch, &dd);
                     if (ch=='\\') {
                         ch = getChar(cb);
                         size ++;
-                        if (size < MAX_LEXEM_SIZE-10) PutLexChar(ch,dd);
+                        if (size < MAX_LEXEM_SIZE-10)
+                            putLexChar(ch, &dd);
                         /* TODO escape sequences */
                         if (ch == '\n') {cb->lineNumber ++;
                             cb->lineBegin = cb->next;
@@ -626,7 +627,7 @@ bool getLexem(LexemBuffer *lb) {
                 if (ch == -1 && options.taskRegime!=RegimeEditServer) {
                     warningMessage(ERR_ST,"string constant through EOF");
                 }
-                PutLexChar(0,dd);
+                putLexChar(0, &dd);
                 PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                 PutLexLine(cb->lineNumber-line,dd);
                 ch = getChar(cb);
@@ -794,10 +795,10 @@ bool getLexem(LexemBuffer *lb) {
                                 scol = columnPosition(cb);
                                 PutLexToken(STRING_LITERAL,dd);
                                 do {
-                                    PutLexChar(ch,dd);
+                                    putLexChar(ch, &dd);
                                     ch = getChar(cb);
                                 } while (ch!=endCh && ch!='\n');
-                                PutLexChar(0,dd);
+                                putLexChar(0, &dd);
                                 PutLexPosition(cb->fileNumber,cb->lineNumber,scol,dd);
                                 if (ch == endCh)
                                     ch = getChar(cb);
@@ -928,7 +929,7 @@ bool getLexem(LexemBuffer *lb) {
                                     dd = lexStartDd;
                                     PutLexToken(IDENT_TO_COMPLETE, dd);
                                     dd += len;
-                                    PutLexChar(0,dd);
+                                    putLexChar(0, &dd);
                                     PutLexPosition(ps->file,ps->line,ps->col,dd);
                                 }
                                 log_trace(":ress %s", lexStartDd+TOKEN_SIZE);

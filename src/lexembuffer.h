@@ -25,13 +25,17 @@ typedef struct lexemBuffer {
             PutLexToken(lines,dd);                           \
         }                                                    \
     }
-#define PutLexChar(xxx,dd) {*(dd)++ = xxx;}
+
+extern void putLexChar(char ch, char **destination);
+
 #define PutLexToken(xxx,dd) {PutLexShort(xxx,dd);}
-#define PutLexShort(xxx,dd) {\
+
+#define PutLexShort(xxx,dd) {                   \
         *(dd)++ = ((unsigned)(xxx))%256;        \
         *(dd)++ = ((unsigned)(xxx))/256;        \
 }
-#define PutLexInt(xxx,dd) {\
+
+#define PutLexInt(xxx,dd) {                     \
     unsigned tmp;\
     tmp = xxx;\
     *(dd)++ = tmp%256; tmp /= 256;\
@@ -40,13 +44,17 @@ typedef struct lexemBuffer {
     *(dd)++ = tmp%256; tmp /= 256;\
 }
 
+
 #define GetLexChar(xxx,dd) {xxx = *((unsigned char*)dd++);}
+
 #define GetLexToken(xxx,dd) GetLexShort(xxx,dd)
-#define GetLexShort(xxx,dd) {\
+
+#define GetLexShort(xxx,dd) {                   \
     xxx = *((unsigned char*)dd++);\
     xxx += 256 * *((unsigned char*)dd++);\
 }
-#define GetLexInt(xxx,dd) {\
+
+#define GetLexInt(xxx,dd) {                     \
     xxx = *((unsigned char*)dd++);\
     xxx += 256 * *((unsigned char*)dd++);\
     xxx += 256 * 256 * *((unsigned char*)dd++);\
@@ -54,17 +62,21 @@ typedef struct lexemBuffer {
 }
 
 #define NextLexChar(dd) (*((unsigned char*)dd))
-#define NextLexShort(dd) (\
+
+#define NextLexShort(dd) (                      \
     *((unsigned char*)dd) \
     + 256 * *(((unsigned char*)dd)+1)\
 )
+
 #define NextLexToken(dd) (NextLexShort(dd))
-#define NextLexInt(dd) (\
+
+#define NextLexInt(dd) (  \
     *((unsigned char*)dd) \
     + 256 * *(((unsigned char*)dd)+1)\
     + 256 * 256 * *(((unsigned char*)dd)+2) \
     + 256 * 256 * 256 * *(((unsigned char*)dd)+3)\
 )
+
 
 #ifndef XREF_HUGE
 

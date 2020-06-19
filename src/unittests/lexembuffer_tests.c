@@ -29,3 +29,20 @@ Ensure(LexemBuffer, can_put_and_get_a_token) {
     assert_that(buffer.next, is_equal_to(next_after_put));
     assert_that(lexem, is_equal_to(DOUBLE_CONSTANT));
 }
+
+Ensure(LexemBuffer, can_put_and_get_a_char_using_function) {
+    LexemBuffer buffer;
+    char ch;
+    char *next_after_put;
+
+    initLexemBuffer(&buffer, NULL);
+
+    putLexChar('x', &buffer.next);
+    next_after_put = buffer.next;
+
+    buffer.next = buffer.chars;
+    GetLexChar(ch, buffer.next);
+
+    assert_that(buffer.next, is_equal_to(next_after_put));
+    assert_that(ch, is_equal_to('x'));
+}
