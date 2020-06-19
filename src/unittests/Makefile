@@ -64,6 +64,9 @@ yylex_tests.so: $(OBJDIR)/yylex_tests.o $(OBJDIR)/yylex.o $(YYLEX_DEPS)
 memory_tests.so: $(OBJDIR)/memory_tests.o $(OBJDIR)/memory.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
+lexembuffer_tests.so: $(OBJDIR)/lexembuffer_tests.o $(OBJDIR)/lexembuffer.o
+	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
+
 # These includes the modules .c to be able to test internal functions or macros
 LEX_DEPENDENCIES = log position characterreader
 LEX_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(LEX_DEPENDENCIES))
