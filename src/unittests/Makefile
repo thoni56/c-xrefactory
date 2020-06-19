@@ -61,16 +61,19 @@ YYLEX_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(YYLEX_DEPENDENCIES))
 yylex_tests.so: $(OBJDIR)/yylex_tests.o $(OBJDIR)/yylex.o $(YYLEX_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
+LEXEMBUFFER_DEPENDENCIES = characterreader
+LEXEMBUFFER_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(LEXEMBUFFER_DEPENDENCIES))
+lexembuffer_tests.so: $(OBJDIR)/lexembuffer_tests.o $(OBJDIR)/lexembuffer.o $(LEXEMBUFFER_DEPS)
+	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
+
 memory_tests.so: $(OBJDIR)/memory_tests.o $(OBJDIR)/memory.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-lexembuffer_tests.so: $(OBJDIR)/lexembuffer_tests.o $(OBJDIR)/lexembuffer.o
-	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 # These includes the modules .c to be able to test internal functions or macros
-LEX_DEPENDENCIES = log position characterreader
-LEX_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(LEX_DEPENDENCIES))
-lexer_tests.so: $(OBJDIR)/lexer_tests.o $(LEX_DEPS)
+LEXER_DEPENDENCIES = log position lexembuffer characterreader
+LEXER_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(LEXER_DEPENDENCIES))
+lexer_tests.so: $(OBJDIR)/lexer_tests.o $(LEXER_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 CXFILE_DEPENDENCIES = protocol log position type usage
