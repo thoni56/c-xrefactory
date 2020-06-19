@@ -19,12 +19,13 @@ YACC=$(ROOTDIR)/byacc-1.9/yacc
 # The heavy lifting is here
 
 debug: CFLAGS+=-DDEBUG -O0
-debug yydebug: COVERAGE=--coverage
-debug yydebug: CLEAN_COVERAGE=yes
+debug yydebug unit: COVERAGE=--coverage
+debug yydebug unit: CLEAN_COVERAGE=yes
 yydebug: CFLAGS+= -DDEBUG -DYYDEBUG -Og
 
 prod debug yydebug: $(ZLIB) c-xref
 devel:
+	make clean-coverage
 	make -j debug
 	make -j unit
 	make -j test
@@ -38,13 +39,15 @@ chcheck:
 #########################################################################
 include sources.mk
 
-c-xref: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB) $(CLEAN_COVERAGE)
-	@if [ "$(CLEAN_COVERAGE)" = "yes" ] ; then \
-		lcov -q -z -d $(OBJDIR) ; \
-	fi
+c-xref: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
 	@make check-tokens			# check that token sections in parsers are identical
 
+.PHONY: clean-coverage
+clean-coverage:
+	@if [ "$(CLEAN_COVERAGE)" = "yes" ] ; then \
+		lcov -q -z -d $(OBJDIR) ; \
+	fi
 
 #########################################################################
 # We generate parsers for C, Yacc, Java and C expressions
