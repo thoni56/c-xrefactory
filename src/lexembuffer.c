@@ -1,5 +1,6 @@
 #include "lexembuffer.h"
 
+
 void initLexemBuffer(LexemBuffer *buffer, FILE *file) {
     buffer->next = buffer->chars;
     buffer->end = buffer->chars;
@@ -17,6 +18,10 @@ void putLexShort(int shortValue, char **writePointer) {
     (*writePointer)++;
     **writePointer = ((unsigned)shortValue)/256;
     (*writePointer)++;
+}
+
+void putLexToken(Lexem lexem, char **writePointer) {
+    putLexShort(lexem, writePointer);
 }
 
 unsigned char getLexChar(char **readPointer) {

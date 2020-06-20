@@ -20,7 +20,7 @@ Ensure(LexemBuffer, can_put_and_get_a_token) {
 
     initLexemBuffer(&buffer, NULL);
 
-    PutLexToken(DOUBLE_CONSTANT, buffer.next);
+    putLexToken(DOUBLE_CONSTANT, &buffer.next);
     next_after_put = buffer.next;
 
     buffer.next = buffer.chars;

@@ -1,6 +1,7 @@
 #ifndef _LEXEMBUFFER_H_
 #define _LEXEMBUFFER_H_
 
+#include "lexem.h"
 #include "characterreader.h"
 #include "position.h"
 
@@ -23,7 +24,7 @@ typedef struct lexemBuffer {
 
 extern void putLexChar(char ch, char **writePointer);
 extern void putLexShort(int shortValue, char **writePointer);
-
+extern void putLexToken(Lexem lexem, char **writePointer);
 #define PutLexToken(xxx,dd) {putLexShort(xxx,&dd);}
 
 #define PutLexInt(xxx,dd) {                     \
