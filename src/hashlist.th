@@ -67,10 +67,6 @@ extern int CONCAT(HASH_FUN_PREFIX, DeleteExact) (
     HASH_TAB_TYPE *table,
     HASH_ELEM_TYPE *element
 );
-extern int CONCAT(HASH_FUN_PREFIX, DeleteLast) (/* Delete last of elem from tab */
-    HASH_TAB_TYPE *table,
-    HASH_ELEM_TYPE *element
-);
 extern void CONCAT(HASH_FUN_PREFIX, Free) (
     HASH_TAB_TYPE *tab
 );

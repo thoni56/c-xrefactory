@@ -114,28 +114,6 @@ int CONCAT(HASH_FUN_PREFIX,DeleteExact)(
 }
 
 
-int CONCAT(HASH_FUN_PREFIX,DeleteLast)(
-    HASH_TAB_TYPE *t,
-    HASH_ELEM_TYPE *element
-) {
-    unsigned posid;
-    HASH_ELEM_TYPE **pp, **dd;
-    posid = HASH_FUN(element);
-    posid = posid % t->size;
-    assert(t->tab!=NULL);
-    dd = NULL;
-    for (pp= &(t->tab[posid]); *pp!=NULL; pp= &((*pp)->next)) {
-        if (HASH_ELEM_EQUAL((*pp), element)) {
-            dd = pp;
-        }
-    }
-    if (dd!=NULL) {
-        *dd = (*dd)->next;
-        return(1);
-    }
-    return(0);
-}
-
 void CONCAT(HASH_FUN_PREFIX,Set) (
     HASH_TAB_TYPE *t,
     HASH_ELEM_TYPE *element,
@@ -144,6 +122,7 @@ void CONCAT(HASH_FUN_PREFIX,Set) (
     element->next = t->tab[position];
     t->tab[position] = element;
 }
+
 
 void CONCAT(HASH_FUN_PREFIX,SetLast) (
     HASH_TAB_TYPE *t,
@@ -156,6 +135,7 @@ void CONCAT(HASH_FUN_PREFIX,SetLast) (
     *pp = element;
     element->next = NULL;
 }
+
 
 void CONCAT(HASH_FUN_PREFIX,Add) (
     HASH_TAB_TYPE *t,
