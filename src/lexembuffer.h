@@ -25,29 +25,27 @@ typedef struct lexemBuffer {
 extern void putLexChar(char ch, char **writePointer);
 extern void putLexShort(int shortValue, char **writePointer);
 extern void putLexToken(Lexem lexem, char **writePointer);
-#define PutLexToken(xxx,dd) {putLexShort(xxx,&dd);}
 
 #define PutLexInt(xxx,dd) {                     \
-    unsigned tmp;\
-    tmp = xxx;\
-    *(dd)++ = tmp%256; tmp /= 256;\
-    *(dd)++ = tmp%256; tmp /= 256;\
-    *(dd)++ = tmp%256; tmp /= 256;\
-    *(dd)++ = tmp%256; tmp /= 256;\
-}
+        unsigned tmp;                           \
+        tmp = xxx;                              \
+        *(dd)++ = tmp%256; tmp /= 256;          \
+        *(dd)++ = tmp%256; tmp /= 256;          \
+        *(dd)++ = tmp%256; tmp /= 256;          \
+        *(dd)++ = tmp%256; tmp /= 256;          \
+    }
 
-#define PutLexLine(lines, dd) {                              \
-        if (lines!=0) {                                      \
-            PutLexToken(LINE_TOK,dd);                        \
-            PutLexToken(lines,dd);                           \
-        }                                                    \
+#define PutLexLine(lines, dd) {                                \
+        if (lines!=0) {                                        \
+            putLexToken(LINE_TOK, &dd);                        \
+            putLexToken(lines, &dd);                           \
+        }                                                      \
     }
 
 
 extern unsigned char getLexChar(char **readPointer);
 extern int getLexShort(char **readPointer);
-
-#define GetLexToken(xxx,dd) {xxx = getLexShort(&dd);}
+extern Lexem getLexToken(char **readPointer);
 
 #define GetLexInt(xxx,dd) {                     \
     xxx = *((unsigned char*)dd++);\

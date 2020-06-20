@@ -37,3 +37,7 @@ int getLexShort(char **readPointer) {
     (*readPointer)++;
     return value;
 }
+
+Lexem getLexToken(char **readPointer) {
+    return (Lexem)getLexShort(readPointer);
+}
