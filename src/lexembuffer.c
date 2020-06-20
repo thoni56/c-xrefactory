@@ -7,16 +7,16 @@ void initLexemBuffer(LexemBuffer *buffer, FILE *file) {
     initCharacterBuffer(&buffer->buffer, file);
 }
 
-void putLexChar(char ch, char **destinationPointer) {
-    **destinationPointer = ch;
-    (*destinationPointer)++;
+void putLexChar(char ch, char **writePointer) {
+    **writePointer = ch;
+    (*writePointer)++;
 }
 
-void putLexShort(int shortValue, char **destinationPointer) {
-    **destinationPointer = ((unsigned)shortValue)%256;
-    (*destinationPointer)++;
-    **destinationPointer = ((unsigned)shortValue)/256;
-    (*destinationPointer)++;
+void putLexShort(int shortValue, char **writePointer) {
+    **writePointer = ((unsigned)shortValue)%256;
+    (*writePointer)++;
+    **writePointer = ((unsigned)shortValue)/256;
+    (*writePointer)++;
 }
 
 unsigned char getLexChar(char **readPointer) {

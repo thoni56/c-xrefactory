@@ -21,8 +21,8 @@ typedef struct lexemBuffer {
 
 /* Common for both normal and huge cases: */
 
-extern void putLexChar(char ch, char **destinationPointer);
-extern void putLexShort(int shortValue, char **destinationPointer);
+extern void putLexChar(char ch, char **writePointer);
+extern void putLexShort(int shortValue, char **writePointer);
 
 #define PutLexToken(xxx,dd) {putLexShort(xxx,&dd);}
 
