@@ -43,14 +43,10 @@ extern void putLexShort(int shortValue, char **destinationPointer);
     }
 
 
-extern unsigned char getLexChar(char **nextPointer);
+extern unsigned char getLexChar(char **readPointer);
+extern int getLexShort(char **readPointer);
 
-#define GetLexShort(xxx,dd) {                   \
-    xxx = *((unsigned char*)dd++);\
-    xxx += 256 * *((unsigned char*)dd++);\
-}
-
-#define GetLexToken(xxx,dd) GetLexShort(xxx,dd)
+#define GetLexToken(xxx,dd) {xxx = getLexShort(&dd);}
 
 #define GetLexInt(xxx,dd) {                     \
     xxx = *((unsigned char*)dd++);\

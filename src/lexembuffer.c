@@ -19,8 +19,16 @@ void putLexShort(int shortValue, char **destinationPointer) {
     (*destinationPointer)++;
 }
 
-unsigned char getLexChar(char **nextPointer) {
-    unsigned char ch = **nextPointer;
-    (*nextPointer)++;
+unsigned char getLexChar(char **readPointer) {
+    unsigned char ch = **readPointer;
+    (*readPointer)++;
     return ch;
+}
+
+int getLexShort(char **readPointer) {
+    int value = *(unsigned char*)(*readPointer);
+    (*readPointer)++;
+    value += 256 * *(unsigned char*)(*readPointer);
+    (*readPointer)++;
+    return value;
 }

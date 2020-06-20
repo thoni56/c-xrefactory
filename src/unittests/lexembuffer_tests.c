@@ -58,7 +58,7 @@ Ensure(LexemBuffer, can_put_and_get_a_short) {
     next_after_put = buffer.next;
 
     buffer.next = buffer.chars;
-    GetLexShort(shortValue, buffer.next);
+    shortValue = getLexShort(&buffer.next);
 
     assert_that(buffer.next, is_equal_to(next_after_put));
     assert_that(shortValue, is_equal_to(433));

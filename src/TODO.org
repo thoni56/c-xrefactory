@@ -5,12 +5,14 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
-* TODO Make S_caching an abstract data type to hide CachePoint and Caching
+* DOING Function-ify lexmac macros
+* TODO Turn lexembuffer functions into methods on the buffer
 * TODO New refactoring: Extract variable
 * TODO Remove FULL/FAST update, we always want correct info?
 There are a number of update modes available from the command line, 'fupdate',
 'updatem', 'update', 'fastupdate' and then there is opt.updateOnlyModifiedFiles
 * TODO Remove all -olcx commands that are not used by the editor interfaces?
+* TODO Make S_caching an abstract data type to hide CachePoint and Caching
 * TODO Separate the options into sections and move HTML (at least) to separate structure
 The S_options structure is used to save or possibly create new sets, when
 refactoring. Then it should only contain what's needed for that.
@@ -93,6 +95,7 @@ easier to mock and unit test other modules.
 
 * TODO Make Makefile.common look for our patched yacc and if it's not
   available ignore yacc-rules otherwise always run yacc.
+* DONE Extract a lexembuffer module
 * DONE Use enum types wherever possible Storage, SymbolType
 Which are left to do?
 * DONE Move XX_ALLOCC and friends to "memory" module
