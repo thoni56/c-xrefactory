@@ -96,9 +96,21 @@ check-tokens: c_parser.tokens yacc_parser.tokens java_parser.tokens
 
 # Create an enum of the %token define's in c_parser.tab.h
 lexem.h: c_parser.tab.h
-	@echo "typedef enum lexem {" > lexem.h
+	@echo "#ifndef _LEXEM_H_" > lexem.h
+	@echo "#define _LEXEM_H_" >> lexem.h
+	@echo >> lexem.h
+	@echo "/**** DO NOT EDIT - generated from c_parser.tab.h by Makefile ****/" >> lexem.h
+	@echo >> lexem.h
+	@echo "#ifndef TYPE_NAME" >> lexem.h
+	@echo >> lexem.h
+	@echo "typedef enum lexem {" >> lexem.h
 	@grep define c_parser.tab.h | sed -e "s/#define \(.*\) \([0-9]*\)/\t\1 = \2,/" >> lexem.h
 	@echo "} Lexem;" >> lexem.h
+	@echo >> lexem.h
+	@echo "#else" >> lexem.h
+	@echo "typedef int Lexem;" >> lexem.h
+	@echo "#endif" >> lexem.h
+	@echo "#endif" >> lexem.h
 
 .c-xrefrc: c-xrefrc.tpl
 	@sed -e "s+CURDIR+$(CURDIR)+g" c-xrefrc.tpl > .c-xrefrc

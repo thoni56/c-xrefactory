@@ -1,3 +1,10 @@
+#ifndef _LEXEM_H_
+#define _LEXEM_H_
+
+/**** DO NOT EDIT - generated from c_parser.tab.h by Makefile ****/
+
+#ifndef TYPE_NAME
+
 typedef enum lexem {
 	TYPE_NAME = 257,
 	CLASS_NAME = 258,
@@ -200,3 +207,8 @@ typedef enum lexem {
 	CHAR_LITERAL = 455,
 	LAST_TOKEN = 456,
 } Lexem;
+
+#else
+typedef int Lexem;
+#endif
+#endif
