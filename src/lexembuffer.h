@@ -25,15 +25,7 @@ typedef struct lexemBuffer {
 extern void putLexChar(char ch, char **writePointer);
 extern void putLexShort(int shortValue, char **writePointer);
 extern void putLexToken(Lexem lexem, char **writePointer);
-
-#define PutLexInt(xxx,dd) {                     \
-        unsigned tmp;                           \
-        tmp = xxx;                              \
-        *(dd)++ = tmp%256; tmp /= 256;          \
-        *(dd)++ = tmp%256; tmp /= 256;          \
-        *(dd)++ = tmp%256; tmp /= 256;          \
-        *(dd)++ = tmp%256; tmp /= 256;          \
-    }
+extern void putLexInt(int value, char **writePointer);
 
 #define PutLexLine(lines, dd) {                                \
         if (lines!=0) {                                        \
@@ -47,28 +39,28 @@ extern unsigned char getLexChar(char **readPointer);
 extern int getLexShort(char **readPointer);
 extern Lexem getLexToken(char **readPointer);
 
-#define GetLexInt(xxx,dd) {                     \
-    xxx = *((unsigned char*)dd++);\
-    xxx += 256 * *((unsigned char*)dd++);\
-    xxx += 256 * 256 * *((unsigned char*)dd++);\
-    xxx += 256 * 256 * 256 * *((unsigned char*)dd++);\
-}
+#define GetLexInt(xxx,dd) {                                 \
+        xxx = *((unsigned char*)dd++);                      \
+        xxx += 256 * *((unsigned char*)dd++);               \
+        xxx += 256 * 256 * *((unsigned char*)dd++);         \
+        xxx += 256 * 256 * 256 * *((unsigned char*)dd++);   \
+    }
 
 #define NextLexChar(dd) (*((unsigned char*)dd))
 
 #define NextLexShort(dd) (                      \
-    *((unsigned char*)dd) \
-    + 256 * *(((unsigned char*)dd)+1)\
-)
+        *((unsigned char*)dd)                   \
+        + 256 * *(((unsigned char*)dd)+1)       \
+    )
 
 #define NextLexToken(dd) (NextLexShort(dd))
 
-#define NextLexInt(dd) (  \
-    *((unsigned char*)dd) \
-    + 256 * *(((unsigned char*)dd)+1)\
-    + 256 * 256 * *(((unsigned char*)dd)+2) \
-    + 256 * 256 * 256 * *(((unsigned char*)dd)+3)\
-)
+#define NextLexInt(dd) (                            \
+        *((unsigned char*)dd)                       \
+    + 256 * *(((unsigned char*)dd)+1)               \
+    + 256 * 256 * *(((unsigned char*)dd)+2)         \
+    + 256 * 256 * 256 * *(((unsigned char*)dd)+3)   \
+    )
 
 
 #ifndef XREF_HUGE
@@ -78,54 +70,56 @@ extern Lexem getLexToken(char **readPointer);
 /* TODO Tests that exercise these and show the difference in
    performance and compression. */
 
-#define PutLexCompacted(xxx,dd) {\
-    assert(((unsigned) xxx)<4194304);\
-    if (((unsigned)xxx)>=128) {\
-        if (((unsigned)xxx)>=16384) {\
-            *(dd)++ = ((unsigned)xxx)%128+128;\
-            *(dd)++ = ((unsigned)xxx)/128%128+128;\
-            *(dd)++ = ((unsigned)xxx)/16384;\
-        } else {\
-            *(dd)++ = ((unsigned)xxx)%128+128;\
-            *(dd)++ = ((unsigned)xxx)/128;\
-        }\
-    } else {\
-        *(dd)++ = ((unsigned char)xxx);\
-    }\
-}
-#define PutLexPosition(cfile,cline,idcoll,dd) {\
-    assert(cfile>=0 && cfile<MAX_FILES);\
-    PutLexCompacted(cfile,dd);\
-    PutLexCompacted(cline,dd);\
-    PutLexCompacted(idcoll,dd);\
-    log_trace("push idp %d %d %d",cfile,cline,idcoll); \
+#define PutLexCompacted(xxx,dd) {                       \
+        assert(((unsigned) xxx)<4194304);               \
+        if (((unsigned)xxx)>=128) {                     \
+            if (((unsigned)xxx)>=16384) {               \
+                *(dd)++ = ((unsigned)xxx)%128+128;      \
+                *(dd)++ = ((unsigned)xxx)/128%128+128;  \
+                *(dd)++ = ((unsigned)xxx)/16384;        \
+            } else {                                    \
+                *(dd)++ = ((unsigned)xxx)%128+128;      \
+                *(dd)++ = ((unsigned)xxx)/128;          \
+            }                                           \
+        } else {                                        \
+            *(dd)++ = ((unsigned char)xxx);             \
+        }                                               \
+    }
+
+#define PutLexPosition(cfile,cline,idcoll,dd) {             \
+        assert(cfile>=0 && cfile<MAX_FILES);                \
+        PutLexCompacted(cfile,dd);                          \
+        PutLexCompacted(cline,dd);                          \
+        PutLexCompacted(idcoll,dd);                         \
+        log_trace("push idp %d %d %d",cfile,cline,idcoll);  \
 }
 
 /* Lexems are coded in compacted form in the lexBuffer, that's why
  * the first char is taken and then the second is add 256**(next char)
  * so [275][001] means 275 + 256 * 1 = 513
  */
-#define GetLexCompacted(xxx,dd) {\
-    xxx = *((unsigned char*)dd++);\
-    if (((unsigned)xxx)>=128) {\
-        unsigned yyy = *((unsigned char*)dd++);\
-        if (yyy >= 128) {\
-            xxx = ((unsigned)xxx)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)dd++);\
-        } else {\
-            xxx = ((unsigned)xxx)-128 + 128 * yyy;\
-        }\
-    }\
-}
-#define GetLexPosition(pos,tmpcc) {\
-    GetLexCompacted(pos.file,tmpcc);\
-    GetLexCompacted(pos.line,tmpcc);\
-    GetLexCompacted(pos.col,tmpcc);\
-}
+#define GetLexCompacted(xxx,dd) {                                       \
+        xxx = *((unsigned char*)dd++);                                  \
+        if (((unsigned)xxx)>=128) {                                     \
+            unsigned yyy = *((unsigned char*)dd++);                     \
+            if (yyy >= 128) {                                           \
+                xxx = ((unsigned)xxx)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)dd++); \
+            } else {                                                    \
+                xxx = ((unsigned)xxx)-128 + 128 * yyy;                  \
+            }                                                           \
+        }                                                               \
+    }
 
-#define NextLexPosition(pos,tmpcc) {\
-    char *tmptmpcc = tmpcc;\
-    GetLexPosition(pos, tmptmpcc);\
-}
+#define GetLexPosition(pos,tmpcc) {             \
+        GetLexCompacted(pos.file,tmpcc);        \
+        GetLexCompacted(pos.line,tmpcc);        \
+        GetLexCompacted(pos.col,tmpcc);         \
+    }
+
+#define NextLexPosition(pos,tmpcc) {            \
+        char *tmptmpcc = tmpcc;                 \
+        GetLexPosition(pos, tmptmpcc);          \
+    }
 
 #else
 
@@ -133,28 +127,28 @@ extern Lexem getLexToken(char **readPointer);
 
 #define PutLexFilePos(xxx,dd) PutLexInt(xxx,dd)
 #define PutLexNumPos(xxx,dd) PutLexInt(xxx,dd)
-#define PutLexPosition(cfile,cline,idcoll,dd) {\
-    PutLexFilePos(cfile,dd);\
-    PutLexNumPos(cline,dd);\
-    PutLexNumPos(idcoll,dd);\
-    log_trace("push idp %d %d %d",cfile,cline,idcoll); \
-}
+#define PutLexPosition(cfile,cline,idcoll,dd) {             \
+        PutLexFilePos(cfile,dd);                            \
+        PutLexNumPos(cline,dd);                             \
+        PutLexNumPos(idcoll,dd);                            \
+        log_trace("push idp %d %d %d",cfile,cline,idcoll);  \
+    }
 
 #define GetLexFilePos(xxx,dd) GetLexInt(xxx,dd)
 #define GetLexNumPos(xxx,dd) GetLexInt(xxx,dd)
-#define GetLexPosition(pos,tmpcc) {\
-    GetLexFilePos(pos.file,tmpcc);\
-    GetLexNumPos(pos.line,tmpcc);\
-    GetLexNumPos(pos.coll,tmpcc);\
-}
+#define GetLexPosition(pos,tmpcc) {             \
+        GetLexFilePos(pos.file,tmpcc);          \
+        GetLexNumPos(pos.line,tmpcc);           \
+        GetLexNumPos(pos.coll,tmpcc);           \
+    }
 
 #define NextLexFilePos(dd) NextLexInt(dd)
 #define NextLexNumPos(dd) NextLexInt(dd)
-#define NextLexPosition(pos,tmpcc) {\
-    pos.file = NextLexFilePos(tmpcc);\
-    pos.line = NextLexNumPos(tmpcc+sizeof(short));\
-    pos.coll = NextLexNumPos(tmpcc+2*sizeof(short));\
-}
+#define NextLexPosition(pos,tmpcc) {                        \
+        pos.file = NextLexFilePos(tmpcc);                   \
+        pos.line = NextLexNumPos(tmpcc+sizeof(short));      \
+        pos.coll = NextLexNumPos(tmpcc+2*sizeof(short));    \
+    }
 
 #endif
 

@@ -292,15 +292,15 @@ bool getLexem(LexemBuffer *lb) {
         }                                                               \
                 putLexToken(rlex, &dd);
                 PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
-                PutLexInt(absoluteFilePosition(cb)-lexStartFilePos, dd);
+                putLexInt(absoluteFilePosition(cb)-lexStartFilePos, &dd);
                 goto nextLexem;
             }
             /* integer */
             rlex = constantType(cb, &ch);
             putLexToken(rlex, &dd);
-            PutLexInt(val,dd);
+            putLexInt(val, &dd);
             PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
-            PutLexInt(absoluteFilePosition(cb)-lexStartFilePos, dd);
+            putLexInt(absoluteFilePosition(cb)-lexStartFilePos, &dd);
             goto nextLexem;
         } else switch (ch) {
                 /* ************   special character *********************  */
@@ -328,7 +328,7 @@ bool getLexem(LexemBuffer *lb) {
                     FloatingPointConstant(ch, cb, rlex);
                     putLexToken(rlex, &dd);
                     PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
-                    PutLexInt(absoluteFilePosition(cb)-lexStartFilePos, dd);
+                    putLexInt(absoluteFilePosition(cb)-lexStartFilePos, &dd);
                     goto nextLexem;
                 } else {
                     putLexToken('.', &dd);
@@ -585,9 +585,9 @@ bool getLexem(LexemBuffer *lb) {
                 } while (ch != '\'' && ch != '\n');
                 if (ch=='\'') {
                     putLexToken(CHAR_LITERAL, &dd);
-                    PutLexInt(chval,dd);
+                    putLexInt(chval, &dd);
                     PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
-                    PutLexInt(absoluteFilePosition(cb)-lexStartFilePos, dd);
+                    putLexInt(absoluteFilePosition(cb)-lexStartFilePos, &dd);
                     ch = getChar(cb);
                 }
                 goto nextLexem;

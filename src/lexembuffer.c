@@ -24,6 +24,15 @@ void putLexToken(Lexem lexem, char **writePointer) {
     putLexShort(lexem, writePointer);
 }
 
+void putLexInt(int value, char **writePointer) {
+        unsigned tmp;
+        tmp = value;
+        *(*writePointer)++ = tmp%256; tmp /= 256;
+        *(*writePointer)++ = tmp%256; tmp /= 256;
+        *(*writePointer)++ = tmp%256; tmp /= 256;
+        *(*writePointer)++ = tmp%256; tmp /= 256;
+    }
+
 unsigned char getLexChar(char **readPointer) {
     unsigned char ch = **readPointer;
     (*readPointer)++;

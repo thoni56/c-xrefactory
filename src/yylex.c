@@ -792,7 +792,7 @@ void processDefine(bool argFlag) {
                                       &pos, UsageUsed);
                 ddd = body+sizei;
                 putLexToken(CPP_MAC_ARG, &ddd);
-                PutLexInt(s_macroArgumentTable.tab[foundIndex]->order, ddd);
+                putLexInt(s_macroArgumentTable.tab[foundIndex]->order, &ddd);
                 PutLexPosition(pos.file, pos.line,pos.col,ddd);
                 sizei = ddd - body;
             } else {

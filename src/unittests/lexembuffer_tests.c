@@ -63,3 +63,20 @@ Ensure(LexemBuffer, can_put_and_get_a_token) {
     assert_that(buffer.next, is_equal_to(next_after_put));
     assert_that(lexem, is_equal_to(DOUBLE_CONSTANT));
 }
+
+Ensure(LexemBuffer, can_put_and_get_an_int) {
+    LexemBuffer buffer;
+    int integer;
+    char *next_after_put;
+
+    initLexemBuffer(&buffer, NULL);
+
+    putLexInt(34581, &buffer.next);
+    next_after_put = buffer.next;
+
+    buffer.next = buffer.chars;
+    GetLexInt(integer, buffer.next);
+
+    assert_that(buffer.next, is_equal_to(next_after_put));
+    assert_that(integer, is_equal_to(34581));
+}
