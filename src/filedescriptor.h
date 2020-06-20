@@ -2,7 +2,7 @@
 #define _FILEDESCRIPTOR_H_
 
 #include "proto.h"
-#include "lexer.h"
+#include "lexembuffer.h"
 
 
 typedef struct fileDescriptor {
