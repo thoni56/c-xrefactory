@@ -23,8 +23,10 @@
 
 #include "proto.h"
 
-/* Include one of the generated parser definitions for common token codes */
-#include "c_parser.tab.h"
+#include "lexem.h"
+typedef union {
+#include "yystype.h"
+} YYSTYPE;
 
 extern YYSTYPE c_yylval;
 #ifdef YYDEBUG
