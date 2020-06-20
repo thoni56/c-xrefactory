@@ -17,23 +17,14 @@ typedef struct lexemBuffer {
 
 
 /* Lexer macros for passing compressed tokens to the parser */
+/* In the process of being turned into testable/debuggable functions */
 
-/* Common to normal and huge case: */
-#define PutLexLine(lines, dd) {                              \
-        if (lines!=0) {                                      \
-            PutLexToken(LINE_TOK,dd);                        \
-            PutLexToken(lines,dd);                           \
-        }                                                    \
-    }
+/* Common for both normal and huge cases: */
 
-extern void putLexChar(char ch, char **destination);
+extern void putLexChar(char ch, char **destinationPointer);
+extern void putLexShort(int shortValue, char **destinationPointer);
 
-#define PutLexToken(xxx,dd) {PutLexShort(xxx,dd);}
-
-#define PutLexShort(xxx,dd) {                   \
-        *(dd)++ = ((unsigned)(xxx))%256;        \
-        *(dd)++ = ((unsigned)(xxx))/256;        \
-}
+#define PutLexToken(xxx,dd) {putLexShort(xxx,&dd);}
 
 #define PutLexInt(xxx,dd) {                     \
     unsigned tmp;\
@@ -44,15 +35,22 @@ extern void putLexChar(char ch, char **destination);
     *(dd)++ = tmp%256; tmp /= 256;\
 }
 
+#define PutLexLine(lines, dd) {                              \
+        if (lines!=0) {                                      \
+            PutLexToken(LINE_TOK,dd);                        \
+            PutLexToken(lines,dd);                           \
+        }                                                    \
+    }
 
-#define GetLexChar(xxx,dd) {xxx = *((unsigned char*)dd++);}
 
-#define GetLexToken(xxx,dd) GetLexShort(xxx,dd)
+extern unsigned char getLexChar(char **nextPointer);
 
 #define GetLexShort(xxx,dd) {                   \
     xxx = *((unsigned char*)dd++);\
     xxx += 256 * *((unsigned char*)dd++);\
 }
+
+#define GetLexToken(xxx,dd) GetLexShort(xxx,dd)
 
 #define GetLexInt(xxx,dd) {                     \
     xxx = *((unsigned char*)dd++);\
