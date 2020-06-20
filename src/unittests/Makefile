@@ -20,6 +20,8 @@ clean:
 cleaner: clean
 	-rm -rf $(OBJDIR)
 
+*.c: Makefile
+
 # These link the modules .o and only tests the external behaviour
 symboltable_tests.so: $(OBJDIR)/symboltable_tests.o $(OBJDIR)/symboltable.o $(OBJDIR)/hash.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
@@ -56,7 +58,7 @@ OPTIONS_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(OPTIONS_DEPENDENCIES))
 options_tests.so: $(OBJDIR)/options_tests.o $(OBJDIR)/options.o $(OPTIONS_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-YYLEX_DEPENDENCIES = protocol log position filedescriptor id filetable hash symboltable macroargumenttable symbol
+YYLEX_DEPENDENCIES = protocol log position filedescriptor id filetable hash symboltable macroargumenttable symbol lexembuffer
 YYLEX_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(YYLEX_DEPENDENCIES))
 yylex_tests.so: $(OBJDIR)/yylex_tests.o $(OBJDIR)/yylex.o $(YYLEX_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
