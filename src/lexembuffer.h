@@ -66,24 +66,22 @@ extern Lexem getLexToken(char **readPointer);
 #ifndef XREF_HUGE
 
 /* NORMAL compacted tokens, HUGE compression is below */
+/* Can only store file, line, column < 4194304 */
 
-/* TODO Tests that exercise these and show the difference in
-   performance and compression. */
-
-#define PutLexCompacted(xxx,dd) {                       \
-        assert(((unsigned) xxx)<4194304);               \
-        if (((unsigned)xxx)>=128) {                     \
-            if (((unsigned)xxx)>=16384) {               \
-                *(dd)++ = ((unsigned)xxx)%128+128;      \
-                *(dd)++ = ((unsigned)xxx)/128%128+128;  \
-                *(dd)++ = ((unsigned)xxx)/16384;        \
-            } else {                                    \
-                *(dd)++ = ((unsigned)xxx)%128+128;      \
-                *(dd)++ = ((unsigned)xxx)/128;          \
-            }                                           \
-        } else {                                        \
-            *(dd)++ = ((unsigned char)xxx);             \
-        }                                               \
+#define PutLexCompacted(value,dd) {                       \
+        assert(((unsigned) value)<4194304);               \
+        if (((unsigned)value)>=128) {                     \
+            if (((unsigned)value)>=16384) {               \
+                *(dd)++ = ((unsigned)value)%128+128;  \
+                *(dd)++ = ((unsigned)value)/128%128+128;  \
+                *(dd)++ = ((unsigned)value)/16384;        \
+            } else {                                      \
+                *(dd)++ = ((unsigned)value)%128+128;      \
+                *(dd)++ = ((unsigned)value)/128;          \
+            }                                             \
+        } else {                                          \
+            *(dd)++ = ((unsigned char)value);             \
+        }                                                 \
     }
 
 #define PutLexPosition(cfile,cline,idcoll,dd) {             \
@@ -94,10 +92,6 @@ extern Lexem getLexToken(char **readPointer);
         log_trace("push idp %d %d %d",cfile,cline,idcoll);  \
 }
 
-/* Lexems are coded in compacted form in the lexBuffer, that's why
- * the first char is taken and then the second is add 256**(next char)
- * so [275][001] means 275 + 256 * 1 = 513
- */
 #define GetLexCompacted(xxx,dd) {                                       \
         xxx = *((unsigned char*)dd++);                                  \
         if (((unsigned)xxx)>=128) {                                     \
@@ -124,6 +118,8 @@ extern Lexem getLexToken(char **readPointer);
 #else
 
 /* HUGE only !!!!!, normal compacted encoding is above */
+
+#error HUGE mode is not supported any more, rewrite your application...
 
 #define PutLexFilePos(xxx,dd) PutLexInt(xxx,dd)
 #define PutLexNumPos(xxx,dd) PutLexInt(xxx,dd)
