@@ -77,40 +77,47 @@ static Lexem constantType(CharacterBuffer *cb, int *ch) {
 }
 
 
-#define FloatingPointConstant(ch, cb, rlex) {                          \
-        rlex = DOUBLE_CONSTANT;                                        \
-        if (ch == '.') {                                                \
-            do {                                                        \
-                ch = getChar(cb);                                       \
-            } while (isdigit(ch));                                      \
-        }                                                               \
-        if (ch == 'e' || ch == 'E') {                                   \
-            ch = getChar(cb);                                           \
-            if (ch == '+' || ch=='-')                                   \
-                ch = getChar(cb);                                       \
-            while (isdigit(ch))                                         \
-                ch = getChar(cb);                                       \
-        }                                                               \
-        if (LANGUAGE(LANG_JAVA)) {                                      \
-            if (ch == 'f' || ch == 'F' || ch == 'd' || ch == 'D') {     \
-                if (ch == 'f' || ch == 'F')                             \
-                    rlex = FLOAT_CONSTANT;                             \
-                ch = getChar(cb);                                       \
-            }                                                           \
-        } else {                                                        \
-            if (ch == 'f' || ch == 'F' || ch == 'l' || ch == 'L') {     \
-                ch = getChar(cb);                                       \
-            }                                                           \
-        }                                                               \
+static Lexem floatingPointConstant(CharacterBuffer *cb, int *chPointer) {
+    int ch = *chPointer;
+    Lexem rlex;
+
+    rlex = DOUBLE_CONSTANT;
+    if (ch == '.') {
+        do {
+            ch = getChar(cb);
+        } while (isdigit(ch));
     }
+    if (ch == 'e' || ch == 'E') {
+        ch = getChar(cb);
+        if (ch == '+' || ch=='-')
+            ch = getChar(cb);
+        while (isdigit(ch))
+            ch = getChar(cb);
+    }
+    if (LANGUAGE(LANG_JAVA)) {
+        if (ch == 'f' || ch == 'F' || ch == 'd' || ch == 'D') {
+            if (ch == 'f' || ch == 'F')
+                rlex = FLOAT_CONSTANT;
+            ch = getChar(cb);
+        }
+    } else {
+        if (ch == 'f' || ch == 'F' || ch == 'l' || ch == 'L') {
+            ch = getChar(cb);
+        }
+    }
+    *chPointer = ch;
+
+    return rlex;
+}
+
 
 #define ProcessIdentifier(ch, cb, dd, labelSuffix) {                    \
         int idcoll;                                                     \
         char *ddd;                                                      \
         /* ***************  identifier ****************************  */ \
         ddd = dd;                                                       \
-        idcoll = columnPosition(cb);                     \
-        putLexToken(IDENTIFIER, &dd);                                     \
+        idcoll = columnPosition(cb);                                    \
+        putLexToken(IDENTIFIER, &dd);                                   \
         do {                                                            \
             putLexChar(ch, &dd);                                        \
         identCont##labelSuffix:                                         \
@@ -265,31 +272,7 @@ bool getLexem(LexemBuffer *lb) {
             if (ch == '.' || ch=='e' || ch=='E'
                 || ((ch=='d' || ch=='D'|| ch=='f' || ch=='F') && LANGUAGE(LANG_JAVA))) {
                 /* floating point */
-                //FloatingPointConstant(ch, cb, rlex);
-        rlex = DOUBLE_CONSTANT;                                        \
-        if (ch == '.') {                                                \
-            do {                                                        \
-                ch = getChar(cb);                                       \
-            } while (isdigit(ch));                                      \
-        }                                                               \
-        if (ch == 'e' || ch == 'E') {                                   \
-            ch = getChar(cb);                                           \
-            if (ch == '+' || ch=='-')                                   \
-                ch = getChar(cb);                                       \
-            while (isdigit(ch))                                         \
-                ch = getChar(cb);                                       \
-        }                                                               \
-        if (LANGUAGE(LANG_JAVA)) {                                      \
-            if (ch == 'f' || ch == 'F' || ch == 'd' || ch == 'D') {     \
-                if (ch == 'f' || ch == 'F')                             \
-                    rlex = FLOAT_CONSTANT;                             \
-                ch = getChar(cb);                                       \
-            }                                                           \
-        } else {                                                        \
-            if (ch == 'f' || ch == 'F' || ch == 'l' || ch == 'L') {     \
-                ch = getChar(cb);                                       \
-            }                                                           \
-        }                                                               \
+                rlex = floatingPointConstant(cb, &ch);
                 putLexToken(rlex, &dd);
                 PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                 putLexInt(absoluteFilePosition(cb)-lexStartFilePos, &dd);
@@ -325,7 +308,7 @@ bool getLexem(LexemBuffer *lb) {
                     /* floating point constant */
                     ungetChar(cb, ch);
                     ch = '.';
-                    FloatingPointConstant(ch, cb, rlex);
+                    rlex = floatingPointConstant(cb, &ch);
                     putLexToken(rlex, &dd);
                     PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
                     putLexInt(absoluteFilePosition(cb)-lexStartFilePos, &dd);
