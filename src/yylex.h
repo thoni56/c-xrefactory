@@ -24,7 +24,7 @@ typedef struct lexInput {
     char *endOfBuffer;
     char *beginningOfBuffer;
     char *macroName;
-    char inputType;		/* input Flag */
+    InputType inputType;
 } LexInput;
 
 extern char *yytext;
