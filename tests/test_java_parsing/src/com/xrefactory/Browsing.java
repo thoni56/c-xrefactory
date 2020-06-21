@@ -42,6 +42,8 @@ class Browsing {
     class NestedSuperClass {
         int i=1, j=1;
         private int k=1;
+        i >>>= 4;
+        j = k >>> 2;
     }
 
     int i=0, j=0, k=0;
