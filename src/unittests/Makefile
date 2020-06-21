@@ -1,13 +1,14 @@
 vpath %.c ..
 
-CFLAGS = -g -O0 -MMD -Wall -Wno-char-subscripts -fPIC -I.. $(COVERAGE) -I/usr/local/include
+WARNINGS = -Wall -Wno-char-subscripts
+CFLAGS = -g -O0 -MMD -funsigned-char $(WARNINGS) -fPIC -I.. $(COVERAGE)
 
 OBJDIR=.objects
 
 # Find all *_tests.c automatically
 UNITTESTS = $(patsubst %.c,%.so,$(wildcard *_tests.c))
 
-CGREEN = -L/usr/local/lib -lcgreen
+CGREEN = -lcgreen
 
 debug: COVERAGE=--coverage
 all debug: $(UNITTESTS)
