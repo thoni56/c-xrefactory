@@ -128,21 +128,21 @@ test:
 unit:
 	make -C unittests debug
 
+LCOV=lcov -q --exclude log.c --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' --exclude '/Library/*'
 coverage: COVERAGE=--coverage
 coverage: clean test
-	lcov -q --exclude \*.mock -exclude /usr -exclude /Library -d . -c -o total.info
+	$(LCOV) -d . -c -o total.info
 	genhtml -q -o ../coverage total.info
 
 coverage-report:
 	@echo Doing the coverage reporting in the background
 	@$(MAKE) the-actual-coverage-report &
 
-LCOV=lcov -q --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' --exclude '/Library/*'
 the-actual-coverage-report:
 	@$(LCOV) -d . -c -t unittests -o ../coverage/unittests.info
 	@ls -1q ../tests/*.info | sed "s/^/-a /g" | xargs $(LCOV) -o ../coverage/total.info -a ../coverage/unittests.info
 	@printf "\\r"
-	@lcov -q --remove ../coverage/total.info '*.tab.c' '/usr/*' '/Library/*' -o ../coverage/total.info
+	@lcov -q --remove ../coverage/total.info 'log.c' '*.tab.c' '/usr/*' '/Library/*' -o ../coverage/total.info
 	@-[ -x "$$(command -v info2gcov)" ] && info2gcov -q ../coverage/total.info
 	genhtml -q -o ../coverage ../coverage/total.info
 
