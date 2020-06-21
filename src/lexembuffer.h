@@ -40,12 +40,6 @@ extern int getLexShort(char **readPointer);
 extern Lexem getLexToken(char **readPointer);
 extern int getLexInt(char **readPointer);
 
-#define GetLexInt(xxx,dd) {                                 \
-        xxx = *((unsigned char*)dd++);                      \
-        xxx += 256 * *((unsigned char*)dd++);               \
-        xxx += 256 * 256 * *((unsigned char*)dd++);         \
-        xxx += 256 * 256 * 256 * *((unsigned char*)dd++);   \
-    }
 
 #define NextLexChar(dd) (*((unsigned char*)dd))
 

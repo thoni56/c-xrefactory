@@ -286,19 +286,19 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileN
                     currentFile.lineNumber += lineval;                  \
                 }                                                       \
             } else if (lexem == CONSTANT || lexem == LONG_CONSTANT) {   \
-                GetLexInt(val,input);                                   \
+                val = getLexInt(&input);                                \
                 GetLexPosition((pos),input);                            \
-                GetLexInt(length,input);                                \
+                length = getLexInt(&input);                             \
             } else if (lexem == DOUBLE_CONSTANT || lexem == FLOAT_CONSTANT) { \
                 GetLexPosition((pos),input);                            \
-                GetLexInt(length,input);                                \
+                length = getLexInt(&input);                             \
             } else if (lexem == CPP_MAC_ARG) {                          \
-                GetLexInt(val,input);                                   \
+                val = getLexInt(&input);                                \
                 GetLexPosition((pos),input);                            \
             } else if (lexem == CHAR_LITERAL) {                         \
-                GetLexInt(val,input);                                   \
+                val = getLexInt(&input);                                \
                 GetLexPosition((pos),input);                            \
-                GetLexInt(length,input);                                \
+                length = getLexInt(&input);                             \
             }                                                           \
         } else if (isPreprocessorToken(lexem)) {                        \
             GetLexPosition((pos),input);                                \
