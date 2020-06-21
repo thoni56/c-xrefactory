@@ -239,29 +239,6 @@ void CONCAT(HASH_FUN_PREFIX,Map5)(
 }
 
 
-void CONCAT(HASH_FUN_PREFIX,Statistics)(
-    HASH_TAB_TYPE *t,
-    int *usedIndexes,
-    int *elements,
-    int *maxdepth
-) {
-    int i,ui,el,dp,mdp;
-    HASH_ELEM_TYPE *pp;
-    ui= el = dp = mdp = 0;
-    for(i=0; i<t->size; i++) {
-        if (t->tab[i]!=NULL) ui ++;
-        dp = el;
-        for(pp=t->tab[i]; pp!=NULL; pp=pp->next) {
-            el++;
-        }
-        if (mdp < el-dp) {mdp = el-dp;}
-    }
-    *usedIndexes = ui;
-    *elements = el;
-    *maxdepth = mdp;
-}
-
-
 #undef GLUE
 #undef CONCAT
 #undef HASH_TAB_TYPE

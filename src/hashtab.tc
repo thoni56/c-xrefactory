@@ -160,18 +160,6 @@ void CONCAT(HASH_FUN_PREFIX,MapWithIndex)(
     }
 }
 
-void CONCAT(HASH_FUN_PREFIX,Map4)(
-    HASH_TAB_TYPE *table,
-    void (*fun)(int, void *, void *),
-    void *a,
-    void *b
-) {
-    int i;
-    for(i=0; i<table->size; i++) {
-        if (table->tab[i]!=NULL) (*fun)(i, a, b);
-    }
-}
-
 #undef GLUE
 #undef CONCAT
 #undef HASH_TAB_TYPE
