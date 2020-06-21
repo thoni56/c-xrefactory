@@ -25,14 +25,14 @@ typedef struct lexInput {
     char *beginningOfBuffer;
     char *macroName;
     char inputType;		/* input Flag */
-} S_lexInput;
+} LexInput;
 
 extern char *yytext;
 extern int macroStackIndex;
-extern S_lexInput cInput;
+extern LexInput cInput;
 
 
-extern void fillLexInput(S_lexInput *lexInput, char *currentLexem, char *endOfBuffer,
+extern void fillLexInput(LexInput *lexInput, char *currentLexem, char *endOfBuffer,
                          char *beginningOfBuffer, char *macroName, InputType margExpFlag);
 extern void ppMemInit(void);
 extern void initAllInputs(void);

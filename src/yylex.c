@@ -59,9 +59,9 @@ static char ppMemory[SIZE_ppMemory];
 static int ppMemoryi=0;
 
 int macroStackIndex=0;
-static S_lexInput macroStack[MACRO_STACK_SIZE];
+static LexInput macroStack[MACRO_STACK_SIZE];
 
-S_lexInput cInput;
+LexInput cInput;
 
 
 static bool isIdentifierLexem(Lexem lex) {
@@ -98,7 +98,7 @@ static void fillMacroArgTabElem(S_macroArgumentTableElement *macroArgTabElem, ch
     macroArgTabElem->order = order;
 }
 
-void fillLexInput(S_lexInput *lexInput, char *currentLexem, char *endOfBuffer,
+void fillLexInput(LexInput *lexInput, char *currentLexem, char *endOfBuffer,
                   char *beginningOfBuffer, char *macroName, InputType margExpFlag) {
     lexInput->currentLexem = currentLexem;
     lexInput->endOfBuffer = endOfBuffer;
@@ -1305,7 +1305,7 @@ static int cyclicCall(S_macroBody *mb) {
 }
 
 
-static void prependMacroInput(S_lexInput *argb) {
+static void prependMacroInput(LexInput *argb) {
     assert(macroStackIndex < MACRO_STACK_SIZE-1);
     macroStack[macroStackIndex++] = cInput;
     cInput = *argb;
@@ -1314,7 +1314,7 @@ static void prependMacroInput(S_lexInput *argb) {
 }
 
 
-static void expandMacroArgument(S_lexInput *argb) {
+static void expandMacroArgument(LexInput *argb) {
     Symbol sd,*memb;
     char *buf,*previousLexem,*currentLexem,*bcc, *tbcc;
     int length,ii,line,val,bsize,failedMacroExpansion,len;
@@ -1385,7 +1385,7 @@ static void cxAddCollateReference( char *sym, char *cs, Position *pos ) {
 /* **************************************************************** */
 
 static void collate(char **albcc, char **abcc, char *buf, int *absize,
-                    char **ancc, S_lexInput *actArgs) {
+                    char **ancc, LexInput *actArgs) {
     char *lbcc,*bcc,*cc,*ccfin,*cc0,*ncc,*occ;
     int line, val, nlex, len1, bsize, len;
     Lexem lexem;
@@ -1510,7 +1510,7 @@ static void macArgsToString(char *res, struct lexInput *lb) {
 /* ********************* macro body replacement ***************** */
 /* ************************************************************** */
 
-static void createMacroBody(S_lexInput *macBody,
+static void createMacroBody(LexInput *macBody,
                         S_macroBody *mb,
                         struct lexInput *actArgs,
                         int actArgn
@@ -1618,7 +1618,7 @@ static void getActMacroArgument(char *previousLexem,
                                 Position *mpos,
                                 Position **parpos1,
                                 Position **parpos2,
-                                S_lexInput *actArg,
+                                LexInput *actArg,
                                 S_macroBody *mb,
                                 int actArgi
                                 ) {
@@ -1768,7 +1768,7 @@ static int expandMacroCall(Symbol *mdef, Position *mpos) {
     int line,val,len;
     char *previousLexem,*freeBase;
     Position pos, lparpos;
-    S_lexInput *actArgs, macroBody;
+    LexInput *actArgs, macroBody;
     S_macroBody *mb;
 
     previousLexem = cInput.currentLexem;
