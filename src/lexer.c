@@ -798,9 +798,11 @@ bool getLexem(LexemBuffer *lb) {
                                 putLexToken(CPP_DEFINE, &ddd);
                             }
                         } else if (strcmp(tt,"pragma") == 0) {
-                            putLexToken(CPP_PRAGMA, &dd); PutLexPosition(cb->fileNumber,cb->lineNumber,lcoll,dd);
+                            putLexToken(CPP_PRAGMA, &dd);
+                            PutLexPosition(cb->fileNumber,cb->lineNumber,lcoll,dd);
                         } else {
-                            putLexToken(CPP_LINE, &dd); PutLexPosition(cb->fileNumber,cb->lineNumber,lcoll,dd);
+                            putLexToken(CPP_LINE, &dd);
+                            PutLexPosition(cb->fileNumber,cb->lineNumber,lcoll,dd);
                         }
                     }
                 }
