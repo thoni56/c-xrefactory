@@ -22,7 +22,7 @@
   TypeCppAny - dummy, a Cpp reference (html only)
   TypeBlockMarker - dummy, block markers for extract
   TypeTryCatchMarker - dummy, block markers for extract
-  TypeComment - dummy, a commentary reference (html only)
+  TypeComment - dummy, a comment reference (html only)
   TypeExpression - dummy, an ambig. name evaluated to expression in java
   TypePackedType - dummy, typemodif, when type is in linkname
   TypeFunSep - dummy, function separator for HTML

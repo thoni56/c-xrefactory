@@ -1603,9 +1603,6 @@ static int checkTheJavaDocBrowsing(S_olcxReferences *refs) {
     S_olSymbolsMenu *mm;
     int res;
     res = 0;
-    // this was in commentary, why?
-    // [16/2/2003 putting it back, because it tries to browse something
-    // when definition not found in C language
     if (LANGUAGE(LANG_JAVA)) {
         for(mm=refs->menuSym; mm!=NULL; mm=mm->next) {
             if (mm->visible && mm->selected) {

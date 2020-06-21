@@ -362,7 +362,7 @@ static void descendTheClassHierarchy(   FILE *ff,
     if (THEBIT(tmpChProcessed,vApplCl)==1) return;
     SETBIT(tmpChProcessed, vApplCl);
 
-    // putting the following in commentary makes that for -refnum==1
+    // putting the following in comments makes that for -refnum==1
     // subclasses will not be sorted !
     // also subclasses for on-line resolution would not be sorted!
     LIST_MERGE_SORT(ClassHierarchyReference, fi->inferiorClasses, classHierarchySupClassNameLess);

@@ -560,8 +560,8 @@ static void refactoryMoveMarkerToTheEndOfDefinitionScope(EditorMarker *mm) {
     }
 }
 
-static int refactoryMarkerWRTCommentary(EditorMarker *mm, int *comBeginOffset) {
-    char            *b, *s, *e, *mms;
+static int refactoryMarkerWRTComment(EditorMarker *mm, int *commentBeginOffset) {
+    char *b, *s, *e, *mms;
     assert(mm->buffer && mm->buffer->a.text);
     s = mm->buffer->a.text;
     e = s + mm->buffer->a.bufferSize;
@@ -574,7 +574,7 @@ static int refactoryMarkerWRTCommentary(EditorMarker *mm, int *comBeginOffset) {
             while ((s+1)<e && ! (*s=='*' && *(s+1)=='/')) s++;
             if (s+1<e) s += 2;
             if (s>mms) {
-                *comBeginOffset = b-mm->buffer->a.text;
+                *commentBeginOffset = b-mm->buffer->a.text;
                 return(MARKER_IS_IN_STAR_COMMENT);
             }
         } else if (*s=='/' && s+1<e && *(s+1)=='/') {
@@ -583,7 +583,7 @@ static int refactoryMarkerWRTCommentary(EditorMarker *mm, int *comBeginOffset) {
             while (s<e && *s!='\n') s++;
             if (s<e) s += 1;
             if (s>mms) {
-                *comBeginOffset = b-mm->buffer->a.text;
+                *commentBeginOffset = b-mm->buffer->a.text;
                 return(MARKER_IS_IN_SLASH_COMMENT);
             }
         } else if (*s=='"') {
@@ -614,28 +614,38 @@ static void refactoryMoveMarkerToTheBeginOfDefinitionScope(EditorMarker *mm) {
             theBeginningOffset = mm->offset+1;
             mm->offset --;
         }
-        if (s_ropt.commentMovingLevel == CM_NO_COMMENT) goto fini;
+        if (s_ropt.commentMovingLevel == CM_NO_COMMENT)
+            goto fini;
         editorMoveMarkerToNonBlank(mm, -1);
-        mp = refactoryMarkerWRTCommentary(mm, &comBeginOffset);
-        if (mp == MARKER_IS_IN_CODE) goto fini;
+        mp = refactoryMarkerWRTComment(mm, &comBeginOffset);
+        if (mp == MARKER_IS_IN_CODE)
+            goto fini;
         else if (mp == MARKER_IS_IN_STAR_COMMENT) {
-            if (s_ropt.commentMovingLevel == CM_SINGLE_SLASHED) goto fini;
-            if (s_ropt.commentMovingLevel == CM_ALL_SLASHED) goto fini;
-            if (staredCommentsProcessed>0 && s_ropt.commentMovingLevel==CM_SINGLE_STARED) goto fini;
-            if (staredCommentsProcessed>0 && s_ropt.commentMovingLevel==CM_SINGLE_SLASHED_AND_STARED) goto fini;
+            if (s_ropt.commentMovingLevel == CM_SINGLE_SLASHED)
+                goto fini;
+            if (s_ropt.commentMovingLevel == CM_ALL_SLASHED)
+                goto fini;
+            if (staredCommentsProcessed>0 && s_ropt.commentMovingLevel==CM_SINGLE_STARED)
+                goto fini;
+            if (staredCommentsProcessed>0 && s_ropt.commentMovingLevel==CM_SINGLE_SLASHED_AND_STARED)
+                goto fini;
             staredCommentsProcessed ++;
             mm->offset = comBeginOffset;
         }
         // slash comment, skip them all
         else if (mp == MARKER_IS_IN_SLASH_COMMENT) {
-            if (s_ropt.commentMovingLevel == CM_SINGLE_STARED) goto fini;
-            if (s_ropt.commentMovingLevel == CM_ALL_STARED) goto fini;
-            if (slashedCommentsProcessed>0 && s_ropt.commentMovingLevel==CM_SINGLE_SLASHED) goto fini;
-            if (slashedCommentsProcessed>0 && s_ropt.commentMovingLevel==CM_SINGLE_SLASHED_AND_STARED) goto fini;
+            if (s_ropt.commentMovingLevel == CM_SINGLE_STARED)
+                goto fini;
+            if (s_ropt.commentMovingLevel == CM_ALL_STARED)
+                goto fini;
+            if (slashedCommentsProcessed>0 && s_ropt.commentMovingLevel==CM_SINGLE_SLASHED)
+                goto fini;
+            if (slashedCommentsProcessed>0 && s_ropt.commentMovingLevel==CM_SINGLE_SLASHED_AND_STARED)
+                goto fini;
             slashedCommentsProcessed ++;
             mm->offset = comBeginOffset;
         } else {
-            warningMessage(ERR_INTERNAL, "A new commentary?");
+            warningMessage(ERR_INTERNAL, "A new comment?");
             goto fini;
         }
     }

@@ -150,27 +150,27 @@ static Lexem constantType(CharacterBuffer *cb, int *ch) {
         PutLexPosition(cb->fileNumber, cb->lineNumber, idcoll, dd);     \
     }
 
-#define CommentaryBegRef(cb) {                                          \
+#define CommentBeginReference(cb) {                                     \
         if (options.taskRegime==RegimeHtmlGenerate && !options.htmlNoColors) { \
             int lcoll;                                                  \
             Position pos;                                               \
             char ttt[TMP_STRING_SIZE];                                  \
-            lcoll = columnPosition(cb) - 1; \
-            fillPosition(&pos, cb->fileNumber, cb->lineNumber, lcoll);   \
+            lcoll = columnPosition(cb) - 1;                             \
+            fillPosition(&pos, cb->fileNumber, cb->lineNumber, lcoll);  \
             sprintf(ttt,"%x/*", cb->fileNumber);                        \
             addTrivialCxReference(ttt, TypeComment, StorageDefault, &pos, UsageDefined); \
         }                                                               \
     }
 
-#define CommentaryEndRef(cb, jdoc) {                                    \
-        if (options.taskRegime==RegimeHtmlGenerate) {                     \
+#define CommentEndReference(cb, jdoc) {                                 \
+        if (options.taskRegime==RegimeHtmlGenerate) {                   \
             int lcoll;                                                  \
             Position pos;                                               \
             char ttt[TMP_STRING_SIZE];                                  \
-            lcoll = columnPosition(cb); \
+            lcoll = columnPosition(cb);                                 \
             fillPosition(&pos, cb->fileNumber, cb->lineNumber, lcoll);  \
             sprintf(ttt,"%x/*", cb->fileNumber);                        \
-            if (!options.htmlNoColors) {                                  \
+            if (!options.htmlNoColors) {                                \
                 addTrivialCxReference(ttt,TypeComment,StorageDefault, &pos, UsageUsed); \
             }                                                           \
             if (jdoc) {                                                 \
@@ -190,7 +190,7 @@ static Lexem constantType(CharacterBuffer *cb, int *ch) {
     }
 
 #define PUT_EMPTY_COMPLETION_ID(cb, dd, len) {                          \
-        putLexToken(IDENT_TO_COMPLETE, &dd);                             \
+        putLexToken(IDENT_TO_COMPLETE, &dd);                            \
         putLexChar(0, &dd);                                             \
         PutLexPosition(cb->fileNumber, cb->lineNumber,                  \
                        columnPosition(cb) - (len), dd);                 \
@@ -498,7 +498,7 @@ bool getLexem(LexemBuffer *lb) {
                     if (ch == '/') {
                         /* a code comment, ignore */
                         ch = getChar(cb);
-                        CommentaryEndRef(cb, 0);
+                        CommentEndReference(cb, 0);
                         goto nextLexem;
                     } else {
                         ungetChar(cb, ch);
@@ -643,7 +643,7 @@ bool getLexem(LexemBuffer *lb) {
                     goto nextLexem;
                 } else if (ch=='*') {
                     bool isJavadoc=false;
-                    CommentaryBegRef(cb);
+                    CommentBeginReference(cb);
                     ch = getChar(cb);
                     if (ch == '&') {
                         /* a program comment, ignore and continue with next lexem */
@@ -660,17 +660,17 @@ bool getLexem(LexemBuffer *lb) {
                     passComment(cb);
                     PutLexLine(cb->lineNumber-line,dd);
                     ch = getChar(cb);
-                    CommentaryEndRef(cb, isJavadoc);
+                    CommentEndReference(cb, isJavadoc);
                     goto nextLexem;
 
                 } else if (ch=='/' && options.cpp_comment) {
                     /*  ******* a // comment ******* */
-                    CommentaryBegRef(cb);
+                    CommentBeginReference(cb);
                     ch = getChar(cb);
                     if (ch == '&') {
                         /* ****** a program comment, ignore */
                         ch = getChar(cb);
-                        CommentaryEndRef(cb, 0);
+                        CommentEndReference(cb, 0);
                         goto nextLexem;
                     }
                     line = cb->lineNumber;
@@ -686,7 +686,7 @@ bool getLexem(LexemBuffer *lb) {
                             ch = getChar(cb);
                         }
                     }
-                    CommentaryEndRef(cb, 0);
+                    CommentEndReference(cb, 0);
                     PutLexLine(cb->lineNumber-line,dd);
                 } else {
                     putLexToken('/', &dd);
@@ -724,7 +724,7 @@ bool getLexem(LexemBuffer *lb) {
                 if (ch == '/') {
                     ch = getChar(cb);
                     if (ch == '*') {
-                        CommentaryBegRef(cb);
+                        CommentBeginReference(cb);
                         ch = getChar(cb);
                         if (ch == '&') {
                             /* ****** a code comment, ignore */
@@ -739,7 +739,7 @@ bool getLexem(LexemBuffer *lb) {
                             passComment(cb);
                             PutLexLine(cb->lineNumber-line,dd);
                             ch = getChar(cb);
-                            CommentaryEndRef(cb, javadoc);
+                            CommentEndReference(cb, javadoc);
                             ch = skipBlanks(cb, ch);
                         }
                     } else {
