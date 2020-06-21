@@ -75,8 +75,25 @@ Ensure(LexemBuffer, can_put_and_get_an_int) {
     next_after_put = buffer.next;
 
     buffer.next = buffer.chars;
-    GetLexInt(integer, buffer.next);
+    integer = getLexInt(&buffer.next);
 
     assert_that(buffer.next, is_equal_to(next_after_put));
     assert_that(integer, is_equal_to(34581));
 }
+
+/* Ensure(LexemBuffer, can_put_and_get_a_compacted_int) { */
+/*     LexemBuffer buffer; */
+/*     int integer; */
+/*     char *next_after_put; */
+
+/*     initLexemBuffer(&buffer, NULL); */
+
+/*     PutLexCompacted(34581, buffer.next); */
+/*     next_after_put = buffer.next; */
+
+/*     buffer.next = buffer.chars; */
+/*     GetLexCompacted(integer, buffer.next); */
+
+/*     assert_that(buffer.next, is_equal_to(next_after_put)); */
+/*     assert_that(integer, is_equal_to(34581)); */
+/* } */

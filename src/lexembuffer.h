@@ -38,6 +38,7 @@ extern void putLexInt(int value, char **writePointer);
 extern unsigned char getLexChar(char **readPointer);
 extern int getLexShort(char **readPointer);
 extern Lexem getLexToken(char **readPointer);
+extern int getLexInt(char **readPointer);
 
 #define GetLexInt(xxx,dd) {                                 \
         xxx = *((unsigned char*)dd++);                      \

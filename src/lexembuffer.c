@@ -50,3 +50,16 @@ int getLexShort(char **readPointer) {
 Lexem getLexToken(char **readPointer) {
     return (Lexem)getLexShort(readPointer);
 }
+
+int getLexInt(char **readPointer) {
+    unsigned int value;
+    value = **(unsigned char**)readPointer;
+    (*readPointer)++;
+    value += 256 * **(unsigned char**)readPointer;
+    (*readPointer)++;
+    value += 256 * 256 * **(unsigned char**)readPointer;
+    (*readPointer)++;
+    value += 256 * 256 * 256 * **(unsigned char**)readPointer;
+    (*readPointer)++;
+    return value;
+}
