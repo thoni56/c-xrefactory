@@ -398,8 +398,8 @@ static void testCxrefCompletionId(Lexem *out_lexem, char *idd, Position *pos) {
 
 static void processLine(void) {
     Lexem lexem;
-    int l,v=0,len;
-    Position pos;
+    int l, v, len; UNUSED len; UNUSED v; UNUSED l;
+    Position pos; UNUSED pos;
 
     //& GetLex(lexem);
     lexem = getLex();
@@ -557,8 +557,8 @@ static void processInclude2(Position *ipos, char pchar, char *iname) {
 static void processInclude(Position *ipos) {
     char *currentLexem, *previousLexem;
     Lexem lexem;
-    int l, v, len;
-    Position pos;
+    int l, v, len; UNUSED len; UNUSED v; UNUSED l;
+    Position pos; UNUSED pos;
 
     //& GetLexA(lexem, previousLexem);
     lexem = getLexA(&previousLexem);
@@ -679,15 +679,15 @@ static S_macroBody *newMacroBody(int msize, int argi, char *name, char *body, ch
 /* Make public only for unittesting */
 void processDefine(bool argFlag) {
     Lexem lexem;
-    int l, v;
     bool bodyReadingFlag = false;
-    int sizei, foundIndex, msize, argCount, ellipsis, len;
+    int sizei, foundIndex, msize, argCount, ellipsis;
     Symbol *pp;
     S_macroArgumentTableElement *maca, mmaca;
     S_macroBody *macroBody;
     Position pos, macpos, ppb1, ppb2, *parpos1, *parpos2, *tmppp;
     char *cc, *mname, *aname, *body, *mm, *ddd;
     char **argNames, *argLinkName;
+    int l, v, len; UNUSED l; UNUSED v; UNUSED len;
 
     sizei= -1;
     msize=0;argCount=0;pp=NULL;macroBody=NULL;mname=body=NULL; // to calm compiler
@@ -876,10 +876,11 @@ void addMacroDefinedByOption(char *opt) {
 
 static void processUnDefine(void) {
     Lexem lexem;
-    int l,v,ii,len;
     char *cc;
     Position pos;
     Symbol dd,*pp,*memb;
+    int ii;
+    int l, v, len; UNUSED len; UNUSED v; UNUSED l;
 
     //& GetLex(lexem);
     lexem = getLex();
@@ -952,9 +953,9 @@ static void genCppIfElseReference(int level, Position *pos, int usage) {
 
 static int cppDeleteUntilEndElse(bool untilEnd) {
     Lexem lexem;
-    int l,v,len;
     int depth;
     Position pos;
+    int l, v, len; UNUSED len; UNUSED v;
 
     depth = 1;
     while (depth > 0) {
@@ -1008,12 +1009,12 @@ static void execCppIf(int deleteSource) {
 
 static void processIfdef(bool isIfdef) {
     Lexem lexem;
-    int l,v;
-    int ii,mm,len;
+    int ii,mm;
     Symbol pp,*memb;
     char *cc;
     Position pos;
     int deleteSrc;
+    int l, v, len; UNUSED len; UNUSED v; UNUSED l;
 
     //& GetLex(lexem);
     lexem = getLex();
@@ -1059,11 +1060,12 @@ endOfFile:;
 /* ********************************* #IF ************************** */
 
 int cexp_yylex(void) {
-    int l,v,par,ii,res,mm,len;
+    int l,par,ii,res,mm;
     Lexem lexem;
     char *cc;
     Symbol dd,*memb;
     Position pos;
+    int v, len; UNUSED len; UNUSED v;
 
     lexem = yylex();
     if (isIdentifierLexem(lexem)) {
@@ -1125,10 +1127,11 @@ static void processIf(void) {
 
 static void processPragma(void) {
     Lexem lexem;
-    int l,v,len,ii;
+    int l,ii;
     char *mname, *fname;
     Position pos;
     Symbol *pp;
+    int v, len; UNUSED len; UNUSED v;
 
     //& GetLex(lexem);
     lexem = getLex();
@@ -1173,8 +1176,9 @@ endOfFile:;
 }
 
 static bool processPreprocessorConstruct(Lexem lexem) {
-    int l,v,len;
+    int l;
     Position pos;
+    int v, len; UNUSED len; UNUSED v;
 
     PassLex(cInput.currentLexem, lexem, l, v, pos, len, 1);
     log_debug("processing cpp-construct '%s' ", s_tokenName[lexem]);
@@ -1317,9 +1321,10 @@ static void prependMacroInput(LexInput *argb) {
 static void expandMacroArgument(LexInput *argb) {
     Symbol sd,*memb;
     char *buf,*previousLexem,*currentLexem,*bcc, *tbcc;
-    int length,ii,line,val,bsize,failedMacroExpansion,len;
+    int length,ii,line,bsize,failedMacroExpansion;
     Lexem lexem;
     Position pos;
+    int len, val; UNUSED val; UNUSED len;
 
     prependMacroInput(argb);
 
@@ -1387,9 +1392,11 @@ static void cxAddCollateReference( char *sym, char *cs, Position *pos ) {
 static void collate(char **albcc, char **abcc, char *buf, int *absize,
                     char **ancc, LexInput *actArgs) {
     char *lbcc,*bcc,*cc,*ccfin,*cc0,*ncc,*occ;
-    int line, val, nlex, len1, bsize, len;
+    int line, val, nlex, len1, bsize;
     Lexem lexem;
-    Position pos,respos;
+    Position respos;
+    Position pos; UNUSED pos;
+    int len; UNUSED len;
 
     ncc = *ancc;
     lbcc = *albcc;
@@ -1477,9 +1484,10 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
 
 static void macArgsToString(char *res, struct lexInput *lb) {
     char *cc, *lcc, *bcc;
-    int v,c,lv,len;
+    int v,c,lv;
     Lexem lexem;
-    Position pos;
+    Position pos; UNUSED pos;
+    int len; UNUSED len;
 
     bcc = res;
     *bcc = 0;
@@ -1511,15 +1519,17 @@ static void macArgsToString(char *res, struct lexInput *lb) {
 /* ************************************************************** */
 
 static void createMacroBody(LexInput *macBody,
-                        S_macroBody *mb,
-                        struct lexInput *actArgs,
-                        int actArgn
-                        ) {
+                            S_macroBody *mb,
+                            struct lexInput *actArgs,
+                            int actArgn
+) {
     char *cc,*cc0,*cfin,*bcc,*lbcc;
-    int i,line,val,len,bsize,lexlen;
+    int i,line,val,len,bsize;
     Lexem lexem;
-    Position pos, hpos;
+    Position hpos;
     char *buf,*buf2;
+    Position pos; UNUSED pos;
+    int lexlen; UNUSED lexlen;
 
     val=0; //compiler
     /* first make ## collations */
@@ -1613,20 +1623,22 @@ static void createMacroBody(LexInput *macBody,
         }                                                               \
     }
 
-static void getActMacroArgument(char *previousLexem,
-                                Lexem *out_lexem,
-                                Position *mpos,
-                                Position **parpos1,
-                                Position **parpos2,
-                                LexInput *actArg,
-                                S_macroBody *mb,
-                                int actArgi
-                                ) {
+static void getActMacroArgument(
+    char *previousLexem,
+    Lexem *out_lexem,
+    Position *mpos,
+    Position **parpos1,
+    Position **parpos2,
+    LexInput *actArg,
+    S_macroBody *mb,
+    int actArgi
+) {
     char *buf,*bcc;
-    int line,val,len, poffset;
-    Position pos;
+    int line,poffset;
     int bufsize,depth;
     Lexem lexem;
+    Position pos; UNUSED pos;
+    int val,len; UNUSED len; UNUSED val;
 
     lexem = *out_lexem;
     bufsize = MACRO_ARG_UNIT_SIZE;
@@ -1692,10 +1704,11 @@ static struct lexInput *getActualMacroArguments(S_macroBody *mb, Position *mpos,
                                                 Position *lparpos) {
     char *previousLexem;
     Lexem lexem;
-    int line,val,len;
+    int line;
     Position pos, ppb1, ppb2, *parpos1, *parpos2;
     int actArgi = 0;
     struct lexInput *actArgs;
+    int val,len; UNUSED len; UNUSED val;
 
     ppb1 = *lparpos;
     ppb2 = *lparpos;
@@ -1765,11 +1778,13 @@ static void addMacroBaseUsageRef(Symbol *mdef) {
 
 static int expandMacroCall(Symbol *mdef, Position *mpos) {
     Lexem lexem;
-    int line,val,len;
+    int line;
     char *previousLexem,*freeBase;
-    Position pos, lparpos;
+    Position lparpos;
     LexInput *actArgs, macroBody;
     S_macroBody *mb;
+    Position pos; UNUSED pos;
+    int val,len; UNUSED len; UNUSED val;
 
     previousLexem = cInput.currentLexem;
     mb = mdef->u.mbody;
@@ -1822,9 +1837,10 @@ endOfFile:
 #ifdef DEBUG
 int lexBufDump(LexemBuffer *lb) {
     char *cc;
-    int v,c,lv,len;
+    int c,lv;
     Lexem lexem;
-    Position pos;
+    Position pos; UNUSED pos;
+    int v,len; UNUSED len; UNUSED v;
 
     c=0;
     fprintf(dumpOut,"\nlexbufdump [start] \n"); fflush(dumpOut);
@@ -1854,10 +1870,11 @@ int lexBufDump(LexemBuffer *lb) {
 /* ************************************************************** */
 int cachedInputPass(int cpoint, char **cfrom) {
     Lexem lexem;
-    int line, val, res, len;
+    int line, res;
     Position pos;
     unsigned lexemLength;
     char *previousLexem, *cto, *ccc;
+    int val, len; UNUSED len; UNUSED val;
 
     assert(cpoint > 0);
     cto = s_cache.cp[cpoint].lbcc;
