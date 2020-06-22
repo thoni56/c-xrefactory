@@ -35,6 +35,26 @@ void putLexInt(int value, char **writePointer) {
         *(*writePointer)++ = tmp%256; tmp /= 256;
     }
 
+void putLexCompacted(int value, char **writePointer) {
+    assert(((unsigned) value)<4194304);
+    if (((unsigned)value) < 128) {
+        **writePointer = ((unsigned char)value);
+        (*writePointer)++;
+    } else if (((unsigned)value) < 16384) {
+        **writePointer = ((unsigned)value)%128+128;
+        (*writePointer)++;
+        **writePointer = ((unsigned)value)/128;
+        (*writePointer)++;
+    } else {
+        **writePointer = ((unsigned)value)%128+128;
+        (*writePointer)++;
+        **writePointer = ((unsigned)value)/128%128+128;
+        (*writePointer)++;
+        **writePointer = ((unsigned)value)/16384;
+        (*writePointer)++;
+    }
+}
+
 unsigned char getLexChar(char **readPointer) {
     unsigned char ch = **readPointer;
     (*readPointer)++;
@@ -66,22 +86,21 @@ int getLexInt(char **readPointer) {
     return value;
 }
 
-void putLexCompacted(int value, char **writePointer) {
-    assert(((unsigned) value)<4194304);
-    if (((unsigned)value) < 128) {
-        **writePointer = ((unsigned char)value);
-        (*writePointer)++;
-    } else if (((unsigned)value) < 16384) {
-        **writePointer = ((unsigned)value)%128+128;
-        (*writePointer)++;
-        **writePointer = ((unsigned)value)/128;
-        (*writePointer)++;
-    } else {
-        **writePointer = ((unsigned)value)%128+128;
-        (*writePointer)++;
-        **writePointer = ((unsigned)value)/128%128+128;
-        (*writePointer)++;
-        **writePointer = ((unsigned)value)/16384;
-        (*writePointer)++;
+int getLexCompacted(char **readPointer) {
+    unsigned value;
+
+    value = **(unsigned char**)readPointer;
+    (*readPointer)++;
+    if (value >= 128) {
+        unsigned secondPart = **(unsigned char**)readPointer;
+        (*readPointer)++;
+        if (secondPart < 128) {
+            value = ((unsigned)value)-128 + 128 * secondPart;
+        } else {
+            unsigned thirdPart = **(unsigned char**)readPointer;
+            (*readPointer)++;
+            value = ((unsigned)value)-128 + 128 * (secondPart-128) + 16384 * thirdPart;
+        }
     }
+    return value;
 }
