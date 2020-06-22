@@ -1,5 +1,7 @@
 #include "lexembuffer.h"
 
+#include "commons.h"
+
 
 void initLexemBuffer(LexemBuffer *buffer, FILE *file) {
     buffer->next = buffer->chars;
@@ -62,4 +64,24 @@ int getLexInt(char **readPointer) {
     value += 256 * 256 * 256 * **(unsigned char**)readPointer;
     (*readPointer)++;
     return value;
+}
+
+void putLexCompacted(int value, char **writePointer) {
+    assert(((unsigned) value)<4194304);
+    if (((unsigned)value) < 128) {
+        **writePointer = ((unsigned char)value);
+        (*writePointer)++;
+    } else if (((unsigned)value) < 16384) {
+        **writePointer = ((unsigned)value)%128+128;
+        (*writePointer)++;
+        **writePointer = ((unsigned)value)/128;
+        (*writePointer)++;
+    } else {
+        **writePointer = ((unsigned)value)%128+128;
+        (*writePointer)++;
+        **writePointer = ((unsigned)value)/128%128+128;
+        (*writePointer)++;
+        **writePointer = ((unsigned)value)/16384;
+        (*writePointer)++;
+    }
 }

@@ -88,10 +88,11 @@ Ensure(LexemBuffer, can_put_and_get_a_compacted_int) {
 
     initLexemBuffer(&buffer, NULL);
 
+    /* Test values across the 128 boundry, 1 or 2 "slots" */
     for (int i=0; i<150; i++) {
         buffer.next = buffer.chars;
 
-        PutLexCompacted(i, buffer.next);
+        putLexCompacted(i, &buffer.next);
         next_after_put = buffer.next;
 
         buffer.next = buffer.chars;
@@ -100,10 +101,12 @@ Ensure(LexemBuffer, can_put_and_get_a_compacted_int) {
         assert_that(buffer.next, is_equal_to(next_after_put));
         assert_that(integer, is_equal_to(i));
     }
-    for (int i=16000; i<17000; i++) {
+
+    /* Test values across the 16384 boundry, 2 or 3 "slots" */
+    for (int i=16300; i<16500; i++) {
         buffer.next = buffer.chars;
 
-        PutLexCompacted(i, buffer.next);
+        putLexCompacted(i, &buffer.next);
         next_after_put = buffer.next;
 
         buffer.next = buffer.chars;
