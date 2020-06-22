@@ -65,46 +65,18 @@ extern int getLexCompacted(char **readPointer);
 /* NORMAL compacted tokens, HUGE compression is below */
 /* Can only store file, line, column < 4194304 */
 
-#define PutLexCompacted(value,dd) {                       \
-        assert(((unsigned) value)<4194304);               \
-        if (((unsigned)value)>=128) {                     \
-            if (((unsigned)value)>=16384) {               \
-                *(dd)++ = ((unsigned)value)%128+128;      \
-                *(dd)++ = ((unsigned)value)/128%128+128;  \
-                *(dd)++ = ((unsigned)value)/16384;        \
-            } else {                                      \
-                *(dd)++ = ((unsigned)value)%128+128;      \
-                *(dd)++ = ((unsigned)value)/128;          \
-            }                                             \
-        } else {                                          \
-            *(dd)++ = ((unsigned char)value);             \
-        }                                                 \
-    }
-
-#define PutLexPosition(cfile,cline,idcoll,dd) {             \
-        assert(cfile>=0 && cfile<MAX_FILES);                \
-        PutLexCompacted(cfile,dd);                          \
-        PutLexCompacted(cline,dd);                          \
-        PutLexCompacted(idcoll,dd);                         \
-        log_trace("push idp %d %d %d",cfile,cline,idcoll);  \
+#define PutLexPosition(cfile,cline,idcoll,dd) {              \
+        assert(cfile>=0 && cfile<MAX_FILES);                 \
+        putLexCompacted(cfile,&dd);                          \
+        putLexCompacted(cline,&dd);                          \
+        putLexCompacted(idcoll,&dd);                         \
+        log_trace("push idp %d %d %d",cfile,cline,idcoll);   \
 }
 
-#define GetLexCompacted(xxx,dd) {                                       \
-        xxx = *((unsigned char*)dd++);                                  \
-        if (((unsigned)xxx)>=128) {                                     \
-            unsigned yyy = *((unsigned char*)dd++);                     \
-            if (yyy >= 128) {                                           \
-                xxx = ((unsigned)xxx)-128 + 128 * (yyy-128) + 16384 * *((unsigned char*)dd++); \
-            } else {                                                    \
-                xxx = ((unsigned)xxx)-128 + 128 * yyy;                  \
-            }                                                           \
-        }                                                               \
-    }
-
-#define GetLexPosition(pos,tmpcc) {             \
-        GetLexCompacted(pos.file,tmpcc);        \
-        GetLexCompacted(pos.line,tmpcc);        \
-        GetLexCompacted(pos.col,tmpcc);         \
+#define GetLexPosition(pos,tmpcc) {                   \
+        pos.file = getLexCompacted(&tmpcc);           \
+        pos.line = getLexCompacted(&tmpcc);           \
+        pos.col = getLexCompacted(&tmpcc);            \
     }
 
 #define NextLexPosition(pos,tmpcc) {            \
