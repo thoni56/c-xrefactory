@@ -67,7 +67,7 @@ extern int getLexInt(char **readPointer);
         assert(((unsigned) value)<4194304);               \
         if (((unsigned)value)>=128) {                     \
             if (((unsigned)value)>=16384) {               \
-                *(dd)++ = ((unsigned)value)%128+128;  \
+                *(dd)++ = ((unsigned)value)%128+128;      \
                 *(dd)++ = ((unsigned)value)/128%128+128;  \
                 *(dd)++ = ((unsigned)value)/16384;        \
             } else {                                      \

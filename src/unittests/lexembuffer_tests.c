@@ -81,19 +81,35 @@ Ensure(LexemBuffer, can_put_and_get_an_int) {
     assert_that(integer, is_equal_to(34581));
 }
 
-/* Ensure(LexemBuffer, can_put_and_get_a_compacted_int) { */
-/*     LexemBuffer buffer; */
-/*     int integer; */
-/*     char *next_after_put; */
+Ensure(LexemBuffer, can_put_and_get_a_compacted_int) {
+    LexemBuffer buffer;
+    int integer;
+    char *next_after_put;
 
-/*     initLexemBuffer(&buffer, NULL); */
+    initLexemBuffer(&buffer, NULL);
 
-/*     PutLexCompacted(34581, buffer.next); */
-/*     next_after_put = buffer.next; */
+    for (int i=0; i<150; i++) {
+        buffer.next = buffer.chars;
 
-/*     buffer.next = buffer.chars; */
-/*     GetLexCompacted(integer, buffer.next); */
+        PutLexCompacted(i, buffer.next);
+        next_after_put = buffer.next;
 
-/*     assert_that(buffer.next, is_equal_to(next_after_put)); */
-/*     assert_that(integer, is_equal_to(34581)); */
-/* } */
+        buffer.next = buffer.chars;
+        GetLexCompacted(integer, buffer.next);
+
+        assert_that(buffer.next, is_equal_to(next_after_put));
+        assert_that(integer, is_equal_to(i));
+    }
+    for (int i=16000; i<17000; i++) {
+        buffer.next = buffer.chars;
+
+        PutLexCompacted(i, buffer.next);
+        next_after_put = buffer.next;
+
+        buffer.next = buffer.chars;
+        GetLexCompacted(integer, buffer.next);
+
+        assert_that(buffer.next, is_equal_to(next_after_put));
+        assert_that(integer, is_equal_to(i));
+    }
+}
