@@ -238,7 +238,7 @@ static TokenNameInitTable tokenNameInitTable3[] = {
 static void initTokensFromTab(TokenNameInitTable *tokenTabIni) {
     char *name;
     int token, not_used, i, languages;
-    Symbol *pp;
+    Symbol *symbol;
 
     for(i=0; tokenTabIni[i].name!=NULL; i++) {
         name = tokenTabIni[i].name;
@@ -248,11 +248,11 @@ static void initTokensFromTab(TokenNameInitTable *tokenTabIni) {
         s_tokenLength[token] = strlen(name);
         if ((isalpha(*name) || *name=='_') && (languages & s_language)) {
             /* looks like a keyword */
-            pp = newSymbolAsKeyword(name, name, s_noPos, token);
-            fillSymbolBits(&pp->bits, AccessDefault, TypeKeyword, StorageNone);
+            symbol = newSymbolAsKeyword(name, name, s_noPos, token);
+            fillSymbolBits(&symbol->bits, AccessDefault, TypeKeyword, StorageNone);
 
             log_trace("adding keyword '%s' to symbol table", name);
-            symbolTableAdd(s_symbolTable, pp, &not_used);
+            symbolTableAdd(s_symbolTable, symbol, &not_used);
         }
     }
 }
