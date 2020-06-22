@@ -8,7 +8,6 @@ char *s_editCommunicationString = "C@$./@mVeDitznAC";
 int s_fileAbortionEnabled;
 
 #define LAST_TOKEN 456          /* To not have to include parsers.h */
-char *s_tokenName[LAST_TOKEN];
 
 char mbMemory[SIZE_mbMemory];
 int mbMemoryi=0;
