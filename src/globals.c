@@ -280,7 +280,7 @@ S_options s_initOpt = {
 #endif
     1,                  // fileNamesCaseSensitive
     TSS_FULL_SEARCH,    // search Tag file specifics
-    JAVA_VERSION_1_3,   // java version
+    JAVA_VERSION_AUTO,  // java version
     "",                 // windel file
     0,                  // following is windel line:col x line-col
     0,
