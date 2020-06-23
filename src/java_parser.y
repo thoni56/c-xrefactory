@@ -863,7 +863,6 @@ CompilationUnit: {
                                                      jsltypeTab);
 
                     fname = fileTable.tab[s_olOriginalFileNumber]->name;
-#if 1 //I_DO_NOT_KNOW, to take also symbols from lastly saved file???
                     if (options.taskRegime == RegimeEditServer
                         && s_ropt.refactoringRegime!=RegimeRefactory) {
                         // this must be before reading 's_olOriginalComFile' !!!
@@ -871,7 +870,7 @@ CompilationUnit: {
                             javaReadSymbolsFromSourceFileNoFreeing(fname, fname);
                         }
                     }
-#endif
+
                     // this must be last reading of this class before parsing
                     if (statb(fileTable.tab[s_olOriginalComFileNumber]->name, &st)==0) {
                         javaReadSymbolsFromSourceFileNoFreeing(
