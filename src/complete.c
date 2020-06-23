@@ -502,36 +502,46 @@ void printCompletions(Completions* c) {
 
 /* *********************************************************************** */
 
-static int isTheSameSymbol(CompletionLine *c1, CompletionLine *c2) {
-    if (strcmp(c1->string, c2->string) != 0) return(0);
+static bool isTheSameSymbol(CompletionLine *c1, CompletionLine *c2) {
+    if (strcmp(c1->string, c2->string) != 0)
+        return false;
     /*fprintf(dumpOut,"st %d %d\n",c1->symType,c2->symType);*/
-    if (c1->symbolType != c2->symbolType) return(0);
-    if (s_language != LANG_JAVA) return(1);
+    if (c1->symbolType != c2->symbolType)
+        return false;
+    if (s_language != LANG_JAVA)
+        return true;
     if (c1->symbolType == TypeStruct) {
         if (c1->symbol!=NULL && c2->symbol!=NULL) {
-            return(strcmp(c1->symbol->linkName, c2->symbol->linkName)==0);
+            return strcmp(c1->symbol->linkName, c2->symbol->linkName)==0;
         }
     }
-    if (c1->symbolType != TypeDefault) return(1);
+    if (c1->symbolType != TypeDefault)
+        return true;
     assert(c1->symbol && c1->symbol->u.type);
     assert(c2->symbol && c2->symbol->u.type);
     /*fprintf(dumpOut,"tm %d %d\n",c1->t->u.type->m,c2->t->u.type->m);*/
-    if (c1->symbol->u.type->kind != c2->symbol->u.type->kind) return(0);
-    if (c1->vFunClass != c2->vFunClass) return(0);
-    if (c2->symbol->u.type->kind != TypeFunction) return(1);
+    if (c1->symbol->u.type->kind != c2->symbol->u.type->kind)
+        return false;
+    if (c1->vFunClass != c2->vFunClass)
+        return false;
+    if (c2->symbol->u.type->kind != TypeFunction)
+        return true;
     /*fprintf(dumpOut,"sigs %s %s\n",c1->t->u.type->u.sig,c2->t->u.type->u.sig);*/
     assert(c1->symbol->u.type->u.m.signature && c2->symbol->u.type->u.m.signature);
-    if (strcmp(c1->symbol->u.type->u.m.signature,c2->symbol->u.type->u.m.signature)) return(0);
-    return(1);
+    if (strcmp(c1->symbol->u.type->u.m.signature,c2->symbol->u.type->u.m.signature))
+        return false;
+    return true;
 }
 
-static int symbolIsInTab(CompletionLine *a, int ai, int *ii, char *s, CompletionLine *t) {
+static bool symbolIsInTab(CompletionLine *a, int ai, int *ii, char *s, CompletionLine *t) {
     int i,j;
     for(i= *ii-1; i>=0 && strcmp(a[i].string,s)==0; i--) ;
     for(j= *ii+1; j<ai && strcmp(a[j].string,s)==0; j++) ;
     /* from a[i] to a[j] symbols have the same names */
-    for (i++; i<j; i++) if (isTheSameSymbol(&a[i],t)) return(1);
-    return(0);
+    for (i++; i<j; i++)
+        if (isTheSameSymbol(&a[i],t))
+            return true;
+    return false;
 }
 
 static int compareCompletionClassName(CompletionLine *c1, CompletionLine *c2) {
@@ -557,43 +567,59 @@ static int completionOrderCmp(CompletionLine *c1, CompletionLine *c2) {
         s2 = strchr(c2->string, '(');
         if (s2 == NULL) l2 = strlen(c2->string);
         else l2 = s2 - c2->string;
-        if (l1 == s_completions.idToProcessLen && l2 != s_completions.idToProcessLen) return(-1);
-        if (l1 != s_completions.idToProcessLen && l2 == s_completions.idToProcessLen) return(1);
+        if (l1 == s_completions.idToProcessLen && l2 != s_completions.idToProcessLen)
+            return(-1);
+        if (l1 != s_completions.idToProcessLen && l2 == s_completions.idToProcessLen)
+            return(1);
         return(strcmp(c1->string, c2->string));
     } else {
-        if (c1->symbolType==TypeKeyword && c2->symbolType!=TypeKeyword) return(1);
-        if (c1->symbolType!=TypeKeyword && c2->symbolType==TypeKeyword) return(-1);
-
-        if (c1->symbolType==TypeNonImportedClass && c2->symbolType!=TypeNonImportedClass) return(1);
-        if (c1->symbolType!=TypeNonImportedClass && c2->symbolType==TypeNonImportedClass) return(-1);
-
-        if (c1->symbolType!=TypeInheritedFullMethod && c2->symbolType==TypeInheritedFullMethod) return(1);
-        if (c1->symbolType==TypeInheritedFullMethod && c2->symbolType!=TypeInheritedFullMethod) return(-1);
+        if (c1->symbolType==TypeKeyword && c2->symbolType!=TypeKeyword)
+            return(1);
+        if (c1->symbolType!=TypeKeyword && c2->symbolType==TypeKeyword)
+            return(-1);
+        if (c1->symbolType==TypeNonImportedClass && c2->symbolType!=TypeNonImportedClass)
+            return(1);
+        if (c1->symbolType!=TypeNonImportedClass && c2->symbolType==TypeNonImportedClass)
+            return(-1);
+        if (c1->symbolType!=TypeInheritedFullMethod && c2->symbolType==TypeInheritedFullMethod)
+            return(1);
+        if (c1->symbolType==TypeInheritedFullMethod && c2->symbolType!=TypeInheritedFullMethod)
+            return(-1);
         if (c1->symbolType==TypeInheritedFullMethod && c2->symbolType==TypeInheritedFullMethod) {
-            if (c1->symbol == NULL) return(1);    // "main"
-            if (c2->symbol == NULL) return(-1);
+            if (c1->symbol == NULL)
+                return(1);    // "main"
+            if (c2->symbol == NULL)
+                return(-1);
             c = compareCompletionClassName(c1, c2);
-            if (c!=0) return(c);
+            if (c!=0)
+                return(c);
         }
-        if (c1->symbolType!=TypeDefault && c2->symbolType==TypeDefault) return(1);
-        if (c1->symbolType==TypeDefault && c2->symbolType!=TypeDefault) return(-1);
-
+        if (c1->symbolType!=TypeDefault && c2->symbolType==TypeDefault)
+            return(1);
+        if (c1->symbolType==TypeDefault && c2->symbolType!=TypeDefault)
+            return(-1);
         // exact matches goes first
         l1 = strlen(c1->string);
         l2 = strlen(c2->string);
-        if (l1 == s_completions.idToProcessLen && l2 != s_completions.idToProcessLen) return(-1);
-        if (l1 != s_completions.idToProcessLen && l2 == s_completions.idToProcessLen) return(1);
-
+        if (l1 == s_completions.idToProcessLen && l2 != s_completions.idToProcessLen)
+            return(-1);
+        if (l1 != s_completions.idToProcessLen && l2 == s_completions.idToProcessLen)
+            return(1);
         if (c1->symbolType==TypeDefault && c2->symbolType==TypeDefault) {
             c = c1->virtLevel - c2->virtLevel;
-            if (c<0) return(-1);
-            if (c>0) return(1);
+            if (c<0)
+                return(-1);
+            if (c>0)
+                return(1);
             c = compareCompletionClassName(c1, c2);
-            if (c!=0) return(c);
+            if (c!=0)
+                return(c);
             // compare storages, fields goes first, then methods
             if (c1->symbol!=NULL && c2->symbol!=NULL) {
-                if (c1->symbol->bits.storage==StorageField && c2->symbol->bits.storage==StorageMethod) return(-1);
-                if (c1->symbol->bits.storage==StorageMethod && c2->symbol->bits.storage==StorageField) return(1);
+                if (c1->symbol->bits.storage==StorageField && c2->symbol->bits.storage==StorageMethod)
+                    return(-1);
+                if (c1->symbol->bits.storage==StorageMethod && c2->symbol->bits.storage==StorageField)
+                    return(1);
             }
         }
         if (c1->symbolType==TypeNonImportedClass && c2->symbolType==TypeNonImportedClass) {
@@ -608,12 +634,13 @@ static int completionOrderCmp(CompletionLine *c1, CompletionLine *c2) {
     }
 }
 
-static int reallyInsert(CompletionLine *a,
-                        int *aip,
-                        char *s,
-                        CompletionLine *t,
-                        int orderFlag
-                        ) {
+static int reallyInsert(
+    CompletionLine *a,
+    int *aip,
+    char *s,
+    CompletionLine *t,
+    int orderFlag
+) {
     int ai;
     int l,r,x,c;
     ai = *aip;
@@ -720,18 +747,21 @@ static void completeName(char *name, CompletionLine *compLine, int orderFlag,
 }
 
 static void searchName(char *name, CompletionLine *compLine, int orderFlag,
-                Completions *ci) {
+                       Completions *ci) {
     int l;
-    if (name == NULL) return;
+    if (name == NULL)
+        return;
 
     if (options.olcxSearchString==NULL || *options.olcxSearchString==0) {
         // old fashioned search
-        if (stringContainsCaseInsensitive(name, ci->idToProcess) == 0) return;
+        if (stringContainsCaseInsensitive(name, ci->idToProcess) == 0)
+            return;
     } else {
         // the new one
         // since 1.6.0 this may not work, because switching to
         // regular expressions
-        if (searchStringFitness(name, strlen(name)) == 0) return;
+        if (searchStringFitness(name, strlen(name)) == 0)
+            return;
     }
     //&compLine->string = name;
     name = compLine->string;

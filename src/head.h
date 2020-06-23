@@ -20,6 +20,7 @@
 
 /* bitwise different */
 typedef enum language {
+    LANG_NONE  = 0,
     LANG_C     = 1<<1,
     LANG_JAVA  = 1<<2,
     LANG_YACC  = 1<<3,

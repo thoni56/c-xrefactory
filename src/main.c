@@ -1924,7 +1924,8 @@ static int computeAndOpenInputFile(void) {
     assert(s_language);
     inputBuff = NULL;
     //!!!! hack for .jar files !!!
-    if (LANGUAGE(LANG_JAR) || LANGUAGE(LANG_CLASS)) return(0);
+    if (LANGUAGE(LANG_JAR) || LANGUAGE(LANG_CLASS))
+        return(0);
     if (s_input_file_name == NULL) {
         assert(0);
         inputIn = stdin;
