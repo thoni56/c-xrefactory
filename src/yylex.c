@@ -1,9 +1,7 @@
 #include "yylex.h"
 
 #include "commons.h"
-#include "lexem.h"
 #include "lexer.h"
-#include "lexembuffer.h"
 #include "globals.h"
 #include "caching.h"
 #include "extract.h"
@@ -11,12 +9,9 @@
 #include "semact.h"
 #include "cxref.h"
 #include "cxfile.h"
-#include "jslsemact.h"
-#include "editor.h"
+#include "jslsemact.h"          /* For s_jsl */
 #include "reftab.h"
-#include "characterreader.h"
-#include "symbol.h"
-#include "jsemact.h"
+#include "jsemact.h"            /* For s_javaStat */
 
 #include "c_parser.x"
 #include "cexp_parser.x"
@@ -24,15 +19,14 @@
 #include "java_parser.x"
 
 #include "parsers.h"
-#include "memory.h"
 #include "protocol.h"
 
 #include "hash.h"
-#include "log.h"
 #include "utils.h"
 #include "macroargumenttable.h"
 #include "filedescriptor.h"
 #include "fileio.h"
+#include "log.h"
 
 
 #define SET_IDENTIFIER_YYLVAL(name, symb, pos) {\

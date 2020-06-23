@@ -1,22 +1,16 @@
 #include "lexer.h"
 
-#include "lexem.h"
-#include "lexembuffer.h"
-
 #include "globals.h"
 #include "commons.h"
-#include "parsers.h"
 #include "cxref.h"
-#include "characterreader.h"
 #include "yylex.h"
 #include "filedescriptor.h"
 
-#include "caching.h"            /* cacheInput() */
+#include "caching.h"            /* s_cache && cacheInput() */
 #include "jslsemact.h"          /* s_jsl */
 
 #include "log.h"
 #include "utils.h"              /* creatingOlcxRefs() */
-
 
 
 void gotOnLineCxRefs(Position *ps ) {
