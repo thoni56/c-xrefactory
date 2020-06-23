@@ -1,13 +1,6 @@
 #ifndef _PROTO_H_
 #define _PROTO_H_
 
-/*
-
-  Structures herein will be subject to the enum strings generation
-  done in the Makefile.common. See description on the wiki.
-
- */
-
 #include "stdinc.h"
 #include <stdbool.h>
 
@@ -63,6 +56,11 @@ typedef enum extractCategory {
     EXTRACT_NONE,
     EXTRACT_ERROR
 } ExtractCategory;
+
+typedef enum pushPullDirection {
+    PULLING_UP = EXTRACT_ERROR+1,
+    PUSHING_DOWN
+} PushPullDirection;
 
 enum miscellaneous {						/* misc. constants */
     DEFAULT_VALUE,
@@ -179,8 +177,6 @@ enum miscellaneous {						/* misc. constants */
     PROFILE_PARTIALLY_APPLICABLE,
     USELESS_FQT_REFS_ALLOWED,
     USELESS_FQT_REFS_DISALLOWED,
-    PULLING_UP,
-    PUSHING_DOWN,
 };
 
 /* *******************      encodings      *************** */

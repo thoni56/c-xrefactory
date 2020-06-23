@@ -4248,7 +4248,7 @@ static void refactoryExpandThissToCastedThisInTheMethod(EditorMarker *point,
     }
 }
 
-static void refactoryPushDownPullUp(EditorMarker *point, int direction, int limitIndex) {
+static void refactoryPushDownPullUp(EditorMarker *point, PushPullDirection direction, int limitIndex) {
     char sourceFqtName[MAX_FILE_NAME_SIZE];
     char superFqtName[MAX_FILE_NAME_SIZE];
     char targetFqtName[MAX_FILE_NAME_SIZE];
