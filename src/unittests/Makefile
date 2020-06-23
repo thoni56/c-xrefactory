@@ -4,7 +4,7 @@ vpath %.so /usr/lib:/usr/local/lib
 
 
 WARNINGS = -Wall -Wno-char-subscripts
-CFLAGS = -g -O0 -MMD -funsigned-char $(WARNINGS) -fPIC -I.. $(COVERAGE) -DHAVE_ZLIB
+CFLAGS = -g -O0 -MMD -funsigned-char $(WARNINGS) -fPIC -I.. -I/usr/include -I/usr/local/include $(COVERAGE) -DHAVE_ZLIB
 
 OBJDIR=.objects
 
@@ -12,7 +12,12 @@ OBJDIR=.objects
 UNITTESTS = $(patsubst %.c,%.so,$(wildcard *_tests.c))
 
 # Assuming Cgreen is installed in "normal" place
+#OS := $(shell uname)
+#ifeq ($(OS),Darwin)
+#CGREEN = -L/usr/local/lib -lcgreen
+#else
 CGREEN = -lcgreen
+#endif
 
 all: $(UNITTESTS)
 	@-[ -x "$$(command -v lcov)" ] && lcov -q -z -d $(OBJDIR)
