@@ -6,6 +6,11 @@
 #include "position.h"
 
 
+/* Sizes in bytes/chars of tokens and identifiers */
+#define TOKEN_SIZE 2
+#define IDENT_TOKEN_SIZE 2
+
+
 typedef struct lexemBuffer {
     char *next;				/* next to read */
     char *end;				/* pointing *after* last valid char */
