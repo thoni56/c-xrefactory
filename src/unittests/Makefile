@@ -39,7 +39,7 @@ filetable_tests.so: $(OBJDIR)/filetable_tests.o $(OBJDIR)/filetable.o $(OBJDIR)/
 symbol_tests.so: $(OBJDIR)/symbol_tests.o $(OBJDIR)/symbol.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-semact_tests.so:  $(OBJDIR)/semact_tests.o $(OBJDIR)/semact.o $(OBJDIR)/protocol.o $(OBJDIR)/hash.o $(OBJDIR)/position.o
+semact_tests.so:  $(OBJDIR)/semact_tests.o $(OBJDIR)/semact.o $(OBJDIR)/protocol.o $(OBJDIR)/hash.o $(OBJDIR)/position.o $(OBJDIR)/log.o
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
 misc_tests.so:  $(OBJDIR)/misc_tests.o $(OBJDIR)/misc.o $(OBJDIR)/protocol.o $(OBJDIR)/type.o
