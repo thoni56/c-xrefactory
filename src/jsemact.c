@@ -1805,7 +1805,7 @@ void javaMethodBodyBeginning(Symbol *method) {
     assert(method->u.type && method->u.type->kind == TypeFunction);
     s_cp.function = method;
     generateInternalLabelReference(-1, UsageDefined);
-    s_count.localVar = 0;
+    counters.localVar = 0;
     javaAddMethodParametersToSymTable(method);
     method->u.type->u.m.signature = strchr(method->linkName, '(');
     s_javaStat->methodModifiers = method->bits.access;

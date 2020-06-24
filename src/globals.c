@@ -30,7 +30,7 @@ Reference s_noRef = {{UsageNone, 0, }, {-1, 0, 0}, NULL};
 int s_progressOffset=0;
 int s_progressFactor=1;
 
-S_counters s_count;
+Counters counters;
 unsigned s_recFindCl = 1;
 
 S_currentlyParsedCl s_cp;

@@ -1675,7 +1675,7 @@ external_definition
         addNewSymbolDef($2.d, StorageExtern, s_symbolTable, UsageDefined);
         tmpWorkMemoryi = $1.d;
         stackMemoryBlockStart();
-        s_count.localVar = 0;
+        counters.localVar = 0;
         assert($2.d->u.type && $2.d->u.type->kind == TypeFunction);
         s_cp.function = $2.d;
         generateInternalLabelReference(-1, UsageDefined);

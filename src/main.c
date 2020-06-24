@@ -2394,7 +2394,7 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
     // following will be displayed only at third pass or so, because
     // s_opt.debug is set only after passing through option processing
     log_debug("Initialisations.");
-    memset(&s_count, 0, sizeof(S_counters));
+    memset(&counters, 0, sizeof(Counters));
     options.includeDirs = NULL;
     SM_INIT(ftMemory);
     FT_ALLOCC(fileTable.tab, MAX_FILES, struct fileItem *);

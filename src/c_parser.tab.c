@@ -3974,7 +3974,7 @@ case 337:
         addNewSymbolDef(yyvsp[0].ast_symbol.d, StorageExtern, s_symbolTable, UsageDefined);
         tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
         stackMemoryBlockStart();
-        s_count.localVar = 0;
+        counters.localVar = 0;
         assert(yyvsp[0].ast_symbol.d->u.type && yyvsp[0].ast_symbol.d->u.type->kind == TypeFunction);
         s_cp.function = yyvsp[0].ast_symbol.d;
         generateInternalLabelReference(-1, UsageDefined);

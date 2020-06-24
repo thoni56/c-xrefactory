@@ -207,26 +207,26 @@ typedef enum language {
 }
 
 #define EXTRACT_COUNTER_SEMACT(rescount) {\
-        rescount = s_count.localSym;\
-        s_count.localSym++;\
+        rescount = counters.localSym;\
+        counters.localSym++;\
 }
 
 #define EXTRACT_LABEL_SEMACT(rescount) {\
-        rescount = s_count.localSym;\
-        generateInternalLabelReference(s_count.localSym, UsageDefined);\
-        s_count.localSym++;\
+        rescount = counters.localSym;\
+        generateInternalLabelReference(counters.localSym, UsageDefined);\
+        counters.localSym++;\
 }
 
 #define EXTRACT_GOTO_SEMACT(rescount) {\
-        rescount = s_count.localSym;\
-        generateInternalLabelReference(s_count.localSym, UsageUsed);\
-        s_count.localSym++;\
+        rescount = counters.localSym;\
+        generateInternalLabelReference(counters.localSym, UsageUsed);\
+        counters.localSym++;\
 }
 
 #define EXTRACT_FORK_SEMACT(rescount) {\
-        rescount = s_count.localSym;\
-        generateInternalLabelReference(s_count.localSym, UsageFork);\
-        s_count.localSym++;\
+        rescount = counters.localSym;\
+        generateInternalLabelReference(counters.localSym, UsageFork);\
+        counters.localSym++;\
 }
 
 #define RESET_REFERENCE_USAGE(rrr,uuu) {\

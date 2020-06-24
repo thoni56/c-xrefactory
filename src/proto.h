@@ -698,14 +698,6 @@ typedef struct currentlyParsedStatics {
     struct symbol	*lastAssignementStruct;
 } S_currentlyParsedStatics;
 
-/* ***************** unique counters  *********************** */
-
-typedef struct counters {
-    int localSym;
-    int localVar;
-    int anonymousClassCounter;
-} S_counters;
-
 
 /* ************************ PRE-PROCESSOR **************************** */
 

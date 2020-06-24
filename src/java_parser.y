@@ -1912,7 +1912,7 @@ ConstructorDeclaration
                         s_cp.function = mh; /* added for set-target-position checks */
                         /* also needed for pushing label reference */
                         generateInternalLabelReference(-1, UsageDefined);
-                        s_count.localVar = 0;
+                        counters.localVar = 0;
                         assert($2.d && $2.d->u.type);
                         javaAddMethodParametersToSymTable($2.d);
                         mh->u.type->u.m.signature = strchr(mh->linkName, '(');

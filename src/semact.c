@@ -481,7 +481,7 @@ void setLocalVariableLinkName(struct symbol *p) {
         len = TMP_STRING_SIZE - tti;
         typeSPrint(ttt+tti, &len, p->u.type, nnn, LINK_NAME_SEPARATOR, 0,1,SHORT_NAME, NULL);
         sprintf(ttt+tti+len,"%c%x-%x-%x-%x", LINK_NAME_SEPARATOR,
-                p->pos.file,p->pos.line,p->pos.col, s_count.localVar++);
+                p->pos.file,p->pos.line,p->pos.col, counters.localVar++);
     } else {
         if (p->bits.storage==StorageExtern && ! options.exactPositionResolve) {
             sprintf(ttt,"%s", p->name);

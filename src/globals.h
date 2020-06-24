@@ -16,6 +16,13 @@ typedef struct stringList {
     struct stringList *next;
 } S_stringList;
 
+/* ***************** unique counters  *********************** */
+typedef struct counters {
+    int localSym;
+    int localVar;
+    int anonymousClassCounter;
+} Counters;
+
 
 extern char s_cwd[MAX_FILE_NAME_SIZE]; /* current working directory */
 extern char s_base[MAX_FILE_NAME_SIZE];
@@ -37,7 +44,7 @@ extern int s_progressFactor;
 extern int s_progressOffset;
 
 extern int s_cxResizingBlocked;
-extern S_counters s_count;
+extern Counters counters;
 extern unsigned s_recFindCl;
 
 extern FILE *errOut;

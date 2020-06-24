@@ -1,7 +1,9 @@
 #ifndef _CACHING_H_
 #define _CACHING_H_
 
-#include "proto.h"
+#include "globals.h"              /* For Counters */
+#include "memory.h"
+
 
 typedef struct cachePoint {
     struct topBlock			*topBlock;

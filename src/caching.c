@@ -274,7 +274,7 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
     tmpWorkMemoryi = 0;
     *s_topBlock = cp->starTopBlock;
     s_javaStat = cp->javaCached;
-    s_count = cp->counts;
+    counters = cp->counts;
     trailDeleteOutOfMemory();
     assert(options.taskRegime);
     if (options.taskRegime==RegimeEditServer && s_currCppPass==1) {
@@ -380,7 +380,7 @@ static void fillCachePoint(CachePoint *cachePoint, S_topBlock *topBlock,
                            S_topBlock starTopBlock, int ppmMemoryi,
                            int cxMemoryi, int mbMemoryi, char *lbcc, short int ibi,
                            short int lineNumber, short int ifDeep, S_cppIfStack *ifstack,
-                           S_javaStat *javaCached, S_counters counts) {
+                           S_javaStat *javaCached, Counters counts) {
     cachePoint->topBlock = topBlock;
     cachePoint->starTopBlock = starTopBlock;
     cachePoint->ppmMemoryi = ppmMemoryi;
@@ -412,7 +412,7 @@ void placeCachePoint(int inputCaching) {
                     ppmMemoryi, cxMemory->i, mbMemoryi,
                     s_cache.lbcc, s_cache.ibi,
                     currentFile.lineNumber, currentFile.ifDepth, currentFile.ifStack,
-                    s_javaStat, s_count
+                    s_javaStat, counters
                     );
     s_cache.cpi ++;
 }

@@ -4508,7 +4508,7 @@ case 176:
                         s_cp.function = mh; /* added for set-target-position checks */
                         /* also needed for pushing label reference */
                         generateInternalLabelReference(-1, UsageDefined);
-                        s_count.localVar = 0;
+                        counters.localVar = 0;
                         assert(yyvsp[-1].ast_symbol.d && yyvsp[-1].ast_symbol.d->u.type);
                         javaAddMethodParametersToSymTable(yyvsp[-1].ast_symbol.d);
                         mh->u.type->u.m.signature = strchr(mh->linkName, '(');

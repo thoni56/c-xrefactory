@@ -81,7 +81,7 @@ Completions s_completions;
 
 char *s_extractStorageName[MAX_STORAGE];
 
-S_counters s_count;
+Counters counters;
 unsigned s_recFindCl = 1;
 
 Position s_paramPosition;
