@@ -72,7 +72,8 @@ void generateInternalLabelReference(int counter, int usage) {
 Symbol *addContinueBreakLabelSymbol(int labn, char *name) {
     Symbol *s;
 
-    if (options.server_operation != OLO_EXTRACT) return NULL;
+    if (options.server_operation != OLO_EXTRACT)
+        return NULL;
 
     s = newSymbolAsLabel(name, name, s_noPos, labn);
     fillSymbolBits(&s->bits, AccessDefault, TypeLabel, StorageAuto);
@@ -86,7 +87,8 @@ void deleteContinueBreakLabelSymbol(char *name) {
     Symbol    ss,*memb;
     int         ii;
 
-    if (options.server_operation != OLO_EXTRACT) return;
+    if (options.server_operation != OLO_EXTRACT)
+        return;
 
     fillSymbolWithLabel(&ss, name, name, s_noPos, 0);
     fillSymbolBits(&ss.bits, AccessDefault, TypeLabel, StorageAuto);
@@ -101,7 +103,8 @@ void genContinueBreakReference(char *name) {
     Symbol    ss,*memb;
     int         ii;
 
-    if (options.server_operation != OLO_EXTRACT) return;
+    if (options.server_operation != OLO_EXTRACT)
+        return;
 
     fillSymbolWithLabel(&ss, name, name, s_noPos, 0);
     fillSymbolBits(&ss.bits, AccessDefault, TypeLabel, StorageAuto);
@@ -235,7 +238,8 @@ static void extSetSetStates(    ProgramGraphNode *p,
     unsigned cpos,oldStateBits;
     for(; p!=NULL; p=p->next) {
     cont:
-        if (p->stateBits == cstate) return;
+        if (p->stateBits == cstate)
+            return;
         oldStateBits = p->stateBits;
         cstate = p->stateBits = (cstate | oldStateBits | INSP_VISITED);
         cpos = p->posBits | INSP_VISITED;
@@ -320,9 +324,12 @@ static ExtractCategory categorizeLocalVariableExtraction0(
                 return(EXTRACT_IN_OUT_ARGUMENT);
             }
         }
-        if (inUsages & INSP_INSIDE_REENTER) return(EXTRACT_IN_OUT_ARGUMENT);
-        if (inUsages & INSP_OUTSIDE_BLOCK) return(EXTRACT_VALUE_ARGUMENT);
-        if (inUsages) return(EXTRACT_LOCAL_VAR);
+        if (inUsages & INSP_INSIDE_REENTER)
+            return(EXTRACT_IN_OUT_ARGUMENT);
+        if (inUsages & INSP_OUTSIDE_BLOCK)
+            return(EXTRACT_VALUE_ARGUMENT);
+        if (inUsages)
+            return(EXTRACT_LOCAL_VAR);
         return(EXTRACT_NONE);
     } else {
         if (    outUsages & INSP_INSIDE_BLOCK
@@ -482,7 +489,7 @@ static void extReClassifyIOVars(ProgramGraphNode *program) {
 
 /* ************************** macro ******************************* */
 
-static void extGenNewMacroCall(ProgramGraphNode *program) {
+static void generateNewMacroCall(ProgramGraphNode *program) {
     char dcla[TMP_STRING_SIZE];
     char decl[TMP_STRING_SIZE];
     char name[TMP_STRING_SIZE];
@@ -550,7 +557,7 @@ static void extGenNewMacroHead(ProgramGraphNode *program) {
     }
 }
 
-static void extGenNewMacroTail(ProgramGraphNode *program) {
+static void generateNewMacroTail(ProgramGraphNode *program) {
     rb[0]=0;
 
     sprintf(rb+strlen(rb),"}\n\n");
@@ -568,7 +575,7 @@ static void extGenNewMacroTail(ProgramGraphNode *program) {
 /* ********************** C function **************************** */
 
 
-static void extGenNewFunCall(ProgramGraphNode *program) {
+static void generateNewFunctionCall(ProgramGraphNode *program) {
     char dcla[TMP_STRING_SIZE];
     char decl[TMP_STRING_SIZE];
     char name[TMP_STRING_SIZE];
@@ -707,7 +714,8 @@ static SymbolReferenceItemList *computeExceptionsThrownBetween(ProgramGraphNode 
 static SymbolReferenceItemList *computeExceptionsThrownInBlock(ProgramGraphNode *program) {
     ProgramGraphNode  *pp, *ee;
     for(pp=program; pp!=NULL && pp->symRef->b.symType!=TypeBlockMarker; pp=pp->next) ;
-    if (pp==NULL) return(NULL);
+    if (pp==NULL)
+        return(NULL);
     for(ee=pp->next; ee!=NULL && ee->symRef->b.symType!=TypeBlockMarker; ee=ee->next) ;
     return(computeExceptionsThrownBetween(pp, ee));
 }
@@ -735,7 +743,7 @@ static void extractSprintThrownExceptions(char *nhead, ProgramGraphNode *program
     }
 }
 
-static void extGenNewFunHead(ProgramGraphNode *program) {
+static void generateNewFunctionHead(ProgramGraphNode *program) {
     char nhead[MAX_EXTRACT_FUN_HEAD_SIZE];
     int nhi, ldclaLen;
     char ldcla[TMP_STRING_SIZE];
@@ -847,7 +855,7 @@ static void extGenNewFunHead(ProgramGraphNode *program) {
     }
 }
 
-static void extGenNewFunTail(ProgramGraphNode *program) {
+static void generateNewFunctionTail(ProgramGraphNode *program) {
     char                dcla[TMP_STRING_SIZE];
     char                decl[TMP_STRING_SIZE];
     char                name[TMP_STRING_SIZE];
@@ -887,7 +895,7 @@ static void extGenNewFunTail(ProgramGraphNode *program) {
 /* ********************** java function **************************** */
 
 
-static char * extJavaNewClassName(void) {
+static char * makeNewClassName(void) {
     static char classname[TMP_STRING_SIZE];
     if (s_extractionName[0]==0) {
         sprintf(classname,"NewClass");
@@ -909,7 +917,7 @@ static void extJavaGenNewClassCall(ProgramGraphNode *program) {
 
     rb[0]=0;
 
-    classname = extJavaNewClassName();
+    classname = makeNewClassName();
 
     // constructor invocation
     sprintf(rb+strlen(rb),"\t\t%s %s = new %s",classname, s_extractionName,classname);
@@ -994,7 +1002,7 @@ static void extJavaGenNewClassHead(ProgramGraphNode *program) {
 
     rb[0]=0;
 
-    classname = extJavaNewClassName();
+    classname = makeNewClassName();
 
     // class header
     sprintf(rb+strlen(rb), "\t");
@@ -1148,7 +1156,7 @@ static void extJavaGenNewClassTail(ProgramGraphNode *program) {
 
 /* ******************************************************************* */
 
-static int extJavaIsNewClassNecesary(ProgramGraphNode *program) {
+static bool extractJavaIsNewClassNecessary(ProgramGraphNode *program) {
     ProgramGraphNode  *p;
     for(p=program; p!=NULL; p=p->next) {
         if (p->classifBits == EXTRACT_OUT_ARGUMENT
@@ -1156,8 +1164,9 @@ static int extJavaIsNewClassNecesary(ProgramGraphNode *program) {
             || p->classifBits == EXTRACT_IN_OUT_ARGUMENT
             ) break;
     }
-    if (p==NULL) return(0);
-    return(1);
+    if (p==NULL)
+        return false;
+    return true;
 }
 
 static void extMakeExtraction(void) {
@@ -1189,7 +1198,7 @@ static void extMakeExtraction(void) {
     extReClassifyIOVars(program);
 
     newClassExt = 0;
-    if (LANGUAGE(LANG_JAVA)) newClassExt =  extJavaIsNewClassNecesary(program);
+    if (LANGUAGE(LANG_JAVA)) newClassExt =  extractJavaIsNewClassNecessary(program);
 
     if (LANGUAGE(LANG_JAVA)) {
         if (newClassExt) s_extractionName = "newClass_";
@@ -1206,23 +1215,23 @@ static void extMakeExtraction(void) {
         fprintf(ccOut,
                 "%%!\n------------------------ The Invocation ------------------------\n!\n");
     }
-    if (options.extractMode==EXTRACT_MACRO) extGenNewMacroCall(program);
+    if (options.extractMode==EXTRACT_MACRO) generateNewMacroCall(program);
     else if (newClassExt) extJavaGenNewClassCall(program);
-    else extGenNewFunCall(program);
+    else generateNewFunctionCall(program);
     if (! options.xref2) {
         fprintf(ccOut,
                 "!\n--------------------------- The Head ---------------------------\n!\n");
     }
     if (options.extractMode==EXTRACT_MACRO) extGenNewMacroHead(program);
     else if (newClassExt) extJavaGenNewClassHead(program);
-    else extGenNewFunHead(program);
+    else generateNewFunctionHead(program);
     if (! options.xref2) {
         fprintf(ccOut,
                 "!\n--------------------------- The Tail ---------------------------\n!\n");
     }
-    if (options.extractMode==EXTRACT_MACRO) extGenNewMacroTail(program);
+    if (options.extractMode==EXTRACT_MACRO) generateNewMacroTail(program);
     else if (newClassExt) extJavaGenNewClassTail(program);
-    else extGenNewFunTail(program);
+    else generateNewFunctionTail(program);
 
     if (options.xref2) {
         ppcGenNumericRecord(PPC_INT_VALUE, s_cp.funBegPosition, "", "\n");
