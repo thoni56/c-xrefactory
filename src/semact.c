@@ -537,8 +537,10 @@ Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, SymbolTable *tab,
     TypeModifier *tt;
     Symbol *pp;
     int ii;
-    if (p == &s_errorSymbol || p->bits.symType==TypeError) return(p);
-    if (p->bits.symType == TypeError) return(p);
+    if (p == &s_errorSymbol || p->bits.symType==TypeError)
+        return(p);
+    if (p->bits.symType == TypeError)
+        return(p);
     assert(p && p->bits.symType == TypeDefault && p->u.type);
     if (p->u.type->kind == TypeFunction && p->bits.storage == StorageDefault) {
         p->bits.storage = StorageExtern;
