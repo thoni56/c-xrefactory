@@ -5184,7 +5184,7 @@ case 286:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genSwitchCaseFork(1);
+                    generateSwitchCaseFork(true);
                     ExtrDeleteContBreakSym(yyvsp[-1].symbol);
                     ExtrDeleteContBreakSym(yyvsp[-2].symbol);
                     generateInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
@@ -5229,7 +5229,7 @@ case 293:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genSwitchCaseFork(0);
+                    generateSwitchCaseFork(false);
                 }
             }
         }

@@ -16,6 +16,6 @@ extern void extractActionOnBlockMarker(void);
 extern void generateInternalLabelReference(int counter, int usage);
 extern void deleteContinueBreakLabelSymbol(char *name);
 extern void genContinueBreakReference(char *name);
-extern void genSwitchCaseFork(int lastFlag);
+extern void generateSwitchCaseFork(bool isLast);
 
 #endif

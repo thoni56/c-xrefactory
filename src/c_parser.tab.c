@@ -3715,19 +3715,19 @@ break;
 case 267:
 #line 1418 "c_parser.y"
 {
-            genSwitchCaseFork(0);
+            generateSwitchCaseFork(false);
     }
 break;
 case 268:
 #line 1421 "c_parser.y"
 {
-            genSwitchCaseFork(0);
+            generateSwitchCaseFork(false);
     }
 break;
 case 269:
 #line 1424 "c_parser.y"
 {
-            genSwitchCaseFork(0);
+            generateSwitchCaseFork(false);
     }
 break;
 case 271:
@@ -3820,7 +3820,7 @@ break;
 case 297:
 #line 1525 "c_parser.y"
 {
-        genSwitchCaseFork(1);
+        generateSwitchCaseFork(true);
         ExtrDeleteContBreakSym(yyvsp[-1].symbol);
         ExtrDeleteContBreakSym(yyvsp[-2].symbol);
         generateInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);

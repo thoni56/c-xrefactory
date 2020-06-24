@@ -2500,7 +2500,7 @@ SwitchStatement
         }   SwitchBlock                     {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genSwitchCaseFork(1);
+                    generateSwitchCaseFork(true);
                     ExtrDeleteContBreakSym($<symbol>7);
                     ExtrDeleteContBreakSym($<symbol>6);
                     generateInternalLabelReference($5.d, UsageDefined);
@@ -2537,7 +2537,7 @@ SwitchBlockStatementGroup
     :   SwitchLabels                            {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    genSwitchCaseFork(0);
+                    generateSwitchCaseFork(false);
                 }
             }
         } BlockStatements						{

@@ -111,19 +111,20 @@ void genContinueBreakReference(char *name) {
     }
 }
 
-void genSwitchCaseFork(int lastFlag) {
-    Symbol    ss,*memb;
-    int         ii;
+void generateSwitchCaseFork(bool isLast) {
+    Symbol symbol, *found_member_pointer;
+    int not_used_int;
 
-    if (options.server_operation != OLO_EXTRACT) return;
+    if (options.server_operation != OLO_EXTRACT)
+        return;
 
-    fillSymbolWithLabel(&ss, SWITCH_LABEL_NAME, SWITCH_LABEL_NAME, s_noPos, 0);
-    fillSymbolBits(&ss.bits, AccessDefault, TypeLabel, StorageAuto);
-    if (symbolTableIsMember(s_symbolTable, &ss, &ii, &memb)) {
-        generateInternalLabelReference(memb->u.labelIndex, UsageDefined);
-        if (! lastFlag) {
-            memb->u.labelIndex++;
-            generateInternalLabelReference(memb->u.labelIndex, UsageFork);
+    fillSymbolWithLabel(&symbol, SWITCH_LABEL_NAME, SWITCH_LABEL_NAME, s_noPos, 0);
+    fillSymbolBits(&symbol.bits, AccessDefault, TypeLabel, StorageAuto);
+    if (symbolTableIsMember(s_symbolTable, &symbol, &not_used_int, &found_member_pointer)) {
+        generateInternalLabelReference(found_member_pointer->u.labelIndex, UsageDefined);
+        if (!isLast) {
+            found_member_pointer->u.labelIndex++;
+            generateInternalLabelReference(found_member_pointer->u.labelIndex, UsageFork);
         }
     }
 }

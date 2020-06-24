@@ -1416,13 +1416,13 @@ statement
 label
     :   label_def_name ':'
     |	CASE constant_expr ':' {
-            genSwitchCaseFork(0);
+            generateSwitchCaseFork(false);
     }
     |	CASE constant_expr ELIPSIS constant_expr ':' {
-            genSwitchCaseFork(0);
+            generateSwitchCaseFork(false);
     }
     |	DEFAULT ':' {
-            genSwitchCaseFork(0);
+            generateSwitchCaseFork(false);
     }
     ;
 
@@ -1523,7 +1523,7 @@ selection_statement
         $<symbol>$ = addContinueBreakLabelSymbol($5.d, BREAK_LABEL_NAME);
         generateInternalLabelReference($5.d, UsageFork);
     } statement					{
-        genSwitchCaseFork(1);
+        generateSwitchCaseFork(true);
         ExtrDeleteContBreakSym($<symbol>7);
         ExtrDeleteContBreakSym($<symbol>6);
         generateInternalLabelReference($5.d, UsageDefined);
