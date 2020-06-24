@@ -35,6 +35,7 @@ extern void log_set_lock(log_LockFn fn);
 extern void log_set_fp(FILE *fp);
 extern void log_set_console_level(int level);
 extern void log_set_file_level(int level);
+extern LogLevel log_get_file_level(void);
 
 extern void log_log(LogLevel level, const char *file, int line, const char *fmt, ...);
 

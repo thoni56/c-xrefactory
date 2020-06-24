@@ -83,6 +83,11 @@ void log_set_file_level(int level) {
 }
 
 
+LogLevel log_get_file_level(void) {
+    return L.file_level;
+}
+
+
 void log_set_console_level(int level) {
   L.console_level = level;
 }
