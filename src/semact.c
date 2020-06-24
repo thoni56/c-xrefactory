@@ -555,32 +555,15 @@ Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, SymbolTable *tab,
         p->u.type = tt;
         tt->typedefSymbol = p;
     }
-    if ((nestingLevel() != 0 && LANGUAGE(LANG_C))
-        || (nestingLevel() != 1 && LANGUAGE(LANG_YACC))) {
+    if (nestingLevel() != 0) {
         // local scope symbol
-        if (! symbolTableIsMember(s_symbolTable,p,&ii,&pp)
-            || (memoryFromPreviousBlock(pp) && IS_DEFINITION_OR_DECL_USAGE(usage))) {
-            pp = p;
-            setLocalVariableLinkName(pp);
-            addSymbol(pp, tab);
-        }
+        setLocalVariableLinkName(p);
     } else if (p->bits.symType==TypeDefault && p->bits.storage==StorageStatic) {
-        if (! symbolTableIsMember(s_symbolTable,p,&ii,&pp)) {
-            pp = p;
-            setStaticFunctionLinkName(pp, usage);
-            addSymbol(pp, tab);
-        }
-    } else {
-        if (! symbolTableIsMember(s_symbolTable,p,&ii,&pp)) {
-            pp = p;
-            if (options.exactPositionResolve) {
-                setGlobalFileDepNames(pp->name, pp, MEMORY_XX);
-            }
-            addSymbol(pp, tab);
-        }
+        setStaticFunctionLinkName(p, usage);
     }
-    addCxReference(pp, &p->pos, usage,noFileIndex, noFileIndex);
-    return(pp);
+    addSymbol(p, tab);
+    addCxReference(p, &p->pos, usage,noFileIndex, noFileIndex);
+    return(p);
 }
 
 static void addInitializerRefs(Symbol *decl,
