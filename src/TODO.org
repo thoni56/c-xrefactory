@@ -6,6 +6,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 (This file is structured for Emacs org-mode...)
 
 * DOING Function-ify lexmac macros
+* TODO Re-fix #13, since it was reverted since it trashed extract for Java with local variables
 * TODO Turn lexembuffer functions into methods on the buffer
 * TODO New refactoring: Extract variable
 * TODO Remove FULL/FAST update, we always want correct info?

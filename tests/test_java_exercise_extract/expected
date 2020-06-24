@@ -1,0 +1,12 @@
+<extraction-dialog type=newMethod_> <str len=<n>>	x = newMethod_(n);
+</str>
+ <str len=<n>>private static int newMethod_(int n) {
+	int i, x, y, t;
+</str>
+ <str len=<n>>
+	return x;
+}
+
+</str>
+  <int val=9 len=<n>></int>
+</extraction-dialog>
