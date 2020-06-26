@@ -9,7 +9,7 @@ OK = echo "Tests in '$(TEST)': $(shell tput setaf 2)Ok$(shell tput sgr0)"
 FAIL = echo "Tests in '$(TEST)': $(shell tput setaf 1)Failed$(shell tput sgr0)"
 
 
-all:
+all: .c-xrefrc
 	@if [ ! -d systemd ] ; then \
 		echo "Tests in \"systemd\": not activated, run 'make init', 'make clean' to deactivate" ; \
 	else \
@@ -34,7 +34,7 @@ systemd:
 	git clone git://anongit.freedesktop.org/systemd/systemd
 
 .c-xrefrc: c-xrefrc.tpl
-	sed -e "s+PWD+$$PWD+g" c-xrefrc.tpl > .c-xrefrc
+	@sed -e "s+PWD+$$PWD+g" c-xrefrc.tpl > .c-xrefrc
 
 clean:
 	rm -rf CXrefs .c-xrefrc systemd systemd.log
