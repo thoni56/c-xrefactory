@@ -82,8 +82,7 @@ static void usage(char *s) {
     fprintf(stdout,"\t-filescaseunsensitive     - file names are case unsensitive\n");
     fprintf(stdout,"\t-csuffixes=<paths>        - list of C files suffixes separated by : (or ;)\n");
     fprintf(stdout,"\t-javasuffixes=<paths>     - list of Java files suffixes separated by : (or ;)\n");
-    fprintf(stdout,"\t-stdop <file>             - read options from <file>\n");
-    fprintf(stdout,"\t-no_cpp_comment           - C++ like comments // not admitted\n");
+    fprintf(stdout,"\t-stdoptions <file>        - read options from <file>\n");
 #if 0
     fprintf(stdout,"\t-olinelen=<n>             - length of lines for on-line output\n");
     fprintf(stdout,"\t-oocheckbits=<n>          - object-oriented resolution for completions\n");
@@ -109,16 +108,18 @@ static void usage(char *s) {
     fprintf(stdout,"\t-debug                    - produce debug output of the execution\n");
     fprintf(stdout,"\t-trace                    - produce trace output of the execution\n");
 #   endif
-    fprintf(stdout,"\t-no_enum                  - don't cross reference enumeration constants\n");
-    fprintf(stdout,"\t-no_mac                   - don't cross reference macros\n");
-    fprintf(stdout,"\t-no_type                  - don't cross reference type names\n");
-    fprintf(stdout,"\t-no_str                   - don't cross reference str. records\n");
-    fprintf(stdout,"\t-no_local                 - don't cross reference local vars\n");
-    fprintf(stdout,"\t-nobrief                  - generate cxrefs in long format\n");
+    fprintf(stdout,"\t-no-classfiles            - Don't collect references from class files\n");
+    fprintf(stdout,"\t-no-cppcomments           - C++ like comments '//' not allowed\n");
+    fprintf(stdout,"\t-no-enums                 - don't cross reference enumeration constants\n");
+    fprintf(stdout,"\t-no-macros                - don't cross reference macros\n");
+    fprintf(stdout,"\t-no-types                 - don't cross reference type names\n");
+    fprintf(stdout,"\t-no-structs               - don't cross reference str. records\n");
+    fprintf(stdout,"\t-no-locals                - don't cross reference local vars\n");
+    fprintf(stdout,"\t-no-brief                 - generate cxrefs in long format\n");
+    fprintf(stdout,"\t-no-stdoptions            - don't read the '~/.c-xrefrc' option file \n");
     fprintf(stdout,"\t-update                   - update old 'refs' reference file\n");
     fprintf(stdout,"\t-compiler                 - path to compiler to use for autodiscovered includes and defines\n");
     fprintf(stdout,"\t-fastupdate               - fast update (modified files only)\n");
-    fprintf(stdout,"\t-no_stdop                 - don't read the '~/.c-xrefrc' option file \n");
     fprintf(stdout,"\t-errors                   - report all error messages\n");
     fprintf(stdout,"\t-version                  - print version information\n");
 }
@@ -857,21 +858,20 @@ static bool processMOption(int *ii, int argc, char **argv) {
 static bool processNOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strcmp(argv[i],"-noincluderefs")==0)       options.noIncludeRefs = true;
-    else if (strcmp(argv[i],"-noincluderefresh")==0)    options.noIncludeRefs=true;
-    else if (strcmp(argv[i],"-nocxfile")==0)            options.noCxFile = 1;
-    else if (strcmp(argv[i],"-no_cpp_comment")==0)      options.cpp_comment = false;
-    else if (strcmp(argv[i],"-nobrief")==0)             options.brief_cxref = false;
-    else if (strcmp(argv[i],"-no_enum")==0)             options.no_ref_enumerator = true;
-    else if (strcmp(argv[i],"-no_mac")==0)              options.no_ref_macro = true;
-    else if (strcmp(argv[i],"-no_type")==0)             options.no_ref_typedef = true;
-    else if (strcmp(argv[i],"-no_str")==0)              options.no_ref_records = true;
-    else if (strcmp(argv[i],"-no_local")==0)            options.no_ref_locals = true;
-    else if (strcmp(argv[i],"-no_cfrefs")==0)           options.allowClassFileRefs = false;
-    else if (strcmp(argv[i],"-no_stdop")==0
-             || strcmp(argv[i],"-nostdop")==0)          options.no_stdop = true;
-    else if (strcmp(argv[i],"-noautoupdatefromsrc")==0) options.javaSlAllowed = 0;
-    else if (strcmp(argv[i],"-noerrors")==0)            options.noErrors=1;
+    else if (strcmp(argv[i],"-no-includerefs")==0) options.noIncludeRefs = true;
+    else if (strcmp(argv[i],"-no-includerefresh")==0) options.noIncludeRefs=true;
+    else if (strcmp(argv[i],"-no-cxfile")==0) options.noCxFile = 1;
+    else if (strcmp(argv[i],"-no-cppcomments")==0) options.cpp_comments = false;
+    else if (strcmp(argv[i],"-no-brief")==0) options.brief_cxref = false;
+    else if (strcmp(argv[i],"-no-enums")==0) options.no_ref_enumerator = true;
+    else if (strcmp(argv[i],"-no-macros")==0) options.no_ref_macro = true;
+    else if (strcmp(argv[i],"-no-types")==0) options.no_ref_typedef = true;
+    else if (strcmp(argv[i],"-no-structs")==0) options.no_ref_records = true;
+    else if (strcmp(argv[i],"-no-locals")==0) options.no_ref_locals = true;
+    else if (strcmp(argv[i],"-no-classfiles")==0) options.allowClassFileRefs = false;
+    else if (strcmp(argv[i],"-no-stdoptions")==0) options.no_stdop = true;
+    else if (strcmp(argv[i],"-no-autoupdatefromsrc")==0) options.javaSlAllowed = 0;
+    else if (strcmp(argv[i],"-no-errors")==0) options.noErrors=1;
     else return false;
     *ii = i;
     return true;

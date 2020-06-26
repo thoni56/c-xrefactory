@@ -58,7 +58,6 @@ apply for refactory mode, right?
 * TODO Cleanup and separate commons, misc and make them independent utility modules
 * TODO Check if the C-part of Yacc grammar is identical, and if so extract it
 * TODO Fix the move_class test
-* TODO Rename some of the options, like -no_str -> -no-structs
 * TODO Why does -refactory read the users default .c-xrefrc?
 * TODO Change all "-no_" options to modern "-no-"
 * TODO Cannot mock structs as arguments like in symbol.mock
@@ -103,6 +102,7 @@ easier to mock and unit test other modules.
 
 * TODO Make Makefile.common look for our patched yacc and if it's not
   available ignore yacc-rules otherwise always run yacc.
+* DONE Rename some of the options, like -no_str -> -no-structs
 * DONE Re-fix #13, since it was reverted since it trashed extract for Java with local variables
 * DONE Extract a lexembuffer module
 * DONE Use enum types wherever possible Storage, SymbolType

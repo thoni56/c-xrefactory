@@ -856,7 +856,6 @@ typedef struct setGetEnv {
     char *value[MAX_SET_GET_OPTIONS];
 } S_setGetEnv;
 
-// TODO all strings inside to static string array
 typedef struct options {
     /* GENERAL */
     int exit;
@@ -984,7 +983,7 @@ typedef struct options {
     char *user;
     bool debug;
     bool trace;
-    bool cpp_comment;
+    bool cpp_comments;
     int c_struct_scope;
     enum olcxOptions server_operation;
     int olcxGotoVal;

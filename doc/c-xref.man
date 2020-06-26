@@ -355,26 +355,26 @@ The output of cross referencing will be in compact form, still readable by
 .I c-xref
 but rather difficult for human reader. This option is default now.
 .TP
-.B "\-nobrief"
+.B "\-no-brief"
 The output of cross referencing will contain "comment" records
 for human readers.
 .TP
-.B "\-no_enum"
+.B "\-no-enums"
 Don't cross reference enumerators.
 .TP
-.B "\-no_mac"
+.B "\-no-macros"
 Don't cross reference macros.
 .TP
-.B "\-no_type"
+.B "\-no-types"
 Don't cross-reference user defined types.
 .TP
-.B "\-no_str"
+.B "\-no-structs"
 Don't cross reference structure records.
 .TP
-.B "\-no_local"
+.B "\-no-locals"
 Don't cross reference function arguments and local variables.
 .TP
-.B "\-no_cfrefs"
+.B "\-no-classfiles"
 Don't get cross references from class files. This can decrease the size of
 your Tag file. However, because informations about class hierarchy are taken
 mainly from class files this option may causes that showed class hierarchies
@@ -535,9 +535,9 @@ If you use -optinclude
 (-stdop) option, and you modify included file, you will need to kill
 and restart c-xref server task in order that changes take effect.
 .TP
-.B \-no_stdop
-This option forbids
-the search of standard option files '.c-xrefrc' and 'C-Xref.opt'.
+.B \-no-stdoptions
+This option prevents
+searching for standard option files '.c-xrefrc' and 'C-Xref.opt'.
 .TP
 .B -mf<n>
 This option sets the memory factor for cross-references. The larger is the
@@ -566,7 +566,7 @@ existing references from the file specified by the
 .I -refs
 option. All old references of the reference file are kept.
 .TP
-.B "\-no_cpp_comment"
+.B "\-no-cppcomments"
 When scanning input files, do not consider the string `\|\c
 .I //\c
 \&\|' as beginning of a comment ended by end of line.

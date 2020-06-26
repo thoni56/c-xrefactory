@@ -640,7 +640,7 @@ bool getLexem(LexemBuffer *lb) {
                     CommentEndReference(cb, isJavadoc);
                     goto nextLexem;
 
-                } else if (ch=='/' && options.cpp_comment) {
+                } else if (ch=='/' && options.cpp_comments) {
                     /*  ******* a // comment ******* */
                     CommentBeginReference(cb);
                     ch = getChar(cb);
