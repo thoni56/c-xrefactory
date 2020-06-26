@@ -43,6 +43,9 @@ are a small as possible. This is why IWYU exists!! It means "Include
 What You Use" and is a Clang related project at
 https://github.com/include-what-you-use/include-what-you-use)
 * TODO Create test to exercise the -1/-2 return cases for getLexA()
+* TODO Bug: when extracting C function including declarations that are required
+by code left outside the extraction, that declaration is moved to the
+extracted function. This should probably trigger "structure error".
 * TODO Refactor int2StringTabs, should not have Init in them
 * TODO Remove opt.xref2 since edit server mode is always called with this, isn't it?
 If so, make xref2 the way c-xref talks if in server mode. But this should also
