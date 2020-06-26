@@ -104,3 +104,14 @@ int getLexCompacted(char **readPointer) {
     }
     return value;
 }
+
+static int nextLexShort(char **readPointer) {
+    int first = *(unsigned char*)(*readPointer);
+    int second = *((unsigned char*)(*readPointer)+1);
+
+    return first + 256*second;
+}
+
+Lexem nextLexToken(char **readPointer) {
+    return (Lexem)nextLexShort(readPointer);
+}

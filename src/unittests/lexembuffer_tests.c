@@ -116,3 +116,15 @@ Ensure(LexemBuffer, can_put_and_get_a_compacted_int) {
         assert_that(integer, is_equal_to(i));
     }
 }
+
+Ensure(LexemBuffer, can_peek_next_token) {
+    char lexems[10];
+    char *lexemPointer = lexems;
+    Lexem any_lexem = CHAR_LITERAL;
+
+    putLexToken(any_lexem, &lexemPointer);
+    lexemPointer = lexems;
+
+    assert_that(nextLexToken(&lexemPointer), is_equal_to(any_lexem));
+    assert_that(lexemPointer, is_equal_to(&lexems));
+}

@@ -1397,7 +1397,7 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
     bcc = *abcc;
     bsize = *absize;
     val=0; // compiler
-    if (NextLexToken(lbcc) == CPP_MAC_ARG) {
+    if (nextLexToken(&lbcc) == CPP_MAC_ARG) {
         bcc = lbcc;
         lexem = getLexToken(&lbcc);
         assert(lexem==CPP_MAC_ARG);
@@ -1415,7 +1415,7 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
             TestPPBufOverflow(bcc,buf,bsize);
         }
     }
-    if (NextLexToken(ncc) == CPP_MAC_ARG) {
+    if (nextLexToken(&ncc) == CPP_MAC_ARG) {
         lexem = getLexToken(&ncc);
         PassLex(ncc, lexem, line, val, pos, len, 0);
         cc = actArgs[val].beginningOfBuffer; ccfin = actArgs[val].endOfBuffer;
@@ -1427,9 +1427,9 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
     }
     /* now collate *lbcc and *cc */
     // berk, do not pre-compute, lbcc can be NULL!!!!
-    //& nlt = NextLexToken(lbcc);
-    if (lbcc!=NULL && cc < ccfin && isIdentifierLexem(NextLexToken(lbcc))) {
-        nlex = NextLexToken(cc);
+    //& nlt = nextLexToken(&lbcc);
+    if (lbcc!=NULL && cc < ccfin && isIdentifierLexem(nextLexToken(&lbcc))) {
+        nlex = nextLexToken(&cc);
         if (isIdentifierLexem(nlex) || nlex == CONSTANT
                     || nlex == LONG_CONSTANT || nlex == FLOAT_CONSTANT
                     || nlex == DOUBLE_CONSTANT ) {
@@ -1570,7 +1570,7 @@ static void createMacroBody(LexInput *macBody,
             TestMBBufOverflow(bcc,len,buf2,bsize);
             memcpy(bcc, actArgs[val].beginningOfBuffer, len);
             bcc += len;
-        } else if (lexem=='#' && cc<cfin && NextLexToken(cc)==CPP_MAC_ARG) {
+        } else if (lexem=='#' && cc<cfin && nextLexToken(&cc)==CPP_MAC_ARG) {
             lexem = getLexToken(&cc);
             PassLex(cc, lexem, line, val, pos, lexlen, 0);
             assert(lexem == CPP_MAC_ARG);

@@ -42,15 +42,7 @@ extern Lexem getLexToken(char **readPointer);
 extern int getLexInt(char **readPointer);
 extern int getLexCompacted(char **readPointer);
 
-
-#define NextLexChar(dd) (*((unsigned char*)dd))
-
-#define NextLexShort(dd) (                      \
-        *((unsigned char*)dd)                   \
-        + 256 * *(((unsigned char*)dd)+1)       \
-    )
-
-#define NextLexToken(dd) (NextLexShort(dd))
+extern Lexem nextLexToken(char **readPointer);
 
 #define NextLexInt(dd) (                            \
         *((unsigned char*)dd)                       \

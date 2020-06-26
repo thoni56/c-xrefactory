@@ -899,7 +899,7 @@ bool getLexem(LexemBuffer *lb) {
                         && (apos >= options.olCursorPos
                             || (ch == -1 && apos+1 == options.olCursorPos))) {
                         log_trace("currentLexemPosition, s_opt.olCursorPos, ABS_FILE_POS, ch == %d, %d, %d, %d",currentLexemPosition, options.olCursorPos, apos, ch);
-                        lastlex = NextLexToken(lexStartDd);
+                        lastlex = nextLexToken(&lexStartDd);
                         if (lastlex == IDENTIFIER) {
                             len = options.olCursorPos-currentLexemPosition;
                             log_trace(":check %s[%d] <-> %d", lexStartDd+TOKEN_SIZE, len,strlen(lexStartDd+TOKEN_SIZE));
@@ -936,7 +936,7 @@ bool getLexem(LexemBuffer *lb) {
                     if (currentLexemPosition <= options.olCursorPos
                         && absoluteFilePosition(cb) >= options.olCursorPos) {
                         gotOnLineCxRefs(ps);
-                        lastlex = NextLexToken(lexStartDd);
+                        lastlex = nextLexToken(&lexStartDd);
                         if (lastlex == IDENTIFIER) {
                             strcpy(s_olstring, lexStartDd+TOKEN_SIZE);
                         }

@@ -6,9 +6,10 @@ There are a *lot* of things to do to make c-xref into modern C.
 (This file is structured for Emacs org-mode...)
 
 * DOING Function-ify lexmac macros
-* TODO Re-fix #13, since it was reverted since it trashed extract for Java with local variables
+* DOING Move XX_ALLOCC and friends to "memory" module
 * TODO Turn lexembuffer functions into methods on the buffer
 * TODO New refactoring: Extract variable
+* TODO Extract function can't extract a boolean function inside an if()
 * TODO Remove FULL/FAST update, we always want correct info?
 There are a number of update modes available from the command line, 'fupdate',
 'updatem', 'update', 'fastupdate' and then there is opt.updateOnlyModifiedFiles
@@ -99,10 +100,10 @@ easier to mock and unit test other modules.
 
 * TODO Make Makefile.common look for our patched yacc and if it's not
   available ignore yacc-rules otherwise always run yacc.
+* DONE Re-fix #13, since it was reverted since it trashed extract for Java with local variables
 * DONE Extract a lexembuffer module
 * DONE Use enum types wherever possible Storage, SymbolType
 Which are left to do?
-* DONE Move XX_ALLOCC and friends to "memory" module
 * DONE Unittests for memory module
 * DONE Test for Java using JRegr sources
 * DONE Remove enum generation by using CPP magic
