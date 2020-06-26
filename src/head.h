@@ -362,7 +362,6 @@ typedef enum language {
     assert(strlen(ftname)+1 < MAX_FILE_NAME_SIZE);\
 }
 
-/*#define LARGE_FILE_POSITION() XREF_HUGE */
 #define LARGE_FILE_POSITION() (MAX_FILES >= 65535)
 
 #define SYMBOL_MENU_FIRST_LINE 0

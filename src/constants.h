@@ -17,8 +17,6 @@
 #define STANDARD_ALIGNMENT sizeof(long int)
 #endif
 
-/* #define XREF_HUGE 1 */
-
 /* ***********************   memory sizes ******************************  */
 
 #define SIZE_TMP_MEM               5000	/* temporary strings, not error messages */
@@ -163,16 +161,9 @@
 #define HTML_DIRECTORY_SEPARATOR '/'               /* directory separator for generated HTML */
 
 /* just constants to be checked, that are data type limits              */
-/* do not modify those constants, rather compile sources with XREF_HUGE */
-#ifdef XREF_HUGE
-/* references are stored in 'int' */
-#define MAX_REFERENCABLE_LINE       2147483647
-#define MAX_REFERENCABLE_COLUMN     2147483647
-#else
 /*  references are compacted (up to 22 bits) */
 #define MAX_REFERENCABLE_LINE       4194304
 #define MAX_REFERENCABLE_COLUMN     4194304
-#endif
 
 /* ************************** PLATFORM SPECIFICS ********************* */
 

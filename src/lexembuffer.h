@@ -35,10 +35,8 @@ extern int getLexCompacted(char **readPointer);
 
 extern Lexem nextLexToken(char **readPointer);
 
-#ifndef XREF_HUGE
-
-/* NORMAL compacted tokens, HUGE compression is below */
-/* Can only store file, line, column < 4194304 */
+/* NORMAL compacted tokens, HUGE mode also existed originally */
+/* Can only store file, line, column < 22 bits */
 
 extern void putLexPosition(int file, int line, int col, char **writePointer);
 extern Position getLexPosition(char **readPointer);
@@ -51,39 +49,6 @@ extern Position nextLexPosition(char **readPointer);
         char *tmptmpcc = tmpcc;                 \
         pos = getLexPosition(&tmptmpcc);        \
     }
-
-#else
-
-/* HUGE only !!!!!, normal compacted encoding is above */
-
-#error HUGE mode is not supported any more, rewrite your application...
-
-#define PutLexFilePos(xxx,dd) PutLexInt(xxx,dd)
-#define PutLexNumPos(xxx,dd) PutLexInt(xxx,dd)
-#define PutLexPosition(cfile,cline,idcoll,dd) {             \
-        PutLexFilePos(cfile,dd);                            \
-        PutLexNumPos(cline,dd);                             \
-        PutLexNumPos(idcoll,dd);                            \
-        log_trace("push idp %d %d %d",cfile,cline,idcoll);  \
-    }
-
-#define GetLexFilePos(xxx,dd) GetLexInt(xxx,dd)
-#define GetLexNumPos(xxx,dd) GetLexInt(xxx,dd)
-#define GetLexPosition(pos,tmpcc) {             \
-        GetLexFilePos(pos.file,tmpcc);          \
-        GetLexNumPos(pos.line,tmpcc);           \
-        GetLexNumPos(pos.coll,tmpcc);           \
-    }
-
-#define NextLexFilePos(dd) NextLexInt(dd)
-#define NextLexNumPos(dd) NextLexInt(dd)
-#define NextLexPosition(pos,tmpcc) {                        \
-        pos.file = NextLexFilePos(tmpcc);                   \
-        pos.line = NextLexNumPos(tmpcc+sizeof(short));      \
-        pos.coll = NextLexNumPos(tmpcc+2*sizeof(short));    \
-    }
-
-#endif
 
 extern void initLexemBuffer(LexemBuffer *buffer, FILE *file);
 
