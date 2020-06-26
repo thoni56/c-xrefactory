@@ -176,8 +176,8 @@ char *yytext;
 
 /* ******************* options ************************** */
 
-S_options options;        // current options
-S_options s_ropt;       // xref -refactory command line options
+Options options;        // current options
+Options s_ropt;       // xref -refactory command line options
 
 char *s_javaThisPackageName = "";
 
@@ -226,7 +226,7 @@ char ppcTmpBuff[MAX_PPC_RECORD_SIZE];
 
 jmp_buf cxmemOverflow;
 
-S_options s_cachedOptions;
+Options s_cachedOptions;
 
 /* ********************************************************************** */
 /*                            real constants                              */
@@ -239,7 +239,7 @@ int s_javaRequiredeAccessibilitiesTable[MAX_REQUIRED_ACCESS+1] = {
     AccessPrivate,
 };
 
-S_options s_initOpt = {
+Options s_initOpt = {
                                 /* GENERAL */
     0,                          // exit
     "gcc", // path to compiler to use for auto-discovering compiler and defines

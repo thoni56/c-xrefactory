@@ -1010,6 +1010,6 @@ typedef struct options {
     struct stringPointerList	*allAllocatedStrings;
     struct memory			pendingMemory;
     char					pendingFreeSpace[SIZE_opiMemory];
-} S_options;
+} Options;
 
 #endif	/* ifndef _PROTO__H */

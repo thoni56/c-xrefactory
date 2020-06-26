@@ -18,7 +18,7 @@ void createOptionString(char **dest, char *text) {
   mock(dest, text);
 }
 
-void copyOptions(S_options *dest, S_options *src) {
+void copyOptions(Options *dest, Options *src) {
   mock(dest, src);
 }
 

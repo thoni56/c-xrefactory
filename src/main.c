@@ -41,7 +41,7 @@ static char oldOnLineClassPath[MAX_OPTION_LEN];
 static time_t oldStdopTime;
 static int oldLanguage;
 static int oldCppPass;
-static S_options s_tmpOptions;
+static Options s_tmpOptions;
 
 static void usage(char *s) {
     fprintf(stdout,"usage: \t\t%s <option>+ ",s);
@@ -318,14 +318,14 @@ void createOptionString(char **optAddress, char *text) {
     strcpy(*optAddress, text);
 }
 
-static void copyOptionShiftPointer(char **lld, S_options *dest, S_options *src) {
+static void copyOptionShiftPointer(char **lld, Options *dest, Options *src) {
     char    **dlld;
     int     offset, localOffset;
     offset = ((char*)dest) - ((char*)src);
     localOffset = ((char*)lld) - ((char*)src);
     dlld = ((char**) (((char*)dest) + localOffset));
     // dlld is dest equivalent of *lld from src
-    //&fprintf(dumpOut,"shifting (%x->%x) [%x]==%x ([%x]==%x), offsets == %d, %d, size==%d\n", src, dest, lld, *lld, dlld, *dlld, offset, localOffset, sizeof(S_options));
+    //&fprintf(dumpOut,"shifting (%x->%x) [%x]==%x ([%x]==%x), offsets == %d, %d, size==%d\n", src, dest, lld, *lld, dlld, *dlld, offset, localOffset, sizeof(Options));
     if (*dlld != *lld) {
         fprintf(dumpOut,"problem %s\n", *lld);
     }
@@ -333,9 +333,9 @@ static void copyOptionShiftPointer(char **lld, S_options *dest, S_options *src) 
     *dlld = *lld + offset;
 }
 
-void copyOptions(S_options *dest, S_options *src) {
+void copyOptions(Options *dest, Options *src) {
     StringPointerList    **ll;
-    memcpy(dest, src, sizeof(S_options));
+    memcpy(dest, src, sizeof(Options));
     for(ll= &src->allAllocatedStrings; *ll!=NULL; ll = &(*ll)->next) {
         copyOptionShiftPointer((*ll)->destination, dest, src);
         copyOptionShiftPointer(((char**)&(*ll)->destination), dest, src);

@@ -185,7 +185,7 @@ static void refactoryUpdateReferences(char *project) {
     char *nargv[MAX_NARGV_OPTIONS_NUM];
     // following woud be too long to be allocated on stack
     //static S_options  savedCachedOptions;
-    static S_options    savedOptions;
+    static Options    savedOptions;
 
     if (s_refactoryUpdateOption==NULL || *s_refactoryUpdateOption==0) {
         writeRelativeProgress(100);
