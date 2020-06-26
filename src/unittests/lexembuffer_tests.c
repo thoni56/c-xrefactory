@@ -128,3 +128,18 @@ Ensure(LexemBuffer, can_peek_next_token) {
     assert_that(nextLexToken(&lexemPointer), is_equal_to(any_lexem));
     assert_that(lexemPointer, is_equal_to(&lexems));
 }
+
+Ensure(LexemBuffer, can_put_and_get_lines) {
+    char lexems[10];
+    char *lexemPointer = lexems;
+    char *pointer_after_put = NULL;
+
+    putLexLines(13, &lexemPointer);
+    pointer_after_put = lexemPointer;
+
+    lexemPointer = lexems;
+
+    assert_that(getLexToken(&lexemPointer), is_equal_to(LINE_TOK));
+    assert_that(getLexToken(&lexemPointer), is_equal_to(13));
+    assert_that(lexemPointer, is_equal_to(pointer_after_put));
+}

@@ -20,21 +20,12 @@ typedef struct lexemBuffer {
 /* Lexer macros for passing compressed tokens to the parser */
 /* In the process of being turned into testable/debuggable functions */
 
-/* Common for both normal and huge cases: */
-
 extern void putLexChar(char ch, char **writePointer);
 extern void putLexShort(int shortValue, char **writePointer);
 extern void putLexToken(Lexem lexem, char **writePointer);
 extern void putLexInt(int value, char **writePointer);
 extern void putLexCompacted(int value, char **writePointer);
-
-#define PutLexLine(lines, dd) {                                \
-        if (lines!=0) {                                        \
-            putLexToken(LINE_TOK, &dd);                        \
-            putLexToken(lines, &dd);                           \
-        }                                                      \
-    }
-
+extern void putLexLines(int lines, char **writePointer);
 
 extern unsigned char getLexChar(char **readPointer);
 extern int getLexShort(char **readPointer);

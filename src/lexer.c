@@ -607,7 +607,7 @@ bool getLexem(LexemBuffer *lb) {
                 }
                 putLexChar(0, &dd);
                 PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
-                PutLexLine(cb->lineNumber-line,dd);
+                putLexLines(cb->lineNumber-line, &dd);
                 ch = getChar(cb);
                 goto nextLexem;
 
@@ -635,7 +635,7 @@ bool getLexem(LexemBuffer *lb) {
 
                     int line = cb->lineNumber;
                     passComment(cb);
-                    PutLexLine(cb->lineNumber-line,dd);
+                    putLexLines(cb->lineNumber-line, &dd);
                     ch = getChar(cb);
                     CommentEndReference(cb, isJavadoc);
                     goto nextLexem;
@@ -664,7 +664,7 @@ bool getLexem(LexemBuffer *lb) {
                         }
                     }
                     CommentEndReference(cb, 0);
-                    PutLexLine(cb->lineNumber-line,dd);
+                    putLexLines(cb->lineNumber-line, &dd);
                 } else {
                     putLexToken('/', &dd);
                     PutLexPosition(cb->fileNumber, cb->lineNumber, lexemStartingColumn, dd);
@@ -677,7 +677,7 @@ bool getLexem(LexemBuffer *lb) {
                     cb->lineNumber ++;
                     cb->lineBegin = cb->next;
                     cb->columnOffset = 0;
-                    PutLexLine(1, dd);
+                    putLexLines(1, &dd);
                     ch = getChar(cb);
                 } else {
                     putLexToken('\\', &dd);
@@ -714,7 +714,7 @@ bool getLexem(LexemBuffer *lb) {
                             ch = '*';
                             int line = cb->lineNumber;
                             passComment(cb);
-                            PutLexLine(cb->lineNumber-line,dd);
+                            putLexLines(cb->lineNumber-line, &dd);
                             ch = getChar(cb);
                             CommentEndReference(cb, javadoc);
                             ch = skipBlanks(cb, ch);

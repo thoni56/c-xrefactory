@@ -16,6 +16,7 @@ void putLexChar(char ch, char **writePointer) {
 }
 
 void putLexShort(int shortValue, char **writePointer) {
+    assert(shortValue <= 65535);
     **writePointer = ((unsigned)shortValue)%256;
     (*writePointer)++;
     **writePointer = ((unsigned)shortValue)/256;
@@ -53,6 +54,11 @@ void putLexCompacted(int value, char **writePointer) {
         **writePointer = ((unsigned)value)/16384;
         (*writePointer)++;
     }
+}
+
+void putLexLines(int lines, char **writePointer) {
+    putLexToken(LINE_TOK, writePointer);
+    putLexToken(lines, writePointer);
 }
 
 unsigned char getLexChar(char **readPointer) {
