@@ -210,13 +210,13 @@ bool getLexem(LexemBuffer *lb) {
     /* first test whether the input is cached */
     if (s_cache.activeCache && includeStackPointer==0 && macroStackIndex==0) {
         cacheInput();
-        s_cache.lexcc = lb->chars;
+        s_cache.lexcc = lb->lexemStream;
     }
 
-    lmax = lb->chars + LEX_BUFF_SIZE - MAX_LEXEM_SIZE;
-    for(dd=lb->chars,cc=lb->next; cc<lb->end; cc++,dd++)
+    lmax = lb->lexemStream + LEX_BUFF_SIZE - MAX_LEXEM_SIZE;
+    for(dd=lb->lexemStream,cc=lb->next; cc<lb->end; cc++,dd++)
         *dd = *cc;
-    lb->next = lb->chars;
+    lb->next = lb->lexemStream;
 
     cb = &lb->buffer;
     ch = getChar(cb);
@@ -960,7 +960,7 @@ bool getLexem(LexemBuffer *lb) {
 
     lb->end = dd;
 
-    if (lb->end == lb->chars)
+    if (lb->end == lb->lexemStream)
         return false;
     else
         return true;

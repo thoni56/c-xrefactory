@@ -109,7 +109,7 @@ static void setCFileConsistency(void) {
 }
 static void setCInputConsistency(void) {
     fillLexInput(&cInput, currentFile.lexBuffer.next, currentFile.lexBuffer.end,
-                 currentFile.lexBuffer.chars, NULL, INPUT_NORMAL);
+                 currentFile.lexBuffer.lexemStream, NULL, INPUT_NORMAL);
 }
 
 char *placeIdent(void) {

@@ -37,6 +37,7 @@ Ensure(Lex, will_signal_false_for_empty_lexbuffer) {
 
 Ensure(Lex, can_scan_a_floating_point_number) {
     LexemBuffer lexBuffer;
+    char *lexemPointer = lexBuffer.lexemStream;
     CharacterBuffer *charBuffer = &lexBuffer.buffer;
     char *inputString = "4.3f";
 
@@ -48,5 +49,5 @@ Ensure(Lex, can_scan_a_floating_point_number) {
     initCharacterBufferFromString(&lexBuffer.buffer, inputString);
 
     assert_that(getLexem(&lexBuffer), is_true);
-    assert_that((unsigned char)lexBuffer.chars[0]+(unsigned char)lexBuffer.chars[1]*256, is_equal_to(DOUBLE_CONSTANT));
+    assert_that(getLexToken(&lexemPointer), is_equal_to(DOUBLE_CONSTANT));
 }

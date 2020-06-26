@@ -23,7 +23,7 @@ Ensure(LexemBuffer, can_put_and_get_a_char) {
     putLexChar('x', &buffer.next);
     next_after_put = buffer.next;
 
-    buffer.next = buffer.chars;
+    buffer.next = buffer.lexemStream;
     ch = getLexChar(&buffer.next);
 
     assert_that(buffer.next, is_equal_to(next_after_put));
@@ -40,7 +40,7 @@ Ensure(LexemBuffer, can_put_and_get_a_short) {
     putLexShort(433, &buffer.next);
     next_after_put = buffer.next;
 
-    buffer.next = buffer.chars;
+    buffer.next = buffer.lexemStream;
     shortValue = getLexShort(&buffer.next);
 
     assert_that(buffer.next, is_equal_to(next_after_put));
@@ -57,7 +57,7 @@ Ensure(LexemBuffer, can_put_and_get_a_token) {
     putLexToken(DOUBLE_CONSTANT, &buffer.next);
     next_after_put = buffer.next;
 
-    buffer.next = buffer.chars;
+    buffer.next = buffer.lexemStream;
     lexem = getLexToken(&buffer.next);
 
     assert_that(buffer.next, is_equal_to(next_after_put));
@@ -74,7 +74,7 @@ Ensure(LexemBuffer, can_put_and_get_an_int) {
     putLexInt(34581, &buffer.next);
     next_after_put = buffer.next;
 
-    buffer.next = buffer.chars;
+    buffer.next = buffer.lexemStream;
     integer = getLexInt(&buffer.next);
 
     assert_that(buffer.next, is_equal_to(next_after_put));
@@ -90,12 +90,12 @@ Ensure(LexemBuffer, can_put_and_get_a_compacted_int) {
 
     /* Test values across the 128 boundry, 1 or 2 "slots" */
     for (int i=0; i<150; i++) {
-        buffer.next = buffer.chars;
+        buffer.next = buffer.lexemStream;
 
         putLexCompacted(i, &buffer.next);
         next_after_put = buffer.next;
 
-        buffer.next = buffer.chars;
+        buffer.next = buffer.lexemStream;
         integer = getLexCompacted(&buffer.next);
 
         assert_that(buffer.next, is_equal_to(next_after_put));
@@ -104,12 +104,12 @@ Ensure(LexemBuffer, can_put_and_get_a_compacted_int) {
 
     /* Test values across the 16384 boundry, 2 or 3 "slots" */
     for (int i=16300; i<16500; i++) {
-        buffer.next = buffer.chars;
+        buffer.next = buffer.lexemStream;
 
         putLexCompacted(i, &buffer.next);
         next_after_put = buffer.next;
 
-        buffer.next = buffer.chars;
+        buffer.next = buffer.lexemStream;
         integer = getLexCompacted(&buffer.next);
 
         assert_that(buffer.next, is_equal_to(next_after_put));

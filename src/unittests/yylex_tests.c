@@ -44,13 +44,13 @@ AfterEach(Yylex) {}
 
 static void setup_lexBuffer_for_reading(void *data) {
     /* Need to insert lexem-codes first ? */
-    currentFile.lexBuffer.chars[0] = '\275';
-    currentFile.lexBuffer.chars[1] = '\001';
+    currentFile.lexBuffer.lexemStream[0] = '\275';
+    currentFile.lexBuffer.lexemStream[1] = '\001';
     /* TODO: WTF This is mostly guesswork, no idea if this is how they are connected... */
-    strcpy(&currentFile.lexBuffer.chars[2], currentFile.lexBuffer.buffer.chars);
-    *strchr(&currentFile.lexBuffer.chars[2], ' ') = '\0';
-    currentFile.lexBuffer.next = currentFile.lexBuffer.chars;
-    currentFile.lexBuffer.end = strchr(currentFile.lexBuffer.chars, '\0');
+    strcpy(&currentFile.lexBuffer.lexemStream[2], currentFile.lexBuffer.buffer.chars);
+    *strchr(&currentFile.lexBuffer.lexemStream[2], ' ') = '\0';
+    currentFile.lexBuffer.next = currentFile.lexBuffer.lexemStream;
+    currentFile.lexBuffer.end = strchr(currentFile.lexBuffer.lexemStream, '\0');
     currentFile.lexBuffer.index = 2;
 }
 
