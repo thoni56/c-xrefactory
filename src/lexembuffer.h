@@ -44,14 +44,6 @@ extern int getLexCompacted(char **readPointer);
 
 extern Lexem nextLexToken(char **readPointer);
 
-#define NextLexInt(dd) (                            \
-        *((unsigned char*)dd)                       \
-    + 256 * *(((unsigned char*)dd)+1)               \
-    + 256 * 256 * *(((unsigned char*)dd)+2)         \
-    + 256 * 256 * 256 * *(((unsigned char*)dd)+3)   \
-    )
-
-
 #ifndef XREF_HUGE
 
 /* NORMAL compacted tokens, HUGE compression is below */
