@@ -1427,7 +1427,6 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
     }
     /* now collate *lbcc and *cc */
     // berk, do not pre-compute, lbcc can be NULL!!!!
-    //& nlt = nextLexToken(&lbcc);
     if (lbcc!=NULL && cc < ccfin && isIdentifierLexem(nextLexToken(&lbcc))) {
         nlex = nextLexToken(&cc);
         if (isIdentifierLexem(nlex) || nlex == CONSTANT
