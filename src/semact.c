@@ -533,10 +533,9 @@ static void setStaticFunctionLinkName( Symbol *p, int usage ) {
 
 
 Symbol *addNewSymbolDef(Symbol *p, unsigned theDefaultStorage, SymbolTable *tab,
-                          int usage) {
+                        int usage) {
     TypeModifier *tt;
-    Symbol *pp;
-    int ii;
+
     if (p == &s_errorSymbol || p->bits.symType==TypeError)
         return(p);
     if (p->bits.symType == TypeError)
