@@ -137,3 +137,10 @@ static int nextLexShort(char **readPointer) {
 Lexem nextLexToken(char **readPointer) {
     return (Lexem)nextLexShort(readPointer);
 }
+
+extern Position nextLexPosition(char **readPointer) {
+    char *tmptmpcc = *readPointer;
+    Position pos;
+    pos = getLexPosition(&tmptmpcc);
+    return pos;
+}

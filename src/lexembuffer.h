@@ -43,6 +43,10 @@ extern Lexem nextLexToken(char **readPointer);
 extern void putLexPosition(int file, int line, int col, char **writePointer);
 extern Position getLexPosition(char **readPointer);
 
+
+/* TODO: cannot replace NextLexPosition yet, as the only call has "bcc+1" as dd */
+extern Position nextLexPosition(char **readPointer);
+
 #define NextLexPosition(pos,tmpcc) {            \
         char *tmptmpcc = tmpcc;                 \
         pos = getLexPosition(&tmptmpcc);        \
