@@ -156,7 +156,7 @@ Ensure(LexemBuffer, can_put_and_get_position) {
 
     lexemPointer = lexems;
 
-    GetLexPosition(read_position, lexemPointer);
+    read_position = getLexPosition(&lexemPointer);
     assert_that(positionsAreEqual(read_position, initial_position));
     assert_that(lexemPointer, is_equal_to(pointer_after_put));
 }

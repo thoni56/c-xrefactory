@@ -41,16 +41,11 @@ extern Lexem nextLexToken(char **readPointer);
 /* Can only store file, line, column < 4194304 */
 
 extern void putLexPosition(int file, int line, int col, char **writePointer);
-
-#define GetLexPosition(pos,tmpcc) {                   \
-        pos.file = getLexCompacted(&tmpcc);           \
-        pos.line = getLexCompacted(&tmpcc);           \
-        pos.col = getLexCompacted(&tmpcc);            \
-    }
+extern Position getLexPosition(char **readPointer);
 
 #define NextLexPosition(pos,tmpcc) {            \
         char *tmptmpcc = tmpcc;                 \
-        GetLexPosition(pos, tmptmpcc);          \
+        pos = getLexPosition(&tmptmpcc);        \
     }
 
 #else

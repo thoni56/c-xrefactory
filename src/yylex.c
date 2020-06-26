@@ -269,10 +269,10 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileN
         if (lexem > MULTI_TOKENS_START) {                               \
             if (isIdentifierLexem(lexem)){                              \
                 input = strchr(input, '\0')+1;                          \
-                GetLexPosition((pos),input);                            \
+                (pos) = getLexPosition(&input);                         \
             } else if (lexem == STRING_LITERAL) {                       \
                 input = strchr(input, '\0')+1;                          \
-                GetLexPosition((pos),input);                            \
+                (pos) = getLexPosition(&input);                         \
             } else if (lexem == LINE_TOK) {                             \
                 lineval = getLexToken(&input);                          \
                 if (linecount) {                                        \
@@ -281,27 +281,27 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileN
                 }                                                       \
             } else if (lexem == CONSTANT || lexem == LONG_CONSTANT) {   \
                 val = getLexInt(&input);                                \
-                GetLexPosition((pos),input);                            \
+                (pos) = getLexPosition(&input);                         \
                 length = getLexInt(&input);                             \
             } else if (lexem == DOUBLE_CONSTANT || lexem == FLOAT_CONSTANT) { \
-                GetLexPosition((pos),input);                            \
+                (pos) = getLexPosition(&input);                         \
                 length = getLexInt(&input);                             \
             } else if (lexem == CPP_MAC_ARG) {                          \
                 val = getLexInt(&input);                                \
-                GetLexPosition((pos),input);                            \
+                (pos) = getLexPosition(&input);                         \
             } else if (lexem == CHAR_LITERAL) {                         \
                 val = getLexInt(&input);                                \
-                GetLexPosition((pos),input);                            \
+                (pos) = getLexPosition(&input);                         \
                 length = getLexInt(&input);                             \
             }                                                           \
         } else if (isPreprocessorToken(lexem)) {                        \
-            GetLexPosition((pos),input);                                \
+            (pos) = getLexPosition(&input);                             \
         } else if (lexem == '\n' && (linecount)) {                      \
-            GetLexPosition((pos),input);                                \
+            (pos) = getLexPosition(&input);                             \
             traceNewline(1);                                            \
             currentFile.lineNumber ++;                                  \
         } else {                                                        \
-            GetLexPosition((pos),input);                                \
+            (pos) = getLexPosition(&input);                             \
         }                                                               \
     }
 

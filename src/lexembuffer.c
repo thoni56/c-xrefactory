@@ -119,6 +119,14 @@ int getLexCompacted(char **readPointer) {
     return value;
 }
 
+extern Position getLexPosition(char **readPointer) {
+    Position pos;
+    pos.file = getLexCompacted(readPointer);
+    pos.line = getLexCompacted(readPointer);
+    pos.col = getLexCompacted(readPointer);
+    return pos;
+}
+
 static int nextLexShort(char **readPointer) {
     int first = *(unsigned char*)(*readPointer);
     int second = *((unsigned char*)(*readPointer)+1);
