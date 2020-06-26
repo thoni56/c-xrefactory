@@ -116,8 +116,8 @@ lexem.h: c_parser.tab.h
 clean:
 	-make -C $(ROOTDIR)/lib/zlib clean
 	-make -C unittests clean
-	-rm -rf $(OBJDIR) c-xref
 	-make -C ../tests clean
+	-rm -rf $(OBJDIR) c-xref *.gcov
 
 ########################################################################
 test:
