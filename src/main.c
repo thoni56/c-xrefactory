@@ -481,7 +481,6 @@ static bool processBOption(int *ii, int argc, char **argv) {
 static bool processCOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strcmp(argv[i],"-c_struct_scope")==0)  options.c_struct_scope=1;
     else if (strcmp(argv[i],"-cacheincludes")==0)   options.cacheIncludes=1;
     else if (strcmp(argv[i],"-crlfconversion")==0)  options.eolConversion|=CR_LF_EOL_CONVERSION;
     else if (strcmp(argv[i],"-crconversion")==0)    options.eolConversion|=CR_EOL_CONVERSION;

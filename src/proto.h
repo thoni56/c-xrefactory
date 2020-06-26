@@ -984,7 +984,6 @@ typedef struct options {
     bool debug;
     bool trace;
     bool cpp_comments;
-    int c_struct_scope;
     enum olcxOptions server_operation;
     int olcxGotoVal;
     char *originalDir;

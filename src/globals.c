@@ -377,7 +377,6 @@ S_options s_initOpt = {
     true,                       /* cpp_comment allowed? */
     0,
     0,
-    0,
     "",
 
     false,                      /* no locals */
