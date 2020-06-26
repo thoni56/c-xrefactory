@@ -64,7 +64,7 @@ YYLEX_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(YYLEX_DEPENDENCIES))
 yylex_tests.so: $(OBJDIR)/yylex_tests.o $(OBJDIR)/yylex.o $(YYLEX_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)
 
-LEXEMBUFFER_DEPENDENCIES = characterreader
+LEXEMBUFFER_DEPENDENCIES = characterreader position
 LEXEMBUFFER_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(LEXEMBUFFER_DEPENDENCIES))
 lexembuffer_tests.so: $(OBJDIR)/lexembuffer_tests.o $(OBJDIR)/lexembuffer.o $(LEXEMBUFFER_DEPS)
 	gcc -shared -o $@ $^ $(COVERAGE) $(CGREEN)

@@ -61,6 +61,14 @@ void putLexLines(int lines, char **writePointer) {
     putLexToken(lines, writePointer);
 }
 
+void putLexPosition(int file, int line, int column, char **writePointer) {
+    assert(file>=0 && file<MAX_FILES);
+    putLexCompacted(file, writePointer);
+    putLexCompacted(line, writePointer);
+    putLexCompacted(column, writePointer);
+}
+
+
 unsigned char getLexChar(char **readPointer) {
     unsigned char ch = **readPointer;
     (*readPointer)++;

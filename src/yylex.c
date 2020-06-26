@@ -787,7 +787,7 @@ void processDefine(bool argFlag) {
                 ddd = body+sizei;
                 putLexToken(CPP_MAC_ARG, &ddd);
                 putLexInt(s_macroArgumentTable.tab[foundIndex]->order, &ddd);
-                PutLexPosition(pos.file, pos.line,pos.col,ddd);
+                putLexPosition(pos.file, pos.line,pos.col, &ddd);
                 sizei = ddd - body;
             } else {
                 if (lexem==IDENT_TO_COMPLETE
@@ -1456,7 +1456,7 @@ static void collate(char **albcc, char **abcc, char *buf, int *absize,
             bcc += strlen(bcc);
             assert(*bcc==0);
             bcc++;
-            PutLexPosition(respos.file,respos.line,respos.col,bcc);
+            putLexPosition(respos.file,respos.line,respos.col, &bcc);
         }
     }
     TestPPBufOverflow(bcc,buf,bsize);
@@ -1579,7 +1579,7 @@ static void createMacroBody(LexInput *macBody,
             macArgsToString(bcc, &actArgs[val]);
             len = strlen(bcc)+1;
             bcc += len;
-            PutLexPosition(hpos.file, hpos.line, hpos.col, bcc);
+            putLexPosition(hpos.file, hpos.line, hpos.col, &bcc);
             if (len >= MACRO_UNIT_SIZE-15) {
                 errorMessage(ERR_INTERNAL,"size of #macro_argument exceeded MACRO_UNIT_SIZE");
             }

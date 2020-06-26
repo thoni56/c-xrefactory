@@ -143,3 +143,20 @@ Ensure(LexemBuffer, can_put_and_get_lines) {
     assert_that(getLexToken(&lexemPointer), is_equal_to(13));
     assert_that(lexemPointer, is_equal_to(pointer_after_put));
 }
+
+Ensure(LexemBuffer, can_put_and_get_position) {
+    char lexems[10];
+    char *lexemPointer = lexems;
+    char *pointer_after_put = NULL;
+    Position initial_position = {41, 42, 43};
+    Position read_position;
+
+    putLexPosition(initial_position.file, initial_position.line, initial_position.col, &lexemPointer);
+    pointer_after_put = lexemPointer;
+
+    lexemPointer = lexems;
+
+    GetLexPosition(read_position, lexemPointer);
+    assert_that(positionsAreEqual(read_position, initial_position));
+    assert_that(lexemPointer, is_equal_to(pointer_after_put));
+}

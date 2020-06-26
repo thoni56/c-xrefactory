@@ -40,13 +40,7 @@ extern Lexem nextLexToken(char **readPointer);
 /* NORMAL compacted tokens, HUGE compression is below */
 /* Can only store file, line, column < 4194304 */
 
-#define PutLexPosition(cfile,cline,idcoll,dd) {              \
-        assert(cfile>=0 && cfile<MAX_FILES);                 \
-        putLexCompacted(cfile,&dd);                          \
-        putLexCompacted(cline,&dd);                          \
-        putLexCompacted(idcoll,&dd);                         \
-        log_trace("push idp %d %d %d",cfile,cline,idcoll);   \
-}
+extern void putLexPosition(int file, int line, int col, char **writePointer);
 
 #define GetLexPosition(pos,tmpcc) {                   \
         pos.file = getLexCompacted(&tmpcc);           \
