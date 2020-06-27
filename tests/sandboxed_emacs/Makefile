@@ -12,17 +12,16 @@ TARGET_PATH=`python -c "import os,sys; print(os.path.realpath(os.path.expanduser
 # Where to log interaction (pipe-spy adds its PID to the filename to avoid clashes)
 LOGFILE=logfile
 
-# Environment variables for the emacs process so that pipe-spy/c-xref-spy can pick them up
-ENV=HOME="$(PWD)" PATH="$(PWD)/bin":"$(PATH)"
+# Environment variables for the pipe-spy/c-xref-spy to pick them up
+ENV=HOME="$(PWD)" PATH="$(PWD)/bin:$(PATH)"
 TARGET=TARGET=$(TARGET_PATH)
 LOG=LOGFILE=$(CURDIR)/$(LOGFILE)
 
+all:
+	@echo "Make 'spy' or 'pure'"
 
-# Run a sandboxed emacs
-all: bin/c-xref clean
-	@if [ ! -e .emacs.d/el-get/c-xrefactory ] ; then \
-		ln -s $(CURDIR)/../../ .emacs.d/el-get/c-xrefactory ; \
-	fi
+# Run a sandboxed emacs using the spy to log interaction
+spy: clean bin/c-xref .emacs/el-get/c-xrefactory
 	@$(ENV) $(TARGET) $(LOG) emacs -l $(PWD)/.emacs.d/init.el -l "$(PWD)"/.emacs.d/override-el-get-update.el --eval '(setq c-xref-home-directory "$(PWD)/bin/")' --eval '(setq c-xref-debug-mode t)' --eval '(setq c-xref-debug-preserve-tmp-files t)' ../../src/cxref.c
 	@echo Interaction saved in $(LOGFILE)
 
@@ -30,8 +29,16 @@ bin/c-xref: pipe-spy
 	-rm bin/c-xref
 	ln -s $(CURDIR)/pipe-spy bin/c-xref
 
+.emacs.d/el-get/c-xrefactory:
+	ln -s $(CURDIR)/../../ .emacs.d/el-get/c-xrefactory ; \
+
 pipe-spy: pipe-spy.c Makefile
 	$(CC) -o pipe-spy -g -Wall -DTARGET=\"$(TARGET_PATH)\" pipe-spy.c
 
 clean:
 	-rm $(LOGFILE)* /tmp/c-xrefx*.log
+
+pure: .emacs.d/el-get/c-xrefactory
+	-rm bin/c-xref
+	ln -s $(CURDIR)/../../src/c-xref bin/c-xref
+	$(ENV) emacs -l $(PWD)/.emacs.d/init.el -l "$(PWD)"/.emacs.d/override-el-get-update.el --eval '(setq c-xref-home-directory "$(PWD)/bin/")' --eval '(setq c-xref-debug-mode t)' --eval '(setq c-xref-debug-preserve-tmp-files t)' ../../src/cxref.c
