@@ -10,7 +10,6 @@
 include ../Makefile.boilerplate
 
 CXREF = ../../src/c-xref
-EDIT_SERVER_DRIVER = ../../utils/edit_server_driver.py
 
 $(TEST): clean
 	@# First do the extract

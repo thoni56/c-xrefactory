@@ -15,6 +15,9 @@ TEST = $(shell basename '$(CURDIR)')
 
 all: .c-xrefrc $(TEST)
 
+# All tests that uses a edit server driver should use this
+EDIT_SERVER_DRIVER = ../../utils/edit_server_driver.py
+
 # If the test requires a .c-xrefrc for test directory you need to
 # generate one. The .c-xrefrc requires absolute paths, and to work in
 # any directory, a .c-xrefrc can be generated from a common

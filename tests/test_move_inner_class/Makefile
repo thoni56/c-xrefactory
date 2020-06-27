@@ -6,7 +6,6 @@
 include ../Makefile.boilerplate
 
 CXREF = ../../src/c-xref
-EDIT_SERVER_DRIVER = ../../utils/edit_server_driver.py
 EDIT_SERVER_DRIVER_COMMAND=$(EDIT_SERVER_DRIVER) commands.input "$(CURDIR)" buffer
 
 $(TEST): CXrefs

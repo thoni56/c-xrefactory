@@ -3,7 +3,6 @@
 include ../Makefile.boilerplate
 
 CXREF = ../../src/c-xref -xrefrc $(CURDIR)/.c-xrefrc
-EDIT_SERVER_DRIVER = ../../utils/edit_server_driver.py
 
 $(TEST): CXrefs
 	@$(EDIT_SERVER_DRIVER) commands.input $(CURDIR) buffer > output.tmp
