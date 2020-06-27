@@ -7,10 +7,13 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 * DOING Function-ify lexmac macros
 * DOING Move XX_ALLOCC and friends to "memory" module
-* TODO Create testcases for all jexercise and cexercise steps
+* DOING Create testcases for all jexercise and cexercise steps
+** DONE F6 to completion()
+** TODO <next step>
 * TODO Turn lexembuffer functions into methods on the buffer
 get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
 When do we point to something not a lexembuffer?
+* TODO Remove zlib from repo, point to it's repo instead
 * TODO New refactoring: Extract variable
 * TODO Extract function can't extract a boolean function inside an if()
 * TODO Remove FULL/FAST update, we always want correct info?
