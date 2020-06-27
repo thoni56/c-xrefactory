@@ -1,4 +1,5 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -task_regime_server -xrefrc .c-xrefrc -p CURDIR -olcxpush -olmark=623 -olcursor=623 CURDIR/cexercise/index.c -log=log -trace -o buffer
+../../src/c-xref -xrefactory-II -log=log -trace -o buffer -task_regime_server
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxpush -olmark=623 -olcursor=623 CURDIR/cexercise/index.c
 end-of-options
 
 <sync>

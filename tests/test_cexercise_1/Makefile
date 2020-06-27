@@ -2,11 +2,10 @@
 
 include ../Makefile.boilerplate
 
-CXREF = ../../src/c-xref -xrefrc $(CURDIR)/.c-xrefrc -xrefactory-II -p $(CURDIR)
+CXREF = ../../src/c-xref -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR)
 COMMAND = $(CXREF)
 
 $(TEST): CXrefs
-	@echo > buffer
 	@-$(EDIT_SERVER_DRIVER) commands.input $(CURDIR) buffer > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	@cmp output expected ; \
