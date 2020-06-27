@@ -1,0 +1,11 @@
+../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -task_regime_server -xrefrc .c-xrefrc -p CURDIR -olcxpush -olmark=623 -olcursor=623 CURDIR/cexercise/index.c -log=log -trace -o buffer
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=13 col=5 len=<n>>CURDIR/cexercise/completions.c</position-lc>
+</goto>
+
+-exit
+end-of-options
+
