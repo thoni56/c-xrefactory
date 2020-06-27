@@ -8,7 +8,7 @@ COMMAND = $(CXREF)
 $(TEST): CXrefs
 	@echo > buffer
 	@-$(EDIT_SERVER_DRIVER) commands.input $(CURDIR) buffer > output.tmp
-	@sed -e "s+$(CURDIR)+CURDIR+g" -e "s/len=[0-9]*/len=<n>/g" output.tmp > output
+	@$(NORMALIZE) output.tmp > output
 	@cmp output expected ; \
 	if [ $$? -ne 0 ] ; then \
 		$(FAIL) ; \

@@ -8,7 +8,7 @@ CXREF = ../../src/c-xref -xrefrc $(CURDIR)/.c-xrefrc
 
 $(TEST):
 	@$(CXREF) test_source > output.tmp
-	@sed -e "s/len=[0-9]*/len=<n>/g" -e "s#$(CURDIR)#CURDIR#g" output.tmp > output
+	@$(NORMALIZE) output.tmp > output
 	@grep -q stubs-32.h output > /dev/null ; \
 	if [ $$? -eq 0 ] ; then \
 		$(FAIL) ; \

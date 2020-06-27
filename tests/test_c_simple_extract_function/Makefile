@@ -14,10 +14,10 @@ CXREF = ../../src/c-xref
 $(TEST): clean
 	@# First do the extract
 	@-$(EDIT_SERVER_DRIVER) commands1.input $(CURDIR) buffer1 > output1.tmp
-	@sed -e "s+$(CURDIR)+CURDIR+g" -e "s/len=[0-9]*/len=<n>/g" output1.tmp > output
+	@$(NORMALIZE) output1.tmp > output
 	@# Then a rename - as the editor would
 	@-$(EDIT_SERVER_DRIVER) commands2.input $(CURDIR) buffer2 > output2.tmp
-	@sed -e "s+$(CURDIR)+CURDIR+g" -e "s/len=[0-9]*/len=<n>/g" output2.tmp >> output
+	@$(NORMALIZE) output2.tmp >> output
 	@diff output expected > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
 		$(FAIL) ; \

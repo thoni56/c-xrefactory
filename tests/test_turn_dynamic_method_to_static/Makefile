@@ -9,7 +9,7 @@ EDIT_SERVER_DRIVER_COMMAND=$(EDIT_SERVER_DRIVER) commands.input "$(CURDIR)" buff
 
 $(TEST): CXrefs
 	@$(EDIT_SERVER_DRIVER_COMMAND) > output.tmp
-	@sed -e "s+$(CURDIR)+CURDIR+g" -e "s/len=[0-9]*/len=<n>/g" output.tmp > output
+	@$(NORMALIZE) output.tmp > output
 	@diff output expected > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
 		$(FAIL) ; \

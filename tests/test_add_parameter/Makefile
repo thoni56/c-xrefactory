@@ -14,7 +14,7 @@ CXREF = ../../src/c-xref
 $(TEST): clean
 	@# First do the extract
 	@-$(EDIT_SERVER_DRIVER) commands1.input $(CURDIR) buffer1 > output1.tmp
-	@sed -e "s+$(CURDIR)+CURDIR+g" -e "s/len=[0-9]*/len=<n>/g" output1.tmp > output
+	@$(NORMALIZE) output1.tmp > output
 	@diff -B output expected > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
 		$(FAIL) ; \

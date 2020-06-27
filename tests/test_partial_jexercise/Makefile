@@ -14,7 +14,7 @@ $(TEST):
 	@export SOURCEPATH=$(CURDIR)/jexercise ; $(CXREF) -refactory -rfct-del-param -olcxparnum=1 $(CXREFRC) -olcursor=866 $(CURDIR)/jexercise/com/xrefactory/refactorings/MoveMethod.java $(OUTPUT)
 	@export SOURCEPATH=$(CURDIR)/jexercise ; $(CXREF) -refactory -rfct-move-param -olcxparnum=1 -olcxparnum2=2 $(CXREFRC) -olcursor=866 $(CURDIR)/jexercise/com/xrefactory/refactorings/MoveMethod.java $(OUTPUT)
 	@export SOURCEPATH=$(CURDIR)/jexercise ; $(CXREF) -refactory -rfct-rename -renameto=tototo $(CXREFRC) -olcursor=866 $(CURDIR)/jexercise/com/xrefactory/refactorings/MoveMethod.java $(OUTPUT)
-	@sed -e "s+$(CURDIR)+CURDIR+g" -e "s/len=[0-9]*/len=<n>/g" output.tmp | grep -v progress > output
+	@$(NORMALIZE) output.tmp | grep -v progress > output
 	@diff output expected > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
 		$(FAIL) ; \
