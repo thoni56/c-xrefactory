@@ -695,14 +695,11 @@ static void generateRefsFromMemory(int fileOrder) {
 }
 
 void genReferenceFile(bool updating, char *filename) {
-    char    fileName[MAX_FILE_NAME_SIZE];
-    char    *dirname;
-    int     i;
-
     if (!updating)
-        removeFile(fileName);
+        removeFile(filename);
 
-    recursivelyCreateFileDirIfNotExists(fileName);
+    recursivelyCreateFileDirIfNotExists(filename);
+
     if (options.referenceFileCount <= 1) {
         /* single reference file */
         openInOutReferenceFiles(updating, filename);
@@ -716,21 +713,24 @@ void genReferenceFile(bool updating, char *filename) {
         closeReferenceFile(filename);
     } else {
         /* several reference files */
-        dirname = filename;
+        char referenceFileName[MAX_FILE_NAME_SIZE];
+        char *dirname = filename;
+        int i;
+
         createDirIfNotExists(dirname);
         genPartialFileTabRefFile(updating,dirname,REFERENCE_FILENAME_FILES,
                                  writeFileIndexItem, writeFileSourceIndexItem);
         genPartialFileTabRefFile(updating,dirname,REFERENCE_FILENAME_CLASSES,
                                  genClassHierarchyItems, NULL);
         for (i=0; i<options.referenceFileCount; i++) {
-            sprintf(fileName, "%s%s%04d", dirname, REFERENCE_FILENAME_PREFIX, i);
-            assert(strlen(fileName) < MAX_FILE_NAME_SIZE-1);
-            openInOutReferenceFiles(updating, fileName);
+            sprintf(referenceFileName, "%s%s%04d", dirname, REFERENCE_FILENAME_PREFIX, i);
+            assert(strlen(referenceFileName) < MAX_FILE_NAME_SIZE-1);
+            openInOutReferenceFiles(updating, referenceFileName);
             genCxFileHead();
             scanCxFile(fullScanFunctionSequence);
             //&refTabMap4(&referenceTable, genPartialRefItem, i);
             generateRefsFromMemory(i);
-            closeReferenceFile(fileName);
+            closeReferenceFile(referenceFileName);
         }
     }
 }
