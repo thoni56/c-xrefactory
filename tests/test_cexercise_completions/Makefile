@@ -1,4 +1,4 @@
-# Automated tests for C exercise step 2: complete completions()
+# Automated tests for C exercise : completions()
 
 include ../Makefile.boilerplate
 
@@ -28,6 +28,3 @@ CXrefs: .c-xrefrc
 
 clean:
 	rm -rf CXrefs .c-xrefrc
-
-gdb:
-	gdb --args $(COMMAND)
