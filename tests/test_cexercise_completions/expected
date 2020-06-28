@@ -51,7 +51,7 @@ tm_isdst   :int tm_isdst
 tm_gmtoff  :Default tm_gmtoff
 tm_zone    :char *tm_zone</all-completions>
 
--xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1232 CURDIR/cexercise/completions.c
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1231 CURDIR/cexercise/completions.c
 end-of-options
 
 <sync>
@@ -77,7 +77,7 @@ tm_isdst   :int tm_isdst
 tm_gmtoff  :Default tm_gmtoff
 tm_zone    :char *tm_zone</all-completions>
 
--xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1362 CURDIR/cexercise/completions.c
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1361 CURDIR/cexercise/completions.c
 end-of-options
 
 <sync>
@@ -86,7 +86,7 @@ end-of-options
 </goto>
 <single-completion len=<n>>assert</single-completion>
 
--xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1436 CURDIR/cexercise/completions.c
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1435 CURDIR/cexercise/completions.c
 end-of-options
 
 <sync>
@@ -102,7 +102,7 @@ tm_isdst   :int tm_isdst
 tm_gmtoff  :Default tm_gmtoff
 tm_zone    :char *tm_zone</all-completions>
 
--xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1520 CURDIR/cexercise/completions.c
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1519 CURDIR/cexercise/completions.c
 end-of-options
 
 <sync>
@@ -111,7 +111,7 @@ end-of-options
 </goto>
 <single-completion len=<n>>l!=NULL; </single-completion>
 
--xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1553 CURDIR/cexercise/completions.c
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1552 CURDIR/cexercise/completions.c
 end-of-options
 
 <sync>
