@@ -13,8 +13,8 @@ CXREF = ../../src/c-xref
 
 $(TEST): clean
 	@# First do the extract
-	@-$(EDIT_SERVER_DRIVER) commands1.input $(CURDIR) buffer1 > output1.tmp
-	@$(NORMALIZE) output1.tmp > output
+	@-$(EDIT_SERVER_DRIVER) commands.input $(CURDIR) buffer > output.tmp
+	@$(NORMALIZE) output.tmp > output
 	@diff -B output expected > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
 		$(FAIL) ; \
@@ -30,7 +30,7 @@ trace: CXREF+=-trace
 trace: $(TEST)
 
 clean:
-	@-rm -rf CXrefs output.log output.tmp output buffer
+	@-rm -rf CXrefs output.log output.tmp output buffer log
 
 gdb:
 	@$(EDIT_SERVER_DRIVER) commands.input "$(CURDIR)" buffer 15 > output.tmp &

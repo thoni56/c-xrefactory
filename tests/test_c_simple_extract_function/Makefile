@@ -11,6 +11,7 @@ include ../Makefile.boilerplate
 
 CXREF = ../../src/c-xref
 
+# TODO: merge the two commands.input into one sequence
 $(TEST): clean
 	@# First do the extract
 	@-$(EDIT_SERVER_DRIVER) commands1.input $(CURDIR) buffer1 > output1.tmp
