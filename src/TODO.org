@@ -61,8 +61,8 @@ apply for refactory mode, right?
 * TODO Cleanup and separate commons, misc and make them independent utility modules
 * TODO Check if the C-part of Yacc grammar is identical, and if so extract it
 * TODO Fix the move_class test
-* TODO Why does -refactory read the users default .c-xrefrc?
-* TODO Change all "-no_" options to modern "-no-"
+* TODO Why does -refactory read the users default .c-xrefrc? And why does -no-stdoptions
+prevent reading explicit -xrefrc options?
 * TODO Cannot mock structs as arguments like in symbol.mock
 We need to change pos to *pos if that's gonna work
 * TODO Rename reftab.[ch] to cxreftab.[ch]? Or s_cxreftab to s_reftab?
@@ -105,6 +105,7 @@ easier to mock and unit test other modules.
 
 * TODO Make Makefile.common look for our patched yacc and if it's not
   available ignore yacc-rules otherwise always run yacc.
+* DONE Change all "-no_" options to modern "-no-"
 * DONE Rename some of the options, like -no_str -> -no-structs
 * DONE Re-fix #13, since it was reverted since it trashed extract for Java with local variables
 * DONE Extract a lexembuffer module
