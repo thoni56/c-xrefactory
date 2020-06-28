@@ -1,0 +1,24 @@
+../../src/c-xref -xrefactory-II -log=log -trace -o buffer -task_regime_server
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1190 CURDIR/cexercise/completions.c
+end-of-options
+
+<sync>
+<error len=<n>>'CURDIR' project options not found
+</error>
+<error len=<n>>'CURDIR' project options not found
+</error>
+<all-completions nofocus=0 len=<n>>tm_sec     :int tm_sec
+tm_min     :int tm_min
+tm_hour    :int tm_hour
+tm_mday    :int tm_mday
+tm_mon     :int tm_mon
+tm_year    :int tm_year
+tm_wday    :int tm_wday
+tm_yday    :int tm_yday
+tm_isdst   :int tm_isdst
+tm_gmtoff  :Default tm_gmtoff
+tm_zone    :char *tm_zone</all-completions>
+
+-exit
+end-of-options
+
