@@ -24,18 +24,18 @@ enum fqtCompletion {
 
 
 typedef struct completionSymInfo {
-    struct completions	*res;
-    enum type symType;
+    struct completions *res;
+    Type symType;
 } S_completionSymInfo;
 
 typedef struct completionSymFunInfo {
-    struct completions	*res;
-    unsigned storage;
+    struct completions *res;
+    Storage storage;
 } S_completionSymFunInfo;
 
 typedef struct completionFqtMapInfo {
-    struct completions  *res;
-    int					completionType;
+    struct completions *res;
+    int completionType;
 } S_completionFqtMapInfo;
 
 
