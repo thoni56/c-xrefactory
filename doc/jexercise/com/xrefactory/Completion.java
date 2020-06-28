@@ -6,10 +6,9 @@ import java.awt.event.*;
 import javax.swing.*;
 
 /*
- Check completion on following demonstration lines!  Each
- demonstration line is preceded by one line of explaining
- commentary. Put cursor at the end of demonstration lines and invoke
- completion by pressing F8.
+ Check completion on following demonstration lines! Each demonstration
+ line is preceded by one line of explaining comment. Put cursor at the
+ end of demonstration lines and invoke completion by pressing F8.
 */
 
 class Completion extends JFrame {
