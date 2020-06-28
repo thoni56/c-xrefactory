@@ -1,4 +1,0 @@
-../../src/c-xref -xrefactory-II -log=log -trace -o buffer -task_regime_server
--xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=514 CURDIR/cexercise/completions.c
-<sync>
-<exit>

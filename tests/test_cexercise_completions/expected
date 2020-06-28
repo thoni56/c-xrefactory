@@ -1,0 +1,134 @@
+../../src/c-xref -xrefactory-II -log=log -trace -o buffer -task_regime_server
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxpush -olmark=623 -olcursor=623 CURDIR/cexercise/index.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=13 col=5 len=<n>>CURDIR/cexercise/completions.c</position-lc>
+</goto>
+
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=427 CURDIR/cexercise/completions.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=18 col=4 len=<n>>CURDIR/cexercise/completions.c</position-lc>
+</goto>
+<single-completion len=<n>>completions</single-completion>
+
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=514 CURDIR/cexercise/completions.c
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=22 col=4 len=<n>>CURDIR/cexercise/completions.c</position-lc>
+</goto>
+<single-completion len=<n>>sprintf</single-completion>
+
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=551 CURDIR/cexercise/completions.c
+end-of-options
+
+<sync>
+<all-completions nofocus=0 len=<n>>fpos_t          :typedef struct _G_fpos_t  fpos_t
+fprintf         :int fprintf(FILE *__stream, char *__format, ...)
+fputc           :int fputc(int __c, FILE *__stream)
+fputc_unlocked  :int fputc_unlocked(int __c, FILE *__stream)
+fputs           :int fputs(char *__s, FILE *__stream)</all-completions>
+
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1190 CURDIR/cexercise/completions.c
+end-of-options
+
+<sync>
+<all-completions nofocus=0 len=<n>>tm_sec     :int tm_sec
+tm_min     :int tm_min
+tm_hour    :int tm_hour
+tm_mday    :int tm_mday
+tm_mon     :int tm_mon
+tm_year    :int tm_year
+tm_wday    :int tm_wday
+tm_yday    :int tm_yday
+tm_isdst   :int tm_isdst
+tm_gmtoff  :Default tm_gmtoff
+tm_zone    :char *tm_zone</all-completions>
+
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1232 CURDIR/cexercise/completions.c
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=47 col=4 len=<n>>CURDIR/cexercise/completions.c</position-lc>
+</goto>
+<single-completion len=<n>>fput</single-completion>
+<bottom-information beep=1 len=<n>>Multiple completions</bottom-information>
+
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1316 CURDIR/cexercise/completions.c
+end-of-options
+
+<sync>
+<all-completions nofocus=0 len=<n>>tm_sec     :int tm_sec
+tm_min     :int tm_min
+tm_hour    :int tm_hour
+tm_mday    :int tm_mday
+tm_mon     :int tm_mon
+tm_year    :int tm_year
+tm_wday    :int tm_wday
+tm_yday    :int tm_yday
+tm_isdst   :int tm_isdst
+tm_gmtoff  :Default tm_gmtoff
+tm_zone    :char *tm_zone</all-completions>
+
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1362 CURDIR/cexercise/completions.c
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=55 col=4 len=<n>>CURDIR/cexercise/completions.c</position-lc>
+</goto>
+<single-completion len=<n>>assert</single-completion>
+
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1436 CURDIR/cexercise/completions.c
+end-of-options
+
+<sync>
+<all-completions nofocus=0 len=<n>>tm_sec     :int tm_sec
+tm_min     :int tm_min
+tm_hour    :int tm_hour
+tm_mday    :int tm_mday
+tm_mon     :int tm_mon
+tm_year    :int tm_year
+tm_wday    :int tm_wday
+tm_yday    :int tm_yday
+tm_isdst   :int tm_isdst
+tm_gmtoff  :Default tm_gmtoff
+tm_zone    :char *tm_zone</all-completions>
+
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1520 CURDIR/cexercise/completions.c
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=67 col=0 len=<n>>CURDIR/cexercise/completions.c</position-lc>
+</goto>
+<single-completion len=<n>>l!=NULL; </single-completion>
+
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 -olinelen=236 -olmark=0 -olcursor=1553 CURDIR/cexercise/completions.c
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=68 col=22 len=<n>>CURDIR/cexercise/completions.c</position-lc>
+</goto>
+<single-completion len=<n>>l=l->next) {</single-completion>
+
+-xrefrc CURDIR/.c-xrefrc -p CURDIR -olcxpop -olmark=0 -olcursor=1362 CURDIR/cexercise/completions.c
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=20 col=5 len=<n>>CURDIR/cexercise/index.c</position-lc>
+</goto>
+<bottom-information len=<n>>stack is now empty</bottom-information>
+
+-exit
+end-of-options
+
