@@ -1,4 +1,4 @@
-# Automated tests for C exercise step 2: complete completions()
+# Automated tests for C exercise step 3: complete sprintf
 
 include ../Makefile.boilerplate
 
