@@ -58,7 +58,6 @@ S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
         } else {                                                        \
             cch = * ((unsigned char*)ccc); ccc++;                       \
         }                                                               \
-        /*fprintf(dumpOut,"getting char *%x < %x == '0x%x'\n",ccc,ffin,cch);fflush(dumpOut);*/ \
     }
 
 
@@ -1044,6 +1043,7 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
     union constantPoolUnion *constantPool;
     Position pos;
     char tmpBuff[TMP_BUFF_SIZE];
+    int major, minor;           /* Version numbers of class file format */
 
     ENTER();
     memb->bits.javaFileIsLoaded = 1;
@@ -1087,8 +1087,9 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
         goto finish;
     }
     assert(cval == 0xcafebabe);
-    GetU4(cval, ccc, ffin, &currentFile.lexBuffer.buffer);
-    log_trace("version is %d", cval);
+    GetU2(minor, ccc, ffin, &currentFile.lexBuffer.buffer);
+    GetU2(major, ccc, ffin, &currentFile.lexBuffer.buffer);
+    log_trace("version of '%s' is %d.%d", name, major, minor);
     constantPool = cfReadConstantPool(&ccc, &ffin, &currentFile.lexBuffer.buffer, &cpSize);
     GetU2(access, ccc, ffin, &currentFile.lexBuffer.buffer);
     memb->bits.access = access;
