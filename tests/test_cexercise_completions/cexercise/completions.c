@@ -1,5 +1,4 @@
 #include <stdio.h>
-#include <time.h>
 #include <assert.h>
 
 /*
@@ -34,7 +33,7 @@ void completions() {
     ;
 
     // completion list
-    fp
+    a
     ;
     /* In the proposals list:
          <return>            - select the completion.
@@ -59,7 +58,7 @@ void completions() {
     ;
 
     // works inside complex expressions
-    (*(5+(struct tm **)0x13e5f)[0]).
+    (*(5+(struct mytm **)0x13e5f)[0]).
     ;
 
     // macro names completions
