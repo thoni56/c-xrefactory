@@ -6,7 +6,7 @@
 (c-xref-completion)
 (search-forward "    sp")
 (c-xref-completion)
-(search-forward "    fpr")
+(search-forward "    fp")
 (c-xref-completion)
 ;; Can't use anything but the first completion, because there seems to
 ;; be no way to move point to other line in completion buffer when in

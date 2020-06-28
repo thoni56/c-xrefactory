@@ -23,7 +23,7 @@ void completions() {
     ;
 
     // completion list
-    fprintf
+    fpos_t
     ;
     /* In the proposals list:
          <return>            - select the completion.
