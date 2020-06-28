@@ -565,7 +565,7 @@ void addSourcePathsCut(void) {
 
 
 static char *canItBeJavaBinPath(char *path) {
-    static char res[MAX_FILE_NAME_SIZE];
+    static char filename[MAX_FILE_NAME_SIZE];
     char *np;
     struct stat st;
     int statResult, len;
@@ -578,7 +578,7 @@ static char *canItBeJavaBinPath(char *path) {
     sprintf(filename, "%s%cjava", np, FILE_PATH_SEPARATOR);
 #endif
     assert(len+6<MAX_FILE_NAME_SIZE);
-    statResult = stat(res, &st);
+    statResult = stat(filename, &st);
     if (statResult==0  && (st.st_mode & S_IFMT)!=S_IFDIR) {
         filename[len]=0;
         if (len>4 && compareFileNames(filename+len-3, "bin")==0 && filename[len-4]==FILE_PATH_SEPARATOR) {
@@ -586,7 +586,7 @@ static char *canItBeJavaBinPath(char *path) {
             assert(strlen(filename)<MAX_FILE_NAME_SIZE-1);
             statResult = stat(filename,&st);
             if (statResult==0) {
-                return(res);
+                return(filename);
             }
         }
     }
