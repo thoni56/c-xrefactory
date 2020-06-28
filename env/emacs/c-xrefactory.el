@@ -3,16 +3,16 @@
 ;; Copyright (C) 1997-2004 Marian Vittek, Xref-Tech
 ;; Put under GPL in 2009 by Marián Vittek
 
-;; This  file  is  part  of  C-xrefactory  software;  it  implements  an
-;; interface  between  xref  task   and  (X)Emacs  editors.   You  can
-;; distribute it  under the  terms of the  GNU General  Public License
+;; This file is part of C-xrefactory software; it implements an
+;; interface between xref task and (X)Emacs editors.  You can
+;; distribute it under the terms of the GNU General Public License
 ;; version 2 as published by the Free Software Foundation.  You should
-;; have received a  copy of the GNU General  Public License along with
-;; this program; if not, write  to the Free Software Foundation, Inc.,
-;; 59  Temple Place  - Suite  330,  Boston, MA  02111-1307, USA.   The
-;; content of  this file is  copyrighted by Xref-Tech. This  file does
-;; not contain any code  written by independent developers.  Xref-Tech
-;; reserves  all rights  to make  any  future changes  in this  file's
+;; have received a copy of the GNU General Public License along with
+;; this program; if not, write to the Free Software Foundation, Inc.,
+;; 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.  The
+;; content of this file is copyrighted by Xref-Tech. This file does
+;; not contain any code written by independent developers.  Xref-Tech
+;; reserves all rights to make any future changes in this file's
 ;; license conditions.
 
 (provide 'c-xrefactory)
