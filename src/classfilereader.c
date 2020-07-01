@@ -821,34 +821,26 @@ static void cfAddRecordToClass(char *name,
     }
 }
 
-static void cfReadFieldInfos(char **accc,
-                             char **affin,
-                             CharacterBuffer *cb,
+static void cfReadFieldInfos(CharacterBuffer *cb,
                              Symbol *memb,
                              ConstantPoolUnion *cp
 ) {
-    char *ccc, *ffin;
     int count, ind;
     int access_flags, nameind, sigind;
 
-    assert(cb->next == *accc);
-    assert(cb->end == *affin);
     GetU2(count, cb->next, cb->end, cb);
-    ccc = cb->next; ffin = cb->end;
     for(ind=0; ind<count; ind++) {
-        GetU2(access_flags, ccc, ffin, cb);
-        GetU2(nameind, ccc, ffin, cb);
-        GetU2(sigind, ccc, ffin, cb);
+        GetU2(access_flags, cb->next, cb->end, cb);
+        GetU2(nameind, cb->next, cb->end, cb);
+        GetU2(sigind, cb->next, cb->end, cb);
         log_trace("field '%s' of type '%s'", cp[nameind].asciz, cp[sigind].asciz);
         cfAddRecordToClass(cp[nameind].asciz, cp[sigind].asciz, memb, access_flags,
                            StorageField, NULL);
-        SkipAttributes(ccc, ffin, cb);
+        SkipAttributes(cb->next, cb->end, cb);
     }
-    goto fin;
+    return;
  endOfFile:
     errorMessage(ERR_ST, "unexpected end of file");
- fin:
-    *accc = ccc; *affin = ffin;
 }
 
 static char *simpleClassNameFromFQTName(char *fqtName) {
@@ -1142,7 +1134,12 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
     }
     //& addSubClassesItemsToFileTab(symbol, symbol->u.s->classFile);
 
-    cfReadFieldInfos(&cb_next, &cb_end, cb, symbol, constantPool);
+    cb->next = cb_next;
+    cb->end = cb_end;
+    cfReadFieldInfos(cb, symbol, constantPool);
+    cb_next = cb->next;
+    cb_end = cb->end;
+
     if (currentFile.lexBuffer.buffer.isAtEOF) goto endOfFile;
     cfReadMethodInfos(&cb_next, &cb_end, cb, symbol, constantPool);
     if (currentFile.lexBuffer.buffer.isAtEOF) goto endOfFile;
