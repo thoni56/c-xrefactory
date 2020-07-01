@@ -2,7 +2,7 @@
 #include "classfilereader.h"
 #include <cgreen/mocks.h>
 
-S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
+ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 
 void javaHumanizeLinkName(char *inn, char *outn, int size) {
   mock(inn, outn, size);
@@ -24,11 +24,11 @@ void addSuperClassOrInterfaceByName(Symbol *memb, char *super, int origin, LoadS
   mock(memb, super, origin, loadSuper);
 }
 
-void fsRecMapOnFiles(S_zipArchiveDir *dir, char *zip, char *path, void (*fun)(char *zip, char *file, void *arg), void *arg) {
+void fsRecMapOnFiles(ZipArchiveDir *dir, char *zip, char *path, void (*fun)(char *zip, char *file, void *arg), void *arg) {
   mock(dir, zip, path, fun, arg);
 }
 
-bool fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset, AddYesNo addFlag, S_zipArchiveDir **place) {
+bool fsIsMember(ZipArchiveDir **dir, char *fn, unsigned offset, AddYesNo addFlag, ZipArchiveDir **place) {
   return (int) mock(dir, fn, offset, addFlag, place);
 }
 
@@ -36,11 +36,11 @@ int zipIndexArchive(char *name) {
   return (int) mock(name);
 }
 
-bool zipFindFile(char *name, char **resName, S_zipFileTableItem *zipfile) {
+bool zipFindFile(char *name, char **resName, ZipFileTableItem *zipfile) {
   return (bool) mock(name, resName, zipfile);
 }
 
-void javaMapZipDirFile(S_zipFileTableItem *zipfile, char *packfile, Completions *a1, void *a2, int *a3, void (*fun)(char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5), char *classPath, char *dirname) {
+void javaMapZipDirFile(ZipFileTableItem *zipfile, char *packfile, Completions *a1, void *a2, int *a3, void (*fun)(char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5), char *classPath, char *dirname) {
   mock(zipfile, packfile, a1, a2, a3, fun, classPath, dirname);
 }
 

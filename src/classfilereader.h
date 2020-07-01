@@ -6,20 +6,20 @@
 
 typedef struct zipArchiveDir {
     union {
-        struct zipArchiveDir	*sub;
-        unsigned				offset;
+        struct zipArchiveDir *sub;
+        unsigned offset;
     } u;
-    struct zipArchiveDir		*next;
-    char                name[1];			/* array of char */
-} S_zipArchiveDir;
+    struct zipArchiveDir *next;
+    char name[1];			/* array of char */
+} ZipArchiveDir;
 
 typedef struct zipFileTableItem {
     char                    fn[MAX_FILE_NAME_SIZE];	/* stored with ';' at the end */
     struct stat				st;						/* status of the archive file */
     struct zipArchiveDir	*dir;
-} S_zipFileTableItem;
+} ZipFileTableItem;
 
-extern S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
+extern ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 
 
 extern void javaHumanizeLinkName(char *inn, char *outn, int size);
@@ -27,14 +27,14 @@ extern Symbol *cfAddCastsToModule(Symbol *memb, Symbol *sup);
 extern void addSuperClassOrInterface(Symbol *memb, Symbol *supp, int origin );
 extern int javaCreateClassFileItem(Symbol *memb);
 extern void addSuperClassOrInterfaceByName(Symbol *memb, char *super, int origin, LoadSuperOrNot loadSuper);
-extern void fsRecMapOnFiles(S_zipArchiveDir *dir, char *zip, char *path,
+extern void fsRecMapOnFiles(ZipArchiveDir *dir, char *zip, char *path,
                             void (*fun)(char *zip, char *file, void *arg),
                             void *arg);
-extern bool fsIsMember(S_zipArchiveDir **dir, char *fn, unsigned offset,
-                       AddYesNo addFlag, S_zipArchiveDir **place);
+extern bool fsIsMember(ZipArchiveDir **dir, char *fn, unsigned offset,
+                       AddYesNo addFlag, ZipArchiveDir **place);
 extern int zipIndexArchive(char *name);
-extern bool zipFindFile(char *name, char **resName, S_zipFileTableItem *zipfile);
-extern void javaMapZipDirFile(S_zipFileTableItem *zipfile,
+extern bool zipFindFile(char *name, char **resName, ZipFileTableItem *zipfile);
+extern void javaMapZipDirFile(ZipFileTableItem *zipfile,
                               char *packfile,
                               Completions *a1,
                               void *a2,

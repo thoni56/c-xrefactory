@@ -40,7 +40,7 @@ typedef union constantPoolUnion {
     struct javaCpRecordInfo rec;
 } ConstantPoolUnion;
 
-S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
+ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 
 /* *********************************************************************** */
 
@@ -228,21 +228,21 @@ static bool zipReadLocalFileHeader(CharacterBuffer *cb,
 static CharacterBuffer s_zipTmpBuff;
 
 
-static void initZipArchiveDir(S_zipArchiveDir *dir) {
+static void initZipArchiveDir(ZipArchiveDir *dir) {
     dir->u.sub = NULL;
     dir->next = NULL;
     dir->name[0] = '\0';
 }
 
 
-static void fillZipFileTableItem(S_zipFileTableItem *fileItem, struct stat st, S_zipArchiveDir *dir) {
+static void fillZipFileTableItem(ZipFileTableItem *fileItem, struct stat st, ZipArchiveDir *dir) {
     fileItem->st = st;
     fileItem->dir = dir;
 }
 
-bool fsIsMember(S_zipArchiveDir **dirPointer, char *fn, unsigned offset,
-                AddYesNo addFlag, S_zipArchiveDir **outDirPointer) {
-    S_zipArchiveDir     *aa, **aaa, *p;
+bool fsIsMember(ZipArchiveDir **dirPointer, char *fn, unsigned offset,
+                AddYesNo addFlag, ZipArchiveDir **outDirPointer) {
+    ZipArchiveDir     *aa, **aaa, *p;
     int                 itemlen, res;
     char                *ss;
 
@@ -280,7 +280,7 @@ bool fsIsMember(S_zipArchiveDir **dirPointer, char *fn, unsigned offset,
     if (aa==NULL) {
         res = false;
         if (addFlag == ADD_YES) {
-            p = StackMemoryAllocC(sizeof(S_zipArchiveDir)+itemlen+1, S_zipArchiveDir);
+            p = StackMemoryAllocC(sizeof(ZipArchiveDir)+itemlen+1, ZipArchiveDir);
             initZipArchiveDir(p);
             strncpy(p->name, fn, itemlen);
             p->name[itemlen]=0;
@@ -308,8 +308,8 @@ bool fsIsMember(S_zipArchiveDir **dirPointer, char *fn, unsigned offset,
     }
 }
 
-void fsRecMapOnFiles(S_zipArchiveDir *dir, char *zip, char *path, void (*fun)(char *zip, char *file, void *arg), void *arg) {
-    S_zipArchiveDir     *aa;
+void fsRecMapOnFiles(ZipArchiveDir *dir, char *zip, char *path, void (*fun)(char *zip, char *file, void *arg), void *arg) {
+    ZipArchiveDir     *aa;
     char                *fn;
     char                npath[MAX_FILE_NAME_SIZE];
     int                 len;
@@ -361,9 +361,9 @@ static bool findEndOfCentralDirectory(char **accc, char **affin,
 }
 
 static void zipArchiveScan(CharacterBuffer *cb,
-                           S_zipFileTableItem *zip, int fsize) {
+                           ZipFileTableItem *zip, int fsize) {
     char fn[MAX_FILE_NAME_SIZE];
-    S_zipArchiveDir *place;
+    ZipArchiveDir *place;
     int signature,madeByVersion,extractVersion,bitFlags,compressionMethod;
     int lastModTime,lastModDate,fnameLen,extraLen,fcommentLen,diskNumber;
     int i,internFileAttribs,tmp;
@@ -488,7 +488,7 @@ static bool zipSeekToFile(CharacterBuffer *cb, char *name) {
     int i, nameLength;
     unsigned lastSig, fsize;
     char fn[MAX_FILE_NAME_SIZE];
-    S_zipArchiveDir *place;
+    ZipArchiveDir *place;
 
     separatorPosition = strchr(name, ZIP_SEPARATOR_CHAR);
     if (separatorPosition == NULL)
@@ -520,11 +520,11 @@ static bool zipSeekToFile(CharacterBuffer *cb, char *name) {
 
 bool zipFindFile(char *name,
                  char **resName,             /* can be NULL !!! */
-                 S_zipFileTableItem *zipfile
+                 ZipFileTableItem *zipfile
 ) {
     char *pp;
     char fname[MAX_FILE_NAME_SIZE];
-    S_zipArchiveDir *place;
+    ZipArchiveDir *place;
 
     strcpy(fname,name);
     strcat(fname,".class");
@@ -540,7 +540,7 @@ bool zipFindFile(char *name,
 }
 
 void javaMapZipDirFile(
-    S_zipFileTableItem *zipfile,
+    ZipFileTableItem *zipfile,
     char *packfile,
     Completions *a1,
     void *a2,
@@ -551,7 +551,7 @@ void javaMapZipDirFile(
 ) {
     char fn[MAX_FILE_NAME_SIZE];
     char dirn[MAX_FILE_NAME_SIZE];
-    S_zipArchiveDir *place, *aa;
+    ZipArchiveDir *place, *aa;
     char *ss;
     int dirlen;
 
