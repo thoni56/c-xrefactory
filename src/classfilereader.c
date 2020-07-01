@@ -821,12 +821,12 @@ static void cfAddRecordToClass(char *name,
     }
 }
 
-static void cfReadFieldInfos(   char **accc,
-                                char **affin,
-                                CharacterBuffer *iBuf,
-                                Symbol *memb,
-                                ConstantPoolUnion *cp
-                                ) {
+static void cfReadFieldInfos(char **accc,
+                             char **affin,
+                             CharacterBuffer *iBuf,
+                             Symbol *memb,
+                             ConstantPoolUnion *cp
+) {
     char *ccc, *ffin;
     int count, ind;
     int access_flags, nameind, sigind;
@@ -836,12 +836,9 @@ static void cfReadFieldInfos(   char **accc,
         GetU2(access_flags, ccc, ffin, iBuf);
         GetU2(nameind, ccc, ffin, iBuf);
         GetU2(sigind, ccc, ffin, iBuf);
-        /*
-          fprintf(dumpOut, "field '%s' of type '%s'\n",
-          cp[nameind].asciz,cp[sigind].asciz); fflush(dumpOut);
-        */
-        cfAddRecordToClass(cp[nameind].asciz,cp[sigind].asciz,memb,access_flags,
-                           StorageField,NULL);
+        log_trace("field '%s' of type '%s'", cp[nameind].asciz, cp[sigind].asciz);
+        cfAddRecordToClass(cp[nameind].asciz, cp[sigind].asciz, memb, access_flags,
+                           StorageField, NULL);
         SkipAttributes(ccc, ffin, iBuf);
     }
     goto fin;
