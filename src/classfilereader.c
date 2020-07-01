@@ -62,74 +62,68 @@ ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
     }
 
 
-#define GetU1(value, cb) {                              \
-        GetChar(value, cb);                             \
+#define GetU1(value, cb) {                      \
+        GetChar(value, cb);                     \
     }
 
-#define GetU2(value, cb) {                              \
-        int ch;                                         \
-        GetChar(value, cb);                             \
-        GetChar(ch, cb);                                \
-        value = value*256+ch;                           \
+#define GetU2(value, cb) {                      \
+        int ch;                                 \
+        GetChar(value, cb);                     \
+        GetChar(ch, cb);                        \
+        value = value*256+ch;                   \
     }
 
-#define GetU4(value, cb_next, cb_end, cb) {               \
-        int ch;                                           \
-        GetChar(value, cb);            \
-        GetChar(ch, cb);               \
-        value = value*256+ch;                             \
-        GetChar(ch, cb);               \
-        value = value*256+ch;                             \
-        GetChar(ch, cb);               \
-        value = value*256+ch;                             \
-        cb_next = cb->next;                               \
-        cb_end = cb->end;                                 \
+#define GetU4(value, cb) {                      \
+        int ch;                                 \
+        GetChar(value, cb);                     \
+        GetChar(ch, cb);                        \
+        value = value*256+ch;                   \
+        GetChar(ch, cb);                        \
+        value = value*256+ch;                   \
+        GetChar(ch, cb);                        \
+        value = value*256+ch;                   \
     }
 
-#define GetZU2(value, cb_next, cb_end, cb) {              \
-        unsigned ch;                                      \
-        GetChar(value, cb);            \
-        GetChar(ch, cb);               \
-        value = value+(ch<<8);                            \
-        cb_next = cb->next;                               \
-        cb_end = cb->end;                                 \
+#define GetZU2(value, cb) {                     \
+        unsigned ch;                            \
+        GetChar(value, cb);                     \
+        GetChar(ch, cb);                        \
+        value = value+(ch<<8);                  \
     }
 
-#define GetZU4(value, cb_next, cb_end, cb) {              \
-        unsigned ch;                                      \
-        GetChar(value, cb);            \
-        GetChar(ch, cb);               \
-        value = value+(ch<<8);                            \
-        GetChar(ch, cb);               \
-        value = value+(ch<<16);                           \
-        GetChar(ch, cb);               \
-        value = value+(ch<<24);                           \
-        cb_next = cb->next;                               \
-        cb_end = cb->end;                                 \
+#define GetZU4(value, cb) {                     \
+        unsigned ch;                            \
+        GetChar(value, cb);                     \
+        GetChar(ch, cb);                        \
+        value = value+(ch<<8);                  \
+        GetChar(ch, cb);                        \
+        value = value+(ch<<16);                 \
+        GetChar(ch, cb);                        \
+        value = value+(ch<<24);                 \
     }
 
-#define SkipNChars(count, cb_next, cb_end, cb) {           \
-        if (cb_next + count < cb_end) {                    \
-            cb_next += count;                              \
-            (cb)->next = cb_next;                          \
-        } else {                                           \
-            (cb)->next = cb_next;                          \
-            skipNCharsInCharacterBuffer(cb, (count));      \
-            cb_next = (cb)->next;                          \
-            cb_end = (cb)->end;                            \
-        }                                                  \
-        assert(cb_next == (cb)->next);                     \
-        assert(cb_end == (cb)->end);                       \
+#define SkipNChars(count, cb_next, cb_end, cb) {        \
+        if (cb_next + count < cb_end) {                 \
+            cb_next += count;                           \
+            (cb)->next = cb_next;                       \
+        } else {                                        \
+            (cb)->next = cb_next;                       \
+            skipNCharsInCharacterBuffer(cb, (count));   \
+            cb_next = (cb)->next;                       \
+            cb_end = (cb)->end;                         \
+        }                                               \
+        assert(cb_next == (cb)->next);                  \
+        assert(cb_end == (cb)->end);                    \
     }
 
-#define SkipAttributes(cb) {                                  \
-        int index, count, aname, alen;                        \
-        GetU2(count, cb);                  \
-        for(index=0; index<count; index++) {                  \
-            GetU2(aname, cb);              \
-            GetU4(alen, cb->next, cb->end, cb);               \
-            SkipNChars(alen, cb->next, cb->end, cb);          \
-        }                                                     \
+#define SkipAttributes(cb) {                            \
+        int index, count, aname, alen;                  \
+        GetU2(count, cb);                               \
+        for(index=0; index<count; index++) {            \
+            GetU2(aname, cb);                           \
+            GetU4(alen, cb);                            \
+            SkipNChars(alen, cb->next, cb->end, cb);    \
+        }                                               \
     }
 
 /* *************** first something to read zip-files ************** */
@@ -146,7 +140,7 @@ static bool zipReadLocalFileHeader(CharacterBuffer *cb,
     char *zzz, ttt[MAX_FILE_NAME_SIZE];
 
     result = true;
-    GetZU4(signature,cb->next,cb->end,cb);
+    GetZU4(signature,cb);
     log_trace("zip file signature is %x", signature);
     *lastSig = signature;
     if (signature != 0x04034b50) {
@@ -161,20 +155,20 @@ static bool zipReadLocalFileHeader(CharacterBuffer *cb,
         result = false;
         goto fin;
     }
-    GetZU2(extractVersion,cb->next,cb->end,cb);
-    GetZU2(bitFlags,cb->next,cb->end,cb);
-    GetZU2(compressionMethod,cb->next,cb->end,cb);
-    GetZU2(lastModTime,cb->next,cb->end,cb);
-    GetZU2(lastModDate,cb->next,cb->end,cb);
-    GetZU4(crc32,cb->next,cb->end,cb);
-    GetZU4(compressedSize,cb->next,cb->end,cb);
+    GetZU2(extractVersion,cb);
+    GetZU2(bitFlags,cb);
+    GetZU2(compressionMethod,cb);
+    GetZU2(lastModTime,cb);
+    GetZU2(lastModDate,cb);
+    GetZU4(crc32,cb);
+    GetZU4(compressedSize,cb);
     *fsize = compressedSize;
-    GetZU4(unCompressedSize,cb->next,cb->end,cb);
-    GetZU2(fnameLen,cb->next,cb->end,cb);
+    GetZU4(unCompressedSize,cb);
+    GetZU2(fnameLen,cb);
     if (fnameLen >= MAX_FILE_NAME_SIZE) {
         fatalError(ERR_INTERNAL,"file name too long", XREF_EXIT_ERR);
     }
-    GetZU2(extraLen,cb->next,cb->end,cb);
+    GetZU2(extraLen,cb);
     for(i=0; i<fnameLen; i++) {
         GetChar(fn[i],cb);
     }
@@ -365,39 +359,39 @@ static void zipArchiveScan(CharacterBuffer *cb,
     zip->dir = NULL;
     if (!findEndOfCentralDirectory(cb, fileSize))
         goto fini;
-    GetZU4(signature,cb->next,cb->end,cb);
+    GetZU4(signature,cb);
     assert(signature == 0x06054b50);
-    GetZU2(tmp,cb->next,cb->end,cb);
-    GetZU2(tmp,cb->next,cb->end,cb);
-    GetZU2(tmp,cb->next,cb->end,cb);
-    GetZU2(tmp,cb->next,cb->end,cb);
-    GetZU4(tmp,cb->next,cb->end,cb);
-    GetZU4(cdOffset,cb->next,cb->end,cb);
+    GetZU2(tmp,cb);
+    GetZU2(tmp,cb);
+    GetZU2(tmp,cb);
+    GetZU2(tmp,cb);
+    GetZU4(tmp,cb);
+    GetZU4(cdOffset,cb);
     seekToPosition(cb, cdOffset);
 
     /* Read signature */
-    GetZU4(signature,cb->next,cb->end,cb);
+    GetZU4(signature,cb);
     while (signature == 0x02014b50) {
         /* Read zip central directory using many output values */
-        GetZU2(madeByVersion,cb->next,cb->end,cb);
-        GetZU2(extractVersion,cb->next,cb->end,cb);
-        GetZU2(bitFlags,cb->next,cb->end,cb);
-        GetZU2(compressionMethod,cb->next,cb->end,cb);
-        GetZU2(lastModTime,cb->next,cb->end,cb);
-        GetZU2(lastModDate,cb->next,cb->end,cb);
-        GetZU4(crc32,cb->next,cb->end,cb);
-        GetZU4(compressedSize,cb->next,cb->end,cb);
-        GetZU4(unCompressedSize,cb->next,cb->end,cb);
-        GetZU2(fnameLen,cb->next,cb->end,cb);
+        GetZU2(madeByVersion,cb);
+        GetZU2(extractVersion,cb);
+        GetZU2(bitFlags,cb);
+        GetZU2(compressionMethod,cb);
+        GetZU2(lastModTime,cb);
+        GetZU2(lastModDate,cb);
+        GetZU4(crc32,cb);
+        GetZU4(compressedSize,cb);
+        GetZU4(unCompressedSize,cb);
+        GetZU2(fnameLen,cb);
         if (fnameLen >= MAX_FILE_NAME_SIZE) {
             fatalError(ERR_INTERNAL,"file name in .zip archive too long", XREF_EXIT_ERR);
         }
-        GetZU2(extraLen,cb->next,cb->end,cb);
-        GetZU2(fcommentLen,cb->next,cb->end,cb);
-        GetZU2(diskNumber,cb->next,cb->end,cb);
-        GetZU2(internFileAttribs,cb->next,cb->end,cb);
-        GetZU4(externFileAttribs,cb->next,cb->end,cb);
-        GetZU4(localHeaderOffset,cb->next,cb->end,cb);
+        GetZU2(extraLen,cb);
+        GetZU2(fcommentLen,cb);
+        GetZU2(diskNumber,cb);
+        GetZU2(internFileAttribs,cb);
+        GetZU4(externFileAttribs,cb);
+        GetZU4(localHeaderOffset,cb);
         for(i=0; i<fnameLen; i++) {
             GetChar(fn[i],cb);
         }
@@ -410,7 +404,7 @@ static void zipArchiveScan(CharacterBuffer *cb,
             fsIsMember(&zip->dir, fn, localHeaderOffset, ADD_YES, &place);
         }
         /* Read next signature */
-        GetZU4(signature,cb->next,cb->end,cb);
+        GetZU4(signature,cb);
     }
  fini:
     return;
@@ -626,13 +620,13 @@ static ConstantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,
             break;
         case CONSTANT_Integer:
         case CONSTANT_Float:
-            GetU4(cval, cb->next, cb->end, cb);
+            GetU4(cval, cb);
             break;
         case CONSTANT_Long:
         case CONSTANT_Double:
-            GetU4(cval, cb->next, cb->end, cb);
+            GetU4(cval, cb);
             ind ++;
-            GetU4(cval, cb->next, cb->end, cb);
+            GetU4(cval, cb);
             break;
         default:
             sprintf(tmpBuff,"unknown tag %d in constant pool of %s",tag,currentFile.fileName);
@@ -892,7 +886,7 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
         GetU2(acount, cb);
         for(aind=0; aind<acount; aind++) {
             GetU2(aname, cb);
-            GetU4(alen, cb->next, cb->end, cb);
+            GetU4(alen, cb);
             // berk, really I need to compare strings?
             if (strcmp(cp[aname].asciz, "Exceptions")==0) {
                 GetU2(excount, cb);
@@ -918,7 +912,7 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
                 // look here for local variable names
                 GetU2(max_stack, cb);
                 GetU2(max_locals, cb);
-                GetU4(code_length, cb->next, cb->end, cb);
+                GetU4(code_length, cb);
                 SkipNChars(code_length, cb->next, cb->end, cb);
                 GetU2(exception_table_length, cb);
                 SkipNChars((exception_table_length*8), cb->next, cb->end, cb);
@@ -926,7 +920,7 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
                 for(ii=0; ii<attributes_count; ii++) {
                     int iii;
                     GetU2(caname, cb);
-                    GetU4(calen, cb->next, cb->end, cb);
+                    GetU4(calen, cb);
                     if (strcmp(cp[caname].asciz, "LocalVariableTable")==0) {
                         unsigned local_variable_table_length;
                         unsigned start_pc,length,name_index,descriptor_index;
@@ -1068,7 +1062,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
         if (!zipSeekToFile(cb, className))
             goto finish;
     }
-    GetU4(readValue, cb->next, cb->end, cb);
+    GetU4(readValue, cb);
     log_trace("magic is %x", readValue);
     if (readValue != 0xcafebabe) {
         sprintf(tmpBuff,"%s is not a valid class file", className);
@@ -1122,7 +1116,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
     GetU2(count, cb);
     for(ind=0; ind<count; ind++) {
         GetU2(aname, cb);
-        GetU4(alen, cb->next, cb->end, cb);
+        GetU4(alen, cb);
         if (strcmp(constantPool[aname].asciz,"InnerClasses")==0) {
             GetU2(inum, cb);
             symbol->u.s->nestedCount = inum;
