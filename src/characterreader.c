@@ -173,7 +173,7 @@ void switchToZippedCharBuff(CharacterBuffer *buffer) {
     }
 }
 
-void skipNCharsInCharacterBuffer(CharacterBuffer *buffer, unsigned count) {
+void skipCharacters(CharacterBuffer *buffer, unsigned count) {
     char *dd;
     char *cc;
     char *fin;
@@ -193,7 +193,7 @@ void skipNCharsInCharacterBuffer(CharacterBuffer *buffer, unsigned count) {
         refillBuffer(buffer);
         if (buffer->end != buffer->next) {
             // TODO remove last recursion
-            skipNCharsInCharacterBuffer(buffer, count);
+            skipCharacters(buffer, count);
         }
     } else {
         count -= fin-cc;

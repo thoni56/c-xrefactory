@@ -106,7 +106,7 @@ ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
         if (cb->next + count < cb->end) {               \
             cb->next += count;                          \
         } else {                                        \
-            skipNCharsInCharacterBuffer(cb, count);     \
+            skipCharacters(cb, count);                  \
         }                                               \
     }
 
