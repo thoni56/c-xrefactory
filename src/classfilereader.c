@@ -590,10 +590,8 @@ void javaMapZipDirFile(
 
 /* **************************************************************** */
 
-static union constantPoolUnion *cfReadConstantPool(char **accc, char **affin,
-                                                   CharacterBuffer *cb,
+static union constantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,
                                                    int *cpSize) {
-    char *ccc, *ffin;
     int cval;
     int count,tag,ind,classind,nameind,typeind,strind;
     int size,i;
@@ -601,59 +599,59 @@ static union constantPoolUnion *cfReadConstantPool(char **accc, char **affin,
     char *str;
     char tmpBuff[TMP_BUFF_SIZE];
 
-    ccc = *accc; ffin = *affin;
-    GetU2(count, ccc, ffin, cb);
+    GetU2(count, cb->next, cb->end, cb);
     CF_ALLOCC(cp, count, union constantPoolUnion);
     //& memset(cp,0, count*sizeof(union constantPoolUnion));    // if broken file
     for(ind=1; ind<count; ind++) {
-        GetU1(tag, ccc, ffin, cb);
+        GetU1(tag, cb->next, cb->end, cb);
         switch (tag) {
         case 0:
-            GetChar(cval, ccc, ffin, cb);
+            GetChar(cval, cb->next, cb->end, cb);
             break;
         case CONSTANT_Asciz:
-            GetU2(size, ccc, ffin, cb);
+            GetU2(size, cb->next, cb->end, cb);
             CF_ALLOCC(str, size+1, char);
-            for(i=0; i<size; i++) GetChar(str[i], ccc, ffin, cb);
+            for(i=0; i<size; i++)
+                GetChar(str[i], cb->next, cb->end, cb);
             str[i]=0;
             cp[ind].asciz = str;
             break;
         case CONSTANT_Unicode:
             errorMessage(ERR_ST,"[cfReadConstantPool] Unicode not yet implemented");
-            GetU2(size, ccc, ffin, cb);
-            SkipNChars(size*2, ccc, ffin, cb);
+            GetU2(size, cb->next, cb->end, cb);
+            SkipNChars(size*2, cb->next, cb->end, cb);
             cp[ind].asciz = "Unicode ??";
             break;
         case CONSTANT_Class:
-            GetU2(classind, ccc, ffin, cb);
+            GetU2(classind, cb->next, cb->end, cb);
             cp[ind].clas.nameIndex = classind;
             break;
         case CONSTANT_Fieldref:
         case CONSTANT_Methodref:
         case CONSTANT_InterfaceMethodref:
-            GetU2(classind, ccc, ffin, cb);
-            GetU2(nameind, ccc, ffin, cb);
+            GetU2(classind, cb->next, cb->end, cb);
+            GetU2(nameind, cb->next, cb->end, cb);
             cp[ind].rec.classIndex = classind;
             cp[ind].rec.nameAndTypeIndex = nameind;
             break;
         case CONSTANT_NameandType:
-            GetU2(nameind, ccc, ffin, cb);
-            GetU2(typeind, ccc, ffin, cb);
+            GetU2(nameind, cb->next, cb->end, cb);
+            GetU2(typeind, cb->next, cb->end, cb);
             cp[ind].nt.nameIndex = nameind;
             cp[ind].nt.signatureIndex = typeind;
             break;
         case CONSTANT_String:
-            GetU2(strind, ccc, ffin, cb);
+            GetU2(strind, cb->next, cb->end, cb);
             break;
         case CONSTANT_Integer:
         case CONSTANT_Float:
-            GetU4(cval, ccc, ffin, cb);
+            GetU4(cval, cb->next, cb->end, cb);
             break;
         case CONSTANT_Long:
         case CONSTANT_Double:
-            GetU4(cval, ccc, ffin, cb);
+            GetU4(cval, cb->next, cb->end, cb);
             ind ++;
-            GetU4(cval, ccc, ffin, cb);
+            GetU4(cval, cb->next, cb->end, cb);
             break;
         default:
             sprintf(tmpBuff,"unknown tag %d in constant pool of %s",tag,currentFile.fileName);
@@ -664,7 +662,7 @@ static union constantPoolUnion *cfReadConstantPool(char **accc, char **affin,
  endOfFile:
     errorMessage(ERR_ST,"unexpected end of file");
  fin:
-    *accc = ccc; *affin = ffin; *cpSize = count;
+    *cpSize = count;
     return(cp);
 }
 
@@ -1118,7 +1116,9 @@ void javaReadClassFile(char *className, Symbol *symbol, int loadSuper) {
     GetU2(minor, cb_next, cb_end, cb);
     GetU2(major, cb_next, cb_end, cb);
     log_trace("version of '%s' is %d.%d", className, major, minor);
-    constantPool = cfReadConstantPool(&cb_next, &cb_end, cb, &cpSize);
+    constantPool = cfReadConstantPool(cb, &cpSize);
+    cb_next = cb->next;
+    cb_end = cb->end;
     GetU2(access, cb_next, cb_end, cb);
     symbol->bits.access = access;
     log_trace("reading accessFlags %s == %x", className, access);
