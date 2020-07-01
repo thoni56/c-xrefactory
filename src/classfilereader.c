@@ -64,13 +64,20 @@ S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
     }
 
 
-#define GetU1(value, cb_next, cb_end, cb) GetChar(value, cb_next, cb_end, cb)
+#define GetU1(value, cb_next, cb_end, cb) {             \
+        GetChar(value, cb_next, cb_end, cb);            \
+        (cb)->next = cb_next;                           \
+        (cb)->end = cb_end;                             \
+    }
+
 
 #define GetU2(value, cb_next, cb_end, cb) {             \
         int ch;                                         \
         GetChar(value, cb_next, cb_end, cb);            \
         GetChar(ch, cb_next, cb_end, cb);               \
         value = value*256+ch;                           \
+        (cb)->next = cb_next;                           \
+        (cb)->end = cb_end;                             \
     }
 
 #define GetU4(value, cb_next, cb_end, cb) {             \
@@ -82,6 +89,8 @@ S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
         value = value*256+ch;                           \
         GetChar(ch, cb_next, cb_end, cb);               \
         value = value*256+ch;                           \
+        (cb)->next = cb_next;                           \
+        (cb)->end = cb_end;                             \
     }
 
 #define GetZU2(value, cb_next, cb_end, cb) {            \
@@ -89,6 +98,8 @@ S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
         GetChar(value, cb_next, cb_end, cb);            \
         GetChar(ch, cb_next, cb_end, cb);               \
         value = value+(ch<<8);                          \
+        (cb)->next = cb_next;                           \
+        (cb)->end = cb_end;                             \
     }
 
 #define GetZU4(value, cb_next, cb_end, cb) {            \
@@ -100,6 +111,8 @@ S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
         value = value+(ch<<16);                         \
         GetChar(ch, cb_next, cb_end, cb);               \
         value = value+(ch<<24);                         \
+        (cb)->next = cb_next;                           \
+        (cb)->end = cb_end;                             \
     }
 
 #define SkipNChars(count, cb_next, cb_end, cb) {           \
@@ -116,9 +129,9 @@ S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
         assert(cb_end == (cb)->end);                       \
     }
 
-#define SeekToPosition(cb_next, cb_end, cb, offset) {                   \
+#define SeekToPosition(cb, offset) {                                    \
         fseek((cb)->file, offset, SEEK_SET);                            \
-        cb_next = cb_end = (cb)->next = (cb)->end = (cb)->lineBegin = (cb)->chars; \
+        (cb)->next = (cb)->end = (cb)->lineBegin = (cb)->chars;         \
     }
 
 #define SkipAttributes(cb_next, cb_end, cb) {               \
@@ -129,6 +142,8 @@ S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
             GetU4(alen, cb_next, cb_end, cb);               \
             SkipNChars(alen, cb_next, cb_end, cb);          \
         }                                                   \
+        (cb)->next = cb_next;                               \
+        (cb)->end = cb_end;                                 \
     }
 
 /* *************** first something to read zip-files ************** */
@@ -146,8 +161,9 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *cb
     char *zzz, ttt[MAX_FILE_NAME_SIZE];
 
     assert(cb->next == *accc);
+    assert(cb->end == *affin);
     res = 1;
-    ccc = *accc; ffin = *affin;
+    ccc = cb->next; ffin = cb->end;
     GetZU4(signature,ccc,ffin,cb);
     log_trace("zip file signature is %x", signature);
     *lastSig = signature;
@@ -219,6 +235,7 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *cb
     errorMessage(ERR_ST,"unexpected end of file");
  fin:
     *accc = ccc; *affin = ffin;
+    cb->next = ccc; cb->end = ffin;
     return(res);
 }
 
@@ -350,7 +367,7 @@ static int findEndOfCentralDirectory(char **accc, char **affin,
     return(res);
 }
 
-static void zipArchiveScan(char **accc, char **affin, CharacterBuffer *iBuf,
+static void zipArchiveScan(char **accc, char **affin, CharacterBuffer *cb,
                            S_zipFileTableItem *zip, int fsize) {
     char fn[MAX_FILE_NAME_SIZE];
     char *ccc, *ffin;
@@ -365,54 +382,56 @@ static void zipArchiveScan(char **accc, char **affin, CharacterBuffer *iBuf,
 
     ccc = *accc; ffin = *affin;
     zip->dir = NULL;
-    if (findEndOfCentralDirectory(&ccc, &ffin, iBuf, fsize)==0)
+    if (findEndOfCentralDirectory(&ccc, &ffin, cb, fsize)==0)
         goto fini;
-    GetZU4(signature,ccc,ffin,iBuf);
+    GetZU4(signature,ccc,ffin,cb);
     assert(signature == 0x06054b50);
-    GetZU2(tmp,ccc,ffin,iBuf);
-    GetZU2(tmp,ccc,ffin,iBuf);
-    GetZU2(tmp,ccc,ffin,iBuf);
-    GetZU2(tmp,ccc,ffin,iBuf);
-    GetZU4(tmp,ccc,ffin,iBuf);
-    GetZU4(cdOffset,ccc,ffin,iBuf);
-    SeekToPosition(ccc,ffin,iBuf,cdOffset);
+    GetZU2(tmp,ccc,ffin,cb);
+    GetZU2(tmp,ccc,ffin,cb);
+    GetZU2(tmp,ccc,ffin,cb);
+    GetZU2(tmp,ccc,ffin,cb);
+    GetZU4(tmp,ccc,ffin,cb);
+    GetZU4(cdOffset,ccc,ffin,cb);
+    SeekToPosition(cb, cdOffset);
+    ccc = cb->next;
+    ffin = cb->end;
 
     /* Read signature */
-    GetZU4(signature,ccc,ffin,iBuf);
+    GetZU4(signature,ccc,ffin,cb);
     while (signature == 0x02014b50) {
         /* Read zip central directory using many output values */
-        GetZU2(madeByVersion,ccc,ffin,iBuf);
-        GetZU2(extractVersion,ccc,ffin,iBuf);
-        GetZU2(bitFlags,ccc,ffin,iBuf);
-        GetZU2(compressionMethod,ccc,ffin,iBuf);
-        GetZU2(lastModTime,ccc,ffin,iBuf);
-        GetZU2(lastModDate,ccc,ffin,iBuf);
-        GetZU4(crc32,ccc,ffin,iBuf);
-        GetZU4(compressedSize,ccc,ffin,iBuf);
-        GetZU4(unCompressedSize,ccc,ffin,iBuf);
-        GetZU2(fnameLen,ccc,ffin,iBuf);
+        GetZU2(madeByVersion,ccc,ffin,cb);
+        GetZU2(extractVersion,ccc,ffin,cb);
+        GetZU2(bitFlags,ccc,ffin,cb);
+        GetZU2(compressionMethod,ccc,ffin,cb);
+        GetZU2(lastModTime,ccc,ffin,cb);
+        GetZU2(lastModDate,ccc,ffin,cb);
+        GetZU4(crc32,ccc,ffin,cb);
+        GetZU4(compressedSize,ccc,ffin,cb);
+        GetZU4(unCompressedSize,ccc,ffin,cb);
+        GetZU2(fnameLen,ccc,ffin,cb);
         if (fnameLen >= MAX_FILE_NAME_SIZE) {
             fatalError(ERR_INTERNAL,"file name in .zip archive too long", XREF_EXIT_ERR);
         }
-        GetZU2(extraLen,ccc,ffin,iBuf);
-        GetZU2(fcommentLen,ccc,ffin,iBuf);
-        GetZU2(diskNumber,ccc,ffin,iBuf);
-        GetZU2(internFileAttribs,ccc,ffin,iBuf);
-        GetZU4(externFileAttribs,ccc,ffin,iBuf);
-        GetZU4(localHeaderOffset,ccc,ffin,iBuf);
+        GetZU2(extraLen,ccc,ffin,cb);
+        GetZU2(fcommentLen,ccc,ffin,cb);
+        GetZU2(diskNumber,ccc,ffin,cb);
+        GetZU2(internFileAttribs,ccc,ffin,cb);
+        GetZU4(externFileAttribs,ccc,ffin,cb);
+        GetZU4(localHeaderOffset,ccc,ffin,cb);
         for(i=0; i<fnameLen; i++) {
-            GetChar(fn[i],ccc,ffin,iBuf);
+            GetChar(fn[i],ccc,ffin,cb);
         }
         fn[i] = 0;
         log_trace("file '%s' in central dir", fn);
-        SkipNChars(extraLen+fcommentLen,ccc,ffin,iBuf);
+        SkipNChars(extraLen+fcommentLen,ccc,ffin,cb);
 
         if (strncmp(fn,"META-INF/",9)!=0) {
             log_trace("adding '%s'", fn);
             fsIsMember(&zip->dir, fn, localHeaderOffset, ADD_YES, &place);
         }
         /* Read next signature */
-        GetZU4(signature,ccc,ffin,iBuf);
+        GetZU4(signature,ccc,ffin,cb);
     }
  fini:
     *accc = ccc; *affin = ffin;
@@ -475,19 +494,18 @@ int zipIndexArchive(char *name) {
     return(archiveIndex);
 }
 
-static int zipSeekToFile(char **accc, char **affin, CharacterBuffer *cb,
-                         char *name
-                         ) {
+static bool zipSeekToFile(CharacterBuffer *cb, char *name) {
     char *sep;
     char *ccc, *ffin;
-    int i,namelen,res = 0;
+    int i, namelen;
+    bool result = false;
     unsigned lastSig, fsize;
     char fn[MAX_FILE_NAME_SIZE];
     S_zipArchiveDir *place;
 
-    ccc = *accc; ffin = *affin;
     sep = strchr(name,ZIP_SEPARATOR_CHAR);
-    if (sep == NULL) {return(0);}
+    if (sep == NULL)
+        return false;
     *sep = 0;
     namelen = strlen(name);
     for(i=0; i<MAX_JAVA_ZIP_ARCHIVES && s_zipArchiveTable[i].fn[0]!=0; i++) {
@@ -503,16 +521,15 @@ static int zipSeekToFile(char **accc, char **affin, CharacterBuffer *cb,
     }
     if (fsIsMember(&s_zipArchiveTable[i].dir, sep+1,0, ADD_NO, &place)==0)
         goto fini;
-    SeekToPosition(ccc, ffin, cb, place->u.offset);
-    if (zipReadLocalFileHeader(&ccc, &ffin, cb, fn, &fsize,
+    SeekToPosition(cb, place->u.offset);
+    if (zipReadLocalFileHeader(&cb->next, &cb->end, cb, fn, &fsize,
                                &lastSig, s_zipArchiveTable[i].fn) == 0)
         goto fini;
     assert(lastSig == 0x04034b50);
     assert(strcmp(fn,sep+1)==0);
-    res = 1;
+    result = true;
  fini:
-    *accc = ccc; *affin = ffin;
-    return(res);
+    return result;
 }
 
 bool zipFindFile(char *name,
@@ -1091,7 +1108,7 @@ void javaReadClassFile(char *className, Symbol *symbol, int loadSuper) {
 
     cb = &currentFile.lexBuffer.buffer;
     if (zipSeparatorIndex != NULL) {
-        if (zipSeekToFile(&cb->next, &cb->end, cb, className) == 0)
+        if (!zipSeekToFile(cb, className))
             goto finish;
     }
     cb_next = cb->next;
