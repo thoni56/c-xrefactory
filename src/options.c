@@ -627,7 +627,27 @@ static char *getJdkClassPathQuickly(void) {
     return(jdkcp);
 }
 
-static char *s_defaultPossibleJavaBinPaths[] = {
+static char *defaultPossibleJavaBinPaths[] = {
+#ifdef __WIN32__
+    "C:\\j2sdk1.4.3\\bin",
+    "C:\\j2sdk1.4.2_03\\bin",
+    "C:\\j2sdk1.4.2_02\\bin",
+    "C:\\j2sdk1.4.2_01\\bin",
+    "C:\\j2sdk1.4.2\\bin",
+    "C:\\j2sdk1.4.1_03\\bin",
+    "C:\\j2sdk1.4.1_02\\bin",
+    "C:\\j2sdk1.4.1_01\\bin",
+    "C:\\j2sdk1.4.1\\bin",
+    "C:\\j2sdk1.4.0_03\\bin",
+    "C:\\j2sdk1.4.0_02\\bin",
+    "C:\\j2sdk1.4.0_01\\bin",
+    "C:\\j2sdk1.4.0\\bin",
+    "C:\\j2sdk1.3.1_03\\bin",
+    "C:\\j2sdk1.3.1_02\\bin",
+    "C:\\j2sdk1.3.1_01\\bin",
+    "C:\\j2sdk1.3.1\\bin",
+    "C:\\j2sdk1.3.0\\bin",
+#else
     "/usr/java/bin",
     "/usr/java/j2sdk1.4.3/bin",
     "/usr/java/j2sdk1.4.2_03/bin",
@@ -648,25 +668,7 @@ static char *s_defaultPossibleJavaBinPaths[] = {
     "/usr/java/j2sdk1.3.1/bin",
     "/usr/java/j2sdk1.3.0/bin",
     "/usr/java1.2/bin",
-
-    "C:\\j2sdk1.4.3\\bin",
-    "C:\\j2sdk1.4.2_03\\bin",
-    "C:\\j2sdk1.4.2_02\\bin",
-    "C:\\j2sdk1.4.2_01\\bin",
-    "C:\\j2sdk1.4.2\\bin",
-    "C:\\j2sdk1.4.1_03\\bin",
-    "C:\\j2sdk1.4.1_02\\bin",
-    "C:\\j2sdk1.4.1_01\\bin",
-    "C:\\j2sdk1.4.1\\bin",
-    "C:\\j2sdk1.4.0_03\\bin",
-    "C:\\j2sdk1.4.0_02\\bin",
-    "C:\\j2sdk1.4.0_01\\bin",
-    "C:\\j2sdk1.4.0\\bin",
-    "C:\\j2sdk1.3.1_03\\bin",
-    "C:\\j2sdk1.3.1_02\\bin",
-    "C:\\j2sdk1.3.1_01\\bin",
-    "C:\\j2sdk1.3.1\\bin",
-    "C:\\j2sdk1.3.0\\bin",
+#endif
     NULL
 };
 
@@ -677,8 +679,8 @@ static char *getJdkClassPath(void) {
     res = getJdkClassPathQuickly();
     if (res!=NULL && *res!=0) return(res);
     // Can't determine it with quick method, try other methods
-    for(i=0; s_defaultPossibleJavaBinPaths[i]!=NULL; i++) {
-        res = canItBeJavaBinPath(s_defaultPossibleJavaBinPaths[i]);
+    for(i=0; defaultPossibleJavaBinPaths[i]!=NULL; i++) {
+        res = canItBeJavaBinPath(defaultPossibleJavaBinPaths[i]);
         if (res!=NULL && *res!=0) return(res);
     }
     return(NULL);
