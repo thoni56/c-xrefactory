@@ -62,17 +62,15 @@ ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
     }
 
 
-#define GetU1(value, cb_next, cb_end, cb) {             \
-        GetChar(value, cb);          \
-        cb_next = (cb)->next;                           \
-        cb_end = (cb)->end;                             \
+#define GetU1(value, cb) {                              \
+        GetChar(value, cb);                             \
     }
 
 
 #define GetU2(value, cb_next, cb_end, cb) {             \
         int ch;                                         \
-        GetChar(value, cb);          \
-        GetChar(ch, cb);             \
+        GetChar(value, cb);                             \
+        GetChar(ch, cb);                                \
         value = value*256+ch;                           \
         cb_next = (cb)->next;                           \
         cb_end = (cb)->end;                             \
@@ -127,16 +125,14 @@ ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
         assert(cb_end == (cb)->end);                       \
     }
 
-#define SkipAttributes(cb_next, cb_end, cb) {               \
-        int index, count, aname, alen;                      \
-        GetU2(count, cb_next, cb_end, cb);                  \
-        for(index=0; index<count; index++) {                \
-            GetU2(aname, cb_next, cb_end, cb);              \
-            GetU4(alen, cb_next, cb_end, cb);               \
-            SkipNChars(alen, cb_next, cb_end, cb);          \
-        }                                                   \
-        (cb)->next = cb_next;                               \
-        (cb)->end = cb_end;                                 \
+#define SkipAttributes(cb) {                                  \
+        int index, count, aname, alen;                        \
+        GetU2(count, cb->next, cb->end, cb);                  \
+        for(index=0; index<count; index++) {                  \
+            GetU2(aname, cb->next, cb->end, cb);              \
+            GetU4(alen, cb->next, cb->end, cb);               \
+            SkipNChars(alen, cb->next, cb->end, cb);          \
+        }                                                     \
     }
 
 /* *************** first something to read zip-files ************** */
@@ -591,7 +587,7 @@ static ConstantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,
     CF_ALLOCC(cp, count, ConstantPoolUnion);
     //& memset(cp,0, count*sizeof(ConstantPoolUnion));    // if broken file
     for(ind=1; ind<count; ind++) {
-        GetU1(tag, cb->next, cb->end, cb);
+        GetU1(tag, cb);
         switch (tag) {
         case 0:
             GetChar(cval, cb);
@@ -833,7 +829,7 @@ static void cfReadFieldInfos(CharacterBuffer *cb,
         log_trace("field '%s' of type '%s'", cp[nameind].asciz, cp[sigind].asciz);
         cfAddRecordToClass(cp[nameind].asciz, cp[sigind].asciz, memb, access_flags,
                            StorageField, NULL);
-        SkipAttributes(cb->next, cb->end, cb);
+        SkipAttributes(cb);
     }
     return;
  endOfFile:
@@ -1133,12 +1129,12 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
 
     cb_next = cb->next;
     cb_end = cb->end;
-    GetU2(count, cb_next, cb_end, cb);
+    GetU2(count, cb->next, cb->end, cb);
     for(ind=0; ind<count; ind++) {
-        GetU2(aname, cb_next, cb_end, cb);
-        GetU4(alen, cb_next, cb_end, cb);
+        GetU2(aname, cb->next, cb->end, cb);
+        GetU4(alen, cb->next, cb->end, cb);
         if (strcmp(constantPool[aname].asciz,"InnerClasses")==0) {
-            GetU2(inum, cb_next, cb_end, cb);
+            GetU2(inum, cb->next, cb->end, cb);
             symbol->u.s->nestedCount = inum;
             // TODO: replace the inner tab by inner list
             if (inum >= MAX_INNERS_CLASSES) {
@@ -1152,11 +1148,11 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
                 CF_ALLOCC(symbol->u.s->nest, inum, S_nestedSpec);
             }
             for(rinners=0; rinners<inum; rinners++) {
-                GetU2(innval, cb_next, cb_end, cb);
+                GetU2(innval, cb->next, cb->end, cb);
                 inner = constantPool[constantPool[innval].clas.nameIndex].asciz;
                 //&fprintf(dumpOut,"inner %s \n",inner);fflush(dumpOut);
-                GetU2(upp, cb_next, cb_end, cb);
-                GetU2(innNameInd, cb_next, cb_end, cb);
+                GetU2(upp, cb->next, cb->end, cb);
+                GetU2(innNameInd, cb->next, cb->end, cb);
                 if (innNameInd==0) innerCName = "";         // !!!!!!!! hack
                 else innerCName = constantPool[innNameInd].asciz;
                 //&fprintf(dumpOut,"class name %x='%s'\n",innerCName,innerCName);fflush(dumpOut);
@@ -1170,7 +1166,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
                         /*&fprintf(dumpOut,"set as member class \n"); fflush(dumpOut);&*/
                     }
                 }
-                GetU2(modifs, cb_next, cb_end, cb);
+                GetU2(modifs, cb->next, cb->end, cb);
                 //& inners->bits.access |= modifs;
                 //&fprintf(dumpOut,"modif? %x\n",modifs);fflush(dumpOut);
 
@@ -1186,7 +1182,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
                 }
             }
         } else {
-            SkipNChars(alen, cb_next, cb_end, cb);
+            SkipNChars(alen, cb->next, cb->end, cb);
         }
     }
     fileTable.tab[fileIndex]->b.cxLoaded = true;
