@@ -1021,7 +1021,6 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
     FILE *zipFile;
     int upp, innNameInd;
     bool membFlag;
-    char *cb_next, *cb_end;
     char *super, *interf, *innerCName, *zipSeparatorIndex;
     Symbol *inners;
     int thisClass, superClass, access, cpSize;
@@ -1072,32 +1071,30 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
         if (!zipSeekToFile(cb, className))
             goto finish;
     }
-    cb_next = cb->next;
-    cb_end = cb->end;
-    GetU4(readValue, cb_next, cb_end, cb);
+    GetU4(readValue, cb->next, cb->end, cb);
     log_trace("magic is %x", readValue);
     if (readValue != 0xcafebabe) {
         sprintf(tmpBuff,"%s is not a valid class file", className);
         errorMessage(ERR_ST, tmpBuff);
         goto finish;
     }
-    GetU2(minor, cb_next, cb_end, cb);
-    GetU2(major, cb_next, cb_end, cb);
+    GetU2(minor, cb->next, cb->end, cb);
+    GetU2(major, cb->next, cb->end, cb);
     log_trace("version of '%s' is %d.%d", className, major, minor);
     constantPool = cfReadConstantPool(cb, &cpSize);
-    cb_next = cb->next;
-    cb_end = cb->end;
-    GetU2(access, cb_next, cb_end, cb);
+    cb->next = cb->next;
+    cb->end = cb->end;
+    GetU2(access, cb->next, cb->end, cb);
     symbol->bits.access = access;
     log_trace("reading accessFlags %s == %x", className, access);
     if (access & AccessInterface) fileTable.tab[fileIndex]->b.isInterface = true;
-    GetU2(thisClass, cb_next, cb_end, cb);
+    GetU2(thisClass, cb->next, cb->end, cb);
     if (thisClass<0 || thisClass>=cpSize) goto corrupted;
     thisClassName = constantPool[constantPool[thisClass].clas.nameIndex].asciz;
     // TODO!!!, it may happen that name of class differ in cases from name of file,
     // what to do in such case? abandon with an error?
     log_trace("this class == %s", thisClassName);
-    GetU2(superClass, cb_next, cb_end, cb);
+    GetU2(superClass, cb->next, cb->end, cb);
     if (superClass != 0) {
         if (superClass<0 || superClass>=cpSize) goto corrupted;
         super = constantPool[constantPool[superClass].clas.nameIndex].asciz;
@@ -1105,11 +1102,11 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
                                        loadSuper);
     }
 
-    GetU2(inum, cb_next, cb_end, cb);
+    GetU2(inum, cb->next, cb->end, cb);
     /* implemented interfaces */
 
     for(i=0; i<inum; i++) {
-        GetU2(readValue, cb_next, cb_end, cb);
+        GetU2(readValue, cb->next, cb->end, cb);
         if (readValue != 0) {
             if (readValue<0 || readValue>=cpSize) goto corrupted;
             interf = constantPool[constantPool[readValue].clas.nameIndex].asciz;
@@ -1119,16 +1116,12 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
     }
     //& addSubClassesItemsToFileTab(symbol, symbol->u.s->classFile);
 
-    cb->next = cb_next;
-    cb->end = cb_end;
     cfReadFieldInfos(cb, symbol, constantPool);
 
     if (currentFile.lexBuffer.buffer.isAtEOF) goto endOfFile;
     cfReadMethodInfos(cb, symbol, constantPool);
     if (currentFile.lexBuffer.buffer.isAtEOF) goto endOfFile;
 
-    cb_next = cb->next;
-    cb_end = cb->end;
     GetU2(count, cb->next, cb->end, cb);
     for(ind=0; ind<count; ind++) {
         GetU2(aname, cb->next, cb->end, cb);
