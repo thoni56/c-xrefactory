@@ -33,12 +33,12 @@ struct javaCpRecordInfo {
     short unsigned  nameAndTypeIndex;
 };
 
-union constantPoolUnion {
-    char                            *asciz;
-    struct javaCpClassInfo          clas;
-    struct javaCpNameAndTypeInfo    nt;
-    struct javaCpRecordInfo         rec;
-};
+typedef union constantPoolUnion {
+    char *asciz;
+    struct javaCpClassInfo clas;
+    struct javaCpNameAndTypeInfo nt;
+    struct javaCpRecordInfo rec;
+} ConstantPoolUnion;
 
 S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 
@@ -590,18 +590,18 @@ void javaMapZipDirFile(
 
 /* **************************************************************** */
 
-static union constantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,
-                                                   int *cpSize) {
+static ConstantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,
+                                             int *cpSize) {
     int cval;
     int count,tag,ind,classind,nameind,typeind,strind;
     int size,i;
-    union constantPoolUnion *cp=NULL;
+    ConstantPoolUnion *cp=NULL;
     char *str;
     char tmpBuff[TMP_BUFF_SIZE];
 
     GetU2(count, cb->next, cb->end, cb);
-    CF_ALLOCC(cp, count, union constantPoolUnion);
-    //& memset(cp,0, count*sizeof(union constantPoolUnion));    // if broken file
+    CF_ALLOCC(cp, count, ConstantPoolUnion);
+    //& memset(cp,0, count*sizeof(ConstantPoolUnion));    // if broken file
     for(ind=1; ind<count; ind++) {
         GetU1(tag, cb->next, cb->end, cb);
         switch (tag) {
@@ -834,7 +834,7 @@ static void cfReadFieldInfos(   char **accc,
                                 char **affin,
                                 CharacterBuffer *iBuf,
                                 Symbol *memb,
-                                union constantPoolUnion *cp
+                                ConstantPoolUnion *cp
                                 ) {
     char *ccc, *ffin;
     int count, ind;
@@ -873,7 +873,7 @@ static void cfReadMethodInfos(  char **accc,
                                 char **affin,
                                 CharacterBuffer *iBuf,
                                 Symbol *memb,
-                                union constantPoolUnion *cp
+                                ConstantPoolUnion *cp
                                 ) {
     char *ccc, *ffin, *name, *sign, *sign2;
     unsigned count, ind;
@@ -1059,7 +1059,7 @@ void javaReadClassFile(char *className, Symbol *symbol, int loadSuper) {
     int thisClass, superClass, access, cpSize;
     int fileIndex, ind, count, aname, alen, cn;
     char *inner, *upper, *thisClassName;
-    union constantPoolUnion *constantPool;
+    ConstantPoolUnion *constantPool;
     Position pos;
     char tmpBuff[TMP_BUFF_SIZE];
     int major, minor;           /* Version numbers of class file format */
