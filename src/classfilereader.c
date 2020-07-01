@@ -103,10 +103,8 @@ S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
     }
 
 #define SkipNChars(count, cb_next, cb_end, cb) {           \
-        int ccount;                                        \
-        ccount = (count);                                  \
-        if (cb_next + ccount < cb_end) {                   \
-            cb_next += ccount;                             \
+        if (cb_next + count < cb_end) {                    \
+            cb_next += count;                              \
             (cb)->next = cb_next;                          \
         } else {                                           \
             (cb)->next = cb_next;                          \
@@ -147,6 +145,7 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *cb
     static int compressionErrorWritten=0;
     char *zzz, ttt[MAX_FILE_NAME_SIZE];
 
+    assert(cb->next == *accc);
     res = 1;
     ccc = *accc; ffin = *affin;
     GetZU4(signature,ccc,ffin,cb);
@@ -1091,12 +1090,12 @@ void javaReadClassFile(char *className, Symbol *symbol, int loadSuper) {
     log_debug("reading file '%s'", className);
 
     cb = &currentFile.lexBuffer.buffer;
-    cb_next = cb->next;
-    cb_end = cb->end;
     if (zipSeparatorIndex != NULL) {
-        if (zipSeekToFile(&cb_next, &cb_end, cb, className) == 0)
+        if (zipSeekToFile(&cb->next, &cb->end, cb, className) == 0)
             goto finish;
     }
+    cb_next = cb->next;
+    cb_end = cb->end;
     GetU4(readValue, cb_next, cb_end, cb);
     log_trace("magic is %x", readValue);
     if (readValue != 0xcafebabe) {
