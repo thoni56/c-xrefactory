@@ -58,8 +58,8 @@ int skipWhiteSpace(CharacterBuffer *cb, int ch) {
     return (int)mock(cb, ch);
 }
 
-int skipNCharsInCharacterBuffer(CharacterBuffer *buffer, unsigned count) {
-    return (int) mock(buffer, count);
+void skipNCharsInCharacterBuffer(CharacterBuffer *buffer, unsigned count) {
+    mock(buffer, count);
 }
 
 int getChar(CharacterBuffer *cb) {

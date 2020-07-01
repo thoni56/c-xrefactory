@@ -173,7 +173,7 @@ void switchToZippedCharBuff(CharacterBuffer *buffer) {
     }
 }
 
-int skipNCharsInCharacterBuffer(CharacterBuffer *buffer, unsigned count) {
+void skipNCharsInCharacterBuffer(CharacterBuffer *buffer, unsigned count) {
     char *dd;
     char *cc;
     char *fin;
@@ -184,7 +184,7 @@ int skipNCharsInCharacterBuffer(CharacterBuffer *buffer, unsigned count) {
     cc = buffer->next;
     if (cc+count < fin) {
         buffer->next = cc+count;
-        return(1);
+        return;
     }
     if (buffer->inputMethod == INPUT_VIA_UNZIP) {
         // TODO FINISH THIS
@@ -208,7 +208,6 @@ int skipNCharsInCharacterBuffer(CharacterBuffer *buffer, unsigned count) {
         buffer->end = dd+n;
         buffer->next = buffer->chars+MAX_UNGET_CHARS;
     }
-    return(buffer->next != buffer->end);
 }
 
 
