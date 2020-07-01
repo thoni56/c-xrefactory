@@ -852,13 +852,11 @@ static char *simpleClassNameFromFQTName(char *fqtName) {
     return(res);
 }
 
-static void cfReadMethodInfos(char **accc,
-                              char **affin,
-                              CharacterBuffer *cb,
+static void cfReadMethodInfos(CharacterBuffer *cb,
                               Symbol *memb,
                               ConstantPoolUnion *cp
 ) {
-    char *ccc, *ffin, *name, *sign, *sign2;
+    char *name, *sign, *sign2;
     unsigned count, ind;
     unsigned aind, acount, aname, alen, excount;
     int i, access_flags, nameind, sigind, exclass;
@@ -866,12 +864,11 @@ static void cfReadMethodInfos(char **accc,
     Symbol *exc;
     SymbolList *exclist, *ee;
 
-    ccc = cb->next; ffin = cb->end;
-    GetU2(count, ccc, ffin, cb);
+    GetU2(count, cb->next, cb->end, cb);
     for(ind=0; ind<count; ind++) {
-        GetU2(access_flags, ccc, ffin, cb);
-        GetU2(nameind, ccc, ffin, cb);
-        GetU2(sigind, ccc, ffin, cb);
+        GetU2(access_flags, cb->next, cb->end, cb);
+        GetU2(nameind, cb->next, cb->end, cb);
+        GetU2(sigind, cb->next, cb->end, cb);
         log_trace("method '%s' of type '%s'", cp[nameind].asciz,cp[sigind].asciz);
         // TODO more efficiently , just index checking
         name = cp[nameind].asciz;
@@ -902,16 +899,16 @@ static void cfReadMethodInfos(char **accc,
             log_trace("strange constructor '%s' '%s'", name, sign);
             storage = StorageConstructor;
         }
-        GetU2(acount, ccc, ffin, cb);
+        GetU2(acount, cb->next, cb->end, cb);
         for(aind=0; aind<acount; aind++) {
-            GetU2(aname, ccc, ffin, cb);
-            GetU4(alen, ccc, ffin, cb);
+            GetU2(aname, cb->next, cb->end, cb);
+            GetU4(alen, cb->next, cb->end, cb);
             // berk, really I need to compare strings?
             if (strcmp(cp[aname].asciz, "Exceptions")==0) {
-                GetU2(excount, ccc, ffin, cb);
+                GetU2(excount, cb->next, cb->end, cb);
                 for(i=0; i<excount; i++) {
                     char *exname, *exsname;
-                    GetU2(exclass, ccc, ffin, cb);
+                    GetU2(exclass, cb->next, cb->end, cb);
                     exname = cp[cp[exclass].clas.nameIndex].asciz;
                     log_trace("throws '%s'", exname);
                     exsname = simpleClassNameFromFQTName(exname);
@@ -929,46 +926,44 @@ static void cfReadMethodInfos(char **accc,
                 unsigned caname, calen;
                 int ii;
                 // look here for local variable names
-                GetU2(max_stack, ccc, ffin, cb);
-                GetU2(max_locals, ccc, ffin, cb);
-                GetU4(code_length, ccc, ffin, cb);
-                SkipNChars(code_length, ccc, ffin, cb);
-                GetU2(exception_table_length, ccc, ffin, cb);
-                SkipNChars((exception_table_length*8), ccc, ffin, cb);
-                GetU2(attributes_count, ccc, ffin, cb);
+                GetU2(max_stack, cb->next, cb->end, cb);
+                GetU2(max_locals, cb->next, cb->end, cb);
+                GetU4(code_length, cb->next, cb->end, cb);
+                SkipNChars(code_length, cb->next, cb->end, cb);
+                GetU2(exception_table_length, cb->next, cb->end, cb);
+                SkipNChars((exception_table_length*8), cb->next, cb->end, cb);
+                GetU2(attributes_count, cb->next, cb->end, cb);
                 for(ii=0; ii<attributes_count; ii++) {
                     int iii;
-                    GetU2(caname, ccc, ffin, cb);
-                    GetU4(calen, ccc, ffin, cb);
+                    GetU2(caname, cb->next, cb->end, cb);
+                    GetU4(calen, cb->next, cb->end, cb);
                     if (strcmp(cp[caname].asciz, "LocalVariableTable")==0) {
                         unsigned local_variable_table_length;
                         unsigned start_pc,length,name_index,descriptor_index;
                         unsigned index;
-                        GetU2(local_variable_table_length, ccc, ffin, cb);
+                        GetU2(local_variable_table_length, cb->next, cb->end, cb);
                         for(iii=0; iii<local_variable_table_length; iii++) {
-                            GetU2(start_pc, ccc, ffin, cb);
-                            GetU2(length, ccc, ffin, cb);
-                            GetU2(name_index, ccc, ffin, cb);
-                            GetU2(descriptor_index, ccc, ffin, cb);
-                            GetU2(index, ccc, ffin, cb);
+                            GetU2(start_pc, cb->next, cb->end, cb);
+                            GetU2(length, cb->next, cb->end, cb);
+                            GetU2(name_index, cb->next, cb->end, cb);
+                            GetU2(descriptor_index, cb->next, cb->end, cb);
+                            GetU2(index, cb->next, cb->end, cb);
                             log_trace("local variable %s, index == %d", cp[name_index].asciz, index);
                         }
                     } else {
-                        SkipNChars(calen, ccc, ffin, cb);
+                        SkipNChars(calen, cb->next, cb->end, cb);
                     }
                 }
             } else {
                 log_trace("skipping %s", cp[aname].asciz);
-                SkipNChars(alen, ccc, ffin, cb);
+                SkipNChars(alen, cb->next, cb->end, cb);
             }
         }
         cfAddRecordToClass(name, sign, memb, access_flags, storage, exclist);
     }
-    goto fin;
+    return;
  endOfFile:
     errorMessage(ERR_ST,"unexpected end of file");
- fin:
-    cb->next = ccc; cb->end = ffin;
 }
 
 Symbol *cfAddCastsToModule(Symbol *memb, Symbol *sup) {
@@ -1136,7 +1131,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
     cfReadFieldInfos(cb, symbol, constantPool);
 
     if (currentFile.lexBuffer.buffer.isAtEOF) goto endOfFile;
-    cfReadMethodInfos(&cb->next, &cb->end, cb, symbol, constantPool);
+    cfReadMethodInfos(cb, symbol, constantPool);
     if (currentFile.lexBuffer.buffer.isAtEOF) goto endOfFile;
 
     cb_next = cb->next;
