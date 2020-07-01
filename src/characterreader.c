@@ -182,13 +182,13 @@ void skipNCharsInCharacterBuffer(CharacterBuffer *buffer, unsigned count) {
 
     fin = buffer->end;
     cc = buffer->next;
-    if (cc+count < fin) {
-        buffer->next = cc+count;
+    if (buffer->next+count < fin) {
+        buffer->next += count;
         return;
     }
     if (buffer->inputMethod == INPUT_VIA_UNZIP) {
         // TODO FINISH THIS
-        count -= fin-cc;
+        count -= fin-cc;        /* How many to skip after refilling? */
         buffer->next = buffer->end;
         refillBuffer(buffer);
         if (buffer->end != buffer->next) {
