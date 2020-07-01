@@ -133,7 +133,7 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iB
     int res;
     char *ccc, *ffin;
     int i;
-    int headSig,extractVersion,bitFlags,compressionMethod;
+    int signature,extractVersion,bitFlags,compressionMethod;
     int lastModTime,lastModDate,fnameLen,extraLen;
     unsigned crc32,compressedSize,unCompressedSize;
     static int compressionErrorWritten=0;
@@ -141,10 +141,10 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iB
 
     res = 1;
     ccc = *accc; ffin = *affin;
-    GetZU4(headSig,ccc,ffin,iBuf);
-    //&fprintf(dumpOut,"signature is %x\n",headSig); fflush(dumpOut);
-    *lastSig = headSig;
-    if (headSig != 0x04034b50) {
+    GetZU4(signature,ccc,ffin,iBuf);
+    log_trace("zip file signature is %x", signature);
+    *lastSig = signature;
+    if (signature != 0x04034b50) {
         static int messagePrinted = 0;
         if (messagePrinted==0) {
             char tmpBuff[TMP_BUFF_SIZE];
@@ -214,37 +214,6 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iB
     *accc = ccc; *affin = ffin;
     return(res);
 }
-
-#define ReadZipCDRecord(ccc,ffin,iBuf) {                                \
-        /* using many output values */                                  \
-        GetZU4(headSig,ccc,ffin,iBuf);                                  \
-        if (headSig != 0x02014b50) goto endcd;                          \
-        GetZU2(madeByVersion,ccc,ffin,iBuf);                            \
-        GetZU2(extractVersion,ccc,ffin,iBuf);                           \
-        GetZU2(bitFlags,ccc,ffin,iBuf);                                 \
-        GetZU2(compressionMethod,ccc,ffin,iBuf);                        \
-        GetZU2(lastModTime,ccc,ffin,iBuf);                              \
-        GetZU2(lastModDate,ccc,ffin,iBuf);                              \
-        GetZU4(crc32,ccc,ffin,iBuf);                                    \
-        GetZU4(compressedSize,ccc,ffin,iBuf);                           \
-        GetZU4(unCompressedSize,ccc,ffin,iBuf);                         \
-        GetZU2(fnameLen,ccc,ffin,iBuf);                                 \
-        if (fnameLen >= MAX_FILE_NAME_SIZE) {                           \
-            fatalError(ERR_INTERNAL,"file name in .zip archive too long", XREF_EXIT_ERR); \
-        }                                                               \
-        GetZU2(extraLen,ccc,ffin,iBuf);                                 \
-        GetZU2(fcommentLen,ccc,ffin,iBuf);                              \
-        GetZU2(diskNumber,ccc,ffin,iBuf);                               \
-        GetZU2(internFileAttribs,ccc,ffin,iBuf);                        \
-        GetZU4(externFileAttribs,ccc,ffin,iBuf);                        \
-        GetZU4(localHeaderOffset,ccc,ffin,iBuf);                        \
-        for(i=0; i<fnameLen; i++) {                                     \
-            GetChar(fn[i],ccc,ffin,iBuf);                               \
-        }                                                               \
-        fn[i] = 0;                                                      \
-        log_trace("file '%s' in central dir", fn);                      \
-        SkipNChars(extraLen+fcommentLen,ccc,ffin,iBuf);                 \
-    }
 
 
 static CharacterBuffer s_zipTmpBuff;
@@ -379,7 +348,7 @@ static void zipArchiveScan(char **accc, char **affin, CharacterBuffer *iBuf,
     char fn[MAX_FILE_NAME_SIZE];
     char *ccc, *ffin;
     S_zipArchiveDir *place;
-    int headSig,madeByVersion,extractVersion,bitFlags,compressionMethod;
+    int signature,madeByVersion,extractVersion,bitFlags,compressionMethod;
     int lastModTime,lastModDate,fnameLen,extraLen,fcommentLen,diskNumber;
     int i,internFileAttribs,tmp;
     unsigned externFileAttribs,localHeaderOffset, cdOffset;
@@ -389,9 +358,10 @@ static void zipArchiveScan(char **accc, char **affin, CharacterBuffer *iBuf,
 
     ccc = *accc; ffin = *affin;
     zip->dir = NULL;
-    if (findEndOfCentralDirectory(&ccc, &ffin, iBuf, fsize)==0) goto fini;
-    GetZU4(headSig,ccc,ffin,iBuf);
-    assert(headSig == 0x06054b50);
+    if (findEndOfCentralDirectory(&ccc, &ffin, iBuf, fsize)==0)
+        goto fini;
+    GetZU4(signature,ccc,ffin,iBuf);
+    assert(signature == 0x06054b50);
     GetZU2(tmp,ccc,ffin,iBuf);
     GetZU2(tmp,ccc,ffin,iBuf);
     GetZU2(tmp,ccc,ffin,iBuf);
@@ -399,18 +369,50 @@ static void zipArchiveScan(char **accc, char **affin, CharacterBuffer *iBuf,
     GetZU4(tmp,ccc,ffin,iBuf);
     GetZU4(cdOffset,ccc,ffin,iBuf);
     SeekToPosition(ccc,ffin,iBuf,cdOffset);
-    for(;;) {
-        ReadZipCDRecord(ccc,ffin,iBuf);
+
+    /* Read signature */
+    GetZU4(signature,ccc,ffin,iBuf);
+    while (signature == 0x02014b50) {
+        /* Read zip central directory using many output values */
+        GetZU2(madeByVersion,ccc,ffin,iBuf);
+        GetZU2(extractVersion,ccc,ffin,iBuf);
+        GetZU2(bitFlags,ccc,ffin,iBuf);
+        GetZU2(compressionMethod,ccc,ffin,iBuf);
+        GetZU2(lastModTime,ccc,ffin,iBuf);
+        GetZU2(lastModDate,ccc,ffin,iBuf);
+        GetZU4(crc32,ccc,ffin,iBuf);
+        GetZU4(compressedSize,ccc,ffin,iBuf);
+        GetZU4(unCompressedSize,ccc,ffin,iBuf);
+        GetZU2(fnameLen,ccc,ffin,iBuf);
+        if (fnameLen >= MAX_FILE_NAME_SIZE) {
+            fatalError(ERR_INTERNAL,"file name in .zip archive too long", XREF_EXIT_ERR);
+        }
+        GetZU2(extraLen,ccc,ffin,iBuf);
+        GetZU2(fcommentLen,ccc,ffin,iBuf);
+        GetZU2(diskNumber,ccc,ffin,iBuf);
+        GetZU2(internFileAttribs,ccc,ffin,iBuf);
+        GetZU4(externFileAttribs,ccc,ffin,iBuf);
+        GetZU4(localHeaderOffset,ccc,ffin,iBuf);
+        for(i=0; i<fnameLen; i++) {
+            GetChar(fn[i],ccc,ffin,iBuf);
+        }
+        fn[i] = 0;
+        log_trace("file '%s' in central dir", fn);
+        SkipNChars(extraLen+fcommentLen,ccc,ffin,iBuf);
+
         if (strncmp(fn,"META-INF/",9)!=0) {
             log_trace("adding '%s'", fn);
             fsIsMember(&zip->dir, fn, localHeaderOffset, ADD_YES, &place);
         }
-    } endcd:;
-    goto fini;
- endOfFile:
-    errorMessage(ERR_ST,"unexpected end of file");
+        /* Read next signature */
+        GetZU4(signature,ccc,ffin,iBuf);
+    }
  fini:
     *accc = ccc; *affin = ffin;
+    return;
+
+ endOfFile:
+    errorMessage(ERR_ST, "unexpected end of file");
 }
 
 int zipIndexArchive(char *name) {
