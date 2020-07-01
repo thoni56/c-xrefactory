@@ -863,7 +863,6 @@ static void cfReadMethodInfos(char **accc,
     unsigned aind, acount, aname, alen, excount;
     int i, access_flags, nameind, sigind, exclass;
     Storage storage;
-    char *exname, *exsname;
     Symbol *exc;
     SymbolList *exclist, *ee;
 
@@ -873,10 +872,7 @@ static void cfReadMethodInfos(char **accc,
         GetU2(access_flags, ccc, ffin, cb);
         GetU2(nameind, ccc, ffin, cb);
         GetU2(sigind, ccc, ffin, cb);
-        /*
-          fprintf(dumpOut, "method '%s' of type '%s'\n",
-          cp[nameind].asciz,cp[sigind].asciz); fflush(dumpOut);
-        */
+        log_trace("method '%s' of type '%s'", cp[nameind].asciz,cp[sigind].asciz);
         // TODO more efficiently , just index checking
         name = cp[nameind].asciz;
         sign = cp[sigind].asciz;
@@ -884,13 +880,13 @@ static void cfReadMethodInfos(char **accc,
         exclist = NULL;
         if (strcmp(name, JAVA_CONSTRUCTOR_NAME1)==0
             || strcmp(name, JAVA_CONSTRUCTOR_NAME2)==0) {
-            // isn't it yet done by javac?
+            // isn't it already done by javac?
             //&if (strcmp(name, JAVA_CONSTRUCTOR_NAME2)==0) {
             //& access_flags |= AccessStatic;
             //&}
             // if constructor, put there type name as constructor name
             // instead of <init>
-            log_trace("constructor %s of %s", name, memb->name);
+            log_trace("constructor '%s' of '%s'", name, memb->name);
             assert(memb && memb->bits.symType==TypeStruct && memb->u.s);
             name = memb->name;
             storage = StorageConstructor;
@@ -899,11 +895,11 @@ static void cfReadMethodInfos(char **accc,
                 sign2 = cfSkipFirstArgumentInSigString(sign);
                 CF_ALLOCC(sign, strlen(sign2)+2, char);
                 sign[0] = '(';  strcpy(sign+1, sign2);
-                log_trace("it is nested constructor %s %s", name, sign);
+                log_trace("nested constructor '%s' '%s'", name, sign);
             }
         } else if (name[0] == '<') {
             // still some strange constructor name?
-            log_trace("strange constructor %s %s", name, sign);
+            log_trace("strange constructor '%s' '%s'", name, sign);
             storage = StorageConstructor;
         }
         GetU2(acount, ccc, ffin, cb);
@@ -914,9 +910,10 @@ static void cfReadMethodInfos(char **accc,
             if (strcmp(cp[aname].asciz, "Exceptions")==0) {
                 GetU2(excount, ccc, ffin, cb);
                 for(i=0; i<excount; i++) {
+                    char *exname, *exsname;
                     GetU2(exclass, ccc, ffin, cb);
                     exname = cp[cp[exclass].clas.nameIndex].asciz;
-                    //&fprintf(dumpOut,"throws %s\n", exname);fflush(dumpOut);
+                    log_trace("throws '%s'", exname);
                     exsname = simpleClassNameFromFQTName(exname);
                     exc = javaFQTypeSymbolDefinition(exsname, exname);
                     CF_ALLOC(ee, SymbolList);
@@ -954,14 +951,14 @@ static void cfReadMethodInfos(char **accc,
                             GetU2(name_index, ccc, ffin, cb);
                             GetU2(descriptor_index, ccc, ffin, cb);
                             GetU2(index, ccc, ffin, cb);
-                            //&fprintf(dumpOut,"local variable %s, index == %d\n", cp[name_index].asciz, index);fflush(dumpOut);
+                            log_trace("local variable %s, index == %d", cp[name_index].asciz, index);
                         }
                     } else {
                         SkipNChars(calen, ccc, ffin, cb);
                     }
                 }
             } else {
-                //&fprintf(dumpOut, "skipping %s\n", cp[aname].asciz);
+                log_trace("skipping %s", cp[aname].asciz);
                 SkipNChars(alen, ccc, ffin, cb);
             }
         }

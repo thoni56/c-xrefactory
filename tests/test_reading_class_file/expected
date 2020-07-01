@@ -8,7 +8,8 @@ java version == 1.3
 0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: reading accessFlags CURDIR/Completion2.class == 20
 0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: this class == com/cxrefactory/Completion2
 0000-00-00 00:<line>:00 DEBUG classfilereader.c:<line>: adding superclass java/lang/Object to CURDIR/Completion2
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: constructor <init> of Completion2
+0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method '<init>' of type '()V'
+0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: constructor '<init>' of 'Completion2'
 0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of Completion2 == Completion2()
 0000-00-00 00:<line>:00 DEBUG classfilereader.c:<line>: closing file CURDIR/Completion2.class
 0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: Leaving: javaReadClassFile
