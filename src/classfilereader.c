@@ -44,75 +44,73 @@ ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 
 /* *********************************************************************** */
 
-#define GetChar(ch, cb_next, cb_end, cb) {                              \
-        if (cb_next >= cb_end) {                                        \
-            (cb)->next = cb_next;                                       \
+#define GetChar(ch, cb) {                                               \
+        if (cb->next >= cb->end) {                                      \
+            (cb)->next = cb->next;                                      \
             if ((cb)->isAtEOF || refillBuffer(cb) == 0) {               \
                 ch = -1;                                                \
                 (cb)->isAtEOF = true;                                   \
                 goto endOfFile;                                         \
             } else {                                                    \
-                cb_next = (cb)->next;                                   \
-                cb_end = (cb)->end;                                     \
-                ch = * ((unsigned char*)cb_next); cb_next ++;           \
+                cb->next = (cb)->next;                                  \
+                cb->end = (cb)->end;                                    \
+                ch = * ((unsigned char*)cb->next); cb->next ++;         \
             }                                                           \
         } else {                                                        \
-            ch = * ((unsigned char*)cb_next); cb_next++;                \
+            ch = * ((unsigned char*)cb->next); cb->next++;              \
         }                                                               \
-        (cb)->next = cb_next;                                           \
-        (cb)->end = cb_end;                                             \
     }
 
 
 #define GetU1(value, cb_next, cb_end, cb) {             \
-        GetChar(value, cb_next, cb_end, cb);            \
-        (cb)->next = cb_next;                           \
-        (cb)->end = cb_end;                             \
+        GetChar(value, cb);          \
+        cb_next = (cb)->next;                           \
+        cb_end = (cb)->end;                             \
     }
 
 
 #define GetU2(value, cb_next, cb_end, cb) {             \
         int ch;                                         \
-        GetChar(value, cb_next, cb_end, cb);            \
-        GetChar(ch, cb_next, cb_end, cb);               \
+        GetChar(value, cb);          \
+        GetChar(ch, cb);             \
         value = value*256+ch;                           \
-        (cb)->next = cb_next;                           \
-        (cb)->end = cb_end;                             \
+        cb_next = (cb)->next;                           \
+        cb_end = (cb)->end;                             \
     }
 
-#define GetU4(value, cb_next, cb_end, cb) {             \
-        int ch;                                         \
-        GetChar(value, cb_next, cb_end, cb);            \
-        GetChar(ch, cb_next, cb_end, cb);               \
-        value = value*256+ch;                           \
-        GetChar(ch, cb_next, cb_end, cb);               \
-        value = value*256+ch;                           \
-        GetChar(ch, cb_next, cb_end, cb);               \
-        value = value*256+ch;                           \
-        (cb)->next = cb_next;                           \
-        (cb)->end = cb_end;                             \
+#define GetU4(value, cb_next, cb_end, cb) {               \
+        int ch;                                           \
+        GetChar(value, cb);            \
+        GetChar(ch, cb);               \
+        value = value*256+ch;                             \
+        GetChar(ch, cb);               \
+        value = value*256+ch;                             \
+        GetChar(ch, cb);               \
+        value = value*256+ch;                             \
+        cb_next = cb->next;                               \
+        cb_end = cb->end;                                 \
     }
 
-#define GetZU2(value, cb_next, cb_end, cb) {            \
-        unsigned ch;                                    \
-        GetChar(value, cb_next, cb_end, cb);            \
-        GetChar(ch, cb_next, cb_end, cb);               \
-        value = value+(ch<<8);                          \
-        (cb)->next = cb_next;                           \
-        (cb)->end = cb_end;                             \
+#define GetZU2(value, cb_next, cb_end, cb) {              \
+        unsigned ch;                                      \
+        GetChar(value, cb);            \
+        GetChar(ch, cb);               \
+        value = value+(ch<<8);                            \
+        cb_next = cb->next;                               \
+        cb_end = cb->end;                                 \
     }
 
-#define GetZU4(value, cb_next, cb_end, cb) {            \
-        unsigned ch;                                    \
-        GetChar(value, cb_next, cb_end, cb);            \
-        GetChar(ch, cb_next, cb_end, cb);               \
-        value = value+(ch<<8);                          \
-        GetChar(ch, cb_next, cb_end, cb);               \
-        value = value+(ch<<16);                         \
-        GetChar(ch, cb_next, cb_end, cb);               \
-        value = value+(ch<<24);                         \
-        (cb)->next = cb_next;                           \
-        (cb)->end = cb_end;                             \
+#define GetZU4(value, cb_next, cb_end, cb) {              \
+        unsigned ch;                                      \
+        GetChar(value, cb);            \
+        GetChar(ch, cb);               \
+        value = value+(ch<<8);                            \
+        GetChar(ch, cb);               \
+        value = value+(ch<<16);                           \
+        GetChar(ch, cb);               \
+        value = value+(ch<<24);                           \
+        cb_next = cb->next;                               \
+        cb_end = cb->end;                                 \
     }
 
 #define SkipNChars(count, cb_next, cb_end, cb) {           \
@@ -185,7 +183,7 @@ static bool zipReadLocalFileHeader(CharacterBuffer *cb,
     }
     GetZU2(extraLen,cb->next,cb->end,cb);
     for(i=0; i<fnameLen; i++) {
-        GetChar(fn[i],cb->next,cb->end,cb);
+        GetChar(fn[i],cb);
     }
     fn[i] = 0;
     SkipNChars(extraLen,cb->next,cb->end,cb);
@@ -332,16 +330,15 @@ static void seekToPosition(CharacterBuffer *cb, int offset) {
 }
 
 
-static bool findEndOfCentralDirectory(char **accc, char **affin,
-                                      CharacterBuffer *cb, int fsize) {
+static bool findEndOfCentralDirectory(CharacterBuffer *cb, int fileSize) {
     int offset;
     char *ccc, *ffin;
     bool found = true;
 
-    if (fsize < CHAR_BUFF_SIZE)
+    if (fileSize < CHAR_BUFF_SIZE)
         offset = 0;
     else
-        offset = fsize-(CHAR_BUFF_SIZE-MAX_UNGET_CHARS);
+        offset = fileSize-(CHAR_BUFF_SIZE-MAX_UNGET_CHARS);
     seekToPosition(cb, offset);
     refillBuffer(cb);
     ccc = ffin = cb->end;
@@ -356,12 +353,12 @@ static bool findEndOfCentralDirectory(char **accc, char **affin,
         goto fini;
     }
  fini:
-    *accc = ccc; *affin = ffin;
+    cb->next = ccc; cb->end = ffin;
     return found;
 }
 
 static void zipArchiveScan(CharacterBuffer *cb,
-                           ZipFileTableItem *zip, int fsize) {
+                           ZipFileTableItem *zip, int fileSize) {
     char fn[MAX_FILE_NAME_SIZE];
     ZipArchiveDir *place;
     int signature,madeByVersion,extractVersion,bitFlags,compressionMethod;
@@ -373,7 +370,7 @@ static void zipArchiveScan(CharacterBuffer *cb,
     UNUSED foffset;
 
     zip->dir = NULL;
-    if (!findEndOfCentralDirectory(&cb->next, &cb->end, cb, fsize))
+    if (!findEndOfCentralDirectory(cb, fileSize))
         goto fini;
     GetZU4(signature,cb->next,cb->end,cb);
     assert(signature == 0x06054b50);
@@ -409,7 +406,7 @@ static void zipArchiveScan(CharacterBuffer *cb,
         GetZU4(externFileAttribs,cb->next,cb->end,cb);
         GetZU4(localHeaderOffset,cb->next,cb->end,cb);
         for(i=0; i<fnameLen; i++) {
-            GetChar(fn[i],cb->next,cb->end,cb);
+            GetChar(fn[i],cb);
         }
         fn[i] = 0;
         log_trace("file '%s' in central dir", fn);
@@ -597,13 +594,13 @@ static ConstantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,
         GetU1(tag, cb->next, cb->end, cb);
         switch (tag) {
         case 0:
-            GetChar(cval, cb->next, cb->end, cb);
+            GetChar(cval, cb);
             break;
         case CONSTANT_Asciz:
             GetU2(size, cb->next, cb->end, cb);
             CF_ALLOCC(str, size+1, char);
             for(i=0; i<size; i++)
-                GetChar(str[i], cb->next, cb->end, cb);
+                GetChar(str[i], cb);
             str[i]=0;
             cp[ind].asciz = str;
             break;
