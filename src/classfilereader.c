@@ -102,18 +102,12 @@ ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
         value = value+(ch<<24);                 \
     }
 
-#define SkipNChars(count, cb_next, cb_end, cb) {        \
-        if (cb_next + count < cb_end) {                 \
-            cb_next += count;                           \
-            (cb)->next = cb_next;                       \
+#define SkipNChars(cb, count) {                         \
+        if (cb->next + count < cb->end) {               \
+            cb->next += count;                          \
         } else {                                        \
-            (cb)->next = cb_next;                       \
-            skipNCharsInCharacterBuffer(cb, (count));   \
-            cb_next = (cb)->next;                       \
-            cb_end = (cb)->end;                         \
+            skipNCharsInCharacterBuffer(cb, count);     \
         }                                               \
-        assert(cb_next == (cb)->next);                  \
-        assert(cb_end == (cb)->end);                    \
     }
 
 #define SkipAttributes(cb) {                            \
@@ -122,7 +116,7 @@ ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
         for(index=0; index<count; index++) {            \
             GetU2(aname, cb);                           \
             GetU4(alen, cb);                            \
-            SkipNChars(alen, cb->next, cb->end, cb);    \
+            SkipNChars(cb, alen);                       \
         }                                               \
     }
 
@@ -173,7 +167,7 @@ static bool zipReadLocalFileHeader(CharacterBuffer *cb,
         GetChar(fn[i],cb);
     }
     fn[i] = 0;
-    SkipNChars(extraLen,cb->next,cb->end,cb);
+    SkipNChars(cb, extraLen);
     if (compressionMethod == 0) {
     }
     else if (compressionMethod == Z_DEFLATED) {
@@ -397,7 +391,7 @@ static void zipArchiveScan(CharacterBuffer *cb,
         }
         fn[i] = 0;
         log_trace("file '%s' in central dir", fn);
-        SkipNChars(extraLen+fcommentLen,cb->next,cb->end,cb);
+        SkipNChars(cb, extraLen+fcommentLen);
 
         if (strncmp(fn,"META-INF/",9)!=0) {
             log_trace("adding '%s'", fn);
@@ -594,7 +588,7 @@ static ConstantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,
         case CONSTANT_Unicode:
             errorMessage(ERR_ST,"[cfReadConstantPool] Unicode not yet implemented");
             GetU2(size, cb);
-            SkipNChars(size*2, cb->next, cb->end, cb);
+            SkipNChars(cb, size*2);
             cp[ind].asciz = "Unicode ??";
             break;
         case CONSTANT_Class:
@@ -913,9 +907,9 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
                 GetU2(max_stack, cb);
                 GetU2(max_locals, cb);
                 GetU4(code_length, cb);
-                SkipNChars(code_length, cb->next, cb->end, cb);
+                SkipNChars(cb, code_length);
                 GetU2(exception_table_length, cb);
-                SkipNChars((exception_table_length*8), cb->next, cb->end, cb);
+                SkipNChars(cb, (exception_table_length*8));
                 GetU2(attributes_count, cb);
                 for(ii=0; ii<attributes_count; ii++) {
                     int iii;
@@ -935,12 +929,12 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
                             log_trace("local variable %s, index == %d", cp[name_index].asciz, index);
                         }
                     } else {
-                        SkipNChars(calen, cb->next, cb->end, cb);
+                        SkipNChars(cb, calen);
                     }
                 }
             } else {
                 log_trace("skipping %s", cp[aname].asciz);
-                SkipNChars(alen, cb->next, cb->end, cb);
+                SkipNChars(cb, alen);
             }
         }
         cfAddRecordToClass(name, sign, memb, access_flags, storage, exclist);
@@ -1166,7 +1160,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
                 }
             }
         } else {
-            SkipNChars(alen, cb->next, cb->end, cb);
+            SkipNChars(cb, alen);
         }
     }
     fileTable.tab[fileIndex]->b.cxLoaded = true;
