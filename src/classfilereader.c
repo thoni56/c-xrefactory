@@ -143,10 +143,10 @@ S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 
 /* *************** first something to read zip-files ************** */
 
-static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *cb,
+static bool zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *cb,
                                   char *fn, unsigned *fsize, unsigned *lastSig,
                                   char *archivename) {
-    int res;
+    bool result;
     char *ccc, *ffin;
     int i;
     int signature,extractVersion,bitFlags,compressionMethod;
@@ -157,25 +157,21 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *cb
 
     assert(cb->next == *accc);
     assert(cb->end == *affin);
-    res = 1;
+    result = true;
     ccc = cb->next; ffin = cb->end;
     GetZU4(signature,ccc,ffin,cb);
     log_trace("zip file signature is %x", signature);
     *lastSig = signature;
     if (signature != 0x04034b50) {
-        static int messagePrinted = 0;
-        if (messagePrinted==0) {
-            char tmpBuff[TMP_BUFF_SIZE];
-            messagePrinted = 1;
-            sprintf(tmpBuff,
-                    "archive %s is corrupted or modified while xref task running",
-                    archivename);
-            errorMessage(ERR_ST, tmpBuff);
-            if (options.taskRegime == RegimeEditServer) {
-                fprintf(errOut,"\t\tplease, kill xref process and retry.\n");
-            }
+        char tmpBuff[TMP_BUFF_SIZE];
+        sprintf(tmpBuff,
+                "archive %s is corrupted or modified while c-xref task running",
+                archivename);
+        errorMessage(ERR_ST, tmpBuff);
+        if (options.taskRegime == RegimeEditServer) {
+            fprintf(errOut,"\t\tplease, kill c-xref process and retry.\n");
         }
-        res = 0;
+        result = false;
         goto fin;
     }
     GetZU2(extractVersion,ccc,ffin,cb);
@@ -207,7 +203,7 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *cb
         ffin = cb->end;
     }
     else {
-        res = 0;
+        result = false;
         if (compressionErrorWritten==0) {
             char tmpBuff[TMP_BUFF_SIZE];
             assert(options.taskRegime);
@@ -231,7 +227,7 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *cb
  fin:
     *accc = ccc; *affin = ffin;
     cb->next = ccc; cb->end = ffin;
-    return(res);
+    return result;
 }
 
 
@@ -523,8 +519,8 @@ static bool zipSeekToFile(CharacterBuffer *cb, char *name) {
         return false;
     seekToPosition(cb, place->u.offset);
 
-    if (zipReadLocalFileHeader(&cb->next, &cb->end, cb, fn, &fsize,
-                               &lastSig, s_zipArchiveTable[i].fn) == 0)
+    if (!zipReadLocalFileHeader(&cb->next, &cb->end, cb, fn, &fsize,
+                                &lastSig, s_zipArchiveTable[i].fn))
         return false;
     assert(lastSig == 0x04034b50);
     assert(strcmp(fn,sep+1)==0);
