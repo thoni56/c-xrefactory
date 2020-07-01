@@ -66,14 +66,11 @@ ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
         GetChar(value, cb);                             \
     }
 
-
-#define GetU2(value, cb_next, cb_end, cb) {             \
+#define GetU2(value, cb) {                              \
         int ch;                                         \
         GetChar(value, cb);                             \
         GetChar(ch, cb);                                \
         value = value*256+ch;                           \
-        cb_next = (cb)->next;                           \
-        cb_end = (cb)->end;                             \
     }
 
 #define GetU4(value, cb_next, cb_end, cb) {               \
@@ -127,9 +124,9 @@ ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 
 #define SkipAttributes(cb) {                                  \
         int index, count, aname, alen;                        \
-        GetU2(count, cb->next, cb->end, cb);                  \
+        GetU2(count, cb);                  \
         for(index=0; index<count; index++) {                  \
-            GetU2(aname, cb->next, cb->end, cb);              \
+            GetU2(aname, cb);              \
             GetU4(alen, cb->next, cb->end, cb);               \
             SkipNChars(alen, cb->next, cb->end, cb);          \
         }                                                     \
@@ -583,7 +580,7 @@ static ConstantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,
     char *str;
     char tmpBuff[TMP_BUFF_SIZE];
 
-    GetU2(count, cb->next, cb->end, cb);
+    GetU2(count, cb);
     CF_ALLOCC(cp, count, ConstantPoolUnion);
     //& memset(cp,0, count*sizeof(ConstantPoolUnion));    // if broken file
     for(ind=1; ind<count; ind++) {
@@ -593,7 +590,7 @@ static ConstantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,
             GetChar(cval, cb);
             break;
         case CONSTANT_Asciz:
-            GetU2(size, cb->next, cb->end, cb);
+            GetU2(size, cb);
             CF_ALLOCC(str, size+1, char);
             for(i=0; i<size; i++)
                 GetChar(str[i], cb);
@@ -602,30 +599,30 @@ static ConstantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,
             break;
         case CONSTANT_Unicode:
             errorMessage(ERR_ST,"[cfReadConstantPool] Unicode not yet implemented");
-            GetU2(size, cb->next, cb->end, cb);
+            GetU2(size, cb);
             SkipNChars(size*2, cb->next, cb->end, cb);
             cp[ind].asciz = "Unicode ??";
             break;
         case CONSTANT_Class:
-            GetU2(classind, cb->next, cb->end, cb);
+            GetU2(classind, cb);
             cp[ind].clas.nameIndex = classind;
             break;
         case CONSTANT_Fieldref:
         case CONSTANT_Methodref:
         case CONSTANT_InterfaceMethodref:
-            GetU2(classind, cb->next, cb->end, cb);
-            GetU2(nameind, cb->next, cb->end, cb);
+            GetU2(classind, cb);
+            GetU2(nameind, cb);
             cp[ind].rec.classIndex = classind;
             cp[ind].rec.nameAndTypeIndex = nameind;
             break;
         case CONSTANT_NameandType:
-            GetU2(nameind, cb->next, cb->end, cb);
-            GetU2(typeind, cb->next, cb->end, cb);
+            GetU2(nameind, cb);
+            GetU2(typeind, cb);
             cp[ind].nt.nameIndex = nameind;
             cp[ind].nt.signatureIndex = typeind;
             break;
         case CONSTANT_String:
-            GetU2(strind, cb->next, cb->end, cb);
+            GetU2(strind, cb);
             break;
         case CONSTANT_Integer:
         case CONSTANT_Float:
@@ -821,11 +818,11 @@ static void cfReadFieldInfos(CharacterBuffer *cb,
     int count, ind;
     int access_flags, nameind, sigind;
 
-    GetU2(count, cb->next, cb->end, cb);
+    GetU2(count, cb);
     for(ind=0; ind<count; ind++) {
-        GetU2(access_flags, cb->next, cb->end, cb);
-        GetU2(nameind, cb->next, cb->end, cb);
-        GetU2(sigind, cb->next, cb->end, cb);
+        GetU2(access_flags, cb);
+        GetU2(nameind, cb);
+        GetU2(sigind, cb);
         log_trace("field '%s' of type '%s'", cp[nameind].asciz, cp[sigind].asciz);
         cfAddRecordToClass(cp[nameind].asciz, cp[sigind].asciz, memb, access_flags,
                            StorageField, NULL);
@@ -857,11 +854,11 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
     Symbol *exc;
     SymbolList *exclist, *ee;
 
-    GetU2(count, cb->next, cb->end, cb);
+    GetU2(count, cb);
     for(ind=0; ind<count; ind++) {
-        GetU2(access_flags, cb->next, cb->end, cb);
-        GetU2(nameind, cb->next, cb->end, cb);
-        GetU2(sigind, cb->next, cb->end, cb);
+        GetU2(access_flags, cb);
+        GetU2(nameind, cb);
+        GetU2(sigind, cb);
         log_trace("method '%s' of type '%s'", cp[nameind].asciz,cp[sigind].asciz);
         // TODO more efficiently , just index checking
         name = cp[nameind].asciz;
@@ -892,16 +889,16 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
             log_trace("strange constructor '%s' '%s'", name, sign);
             storage = StorageConstructor;
         }
-        GetU2(acount, cb->next, cb->end, cb);
+        GetU2(acount, cb);
         for(aind=0; aind<acount; aind++) {
-            GetU2(aname, cb->next, cb->end, cb);
+            GetU2(aname, cb);
             GetU4(alen, cb->next, cb->end, cb);
             // berk, really I need to compare strings?
             if (strcmp(cp[aname].asciz, "Exceptions")==0) {
-                GetU2(excount, cb->next, cb->end, cb);
+                GetU2(excount, cb);
                 for(i=0; i<excount; i++) {
                     char *exname, *exsname;
-                    GetU2(exclass, cb->next, cb->end, cb);
+                    GetU2(exclass, cb);
                     exname = cp[cp[exclass].clas.nameIndex].asciz;
                     log_trace("throws '%s'", exname);
                     exsname = simpleClassNameFromFQTName(exname);
@@ -919,28 +916,28 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
                 unsigned caname, calen;
                 int ii;
                 // look here for local variable names
-                GetU2(max_stack, cb->next, cb->end, cb);
-                GetU2(max_locals, cb->next, cb->end, cb);
+                GetU2(max_stack, cb);
+                GetU2(max_locals, cb);
                 GetU4(code_length, cb->next, cb->end, cb);
                 SkipNChars(code_length, cb->next, cb->end, cb);
-                GetU2(exception_table_length, cb->next, cb->end, cb);
+                GetU2(exception_table_length, cb);
                 SkipNChars((exception_table_length*8), cb->next, cb->end, cb);
-                GetU2(attributes_count, cb->next, cb->end, cb);
+                GetU2(attributes_count, cb);
                 for(ii=0; ii<attributes_count; ii++) {
                     int iii;
-                    GetU2(caname, cb->next, cb->end, cb);
+                    GetU2(caname, cb);
                     GetU4(calen, cb->next, cb->end, cb);
                     if (strcmp(cp[caname].asciz, "LocalVariableTable")==0) {
                         unsigned local_variable_table_length;
                         unsigned start_pc,length,name_index,descriptor_index;
                         unsigned index;
-                        GetU2(local_variable_table_length, cb->next, cb->end, cb);
+                        GetU2(local_variable_table_length, cb);
                         for(iii=0; iii<local_variable_table_length; iii++) {
-                            GetU2(start_pc, cb->next, cb->end, cb);
-                            GetU2(length, cb->next, cb->end, cb);
-                            GetU2(name_index, cb->next, cb->end, cb);
-                            GetU2(descriptor_index, cb->next, cb->end, cb);
-                            GetU2(index, cb->next, cb->end, cb);
+                            GetU2(start_pc, cb);
+                            GetU2(length, cb);
+                            GetU2(name_index, cb);
+                            GetU2(descriptor_index, cb);
+                            GetU2(index, cb);
                             log_trace("local variable %s, index == %d", cp[name_index].asciz, index);
                         }
                     } else {
@@ -1078,23 +1075,23 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
         errorMessage(ERR_ST, tmpBuff);
         goto finish;
     }
-    GetU2(minor, cb->next, cb->end, cb);
-    GetU2(major, cb->next, cb->end, cb);
+    GetU2(minor, cb);
+    GetU2(major, cb);
     log_trace("version of '%s' is %d.%d", className, major, minor);
     constantPool = cfReadConstantPool(cb, &cpSize);
     cb->next = cb->next;
     cb->end = cb->end;
-    GetU2(access, cb->next, cb->end, cb);
+    GetU2(access, cb);
     symbol->bits.access = access;
     log_trace("reading accessFlags %s == %x", className, access);
     if (access & AccessInterface) fileTable.tab[fileIndex]->b.isInterface = true;
-    GetU2(thisClass, cb->next, cb->end, cb);
+    GetU2(thisClass, cb);
     if (thisClass<0 || thisClass>=cpSize) goto corrupted;
     thisClassName = constantPool[constantPool[thisClass].clas.nameIndex].asciz;
     // TODO!!!, it may happen that name of class differ in cases from name of file,
     // what to do in such case? abandon with an error?
     log_trace("this class == %s", thisClassName);
-    GetU2(superClass, cb->next, cb->end, cb);
+    GetU2(superClass, cb);
     if (superClass != 0) {
         if (superClass<0 || superClass>=cpSize) goto corrupted;
         super = constantPool[constantPool[superClass].clas.nameIndex].asciz;
@@ -1102,11 +1099,11 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
                                        loadSuper);
     }
 
-    GetU2(inum, cb->next, cb->end, cb);
+    GetU2(inum, cb);
     /* implemented interfaces */
 
     for(i=0; i<inum; i++) {
-        GetU2(readValue, cb->next, cb->end, cb);
+        GetU2(readValue, cb);
         if (readValue != 0) {
             if (readValue<0 || readValue>=cpSize) goto corrupted;
             interf = constantPool[constantPool[readValue].clas.nameIndex].asciz;
@@ -1122,12 +1119,12 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
     cfReadMethodInfos(cb, symbol, constantPool);
     if (currentFile.lexBuffer.buffer.isAtEOF) goto endOfFile;
 
-    GetU2(count, cb->next, cb->end, cb);
+    GetU2(count, cb);
     for(ind=0; ind<count; ind++) {
-        GetU2(aname, cb->next, cb->end, cb);
+        GetU2(aname, cb);
         GetU4(alen, cb->next, cb->end, cb);
         if (strcmp(constantPool[aname].asciz,"InnerClasses")==0) {
-            GetU2(inum, cb->next, cb->end, cb);
+            GetU2(inum, cb);
             symbol->u.s->nestedCount = inum;
             // TODO: replace the inner tab by inner list
             if (inum >= MAX_INNERS_CLASSES) {
@@ -1141,11 +1138,11 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
                 CF_ALLOCC(symbol->u.s->nest, inum, S_nestedSpec);
             }
             for(rinners=0; rinners<inum; rinners++) {
-                GetU2(innval, cb->next, cb->end, cb);
+                GetU2(innval, cb);
                 inner = constantPool[constantPool[innval].clas.nameIndex].asciz;
                 //&fprintf(dumpOut,"inner %s \n",inner);fflush(dumpOut);
-                GetU2(upp, cb->next, cb->end, cb);
-                GetU2(innNameInd, cb->next, cb->end, cb);
+                GetU2(upp, cb);
+                GetU2(innNameInd, cb);
                 if (innNameInd==0) innerCName = "";         // !!!!!!!! hack
                 else innerCName = constantPool[innNameInd].asciz;
                 //&fprintf(dumpOut,"class name %x='%s'\n",innerCName,innerCName);fflush(dumpOut);
@@ -1159,7 +1156,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
                         /*&fprintf(dumpOut,"set as member class \n"); fflush(dumpOut);&*/
                     }
                 }
-                GetU2(modifs, cb->next, cb->end, cb);
+                GetU2(modifs, cb);
                 //& inners->bits.access |= modifs;
                 //&fprintf(dumpOut,"modif? %x\n",modifs);fflush(dumpOut);
 
