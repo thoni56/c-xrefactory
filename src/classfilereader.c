@@ -102,21 +102,13 @@ ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
         value = value+(ch<<24);                 \
     }
 
-#define SkipNChars(cb, count) {                         \
-        if (cb->next + count < cb->end) {               \
-            cb->next += count;                          \
-        } else {                                        \
-            skipCharacters(cb, count);                  \
-        }                                               \
-    }
-
 #define SkipAttributes(cb) {                            \
         int index, count, aname, alen;                  \
         GetU2(count, cb);                               \
         for(index=0; index<count; index++) {            \
             GetU2(aname, cb);                           \
             GetU4(alen, cb);                            \
-            SkipNChars(cb, alen);                       \
+            skipCharacters(cb, alen);                       \
         }                                               \
     }
 
@@ -125,7 +117,7 @@ ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 static bool zipReadLocalFileHeader(CharacterBuffer *cb,
                                    char *fn, unsigned *fsize, unsigned *lastSig,
                                    char *archivename) {
-    bool result;
+    bool result = true;
     int i;
     int signature,extractVersion,bitFlags,compressionMethod;
     int lastModTime,lastModDate,fnameLen,extraLen;
@@ -133,8 +125,7 @@ static bool zipReadLocalFileHeader(CharacterBuffer *cb,
     static int compressionErrorWritten=0;
     char *zzz, ttt[MAX_FILE_NAME_SIZE];
 
-    result = true;
-    GetZU4(signature,cb);
+    GetZU4(signature, cb);
     log_trace("zip file signature is %x", signature);
     *lastSig = signature;
     if (signature != 0x04034b50) {
@@ -149,25 +140,25 @@ static bool zipReadLocalFileHeader(CharacterBuffer *cb,
         result = false;
         goto fin;
     }
-    GetZU2(extractVersion,cb);
-    GetZU2(bitFlags,cb);
-    GetZU2(compressionMethod,cb);
-    GetZU2(lastModTime,cb);
-    GetZU2(lastModDate,cb);
-    GetZU4(crc32,cb);
-    GetZU4(compressedSize,cb);
+    GetZU2(extractVersion, cb);
+    GetZU2(bitFlags, cb);
+    GetZU2(compressionMethod, cb);
+    GetZU2(lastModTime, cb);
+    GetZU2(lastModDate, cb);
+    GetZU4(crc32, cb);
+    GetZU4(compressedSize, cb);
     *fsize = compressedSize;
-    GetZU4(unCompressedSize,cb);
-    GetZU2(fnameLen,cb);
+    GetZU4(unCompressedSize, cb);
+    GetZU2(fnameLen, cb);
     if (fnameLen >= MAX_FILE_NAME_SIZE) {
         fatalError(ERR_INTERNAL,"file name too long", XREF_EXIT_ERR);
     }
-    GetZU2(extraLen,cb);
+    GetZU2(extraLen, cb);
     for(i=0; i<fnameLen; i++) {
-        GetChar(fn[i],cb);
+        GetChar(fn[i], cb);
     }
     fn[i] = 0;
-    SkipNChars(cb, extraLen);
+    skipCharacters(cb, extraLen);
     if (compressionMethod == 0) {
     }
     else if (compressionMethod == Z_DEFLATED) {
@@ -352,55 +343,54 @@ static void zipArchiveScan(CharacterBuffer *cb,
 
     zip->dir = NULL;
     if (!findEndOfCentralDirectory(cb, fileSize))
-        goto fini;
-    GetZU4(signature,cb);
+        return;
+    GetZU4(signature, cb);
     assert(signature == 0x06054b50);
-    GetZU2(tmp,cb);
-    GetZU2(tmp,cb);
-    GetZU2(tmp,cb);
-    GetZU2(tmp,cb);
-    GetZU4(tmp,cb);
-    GetZU4(cdOffset,cb);
+    GetZU2(tmp, cb);
+    GetZU2(tmp, cb);
+    GetZU2(tmp, cb);
+    GetZU2(tmp, cb);
+    GetZU4(tmp, cb);
+    GetZU4(cdOffset, cb);
     seekToPosition(cb, cdOffset);
 
     /* Read signature */
-    GetZU4(signature,cb);
+    GetZU4(signature, cb);
     while (signature == 0x02014b50) {
         /* Read zip central directory using many output values */
-        GetZU2(madeByVersion,cb);
-        GetZU2(extractVersion,cb);
-        GetZU2(bitFlags,cb);
-        GetZU2(compressionMethod,cb);
-        GetZU2(lastModTime,cb);
-        GetZU2(lastModDate,cb);
-        GetZU4(crc32,cb);
-        GetZU4(compressedSize,cb);
-        GetZU4(unCompressedSize,cb);
-        GetZU2(fnameLen,cb);
+        GetZU2(madeByVersion, cb);
+        GetZU2(extractVersion, cb);
+        GetZU2(bitFlags, cb);
+        GetZU2(compressionMethod, cb);
+        GetZU2(lastModTime, cb);
+        GetZU2(lastModDate, cb);
+        GetZU4(crc32, cb);
+        GetZU4(compressedSize, cb);
+        GetZU4(unCompressedSize, cb);
+        GetZU2(fnameLen, cb);
         if (fnameLen >= MAX_FILE_NAME_SIZE) {
             fatalError(ERR_INTERNAL,"file name in .zip archive too long", XREF_EXIT_ERR);
         }
-        GetZU2(extraLen,cb);
-        GetZU2(fcommentLen,cb);
-        GetZU2(diskNumber,cb);
-        GetZU2(internFileAttribs,cb);
-        GetZU4(externFileAttribs,cb);
-        GetZU4(localHeaderOffset,cb);
+        GetZU2(extraLen, cb);
+        GetZU2(fcommentLen, cb);
+        GetZU2(diskNumber, cb);
+        GetZU2(internFileAttribs, cb);
+        GetZU4(externFileAttribs, cb);
+        GetZU4(localHeaderOffset, cb);
         for(i=0; i<fnameLen; i++) {
-            GetChar(fn[i],cb);
+            GetChar(fn[i], cb);
         }
         fn[i] = 0;
         log_trace("file '%s' in central dir", fn);
-        SkipNChars(cb, extraLen+fcommentLen);
+        skipCharacters(cb, extraLen+fcommentLen);
 
         if (strncmp(fn,"META-INF/",9)!=0) {
             log_trace("adding '%s'", fn);
             fsIsMember(&zip->dir, fn, localHeaderOffset, ADD_YES, &place);
         }
         /* Read next signature */
-        GetZU4(signature,cb);
+        GetZU4(signature, cb);
     }
- fini:
     return;
 
  endOfFile:
@@ -420,10 +410,9 @@ int zipIndexArchive(char *name) {
         archiveIndex++) {
         if (strncmp(s_zipArchiveTable[archiveIndex].fn,name,namelen)==0
             && s_zipArchiveTable[archiveIndex].fn[namelen]==ZIP_SEPARATOR_CHAR) {
-            goto forend;
+            break;
         }
     }
- forend:;
     if (archiveIndex<MAX_JAVA_ZIP_ARCHIVES && s_zipArchiveTable[archiveIndex].fn[0] == 0) {
         // new file into the table
         log_debug("adding %s into index ",name);
@@ -588,7 +577,7 @@ static ConstantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,
         case CONSTANT_Unicode:
             errorMessage(ERR_ST,"[cfReadConstantPool] Unicode not yet implemented");
             GetU2(size, cb);
-            SkipNChars(cb, size*2);
+            skipCharacters(cb, size*2);
             cp[ind].asciz = "Unicode ??";
             break;
         case CONSTANT_Class:
@@ -907,9 +896,9 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
                 GetU2(max_stack, cb);
                 GetU2(max_locals, cb);
                 GetU4(code_length, cb);
-                SkipNChars(cb, code_length);
+                skipCharacters(cb, code_length);
                 GetU2(exception_table_length, cb);
-                SkipNChars(cb, (exception_table_length*8));
+                skipCharacters(cb, (exception_table_length*8));
                 GetU2(attributes_count, cb);
                 for(ii=0; ii<attributes_count; ii++) {
                     int iii;
@@ -929,12 +918,12 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
                             log_trace("local variable %s, index == %d", cp[name_index].asciz, index);
                         }
                     } else {
-                        SkipNChars(cb, calen);
+                        skipCharacters(cb, calen);
                     }
                 }
             } else {
                 log_trace("skipping %s", cp[aname].asciz);
-                SkipNChars(cb, alen);
+                skipCharacters(cb, alen);
             }
         }
         cfAddRecordToClass(name, sign, memb, access_flags, storage, exclist);
@@ -1160,7 +1149,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
                 }
             }
         } else {
-            SkipNChars(cb, alen);
+            skipCharacters(cb, alen);
         }
     }
     fileTable.tab[fileIndex]->b.cxLoaded = true;
