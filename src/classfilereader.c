@@ -44,90 +44,98 @@ S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 
 /* *********************************************************************** */
 
-#define GetChar(cch, ccc, ffin, bbb) {                                  \
-        if (ccc >= ffin) {                                              \
-            (bbb)->next = ccc;                                          \
-            if ((bbb)->isAtEOF || refillBuffer(bbb) == 0) {               \
-                cch = -1;                                               \
-                (bbb)->isAtEOF = true;                                  \
+#define GetChar(ch, cb_next, cb_end, cb) {                              \
+        if (cb_next >= cb_end) {                                        \
+            (cb)->next = cb_next;                                       \
+            if ((cb)->isAtEOF || refillBuffer(cb) == 0) {               \
+                ch = -1;                                                \
+                (cb)->isAtEOF = true;                                   \
                 goto endOfFile;                                         \
             } else {                                                    \
-                ccc = (bbb)->next; ffin = (bbb)->end;                   \
-                cch = * ((unsigned char*)ccc); ccc ++;                  \
+                cb_next = (cb)->next;                                   \
+                cb_end = (cb)->end;                                     \
+                ch = * ((unsigned char*)cb_next); cb_next ++;           \
             }                                                           \
         } else {                                                        \
-            cch = * ((unsigned char*)ccc); ccc++;                       \
+            ch = * ((unsigned char*)cb_next); cb_next++;                \
         }                                                               \
+        (cb)->next = cb_next;                                           \
+        (cb)->end = cb_end;                                             \
     }
 
 
-#define GetU1(val, ccc, ffin, bbb) GetChar(val, ccc, ffin, bbb)
+#define GetU1(value, cb_next, cb_end, cb) GetChar(value, cb_next, cb_end, cb)
 
-#define GetU2(val, ccc, ffin, bbb) {            \
-        int chh;                                \
-        GetChar(val, ccc, ffin, bbb);           \
-        GetChar(chh, ccc, ffin, bbb);           \
-        val = val*256+chh;                      \
+#define GetU2(value, cb_next, cb_end, cb) {             \
+        int ch;                                         \
+        GetChar(value, cb_next, cb_end, cb);            \
+        GetChar(ch, cb_next, cb_end, cb);               \
+        value = value*256+ch;                           \
     }
 
-#define GetU4(val, ccc, ffin, bbb) {            \
-        int chh;                                \
-        GetChar(val, ccc, ffin, bbb);           \
-        GetChar(chh, ccc, ffin, bbb);           \
-        val = val*256+chh;                      \
-        GetChar(chh, ccc, ffin, bbb);           \
-        val = val*256+chh;                      \
-        GetChar(chh, ccc, ffin, bbb);           \
-        val = val*256+chh;                      \
+#define GetU4(value, cb_next, cb_end, cb) {             \
+        int ch;                                         \
+        GetChar(value, cb_next, cb_end, cb);            \
+        GetChar(ch, cb_next, cb_end, cb);               \
+        value = value*256+ch;                           \
+        GetChar(ch, cb_next, cb_end, cb);               \
+        value = value*256+ch;                           \
+        GetChar(ch, cb_next, cb_end, cb);               \
+        value = value*256+ch;                           \
     }
 
-#define GetZU2(val, ccc, ffin, bbb) {           \
-        unsigned chh;                           \
-        GetChar(val, ccc, ffin, bbb);           \
-        GetChar(chh, ccc, ffin, bbb);           \
-        val = val+(chh<<8);                     \
+#define GetZU2(value, cb_next, cb_end, cb) {            \
+        unsigned ch;                                    \
+        GetChar(value, cb_next, cb_end, cb);            \
+        GetChar(ch, cb_next, cb_end, cb);               \
+        value = value+(ch<<8);                          \
     }
 
-#define GetZU4(val, ccc, ffin, bbb) {           \
-        unsigned chh;                           \
-        GetChar(val, ccc, ffin, bbb);           \
-        GetChar(chh, ccc, ffin, bbb);           \
-        val = val+(chh<<8);                     \
-        GetChar(chh, ccc, ffin, bbb);           \
-        val = val+(chh<<16);                    \
-        GetChar(chh, ccc, ffin, bbb);           \
-        val = val+(chh<<24);                    \
+#define GetZU4(value, cb_next, cb_end, cb) {            \
+        unsigned ch;                                    \
+        GetChar(value, cb_next, cb_end, cb);            \
+        GetChar(ch, cb_next, cb_end, cb);               \
+        value = value+(ch<<8);                          \
+        GetChar(ch, cb_next, cb_end, cb);               \
+        value = value+(ch<<16);                         \
+        GetChar(ch, cb_next, cb_end, cb);               \
+        value = value+(ch<<24);                         \
     }
 
-#define SkipNChars(count, ccc, ffin, bbb) {     \
-        int ccount;                             \
-        ccount = (count);                       \
-        if (ccc + ccount < ffin) ccc += ccount; \
-        else {                                  \
-            (bbb)->next = ccc;                    \
-            skipNCharsInCharBuf(bbb,(count));   \
-            ccc = (bbb)->next; ffin = (bbb)->end; \
-        }                                       \
+#define SkipNChars(count, cb_next, cb_end, cb) {           \
+        int ccount;                                        \
+        ccount = (count);                                  \
+        if (cb_next + ccount < cb_end) {                   \
+            cb_next += ccount;                             \
+            (cb)->next = cb_next;                          \
+        } else {                                           \
+            (cb)->next = cb_next;                          \
+            skipNCharsInCharacterBuffer(cb, (count));      \
+            cb_next = (cb)->next;                          \
+            cb_end = (cb)->end;                            \
+        }                                                  \
+        assert(cb_next == (cb)->next);                     \
+        assert(cb_end == (cb)->end);                       \
     }
 
-#define SeekToPosition(ccc,ffin,bbb,offset) {                           \
-        fseek((bbb)->file,offset,SEEK_SET);                               \
-        ccc = ffin = (bbb)->next = (bbb)->end = (bbb)->lineBegin = (bbb)->chars; \
+#define SeekToPosition(cb_next, cb_end, cb, offset) {                   \
+        fseek((cb)->file, offset, SEEK_SET);                            \
+        cb_next = cb_end = (cb)->next = (cb)->end = (cb)->lineBegin = (cb)->chars; \
     }
 
-#define SkipAttributes(ccc, ffin, iBuf) {       \
-        int ind,count,aname,alen;               \
-        GetU2(count, ccc, ffin, iBuf);          \
-        for(ind=0; ind<count; ind++) {          \
-            GetU2(aname, ccc, ffin, iBuf);      \
-            GetU4(alen, ccc, ffin, iBuf);       \
-            SkipNChars(alen, ccc, ffin, iBuf);  \
-        }                                       \
+#define SkipAttributes(cb_next, cb_end, cb) {               \
+        int index, count, aname, alen;                      \
+        GetU2(count, cb_next, cb_end, cb);                  \
+        for(index=0; index<count; index++) {                \
+            GetU2(aname, cb_next, cb_end, cb);              \
+            GetU4(alen, cb_next, cb_end, cb);               \
+            SkipNChars(alen, cb_next, cb_end, cb);          \
+        }                                                   \
     }
 
 /* *************** first something to read zip-files ************** */
 
-static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iBuf,
+static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *cb,
                                   char *fn, unsigned *fsize, unsigned *lastSig,
                                   char *archivename) {
     int res;
@@ -141,7 +149,7 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iB
 
     res = 1;
     ccc = *accc; ffin = *affin;
-    GetZU4(signature,ccc,ffin,iBuf);
+    GetZU4(signature,ccc,ffin,cb);
     log_trace("zip file signature is %x", signature);
     *lastSig = signature;
     if (signature != 0x04034b50) {
@@ -160,33 +168,33 @@ static int zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *iB
         res = 0;
         goto fin;
     }
-    GetZU2(extractVersion,ccc,ffin,iBuf);
-    GetZU2(bitFlags,ccc,ffin,iBuf);
-    GetZU2(compressionMethod,ccc,ffin,iBuf);
-    GetZU2(lastModTime,ccc,ffin,iBuf);
-    GetZU2(lastModDate,ccc,ffin,iBuf);
-    GetZU4(crc32,ccc,ffin,iBuf);
-    GetZU4(compressedSize,ccc,ffin,iBuf);
+    GetZU2(extractVersion,ccc,ffin,cb);
+    GetZU2(bitFlags,ccc,ffin,cb);
+    GetZU2(compressionMethod,ccc,ffin,cb);
+    GetZU2(lastModTime,ccc,ffin,cb);
+    GetZU2(lastModDate,ccc,ffin,cb);
+    GetZU4(crc32,ccc,ffin,cb);
+    GetZU4(compressedSize,ccc,ffin,cb);
     *fsize = compressedSize;
-    GetZU4(unCompressedSize,ccc,ffin,iBuf);
-    GetZU2(fnameLen,ccc,ffin,iBuf);
+    GetZU4(unCompressedSize,ccc,ffin,cb);
+    GetZU2(fnameLen,ccc,ffin,cb);
     if (fnameLen >= MAX_FILE_NAME_SIZE) {
         fatalError(ERR_INTERNAL,"file name too long", XREF_EXIT_ERR);
     }
-    GetZU2(extraLen,ccc,ffin,iBuf);
+    GetZU2(extraLen,ccc,ffin,cb);
     for(i=0; i<fnameLen; i++) {
-        GetChar(fn[i],ccc,ffin,iBuf);
+        GetChar(fn[i],ccc,ffin,cb);
     }
     fn[i] = 0;
-    SkipNChars(extraLen,ccc,ffin,iBuf);
+    SkipNChars(extraLen,ccc,ffin,cb);
     if (compressionMethod == 0) {
     }
     else if (compressionMethod == Z_DEFLATED) {
-        iBuf->next = ccc;
-        iBuf->end = ffin;
-        switchToZippedCharBuff(iBuf);
-        ccc = iBuf->next;
-        ffin = iBuf->end;
+        cb->next = ccc;
+        cb->end = ffin;
+        switchToZippedCharBuff(cb);
+        ccc = cb->next;
+        ffin = cb->end;
     }
     else {
         res = 0;
@@ -468,7 +476,7 @@ int zipIndexArchive(char *name) {
     return(archiveIndex);
 }
 
-static int zipSeekToFile(char **accc, char **affin, CharacterBuffer *iBuf,
+static int zipSeekToFile(char **accc, char **affin, CharacterBuffer *cb,
                          char *name
                          ) {
     char *sep;
@@ -494,10 +502,10 @@ static int zipSeekToFile(char **accc, char **affin, CharacterBuffer *iBuf,
         errorMessage(ERR_INTERNAL, "archive not indexed");
         goto fini;
     }
-    if (fsIsMember(&s_zipArchiveTable[i].dir,sep+1,0,ADD_NO,&place)==0)
+    if (fsIsMember(&s_zipArchiveTable[i].dir, sep+1,0, ADD_NO, &place)==0)
         goto fini;
-    SeekToPosition(ccc,ffin,iBuf,place->u.offset);
-    if (zipReadLocalFileHeader(&ccc, &ffin, iBuf, fn, &fsize,
+    SeekToPosition(ccc, ffin, cb, place->u.offset);
+    if (zipReadLocalFileHeader(&ccc, &ffin, cb, fn, &fsize,
                                &lastSig, s_zipArchiveTable[i].fn) == 0)
         goto fini;
     assert(lastSig == 0x04034b50);
@@ -572,7 +580,7 @@ void javaMapZipDirFile(
 /* **************************************************************** */
 
 static union constantPoolUnion *cfReadConstantPool(char **accc, char **affin,
-                                                   CharacterBuffer *iBuf,
+                                                   CharacterBuffer *cb,
                                                    int *cpSize) {
     char *ccc, *ffin;
     int cval;
@@ -583,58 +591,58 @@ static union constantPoolUnion *cfReadConstantPool(char **accc, char **affin,
     char tmpBuff[TMP_BUFF_SIZE];
 
     ccc = *accc; ffin = *affin;
-    GetU2(count, ccc, ffin, iBuf);
+    GetU2(count, ccc, ffin, cb);
     CF_ALLOCC(cp, count, union constantPoolUnion);
     //& memset(cp,0, count*sizeof(union constantPoolUnion));    // if broken file
     for(ind=1; ind<count; ind++) {
-        GetU1(tag, ccc, ffin, iBuf);
+        GetU1(tag, ccc, ffin, cb);
         switch (tag) {
         case 0:
-            GetChar(cval, ccc, ffin, iBuf);
+            GetChar(cval, ccc, ffin, cb);
             break;
         case CONSTANT_Asciz:
-            GetU2(size, ccc, ffin, iBuf);
+            GetU2(size, ccc, ffin, cb);
             CF_ALLOCC(str, size+1, char);
-            for(i=0; i<size; i++) GetChar(str[i], ccc, ffin, iBuf);
+            for(i=0; i<size; i++) GetChar(str[i], ccc, ffin, cb);
             str[i]=0;
             cp[ind].asciz = str;
             break;
         case CONSTANT_Unicode:
             errorMessage(ERR_ST,"[cfReadConstantPool] Unicode not yet implemented");
-            GetU2(size, ccc, ffin, iBuf);
-            SkipNChars(size*2, ccc, ffin, iBuf);
+            GetU2(size, ccc, ffin, cb);
+            SkipNChars(size*2, ccc, ffin, cb);
             cp[ind].asciz = "Unicode ??";
             break;
         case CONSTANT_Class:
-            GetU2(classind, ccc, ffin, iBuf);
+            GetU2(classind, ccc, ffin, cb);
             cp[ind].clas.nameIndex = classind;
             break;
         case CONSTANT_Fieldref:
         case CONSTANT_Methodref:
         case CONSTANT_InterfaceMethodref:
-            GetU2(classind, ccc, ffin, iBuf);
-            GetU2(nameind, ccc, ffin, iBuf);
+            GetU2(classind, ccc, ffin, cb);
+            GetU2(nameind, ccc, ffin, cb);
             cp[ind].rec.classIndex = classind;
             cp[ind].rec.nameAndTypeIndex = nameind;
             break;
         case CONSTANT_NameandType:
-            GetU2(nameind, ccc, ffin, iBuf);
-            GetU2(typeind, ccc, ffin, iBuf);
+            GetU2(nameind, ccc, ffin, cb);
+            GetU2(typeind, ccc, ffin, cb);
             cp[ind].nt.nameIndex = nameind;
             cp[ind].nt.signatureIndex = typeind;
             break;
         case CONSTANT_String:
-            GetU2(strind, ccc, ffin, iBuf);
+            GetU2(strind, ccc, ffin, cb);
             break;
         case CONSTANT_Integer:
         case CONSTANT_Float:
-            GetU4(cval, ccc, ffin, iBuf);
+            GetU4(cval, ccc, ffin, cb);
             break;
         case CONSTANT_Long:
         case CONSTANT_Double:
-            GetU4(cval, ccc, ffin, iBuf);
+            GetU4(cval, ccc, ffin, cb);
             ind ++;
-            GetU4(cval, ccc, ffin, iBuf);
+            GetU4(cval, ccc, ffin, cb);
             break;
         default:
             sprintf(tmpBuff,"unknown tag %d in constant pool of %s",tag,currentFile.fileName);
@@ -1031,129 +1039,136 @@ int javaCreateClassFileItem( Symbol *memb) {
 
 /* ********************************************************************* */
 
-void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
-    int cval, i, inum, innval, rinners, modifs;
-    FILE *ff;
+void javaReadClassFile(char *className, Symbol *symbol, int loadSuper) {
+    int readValue, i, inum, innval, rinners, modifs;
+    FILE *zipFile;
     int upp, innNameInd;
     bool membFlag;
-    char *ccc, *ffin;
-    char *super, *interf, *innerCName, *zipsep;
+    char *cb_next, *cb_end;
+    char *super, *interf, *innerCName, *zipSeparatorIndex;
     Symbol *inners;
     int thisClass, superClass, access, cpSize;
-    int fileInd, ind, count, aname, alen, cn;
+    int fileIndex, ind, count, aname, alen, cn;
     char *inner, *upper, *thisClassName;
     union constantPoolUnion *constantPool;
     Position pos;
     char tmpBuff[TMP_BUFF_SIZE];
     int major, minor;           /* Version numbers of class file format */
+    CharacterBuffer *cb;
 
     ENTER();
-    memb->bits.javaFileIsLoaded = 1;
+    symbol->bits.javaFileIsLoaded = 1;
     /*&
       fprintf(dumpOut,": ppmmem == %d/%d\n",ppmMemoryi,SIZE_ppmMemory);
       fprintf(dumpOut,":reading file %s arg class == %s == %s\n",
-      name, memb->name, memb->linkName); fflush(dumpOut);
+      className, symbol->name, symbol->linkName); fflush(dumpOut);
       &*/
-    zipsep = strchr(name, ZIP_SEPARATOR_CHAR);
-    if (zipsep != NULL) *zipsep = 0;
-    ff = openFile(name, "rb");
-    if (zipsep != NULL) *zipsep = ZIP_SEPARATOR_CHAR;
 
-    if (ff == NULL) {
-        errorMessage(ERR_CANT_OPEN, name);
+    /* Open the file, the name is prefixing the actual class name separated by separator, if any */
+    zipSeparatorIndex = strchr(className, ZIP_SEPARATOR_CHAR);
+    if (zipSeparatorIndex != NULL)
+        *zipSeparatorIndex = 0;
+    zipFile = openFile(className, "rb");
+    if (zipSeparatorIndex != NULL)
+        *zipSeparatorIndex = ZIP_SEPARATOR_CHAR;
+
+    if (zipFile == NULL) {
+        errorMessage(ERR_CANT_OPEN, className);
         LEAVE();
         return;
     }
 
-    fileInd = javaCreateClassFileItem( memb);
-    fileTable.tab[fileInd]->b.cxLoading = true;
+    fileIndex = javaCreateClassFileItem(symbol);
+    fileTable.tab[fileIndex]->b.cxLoading = true;
 
-    fillPosition(&pos, fileInd,1,0);
-    addCxReference(memb, &pos, UsageClassFileDefinition,
+    fillPosition(&pos, fileIndex, 1, 0);
+    addCxReference(symbol, &pos, UsageClassFileDefinition,
                    noFileIndex, noFileIndex);
-    addCfClassTreeHierarchyRef(fileInd, UsageClassFileDefinition);
-    log_trace("fileitem==%s", fileTable.tab[fileInd]->name);
-    pushNewInclude( ff, NULL, fileTable.tab[fileInd]->name, "");
+    addCfClassTreeHierarchyRef(fileIndex, UsageClassFileDefinition);
+    log_trace("fileitem=='%s'", fileTable.tab[fileIndex]->name);
+    pushNewInclude(zipFile, NULL, fileTable.tab[fileIndex]->name, "");
 
-    log_debug("reading file %s",name);
+    log_debug("reading file '%s'", className);
 
-    ccc = currentFile.lexBuffer.buffer.next; ffin = currentFile.lexBuffer.buffer.end;
-    if (zipsep != NULL) {
-        if (zipSeekToFile(&ccc,&ffin,&currentFile.lexBuffer.buffer,name) == 0) goto finish;
+    cb = &currentFile.lexBuffer.buffer;
+    cb_next = cb->next;
+    cb_end = cb->end;
+    if (zipSeparatorIndex != NULL) {
+        if (zipSeekToFile(&cb_next, &cb_end, cb, className) == 0)
+            goto finish;
     }
-    GetU4(cval, ccc, ffin, &currentFile.lexBuffer.buffer);
-    log_trace("magic is %x", cval);
-    if (cval != 0xcafebabe) {
-        sprintf(tmpBuff,"%s is not a valid class file", name);
+    GetU4(readValue, cb_next, cb_end, cb);
+    log_trace("magic is %x", readValue);
+    if (readValue != 0xcafebabe) {
+        sprintf(tmpBuff,"%s is not a valid class file", className);
         errorMessage(ERR_ST, tmpBuff);
         goto finish;
     }
-    assert(cval == 0xcafebabe);
-    GetU2(minor, ccc, ffin, &currentFile.lexBuffer.buffer);
-    GetU2(major, ccc, ffin, &currentFile.lexBuffer.buffer);
-    log_trace("version of '%s' is %d.%d", name, major, minor);
-    constantPool = cfReadConstantPool(&ccc, &ffin, &currentFile.lexBuffer.buffer, &cpSize);
-    GetU2(access, ccc, ffin, &currentFile.lexBuffer.buffer);
-    memb->bits.access = access;
-    log_trace("reading accessFlags %s == %x", name, access);
-    if (access & AccessInterface) fileTable.tab[fileInd]->b.isInterface = true;
-    GetU2(thisClass, ccc, ffin, &currentFile.lexBuffer.buffer);
+    GetU2(minor, cb_next, cb_end, cb);
+    GetU2(major, cb_next, cb_end, cb);
+    log_trace("version of '%s' is %d.%d", className, major, minor);
+    constantPool = cfReadConstantPool(&cb_next, &cb_end, cb, &cpSize);
+    GetU2(access, cb_next, cb_end, cb);
+    symbol->bits.access = access;
+    log_trace("reading accessFlags %s == %x", className, access);
+    if (access & AccessInterface) fileTable.tab[fileIndex]->b.isInterface = true;
+    GetU2(thisClass, cb_next, cb_end, cb);
     if (thisClass<0 || thisClass>=cpSize) goto corrupted;
     thisClassName = constantPool[constantPool[thisClass].clas.nameIndex].asciz;
     // TODO!!!, it may happen that name of class differ in cases from name of file,
     // what to do in such case? abandon with an error?
     log_trace("this class == %s", thisClassName);
-    GetU2(superClass, ccc, ffin, &currentFile.lexBuffer.buffer);
+    GetU2(superClass, cb_next, cb_end, cb);
     if (superClass != 0) {
         if (superClass<0 || superClass>=cpSize) goto corrupted;
         super = constantPool[constantPool[superClass].clas.nameIndex].asciz;
-        addSuperClassOrInterfaceByName(memb, super, memb->u.s->classFile,
+        addSuperClassOrInterfaceByName(symbol, super, symbol->u.s->classFile,
                                        loadSuper);
     }
 
-    GetU2(inum, ccc, ffin, &currentFile.lexBuffer.buffer);
+    GetU2(inum, cb_next, cb_end, cb);
     /* implemented interfaces */
 
     for(i=0; i<inum; i++) {
-        GetU2(cval, ccc, ffin, &currentFile.lexBuffer.buffer);
-        if (cval != 0) {
-            if (cval<0 || cval>=cpSize) goto corrupted;
-            interf = constantPool[constantPool[cval].clas.nameIndex].asciz;
-            addSuperClassOrInterfaceByName(memb, interf, memb->u.s->classFile,
+        GetU2(readValue, cb_next, cb_end, cb);
+        if (readValue != 0) {
+            if (readValue<0 || readValue>=cpSize) goto corrupted;
+            interf = constantPool[constantPool[readValue].clas.nameIndex].asciz;
+            addSuperClassOrInterfaceByName(symbol, interf, symbol->u.s->classFile,
                                            loadSuper);
         }
     }
-    //& addSubClassesItemsToFileTab(memb, memb->u.s->classFile);
+    //& addSubClassesItemsToFileTab(symbol, symbol->u.s->classFile);
 
-    cfReadFieldInfos(&ccc, &ffin, &currentFile.lexBuffer.buffer, memb, constantPool);
+    cfReadFieldInfos(&cb_next, &cb_end, cb, symbol, constantPool);
     if (currentFile.lexBuffer.buffer.isAtEOF) goto endOfFile;
-    cfReadMethodInfos(&ccc, &ffin, &currentFile.lexBuffer.buffer, memb, constantPool);
+    cfReadMethodInfos(&cb_next, &cb_end, cb, symbol, constantPool);
     if (currentFile.lexBuffer.buffer.isAtEOF) goto endOfFile;
 
-    GetU2(count, ccc, ffin, &currentFile.lexBuffer.buffer);
+    GetU2(count, cb_next, cb_end, cb);
     for(ind=0; ind<count; ind++) {
-        GetU2(aname, ccc, ffin, &currentFile.lexBuffer.buffer);
-        GetU4(alen, ccc, ffin, &currentFile.lexBuffer.buffer);
+        GetU2(aname, cb_next, cb_end, cb);
+        GetU4(alen, cb_next, cb_end, cb);
         if (strcmp(constantPool[aname].asciz,"InnerClasses")==0) {
-            GetU2(inum, ccc, ffin, &currentFile.lexBuffer.buffer);
-            memb->u.s->nestedCount = inum;
+            GetU2(inum, cb_next, cb_end, cb);
+            symbol->u.s->nestedCount = inum;
             // TODO: replace the inner tab by inner list
             if (inum >= MAX_INNERS_CLASSES) {
                 fatalError(ERR_ST,"number of nested classes overflowed over MAX_INNERS_CLASSES", XREF_EXIT_ERR);
             }
-            memb->u.s->nest = NULL;
+            symbol->u.s->nest = NULL;
             if (inum > 0) {
                 // I think this should be optimized, not all mentioned here
                 // are my inners classes
-                //&             CF_ALLOCC(memb->u.s->nest, MAX_INNERS_CLASSES, S_nestedSpec);
-                CF_ALLOCC(memb->u.s->nest, inum, S_nestedSpec);
+                //&             CF_ALLOCC(symbol->u.s->nest, MAX_INNERS_CLASSES, S_nestedSpec);
+                CF_ALLOCC(symbol->u.s->nest, inum, S_nestedSpec);
             }
             for(rinners=0; rinners<inum; rinners++) {
-                GetU2(innval, ccc, ffin, &currentFile.lexBuffer.buffer);
+                GetU2(innval, cb_next, cb_end, cb);
                 inner = constantPool[constantPool[innval].clas.nameIndex].asciz;
                 //&fprintf(dumpOut,"inner %s \n",inner);fflush(dumpOut);
-                GetU2(upp, ccc, ffin, &currentFile.lexBuffer.buffer);
-                GetU2(innNameInd, ccc, ffin, &currentFile.lexBuffer.buffer);
+                GetU2(upp, cb_next, cb_end, cb);
+                GetU2(innNameInd, cb_next, cb_end, cb);
                 if (innNameInd==0) innerCName = "";         // !!!!!!!! hack
                 else innerCName = constantPool[innNameInd].asciz;
                 //&fprintf(dumpOut,"class name %x='%s'\n",innerCName,innerCName);fflush(dumpOut);
@@ -1167,41 +1182,41 @@ void javaReadClassFile(char *name, Symbol *memb, int loadSuper) {
                         /*&fprintf(dumpOut,"set as member class \n"); fflush(dumpOut);&*/
                     }
                 }
-                GetU2(modifs, ccc, ffin, &currentFile.lexBuffer.buffer);
+                GetU2(modifs, cb_next, cb_end, cb);
                 //& inners->bits.access |= modifs;
                 //&fprintf(dumpOut,"modif? %x\n",modifs);fflush(dumpOut);
 
-                fill_nestedSpec(& memb->u.s->nest[rinners], inners, membFlag, modifs);
+                fill_nestedSpec(& symbol->u.s->nest[rinners], inners, membFlag, modifs);
                 assert(inners && inners->bits.symType==TypeStruct && inners->u.s);
                 cn = inners->u.s->classFile;
                 if (membFlag && ! (modifs & AccessStatic)) {
                     // note that non-static direct enclosing class exists
                     assert(fileTable.tab[cn]);
-                    fileTable.tab[cn]->directEnclosingInstance = memb->u.s->classFile;
+                    fileTable.tab[cn]->directEnclosingInstance = symbol->u.s->classFile;
                 } else {
                     fileTable.tab[cn]->directEnclosingInstance = noFileIndex;
                 }
             }
         } else {
-            SkipNChars(alen, ccc, ffin, &currentFile.lexBuffer.buffer);
+            SkipNChars(alen, cb_next, cb_end, cb);
         }
     }
-    fileTable.tab[fileInd]->b.cxLoaded = true;
+    fileTable.tab[fileIndex]->b.cxLoaded = true;
     goto finish;
 
  endOfFile:
-    sprintf(tmpBuff,"unexpected end of file '%s'", name);
+    sprintf(tmpBuff,"unexpected end of file '%s'", className);
     errorMessage(ERR_ST, tmpBuff);
     goto emergency;
  corrupted:
-    sprintf(tmpBuff,"corrupted file '%s'", name);
+    sprintf(tmpBuff,"corrupted file '%s'", className);
     errorMessage(ERR_ST, tmpBuff);
     goto emergency;
  emergency:
-    memb->u.s->nestedCount = 0;
+    symbol->u.s->nestedCount = 0;
  finish:
-    log_debug("closing file %s", name);
-    //&{fprintf(dumpOut,": closing file %s\n",name);fflush(dumpOut);fprintf(dumpOut,": ppmmem == %d/%d\n",ppmMemoryi,SIZE_ppmMemory);fflush(dumpOut);}
+    log_debug("closing file %s", className);
+    //&{fprintf(dumpOut,": closing file %s\n",className);fflush(dumpOut);fprintf(dumpOut,": ppmmem == %d/%d\n",ppmMemoryi,SIZE_ppmMemory);fflush(dumpOut);}
     popInclude();
 
     LEAVE();

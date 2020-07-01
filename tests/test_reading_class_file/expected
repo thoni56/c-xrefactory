@@ -1,8 +1,8 @@
 [C-xref] active project: 'CURDIR'
 java version == 1.3
 0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: Entering: javaReadClassFile
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: fileitem==;CURDIR/Completion2.class
-0000-00-00 00:<line>:00 DEBUG classfilereader.c:<line>: reading file CURDIR/Completion2.class
+0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: fileitem==';CURDIR/Completion2.class'
+0000-00-00 00:<line>:00 DEBUG classfilereader.c:<line>: reading file 'CURDIR/Completion2.class'
 0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: magic is cafebabe
 0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: version of 'CURDIR/Completion2.class' is 55.0
 0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: reading accessFlags CURDIR/Completion2.class == 20

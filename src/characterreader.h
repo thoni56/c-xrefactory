@@ -49,7 +49,7 @@ extern int absoluteFilePosition(CharacterBuffer *cb);
 
 extern int skipBlanks(CharacterBuffer *cb, int ch);
 extern int skipWhiteSpace(CharacterBuffer *cb, int ch);
-extern int skipNCharsInCharBuf(CharacterBuffer *buffer, unsigned count);
+extern int skipNCharsInCharacterBuffer(CharacterBuffer *buffer, unsigned count);
 
 extern int getChar(CharacterBuffer *cb);
 extern void ungetChar(CharacterBuffer *cb, int ch);

@@ -173,7 +173,7 @@ void switchToZippedCharBuff(CharacterBuffer *buffer) {
     }
 }
 
-int skipNCharsInCharBuf(CharacterBuffer *buffer, unsigned count) {
+int skipNCharsInCharacterBuffer(CharacterBuffer *buffer, unsigned count) {
     char *dd;
     char *cc;
     char *fin;
@@ -193,7 +193,7 @@ int skipNCharsInCharBuf(CharacterBuffer *buffer, unsigned count) {
         refillBuffer(buffer);
         if (buffer->end != buffer->next) {
             // TODO remove last recursion
-            skipNCharsInCharBuf(buffer, count);
+            skipNCharsInCharacterBuffer(buffer, count);
         }
     } else {
         count -= fin-cc;
@@ -249,7 +249,6 @@ int getChar(CharacterBuffer *cb) {
             ch = -1;
             cb->isAtEOF = true;
         } else {
-            /* TODO This never happens! Why? */
             cb->lineBegin = cb->next;
             ch = *((unsigned char *)cb->next);
             cb->next++;
