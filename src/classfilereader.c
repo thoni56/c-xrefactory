@@ -332,21 +332,23 @@ static void seekToPosition(CharacterBuffer *cb, int offset) {
 }
 
 
-static int findEndOfCentralDirectory(char **accc, char **affin,
-                                     CharacterBuffer *cb, int fsize) {
-    int offset,res;
+static bool findEndOfCentralDirectory(char **accc, char **affin,
+                                      CharacterBuffer *cb, int fsize) {
+    int offset;
     char *ccc, *ffin;
-    res = 1;
-    if (fsize < CHAR_BUFF_SIZE) offset = 0;
-    else offset = fsize-(CHAR_BUFF_SIZE-MAX_UNGET_CHARS);
-    fseek(cb->file, offset, SEEK_SET);
-    cb->next = cb->end;
+    bool found = true;
+
+    if (fsize < CHAR_BUFF_SIZE)
+        offset = 0;
+    else
+        offset = fsize-(CHAR_BUFF_SIZE-MAX_UNGET_CHARS);
+    seekToPosition(cb, offset);
     refillBuffer(cb);
     ccc = ffin = cb->end;
     for (ccc-=4; ccc>cb->chars && strncmp(ccc,"\120\113\005\006",4)!=0; ccc--) {
     }
     if (ccc <= cb->chars) {
-        res = 0;
+        found = false;
         assert(options.taskRegime);
         if (options.taskRegime!=RegimeEditServer) {
             warningMessage(ERR_INTERNAL,"can't find end of central dir in archive");
@@ -355,13 +357,12 @@ static int findEndOfCentralDirectory(char **accc, char **affin,
     }
  fini:
     *accc = ccc; *affin = ffin;
-    return(res);
+    return found;
 }
 
-static void zipArchiveScan(char **accc, char **affin, CharacterBuffer *cb,
+static void zipArchiveScan(CharacterBuffer *cb,
                            S_zipFileTableItem *zip, int fsize) {
     char fn[MAX_FILE_NAME_SIZE];
-    char *ccc, *ffin;
     S_zipArchiveDir *place;
     int signature,madeByVersion,extractVersion,bitFlags,compressionMethod;
     int lastModTime,lastModDate,fnameLen,extraLen,fcommentLen,diskNumber;
@@ -371,61 +372,57 @@ static void zipArchiveScan(char **accc, char **affin, CharacterBuffer *cb,
     unsigned foffset;
     UNUSED foffset;
 
-    ccc = *accc; ffin = *affin;
     zip->dir = NULL;
-    if (findEndOfCentralDirectory(&ccc, &ffin, cb, fsize)==0)
+    if (!findEndOfCentralDirectory(&cb->next, &cb->end, cb, fsize))
         goto fini;
-    GetZU4(signature,ccc,ffin,cb);
+    GetZU4(signature,cb->next,cb->end,cb);
     assert(signature == 0x06054b50);
-    GetZU2(tmp,ccc,ffin,cb);
-    GetZU2(tmp,ccc,ffin,cb);
-    GetZU2(tmp,ccc,ffin,cb);
-    GetZU2(tmp,ccc,ffin,cb);
-    GetZU4(tmp,ccc,ffin,cb);
-    GetZU4(cdOffset,ccc,ffin,cb);
+    GetZU2(tmp,cb->next,cb->end,cb);
+    GetZU2(tmp,cb->next,cb->end,cb);
+    GetZU2(tmp,cb->next,cb->end,cb);
+    GetZU2(tmp,cb->next,cb->end,cb);
+    GetZU4(tmp,cb->next,cb->end,cb);
+    GetZU4(cdOffset,cb->next,cb->end,cb);
     seekToPosition(cb, cdOffset);
-    ccc = cb->next;
-    ffin = cb->end;
 
     /* Read signature */
-    GetZU4(signature,ccc,ffin,cb);
+    GetZU4(signature,cb->next,cb->end,cb);
     while (signature == 0x02014b50) {
         /* Read zip central directory using many output values */
-        GetZU2(madeByVersion,ccc,ffin,cb);
-        GetZU2(extractVersion,ccc,ffin,cb);
-        GetZU2(bitFlags,ccc,ffin,cb);
-        GetZU2(compressionMethod,ccc,ffin,cb);
-        GetZU2(lastModTime,ccc,ffin,cb);
-        GetZU2(lastModDate,ccc,ffin,cb);
-        GetZU4(crc32,ccc,ffin,cb);
-        GetZU4(compressedSize,ccc,ffin,cb);
-        GetZU4(unCompressedSize,ccc,ffin,cb);
-        GetZU2(fnameLen,ccc,ffin,cb);
+        GetZU2(madeByVersion,cb->next,cb->end,cb);
+        GetZU2(extractVersion,cb->next,cb->end,cb);
+        GetZU2(bitFlags,cb->next,cb->end,cb);
+        GetZU2(compressionMethod,cb->next,cb->end,cb);
+        GetZU2(lastModTime,cb->next,cb->end,cb);
+        GetZU2(lastModDate,cb->next,cb->end,cb);
+        GetZU4(crc32,cb->next,cb->end,cb);
+        GetZU4(compressedSize,cb->next,cb->end,cb);
+        GetZU4(unCompressedSize,cb->next,cb->end,cb);
+        GetZU2(fnameLen,cb->next,cb->end,cb);
         if (fnameLen >= MAX_FILE_NAME_SIZE) {
             fatalError(ERR_INTERNAL,"file name in .zip archive too long", XREF_EXIT_ERR);
         }
-        GetZU2(extraLen,ccc,ffin,cb);
-        GetZU2(fcommentLen,ccc,ffin,cb);
-        GetZU2(diskNumber,ccc,ffin,cb);
-        GetZU2(internFileAttribs,ccc,ffin,cb);
-        GetZU4(externFileAttribs,ccc,ffin,cb);
-        GetZU4(localHeaderOffset,ccc,ffin,cb);
+        GetZU2(extraLen,cb->next,cb->end,cb);
+        GetZU2(fcommentLen,cb->next,cb->end,cb);
+        GetZU2(diskNumber,cb->next,cb->end,cb);
+        GetZU2(internFileAttribs,cb->next,cb->end,cb);
+        GetZU4(externFileAttribs,cb->next,cb->end,cb);
+        GetZU4(localHeaderOffset,cb->next,cb->end,cb);
         for(i=0; i<fnameLen; i++) {
-            GetChar(fn[i],ccc,ffin,cb);
+            GetChar(fn[i],cb->next,cb->end,cb);
         }
         fn[i] = 0;
         log_trace("file '%s' in central dir", fn);
-        SkipNChars(extraLen+fcommentLen,ccc,ffin,cb);
+        SkipNChars(extraLen+fcommentLen,cb->next,cb->end,cb);
 
         if (strncmp(fn,"META-INF/",9)!=0) {
             log_trace("adding '%s'", fn);
             fsIsMember(&zip->dir, fn, localHeaderOffset, ADD_YES, &place);
         }
         /* Read next signature */
-        GetZU4(signature,ccc,ffin,cb);
+        GetZU4(signature,cb->next,cb->end,cb);
     }
  fini:
-    *accc = ccc; *affin = ffin;
     return;
 
  endOfFile:
@@ -479,7 +476,7 @@ int zipIndexArchive(char *name) {
         s_zipArchiveTable[archiveIndex].fn[namelen] = ZIP_SEPARATOR_CHAR;
         s_zipArchiveTable[archiveIndex].fn[namelen+1] = 0;
         fillZipFileTableItem(&s_zipArchiveTable[archiveIndex], fst, NULL);
-        zipArchiveScan(&buffer->next,&buffer->end,buffer,&s_zipArchiveTable[archiveIndex], fst.st_size);
+        zipArchiveScan(buffer,&s_zipArchiveTable[archiveIndex], fst.st_size);
         closeFile(zipFile);
     }
     return(archiveIndex);
