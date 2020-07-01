@@ -852,12 +852,12 @@ static char *simpleClassNameFromFQTName(char *fqtName) {
     return(res);
 }
 
-static void cfReadMethodInfos(  char **accc,
-                                char **affin,
-                                CharacterBuffer *iBuf,
-                                Symbol *memb,
-                                ConstantPoolUnion *cp
-                                ) {
+static void cfReadMethodInfos(char **accc,
+                              char **affin,
+                              CharacterBuffer *cb,
+                              Symbol *memb,
+                              ConstantPoolUnion *cp
+) {
     char *ccc, *ffin, *name, *sign, *sign2;
     unsigned count, ind;
     unsigned aind, acount, aname, alen, excount;
@@ -867,12 +867,12 @@ static void cfReadMethodInfos(  char **accc,
     Symbol *exc;
     SymbolList *exclist, *ee;
 
-    ccc = *accc; ffin = *affin;
-    GetU2(count, ccc, ffin, iBuf);
+    ccc = cb->next; ffin = cb->end;
+    GetU2(count, ccc, ffin, cb);
     for(ind=0; ind<count; ind++) {
-        GetU2(access_flags, ccc, ffin, iBuf);
-        GetU2(nameind, ccc, ffin, iBuf);
-        GetU2(sigind, ccc, ffin, iBuf);
+        GetU2(access_flags, ccc, ffin, cb);
+        GetU2(nameind, ccc, ffin, cb);
+        GetU2(sigind, ccc, ffin, cb);
         /*
           fprintf(dumpOut, "method '%s' of type '%s'\n",
           cp[nameind].asciz,cp[sigind].asciz); fflush(dumpOut);
@@ -906,15 +906,15 @@ static void cfReadMethodInfos(  char **accc,
             log_trace("strange constructor %s %s", name, sign);
             storage = StorageConstructor;
         }
-        GetU2(acount, ccc, ffin, iBuf);
+        GetU2(acount, ccc, ffin, cb);
         for(aind=0; aind<acount; aind++) {
-            GetU2(aname, ccc, ffin, iBuf);
-            GetU4(alen, ccc, ffin, iBuf);
+            GetU2(aname, ccc, ffin, cb);
+            GetU4(alen, ccc, ffin, cb);
             // berk, really I need to compare strings?
             if (strcmp(cp[aname].asciz, "Exceptions")==0) {
-                GetU2(excount, ccc, ffin, iBuf);
+                GetU2(excount, ccc, ffin, cb);
                 for(i=0; i<excount; i++) {
-                    GetU2(exclass, ccc, ffin, iBuf);
+                    GetU2(exclass, ccc, ffin, cb);
                     exname = cp[cp[exclass].clas.nameIndex].asciz;
                     //&fprintf(dumpOut,"throws %s\n", exname);fflush(dumpOut);
                     exsname = simpleClassNameFromFQTName(exname);
@@ -932,37 +932,37 @@ static void cfReadMethodInfos(  char **accc,
                 unsigned caname, calen;
                 int ii;
                 // look here for local variable names
-                GetU2(max_stack, ccc, ffin, iBuf);
-                GetU2(max_locals, ccc, ffin, iBuf);
-                GetU4(code_length, ccc, ffin, iBuf);
-                SkipNChars(code_length, ccc, ffin, iBuf);
-                GetU2(exception_table_length, ccc, ffin, iBuf);
-                SkipNChars((exception_table_length*8), ccc, ffin, iBuf);
-                GetU2(attributes_count, ccc, ffin, iBuf);
+                GetU2(max_stack, ccc, ffin, cb);
+                GetU2(max_locals, ccc, ffin, cb);
+                GetU4(code_length, ccc, ffin, cb);
+                SkipNChars(code_length, ccc, ffin, cb);
+                GetU2(exception_table_length, ccc, ffin, cb);
+                SkipNChars((exception_table_length*8), ccc, ffin, cb);
+                GetU2(attributes_count, ccc, ffin, cb);
                 for(ii=0; ii<attributes_count; ii++) {
                     int iii;
-                    GetU2(caname, ccc, ffin, iBuf);
-                    GetU4(calen, ccc, ffin, iBuf);
+                    GetU2(caname, ccc, ffin, cb);
+                    GetU4(calen, ccc, ffin, cb);
                     if (strcmp(cp[caname].asciz, "LocalVariableTable")==0) {
                         unsigned local_variable_table_length;
                         unsigned start_pc,length,name_index,descriptor_index;
                         unsigned index;
-                        GetU2(local_variable_table_length, ccc, ffin, iBuf);
+                        GetU2(local_variable_table_length, ccc, ffin, cb);
                         for(iii=0; iii<local_variable_table_length; iii++) {
-                            GetU2(start_pc, ccc, ffin, iBuf);
-                            GetU2(length, ccc, ffin, iBuf);
-                            GetU2(name_index, ccc, ffin, iBuf);
-                            GetU2(descriptor_index, ccc, ffin, iBuf);
-                            GetU2(index, ccc, ffin, iBuf);
+                            GetU2(start_pc, ccc, ffin, cb);
+                            GetU2(length, ccc, ffin, cb);
+                            GetU2(name_index, ccc, ffin, cb);
+                            GetU2(descriptor_index, ccc, ffin, cb);
+                            GetU2(index, ccc, ffin, cb);
                             //&fprintf(dumpOut,"local variable %s, index == %d\n", cp[name_index].asciz, index);fflush(dumpOut);
                         }
                     } else {
-                        SkipNChars(calen, ccc, ffin, iBuf);
+                        SkipNChars(calen, ccc, ffin, cb);
                     }
                 }
             } else {
                 //&fprintf(dumpOut, "skipping %s\n", cp[aname].asciz);
-                SkipNChars(alen, ccc, ffin, iBuf);
+                SkipNChars(alen, ccc, ffin, cb);
             }
         }
         cfAddRecordToClass(name, sign, memb, access_flags, storage, exclist);
@@ -971,7 +971,7 @@ static void cfReadMethodInfos(  char **accc,
  endOfFile:
     errorMessage(ERR_ST,"unexpected end of file");
  fin:
-    *accc = ccc; *affin = ffin;
+    cb->next = ccc; cb->end = ffin;
 }
 
 Symbol *cfAddCastsToModule(Symbol *memb, Symbol *sup) {
@@ -1137,13 +1137,13 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
     cb->next = cb_next;
     cb->end = cb_end;
     cfReadFieldInfos(cb, symbol, constantPool);
+
+    if (currentFile.lexBuffer.buffer.isAtEOF) goto endOfFile;
+    cfReadMethodInfos(&cb->next, &cb->end, cb, symbol, constantPool);
+    if (currentFile.lexBuffer.buffer.isAtEOF) goto endOfFile;
+
     cb_next = cb->next;
     cb_end = cb->end;
-
-    if (currentFile.lexBuffer.buffer.isAtEOF) goto endOfFile;
-    cfReadMethodInfos(&cb_next, &cb_end, cb, symbol, constantPool);
-    if (currentFile.lexBuffer.buffer.isAtEOF) goto endOfFile;
-
     GetU2(count, cb_next, cb_end, cb);
     for(ind=0; ind<count; ind++) {
         GetU2(aname, cb_next, cb_end, cb);
