@@ -129,11 +129,6 @@ S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
         assert(cb_end == (cb)->end);                       \
     }
 
-#define SeekToPosition(cb, offset) {                                    \
-        fseek((cb)->file, offset, SEEK_SET);                            \
-        (cb)->next = (cb)->end = (cb)->lineBegin = (cb)->chars;         \
-    }
-
 #define SkipAttributes(cb_next, cb_end, cb) {               \
         int index, count, aname, alen;                      \
         GetU2(count, cb_next, cb_end, cb);                  \
@@ -341,20 +336,26 @@ void fsRecMapOnFiles(S_zipArchiveDir *dir, char *zip, char *path, void (*fun)(ch
     }
 }
 
+static void seekToPosition(CharacterBuffer *cb, int offset) {
+    fseek(cb->file, offset, SEEK_SET);
+    cb->next = cb->end = cb->lineBegin = cb->chars;
+}
+
+
 static int findEndOfCentralDirectory(char **accc, char **affin,
-                                     CharacterBuffer *iBuf, int fsize) {
+                                     CharacterBuffer *cb, int fsize) {
     int offset,res;
     char *ccc, *ffin;
     res = 1;
     if (fsize < CHAR_BUFF_SIZE) offset = 0;
     else offset = fsize-(CHAR_BUFF_SIZE-MAX_UNGET_CHARS);
-    fseek(iBuf->file, offset, SEEK_SET);
-    iBuf->next = iBuf->end;
-    refillBuffer(iBuf);
-    ccc = ffin = iBuf->end;
-    for (ccc-=4; ccc>iBuf->chars && strncmp(ccc,"\120\113\005\006",4)!=0; ccc--) {
+    fseek(cb->file, offset, SEEK_SET);
+    cb->next = cb->end;
+    refillBuffer(cb);
+    ccc = ffin = cb->end;
+    for (ccc-=4; ccc>cb->chars && strncmp(ccc,"\120\113\005\006",4)!=0; ccc--) {
     }
-    if (ccc <= iBuf->chars) {
+    if (ccc <= cb->chars) {
         res = 0;
         assert(options.taskRegime);
         if (options.taskRegime!=RegimeEditServer) {
@@ -392,7 +393,7 @@ static void zipArchiveScan(char **accc, char **affin, CharacterBuffer *cb,
     GetZU2(tmp,ccc,ffin,cb);
     GetZU4(tmp,ccc,ffin,cb);
     GetZU4(cdOffset,ccc,ffin,cb);
-    SeekToPosition(cb, cdOffset);
+    seekToPosition(cb, cdOffset);
     ccc = cb->next;
     ffin = cb->end;
 
@@ -494,11 +495,10 @@ int zipIndexArchive(char *name) {
     return(archiveIndex);
 }
 
+
 static bool zipSeekToFile(CharacterBuffer *cb, char *name) {
     char *sep;
-    char *ccc, *ffin;
     int i, namelen;
-    bool result = false;
     unsigned lastSig, fsize;
     char fn[MAX_FILE_NAME_SIZE];
     S_zipArchiveDir *place;
@@ -517,19 +517,18 @@ static bool zipSeekToFile(CharacterBuffer *cb, char *name) {
     *sep = ZIP_SEPARATOR_CHAR;
     if (i>=MAX_JAVA_ZIP_ARCHIVES || s_zipArchiveTable[i].fn[0]==0) {
         errorMessage(ERR_INTERNAL, "archive not indexed");
-        goto fini;
+        return false;
     }
-    if (fsIsMember(&s_zipArchiveTable[i].dir, sep+1,0, ADD_NO, &place)==0)
-        goto fini;
-    SeekToPosition(cb, place->u.offset);
+    if (!fsIsMember(&s_zipArchiveTable[i].dir, sep+1,0, ADD_NO, &place))
+        return false;
+    seekToPosition(cb, place->u.offset);
+
     if (zipReadLocalFileHeader(&cb->next, &cb->end, cb, fn, &fsize,
                                &lastSig, s_zipArchiveTable[i].fn) == 0)
-        goto fini;
+        return false;
     assert(lastSig == 0x04034b50);
     assert(strcmp(fn,sep+1)==0);
-    result = true;
- fini:
-    return result;
+    return true;
 }
 
 bool zipFindFile(char *name,
