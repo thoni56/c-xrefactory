@@ -143,11 +143,10 @@ S_zipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 
 /* *************** first something to read zip-files ************** */
 
-static bool zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *cb,
-                                  char *fn, unsigned *fsize, unsigned *lastSig,
-                                  char *archivename) {
+static bool zipReadLocalFileHeader(CharacterBuffer *cb,
+                                   char *fn, unsigned *fsize, unsigned *lastSig,
+                                   char *archivename) {
     bool result;
-    char *ccc, *ffin;
     int i;
     int signature,extractVersion,bitFlags,compressionMethod;
     int lastModTime,lastModDate,fnameLen,extraLen;
@@ -155,11 +154,8 @@ static bool zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *c
     static int compressionErrorWritten=0;
     char *zzz, ttt[MAX_FILE_NAME_SIZE];
 
-    assert(cb->next == *accc);
-    assert(cb->end == *affin);
     result = true;
-    ccc = cb->next; ffin = cb->end;
-    GetZU4(signature,ccc,ffin,cb);
+    GetZU4(signature,cb->next,cb->end,cb);
     log_trace("zip file signature is %x", signature);
     *lastSig = signature;
     if (signature != 0x04034b50) {
@@ -174,33 +170,33 @@ static bool zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *c
         result = false;
         goto fin;
     }
-    GetZU2(extractVersion,ccc,ffin,cb);
-    GetZU2(bitFlags,ccc,ffin,cb);
-    GetZU2(compressionMethod,ccc,ffin,cb);
-    GetZU2(lastModTime,ccc,ffin,cb);
-    GetZU2(lastModDate,ccc,ffin,cb);
-    GetZU4(crc32,ccc,ffin,cb);
-    GetZU4(compressedSize,ccc,ffin,cb);
+    GetZU2(extractVersion,cb->next,cb->end,cb);
+    GetZU2(bitFlags,cb->next,cb->end,cb);
+    GetZU2(compressionMethod,cb->next,cb->end,cb);
+    GetZU2(lastModTime,cb->next,cb->end,cb);
+    GetZU2(lastModDate,cb->next,cb->end,cb);
+    GetZU4(crc32,cb->next,cb->end,cb);
+    GetZU4(compressedSize,cb->next,cb->end,cb);
     *fsize = compressedSize;
-    GetZU4(unCompressedSize,ccc,ffin,cb);
-    GetZU2(fnameLen,ccc,ffin,cb);
+    GetZU4(unCompressedSize,cb->next,cb->end,cb);
+    GetZU2(fnameLen,cb->next,cb->end,cb);
     if (fnameLen >= MAX_FILE_NAME_SIZE) {
         fatalError(ERR_INTERNAL,"file name too long", XREF_EXIT_ERR);
     }
-    GetZU2(extraLen,ccc,ffin,cb);
+    GetZU2(extraLen,cb->next,cb->end,cb);
     for(i=0; i<fnameLen; i++) {
-        GetChar(fn[i],ccc,ffin,cb);
+        GetChar(fn[i],cb->next,cb->end,cb);
     }
     fn[i] = 0;
-    SkipNChars(extraLen,ccc,ffin,cb);
+    SkipNChars(extraLen,cb->next,cb->end,cb);
     if (compressionMethod == 0) {
     }
     else if (compressionMethod == Z_DEFLATED) {
-        cb->next = ccc;
-        cb->end = ffin;
+        cb->next = cb->next;
+        cb->end = cb->end;
         switchToZippedCharBuff(cb);
-        ccc = cb->next;
-        ffin = cb->end;
+        cb->next = cb->next;
+        cb->end = cb->end;
     }
     else {
         result = false;
@@ -225,8 +221,6 @@ static bool zipReadLocalFileHeader(char **accc, char **affin, CharacterBuffer *c
  endOfFile:
     errorMessage(ERR_ST,"unexpected end of file");
  fin:
-    *accc = ccc; *affin = ffin;
-    cb->next = ccc; cb->end = ffin;
     return result;
 }
 
@@ -519,7 +513,7 @@ static bool zipSeekToFile(CharacterBuffer *cb, char *name) {
         return false;
     seekToPosition(cb, place->u.offset);
 
-    if (!zipReadLocalFileHeader(&cb->next, &cb->end, cb, fn, &fsize,
+    if (!zipReadLocalFileHeader(cb, fn, &fsize,
                                 &lastSig, s_zipArchiveTable[i].fn))
         return false;
     assert(lastSig == 0x04034b50);
