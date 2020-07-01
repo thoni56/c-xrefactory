@@ -823,27 +823,30 @@ static void cfAddRecordToClass(char *name,
 
 static void cfReadFieldInfos(char **accc,
                              char **affin,
-                             CharacterBuffer *iBuf,
+                             CharacterBuffer *cb,
                              Symbol *memb,
                              ConstantPoolUnion *cp
 ) {
     char *ccc, *ffin;
     int count, ind;
     int access_flags, nameind, sigind;
-    ccc = *accc; ffin = *affin;
-    GetU2(count, ccc, ffin, iBuf);
+
+    assert(cb->next == *accc);
+    assert(cb->end == *affin);
+    GetU2(count, cb->next, cb->end, cb);
+    ccc = cb->next; ffin = cb->end;
     for(ind=0; ind<count; ind++) {
-        GetU2(access_flags, ccc, ffin, iBuf);
-        GetU2(nameind, ccc, ffin, iBuf);
-        GetU2(sigind, ccc, ffin, iBuf);
+        GetU2(access_flags, ccc, ffin, cb);
+        GetU2(nameind, ccc, ffin, cb);
+        GetU2(sigind, ccc, ffin, cb);
         log_trace("field '%s' of type '%s'", cp[nameind].asciz, cp[sigind].asciz);
         cfAddRecordToClass(cp[nameind].asciz, cp[sigind].asciz, memb, access_flags,
                            StorageField, NULL);
-        SkipAttributes(ccc, ffin, iBuf);
+        SkipAttributes(ccc, ffin, cb);
     }
     goto fin;
  endOfFile:
-    errorMessage(ERR_ST,"unexpected end of file");
+    errorMessage(ERR_ST, "unexpected end of file");
  fin:
     *accc = ccc; *affin = ffin;
 }
