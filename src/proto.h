@@ -62,6 +62,11 @@ typedef enum pushPullDirection {
     PUSHING_DOWN
 } PushPullDirection;
 
+typedef enum loadSuperOrNot {
+    LOAD_SUPER = PUSHING_DOWN+1,
+    DO_NOT_LOAD_SUPER
+} LoadSuperOrNot;
+
 enum miscellaneous {						/* misc. constants */
     DEFAULT_VALUE,
     CLASS_TO_TYPE,
@@ -142,8 +147,6 @@ enum miscellaneous {						/* misc. constants */
     INSPECT_CLASS,
     DOTIFY_NAME,
     KEEP_SLASHES,
-    LOAD_SUPER,
-    DO_NOT_LOAD_SUPER,
     ADD_MAYBE_THIS_REFERENCE,
     TSS_FULL_SEARCH,
     TSS_SEARCH_DEFS_ONLY,

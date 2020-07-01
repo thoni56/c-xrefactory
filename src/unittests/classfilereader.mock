@@ -20,7 +20,7 @@ int javaCreateClassFileItem(Symbol *memb) {
   return (int) mock(memb);
 }
 
-void addSuperClassOrInterfaceByName(Symbol *memb, char *super, int origin, int loadSuper) {
+void addSuperClassOrInterfaceByName(Symbol *memb, char *super, int origin, LoadSuperOrNot loadSuper) {
   mock(memb, super, origin, loadSuper);
 }
 
@@ -44,6 +44,6 @@ void javaMapZipDirFile(S_zipFileTableItem *zipfile, char *packfile, Completions 
   mock(zipfile, packfile, a1, a2, a3, fun, classPath, dirname);
 }
 
-void javaReadClassFile(char *name, Symbol *cdef, int loadSuper) {
+void javaReadClassFile(char *name, Symbol *cdef, LoadSuperOrNot loadSuper) {
   mock(name, cdef, loadSuper);
 }

@@ -1026,7 +1026,7 @@ void addSuperClassOrInterface(Symbol *member, Symbol *super, int origin) {
 }
 
 void addSuperClassOrInterfaceByName(Symbol *member, char *super, int origin,
-                                    int loadSuper) {
+                                    LoadSuperOrNot loadSuper) {
     Symbol *s;
 
     s = javaGetFieldClass(super, NULL);
@@ -1048,7 +1048,7 @@ int javaCreateClassFileItem( Symbol *memb) {
 
 /* ********************************************************************* */
 
-void javaReadClassFile(char *className, Symbol *symbol, int loadSuper) {
+void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper) {
     int readValue, i, inum, innval, rinners, modifs;
     FILE *zipFile;
     int upp, innNameInd;
