@@ -42,15 +42,20 @@ typedef union constantPoolUnion {
 
 ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 
+typedef enum exception {
+    NO_EXCEPTION,
+    END_OF_FILE_EXCEPTION
+} Exception;
+
 /* *********************************************************************** */
 
-#define GetChar(ch, cb) {                                               \
+#define GetChar(ch, cb, exception) {                                    \
         if (cb->next >= cb->end) {                                      \
             (cb)->next = cb->next;                                      \
             if ((cb)->isAtEOF || refillBuffer(cb) == 0) {               \
                 ch = -1;                                                \
                 (cb)->isAtEOF = true;                                   \
-                goto endOfFile;                                         \
+                longjmp(exception, END_OF_FILE_EXCEPTION);              \
             } else {                                                    \
                 cb->next = (cb)->next;                                  \
                 cb->end = (cb)->end;                                    \
@@ -62,52 +67,52 @@ ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
     }
 
 
-#define GetU1(value, cb) {                      \
-        GetChar(value, cb);                     \
+#define GetU1(value, cb, exception) {           \
+        GetChar(value, cb, exception);          \
     }
 
-#define GetU2(value, cb) {                      \
+#define GetU2(value, cb, exception) {           \
         int ch;                                 \
-        GetChar(value, cb);                     \
-        GetChar(ch, cb);                        \
+        GetChar(value, cb, exception);          \
+        GetChar(ch, cb, exception);             \
         value = value*256+ch;                   \
     }
 
-#define GetU4(value, cb) {                      \
+#define GetU4(value, cb, exception) {           \
         int ch;                                 \
-        GetChar(value, cb);                     \
-        GetChar(ch, cb);                        \
+        GetChar(value, cb, exception);          \
+        GetChar(ch, cb, exception);             \
         value = value*256+ch;                   \
-        GetChar(ch, cb);                        \
+        GetChar(ch, cb, exception);             \
         value = value*256+ch;                   \
-        GetChar(ch, cb);                        \
+        GetChar(ch, cb, exception);             \
         value = value*256+ch;                   \
     }
 
-#define GetZU2(value, cb) {                     \
+#define GetZU2(value, cb, exception) {          \
         unsigned ch;                            \
-        GetChar(value, cb);                     \
-        GetChar(ch, cb);                        \
+        GetChar(value, cb, exception);          \
+        GetChar(ch, cb, exception);             \
         value = value+(ch<<8);                  \
     }
 
-#define GetZU4(value, cb) {                     \
+#define GetZU4(value, cb, exception) {          \
         unsigned ch;                            \
-        GetChar(value, cb);                     \
-        GetChar(ch, cb);                        \
+        GetChar(value, cb, exception);          \
+        GetChar(ch, cb, exception);             \
         value = value+(ch<<8);                  \
-        GetChar(ch, cb);                        \
+        GetChar(ch, cb, exception);             \
         value = value+(ch<<16);                 \
-        GetChar(ch, cb);                        \
+        GetChar(ch, cb, exception);             \
         value = value+(ch<<24);                 \
     }
 
 #define SkipAttributes(cb) {                    \
         int index, count, aname, alen;          \
-        GetU2(count, cb);                       \
+        GetU2(count, cb, exception);            \
         for(index=0; index<count; index++) {    \
-            GetU2(aname, cb);                   \
-            GetU4(alen, cb);                    \
+            GetU2(aname, cb, exception);        \
+            GetU4(alen, cb, exception);         \
             skipCharacters(cb, alen);           \
         }                                       \
     }
@@ -124,8 +129,14 @@ static bool zipReadLocalFileHeader(CharacterBuffer *cb,
     unsigned crc32,compressedSize,unCompressedSize;
     static int compressionErrorWritten=0;
     char *zzz, ttt[MAX_FILE_NAME_SIZE];
+    jmp_buf exception;
 
-    GetZU4(signature, cb);
+    switch (setjmp(exception)) {
+    case END_OF_FILE_EXCEPTION:
+        goto endOfFile;
+    }
+
+    GetZU4(signature, cb, exception);
     log_trace("zip file signature is %x", signature);
     *lastSig = signature;
     if (signature != 0x04034b50) {
@@ -144,22 +155,22 @@ static bool zipReadLocalFileHeader(CharacterBuffer *cb,
         result = false;
         goto fin;
     }
-    GetZU2(extractVersion, cb);
-    GetZU2(bitFlags, cb);
-    GetZU2(compressionMethod, cb);
-    GetZU2(lastModTime, cb);
-    GetZU2(lastModDate, cb);
-    GetZU4(crc32, cb);
-    GetZU4(compressedSize, cb);
+    GetZU2(extractVersion, cb, exception);
+    GetZU2(bitFlags, cb, exception);
+    GetZU2(compressionMethod, cb, exception);
+    GetZU2(lastModTime, cb, exception);
+    GetZU2(lastModDate, cb, exception);
+    GetZU4(crc32, cb, exception);
+    GetZU4(compressedSize, cb, exception);
     *fsize = compressedSize;
-    GetZU4(unCompressedSize, cb);
-    GetZU2(fnameLen, cb);
+    GetZU4(unCompressedSize, cb, exception);
+    GetZU2(fnameLen, cb, exception);
     if (fnameLen >= MAX_FILE_NAME_SIZE) {
         fatalError(ERR_INTERNAL,"file name too long", XREF_EXIT_ERR);
     }
-    GetZU2(extraLen, cb);
+    GetZU2(extraLen, cb, exception);
     for(i=0; i<fnameLen; i++) {
-        GetChar(fn[i], cb);
+        GetChar(fn[i], cb, exception);
     }
     fn[i] = 0;
     skipCharacters(cb, extraLen);
@@ -344,45 +355,51 @@ static void zipArchiveScan(CharacterBuffer *cb,
     unsigned crc32,compressedSize,unCompressedSize;
     unsigned foffset;
     UNUSED foffset;
+    jmp_buf exception;
+
+    switch (setjmp(exception)) {
+    case END_OF_FILE_EXCEPTION:
+        goto endOfFile;
+    }
 
     zip->dir = NULL;
     if (!findEndOfCentralDirectory(cb, fileSize))
         return;
-    GetZU4(signature, cb);
+    GetZU4(signature, cb, exception);
     assert(signature == 0x06054b50);
-    GetZU2(tmp, cb);
-    GetZU2(tmp, cb);
-    GetZU2(tmp, cb);
-    GetZU2(tmp, cb);
-    GetZU4(tmp, cb);
-    GetZU4(cdOffset, cb);
+    GetZU2(tmp, cb, exception);
+    GetZU2(tmp, cb, exception);
+    GetZU2(tmp, cb, exception);
+    GetZU2(tmp, cb, exception);
+    GetZU4(tmp, cb, exception);
+    GetZU4(cdOffset, cb, exception);
     seekToPosition(cb, cdOffset);
 
     /* Read signature */
-    GetZU4(signature, cb);
+    GetZU4(signature, cb, exception);
     while (signature == 0x02014b50) {
         /* Read zip central directory using many output values */
-        GetZU2(madeByVersion, cb);
-        GetZU2(extractVersion, cb);
-        GetZU2(bitFlags, cb);
-        GetZU2(compressionMethod, cb);
-        GetZU2(lastModTime, cb);
-        GetZU2(lastModDate, cb);
-        GetZU4(crc32, cb);
-        GetZU4(compressedSize, cb);
-        GetZU4(unCompressedSize, cb);
-        GetZU2(fnameLen, cb);
+        GetZU2(madeByVersion, cb, exception);
+        GetZU2(extractVersion, cb, exception);
+        GetZU2(bitFlags, cb, exception);
+        GetZU2(compressionMethod, cb, exception);
+        GetZU2(lastModTime, cb, exception);
+        GetZU2(lastModDate, cb, exception);
+        GetZU4(crc32, cb, exception);
+        GetZU4(compressedSize, cb, exception);
+        GetZU4(unCompressedSize, cb, exception);
+        GetZU2(fnameLen, cb, exception);
         if (fnameLen >= MAX_FILE_NAME_SIZE) {
             fatalError(ERR_INTERNAL,"file name in .zip archive too long", XREF_EXIT_ERR);
         }
-        GetZU2(extraLen, cb);
-        GetZU2(fcommentLen, cb);
-        GetZU2(diskNumber, cb);
-        GetZU2(internFileAttribs, cb);
-        GetZU4(externFileAttribs, cb);
-        GetZU4(localHeaderOffset, cb);
+        GetZU2(extraLen, cb, exception);
+        GetZU2(fcommentLen, cb, exception);
+        GetZU2(diskNumber, cb, exception);
+        GetZU2(internFileAttribs, cb, exception);
+        GetZU4(externFileAttribs, cb, exception);
+        GetZU4(localHeaderOffset, cb, exception);
         for(i=0; i<fnameLen; i++) {
-            GetChar(fn[i], cb);
+            GetChar(fn[i], cb, exception);
         }
         fn[i] = 0;
         log_trace("file '%s' in central dir", fn);
@@ -393,7 +410,7 @@ static void zipArchiveScan(CharacterBuffer *cb,
             fsIsMember(&zip->dir, fn, localHeaderOffset, ADD_YES, &place);
         }
         /* Read next signature */
-        GetZU4(signature, cb);
+        GetZU4(signature, cb, exception);
     }
     return;
 
@@ -560,60 +577,66 @@ static ConstantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,
     ConstantPoolUnion *cp=NULL;
     char *str;
     char tmpBuff[TMP_BUFF_SIZE];
+    jmp_buf exception;
 
-    GetU2(count, cb);
+    switch (setjmp(exception)) {
+    case END_OF_FILE_EXCEPTION:
+        goto endOfFile;
+    }
+
+    GetU2(count, cb, exception);
     CF_ALLOCC(cp, count, ConstantPoolUnion);
     //& memset(cp,0, count*sizeof(ConstantPoolUnion));    // if broken file
     for(ind=1; ind<count; ind++) {
-        GetU1(tag, cb);
+        GetU1(tag, cb, exception);
         switch (tag) {
         case 0:
-            GetChar(cval, cb);
+            GetChar(cval, cb, exception);
             break;
         case CONSTANT_Asciz:
-            GetU2(size, cb);
+            GetU2(size, cb, exception);
             CF_ALLOCC(str, size+1, char);
             for(i=0; i<size; i++)
-                GetChar(str[i], cb);
+                GetChar(str[i], cb, exception);
             str[i]=0;
             cp[ind].asciz = str;
             break;
         case CONSTANT_Unicode:
             errorMessage(ERR_ST,"[cfReadConstantPool] Unicode not yet implemented");
-            GetU2(size, cb);
+            GetU2(size, cb, exception);
             skipCharacters(cb, size*2);
             cp[ind].asciz = "Unicode ??";
             break;
         case CONSTANT_Class:
-            GetU2(classind, cb);
+            GetU2(classind, cb, exception);
             cp[ind].clas.nameIndex = classind;
             break;
         case CONSTANT_Fieldref:
         case CONSTANT_Methodref:
         case CONSTANT_InterfaceMethodref:
-            GetU2(classind, cb);
-            GetU2(nameind, cb);
+            GetU2(classind, cb, exception);
+            GetU2(nameind, cb, exception);
             cp[ind].rec.classIndex = classind;
             cp[ind].rec.nameAndTypeIndex = nameind;
             break;
         case CONSTANT_NameandType:
-            GetU2(nameind, cb);
-            GetU2(typeind, cb);
+            GetU2(nameind, cb, exception);
+            GetU2(typeind, cb, exception);
             cp[ind].nt.nameIndex = nameind;
             cp[ind].nt.signatureIndex = typeind;
             break;
         case CONSTANT_String:
-            GetU2(strind, cb);
+            GetU2(strind, cb, exception);
             break;
         case CONSTANT_Integer:
         case CONSTANT_Float:
-            GetU4(cval, cb);
+            GetU4(cval, cb, exception);
             break;
         case CONSTANT_Long:
         case CONSTANT_Double:
-            GetU4(cval, cb);
+            GetU4(cval, cb, exception);
             ind ++;
-            GetU4(cval, cb);
+            GetU4(cval, cb, exception);
             break;
         default:
             sprintf(tmpBuff,"unknown tag %d in constant pool of %s",tag,currentFile.fileName);
@@ -798,12 +821,18 @@ static void cfReadFieldInfos(CharacterBuffer *cb,
 ) {
     int count, ind;
     int access_flags, nameind, sigind;
+    jmp_buf exception;
 
-    GetU2(count, cb);
+    switch (setjmp(exception)) {
+    case END_OF_FILE_EXCEPTION:
+        goto endOfFile;
+    }
+
+    GetU2(count, cb, exception);
     for(ind=0; ind<count; ind++) {
-        GetU2(access_flags, cb);
-        GetU2(nameind, cb);
-        GetU2(sigind, cb);
+        GetU2(access_flags, cb, exception);
+        GetU2(nameind, cb, exception);
+        GetU2(sigind, cb, exception);
         log_trace("field '%s' of type '%s'", cp[nameind].asciz, cp[sigind].asciz);
         cfAddRecordToClass(cp[nameind].asciz, cp[sigind].asciz, memb, access_flags,
                            StorageField, NULL);
@@ -834,12 +863,18 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
     Storage storage;
     Symbol *exc;
     SymbolList *exclist, *ee;
+    jmp_buf exception;
 
-    GetU2(count, cb);
+    switch (setjmp(exception)) {
+    case END_OF_FILE_EXCEPTION:
+        goto endOfFile;
+    }
+
+    GetU2(count, cb, exception);
     for(ind=0; ind<count; ind++) {
-        GetU2(access_flags, cb);
-        GetU2(nameind, cb);
-        GetU2(sigind, cb);
+        GetU2(access_flags, cb, exception);
+        GetU2(nameind, cb, exception);
+        GetU2(sigind, cb, exception);
         log_trace("method '%s' of type '%s'", cp[nameind].asciz,cp[sigind].asciz);
         // TODO more efficiently , just index checking
         name = cp[nameind].asciz;
@@ -870,16 +905,16 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
             log_trace("strange constructor '%s' '%s'", name, sign);
             storage = StorageConstructor;
         }
-        GetU2(acount, cb);
+        GetU2(acount, cb, exception);
         for(aind=0; aind<acount; aind++) {
-            GetU2(aname, cb);
-            GetU4(alen, cb);
+            GetU2(aname, cb, exception);
+            GetU4(alen, cb, exception);
             // berk, really I need to compare strings?
             if (strcmp(cp[aname].asciz, "Exceptions")==0) {
-                GetU2(excount, cb);
+                GetU2(excount, cb, exception);
                 for(i=0; i<excount; i++) {
                     char *exname, *exsname;
-                    GetU2(exclass, cb);
+                    GetU2(exclass, cb, exception);
                     exname = cp[cp[exclass].clas.nameIndex].asciz;
                     log_trace("throws '%s'", exname);
                     exsname = simpleClassNameFromFQTName(exname);
@@ -897,28 +932,28 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
                 unsigned caname, calen;
                 int ii;
                 // look here for local variable names
-                GetU2(max_stack, cb);
-                GetU2(max_locals, cb);
-                GetU4(code_length, cb);
+                GetU2(max_stack, cb, exception);
+                GetU2(max_locals, cb, exception);
+                GetU4(code_length, cb, exception);
                 skipCharacters(cb, code_length);
-                GetU2(exception_table_length, cb);
+                GetU2(exception_table_length, cb, exception);
                 skipCharacters(cb, (exception_table_length*8));
-                GetU2(attributes_count, cb);
+                GetU2(attributes_count, cb, exception);
                 for(ii=0; ii<attributes_count; ii++) {
                     int iii;
-                    GetU2(caname, cb);
-                    GetU4(calen, cb);
+                    GetU2(caname, cb, exception);
+                    GetU4(calen, cb, exception);
                     if (strcmp(cp[caname].asciz, "LocalVariableTable")==0) {
                         unsigned local_variable_table_length;
                         unsigned start_pc,length,name_index,descriptor_index;
                         unsigned index;
-                        GetU2(local_variable_table_length, cb);
+                        GetU2(local_variable_table_length, cb, exception);
                         for(iii=0; iii<local_variable_table_length; iii++) {
-                            GetU2(start_pc, cb);
-                            GetU2(length, cb);
-                            GetU2(name_index, cb);
-                            GetU2(descriptor_index, cb);
-                            GetU2(index, cb);
+                            GetU2(start_pc, cb, exception);
+                            GetU2(length, cb, exception);
+                            GetU2(name_index, cb, exception);
+                            GetU2(descriptor_index, cb, exception);
+                            GetU2(index, cb, exception);
                             log_trace("local variable %s, index == %d", cp[name_index].asciz, index);
                         }
                     } else {
@@ -1009,8 +1044,15 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
     char tmpBuff[TMP_BUFF_SIZE];
     int major, minor;           /* Version numbers of class file format */
     CharacterBuffer *cb;
+    jmp_buf exception;
 
     ENTER();
+
+    switch (setjmp(exception)) {
+    case END_OF_FILE_EXCEPTION:
+        goto endOfFile;
+    }
+
     symbol->bits.javaFileIsLoaded = 1;
     /*&
       fprintf(dumpOut,": ppmmem == %d/%d\n",ppmMemoryi,SIZE_ppmMemory);
@@ -1049,30 +1091,30 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
         if (!zipSeekToFile(cb, className))
             goto finish;
     }
-    GetU4(readValue, cb);
+    GetU4(readValue, cb, exception);
     log_trace("magic is %x", readValue);
     if (readValue != 0xcafebabe) {
         sprintf(tmpBuff,"%s is not a valid class file", className);
         errorMessage(ERR_ST, tmpBuff);
         goto finish;
     }
-    GetU2(minor, cb);
-    GetU2(major, cb);
+    GetU2(minor, cb, exception);
+    GetU2(major, cb, exception);
     log_trace("version of '%s' is %d.%d", className, major, minor);
     constantPool = cfReadConstantPool(cb, &cpSize);
     cb->next = cb->next;
     cb->end = cb->end;
-    GetU2(access, cb);
+    GetU2(access, cb, exception);
     symbol->bits.access = access;
     log_trace("reading accessFlags %s == %x", className, access);
     if (access & AccessInterface) fileTable.tab[fileIndex]->b.isInterface = true;
-    GetU2(thisClass, cb);
+    GetU2(thisClass, cb, exception);
     if (thisClass<0 || thisClass>=cpSize) goto corrupted;
     thisClassName = constantPool[constantPool[thisClass].clas.nameIndex].asciz;
     // TODO!!!, it may happen that name of class differ in cases from name of file,
     // what to do in such case? abandon with an error?
     log_trace("this class == %s", thisClassName);
-    GetU2(superClass, cb);
+    GetU2(superClass, cb, exception);
     if (superClass != 0) {
         if (superClass<0 || superClass>=cpSize) goto corrupted;
         super = constantPool[constantPool[superClass].clas.nameIndex].asciz;
@@ -1080,11 +1122,11 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
                                        loadSuper);
     }
 
-    GetU2(inum, cb);
+    GetU2(inum, cb, exception);
     /* implemented interfaces */
 
     for(i=0; i<inum; i++) {
-        GetU2(readValue, cb);
+        GetU2(readValue, cb, exception);
         if (readValue != 0) {
             if (readValue<0 || readValue>=cpSize) goto corrupted;
             interf = constantPool[constantPool[readValue].clas.nameIndex].asciz;
@@ -1096,16 +1138,18 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
 
     cfReadFieldInfos(cb, symbol, constantPool);
 
-    if (currentFile.lexBuffer.buffer.isAtEOF) goto endOfFile;
+    if (currentFile.lexBuffer.buffer.isAtEOF)
+        goto endOfFile;
     cfReadMethodInfos(cb, symbol, constantPool);
-    if (currentFile.lexBuffer.buffer.isAtEOF) goto endOfFile;
+    if (currentFile.lexBuffer.buffer.isAtEOF)
+        goto endOfFile;
 
-    GetU2(count, cb);
+    GetU2(count, cb, exception);
     for(ind=0; ind<count; ind++) {
-        GetU2(aname, cb);
-        GetU4(alen, cb);
+        GetU2(aname, cb, exception);
+        GetU4(alen, cb, exception);
         if (strcmp(constantPool[aname].asciz,"InnerClasses")==0) {
-            GetU2(inum, cb);
+            GetU2(inum, cb, exception);
             symbol->u.s->nestedCount = inum;
             // TODO: replace the inner tab by inner list
             if (inum >= MAX_INNERS_CLASSES) {
@@ -1119,11 +1163,11 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
                 CF_ALLOCC(symbol->u.s->nest, inum, S_nestedSpec);
             }
             for(rinners=0; rinners<inum; rinners++) {
-                GetU2(innval, cb);
+                GetU2(innval, cb, exception);
                 inner = constantPool[constantPool[innval].clas.nameIndex].asciz;
                 //&fprintf(dumpOut,"inner %s \n",inner);fflush(dumpOut);
-                GetU2(upp, cb);
-                GetU2(innNameInd, cb);
+                GetU2(upp, cb, exception);
+                GetU2(innNameInd, cb, exception);
                 if (innNameInd==0) innerCName = "";         // !!!!!!!! hack
                 else innerCName = constantPool[innNameInd].asciz;
                 //&fprintf(dumpOut,"class name %x='%s'\n",innerCName,innerCName);fflush(dumpOut);
@@ -1137,7 +1181,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
                         /*&fprintf(dumpOut,"set as member class \n"); fflush(dumpOut);&*/
                     }
                 }
-                GetU2(modifs, cb);
+                GetU2(modifs, cb, exception);
                 //& inners->bits.access |= modifs;
                 //&fprintf(dumpOut,"modif? %x\n",modifs);fflush(dumpOut);
 
@@ -1171,7 +1215,6 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
     symbol->u.s->nestedCount = 0;
  finish:
     log_debug("closing file %s", className);
-    //&{fprintf(dumpOut,": closing file %s\n",className);fflush(dumpOut);fprintf(dumpOut,": ppmmem == %d/%d\n",ppmMemoryi,SIZE_ppmMemory);fflush(dumpOut);}
     popInclude();
 
     LEAVE();
