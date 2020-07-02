@@ -319,13 +319,13 @@ static Lexem getLexA(char **previousLexem) {
         inputType = cInput.inputType;
         if (macroStackIndex > 0) {
             if (inputType == INPUT_MACRO_ARGUMENT)
-                return -1; //goto endOfMacArg;
+                return -1; //goto endOfMacArg; TODO: replace with setjmp()/longjmp()
             MB_FREE_UNTIL(cInput.beginningOfBuffer);
             cInput = macroStack[--macroStackIndex];
         } else if (inputType == INPUT_NORMAL) {
             setCFileConsistency();
             if (!getLexem(&currentFile.lexBuffer))
-                return -2; //goto endOfFile;
+                return -2; //goto endOfFile; TODO: replace with setjmp()/longjmp()
             setCInputConsistency();
         } else {
             s_cache.cc = s_cache.cfin = NULL;
