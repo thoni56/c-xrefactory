@@ -889,7 +889,7 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
                     *ee = (SymbolList){.d = exc, .next = exclist};
                     exclist = ee;
                 }
-            } else if (1 && strcmp(cp[aname].asciz, "Code")==0) {
+            } else if (strcmp(cp[aname].asciz, "Code")==0) {
                 // forget this, it is useless as .jar usually do not cantain
                 // informations about variable names.
                 unsigned max_stack, max_locals, code_length;
