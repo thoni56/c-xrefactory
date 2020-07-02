@@ -102,14 +102,14 @@ ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
         value = value+(ch<<24);                 \
     }
 
-#define SkipAttributes(cb) {                            \
-        int index, count, aname, alen;                  \
-        GetU2(count, cb);                               \
-        for(index=0; index<count; index++) {            \
-            GetU2(aname, cb);                           \
-            GetU4(alen, cb);                            \
-            skipCharacters(cb, alen);                       \
-        }                                               \
+#define SkipAttributes(cb) {                    \
+        int index, count, aname, alen;          \
+        GetU2(count, cb);                       \
+        for(index=0; index<count; index++) {    \
+            GetU2(aname, cb);                   \
+            GetU4(alen, cb);                    \
+            skipCharacters(cb, alen);           \
+        }                                       \
     }
 
 /* *************** first something to read zip-files ************** */
