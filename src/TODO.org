@@ -10,6 +10,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 * DOING Create testcases for all jexercise and cexercise steps
 ** DONE F6 to completion()
 ** TODO <next step>
+* TODO Replace the -1/-2 return cases for getLexA() with longjmp(<reason>)
 * TODO Turn lexembuffer functions into methods on the buffer
 get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
 When do we point to something not a lexembuffer?
@@ -49,7 +50,6 @@ whatever other things it needs...)
 are a small as possible. This is why IWYU exists!! It means "Include
 What You Use" and is a Clang related project at
 https://github.com/include-what-you-use/include-what-you-use)
-* TODO Create test to exercise the -1/-2 return cases for getLexA()
 * TODO Bug: when extracting C function including declarations that are required
 by code left outside the extraction, that declaration is moved to the
 extracted function. This should probably trigger "structure error".
