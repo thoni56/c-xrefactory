@@ -129,13 +129,17 @@ static bool zipReadLocalFileHeader(CharacterBuffer *cb,
     log_trace("zip file signature is %x", signature);
     *lastSig = signature;
     if (signature != 0x04034b50) {
-        char tmpBuff[TMP_BUFF_SIZE];
-        sprintf(tmpBuff,
-                "archive %s is corrupted or modified while c-xref task running",
-                archivename);
-        errorMessage(ERR_ST, tmpBuff);
-        if (options.taskRegime == RegimeEditServer) {
-            fprintf(errOut,"\t\tplease, kill c-xref process and retry.\n");
+        static bool messagePrinted = false;
+        if (!messagePrinted) {
+            char tmpBuff[TMP_BUFF_SIZE];
+            messagePrinted = true;
+            sprintf(tmpBuff,
+                    "archive %s is corrupted or modified while c-xref task running",
+                    archivename);
+            errorMessage(ERR_ST, tmpBuff);
+            if (options.taskRegime == RegimeEditServer) {
+                fprintf(errOut,"\t\tplease, kill c-xref process and retry.\n");
+            }
         }
         result = false;
         goto fin;
