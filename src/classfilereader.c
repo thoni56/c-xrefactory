@@ -1016,11 +1016,18 @@ void addSuperClassOrInterfaceByName(Symbol *member, char *super, int origin,
     addSuperClassOrInterface(member, s, origin);
 }
 
+
+void convertLinkNameToClassFileName(char classFileName[], char *linkName) {
+    sprintf(classFileName, "%c%s.class", ZIP_SEPARATOR_CHAR, linkName);
+    assert(strlen(classFileName)+1 < MAX_FILE_NAME_SIZE);
+}
+
+
 int javaCreateClassFileItem( Symbol *memb) {
     char ftname[MAX_FILE_NAME_SIZE];
     int fileIndex;
 
-    SPRINT_FILE_TAB_CLASS_NAME(ftname, memb->linkName);
+    convertLinkNameToClassFileName(ftname, memb->linkName);
     fileIndex = addFileTabItem(ftname);
     memb->u.s->classFile = fileIndex;
 
@@ -1054,11 +1061,6 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
     }
 
     symbol->bits.javaFileIsLoaded = 1;
-    /*&
-      fprintf(dumpOut,": ppmmem == %d/%d\n",ppmMemoryi,SIZE_ppmMemory);
-      fprintf(dumpOut,":reading file %s arg class == %s == %s\n",
-      className, symbol->name, symbol->linkName); fflush(dumpOut);
-      &*/
 
     /* Open the file, the name is prefixing the actual class name separated by separator, if any */
     zipSeparatorIndex = strchr(className, ZIP_SEPARATOR_CHAR);

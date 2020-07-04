@@ -25,6 +25,7 @@
 #include "utils.mock"
 #include "reftab.mock"
 #include "fileio.mock"
+#include "classfilereader.mock"
 
 
 Describe(CxRef);
@@ -38,6 +39,9 @@ Ensure(CxRef, get_class_num_from_class_linkname_will_return_default_value_if_not
     expect(fileTableExists,
            when(fileName, is_equal_to_string(";name.class")),
            will_return(false));
+    expect(convertLinkNameToClassFileName,
+           when(linkName, is_equal_to_string("name")),
+           will_set_contents_of_parameter(classFileName, ";name.class", 12));
 
     assert_that(getClassNumFromClassLinkName("name", defaultValue), is_equal_to(defaultValue));
 }
@@ -50,6 +54,9 @@ Ensure(CxRef, get_class_num_from_class_linkname_will_return_filenumber_if_member
            when(fileName, is_equal_to_string(";name.class")),
            will_return(true));
     expect(fileTableLookup, will_return(position));
+    expect(convertLinkNameToClassFileName,
+           when(linkName, is_equal_to_string("name")),
+           will_set_contents_of_parameter(classFileName, ";name.class", 12));
 
     assert_that(getClassNumFromClassLinkName("name", defaultValue), is_equal_to(position));
 }

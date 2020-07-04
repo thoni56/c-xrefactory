@@ -5,45 +5,49 @@
 ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 
 void javaHumanizeLinkName(char *inn, char *outn, int size) {
-  mock(inn, outn, size);
+    mock(inn, outn, size);
+}
+
+void convertLinkNameToClassFileName(char *classFileName, char linkName[]) {
+    mock(classFileName, linkName);
 }
 
 Symbol *cfAddCastsToModule(Symbol *memb, Symbol *sup) {
-  return (Symbol *) mock(memb, sup);
+    return (Symbol *) mock(memb, sup);
 }
 
 void addSuperClassOrInterface(Symbol *memb, Symbol *supp, int origin) {
-  mock(memb, supp, origin);
+    mock(memb, supp, origin);
 }
 
 int javaCreateClassFileItem(Symbol *memb) {
-  return (int) mock(memb);
+    return (int) mock(memb);
 }
 
 void addSuperClassOrInterfaceByName(Symbol *memb, char *super, int origin, LoadSuperOrNot loadSuper) {
-  mock(memb, super, origin, loadSuper);
+    mock(memb, super, origin, loadSuper);
 }
 
 void fsRecMapOnFiles(ZipArchiveDir *dir, char *zip, char *path, void (*fun)(char *zip, char *file, void *arg), void *arg) {
-  mock(dir, zip, path, fun, arg);
+    mock(dir, zip, path, fun, arg);
 }
 
 bool fsIsMember(ZipArchiveDir **dir, char *fn, unsigned offset, AddYesNo addFlag, ZipArchiveDir **place) {
-  return (int) mock(dir, fn, offset, addFlag, place);
+    return (int) mock(dir, fn, offset, addFlag, place);
 }
 
 int zipIndexArchive(char *name) {
-  return (int) mock(name);
+    return (int) mock(name);
 }
 
 bool zipFindFile(char *name, char **resName, ZipFileTableItem *zipfile) {
-  return (bool) mock(name, resName, zipfile);
+    return (bool) mock(name, resName, zipfile);
 }
 
 void javaMapZipDirFile(ZipFileTableItem *zipfile, char *packfile, Completions *a1, void *a2, int *a3, void (*fun)(char *file, char *a1, char *a2, Completions *a3, void *a4, int *a5), char *classPath, char *dirname) {
-  mock(zipfile, packfile, a1, a2, a3, fun, classPath, dirname);
+    mock(zipfile, packfile, a1, a2, a3, fun, classPath, dirname);
 }
 
 void javaReadClassFile(char *name, Symbol *cdef, LoadSuperOrNot loadSuper) {
-  mock(name, cdef, loadSuper);
+    mock(name, cdef, loadSuper);
 }

@@ -4,6 +4,7 @@
 #include "lexer.h"
 #include "yylex.h"
 #include "classhierarchy.h"
+#include "classfilereader.h"
 #include "globals.h"
 #include "caching.h"
 #include "html.h"
@@ -3493,7 +3494,7 @@ int getClassNumFromClassLinkName(char *name, int defaultResult) {
     char classFileName[MAX_FILE_NAME_SIZE];
 
     fileIndex = defaultResult;
-    SPRINT_FILE_TAB_CLASS_NAME(classFileName, name);
+    convertLinkNameToClassFileName(classFileName, name);
     log_trace("looking for class file '%s'", classFileName);
     if (fileTableExists(&fileTable, classFileName))
         fileIndex = fileTableLookup(&fileTable, classFileName);
