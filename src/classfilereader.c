@@ -26,20 +26,20 @@
 /* *********************************************************************** */
 /*                    JAVA Constant Pool Item Tags                         */
 
-#define CONSTANT_Utf8				1
-#define CONSTANT_Unicode			2			/* ?????????????? */
-#define CONSTANT_Integer			3
-#define CONSTANT_Float				4
-#define CONSTANT_Long				5
-#define CONSTANT_Double				6
-#define CONSTANT_Class				7
-#define CONSTANT_String				8
-#define CONSTANT_Fieldref			9
-#define CONSTANT_Methodref			10
+#define CONSTANT_Utf8               1
+#define CONSTANT_Integer            3
+#define CONSTANT_Float              4
+#define CONSTANT_Long               5
+#define CONSTANT_Double             6
+#define CONSTANT_Class              7
+#define CONSTANT_String             8
+#define CONSTANT_Fieldref           9
+#define CONSTANT_Methodref          10
 #define CONSTANT_InterfaceMethodref	11
-#define CONSTANT_NameandType		12
+#define CONSTANT_NameandType        12
 #define CONSTANT_MethodHandle       15
 #define CONSTANT_MethodType         16
+#define CONSTANT_Dynamic            17
 #define CONSTANT_InvokeDynamic      18
 #define CONSTANT_Module             19
 #define CONSTANT_Package            20
@@ -48,17 +48,31 @@
 /* NOTE the tag is read and discarded, not included in these structures */
 struct CONSTANT_Class_info {
     /* U1 tag; */
-    short unsigned  name_index;
+    short unsigned name_index;
 };
 struct CONSTANT_NameAndType_info {
     /* U1 tag; */
-    short unsigned  name_index;
-    short unsigned  descriptor_index;
+    short unsigned name_index;
+    short unsigned descriptor_index;
 };
 struct CONSTANT_Ref_info {
     /* U1 tag; */
-    short unsigned  class_index;
-    short unsigned  name_and_type_index;
+    short unsigned class_index;
+    short unsigned name_and_type_index;
+};
+struct CONSTANT_MethodHandle_info {
+    /* U1 tag; */
+    short unsigned reference_kind;
+    short unsigned reference_index;
+};
+struct CONSTANT_MethodType_info {
+    /* U1 tag; */
+    short unsigned descriptor_index;
+};
+struct CONSTANT_Dynamic_info {  /* Also InvokeDynamic */
+    /* U1 tag; */
+    short unsigned bootstrap_method_attr_index;
+    short unsigned name_and_type_index;
 };
 
 typedef union constantPoolUnion {
@@ -66,6 +80,9 @@ typedef union constantPoolUnion {
     struct CONSTANT_Class_info class;
     struct CONSTANT_NameAndType_info nameAndType;
     struct CONSTANT_Ref_info ref;
+    struct CONSTANT_MethodHandle_info methodHandle;
+    struct CONSTANT_MethodType_info methodType;
+    struct CONSTANT_Dynamic_info dynamic;
 } ConstantPoolUnion;
 
 ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
@@ -635,11 +652,11 @@ void javaMapZipDirFile(
 
 static ConstantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,
                                              int *cpSize) {
-    int value;
-    int count,tag,index,classIndex,nameIndex,typeIndex,stringIndex;
-    int size;
     ConstantPoolUnion *cp=NULL;
-    char *str;
+    int count, tag, index;
+    int value, stringIndex;
+    int length;
+    char *string;
     jmp_buf exception;
 
     switch (setjmp(exception)) {
@@ -654,30 +671,25 @@ static ConstantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,
         GetU1(tag, cb, exception);
         switch (tag) {
         case CONSTANT_Utf8:
-            GetU2(size, cb, exception);
-            CF_ALLOCC(str, size+1, char);
-            for(int i=0; i<size; i++)
-                GetChar(str[i], cb, exception);
-            str[size]=0;
-            cp[index].utf8 = str;
+            GetU2(length, cb, exception);
+            CF_ALLOCC(string, length+1, char);
+            for(int i=0; i<length; i++)
+                GetChar(string[i], cb, exception);
+            string[length]=0;
+            cp[index].utf8 = string;
             break;
         case CONSTANT_Class:
-            GetU2(classIndex, cb, exception);
-            cp[index].class.name_index = classIndex;
+            GetU2(cp[index].class.name_index, cb, exception);
             break;
         case CONSTANT_Fieldref:
         case CONSTANT_Methodref:
         case CONSTANT_InterfaceMethodref:
-            GetU2(classIndex, cb, exception);
-            GetU2(nameIndex, cb, exception);
-            cp[index].ref.class_index = classIndex;
-            cp[index].ref.name_and_type_index = nameIndex;
+            GetU2(cp[index].ref.class_index, cb, exception);
+            GetU2(cp[index].ref.name_and_type_index, cb, exception);
             break;
         case CONSTANT_NameandType:
-            GetU2(nameIndex, cb, exception);
-            GetU2(typeIndex, cb, exception);
-            cp[index].nameAndType.name_index = nameIndex;
-            cp[index].nameAndType.descriptor_index = typeIndex;
+            GetU2(cp[index].nameAndType.name_index, cb, exception);
+            GetU2(cp[index].nameAndType.descriptor_index, cb, exception);
             break;
         case CONSTANT_String:
             GetU2(stringIndex, cb, exception);
@@ -691,6 +703,18 @@ static ConstantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,
             GetU4(value, cb, exception);
             index ++;
             GetU4(value, cb, exception);
+            break;
+        case CONSTANT_MethodHandle:
+            GetU1(cp[index].methodHandle.reference_kind, cb, exception);
+            GetU2(cp[index].methodHandle.reference_index, cb, exception);
+            break;
+        case CONSTANT_MethodType:
+            GetU2(cp[index].methodType.descriptor_index, cb, exception);
+            break;
+        case CONSTANT_Dynamic:
+        case CONSTANT_InvokeDynamic:
+            GetU2(cp[index].dynamic.bootstrap_method_attr_index, cb, exception);
+            GetU2(cp[index].dynamic.name_and_type_index, cb, exception);
             break;
         default: {
             char tmpBuff[TMP_BUFF_SIZE];
