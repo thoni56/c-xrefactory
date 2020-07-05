@@ -119,6 +119,16 @@ typedef enum exception {
 
 /* *************** first something to read zip-files ************** */
 
+typedef struct zipFileInfo {
+    unsigned versionMadeBy,versionNeededToExtract,bitFlags,compressionMethod;
+    unsigned lastModificationTime,lastModificationDate;
+    unsigned crc32,compressedSize,unCompressedSize;
+    unsigned fileNameLength,extraFieldLength,fileCommentLength,diskNumber;
+    char filename[MAX_FILE_NAME_SIZE];
+    unsigned internalFileAttributes, externalFileAttributes, localHeaderOffset;
+} ZipFileInfo;
+
+
 static bool zipReadLocalFileHeader(CharacterBuffer *cb,
                                    char *fn, unsigned *fsize, unsigned *lastSig,
                                    char *archivename) {
@@ -175,15 +185,10 @@ static bool zipReadLocalFileHeader(CharacterBuffer *cb,
     fn[i] = 0;
     skipCharacters(cb, extraLen);
     if (compressionMethod == 0) {
-    }
-    else if (compressionMethod == Z_DEFLATED) {
-        cb->next = cb->next;
-        cb->end = cb->end;
+        /* No compression */
+    } else if (compressionMethod == Z_DEFLATED) {
         switchToZippedCharBuff(cb);
-        cb->next = cb->next;
-        cb->end = cb->end;
-    }
-    else {
+    } else {
         result = false;
         if (compressionErrorWritten==0) {
             char tmpBuff[TMP_BUFF_SIZE];
@@ -343,15 +348,46 @@ static bool findEndOfCentralDirectory(CharacterBuffer *cb, int fileSize) {
     return found;
 }
 
-static void zipArchiveScan(CharacterBuffer *cb,
-                           ZipFileTableItem *zip, int fileSize) {
-    char fn[MAX_FILE_NAME_SIZE];
+
+static void readCentralDirectoryFileHeader(CharacterBuffer *cb, ZipFileInfo *info, jmp_buf exception) {
+    GetZU2(info->versionMadeBy, cb, exception);
+    GetZU2(info->versionNeededToExtract, cb, exception);
+    GetZU2(info->bitFlags, cb, exception);
+    GetZU2(info->compressionMethod, cb, exception);
+    GetZU2(info->lastModificationTime, cb, exception);
+    GetZU2(info->lastModificationDate, cb, exception);
+    GetZU4(info->crc32, cb, exception);
+    GetZU4(info->compressedSize, cb, exception);
+    GetZU4(info->unCompressedSize, cb, exception);
+    GetZU2(info->fileNameLength, cb, exception);
+    if (info->fileNameLength >= MAX_FILE_NAME_SIZE) {
+        fatalError(ERR_INTERNAL,"file name in .zip archive too long", XREF_EXIT_ERR);
+    }
+    GetZU2(info->extraFieldLength, cb, exception);
+    GetZU2(info->fileCommentLength, cb, exception);
+    GetZU2(info->diskNumber, cb, exception);
+    GetZU2(info->internalFileAttributes, cb, exception);
+    GetZU4(info->externalFileAttributes, cb, exception);
+    GetZU4(info->localHeaderOffset, cb, exception);
+    for(int i=0; i<info->fileNameLength; i++) {
+        GetChar(info->filename[i], cb, exception);
+    }
+    info->filename[info->fileNameLength] = 0;
+    log_trace("file '%s' in central dir", info->filename);
+    skipCharacters(cb, info->extraFieldLength+info->fileCommentLength);
+}
+
+
+static bool isRealFile(ZipFileInfo info) {
+    return strncmp(info.filename, "META-INF/", 9) != 0;
+}
+
+
+static void zipArchiveScan(CharacterBuffer *cb, ZipFileTableItem *zip, int fileSize) {
     ZipArchiveDir *place;
-    int signature,madeByVersion,extractVersion,bitFlags,compressionMethod;
-    int lastModTime,lastModDate,fnameLen,extraLen,fcommentLen,diskNumber;
-    int i,internFileAttribs;
-    unsigned externFileAttribs,localHeaderOffset, cdOffset;
-    unsigned crc32,compressedSize,unCompressedSize;
+    unsigned signature;
+    unsigned cdOffset;
+    ZipFileInfo info;
     jmp_buf exception;
 
     ENTER();
@@ -373,39 +409,14 @@ static void zipArchiveScan(CharacterBuffer *cb,
     GetZU4(cdOffset, cb, exception);
     seekToPosition(cb, cdOffset);
 
-    /* Read signature */
+    /* Read signature, should be central directory file header */
     GetZU4(signature, cb, exception);
     while (signature == 0x02014b50) {
-        /* Read zip central directory using many output values */
-        GetZU2(madeByVersion, cb, exception);
-        GetZU2(extractVersion, cb, exception);
-        GetZU2(bitFlags, cb, exception);
-        GetZU2(compressionMethod, cb, exception);
-        GetZU2(lastModTime, cb, exception);
-        GetZU2(lastModDate, cb, exception);
-        GetZU4(crc32, cb, exception);
-        GetZU4(compressedSize, cb, exception);
-        GetZU4(unCompressedSize, cb, exception);
-        GetZU2(fnameLen, cb, exception);
-        if (fnameLen >= MAX_FILE_NAME_SIZE) {
-            fatalError(ERR_INTERNAL,"file name in .zip archive too long", XREF_EXIT_ERR);
-        }
-        GetZU2(extraLen, cb, exception);
-        GetZU2(fcommentLen, cb, exception);
-        GetZU2(diskNumber, cb, exception);
-        GetZU2(internFileAttribs, cb, exception);
-        GetZU4(externFileAttribs, cb, exception);
-        GetZU4(localHeaderOffset, cb, exception);
-        for(i=0; i<fnameLen; i++) {
-            GetChar(fn[i], cb, exception);
-        }
-        fn[i] = 0;
-        log_trace("file '%s' in central dir", fn);
-        skipCharacters(cb, extraLen+fcommentLen);
+        readCentralDirectoryFileHeader(cb, &info, exception);
 
-        if (strncmp(fn,"META-INF/",9)!=0) {
-            log_trace("adding '%s'", fn);
-            fsIsMember(&zip->dir, fn, localHeaderOffset, ADD_YES, &place);
+        if (isRealFile(info)) {
+            log_trace("adding '%s'", info.filename);
+            fsIsMember(&zip->dir, info.filename, info.localHeaderOffset, ADD_YES, &place);
         }
         /* Read next signature */
         GetZU4(signature, cb, exception);
