@@ -356,14 +356,19 @@ static void zipArchiveScan(CharacterBuffer *cb,
     UNUSED foffset;
     jmp_buf exception;
 
+    ENTER();
+
     switch (setjmp(exception)) {
     case END_OF_FILE_EXCEPTION:
         goto endOfFile;
     }
 
     zip->dir = NULL;
-    if (!findEndOfCentralDirectory(cb, fileSize))
+    if (!findEndOfCentralDirectory(cb, fileSize)) {
+        LEAVE();
         return;
+    }
+
     GetZU4(signature, cb, exception);
     assert(signature == 0x06054b50);
     GetZU2(tmp, cb, exception);
@@ -411,10 +416,12 @@ static void zipArchiveScan(CharacterBuffer *cb,
         /* Read next signature */
         GetZU4(signature, cb, exception);
     }
+    LEAVE();
     return;
 
  endOfFile:
     errorMessage(ERR_ST, "unexpected end of file");
+    LEAVE();
 }
 
 int zipIndexArchive(char *name) {
