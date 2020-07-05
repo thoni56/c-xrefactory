@@ -257,7 +257,6 @@ bool fsIsMember(ZipArchiveDir **dirPointer, char *fn, unsigned offset,
         itemlen = (ss-fn) + 1;
     }
     for(aaa=dirPointer, aa= *aaa; aa!=NULL; aaa= &(aa->next), aa = *aaa) {
-        log_trace("comparing %s <-> %s of len %d", fn, aa->name, itemlen);
         if (strncmp(fn,aa->name,itemlen)==0 && aa->name[itemlen]==0)
             break;
     }
