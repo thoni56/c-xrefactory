@@ -10,60 +10,64 @@ There are a *lot* of things to do to make c-xref into modern C.
 ** DONE F6 to completion()
 ** TODO <next step>
 * TODO Create jar reading test for unexpected end of file
+* TODO Read java runtime which now has many more options
+** TODO Understand why reading jar takes up all memory
+** TODO Introduce data driven strategy to find runtime
+jrt-fs.jar, ...
 * TODO Replace the -1/-2 return cases for getLexA() with longjmp(<reason>)
 * TODO Turn lexembuffer functions into methods on the buffer
-get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
-When do we point to something not a lexembuffer?
+  get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
+  When do we point to something not a lexembuffer?
 * TODO Remove zlib from repo, point to it's repo instead
 * TODO New refactoring: Extract variable
 * TODO Extract function can't extract a boolean function inside an if()
 * TODO Remove FULL/FAST update, we always want correct info?
-There are a number of update modes available from the command line, 'fupdate',
-'updatem', 'update', 'fastupdate' and then there is opt.updateOnlyModifiedFiles
+  There are a number of update modes available from the command line, 'fupdate',
+  'updatem', 'update', 'fastupdate' and then there is opt.updateOnlyModifiedFiles
 * TODO Remove all -olcx commands that are not used by the editor interfaces?
 * TODO Make S_caching an abstract data type to hide CachePoint and Caching
 * TODO Separate the options into sections and move HTML (at least) to separate structure
-The S_options structure is used to save or possibly create new sets, when
-refactoring. Then it should only contain what's needed for that.
+  The S_options structure is used to save or possibly create new sets, when
+  refactoring. Then it should only contain what's needed for that.
 * TODO Some code in yacc semantic actions is not detected (try F6 on .reference)
-It seems that it is primarily java_parser.y that has this problem. See
-issue on github. One theory might be that "/*&" is not handled in
-yacc-files under some circumstances. There is a line in lex.c that
-handles this, we could see if it triggers...
+  It seems that it is primarily java_parser.y that has this problem. See
+  issue on github. One theory might be that "/*&" is not handled in
+  yacc-files under some circumstances. There is a line in lex.c that
+  handles this, we could see if it triggers...
 * TODO Handle for-loops with declarations ("for (int i = 0;...")
-This requires grammar changes for C and Yacc
+  This requires grammar changes for C and Yacc
 * TODO Make all modules independent on main
 ** DONE Document why main.h is needed
 ** DONE Make commons.c independent on main
 ** TODO Make cxref.c independent on main
 ** TODO Make options.c independent on main
 ** TODO Make refactory.c independent on main
-This probably requires a lot more understanding of refactory.c and why
-it is structured the way it is, it seems to be calling on itself and
-main processing. Also refactory task is always performed in a separate
-process, what happens if we specify -refactory as a PPC command?
+   This probably requires a lot more understanding of refactory.c and why
+   it is structured the way it is, it seems to be calling on itself and
+   main processing. Also refactory task is always performed in a separate
+   process, what happens if we specify -refactory as a PPC command?
 * TODO Ensure each header file is not dependent on the fact that some other
-header file is included before it. (Could this be done by taking each
-header file and try to compile it in isolation? It should include
-whatever other things it needs...)
+  header file is included before it. (Could this be done by taking each
+  header file and try to compile it in isolation? It should include
+  whatever other things it needs...)
 * TODO Ensure every file only includes what it needs so that dependencies
-are a small as possible. This is why IWYU exists!! It means "Include
-What You Use" and is a Clang related project at
-https://github.com/include-what-you-use/include-what-you-use)
+  are a small as possible. This is why IWYU exists!! It means "Include
+  What You Use" and is a Clang related project at
+  https://github.com/include-what-you-use/include-what-you-use)
 * TODO Bug: when extracting C function including declarations that are required
-by code left outside the extraction, that declaration is moved to the
-extracted function. This should probably trigger "structure error".
+  by code left outside the extraction, that declaration is moved to the
+  extracted function. This should probably trigger "structure error".
 * TODO Refactor int2StringTabs, should not have Init in them
 * TODO Remove opt.xref2 since edit server mode is always called with this, isn't it?
-If so, make xref2 the way c-xref talks if in server mode. But this should also
-apply for refactory mode, right?
+  If so, make xref2 the way c-xref talks if in server mode. But this should also
+  apply for refactory mode, right?
 * TODO Cleanup and separate commons, misc and make them independent utility modules
 * TODO Check if the C-part of Yacc grammar is identical, and if so extract it
 * TODO Fix the move_class test
 * TODO Why does -refactory read the users default .c-xrefrc? And why does -no-stdoptions
-prevent reading explicit -xrefrc options?
+  prevent reading explicit -xrefrc options?
 * TODO Cannot mock structs as arguments like in symbol.mock
-We need to change pos to *pos if that's gonna work
+  We need to change pos to *pos if that's gonna work
 * TODO Rename reftab.[ch] to cxreftab.[ch]? Or s_cxreftab to s_reftab?
 * TODO Clean up documentation, primarily remove 'create_distribution'
 * TODO Document that the "distribution" method is unsupported
@@ -78,12 +82,12 @@ We need to change pos to *pos if that's gonna work
   might be tied into this, though.
 
 * TODO Naming. Generally it is heavy on short, write-only naming, we should
-move towards full names as much as possible
+  move towards full names as much as possible
 
 ** TODO Remove S_, s_ and other naming conventions
 ** TODO Use actual typedef names where ever possible
 * TODO Macros. There are many things that might need the magic of macros, but we
-should watch out for "macro for optimisation" and remove that.
+  should watch out for "macro for optimisation" and remove that.
 
 * TODO Header files. There are a number of sections in the proto.h that
   indicates which file/module it declares an externa interface for. We
@@ -92,8 +96,8 @@ should watch out for "macro for optimisation" and remove that.
   generation. Not all does, though...
 
 * TODO Modules. Better use of modules (Clean Code/Architecture)
-The hash tables and lists are such candidates. If we do that it would be much
-easier to mock and unit test other modules.
+  The hash tables and lists are such candidates. If we do that it would be much
+  easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
 * DONE Function-ify lexmac macros
 * DONE Change structure declarations in proto.h into ideomatic struct
@@ -110,45 +114,45 @@ easier to mock and unit test other modules.
 * DONE Re-fix #13, since it was reverted since it trashed extract for Java with local variables
 * DONE Extract a lexembuffer module
 * DONE Use enum types wherever possible Storage, SymbolType
-Which are left to do?
+  Which are left to do?
 * DONE Unittests for memory module
 * DONE Test for Java using JRegr sources
 * DONE Remove enum generation by using CPP magic
-In order to
-- simplify the code by removing the whole generate regime
-- avoid regeneration different enum string sets on various platforms
-- be explicit about which enums that actually need string representations
-we will
-- replace re-generation of all enums with some macro magic to produce both
-enum values and strings in the modules themselves as part of the declaration
+  In order to
+  - simplify the code by removing the whole generate regime
+  - avoid regeneration different enum string sets on various platforms
+  - be explicit about which enums that actually need string representations
+  we will
+  - replace re-generation of all enums with some macro magic to produce both
+  enum values and strings in the modules themselves as part of the declaration
 
-We don't need the complex logic of the whole generate_regime if we
-only want to be able to print the strings for the values (see
-https://stackoverflow.com/a/10966395/204658)
+  We don't need the complex logic of the whole generate_regime if we
+  only want to be able to print the strings for the values (see
+  https://stackoverflow.com/a/10966395/204658)
 
-Currently all enums included are generated, but that includes ones
-that are in the systems headers which in turns creates different
-output. It is better to be precise about which you want to be generated.
+  Currently all enums included are generated, but that includes ones
+  that are in the systems headers which in turns creates different
+  output. It is better to be precise about which you want to be generated.
 
-Currently only the following are actually used:
-- miscellaneous
-- referenceCategory (removed use of enumTxt for it)
-- storage (done)
-- type (done)
-- usage (done)
+  Currently only the following are actually used:
+  - miscellaneous
+  - referenceCategory (removed use of enumTxt for it)
+  - storage (done)
+  - type (done)
+  - usage (done)
 
-Re-test this with "ls *.c | grep -v enumTxt | xargs grep -h -o '[^ ("*,]*EnumName\[[^ ]*' | sed -e 's/\[.*//g' | sort | uniq"
+  Re-test this with "ls *.c | grep -v enumTxt | xargs grep -h -o '[^ ("*,]*EnumName\[[^ ]*' | sed -e 's/\[.*//g' | sort | uniq"
 * DONE Replace "int lexem" with an enum for all lexems, "Lexem lexem"?
 * DONE Start using log.c functions to log to a separate log file
-Adjust options so that we can better control logging for various
-modules(?)
+  Adjust options so that we can better control logging for various
+  modules(?)
 ** DONE Include and start using log()
 ** DONE Move output from log() from dumpOut to some logFile
 * DONE Figure out a way to remove "commons.c 295" from all parser error messages
 * DONE Don't overwrite enumTxt.g.[ch] if they are different, separate target?
-If the change creates broken (like empty) enum-files we should not just overwrite
-the working ones. Create a separate target to run to explicitly do that and say
-so in the output. E.g. "REGENERATED: inspect and do 'make enums' if correct"
+  If the change creates broken (like empty) enum-files we should not just overwrite
+  the working ones. Create a separate target to run to explicitly do that and say
+  so in the output. E.g. "REGENERATED: inspect and do 'make enums' if correct"
 * DONE Introduce -compiler option for C so that we can ensure discovery works
 * DONE Remove the global tmpBuff
 * DONE Introduce fileio layer for fopen, fread etc. and possibly copyFile...
@@ -158,16 +162,16 @@ so in the output. E.g. "REGENERATED: inspect and do 'make enums' if correct"
 ** DONE Add as reference to the field
 * DONE Add a test for reading class files (note only 1.4 max for now...)
 * DONE Ensure that token declarations in the parsers are exactly the same
-They must be, but Yacc does not allow #include of a common file.
+  They must be, but Yacc does not allow #include of a common file.
 * DONE Investigate to remove S_classTreeData
 * DONE Remove code for generation of str_fill & str_copy
 * DONE Remove bootstrap step (strfill and local definitions)
 ** DONE Remove bootstrap enumTxt generation
-To retain the feature that some enums have there values as strings,
-and be sure that if we change the enum, those will change too. Instead
-of generating them as a pre-requisite we will generate them after.
+   To retain the feature that some enums have there values as strings,
+   and be sure that if we change the enum, those will change too. Instead
+   of generating them as a pre-requisite we will generate them after.
 ** DONE Remove the need for FILL_xxx macros
-At this point there are 66, 65, 64, 63, 62, 41, 33, 15, 8 FILL-macros that are in use
+   At this point there are 66, 65, 64, 63, 62, 41, 33, 15, 8 FILL-macros that are in use
 *** DONE Remove position from proto.h
 *** DONE Remove FILLF_typeModifier
 *** DONE Remove chReference from proto.h
@@ -185,40 +189,40 @@ At this point there are 66, 65, 64, 63, 62, 41, 33, 15, 8 FILL-macros that are i
 *** DONE Remove FILL_symbol()
 ***** DONE Remove #include "symbol" from proto.h
 ***** DONE semact.c requires FILL_symbolBits which are not strFill'ed
-if symbol.h is not in proto.h. We need to create fillSymbolBits()
+      if symbol.h is not in proto.h. We need to create fillSymbolBits()
 ***** DONE Replace 0 with ACC_DEFAULT in calls to fillSymbolBits()
 ****** DONE symtab.h: unknown type name Symbol: include symbol instead of proto
 ******* DONE hashlist.th bool
 ***** DONE Replace all FILL_symbol() calls
 ***** DONE Move Symbol struct to Symbol-module
 ***** DONE Create a Symbol module with newSymbolxxx() & fillSymbolxxx()
-The call pattern XX_ALLOC... FILL_symbolBits ... FILL_symbol is
-prominent. And if we remove all instances where a newSymbol() function
-returning a pointer would work that's a big step. Started on the
-"remove-fill-symbol" branch. There is still an issue in that the
-FILL_symbol macro takes one argument which is the name of the union
-field that the next argument should assign to (is this a general
-pattern for FILL-generation? Probably) Suggested solution is one
-newSymbol<field>() for each of the necessary fields that are actually used.
+      The call pattern XX_ALLOC... FILL_symbolBits ... FILL_symbol is
+      prominent. And if we remove all instances where a newSymbol() function
+      returning a pointer would work that's a big step. Started on the
+      "remove-fill-symbol" branch. There is still an issue in that the
+      FILL_symbol macro takes one argument which is the name of the union
+      field that the next argument should assign to (is this a general
+      pattern for FILL-generation? Probably) Suggested solution is one
+      newSymbol<field>() for each of the necessary fields that are actually used.
 *** DONE Remove FILL_symbollist() macro
 ** DONE Remove generation of str_fill from build
 ** DONE Remove compiler_defines.h
 *** DONE Re-work standard options, since reading included system files may
 * DONE Remove all QNX-stuff
-depend on them. Think about calling compiler to get defines, much like
-generation of "compiler_defines.g.h" was done. Here's what that did to
-get a list of #defines:
+  depend on them. Think about calling compiler to get defines, much like
+  generation of "compiler_defines.g.h" was done. Here's what that did to
+  get a list of #defines:
 
- echo | gcc -dM -E -
+  echo | gcc -dM -E -
 
-It should be possible to piggyback on the command line options
-handling. That is performed by the last lines in
-addMacroDefinedByOption().
+  It should be possible to piggyback on the command line options
+  handling. That is performed by the last lines in
+  addMacroDefinedByOption().
 * DONE Use Yacc's -p for "symbol_prefix" instead of the #defines?
 * DONE Rename classh to classhierarchy
 * DONE make memory.c (linkage) independent on all other modules
-One way to do this to inject the remaining, problematic, dependencies
-such as internalCheckFail(), removeFromTrailUntil() and fatalError()
+  One way to do this to inject the remaining, problematic, dependencies
+  such as internalCheckFail(), removeFromTrailUntil() and fatalError()
 * DONE Move all function prototypes from proto.h to <module>.h
 * DONE Create test case for converting virtual function to static
 * DONE Fix tests/olcx_refactor_rename gets "buf is not valid"
@@ -231,8 +235,8 @@ such as internalCheckFail(), removeFromTrailUntil() and fatalError()
   with the naming strategy as for the others.
 * DONE Rename maTab to macroArgTab
 * DONE Make fillSymbol() and newSymbol() set default symbolBits
-then we only need to set non-default values (which could be done
-using setType(), setStorage() and so on, functions
+  then we only need to set non-default values (which could be done
+  using setType(), setStorage() and so on, functions
 * DONE Remove FILLF_fileItem() by replacing it with fillFileItem()
 ** DONE Make hashTabAdd() return int rather than *int out arg
 *** DONE Make IsMember() return position rather than out argument
@@ -243,15 +247,15 @@ using setType(), setStorage() and so on, functions
 * DONE Create a map of how structs are dependent on each other
 * DONE Add an -exit option so that clients can take down server cleanly
 * DONE Ensure only externally used functions are visible in the modules
-header file. And that only those are "non-static" in the C file.
+  header file. And that only those are "non-static" in the C file.
 * DONE Make edit_server_driver read output from pipespy
-Idea is to be able to record interactions and then re-play them
-with the driver.
+  Idea is to be able to record interactions and then re-play them
+  with the driver.
 * DONE Build a protocol spy that can be put between the editor and the
-server to inspect and learn about the communication. It should be
-fairly easy, just start up like c-xref does, start the real c-xref
-with the startup arguments. Shuffle all communication on to the other
-while logging the messages to a file.
+  server to inspect and learn about the communication. It should be
+  fairly easy, just start up like c-xref does, start the real c-xref
+  with the startup arguments. Shuffle all communication on to the other
+  while logging the messages to a file.
 
 * DONE Although generation of typedef's etc. in strTdef et al might be
   questioned we need to handle that for now, but at least let's add

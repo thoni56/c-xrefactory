@@ -310,6 +310,8 @@ void initInput(FILE *file, EditorBuffer *editorBuffer, char *prefix, char *fileN
  * the found lexem
  * -1 for end of macro argument
  * -2 for end of file
+
+ TODO: convert to use longjmp() exception handling instead of magic return values
 */
 static Lexem getLexA(char **previousLexem) {
     Lexem lexem;
