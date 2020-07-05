@@ -2384,7 +2384,7 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
     mm = cxMemoryOverflowHandler(1);
     assert(mm);
     // initoptions
-    initMemory(((S_memory*)&s_initOpt.pendingMemory),
+    initMemory(((Memory*)&s_initOpt.pendingMemory),
                optionsOverflowHandler, SIZE_opiMemory);
 
     // Inject error handling functions

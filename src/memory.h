@@ -175,7 +175,7 @@ typedef struct memory {
     int     i;
     int		size;
     double  b;		//  double in order to get it properly aligned
-} S_memory;
+} Memory;
 
 typedef struct topBlock {
     int              firstFreeIndex;
@@ -185,7 +185,7 @@ typedef struct topBlock {
 } S_topBlock;
 
 
-extern S_memory *cxMemory;
+extern Memory *cxMemory;
 extern S_topBlock *s_topBlock;
 
 extern jmp_buf memoryResizeJumpTarget;
@@ -202,7 +202,7 @@ extern void memoryUseFunctionForFatalError(void (*function)(int errCode, char *m
 extern void memoryUseFunctionForInternalCheckFail(void (*function)(char *expr, char *file, int line));
 extern void memoryUseFunctionForError(void (*function)(int code, char *message));
 
-extern void initMemory(S_memory *memory, bool (*overflowHandler)(int n), int size);
+extern void initMemory(Memory *memory, bool (*overflowHandler)(int n), int size);
 extern void memoryResize(void);
 extern bool cxMemoryOverflowHandler(int n);
 

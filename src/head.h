@@ -167,8 +167,8 @@ typedef enum language {
 #define CX_FREE_UNTIL(p)        {DM_FREE_UNTIL(cxMemory,p);}
 
 /* options allocations */
-#define OPT_ALLOC(p,t)          {DM_ALLOC(((S_memory*)&options.pendingMemory),p,t);}
-#define OPT_ALLOCC(p,n,t)       {DM_ALLOCC(((S_memory*)&options.pendingMemory),p,n,t);}
+#define OPT_ALLOC(p,t)          {DM_ALLOC(((Memory*)&options.pendingMemory),p,t);}
+#define OPT_ALLOCC(p,n,t)       {DM_ALLOCC(((Memory*)&options.pendingMemory),p,n,t);}
 
 /* on-line dialogs allocation */
 #define OLCX_ALLOCC(p,n,t) {\

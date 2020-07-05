@@ -4,7 +4,7 @@
 #include "log.h"
 #include "misc.h"               /* for removeFromTrailUntil() */
 
-S_memory *cxMemory=NULL;
+Memory *cxMemory=NULL;
 S_topBlock *s_topBlock;
 
 jmp_buf memoryResizeJumpTarget;
@@ -45,7 +45,7 @@ void memoryResize(void) {
     longjmp(memoryResizeJumpTarget,1);
 }
 
-void initMemory(S_memory *memory, bool (*overflowHandler)(int n), int size) {
+void initMemory(Memory *memory, bool (*overflowHandler)(int n), int size) {
     memory->overflowHandler = overflowHandler;
     memory->i = 0;
     memory->size = size;
@@ -56,7 +56,7 @@ void initMemory(S_memory *memory, bool (*overflowHandler)(int n), int size) {
 
 bool cxMemoryOverflowHandler(int n) {
     int ofactor,factor,oldsize, newsize;
-    S_memory *oldcxMemory;
+    Memory *oldcxMemory;
 
     if (cxMemory!=NULL) {
         oldsize = cxMemory->size;
@@ -72,7 +72,7 @@ bool cxMemoryOverflowHandler(int n) {
     newsize = factor * CX_MEMORY_CHUNK_SIZE;
     oldcxMemory = cxMemory;
     if (oldcxMemory!=NULL) free(oldcxMemory);
-    cxMemory = malloc(newsize + sizeof(S_memory));
+    cxMemory = malloc(newsize + sizeof(Memory));
     if (cxMemory!=NULL) {
         initMemory(cxMemory, cxMemoryOverflowHandler, newsize);
     }
