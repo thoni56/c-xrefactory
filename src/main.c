@@ -2387,6 +2387,10 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
     initMemory(((S_memory*)&s_initOpt.pendingMemory),
                optionsOverflowHandler, SIZE_opiMemory);
 
+    // Inject error handling functions
+    memoryUseFunctionForFatalError(fatalError);
+    memoryUseFunctionForInternalCheckFail(internalCheckFail);
+
     // just for very beginning
     s_fileProcessStartTime = time(NULL);
 

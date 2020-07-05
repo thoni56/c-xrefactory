@@ -57,7 +57,6 @@ extracted function. This should probably trigger "structure error".
 * TODO Remove opt.xref2 since edit server mode is always called with this, isn't it?
 If so, make xref2 the way c-xref talks if in server mode. But this should also
 apply for refactory mode, right?
-* TODO Initialize memory's injected error functions in main.c, but it still works?
 * TODO Cleanup and separate commons, misc and make them independent utility modules
 * TODO Check if the C-part of Yacc grammar is identical, and if so extract it
 * TODO Fix the move_class test
@@ -103,8 +102,9 @@ easier to mock and unit test other modules.
   with cctNode and position. Primary benefit is to be able to use
   renaming on them...
 
-* TODO Make Makefile.common look for our patched yacc and if it's not
+* DONE Make Makefile.common look for our patched yacc and if it's not
   available ignore yacc-rules otherwise always run yacc.
+* DONE Initialize memory's injected error functions in main.c, but it still works?
 * DONE Change all "-no_" options to modern "-no-"
 * DONE Rename some of the options, like -no_str -> -no-structs
 * DONE Re-fix #13, since it was reverted since it trashed extract for Java with local variables
