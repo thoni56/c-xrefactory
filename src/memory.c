@@ -4,13 +4,8 @@
 #include "log.h"
 
 
-//#define MEMTRACE
-
-#ifdef MEMTRACE
-#define mem_trace(...) log_log(LOG_TRACE, __FILE__, __LINE__, __VA_ARGS__)
-#else
-#define mem_trace(...)
-#endif
+static bool memoryTrace = false;
+#define mem_trace(...)  { if (memoryTrace) log_log(LOG_TRACE, __FILE__, __LINE__, __VA_ARGS__); }
 
 
 Memory *cxMemory=NULL;
@@ -92,7 +87,7 @@ bool cxMemoryOverflowHandler(int n) {
 
 /* ***************************************************************** */
 
-#if MEMTRACE
+#ifdef MEMTRACE
 static void trailDump(void) {
     S_freeTrail *t;
     log_trace("*** start trailDump");
@@ -142,6 +137,8 @@ void stackMemoryInit(void) {
 
 void *stackMemoryAlloc(int size) {
     int i;
+
+    mem_trace("stackMemoryAlloc: allocating %d bytes", size);
     i = s_topBlock->firstFreeIndex;
     i = ((char *)ALIGNMENT(memory+i,STANDARD_ALIGNMENT))-memory;
     if (i+size < SIZE_workMemory) {
