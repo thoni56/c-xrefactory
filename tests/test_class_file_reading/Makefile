@@ -18,5 +18,8 @@ $(TEST):
 		exit 0 ; \
 	fi
 
+clean:
+	rm -rf CXrefs .c-xrefrc *.tmp
+
 gdb:
 	sudo gdb --args $(COMMAND)

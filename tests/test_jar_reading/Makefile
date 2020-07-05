@@ -17,7 +17,7 @@ $(TEST):
 	fi
 
 clean:
-	rm .c-xrefrc CXrefs
+	rm -r .c-xrefrc CXrefs
 
 gdb:
 	gdb --args $(COMMAND)
