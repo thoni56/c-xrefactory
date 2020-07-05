@@ -118,10 +118,11 @@ bool refillBuffer(CharacterBuffer *buffer) {
     int charactersRead;
     int max_size;
 
-    end = buffer->end;
     next = buffer->next;
+    end = buffer->end;
 
-    for(cp=buffer->chars+MAX_UNGET_CHARS; next<end; next++,cp++) *cp = *next;
+    for(cp=buffer->chars+MAX_UNGET_CHARS; next<end; next++,cp++)
+        *cp = *next;
 
     max_size = CHAR_BUFF_SIZE - (cp - buffer->chars);
     if (buffer->inputMethod == INPUT_DIRECT) {
