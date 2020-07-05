@@ -150,18 +150,51 @@ static void compressionError(char *archivename, unsigned compressionMethod) {
 }
 
 
+static void signatureError(char *archivename) {
+    static bool messagePrinted = false;
+    if (!messagePrinted) {
+        char tmpBuff[TMP_BUFF_SIZE];
+        messagePrinted = true;
+        sprintf(tmpBuff,
+                "archive %s is corrupted or modified while c-xref task running",
+                archivename);
+        errorMessage(ERR_ST, tmpBuff);
+        if (options.taskRegime == RegimeEditServer) {
+            fprintf(errOut,"\t\tplease, kill c-xref process and retry.\n");
+        }
+    }
+}
+
+
+static void readLocalFileHeader(CharacterBuffer *cb, ZipFileInfo *info, jmp_buf exception) {
+    GetZU2(info->versionNeededToExtract, cb, exception);
+    GetZU2(info->bitFlags, cb, exception);
+    GetZU2(info->compressionMethod, cb, exception);
+    GetZU2(info->lastModificationTime, cb, exception);
+    GetZU2(info->lastModificationDate, cb, exception);
+    GetZU4(info->crc32, cb, exception);
+    GetZU4(info->compressedSize, cb, exception);
+    GetZU4(info->unCompressedSize, cb, exception);
+    GetZU2(info->fileNameLength, cb, exception);
+    if (info->fileNameLength >= MAX_FILE_NAME_SIZE) {
+        fatalError(ERR_INTERNAL, "file name too long", XREF_EXIT_ERR);
+    }
+    GetZU2(info->extraFieldLength, cb, exception);
+    for(int i=0; i<info->fileNameLength; i++) {
+        GetChar(info->filename[i], cb, exception);
+    }
+    info->filename[info->fileNameLength] = 0;
+    skipCharacters(cb, info->extraFieldLength);
+}
+
 
 static bool zipReadLocalFileInfo(CharacterBuffer *cb,
                                  char *filename, unsigned *filesize,
                                  unsigned *lastSignature,
                                  char *archivename) {
     bool result = true;
-    int i;
     int signature;
-    unsigned versionNeededToExtract,bitFlags,compressionMethod;
-    int lastModificationTime,lastModificationDate,fileNameLength,extraFieldLength;
     ZipFileInfo info;
-    unsigned crc32,compressedSize,unCompressedSize;
     jmp_buf exception;
 
     switch (setjmp(exception)) {
@@ -173,45 +206,21 @@ static bool zipReadLocalFileInfo(CharacterBuffer *cb,
     log_trace("zip file signature is %x", signature);
     *lastSignature = signature;
     if (signature != 0x04034b50) {
-        static bool messagePrinted = false;
-        if (!messagePrinted) {
-            char tmpBuff[TMP_BUFF_SIZE];
-            messagePrinted = true;
-            sprintf(tmpBuff,
-                    "archive %s is corrupted or modified while c-xref task running",
-                    archivename);
-            errorMessage(ERR_ST, tmpBuff);
-            if (options.taskRegime == RegimeEditServer) {
-                fprintf(errOut,"\t\tplease, kill c-xref process and retry.\n");
-            }
-        }
+        signatureError(archivename);
         return false;
     }
-    GetZU2(versionNeededToExtract, cb, exception);
-    GetZU2(bitFlags, cb, exception);
-    GetZU2(compressionMethod, cb, exception);
-    GetZU2(lastModificationTime, cb, exception);
-    GetZU2(lastModificationDate, cb, exception);
-    GetZU4(crc32, cb, exception);
-    GetZU4(compressedSize, cb, exception);
-    *filesize = compressedSize;
-    GetZU4(unCompressedSize, cb, exception);
-    GetZU2(fileNameLength, cb, exception);
-    if (fileNameLength >= MAX_FILE_NAME_SIZE) {
-        fatalError(ERR_INTERNAL,"file name too long", XREF_EXIT_ERR);
-    }
-    GetZU2(extraFieldLength, cb, exception);
-    for(i=0; i<fileNameLength; i++) {
-        GetChar(filename[i], cb, exception);
-    }
-    filename[i] = 0;
-    skipCharacters(cb, extraFieldLength);
-    if (compressionMethod == 0) {
+
+    readLocalFileHeader(cb, &info, exception);
+
+    *filesize = info.compressedSize;
+    strcpy(filename, info.filename);
+
+    if (info.compressionMethod == 0) {
         /* No compression */
-    } else if (compressionMethod == Z_DEFLATED) {
+    } else if (info.compressionMethod == Z_DEFLATED) {
         switchToZippedCharBuff(cb);
     } else {
-        compressionError(archivename, compressionMethod);
+        compressionError(archivename, info.compressionMethod);
         return false;
     }
     goto fin;
@@ -236,6 +245,7 @@ static void fillZipFileTableItem(ZipFileTableItem *fileItem, struct stat st, Zip
     fileItem->st = st;
     fileItem->dir = dir;
 }
+
 
 bool fsIsMember(ZipArchiveDir **dirPointer, char *fn, unsigned offset,
                 AddYesNo addFlag, ZipArchiveDir **outDirPointer) {
@@ -304,6 +314,7 @@ bool fsIsMember(ZipArchiveDir **dirPointer, char *fn, unsigned offset,
     }
 }
 
+
 void fsRecMapOnFiles(ZipArchiveDir *dir, char *zip, char *path, void (*fun)(char *zip, char *file, void *arg), void *arg) {
     ZipArchiveDir     *aa;
     char                *fn;
@@ -321,6 +332,7 @@ void fsRecMapOnFiles(ZipArchiveDir *dir, char *zip, char *path, void (*fun)(char
         }
     }
 }
+
 
 static void seekToPosition(CharacterBuffer *cb, int offset) {
     fseek(cb->file, offset, SEEK_SET);
@@ -436,6 +448,7 @@ static void zipArchiveScan(CharacterBuffer *cb, ZipFileTableItem *zip, int fileS
     LEAVE();
 }
 
+
 int zipIndexArchive(char *name) {
     int archiveIndex, namelen;
     FILE *zipFile;
@@ -544,6 +557,7 @@ bool zipFindFile(char *name,
     }
     return true;
 }
+
 
 void javaMapZipDirFile(
     ZipFileTableItem *zipfile,
@@ -669,6 +683,7 @@ static ConstantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,
     return(cp);
 }
 
+
 void javaHumanizeLinkName( char *inn, char *outn, int size) {
     int     i;
     char    *cut;
@@ -708,6 +723,7 @@ char * cfSkipFirstArgumentInSigString(char *sig) {
     }
     return(ssig);
 }
+
 
 TypeModifier *cfUnPackResultType(char *sig, char **restype) {
     TypeModifier *res, **ares, *tt;
@@ -762,6 +778,7 @@ TypeModifier *cfUnPackResultType(char *sig, char **restype) {
     }
     return(res);
 }
+
 
 static void cfAddRecordToClass(char *name,
                                char *sig,
@@ -833,6 +850,7 @@ static void cfAddRecordToClass(char *name,
     }
 }
 
+
 static void cfReadFieldInfos(CharacterBuffer *cb,
                              Symbol *memb,
                              ConstantPoolUnion *cp
@@ -869,6 +887,7 @@ static char *simpleClassNameFromFQTName(char *fqtName) {
     }
     return(res);
 }
+
 
 static void cfReadMethodInfos(CharacterBuffer *cb,
                               Symbol *memb,
@@ -990,6 +1009,7 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
     errorMessage(ERR_ST,"unexpected end of file");
 }
 
+
 Symbol *cfAddCastsToModule(Symbol *memb, Symbol *sup) {
     assert(memb->u.s);
     cctAddSimpleValue(&memb->u.s->casts, sup, 1);
@@ -997,6 +1017,7 @@ Symbol *cfAddCastsToModule(Symbol *memb, Symbol *sup) {
     cctAddCctTree(&memb->u.s->casts, &sup->u.s->casts, 1);
     return(sup);
 }
+
 
 void addSuperClassOrInterface(Symbol *member, Symbol *super, int origin) {
     SymbolList *symbolList, *s;
@@ -1023,6 +1044,7 @@ void addSuperClassOrInterface(Symbol *member, Symbol *super, int origin) {
                              member->u.s->classFile,
                              origin);
 }
+
 
 void addSuperClassOrInterfaceByName(Symbol *member, char *super, int origin,
                                     LoadSuperOrNot loadSuper) {
@@ -1051,6 +1073,7 @@ int javaCreateClassFileItem( Symbol *memb) {
 
     return fileIndex;
 }
+
 
 /* ********************************************************************* */
 
