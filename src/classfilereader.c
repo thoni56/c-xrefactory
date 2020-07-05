@@ -20,24 +20,52 @@
 #include "log.h"
 #include "utils.h"
 
+/* This reads class files according to the Java Machine Specification,
+ * https://docs.oracle.com/javase/specs/jvms/se8/jvms8.pdf */
 
-struct javaCpClassInfo {
-    short unsigned  nameIndex;
+/* *********************************************************************** */
+/*                    JAVA Constant Pool Item Tags                         */
+
+#define CONSTANT_Utf8				1
+#define CONSTANT_Unicode			2			/* ?????????????? */
+#define CONSTANT_Integer			3
+#define CONSTANT_Float				4
+#define CONSTANT_Long				5
+#define CONSTANT_Double				6
+#define CONSTANT_Class				7
+#define CONSTANT_String				8
+#define CONSTANT_Fieldref			9
+#define CONSTANT_Methodref			10
+#define CONSTANT_InterfaceMethodref	11
+#define CONSTANT_NameandType		12
+#define CONSTANT_MethodHandle       15
+#define CONSTANT_MethodType         16
+#define CONSTANT_InvokeDynamic      18
+#define CONSTANT_Module             19
+#define CONSTANT_Package            20
+
+
+/* NOTE the tag is read and discarded, not included in these structures */
+struct CONSTANT_Class_info {
+    /* U1 tag; */
+    short unsigned  name_index;
 };
-struct javaCpNameAndTypeInfo {
-    short unsigned  nameIndex;
-    short unsigned  signatureIndex;
+struct CONSTANT_NameAndType_info {
+    /* U1 tag; */
+    short unsigned  name_index;
+    short unsigned  descriptor_index;
 };
-struct javaCpRecordInfo {
-    short unsigned  classIndex;
-    short unsigned  nameAndTypeIndex;
+struct CONSTANT_Ref_info {
+    /* U1 tag; */
+    short unsigned  class_index;
+    short unsigned  name_and_type_index;
 };
 
 typedef union constantPoolUnion {
-    char *asciz;
-    struct javaCpClassInfo clas;
-    struct javaCpNameAndTypeInfo nt;
-    struct javaCpRecordInfo rec;
+    char *utf8;
+    struct CONSTANT_Class_info class;
+    struct CONSTANT_NameAndType_info nameAndType;
+    struct CONSTANT_Ref_info ref;
 } ConstantPoolUnion;
 
 ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
@@ -607,12 +635,11 @@ void javaMapZipDirFile(
 
 static ConstantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,
                                              int *cpSize) {
-    int cval;
-    int count,tag,ind,classind,nameind,typeind,strind;
-    int size,i;
+    int value;
+    int count,tag,index,classIndex,nameIndex,typeIndex,stringIndex;
+    int size;
     ConstantPoolUnion *cp=NULL;
     char *str;
-    char tmpBuff[TMP_BUFF_SIZE];
     jmp_buf exception;
 
     switch (setjmp(exception)) {
@@ -623,65 +650,58 @@ static ConstantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,
     GetU2(count, cb, exception);
     CF_ALLOCC(cp, count, ConstantPoolUnion);
     //& memset(cp,0, count*sizeof(ConstantPoolUnion));    // if broken file
-    for(ind=1; ind<count; ind++) {
+    for(index=1; index<count; index++) {
         GetU1(tag, cb, exception);
         switch (tag) {
-        case 0:
-            GetChar(cval, cb, exception);
-            break;
-        case CONSTANT_Asciz:
+        case CONSTANT_Utf8:
             GetU2(size, cb, exception);
             CF_ALLOCC(str, size+1, char);
-            for(i=0; i<size; i++)
+            for(int i=0; i<size; i++)
                 GetChar(str[i], cb, exception);
-            str[i]=0;
-            cp[ind].asciz = str;
-            break;
-        case CONSTANT_Unicode:
-            errorMessage(ERR_ST,"[cfReadConstantPool] Unicode not yet implemented");
-            GetU2(size, cb, exception);
-            skipCharacters(cb, size*2);
-            cp[ind].asciz = "Unicode ??";
+            str[size]=0;
+            cp[index].utf8 = str;
             break;
         case CONSTANT_Class:
-            GetU2(classind, cb, exception);
-            cp[ind].clas.nameIndex = classind;
+            GetU2(classIndex, cb, exception);
+            cp[index].class.name_index = classIndex;
             break;
         case CONSTANT_Fieldref:
         case CONSTANT_Methodref:
         case CONSTANT_InterfaceMethodref:
-            GetU2(classind, cb, exception);
-            GetU2(nameind, cb, exception);
-            cp[ind].rec.classIndex = classind;
-            cp[ind].rec.nameAndTypeIndex = nameind;
+            GetU2(classIndex, cb, exception);
+            GetU2(nameIndex, cb, exception);
+            cp[index].ref.class_index = classIndex;
+            cp[index].ref.name_and_type_index = nameIndex;
             break;
         case CONSTANT_NameandType:
-            GetU2(nameind, cb, exception);
-            GetU2(typeind, cb, exception);
-            cp[ind].nt.nameIndex = nameind;
-            cp[ind].nt.signatureIndex = typeind;
+            GetU2(nameIndex, cb, exception);
+            GetU2(typeIndex, cb, exception);
+            cp[index].nameAndType.name_index = nameIndex;
+            cp[index].nameAndType.descriptor_index = typeIndex;
             break;
         case CONSTANT_String:
-            GetU2(strind, cb, exception);
+            GetU2(stringIndex, cb, exception);
             break;
         case CONSTANT_Integer:
         case CONSTANT_Float:
-            GetU4(cval, cb, exception);
+            GetU4(value, cb, exception);
             break;
         case CONSTANT_Long:
         case CONSTANT_Double:
-            GetU4(cval, cb, exception);
-            ind ++;
-            GetU4(cval, cb, exception);
+            GetU4(value, cb, exception);
+            index ++;
+            GetU4(value, cb, exception);
             break;
-        default:
-            sprintf(tmpBuff,"unknown tag %d in constant pool of %s",tag,currentFile.fileName);
-            errorMessage(ERR_ST,tmpBuff);
+        default: {
+            char tmpBuff[TMP_BUFF_SIZE];
+            sprintf(tmpBuff,"unexpected tag %d in constant pool of %s", tag, currentFile.fileName);
+            fatalError(ERR_ST, tmpBuff, XREF_EXIT_ERR);
+        }
         }
     }
     goto fin;
  endOfFile:
-    errorMessage(ERR_ST,"unexpected end of file");
+    errorMessage(ERR_ST, "unexpected end of file");
  fin:
     *cpSize = count;
     return(cp);
@@ -873,8 +893,8 @@ static void cfReadFieldInfos(CharacterBuffer *cb,
         GetU2(access_flags, cb, exception);
         GetU2(nameind, cb, exception);
         GetU2(sigind, cb, exception);
-        log_trace("field '%s' of type '%s'", cp[nameind].asciz, cp[sigind].asciz);
-        cfAddRecordToClass(cp[nameind].asciz, cp[sigind].asciz, memb, access_flags,
+        log_trace("field '%s' of type '%s'", cp[nameind].utf8, cp[sigind].utf8);
+        cfAddRecordToClass(cp[nameind].utf8, cp[sigind].utf8, memb, access_flags,
                            StorageField, NULL);
         SkipAttributes(cb);
     }
@@ -916,10 +936,10 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
         GetU2(access_flags, cb, exception);
         GetU2(nameind, cb, exception);
         GetU2(sigind, cb, exception);
-        log_trace("method '%s' of type '%s'", cp[nameind].asciz,cp[sigind].asciz);
+        log_trace("method '%s' of type '%s'", cp[nameind].utf8,cp[sigind].utf8);
         // TODO more efficiently , just index checking
-        name = cp[nameind].asciz;
-        sign = cp[sigind].asciz;
+        name = cp[nameind].utf8;
+        sign = cp[sigind].utf8;
         storage = StorageMethod;
         exclist = NULL;
         if (strcmp(name, JAVA_CONSTRUCTOR_NAME1)==0
@@ -951,12 +971,12 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
             GetU2(aname, cb, exception);
             GetU4(alen, cb, exception);
             // berk, really I need to compare strings?
-            if (strcmp(cp[aname].asciz, "Exceptions")==0) {
+            if (strcmp(cp[aname].utf8, "Exceptions")==0) {
                 GetU2(excount, cb, exception);
                 for(i=0; i<excount; i++) {
                     char *exname, *exsname;
                     GetU2(exclass, cb, exception);
-                    exname = cp[cp[exclass].clas.nameIndex].asciz;
+                    exname = cp[cp[exclass].class.name_index].utf8;
                     log_trace("throws '%s'", exname);
                     exsname = simpleClassNameFromFQTName(exname);
                     exc = javaFQTypeSymbolDefinition(exsname, exname);
@@ -965,7 +985,7 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
                     *ee = (SymbolList){.d = exc, .next = exclist};
                     exclist = ee;
                 }
-            } else if (strcmp(cp[aname].asciz, "Code")==0) {
+            } else if (strcmp(cp[aname].utf8, "Code")==0) {
                 // forget this, it is useless as .jar usually do not cantain
                 // informations about variable names.
                 unsigned max_stack, max_locals, code_length;
@@ -984,7 +1004,7 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
                     int iii;
                     GetU2(caname, cb, exception);
                     GetU4(calen, cb, exception);
-                    if (strcmp(cp[caname].asciz, "LocalVariableTable")==0) {
+                    if (strcmp(cp[caname].utf8, "LocalVariableTable")==0) {
                         unsigned local_variable_table_length;
                         unsigned start_pc,length,name_index,descriptor_index;
                         unsigned index;
@@ -995,14 +1015,14 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
                             GetU2(name_index, cb, exception);
                             GetU2(descriptor_index, cb, exception);
                             GetU2(index, cb, exception);
-                            log_trace("local variable %s, index == %d", cp[name_index].asciz, index);
+                            log_trace("local variable %s, index == %d", cp[name_index].utf8, index);
                         }
                     } else {
                         skipCharacters(cb, calen);
                     }
                 }
             } else {
-                log_trace("skipping %s", cp[aname].asciz);
+                log_trace("skipping %s", cp[aname].utf8);
                 skipCharacters(cb, alen);
             }
         }
@@ -1154,17 +1174,20 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
     GetU2(access, cb, exception);
     symbol->bits.access = access;
     log_trace("reading accessFlags %s == %x", className, access);
-    if (access & AccessInterface) fileTable.tab[fileIndex]->b.isInterface = true;
+    if (access & AccessInterface)
+        fileTable.tab[fileIndex]->b.isInterface = true;
     GetU2(thisClass, cb, exception);
-    if (thisClass<0 || thisClass>=cpSize) goto corrupted;
-    thisClassName = constantPool[constantPool[thisClass].clas.nameIndex].asciz;
+    if (thisClass<0 || thisClass>=cpSize)
+        goto corrupted;
+    thisClassName = constantPool[constantPool[thisClass].class.name_index].utf8;
     // TODO!!!, it may happen that name of class differ in cases from name of file,
     // what to do in such case? abandon with an error?
     log_trace("this class == %s", thisClassName);
     GetU2(superClass, cb, exception);
     if (superClass != 0) {
-        if (superClass<0 || superClass>=cpSize) goto corrupted;
-        super = constantPool[constantPool[superClass].clas.nameIndex].asciz;
+        if (superClass<0 || superClass>=cpSize)
+            goto corrupted;
+        super = constantPool[constantPool[superClass].class.name_index].utf8;
         addSuperClassOrInterfaceByName(symbol, super, symbol->u.s->classFile,
                                        loadSuper);
     }
@@ -1176,7 +1199,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
         GetU2(readValue, cb, exception);
         if (readValue != 0) {
             if (readValue<0 || readValue>=cpSize) goto corrupted;
-            interf = constantPool[constantPool[readValue].clas.nameIndex].asciz;
+            interf = constantPool[constantPool[readValue].class.name_index].utf8;
             addSuperClassOrInterfaceByName(symbol, interf, symbol->u.s->classFile,
                                            loadSuper);
         }
@@ -1195,7 +1218,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
     for(ind=0; ind<count; ind++) {
         GetU2(aname, cb, exception);
         GetU4(alen, cb, exception);
-        if (strcmp(constantPool[aname].asciz,"InnerClasses")==0) {
+        if (strcmp(constantPool[aname].utf8,"InnerClasses")==0) {
             GetU2(inum, cb, exception);
             symbol->u.s->nestedCount = inum;
             // TODO: replace the inner tab by inner list
@@ -1211,17 +1234,17 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
             }
             for(rinners=0; rinners<inum; rinners++) {
                 GetU2(innval, cb, exception);
-                inner = constantPool[constantPool[innval].clas.nameIndex].asciz;
+                inner = constantPool[constantPool[innval].class.name_index].utf8;
                 //&fprintf(dumpOut,"inner %s \n",inner);fflush(dumpOut);
                 GetU2(upp, cb, exception);
                 GetU2(innNameInd, cb, exception);
                 if (innNameInd==0) innerCName = "";         // !!!!!!!! hack
-                else innerCName = constantPool[innNameInd].asciz;
+                else innerCName = constantPool[innNameInd].utf8;
                 //&fprintf(dumpOut,"class name %x='%s'\n",innerCName,innerCName);fflush(dumpOut);
                 inners = javaFQTypeSymbolDefinition(innerCName, inner);
                 membFlag = false;
                 if (upp != 0) {
-                    upper = constantPool[constantPool[upp].clas.nameIndex].asciz;
+                    upper = constantPool[constantPool[upp].class.name_index].utf8;
                     //&{fprintf(dumpOut,"upper %s encloses %s\n",upper, inner);fflush(dumpOut);}
                     if (strcmp(upper,thisClassName)==0) {
                         membFlag = true;

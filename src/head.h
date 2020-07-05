@@ -375,22 +375,6 @@ typedef enum language {
 #define CHAR_ON_MARKER(marker) (*MARKER_TO_POINTER(marker))
 #define CHAR_AFTER_MARKER(marker) (*POINTER_AFTER_MARKER(marker))
 
-/* *********************************************************************** */
-/*                    JAVA Constant Pool Item Tags                         */
-
-#define CONSTANT_Asciz				1
-#define CONSTANT_Unicode			2			/* ?????????????? */
-#define CONSTANT_Integer			3
-#define CONSTANT_Float				4
-#define CONSTANT_Long				5
-#define CONSTANT_Double				6
-#define CONSTANT_Class				7
-#define CONSTANT_String				8
-#define CONSTANT_Fieldref			9
-#define CONSTANT_Methodref			10
-#define CONSTANT_InterfaceMethodref	11
-#define CONSTANT_NameandType		12
-
 #include "access.h"
 
 /* *********************************************************************** */
