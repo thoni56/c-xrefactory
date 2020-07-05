@@ -10,6 +10,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 ** DONE F6 to completion()
 ** TODO <next step>
 * TODO Create jar reading test for unexpected end of file
+* TODO Test case for corruptionError() and compressionError()
 * TODO Read java runtime which now has many more options
 ** TODO Understand why reading jar takes up all memory
 ** TODO Introduce data driven strategy to find runtime
