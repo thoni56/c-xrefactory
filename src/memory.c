@@ -137,11 +137,11 @@ void *stackMemoryAlloc(int size) {
     i = ((char *)ALIGNMENT(memory+i,STANDARD_ALIGNMENT))-memory;
     if (i+size < SIZE_workMemory) {
         s_topBlock->firstFreeIndex = i+size;
-        return( & memory[i] );
+        return &memory[i];
     } else {
         fatalError(ERR_ST,"i+size > SIZE_workMemory,\n\tworking memory overflowed,\n\tread TROUBLES section of README file\n", XREF_EXIT_ERR);
         /* Should not return, but for testing and compilers sake return something */
-        return(NULL);
+        return NULL;
     }
 }
 
