@@ -2,7 +2,7 @@
 
 #include "memory.h"
 #include "log.h"
-#include "misc.h"               /* for removeFromTrailUntil() */
+
 
 Memory *cxMemory=NULL;
 S_topBlock *s_topBlock;

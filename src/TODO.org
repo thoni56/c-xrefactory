@@ -95,13 +95,12 @@ should watch out for "macro for optimisation" and remove that.
 The hash tables and lists are such candidates. If we do that it would be much
 easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
-** DONE Extract charbuf module
-* TODO Change structure declarations in proto.h into ideomatic struct
+* DONE Change structure declarations in proto.h into ideomatic struct
   {struct} typedefs instead of using typenames generated into the
   strTdef file. See NOTES.md. Few examples of strategy is implemented
   with cctNode and position. Primary benefit is to be able to use
   renaming on them...
-
+* DONE Extract charbuf module
 * DONE Make Makefile.common look for our patched yacc and if it's not
   available ignore yacc-rules otherwise always run yacc.
 * DONE Initialize memory's injected error functions in main.c, but it still works?
