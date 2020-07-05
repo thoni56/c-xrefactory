@@ -4,10 +4,6 @@
 
 ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 
-void javaHumanizeLinkName(char *inn, char *outn, int size) {
-    mock(inn, outn, size);
-}
-
 void convertLinkNameToClassFileName(char *classFileName, char linkName[]) {
     mock(classFileName, linkName);
 }

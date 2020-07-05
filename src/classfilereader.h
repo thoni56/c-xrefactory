@@ -22,7 +22,6 @@ typedef struct zipFileTableItem {
 extern ZipFileTableItem s_zipArchiveTable[MAX_JAVA_ZIP_ARCHIVES];
 
 
-extern void javaHumanizeLinkName(char *inn, char *outn, int size);
 extern void convertLinkNameToClassFileName(char classFileName[], char *linkName);
 extern Symbol *cfAddCastsToModule(Symbol *memb, Symbol *sup);
 extern void addSuperClassOrInterface(Symbol *memb, Symbol *supp, int origin );

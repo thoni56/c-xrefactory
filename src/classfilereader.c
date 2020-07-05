@@ -732,44 +732,31 @@ static ConstantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,
 }
 
 
-void javaHumanizeLinkName( char *inn, char *outn, int size) {
-    int     i;
-    char    *cut;
-    cut = strchr(inn, LINK_NAME_SEPARATOR);
-    if (cut==NULL) cut = inn;
-    else cut ++;
-    for(i=0; cut[i]; i++) {
-        outn[i] = cut[i];
-        //&     if (LANGUAGE(LANG_JAVA)) {
-        if (outn[i]=='/') outn[i]='.';
-        //&     }
-        assert(i<size-1);
-    }
-    outn[i] = 0;
-}
+char *skipFirstArgumentInDescriptorString(char *descriptor) {
+    char *d = descriptor;
 
-char * cfSkipFirstArgumentInSigString(char *sig) {
-    char *ssig;
-    ssig = sig;
-    assert(ssig);
-    /*fprintf(dumpOut, ": skipping first argument of %s\n",sig);*/
-    if (*ssig != '(') return(ssig);
-    ssig ++;
-    assert(*ssig);
-    switch (*ssig) {
+    assert(descriptor);
+    log_trace("skipping first argument of %s", descriptor);
+    if (*d != '(')
+        return(d);
+    d++;
+    assert(*d);
+    switch (*d) {
     case ')':
         break;
     case '[':
-        for(ssig++; *ssig && isdigit(*ssig); ssig++) ;
+        for(d++; *d && isdigit(*d); d++)
+            ;
         break;
     case 'L':
-        for(; *ssig && *ssig!=';'; ssig++) ;
-        ssig++;
+        for(; *d && *d!=';'; d++)
+            ;
+        d++;
         break;
     default:
-        ssig++;
+        d++;
     }
-    return(ssig);
+    return(d);
 }
 
 
@@ -941,10 +928,10 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
                               Symbol *memb,
                               ConstantPoolUnion *cp
 ) {
-    char *name, *sign, *sign2;
+    char *name, *descriptor, *sign2;
     unsigned count, ind;
     unsigned aind, acount, aname, alen, excount;
-    int i, access_flags, nameind, sigind, exclass;
+    int i, access_flags, name_index, descriptor_index, exclass;
     Storage storage;
     Symbol *exc;
     SymbolList *exclist, *ee;
@@ -958,12 +945,12 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
     GetU2(count, cb, exception);
     for(ind=0; ind<count; ind++) {
         GetU2(access_flags, cb, exception);
-        GetU2(nameind, cb, exception);
-        GetU2(sigind, cb, exception);
-        log_trace("method '%s' of type '%s'", cp[nameind].utf8,cp[sigind].utf8);
-        // TODO more efficiently , just index checking
-        name = cp[nameind].utf8;
-        sign = cp[sigind].utf8;
+        GetU2(name_index, cb, exception);
+        GetU2(descriptor_index, cb, exception);
+        log_trace("method '%s' of type '%s'", cp[name_index].utf8,cp[descriptor_index].utf8);
+        // TODO more efficiently, just index checking
+        name = cp[name_index].utf8;
+        descriptor = cp[descriptor_index].utf8;
         storage = StorageMethod;
         exclist = NULL;
         if (strcmp(name, JAVA_CONSTRUCTOR_NAME1)==0
@@ -980,14 +967,14 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
             storage = StorageConstructor;
             if (fileTable.tab[memb->u.s->classFile]->directEnclosingInstance != noFileIndex) {
                 // the first argument is direct enclosing instance, remove it
-                sign2 = cfSkipFirstArgumentInSigString(sign);
-                CF_ALLOCC(sign, strlen(sign2)+2, char);
-                sign[0] = '(';  strcpy(sign+1, sign2);
-                log_trace("nested constructor '%s' '%s'", name, sign);
+                sign2 = skipFirstArgumentInDescriptorString(descriptor);
+                CF_ALLOCC(descriptor, strlen(sign2)+2, char);
+                descriptor[0] = '(';  strcpy(descriptor+1, sign2);
+                log_trace("nested constructor '%s' '%s'", name, descriptor);
             }
         } else if (name[0] == '<') {
             // still some strange constructor name?
-            log_trace("strange constructor '%s' '%s'", name, sign);
+            log_trace("strange constructor '%s' '%s'", name, descriptor);
             storage = StorageConstructor;
         }
         GetU2(acount, cb, exception);
@@ -1050,7 +1037,7 @@ static void cfReadMethodInfos(CharacterBuffer *cb,
                 skipCharacters(cb, alen);
             }
         }
-        cfAddRecordToClass(name, sign, memb, access_flags, storage, exclist);
+        cfAddRecordToClass(name, descriptor, memb, access_flags, storage, exclist);
     }
     return;
  endOfFile:
