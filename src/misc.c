@@ -1434,29 +1434,30 @@ static void scanClassFile(char *zip, char *file, void *arg) {
     char        *tt, *suff;
     Symbol    *memb;
     int         cpi, fileInd;
-    //&fprintf(dumpOut,"scanning %s ; %s\n", zip, file);
+
+    log_trace("scanning %s ; %s", zip, file);
     suff = getFileSuffix(file);
     if (compareFileNames(suff, ".class")==0) {
         cpi = s_cache.cpi;
         s_cache.activeCache = 1;
-        //&fprintf(dumpOut,"%d ", s_topBlock->firstFreeIndex);
+        log_trace("firstFreeIndex = %d", s_topBlock->firstFreeIndex);
         placeCachePoint(0);
         s_cache.activeCache = 0;
         memb = javaGetFieldClass(file, &tt);
-        fileInd = javaCreateClassFileItem( memb);
+        fileInd = javaCreateClassFileItem(memb);
         if (! fileTable.tab[fileInd]->b.cxSaved) {
             // read only if not saved (and returned through overflow)
             sprintf(ttt, "%s%s", zip, file);
             assert(strlen(ttt) < MAX_FILE_NAME_SIZE-1);
             // recover memories, only cxrefs are interesting
             assert(memb->u.s);
-            //&fprintf(dumpOut,"adding %s %s\n", memb->name, fileTable.tab[fileInd]->name);
+            log_trace("adding %s %s", memb->name, fileTable.tab[fileInd]->name);
             javaReadClassFile(ttt, memb, DO_NOT_LOAD_SUPER);
         }
         // following is to free CF_MEMORY taken by scan, only
         // cross references in CX_MEMORY are interesting in this case.
-        recoverCachePoint(cpi-1,s_cache.cp[cpi-1].lbcc,0);
-        //&fprintf(dumpOut,"%d \n", s_topBlock->firstFreeIndex);
+        recoverCachePoint(cpi-1, s_cache.cp[cpi-1].lbcc, 0);
+        log_trace("firstFreeIndex = %d", s_topBlock->firstFreeIndex);
         //&fprintf(dumpOut,": ppmmem == %d/%d %x-%x\n",ppmMemoryi,SIZE_ppmMemory,ppmMemory,ppmMemory+SIZE_ppmMemory);
     }
 }
