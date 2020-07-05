@@ -349,11 +349,9 @@ static void zipArchiveScan(CharacterBuffer *cb,
     ZipArchiveDir *place;
     int signature,madeByVersion,extractVersion,bitFlags,compressionMethod;
     int lastModTime,lastModDate,fnameLen,extraLen,fcommentLen,diskNumber;
-    int i,internFileAttribs,tmp;
+    int i,internFileAttribs;
     unsigned externFileAttribs,localHeaderOffset, cdOffset;
     unsigned crc32,compressedSize,unCompressedSize;
-    unsigned foffset;
-    UNUSED foffset;
     jmp_buf exception;
 
     ENTER();
@@ -371,11 +369,7 @@ static void zipArchiveScan(CharacterBuffer *cb,
 
     GetZU4(signature, cb, exception);
     assert(signature == 0x06054b50);
-    GetZU2(tmp, cb, exception);
-    GetZU2(tmp, cb, exception);
-    GetZU2(tmp, cb, exception);
-    GetZU2(tmp, cb, exception);
-    GetZU4(tmp, cb, exception);
+    skipCharacters(cb, 12);     /* Skip over 4 U2 and one U4 */
     GetZU4(cdOffset, cb, exception);
     seekToPosition(cb, cdOffset);
 
