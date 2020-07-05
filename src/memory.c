@@ -4,6 +4,15 @@
 #include "log.h"
 
 
+//#define MEMTRACE
+
+#ifdef MEMTRACE
+#define mem_trace(...) log_log(LOG_TRACE, __FILE__, __LINE__, __VA_ARGS__)
+#else
+#define mem_trace(...)
+#endif
+
+
 Memory *cxMemory=NULL;
 S_topBlock *s_topBlock;
 
@@ -83,7 +92,7 @@ bool cxMemoryOverflowHandler(int n) {
 
 /* ***************************************************************** */
 
-#if ZERO
+#if MEMTRACE
 static void trailDump(void) {
     S_freeTrail *t;
     log_trace("*** start trailDump");
