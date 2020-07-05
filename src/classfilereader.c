@@ -1159,7 +1159,7 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
             goto finish;
     }
     GetU4(readValue, cb, exception);
-    log_trace("magic is %x", readValue);
+    log_trace("magic is 0x%x", readValue);
     if (readValue != 0xcafebabe) {
         sprintf(tmpBuff,"%s is not a valid class file", className);
         errorMessage(ERR_ST, tmpBuff);
@@ -1169,8 +1169,6 @@ void javaReadClassFile(char *className, Symbol *symbol, LoadSuperOrNot loadSuper
     GetU2(major, cb, exception);
     log_trace("version of '%s' is %d.%d", className, major, minor);
     constantPool = cfReadConstantPool(cb, &cpSize);
-    cb->next = cb->next;
-    cb->end = cb->end;
     GetU2(access, cb, exception);
     symbol->bits.access = access;
     log_trace("reading accessFlags %s == %x", className, access);
