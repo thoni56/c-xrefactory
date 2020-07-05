@@ -247,11 +247,11 @@ static void fillZipFileTableItem(ZipFileTableItem *fileItem, struct stat st, Zip
 }
 
 
-bool fsIsMember(ZipArchiveDir **dirPointer, char *fn, unsigned offset,
+bool fsIsMember(ZipArchiveDir **dirPointer, char *filename, unsigned offset,
                 AddYesNo addFlag, ZipArchiveDir **outDirPointer) {
-    ZipArchiveDir     *aa, **aaa, *p;
-    int                 itemlen, res;
-    char                *ss;
+    ZipArchiveDir *aa, **aaa, *p;
+    int itemlen, res;
+    char *slashPosition;
 
     if (dirPointer == NULL)
         return false;
@@ -261,25 +261,25 @@ bool fsIsMember(ZipArchiveDir **dirPointer, char *fn, unsigned offset,
         *outDirPointer = *dirPointer;
 
     res = true;
-    if (fn[0] == 0) {
+    if (filename[0] == 0) {
         errorMessage(ERR_INTERNAL, "looking for empty file name in 'fsdir'");
         return false;
     }
-    if (fn[0]=='/' && fn[1]==0) {
+    if (filename[0]=='/' && filename[1]==0) {
         errorMessage(ERR_INTERNAL, "looking for root in 'fsdir'");
         return false;  /* should not happen */
     }
  lastrecLabel:
-    ss = strchr(fn,'/');
-    if (ss == NULL) {
-        itemlen = strlen(fn);
+    slashPosition = strchr(filename,'/');
+    if (slashPosition == NULL) {
+        itemlen = strlen(filename);
         if (itemlen == 0)
             return res;  /* directory */
     } else {
-        itemlen = (ss-fn) + 1;
+        itemlen = (slashPosition-filename) + 1;
     }
     for(aaa=dirPointer, aa= *aaa; aa!=NULL; aaa= &(aa->next), aa = *aaa) {
-        if (strncmp(fn,aa->name,itemlen)==0 && aa->name[itemlen]==0)
+        if (strncmp(filename,aa->name,itemlen)==0 && aa->name[itemlen]==0)
             break;
     }
     assert(itemlen > 0);
@@ -288,10 +288,10 @@ bool fsIsMember(ZipArchiveDir **dirPointer, char *fn, unsigned offset,
         if (addFlag == ADD_YES) {
             p = StackMemoryAllocC(sizeof(ZipArchiveDir)+itemlen+1, ZipArchiveDir);
             initZipArchiveDir(p);
-            strncpy(p->name, fn, itemlen);
+            strncpy(p->name, filename, itemlen);
             p->name[itemlen]=0;
             log_trace("adding new item '%s'", p->name);
-            if (fn[itemlen-1] == '/') {         /* directory */
+            if (filename[itemlen-1] == '/') {         /* directory */
                 p->u.sub = NULL;
             } else {
                 p->u.offset = offset;
@@ -305,9 +305,9 @@ bool fsIsMember(ZipArchiveDir **dirPointer, char *fn, unsigned offset,
     if (outDirPointer != NULL)
         *outDirPointer = aa;
 
-    if (fn[itemlen-1] == '/') {
+    if (filename[itemlen-1] == '/') {
         dirPointer = &(aa->u.sub);
-        fn = fn+itemlen;
+        filename = filename+itemlen;
         goto lastrecLabel;
     } else {
         return res;
