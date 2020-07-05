@@ -1,6 +1,6 @@
 include ../Makefile.boilerplate
 
-COMMAND = ../../src/c-xref -xrefrc .c-xrefrc -log=log -trace Completion2.class
+COMMAND = ../../src/c-xref -xrefrc .c-xrefrc -log=log -trace Completion2.class CNCtx.class
 
 $(TEST):
 	@$(COMMAND) > output.tmp
