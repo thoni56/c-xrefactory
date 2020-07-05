@@ -5,11 +5,11 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
-* DOING Function-ify lexmac macros
 * DOING Move XX_ALLOCC and friends to "memory" module
 * DOING Create testcases for all jexercise and cexercise steps
 ** DONE F6 to completion()
 ** TODO <next step>
+* TODO Create jar reading test for unexpected end of file
 * TODO Replace the -1/-2 return cases for getLexA() with longjmp(<reason>)
 * TODO Turn lexembuffer functions into methods on the buffer
 get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
@@ -95,6 +95,7 @@ should watch out for "macro for optimisation" and remove that.
 The hash tables and lists are such candidates. If we do that it would be much
 easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Function-ify lexmac macros
 * DONE Change structure declarations in proto.h into ideomatic struct
   {struct} typedefs instead of using typenames generated into the
   strTdef file. See NOTES.md. Few examples of strategy is implemented

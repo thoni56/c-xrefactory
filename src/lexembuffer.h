@@ -35,8 +35,9 @@ extern int getLexCompacted(char **readPointer);
 
 extern Lexem nextLexToken(char **readPointer);
 
-/* NORMAL compacted tokens, HUGE mode also existed originally */
-/* Can only store file, line, column < 22 bits */
+/* NORMAL compacted tokens, HUGE mode also existed originally. NORMAL
+ can only store file, line, column < 22 bits which should be
+ sufficient for any reasonable case. */
 
 extern void putLexPosition(int file, int line, int col, char **writePointer);
 extern Position getLexPosition(char **readPointer);
