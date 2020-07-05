@@ -119,6 +119,10 @@ typedef enum exception {
 
 /* *************** first something to read zip-files ************** */
 
+#define CENTRAL_DIRECTORY_FILE_HEADER_SIGNATURE 0x02014b50
+#define CENTRAL_DIRECTORY_SIGNATURE 0x06054b50
+#define LOCAL_FILE_HEADER_SIGNATURE 0x04034b50
+
 typedef struct zipFileInfo {
     unsigned versionMadeBy,versionNeededToExtract,bitFlags,compressionMethod;
     unsigned lastModificationTime,lastModificationDate;
@@ -150,7 +154,7 @@ static void compressionError(char *archivename, unsigned compressionMethod) {
 }
 
 
-static void signatureError(char *archivename) {
+static void corruptedError(char *archivename) {
     static bool messagePrinted = false;
     if (!messagePrinted) {
         char tmpBuff[TMP_BUFF_SIZE];
@@ -205,8 +209,8 @@ static bool zipReadLocalFileInfo(CharacterBuffer *cb,
     GetZU4(signature, cb, exception);
     log_trace("zip file signature is %x", signature);
     *lastSignature = signature;
-    if (signature != 0x04034b50) {
-        signatureError(archivename);
+    if (signature != LOCAL_FILE_HEADER_SIGNATURE) {
+        corruptedError(archivename);
         return false;
     }
 
@@ -423,14 +427,14 @@ static void zipArchiveScan(CharacterBuffer *cb, ZipFileTableItem *zip, int fileS
     }
 
     GetZU4(signature, cb, exception);
-    assert(signature == 0x06054b50);
+    assert(signature == CENTRAL_DIRECTORY_SIGNATURE);
     skipCharacters(cb, 12);     /* Skip over 4 U2 and one U4 */
     GetZU4(cdOffset, cb, exception);
     seekToPosition(cb, cdOffset);
 
     /* Read signature, should be central directory file header */
     GetZU4(signature, cb, exception);
-    while (signature == 0x02014b50) {
+    while (signature == CENTRAL_DIRECTORY_FILE_HEADER_SIGNATURE) {
         readCentralDirectoryFileHeader(cb, &info, exception);
 
         if (isRealFile(info)) {
@@ -532,7 +536,7 @@ static bool zipSeekToFile(CharacterBuffer *cb, char *name) {
     if (!zipReadLocalFileInfo(cb, fn, &fsize,
                                 &lastSig, s_zipArchiveTable[i].fn))
         return false;
-    assert(lastSig == 0x04034b50);
+    assert(lastSig == LOCAL_FILE_HEADER_SIGNATURE);
     assert(strcmp(fn,separatorPosition+1)==0);
     return true;
 }
