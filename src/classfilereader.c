@@ -129,16 +129,39 @@ typedef struct zipFileInfo {
 } ZipFileInfo;
 
 
-static bool zipReadLocalFileHeader(CharacterBuffer *cb,
-                                   char *fn, unsigned *fsize, unsigned *lastSig,
-                                   char *archivename) {
+static void compressionError(char *archivename, unsigned compressionMethod) {
+    static bool compressionErrorWritten = false;
+    char *separator_position, jar_filename[MAX_FILE_NAME_SIZE];
+
+    if (!compressionErrorWritten) {
+        char tmpBuff[TMP_BUFF_SIZE];
+        assert(options.taskRegime);
+        strcpy(jar_filename, archivename);
+        separator_position = strchr(jar_filename, ZIP_SEPARATOR_CHAR);
+        if (separator_position != NULL)
+            *separator_position = 0;
+        sprintf(tmpBuff,"\n\tfiles in %s are compressed by unknown method #%d\n", jar_filename, compressionMethod);
+        sprintf(tmpBuff+strlen(tmpBuff),
+                "\tYou can try running 'jar2jar0 %s' command to uncompress them.", jar_filename);
+        assert(strlen(tmpBuff)+1 < TMP_BUFF_SIZE);
+        errorMessage(ERR_ST,tmpBuff);
+        compressionErrorWritten = true;
+    }
+}
+
+
+
+static bool zipReadLocalFileInfo(CharacterBuffer *cb,
+                                 char *filename, unsigned *filesize,
+                                 unsigned *lastSignature,
+                                 char *archivename) {
     bool result = true;
     int i;
-    int signature,extractVersion,bitFlags,compressionMethod;
-    int lastModTime,lastModDate,fnameLen,extraLen;
+    int signature;
+    unsigned versionNeededToExtract,bitFlags,compressionMethod;
+    int lastModificationTime,lastModificationDate,fileNameLength,extraFieldLength;
+    ZipFileInfo info;
     unsigned crc32,compressedSize,unCompressedSize;
-    static int compressionErrorWritten=0;
-    char *zzz, ttt[MAX_FILE_NAME_SIZE];
     jmp_buf exception;
 
     switch (setjmp(exception)) {
@@ -148,7 +171,7 @@ static bool zipReadLocalFileHeader(CharacterBuffer *cb,
 
     GetZU4(signature, cb, exception);
     log_trace("zip file signature is %x", signature);
-    *lastSig = signature;
+    *lastSignature = signature;
     if (signature != 0x04034b50) {
         static bool messagePrinted = false;
         if (!messagePrinted) {
@@ -162,50 +185,34 @@ static bool zipReadLocalFileHeader(CharacterBuffer *cb,
                 fprintf(errOut,"\t\tplease, kill c-xref process and retry.\n");
             }
         }
-        result = false;
-        goto fin;
+        return false;
     }
-    GetZU2(extractVersion, cb, exception);
+    GetZU2(versionNeededToExtract, cb, exception);
     GetZU2(bitFlags, cb, exception);
     GetZU2(compressionMethod, cb, exception);
-    GetZU2(lastModTime, cb, exception);
-    GetZU2(lastModDate, cb, exception);
+    GetZU2(lastModificationTime, cb, exception);
+    GetZU2(lastModificationDate, cb, exception);
     GetZU4(crc32, cb, exception);
     GetZU4(compressedSize, cb, exception);
-    *fsize = compressedSize;
+    *filesize = compressedSize;
     GetZU4(unCompressedSize, cb, exception);
-    GetZU2(fnameLen, cb, exception);
-    if (fnameLen >= MAX_FILE_NAME_SIZE) {
+    GetZU2(fileNameLength, cb, exception);
+    if (fileNameLength >= MAX_FILE_NAME_SIZE) {
         fatalError(ERR_INTERNAL,"file name too long", XREF_EXIT_ERR);
     }
-    GetZU2(extraLen, cb, exception);
-    for(i=0; i<fnameLen; i++) {
-        GetChar(fn[i], cb, exception);
+    GetZU2(extraFieldLength, cb, exception);
+    for(i=0; i<fileNameLength; i++) {
+        GetChar(filename[i], cb, exception);
     }
-    fn[i] = 0;
-    skipCharacters(cb, extraLen);
+    filename[i] = 0;
+    skipCharacters(cb, extraFieldLength);
     if (compressionMethod == 0) {
         /* No compression */
     } else if (compressionMethod == Z_DEFLATED) {
         switchToZippedCharBuff(cb);
     } else {
-        result = false;
-        if (compressionErrorWritten==0) {
-            char tmpBuff[TMP_BUFF_SIZE];
-            assert(options.taskRegime);
-            // why the message was only for editserver?
-            //&if (options.taskRegime==RegimeEditServer) {
-            strcpy(ttt, archivename);
-            zzz = strchr(ttt, ZIP_SEPARATOR_CHAR);
-            if (zzz!=NULL) *zzz = 0;
-            sprintf(tmpBuff,"\n\tfiles in %s are compressed by unknown method #%d\n", ttt, compressionMethod);
-            sprintf(tmpBuff+strlen(tmpBuff),
-                    "\tRun 'jar2jar0 %s' command to uncompress them.", ttt);
-            assert(strlen(tmpBuff)+1 < TMP_BUFF_SIZE);
-            errorMessage(ERR_ST,tmpBuff);
-            //&}
-            compressionErrorWritten = 1;
-        }
+        compressionError(archivename, compressionMethod);
+        return false;
     }
     goto fin;
  endOfFile:
@@ -509,7 +516,7 @@ static bool zipSeekToFile(CharacterBuffer *cb, char *name) {
         return false;
     seekToPosition(cb, place->u.offset);
 
-    if (!zipReadLocalFileHeader(cb, fn, &fsize,
+    if (!zipReadLocalFileInfo(cb, fn, &fsize,
                                 &lastSig, s_zipArchiveTable[i].fn))
         return false;
     assert(lastSig == 0x04034b50);
