@@ -10,7 +10,7 @@
 #include "log.h"
 
 
-z_stream s_defaultZStream = {NULL,};
+static z_stream emptyZStream = {NULL,};
 
 
 void fillCharacterBuffer(CharacterBuffer *characterBuffer,
@@ -31,7 +31,7 @@ void fillCharacterBuffer(CharacterBuffer *characterBuffer,
     characterBuffer->columnOffset = 0;
     characterBuffer->isAtEOF = false;
     characterBuffer->inputMethod = INPUT_DIRECT;
-    characterBuffer->zipStream = s_defaultZStream;
+    characterBuffer->zipStream = emptyZStream;
 }
 
 void initCharacterBuffer(CharacterBuffer *characterbuffer, FILE *file) {
