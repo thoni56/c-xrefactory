@@ -5,9 +5,10 @@
 
 #include "yylex.h"
 #include "semact.h"
+#include "log.h"
 
-#define YYSTYPE MAINYYSTYPE
-#include "c_parser.tab.h"				/* tokens from grammars */
+#define YYSTYPE CEXPYYSTYPE
+#include "c_parser.tab.h"				/* tokens from grammars and overridden YYSTYPE */
 #undef  YYSTYPE
 
 #ifndef YYDEBUG
@@ -73,10 +74,6 @@ e:    e '*' e					{$$ = $1 * $3;}
     | '!' e						{$$ = !$2;}
     | '~' e						{$$ = ~$2;}
     | '(' e ')'					{$$ = $2;}
-/*
-    | DEFINED '(' number ')'	{$$= $3;}
-    | DEFINED number			{$$ = $2;}
-*/
     | number					{$$= $1;}
     ;
 %%
@@ -88,7 +85,7 @@ int cexpTranslateToken(int tok, int val) {
     switch (tok) {
     case CONSTANT: case LONG_CONSTANT:
         yylval = val;
-/*fprintf(dumpOut,"reading constant %d\n",val);*/
+        log_trace("reading constant %d", val);
         return(number);
     case EQ_OP:     return(EQ);
     case NE_OP:     return(NE);
