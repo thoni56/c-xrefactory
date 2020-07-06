@@ -5,23 +5,31 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
-* DOING Move XX_ALLOCC and friends to "memory" module
+* DOING Read java runtime which now has many more options
+** DONE Understand why reading jar takes up all memory
+** DONE Support new class file constant pool items for v52.0
+** TODO Crash when swapping CXrefs
 * DOING Create testcases for all jexercise and cexercise steps
-** DONE F6 to completion()
-** TODO <next step>
+** DOING cexercise
+*** DONE F6 to completion() and completions
+*** TODO <next step>
+** TODO jexercise
+*** TODO F6 to completion() and completions
+*** TODO <next step>
+* DOING Move XX_ALLOCC and friends to "memory" module
+* TODO Introduce data driven strategy to find runtime
+jrt-fs.jar, ...
 * TODO Create jar reading test for unexpected end of file
 * TODO Test case for corruptionError() and compressionError()
-* TODO Read java runtime which now has many more options
-** TODO Understand why reading jar takes up all memory
-** TODO Introduce data driven strategy to find runtime
-jrt-fs.jar, ...
 * TODO Replace the -1/-2 return cases for getLexA() with longjmp(<reason>)
 * TODO Turn lexembuffer functions into methods on the buffer
   get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
   When do we point to something not a lexembuffer?
 * TODO Remove zlib from repo, point to it's repo instead
-* TODO New refactoring: Extract variable
-* TODO Extract function can't extract a boolean function inside an if()
+* TODO New features
+** TODO New refactoring: move function
+** TODO New refactoring: Extract variable
+** TODO Extract function can't extract a boolean function inside an if()
 * TODO Remove FULL/FAST update, we always want correct info?
   There are a number of update modes available from the command line, 'fupdate',
   'updatem', 'update', 'fastupdate' and then there is opt.updateOnlyModifiedFiles
