@@ -376,13 +376,12 @@ void cacheInclude(int fileNum) {
     if (s_cache.ibi >= INCLUDE_CACHE_SIZE) s_cache.activeCache = 0;
 }
 
-static void fillCachePoint(CachePoint *cachePoint, S_topBlock *topBlock,
-                           S_topBlock starTopBlock, int ppmMemoryi,
+static void fillCachePoint(CachePoint *cachePoint, S_topBlock *topBlock, int ppmMemoryi,
                            int cxMemoryi, int mbMemoryi, char *lbcc, short int ibi,
                            short int lineNumber, short int ifDeep, S_cppIfStack *ifstack,
                            S_javaStat *javaCached, Counters counts) {
     cachePoint->topBlock = topBlock;
-    cachePoint->starTopBlock = starTopBlock;
+    cachePoint->starTopBlock = *topBlock;
     cachePoint->ppmMemoryi = ppmMemoryi;
     cachePoint->cxMemoryi = cxMemoryi;
     cachePoint->mbMemoryi = mbMemoryi;
@@ -408,7 +407,7 @@ void placeCachePoint(int inputCaching) {
     if (tmpWorkMemoryi != 0) return; /* something in non-cached tmp memory */
     pp = &s_cache.cp[s_cache.cpi];
     log_debug("placing cache point %d", s_cache.cpi);
-    fillCachePoint(pp, s_topBlock, *s_topBlock,
+    fillCachePoint(pp, s_topBlock,
                     ppmMemoryi, cxMemory->i, mbMemoryi,
                     s_cache.lbcc, s_cache.ibi,
                     currentFile.lineNumber, currentFile.ifDepth, currentFile.ifStack,
