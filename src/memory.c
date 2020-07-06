@@ -59,7 +59,7 @@ void initMemory(Memory *memory, bool (*overflowHandler)(int n), int size) {
 /* ************************** Overflow Handlers ************************* */
 
 bool cxMemoryOverflowHandler(int n) {
-    int ofactor,factor,oldsize, newsize;
+    int oldfactor, factor, oldsize, newsize;
     Memory *oldcxMemory;
 
     if (cxMemory!=NULL) {
@@ -68,26 +68,27 @@ bool cxMemoryOverflowHandler(int n) {
         oldsize = 0;
     }
 
-    ofactor = oldsize / CX_MEMORY_CHUNK_SIZE;
+    oldfactor = oldsize / CX_MEMORY_CHUNK_SIZE;
     factor = ((n>1)?(n-1):0)/CX_MEMORY_CHUNK_SIZE + 1; // 1 no patience to wait ;
     //& if (options.cxMemoryFactor>=1) factor *= options.cxMemoryFactor;
-    factor += ofactor;
-    if (ofactor*2 > factor) factor = ofactor*2;
+    factor += oldfactor;
+    if (oldfactor*2 > factor)
+        factor = oldfactor*2;
     newsize = factor * CX_MEMORY_CHUNK_SIZE;
     oldcxMemory = cxMemory;
-    if (oldcxMemory!=NULL) free(oldcxMemory);
+    if (oldcxMemory!=NULL)
+        free(oldcxMemory);
     cxMemory = malloc(newsize + sizeof(Memory));
     if (cxMemory!=NULL) {
         initMemory(cxMemory, cxMemoryOverflowHandler, newsize);
     }
     log_debug("Reallocating cxMemory: %d -> %d", oldsize, newsize);
 
-    return(cxMemory!=NULL);
+    return cxMemory != NULL;
 }
 
 /* ***************************************************************** */
 
-#ifdef MEMTRACE
 static void trailDump(void) {
     S_freeTrail *t;
     log_trace("*** start trailDump");
@@ -95,7 +96,7 @@ static void trailDump(void) {
         log_trace("%p ", t);
     log_trace("***stop trailDump");
 }
-#endif
+
 
 void addToTrail(void (*a)(void*), void *p) {
     S_freeTrail *t;
@@ -107,7 +108,7 @@ void addToTrail(void (*a)(void*), void *p) {
     t->p = (void **) p;
     t->next = s_topBlock->trail;
     s_topBlock->trail = t;
-    /*trailDump();*/
+    if (memoryTrace) trailDump();
 }
 
 void removeFromTrailUntil(S_freeTrail *untilP) {
@@ -117,10 +118,10 @@ void removeFromTrailUntil(S_freeTrail *untilP) {
         (*(p->action))(p->p);
     }
     if (p!=untilP) {
-        error(ERR_INTERNAL,"block structure mismatch?");
+        error(ERR_INTERNAL, "block structure mismatch?");
     }
     s_topBlock->trail = p;
-    /*trailDump();*/
+    if (memoryTrace) trailDump();
 }
 
 static void fillTopBlock(S_topBlock *topBlock, int firstFreeIndex, int tmpMemoryBasei, S_freeTrail *trail, S_topBlock *previousTopBlock) {
