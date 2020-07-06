@@ -7,17 +7,17 @@
 
 typedef struct cachePoint {
     struct topBlock			*topBlock;
-    struct topBlock         starTopBlock;
-    int                     ppmMemoryi;
-    int                     cxMemoryi;
-    int                     mbMemoryi;
+    struct topBlock         topBlockContent;
+    int                     ppmMemoryIndex;
+    int                     cxMemoryIndex;
+    int                     mbMemoryIndex;
     char					*lbcc;		/* caching lbcc */
     short int				ibi;		/* caching ibi */
     short int               lineNumber;
-    short int               ifDeep;
-    struct cppIfStack       *ifstack;
+    short int               ifDepth;
+    struct cppIfStack       *ifStack;
     struct javaStat			*javaCached;
-    struct counters			counts;
+    struct counters			counters;
 } CachePoint;
 
 typedef struct caching {

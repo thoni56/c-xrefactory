@@ -249,7 +249,7 @@ static void fillCaching(S_caching *caching,
 
 void recoverCachePointZero(void) {
     //&if (CACHING_CLASSES) {
-    ppmMemoryi = s_cache.cp[0].ppmMemoryi;
+    ppmMemoryi = s_cache.cp[0].ppmMemoryIndex;
     //&}
     recoverCachePoint(0,s_cache.cp[0].lbcc,0);
 }
@@ -266,21 +266,21 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
     log_trace("recovering cache point %d", i);
     cp = &s_cache.cp[i];
     if (! CAN_CONTINUE_CACHING_CLASSES(cp)) {
-        ppmMemoryi = cp->ppmMemoryi;
+        ppmMemoryi = cp->ppmMemoryIndex;
         //& if (CACHING_CLASSES) fprintf(dumpOut, "\nflushing classes\n\n");
     }
-    mbMemoryi = cp->mbMemoryi;
+    mbMemoryi = cp->mbMemoryIndex;
     s_topBlock = cp->topBlock;
     tmpWorkMemoryi = 0;
-    *s_topBlock = cp->starTopBlock;
+    *s_topBlock = cp->topBlockContent;
     s_javaStat = cp->javaCached;
-    counters = cp->counts;
+    counters = cp->counters;
     trailDeleteOutOfMemory();
     assert(options.taskRegime);
     if (options.taskRegime==RegimeEditServer && s_currCppPass==1) {
         /* remove old references, only on first pass of edit server */
         log_trace("removing references");
-        cxMemory->i = cp->cxMemoryi;
+        cxMemory->i = cp->cxMemoryIndex;
         refTabMap3(&referenceTable, cxrefTabDeleteOutOfMemory);
         fileTableMapWithIndex(&fileTable, fileTabDeleteOutOfMemory);
     }
@@ -296,18 +296,12 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
     includeListDeleteOutOfMemory();
 
     currentFile.lineNumber = cp->lineNumber;
-    currentFile.ifDepth = cp->ifDeep;
-    currentFile.ifStack = cp->ifstack;
+    currentFile.ifDepth = cp->ifDepth;
+    currentFile.ifStack = cp->ifStack;
     fillLexInput(&cInput, cp->lbcc, readUntil, s_cache.lb, NULL, INPUT_CACHE);
     fillCaching(&s_cache,
-                 activeCaching,
-                 i+1,
-                 cp->ibi,
-                 cp->lbcc,
-                 cInput.currentLexem,
-                 cInput.currentLexem,
-                 cInput.endOfBuffer
-                 );
+                activeCaching, i+1, cp->ibi, cp->lbcc,
+                cInput.currentLexem, cInput.currentLexem, cInput.endOfBuffer);
     log_trace("finished recovering");
 }
 
@@ -367,7 +361,7 @@ void cacheInput(void) {
 
 void cacheInclude(int fileNum) {
     if (s_cache.activeCache == 0) return;
-    log_debug("caching include of file %d: %s\n",
+    log_debug("caching include of file %d: %s",
               s_cache.ibi, fileTable.tab[fileNum]->name);
     checkFileModifiedTime(fileNum);
     assert(s_cache.ibi < INCLUDE_CACHE_SIZE);
@@ -376,42 +370,44 @@ void cacheInclude(int fileNum) {
     if (s_cache.ibi >= INCLUDE_CACHE_SIZE) s_cache.activeCache = 0;
 }
 
-static void fillCachePoint(CachePoint *cachePoint, S_topBlock *topBlock, int ppmMemoryi,
-                           int cxMemoryi, int mbMemoryi, char *lbcc, short int ibi,
-                           short int lineNumber, short int ifDeep, S_cppIfStack *ifstack,
-                           S_javaStat *javaCached, Counters counts) {
+static void fillCachePoint(CachePoint *cachePoint, S_topBlock *topBlock, int ppmMemoryIndex,
+                           int cxMemoryIndex, int mbMemoryIndex, char *lbcc, short int ibi,
+                           short int lineNumber, short int ifDepth, S_cppIfStack *ifStack,
+                           S_javaStat *javaCached, Counters counters) {
     cachePoint->topBlock = topBlock;
-    cachePoint->starTopBlock = *topBlock;
-    cachePoint->ppmMemoryi = ppmMemoryi;
-    cachePoint->cxMemoryi = cxMemoryi;
-    cachePoint->mbMemoryi = mbMemoryi;
+    cachePoint->topBlockContent = *topBlock;
+    cachePoint->ppmMemoryIndex = ppmMemoryIndex;
+    cachePoint->cxMemoryIndex = cxMemoryIndex;
+    cachePoint->mbMemoryIndex = mbMemoryIndex;
     cachePoint->lbcc = lbcc;
     cachePoint->ibi = ibi;
     cachePoint->lineNumber = lineNumber;
-    cachePoint->ifDeep = ifDeep;
-    cachePoint->ifstack = ifstack;
+    cachePoint->ifDepth = ifDepth;
+    cachePoint->ifStack = ifStack;
     cachePoint->javaCached = javaCached;
-    cachePoint->counts = counts;
+    cachePoint->counters = counters;
 }
 
 void placeCachePoint(int inputCaching) {
     CachePoint *pp;
-    if (s_cache.activeCache == 0) return;
-    if (includeStackPointer != 0 || macroStackIndex != 0) return;
+    if (s_cache.activeCache == 0)
+        return;
+    if (includeStackPointer != 0 || macroStackIndex != 0)
+        return;
     if (s_cache.cpi >= MAX_CACHE_POINTS) {
         s_cache.activeCache = 0;
         return;
     }
-    if (inputCaching) cacheInput();
-    if (s_cache.activeCache == 0) return;
-    if (tmpWorkMemoryi != 0) return; /* something in non-cached tmp memory */
+    if (inputCaching)
+        cacheInput();
+    if (s_cache.activeCache == 0)
+        return;
+    if (tmpWorkMemoryi != 0)
+        return; /* something in non-cached tmp memory */
     pp = &s_cache.cp[s_cache.cpi];
     log_debug("placing cache point %d", s_cache.cpi);
-    fillCachePoint(pp, s_topBlock,
-                    ppmMemoryi, cxMemory->i, mbMemoryi,
-                    s_cache.lbcc, s_cache.ibi,
-                    currentFile.lineNumber, currentFile.ifDepth, currentFile.ifStack,
-                    s_javaStat, counters
-                    );
+    fillCachePoint(pp, s_topBlock, ppmMemoryi, cxMemory->i, mbMemoryi, s_cache.lbcc,
+                   s_cache.ibi, currentFile.lineNumber, currentFile.ifDepth,
+                   currentFile.ifStack, s_javaStat, counters);
     s_cache.cpi ++;
 }
