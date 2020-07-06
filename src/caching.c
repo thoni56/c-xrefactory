@@ -48,7 +48,7 @@ int checkFileModifiedTime(int fileIndex) {
 static void deleteReferencesOutOfMemory(Reference **rr) {
     while (*rr!=NULL) {
         if (DM_FREED_POINTER(cxMemory,*rr)) {
-            /*fprintf(dumpOut,"deleting reference on %s:%d\n",s_fileTab.tab[(*rr)->p.file]->name,(*rr)->p.line);*/
+            log_trace("deleting reference on %s:%d", fileTable.tab[(*rr)->p.file]->name, (*rr)->p.line);
             *rr = (*rr)->next;
             continue;
         }
@@ -58,12 +58,13 @@ static void deleteReferencesOutOfMemory(Reference **rr) {
 
 static void cxrefTabDeleteOutOfMemory(int i) {
     SymbolReferenceItem **pp;
+
     pp = &referenceTable.tab[i];
     while (*pp!=NULL) {
-        if (DM_FREED_POINTER(cxMemory,*pp)) {
+        if (DM_FREED_POINTER(cxMemory, *pp)) {
             /* out of memory, delete it */
-            /*fprintf(dumpOut,"deleting all references on %s\n",(*pp)->name);*/
-            *pp = (*pp)->next;
+            log_trace("deleting all references on %s", (*pp)->name);
+            *pp = (*pp)->next;  /* Unlink it and look at next */
             continue;
         } else {
             /* in memory, examine all refs */
@@ -345,12 +346,14 @@ void initCaching(void) {
 
 void cacheInput(void) {
     int size;
-    /*fprintf(dumpOut,"enter cacheInput\n");*/
+
+    ENTER();
     if (s_cache.activeCache == 0) return;
     if (includeStackPointer != 0 || macroStackIndex != 0) return;
     size = cInput.currentLexem - s_cache.lexcc;
-    if ( s_cache.lbcc - s_cache.lb + size >= LEX_BUF_CACHE_SIZE) {
+    if (s_cache.lbcc - s_cache.lb + size >= LEX_BUF_CACHE_SIZE) {
         s_cache.activeCache = 0;
+        LEAVE();
         return;
     }
     /* if from cache, don't copy on the same place */
@@ -358,10 +361,12 @@ void cacheInput(void) {
         memcpy(s_cache.lbcc, s_cache.lexcc, size);
     s_cache.lbcc += size;
     s_cache.lexcc = cInput.currentLexem;
+    LEAVE();
 }
 
 void cacheInclude(int fileNum) {
-    if (s_cache.activeCache == 0) return;
+    if (s_cache.activeCache == 0)
+        return;
     log_debug("caching include of file %d: %s",
               s_cache.ibi, fileTable.tab[fileNum]->name);
     checkFileModifiedTime(fileNum);
