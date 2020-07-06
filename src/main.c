@@ -2301,7 +2301,7 @@ static void mainFileProcessingInitialisations(
         // troubles to move it here, because of autodetection of -javaVersion from jdkcp
         initTokenNameTab();
         s_cache.activeCache = 1;
-        placeCachePoint(0);
+        placeCachePoint(false);
         s_cache.activeCache = 0;
         assert(s_cache.lbcc == s_cache.cp[0].lbcc);
         assert(s_cache.lbcc == s_cache.cp[1].lbcc);

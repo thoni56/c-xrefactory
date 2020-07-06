@@ -39,11 +39,11 @@ extern S_caching s_cache;
 
 extern void setupCaching(void);
 extern void initCaching(void);
-extern void recoverCachePoint(int i, char *readedUntil, int activeCaching);
+extern void recoverCachePoint(int i, char *readUntil, int activeCaching);
 extern void recoverFromCache(void);
 extern void cacheInput(void);
 extern void cacheInclude(int fileNum);
-extern void placeCachePoint(int inputCacheFlag);
+extern void placeCachePoint(bool inputCache);
 extern void recoverCachePointZero(void);
 extern void recoverMemoriesAfterOverflow(char *cxMemFreeBase);
 extern int checkFileModifiedTime(int ii);

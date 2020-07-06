@@ -254,7 +254,7 @@ yaccfile
             l_currentType = NULL;
         }
         before_rules '%' '%' {
-            placeCachePoint(1);
+            placeCachePoint(true);
         }
         rules '%' '%' file
     ;

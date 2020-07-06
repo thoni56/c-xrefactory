@@ -1441,7 +1441,7 @@ static void scanClassFile(char *zip, char *file, void *arg) {
         cpi = s_cache.cpi;
         s_cache.activeCache = 1;
         log_trace("firstFreeIndex = %d", s_topBlock->firstFreeIndex);
-        placeCachePoint(0);
+        placeCachePoint(false);
         s_cache.activeCache = 0;
         memb = javaGetFieldClass(file, &tt);
         fileInd = javaCreateClassFileItem(memb);

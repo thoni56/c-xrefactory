@@ -2191,7 +2191,7 @@ int yylex(void) {
  endOfFile:
     if ((!LANGUAGE(LANG_JAVA)) && includeStackPointer != 0) {
         popInclude();
-        placeCachePoint(1);
+        placeCachePoint(true);
         goto nextYylex;
     }
     /* add the test whether in COMPLETION, communication string found */

@@ -336,7 +336,7 @@ void setupCaching(void) {
 
 void initCaching(void) {
     fillCaching(&s_cache, 1, 0, 0, s_cache.lb, currentFile.lexBuffer.next, NULL,NULL);
-    placeCachePoint(0);
+    placeCachePoint(false);
     s_cache.activeCache = 0;
 }
 
@@ -394,7 +394,7 @@ static void fillCachePoint(CachePoint *cachePoint, S_topBlock *topBlock, int ppm
     cachePoint->counters = counters;
 }
 
-void placeCachePoint(int inputCaching) {
+void placeCachePoint(bool inputCaching) {
     CachePoint *pp;
     if (s_cache.activeCache == 0)
         return;

@@ -12,8 +12,8 @@ void initCaching(void) {
   mock();
 }
 
-void recoverCachePoint(int i, char *readedUntil, int activeCaching) {
-  mock(i, readedUntil, activeCaching);
+void recoverCachePoint(int i, char *readUntil, int activeCaching) {
+  mock(i, readUntil, activeCaching);
 }
 
 void recoverFromCache(void) {
@@ -28,7 +28,7 @@ void cacheInclude(int fileNum) {
   mock(fileNum);
 }
 
-void placeCachePoint(int inputCacheFlag) {
+void placeCachePoint(bool inputCacheFlag) {
   mock(inputCacheFlag);
 }
 

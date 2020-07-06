@@ -2683,7 +2683,7 @@ break;
 case 2:
 #line 256 "yacc_parser.y"
 {
-            placeCachePoint(1);
+            placeCachePoint(true);
         }
 break;
 case 7:

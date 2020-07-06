@@ -1645,12 +1645,12 @@ file
 cached_external_definition_list
     : external_definition				{
         if (includeStackPointer == 0) {
-            placeCachePoint(1);
+            placeCachePoint(true);
         }
     }
     | cached_external_definition_list _bef_ external_definition {
         if (includeStackPointer == 0) {
-            placeCachePoint(1);
+            placeCachePoint(true);
         }
     }
     | error
