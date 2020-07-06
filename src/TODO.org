@@ -66,7 +66,12 @@ jrt-fs.jar, ...
 * TODO Bug: when extracting C function including declarations that are required
   by code left outside the extraction, that declaration is moved to the
   extracted function. This should probably trigger "structure error".
-* TODO Refactor int2StringTabs, should not have Init in them
+* TODO Rename int2StringTabs, should not have Init in them
+* TODO Add menu for running the tutorial (in C or Java)
+** TODO Elisp function to copy cexercise to /tmp and visit it
+** TODO Elisp function to copy jexercise to /tmp and visit it
+** TODO Menu for the two exercises
+** TODO Add end of old INSTALL to README.md
 * TODO Remove opt.xref2 since edit server mode is always called with this, isn't it?
   If so, make xref2 the way c-xref talks if in server mode. But this should also
   apply for refactory mode, right?
@@ -78,7 +83,6 @@ jrt-fs.jar, ...
 * TODO Cannot mock structs as arguments like in symbol.mock
   We need to change pos to *pos if that's gonna work
 * TODO Rename reftab.[ch] to cxreftab.[ch]? Or s_cxreftab to s_reftab?
-* TODO Clean up documentation, primarily remove 'create_distribution'
 * TODO Document that the "distribution" method is unsupported
 * TODO Ensure all ANSI-C, C99 and C11 keywords (and macros for them?) are
   recognized (list e.g. at
@@ -108,6 +112,7 @@ jrt-fs.jar, ...
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Clean up documentation, primarily remove 'create_distribution'
 * DONE Function-ify lexmac macros
 * DONE Change structure declarations in proto.h into ideomatic struct
   {struct} typedefs instead of using typenames generated into the

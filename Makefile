@@ -1,3 +1,11 @@
+# This is the top level Makefile for c-xrefactory
+#
+# It will run using the el-get install process so note that it must
+# exist.
+#
+# All the heavy lifting is in the src directory.  There is no longer
+# any way to create a "distribution" or to "make install".
+
 ifndef VERBOSE
 MAKEFLAGS+=--no-print-directory
 endif
@@ -6,17 +14,11 @@ all:
 	make -C src prod
 	make -C env/emacs
 
-distribution:
-	sh CreateXrefDistribution
-
 test: all
 	make -C tests all
 
 quick: all
 	make -C tests quick
-
-install:
-	sh c-xref/c-xrefsetup
 
 clean:
 	make -C src clean
