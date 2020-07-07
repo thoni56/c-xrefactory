@@ -184,15 +184,15 @@
 
 #if defined(__WIN32__)
 
-#define REFERENCE_FILENAME_FILES       "\\XFiles"
-#define REFERENCE_FILENAME_CLASSES       "\\XClasses"
-#define REFERENCE_FILENAME_PREFIX  "\\X"
+#define REFERENCE_FILENAME_FILES "\\XFiles"
+#define REFERENCE_FILENAME_CLASSES "\\XClasses"
+#define REFERENCE_FILENAME_PREFIX "\\X"
 
 #else
 
-#define REFERENCE_FILENAME_FILES       "/XFiles"
-#define REFERENCE_FILENAME_CLASSES       "/XClasses"
-#define REFERENCE_FILENAME_PREFIX  "/X"
+#define REFERENCE_FILENAME_FILES "/XFiles"
+#define REFERENCE_FILENAME_CLASSES "/XClasses"
+#define REFERENCE_FILENAME_PREFIX "/X"
 
 #endif
 

@@ -1317,14 +1317,14 @@ static void htmlCreateGlobSymList(int i, void *off, void *ffn, void *genfi) {
     }
 }
 
-static void htmlScanCxFileAndGenRefLists(char *fn1, char *fn2,
-                                         int fi, int genFlag) {
+static void htmlScanCxFileAndGenRefLists(char *name1, char *name2,
+                                         int fi, int generateFlag) {
     char fn[MAX_FILE_NAME_SIZE];
     char ln[MAX_FILE_NAME_SIZE];
     char *ffn;
     FILE *ff;
 
-    sprintf(fn, "%s%s", getRealFileNameStatic(normalizeFileName(fn1,s_cwd)), fn2);
+    sprintf(fn, "%s%s", getRealFileNameStatic(normalizeFileName(name1, s_cwd)), name2);
     assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
     if (! options.noCxFile) {
         inputFile = openFile(fn, "r");
@@ -1336,19 +1336,13 @@ static void htmlScanCxFileAndGenRefLists(char *fn1, char *fn2,
         }
     }
     ffn = cutHtmlPath(fn);
-    if (genFlag == HTML_GEN) {
-        //& fprintf(stdout,"\n %s ",ffn);fflush(stdout);
-        if (!options.xref2) {
-            if (fi%10==0) fprintf(stdout,"\n");
-            fprintf(stdout,"X%04d ",fi);
-            fflush(stdout);
-        }
+    if (generateFlag == HTML_GEN) {
         concatPaths(ln,MAX_FILE_NAME_SIZE, options.htmlRoot, ffn,".html");
         recursivelyCreateFileDirIfNotExists(ln);
         ff = openFile(ln, "w");
         if (ff==NULL) errorMessage(ERR_CANT_OPEN, ln);
         else {
-            htmlGenRefListFileHead(ff,fi);
+            htmlGenRefListFileHead(ff, fi);
             s_htmlCurrentCxlist = NULL;
             refTabMap32(&referenceTable, htmlCreateGlobSymList, ff, ffn, &fi);
             LIST_MERGE_SORT(S_olSymbolsMenu,
@@ -1726,20 +1720,24 @@ void htmlGenGlobalReferenceLists(char *cxMemFreeBase) {
     if (options.referenceFileCount <= 1) {
         /* single reference file */
         recoverMemoriesAfterOverflow(cxMemFreeBase);
-        htmlScanCxFileAndGenRefLists(fname, "",HTML_GXANY, HTML_GEN);
+        htmlScanCxFileAndGenRefLists(fname, "", HTML_GXANY, HTML_GEN);
     } else {
         /* several reference files */
         dirname = fname;
         recoverMemoriesAfterOverflow(cxMemFreeBase);
-        htmlScanCxFileAndGenRefLists(dirname,REFERENCE_FILENAME_FILES,HTML_GXANY,HTML_NO_GEN);
-        htmlScanCxFileAndGenRefLists(dirname,REFERENCE_FILENAME_CLASSES,
+        htmlScanCxFileAndGenRefLists(dirname, REFERENCE_FILENAME_FILES,
+                                     HTML_GXANY, HTML_NO_GEN);
+        htmlScanCxFileAndGenRefLists(dirname, REFERENCE_FILENAME_CLASSES,
                                      HTML_GXANY, HTML_NO_GEN);
         fileTableMap(&fileTable, sortSubClassesList);
         CX_ALLOCC(newFreeBase, 0, char);
         for (i=0; i<options.referenceFileCount; i++) {
             recoverMemoriesAfterOverflow(newFreeBase);
             sprintf(fn, "%s%04d", REFERENCE_FILENAME_PREFIX, i);
-            htmlScanCxFileAndGenRefLists(dirname,fn, i, HTML_GEN);
+            if (!options.xref2) {
+                fprintf(dumpOut,"%sX%04d", i%10==0?"\n":" ", i);
+            }
+            htmlScanCxFileAndGenRefLists(dirname, fn, i, HTML_GEN);
         }
     }
     if (!options.xref2) {
@@ -1749,8 +1747,8 @@ void htmlGenGlobalReferenceLists(char *cxMemFreeBase) {
 
 
 void generateHtml(void) {
-    int    i;
-    FileItem      *fi;
+    int i;
+    FileItem *fi;
 
     if (options.htmlRoot==NULL ||  options.htmlRoot[0]==0) {
         fatalError(ERR_ST, "No HTML output directory specified, use -htmlroot=<dir>", XREF_EXIT_ERR);
