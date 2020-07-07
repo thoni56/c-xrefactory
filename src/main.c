@@ -56,7 +56,7 @@ static void usage(char *s) {
     fprintf(stdout,"\t-htmllxlist               - generate xref-lists for local symbols\n");
     fprintf(stdout,"\t-htmldirectx              - link first character to cross references\n");
     fprintf(stdout,"\t-htmlfunseparate          - separate functions by a bar\n");
-    fprintf(stdout,"\t-htmlzip=<command>        - zip command, ! stands for the file name\n");
+    fprintf(stdout,"\t-htmlzip=<command>        - zip command, use '!' for the file name\n");
     fprintf(stdout,"\t-htmllinksuffix=<suf>     - add this suffix to file links\n");
     fprintf(stdout,"\t-htmllinenums             - generate line numbers in HTML\n");
     fprintf(stdout,"\t-htmlnocolors             - do not generate colors in HTML\n");
@@ -646,14 +646,10 @@ static bool processHOption(int *ii, int argc, char **argv) {
     if (strncmp(argv[i],"-htmltab=",9)==0)  {
         sscanf(argv[i]+9,"%d",&options.tabulator);
     }
-    else if (strcmp(argv[i],"-htmllinenums")==0)    options.htmlLineNums = 1;
-    else if (strcmp(argv[i],"-htmlnocolors")==0)    options.htmlNoColors = true;
-    else if (strcmp(argv[i],"-htmlgxlist")==0)  options.htmlglobalx = true;
-    else if (strcmp(argv[i],"-htmllxlist")==0)  options.htmllocalx = true;
-    else if (strcmp(argv[i],"-htmlrichlist")==0)    {
-        warningMessage(ERR_ST,"-htmlrichlist option is no longer supported");
-        //&         options.htmlRichLists= 1;
-    }
+    else if (strcmp(argv[i],"-htmllinenums")==0) options.htmlLineNums = 1;
+    else if (strcmp(argv[i],"-htmlnocolors")==0) options.htmlNoColors = true;
+    else if (strcmp(argv[i],"-htmlgxlist")==0) options.htmlglobalx = true;
+    else if (strcmp(argv[i],"-htmllxlist")==0) options.htmllocalx = true;
     else if (strcmp(argv[i],"-htmlfunseparate")==0)options.htmlFunSeparate=true;
     else if (strcmp(argv[i],"-html")==0) {
         options.taskRegime = RegimeHtmlGenerate;
