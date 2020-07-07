@@ -18,8 +18,9 @@ There are a *lot* of things to do to make c-xref into modern C.
 *** TODO <next step>
 * DOING Move XX_ALLOCC and friends to "memory" module
 * TODO Introduce data driven strategy to find runtime
-jrt-fs.jar, ...
+  jrt-fs.jar, ...
 * TODO Create jar reading test for unexpected end of file
+* TODO Test case for Move Method
 * TODO Test case for corruptionError() and compressionError()
 * TODO Replace the -1/-2 return cases for getLexA() with longjmp(<reason>)
 * TODO Turn lexembuffer functions into methods on the buffer
@@ -111,6 +112,9 @@ jrt-fs.jar, ...
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Define face for completion that works for dark themes
+* DONE c-xref-key-binding "local" should set M-TAB to completion
+Well, actually not really done, but I found how to make M-TAB do completion...
 * DONE Document that the "distribution" method is unsupported
 * DONE Clean up documentation, primarily remove 'create_distribution'
 * DONE Function-ify lexmac macros

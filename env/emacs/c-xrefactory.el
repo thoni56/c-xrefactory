@@ -84,36 +84,23 @@
 )
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;  Completion coloring, you can choose your colors here!
+;;  Completion coloring using faces that inherit from standard face
 
-(if (fboundp 'make-face)
-    (progn
-      (if (not (boundp 'c-xref-list-default-face))
-          (make-face 'c-xref-list-default-face)
-        )
-      (if (not (boundp 'c-xref-list-pilot-face))
-          (progn
-            (make-face 'c-xref-list-pilot-face)
-            (set-face-foreground 'c-xref-list-pilot-face "navy")
-            ))
-      (if (not (boundp 'c-xref-list-symbol-face))
-          (progn
-            (make-face 'c-xref-list-symbol-face)
-            (set-face-foreground 'c-xref-list-symbol-face "Sienna")
-            ))
-      (if (not (boundp 'c-xref-keyword-face))
-          (progn
-            (make-face 'c-xref-keyword-face)
-            (set-face-foreground 'c-xref-keyword-face "blue")
-            ))
-      (if (not (boundp 'c-xref-error-face))
-          (progn
-            (make-face 'c-xref-error-face)
-            (set-face-foreground 'c-xref-error-face "red")
-            ))
-      )
- ;; if do not know how to make faces, set the coloring off
-  )
+(defface c-xref-list-default-face
+  '((t :inherit 'default))
+  "Default face in c-xref lists")
+(defface c-xref-list-pilot-face
+  '((t :inherit 'font-lock-string-face))
+  "Face for pilots(selection numbers?) in c-xref lists")
+(defface c-xref-list-symbol-face
+  '((t :inherit 'font-lock-variable-name-face))
+  "Face for symbols in c-xref lists")
+(defface c-xref-keyword-face
+  '((t :inherit 'font-lock-type-face))
+  "Face for keywords in c-xref windows")
+(defface c-xref-error-face
+  '((t :inherit 'error))
+  "Face for errors in c-xref windows")
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 

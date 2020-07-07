@@ -2116,23 +2116,6 @@ tries to delete C-xrefactory windows first.
     res
 ))
 
-; until 1.6.3
-; (defun c-xref-completion-symbol-highlight (begpos endpos)
-;   (let ((line) (sym) (spos) (mbeg) (mend))
-;   (setq line (buffer-substring begpos endpos))
-;   (setq spos (string-match "[^a-zA-Z0-9_]" line 0))
-;   (setq sym (c-xref-create-escaped-cased-string (substring line 0 spos)))
-;   (setq mbeg (string-match (concat "\\b[a-zA-Z0-9_\\.]*\\b" sym "\\b") line spos))
-;   (if mbeg
-;       (progn
-;         (setq mend (match-end 0))
-;         (put-text-property (+ mbeg begpos)
-;                            (+ mend begpos)
-;                            'face 'c-xref-list-symbol-face)
-;         ))
-; ))
-
-; since 1.6.4
 (defun c-xref-completion-symbol-highlight (begpos endpos)
   (let ((line) (sym) (spos) (mbeg) (mend))
     (setq line (buffer-substring begpos endpos))
