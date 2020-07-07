@@ -39,6 +39,6 @@ clean:
 	-rm $(LOGFILE)* /tmp/c-xrefx*.log
 
 pure: .emacs.d/el-get/c-xrefactory
-	-rm bin/c-xref
-	ln -s $(CURDIR)/../../src/c-xref bin/c-xref
-	$(ENV) emacs -l $(PWD)/.emacs.d/init.el -l "$(PWD)"/.emacs.d/override-el-get-update.el --eval '(setq c-xref-home-directory "$(PWD)/bin/")' --eval '(setq c-xref-debug-mode t)' --eval '(setq c-xref-debug-preserve-tmp-files t)' ../../src/cxref.c
+	@-rm bin/c-xref
+	@ln -s $(CURDIR)/../../src/c-xref bin/c-xref
+	@$(ENV) emacs -l $(PWD)/.emacs.d/init.el -l "$(PWD)"/.emacs.d/override-el-get-update.el --eval '(setq c-xref-home-directory "$(PWD)/bin/")' --eval '(setq c-xref-debug-mode t)' --eval '(setq c-xref-debug-preserve-tmp-files t)' ../../src/cxref.c
