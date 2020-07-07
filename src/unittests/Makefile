@@ -72,6 +72,9 @@ lexembuffer_tests.so: Makefile $(OBJDIR)/lexembuffer_tests.o $(OBJDIR)/lexembuff
 memory_tests.so: Makefile $(OBJDIR)/memory_tests.o $(OBJDIR)/memory.o $(OBJDIR)/log.o
 	gcc -shared -o $@ $(filter-out Makefile,$^) $(COVERAGE) $(CGREEN)
 
+position_tests.so: Makefile $(OBJDIR)/position_tests.o $(OBJDIR)/position.o $(OBJDIR)/log.o
+	gcc -shared -o $@ $(filter-out Makefile,$^) $(COVERAGE) $(CGREEN)
+
 
 # These includes the modules .c to be able to test internal functions or macros
 LEXER_DEPENDENCIES = log position lexembuffer characterreader

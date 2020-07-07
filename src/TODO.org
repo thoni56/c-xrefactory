@@ -8,7 +8,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 * DOING Read java runtime which now has many more options
 ** DONE Understand why reading jar takes up all memory
 ** DONE Support new class file constant pool items for v52.0
-** TODO Crash when swapping CXrefs
+** TODO Crash when swapping CXrefs after reading jdk1.8.0_121_jre_lib_rt.jar
 * DOING Create testcases for all jexercise and cexercise steps
 ** DOING cexercise
 *** DONE F6 to completion() and completions
@@ -33,18 +33,22 @@ jrt-fs.jar, ...
 * TODO Remove FULL/FAST update, we always want correct info?
   There are a number of update modes available from the command line, 'fupdate',
   'updatem', 'update', 'fastupdate' and then there is opt.updateOnlyModifiedFiles
-* TODO Remove all -olcx commands that are not used by the editor interfaces?
 * TODO Make S_caching an abstract data type to hide CachePoint and Caching
 * TODO Separate the options into sections and move HTML (at least) to separate structure
   The S_options structure is used to save or possibly create new sets, when
   refactoring. Then it should only contain what's needed for that.
+* TODO Handle for-loops with declarations ("for (int i = 0;...")
+  This requires grammar changes for C and Yacc
 * TODO Some code in yacc semantic actions is not detected (try F6 on .reference)
   It seems that it is primarily java_parser.y that has this problem. See
   issue on github. One theory might be that "/*&" is not handled in
   yacc-files under some circumstances. There is a line in lex.c that
   handles this, we could see if it triggers...
-* TODO Handle for-loops with declarations ("for (int i = 0;...")
-  This requires grammar changes for C and Yacc
+* TODO Add menu for running the tutorial (in C or Java)
+** TODO Elisp function to copy cexercise to /tmp and visit it
+** TODO Elisp function to copy jexercise to /tmp and visit it
+** TODO Menu for the two exercises
+** TODO Add end of old INSTALL to README.md
 * TODO Make all modules independent on main
 ** DONE Document why main.h is needed
 ** DONE Make commons.c independent on main
@@ -55,6 +59,7 @@ jrt-fs.jar, ...
    it is structured the way it is, it seems to be calling on itself and
    main processing. Also refactory task is always performed in a separate
    process, what happens if we specify -refactory as a PPC command?
+* TODO Remove all -olcx commands that are not used by the editor interfaces?
 * TODO Ensure each header file is not dependent on the fact that some other
   header file is included before it. (Could this be done by taking each
   header file and try to compile it in isolation? It should include
@@ -67,11 +72,6 @@ jrt-fs.jar, ...
   by code left outside the extraction, that declaration is moved to the
   extracted function. This should probably trigger "structure error".
 * TODO Rename int2StringTabs, should not have Init in them
-* TODO Add menu for running the tutorial (in C or Java)
-** TODO Elisp function to copy cexercise to /tmp and visit it
-** TODO Elisp function to copy jexercise to /tmp and visit it
-** TODO Menu for the two exercises
-** TODO Add end of old INSTALL to README.md
 * TODO Remove opt.xref2 since edit server mode is always called with this, isn't it?
   If so, make xref2 the way c-xref talks if in server mode. But this should also
   apply for refactory mode, right?
@@ -83,7 +83,6 @@ jrt-fs.jar, ...
 * TODO Cannot mock structs as arguments like in symbol.mock
   We need to change pos to *pos if that's gonna work
 * TODO Rename reftab.[ch] to cxreftab.[ch]? Or s_cxreftab to s_reftab?
-* TODO Document that the "distribution" method is unsupported
 * TODO Ensure all ANSI-C, C99 and C11 keywords (and macros for them?) are
   recognized (list e.g. at
   http://www.c-programming-simple-steps.com/c-keywords.html)
@@ -112,6 +111,7 @@ jrt-fs.jar, ...
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Document that the "distribution" method is unsupported
 * DONE Clean up documentation, primarily remove 'create_distribution'
 * DONE Function-ify lexmac macros
 * DONE Change structure declarations in proto.h into ideomatic struct

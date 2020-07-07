@@ -20,6 +20,8 @@ extern void fillPosition(Position *position, int file, int line, int col);
 extern void fillPositionList(PositionList *positionList, Position p, PositionList *next);
 extern bool onSameLine(Position pos1, Position pos2);
 
+extern void addPositionsInto(Position *sum, Position p1, Position p2);
+extern void subtractPositionsInto(Position *difference, Position minuend, Position subtrahend);
 extern bool positionsAreEqual(Position p1, Position p2);
 extern bool positionsAreNotEqual(Position p1, Position p2);
 extern bool positionIsLessThan(Position p1, Position p2);

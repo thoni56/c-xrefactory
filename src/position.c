@@ -15,6 +15,14 @@ bool onSameLine(Position pos1, Position pos2) {
     return pos1.file == pos2.file && pos1.line == pos2.line;
 }
 
+extern void addPositionsInto(Position *sum, Position p1, Position p2) {
+    fillPosition(sum, p1.file+p2.file, p1.line+p2.line, p1.col+p2.col);
+}
+
+extern void subtractPositionsInto(Position *difference, Position minuend, Position subtrahend) {
+    fillPosition(difference, minuend.file-subtrahend.file, minuend.line-subtrahend.line, minuend.col-subtrahend.col);
+}
+
 bool positionsAreEqual(Position p1, Position p2) {
     return p1.file == p2.file &&
         p1.line == p2.line &&

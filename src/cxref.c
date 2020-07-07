@@ -44,19 +44,11 @@ typedef struct referencesChangeData {
                                   positionsAreNotEqual((tmp)->p, (key).p)   \
                                   )
 
-#define POSITION_MINUS(res,p1,p2) {                                     \
-        fillPosition(&(res), (p1).file-(p2).file, (p1).line-(p2).line, (p1).col-(p2).col); \
-    }
-
-#define POSITION_PLUS(res,p1,p2) {                                      \
-        fillPosition(&(res), (p1).file+(p2).file, (p1).line+(p2).line, (p1).col+(p2).col); \
-    }
-
 #define CX_TEST_SPACE() {                                               \
-        assert(options.taskRegime);                                       \
+        assert(options.taskRegime);                                     \
         if (options.taskRegime==RegimeXref||options.taskRegime==RegimeHtmlGenerate) { \
             if (!(DM_FREE_SPACE(cxMemory,CX_SPACE_RESERVE))) {          \
-                longjmp(cxmemOverflow,LONGJUMP_REASON_REFERENCE_OVERFLOW);         \
+                longjmp(cxmemOverflow,LONGJUMP_REASON_REFERENCE_OVERFLOW); \
             }                                                           \
         }                                                               \
     }
@@ -3683,10 +3675,11 @@ static S_olSymbolsMenu *mmFindSymWithCorrespondingRef(Reference *ref,
                                                       S_olcxReferences *refs,
                                                       Position *moveOffset
                                                       ) {
-    Reference         sr, *place;
-    S_olSymbolsMenu     *mm;
+    Reference sr, *place;
+    S_olSymbolsMenu *mm;
+
     sr = *ref;
-    POSITION_PLUS(sr.p, ref->p, *moveOffset);
+    addPositionsInto(&sr.p, ref->p, *moveOffset);
     // now looks for the reference 'r'
     for(mm=refs->menuSym; mm!=NULL; mm=mm->next) {
         // do not check anything, but symbol type to avoid missresolution
@@ -3756,9 +3749,9 @@ static int mmPreCheckMakeDifference(S_olcxReferences *origrefs,
     ofirstsym = mmPreCheckGetFirstDefinitionReferenceAndItsSymbol(origrefs->menuSym);
     nfirstsym = mmPreCheckGetFirstDefinitionReferenceAndItsSymbol(newrefs->menuSym);
     if (ofirstsym!=NULL && nfirstsym!=NULL) {
-        // TODO! Check here rather symbol name, then just column offsets
+        // TODO! Check here rather symbol name, than just column offsets
         assert(ofirstsym->s.refs && nfirstsym->s.refs);
-        POSITION_MINUS(moveOffset,nfirstsym->s.refs->p,ofirstsym->s.refs->p);
+        subtractPositionsInto(&moveOffset, nfirstsym->s.refs->p, ofirstsym->s.refs->p);
         //&fprintf(dumpOut,"!ofirstsym, nfirstsym == %s %s at %d,%d %d,%d\n", ofirstsym->s.name, nfirstsym->s.name, ofirstsym->s.refs->p.line, ofirstsym->s.refs->p.col, nfirstsym->s.refs->p.line, nfirstsym->s.refs->p.col);
         if (moveOffset.col!=0) {
             errorMessage(ERR_ST, "method has to be moved into an empty line");
