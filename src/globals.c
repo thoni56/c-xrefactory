@@ -307,7 +307,6 @@ Options s_initOpt = {
     0,                          // new line number of the first line
 
     "",                         // getValue
-    false,                      // java2html
     1,                          // javaSlAllowed (autoUpdateFromSrc)
     XFILE_HASH_DEFAULT,
 

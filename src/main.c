@@ -679,9 +679,6 @@ static bool processHOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i],"-htmlcutcwd")==0)  {
         int tmp;
         tmp = addHtmlCutPath(s_cwd);
-        if (options.java2html && tmp) {
-            fatalError(ERR_ST, "a path clash occurred, please, run java2html from different directory", XREF_EXIT_ERR);
-        }
     }
     else if (strcmp(argv[i],"-htmlcutsourcepaths")==0)  {
         addSourcePathsCut();
@@ -764,7 +761,6 @@ static bool processJOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
     else if (strcmp(argv[i],"-javadoc")==0)     options.javaDoc = true;
-    else if (strcmp(argv[i],"-java2html")==0)   options.java2html = true;
     else if (strcmp(argv[i],"-java1.4")==0)     {
         createOptionString(&options.javaVersion, JAVA_VERSION_1_4);
     }
@@ -1833,8 +1829,7 @@ void searchDefaultOptionsFile(char *filename, char *options_filename, char *sect
     return;
 }
 
-static void writeOptionsFileMessage( char *file,
-                                     char *outFName, char *outSect ) {
+static void writeOptionsFileMessage(char *file, char *outFName, char *outSect ) {
     char tmpBuff[TMP_BUFF_SIZE];
 
     if (options.refactoringRegime==RegimeRefactory) return;
@@ -1847,17 +1842,12 @@ static void writeOptionsFileMessage( char *file,
             } else {
                 fatalError(ERR_ST, tmpBuff, XREF_EXIT_NO_PROJECT);
             }
-        } else if (! JAVA2HTML()) {
-            if (options.xref2) {
-                ppcGenRecord(PPC_NO_PROJECT,file,"\n");
-            } else {
-                sprintf(tmpBuff,"no project name covers '%s'",file);
-                warningMessage(ERR_ST, tmpBuff);
-            }
+        } else if (options.xref2) {
+            ppcGenRecord(PPC_NO_PROJECT,file,"\n");
+        } else {
+            sprintf(tmpBuff,"no project name covers '%s'",file);
+            warningMessage(ERR_ST, tmpBuff);
         }
-        //&} else if (options.xref2) {
-        //& sprintf(tmpBuff,"C-xrefactory project: %s", outSect);
-        //& ppcGenRecord(PPC_BOTTOM_INFORMATION, tmpBuff, "\n");
     } else if (options.taskRegime==RegimeXref) {
         if (options.xref2) {
             sprintf(tmpBuff,"C-xrefactory project: %s", outSect);

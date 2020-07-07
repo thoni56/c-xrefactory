@@ -355,8 +355,6 @@ typedef enum language {
   && rr->p.file == s_input_file_number /* fixing bug with references comming from jsl */\
 )
 
-#define JAVA2HTML() (options.java2html)
-
 #define SPRINT_FILE_TAB_CLASS_NAME(ftname, linkName) {\
     sprintf(ftname, "%c%s.class", ZIP_SEPARATOR_CHAR, linkName);\
     assert(strlen(ftname)+1 < MAX_FILE_NAME_SIZE);\

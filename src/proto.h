@@ -921,7 +921,6 @@ typedef struct options {
     int checkNewLineNumber;
 
     char *getValue;
-    bool java2html;
     int javaSlAllowed;
     int xfileHashingMethod;
 
