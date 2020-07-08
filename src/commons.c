@@ -312,9 +312,10 @@ void fatalError(int errCode, char *mess, int exitStatus) {
 void internalCheckFail(char *expr, char *file, int line) {
     char msg[TMP_BUFF_SIZE];
 
-    if (errOut == NULL) errOut = stderr;
-    sprintf(msg,"'%s' is not true in '%s:%d'",expr,file,line);
     log_fatal_with_line(file, line, "'%s' is not true",  expr);
+    if (errOut == NULL)
+        errOut = stderr;
+    sprintf(msg,"'%s' is not true in '%s:%d'", expr, file, line);
     writeErrorMessage(ERR_INTERNAL_CHECK,msg);
     if (options.taskRegime == RegimeEditServer || options.refactoringRegime == RegimeRefactory) {
         if (options.xref2) {
@@ -328,11 +329,12 @@ void internalCheckFail(char *expr, char *file, int line) {
     if (options.taskRegime == RegimeEditServer
         || options.refactoringRegime == RegimeRefactory
         || s_fileAbortionEnabled == 0
-        ) {
+    ) {
         emergencyExit(XREF_EXIT_ERR);
     }
+
     fprintf(errOut, "\t file aborted!\n"); fflush(errOut);
-    // longjump is causing problems with refactory, the longjmp
-    // is missplaced
-    longjmp(cxmemOverflow,LONGJMP_REASON_FILE_ABORT);
+    // TODO: WAS: longjump is causing problems with refactory, the longjmp
+    // is missplaced. Is it? Test for this case?
+    longjmp(cxmemOverflow, LONGJMP_REASON_FILE_ABORT);
 }

@@ -677,8 +677,7 @@ static bool processHOption(int *ii, int argc, char **argv) {
         addHtmlCutPath(argv[i]+13);
     }
     else if (strcmp(argv[i],"-htmlcutcwd")==0)  {
-        int tmp;
-        tmp = addHtmlCutPath(s_cwd);
+        addHtmlCutPath(s_cwd);
     }
     else if (strcmp(argv[i],"-htmlcutsourcepaths")==0)  {
         addSourcePathsCut();
@@ -2551,10 +2550,10 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
     ENTER();
     if (mess!=LONGJMP_REASON_NONE && options.taskRegime!=RegimeHtmlGenerate) {
         if (options.xref2) {
-            ppcGenRecord(PPC_INFORMATION,"swapping references on disk", "\n");
-            ppcGenRecord(PPC_INFORMATION,"", "\n");
+            ppcGenRecord(PPC_INFORMATION, "swapping references to disk", "\n");
+            ppcGenRecord(PPC_INFORMATION, "", "\n");
         } else {
-            fprintf(dumpOut,"\nswapping references on disk (please wait)\n");
+            fprintf(dumpOut, "swapping references to disk (please wait)\n");
             fflush(dumpOut);
         }
     }
@@ -2585,8 +2584,10 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
         }
         generateHtml();
     }
-    if (options.taskRegime==RegimeXref) mainGenerateReferenceFile();
+    if (options.taskRegime==RegimeXref)
+        mainGenerateReferenceFile();
     recoverMemoriesAfterOverflow(cxMemFreeBase);
+
     /* ************ start with CXREFS and memories clean ************ */
     savingFlag = 0;
     for(i=0; i<fileTable.size; i++) {
@@ -2594,12 +2595,12 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
             if (fileTable.tab[i]->b.cxLoading) {
                 fileTable.tab[i]->b.cxLoading = false;
                 fileTable.tab[i]->b.cxSaved = 1;
-                if (fileTable.tab[i]->b.commandLineEntered
-                    || !options.multiHeadRefsCare) savingFlag = 1;
+                if (fileTable.tab[i]->b.commandLineEntered || !options.multiHeadRefsCare)
+                    savingFlag = 1;
                 // before, but do not work as scheduledToProcess is auto-cleared
                 //&             if (fileTable.tab[i]->b.scheduledToProcess
                 //&                 || !options.multiHeadRefsCare) savingFlag = 1;
-                //&fprintf(dumpOut," -># '%s'\n",fileTable.tab[i]->name);fflush(dumpOut);
+                log_trace(" -># '%s'",fileTable.tab[i]->name);
             }
         }
     }
@@ -3105,9 +3106,12 @@ void mainCallXref(int argc, char **argv) {
                 }
                 mainSetLanguage(pffc->name, &s_language);
                 if (LANGUAGE(LANG_JAVA)) {
+                    /* TODO: problematic if a single file generates overflow, e.g. a JAR
+                       Can we just reread from the last class file? */
                     mainXrefOneWholeFileProcessing(argc, argv, pffc, &firstPassing, &atLeastOneProcessed);
                 }
-                if (options.xref2) writeRelativeProgress(10*pinputCounter/numberOfInputs);
+                if (options.xref2)
+                    writeRelativeProgress(10*pinputCounter/numberOfInputs);
                 pinputCounter++;
             }
             s_javaPreScanOnly = 0;
@@ -3116,7 +3120,8 @@ void mainCallXref(int argc, char **argv) {
                 mainXrefOneWholeFileProcessing(argc, argv, ffc, &firstPassing, &atLeastOneProcessed);
                 ffc->b.scheduledToProcess = false;
                 ffc->b.scheduledToUpdate = false;
-                if (options.xref2) writeRelativeProgress(10+90*inputCounter/numberOfInputs);
+                if (options.xref2)
+                    writeRelativeProgress(10+90*inputCounter/numberOfInputs);
                 inputCounter++;
                 CHECK_FINAL();
             }
