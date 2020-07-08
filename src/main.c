@@ -2548,6 +2548,7 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
 static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
     int i,fi,savingFlag;
 
+    ENTER();
     if (mess!=LONGJMP_REASON_NONE && options.taskRegime!=RegimeHtmlGenerate) {
         if (options.xref2) {
             ppcGenRecord(PPC_INFORMATION,"swapping references on disk", "\n");
@@ -2606,6 +2607,7 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
         /* references overflowed, but no whole file readed */
         fatalError(ERR_NO_MEMORY,"cxMemory", XREF_EXIT_ERR);
     }
+    LEAVE();
 }
 
 void getPipedOptions(int *outNargc,char ***outNargv){
