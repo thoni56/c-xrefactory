@@ -166,7 +166,7 @@ the default include directories like /usr/include).
 This option should be used before any -I option.
 .TP
 .B \-cacheincludes
-This option causes that c-xref task will keep readed include files in memory
+This option makes c-xref keep read include files in memory
 and reuse them when processing next files.
 This can improve time performance when many source files are using
 common header files. Especially if those header files are read
@@ -539,13 +539,13 @@ and restart c-xref server task in order that changes take effect.
 This option prevents
 searching for standard option files '.c-xrefrc' and 'C-Xref.opt'.
 .TP
-.B -mf<n>
+.B -mf=<n>
 This option sets the memory factor for cross-references. The larger is the
 memory factor, the larger is the memory reserved to store cross-references
 and so c-xref does not need to swap references on disk so frequently. The default
 value of
 .I n
-is 1. For example the '-mf10' option causes that the memory used for
+is 1. For example the '-mf=10' option causes that the memory used for
 cross-references will be increased by the factor of 10. This option can be
 used only as command line option. If you use it inside the ~/.c-xrefrc file
 it has no effect.
@@ -556,15 +556,6 @@ configuration file to describe how to process source files in multiple passes.
 Multiple passes are necessary if you need to process your C sources
 for several initial macro settings. For more informations about this option
 read the 'c-xrefrc' manual page.
-.TP
-.B "\-keep_old"
-This option is obsolete. It is kept for compatibility reasons only.
-It is recommended to use multiple passes options of the '.c-xrefrc'
-file instead. The '-keep_old' option causes that
-the output of cross-referencing is added to
-existing references from the file specified by the
-.I -refs
-option. All old references of the reference file are kept.
 .TP
 .B "\-no-cppcomments"
 When scanning input files, do not consider the string `\|\c
