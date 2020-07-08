@@ -312,10 +312,10 @@ void fatalError(int errCode, char *mess, int exitStatus) {
 void internalCheckFail(char *expr, char *file, int line) {
     char msg[TMP_BUFF_SIZE];
 
-    log_fatal_with_line(file, line, "'%s' is not true",  expr);
     if (errOut == NULL)
         errOut = stderr;
     sprintf(msg,"'%s' is not true in '%s:%d'", expr, file, line);
+    log_with_line(LOG_FATAL, file, line, "'%s' is not true",  expr);
     writeErrorMessage(ERR_INTERNAL_CHECK,msg);
     if (options.taskRegime == RegimeEditServer || options.refactoringRegime == RegimeRefactory) {
         if (options.xref2) {
