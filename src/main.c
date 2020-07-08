@@ -2248,18 +2248,9 @@ static void mainFileProcessingInitialisations(
            must be set after .c-xrefrc file, but s_cachedOptions can't contain
            piped options, !!! berk.
         */
-        {
-            copyOptions(&s_tmpOptions, &options);
-            processOptions(nargc, nargv, INFILES_DISABLED);
-            // get options file once more time, because of -license ???
-            // if takes into account the -p option from piped options
-            // but copy new project name into old to avoid warning message
-            strcpy(oldStdopFile,dffname);
-            strcpy(oldStdopSection,dffsect);
-            getOptionsFile(fileName, dffname, dffsect,DEFAULT_VALUE);
-            //&     s_tmpOptions.setGetEnv = options.setGetEnv; // hack, take new env. vals
-            copyOptions(&options, &s_tmpOptions);
-        }
+        copyOptions(&s_tmpOptions, &options);
+        processOptions(nargc, nargv, INFILES_DISABLED);
+
         reInitCwd(dffname, dffsect);
         tmpIncludeDirs = options.includeDirs;
         options.includeDirs = NULL;
@@ -2315,25 +2306,6 @@ static void mainFileProcessingInitialisations(
         errOut = dumpOut;
     checkExactPositionUpdate(0);
     // so s_input_file_number is not set if the file is not really opened!!!
-}
-
-static void createXrefrcDefaultLicense(void) {
-    char            fn[MAX_FILE_NAME_SIZE];
-    struct stat     st;
-    FILE            *ff;
-
-    getXrefrcFileName(fn);
-    if (stat(fn, &st)!=0) {
-        // does not exists
-        ff = openFile(fn,"w");
-        if (ff == NULL) {
-            char tmpBuff[TMP_BUFF_SIZE];
-            sprintf(tmpBuff, "home directory %s does not exists", fn);
-            fatalError(ERR_ST,tmpBuff, XREF_EXIT_ERR);
-        } else {
-            closeFile(ff);
-        }
-    }
 }
 
 static int power(int x, int y) {
@@ -2483,7 +2455,6 @@ void mainTaskEntryInitialisations(int argc, char **argv) {
         CX_FREE_UNTIL(sss);
     }
     // must be after processing command line options
-    createXrefrcDefaultLicense();
     initCaching();
     // enclosed in cache point, because of persistent #define in XrefEdit
     argcount = 0;
