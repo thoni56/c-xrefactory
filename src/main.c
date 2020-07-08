@@ -2549,6 +2549,7 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
 
     ENTER();
     if (mess!=LONGJMP_REASON_NONE && options.taskRegime!=RegimeHtmlGenerate) {
+        log_trace("swapping references to disk");
         if (options.xref2) {
             ppcGenRecord(PPC_INFORMATION, "swapping references to disk", "\n");
             ppcGenRecord(PPC_INFORMATION, "", "\n");
@@ -2561,6 +2562,7 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
         fatalError(ERR_ST,"sorry no file for cxrefs, use -refs option", XREF_EXIT_ERR);
     }
     for(i=0; i<includeStackPointer; i++) {
+        log_trace("inspecting include %d, fileNumber: %d", i, includeStack[i].lexBuffer.buffer.fileNumber);
         if (includeStack[i].lexBuffer.buffer.file != stdin) {
             fi = includeStack[i].lexBuffer.buffer.fileNumber;
             assert(fileTable.tab[fi]);
@@ -2570,6 +2572,7 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
         }
     }
     if (currentFile.lexBuffer.buffer.file != stdin) {
+        log_trace("inspecting current file, fileNumber: %d", currentFile.lexBuffer.buffer.fileNumber);
         fi = currentFile.lexBuffer.buffer.fileNumber;
         assert(fileTable.tab[fi]);
         fileTable.tab[fi]->b.cxLoading = false;
