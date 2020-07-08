@@ -823,13 +823,13 @@ static bool processLOption(int *ii, int argc, char **argv) {
 static bool processMOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strncmp(argv[i],"-mf",3)==0)   {
-        int newmf;
-        sscanf(argv[i]+3, "%d", &newmf);
-        if (newmf<=0 || newmf>255) {
+    else if (strncmp(argv[i],"-mf=", 4)==0) {
+        int mf;
+        sscanf(argv[i]+4, "%d", &mf);
+        if (mf<0 || mf>=255) {
             fatalError(ERR_ST, "memory factor out of range <1,255>", XREF_EXIT_ERR);
         }
-        options.cxMemoryFactor = newmf;
+        options.cxMemoryFactor = mf;
     }
     else if (strncmp(argv[i],"-maxCompls=",11)==0 || strncmp(argv[i],"-maxcompls=",11)==0)  {
         sscanf(argv[i]+11, "%d", &options.maxCompletions);
