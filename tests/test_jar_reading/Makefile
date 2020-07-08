@@ -2,7 +2,7 @@
 
 include ../Makefile.boilerplate
 
-COMMAND = ../../src/c-xref -xrefrc .c-xrefrc abbot.jar
+COMMAND = ../../src/c-xref -xrefrc .c-xrefrc -mf=4 abbot.jar jdk1.8.0_121_jre_lib_rt.jar
 
 $(TEST):
 	@$(COMMAND) > output
