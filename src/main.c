@@ -3335,7 +3335,7 @@ int main(int argc, char **argv) {
        start processing for real ... Allocating initial memory? */
     setjmp(memoryResizeJumpTarget);
     if (s_cxResizingBlocked) {
-        fatalError(ERR_ST,"cx_memory resizing required, see the TROUBLES section of README file",
+        fatalError(ERR_ST,"cx_memory resizing required, see file TROUBLES",
                    XREF_EXIT_ERR);
     }
 
