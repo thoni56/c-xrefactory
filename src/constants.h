@@ -29,11 +29,7 @@
 #define SIZE_ftMemory           8000000	/* memory for file (and class) table */
 
 #define SIZE_ppmMemory         15000000	/* macro definitions or java class files */
-#ifdef SMALL_OLCX_MEMORY
-#define SIZE_olcxMemory        15000000	/* memory for browsing symbol stack */
-#else
 #define SIZE_olcxMemory        50000000	/* memory for browsing symbol stack */
-#endif
 #define CX_MEMORY_CHUNK_SIZE	2000000
 
                                         /* memory for cross references, can be
