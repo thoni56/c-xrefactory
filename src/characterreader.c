@@ -61,11 +61,13 @@ static int readFromFileToBuffer(CharacterBuffer  *buffer, char *outBuffer, int m
 }
 
 void closeCharacterBuffer(CharacterBuffer *buffer) {
+    ENTER();
     if (buffer->file!=NULL)
         closeFile(buffer->file);
     if (buffer->inputMethod == INPUT_VIA_UNZIP) {
         inflateEnd(&buffer->zipStream);
     }
+    LEAVE();
 }
 
 /* Need to match zlib'z alloc_func
