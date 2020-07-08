@@ -44,15 +44,6 @@ typedef struct referencesChangeData {
                                   positionsAreNotEqual((tmp)->p, (key).p)   \
                                   )
 
-#define CX_TEST_SPACE() {                                               \
-        assert(options.taskRegime);                                     \
-        if (options.taskRegime==RegimeXref||options.taskRegime==RegimeHtmlGenerate) { \
-            if (!(DM_FREE_SPACE(cxMemory,CX_SPACE_RESERVE))) {          \
-                longjmp(cxmemOverflow,LONGJUMP_REASON_REFERENCE_OVERFLOW); \
-            }                                                           \
-        }                                                               \
-    }
-
 #define OLCX_USER_RESERVE 30
 
 /* ************************************************************** */
@@ -849,7 +840,8 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
                 defpos = &p->pos;
                 defusage = UsageDefined;
             }
-            //&if (defpos->file!=noFileIndex) fprintf(dumpOut,":getting definition position of %s at line %d\n", p->name, defpos->line);
+            if (defpos->file!=noFileIndex)
+                log_trace("getting definition position of %s at line %d", p->name, defpos->line);
             if (! olcxOnlyParseNoPushing(options.server_operation)) {
                 mmi = olAddBrowsedSymbol(memb,&s_olcxCurrentUser->browserStack.top->hkSelectedSym,
                                          1,1,0,usage,0, defpos, defusage);
@@ -873,10 +865,18 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
         }
     }
 
-    CX_TEST_SPACE();
+    /* Test for available space */
+    assert(options.taskRegime);
+    if (options.taskRegime==RegimeXref||options.taskRegime==RegimeHtmlGenerate) {
+        if (!(DM_FREE_SPACE(cxMemory, CX_SPACE_RESERVE))) {
+            longjmp(cxmemOverflow, LONGJUMP_REASON_REFERENCE_OVERFLOW);
+        }
+    }
+
     assert(place);
-    /*&fprintf(dumpOut,":returning %x == %s %s:%d\n",*place,usageName[(*place)->usage.base],fileTable.tab[(*place)->p.file]->name,(*place)->p.line);&*/
-    return(*place);
+    log_trace("returning %x == %s %s:%d", *place, usageEnumName[(*place)->usage.base],
+              fileTable.tab[(*place)->p.file]->name, (*place)->p.line);
+    return *place;
 }
 
 Reference * addCxReference(Symbol *p, Position *pos, Usage usage, int vFunCl, int vApplCl) {
