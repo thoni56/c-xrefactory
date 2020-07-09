@@ -594,36 +594,48 @@ static char *canItBeJavaBinPath(char *path) {
 }
 
 
-static char *getJdk12AutoClassPathQuickly(void) {
-    char ttt[MAX_FILE_NAME_SIZE];
-    char *res;
+static bool endsWithPathSeparator(char dirname[]) {
+    int len = strlen(dirname);
+
+    if (len > 0)
+        return dirname[len-1]==FILE_PATH_SEPARATOR;
+    else
+        return false;
+}
+
+
+static char *getJdkClassPathFromJavaHomeOrPath(void) {
     char *cp;
+    char dirname[MAX_FILE_NAME_SIZE];
     int len;
+    char *res;
 
     cp = getenv("JAVA_HOME");
-    if (cp!=NULL) {
-        strcpy(ttt,cp);
-        len = strlen(ttt);
-        if (len>0 && (ttt[len-1]=='/' || ttt[len-1]=='\\')) len--;
-        sprintf(ttt+len, "%cbin", FILE_PATH_SEPARATOR);
-        res = canItBeJavaBinPath(ttt);
-        if (res!=NULL) return(res);
+    if (cp != NULL) {
+        strcpy(dirname, cp);
+        len = strlen(dirname);
+        if (endsWithPathSeparator(dirname))
+            len--;
+        sprintf(dirname+len, "%cbin", FILE_PATH_SEPARATOR);
+        res = canItBeJavaBinPath(dirname);
+        if (res!=NULL)
+            return(res);
     }
     cp = getenv("PATH");
-    if (cp!=NULL) {
+    if (cp != NULL) {
         JavaMapOnPaths(cp, {
                 res = canItBeJavaBinPath(currentPath);
                 if (res != NULL) return(res);
             });
     }
-    return(NULL);
+    return NULL;
 }
 
 static char *getJdkClassPathQuickly(void) {
     char *jdkcp;
     jdkcp = options.jdkClassPath;
     if (jdkcp == NULL || *jdkcp==0) jdkcp = getenv("JDKCLASSPATH");
-    if (jdkcp == NULL || *jdkcp==0) jdkcp = getJdk12AutoClassPathQuickly();
+    if (jdkcp == NULL || *jdkcp==0) jdkcp = getJdkClassPathFromJavaHomeOrPath();
     return(jdkcp);
 }
 
