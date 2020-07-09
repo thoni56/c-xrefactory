@@ -1,5 +1,7 @@
 #include "fileio.h"
+
 #include <unistd.h>
+#include <sys/stat.h>
 
 #include "log.h"
 #include "head.h"
@@ -32,4 +34,20 @@ void createDir(char *dirname) {
 void removeFile(char *fileName) {
     log_trace("removing file '%s'", fileName);
     unlink(fileName);
+}
+
+bool dirExists(char *fullPath) {
+    struct stat st;
+    int statResult;
+
+    statResult = stat(fullPath, &st);
+    return statResult==0 && S_ISDIR(st.st_mode);
+}
+
+bool fileExists(char *fullPath) {
+    struct stat st;
+    int statResult;
+
+    statResult = stat(fullPath, &st);
+    return statResult==0 && S_ISREG(st.st_mode);
 }

@@ -564,33 +564,38 @@ void addSourcePathsCut(void) {
 }
 
 
-static char *canItBeJavaBinPath(char *path) {
+static char *canItBeJavaBinPath(char *possibleBinPath) {
     static char filename[MAX_FILE_NAME_SIZE];
-    char *np;
-    struct stat st;
-    int statResult, len;
+    char *path;
+    int len;
 
-    np = normalizeFileName(path, s_cwd);
-    len = strlen(np);
+    path = normalizeFileName(possibleBinPath, s_cwd);
+    len = strlen(path);
 #if defined (__WIN32__)
-    sprintf(filename, "%s%cjava.exe", np, FILE_PATH_SEPARATOR);
+    sprintf(filename, "%s%cjava.exe", path, FILE_PATH_SEPARATOR);
 #else
-    sprintf(filename, "%s%cjava", np, FILE_PATH_SEPARATOR);
+    sprintf(filename, "%s%cjava", path, FILE_PATH_SEPARATOR);
 #endif
     assert(len+6<MAX_FILE_NAME_SIZE);
-    statResult = stat(filename, &st);
-    if (statResult==0  && (st.st_mode & S_IFMT)!=S_IFDIR) {
+    if (fileExists(filename)) {
         filename[len]=0;
         if (len>4 && compareFileNames(filename+len-3, "bin")==0 && filename[len-4]==FILE_PATH_SEPARATOR) {
-            sprintf(filename+len-3, "jre%clib%crt.jar", FILE_PATH_SEPARATOR, FILE_PATH_SEPARATOR);
-            assert(strlen(filename)<MAX_FILE_NAME_SIZE-1);
-            statResult = stat(filename,&st);
-            if (statResult==0) {
-                return(filename);
+            sprintf(filename+len-3, "jre");
+            if (dirExists(filename)) {
+                /* This is a JRE or JDK < Java 9 */
+                sprintf(filename+len-3, "jre%clib%crt.jar", FILE_PATH_SEPARATOR, FILE_PATH_SEPARATOR);
+                assert(strlen(filename)<MAX_FILE_NAME_SIZE-1);
+                if (fileExists(filename))
+                    return filename;
+            } else {
+                sprintf(filename+len-3, "jrt-fs.jar");
+                if (fileExists(filename))
+                    /* In Java 9 the rt.jar was removed and replaced by "implementation dependent" files in lib... */
+                    log_warning("Found Java > 8 which don't have a jar that we can read...");
             }
         }
     }
-    return(NULL);
+    return NULL;
 }
 
 

@@ -25,3 +25,11 @@ void createDir(char *dirName) {
 void removeFile(char *fileName) {
     mock(fileName);
 }
+
+bool dirExists(char *fullPath) {
+    return mock(fullPath);
+}
+
+bool fileExists(char *fullPath) {
+    return mock(fullPath);
+}
