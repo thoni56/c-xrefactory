@@ -9,7 +9,7 @@ COMMAND = ../../src/c-xref -xrefrc .c-xrefrc src -o $(TEST).output
 
 $(TEST):
 	@rm -rf $(TEST).output CXrefs
-	@$(COMMAND)
+	@JAVA_HOME=/ $(COMMAND)
 	@grep -i error $(TEST).output ; \
 	if [ $$? -ne 1 ] ; then \
 		$(FAIL) ; \
