@@ -2141,25 +2141,41 @@ static void olcxReferenceGotoTagSearchItem(int refn) {
 static void olcxReferenceBrowseCompletion(int refn) {
     S_olcxReferences    *refs;
     S_olCompletion      *rr;
-    char                *url,*tt;
+    char                *url;
     int                 aa;
     assert(refn > 0);
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
     rr = olCompletionNthLineRef(refs->cpls, refn);
     if (rr != NULL) {
         if (rr->cat == CategoryLocal) {
-            fprintf(ccOut,"* ** no JavaDoc is available for local symbols **");
+            if (options.xref2)
+                ppcGenRecord(PPC_ERROR, "No JavaDoc is available for local symbols.", "\n");
+            else
+                fprintf(ccOut,"* ** no JavaDoc is available for local symbols **");
         } else {
             aa = olcxBrowseSymbolInJavaDoc(&rr->sym);
             if (aa==0) {
-                fprintf(ccOut, "*** JavaDoc for ");
+                char message[TMP_BUFF_SIZE];
+                int len;
+
+                sprintf(message, "*** JavaDoc for ");
                 url = getJavaDocUrl_st(&rr->sym);
-                for(tt=url ; *tt && *tt!='#'; tt++) fputc(*tt, ccOut);
-                fprintf(ccOut, " not available, (check -javadocpath) **");
+                len = strlen(message);
+                for(char *tt=url ; *tt && *tt!='#'; tt++, len++)
+                    message[len] = *tt;
+                message[len] = '\0';
+                strcat(message, " not available, (check -javadocpath) **");
+                if (options.xref2)
+                    ppcGenRecord(PPC_ERROR, message, "\n");
+                else
+                    fprintf(ccOut, "%s", message);
             }
         }
     } else {
-        fprintf(ccOut, "* ** out of range **");
+        if (options.xref2)
+            ppcGenRecord(PPC_ERROR, "Out of range", "\n");
+        else
+            fprintf(ccOut, "* ** out of range **");
     }
 }
 
