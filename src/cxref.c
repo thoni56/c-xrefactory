@@ -695,16 +695,6 @@ static int olcxOnlyParseNoPushing(int opt) {
 }
 
 
-#if ZERO
-static int htmlReferencableSymbol(int scope, int category, Symbol *p) {
-    //& if (p->b.symType==TypeCppIfElse) return(0); /* takes too much memory */
-    if (scope==ScopeFile) return(1);
-    if (category==CatGlobal) return(1);
-    if (p->b.symType==TypeDefault && p->b.storage==StorageStatic) return(1);
-    return(0);
-}
-#endif
-
 /* ********************************************************************* */
 /* ********************************************************************* */
 /* default vappClass == vFunClass == s_noneFileIndex !!!!!!!             */
@@ -775,9 +765,6 @@ Reference * addCxReferenceNew(Symbol *p, Position *pos, UsageBits *usageb,
         if (!fileTable.tab[pos->file]->b.cxLoading) return NULL;
     }
     if (options.taskRegime == RegimeHtmlGenerate) {
-        //&     scope = ScopeFile;  /* do not forget any reference */
-        //&     if (! htmlReferencableSymbol(scope, category, p)) return NULL;
-        //&     if (!fileTable.tab[pos->file]->b.cxLoading) return NULL;
         if (!fileTable.tab[pos->file]->b.cxLoading && category==CategoryGlobal) return NULL;
         if (fileTable.tab[pos->file]->b.cxLoaded
             &&p->bits.symType==TypeCppIfElse) return NULL;
