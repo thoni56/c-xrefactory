@@ -21,7 +21,7 @@ trace: CXREF+=-trace
 trace: $(TEST)
 
 clean:
-	@-rm -rf .c-xrefrc CXrefs output.log output.tmp output buffer *~ log
+	@-rm -rf .c-xrefrc CXrefs output.log output.tmp output *~ log
 
 gdb:
 	@gdb --args $(COMMAND)

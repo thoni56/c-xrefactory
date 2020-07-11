@@ -22,4 +22,4 @@ trace: CXREF+=-trace
 trace: $(TEST)
 
 clean:
-	rm -rf .c-xrefrc CXrefs output* buffer
+	rm -rf .c-xrefrc CXrefs output*

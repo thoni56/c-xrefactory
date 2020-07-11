@@ -12,7 +12,7 @@ include ../Makefile.boilerplate
 CXREF = ../../src/c-xref
 
 $(TEST):
-	@-$(EDIT_SERVER_DRIVER) commands.input $(CURDIR) buffer > output.tmp
+	@-$(EDIT_SERVER_DRIVER) commands.input $(CURDIR) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	@diff output expected > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
@@ -29,9 +29,9 @@ trace: CXREF+=-trace
 trace: $(TEST)
 
 clean:
-	@-rm -rf .c-xrefrc CXrefs log output.tmp output buffer
+	@-rm -rf .c-xrefrc CXrefs log output.tmp output
 
 gdb:
-	@$(EDIT_SERVER_DRIVER) commands.input "$(CURDIR)" buffer 15 > output.tmp &
+	@$(EDIT_SERVER_DRIVER) commands.input "$(CURDIR)" 15 > output.tmp &
 	sleep 1
 	sudo gdb -pid `pgrep c-xref | tail -1` -ex 'br mainRefactory' -ex 'continue'

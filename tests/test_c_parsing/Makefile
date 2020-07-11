@@ -10,7 +10,7 @@ $(TEST): clean
 	@exit 0
 
 clean:
-	@-rm -rf CXrefs output.log output.tmp output buffer
+	@-rm -rf CXrefs output.log output.tmp output
 
 gdb:
 	gdb --args $(COMMAND)

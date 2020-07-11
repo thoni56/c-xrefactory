@@ -4,21 +4,25 @@
 #
 # Usage:
 #
-#     edit_server_driver.py <commandsfile> <curdir> <bufferfile> [ <seconds> ]
+#     edit_server_driver.py <commandsfile> <curdir> [ <seconds> ]
 #
-# Format of commandsfile is just a sequence of lines which are sent to
+# <curdir> is the current directory to replace "CURDIR" with in command input files
+# and output so that they are location independent.
+#
+# Format of <commandsfile> is a sequence of lines which are sent to
 # the edit server interspersed with <sync> which will cause the driver
 # to listen wait for syncronization from the server. Note that the edit
 # server might send <progress> a couple of times before sending the <sync>.
 #
-# The first line is always the invocation command.
+# The first line is always the invocation command. It should not have an "-o" option as
+# the edit_server_driver will add "-o buffer".
 #
 # All commands will be printed on stdout. After a <sync> is recieved
 # the servers answer is in the specified output file. That answer will
 # be copied into the output so that the complete interaction can be
-# seen. Example input
+# seen. Example commands file
 #
-#     ../../src/c-xref -xrefrc CURDIR/.c-xrefrc single_int1.c -xrefactory-II -o buffer -task_regime_server
+#     ../../src/c-xref -xrefrc CURDIR/.c-xrefrc single_int1.c -xrefactory-II -task_regime_server
 #     -olcxgetprojectname -xrefrc CURDIR/.c-xrefrc CURDIR/single_int1.c
 #     <sync>
 #     -olcxcomplet CURDIR/single_int1.c -olcursor=85 -xrefrc CURDIR/.c-xrefrc -p CURDIR
@@ -65,7 +69,7 @@ def read_output(filename):
     with open(filename, 'rb') as file:
         print(file.read().decode())
 
-if len(sys.argv) < 4:
+if len(sys.argv) < 3:
     print("Error - not enough arguments", file=sys.stderr)
     sys.exit(1)
 
@@ -75,19 +79,20 @@ command_file = sys.argv[1]
 # Second argument is the value of CURDIR
 CURDIR = sys.argv[2]
 
-# Third argument is name of the communication buffer file that edit
-# server will write its response in
-buffer = sys.argv[3]
+buffer_filename = "buffer"
+with open(buffer_filename, "w"):
+    pass
 
-# If there is a fourth argument that is a sleep timer to
+# If there is a third argument that is a sleep timer to
 # be able to attach a debugger
-if len(sys.argv) == 5:
-    sleep = int(sys.argv[4])
+if len(sys.argv) == 4:
+    sleep = int(sys.argv[3])
 else:
     sleep = None
 
 with open(command_file, 'rb') as file:
     invocation = file.readline().decode().rstrip().replace("CURDIR", CURDIR)
+    invocation += " -o "+buffer_filename
     print(invocation)
 
     args = shlex.split(invocation)
@@ -112,7 +117,7 @@ with open(command_file, 'rb') as file:
         if command == '<sync>':
             end_of_options(p)
             wait_for_sync(p)
-            read_output(buffer)
+            read_output(buffer_filename)
             command = file.readline().decode().rstrip()
 
         if command == '<update-report>':

@@ -6,7 +6,7 @@ CXREF = ../../src/c-xref -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR)
 COMMAND = $(CXREF)
 
 $(TEST): CXrefs
-	@-$(EDIT_SERVER_DRIVER) commands.input $(CURDIR) buffer > output.tmp
+	@-$(EDIT_SERVER_DRIVER) commands.input $(CURDIR) > output.tmp
 	@$(NORMALIZE) output.tmp > output
 	@cmp output expected ; \
 	if [ $$? -ne 0 ] ; then \

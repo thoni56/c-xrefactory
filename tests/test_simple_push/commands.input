@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -task_regime_server -o buffer
+../../src/c-xref -xrefactory-II -crlfconversion -crconversion -encoding=default -task_regime_server
 -olcxgetprojectname -xrefrc ".c-xrefrc" "test_source/single_int1.c"
 <sync>
 -olcxpush -urldirect "-olmark=0" "-olcursor=6" "test_source/single_int1.c" -xrefrc ".c-xrefrc" -p "CURDIR" -encoding=european
