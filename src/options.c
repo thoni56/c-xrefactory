@@ -610,27 +610,28 @@ static bool endsWithPathSeparator(char dirname[]) {
 
 
 static char *getJdkClassPathFromJavaHomeOrPath(void) {
-    char *cp;
+    char *path;
     char dirname[MAX_FILE_NAME_SIZE];
     int len;
-    char *res;
+    char *dir;
 
-    cp = getenv("JAVA_HOME");
-    if (cp != NULL) {
-        strcpy(dirname, cp);
+    path = getenv("JAVA_HOME");
+    if (path != NULL) {
+        strcpy(dirname, path);
         len = strlen(dirname);
         if (endsWithPathSeparator(dirname))
             len--;
         sprintf(dirname+len, "%cbin", FILE_PATH_SEPARATOR);
-        res = canItBeJavaBinPath(dirname);
-        if (res!=NULL)
-            return(res);
+        dir = canItBeJavaBinPath(dirname);
+        if (dir != NULL)
+            return dir;
     }
-    cp = getenv("PATH");
-    if (cp != NULL) {
-        JavaMapOnPaths(cp, {
-                res = canItBeJavaBinPath(currentPath);
-                if (res != NULL) return(res);
+    path = getenv("PATH");
+    if (path != NULL) {
+        JavaMapOnPaths(path, {
+                dir = canItBeJavaBinPath(currentPath);
+                if (dir != NULL)
+                    return dir;
             });
     }
     return NULL;
