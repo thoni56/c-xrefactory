@@ -4713,7 +4713,8 @@ void mainAnswerEditAction(void) {
                 searchDefaultOptionsFile(ifname, dffname, dffsect);
                 if (dffname[0]==0 || dffsect[0]==0) {
                     if (options.noErrors) {
-                        if (! options.xref2) fprintf(ccOut,"^"); // TODO: was "fprintf(ccOut,"^", ifname);"
+                        if (! options.xref2)
+                            fprintf(ccOut,"^"); // TODO: was "fprintf(ccOut,"^", ifname);"
                     } else {
                         if (options.xref2) {
                             ppcGenRecord(PPC_NO_PROJECT, ifname, "\n");
@@ -4756,81 +4757,117 @@ void mainAnswerEditAction(void) {
     case OLO_GET_ENV_VALUE:
         olcxProcessGetRequest();
         break;
-    case OLO_PLUS:  olcxReferencePlus();
+    case OLO_PLUS:
+        olcxReferencePlus();
         break;
-    case OLO_MINUS: olcxReferenceMinus();
+    case OLO_MINUS:
+        olcxReferenceMinus();
         break;
-    case OLO_GOTO_DEF:  olcxReferenceGotoDef();
+    case OLO_GOTO_DEF:
+        olcxReferenceGotoDef();
         break;
-    case OLO_GOTO_CALLER:   olcxReferenceGotoCaller();
+    case OLO_GOTO_CALLER:
+        olcxReferenceGotoCaller();
         break;
-    case OLO_GOTO_CURRENT:  olcxReferenceGotoCurrent();
+    case OLO_GOTO_CURRENT:
+        olcxReferenceGotoCurrent();
         break;
-    case OLO_GET_CURRENT_REFNUM:    olcxReferenceGetCurrentRefn();
+    case OLO_GET_CURRENT_REFNUM:
+        olcxReferenceGetCurrentRefn();
         break;
-    case OLO_LIST_TOP:  olcxListTopReferences(";");
+    case OLO_LIST_TOP:
+        olcxListTopReferences(";");
         break;
-    case OLO_SHOW_TOP:  olcxShowTopSymbol();
+    case OLO_SHOW_TOP:
+        olcxShowTopSymbol();
         break;
-    case OLO_SHOW_TOP_APPL_CLASS:   olcxShowTopApplClass();
+    case OLO_SHOW_TOP_APPL_CLASS:
+        olcxShowTopApplClass();
         break;
-    case OLO_SHOW_TOP_TYPE: olcxShowTopType();
+    case OLO_SHOW_TOP_TYPE:
+        olcxShowTopType();
         break;
-    case OLO_SHOW_CLASS_TREE:   olcxShowClassTree();
+    case OLO_SHOW_CLASS_TREE:
+        olcxShowClassTree();
         break;
-    case OLO_TOP_SYMBOL_RES:    olcxTopSymbolResolution();
+    case OLO_TOP_SYMBOL_RES:
+        olcxTopSymbolResolution();
         break;
-    case OLO_CSELECT:   olCompletionSelect();
+    case OLO_CSELECT:
+        olCompletionSelect();
         break;
-    case OLO_COMPLETION_BACK:   olCompletionBack();
+    case OLO_COMPLETION_BACK:
+        olCompletionBack();
         break;
-    case OLO_COMPLETION_FORWARD:    olCompletionForward();
+    case OLO_COMPLETION_FORWARD:
+        olCompletionForward();
         break;
-    case OLO_GOTO:  olcxReferenceGotoRef(options.olcxGotoVal);
+    case OLO_GOTO:
+        olcxReferenceGotoRef(options.olcxGotoVal);
         break;
-    case OLO_CGOTO: olcxReferenceGotoCompletion(options.olcxGotoVal);
+    case OLO_CGOTO:
+        olcxReferenceGotoCompletion(options.olcxGotoVal);
         break;
-    case OLO_TAGGOTO:   olcxReferenceGotoTagSearchItem(options.olcxGotoVal);
+    case OLO_TAGGOTO:
+        olcxReferenceGotoTagSearchItem(options.olcxGotoVal);
         break;
-    case OLO_TAGSELECT: olcxReferenceSelectTagSearchItem(options.olcxGotoVal);
+    case OLO_TAGSELECT:
+        olcxReferenceSelectTagSearchItem(options.olcxGotoVal);
         break;
-    case OLO_CBROWSE:   olcxReferenceBrowseCompletion(options.olcxGotoVal);
+    case OLO_CBROWSE:
+        olcxReferenceBrowseCompletion(options.olcxGotoVal);
         break;
-    case OLO_REF_FILTER_SET:    olcxReferenceFilterSet(options.filterValue);
+    case OLO_REF_FILTER_SET:
+        olcxReferenceFilterSet(options.filterValue);
         break;
-    case OLO_REPUSH:    olcxReferenceRePush();
+    case OLO_REPUSH:
+        olcxReferenceRePush();
         break;
-    case OLO_POP:   olcxReferencePop();
+    case OLO_POP:
+        olcxReferencePop();
         break;
-    case OLO_POP_ONLY:  olcxPopOnly();
+    case OLO_POP_ONLY:
+        olcxPopOnly();
         break;
-    case OLO_MENU_INSPECT_DEF: olcxSymbolMenuInspectDef();
+    case OLO_MENU_INSPECT_DEF:
+        olcxSymbolMenuInspectDef();
         break;
-    case OLO_MENU_INSPECT_CLASS: olcxSymbolMenuInspectClass();
+    case OLO_MENU_INSPECT_CLASS:
+        olcxSymbolMenuInspectClass();
         break;
-    case OLO_MENU_SELECT: olcxMenuToggleSelect();
+    case OLO_MENU_SELECT:
+        olcxMenuToggleSelect();
         break;
-    case OLO_MENU_SELECT_ONLY: olcxMenuSelectOnly();
+    case OLO_MENU_SELECT_ONLY:
+        olcxMenuSelectOnly();
         break;
-    case OLO_MENU_SELECT_ALL: olcxMenuSelectAll(1);
+    case OLO_MENU_SELECT_ALL:
+        olcxMenuSelectAll(1);
         break;
-    case OLO_MENU_SELECT_NONE: olcxMenuSelectAll(0);
+    case OLO_MENU_SELECT_NONE:
+        olcxMenuSelectAll(0);
         break;
     case OLO_MENU_FILTER_SET:
         olcxMenuSelectPlusolcxMenuSelectFilterSet(options.filterValue);
         break;
-    case OLO_RESET_REF_SUFFIX: olcxResetSuffix();
+    case OLO_RESET_REF_SUFFIX:
+        olcxResetSuffix();
         break;
-    case OLO_SAFETY_CHECK_INIT: olcxSafetyCheckInit();
+    case OLO_SAFETY_CHECK_INIT:
+        olcxSafetyCheckInit();
         break;
-    case OLO_SAFETY_CHECK1: olcxSafetyCheck1();
+    case OLO_SAFETY_CHECK1:
+        olcxSafetyCheck1();
         break;
-    case OLO_MM_PRE_CHECK: case OLO_PP_PRE_CHECK:
+    case OLO_MM_PRE_CHECK:
+    case OLO_PP_PRE_CHECK:
         olcxMMPreCheck();   // the value of s_opt.cxrefs is checked inside
         break;
-    case OLO_INTERSECTION: olcxTopReferencesIntersection();
+    case OLO_INTERSECTION:
+        olcxTopReferencesIntersection();
         break;
-    case OLO_REMOVE_WIN: olcxTopReferencesRemoveWindow();
+    case OLO_REMOVE_WIN:
+        olcxTopReferencesRemoveWindow();
         break;
     case OLO_MENU_GO:
         assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
@@ -4839,19 +4876,25 @@ void mainAnswerEditAction(void) {
         olcxPrintPushingAction(s_olcxCurrentUser->browserStack.top->command,
                                PUSH_AFTER_MENU);
         break;
-    case OLO_CT_INSPECT_DEF: olcxClassTreeInspectDef();
+    case OLO_CT_INSPECT_DEF:
+        olcxClassTreeInspectDef();
         break;
-    case OLO_CLASS_TREE:  olcxCreateClassTree();
+    case OLO_CLASS_TREE:
+        olcxCreateClassTree();
         break;
-    case OLO_USELESS_LONG_NAME: case OLO_USELESS_LONG_NAME_IN_CLASS:
+    case OLO_USELESS_LONG_NAME:
+    case OLO_USELESS_LONG_NAME_IN_CLASS:
         olcxListSpecial(LINK_NAME_IMPORTED_QUALIFIED_ITEM);
         break;
-    case OLO_MAYBE_THIS:  olcxListSpecial(LINK_NAME_MAYBE_THIS_ITEM);
+    case OLO_MAYBE_THIS:
+        olcxListSpecial(LINK_NAME_MAYBE_THIS_ITEM);
         break;
-    case OLO_NOT_FQT_REFS:  case OLO_NOT_FQT_REFS_IN_CLASS:
+    case OLO_NOT_FQT_REFS:
+    case OLO_NOT_FQT_REFS_IN_CLASS:
         olcxListSpecial(LINK_NAME_NOT_FQT_ITEM);
         break;
-    case OLO_SET_MOVE_TARGET:                       // xref1 target setting
+    case OLO_SET_MOVE_TARGET:
+        // xref1 target setting
         assert(!options.xref2);
         if (*s_cps.setTargetAnswerClass!=0) {
             fprintf(ccOut,"*");
@@ -4862,7 +4905,9 @@ void mainAnswerEditAction(void) {
             errorMessage(ERR_ST, "Not a valid target position. The cursor has to be on a place where a new field/method can be inserted.");
         }
         break;
-    case OLO_SET_MOVE_CLASS_TARGET: case OLO_SET_MOVE_METHOD_TARGET:    // xref2 target
+    case OLO_SET_MOVE_CLASS_TARGET:
+    case OLO_SET_MOVE_METHOD_TARGET:
+        // xref2 target
         assert(options.xref2);
         if (!s_cps.moveTargetApproved) {
             ppcGenRecord(PPC_ERROR, "Invalid target place","\n");
