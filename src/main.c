@@ -67,21 +67,21 @@ static void usage(char *s) {
     fprintf(stdout,"\t-htmlcutsuffix            - cut language suffix in html\n");
     fprintf(stdout,"\t-htmllinkcolor=<color>    - color of HTML links\n");
     fprintf(stdout,"\t-htmllinenumcolor=<color> - color of line numbers in HTML links\n");
-    fprintf(stdout,"\t-htmlgenjavadoclinks      - gen links to javadoc if no definition\n");
+    fprintf(stdout,"\t-htmlgenjavadoclinks      - generate links to Java API docs if no definition\n");
     fprintf(stdout,"\t                            only for packages from -htmljavadocavailable\n");
-    fprintf(stdout,"\t-javadocurl=<http>        - url to existing java docs\n");
-    fprintf(stdout,"\t-javadocpath=<path>       - paths to existing java docs\n");
+    fprintf(stdout,"\t-javadocurl=<http>        - url to existing Java API docs\n");
+    fprintf(stdout,"\t-javadocpath=<path>       - paths to existing Java API docs\n");
     fprintf(stdout,"\t-javadocavailable=<packs> - packages for which javadoc is available\n");
-    fprintf(stdout,"\t-p <prj>                  - read options from <prj> section\n");
+    fprintf(stdout,"\t-p <project>              - read options from <project> section\n");
     fprintf(stdout,"\t-I <dir>                  - search for includes in <dir>\n");
-    fprintf(stdout,"\t-D<mac>[=<body>]          - define macro <mac> with body <body>\n");
+    fprintf(stdout,"\t-D<macro>[=<body>]        - define macro <macro> with body <body>\n");
     fprintf(stdout,"\t-packages                 - allow packages as input files\n");
     fprintf(stdout,"\t-sourcepath <path>        - set java sources paths\n");
     fprintf(stdout,"\t-classpath <path>         - set java class path\n");
     fprintf(stdout,"\t-filescasesensitive       - file names are case sensitive\n");
     fprintf(stdout,"\t-filescaseunsensitive     - file names are case unsensitive\n");
     fprintf(stdout,"\t-csuffixes=<paths>        - list of C files suffixes separated by : (or ;)\n");
-    fprintf(stdout,"\t-javasuffixes=<paths>     - list of Java files suffixes separated by : (or ;)\n");
+    fprintf(stdout,"\t-javasuffixes=<suffixes>  - list of Java files suffixes separated by : (or ;)\n");
     fprintf(stdout,"\t-stdoptions <file>        - read options from <file>\n");
 #if 0
     fprintf(stdout,"\t-olinelen=<n>             - length of lines for on-line output\n");
@@ -95,7 +95,7 @@ static void usage(char *s) {
     fprintf(stdout,"\t-olcxminus                - previous on-line reference\n");
     fprintf(stdout,"\t-olcxgoto<n>              - go to the n-th on-line reference\n");
     fprintf(stdout,"\t-user                     - user logname for olcx\n");
-    fprintf(stdout,"\t-o <file>                 - log output to <file>\n");
+    fprintf(stdout,"\t-o <file>                 - write output to <file>\n");
     fprintf(stdout,"\t-file <file>              - name of the file given to stdin\n");
 #endif
     fprintf(stdout,"\t-refs <file>              - name of file with cxrefs\n");
@@ -107,6 +107,7 @@ static void usage(char *s) {
 #   ifdef DEBUG
     fprintf(stdout,"\t-debug                    - produce debug output of the execution\n");
     fprintf(stdout,"\t-trace                    - produce trace output of the execution\n");
+    fprintf(stdout,"\t-log=<file>               - log to <file>\n");
 #   endif
     fprintf(stdout,"\t-no-classfiles            - Don't collect references from class files\n");
     fprintf(stdout,"\t-no-cppcomments           - C++ like comments '//' not allowed\n");
