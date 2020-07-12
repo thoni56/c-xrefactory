@@ -1272,88 +1272,83 @@ static bool processROption(int *ii, int argc, char **argv, int infilesFlag) {
         options.refactoringRegime = RegimeRefactory;
     }
     else if (strcmp(argv[i],"-rfct-rename")==0) {
-        options.theRefactoring = PPC_AVR_RENAME_SYMBOL;
+        options.theRefactoring = AVR_RENAME_SYMBOL;
     }
     else if (strcmp(argv[i],"-rfct-rename-class")==0)   {
-        options.theRefactoring = PPC_AVR_RENAME_CLASS;
+        options.theRefactoring = AVR_RENAME_CLASS;
     }
     else if (strcmp(argv[i],"-rfct-rename-package")==0) {
-        options.theRefactoring = PPC_AVR_RENAME_PACKAGE;
+        options.theRefactoring = AVR_RENAME_PACKAGE;
     }
     else if (strcmp(argv[i],"-rfct-expand")==0) {
-        options.theRefactoring = PPC_AVR_EXPAND_NAMES;
+        options.theRefactoring = AVR_EXPAND_NAMES;
     }
     else if (strcmp(argv[i],"-rfct-reduce")==0) {
-        options.theRefactoring = PPC_AVR_REDUCE_NAMES;
+        options.theRefactoring = AVR_REDUCE_NAMES;
     }
     else if (strcmp(argv[i],"-rfct-add-param")==0)  {
-        options.theRefactoring = PPC_AVR_ADD_PARAMETER;
+        options.theRefactoring = AVR_ADD_PARAMETER;
     }
     else if (strcmp(argv[i],"-rfct-del-param")==0)  {
-        options.theRefactoring = PPC_AVR_DEL_PARAMETER;
+        options.theRefactoring = AVR_DEL_PARAMETER;
     }
     else if (strcmp(argv[i],"-rfct-move-param")==0) {
-        options.theRefactoring = PPC_AVR_MOVE_PARAMETER;
+        options.theRefactoring = AVR_MOVE_PARAMETER;
     }
     else if (strcmp(argv[i],"-rfct-move-field")==0) {
-        options.theRefactoring = PPC_AVR_MOVE_FIELD;
+        options.theRefactoring = AVR_MOVE_FIELD;
     }
     else if (strcmp(argv[i],"-rfct-move-static-field")==0)  {
-        options.theRefactoring = PPC_AVR_MOVE_STATIC_FIELD;
+        options.theRefactoring = AVR_MOVE_STATIC_FIELD;
     }
     else if (strcmp(argv[i],"-rfct-move-static-method")==0) {
-        options.theRefactoring = PPC_AVR_MOVE_STATIC_METHOD;
+        options.theRefactoring = AVR_MOVE_STATIC_METHOD;
     }
     else if (strcmp(argv[i],"-rfct-move-class")==0) {
-        options.theRefactoring = PPC_AVR_MOVE_CLASS;
+        options.theRefactoring = AVR_MOVE_CLASS;
     }
     else if (strcmp(argv[i],"-rfct-move-class-to-new-file")==0) {
-        options.theRefactoring = PPC_AVR_MOVE_CLASS_TO_NEW_FILE;
+        options.theRefactoring = AVR_MOVE_CLASS_TO_NEW_FILE;
     }
     else if (strcmp(argv[i],"-rfct-move-all-classes-to-new-file")==0)   {
-        options.theRefactoring = PPC_AVR_MOVE_ALL_CLASSES_TO_NEW_FILE;
+        options.theRefactoring = AVR_MOVE_ALL_CLASSES_TO_NEW_FILE;
     }
     else if (strcmp(argv[i],"-rfct-static-to-dynamic")==0)  {
-        options.theRefactoring = PPC_AVR_TURN_STATIC_METHOD_TO_DYNAMIC;
+        options.theRefactoring = AVR_TURN_STATIC_METHOD_TO_DYNAMIC;
     }
     else if (strcmp(argv[i],"-rfct-dynamic-to-static")==0)  {
-        options.theRefactoring = PPC_AVR_TURN_DYNAMIC_METHOD_TO_STATIC;
+        options.theRefactoring = AVR_TURN_DYNAMIC_METHOD_TO_STATIC;
     }
     else if (strcmp(argv[i],"-rfct-extract-method")==0) {
-        options.theRefactoring = PPC_AVR_EXTRACT_METHOD;
+        options.theRefactoring = AVR_EXTRACT_METHOD;
     }
     else if (strcmp(argv[i],"-rfct-extract-macro")==0)  {
-        options.theRefactoring = PPC_AVR_EXTRACT_MACRO;
+        options.theRefactoring = AVR_EXTRACT_MACRO;
     }
     else if (strcmp(argv[i],"-rfct-reduce-long-names-in-the-file")==0)  {
-        options.theRefactoring = PPC_AVR_ADD_ALL_POSSIBLE_IMPORTS;
+        options.theRefactoring = AVR_ADD_ALL_POSSIBLE_IMPORTS;
     }
     else if (strcmp(argv[i],"-rfct-add-to-imports")==0) {
-        options.theRefactoring = PPC_AVR_ADD_TO_IMPORT;
+        options.theRefactoring = AVR_ADD_TO_IMPORT;
     }
     else if (strcmp(argv[i],"-rfct-self-encapsulate-field")==0) {
-        options.theRefactoring = PPC_AVR_SELF_ENCAPSULATE_FIELD;
+        options.theRefactoring = AVR_SELF_ENCAPSULATE_FIELD;
     }
     else if (strcmp(argv[i],"-rfct-encapsulate-field")==0)  {
-        options.theRefactoring = PPC_AVR_ENCAPSULATE_FIELD;
+        options.theRefactoring = AVR_ENCAPSULATE_FIELD;
     }
     else if (strcmp(argv[i],"-rfct-push-down-field")==0)    {
-        options.theRefactoring = PPC_AVR_PUSH_DOWN_FIELD;
+        options.theRefactoring = AVR_PUSH_DOWN_FIELD;
     }
     else if (strcmp(argv[i],"-rfct-push-down-method")==0)   {
-        options.theRefactoring = PPC_AVR_PUSH_DOWN_METHOD;
+        options.theRefactoring = AVR_PUSH_DOWN_METHOD;
     }
     else if (strcmp(argv[i],"-rfct-pull-up-field")==0)  {
-        options.theRefactoring = PPC_AVR_PULL_UP_FIELD;
+        options.theRefactoring = AVR_PULL_UP_FIELD;
     }
     else if (strcmp(argv[i],"-rfct-pull-up-method")==0) {
-        options.theRefactoring = PPC_AVR_PULL_UP_METHOD;
+        options.theRefactoring = AVR_PULL_UP_METHOD;
     }
-#if 0
-    else if (strcmp(argv[i],"-rfct-")==0)   {
-        s_opt.theRefactoring = PPC_AVR_;
-    }
-#endif
     else if (strncmp(argv[i], "-rfct-param1=", 13)==0)  {
         createOptionString(&options.refpar1, argv[i]+13);
     }

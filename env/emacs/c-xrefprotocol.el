@@ -28,8 +28,6 @@
 (defvar PPC_REFACTORING_PASTE_BLOCK "paste-block")
 
 
-
-
 (defvar PPC_ASK_CONFIRMATION "ask-confirmation")
 (defvar PPC_ADD_TO_IMPORTS_DIALOG "add-to-imports-dialog")
 (defvar PPC_EXTRACTION_DIALOG "extraction-dialog")
@@ -76,12 +74,10 @@
 (defvar PPC_SYNCHRO_RECORD "sync")
 
 
-
 (defvar PPC_LC_POSITION "position-lc")
 (defvar PPC_OFFSET_POSITION "position-off")
 (defvar PPC_STRING_VALUE "str")
 (defvar PPC_INT_VALUE "int")
-
 
 
 (defvar PPCA_LEN "len")
@@ -113,7 +109,8 @@
 (defvar PPCV_BROWSER_TYPE_WARNING 1)
 
 
-(defvar PPC_AVR_NO_REFACTORING 00)
+
+(defvar PPC_AVR_NO_REFACTORING 0)
 (defvar PPC_AVR_RENAME_SYMBOL 10)
 (defvar PPC_AVR_RENAME_CLASS 20)
 (defvar PPC_AVR_RENAME_PACKAGE 30)
@@ -144,12 +141,5 @@
 (defvar PPC_AVR_SET_MOVE_TARGET 280)
 (defvar PPC_AVR_UNDO 290)
 (defvar PPC_MAX_AVAILABLE_REFACTORINGS 300)
-
-
-
-
-
-
-(defvar PPC_SET_PROJECT "set-project")
 
 

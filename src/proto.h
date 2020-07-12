@@ -859,6 +859,8 @@ typedef struct setGetEnv {
     char *value[MAX_SET_GET_OPTIONS];
 } S_setGetEnv;
 
+#include "refactorings.h"
+
 typedef struct options {
     /* GENERAL */
     int exit;
@@ -881,7 +883,7 @@ typedef struct options {
     int parnum2;
     char *refpar1;
     char *refpar2;
-    int theRefactoring;
+    AvailableRefactorings theRefactoring;
     bool briefoutput;
     int cacheIncludes;
     int stdopFlag;		// does this serve to anything ?

@@ -1,6 +1,8 @@
 #ifndef PROTOCOL_H
 #define PROTOCOL_H
 
+#include "refactorings.h"
+
 #define String char *
 #define COMMENT(xx)
 #ifdef PROTOCOL_C

@@ -242,7 +242,7 @@ int s_javaRequiredeAccessibilitiesTable[MAX_REQUIRED_ACCESS+1] = {
 Options s_initOpt = {
                                 /* GENERAL */
     0,                          // exit
-    "gcc", // path to compiler to use for auto-discovering compiler and defines
+    "gcc",                      // path to compiler to use for auto-discovering compiler and defines
     MULE_DEFAULT,               // encoding
     0,                          // completeParenthesis
     NID_IMPORT_ON_DEMAND,       // defaultAddImportStrategy
@@ -261,7 +261,7 @@ Options s_initOpt = {
     0,                          // parnum2
     "",                         // refactoring parameter 1
     "",                         // refactoring parameter 2
-    0,                          // refactoring
+    AVR_NO_REFACTORING,         // refactoring
     false,                      // briefoutput
     0,                          // cacheIncludes
     0,                          // stdopFlag

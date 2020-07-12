@@ -1326,7 +1326,7 @@ static int refactoryHandleSafetyCheckDifferenceLists(
         editorFreeMarkerListNotMarkers(diff1);
         editorFreeMarkerListNotMarkers(diff2);
         olcxPopOnly();
-        if (s_ropt.theRefactoring == PPC_AVR_RENAME_PACKAGE) {
+        if (s_ropt.theRefactoring == AVR_RENAME_PACKAGE) {
             refactoryDisplayResolutionDialog(
                                              "The package exists and is referenced in the original project. Renaming will join two packages without possibility of inverse refactoring",
                                              PPCV_BROWSER_TYPE_WARNING, CONTINUATION_ENABLED);
@@ -1564,22 +1564,22 @@ static void refactorySimpleRenaming(S_editorMarkerList *occs, EditorMarker *poin
     char                *ss;
     S_editorMarkerList  *ll;
     if (symtype == TypeStruct && LANGUAGE(LANG_JAVA)
-        && s_ropt.theRefactoring != PPC_AVR_RENAME_CLASS) {
+        && s_ropt.theRefactoring != AVR_RENAME_CLASS) {
         errorMessage(ERR_INTERNAL, "Use Rename Class to rename classes");
     }
     if (symtype == TypePackage && LANGUAGE(LANG_JAVA)
-        && s_ropt.theRefactoring != PPC_AVR_RENAME_PACKAGE) {
+        && s_ropt.theRefactoring != AVR_RENAME_PACKAGE) {
         errorMessage(ERR_INTERNAL, "Use Rename Package to rename packages");
     }
 
-    if (s_ropt.theRefactoring == PPC_AVR_RENAME_PACKAGE) {
+    if (s_ropt.theRefactoring == AVR_RENAME_PACKAGE) {
         refactorySimplePackageRenaming(occs, point, symname, symLinkName, symtype);
     } else {
         for(ll=occs; ll!=NULL; ll=ll->next) {
             refactoryRenameTo(ll->d, symname, s_ropt.renameTo);
         }
         ppcGenGotoMarkerRecord(point);
-        if (s_ropt.theRefactoring == PPC_AVR_RENAME_CLASS) {
+        if (s_ropt.theRefactoring == AVR_RENAME_CLASS) {
             if (strcmp(simpleFileNameWithoutSuffix_st(point->buffer->name), symname)==0) {
                 // O.K. file name equals to class name, rename file
                 strcpy(nfile, point->buffer->name);
@@ -1828,9 +1828,9 @@ static void refactoryRename(EditorBuffer *buf, EditorMarker *point) {
     //&else ppcGenRecord(PPC_INFORMATION,"Symbol has been renamed","\n");
     editorFreeMarkersAndMarkerList(occs);  // O(n^2)!
 
-    if (s_ropt.theRefactoring==PPC_AVR_RENAME_PACKAGE) {
+    if (s_ropt.theRefactoring==AVR_RENAME_PACKAGE) {
         ppcGenRecord(PPC_INFORMATION, "\nDone.\nDo not forget to remove .class files of former package", "\n");
-    } else if (s_ropt.theRefactoring==PPC_AVR_RENAME_CLASS
+    } else if (s_ropt.theRefactoring==AVR_RENAME_CLASS
                && strcmp(simpleFileNameWithoutSuffix_st(point->buffer->name), s_ropt.renameTo)==0) {
         ppcGenRecord(PPC_INFORMATION, "\nDone.\nDo not forget to remove .class file of former class", "\n");
     }
@@ -4513,26 +4513,26 @@ void mainRefactory(int argc, char **argv) {
 
     s_progressFactor = 1;
     /* TODO: this should be a switch but the PPC_values are not constants... */
-    if (s_ropt.theRefactoring==PPC_AVR_RENAME_SYMBOL
-        || s_ropt.theRefactoring==PPC_AVR_RENAME_CLASS
-        || s_ropt.theRefactoring==PPC_AVR_RENAME_PACKAGE) {
+    if (s_ropt.theRefactoring==AVR_RENAME_SYMBOL
+        || s_ropt.theRefactoring==AVR_RENAME_CLASS
+        || s_ropt.theRefactoring==AVR_RENAME_PACKAGE) {
         s_progressFactor = 3;
         s_refactoryUpdateOption = refactoryComputeUpdateOptionForSymbol(point);
         refactoryRename(buf, point);
-    } else if (s_ropt.theRefactoring==PPC_AVR_EXPAND_NAMES) {
+    } else if (s_ropt.theRefactoring==AVR_EXPAND_NAMES) {
         s_progressFactor = 1;
         refactoryExpandShortNames(buf, point);
-    } else if (s_ropt.theRefactoring==PPC_AVR_REDUCE_NAMES) {
+    } else if (s_ropt.theRefactoring==AVR_REDUCE_NAMES) {
         s_progressFactor = 1;
         refactoryReduceLongNamesInTheFile(buf, point);
-    } else if (s_ropt.theRefactoring==PPC_AVR_ADD_ALL_POSSIBLE_IMPORTS) {
+    } else if (s_ropt.theRefactoring==AVR_ADD_ALL_POSSIBLE_IMPORTS) {
         s_progressFactor = 2;
         refactoryReduceLongNamesInTheFile(buf, point);
-    } else if (s_ropt.theRefactoring==PPC_AVR_ADD_TO_IMPORT) {
+    } else if (s_ropt.theRefactoring==AVR_ADD_TO_IMPORT) {
         s_progressFactor = 2;
         refactoryAddToImports(buf, point);
-    } else if (s_ropt.theRefactoring==PPC_AVR_ADD_PARAMETER
-               || s_ropt.theRefactoring==PPC_AVR_DEL_PARAMETER
+    } else if (s_ropt.theRefactoring==AVR_ADD_PARAMETER
+               || s_ropt.theRefactoring==AVR_DEL_PARAMETER
                || s_ropt.theRefactoring==PPC_AVR_MOVE_PARAMETER) {
         s_progressFactor = 3;
         s_refactoryUpdateOption = refactoryComputeUpdateOptionForSymbol(point);
@@ -4540,52 +4540,52 @@ void mainRefactory(int argc, char **argv) {
         if (LANGUAGE(LANG_JAVA)) s_progressFactor ++;
         refactoryParameterManipulation(buf, point, s_ropt.theRefactoring,
                                        s_ropt.olcxGotoVal, s_ropt.parnum2);
-    } else if (s_ropt.theRefactoring==PPC_AVR_MOVE_FIELD) {
+    } else if (s_ropt.theRefactoring==AVR_MOVE_FIELD) {
         s_progressFactor = 6;
         refactoryMoveField(point);
-    } else if (s_ropt.theRefactoring==PPC_AVR_MOVE_STATIC_FIELD) {
+    } else if (s_ropt.theRefactoring==AVR_MOVE_STATIC_FIELD) {
         s_progressFactor = 4;
         refactoryMoveStaticField(point);
-    } else if (s_ropt.theRefactoring==PPC_AVR_MOVE_STATIC_METHOD) {
+    } else if (s_ropt.theRefactoring==AVR_MOVE_STATIC_METHOD) {
         s_progressFactor = 4;
         refactoryMoveStaticMethod(point);
-    } else if (s_ropt.theRefactoring==PPC_AVR_MOVE_CLASS) {
+    } else if (s_ropt.theRefactoring==AVR_MOVE_CLASS) {
         s_progressFactor = 3;
         refactoryMoveClass(point);
-    } else if (s_ropt.theRefactoring==PPC_AVR_MOVE_CLASS_TO_NEW_FILE) {
+    } else if (s_ropt.theRefactoring==AVR_MOVE_CLASS_TO_NEW_FILE) {
         s_progressFactor = 3;
         refactoryMoveClassToNewFile(point);
-    } else if (s_ropt.theRefactoring==PPC_AVR_MOVE_ALL_CLASSES_TO_NEW_FILE) {
+    } else if (s_ropt.theRefactoring==AVR_MOVE_ALL_CLASSES_TO_NEW_FILE) {
         s_progressFactor = 3;
         refactoryMoveAllClassesToNewFile(point);
-    } else if (s_ropt.theRefactoring==PPC_AVR_PULL_UP_METHOD) {
+    } else if (s_ropt.theRefactoring==AVR_PULL_UP_METHOD) {
         s_progressFactor = 2;
         refactoryPullUpMethod(point);
-    } else if (s_ropt.theRefactoring==PPC_AVR_PULL_UP_FIELD) {
+    } else if (s_ropt.theRefactoring==AVR_PULL_UP_FIELD) {
         s_progressFactor = 2;
         refactoryPullUpField(point);
-    } else if (s_ropt.theRefactoring==PPC_AVR_PUSH_DOWN_METHOD) {
+    } else if (s_ropt.theRefactoring==AVR_PUSH_DOWN_METHOD) {
         s_progressFactor = 2;
         refactoryPushDownMethod(point);
-    } else if (s_ropt.theRefactoring==PPC_AVR_PUSH_DOWN_FIELD) {
+    } else if (s_ropt.theRefactoring==AVR_PUSH_DOWN_FIELD) {
         s_progressFactor = 2;
         refactoryPushDownField(point);
-    } else if (s_ropt.theRefactoring==PPC_AVR_TURN_STATIC_METHOD_TO_DYNAMIC) {
+    } else if (s_ropt.theRefactoring==AVR_TURN_STATIC_METHOD_TO_DYNAMIC) {
         s_progressFactor = 6;
         refactoryTurnStaticToDynamic(point);
-    } else if (s_ropt.theRefactoring==PPC_AVR_TURN_DYNAMIC_METHOD_TO_STATIC) {
+    } else if (s_ropt.theRefactoring==AVR_TURN_DYNAMIC_METHOD_TO_STATIC) {
         s_progressFactor = 4;
         refactoryTurnDynamicToStatic(point);
-    } else if (s_ropt.theRefactoring==PPC_AVR_EXTRACT_METHOD) {
+    } else if (s_ropt.theRefactoring==AVR_EXTRACT_METHOD) {
         s_progressFactor = 1;
         refactoryExtractMethod(point, mark);
-    } else if (s_ropt.theRefactoring==PPC_AVR_EXTRACT_MACRO) {
+    } else if (s_ropt.theRefactoring==AVR_EXTRACT_MACRO) {
         s_progressFactor = 1;
         refactoryExtractMacro(point, mark);
-    } else if (s_ropt.theRefactoring==PPC_AVR_SELF_ENCAPSULATE_FIELD) {
+    } else if (s_ropt.theRefactoring==AVR_SELF_ENCAPSULATE_FIELD) {
         s_progressFactor = 3;
         refactorySelfEncapsulateField(point);
-    } else if (s_ropt.theRefactoring==PPC_AVR_ENCAPSULATE_FIELD) {
+    } else if (s_ropt.theRefactoring==AVR_ENCAPSULATE_FIELD) {
         s_progressFactor = 3;
         refactoryEncapsulateField(point);
     } else {
