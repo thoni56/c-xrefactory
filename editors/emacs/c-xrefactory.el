@@ -1072,14 +1072,16 @@ faces and highlighting in buffers created by C-xrefactory.
 )
 
 (defun c-xref-add-custom-menu-item (text expression)
-"Add an item to C-xrefactory's 'Custom' submenu. If the 'Custom' submenu
-does not  exist, create it.   TEXT is the  name of the  inserted item.
-EXPRESSION is an  expression which will be evaluated  when the item is
-selected.  For  example: (c-xref-add-custom-menu-item \"Call java2html\"
-'(shell-command  (c-xref-get-env  \"java2html\")))  will  add  a   'Call
-java2html' menu item, which will execute the shell command specified by
-the 'java2html' c-xref environment variable. This variable should be set
-by a '-set java2html <command>' option in your .c-xrefrc file.
+"Add an item to C-xrefactory's 'Custom' submenu. If the 'Custom'
+submenu does not exist, create it. TEXT is the name of the
+inserted item. EXPRESSION is an expression which will be
+evaluated when the item is selected. For example:
+(c-xref-add-custom-menu-item \"Call java2html\"
+'(shell-command (c-xref-get-env \"java2html\"))) will add a 'Call
+java2html' menu item, which will execute the shell command
+specified by the 'java2html' c-xref environment variable. This
+variable should be set by a '-set java2html <command>' option in
+your .c-xrefrc file.
 "
   (if (string-match "XEmacs" emacs-version)
       (progn

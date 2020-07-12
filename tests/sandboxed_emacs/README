@@ -1,10 +1,10 @@
-In this directory you can start c-xref & emacs in a sandboxed
-session so that it can be monitored, logged and explored. Sandboxed
-means that the c-xref will guaranteed to be the one in ../../src and
-the emacs started will use the c-xref[actory].el in
-../../env/emacs. Also the home directory will be set to this directory
-so that all c-xref projects and data will be isolated and not interfer
-with your private ones.
+In this directory you can start c-xref & emacs in a sandboxed session
+so that it can be monitored, logged and explored. Sandboxed means that
+the c-xref will guaranteed to be the one in ../../src and the emacs
+started will use the c-xref[actory].el in ../../editors/emacs. Also
+the home directory will be set to this directory so that all c-xref
+projects and data will be isolated and not interfer with your private
+ones.
 
 The interaction will be saved by pipespy into a temporary file called
 /tmp/pipespyNNNN.log.

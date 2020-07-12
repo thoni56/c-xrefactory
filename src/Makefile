@@ -26,7 +26,7 @@ yydebug: CFLAGS+= -DDEBUG -DYYDEBUG -Og
 prod debug yydebug: $(ZLIB) c-xref
 devel:
 	make clean-coverage
-	make -C ../env/emacs
+	make -C ../editors/emacs
 	make -j unit
 	make -j debug
 	make -j test
