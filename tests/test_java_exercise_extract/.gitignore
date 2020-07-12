@@ -1,4 +1,5 @@
+.c-xrefrc
 log
 output
 output.tmp
-.c-xrefrc
+command_output
