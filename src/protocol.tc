@@ -25,8 +25,6 @@ PROTOCOL_ITEM(String, PPC_REFACTORING_COPY_BLOCK,       "copy-block")
 PROTOCOL_ITEM(String, PPC_REFACTORING_PASTE_BLOCK,      "paste-block")
 
 
-
-
 PROTOCOL_ITEM(String, PPC_ASK_CONFIRMATION,             "ask-confirmation")
 PROTOCOL_ITEM(String, PPC_ADD_TO_IMPORTS_DIALOG,        "add-to-imports-dialog")
 PROTOCOL_ITEM(String, PPC_EXTRACTION_DIALOG,            "extraction-dialog")
@@ -73,12 +71,10 @@ PROTOCOL_ITEM(String, PPC_AVAILABLE_REFACTORINGS,       "available-refactorings"
 PROTOCOL_ITEM(String, PPC_SYNCHRO_RECORD,               "sync")
 
 
-
 PROTOCOL_ITEM(String, PPC_LC_POSITION,                  "position-lc")
 PROTOCOL_ITEM(String, PPC_OFFSET_POSITION,              "position-off")
 PROTOCOL_ITEM(String, PPC_STRING_VALUE,                 "str")
 PROTOCOL_ITEM(String, PPC_INT_VALUE,                    "int")
-
 
 
 PROTOCOL_ITEM(String, PPCA_LEN,                 "len")
@@ -141,12 +137,5 @@ PROTOCOL_ITEM(int, PPC_AVR_ADD_ALL_POSSIBLE_IMPORTS,        270)
 PROTOCOL_ITEM(int, PPC_AVR_SET_MOVE_TARGET,                 280)
 PROTOCOL_ITEM(int, PPC_AVR_UNDO,                            290)
 PROTOCOL_ITEM(int, PPC_MAX_AVAILABLE_REFACTORINGS,          300)
-
-
-
-
-COMMENT("The following items are going to be deleted, since 1.6.0")
-
-PROTOCOL_ITEM(String, PPC_SET_PROJECT,                  "set-project")
 
 COMMENT("There HAS to be an end of line at the end of the file")
