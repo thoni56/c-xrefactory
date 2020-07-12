@@ -4512,84 +4512,108 @@ void mainRefactory(int argc, char **argv) {
     refactoryXrefEditServerSubTaskFirstPass = 1;
 
     s_progressFactor = 1;
-    /* TODO: this should be a switch but the PPC_values are not constants... */
-    if (s_ropt.theRefactoring==AVR_RENAME_SYMBOL
-        || s_ropt.theRefactoring==AVR_RENAME_CLASS
-        || s_ropt.theRefactoring==AVR_RENAME_PACKAGE) {
+
+    switch (s_ropt.theRefactoring) {
+    case AVR_RENAME_SYMBOL:
+    case AVR_RENAME_CLASS:
+    case AVR_RENAME_PACKAGE:
         s_progressFactor = 3;
         s_refactoryUpdateOption = refactoryComputeUpdateOptionForSymbol(point);
         refactoryRename(buf, point);
-    } else if (s_ropt.theRefactoring==AVR_EXPAND_NAMES) {
+        break;
+    case AVR_EXPAND_NAMES:
         s_progressFactor = 1;
         refactoryExpandShortNames(buf, point);
-    } else if (s_ropt.theRefactoring==AVR_REDUCE_NAMES) {
+        break;
+    case AVR_REDUCE_NAMES:
         s_progressFactor = 1;
         refactoryReduceLongNamesInTheFile(buf, point);
-    } else if (s_ropt.theRefactoring==AVR_ADD_ALL_POSSIBLE_IMPORTS) {
+        break;
+    case AVR_ADD_ALL_POSSIBLE_IMPORTS:
         s_progressFactor = 2;
         refactoryReduceLongNamesInTheFile(buf, point);
-    } else if (s_ropt.theRefactoring==AVR_ADD_TO_IMPORT) {
+        break;
+    case AVR_ADD_TO_IMPORT:
         s_progressFactor = 2;
         refactoryAddToImports(buf, point);
-    } else if (s_ropt.theRefactoring==AVR_ADD_PARAMETER
-               || s_ropt.theRefactoring==AVR_DEL_PARAMETER
-               || s_ropt.theRefactoring==PPC_AVR_MOVE_PARAMETER) {
+        break;
+    case AVR_ADD_PARAMETER:
+    case AVR_DEL_PARAMETER:
+    case AVR_MOVE_PARAMETER:
         s_progressFactor = 3;
         s_refactoryUpdateOption = refactoryComputeUpdateOptionForSymbol(point);
         mainSetLanguage(file, &s_language);
-        if (LANGUAGE(LANG_JAVA)) s_progressFactor ++;
+        if (LANGUAGE(LANG_JAVA)) s_progressFactor++;
         refactoryParameterManipulation(buf, point, s_ropt.theRefactoring,
                                        s_ropt.olcxGotoVal, s_ropt.parnum2);
-    } else if (s_ropt.theRefactoring==AVR_MOVE_FIELD) {
+        break;
+    case AVR_MOVE_FIELD:
         s_progressFactor = 6;
         refactoryMoveField(point);
-    } else if (s_ropt.theRefactoring==AVR_MOVE_STATIC_FIELD) {
+        break;
+    case AVR_MOVE_STATIC_FIELD:
         s_progressFactor = 4;
         refactoryMoveStaticField(point);
-    } else if (s_ropt.theRefactoring==AVR_MOVE_STATIC_METHOD) {
+        break;
+    case AVR_MOVE_STATIC_METHOD:
         s_progressFactor = 4;
         refactoryMoveStaticMethod(point);
-    } else if (s_ropt.theRefactoring==AVR_MOVE_CLASS) {
+        break;
+    case AVR_MOVE_CLASS:
         s_progressFactor = 3;
         refactoryMoveClass(point);
-    } else if (s_ropt.theRefactoring==AVR_MOVE_CLASS_TO_NEW_FILE) {
+        break;
+    case AVR_MOVE_CLASS_TO_NEW_FILE:
         s_progressFactor = 3;
         refactoryMoveClassToNewFile(point);
-    } else if (s_ropt.theRefactoring==AVR_MOVE_ALL_CLASSES_TO_NEW_FILE) {
+        break;
+    case AVR_MOVE_ALL_CLASSES_TO_NEW_FILE:
         s_progressFactor = 3;
         refactoryMoveAllClassesToNewFile(point);
-    } else if (s_ropt.theRefactoring==AVR_PULL_UP_METHOD) {
+        break;
+    case AVR_PULL_UP_METHOD:
         s_progressFactor = 2;
         refactoryPullUpMethod(point);
-    } else if (s_ropt.theRefactoring==AVR_PULL_UP_FIELD) {
+        break;
+    case AVR_PULL_UP_FIELD:
         s_progressFactor = 2;
         refactoryPullUpField(point);
-    } else if (s_ropt.theRefactoring==AVR_PUSH_DOWN_METHOD) {
+        break;
+    case AVR_PUSH_DOWN_METHOD:
         s_progressFactor = 2;
         refactoryPushDownMethod(point);
-    } else if (s_ropt.theRefactoring==AVR_PUSH_DOWN_FIELD) {
+        break;
+    case AVR_PUSH_DOWN_FIELD:
         s_progressFactor = 2;
         refactoryPushDownField(point);
-    } else if (s_ropt.theRefactoring==AVR_TURN_STATIC_METHOD_TO_DYNAMIC) {
+        break;
+    case AVR_TURN_STATIC_METHOD_TO_DYNAMIC:
         s_progressFactor = 6;
         refactoryTurnStaticToDynamic(point);
-    } else if (s_ropt.theRefactoring==AVR_TURN_DYNAMIC_METHOD_TO_STATIC) {
+        break;
+    case AVR_TURN_DYNAMIC_METHOD_TO_STATIC:
         s_progressFactor = 4;
         refactoryTurnDynamicToStatic(point);
-    } else if (s_ropt.theRefactoring==AVR_EXTRACT_METHOD) {
+        break;
+    case AVR_EXTRACT_METHOD:
         s_progressFactor = 1;
         refactoryExtractMethod(point, mark);
-    } else if (s_ropt.theRefactoring==AVR_EXTRACT_MACRO) {
+        break;
+    case AVR_EXTRACT_MACRO:
         s_progressFactor = 1;
         refactoryExtractMacro(point, mark);
-    } else if (s_ropt.theRefactoring==AVR_SELF_ENCAPSULATE_FIELD) {
+        break;
+    case AVR_SELF_ENCAPSULATE_FIELD:
         s_progressFactor = 3;
         refactorySelfEncapsulateField(point);
-    } else if (s_ropt.theRefactoring==AVR_ENCAPSULATE_FIELD) {
+        break;
+    case AVR_ENCAPSULATE_FIELD:
         s_progressFactor = 3;
         refactoryEncapsulateField(point);
-    } else {
+        break;
+    default:
         errorMessage(ERR_INTERNAL, "unknown refactoring");
+        break;
     }
 
     // always finish once more time
