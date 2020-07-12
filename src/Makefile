@@ -12,7 +12,7 @@ ROOTDIR=..
 # We need our own patched yacc
 YACC=$(ROOTDIR)/byacc-1.9/yacc
 
-# If there is no ZLIB on the system you can activate building it in sources.mk
+# If there is no ZLIB on the system you can build it yourself, see sources.mk
 
 #########################################################################
 #
@@ -115,7 +115,6 @@ lexem.h: c_parser.tab.h
 #########################################################################
 
 clean:
-	-make -C $(ROOTDIR)/lib/zlib clean
 	-make -C unittests clean
 	-make -C ../tests clean
 	-rm -rf $(OBJDIR) c-xref *.gcov

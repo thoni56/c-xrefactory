@@ -266,9 +266,13 @@ static bool zipReadLocalFileInfo(CharacterBuffer *cb,
 
     if (info.compressionMethod == 0) {
         /* No compression */
-    } else if (info.compressionMethod == Z_DEFLATED) {
+    }
+#ifdef HAVE_ZLIB
+    else if (info.compressionMethod == Z_DEFLATED) {
         switchToZippedCharBuff(cb);
-    } else {
+    }
+#endif
+    else {
         compressionError(archivename, info.compressionMethod);
         return false;
     }

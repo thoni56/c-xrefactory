@@ -64,9 +64,11 @@ void closeCharacterBuffer(CharacterBuffer *buffer) {
     ENTER();
     if (buffer->file!=NULL)
         closeFile(buffer->file);
+#ifdef HAVE_ZLIB
     if (buffer->inputMethod == INPUT_VIA_UNZIP) {
         inflateEnd(&buffer->zipStream);
     }
+#endif
     LEAVE();
 }
 
@@ -86,6 +88,7 @@ static int readFromUnzipFilterToBuffer(CharacterBuffer *buffer, char *outBuffer,
 
     buffer->zipStream.next_out = (unsigned char *)outBuffer;
     buffer->zipStream.avail_out = max_size;
+#ifdef HAVE_ZLIB
     do {
         if (buffer->zipStream.avail_in == 0) {
             fn = readFromFileToBuffer(buffer, buffer->z, CHAR_BUFF_SIZE);
@@ -109,6 +112,7 @@ static int readFromUnzipFilterToBuffer(CharacterBuffer *buffer, char *outBuffer,
             buffer->zipStream.next_out = (unsigned char *)outBuffer;
         }
     } while (((char*)buffer->zipStream.next_out)==outBuffer && res==Z_OK);
+#endif
     n = ((char*)buffer->zipStream.next_out) - outBuffer;
     return(n);
 }
@@ -161,6 +165,7 @@ void switchToZippedCharBuff(CharacterBuffer *buffer) {
     char *fin;
 
     refillBuffer(buffer);     // just for now
+#ifdef HAVE_ZLIB
     fin = buffer->end;
     cc = buffer->next;
     for(dd=buffer->z; cc<fin; cc++,dd++) *dd = *cc;
@@ -174,6 +179,7 @@ void switchToZippedCharBuff(CharacterBuffer *buffer) {
         fprintf(stderr, "initialization: %s\n", buffer->zipStream.msg);
         exit(1);
     }
+#endif
 }
 
 void skipCharacters(CharacterBuffer *buffer, unsigned count) {

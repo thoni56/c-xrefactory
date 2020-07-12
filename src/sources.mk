@@ -29,8 +29,18 @@ $(OBJDIR):
 $(OPTIONAL_ZLIB_LIB):
 	make -C $(ROOTDIR)/lib/zlib libz.a
 
-# If you are using your systems zlib use this
-LIBS+=-lz
-# Else build the local, included, version and use these
-# OPTIONAL_ZLIB_LIB=$(ROOTDIR)/lib/zlib/libz.a
-# INCLUDES += -I$(ROOTDIR)/lib/zlib
+# If your system has zlib use this:
+
+LIBS += -lz
+CFLAGS += -DHAVE_ZLIB
+
+# else you can either
+
+# 1) build a local version of zlib
+# see http://zlib.net and https://github.com/madler/zlib and
+# set:
+# OPTIONAL_ZLIB_LIB=<path-to-libz>
+# INCLUDES += -I<path-to-libz>
+
+# 2) compile c-xrefactory without support for compressed jars by
+# commenting out the above LIBS and CFLAGS definitions

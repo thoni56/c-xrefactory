@@ -1,7 +1,7 @@
 vpath %.c ..
 
 WARNINGS = -Wall -Wno-char-subscripts
-CFLAGS = -g -O0 -MMD -funsigned-char $(WARNINGS) -fPIC -I.. $(COVERAGE)
+CFLAGS = -g -O0 -MMD -funsigned-char $(WARNINGS) -fPIC -I.. $(COVERAGE) -DHAVE_ZLIB
 
 OBJDIR=.objects
 
