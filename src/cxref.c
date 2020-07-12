@@ -647,7 +647,12 @@ static void setOlAvailableRefactorings(Symbol *p, S_olSymbolsMenu *mmi, int usag
 }
 
 static void olGetAvailableRefactorings(void) {
-    int                 i, count;
+    int i, count;
+
+    if (! options.xref2) {
+        fprintf(ccOut,"* refactoring list not available in C-xrefactory-I");
+        return;
+    }
 
     count = 0;
     for(i=0; i<MAX_AVAILABLE_REFACTORINGS; i++) {
@@ -672,10 +677,6 @@ static void olGetAvailableRefactorings(void) {
         if (! LANGUAGE(LANG_JAVA)) {
             s_availableRefactorings[PPC_AVR_EXTRACT_MACRO].available = true;
         }
-    }
-    if (! options.xref2) {
-        fprintf(ccOut,"* refactoring list not available in C-xrefactory-I");
-        return;
     }
     ppcGenRecordBegin(PPC_AVAILABLE_REFACTORINGS);
     for(i=0; i<MAX_AVAILABLE_REFACTORINGS; i++) {
