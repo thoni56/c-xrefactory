@@ -131,15 +131,6 @@ void ppcGenRecordWithNumeric(char *kind, char *attr, int val, char *message) {
             message, kind);
 }
 
-void ppcGenTwoNumericsAndrecord(char *kind, char *attr1, int val1, char *attr2, int val2, char *message,char *suff) {
-    ppcIndentOffset();
-    fprintf(ccOut, "<%s %s=%d %s=%d %s=%ld>%s</%s>%s", kind,
-            attr1, val1,
-            attr2, val2,
-            PPCA_LEN, (unsigned long)strlen(message),
-            message, kind, suff);
-}
-
 void ppcGenNumericRecord(char *kind, int val,char *message) {
     ppcIndentOffset();
     ppcGenRecordWithNumeric(kind, PPCA_VALUE, val, message);

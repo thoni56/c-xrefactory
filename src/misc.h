@@ -47,7 +47,6 @@ extern void ppcGenNumericRecordBegin(char *kind, int val);
 extern void ppcGenTwoNumericAndRecordBegin(char *kind, char *attr1, int val1, char *attr2, int val2);
 extern void ppcGenWithNumericAndRecordBegin(char *kind, int val, char *attr, char *attrVal);
 extern void ppcGenAllCompletionsRecordBegin(int nofocus, int len);
-extern void ppcGenTwoNumericsAndrecord(char *kind, char *attr1, int val1, char *attr2, int val2, char *message,char *suff);
 extern void ppcGenRecordWithNumeric(char *kind, char *attr, int val, char *message);
 extern void ppcGenNumericRecord(char *kind, int val, char *message);
 extern void ppcGenRecord(char *kind, char *message);
