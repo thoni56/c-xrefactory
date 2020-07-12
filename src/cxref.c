@@ -657,7 +657,7 @@ static void olGetAvailableRefactorings(void) {
     if (options.editor == EDITOR_EMACS) {
         s_availableRefactorings[PPC_AVR_UNDO].available = true;
 #if ZERO
-        if (LANGUAGE(LAN_JAVA)) {
+        if (LANGUAGE(LANG_JAVA)) {
             s_availableRefactorings[PPC_AVR_ADD_ALL_POSSIBLE_IMPORTS].available = true;
         }
 #endif
