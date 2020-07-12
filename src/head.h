@@ -321,7 +321,7 @@ typedef enum language {
 
 #define SAFETY_CHECK2_GET_SYM_LISTS(refs,origrefs,newrefs,diffrefs,pbflag) {\
     assert(s_olcxCurrentUser);\
-/*&fprintf(ccOut,";safetyCheck2!!!\n");fflush(dumpOut);&*/\
+/*&fprintf(communicationChannel,";safetyCheck2!!!\n");fflush(dumpOut);&*/\
     refs = s_olcxCurrentUser->browserStack.top;\
     if (refs==NULL || refs->previous==NULL || refs->previous->previous==NULL){\
         errorMessage(ERR_INTERNAL, "something goes wrong at safety check");\

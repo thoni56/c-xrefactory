@@ -142,7 +142,7 @@ Symbol *jslTypeSymbolDefinition(char *ttt2, IdList *packid,
     fillfIdList(&dd2, ttt2, NULL, s_noPos, ttt2, TypeStruct, packid);
     javaCreateComposedName(NULL,&dd2,'/',NULL,fqtName,MAX_FILE_NAME_SIZE);
     smemb = javaFQTypeSymbolDefinition(ttt2, fqtName);
-    //&fprintf(ccOut, "[jsl] jslTypeSymbolDefinition %s, %s, %s, %s\n", ttt2, fqtName, smemb->name, smemb->linkName);
+    //&fprintf(communicationChannel, "[jsl] jslTypeSymbolDefinition %s, %s, %s, %s\n", ttt2, fqtName, smemb->name, smemb->linkName);
     if (add == ADD_YES) {
         if (packid!=NULL) importPos = &packid->id.p;
         else importPos = &s_noPos;
@@ -309,7 +309,7 @@ void jslAddMapedImportTypeName(
     int len2;
     IdList *packid;
 
-    //&fprintf(ccOut,":jsl import type %s %s %s\n", file, path, pack);
+    //&fprintf(communicationChannel,":jsl import type %s %s %s\n", file, path, pack);
     packid = (IdList *) vdirid;
     for(p=file; *p && *p!='.' && *p!='$'; p++) ;
     if (*p != '.') return;

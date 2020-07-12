@@ -650,7 +650,7 @@ static void olGetAvailableRefactorings(void) {
     int i, count;
 
     if (! options.xref2) {
-        fprintf(ccOut,"* refactoring list not available in C-xrefactory-I");
+        fprintf(communicationChannel,"* refactoring list not available in C-xrefactory-I");
         return;
     }
 
@@ -1263,7 +1263,7 @@ void generateOnlineCxref(Position *p,
     if (options.xref2) {
         ppcGenGotoPositionRecord(p);
     } else {
-        fprintf(ccOut,"%s%s#*+*#%d %d :%c%s%s ;;\n", commandString,
+        fprintf(communicationChannel,"%s%s#*+*#%d %d :%c%s%s ;;\n", commandString,
                 getRealFileNameStatic(fileTable.tab[p->file]->name),
                 p->line, p->col, refCharCode(usage),
                 suffix, suffix2);
@@ -1295,7 +1295,7 @@ void generateOnlineCxref(Position *p,
             if (options.xref2) {                                          \
                 ppcGenRecordWithNumeric(PPC_BOTTOM_WARNING, PPCA_BEEP, 1, "Empty stack"); \
             } else {                                                    \
-                fprintf(ccOut, "=");                                    \
+                fprintf(communicationChannel, "=");                                    \
             }                                                           \
             return; /* tricky return from function calling this macro !!!!! */ \
         }                                                               \
@@ -1354,7 +1354,7 @@ static void olcxGenNoReferenceSignal(void) {
     if (options.xref2) {
         ppcGenRecord(PPC_BOTTOM_INFORMATION, "No reference");
     } else {
-        fprintf(ccOut, "_");
+        fprintf(communicationChannel, "_");
     }
 }
 
@@ -1454,7 +1454,7 @@ static int olcxGenHtmlFileWithIndirectLink(char *ofname, char *url) {
     FILE *of;
     of = openFile(ofname, "w");
     if (of == NULL) {
-        fprintf(ccOut,"* ** Can't open temporary file %s\n", ofname);
+        fprintf(communicationChannel,"* ** Can't open temporary file %s\n", ofname);
         return(0);
     }
     fprintf(of, "<html><head>");
@@ -1553,7 +1553,7 @@ static int olcxBrowseSymbolInJavaDoc(SymbolReferenceItem *rr) {
         if (options.xref2) {
             ppcGenRecord(PPC_BROWSE_URL, getFullUrlOfJavaDoc_st(url));
         } else {
-            fprintf(ccOut,"~%s\n", getFullUrlOfJavaDoc_st(url));
+            fprintf(communicationChannel,"~%s\n", getFullUrlOfJavaDoc_st(url));
         }
     } else {
 #ifdef __WIN32__
@@ -1573,7 +1573,7 @@ static int olcxBrowseSymbolInJavaDoc(SymbolReferenceItem *rr) {
             if (options.xref2) {
                 ppcGenRecord(PPC_BROWSE_URL, theUrl);
             } else {
-                fprintf(ccOut,"~%s\n", theUrl);
+                fprintf(communicationChannel,"~%s\n", theUrl);
             }
         }
     }
@@ -1618,7 +1618,7 @@ static void orderRefsAndGotoDefinition(S_olcxReferences *refs, int afterMenuFlag
             if (options.xref2) {
                 ppcGenDefinitionNotFoundWarning();
             } else {
-                fprintf(ccOut,"*** Definition reference not found **");
+                fprintf(communicationChannel,"*** Definition reference not found **");
             }
         }
     }
@@ -1850,10 +1850,10 @@ void olcxPrintClassTree(S_olSymbolsMenu *sss) {
     if (options.xref2) {
         ppcGenRecordBegin(PPC_DISPLAY_CLASS_TREE);
     } else {
-        fprintf(ccOut, "<");
+        fprintf(communicationChannel, "<");
     }
     readOneAppropReferenceFile(NULL, classHierarchyFunctionSequence);
-    htmlGenerateGlobalReferenceLists(sss, ccOut, "__NO_HTML_FILE_NAME!__");
+    htmlGenerateGlobalReferenceLists(sss, communicationChannel, "__NO_HTML_FILE_NAME!__");
     if (options.xref2) ppcGenRecordEnd(PPC_DISPLAY_CLASS_TREE);
 }
 
@@ -1861,34 +1861,34 @@ void olcxPrintSelectionMenu(S_olSymbolsMenu *sss) {
     if (options.xref2) {
         ppcGenRecordBegin(PPC_SYMBOL_RESOLUTION);
     } else {
-        fprintf(ccOut, ">");
+        fprintf(communicationChannel, ">");
     }
     if (sss!=NULL) {
         readOneAppropReferenceFile(NULL, classHierarchyFunctionSequence);
-        htmlGenerateGlobalReferenceLists(sss, ccOut, "__NO_HTML_FILE_NAME!__");
+        htmlGenerateGlobalReferenceLists(sss, communicationChannel, "__NO_HTML_FILE_NAME!__");
     }
     if (options.xref2) {
         ppcGenRecordEnd(PPC_SYMBOL_RESOLUTION);
     } else {
         if (options.server_operation==OLO_RENAME || options.server_operation==OLO_ARG_MANIP || options.server_operation==OLO_ENCAPSULATE) {
             if (LANGUAGE(LANG_JAVA)) {
-                fprintf(ccOut, "-![Warning] It is highly recommended to process the whole hierarchy of related classes at once. Unselection of any class of applications above (and its exclusion from refactoring process) may cause changes in your program behavior. Press <return> to continue.\n");
+                fprintf(communicationChannel, "-![Warning] It is highly recommended to process the whole hierarchy of related classes at once. Unselection of any class of applications above (and its exclusion from refactoring process) may cause changes in your program behavior. Press <return> to continue.\n");
             } else {
-                fprintf(ccOut, "-![Warning] It is highly recommended to process all symbols at once. Unselection of any symbols and its exclusion from refactoring process may cause changes in your program behavior. Press <return> to continue.\n");
+                fprintf(communicationChannel, "-![Warning] It is highly recommended to process all symbols at once. Unselection of any symbols and its exclusion from refactoring process may cause changes in your program behavior. Press <return> to continue.\n");
             }
         }
         if (options.server_operation==OLO_VIRTUAL2STATIC_PUSH) {
-            fprintf(ccOut, "-![Warning] If you see this message it is highly probable that turning this virtual method into static will not be behaviour preserving! This refactoring is behaviour preserving only if the method does not use mechanism of virtual invocations. On this screen you should select the application classes which are refering to the method which will become static. If you can't unambiguously determine those references do not continue in this refactoring!\n");
+            fprintf(communicationChannel, "-![Warning] If you see this message it is highly probable that turning this virtual method into static will not be behaviour preserving! This refactoring is behaviour preserving only if the method does not use mechanism of virtual invocations. On this screen you should select the application classes which are refering to the method which will become static. If you can't unambiguously determine those references do not continue in this refactoring!\n");
         }
         if (options.server_operation==OLO_SAFETY_CHECK2) {
             if (LANGUAGE(LANG_JAVA)) {
-                fprintf(ccOut, "-![Warning] There are differences between original class hierarchy and the new one, those name clashes may cause that the refactoring will not be behavior preserving!\n");
+                fprintf(communicationChannel, "-![Warning] There are differences between original class hierarchy and the new one, those name clashes may cause that the refactoring will not be behavior preserving!\n");
             } else {
-                fprintf(ccOut, "-![Error] There is differences between original and new symbols referenced at this position. The difference is due to name clashes and may cause changes in the behaviour of the program. Please, undo last refactoring!");
+                fprintf(communicationChannel, "-![Error] There is differences between original and new symbols referenced at this position. The difference is due to name clashes and may cause changes in the behaviour of the program. Please, undo last refactoring!");
             }
         }
         if (options.server_operation==OLO_PUSH_ENCAPSULATE_SAFETY_CHECK) {
-            fprintf(ccOut, "-![Warning] A method (getter or setter) created during the encapsulation has the same name as an existing method, so it will be inserted into this (existing) inheritance hierarchy. This may cause that the refactoring will not be behaviour preserving. Please, select applications unambiguously reporting to the newly created method. If you can't do this, you should undo the refactoring and rename the field first!\n");
+            fprintf(communicationChannel, "-![Warning] A method (getter or setter) created during the encapsulation has the same name as an existing method, so it will be inserted into this (existing) inheritance hierarchy. This may cause that the refactoring will not be behaviour preserving. Please, select applications unambiguously reporting to the newly created method. If you can't do this, you should undo the refactoring and rename the field first!\n");
         }
     }
 }
@@ -1945,13 +1945,13 @@ static void olcxPrintRefList(char *commandString, S_olcxReferences *refs) {
             ppcGenNumericRecordBegin(PPC_REFERENCE_LIST, actn);
         }
     } else {
-        fprintf(ccOut,"%s",commandString);/* communication char */
+        fprintf(communicationChannel,"%s",commandString);/* communication char */
     }
     if (refs!=NULL) {
         rr=refs->r;
         while (rr != NULL) {
             passRefsThroughSourceFile(&rr, &refs->act->p,
-                                      ccOut, "*xref-list*", USAGE_FILTER,
+                                      communicationChannel, "*xref-list*", USAGE_FILTER,
                                       s_refListFilters[refs->refsFilterLevel]);
         }
     }
@@ -1959,7 +1959,7 @@ static void olcxPrintRefList(char *commandString, S_olcxReferences *refs) {
         ppcGenRecordEnd(PPC_REFERENCE_LIST);
         //& if (refs!=NULL && refs->act!=NULL) ppcGenGotoPositionRecord(&refs->act->p);
     }
-    fflush(ccOut);
+    fflush(communicationChannel);
 }
 
 static void olcxReferenceList(char *commandString) {
@@ -2139,7 +2139,7 @@ static void olcxReferenceBrowseCompletion(int refn) {
             if (options.xref2)
                 ppcGenRecord(PPC_ERROR, "No JavaDoc is available for local symbols.");
             else
-                fprintf(ccOut,"* ** no JavaDoc is available for local symbols **");
+                fprintf(communicationChannel,"* ** no JavaDoc is available for local symbols **");
         } else {
             aa = olcxBrowseSymbolInJavaDoc(&rr->sym);
             if (aa==0) {
@@ -2156,14 +2156,14 @@ static void olcxReferenceBrowseCompletion(int refn) {
                 if (options.xref2)
                     ppcGenRecord(PPC_ERROR, message);
                 else
-                    fprintf(ccOut, "%s", message);
+                    fprintf(communicationChannel, "%s", message);
             }
         }
     } else {
         if (options.xref2)
             ppcGenRecord(PPC_ERROR, "Out of range");
         else
-            fprintf(ccOut, "* ** out of range **");
+            fprintf(communicationChannel, "* ** out of range **");
     }
 }
 
@@ -2269,14 +2269,14 @@ static void olcxPrintSymbolName(S_olcxReferences *refs) {
         if (options.xref2) {
             ppcGenRecord(PPC_BOTTOM_INFORMATION, "stack is now empty");
         } else {
-            fprintf(ccOut, "*stack is now empty");
+            fprintf(communicationChannel, "*stack is now empty");
         }
-        //&     fprintf(ccOut, "*");
+        //&     fprintf(communicationChannel, "*");
     } else if (refs->hkSelectedSym==NULL) {
         if (options.xref2) {
             ppcGenRecord(PPC_BOTTOM_INFORMATION, "Current top symbol: <empty>");
         } else {
-            fprintf(ccOut, "*Current top symbol: <empty>");
+            fprintf(communicationChannel, "*Current top symbol: <empty>");
         }
     } else {
         ss = refs->hkSelectedSym;
@@ -2286,8 +2286,8 @@ static void olcxPrintSymbolName(S_olcxReferences *refs) {
             sprintfSymbolLinkName(ttt+strlen(ttt), ss);
             ppcGenRecord(PPC_BOTTOM_INFORMATION, ttt);
         } else {
-            fprintf(ccOut, "*Current top symbol: ");
-            printSymbolLinkName(ccOut, ss);
+            fprintf(communicationChannel, "*Current top symbol: ");
+            printSymbolLinkName(communicationChannel, ss);
         }
     }
 }
@@ -2330,8 +2330,8 @@ static void olcxShowTopApplClass(void) {
     if (mms==NULL) {
         olcxGenNoReferenceSignal();
     } else {
-        fprintf(ccOut, "*");
-        printClassFqtNameFromClassNum(ccOut, mms->s.vApplClass);
+        fprintf(communicationChannel, "*");
+        printClassFqtNameFromClassNum(communicationChannel, mms->s.vApplClass);
     }
 }
 
@@ -2345,7 +2345,7 @@ static void olcxShowTopType(void) {
     if (mms==NULL) {
         olcxGenNoReferenceSignal();
     } else {
-        fprintf(ccOut, "*%s",typeEnumName[mms->s.b.symType]);
+        fprintf(communicationChannel, "*%s",typeEnumName[mms->s.b.symType]);
     }
 }
 
@@ -2536,8 +2536,8 @@ static void olcxMenuToggleSelect(void) {
                                               options.nestedClassDisplaying);
             sprintf(tmpBuff, "%s %s refs of \"%s\"",
                     (ss->selected?"inserting":"removing"), cname, ln);
-            fprintf(ccOut,"*%s", tmpBuff);
-            //&fprintf(ccOut,"\"%s\" refs of \"%s\"", fileTable.tab[ss->s.vApplClass]->name, ss->s.name);
+            fprintf(communicationChannel,"*%s", tmpBuff);
+            //&fprintf(communicationChannel,"\"%s\" refs of \"%s\"", fileTable.tab[ss->s.vApplClass]->name, ss->s.name);
         }
     }
 }
@@ -2563,7 +2563,7 @@ static void olcxMenuSelectOnly(void) {
         if (options.xref2) {
             ppcGenRecord(PPC_BOTTOM_WARNING, "No Symbol");
         } else {
-            fprintf(ccOut,"*No symbol");
+            fprintf(communicationChannel,"*No symbol");
         }
         return;
     }
@@ -2590,7 +2590,7 @@ static void olcxMenuSelectOnly(void) {
             ppcGenGotoPositionRecord(&refs->act->p);
         }
     } else {
-        fprintf(ccOut, "*");
+        fprintf(communicationChannel, "*");
     }
 }
 
@@ -2681,7 +2681,7 @@ static void olcxMenuSelectAll(int val) {
     if (options.xref2) {
         olcxPrintRefList(";", refs);
     } else {
-        fprintf(ccOut, "*Done");
+        fprintf(communicationChannel, "*Done");
     }
 }
 
@@ -2903,7 +2903,7 @@ static void olcxMenuSelectPlusolcxMenuSelectFilterSet(int flevel) {
             olcxPrintSelectionMenu(NULL);
             olcxPrintRefList(";", NULL);
         } else {
-            fprintf(ccOut, "=");
+            fprintf(communicationChannel, "=");
         }
     }
 }
@@ -2923,7 +2923,7 @@ static void olcxReferenceFilterSet(int flevel) {
         if (refs!=NULL) olcxSetActReferenceToFirstVisible(refs, refs->act);
         olcxPrintRefList(";", refs);
     } else {
-        fprintf(ccOut, "*");
+        fprintf(communicationChannel, "*");
     }
 }
 
@@ -2954,7 +2954,7 @@ static void olcxReferenceRePush(void) {
         if (options.xref2) {
             ppcGenRecordWithNumeric(PPC_BOTTOM_WARNING, PPCA_BEEP, 1, "You are on the top of browser stack.");
         } else {
-            fprintf(ccOut, "*** Complete stack, no pop-ed references");
+            fprintf(communicationChannel, "*** Complete stack, no pop-ed references");
         }
     }
 }
@@ -2977,7 +2977,7 @@ void olcxPopOnly(void) {
     S_olcxReferences *refs;
 
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
-    if (!options.xref2) fprintf(ccOut, "*");
+    if (!options.xref2) fprintf(communicationChannel, "*");
     //& olStackDeleteSymbol(refs);
     s_olcxCurrentUser->browserStack.top = refs->previous;
 }
@@ -3000,14 +3000,14 @@ static void safetyCheckAddDiffRef(Reference *r, S_olcxReferences *diffrefs,
     int prefixchar;
     prefixchar = ' ';
     if (diffrefs->r == NULL) {
-        fprintf(ccOut, "%s", COLCX_LIST);
+        fprintf(communicationChannel, "%s", COLCX_LIST);
         prefixchar = '>';
     }
     if (mode == DIFF_MISSING_REF) {
-        fprintf(ccOut, "%c %s:%d missing reference\n", prefixchar,
+        fprintf(communicationChannel, "%c %s:%d missing reference\n", prefixchar,
                 simpleFileNameFromFileNum(r->p.file), r->p.line);
     } else if (mode == DIFF_UNEXPECTED_REF) {
-        fprintf(ccOut, "%c %s:%d unexpected new reference\n", prefixchar,
+        fprintf(communicationChannel, "%c %s:%d unexpected new reference\n", prefixchar,
                 simpleFileNameFromFileNum(r->p.file), r->p.line);
     } else {
         assert(0);
@@ -3157,13 +3157,13 @@ static void olcxSafetyCheck2(void) {
         s_olcxCurrentUser->browserStack.top = s_olcxCurrentUser->browserStack.top->previous;
         s_olcxCurrentUser->browserStack.top = s_olcxCurrentUser->browserStack.top->previous;
         s_olcxCurrentUser->browserStack.top = s_olcxCurrentUser->browserStack.top->previous;
-        fprintf(ccOut, "*Done. No conflicts detected.");
+        fprintf(communicationChannel, "*Done. No conflicts detected.");
     } else {
         assert(diffrefs->menuSym);
         s_olcxCurrentUser->browserStack.top = s_olcxCurrentUser->browserStack.top->previous;
-        fprintf(ccOut, " ** Some misinterpreted references detected. Please, undo last refactoring.");
+        fprintf(communicationChannel, " ** Some misinterpreted references detected. Please, undo last refactoring.");
     }
-    fflush(ccOut);
+    fflush(communicationChannel);
 }
 
 static int olRemoveCallerReference(S_olcxReferences *refs) {
@@ -3208,7 +3208,7 @@ static void olcxResetSuffix(void) {
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
     strncpy(refs->refsuffix, options.olcxRefSuffix, MAX_OLCX_SUFF_SIZE-1);
     refs->refsuffix[MAX_OLCX_SUFF_SIZE-1] = 0;
-    fprintf(ccOut,"* refs %s", refs->refsuffix);
+    fprintf(communicationChannel,"* refs %s", refs->refsuffix);
 }
 
 static void olCompletionSelect(void) {
@@ -3281,13 +3281,13 @@ static void olcxNoSymbolFoundErrorMessage(void) {
         if (options.xref2) {
             ppcGenRecord(PPC_ERROR,"No symbol found.");
         } else {
-            fprintf(ccOut,"*** No symbol found.");
+            fprintf(communicationChannel,"*** No symbol found.");
         }
     } else {
         if (options.xref2) {
             ppcGenRecord(PPC_ERROR,"No symbol found, please position the cursor on a program symbol.");
         } else {
-            fprintf(ccOut,"*** No symbol found, please position the cursor on a program symbol.");
+            fprintf(communicationChannel,"*** No symbol found, please position the cursor on a program symbol.");
         }
     }
 }
@@ -3586,13 +3586,13 @@ static void olcxSingleReferenceCheck1(SymbolReferenceItem *p,
     if (refOccursInRefs(r, rstack->r)) {
         prefixchar = ' ';
         if (s_olcxCurrentUser->browserStack.top->r == NULL) {
-            fprintf(ccOut,"%s",COLCX_LIST);
+            fprintf(communicationChannel,"%s",COLCX_LIST);
             prefixchar = '>';
         }
-        fprintf(ccOut,"%c  %s:%d reference to '", prefixchar,
+        fprintf(communicationChannel,"%c  %s:%d reference to '", prefixchar,
                 simpleFileNameFromFileNum(r->p.file), r->p.line);
-        printSymbolLinkNameString(ccOut, p->name);
-        fprintf(ccOut,"' lost\n");
+        printSymbolLinkNameString(communicationChannel, p->name);
+        fprintf(communicationChannel,"' lost\n");
         olcxAppendReference(r, s_olcxCurrentUser->browserStack.top);
 #if ZERO    // for the moment, it is difficult to get def. reference from cxfile
         dr = getDefinitionRef(p->refs);
@@ -3657,8 +3657,8 @@ void olcxPushSpecialCheckMenuSym(int pushCommand,char *symname) {
 static void olcxSafetyCheckInit(void) {
     assert(options.server_operation == OLO_SAFETY_CHECK_INIT);
     olcxPushSpecialCheckMenuSym(options.server_operation,LINK_NAME_SAFETY_CHECK_MISSED);
-    fprintf(ccOut,"* safety checks initialized");
-    fflush(ccOut);
+    fprintf(communicationChannel,"* safety checks initialized");
+    fflush(communicationChannel);
 }
 
 static S_olSymbolsMenu *mmPreCheckGetFirstDefinitionReferenceAndItsSymbol(
@@ -3819,10 +3819,10 @@ static void olcxMMPreCheck(void) {
             olcxPrintRefList(";", diffrefs);
         } else {
             olStackDeleteSymbol(diffrefs);
-            fprintf(ccOut,"* Method moving pre-check passed.");
+            fprintf(communicationChannel,"* Method moving pre-check passed.");
         }
     }
-    fflush(ccOut);
+    fflush(communicationChannel);
 }
 
 
@@ -3838,12 +3838,12 @@ static void olcxSafetyCheck1(void) {
     //& setRefSuffix();
     olProcessSelectedReferences(rstack, olcxProceedSafetyCheck1OnInloadedRefs);
     if (s_olcxCurrentUser->browserStack.top->r == NULL) {
-        fprintf(ccOut,"* check1 passed");
+        fprintf(communicationChannel,"* check1 passed");
     } else {
         s_olcxCurrentUser->browserStack.top->act = s_olcxCurrentUser->browserStack.top->r;
-        fprintf(ccOut," ** Shared references lost. Please, undo last refactoring\n");
+        fprintf(communicationChannel," ** Shared references lost. Please, undo last refactoring\n");
     }
-    fflush(ccOut);
+    fflush(communicationChannel);
 }
 
 static int refOccursInRefsCompareFileAndLineOnly(Reference *rr,
@@ -3879,7 +3879,7 @@ static void olcxTopReferencesIntersection(void) {
         }
     }
     top1->act = top1->r;
-    fprintf(ccOut,"*");
+    fprintf(communicationChannel,"*");
 }
 
 static void olcxRemoveRefWinFromRefList(Reference **r1,
@@ -3923,7 +3923,7 @@ static void olcxTopReferencesRemoveWindow(void) {
         olcxRemoveRefWinFromRefList(&mm->s.refs, wdfile, &fp, &tp);
     }
     top1->act = top1->r;
-    fprintf(ccOut,"*");
+    fprintf(communicationChannel,"*");
 }
 
 char *getXrefEnvironmentValue(char *name ) {
@@ -3953,7 +3953,7 @@ static void olcxProcessGetRequest(void) {
         if (options.xref2) {
             ppcGenRecord(PPC_SET_INFO, expandSpecialFilePredefinedVariables_st(val));
         } else {
-            fprintf(ccOut,"*%s", expandSpecialFilePredefinedVariables_st(val));
+            fprintf(communicationChannel,"*%s", expandSpecialFilePredefinedVariables_st(val));
         }
     } else {
         char tmpBuff[TMP_BUFF_SIZE];
@@ -4309,13 +4309,13 @@ static int tpCheckPrintClassMovingType(void) {
     ss = rstack->hkSelectedSym;
     assert(ss);
     if (ss->s.b.accessFlags & AccessStatic) {
-        fprintf(ccOut,"*nested");
+        fprintf(communicationChannel,"*nested");
     } else {
-        fprintf(ccOut,"*outer");
+        fprintf(communicationChannel,"*outer");
     }
     tpCheckFillMoveClassData(&dd, spack, tpack);
     if (dd.transPackageMove) {
-        fprintf(ccOut, ";transpackage");
+        fprintf(communicationChannel, ";transpackage");
     }
     return(1);
 }
@@ -4326,8 +4326,8 @@ static int tpCheckPrintSelectedSymbol(void) {
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
     rstack = s_olcxCurrentUser->browserStack.top;
     ss = rstack->hkSelectedSym;
-    fprintf(ccOut,"*");
-    printSymbolLinkName(ccOut, ss);
+    fprintf(communicationChannel,"*");
+    printSymbolLinkName(communicationChannel, ss);
     return(1);
 }
 
@@ -4351,7 +4351,7 @@ int javaIsSuperClass(int superclas, int clas) {
 }
 
 static int tpCheckPrintPushingDownMethodType(void) {
-    fprintf(ccOut, "*** push_down_method trivial precheck passed.");
+    fprintf(communicationChannel, "*** push_down_method trivial precheck passed.");
     return(1);
 #if ZERO
     assert(s_olcxCurrentUser && s_olcxCurrentUser->browserStack.top);
@@ -4400,28 +4400,28 @@ static void olTrivialRefactoringPreCheck(int refcode) {
         (void) (tpCheckUniquityOfSymbol("field") &&
                 tpCheckItIsAFieldOrMethod(REQ_FIELD, "field") &&
                 tpCheckThatCurrentReferenceIsDefinition("field") &&
-                fprintf(ccOut,"*** move_static_field trivial precheck passed."));
+                fprintf(communicationChannel,"*** move_static_field trivial precheck passed."));
         break;
     case TPC_MOVE_STATIC_FIELD:
         (void) (tpCheckUniquityOfSymbol("field") &&
                 tpCheckItIsAFieldOrMethod(REQ_FIELD, "field") &&
                 tpCheckThatCurrentReferenceIsDefinition("field") &&
                 tpCheckStaticity(REQ_STATIC,"field") &&
-                fprintf(ccOut,"*** move_static_field trivial precheck passed."));
+                fprintf(communicationChannel,"*** move_static_field trivial precheck passed."));
         break;
     case TPC_MOVE_STATIC_METHOD:
         (void) (tpCheckUniquityOfSymbol("method") &&
                 tpCheckItIsAFieldOrMethod(REQ_METHOD, "method") &&
                 tpCheckThatCurrentReferenceIsDefinition("method") &&
                 tpCheckStaticity(REQ_STATIC,"method") &&
-                fprintf(ccOut,"*** move_static_method trivial precheck passed."));
+                fprintf(communicationChannel,"*** move_static_method trivial precheck passed."));
         break;
     case TPC_TURN_STATIC_METHOD_TO_DYN:
         (void) (tpCheckUniquityOfSymbol("method") &&
                 tpCheckItIsAFieldOrMethod(REQ_METHOD, "method") &&
                 tpCheckThatCurrentReferenceIsDefinition("method") &&
                 tpCheckStaticity(REQ_STATIC,"method") &&
-                fprintf(ccOut,"*** turn_static_method_to_dyn trivial precheck passed."));
+                fprintf(communicationChannel,"*** turn_static_method_to_dyn trivial precheck passed."));
         break;
     case TPC_TURN_DYN_METHOD_TO_STATIC:
         (void) (tpCheckUniquityOfSymbol("method") &&
@@ -4430,7 +4430,7 @@ static void olTrivialRefactoringPreCheck(int refcode) {
                 tpCheckStaticity(REQ_NONSTATIC,"method") &&
                 tpCheckOuterScopeUsagesForDynToSt() &&
                 tpCheckSuperMethodReferencesForDynToSt() &&
-                fprintf(ccOut,"*** turn_static_method_to_dyn trivial precheck passed."));
+                fprintf(communicationChannel,"*** turn_static_method_to_dyn trivial precheck passed."));
         break;
     case TPC_PULL_UP_METHOD:
         (void) (tpCheckUniquityOfSymbol("method") &&
@@ -4440,7 +4440,7 @@ static void olTrivialRefactoringPreCheck(int refcode) {
                 tpCheckTargetToBeDirectSubOrSupClass(REQ_SUPERCLASS,"superclass") &&
                 tpCheckSuperMethodReferencesForPullUp() &&
                 tpCheckMethodReferencesWithApplOnSuperClassForPullUp() &&
-                fprintf(ccOut,"*** pull_up_method trivial precheck passed."));
+                fprintf(communicationChannel,"*** pull_up_method trivial precheck passed."));
         break;
     case TPC_PUSH_DOWN_METHOD:
         (void) (tpCheckUniquityOfSymbol("method") &&
@@ -4452,7 +4452,7 @@ static void olTrivialRefactoringPreCheck(int refcode) {
                 break;
     case TPC_PUSH_DOWN_METHOD_POST_CHECK:
         (void) (tpCheckSuperMethodReferencesAfterPushDown() &&
-                fprintf(ccOut,"*** push_down_method trivial postcheck passed."));
+                fprintf(communicationChannel,"*** push_down_method trivial postcheck passed."));
         break;
     case TPC_PULL_UP_FIELD:
         (void) (tpCheckUniquityOfSymbol("field") &&
@@ -4461,7 +4461,7 @@ static void olTrivialRefactoringPreCheck(int refcode) {
                 tpCheckStaticity(REQ_NONSTATIC,"field") &&
                 tpCheckTargetToBeDirectSubOrSupClass(REQ_SUPERCLASS,"superclass") &&
                 tpPullUpFieldLastPreconditions() &&
-                fprintf(ccOut,"*** pull_up_field trivial precheck passed."));
+                fprintf(communicationChannel,"*** pull_up_field trivial precheck passed."));
         break;
     case TPC_PUSH_DOWN_FIELD:
         (void) (tpCheckUniquityOfSymbol("field") &&
@@ -4470,7 +4470,7 @@ static void olTrivialRefactoringPreCheck(int refcode) {
                 tpCheckStaticity(REQ_NONSTATIC,"field") &&
                 tpCheckTargetToBeDirectSubOrSupClass(REQ_SUBCLASS, "subclass") &&
                 tpPushDownFieldLastPreconditions() &&
-                fprintf(ccOut,"*** push_down_field trivial precheck passed."));
+                fprintf(communicationChannel,"*** push_down_field trivial precheck passed."));
         break;
     case TPC_RENAME_PACKAGE:
         (void) (tpCheckUniquityOfSymbol("package") &&
@@ -4495,7 +4495,7 @@ static void olTrivialRefactoringPreCheck(int refcode) {
             sprintf(tmpBuff, "%d", s_cps.lastImportLine);
             ppcGenRecord(PPC_SET_INFO, tmpBuff);
         } else {
-            fprintf(ccOut,"*%d", s_cps.lastImportLine);
+            fprintf(communicationChannel,"*%d", s_cps.lastImportLine);
         }
         break;
     default:
@@ -4603,7 +4603,7 @@ static void answerClassName(char *name) {
         if (options.xref2) {
             ppcGenRecord(PPC_SET_INFO, ttt);
         } else {
-            fprintf(ccOut,"*%s", ttt);
+            fprintf(communicationChannel,"*%s", ttt);
         }
     } else {
         errorMessage(ERR_ST, "Not inside a class. Can't get curent class.");
@@ -4631,7 +4631,7 @@ void mainAnswerEditAction(void) {
     char dffname[MAX_FILE_NAME_SIZE];
     char dffsect[MAX_FILE_NAME_SIZE];
 
-    assert(ccOut);
+    assert(communicationChannel);
 
     switch (options.server_operation) {
     case OLO_CHECK_VERSION:
@@ -4646,13 +4646,13 @@ void mainAnswerEditAction(void) {
         break;
     case OLO_EXTRACT:
         if (! s_cps.extractProcessedFlag) {
-            fprintf(ccOut,"*** No function/method enclosing selected block found **");
+            fprintf(communicationChannel,"*** No function/method enclosing selected block found **");
         }
         break;
     case OLO_TAG_SEARCH:
         getCallerPositionFromCommandLineOption(&opos);
         //&olCompletionListInit(&opos);
-        if (! options.xref2) fprintf(ccOut,";");
+        if (! options.xref2) fprintf(communicationChannel,";");
         assert(s_olcxCurrentUser);
         olcxPushEmptyStackItem(&s_olcxCurrentUser->retrieverStack);
         s_olcxCurrentUser->retrieverStack.top->cpos = opos;
@@ -4686,14 +4686,14 @@ void mainAnswerEditAction(void) {
             if (options.xref2) {
                 ppcGenRecord(PPC_SET_INFO, options.project);
             } else {
-                fprintf(ccOut,"*%s", options.project);
+                fprintf(communicationChannel,"*%s", options.project);
             }
         } else {
             if (s_olOriginalComFileNumber == noFileIndex) {
                 if (options.xref2) {
                     ppcGenRecord(PPC_ERROR, "No source file to identify project");
                 } else {
-                    fprintf(ccOut,"!** No source file to identify project");
+                    fprintf(communicationChannel,"!** No source file to identify project");
                 }
             } else {
                 ifname = fileTable.tab[s_olOriginalComFileNumber]->name;
@@ -4702,19 +4702,19 @@ void mainAnswerEditAction(void) {
                 if (dffname[0]==0 || dffsect[0]==0) {
                     if (options.noErrors) {
                         if (! options.xref2)
-                            fprintf(ccOut,"^"); // TODO: was "fprintf(ccOut,"^", ifname);"
+                            fprintf(communicationChannel,"^"); // TODO: was "fprintf(ccOut,"^", ifname);"
                     } else {
                         if (options.xref2) {
                             ppcGenRecord(PPC_NO_PROJECT, ifname);
                         } else {
-                            fprintf(ccOut,"!** No project name matches %s", ifname);
+                            fprintf(communicationChannel,"!** No project name matches %s", ifname);
                         }
                     }
                 } else {
                     if (options.xref2) {
                         ppcGenRecord(PPC_SET_INFO, dffsect);
                     } else {
-                        fprintf(ccOut,"*%s", dffsect);
+                        fprintf(communicationChannel,"*%s", dffsect);
                     }
                 }
             }
@@ -4733,12 +4733,12 @@ void mainAnswerEditAction(void) {
         } else {
             if (jdkcp==NULL) {
                 if (options.noErrors) {
-                    fprintf(ccOut,"^");
+                    fprintf(communicationChannel,"^");
                 } else {
-                    fprintf(ccOut,"!* Can't find Java runtime library rt.jar"); // TODO: was "..., ifname);"
+                    fprintf(communicationChannel,"!* Can't find Java runtime library rt.jar"); // TODO: was "..., ifname);"
                 }
             } else {
-                fprintf(ccOut,"*%s", jdkcp);
+                fprintf(communicationChannel,"*%s", jdkcp);
             }
         }
         break;
@@ -4885,10 +4885,10 @@ void mainAnswerEditAction(void) {
         // xref1 target setting
         assert(!options.xref2);
         if (*s_cps.setTargetAnswerClass!=0) {
-            fprintf(ccOut,"*");
-            //&printSymbolLinkNameString(ccOut, s_cps.setTargetAnswerClass);
+            fprintf(communicationChannel,"*");
+            //&printSymbolLinkNameString(communicationChannel, s_cps.setTargetAnswerClass);
             // very risky, will need a lot of adjustements in xref.el
-            fprintf(ccOut, "%s", s_cps.setTargetAnswerClass);
+            fprintf(communicationChannel, "%s", s_cps.setTargetAnswerClass);
         } else {
             errorMessage(ERR_ST, "Not a valid target position. The cursor has to be on a place where a new field/method can be inserted.");
         }
@@ -4909,23 +4909,23 @@ void mainAnswerEditAction(void) {
         break;
     case OLO_GET_METHOD_COORD:
         if (s_cps.methodCoordEndLine!=0) {
-            fprintf(ccOut,"*%d", s_cps.methodCoordEndLine);
+            fprintf(communicationChannel,"*%d", s_cps.methodCoordEndLine);
         } else {
             errorMessage(ERR_ST, "No method found.");
         }
         break;
     case OLO_GET_CLASS_COORD:
         if (s_cps.classCoordEndLine!=0) {
-            fprintf(ccOut,"*%d", s_cps.classCoordEndLine);
+            fprintf(communicationChannel,"*%d", s_cps.classCoordEndLine);
         } else {
             errorMessage(ERR_ST, "No class found.");
         }
         break;
     case OLO_GET_SYMBOL_TYPE:
         if (s_olstringServed) {
-            fprintf(ccOut,"*%s", s_olSymbolType);
+            fprintf(communicationChannel,"*%s", s_olSymbolType);
         } else if (options.noErrors) {
-            fprintf(ccOut,"*");
+            fprintf(communicationChannel,"*");
         } else {
             errorMessage(ERR_ST, "No symbol found.");
         }
@@ -4953,7 +4953,7 @@ void mainAnswerEditAction(void) {
         }
         break;
     case OLO_PUSH_ALL_IN_METHOD:
-        //&fprintf(ccOut,":\n\n getting all references from %d to %d\n", s_cps.cxMemiAtMethodBeginning, s_cps.cxMemiAtMethodEnd);
+        //&fprintf(communicationChannel,":\n\n getting all references from %d to %d\n", s_cps.cxMemiAtMethodBeginning, s_cps.cxMemiAtMethodEnd);
         olPushAllReferencesInBetween(s_cps.cxMemiAtMethodBeginning, s_cps.cxMemiAtMethodEnd);
         olcxPrintPushingAction(options.server_operation, 0);
         break;
@@ -4998,7 +4998,7 @@ void mainAnswerEditAction(void) {
         mainAnswerReferencePushingAction(options.server_operation);
     } // switch
 
-    fflush(ccOut);
+    fflush(communicationChannel);
     s_input_file_name = NULL;
     //&RLM_FREE_COUNT(olcxMemory);
 }
@@ -5338,7 +5338,7 @@ void printTagSearchResults(void) {
         if (options.xref2) {
             ppcGenRecord(PPC_STRING_VALUE, ls);
         } else {
-            fprintf(ccOut,"%s\n", ls);
+            fprintf(communicationChannel,"%s\n", ls);
         }
         len1 = len;
     }

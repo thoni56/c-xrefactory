@@ -188,7 +188,7 @@ char *s_javaThisPackageName = "";
 
 FILE *cxOut;
 FILE *inputFile;
-FILE *ccOut=NULL;
+FILE *communicationChannel=NULL;
 FILE *dumpOut=NULL;
 FILE *errOut=NULL;
 

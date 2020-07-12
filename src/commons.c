@@ -14,13 +14,13 @@
 
 
 void closeMainOutputFile(void) {
-    if (ccOut!=stdout) {
+    if (communicationChannel!=stdout) {
         //&fprintf(dumpOut,"CLOSING OUTPUT FILE\n");
-        closeFile(ccOut);
-        ccOut = stdout;
+        closeFile(communicationChannel);
+        communicationChannel = stdout;
     }
-    errOut = ccOut;
-    dumpOut = ccOut;
+    errOut = communicationChannel;
+    dumpOut = communicationChannel;
 }
 
 void initCwd(void) {

@@ -731,7 +731,7 @@ static void tpCheckFutureAccOfLocalReferences(SymbolReferenceItem *ri, void *ddd
     S_olSymbolsMenu *ss;
 
     dd = (S_tpCheckMoveClassData *) ddd;
-    //&fprintf(ccOut,"!mapping %s\n", ri->name);
+    //&fprintf(communicationChannel,"!mapping %s\n", ri->name);
     MOVE_CLASS_MAP_FUN_RETURN_ON_UNINTERESTING_SYMBOLS(ri, dd);
     ss = javaGetRelevantHkSelectedItem(ri);
     if (ss!=NULL) {
@@ -757,7 +757,7 @@ static void tpCheckMoveClassPutClassDefaultSymbols(SymbolReferenceItem *ri, void
     S_tpCheckMoveClassData *dd;
 
     dd = (S_tpCheckMoveClassData *) ddd;
-    //&fprintf(ccOut,"!mapping %s\n", ri->name);
+    //&fprintf(communicationChannel,"!mapping %s\n", ri->name);
     MOVE_CLASS_MAP_FUN_RETURN_ON_UNINTERESTING_SYMBOLS(ri, dd);
     // fine, add it to Menu, so we will load its references
     for(rr=ri->refs; rr!=NULL; rr=rr->next) {
@@ -827,7 +827,7 @@ static void tpCheckDefaultAccessibilitiesMoveClass(SymbolReferenceItem *ri, void
     char                    symclass[MAX_FILE_NAME_SIZE];
     int                     sclen, symclen;
     dd = (S_tpCheckMoveClassData *) ddd;
-    //&fprintf(ccOut,"!mapping %s\n", ri->name);
+    //&fprintf(communicationChannel,"!mapping %s\n", ri->name);
     MOVE_CLASS_MAP_FUN_RETURN_ON_UNINTERESTING_SYMBOLS(ri, dd);
     // check that it is not from moved class
     javaGetClassNameFromFileNum(ri->vFunClass, symclass, 0);
@@ -1071,7 +1071,7 @@ int tpCheckSuperMethodReferencesAfterPushDown(void) {
         linkNamePrettyPrint(ttt, ss->s.name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
         sprintf(tmpBuff,"'%s' invokes another method using the keyword \"super\" and the invoked method is also defined in current class. After pushing down, the reference will be misrelated. In consequence, it is not possible to ensure behaviour preseving pushing-down of this method.", ttt);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-        fprintf(ccOut,":[warning] %s", tmpBuff);
+        fprintf(communicationChannel,":[warning] %s", tmpBuff);
         //&errorMessage(ERR_ST, tmpBuff);
         return(0);
     }
@@ -1116,7 +1116,7 @@ int tpCheckOuterScopeUsagesForDynToSt(void) {
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
             ppcGenRecord(PPC_ERROR, tmpBuff);
         } else {
-            fprintf(ccOut, ":[warning] %s", tmpBuff);
+            fprintf(communicationChannel, ":[warning] %s", tmpBuff);
         }
         //& errorMessage(ERR_ST, tmpBuff);
         return(0);
@@ -1236,7 +1236,7 @@ int tpPullUpFieldLastPreconditions(void) {
     if (mm->s.refs == NULL) return(1);
     javaGetClassNameFromFileNum(target->u.s->classFile, ttt, DOTIFY_NAME);
     if (IS_DEFINITION_OR_DECL_USAGE(mm->s.refs->usage.base) && mm->s.refs->next==NULL) {
-        if (pcharFlag==0) {pcharFlag=1; fprintf(ccOut,":[warning] ");}
+        if (pcharFlag==0) {pcharFlag=1; fprintf(communicationChannel,":[warning] ");}
         sprintf(tmpBuff, "%s is already defined in the superclass %s.  Pulling up will do nothing, but removing the definition from the subclass. You should make sure that both fields are initialized to the same value.", mm->s.name, ttt);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
         warningMessage(ERR_ST, tmpBuff);
@@ -1286,7 +1286,7 @@ int tpPushDownFieldLastPreconditions(void) {
     }
     if (sourcesm != NULL) {
         if (sourcesm->s.refs!=NULL && sourcesm->s.refs->next!=NULL) {
-            //& if (pcharFlag==0) {pcharFlag=1; fprintf(ccOut,":[warning] ");}
+            //& if (pcharFlag==0) {pcharFlag=1; fprintf(communicationChannel,":[warning] ");}
             javaGetClassNameFromFileNum(thisclassi, ttt, DOTIFY_NAME);
             sprintf(tmpBuff, "There are several references of %s syntactically applied on %s. This may cause that the refactoring will not be behaviour preserving!", sourcesm->s.name, ttt);
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);

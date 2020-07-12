@@ -520,7 +520,7 @@ static void generateNewMacroCall(ProgramGraphNode *program) {
     if (options.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb);
     } else {
-        fprintf(ccOut, "%s", rb);
+        fprintf(communicationChannel, "%s", rb);
     }
 }
 
@@ -553,7 +553,7 @@ static void extGenNewMacroHead(ProgramGraphNode *program) {
     if (options.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb);
     } else {
-        fprintf(ccOut, "%s", rb);
+        fprintf(communicationChannel, "%s", rb);
     }
 }
 
@@ -566,7 +566,7 @@ static void generateNewMacroTail(ProgramGraphNode *program) {
     if (options.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb);
     } else {
-        fprintf(ccOut, "%s", rb);
+        fprintf(communicationChannel, "%s", rb);
     }
 }
 
@@ -627,7 +627,7 @@ static void generateNewFunctionCall(ProgramGraphNode *program) {
     if (options.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb);
     } else {
-        fprintf(ccOut, "%s", rb);
+        fprintf(communicationChannel, "%s", rb);
     }
 }
 
@@ -851,7 +851,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
     if (options.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb);
     } else {
-        fprintf(ccOut, "%s", rb);
+        fprintf(communicationChannel, "%s", rb);
     }
 }
 
@@ -887,7 +887,7 @@ static void generateNewFunctionTail(ProgramGraphNode *program) {
     if (options.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb);
     } else {
-        fprintf(ccOut, "%s", rb);
+        fprintf(communicationChannel, "%s", rb);
     }
 }
 
@@ -985,7 +985,7 @@ static void extJavaGenNewClassCall(ProgramGraphNode *program) {
     if (options.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb);
     } else {
-        fprintf(ccOut, "%s", rb);
+        fprintf(communicationChannel, "%s", rb);
     }
 }
 
@@ -1107,7 +1107,7 @@ static void extJavaGenNewClassHead(ProgramGraphNode *program) {
     if (options.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb);
     } else {
-        fprintf(ccOut, "%s", rb);
+        fprintf(communicationChannel, "%s", rb);
     }
 }
 
@@ -1150,7 +1150,7 @@ static void extJavaGenNewClassTail(ProgramGraphNode *program) {
     if (options.xref2) {
         ppcGenRecord(PPC_STRING_VALUE, rb);
     } else {
-        fprintf(ccOut, "%s", rb);
+        fprintf(communicationChannel, "%s", rb);
     }
 }
 
@@ -1212,21 +1212,21 @@ static void extMakeExtraction(void) {
     CX_ALLOCC(rb, EXTRACT_GEN_BUFFER_SIZE, char);
 
     if (! options.xref2) {
-        fprintf(ccOut,
+        fprintf(communicationChannel,
                 "%%!\n------------------------ The Invocation ------------------------\n!\n");
     }
     if (options.extractMode==EXTRACT_MACRO) generateNewMacroCall(program);
     else if (newClassExt) extJavaGenNewClassCall(program);
     else generateNewFunctionCall(program);
     if (! options.xref2) {
-        fprintf(ccOut,
+        fprintf(communicationChannel,
                 "!\n--------------------------- The Head ---------------------------\n!\n");
     }
     if (options.extractMode==EXTRACT_MACRO) extGenNewMacroHead(program);
     else if (newClassExt) extJavaGenNewClassHead(program);
     else generateNewFunctionHead(program);
     if (! options.xref2) {
-        fprintf(ccOut,
+        fprintf(communicationChannel,
                 "!\n--------------------------- The Tail ---------------------------\n!\n");
     }
     if (options.extractMode==EXTRACT_MACRO) generateNewMacroTail(program);
@@ -1236,8 +1236,8 @@ static void extMakeExtraction(void) {
     if (options.xref2) {
         ppcGenNumericRecord(PPC_INT_VALUE, s_cp.funBegPosition, "");
     } else {
-        fprintf(ccOut,"!%d!\n", s_cp.funBegPosition);
-        fflush(ccOut);
+        fprintf(communicationChannel,"!%d!\n", s_cp.funBegPosition);
+        fflush(communicationChannel);
     }
 
     if (options.xref2) ppcGenRecordEnd(PPC_EXTRACTION_DIALOG);

@@ -776,7 +776,7 @@ void editorReplaceString(EditorBuffer *buff, int position, int delsize,
     // prepare operation
     if (nsize >= buff->a.allocatedSize - buff->a.allocatedFreePrefixSize) {
         // resize buffer
-        //&sprintf(tmpBuff,"resizing %s from %d(%d) to %d\n", buff->name, buff->a.bufferSize, buff->a.allocatedSize, nsize);ppcGenRecord(PPC_INFORMATION, tmpBuff);fflush(ccOut);
+        //&sprintf(tmpBuff,"resizing %s from %d(%d) to %d\n", buff->name, buff->a.bufferSize, buff->a.allocatedSize, nsize);ppcGenRecord(PPC_INFORMATION, tmpBuff);fflush(communicationChannel);
         text = buff->a.text;
         space = buff->a.allocatedBlock; index = buff->a.allocatedIndex;
         allocNewEditorBufferTextSpace(buff, nsize);
@@ -801,7 +801,7 @@ void editorReplaceString(EditorBuffer *buff, int position, int delsize,
             buff->a.bufferSize - position - delsize);
     memcpy(buff->a.text+position, str, strlength);
     buff->a.bufferSize = buff->a.bufferSize - delsize + strlength;
-    //&sprintf(tmpBuff,"setting buffersize of  %s to %d\n", buff->name, buff->a.bufferSize);ppcGenRecord(PPC_INFORMATION, tmpBuff);fflush(ccOut);
+    //&sprintf(tmpBuff,"setting buffersize of  %s to %d\n", buff->name, buff->a.bufferSize);ppcGenRecord(PPC_INFORMATION, tmpBuff);fflush(communicationChannel);
     // update markers
     if (delsize > strlength) {
         if (strlength > 0) pattractor = position + strlength - 1;

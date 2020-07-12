@@ -386,20 +386,20 @@ static void printCompletionsBeginning(S_olCompletion *olc, int noFocus) {
             ppcGenAllCompletionsRecordBegin(noFocus, tlen);
         }
     } else {
-        fprintf(ccOut,";");
+        fprintf(communicationChannel,";");
     }
 }
 
 static void printOneCompletion(S_olCompletion *olc) {
     if (options.editor == EDITOR_JEDIT) {
-        fprintf(ccOut,"<%s %s=\"%s\" %s=%d %s=%ld>", PPC_MULTIPLE_COMPLETION_LINE,
+        fprintf(communicationChannel,"<%s %s=\"%s\" %s=%d %s=%ld>", PPC_MULTIPLE_COMPLETION_LINE,
                 PPCA_VCLASS, olc->vclass,
                 PPCA_VALUE, olc->jindent,
                 PPCA_LEN, (unsigned long)strlen(olc->fullName));
-        fprintf(ccOut, "%s", olc->fullName);
-        fprintf(ccOut, "</%s>\n", PPC_MULTIPLE_COMPLETION_LINE);
+        fprintf(communicationChannel, "%s", olc->fullName);
+        fprintf(communicationChannel, "</%s>\n", PPC_MULTIPLE_COMPLETION_LINE);
     } else {
-        fprintf(ccOut, "%s", olc->fullName);
+        fprintf(communicationChannel, "%s", olc->fullName);
     }
 }
 
@@ -407,7 +407,7 @@ static void printCompletionsEnding(S_olCompletion *olc) {
     if (completionsWillPrintEllipsis(olc)) {
         if (options.editor == EDITOR_JEDIT) {
         } else {
-            fprintf(ccOut,"\n...");
+            fprintf(communicationChannel,"\n...");
         }
     }
     if (options.xref2) {
@@ -425,7 +425,7 @@ void printCompletionsList(int noFocus) {
     printCompletionsBeginning(olc, noFocus);
     for(cc=olc; cc!=NULL; cc=cc->next) {
         printOneCompletion(cc);
-        if (cc->next!=NULL) fprintf(ccOut,"\n");
+        if (cc->next!=NULL) fprintf(communicationChannel,"\n");
     }
     printCompletionsEnding(olc);
 }
@@ -441,7 +441,7 @@ void printCompletions(Completions* c) {
         if (options.xref2) {
             ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No completion possible **");
         } else {
-            fprintf(ccOut,"-");
+            fprintf(communicationChannel,"-");
         }
         goto finiWithoutMenu;
     }
@@ -450,7 +450,7 @@ void printCompletions(Completions* c) {
             ppcGenGotoPositionRecord(&s_olcxCurrentUser->completionsStack.top->cpos);
             ppcGenRecord(PPC_SINGLE_COMPLETION, c->alternatives[0].string);
         } else {
-            fprintf(ccOut,".%s", c->comPrefix+c->idToProcessLen);
+            fprintf(communicationChannel,".%s", c->comPrefix+c->idToProcessLen);
         }
         goto finiWithoutMenu;
     }
@@ -460,7 +460,7 @@ void printCompletions(Completions* c) {
             ppcGenRecord(PPC_SINGLE_COMPLETION, c->comPrefix);
             ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 1, "Multiple completions");
         } else {
-            fprintf(ccOut,",%s", c->comPrefix+c->idToProcessLen);
+            fprintf(communicationChannel,",%s", c->comPrefix+c->idToProcessLen);
         }
         goto finiWithoutMenu;
     }
@@ -489,11 +489,11 @@ void printCompletions(Completions* c) {
     }
     olCompletionListReverse();
     printCompletionsList(c->noFocusOnCompletions);
-    fflush(ccOut);
+    fflush(communicationChannel);
     return;
  finiWithoutMenu:
     s_olcxCurrentUser->completionsStack.top = s_olcxCurrentUser->completionsStack.top->previous;
-    fflush(ccOut);
+    fflush(communicationChannel);
 }
 
 /* *********************************************************************** */

@@ -2323,7 +2323,7 @@ static void mainTotalTaskEntryInitialisations(int argc, char **argv) {
 
     s_fileAbortionEnabled = 0;
     cxOut = stdout;
-    ccOut = stdout;
+    communicationChannel = stdout;
     if (options.taskRegime == RegimeEditServer) errOut = stdout;
 
     assert(MAX_TYPE < power(2,SYMTYPES_LN));
@@ -2681,19 +2681,19 @@ void mainOpenOutputFile(char *ofile) {
         //&fprintf(dumpOut,"OPENING OUTPUT FILE %s\n", options.outputFileName);
 #if defined (__WIN32__)
         // open it as binary file, so that record lengths will be correct
-        ccOut = openFile(ofile,"wb");
+        communicationChannel = openFile(ofile,"wb");
 #else
-        ccOut = openFile(ofile,"w");
+        communicationChannel = openFile(ofile,"w");
 #endif
     } else {
-        ccOut = stdout;
+        communicationChannel = stdout;
     }
-    if (ccOut == NULL) {
+    if (communicationChannel == NULL) {
         errorMessage(ERR_CANT_OPEN, ofile);
-        ccOut = stdout;
+        communicationChannel = stdout;
     }
-    errOut = ccOut;
-    dumpOut = ccOut;
+    errOut = communicationChannel;
+    dumpOut = communicationChannel;
 }
 
 static int scheduleFileUsingTheMacro(void) {
@@ -3212,7 +3212,7 @@ static void mainEditServer(int argc, char **argv) {
         //&dumpOptions(nargc, nargv);
         log_trace("getting request");
         mainCallEditServerInit(nargc, nargv);
-        if (ccOut==stdout && options.outputFileName!=NULL) {
+        if (communicationChannel==stdout && options.outputFileName!=NULL) {
             mainOpenOutputFile(options.outputFileName);
         }
         mainCallEditServer(argc, argv, nargc, nargv, &firstPassing);
@@ -3228,8 +3228,8 @@ static void mainEditServer(int argc, char **argv) {
         if (options.server_operation == OLO_EXTRACT)
             s_cache.cpi = 2; // !!!! no cache
         if (options.last_message != NULL) {
-            fprintf(ccOut,"%s",options.last_message);
-            fflush(ccOut);
+            fprintf(communicationChannel,"%s",options.last_message);
+            fflush(communicationChannel);
         }
         if (options.xref2) ppcGenSynchroRecord();
         /*fprintf(dumpOut,"request answered\n\n");fflush(dumpOut);*/

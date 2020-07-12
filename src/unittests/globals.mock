@@ -28,7 +28,7 @@ char s_base[MAX_FILE_NAME_SIZE];
 
 FILE *inputFile;
 FILE *cxOut;
-FILE *ccOut;
+FILE *communicationChannel;
 FILE *dumpOut = NULL;
 FILE *errOut=NULL;
 
