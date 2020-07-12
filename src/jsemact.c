@@ -800,7 +800,7 @@ void javaLoadClassSymbolsFromFile(Symbol *memb) {
         addCfClassTreeHierarchyRef(cInd, UsageClassFileDefinition);
         ffound = javaFindFile(memb, &sname, &cname);
 //&fprintf(dumpOut,"![load] file containing %s, %s, %s %s\n", memb->linkName, miscellaneousName[ffound], sname, cname);
-//&sprintf(tmpBuff,"![load] file containing %s, %s, %s %s\n", memb->linkName, miscellaneousName[ffound], sname, cname);ppcGenRecord(PPC_IGNORE, tmpBuff, "\n");
+//&sprintf(tmpBuff,"![load] file containing %s, %s, %s %s\n", memb->linkName, miscellaneousName[ffound], sname, cname);ppcGenRecord(PPC_IGNORE, tmpBuff);
         if (ffound == RESULT_IS_JAVA_FILE) {
             assert(memb->u.s);
             cfi = memb->u.s->classFile;

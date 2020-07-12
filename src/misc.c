@@ -42,9 +42,9 @@ void ppcGenPosition(Position *p) {
             PPCA_LINE, p->line, PPCA_COL, p->col,
             PPCA_LEN, (unsigned long)strlen(fn), fn,
             PPC_LC_POSITION);
-    //&ppcGenRecord(PPC_FILE, fileTable.tab[p->file]->name,"\n");
-    //&ppcGenNumericRecord(PPC_LINE, p->line,"","");
-    //&ppcGenNumericRecord(PPC_COL, p->col,"","");
+    //&ppcGenRecord(PPC_FILE, fileTable.tab[p->file]->name);
+    //&ppcGenNumericRecord(PPC_LINE, p->line,"");
+    //&ppcGenNumericRecord(PPC_COL, p->col,"");
 }
 
 void ppcGenGotoPositionRecord(Position *p) {
@@ -66,8 +66,8 @@ void ppcGenOffsetPosition(char *fn, int offset) {
             PPCA_OFFSET, offset,
             PPCA_LEN, (unsigned long)strlen(fn), fn,
             PPC_OFFSET_POSITION);
-    //&ppcGenRecord(PPC_FILE, m->buffer->name,"\n");
-    //&ppcGenNumericRecord(PPC_OFFSET, m->offset,"","");
+    //&ppcGenRecord(PPC_FILE, m->buffer->name);
+    //&ppcGenNumericRecord(PPC_OFFSET, m->offset,"");
 }
 
 void ppcGenMarker(EditorMarker *m) {
@@ -124,11 +124,11 @@ void ppcGenAllCompletionsRecordBegin(int nofocus, int len) {
     fprintf(ccOut, "<%s %s=%d %s=%d>", PPC_ALL_COMPLETIONS, PPCA_NO_FOCUS, nofocus, PPCA_LEN, len);
 }
 
-void ppcGenRecordWithNumeric(char *kind, char *attr, int val, char *message,char *suff) {
+void ppcGenRecordWithNumeric(char *kind, char *attr, int val, char *message) {
     ppcIndentOffset();
-    fprintf(ccOut, "<%s %s=%d %s=%ld>%s</%s>%s", kind,
+    fprintf(ccOut, "<%s %s=%d %s=%ld>%s</%s>\n", kind,
             attr, val, PPCA_LEN, (unsigned long)strlen(message),
-            message, kind, suff);
+            message, kind);
 }
 
 void ppcGenTwoNumericsAndrecord(char *kind, char *attr1, int val1, char *attr2, int val2, char *message,char *suff) {
@@ -140,23 +140,23 @@ void ppcGenTwoNumericsAndrecord(char *kind, char *attr1, int val1, char *attr2, 
             message, kind, suff);
 }
 
-void ppcGenNumericRecord(char *kind, int val,char *message,char *suff) {
+void ppcGenNumericRecord(char *kind, int val,char *message) {
     ppcIndentOffset();
-    ppcGenRecordWithNumeric(kind, PPCA_VALUE, val, message, suff);
+    ppcGenRecordWithNumeric(kind, PPCA_VALUE, val, message);
 }
 
-void ppcGenRecord(char *kind, char *message, char *suffix) {
+void ppcGenRecord(char *kind, char *message) {
     ppcIndentOffset();
-    fprintf(ccOut, "<%s %s=%ld>%s</%s>%s", kind, PPCA_LEN, (unsigned long)strlen(message),
-            message, kind, suffix);
+    fprintf(ccOut, "<%s %s=%ld>%s</%s>\n", kind, PPCA_LEN, (unsigned long)strlen(message),
+            message, kind);
 }
 
 // use this for debugging purposes only!!!
 void ppcGenTmpBuff(void) {
     char tmpBuff[TMP_BUFF_SIZE];
 
-    ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
-    //&ppcGenRecord(PPC_INFORMATION,tmpBuff,"\n");
+    ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
+    //&ppcGenRecord(PPC_INFORMATION,tmpBuff);
     fflush(ccOut);
 }
 
@@ -177,7 +177,7 @@ void ppcGenReplaceRecord(char *file, int offset, char *oldName, int oldLen, char
     fprintf(ccOut, "<%s %s=%d>", PPC_STRING_VALUE, PPCA_LEN, oldLen);
     for(i=0; i<oldLen; i++) putc(oldName[i], ccOut);
     fprintf(ccOut, "</%s> ", PPC_STRING_VALUE);
-    ppcGenRecord(PPC_STRING_VALUE, newName,"\n");
+    ppcGenRecord(PPC_STRING_VALUE, newName);
     ppcGenRecordEnd(PPC_REFACTORING_REPLACEMENT);
 }
 
@@ -203,11 +203,11 @@ void ppcGenReferencePreCheckRecord(Reference *r, char *text) {
 }
 
 void ppcGenDefinitionNotFoundWarning(void) {
-    ppcGenRecord(PPC_WARNING, DEFINITION_NOT_FOUND_MESSAGE, "\n");
+    ppcGenRecord(PPC_WARNING, DEFINITION_NOT_FOUND_MESSAGE);
 }
 
 void ppcGenDefinitionNotFoundWarningAtBottom(void) {
-    ppcGenRecordWithNumeric(PPC_BOTTOM_WARNING, PPCA_BEEP, 1, DEFINITION_NOT_FOUND_MESSAGE, "\n");
+    ppcGenRecordWithNumeric(PPC_BOTTOM_WARNING, PPCA_BEEP, 1, DEFINITION_NOT_FOUND_MESSAGE);
 }
 
 
@@ -222,7 +222,7 @@ void dumpOptions(int nargc, char **nargv) {
         sprintf(tmpBuff+strlen(tmpBuff), "%s", nargv[i]);
     }
     assert(strlen(tmpBuff)<TMP_BUFF_SIZE-1);
-    ppcGenRecord(PPC_INFORMATION,tmpBuff,"\n");
+    ppcGenRecord(PPC_INFORMATION,tmpBuff);
 }
 
 /* *************************************************************************

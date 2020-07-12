@@ -1011,7 +1011,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
 static void cxfileCheckLastSymbolDeadness(void) {
     if (s_inLastInfos.symbolToCheckForDeadness != -1
         && s_inLastInfos.deadSymbolIsDefined) {
-        //&sprintf(tmpBuff,"adding %s storage==%s", s_inLastInfos.symbolTab[s_inLastInfos.symbolToCheckForDeadness]->name, storagesName[s_inLastInfos.symbolTab[s_inLastInfos.symbolToCheckForDeadness]->b.storage]);ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
+        //&sprintf(tmpBuff,"adding %s storage==%s", s_inLastInfos.symbolTab[s_inLastInfos.symbolToCheckForDeadness]->name, storagesName[s_inLastInfos.symbolTab[s_inLastInfos.symbolToCheckForDeadness]->b.storage]);ppcGenRecord(PPC_INFORMATION, tmpBuff);
         olAddBrowsedSymbol(s_inLastInfos.symbolTab[s_inLastInfos.symbolToCheckForDeadness],
                            &s_olcxCurrentUser->browserStack.top->hkSelectedSym,
                            1,1,0,UsageDefined,0, &s_noPos, UsageDefined);

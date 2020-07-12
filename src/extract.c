@@ -313,7 +313,7 @@ static ExtractCategory categorizeLocalVariableExtraction0(
         // a variable defined outside of the block
         if (outUsages & INSP_INSIDE_BLOCK) {
             // a value set in the block is used outside
-            //&sprintf(tmpBuff,"testing %s: %d %d %d\n", varRef->symRef->name, (inUsages & INSP_INSIDE_REENTER),(inUsages & INSP_OUTSIDE_BLOCK), outUsageBothExists);ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
+            //&sprintf(tmpBuff,"testing %s: %d %d %d\n", varRef->symRef->name, (inUsages & INSP_INSIDE_REENTER),(inUsages & INSP_OUTSIDE_BLOCK), outUsageBothExists);ppcGenRecord(PPC_INFORMATION, tmpBuff);
             if ((inUsages & INSP_INSIDE_REENTER) == 0
                 && (inUsages & INSP_OUTSIDE_BLOCK) == 0
                 /*& && outUsageBothExists == 0 &*/
@@ -518,7 +518,7 @@ static void generateNewMacroCall(ProgramGraphNode *program) {
 
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (options.xref2) {
-        ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
+        ppcGenRecord(PPC_STRING_VALUE, rb);
     } else {
         fprintf(ccOut, "%s", rb);
     }
@@ -551,7 +551,7 @@ static void extGenNewMacroHead(ProgramGraphNode *program) {
     sprintf(rb+strlen(rb), "%s) {\\\n", fFlag?"(":"");
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (options.xref2) {
-        ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
+        ppcGenRecord(PPC_STRING_VALUE, rb);
     } else {
         fprintf(ccOut, "%s", rb);
     }
@@ -564,7 +564,7 @@ static void generateNewMacroTail(ProgramGraphNode *program) {
 
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (options.xref2) {
-        ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
+        ppcGenRecord(PPC_STRING_VALUE, rb);
     } else {
         fprintf(ccOut, "%s", rb);
     }
@@ -625,7 +625,7 @@ static void generateNewFunctionCall(ProgramGraphNode *program) {
     sprintf(rb+strlen(rb), "%s);\n", fFlag?"(":"");
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (options.xref2) {
-        ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
+        ppcGenRecord(PPC_STRING_VALUE, rb);
     } else {
         fprintf(ccOut, "%s", rb);
     }
@@ -849,7 +849,7 @@ static void generateNewFunctionHead(ProgramGraphNode *program) {
     if (fFlag == 0) sprintf(rb+strlen(rb), ";\n");
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (options.xref2) {
-        ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
+        ppcGenRecord(PPC_STRING_VALUE, rb);
     } else {
         fprintf(ccOut, "%s", rb);
     }
@@ -885,7 +885,7 @@ static void generateNewFunctionTail(ProgramGraphNode *program) {
     sprintf(rb+strlen(rb),"}\n\n");
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (options.xref2) {
-        ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
+        ppcGenRecord(PPC_STRING_VALUE, rb);
     } else {
         fprintf(ccOut, "%s", rb);
     }
@@ -983,7 +983,7 @@ static void extJavaGenNewClassCall(ProgramGraphNode *program) {
 
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (options.xref2) {
-        ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
+        ppcGenRecord(PPC_STRING_VALUE, rb);
     } else {
         fprintf(ccOut, "%s", rb);
     }
@@ -1105,7 +1105,7 @@ static void extJavaGenNewClassHead(ProgramGraphNode *program) {
     if (fFlag == 0) sprintf(rb+strlen(rb), ";\n");
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (options.xref2) {
-        ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
+        ppcGenRecord(PPC_STRING_VALUE, rb);
     } else {
         fprintf(ccOut, "%s", rb);
     }
@@ -1148,7 +1148,7 @@ static void extJavaGenNewClassTail(ProgramGraphNode *program) {
 
     assert(strlen(rb)<EXTRACT_GEN_BUFFER_SIZE-1);
     if (options.xref2) {
-        ppcGenRecord(PPC_STRING_VALUE, rb, "\n");
+        ppcGenRecord(PPC_STRING_VALUE, rb);
     } else {
         fprintf(ccOut, "%s", rb);
     }
@@ -1234,7 +1234,7 @@ static void extMakeExtraction(void) {
     else generateNewFunctionTail(program);
 
     if (options.xref2) {
-        ppcGenNumericRecord(PPC_INT_VALUE, s_cp.funBegPosition, "", "\n");
+        ppcGenNumericRecord(PPC_INT_VALUE, s_cp.funBegPosition, "");
     } else {
         fprintf(ccOut,"!%d!\n", s_cp.funBegPosition);
         fflush(ccOut);

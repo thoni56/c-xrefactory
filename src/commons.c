@@ -265,7 +265,7 @@ void warningMessage(int errCode, char *message) {
         formatMessage(ppcTmpBuff, errCode, message);
         if (options.xref2) {
             strcat(ppcTmpBuff, "\n");
-            ppcGenRecord(PPC_WARNING, ppcTmpBuff,"\n");
+            ppcGenRecord(PPC_WARNING, ppcTmpBuff);
         } else {
             if (displayingErrorMessages())
                 log_warning("%s", ppcTmpBuff);
@@ -277,7 +277,7 @@ static void writeErrorMessage(int errCode, char *mess) {
     formatMessage(ppcTmpBuff, errCode, mess);
     if (options.xref2) {
         strcat(ppcTmpBuff, "\n");
-        ppcGenRecord(PPC_ERROR, ppcTmpBuff, "\n");
+        ppcGenRecord(PPC_ERROR, ppcTmpBuff);
     } else {
         if (displayingErrorMessages())
             log_error("%s", ppcTmpBuff);
@@ -302,7 +302,7 @@ static void emergencyExit(int exitStatus) {
 void fatalError(int errCode, char *mess, int exitStatus) {
     formatMessage(ppcTmpBuff, errCode, mess);
     if (options.xref2) {
-        ppcGenRecord(PPC_FATAL_ERROR, ppcTmpBuff,"\n");
+        ppcGenRecord(PPC_FATAL_ERROR, ppcTmpBuff);
     } else {
         log_error(ppcTmpBuff);
     }
@@ -319,7 +319,7 @@ void internalCheckFail(char *expr, char *file, int line) {
     writeErrorMessage(ERR_INTERNAL_CHECK,msg);
     if (options.taskRegime == RegimeEditServer || options.refactoringRegime == RegimeRefactory) {
         if (options.xref2) {
-            ppcGenRecord(PPC_INFORMATION,"Exiting","\n");
+            ppcGenRecord(PPC_INFORMATION,"Exiting");
             closeMainOutputFile();
             ppcGenSynchroRecord();
         } else {

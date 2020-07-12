@@ -441,7 +441,7 @@ static void olcxMenuGenGlobRefsForVirtMethod(FILE *ff, S_olSymbolsMenu *rrr) {
           s_symbolListOutputCurrentLine += 1 ;
           &*/
     } else {
-        if (options.xref2) ppcGenRecord(PPC_VIRTUAL_SYMBOL, ln, "\n");
+        if (options.xref2) ppcGenRecord(PPC_VIRTUAL_SYMBOL, ln);
         else fprintf(ff, "\n== %s\n", ln);
         s_symbolListOutputCurrentLine += 2 ;
     }

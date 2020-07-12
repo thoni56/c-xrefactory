@@ -439,7 +439,7 @@ void printCompletions(Completions* c) {
     olCompletionListInit(&c->idToProcessPos);
     if (c->alternativeIndex == 0) {
         if (options.xref2) {
-            ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No completion possible **","\n");
+            ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 0, "** No completion possible **");
         } else {
             fprintf(ccOut,"-");
         }
@@ -448,7 +448,7 @@ void printCompletions(Completions* c) {
     if ((! c->fullMatchFlag) && c->alternativeIndex==1) {
         if (options.xref2) {
             ppcGenGotoPositionRecord(&s_olcxCurrentUser->completionsStack.top->cpos);
-            ppcGenRecord(PPC_SINGLE_COMPLETION, c->alternatives[0].string,"\n");
+            ppcGenRecord(PPC_SINGLE_COMPLETION, c->alternatives[0].string);
         } else {
             fprintf(ccOut,".%s", c->comPrefix+c->idToProcessLen);
         }
@@ -457,8 +457,8 @@ void printCompletions(Completions* c) {
     if ((! c->fullMatchFlag) && strlen(c->comPrefix) > c->idToProcessLen) {
         if (options.xref2) {
             ppcGenGotoPositionRecord(&s_olcxCurrentUser->completionsStack.top->cpos);
-            ppcGenRecord(PPC_SINGLE_COMPLETION, c->comPrefix,"\n");
-            ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 1, "Multiple completions","\n");
+            ppcGenRecord(PPC_SINGLE_COMPLETION, c->comPrefix);
+            ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 1, "Multiple completions");
         } else {
             fprintf(ccOut,",%s", c->comPrefix+c->idToProcessLen);
         }

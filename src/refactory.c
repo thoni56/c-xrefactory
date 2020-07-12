@@ -268,7 +268,7 @@ static void refactoryBeInteractive(void) {
                        s_refactoryEditSrvInitOptions, INFILES_DISABLED);
         getPipedOptions(&pargc, &pargv);
         mainOpenOutputFile(s_ropt.outputFileName);
-        //&ppcGenRecord(PPC_INFORMATION, "Refactoring task answering", "\n");
+        //&ppcGenRecord(PPC_INFORMATION, "Refactoring task answering");
         // old way how to finish dialog
         if (pargc <= 1) break;
         mainCallEditServerInit(pargc, pargv);
@@ -419,7 +419,7 @@ void editorApplyUndos(S_editorUndo *undos, S_editorUndo *until,
         case UNDO_RENAME_BUFFER:
             if (gen == GEN_FULL_OUTPUT) {
                 ppcGenGotoOffsetPosition(uu->buffer->name, 0);
-                ppcGenRecord(PPC_MOVE_FILE_AS, uu->u.rename.name, "\n");
+                ppcGenRecord(PPC_MOVE_FILE_AS, uu->u.rename.name);
             }
             editorRenameBuffer(uu->buffer, uu->u.rename.name, undoundo);
             break;
@@ -428,12 +428,12 @@ void editorApplyUndos(S_editorUndo *undos, S_editorUndo *until,
             m2 = editorCrNewMarker(uu->u.moveBlock.dbuffer, uu->u.moveBlock.doffset);
             if (gen == GEN_FULL_OUTPUT) {
                 ppcGenGotoMarkerRecord(m1);
-                ppcGenNumericRecord(PPC_REFACTORING_CUT_BLOCK,uu->u.moveBlock.size,"","\n");
+                ppcGenNumericRecord(PPC_REFACTORING_CUT_BLOCK,uu->u.moveBlock.size,"");
             }
             editorMoveBlock(m2, m1, uu->u.moveBlock.size, undoundo);
             if (gen == GEN_FULL_OUTPUT) {
                 ppcGenGotoMarkerRecord(m1);
-                ppcGenRecord(PPC_REFACTORING_PASTE_BLOCK, "", "\n");
+                ppcGenRecord(PPC_REFACTORING_PASTE_BLOCK, "");
             }
             editorFreeMarker(m2);
             editorFreeMarker(m1);
@@ -690,7 +690,7 @@ static void refactoryPushMarkersAsReferences(S_editorMarkerList **markers,
         if (strcmp(mm->s.name, sym)==0) {
             for(r=rr; r!=NULL; r=r->next) {
                 //&sprintf(tmpBuff,"adding mis ref on %d:%d", r->p.line, r->p.col);
-                //&ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
+                //&ppcGenRecord(PPC_INFORMATION, tmpBuff);
                 olcxAddReference(&mm->s.refs, r, 0);
             }
         }
@@ -1114,7 +1114,7 @@ int tpCheckOuterScopeUsagesForDynToSt(void) {
         if (options.xref2) {
             ppcGenGotoPositionRecord(&rr.foundOuterScopeRef->p);
             formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-            ppcGenRecord(PPC_ERROR, tmpBuff, "\n");
+            ppcGenRecord(PPC_ERROR, tmpBuff);
         } else {
             fprintf(ccOut, ":[warning] %s", tmpBuff);
         }
@@ -1384,7 +1384,7 @@ static int refactoryMakeSafetyCheckAndUndo(
 }
 
 void refactoryAskForReallyContinueConfirmation(void) {
-    ppcGenRecord(PPC_ASK_CONFIRMATION,"The refactoring may change program behaviour, really continue?", "\n");
+    ppcGenRecord(PPC_ASK_CONFIRMATION,"The refactoring may change program behaviour, really continue?");
 }
 
 static void refactoryPreCheckThatSymbolRefsCorresponds(char *oldName, S_editorMarkerList *occs) {
@@ -1463,7 +1463,7 @@ static void refactoryCheckedRenameBuffer(
     if (statb(newName, &st)==0) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "Renaming buffer %s to an existing file.\nCan I do this?", buff->name);
-        ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff, "\n");
+        ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff);
     }
     editorRenameBuffer(buff, newName, undo);
 }
@@ -1497,7 +1497,7 @@ static int refactoryRenamePackageFileMove(char *currentPath, S_editorMarkerList 
     int                 res, plen;
     res = 0;
     plen = strlen(currentPath);
-    //&sprintf(tmpBuff,"checking %s<->%s, %s<->%s\n",ll->d->buffer->name, currentPath,ll->d->buffer->name+plen+1, symLinkName);ppcGenRecord(PPC_WARNING,tmpBuff,"\n");
+    //&sprintf(tmpBuff,"checking %s<->%s, %s<->%s\n",ll->d->buffer->name, currentPath,ll->d->buffer->name+plen+1, symLinkName);ppcGenRecord(PPC_WARNING,tmpBuff);
     if (fnnCmp(ll->d->buffer->name, currentPath, plen)==0
         && ll->d->buffer->name[plen] == FILE_PATH_SEPARATOR
         && fnnCmp(ll->d->buffer->name+plen+1, symLinkName, slnlen)==0) {
@@ -1746,7 +1746,7 @@ static void refactoryCheckForMultipleReferencesOnSinglePlace2( SymbolReferenceIt
         ppcGenGotoPositionRecord(&r->p);
         sprintf(tmpBuff, "The reference at this place refers to multiple symbols. The refactoring will probably damage your program. Do you really want to continue?");
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-        ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff, "\n");
+        ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff);
         //& olcxAppendReference(r, s_olcxCurrentUser->browserStack.top);
     }
 }
@@ -1824,15 +1824,15 @@ static void refactoryRename(EditorBuffer *buf, EditorMarker *point) {
     ppcGenGotoMarkerRecord(point);
 
     // no messages, they make problem on extract method
-    //&if (check) ppcGenRecord(PPC_INFORMATION,"Symbol has been safely renamed","\n");
-    //&else ppcGenRecord(PPC_INFORMATION,"Symbol has been renamed","\n");
+    //&if (check) ppcGenRecord(PPC_INFORMATION,"Symbol has been safely renamed");
+    //&else ppcGenRecord(PPC_INFORMATION,"Symbol has been renamed");
     editorFreeMarkersAndMarkerList(occs);  // O(n^2)!
 
     if (s_ropt.theRefactoring==AVR_RENAME_PACKAGE) {
-        ppcGenRecord(PPC_INFORMATION, "\nDone.\nDo not forget to remove .class files of former package", "\n");
+        ppcGenRecord(PPC_INFORMATION, "\nDone.\nDo not forget to remove .class files of former package");
     } else if (s_ropt.theRefactoring==AVR_RENAME_CLASS
                && strcmp(simpleFileNameWithoutSuffix_st(point->buffer->name), s_ropt.renameTo)==0) {
-        ppcGenRecord(PPC_INFORMATION, "\nDone.\nDo not forget to remove .class file of former class", "\n");
+        ppcGenRecord(PPC_INFORMATION, "\nDone.\nDo not forget to remove .class file of former class");
     }
 }
 
@@ -2000,7 +2000,7 @@ static void refactoryCheckThatParameterIsUnused(EditorMarker *pos, char *fname,
 
     rr = refactoryGetParamNamePosition(pos, fname, argn);
     if (rr != RETURN_OK) {
-        ppcGenRecord(PPC_ASK_CONFIRMATION, "Can not parse parameter definition, continue anyway?", "\n");
+        ppcGenRecord(PPC_ASK_CONFIRMATION, "Can not parse parameter definition, continue anyway?");
         return;
     }
 
@@ -2011,10 +2011,10 @@ static void refactoryCheckThatParameterIsUnused(EditorMarker *pos, char *fname,
         char tmpBuff[TMP_BUFF_SIZE];
         if (checkfor==CHECK_FOR_ADD_PARAM) {
             sprintf(tmpBuff, "parameter '%s' clashes with an existing symbol, continue anyway?", pname);
-            ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff, "\n");
+            ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff);
         } else if (checkfor==CHECK_FOR_DEL_PARAM) {
             sprintf(tmpBuff, "parameter '%s' is used, delete it anyway?", pname);
-            ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff, "\n");
+            ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff);
         } else {
             assert(0);
         }
@@ -2205,12 +2205,12 @@ static int createMarkersForAllReferencesInRegions(
     for(mm=menu; mm!=NULL; mm=mm->next) {
         assert(mm->markers==NULL);
         if (mm->selected && mm->visible) {
-            //&LIST_LEN(nn, Reference, mm->s.refs);sprintf(tmpBuff,"there are %d refs for %s", nn, fileTable.tab[mm->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+            //&LIST_LEN(nn, Reference, mm->s.refs);sprintf(tmpBuff,"there are %d refs for %s", nn, fileTable.tab[mm->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
             mm->markers = editorReferencesToMarkers(mm->s.refs,filter0, NULL);
             if (regions != NULL) {
                 editorRestrictMarkersToRegions(&mm->markers, regions);
             }
-            //&LIST_LEN(nn, S_editorMarkerList, mm->markers);sprintf(tmpBuff,"converted to %d refs for %s", nn, fileTable.tab[mm->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+            //&LIST_LEN(nn, S_editorMarkerList, mm->markers);sprintf(tmpBuff,"converted to %d refs for %s", nn, fileTable.tab[mm->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
             LIST_MERGE_SORT(S_editorMarkerList, mm->markers, editorMarkerListLess);
             LIST_LEN(n, S_editorMarkerList, mm->markers);
             res += n;
@@ -2426,8 +2426,7 @@ static int refactoryAddImport(EditorMarker *point, S_editorRegionList **regions,
         if (refactoryIsTheImportUsed(mm, line, icoll)) {
             if (interactive == INTERACTIVE_YES) {
                 ppcGenRecord(PPC_WARNING,
-                             "Sorry, adding this import would cause misinterpretation of\nsome of classes used elsewhere it the file.",
-                             "\n");
+                             "Sorry, adding this import would cause misinterpretation of\nsome of classes used elsewhere it the file.");
             }
             res = 0;
         } else {
@@ -2437,8 +2436,7 @@ static int refactoryAddImport(EditorMarker *point, S_editorRegionList **regions,
             if (refactoryImportNeeded(point, regions, vApplCl)) {
                 if (interactive == INTERACTIVE_YES) {
                     ppcGenRecord(PPC_WARNING,
-                                 "Sorry, this import will not help to reduce class references.",
-                                 "\n");
+                                 "Sorry, this import will not help to reduce class references.");
                 }
                 res = 0;
             }
@@ -2474,7 +2472,7 @@ static int refactoryInteractiveAskForAddImportAction(S_editorMarkerList *ppp, in
     int action;
     refactoryApplyWholeRefactoringFromUndo();  // make current state visible
     ppcGenGotoMarkerRecord(ppp->d);
-    ppcGenNumericRecord(PPC_ADD_TO_IMPORTS_DIALOG,defaultAction,fqtName,"\n");
+    ppcGenNumericRecord(PPC_ADD_TO_IMPORTS_DIALOG,defaultAction,fqtName);
     refactoryBeInteractive();
     action = options.continueRefactoring;
     return(action);
@@ -2767,7 +2765,7 @@ static void refactoryPerformMovingOfStaticObjectAndMakeItPublic(
     if (target->buffer == mstart->buffer
         && target->offset > mstart->offset
         && target->offset < mstart->offset+size) {
-        ppcGenRecord(PPC_INFORMATION, "You can't move something into itself.", "\n");
+        ppcGenRecord(PPC_INFORMATION, "You can't move something into itself.");
         return;
     }
 
@@ -2904,7 +2902,7 @@ static void refactoryMoveStaticFieldOrMethod(EditorMarker *point, int limitIndex
     // and generate output
     refactoryApplyWholeRefactoringFromUndo();
     ppcGenGotoMarkerRecord(point);
-    ppcGenNumericRecord(PPC_INDENT, lines, "", "\n");
+    ppcGenNumericRecord(PPC_INDENT, lines, "");
 }
 
 
@@ -2955,7 +2953,7 @@ static void refactoryMoveField(EditorMarker *point) {
     if (target->buffer == mstart->buffer
         && target->offset > mstart->offset
         && target->offset < mstart->offset+size) {
-        ppcGenRecord(PPC_INFORMATION, "You can't move something into itself.", "\n");
+        ppcGenRecord(PPC_INFORMATION, "You can't move something into itself.");
         return;
     }
 
@@ -3005,7 +3003,7 @@ static void refactoryMoveField(EditorMarker *point) {
 
 
     ppcGenGotoMarkerRecord(point);
-    ppcGenNumericRecord(PPC_INDENT, lines, "", "\n");
+    ppcGenNumericRecord(PPC_INDENT, lines, "");
 }
 
 // ---------------------------------------------------------- MoveClass
@@ -3118,9 +3116,9 @@ static void refactoryMoveClass(EditorMarker *point) {
     // and generate output
     refactoryApplyWholeRefactoringFromUndo();
     ppcGenGotoMarkerRecord(point);
-    ppcGenNumericRecord(PPC_INDENT, linenum, "", "\n");
+    ppcGenNumericRecord(PPC_INDENT, linenum, "");
 
-    ppcGenRecord(PPC_INFORMATION, "\nDone.\nDo not forget to remove .class files of former class.", "\n");
+    ppcGenRecord(PPC_INFORMATION, "\nDone.\nDo not forget to remove .class files of former class.");
 }
 
 static void refactoryGetPackageNameFromMarkerFileName(EditorMarker *target, char *tclass) {
@@ -3178,7 +3176,7 @@ static void refactoryMoveClassToNewFile(EditorMarker *point) {
 
     // indentation must be at the end (undo, redo does not work with)
     ppcGenGotoMarkerRecord(point);
-    ppcGenNumericRecord(PPC_INDENT, linenum, "", "\n");
+    ppcGenNumericRecord(PPC_INDENT, linenum, "");
 
     // TODO check whether the original class was the only class in the file
     npoint = editorCrNewMarker(buff, 0);
@@ -3186,9 +3184,9 @@ static void refactoryMoveClassToNewFile(EditorMarker *point) {
     refactoryEditServerParseBuffer(s_ropt.project, npoint->buffer, npoint,NULL, "-olcxpushspecialname=", NULL);
     if (s_spp[SPP_LAST_TOP_LEVEL_CLASS_POSITION].file == noFileIndex) {
         ppcGenGotoMarkerRecord(npoint);
-        ppcGenRecord(PPC_KILL_BUFFER_REMOVE_FILE, "This file does not contain classes anymore, can I remove it?", "\n");
+        ppcGenRecord(PPC_KILL_BUFFER_REMOVE_FILE, "This file does not contain classes anymore, can I remove it?");
     }
-    ppcGenRecord(PPC_INFORMATION, "\nDone.\nDo not forget to remove .class files of former class.", "\n");
+    ppcGenRecord(PPC_INFORMATION, "\nDone.\nDo not forget to remove .class files of former class.");
 }
 
 static void refactoryMoveAllClassesToNewFile(EditorMarker *point) {
@@ -3344,7 +3342,7 @@ static void refactoryTurnDynamicToStatic(EditorMarker *point) {
                     strncpy(cid, refactoryGetIdentifierOnMarker_st(ll->d), TMP_STRING_SIZE);
                     cid[TMP_STRING_SIZE-1]=0;
                     poffset = ll->d->offset;
-                    //&sprintf(tmpBuff, "Checking %s", cid); ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
+                    //&sprintf(tmpBuff, "Checking %s", cid); ppcGenRecord(PPC_INFORMATION, tmpBuff);
                     if (strcmp(cid, "this")==0 || strcmp(cid, "super")==0) {
                         pp = refactoryReplaceStaticPrefix(ll->d, "");
                         poffset = pp->offset;
@@ -3457,7 +3455,7 @@ static int refactoryIsMethodPartRedundant(
             LIST_MERGE_SORT(S_editorMarkerList, lll, editorMarkerListLess);
             for (ll=lll; ll!=NULL; ll=ll->next) {
                 assert(ll->d->buffer == m1->buffer);
-                //&sprintf(tmpBuff, "checking diff %d", ll->d->offset); ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
+                //&sprintf(tmpBuff, "checking diff %d", ll->d->offset); ppcGenRecord(PPC_INFORMATION, tmpBuff);
                 if (editorMarkerLess(ll->d, m1) || editorMarkerLessOrEq(m2, ll->d)) {
                     res=0;
                 }
@@ -3727,12 +3725,12 @@ static Reference *refactoryCheckEncapsulateGetterSetterForExistingMethods(char *
         sprintf(tmpBuff,
                 "The method %s is also defined in the following related classes: %s. Its definition in current class may (under some circumstance) change your program behaviour. Do you really want to continue with this refactoring?", mname, clist);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-        ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff, "\n");
+        ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff);
     }
     if (anotherDefinition!=NULL) {
         sprintf(tmpBuff, "The method %s is yet defined in this class. C-xrefactory will not generate new method. Continue anyway?", mname);
         formatOutputLine(tmpBuff, ERROR_MESSAGE_STARTING_OFFSET);
-        ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff, "\n");
+        ppcGenRecord(PPC_ASK_CONFIRMATION, tmpBuff);
     }
     return(anotherDefinition);
 }
@@ -3920,7 +3918,7 @@ static void refactoryPerformEncapsulateField(EditorMarker *point,
     // put it here, undo-redo sometimes shifts markers
     de->offset = indoffset;
     ppcGenGotoMarkerRecord(de);
-    ppcGenNumericRecord(PPC_INDENT, indlines, "", "\n");
+    ppcGenNumericRecord(PPC_INDENT, indlines, "");
 
     ppcGenGotoMarkerRecord(point);
 }
@@ -4623,7 +4621,7 @@ void mainRefactory(int argc, char **argv) {
     if (s_progressOffset != s_progressFactor) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "s_progressOffset (%d) != s_progressFactor (%d)", s_progressOffset, s_progressFactor);
-        ppcGenRecord(PPC_DEBUG_INFORMATION, tmpBuff, "\n");
+        ppcGenRecord(PPC_DEBUG_INFORMATION, tmpBuff);
     }
 
     // synchronisation, wait so files won't be saved with the same time

@@ -432,12 +432,12 @@ void changeFieldRefUsages(SymbolReferenceItem  *ri, void  *rrcd) {
     fillSymbolRefItemBits(&ddd.b, TypeDefault, StorageField,
                            ScopeFile, AccessDefault, rcd->category, 0);
     if (isSameCxSymbol(ri, &ddd)) {
-        //&sprintf(tmpBuff, "checking %s <-> %s, %d,%d", ri->name, rcd->linkName, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+        //&sprintf(tmpBuff, "checking %s <-> %s, %d,%d", ri->name, rcd->linkName, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
         for(rr = ri->refs; rr!=NULL; rr=rr->next) {
-            //&sprintf(tmpBuff, "checking %d,%d %d,%d,%d", rr->p.file, rcd->fnum, rr, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+            //&sprintf(tmpBuff, "checking %d,%d %d,%d,%d", rr->p.file, rcd->fnum, rr, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
             if (rr->p.file == rcd->fnum &&  /* I think it is used only for Java */
                 DM_IS_BETWEEN(cxMemory,rr,rcd->cxMemBegin,rcd->cxMemEnd)) {
-                //&sprintf(tmpBuff, "checking %d,%d %d,%d,%d", rr->p.file, rcd->fnum, rr, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+                //&sprintf(tmpBuff, "checking %d,%d %d,%d,%d", rr->p.file, rcd->fnum, rr, rcd->cxMemBegin,rcd->cxMemEnd);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
                 switch(rr->usage.base) {
                 case UsageMaybeThis:
                     assert(rcd->cclass->u.s);
@@ -452,7 +452,7 @@ void changeFieldRefUsages(SymbolReferenceItem  *ri, void  *rrcd) {
                     }
                     break;
                 case UsageNotFQType: rr->usage.base = UsageNotFQTypeInClassOrMethod;
-                    //&sprintf(tmpBuff, "reseting %d:%d:%d at %d", rr->p.file, rr->p.line, rr->p.col, rr);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+                    //&sprintf(tmpBuff, "reseting %d:%d:%d at %d", rr->p.file, rr->p.line, rr->p.col, rr);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
                     break;
                 case UsageNotFQField: rr->usage.base = UsageNotFQFieldInClassOrMethod;
                     break;
@@ -681,7 +681,7 @@ static void olGetAvailableRefactorings(void) {
     ppcGenRecordBegin(PPC_AVAILABLE_REFACTORINGS);
     for(i=0; i<MAX_AVAILABLE_REFACTORINGS; i++) {
         if (s_availableRefactorings[i].available) {
-            ppcGenNumericRecord(PPC_INT_VALUE, i, s_availableRefactorings[i].option, "\n");
+            ppcGenNumericRecord(PPC_INT_VALUE, i, s_availableRefactorings[i].option);
         }
     }
     ppcGenRecordEnd(PPC_AVAILABLE_REFACTORINGS);
@@ -1179,7 +1179,7 @@ Reference *olcxAddReferenceNoUsageCheck(Reference **rlist, Reference *ref, int b
 
 Reference *olcxAddReference(Reference **rlist,Reference *ref,int bestMatchFlag) {
     Reference *rr;
-    //&sprintf(tmpBuff,"checking ref %s %s:%d:%d at %d\n",usageName[ref->usage.base], simpleFileName(fileTable.tab[ref->p.file]->name),ref->p.line,ref->p.col, ref); ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+    //&sprintf(tmpBuff,"checking ref %s %s:%d:%d at %d\n",usageName[ref->usage.base], simpleFileName(fileTable.tab[ref->p.file]->name),ref->p.line,ref->p.col, ref); ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
     if (! OL_VIEWABLE_REFS(ref)) return NULL; // no regular on-line refs
     rr = olcxAddReferenceNoUsageCheck(rlist, ref, bestMatchFlag);
     return(rr);
@@ -1293,7 +1293,7 @@ void generateOnlineCxref(Position *p,
         }                                                               \
         if (checkFlag==CHECK_NULL && refs == NULL) {                    \
             if (options.xref2) {                                          \
-                ppcGenRecordWithNumeric(PPC_BOTTOM_WARNING, PPCA_BEEP, 1, "Empty stack","\n"); \
+                ppcGenRecordWithNumeric(PPC_BOTTOM_WARNING, PPCA_BEEP, 1, "Empty stack"); \
             } else {                                                    \
                 fprintf(ccOut, "=");                                    \
             }                                                           \
@@ -1352,7 +1352,7 @@ static void olcxNaturalReorder(S_olcxReferences *refs) {
 
 static void olcxGenNoReferenceSignal(void) {
     if (options.xref2) {
-        ppcGenRecord(PPC_BOTTOM_INFORMATION, "No reference", "\n");
+        ppcGenRecord(PPC_BOTTOM_INFORMATION, "No reference");
     } else {
         fprintf(ccOut, "_");
     }
@@ -1551,7 +1551,7 @@ static int olcxBrowseSymbolInJavaDoc(SymbolReferenceItem *rr) {
     if (lfn==NULL && (options.htmlJdkDocUrl==NULL || ! htmlJdkDocAvailableForUrl(url))) return(0);
     if (! options.urlGenTemporaryFile) {
         if (options.xref2) {
-            ppcGenRecord(PPC_BROWSE_URL, getFullUrlOfJavaDoc_st(url), "\n");
+            ppcGenRecord(PPC_BROWSE_URL, getFullUrlOfJavaDoc_st(url));
         } else {
             fprintf(ccOut,"~%s\n", getFullUrlOfJavaDoc_st(url));
         }
@@ -1571,7 +1571,7 @@ static int olcxBrowseSymbolInJavaDoc(SymbolReferenceItem *rr) {
             sprintf(theUrl, "file:///%s", tmpfname);
             assert(strlen(theUrl)<MAX_FILE_NAME_SIZE-1);
             if (options.xref2) {
-                ppcGenRecord(PPC_BROWSE_URL, theUrl, "\n");
+                ppcGenRecord(PPC_BROWSE_URL, theUrl);
             } else {
                 fprintf(ccOut,"~%s\n", theUrl);
             }
@@ -2007,7 +2007,7 @@ static void olcxPushAndCallMacro(void) {
     }
     for(rr=refs->r; rr!=NULL; rr=rr->next) {
         ppcGenReferencePreCheckRecord(rr, symbol);
-        ppcGenRecord(PPC_CALL_MACRO, "", "\n");
+        ppcGenRecord(PPC_CALL_MACRO, "");
     }
     LIST_REVERSE(Reference, refs->r);
 }
@@ -2137,7 +2137,7 @@ static void olcxReferenceBrowseCompletion(int refn) {
     if (rr != NULL) {
         if (rr->cat == CategoryLocal) {
             if (options.xref2)
-                ppcGenRecord(PPC_ERROR, "No JavaDoc is available for local symbols.", "\n");
+                ppcGenRecord(PPC_ERROR, "No JavaDoc is available for local symbols.");
             else
                 fprintf(ccOut,"* ** no JavaDoc is available for local symbols **");
         } else {
@@ -2154,14 +2154,14 @@ static void olcxReferenceBrowseCompletion(int refn) {
                 message[len] = '\0';
                 strcat(message, " not available, (check -javadocpath) **");
                 if (options.xref2)
-                    ppcGenRecord(PPC_ERROR, message, "\n");
+                    ppcGenRecord(PPC_ERROR, message);
                 else
                     fprintf(ccOut, "%s", message);
             }
         }
     } else {
         if (options.xref2)
-            ppcGenRecord(PPC_ERROR, "Out of range", "\n");
+            ppcGenRecord(PPC_ERROR, "Out of range");
         else
             fprintf(ccOut, "* ** out of range **");
     }
@@ -2175,7 +2175,7 @@ static void olcxSetActReferenceToFirstVisible(S_olcxReferences *refs, Reference 
         refs->act = r;
     } else {
         if (options.xref2) {
-            ppcGenRecord(PPC_BOTTOM_INFORMATION, "Moving to the first reference", "\n");
+            ppcGenRecord(PPC_BOTTOM_INFORMATION, "Moving to the first reference");
         }
         r = refs->r;
         while (r!=NULL && r->usage.base>=rlevel) r = r->next;
@@ -2210,7 +2210,7 @@ static void olcxReferenceMinus(void) {
         }
         if (l==NULL) {
             if (options.xref2) {
-                ppcGenRecord(PPC_BOTTOM_INFORMATION, "Moving to the last reference", "\n");
+                ppcGenRecord(PPC_BOTTOM_INFORMATION, "Moving to the last reference");
             }
             for(; r!=NULL; r=r->next) {
                 if (r->usage.base < rlevel) l = r;
@@ -2245,7 +2245,7 @@ static void olcxReferenceGetCurrentRefn(void) {
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
     n = getCurrentRefPosition(refs);
     assert(options.xref2);
-    ppcGenNumericRecord(PPC_UPDATE_CURRENT_REFERENCE, n, "", "\n");
+    ppcGenNumericRecord(PPC_UPDATE_CURRENT_REFERENCE, n, "");
 }
 
 static void olcxReferenceGotoCaller(void) {
@@ -2267,14 +2267,14 @@ static void olcxPrintSymbolName(S_olcxReferences *refs) {
     S_olSymbolsMenu *ss;
     if (refs==NULL) {
         if (options.xref2) {
-            ppcGenRecord(PPC_BOTTOM_INFORMATION, "stack is now empty", "\n");
+            ppcGenRecord(PPC_BOTTOM_INFORMATION, "stack is now empty");
         } else {
             fprintf(ccOut, "*stack is now empty");
         }
         //&     fprintf(ccOut, "*");
     } else if (refs->hkSelectedSym==NULL) {
         if (options.xref2) {
-            ppcGenRecord(PPC_BOTTOM_INFORMATION, "Current top symbol: <empty>", "\n");
+            ppcGenRecord(PPC_BOTTOM_INFORMATION, "Current top symbol: <empty>");
         } else {
             fprintf(ccOut, "*Current top symbol: <empty>");
         }
@@ -2284,7 +2284,7 @@ static void olcxPrintSymbolName(S_olcxReferences *refs) {
             sprintf(ttt, "Current top symbol: ");
             assert(strlen(ttt) < MAX_SYMBOL_MESSAGE_LEN);
             sprintfSymbolLinkName(ttt+strlen(ttt), ss);
-            ppcGenRecord(PPC_BOTTOM_INFORMATION, ttt, "\n");
+            ppcGenRecord(PPC_BOTTOM_INFORMATION, ttt);
         } else {
             fprintf(ccOut, "*Current top symbol: ");
             printSymbolLinkName(ccOut, ss);
@@ -2440,7 +2440,7 @@ static void olcxMenuInspectDef(S_olSymbolsMenu *menu, char *refsuffix,
     S_olSymbolsMenu     *ss;
     int                 line;
     for(ss=menu; ss!=NULL; ss=ss->next) {
-        //&sprintf(tmpBuff,"checking line %d", ss->outOnLine);  ppcGenRecord(PPC_BOTTOM_INFORMATION, tmpBuff, "\n");
+        //&sprintf(tmpBuff,"checking line %d", ss->outOnLine);  ppcGenRecord(PPC_BOTTOM_INFORMATION, tmpBuff);
         line = SYMBOL_MENU_FIRST_LINE + ss->outOnLine;
         if (line == options.olcxMenuSelectLineNum) goto breakl;
     }
@@ -2490,7 +2490,7 @@ void olProcessSelectedReferences(
     //& renameCollationSymbols(ss);
     LIST_MERGE_SORT(Reference, rstack->r, olcxReferenceInternalLessFunction);
     for(ss=rstack->menuSym; ss!=NULL; ss=ss->next) {
-        //&LIST_LEN(nn, Reference, ss->s.refs);sprintf(tmpBuff,"xxx1 %d refs for %s", nn, fileTable.tab[ss->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+        //&LIST_LEN(nn, Reference, ss->s.refs);sprintf(tmpBuff,"xxx1 %d refs for %s", nn, fileTable.tab[ss->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
         referencesMapFun(rstack, ss);
     }
     olcxSetCurrentRefsOnCaller(rstack);
@@ -2561,7 +2561,7 @@ static void olcxMenuSelectOnly(void) {
     }
     if (sel==NULL) {
         if (options.xref2) {
-            ppcGenRecord(PPC_BOTTOM_WARNING, "No Symbol", "\n");
+            ppcGenRecord(PPC_BOTTOM_WARNING, "No Symbol");
         } else {
             fprintf(ccOut,"*No symbol");
         }
@@ -2577,13 +2577,13 @@ static void olcxMenuSelectOnly(void) {
                 char tmpBuff[TMP_BUFF_SIZE];
                 sprintfSymbolLinkName(ttt, sel);
                 sprintf(tmpBuff,"Class %s does not define %s", javaGetShortClassNameFromFileNum_st(sel->s.vApplClass), ttt);
-                ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 1, tmpBuff, "\n");
+                ppcGenRecordWithNumeric(PPC_BOTTOM_INFORMATION, PPCA_BEEP, 1, tmpBuff);
             } else {
                 jd = olcxBrowseSymbolInJavaDoc(&sel->s);  //& checkTheJavaDocBrowsing(refs);
                 if (jd==0) {
                     ppcGenDefinitionNotFoundWarningAtBottom();
                 } else {
-                    ppcGenRecord(PPC_BOTTOM_INFORMATION, "Definition not found, loading javadoc.", "\n");
+                    ppcGenRecord(PPC_BOTTOM_INFORMATION, "Definition not found, loading javadoc.");
                 }
             }
         } else {
@@ -2671,7 +2671,7 @@ static void olcxMenuSelectAll(int val) {
     OLCX_MOVE_INIT(s_olcxCurrentUser,refs,CHECK_NULL);
     if (refs->command == OLO_GLOBAL_UNUSED) {
         if (options.xref2) {
-            ppcGenRecord(PPC_WARNING, "The browser does not display project unused symbols anymore","\n");
+            ppcGenRecord(PPC_WARNING, "The browser does not display project unused symbols anymore");
         }
     }
     for(ss=refs->menuSym; ss!=NULL; ss=ss->next) {
@@ -2952,7 +2952,7 @@ static void olcxReferenceRePush(void) {
         olcxPrintSymbolName(s_olcxCurrentUser->browserStack.top);
     } else {
         if (options.xref2) {
-            ppcGenRecordWithNumeric(PPC_BOTTOM_WARNING, PPCA_BEEP, 1, "You are on the top of browser stack.", "\n");
+            ppcGenRecordWithNumeric(PPC_BOTTOM_WARNING, PPCA_BEEP, 1, "You are on the top of browser stack.");
         } else {
             fprintf(ccOut, "*** Complete stack, no pop-ed references");
         }
@@ -3224,9 +3224,9 @@ static void olCompletionSelect(void) {
         assert(s_olcxCurrentUser->completionsStack.root!=NULL);
         ppcGenGotoPositionRecord(&s_olcxCurrentUser->completionsStack.root->cpos);
         if (rr->csymType==TypeNonImportedClass) {
-            ppcGenRecord(PPC_FQT_COMPLETION, rr->name, "\n");
+            ppcGenRecord(PPC_FQT_COMPLETION, rr->name);
         } else {
-            ppcGenRecord(PPC_SINGLE_COMPLETION, rr->name, "\n");
+            ppcGenRecord(PPC_SINGLE_COMPLETION, rr->name);
         }
     } else {
         generateOnlineCxref(&refs->cpos, COLCX_GOTO_REFERENCE, UsageUsed,
@@ -3251,7 +3251,7 @@ static void olcxReferenceSelectTagSearchItem(int refn) {
     assert(s_olcxCurrentUser->retrieverStack.root!=NULL);
     ppcGenGotoPositionRecord(&s_olcxCurrentUser->retrieverStack.root->cpos);
     sprintf(ttt, " %s", rr->name);
-    ppcGenRecord(PPC_SINGLE_COMPLETION, ttt, "\n");
+    ppcGenRecord(PPC_SINGLE_COMPLETION, ttt);
 }
 
 static void olCompletionBack(void) {
@@ -3279,13 +3279,13 @@ static void olCompletionForward(void) {
 static void olcxNoSymbolFoundErrorMessage(void) {
     if (options.server_operation == OLO_PUSH_NAME || options.server_operation == OLO_PUSH_SPECIAL_NAME) {
         if (options.xref2) {
-            ppcGenRecord(PPC_ERROR,"No symbol found.", "\n");
+            ppcGenRecord(PPC_ERROR,"No symbol found.");
         } else {
             fprintf(ccOut,"*** No symbol found.");
         }
     } else {
         if (options.xref2) {
-            ppcGenRecord(PPC_ERROR,"No symbol found, please position the cursor on a program symbol.", "\n");
+            ppcGenRecord(PPC_ERROR,"No symbol found, please position the cursor on a program symbol.");
         } else {
             fprintf(ccOut,"*** No symbol found, please position the cursor on a program symbol.");
         }
@@ -3951,7 +3951,7 @@ static void olcxProcessGetRequest(void) {
         // O.K. this is a special case, if input file is given
         // then make additional 'predefined' replacements
         if (options.xref2) {
-            ppcGenRecord(PPC_SET_INFO, expandSpecialFilePredefinedVariables_st(val), "\n");
+            ppcGenRecord(PPC_SET_INFO, expandSpecialFilePredefinedVariables_st(val));
         } else {
             fprintf(ccOut,"*%s", expandSpecialFilePredefinedVariables_st(val));
         }
@@ -3973,7 +3973,7 @@ void olcxPrintPushingAction(int opt, int afterMenu) {
             olcxOrderRefsAndGotoDefinition(afterMenu);
         } else {
             // to auto repush symbol by name, but I do not like it.
-            //& if (options.xref2) ppcGenRecord(PPC_NO_SYMBOL, "", "\n");
+            //& if (options.xref2) ppcGenRecord(PPC_NO_SYMBOL, "");
             //& else
             olcxNoSymbolFoundErrorMessage();
             olStackDeleteSymbol(s_olcxCurrentUser->browserStack.top);
@@ -4493,7 +4493,7 @@ static void olTrivialRefactoringPreCheck(int refcode) {
         if (options.xref2) {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff, "%d", s_cps.lastImportLine);
-            ppcGenRecord(PPC_SET_INFO, tmpBuff, "\n");
+            ppcGenRecord(PPC_SET_INFO, tmpBuff);
         } else {
             fprintf(ccOut,"*%d", s_cps.lastImportLine);
         }
@@ -4517,7 +4517,7 @@ static void mainAnswerReferencePushingAction(int command) {
         || (olcxShowSelectionMenu()
             && options.manualResolve != RESOLVE_DIALOG_NEVER)) {
         if (options.xref2) {
-            ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "", "\n");
+            ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "");
         } else {
             olcxPrintSelectionMenu(s_olcxCurrentUser->browserStack.top->menuSym);
         }
@@ -4570,7 +4570,7 @@ void pushLocalUnusedSymbolsAction(void) {
 static void answerPushLocalUnusedSymbolsAction(void) {
     pushLocalUnusedSymbolsAction();
     assert(options.xref2);
-    ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "", "\n");
+    ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "");
 }
 
 static void answerPushGlobalUnusedSymbolsAction(void) {
@@ -4584,7 +4584,7 @@ static void answerPushGlobalUnusedSymbolsAction(void) {
     scanReferenceFiles(options.cxrefFileName, deadCodeDetectionFunctionSequence);
     olCreateSelectionMenu(options.server_operation);
     assert(options.xref2);
-    ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "", "\n");
+    ppcGenRecord(PPC_DISPLAY_OR_UPDATE_BROWSER, "");
 }
 
 static void getCallerPositionFromCommandLineOption(Position *opos) {
@@ -4601,7 +4601,7 @@ static void answerClassName(char *name) {
     if (*name!=0) {
         linkNamePrettyPrint(ttt, name, MAX_CX_SYMBOL_SIZE, SHORT_NAME);
         if (options.xref2) {
-            ppcGenRecord(PPC_SET_INFO, ttt, "\n");
+            ppcGenRecord(PPC_SET_INFO, ttt);
         } else {
             fprintf(ccOut,"*%s", ttt);
         }
@@ -4637,7 +4637,7 @@ void mainAnswerEditAction(void) {
     case OLO_CHECK_VERSION:
         assert(options.checkVersion!=NULL);
         if (strcmp(options.checkVersion, C_XREF_VERSION_NUMBER)!=0) {
-            ppcGenRecord(PPC_VERSION_MISMATCH, C_XREF_VERSION_NUMBER, "\n");
+            ppcGenRecord(PPC_VERSION_MISMATCH, C_XREF_VERSION_NUMBER);
         }
         break;
     case OLO_COMPLETION:
@@ -4684,14 +4684,14 @@ void mainAnswerEditAction(void) {
     case OLO_ACTIVE_PROJECT:
         if (options.project != NULL) {
             if (options.xref2) {
-                ppcGenRecord(PPC_SET_INFO, options.project, "\n");
+                ppcGenRecord(PPC_SET_INFO, options.project);
             } else {
                 fprintf(ccOut,"*%s", options.project);
             }
         } else {
             if (s_olOriginalComFileNumber == noFileIndex) {
                 if (options.xref2) {
-                    ppcGenRecord(PPC_ERROR, "No source file to identify project", "\n");
+                    ppcGenRecord(PPC_ERROR, "No source file to identify project");
                 } else {
                     fprintf(ccOut,"!** No source file to identify project");
                 }
@@ -4705,14 +4705,14 @@ void mainAnswerEditAction(void) {
                             fprintf(ccOut,"^"); // TODO: was "fprintf(ccOut,"^", ifname);"
                     } else {
                         if (options.xref2) {
-                            ppcGenRecord(PPC_NO_PROJECT, ifname, "\n");
+                            ppcGenRecord(PPC_NO_PROJECT, ifname);
                         } else {
                             fprintf(ccOut,"!** No project name matches %s", ifname);
                         }
                     }
                 } else {
                     if (options.xref2) {
-                        ppcGenRecord(PPC_SET_INFO, dffsect, "\n");
+                        ppcGenRecord(PPC_SET_INFO, dffsect);
                     } else {
                         fprintf(ccOut,"*%s", dffsect);
                     }
@@ -4725,10 +4725,10 @@ void mainAnswerEditAction(void) {
         if (options.xref2) {
             if (jdkcp==NULL) {
                 if (! options.noErrors) {
-                    ppcGenRecord(PPC_ERROR, "Can't infer Java home", "\n");
+                    ppcGenRecord(PPC_ERROR, "Can't infer Java home");
                 }
             } else {
-                ppcGenRecord(PPC_SET_INFO, jdkcp, "\n");
+                ppcGenRecord(PPC_SET_INFO, jdkcp);
             }
         } else {
             if (jdkcp==NULL) {
@@ -4898,7 +4898,7 @@ void mainAnswerEditAction(void) {
         // xref2 target
         assert(options.xref2);
         if (!s_cps.moveTargetApproved) {
-            ppcGenRecord(PPC_ERROR, "Invalid target place","\n");
+            ppcGenRecord(PPC_ERROR, "Invalid target place");
         }
         break;
     case OLO_GET_CURRENT_CLASS:
@@ -5045,11 +5045,11 @@ void putOnLineLoadedReferences(SymbolReferenceItem *p) {
                                      &cms, DO_NOT_CHECK_IF_SELECTED);
     if (ols) {
         assert(cms);
-        //&LIST_LEN(nn, Reference, p->refs);sprintf(tmpBuff,"!putting %d references of %s\n", nn, fileTable.tab[p->vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+        //&LIST_LEN(nn, Reference, p->refs);sprintf(tmpBuff,"!putting %d references of %s\n", nn, fileTable.tab[p->vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
         for(rr=p->refs; rr!=NULL; rr=rr->next) {
             olcxAddReferenceToOlSymbolsMenu(cms, rr, (ols == 2));
         }
-        //&LIST_LEN(nn, Reference, cms->s.refs);sprintf(tmpBuff,"added %d refs for %s", nn, fileTable.tab[cms->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff,"\n");
+        //&LIST_LEN(nn, Reference, cms->s.refs);sprintf(tmpBuff,"added %d refs for %s", nn, fileTable.tab[cms->s.vApplClass]->name);ppcGenRecord(PPC_BOTTOM_INFORMATION,tmpBuff);
     }
 }
 
@@ -5336,7 +5336,7 @@ void printTagSearchResults(void) {
         ls = crTagSearchLineStatic(cc->name, &cc->ref.p,
                                    &len1, &len2, &len3);
         if (options.xref2) {
-            ppcGenRecord(PPC_STRING_VALUE, ls, "\n");
+            ppcGenRecord(PPC_STRING_VALUE, ls);
         } else {
             fprintf(ccOut,"%s\n", ls);
         }

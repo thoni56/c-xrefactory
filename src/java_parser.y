@@ -1370,7 +1370,7 @@ _bef_:	{
                                     olcxOptionsName[options.server_operation],
                                     s_cp.parserPassedMarker, s_cp.thisMethodMemoriesStored,
                                     s_cps.cxMemiAtMethodBeginning, s_cps.cxMemiAtMethodEnd),
-                                ppcGenRecord(PPC_BOTTOM_INFORMATION, tmpBuff,"\n"); &*/
+                                ppcGenRecord(PPC_BOTTOM_INFORMATION, tmpBuff); &*/
                             s_cp.thisMethodMemoriesStored = 1;
                             if (options.server_operation == OLO_MAYBE_THIS) {
                                 changeMethodReferencesUsages(LINK_NAME_MAYBE_THIS_ITEM,

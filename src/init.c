@@ -291,7 +291,7 @@ void initTokenNameTab(void) {
         if (options.xref2) {
             char tmpBuff[TMP_BUFF_SIZE];
             sprintf(tmpBuff,"java version == %s", jv);
-            ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
+            ppcGenRecord(PPC_INFORMATION, tmpBuff);
         } else {
             fprintf(dumpOut,"java version == %s\n", jv);
         }

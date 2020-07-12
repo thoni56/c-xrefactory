@@ -776,7 +776,7 @@ void editorReplaceString(EditorBuffer *buff, int position, int delsize,
     // prepare operation
     if (nsize >= buff->a.allocatedSize - buff->a.allocatedFreePrefixSize) {
         // resize buffer
-        //&sprintf(tmpBuff,"resizing %s from %d(%d) to %d\n", buff->name, buff->a.bufferSize, buff->a.allocatedSize, nsize);ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");fflush(ccOut);
+        //&sprintf(tmpBuff,"resizing %s from %d(%d) to %d\n", buff->name, buff->a.bufferSize, buff->a.allocatedSize, nsize);ppcGenRecord(PPC_INFORMATION, tmpBuff);fflush(ccOut);
         text = buff->a.text;
         space = buff->a.allocatedBlock; index = buff->a.allocatedIndex;
         allocNewEditorBufferTextSpace(buff, nsize);
@@ -801,7 +801,7 @@ void editorReplaceString(EditorBuffer *buff, int position, int delsize,
             buff->a.bufferSize - position - delsize);
     memcpy(buff->a.text+position, str, strlength);
     buff->a.bufferSize = buff->a.bufferSize - delsize + strlength;
-    //&sprintf(tmpBuff,"setting buffersize of  %s to %d\n", buff->name, buff->a.bufferSize);ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");fflush(ccOut);
+    //&sprintf(tmpBuff,"setting buffersize of  %s to %d\n", buff->name, buff->a.bufferSize);ppcGenRecord(PPC_INFORMATION, tmpBuff);fflush(ccOut);
     // update markers
     if (delsize > strlength) {
         if (strlength > 0) pattractor = position + strlength - 1;
@@ -928,7 +928,7 @@ void editorQuasiSaveModifiedBuffers(void) {
             fatalError(ERR_INTERNAL, "last save in the future, travelling in time?", XREF_EXIT_ERR);
         } else if (lastQuazySaveTime >= timeNull) {
             sleep(1+lastQuazySaveTime-timeNull);
-            //&         ppcGenRecord(PPC_INFORMATION,"slept","\n");
+            //&         ppcGenRecord(PPC_INFORMATION,"slept");
         }
     }
     for(i=0; i<s_editorBufferTab.size; i++) {
@@ -953,7 +953,7 @@ void editorLoadAllOpenedBufferFiles(void) {
                     size = st.st_size;
                     allocNewEditorBufferTextSpace(ll->f, size);
                     editorLoadFileIntoBufferText(ll->f, &st);
-                    //&sprintf(tmpBuff,"preloading %s into %s\n", ll->f->fileName, ll->f->name); ppcGenRecord(PPC_IGNORE, tmpBuff,"\n");
+                    //&sprintf(tmpBuff,"preloading %s into %s\n", ll->f->fileName, ll->f->name); ppcGenRecord(PPC_IGNORE, tmpBuff);
                 }
             }
         }
@@ -1488,7 +1488,7 @@ int editorMapOnNonexistantFiles(
     bl = editorComputeAllBuffersList();
     LIST_MERGE_SORT(EditorBufferList, bl, editorBufferNameLess);
     ll = bl;
-    //&sprintf(tmpBuff, "ENTER!!!"); ppcGenRecord(PPC_IGNORE,tmpBuff,"\n");
+    //&sprintf(tmpBuff, "ENTER!!!"); ppcGenRecord(PPC_IGNORE,tmpBuff);
     while(ll!=NULL) {
         if (fnnCmp(ll->f->name, dirname, dlen)==0
             && (ll->f->name[dlen]=='/' || ll->f->name[dlen]=='\\')) {
@@ -1510,7 +1510,7 @@ int editorMapOnNonexistantFiles(
             // check if file exists, map only nonexistant
             if (stat(ll->f->name, &st)!=0) {
                 // get file name
-                //&sprintf(tmpBuff, "MAPPING %s as %s in %s", ll->f->name, fname, dirname); ppcGenRecord(PPC_IGNORE,tmpBuff,"\n");
+                //&sprintf(tmpBuff, "MAPPING %s as %s in %s", ll->f->name, fname, dirname); ppcGenRecord(PPC_IGNORE,tmpBuff);
                 (*fun)(fname, a1, a2, a3, a4, a5);
                 res = 1;
                 // skip all files in the same directory
@@ -1520,7 +1520,7 @@ int editorMapOnNonexistantFiles(
                 while (ll!=NULL
                        && fnnCmp(ll->f->name, lastMapped, lastMappedLen)==0
                        && (ll->f->name[lastMappedLen]=='/' || ll->f->name[lastMappedLen]=='\\')) {
-                    //&sprintf(tmpBuff, "SKIPPING %s", ll->f->name); ppcGenRecord(PPC_IGNORE,tmpBuff,"\n");
+                    //&sprintf(tmpBuff, "SKIPPING %s", ll->f->name); ppcGenRecord(PPC_IGNORE,tmpBuff);
                     ll = ll->next;
                 }
             } else {
@@ -1531,13 +1531,13 @@ int editorMapOnNonexistantFiles(
         }
     }
     editorFreeBufferListButNotBuffers(bl);
-    //&sprintf(tmpBuff, "QUIT!!!"); ppcGenRecord(PPC_IGNORE,tmpBuff,"\n");
+    //&sprintf(tmpBuff, "QUIT!!!"); ppcGenRecord(PPC_IGNORE,tmpBuff);
     return(res);
 }
 
 static void editorCloseBuffer(EditorBufferList *memb, int ii) {
     EditorBufferList **ll;
-    //&sprintf(tmpBuff,"closing buffer %s %s\n", memb->f->name, memb->f->fileName);ppcGenRecord(PPC_IGNORE, tmpBuff, "\n");
+    //&sprintf(tmpBuff,"closing buffer %s %s\n", memb->f->name, memb->f->fileName);ppcGenRecord(PPC_IGNORE, tmpBuff);
     for(ll= &s_editorBufferTab.tab[ii]; (*ll)!=NULL; ll = &(*ll)->next) {
         if (*ll == memb) break;
     }

@@ -732,12 +732,12 @@ void getJavaClassAndSourcePath(void) {
                     char tmpBuff[TMP_BUFF_SIZE];
                     if (jdkcp!=NULL && *jdkcp!=0) {
                         sprintf(tmpBuff,"java runtime == %s", jdkcp);
-                        ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
+                        ppcGenRecord(PPC_INFORMATION, tmpBuff);
                     }
                     sprintf(tmpBuff,"classpath == %s", cp);
-                    ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
+                    ppcGenRecord(PPC_INFORMATION, tmpBuff);
                     sprintf(tmpBuff,"sourcepath == %s", s_javaSourcePaths);
-                    ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
+                    ppcGenRecord(PPC_INFORMATION, tmpBuff);
                 } else {
                     if (jdkcp!=NULL && *jdkcp!=0) {
                         fprintf(dumpOut,"java runtime == %s\n", jdkcp);

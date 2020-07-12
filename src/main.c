@@ -136,7 +136,7 @@ static void aboutMessage(void) {
         sprintf(output+strlen(output),"Exiting!");
     }
     if (options.xref2) {
-        ppcGenRecord(PPC_INFORMATION, output, "\n");
+        ppcGenRecord(PPC_INFORMATION, output);
     } else {
         fprintf(stdout, "%s", output);
     }
@@ -1192,7 +1192,7 @@ static bool processPOption(int *ii, int argc, char **argv) {
         fromFile = argv[i];
         // TODO, maybe do this also through allocated list of options
         // and serve them later ?
-        //&sprintf(tmpBuff,"-preload %s %s\n", ttt, fromFile); ppcGenRecord(PPC_IGNORE, tmpBuff, "\n");
+        //&sprintf(tmpBuff,"-preload %s %s\n", ttt, fromFile); ppcGenRecord(PPC_IGNORE, tmpBuff);
         editorOpenBufferNoFileLoad(ttt, fromFile);
     }
     else if (strcmp(argv[i],"-prune")==0) {
@@ -1838,7 +1838,7 @@ static void writeOptionsFileMessage(char *file, char *outFName, char *outSect ) 
                 fatalError(ERR_ST, tmpBuff, XREF_EXIT_NO_PROJECT);
             }
         } else if (options.xref2) {
-            ppcGenRecord(PPC_NO_PROJECT,file,"\n");
+            ppcGenRecord(PPC_NO_PROJECT,file);
         } else {
             sprintf(tmpBuff,"no project name covers '%s'",file);
             warningMessage(ERR_ST, tmpBuff);
@@ -1846,7 +1846,7 @@ static void writeOptionsFileMessage(char *file, char *outFName, char *outSect ) 
     } else if (options.taskRegime==RegimeXref) {
         if (options.xref2) {
             sprintf(tmpBuff,"C-xrefactory project: %s", outSect);
-            ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
+            ppcGenRecord(PPC_INFORMATION, tmpBuff);
         } else {
             fprintf(dumpOut,"[C-xref] active project: '%s'\n", outSect);
             fflush(dumpOut);
@@ -1883,7 +1883,7 @@ static void handlePathologicProjectCases(char *file,char *outFName,char *outSect
                 if (options.xref2) {
                     char tmpBuff[TMP_BUFF_SIZE];                        \
                     sprintf(tmpBuff, "[Xref] new project: '%s'", outSect);
-                    ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
+                    ppcGenRecord(PPC_INFORMATION, tmpBuff);
                 } else {
                     fprintf(dumpOut,"[Xref] new project: '%s'\n", outSect);
                 }
@@ -2290,7 +2290,7 @@ static void mainFileProcessingInitialisations(
              || options.taskRegime==RegimeHtmlGenerate)
             && (! s_javaPreScanOnly)) {
         if (options.xref2) {
-            ppcGenRecord(PPC_INFORMATION, getRealFileNameStatic(s_input_file_name), "\n");
+            ppcGenRecord(PPC_INFORMATION, getRealFileNameStatic(s_input_file_name));
         } else {
             log_info("Processing '%s'", getRealFileNameStatic(s_input_file_name));
         }
@@ -2518,8 +2518,8 @@ static void mainReferencesOverflowed(char *cxMemFreeBase, LongjmpReason mess) {
     if (mess!=LONGJMP_REASON_NONE && options.taskRegime!=RegimeHtmlGenerate) {
         log_trace("swapping references to disk");
         if (options.xref2) {
-            ppcGenRecord(PPC_INFORMATION, "swapping references to disk", "\n");
-            ppcGenRecord(PPC_INFORMATION, "", "\n");
+            ppcGenRecord(PPC_INFORMATION, "swapping references to disk");
+            ppcGenRecord(PPC_INFORMATION, "");
         } else {
             fprintf(dumpOut, "swapping references to disk (please wait)\n");
             fflush(dumpOut);
@@ -3001,7 +3001,7 @@ static void printPrescanningMessage(void) {
     if (options.xref2) {
         char tmpBuff[TMP_BUFF_SIZE];
         sprintf(tmpBuff, "Prescanning classes, please wait.");
-        ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
+        ppcGenRecord(PPC_INFORMATION, tmpBuff);
     } else {
         log_info("Prescanning classes, please wait.");
     }
@@ -3116,7 +3116,7 @@ void mainCallXref(int argc, char **argv) {
             if (options.xref2) {
                 char tmpBuff[TMP_BUFF_SIZE];
                 sprintf(tmpBuff, "Generating '%s'",options.cxrefFileName);
-                ppcGenRecord(PPC_INFORMATION, tmpBuff, "\n");
+                ppcGenRecord(PPC_INFORMATION, tmpBuff);
             } else {
                 log_info("Generating '%s'",options.cxrefFileName);
             }
