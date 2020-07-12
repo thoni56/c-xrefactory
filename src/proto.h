@@ -949,7 +949,7 @@ typedef struct options {
 
     /* JAVA: */
     char *javaDocPath;
-    int allowPackagesOnCl;
+    int allowPackagesOnCommandLine;
     char *sourcePath;
     char *jdocTmpDir;
     int noCxFile;

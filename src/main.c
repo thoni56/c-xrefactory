@@ -256,7 +256,7 @@ void dirInputFile(MAP_FUN_SIGNATURE) {
                 dirInputFile(currentPath,"",NULL,NULL,recurseFlag,&topCallFlag);
             });
     } else if (topCallFlag
-               && ((!options.allowPackagesOnCl)
+               && ((!options.allowPackagesOnCommandLine)
                    || packageOnCommandLine(fname)==0)) {
         if (options.taskRegime!=RegimeEditServer) {
             errorMessage(ERR_CANT_OPEN, fn);
@@ -1176,7 +1176,7 @@ static bool processPOption(int *ii, int argc, char **argv) {
         errorMessage(ERR_ST,"'-pass' option can't be entered from command line");
     }
     else if (strcmp(argv[i],"-packages")==0) {
-        options.allowPackagesOnCl = 1;
+        options.allowPackagesOnCommandLine = 1;
     }
     else if (strcmp(argv[i],"-p")==0) {
         NEXT_FILE_ARG();
