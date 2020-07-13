@@ -97,7 +97,7 @@ with open(command_file, 'rb') as file:
 
     args = shlex.split(invocation)
     if sleep:
-        args = [args[0]] + ["-pause", sys.argv[4]] + args[1:]
+        args = [args[0]] + ["-pause", sys.argv[3]] + args[1:]
 
     p = subprocess.Popen(args,
                          stdout=subprocess.PIPE,
