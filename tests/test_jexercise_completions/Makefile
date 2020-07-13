@@ -22,8 +22,8 @@ trace: CXREF+=-trace
 trace: $(TEST)
 
 CXrefs: .c-xrefrc
-	# Files in the jexercise subdir and the project name
-	sed -ibak -e s:CXrefs$$:CXrefs/jexercise: .c-xrefrc -e s:$(CURDIR)]$$:$(CURDIR)/jexercise]: -e s:$(CURDIR)$$:$(CURDIR)/jexercise: .c-xrefrc
+	@# Files in the jexercise subdir and the project name
+	@sed -ibak -e s:CXrefs$$:CXrefs/jexercise: .c-xrefrc -e s:$(CURDIR)]$$:$(CURDIR)/jexercise]: -e s:$(CURDIR)$$:$(CURDIR)/jexercise: .c-xrefrc
 	@$(CXREF) -create  -o $(TEST).log
 
 clean:
