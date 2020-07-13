@@ -11,6 +11,8 @@ def fixup_calling(line):
 
 def fixup_sending(line):
     _, line = line.split("sending: ")
+    if "-preload" in line:
+        line = re.sub("\"-preload\"( \"[^\"]*\"){2} ", '', line)
     print(line[:-1])
     print("<sync>")
 
