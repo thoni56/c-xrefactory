@@ -4,8 +4,8 @@ import java.awt.*;
 import javax.swing.*;
 
 /*
-  Follow  instructions  in  commentaries  to check  C-Xrefactory  source
-  browser.
+  Follow the instructions to in the comments to try the C-Xrefactory
+  source browser.
 */
 
 class Browsing {
