@@ -32,6 +32,7 @@
 # 'end-of-options' and exit. This allows the server to shut down nicely.
 
 import sys
+import os
 import subprocess
 import io
 import time
@@ -71,6 +72,7 @@ def read_output(filename):
 
 if len(sys.argv) < 3:
     print("Error - not enough arguments", file=sys.stderr)
+    print("Usage:\t"+os.path.basename(sys.argv[0])+" <commandsfile> <curdir> [ <delay> ]")
     sys.exit(1)
 
 # First argument is the file with the commands
