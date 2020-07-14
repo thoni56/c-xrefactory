@@ -16,15 +16,15 @@ before_install:
     - gcov --version
 
 script:
-    - cd src
-    - make -j debug
-    - make -j unit
-    # Coverage for unittest to Codecov
-    #- bash <(curl -s https://codecov.io/bash)
+    - cd src/unittests
+    - make debug
+    # Separate coverage for unittest to Codecov
+    - bash <(curl -s https://codecov.io/bash)
     - cd ..
-    # Now reset coverage and run integration tests
-    #- find . -name *.gcda -exec rm {} \;
-    - cd tests
+    # Now reset coverage and run everything
+    - lcov -q -z -d .
+    - make -j debug
+    - cd ../tests
     - cd ffmpeg ; make init ; cd ..
     - cd systemd ; make init ; cd ..
     # Run all tests, creating coverage in standard place
