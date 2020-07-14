@@ -1,60 +1,60 @@
 ../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-task_regime_server"
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 <sync>
--olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=533" "-olcursor=606" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR/jexercise" -user 1
+-olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=533" "-olcursor=606" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 <sync>
--olcomplselect5 -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR/jexercise" -user 1
-<sync>
--olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
-<sync>
--olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=606" "-olcursor=1346" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR/jexercise" -user 1
+-olcomplselect5 -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 <sync>
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 <sync>
--olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=1346" "-olcursor=1349" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR/jexercise" -user 1
+-olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=606" "-olcursor=1346" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 <sync>
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 <sync>
--olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=1346" "-olcursor=1491" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR/jexercise" -user 1
+-olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=1346" "-olcursor=1349" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 <sync>
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 <sync>
--olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=1346" "-olcursor=1613" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR/jexercise" -user 1
+-olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=1346" "-olcursor=1491" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 <sync>
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 <sync>
--olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=1613" "-olcursor=1705" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR/jexercise" -user 1
+-olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=1346" "-olcursor=1613" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 <sync>
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 <sync>
--olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=1613" "-olcursor=1838" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR/jexercise" -user 1
+-olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=1613" "-olcursor=1705" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 <sync>
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 <sync>
--olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=1613" "-olcursor=1965" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR/jexercise" -user 1
+-olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=1613" "-olcursor=1838" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 <sync>
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 <sync>
--olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=1613" "-olcursor=2033" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR/jexercise" -user 1
-<sync>
--olcomplselect1 -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR/jexercise" -user 1
+-olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=1613" "-olcursor=1965" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 <sync>
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 <sync>
--olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=2033" "-olcursor=2033" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR/jexercise" -user 1
+-olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=1613" "-olcursor=2033" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+<sync>
+-olcomplselect1 -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 <sync>
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 <sync>
--olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=2033" "-olcursor=2226" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR/jexercise" -user 1
+-olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=2033" "-olcursor=2033" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 <sync>
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 <sync>
--olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=2033" "-olcursor=2360" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR/jexercise" -user 1
+-olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=2033" "-olcursor=2226" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 <sync>
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 <sync>
--olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=2033" "-olcursor=2359" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR/jexercise" -user 1
+-olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=2033" "-olcursor=2360" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 <sync>
--olcomplselect2 -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR/jexercise" -user 1
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
+<sync>
+-olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=2033" "-olcursor=2359" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+<sync>
+-olcomplselect2 -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 <sync>
 <exit>

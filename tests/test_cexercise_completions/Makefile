@@ -22,7 +22,8 @@ trace: CXREF+=-trace
 trace: $(TEST)
 
 CXrefs: .c-xrefrc
-	@sed -e 's:CXrefs$$:CXrefs/cexercise:' .c-xrefrc > .c-xrefrc.tmp
+	@# Sources in subdir
+	@sed -e s:$(CURDIR)$$:$(CURDIR)/cexercise: .c-xrefrc > .c-xrefrc.tmp
 	@mv .c-xrefrc.tmp .c-xrefrc
 	@$(CXREF) -create -o $(TEST).log
 
