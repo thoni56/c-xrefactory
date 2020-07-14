@@ -17,7 +17,7 @@ before_install:
 
 script:
     - cd src/unittests
-    - make debug
+    - make -j debug
     # Separate coverage for unittest to Codecov
     - bash <(curl -s https://codecov.io/bash)
     - cd ..
