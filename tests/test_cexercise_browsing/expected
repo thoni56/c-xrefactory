@@ -1,0 +1,492 @@
+../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-task_regime_server" -o buffer
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/cexercise/index.c"
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+
+-olcxpush -urldirect  "-olcursor=641" "CURDIR/cexercise/index.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=9 col=5 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/cexercise/browsing.c"
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+
+-olcxpush -urldirect  "-olmark=0" "-olcursor=418" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=13 col=8 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxplus  "-olmark=418" "-olcursor=241" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=18 col=8 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxplus  "-olmark=241" "-olcursor=418" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=18 col=13 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxplus  "-olmark=418" "-olcursor=423" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=18 col=19 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxplus  "-olmark=423" "-olcursor=429" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=18 col=44 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxplus  "-olmark=429" "-olcursor=454" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=35 col=4 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxplus  "-olmark=454" "-olcursor=904" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<bottom-information len=<n>>Moving to the first reference</bottom-information>
+<goto>
+ <position-lc line=13 col=8 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxminus  "-olmark=904" "-olcursor=241" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<bottom-information len=<n>>Moving to the last reference</bottom-information>
+<goto>
+ <position-lc line=35 col=4 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxminus  "-olmark=241" "-olcursor=904" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=18 col=44 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxminus  "-olmark=904" "-olcursor=454" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=18 col=19 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxpop  "-olmark=454" "-olcursor=429" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=18 col=8 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+<bottom-information len=<n>>Current top symbol: browsing</bottom-information>
+
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/cexercise/browsing.c"
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+
+-olcxpush -urldirect  "-olmark=429" "-olcursor=601" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=22 col=10 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxplus  "-olmark=601" "-olcursor=588" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=23 col=6 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxpop  "-olmark=588" "-olcursor=597" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=23 col=10 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+<bottom-information len=<n>>Current top symbol: browsing</bottom-information>
+
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/cexercise/browsing.c"
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+
+-olcxpush -urldirect  "-olmark=597" "-olcursor=744" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=10 col=42 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxplus  "-olmark=744" "-olcursor=166" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=29 col=14 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxpop  "-olmark=166" "-olcursor=744" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=29 col=14 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+<bottom-information len=<n>>Current top symbol: browsing</bottom-information>
+
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/cexercise/browsing.c"
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+
+-olcxpush -urldirect  "-olmark=744" "-olcursor=761" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=10 col=22 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxplus  "-olmark=761" "-olcursor=146" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=31 col=9 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxpop  "-olmark=146" "-olcursor=761" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=31 col=9 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+<bottom-information len=<n>>Current top symbol: browsing</bottom-information>
+
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/cexercise/browsing.c"
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+
+-olcxpushonly  "-olmark=761" "-olcursor=904" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+ <position-lc line=35 col=4 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxmenufilter=2 -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<resolution>
+ <symbol line=2 selected=1 base=0 drefn=1 refn=5 len=<n>>i</symbol>
+</resolution>
+
+-olcxfilter=0  "-olmark=0" "-olcursor=1" "nil" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<reference-list val=5 symbol="i">
+<src-line refn=1 len=<n>>browsing.c:13:    int i,j,k;</src-line>
+<src-line refn=4 len=<n>>browsing.c:18:    for(i=0; i<10; i++) printf("i == %d\n", i );</src-line>
+<src-line refn=1 len=<n>>browsing.c:35:    i = 0;</src-line>
+</reference-list>
+
+-olcxplus  "-olmark=904" "-olcursor=904" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<bottom-information len=<n>>Moving to the first reference</bottom-information>
+<goto>
+<position-lc line=13 col=8 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxplus  "-olmark=904" "-olcursor=241" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=18 col=8 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxplus  "-olmark=241" "-olcursor=418" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=18 col=13 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxplus  "-olmark=418" "-olcursor=423" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=18 col=19 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxplus  "-olmark=423" "-olcursor=429" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=18 col=44 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxplus  "-olmark=429" "-olcursor=454" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=35 col=4 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/cexercise/browsing.c"
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+
+-olcxpush -urldirect  "-olmark=454" "-olcursor=1310" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=11 col=42 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxfilter=0  "-olmark=1310" "-olcursor=220" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<reference-list val=0 symbol="next">
+<src-line refn=1 len=<n>>browsing.c:11:    struct dlist {double d; struct dlist *next;} *dl;</src-line>
+<src-line refn=1 len=<n>>browsing.c:48:#define LISTLEN(ll,res) {res=0; for(; ll!=NULL; ll=ll-> next ) res++;}</src-line>
+<src-line refn=1 len=<n>>browsing.c:54:#define LISTLOOP(ll,ii) for(ll=ii; ll!=NULL; ll=ll-> next )</src-line>
+</reference-list>
+
+-olcxpop  "-olmark=1310" "-olcursor=220" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=48 col=56 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+<bottom-information len=<n>>Current top symbol: i</bottom-information>
+
+-olcxfilter=0  "-olmark=220" "-olcursor=1309" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<reference-list val=5 symbol="i">
+<src-line refn=1 len=<n>>browsing.c:13:    int i,j,k;</src-line>
+<src-line refn=4 len=<n>>browsing.c:18:    for(i=0; i<10; i++) printf("i == %d\n", i );</src-line>
+<src-line refn=1 len=<n>>browsing.c:35:    i = 0;</src-line>
+</reference-list>
+
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/cexercise/browsing.c"
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+
+-olcxpushonly  "-olmark=220" "-olcursor=1497" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<display-or-update-browser len=<n>></display-or-update-browser>
+
+-olcxmenufilter=2 -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<resolution>
+<symbol line=2 selected=1 base=0 drefn=1 refn=2 len=<n>>dlist.next</symbol>
+<symbol line=3 selected=1 base=0 drefn=1 refn=2 len=<n>>ilist.next</symbol>
+</resolution>
+
+-olcxfilter=0  "-olmark=0" "-olcursor=1" "nil" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<reference-list val=4 symbol="next">
+<src-line refn=1 len=<n>>browsing.c:10:    struct ilist {int i;    struct ilist *next;} *il;</src-line>
+<src-line refn=1 len=<n>>browsing.c:11:    struct dlist {double d; struct dlist *next;} *dl;</src-line>
+<src-line refn=1 len=<n>>browsing.c:29:    il = il-> next ;</src-line>
+<src-line refn=1 len=<n>>browsing.c:48:#define LISTLEN(ll,res) {res=0; for(; ll!=NULL; ll=ll-> next ) res++;}</src-line>
+<src-line refn=1 len=<n>>browsing.c:54:#define LISTLOOP(ll,ii) for(ll=ii; ll!=NULL; ll=ll-> next )</src-line>
+</reference-list>
+
+-olcxgoto2  -urldirect -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=11 col=42 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxgoto3  -urldirect -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=29 col=14 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxgoto4  -urldirect -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=48 col=56 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxgoto5  -urldirect -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=54 col=53 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxgoto5  -urldirect -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=54 col=53 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxgoto4  -urldirect -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=48 col=56 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxgoto2  -urldirect -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=11 col=42 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxgoto2  -urldirect -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=11 col=42 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxmenusingleselect2  -urldirect -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<reference-list val=0 symbol="next">
+<src-line refn=1 len=<n>>browsing.c:11:    struct dlist {double d; struct dlist *next;} *dl;</src-line>
+<src-line refn=1 len=<n>>browsing.c:48:#define LISTLEN(ll,res) {res=0; for(; ll!=NULL; ll=ll-> next ) res++;}</src-line>
+<src-line refn=1 len=<n>>browsing.c:54:#define LISTLOOP(ll,ii) for(ll=ii; ll!=NULL; ll=ll-> next )</src-line>
+</reference-list>
+<goto>
+<position-lc line=11 col=42 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+
+-olcxpop  "-olmark=220" "-olcursor=220" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=54 col=53 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+<bottom-information len=<n>>Current top symbol: i</bottom-information>
+
+-olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/cexercise/browsing.c"
+end-of-options
+
+<sync>
+<set-info len=<n>>CURDIR</set-info>
+
+-olcxpush -urldirect  "-olmark=220" "-olcursor=1975" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=1 col=0 len=<n>>/usr/include/stdlib.h</position-lc>
+</goto>
+
+-olcxpop  "-olmark=0" "-olcursor=0" "/usr/include/stdlib.h" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=75 col=0 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+<bottom-information len=<n>>Current top symbol: i</bottom-information>
+
+-olcxpop  "-olmark=1975" "-olcursor=1961" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=35 col=4 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
+</goto>
+<bottom-information len=<n>>Current top symbol: browsing</bottom-information>
+
+-olcxpop  "-olmark=1961" "-olcursor=904" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+end-of-options
+
+<sync>
+<goto>
+<position-lc line=21 col=5 len=<n>>CURDIR/cexercise/index.c</position-lc>
+</goto>
+<bottom-information len=<n>>stack is now empty</bottom-information>
+
+-exit
+end-of-options
+
