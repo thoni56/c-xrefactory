@@ -31,7 +31,7 @@
   (define-key keymap [(f7)] 'c-xref-delete-window)
 
   (define-key keymap [(f6)] 'c-xref-push-and-goto-definition)
-  (define-key keymap [(control f6)] 'c-xref-search-definition-in-tag-file)
+  (define-key keymap [(control f6)] 'c-xref-browse-symbol)
   (define-key keymap [(f5)] 'c-xref-pop-and-return)
   (define-key keymap [(control f5)] 'c-xref-re-push)
   (define-key keymap [(f4)] 'c-xref-next-reference)
