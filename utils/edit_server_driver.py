@@ -71,7 +71,6 @@ def read_output(filename):
         print(file.read().decode())
 
 def call_refactory(command):
-    print("Refactory")
     refactoring_buffer_filename = "refactory-buffer"
     invocation = command.replace("CURDIR", CURDIR)
     invocation += " -o " + refactoring_buffer_filename

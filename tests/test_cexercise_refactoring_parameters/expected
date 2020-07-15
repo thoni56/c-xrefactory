@@ -33,7 +33,6 @@ end-of-options
   <int val=290 len=<n>></int>
 </available-refactorings>
 
-Refactory
 ../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-user" "1" "-rfct-add-param" "-olcxparnum=1" "-rfct-param1=int arg" "-rfct-param2=0" "-olmark=0" "-olcursor=289" "-addimportdefault=0" "CURDIR/cexercise/refactorings/parameter.c" -o refactory-buffer
 <sync>
 <goto>
@@ -75,7 +74,6 @@ end-of-options
   <int val=290 len=<n>></int>
 </available-refactorings>
 
-Refactory
 ../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-user" "1" "-rfct-del-param" "-olcxparnum=1" "-olmark=0" "-olcursor=386" "-addimportdefault=0" "CURDIR/cexercise/refactorings/parameter.c" -o refactory-buffer
 <sync>
 <goto>
@@ -117,7 +115,6 @@ end-of-options
   <int val=290 len=<n>></int>
 </available-refactorings>
 
-Refactory
 ../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-user" "1" "-rfct-del-param" "-olcxparnum=1" "-olmark=0" "-olcursor=482" "-addimportdefault=0" "CURDIR/cexercise/refactorings/parameter.c" -o refactory-buffer
 <sync>
 <goto>
@@ -151,7 +148,6 @@ end-of-options
   <int val=290 len=<n>></int>
 </available-refactorings>
 
-Refactory
 ../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-user" "1" "-rfct-add-param" "-olcxparnum=1" "-rfct-param1=int arg" "-rfct-param2=0" "-olmark=0" "-olcursor=608" "-addimportdefault=0" "CURDIR/cexercise/refactorings/parameter.c" -o refactory-buffer
 <sync>
 <goto>
