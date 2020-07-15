@@ -96,8 +96,8 @@ command_file = sys.argv[1]
 # Second argument is the value of CURDIR
 CURDIR = sys.argv[2]
 
-buffer_filename = "server-buffer"
-with open(buffer_filename, "w"):
+server_buffer_filename = "server-buffer"
+with open(server_buffer_filename, "w"):
     pass
 
 # If there is a third argument that is a sleep timer to
@@ -109,7 +109,7 @@ else:
 
 with open(command_file, 'rb') as file:
     invocation = file.readline().decode().rstrip().replace("CURDIR", CURDIR)
-    invocation += " -o "+buffer_filename
+    invocation += " -o "+server_buffer_filename
     print(invocation)
 
     args = shlex.split(invocation)
@@ -139,7 +139,7 @@ with open(command_file, 'rb') as file:
         if command == '<sync>':
             end_of_options(p)
             wait_for_sync(p)
-            read_output(buffer_filename)
+            read_output(server_buffer_filename)
             command = file.readline().decode().rstrip()
 
         if command == '<update-report>':
