@@ -3,16 +3,22 @@
 import sys
 import re
 
+def remove_preload(line):
+    if "-preload" in line:
+        return re.sub("\"-preload\"( \"[^\"]*\"){2} ", '', line)
+    else:
+        return line
+
 def fixup_calling(line):
     _, line = line.split("calling: (")
     line, _ = line.split(")")
     line = re.sub(" \"-o\" \"[^\"]*\"", '', line)
+    line = remove_preload(line)
     print("../../src/c-xref", line)
 
 def fixup_sending(line):
     _, line = line.split("sending: ")
-    if "-preload" in line:
-        line = re.sub("\"-preload\"( \"[^\"]*\"){2} ", '', line)
+    line = remove_preload(line)
     print(line[:-1])
     print("<sync>")
 
