@@ -30,6 +30,15 @@
 #
 # If the line (probably the last) is '<exit>', the driver will send '-exit',
 # 'end-of-options' and exit. This allows the server to shut down nicely.
+#
+# A very special case is if the line contains '-refactory' (it also
+# then must start with a path to the c-xref program like the inital
+# line in the command file). Then it is a refactoring "command" which
+# needs to be handled by a separate invocation, so the driver then uses
+# the command to call a new process using a separate buffer. A
+# refactoring command will terminate with sending a '<sync>'. So note
+# that there should not be any '<sync>' in the command file after such
+# an invocations.
 
 import sys
 import os
