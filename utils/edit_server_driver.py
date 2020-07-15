@@ -70,6 +70,21 @@ def read_output(filename):
     with open(filename, 'rb') as file:
         print(file.read().decode())
 
+def call_refactory(command):
+    print("Refactory")
+    refactoring_buffer_filename = "refactory-buffer"
+    invocation = command.replace("CURDIR", CURDIR)
+    invocation += " -o " + refactoring_buffer_filename
+    print(invocation)
+
+    args = shlex.split(invocation)
+
+    p = subprocess.Popen(args,
+                         stdout=subprocess.PIPE,
+                         stdin=subprocess.PIPE)
+    wait_for_sync(p)
+    read_output(refactoring_buffer_filename)
+
 if len(sys.argv) < 3:
     print("Error - not enough arguments", file=sys.stderr)
     print("Usage:\t"+os.path.basename(sys.argv[0])+" <commandsfile> <curdir> [ <delay> ]")
@@ -81,7 +96,7 @@ command_file = sys.argv[1]
 # Second argument is the value of CURDIR
 CURDIR = sys.argv[2]
 
-buffer_filename = "buffer"
+buffer_filename = "server-buffer"
 with open(buffer_filename, "w"):
     pass
 
@@ -107,8 +122,13 @@ with open(command_file, 'rb') as file:
 
     command = file.readline().decode().rstrip()
     while command != '':
-        while command != '<sync>' and command != '<exit>' and command != '':
+        while command != '<sync>' and command != '<exit>' and command != '' and not "-refactory" in command:
             send_command(p, command.replace("CURDIR", CURDIR))
+            command = file.readline().decode().rstrip()
+
+        if "-refactory" in command:
+            # run this command in separate invocation with separate buffer
+            call_refactory(command)
             command = file.readline().decode().rstrip()
 
         if command == '<exit>':
