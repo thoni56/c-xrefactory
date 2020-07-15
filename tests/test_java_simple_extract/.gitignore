@@ -2,6 +2,6 @@
 CXrefs
 *.log
 log*
-buffer*
+*buffer*
 output
 output*.tmp

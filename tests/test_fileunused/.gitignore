@@ -1,5 +1,5 @@
 .c-xrefrc
-buffer
+*buffer
 log
 *.tmp
 output

@@ -1,7 +1,7 @@
 output
 output.tmp
 log
-buffer
+*buffer
 CXrefs
 *.output
 .c-xrefrc

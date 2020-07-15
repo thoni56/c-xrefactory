@@ -2,6 +2,6 @@ CXrefs
 .c-xrefrc
 output
 output.tmp
-buffer
+*buffer
 log
 *.output
