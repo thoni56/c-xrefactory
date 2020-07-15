@@ -4,9 +4,6 @@
 (defvar C_XREF_VERSION_NUMBER "1.6.14")
 (defvar C_XREF_FILE_VERSION_NUMBER "1.6.0")
 
-
-
-
 (defvar PPC_NO_TAG "-- no tag --")
 
 (defvar PPC_VERSION_MISMATCH "version-mismatch")

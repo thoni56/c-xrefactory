@@ -1,9 +1,6 @@
 PROTOCOL_ITEM(String, C_XREF_VERSION_NUMBER,            "1.6.14")
 PROTOCOL_ITEM(String, C_XREF_FILE_VERSION_NUMBER,       "1.6.0")
 
-COMMENT("All the following stuff shall be renamed to C_XREF_PPC_...")
-COMMENT("to avoid conflicts with Xrefactory 2.*.*")
-
 PROTOCOL_ITEM(String, PPC_NO_TAG,                       "-- no tag --")
 
 PROTOCOL_ITEM(String, PPC_VERSION_MISMATCH,             "version-mismatch")
@@ -106,7 +103,7 @@ PROTOCOL_ITEM(int, PPCV_BROWSER_TYPE_INFO,      0)
 PROTOCOL_ITEM(int, PPCV_BROWSER_TYPE_WARNING,   1)
 
 
-COMMENT("These constants are defined in refactoring.h")
+COMMENT("The constants for available refactorings are defined in refactoring.h")
 PROTOCOL_ITEM(int, PPC_AVR_NO_REFACTORING,                AVR_NO_REFACTORING)
 PROTOCOL_ITEM(int, PPC_AVR_RENAME_SYMBOL,                 AVR_RENAME_SYMBOL)
 PROTOCOL_ITEM(int, PPC_AVR_RENAME_CLASS,                  AVR_RENAME_CLASS)
