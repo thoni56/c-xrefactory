@@ -220,7 +220,7 @@ enum addImportsDefault {
 /* *******************      refactoring continuations      *************** */
 
 enum {
-    RC_ZERO,				// do not continue, keep interactive
+    RC_NONE,				// do not continue, keep interactive
     RC_CONTINUE,			// continue, no special info
     RC_IMPORT_SINGLE_TYPE,
     RC_IMPORT_ON_DEMAND,

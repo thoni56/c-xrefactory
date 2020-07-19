@@ -272,7 +272,8 @@ static void refactoryBeInteractive(void) {
         // old way how to finish dialog
         if (pargc <= 1) break;
         mainCallEditServerInit(pargc, pargv);
-        if (options.continueRefactoring) break;
+        if (options.continueRefactoring != RC_NONE)
+            break;
         mainCallEditServer(argument_count(s_refactoryEditSrvInitOptions),
                            s_refactoryEditSrvInitOptions,
                            pargc, pargv, &refactoryXrefEditServerSubTaskFirstPass);

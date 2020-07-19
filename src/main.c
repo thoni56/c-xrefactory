@@ -490,10 +490,11 @@ static bool processCOption(int *ii, int argc, char **argv) {
     else if (strncmp(argv[i],"-completionoverloadwizdeep=",27)==0)  {
         sscanf(argv[i]+27, "%d", &options.completionOverloadWizardDeep);
     }
-    else if (strcmp(argv[i],"-continuerefactoring")==0)
-        options.continueRefactoring=RC_CONTINUE;
     else if (strncmp(argv[i],"-commentmovinglevel=",20)==0) {
         sscanf(argv[i]+20, "%d", &options.commentMovingLevel);
+    }
+    else if (strcmp(argv[i],"-continuerefactoring")==0) {
+        options.continueRefactoring=RC_CONTINUE;
     }
     else if (strcmp(argv[i],"-continuerefactoring=importSingle")==0)    {
         options.continueRefactoring = RC_IMPORT_SINGLE_TYPE;

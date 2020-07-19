@@ -15,6 +15,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 *** TODO <next step>
 * DOING Move XX_ALLOCC and friends to "memory" module
 * TODO Create jar reading test for unexpected end of file
+* TODO Split out more specific tests from ?exercise tests, like "rename_with_conflicts"
 * TODO Make C-xref->Misc->About show commit-id
 * TODO Fix javadoc not available (-olcxbrowse com.sun.org.apache.bcel.internal.generic.LADD in jexercise)
 * TODO Why is -olcxbrowse concating the option number without '='? Any more options that do?

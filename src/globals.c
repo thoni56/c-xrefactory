@@ -251,7 +251,7 @@ Options s_initOpt = {
     0,                          // comment moving level
     NULL,                       // prune name
     NULL,                       // input files
-    RC_ZERO,                    // continue refactoring
+    RC_NONE,                    // continue refactoring
     0,                          // completion case sensitive
     NULL,                       // xrefrc
     NO_EOL_CONVERSION,          // crlfConversion
