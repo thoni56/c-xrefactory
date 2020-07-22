@@ -3228,7 +3228,10 @@ No.
     (c-xref-server-dispatch-require-end-ctag tag)
     (setq conf (c-xref-yes-or-no-window cc t dispatch-data))
     (if (not conf)
-        (error "exiting")
+        (progn
+          (if c-xref-debug-mode (message "exiting: %s" tag))
+          (error "exiting")
+          )
       )
     i
 ))
