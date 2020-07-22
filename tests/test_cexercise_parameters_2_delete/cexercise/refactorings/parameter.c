@@ -9,28 +9,28 @@
 static int arg = 1;
 
 // add another parameter to function printint
-void printint(int arg, int j) {
+void printint(int j) {
     printf("j == %d", j);
 }
 
 // remove parameter of printNewline
-void printNewline() {
+void printNewline(int i) {
     printf("\n");
 }
 
 // removing of used parameter issues warning message
-void printNewlines() {
+void printNewlines(int i) {
     for(; i>0; i--) printf("\n");
 }
 
 // adding a parameter named 'arg' here will report symbol clash
-void printArg(int arg) {
+void printArg() {
     printf("arg == %d\n", arg);
 }
 
 void addRemoveParameter() {
-    printint(0, 1);
-    printNewline();
+    printint(1);
+    printNewline(1);
 }
 
 
