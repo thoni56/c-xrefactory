@@ -1,0 +1,16 @@
+../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-user" "1" "-rfct-del-param" "-olcxparnum=1" "-olmark=0" "-olcursor=482" "-addimportdefault=0" "CURDIR/cexercise/refactorings/parameter.c" -o server-buffer
+<sync>
+<goto>
+ <position-off off=482 len=<n>>CURDIR/cexercise/refactorings/parameter.c</position-off>
+</goto>
+<ask-confirmation len=<n>>parameter 'i' is used, delete it anyway?</ask-confirmation>
+<goto>
+ <position-off off=492 len=<n>>CURDIR/cexercise/refactorings/parameter.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>int i</str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=482 len=<n>>CURDIR/cexercise/refactorings/parameter.c</position-off>
+</goto>
+

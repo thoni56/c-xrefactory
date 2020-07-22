@@ -1,0 +1,21 @@
+../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-user" "1" "-rfct-add-param" "-olcxparnum=1" "-rfct-param1=int arg" "-rfct-param2=0" "-olmark=0" "-olcursor=289" "-addimportdefault=0" "CURDIR/cexercise/refactorings/parameter.c" -o server-buffer
+<sync>
+<goto>
+ <position-off off=289 len=<n>>CURDIR/cexercise/refactorings/parameter.c</position-off>
+</goto>
+<goto>
+ <position-off off=298 len=<n>>CURDIR/cexercise/refactorings/parameter.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>int arg, </str>
+</replacement>
+<goto>
+ <position-off off=705 len=<n>>CURDIR/cexercise/refactorings/parameter.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>0, </str>
+</replacement>
+<goto>
+ <position-off off=289 len=<n>>CURDIR/cexercise/refactorings/parameter.c</position-off>
+</goto>
+

@@ -1,0 +1,16 @@
+../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-user" "1" "-rfct-add-param" "-olcxparnum=1" "-rfct-param1=int arg" "-rfct-param2=0" "-olmark=0" "-olcursor=608" "-addimportdefault=0" "CURDIR/cexercise/refactorings/parameter.c" -o server-buffer
+<sync>
+<goto>
+ <position-off off=608 len=<n>>CURDIR/cexercise/refactorings/parameter.c</position-off>
+</goto>
+<ask-confirmation len=<n>>parameter 'arg' clashes with an existing symbol, continue anyway?</ask-confirmation>
+<goto>
+ <position-off off=616 len=<n>>CURDIR/cexercise/refactorings/parameter.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>int arg</str>
+</replacement>
+<goto>
+ <position-off off=608 len=<n>>CURDIR/cexercise/refactorings/parameter.c</position-off>
+</goto>
+
