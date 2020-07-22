@@ -1,0 +1,9 @@
+<reference-list val=0 symbol="  Conflicting References">
+<src-line refn=1 len=51>rename.c:21:#define PRINTJ() printf("j == %d\n", j)</src-line>
+<src-line refn=1 len=33>rename.c:24:    j = 33; PRINTJ();</src-line>
+</reference-list>
+src-line refn=1 len=51>rename.c:21:#define PRINTJ() printf("j == %d\n", j)</src-line>
+<src-line refn=1 len=33>rename.c:24:    j = 33; PRINTJ();</src-line>
+</reference-list>src-line refn=1 len=51>rename.c:21:#define PRINTJ() printf("j == %d\n", j)</src-line>
+<src-line refn=1 len=33>rename.c:24:    j = 33; PRINTJ();</src-line>
+</reference-list>1 len=33>rename.c:24:    j = 33; 1 len=33>rename.c:24:    j = 33; 1 len=33>rename.c:24:    j = 33; 1 len=33>rename.c:24:    j = 33; 1 len=33>rename.c:24:    j = 33; 1 len=33>rename.c:24:    j = 33; Makefile

@@ -1,0 +1,39 @@
+../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" "-p" "CURDIR/cexercise/refactorings" "-user" "1" "-rfct-rename" "-renameto=renameSympol" "-olcursor=484" "-addimportdefault=0" "CURDIR/cexercise/refactorings/rename.c" -o server-buffer
+<sync>
+<goto>
+ <position-off off=301 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
+</goto>
+<precheck len=<n>> renameSymbol(</precheck>
+<goto>
+ <position-off off=479 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
+</goto>
+<precheck len=<n>> renameSymbol(</precheck>
+<goto>
+ <position-off off=1139 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
+</goto>
+<precheck len=<n>> renameSymbol(</precheck>
+<goto>
+ <position-off off=484 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
+</goto>
+<goto>
+ <position-off off=302 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>renameSymbol</str>  <str len=<n>>renameSympol</str>
+</replacement>
+<goto>
+ <position-off off=480 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>renameSymbol</str>  <str len=<n>>renameSympol</str>
+</replacement>
+<goto>
+ <position-off off=1140 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>renameSymbol</str>  <str len=<n>>renameSympol</str>
+</replacement>
+<goto>
+ <position-off off=484 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
+</goto>
+

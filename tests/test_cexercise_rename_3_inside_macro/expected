@@ -1,0 +1,39 @@
+../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-user" "1" "-rfct-rename" "-renameto=m" "-olcursor=534" "-addimportdefault=0" "CURDIR/cexercise/refactorings/rename.c" -o server-buffer
+<sync>
+<goto>
+ <position-off off=292 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
+</goto>
+<precheck len=<n>> j;</precheck>
+<goto>
+ <position-off off=533 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
+</goto>
+<precheck len=<n>> j)</precheck>
+<goto>
+ <position-off off=592 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
+</goto>
+<precheck len=<n>> j </precheck>
+<goto>
+ <position-off off=534 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
+</goto>
+<goto>
+ <position-off off=293 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>j</str>  <str len=<n>>m</str>
+</replacement>
+<goto>
+ <position-off off=534 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>j</str>  <str len=<n>>m</str>
+</replacement>
+<goto>
+ <position-off off=593 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>j</str>  <str len=<n>>m</str>
+</replacement>
+<goto>
+ <position-off off=534 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
+</goto>
+
