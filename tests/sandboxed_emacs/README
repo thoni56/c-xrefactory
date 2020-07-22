@@ -17,7 +17,7 @@ to start a sandboxed Emacs.
 
 One very handy use of this is that you can start an Emacs using this
 and then replay the interaction using the utility
-utils/edit_server_driver.
+utils/server_driver.
 
 To do that save the /tmp/pipespy*.log file and use that as an input
 file for the driver. You just have to

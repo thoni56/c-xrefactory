@@ -4,7 +4,7 @@
 #
 # Usage:
 #
-#     edit_server_driver.py <commandsfile> <curdir> [ <seconds> ]
+#     server_driver.py <commandsfile> <curdir> [ <seconds> ]
 #
 # <curdir> is the current directory to replace "CURDIR" with in command input files
 # and output so that they are location independent.
@@ -15,7 +15,7 @@
 # server might send <progress> a couple of times before sending the <sync>.
 #
 # The first line is always the invocation command. It should not have an "-o" option as
-# the edit_server_driver will add "-o buffer".
+# the server_driver will add "-o buffer".
 #
 # All commands will be printed on stdout. After a <sync> is recieved
 # the servers answer is in the specified output file. That answer will
@@ -31,14 +31,11 @@
 # If the line (probably the last) is '<exit>', the driver will send '-exit',
 # 'end-of-options' and exit. This allows the server to shut down nicely.
 #
-# A very special case is if the line contains '-refactory' (it also
-# then must start with a path to the c-xref program like the inital
-# line in the command file). Then it is a refactoring "command" which
-# needs to be handled by a separate invocation, so the driver then uses
-# the command to call a new process using a separate buffer. A
-# refactoring command will terminate with sending a '<sync>'. So note
-# that there should not be any '<sync>' in the command file after such
-# an invocations.
+# A very special case is if the invocation contains '-refactory'. Then
+# it is a refactoring "command" which actually sends output even on
+# the the first command, without "end-of-options". So then we need to
+# wait for a sync and read the output. However, more commands may
+# follow.
 
 import sys
 import os
@@ -79,84 +76,70 @@ def read_output(filename):
     with open(filename, 'rb') as file:
         print(file.read().decode())
 
-def call_refactory(command):
-    refactoring_buffer_filename = "refactory-buffer"
-    invocation = command.replace("CURDIR", CURDIR)
-    invocation += " -o " + refactoring_buffer_filename
-    print(invocation)
+if __name__ == "__main__":
+    if len(sys.argv) < 3:
+        print("Error - not enough arguments", file=sys.stderr)
+        print("Usage:\t"+os.path.basename(sys.argv[0])+" <commandsfile> <curdir> [ <delay> ]")
+        sys.exit(1)
 
-    args = shlex.split(invocation)
+    # First argument is the file with the commands
+    command_file = sys.argv[1]
 
-    p = subprocess.Popen(args,
-                         stdout=subprocess.PIPE,
-                         stdin=subprocess.PIPE)
-    wait_for_sync(p)
-    read_output(refactoring_buffer_filename)
+    # Second argument is the value of CURDIR
+    CURDIR = sys.argv[2]
 
-if len(sys.argv) < 3:
-    print("Error - not enough arguments", file=sys.stderr)
-    print("Usage:\t"+os.path.basename(sys.argv[0])+" <commandsfile> <curdir> [ <delay> ]")
-    sys.exit(1)
+    server_buffer_filename = "server-buffer"
+    with open(server_buffer_filename, "w"):
+        pass
 
-# First argument is the file with the commands
-command_file = sys.argv[1]
+    # If there is a third argument that is a sleep timer to
+    # be able to attach a debugger
+    if len(sys.argv) == 4:
+        sleep = int(sys.argv[3])
+    else:
+        sleep = None
 
-# Second argument is the value of CURDIR
-CURDIR = sys.argv[2]
+    with open(command_file, 'rb') as file:
+        invocation = file.readline().decode().rstrip().replace("CURDIR", CURDIR)
+        invocation += " -o "+server_buffer_filename
+        print(invocation)
 
-server_buffer_filename = "server-buffer"
-with open(server_buffer_filename, "w"):
-    pass
+        args = shlex.split(invocation)
+        if sleep:
+            args = [args[0]] + ["-pause", sys.argv[3]] + args[1:]
 
-# If there is a third argument that is a sleep timer to
-# be able to attach a debugger
-if len(sys.argv) == 4:
-    sleep = int(sys.argv[3])
-else:
-    sleep = None
+        p = subprocess.Popen(args,
+                             stdout=subprocess.PIPE,
+                             stdin=subprocess.PIPE)
 
-with open(command_file, 'rb') as file:
-    invocation = file.readline().decode().rstrip().replace("CURDIR", CURDIR)
-    invocation += " -o "+server_buffer_filename
-    print(invocation)
-
-    args = shlex.split(invocation)
-    if sleep:
-        args = [args[0]] + ["-pause", sys.argv[3]] + args[1:]
-
-    p = subprocess.Popen(args,
-                         stdout=subprocess.PIPE,
-                         stdin=subprocess.PIPE)
-
-    command = file.readline().decode().rstrip()
-    while command != '':
-        while command != '<sync>' and command != '<exit>' and command != '' and not "-refactory" in command:
-            send_command(p, command.replace("CURDIR", CURDIR))
-            command = file.readline().decode().rstrip()
-
-        if "-refactory" in command:
-            # run this command in separate invocation with separate buffer
-            call_refactory(command)
-            command = file.readline().decode().rstrip()
-
-        if command == '<exit>':
-            send_command(p, "-exit")
-            end_of_options(p)
-            sys.exit(0)
-
-        if command == '<sync>':
-            end_of_options(p)
+        if "-refactory" in invocation:
             wait_for_sync(p)
             read_output(server_buffer_filename)
-            command = file.readline().decode().rstrip()
 
-        if command == '<update-report>':
-            eprint(command)
-            while command != '</update-report>':
+        command = file.readline().decode().rstrip()
+        while command != '':
+            while command != '<sync>' and command != '<exit>' and command != '': #and not "-refactory" in command:
+                send_command(p, command.replace("CURDIR", CURDIR))
                 command = file.readline().decode().rstrip()
-                eprint(command)
 
-    line = p.stdout.readline()[:-1].decode()
-    while line != '':
-        eprint("Waiting for end of communication, got: '{0}'".format(line))
-        line = p.stdout.readline().decode()[:-1]
+            if command == '<exit>':
+                send_command(p, "-exit")
+                end_of_options(p)
+                sys.exit(0)
+
+            if command == '<sync>':
+                end_of_options(p)
+                wait_for_sync(p)
+                read_output(server_buffer_filename)
+                command = file.readline().decode().rstrip()
+
+            if command == '<update-report>':
+                eprint(command)
+                while command != '</update-report>':
+                    command = file.readline().decode().rstrip()
+                    eprint(command)
+
+        line = p.stdout.readline()[:-1].decode()
+        while line != '':
+            eprint("Waiting for end of communication, got: '{0}'".format(line))
+            line = p.stdout.readline().decode()[:-1]
