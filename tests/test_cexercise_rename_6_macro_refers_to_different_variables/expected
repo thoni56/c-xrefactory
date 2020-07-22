@@ -1,34 +1,34 @@
-../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "/home/thoni/Utveckling/c-xrefactory/tests/sandboxed_emacs/.c-xrefrc" "-p" "/home/thoni/Utveckling/c-xrefactory/tests/test_cexercise_rename_2_function/cexercise/refactorings" "-user" "1" "-rfct-rename" "-renameto=y" "-olcursor=1073" "-addimportdefault=0" "/home/thoni/Utveckling/c-xrefactory/tests/test_cexercise_rename_2_function/cexercise/refactorings/rename.c" -o server-buffer
+../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-user" "1" "-rfct-rename" "-renameto=y" "-olcursor=1073" "-addimportdefault=0" "CURDIR/cexercise/refactorings/rename.c" -o server-buffer
 <sync>
 <goto>
- <position-off off=892 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/test_cexercise_rename_2_function/cexercise/refactorings/rename.c</position-off>
+ <position-off off=892 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
 </goto>
 <precheck len=<n>> x)</precheck>
 <goto>
- <position-off off=1072 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/test_cexercise_rename_2_function/cexercise/refactorings/rename.c</position-off>
+ <position-off off=1072 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
 </goto>
 <precheck len=<n>> x </precheck>
 <goto>
- <position-lc line=36 col=37 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/test_cexercise_rename_2_function/cexercise/refactorings/rename.c</position-lc>
+ <position-lc line=36 col=37 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-lc>
 </goto>
 <ask-confirmation len=<n>>The reference at this place refers to multiple symbols. The
 refactoring will probably damage your program. Do you really want to continue?</ask-confirmation>
 <goto>
- <position-off off=1073 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/test_cexercise_rename_2_function/cexercise/refactorings/rename.c</position-off>
+ <position-off off=1073 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
 </goto>
 <goto>
- <position-off off=893 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/test_cexercise_rename_2_function/cexercise/refactorings/rename.c</position-off>
-</goto>
-<replacement>
- <str len=<n>>x</str>  <str len=<n>>y</str>
-</replacement>
-<goto>
- <position-off off=1073 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/test_cexercise_rename_2_function/cexercise/refactorings/rename.c</position-off>
+ <position-off off=893 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
 </goto>
 <replacement>
  <str len=<n>>x</str>  <str len=<n>>y</str>
 </replacement>
 <goto>
- <position-off off=1073 len=<n>>/home/thoni/Utveckling/c-xrefactory/tests/test_cexercise_rename_2_function/cexercise/refactorings/rename.c</position-off>
+ <position-off off=1073 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
+</goto>
+<replacement>
+ <str len=<n>>x</str>  <str len=<n>>y</str>
+</replacement>
+<goto>
+ <position-off off=1073 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
 </goto>
 
