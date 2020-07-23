@@ -1,0 +1,7 @@
+../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-user" "1" "-rfct-rename" "-renameto=j" "-olcursor=784" "-addimportdefault=0" "CURDIR/jexercise/com/xrefactory/refactorings/RenameSymbol.java"
+-olcxmenufilter=2 -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+<sync>
+-olcxfilter=0  "-olmark=0" "-olcursor=1" "nil" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+<sync>
+-continuerefactoring -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+<sync>
