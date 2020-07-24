@@ -27,4 +27,3 @@ single_int_on_line_1_col_4 </precheck>
 <goto>
  <position-off off=67 len=<n>>CURDIR/test_source/single_int1.c</position-off>
 </goto>
-

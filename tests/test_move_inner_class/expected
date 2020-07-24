@@ -34,4 +34,3 @@ class does not depend on its enclosing instances, you should declare it
 <information len=<n>>
 Done.
 Do not forget to remove .class files of former class.</information>
-

@@ -4,7 +4,6 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
-
 -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=533" "-olcursor=606" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
@@ -12,7 +11,6 @@ end-of-options
 <all-completions nofocus=0 len=<n>>la = new La  :(Completion Wizard)
 la = null;   :(Completion Wizard)
 la           :(Completion Wizard)</all-completions>
-
 -olcomplselect5 -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
@@ -21,13 +19,11 @@ end-of-options
 <position-lc line=29 col=3 len=<n>>CURDIR/jexercise/com/xrefactory/Completion.java</position-lc>
 </goto>
 <single-completion len=<n>>la</single-completion>
-
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
-
 -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=606" "-olcursor=1346" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
@@ -83,85 +79,71 @@ true                  :keyword
 false                 :keyword
 null                  :keyword
 strictfp              :keyword</all-completions>
-
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
-
 -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=1346" "-olcursor=1349" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <bottom-information beep=0 len=<n>>** No completion possible **</bottom-information>
-
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
-
 -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=1346" "-olcursor=1491" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <bottom-information beep=0 len=<n>>** No completion possible **</bottom-information>
-
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
-
 -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=1346" "-olcursor=1613" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <bottom-information beep=0 len=<n>>** No completion possible **</bottom-information>
-
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
-
 -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=1613" "-olcursor=1705" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <bottom-information beep=0 len=<n>>** No completion possible **</bottom-information>
-
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
-
 -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=1613" "-olcursor=1838" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <bottom-information beep=0 len=<n>>** No completion possible **</bottom-information>
-
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
-
 -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=1613" "-olcursor=1965" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <bottom-information beep=0 len=<n>>** No completion possible **</bottom-information>
-
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
-
 -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=1613" "-olcursor=2033" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
@@ -170,7 +152,6 @@ end-of-options
 <position-lc line=74 col=14 len=<n>>CURDIR/jexercise/com/xrefactory/Completion.java</position-lc>
 </goto>
 <single-completion len=<n>>Nested</single-completion>
-
 -olcomplselect1 -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
@@ -179,13 +160,11 @@ end-of-options
 <position-lc line=74 col=14 len=<n>>CURDIR/jexercise/com/xrefactory/Completion.java</position-lc>
 </goto>
 <single-completion len=<n>>arguments</single-completion>
-
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
-
 -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=2033" "-olcursor=2033" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
@@ -194,13 +173,11 @@ end-of-options
 <position-lc line=74 col=14 len=<n>>CURDIR/jexercise/com/xrefactory/Completion.java</position-lc>
 </goto>
 <single-completion len=<n>>Nested</single-completion>
-
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
-
 -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=2033" "-olcursor=2226" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
@@ -259,13 +236,11 @@ true                  :keyword
 false                 :keyword
 null                  :keyword
 strictfp              :keyword</all-completions>
-
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
-
 -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=2033" "-olcursor=2360" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
@@ -324,13 +299,11 @@ true                  :keyword
 false                 :keyword
 null                  :keyword
 strictfp              :keyword</all-completions>
-
 -olcxgetprojectname -xrefrc "CURDIR/.c-xrefrc" "CURDIR/jexercise/com/xrefactory/Completion.java"
 end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
-
 -olcxcomplet -maxcompls=500 -olfqtcompletionslevel=2 "-olmark=2033" "-olcursor=2359" "CURDIR/jexercise/com/xrefactory/Completion.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
@@ -389,7 +362,6 @@ true                  :keyword
 false                 :keyword
 null                  :keyword
 strictfp              :keyword</all-completions>
-
 -olcomplselect2 -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
@@ -398,7 +370,6 @@ end-of-options
 <position-lc line=87 col=9 len=<n>>CURDIR/jexercise/com/xrefactory/Completion.java</position-lc>
 </goto>
 <single-completion len=<n>>mybutton</single-completion>
-
 -exit
 end-of-options
 

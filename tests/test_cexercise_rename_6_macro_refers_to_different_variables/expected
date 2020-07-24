@@ -31,4 +31,3 @@ refactoring will probably damage your program. Do you really want to continue?</
 <goto>
  <position-off off=1073 len=<n>>CURDIR/cexercise/refactorings/rename.c</position-off>
 </goto>
-

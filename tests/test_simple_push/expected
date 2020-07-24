@@ -4,7 +4,6 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
-
 -olcxpush -urldirect "-olmark=0" "-olcursor=6" "test_source/single_int1.c" -xrefrc ".c-xrefrc" -p "CURDIR" -encoding=european
 end-of-options
 
@@ -12,7 +11,6 @@ end-of-options
 <goto>
  <position-lc line=1 col=4 len=<n>>CURDIR/test_source/single_int1.c</position-lc>
 </goto>
-
 -exit
 end-of-options
 

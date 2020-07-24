@@ -4,7 +4,6 @@ end-of-options
 
 <sync>
 <set-info len=<n>>CURDIR</set-info>
-
 -exit
 end-of-options
 

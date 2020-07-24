@@ -64,7 +64,8 @@ def end_of_options(p):
 def wait_for_sync(p):
     line = p.stdout.readline()[:-1].decode()
     while line != '<sync>' and line != '':
-        eprint("Waiting for <sync>, got: '{0}'".format(line))
+        if not line.startswith("<progress>"):
+            eprint("Waiting for <sync>, got: '{0}'".format(line))
         line = p.stdout.readline().decode()[:-1]
     if line == '':
         eprint("Broken input")
@@ -73,15 +74,18 @@ def wait_for_sync(p):
 
 
 def read_output(filename):
-    with open(filename, 'rb') as file:
-        line = file.readline().decode().rstrip()
-        while line != '':
-            if line == '<update-report>':
+    with open(filename, 'r') as file:
+        in_update_report = False
+        for line in file:
+            line = line[:-1]			# Remove newline
+            if not in_update_report:
                 print(line)
-                while line != '</update-report>':
-                    line = file.readline().decode().rstrip()
-            print(line)
-            line = file.readline().decode().rstrip()
+            if line == '<update-report>':
+                in_update_report = True
+            if line == '</update-report>':
+                print(line)
+                in_update_report = False
+
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:

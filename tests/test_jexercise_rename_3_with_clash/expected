@@ -20,7 +20,6 @@
  <position-off off=784 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/RenameSymbol.java</position-off>
 </goto>
 <display-resolution len=<n> mtype=1 continue=1>These references may be  misinterpreted after refactoring</display-resolution>
-
 -olcxmenufilter=2 -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
@@ -28,7 +27,6 @@ end-of-options
 <resolution>
  <symbol line=2 selected=1 base=0 drefn=0 refn=0 len=<n>>  Conflicting References</symbol>
 </resolution>
-
 -olcxfilter=0  "-olmark=0" "-olcursor=1" "nil" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
@@ -36,7 +34,6 @@ end-of-options
 <reference-list val=0 symbol="  Conflicting References">
 <src-line refn=1 len=<n>>RenameSymbol.java:32:        for(int x=0; x<10; x++) System.out.print(" " + j + " " + x);</src-line>
 </reference-list>
-
 -continuerefactoring -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
@@ -69,4 +66,3 @@ end-of-options
 <goto>
 <position-off off=784 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/RenameSymbol.java</position-off>
 </goto>
-

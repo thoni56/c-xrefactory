@@ -46,4 +46,3 @@
 <goto>
  <position-off off=365 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/RenameSymbol.java</position-off>
 </goto>
-
