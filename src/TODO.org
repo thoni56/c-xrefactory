@@ -5,7 +5,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
-* DOING Tool to convert debug log from Emacs/c-xref into commands for edit-server-driver.py
+* DOING Split out more specific tests from ?exercise tests, like "rename_with_conflicts"
 * DOING Create testcases for all jexercise and cexercise steps
 ** DOING cexercise
 *** DONE F6 to completion() and completions
@@ -15,9 +15,9 @@ There are a *lot* of things to do to make c-xref into modern C.
 *** TODO <next step>
 * DOING Move XX_ALLOCC and friends to "memory" module
 * TODO Create jar reading test for unexpected end of file
+* TODO Strange that <update-report> is put in the -o file since that is synchronous...
 * TODO Java home can be found using "java -XshowSettings:properties 2>&1 | grep java.home"
 and you can also get java.class.version=55 => java version without decoding directory names
-* TODO Split out more specific tests from ?exercise tests, like "rename_with_conflicts"
 * TODO Make C-xref->Misc->About show commit-id
 * TODO Fix javadoc not available (-olcxbrowse com.sun.org.apache.bcel.internal.generic.LADD in jexercise)
 * TODO Why is -olcxbrowse concating the option number without '='? Any more options that do?
@@ -116,6 +116,7 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Tool to convert debug log from Emacs/c-xref into commands for edit-server-driver.py
 * DONE Introduce data driven strategy to find java runtime
 Java up to v8 uses /bin/java[.exe], Java 9 and higher has no rt.jar at
 all.
