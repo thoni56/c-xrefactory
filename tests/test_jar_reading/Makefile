@@ -2,10 +2,10 @@
 
 include ../Makefile.boilerplate
 
-COMMAND = ../../src/c-xref -xrefrc .c-xrefrc -mf=4 abbot.jar jdk1.8.0_121_jre_lib_rt.jar
+COMMAND = ../../src/c-xref -xrefrc .c-xrefrc -mf=4 abbot.jar -jdkclasspath jdk1.8.0_121_jre_lib_rt.jar
 
 $(TEST):
-	@$(COMMAND) > output
+	@$(COMMAND) -create > output
 	@grep abbot/tester/JFileChooserTester CXrefs/X0* > /dev/null ; \
 	if [ $$? -ne 0 ] ; then \
 		$(FAIL) ; \
