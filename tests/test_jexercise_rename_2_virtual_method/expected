@@ -1,17 +1,11 @@
 ../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-user" "1" "-rfct-rename" "-renameto=wmethod" "-olcursor=603" "-addimportdefault=0" "CURDIR/jexercise/com/xrefactory/refactorings/RenameSymbol.java" -o server-buffer
 <sync>
 <update-report>
- <information len=<n>>Prescanning classes, please wait.</information>
- <information len=<n>>C-xrefactory project: CURDIR</information>
- <information len=<n>>java version == 1.3</information>
- <information len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/RenameSymbol.java</information>
- <information len=<n>>Generating 'CURDIR/CXrefs'</information>
 </update-report>
 <display-resolution len=<n> mtype=0 continue=1>Select classes in left window. These classes will be processed
 during refactoring. It is highly recommended to process whole hierarchy of
 related classes all at once. Unselection of any class and its exclusion from
 refactoring may cause changes in your program behaviour.</display-resolution>
-
 -olcxmenufilter=2 -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR/jexercise/com/xrefactory/refactorings" -user 1
 end-of-options
 
@@ -19,7 +13,6 @@ end-of-options
 <resolution>
  <virtual-symbol len=<n>>vmethod()</virtual-symbol>
 </resolution>
-
 -olcxfilter=0  "-olmark=0" "-olcursor=1" "nil" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
@@ -28,7 +21,6 @@ end-of-options
 <src-line refn=1 len=<n>>RenameSymbol.java:24:        void vmethod() {}</src-line>
 <src-line refn=1 len=<n>>RenameSymbol.java:27:        void vmethod() {}</src-line>
 </reference-list>
-
 -continuerefactoring -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
@@ -45,8 +37,6 @@ end-of-options
 <position-off off=603 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/RenameSymbol.java</position-off>
 </goto>
 <update-report>
-<information len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/RenameSymbol.java</information>
-<information len=<n>>Generating 'CURDIR/CXrefs'</information>
 </update-report>
 <goto>
 <position-off off=602 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/RenameSymbol.java</position-off>
@@ -63,4 +53,3 @@ end-of-options
 <goto>
 <position-off off=603 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/RenameSymbol.java</position-off>
 </goto>
-

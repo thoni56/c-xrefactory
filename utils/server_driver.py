@@ -74,7 +74,14 @@ def wait_for_sync(p):
 
 def read_output(filename):
     with open(filename, 'rb') as file:
-        print(file.read().decode())
+        line = file.readline().decode().rstrip()
+        while line != '':
+            if line == '<update-report>':
+                print(line)
+                while line != '</update-report>':
+                    line = file.readline().decode().rstrip()
+            print(line)
+            line = file.readline().decode().rstrip()
 
 if __name__ == "__main__":
     if len(sys.argv) < 3:
