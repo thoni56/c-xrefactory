@@ -1,0 +1,9 @@
+#!/bin/bash
+
+# If an arg then go to that test directory
+if [ $# -eq 1 ]; then
+   cd `dirname $(readlink -f $0)`
+   cd ../tests/$1
+fi
+cp output expected
+
