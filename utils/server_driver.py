@@ -134,8 +134,9 @@ if __name__ == "__main__":
                 command = file.readline().decode().rstrip()
 
             if command == '<exit>':
-                send_command(p, "-exit")
-                end_of_options(p)
+                if p.poll() == None:	# no error code yet? So still alive...
+                    send_command(p, "-exit")
+                    end_of_options(p)
                 sys.exit(0)
 
             if command == '<sync>':
