@@ -5,7 +5,6 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
-* DOING Split out more specific tests from ?exercise tests, like "rename_with_conflicts"
 * DOING Create testcases for all jexercise and cexercise steps
 ** DOING cexercise
 *** DONE F6 to completion() and completions
@@ -15,9 +14,9 @@ There are a *lot* of things to do to make c-xref into modern C.
 *** TODO <next step>
 * DOING Move XX_ALLOCC and friends to "memory" module
 * TODO Create jar reading test for unexpected end of file
-* TODO Strange that <update-report> is put in the -o file since that is synchronous...
 * TODO Java home can be found using "java -XshowSettings:properties 2>&1 | grep java.home"
 and you can also get java.class.version=55 => java version without decoding directory names
+* TODO Strange that <update-report> is put in the -o file since that is synchronous...
 * TODO Make C-xref->Misc->About show commit-id
 * TODO Fix javadoc not available (-olcxbrowse com.sun.org.apache.bcel.internal.generic.LADD in jexercise)
 * TODO Why is -olcxbrowse concating the option number without '='? Any more options that do?
@@ -27,18 +26,19 @@ and you can also get java.class.version=55 => java version without decoding dire
 * TODO Turn lexembuffer functions into methods on the buffer
   get/putLexZZZ() uses pointers to chars, why not a lexembuffer?
   When do we point to something not a lexembuffer?
-* TODO Remove zlib from repo, point to it's repo instead
-* TODO New features
-** TODO New refactoring: move function
+* TODO NEW FEATURES:
+** TODO New refactoring: move function for C
 ** TODO New refactoring: Extract variable
 ** TODO Extract function can't extract a boolean function inside an if()
 * TODO Remove FULL/FAST update, we always want correct info?
   There are a number of update modes available from the command line, 'fupdate',
   'updatem', 'update', 'fastupdate' and then there is opt.updateOnlyModifiedFiles
 * TODO Make S_caching an abstract data type to hide CachePoint and Caching
-* TODO Bugs
+* TODO BUGS:
 ** TODO Double free when swapping refs while reading jar file
 Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
+** TODO bug_add_to_constructor_missinterpreted_if_not_int_arg_0
+* TODO Check if the C-part of Yacc grammar is identical, and if so extract it
 * TODO Separate the options into sections and move HTML (at least) to separate structure
   The S_options structure is used to save or possibly create new sets, when
   refactoring. Then it should only contain what's needed for that.
@@ -81,7 +81,6 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   If so, make xref2 the way c-xref talks if in server mode. But this should also
   apply for refactory mode, right?
 * TODO Cleanup and separate commons, misc and make them independent utility modules
-* TODO Check if the C-part of Yacc grammar is identical, and if so extract it
 * TODO Fix the move_class test
 * TODO Why does -refactory read the users default .c-xrefrc? And why does -no-stdoptions
   prevent reading explicit -xrefrc options?
@@ -116,6 +115,8 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Remove zlib from repo, point to it's repo instead
+* DONE Split out more specific tests from ?exercise tests, like "rename_with_conflicts"
 * DONE Tool to convert debug log from Emacs/c-xref into commands for edit-server-driver.py
 * DONE Introduce data driven strategy to find java runtime
 Java up to v8 uses /bin/java[.exe], Java 9 and higher has no rt.jar at
