@@ -52,19 +52,25 @@ clean-coverage:
 
 #########################################################################
 # We generate parsers for C, Yacc, Java and C expressions
-# Note the file prefix (-b) and symbol prefix (-p)
+# Note the file prefix (-b) and symbol prefix (-p) and that we create
+# a .rules file with only the rules in it
 
 c_parser.tab.c c_parser.tab.h: c_parser.y $(YACC)
 	$(YACC) -v -d -b c_parser -p c_yy c_parser.y
+	sed -E '/^$$/q' c_parser.output > c_parser.rules
 
 java_parser.tab.c: java_parser.y $(YACC)
 	$(YACC) -v -b java_parser -p java_yy java_parser.y
+	sed -E '/^$$/q' java_parser.output > java_parser.rules
 
 yacc_parser.tab.c: yacc_parser.y $(YACC)
 	$(YACC) -v -b yacc_parser -p yacc_yy yacc_parser.y
+	sed -E '/^$$/q' yacc_parser.output > yacc_parser.rules
 
 cexp_parser.tab.c: cexp_parser.y $(YACC)
 	$(YACC) -v -b cexp_parser -p cexp_yy cexp_parser.y
+	sed -E '/^$$/q' cexp_parser.output > cexp_parser.rules
+
 
 # There is no include feature in grammars so we need duplicate
 # token definitons. Here we ensure they are in sync
@@ -79,7 +85,7 @@ yacc_parser.tokens: yacc_parser.y
 java_parser.tokens: java_parser.y
 	@cat java_parser.y | $(EXTRACT_TOKEN_DEFINITIONS) > java_parser.tokens
 
-# Compare the three token sectionto ensuret they are exactly the same
+# Compare the three token sections to ensure that they are exactly the same
 .PHONY: check-tokens
 check-tokens: c_parser.tokens yacc_parser.tokens java_parser.tokens
 	@if ! diff -q c_parser.tokens yacc_parser.tokens ; then \
