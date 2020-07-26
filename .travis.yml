@@ -14,6 +14,7 @@ before_install:
     - sudo apt-get install ./cgreen_1.3.0_amd64.deb
     - lcov --version
     - gcov --version
+    - ls /usr/lib/jvm
 
 script:
     - cd src/unittests
