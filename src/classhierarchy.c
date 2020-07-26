@@ -373,7 +373,7 @@ static void descendTheClassHierarchy(   FILE *ff,
         while (snext!=NULL && THEBIT(tmpChRelevant,snext->superClass)==0) {
             snext = snext->next;
         }
-        *nextbars = (S_intlist) {.i = (snext!=NULL), .next = nextbars};
+        snextbar = (S_intlist) {.i = (snext!=NULL), .next = nextbars};
         descendTheClassHierarchy(ff, s->superClass, vFunCl, rrr, level+1,
                                  &snextbar, virtFlag, pass);
         s = snext;
@@ -405,29 +405,29 @@ static int genThisClassHierarchy(int vApplCl, int oldvFunCl,
     return(1);
 }
 
-void genClassHierarchies( FILE *ff, S_olSymbolsMenu *rrr,
-                          int virtFlag, int pass ) {
-    S_olSymbolsMenu *ss;
+void genClassHierarchies(FILE *file, S_olSymbolsMenu *menuList,
+                         int virtFlag, int passCount) {
+    S_olSymbolsMenu *menu;
 
     // mark the classes where the method is defined and used
     clearTmpChRelevant();
-    for(ss=rrr; ss!=NULL; ss=ss->next) {
-        assert(fileTable.tab[ss->s.vApplClass]);
-        if (ss->visible) {
-            SETBIT(tmpChRelevant, ss->s.vApplClass);
-            SETBIT(tmpChRelevant, ss->s.vFunClass);
+    for(menu=menuList; menu!=NULL; menu=menu->next) {
+        assert(fileTable.tab[menu->s.vApplClass]);
+        if (menu->visible) {
+            SETBIT(tmpChRelevant, menu->s.vApplClass);
+            SETBIT(tmpChRelevant, menu->s.vFunClass);
         }
     }
     // now, mark the relevant subtree of class tree
     clearTmpChMarkProcessed();
-    for(ss=rrr; ss!=NULL; ss=ss->next) {
-        markTransitiveRelevantSubs(ss->s.vFunClass, pass);
-        markTransitiveRelevantSubs(ss->s.vApplClass, pass);
+    for(menu=menuList; menu!=NULL; menu=menu->next) {
+        markTransitiveRelevantSubs(menu->s.vFunClass, passCount);
+        markTransitiveRelevantSubs(menu->s.vApplClass, passCount);
     }
     // and gen the class subhierarchy
-    for(ss=rrr; ss!=NULL; ss=ss->next) {
-        genThisClassHierarchy(ss->s.vFunClass, noFileIndex,ff,rrr,virtFlag,pass);
-        genThisClassHierarchy(ss->s.vApplClass, noFileIndex,ff,rrr,virtFlag,pass);
+    for(menu=menuList; menu!=NULL; menu=menu->next) {
+        genThisClassHierarchy(menu->s.vFunClass, noFileIndex, file, menuList, virtFlag, passCount);
+        genThisClassHierarchy(menu->s.vApplClass, noFileIndex, file, menuList, virtFlag, passCount);
     }
 }
 
