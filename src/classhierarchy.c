@@ -10,6 +10,13 @@
 #include "protocol.h"
 
 
+typedef struct integerList {
+    int         i;
+    struct integerList   *next;
+} IntegerList;
+
+
+
 static bitArray tmpChRelevant[BIT_ARR_DIM(MAX_FILES)];
 static bitArray tmpChProcessed[BIT_ARR_DIM(MAX_FILES)];
 static bitArray tmpChMarkProcessed[BIT_ARR_DIM(MAX_FILES)];
@@ -115,14 +122,14 @@ void setTmpClassBackPointersToMenu(S_olSymbolsMenu *menu) {
     }
 }
 
-static void genClassHierarchyVerticalBars( FILE *ff, S_intlist *nextbars,
+static void genClassHierarchyVerticalBars( FILE *ff, IntegerList *nextbars,
                                            int secondpass) {
-    S_intlist *nn;
+    IntegerList *nn;
     if (options.xref2 && options.taskRegime!=RegimeHtmlGenerate) {
         fprintf(ff," %s=\"", PPCA_TREE_DEPS);
     }
     if (nextbars!=NULL) {
-        LIST_REVERSE(S_intlist, nextbars);
+        LIST_REVERSE(IntegerList, nextbars);
         for(nn = nextbars; nn!=NULL; nn=nn->next) {
             if (nn->next==NULL) {
                 if (secondpass) fprintf(ff,"  +- ");
@@ -131,7 +138,7 @@ static void genClassHierarchyVerticalBars( FILE *ff, S_intlist *nextbars,
             else if (nn->i) fprintf(ff,"  | ");
             else fprintf(ff,"    ");
         }
-        LIST_REVERSE(S_intlist, nextbars);
+        LIST_REVERSE(IntegerList, nextbars);
     }
     if (options.xref2 && options.taskRegime!=RegimeHtmlGenerate) {
         fprintf(ff,"\"");
@@ -159,7 +166,7 @@ static void htmlCHEmptyIndent( FILE *ff ) {
 
 
 static void htmlPrintClassHierarchyLine( FILE *ff, int fInd,
-                                         S_intlist *nextbars,
+                                         IntegerList *nextbars,
                                          int virtFlag,
                                          S_olSymbolsMenu *itt ) {
     char *cname, *pref1, *pref2, *suf1, *suf2;
@@ -271,7 +278,7 @@ static void olcxMenuGenNonVirtualGlobSymList( FILE *ff, S_olSymbolsMenu *ss) {
 }
 
 static void olcxMenuPrintClassHierarchyLine( FILE *ff, int fInd,
-                                             S_intlist *nextbars,
+                                             IntegerList *nextbars,
                                              int virtFlag,
                                              S_olSymbolsMenu *itt ) {
     char        *cname;
@@ -286,7 +293,7 @@ static void olcxMenuPrintClassHierarchyLine( FILE *ff, int fInd,
     }
     olcxPrintMenuItemPrefix(ff, itt, ! yetProcesed);
     if (options.xref2) {
-        LIST_LEN(indent, S_intlist, nextbars);
+        LIST_LEN(indent, IntegerList, nextbars);
         fprintf(ff, " %s=%d", PPCA_INDENT, indent);
     }
     genClassHierarchyVerticalBars( ff, nextbars, 1);
@@ -321,11 +328,11 @@ static void descendTheClassHierarchy(   FILE *ff,
                                         int vApplCl, int oldvFunCl,
                                         S_olSymbolsMenu *rrr,
                                         int level,
-                                        S_intlist *nextbars,
+                                        IntegerList *nextbars,
                                         int virtFlag,
                                         int pass
                                         ) {
-    S_intlist snextbar;
+    IntegerList snextbar;
     FileItem *fi;
     ClassHierarchyReference *s, *snext;
     S_olSymbolsMenu *itt;
@@ -373,7 +380,7 @@ static void descendTheClassHierarchy(   FILE *ff,
         while (snext!=NULL && THEBIT(tmpChRelevant,snext->superClass)==0) {
             snext = snext->next;
         }
-        snextbar = (S_intlist) {.i = (snext!=NULL), .next = nextbars};
+        snextbar = (IntegerList) {.i = (snext!=NULL), .next = nextbars};
         descendTheClassHierarchy(ff, s->superClass, vFunCl, rrr, level+1,
                                  &snextbar, virtFlag, pass);
         s = snext;

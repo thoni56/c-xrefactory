@@ -20,6 +20,13 @@
 
 #include "log.h"
 
+
+typedef struct integerList {
+    int         i;
+    struct integerList   *next;
+} IntegerList;
+
+
 static int s_ppcIndentOffset = 0;
 
 void ppcGenSynchroRecord(void) {
@@ -898,19 +905,19 @@ int compareFileNames(char *ss1, char *ss2) {
 
 // ------------------------------------------- SHELL (SUB)EXPRESSIONS ---
 
-static S_intlist *shellMatchNewState(int s, S_intlist *next) {
-    S_intlist     *res;
-    OLCX_ALLOC(res, S_intlist);
+static IntegerList *shellMatchNewState(int s, IntegerList *next) {
+    IntegerList     *res;
+    OLCX_ALLOC(res, IntegerList);
     res->i = s;
     res->next = next;
     return(res);
 }
 
-static void shellMatchDeleteState(S_intlist **s) {
-    S_intlist *p;
+static void shellMatchDeleteState(IntegerList **s) {
+    IntegerList *p;
     p = *s;
     *s = (*s)->next;
-    OLCX_FREE(p, sizeof(S_intlist));
+    OLCX_FREE(p, sizeof(IntegerList));
 }
 
 static int shellMatchParseBracketPattern(char *pattern, int pi, int caseSensitive, char *asciiMap) {
@@ -959,7 +966,7 @@ static int shellMatchParseBracketPattern(char *pattern, int pi, int caseSensitiv
 
 int shellMatch(char *string, int stringLen, char *pattern, int caseSensitive) {
     int             si, pi, slen, plen, res;
-    S_intlist       *states, **p, *f;
+    IntegerList       *states, **p, *f;
     char            asciiMap[MAX_ASCII_CHAR];
     si = 0;
     //&slen = strlen(string);

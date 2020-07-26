@@ -4,11 +4,6 @@
 #include "proto.h"
 #include "symbol.h"
 
-typedef struct intlist {
-    int         i;
-    struct intlist   *next;
-} S_intlist;
-
 typedef struct htmlData {
     struct position          *cp;
     struct reference         *np;
