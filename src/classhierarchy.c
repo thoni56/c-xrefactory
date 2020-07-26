@@ -324,14 +324,14 @@ static void olcxMenuPrintClassHierarchyLine( FILE *ff, int fInd,
 }
 
 
-static void descendTheClassHierarchy(   FILE *ff,
-                                        int vApplCl, int oldvFunCl,
-                                        S_olSymbolsMenu *rrr,
-                                        int level,
-                                        IntegerList *nextbars,
-                                        int virtFlag,
-                                        int pass
-                                        ) {
+static void descendTheClassHierarchy(FILE *ff,
+                                     int vApplCl, int oldvFunCl,
+                                     S_olSymbolsMenu *rrr,
+                                     int level,
+                                     IntegerList *nextbars,
+                                     int virtFlag,
+                                     int pass
+) {
     IntegerList snextbar;
     FileItem *fi;
     ClassHierarchyReference *s, *snext;
