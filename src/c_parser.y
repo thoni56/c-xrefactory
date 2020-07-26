@@ -774,29 +774,8 @@ declaration_modality_specifiers
     }
     ;
 
-/*& // an experiment
-declaration_specifier0
-    :   storage_class_specifier
-    |	type_modality_specifier
-    ;
 
-declaration_specifiers0
-    :   declaration_specifier0
-    |	declaration_specifiers0 declaration_specifier0
-    ;
-
-declaration_specifiers
-    :   user_defined_type
-    |	declaration_specifiers0 user_defined_type
-    |	declaration_specifiers0 type_specifier1
-    |	declaration_specifiers0 type_specifier2
-    |	declaration_specifiers declaration_specifier0
-    |	declaration_specifiers type_specifier1
-    |	declaration_specifiers type_specifier2
-    ;
-&*/
-
-/* a gcc extensions ? */
+/* a gcc extension ? */
 asm_opt
     :
     |	ASM_KEYWORD '(' string_literals ')'
@@ -814,12 +793,6 @@ eq_initializer_opt
 init_declarator
     : declarator asm_opt /* eq_initializer_opt   { $$.d = $1.d; } */
     ;
-
-/* the original
-    : declarator
-    | declarator '=' initializer
-    ;
-*/
 
 storage_class_specifier
     : TYPEDEF		{ $$.d = StorageTypedef; }
