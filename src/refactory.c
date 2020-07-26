@@ -1333,7 +1333,7 @@ static int refactoryHandleSafetyCheckDifferenceLists(
                                              PPCV_BROWSER_TYPE_WARNING, CONTINUATION_ENABLED);
         } else {
             refactoryDisplayResolutionDialog(
-                                             "These references may be  misinterpreted after refactoring",
+                                             "These references may be misinterpreted after refactoring",
                                              PPCV_BROWSER_TYPE_WARNING, CONTINUATION_ENABLED);
         }
     }
@@ -1342,10 +1342,10 @@ static int refactoryHandleSafetyCheckDifferenceLists(
 
 
 static int refactoryMakeSafetyCheckAndUndo(
-                                           EditorBuffer *buf, EditorMarker *point,
-                                           S_editorMarkerList **occs, S_editorUndo *startPoint,
-                                           S_editorUndo **redoTrack
-                                           ) {
+    EditorBuffer *buf, EditorMarker *point,
+    S_editorMarkerList **occs, S_editorUndo *startPoint,
+    S_editorUndo **redoTrack
+) {
     int res;
     S_editorMarkerList *chks;
     EditorMarker *defin;
