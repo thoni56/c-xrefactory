@@ -22,6 +22,3 @@
 <goto>
  <position-off off=489 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/AddRemoveParameter.java</position-off>
 </goto>
--exit
-end-of-options
-
