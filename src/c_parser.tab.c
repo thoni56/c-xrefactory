@@ -8,6 +8,7 @@
 #define yylex c_yylex
 #define yyerror c_yyerror
 #define yychar c_yychar
+#define lastyystate c_yylastyystate
 #define yyval c_yyval
 #define yylval c_yylval
 #define yydebug c_yydebug
@@ -81,7 +82,7 @@
 typedef union {
 #include "yystype.h"
 } YYSTYPE;
-#line 85 "c_parser.tab.c"
+#line 86 "c_parser.tab.c"
 #define TYPE_NAME 257
 #define CLASS_NAME 258
 #define TEMPLATE_NAME 259
@@ -2101,7 +2102,7 @@ void makeCCompletions(char *s, int len, Position *pos) {
         }
     }
 }
-#line 2105 "c_parser.tab.c"
+#line 2106 "c_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -4131,7 +4132,7 @@ case 359:
 #line 1763 "c_parser.y"
 { stackMemoryBlockFree(); }
 break;
-#line 4135 "c_parser.tab.c"
+#line 4136 "c_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

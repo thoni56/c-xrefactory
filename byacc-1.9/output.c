@@ -81,6 +81,8 @@ void output_prefix(void)
     ++outline;
     fprintf(code_file, "#define yychar %schar\n", symbol_prefix);
     ++outline;
+    fprintf(code_file, "#define lastyystate %slastyystate\n", symbol_prefix);
+    ++outline;
     fprintf(code_file, "#define yyval %sval\n", symbol_prefix);
     ++outline;
     fprintf(code_file, "#define yylval %slval\n", symbol_prefix);

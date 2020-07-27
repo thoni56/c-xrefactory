@@ -8,6 +8,7 @@
 #define yylex yacc_yylex
 #define yyerror yacc_yyerror
 #define yychar yacc_yychar
+#define lastyystate yacc_yylastyystate
 #define yyval yacc_yyval
 #define yylval yacc_yylval
 #define yydebug yacc_yydebug
@@ -90,7 +91,7 @@ static void addYaccSymbolReference(Id *name, int usage);
 typedef union {
 #include "yystype.h"
 } YYSTYPE;
-#line 94 "yacc_parser.tab.c"
+#line 95 "yacc_parser.tab.c"
 #define TYPE_NAME 257
 #define CLASS_NAME 258
 #define TEMPLATE_NAME 259
@@ -2532,7 +2533,7 @@ void makeYaccCompletions(char *s, int len, Position *pos) {
         }
     }
 }
-#line 2536 "yacc_parser.tab.c"
+#line 2537 "yacc_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -4332,7 +4333,7 @@ case 502:
 #line 1685 "yacc_parser.y"
 { stackMemoryBlockFree(); }
 break;
-#line 4336 "yacc_parser.tab.c"
+#line 4337 "yacc_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

@@ -8,6 +8,7 @@
 #define yylex java_yylex
 #define yyerror java_yyerror
 #define yychar java_yychar
+#define lastyystate java_yylastyystate
 #define yyval java_yyval
 #define yylval java_yylval
 #define yydebug java_yydebug
@@ -147,7 +148,7 @@ static S_whileExtractData *newWhileExtractData(int i1, int i2, Symbol *i3, Symbo
 typedef union {
 #include "yystype.h"
 } YYSTYPE;
-#line 151 "java_parser.tab.c"
+#line 152 "java_parser.tab.c"
 #define TYPE_NAME 257
 #define CLASS_NAME 258
 #define TEMPLATE_NAME 259
@@ -2659,7 +2660,7 @@ void makeJavaCompletions(char *s, int len, Position *pos) {
         }
     }
 }
-#line 2663 "java_parser.tab.c"
+#line 2664 "java_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -7196,7 +7197,7 @@ case 484:
             }
         }
 break;
-#line 7200 "java_parser.tab.c"
+#line 7201 "java_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

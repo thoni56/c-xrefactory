@@ -8,6 +8,7 @@
 #define yylex cexp_yylex
 #define yyerror cexp_yyerror
 #define yychar cexp_yychar
+#define lastyystate cexp_yylastyystate
 #define yyval cexp_yyval
 #define yylval cexp_yylval
 #define yydebug cexp_yydebug
@@ -48,7 +49,7 @@
 #define cexp_yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
-#line 52 "cexp_parser.tab.c"
+#line 53 "cexp_parser.tab.c"
 #define number 257
 #define DEFINED 258
 #define EQ 259
@@ -360,7 +361,7 @@ int cexpTranslateToken(int tok, int val) {
     return(number);
     return(UNKNOWN);
 }
-#line 364 "cexp_parser.tab.c"
+#line 365 "cexp_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -613,7 +614,7 @@ case 27:
 #line 77 "cexp_parser.y"
 {yyval= yyvsp[0];}
 break;
-#line 617 "cexp_parser.tab.c"
+#line 618 "cexp_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;
