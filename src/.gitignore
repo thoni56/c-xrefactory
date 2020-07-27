@@ -11,3 +11,5 @@ coverage
 doxygen
 *_parser.tokens
 *.gcov
+*_parser.rules
+c_rules*.txt
