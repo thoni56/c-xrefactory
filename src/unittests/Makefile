@@ -1,6 +1,6 @@
 vpath %.c ..
-vpath %.dll.a /usr/local/lib
-vpath %.so /usr/local/lib
+vpath %.dll.a /usr/local:/usr/local/lib
+vpath %.so /usr/lib:/usr/local/lib
 
 
 WARNINGS = -Wall -Wno-char-subscripts
