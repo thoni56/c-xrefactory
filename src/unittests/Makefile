@@ -14,8 +14,11 @@ UNITTESTS = $(patsubst %.c,%.so,$(wildcard *_tests.c))
 # Assuming Cgreen is installed in "normal" place
 CGREEN = -lcgreen
 
+all: $(UNITTESTS)
+	cgreen-runner $(CGREEN_OUTPUT) --suite unittests $^
+
 debug: COVERAGE=--coverage
-all debug: $(UNITTESTS)
+debug: $(UNITTESTS)
 	lcov -q -z -d $(OBJDIR)
 	cgreen-runner $(CGREEN_OUTPUT) --suite unittests $^
 
