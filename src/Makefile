@@ -162,8 +162,5 @@ the-actual-coverage-report:
 # Trigger building our patched yacc if it doesn't exist and run it on
 # possibly updated grammar files
 
-yacc: $(YACC)
-	$(MAKE) YACCING=yes
-
-$(YACC):
+$(YACC): $(ROOTDIR)/byacc-1.9/*.[ch]
 	$(MAKE) -C $(ROOTDIR)/byacc-1.9
