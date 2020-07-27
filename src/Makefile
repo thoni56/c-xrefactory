@@ -58,23 +58,23 @@ clean-coverage:
 
 c_parser.tab.c c_parser.tab.h: c_parser.y $(YACC)
 	$(YACC) -v -d -b c_parser -p c_yy c_parser.y
-	sed -E '/^$$/q' c_parser.output > c_parser.rules
-	awk '{$$1=""; print}' c_parser.rules > c_parser.tmp
-	sed -n '/primary_expr/,$$p' c_parser.tmp > c_rules_from_c_parser.txt
+	@sed -E '/^$$/q' c_parser.output > c_parser.rules
+	@awk '{$$1=""; print}' c_parser.rules > c_parser.tmp
+	@sed -n '/primary_expr/,$$p' c_parser.tmp > c_rules_from_c_parser.txt
 
 cexp_parser.tab.c: cexp_parser.y $(YACC)
 	$(YACC) -v -b cexp_parser -p cexp_yy cexp_parser.y
-	sed -E '/^$$/q' cexp_parser.output > cexp_parser.rules
+	@sed -E '/^$$/q' cexp_parser.output > cexp_parser.rules
 
 yacc_parser.tab.c: yacc_parser.y $(YACC)
 	$(YACC) -v -b yacc_parser -p yacc_yy yacc_parser.y
-	sed -E '/^$$/q' yacc_parser.output > yacc_parser.rules
-	awk '{$$1=""; print}' yacc_parser.rules > yacc_parser.tmp
-	sed -n '/primary_expr/,$$p' yacc_parser.tmp > c_rules_from_yacc_parser.txt
+	@sed -E '/^$$/q' yacc_parser.output > yacc_parser.rules
+	@awk '{$$1=""; print}' yacc_parser.rules > yacc_parser.tmp
+	@sed -n '/primary_expr/,$$p' yacc_parser.tmp > c_rules_from_yacc_parser.txt
 
 java_parser.tab.c: java_parser.y $(YACC)
 	$(YACC) -v -b java_parser -p java_yy java_parser.y
-	sed -E '/^$$/q' java_parser.output > java_parser.rules
+	@sed -E '/^$$/q' java_parser.output > java_parser.rules
 
 
 # There is no include feature in grammars so we need duplicate
