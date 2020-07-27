@@ -24,12 +24,12 @@ script:
     - cd ..
     # Now reset coverage and run everything
     - lcov -q -z -d .
-    - make -j debug
+    - make -j devel
     - cd ../tests
     - cd ffmpeg ; make init ; cd ..
     - cd systemd ; make init ; cd ..
-    # Run all tests, creating coverage in standard place
-    - make GCOV= all
+    # Run the slow tests too
+    - make GCOV= slow
     - cd ..
 
 branches:
