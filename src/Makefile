@@ -19,8 +19,8 @@ YACC=$(ROOTDIR)/byacc-1.9/yacc
 # The heavy lifting is here
 
 debug: CFLAGS+=-DDEBUG -O0
-debug yydebug unit: COVERAGE=--coverage
-debug yydebug unit: CLEAN_COVERAGE=yes
+devel: COVERAGE=--coverage
+devel: CLEAN_COVERAGE=yes
 yydebug: CFLAGS+= -DDEBUG -DYYDEBUG -Og
 
 prod debug yydebug: $(ZLIB) c-xref
