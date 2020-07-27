@@ -1,0 +1,60 @@
+../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-refactory" "-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-user" "1" "-rfct-move-static-method" "-commentmovinglevel=0" "-movetargetfile=CURDIR/jexercise/com/xrefactory/refactorings/MoveStaticMethod.java" "-rfct-param1=18" "-olcursor=543" "-addimportdefault=0" "CURDIR/jexercise/com/xrefactory/refactorings/MoveStaticMethod.java" -o server-buffer
+<sync>
+<update-report>
+</update-report>
+<update-report>
+</update-report>
+<goto>
+ <position-off off=611 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveStaticMethod.java</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>com.xrefactory.refactorings.Source.</str>
+</replacement>
+<goto>
+ <position-off off=593 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveStaticMethod.java</position-off>
+</goto>
+<replacement>
+ <str len=<n>>Target</str>  <str len=<n>>com.xrefactory.refactorings.Target</str>
+</replacement>
+<goto>
+ <position-off off=766 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveStaticMethod.java</position-off>
+</goto>
+<replacement>
+ <str len=<n>>Source.</str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=766 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveStaticMethod.java</position-off>
+</goto>
+<replacement>
+ <str len=<n>></str>  <str len=<n>>com.xrefactory.refactorings.Target.</str>
+</replacement>
+<goto>
+ <position-off off=519 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveStaticMethod.java</position-off>
+</goto>
+<cut-block val=165 len=<n>></cut-block>
+<goto>
+ <position-off off=437 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveStaticMethod.java</position-off>
+</goto>
+<paste-block len=<n>></paste-block>
+<goto>
+ <position-off off=766 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveStaticMethod.java</position-off>
+</goto>
+<replacement>
+ <str len=<n>>com.xrefactory.refactorings.</str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=557 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveStaticMethod.java</position-off>
+</goto>
+<replacement>
+ <str len=<n>>com.xrefactory.refactorings.</str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=511 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveStaticMethod.java</position-off>
+</goto>
+<replacement>
+ <str len=<n>>com.xrefactory.refactorings.Target.</str>  <str len=<n>></str>
+</replacement>
+<goto>
+ <position-off off=461 len=<n>>CURDIR/jexercise/com/xrefactory/refactorings/MoveStaticMethod.java</position-off>
+</goto>
+<indent-block val=3 len=<n>></indent-block>
