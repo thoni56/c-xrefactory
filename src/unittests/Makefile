@@ -28,8 +28,8 @@ cleaner: clean
 define UNITTEST
 $(1)_DEPENDENCIES = $(2)
 $(1)_DEPS = $$(patsubst %,$(OBJDIR)/%.o,$$($(1)_DEPENDENCIES))
-$(1)_tests.so: $(OBJDIR)/$(1)_tests.o $(OBJDIR)/$(1).o $$($(1)_DEPS)
-	gcc -shared -o $$@ $$^ $$(COVERAGE) $$(CGREEN)
+$(1)_tests.so: $(OBJDIR)/$(1)_tests.o $(OBJDIR)/$(1).o $$($(1)_DEPS) $$(CGREEN)
+	gcc -shared -o $$@ $$^ $$(COVERAGE)
 endef
 
 $(eval $(call UNITTEST,options,protocol log position))
@@ -51,18 +51,18 @@ $(eval $(call UNITTEST,position,log))
 # These includes the modules .c to be able to test internal functions or macros
 LEXER_DEPENDENCIES = log position lexembuffer characterreader
 LEXER_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(LEXER_DEPENDENCIES))
-lexer_tests.so: $(OBJDIR)/lexer_tests.o $(LEXER_DEPS)
-	gcc -shared -o $@ $(filter-out Makefile,$^) $(COVERAGE) $(CGREEN)
+lexer_tests.so: $(OBJDIR)/lexer_tests.o $(LEXER_DEPS) $(CGREEN)
+	gcc -shared -o $@ $(filter-out Makefile,$^) $(COVERAGE)
 
 CXFILE_DEPENDENCIES = protocol log position type usage
 CXFILE_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(CXFILE_DEPENDENCIES))
-cxfile_tests.so: $(OBJDIR)/cxfile_tests.o $(CXFILE_DEPS)
-	gcc -shared -o $@ $(filter-out Makefile,$^) $(COVERAGE) $(CGREEN)
+cxfile_tests.so: $(OBJDIR)/cxfile_tests.o $(CXFILE_DEPS) $(CGREEN)
+	gcc -shared -o $@ $(filter-out Makefile,$^) $(COVERAGE)
 
 EXTRACT_DEPENDENCIES = protocol log position memory id
 EXTRACT_DEPS = $(patsubst %,$(OBJDIR)/%.o,$(EXTRACT_DEPENDENCIES))
-extract_tests.so: $(OBJDIR)/extract_tests.o $(EXTRACT_DEPS)
-	gcc -shared -o $@ $(filter-out Makefile,$^) $(COVERAGE) $(CGREEN)
+extract_tests.so: $(OBJDIR)/extract_tests.o $(EXTRACT_DEPS) $(CGREEN)
+	gcc -shared -o $@ $(filter-out Makefile,$^) $(COVERAGE)
 
 
 
