@@ -1,4 +1,7 @@
 vpath %.c ..
+vpath %.dll.a /usr/local/lib
+vpath %.so /usr/local/lib
+
 
 WARNINGS = -Wall -Wno-char-subscripts
 CFLAGS = -g -O0 -MMD -funsigned-char $(WARNINGS) -fPIC -I.. $(COVERAGE) -DHAVE_ZLIB

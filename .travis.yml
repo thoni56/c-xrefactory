@@ -18,7 +18,8 @@ before_install:
 
 script:
     - cd src/unittests
-    - make -j debug
+    - whereis libcgreeen.so
+    - make -k debug
     # Separate coverage for unittest to Codecov
     - bash <(curl -s https://codecov.io/bash)
     - cd ..
