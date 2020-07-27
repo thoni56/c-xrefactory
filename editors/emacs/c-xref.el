@@ -8602,9 +8602,9 @@ refactoring.
     (setq name (c-xref-get-identifier-on-point))
     (setq class-name (c-xref-compute-simple-information "-olcxcurrentclass"))
     (setq new-par-name
-          (read-from-minibuffer "Name of the new paramater: "
+          (read-from-minibuffer "Name of the new parameter: "
                                 (c-xref-param-from-class-name class-name)))
-    (c-xref-refactoring-init-actions (format "makeing %s static" name))
+    (c-xref-refactoring-init-actions (format "making %s static" name))
 
     (c-xref-server-call-refactoring-task
      (list
