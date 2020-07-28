@@ -32,6 +32,12 @@ devel:
 	make -j test
 	make coverage-report
 
+ci: COVERAGE=--coverage
+ci:
+	make -j unit
+	make -j debug
+	make -j test
+
 chcheck:
 	@for m in `echo $(MODULES) | sed -e 's/[a-z]*_parser\.tab//g'` ; do \
 		chcheck $$m ; \

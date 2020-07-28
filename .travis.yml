@@ -24,7 +24,7 @@ script:
     - cd ..
     # Now reset coverage and run everything
     - lcov -q -z -d .
-    - make -j devel
+    - make ci
     - cd ../tests
     - cd ffmpeg ; make init ; cd ..
     - cd systemd ; make init ; cd ..
