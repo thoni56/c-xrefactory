@@ -39,12 +39,14 @@ autodiscovered_tests: $(TESTS)
 define RULE
 .PHONY: $(1)
 $(1):
-	@cd $(1) ; lcov -q -z -d .
+	@cd $(1) ; [ -x "$$(command -v lcov)" ] && lcov -q -z -d .
 	@$(MAKE) $(GCOV_OPTIONS) -C $(1)
-	@if [ ! -z "$(GCOV_OPTIONS)" ] ; then \
-		if [ -d $(1)/.coverage ] ; then \
-			cp ../src/.objects/*.gcno $(1)/.coverage ; \
-			lcov -q -t $(1) -d $(1)/.coverage -c -o $(1).info ; \
+	if [ -x "$$(command -v lcov)" ] ; then \
+		if [ ! -z "$(GCOV_OPTIONS)" ] ; then \
+			if [ -d $(1)/.coverage ] ; then \
+				cp ../src/.objects/*.gcno $(1)/.coverage ; \
+				lcov -q -t $(1) -d $(1)/.coverage -c -o $(1).info ; \
+			fi \
 		fi \
 	fi
 endef

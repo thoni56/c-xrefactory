@@ -28,7 +28,7 @@ script:
     - cd ../tests
     - cd ffmpeg ; make init ; cd ..
     - cd systemd ; make init ; cd ..
-    - make GCOV= slow
+    - make GCOV_OPTIONS= slow
     - cd ..
 
 branches:
@@ -37,7 +37,7 @@ branches:
 
 after_success:
     # Coverage for tests to Coveralls
-    - lcov -q -d src -c -o coverage.info
+    - lcov -q -d . -c -o coverage.info
     - lcov -q --remove coverage.info '*.mock' '*.tab.c' '/usr/*' -o coverage.info
     - coveralls-lcov coverage.info
     # Move "stable" tag if on master
