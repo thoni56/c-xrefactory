@@ -21,7 +21,7 @@ $(TEST): CXrefs
 		exit 0 ; \
 	fi
 
-CXrefs:
+CXrefs: .c-xrefrc
 	@../../src/c-xref -p $(CURDIR) -xrefrc .c-xrefrc jexercise -sourcepath $(CURDIR)/jexercise -o CXrefs.output
 
 clean:
