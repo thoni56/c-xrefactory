@@ -2,8 +2,6 @@
 #
 # NOTE: sandboxed_emacs is not a test...
 
-.SILENT:
-
 ifndef VERBOSE
 MAKEFLAGS+=--no-print-directory
 endif
@@ -52,6 +50,7 @@ $(1):
 	if [ -x "$$(command -v lcov)" ] ; then \
 		if [ ! -z "$(GCOV_OPTIONS)" ] ; then \
 			if [ -d $(1)/.coverage ] ; then \
+				echo "Copying *.gcno to $(1)/.coverage" ; \
 				cp ../src/.objects/*.gcno $(1)/.coverage ; \
 				lcov -q -t $(1) -d $(1)/.coverage -c -o $(1).info ; \
 			fi \
