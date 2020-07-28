@@ -32,19 +32,16 @@ devel:
 	make -j test
 	make coverage-report
 
-ci: COVERAGE=--coverage
 ci:
-	make unit
-	make debug
+	make COVERAGE=--coverage unit
+	make COVERAGE=--coverage debug
 	make test
 
-ci-unit: COVERAGE=--coverage
 ci-unit:
-	make unit
+	make COVERAGE=--coverage unit
 
-ci-build: COVERAGE=--coverage
 ci-build:
-	make debug
+	make COVERAGE=--coverage debug
 
 ci-test:
 	make test
