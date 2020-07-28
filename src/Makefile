@@ -20,31 +20,31 @@ YACC=$(ROOTDIR)/byacc-1.9/yacc
 
 debug: CFLAGS+=-DDEBUG -O0
 devel: COVERAGE=--coverage
-devel: CLEAN_COVERAGE=yes
 yydebug: CFLAGS+= -DDEBUG -DYYDEBUG -Og
 
 prod debug yydebug: $(ZLIB) c-xref
 devel:
-	make clean-coverage
-	make -C ../editors/emacs
-	make -j unit
-	make -j debug
-	make -j test
-	make coverage-report
+	$(MAKE) clean-coverage
+	$(MAKE) -C ../editors/emacs
+	$(MAKE) COVERAGE=$(COVERAGE) -j unit
+	$(MAKE) COVERAGE=$(COVERAGE) -j debug
+	$(MAKE) -j test
+	$(MAKE) coverage-report
 
+ci ci-unit ci-build ci-test: COVERAGE=--coverage
 ci:
-	make COVERAGE=--coverage unit
-	make COVERAGE=--coverage debug
-	make test
+	$(MAKE) COVERAGE=$(COVERAGE) unit
+	$(MAKE) COVERAGE=$(COVERAGE) debug
+	$(MAKE) test
 
 ci-unit:
-	make COVERAGE=--coverage unit
+	$(MAKE) COVERAGE=$(COVERAGE) unit
 
 ci-build:
-	make COVERAGE=--coverage debug
+	$(MAKE) COVERAGE=$(COVERAGE) debug
 
 ci-test:
-	make test
+	$(MAKE) test
 
 chcheck:
 	@for m in `echo $(MODULES) | sed -e 's/[a-z]*_parser\.tab//g'` ; do \
@@ -56,13 +56,15 @@ include sources.mk
 
 c-xref: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
-	@make check-tokens			# check that token sections in parsers are identical
+	@$(MAKE) check-tokens			# check that token sections in parsers are identical
 
-.PHONY: clean-coverage
-clean-coverage:
-	@if [ "$(CLEAN_COVERAGE)" = "yes" ] ; then \
-		lcov -q -z -d $(OBJDIR) ; \
-	fi
+#########################################################################
+test:
+	@echo "Only running quick tests for now - 'cd ../test; make all' to run all"
+	$(MAKE) -C ../tests -j quick
+
+unit:
+	$(MAKE) COVERAGE=$(COVERAGE) -C unittests
 
 #########################################################################
 # We generate parsers for C, Yacc, Java and C expressions
@@ -140,30 +142,29 @@ lexem.h: c_parser.tab.h
 #########################################################################
 
 clean:
-	-make -C unittests clean
-	-make -C ../tests clean
+	-$(MAKE) -C unittests clean
+	-$(MAKE) -C ../tests clean
 	-rm -rf $(OBJDIR) c-xref *.gcov
 
 ########################################################################
-test:
-	@echo "Only running quick tests for now - 'cd ../test; make all' to run all"
-	$(MAKE) -C ../tests -j quick
 
+.PHONY: clean-coverage
+clean-coverage:
+	@-[ -x "$$(command -v lcov)" ] && lcov -q -z -d $(OBJDIR)
 
-unit:
-	make -C unittests debug
-
+# lcov < 1.14 don't have --exclude
 LCOV=lcov -q --exclude log.c --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' --exclude '/Library/*'
-coverage: COVERAGE=--coverage
-coverage: clean test
-	$(LCOV) -d . -c -o total.info
-	genhtml -q -o ../coverage total.info
-
 coverage-report:
 	@echo Doing the coverage reporting in the background
 	@$(MAKE) the-actual-coverage-report &
 
 the-actual-coverage-report:
+	@$(LCOV) -d .. -c -o ../coverage/total.info
+	@-[ -x "$$(command -v info2gcov)" ] && info2gcov -q ../coverage/total.info
+	@printf "\\r"
+	genhtml -q -o ../coverage ../coverage/total.info
+
+old-actual-coverage-report-with-testnames:
 	@$(LCOV) -d . -c -t unittests -o ../coverage/unittests.info
 	@ls -1q ../tests/*.info | sed "s/^/-a /g" | xargs $(LCOV) -o ../coverage/total.info -a ../coverage/unittests.info
 	@printf "\\r"

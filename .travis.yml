@@ -17,14 +17,13 @@ before_install:
     - gem install coveralls-lcov
 
 script:
-    - cd src/unittests
-    - make -k debug
+    - cd src
+    - make ci-unit
     # Separate coverage for unittest to Codecov
     - bash <(curl -s https://codecov.io/bash)
-    - cd ..
     # Now reset coverage and run everything
     - lcov -q -z -d .
-    - make ci # = unit, build & test
+    - make ci                # = unit, build & test
     # Run the slow tests too
     - cd ../tests
     - cd ffmpeg ; make init ; cd ..

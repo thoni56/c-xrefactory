@@ -15,11 +15,7 @@ UNITTESTS = $(patsubst %.c,%.so,$(wildcard *_tests.c))
 CGREEN = -lcgreen
 
 all: $(UNITTESTS)
-	cgreen-runner $(CGREEN_OUTPUT) --suite unittests $^
-
-debug: COVERAGE=--coverage
-debug: $(UNITTESTS)
-	lcov -q -z -d $(OBJDIR)
+	@-[ -x "$$(command -v lcov)" ] && lcov -q -z -d $(OBJDIR)
 	cgreen-runner $(CGREEN_OUTPUT) --suite unittests $^
 
 clean:
