@@ -24,11 +24,11 @@ script:
     - cd ..
     # Now reset coverage and run everything
     - lcov -q -z -d .
-    - make ci
+    - make ci # = unit, build & test
+    # Run the slow tests too
     - cd ../tests
     - cd ffmpeg ; make init ; cd ..
     - cd systemd ; make init ; cd ..
-    # Run the slow tests too
     - make GCOV= slow
     - cd ..
 
