@@ -10,9 +10,9 @@ endif
 
 # Create GCOV settings so that tests can be run in parallel by
 # directing all coverage to a separate directory under src/.objects
-# for each autodiscovered test. If GCOV="" then coverage is written
-# to the original object directory (required by Travis build. e.g)
-# which means we cannot run tests in parallel
+# for each autodiscovered test. If GCOV_OPTIONS="" then coverage is
+# written to the original object directory (required by Travis
+# build. e.g) which means we cannot run tests in parallel
 GCOV_OPTIONS = GCOV_PREFIX=$(CURDIR)/$(1)/.coverage GCOV_PREFIX_STRIP=`pwd | awk -F"/" '{print NF}'`
 
 void:
@@ -37,7 +37,9 @@ clean:
 TESTS = $(patsubst %/.,%,$(wildcard test_*/.))
 autodiscovered_tests: $(TESTS)
 
-# Define a macro to generate a RULE for $1
+# Define a macro to generate a RULE for a test(directory)
+# In case we run the tests with -j all tests need to store
+# coverage data in their own directories as per above
 define RULE
 .PHONY: $(1)
 $(1):
