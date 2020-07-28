@@ -2,6 +2,8 @@
 #
 # NOTE: sandboxed_emacs is not a test...
 
+.SILENT:
+
 ifndef VERBOSE
 MAKEFLAGS+=--no-print-directory
 endif
@@ -39,8 +41,12 @@ autodiscovered_tests: $(TESTS)
 define RULE
 .PHONY: $(1)
 $(1):
-	@cd $(1) ; [ -x "$$(command -v lcov)" ] && lcov -q -z -d .
-	@$(MAKE) $(GCOV_OPTIONS) -C $(1)
+	mkdir -p $(1)/.coverage
+	if [ -x "$$(command -v lcov)" ] ; then \
+		cd $(1) ; \
+		lcov -q -z -d . ; \
+	fi
+	$(MAKE) $(GCOV_OPTIONS) -C $(1)
 	if [ -x "$$(command -v lcov)" ] ; then \
 		if [ ! -z "$(GCOV_OPTIONS)" ] ; then \
 			if [ -d $(1)/.coverage ] ; then \
@@ -59,6 +65,6 @@ $(foreach _t,$(TESTS),$(eval $(call RULE,$(_t))))
 quick: autodiscovered_tests
 
 slow:
-	@$(MAKE) -C c-xref
-	@$(MAKE) -C ffmpeg
-	@$(MAKE) -C systemd
+	$(MAKE) -C c-xref
+	$(MAKE) -C ffmpeg
+	$(MAKE) -C systemd

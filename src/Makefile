@@ -61,7 +61,7 @@ c-xref: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB)
 #########################################################################
 test:
 	@echo "Only running quick tests for now - 'cd ../test; make all' to run all"
-	$(MAKE) -C ../tests -j quick
+	$(MAKE) -C ../tests quick
 
 unit:
 	$(MAKE) COVERAGE=$(COVERAGE) -C unittests
