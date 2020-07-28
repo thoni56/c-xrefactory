@@ -2,6 +2,8 @@
 #
 # NOTE: sandboxed_emacs is not a test...
 
+.SILENT:
+
 ifndef VERBOSE
 MAKEFLAGS+=--no-print-directory
 endif
@@ -42,17 +44,17 @@ define RULE
 .PHONY: $(1)
 $(1):
 	mkdir -p $(1)/.coverage
-	if [ -x "$$(command -v lcov)" ] ; then \
+	if command -v lcov > /dev/null 2>&1 ; then \
 		cd $(1) ; \
 		lcov -q -z -d . ; \
 	fi
 	$(MAKE) $(GCOV_OPTIONS) -C $(1)
-	if [ -x "$$(command -v lcov)" ] ; then \
+	if command -v lcov > /dev/null 2>&1 ; then \
 		if [ ! -z "$(GCOV_OPTIONS)" ] ; then \
 			if [ -d $(1)/.coverage ] ; then \
-				echo "Copying *.gcno to $(1)/.coverage" ; \
-				cp ../src/.objects/*.gcno $(1)/.coverage ; \
-				lcov -q -t $(1) -d $(1)/.coverage -c -o $(1).info ; \
+				cd ../src ; \
+				cp .objects/*.gcno ../tests/$(1)/.coverage ; \
+				lcov -q -t $(1) -d ../tests/$(1)/.coverage -c -o ../tests/$(1).info ; \
 			fi \
 		fi \
 	fi

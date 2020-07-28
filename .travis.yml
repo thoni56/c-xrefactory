@@ -23,7 +23,7 @@ script:
     - bash <(curl -s https://codecov.io/bash)
     # Now reset coverage and run everything
     - lcov -q -z -d .
-    - make ci                # = unit, build & test
+    - make GCOV_OPTIONS= ci                # = unit, build & test
     # Run the slow tests too
     - cd ../tests
     - cd ffmpeg ; make init ; cd ..

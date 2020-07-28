@@ -1,4 +1,9 @@
+ifndef VERBOSE
+MAKEFLAGS+=--no-print-directory
+endif
+
 #########################################################################
+
 CC = gcc
 
 WARNINGS = -Wall -Wno-char-subscripts
@@ -26,9 +31,9 @@ prod debug yydebug: $(ZLIB) c-xref
 devel:
 	$(MAKE) clean-coverage
 	$(MAKE) -C ../editors/emacs
-	$(MAKE) COVERAGE=$(COVERAGE) -j unit
-	$(MAKE) COVERAGE=$(COVERAGE) -j debug
-	$(MAKE) -j test
+	$(MAKE) COVERAGE=$(COVERAGE) unit
+	$(MAKE) COVERAGE=$(COVERAGE) debug
+	$(MAKE) test
 	$(MAKE) coverage-report
 
 ci ci-unit ci-build ci-test: COVERAGE=--coverage
@@ -150,9 +155,11 @@ clean:
 
 .PHONY: clean-coverage
 clean-coverage:
-	@-[ -x "$$(command -v lcov)" ] && lcov -q -z -d $(OBJDIR)
+	@if command -v lcov > /dev/null 2>&1 ; then \
+		lcov -q -z -d .. ; \
+	fi
 
-# lcov < 1.14 don't have --exclude
+# NOTE: lcov < 1.14 don't have --exclude
 LCOV=lcov -q --exclude log.c --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' --exclude '/Library/*'
 coverage-report:
 	@echo Doing the coverage reporting in the background
@@ -160,22 +167,27 @@ coverage-report:
 
 the-actual-coverage-report:
 	@$(LCOV) -d .. -c -o ../coverage/total.info
-	@-[ -x "$$(command -v info2gcov)" ] && info2gcov -q ../coverage/total.info
+	@if command -v info2gcov > /dev/null 2>&1 ; then \
+		info2gcov -q ../coverage/total.info ; \
+	fi
 	@printf "\\r"
 	genhtml -q -o ../coverage ../coverage/total.info
+	@echo Coverage done
 
 old-actual-coverage-report-with-testnames:
 	@$(LCOV) -d . -c -t unittests -o ../coverage/unittests.info
 	@ls -1q ../tests/*.info | sed "s/^/-a /g" | xargs $(LCOV) -o ../coverage/total.info -a ../coverage/unittests.info
 	@printf "\\r"
 	@lcov -q --remove ../coverage/total.info 'log.c' '*.tab.c' '/usr/*' '/Library/*' -o ../coverage/total.info
-	@-[ -x "$$(command -v info2gcov)" ] && info2gcov -q ../coverage/total.info
+	@if command -v info2gcov > /dev/null 2>&1 ; then \
+		info2gcov -q ../coverage/total.info ; \
+	fi
 	genhtml -q -o ../coverage ../coverage/total.info
+	@echo Coverage done
 
 #########################################################################
 #
-# Trigger building our patched yacc if it doesn't exist and run it on
-# possibly updated grammar files
+# Trigger building our patched yacc if it doesn't exist
 
 $(YACC): $(ROOTDIR)/byacc-1.9/*.[ch]
 	$(MAKE) -C $(ROOTDIR)/byacc-1.9
