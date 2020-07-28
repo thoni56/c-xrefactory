@@ -38,6 +38,16 @@ ci:
 	make debug
 	make test
 
+ci-unit: COVERAGE=--coverage
+ci-unit:
+	make unit
+
+ci-build: COVERAGE=--coverage
+ci-build:
+	make debug
+
+ci-test:
+	make test
 
 chcheck:
 	@for m in `echo $(MODULES) | sed -e 's/[a-z]*_parser\.tab//g'` ; do \
