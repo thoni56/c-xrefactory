@@ -246,7 +246,7 @@ static void addYaccSymbolReference(Id *name, int usage);
 %type <ast_expressionType> multiplicative_expr additive_expr shift_expr
 %type <ast_expressionType> relational_expr equality_expr and_expr exclusive_or_expr
 %type <ast_expressionType> inclusive_or_expr logical_and_expr logical_or_expr
-%type <ast_expressionType> conditional_expr assignment_expr expr
+%type <ast_expressionType> conditional_expr assignment_expr expr maybe_expr
 
 %type <ast_position> STRING_LITERAL '(' ',' ')'
 
@@ -1543,14 +1543,26 @@ statement
     | Sv_tmp jump_statement     {
         tmpWorkMemoryi = $1.d;
     }
-    | error
+    | Sv_tmp error  {
+        tmpWorkMemoryi = $1.d;
+    }
+    ;
+
+label
+    :   label_def_name ':'
+    |   CASE constant_expr ':' {
+            generateSwitchCaseFork(false);
+    }
+    |   CASE constant_expr ELIPSIS constant_expr ':' {
+            generateSwitchCaseFork(false);
+    }
+    |   DEFAULT ':' {
+            generateSwitchCaseFork(false);
+    }
     ;
 
 labeled_statement
-    : label_def_name ':' statement
-    | CASE constant_expr ':' statement
-    | CASE constant_expr ELIPSIS constant_expr ':' statement
-    | DEFAULT ':' statement
+    : label statement
     ;
 
 label_def_name
@@ -1569,28 +1581,49 @@ label_name
 
 compound_statement
     : '{' '}'
-    | '{' Start_block statement_list Stop_block '}'
-    | '{' Start_block declaration_list Stop_block '}'
-    | '{' Start_block declaration_list statement_list Stop_block '}'
+    | '{' Start_block label_decls_opt statement_list Stop_block '}'
+/*&
+    | '{' Start_block label_decls_opt declaration_list Stop_block '}'
+    | '{' Start_block label_decls_opt declaration_list statement_list Stop_block '}'
+&*/
     ;
 
+label_decls_opt
+    :
+    |   label_decls
+    ;
+
+label_decls
+    :   LABEL identifier {
+        labelReference($2.d,UsageDeclared);
+    }
+    |   label_decls LABEL identifier {
+        labelReference($3.d,UsageDeclared);
+    }
+    ;
+
+/*&
 declaration_list
     : declaration
     | declaration_list declaration
     ;
+&*/
+
+/* allowing declarations inside statements makes better error recovery.
+   If an error occurs in one of early declarations, this worked only
+   because of some strange recovering
+ */
 
 statement_list
     : statement
     | statement_list statement
-/*
     | declaration
     | statement_list declaration
-*/
     ;
 
 maybe_expr
-    :
-    | expr
+    :                   { $$.d.typeModifier = NULL; $$.d.reference = NULL; }
+    | expr              { $$.d = $1.d; }
     ;
 
 expression_statement
