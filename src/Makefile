@@ -162,7 +162,7 @@ clean-coverage:
 # NOTE: lcov < 1.14 don't have --exclude
 LCOV=lcov -q --exclude log.c --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' --exclude '/Library/*'
 coverage-report:
-	@echo Doing the coverage reporting in the background
+	@echo Doing the coverage reporting in the background...
 	@$(MAKE) the-actual-coverage-report &
 
 the-actual-coverage-report:

@@ -5,13 +5,6 @@ There are a *lot* of things to do to make c-xref into modern C.
 
 (This file is structured for Emacs org-mode...)
 
-* DOING Create testcases for all jexercise and cexercise steps
-** DOING cexercise
-*** DONE F6 to completion() and completions
-*** TODO <next step>
-** TODO jexercise - Only Java 8 since we can't parse JDK for > 8
-*** TODO F6 to completion() and completions
-*** TODO <next step>
 * DOING Move XX_ALLOCC and friends to "memory" module
 * TODO Java home can be found using "java -XshowSettings:properties 2>&1 | grep java.home"
 and you can also get java.class.version=55 => java version without decoding directory names
@@ -119,6 +112,7 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Create testcases for all jexercise and cexercise steps
 * DONE Remove zlib from repo, point to it's repo instead
 * DONE Split out more specific tests from ?exercise tests, like "rename_with_conflicts"
 * DONE Tool to convert debug log from Emacs/c-xref into commands for edit-server-driver.py
