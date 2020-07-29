@@ -1,10 +1,10 @@
 /*
   Our yacc does not support %expect, but this should be it for the Yacc grammar
 
-  %expect 25
-  %expect-rr 35
+  %expect 24
+  %expect-rr 34
 
-../../../byacc-1.9/yacc: 7 shift/reduce conflicts, 28 reduce/reduce conflicts.
+../../../byacc-1.9/yacc: 24 shift/reduce conflicts, 34 reduce/reduce conflicts.
 
 */
 %{
