@@ -1689,7 +1689,7 @@ external_definition
     ;
 
 top_init_declarations
-    : declaration_specifiers init_declarator eq_initializer_opt         {
+    : declaration_specifiers init_declarator eq_initializer_opt {
         $$.d = $1.d;
         addNewDeclaration($1.d, $2.d, $3.d, StorageExtern,s_symbolTable);
     }
@@ -1701,7 +1701,7 @@ top_init_declarations
         $$.d = $1.d;
         addNewDeclaration($1.d, $3.d, $4.d, StorageExtern,s_symbolTable);
     }
-    | error                                     {
+    | error                                                     {
         /* $$.d = &s_errorSymbol; */
         $$.d = typeSpecifier2(&s_errorModifier);
     }
@@ -1773,7 +1773,6 @@ identifier
     ;
 
 %%
-
 
 static S_completionFunTab spCompletionsTab[]  = {
     {COMPL_FOR_SPECIAL1,    completeForSpecial1},

@@ -18,7 +18,9 @@
 #include "complete.h"
 #include "cxref.h"
 #include "extract.h"
+#include "filedescriptor.h"
 #include "globals.h"
+#include "html.h"
 #include "list.h"
 #include "misc.h"
 #include "semact.h"
@@ -68,6 +70,7 @@ static void addYaccSymbolReference(Id *name, int usage);
 %}
 
 /* Token definitions *must* be the same in all parsers. The following
+
    is a marker, it must be the same as in the Makefile check */
 /* START OF COMMON TOKEN DEFINITIONS */
 
@@ -1720,27 +1723,42 @@ iteration_statement
 
 jump_statement
     : GOTO label_name ';'
-    | CONTINUE ';'
-    | BREAK ';'
-    | RETURN ';'
-    | RETURN expr ';'
+    | CONTINUE ';'          {
+        genContinueBreakReference(CONTINUE_LABEL_NAME);
+    }
+    | BREAK ';'             {
+        genContinueBreakReference(BREAK_LABEL_NAME);
+    }
+    | RETURN ';'            {
+        generateInternalLabelReference(-1, UsageUsed);
+    }
+    | RETURN expr ';'       {
+        generateInternalLabelReference(-1, UsageUsed);
+    }
+    ;
+
+_bef_:          {
+        actionsBeforeAfterExternalDefinition();
+    }
     ;
 
 file
-    : cached_external_definition_list
-    |
-    | cached_external_definition_list EOI_TOKEN
-        Start_block statement_list Stop_block
-    | EOI_TOKEN Start_block statement_list Stop_block
+    : _bef_
+    | _bef_ cached_external_definition_list _bef_
     ;
 
 cached_external_definition_list
-    : external_definition       {
-        /* poseCachePoint(1); no caching in yacc files */
+    : external_definition               {
+        if (includeStackPointer == 0) {
+            placeCachePoint(true);
+        }
     }
-    | cached_external_definition_list external_definition {
-        /* poseCachePoint(1); no caching in yacc files */
+    | cached_external_definition_list _bef_ external_definition {
+        if (includeStackPointer == 0) {
+            placeCachePoint(true);
+        }
     }
+    | error
     ;
 
 external_definition
@@ -1751,33 +1769,32 @@ external_definition
         tmpWorkMemoryi = $1.d;
     }
     | Sv_tmp function_definition_head {
-        Symbol *p,*pa;
+        Symbol *p;
         int i;
         assert($2.d);
+        // I think that due to the following line sometimes
+        // storage was not extern, see 'addNewSymbolDef'
         /*& if ($2.d->bits.storage == StorageDefault) $2.d->bits.storage = StorageExtern; &*/
+        // TODO!!!, here you should check if there is previous declaration of
+        // the function, if yes and is declared static, make it static!
         addNewSymbolDef($2.d, StorageExtern, s_symbolTable, UsageDefined);
         tmpWorkMemoryi = $1.d;
         stackMemoryBlockStart();
+        counters.localVar = 0;
         assert($2.d->u.type && $2.d->u.type->kind == TypeFunction);
         s_cp.function = $2.d;
+        generateInternalLabelReference(-1, UsageDefined);
         for(p=$2.d->u.type->u.f.args,i=1; p!=NULL; p=p->next,i++) {
             if (p->bits.symType == TypeElipsis) continue;
             if (p->u.type == NULL) p->u.type = &s_defaultIntModifier;
-            if (p->name != NULL) {
-                pa = newSymbolAsCopyOf(p);
-                addNewSymbolDef(pa, StorageAuto, s_symbolTable, UsageDefined);
-            }
-            if (options.server_operation == OLO_GOTO_PARAM_NAME
-                && i == options.olcxGotoVal
-                && positionsAreEqual($2.d->pos, s_cxRefPos))
-            {
-                s_paramPosition = p->pos;
-            }
-
+            addFunctionParameterToSymTable($2.d, p, i, s_symbolTable);
         }
     } compound_statement {
         stackMemoryBlockFree();
         s_cp.function = NULL;
+        if (options.taskRegime == RegimeHtmlGenerate) {
+            htmlAddFunctionSeparatorReference();
+        }
     }
     | Sv_tmp EXTERN STRING_LITERAL  external_definition {
         tmpWorkMemoryi = $1.d;
@@ -1785,25 +1802,33 @@ external_definition
     | Sv_tmp EXTERN STRING_LITERAL  '{' cached_external_definition_list '}' {
         tmpWorkMemoryi = $1.d;
     }
-    | error compound_statement
-    | error ';'
+    | Sv_tmp error compound_statement       {
+        tmpWorkMemoryi = $1.d;
+    }
+    | Sv_tmp error      {
+        tmpWorkMemoryi = $1.d;
+    }
+    | Sv_tmp ';'        {  /* empty external definition */
+        tmpWorkMemoryi = $1.d;
+    }
     ;
 
 top_init_declarations
-    : declaration_specifiers init_declarator            {
+    : declaration_specifiers init_declarator eq_initializer_opt {
         $$.d = $1.d;
-        addNewDeclaration($1.d, $2.d, NULL, StorageExtern,s_symbolTable);
+        addNewDeclaration($1.d, $2.d, $3.d, StorageExtern,s_symbolTable);
     }
-    | init_declarator                                   {
+    | init_declarator eq_initializer_opt                        {
         $$.d = & s_defaultIntDefinition;
-        addNewDeclaration($$.d, $1.d, NULL, StorageExtern,s_symbolTable);
+        addNewDeclaration($$.d, $1.d, $2.d, StorageExtern,s_symbolTable);
     }
-    | top_init_declarations ',' init_declarator         {
+    | top_init_declarations ',' init_declarator eq_initializer_opt          {
         $$.d = $1.d;
-        addNewDeclaration($1.d, $3.d, NULL, StorageExtern,s_symbolTable);
+        addNewDeclaration($1.d, $3.d, $4.d, StorageExtern,s_symbolTable);
     }
-    | error                                             {
-        $$.d = newSymbolAsCopyOf(&s_errorSymbol);
+    | error                                                     {
+        /* $$.d = &s_errorSymbol; */
+        $$.d = typeSpecifier2(&s_errorModifier);
     }
     ;
 
@@ -1833,10 +1858,10 @@ fun_arg_declaration
     ;
 
 fun_arg_init_declarations
-    : init_declarator           {
+    : init_declarator eq_initializer_opt            {
         $$.d = $1.d;
     }
-    | fun_arg_init_declarations ',' init_declarator             {
+    | fun_arg_init_declarations ',' init_declarator eq_initializer_opt              {
         $$.d = $1.d;
         LIST_APPEND(Symbol, $$.d, $3.d);
     }

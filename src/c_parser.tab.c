@@ -2016,7 +2016,6 @@ YYSTYPE yyvs[YYSTACKSIZE];
 #define yystacksize YYSTACKSIZE
 #line 1776 "c_parser.y"
 
-
 static S_completionFunTab spCompletionsTab[]  = {
     {COMPL_FOR_SPECIAL1,    completeForSpecial1},
     {COMPL_FOR_SPECIAL2,    completeForSpecial2},
@@ -2102,7 +2101,7 @@ void makeCCompletions(char *s, int len, Position *pos) {
         }
     }
 }
-#line 2106 "c_parser.tab.c"
+#line 2105 "c_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -4135,7 +4134,7 @@ case 359:
 #line 1767 "c_parser.y"
 { stackMemoryBlockFree(); }
 break;
-#line 4139 "c_parser.tab.c"
+#line 4138 "c_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;
