@@ -940,7 +940,7 @@ struct_declarator
 
 enum_specifier
     : ENUM enum_identifier                                  {
-        int usage;
+        Usage usage;
         if (nestingLevel() == 0)
             usage = USAGE_TOP_LEVEL_USED;
         else

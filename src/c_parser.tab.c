@@ -3129,7 +3129,7 @@ break;
 case 177:
 #line 942 "c_parser.y"
 {
-        int usage;
+        Usage usage;
         if (nestingLevel() == 0)
             usage = USAGE_TOP_LEVEL_USED;
         else

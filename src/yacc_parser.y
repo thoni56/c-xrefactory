@@ -1027,6 +1027,9 @@ struct_or_union_specifier
         $$.d = $1.d;
         specializeStrUnionDef($$.d->u.t, $3.d);
     }
+    | struct_or_union_define_specifier '{' '}'                      {
+        $$.d = $1.d;
+    }
     ;
 
 struct_or_union_define_specifier
@@ -1090,19 +1093,24 @@ struct_declarator_list
     ;
 
 struct_declarator
-    : declarator                    /*& { $$.d = $1.d; } &*/
-    | ':' constant_expr             {
-        TypeModifier *p;
-        p = newSimpleTypeModifier(TypeAnonymousField);
-        $$.d = newSymbolAsType(NULL, NULL, s_noPos, p);
-
+    : /* gcc extension allow empty field */ {
+        $$.d = createEmptyField();
     }
+    | ':' constant_expr             {
+        $$.d = createEmptyField();
+    }
+    | declarator                    /*& { $$.d = $1.d; } &*/
     | declarator ':' constant_expr  /*& { $$.d = $1.d; } &*/
     ;
 
 enum_specifier
     : ENUM enum_identifier                                  {
-        $$.d = simpleEnumSpecifier($2.d, UsageUsed);
+        Usage usage;
+        if (nestingLevel() == 0)
+            usage = USAGE_TOP_LEVEL_USED;
+        else
+            usage = UsageUsed;
+        $$.d = simpleEnumSpecifier($2.d, usage);
     }
     | enum_define_specifier '{' enumerator_list_comma '}'       {
         assert($1.d && $1.d->kind == TypeEnum && $1.d->u.t);
@@ -1168,7 +1176,7 @@ declarator
     ;
 
 declarator2
-    : IDENTIFIER                                        {
+    : identifier                                        {
         $$.d = newSymbol($1.d->name, $1.d->name, $1.d->p);
     }
     | '(' declarator ')'                                {
