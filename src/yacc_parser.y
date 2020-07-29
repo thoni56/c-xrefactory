@@ -218,7 +218,7 @@ static void addYaccSymbolReference(Id *name, int usage);
 %type <ast_id> user_defined_type TYPE_NAME lexem
 %type <ast_id> designator, designator_list
 %type <ast_idList> designation_opt, initializer, initializer_list, eq_initializer_opt
-%type <ast_integer> pointer CONSTANT rule_body
+%type <ast_integer> pointer CONSTANT rule_body _ncounter_ _nlabel_ _ngoto_ _nfork_
 %type <ast_unsigned> storage_class_specifier type_specifier1
 %type <ast_unsigned> type_modality_specifier Sv_tmp
 %type <ast_symbol> init_declarator declarator declarator2 struct_declarator
@@ -1630,16 +1630,92 @@ expression_statement
     : maybe_expr ';'
     ;
 
+
+_ncounter_:  {EXTRACT_COUNTER_SEMACT($$.d);}
+    ;
+
+_nlabel_:   {EXTRACT_LABEL_SEMACT($$.d);}
+    ;
+
+_ngoto_:    {EXTRACT_GOTO_SEMACT($$.d);}
+    ;
+
+_nfork_:    {EXTRACT_FORK_SEMACT($$.d);}
+    ;
+
 selection_statement
-    : IF '(' expr ')' statement
-    | IF '(' expr ')' statement ELSE statement
-    | SWITCH '(' expr ')' statement
+    : IF '(' expr ')' _nfork_ statement                     {
+        generateInternalLabelReference($5.d, UsageDefined);
+    }
+    | IF '(' expr ')' _nfork_ statement ELSE _ngoto_ {
+        generateInternalLabelReference($5.d, UsageDefined);
+    }   statement                               {
+        generateInternalLabelReference($8.d, UsageDefined);
+    }
+    | SWITCH '(' expr ')' /*5*/ _ncounter_  {/*6*/
+        $<symbol>$ = addContinueBreakLabelSymbol(1000*$5.d, SWITCH_LABEL_NAME);
+    } {/*7*/
+        $<symbol>$ = addContinueBreakLabelSymbol($5.d, BREAK_LABEL_NAME);
+        generateInternalLabelReference($5.d, UsageFork);
+    } statement                 {
+        generateSwitchCaseFork(true);
+        ExtrDeleteContBreakSym($<symbol>7);
+        ExtrDeleteContBreakSym($<symbol>6);
+        generateInternalLabelReference($5.d, UsageDefined);
+    }
+    ;
+
+for1maybe_expr
+    : maybe_expr            {s_forCompletionType=$1.d;}
     ;
 
 iteration_statement
-    : WHILE '(' expr ')' statement
-    | DO statement WHILE '(' expr ')' ';'
-    | FOR '(' maybe_expr ';' maybe_expr ';' maybe_expr ')' statement
+    : WHILE _nlabel_ '(' expr ')' /*6*/ _nfork_
+    {/*7*/
+        $<symbol>$ = addContinueBreakLabelSymbol($2.d, CONTINUE_LABEL_NAME);
+    } {/*8*/
+        $<symbol>$ = addContinueBreakLabelSymbol($6.d, BREAK_LABEL_NAME);
+    } statement                 {
+        ExtrDeleteContBreakSym($<symbol>8);
+        ExtrDeleteContBreakSym($<symbol>7);
+        generateInternalLabelReference($2.d, UsageUsed);
+        generateInternalLabelReference($6.d, UsageDefined);
+    }
+
+    | DO _nlabel_ _ncounter_ _ncounter_ { /*5*/
+        $<symbol>$ = addContinueBreakLabelSymbol($3.d, CONTINUE_LABEL_NAME);
+    } {/*6*/
+        $<symbol>$ = addContinueBreakLabelSymbol($4.d, BREAK_LABEL_NAME);
+    } statement WHILE {
+        ExtrDeleteContBreakSym($<symbol>6);
+        ExtrDeleteContBreakSym($<symbol>5);
+        generateInternalLabelReference($3.d, UsageDefined);
+    } '(' expr ')' ';'          {
+        generateInternalLabelReference($2.d, UsageFork);
+        generateInternalLabelReference($4.d, UsageDefined);
+    }
+
+    | FOR '(' for1maybe_expr ';'
+            /*5*/ _nlabel_  maybe_expr ';'  /*8*/_ngoto_
+            /*9*/ _nlabel_  maybe_expr ')' /*12*/ _nfork_
+        {
+        /*13*/
+        generateInternalLabelReference($5.d, UsageUsed);
+        generateInternalLabelReference($8.d, UsageDefined);
+        $<symbol>$ = addContinueBreakLabelSymbol($9.d, CONTINUE_LABEL_NAME);
+        }
+        {/*14*/
+            $<symbol>$ = addContinueBreakLabelSymbol($12.d, BREAK_LABEL_NAME);
+        }
+            statement
+        {
+        ExtrDeleteContBreakSym($<symbol>14);
+        ExtrDeleteContBreakSym($<symbol>13);
+        generateInternalLabelReference($9.d, UsageUsed);
+        generateInternalLabelReference($12.d, UsageDefined);
+        }
+    | FOR '(' for1maybe_expr ';' COMPL_FOR_SPECIAL1
+    | FOR '(' for1maybe_expr ';' _nlabel_  maybe_expr ';' COMPL_FOR_SPECIAL2
     ;
 
 jump_statement
