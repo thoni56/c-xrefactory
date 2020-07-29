@@ -3,6 +3,7 @@
 
 #include "symbol.h"
 #include "symboltable.h"
+#include "usage.h"
 
 #include "proto.h"
 
@@ -27,7 +28,7 @@ extern int findStrRecordSym(	S_recFindStr *ss,
                                 AccessibilityCheckYesNo accessCheck,
                                 VisibilityCheckYesNo visibilityCheck
                                 );
-extern Symbol *addNewSymbolDef(Symbol *p, unsigned storage, SymbolTable *tab, int usage);
+extern Symbol *addNewSymbolDef(Symbol *p, unsigned storage, SymbolTable *tab, Usage usage);
 extern Symbol *addNewDeclaration(Symbol *btype, Symbol *decl, IdList *idl,
                                    unsigned storage, SymbolTable *tab);
 extern int styyerror(char *s);
@@ -62,12 +63,11 @@ extern Reference * findStructureFieldFromType(TypeModifier *structure,
                                                 );
 extern int mergeArguments(Symbol *id, Symbol *ty);
 extern TypeModifier *simpleStrUnionSpecifier(Id *typeName,
-                                                Id *id,
-                                                int usage
-                                                );
+                                             Id *id,
+                                             Usage usage);
 extern TypeModifier *createNewAnonymousStructOrUnion(Id *typeName);
 extern void specializeStrUnionDef(Symbol *sd, Symbol *rec);
-extern TypeModifier *simpleEnumSpecifier(Id *id, int usage);
+extern TypeModifier *simpleEnumSpecifier(Id *id, Usage usage);
 extern void setGlobalFileDepNames(char *iname, Symbol *pp, int memory);
 extern TypeModifier *createNewAnonymousEnum(SymbolList *enums);
 extern void appendPositionToList(PositionList **list, Position *pos);
@@ -84,6 +84,6 @@ extern void handleInvocationParamPositions(Reference *ref, Position *lpar,
 extern void javaHandleDeclaratorParamPositions(Position *sym, Position *lpar,
                                                PositionList *commas, Position *rpar);
 extern void setLocalVariableLinkName(struct symbol *p);
-extern void labelReference(Id *id, int usage);
+extern void labelReference(Id *id, Usage usage);
 
 #endif
