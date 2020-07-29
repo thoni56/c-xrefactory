@@ -11,7 +11,6 @@ Describe(FileTable);
 BeforeEach(FileTable) {}
 AfterEach(FileTable) {}
 
-FileTable fileTable;
 
 Ensure(FileTable, can_fetch_a_stored_filename) {
     FileItem fileItem = {"file.c"};
