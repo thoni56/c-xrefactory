@@ -14,3 +14,5 @@ doxygen
 *_parser.rules
 c_rules*.txt
 *.tmp
+yacc_parser.head
+yacc_parser.tail

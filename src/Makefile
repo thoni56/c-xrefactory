@@ -74,14 +74,21 @@ unit:
 #########################################################################
 # We generate parsers for C, Yacc, Java and C expressions
 # Note the file prefix (-b) and symbol prefix (-p)
-# Also create a .rules file with only the rules in it and files with
-# only C-rules from C and Yacc parsers to be able to compare them
+# Also create .rules files with only the rules in it
 
-c_parser.tab.c c_parser.tab.h: c_parser.y $(YACC)
+c_parser.tab.c c_parser.tab.h : c_parser.y $(YACC)
 	$(YACC) -v -d -b c_parser -p c_yy c_parser.y
 	@sed -E '/^$$/q' c_parser.output > c_parser.rules
 	@awk '{$$1=""; print}' c_parser.rules > c_parser.tmp
 	@sed -n '/primary_expr/,$$p' c_parser.tmp > c_rules_from_c_parser.txt
+
+# Extract the C rules in yacc format and merge them into yacc_parser.y
+yacc_parser.y: c_parser.y
+	@echo "Yacc grammar needs updating from c_parser.y ..."
+	@sed -n '/^%%$$/,/^%%$$/{/^%%$$/!{/^%%$$/!p;};}' c_parser.y > c_rules.txt
+	@sed '/NOW FOLLOWS THE COMPLETE C GRAMMAR/q' yacc_parser.y > yacc_parser.head
+	@sed '1,/^%%$$/d' yacc_parser.y | sed -n '/^%%$$/,$$p' > yacc_parser.tail
+	@cat yacc_parser.head c_rules.txt yacc_parser.tail > yacc_parser.y
 
 cexp_parser.tab.c: cexp_parser.y $(YACC)
 	$(YACC) -v -b cexp_parser -p cexp_yy cexp_parser.y

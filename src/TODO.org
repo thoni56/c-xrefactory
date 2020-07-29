@@ -39,7 +39,6 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
 ** TODO Bug: when extracting C function including declarations that are required
    by code left outside the extraction, that declaration is moved to the
    extracted function. This should probably trigger "structure error".
-* TODO Check if the C-part of Yacc grammar is identical, and if so extract it
 * TODO Separate the options into sections and move HTML (at least) to separate structure
   The S_options structure is used to save or possibly create new sets, when
   refactoring. Then it should only contain what's needed for that.
@@ -112,6 +111,7 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Check if the C-part of Yacc grammar is identical, and if so extract it
 * DONE Create testcases for all jexercise and cexercise steps
 * DONE Remove zlib from repo, point to it's repo instead
 * DONE Split out more specific tests from ?exercise tests, like "rename_with_conflicts"

@@ -443,11 +443,13 @@ any_token
 
 /* *************************************************************** */
 /* *************************************************************** */
-/*                  NOW FOLLOWS THE COMPLETE C GRAMMAR             */
-/* TODO: check if this is exactly the same as c_parser.y and if so */
-/* extract the common parts and include the same code to avoid dup */
+/* This is exactly the same as in c_parser.y. It is extracted from */
+/* there and inserted here automatically to avoid duplication.     */
 /* *************************************************************** */
 /* *************************************************************** */
+/* Next line is a marker line, don't touch */
+
+/*               NOW FOLLOWS THE COMPLETE C GRAMMAR                */
 
 primary_expr
     : IDENTIFIER            {
