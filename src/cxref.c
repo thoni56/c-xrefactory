@@ -1828,6 +1828,7 @@ static void passRefsThroughSourceFile(Reference **in_out_references, Position *c
 
 /* ******************************************************************** */
 
+#if 0
 static void olcxDumpSelectionMenu(S_olSymbolsMenu *menu) {
     S_olSymbolsMenu *ss;
     for(ss=menu; ss!=NULL; ss=ss->next) {
@@ -1835,6 +1836,7 @@ static void olcxDumpSelectionMenu(S_olSymbolsMenu *menu) {
     }
     fprintf(dumpOut,"\n\n");
 }
+#endif
 
 int ooBitsGreaterOrEqual(unsigned oo1, unsigned oo2) { /* TODO: bool! */
     if ((oo1&OOC_PROFILE_MASK) < (oo2&OOC_PROFILE_MASK)) {
