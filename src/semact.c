@@ -121,7 +121,7 @@ void recFindPush(Symbol *str, S_recFindStr *rfs) {
     //& }
 }
 
-S_recFindStr * iniFind(Symbol *s, S_recFindStr *rfs) {
+S_recFindStr *iniFind(Symbol *s, S_recFindStr *rfs) {
     assert(s);
     assert(s->bits.symType == TypeStruct || s->bits.symType == TypeUnion);
     assert(s->u.s);
@@ -129,6 +129,24 @@ S_recFindStr * iniFind(Symbol *s, S_recFindStr *rfs) {
     fillRecFindStr(rfs, s, NULL, NULL,s_recFindCl++);
     recFindPush(s, rfs);
     return(rfs);
+}
+
+void setDirectStructureCompletionType(TypeModifier *typeModifier) {
+    assert(options.taskRegime);
+    if (options.taskRegime == RegimeEditServer) {
+        s_structRecordCompletionType = typeModifier;
+        assert(s_structRecordCompletionType);
+    }
+}
+
+void setIndirectStructureCompletionType(TypeModifier *typeModifier) {
+    assert(options.taskRegime);
+    if (options.taskRegime == RegimeEditServer) {
+        if (typeModifier->kind==TypePointer || typeModifier->kind==TypeArray) {
+            s_structRecordCompletionType = typeModifier->next;
+            assert(s_structRecordCompletionType);
+        } else s_structRecordCompletionType = &s_errorModifier;
+    }
 }
 
 bool javaOuterClassAccessible(Symbol *cl) {

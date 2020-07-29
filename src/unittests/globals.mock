@@ -45,6 +45,7 @@ char *yytext;
 Id s_yyIdentBuf[YYBUFFERED_ID_INDEX];
 int s_yyIdentBufi = 0;
 Symbol s_errorSymbol;
+TypeModifier s_errorModifier;
 
 bool s_ifEvaluation = false;     /* flag for yylex, to not filter '\n' */
 
