@@ -13,16 +13,17 @@
 
 #include "yacc_parser.x"
 
-#include "globals.h"
-#include "misc.h"
+#include "caching.h"
 #include "commons.h"
 #include "complete.h"
-#include "caching.h"
-#include "yylex.h"
-#include "semact.h"
 #include "cxref.h"
-#include "symbol.h"
+#include "extract.h"
+#include "globals.h"
 #include "list.h"
+#include "misc.h"
+#include "semact.h"
+#include "symbol.h"
+#include "yylex.h"
 
 #include "log.h"
 #include "utils.h"
