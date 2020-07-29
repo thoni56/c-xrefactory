@@ -204,6 +204,7 @@ static void addYaccSymbolReference(Id *name, int usage);
 %type <ast_id> user_defined_type TYPE_NAME lexem
 %type <ast_id> designator, designator_list
 %type <ast_idList> designation_opt, initializer, initializer_list, eq_initializer_opt
+%type <ast_integer> assignment_operator
 %type <ast_integer> pointer CONSTANT rule_body _ncounter_ _nlabel_ _ngoto_ _nfork_
 %type <ast_unsigned> storage_class_specifier type_specifier1
 %type <ast_unsigned> type_modality_specifier Sv_tmp
@@ -464,16 +465,16 @@ primary_expr
             /* implicit function declaration */
             TypeModifier *p;
             Symbol *d;
-            Symbol *dd __attribute__((unused));
+            Symbol *dd;
 
-            p = newSimpleTypeModifier(TypeInt);
+            p = newTypeModifier(TypeInt, NULL, NULL);
             $$.d.typeModifier = newFunctionTypeModifier(NULL, NULL, NULL, p);
 
-            d = newSymbolAsType($1.d->name, $1.d->name, $1.d->p,$$.d.typeModifier);
+            d = newSymbolAsType($1.d->name, $1.d->name, $1.d->p, $$.d.typeModifier);
             fillSymbolBits(&d->bits, AccessDefault, TypeDefault, StorageExtern);
 
             dd = addNewSymbolDef(d, StorageExtern, s_symbolTable, UsageUsed);
-            $$.d.reference = NULL;
+            $$.d.reference = addCxReference(dd, &$1.d->p, UsageUsed, noFileIndex, noFileIndex);
         }
     }
     | CHAR_LITERAL          { $$.d.typeModifier = newSimpleTypeModifier(TypeInt); $$.d.reference = NULL;}
@@ -544,16 +545,15 @@ postfix_expr
         $$.d.reference = NULL;
         assert($$.d.typeModifier);
     }
-    | postfix_expr {setDirectStructureCompletionType($1.d.typeModifier);} '.' str_rec_identifier          {
+    | postfix_expr {setDirectStructureCompletionType($1.d.typeModifier);} '.' str_rec_identifier        {
         Symbol *rec=NULL;
         $$.d.reference = findStructureFieldFromType($1.d.typeModifier, $4.d, &rec, CLASS_TO_ANY);
         assert(rec);
         $$.d.typeModifier = rec->u.type;
         assert($$.d.typeModifier);
     }
-    | postfix_expr {setIndirectStructureCompletionType($1.d.typeModifier);} PTR_OP str_rec_identifier    {
+    | postfix_expr {setIndirectStructureCompletionType($1.d.typeModifier);} PTR_OP str_rec_identifier   {
         Symbol *rec=NULL;
-
         $$.d.reference = NULL;
         if ($1.d.typeModifier->kind==TypePointer || $1.d.typeModifier->kind==TypeArray) {
             $$.d.reference = findStructureFieldFromType($1.d.typeModifier->next, $4.d, &rec, CLASS_TO_ANY);
@@ -562,8 +562,14 @@ postfix_expr
         } else $$.d.typeModifier = &s_errorModifier;
         assert($$.d.typeModifier);
     }
-    | postfix_expr INC_OP                       { $$.d.typeModifier = $1.d.typeModifier; $$.d.reference = NULL;}
-    | postfix_expr DEC_OP                       { $$.d.typeModifier = $1.d.typeModifier; $$.d.reference = NULL;}
+    | postfix_expr INC_OP                       {
+        $$.d.typeModifier = $1.d.typeModifier;
+        RESET_REFERENCE_USAGE($1.d.reference, UsageAddrUsed);
+    }
+    | postfix_expr DEC_OP                       {
+        $$.d.typeModifier = $1.d.typeModifier;
+        RESET_REFERENCE_USAGE($1.d.reference, UsageAddrUsed);
+    }
     | compound_literal
     ;
 
@@ -614,11 +620,11 @@ unary_expr
     : postfix_expr                  /*& { $$.d = $1.d; } &*/
     | INC_OP unary_expr             {
         $$.d.typeModifier = $2.d.typeModifier;
-        $$.d.reference = NULL;
+        RESET_REFERENCE_USAGE($2.d.reference, UsageAddrUsed);
     }
     | DEC_OP unary_expr             {
         $$.d.typeModifier = $2.d.typeModifier;
-        $$.d.reference = NULL;
+        RESET_REFERENCE_USAGE($2.d.reference, UsageAddrUsed);
     }
     | unary_operator cast_expr      {
         $$.d.typeModifier = $2.d.typeModifier;
@@ -794,24 +800,38 @@ conditional_expr
 assignment_expr
     : conditional_expr                                  /*& { $$.d = $1.d; } &*/
     | unary_expr assignment_operator assignment_expr    {
-        RESET_REFERENCE_USAGE($1.d.reference, UsageLvalUsed);
-        $$.d.typeModifier = $1.d.typeModifier;
-        $$.d.reference = NULL;
+        if ($1.d.reference != NULL && options.server_operation == OLO_EXTRACT) {
+            Reference *rr;
+            rr = duplicateReference($1.d.reference);
+            $1.d.reference->usage = s_noUsage;
+            if ($2.d == '=') {
+                RESET_REFERENCE_USAGE(rr, UsageLvalUsed);
+            } else {
+                RESET_REFERENCE_USAGE(rr, UsageAddrUsed);
+            }
+        } else {
+            if ($2.d == '=') {
+                RESET_REFERENCE_USAGE($1.d.reference, UsageLvalUsed);
+            } else {
+                RESET_REFERENCE_USAGE($1.d.reference, UsageAddrUsed);
+            }
+        }
+        $$.d = $1.d;    /* $$.d.r will be used for FOR completions ! */
     }
     ;
 
 assignment_operator
-    : '='
-    | MUL_ASSIGN
-    | DIV_ASSIGN
-    | MOD_ASSIGN
-    | ADD_ASSIGN
-    | SUB_ASSIGN
-    | LEFT_ASSIGN
-    | RIGHT_ASSIGN
-    | AND_ASSIGN
-    | XOR_ASSIGN
-    | OR_ASSIGN
+    : '='                   {$$.d = '=';}
+    | MUL_ASSIGN            {$$.d = MUL_ASSIGN;}
+    | DIV_ASSIGN            {$$.d = DIV_ASSIGN;}
+    | MOD_ASSIGN            {$$.d = MOD_ASSIGN;}
+    | ADD_ASSIGN            {$$.d = ADD_ASSIGN;}
+    | SUB_ASSIGN            {$$.d = SUB_ASSIGN;}
+    | LEFT_ASSIGN           {$$.d = LEFT_ASSIGN;}
+    | RIGHT_ASSIGN          {$$.d = RIGHT_ASSIGN;}
+    | AND_ASSIGN            {$$.d = AND_ASSIGN;}
+    | XOR_ASSIGN            {$$.d = XOR_ASSIGN;}
+    | OR_ASSIGN             {$$.d = OR_ASSIGN;}
     ;
 
 expr
@@ -836,6 +856,13 @@ declaration
     : Sv_tmp declaration_specifiers ';'     { tmpWorkMemoryi = $1.d; }
     | Sv_tmp init_declarations ';'          { tmpWorkMemoryi = $1.d; }
     | error
+        {
+#if YYDEBUG
+            char buffer[100];
+            sprintf(buffer, "error parsing declaration, near '%s'", yytext);
+            yyerror(buffer);
+#endif
+        }
     ;
 
 init_declarations
@@ -859,24 +886,28 @@ init_declarations
     ;
 
 declaration_specifiers
-    : declaration_modality_specifiers                       /*& { $$.d = $1.d; } &*/
-    | declaration_specifiers0                               /*& { $$.d = $1.d; } &*/
+    : declaration_modality_specifiers
+    | declaration_specifiers0
     ;
 
 user_defined_type
     : TYPE_NAME                                             {
+        int usage;
         $$.d = $1.d;
         assert(options.taskRegime);
         assert($1.d);
         assert($1.d->symbol);
-        addCxReference($1.d->symbol, &$1.d->p, UsageUsed, noFileIndex, noFileIndex);
+        if (nestingLevel() == 0)
+            usage = USAGE_TOP_LEVEL_USED;
+        else
+            usage = UsageUsed;
+        addCxReference($1.d->symbol,&$1.d->p,usage,noFileIndex,noFileIndex);
     }
     ;
 
 declaration_specifiers0
     : user_defined_type                                     {
         assert($1.d);
-        assert($1.d->symbol);
         assert($1.d->symbol);
         $$.d = typeSpecifier2($1.d->symbol->u.type);
     }
@@ -888,7 +919,6 @@ declaration_specifiers0
     }
     | declaration_modality_specifiers  user_defined_type    {
         assert($2.d);
-        assert($2.d->symbol);
         assert($2.d->symbol);
         $$.d = $1.d;
         declTypeSpecifier2($1.d,$2.d->symbol->u.type);
@@ -951,6 +981,13 @@ declaration_modality_specifiers
     }
     ;
 
+
+/* a gcc extension ? */
+asm_opt
+    :
+    |   ASM_KEYWORD '(' string_literals ')'
+    ;
+
 eq_initializer_opt
     :                   {
         $$.d = NULL;
@@ -961,8 +998,7 @@ eq_initializer_opt
     ;
 
 init_declarator
-    : declarator                    /*& { $$.d = $1.d; } &*/
-    | declarator '=' initializer    /*& { $$.d = $1.d; } &*/
+    : declarator asm_opt /* eq_initializer_opt   { $$.d = $1.d; } */
     ;
 
 storage_class_specifier
@@ -980,6 +1016,11 @@ type_modality_specifier
     | VOLATILE      { $$.d = TypeDefault; }
     | _ATOMIC       { $$.d = TypeDefault; }
     | ANONYME_MOD   { $$.d = TypeDefault; }
+    ;
+
+type_modality_specifier_opt
+    :
+    | type_modality_specifier
     ;
 
 type_specifier1
@@ -1007,7 +1048,12 @@ function_specifier
 
 struct_or_union_specifier
     : struct_or_union struct_identifier                             {
-        $$.d = simpleStrUnionSpecifier($1.d, $2.d, UsageUsed);
+        int usage;
+        if (nestingLevel() == 0)
+            usage = USAGE_TOP_LEVEL_USED;
+        else
+            usage = UsageUsed;
+        $$.d = simpleStrUnionSpecifier($1.d, $2.d, usage);
     }
     | struct_or_union_define_specifier '{' struct_declaration_list '}'{
         assert($1.d && $1.d->u.t);
@@ -1043,7 +1089,7 @@ struct_declaration_list
     | struct_declaration_list struct_declaration        {
         if ($1.d == &s_errorSymbol || $1.d->bits.symType==TypeError) {
             $$.d = $2.d;
-        } else if ($2.d == &s_errorSymbol || $1.d->bits.symType==TypeError) {
+        } else if ($2.d == &s_errorSymbol || $1.d->bits.symType==TypeError)  {
             $$.d = $1.d;
         } else {
             $$.d = $1.d;
@@ -1064,6 +1110,11 @@ struct_declaration
     }
     | error                                             {
         $$.d = newSymbolAsCopyOf(&s_errorSymbol);
+#if YYDEBUG
+        char buffer[100];
+        sprintf(buffer, "DEBUG: error parsing struct_declaration near '%s'", yytext);
+        yyerror(buffer);
+#endif
     }
     ;
 
@@ -1149,6 +1200,11 @@ enumerator
     }
     | error                                 {
         $$.d = newSymbolAsCopyOf(&s_errorSymbol);
+#if YYDEBUG
+        char buffer[100];
+        sprintf(buffer, "DEBUG: error parsing enumerator near '%s'", yytext);
+        yyerror(buffer);
+#endif
     }
     | COMPL_OTHER_NAME      { assert(0); /* token never used */ }
     ;
@@ -1156,9 +1212,9 @@ enumerator
 declarator
     : declarator2                                       /*& { $$.d = $1.d; } &*/
     | pointer declarator2                               {
-        int i;
         $$.d = $2.d;
-        for (i=0; i<$1.d; i++) AddComposedType($$.d,TypePointer);
+        assert($$.d->bits.npointers == 0);
+        $$.d->bits.npointers = $1.d;
     }
     ;
 
@@ -1168,6 +1224,7 @@ declarator2
     }
     | '(' declarator ')'                                {
         $$.d = $2.d;
+        unpackPointers($$.d);
     }
     | declarator2 '[' ']'                               {
         assert($1.d);
@@ -1185,6 +1242,7 @@ declarator2
         $$.d = $1.d;
         p = AddComposedType($$.d, TypeFunction);
         initFunctionTypeModifier(&p->u.f , NULL);
+        handleDeclaratorParamPositions($1.d, &$2.d, NULL, &$3.d, 0);
     }
     | declarator2 '(' parameter_type_list ')'           {
         TypeModifier *p;
@@ -1302,16 +1360,15 @@ type_specifier_list0
 parameter_identifier_list
     : identifier_list                           /*& { $$.d = $1.d; } &*/
     | identifier_list ',' ELIPSIS               {
-        Symbol *p;
-        Position pp;
-        fillPosition(&pp, -1, 0, 0);
+        Symbol *symbol;
+        Position pos;
+        fillPosition(&pos, -1, 0, 0);
 
-        p = newSymbol("", "", pp);
-        fillSymbolBits(&p->bits, AccessDefault, TypeElipsis, StorageDefault);
-
+        symbol = newSymbol("", "", pos);
+        fillSymbolBits(&symbol->bits, AccessDefault, TypeElipsis, StorageDefault);
         $$.d = $1.d;
 
-        LIST_APPEND(Symbol, $$.d.s, p);
+        LIST_APPEND(Symbol, $$.d.s, symbol);
         appendPositionToList(&$$.d.p, &$2.d);
     }
     ;
@@ -1319,19 +1376,14 @@ parameter_identifier_list
 identifier_list
     : IDENTIFIER                                {
         Symbol *p;
-
         p = newSymbol($1.d->name, $1.d->name, $1.d->p);
-
         $$.d.s = p;
         $$.d.p = NULL;
     }
     | identifier_list ',' identifier            {
         Symbol        *p;
-
         p = newSymbol($3.d->name, $3.d->name, $3.d->p);
-
         $$.d = $1.d;
-
         LIST_APPEND(Symbol, $$.d.s, p);
         appendPositionToList(&$$.d.p, &$2.d);
     }
@@ -1341,15 +1393,15 @@ identifier_list
 parameter_type_list
     : parameter_list                    /*& { $$.d = $1.d; } &*/
     | parameter_list ',' ELIPSIS                {
-        Symbol        *p;
-        Position      pp;
-        fillPosition(&pp, -1, 0, 0);
+        Symbol *symbol;
+        Position position;
+        fillPosition(&position, -1, 0, 0);
 
-        p = newSymbol("", "", pp);
-        fillSymbolBits(&p->bits, AccessDefault, TypeElipsis, StorageDefault);
-
+        symbol = newSymbol("", "", position);
+        fillSymbolBits(&symbol->bits, AccessDefault, TypeElipsis, StorageDefault);
         $$.d = $1.d;
-        LIST_APPEND(Symbol, $$.d.s, p);
+
+        LIST_APPEND(Symbol, $$.d.s, symbol);
         appendPositionToList(&$$.d.p, &$2.d);
     }
     ;
@@ -1366,6 +1418,7 @@ parameter_list
     }
     ;
 
+
 parameter_declaration
     : declaration_specifiers declarator         {
         completeDeclarator($1.d, $2.d);
@@ -1376,6 +1429,11 @@ parameter_declaration
     }
     | error                                     {
         $$.d = newSymbolAsCopyOf(&s_errorSymbol);
+#if YYDEBUG
+        char buffer[100];
+        sprintf(buffer, "DEBUG: error parsing parameter_declaration near '%s'", yytext);
+        yyerror(buffer);
+#endif
     }
     ;
 
@@ -1425,11 +1483,9 @@ abstract_declarator2
     }
     | '(' ')'                                       {
         $$.d = newFunctionTypeModifier(NULL, NULL, NULL, NULL);
-        initFunctionTypeModifier(&$$.d->u.f , NULL);
     }
     | '(' parameter_type_list ')'                   {
-        $$.d = newFunctionTypeModifier(NULL, NULL, NULL, NULL);
-        initFunctionTypeModifier(&$$.d->u.f , $2.d.s);
+        $$.d = newFunctionTypeModifier($2.d.s, NULL, NULL, NULL);
     }
     | abstract_declarator2 '(' ')'                  {
         TypeModifier *p;
@@ -1441,9 +1497,10 @@ abstract_declarator2
         TypeModifier *p;
         $$.d = $1.d;
         p = appendComposedType(&($$.d), TypeFunction);
-        // why there was the following ?????
-        // initFunctionTypeModifier(&p->u.f , NULL);
-        initFunctionTypeModifier(&p->u.f , $3.d.s);
+        // I think there should be the following, but in abstract
+        // declarator it does not matter
+        /*& initFunctionTypeModifier(&p->u.f , $3.d.s); &*/
+        initFunctionTypeModifier(&p->u.f , NULL);
     }
     ;
 
@@ -1477,7 +1534,6 @@ initializer_list
         LIST_APPEND(IdList, $1.d, $4.d);
         tmpWorkMemoryi = $3.d;
     }
-    | error
     ;
 
 designation_opt
@@ -1527,6 +1583,9 @@ statement
         tmpWorkMemoryi = $1.d;
     }
     | Sv_tmp jump_statement     {
+        tmpWorkMemoryi = $1.d;
+    }
+    | Sv_tmp asm_statement      {
         tmpWorkMemoryi = $1.d;
     }
     | Sv_tmp error  {
@@ -1725,6 +1784,39 @@ _bef_:          {
     }
     ;
 
+/* ****************** following is some gcc asm support ************ */
+/* it is not exactly as in gcc, but I hope it is suf. general */
+
+gcc_asm_symbolic_name_opt
+    :
+    |   '[' IDENTIFIER ']'
+    ;
+
+gcc_asm_item_opt
+    :
+    |   gcc_asm_symbolic_name_opt IDENTIFIER
+    |   gcc_asm_symbolic_name_opt IDENTIFIER '(' expr ')'
+    |   gcc_asm_symbolic_name_opt string_literals
+    |   gcc_asm_symbolic_name_opt string_literals '(' expr ')'
+    ;
+
+gcc_asm_item_list
+    :   gcc_asm_item_opt
+    |   gcc_asm_item_list ',' gcc_asm_item_opt
+    ;
+
+gcc_asm_oper
+    :   ':' gcc_asm_item_list
+    |   gcc_asm_oper ':' gcc_asm_item_list
+    ;
+
+asm_statement
+    :   ASM_KEYWORD type_modality_specifier_opt '(' expr ')' ';'
+    |   ASM_KEYWORD type_modality_specifier_opt '(' expr gcc_asm_oper ')' ';'
+    ;
+
+/* *********************************************************************** */
+
 file
     : _bef_
     | _bef_ cached_external_definition_list _bef_
@@ -1783,6 +1875,9 @@ external_definition
         tmpWorkMemoryi = $1.d;
     }
     | Sv_tmp EXTERN STRING_LITERAL  '{' cached_external_definition_list '}' {
+        tmpWorkMemoryi = $1.d;
+    }
+    | Sv_tmp ASM_KEYWORD '(' expr ')' ';'       {
         tmpWorkMemoryi = $1.d;
     }
     | Sv_tmp error compound_statement       {
