@@ -736,7 +736,7 @@ static ConstantPoolUnion *cfReadConstantPool(CharacterBuffer *cb,
 }
 
 
-char *skipFirstArgumentInDescriptorString(char *descriptor) {
+static char *skipFirstArgumentInDescriptorString(char *descriptor) {
     char *d = descriptor;
 
     assert(descriptor);
@@ -764,7 +764,7 @@ char *skipFirstArgumentInDescriptorString(char *descriptor) {
 }
 
 
-TypeModifier *cfUnPackResultType(char *sig, char **restype) {
+static TypeModifier *cfUnPackResultType(char *sig, char **restype) {
     TypeModifier *res, **ares, *tt;
     int typ;
     char *fqname;

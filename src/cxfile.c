@@ -197,7 +197,7 @@ static int searchSingleStringFitness(char *cxtag, char *searchedStr, int len) {
     return(0);
 }
 
-int searchStringNonWildcardFitness(char *cxtag, int len) {
+static int searchStringNonWildcardFitness(char *cxtag, int len) {
     char    *ss;
     int     r;
     ss = options.olcxSearchString;

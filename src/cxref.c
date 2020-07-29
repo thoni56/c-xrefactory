@@ -421,7 +421,7 @@ int isStrictlyEnclosingClass(int enclosedClass, int enclosingClass) {
 }
 
 // TODO, all this stuff should be done differently!
-void changeFieldRefUsages(SymbolReferenceItem  *ri, void  *rrcd) {
+static void changeFieldRefUsages(SymbolReferenceItem  *ri, void  *rrcd) {
     S_referencesChangeData      *rcd;
     SymbolReferenceItem             ddd;
     Reference                 *rr;
@@ -894,7 +894,7 @@ void addCfClassTreeHierarchyRef(int fnum, int usage) {
 
 /* ***************************************************************** */
 
-int isSmallerOrEqClassR(int inf, int sup, int level) {
+static int isSmallerOrEqClassR(int inf, int sup, int level) {
     ClassHierarchyReference *p;
     int         smallerLevel;
     assert(level>0);
@@ -1193,7 +1193,7 @@ static Reference *olcxCopyReference(Reference *ref) {
     return(rr);
 }
 
-void olcxAppendReference(Reference *ref, S_olcxReferences *refs) {
+static void olcxAppendReference(Reference *ref, S_olcxReferences *refs) {
     Reference *rr;
     rr = olcxCopyReference(ref);
     LIST_APPEND(Reference, refs->r, rr);
@@ -1828,7 +1828,7 @@ static void passRefsThroughSourceFile(Reference **in_out_references, Position *c
 
 /* ******************************************************************** */
 
-void olcxDumpSelectionMenu(S_olSymbolsMenu *menu) {
+static void olcxDumpSelectionMenu(S_olSymbolsMenu *menu) {
     S_olSymbolsMenu *ss;
     for(ss=menu; ss!=NULL; ss=ss->next) {
         fprintf(dumpOut,">> %d/%d %s %s %s %d\n", ss->defRefn, ss->refn, ss->s.name, simpleFileName(fileTable.tab[ss->s.vFunClass]->name), simpleFileName(fileTable.tab[ss->s.vApplClass]->name), ss->outOnLine);
@@ -2025,7 +2025,7 @@ static void olcxReferenceGotoRef(int refn) {
     olcxGenGotoActReference(refs);
 }
 
-S_olCompletion *olCompletionNthLineRef(S_olCompletion *cpls, int refn) {
+static S_olCompletion *olCompletionNthLineRef(S_olCompletion *cpls, int refn) {
     S_olCompletion *rr, *rrr;
     int i;
     for(rr=rrr=cpls, i=1; i<=refn && rrr!=NULL; rrr=rrr->next) {
@@ -2775,9 +2775,6 @@ static void handleConstructorSpecialsInSelectingSymbolInMenu(
                                         || command == OLO_SAFETY_CHECK2 \
                                         || options.manualResolve == RESOLVE_DIALOG_NEVER \
                                         )
-
-void dummyloop1(){}
-void dummyloop2(){}
 
 static void computeSubClassOfRelatedItemsOOBit(S_olSymbolsMenu *menu, int command) {
     S_olSymbolsMenu *s1, *s2;

@@ -75,11 +75,11 @@ void closeCharacterBuffer(CharacterBuffer *buffer) {
 /* Need to match zlib'z alloc_func
    alloc_func zlibAlloc() ?
  */
-voidpf zlibAlloc(voidpf opaque, uInt items, uInt size) {
+static voidpf zlibAlloc(voidpf opaque, uInt items, uInt size) {
     return(calloc(items, size));
 }
 
-void zlibFree(voidpf opaque, voidpf address) {
+static void zlibFree(voidpf opaque, voidpf address) {
     free(address);
 }
 
