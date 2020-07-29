@@ -2353,7 +2353,7 @@ case 16:
 break;
 case 17:
 #line 345 "c_parser.y"
-{SetDirectStructureCompletionType(yyvsp[0].ast_expressionType.d.typeModifier);}
+{setDirectStructureCompletionType(yyvsp[0].ast_expressionType.d.typeModifier);}
 break;
 case 18:
 #line 345 "c_parser.y"
@@ -2367,7 +2367,7 @@ case 18:
 break;
 case 19:
 #line 352 "c_parser.y"
-{SetIndirectStructureCompletionType(yyvsp[0].ast_expressionType.d.typeModifier);}
+{setIndirectStructureCompletionType(yyvsp[0].ast_expressionType.d.typeModifier);}
 break;
 case 20:
 #line 352 "c_parser.y"

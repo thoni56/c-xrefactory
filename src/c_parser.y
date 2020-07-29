@@ -342,14 +342,14 @@ postfix_expr
         $$.d.reference = NULL;
         assert($$.d.typeModifier);
     }
-    | postfix_expr {SetDirectStructureCompletionType($1.d.typeModifier);} '.' str_rec_identifier        {
+    | postfix_expr {setDirectStructureCompletionType($1.d.typeModifier);} '.' str_rec_identifier        {
         Symbol *rec=NULL;
         $$.d.reference = findStructureFieldFromType($1.d.typeModifier, $4.d, &rec, CLASS_TO_ANY);
         assert(rec);
         $$.d.typeModifier = rec->u.type;
         assert($$.d.typeModifier);
     }
-    | postfix_expr {SetIndirectStructureCompletionType($1.d.typeModifier);} PTR_OP str_rec_identifier   {
+    | postfix_expr {setIndirectStructureCompletionType($1.d.typeModifier);} PTR_OP str_rec_identifier   {
         Symbol *rec=NULL;
         $$.d.reference = NULL;
         if ($1.d.typeModifier->kind==TypePointer || $1.d.typeModifier->kind==TypeArray) {
