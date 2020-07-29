@@ -216,7 +216,7 @@ static void addYaccSymbolReference(Id *name, int usage);
 %type <ast_id> str_rec_identifier STRUCT UNION struct_or_union
 %type <ast_id> user_defined_type TYPE_NAME lexem
 %type <ast_id> designator, designator_list
-%type <ast_idList> designation_opt, initializer, initializer_list
+%type <ast_idList> designation_opt, initializer, initializer_list, eq_initializer_opt
 %type <ast_integer> pointer CONSTANT rule_body
 %type <ast_unsigned> storage_class_specifier type_specifier1
 %type <ast_unsigned> type_modality_specifier Sv_tmp
@@ -234,7 +234,7 @@ static void addYaccSymbolReference(Id *name, int usage);
 %type <ast_symbol> fun_arg_init_declarations fun_arg_declaration
 %type <ast_symbolPositionListPair> parameter_list parameter_type_list
 %type <ast_symbolPositionListPair> parameter_identifier_list identifier_list
-%type <ast_positionList> argument_expr_list
+%type <ast_positionList> argument_expr_list argument_expr_list_opt
 
 %type <ast_typeModifiers> type_specifier2
 %type <ast_typeModifiers> struct_or_union_specifier struct_or_union_define_specifier
@@ -494,7 +494,7 @@ primary_expr
     | LONG_CONSTANT         { $$.d.typeModifier = newSimpleTypeModifier(TypeLong); $$.d.reference = NULL;}
     | FLOAT_CONSTANT        { $$.d.typeModifier = newSimpleTypeModifier(TypeFloat); $$.d.reference = NULL;}
     | DOUBLE_CONSTANT       { $$.d.typeModifier = newSimpleTypeModifier(TypeDouble); $$.d.reference = NULL;}
-    | STRING_LITERAL        {
+    | string_literals       {
         TypeModifier *p;
         p = newSimpleTypeModifier(TypeChar);
         $$.d.typeModifier = newPointerTypeModifier(p);
@@ -510,6 +510,11 @@ primary_expr
     | COMPL_OTHER_NAME      { assert(0); /* token never used */ }
     ;
 
+string_literals
+    : STRING_LITERAL
+    | STRING_LITERAL string_literals
+    ;
+
 postfix_expr
     : primary_expr                              /*& { $$.d = $1.d; } &*/
     | postfix_expr '[' expr ']'                 {
@@ -519,6 +524,8 @@ postfix_expr
         $$.d.reference = NULL;
         assert($$.d.typeModifier);
     }
+/*
+  Replaced by optional arguments in "postfix_expr '(' argument_expr_list_opt ')' ...
     | postfix_expr '(' ')'                      {
         if ($1.d.typeModifier->kind==TypeFunction) {
             $$.d.typeModifier=$1.d.typeModifier->next;
@@ -529,17 +536,28 @@ postfix_expr
         $$.d.reference = NULL;
         assert($$.d.typeModifier);
     }
-    | postfix_expr '(' argument_expr_list ')'   {
+*/
+    | postfix_expr
+            {
+                $<typeModifier>$ = s_upLevelFunctionCompletionType;
+                s_upLevelFunctionCompletionType = $1.d.typeModifier;
+            }
+      '(' argument_expr_list_opt ')'    {
+        s_upLevelFunctionCompletionType = $<typeModifier>2;
         if ($1.d.typeModifier->kind==TypeFunction) {
             $$.d.typeModifier=$1.d.typeModifier->next;
-            handleInvocationParamPositions($1.d.reference, &$2.d, $3.d, &$4.d, 1);
+            if ($4.d==NULL) {
+                handleInvocationParamPositions($1.d.reference, &$3.d, NULL, &$5.d, 0);
+            } else {
+                handleInvocationParamPositions($1.d.reference, &$3.d, $4.d->next, &$5.d, 1);
+            }
         } else {
             $$.d.typeModifier = &s_errorModifier;
         }
         $$.d.reference = NULL;
         assert($$.d.typeModifier);
     }
-    | postfix_expr {SetDirectStructureCompletionType($1.d.typeModifier);} '.' str_rec_identifier       {
+    | postfix_expr {SetDirectStructureCompletionType($1.d.typeModifier);} '.' str_rec_identifier          {
         Symbol *rec=NULL;
         $$.d.reference = findStructureFieldFromType($1.d.typeModifier, $4.d, &rec, CLASS_TO_ANY);
         assert(rec);
@@ -563,7 +581,7 @@ postfix_expr
     ;
 
 compound_literal                /* Added in C99 */
-    : '(' type_name ')' '{' initializer_list optional_comma '}'		{
+    : '(' type_name ')' '{' initializer_list optional_comma '}'     {
         for (IdList *idList = $5.d; idList != NULL; idList = idList->next) {
             Symbol *rec=NULL;
             (void) findStructureFieldFromType($2.d, &idList->id, &rec, CLASS_TO_ANY);
@@ -583,6 +601,16 @@ str_rec_identifier
     | COMPL_STRUCT_REC_NAME     { assert(0); /* token never used */ }
     ;
 
+argument_expr_list_opt
+    :                                           {
+        $$.d = NULL;
+    }
+    |   argument_expr_list          {
+            $$.d = StackMemoryAlloc(PositionList);
+            fillPositionList($$.d, s_noPos, $1.d);
+        }
+    ;
+
 argument_expr_list
     : assignment_expr                           {
         $$.d = NULL;
@@ -591,13 +619,24 @@ argument_expr_list
         $$.d = $1.d;
         appendPositionToList(&$$.d, &$2.d);
     }
+    | COMPL_UP_FUN_PROFILE                          {/* never used */}
+    | argument_expr_list ',' COMPL_UP_FUN_PROFILE   {/* never used */}
     ;
 
 unary_expr
     : postfix_expr                  /*& { $$.d = $1.d; } &*/
-    | INC_OP unary_expr             { $$.d.typeModifier = $2.d.typeModifier; $$.d.reference = NULL;}
-    | DEC_OP unary_expr             { $$.d.typeModifier = $2.d.typeModifier; $$.d.reference = NULL;}
-    | unary_operator cast_expr      { $$.d.typeModifier = $2.d.typeModifier; $$.d.reference = NULL;}
+    | INC_OP unary_expr             {
+        $$.d.typeModifier = $2.d.typeModifier;
+        $$.d.reference = NULL;
+    }
+    | DEC_OP unary_expr             {
+        $$.d.typeModifier = $2.d.typeModifier;
+        $$.d.reference = NULL;
+    }
+    | unary_operator cast_expr      {
+        $$.d.typeModifier = $2.d.typeModifier;
+        $$.d.reference = NULL;
+    }
     | '&' cast_expr                 {
         $$.d.typeModifier = newPointerTypeModifier($2.d.typeModifier);
         RESET_REFERENCE_USAGE($2.d.reference, UsageAddrUsed);
@@ -617,6 +656,10 @@ unary_expr
         $$.d.typeModifier = newSimpleTypeModifier(TypeInt);
         $$.d.reference = NULL;
     }
+    /* yet another GCC ext. */
+    | AND_OP identifier     {
+        labelReference($2.d, UsageLvalUsed);
+    }
     ;
 
 unary_operator
@@ -631,14 +674,6 @@ cast_expr
     | '(' type_name ')' cast_expr       {
         $$.d.typeModifier = $2.d;
         $$.d.reference = $4.d.reference;
-    }
-    | '(' type_name ')' '{' initializer_list '}'        { /* GNU-extension*/
-        $$.d.typeModifier = $2.d;
-        $$.d.reference = NULL;
-    }
-    | '(' type_name ')' '{' initializer_list ',' '}'    { /* GNU-extension*/
-        $$.d.typeModifier = $2.d;
-        $$.d.reference = NULL;
     }
     ;
 
@@ -762,6 +797,11 @@ conditional_expr
         $$.d.typeModifier = $3.d.typeModifier;
         $$.d.reference = NULL;
     }
+    /* another GCC "improvement", grrr */
+    | logical_or_expr '?' ':' conditional_expr  {
+        $$.d.typeModifier = $4.d.typeModifier;
+        $$.d.reference = NULL;
+    }
     ;
 
 assignment_expr
@@ -812,16 +852,22 @@ declaration
     ;
 
 init_declarations
-    : declaration_specifiers init_declarator            {
+    : declaration_specifiers init_declarator eq_initializer_opt {
         $$.d = $1.d;
-        addNewDeclaration($1.d, $2.d, NULL, StorageAuto,s_symbolTable);
+        addNewDeclaration($1.d, $2.d, $3.d, StorageAuto, s_symbolTable);
     }
-    | init_declarations ',' init_declarator             {
+    | init_declarations ',' init_declarator eq_initializer_opt  {
         $$.d = $1.d;
-        addNewDeclaration($1.d, $3.d, NULL, StorageAuto,s_symbolTable);
+        addNewDeclaration($1.d, $3.d, $4.d, StorageAuto, s_symbolTable);
     }
     | error                                             {
-        $$.d = newSymbolAsCopyOf(&s_errorSymbol);
+        /* $$.d = &s_errorSymbol; */
+        $$.d = typeSpecifier2(&s_errorModifier);
+#if YYDEBUG
+        char buffer[100];
+        sprintf(buffer, "error parsing init_declarations, near '%s'", yytext);
+        yyerror(buffer);
+#endif
     }
     ;
 
@@ -884,7 +930,7 @@ declaration_specifiers0
         $$.d = $1.d;
         $$.d->bits.storage = $2.d;
     }
-    | declaration_specifiers0 function_specifier			{
+    | declaration_specifiers0 function_specifier            {
         $$.d = $1.d;
     }
     | COMPL_TYPE_NAME                                       {
@@ -910,11 +956,20 @@ declaration_modality_specifiers
     | declaration_modality_specifiers type_modality_specifier       {
         declTypeSpecifier1($1.d, $2.d);
     }
-    | function_specifier									{
+    | function_specifier                                    {
         $$.d = typeSpecifier1(TypeDefault);
     }
-    | declaration_modality_specifiers function_specifier			{
+    | declaration_modality_specifiers function_specifier            {
         $$.d = $1.d;
+    }
+    ;
+
+eq_initializer_opt
+    :                   {
+        $$.d = NULL;
+    }
+    | '=' initializer   {
+        $$.d = $2.d;
     }
     ;
 
@@ -924,19 +979,19 @@ init_declarator
     ;
 
 storage_class_specifier
-    : TYPEDEF		{ $$.d = StorageTypedef; }
-    | EXTERN		{ $$.d = StorageExtern; }
-    | STATIC		{ $$.d = StorageStatic; }
-    | _THREADLOCAL	{ $$.d = StorageThreadLocal; }
-    | AUTO			{ $$.d = StorageAuto; }
-    | REGISTER		{ $$.d = StorageAuto; }
+    : TYPEDEF       { $$.d = StorageTypedef; }
+    | EXTERN        { $$.d = StorageExtern; }
+    | STATIC        { $$.d = StorageStatic; }
+    | _THREADLOCAL  { $$.d = StorageThreadLocal; }
+    | AUTO          { $$.d = StorageAuto; }
+    | REGISTER      { $$.d = StorageAuto; }
     ;
 
 type_modality_specifier
     : CONST         { $$.d = TypeDefault; }
-    | RESTRICT		{ $$.d = TypeDefault; }
+    | RESTRICT      { $$.d = TypeDefault; }
     | VOLATILE      { $$.d = TypeDefault; }
-    | _ATOMIC		{ $$.d = TypeDefault; }
+    | _ATOMIC       { $$.d = TypeDefault; }
     | ANONYME_MOD   { $$.d = TypeDefault; }
     ;
 
@@ -950,7 +1005,7 @@ type_specifier1
     | FLOAT     { $$.d = TypeFloat; }
     | DOUBLE    { $$.d = TypeDouble; }
     | VOID      { $$.d = TypeVoid; }
-    | _BOOL		{ $$.d = TypeBoolean; }
+    | _BOOL     { $$.d = TypeBoolean; }
     ;
 
 type_specifier2
@@ -1398,17 +1453,17 @@ abstract_declarator2
     ;
 
 initializer
-    : assignment_expr		{
+    : assignment_expr       {
         $$.d = NULL;
     }
       /* it is enclosed because on linux kernel it overflows memory */
-    | '{' initializer_list '}'	{
+    | '{' initializer_list '}'  {
         $$.d = $2.d;
     }
-    | '{' initializer_list ',' '}'	{
+    | '{' initializer_list ',' '}'  {
         $$.d = $2.d;
     }
-    | error				{
+    | error             {
         $$.d = NULL;
 #if YYDEBUG
         char buffer[100];
@@ -1434,27 +1489,27 @@ designation_opt
     :                           {
         $$.d = NULL;
     }
-    | designator_list '='		{
+    | designator_list '='       {
         $$.d = StackMemoryAlloc(IdList);
         fillIdList($$.d, *$1.d, $1.d->name, TypeDefault, NULL);
     }
     ;
 
 designator_list
-    : designator					{
+    : designator                    {
         $$.d = $1.d;
     }
-    | designator_list designator	{
+    | designator_list designator    {
         LIST_APPEND(Id, $1.d, $2.d);
     }
     ;
 
 designator
-    : '[' constant_expr ']'		{
+    : '[' constant_expr ']'     {
         $$.d = StackMemoryAlloc(Id);
         fillId($$.d, "", NULL, s_noPos);
     }
-    | '.' str_rec_identifier	{
+    | '.' str_rec_identifier    {
         $$.d = StackMemoryAlloc(Id);
         *($$.d) = *($2.d);
     }
@@ -1711,7 +1766,7 @@ static void addYaccSymbolReference(Id *name, int usage) {
 
 static void addRuleLocalVariable(Id *name, int order) {
     Symbol *p,*ss;
-    char	*nn;
+    char    *nn;
 
     if (l_yaccUnion!=NULL) {
         p = name->symbol;
@@ -1731,13 +1786,13 @@ static void addRuleLocalVariable(Id *name, int order) {
 }
 
 static S_completionFunTab completionsTab[]  = {
-    {COMPL_TYPE_NAME,		completeTypes},
-    {COMPL_STRUCT_NAME,		completeStructs},
-    {COMPL_STRUCT_REC_NAME,	completeRecNames},
-    {COMPL_ENUM_NAME,		completeEnums},
-    {COMPL_LABEL_NAME,		completeLabels},
-    {COMPL_OTHER_NAME,		completeOthers},
-    {COMPL_YACC_LEXEM_NAME,	completeYaccLexem},
+    {COMPL_TYPE_NAME,       completeTypes},
+    {COMPL_STRUCT_NAME,     completeStructs},
+    {COMPL_STRUCT_REC_NAME, completeRecNames},
+    {COMPL_ENUM_NAME,       completeEnums},
+    {COMPL_LABEL_NAME,      completeLabels},
+    {COMPL_OTHER_NAME,      completeOthers},
+    {COMPL_YACC_LEXEM_NAME, completeYaccLexem},
     {0,NULL}
 };
 

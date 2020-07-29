@@ -247,7 +247,7 @@
 %%
 
 primary_expr
-    : IDENTIFIER			{
+    : IDENTIFIER            {
         Symbol *p;
         Symbol *dd;
         p = $1.d->symbol;
@@ -274,25 +274,25 @@ primary_expr
             $$.d.reference = addCxReference(dd, &$1.d->p, UsageUsed, noFileIndex, noFileIndex);
         }
     }
-    | CHAR_LITERAL			{ $$.d.typeModifier = newSimpleTypeModifier(TypeInt); $$.d.reference = NULL;}
-    | CONSTANT				{ $$.d.typeModifier = newSimpleTypeModifier(TypeInt); $$.d.reference = NULL;}
-    | LONG_CONSTANT			{ $$.d.typeModifier = newSimpleTypeModifier(TypeLong); $$.d.reference = NULL;}
-    | FLOAT_CONSTANT		{ $$.d.typeModifier = newSimpleTypeModifier(TypeFloat); $$.d.reference = NULL;}
-    | DOUBLE_CONSTANT		{ $$.d.typeModifier = newSimpleTypeModifier(TypeDouble); $$.d.reference = NULL;}
-    | string_literals		{
+    | CHAR_LITERAL          { $$.d.typeModifier = newSimpleTypeModifier(TypeInt); $$.d.reference = NULL;}
+    | CONSTANT              { $$.d.typeModifier = newSimpleTypeModifier(TypeInt); $$.d.reference = NULL;}
+    | LONG_CONSTANT         { $$.d.typeModifier = newSimpleTypeModifier(TypeLong); $$.d.reference = NULL;}
+    | FLOAT_CONSTANT        { $$.d.typeModifier = newSimpleTypeModifier(TypeFloat); $$.d.reference = NULL;}
+    | DOUBLE_CONSTANT       { $$.d.typeModifier = newSimpleTypeModifier(TypeDouble); $$.d.reference = NULL;}
+    | string_literals       {
         TypeModifier *p;
         p = newSimpleTypeModifier(TypeChar);
         $$.d.typeModifier = newPointerTypeModifier(p);
         $$.d.reference = NULL;
     }
-    | '(' expr ')'			{
+    | '(' expr ')'          {
         $$.d = $2.d;
     }
-    | '(' compound_statement ')'			{       /* GNU's shit */
+    | '(' compound_statement ')'            {       /* GNU's shit */
         $$.d.typeModifier = &s_errorModifier;
         $$.d.reference = NULL;
     }
-    | COMPL_OTHER_NAME		{ assert(0); /* token never used */ }
+    | COMPL_OTHER_NAME      { assert(0); /* token never used */ }
     ;
 
 string_literals
@@ -301,8 +301,8 @@ string_literals
     ;
 
 postfix_expr
-    : primary_expr								/*& { $$.d = $1.d; } &*/
-    | postfix_expr '[' expr ']'					{
+    : primary_expr                              /*& { $$.d = $1.d; } &*/
+    | postfix_expr '[' expr ']'                 {
         if ($1.d.typeModifier->kind==TypePointer || $1.d.typeModifier->kind==TypeArray) $$.d.typeModifier=$1.d.typeModifier->next;
         else if ($3.d.typeModifier->kind==TypePointer || $3.d.typeModifier->kind==TypeArray) $$.d.typeModifier=$3.d.typeModifier->next;
         else $$.d.typeModifier = &s_errorModifier;
@@ -310,17 +310,16 @@ postfix_expr
         assert($$.d.typeModifier);
     }
 /*
-  TODO: Why is this commented out?
-
-    | postfix_expr '(' ')'						{
-        if ($1.d.t->m==TypeFunction) {
-            $$.d.t=$1.d.t->next;
-            handleInvocationParamPositions($1.d.r, &$2.d, NULL, &$3.d, 0);
+  Replaced by optional arguments in "postfix_expr '(' argument_expr_list_opt ')' ...
+    | postfix_expr '(' ')'                      {
+        if ($1.d.typeModifier->kind==TypeFunction) {
+            $$.d.typeModifier=$1.d.typeModifier->next;
+            handleInvocationParamPositions($1.d.reference, &$2.d, NULL, &$3.d, 0);
         } else {
-            $$.d.t = &s_errorModifier;
+            $$.d.typeModifier = &s_errorModifier;
         }
-        $$.d.r = NULL;
-        assert($$.d.t);
+        $$.d.reference = NULL;
+        assert($$.d.typeModifier);
     }
 */
     | postfix_expr
@@ -328,7 +327,7 @@ postfix_expr
                 $<typeModifier>$ = s_upLevelFunctionCompletionType;
                 s_upLevelFunctionCompletionType = $1.d.typeModifier;
             }
-      '(' argument_expr_list_opt ')'	{
+      '(' argument_expr_list_opt ')'    {
         s_upLevelFunctionCompletionType = $<typeModifier>2;
         if ($1.d.typeModifier->kind==TypeFunction) {
             $$.d.typeModifier=$1.d.typeModifier->next;
@@ -343,14 +342,14 @@ postfix_expr
         $$.d.reference = NULL;
         assert($$.d.typeModifier);
     }
-    | postfix_expr {SetDirectStructureCompletionType($1.d.typeModifier);} '.' str_rec_identifier		{
+    | postfix_expr {SetDirectStructureCompletionType($1.d.typeModifier);} '.' str_rec_identifier        {
         Symbol *rec=NULL;
         $$.d.reference = findStructureFieldFromType($1.d.typeModifier, $4.d, &rec, CLASS_TO_ANY);
         assert(rec);
         $$.d.typeModifier = rec->u.type;
         assert($$.d.typeModifier);
     }
-    | postfix_expr {SetIndirectStructureCompletionType($1.d.typeModifier);} PTR_OP str_rec_identifier	{
+    | postfix_expr {SetIndirectStructureCompletionType($1.d.typeModifier);} PTR_OP str_rec_identifier   {
         Symbol *rec=NULL;
         $$.d.reference = NULL;
         if ($1.d.typeModifier->kind==TypePointer || $1.d.typeModifier->kind==TypeArray) {
@@ -360,11 +359,11 @@ postfix_expr
         } else $$.d.typeModifier = &s_errorModifier;
         assert($$.d.typeModifier);
     }
-    | postfix_expr INC_OP						{
+    | postfix_expr INC_OP                       {
         $$.d.typeModifier = $1.d.typeModifier;
         RESET_REFERENCE_USAGE($1.d.reference, UsageAddrUsed);
     }
-    | postfix_expr DEC_OP						{
+    | postfix_expr DEC_OP                       {
         $$.d.typeModifier = $1.d.typeModifier;
         RESET_REFERENCE_USAGE($1.d.reference, UsageAddrUsed);
     }
@@ -372,7 +371,7 @@ postfix_expr
     ;
 
 compound_literal                /* Added in C99 */
-    : '(' type_name ')' '{' initializer_list optional_comma '}'		{
+    : '(' type_name ')' '{' initializer_list optional_comma '}'     {
         for (IdList *idList = $5.d; idList != NULL; idList = idList->next) {
             Symbol *rec=NULL;
             (void) findStructureFieldFromType($2.d, &idList->id, &rec, CLASS_TO_ANY);
@@ -388,64 +387,67 @@ optional_comma
     ;
 
 str_rec_identifier
-    : identifier				/*& { $$.d = $1.d; } &*/
-    | COMPL_STRUCT_REC_NAME		{ assert(0); /* token never used */ }
+    : identifier                /*& { $$.d = $1.d; } &*/
+    | COMPL_STRUCT_REC_NAME     { assert(0); /* token never used */ }
     ;
 
 argument_expr_list_opt
-    :											{
+    :                                           {
         $$.d = NULL;
     }
-    |	argument_expr_list			{
+    |   argument_expr_list          {
             $$.d = StackMemoryAlloc(PositionList);
             fillPositionList($$.d, s_noPos, $1.d);
         }
     ;
 
 argument_expr_list
-    : assignment_expr							{
+    : assignment_expr                           {
         $$.d = NULL;
     }
-    | argument_expr_list ',' assignment_expr	{
+    | argument_expr_list ',' assignment_expr    {
         $$.d = $1.d;
         appendPositionToList(&$$.d, &$2.d);
     }
-    | COMPL_UP_FUN_PROFILE							{/* never used */}
-    | argument_expr_list ',' COMPL_UP_FUN_PROFILE	{/* never used */}
+    | COMPL_UP_FUN_PROFILE                          {/* never used */}
+    | argument_expr_list ',' COMPL_UP_FUN_PROFILE   {/* never used */}
     ;
 
 unary_expr
-    : postfix_expr					/*& { $$.d = $1.d; } &*/
-    | INC_OP unary_expr				{
+    : postfix_expr                  /*& { $$.d = $1.d; } &*/
+    | INC_OP unary_expr             {
         $$.d.typeModifier = $2.d.typeModifier;
         RESET_REFERENCE_USAGE($2.d.reference, UsageAddrUsed);
     }
-    | DEC_OP unary_expr				{
+    | DEC_OP unary_expr             {
         $$.d.typeModifier = $2.d.typeModifier;
         RESET_REFERENCE_USAGE($2.d.reference, UsageAddrUsed);
     }
-    | unary_operator cast_expr		{ $$.d.typeModifier = $2.d.typeModifier; $$.d.reference = NULL;}
-    | '&' cast_expr					{
+    | unary_operator cast_expr      {
+        $$.d.typeModifier = $2.d.typeModifier;
+        $$.d.reference = NULL;
+      }
+    | '&' cast_expr                 {
         $$.d.typeModifier = newPointerTypeModifier($2.d.typeModifier);
         RESET_REFERENCE_USAGE($2.d.reference, UsageAddrUsed);
         $$.d.reference = NULL;
     }
-    | '*' cast_expr					{
+    | '*' cast_expr                 {
         if ($2.d.typeModifier->kind==TypePointer || $2.d.typeModifier->kind==TypeArray) $$.d.typeModifier=$2.d.typeModifier->next;
         else $$.d.typeModifier = &s_errorModifier;
         assert($$.d.typeModifier);
         $$.d.reference = NULL;
     }
-    | SIZEOF unary_expr				{
+    | SIZEOF unary_expr             {
         $$.d.typeModifier = newSimpleTypeModifier(TypeInt);
         $$.d.reference = NULL;
     }
-    | SIZEOF '(' type_name ')'		{
+    | SIZEOF '(' type_name ')'      {
         $$.d.typeModifier = newSimpleTypeModifier(TypeInt);
         $$.d.reference = NULL;
     }
     /* yet another GCC ext. */
-    | AND_OP identifier		{
+    | AND_OP identifier     {
         labelReference($2.d, UsageLvalUsed);
     }
     ;
@@ -458,37 +460,37 @@ unary_operator
     ;
 
 cast_expr
-    : unary_expr						/*& { $$.d = $1.d; } &*/
-    | '(' type_name ')' cast_expr		{
+    : unary_expr                        /*& { $$.d = $1.d; } &*/
+    | '(' type_name ')' cast_expr       {
         $$.d.typeModifier = $2.d;
         $$.d.reference = $4.d.reference;
     }
     ;
 
 multiplicative_expr
-    : cast_expr							/*& { $$.d = $1.d; } &*/
-    | multiplicative_expr '*' cast_expr	{
+    : cast_expr                         /*& { $$.d = $1.d; } &*/
+    | multiplicative_expr '*' cast_expr {
         $$.d.typeModifier = &s_defaultIntModifier;
         $$.d.reference = NULL;
     }
-    | multiplicative_expr '/' cast_expr	{
+    | multiplicative_expr '/' cast_expr {
         $$.d.typeModifier = &s_defaultIntModifier;
         $$.d.reference = NULL;
     }
-    | multiplicative_expr '%' cast_expr	{
+    | multiplicative_expr '%' cast_expr {
         $$.d.typeModifier = &s_defaultIntModifier;
         $$.d.reference = NULL;
     }
     ;
 
 additive_expr
-    : multiplicative_expr						/*& { $$.d = $1.d; } &*/
-    | additive_expr '+' multiplicative_expr		{
+    : multiplicative_expr                       /*& { $$.d = $1.d; } &*/
+    | additive_expr '+' multiplicative_expr     {
         if ($3.d.typeModifier->kind==TypePointer || $3.d.typeModifier->kind==TypeArray) $$.d.typeModifier = $3.d.typeModifier;
         else $$.d.typeModifier = $1.d.typeModifier;
         $$.d.reference = NULL;
     }
-    | additive_expr '-' multiplicative_expr		{
+    | additive_expr '-' multiplicative_expr     {
         if ($3.d.typeModifier->kind==TypePointer || $3.d.typeModifier->kind==TypeArray) $$.d.typeModifier = $3.d.typeModifier;
         else $$.d.typeModifier = $1.d.typeModifier;
         $$.d.reference = NULL;
@@ -496,105 +498,105 @@ additive_expr
     ;
 
 shift_expr
-    : additive_expr								/*& { $$.d = $1.d; } &*/
-    | shift_expr LEFT_OP additive_expr			{
+    : additive_expr                             /*& { $$.d = $1.d; } &*/
+    | shift_expr LEFT_OP additive_expr          {
         $$.d.typeModifier = &s_defaultIntModifier;
         $$.d.reference = NULL;
     }
-    | shift_expr RIGHT_OP additive_expr			{
+    | shift_expr RIGHT_OP additive_expr         {
         $$.d.typeModifier = &s_defaultIntModifier;
         $$.d.reference = NULL;
     }
     ;
 
 relational_expr
-    : shift_expr								/*& { $$.d = $1.d; } &*/
-    | relational_expr '<' shift_expr			{
+    : shift_expr                                /*& { $$.d = $1.d; } &*/
+    | relational_expr '<' shift_expr            {
         $$.d.typeModifier = &s_defaultIntModifier;
         $$.d.reference = NULL;
     }
-    | relational_expr '>' shift_expr			{
+    | relational_expr '>' shift_expr            {
         $$.d.typeModifier = &s_defaultIntModifier;
         $$.d.reference = NULL;
     }
-    | relational_expr LE_OP shift_expr			{
+    | relational_expr LE_OP shift_expr          {
         $$.d.typeModifier = &s_defaultIntModifier;
         $$.d.reference = NULL;
     }
-    | relational_expr GE_OP shift_expr			{
+    | relational_expr GE_OP shift_expr          {
         $$.d.typeModifier = &s_defaultIntModifier;
         $$.d.reference = NULL;
     }
     ;
 
 equality_expr
-    : relational_expr							/*& { $$.d = $1.d; } &*/
-    | equality_expr EQ_OP relational_expr		{
+    : relational_expr                           /*& { $$.d = $1.d; } &*/
+    | equality_expr EQ_OP relational_expr       {
         $$.d.typeModifier = &s_defaultIntModifier;
         $$.d.reference = NULL;
     }
-    | equality_expr NE_OP relational_expr		{
+    | equality_expr NE_OP relational_expr       {
         $$.d.typeModifier = &s_defaultIntModifier;
         $$.d.reference = NULL;
     }
     ;
 
 and_expr
-    : equality_expr								/*& { $$.d = $1.d; } &*/
-    | and_expr '&' equality_expr				{
+    : equality_expr                             /*& { $$.d = $1.d; } &*/
+    | and_expr '&' equality_expr                {
         $$.d.typeModifier = &s_defaultIntModifier;
         $$.d.reference = NULL;
     }
     ;
 
 exclusive_or_expr
-    : and_expr									/*& { $$.d = $1.d; } &*/
-    | exclusive_or_expr '^' and_expr			{
+    : and_expr                                  /*& { $$.d = $1.d; } &*/
+    | exclusive_or_expr '^' and_expr            {
         $$.d.typeModifier = &s_defaultIntModifier;
         $$.d.reference = NULL;
     }
     ;
 
 inclusive_or_expr
-    : exclusive_or_expr							/*& { $$.d = $1.d; } &*/
-    | inclusive_or_expr '|' exclusive_or_expr	{
+    : exclusive_or_expr                         /*& { $$.d = $1.d; } &*/
+    | inclusive_or_expr '|' exclusive_or_expr   {
         $$.d.typeModifier = &s_defaultIntModifier;
         $$.d.reference = NULL;
     }
     ;
 
 logical_and_expr
-    : inclusive_or_expr							/*& { $$.d = $1.d; } &*/
-    | logical_and_expr AND_OP inclusive_or_expr	{
+    : inclusive_or_expr                         /*& { $$.d = $1.d; } &*/
+    | logical_and_expr AND_OP inclusive_or_expr {
         $$.d.typeModifier = &s_defaultIntModifier;
         $$.d.reference = NULL;
     }
     ;
 
 logical_or_expr
-    : logical_and_expr							/*& { $$.d = $1.d; } &*/
-    | logical_or_expr OR_OP logical_and_expr	{
+    : logical_and_expr                          /*& { $$.d = $1.d; } &*/
+    | logical_or_expr OR_OP logical_and_expr    {
         $$.d.typeModifier = &s_defaultIntModifier;
         $$.d.reference = NULL;
     }
     ;
 
 conditional_expr
-    : logical_or_expr											/*& { $$.d = $1.d; } &*/
-    | logical_or_expr '?' logical_or_expr ':' conditional_expr	{
+    : logical_or_expr                                           /*& { $$.d = $1.d; } &*/
+    | logical_or_expr '?' logical_or_expr ':' conditional_expr  {
         $$.d.typeModifier = $3.d.typeModifier;
         $$.d.reference = NULL;
     }
     /* another GCC "improvement", grrr */
-    | logical_or_expr '?' ':' conditional_expr	{
+    | logical_or_expr '?' ':' conditional_expr  {
         $$.d.typeModifier = $4.d.typeModifier;
         $$.d.reference = NULL;
     }
     ;
 
 assignment_expr
-    : conditional_expr									/*& { $$.d = $1.d; } &*/
-    | unary_expr assignment_operator assignment_expr	{
+    : conditional_expr                                  /*& { $$.d = $1.d; } &*/
+    | unary_expr assignment_operator assignment_expr    {
         if ($1.d.reference != NULL && options.server_operation == OLO_EXTRACT) {
             Reference *rr;
             rr = duplicateReference($1.d.reference);
@@ -616,22 +618,22 @@ assignment_expr
     ;
 
 assignment_operator
-    : '='					{$$.d = '=';}
-    | MUL_ASSIGN			{$$.d = MUL_ASSIGN;}
-    | DIV_ASSIGN			{$$.d = DIV_ASSIGN;}
-    | MOD_ASSIGN			{$$.d = MOD_ASSIGN;}
-    | ADD_ASSIGN			{$$.d = ADD_ASSIGN;}
-    | SUB_ASSIGN			{$$.d = SUB_ASSIGN;}
-    | LEFT_ASSIGN			{$$.d = LEFT_ASSIGN;}
-    | RIGHT_ASSIGN			{$$.d = RIGHT_ASSIGN;}
-    | AND_ASSIGN			{$$.d = AND_ASSIGN;}
-    | XOR_ASSIGN			{$$.d = XOR_ASSIGN;}
-    | OR_ASSIGN				{$$.d = OR_ASSIGN;}
+    : '='                   {$$.d = '=';}
+    | MUL_ASSIGN            {$$.d = MUL_ASSIGN;}
+    | DIV_ASSIGN            {$$.d = DIV_ASSIGN;}
+    | MOD_ASSIGN            {$$.d = MOD_ASSIGN;}
+    | ADD_ASSIGN            {$$.d = ADD_ASSIGN;}
+    | SUB_ASSIGN            {$$.d = SUB_ASSIGN;}
+    | LEFT_ASSIGN           {$$.d = LEFT_ASSIGN;}
+    | RIGHT_ASSIGN          {$$.d = RIGHT_ASSIGN;}
+    | AND_ASSIGN            {$$.d = AND_ASSIGN;}
+    | XOR_ASSIGN            {$$.d = XOR_ASSIGN;}
+    | OR_ASSIGN             {$$.d = OR_ASSIGN;}
     ;
 
 expr
-    : assignment_expr							/*& { $$.d = $1.d; } &*/
-    | expr ',' assignment_expr					{
+    : assignment_expr                           /*& { $$.d = $1.d; } &*/
+    | expr ',' assignment_expr                  {
         $$.d.typeModifier = $3.d.typeModifier;
         $$.d.reference = NULL;
     }
@@ -648,8 +650,8 @@ Sv_tmp
     ;
 
 declaration
-    : Sv_tmp declaration_specifiers ';'		{ tmpWorkMemoryi = $1.d; }
-    | Sv_tmp init_declarations ';'			{ tmpWorkMemoryi = $1.d; }
+    : Sv_tmp declaration_specifiers ';'     { tmpWorkMemoryi = $1.d; }
+    | Sv_tmp init_declarations ';'          { tmpWorkMemoryi = $1.d; }
     | error
         {
 #if YYDEBUG
@@ -661,15 +663,15 @@ declaration
     ;
 
 init_declarations
-    : declaration_specifiers init_declarator eq_initializer_opt	{
+    : declaration_specifiers init_declarator eq_initializer_opt {
         $$.d = $1.d;
         addNewDeclaration($1.d, $2.d, $3.d, StorageAuto, s_symbolTable);
     }
-    | init_declarations ',' init_declarator eq_initializer_opt	{
+    | init_declarations ',' init_declarator eq_initializer_opt  {
         $$.d = $1.d;
         addNewDeclaration($1.d, $3.d, $4.d, StorageAuto, s_symbolTable);
     }
-    | error												{
+    | error                                             {
         /* $$.d = &s_errorSymbol; */
         $$.d = typeSpecifier2(&s_errorModifier);
 #if YYDEBUG
@@ -686,7 +688,7 @@ declaration_specifiers
     ;
 
 user_defined_type
-    : TYPE_NAME												{
+    : TYPE_NAME                                             {
         int usage;
         $$.d = $1.d;
         assert(options.taskRegime);
@@ -701,60 +703,60 @@ user_defined_type
     ;
 
 declaration_specifiers0
-    : user_defined_type										{
+    : user_defined_type                                     {
         assert($1.d);
         assert($1.d->symbol);
         $$.d = typeSpecifier2($1.d->symbol->u.type);
     }
-    | type_specifier1										{
+    | type_specifier1                                       {
         $$.d  = typeSpecifier1($1.d);
     }
-    | type_specifier2										{
+    | type_specifier2                                       {
         $$.d  = typeSpecifier2($1.d);
     }
-    | declaration_modality_specifiers  user_defined_type	{
+    | declaration_modality_specifiers  user_defined_type    {
         assert($2.d);
         assert($2.d->symbol);
         $$.d = $1.d;
         declTypeSpecifier2($1.d,$2.d->symbol->u.type);
     }
-    | declaration_modality_specifiers type_specifier1		{
+    | declaration_modality_specifiers type_specifier1       {
         $$.d = $1.d;
         declTypeSpecifier1($1.d,$2.d);
     }
-    | declaration_modality_specifiers type_specifier2		{
+    | declaration_modality_specifiers type_specifier2       {
         $$.d = $1.d;
         declTypeSpecifier2($1.d,$2.d);
     }
-    | declaration_specifiers0 type_modality_specifier		{
+    | declaration_specifiers0 type_modality_specifier       {
         $$.d = $1.d;
         declTypeSpecifier1($1.d,$2.d);
     }
-    | declaration_specifiers0 type_specifier1				{
+    | declaration_specifiers0 type_specifier1               {
         $$.d = $1.d;
         declTypeSpecifier1($1.d,$2.d);
     }
-    | declaration_specifiers0 type_specifier2				{
+    | declaration_specifiers0 type_specifier2               {
         $$.d = $1.d;
         declTypeSpecifier2($1.d,$2.d);
     }
-    | declaration_specifiers0 storage_class_specifier		{
+    | declaration_specifiers0 storage_class_specifier       {
         $$.d = $1.d;
         $$.d->bits.storage = $2.d;
     }
-    | declaration_specifiers0 function_specifier			{
+    | declaration_specifiers0 function_specifier            {
         $$.d = $1.d;
     }
-    | COMPL_TYPE_NAME										{
+    | COMPL_TYPE_NAME                                       {
         assert(0);
     }
-    | declaration_modality_specifiers COMPL_TYPE_NAME		{
+    | declaration_modality_specifiers COMPL_TYPE_NAME       {
         assert(0); /* token never used */
     }
     ;
 
 declaration_modality_specifiers
-    : storage_class_specifier								{
+    : storage_class_specifier                               {
         $$.d  = typeSpecifier1(TypeDefault);
         $$.d->bits.storage = $1.d;
     }
@@ -762,16 +764,16 @@ declaration_modality_specifiers
         $$.d = $1.d;
         $$.d->bits.storage = $2.d;
     }
-    | type_modality_specifier								{
+    | type_modality_specifier                               {
         $$.d  = typeSpecifier1($1.d);
     }
-    | declaration_modality_specifiers type_modality_specifier		{
+    | declaration_modality_specifiers type_modality_specifier       {
         declTypeSpecifier1($1.d, $2.d);
     }
-    | function_specifier									{
+    | function_specifier                                    {
         $$.d = typeSpecifier1(TypeDefault);
     }
-    | declaration_modality_specifiers function_specifier			{
+    | declaration_modality_specifiers function_specifier            {
         $$.d = $1.d;
     }
     ;
@@ -780,14 +782,14 @@ declaration_modality_specifiers
 /* a gcc extension ? */
 asm_opt
     :
-    |	ASM_KEYWORD '(' string_literals ')'
+    |   ASM_KEYWORD '(' string_literals ')'
     ;
 
 eq_initializer_opt
     :                   {
         $$.d = NULL;
     }
-    | '=' initializer	{
+    | '=' initializer   {
         $$.d = $2.d;
     }
     ;
@@ -797,20 +799,20 @@ init_declarator
     ;
 
 storage_class_specifier
-    : TYPEDEF		{ $$.d = StorageTypedef; }
-    | EXTERN		{ $$.d = StorageExtern; }
-    | STATIC		{ $$.d = StorageStatic; }
-    | _THREADLOCAL	{ $$.d = StorageThreadLocal; }
-    | AUTO			{ $$.d = StorageAuto; }
-    | REGISTER		{ $$.d = StorageAuto; }
+    : TYPEDEF       { $$.d = StorageTypedef; }
+    | EXTERN        { $$.d = StorageExtern; }
+    | STATIC        { $$.d = StorageStatic; }
+    | _THREADLOCAL  { $$.d = StorageThreadLocal; }
+    | AUTO          { $$.d = StorageAuto; }
+    | REGISTER      { $$.d = StorageAuto; }
     ;
 
 type_modality_specifier
-    : CONST			{ $$.d = TypeDefault; }
-    | RESTRICT		{ $$.d = TypeDefault; }
-    | VOLATILE		{ $$.d = TypeDefault; }
-    | _ATOMIC		{ $$.d = TypeDefault; }
-    | ANONYME_MOD	{ $$.d = TypeDefault; }
+    : CONST         { $$.d = TypeDefault; }
+    | RESTRICT      { $$.d = TypeDefault; }
+    | VOLATILE      { $$.d = TypeDefault; }
+    | _ATOMIC       { $$.d = TypeDefault; }
+    | ANONYME_MOD   { $$.d = TypeDefault; }
     ;
 
 type_modality_specifier_opt
@@ -819,21 +821,21 @@ type_modality_specifier_opt
     ;
 
 type_specifier1
-    : CHAR		{ $$.d = TypeChar; }
-    | SHORT		{ $$.d = TmodShort; }
-    | INT		{ $$.d = TypeInt; }
-    | LONG		{ $$.d = TmodLong; }
-    | SIGNED	{ $$.d = TmodSigned; }
-    | UNSIGNED	{ $$.d = TmodUnsigned; }
-    | FLOAT		{ $$.d = TypeFloat; }
-    | DOUBLE	{ $$.d = TypeDouble; }
-    | VOID		{ $$.d = TypeVoid; }
-    | _BOOL		{ $$.d = TypeBoolean; }
+    : CHAR      { $$.d = TypeChar; }
+    | SHORT     { $$.d = TmodShort; }
+    | INT       { $$.d = TypeInt; }
+    | LONG      { $$.d = TmodLong; }
+    | SIGNED    { $$.d = TmodSigned; }
+    | UNSIGNED  { $$.d = TmodUnsigned; }
+    | FLOAT     { $$.d = TypeFloat; }
+    | DOUBLE    { $$.d = TypeDouble; }
+    | VOID      { $$.d = TypeVoid; }
+    | _BOOL     { $$.d = TypeBoolean; }
     ;
 
 type_specifier2
-    : struct_or_union_specifier		/*& { $$.d = $1.d; } &*/
-    | enum_specifier				/*& { $$.d = $1.d; } &*/
+    : struct_or_union_specifier     /*& { $$.d = $1.d; } &*/
+    | enum_specifier                /*& { $$.d = $1.d; } &*/
     ;
 
 function_specifier
@@ -842,7 +844,7 @@ function_specifier
     ;
 
 struct_or_union_specifier
-    : struct_or_union struct_identifier								{
+    : struct_or_union struct_identifier                             {
         int usage;
         if (nestingLevel() == 0)
             usage = USAGE_TOP_LEVEL_USED;
@@ -861,7 +863,7 @@ struct_or_union_specifier
     ;
 
 struct_or_union_define_specifier
-    : struct_or_union struct_identifier								{
+    : struct_or_union struct_identifier                             {
         $$.d = simpleStrUnionSpecifier($1.d, $2.d, UsageDefined);
     }
     | struct_or_union                                               {
@@ -870,18 +872,18 @@ struct_or_union_define_specifier
     ;
 
 struct_identifier
-    : identifier			/*& { $$.d = $1.d; } &*/
-    | COMPL_STRUCT_NAME		{ assert(0); /* token never used */ }
+    : identifier            /*& { $$.d = $1.d; } &*/
+    | COMPL_STRUCT_NAME     { assert(0); /* token never used */ }
     ;
 
 struct_or_union
-    : STRUCT		{ $$.d = $1.d; }
-    | UNION			{ $$.d = $1.d; }
+    : STRUCT        { $$.d = $1.d; }
+    | UNION         { $$.d = $1.d; }
     ;
 
 struct_declaration_list
-    : struct_declaration								/*& { $$.d = $1.d; } &*/
-    | struct_declaration_list struct_declaration		{
+    : struct_declaration                                /*& { $$.d = $1.d; } &*/
+    | struct_declaration_list struct_declaration        {
         if ($1.d == &s_errorSymbol || $1.d->bits.symType==TypeError) {
             $$.d = $2.d;
         } else if ($2.d == &s_errorSymbol || $1.d->bits.symType==TypeError)  {
@@ -903,7 +905,7 @@ struct_declaration
         $$.d = $3.d;
         tmpWorkMemoryi = $1.d;
     }
-    | error												{
+    | error                                             {
         $$.d = newSymbolAsCopyOf(&s_errorSymbol);
 #if YYDEBUG
         char buffer[100];
@@ -914,11 +916,11 @@ struct_declaration
     ;
 
 struct_declarator_list
-    : struct_declarator									{
+    : struct_declarator                                 {
         $$.d = $1.d;
         assert($$.d->next == NULL);
     }
-    | struct_declarator_list ',' struct_declarator		{
+    | struct_declarator_list ',' struct_declarator      {
         $$.d = $1.d;
         assert($3.d->next == NULL);
         LIST_APPEND(Symbol, $$.d, $3.d);
@@ -929,15 +931,15 @@ struct_declarator
     : /* gcc extension allow empty field */ {
         $$.d = createEmptyField();
     }
-    | ':' constant_expr				{
+    | ':' constant_expr             {
         $$.d = createEmptyField();
     }
-    | declarator					/*& { $$.d = $1.d; } &*/
-    | declarator ':' constant_expr	/*& { $$.d = $1.d; } &*/
+    | declarator                    /*& { $$.d = $1.d; } &*/
+    | declarator ':' constant_expr  /*& { $$.d = $1.d; } &*/
     ;
 
 enum_specifier
-    : ENUM enum_identifier									{
+    : ENUM enum_identifier                                  {
         int usage;
         if (nestingLevel() == 0)
             usage = USAGE_TOP_LEVEL_USED;
@@ -945,7 +947,7 @@ enum_specifier
             usage = UsageUsed;
         $$.d = simpleEnumSpecifier($2.d, usage);
     }
-    | enum_define_specifier '{' enumerator_list_comma '}'		{
+    | enum_define_specifier '{' enumerator_list_comma '}'       {
         assert($1.d && $1.d->kind == TypeEnum && $1.d->u.t);
         $$.d = $1.d;
         if ($$.d->u.t->u.enums==NULL) {
@@ -953,20 +955,20 @@ enum_specifier
             addToTrail(setToNull, & ($$.d->u.t->u.enums) );
         }
     }
-    | ENUM '{' enumerator_list_comma '}'						{
+    | ENUM '{' enumerator_list_comma '}'                        {
         $$.d = createNewAnonymousEnum($3.d);
     }
     ;
 
 enum_define_specifier
-    : ENUM enum_identifier									{
+    : ENUM enum_identifier                                  {
         $$.d = simpleEnumSpecifier($2.d, UsageDefined);
     }
     ;
 
 enum_identifier
-    : identifier			/*& { $$.d = $1.d; } &*/
-    | COMPL_ENUM_NAME		{ assert(0); /* token never used */ }
+    : identifier            /*& { $$.d = $1.d; } &*/
+    | COMPL_ENUM_NAME       { assert(0); /* token never used */ }
     ;
 
 enumerator_list_comma
@@ -975,25 +977,25 @@ enumerator_list_comma
     ;
 
 enumerator_list
-    : enumerator							{
+    : enumerator                            {
         $$.d = createDefinitionList($1.d);
     }
-    | enumerator_list ',' enumerator		{
+    | enumerator_list ',' enumerator        {
         $$.d = $1.d;
         LIST_APPEND(SymbolList, $$.d, createDefinitionList($3.d));
     }
     ;
 
 enumerator
-    : identifier							{
+    : identifier                            {
         $$.d = createSimpleDefinition(StorageConstant,TypeInt,$1.d);
         addNewSymbolDef($$.d,StorageConstant, s_symbolTable, UsageDefined);
     }
-    | identifier '=' constant_expr			{
+    | identifier '=' constant_expr          {
         $$.d = createSimpleDefinition(StorageConstant,TypeInt,$1.d);
         addNewSymbolDef($$.d,StorageConstant, s_symbolTable, UsageDefined);
     }
-    | error									{
+    | error                                 {
         $$.d = newSymbolAsCopyOf(&s_errorSymbol);
 #if YYDEBUG
         char buffer[100];
@@ -1001,12 +1003,12 @@ enumerator
         yyerror(buffer);
 #endif
     }
-    | COMPL_OTHER_NAME		{ assert(0); /* token never used */ }
+    | COMPL_OTHER_NAME      { assert(0); /* token never used */ }
     ;
 
 declarator
-    : declarator2										/*& { $$.d = $1.d; } &*/
-    | pointer declarator2								{
+    : declarator2                                       /*& { $$.d = $1.d; } &*/
+    | pointer declarator2                               {
         $$.d = $2.d;
         assert($$.d->bits.npointers == 0);
         $$.d->bits.npointers = $1.d;
@@ -1014,24 +1016,24 @@ declarator
     ;
 
 declarator2
-    : identifier										{
+    : identifier                                        {
         $$.d = newSymbol($1.d->name, $1.d->name, $1.d->p);
     }
-    | '(' declarator ')'								{
+    | '(' declarator ')'                                {
         $$.d = $2.d;
         unpackPointers($$.d);
     }
-    | declarator2 '[' ']'								{
+    | declarator2 '[' ']'                               {
         assert($1.d);
         $$.d = $1.d;
         AddComposedType($$.d, TypeArray);
     }
-    | declarator2 '[' constant_expr ']'					{
+    | declarator2 '[' constant_expr ']'                 {
         assert($1.d);
         $$.d = $1.d;
         AddComposedType($$.d, TypeArray);
     }
-    | declarator2 '(' ')'								{
+    | declarator2 '(' ')'                               {
         TypeModifier *p;
         assert($1.d);
         $$.d = $1.d;
@@ -1039,7 +1041,7 @@ declarator2
         initFunctionTypeModifier(&p->u.f , NULL);
         handleDeclaratorParamPositions($1.d, &$2.d, NULL, &$3.d, 0);
     }
-    | declarator2 '(' parameter_type_list ')'			{
+    | declarator2 '(' parameter_type_list ')'           {
         TypeModifier *p;
         assert($1.d);
         $$.d = $1.d;
@@ -1047,7 +1049,7 @@ declarator2
         initFunctionTypeModifier(&p->u.f , $3.d.s);
         handleDeclaratorParamPositions($1.d, &$2.d, $3.d.p, &$4.d, 1);
     }
-    | declarator2 '(' parameter_identifier_list ')'		{
+    | declarator2 '(' parameter_identifier_list ')'     {
         TypeModifier *p;
         assert($1.d);
         $$.d = $1.d;
@@ -1055,106 +1057,106 @@ declarator2
         initFunctionTypeModifier(&p->u.f , $3.d.s);
         handleDeclaratorParamPositions($1.d, &$2.d, $3.d.p, &$4.d, 1);
     }
-    | COMPL_OTHER_NAME		{ assert(0); /* token never used */ }
+    | COMPL_OTHER_NAME      { assert(0); /* token never used */ }
     ;
 
 pointer
-    : '*'									{
+    : '*'                                   {
         $$.d = 1;
     }
-    | '*' type_mod_specifier_list				{
+    | '*' type_mod_specifier_list               {
         $$.d = 1;
     }
-    | '*' pointer							{
+    | '*' pointer                           {
         $$.d = $2.d+1;
     }
-    | '*' type_mod_specifier_list pointer		{
+    | '*' type_mod_specifier_list pointer       {
         $$.d = $3.d+1;
     }
     ;
 
 type_mod_specifier_list
-    : type_modality_specifier									{
+    : type_modality_specifier                                   {
         $$.d  = typeSpecifier1($1.d);
     }
-    | type_mod_specifier_list type_modality_specifier			{
+    | type_mod_specifier_list type_modality_specifier           {
         declTypeSpecifier1($1.d, $2.d);
     }
     ;
 
 /*
 type_specifier_list
-    : type_specifier1									{
+    : type_specifier1                                   {
         $$.d  = typeSpecifier1($1.d);
     }
-    | type_specifier2									{
+    | type_specifier2                                   {
         $$.d  = typeSpecifier2($1.d);
     }
-    | type_specifier_list type_specifier1				{
+    | type_specifier_list type_specifier1               {
         declTypeSpecifier1($1.d, $2.d);
     }
-    | type_specifier_list type_specifier2				{
+    | type_specifier_list type_specifier2               {
         declTypeSpecifier2($1.d, $2.d);
     }
     ;
 */
 
 type_specifier_list
-    : type_mod_specifier_list						/*& { $$.d = $1.d; } &*/
-    | type_specifier_list0							/*& { $$.d = $1.d; } &*/
+    : type_mod_specifier_list                       /*& { $$.d = $1.d; } &*/
+    | type_specifier_list0                          /*& { $$.d = $1.d; } &*/
     ;
 
 type_specifier_list0
-    : user_defined_type										{
+    : user_defined_type                                     {
         assert($1.d);
         assert($1.d->symbol);
         assert($1.d->symbol);
         $$.d = typeSpecifier2($1.d->symbol->u.type);
     }
-    | type_specifier1										{
+    | type_specifier1                                       {
         $$.d  = typeSpecifier1($1.d);
     }
-    | type_specifier2										{
+    | type_specifier2                                       {
         $$.d  = typeSpecifier2($1.d);
     }
-    | type_mod_specifier_list user_defined_type				{
+    | type_mod_specifier_list user_defined_type             {
         assert($2.d);
         assert($2.d->symbol);
         assert($2.d->symbol);
         $$.d = $1.d;
         declTypeSpecifier2($1.d,$2.d->symbol->u.type);
     }
-    | type_mod_specifier_list type_specifier1		{
+    | type_mod_specifier_list type_specifier1       {
         $$.d = $1.d;
         declTypeSpecifier1($1.d,$2.d);
     }
-    | type_mod_specifier_list type_specifier2		{
+    | type_mod_specifier_list type_specifier2       {
         $$.d = $1.d;
         declTypeSpecifier2($1.d,$2.d);
     }
-    | type_specifier_list0 type_modality_specifier		{
+    | type_specifier_list0 type_modality_specifier      {
         $$.d = $1.d;
         declTypeSpecifier1($1.d,$2.d);
     }
-    | type_specifier_list0 type_specifier1				{
+    | type_specifier_list0 type_specifier1              {
         $$.d = $1.d;
         declTypeSpecifier1($1.d,$2.d);
     }
-    | type_specifier_list0 type_specifier2				{
+    | type_specifier_list0 type_specifier2              {
         $$.d = $1.d;
         declTypeSpecifier2($1.d,$2.d);
     }
-    | COMPL_TYPE_NAME										{
+    | COMPL_TYPE_NAME                                       {
         assert(0);
     }
-    | type_mod_specifier_list COMPL_TYPE_NAME		{
+    | type_mod_specifier_list COMPL_TYPE_NAME       {
         assert(0); /* token never used */
     }
     ;
 
 parameter_identifier_list
-    : identifier_list							/*& { $$.d = $1.d; } &*/
-    | identifier_list ',' ELIPSIS				{
+    : identifier_list                           /*& { $$.d = $1.d; } &*/
+    | identifier_list ',' ELIPSIS               {
         Symbol *symbol;
         Position pos;
         fillPosition(&pos, -1, 0, 0);
@@ -1169,25 +1171,25 @@ parameter_identifier_list
     ;
 
 identifier_list
-    : IDENTIFIER								{
+    : IDENTIFIER                                {
         Symbol *p;
         p = newSymbol($1.d->name, $1.d->name, $1.d->p);
         $$.d.s = p;
         $$.d.p = NULL;
     }
-    | identifier_list ',' identifier			{
+    | identifier_list ',' identifier            {
         Symbol        *p;
         p = newSymbol($3.d->name, $3.d->name, $3.d->p);
         $$.d = $1.d;
         LIST_APPEND(Symbol, $$.d.s, p);
         appendPositionToList(&$$.d.p, &$2.d);
     }
-    | COMPL_OTHER_NAME		{ assert(0); /* token never used */ }
+    | COMPL_OTHER_NAME      { assert(0); /* token never used */ }
     ;
 
 parameter_type_list
-    : parameter_list					/*& { $$.d = $1.d; } &*/
-    | parameter_list ',' ELIPSIS				{
+    : parameter_list                    /*& { $$.d = $1.d; } &*/
+    | parameter_list ',' ELIPSIS                {
         Symbol *symbol;
         Position position;
         fillPosition(&position, -1, 0, 0);
@@ -1202,11 +1204,11 @@ parameter_type_list
     ;
 
 parameter_list
-    : parameter_declaration							{
+    : parameter_declaration                         {
         $$.d.s = $1.d;
         $$.d.p = NULL;
     }
-    | parameter_list ',' parameter_declaration		{
+    | parameter_list ',' parameter_declaration      {
         $$.d = $1.d;
         LIST_APPEND(Symbol, $1.d.s, $3.d);
         appendPositionToList(&$$.d.p, &$2.d);
@@ -1215,14 +1217,14 @@ parameter_list
 
 
 parameter_declaration
-    : declaration_specifiers declarator			{
+    : declaration_specifiers declarator         {
         completeDeclarator($1.d, $2.d);
         $$.d = $2.d;
     }
-    | type_name									{
+    | type_name                                 {
         $$.d = newSymbolAsType(NULL, NULL, s_noPos, $1.d);
     }
-    | error										{
+    | error                                     {
         $$.d = newSymbolAsCopyOf(&s_errorSymbol);
 #if YYDEBUG
         char buffer[100];
@@ -1233,25 +1235,25 @@ parameter_declaration
     ;
 
 type_name
-    : declaration_specifiers						{
+    : declaration_specifiers                        {
         $$.d = $1.d->u.type;
     }
-    | declaration_specifiers abstract_declarator	{
+    | declaration_specifiers abstract_declarator    {
         $$.d = $2.d;
         LIST_APPEND(TypeModifier, $$.d, $1.d->u.type);
     }
     ;
 
 abstract_declarator
-    : pointer								{
+    : pointer                               {
         int i;
         $$.d = newPointerTypeModifier(NULL);
         for(i=1; i<$1.d; i++) appendComposedType(&($$.d), TypePointer);
     }
-    | abstract_declarator2					{
+    | abstract_declarator2                  {
         $$.d = $1.d;
     }
-    | pointer abstract_declarator2			{
+    | pointer abstract_declarator2          {
         int i;
         $$.d = $2.d;
         for(i=0; i<$1.d; i++) appendComposedType(&($$.d), TypePointer);
@@ -1259,36 +1261,36 @@ abstract_declarator
     ;
 
 abstract_declarator2
-    : '(' abstract_declarator ')'			{
+    : '(' abstract_declarator ')'           {
         $$.d = $2.d;
     }
-    | '[' ']'								{
+    | '[' ']'                               {
         $$.d  = newArrayTypeModifier();
     }
-    | '[' constant_expr ']'					{
+    | '[' constant_expr ']'                 {
         $$.d = newArrayTypeModifier();
     }
-    | abstract_declarator2 '[' ']'			{
+    | abstract_declarator2 '[' ']'          {
         $$.d = $1.d;
         appendComposedType(&($$.d), TypeArray);
     }
-    | abstract_declarator2 '[' constant_expr ']'	{
+    | abstract_declarator2 '[' constant_expr ']'    {
         $$.d = $1.d;
         appendComposedType(&($$.d), TypeArray);
     }
-    | '(' ')'										{
+    | '(' ')'                                       {
         $$.d = newFunctionTypeModifier(NULL, NULL, NULL, NULL);
     }
-    | '(' parameter_type_list ')'					{
+    | '(' parameter_type_list ')'                   {
         $$.d = newFunctionTypeModifier($2.d.s, NULL, NULL, NULL);
     }
-    | abstract_declarator2 '(' ')'					{
+    | abstract_declarator2 '(' ')'                  {
         TypeModifier *p;
         $$.d = $1.d;
         p = appendComposedType(&($$.d), TypeFunction);
         initFunctionTypeModifier(&p->u.f , NULL);
     }
-    | abstract_declarator2 '(' parameter_type_list ')'			{
+    | abstract_declarator2 '(' parameter_type_list ')'          {
         TypeModifier *p;
         $$.d = $1.d;
         p = appendComposedType(&($$.d), TypeFunction);
@@ -1300,17 +1302,17 @@ abstract_declarator2
     ;
 
 initializer
-    : assignment_expr		{
+    : assignment_expr       {
         $$.d = NULL;
     }
       /* it is enclosed because on linux kernel it overflows memory */
-    | '{' initializer_list '}'	{
+    | '{' initializer_list '}'  {
         $$.d = $2.d;
     }
-    | '{' initializer_list ',' '}'	{
+    | '{' initializer_list ',' '}'  {
         $$.d = $2.d;
     }
-    | error				{
+    | error             {
         $$.d = NULL;
 #if YYDEBUG
         char buffer[100];
@@ -1321,7 +1323,7 @@ initializer
     ;
 
 initializer_list
-    : Sv_tmp designation_opt Start_block initializer Stop_block	{
+    : Sv_tmp designation_opt Start_block initializer Stop_block {
         $$.d = $2.d;
         tmpWorkMemoryi = $1.d;
     }
@@ -1335,68 +1337,68 @@ designation_opt
     :                           {
         $$.d = NULL;
     }
-    | designator_list '='		{
+    | designator_list '='       {
         $$.d = StackMemoryAlloc(IdList);
         fillIdList($$.d, *$1.d, $1.d->name, TypeDefault, NULL);
     }
     ;
 
 designator_list
-    : designator					{
+    : designator                    {
         $$.d = $1.d;
     }
-    | designator_list designator	{
+    | designator_list designator    {
         LIST_APPEND(Id, $1.d, $2.d);
     }
     ;
 
 designator
-    : '[' constant_expr ']'		{
+    : '[' constant_expr ']'     {
         $$.d = StackMemoryAlloc(Id);
         fillId($$.d, "", NULL, s_noPos);
     }
-    | '.' str_rec_identifier	{
+    | '.' str_rec_identifier    {
         $$.d = StackMemoryAlloc(Id);
         *($$.d) = *($2.d);
     }
     ;
 
 statement
-    : Sv_tmp labeled_statement		{
+    : Sv_tmp labeled_statement      {
         tmpWorkMemoryi = $1.d;
     }
-    | Sv_tmp compound_statement		{
+    | Sv_tmp compound_statement     {
         tmpWorkMemoryi = $1.d;
     }
-    | Sv_tmp expression_statement		{
+    | Sv_tmp expression_statement       {
         tmpWorkMemoryi = $1.d;
     }
-    | Sv_tmp selection_statement		{
+    | Sv_tmp selection_statement        {
         tmpWorkMemoryi = $1.d;
     }
-    | Sv_tmp iteration_statement		{
+    | Sv_tmp iteration_statement        {
         tmpWorkMemoryi = $1.d;
     }
-    | Sv_tmp jump_statement		{
+    | Sv_tmp jump_statement     {
         tmpWorkMemoryi = $1.d;
     }
-    | Sv_tmp asm_statement		{
+    | Sv_tmp asm_statement      {
         tmpWorkMemoryi = $1.d;
     }
-    | Sv_tmp error	{
+    | Sv_tmp error  {
         tmpWorkMemoryi = $1.d;
     }
     ;
 
 label
     :   label_def_name ':'
-    |	CASE constant_expr ':' {
+    |   CASE constant_expr ':' {
             generateSwitchCaseFork(false);
     }
-    |	CASE constant_expr ELIPSIS constant_expr ':' {
+    |   CASE constant_expr ELIPSIS constant_expr ':' {
             generateSwitchCaseFork(false);
     }
-    |	DEFAULT ':' {
+    |   DEFAULT ':' {
             generateSwitchCaseFork(false);
     }
     ;
@@ -1409,14 +1411,14 @@ label_def_name
     : identifier            {
         labelReference($1.d,UsageDefined);
     }
-    | COMPL_LABEL_NAME		{ assert(0); /* token never used */ }
+    | COMPL_LABEL_NAME      { assert(0); /* token never used */ }
     ;
 
 label_name
     : identifier            {
         labelReference($1.d,UsageUsed);
     }
-    | COMPL_LABEL_NAME		{ assert(0); /* token never used */ }
+    | COMPL_LABEL_NAME      { assert(0); /* token never used */ }
     ;
 
 compound_statement
@@ -1430,14 +1432,14 @@ compound_statement
 
 label_decls_opt
     :
-    |	label_decls
+    |   label_decls
     ;
 
 label_decls
     :   LABEL identifier {
         labelReference($2.d,UsageDeclared);
     }
-    |	label_decls LABEL identifier {
+    |   label_decls LABEL identifier {
         labelReference($3.d,UsageDeclared);
     }
     ;
@@ -1462,8 +1464,8 @@ statement_list
     ;
 
 maybe_expr
-    :					{ $$.d.typeModifier = NULL; $$.d.reference = NULL; }
-    | expr				{ $$.d = $1.d; }
+    :                   { $$.d.typeModifier = NULL; $$.d.reference = NULL; }
+    | expr              { $$.d = $1.d; }
     ;
 
 expression_statement
@@ -1474,22 +1476,22 @@ expression_statement
 _ncounter_:  {EXTRACT_COUNTER_SEMACT($$.d);}
     ;
 
-_nlabel_:	{EXTRACT_LABEL_SEMACT($$.d);}
+_nlabel_:   {EXTRACT_LABEL_SEMACT($$.d);}
     ;
 
-_ngoto_:	{EXTRACT_GOTO_SEMACT($$.d);}
+_ngoto_:    {EXTRACT_GOTO_SEMACT($$.d);}
     ;
 
-_nfork_:	{EXTRACT_FORK_SEMACT($$.d);}
+_nfork_:    {EXTRACT_FORK_SEMACT($$.d);}
     ;
 
 selection_statement
-    : IF '(' expr ')' _nfork_ statement						{
+    : IF '(' expr ')' _nfork_ statement                     {
         generateInternalLabelReference($5.d, UsageDefined);
     }
     | IF '(' expr ')' _nfork_ statement ELSE _ngoto_ {
         generateInternalLabelReference($5.d, UsageDefined);
-    }	statement								{
+    }   statement                               {
         generateInternalLabelReference($8.d, UsageDefined);
     }
     | SWITCH '(' expr ')' /*5*/ _ncounter_  {/*6*/
@@ -1497,7 +1499,7 @@ selection_statement
     } {/*7*/
         $<symbol>$ = addContinueBreakLabelSymbol($5.d, BREAK_LABEL_NAME);
         generateInternalLabelReference($5.d, UsageFork);
-    } statement					{
+    } statement                 {
         generateSwitchCaseFork(true);
         ExtrDeleteContBreakSym($<symbol>7);
         ExtrDeleteContBreakSym($<symbol>6);
@@ -1506,7 +1508,7 @@ selection_statement
     ;
 
 for1maybe_expr
-    : maybe_expr			{s_forCompletionType=$1.d;}
+    : maybe_expr            {s_forCompletionType=$1.d;}
     ;
 
 iteration_statement
@@ -1515,7 +1517,7 @@ iteration_statement
         $<symbol>$ = addContinueBreakLabelSymbol($2.d, CONTINUE_LABEL_NAME);
     } {/*8*/
         $<symbol>$ = addContinueBreakLabelSymbol($6.d, BREAK_LABEL_NAME);
-    } statement					{
+    } statement                 {
         ExtrDeleteContBreakSym($<symbol>8);
         ExtrDeleteContBreakSym($<symbol>7);
         generateInternalLabelReference($2.d, UsageUsed);
@@ -1530,7 +1532,7 @@ iteration_statement
         ExtrDeleteContBreakSym($<symbol>6);
         ExtrDeleteContBreakSym($<symbol>5);
         generateInternalLabelReference($3.d, UsageDefined);
-    } '(' expr ')' ';'			{
+    } '(' expr ')' ';'          {
         generateInternalLabelReference($2.d, UsageFork);
         generateInternalLabelReference($4.d, UsageDefined);
     }
@@ -1560,21 +1562,21 @@ iteration_statement
 
 jump_statement
     : GOTO label_name ';'
-    | CONTINUE ';'			{
+    | CONTINUE ';'          {
         genContinueBreakReference(CONTINUE_LABEL_NAME);
     }
-    | BREAK ';'				{
+    | BREAK ';'             {
         genContinueBreakReference(BREAK_LABEL_NAME);
     }
-    | RETURN ';'			{
+    | RETURN ';'            {
         generateInternalLabelReference(-1, UsageUsed);
     }
-    | RETURN expr ';'		{
+    | RETURN expr ';'       {
         generateInternalLabelReference(-1, UsageUsed);
     }
     ;
 
-_bef_:			{
+_bef_:          {
         actionsBeforeAfterExternalDefinition();
     }
     ;
@@ -1584,30 +1586,30 @@ _bef_:			{
 
 gcc_asm_symbolic_name_opt
     :
-    |	'[' IDENTIFIER ']'
+    |   '[' IDENTIFIER ']'
     ;
 
 gcc_asm_item_opt
     :
-    |	gcc_asm_symbolic_name_opt IDENTIFIER
-    |	gcc_asm_symbolic_name_opt IDENTIFIER '(' expr ')'
-    |	gcc_asm_symbolic_name_opt string_literals
-    |	gcc_asm_symbolic_name_opt string_literals '(' expr ')'
+    |   gcc_asm_symbolic_name_opt IDENTIFIER
+    |   gcc_asm_symbolic_name_opt IDENTIFIER '(' expr ')'
+    |   gcc_asm_symbolic_name_opt string_literals
+    |   gcc_asm_symbolic_name_opt string_literals '(' expr ')'
     ;
 
 gcc_asm_item_list
     :   gcc_asm_item_opt
-    |	gcc_asm_item_list ',' gcc_asm_item_opt
+    |   gcc_asm_item_list ',' gcc_asm_item_opt
     ;
 
 gcc_asm_oper
     :   ':' gcc_asm_item_list
-    |	gcc_asm_oper ':' gcc_asm_item_list
+    |   gcc_asm_oper ':' gcc_asm_item_list
     ;
 
 asm_statement
     :   ASM_KEYWORD type_modality_specifier_opt '(' expr ')' ';'
-    |	ASM_KEYWORD type_modality_specifier_opt '(' expr gcc_asm_oper ')' ';'
+    |   ASM_KEYWORD type_modality_specifier_opt '(' expr gcc_asm_oper ')' ';'
     ;
 
 /* *********************************************************************** */
@@ -1618,7 +1620,7 @@ file
     ;
 
 cached_external_definition_list
-    : external_definition				{
+    : external_definition               {
         if (includeStackPointer == 0) {
             placeCachePoint(true);
         }
@@ -1632,10 +1634,10 @@ cached_external_definition_list
     ;
 
 external_definition
-    : Sv_tmp declaration_specifiers ';'		{
+    : Sv_tmp declaration_specifiers ';'     {
         tmpWorkMemoryi = $1.d;
     }
-    | Sv_tmp top_init_declarations ';'		{
+    | Sv_tmp top_init_declarations ';'      {
         tmpWorkMemoryi = $1.d;
     }
     | Sv_tmp function_definition_head {
@@ -1666,10 +1668,10 @@ external_definition
             htmlAddFunctionSeparatorReference();
         }
     }
-    | Sv_tmp EXTERN STRING_LITERAL  external_definition	{
+    | Sv_tmp EXTERN STRING_LITERAL  external_definition {
         tmpWorkMemoryi = $1.d;
     }
-    | Sv_tmp EXTERN STRING_LITERAL  '{' cached_external_definition_list	'}' {
+    | Sv_tmp EXTERN STRING_LITERAL  '{' cached_external_definition_list '}' {
         tmpWorkMemoryi = $1.d;
     }
     | Sv_tmp ASM_KEYWORD '(' expr ')' ';'       {
@@ -1687,27 +1689,27 @@ external_definition
     ;
 
 top_init_declarations
-    : declaration_specifiers init_declarator eq_initializer_opt			{
+    : declaration_specifiers init_declarator eq_initializer_opt         {
         $$.d = $1.d;
         addNewDeclaration($1.d, $2.d, $3.d, StorageExtern,s_symbolTable);
     }
-    | init_declarator eq_initializer_opt						{
+    | init_declarator eq_initializer_opt                        {
         $$.d = & s_defaultIntDefinition;
         addNewDeclaration($$.d, $1.d, $2.d, StorageExtern,s_symbolTable);
     }
-    | top_init_declarations ',' init_declarator eq_initializer_opt			{
+    | top_init_declarations ',' init_declarator eq_initializer_opt          {
         $$.d = $1.d;
         addNewDeclaration($1.d, $3.d, $4.d, StorageExtern,s_symbolTable);
     }
-    | error										{
+    | error                                     {
         /* $$.d = &s_errorSymbol; */
         $$.d = typeSpecifier2(&s_errorModifier);
     }
     ;
 
 function_definition_head
-    : function_head_declaration							/*& { $$.d = $1.d; } &*/
-    | function_definition_head fun_arg_declaration		{
+    : function_head_declaration                         /*& { $$.d = $1.d; } &*/
+    | function_definition_head fun_arg_declaration      {
         int r;
         assert($1.d->u.type && $1.d->u.type->kind == TypeFunction);
         r = mergeArguments($1.d->u.type->u.f.args, $2.d);
@@ -1717,10 +1719,10 @@ function_definition_head
     ;
 
 fun_arg_declaration
-    : declaration_specifiers ';'								{
+    : declaration_specifiers ';'                                {
         $$.d = NULL;
     }
-    | declaration_specifiers fun_arg_init_declarations ';'		{
+    | declaration_specifiers fun_arg_init_declarations ';'      {
         Symbol *p;
         assert($1.d && $2.d);
         for(p=$2.d; p!=NULL; p=p->next) {
@@ -1731,26 +1733,26 @@ fun_arg_declaration
     ;
 
 fun_arg_init_declarations
-    : init_declarator eq_initializer_opt			{
+    : init_declarator eq_initializer_opt            {
         $$.d = $1.d;
     }
-    | fun_arg_init_declarations ',' init_declarator eq_initializer_opt				{
+    | fun_arg_init_declarations ',' init_declarator eq_initializer_opt              {
         $$.d = $1.d;
         LIST_APPEND(Symbol, $$.d, $3.d);
     }
-    | fun_arg_init_declarations ',' error						{
+    | fun_arg_init_declarations ',' error                       {
         $$.d = $1.d;
     }
     ;
 
 function_head_declaration
-    : declarator							{
+    : declarator                            {
         completeDeclarator(&s_defaultIntDefinition, $1.d);
         assert($1.d && $1.d->u.type);
         if ($1.d->u.type->kind != TypeFunction) YYERROR;
         $$.d = $1.d;
     }
-    | declaration_specifiers declarator		{
+    | declaration_specifiers declarator     {
         completeDeclarator($1.d, $2.d);
         assert($2.d && $2.d->u.type);
         if ($2.d->u.type->kind != TypeFunction) YYERROR;
@@ -1759,34 +1761,34 @@ function_head_declaration
     ;
 
 
-Start_block:	{ stackMemoryBlockStart(); }
+Start_block:    { stackMemoryBlockStart(); }
     ;
 
-Stop_block:		{ stackMemoryBlockFree(); }
+Stop_block:     { stackMemoryBlockFree(); }
     ;
 
 identifier
     : IDENTIFIER    /*& { $$.d = $1.d; } &*/
-    | TYPE_NAME		/*& { $$.d = $1.d; } &*/
+    | TYPE_NAME     /*& { $$.d = $1.d; } &*/
     ;
 
 %%
 
 
 static S_completionFunTab spCompletionsTab[]  = {
-    {COMPL_FOR_SPECIAL1,	completeForSpecial1},
-    {COMPL_FOR_SPECIAL2,	completeForSpecial2},
-    {COMPL_UP_FUN_PROFILE,	completeUpFunProfile},
+    {COMPL_FOR_SPECIAL1,    completeForSpecial1},
+    {COMPL_FOR_SPECIAL2,    completeForSpecial2},
+    {COMPL_UP_FUN_PROFILE,  completeUpFunProfile},
     {0,NULL}
 };
 
 static S_completionFunTab completionsTab[]  = {
-    {COMPL_TYPE_NAME,		completeTypes},
-    {COMPL_STRUCT_NAME,		completeStructs},
-    {COMPL_STRUCT_REC_NAME,	completeRecNames},
-    {COMPL_ENUM_NAME,		completeEnums},
-    {COMPL_LABEL_NAME,		completeLabels},
-    {COMPL_OTHER_NAME,		completeOthers},
+    {COMPL_TYPE_NAME,       completeTypes},
+    {COMPL_STRUCT_NAME,     completeStructs},
+    {COMPL_STRUCT_REC_NAME, completeRecNames},
+    {COMPL_ENUM_NAME,       completeEnums},
+    {COMPL_LABEL_NAME,      completeLabels},
+    {COMPL_OTHER_NAME,      completeOthers},
     {0,NULL}
 };
 
