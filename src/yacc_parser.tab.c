@@ -292,7 +292,6 @@ typedef union {
 #define IDENT_NO_CPP_EXPAND 454
 #define CHAR_LITERAL 455
 #define LAST_TOKEN 456
-#define eq_initializer_opt 457
 #define YYERRCODE 256
 short yacc_yylhs[] = {                                        -1,
    75,   77,    0,   74,   74,   79,   81,   79,   79,   84,
@@ -1854,7 +1853,7 @@ short yacc_yycheck[] = {                                     161,
 #ifndef YYDEBUG
 #define YYDEBUG 0
 #endif
-#define YYMAXTOKEN 457
+#define YYMAXTOKEN 456
 #if YYDEBUG
 char *yacc_yyname[] = {
 "end-of-file",0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,
@@ -1902,7 +1901,7 @@ char *yacc_yyname[] = {
 "TMP_TOKEN1","TMP_TOKEN2","CCC_OPER_PARENTHESIS","CCC_OPER_BRACKETS",
 "MULTI_TOKENS_START","IDENTIFIER","CONSTANT","LONG_CONSTANT","FLOAT_CONSTANT",
 "DOUBLE_CONSTANT","STRING_LITERAL","LINE_TOK","IDENT_TO_COMPLETE","CPP_MAC_ARG",
-"IDENT_NO_CPP_EXPAND","CHAR_LITERAL","LAST_TOKEN","eq_initializer_opt",
+"IDENT_NO_CPP_EXPAND","CHAR_LITERAL","LAST_TOKEN",
 };
 char *yacc_yyrule[] = {
 "$accept : yaccfile",
@@ -2533,7 +2532,7 @@ void makeYaccCompletions(char *s, int len, Position *pos) {
         }
     }
 }
-#line 2537 "yacc_parser.tab.c"
+#line 2536 "yacc_parser.tab.c"
 #define YYABORT goto yyabort
 #define YYREJECT goto yyabort
 #define YYACCEPT goto yyaccept
@@ -4333,7 +4332,7 @@ case 502:
 #line 1685 "yacc_parser.y"
 { stackMemoryBlockFree(); }
 break;
-#line 4337 "yacc_parser.tab.c"
+#line 4336 "yacc_parser.tab.c"
     }
     yyssp -= yym;
     yystate = *yyssp;

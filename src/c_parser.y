@@ -1,4 +1,6 @@
 /*
+  Our yacc does not support %expect, but this should be it for the C grammar
+
   %expect 7
   %expect-rr 34
 

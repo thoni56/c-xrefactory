@@ -1,3 +1,12 @@
+/*
+  Our yacc does not support %expect, but this should be it for the Yacc grammar
+
+  %expect 25
+  %expect-rr 35
+
+../../../byacc-1.9/yacc: 7 shift/reduce conflicts, 28 reduce/reduce conflicts.
+
+*/
 %{
 
 #define yacc_yylex yylex
@@ -207,7 +216,7 @@ static void addYaccSymbolReference(Id *name, int usage);
 %type <ast_id> str_rec_identifier STRUCT UNION struct_or_union
 %type <ast_id> user_defined_type TYPE_NAME lexem
 %type <ast_id> designator, designator_list
-%type <ast_idList> designation_opt, initializer, initializer_list, eq_initializer_opt
+%type <ast_idList> designation_opt, initializer, initializer_list
 %type <ast_integer> pointer CONSTANT rule_body
 %type <ast_unsigned> storage_class_specifier type_specifier1
 %type <ast_unsigned> type_modality_specifier Sv_tmp
