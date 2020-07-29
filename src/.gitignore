@@ -13,3 +13,4 @@ doxygen
 *.gcov
 *_parser.rules
 c_rules*.txt
+*.tmp
