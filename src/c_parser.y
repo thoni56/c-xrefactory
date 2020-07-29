@@ -37,23 +37,6 @@
 #define c_yyerror styyerror
 #define yyErrorRecovery styyErrorRecovery
 
-#define SetDirectStructureCompletionType(xxx) {\
-    assert(options.taskRegime);\
-    if (options.taskRegime == RegimeEditServer) {\
-        s_structRecordCompletionType = xxx;\
-        assert(s_structRecordCompletionType);\
-    }\
-}
-#define SetIndirectStructureCompletionType(xxx) {\
-    assert(options.taskRegime);\
-    if (options.taskRegime == RegimeEditServer) {\
-        if (xxx->kind==TypePointer || xxx->kind==TypeArray) {\
-            s_structRecordCompletionType = xxx->next;\
-            assert(s_structRecordCompletionType);\
-        } else s_structRecordCompletionType = &s_errorModifier;\
-    }\
-}
-
 #define AddComposedType(ddd, ttt) appendComposedType(&ddd->u.type, ttt)
 
 %}

@@ -37,22 +37,6 @@
 #define yyErrorRecovery styyErrorRecovery
 
 
-#define SetDirectStructureCompletionType(xxx) {\
-    assert(options.taskRegime);\
-    if (options.taskRegime == RegimeEditServer) {\
-        s_structRecordCompletionType = xxx;\
-    }\
-}
-
-#define SetIndirectStructureCompletionType(xxx) {                     \
-    assert(options.taskRegime);\
-    if (options.taskRegime == RegimeEditServer) {\
-        if (xxx->kind==TypePointer || xxx->kind==TypeArray) {\
-            s_structRecordCompletionType = xxx->next;\
-        } else s_structRecordCompletionType = &s_errorModifier;\
-    }\
-}
-
 #define AddComposedType(ddd, ttt) appendComposedType(&ddd->u.type, ttt)
 
 #define AddHtmlTrivialReference(pos) {\
@@ -70,7 +54,6 @@ static void addYaccSymbolReference(Id *name, int usage);
 %}
 
 /* Token definitions *must* be the same in all parsers. The following
-
    is a marker, it must be the same as in the Makefile check */
 /* START OF COMMON TOKEN DEFINITIONS */
 
@@ -561,14 +544,14 @@ postfix_expr
         $$.d.reference = NULL;
         assert($$.d.typeModifier);
     }
-    | postfix_expr {SetDirectStructureCompletionType($1.d.typeModifier);} '.' str_rec_identifier          {
+    | postfix_expr {setDirectStructureCompletionType($1.d.typeModifier);} '.' str_rec_identifier          {
         Symbol *rec=NULL;
         $$.d.reference = findStructureFieldFromType($1.d.typeModifier, $4.d, &rec, CLASS_TO_ANY);
         assert(rec);
         $$.d.typeModifier = rec->u.type;
         assert($$.d.typeModifier);
     }
-    | postfix_expr {SetIndirectStructureCompletionType($1.d.typeModifier);} PTR_OP str_rec_identifier    {
+    | postfix_expr {setIndirectStructureCompletionType($1.d.typeModifier);} PTR_OP str_rec_identifier    {
         Symbol *rec=NULL;
 
         $$.d.reference = NULL;
