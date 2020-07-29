@@ -67,7 +67,7 @@
     }\
 }
 
-#define SetIndirectStructureCompletionType2(xxx) {                     \
+#define SetIndirectStructureCompletionType(xxx) {                     \
     assert(options.taskRegime);\
     if (options.taskRegime == RegimeEditServer) {\
         if (xxx->kind==TypePointer || xxx->kind==TypeArray) {\
@@ -3210,7 +3210,7 @@ case 209:
 break;
 case 210:
 #line 571 "yacc_parser.y"
-{SetIndirectStructureCompletionType2(yyvsp[0].ast_expressionType.d.typeModifier);}
+{SetIndirectStructureCompletionType(yyvsp[0].ast_expressionType.d.typeModifier);}
 break;
 case 211:
 #line 571 "yacc_parser.y"

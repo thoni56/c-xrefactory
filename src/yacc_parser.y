@@ -44,7 +44,7 @@
     }\
 }
 
-#define SetIndirectStructureCompletionType2(xxx) {                     \
+#define SetIndirectStructureCompletionType(xxx) {                     \
     assert(options.taskRegime);\
     if (options.taskRegime == RegimeEditServer) {\
         if (xxx->kind==TypePointer || xxx->kind==TypeArray) {\
@@ -568,7 +568,7 @@ postfix_expr
         $$.d.typeModifier = rec->u.type;
         assert($$.d.typeModifier);
     }
-    | postfix_expr {SetIndirectStructureCompletionType2($1.d.typeModifier);} PTR_OP str_rec_identifier    {
+    | postfix_expr {SetIndirectStructureCompletionType($1.d.typeModifier);} PTR_OP str_rec_identifier    {
         Symbol *rec=NULL;
 
         $$.d.reference = NULL;
