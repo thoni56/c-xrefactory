@@ -2464,7 +2464,7 @@ case 38:
 {
         yyval.ast_expressionType.d.typeModifier = yyvsp[0].ast_expressionType.d.typeModifier;
         yyval.ast_expressionType.d.reference = NULL;
-      }
+    }
 break;
 case 39:
 #line 430 "c_parser.y"
@@ -3529,7 +3529,7 @@ break;
 case 238:
 #line 1267 "c_parser.y"
 {
-        yyval.ast_typeModifiers.d  = newArrayTypeModifier();
+        yyval.ast_typeModifiers.d = newArrayTypeModifier();
     }
 break;
 case 239:

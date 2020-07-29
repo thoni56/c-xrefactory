@@ -426,7 +426,7 @@ unary_expr
     | unary_operator cast_expr      {
         $$.d.typeModifier = $2.d.typeModifier;
         $$.d.reference = NULL;
-      }
+    }
     | '&' cast_expr                 {
         $$.d.typeModifier = newPointerTypeModifier($2.d.typeModifier);
         RESET_REFERENCE_USAGE($2.d.reference, UsageAddrUsed);
@@ -1265,7 +1265,7 @@ abstract_declarator2
         $$.d = $2.d;
     }
     | '[' ']'                               {
-        $$.d  = newArrayTypeModifier();
+        $$.d = newArrayTypeModifier();
     }
     | '[' constant_expr ']'                 {
         $$.d = newArrayTypeModifier();
