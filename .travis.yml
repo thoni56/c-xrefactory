@@ -20,7 +20,9 @@ script:
     - cd src
     - make ci-unit
     # Separate coverage for unittest to Codecov
+    - cd unittests
     - bash <(curl -s https://codecov.io/bash)
+    . cd ..
     # Now reset coverage and run everything
     - lcov -q -z -d .
     - make GCOV_OPTIONS= ci                # = unit, build & test
