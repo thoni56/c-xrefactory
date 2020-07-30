@@ -16,16 +16,7 @@ CHECK_FOR_CONTENT = python -c "content=open('$(1)').read(); target=open('output'
 $(TEST):
 	@rm -rf output $@.log CXrefs
 	@$(COMMAND)
-	@../../utils/cxref_reader.py > output
-	@while read -r line ; do \
-		grep -q $$line output ; \
-		ecode=$$? ; \
-		if [ $$ecode -ne 0 ] ; then \
-			echo "$(shell tput setaf 1)Failed: output did not contain expected: '$$line'$(shell tput sgr0)" ; \
-			exit 1 ; \
-		fi ; \
-	done < expected
-	@$(OK)
+	@echo "Tests in '$(TEST)': $(shell tput setaf 3)No tests, just executing$(shell tput sgr0)"
 	@exit 0
 
 gdb:

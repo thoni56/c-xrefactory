@@ -68,7 +68,8 @@
 /* int func() to get parameter_identifier_list rule to trigger */
 
 start:	e						{ int func(p1, p2, p3); return($1); }
-    |	error					{ void func2(a, ...); return(0); }
+    |	error					{ void func2(a, ...); return a[3]; }
+    |	error					{ void func2(a, ...); return a->field; }
     ;
 
 e:    e '*' e					{$$ = $1 * $3;}
@@ -77,14 +78,26 @@ e:    e '*' e					{$$ = $1 * $3;}
         int i = 346;
         short s = 4;
         float f = 0.3f;
-        double d = 3.14;
-        char *s = "string";
+        auto double d = 3.14;
+        register char *s = "string";
+        typedef struct s {
+            int f1;
+            int bits:3;
+        } S;
+        typedef enum e {
+            ONE, TWO
+        } E;
+        char array[10];
 
         if ($3 == 0) $$ = $1;
         else $$ = $1 / $3;
+
+        c++; c--;
+        ++i; --i;
+        s = (struct s){.f1 = 1};
     }
     | e '%' e					{
-        if ($3 == 0) $$ = $1;
+        if ($3 == 0 && $3 != 0) $$ = $1 + 15;
         else $$ = $1 % $3;
     }
     | e '+' e					{$$ = $1 + $3;}
@@ -138,4 +151,14 @@ int cexpTranslateToken(int tok, int val) {
     yylval = 0;
     return(number);
     return(UNKNOWN);
+
+    while (14) {
+        s += 4;
+        break;
+        continue;
+    }
+
+    do {
+        s /= 2;
+    } while (true == &a[3]);
 }
