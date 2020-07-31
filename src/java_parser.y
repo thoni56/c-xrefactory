@@ -2421,16 +2421,16 @@ StatementExpression
     |	ClassInstanceCreationExpression	{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
     ;
 
-_ncounter_:  {if (regularPass()) EXTRACT_COUNTER_SEMACT($$.d);}
+_ncounter_:  {if (regularPass()) $$.d = nextGeneratedLocalSymbol();}
     ;
 
-_nlabel_:	{if (regularPass()) EXTRACT_LABEL_SEMACT($$.d);}
+_nlabel_:	{if (regularPass()) $$.d = nextGeneratedLabelSymbol();}
     ;
 
-_ngoto_:	{if (regularPass()) EXTRACT_GOTO_SEMACT($$.d);}
+_ngoto_:	{if (regularPass()) $$.d = nextGeneratedGotoSymbol();}
     ;
 
-_nfork_:	{if (regularPass()) EXTRACT_FORK_SEMACT($$.d);}
+_nfork_:	{if (regularPass()) $$.d = nextGeneratedForkSymbol();}
     ;
 
 
@@ -2501,8 +2501,8 @@ SwitchStatement
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     generateSwitchCaseFork(true);
-                    ExtrDeleteContBreakSym($<symbol>7);
-                    ExtrDeleteContBreakSym($<symbol>6);
+                    deleteContinueBreakSymbol($<symbol>7);
+                    deleteContinueBreakSymbol($<symbol>6);
                     generateInternalLabelReference($5.d, UsageDefined);
                 } else {
                     PropagateBoundaries($$, $1, $8);
@@ -2589,8 +2589,8 @@ WhileStatement
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if ($1.d != NULL) {
-                        ExtrDeleteContBreakSym($1.d->i4);
-                        ExtrDeleteContBreakSym($1.d->i3);
+                        deleteContinueBreakSymbol($1.d->i4);
+                        deleteContinueBreakSymbol($1.d->i3);
                         generateInternalLabelReference($1.d->i1, UsageUsed);
                         generateInternalLabelReference($1.d->i2, UsageDefined);
                     }
@@ -2606,8 +2606,8 @@ WhileStatementNoShortIf
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if ($1.d != NULL) {
-                        ExtrDeleteContBreakSym($1.d->i4);
-                        ExtrDeleteContBreakSym($1.d->i3);
+                        deleteContinueBreakSymbol($1.d->i4);
+                        deleteContinueBreakSymbol($1.d->i3);
                         generateInternalLabelReference($1.d->i1, UsageUsed);
                         generateInternalLabelReference($1.d->i2, UsageDefined);
                     }
@@ -2634,8 +2634,8 @@ DoStatement
         } Statement WHILE {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    ExtrDeleteContBreakSym($<symbol>6);
-                    ExtrDeleteContBreakSym($<symbol>5);
+                    deleteContinueBreakSymbol($<symbol>6);
+                    deleteContinueBreakSymbol($<symbol>5);
                     generateInternalLabelReference($3.d, UsageDefined);
                 }
             }

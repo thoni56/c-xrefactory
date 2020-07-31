@@ -5096,19 +5096,19 @@ case 275:
 break;
 case 276:
 #line 2424 "java_parser.y"
-{if (regularPass()) EXTRACT_COUNTER_SEMACT(yyval.ast_integer.d);}
+{if (regularPass()) yyval.ast_integer.d = nextGeneratedLocalSymbol();}
 break;
 case 277:
 #line 2427 "java_parser.y"
-{if (regularPass()) EXTRACT_LABEL_SEMACT(yyval.ast_integer.d);}
+{if (regularPass()) yyval.ast_integer.d = nextGeneratedLabelSymbol();}
 break;
 case 278:
 #line 2430 "java_parser.y"
-{if (regularPass()) EXTRACT_GOTO_SEMACT(yyval.ast_integer.d);}
+{if (regularPass()) yyval.ast_integer.d = nextGeneratedGotoSymbol();}
 break;
 case 279:
 #line 2433 "java_parser.y"
-{if (regularPass()) EXTRACT_FORK_SEMACT(yyval.ast_integer.d);}
+{if (regularPass()) yyval.ast_integer.d = nextGeneratedForkSymbol();}
 break;
 case 280:
 #line 2438 "java_parser.y"
@@ -5186,8 +5186,8 @@ case 286:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     generateSwitchCaseFork(true);
-                    ExtrDeleteContBreakSym(yyvsp[-1].symbol);
-                    ExtrDeleteContBreakSym(yyvsp[-2].symbol);
+                    deleteContinueBreakSymbol(yyvsp[-1].symbol);
+                    deleteContinueBreakSymbol(yyvsp[-2].symbol);
                     generateInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
                 } else {
                     PropagateBoundaries(yyval.ast_position, yyvsp[-7].ast_position, yyvsp[0].ast_position);
@@ -5291,8 +5291,8 @@ case 301:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (yyvsp[-1].ast_whileData.d != NULL) {
-                        ExtrDeleteContBreakSym(yyvsp[-1].ast_whileData.d->i4);
-                        ExtrDeleteContBreakSym(yyvsp[-1].ast_whileData.d->i3);
+                        deleteContinueBreakSymbol(yyvsp[-1].ast_whileData.d->i4);
+                        deleteContinueBreakSymbol(yyvsp[-1].ast_whileData.d->i3);
                         generateInternalLabelReference(yyvsp[-1].ast_whileData.d->i1, UsageUsed);
                         generateInternalLabelReference(yyvsp[-1].ast_whileData.d->i2, UsageDefined);
                     }
@@ -5308,8 +5308,8 @@ case 302:
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
                     if (yyvsp[-1].ast_whileData.d != NULL) {
-                        ExtrDeleteContBreakSym(yyvsp[-1].ast_whileData.d->i4);
-                        ExtrDeleteContBreakSym(yyvsp[-1].ast_whileData.d->i3);
+                        deleteContinueBreakSymbol(yyvsp[-1].ast_whileData.d->i4);
+                        deleteContinueBreakSymbol(yyvsp[-1].ast_whileData.d->i3);
                         generateInternalLabelReference(yyvsp[-1].ast_whileData.d->i1, UsageUsed);
                         generateInternalLabelReference(yyvsp[-1].ast_whileData.d->i2, UsageDefined);
                     }
@@ -5344,8 +5344,8 @@ case 305:
 {
             if (regularPass()) {
                 if (! SyntaxPassOnly()) {
-                    ExtrDeleteContBreakSym(yyvsp[-2].symbol);
-                    ExtrDeleteContBreakSym(yyvsp[-3].symbol);
+                    deleteContinueBreakSymbol(yyvsp[-2].symbol);
+                    deleteContinueBreakSymbol(yyvsp[-3].symbol);
                     generateInternalLabelReference(yyvsp[-5].ast_integer.d, UsageDefined);
                 }
             }

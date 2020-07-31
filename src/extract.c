@@ -93,7 +93,7 @@ void deleteContinueBreakLabelSymbol(char *name) {
     fillSymbolWithLabel(&ss, name, name, s_noPos, 0);
     fillSymbolBits(&ss.bits, AccessDefault, TypeLabel, StorageAuto);
     if (symbolTableIsMember(s_symbolTable, &ss, &ii, &memb)) {
-        ExtrDeleteContBreakSym(memb);
+        deleteContinueBreakSymbol(memb);
     } else {
         assert(0);
     }
@@ -1284,4 +1284,34 @@ void extractActionOnBlockMarker(void) {
     }
     fillPosition(&pos, currentFile.lexBuffer.buffer.fileNumber, 0, 0);
     addTrivialCxReference("Block", TypeBlockMarker,StorageDefault, &pos, UsageUsed);
+}
+
+void deleteContinueBreakSymbol(Symbol *symbol) {
+    if (options.server_operation == OLO_EXTRACT)
+        deleteSymDef(symbol);
+}
+
+int nextGeneratedLocalSymbol(void) {
+    return counters.localSym++;
+}
+
+int nextGeneratedLabelSymbol(void) {
+    int n = counters.localSym;
+    generateInternalLabelReference(counters.localSym, UsageDefined);
+    counters.localSym++;
+    return n;
+}
+
+int nextGeneratedGotoSymbol(void) {
+    int n = counters.localSym;
+    generateInternalLabelReference(counters.localSym, UsageUsed);
+    counters.localSym++;
+    return n;
+}
+
+int nextGeneratedForkSymbol(void) {
+    int n = counters.localSym;
+    generateInternalLabelReference(counters.localSym, UsageFork);
+    counters.localSym++;
+    return n;
 }

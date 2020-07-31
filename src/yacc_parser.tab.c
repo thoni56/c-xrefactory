@@ -4648,19 +4648,19 @@ case 477:
 break;
 case 479:
 #line 1681 "yacc_parser.y"
-{EXTRACT_COUNTER_SEMACT(yyval.ast_integer.d);}
+{yyval.ast_integer.d = nextGeneratedLocalSymbol();}
 break;
 case 480:
 #line 1684 "yacc_parser.y"
-{EXTRACT_LABEL_SEMACT(yyval.ast_integer.d);}
+{yyval.ast_integer.d = nextGeneratedLabelSymbol();}
 break;
 case 481:
 #line 1687 "yacc_parser.y"
-{EXTRACT_GOTO_SEMACT(yyval.ast_integer.d);}
+{yyval.ast_integer.d = nextGeneratedGotoSymbol();}
 break;
 case 482:
 #line 1690 "yacc_parser.y"
-{EXTRACT_FORK_SEMACT(yyval.ast_integer.d);}
+{yyval.ast_integer.d = nextGeneratedForkSymbol();}
 break;
 case 483:
 #line 1694 "yacc_parser.y"
@@ -4697,8 +4697,8 @@ case 488:
 #line 1707 "yacc_parser.y"
 {
         generateSwitchCaseFork(true);
-        ExtrDeleteContBreakSym(yyvsp[-1].symbol);
-        ExtrDeleteContBreakSym(yyvsp[-2].symbol);
+        deleteContinueBreakSymbol(yyvsp[-1].symbol);
+        deleteContinueBreakSymbol(yyvsp[-2].symbol);
         generateInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
     }
 break;
@@ -4721,8 +4721,8 @@ break;
 case 492:
 #line 1725 "yacc_parser.y"
 {
-        ExtrDeleteContBreakSym(yyvsp[-1].symbol);
-        ExtrDeleteContBreakSym(yyvsp[-2].symbol);
+        deleteContinueBreakSymbol(yyvsp[-1].symbol);
+        deleteContinueBreakSymbol(yyvsp[-2].symbol);
         generateInternalLabelReference(yyvsp[-7].ast_integer.d, UsageUsed);
         generateInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
     }
@@ -4742,8 +4742,8 @@ break;
 case 495:
 #line 1736 "yacc_parser.y"
 {
-        ExtrDeleteContBreakSym(yyvsp[-2].symbol);
-        ExtrDeleteContBreakSym(yyvsp[-3].symbol);
+        deleteContinueBreakSymbol(yyvsp[-2].symbol);
+        deleteContinueBreakSymbol(yyvsp[-3].symbol);
         generateInternalLabelReference(yyvsp[-5].ast_integer.d, UsageDefined);
     }
 break;
@@ -4772,8 +4772,8 @@ break;
 case 499:
 #line 1758 "yacc_parser.y"
 {
-        ExtrDeleteContBreakSym(yyvsp[-1].symbol);
-        ExtrDeleteContBreakSym(yyvsp[-2].symbol);
+        deleteContinueBreakSymbol(yyvsp[-1].symbol);
+        deleteContinueBreakSymbol(yyvsp[-2].symbol);
         generateInternalLabelReference(yyvsp[-6].ast_integer.d, UsageUsed);
         generateInternalLabelReference(yyvsp[-3].ast_integer.d, UsageDefined);
         }

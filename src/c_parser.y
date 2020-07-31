@@ -1456,16 +1456,16 @@ expression_statement
     ;
 
 
-_ncounter_:  {EXTRACT_COUNTER_SEMACT($$.d);}
+_ncounter_:  {$$.d = nextGeneratedLocalSymbol();}
     ;
 
-_nlabel_:   {EXTRACT_LABEL_SEMACT($$.d);}
+_nlabel_:   {$$.d = nextGeneratedLabelSymbol();}
     ;
 
-_ngoto_:    {EXTRACT_GOTO_SEMACT($$.d);}
+_ngoto_:    {$$.d = nextGeneratedGotoSymbol();}
     ;
 
-_nfork_:    {EXTRACT_FORK_SEMACT($$.d);}
+_nfork_:    {$$.d = nextGeneratedForkSymbol();}
     ;
 
 selection_statement
@@ -1484,8 +1484,8 @@ selection_statement
         generateInternalLabelReference($5.d, UsageFork);
     } statement                 {
         generateSwitchCaseFork(true);
-        ExtrDeleteContBreakSym($<symbol>7);
-        ExtrDeleteContBreakSym($<symbol>6);
+        deleteContinueBreakSymbol($<symbol>7);
+        deleteContinueBreakSymbol($<symbol>6);
         generateInternalLabelReference($5.d, UsageDefined);
     }
     ;
@@ -1501,8 +1501,8 @@ iteration_statement
     } {/*8*/
         $<symbol>$ = addContinueBreakLabelSymbol($6.d, BREAK_LABEL_NAME);
     } statement                 {
-        ExtrDeleteContBreakSym($<symbol>8);
-        ExtrDeleteContBreakSym($<symbol>7);
+        deleteContinueBreakSymbol($<symbol>8);
+        deleteContinueBreakSymbol($<symbol>7);
         generateInternalLabelReference($2.d, UsageUsed);
         generateInternalLabelReference($6.d, UsageDefined);
     }
@@ -1512,8 +1512,8 @@ iteration_statement
     } {/*6*/
         $<symbol>$ = addContinueBreakLabelSymbol($4.d, BREAK_LABEL_NAME);
     } statement WHILE {
-        ExtrDeleteContBreakSym($<symbol>6);
-        ExtrDeleteContBreakSym($<symbol>5);
+        deleteContinueBreakSymbol($<symbol>6);
+        deleteContinueBreakSymbol($<symbol>5);
         generateInternalLabelReference($3.d, UsageDefined);
     } '(' expr ')' ';'          {
         generateInternalLabelReference($2.d, UsageFork);
@@ -1534,8 +1534,8 @@ iteration_statement
         }
             statement
         {
-        ExtrDeleteContBreakSym($<symbol>14);
-        ExtrDeleteContBreakSym($<symbol>13);
+        deleteContinueBreakSymbol($<symbol>14);
+        deleteContinueBreakSymbol($<symbol>13);
         generateInternalLabelReference($9.d, UsageUsed);
         generateInternalLabelReference($12.d, UsageDefined);
         }
