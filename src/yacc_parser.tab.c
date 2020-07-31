@@ -2753,7 +2753,7 @@ static void addRuleLocalVariable(Id *name, int order) {
     }
 }
 
-static S_completionFunTab completionsTab[]  = {
+static CompletionFunctionsTable completionsTab[]  = {
     {COMPL_TYPE_NAME,       completeTypes},
     {COMPL_STRUCT_NAME,     completeStructs},
     {COMPL_STRUCT_REC_NAME, completeRecNames},

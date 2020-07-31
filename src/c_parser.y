@@ -1757,14 +1757,14 @@ identifier
 
 %%
 
-static S_completionFunTab spCompletionsTab[]  = {
+static CompletionFunctionsTable spCompletionsTab[]  = {
     {COMPL_FOR_SPECIAL1,    completeForSpecial1},
     {COMPL_FOR_SPECIAL2,    completeForSpecial2},
     {COMPL_UP_FUN_PROFILE,  completeUpFunProfile},
     {0,NULL}
 };
 
-static S_completionFunTab completionsTab[]  = {
+static CompletionFunctionsTable completionsTab[]  = {
     {COMPL_TYPE_NAME,       completeTypes},
     {COMPL_STRUCT_NAME,     completeStructs},
     {COMPL_STRUCT_REC_NAME, completeRecNames},

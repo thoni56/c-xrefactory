@@ -4347,7 +4347,7 @@ void javaParsingInitializations(void) {
     javaInitArrayObject();
 }
 
-static S_completionFunTab spCompletionsTab[]  = {
+static CompletionFunctionsTable spCompletionsTab[]  = {
     { COMPL_THIS_PACKAGE_SPECIAL,	javaCompleteThisPackageName },
     { COMPL_CLASS_DEF_NAME,			javaCompleteClassDefinitionNameSpecial },
     { COMPL_FULL_INHERITED_HEADER,	javaCompleteFullInheritedMethodHeader },
@@ -4357,7 +4357,7 @@ static S_completionFunTab spCompletionsTab[]  = {
     {0,NULL}
 };
 
-static S_completionFunTab completionsTab[]  = {
+static CompletionFunctionsTable completionsTab[]  = {
     { COMPL_TYPE_NAME0,				javaCompleteTypeSingleName },
     { COMPL_TYPE_NAME1,				javaCompleteTypeCompName },
     { COMPL_PACKAGE_NAME0,			javaCompletePackageSingleName },
@@ -4381,7 +4381,7 @@ static S_completionFunTab completionsTab[]  = {
 };
 
 
-static S_completionFunTab hintCompletionsTab[]  = {
+static CompletionFunctionsTable hintCompletionsTab[]  = {
     { COMPL_TYPE_NAME0,				javaHintCompleteNonImportedTypes },
 // Finally I do not know if this is practical
 /*&	{ COMPL_IMPORT_SPECIAL,			javaHintImportFqt }, &*/

@@ -3,15 +3,15 @@
 
 #include "proto.h"
 
-typedef struct completionFunTab {
+typedef struct completionFunctionsTable {
     int token;
     void (*fun)(Completions*);
-} S_completionFunTab;
+} CompletionFunctionsTable;
 
 
 extern void fillCompletionLine(CompletionLine *cline, char *string, Symbol *symbol, Type symbolType,
-                       short int virtualLevel, short int margn, char **margs,
-                       Symbol *vFunClass);
+                               short int virtualLevel, short int margn, char **margs,
+                               Symbol *vFunClass);
 extern void initCompletions(Completions *completions, int length, Position position);
 extern void processName(char *name, CompletionLine *t, int orderFlag, void *c);
 extern void completeForSpecial1(Completions *c);
