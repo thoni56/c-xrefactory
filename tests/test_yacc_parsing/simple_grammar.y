@@ -125,7 +125,11 @@ e:    e '*' e					{$$ = $1 * $3;}
     | DEFINED '(' number ')'	{$$= $3;}
     | DEFINED number			{$$ = $2;}
 */
-    | number					{$$= $1;}
+    | number					{
+        $$= $1;
+        for (i=1;;)
+            ;
+      }
     ;
 %%
 
