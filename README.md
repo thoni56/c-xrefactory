@@ -4,7 +4,7 @@
 ## TL;DR
 
 `c-xrefactory` is a free Emacs refactoring tool and code browser for
-C (and Java).
+_C_ (& _Java_ and _Yacc_).
 
 Easiest way to install is using `el-get` (see NOTE below):
 
@@ -23,6 +23,35 @@ code will never be the same. Some highlights:
 
 When installed correctly there will be an Emacs menu called `C-xref`
 for easy access to most functions.
+
+### Yacc special features
+
+C code inside semantic actions in a Yacc file will be analysed so that
+you can (mostly) navigate symbol even inside them.
+
+Non-terminals (rule names) can be navigated and completed as if they
+were any other symbol. Furthermore the special symbol `$<n>`, where
+<n> is a number referencing symbol <n> in the rule can also be
+navigated. This is extra handy with F6 to be sure that you referenced
+the terminal or non-terminal that you meant to.
+
+Unfortunately there are no refactorings of Yacc rules possible (but
+that would be a cool project!). But you can of course do all the C
+refactorings you want from inside the C code in the semantic actions.
+
+### Java notes
+
+The current Java grammar has not been updated from Java 1.4, but since
+`c-xrefactory` recovers gracefully that is not a major problem except
+for the fact that you can't for certain navigate all symbols inside
+construct that was introduced in later Java versions.
+
+You need to have a JRE installed so that it can be found. If it's
+Java 8 it will also be parsed for all Java standard library
+symbols. Unfortunately later versions does not store JRE in a
+standardized format (which was Jar-files with class files) so
+`c-xrefactory` cannot read it. You can still compile with Java > 8 and
+use `c-xrefactory` with a Java 8 JRE.
 
 ## Help!
 
