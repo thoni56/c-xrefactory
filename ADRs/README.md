@@ -33,5 +33,4 @@ following this pattern:
     because <additional rationale>.
   
 NOTE: As the whole c-xrefactory project is a hobby project where I'm
-constantly learning things, this is also a WIP.
-    
+constantly trying out and learning things, this is also a WIP.
