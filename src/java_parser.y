@@ -72,13 +72,13 @@
         else assert(0);                         \
     }
 
-#define PropagateBoundaries(res, beg, end) {res.b=beg.b; res.e=end.e;}
-#define PropagateBoundariesIfRegularSyntaxPass(res, beg, end) {         \
+#define PropagateBoundaries(node, startSymbol, endSymbol) {node.b=startSymbol.b; node.e=endSymbol.e;}
+#define PropagateBoundariesIfRegularSyntaxPass(node, startSymbol, endSymbol) {         \
         if (regularPass()) {                                            \
-            if (SyntaxPassOnly()) {PropagateBoundaries(res, beg, end);} \
+            if (SyntaxPassOnly()) {PropagateBoundaries(node, startSymbol, endSymbol);} \
         }                                                               \
     }
-#define SetNullBoundaries(res) {res.b=s_noPos; res.e=s_noPos;}
+#define SetNullBoundariesFor(node) {node.b=s_noPos; node.e=s_noPos;}
 
 #define NULL_POS NULL
 
@@ -942,7 +942,7 @@ CompilationUnit: {
     ;
 
 ImportDeclarations_opt:						{
-            SetNullBoundaries($$);
+            SetNullBoundariesFor($$);
         }
     |	ImportDeclarations					/* $$ = $1; */
     ;
@@ -1036,7 +1036,7 @@ TypeImportOnDemandDeclaration
     ;
 
 TypeDeclarations_opt:							{
-            SetNullBoundaries($$);
+            SetNullBoundariesFor($$);
         }
     |	TypeDeclarations _bef_					{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
@@ -1056,7 +1056,7 @@ PackageDeclaration_opt:							{
             $$.d = NULL;
             if (regularPass()) {
                 s_cps.lastImportLine = 0;
-                SetNullBoundaries($$);
+                SetNullBoundariesFor($$);
             }
         }
     |	Package Name ';'						{
@@ -1098,7 +1098,7 @@ TypeDeclaration
 
 Modifiers_opt:					{
             $$.d = AccessDefault;
-            SetNullBoundaries($$);
+            SetNullBoundariesFor($$);
         }
     |	Modifiers				{
             $$.d = $1.d;
@@ -1292,7 +1292,7 @@ Super_opt
                         s_jsl->classStat->thisClass, s_javaLangObjectLinkName);
                 }
             }
-            SetNullBoundaries($$);
+            SetNullBoundariesFor($$);
         }
     |	EXTENDS ExtendClassOrInterfaceType			{
             if (regularPass()) {
@@ -1314,7 +1314,7 @@ Super_opt
     ;
 
 Interfaces_opt:								{
-            SetNullBoundaries($$);
+            SetNullBoundariesFor($$);
         }
     |	IMPLEMENTS InterfaceTypeList		{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
@@ -1434,7 +1434,7 @@ ClassBodyDeclaration
     |	ClassInitializer
     |	ConstructorDeclaration
     |	';'
-    |	error							{SetNullBoundaries($$);}
+    |	error							{SetNullBoundariesFor($$);}
     ;
 
 ClassMemberDeclaration
@@ -1595,7 +1595,7 @@ VariableDeclarator
                 if (! SyntaxPassOnly()) {
                     $$.d = newSymbolAsCopyOf(&s_errorSymbol);
                 } else {
-                    SetNullBoundaries($$);
+                    SetNullBoundariesFor($$);
                 }
             }
             if (inSecondJslPass()) {
@@ -1764,7 +1764,7 @@ MethodDeclarator
 FormalParameterList_opt:					{
             $$.d.s = NULL;
             $$.d.p = NULL;
-            SetNullBoundaries($$);
+            SetNullBoundariesFor($$);
         }
     |	FormalParameterList					/*& {$$ = $1;} &*/
     ;
@@ -1830,7 +1830,7 @@ FormalParameter
                 if (! SyntaxPassOnly()) {
                     $$.d = newSymbolAsCopyOf(&s_errorSymbol);
                 } else {
-                    SetNullBoundaries($$);
+                    SetNullBoundariesFor($$);
                 }
             }
             if (inSecondJslPass()) {
@@ -1842,7 +1842,7 @@ FormalParameter
 
 Throws_opt:								{
             $$.d = NULL;
-            SetNullBoundaries($$);
+            SetNullBoundariesFor($$);
         }
     |	THROWS ClassTypeList			{
             $$.d = $2.d;
@@ -2059,9 +2059,9 @@ ExplicitConstructorInvocation
                     }
                 }
             }
-    |	This error					{SetNullBoundaries($$);}
-    |	Super error					{SetNullBoundaries($$);}
-    |	Primary error				{SetNullBoundaries($$);}
+    |	This error					{SetNullBoundariesFor($$);}
+    |	Super error					{SetNullBoundariesFor($$);}
+    |	Primary error				{SetNullBoundariesFor($$);}
     |	COMPL_SUPER_CONSTRUCTOR1						{assert(0);}
     |	COMPL_THIS_CONSTRUCTOR							{assert(0);}
     |	Primary '.' COMPL_SUPER_CONSTRUCTOR1			{assert(0);}
@@ -2135,7 +2135,7 @@ InterfaceDeclaration
     ;
 
 ExtendsInterfaces_opt:					{
-            SetNullBoundaries($$);
+            SetNullBoundariesFor($$);
             if (inSecondJslPass()) {
                 jslAddSuperClassOrInterfaceByName(s_jsl->classStat->thisClass,
                                                 s_javaLangObjectLinkName);
@@ -2203,7 +2203,7 @@ InterfaceMemberDeclaration
     |	ConstantDeclaration				{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
     |	AbstractMethodDeclaration		{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
     |	';'								{PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);}
-    |	error							{SetNullBoundaries($$);}
+    |	error							{SetNullBoundariesFor($$);}
     ;
 
 ConstantDeclaration
@@ -2273,7 +2273,7 @@ BlockStatement
     :   LocalVariableDeclarationStatement		/*& {$$ = $1;} &*/
     |	FunctionInnerClassDeclaration			/*& {$$ = $1;} &*/
     |	Statement								/*& {$$ = $1;} &*/
-    |	error									{SetNullBoundaries($$);}
+    |	error									{SetNullBoundariesFor($$);}
     ;
 
 LocalVariableDeclarationStatement
@@ -2551,7 +2551,7 @@ SwitchLabels
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $2);
         }
     |	error									{
-            SetNullBoundaries($$);
+            SetNullBoundariesFor($$);
         }
     ;
 
@@ -2652,7 +2652,7 @@ DoStatement
     ;
 
 MaybeExpression:							{
-            SetNullBoundaries($$);
+            SetNullBoundariesFor($$);
         }
         | Expression						{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
@@ -2736,7 +2736,7 @@ ForStatement
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockFree();
                 } else {
-                    SetNullBoundaries($$);
+                    SetNullBoundariesFor($$);
                 }
             }
         }
@@ -2757,7 +2757,7 @@ ForStatementNoShortIf
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockFree();
                 } else {
-                    SetNullBoundaries($$);
+                    SetNullBoundariesFor($$);
                 }
             }
         }
@@ -2765,7 +2765,7 @@ ForStatementNoShortIf
 
 
 ForInit_opt:							{
-            SetNullBoundaries($$);
+            SetNullBoundariesFor($$);
         }
     |	StatementExpressionList			{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
@@ -2776,7 +2776,7 @@ ForInit_opt:							{
     ;
 
 ForUpdate_opt:							{
-            SetNullBoundaries($$);
+            SetNullBoundariesFor($$);
         }
     |	StatementExpressionList			{
             PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
@@ -3322,7 +3322,7 @@ ClassInstanceCreationExpression
 ArgumentList_opt:				{
             $$.d.t = NULL;
             $$.d.p = NULL;
-            SetNullBoundaries($$);
+            SetNullBoundariesFor($$);
         }
     | ArgumentList				/*& { $$.d = $1.d; } &*/
     ;
@@ -3445,7 +3445,7 @@ DimExpr
 Dims_opt
     :							{
         if (regularPass()) $$.d = 0;
-            SetNullBoundaries($$);
+            SetNullBoundariesFor($$);
         }
     |	Dims						/*& { $$ = $1; } &*/
     ;
@@ -4283,7 +4283,7 @@ Expression
                     $$.d.reference = NULL;
                 } else {
                     $$.d.position = NULL_POS;
-                    SetNullBoundaries($$);
+                    SetNullBoundariesFor($$);
                 }
             }
         }

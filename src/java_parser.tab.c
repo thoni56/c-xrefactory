@@ -101,13 +101,13 @@
         else assert(0);                         \
     }
 
-#define PropagateBoundaries(res, beg, end) {res.b=beg.b; res.e=end.e;}
-#define PropagateBoundariesIfRegularSyntaxPass(res, beg, end) {         \
+#define PropagateBoundaries(node, startSymbol, endSymbol) {node.b=startSymbol.b; node.e=endSymbol.e;}
+#define PropagateBoundariesIfRegularSyntaxPass(node, startSymbol, endSymbol) {         \
         if (regularPass()) {                                            \
-            if (SyntaxPassOnly()) {PropagateBoundaries(res, beg, end);} \
+            if (SyntaxPassOnly()) {PropagateBoundaries(node, startSymbol, endSymbol);} \
         }                                                               \
     }
-#define SetNullBoundaries(res) {res.b=s_noPos; res.e=s_noPos;}
+#define SetNullBoundariesFor(node) {node.b=s_noPos; node.e=s_noPos;}
 
 #define NULL_POS NULL
 
@@ -3423,7 +3423,7 @@ break;
 case 68:
 #line 944 "java_parser.y"
 {
-            SetNullBoundaries(yyval.ast_position);
+            SetNullBoundariesFor(yyval.ast_position);
         }
 break;
 case 70:
@@ -3521,7 +3521,7 @@ break;
 case 79:
 #line 1038 "java_parser.y"
 {
-            SetNullBoundaries(yyval.ast_position);
+            SetNullBoundariesFor(yyval.ast_position);
         }
 break;
 case 80:
@@ -3548,7 +3548,7 @@ case 83:
             yyval.ast_idList.d = NULL;
             if (regularPass()) {
                 s_cps.lastImportLine = 0;
-                SetNullBoundaries(yyval.ast_idList);
+                SetNullBoundariesFor(yyval.ast_idList);
             }
         }
 break;
@@ -3610,7 +3610,7 @@ case 92:
 #line 1099 "java_parser.y"
 {
             yyval.ast_unsigned.d = AccessDefault;
-            SetNullBoundaries(yyval.ast_unsigned);
+            SetNullBoundariesFor(yyval.ast_unsigned);
         }
 break;
 case 93:
@@ -3836,7 +3836,7 @@ case 120:
                         s_jsl->classStat->thisClass, s_javaLangObjectLinkName);
                 }
             }
-            SetNullBoundaries(yyval.ast_position);
+            SetNullBoundariesFor(yyval.ast_position);
         }
 break;
 case 121:
@@ -3862,7 +3862,7 @@ break;
 case 122:
 #line 1316 "java_parser.y"
 {
-            SetNullBoundaries(yyval.ast_position);
+            SetNullBoundariesFor(yyval.ast_position);
         }
 break;
 case 123:
@@ -3991,7 +3991,7 @@ case 130:
 break;
 case 135:
 #line 1437 "java_parser.y"
-{SetNullBoundaries(yyval.ast_position);}
+{SetNullBoundariesFor(yyval.ast_position);}
 break;
 case 136:
 #line 1441 "java_parser.y"
@@ -4164,7 +4164,7 @@ case 146:
                 if (! SyntaxPassOnly()) {
                     yyval.ast_symbol.d = newSymbolAsCopyOf(&s_errorSymbol);
                 } else {
-                    SetNullBoundaries(yyval.ast_symbol);
+                    SetNullBoundariesFor(yyval.ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
@@ -4347,7 +4347,7 @@ case 161:
 {
             yyval.ast_symbolPositionListPair.d.s = NULL;
             yyval.ast_symbolPositionListPair.d.p = NULL;
-            SetNullBoundaries(yyval.ast_symbolPositionListPair);
+            SetNullBoundariesFor(yyval.ast_symbolPositionListPair);
         }
 break;
 case 163:
@@ -4421,7 +4421,7 @@ case 167:
                 if (! SyntaxPassOnly()) {
                     yyval.ast_symbol.d = newSymbolAsCopyOf(&s_errorSymbol);
                 } else {
-                    SetNullBoundaries(yyval.ast_symbol);
+                    SetNullBoundariesFor(yyval.ast_symbol);
                 }
             }
             if (inSecondJslPass()) {
@@ -4434,7 +4434,7 @@ case 168:
 #line 1843 "java_parser.y"
 {
             yyval.ast_symbolList.d = NULL;
-            SetNullBoundaries(yyval.ast_symbolList);
+            SetNullBoundariesFor(yyval.ast_symbolList);
         }
 break;
 case 169:
@@ -4686,15 +4686,15 @@ case 189:
 break;
 case 190:
 #line 2062 "java_parser.y"
-{SetNullBoundaries(yyval.ast_position);}
+{SetNullBoundariesFor(yyval.ast_position);}
 break;
 case 191:
 #line 2063 "java_parser.y"
-{SetNullBoundaries(yyval.ast_position);}
+{SetNullBoundariesFor(yyval.ast_position);}
 break;
 case 192:
 #line 2064 "java_parser.y"
-{SetNullBoundaries(yyval.ast_position);}
+{SetNullBoundariesFor(yyval.ast_position);}
 break;
 case 193:
 #line 2065 "java_parser.y"
@@ -4790,7 +4790,7 @@ break;
 case 202:
 #line 2137 "java_parser.y"
 {
-            SetNullBoundaries(yyval.ast_position);
+            SetNullBoundariesFor(yyval.ast_position);
             if (inSecondJslPass()) {
                 jslAddSuperClassOrInterfaceByName(s_jsl->classStat->thisClass,
                                                 s_javaLangObjectLinkName);
@@ -4877,7 +4877,7 @@ case 214:
 break;
 case 215:
 #line 2206 "java_parser.y"
-{SetNullBoundaries(yyval.ast_position);}
+{SetNullBoundariesFor(yyval.ast_position);}
 break;
 case 217:
 #line 2215 "java_parser.y"
@@ -4951,7 +4951,7 @@ case 228:
 break;
 case 232:
 #line 2276 "java_parser.y"
-{SetNullBoundaries(yyval.ast_position);}
+{SetNullBoundariesFor(yyval.ast_position);}
 break;
 case 233:
 #line 2280 "java_parser.y"
@@ -5250,7 +5250,7 @@ break;
 case 297:
 #line 2553 "java_parser.y"
 {
-            SetNullBoundaries(yyval.ast_position);
+            SetNullBoundariesFor(yyval.ast_position);
         }
 break;
 case 298:
@@ -5367,7 +5367,7 @@ break;
 case 307:
 #line 2654 "java_parser.y"
 {
-            SetNullBoundaries(yyval.ast_position);
+            SetNullBoundariesFor(yyval.ast_position);
         }
 break;
 case 308:
@@ -5455,7 +5455,7 @@ case 314:
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockFree();
                 } else {
-                    SetNullBoundaries(yyval.ast_position);
+                    SetNullBoundariesFor(yyval.ast_position);
                 }
             }
         }
@@ -5479,7 +5479,7 @@ case 316:
                 if (! SyntaxPassOnly()) {
                     stackMemoryBlockFree();
                 } else {
-                    SetNullBoundaries(yyval.ast_position);
+                    SetNullBoundariesFor(yyval.ast_position);
                 }
             }
         }
@@ -5487,7 +5487,7 @@ break;
 case 317:
 #line 2767 "java_parser.y"
 {
-            SetNullBoundaries(yyval.ast_position);
+            SetNullBoundariesFor(yyval.ast_position);
         }
 break;
 case 318:
@@ -5505,7 +5505,7 @@ break;
 case 320:
 #line 2778 "java_parser.y"
 {
-            SetNullBoundaries(yyval.ast_position);
+            SetNullBoundariesFor(yyval.ast_position);
         }
 break;
 case 321:
@@ -6111,7 +6111,7 @@ case 375:
 {
             yyval.ast_typeModifiersListPositionListPair.d.t = NULL;
             yyval.ast_typeModifiersListPositionListPair.d.p = NULL;
-            SetNullBoundaries(yyval.ast_typeModifiersListPositionListPair);
+            SetNullBoundariesFor(yyval.ast_typeModifiersListPositionListPair);
         }
 break;
 case 377:
@@ -6252,7 +6252,7 @@ case 388:
 #line 3446 "java_parser.y"
 {
         if (regularPass()) yyval.ast_integer.d = 0;
-            SetNullBoundaries(yyval.ast_integer);
+            SetNullBoundariesFor(yyval.ast_integer);
         }
 break;
 case 390:
@@ -7172,7 +7172,7 @@ case 481:
                     yyval.ast_expressionType.d.reference = NULL;
                 } else {
                     yyval.ast_expressionType.d.position = NULL_POS;
-                    SetNullBoundaries(yyval.ast_expressionType);
+                    SetNullBoundariesFor(yyval.ast_expressionType);
                 }
             }
         }
