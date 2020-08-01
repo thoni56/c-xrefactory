@@ -83,7 +83,6 @@
 #define NULL_POS NULL
 
 #define AddComposedType(ddd, ttt) appendComposedType(&ddd->u.type, ttt)
-#define AllocIdCopy(copy, ident) {copy = StackMemoryAlloc(Id); *(copy) = *(ident);}
 
 
 static bool regularPass(void) { return s_jsl == NULL; }
@@ -656,42 +655,50 @@ ArrayType
 /* ****************************** Names **************************** */
 
 Identifier:	IDENTIFIER			{
-                if (regularPass()) AllocIdCopy($$.d,$1.d);
-                PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
-            };
+            if (regularPass()) $$.d = newCopyOfId($1.d);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
+        }
+    ;
 This:		THIS				{
-                if (regularPass()) AllocIdCopy($$.d,$1.d);
-                PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
-            };
+            if (regularPass()) $$.d = newCopyOfId($1.d);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
+        }
+    ;
 Super:		SUPER				{
-                if (regularPass()) AllocIdCopy($$.d,$1.d);
-                PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
-            };
+            if (regularPass()) $$.d = newCopyOfId($1.d);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
+        }
+    ;
 New:		NEW					{
-                if (regularPass()) AllocIdCopy($$.d,$1.d);
-                PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
-            };
+            if (regularPass()) $$.d = newCopyOfId($1.d);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
+        }
+    ;
 Import:		IMPORT				{
-                if (regularPass()) AllocIdCopy($$.d,$1.d);
-                PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
-            };
+            if (regularPass()) $$.d = newCopyOfId($1.d);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
+        }
+    ;
 Package:	PACKAGE				{
-                if (regularPass()) AllocIdCopy($$.d,$1.d);
-                PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
-            };
+            if (regularPass()) $$.d = newCopyOfId($1.d);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
+        }
+    ;
 Throw:		THROW				{
-                if (regularPass()) AllocIdCopy($$.d,$1.d);
-                PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
-            };
+            if (regularPass()) $$.d = newCopyOfId($1.d);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
+        }
+    ;
 Try:		TRY					{
-                if (regularPass()) AllocIdCopy($$.d,$1.d);
-                PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
-            };
+            if (regularPass()) $$.d = newCopyOfId($1.d);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
+        }
+    ;
 Catch:		CATCH				{
-                if (regularPass()) AllocIdCopy($$.d,$1.d);
-                PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
-            };
-
+            if (regularPass()) $$.d = newCopyOfId($1.d);
+            PropagateBoundariesIfRegularSyntaxPass($$, $1, $1);
+        }
+    ;
 
 Name
     :   SimpleName				{
