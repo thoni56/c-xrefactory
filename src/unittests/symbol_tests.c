@@ -4,7 +4,8 @@
 
 #include "../proto.h"           /* For S_position */
 
-void *stackMemoryAlloc(int size) { return malloc(size); }
+#include "memory.mock"
+
 
 Describe(Symbol);
 BeforeEach(Symbol) {}

@@ -25,3 +25,9 @@ void fillfIdList(IdList *idList, char *name, Symbol *symbol,
     idList->nameType = nameType;
     idList->next = next;
 }
+
+Id *newCopyOfId(Id *id) {
+    Id *copy = StackMemoryAlloc(Id);
+    *(copy) = *(id);
+    return copy;
+}

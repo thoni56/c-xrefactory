@@ -49,6 +49,7 @@ $(eval $(call UNITTEST,yylex,protocol log position filedescriptor id filetable h
 $(eval $(call UNITTEST,lexembuffer,characterreader position))
 $(eval $(call UNITTEST,memory,memory log))
 $(eval $(call UNITTEST,position,log))
+$(eval $(call UNITTEST,id))
 
 # These includes the modules .c to be able to test internal functions or macros
 LEXER_DEPENDENCIES = log position lexembuffer characterreader
