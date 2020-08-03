@@ -43,8 +43,8 @@ int s_javaPreScanOnly=0;
 
 /* **************** cached symbols ********************** */
 
-int ppmMemoryi=0;
-int mbMemoryi=0;
+int ppmMemoryIndex=0;
+int mbMemoryIndex=0;
 
 /* *********** symbols excluded from cache ************** */
 

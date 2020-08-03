@@ -26,30 +26,30 @@
 
 */
 
-#define SM_INIT(mem) {mem##i = 0;}
+#define SM_INIT(mem) {mem##Index = 0;}
 #define SM_ALLOCC(mem,p,n,t) {\
     assert( (n) >= 0);\
-    /* memset(mem+mem##i,0,(n)*sizeof(t)); */\
-    mem##i = ((char*)ALIGNMENT(mem+mem##i,STANDARD_ALIGNMENT)) - mem;\
-    if (mem##i+(n)*sizeof(t) >= SIZE_##mem) {\
+    /* memset(mem+mem##Index,0,(n)*sizeof(t)); */\
+    mem##Index = ((char*)ALIGNMENT(mem+mem##Index,STANDARD_ALIGNMENT)) - mem;\
+    if (mem##Index+(n)*sizeof(t) >= SIZE_##mem) {\
         fatalError(ERR_NO_MEMORY,#mem, XREF_EXIT_ERR);\
     }\
-    p = (t*) (mem + mem##i);\
+    p = (t*) (mem + mem##Index);\
     /* memset(p,0,(n)*sizeof(t)); / * for detecting any bug */\
-    mem##i += (n)*sizeof(t);\
+    mem##Index += (n)*sizeof(t);\
 }
 #define SM_ALLOC(mem,p,t) {SM_ALLOCC(mem,p,1,t);}
 #define SM_REALLOCC(mem,p,n,t,oldn) {\
-    assert(((char *)(p)) + (oldn)*sizeof(t) == mem + mem##i);\
-    mem##i = ((char*)p) - mem;\
+    assert(((char *)(p)) + (oldn)*sizeof(t) == mem + mem##Index);\
+    mem##Index = ((char*)p) - mem;\
     SM_ALLOCC(mem,p,n,t);\
 }
 #define SM_FREE_UNTIL(mem,p) {\
-    assert((p)>=mem && (p)<= mem+mem##i);\
-    mem##i = ((char*)(p))-mem;\
+    assert((p)>=mem && (p)<= mem+mem##Index);\
+    mem##Index = ((char*)(p))-mem;\
 }
 #define SM_FREED_POINTER(mem,ppp) (\
-    ((char*)ppp) >= mem + mem##i && ((char*)ppp) < mem + SIZE_##mem \
+    ((char*)ppp) >= mem + mem##Index && ((char*)ppp) < mem + SIZE_##mem \
 )
 
 
@@ -191,9 +191,9 @@ extern S_topBlock *s_topBlock;
 extern jmp_buf memoryResizeJumpTarget;
 
 extern char tmpWorkMemory[];
-extern int tmpWorkMemoryi;
+extern int tmpWorkMemoryIndex;
 extern char ftMemory[];
-extern int ftMemoryi;
+extern int ftMemoryIndex;
 extern char tmpMemory[];
 
 

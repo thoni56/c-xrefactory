@@ -244,13 +244,13 @@ static void fillCaching(S_caching *caching,
                                           CACHING_CLASSES               \
                                           && LANGUAGE(LANG_JAVA)         \
                                           && (options.taskRegime == RegimeXref || options.taskRegime == RegimeHtmlGenerate) \
-                                          && ppmMemoryi < (SIZE_ppmMemory/3)*2 \
+                                          && ppmMemoryIndex < (SIZE_ppmMemory/3)*2 \
                                                                         )
 
 
 void recoverCachePointZero(void) {
     //&if (CACHING_CLASSES) {
-    ppmMemoryi = s_cache.cp[0].ppmMemoryIndex;
+    ppmMemoryIndex = s_cache.cp[0].ppmMemoryIndex;
     //&}
     recoverCachePoint(0,s_cache.cp[0].lbcc,0);
 }
@@ -267,12 +267,12 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
     log_trace("recovering cache point %d", i);
     cp = &s_cache.cp[i];
     if (! CAN_CONTINUE_CACHING_CLASSES(cp)) {
-        ppmMemoryi = cp->ppmMemoryIndex;
+        ppmMemoryIndex = cp->ppmMemoryIndex;
         //& if (CACHING_CLASSES) fprintf(dumpOut, "\nflushing classes\n\n");
     }
-    mbMemoryi = cp->mbMemoryIndex;
+    mbMemoryIndex = cp->mbMemoryIndex;
     s_topBlock = cp->topBlock;
-    tmpWorkMemoryi = 0;
+    tmpWorkMemoryIndex = 0;
     *s_topBlock = cp->topBlockContent;
     s_javaStat = cp->javaCached;
     counters = cp->counters;
@@ -408,11 +408,11 @@ void placeCachePoint(bool inputCaching) {
         cacheInput();
     if (s_cache.activeCache == 0)
         return;
-    if (tmpWorkMemoryi != 0)
+    if (tmpWorkMemoryIndex != 0)
         return; /* something in non-cached tmp memory */
     pp = &s_cache.cp[s_cache.cpi];
     log_debug("placing cache point %d", s_cache.cpi);
-    fillCachePoint(pp, s_topBlock, ppmMemoryi, cxMemory->index, mbMemoryi, s_cache.lbcc,
+    fillCachePoint(pp, s_topBlock, ppmMemoryIndex, cxMemory->index, mbMemoryIndex, s_cache.lbcc,
                    s_cache.ibi, currentFile.lineNumber, currentFile.ifDepth,
                    currentFile.ifStack, s_javaStat, counters);
     s_cache.cpi ++;

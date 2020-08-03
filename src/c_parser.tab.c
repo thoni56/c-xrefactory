@@ -2711,16 +2711,16 @@ break;
 case 97:
 #line 630 "c_parser.y"
 {
-        yyval.ast_unsigned.d = tmpWorkMemoryi;
+        yyval.ast_unsigned.d = tmpWorkMemoryIndex;
     }
 break;
 case 98:
 #line 636 "c_parser.y"
-{ tmpWorkMemoryi = yyvsp[-2].ast_unsigned.d; }
+{ tmpWorkMemoryIndex = yyvsp[-2].ast_unsigned.d; }
 break;
 case 99:
 #line 637 "c_parser.y"
-{ tmpWorkMemoryi = yyvsp[-2].ast_unsigned.d; }
+{ tmpWorkMemoryIndex = yyvsp[-2].ast_unsigned.d; }
 break;
 case 100:
 #line 639 "c_parser.y"
@@ -3067,7 +3067,7 @@ case 169:
             completeDeclarator(yyvsp[-2].ast_symbol.d, p);
         }
         yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
-        tmpWorkMemoryi = yyvsp[-3].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-3].ast_unsigned.d;
     }
 break;
 case 170:
@@ -3601,14 +3601,14 @@ case 250:
 #line 1309 "c_parser.y"
 {
         yyval.ast_idList.d = yyvsp[-3].ast_idList.d;
-        tmpWorkMemoryi = yyvsp[-4].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-4].ast_unsigned.d;
     }
 break;
 case 251:
 #line 1313 "c_parser.y"
 {
         LIST_APPEND(IdList, yyvsp[-6].ast_idList.d, yyvsp[-3].ast_idList.d);
-        tmpWorkMemoryi = yyvsp[-4].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-4].ast_unsigned.d;
     }
 break;
 case 252:
@@ -3653,49 +3653,49 @@ break;
 case 258:
 #line 1350 "c_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
     }
 break;
 case 259:
 #line 1353 "c_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
     }
 break;
 case 260:
 #line 1356 "c_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
     }
 break;
 case 261:
 #line 1359 "c_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
     }
 break;
 case 262:
 #line 1362 "c_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
     }
 break;
 case 263:
 #line 1365 "c_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
     }
 break;
 case 264:
 #line 1368 "c_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
     }
 break;
 case 265:
 #line 1371 "c_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
     }
 break;
 case 267:
@@ -3937,13 +3937,13 @@ break;
 case 335:
 #line 1620 "c_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-2].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-2].ast_unsigned.d;
     }
 break;
 case 336:
 #line 1623 "c_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-2].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-2].ast_unsigned.d;
     }
 break;
 case 337:
@@ -3958,7 +3958,7 @@ case 337:
         /* TODO!!!, here you should check if there is previous declaration of*/
         /* the function, if yes and is declared static, make it static!*/
         addNewSymbolDef(yyvsp[0].ast_symbol.d, StorageExtern, s_symbolTable, UsageDefined);
-        tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
         stackMemoryBlockStart();
         counters.localVar = 0;
         assert(yyvsp[0].ast_symbol.d->u.type && yyvsp[0].ast_symbol.d->u.type->kind == TypeFunction);
@@ -3984,37 +3984,37 @@ break;
 case 339:
 #line 1654 "c_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-3].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-3].ast_unsigned.d;
     }
 break;
 case 340:
 #line 1657 "c_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-5].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-5].ast_unsigned.d;
     }
 break;
 case 341:
 #line 1660 "c_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-5].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-5].ast_unsigned.d;
     }
 break;
 case 342:
 #line 1663 "c_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-2].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-2].ast_unsigned.d;
     }
 break;
 case 343:
 #line 1666 "c_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
     }
 break;
 case 344:
 #line 1669 "c_parser.y"
 {  /* empty external definition */
-        tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
     }
 break;
 case 345:

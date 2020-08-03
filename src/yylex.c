@@ -50,7 +50,7 @@
 #define MB_FREE_UNTIL(p)        {SM_FREE_UNTIL(mbMemory,p);}
 
 static char ppMemory[SIZE_ppMemory];
-static int ppMemoryi=0;
+static int ppMemoryIndex=0;
 
 int macroStackIndex=0;
 static LexInput macroStack[MACRO_STACK_SIZE];
@@ -69,13 +69,13 @@ static int expandMacroCall(Symbol *mdef, Position *mpos);
 /* ************************************************************ */
 
 void initAllInputs(void) {
-    mbMemoryi=0;
+    mbMemoryIndex=0;
     includeStackPointer=0;
     macroStackIndex=0;
     s_ifEvaluation = 0;
     s_cxRefFlag = 0;
     macroArgumentTableNoAllocInit(&s_macroArgumentTable, MAX_MACRO_ARGS);
-    ppMemoryi=0;
+    ppMemoryIndex=0;
     s_olstring[0]=0;
     s_olstringFound = 0;
     s_olstringServed = 0;
@@ -227,7 +227,7 @@ static int getOrCreateFileNumberFor(char *fileName) {
 void ppMemInit(void) {
     PP_ALLOCC(s_macroArgumentTable.tab, MAX_MACRO_ARGS, S_macroArgumentTableElement *);
     macroArgumentTableNoAllocInit(&s_macroArgumentTable, MAX_MACRO_ARGS);
-    ppMemoryi = 0;
+    ppMemoryIndex = 0;
 }
 
 // it is supposed that one of file or buffer is NULL

@@ -1456,7 +1456,7 @@ static void scanClassFile(char *zip, char *file, void *arg) {
         // cross references in CX_MEMORY are interesting in this case.
         recoverCachePoint(cpi-1, s_cache.cp[cpi-1].lbcc, 0);
         log_trace("firstFreeIndex = %d", s_topBlock->firstFreeIndex);
-        //&fprintf(dumpOut,": ppmmem == %d/%d %x-%x\n",ppmMemoryi,SIZE_ppmMemory,ppmMemory,ppmMemory+SIZE_ppmMemory);
+        //&fprintf(dumpOut,": ppmmem == %d/%d %x-%x\n",ppmMemoryIndex,SIZE_ppmMemory,ppmMemory,ppmMemory+SIZE_ppmMemory);
     }
 }
 

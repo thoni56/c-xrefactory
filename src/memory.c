@@ -17,10 +17,10 @@ jmp_buf memoryResizeJumpTarget;
 static char memory[SIZE_workMemory];   /* Allocation using stackMemoryAlloc() et.al */
 
 char tmpWorkMemory[SIZE_tmpWorkMemory];
-int tmpWorkMemoryi = 0;
+int tmpWorkMemoryIndex = 0;
 
 char ftMemory[SIZE_ftMemory];
-int ftMemoryi = 0;
+int ftMemoryIndex = 0;
 
 char tmpMemory[SIZE_TMP_MEM];
 
@@ -171,8 +171,8 @@ void stackMemoryBlockStart(void) {
     p = stackMemoryPush(&top, sizeof(S_topBlock));
     // trail can't be reset to NULL, because in case of syntax errors
     // this would avoid balancing of } at the end of class
-    /*& fillTopBlock(s_topBlock, s_topBlock->firstFreeIndex, tmpWorkMemoryi, NULL, p); &*/
-    fillTopBlock(s_topBlock, s_topBlock->firstFreeIndex, tmpWorkMemoryi, s_topBlock->trail, p);
+    /*& fillTopBlock(s_topBlock, s_topBlock->firstFreeIndex, tmpWorkMemoryIndex, NULL, p); &*/
+    fillTopBlock(s_topBlock, s_topBlock->firstFreeIndex, tmpWorkMemoryIndex, s_topBlock->trail, p);
 }
 
 void stackMemoryBlockFree(void) {
@@ -180,9 +180,9 @@ void stackMemoryBlockFree(void) {
     //&removeFromTrailUntil(NULL);
     assert(s_topBlock && s_topBlock->previousTopBlock);
     removeFromTrailUntil(s_topBlock->previousTopBlock->trail);
-    log_trace("block free %d %d",tmpWorkMemoryi,s_topBlock->tmpMemoryBasei);
-    assert(tmpWorkMemoryi >= s_topBlock->tmpMemoryBasei);
-    tmpWorkMemoryi = s_topBlock->tmpMemoryBasei;
+    log_trace("block free %d %d",tmpWorkMemoryIndex,s_topBlock->tmpMemoryBasei);
+    assert(tmpWorkMemoryIndex >= s_topBlock->tmpMemoryBasei);
+    tmpWorkMemoryIndex = s_topBlock->tmpMemoryBasei;
     * s_topBlock =  * s_topBlock->previousTopBlock;
     /*  FILL_topBlock(s_topBlock,s_topBlock->firstFreeIndex,NULL,NULL); */
     // burk, following disables any memory freeing for Java

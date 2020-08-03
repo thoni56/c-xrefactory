@@ -850,13 +850,13 @@ constant_expr
 
 Sv_tmp
     :    {
-        $$.d = tmpWorkMemoryi;
+        $$.d = tmpWorkMemoryIndex;
     }
     ;
 
 declaration
-    : Sv_tmp declaration_specifiers ';'     { tmpWorkMemoryi = $1.d; }
-    | Sv_tmp init_declarations ';'          { tmpWorkMemoryi = $1.d; }
+    : Sv_tmp declaration_specifiers ';'     { tmpWorkMemoryIndex = $1.d; }
+    | Sv_tmp init_declarations ';'          { tmpWorkMemoryIndex = $1.d; }
     | error
         {
 #if YYDEBUG
@@ -1108,7 +1108,7 @@ struct_declaration
             completeDeclarator($2.d, p);
         }
         $$.d = $3.d;
-        tmpWorkMemoryi = $1.d;
+        tmpWorkMemoryIndex = $1.d;
     }
     | error                                             {
         $$.d = newSymbolAsCopyOf(&s_errorSymbol);
@@ -1530,11 +1530,11 @@ initializer
 initializer_list
     : Sv_tmp designation_opt Start_block initializer Stop_block {
         $$.d = $2.d;
-        tmpWorkMemoryi = $1.d;
+        tmpWorkMemoryIndex = $1.d;
     }
     | initializer_list ',' Sv_tmp designation_opt Start_block initializer Stop_block {
         LIST_APPEND(IdList, $1.d, $4.d);
-        tmpWorkMemoryi = $3.d;
+        tmpWorkMemoryIndex = $3.d;
     }
     ;
 
@@ -1570,28 +1570,28 @@ designator
 
 statement
     : Sv_tmp labeled_statement      {
-        tmpWorkMemoryi = $1.d;
+        tmpWorkMemoryIndex = $1.d;
     }
     | Sv_tmp compound_statement     {
-        tmpWorkMemoryi = $1.d;
+        tmpWorkMemoryIndex = $1.d;
     }
     | Sv_tmp expression_statement       {
-        tmpWorkMemoryi = $1.d;
+        tmpWorkMemoryIndex = $1.d;
     }
     | Sv_tmp selection_statement        {
-        tmpWorkMemoryi = $1.d;
+        tmpWorkMemoryIndex = $1.d;
     }
     | Sv_tmp iteration_statement        {
-        tmpWorkMemoryi = $1.d;
+        tmpWorkMemoryIndex = $1.d;
     }
     | Sv_tmp jump_statement     {
-        tmpWorkMemoryi = $1.d;
+        tmpWorkMemoryIndex = $1.d;
     }
     | Sv_tmp asm_statement      {
-        tmpWorkMemoryi = $1.d;
+        tmpWorkMemoryIndex = $1.d;
     }
     | Sv_tmp error  {
-        tmpWorkMemoryi = $1.d;
+        tmpWorkMemoryIndex = $1.d;
     }
     ;
 
@@ -1840,10 +1840,10 @@ cached_external_definition_list
 
 external_definition
     : Sv_tmp declaration_specifiers ';'     {
-        tmpWorkMemoryi = $1.d;
+        tmpWorkMemoryIndex = $1.d;
     }
     | Sv_tmp top_init_declarations ';'      {
-        tmpWorkMemoryi = $1.d;
+        tmpWorkMemoryIndex = $1.d;
     }
     | Sv_tmp function_definition_head {
         Symbol *p;
@@ -1855,7 +1855,7 @@ external_definition
         // TODO!!!, here you should check if there is previous declaration of
         // the function, if yes and is declared static, make it static!
         addNewSymbolDef($2.d, StorageExtern, s_symbolTable, UsageDefined);
-        tmpWorkMemoryi = $1.d;
+        tmpWorkMemoryIndex = $1.d;
         stackMemoryBlockStart();
         counters.localVar = 0;
         assert($2.d->u.type && $2.d->u.type->kind == TypeFunction);
@@ -1874,22 +1874,22 @@ external_definition
         }
     }
     | Sv_tmp EXTERN STRING_LITERAL  external_definition {
-        tmpWorkMemoryi = $1.d;
+        tmpWorkMemoryIndex = $1.d;
     }
     | Sv_tmp EXTERN STRING_LITERAL  '{' cached_external_definition_list '}' {
-        tmpWorkMemoryi = $1.d;
+        tmpWorkMemoryIndex = $1.d;
     }
     | Sv_tmp ASM_KEYWORD '(' expr ')' ';'       {
-        tmpWorkMemoryi = $1.d;
+        tmpWorkMemoryIndex = $1.d;
     }
     | Sv_tmp error compound_statement       {
-        tmpWorkMemoryi = $1.d;
+        tmpWorkMemoryIndex = $1.d;
     }
     | Sv_tmp error      {
-        tmpWorkMemoryi = $1.d;
+        tmpWorkMemoryIndex = $1.d;
     }
     | Sv_tmp ';'        {  /* empty external definition */
-        tmpWorkMemoryi = $1.d;
+        tmpWorkMemoryIndex = $1.d;
     }
     ;
 

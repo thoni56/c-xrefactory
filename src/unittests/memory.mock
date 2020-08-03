@@ -6,10 +6,10 @@ Memory *cxMemory = NULL;
 S_topBlock *s_topBlock;
 
 char tmpWorkMemory[SIZE_tmpWorkMemory];
-int tmpWorkMemoryi = 0;
+int tmpWorkMemoryIndex = 0;
 
 char ftMemory[SIZE_ftMemory];
-int ftMemoryi = 0;
+int ftMemoryIndex = 0;
 
 char tmpMemory[SIZE_TMP_MEM];
 

@@ -10,9 +10,9 @@ int s_fileAbortionEnabled;
 #define LAST_TOKEN 456          /* To not have to include parsers.h */
 
 char mbMemory[SIZE_mbMemory];
-int mbMemoryi=0;
+int mbMemoryIndex=0;
 char ppmMemory[SIZE_ppmMemory];
-int ppmMemoryi=0;
+int ppmMemoryIndex=0;
 int olcxMemoryAllocatedBytes;
 jmp_buf cxmemOverflow;
 

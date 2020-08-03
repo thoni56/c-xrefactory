@@ -3601,16 +3601,16 @@ break;
 case 288:
 #line 852 "yacc_parser.y"
 {
-        yyval.ast_unsigned.d = tmpWorkMemoryi;
+        yyval.ast_unsigned.d = tmpWorkMemoryIndex;
     }
 break;
 case 289:
 #line 858 "yacc_parser.y"
-{ tmpWorkMemoryi = yyvsp[-2].ast_unsigned.d; }
+{ tmpWorkMemoryIndex = yyvsp[-2].ast_unsigned.d; }
 break;
 case 290:
 #line 859 "yacc_parser.y"
-{ tmpWorkMemoryi = yyvsp[-2].ast_unsigned.d; }
+{ tmpWorkMemoryIndex = yyvsp[-2].ast_unsigned.d; }
 break;
 case 291:
 #line 861 "yacc_parser.y"
@@ -3957,7 +3957,7 @@ case 360:
             completeDeclarator(yyvsp[-2].ast_symbol.d, p);
         }
         yyval.ast_symbol.d = yyvsp[-1].ast_symbol.d;
-        tmpWorkMemoryi = yyvsp[-3].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-3].ast_unsigned.d;
     }
 break;
 case 361:
@@ -4491,14 +4491,14 @@ case 441:
 #line 1531 "yacc_parser.y"
 {
         yyval.ast_idList.d = yyvsp[-3].ast_idList.d;
-        tmpWorkMemoryi = yyvsp[-4].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-4].ast_unsigned.d;
     }
 break;
 case 442:
 #line 1535 "yacc_parser.y"
 {
         LIST_APPEND(IdList, yyvsp[-6].ast_idList.d, yyvsp[-3].ast_idList.d);
-        tmpWorkMemoryi = yyvsp[-4].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-4].ast_unsigned.d;
     }
 break;
 case 443:
@@ -4543,49 +4543,49 @@ break;
 case 449:
 #line 1572 "yacc_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
     }
 break;
 case 450:
 #line 1575 "yacc_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
     }
 break;
 case 451:
 #line 1578 "yacc_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
     }
 break;
 case 452:
 #line 1581 "yacc_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
     }
 break;
 case 453:
 #line 1584 "yacc_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
     }
 break;
 case 454:
 #line 1587 "yacc_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
     }
 break;
 case 455:
 #line 1590 "yacc_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
     }
 break;
 case 456:
 #line 1593 "yacc_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
     }
 break;
 case 458:
@@ -4827,13 +4827,13 @@ break;
 case 526:
 #line 1842 "yacc_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-2].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-2].ast_unsigned.d;
     }
 break;
 case 527:
 #line 1845 "yacc_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-2].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-2].ast_unsigned.d;
     }
 break;
 case 528:
@@ -4848,7 +4848,7 @@ case 528:
         /* TODO!!!, here you should check if there is previous declaration of*/
         /* the function, if yes and is declared static, make it static!*/
         addNewSymbolDef(yyvsp[0].ast_symbol.d, StorageExtern, s_symbolTable, UsageDefined);
-        tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
         stackMemoryBlockStart();
         counters.localVar = 0;
         assert(yyvsp[0].ast_symbol.d->u.type && yyvsp[0].ast_symbol.d->u.type->kind == TypeFunction);
@@ -4874,37 +4874,37 @@ break;
 case 530:
 #line 1876 "yacc_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-3].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-3].ast_unsigned.d;
     }
 break;
 case 531:
 #line 1879 "yacc_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-5].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-5].ast_unsigned.d;
     }
 break;
 case 532:
 #line 1882 "yacc_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-5].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-5].ast_unsigned.d;
     }
 break;
 case 533:
 #line 1885 "yacc_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-2].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-2].ast_unsigned.d;
     }
 break;
 case 534:
 #line 1888 "yacc_parser.y"
 {
-        tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
     }
 break;
 case 535:
 #line 1891 "yacc_parser.y"
 {  /* empty external definition */
-        tmpWorkMemoryi = yyvsp[-1].ast_unsigned.d;
+        tmpWorkMemoryIndex = yyvsp[-1].ast_unsigned.d;
     }
 break;
 case 536:

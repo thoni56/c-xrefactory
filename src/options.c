@@ -28,7 +28,7 @@
 /* memory where on-line given options are stored */
 #define SIZE_optMemory SIZE_opiMemory
 static char optMemory[SIZE_optMemory];
-static int optMemoryi;
+static int optMemoryIndex;
 
 static char s_javaSourcePathStatic[MAX_OPTION_LEN];
 static char s_javaClassPathStatic[MAX_OPTION_LEN];
