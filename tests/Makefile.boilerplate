@@ -21,6 +21,17 @@ EDIT_SERVER_DRIVER = ../../utils/server_driver.py
 # Since absolute paths are abundant we need to...
 NORMALIZE = sed -e "s+$(CURDIR)+CURDIR+g" -e "s/ len=[0-9]*/ len=<n>/g"
 
+# Verification is often done by comparing an output with the expected
+VERIFY = cmp output expected ; \
+	if [ $$? -ne 0 ] ; then \
+		$(FAIL) ; \
+		diff output expected ; \
+		exit 1 ; \
+	else \
+		$(OK) ; \
+		exit 0 ; \
+	fi
+
 # If the test requires a .c-xrefrc for test directory you need to
 # generate one. The .c-xrefrc requires absolute paths, and to work in
 # any directory, a .c-xrefrc can be generated from a common
@@ -30,8 +41,8 @@ NORMALIZE = sed -e "s+$(CURDIR)+CURDIR+g" -e "s/ len=[0-9]*/ len=<n>/g"
 # editors will automatically read the correct file as if it was in the
 # users HOME.
 #
-# TODO: we should check for a c-xrefrc.tpl in the test directory we should use
-# that instead, currently they have to do this in the Makefile if the standard
-# does not work
+# TODO: we should check for a c-xrefrc.tpl in the test directory and
+# use that instead, currently they have to do this in the Makefile if
+# the standard does not work
 .c-xrefrc: ../c-xrefrc.tpl
 	@sed -e "s+CURDIR+$(CURDIR)+g" -e "s+TEST+$(TEST)+g" ../c-xrefrc.tpl > .c-xrefrc

@@ -12,15 +12,7 @@ $(TEST): CXrefs
 	else \
 		$(EDIT_SERVER_DRIVER) commands.input $(CURDIR) > output.tmp ; \
 		$(NORMALIZE) output.tmp > output ; \
-		cmp output expected ; \
-		if [ $$? -ne 0 ] ; then \
-			$(FAIL) ; \
-			diff output expected ; \
-			exit 1 ; \
-		else \
-			$(OK) ; \
-			exit 0 ; \
-		fi ; \
+		$(VERIFY) ; \
 	fi
 
 CXrefs: .c-xrefrc
