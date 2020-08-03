@@ -281,7 +281,7 @@ void recoverCachePoint(int i, char *readUntil, int activeCaching) {
     if (options.taskRegime==RegimeEditServer && s_currCppPass==1) {
         /* remove old references, only on first pass of edit server */
         log_trace("removing references");
-        cxMemory->i = cp->cxMemoryIndex;
+        cxMemory->index = cp->cxMemoryIndex;
         refTabMap3(&referenceTable, cxrefTabDeleteOutOfMemory);
         fileTableMapWithIndex(&fileTable, fileTabDeleteOutOfMemory);
     }
@@ -412,7 +412,7 @@ void placeCachePoint(bool inputCaching) {
         return; /* something in non-cached tmp memory */
     pp = &s_cache.cp[s_cache.cpi];
     log_debug("placing cache point %d", s_cache.cpi);
-    fillCachePoint(pp, s_topBlock, ppmMemoryi, cxMemory->i, mbMemoryi, s_cache.lbcc,
+    fillCachePoint(pp, s_topBlock, ppmMemoryi, cxMemory->index, mbMemoryi, s_cache.lbcc,
                    s_cache.ibi, currentFile.lineNumber, currentFile.ifDepth,
                    currentFile.ifStack, s_javaStat, counters);
     s_cache.cpi ++;

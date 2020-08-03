@@ -51,7 +51,7 @@ void memoryResize(void) {
 
 void initMemory(Memory *memory, bool (*overflowHandler)(int n), int size) {
     memory->overflowHandler = overflowHandler;
-    memory->i = 0;
+    memory->index = 0;
     memory->size = size;
     memory->b = 0;
 }

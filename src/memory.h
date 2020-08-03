@@ -58,23 +58,23 @@
 
 */
 
-#define DM_FREE_SPACE(mem,n) (mem->i+(n) < mem->size)
+#define DM_FREE_SPACE(mem,n) (mem->index+(n) < mem->size)
 
 #define DM_IS_BETWEEN(mem,ppp,iii,jjj) (\
     ((char*)ppp) >= ((char*)&mem->b) + (iii) && ((char*)ppp) < ((char*)&mem->b) + (jjj) \
 )
-#define DM_FREED_POINTER(mem,ppp) DM_IS_BETWEEN(mem,ppp,mem->i,mem->size)
+#define DM_FREED_POINTER(mem,ppp) DM_IS_BETWEEN(mem,ppp,mem->index,mem->size)
 
-#define DM_INIT(mem) {mem->i = 0;}
+#define DM_INIT(mem) {mem->index = 0;}
 #define DM_ALLOCC(mem,p,n,type) {\
     assert( (n) >= 0);\
-    mem->i = ((char*)ALIGNMENT(((char*)&mem->b)+mem->i,STANDARD_ALIGNMENT)) - ((char*)&mem->b);\
-    if (mem->i+(n)*sizeof(type) >= mem->size) {\
+    mem->index = ((char*)ALIGNMENT(((char*)&mem->b)+mem->index,STANDARD_ALIGNMENT)) - ((char*)&mem->b);\
+    if (mem->index+(n)*sizeof(type) >= mem->size) {\
         if (mem->overflowHandler(n)) memoryResize();        \
         else fatalError(ERR_NO_MEMORY,#mem, XREF_EXIT_ERR);\
     }\
-    p = (type*) (((char*)&mem->b) + mem->i);\
-    mem->i += (n)*sizeof(type);\
+    p = (type*) (((char*)&mem->b) + mem->index);\
+    mem->index += (n)*sizeof(type);\
 }
 #define DM_ALLOC(mem,p,t) {DM_ALLOCC(mem,p,1,t);}
 #define DM_REALLOCC(mem,p,n,t,oldn) {\
@@ -83,8 +83,8 @@
     DM_ALLOCC(mem,p,n,t);\
 }
 #define DM_FREE_UNTIL(mem,p) {\
-    assert((p)>= ((char*)&mem->b) && (p)<= ((char*)&mem->b)+mem->i);\
-    mem->i = ((char*)(p)) - ((char*)&mem->b);\
+    assert((p)>= ((char*)&mem->b) && (p)<= ((char*)&mem->b)+mem->index);\
+    mem->index = ((char*)(p)) - ((char*)&mem->b);\
 }
 
 /* editor allocations, for now, store it in olcxmemory */
@@ -172,7 +172,7 @@ typedef struct freeTrail {
 
 typedef struct memory {
     bool	(*overflowHandler)(int n);
-    int     i;
+    int     index;
     int		size;
     double  b;		//  double in order to get it properly aligned
 } Memory;

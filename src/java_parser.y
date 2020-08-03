@@ -1372,7 +1372,7 @@ _bef_:	{
                     if (options.taskRegime == RegimeEditServer) {
                         if (s_cp.parserPassedMarker && !s_cp.thisMethodMemoriesStored){
                             s_cps.cxMemoryIndexAtMethodBegin = s_cp.cxMemoryIndexAtFunctionBegin;
-                            s_cps.cxMemoryIndexAtMethodEnd = cxMemory->i;
+                            s_cps.cxMemoryIndexAtMethodEnd = cxMemory->index;
                             /*& sprintf(tmpBuff,"setting %s, %d,%d   %d,%d",
                                     olcxOptionsName[options.server_operation],
                                     s_cp.parserPassedMarker, s_cp.thisMethodMemoriesStored,
@@ -1393,7 +1393,7 @@ _bef_:	{
                                                              s_javaStat->thisClass);
                             }
                             s_cps.cxMemoryIndexAtClassBeginning = s_cp.cxMemoryIndexdiAtClassBegin;
-                            s_cps.cxMemoryIndexAtClassEnd = cxMemory->i;
+                            s_cps.cxMemoryIndexAtClassEnd = cxMemory->index;
                             s_cps.classCoordEndLine = currentFile.lineNumber+1;
                             /*& fprintf(dumpOut,"!setting class end line to %d, cb==%d, ce==%d\n",
                               s_cps.classCoordEndLine, s_cps.cxMemoryIndexAtClassBeginning,
@@ -1409,7 +1409,7 @@ _bef_:	{
                             }
                         }
                     }
-                    s_cp.cxMemoryIndexdiAtClassBegin = cxMemory->i;
+                    s_cp.cxMemoryIndexdiAtClassBegin = cxMemory->index;
                     /*& fprintf(dumpOut,"!setting class begin memory %d\n",
                       s_cp.cxMemoryIndexdiAtClassBegin); &*/
                     actionsBeforeAfterExternalDefinition();

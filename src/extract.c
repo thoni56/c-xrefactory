@@ -1255,13 +1255,13 @@ void actionsBeforeAfterExternalDefinition(void) {
         && (! s_cps.extractProcessedFlag))
     {
         // O.K. make extraction
-        s_cp.cxMemoryIndexAtFunctionEnd = cxMemory->i;
+        s_cp.cxMemoryIndexAtFunctionEnd = cxMemory->index;
         makeExtraction();
         s_cps.extractProcessedFlag = 1;
         /* here should be a longjmp to stop file processing !!!! */
         /* No, all this extraction should be after parsing ! */
     }
-    s_cp.cxMemoryIndexAtFunctionBegin = cxMemory->i;
+    s_cp.cxMemoryIndexAtFunctionBegin = cxMemory->index;
     if (includeStackPointer) {                     // ??????? burk ????
         s_cp.funBegPosition = includeStack[0].lineNumber+1;
     } else {
@@ -1273,14 +1273,14 @@ void actionsBeforeAfterExternalDefinition(void) {
 void extractActionOnBlockMarker(void) {
     Position pos;
     if (s_cps.cxMemoryIndexAtBlockBegin == 0) {
-        s_cps.cxMemoryIndexAtBlockBegin = cxMemory->i;
+        s_cps.cxMemoryIndexAtBlockBegin = cxMemory->index;
         s_cps.workMemiAtBlockBegin = s_topBlock->previousTopBlock;
         if (LANGUAGE(LANG_JAVA)) {
             s_javaExtractFromFunctionMods = s_javaStat->methodModifiers;
         }
     } else {
         assert(s_cps.cxMemoryIndexAtBlockEnd == 0);
-        s_cps.cxMemoryIndexAtBlockEnd = cxMemory->i;
+        s_cps.cxMemoryIndexAtBlockEnd = cxMemory->index;
         s_cps.workMemiAtBlockEnd = s_topBlock->previousTopBlock;
     }
     fillPosition(&pos, currentFile.lexBuffer.buffer.fileNumber, 0, 0);
