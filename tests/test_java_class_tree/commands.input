@@ -1,0 +1,4 @@
+../../src/c-xref "-xrefactory-II" "-crlfconversion" "-crconversion" "-encoding=default" "-encoding=european" "-task_regime_server"
+"-xrefrc" "CURDIR/.c-xrefrc" "-p" "CURDIR" "-user" "1" "-olcxclasstree" "-olmark=303" "-olcursor=461" "-addimportdefault=0" "CURDIR/jexercise/com/xrefactory/refactorings/PullUpMethod.java"
+<sync>
+<exit>
