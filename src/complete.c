@@ -879,9 +879,9 @@ void completeStructs(Completions *c) {
     symbolTableMap2(s_symbolTable, completeFun, (void*) &ii);
 }
 
-static bool javaLinkable(Storage storage, Access access) {
+static bool javaLinkable(Access access) {
 
-    log_trace("testing linkability %x %x", storage, access);
+    log_trace("testing linkability %x", access);
     if (s_language != LANG_JAVA) return true;
     if (access == AccessAll) return true;
     if ((options.ooChecksBits & OOC_LINKAGE_CHECK) == 0) return true;
@@ -967,7 +967,7 @@ static void completeRecordsNames(
                 && (! symbolNameShouldBeHiddenFromReports(r->linkName))
                 //  I do not know whether to check linkability or not
                 //  What is more natural ???
-                && javaLinkable(access,r->bits.access)) {
+                && javaLinkable(r->bits.access)) {
             //&fprintf(dumpOut,"passed\n", cname);
             assert(rfs.currClass && rfs.currClass->u.s);
             assert(r->bits.symType == TypeDefault);
@@ -1135,7 +1135,7 @@ static char *spComplFindNextRecord(S_exprTokenType *tok) {
         assert(r);
         cname = r->name;
         CONST_CONSTRUCT_NAME(StorageDefault,r->bits.storage,cname);
-        if (cname!=NULL && javaLinkable(AccessAll, r->bits.access)){
+        if (cname!=NULL && javaLinkable(r->bits.access)){
             assert(rfs.currClass && rfs.currClass->u.s);
             assert(r->bits.symType == TypeDefault);
             if (isEqualType(r->u.type, tok->typeModifier)) {
