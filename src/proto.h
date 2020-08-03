@@ -668,10 +668,10 @@ typedef struct currentlyParsedCl {		// class local, nested for classes
     struct symbol			*function;
     struct extRecFindStr	*erfsForParamsComplet;			// curently parsed method for param completion
     unsigned				funBegPosition;
-    int                     cxMemiAtFunBegin;
-    int						cxMemiAtFunEnd;
-    int                     cxMemiAtClassBegin;
-    int						cxMemiAtClassEnd;
+    int                     cxMemoryIndexAtFunctionBegin;
+    int						cxMemoryIndexAtFunctionEnd;
+    int                     cxMemoryIndexdiAtClassBegin;
+    int						cxMemoryIndexAtClassEnd;
     int						thisMethodMemoriesStored;
     int						thisClassMemoriesStored;
     int						parserPassedMarker;
@@ -679,10 +679,6 @@ typedef struct currentlyParsedCl {		// class local, nested for classes
 
 typedef struct currentlyParsedStatics {
     int             extractProcessedFlag;
-    int             cxMemiAtBlockBegin;
-    int             cxMemiAtBlockEnd;
-    struct topBlock *workMemiAtBlockBegin;
-    struct topBlock *workMemiAtBlockEnd;
     int				marker1Flag;
     int				marker2Flag;
     char			setTargetAnswerClass[TMP_STRING_SIZE];	// useless for xref2
@@ -691,11 +687,15 @@ typedef struct currentlyParsedStatics {
     char			currentClassAnswer[TMP_STRING_SIZE];
     char			currentSuperClassAnswer[TMP_STRING_SIZE];
     int				methodCoordEndLine;        // to be removed
-    int				cxMemiAtMethodBeginning;
-    int				cxMemiAtMethodEnd;
     int				classCoordEndLine;
-    int				cxMemiAtClassBeginning;
-    int				cxMemiAtClassEnd;
+    struct topBlock *workMemiAtBlockBegin;
+    struct topBlock *workMemiAtBlockEnd;
+    int             cxMemoryIndexAtBlockBegin;
+    int             cxMemoryIndexAtBlockEnd;
+    int				cxMemoryIndexAtMethodBegin;
+    int				cxMemoryIndexAtMethodEnd;
+    int				cxMemoryIndexAtClassBeginning;
+    int				cxMemoryIndexAtClassEnd;
     int				lastImportLine;
     struct symbol	*lastDeclaratorType;
     struct symbol	*lastAssignementStruct;

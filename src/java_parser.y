@@ -1371,12 +1371,12 @@ _bef_:	{
                     // TODO, REDO all this stuff around class/method boundaries !!!!!!
                     if (options.taskRegime == RegimeEditServer) {
                         if (s_cp.parserPassedMarker && !s_cp.thisMethodMemoriesStored){
-                            s_cps.cxMemiAtMethodBeginning = s_cp.cxMemiAtFunBegin;
-                            s_cps.cxMemiAtMethodEnd = cxMemory->i;
+                            s_cps.cxMemoryIndexAtMethodBegin = s_cp.cxMemoryIndexAtFunctionBegin;
+                            s_cps.cxMemoryIndexAtMethodEnd = cxMemory->i;
                             /*& sprintf(tmpBuff,"setting %s, %d,%d   %d,%d",
                                     olcxOptionsName[options.server_operation],
                                     s_cp.parserPassedMarker, s_cp.thisMethodMemoriesStored,
-                                    s_cps.cxMemiAtMethodBeginning, s_cps.cxMemiAtMethodEnd),
+                                    s_cps.cxMemoryIndexAtMethodBegin, s_cps.cxMemoryIndexAtMethodEnd),
                                 ppcGenRecord(PPC_BOTTOM_INFORMATION, tmpBuff); &*/
                             s_cp.thisMethodMemoriesStored = 1;
                             if (options.server_operation == OLO_MAYBE_THIS) {
@@ -1392,12 +1392,12 @@ _bef_:	{
                                                              CategoryGlobal,currentFile.lexBuffer.buffer.fileNumber,
                                                              s_javaStat->thisClass);
                             }
-                            s_cps.cxMemiAtClassBeginning = s_cp.cxMemiAtClassBegin;
-                            s_cps.cxMemiAtClassEnd = cxMemory->i;
+                            s_cps.cxMemoryIndexAtClassBeginning = s_cp.cxMemoryIndexdiAtClassBegin;
+                            s_cps.cxMemoryIndexAtClassEnd = cxMemory->i;
                             s_cps.classCoordEndLine = currentFile.lineNumber+1;
                             /*& fprintf(dumpOut,"!setting class end line to %d, cb==%d, ce==%d\n",
-                              s_cps.classCoordEndLine, s_cps.cxMemiAtClassBeginning,
-                              s_cps.cxMemiAtClassEnd); &*/
+                              s_cps.classCoordEndLine, s_cps.cxMemoryIndexAtClassBeginning,
+                              s_cps.cxMemoryIndexAtClassEnd); &*/
                             if (options.server_operation == OLO_NOT_FQT_REFS_IN_CLASS) {
                                 changeClassReferencesUsages(LINK_NAME_NOT_FQT_ITEM,
                                                             CategoryLocal,currentFile.lexBuffer.buffer.fileNumber,
@@ -1409,9 +1409,9 @@ _bef_:	{
                             }
                         }
                     }
-                    s_cp.cxMemiAtClassBegin = cxMemory->i;
+                    s_cp.cxMemoryIndexdiAtClassBegin = cxMemory->i;
                     /*& fprintf(dumpOut,"!setting class begin memory %d\n",
-                      s_cp.cxMemiAtClassBegin); &*/
+                      s_cp.cxMemoryIndexdiAtClassBegin); &*/
                     actionsBeforeAfterExternalDefinition();
                 }
             }

@@ -880,7 +880,7 @@ void tpCheckFillMoveClassData(S_tpCheckMoveClassData *dd, char *spack, char *tpa
     if (compareFileNames(spack, tpack)==0) transPackageMove = 0;
     else transPackageMove = 1;
 
-    fillTpCheckMoveClassData(dd, s_cps.cxMemiAtClassBeginning, s_cps.cxMemiAtClassEnd,
+    fillTpCheckMoveClassData(dd, s_cps.cxMemoryIndexAtClassBeginning, s_cps.cxMemoryIndexAtClassEnd,
                                spack, tpack, transPackageMove, sclass->s.name);
 
 }
@@ -1020,8 +1020,8 @@ static bool tpCheckSuperMethodReferencesInit(S_tpCheckSpecialReferencesData *rr)
         errorMessage(ERR_ST, "no super class, something is going wrong");
         return false;;
     }
-    initTpCheckSpecialReferencesData(rr, s_cps.cxMemiAtMethodBeginning,
-                                     s_cps.cxMemiAtMethodEnd,
+    initTpCheckSpecialReferencesData(rr, s_cps.cxMemoryIndexAtMethodBegin,
+                                     s_cps.cxMemoryIndexAtMethodEnd,
                                      LINK_NAME_SUPER_METHOD_ITEM, scl);
     refTabMap2(&referenceTable, tpCheckSpecialReferencesMapFun, rr);
     return true;
@@ -1104,8 +1104,8 @@ int tpCheckOuterScopeUsagesForDynToSt(void) {
     rstack = s_olcxCurrentUser->browserStack.top;
     ss = rstack->hkSelectedSym;
     assert(ss);
-    initTpCheckSpecialReferencesData(&rr, s_cps.cxMemiAtMethodBeginning,
-                                     s_cps.cxMemiAtMethodEnd,
+    initTpCheckSpecialReferencesData(&rr, s_cps.cxMemoryIndexAtMethodBegin,
+                                     s_cps.cxMemoryIndexAtMethodEnd,
                                      LINK_NAME_MAYBE_THIS_ITEM, ss->s.vApplClass);
     refTabMap2(&referenceTable, tpCheckSpecialReferencesMapFun, &rr);
     if (rr.foundOuterScopeRef!=NULL) {
@@ -2630,7 +2630,7 @@ static void refactoryAddToImports(EditorBuffer *buf, EditorMarker *point) {
 
 static void refactoryPushAllReferencesOfMethod(EditorMarker *m1, char *specialOption) {
     refactoryEditServerParseBuffer( s_ropt.project, m1->buffer, m1,NULL, "-olcxpushallinmethod", specialOption);
-    olPushAllReferencesInBetween(s_cps.cxMemiAtMethodBeginning, s_cps.cxMemiAtMethodEnd);
+    olPushAllReferencesInBetween(s_cps.cxMemoryIndexAtMethodBegin, s_cps.cxMemoryIndexAtMethodEnd);
 }
 
 

@@ -159,7 +159,7 @@ static void extractFunGraphRef(SymbolReferenceItem *rr, void *prog) {
     ProgramGraphNode *p,**ap;
     ap = (ProgramGraphNode **) prog;
     for(r=rr->refs; r!=NULL; r=r->next) {
-        if (DM_IS_BETWEEN(cxMemory,r,s_cp.cxMemiAtFunBegin,s_cp.cxMemiAtFunEnd)){
+        if (DM_IS_BETWEEN(cxMemory,r,s_cp.cxMemoryIndexAtFunctionBegin,s_cp.cxMemoryIndexAtFunctionEnd)){
             p = newProgramGraphNode(r, rr, NULL, 0, 0, EXTRACT_NONE, *ap);
             *ap = p;
         }
@@ -1169,22 +1169,22 @@ static bool extractJavaIsNewClassNecessary(ProgramGraphNode *program) {
     return true;
 }
 
-static void extMakeExtraction(void) {
+static void makeExtraction(void) {
     ProgramGraphNode *program;
     int newClassExt;
 
-    if (s_cp.cxMemiAtFunBegin > s_cps.cxMemiAtBlockBegin
-        || s_cps.cxMemiAtBlockBegin > s_cps.cxMemiAtBlockEnd
-        || s_cps.cxMemiAtBlockEnd > s_cp.cxMemiAtFunEnd
+    if (s_cp.cxMemoryIndexAtFunctionBegin > s_cps.cxMemoryIndexAtBlockBegin
+        || s_cps.cxMemoryIndexAtBlockBegin > s_cps.cxMemoryIndexAtBlockEnd
+        || s_cps.cxMemoryIndexAtBlockEnd > s_cp.cxMemoryIndexAtFunctionEnd
         || s_cps.workMemiAtBlockBegin != s_cps.workMemiAtBlockEnd) {
         errorMessage(ERR_ST, "Region / program structure mismatch");
         return;
     }
-    //&fprintf(dumpOut,"!cxMemories: funBeg, blockBeb, blockEnd, funEnd: %x, %x, %x, %x\n", s_cp.cxMemiAtFunBegin, s_cps.cxMemiAtBlockBegin, s_cps.cxMemiAtBlockEnd, s_cp.cxMemiAtFunEnd);
-    assert(s_cp.cxMemiAtFunBegin);
-    assert(s_cps.cxMemiAtBlockBegin);
-    assert(s_cps.cxMemiAtBlockEnd);
-    assert(s_cp.cxMemiAtFunEnd);
+    //&fprintf(dumpOut,"!cxMemories: funBeg, blockBeb, blockEnd, funEnd: %x, %x, %x, %x\n", s_cp.cxMemoryIndexAtFunctionBegin, s_cps.cxMemoryIndexAtBlockBegin, s_cps.cxMemoryIndexAtBlockEnd, s_cp.cxMemoryIndexAtFunctionEnd);
+    assert(s_cp.cxMemoryIndexAtFunctionBegin);
+    assert(s_cps.cxMemoryIndexAtBlockBegin);
+    assert(s_cps.cxMemoryIndexAtBlockEnd);
+    assert(s_cp.cxMemoryIndexAtFunctionEnd);
 
     program = extMakeProgramGraph();
     extSetInOutBlockFields(program);
@@ -1245,22 +1245,23 @@ static void extMakeExtraction(void) {
 
 
 void actionsBeforeAfterExternalDefinition(void) {
-    if (s_cps.cxMemiAtBlockEnd != 0
+    if (s_cps.cxMemoryIndexAtBlockEnd != 0
         // you have to check for matching class method
         // i.e. for case 'void mmm() { //blockbeg; ...; //blockend; class X { mmm(){}!!}; }'
-        && s_cp.cxMemiAtFunBegin != 0
-        && s_cp.cxMemiAtFunBegin <= s_cps.cxMemiAtBlockBegin
+        && s_cp.cxMemoryIndexAtFunctionBegin != 0
+        && s_cp.cxMemoryIndexAtFunctionBegin <= s_cps.cxMemoryIndexAtBlockBegin
         // is it an extraction action ?
         && options.server_operation == OLO_EXTRACT
-        && (! s_cps.extractProcessedFlag)) {
+        && (! s_cps.extractProcessedFlag))
+    {
         // O.K. make extraction
-        s_cp.cxMemiAtFunEnd = cxMemory->i;
-        extMakeExtraction();
+        s_cp.cxMemoryIndexAtFunctionEnd = cxMemory->i;
+        makeExtraction();
         s_cps.extractProcessedFlag = 1;
         /* here should be a longjmp to stop file processing !!!! */
         /* No, all this extraction should be after parsing ! */
     }
-    s_cp.cxMemiAtFunBegin = cxMemory->i;
+    s_cp.cxMemoryIndexAtFunctionBegin = cxMemory->i;
     if (includeStackPointer) {                     // ??????? burk ????
         s_cp.funBegPosition = includeStack[0].lineNumber+1;
     } else {
@@ -1271,15 +1272,15 @@ void actionsBeforeAfterExternalDefinition(void) {
 
 void extractActionOnBlockMarker(void) {
     Position pos;
-    if (s_cps.cxMemiAtBlockBegin == 0) {
-        s_cps.cxMemiAtBlockBegin = cxMemory->i;
+    if (s_cps.cxMemoryIndexAtBlockBegin == 0) {
+        s_cps.cxMemoryIndexAtBlockBegin = cxMemory->i;
         s_cps.workMemiAtBlockBegin = s_topBlock->previousTopBlock;
         if (LANGUAGE(LANG_JAVA)) {
             s_javaExtractFromFunctionMods = s_javaStat->methodModifiers;
         }
     } else {
-        assert(s_cps.cxMemiAtBlockEnd == 0);
-        s_cps.cxMemiAtBlockEnd = cxMemory->i;
+        assert(s_cps.cxMemoryIndexAtBlockEnd == 0);
+        s_cps.cxMemoryIndexAtBlockEnd = cxMemory->i;
         s_cps.workMemiAtBlockEnd = s_topBlock->previousTopBlock;
     }
     fillPosition(&pos, currentFile.lexBuffer.buffer.fileNumber, 0, 0);

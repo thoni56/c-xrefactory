@@ -2600,7 +2600,7 @@ void newClassDefinitionEnd(S_freeTrail *trail) {
     // make attention with it, ? really
     s_cp = s_javaStat->cp;
     s_javaStat = s_javaStat->next;
-    log_trace("recovering s_cp to %d", s_cp.cxMemiAtClassBegin);
+    log_trace("recovering s_cp to %d", s_cp.cxMemoryIndexdiAtClassBegin);
 }
 
 void javaInitArrayObject(void) {

@@ -492,8 +492,8 @@ void changeMethodReferencesUsages(char *linkName, int category, int fnum,
                                   Symbol *cclass){
     S_referencesChangeData rr;
     fillReferencesChangeData(&rr, linkName, fnum, cclass, category,
-                              s_cps.cxMemiAtMethodBeginning,
-                              s_cps.cxMemiAtMethodEnd);
+                              s_cps.cxMemoryIndexAtMethodBegin,
+                              s_cps.cxMemoryIndexAtMethodEnd);
     refTabMap2(&referenceTable, changeFieldRefUsages, &rr);
 }
 
@@ -501,8 +501,8 @@ void changeClassReferencesUsages(char *linkName, int category, int fnum,
                                  Symbol *cclass){
     S_referencesChangeData rr;
     fillReferencesChangeData(&rr, linkName, fnum, cclass, category,
-                              s_cps.cxMemiAtClassBeginning,
-                              s_cps.cxMemiAtClassEnd);
+                              s_cps.cxMemoryIndexAtClassBeginning,
+                              s_cps.cxMemoryIndexAtClassEnd);
     refTabMap2(&referenceTable, changeFieldRefUsages, &rr);
 }
 
@@ -4605,7 +4605,7 @@ static void answerClassName(char *name) {
             fprintf(communicationChannel,"*%s", ttt);
         }
     } else {
-        errorMessage(ERR_ST, "Not inside a class. Can't get curent class.");
+        errorMessage(ERR_ST, "Not inside a class. Can't get current class.");
     }
 }
 
@@ -4952,8 +4952,8 @@ void mainAnswerEditAction(void) {
         }
         break;
     case OLO_PUSH_ALL_IN_METHOD:
-        //&fprintf(communicationChannel,":\n\n getting all references from %d to %d\n", s_cps.cxMemiAtMethodBeginning, s_cps.cxMemiAtMethodEnd);
-        olPushAllReferencesInBetween(s_cps.cxMemiAtMethodBeginning, s_cps.cxMemiAtMethodEnd);
+        //&fprintf(communicationChannel,":\n\n getting all references from %d to %d\n", s_cps.cxMemoryIndexAtMethodBegin, s_cps.cxMemoryIndexAtMethodEnd);
+        olPushAllReferencesInBetween(s_cps.cxMemoryIndexAtMethodBegin, s_cps.cxMemoryIndexAtMethodEnd);
         olcxPrintPushingAction(options.server_operation, 0);
         break;
     case OLO_TRIVIAL_PRECHECK:
