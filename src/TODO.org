@@ -8,8 +8,6 @@ There are a *lot* of things to do to make c-xref into modern C.
 * DOING Move XX_ALLOCC and friends to "memory" module
 * TODO Java home can be found using "java -XshowSettings:properties 2>&1 | grep java.home"
 and you can also get java.class.version=55 => java version without decoding directory names
-* TODO Make some tests (e.g. test_cexercise_browsing) independent on where standard includes are located
-E.g. that test has "/usr/include" on Linux but "/Applications/X-code.app/.../SDKs/MacOSX.sdk/usr/include/" on MacOS
 * TODO Strange that <update-report> is put in the -o file since that is synchronous
 Should really be sent synchronously so that the editor can display it.
 * TODO Make C-xref->Misc->About show commit-id
@@ -108,6 +106,8 @@ Test with jdk1.8.0_121_jre_lib_rt.jar in tests/test_jar_reading
   The hash tables and lists are such candidates. If we do that it would be much
   easier to mock and unit test other modules.
 ** TODO Extract PPC-functions from misc.c into a ppc-module
+* DONE Make some tests (e.g. test_cexercise_browsing) independent on where standard includes are located
+E.g. that test has "/usr/include" on Linux but "/Applications/X-code.app/.../SDKs/MacOSX.sdk/usr/include/" on MacOS
 * DONE Some code in yacc semantic actions is not detected (try F6 on .reference)
   It seems that it is primarily java_parser.y that has this problem. See
   issue on github. One theory might be that "/*&" is not handled in

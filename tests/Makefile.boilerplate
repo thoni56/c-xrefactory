@@ -19,7 +19,7 @@ all: .c-xrefrc $(TEST)
 EDIT_SERVER_DRIVER = ../../utils/server_driver.py
 
 # Since absolute paths are abundant we need to...
-NORMALIZE = sed -e "s+$(CURDIR)+CURDIR+g" -e "s/ len=[0-9]*/ len=<n>/g"
+NORMALIZE = sed -e "s+$(CURDIR)+CURDIR+g" -e "s/ len=[0-9]*/ len=<n>/g" -e "s+/.*/usr/+/usr/+g"
 
 # Verification is often done by comparing an output with the expected
 VERIFY = cmp output expected ; \
