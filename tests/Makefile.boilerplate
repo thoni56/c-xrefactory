@@ -25,11 +25,18 @@ TEST = $(shell basename '$(CURDIR)')
 
 all: .c-xrefrc $(TEST)
 
+# Make all testcases silent by default. Use VERBOSE=1 to revert
+# Automated tests for checking generated c-xreferences
+$(VERBOSE).SILENT:
+
 # All tests that uses a server driver should use this
 EDIT_SERVER_DRIVER = ../../utils/server_driver.py
 
 # Since absolute paths are abundant we need to...
 NORMALIZE = sed -e "s+$(CURDIR)+CURDIR+g" -e "s/ len=[0-9]*/ len=<n>/g" -e "s+/.*/usr/+/usr/+g"
+
+# Do we need date normalization too?
+# -E 's/[[:digit:]]{4}-[[:digit:]]{2}-[[:digit:]]{2} [[:digit:]]{2}:[[:digit:]]{2}:[[:digit:]]{2}/0000-00-00 00:00:00/' >> output.tmp
 
 # Verification is often done by comparing an output with the expected
 VERIFY = cmp output expected ; \
