@@ -1,8 +1,6 @@
-# Automated tests for checking generated c-xreferences
-
 include ../Makefile.boilerplate
 
-COMMAND = ../../src/c-xref -xrefrc .c-xrefrc -create -trace -log=log -o out
+COMMAND = ../../src/c-xref -xrefrc .c-xrefrc -create -log=log -o out
 
 $(TEST):
 	@rm -rf output $@.log CXrefs Xrefs

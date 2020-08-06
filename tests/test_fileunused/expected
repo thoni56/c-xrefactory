@@ -1,4 +1,4 @@
-../../src/c-xref -xrefactory-II -xrefrc CURDIR/.c-xrefrc -p CURDIR -user 1 -task_regime_server -trace -o server-buffer
+../../src/c-xref -xrefactory-II -xrefrc CURDIR/.c-xrefrc -p CURDIR -user 1 -task_regime_server -o server-buffer
 -olcxpushfileunused  CURDIR/hello.c -xrefrc CURDIR/.c-xrefrc -p CURDIR -user 1
 end-of-options
 

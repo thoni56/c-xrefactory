@@ -1,224 +1,102 @@
-[C-xref] active project: 'CURDIR'
-java version == 1.3
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: Entering: javaReadClassFile
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: fileitem==';CURDIR/CNCtx.class'
-0000-00-00 00:<line>:00 DEBUG classfilereader.c:<line>: reading file 'CURDIR/CNCtx.class'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: magic is 0xcafebabe
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: version of 'CURDIR/CNCtx.class' is 52.0
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: reading accessFlags CURDIR/CNCtx.class == 21
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: this class == com/sun/jndi/cosnaming/CNCtx
-0000-00-00 00:<line>:00 DEBUG classfilereader.c:<line>: adding superclass java/lang/Object to CURDIR/CNCtx
-0000-00-00 00:<line>:00 DEBUG classfilereader.c:<line>: adding superclass javax/naming/Context to CURDIR/CNCtx
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: field 'debug' of type 'Z'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of debug == debug
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: field '_defaultOrb' of type 'Lorg/omg/CORBA/ORB;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of _defaultOrb == _defaultOrb
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: field '_orb' of type 'Lorg/omg/CORBA/ORB;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of _orb == _orb
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: field '_nc' of type 'Lorg/omg/CosNaming/NamingContext;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of _nc == _nc
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: field '_name' of type '[Lorg/omg/CosNaming/NameComponent;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of _name == _name
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: field '_env' of type 'Ljava/util/Hashtable;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of _env == _env
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: field 'parser' of type 'Lcom/sun/jndi/cosnaming/CNNameParser;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of parser == parser
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: field 'FED_PROP' of type 'Ljava/lang/String;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of FED_PROP == FED_PROP
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: field 'federation' of type 'Z'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of federation == federation
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: field 'trustURLCodebase' of type 'Z'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of trustURLCodebase == trustURLCodebase
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: field 'orbTracker' of type 'Lcom/sun/jndi/cosnaming/OrbReuseTracker;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of orbTracker == orbTracker
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: field 'enumCount' of type 'I'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of enumCount == enumCount
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: field 'isCloseCalled' of type 'Z'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of isCloseCalled == isCloseCalled
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'getDefaultOrb' of type '()Lorg/omg/CORBA/ORB;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of getDefaultOrb == getDefaultOrb()
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method '<init>' of type '(Ljava/util/Hashtable;)V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: constructor '<init>' of 'CNCtx'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: skipping Signature
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of CNCtx == CNCtx(Ljava/util/Hashtable;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method '<init>' of type '()V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: constructor '<init>' of 'CNCtx'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of CNCtx == CNCtx()
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'createUsingURL' of type '(Ljava/lang/String;Ljava/util/Hashtable;)Ljavax/naming/spi/ResolveResult;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: skipping Signature
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of createUsingURL == createUsingURL(Ljava/lang/String;Ljava/util/Hashtable;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method '<init>' of type '(Lorg/omg/CORBA/ORB;Lcom/sun/jndi/cosnaming/OrbReuseTracker;Lorg/omg/CosNaming/NamingContext;Ljava/util/Hashtable;[Lorg/omg/CosNaming/NameComponent;)V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: constructor '<init>' of 'CNCtx'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: skipping Signature
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of CNCtx == CNCtx(Lorg/omg/CORBA/ORB;Lcom/sun/jndi/cosnaming/OrbReuseTracker;Lorg/omg/CosNaming/NamingContext;Ljava/util/Hashtable;[Lorg/omg/CosNaming/NameComponent;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'makeFullName' of type '([Lorg/omg/CosNaming/NameComponent;)[Lorg/omg/CosNaming/NameComponent;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of makeFullName == makeFullName([Lorg/omg/CosNaming/NameComponent;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'getNameInNamespace' of type '()Ljava/lang/String;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of getNameInNamespace == getNameInNamespace()
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'isCorbaUrl' of type '(Ljava/lang/String;)Z'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of isCorbaUrl == isCorbaUrl(Ljava/lang/String;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'initOrbAndRootContext' of type '(Ljava/util/Hashtable;)V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: skipping Signature
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of initOrbAndRootContext == initOrbAndRootContext(Ljava/util/Hashtable;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'initUsingUrl' of type '(Lorg/omg/CORBA/ORB;Ljava/lang/String;Ljava/util/Hashtable;)Ljava/lang/String;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: skipping Signature
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of initUsingUrl == initUsingUrl(Lorg/omg/CORBA/ORB;Ljava/lang/String;Ljava/util/Hashtable;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'initUsingIiopUrl' of type '(Lorg/omg/CORBA/ORB;Ljava/lang/String;Ljava/util/Hashtable;)Ljava/lang/String;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: skipping Signature
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of initUsingIiopUrl == initUsingIiopUrl(Lorg/omg/CORBA/ORB;Ljava/lang/String;Ljava/util/Hashtable;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'initUsingCorbanameUrl' of type '(Lorg/omg/CORBA/ORB;Ljava/lang/String;Ljava/util/Hashtable;)Ljava/lang/String;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: skipping Signature
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of initUsingCorbanameUrl == initUsingCorbanameUrl(Lorg/omg/CORBA/ORB;Ljava/lang/String;Ljava/util/Hashtable;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'setOrbAndRootContext' of type '(Lorg/omg/CORBA/ORB;Ljava/lang/String;)V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of setOrbAndRootContext == setOrbAndRootContext(Lorg/omg/CORBA/ORB;Ljava/lang/String;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'setOrbAndRootContext' of type '(Lorg/omg/CORBA/ORB;Lorg/omg/CORBA/Object;)V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of setOrbAndRootContext == setOrbAndRootContext(Lorg/omg/CORBA/ORB;Lorg/omg/CORBA/Object;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'getStringifiedIor' of type '(Ljava/lang/String;)Ljava/lang/String;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of getStringifiedIor == getStringifiedIor(Ljava/lang/String;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'callResolve' of type '([Lorg/omg/CosNaming/NameComponent;)Ljava/lang/Object;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of callResolve == callResolve([Lorg/omg/CosNaming/NameComponent;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'lookup' of type '(Ljava/lang/String;)Ljava/lang/Object;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of lookup == lookup(Ljava/lang/String;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'lookup' of type '(Ljavax/naming/Name;)Ljava/lang/Object;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of lookup == lookup(Ljavax/naming/Name;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'callBindOrRebind' of type '([Lorg/omg/CosNaming/NameComponent;Ljavax/naming/Name;Ljava/lang/Object;Z)V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of callBindOrRebind == callBindOrRebind([Lorg/omg/CosNaming/NameComponent;Ljavax/naming/Name;Ljava/lang/Object;Z)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'bind' of type '(Ljavax/naming/Name;Ljava/lang/Object;)V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of bind == bind(Ljavax/naming/Name;Ljava/lang/Object;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'getContinuationContext' of type '(Ljavax/naming/CannotProceedException;)Ljavax/naming/Context;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of getContinuationContext == getContinuationContext(Ljavax/naming/CannotProceedException;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'bind' of type '(Ljava/lang/String;Ljava/lang/Object;)V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of bind == bind(Ljava/lang/String;Ljava/lang/Object;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'rebind' of type '(Ljavax/naming/Name;Ljava/lang/Object;)V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of rebind == rebind(Ljavax/naming/Name;Ljava/lang/Object;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'rebind' of type '(Ljava/lang/String;Ljava/lang/Object;)V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of rebind == rebind(Ljava/lang/String;Ljava/lang/Object;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'callUnbind' of type '([Lorg/omg/CosNaming/NameComponent;)V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of callUnbind == callUnbind([Lorg/omg/CosNaming/NameComponent;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'leafNotFound' of type '(Lorg/omg/CosNaming/NamingContextPackage/NotFound;Lorg/omg/CosNaming/NameComponent;)Z'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of leafNotFound == leafNotFound(Lorg/omg/CosNaming/NamingContextPackage/NotFound;Lorg/omg/CosNaming/NameComponent;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'unbind' of type '(Ljava/lang/String;)V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of unbind == unbind(Ljava/lang/String;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'unbind' of type '(Ljavax/naming/Name;)V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of unbind == unbind(Ljavax/naming/Name;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'rename' of type '(Ljava/lang/String;Ljava/lang/String;)V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of rename == rename(Ljava/lang/String;Ljava/lang/String;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'rename' of type '(Ljavax/naming/Name;Ljavax/naming/Name;)V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of rename == rename(Ljavax/naming/Name;Ljavax/naming/Name;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'list' of type '(Ljava/lang/String;)Ljavax/naming/NamingEnumeration;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: skipping Signature
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of list == list(Ljava/lang/String;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'list' of type '(Ljavax/naming/Name;)Ljavax/naming/NamingEnumeration;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: skipping Signature
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of list == list(Ljavax/naming/Name;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'listBindings' of type '(Ljava/lang/String;)Ljavax/naming/NamingEnumeration;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: skipping Signature
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of listBindings == listBindings(Ljava/lang/String;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'listBindings' of type '(Ljavax/naming/Name;)Ljavax/naming/NamingEnumeration;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: skipping Signature
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of listBindings == listBindings(Ljavax/naming/Name;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'callDestroy' of type '(Lorg/omg/CosNaming/NamingContext;)V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of callDestroy == callDestroy(Lorg/omg/CosNaming/NamingContext;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'destroySubcontext' of type '(Ljava/lang/String;)V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of destroySubcontext == destroySubcontext(Ljava/lang/String;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'destroySubcontext' of type '(Ljavax/naming/Name;)V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of destroySubcontext == destroySubcontext(Ljavax/naming/Name;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'callBindNewContext' of type '([Lorg/omg/CosNaming/NameComponent;)Ljavax/naming/Context;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of callBindNewContext == callBindNewContext([Lorg/omg/CosNaming/NameComponent;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'createSubcontext' of type '(Ljava/lang/String;)Ljavax/naming/Context;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of createSubcontext == createSubcontext(Ljava/lang/String;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'createSubcontext' of type '(Ljavax/naming/Name;)Ljavax/naming/Context;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of createSubcontext == createSubcontext(Ljavax/naming/Name;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'lookupLink' of type '(Ljava/lang/String;)Ljava/lang/Object;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of lookupLink == lookupLink(Ljava/lang/String;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'lookupLink' of type '(Ljavax/naming/Name;)Ljava/lang/Object;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of lookupLink == lookupLink(Ljavax/naming/Name;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'getNameParser' of type '(Ljava/lang/String;)Ljavax/naming/NameParser;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of getNameParser == getNameParser(Ljava/lang/String;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'getNameParser' of type '(Ljavax/naming/Name;)Ljavax/naming/NameParser;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of getNameParser == getNameParser(Ljavax/naming/Name;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'getEnvironment' of type '()Ljava/util/Hashtable;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: skipping Signature
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of getEnvironment == getEnvironment()
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'composeName' of type '(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of composeName == composeName(Ljava/lang/String;Ljava/lang/String;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'composeName' of type '(Ljavax/naming/Name;Ljavax/naming/Name;)Ljavax/naming/Name;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of composeName == composeName(Ljavax/naming/Name;Ljavax/naming/Name;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'addToEnvironment' of type '(Ljava/lang/String;Ljava/lang/Object;)Ljava/lang/Object;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of addToEnvironment == addToEnvironment(Ljava/lang/String;Ljava/lang/Object;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'removeFromEnvironment' of type '(Ljava/lang/String;)Ljava/lang/Object;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of removeFromEnvironment == removeFromEnvironment(Ljava/lang/String;)
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'incEnumCount' of type '()V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of incEnumCount == incEnumCount()
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'decEnumCount' of type '()V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of decEnumCount == decEnumCount()
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'close' of type '()V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: throws 'javax/naming/NamingException'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of close == close()
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'finalize' of type '()V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of finalize == finalize()
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method 'lambda$static$0' of type '()Ljava/lang/String;'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of lambda$static$0 == lambda$static$0()
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method '<clinit>' of type '()V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: constructor '<clinit>' of 'CNCtx'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of CNCtx == CNCtx()
-0000-00-00 00:<line>:00 DEBUG classfilereader.c:<line>: closing file CURDIR/CNCtx.class
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: Leaving: javaReadClassFile
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: Entering: javaReadClassFile
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: fileitem==';CURDIR/Completion2.class'
-0000-00-00 00:<line>:00 DEBUG classfilereader.c:<line>: reading file 'CURDIR/Completion2.class'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: magic is 0xcafebabe
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: version of 'CURDIR/Completion2.class' is 55.0
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: reading accessFlags CURDIR/Completion2.class == 20
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: this class == com/cxrefactory/Completion2
-0000-00-00 00:<line>:00 DEBUG classfilereader.c:<line>: adding superclass java/lang/Object to CURDIR/Completion2
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: method '<init>' of type '()V'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: constructor '<init>' of 'Completion2'
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: adding definition of Completion2 == Completion2()
-0000-00-00 00:<line>:00 DEBUG classfilereader.c:<line>: closing file CURDIR/Completion2.class
-0000-00-00 00:<line>:00 TRACE classfilereader.c:<line>: Leaving: javaReadClassFile
+
+
+34v file format: C-xrefactory 1.6.0 
+
+
+21@mpfotulcsrhdeibnaAgk 1n 300000k
+1626f p mia 43:;com/sun/jndi/cosnaming/CNNameParser.class
+3377f   28:;javax/naming/Context.class
+3851f 1595915187p 1i 78:CURDIR/CNCtx.class
+4031f p i 39:;org/omg/CosNaming/NameComponent.class
+4733f   79:;CURDIR/CNCtx.class
+6322f   31:;javax/naming/NameParser.class
+6398f   25:;javax/naming/Name.class
+13252f   27:;java/util/Hashtable.class
+15960f   46:;com/sun/jndi/cosnaming/OrbReuseTracker.class
+16509f   36:;javax/naming/NamingException.class
+18485f   24:;java/lang/String.class
+24597f   11:___None___
+28706f 1595915187p 1i 84:CURDIR/Completion2.class
+31830f p i 38:;javax/naming/NamingEnumeration.class
+34640f   45:;java/lang/invoke/MethodHandles$Lookup.class
+36587f   46:;com/sun/jndi/cosnaming/IiopUrl$Address.class
+36732f   38:;javax/naming/spi/ResolveResult.class
+41394f   24:;java/lang/Object.class
+43286f   85:;CURDIR/Completion2.class
+44047f   39:;org/omg/CosNaming/NamingContext.class
+45246f   25:;org/omg/CORBA/ORB.class
+4733f3377h4733de
+41394he
+43286f43286des
+t4733d4733h1a13g	34/getNameParser(Ljava/lang/String;)	36uA4733f1lcr
+	45/rebind(Ljava/lang/String;Ljava/lang/Object;)	r
+43286d43286ha11g	14/Completion2()	43286fr
+4733d4733h1a13g	50/composeName(Ljava/lang/String;Ljava/lang/String;)	4733fr
+	32/lookupLink(Ljavax/naming/Name;)	r
+	26/list(Ljavax/naming/Name;)	r
+2a	60/setOrbAndRootContext(Lorg/omg/CORBA/ORB;Ljava/lang/String;)	r
+10a12g	12/_defaultOrb	r
+2a	6/_name	r
+13g	91/callBindOrRebind([Lorg/omg/CosNaming/NameComponent;Ljavax/naming/Name;Ljava/lang/Object;Z)	r
+1a	39/destroySubcontext(Ljavax/naming/Name;)	r
+a12g	10/enumCount	r
+2a13g	47/callUnbind([Lorg/omg/CosNaming/NameComponent;)	r
+	73/initUsingUrl(Lorg/omg/CORBA/ORB;Ljava/lang/String;Ljava/util/Hashtable;)	r
+10a	62/getContinuationContext(Ljavax/naming/CannotProceedException;)	r
+1a	52/composeName(Ljavax/naming/Name;Ljavax/naming/Name;)	r
+	27/lookup(Ljava/lang/String;)	r
+12g	4/_nc	r
+4a13g	11/finalize()	r
+33a	8/close()	r
+1a	46/rebind(Ljavax/naming/Name;Ljava/lang/Object;)	r
+33a	15/decEnumCount()	r
+24a12g	7/parser	r
+1a13g	27/unbind(Ljava/lang/String;)	r
+	44/bind(Ljavax/naming/Name;Ljava/lang/Object;)	r
+2a	55/callBindNewContext([Lorg/omg/CosNaming/NameComponent;)	r
+15t24597d24597ha4g	78/CURDIR/Completion2	43286fr
+t4733d4733h12g	14/isCloseCalled	4733fr
+	11/orbTracker	r
+2a13g	82/initUsingCorbanameUrl(Lorg/omg/CORBA/ORB;Ljava/lang/String;Ljava/util/Hashtable;)	r
+a12g	11/federation	r
+1a13g	42/removeFromEnvironment(Ljava/lang/String;)	r
+2a	64/setOrbAndRootContext(Lorg/omg/CORBA/ORB;Lorg/omg/CORBA/Object;)	r
+10a	18/lambda$static$0()	r
+1a	38/createSubcontext(Ljavax/naming/Name;)	r
+10a	31/isCorbaUrl(Ljava/lang/String;)	r
+1a	28/lookup(Ljavax/naming/Name;)	r
+9a	56/createUsingURL(Ljava/lang/String;Ljava/util/Hashtable;)	r
+1a	28/unbind(Ljavax/naming/Name;)	r
+	34/listBindings(Ljavax/naming/Name;)	r
+	31/lookupLink(Ljava/lang/String;)	r
+	47/rename(Ljavax/naming/Name;Ljavax/naming/Name;)	r
+	37/createSubcontext(Ljava/lang/String;)	r
+a12g	5/_env	r
+13g	49/makeFullName([Lorg/omg/CosNaming/NameComponent;)	r
+2a	45/initOrbAndRootContext(Ljava/util/Hashtable;)	r
+43286d43286ha	13/ [classTree]	43286flr
+4733d4733h1a	33/listBindings(Ljava/lang/String;)	4733f1lr
+a11g	155/CNCtx(Lorg/omg/CORBA/ORB;Lcom/sun/jndi/cosnaming/OrbReuseTracker;Lorg/omg/CosNaming/NamingContext;Ljava/util/Hashtable;[Lorg/omg/CosNaming/NameComponent;)	r
+1a13g	55/addToEnvironment(Ljava/lang/String;Ljava/lang/Object;)	r
+	25/list(Ljava/lang/String;)	r
+2a	38/getStringifiedIor(Ljava/lang/String;)	r
+15t24597d24597ha4g	72/CURDIR/CNCtx	r
+t4733d4733h2a13g	77/initUsingIiopUrl(Lorg/omg/CORBA/ORB;Ljava/lang/String;Ljava/util/Hashtable;)	r
+a	48/callResolve([Lorg/omg/CosNaming/NameComponent;)	r
+2a	47/callDestroy(Lorg/omg/CosNaming/NamingContext;)	r
+42a	16/getDefaultOrb()	r
+1a	45/rename(Ljava/lang/String;Ljava/lang/String;)	r
+2a	97/leafNotFound(Lorg/omg/CosNaming/NamingContextPackage/NotFound;Lorg/omg/CosNaming/NameComponent;)	r
+10a11g	8/CNCtx()	r
+a	29/CNCtx(Ljava/util/Hashtable;)	r
+26a12g	6/debug	r
+1a13g	21/getNameInNamespace()	r
+	17/getEnvironment()	r
+	43/bind(Ljava/lang/String;Ljava/lang/Object;)	r
+	38/destroySubcontext(Ljava/lang/String;)	r
+26a12g	9/FED_PROP	r
+33a13g	15/incEnumCount()	r
+a12g	5/_orb	r
+1a13g	35/getNameParser(Ljavax/naming/Name;)	r
+a	13/ [classTree]	lr
+25a12g	17/trustURLCodebase	1lr
