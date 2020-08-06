@@ -14,6 +14,8 @@ Should really be sent synchronously so that the editor can display it.
 * TODO Make C-xref->Misc->About show commit-id
 * TODO Fix javadoc not available (-olcxbrowse com.sun.org.apache.bcel.internal.generic.LADD in jexercise)
 * TODO Why is -olcxbrowse concating the option number without '='? Any more options that do?
+* TODO Better options handling
+** TODO If an option requires a value ('-<option>=..'), print an error message for '-<option>'
 * TODO Fix the move_class test
 * TODO MISSING TEST CASES:
 ** TODO Test case for Move Method
