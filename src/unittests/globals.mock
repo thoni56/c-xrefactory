@@ -75,7 +75,7 @@ Position s_noPos = {-1, 0, 0};
 
 Language s_language;
 Options options;
-Options s_ropt;
+Options refactoringOptions;
 
 TypeModifier *s_structRecordCompletionType;
 Completions s_completions;

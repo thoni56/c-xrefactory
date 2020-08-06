@@ -177,7 +177,7 @@ char *yytext;
 /* ******************* options ************************** */
 
 Options options;        // current options
-Options s_ropt;       // xref -refactory command line options
+Options refactoringOptions;       // xref -refactory command line options
 
 char *s_javaThisPackageName = "";
 

@@ -185,7 +185,7 @@ extern int mbMemoryIndex;
 extern bool s_ifEvaluation;		/* flag for yylex, to not filter '\n' */
 
 extern Options options;			// current options
-extern Options s_ropt;		// xref -refactory command line options
+extern Options refactoringOptions;		// xref -refactory command line options
 extern Options s_cachedOptions;
 extern int s_javaRequiredeAccessibilitiesTable[MAX_REQUIRED_ACCESS+1];
 extern Options s_initOpt;

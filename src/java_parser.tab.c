@@ -3341,7 +3341,7 @@ case 64:
 
                     fname = fileTable.tab[s_olOriginalFileNumber]->name;
                     if (options.taskRegime == RegimeEditServer
-                        && s_ropt.refactoringRegime!=RegimeRefactory) {
+                        && refactoringOptions.refactoringRegime!=RegimeRefactory) {
                         /* this must be before reading 's_olOriginalComFile' !!!*/
                         if (statb(fname, &st)==0) {
                             javaReadSymbolsFromSourceFileNoFreeing(fname, fname);

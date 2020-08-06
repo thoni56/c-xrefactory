@@ -55,10 +55,10 @@ $(1):
 		$(MAKE) $(GCOV_OPTIONS) -C $(1) ; \
 		if command -v lcov > /dev/null 2>&1 ; then \
 			if [ ! -z "$(GCOV_OPTIONS)" ] ; then \
-				if [ "$(ls -A $(1)/.coverage)" ] ; then \
+				if [ ! "$(ls -A $(1)/.coverage/*.gcda)" ] ; then \
 					cd ../src ; \
 					cp .objects/*.gcno ../tests/$(1)/.coverage ; \
-					lcov -q -t $(1) -d ../tests/$(1)/.coverage -c -o ../tests/$(1).info ; \
+					lcov -q -t $(1) -d ../tests/$(1)/.coverage -c -o ../tests/$(1).info -b . ; \
 				fi \
 			fi \
 		fi \

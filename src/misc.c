@@ -1253,7 +1253,7 @@ int mapDirectoryFiles(
 #endif
     // as special case, during refactorings you have to examine
     // also files stored in renamed buffers
-    if (s_ropt.refactoringRegime == RegimeRefactory
+    if (refactoringOptions.refactoringRegime == RegimeRefactory
         && allowEditorFilesFlag==ALLOW_EDITOR_FILES) {
         res |= editorMapOnNonexistantFiles(dirname, fun, DEPTH_ONE, a1, a2, a3, a4, a5);
     }

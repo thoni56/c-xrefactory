@@ -1744,7 +1744,7 @@ static void schedulingToUpdate(FileItem *p, void *rs) {
         // removed file, remove it from watched updates, load no reference
         if (p->b.commandLineEntered) {
             // no messages during refactorings
-            if (s_ropt.refactoringRegime != RegimeRefactory) {
+            if (refactoringOptions.refactoringRegime != RegimeRefactory) {
                 char tmpBuff[TMP_BUFF_SIZE];
                 sprintf(tmpBuff,"file %s not accessible",   p->name);
                 warningMessage(ERR_ST, tmpBuff);
@@ -2992,7 +2992,7 @@ static void mainXrefOneWholeFileProcessing(int argc, char **argv,
     // now free the buffer because it tooks too much memory,
     // but I can not free it when refactoring, nor when preloaded,
     // so be very carefull about this!!!
-    if (s_ropt.refactoringRegime!=RegimeRefactory) {
+    if (refactoringOptions.refactoringRegime!=RegimeRefactory) {
         editorCloseBufferIfClosable(s_input_file_name);
         if (! options.cacheIncludes) editorCloseAllBuffersIfClosable();
     }

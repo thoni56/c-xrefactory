@@ -1024,7 +1024,7 @@ void freeOldestOlcx(void) {
     time_t                  oldestt;
     S_olcxReferencesStack   *oldestStack;
     oldestt = s_fileProcessStartTime; oldest=NULL; oldestStack=NULL;
-    if (s_ropt.refactoringRegime != RegimeRefactory) {
+    if (refactoringOptions.refactoringRegime != RegimeRefactory) {
         for(i=0; i<OLCX_TAB_SIZE; i++) {
             user = s_olcxTab.tab[i];
             if (user!=NULL) {
