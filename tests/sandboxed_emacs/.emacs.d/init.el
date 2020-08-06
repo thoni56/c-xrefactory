@@ -9,8 +9,8 @@
 (require 'el-get)
 (add-to-list 'el-get-recipe-path "~/.emacs.d/el-get-user/recipes")
 
-(add-to-list 'load-path "~/.emacs.d/el-get/c-xrefactory/env/emacs")
-(load-file "~/.emacs.d/el-get/c-xrefactory/env/emacs/c-xrefactory.el")
+(add-to-list 'load-path "~/.emacs.d/el-get/c-xrefactory/editors/emacs")
+(load-file "~/.emacs.d/el-get/c-xrefactory/editors/emacs/c-xrefactory.el")
 
 (custom-set-variables
  ;; custom-set-variables was added by Custom.
