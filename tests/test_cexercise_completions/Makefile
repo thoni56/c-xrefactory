@@ -3,7 +3,6 @@
 include ../Makefile.boilerplate
 
 CXREF = ../../src/c-xref -xrefrc $(CURDIR)/.c-xrefrc -p $(CURDIR)
-COMMAND = $(CXREF)
 
 $(TEST): CXrefs
 	@-$(EDIT_SERVER_DRIVER) commands.input $(CURDIR) > output.tmp
