@@ -43,18 +43,23 @@ autodiscovered_tests: $(TESTS)
 define RULE
 .PHONY: $(1)
 $(1):
-	mkdir -p $(1)/.coverage
-	if command -v lcov > /dev/null 2>&1 ; then \
-		cd $(1) ; \
-		lcov -q -z -d . ; \
-	fi
-	$(MAKE) $(GCOV_OPTIONS) -C $(1)
-	if command -v lcov > /dev/null 2>&1 ; then \
-		if [ ! -z "$(GCOV_OPTIONS)" ] ; then \
-			if [ "$(ls -A $(1)/.coverage)" ] ; then \
-				cd ../src ; \
-				cp .objects/*.gcno ../tests/$(1)/.coverage ; \
-				lcov -q -t $(1) -d ../tests/$(1)/.coverage -c -o ../tests/$(1).info ; \
+	if [ -f $(1)/.suspended ] ; then \
+		echo "Tests in '$(1)': $(shell tput setaf 6)SUSPENDED$(shell tput sgr0)" ; \
+	else \
+		mkdir -p $(1)/.coverage ; \
+		if command -v lcov > /dev/null 2>&1 ; then \
+			cd $(1) ; \
+			lcov -q -z -d . ; \
+			cd .. ; \
+		fi ; \
+		$(MAKE) $(GCOV_OPTIONS) -C $(1) ; \
+		if command -v lcov > /dev/null 2>&1 ; then \
+			if [ ! -z "$(GCOV_OPTIONS)" ] ; then \
+				if [ "$(ls -A $(1)/.coverage)" ] ; then \
+					cd ../src ; \
+					cp .objects/*.gcno ../tests/$(1)/.coverage ; \
+					lcov -q -t $(1) -d ../tests/$(1)/.coverage -c -o ../tests/$(1).info ; \
+				fi \
 			fi \
 		fi \
 	fi
