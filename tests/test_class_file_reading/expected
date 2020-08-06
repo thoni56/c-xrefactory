@@ -6,8 +6,8 @@
 21@mpfotulcsrhdeibnaAgk 1n 300000k
 1626f p mia 43:;com/sun/jndi/cosnaming/CNNameParser.class
 3377f   28:;javax/naming/Context.class
-3851f 1595915187p 1i 78:CURDIR/CNCtx.class
-4031f p i 39:;org/omg/CosNaming/NameComponent.class
+3851f 1595915187p 1595915187m1i 78:CURDIR/CNCtx.class
+4031f p mi 39:;org/omg/CosNaming/NameComponent.class
 4733f   79:;CURDIR/CNCtx.class
 6322f   31:;javax/naming/NameParser.class
 6398f   25:;javax/naming/Name.class
@@ -16,8 +16,8 @@
 16509f   36:;javax/naming/NamingException.class
 18485f   24:;java/lang/String.class
 24597f   11:___None___
-28706f 1595915187p 1i 84:CURDIR/Completion2.class
-31830f p i 38:;javax/naming/NamingEnumeration.class
+28706f 1595915187p 1595915187m1i 84:CURDIR/Completion2.class
+31830f p mi 38:;javax/naming/NamingEnumeration.class
 34640f   45:;java/lang/invoke/MethodHandles$Lookup.class
 36587f   46:;com/sun/jndi/cosnaming/IiopUrl$Address.class
 36732f   38:;javax/naming/spi/ResolveResult.class
