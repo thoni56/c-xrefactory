@@ -23,42 +23,42 @@ end-of-options
 <goto>
  <position-lc line=13 col=8 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
 </goto>
--olcxplus  "-olmark=418" "-olcursor=241" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=418" "-olcursor=241" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=18 col=8 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
 </goto>
--olcxplus  "-olmark=241" "-olcursor=418" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=241" "-olcursor=418" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=18 col=13 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
 </goto>
--olcxplus  "-olmark=418" "-olcursor=423" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=418" "-olcursor=423" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=18 col=19 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
 </goto>
--olcxplus  "-olmark=423" "-olcursor=429" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=423" "-olcursor=429" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=18 col=44 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
 </goto>
--olcxplus  "-olmark=429" "-olcursor=454" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=429" "-olcursor=454" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=35 col=4 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
 </goto>
--olcxplus  "-olmark=454" "-olcursor=904" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=454" "-olcursor=904" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
@@ -108,7 +108,7 @@ end-of-options
 <goto>
  <position-lc line=22 col=10 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
 </goto>
--olcxplus  "-olmark=601" "-olcursor=588" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=601" "-olcursor=588" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
@@ -135,7 +135,7 @@ end-of-options
 <goto>
  <position-lc line=10 col=42 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
 </goto>
--olcxplus  "-olmark=744" "-olcursor=166" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=744" "-olcursor=166" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
@@ -162,7 +162,7 @@ end-of-options
 <goto>
  <position-lc line=10 col=22 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
 </goto>
--olcxplus  "-olmark=761" "-olcursor=146" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=761" "-olcursor=146" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
@@ -205,7 +205,7 @@ end-of-options
 <src-line refn=4 len=<n>>browsing.c:18:    for(i=0; i<10; i++) printf("i == %d\n", i );</src-line>
 <src-line refn=1 len=<n>>browsing.c:35:    i = 0;</src-line>
 </reference-list>
--olcxplus  "-olmark=904" "-olcursor=904" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=904" "-olcursor=904" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
@@ -213,35 +213,35 @@ end-of-options
 <goto>
 <position-lc line=13 col=8 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
 </goto>
--olcxplus  "-olmark=904" "-olcursor=241" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=904" "-olcursor=241" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
 <position-lc line=18 col=8 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
 </goto>
--olcxplus  "-olmark=241" "-olcursor=418" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=241" "-olcursor=418" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
 <position-lc line=18 col=13 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
 </goto>
--olcxplus  "-olmark=418" "-olcursor=423" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=418" "-olcursor=423" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
 <position-lc line=18 col=19 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
 </goto>
--olcxplus  "-olmark=423" "-olcursor=429" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=423" "-olcursor=429" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
 <position-lc line=18 col=44 len=<n>>CURDIR/cexercise/browsing.c</position-lc>
 </goto>
--olcxplus  "-olmark=429" "-olcursor=454" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=429" "-olcursor=454" "CURDIR/cexercise/browsing.c" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>

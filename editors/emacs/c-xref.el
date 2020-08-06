@@ -6669,7 +6669,7 @@ refactoring, changes made by this function can be undone with the
 "Move to the next reference stored on the top of the browser stack.
 "
   (interactive "")
-  (c-xref-previous-next-reference "-olcxplus" 1)
+  (c-xref-previous-next-reference "-olcxnext" 1)
 )
 
 
@@ -6730,7 +6730,7 @@ this browser instead.
       (if (and c-xref-inspect-errors-if-compilation-window
                (get-buffer-window c-xref-compilation-buffer))
           (c-xref-ide-next-error)
-        (c-xref-local-motion "-olcxplus")
+        (c-xref-local-motion "-olcxnext")
         ))
 ))
 

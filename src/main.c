@@ -91,7 +91,7 @@ static void usage(char *s) {
     fprintf(stdout,"\t-olcxrename               - generate and push xrfs for rename\n");
     fprintf(stdout,"\t-olcxlist                 - generate, push and list on-line cxrefs \n");
     fprintf(stdout,"\t-olcxpop                  - pop on-line cxrefs\n");
-    fprintf(stdout,"\t-olcxplus                 - next on-line reference\n");
+    fprintf(stdout,"\t-olcxnext                 - next on-line reference\n");
     fprintf(stdout,"\t-olcxminus                - previous on-line reference\n");
     fprintf(stdout,"\t-olcxgoto<n>              - go to the n-th on-line reference\n");
     fprintf(stdout,"\t-user                     - user logname for olcx\n");
@@ -1030,7 +1030,7 @@ static bool processOOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i],"-olcxlisttop")==0) options.server_operation=OLO_LIST_TOP;
     else if (strcmp(argv[i],"-olcxpop")==0)     options.server_operation = OLO_POP;
     else if (strcmp(argv[i],"-olcxpoponly")==0) options.server_operation =OLO_POP_ONLY;
-    else if (strcmp(argv[i],"-olcxplus")==0)    options.server_operation = OLO_PLUS;
+    else if (strcmp(argv[i],"-olcxnext")==0)    options.server_operation = OLO_PLUS;
     else if (strcmp(argv[i],"-olcxminus")==0)   options.server_operation = OLO_MINUS;
     else if (strcmp(argv[i],"-olcxsearch")==0)  options.server_operation = OLO_SEARCH;
     else if (strcmp(argv[i],"-olcxcomplet")==0)options.server_operation=OLO_COMPLETION;

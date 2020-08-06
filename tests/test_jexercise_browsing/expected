@@ -13,35 +13,35 @@ end-of-options
 <goto>
  <position-lc line=14 col=12 len=<n>>CURDIR/jexercise/com/xrefactory/Browsing.java</position-lc>
 </goto>
--olcxplus  "-olmark=210" "-olcursor=210" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=210" "-olcursor=210" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=19 col=12 len=<n>>CURDIR/jexercise/com/xrefactory/Browsing.java</position-lc>
 </goto>
--olcxplus  "-olmark=210" "-olcursor=406" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=210" "-olcursor=406" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=19 col=17 len=<n>>CURDIR/jexercise/com/xrefactory/Browsing.java</position-lc>
 </goto>
--olcxplus  "-olmark=406" "-olcursor=411" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=406" "-olcursor=411" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=19 col=23 len=<n>>CURDIR/jexercise/com/xrefactory/Browsing.java</position-lc>
 </goto>
--olcxplus  "-olmark=411" "-olcursor=417" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=411" "-olcursor=417" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=19 col=74 len=<n>>CURDIR/jexercise/com/xrefactory/Browsing.java</position-lc>
 </goto>
--olcxplus  "-olmark=417" "-olcursor=468" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=417" "-olcursor=468" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
@@ -49,35 +49,35 @@ end-of-options
 <goto>
  <position-lc line=14 col=12 len=<n>>CURDIR/jexercise/com/xrefactory/Browsing.java</position-lc>
 </goto>
--olcxplus  "-olmark=468" "-olcursor=210" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=468" "-olcursor=210" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=19 col=12 len=<n>>CURDIR/jexercise/com/xrefactory/Browsing.java</position-lc>
 </goto>
--olcxplus  "-olmark=210" "-olcursor=406" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=210" "-olcursor=406" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=19 col=17 len=<n>>CURDIR/jexercise/com/xrefactory/Browsing.java</position-lc>
 </goto>
--olcxplus  "-olmark=406" "-olcursor=411" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=406" "-olcursor=411" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=19 col=23 len=<n>>CURDIR/jexercise/com/xrefactory/Browsing.java</position-lc>
 </goto>
--olcxplus  "-olmark=411" "-olcursor=417" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=411" "-olcursor=417" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=19 col=74 len=<n>>CURDIR/jexercise/com/xrefactory/Browsing.java</position-lc>
 </goto>
--olcxplus  "-olmark=417" "-olcursor=468" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=417" "-olcursor=468" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
@@ -122,42 +122,42 @@ end-of-options
 <goto>
  <position-lc line=47 col=18 len=<n>>CURDIR/jexercise/com/xrefactory/Browsing.java</position-lc>
 </goto>
--olcxplus  "-olmark=926" "-olcursor=1291" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=926" "-olcursor=1291" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=31 col=41 len=<n>>CURDIR/jexercise/com/xrefactory/Browsing.java</position-lc>
 </goto>
--olcxplus  "-olmark=1291" "-olcursor=926" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=1291" "-olcursor=926" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=63 col=8 len=<n>>CURDIR/jexercise/com/xrefactory/Browsing.java</position-lc>
 </goto>
--olcxplus  "-olmark=926" "-olcursor=1794" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=926" "-olcursor=1794" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=142 col=34 len=<n>>CURDIR/jexercise/com/xrefactory/Browsing.java</position-lc>
 </goto>
--olcxplus  "-olmark=1794" "-olcursor=4324" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=1794" "-olcursor=4324" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=143 col=30 len=<n>>CURDIR/jexercise/com/xrefactory/Browsing.java</position-lc>
 </goto>
--olcxplus  "-olmark=4324" "-olcursor=4362" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=4324" "-olcursor=4362" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
 <goto>
  <position-lc line=150 col=11 len=<n>>CURDIR/jexercise/com/xrefactory/Browsing.java</position-lc>
 </goto>
--olcxplus  "-olmark=4362" "-olcursor=4581" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
+-olcxnext  "-olmark=4362" "-olcursor=4581" "CURDIR/jexercise/com/xrefactory/Browsing.java" -encoding=european -xrefrc "CURDIR/.c-xrefrc" -p "CURDIR" -user 1
 end-of-options
 
 <sync>
