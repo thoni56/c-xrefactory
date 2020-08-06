@@ -2,12 +2,6 @@
 #
 # NOTE: sandboxed_emacs is not a test...
 
-.SILENT:
-
-ifndef VERBOSE
-MAKEFLAGS+=--no-print-directory
-endif
-
 # Create GCOV settings so that tests can be run in parallel by
 # directing all coverage to a separate directory under src/.objects
 # for each autodiscovered test. If GCOV_OPTIONS="" then coverage is
@@ -27,6 +21,12 @@ list:
 
 clean:
 	rm -rf *.info */.coverage
+
+$(VERBOSE).SILENT:
+
+ifndef VERBOSE
+MAKEFLAGS+=--no-print-directory
+endif
 
 #-------------------------------------------------------------------
 # Here follows some GNU magic to automatically discover tests
