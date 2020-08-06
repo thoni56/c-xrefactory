@@ -107,8 +107,8 @@ static void usage(char *s) {
 #   ifdef DEBUG
     fprintf(stdout,"\t-debug                    - produce debug output of the execution\n");
     fprintf(stdout,"\t-trace                    - produce trace output of the execution\n");
-    fprintf(stdout,"\t-log=<file>               - log to <file>\n");
 #   endif
+    fprintf(stdout,"\t-log=<file>               - log to <file>\n");
     fprintf(stdout,"\t-no-classfiles            - Don't collect references from class files\n");
     fprintf(stdout,"\t-no-cppcomments           - C++ like comments '//' not allowed\n");
     fprintf(stdout,"\t-no-enums                 - don't cross reference enumeration constants\n");

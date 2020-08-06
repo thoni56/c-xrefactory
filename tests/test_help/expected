@@ -41,8 +41,6 @@ options:
 	-refalpha2hash            - split references alphabetically (-refnum=28*28)
 	-exactpositionresolve     - resolve symbols by def. position
 	-mf<n>                    - factor increasing cxMemory
-	-debug                    - produce debug output of the execution
-	-trace                    - produce trace output of the execution
 	-log=<file>               - log to <file>
 	-no-classfiles            - Don't collect references from class files
 	-no-cppcomments           - C++ like comments '//' not allowed
