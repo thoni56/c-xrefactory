@@ -119,7 +119,7 @@ static void usage(char *s) {
     fprintf(stdout,"\t-no-brief                 - generate cxrefs in long format\n");
     fprintf(stdout,"\t-no-stdoptions            - don't read the '~/.c-xrefrc' option file \n");
     fprintf(stdout,"\t-update                   - update old 'refs' reference file\n");
-    fprintf(stdout,"\t-compiler                 - path to compiler to use for autodiscovered includes and defines\n");
+    fprintf(stdout,"\t-compiler=<path>          - path to compiler to use for autodiscovered includes and defines\n");
     fprintf(stdout,"\t-fastupdate               - fast update (modified files only)\n");
     fprintf(stdout,"\t-errors                   - report all error messages\n");
     fprintf(stdout,"\t-version                  - print version information\n");

@@ -54,7 +54,7 @@ options:
 	-no-brief                 - generate cxrefs in long format
 	-no-stdoptions            - don't read the '~/.c-xrefrc' option file 
 	-update                   - update old 'refs' reference file
-	-compiler                 - path to compiler to use for autodiscovered includes and defines
+	-compiler=<path>          - path to compiler to use for autodiscovered includes and defines
 	-fastupdate               - fast update (modified files only)
 	-errors                   - report all error messages
 	-version                  - print version information
