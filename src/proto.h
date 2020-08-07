@@ -266,7 +266,7 @@ enum olcxOptions {
     OLO_POP,
     OLO_POP_ONLY,
     OLO_NEXT,
-    OLO_MINUS,
+    OLO_PREVIOUS,
     OLO_GOTO_CURRENT,
     OLO_GET_CURRENT_REFNUM,
     OLO_GOTO_PARAM_NAME,

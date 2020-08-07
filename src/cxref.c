@@ -4747,7 +4747,7 @@ void mainAnswerEditAction(void) {
     case OLO_NEXT:
         olcxReferencePlus();
         break;
-    case OLO_MINUS:
+    case OLO_PREVIOUS:
         olcxReferenceMinus();
         break;
     case OLO_GOTO_DEF:
