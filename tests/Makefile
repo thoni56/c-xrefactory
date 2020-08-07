@@ -43,27 +43,7 @@ autodiscovered_tests: $(TESTS)
 define RULE
 .PHONY: $(1)
 $(1):
-	if [ -f $(1)/.suspended ] ; then \
-		echo "Tests in '$(1)': $(shell tput setaf 6)SUSPENDED$(shell tput sgr0)" ; \
-	else \
-		mkdir -p $(1)/.coverage ; \
-		if command -v lcov > /dev/null 2>&1 ; then \
-			cd $(1) ; \
-			lcov -q -z -d . ; \
-			cd .. ; \
-		fi ; \
-		$(MAKE) $(GCOV_OPTIONS) -C $(1) ; \
-		if command -v lcov > /dev/null 2>&1 ; then \
-			if [ ! -z "$(GCOV_OPTIONS)" ] ; then \
-				filecount=`ls -1 $(1)/.coverage/*.gcda 2>/dev/null | wc -l` ; \
-				if [ $$$$filecount -gt 0 ] ; then \
-					cd ../src ; \
-					cp .objects/*.gcno ../tests/$(1)/.coverage ; \
-					lcov -q -t $(1) -d ../tests/$(1)/.coverage -c -o ../tests/$(1).info -b . ; \
-				fi \
-			fi \
-		fi \
-	fi
+	./run_test $(1) "$(GCOV_OPTIONS)"
 endef
 
 # Loop over all test_ directories to create a rule for each

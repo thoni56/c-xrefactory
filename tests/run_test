@@ -1,0 +1,31 @@
+#! /bin/bash
+# Run an autodiscovered test in the c-xrefactory test suite
+# args: 1 = test (directory) name
+#       2 = GCOV_OPTIONS (optionally empty, but often "GCOV_PREFIX=<path> GCOV_PREFIX_STRIP=6"
+
+GCOV_OPTIONS=$2
+if [ -f $1/.suspended ] ; then
+    echo "Tests in '$1': `tput setaf 6`SUSPENDED`tput sgr0`"
+else
+    mkdir -p $1/.coverage
+    if command -v lcov > /dev/null 2>&1 ; then
+        cd $1
+        lcov -q -z -d .
+        cd ..
+    fi
+    make --no-print-directory $GCOV_OPTIONS -C $1
+    rc=$?
+    if [ $rc -ne 0 ] ; then
+        exit $rc
+    fi
+    if command -v lcov > /dev/null 2>&1 ; then
+        if [ ! -z "$GCOV_OPTIONS" ] ; then
+            filecount=`ls -1 $1/.coverage/*.gcda 2>/dev/null | wc -l`
+            if [ $filecount -gt 0 ] ; then
+                cd ../src
+                cp .objects/*.gcno ../tests/$1/.coverage
+                lcov -q -t $1 -d ../tests/$1/.coverage -c -o ../tests/$1.info -b .
+            fi
+        fi
+    fi
+fi
