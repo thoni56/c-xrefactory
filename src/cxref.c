@@ -4744,7 +4744,7 @@ void mainAnswerEditAction(void) {
     case OLO_GET_ENV_VALUE:
         olcxProcessGetRequest();
         break;
-    case OLO_PLUS:
+    case OLO_NEXT:
         olcxReferencePlus();
         break;
     case OLO_MINUS:

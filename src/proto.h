@@ -265,7 +265,7 @@ enum olcxOptions {
     OLO_PUSH_SPECIAL_NAME,		/* also reparsing current file */
     OLO_POP,
     OLO_POP_ONLY,
-    OLO_PLUS,
+    OLO_NEXT,
     OLO_MINUS,
     OLO_GOTO_CURRENT,
     OLO_GET_CURRENT_REFNUM,

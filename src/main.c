@@ -1030,7 +1030,7 @@ static bool processOOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i],"-olcxlisttop")==0) options.server_operation=OLO_LIST_TOP;
     else if (strcmp(argv[i],"-olcxpop")==0)     options.server_operation = OLO_POP;
     else if (strcmp(argv[i],"-olcxpoponly")==0) options.server_operation =OLO_POP_ONLY;
-    else if (strcmp(argv[i],"-olcxnext")==0)    options.server_operation = OLO_PLUS;
+    else if (strcmp(argv[i],"-olcxnext")==0)    options.server_operation = OLO_NEXT;
     else if (strcmp(argv[i],"-olcxminus")==0)   options.server_operation = OLO_MINUS;
     else if (strcmp(argv[i],"-olcxsearch")==0)  options.server_operation = OLO_SEARCH;
     else if (strcmp(argv[i],"-olcxcomplet")==0)options.server_operation=OLO_COMPLETION;
