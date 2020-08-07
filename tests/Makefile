@@ -55,7 +55,8 @@ $(1):
 		$(MAKE) $(GCOV_OPTIONS) -C $(1) ; \
 		if command -v lcov > /dev/null 2>&1 ; then \
 			if [ ! -z "$(GCOV_OPTIONS)" ] ; then \
-				if [ -z "$(ls -A $(1)/.coverage/*.gcda)" ] ; then \
+				filecount=`ls -1 $(1)/.coverage/*.gcda 2>/dev/null | wc -l` ; \
+				if [ $$$$filecount -gt 0 ] ; then \
 					cd ../src ; \
 					cp .objects/*.gcno ../tests/$(1)/.coverage ; \
 					lcov -q -t $(1) -d ../tests/$(1)/.coverage -c -o ../tests/$(1).info -b . ; \
