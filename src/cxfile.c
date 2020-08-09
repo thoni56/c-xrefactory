@@ -406,34 +406,34 @@ static void writeSymbolItem(int symIndex) {
     fputc('\t', cxOut);
 }
 
-#define writeOptionalSymbolItem(symIndex) {                        \
-        if (! s_outLastInfos.symbolIsWritten[symIndex]) {   \
-            writeSymbolItem(symIndex);                        \
-        }                                                   \
+static void writeSymbolItemIfNotWritten(int symIndex) {
+    if (! s_outLastInfos.symbolIsWritten[symIndex]) {
+        writeSymbolItem(symIndex);
     }
+}
 
-#define writeCxReferenceBase(symbolNum, usage, requiredAccess, file, line, coll) { \
-        char ttt[TMP_STRING_SIZE];                                      \
-        writeOptionalSymbolItem(symbolNum);                             \
-        if (usage == UsageMacroBaseFileUsage) {                         \
-            /* optimize the number of those references to 1*/           \
-            assert(symbolNum>=0 && symbolNum<MAX_CX_SYMBOL_TAB);        \
-            if (s_outLastInfos.macroBaseFileGeneratedForSym[symbolNum]) return; \
-            s_outLastInfos.macroBaseFileGeneratedForSym[symbolNum] = 1; \
-        }                                                               \
-        writeOptionalCompactRecord(CXFI_USAGE, usage, "");              \
-        writeOptionalCompactRecord(CXFI_REQ_ACCESS, requiredAccess, ""); \
-        writeOptionalCompactRecord(CXFI_SYM_INDEX, symbolNum, "");      \
-        writeOptionalCompactRecord(CXFI_FILE_INDEX, file, "");          \
-        writeOptionalCompactRecord(CXFI_LINE_INDEX, line, "");          \
-        writeOptionalCompactRecord(CXFI_COLL_INDEX, coll, "");          \
-        writeCompactRecord(CXFI_REFERENCE, 0, "");                      \
-        if (!options.brief_cxref) {                                     \
-            sprintf(ttt,"\t%-7s in %30s:%u:%d\n",usageEnumName[usage]+5, \
-                    fileTable.tab[file]->name,line,coll);               \
-            writeStringRecord(CXFI_REMARK,ttt,"");                      \
-        }                                                               \
+static void writeCxReferenceBase(int symbolNum, Usage usage, int requiredAccess, int file, int line, int coll) {
+    char ttt[TMP_STRING_SIZE];
+    writeSymbolItemIfNotWritten(symbolNum);
+    if (usage == UsageMacroBaseFileUsage) {
+        /* optimize the number of those references to 1*/
+        assert(symbolNum>=0 && symbolNum<MAX_CX_SYMBOL_TAB);
+        if (s_outLastInfos.macroBaseFileGeneratedForSym[symbolNum]) return;
+        s_outLastInfos.macroBaseFileGeneratedForSym[symbolNum] = 1;
     }
+    writeOptionalCompactRecord(CXFI_USAGE, usage, "");
+    writeOptionalCompactRecord(CXFI_REQ_ACCESS, requiredAccess, "");
+    writeOptionalCompactRecord(CXFI_SYM_INDEX, symbolNum, "");
+    writeOptionalCompactRecord(CXFI_FILE_INDEX, file, "");
+    writeOptionalCompactRecord(CXFI_LINE_INDEX, line, "");
+    writeOptionalCompactRecord(CXFI_COLL_INDEX, coll, "");
+    writeCompactRecord(CXFI_REFERENCE, 0, "");
+    if (!options.brief_cxref) {
+        sprintf(ttt,"\t%-7s in %30s:%u:%d\n",usageEnumName[usage]+5,
+                fileTable.tab[file]->name,line,coll);
+            writeStringRecord(CXFI_REMARK,ttt,"");
+    }
+}
 
 static void writeCxReference(Reference *reference, int symbolNum) {
     writeCxReferenceBase(symbolNum, reference->usage.base, reference->usage.requiredAccess,
@@ -578,8 +578,9 @@ static void genRefItem(SymbolReferenceItem *dd) {
 }
 
 #define COMPOSE_CXFI_CHECK_NUM(filen,hashMethod,exactPositionLinkFlag) ( \
-                                                                        ((filen)*XFILE_HASH_MAX+hashMethod)*2+exactPositionLinkFlag \
-                                                                        )
+        ((filen)*XFILE_HASH_MAX+hashMethod)*2+exactPositionLinkFlag     \
+    )
+
 #define DECOMPOSE_CXFI_CHECK_NUM(num,filen,hashMethod,exactPositionLinkFlag){ \
         unsigned tmp;                                                   \
         tmp = num;                                                      \
@@ -1188,7 +1189,8 @@ static void cxrfReference(int size,
         } else {
             copyrefFl = ! fileTable.tab[file]->b.cxLoading;
         }
-        if (copyrefFl) writeCxReferenceBase(sym, usage, reqAcc, file, line, coll);
+        if (copyrefFl)
+            writeCxReferenceBase(sym, usage, reqAcc, file, line, coll);
     } else  if (options.taskRegime == RegimeHtmlGenerate) {
         fillPosition(&pos,file,line,coll);
         fillUsageBits(&usageBits, usage, reqAcc);
