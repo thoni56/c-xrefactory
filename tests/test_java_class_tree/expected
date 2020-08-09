@@ -4,10 +4,10 @@ end-of-options
 
 <sync>
 <display-class-tree>
- <class line=2 base=0 indent=0 deps="" len=<n>>Object</class>
- <class line=3 base=0 indent=0 deps="" len=<n>>PullUpMethod</class>
- <class line=4 base=1 indent=1 deps="  +- " len=<n>>InferClass</class>
- <class line=2 base=0 indent=1 deps="  +- " up=1 len=<n>>Object</class>
+ <class line=2 base=1 indent=0 deps="" len=<n>>Object</class>
+ <class line=3 base=0 indent=1 deps="  +- " len=<n>>PullUpMethod</class>
+ <class line=4 base=0 indent=2 deps="      +- " len=<n>>InferClass</class>
+ <class line=2 base=1 indent=2 deps="      +- " up=1 len=<n>>Object</class>
 </display-class-tree>
 -exit
 end-of-options

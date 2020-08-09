@@ -10,7 +10,7 @@ package com.xrefactory.refactorings;
   'Pull Up Method'.
 */
 
-class PullUpMethod {
+class PullUpMethod extends java.lang.Object {
     int x = 0;
     int y = 0;
     // set target here:
