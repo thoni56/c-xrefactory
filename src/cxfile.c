@@ -218,9 +218,7 @@ int searchStringFitness(char *cxtag, int len) {
 }
 
 
-#define SET_MAX(max,val) {                      \
-        if (val > max) max = val;               \
-    }
+#define maxOf(a, b) (((a) > (b)) ? (a) : (b))
 
 char *crTagSearchLineStatic(char *name, Position *p,
                             int *len1, int *len2, int *len3) {
@@ -251,9 +249,9 @@ char *crTagSearchLineStatic(char *name, Position *p,
     strncpy(dir, ffname, dl);
     dir[dl]=0;
 
-    SET_MAX(*len1, l1);
-    SET_MAX(*len2, l2);
-    SET_MAX(*len3, l3);
+    *len1 = maxOf(*len1, l1);
+    *len2 = maxOf(*len2, l2);
+    *len3 = maxOf(*len3, l3);
 
     if (options.tagSearchSpecif == TSS_SEARCH_DEFS_ONLY_SHORT
         || options.tagSearchSpecif==TSS_FULL_SEARCH_SHORT) {
