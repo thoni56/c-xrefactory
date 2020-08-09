@@ -30,9 +30,9 @@
 #define CXFI_LINE_INDEX     'l'
 #define CXFI_COLL_INDEX     'c'
 #define CXFI_REFERENCE      'r'     /* using 'fsulc' */
-#define CXFI_INPUT_FROM_CL  'i'     /* file was introduced from comand line */
+#define CXFI_INPUT_FROM_CL  'i'     /* file was introduced from command line */
 #define CXFI_ACCESS_BITS    'a'     /* java access bit */
-#define CXFI_REQ_ACCESS     'A'     /* java reference required accessibilite index */
+#define CXFI_REQ_ACCESS     'A'     /* java reference required accessibility index */
 #define CXFI_STORAGE        'g'     /* storaGe field */
 
 #define CXFI_SUPER_CLASS    'h'     /* hore = up in slovac */
@@ -97,7 +97,7 @@ struct lastCxFileInfos {
     char                deadSymbolIsDefined;
 
     // following item can be used only via symbolTab,
-    // it is just to smplifie memoru handling !!!!!!!!!!!!!!!!
+    // it is just to simplify memory handling !!!!!!!!!!!!!!!!
     SymbolReferenceItem     _symbolTab[MAX_CX_SYMBOL_TAB];
     char                _symbolTabNames[MAX_CX_SYMBOL_TAB][MAX_CX_SYMBOL_SIZE];
 };
@@ -344,24 +344,25 @@ static void get_version_string(char *ttt) {                             \
 }
 
 
-#define writeCompactRecord(recNum, info, blankPrefix) {                   \
-        assert(recNum >= 0 && recNum < MAX_CHARS); \
-        assert(info >= 0);                                              \
-        if (*blankPrefix!=0) fputs(blankPrefix, cxOut);                 \
-        if (info != 0) fPutDecimal(cxOut, info);                        \
-        fputc(recNum, cxOut);                                           \
-        s_outLastInfos.counter[recNum] = info;                          \
-    }
+static void writeCompactRecord(char recNum, int info, char *blankPrefix) {
+    assert(recNum >= 0 && recNum < MAX_CHARS);
+    assert(info >= 0);
+    if (*blankPrefix!=0) fputs(blankPrefix, cxOut);
+    if (info != 0) fPutDecimal(cxOut, info);
+    fputc(recNum, cxOut);
+    s_outLastInfos.counter[recNum] = info;
+}
 
-#define writeOptionalCompactRecord(recNum, info, blankPrefix) {    \
-        assert(recNum >= 0 && recNum < MAX_CHARS);          \
-        if (*blankPrefix!=0) fputs(blankPrefix, cxOut);     \
-        if (s_outLastInfos.counter[recNum] != info) {       \
-            if (info != 0) fPutDecimal(cxOut, info);        \
-            fputc(recNum, cxOut);                           \
-            s_outLastInfos.counter[recNum] = info;          \
-        }                                                   \
-    }
+static void writeOptionalCompactRecord(char recNum, int info, char *blankPrefix) {
+        assert(recNum >= 0 && recNum < MAX_CHARS);
+        if (*blankPrefix!=0) fputs(blankPrefix, cxOut);
+        if (s_outLastInfos.counter[recNum] != info) {
+            if (info != 0) fPutDecimal(cxOut, info);
+            fputc(recNum, cxOut);
+            s_outLastInfos.counter[recNum] = info;
+        }
+}
+
 
 static void writeStringRecord(int recNum, char *s, char *blankPrefix) {
     int rsize;
@@ -415,24 +416,24 @@ static void writeSymbolItem(int symIndex) {
 
 #define writeCxReferenceBase(symbolNum, usage, requiredAccess, file, line, coll) { \
         char ttt[TMP_STRING_SIZE];                                      \
-        writeOptionalSymbolItem(symbolNum);                                    \
+        writeOptionalSymbolItem(symbolNum);                             \
         if (usage == UsageMacroBaseFileUsage) {                         \
             /* optimize the number of those references to 1*/           \
             assert(symbolNum>=0 && symbolNum<MAX_CX_SYMBOL_TAB);        \
             if (s_outLastInfos.macroBaseFileGeneratedForSym[symbolNum]) return; \
             s_outLastInfos.macroBaseFileGeneratedForSym[symbolNum] = 1; \
         }                                                               \
-        writeOptionalCompactRecord(CXFI_USAGE, usage, "");                     \
-        writeOptionalCompactRecord(CXFI_REQ_ACCESS, requiredAccess, "");       \
-        writeOptionalCompactRecord(CXFI_SYM_INDEX, symbolNum, "");             \
-        writeOptionalCompactRecord(CXFI_FILE_INDEX, file, "");                 \
-        writeOptionalCompactRecord(CXFI_LINE_INDEX, line, "");                 \
-        writeOptionalCompactRecord(CXFI_COLL_INDEX, coll, "");                 \
-        writeCompactRecord(CXFI_REFERENCE, 0, "");                        \
-        if (!options.brief_cxref) {                                         \
-            sprintf(ttt,"\t%-7s in %30s:%u:%d\n",usageEnumName[usage]+5,   \
+        writeOptionalCompactRecord(CXFI_USAGE, usage, "");              \
+        writeOptionalCompactRecord(CXFI_REQ_ACCESS, requiredAccess, ""); \
+        writeOptionalCompactRecord(CXFI_SYM_INDEX, symbolNum, "");      \
+        writeOptionalCompactRecord(CXFI_FILE_INDEX, file, "");          \
+        writeOptionalCompactRecord(CXFI_LINE_INDEX, line, "");          \
+        writeOptionalCompactRecord(CXFI_COLL_INDEX, coll, "");          \
+        writeCompactRecord(CXFI_REFERENCE, 0, "");                      \
+        if (!options.brief_cxref) {                                     \
+            sprintf(ttt,"\t%-7s in %30s:%u:%d\n",usageEnumName[usage]+5, \
                     fileTable.tab[file]->name,line,coll);               \
-            writeStringRecord(CXFI_REMARK,ttt,"");                        \
+            writeStringRecord(CXFI_REMARK,ttt,"");                      \
         }                                                               \
     }
 
