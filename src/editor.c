@@ -624,7 +624,7 @@ static S_editorUndo *newEditorUndoRename(EditorBuffer *buffer, char *name,
 
     ED_ALLOC(undo, S_editorUndo);
     undo->buffer = buffer;
-    undo->operation = UNDO_REPLACE_STRING;
+    undo->operation = UNDO_RENAME_BUFFER;
     undo->u.rename.name = name;
     undo->next = next;
 
