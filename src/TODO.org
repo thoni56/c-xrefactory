@@ -8,6 +8,7 @@ There are a *lot* of things to do to make c-xref into modern C.
 * DOING Move XX_ALLOCC and friends to "memory" module
 * TODO Java home can be found using "java -XshowSettings:properties 2>&1 | grep java.home"
 and you can also get java.class.version=55 => java version without decoding directory names
+* TODO Remove option brief_cxref - completely unnecessary
 * TODO Strange that <update-report> is put in the -o file since that is synchronous
 Should really be sent synchronously so that the editor can display it.
 * TODO Make C-xref->Misc->About show commit-id
