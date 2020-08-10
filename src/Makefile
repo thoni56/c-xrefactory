@@ -20,7 +20,7 @@ YACC=$(ROOTDIR)/byacc-1.9/yacc
 # If there is no ZLIB on the system you can build it yourself, see sources.mk
 
 # We need to use compatible gcov (Darwin/Brew now have GCC v10)
-ifneq ($(CC), "gcc-10)
+ifeq ($(CC), "gcc-10")
 	LCOV_OPTIONS = --gcov-tool gcov-10
 endif
 
@@ -172,7 +172,7 @@ clean-coverage:
 	fi
 
 # NOTE: lcov < 1.14 don't have --exclude
-LCOV=lcov -q --exclude log.c --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' --exclude '/Library/*' --gcov-tool /usr/local/bin/gcov-10
+LCOV=lcov -q --exclude log.c --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' --exclude '/Library/*'
 coverage-report:
 	@echo Doing the coverage reporting in the background...
 	@$(MAKE) the-actual-coverage-report &
