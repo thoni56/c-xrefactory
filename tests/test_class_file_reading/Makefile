@@ -8,7 +8,6 @@ $(TEST):
 	$(COMMAND) > output.tmp
 	# and compare it to expected
 	$(NORMALIZE) CXrefs > output
-	cat output # To catch the output from Travis build - just temporary
 	$(VERIFY)
 
 clean:
