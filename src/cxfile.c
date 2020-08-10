@@ -28,15 +28,15 @@
 #define CXFI_SYM_INDEX      's'
 #define CXFI_USAGE          'u'
 #define CXFI_LINE_INDEX     'l'
-#define CXFI_COLL_INDEX     'c'
+#define CXFI_COLUMN_INDEX   'c'
 #define CXFI_REFERENCE      'r'     /* using 'fsulc' */
-#define CXFI_INPUT_FROM_CL  'i'     /* file was introduced from command line */
+#define CXFI_INPUT_FROM_COMMAND_LINE  'i'     /* file was introduced from command line */
 #define CXFI_ACCESS_BITS    'a'     /* java access bit */
-#define CXFI_REQ_ACCESS     'A'     /* java reference required accessibility index */
+#define CXFI_REQUIRED_ACCESS     'A'     /* java reference required accessibility index */
 #define CXFI_STORAGE        'g'     /* storaGe field */
 
 #define CXFI_SUPER_CLASS    'h'     /* hore = up in slovac */
-#define CXFI_INFER_CLASS    'd'     /* dole = down in slovac */
+#define CXFI_INFERIOR_CLASS 'd'     /* dole = down in slovac */
 #define CXFI_CLASS_EXT      'e'     /* using 'fhd' */
 
 #define CXFI_MACRO_BASE_FILE 'b'    /* ref to a file invoking macro */
@@ -61,17 +61,17 @@ static int s_cxGeneratedSingleRecords[] = {
     CXFI_SYM_TYPE,
     CXFI_USAGE,
     CXFI_LINE_INDEX,
-    CXFI_COLL_INDEX,
+    CXFI_COLUMN_INDEX,
     CXFI_SYM_INDEX,
     CXFI_REFERENCE,
     CXFI_SUPER_CLASS,
-    CXFI_INFER_CLASS,
+    CXFI_INFERIOR_CLASS,
     CXFI_CLASS_EXT,
-    CXFI_INPUT_FROM_CL,
+    CXFI_INPUT_FROM_COMMAND_LINE,
     CXFI_MACRO_BASE_FILE,
     CXFI_REFNUM,
     CXFI_ACCESS_BITS,
-    CXFI_REQ_ACCESS,
+    CXFI_REQUIRED_ACCESS,
     CXFI_STORAGE,
     CXFI_CHECK_NUMBER,
     -1
@@ -377,7 +377,7 @@ static void writeSymbolItem(int symIndex) {
     writeOptionalCompactRecord(CXFI_SYM_INDEX, symIndex, "");
     d = s_outLastInfos.symbolTab[symIndex];
     writeOptionalCompactRecord(CXFI_SYM_TYPE, d->b.symType, "\n");
-    writeOptionalCompactRecord(CXFI_INFER_CLASS, d->vApplClass, "");
+    writeOptionalCompactRecord(CXFI_INFERIOR_CLASS, d->vApplClass, "");
     writeOptionalCompactRecord(CXFI_SUPER_CLASS, d->vFunClass, "");
     writeOptionalCompactRecord(CXFI_ACCESS_BITS, d->b.accessFlags, "");
     writeOptionalCompactRecord(CXFI_STORAGE, d->b.storage, "");
@@ -402,11 +402,11 @@ static void writeCxReferenceBase(int symbolNum, Usage usage, int requiredAccess,
         s_outLastInfos.macroBaseFileGeneratedForSym[symbolNum] = 1;
     }
     writeOptionalCompactRecord(CXFI_USAGE, usage, "");
-    writeOptionalCompactRecord(CXFI_REQ_ACCESS, requiredAccess, "");
+    writeOptionalCompactRecord(CXFI_REQUIRED_ACCESS, requiredAccess, "");
     writeOptionalCompactRecord(CXFI_SYM_INDEX, symbolNum, "");
     writeOptionalCompactRecord(CXFI_FILE_INDEX, file, "");
     writeOptionalCompactRecord(CXFI_LINE_INDEX, line, "");
-    writeOptionalCompactRecord(CXFI_COLL_INDEX, coll, "");
+    writeOptionalCompactRecord(CXFI_COLUMN_INDEX, coll, "");
     writeCompactRecord(CXFI_REFERENCE, 0, "");
 }
 
@@ -418,7 +418,7 @@ static void writeCxReference(Reference *reference, int symbolNum) {
 static void writeSubClassInfo(int sup, int inf, int origin) {
     writeOptionalCompactRecord(CXFI_FILE_INDEX, origin, "\n");
     writeOptionalCompactRecord(CXFI_SUPER_CLASS, sup, "");
-    writeOptionalCompactRecord(CXFI_INFER_CLASS, inf, "");
+    writeOptionalCompactRecord(CXFI_INFERIOR_CLASS, inf, "");
     writeCompactRecord(CXFI_CLASS_EXT, 0, "");
 }
 
@@ -426,7 +426,7 @@ static void writeFileIndexItem(struct fileItem *fi, int ii) {
     writeOptionalCompactRecord(CXFI_FILE_INDEX, ii, "\n");
     writeOptionalCompactRecord(CXFI_FILE_UMTIME, fi->lastUpdateMtime, " ");
     writeOptionalCompactRecord(CXFI_FILE_FUMTIME, fi->lastFullUpdateMtime, " ");
-    writeOptionalCompactRecord(CXFI_INPUT_FROM_CL, fi->b.commandLineEntered, "");
+    writeOptionalCompactRecord(CXFI_INPUT_FROM_COMMAND_LINE, fi->b.commandLineEntered, "");
     if (fi->b.isInterface) {
         writeOptionalCompactRecord(CXFI_ACCESS_BITS, AccessInterface, "");
     } else {
@@ -826,7 +826,7 @@ static void cxReadFileName(int size,
     assert(ri == CXFI_FILE_NAME);
     fumtime = (time_t) s_inLastInfos.counter[CXFI_FILE_FUMTIME];
     umtime = (time_t) s_inLastInfos.counter[CXFI_FILE_UMTIME];
-    commandLineFlag = s_inLastInfos.counter[CXFI_INPUT_FROM_CL];
+    commandLineFlag = s_inLastInfos.counter[CXFI_INPUT_FROM_COMMAND_LINE];
     isInterface=((s_inLastInfos.counter[CXFI_ACCESS_BITS] & AccessInterface)!=0);
     ii = s_inLastInfos.counter[CXFI_FILE_INDEX];
     for (i=0; i<size-1; i++) {
@@ -917,7 +917,7 @@ static void getSymTypeAndClasses(int *_symType, int *_vApplClass,
                                  int *_vFunClass) {
     int symType, vApplClass, vFunClass;
     symType = s_inLastInfos.counter[CXFI_SYM_TYPE];
-    vApplClass = s_inLastInfos.counter[CXFI_INFER_CLASS];
+    vApplClass = s_inLastInfos.counter[CXFI_INFERIOR_CLASS];
     vApplClass = s_decodeFilesNum[vApplClass];
     assert(fileTable.tab[vApplClass] != NULL);
     vFunClass = s_inLastInfos.counter[CXFI_SUPER_CLASS];
@@ -1107,14 +1107,14 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
 
     assert(ri == CXFI_REFERENCE);
     usage = s_inLastInfos.counter[CXFI_USAGE];
-    reqAcc = s_inLastInfos.counter[CXFI_REQ_ACCESS];
+    reqAcc = s_inLastInfos.counter[CXFI_REQUIRED_ACCESS];
     fillUsageBits(&usageBits, usage, reqAcc);
     sym = s_inLastInfos.counter[CXFI_SYM_INDEX];
     file = s_inLastInfos.counter[CXFI_FILE_INDEX];
     file = s_decodeFilesNum[file];
     assert(fileTable.tab[file]!=NULL);
     line = s_inLastInfos.counter[CXFI_LINE_INDEX];
-    coll = s_inLastInfos.counter[CXFI_COLL_INDEX];
+    coll = s_inLastInfos.counter[CXFI_COLUMN_INDEX];
     getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
     log_trace("%d %d->%d %d", usage, file, s_decodeFilesNum[file], line);
     fillPosition(&pos,file,line,coll);
@@ -1138,13 +1138,13 @@ static void cxrfReference(int size,
 
     assert(ri == CXFI_REFERENCE);
     usage = s_inLastInfos.counter[CXFI_USAGE];
-    reqAcc = s_inLastInfos.counter[CXFI_REQ_ACCESS];
+    reqAcc = s_inLastInfos.counter[CXFI_REQUIRED_ACCESS];
     sym = s_inLastInfos.counter[CXFI_SYM_INDEX];
     file = s_inLastInfos.counter[CXFI_FILE_INDEX];
     file = s_decodeFilesNum[file];
     assert(fileTable.tab[file]!=NULL);
     line = s_inLastInfos.counter[CXFI_LINE_INDEX];
-    coll = s_inLastInfos.counter[CXFI_COLL_INDEX];
+    coll = s_inLastInfos.counter[CXFI_COLUMN_INDEX];
     /*&fprintf(dumpOut,"%d %d %d  ", usage,file,line);fflush(dumpOut);&*/
     assert(options.taskRegime);
     if (options.taskRegime == RegimeXref) {
@@ -1271,7 +1271,7 @@ static void cxrfSubClass(int size,
     assert(ri == CXFI_CLASS_EXT);
     file = of = s_inLastInfos.counter[CXFI_FILE_INDEX];
     sup = s_inLastInfos.counter[CXFI_SUPER_CLASS];
-    inf = s_inLastInfos.counter[CXFI_INFER_CLASS];
+    inf = s_inLastInfos.counter[CXFI_INFERIOR_CLASS];
     /*fprintf(dumpOut,"%d %d->%d %d  ", usage,file,s_decodeFilesNum[file],line);*/
     /*fflush(dumpOut);*/
     file = s_decodeFilesNum[file];
@@ -1331,7 +1331,7 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
     s_inLastInfos.onLineReferencedSym = -1;
     s_inLastInfos.symbolToCheckForDeadness = -1;
     s_inLastInfos.onLineRefMenuItem = NULL;
-    s_inLastInfos.singleRecord[CXFI_INFER_CLASS] = noFileIndex;
+    s_inLastInfos.singleRecord[CXFI_INFERIOR_CLASS] = noFileIndex;
     s_inLastInfos.singleRecord[CXFI_SUPER_CLASS] = noFileIndex;
     s_decodeFilesNum[noFileIndex] = noFileIndex;
     for(i=0; scanFuns[i].recordCode>0; i++) {
