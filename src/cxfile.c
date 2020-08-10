@@ -23,25 +23,27 @@
 
 #define CXFI_FILE_FUMTIME   'm'     /* last full update mtime for file item */
 #define CXFI_FILE_UMTIME    'p'     /* last update mtime for file item */
-#define CXFI_FILE_INDEX     'f'
 #define CXFI_SOURCE_INDEX   'o'     /* source index for java classes */
 #define CXFI_SYM_INDEX      's'
+#define CXFI_INPUT_FROM_COMMAND_LINE  'i'     /* file was introduced from command line */
+
 #define CXFI_USAGE          'u'
+#define CXFI_REQUIRED_ACCESS     'A'     /* java reference required accessibility index */
+#define CXFI_FILE_INDEX     'f'
 #define CXFI_LINE_INDEX     'l'
 #define CXFI_COLUMN_INDEX   'c'
 #define CXFI_REFERENCE      'r'     /* using 'fsulc' */
-#define CXFI_INPUT_FROM_COMMAND_LINE  'i'     /* file was introduced from command line */
+
 #define CXFI_ACCESS_BITS    'a'     /* java access bit */
-#define CXFI_REQUIRED_ACCESS     'A'     /* java reference required accessibility index */
 #define CXFI_STORAGE        'g'     /* storaGe field */
+
+#define CXFI_SYM_TYPE       't'
 
 #define CXFI_SUPER_CLASS    'h'     /* hore = up in slovac */
 #define CXFI_INFERIOR_CLASS 'd'     /* dole = down in slovac */
 #define CXFI_CLASS_EXT      'e'     /* using 'fhd' */
 
 #define CXFI_MACRO_BASE_FILE 'b'    /* ref to a file invoking macro */
-
-#define CXFI_SYM_TYPE       't'
 
 #define CXFI_SYM_NAME       '/'     /* using 'atdhg' -> 's'             */
 #define CXFI_CLASS_NAME     '+'     /*               -> 'h' info    */
