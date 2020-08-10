@@ -387,7 +387,6 @@ Options s_initOpt = {
 
     /* CXREF options  */
     0,                          /* show err */
-    true,                       /* brief_cxref */
     UP_CREATE,                  /* create, update */
     false,                      // updateOnlyModifiedFiles
     NULL,                       /* last_message */

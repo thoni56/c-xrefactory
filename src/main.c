@@ -116,7 +116,6 @@ static void usage(char *s) {
     fprintf(stdout,"\t-no-types                 - don't cross reference type names\n");
     fprintf(stdout,"\t-no-structs               - don't cross reference str. records\n");
     fprintf(stdout,"\t-no-locals                - don't cross reference local vars\n");
-    fprintf(stdout,"\t-no-brief                 - generate cxrefs in long format\n");
     fprintf(stdout,"\t-no-stdoptions            - don't read the '~/.c-xrefrc' option file \n");
     fprintf(stdout,"\t-update                   - update old 'refs' reference file\n");
     fprintf(stdout,"\t-compiler=<path>          - path to compiler to use for autodiscovered includes and defines\n");
@@ -469,7 +468,6 @@ static bool processAOption(int *ii, int argc, char **argv) {
 static bool processBOption(int *ii, int argc, char **argv) {
     int i = * ii;
     if (0) {}
-    else if (strcmp(argv[i],"-brief")==0)           options.brief_cxref = true;
     else if (strcmp(argv[i],"-briefoutput")==0)     options.briefoutput = true;
     else if (strncmp(argv[i],"-browsedsym=",12)==0)     {
         createOptionString(&options.browsedSymName, argv[i]+12);
@@ -854,7 +852,6 @@ static bool processNOption(int *ii, int argc, char **argv) {
     else if (strcmp(argv[i],"-no-includerefresh")==0) options.noIncludeRefs=true;
     else if (strcmp(argv[i],"-no-cxfile")==0) options.noCxFile = 1;
     else if (strcmp(argv[i],"-no-cppcomments")==0) options.cpp_comments = false;
-    else if (strcmp(argv[i],"-no-brief")==0) options.brief_cxref = false;
     else if (strcmp(argv[i],"-no-enums")==0) options.no_ref_enumerator = true;
     else if (strcmp(argv[i],"-no-macros")==0) options.no_ref_macro = true;
     else if (strcmp(argv[i],"-no-types")==0) options.no_ref_typedef = true;

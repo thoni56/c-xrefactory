@@ -373,7 +373,6 @@ static void writeStringRecord(int recNum, char *s, char *blankPrefix) {
 
 
 static void writeSymbolItem(int symIndex) {
-    char ttt[TMP_STRING_SIZE];
     SymbolReferenceItem *d;
     writeOptionalCompactRecord(CXFI_SYM_INDEX, symIndex, "");
     d = s_outLastInfos.symbolTab[symIndex];
@@ -384,25 +383,7 @@ static void writeSymbolItem(int symIndex) {
     writeOptionalCompactRecord(CXFI_STORAGE, d->b.storage, "");
     s_outLastInfos.macroBaseFileGeneratedForSym[symIndex] = 0;
     s_outLastInfos.symbolIsWritten[symIndex] = 1;
-    if (!options.brief_cxref) {
-        sprintf(ttt,"\t%s",typeEnumName[d->b.symType]);
-        writeStringRecord(CXFI_REMARK,ttt,"");
-    }
     writeStringRecord(CXFI_SYM_NAME, d->name, "\t");
-    if (!options.brief_cxref) {
-        if (d->vApplClass != noFileIndex) {
-            sprintf(ttt,"\ton %s",fileTable.tab[d->vApplClass]->name);
-            writeStringRecord(CXFI_REMARK,ttt,"\n");
-        }
-    }
-    if (!options.brief_cxref) {
-        if (d->vApplClass != noFileIndex) {
-            sprintf(ttt,"\tfun %s",fileTable.tab[d->vFunClass]->name);
-            writeStringRecord(CXFI_REMARK,ttt,"\n");
-        }
-    }
-    //& fprintf(cxOut,"\n\n");
-    //fprintf(cxOut,"\t");
     fputc('\t', cxOut);
 }
 
@@ -413,7 +394,6 @@ static void writeSymbolItemIfNotWritten(int symIndex) {
 }
 
 static void writeCxReferenceBase(int symbolNum, Usage usage, int requiredAccess, int file, int line, int coll) {
-    char ttt[TMP_STRING_SIZE];
     writeSymbolItemIfNotWritten(symbolNum);
     if (usage == UsageMacroBaseFileUsage) {
         /* optimize the number of those references to 1*/
@@ -428,11 +408,6 @@ static void writeCxReferenceBase(int symbolNum, Usage usage, int requiredAccess,
     writeOptionalCompactRecord(CXFI_LINE_INDEX, line, "");
     writeOptionalCompactRecord(CXFI_COLL_INDEX, coll, "");
     writeCompactRecord(CXFI_REFERENCE, 0, "");
-    if (!options.brief_cxref) {
-        sprintf(ttt,"\t%-7s in %30s:%u:%d\n",usageEnumName[usage]+5,
-                fileTable.tab[file]->name,line,coll);
-            writeStringRecord(CXFI_REMARK,ttt,"");
-    }
 }
 
 static void writeCxReference(Reference *reference, int symbolNum) {
@@ -441,17 +416,10 @@ static void writeCxReference(Reference *reference, int symbolNum) {
 }
 
 static void writeSubClassInfo(int sup, int inf, int origin) {
-    char ttt[TMP_STRING_SIZE];
     writeOptionalCompactRecord(CXFI_FILE_INDEX, origin, "\n");
     writeOptionalCompactRecord(CXFI_SUPER_CLASS, sup, "");
     writeOptionalCompactRecord(CXFI_INFER_CLASS, inf, "");
     writeCompactRecord(CXFI_CLASS_EXT, 0, "");
-    if (!options.brief_cxref) {
-        sprintf(ttt,"\t\t%s",fileTable.tab[inf]->name);
-        writeStringRecord(CXFI_REMARK,ttt,"\n");
-        sprintf(ttt,"  extends\t%s",fileTable.tab[sup]->name);
-        writeStringRecord(CXFI_REMARK,ttt,"\n");
-    }
 }
 
 static void writeFileIndexItem(struct fileItem *fi, int ii) {

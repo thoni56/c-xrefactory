@@ -49,7 +49,6 @@ options:
 	-no-types                 - don't cross reference type names
 	-no-structs               - don't cross reference str. records
 	-no-locals                - don't cross reference local vars
-	-no-brief                 - generate cxrefs in long format
 	-no-stdoptions            - don't read the '~/.c-xrefrc' option file 
 	-update                   - update old 'refs' reference file
 	-compiler=<path>          - path to compiler to use for autodiscovered includes and defines

@@ -1001,7 +1001,6 @@ typedef struct options {
 
     /* CXREF options  */
     bool show_errors;
-    bool brief_cxref;
     UpdateType update;
     bool updateOnlyModifiedFiles;
     char *last_message;
