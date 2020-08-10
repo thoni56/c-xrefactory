@@ -53,7 +53,7 @@
 #define CXFI_SINGLE_RECORDS '@'
 #define CXFI_REMARK         '#'
 
-static int s_cxGeneratedSingleRecords[] = {
+static int generatedSingleRecordMarkers[] = {
     CXFI_FILE_FUMTIME,
     CXFI_FILE_UMTIME,
     CXFI_FILE_INDEX,
@@ -570,8 +570,8 @@ static void genCxFileHead(void) {
     get_version_string(ttt);
     writeStringRecord(CXFI_VERSION, ttt, "\n\n");
     fprintf(cxOut,"\n\n\n");
-    for(i=0; i<MAX_CHARS && s_cxGeneratedSingleRecords[i] != -1; i++) {
-        sr[i] = s_cxGeneratedSingleRecords[i];
+    for(i=0; i<MAX_CHARS && generatedSingleRecordMarkers[i] != -1; i++) {
+        sr[i] = generatedSingleRecordMarkers[i];
     }
     assert(i < MAX_CHARS);
     sr[i]=0;
