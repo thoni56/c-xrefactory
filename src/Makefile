@@ -19,6 +19,11 @@ YACC=$(ROOTDIR)/byacc-1.9/yacc
 
 # If there is no ZLIB on the system you can build it yourself, see sources.mk
 
+# We need to use compatible gcov (Darwin/Brew now have GCC v10)
+ifneq ($(CC), "gcc-10)
+	LCOV_OPTIONS = --gcov-tool gcov-10
+endif
+
 #########################################################################
 #
 # The heavy lifting is here
@@ -66,7 +71,7 @@ c-xref: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB)
 #########################################################################
 test:
 	@echo "Only running quick tests for now - 'cd ../test; make all' to run all"
-	$(MAKE) -C ../tests quick
+	$(MAKE) -C ../tests LCOV_OPTIONS="$(LCOV_OPTIONS)" quick
 
 unit:
 	$(MAKE) CC=$(CC) COVERAGE=$(COVERAGE) -C unittests
@@ -167,13 +172,13 @@ clean-coverage:
 	fi
 
 # NOTE: lcov < 1.14 don't have --exclude
-LCOV=lcov -q --exclude log.c --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' --exclude '/Library/*'
+LCOV=lcov -q --exclude log.c --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' --exclude '/Library/*' --gcov-tool /usr/local/bin/gcov-10
 coverage-report:
 	@echo Doing the coverage reporting in the background...
 	@$(MAKE) the-actual-coverage-report &
 
 the-actual-coverage-report:
-	@$(LCOV) -d .. -c -o ../coverage/total.info
+	@$(LCOV) $(LCOV_OPTIONS) -d .. -c -o ../coverage/total.info
 	@if command -v info2gcov > /dev/null 2>&1 ; then \
 		info2gcov -q ../coverage/total.info ; \
 	fi

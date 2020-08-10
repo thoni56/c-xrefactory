@@ -43,7 +43,7 @@ autodiscovered_tests: $(TESTS)
 define RULE
 .PHONY: $(1)
 $(1):
-	./run_test $(1) "$(GCOV_OPTIONS)"
+	$(GCOV_OPTIONS) LCOV_OPTIONS="$(LCOV_OPTIONS)" ./run_test $(1)
 endef
 
 # Loop over all test_ directories to create a rule for each
