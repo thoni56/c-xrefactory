@@ -1,8 +1,8 @@
 #! /bin/bash
 # Run an autodiscovered test in the c-xrefactory test suite
 # args: 1 = test (directory) name
-# Environmen variabls:
-#	GCOV_OPTIONS optional, but often "GCOV_PREFIX=<path> GCOV_PREFIX_STRIP=6"
+# Environment variables:
+#	Gcov options such as "GCOV_PREFIX=<path> GCOV_PREFIX_STRIP=6"
 #	LCOV_OPTIONS optional, but could be "--gcov-tool /usr/local/bin/gcov-10"
 
 if [ -f $1/.suspended ] ; then
@@ -20,7 +20,7 @@ else
         exit $rc
     fi
     if command -v lcov > /dev/null 2>&1 ; then
-        if [ ! -z "$GCOV_OPTIONS" ] ; then
+        if [ ! -z "$GCOV_PREFIX" ] ; then
             # Then coverage is stored in separate directory for each test to be able to run tests in parallel
             filecount=`ls -1 $1/.coverage/*.gcda 2>/dev/null | wc -l`
             if [ $filecount -gt 0 ] ; then
