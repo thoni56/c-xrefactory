@@ -31,7 +31,7 @@ prod debug yydebug: $(ZLIB) c-xref
 devel:
 	$(MAKE) clean-coverage
 	$(MAKE) -C ../editors/emacs
-	$(MAKE) COVERAGE=$(COVERAGE) unit
+	$(MAKE) CC=$(CC) COVERAGE=$(COVERAGE) unit
 	$(MAKE) COVERAGE=$(COVERAGE) debug
 	$(MAKE) test
 	$(MAKE) coverage-report
@@ -43,7 +43,7 @@ ci:
 	$(MAKE) test
 
 ci-unit:
-	$(MAKE) COVERAGE=$(COVERAGE) unit
+	$(MAKE) CC=$(CC) COVERAGE=$(COVERAGE) unit
 
 ci-build:
 	$(MAKE) COVERAGE=$(COVERAGE) debug
@@ -69,7 +69,7 @@ test:
 	$(MAKE) -C ../tests quick
 
 unit:
-	$(MAKE) COVERAGE=$(COVERAGE) -C unittests
+	$(MAKE) CC=$(CC) COVERAGE=$(COVERAGE) -C unittests
 
 #########################################################################
 # We generate parsers for C, Yacc, Java and C expressions
