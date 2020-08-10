@@ -1,4 +1,5 @@
 *.o
+*.d
 *~
 src/structs-example.c
 src/tmp-*.g
