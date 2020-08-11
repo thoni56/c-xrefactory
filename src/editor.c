@@ -356,39 +356,39 @@ static void editorError(int errCode, char *message) {
     errorMessage(errCode, message);
 }
 
-int editorMarkerLess(EditorMarker *m1, EditorMarker *m2) {
+bool editorMarkerLess(EditorMarker *m1, EditorMarker *m2) {
     // m1->buffer->ftnum <> m2->buffer->ftnum;
     // following is tricky as it works also for renamed buffers
-    if (m1->buffer < m2->buffer) return(1);
-    if (m1->buffer > m2->buffer) return(0);
-    if (m1->offset < m2->offset) return(1);
-    if (m1->offset > m2->offset) return(0);
-    return(0);
+    if (m1->buffer < m2->buffer) return true;
+    if (m1->buffer > m2->buffer) return false;
+    if (m1->offset < m2->offset) return true;
+    if (m1->offset > m2->offset) return false;
+    return false;
 }
 
-int editorMarkerLessOrEq(EditorMarker *m1, EditorMarker *m2) {
+bool editorMarkerLessOrEq(EditorMarker *m1, EditorMarker *m2) {
     return(! editorMarkerLess(m2, m1));
 }
 
-int editorMarkerGreater(EditorMarker *m1, EditorMarker *m2) {
+bool editorMarkerGreater(EditorMarker *m1, EditorMarker *m2) {
     return(editorMarkerLess(m2, m1));
 }
 
-int editorMarkerGreaterOrEq(EditorMarker *m1, EditorMarker *m2) {
+bool editorMarkerGreaterOrEq(EditorMarker *m1, EditorMarker *m2) {
     return(editorMarkerLessOrEq(m2, m1));
 }
 
-int editorMarkerListLess(S_editorMarkerList *l1, S_editorMarkerList *l2) {
+bool editorMarkerListLess(S_editorMarkerList *l1, S_editorMarkerList *l2) {
     return(editorMarkerLess(l1->d, l2->d));
 }
 
-int editorRegionListLess(S_editorRegionList *l1, S_editorRegionList *l2) {
-    if (editorMarkerLess(l1->r.b, l2->r.b)) return(1);
-    if (editorMarkerLess(l2->r.b, l1->r.b)) return(0);
+bool editorRegionListLess(S_editorRegionList *l1, S_editorRegionList *l2) {
+    if (editorMarkerLess(l1->r.b, l2->r.b)) return true;
+    if (editorMarkerLess(l2->r.b, l1->r.b)) return false;
     // region begins are equal, check end
-    if (editorMarkerLess(l1->r.e, l2->r.e)) return(1);
-    if (editorMarkerLess(l2->r.e, l1->r.e)) return(0);
-    return(0);
+    if (editorMarkerLess(l1->r.e, l2->r.e)) return true;
+    if (editorMarkerLess(l2->r.e, l1->r.e)) return false;
+    return false;
 }
 
 static void editorAffectMarkerToBuffer(EditorBuffer *buff, EditorMarker *marker) {

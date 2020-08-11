@@ -10,27 +10,27 @@ int statb(char *path, struct stat *statbuf) {
   return (int) mock(path, statbuf);
 }
 
-int editorMarkerLess(EditorMarker *m1, EditorMarker *m2) {
+bool editorMarkerLess(EditorMarker *m1, EditorMarker *m2) {
   return (int) mock(m1, m2);
 }
 
-int editorMarkerLessOrEq(EditorMarker *m1, EditorMarker *m2) {
+bool editorMarkerLessOrEq(EditorMarker *m1, EditorMarker *m2) {
   return (int) mock(m1, m2);
 }
 
-int editorMarkerGreater(EditorMarker *m1, EditorMarker *m2) {
+bool editorMarkerGreater(EditorMarker *m1, EditorMarker *m2) {
   return (int) mock(m1, m2);
 }
 
-int editorMarkerGreaterOrEq(EditorMarker *m1, EditorMarker *m2) {
+bool editorMarkerGreaterOrEq(EditorMarker *m1, EditorMarker *m2) {
   return (int) mock(m1, m2);
 }
 
-int editorMarkerListLess(S_editorMarkerList *l1, S_editorMarkerList *l2) {
+bool editorMarkerListLess(S_editorMarkerList *l1, S_editorMarkerList *l2) {
   return (int) mock(l1, l2);
 }
 
-int editorRegionListLess(S_editorRegionList *l1, S_editorRegionList *l2) {
+bool editorRegionListLess(S_editorRegionList *l1, S_editorRegionList *l2) {
   return (int) mock(l1, l2);
 }
 
