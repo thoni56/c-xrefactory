@@ -11,6 +11,7 @@ and you can also get java.class.version=55 => java version without decoding dire
 * TODO Strange that <update-report> is put in the -o file since that is synchronous
 Should really be sent synchronously so that the editor can display it.
 * TODO Make C-xref->Misc->About show commit-id
+* TODO Introduce adapter for stat() in fileio
 * TODO Fix javadoc not available (-olcxbrowse com.sun.org.apache.bcel.internal.generic.LADD in jexercise)
 * TODO Why is -olcxbrowse concating the option number without '='? Any more options that do?
 * TODO Better options handling
@@ -28,6 +29,7 @@ Should really be sent synchronously so that the editor can display it.
   When do we point to something not a lexembuffer?
 * TODO NEW FEATURES:
 ** TODO New refactoring: move function for C
+** TODO New refactoring: change return type of function
 ** TODO New refactoring: Extract variable
 ** TODO Extract function can't extract a boolean function inside an if()
 * TODO Remove FULL/FAST update, we always want correct info?

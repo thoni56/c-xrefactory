@@ -339,7 +339,6 @@ void editorInit(void) {
 }
 
 int statb(char *path, struct stat *statbuf) {
-    int                 result;
     EditorBuffer      *buffer;
 
     buffer = editorGetOpenedBuffer(path);
@@ -348,11 +347,9 @@ int statb(char *path, struct stat *statbuf) {
             *statbuf = buffer->stat;
             log_trace("returning stat of %s modified at %s", path, ctime(&buffer->stat.st_mtime));
         }
-        return(0);
+        return 0;
     }
-    result = stat(path, statbuf);
-
-    return result;
+    return stat(path, statbuf);
 }
 
 static void editorError(int errCode, char *message) {
