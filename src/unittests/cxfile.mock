@@ -50,7 +50,7 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
   mock(scanFuns);
 }
 
-int scanReferenceFile(char *fname, char *fns1, char *fns2, ScanFileFunctionStep *scanFunTab) {
+bool scanReferenceFile(char *fname, char *fns1, char *fns2, ScanFileFunctionStep *scanFunTab) {
   return (int) mock(fname, fns1, fns2, scanFunTab);
 }
 

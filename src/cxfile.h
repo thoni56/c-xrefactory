@@ -36,7 +36,7 @@ extern void genReferenceFile(bool updating, char *filename);
 extern void addSubClassItemToFileTab( int sup, int inf, int origin);
 extern void addSubClassesItemsToFileTab(Symbol *ss, int origin);
 extern void scanCxFile(ScanFileFunctionStep *scanFuns);
-extern int scanReferenceFile(char *fname, char *fns1, char *fns2,
+extern bool scanReferenceFile(char *fname, char *fns1, char *fns2,
                              ScanFileFunctionStep *scanFunTab);
 extern void readOneAppropReferenceFile(char *symname,
                                        ScanFileFunctionStep *scanFunTab);

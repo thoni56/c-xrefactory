@@ -1383,7 +1383,7 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
 
 
 /* fnamesuff contains '/' at the beginning !!! */
-int scanReferenceFile(char *fname, char *fns1, char *fns2, /* TODO: bool? */
+bool scanReferenceFile(char *fname, char *fns1, char *fns2,
                       ScanFileFunctionStep *scanFunTab) {
     char fn[MAX_FILE_NAME_SIZE];
 
@@ -1392,12 +1392,12 @@ int scanReferenceFile(char *fname, char *fns1, char *fns2, /* TODO: bool? */
     log_trace(":scanning file %s", fn);
     inputFile = openFile(fn, "r");
     if (inputFile==NULL) {
-        return(0);
+        return false;
     } else {
         scanCxFile(scanFunTab);
         closeFile(inputFile);
         inputFile = NULL;
-        return(1);
+        return true;
     }
 }
 
@@ -1418,27 +1418,27 @@ void scanReferenceFiles(char *fname, ScanFileFunctionStep *scanFunTab) {
 }
 
 int smartReadFileTabFile(void) {
-    static time_t   readedFileModTime = 0;
-    static off_t    readedFileSize = 0;
-    static char     readedFileFile[MAX_FILE_NAME_SIZE] = {0};
-    char            tt[MAX_FILE_NAME_SIZE];
-    struct stat     st;
-    int             tmp;
-    if (options.referenceFileCount > 1) {
-        sprintf(tt, "%s%s", options.cxrefFileName, REFERENCE_FILENAME_FILES);
-    } else {
+    static time_t fileModificationTime = 0;
+    static off_t fileSize = 0;
+    static char previouslyReadFileName[MAX_FILE_NAME_SIZE] = "";
+    char tt[MAX_FILE_NAME_SIZE];
+    struct stat st;
+
+    if (options.referenceFileCount <= 1) {
         sprintf(tt, "%s", options.cxrefFileName);
+    } else {
+        sprintf(tt, "%s%s", options.cxrefFileName, REFERENCE_FILENAME_FILES);
     }
-    if (statb(tt,&st)==0) {
-        if (    readedFileModTime != st.st_mtime
-                ||  readedFileSize != st.st_size
-                ||  strcmp(readedFileFile, tt) != 0) {
+    if (statb(tt, &st)==0) {
+        if (fileModificationTime != st.st_mtime
+            ||  fileSize != st.st_size
+            ||  strcmp(previouslyReadFileName, tt) != 0)
+        {
             log_trace(":(re)reading file tab");
-            tmp = scanReferenceFile(tt,"","",normalScanFunctionSequence);
-            if (tmp != 0) {
-                readedFileModTime = st.st_mtime;
-                readedFileSize = st.st_size;
-                strcpy(readedFileFile, tt);
+            if (scanReferenceFile(tt,"","",normalScanFunctionSequence)) {
+                fileModificationTime = st.st_mtime;
+                fileSize = st.st_size;
+                strcpy(previouslyReadFileName, tt);
             }
         } else {
             log_trace(":saving the (re)reading of file tab");
@@ -1453,28 +1453,29 @@ void readOneAppropReferenceFile(char *symbolName,
                                 ScanFileFunctionStep  *scanFileFunctionTable
                                 ) {
     static char fns[MAX_FILE_NAME_SIZE];
-    int i,tmp;
-    //& if (options.server_operation!=OLO_CGOTO && ! creatingOlcxRefs()) return;
-    if (options.cxrefFileName == NULL) return;
+    int i;
+
+    if (options.cxrefFileName == NULL)
+        return;
     cxOut = stdout;
     if (options.referenceFileCount <= 1) {
-        tmp = scanReferenceFile(options.cxrefFileName,"","",scanFileFunctionTable);
-        if (tmp == 0) return;
+        scanReferenceFile(options.cxrefFileName,"","",scanFileFunctionTable);
     } else {
-        tmp = smartReadFileTabFile();
-        if (tmp == 0) return;
-        tmp = scanReferenceFile(options.cxrefFileName, REFERENCE_FILENAME_CLASSES, "",
-                                scanFileFunctionTable);
-        if (tmp == 0) return;
-        if (symbolName == NULL) return;
+        if (!smartReadFileTabFile())
+            return;
+        if (!scanReferenceFile(options.cxrefFileName, REFERENCE_FILENAME_CLASSES, "",
+                               scanFileFunctionTable))
+            return;
+        if (symbolName == NULL)
+            return;
+
         /* following must be after reading XFiles*/
         i = cxFileHashNumber(symbolName);
-        //&fprintf(dumpOut,"reading X%04d\n",i);fflush(dumpOut);
+
         sprintf(fns, "%04d", i);
         assert(strlen(fns) < MAX_FILE_NAME_SIZE-1);
-        tmp = scanReferenceFile(options.cxrefFileName,REFERENCE_FILENAME_PREFIX,fns,
-                                scanFileFunctionTable);
-        if (tmp == 0) return;
+        scanReferenceFile(options.cxrefFileName, REFERENCE_FILENAME_PREFIX, fns,
+                          scanFileFunctionTable);
     }
 }
 
