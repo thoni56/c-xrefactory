@@ -7,13 +7,19 @@ import re
 import sys
 from collections import namedtuple
 
+
+def eprint(*args, **kwargs):
+    print(*args, file=sys.stderr, **kwargs)
+
+
 # Create the Position structure
 SymbolPosition = namedtuple(
     'SymbolPosition', ['fileid', 'lineno', 'colno', 'position_string', 'complete_string'])
 
 
 def unpack_positions(string, fileid=None, lineno=None, colno=None):
-    # Unpack a reference string into a list of SymbolPositions
+    # Unpack a reference string into a list of SymbolPositions or something
+    # All "segments" have a format of <int><marker>, e.g. 456f
     refs = []
     complete_string = string
 
@@ -24,10 +30,13 @@ def unpack_positions(string, fileid=None, lineno=None, colno=None):
             usage = int(string[f.start():f.end()-1])
             string = string[f.end():]
 
-        if string[0] == 'A':
+        f = re.match(r"(\d*)A", string)
+        if not f == None:
             # Don't now what this is yet ("java reference required accessibilite index")
-            accessibility_index = True
-            string = string[1:]
+            # Sometimes no preceeding index
+            if string[f.start():f.end()-1] != '':
+                accessibility_index = int(string[f.start():f.end()-1])
+            string = string[f.end():]
 
         # File marker
         f = re.match(r"(\d+)f", string)
@@ -52,17 +61,16 @@ def unpack_positions(string, fileid=None, lineno=None, colno=None):
         if string[0] == 'c':
             # Column marker without colno, use previous?
             string = string[1:]
-
         if string[0] == 'r':
             reference = True
         else:
-            print("Unknown position type(?): '%s'" % string[0])
+            print("Unknown marker(?): '%s'" % string)
             exit(1)
         string = string[1:]  # For now, skip 'r' - reference?
 
         if not fileid or not lineno or not colno:
-            print("ERROR: incomplete position, string is: '%s'" %
-                  position_string)
+            eprint("ERROR: incomplete position, string is: '%s'" %
+                   position_string)
         refs.append(SymbolPosition(fileid, lineno, colno,
                                    position_string[:len(
                                        position_string)-len(string)],
@@ -83,16 +91,20 @@ def unpack_files(lines):
             segments = line.split(' ')
             if len(segments) > 0 and segments[0] != '':
                 if segments[0][-1] == 'f':
-                    # Remove trailing 'f' and turn fileid into an int
-                    filerefs.append(FileReference(int(segments[0][:-1]),
-                                                  segments[1],
-                                                  segments[2],
-                                                  segments[3].split(':', 1)[-1]))
+                    if segments[1] != '' and segments[1][-1] == 'o':
+                        # Only two segments, second is Java source index(?)
+                        pass  # for now
+                    else:
+                        # Remove trailing 'f' and turn fileid into an int
+                        filerefs.append(FileReference(int(segments[0][:-1]),
+                                                      segments[1],
+                                                      segments[2],
+                                                      segments[3].split(':', 1)[-1]))
                 elif segments[0][-1] == 'v':
                     # Version string
                     pass
                 elif segments[0][0:3] == '21@':
-                    # "Single Records" - whatever that is
+                    # Marker list (only the marker characters as a string)
                     pass
                 else:
                     print("Unknown line in XFiles: '%s'" % line)
@@ -110,7 +122,7 @@ def get_filename_from_id(fileid, file_references):
 Symbol = namedtuple('Symbol', ['symbolname', 'positions', 'kind'])
 
 
-def unpack_symbols(lines):
+def unpack_symbols(lines, cxfilename):
     symbols = []
     marker = ""
     for line in lines:
@@ -122,7 +134,7 @@ def unpack_symbols(lines):
                 # Version string
                 pass
             elif marker[-1] == '@':
-                # "Single Records" - whatever that is
+                # "Single Records" - all marker characters in the order specified in cxfile.c (generatedSingleRecordMarkers)
                 pass
             elif marker[-1] == 't':
                 # Symbol type
@@ -135,14 +147,14 @@ def unpack_symbols(lines):
                 symbolname = segments[1].split('/', 1)[-1]
                 symbols.append(Symbol(symbolname, segments[2], marker))
             else:
-                print("Unknown marker '%s' in Xrefs file: '%s'" %
-                      (marker[-1], line))
+                print("Unknown marker '%s' in Xrefs file '%s': '%s'" %
+                      (marker[-1], cxfilename, line))
     return symbols
 
 
 def read_lines_from(directory_name, file_name):
-    with open(os.path.join(directory_name, file_name)) as filename:
-        lines = [line.rstrip('\n') for line in filename]
+    with open(os.path.join(directory_name, file_name)) as file:
+        lines = file.read().splitlines()
     return lines
 
 
@@ -181,16 +193,16 @@ if __name__ == "__main__":
     files = unpack_files(lines)
 
     # Read all CXref-files and list identifiers
-    for filename in os.listdir(directory_name):
-        if filename != "XFiles":
-            with open(os.path.join(directory_name, filename)) as origin_file:
+    for cxfilename in os.listdir(directory_name):
+        if cxfilename != "XFiles":
+            with open(os.path.join(directory_name, cxfilename)) as origin_file:
                 lines = read_lines_from(
-                    directory_name, filename)
+                    directory_name, cxfilename)
                 # Somewhere to save previously found fileid, lineno and colno
                 fileid = None
                 lineno = None
                 colno = None
-                symbols = unpack_symbols(lines)
+                symbols = unpack_symbols(lines, cxfilename)
                 for symbol in symbols:
                     print(symbol.symbolname)
                     # Use previously found fileid, lineno and colno
@@ -203,6 +215,7 @@ if __name__ == "__main__":
                         colno = p.colno
                         filename = get_filename_from_id(p.fileid, files)
                         filename = os.path.basename(filename)
-                        print("    %s@%s:%d:%d" % (symbol.symbolname, filename, p.lineno, p.colno))
+                        print("    %s@%s:%d:%d" %
+                              (symbol.symbolname, filename, p.lineno, p.colno))
 
     "4uA 20900f 1l 4c r 4l c r 32710f 1l 4c r 4l c r 48151f 1l 4c r 4l c r"
