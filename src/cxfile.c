@@ -19,7 +19,7 @@
 #include "utils.h"
 
 
-/* *********************** INPUT/OUTPUT ************************** */
+/* *********************** INPUT/OUTPUT FIELD MARKERS ************************** */
 
 #define CXFI_FILE_FUMTIME   'm'     /* last full update mtime for file item */
 #define CXFI_FILE_UMTIME    'p'     /* last update mtime for file item */
@@ -52,10 +52,10 @@
 #define CXFI_CHECK_NUMBER   'k'
 #define CXFI_REFNUM         'n'
 #define CXFI_VERSION        'v'
-#define CXFI_SINGLE_RECORDS '@'
+#define CXFI_MARKER_LIST    '@'
 #define CXFI_REMARK         '#'
 
-static int generatedSingleRecordMarkers[] = {
+static int generatedFieldMarkersList[] = {
     CXFI_FILE_FUMTIME,
     CXFI_FILE_UMTIME,
     CXFI_FILE_INDEX,
@@ -89,9 +89,9 @@ struct lastCxFileInfos {
     char                symbolIsWritten[MAX_CX_SYMBOL_TAB];
     char                *symbolBestMatchFlag[MAX_CX_SYMBOL_TAB];
     int                 macroBaseFileGeneratedForSym[MAX_CX_SYMBOL_TAB];
-    char                singleRecord[MAX_CHARS];
+    char                markers[MAX_CHARS];
     int                 counter[MAX_CHARS];
-    void                (*fun[MAX_CHARS])(int size, int ri, CharacterBuffer *cb, int additional);
+    void                (*fun[MAX_CHARS])(int size, int marker, CharacterBuffer *cb, int additional);
     int                 additional[MAX_CHARS];
 
     // dead code detection vars
@@ -572,12 +572,12 @@ static void genCxFileHead(void) {
     get_version_string(ttt);
     writeStringRecord(CXFI_VERSION, ttt, "\n\n");
     fprintf(cxOut,"\n\n\n");
-    for(i=0; i<MAX_CHARS && generatedSingleRecordMarkers[i] != -1; i++) {
-        sr[i] = generatedSingleRecordMarkers[i];
+    for(i=0; i<MAX_CHARS && generatedFieldMarkersList[i] != -1; i++) {
+        sr[i] = generatedFieldMarkersList[i];
     }
     assert(i < MAX_CHARS);
     sr[i]=0;
-    writeStringRecord(CXFI_SINGLE_RECORDS, sr, "");
+    writeStringRecord(CXFI_MARKER_LIST, sr, "");
     writeCompactRecord(CXFI_REFNUM, options.referenceFileCount, " ");
     writeCompactRecord(CXFI_CHECK_NUMBER, COMPOSE_CXFI_CHECK_NUM(
                                                                MAX_FILES,
@@ -705,23 +705,6 @@ void genReferenceFile(bool updating, char *filename) {
     }
 }
 
-/* ************************* READ **************************** */
-
-static void cxrfSetSingleRecords(int size,
-                                 int ri,
-                                 CharacterBuffer *cb,
-                                 int additionalArg
-                                 ) {
-    int i, ch;
-
-    assert(ri == CXFI_SINGLE_RECORDS);
-    for(i=0; i<size-1; i++) {
-        ch = getChar(cb);
-        s_inLastInfos.singleRecord[ch] = 1;
-    }
-}
-
-
 static void writeCxFileCompatibilityError(char *message) {
     static time_t lastMessageTime;
     if (options.taskRegime == RegimeEditServer) {
@@ -735,8 +718,25 @@ static void writeCxFileCompatibilityError(char *message) {
 }
 
 
+/* ************************* READ **************************** */
+
+static void cxrfSetSingleRecords(int size,
+                                 int marker,
+                                 CharacterBuffer *cb,
+                                 int additionalArg
+                                 ) {
+    int i, ch;
+
+    assert(marker == CXFI_MARKER_LIST);
+    for(i=0; i<size-1; i++) {
+        ch = getChar(cb);
+        s_inLastInfos.markers[ch] = 1;
+    }
+}
+
+
 static void cxrfVersionCheck(int size,
-                             int ri,
+                             int marker,
                              CharacterBuffer *cb,
                              int additionalArg
                              ) {
@@ -744,7 +744,7 @@ static void cxrfVersionCheck(int size,
     char thisVersionString[TMP_STRING_SIZE];
     int i, ch;
 
-    assert(ri == CXFI_VERSION);
+    assert(marker == CXFI_VERSION);
     for(i=0; i<size-1; i++) {
         ch = getChar(cb);
         versionString[i]=ch;
@@ -757,14 +757,14 @@ static void cxrfVersionCheck(int size,
 }
 
 static void cxrfCheckNumber(int size,
-                            int ri,
+                            int marker,
                             CharacterBuffer *cb,
                             int additionalArg
                             ) {
     int magicn, filen, hashMethod, exactPositionLinkFlag;
     char tmpBuff[TMP_BUFF_SIZE];
 
-    assert(ri == CXFI_CHECK_NUMBER);
+    assert(marker == CXFI_CHECK_NUMBER);
     if (options.create)
         return; // no check when creating new file
 
@@ -815,7 +815,7 @@ static int cxrfFileItemShouldBeUpdatedFromCxFile(FileItem *ffi) {
 }
 
 static void cxReadFileName(int size,
-                           int ri,
+                           int marker,
                            CharacterBuffer *cb,
                            int genFl
                            ) {
@@ -825,7 +825,7 @@ static void cxReadFileName(int size,
     time_t fumtime, umtime;
     char ch;
 
-    assert(ri == CXFI_FILE_NAME);
+    assert(marker == CXFI_FILE_NAME);
     fumtime = (time_t) s_inLastInfos.counter[CXFI_FILE_FUMTIME];
     umtime = (time_t) s_inLastInfos.counter[CXFI_FILE_UMTIME];
     commandLineFlag = s_inLastInfos.counter[CXFI_INPUT_FROM_COMMAND_LINE];
@@ -874,13 +874,13 @@ static void cxReadFileName(int size,
 }
 
 static void cxrfSourceIndex(int size,
-                            int ri,
+                            int marker,
                             CharacterBuffer *cb,
                             int genFl
                             ) {
     int file, sfile;
 
-    assert(ri == CXFI_SOURCE_INDEX);
+    assert(marker == CXFI_SOURCE_INDEX);
     file = s_inLastInfos.counter[CXFI_FILE_INDEX];
     file = s_decodeFilesNum[file];
     sfile = s_inLastInfos.counter[CXFI_SOURCE_INDEX];
@@ -933,7 +933,7 @@ static void getSymTypeAndClasses(int *_symType, int *_vApplClass,
 
 
 static void cxrfSymbolNameForFullUpdateSchedule(int size,
-                                                int ri,
+                                                int marker,
                                                 CharacterBuffer *cb,
                                                 int additionalArg
                                                 ) {
@@ -943,7 +943,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
     char *id;
     char *ss;
 
-    assert(ri == CXFI_SYM_NAME);
+    assert(marker == CXFI_SYM_NAME);
     accessFlags = s_inLastInfos.counter[CXFI_ACCESS_BITS];
     storage = s_inLastInfos.counter[CXFI_STORAGE];
     si = s_inLastInfos.counter[CXFI_SYM_INDEX];
@@ -1008,7 +1008,7 @@ static int symbolIsReportableAsDead(SymbolReferenceItem *ss) {
 }
 
 static void cxrfSymbolName(int size,
-                           int ri,
+                           int marker,
                            CharacterBuffer *cb,
                            int additionalArg
                            ) {
@@ -1019,7 +1019,7 @@ static void cxrfSymbolName(int size,
     char *id;
     char *ss;
 
-    assert(ri == CXFI_SYM_NAME);
+    assert(marker == CXFI_SYM_NAME);
     if (options.taskRegime==RegimeEditServer && additionalArg==DEAD_CODE_DETECTION) {
         // check if previous symbol was dead
         cxfileCheckLastSymbolDeadness();
@@ -1098,7 +1098,7 @@ static void cxrfSymbolName(int size,
 }
 
 static void cxrfReferenceForFullUpdateSchedule(int size,
-                                               int ri,
+                                               int marker,
                                                CharacterBuffer *cb,
                                                int additionalArg
                                                ) {
@@ -1107,7 +1107,7 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
     int file, line, coll, usage, sym, vApplClass, vFunClass;
     int symType,reqAcc;
 
-    assert(ri == CXFI_REFERENCE);
+    assert(marker == CXFI_REFERENCE);
     usage = s_inLastInfos.counter[CXFI_USAGE];
     reqAcc = s_inLastInfos.counter[CXFI_REQUIRED_ACCESS];
     fillUsageBits(&usageBits, usage, reqAcc);
@@ -1128,7 +1128,7 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
 }
 
 static void cxrfReference(int size,
-                          int ri,
+                          int marker,
                           CharacterBuffer *cb,
                           int additionalArg
                           ) {
@@ -1138,7 +1138,7 @@ static void cxrfReference(int size,
     int file, line, coll, usage, sym, reqAcc;
     int copyrefFl;
 
-    assert(ri == CXFI_REFERENCE);
+    assert(marker == CXFI_REFERENCE);
     usage = s_inLastInfos.counter[CXFI_USAGE];
     reqAcc = s_inLastInfos.counter[CXFI_REQUIRED_ACCESS];
     sym = s_inLastInfos.counter[CXFI_SYM_INDEX];
@@ -1250,7 +1250,7 @@ static void cxrfReference(int size,
 
 
 static void cxrfRefNum(int fileRefNum,
-                       int ri,
+                       int marker,
                        CharacterBuffer *cb,
                        int additionalArg
                        ) {
@@ -1264,13 +1264,13 @@ static void cxrfRefNum(int fileRefNum,
 }
 
 static void cxrfSubClass(int size,
-                         int ri,
+                         int marker,
                          CharacterBuffer *cb,
                          int additionalArg
                          ) {
     int of, file, sup, inf;
 
-    assert(ri == CXFI_CLASS_EXT);
+    assert(marker == CXFI_CLASS_EXT);
     file = of = s_inLastInfos.counter[CXFI_FILE_INDEX];
     sup = s_inLastInfos.counter[CXFI_SUPER_CLASS];
     inf = s_inLastInfos.counter[CXFI_INFERIOR_CLASS];
@@ -1333,8 +1333,8 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
     s_inLastInfos.onLineReferencedSym = -1;
     s_inLastInfos.symbolToCheckForDeadness = -1;
     s_inLastInfos.onLineRefMenuItem = NULL;
-    s_inLastInfos.singleRecord[CXFI_INFERIOR_CLASS] = noFileIndex;
-    s_inLastInfos.singleRecord[CXFI_SUPER_CLASS] = noFileIndex;
+    s_inLastInfos.markers[CXFI_INFERIOR_CLASS] = noFileIndex;
+    s_inLastInfos.markers[CXFI_SUPER_CLASS] = noFileIndex;
     s_decodeFilesNum[noFileIndex] = noFileIndex;
     for(i=0; scanFuns[i].recordCode>0; i++) {
         assert(scanFuns[i].recordCode < MAX_CHARS);
@@ -1350,13 +1350,13 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
         if (cxfCharacterBuffer.isAtEOF)
             break;
         assert(ch >= 0 && ch<MAX_CHARS);
-        if (s_inLastInfos.singleRecord[ch]) {
+        if (s_inLastInfos.markers[ch]) {
             s_inLastInfos.counter[ch] = scannedInt;
         }
         if (s_inLastInfos.fun[ch] != NULL) {
             (*s_inLastInfos.fun[ch])(scannedInt, ch, &cxfCharacterBuffer,
                                      s_inLastInfos.additional[ch]);
-        } else if (! s_inLastInfos.singleRecord[ch]) {
+        } else if (! s_inLastInfos.markers[ch]) {
             assert(scannedInt>0);
             //& CxSkipNChars(scannedInt-1, next, end, cb);
             {
@@ -1482,7 +1482,7 @@ void readOneAppropReferenceFile(char *symbolName,
 
 
 ScanFileFunctionStep normalScanFunctionSequence[]={
-    {CXFI_SINGLE_RECORDS, cxrfSetSingleRecords, 0},
+    {CXFI_MARKER_LIST, cxrfSetSingleRecords, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
@@ -1491,7 +1491,7 @@ ScanFileFunctionStep normalScanFunctionSequence[]={
 };
 
 ScanFileFunctionStep fullScanFunctionSequence[]={
-    {CXFI_SINGLE_RECORDS, cxrfSetSingleRecords, 0},
+    {CXFI_MARKER_LIST, cxrfSetSingleRecords, 0},
     {CXFI_VERSION, cxrfVersionCheck, 0},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_GENERATE_OUTPUT},
@@ -1504,7 +1504,7 @@ ScanFileFunctionStep fullScanFunctionSequence[]={
 };
 
 ScanFileFunctionStep byPassFunctionSequence[]={
-    {CXFI_SINGLE_RECORDS, cxrfSetSingleRecords, 0},
+    {CXFI_MARKER_LIST, cxrfSetSingleRecords, 0},
     {CXFI_VERSION, cxrfVersionCheck, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
@@ -1516,7 +1516,7 @@ ScanFileFunctionStep byPassFunctionSequence[]={
 };
 
 ScanFileFunctionStep symbolLoadMenuRefsFunctionSequence[]={
-    {CXFI_SINGLE_RECORDS, cxrfSetSingleRecords, 0},
+    {CXFI_MARKER_LIST, cxrfSetSingleRecords, 0},
     {CXFI_VERSION, cxrfVersionCheck, 0},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
@@ -1529,7 +1529,7 @@ ScanFileFunctionStep symbolLoadMenuRefsFunctionSequence[]={
 };
 
 ScanFileFunctionStep symbolMenuCreationFunctionSequence[]={
-    {CXFI_SINGLE_RECORDS, cxrfSetSingleRecords, 0},
+    {CXFI_MARKER_LIST, cxrfSetSingleRecords, 0},
     {CXFI_VERSION, cxrfVersionCheck, 0},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
@@ -1542,7 +1542,7 @@ ScanFileFunctionStep symbolMenuCreationFunctionSequence[]={
 };
 
 ScanFileFunctionStep fullUpdateFunctionSequence[]={
-    {CXFI_SINGLE_RECORDS, cxrfSetSingleRecords, 0},
+    {CXFI_MARKER_LIST, cxrfSetSingleRecords, 0},
     {CXFI_VERSION, cxrfVersionCheck, 0},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
@@ -1554,7 +1554,7 @@ ScanFileFunctionStep fullUpdateFunctionSequence[]={
 };
 
 ScanFileFunctionStep secondPassMacroUsageFunctionSequence[]={
-    {CXFI_SINGLE_RECORDS, cxrfSetSingleRecords, DEFAULT_VALUE},
+    {CXFI_MARKER_LIST, cxrfSetSingleRecords, DEFAULT_VALUE},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
     {CXFI_SYM_NAME, cxrfSymbolName, OL_LOOKING_2_PASS_MACRO_USAGE},
@@ -1565,7 +1565,7 @@ ScanFileFunctionStep secondPassMacroUsageFunctionSequence[]={
 };
 
 ScanFileFunctionStep classHierarchyFunctionSequence[]={
-    {CXFI_SINGLE_RECORDS, cxrfSetSingleRecords, DEFAULT_VALUE},
+    {CXFI_MARKER_LIST, cxrfSetSingleRecords, DEFAULT_VALUE},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_CLASS_EXT, cxrfSubClass, CX_JUST_READ},
     {CXFI_REFNUM, cxrfRefNum, DEFAULT_VALUE},
@@ -1573,7 +1573,7 @@ ScanFileFunctionStep classHierarchyFunctionSequence[]={
 };
 
 ScanFileFunctionStep htmlGlobalReferencesFunctionSequence[]={
-    {CXFI_SINGLE_RECORDS, cxrfSetSingleRecords, 0},
+    {CXFI_MARKER_LIST, cxrfSetSingleRecords, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
     {CXFI_CLASS_EXT, cxrfSubClass, CX_JUST_READ},
@@ -1584,7 +1584,7 @@ ScanFileFunctionStep htmlGlobalReferencesFunctionSequence[]={
 };
 
 ScanFileFunctionStep symbolSearchFunctionSequence[]={
-    {CXFI_SINGLE_RECORDS, cxrfSetSingleRecords, 0},
+    {CXFI_MARKER_LIST, cxrfSetSingleRecords, 0},
     {CXFI_REFNUM, cxrfRefNum, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
@@ -1594,7 +1594,7 @@ ScanFileFunctionStep symbolSearchFunctionSequence[]={
 };
 
 ScanFileFunctionStep deadCodeDetectionFunctionSequence[]={
-    {CXFI_SINGLE_RECORDS, cxrfSetSingleRecords, 0},
+    {CXFI_MARKER_LIST, cxrfSetSingleRecords, 0},
     {CXFI_REFNUM, cxrfRefNum, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
