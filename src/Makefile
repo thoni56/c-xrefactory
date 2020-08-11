@@ -19,8 +19,16 @@ YACC=$(ROOTDIR)/byacc-1.9/yacc
 
 # If there is no ZLIB on the system you can build it yourself, see sources.mk
 
+# On Darwin we want to use gcc-10 if available
+OS := $(shell uname)
+ifeq ($(OS),Darwin)
+ ifneq (, $(shell which gcc-10))
+  CC=gcc-10
+ endif
+endif
+
 # We need to use compatible gcov (Darwin/Brew now have GCC v10)
-ifeq ($(CC), "gcc-10")
+ifeq ("$(CC)", "gcc-10")
 	LCOV_OPTIONS = --gcov-tool gcov-10
 endif
 
@@ -178,8 +186,9 @@ coverage-report:
 	@$(MAKE) the-actual-coverage-report &
 
 the-actual-coverage-report:
-	@$(LCOV) $(LCOV_OPTIONS) -d .. -c -o ../coverage/total.info
-	@if command -v info2gcov > /dev/null 2>&1 ; then \
+	$(LCOV) $(LCOV_OPTIONS) -d .. -c -o ../coverage/total.info
+	# Create gcov files for Emacs gcov-mode
+	if command -v info2gcov > /dev/null 2>&1 ; then \
 		info2gcov -q ../coverage/total.info ; \
 	fi
 	@printf "\\r"
@@ -187,8 +196,8 @@ the-actual-coverage-report:
 	@echo Coverage done
 
 old-actual-coverage-report-with-testnames:
-	@$(LCOV) -d . -c -t unittests -o ../coverage/unittests.info
-	@ls -1q ../tests/*.info | sed "s/^/-a /g" | xargs $(LCOV) -o ../coverage/total.info -a ../coverage/unittests.info
+	@$(LCOV) $(LCOV_OPTIONS) -d . -c -t unittests -o ../coverage/unittests.info
+	@ls -1q ../tests/*.info | sed "s/^/-a /g" | xargs $(LCOV) $(LCOV_OPTIONS) -o ../coverage/total.info -a ../coverage/unittests.info
 	@printf "\\r"
 	@lcov -q --remove ../coverage/total.info 'log.c' '*.tab.c' '/usr/*' '/Library/*' -o ../coverage/total.info
 	@if command -v info2gcov > /dev/null 2>&1 ; then \
