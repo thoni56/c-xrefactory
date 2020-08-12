@@ -198,6 +198,8 @@ if __name__ == "__main__":
             with open(os.path.join(directory_name, cxfilename)) as origin_file:
                 lines = read_lines_from(
                     directory_name, cxfilename)
+                # Skip file head, 6 lines
+                lines = lines[6:]
                 # Somewhere to save previously found fileid, lineno and colno
                 fileid = None
                 lineno = None
