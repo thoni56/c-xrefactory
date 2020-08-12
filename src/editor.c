@@ -378,7 +378,7 @@ bool editorMarkerGreaterOrEq(EditorMarker *m1, EditorMarker *m2) {
     return(editorMarkerLessOrEq(m2, m1));
 }
 
-bool editorMarkerListLess(S_editorMarkerList *l1, S_editorMarkerList *l2) {
+bool editorMarkerListLess(EditorMarkerList *l1, EditorMarkerList *l2) {
     return(editorMarkerLess(l1->d, l2->d));
 }
 
@@ -1064,12 +1064,12 @@ void editorMoveMarkerToLineCol(EditorMarker *m, int line, int col) {
     assert(m->offset>=0 && m->offset<=buff->a.bufferSize);
 }
 
-S_editorMarkerList *editorReferencesToMarkers(Reference *refs,
+EditorMarkerList *editorReferencesToMarkers(Reference *refs,
                                               int (*filter)(Reference *, void *),
                                               void *filterParam) {
     Reference         *r;
     EditorMarker      *m;
-    S_editorMarkerList  *res, *rrr;
+    EditorMarkerList  *res, *rrr;
     int                 line, col, file, maxoffset;
     char       *s, *smax;
     int        ln, c;
@@ -1096,8 +1096,8 @@ S_editorMarkerList *editorReferencesToMarkers(Reference *refs,
                 for(; s<smax; s++, c++) {
                     if (ln==line && c==col) {
                         m = editorCrNewMarker(buff, s - buff->a.text);
-                        ED_ALLOC(rrr, S_editorMarkerList);
-                        *rrr = (S_editorMarkerList){.d = m, .usage = r->usage, .next = res};
+                        ED_ALLOC(rrr, EditorMarkerList);
+                        *rrr = (EditorMarkerList){.d = m, .usage = r->usage, .next = res};
                         res = rrr;
                         r = r->next;
                         while (r!=NULL && ! filter(r,filterParam)) r = r->next;
@@ -1110,8 +1110,8 @@ S_editorMarkerList *editorReferencesToMarkers(Reference *refs,
                 // references beyond end of buffer
                 while (r!=NULL && file == r->p.file) {
                     m = editorCrNewMarker(buff, maxoffset);
-                    ED_ALLOC(rrr, S_editorMarkerList);
-                    *rrr = (S_editorMarkerList){.d = m, .usage = r->usage, .next = res};
+                    ED_ALLOC(rrr, EditorMarkerList);
+                    *rrr = (EditorMarkerList){.d = m, .usage = r->usage, .next = res};
                     res = rrr;
                     r = r->next;
                     while (r!=NULL && ! filter(r,filterParam)) r = r->next;
@@ -1121,17 +1121,17 @@ S_editorMarkerList *editorReferencesToMarkers(Reference *refs,
     }
     // get markers in the same order as were references
     // ?? is this still needed?
-    LIST_REVERSE(S_editorMarkerList, res);
+    LIST_REVERSE(EditorMarkerList, res);
     return(res);
 }
 
-Reference *editorMarkersToReferences(S_editorMarkerList **mms) {
-    S_editorMarkerList  *mm;
+Reference *editorMarkersToReferences(EditorMarkerList **mms) {
+    EditorMarkerList  *mm;
     EditorBuffer      *buf;
     char                *s, *smax, *off;
     int                 ln, c;
     Reference         *res, *rr;
-    LIST_MERGE_SORT(S_editorMarkerList, *mms, editorMarkerListLess);
+    LIST_MERGE_SORT(EditorMarkerList, *mms, editorMarkerListLess);
     res = NULL;
     mm = *mms;
     while (mm!=NULL) {
@@ -1184,21 +1184,21 @@ void editorFreeMarkersAndRegionList(S_editorRegionList *occs) {
     }
 }
 
-void editorFreeMarkerListNotMarkers(S_editorMarkerList *occs) {
-    S_editorMarkerList  *o, *next;
+void editorFreeMarkerListNotMarkers(EditorMarkerList *occs) {
+    EditorMarkerList  *o, *next;
     for(o=occs; o!=NULL; ) {
         next = o->next;
-        ED_FREE(o, sizeof(S_editorMarkerList));
+        ED_FREE(o, sizeof(EditorMarkerList));
         o = next;
     }
 }
 
-void editorFreeMarkersAndMarkerList(S_editorMarkerList *occs) {
-    S_editorMarkerList  *o, *next;
+void editorFreeMarkersAndMarkerList(EditorMarkerList *occs) {
+    EditorMarkerList  *o, *next;
     for(o=occs; o!=NULL; ) {
         next = o->next;
         editorFreeMarker(o->d);
-        ED_FREE(o, sizeof(S_editorMarkerList));
+        ED_FREE(o, sizeof(EditorMarkerList));
         o = next;
     }
 }
@@ -1209,8 +1209,8 @@ void editorDumpMarker(EditorMarker *mm) {
     sprintf(tmpBuff, "[%s:%d] --> %c", simpleFileName(mm->buffer->name), mm->offset, CHAR_ON_MARKER(mm)); ppcGenTmpBuff();
 }
 
-void editorDumpMarkerList(S_editorMarkerList *mml) {
-    S_editorMarkerList *mm;
+void editorDumpMarkerList(EditorMarkerList *mml) {
+    EditorMarkerList *mm;
     char tmpBuff[TMP_BUFF_SIZE];
 
     sprintf(tmpBuff, "------------------[[dumping editor markers]]");ppcGenTmpBuff();
@@ -1281,24 +1281,24 @@ void editorDumpUndoList(S_editorUndo *uu) {
 }
 
 
-void editorMarkersDifferences(S_editorMarkerList **list1, S_editorMarkerList **list2,
-                              S_editorMarkerList **diff1, S_editorMarkerList **diff2) {
-    S_editorMarkerList *l1, *l2, *ll;
+void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2,
+                              EditorMarkerList **diff1, EditorMarkerList **diff2) {
+    EditorMarkerList *l1, *l2, *ll;
     EditorMarker *m;
-    LIST_MERGE_SORT(S_editorMarkerList, *list1, editorMarkerListLess);
-    LIST_MERGE_SORT(S_editorMarkerList, *list2, editorMarkerListLess);
+    LIST_MERGE_SORT(EditorMarkerList, *list1, editorMarkerListLess);
+    LIST_MERGE_SORT(EditorMarkerList, *list2, editorMarkerListLess);
     *diff1 = *diff2 = NULL;
     for(l1 = *list1, l2 = *list2; l1!=NULL && l2!=NULL; ) {
         if (editorMarkerListLess(l1, l2)) {
             m = editorCrNewMarker(l1->d->buffer, l1->d->offset);
-            ED_ALLOC(ll, S_editorMarkerList);
-            *ll = (S_editorMarkerList){.d = m, .usage = l1->usage, .next = *diff1};
+            ED_ALLOC(ll, EditorMarkerList);
+            *ll = (EditorMarkerList){.d = m, .usage = l1->usage, .next = *diff1};
             *diff1 = ll;
             l1 = l1->next;
         } else if (editorMarkerListLess(l2, l1)) {
             m = editorCrNewMarker(l2->d->buffer, l2->d->offset);
-            ED_ALLOC(ll, S_editorMarkerList);
-            *ll = (S_editorMarkerList){.d = m, .usage = l2->usage, .next = *diff2};
+            ED_ALLOC(ll, EditorMarkerList);
+            *ll = (EditorMarkerList){.d = m, .usage = l2->usage, .next = *diff2};
             *diff2 = ll;
             l2 = l2->next;
         } else {
@@ -1307,15 +1307,15 @@ void editorMarkersDifferences(S_editorMarkerList **list1, S_editorMarkerList **l
     }
     while (l1 != NULL) {
         m = editorCrNewMarker(l1->d->buffer, l1->d->offset);
-        ED_ALLOC(ll, S_editorMarkerList);
-        *ll = (S_editorMarkerList){.d = m, .usage = l1->usage, .next = *diff1};
+        ED_ALLOC(ll, EditorMarkerList);
+        *ll = (EditorMarkerList){.d = m, .usage = l1->usage, .next = *diff1};
         *diff1 = ll;
         l1 = l1->next;
     }
     while (l2 != NULL) {
         m = editorCrNewMarker(l2->d->buffer, l2->d->offset);
-        ED_ALLOC(ll, S_editorMarkerList);
-        *ll = (S_editorMarkerList){.d = m, .usage = l2->usage, .next = *diff2};
+        ED_ALLOC(ll, EditorMarkerList);
+        *ll = (EditorMarkerList){.d = m, .usage = l2->usage, .next = *diff2};
         *diff2 = ll;
         l2 = l2->next;
     }
@@ -1356,22 +1356,22 @@ void editorSortRegionsAndRemoveOverlaps(S_editorRegionList **regions) {
 }
 
 void editorSplitMarkersWithRespectToRegions(
-                                            S_editorMarkerList  **inMarkers,
+                                            EditorMarkerList  **inMarkers,
                                             S_editorRegionList  **inRegions,
-                                            S_editorMarkerList  **outInsiders,
-                                            S_editorMarkerList  **outOutsiders
+                                            EditorMarkerList  **outInsiders,
+                                            EditorMarkerList  **outOutsiders
                                             ) {
-    S_editorMarkerList *mm, *nn;
+    EditorMarkerList *mm, *nn;
     S_editorRegionList *rr;
 
     *outInsiders = NULL;
     *outOutsiders = NULL;
 
-    LIST_MERGE_SORT(S_editorMarkerList, *inMarkers, editorMarkerListLess);
+    LIST_MERGE_SORT(EditorMarkerList, *inMarkers, editorMarkerListLess);
     editorSortRegionsAndRemoveOverlaps(inRegions);
 
     LIST_REVERSE(S_editorRegionList, *inRegions);
-    LIST_REVERSE(S_editorMarkerList, *inMarkers);
+    LIST_REVERSE(EditorMarkerList, *inMarkers);
 
     //&editorDumpRegionList(*inRegions);
     //&editorDumpMarkerList(*inMarkers);
@@ -1395,14 +1395,14 @@ void editorSplitMarkersWithRespectToRegions(
 
     *inMarkers = NULL;
     LIST_REVERSE(S_editorRegionList, *inRegions);
-    LIST_REVERSE(S_editorMarkerList, *outInsiders);
-    LIST_REVERSE(S_editorMarkerList, *outOutsiders);
+    LIST_REVERSE(EditorMarkerList, *outInsiders);
+    LIST_REVERSE(EditorMarkerList, *outOutsiders);
     //&editorDumpMarkerList(*outInsiders);
     //&editorDumpMarkerList(*outOutsiders);
 }
 
-void editorRestrictMarkersToRegions(S_editorMarkerList **mm, S_editorRegionList **regions) {
-    S_editorMarkerList *ins, *outs;
+void editorRestrictMarkersToRegions(EditorMarkerList **mm, S_editorRegionList **regions) {
+    EditorMarkerList *ins, *outs;
     editorSplitMarkersWithRespectToRegions(mm, regions, &ins, &outs);
     *mm = ins;
     editorFreeMarkersAndMarkerList(outs);

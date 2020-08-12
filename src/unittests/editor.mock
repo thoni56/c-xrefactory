@@ -26,7 +26,7 @@ bool editorMarkerGreaterOrEq(EditorMarker *m1, EditorMarker *m2) {
   return (int) mock(m1, m2);
 }
 
-bool editorMarkerListLess(S_editorMarkerList *l1, S_editorMarkerList *l2) {
+bool editorMarkerListLess(EditorMarkerList *l1, EditorMarkerList *l2) {
   return (int) mock(l1, l2);
 }
 
@@ -58,11 +58,11 @@ EditorMarker *editorCrNewMarkerForPosition(Position *pos) {
   return (EditorMarker *) mock(pos);
 }
 
-S_editorMarkerList *editorReferencesToMarkers(Reference *refs, int (*filter)(Reference *, void *), void *filterParam) {
-  return (S_editorMarkerList *) mock(refs, filter, filterParam);
+EditorMarkerList *editorReferencesToMarkers(Reference *refs, int (*filter)(Reference *, void *), void *filterParam) {
+  return (EditorMarkerList *) mock(refs, filter, filterParam);
 }
 
-Reference *editorMarkersToReferences(S_editorMarkerList **mms) {
+Reference *editorMarkersToReferences(EditorMarkerList **mms) {
   return (Reference *) mock(mms);
 }
 
@@ -90,7 +90,7 @@ void editorDumpMarker(EditorMarker *mm) {
   mock(mm);
 }
 
-void editorDumpMarkerList(S_editorMarkerList *mml) {
+void editorDumpMarkerList(EditorMarkerList *mml) {
   mock(mml);
 }
 
@@ -150,7 +150,7 @@ void editorMoveMarkerToLineCol(EditorMarker *m, int line, int col) {
   mock(m, line, col);
 }
 
-void editorMarkersDifferences(S_editorMarkerList **list1, S_editorMarkerList **list2, S_editorMarkerList **diff1, S_editorMarkerList **diff2) {
+void editorMarkersDifferences(EditorMarkerList **list1, EditorMarkerList **list2, EditorMarkerList **diff1, EditorMarkerList **diff2) {
   mock(list1, list2, diff1, diff2);
 }
 
@@ -158,7 +158,7 @@ void editorFreeMarker(EditorMarker *marker) {
   mock(marker);
 }
 
-void editorFreeMarkerListNotMarkers(S_editorMarkerList *occs) {
+void editorFreeMarkerListNotMarkers(EditorMarkerList *occs) {
   mock(occs);
 }
 
@@ -174,11 +174,11 @@ void editorSortRegionsAndRemoveOverlaps(S_editorRegionList **regions) {
   mock(regions);
 }
 
-void editorSplitMarkersWithRespectToRegions(S_editorMarkerList **inMarkers, S_editorRegionList **inRegions, S_editorMarkerList **outInsiders, S_editorMarkerList **outOutsiders) {
+void editorSplitMarkersWithRespectToRegions(EditorMarkerList **inMarkers, S_editorRegionList **inRegions, EditorMarkerList **outInsiders, EditorMarkerList **outOutsiders) {
   mock(inMarkers, inRegions, outInsiders, outOutsiders);
 }
 
-void editorRestrictMarkersToRegions(S_editorMarkerList **mm, S_editorRegionList **regions) {
+void editorRestrictMarkersToRegions(EditorMarkerList **mm, S_editorRegionList **regions) {
   mock(mm, regions);
 }
 
@@ -194,7 +194,7 @@ S_editorRegionList *editorWholeBufferRegion(EditorBuffer *buffer) {
   return (S_editorRegionList *) mock(buffer);
 }
 
-void editorFreeMarkersAndMarkerList(S_editorMarkerList *occs) {
+void editorFreeMarkersAndMarkerList(EditorMarkerList *occs) {
   mock(occs);
 }
 
