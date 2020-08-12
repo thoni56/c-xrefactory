@@ -6,4 +6,4 @@ c-xrefprotocol.el: refactorings.def ../../src/protocol.tc c-xrefprotocol.elt
 
 refactorings.def: ../../src/refactorings.h
 	# Convert enums in refactorings.h into #defines
-	grep AVR ../../src/refactorings.h | sed -e 's/\s*\(AVR.*\) =/#define \1/' -e 's/,//' > refactorings.def
+	grep AVR ../../src/refactorings.h | sed -e 's/ *\(AVR.*\) =/#define \1/' -e 's/,//' > refactorings.def
