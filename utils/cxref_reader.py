@@ -216,6 +216,6 @@ if __name__ == "__main__":
                         filename = get_filename_from_id(p.fileid, files)
                         filename = os.path.basename(filename)
                         print("    %s@%s:%d:%d" %
-                              (symbol.symbolname, filename, p.lineno, p.colno))
+                              (symbol.symbolname, filename, p.lineno if p.lineno else 0, p.colno if p.colno else 0))
 
     "4uA 20900f 1l 4c r 4l c r 32710f 1l 4c r 4l c r 48151f 1l 4c r 4l c r"
