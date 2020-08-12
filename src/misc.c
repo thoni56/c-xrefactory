@@ -762,22 +762,6 @@ void fillTrivialSpecialRefItem( SymbolReferenceItem *ddd , char *name) {
 
 /* ***************************************************************** */
 
-void fPutDecimal(FILE *ff, int num) {
-    static char ttt[TMP_STRING_SIZE]= {0,};
-    char *d;
-    int n;
-    n = num;
-    assert(n>=0);
-    d = ttt+TMP_STRING_SIZE-1;
-    while (n>=10) {
-        *(--d) = n%10 + '0';
-        n = n/10;
-    }
-    *(--d) = n + '0';
-    assert(d>=ttt);
-    fputs(d, ff);
-}
-
 char *strmcpy(char *dest, char *src) {
     char *p1,*p2;
     for(p1=dest,p2=src; *p2; p1++, p2++) *p1 = *p2;

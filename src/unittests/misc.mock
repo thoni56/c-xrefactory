@@ -162,10 +162,6 @@ void javaSignatureSPrint(char *buff, int *size, char *sig, int classstyle) {
   mock(buff, size, sig, classstyle);
 }
 
-void fPutDecimal(FILE *f, int n) {
-  mock(f, n);
-}
-
 char *strmcpy(char *dest, char *src) {
   return (char *) mock(dest, src);
 }

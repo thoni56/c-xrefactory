@@ -115,6 +115,22 @@ static unsigned s_decodeFilesNum[MAX_FILES];
 static char tmpFileName[MAX_FILE_NAME_SIZE];
 
 
+static void fPutDecimal(FILE *ff, int num) {
+    static char ttt[TMP_STRING_SIZE]= {0,};
+    char *d;
+    int n;
+    n = num;
+    assert(n>=0);
+    d = ttt+TMP_STRING_SIZE-1;
+    while (n>=10) {
+        *(--d) = n%10 + '0';
+        n = n/10;
+    }
+    *(--d) = n + '0';
+    assert(d>=ttt);
+    fputs(d, ff);
+}
+
 
 /* *********************** INPUT/OUTPUT ************************** */
 

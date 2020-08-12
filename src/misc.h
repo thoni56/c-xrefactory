@@ -81,7 +81,6 @@ extern void macDefSPrintf(char *buff, int *size, char *name1, char *name2, int a
 extern char * string3ConcatInStackMem(char *str1, char *str2, char *str3);
 
 extern void javaSignatureSPrint(char *buff, int *size, char *sig, int classstyle);
-extern void fPutDecimal(FILE *f, int n);
 extern char *strmcpy(char *dest, char *src);
 extern char *simpleFileName(char *fullFileName);
 extern char *directoryName_st(char *fullFileName);
