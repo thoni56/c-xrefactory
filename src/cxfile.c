@@ -81,7 +81,7 @@ static int generatedFieldMarkersList[] = {
 
 #define MAX_CX_SYMBOL_TAB 2
 
-struct lastCxFileInfos {
+typedef struct lastCxFileInfo {
     int                 onLineReferencedSym;
     S_olSymbolsMenu     *onLineRefMenuItem;
     int                 onLineRefIsBestMatchFlag; // vyhodit ?
@@ -90,7 +90,7 @@ struct lastCxFileInfos {
     char                *symbolBestMatchFlag[MAX_CX_SYMBOL_TAB];
     int                 macroBaseFileGeneratedForSym[MAX_CX_SYMBOL_TAB];
     char                markers[MAX_CHARS];
-    int                 counter[MAX_CHARS];
+    int                 values[MAX_CHARS];
     void                (*fun[MAX_CHARS])(int size, int marker, CharacterBuffer *cb, int additional);
     int                 additional[MAX_CHARS];
 
@@ -102,10 +102,10 @@ struct lastCxFileInfos {
     // it is just to simplify memory handling !!!!!!!!!!!!!!!!
     SymbolReferenceItem     _symbolTab[MAX_CX_SYMBOL_TAB];
     char                _symbolTabNames[MAX_CX_SYMBOL_TAB][MAX_CX_SYMBOL_SIZE];
-};
+} LastCxFileInfo;
 
-static struct lastCxFileInfos s_inLastInfos;
-static struct lastCxFileInfos s_outLastInfos;
+static LastCxFileInfo lastIncomingInfo;
+static LastCxFileInfo lastOutgoingInfo;
 
 
 static CharacterBuffer cxfCharacterBuffer;
@@ -350,16 +350,16 @@ static void writeCompactRecord(char marker, int info, char *blankPrefix) {
     if (*blankPrefix!=0) fputs(blankPrefix, cxOut);
     if (info != 0) fPutDecimal(cxOut, info);
     fputc(marker, cxOut);
-    s_outLastInfos.counter[marker] = info;
+    lastOutgoingInfo.values[marker] = info;
 }
 
 static void writeOptionalCompactRecord(char marker, int info, char *blankPrefix) {
     assert(marker >= 0 && marker < MAX_CHARS);
     if (*blankPrefix!=0) fputs(blankPrefix, cxOut);
-    if (s_outLastInfos.counter[marker] != info) {
+    if (lastOutgoingInfo.values[marker] != info) {
         if (info != 0) fPutDecimal(cxOut, info);
         fputc(marker, cxOut);
-        s_outLastInfos.counter[marker] = info;
+        lastOutgoingInfo.values[marker] = info;
     }
 }
 
@@ -377,20 +377,20 @@ static void writeStringRecord(int marker, char *s, char *blankPrefix) {
 static void writeSymbolItem(int symIndex) {
     SymbolReferenceItem *d;
     writeOptionalCompactRecord(CXFI_SYM_INDEX, symIndex, "");
-    d = s_outLastInfos.symbolTab[symIndex];
+    d = lastOutgoingInfo.symbolTab[symIndex];
     writeOptionalCompactRecord(CXFI_SYM_TYPE, d->b.symType, "\n");
     writeOptionalCompactRecord(CXFI_INFERIOR_CLASS, d->vApplClass, "");
     writeOptionalCompactRecord(CXFI_SUPER_CLASS, d->vFunClass, "");
     writeOptionalCompactRecord(CXFI_ACCESS_BITS, d->b.accessFlags, "");
     writeOptionalCompactRecord(CXFI_STORAGE, d->b.storage, "");
-    s_outLastInfos.macroBaseFileGeneratedForSym[symIndex] = 0;
-    s_outLastInfos.symbolIsWritten[symIndex] = 1;
+    lastOutgoingInfo.macroBaseFileGeneratedForSym[symIndex] = 0;
+    lastOutgoingInfo.symbolIsWritten[symIndex] = 1;
     writeStringRecord(CXFI_SYM_NAME, d->name, "\t");
     fputc('\t', cxOut);
 }
 
 static void writeSymbolItemIfNotWritten(int symIndex) {
-    if (! s_outLastInfos.symbolIsWritten[symIndex]) {
+    if (! lastOutgoingInfo.symbolIsWritten[symIndex]) {
         writeSymbolItem(symIndex);
     }
 }
@@ -400,8 +400,8 @@ static void writeCxReferenceBase(int symbolNum, Usage usage, int requiredAccess,
     if (usage == UsageMacroBaseFileUsage) {
         /* optimize the number of those references to 1*/
         assert(symbolNum>=0 && symbolNum<MAX_CX_SYMBOL_TAB);
-        if (s_outLastInfos.macroBaseFileGeneratedForSym[symbolNum]) return;
-        s_outLastInfos.macroBaseFileGeneratedForSym[symbolNum] = 1;
+        if (lastOutgoingInfo.macroBaseFileGeneratedForSym[symbolNum]) return;
+        lastOutgoingInfo.macroBaseFileGeneratedForSym[symbolNum] = 1;
     }
     writeOptionalCompactRecord(CXFI_USAGE, usage, "");
     writeOptionalCompactRecord(CXFI_REQUIRED_ACCESS, requiredAccess, "");
@@ -516,16 +516,16 @@ static void genRefItem0(SymbolReferenceItem *d, int forceGen) {
     log_trace("function '%s'", d->name);
     symIndex = 0;
     assert(strlen(d->name)+1 < MAX_CX_SYMBOL_SIZE);
-    strcpy(s_outLastInfos._symbolTabNames[symIndex], d->name);
-    fillSymbolRefItemExceptBits(&s_outLastInfos._symbolTab[symIndex],
-                                s_outLastInfos._symbolTabNames[symIndex],
+    strcpy(lastOutgoingInfo._symbolTabNames[symIndex], d->name);
+    fillSymbolRefItemExceptBits(&lastOutgoingInfo._symbolTab[symIndex],
+                                lastOutgoingInfo._symbolTabNames[symIndex],
                                 d->fileHash, // useless put 0
                                 d->vApplClass, d->vFunClass);
-    fillSymbolRefItemBits(&s_outLastInfos._symbolTab[symIndex].b,
+    fillSymbolRefItemBits(&lastOutgoingInfo._symbolTab[symIndex].b,
                            d->b.symType, d->b.storage,
                            d->b.scope, d->b.accessFlags, d->b.category, 0);
-    s_outLastInfos.symbolTab[symIndex] = &s_outLastInfos._symbolTab[symIndex];
-    s_outLastInfos.symbolIsWritten[symIndex] = 0;
+    lastOutgoingInfo.symbolTab[symIndex] = &lastOutgoingInfo._symbolTab[symIndex];
+    lastOutgoingInfo.symbolIsWritten[symIndex] = 0;
     if (d->b.category == CategoryLocal) return;
     if (d->refs == NULL && !forceGen) return;
     for(reference = d->refs; reference!=NULL; reference=reference->next) {
@@ -565,9 +565,9 @@ static void genCxFileHead(void) {
     char sr[MAX_CHARS];
     char ttt[TMP_STRING_SIZE];
     int i;
-    memset(&s_outLastInfos, 0, sizeof(s_outLastInfos));
+    memset(&lastOutgoingInfo, 0, sizeof(lastOutgoingInfo));
     for(i=0; i<MAX_CHARS; i++) {
-        s_outLastInfos.counter[i] = -1;
+        lastOutgoingInfo.values[i] = -1;
     }
     get_version_string(ttt);
     writeStringRecord(CXFI_VERSION, ttt, "\n\n");
@@ -720,17 +720,17 @@ static void writeCxFileCompatibilityError(char *message) {
 
 /* ************************* READ **************************** */
 
-static void cxrfSetSingleRecords(int size,
-                                 int marker,
-                                 CharacterBuffer *cb,
-                                 int additionalArg
-                                 ) {
+static void cxrfReadRecordMarkers(int size,
+                                  int marker,
+                                  CharacterBuffer *cb,
+                                  int additionalArg
+) {
     int i, ch;
 
     assert(marker == CXFI_MARKER_LIST);
     for(i=0; i<size-1; i++) {
         ch = getChar(cb);
-        s_inLastInfos.markers[ch] = 1;
+        lastIncomingInfo.markers[ch] = 1;
     }
 }
 
@@ -739,7 +739,7 @@ static void cxrfVersionCheck(int size,
                              int marker,
                              CharacterBuffer *cb,
                              int additionalArg
-                             ) {
+) {
     char versionString[TMP_STRING_SIZE];
     char thisVersionString[TMP_STRING_SIZE];
     int i, ch;
@@ -768,7 +768,7 @@ static void cxrfCheckNumber(int size,
     if (options.create)
         return; // no check when creating new file
 
-    magicn = s_inLastInfos.counter[CXFI_CHECK_NUMBER];
+    magicn = lastIncomingInfo.values[CXFI_CHECK_NUMBER];
     DECOMPOSE_CXFI_CHECK_NUM(magicn,filen,hashMethod,exactPositionLinkFlag);
     if (filen != MAX_FILES) {
         sprintf(tmpBuff,"The Tag file was generated with different MAX_FILES, recreate it");
@@ -826,11 +826,11 @@ static void cxReadFileName(int size,
     char ch;
 
     assert(marker == CXFI_FILE_NAME);
-    fumtime = (time_t) s_inLastInfos.counter[CXFI_FILE_FUMTIME];
-    umtime = (time_t) s_inLastInfos.counter[CXFI_FILE_UMTIME];
-    commandLineFlag = s_inLastInfos.counter[CXFI_INPUT_FROM_COMMAND_LINE];
-    isInterface=((s_inLastInfos.counter[CXFI_ACCESS_BITS] & AccessInterface)!=0);
-    ii = s_inLastInfos.counter[CXFI_FILE_INDEX];
+    fumtime = (time_t) lastIncomingInfo.values[CXFI_FILE_FUMTIME];
+    umtime = (time_t) lastIncomingInfo.values[CXFI_FILE_UMTIME];
+    commandLineFlag = lastIncomingInfo.values[CXFI_INPUT_FROM_COMMAND_LINE];
+    isInterface=((lastIncomingInfo.values[CXFI_ACCESS_BITS] & AccessInterface)!=0);
+    ii = lastIncomingInfo.values[CXFI_FILE_INDEX];
     for (i=0; i<size-1; i++) {
         ch = getChar(cb);
         id[i] = ch;
@@ -881,9 +881,9 @@ static void cxrfSourceIndex(int size,
     int file, sfile;
 
     assert(marker == CXFI_SOURCE_INDEX);
-    file = s_inLastInfos.counter[CXFI_FILE_INDEX];
+    file = lastIncomingInfo.values[CXFI_FILE_INDEX];
     file = s_decodeFilesNum[file];
-    sfile = s_inLastInfos.counter[CXFI_SOURCE_INDEX];
+    sfile = lastIncomingInfo.values[CXFI_SOURCE_INDEX];
     sfile = s_decodeFilesNum[sfile];
     assert(file>=0 && file<MAX_FILES && fileTable.tab[file]);
     // hmmm. here be more generous in getting corrct source info
@@ -918,11 +918,11 @@ static int scanSymNameString(int size,
 static void getSymTypeAndClasses(int *_symType, int *_vApplClass,
                                  int *_vFunClass) {
     int symType, vApplClass, vFunClass;
-    symType = s_inLastInfos.counter[CXFI_SYM_TYPE];
-    vApplClass = s_inLastInfos.counter[CXFI_INFERIOR_CLASS];
+    symType = lastIncomingInfo.values[CXFI_SYM_TYPE];
+    vApplClass = lastIncomingInfo.values[CXFI_INFERIOR_CLASS];
     vApplClass = s_decodeFilesNum[vApplClass];
     assert(fileTable.tab[vApplClass] != NULL);
-    vFunClass = s_inLastInfos.counter[CXFI_SUPER_CLASS];
+    vFunClass = lastIncomingInfo.values[CXFI_SUPER_CLASS];
     vFunClass = s_decodeFilesNum[vFunClass];
     assert(fileTable.tab[vFunClass] != NULL);
     *_symType = symType;
@@ -944,20 +944,20 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
     char *ss;
 
     assert(marker == CXFI_SYM_NAME);
-    accessFlags = s_inLastInfos.counter[CXFI_ACCESS_BITS];
-    storage = s_inLastInfos.counter[CXFI_STORAGE];
-    si = s_inLastInfos.counter[CXFI_SYM_INDEX];
+    accessFlags = lastIncomingInfo.values[CXFI_ACCESS_BITS];
+    storage = lastIncomingInfo.values[CXFI_STORAGE];
+    si = lastIncomingInfo.values[CXFI_SYM_INDEX];
     assert(si>=0 && si<MAX_CX_SYMBOL_TAB);
-    id = s_inLastInfos._symbolTabNames[si];
+    id = lastIncomingInfo._symbolTabNames[si];
     len = scanSymNameString(size, cb, id);
     getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
     //&fprintf(dumpOut,":scanning ref of %s %d %d: \n",id,symType,vFunClass);fflush(dumpOut);
     if (symType!=TypeCppInclude || strcmp(id, LINK_NAME_INCLUDE_REFS)!=0) {
-        s_inLastInfos.onLineReferencedSym = -1;
+        lastIncomingInfo.onLineReferencedSym = -1;
         return;
     }
-    ddd = &s_inLastInfos._symbolTab[si];
-    s_inLastInfos.symbolTab[si] = ddd;
+    ddd = &lastIncomingInfo._symbolTab[si];
+    lastIncomingInfo.symbolTab[si] = ddd;
     fillSymbolRefItemExceptBits(ddd, id,
                                 cxFileHashNumber(id), //useless, put 0
                                 vApplClass, vFunClass);
@@ -974,15 +974,15 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
                                ScopeGlobal, accessFlags, CategoryGlobal,0);
         refTabAdd(&referenceTable, memb, &out_index);
     }
-    s_inLastInfos.symbolTab[si] = memb;
-    s_inLastInfos.onLineReferencedSym = si;
+    lastIncomingInfo.symbolTab[si] = memb;
+    lastIncomingInfo.onLineReferencedSym = si;
 }
 
 static void cxfileCheckLastSymbolDeadness(void) {
-    if (s_inLastInfos.symbolToCheckForDeadness != -1
-        && s_inLastInfos.deadSymbolIsDefined) {
-        //&sprintf(tmpBuff,"adding %s storage==%s", s_inLastInfos.symbolTab[s_inLastInfos.symbolToCheckForDeadness]->name, storagesName[s_inLastInfos.symbolTab[s_inLastInfos.symbolToCheckForDeadness]->b.storage]);ppcGenRecord(PPC_INFORMATION, tmpBuff);
-        olAddBrowsedSymbol(s_inLastInfos.symbolTab[s_inLastInfos.symbolToCheckForDeadness],
+    if (lastIncomingInfo.symbolToCheckForDeadness != -1
+        && lastIncomingInfo.deadSymbolIsDefined) {
+        //&sprintf(tmpBuff,"adding %s storage==%s", lastIncomingInfo.symbolTab[lastIncomingInfo.symbolToCheckForDeadness]->name, storagesName[lastIncomingInfo.symbolTab[lastIncomingInfo.symbolToCheckForDeadness]->b.storage]);ppcGenRecord(PPC_INFORMATION, tmpBuff);
+        olAddBrowsedSymbol(lastIncomingInfo.symbolTab[lastIncomingInfo.symbolToCheckForDeadness],
                            &s_olcxCurrentUser->browserStack.top->hkSelectedSym,
                            1,1,0,UsageDefined,0, &s_noPos, UsageDefined);
     }
@@ -1024,16 +1024,16 @@ static void cxrfSymbolName(int size,
         // check if previous symbol was dead
         cxfileCheckLastSymbolDeadness();
     }
-    accessFlags = s_inLastInfos.counter[CXFI_ACCESS_BITS];
-    storage = s_inLastInfos.counter[CXFI_STORAGE];
-    si = s_inLastInfos.counter[CXFI_SYM_INDEX];
+    accessFlags = lastIncomingInfo.values[CXFI_ACCESS_BITS];
+    storage = lastIncomingInfo.values[CXFI_STORAGE];
+    si = lastIncomingInfo.values[CXFI_SYM_INDEX];
     assert(si>=0 && si<MAX_CX_SYMBOL_TAB);
-    id = s_inLastInfos._symbolTabNames[si];
+    id = lastIncomingInfo._symbolTabNames[si];
     len = scanSymNameString( size, cb, id);
     getSymTypeAndClasses(&symType, &vApplClass, &vFunClass);
 
-    ddd = &s_inLastInfos._symbolTab[si];
-    s_inLastInfos.symbolTab[si] = ddd;
+    ddd = &lastIncomingInfo._symbolTab[si];
+    lastIncomingInfo.symbolTab[si] = ddd;
     fillSymbolRefItemExceptBits(ddd,id,
                                 cxFileHashNumber(id), // useless put 0
                                 vApplClass, vFunClass);
@@ -1053,7 +1053,7 @@ static void cxrfSymbolName(int size,
                                    ScopeGlobal, accessFlags, CategoryGlobal, 0);
             refTabAdd(&referenceTable,memb, &not_used2);
         }
-        s_inLastInfos.symbolTab[si] = memb;
+        lastIncomingInfo.symbolTab[si] = memb;
     }
     if (options.taskRegime == RegimeXref) {
         if (memb==NULL) memb=ddd;
@@ -1063,11 +1063,11 @@ static void cxrfSymbolName(int size,
     }
     if (options.taskRegime == RegimeEditServer) {
         if (additionalArg == DEAD_CODE_DETECTION) {
-            if (symbolIsReportableAsDead(s_inLastInfos.symbolTab[si])) {
-                s_inLastInfos.symbolToCheckForDeadness = si;
-                s_inLastInfos.deadSymbolIsDefined = 0;
+            if (symbolIsReportableAsDead(lastIncomingInfo.symbolTab[si])) {
+                lastIncomingInfo.symbolToCheckForDeadness = si;
+                lastIncomingInfo.deadSymbolIsDefined = 0;
             } else {
-                s_inLastInfos.symbolToCheckForDeadness = -1;
+                lastIncomingInfo.symbolToCheckForDeadness = -1;
             }
         } else if (options.server_operation!=OLO_TAG_SEARCH) {
             cms = NULL; ols = 0;
@@ -1082,15 +1082,15 @@ static void cxrfSymbolName(int size,
             } else if (additionalArg!=CX_BY_PASS) {
                 ols=itIsSymbolToPushOlRefences(ddd,s_olcxCurrentUser->browserStack.top,&cms,DEFAULT_VALUE);
             }
-            s_inLastInfos.onLineRefMenuItem = cms;
+            lastIncomingInfo.onLineRefMenuItem = cms;
             if (ols || (additionalArg==CX_BY_PASS&&byPassAcceptableSymbol(ddd))
                 ) {
-                s_inLastInfos.onLineReferencedSym = si;
-                s_inLastInfos.onLineRefIsBestMatchFlag = (ols == 2);
+                lastIncomingInfo.onLineReferencedSym = si;
+                lastIncomingInfo.onLineRefIsBestMatchFlag = (ols == 2);
                 log_trace("symbol %s is O.K. for %s (ols==%d)", ddd->name, options.browsedSymName, ols);
             } else {
-                if (s_inLastInfos.onLineReferencedSym == si) {
-                    s_inLastInfos.onLineReferencedSym = -1;
+                if (lastIncomingInfo.onLineReferencedSym == si) {
+                    lastIncomingInfo.onLineReferencedSym = -1;
                 }
             }
         }
@@ -1108,21 +1108,21 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
     int symType,reqAcc;
 
     assert(marker == CXFI_REFERENCE);
-    usage = s_inLastInfos.counter[CXFI_USAGE];
-    reqAcc = s_inLastInfos.counter[CXFI_REQUIRED_ACCESS];
+    usage = lastIncomingInfo.values[CXFI_USAGE];
+    reqAcc = lastIncomingInfo.values[CXFI_REQUIRED_ACCESS];
     fillUsageBits(&usageBits, usage, reqAcc);
-    sym = s_inLastInfos.counter[CXFI_SYM_INDEX];
-    file = s_inLastInfos.counter[CXFI_FILE_INDEX];
+    sym = lastIncomingInfo.values[CXFI_SYM_INDEX];
+    file = lastIncomingInfo.values[CXFI_FILE_INDEX];
     file = s_decodeFilesNum[file];
     assert(fileTable.tab[file]!=NULL);
-    line = s_inLastInfos.counter[CXFI_LINE_INDEX];
-    coll = s_inLastInfos.counter[CXFI_COLUMN_INDEX];
+    line = lastIncomingInfo.values[CXFI_LINE_INDEX];
+    coll = lastIncomingInfo.values[CXFI_COLUMN_INDEX];
     getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
     log_trace("%d %d->%d %d", usage, file, s_decodeFilesNum[file], line);
     fillPosition(&pos,file,line,coll);
-    if (s_inLastInfos.onLineReferencedSym ==
-        s_inLastInfos.counter[CXFI_SYM_INDEX]) {
-        addToRefList(&s_inLastInfos.symbolTab[sym]->refs,
+    if (lastIncomingInfo.onLineReferencedSym ==
+        lastIncomingInfo.values[CXFI_SYM_INDEX]) {
+        addToRefList(&lastIncomingInfo.symbolTab[sym]->refs,
                      &usageBits,&pos,CategoryGlobal);
     }
 }
@@ -1139,14 +1139,14 @@ static void cxrfReference(int size,
     int copyrefFl;
 
     assert(marker == CXFI_REFERENCE);
-    usage = s_inLastInfos.counter[CXFI_USAGE];
-    reqAcc = s_inLastInfos.counter[CXFI_REQUIRED_ACCESS];
-    sym = s_inLastInfos.counter[CXFI_SYM_INDEX];
-    file = s_inLastInfos.counter[CXFI_FILE_INDEX];
+    usage = lastIncomingInfo.values[CXFI_USAGE];
+    reqAcc = lastIncomingInfo.values[CXFI_REQUIRED_ACCESS];
+    sym = lastIncomingInfo.values[CXFI_SYM_INDEX];
+    file = lastIncomingInfo.values[CXFI_FILE_INDEX];
     file = s_decodeFilesNum[file];
     assert(fileTable.tab[file]!=NULL);
-    line = s_inLastInfos.counter[CXFI_LINE_INDEX];
-    coll = s_inLastInfos.counter[CXFI_COLUMN_INDEX];
+    line = lastIncomingInfo.values[CXFI_LINE_INDEX];
+    coll = lastIncomingInfo.values[CXFI_COLUMN_INDEX];
     /*&fprintf(dumpOut,"%d %d %d  ", usage,file,line);fflush(dumpOut);&*/
     assert(options.taskRegime);
     if (options.taskRegime == RegimeXref) {
@@ -1154,7 +1154,7 @@ static void cxrfReference(int size,
             /* if we repass refs after overflow */
             fillPosition(&pos,file,line,coll);
             fillUsageBits(&usageBits, usage, reqAcc);
-            copyrefFl = ! isInRefList(s_inLastInfos.symbolTab[sym]->refs,
+            copyrefFl = ! isInRefList(lastIncomingInfo.symbolTab[sym]->refs,
                                       &usageBits, &pos, CategoryGlobal);
         } else {
             copyrefFl = ! fileTable.tab[file]->b.cxLoading;
@@ -1168,14 +1168,14 @@ static void cxrfReference(int size,
         assert(sym>=0 && sym<MAX_CX_SYMBOL_TAB);
         if (additionalArg==CX_HTML_SECOND_PASS) {
             if (rr.usage.base<UsageMaxOLUsages || rr.usage.base==UsageClassTreeDefinition) {
-                addToRefList(&s_inLastInfos.symbolTab[sym]->refs,
+                addToRefList(&lastIncomingInfo.symbolTab[sym]->refs,
                              &rr.usage,&rr.p,CategoryGlobal);
             }
         } else if (rr.usage.base==UsageDefined || rr.usage.base==UsageDeclared
                    ||  !fileTable.tab[rr.p.file]->b.commandLineEntered ) {
-            log_trace("htmladdref %s on %s:%d", s_inLastInfos.symbolTab[sym]->name,
+            log_trace("htmladdref %s on %s:%d", lastIncomingInfo.symbolTab[sym]->name,
                       fileTable.tab[rr.p.file]->name, rr.p.line);
-            addToRefList(&s_inLastInfos.symbolTab[sym]->refs,
+            addToRefList(&lastIncomingInfo.symbolTab[sym]->refs,
                          &rr.usage,&rr.p,CategoryGlobal);
         }
     } else if (options.taskRegime == RegimeEditServer) {
@@ -1189,14 +1189,14 @@ static void cxrfReference(int size,
                 if (IS_DEFINITION_USAGE(rr.usage.base)
                     && fileTable.tab[rr.p.file]->b.commandLineEntered
                     ) {
-                    s_inLastInfos.deadSymbolIsDefined = 1;
+                    lastIncomingInfo.deadSymbolIsDefined = 1;
                 } else if (! IS_DEFINITION_OR_DECL_USAGE(rr.usage.base)) {
-                    s_inLastInfos.symbolToCheckForDeadness = -1;
+                    lastIncomingInfo.symbolToCheckForDeadness = -1;
                 }
             }
         } else if (additionalArg == OL_LOOKING_2_PASS_MACRO_USAGE) {
-            if (    s_inLastInfos.onLineReferencedSym ==
-                    s_inLastInfos.counter[CXFI_SYM_INDEX]
+            if (    lastIncomingInfo.onLineReferencedSym ==
+                    lastIncomingInfo.values[CXFI_SYM_INDEX]
                     &&  rr.usage.base == UsageMacroBaseFileUsage) {
                 s_olMacro2PassFile = rr.p.file;
             }
@@ -1207,19 +1207,19 @@ static void cxrfReference(int size,
                          || options.tagSearchSpecif==TSS_FULL_SEARCH_SHORT)
                         &&  (rr.usage.base==UsageDeclared
                              || rr.usage.base==UsageClassFileDefinition))) {
-                    searchSymbolCheckReference(s_inLastInfos.symbolTab[sym],&rr);
+                    searchSymbolCheckReference(lastIncomingInfo.symbolTab[sym],&rr);
                 }
             } else if (options.server_operation == OLO_SAFETY_CHECK1) {
-                if (    s_inLastInfos.onLineReferencedSym !=
-                        s_inLastInfos.counter[CXFI_SYM_INDEX]) {
-                    olcxCheck1CxFileReference(s_inLastInfos.symbolTab[sym],
+                if (    lastIncomingInfo.onLineReferencedSym !=
+                        lastIncomingInfo.values[CXFI_SYM_INDEX]) {
+                    olcxCheck1CxFileReference(lastIncomingInfo.symbolTab[sym],
                                               &rr);
                 }
             } else {
-                if (    s_inLastInfos.onLineReferencedSym ==
-                        s_inLastInfos.counter[CXFI_SYM_INDEX]) {
+                if (    lastIncomingInfo.onLineReferencedSym ==
+                        lastIncomingInfo.values[CXFI_SYM_INDEX]) {
                     if (additionalArg == CX_MENU_CREATION) {
-                        assert(s_inLastInfos.onLineRefMenuItem);
+                        assert(lastIncomingInfo.onLineRefMenuItem);
                         if (file!=s_olOriginalFileNumber
                             || !fileTable.tab[file]->b.commandLineEntered
                             || options.server_operation==OLO_GOTO
@@ -1228,19 +1228,19 @@ static void cxrfReference(int size,
                             || options.server_operation==OLO_PUSH_SPECIAL_NAME
                             ) {
                             //&fprintf(dumpOut,":adding reference %s:%d\n", fileTable.tab[rr.p.file]->name, rr.p.line);
-                            olcxAddReferenceToOlSymbolsMenu(s_inLastInfos.onLineRefMenuItem, &rr, s_inLastInfos.onLineRefIsBestMatchFlag);
+                            olcxAddReferenceToOlSymbolsMenu(lastIncomingInfo.onLineRefMenuItem, &rr, lastIncomingInfo.onLineRefIsBestMatchFlag);
                         }
                     } else if (additionalArg == CX_BY_PASS) {
                         if (positionsAreEqual(s_olcxByPassPos,rr.p)) {
                             // got the bypass reference
-                            //&fprintf(dumpOut,":adding bypass selected symbol %s\n", s_inLastInfos.symbolTab[sym]->name);
-                            olAddBrowsedSymbol(s_inLastInfos.symbolTab[sym],
+                            //&fprintf(dumpOut,":adding bypass selected symbol %s\n", lastIncomingInfo.symbolTab[sym]->name);
+                            olAddBrowsedSymbol(lastIncomingInfo.symbolTab[sym],
                                                &s_olcxCurrentUser->browserStack.top->hkSelectedSym,
                                                1, 1, 0, usage,0,&s_noPos, UsageNone);
                         }
                     } else {
                         olcxAddReference(&s_olcxCurrentUser->browserStack.top->r, &rr,
-                                         s_inLastInfos.onLineRefIsBestMatchFlag);
+                                         lastIncomingInfo.onLineRefIsBestMatchFlag);
                     }
                 }
             }
@@ -1271,9 +1271,9 @@ static void cxrfSubClass(int size,
     int of, file, sup, inf;
 
     assert(marker == CXFI_CLASS_EXT);
-    file = of = s_inLastInfos.counter[CXFI_FILE_INDEX];
-    sup = s_inLastInfos.counter[CXFI_SUPER_CLASS];
-    inf = s_inLastInfos.counter[CXFI_INFERIOR_CLASS];
+    file = of = lastIncomingInfo.values[CXFI_FILE_INDEX];
+    sup = lastIncomingInfo.values[CXFI_SUPER_CLASS];
+    inf = lastIncomingInfo.values[CXFI_INFERIOR_CLASS];
     /*fprintf(dumpOut,"%d %d->%d %d  ", usage,file,s_decodeFilesNum[file],line);*/
     /*fflush(dumpOut);*/
     file = s_decodeFilesNum[file];
@@ -1329,18 +1329,18 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
         return;
     }
 
-    memset(&s_inLastInfos, 0, sizeof(s_inLastInfos));
-    s_inLastInfos.onLineReferencedSym = -1;
-    s_inLastInfos.symbolToCheckForDeadness = -1;
-    s_inLastInfos.onLineRefMenuItem = NULL;
-    s_inLastInfos.markers[CXFI_INFERIOR_CLASS] = noFileIndex;
-    s_inLastInfos.markers[CXFI_SUPER_CLASS] = noFileIndex;
+    memset(&lastIncomingInfo, 0, sizeof(lastIncomingInfo));
+    lastIncomingInfo.onLineReferencedSym = -1;
+    lastIncomingInfo.symbolToCheckForDeadness = -1;
+    lastIncomingInfo.onLineRefMenuItem = NULL;
+    lastIncomingInfo.markers[CXFI_INFERIOR_CLASS] = noFileIndex;
+    lastIncomingInfo.markers[CXFI_SUPER_CLASS] = noFileIndex;
     s_decodeFilesNum[noFileIndex] = noFileIndex;
     for(i=0; scanFuns[i].recordCode>0; i++) {
         assert(scanFuns[i].recordCode < MAX_CHARS);
         ch = scanFuns[i].recordCode;
-        s_inLastInfos.fun[ch] = scanFuns[i].handleFun;
-        s_inLastInfos.additional[ch] = scanFuns[i].additionalArg;
+        lastIncomingInfo.fun[ch] = scanFuns[i].handleFun;
+        lastIncomingInfo.additional[ch] = scanFuns[i].additionalArg;
     }
     initCharacterBuffer(&cxfCharacterBuffer, inputFile);
     ch = ' ';
@@ -1350,13 +1350,13 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
         if (cxfCharacterBuffer.isAtEOF)
             break;
         assert(ch >= 0 && ch<MAX_CHARS);
-        if (s_inLastInfos.markers[ch]) {
-            s_inLastInfos.counter[ch] = scannedInt;
+        if (lastIncomingInfo.markers[ch]) {
+            lastIncomingInfo.values[ch] = scannedInt;
         }
-        if (s_inLastInfos.fun[ch] != NULL) {
-            (*s_inLastInfos.fun[ch])(scannedInt, ch, &cxfCharacterBuffer,
-                                     s_inLastInfos.additional[ch]);
-        } else if (! s_inLastInfos.markers[ch]) {
+        if (lastIncomingInfo.fun[ch] != NULL) {
+            (*lastIncomingInfo.fun[ch])(scannedInt, ch, &cxfCharacterBuffer,
+                                     lastIncomingInfo.additional[ch]);
+        } else if (! lastIncomingInfo.markers[ch]) {
             assert(scannedInt>0);
             //& CxSkipNChars(scannedInt-1, next, end, cb);
             {
@@ -1483,7 +1483,7 @@ void readOneAppropReferenceFile(char *symbolName,
 
 
 ScanFileFunctionStep normalScanFunctionSequence[]={
-    {CXFI_MARKER_LIST, cxrfSetSingleRecords, 0},
+    {CXFI_MARKER_LIST, cxrfReadRecordMarkers, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
@@ -1492,7 +1492,7 @@ ScanFileFunctionStep normalScanFunctionSequence[]={
 };
 
 ScanFileFunctionStep fullScanFunctionSequence[]={
-    {CXFI_MARKER_LIST, cxrfSetSingleRecords, 0},
+    {CXFI_MARKER_LIST, cxrfReadRecordMarkers, 0},
     {CXFI_VERSION, cxrfVersionCheck, 0},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_GENERATE_OUTPUT},
@@ -1505,7 +1505,7 @@ ScanFileFunctionStep fullScanFunctionSequence[]={
 };
 
 ScanFileFunctionStep byPassFunctionSequence[]={
-    {CXFI_MARKER_LIST, cxrfSetSingleRecords, 0},
+    {CXFI_MARKER_LIST, cxrfReadRecordMarkers, 0},
     {CXFI_VERSION, cxrfVersionCheck, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
@@ -1517,7 +1517,7 @@ ScanFileFunctionStep byPassFunctionSequence[]={
 };
 
 ScanFileFunctionStep symbolLoadMenuRefsFunctionSequence[]={
-    {CXFI_MARKER_LIST, cxrfSetSingleRecords, 0},
+    {CXFI_MARKER_LIST, cxrfReadRecordMarkers, 0},
     {CXFI_VERSION, cxrfVersionCheck, 0},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
@@ -1530,7 +1530,7 @@ ScanFileFunctionStep symbolLoadMenuRefsFunctionSequence[]={
 };
 
 ScanFileFunctionStep symbolMenuCreationFunctionSequence[]={
-    {CXFI_MARKER_LIST, cxrfSetSingleRecords, 0},
+    {CXFI_MARKER_LIST, cxrfReadRecordMarkers, 0},
     {CXFI_VERSION, cxrfVersionCheck, 0},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
@@ -1543,7 +1543,7 @@ ScanFileFunctionStep symbolMenuCreationFunctionSequence[]={
 };
 
 ScanFileFunctionStep fullUpdateFunctionSequence[]={
-    {CXFI_MARKER_LIST, cxrfSetSingleRecords, 0},
+    {CXFI_MARKER_LIST, cxrfReadRecordMarkers, 0},
     {CXFI_VERSION, cxrfVersionCheck, 0},
     {CXFI_CHECK_NUMBER, cxrfCheckNumber, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
@@ -1555,7 +1555,7 @@ ScanFileFunctionStep fullUpdateFunctionSequence[]={
 };
 
 ScanFileFunctionStep secondPassMacroUsageFunctionSequence[]={
-    {CXFI_MARKER_LIST, cxrfSetSingleRecords, DEFAULT_VALUE},
+    {CXFI_MARKER_LIST, cxrfReadRecordMarkers, DEFAULT_VALUE},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
     {CXFI_SYM_NAME, cxrfSymbolName, OL_LOOKING_2_PASS_MACRO_USAGE},
@@ -1566,7 +1566,7 @@ ScanFileFunctionStep secondPassMacroUsageFunctionSequence[]={
 };
 
 ScanFileFunctionStep classHierarchyFunctionSequence[]={
-    {CXFI_MARKER_LIST, cxrfSetSingleRecords, DEFAULT_VALUE},
+    {CXFI_MARKER_LIST, cxrfReadRecordMarkers, DEFAULT_VALUE},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_CLASS_EXT, cxrfSubClass, CX_JUST_READ},
     {CXFI_REFNUM, cxrfRefNum, DEFAULT_VALUE},
@@ -1574,7 +1574,7 @@ ScanFileFunctionStep classHierarchyFunctionSequence[]={
 };
 
 ScanFileFunctionStep htmlGlobalReferencesFunctionSequence[]={
-    {CXFI_MARKER_LIST, cxrfSetSingleRecords, 0},
+    {CXFI_MARKER_LIST, cxrfReadRecordMarkers, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
     {CXFI_CLASS_EXT, cxrfSubClass, CX_JUST_READ},
@@ -1585,7 +1585,7 @@ ScanFileFunctionStep htmlGlobalReferencesFunctionSequence[]={
 };
 
 ScanFileFunctionStep symbolSearchFunctionSequence[]={
-    {CXFI_MARKER_LIST, cxrfSetSingleRecords, 0},
+    {CXFI_MARKER_LIST, cxrfReadRecordMarkers, 0},
     {CXFI_REFNUM, cxrfRefNum, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
@@ -1595,7 +1595,7 @@ ScanFileFunctionStep symbolSearchFunctionSequence[]={
 };
 
 ScanFileFunctionStep deadCodeDetectionFunctionSequence[]={
-    {CXFI_MARKER_LIST, cxrfSetSingleRecords, 0},
+    {CXFI_MARKER_LIST, cxrfReadRecordMarkers, 0},
     {CXFI_REFNUM, cxrfRefNum, 0},
     {CXFI_FILE_NAME, cxReadFileName, CX_JUST_READ},
     {CXFI_SOURCE_INDEX, cxrfSourceIndex, CX_JUST_READ},
