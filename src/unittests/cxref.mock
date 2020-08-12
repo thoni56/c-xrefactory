@@ -10,7 +10,7 @@ void fill_reference(Reference *reference, UsageBits usage, Position position,
     mock(reference, next);
 }
 
-void fillSymbolRefItemExceptBits(SymbolReferenceItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass,
+void fillSymbolRefItem(SymbolReferenceItem *symbolRefItem, char *name, unsigned fileHash, int vApplClass,
                                  int vFunClass) {
     mock(symbolRefItem, name, fileHash, vApplClass, vFunClass);
 }

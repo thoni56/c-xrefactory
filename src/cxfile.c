@@ -100,8 +100,8 @@ typedef struct lastCxFileInfo {
 
     // following item can be used only via symbolTab,
     // it is just to simplify memory handling !!!!!!!!!!!!!!!!
-    SymbolReferenceItem     _symbolTab[MAX_CX_SYMBOL_TAB];
-    char                _symbolTabNames[MAX_CX_SYMBOL_TAB][MAX_CX_SYMBOL_SIZE];
+    SymbolReferenceItem     cachedSymbolReferenceItem[MAX_CX_SYMBOL_TAB];
+    char                cachedSymbolName[MAX_CX_SYMBOL_TAB][MAX_CX_SYMBOL_SIZE];
 } LastCxFileInfo;
 
 static LastCxFileInfo lastIncomingInfo;
@@ -525,31 +525,33 @@ void addSubClassesItemsToFileTab(Symbol *ss, int origin) {
 
 /* *************************************************************** */
 
-static void genRefItem0(SymbolReferenceItem *d, int forceGen) {
+static void genRefItem0(SymbolReferenceItem *d, bool force) {
     Reference *reference;
-    int symIndex;
+    int symbolIndex;
 
-    log_trace("function '%s'", d->name);
-    symIndex = 0;
+    log_trace("generate cxref for symbol '%s'", d->name);
+    symbolIndex = 0;
     assert(strlen(d->name)+1 < MAX_CX_SYMBOL_SIZE);
-    strcpy(lastOutgoingInfo._symbolTabNames[symIndex], d->name);
-    fillSymbolRefItemExceptBits(&lastOutgoingInfo._symbolTab[symIndex],
-                                lastOutgoingInfo._symbolTabNames[symIndex],
-                                d->fileHash, // useless put 0
-                                d->vApplClass, d->vFunClass);
-    fillSymbolRefItemBits(&lastOutgoingInfo._symbolTab[symIndex].b,
+
+    strcpy(lastOutgoingInfo.cachedSymbolName[symbolIndex], d->name);
+    fillSymbolRefItem(&lastOutgoingInfo.cachedSymbolReferenceItem[symbolIndex],
+                      lastOutgoingInfo.cachedSymbolName[symbolIndex],
+                      d->fileHash, // useless put 0
+                      d->vApplClass, d->vFunClass);
+    fillSymbolRefItemBits(&lastOutgoingInfo.cachedSymbolReferenceItem[symbolIndex].b,
                            d->b.symType, d->b.storage,
                            d->b.scope, d->b.accessFlags, d->b.category, 0);
-    lastOutgoingInfo.symbolTab[symIndex] = &lastOutgoingInfo._symbolTab[symIndex];
-    lastOutgoingInfo.symbolIsWritten[symIndex] = false;
+    lastOutgoingInfo.symbolTab[symbolIndex] = &lastOutgoingInfo.cachedSymbolReferenceItem[symbolIndex];
+    lastOutgoingInfo.symbolIsWritten[symbolIndex] = false;
+
     if (d->b.category == CategoryLocal) return;
-    if (d->refs == NULL && !forceGen) return;
+    if (d->refs == NULL && !force) return;
+
     for(reference = d->refs; reference!=NULL; reference=reference->next) {
         log_trace("checking ref: loading=%d --< %s:%d", fileTable.tab[reference->p.file]->b.cxLoading,
                   fileTable.tab[reference->p.file]->name, reference->p.line);
         if (options.update==UP_CREATE || fileTable.tab[reference->p.file]->b.cxLoading) {
-            /*& options.update==UP_CREATE; why it is there &*/
-            writeCxReference(reference, symIndex);
+            writeCxReference(reference, symbolIndex);
         } else {
             log_trace("Some kind of update (%d) or not loading (%d), so don't writeCxReference()",
                       options.update, fileTable.tab[reference->p.file]->b.cxLoading);
@@ -560,7 +562,7 @@ static void genRefItem0(SymbolReferenceItem *d, int forceGen) {
 }
 
 static void genRefItem(SymbolReferenceItem *dd) {
-    genRefItem0(dd,0);
+    genRefItem0(dd, false);
 }
 
 #define COMPOSE_CXFI_CHECK_NUM(filen,hashMethod,exactPositionLinkFlag) ( \
@@ -675,7 +677,7 @@ static void generateRefsFromMemory(int fileOrder) {
             if (pp->refs == NULL)
                 continue;
             if (pp->fileHash == fileOrder)
-                genRefItem0(pp,0);
+                genRefItem0(pp, false);
         }
     }
 }
@@ -964,7 +966,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
     storage = lastIncomingInfo.values[CXFI_STORAGE];
     si = lastIncomingInfo.values[CXFI_SYM_INDEX];
     assert(si>=0 && si<MAX_CX_SYMBOL_TAB);
-    id = lastIncomingInfo._symbolTabNames[si];
+    id = lastIncomingInfo.cachedSymbolName[si];
     len = scanSymNameString(size, cb, id);
     getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
     //&fprintf(dumpOut,":scanning ref of %s %d %d: \n",id,symType,vFunClass);fflush(dumpOut);
@@ -972,9 +974,9 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
         lastIncomingInfo.onLineReferencedSym = -1;
         return;
     }
-    ddd = &lastIncomingInfo._symbolTab[si];
+    ddd = &lastIncomingInfo.cachedSymbolReferenceItem[si];
     lastIncomingInfo.symbolTab[si] = ddd;
-    fillSymbolRefItemExceptBits(ddd, id,
+    fillSymbolRefItem(ddd, id,
                                 cxFileHashNumber(id), //useless, put 0
                                 vApplClass, vFunClass);
     fillSymbolRefItemBits(&ddd->b, symType, storage, ScopeGlobal, accessFlags,
@@ -984,7 +986,7 @@ static void cxrfSymbolNameForFullUpdateSchedule(int size,
         CX_ALLOCC(ss, len+1, char);
         strcpy(ss,id);
         CX_ALLOC(memb, SymbolReferenceItem);
-        fillSymbolRefItemExceptBits(memb,ss, cxFileHashNumber(ss),
+        fillSymbolRefItem(memb,ss, cxFileHashNumber(ss),
                                     vApplClass, vFunClass);
         fillSymbolRefItemBits(&memb->b, symType, storage,
                                ScopeGlobal, accessFlags, CategoryGlobal,0);
@@ -1044,13 +1046,13 @@ static void cxrfSymbolName(int size,
     storage = lastIncomingInfo.values[CXFI_STORAGE];
     si = lastIncomingInfo.values[CXFI_SYM_INDEX];
     assert(si>=0 && si<MAX_CX_SYMBOL_TAB);
-    id = lastIncomingInfo._symbolTabNames[si];
+    id = lastIncomingInfo.cachedSymbolName[si];
     len = scanSymNameString( size, cb, id);
     getSymTypeAndClasses(&symType, &vApplClass, &vFunClass);
 
-    ddd = &lastIncomingInfo._symbolTab[si];
+    ddd = &lastIncomingInfo.cachedSymbolReferenceItem[si];
     lastIncomingInfo.symbolTab[si] = ddd;
-    fillSymbolRefItemExceptBits(ddd,id,
+    fillSymbolRefItem(ddd,id,
                                 cxFileHashNumber(id), // useless put 0
                                 vApplClass, vFunClass);
     fillSymbolRefItemBits(&ddd->b,symType, storage, ScopeGlobal, accessFlags,
@@ -1063,7 +1065,7 @@ static void cxrfSymbolName(int size,
             CX_ALLOCC(ss, len+1, char);
             strcpy(ss,id);
             CX_ALLOC(memb, SymbolReferenceItem);
-            fillSymbolRefItemExceptBits(memb, ss, cxFileHashNumber(ss),
+            fillSymbolRefItem(memb, ss, cxFileHashNumber(ss),
                                         vApplClass, vFunClass);
             fillSymbolRefItemBits(&memb->b,symType, storage,
                                    ScopeGlobal, accessFlags, CategoryGlobal, 0);
@@ -1073,7 +1075,7 @@ static void cxrfSymbolName(int size,
     }
     if (options.taskRegime == RegimeXref) {
         if (memb==NULL) memb=ddd;
-        genRefItem0(memb,1);
+        genRefItem0(memb, true);
         ddd->refs = memb->refs; // note references to not generate multiple
         memb->refs = NULL;      // HACK, remove them, to not be regenerated
     }
