@@ -75,7 +75,7 @@ char *normalizeFileName(char *name, char *relativeto) {
     int l1,l2,i,j,s1,inzip=0;
     char *ss;
 
-    log_trace("normalizing %s (%s)", name, s_cwd);
+    log_trace("normalizing %s relative to %s (cwd=%s)", name, relativeto, s_cwd);
     l1 = strlen(relativeto);
     l2 = strlen(name);
     s1 = 0;
