@@ -344,32 +344,32 @@ static void get_version_string(char *ttt) {                             \
 }
 
 
-static void writeCompactRecord(char recNum, int info, char *blankPrefix) {
-    assert(recNum >= 0 && recNum < MAX_CHARS);
+static void writeCompactRecord(char marker, int info, char *blankPrefix) {
+    assert(marker >= 0 && marker < MAX_CHARS);
     assert(info >= 0);
     if (*blankPrefix!=0) fputs(blankPrefix, cxOut);
     if (info != 0) fPutDecimal(cxOut, info);
-    fputc(recNum, cxOut);
-    s_outLastInfos.counter[recNum] = info;
+    fputc(marker, cxOut);
+    s_outLastInfos.counter[marker] = info;
 }
 
-static void writeOptionalCompactRecord(char recNum, int info, char *blankPrefix) {
-        assert(recNum >= 0 && recNum < MAX_CHARS);
-        if (*blankPrefix!=0) fputs(blankPrefix, cxOut);
-        if (s_outLastInfos.counter[recNum] != info) {
-            if (info != 0) fPutDecimal(cxOut, info);
-            fputc(recNum, cxOut);
-            s_outLastInfos.counter[recNum] = info;
-        }
+static void writeOptionalCompactRecord(char marker, int info, char *blankPrefix) {
+    assert(marker >= 0 && marker < MAX_CHARS);
+    if (*blankPrefix!=0) fputs(blankPrefix, cxOut);
+    if (s_outLastInfos.counter[marker] != info) {
+        if (info != 0) fPutDecimal(cxOut, info);
+        fputc(marker, cxOut);
+        s_outLastInfos.counter[marker] = info;
+    }
 }
 
 
-static void writeStringRecord(int recNum, char *s, char *blankPrefix) {
+static void writeStringRecord(int marker, char *s, char *blankPrefix) {
     int rsize;
     rsize = strlen(s)+1;
     if (*blankPrefix!=0) fputs(blankPrefix, cxOut);
     fPutDecimal(cxOut, rsize);
-    fputc(recNum, cxOut);
+    fputc(marker, cxOut);
     fputs(s, cxOut);
 }
 
