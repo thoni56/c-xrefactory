@@ -85,8 +85,8 @@ typedef struct lastCxFileInfo {
     int                 onLineReferencedSym;
     S_olSymbolsMenu     *onLineRefMenuItem;
     int                 onLineRefIsBestMatchFlag; // vyhodit ?
-    SymbolReferenceItem     *symbolTab[MAX_CX_SYMBOL_TAB];
-    char                symbolIsWritten[MAX_CX_SYMBOL_TAB];
+    SymbolReferenceItem *symbolTab[MAX_CX_SYMBOL_TAB];
+    bool                symbolIsWritten[MAX_CX_SYMBOL_TAB];
     char                *symbolBestMatchFlag[MAX_CX_SYMBOL_TAB];
     int                 macroBaseFileGeneratedForSym[MAX_CX_SYMBOL_TAB];
     char                markers[MAX_CHARS];
@@ -400,7 +400,7 @@ static void writeSymbolItem(int symIndex) {
     writeOptionalCompactRecord(CXFI_ACCESS_BITS, d->b.accessFlags, "");
     writeOptionalCompactRecord(CXFI_STORAGE, d->b.storage, "");
     lastOutgoingInfo.macroBaseFileGeneratedForSym[symIndex] = 0;
-    lastOutgoingInfo.symbolIsWritten[symIndex] = 1;
+    lastOutgoingInfo.symbolIsWritten[symIndex] = true;
     writeStringRecord(CXFI_SYM_NAME, d->name, "\t");
     fputc('\t', cxOut);
 }
@@ -541,7 +541,7 @@ static void genRefItem0(SymbolReferenceItem *d, int forceGen) {
                            d->b.symType, d->b.storage,
                            d->b.scope, d->b.accessFlags, d->b.category, 0);
     lastOutgoingInfo.symbolTab[symIndex] = &lastOutgoingInfo._symbolTab[symIndex];
-    lastOutgoingInfo.symbolIsWritten[symIndex] = 0;
+    lastOutgoingInfo.symbolIsWritten[symIndex] = false;
     if (d->b.category == CategoryLocal) return;
     if (d->refs == NULL && !forceGen) return;
     for(reference = d->refs; reference!=NULL; reference=reference->next) {
