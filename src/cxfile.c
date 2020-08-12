@@ -389,32 +389,36 @@ static void writeStringRecord(int marker, char *s, char *blankPrefix) {
     fputs(s, cxOut);
 }
 
-
-static void writeSymbolItem(int symIndex) {
+/* Here we do the actual writing of the symbol */
+static void writeSymbolItem(int symbolIndex) {
     SymbolReferenceItem *d;
-    writeOptionalCompactRecord(CXFI_SYM_INDEX, symIndex, "");
-    d = lastOutgoingInfo.symbolTab[symIndex];
-    writeOptionalCompactRecord(CXFI_SYM_TYPE, d->b.symType, "\n");
+
+    /* First the symbol info, if not done already */
+    writeOptionalCompactRecord(CXFI_SYM_INDEX, symbolIndex, "");
+
+    /* Then the reference info */
+    d = lastOutgoingInfo.symbolTab[symbolIndex];
+    writeOptionalCompactRecord(CXFI_SYM_TYPE, d->b.symType, "\n"); /* Why newline in the middle of all this? */
     writeOptionalCompactRecord(CXFI_INFERIOR_CLASS, d->vApplClass, "");
     writeOptionalCompactRecord(CXFI_SUPER_CLASS, d->vFunClass, "");
     writeOptionalCompactRecord(CXFI_ACCESS_BITS, d->b.accessFlags, "");
     writeOptionalCompactRecord(CXFI_STORAGE, d->b.storage, "");
-    lastOutgoingInfo.macroBaseFileGeneratedForSym[symIndex] = 0;
-    lastOutgoingInfo.symbolIsWritten[symIndex] = true;
+    lastOutgoingInfo.macroBaseFileGeneratedForSym[symbolIndex] = 0;
+    lastOutgoingInfo.symbolIsWritten[symbolIndex] = true;
     writeStringRecord(CXFI_SYM_NAME, d->name, "\t");
     fputc('\t', cxOut);
 }
 
-static void writeSymbolItemIfNotWritten(int symIndex) {
-    if (! lastOutgoingInfo.symbolIsWritten[symIndex]) {
-        writeSymbolItem(symIndex);
+static void writeSymbolItemIfNotWritten(int symbolIndex) {
+    if (! lastOutgoingInfo.symbolIsWritten[symbolIndex]) {
+        writeSymbolItem(symbolIndex);
     }
 }
 
 static void writeCxReferenceBase(int symbolNum, Usage usage, int requiredAccess, int file, int line, int coll) {
     writeSymbolItemIfNotWritten(symbolNum);
     if (usage == UsageMacroBaseFileUsage) {
-        /* optimize the number of those references to 1*/
+        /* optimize the number of those references to 1 */
         assert(symbolNum>=0 && symbolNum<MAX_CX_SYMBOL_TAB);
         if (lastOutgoingInfo.macroBaseFileGeneratedForSym[symbolNum]) return;
         lastOutgoingInfo.macroBaseFileGeneratedForSym[symbolNum] = 1;
