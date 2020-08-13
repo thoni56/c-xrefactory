@@ -415,7 +415,7 @@ static void writeSymbolItemIfNotWritten(int symbolIndex) {
     }
 }
 
-static void writeCxReferenceBase(int symbolNum, Usage usage, int requiredAccess, int file, int line, int coll) {
+static void writeCxReferenceBase(int symbolNum, Usage usage, int requiredAccess, int file, int line, int col) {
     writeSymbolItemIfNotWritten(symbolNum);
     if (usage == UsageMacroBaseFileUsage) {
         /* optimize the number of those references to 1 */
@@ -428,7 +428,7 @@ static void writeCxReferenceBase(int symbolNum, Usage usage, int requiredAccess,
     writeOptionalCompactRecord(CXFI_SYM_INDEX, symbolNum, "");
     writeOptionalCompactRecord(CXFI_FILE_INDEX, file, "");
     writeOptionalCompactRecord(CXFI_LINE_INDEX, line, "");
-    writeOptionalCompactRecord(CXFI_COLUMN_INDEX, coll, "");
+    writeOptionalCompactRecord(CXFI_COLUMN_INDEX, col, "");
     writeCompactRecord(CXFI_REFERENCE, 0, "");
 }
 
@@ -1126,7 +1126,7 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
                                                ) {
     Position pos;
     UsageBits usageBits;
-    int file, line, coll, usage, sym, vApplClass, vFunClass;
+    int file, line, col, usage, sym, vApplClass, vFunClass;
     int symType,reqAcc;
 
     assert(marker == CXFI_REFERENCE);
@@ -1138,10 +1138,10 @@ static void cxrfReferenceForFullUpdateSchedule(int size,
     file = s_decodeFilesNum[file];
     assert(fileTable.tab[file]!=NULL);
     line = lastIncomingInfo.values[CXFI_LINE_INDEX];
-    coll = lastIncomingInfo.values[CXFI_COLUMN_INDEX];
+    col = lastIncomingInfo.values[CXFI_COLUMN_INDEX];
     getSymTypeAndClasses( &symType, &vApplClass, &vFunClass);
     log_trace("%d %d->%d %d", usage, file, s_decodeFilesNum[file], line);
-    fillPosition(&pos,file,line,coll);
+    fillPosition(&pos,file,line,col);
     if (lastIncomingInfo.onLineReferencedSym ==
         lastIncomingInfo.values[CXFI_SYM_INDEX]) {
         addToRefList(&lastIncomingInfo.symbolTab[sym]->refs,
@@ -1157,7 +1157,7 @@ static void cxrfReference(int size,
     Position pos;
     Reference rr;
     UsageBits usageBits;
-    int file, line, coll, usage, sym, reqAcc;
+    int file, line, col, usage, sym, reqAcc;
     int copyrefFl;
 
     assert(marker == CXFI_REFERENCE);
@@ -1168,13 +1168,13 @@ static void cxrfReference(int size,
     file = s_decodeFilesNum[file];
     assert(fileTable.tab[file]!=NULL);
     line = lastIncomingInfo.values[CXFI_LINE_INDEX];
-    coll = lastIncomingInfo.values[CXFI_COLUMN_INDEX];
+    col = lastIncomingInfo.values[CXFI_COLUMN_INDEX];
     /*&fprintf(dumpOut,"%d %d %d  ", usage,file,line);fflush(dumpOut);&*/
     assert(options.taskRegime);
     if (options.taskRegime == RegimeXref) {
         if (fileTable.tab[file]->b.cxLoading&&fileTable.tab[file]->b.cxSaved) {
             /* if we repass refs after overflow */
-            fillPosition(&pos,file,line,coll);
+            fillPosition(&pos,file,line,col);
             fillUsageBits(&usageBits, usage, reqAcc);
             copyrefFl = ! isInRefList(lastIncomingInfo.symbolTab[sym]->refs,
                                       &usageBits, &pos, CategoryGlobal);
@@ -1182,9 +1182,9 @@ static void cxrfReference(int size,
             copyrefFl = ! fileTable.tab[file]->b.cxLoading;
         }
         if (copyrefFl)
-            writeCxReferenceBase(sym, usage, reqAcc, file, line, coll);
+            writeCxReferenceBase(sym, usage, reqAcc, file, line, col);
     } else  if (options.taskRegime == RegimeHtmlGenerate) {
-        fillPosition(&pos,file,line,coll);
+        fillPosition(&pos,file,line,col);
         fillUsageBits(&usageBits, usage, reqAcc);
         fill_reference(&rr, usageBits, pos, NULL);
         assert(sym>=0 && sym<MAX_CX_SYMBOL_TAB);
@@ -1201,7 +1201,7 @@ static void cxrfReference(int size,
                          &rr.usage,&rr.p,CategoryGlobal);
         }
     } else if (options.taskRegime == RegimeEditServer) {
-        fillPosition(&pos,file,line,coll);
+        fillPosition(&pos,file,line,col);
         fillUsageBits(&usageBits, usage, reqAcc);
         fill_reference(&rr, usageBits, pos, NULL);
         if (additionalArg == DEAD_CODE_DETECTION) {
