@@ -119,6 +119,8 @@ static void fPutDecimal(FILE *ff, int num) {
     static char ttt[TMP_STRING_SIZE]= {0,};
     char *d;
     int n;
+
+    /* TODO: why re-implement fprintf("%d",num)? */
     n = num;
     assert(n>=0);
     d = ttt+TMP_STRING_SIZE-1;
@@ -127,7 +129,7 @@ static void fPutDecimal(FILE *ff, int num) {
         n = n/10;
     }
     *(--d) = n + '0';
-    assert(d>=ttt);
+    assert(d>=ttt);             /* TODO: WTF? */
     fputs(d, ff);
 }
 
@@ -372,8 +374,12 @@ static void writeCompactRecord(char marker, int info, char *blankPrefix) {
 static void writeOptionalCompactRecord(char marker, int info, char *blankPrefix) {
     assert(marker >= 0 && marker < MAX_CHARS);
     if (*blankPrefix!=0) fputs(blankPrefix, cxOut);
+
+    /* If value for marker is same as last, don't write anything */
     if (lastOutgoingInfo.values[marker] != info) {
-        if (info != 0) fPutDecimal(cxOut, info);
+        /* If the info to write is not 0 then write it, else just write the marker */
+        if (info != 0)
+            fPutDecimal(cxOut, info);
         fputc(marker, cxOut);
         lastOutgoingInfo.values[marker] = info;
     }
