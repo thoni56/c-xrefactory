@@ -19,6 +19,7 @@ Should really be sent synchronously so that the editor can display it.
 * TODO Fix the move_class test
 * TODO MISSING TEST CASES:
 ** TODO Test case for Move Method
+** TODO Test case for dead symbol detection
 ** TODO Test case for Move Parameter
 ** TODO Test case for Push Down Method
 ** TODO Test case for corruptionError() and compressionError()
