@@ -17,9 +17,21 @@ SymbolPosition = namedtuple(
     'SymbolPosition', ['fileid', 'lineno', 'colno', 'position_string', 'complete_string'])
 
 
-def unpack_positions(string, fileid=None, lineno=None, colno=None):
+# Somewhere to save previously found fileid, lineno and colno
+fileid = None
+lineno = None
+colno = None
+
+
+def unpack_positions(string):
     # Unpack a reference string into a list of SymbolPositions or something
     # All "segments" have a format of <int><marker>, e.g. 456f
+    # If a segment does not have number it means 0 (zero)
+    # If the segment is missing it means that it is the same as the last
+    global fileid
+    global lineno
+    global colno
+
     refs = []
     complete_string = string
 
@@ -30,19 +42,23 @@ def unpack_positions(string, fileid=None, lineno=None, colno=None):
             usage = int(string[f.start():f.end()-1])
             string = string[f.end():]
 
-        f = re.match(r"(\d*)A", string)
+        f = re.match(r"(\d+)A", string)
         if not f == None:
-            # Don't now what this is yet ("java reference required accessibilite index")
-            # Sometimes no preceeding index
             if string[f.start():f.end()-1] != '':
                 accessibility_index = int(string[f.start():f.end()-1])
             string = string[f.end():]
+        if string[0] == 'A':
+            accessibility_index = 0
+            string = string[1:]
 
         # File marker
         f = re.match(r"(\d+)f", string)
         if not f == None:
             fileid = int(string[f.start():f.end()-1])
             string = string[f.end():]
+        if string[0] == 'f':
+            fileid = 0
+            string = string[1:]
 
         # Line marker
         f = re.match(r"(\d+)l", string)
@@ -50,7 +66,7 @@ def unpack_positions(string, fileid=None, lineno=None, colno=None):
             lineno = int(string[f.start():f.end()-1])
             string = string[f.end():]
         if string[0] == 'l':
-            # Line marker without lineno, use previous?
+            lineno = 0
             string = string[1:]
 
         # Column marker
@@ -59,16 +75,18 @@ def unpack_positions(string, fileid=None, lineno=None, colno=None):
             colno = int(string[f.start():f.end()-1])
             string = string[f.end():]
         if string[0] == 'c':
-            # Column marker without colno, use previous?
+            colno = 0
             string = string[1:]
+
         if string[0] == 'r':
             reference = True
         else:
             print("Unknown marker(?): '%s'" % string)
             exit(1)
+
         string = string[1:]  # For now, skip 'r' - reference?
 
-        if not fileid or not lineno or not colno:
+        if fileid is None or lineno is None or colno is None:
             eprint("ERROR: incomplete position, string is: '%s'" %
                    position_string)
         refs.append(SymbolPosition(fileid, lineno, colno,
@@ -107,7 +125,7 @@ def unpack_files(lines):
                     # Marker list (only the marker characters as a string)
                     pass
                 else:
-                    print("Unknown line in XFiles: '%s'" % line)
+                    eprint("Unknown line in XFiles: '%s'" % line)
     return filerefs
 
 
@@ -200,16 +218,11 @@ if __name__ == "__main__":
                     directory_name, cxfilename)
                 # Skip file head, 6 lines
                 lines = lines[6:]
-                # Somewhere to save previously found fileid, lineno and colno
-                fileid = None
-                lineno = None
-                colno = None
                 symbols = unpack_symbols(lines, cxfilename)
                 for symbol in symbols:
                     print(symbol.symbolname)
                     # Use previously found fileid, lineno and colno
-                    positions = unpack_positions(
-                        symbol.positions, fileid=fileid, lineno=lineno, colno=colno)
+                    positions = unpack_positions(symbol.positions)
                     for p in positions:
                         # Save fileid, lineno and colno in case any of them are skipped in next symbol in this file
                         fileid = p.fileid
