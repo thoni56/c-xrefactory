@@ -25,6 +25,18 @@ colno = None
 # Make a dict instead
 marker_value = {}
 
+def read_marker(marker, string):
+    f = re.match(r"(\d*)"+marker, string)
+    if f == None:
+        value = marker_value[marker]
+    else:
+        if string[f.start():f.end()-1] != '':
+            value = int(string[f.start():f.end()-1])
+        else:
+            value = 0
+        return (value, string[f.end():])
+    return (value, string)
+
 def unpack_positions(string):
     # Unpack a reference string into a list of SymbolPositions or something
     # All "segments" have a format of <int><marker>, e.g. 456f

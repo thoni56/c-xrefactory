@@ -2,7 +2,7 @@
 
 import unittest
 
-from cxref_reader import unpack_positions, SymbolPosition, unpack_files, FileReference, unpack_symbols, Symbol
+from cxref_reader import unpack_positions, SymbolPosition, unpack_files, FileReference, unpack_symbols, Symbol, read_marker
 
 
 class TestPositionUnpacker(unittest.TestCase):
@@ -139,10 +139,32 @@ class TestMakerValues(unittest.TestCase):
     def setUp(self):
         marker_value = {}
 
-    def test_read_marker_should_save_value(self):
-        value = read_marker("12u")
+    def test_read_marker_should_read_explicit_value(self):
+        (value, _) = read_marker("u", "12u")
         self.assertEqual(value, 12)
-        self.assertEqual(marker_value("u"), 12)
+
+    def test_read_marker_should_use_previous_value_if_no_explicit_value(self):
+        marker_value["u"] = 12
+        (value, _) = read_marker("u", "14f")
+        self.assertEqual(value, 12)
+
+    def test_read_marker_should_use_zero_if_no_marker(self):
+        (value, _) = read_marker("u", "u")
+        self.assertEqual(value, 0)
+
+    def test_read_marker_should_not_advance_if_no_marker(self):
+        marker_value["u"] = 12
+        (_, rest) = read_marker("u", "14f")
+        self.assertEqual(rest, "14f")
+
+    def test_read_marker_should_advance_over_marker_without_value(self):
+        (_, rest) = read_marker("u", "u")
+        self.assertEqual(rest, "")
+
+    def test_read_marker_should_advance_over_marker_and_value(self):
+        (_, rest) = read_marker("u", "1234u")
+        self.assertEqual(rest, "")
+
 
 
 if __name__ == '__main__':
