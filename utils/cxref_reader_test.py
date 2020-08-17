@@ -23,19 +23,19 @@ class TestPositionUnpacker(unittest.TestCase):
         self.assertEqual(ref[0].colno, 4)
 
     def test_no_file_uses_argument(self):
-        ref = unpack_positions("4uA2l3cr", fileid=1)
+        ref = unpack_positions("4uA2l3cr")
         self.assertEqual(ref[0].fileid, 1)
         self.assertEqual(ref[0].lineno, 2)
         self.assertEqual(ref[0].colno, 3)
 
     def test_no_line_uses_argument(self):
-        ref = unpack_positions("4uA1f3cr", lineno=2)
+        ref = unpack_positions("4uA1f3cr")
         self.assertEqual(ref[0].fileid, 1)
         self.assertEqual(ref[0].lineno, 2)
         self.assertEqual(ref[0].colno, 3)
 
     def test_no_column_uses_argument(self):
-        ref = unpack_positions("4uA1f2lr", colno=3)
+        ref = unpack_positions("4uA1f2lr")
         self.assertEqual(ref[0].fileid, 1)
         self.assertEqual(ref[0].lineno, 2)
         self.assertEqual(ref[0].colno, 3)
@@ -57,11 +57,6 @@ class TestPositionUnpacker(unittest.TestCase):
         self.assertEqual(ref[1].fileid, 1)
         self.assertEqual(ref[1].lineno, 5)
         self.assertEqual(ref[1].colno, 6)
-
-    def test_should_save_position_string(self):
-        ref = unpack_positions("4uA1f2l3cr5l6cr")
-        self.assertEqual(ref[0].position_string, "1f2l3cr")
-        self.assertEqual(ref[1].position_string, "5l6cr")
 
     def test_should_save_complete_string(self):
         ref = unpack_positions("4uA1f2l3cr5l6cr")
@@ -107,25 +102,21 @@ class TestFileReferenceUnpacker(unittest.TestCase):
 class TestSymbolUnpacker(unittest.TestCase):
 
     def test_returns_empty_list_for_no_lines(self):
-        symbols = unpack_symbols([])
+        symbols = unpack_symbols([], "")
         self.assertEqual(symbols, [])
 
     def test_returns_one_symbol_for_one_line(self):
         symbols = unpack_symbols(
-            ["t24597d24597ha4g\t27/single_int_on_line_1_col_4\t4uA20900f1l4cr4lcr48151f1l4cr4lcr"])
-        self.assertEqual(len(symbols), 1)
-        self.assertEqual(symbols[0].symbolname, "single_int_on_line_1_col_4")
-
-    def test_ignores_lines_not_starting_with_t(self):
-        symbols = unpack_symbols(
-            ["", "111", "t24597d24597ha4g\t27/single_int_on_line_1_col_4\t4uA20900f1l4cr4lcr48151f1l4cr4lcr"])
+            ["t24597d24597ha4g\t27/single_int_on_line_1_col_4\t4uA20900f1l4cr4lcr48151f1l4cr4lcr"],
+            "")
         self.assertEqual(len(symbols), 1)
         self.assertEqual(symbols[0].symbolname, "single_int_on_line_1_col_4")
 
     def test_returns_two_symbols_for_two_valid_lines(self):
         symbols = unpack_symbols(
             ["t24597d24597ha4g\t27/single_int_on_line_1_col_4\t4uA20900f1l4cr4lcr48151f1l4cr4lcr",
-             "t24597d24597ha4g\t27/single_int_on_line_2_col_5\t4uA20900f2l5cr5l1cr48151f2l5cr5l1cr"])
+             "t24597d24597ha4g\t27/single_int_on_line_2_col_5\t4uA20900f2l5cr5l1cr48151f2l5cr5l1cr"],
+            "")
         self.assertEqual(len(symbols), 2)
         self.assertEqual(symbols[0].symbolname, "single_int_on_line_1_col_4")
         self.assertEqual(symbols[1].symbolname, "single_int_on_line_2_col_5")
@@ -133,12 +124,25 @@ class TestSymbolUnpacker(unittest.TestCase):
     def test_stores_position_reference(self):
         symbols = unpack_symbols(
             ["t24597d24597ha4g\t27/single_int_on_line_1_col_4\t4uA20900f1l4cr4lcr48151f1l4cr4lcr",
-             "t24597d24597ha4g\t27/single_int_on_line_2_col_5\t4uA20900f2l5cr5l1cr48151f2l5cr5l1cr"])
+             "t24597d24597ha4g\t27/single_int_on_line_2_col_5\t4uA20900f2l5cr5l1cr48151f2l5cr5l1cr"],
+            "")
         self.assertEqual(len(symbols), 2)
         self.assertEqual(symbols[0].positions,
                          "4uA20900f1l4cr4lcr48151f1l4cr4lcr")
         self.assertEqual(symbols[1].positions,
                          "4uA20900f2l5cr5l1cr48151f2l5cr5l1cr")
+
+from cxref_reader import marker_value
+
+class TestMakerValues(unittest.TestCase):
+
+    def setUp(self):
+        marker_value = {}
+
+    def test_read_marker_should_save_value(self):
+        value = read_marker("12u")
+        self.assertEqual(value, 12)
+        self.assertEqual(marker_value("u"), 12)
 
 
 if __name__ == '__main__':

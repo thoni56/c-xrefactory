@@ -22,6 +22,8 @@ fileid = None
 lineno = None
 colno = None
 
+# Make a dict instead
+marker_value = {}
 
 def unpack_positions(string):
     # Unpack a reference string into a list of SymbolPositions or something
