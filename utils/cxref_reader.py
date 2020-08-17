@@ -25,6 +25,9 @@ colno = None
 # Make a dict instead
 marker_value = {}
 
+def read_header(lines):
+    return lines[6:]
+
 def read_marker(marker, string):
     f = re.match(r"(\d*)"+marker, string)
     if f == None:
@@ -205,7 +208,6 @@ def verify_directory(directory_name):
         print("ERROR: '%s' does not contain an 'XFiles' file" % directory_name)
         sys.exit()
 
-
 if __name__ == "__main__":
 
     if len(sys.argv) > 2:
@@ -221,17 +223,21 @@ if __name__ == "__main__":
     verify_directory(directory_name)
 
     # Get all file references
+    eprint("Unpacking", "XFiles")
     lines = read_lines_from(directory_name, "XFiles")
     files = unpack_files(lines)
 
+    # Get all classes
+    eprint("Unpacking", "XClasses")
+    lines = read_lines_from(directory_name, "XClasses")
+    #classes = unpack(lines)
+
     # Read all CXref-files and list identifiers
-    for cxfilename in os.listdir(directory_name):
-        if cxfilename != "XFiles":
+    for cxfilename in sorted(os.listdir(directory_name)):
+        if cxfilename != "XFiles" and cxfilename != "XClasses":
+            eprint("Unpacking", cxfilename)
             with open(os.path.join(directory_name, cxfilename)) as origin_file:
-                lines = read_lines_from(
-                    directory_name, cxfilename)
-                # Skip file head, 6 lines
-                lines = lines[6:]
+                lines = read_header(lines)
                 symbols = unpack_symbols(lines, cxfilename)
                 for symbol in symbols:
                     print(symbol.symbolname)
