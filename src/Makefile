@@ -187,8 +187,11 @@ coverage-report:
 	$(MAKE) the-actual-coverage-report &
 
 the-actual-coverage-report:
-	$(LCOV) $(LCOV_OPTIONS) -d .. -c -o ../coverage/total.info
-	# Create gcov files for Emacs gcov-mode
+	#$(LCOV) $(LCOV_OPTIONS) -d .. -c -o ../coverage/total.info
+	# If running in parallel each test has created its own .info file in ../test
+	# Combine them
+	ls ../tests/*.info | xargs printf -- '-a %s\n' | xargs lcov -o ../coverage/total.info -a ../coverage/unittests.info
+	# Re-create collated gcov files from total.info for Emacs gcov-mode
 	if command -v info2gcov > /dev/null 2>&1 ; then \
 		info2gcov -q ../coverage/total.info ; \
 	fi
