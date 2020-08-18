@@ -65,7 +65,7 @@ ci-test:
 	$(MAKE) test
 
 chcheck:
-	@for m in `echo $(MODULES) | sed -e 's/[a-z]*_parser\.tab//g'` ; do \
+	for m in `echo $(MODULES) | sed -e 's/[a-z]*_parser\.tab//g'` ; do \
 		chcheck $$m ; \
 	done
 
@@ -74,7 +74,7 @@ include sources.mk
 
 c-xref: .c-xrefrc $(OBJS) $(OPTIONAL_ZLIB_LIB)
 	$(CC) $(LDFLAGS) -o c-xref $(OBJS) $(LIBS)
-	@$(MAKE) check-tokens			# check that token sections in parsers are identical
+	$(MAKE) check-tokens			# check that token sections in parsers are identical
 
 #########################################################################
 test:
@@ -91,31 +91,31 @@ unit:
 
 c_parser.tab.c c_parser.tab.h : c_parser.y $(YACC)
 	$(YACC) -v -d -b c_parser -p c_yy c_parser.y
-	@sed -E '/^$$/q' c_parser.output > c_parser.rules
-	@awk '{$$1=""; print}' c_parser.rules > c_parser.tmp
-	@sed -n '/primary_expr/,$$p' c_parser.tmp > c_rules_from_c_parser.txt
+	sed -E '/^$$/q' c_parser.output > c_parser.rules
+	awk '{$$1=""; print}' c_parser.rules > c_parser.tmp
+	sed -n '/primary_expr/,$$p' c_parser.tmp > c_rules_from_c_parser.txt
 
 # Extract the C rules in yacc format and merge them into yacc_parser.y
 yacc_parser.y: c_parser.y
 	@echo "Yacc grammar needs updating from c_parser.y ..."
-	@sed -n '/^%%$$/,/^%%$$/{/^%%$$/!{/^%%$$/!p;};}' c_parser.y > c_rules.txt
-	@sed '/NOW FOLLOWS THE COMPLETE C GRAMMAR/q' yacc_parser.y > yacc_parser.head
-	@sed '1,/^%%$$/d' yacc_parser.y | sed -n '/^%%$$/,$$p' > yacc_parser.tail
-	@cat yacc_parser.head c_rules.txt yacc_parser.tail > yacc_parser.y
+	sed -n '/^%%$$/,/^%%$$/{/^%%$$/!{/^%%$$/!p;};}' c_parser.y > c_rules.txt
+	sed '/NOW FOLLOWS THE COMPLETE C GRAMMAR/q' yacc_parser.y > yacc_parser.head
+	sed '1,/^%%$$/d' yacc_parser.y | sed -n '/^%%$$/,$$p' > yacc_parser.tail
+	cat yacc_parser.head c_rules.txt yacc_parser.tail > yacc_parser.y
 
 cexp_parser.tab.c: cexp_parser.y $(YACC)
 	$(YACC) -v -b cexp_parser -p cexp_yy cexp_parser.y
-	@sed -E '/^$$/q' cexp_parser.output > cexp_parser.rules
+	sed -E '/^$$/q' cexp_parser.output > cexp_parser.rules
 
 yacc_parser.tab.c: yacc_parser.y $(YACC)
 	$(YACC) -v -b yacc_parser -p yacc_yy yacc_parser.y
-	@sed -E '/^$$/q' yacc_parser.output > yacc_parser.rules
-	@awk '{$$1=""; print}' yacc_parser.rules > yacc_parser.tmp
-	@sed -n '/primary_expr/,$$p' yacc_parser.tmp > c_rules_from_yacc_parser.txt
+	sed -E '/^$$/q' yacc_parser.output > yacc_parser.rules
+	awk '{$$1=""; print}' yacc_parser.rules > yacc_parser.tmp
+	sed -n '/primary_expr/,$$p' yacc_parser.tmp > c_rules_from_yacc_parser.txt
 
 java_parser.tab.c: java_parser.y $(YACC)
 	$(YACC) -v -b java_parser -p java_yy java_parser.y
-	@sed -E '/^$$/q' java_parser.output > java_parser.rules
+	sed -E '/^$$/q' java_parser.output > java_parser.rules
 
 
 # There is no include feature in grammars so we need duplicate
@@ -123,26 +123,26 @@ java_parser.tab.c: java_parser.y $(YACC)
 # Extract all three token sections
 EXTRACT_TOKEN_DEFINITIONS = sed -E '/END OF COMMON TOKEN DEFINITIONS/,$$d' | sed -E '/START OF COMMON TOKEN DEFINITIONS/,$$!d'
 c_parser.tokens: c_parser.y
-	@cat c_parser.y | $(EXTRACT_TOKEN_DEFINITIONS) > c_parser.tokens
+	cat c_parser.y | $(EXTRACT_TOKEN_DEFINITIONS) > c_parser.tokens
 
 yacc_parser.tokens: yacc_parser.y
-	@cat yacc_parser.y | $(EXTRACT_TOKEN_DEFINITIONS) > yacc_parser.tokens
+	cat yacc_parser.y | $(EXTRACT_TOKEN_DEFINITIONS) > yacc_parser.tokens
 
 java_parser.tokens: java_parser.y
-	@cat java_parser.y | $(EXTRACT_TOKEN_DEFINITIONS) > java_parser.tokens
+	cat java_parser.y | $(EXTRACT_TOKEN_DEFINITIONS) > java_parser.tokens
 
 # Compare the three token sections to ensure that they are exactly the same
 .PHONY: check-tokens
 check-tokens: c_parser.tokens yacc_parser.tokens java_parser.tokens
-	@if ! diff -q c_parser.tokens yacc_parser.tokens ; then \
+	if ! diff -q c_parser.tokens yacc_parser.tokens ; then \
 		echo "ERROR: Parser token section must be identical:" ; \
 		diff -c c_parser.tokens yacc_parser.tokens ; \
 	fi
-	@if ! diff -q yacc_parser.tokens java_parser.tokens ; then \
+	if ! diff -q yacc_parser.tokens java_parser.tokens ; then \
 		echo "ERROR: Parser token section must be identical:" ; \
 		diff -c yacc_parser.tokens java_parser.tokens ; \
 	fi
-	@if ! diff -q java_parser.tokens c_parser.tokens ; then \
+	if ! diff -q java_parser.tokens c_parser.tokens ; then \
 		echo "ERROR: Parser token section must be identical:" ; \
 		diff -c java_parser.tokens c_parser.tokens ; \
 	fi
@@ -162,7 +162,7 @@ lexem.h: c_parser.tab.h
 	@echo "#endif" >> lexem.h
 
 .c-xrefrc: c-xrefrc.tpl
-	@sed -e "s+CURDIR+$(CURDIR)+g" c-xrefrc.tpl > .c-xrefrc
+	sed -e "s+CURDIR+$(CURDIR)+g" c-xrefrc.tpl > .c-xrefrc
 
 #########################################################################
 
@@ -175,15 +175,16 @@ clean:
 
 .PHONY: clean-coverage
 clean-coverage:
-	@if command -v lcov > /dev/null 2>&1 ; then \
+	-if command -v lcov > /dev/null 2>&1 ; then \
 		lcov -q -z -d .. ; \
+		rm ../tests/*.info ; \
 	fi
 
 # NOTE: lcov < 1.14 don't have --exclude
 LCOV=lcov -q --exclude log.c --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' --exclude '/Library/*'
 coverage-report:
 	@echo Doing the coverage reporting in the background...
-	@$(MAKE) the-actual-coverage-report &
+	$(MAKE) the-actual-coverage-report &
 
 the-actual-coverage-report:
 	$(LCOV) $(LCOV_OPTIONS) -d .. -c -o ../coverage/total.info
@@ -196,11 +197,11 @@ the-actual-coverage-report:
 	@echo Coverage done
 
 old-actual-coverage-report-with-testnames:
-	@$(LCOV) $(LCOV_OPTIONS) -d . -c -t unittests -o ../coverage/unittests.info
-	@ls -1q ../tests/*.info | sed "s/^/-a /g" | xargs $(LCOV) $(LCOV_OPTIONS) -o ../coverage/total.info -a ../coverage/unittests.info
+	$(LCOV) $(LCOV_OPTIONS) -d . -c -t unittests -o ../coverage/unittests.info
+	ls -1q ../tests/*.info | sed "s/^/-a /g" | xargs $(LCOV) $(LCOV_OPTIONS) -o ../coverage/total.info -a ../coverage/unittests.info
 	@printf "\\r"
-	@lcov -q --remove ../coverage/total.info 'log.c' '*.tab.c' '/usr/*' '/Library/*' -o ../coverage/total.info
-	@if command -v info2gcov > /dev/null 2>&1 ; then \
+	lcov -q --remove ../coverage/total.info 'log.c' '*.tab.c' '/usr/*' '/Library/*' -o ../coverage/total.info
+	if command -v info2gcov > /dev/null 2>&1 ; then \
 		info2gcov -q ../coverage/total.info ; \
 	fi
 	genhtml -q -o ../coverage ../coverage/total.info
