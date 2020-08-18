@@ -9,6 +9,7 @@
 #include "reftab.h"
 #include "classhierarchy.h"
 #include "fileio.h"
+#include "characterreader.h"
 
 #include "protocol.h"
 #include "globals.h"
@@ -1395,17 +1396,18 @@ void scanCxFile(ScanFileFunctionStep *scanningFunctions) {
                                      lastIncomingInfo.additional[ch]);
         } else if (! lastIncomingInfo.markers[ch]) {
             assert(scannedInt>0);
+            skipCharacters(cb, scannedInt-1);
             //& CxSkipNChars(scannedInt-1, next, end, cb);
-            {
-                int ccount = scannedInt-1;
-                while (cb->next + ccount > cb->end) {
-                    ccount -= cb->end - cb->next;
-                    cb->next = cb->end;
-                    ch = getChar(cb);
-                    ccount --;
-                }
-                cb->next += ccount;
-            }
+            /* { */
+            /*     int ccount = scannedInt-1; */
+            /*     while (cb->next + ccount > cb->end) { */
+            /*         ccount -= cb->end - cb->next; */
+            /*         cb->next = cb->end; */
+            /*         ch = getChar(cb); */
+            /*         ccount --; */
+            /*     } */
+            /*     cb->next += ccount; */
+            /* } */
         }
         ch = getChar(cb);
     }
