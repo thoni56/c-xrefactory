@@ -1333,6 +1333,8 @@ static void cxrfSubClass(int size,
             createSubClassInfo(super_class, sub_class, fileIndex, NO_CX_FILE_ITEM_GEN);
         }
         break;
+    default:
+        assert(0);              /* Undefined & Refactory should not happen? */
     }
 }
 
