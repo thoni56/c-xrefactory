@@ -1421,12 +1421,12 @@ void scanCxFile(ScanFileFunctionStep *scanningFunctions) {
 }
 
 
-/* fnamesuff contains '/' at the beginning !!! */
-bool scanReferenceFile(char *fname, char *fns1, char *fns2,
+/* suffix contains '/' at the beginning !!! */
+bool scanReferenceFile(char *fileName, char *suffix1, char *suffix2,
                       ScanFileFunctionStep *scanFunTab) {
     char fn[MAX_FILE_NAME_SIZE];
 
-    sprintf(fn, "%s%s%s", fname, fns1, fns2);
+    sprintf(fn, "%s%s%s", fileName, suffix1, suffix2);
     assert(strlen(fn) < MAX_FILE_NAME_SIZE-1);
     log_trace(":scanning file %s", fn);
     inputFile = openFile(fn, "r");
