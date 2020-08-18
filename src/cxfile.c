@@ -1296,37 +1296,42 @@ static void cxrfSubClass(int size,
                          CharacterBuffer *cb,
                          int additionalArg
                          ) {
-    int of, file, sup, inf;
+    int fileIndex;
+    int super_class, sub_class;
 
     assert(marker == CXFI_CLASS_EXT);
-    file = of = lastIncomingInfo.values[CXFI_FILE_INDEX];
-    sup = lastIncomingInfo.values[CXFI_SUPERCLASS];
-    inf = lastIncomingInfo.values[CXFI_SUBCLASS];
+    fileIndex = lastIncomingInfo.values[CXFI_FILE_INDEX];
+    super_class = lastIncomingInfo.values[CXFI_SUPERCLASS];
+    sub_class = lastIncomingInfo.values[CXFI_SUBCLASS];
     /*fprintf(dumpOut,"%d %d->%d %d  ", usage,file,s_decodeFilesNum[file],line);*/
     /*fflush(dumpOut);*/
-    file = s_decodeFilesNum[file];
-    //&if (fileTable.tab[file]==NULL) {fprintf(dumpOut,"!%d->%d %d %d ",of,file,sup,inf);}
-    assert(fileTable.tab[file]!=NULL);
-    sup = s_decodeFilesNum[sup];
-    assert(fileTable.tab[sup]!=NULL);
-    inf = s_decodeFilesNum[inf];
-    assert(fileTable.tab[inf]!=NULL);
+
+    fileIndex = s_decodeFilesNum[fileIndex];
+    assert(fileTable.tab[fileIndex]!=NULL);
+
+    super_class = s_decodeFilesNum[super_class];
+    assert(fileTable.tab[super_class]!=NULL);
+    sub_class = s_decodeFilesNum[sub_class];
+    assert(fileTable.tab[sub_class]!=NULL);
     assert(options.taskRegime);
-    if (options.taskRegime == RegimeHtmlGenerate) {
-        createSubClassInfo(sup, inf, file, NO_CX_FILE_ITEM_GEN);
-    }
-    if (options.taskRegime == RegimeXref) {
-        if (!fileTable.tab[file]->b.cxLoading &&
+
+    switch (options.taskRegime) {
+    case RegimeHtmlGenerate:
+        createSubClassInfo(super_class, sub_class, fileIndex, NO_CX_FILE_ITEM_GEN);
+        break;
+    case RegimeXref:
+        if (!fileTable.tab[fileIndex]->b.cxLoading &&
             additionalArg==CX_GENERATE_OUTPUT) {
-            writeSubClassInfo(sup, inf, file);  // updating refs
-            //&         createSubClassInfo(sup, inf, file, CX_FILE_ITEM_GEN);
+            writeSubClassInfo(super_class, sub_class, fileIndex);  // updating refs
         }
-    }
-    if (options.taskRegime == RegimeEditServer) {
-        if (file!=s_input_file_number) {
-            log_trace("reading %s < %s", simpleFileName(fileTable.tab[inf]->name),simpleFileName(fileTable.tab[sup]->name));
-            createSubClassInfo(sup, inf, file, NO_CX_FILE_ITEM_GEN);
+        break;
+    case RegimeEditServer:
+        if (fileIndex!=s_input_file_number) {
+            log_trace("reading %s < %s", simpleFileName(fileTable.tab[sub_class]->name),
+                      simpleFileName(fileTable.tab[super_class]->name));
+            createSubClassInfo(super_class, sub_class, fileIndex, NO_CX_FILE_ITEM_GEN);
         }
+        break;
     }
 }
 
