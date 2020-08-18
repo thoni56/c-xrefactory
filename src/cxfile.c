@@ -1346,7 +1346,7 @@ static int scanInteger(CharacterBuffer *cb, int *_ch) {
 
 
 
-void scanCxFile(ScanFileFunctionStep *scanFuns) {
+void scanCxFile(ScanFileFunctionStep *scanningFunctions) {
     int scannedInt = 0;
     int ch,i;
 
@@ -1364,19 +1364,23 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
     lastIncomingInfo.markers[CXFI_INFERIOR_CLASS] = noFileIndex;
     lastIncomingInfo.markers[CXFI_SUPER_CLASS] = noFileIndex;
     s_decodeFilesNum[noFileIndex] = noFileIndex;
-    for(i=0; scanFuns[i].recordCode>0; i++) {
-        assert(scanFuns[i].recordCode < MAX_CHARS);
-        ch = scanFuns[i].recordCode;
-        lastIncomingInfo.fun[ch] = scanFuns[i].handleFun;
-        lastIncomingInfo.additional[ch] = scanFuns[i].additionalArg;
+
+    for(i=0; scanningFunctions[i].recordCode>0; i++) {
+        assert(scanningFunctions[i].recordCode < MAX_CHARS);
+        ch = scanningFunctions[i].recordCode;
+        lastIncomingInfo.fun[ch] = scanningFunctions[i].handleFun;
+        lastIncomingInfo.additional[ch] = scanningFunctions[i].additionalArg;
     }
+
     initCharacterBuffer(&cxfCharacterBuffer, inputFile);
     ch = ' ';
     while(! cxfCharacterBuffer.isAtEOF) {
         CharacterBuffer *cb = &cxfCharacterBuffer;
         scannedInt = scanInteger(cb, &ch);
+
         if (cxfCharacterBuffer.isAtEOF)
             break;
+
         assert(ch >= 0 && ch<MAX_CHARS);
         if (lastIncomingInfo.markers[ch]) {
             lastIncomingInfo.values[ch] = scannedInt;
@@ -1398,14 +1402,16 @@ void scanCxFile(ScanFileFunctionStep *scanFuns) {
                 cb->next += ccount;
             }
         }
-        ch = getChar(&cxfCharacterBuffer);
+        ch = getChar(cb);
     }
+
     if (options.taskRegime==RegimeEditServer
         && (options.server_operation==OLO_LOCAL_UNUSED
             || options.server_operation==OLO_GLOBAL_UNUSED)) {
         // check if last symbol was dead
         cxfileCheckLastSymbolDeadness();
     }
+
     LEAVE();
 }
 
