@@ -39,8 +39,8 @@
 
 #define CXFI_SYM_TYPE       't'
 
-#define CXFI_SUPER_CLASS    'h'     /* hore = up in slovac */
-#define CXFI_INFERIOR_CLASS 'd'     /* dole = down in slovac */
+#define CXFI_SUPERCLASS     'h'     /* hore = up in slovac */
+#define CXFI_SUBCLASS       'd'     /* dole = down in slovac */
 #define CXFI_CLASS_EXT      'e'     /* using 'fhd' */
 
 #define CXFI_MACRO_BASE_FILE 'b'    /* ref to a file invoking macro */
@@ -66,8 +66,8 @@ static int generatedFieldMarkersList[] = {
     CXFI_COLUMN_INDEX,
     CXFI_SYM_INDEX,
     CXFI_REFERENCE,
-    CXFI_SUPER_CLASS,
-    CXFI_INFERIOR_CLASS,
+    CXFI_SUPERCLASS,
+    CXFI_SUBCLASS,
     CXFI_CLASS_EXT,
     CXFI_INPUT_FROM_COMMAND_LINE,
     CXFI_MACRO_BASE_FILE,
@@ -405,8 +405,8 @@ static void writeSymbolItem(int symbolIndex) {
     /* Then the reference info */
     d = lastOutgoingInfo.symbolTab[symbolIndex];
     writeOptionalCompactRecord(CXFI_SYM_TYPE, d->b.symType, "\n"); /* Why newline in the middle of all this? */
-    writeOptionalCompactRecord(CXFI_INFERIOR_CLASS, d->vApplClass, "");
-    writeOptionalCompactRecord(CXFI_SUPER_CLASS, d->vFunClass, "");
+    writeOptionalCompactRecord(CXFI_SUBCLASS, d->vApplClass, "");
+    writeOptionalCompactRecord(CXFI_SUPERCLASS, d->vFunClass, "");
     writeOptionalCompactRecord(CXFI_ACCESS_BITS, d->b.accessFlags, "");
     writeOptionalCompactRecord(CXFI_STORAGE, d->b.storage, "");
     lastOutgoingInfo.macroBaseFileGeneratedForSym[symbolIndex] = 0;
@@ -445,8 +445,8 @@ static void writeCxReference(Reference *reference, int symbolNum) {
 
 static void writeSubClassInfo(int sup, int inf, int origin) {
     writeOptionalCompactRecord(CXFI_FILE_INDEX, origin, "\n");
-    writeOptionalCompactRecord(CXFI_SUPER_CLASS, sup, "");
-    writeOptionalCompactRecord(CXFI_INFERIOR_CLASS, inf, "");
+    writeOptionalCompactRecord(CXFI_SUPERCLASS, sup, "");
+    writeOptionalCompactRecord(CXFI_SUBCLASS, inf, "");
     writeCompactRecord(CXFI_CLASS_EXT, 0, "");
 }
 
@@ -947,10 +947,10 @@ static void getSymTypeAndClasses(int *_symType, int *_vApplClass,
                                  int *_vFunClass) {
     int symType, vApplClass, vFunClass;
     symType = lastIncomingInfo.values[CXFI_SYM_TYPE];
-    vApplClass = lastIncomingInfo.values[CXFI_INFERIOR_CLASS];
+    vApplClass = lastIncomingInfo.values[CXFI_SUBCLASS];
     vApplClass = s_decodeFilesNum[vApplClass];
     assert(fileTable.tab[vApplClass] != NULL);
-    vFunClass = lastIncomingInfo.values[CXFI_SUPER_CLASS];
+    vFunClass = lastIncomingInfo.values[CXFI_SUPERCLASS];
     vFunClass = s_decodeFilesNum[vFunClass];
     assert(fileTable.tab[vFunClass] != NULL);
     *_symType = symType;
@@ -1300,8 +1300,8 @@ static void cxrfSubClass(int size,
 
     assert(marker == CXFI_CLASS_EXT);
     file = of = lastIncomingInfo.values[CXFI_FILE_INDEX];
-    sup = lastIncomingInfo.values[CXFI_SUPER_CLASS];
-    inf = lastIncomingInfo.values[CXFI_INFERIOR_CLASS];
+    sup = lastIncomingInfo.values[CXFI_SUPERCLASS];
+    inf = lastIncomingInfo.values[CXFI_SUBCLASS];
     /*fprintf(dumpOut,"%d %d->%d %d  ", usage,file,s_decodeFilesNum[file],line);*/
     /*fflush(dumpOut);*/
     file = s_decodeFilesNum[file];
@@ -1361,8 +1361,8 @@ void scanCxFile(ScanFileFunctionStep *scanningFunctions) {
     lastIncomingInfo.onLineReferencedSym = -1;
     lastIncomingInfo.symbolToCheckForDeadness = -1;
     lastIncomingInfo.onLineRefMenuItem = NULL;
-    lastIncomingInfo.markers[CXFI_INFERIOR_CLASS] = noFileIndex;
-    lastIncomingInfo.markers[CXFI_SUPER_CLASS] = noFileIndex;
+    lastIncomingInfo.markers[CXFI_SUBCLASS] = noFileIndex;
+    lastIncomingInfo.markers[CXFI_SUPERCLASS] = noFileIndex;
     s_decodeFilesNum[noFileIndex] = noFileIndex;
 
     for(i=0; scanningFunctions[i].recordCode>0; i++) {
