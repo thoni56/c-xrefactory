@@ -183,21 +183,14 @@ void switchToZippedCharBuff(CharacterBuffer *buffer) {
 }
 
 void skipCharacters(CharacterBuffer *buffer, unsigned count) {
-    char *dd;
-    char *cc;
-    char *fin;
-    int n;
-    int max_size;
 
-    fin = buffer->end;
-    cc = buffer->next;
-    if (buffer->next+count < fin) {
+    if (buffer->next+count < buffer->end) {
         buffer->next += count;
         return;
     }
+
+    count -= buffer->end - buffer->next;        /* How many to skip after refilling? */
     if (buffer->inputMethod == INPUT_VIA_UNZIP) {
-        // TODO FINISH THIS
-        count -= fin-cc;        /* How many to skip after refilling? */
         buffer->next = buffer->end;
         refillBuffer(buffer);
         if (buffer->end != buffer->next) {
@@ -205,17 +198,22 @@ void skipCharacters(CharacterBuffer *buffer, unsigned count) {
             skipCharacters(buffer, count);
         }
     } else {
-        count -= fin-cc;
+        char *dd;
+        int n;
+        int max_size;
+
         /*&fprintf(dumpOut,"seeking %d chars\n",count); fflush(dumpOut);&*/
         fseek(buffer->file, count, SEEK_CUR);
         buffer->filePos += count;
-        dd=buffer->chars+MAX_UNGET_CHARS;
-        max_size = CHAR_BUFF_SIZE-(dd - buffer->chars);
-        if (buffer->file == NULL) n = 0;
-        else n = readFile(dd, 1, max_size, buffer->file);
+        dd = buffer->chars + MAX_UNGET_CHARS;
+        max_size = CHAR_BUFF_SIZE - (dd - buffer->chars);
+        if (buffer->file == NULL)
+            n = 0;
+        else
+            n = readFile(dd, 1, max_size, buffer->file);
         buffer->filePos += n;
-        buffer->end = dd+n;
-        buffer->next = buffer->chars+MAX_UNGET_CHARS;
+        buffer->end = dd + n;
+        buffer->next = buffer->chars + MAX_UNGET_CHARS;
     }
 }
 
