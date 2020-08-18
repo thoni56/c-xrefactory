@@ -135,12 +135,6 @@ def unpack_files(lines):
                                                       segments[1],
                                                       segments[2],
                                                       segments[3].split(':', 1)[-1]))
-                elif segments[0][-1] == 'v':
-                    # Version string
-                    pass
-                elif segments[0][0:3] == '21@':
-                    # Marker list (only the marker characters as a string)
-                    pass
                 else:
                     eprint("Unknown line in XFiles: '%s'" % line)
     return filerefs
@@ -165,13 +159,7 @@ def unpack_symbols(lines, cxfilename):
             if line[0] != '\t':
                 # If there is a marker, dechiffer it, else use the previously found one
                 marker = re.match(r"(\d*)\D", line).group()
-            if marker[-1] == 'v':
-                # Version string
-                pass
-            elif marker[-1] == '@':
-                # "Single Records" - all marker characters in the order specified in cxfile.c (generatedSingleRecordMarkers)
-                pass
-            elif marker[-1] == 't':
+            if marker[-1] == 't':
                 # Symbol type
                 segments = line.split('\t')
                 symbolname = segments[1].split('/', 1)[-1]
@@ -225,6 +213,7 @@ if __name__ == "__main__":
     # Get all file references
     eprint("Unpacking", "XFiles")
     lines = read_lines_from(directory_name, "XFiles")
+    lines = lines[6:] # Skip header
     files = unpack_files(lines)
 
     # Get all classes
