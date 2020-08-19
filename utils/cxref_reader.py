@@ -31,6 +31,8 @@ def read_header(lines):
 
 
 def read_marker(marker, string):
+    global marker_value
+    rest = string
     f = re.match(r"(\d*)"+marker, string)
     if f == None:
         value = marker_value[marker]
@@ -39,8 +41,9 @@ def read_marker(marker, string):
             value = int(string[f.start():f.end()-1])
         else:
             value = 0
-        return (value, string[f.end():])
-    return (value, string)
+        rest = string[f.end():]
+    marker_value[marker] = value
+    return (value, rest)
 
 
 def unpack_positions(string):
@@ -90,13 +93,7 @@ def unpack_positions(string):
             string = string[1:]
 
         # Column marker
-        f = re.match(r"(\d+)c", string)
-        if not f == None:
-            colno = int(string[f.start():f.end()-1])
-            string = string[f.end():]
-        if string[0] == 'c':
-            colno = 0
-            string = string[1:]
+        (colno, string) = read_marker('c', string)
 
         if string[0] == 'r':
             reference = True
@@ -237,9 +234,6 @@ if __name__ == "__main__":
                 positions = unpack_positions(symbol.positions)
                 for p in positions:
                     # Save fileid, lineno and colno in case any of them are skipped in next symbol in this file
-                    fileid = p.fileid
-                    lineno = p.lineno
-                    colno = p.colno
                     filename = get_filename_from_id(p.fileid, files)
                     filename = os.path.basename(filename)
                     print("    %s@%s:%d:%d" %
