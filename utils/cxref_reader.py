@@ -25,8 +25,10 @@ colno = None
 # Make a dict instead
 marker_value = {}
 
+
 def read_header(lines):
     return lines[6:]
+
 
 def read_marker(marker, string):
     f = re.match(r"(\d*)"+marker, string)
@@ -39,6 +41,7 @@ def read_marker(marker, string):
             value = 0
         return (value, string[f.end():])
     return (value, string)
+
 
 def unpack_positions(string):
     # Unpack a reference string into a list of SymbolPositions or something
@@ -99,7 +102,6 @@ def unpack_positions(string):
             reference = True
         else:
             print("Unknown marker(?): '%s'" % string)
-            exit(1)
 
         string = string[1:]  # For now, skip 'r' - reference?
 
@@ -196,6 +198,7 @@ def verify_directory(directory_name):
         print("ERROR: '%s' does not contain an 'XFiles' file" % directory_name)
         sys.exit()
 
+
 if __name__ == "__main__":
 
     if len(sys.argv) > 2:
@@ -213,7 +216,7 @@ if __name__ == "__main__":
     # Get all file references
     eprint("Unpacking", "XFiles")
     lines = read_lines_from(directory_name, "XFiles")
-    lines = lines[6:] # Skip header
+    lines = lines[6:]  # Skip header
     files = unpack_files(lines)
 
     # Get all classes
@@ -225,21 +228,21 @@ if __name__ == "__main__":
     for cxfilename in sorted(os.listdir(directory_name)):
         if cxfilename != "XFiles" and cxfilename != "XClasses":
             eprint("Unpacking", cxfilename)
-            with open(os.path.join(directory_name, cxfilename)) as origin_file:
-                lines = read_header(lines)
-                symbols = unpack_symbols(lines, cxfilename)
-                for symbol in symbols:
-                    print(symbol.symbolname)
-                    # Use previously found fileid, lineno and colno
-                    positions = unpack_positions(symbol.positions)
-                    for p in positions:
-                        # Save fileid, lineno and colno in case any of them are skipped in next symbol in this file
-                        fileid = p.fileid
-                        lineno = p.lineno
-                        colno = p.colno
-                        filename = get_filename_from_id(p.fileid, files)
-                        filename = os.path.basename(filename)
-                        print("    %s@%s:%d:%d" %
-                              (symbol.symbolname, filename, p.lineno if p.lineno else 0, p.colno if p.colno else 0))
+            lines = read_lines_from(directory_name, cxfilename)
+            lines = read_header(lines)
+            symbols = unpack_symbols(lines, cxfilename)
+            for symbol in symbols:
+                print(symbol.symbolname)
+                # Use previously found fileid, lineno and colno
+                positions = unpack_positions(symbol.positions)
+                for p in positions:
+                    # Save fileid, lineno and colno in case any of them are skipped in next symbol in this file
+                    fileid = p.fileid
+                    lineno = p.lineno
+                    colno = p.colno
+                    filename = get_filename_from_id(p.fileid, files)
+                    filename = os.path.basename(filename)
+                    print("    %s@%s:%d:%d" %
+                          (symbol.symbolname, filename, p.lineno if p.lineno else 0, p.colno if p.colno else 0))
 
     "4uA 20900f 1l 4c r 4l c r 32710f 1l 4c r 4l c r 48151f 1l 4c r 4l c r"
