@@ -98,7 +98,7 @@ def unpack_positions(string):
         if string[0] == 'r':
             reference = True
         else:
-            print("Unknown marker(?): '%s'" % string)
+            eprint("Unknown marker(?): '%s'" % string)
 
         string = string[1:]  # For now, skip 'r' - reference?
 
@@ -169,7 +169,7 @@ def unpack_symbols(lines, cxfilename):
                 symbolname = segments[1].split('/', 1)[-1]
                 symbols.append(Symbol(symbolname, segments[2], marker))
             else:
-                print("Unknown marker '%s' in Xrefs file '%s': '%s'" %
+                eprint("Unknown marker '%s' in Xrefs file '%s': '%s'" %
                       (marker[-1], cxfilename, line))
     return symbols
 
@@ -182,24 +182,24 @@ def read_lines_from(directory_name, file_name):
 
 def verify_directory(directory_name):
     if not os.path.exists(directory_name):
-        print("ERROR: directory '%s' does not exist, point to a c-xref index directory" %
+        eprint("ERROR: directory '%s' does not exist, point to a c-xref index directory" %
               directory_name)
         sys.exit()
 
     if not os.path.isdir(directory_name):
-        print("ERROR: '%s' is not a directory, should be a c-xref index directory" %
+        eprint("ERROR: '%s' is not a directory, should be a c-xref index directory" %
               directory_name)
         sys.exit()
 
     if not os.path.exists(os.path.join(directory_name, "XFiles")):
-        print("ERROR: '%s' does not contain an 'XFiles' file" % directory_name)
+        eprint("ERROR: '%s' does not contain an 'XFiles' file" % directory_name)
         sys.exit()
 
 
 if __name__ == "__main__":
 
     if len(sys.argv) > 2:
-        print(
+        eprint(
             "ERROR: %s only takes 1 argument, the directory to scan, it defaults to 'CXrefs'" % sys.argv[0])
         sys.exit()
 

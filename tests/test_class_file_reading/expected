@@ -1,102 +1,40 @@
-
-
-34v file format: C-xrefactory 1.6.0 
-
-
-21@mpfotulcsrhdeibnaAgk 1n 300000k
-1626f p mia 43:;com/sun/jndi/cosnaming/CNNameParser.class
-3377f   28:;javax/naming/Context.class
-3851f 1596976614p 1596976614m1i 78:CURDIR/CNCtx.class
-4031f p mi 39:;org/omg/CosNaming/NameComponent.class
-4733f   79:;CURDIR/CNCtx.class
-6322f   31:;javax/naming/NameParser.class
-6398f   25:;javax/naming/Name.class
-13252f   27:;java/util/Hashtable.class
-15960f   46:;com/sun/jndi/cosnaming/OrbReuseTracker.class
-16509f   36:;javax/naming/NamingException.class
-18485f   24:;java/lang/String.class
-24597f   11:___None___
-28706f 1596976614p 1596976614m1i 84:CURDIR/Completion2.class
-31830f p mi 38:;javax/naming/NamingEnumeration.class
-34640f   45:;java/lang/invoke/MethodHandles$Lookup.class
-36587f   46:;com/sun/jndi/cosnaming/IiopUrl$Address.class
-36732f   38:;javax/naming/spi/ResolveResult.class
-41394f   24:;java/lang/Object.class
-43286f   85:;CURDIR/Completion2.class
-44047f   39:;org/omg/CosNaming/NamingContext.class
-45246f   25:;org/omg/CORBA/ORB.class
-4733f3377h4733de
-41394he
-43286f43286des
-t4733d4733h1a13g	34/getNameParser(Ljava/lang/String;)	36uA4733f1lcr
-	45/rebind(Ljava/lang/String;Ljava/lang/Object;)	r
-43286d43286ha11g	14/Completion2()	43286fr
-4733d4733h1a13g	50/composeName(Ljava/lang/String;Ljava/lang/String;)	4733fr
-	32/lookupLink(Ljavax/naming/Name;)	r
-	26/list(Ljavax/naming/Name;)	r
-2a	60/setOrbAndRootContext(Lorg/omg/CORBA/ORB;Ljava/lang/String;)	r
-10a12g	12/_defaultOrb	r
-2a	6/_name	r
-13g	91/callBindOrRebind([Lorg/omg/CosNaming/NameComponent;Ljavax/naming/Name;Ljava/lang/Object;Z)	r
-1a	39/destroySubcontext(Ljavax/naming/Name;)	r
-a12g	10/enumCount	r
-2a13g	47/callUnbind([Lorg/omg/CosNaming/NameComponent;)	r
-	73/initUsingUrl(Lorg/omg/CORBA/ORB;Ljava/lang/String;Ljava/util/Hashtable;)	r
-10a	62/getContinuationContext(Ljavax/naming/CannotProceedException;)	r
-1a	52/composeName(Ljavax/naming/Name;Ljavax/naming/Name;)	r
-	27/lookup(Ljava/lang/String;)	r
-12g	4/_nc	r
-4a13g	11/finalize()	r
-33a	8/close()	r
-1a	46/rebind(Ljavax/naming/Name;Ljava/lang/Object;)	r
-33a	15/decEnumCount()	r
-24a12g	7/parser	r
-1a13g	27/unbind(Ljava/lang/String;)	r
-	44/bind(Ljavax/naming/Name;Ljava/lang/Object;)	r
-2a	55/callBindNewContext([Lorg/omg/CosNaming/NameComponent;)	r
-15t24597d24597ha4g	78/CURDIR/Completion2	43286fr
-t4733d4733h12g	14/isCloseCalled	4733fr
-	11/orbTracker	r
-2a13g	82/initUsingCorbanameUrl(Lorg/omg/CORBA/ORB;Ljava/lang/String;Ljava/util/Hashtable;)	r
-a12g	11/federation	r
-1a13g	42/removeFromEnvironment(Ljava/lang/String;)	r
-2a	64/setOrbAndRootContext(Lorg/omg/CORBA/ORB;Lorg/omg/CORBA/Object;)	r
-10a	18/lambda$static$0()	r
-1a	38/createSubcontext(Ljavax/naming/Name;)	r
-10a	31/isCorbaUrl(Ljava/lang/String;)	r
-1a	28/lookup(Ljavax/naming/Name;)	r
-9a	56/createUsingURL(Ljava/lang/String;Ljava/util/Hashtable;)	r
-1a	28/unbind(Ljavax/naming/Name;)	r
-	34/listBindings(Ljavax/naming/Name;)	r
-	31/lookupLink(Ljava/lang/String;)	r
-	47/rename(Ljavax/naming/Name;Ljavax/naming/Name;)	r
-	37/createSubcontext(Ljava/lang/String;)	r
-a12g	5/_env	r
-13g	49/makeFullName([Lorg/omg/CosNaming/NameComponent;)	r
-2a	45/initOrbAndRootContext(Ljava/util/Hashtable;)	r
-43286d43286ha	13/ [classTree]	43286flr
-4733d4733h1a	33/listBindings(Ljava/lang/String;)	4733f1lr
-a11g	155/CNCtx(Lorg/omg/CORBA/ORB;Lcom/sun/jndi/cosnaming/OrbReuseTracker;Lorg/omg/CosNaming/NamingContext;Ljava/util/Hashtable;[Lorg/omg/CosNaming/NameComponent;)	r
-1a13g	55/addToEnvironment(Ljava/lang/String;Ljava/lang/Object;)	r
-	25/list(Ljava/lang/String;)	r
-2a	38/getStringifiedIor(Ljava/lang/String;)	r
-15t24597d24597ha4g	72/CURDIR/CNCtx	r
-t4733d4733h2a13g	77/initUsingIiopUrl(Lorg/omg/CORBA/ORB;Ljava/lang/String;Ljava/util/Hashtable;)	r
-a	48/callResolve([Lorg/omg/CosNaming/NameComponent;)	r
-2a	47/callDestroy(Lorg/omg/CosNaming/NamingContext;)	r
-42a	16/getDefaultOrb()	r
-1a	45/rename(Ljava/lang/String;Ljava/lang/String;)	r
-2a	97/leafNotFound(Lorg/omg/CosNaming/NamingContextPackage/NotFound;Lorg/omg/CosNaming/NameComponent;)	r
-10a11g	8/CNCtx()	r
-a	29/CNCtx(Ljava/util/Hashtable;)	r
-26a12g	6/debug	r
-1a13g	21/getNameInNamespace()	r
-	17/getEnvironment()	r
-	43/bind(Ljava/lang/String;Ljava/lang/Object;)	r
-	38/destroySubcontext(Ljava/lang/String;)	r
-26a12g	9/FED_PROP	r
-33a13g	15/incEnumCount()	r
-a12g	5/_orb	r
-1a13g	35/getNameParser(Ljavax/naming/Name;)	r
-a	13/ [classTree]	lr
-25a12g	17/trustURLCodebase	1lr
+orbTracker
+    orbTracker@CNCtx.class:1:0
+CURDIR/CNCtx
+    CURDIR/CNCtx@CNCtx.class:1:0
+callDestroy(Lorg/omg/CosNaming/NamingContext;)
+    callDestroy(Lorg/omg/CosNaming/NamingContext;)@CNCtx.class:1:0
+list(Ljavax/naming/Name;)
+    list(Ljavax/naming/Name;)@CNCtx.class:1:0
+lookupLink(Ljavax/naming/Name;)
+    lookupLink(Ljavax/naming/Name;)@CNCtx.class:1:0
+lookup(Ljava/lang/String;)
+    lookup(Ljava/lang/String;)@CNCtx.class:1:0
+lookup(Ljavax/naming/Name;)
+    lookup(Ljavax/naming/Name;)@CNCtx.class:1:0
+setOrbAndRootContext(Lorg/omg/CORBA/ORB;Ljava/lang/String;)
+    setOrbAndRootContext(Lorg/omg/CORBA/ORB;Ljava/lang/String;)@CNCtx.class:1:0
+callBindOrRebind([Lorg/omg/CosNaming/NameComponent;Ljavax/naming/Name;Ljava/lang/Object;Z)
+    callBindOrRebind([Lorg/omg/CosNaming/NameComponent;Ljavax/naming/Name;Ljava/lang/Object;Z)@CNCtx.class:1:0
+getNameParser(Ljava/lang/String;)
+    getNameParser(Ljava/lang/String;)@CNCtx.class:1:0
+rebind(Ljava/lang/String;Ljava/lang/Object;)
+    rebind(Ljava/lang/String;Ljava/lang/Object;)@CNCtx.class:1:0
+CURDIR/Completion2
+    CURDIR/Completion2@Completion2.class:1:0
+ [classTree]
+     [classTree]@Completion2.class:0:0
+getContinuationContext(Ljavax/naming/CannotProceedException;)
+    getContinuationContext(Ljavax/naming/CannotProceedException;)@CNCtx.class:1:0
+enumCount
+    enumCount@CNCtx.class:1:0
+_nc
+    _nc@CNCtx.class:1:0
+bind(Ljavax/naming/Name;Ljava/lang/Object;)
+    bind(Ljavax/naming/Name;Ljava/lang/Object;)@CNCtx.class:1:0
+callUnbind([Lorg/omg/CosNaming/NameComponent;)
+    callUnbind([Lorg/omg/CosNaming/NameComponent;)@CNCtx.class:1:0
+composeName(Ljava/lang/String;Ljava/lang/String;)
+    composeName(Ljava/lang/String;Ljava/lang/String;)@CNCtx.class:1:0
+composeName(Ljavax/naming/Name;Ljavax/naming/Name;)
+    composeName(Ljavax/naming/Name;Ljavax/naming/Name;)@CNCtx.class:1:0
