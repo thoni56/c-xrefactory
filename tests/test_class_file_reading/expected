@@ -1,40 +1,38 @@
-orbTracker
-    orbTracker@CNCtx.class:1:0
-CURDIR/CNCtx
-    CURDIR/CNCtx@CNCtx.class:1:0
-callDestroy(Lorg/omg/CosNaming/NamingContext;)
-    callDestroy(Lorg/omg/CosNaming/NamingContext;)@CNCtx.class:1:0
-list(Ljavax/naming/Name;)
-    list(Ljavax/naming/Name;)@CNCtx.class:1:0
-lookupLink(Ljavax/naming/Name;)
-    lookupLink(Ljavax/naming/Name;)@CNCtx.class:1:0
-lookup(Ljava/lang/String;)
-    lookup(Ljava/lang/String;)@CNCtx.class:1:0
-lookup(Ljavax/naming/Name;)
-    lookup(Ljavax/naming/Name;)@CNCtx.class:1:0
-setOrbAndRootContext(Lorg/omg/CORBA/ORB;Ljava/lang/String;)
-    setOrbAndRootContext(Lorg/omg/CORBA/ORB;Ljava/lang/String;)@CNCtx.class:1:0
-callBindOrRebind([Lorg/omg/CosNaming/NameComponent;Ljavax/naming/Name;Ljava/lang/Object;Z)
-    callBindOrRebind([Lorg/omg/CosNaming/NameComponent;Ljavax/naming/Name;Ljava/lang/Object;Z)@CNCtx.class:1:0
-getNameParser(Ljava/lang/String;)
-    getNameParser(Ljava/lang/String;)@CNCtx.class:1:0
-rebind(Ljava/lang/String;Ljava/lang/Object;)
-    rebind(Ljava/lang/String;Ljava/lang/Object;)@CNCtx.class:1:0
-CURDIR/Completion2
-    CURDIR/Completion2@Completion2.class:1:0
  [classTree]
      [classTree]@Completion2.class:0:0
-getContinuationContext(Ljavax/naming/CannotProceedException;)
-    getContinuationContext(Ljavax/naming/CannotProceedException;)@CNCtx.class:1:0
-enumCount
-    enumCount@CNCtx.class:1:0
-_nc
-    _nc@CNCtx.class:1:0
+CURDIR/CNCtx
+    CURDIR/CNCtx@Completion2.class:0:0
+CURDIR/Completion2
+    CURDIR/Completion2@Completion2.class:0:0
+CNCtx(Lorg/omg/CORBA/ORB;Lcom/sun/jndi/cosnaming/OrbReuseTracker;Lorg/omg/CosNaming/NamingContext;Ljava/util/Hashtable;[Lorg/omg/CosNaming/NameComponent;)
+    CNCtx(Lorg/omg/CORBA/ORB;Lcom/sun/jndi/cosnaming/OrbReuseTracker;Lorg/omg/CosNaming/NamingContext;Ljava/util/Hashtable;[Lorg/omg/CosNaming/NameComponent;)@CNCtx.class:1:0
+addToEnvironment(Ljava/lang/String;Ljava/lang/Object;)
+    addToEnvironment(Ljava/lang/String;Ljava/lang/Object;)@CNCtx.class:1:0
 bind(Ljavax/naming/Name;Ljava/lang/Object;)
     bind(Ljavax/naming/Name;Ljava/lang/Object;)@CNCtx.class:1:0
-callUnbind([Lorg/omg/CosNaming/NameComponent;)
-    callUnbind([Lorg/omg/CosNaming/NameComponent;)@CNCtx.class:1:0
 composeName(Ljava/lang/String;Ljava/lang/String;)
     composeName(Ljava/lang/String;Ljava/lang/String;)@CNCtx.class:1:0
 composeName(Ljavax/naming/Name;Ljavax/naming/Name;)
     composeName(Ljavax/naming/Name;Ljavax/naming/Name;)@CNCtx.class:1:0
+destroySubcontext(Ljava/lang/String;)
+    destroySubcontext(Ljava/lang/String;)@CNCtx.class:1:0
+enumCount
+    enumCount@CNCtx.class:1:0
+getDefaultOrb()
+    getDefaultOrb()@CNCtx.class:1:0
+getEnvironment()
+    getEnvironment()@CNCtx.class:1:0
+getNameParser(Ljavax/naming/Name;)
+    getNameParser(Ljavax/naming/Name;)@CNCtx.class:1:0
+initOrbAndRootContext(Ljava/util/Hashtable;)
+    initOrbAndRootContext(Ljava/util/Hashtable;)@CNCtx.class:1:0
+initUsingIiopUrl(Lorg/omg/CORBA/ORB;Ljava/lang/String;Ljava/util/Hashtable;)
+    initUsingIiopUrl(Lorg/omg/CORBA/ORB;Ljava/lang/String;Ljava/util/Hashtable;)@CNCtx.class:1:0
+list(Ljava/lang/String;)
+    list(Ljava/lang/String;)@CNCtx.class:1:0
+listBindings(Ljava/lang/String;)
+    listBindings(Ljava/lang/String;)@CNCtx.class:1:0
+orbTracker
+    orbTracker@CNCtx.class:1:0
+trustURLCodebase
+    trustURLCodebase@CNCtx.class:1:0

@@ -221,22 +221,23 @@ if __name__ == "__main__":
     lines = read_lines_from(directory_name, "XClasses")
     #classes = unpack(lines)
 
+    symbols = []
     # Read all CXref-files and list identifiers
     for cxfilename in sorted(os.listdir(directory_name)):
         if cxfilename != "XFiles" and cxfilename != "XClasses":
             eprint("Unpacking", cxfilename)
             lines = read_lines_from(directory_name, cxfilename)
             lines = read_header(lines)
-            symbols = unpack_symbols(lines, cxfilename)
-            for symbol in symbols:
-                print(symbol.symbolname)
-                # Use previously found fileid, lineno and colno
-                positions = unpack_positions(symbol.positions)
-                for p in positions:
-                    # Save fileid, lineno and colno in case any of them are skipped in next symbol in this file
-                    filename = get_filename_from_id(p.fileid, files)
-                    filename = os.path.basename(filename)
-                    print("    %s@%s:%d:%d" %
-                          (symbol.symbolname, filename, p.lineno if p.lineno else 0, p.colno if p.colno else 0))
+            symbols += unpack_symbols(lines, cxfilename)
 
-    "4uA 20900f 1l 4c r 4l c r 32710f 1l 4c r 4l c r 48151f 1l 4c r 4l c r"
+    symbols.sort(key=lambda s: s.symbolname)
+    for symbol in symbols:
+        print(symbol.symbolname)
+        # Use previously found fileid, lineno and colno
+        positions = unpack_positions(symbol.positions)
+        for p in positions:
+            # Save fileid, lineno and colno in case any of them are skipped in next symbol in this file
+            filename = get_filename_from_id(p.fileid, files)
+            filename = os.path.basename(filename)
+            print("    %s@%s:%d:%d" %
+                  (symbol.symbolname, filename, p.lineno if p.lineno else 0, p.colno if p.colno else 0))
