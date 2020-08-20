@@ -53,7 +53,7 @@ typedef struct referencesChangeData {
 /* *********************************************************************** */
 
 void fillSymbolRefItem(SymbolReferenceItem *symbolRefItem, char *name,
-                                 unsigned fileHash, int vApplClass, int vFunClass) {
+                       unsigned fileHash, int vApplClass, int vFunClass) {
     symbolRefItem->name = name;
     symbolRefItem->fileHash = fileHash;
     symbolRefItem->vApplClass = vApplClass;
@@ -63,8 +63,8 @@ void fillSymbolRefItem(SymbolReferenceItem *symbolRefItem, char *name,
 }
 
 void fillSymbolRefItemBits(SymbolReferenceItemBits *symbolRefItemBits, unsigned symType,
-                            unsigned storage, unsigned scope, unsigned accessFlags,
-                            unsigned category, unsigned htmlWasLn) {
+                           unsigned storage, unsigned scope, unsigned accessFlags,
+                           unsigned category, unsigned htmlWasLn) {
     symbolRefItemBits->symType = symType;
     symbolRefItemBits->storage = storage;
     symbolRefItemBits->scope = scope;
