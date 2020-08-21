@@ -46,7 +46,7 @@ def read_marker(marker, string):
     return (value, rest)
 
 
-def unpack_positions(string):
+def unpack_references(string):
     # Unpack a reference string into a list of SymbolPositions or something
     # All "segments" have a format of <int><marker>, e.g. 456f
     # If a segment does not have number it means 0 (zero)
@@ -60,37 +60,18 @@ def unpack_positions(string):
 
     while string != "":
         position_string = string
-        f = re.match(r"(\d+)u", string)
-        if not f == None:
-            usage = int(string[f.start():f.end()-1])
-            string = string[f.end():]
 
-        f = re.match(r"(\d+)A", string)
-        if not f == None:
-            if string[f.start():f.end()-1] != '':
-                accessibility_index = int(string[f.start():f.end()-1])
-            string = string[f.end():]
-        if string[0] == 'A':
-            accessibility_index = 0
-            string = string[1:]
+        # Usage marker
+        (usage, string) = read_marker('u', string)
+
+        # Accessibility marker
+        (accessibility, string) = read_marker('A', string)
 
         # File marker
-        f = re.match(r"(\d+)f", string)
-        if not f == None:
-            fileid = int(string[f.start():f.end()-1])
-            string = string[f.end():]
-        if string[0] == 'f':
-            fileid = 0
-            string = string[1:]
+        (fileid, string) = read_marker('f', string)
 
         # Line marker
-        f = re.match(r"(\d+)l", string)
-        if not f == None:
-            lineno = int(string[f.start():f.end()-1])
-            string = string[f.end():]
-        if string[0] == 'l':
-            lineno = 0
-            string = string[1:]
+        (lineno, string) = read_marker('l', string)
 
         # Column marker
         (colno, string) = read_marker('c', string)
@@ -147,7 +128,7 @@ def get_filename_from_id(fileid, file_references):
 
 
 # Create Symbol structure
-Symbol = namedtuple('Symbol', ['symbolname', 'positions', 'kind'])
+Symbol = namedtuple('Symbol', ['symbolname', 'references', 'kind'])
 
 
 def unpack_symbols(lines, cxfilename):
@@ -155,22 +136,24 @@ def unpack_symbols(lines, cxfilename):
     marker = ""
     for line in lines:
         if line != "":
+            segments = line.split('\t')
             if line[0] != '\t':
                 # If there is a marker, dechiffer it, else use the previously found one
                 marker = re.match(r"(\d*)\D", line).group()
             if marker[-1] == 't':
                 # Symbol type
-                segments = line.split('\t')
                 symbolname = segments[1].split('/', 1)[-1]
-                symbols.append(Symbol(symbolname, segments[2], marker))
+                symbols.append(
+                    Symbol(symbolname, unpack_references(segments[2]), marker))
             elif marker[-1] == 'g':
                 # Storage
                 segments = line.split('\t')
                 symbolname = segments[1].split('/', 1)[-1]
-                symbols.append(Symbol(symbolname, segments[2], marker))
+                symbols.append(
+                    Symbol(symbolname, unpack_references(segments[2]), marker))
             else:
                 eprint("Unknown marker '%s' in Xrefs file '%s': '%s'" %
-                      (marker[-1], cxfilename, line))
+                       (marker[-1], cxfilename, line))
     return symbols
 
 
@@ -183,12 +166,12 @@ def read_lines_from(directory_name, file_name):
 def verify_directory(directory_name):
     if not os.path.exists(directory_name):
         eprint("ERROR: directory '%s' does not exist, point to a c-xref index directory" %
-              directory_name)
+               directory_name)
         sys.exit()
 
     if not os.path.isdir(directory_name):
         eprint("ERROR: '%s' is not a directory, should be a c-xref index directory" %
-              directory_name)
+               directory_name)
         sys.exit()
 
     if not os.path.exists(os.path.join(directory_name, "XFiles")):
@@ -233,9 +216,7 @@ if __name__ == "__main__":
     symbols.sort(key=lambda s: s.symbolname)
     for symbol in symbols:
         print(symbol.symbolname)
-        # Use previously found fileid, lineno and colno
-        positions = unpack_positions(symbol.positions)
-        for p in positions:
+        for p in symbol.references:
             # Save fileid, lineno and colno in case any of them are skipped in next symbol in this file
             filename = get_filename_from_id(p.fileid, files)
             filename = os.path.basename(filename)
