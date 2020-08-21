@@ -120,6 +120,7 @@ static void usage(char *s) {
     fprintf(stdout,"\t-update                   - update old 'refs' reference file\n");
     fprintf(stdout,"\t-compiler=<path>          - path to compiler to use for autodiscovered includes and defines\n");
     fprintf(stdout,"\t-fastupdate               - fast update (modified files only)\n");
+    fprintf(stdout,"\t-fullupdate               - full update (all files)\n");
     fprintf(stdout,"\t-errors                   - report all error messages\n");
     fprintf(stdout,"\t-version                  - print version information\n");
 }
@@ -616,7 +617,7 @@ static bool processFOption(int *ii, int argc, char **argv) {
         options.update = UP_FAST_UPDATE;
         options.updateOnlyModifiedFiles = true;
     }
-    else if (strcmp(argv[i],"-fupdate")==0) {
+    else if (strcmp(argv[i],"-fullupdate")==0) {
         options.update = UP_FULL_UPDATE;
         options.updateOnlyModifiedFiles = false;
     }
@@ -1482,10 +1483,6 @@ static bool processUOption(int *argIndexP, int argc, char **argv) {
     else if (strcmp(argv[i],"-update")==0)  {
         options.update = UP_FULL_UPDATE;
         options.updateOnlyModifiedFiles = true;
-    }
-    else if (strcmp(argv[i],"-updatem")==0) {
-        options.update = UP_FULL_UPDATE;
-        options.updateOnlyModifiedFiles = false;
     }
     else
         return(false);

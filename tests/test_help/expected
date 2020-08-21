@@ -53,5 +53,6 @@ options:
 	-update                   - update old 'refs' reference file
 	-compiler=<path>          - path to compiler to use for autodiscovered includes and defines
 	-fastupdate               - fast update (modified files only)
+	-fullupdate               - full update (all files)
 	-errors                   - report all error messages
 	-version                  - print version information
