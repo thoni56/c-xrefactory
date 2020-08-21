@@ -5,11 +5,17 @@
 import os
 import re
 import sys
+import argparse
+
 from collections import namedtuple
 
 
 def eprint(*args, **kwargs):
     print(*args, file=sys.stderr, **kwargs)
+
+def vprint(*args, **kwargs):
+    if verbose:
+        print(*args, **kwargs)
 
 
 # Create the Position structure
@@ -181,26 +187,28 @@ def verify_directory(directory_name):
 
 if __name__ == "__main__":
 
-    if len(sys.argv) > 2:
-        eprint(
-            "ERROR: %s only takes 1 argument, the directory to scan, it defaults to 'CXrefs'" % sys.argv[0])
-        sys.exit()
+    parser = argparse.ArgumentParser(description='Read the CXrefs of c-xrefactory and present them in readable format.')
+    parser.add_argument('-v', '--verbose', help='verbose output', action='store_true')
+    parser.add_argument('directory', help='the directory to scan, default is CXrefs', nargs='?', default='CXrefs')
 
-    if len(sys.argv) == 2:
-        directory_name = sys.argv[1]
+    args = parser.parse_args()
+
+    directory_name = args.directory
+    if args.verbose:
+        verbose = True
     else:
-        directory_name = "CXrefs"
+        verbose = False
 
     verify_directory(directory_name)
 
     # Get all file references
-    eprint("Unpacking", "XFiles")
+    vprint("Unpacking", "XFiles")
     lines = read_lines_from(directory_name, "XFiles")
     lines = lines[6:]  # Skip header
     files = unpack_files(lines)
 
     # Get all classes
-    eprint("Unpacking", "XClasses")
+    vprint("Unpacking", "XClasses")
     lines = read_lines_from(directory_name, "XClasses")
     #classes = unpack(lines)
 
@@ -208,7 +216,7 @@ if __name__ == "__main__":
     # Read all CXref-files and list identifiers
     for cxfilename in sorted(os.listdir(directory_name)):
         if cxfilename != "XFiles" and cxfilename != "XClasses":
-            eprint("Unpacking", cxfilename)
+            vprint("Unpacking", cxfilename)
             lines = read_lines_from(directory_name, cxfilename)
             lines = read_header(lines)
             symbols += unpack_symbols(lines, cxfilename)
