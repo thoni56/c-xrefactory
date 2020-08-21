@@ -4,8 +4,8 @@ COMMAND = ../../src/c-xref -xrefrc .c-xrefrc -create -refnum=1 -log=log Completi
 
 $(TEST):
 	$(COMMAND) -o command.log
-	# and compare it to expected
-	../../utils/cxref_reader > output.tmp
+	# and compare some symbols to expected
+	../../utils/cxref_reader | grep 'CNCtcx\|enumCount\|orbTracker' > output.tmp
 	$(NORMALIZE) output.tmp > output
 	$(VERIFY)
 
