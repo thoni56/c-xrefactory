@@ -12,19 +12,24 @@ OBJDIR=.objects
 # Find all *_tests.c automatically
 UNITTESTS = $(patsubst %.c,%.$(EXT),$(wildcard *_tests.c))
 
-# Assuming Cgreen is installed in "normal" place
 OS := $(shell uname)
 ifeq ($(OS),Darwin)
 EXT=dylib
 else
 EXT=so
 endif
+
+# Assuming make (>3.something, not Apple!) can use vpath to locate Cgreen library
 CGREEN = -lcgreen
 
 
 all: $(UNITTESTS)
 	@-[ -x "$$(command -v lcov)" ] && lcov -q -z -d $(OBJDIR)
 	cgreen-runner $(CGREEN_OUTPUT) --suite unittests $^
+	filecount=`ls -1 $(OBJDIR)/*.gcda 2>/dev/null | wc -l` ; \
+	if [ $$filecount > 0 ] ; then \
+		lcov $$LCOV_OPTIONS -q -t unittests -d . -c -o unittests.info ; \
+	fi
 
 clean:
 	-rm $(OBJDIR)/*.[od] *.$(EXT) $(OBJDIR)/*.gc*
@@ -33,6 +38,8 @@ cleaner: clean
 	-rm -rf $(OBJDIR)
 
 .objs/*.o: Makefile
+
+.SILENT:
 
 # Macro for unittests that link the SUT and a small number of dependent .o
 define UNITTEST
