@@ -22,13 +22,14 @@ endif
 # Assuming make (>3.something, not Apple!) can use vpath to locate Cgreen library
 CGREEN = -lcgreen
 
+LCOV=lcov -q --exclude log.c --exclude '*.mock' --exclude '*.tab.c' --exclude '/usr/*' --exclude '/Library/*'
 
 all: $(UNITTESTS)
 	@-[ -x "$$(command -v lcov)" ] && lcov -q -z -d $(OBJDIR)
 	cgreen-runner $(CGREEN_OUTPUT) --suite unittests $^
 	filecount=`ls -1 $(OBJDIR)/*.gcda 2>/dev/null | wc -l` ; \
 	if [ $$filecount > 0 ] ; then \
-		lcov $$LCOV_OPTIONS -q -t unittests -d . -c -o unittests.info ; \
+		$(LCOV) $$LCOV_OPTIONS -q -t unittests -d . -c -o unittests.info ; \
 	fi
 
 clean:
