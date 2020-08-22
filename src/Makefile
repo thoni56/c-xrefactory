@@ -51,15 +51,15 @@ devel:
 
 ci ci-unit ci-build ci-test: COVERAGE=--coverage
 ci:
-	$(MAKE) COVERAGE=$(COVERAGE) unit
-	$(MAKE) COVERAGE=$(COVERAGE) debug
+	$(MAKE) CC=$(CC) COVERAGE=$(COVERAGE) unit
+	$(MAKE) CC=$(CC) COVERAGE=$(COVERAGE) debug
 	$(MAKE) test
 
 ci-unit:
 	$(MAKE) CC=$(CC) COVERAGE=$(COVERAGE) unit
 
 ci-build:
-	$(MAKE) COVERAGE=$(COVERAGE) debug
+	$(MAKE) CC=$(CC) COVERAGE=$(COVERAGE) debug
 
 ci-test:
 	$(MAKE) test
@@ -187,28 +187,15 @@ coverage-report:
 	$(MAKE) the-actual-coverage-report &
 
 the-actual-coverage-report:
-	#$(LCOV) $(LCOV_OPTIONS) -d .. -c -o ../coverage/total.info
-	# If running in parallel each test has created its own .info file in ../test
-	# Combine them
-	ls ../tests/*.info | xargs printf -- '-a %s\n' | xargs lcov -q -o ../coverage/total.info
-	# Add the unittest coverage info
-	#lcov -a ../coverage/total.info -a ../coverage/unittests.info -o ../coverage/total.info
-	# Re-create collated gcov files from total.info for Emacs gcov-mode
+	@# If running in parallel each test has created its own .info file in ../test, combine them
+	ls ../tests/*.info | xargs printf -- '-a %s\n' | xargs lcov -q -o ../tests/total.info
+	@# Add the unittest coverage info
+	-lcov -a ../tests/total.info -a unittests/unittests.info -o ../coverage/total.info
+	@# Re-create collated gcov files from total.info for Emacs gcov-mode
 	if command -v info2gcov > /dev/null 2>&1 ; then \
 		info2gcov -q ../coverage/total.info ; \
 	fi
 	@printf "\\r"
-	genhtml -q -o ../coverage ../coverage/total.info
-	@echo Coverage done
-
-old-actual-coverage-report-with-testnames:
-	$(LCOV) $(LCOV_OPTIONS) -d . -c -t unittests -o ../coverage/unittests.info
-	ls -1q ../tests/*.info | sed "s/^/-a /g" | xargs $(LCOV) $(LCOV_OPTIONS) -o ../coverage/total.info -a ../coverage/unittests.info
-	@printf "\\r"
-	lcov -q --remove ../coverage/total.info 'log.c' '*.tab.c' '/usr/*' '/Library/*' -o ../coverage/total.info
-	if command -v info2gcov > /dev/null 2>&1 ; then \
-		info2gcov -q ../coverage/total.info ; \
-	fi
 	genhtml -q -o ../coverage ../coverage/total.info
 	@echo Coverage done
 
