@@ -20,7 +20,7 @@ list:
 	echo $(TESTS)
 
 clean:
-	rm -rf *.info */.coverage
+	rm -rf *.info */.coverage coverage
 
 $(VERBOSE).SILENT:
 

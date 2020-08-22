@@ -188,7 +188,7 @@ coverage-report:
 
 the-actual-coverage-report:
 	@# If running in parallel each test has created its own .info file in ../test, combine them
-	ls ../tests/*.info | xargs printf -- '-a %s\n' | xargs lcov -q -o ../tests/total.info
+	ls ../tests/coverage/*.info | xargs printf -- '-a %s\n' | xargs lcov -q -o ../tests/total.info
 	@# Add the unittest coverage info
 	-lcov -a ../tests/total.info -a unittests/unittests.info -o ../coverage/total.info
 	@# Re-create collated gcov files from total.info for Emacs gcov-mode

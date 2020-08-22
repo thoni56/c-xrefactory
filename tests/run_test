@@ -28,7 +28,8 @@ else
                 cd ../src
                 # Copy the .gcno files to the coverage directory, because they are needed there by lcov
                 cp .objects/*.gcno ../tests/$1/.coverage
-                lcov $LCOV_OPTIONS -q -t $1 -d ../tests/$1/.coverage -c -o ../tests/$1.info -b .
+                mkdir -p ../tests/coverage
+                lcov $LCOV_OPTIONS -q -t $1 -d ../tests/$1/.coverage -c -o ../tests/coverage/$1.info -b .
             fi
         fi
     fi
